@@ -1,234 +1,204 @@
-Return-Path: <linux-kernel+bounces-713848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90500AF5F22
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 18:52:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C914BAF5F31
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 18:54:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C7491C45BC5
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 16:52:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C25D4E0127
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 16:52:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF5C91DE2A5;
-	Wed,  2 Jul 2025 16:51:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C90AB2FD59D;
+	Wed,  2 Jul 2025 16:53:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="blHLxU37"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EDwtMXNI"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EB7C72600
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 16:51:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 708F52F4321
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 16:53:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751475079; cv=none; b=heV8TKn6NKL/nUI1SnKl7Og+q65iZiadj52MjHw2N9XJjsM5FOFjXvBwasrcVSDrk09ZIZziG1MVdL68UgppLgNfMAbZf1/3XL5dLK9qAA7c85jCijZrIvt+XSKSWPf3EHOOBTYh8MOJeqRLPMzLLJmy39bcMHSZnStcbeMT9u0=
+	t=1751475182; cv=none; b=izpaxa15A5XMUkWfnCkLaVZmemwPXG+UxdQblcQXqCsmDOnoKEOtQZLUQOzcCw+PwVa/0AgPF84FgKUMHGodsQFL1OYUVDXsl8+QSyKB6bThFofEr/7Gk2KKSS6+eWsEbjQwHQeCVe4YcSCCCvpXz1sNCYV2L8qqtdKa5xsvtzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751475079; c=relaxed/simple;
-	bh=vb//Qo24WW6S8QPbUQgG5ByNtX4L0YdqgqXP0MjGKWw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QBaVY/9woSm/6K1APcTrX7nPgN7P7LHKtbU5DVWAEPqOxQWU6T7ynErGs4W2R1+U8f5rHfvp65/jDONtm8LZoFk+QVnzyWKpXbryaIDm3MguCbdUitf++u8H2a8MRj4ENuHpq8+fBGFOwJllK1/Vi+bOqtEd2badZuBIvfXeaLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=blHLxU37; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1751475182; c=relaxed/simple;
+	bh=eYBPhk4sV4GO/PBkfuhrYLwaeqNoDsM3graeutBFqgE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lMP/ZpPocUxpTL8QC4VLoMRN636+MADL1L3kpC2MQV/LivXHIKeOFUV8Gx+RsrHmHIX4bHCaZF2s04qcbLHrDR+ps+TSPWQxf1xDskYIzmcfy73bi8eeUtxeoNJONhYkfi6oYBsJT4xRzD0e+o/Bn8Oz2ApypzdMzHGhTdQ6tXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EDwtMXNI; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1751475075;
+	s=mimecast20190719; t=1751475179;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=xpfWH72ogCTg47ecP2Ua5CQ85Iecj8xXO5x3bBkcgCk=;
-	b=blHLxU37YUFkI3bg7H+naGM0VC+IgvyqR60WyGZH4VR1Nyh9YiXXWDVFQ+CoRQWAI05Elh
-	ckInTcB8OywNTOnEMrfkgockwoFfMQ/mWBOUpODo7bhMnm+U0KqEJBlyWabj8AzfqPrNAe
-	PKcdSpG4efiivslS99RhQYUfcuLffkc=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=BYPE9kAm4n5JaaAj3WmzYSVaYGMobSZ1mvZBnXOb9Jo=;
+	b=EDwtMXNI3vV+7orAlA9+Wq/KtFXqzMNgKGA7CdZM+KspZA09Jw6I34feWgjJagvWtE2gIV
+	+20aDYTE4kBxP7lMunxSB2WRZy5UXvOjHHy+GDR5yyqVo+YKJDI6zoBh0UTGJGSQ3HeaDv
+	9tADzCRAVY3p7h5zGktFn2gRcz4LTJk=
+Received: from mail-oa1-f70.google.com (mail-oa1-f70.google.com
+ [209.85.160.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-678-U2lz1bcdM_yzE1Fwwv9RhQ-1; Wed, 02 Jul 2025 12:51:14 -0400
-X-MC-Unique: U2lz1bcdM_yzE1Fwwv9RhQ-1
-X-Mimecast-MFC-AGG-ID: U2lz1bcdM_yzE1Fwwv9RhQ_1751475073
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4536962204aso19130445e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 09:51:13 -0700 (PDT)
+ us-mta-607-1qh7-h34NE2P6j7q6kxETA-1; Wed, 02 Jul 2025 12:52:58 -0400
+X-MC-Unique: 1qh7-h34NE2P6j7q6kxETA-1
+X-Mimecast-MFC-AGG-ID: 1qh7-h34NE2P6j7q6kxETA_1751475177
+Received: by mail-oa1-f70.google.com with SMTP id 586e51a60fabf-2f76caa41a3so25937fac.0
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 09:52:58 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751475073; x=1752079873;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xpfWH72ogCTg47ecP2Ua5CQ85Iecj8xXO5x3bBkcgCk=;
-        b=rih0Tu4KXZSPQ+o6sZ6nHgQcbanDpyYud6kWUcgnx+lMaIAod/G5AGYE6OazkZMoi5
-         A+oBP0ZCNjkxbT2cW8xzlcbYSC1YbyUxYnNB2Y4JVPZNf6nSeOkuwF0W0yp3dFGawZSd
-         dE8LhErQ7RsIr2E/PurUgWke8X5Ca5BM3By2V3Rbat7QvH0778PBazSMFxL2A7SCQqkz
-         Qzb/awYSrEr2LEbDSob+cwU+uzf00aZITEwhK9fBFnMBZAI5aDUIYmWC9jDBUEozflGO
-         C27x4vA1wMr3CneRao9GObCmEz5CV7XhCV+f3SKrKhlS4Rl2KAfmZVf1xcMpdquQRYUj
-         M8qQ==
-X-Gm-Message-State: AOJu0Yzzwn4cVEH/VPQbdxgrW63kHy1GalVFYJSvCskpLEMgQyvNC3R/
-	vU+DNboBCdWUd5C2fJLv23w/Q1xi/uze/7d+egC2DnAZDYqeeAn2Tzer6IzNsducYd0P7WwZ/rG
-	9AGyuRygS/VggasBCMHkxfUneHuGJ5fKnbbpMOYvy9J7OnUkFulKlj8tp2UpE0VdMfA==
-X-Gm-Gg: ASbGnct2f5a9MUeCdKgqJrizwRxGTQoYOCFAFkXX/EdMKVEg/1yosNRp8pl0NNFKzNr
-	olLE6Nb8MQsG54g26wupt8PGijfYamc7VcB0eDJSg4cs4YWZ24JzjfYnNzkHVPIxiLwJIizoAQx
-	QgiJq0I4DDFmuf/hjWAnxrAlxBeXuleVIsZKEfFt3Bc1qlLkx0qsXXIpFOz5uAxiibNEjNnZkyH
-	/dK5QzsAEj+6oGEkSDPzcuAmqn8OmAJiVDwqa2exSGg6bRb+1hqqLYdJ3F6rec1fM7RCMaTnUKH
-	Sgd9LnWEPK/b9QEQhu4fg5TEvq4=
-X-Received: by 2002:a05:6000:1acc:b0:3a5:3a03:79c1 with SMTP id ffacd0b85a97d-3b2015e2547mr3077867f8f.48.1751475072819;
-        Wed, 02 Jul 2025 09:51:12 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGvxMRKysuQdHGrGs7w7B21ZCIsLANcSN4jMzO65KTRNFi6asbCS0Y0iZ5KuPAG39RZBqRDZg==
-X-Received: by 2002:a05:6000:1acc:b0:3a5:3a03:79c1 with SMTP id ffacd0b85a97d-3b2015e2547mr3077832f8f.48.1751475072278;
-        Wed, 02 Jul 2025 09:51:12 -0700 (PDT)
-Received: from sgarzare-redhat ([193.207.161.84])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a88c80b516sm16110429f8f.41.2025.07.02.09.51.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Jul 2025 09:51:11 -0700 (PDT)
-Date: Wed, 2 Jul 2025 18:50:59 +0200
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: Will Deacon <will@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Keir Fraser <keirf@google.com>, 
-	Steven Moreland <smoreland@google.com>, Frederick Mayle <fmayle@google.com>, 
-	Stefan Hajnoczi <stefanha@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>, 
-	Jason Wang <jasowang@redhat.com>, Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>, 
-	netdev@vger.kernel.org, virtualization@lists.linux.dev
-Subject: Re: [PATCH v2 6/8] vhost/vsock: Allocate nonlinear SKBs for handling
- large receive buffers
-Message-ID: <bborsmywroqnwopuadqovhjvdt2fexhwjy2h3higczb7rwojnf@mg5xrk4mgnwx>
-References: <20250701164507.14883-1-will@kernel.org>
- <20250701164507.14883-7-will@kernel.org>
+        d=1e100.net; s=20230601; t=1751475177; x=1752079977;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BYPE9kAm4n5JaaAj3WmzYSVaYGMobSZ1mvZBnXOb9Jo=;
+        b=fTCVKoi+qd+EFbD9ppJtToQkOkneGxKCaX2TEgThLui1JpXxthb3xOhH+M6HJz2WVi
+         bL6iSO7o0QzpMVxVu58sGIQwhhJYhWBfV5PX6mmN6FDitqCxKk2rdTeHU0/2AG0bIpT7
+         T2NIV1KErf0FkgUTeWuzVmM5BFNpZXkwU4ODLF/zyZ70yUl3wPr7mKh/C0rat9h1ECOY
+         sOWREOS9dOzCrZyiwJaj6QHnS/7RMIAoxq2+uBoVtT9Fr9SbiJEEekX7suU64m4vu5YI
+         qj92xxOEhNkxrxXXyzyeJgO9rQbv+E9ylfjrl2RV9w71IYRofmWQ6MyeiqArEdrEMwU3
+         TJTA==
+X-Forwarded-Encrypted: i=1; AJvYcCXUI7J+50yUZb2ULNY+4bdOVGOjuWT2KsGCIjQqyF5hFnC661N0+xeFiXLYxTQFc5xYZKRqql8iubfVD48=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzbsegVX078i1SzgmSx2gGnv2lNPn5apFnJqPw59JNOul1VdRou
+	6HJ0JzfWqOPhCce+1F4eerO28Drh3di0CoF++PwWd03yfCOhP/K/GDfpfBn1jrfhBkgDR9VhwpM
+	XJoEa+l0j4eT6lWApLZGNBuNw5AtD0uqPMY6kuWN7Ul4b/v7RB1g9fJFWj/AxU3wJ0w==
+X-Gm-Gg: ASbGnctxn0b16DvpB9aIwRZ3l00STLOQxJ9yqYQpJPaqVKnAwCzOje/Ju0SvtC55Bpi
+	H6auKxD2992/Pt1RVeEJbVIV+kh2gfKTB5SftDyizx3diNVw3X6tULEpfN573gnXChInDkBrqsG
+	jARu4ije4PaXx8ZhLH5i4K1RA+Opi8EfZACk4EcjssrQ+lkjQuOWeYzdYvSDMFRZt5802CpJ9Sv
+	A/lnxsLftvKo0tzlv7HtNnYu+ZgwGeLIg1jrYlOZ06lGtqPp5n63S4TN0Zxfx+vfN9ZKYVdjaEu
+	z8fi+gAcqAyclP/+LIEPchY=
+X-Received: by 2002:a05:6870:c18c:b0:2ea:6ec5:f182 with SMTP id 586e51a60fabf-2f76cb4ee23mr82908fac.38.1751475177335;
+        Wed, 02 Jul 2025 09:52:57 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH8xhPj4vbeCO6BR/7uWOvOuQ5ERydvemFdCvd/3yMMwrMEKbwcC+0fs0OrYA1xZmzNSwVtTg==
+X-Received: by 2002:a05:6870:c18c:b0:2ea:6ec5:f182 with SMTP id 586e51a60fabf-2f76cb4ee23mr82872fac.38.1751475176870;
+        Wed, 02 Jul 2025 09:52:56 -0700 (PDT)
+Received: from [192.168.40.164] ([70.105.235.240])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-73afafee51bsm2562567a34.10.2025.07.02.09.52.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 02 Jul 2025 09:52:56 -0700 (PDT)
+Message-ID: <1a14ee0a-04af-407d-89a5-5222ee6da9c7@redhat.com>
+Date: Wed, 2 Jul 2025 12:51:06 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20250701164507.14883-7-will@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 0/6] KVM: arm64: Map GPU device memory as cacheable
+Content-Language: en-US
+To: Ankit Agrawal <ankita@nvidia.com>, Jason Gunthorpe <jgg@nvidia.com>,
+ "maz@kernel.org" <maz@kernel.org>,
+ "oliver.upton@linux.dev" <oliver.upton@linux.dev>,
+ "joey.gouly@arm.com" <joey.gouly@arm.com>,
+ "suzuki.poulose@arm.com" <suzuki.poulose@arm.com>,
+ "yuzenghui@huawei.com" <yuzenghui@huawei.com>,
+ "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+ "will@kernel.org" <will@kernel.org>,
+ "ryan.roberts@arm.com" <ryan.roberts@arm.com>,
+ "shahuang@redhat.com" <shahuang@redhat.com>,
+ "lpieralisi@kernel.org" <lpieralisi@kernel.org>,
+ "david@redhat.com" <david@redhat.com>, "seanjc@google.com"
+ <seanjc@google.com>
+Cc: Aniket Agashe <aniketa@nvidia.com>, Neo Jia <cjia@nvidia.com>,
+ Kirti Wankhede <kwankhede@nvidia.com>, Krishnakant Jaju <kjaju@nvidia.com>,
+ "Tarun Gupta (SW-GPU)" <targupta@nvidia.com>,
+ Vikram Sethi <vsethi@nvidia.com>, Andy Currid <acurrid@nvidia.com>,
+ Alistair Popple <apopple@nvidia.com>, John Hubbard <jhubbard@nvidia.com>,
+ Dan Williams <danw@nvidia.com>, Zhi Wang <zhiw@nvidia.com>,
+ Matt Ochs <mochs@nvidia.com>, Uday Dhoke <udhoke@nvidia.com>,
+ Dheeraj Nigam <dnigam@nvidia.com>,
+ "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
+ "sebastianene@google.com" <sebastianene@google.com>,
+ "coltonlewis@google.com" <coltonlewis@google.com>,
+ "kevin.tian@intel.com" <kevin.tian@intel.com>,
+ "yi.l.liu@intel.com" <yi.l.liu@intel.com>, "ardb@kernel.org"
+ <ardb@kernel.org>, "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+ "gshan@redhat.com" <gshan@redhat.com>,
+ "linux-mm@kvack.org" <linux-mm@kvack.org>,
+ "tabba@google.com" <tabba@google.com>,
+ "qperret@google.com" <qperret@google.com>,
+ "kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "maobibo@loongson.cn" <maobibo@loongson.cn>
+References: <20250621042111.3992-1-ankita@nvidia.com>
+ <SA1PR12MB7199F8346F2CA802E9F3965DB040A@SA1PR12MB7199.namprd12.prod.outlook.com>
+From: Donald Dutile <ddutile@redhat.com>
+In-Reply-To: <SA1PR12MB7199F8346F2CA802E9F3965DB040A@SA1PR12MB7199.namprd12.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 01, 2025 at 05:45:05PM +0100, Will Deacon wrote:
->When receiving a packet from a guest, vhost_vsock_handle_tx_kick()
->calls vhost_vsock_alloc_linear_skb() to allocate and fill an SKB with
->the receive data. Unfortunately, these are always linear allocations and
->can therefore result in significant pressure on kmalloc() considering
->that the maximum packet size (VIRTIO_VSOCK_MAX_PKT_BUF_SIZE +
->VIRTIO_VSOCK_SKB_HEADROOM) is a little over 64KiB, resulting in a 128KiB
->allocation for each packet.
->
->Rework the vsock SKB allocation so that, for sizes with page order
->greater than PAGE_ALLOC_COSTLY_ORDER, a nonlinear SKB is allocated
->instead with the packet header in the SKB and the receive data in the
->fragments. Move the VIRTIO_VSOCK_SKB_HEADROOM check out of the
->allocation function and into the single caller that needs it and add a
->debug warning if virtio_vsock_skb_rx_put() is ever called on an SKB with
->a non-zero length, as this would be destructive for the nonlinear case.
->
->Signed-off-by: Will Deacon <will@kernel.org>
->---
-> drivers/vhost/vsock.c        | 11 +++++------
-> include/linux/virtio_vsock.h | 32 +++++++++++++++++++++++++-------
-> 2 files changed, 30 insertions(+), 13 deletions(-)
->
->diff --git a/drivers/vhost/vsock.c b/drivers/vhost/vsock.c
->index b13f6be452ba..f3c2ea1d0ae7 100644
->--- a/drivers/vhost/vsock.c
->+++ b/drivers/vhost/vsock.c
->@@ -344,11 +344,12 @@ vhost_vsock_alloc_skb(struct vhost_virtqueue *vq,
->
-> 	len = iov_length(vq->iov, out);
->
->-	if (len > VIRTIO_VSOCK_MAX_PKT_BUF_SIZE + VIRTIO_VSOCK_SKB_HEADROOM)
->+	if (len < VIRTIO_VSOCK_SKB_HEADROOM ||
->+	    len > VIRTIO_VSOCK_MAX_PKT_BUF_SIZE + VIRTIO_VSOCK_SKB_HEADROOM)
-> 		return NULL;
->
-> 	/* len contains both payload and hdr */
->-	skb = virtio_vsock_alloc_linear_skb(len, GFP_KERNEL);
->+	skb = virtio_vsock_alloc_skb(len, GFP_KERNEL);
-> 	if (!skb)
-> 		return NULL;
->
->@@ -377,10 +378,8 @@ vhost_vsock_alloc_skb(struct vhost_virtqueue *vq,
->
-> 	virtio_vsock_skb_rx_put(skb);
->
->-	nbytes = copy_from_iter(skb->data, payload_len, &iov_iter);
->-	if (nbytes != payload_len) {
->-		vq_err(vq, "Expected %zu byte payload, got %zu bytes\n",
->-		       payload_len, nbytes);
->+	if (skb_copy_datagram_from_iter(skb, 0, &iov_iter, payload_len)) {
->+		vq_err(vq, "Failed to copy %zu byte payload\n", payload_len);
-> 		kfree_skb(skb);
-> 		return NULL;
-> 	}
->diff --git a/include/linux/virtio_vsock.h b/include/linux/virtio_vsock.h
->index 6d4a933c895a..ad69668f6b91 100644
->--- a/include/linux/virtio_vsock.h
->+++ b/include/linux/virtio_vsock.h
->@@ -51,29 +51,47 @@ static inline void virtio_vsock_skb_rx_put(struct sk_buff *skb)
-> {
-> 	u32 len;
->
->+	DEBUG_NET_WARN_ON_ONCE(skb->len);
-> 	len = le32_to_cpu(virtio_vsock_hdr(skb)->len);
->-	skb_put(skb, len);
->+
->+	if (skb_is_nonlinear(skb))
->+		skb->len = len;
->+	else
->+		skb_put(skb, len);
-> }
 
->
->-static inline struct sk_buff *virtio_vsock_alloc_skb(unsigned int size, gfp_t mask)
->+static inline struct sk_buff *
->+__virtio_vsock_alloc_skb_with_frags(unsigned int header_len,
->+				    unsigned int data_len,
->+				    gfp_t mask)
-> {
-> 	struct sk_buff *skb;
->+	int err;
->
->-	if (size < VIRTIO_VSOCK_SKB_HEADROOM)
->-		return NULL;
 
-I would have made this change in a separate patch, but IIUC the only 
-other caller is virtio_transport_alloc_skb() where this condition is 
-implied, right?
+On 7/2/25 5:33 AM, Ankit Agrawal wrote:
+>> Grace based platforms such as Grace Hopper/Blackwell Superchips have
+>> CPU accessible cache coherent GPU memory. The GPU device memory is
+>> essentially a DDR memory and retains properties such as cacheability,
+>> unaligned accesses, atomics and handling of executable faults. This
+>> requires the device memory to be mapped as NORMAL in stage-2.
+>>
+>> Today KVM forces the memory to either NORMAL or DEVICE_nGnRE depending
+>> on whether the memory region is added to the kernel. The KVM code is
+>> thus restrictive and prevents device memory that is not added to the
+>> kernel to be marked as cacheable. The patch aims to solve this.
+>>
+>> A cachebility check is made by consulting the VMA pgprot value. If
+>> the pgprot mapping type is cacheable, it is considered safe to be
+>> mapped cacheable as the KVM S2 will have the same Normal memory type
+>> as the VMA has in the S1 and KVM has no additional responsibility
+>> for safety.
+>>
+>> Note when FWB (Force Write Back) is not enabled, the kernel expects to
+>> trivially do cache management by flushing the memory by linearly
+>> converting a kvm_pte to phys_addr to a KVA. The cache management thus
+>> relies on memory being mapped. Since the GPU device memory is not kernel
+>> mapped, exit when the FWB is not supported. Similarly, ARM64_HAS_CACHE_DIC
+>> allows KVM to avoid flushing the icache and turns icache_inval_pou() into
+>> a NOP. So the cacheable PFNMAP is made contingent on these two hardware
+>> features.
+>>
+>> The ability to safely do the cacheable mapping of PFNMAP is exposed
+>> through a KVM capability for userspace consumption.
+>>
+>> The changes are heavily influenced by the discussions among
+>> maintainers Marc Zyngier and Oliver Upton besides Jason Gunthorpe,
+>> Catalin Marinas, David Hildenbrand, Sean Christopherson [1]. Many
+>> thanks for their valuable suggestions.
+>>
+>> Applied over next-20250610 and tested on the Grace Blackwell
+>> platform by booting up VM, loading NVIDIA module [2] and running
+>> nvidia-smi in the VM.
+>>
+>> To run CUDA workloads, there is a dependency on the IOMMUFD and the
+>> Nested Page Table patches being worked on separately by Nicolin Chen.
+>> (nicolinc@nvidia.com). NVIDIA has provided git repositories which
+>> includes all the requisite kernel [3] and Qemu [4] patches in case
+>> one wants to try.
+>>
+>> v8 -> v9
+>> 1. Included MIXEDMAP to also be considered for cacheable mapping.
+>> (Jason Gunthorpe).
+>> 2. Minor text nits (Jason Gunthorpe).
+> 
+> Humble reminder for review.
+> 
 
-I don't know, maybe we could have one patch where you touch this and 
-virtio_vsock_skb_rx_put(), and another where you introduce nonlinear 
-allocation for vhost/vsock.  What do you think? (not a strong opinion, 
-just worried about doing 2 things in a single patch)
+Apologies for the delay, I had some issues getting a Grace-Hopper to test on,
+and a VM that needed to be adjusted(bigger file system) to run the 12.9.1 CUDA install script.
 
-Thanks,
-Stefano
+Anyhow, able to assign a G-H GPU to a VM under qemu-kvm, and in the
+guest, successfully perform an 'nvidia-smi'.  Previously, without this patch
+series in the host, the nvida-smi command would fail and hang the guest.
+(qemu-kvm was qemu-10.0 -based)
 
->-
->-	skb = alloc_skb(size, mask);
->+	skb = alloc_skb_with_frags(header_len, data_len,
->+				   PAGE_ALLOC_COSTLY_ORDER, &err, mask);
-> 	if (!skb)
-> 		return NULL;
->
-> 	skb_reserve(skb, VIRTIO_VSOCK_SKB_HEADROOM);
->+	skb->data_len = data_len;
-> 	return skb;
-> }
->
-> static inline struct sk_buff *
-> virtio_vsock_alloc_linear_skb(unsigned int size, gfp_t mask)
-> {
->-	return virtio_vsock_alloc_skb(size, mask);
->+	return __virtio_vsock_alloc_skb_with_frags(size, 0, mask);
->+}
->+
->+static inline struct sk_buff *virtio_vsock_alloc_skb(unsigned int size, gfp_t mask)
->+{
->+	if (size <= SKB_WITH_OVERHEAD(PAGE_SIZE << PAGE_ALLOC_COSTLY_ORDER))
->+		return virtio_vsock_alloc_linear_skb(size, mask);
->+
->+	size -= VIRTIO_VSOCK_SKB_HEADROOM;
->+	return __virtio_vsock_alloc_skb_with_frags(VIRTIO_VSOCK_SKB_HEADROOM,
->+						   size, mask);
-> }
->
-> static inline void
->-- 
->2.50.0.727.gbf7dc18ff4-goog
->
+If anyone wants more details, or want more tests run, feel free to ask;
+I can probably keep the system for another day or two, but I'll have to
+give it up by this Friday.
+
+Tested-by: Donald Dutile <ddutile@redhat.com>
 
 
