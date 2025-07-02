@@ -1,195 +1,116 @@
-Return-Path: <linux-kernel+bounces-712419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-712422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF21DAF08EC
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 05:05:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09A50AF08F2
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 05:06:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E87C42196A
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 03:04:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED80A4E2E6F
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 03:06:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3F6D1DF96F;
-	Wed,  2 Jul 2025 03:04:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01E971E520D;
+	Wed,  2 Jul 2025 03:05:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Q96mLj3j"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="UvQX87Eu"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 951071DE2A8;
-	Wed,  2 Jul 2025 03:04:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751425481; cv=none; b=f59r7sC1UaN456dyZTS9wmPnzBpfPLzJp2Wty/y+yJ9Oi+Xb9axlwabrP4Kj+wsCYB6KYm2EaSnjrj2odXZHCIgmxkN9tb88cz5KiBg1lethGU/xDr/0rHnf0ZcdjYvk4/WuwAqJjEsZIFJdOrHwsYqo8q91abEQx0pmvri1q1g=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751425481; c=relaxed/simple;
-	bh=N/Ju9CTx2ChR+SLX12GIxOTP4pPLBnK+s0QZSnEJQR0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=otWKRJEE93kNsz0v1NWcjnyvB47LK+RvWpttCSJgDkLwA9edKQG2umpzOxH0Vd+ASyJmpdbp01pXLY0cIlGyEc7ke+aQKZGdVB0PmQdvlVSEGnO/S52EFJjqfYBDzJTPxtHcpKQv3b4T5xVsFrAAW0PkiyWXUieEY5jHuELB+qo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Q96mLj3j; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751425479; x=1782961479;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=N/Ju9CTx2ChR+SLX12GIxOTP4pPLBnK+s0QZSnEJQR0=;
-  b=Q96mLj3jWqZebQilcAze2g6pj3Pw3CbYDFxPEVmX8Naqmj9+JQK+MZYU
-   r3+ukP68cq0x8yej1pP7j0F0/mot9hdC79lzrhdxCFYgICDOZT3QskF/y
-   UG/jNwDlsjKte6Kd1YOSQDEWHwxdRjgakp8YAZd35UPQa87/1Oot6ysIJ
-   xC95TDyndhR9m1dHlE6j6sCRVdnylaT8SXPA4HQqtmIkWeDmVBcdhb7Ly
-   HHKmFC9hAXpH6GCtO1/NvWnoAifujTInJzAg3IADO8AVlvUz/LKCErRbQ
-   vjyarRAJng6XEFwJ+ilF/v6pxEbvm+RuEYAwh2Swj9KpFISjcBQfLFzDk
-   g==;
-X-CSE-ConnectionGUID: JZJ8RwbZShekUO+NQ6kVnw==
-X-CSE-MsgGUID: Gm2OtYstRQmqv/RaM4xwuw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11481"; a="71132823"
-X-IronPort-AV: E=Sophos;i="6.16,280,1744095600"; 
-   d="scan'208";a="71132823"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2025 20:04:39 -0700
-X-CSE-ConnectionGUID: g3knVLkyTzulmTRFrLkusw==
-X-CSE-MsgGUID: UeiYLr6bTeu55Zvc68NCQw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,280,1744095600"; 
-   d="scan'208";a="153407683"
-Received: from p12ill20yoongsia.png.intel.com ([10.88.227.38])
-  by orviesa006.jf.intel.com with ESMTP; 01 Jul 2025 20:04:33 -0700
-From: Song Yoong Siang <yoong.siang.song@intel.com>
-To: "David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	KP Singh <kpsingh@kernel.org>,
-	Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Mykola Lysenko <mykolal@fb.com>,
-	Shuah Khan <shuah@kernel.org>
-Cc: netdev@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: [PATCH bpf-next,v2 2/2] selftests/bpf: Enhance XDP Rx Metadata Handling
-Date: Wed,  2 Jul 2025 11:03:49 +0800
-Message-Id: <20250702030349.3275368-3-yoong.siang.song@intel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250702030349.3275368-1-yoong.siang.song@intel.com>
-References: <20250702030349.3275368-1-yoong.siang.song@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 564C41A38E4;
+	Wed,  2 Jul 2025 03:05:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751425511; cv=pass; b=gJPUNuYQylaG3uvttLwPSXpGXt0epzSWJUnFJYQIGkc3mgQhIPNHaqio3Xup8YCDQEEbNObwQJ1mmwuSPVGRUCOVMFyfYh7tovdvZB4d0sNzr0McnYw9t+v28JcBpYdAmyDcYV3b6I82VhMs79dOo72P/tLq0drBS/qtNqTd5BE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751425511; c=relaxed/simple;
+	bh=kCjo++jxPb2m26uPX5nEv2seRmQSxTmYhd+wC5dx3tQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=hJ140ga6YzCN5ULBboDuzqLV0YgFfAP2fFzlL5HHc6AhuqVhIhGsDbXUxrHEw64klhYopE7ezeFfL9EpACH+kMIVFO/H26xr7IXpm6s00rKh9xXiQ9zP7dYhvrGBpAW2Cor3YoZx/dTZXuetOc6s5zttfokqVsYnTvI6Ps7BCpc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=UvQX87Eu; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
+ARC-Seal: i=1; a=rsa-sha256; t=1751425470; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=XUfxS/9WxCXUjsdlc0UxWCoHfuTflL9TbGEtvjoMBMJfPpjXH2e5Z6tAUQIj2zdQZDm1D4RMmiyDcufXUZ1JKT+Q2Nq3rRClA09tGYI8AowATgGGTYBEtxwTqpa15bbVL40zX9CcOhmgxJVfG82hwnm8EPTn2NuyxNYR9WtLBvg=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1751425470; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=kCjo++jxPb2m26uPX5nEv2seRmQSxTmYhd+wC5dx3tQ=; 
+	b=awTBKLvKqgEtc5Moi4QyIUUzAJWegDz66GnMm4LmgwqhqrrzX1JO39za4oeJH6pRNOq897pbHk2PP4zZ8KLsZJjZiOh6jCgljxgpmTnMEyKK69cbDVTtXsczeoDahH3y5h1Y+IN+YilEXJvox0AWE0TJr1jmhsDKiqvM59J54pU=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=icenowy.me;
+	spf=pass  smtp.mailfrom=uwu@icenowy.me;
+	dmarc=pass header.from=<uwu@icenowy.me>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1751425470;
+	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
+	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
+	bh=kCjo++jxPb2m26uPX5nEv2seRmQSxTmYhd+wC5dx3tQ=;
+	b=UvQX87EuDyQL6heWHjlgUaK9WLUyis9VEiqNpnfswdPVykTchPYe2wUdC4Sp397W
+	jdveOjIw8ACk1Cf8ccnv6m+HbruCvDkDuGGWNZNoKZdMt0anRzEMACCzr8dXf5IlzJ0
+	N8kB/vSdKpDtyALos+X1fTtr/RiittEV2DjvXpBAmQodgL3w3m3/KeSInotUYC4M6XX
+	PA3jVp6AtiU8poqLk0/jULBDldc2P/HKbCMcrX3xRLhGWQpMcpKQH+39A/Wo4tFu3qc
+	FPrhBnk+FXULWKGWicXbFJkpExmUbbhhsNkGpaSYkzcyL9SgCNoqJPwVLNVIbY2ewui
+	XhtoSsE8MA==
+Received: by mx.zohomail.com with SMTPS id 1751425468750404.3223451135418;
+	Tue, 1 Jul 2025 20:04:28 -0700 (PDT)
+Message-ID: <04ee563fda1411961e6f16bb1a2ab0a3163d550d.camel@icenowy.me>
+Subject: Re: [PATCH 1/5] pinctrl: sunxi: v3s: Fix wrong comment about UART2
+ pinmux
+From: Icenowy Zheng <uwu@icenowy.me>
+To: Paul Kocialkowski <paulk@sys-base.io>, linux-media@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linux-gpio@vger.kernel.org
+Cc: Yong Deng <yong.deng@magewell.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec
+ <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, Michael
+ Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+ Maxime Ripard <mripard@kernel.org>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
+ <tzimmermann@suse.de>,  David Airlie <airlied@gmail.com>, Simona Vetter
+ <simona@ffwll.ch>, Linus Walleij <linus.walleij@linaro.org>,  Icenowy Zheng
+ <icenowy@aosc.xyz>, Andre Przywara <andre.przywara@arm.com>
+Date: Wed, 02 Jul 2025 11:04:18 +0800
+In-Reply-To: <20250701201124.812882-2-paulk@sys-base.io>
+References: <20250701201124.812882-1-paulk@sys-base.io>
+	 <20250701201124.812882-2-paulk@sys-base.io>
+Organization: Anthon Open-Source Community
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+User-Agent: Evolution 3.44.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-Introduce the XDP_METADATA_SIZE macro to ensure that user applications can
-consistently retrieve the correct location of struct xdp_meta.
-
-Prior to this commit, the XDP program adjusted the data_meta backward by
-the size of struct xdp_meta, while the user application retrieved the data
-by calculating backward from the data pointer. This approach only worked if
-xdp_buff->data_meta was equal to xdp_buff->data before calling
-bpf_xdp_adjust_meta.
-
-With the introduction of XDP_METADATA_SIZE, both the XDP program and user
-application now calculate and identify the location of struct xdp_meta from
-the data pointer. This ensures the implementation remains functional even
-when there is device-reserved metadata, making the tests more portable
-across different NICs.
-
-Signed-off-by: Song Yoong Siang <yoong.siang.song@intel.com>
----
- tools/testing/selftests/bpf/prog_tests/xdp_metadata.c | 2 +-
- tools/testing/selftests/bpf/progs/xdp_hw_metadata.c   | 2 +-
- tools/testing/selftests/bpf/progs/xdp_metadata.c      | 2 +-
- tools/testing/selftests/bpf/xdp_hw_metadata.c         | 2 +-
- tools/testing/selftests/bpf/xdp_metadata.h            | 7 +++++++
- 5 files changed, 11 insertions(+), 4 deletions(-)
-
-diff --git a/tools/testing/selftests/bpf/prog_tests/xdp_metadata.c b/tools/testing/selftests/bpf/prog_tests/xdp_metadata.c
-index 19f92affc2da..8d6c2633698b 100644
---- a/tools/testing/selftests/bpf/prog_tests/xdp_metadata.c
-+++ b/tools/testing/selftests/bpf/prog_tests/xdp_metadata.c
-@@ -302,7 +302,7 @@ static int verify_xsk_metadata(struct xsk *xsk, bool sent_from_af_xdp)
- 
- 	/* custom metadata */
- 
--	meta = data - sizeof(struct xdp_meta);
-+	meta = data - XDP_METADATA_SIZE;
- 
- 	if (!ASSERT_NEQ(meta->rx_timestamp, 0, "rx_timestamp"))
- 		return -1;
-diff --git a/tools/testing/selftests/bpf/progs/xdp_hw_metadata.c b/tools/testing/selftests/bpf/progs/xdp_hw_metadata.c
-index 330ece2eabdb..3766f58d3486 100644
---- a/tools/testing/selftests/bpf/progs/xdp_hw_metadata.c
-+++ b/tools/testing/selftests/bpf/progs/xdp_hw_metadata.c
-@@ -72,7 +72,7 @@ int rx(struct xdp_md *ctx)
- 		return XDP_PASS;
- 	}
- 
--	err = bpf_xdp_adjust_meta(ctx, -(int)sizeof(struct xdp_meta));
-+	err = bpf_xdp_adjust_meta(ctx, -(int)XDP_METADATA_SIZE);
- 	if (err) {
- 		__sync_add_and_fetch(&pkts_fail, 1);
- 		return XDP_PASS;
-diff --git a/tools/testing/selftests/bpf/progs/xdp_metadata.c b/tools/testing/selftests/bpf/progs/xdp_metadata.c
-index 09bb8a038d52..5cada85fe0f4 100644
---- a/tools/testing/selftests/bpf/progs/xdp_metadata.c
-+++ b/tools/testing/selftests/bpf/progs/xdp_metadata.c
-@@ -73,7 +73,7 @@ int rx(struct xdp_md *ctx)
- 
- 	/* Reserve enough for all custom metadata. */
- 
--	ret = bpf_xdp_adjust_meta(ctx, -(int)sizeof(struct xdp_meta));
-+	ret = bpf_xdp_adjust_meta(ctx, -(int)XDP_METADATA_SIZE);
- 	if (ret != 0)
- 		return XDP_DROP;
- 
-diff --git a/tools/testing/selftests/bpf/xdp_hw_metadata.c b/tools/testing/selftests/bpf/xdp_hw_metadata.c
-index 3d8de0d4c96a..a529d55d4ff4 100644
---- a/tools/testing/selftests/bpf/xdp_hw_metadata.c
-+++ b/tools/testing/selftests/bpf/xdp_hw_metadata.c
-@@ -223,7 +223,7 @@ static void verify_xdp_metadata(void *data, clockid_t clock_id)
- {
- 	struct xdp_meta *meta;
- 
--	meta = data - sizeof(*meta);
-+	meta = data - XDP_METADATA_SIZE;
- 
- 	if (meta->hint_valid & XDP_META_FIELD_RSS)
- 		printf("rx_hash: 0x%X with RSS type:0x%X\n",
-diff --git a/tools/testing/selftests/bpf/xdp_metadata.h b/tools/testing/selftests/bpf/xdp_metadata.h
-index 87318ad1117a..2dfd3bf5e7bb 100644
---- a/tools/testing/selftests/bpf/xdp_metadata.h
-+++ b/tools/testing/selftests/bpf/xdp_metadata.h
-@@ -50,3 +50,10 @@ struct xdp_meta {
- 	};
- 	enum xdp_meta_field hint_valid;
- };
-+
-+/* XDP_METADATA_SIZE must be at least the size of struct xdp_meta. An additional
-+ * 32 bytes of padding is included as a conservative measure to accommodate any
-+ * metadata areas reserved by Ethernet devices. If the device-reserved metadata
-+ * exceeds 32 bytes, this value will need adjustment.
-+ */
-+#define XDP_METADATA_SIZE	(sizeof(struct xdp_meta) + 32)
--- 
-2.34.1
+5ZyoIDIwMjUtMDctMDHmmJ/mnJ/kuoznmoQgMjI6MTEgKzAyMDDvvIxQYXVsIEtvY2lhbGtvd3Nr
+aeWGmemBk++8mgo+IFRoZSBvcmlnaW5hbCBjb21tZW50IGRvZXNuJ3QgbWF0Y2ggdGhlIHBpbiBh
+dHRyaWJ1dGlvbiwgcHJvYmFibHkgZHVlCj4gdG8gYSBoYXN0eSBjb3B5L3Bhc3RlLgo+IAo+IFNp
+Z25lZC1vZmYtYnk6IFBhdWwgS29jaWFsa293c2tpIDxwYXVsa0BzeXMtYmFzZS5pbz4KPiAtLS0K
+PiDCoGRyaXZlcnMvcGluY3RybC9zdW54aS9waW5jdHJsLXN1bjhpLXYzcy5jIHwgMiArLQo+IMKg
+MSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pCj4gCj4gZGlmZiAt
+LWdpdCBhL2RyaXZlcnMvcGluY3RybC9zdW54aS9waW5jdHJsLXN1bjhpLXYzcy5jCj4gYi9kcml2
+ZXJzL3BpbmN0cmwvc3VueGkvcGluY3RybC1zdW44aS12M3MuYwo+IGluZGV4IDY5NmQ3ZGQ4ZDg3
+Yi4uMmUzYmQzNmE0NDEwIDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvcGluY3RybC9zdW54aS9waW5j
+dHJsLXN1bjhpLXYzcy5jCj4gKysrIGIvZHJpdmVycy9waW5jdHJsL3N1bnhpL3BpbmN0cmwtc3Vu
+OGktdjNzLmMKPiBAQCAtNDUsNyArNDUsNyBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IHN1bnhpX2Rl
+c2NfcGluIHN1bjhpX3Yzc19waW5zW10KPiA9IHsKPiDCoMKgwqDCoMKgwqDCoMKgU1VOWElfUElO
+KFNVTlhJX1BJTkNUUkxfUElOKEIsIDMpLAo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqAgU1VOWElfRlVOQ1RJT04oMHgwLCAiZ3Bpb19pbiIpLAo+IMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqAgU1VOWElfRlVOQ1RJT04oMHgxLCAiZ3Bpb19vdXQiKSwKPiAtwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgU1VOWElfRlVOQ1RJT04oMHgyLCAidWFydDIi
+KSzCoMKgwqDCoMKgwqDCoMKgwqAvKiBEMSAqLwo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoCBTVU5YSV9GVU5DVElPTigweDIsICJ1YXJ0MiIpLMKgwqDCoMKgwqDCoMKgwqDCoC8q
+IENUUyAqLwoKTEdUTS4gQmxhbWUgdG8gbXkgQURIRCA7LSkKClJldmlld2VkLWJ5OiBJY2Vub3d5
+IFpoZW5nIDx1d3VAaWNlbm93eS5tZT4KCj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoCBTVU5YSV9GVU5DVElPTl9JUlFfQkFOSygweDYsIDAsIDMpKSzCoMKgLyogUEJfRUlOVDMK
+PiAqLwo+IMKgwqDCoMKgwqDCoMKgwqBTVU5YSV9QSU4oU1VOWElfUElOQ1RSTF9QSU4oQiwgNCks
+Cj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBTVU5YSV9GVU5DVElPTigweDAs
+ICJncGlvX2luIiksCgo=
 
 
