@@ -1,271 +1,121 @@
-Return-Path: <linux-kernel+bounces-713427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51D73AF595A
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 15:36:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C930AF599E
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 15:41:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C40717D16E
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 13:36:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F375B4E27CF
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 13:36:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EB48286406;
-	Wed,  2 Jul 2025 13:32:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7687227E7DA;
+	Wed,  2 Jul 2025 13:33:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tsgDG4ar"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MTtEH+AI"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1975277CA6
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 13:32:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B7EC279DDE;
+	Wed,  2 Jul 2025 13:33:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751463143; cv=none; b=SiIaJO/06S2AeJPWuvunc/L7HLTDAz3TAgetGB3rLHmEEneTqr6+hUnm3AfUuyp1JDDI8mnUXBlyPRybt6noNEeAN1PrUz6ti53Og8JX/zQeqRo1oStd94GKQ9sUUpSGS9flpW2DGAOWmj84dC5FbKA/tzP/21I8Jl4pxKUsnEs=
+	t=1751463199; cv=none; b=doo2gdLeC6+g1Rd+bYxk43x5XTafUqrzDph4o5GS/RSJFgD4YbP5gduzR8Zc9vU2HydsHengkoSzCZitSMZGJB85yN+qQIehqCJEpjnWe/MCQ4YPrwFEiTnfmNNIFdOCS8TygBeOk3DptBfAGBjyxjyt5BlEJ3E8QLFg5uK8grA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751463143; c=relaxed/simple;
-	bh=z7Gd2ZV19XvvqLtgd16QId8F4kQS/oThQ6mvOseMOeA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gxjv5aQOtpPWgW1H9xv3tsTjhI8FZMoQIaHFI/VhMuHXuqCZpiKFX82tnXBG6aZdabJSbMCJQyaQ43Q9PJv4ODt2n1IY5Yp9KWOxBcobuQkNRnBz54i+Ml9807/rMiT2ZrBUFfEctc+UJXCHRLGzar2UVBZEettqxQY+IjUwunY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tsgDG4ar; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-3138e64b3fcso3242755a91.2
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 06:32:20 -0700 (PDT)
+	s=arc-20240116; t=1751463199; c=relaxed/simple;
+	bh=m73SrJe9xK4ND8q0YawG5Yh5XCh7jqbD7zPC22rjn1g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=j8643mZ/QPICrA/gA5PGb7VIuvgK3ppgKZA6vAGvQQ6DM+rekr1vJ4FdeVBSHEnHI3EyMb04efaZLZT5Cfjka4tDEYojT0N95OFFgKUCkVH7VBlFHancwAu92tP/8uqdJuSTwvcT7+9PJhhQEb54T/n//NTW5RbC1Ex2MEsgjoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MTtEH+AI; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-553d2eb03a0so8607574e87.1;
+        Wed, 02 Jul 2025 06:33:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1751463140; x=1752067940; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rLb/hiHcDswU0D4uNpcn2drPp3SCOUyv9DR9ui8PXlc=;
-        b=tsgDG4arB5k0MWH3m6IqSA4JrJ1cE46VRb7JreDK4X/naTp6liVD07yMDgbAi9z+qo
-         +9JBqnVawGjIc0Vcx6D0HNxn+uaJmRt4tpyk/gENgCZAkTuyolgL9na3PCiZHqndE+98
-         NfJie5wja6L3wRPI0vrOgFCQAswDXyey8Ps1V616s70s9XOkFCMj5uI1wxnXCrO4NL7T
-         HBI5Z1tZA+cYUBJKb4dNp8v/OxUx8UfPtcXvUUc7SA1q0p1Ywg9+PX2GEADWNpe//x3r
-         DFqsKzCbsLWmCJjG54jhf6f6SD7BlIAvM5BzkND8XepL6/zFGWTn567/tA8TvsIyZiRM
-         +/CQ==
+        d=gmail.com; s=20230601; t=1751463196; x=1752067996; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rMtgRnDiBAM4XVarNEG1UtN9Q6JeflagLHeOXHOrlZE=;
+        b=MTtEH+AIpOnyKncJM4mwdwhneood1XJ9o7VlJXXg3+NlsKn2Gkvm6lZiM9l2C0+FyR
+         wvA9JWwBnTf/pku7T4KJmq4JPi/SWH/KYlwLkh+nqZv5Tt9AnEPlb3Y0jWGR464l8gHF
+         I732qgXBEvp5eAPgmLsDVzHedO4gf6ByvImh0dbr738QzS15HbNoV8nqFwoM8+gow96A
+         Ba0Ke3ST6pT0oEMusQyrSQ0RvPsqkIXGAVS1YbBZhc8tHbFRnmI45xon4zjS6IPuiaPw
+         PZvbhqD6DWrF5JEm1ukl4ElYPBP2NGVsoV3pRjGlGGIiYsZy4LDw5DVjPjyWKzFAnkI4
+         GvJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751463140; x=1752067940;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rLb/hiHcDswU0D4uNpcn2drPp3SCOUyv9DR9ui8PXlc=;
-        b=EZJhRvxxT0SjJ+VBYavvx5NjEEaXeNfitjqai4zBnscktGP3wXqRhBrJTQcA/JJj6V
-         KFd6jq15plPAK7SHIbaqf4t8VSWd7Acij/OYVzCTUy35qtDC9BHxVionpQGx0aEW1ByV
-         dMJLz9sBQLMrFCPwNAuN3hPoNK9zWyuFz3BUMFik24yc9zOpoaqmTqZZD3BQEzRn2Mx9
-         wtWvGAY3rIFhxgwdVDQsKqL8BzOswcA/29XAtEzE9q/EQA0rV0kvctarvSu44Ene//Zr
-         rUZPsGacfilZgaM+AtCTzIOsaokG9ZvN4BSGLFv5yamY/OnnzanlQJ2TMrTdiEGvLzr5
-         TMig==
-X-Forwarded-Encrypted: i=1; AJvYcCVRjYo276uA3fBzL6M4pZRhs+yJ8rLwI0TlIrGfeFGMsyUKglY+U1wT5/9Ngvz/EZnQcCnyAtNW2jTxwns=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywm5G0qniYEq0MaTfOuND2rFhQwuoUny417YLJgxTzz/f+VBBLr
-	3tc9BNoYQueRC8ZfEvJuHyEj3Oh6HHeGbAEzMqGBQTiEaczAIH2rzK7CpHbI8H2qxiQ6oVGNSnJ
-	pm9WZQO73RnaGA/oyvnf5GSmS4Rcu9/2S7X7I0G6F
-X-Gm-Gg: ASbGncsr0utqYIotZ/lP4SP44/F16eE5S89nYfSMZjAdYYfkU+2KnL/KuefehBVgco0
-	BeL98iydmgzMlE6toMeflRifZoRgdXwxYduGOH2l0uMViJwkdfF2uWWhMW2Dd/r86spRHEo7aFH
-	5KDw5lqbxOntQVdUmY3XUvnb1GHvvAQCFRUzXpOUSUJ7BB/IjffU37eZA5HzXSDrmQe4SS6WPED
-	tyF/pnoBA==
-X-Google-Smtp-Source: AGHT+IGl/TSKdQK7b9WQhHkHUkAL99tfbfmIwoIuqDS1wkyiy3yWj1kqtAXrBjAXrNOeDXSrDfXhNvdyiTqbiD64MZ4=
-X-Received: by 2002:a17:90b:5788:b0:312:e91c:e340 with SMTP id
- 98e67ed59e1d1-31a90c2f8f3mr4423923a91.35.1751463139949; Wed, 02 Jul 2025
- 06:32:19 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1751463196; x=1752067996;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rMtgRnDiBAM4XVarNEG1UtN9Q6JeflagLHeOXHOrlZE=;
+        b=tQOOxniFlDq8YkHtAniFNL0yGtutwVbbFbBPMdL7yGHchBY5cV7qHW89X4qoGiiLqC
+         vh3EtuYwgXslfaCi55qFIdzj9EsDxf9/7bpXc2LAgU0a3Gq3jY0zTbtrUVPEb2GuKlI5
+         m5TpprVEgci7jzNbo7Yd8ZaAufSgZydihBpB7Tyw53O1ZYCW8FlR10QlFjue7rPw8FhY
+         vvWS4qFPCmWYADcq8Gmh5tvFteuWthNTTzZOs+1R1r5FZP/pDXbEjGX38cJATfbOOHW7
+         7++SBVSdI+3Udpo7KfNH8Kr2rTJ2TEwiL1pjCG7kBS2tVWfN2lVzTcSe+7bR4HS9Ifbp
+         cK8w==
+X-Forwarded-Encrypted: i=1; AJvYcCXvu2UCKCCeX9PRZPZaNzegidMt7jW/OVugrXaym3XfHcBl4fs+ZgCzegKfacta76uPT/JS86nc42TTNKE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhdsomW7mTPCJ+/2tX8zEopQ0oe5QjzwU3KoV2Nbqf7NyNYPta
+	BaqSX9ogEWxcA2T52KojspKepZ+9ijVT1S1ixZ0XmcAmj5X+t5fAJxXA
+X-Gm-Gg: ASbGncsotR9mNttgJYdwABkH1a/yPLGmj5zIyfIM85FiMsrZp2ymDb0DPgkMOWdeSft
+	/ORUhnavatTkUQta1x/HTYelYMn8HZh/LAKgyormhTEdWJbetTLl2Y6VKOMFAr1ha29ioNJRMsq
+	VMbrrE9bfZAG258pevznykPjyAJ3FXUdTB/wpaDCmjmCyU4rUdJ9bHxTcVgeohhGozBeDCReoZS
+	Q4EHT5Elkw72ON0MsfdJompn5DGigTXAh+HHWNPlvrZ0A3uvSH36sm7FWWIDbk7W2/WlzgndTQO
+	HTsd+nMW9Q/qJ/2FPjaJGFPvTDh4YfMZ8YVacHciTSiBIbtlzYBbAYDG7Xnbfkn1uJj220E61RH
+	6lz5jUsC0NNHA1w==
+X-Google-Smtp-Source: AGHT+IH6PzjiqqGXg3RonE8QCL7askIRZwW0UMnw53TSZ2jCDf0Z/9L8ruPAnI1nkkIVpcqHhmg8oQ==
+X-Received: by 2002:ac2:4f13:0:b0:553:2159:8716 with SMTP id 2adb3069b0e04-55628f1c34bmr1082796e87.26.1751463195923;
+        Wed, 02 Jul 2025 06:33:15 -0700 (PDT)
+Received: from SC-WS-02452.corp.sbercloud.ru ([85.174.201.64])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5550b24e431sm2153712e87.72.2025.07.02.06.33.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Jul 2025 06:33:15 -0700 (PDT)
+From: Sergey Bashirov <sergeybashirov@gmail.com>
+To: Christoph Hellwig <hch@infradead.org>,
+	Trond Myklebust <trondmy@kernel.org>,
+	Anna Schumaker <anna@kernel.org>
+Cc: linux-nfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Konstantin Evtushenko <koevtushenko@yandex.com>,
+	Sergey Bashirov <sergeybashirov@gmail.com>
+Subject: [PATCH] pNFS: Fix disk addr range check in block/scsi layout
+Date: Wed,  2 Jul 2025 16:32:21 +0300
+Message-ID: <20250702133226.212537-1-sergeybashirov@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250702-module-params-v3-v14-0-5b1cc32311af@kernel.org> <20250702-module-params-v3-v14-1-5b1cc32311af@kernel.org>
-In-Reply-To: <20250702-module-params-v3-v14-1-5b1cc32311af@kernel.org>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Wed, 2 Jul 2025 15:32:05 +0200
-X-Gm-Features: Ac12FXyWI8bK1guggG5Rvhs0301hdIxUpCmaYFQClmsVD87QxHCiS9wDlqMCJQk
-Message-ID: <CAH5fLghw5TDrzmFZB=tORR5Lxx4WoG4wer6y5NuFdod2_tb6zg@mail.gmail.com>
-Subject: Re: [PATCH v14 1/7] rust: sync: add `OnceLock`
-To: Andreas Hindborg <a.hindborg@kernel.org>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Luis Chamberlain <mcgrof@kernel.org>, Danilo Krummrich <dakr@kernel.org>, Benno Lossin <lossin@kernel.org>, 
-	Nicolas Schier <nicolas.schier@linux.dev>, Trevor Gross <tmgross@umich.edu>, 
-	Adam Bratschi-Kaye <ark.email@gmail.com>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
-	Petr Pavlu <petr.pavlu@suse.com>, Sami Tolvanen <samitolvanen@google.com>, 
-	Daniel Gomez <da.gomez@samsung.com>, Simona Vetter <simona.vetter@ffwll.ch>, 
-	Greg KH <gregkh@linuxfoundation.org>, Fiona Behrens <me@kloenk.dev>, 
-	Daniel Almeida <daniel.almeida@collabora.com>, linux-modules@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 2, 2025 at 3:19=E2=80=AFPM Andreas Hindborg <a.hindborg@kernel.=
-org> wrote:
->
-> Introduce the `OnceLock` type, a container that can only be written once.
-> The container uses an internal atomic to synchronize writes to the intern=
-al
-> value.
->
-> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
+At the end of the isect translation, disc_addr represents the physical
+disk offset. Thus, end calculated from disk_addr is also a physical disk
+offset. Therefore, range checking should be done using map->disk_offset,
+not map->start.
 
-This type provides no way to wait for initialization to finish if it's
-ongoing. Do you not need that?
+Signed-off-by: Sergey Bashirov <sergeybashirov@gmail.com>
+---
+ fs/nfs/blocklayout/blocklayout.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> ---
->  rust/kernel/sync.rs           |   1 +
->  rust/kernel/sync/once_lock.rs | 104 ++++++++++++++++++++++++++++++++++++=
-++++++
->  2 files changed, 105 insertions(+)
->
-> diff --git a/rust/kernel/sync.rs b/rust/kernel/sync.rs
-> index c7c0e552bafe..f2ee07315091 100644
-> --- a/rust/kernel/sync.rs
-> +++ b/rust/kernel/sync.rs
-> @@ -15,6 +15,7 @@
->  mod condvar;
->  pub mod lock;
->  mod locked_by;
-> +pub mod once_lock;
+diff --git a/fs/nfs/blocklayout/blocklayout.c b/fs/nfs/blocklayout/blocklayout.c
+index 47189476b553..5d6edafbed20 100644
+--- a/fs/nfs/blocklayout/blocklayout.c
++++ b/fs/nfs/blocklayout/blocklayout.c
+@@ -149,8 +149,8 @@ do_add_page_to_bio(struct bio *bio, int npg, enum req_op op, sector_t isect,
+ 
+ 	/* limit length to what the device mapping allows */
+ 	end = disk_addr + *len;
+-	if (end >= map->start + map->len)
+-		*len = map->start + map->len - disk_addr;
++	if (end >= map->disk_offset + map->len)
++		*len = map->disk_offset + map->len - disk_addr;
+ 
+ retry:
+ 	if (!bio) {
+-- 
+2.43.0
 
-I would add a re-export so that users can import this as kernel::sync::Once=
-Lock.
-
->  pub mod poll;
->  pub mod rcu;
->
-> diff --git a/rust/kernel/sync/once_lock.rs b/rust/kernel/sync/once_lock.r=
-s
-> new file mode 100644
-> index 000000000000..cd311bea3919
-> --- /dev/null
-> +++ b/rust/kernel/sync/once_lock.rs
-> @@ -0,0 +1,104 @@
-> +//! A container that can be initialized at most once.
-> +
-> +use super::atomic::ordering::Acquire;
-> +use super::atomic::ordering::Release;
-> +use super::atomic::Atomic;
-> +use kernel::types::Opaque;
-> +
-> +/// A container that can be populated at most once. Thread safe.
-> +///
-> +/// Once the a [`OnceLock`] is populated, it remains populated by the sa=
-me object for the
-> +/// lifetime `Self`.
-> +///
-> +/// # Invariants
-> +///
-> +/// `init` tracks the state of the container:
-> +///
-> +/// - If the container is empty, `init` is `0`.
-> +/// - If the container is mutably accessed, `init` is `1`.
-
-I would phrase this as "being initialized" instead of "mutably
-accessed". I initially thought this was talking about someone calling
-a &mut self method.
-
-> +/// - If the container is populated and ready for shared access, `init` =
-is `2`.
-> +///
-> +/// # Example
-> +///
-> +/// ```
-> +/// # use kernel::sync::once_lock::OnceLock;
-> +/// let value =3D OnceLock::new();
-> +/// assert_eq!(None, value.as_ref());
-> +///
-> +/// let status =3D value.populate(42u8);
-> +/// assert_eq!(true, status);
-> +/// assert_eq!(Some(&42u8), value.as_ref());
-> +/// assert_eq!(Some(42u8), value.copy());
-> +///
-> +/// let status =3D value.populate(101u8);
-> +/// assert_eq!(false, status);
-> +/// assert_eq!(Some(&42u8), value.as_ref());
-> +/// assert_eq!(Some(42u8), value.copy());
-> +/// ```
-> +pub struct OnceLock<T> {
-> +    init: Atomic<u32>,
-> +    value: Opaque<T>,
-
-Opaque does not destroy the inner value. You are missing a destructor.
-
-> +}
-> +
-> +impl<T> Default for OnceLock<T> {
-> +    fn default() -> Self {
-> +        Self::new()
-> +    }
-> +}
-> +
-> +impl<T> OnceLock<T> {
-> +    /// Create a new [`OnceLock`].
-> +    ///
-> +    /// The returned instance will be empty.
-> +    pub const fn new() -> Self {
-> +        // INVARIANT: The container is empty and we set `init` to `0`.
-> +        Self {
-> +            value: Opaque::uninit(),
-> +            init: Atomic::new(0),
-> +        }
-> +    }
-> +
-> +    /// Get a reference to the contained object.
-> +    ///
-> +    /// Returns [`None`] if this [`OnceLock`] is empty.
-> +    pub fn as_ref(&self) -> Option<&T> {
-> +        if self.init.load(Acquire) =3D=3D 2 {
-> +            // SAFETY: As determined by the load above, the object is re=
-ady for shared access.
-> +            Some(unsafe { &*self.value.get() })
-> +        } else {
-> +            None
-> +        }
-> +    }
-> +
-> +    /// Populate the [`OnceLock`].
-> +    ///
-> +    /// Returns `true` if the [`OnceLock`] was successfully populated.
-> +    pub fn populate(&self, value: T) -> bool {
-> +        // INVARIANT: We obtain exclusive access to the contained alloca=
-tion and write 1 to
-> +        // `init`.
-> +        if let Ok(0) =3D self.init.cmpxchg(0, 1, Acquire) {
-
-This acquire can be Relaxed. All other accesses to self.value
-synchronize with the release store below, so you do not need acquire
-here to obtain exclusive access.
-
-> +            // SAFETY: We obtained exclusive access to the contained obj=
-ect.
-> +            unsafe { core::ptr::write(self.value.get(), value) };
-> +            // INVARIANT: We release our exclusive access and transition=
- the object to shared
-> +            // access.
-> +            self.init.store(2, Release);
-> +            true
-> +        } else {
-> +            false
-> +        }
-> +    }
-> +}
-> +
-> +impl<T: Copy> OnceLock<T> {
-> +    /// Get a copy of the contained object.
-> +    ///
-> +    /// Returns [`None`] if the [`OnceLock`] is empty.
-> +    pub fn copy(&self) -> Option<T> {
-> +        if self.init.load(Acquire) =3D=3D 2 {
-> +            // SAFETY: As determined by the load above, the object is re=
-ady for shared access.
-> +            Some(unsafe { *self.value.get() })
-> +        } else {
-> +            None
-> +        }
-> +    }
-> +}
->
-> --
-> 2.47.2
->
->
 
