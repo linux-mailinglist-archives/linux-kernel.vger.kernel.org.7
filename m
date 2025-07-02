@@ -1,338 +1,111 @@
-Return-Path: <linux-kernel+bounces-712713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-712710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64CB8AF0DDF
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 10:24:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76044AF0DD4
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 10:23:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B68E04E50F8
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 08:24:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A32C4830C7
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 08:23:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A247323A997;
-	Wed,  2 Jul 2025 08:23:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 178CC2367AE;
+	Wed,  2 Jul 2025 08:23:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="W06VDGbE"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ts5Ndxmv"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29A2A2376FF;
-	Wed,  2 Jul 2025 08:23:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6BC6233723;
+	Wed,  2 Jul 2025 08:23:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751444630; cv=none; b=V1GEhCUXoEapGhFXf8SUKCVubvtgN9h8DdknwM0pFky2BkeAgXDZcRi+1gPgCRrsgo/d1WIywrDZ7KkfNoeg0YfXPV3Nn/j0e3SvKbTLcguozxN0PTQsLXz4Ea+bQMCfNMXfUL+KXMh89A1fx6vPuzHZFQZE9RmVZh8O/zanpc8=
+	t=1751444618; cv=none; b=pjWo2M3yy6EPwAm6XstJ1APjHyzAdrPBcCFt8y7G2jz56KvZHMaOB70RyjRy35tdRfJgJ2CX7nf3FsViUZ/xZrO+IUqUXCKuX9F+wOWTPHsYKTFGEnYmKqi6IBfVqb7qSyDH8eIDq74aV1WWAJdA1yYDwT4RmavbekwBPv2qGBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751444630; c=relaxed/simple;
-	bh=L9i92jFaAACyOw7d3NDbDtgeZVEFheqR8s3fdi4XEaY=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RvIH/2ZV+ec7M81vOmhtXITBDL3SMBdGOf6cVSwqrRAUxYJkt2Qc0KRBaG/yAHDj7N0YqjwnWaVp7XGy/FH8gyl9rsZpTmhEC03aPNarsnU3swMj2ZoUo8DPe3kORZIExB0DbNQbka9haCNOi3XMlqXOJEXvPRFSWdjjUNMSk2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=W06VDGbE; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56289uZ2024893;
-	Wed, 2 Jul 2025 08:23:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	BOfH8A59zCMGBNgUzITq75nBa7NlULlrPT9xI7uNOsQ=; b=W06VDGbE4jiliXBY
-	DsFP4g8X6p8G1bVm0CSXEnBFB++Y63i8mmJgFD2jjkhJHwu7DkwvlVjACMKhT8r/
-	uRPFtZLgFDwEqyVch1EWI28R01/Cpb6boBOXfRZ5VSyISPyjR0rvO9UM5/0qb8Zs
-	8YrqTjicbVyIwZCmPXvGTq9RB7Ng2h577OMuChoXNz8znI1kQDY+MKKEHQZG8j+r
-	BBCij3TQ11SlU3gA727D23YeDsaQFmNoOEa+b5SReBy/O3K+4020UYLOYdPVeFcv
-	WelBZDpMQPFHizKurOy2NtqdTNbKHoqzsAJRI0sbLbh113TDcPSVYd7GGt4g5npy
-	rW884g==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47j8023n96-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 02 Jul 2025 08:23:42 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5628NfYO026711
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 2 Jul 2025 08:23:41 GMT
-Received: from hu-gkohli-hyd.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.10; Wed, 2 Jul 2025 01:23:37 -0700
-From: Gaurav Kohli <quic_gkohli@quicinc.com>
-To: <amitk@kernel.org>, <daniel.lezcano@linaro.org>, <rui.zhang@intel.com>,
-        <lukasz.luba@arm.com>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <andersson@kernel.org>, <konradybcio@kernel.org>
-CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <quic_manafm@quicinc.com>,
-        Gaurav Kohli
-	<quic_gkohli@quicinc.com>
-Subject: [PATCH v6 2/2] arm64: dts: qcom: qcs615: Enable TSENS support for QCS615 SoC
-Date: Wed, 2 Jul 2025 13:53:11 +0530
-Message-ID: <20250702082311.4123461-3-quic_gkohli@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250702082311.4123461-1-quic_gkohli@quicinc.com>
-References: <20250702082311.4123461-1-quic_gkohli@quicinc.com>
+	s=arc-20240116; t=1751444618; c=relaxed/simple;
+	bh=HBWjIeHT2TPx6GxRmnniI2Bkgont5Fgc3phV6Wo21uE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=SOw9eIYjud03S6kZZC4tccLEjBXHD92b0zvwpG4saDLiouYSv2U/PDWxtA6SZGOHSYsK/cVL7+ms4ObtvFP3AGG9lq3K+7dcpNZOdM+Nwfdedh3HEfSvBVZYahpgpKbINHSd4+jVCvYtyZ0FJakFzfthPzPQK48g8RibQXHIJJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ts5Ndxmv; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751444617; x=1782980617;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=HBWjIeHT2TPx6GxRmnniI2Bkgont5Fgc3phV6Wo21uE=;
+  b=Ts5NdxmvSq1lssn0L5V5f6Cg5pftbfXqzT0uTVkhUTa5E9lBoMv7RLhz
+   uVk8A+8Kdttm17ve5XJmC5nvFh2DmJLpfb+vnm3mQC3xDzTdLceqLIF6H
+   M8gesEUAQM/Bjwb81neg0cZeI1+vZYpwK+ClSw+l06b5xT3774aRn++DY
+   6L0ua2x97DX7PHSNedUFW6b/ilsAhkTgfhkGf9eoU/MzwB5NEewjAs70r
+   cBK2lnlBXZryNId8zP1punoU2tPus0r/WC2KlWD+dlbYIZSsh0nIMteh0
+   /ubouYybXvJIetM0XiLdOnSerBBqyHA+QkuIubXN6FNYEFa5IAMLRGACa
+   g==;
+X-CSE-ConnectionGUID: av93zIewQN+quNUbKsLm+Q==
+X-CSE-MsgGUID: ypv88JdsSWuayApenIfD/A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11481"; a="53871416"
+X-IronPort-AV: E=Sophos;i="6.16,281,1744095600"; 
+   d="scan'208";a="53871416"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2025 01:23:35 -0700
+X-CSE-ConnectionGUID: 6eHzCsT7R2Cc1UlwpOveoQ==
+X-CSE-MsgGUID: SRDxKhSaQLiW8WSuocYl2w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,281,1744095600"; 
+   d="scan'208";a="154164230"
+Received: from fdefranc-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.246.29])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2025 01:23:33 -0700
+From: Jani Nikula <jani.nikula@intel.com>
+To: Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Mauro Carvalho Chehab
+ <mchehab+huawei@kernel.org>, Akira Yokosawa <akiyks@gmail.com>, Jonathan
+ Corbet <corbet@lwn.net>
+Subject: Re: [PATCH 6/7] docs: kdoc: Remove a Python 2 comment
+In-Reply-To: <20250701205730.146687-7-corbet@lwn.net>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20250701205730.146687-1-corbet@lwn.net>
+ <20250701205730.146687-7-corbet@lwn.net>
+Date: Wed, 02 Jul 2025 11:23:29 +0300
+Message-ID: <829b4b1ed00f6e97626ff551148b6e47212ae673@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: OlFzicdvidR-IyZFpk4BzI7rMtw2HImZ
-X-Authority-Analysis: v=2.4 cv=YPWfyQGx c=1 sm=1 tr=0 ts=6864ec8e cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=Wb1JkmetP80A:10 a=COk6AnOGAAAA:8 a=3mcCAZ4DCuo2i6UhkvcA:9
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: OlFzicdvidR-IyZFpk4BzI7rMtw2HImZ
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzAyMDA2NiBTYWx0ZWRfXzaObO/ayU2vB
- NjxkugzJUH9Q6/sLFHuyPq/8YiO0aZQ86Z16gsqlPh0m9LD0FuMGE+qTHF4fcNmDgJWwj5xTdyE
- rnHwFh6RYG3qDToBz+YX8rZSnaAHInj45KNk4quYa4UlBEnbgvmMWp9FqKsmGAlgVLfXtiZ7F+y
- 3KNyiwmhpbtU67KMMzwmMpDAL5P0BgZYx1u1wKXCAIiJ5IxRsy/dQJFoyl8vrzCuAn4Qv/FnUj3
- Oa+on6FuZzcekP76kcYkIfWsq14XmUP01W19bW1D2WhZmKnV0duCHOXZ6DfDNWlS3NZvySkRjhG
- D+P/k95PfSe3luSsyxecuAGhZkmFyex7TVy7vqLEij/mOp7mFQY5/0z2bedauDKa6KBYcZV8Zeg
- cakjGFJl8BWJl7JTBFkTz4/CkWb48WaM9GABvfLBC02iAvepFivSt+2ID8g3Qi4bI4CpYadT
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-01_02,2025-06-27_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 mlxlogscore=756 mlxscore=0 malwarescore=0 suspectscore=0
- lowpriorityscore=0 clxscore=1015 impostorscore=0 adultscore=0
- priorityscore=1501 bulkscore=0 phishscore=0 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507020066
 
-Add TSENS and thermal devicetree node for QCS615 SoC.
+On Tue, 01 Jul 2025, Jonathan Corbet <corbet@lwn.net> wrote:
+> We no longer support Python 2 in the docs build chain at all, so we
+> certainly do not need to admonish folks to keep this file working with it.
 
-Signed-off-by: Gaurav Kohli <quic_gkohli@quicinc.com>
----
- arch/arm64/boot/dts/qcom/qcs615.dtsi | 205 +++++++++++++++++++++++++++
- 1 file changed, 205 insertions(+)
+I feel old.
 
-diff --git a/arch/arm64/boot/dts/qcom/qcs615.dtsi b/arch/arm64/boot/dts/qcom/qcs615.dtsi
-index bb8b6c3ebd03..6997627935bd 100644
---- a/arch/arm64/boot/dts/qcom/qcs615.dtsi
-+++ b/arch/arm64/boot/dts/qcom/qcs615.dtsi
-@@ -3692,6 +3692,17 @@ usb_2_dwc3: usb@a800000 {
- 				maximum-speed = "high-speed";
- 			};
- 		};
-+
-+		tsens0: thermal-sensor@c263000 {
-+			compatible = "qcom,qcs615-tsens", "qcom,tsens-v2";
-+			reg = <0x0 0x0c263000 0x0 0x1000>,
-+			      <0x0 0x0c222000 0x0 0x1000>;
-+			interrupts = <GIC_SPI 506 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 508 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "uplow", "critical";
-+			#qcom,sensors = <16>;
-+			#thermal-sensor-cells = <1>;
-+		};
- 	};
- 
- 	arch_timer: timer {
-@@ -3701,4 +3712,198 @@ arch_timer: timer {
- 			     <GIC_PPI 3 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
- 			     <GIC_PPI 0 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>;
- 	};
-+
-+	thermal-zones {
-+		aoss-thermal {
-+			thermal-sensors = <&tsens0 0>;
-+
-+			trips {
-+				aoss-critical {
-+					temperature = <115000>;
-+					hysteresis = <1000>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		cpuss-0-thermal {
-+			thermal-sensors = <&tsens0 1>;
-+
-+			trips {
-+				cpuss0-critical {
-+					temperature = <115000>;
-+					hysteresis = <1000>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		cpuss-1-thermal {
-+			thermal-sensors = <&tsens0 2>;
-+
-+			trips {
-+				cpuss1-critical {
-+					temperature = <115000>;
-+					hysteresis = <1000>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		cpuss-2-thermal {
-+			thermal-sensors = <&tsens0 3>;
-+
-+			trips {
-+				cpuss2-critical {
-+					temperature = <115000>;
-+					hysteresis = <1000>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		cpuss-3-thermal {
-+			thermal-sensors = <&tsens0 4>;
-+
-+			trips {
-+				cpuss3-critical {
-+					temperature = <115000>;
-+					hysteresis = <1000>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		cpu-1-0-thermal {
-+			thermal-sensors = <&tsens0 5>;
-+
-+			trips {
-+				cpu-critical {
-+					temperature = <115000>;
-+					hysteresis = <1000>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		cpu-1-1-thermal {
-+			thermal-sensors = <&tsens0 6>;
-+
-+			trips {
-+				cpu-critical {
-+					temperature = <115000>;
-+					hysteresis = <1000>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		cpu-1-2-thermal {
-+			thermal-sensors = <&tsens0 7>;
-+
-+			trips {
-+				cpu-critical {
-+					temperature = <115000>;
-+					hysteresis = <1000>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		cpu-1-3-thermal {
-+			thermal-sensors = <&tsens0 8>;
-+
-+			trips {
-+				cpu-critical {
-+					temperature = <115000>;
-+					hysteresis = <1000>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		gpu-thermal {
-+			thermal-sensors = <&tsens0 9>;
-+
-+			trips {
-+				gpu-critical {
-+					temperature = <115000>;
-+					hysteresis = <1000>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		q6-hvx-thermal {
-+			thermal-sensors = <&tsens0 10>;
-+
-+			trips {
-+				q6-hvx-critical {
-+					temperature = <115000>;
-+					hysteresis = <1000>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		mdm-core-thermal {
-+			thermal-sensors = <&tsens0 11>;
-+
-+			trips {
-+				mdm-core-critical {
-+					temperature = <115000>;
-+					hysteresis = <1000>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		camera-thermal {
-+			thermal-sensors = <&tsens0 12>;
-+
-+			trips {
-+				camera-critical {
-+					temperature = <115000>;
-+					hysteresis = <1000>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		wlan-thermal {
-+			thermal-sensors = <&tsens0 13>;
-+
-+			trips {
-+				wlan-critical {
-+					temperature = <115000>;
-+					hysteresis = <1000>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		display-thermal {
-+			thermal-sensors = <&tsens0 14>;
-+
-+			trips {
-+				display-critical {
-+					temperature = <115000>;
-+					hysteresis = <1000>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		video-thermal {
-+			thermal-sensors = <&tsens0 15>;
-+
-+			trips {
-+				video-critical {
-+					temperature = <115000>;
-+					hysteresis = <1000>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+	};
- };
+Acked-by: Jani Nikula <jani.nikula@intel.com>
+
+>
+> Cc: Jani Nikula <jani.nikula@intel.com>
+> Signed-off-by: Jonathan Corbet <corbet@lwn.net>
+> ---
+>  Documentation/sphinx/kerneldoc.py | 2 --
+>  1 file changed, 2 deletions(-)
+>
+> diff --git a/Documentation/sphinx/kerneldoc.py b/Documentation/sphinx/kerneldoc.py
+> index 51a2793dc8e2..2586b4d4e494 100644
+> --- a/Documentation/sphinx/kerneldoc.py
+> +++ b/Documentation/sphinx/kerneldoc.py
+> @@ -25,8 +25,6 @@
+>  # Authors:
+>  #    Jani Nikula <jani.nikula@intel.com>
+>  #
+> -# Please make sure this works on both python2 and python3.
+> -#
+>  
+>  import codecs
+>  import os
+
 -- 
-2.34.1
-
+Jani Nikula, Intel
 
