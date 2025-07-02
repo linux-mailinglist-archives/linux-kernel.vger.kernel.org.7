@@ -1,131 +1,302 @@
-Return-Path: <linux-kernel+bounces-712658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-712660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E38DEAF0CC9
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 09:41:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B475DAF0CCF
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 09:42:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3DE3B4E232B
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 07:41:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BB594E253D
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 07:42:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB2F522F384;
-	Wed,  2 Jul 2025 07:41:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="NW+O2ndk"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4964023026B;
+	Wed,  2 Jul 2025 07:42:07 +0000 (UTC)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 724241DF977;
-	Wed,  2 Jul 2025 07:40:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEA201DF977;
+	Wed,  2 Jul 2025 07:42:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751442064; cv=none; b=kFVgChSI2J4whUzzeeW3tTbpyezKJu+VFPF3YQv81zUT/AgBX87RluFdo14fiOAGUlhmZdAZ+ojT0+4tIwpBz4Y2wb1aCfeJx0zwoo1WtDeBLGtqovg8Igo0dCTeOU4skjhMJuDaG6Aqi1O+VL2qv6RNXHRkRePiW/2C7FZH4Yk=
+	t=1751442126; cv=none; b=Jr4reNUNYXtb3TWgM2/ePcOq4q4gzJc0X/MAfesNnbXrDnZtEfP1uonNcazW24GIlSfPAZmBJ38+BtQ3Cl7vi8h9oxQUxFXLjdjXiIlOAh9HQLyg7R8aHlh85MRCiZSmDocuGvuiGR4Wv44fnbp/Ca5q/bylNqwzRg7jDJ4hVMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751442064; c=relaxed/simple;
-	bh=Q+tJOgDXSyHv7cn+GwyRvugVT/KDOb3xDLGrdh76eAw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=EpNwZtMJzckTA3T2owL+3eFLdFfe8UxenPI576te29TQH3f+Qk6WHA2k7aQjGCNTjqbVnJr2jqnxilyLWJbzFrEEKCjYIgiCWwKmWIgKYJvem4YmjgNsHsyDgmmyLZmYbsODM7w9lJ6c9K+HBEYHT/BuE1JOYTrPT0pZCiK+znA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=NW+O2ndk; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1751442041;
-	bh=10rrKV1mRpMK7w0xooZ94xMtgBGMsUxVJ0NQ3XuotQo=;
-	h=Date:From:To:Cc:Subject:From;
-	b=NW+O2ndkZ7jJgB93qVbYFfhLetrAe4r0v13Jrx0oQb/5ast4qCjSezlcA3Cs4JA+n
-	 QVG2TLcQiUECnX5Ybn/qJesvi0PdUB4opnJtzzQAC6mxUk4kSQQ34Dozos2C3LyU5u
-	 DzJG7rq7ivutuxYF4rMKnMWnL5XwL6VlU/juW+u3hUIi+CuTpHHgaT5dSFz77NZK4b
-	 XGPeFIPCGU1vEV0dbpdaKB+J+og8aeNu4lWekIp4vF2P6wR4Zr15ixCq1BmlaygUru
-	 s0lSn9VgDT7DuWAFJszr2PjlY9RuYGz1/AGW6tp8sYbtBBsdJxZ5u7d0jSyQcPxc7N
-	 JagkolXNCif4Q==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bXBdj10Bmz4wcZ;
-	Wed,  2 Jul 2025 17:40:40 +1000 (AEST)
-Date: Wed, 2 Jul 2025 17:40:54 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Andrew Jeffery <andrew@codeconstruct.com.au>, Joel Stanley
- <joel@jms.id.au>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patches in the bmc tree
-Message-ID: <20250702174054.383aef05@canb.auug.org.au>
+	s=arc-20240116; t=1751442126; c=relaxed/simple;
+	bh=h5XObXmGPhWIsFNdl0j4c/OXIDA4oaPIHx3BFw437GQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ypz0bYUTW4oQrQDYOkICni46UDK3/jsCnkbB0lPMWpOgFumrxXVGZa8jRsNJihaxLcQt/hFkJapp43sJ64E8dfCMrkzN11XHtQnsnimBuYmZKbn6PgMKF9BbZha3yiUgbNRW0xJ+QYJFjiQUBSYRbyctV/AOKrtleZg/SuP5+gE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from [192.168.33.13] (unknown [210.73.43.2])
+	by APP-03 (Coremail) with SMTP id rQCowAAXrn+f4mRooUF4AA--.33051S2;
+	Wed, 02 Jul 2025 15:41:20 +0800 (CST)
+Message-ID: <5f02539a-2541-4705-b1a3-c1095416463e@iscas.ac.cn>
+Date: Wed, 2 Jul 2025 15:41:18 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/l+oVLjgMHyk/mGIsyq_c_GI";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v3 2/5] net: spacemit: Add K1 Ethernet MAC
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Alexandre Ghiti <alex@ghiti.fr>, Vivian Wang <uwu@dram.page>,
+ Lukas Bulwahn <lukas.bulwahn@redhat.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Parthiban Veerasooran <Parthiban.Veerasooran@microchip.com>,
+ netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+References: <20250702-net-k1-emac-v3-0-882dc55404f3@iscas.ac.cn>
+ <20250702-net-k1-emac-v3-2-882dc55404f3@iscas.ac.cn>
+ <20250702091708.7d459213@fedora.home>
+Content-Language: en-US
+From: Vivian Wang <wangruikang@iscas.ac.cn>
+In-Reply-To: <20250702091708.7d459213@fedora.home>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:rQCowAAXrn+f4mRooUF4AA--.33051S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxtw18ZF47GFWUAFy8KF13twb_yoW7Cw13pa
+	95GFWftF18Zr1xWr42vr4DJr92vw1ktF10kryYyay8u3sIyr1fJFy8KrWUCas5AFyqvrW5
+	Zw4UXFnrua1kWrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvCb7Iv0xC_Kw4lb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I2
+	0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
+	A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xII
+	jxv20xvEc7CjxVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwV
+	C2z280aVCY1x0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
+	0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Gr1j6F
+	4UJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkI
+	wI1lc7CjxVAaw2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr
+	0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY
+	17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcV
+	C0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY
+	6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4UJVWxJrUvcSsGvfC2Kf
+	nxnUUI43ZEXa7IUY4pBDUUUUU==
+X-CM-SenderInfo: pzdqw2pxlnt03j6l2u1dvotugofq/
 
---Sig_/l+oVLjgMHyk/mGIsyq_c_GI
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Maxime,
 
-Hi all,
+Thanks for your suggestions.
 
-The following commits are also in the aspeed tree as different commits
-(but the same patches):
+On 7/2/25 15:17, Maxime Chevallier wrote:
+> Hello Vivian,
+>
+> On Wed, 02 Jul 2025 14:01:41 +0800
+> Vivian Wang <wangruikang@iscas.ac.cn> wrote:
+>
+>> The Ethernet MACs found on SpacemiT K1 appears to be a custom design
+>> that only superficially resembles some other embedded MACs. SpacemiT
+>> refers to them as "EMAC", so let's just call the driver "k1_emac".
+>>
+>> This driver is based on "k1x-emac" in the same directory in the vendor's
+>> tree [1]. Some debugging tunables have been fixed to vendor-recommended
+>> defaults, and PTP support is not included yet.
+>>
+>> [1]: https://github.com/spacemit-com/linux-k1x
+>>
+>> Signed-off-by: Vivian Wang <wangruikang@iscas.ac.cn>
+> I have a handful of tiny comments, the rest looks fine by me !
+>
+>> +static int emac_phy_connect(struct net_device *ndev)
+>> +{
+>> +	struct emac_priv *priv = netdev_priv(ndev);
+>> +	struct device *dev = &priv->pdev->dev;
+>> +	struct phy_device *phydev;
+>> +	struct device_node *np;
+>> +	int ret;
+>> +
+>> +	ret = of_get_phy_mode(dev->of_node, &priv->phy_interface);
+>> +	if (ret) {
+>> +		dev_err(dev, "No phy-mode found");
+>> +		return ret;
+>> +	}
+>> +
+>> +	np = of_parse_phandle(dev->of_node, "phy-handle", 0);
+>> +	if (!np && of_phy_is_fixed_link(dev->of_node))
+>> +		np = of_node_get(dev->of_node);
+>> +
+>> +	if (!np) {
+>> +		dev_err(dev, "No PHY specified");
+>> +		return -ENODEV;
+>> +	}
+>> +
+>> +	ret = emac_phy_interface_config(priv);
+>> +	if (ret)
+>> +		goto err_node_put;
+>> +
+>> +	phydev = of_phy_connect(ndev, np, &emac_adjust_link, 0,
+>> +				priv->phy_interface);
+>> +	if (!phydev) {
+>> +		dev_err(dev, "Could not attach to PHY\n");
+>> +		ret = -ENODEV;
+>> +		goto err_node_put;
+>> +	}
+>> +
+>> +	phydev->mac_managed_pm = true;
+>> +
+>> +	ndev->phydev = phydev;
+> of_phy_connect() eventually calls phy_attach_direct(), which sets
+> ndev->phydev, so you don't need to do it here :)
 
-  05a8cfc12f1c ("ARM: dts: aspeed: system1: Add GPIO line name")
-  24c5110ce866 ("ARM: dts: aspeed: system1: Reduce sgpio speed")
-  2f0f9cc149f5 ("dt-bindings: arm: aspeed: add Nvidia's GB200NVL BMC")
-  322dbe88fe88 ("ARM: dts: aspeed: system1: Remove VRs max8952")
-  373d9b5989e0 ("ARM: dts: aspeed: catalina: Enable MCTP support for NIC ma=
-nage
-ment")
-  3969aadf4be9 ("ARM: dts: aspeed: system1: Update LED gpio name")
-  4de4329d8a76 ("ARM: dts: aspeed: system1: Disable gpio pull down")
-  6b357c149ec5 ("dt-bindings: ipmi: Add binding for IPMB device")
-  6e8b400dddd1 ("ARM: dts: aspeed: catalina: Add IO Mezz board thermal sens=
-or nodes")
-  7c59fb16bfee ("ARM: dts: aspeed: Rework APB nodes")
-  8c2d9fc03293 ("ARM: dts: aspeed: catalina: Add second source fan controll=
-er support")
-  8f58b439c451 ("ARM: dts: aspeed: catalina: Remove INA238 and INA230 nodes=
-")
-  90e9de1d0921 ("ARM: dts: aspeed: Add device tree for Nvidia's GB200NVL BM=
-C")
-  94706cdd3ead ("ARM: dts: aspeed: bletchley: remove unused ethernet-phy no=
-de")
-  94776ee4e1ec ("ARM: dts: aspeed: Align GPIO hog name with bindings")
-  a2c2d4c41785 ("ARM: dts: aspeed: catalina: Add Front IO board remote ther=
-mal sensor")
-  a7d6d2d622d7 ("ARM: dts: aspeed: Remove swift machine")
-  aadc4c3ddd1e ("ARM: dts: aspeed: catalina: Update CBC FRU EEPROM I2C bus =
-and address")
-  c8c33f37a6a6 ("ARM: dts: aspeed: system1: Mark GPIO line high/low")
-  d276bb9fb5b6 ("ARM: dts: aspeed: catalina: Add MP5990 power sensor node")
-  df89538262c5 ("ARM: dts: aspeed: catalina: Enable multi-master on additio=
-nal I2C buses")
-  ebd7b3c42ffa ("ARM: dts: aspeed: catalina: Add fan controller support")
-  f06ff444bf79 ("ARM: dts: aspeed: system1: Add IPMB device")
-  f2919835b87e ("ARM: dts: aspeed: catalina: Add second source HSC node sup=
-port")
+I will remove it next version.
 
---=20
-Cheers,
-Stephen Rothwell
+>> +
+>> +	emac_update_delay_line(priv);
+>> +
+>> +err_node_put:
+>> +	of_node_put(np);
+>> +	return ret;
+>> +}
+> [ ... ]
+>
+>> +static int emac_down(struct emac_priv *priv)
+>> +{
+>> +	struct platform_device *pdev = priv->pdev;
+>> +	struct net_device *ndev = priv->ndev;
+>> +
+>> +	netif_stop_queue(ndev);
+>> +
+>> +	phy_stop(ndev->phydev);
+> phy_disconnect() will call phy_stop() for you, you can remove it.
 
---Sig_/l+oVLjgMHyk/mGIsyq_c_GI
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+Thanks, I will simplify handling of this.
 
------BEGIN PGP SIGNATURE-----
+>> +	phy_disconnect(ndev->phydev);
+>> +
+>> +	emac_wr(priv, MAC_INTERRUPT_ENABLE, 0x0);
+>> +	emac_wr(priv, DMA_INTERRUPT_ENABLE, 0x0);
+>> +
+>> +	free_irq(priv->irq, ndev);
+>> +
+>> +	napi_disable(&priv->napi);
+>> +
+>> +	emac_reset_hw(priv);
+>> +
+>> +	pm_runtime_put_sync(&pdev->dev);
+>> +	return 0;
+>> +}
+>> +
+> [ ... ]
+>
+>> +static int emac_probe(struct platform_device *pdev)
+>> +{
+>> +	struct device *dev = &pdev->dev;
+>> +	struct reset_control *reset;
+>> +	struct net_device *ndev;
+>> +	struct emac_priv *priv;
+>> +	int ret;
+>> +
+>> +	ndev = devm_alloc_etherdev(dev, sizeof(struct emac_priv));
+>> +	if (!ndev)
+>> +		return -ENOMEM;
+>> +
+>> +	ndev->hw_features = NETIF_F_SG;
+>> +	ndev->features |= ndev->hw_features;
+>> +
+>> +	ndev->min_mtu = ETH_MIN_MTU;
+> This should already be the default value when using
+> devm_alloc_etherdev()
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmhk4oYACgkQAVBC80lX
-0Gzyswf+JT8SgeqbGbjI/0JPSQ+6qj6LglhAEc4b8OS7soDOCPZZKEVSjidkU7GU
-3FnEE9VcEEvaW1guDUxabAnF8QYi6s8WOJprLrjcpqoF9/hg8TcwIFFP7UsZRt00
-DxM+f/R97eh6lZMgGEAWWGJBr3TxXyYSbPFxDDBHjLXYpdU+NIgdvzk2w0RLJxD2
-FP7iwNWkTCa2XPBlzoX6cmWvtIo5eI7wHk0isi0iLY4YOxu3wWddbmAqcQG7jd7v
-W7Scm5uBPItov/WINioBmh3TmfqWAx8uk4cT1SQtW76dpZNyz58hwpzk6iwXctge
-b6D9MF2CwUSCU3moX9Q4vxQZvuwJKw==
-=isJn
------END PGP SIGNATURE-----
+I will remove next version.
 
---Sig_/l+oVLjgMHyk/mGIsyq_c_GI--
+>> +	ndev->max_mtu = EMAC_RX_BUF_4K - (ETH_HLEN + ETH_FCS_LEN);
+>> +
+>> +	priv = netdev_priv(ndev);
+>> +	priv->ndev = ndev;
+>> +	priv->pdev = pdev;
+>> +	platform_set_drvdata(pdev, priv);
+>> +	priv->hw_stats = devm_kzalloc(dev, sizeof(*priv->hw_stats), GFP_KERNEL);
+>> +	if (!priv->hw_stats) {
+>> +		dev_err(dev, "Failed to allocate memory for stats\n");
+>> +		ret = -ENOMEM;
+>> +		goto err;
+>> +	}
+>> +
+>> +	ret = emac_config_dt(pdev, priv);
+>> +	if (ret < 0) {
+>> +		dev_err(dev, "Configuration failed\n");
+>> +		goto err;
+>> +	}
+>> +
+>> +	ndev->watchdog_timeo = 5 * HZ;
+>> +	ndev->base_addr = (unsigned long)priv->iobase;
+>> +	ndev->irq = priv->irq;
+>> +
+>> +	ndev->ethtool_ops = &emac_ethtool_ops;
+>> +	ndev->netdev_ops = &emac_netdev_ops;
+>> +
+>> +	devm_pm_runtime_enable(&pdev->dev);
+>> +
+>> +	priv->bus_clk = devm_clk_get_enabled(&pdev->dev, NULL);
+>> +	if (IS_ERR(priv->bus_clk)) {
+>> +		ret = dev_err_probe(dev, PTR_ERR(priv->bus_clk),
+>> +				    "Failed to get clock\n");
+>> +		goto err;
+>> +	}
+>> +
+>> +	reset = devm_reset_control_get_optional_exclusive_deasserted(&pdev->dev,
+>> +								     NULL);
+>> +	if (IS_ERR(reset)) {
+>> +		ret = dev_err_probe(dev, PTR_ERR(reset),
+>> +				    "Failed to get reset\n");
+>> +		goto err;
+>> +	}
+>> +
+>> +	emac_sw_init(priv);
+>> +
+>> +	if (of_phy_is_fixed_link(dev->of_node)) {
+>> +		ret = of_phy_register_fixed_link(dev->of_node);
+>> +		if (ret) {
+>> +			dev_err_probe(dev, ret,
+>> +				      "Failed to register fixed-link");
+>> +			goto err_timer_delete;
+>> +		}
+> It looks like you're missing the calls to:
+>
+>   of_phy_deregister_fixed_link()
+>
+> in the error path here as well as in the .remove() function.
+
+It seems I had misunderstood the use of of_phy_register_fixed_link, I
+will fix this next version.
+
+Thanks,
+Vivian "dramforever" Wang
+
+>> +	}
+>> +
+>> +	ret = emac_mdio_init(priv);
+>> +	if (ret)
+>> +		goto err_timer_delete;
+>> +
+>> +	SET_NETDEV_DEV(ndev, &pdev->dev);
+>> +
+>> +	ret = devm_register_netdev(dev, ndev);
+>> +	if (ret) {
+>> +		dev_err(dev, "devm_register_netdev failed\n");
+>> +		goto err_timer_delete;
+>> +	}
+>> +
+>> +	netif_napi_add(ndev, &priv->napi, emac_rx_poll);
+>> +	netif_carrier_off(ndev);
+>> +
+>> +	return 0;
+>> +
+>> +err_timer_delete:
+>> +	timer_delete_sync(&priv->txtimer);
+>> +err:
+>> +	return ret;
+>> +}
+> Maxime
+
 
