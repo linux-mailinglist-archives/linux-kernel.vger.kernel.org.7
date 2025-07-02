@@ -1,83 +1,53 @@
-Return-Path: <linux-kernel+bounces-712646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-712612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF612AF0C8F
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 09:28:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C12C7AF0BF2
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 08:49:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F5E63AC5A7
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 07:28:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB7561C06CB4
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 06:49:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BDB622A4E4;
-	Wed,  2 Jul 2025 07:28:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FF89223DEA;
+	Wed,  2 Jul 2025 06:49:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J5UutlcP"
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LX296OkA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D451A223DCD
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 07:28:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71830221734
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 06:49:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751441313; cv=none; b=o15AFNzwBqof1KZwlvXkVbi/dt+xFcMBMVToJhRDgPR3mTnvl6ZcvCibuwhgl0kDinZTBjnEr9jFXk391e858YNZaCPceLFmRnC+88C09jN+opIZD8XbRwh1Ov7tm0Wdnx+1h8xnrAWOLvqMZw45aKqqiTxv+3c8mG3myG09sm0=
+	t=1751438974; cv=none; b=VwJ/6kZg8tgbB6tU7eRUkMOZt491tM6q6HGjEl6DyvuFKPqH1+io0gBZzJdfykGu42Ya+9j8K6O1PIn2ff2OvLxp1Kt154+/P9V2CpgkGifa26xgZRSz4pZl3UgRyCcXpo75atwQvNyYRPEtIVs3mf8TrC3ynwoI4IP0BdzGfho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751441313; c=relaxed/simple;
-	bh=FDIXACwz7puhDj4N6F5Bd/6AaX9aqxOydTQwoK7Bra8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZcXPq/9Xs7EGE6bN9+xm81t2oW+yAx891DgYWiexdCdv74cexI/bWdJAUS5XDV5lqRSwrmwG3ypPM5FxQmKvKM5g65cKlG08bvF+fuQo5zql4fLkhIw9e/6t6hPPZCo9GiDY/GgkP2l0xAoVcLrHEq17xq55ZkFtkaM26Wj+O0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J5UutlcP; arc=none smtp.client-ip=209.85.219.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6f8aa9e6ffdso73188986d6.3
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 00:28:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751441311; x=1752046111; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=O0c41L9VTbYMrAm4t2oLCDW8W0XVr26QOniUyuOXhc8=;
-        b=J5UutlcPDe+hnU0XKRuZD8AlnurqX4RgD/O1xCs05saazju4PkUa4qCPZd6aSL7Wog
-         NdqX2KMuFskHSRKljO0/4IlgPEIq4L0LWaKIkEfAQ7kClnWxMjHEIBNvQaJ5SyOpcR90
-         W2VCrKgKrxOUwpGU2DfCH91CRVVQtLamYYB3hf714M1YpLMJb00coCOys3/SxNc3/b6n
-         PA/dcKSFq712lY1qiyHXTpbJDltfCxFNNJhePIkM0Jyt+3i9sb+A291GFacjvtV1oMT1
-         5bSGiD5pXMvHMfC8Yj/NEWM8Me6e7ml67BWPRAuLPR8DyLLq498EtYQpwtfCk3vobkm0
-         N34A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751441311; x=1752046111;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=O0c41L9VTbYMrAm4t2oLCDW8W0XVr26QOniUyuOXhc8=;
-        b=RMlf/8dLkLxGsolCt8lBhHsYXhwCe9iM805uaVkTo/UI54f1/LTBbNn+WljO5BnRKQ
-         1kTWGax5Zt8VQ18AuANfJ9ZgCXWXcoP++4ccK9Rx5WLxXWjrH9VWnRNlPw8zJCWk6QTF
-         yXO91RzUMLRkX/aMHL7alOgCgyavanBQr0+Ux+eSgK1uNjd18CYf6tTblPeo7RaxV8Oq
-         GAhde8vNsXmUte2fJ7JVu5iW8Fu07jMxgZaf/uh5NNlchLt2RFvtkI5dntzlJzvoVmbn
-         Ekhzs5JFQTAdq7WlIP0bE5kIHcbSXUjRTty6kWM1n/hXuVMzglya2DYwuWVwNLgQ3W8P
-         7QWA==
-X-Forwarded-Encrypted: i=1; AJvYcCVcK1GTTDaChSRPZErD3RhoUWt4ggE9HaflRwYGIDoOG1cvwqGWWaFjZZ73TvkAS2Vp3nB7/spiN0iqvLA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2OHQx3EykKciqQGQspB7teg7xd1Hps4bLJaxyx/KivDTG2eNc
-	tpvRAQlCQHnZUdltqLv6ie+ToiB/U+Aw3mPV1YJW5kqeY6EX0R1zbTtx
-X-Gm-Gg: ASbGncsPfGcrCkztNcdIVjqvNdnhSxMsyN7iA8rN8tIaOnCRXe97s9LKeMK3Dk7Kh5p
-	aXc/4/j3YsUc3ATd6zw07otKd/JG6MoMt0N8WHWbs+L0aYDMQjyNgV8G7HZMCByEGXh7tWq9AIj
-	N10I+ffP80BLYBzWBmkNAhNe6OUPoCDVao0V3v7foDt8kacaxHu+isi+vG/As8JBy15wbhv+wKY
-	u0EOVzwRY0yFtSPwHqt2++MqsMnpxtYhhaie1AGKWA+MV7uTyCk7K2fnkPGAKyV3/9Uuu5EgA53
-	ejYeThQax9S/U1NYYInW779/L94rd5lyTB2vQv0Rx+952CzmfY0xiA1xk0zF+E6yU2QzRsYl
-X-Google-Smtp-Source: AGHT+IH96QKpHxensxCFYjfvqCsEceqBocyK2U3z8xvgLq5e6wKTGkMZxTJ7mrG1s9+xfl5blen4TQ==
-X-Received: by 2002:ad4:5948:0:b0:6e8:fe16:4d44 with SMTP id 6a1803df08f44-702b1c04e2dmr24082656d6.31.1751441310668;
-        Wed, 02 Jul 2025 00:28:30 -0700 (PDT)
-Received: from Gentoo.localdomain ([37.19.198.234])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6fd77307918sm96615876d6.101.2025.07.02.00.28.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Jul 2025 00:28:29 -0700 (PDT)
-From: Bhaskar Chowdhury <unixbhaskar@gmail.com>
-To: akpm@linux-foundation.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Cc: Bhaskar Chowdhury <unixbhaskar@gmail.com>
-Subject: [PATCH V2] tools: mm: Added modern version of shell quote and a stanza
-Date: Wed,  2 Jul 2025 12:19:18 +0530
-Message-ID: <20250702072801.10216-1-unixbhaskar@gmail.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1751438974; c=relaxed/simple;
+	bh=BPubFNKGvdKys1olDiBUNYKykKsbgSZ1DEu9K8YU6X4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CUwpGkim4rl1NCqn5juYjDxQ1qkMgVOBlbp+uCC6P/VcWMipjT8omipwev/330NNRcc2kZIe0ysuCGfmC22NEcQj3bDjw72L1jIuK/c+CqYivuxcOGcMhMZDVRzIx8sPCh6ymoZIMch5RpQhHqKKUNarV/nAUtlXF8MXuWdzgSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LX296OkA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D290AC4CEEE;
+	Wed,  2 Jul 2025 06:49:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751438974;
+	bh=BPubFNKGvdKys1olDiBUNYKykKsbgSZ1DEu9K8YU6X4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=LX296OkA/i+AuOF/zQQeLMvUCdbVI1qupnMWDLTLzAbxdTSZjW2KKHOMDcnnBJyRC
+	 UZjmPD/6jLEwcUx6e/9GxVg1PMoWtWKj9A3fkHo5/Q4lwRRmJYT4MX827sZl2FXq2W
+	 zuLIEHr8ghqj17cKWaNAwJYpK4/vD7t3NVf51/uOFZVXofM3zm0stIdfcnWvHNcrKB
+	 Vjg6A8B+H0ve5kEnI0L73LM2HntKDBpwhUDJQu+IYepG3sIb5AhzpDC9FyHQiSNdcN
+	 gWVRiAca+9U6LtpmNWceR1fKIJzwPSYfM1rHnT1+8TJW7yGmbnO/A4bM8j9bGyDqqa
+	 A+3f7qe6za2yg==
+From: Chao Yu <chao@kernel.org>
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	Chao Yu <chao@kernel.org>
+Subject: [PATCH] f2fs: doc: fix wrong quota mount option description
+Date: Wed,  2 Jul 2025 14:49:25 +0800
+Message-ID: <20250702064925.1002176-1-chao@kernel.org>
+X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,136 +56,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Three things precisely:
+We should use "{usr,grp,prj}jquota=" to disable journaled quota,
+rather than using off{usr,grp,prj}jquota.
 
-Replaced backquote with dollar-parentheses ...that is modern way of quoting in
-shell script. Improved readability.
-
-Added a stranza of missing/required command for the operation,in this case
-gnuplot and that too in shell path.
-
-And lastly,use "command -v" to search the command i.e gnuplot and the REASON
-for that :
-
-The -v option tell show shell will invoke the command specified as its
-options.Basically to avoid dependency on something outside of the shell.It is
-also execute command found in the PATH. Essentially, ignoring other similar
-name stuff curated somewhere else in the system.
-
-Signed-off-by: Bhaskar Chowdhury <unixbhaskar@gmail.com>
+Fixes: 4b2414d04e99 ("f2fs: support journalled quota")
+Signed-off-by: Chao Yu <chao@kernel.org>
 ---
- V2: What changes from V1: Verbose changelog, especially using command -v to
- find the specific program i.e. gnuplot.
+ Documentation/filesystems/f2fs.rst | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
- tools/mm/slabinfo-gnuplot.sh | 44 ++++++++++++++++++++++++------------
- 1 file changed, 30 insertions(+), 14 deletions(-)
-
-diff --git a/tools/mm/slabinfo-gnuplot.sh b/tools/mm/slabinfo-gnuplot.sh
-index 873a892147e5..6c9add4bb8ad 100644
---- a/tools/mm/slabinfo-gnuplot.sh
-+++ b/tools/mm/slabinfo-gnuplot.sh
-@@ -46,6 +46,22 @@ check_file_exist()
- 	fi
- }
-
-+# This variable could have space separated value
-+my_needed_commands="gnuplot"
-+
-+missing_counter=0
-+for needed_command in $my_needed_commands; do
-+  if ! hash "$needed_command" >/dev/null 2>&1; then
-+    printf "Command not found in PATH: %s\n" "$needed_command" >&2
-+    ((missing_counter++))
-+  fi
-+done
-+
-+if ((missing_counter > 0)); then
-+  printf "Minimum %d commands are missing in PATH, aborting\n" "$missing_counter" >&2
-+  exit 1
-+fi
-+
- do_slabs_plotting()
- {
- 	local file=$1
-@@ -58,13 +74,13 @@ do_slabs_plotting()
-
- 	check_file_exist "$file"
-
--	out_file=`basename "$file"`
-+	out_file=$(basename "$file")
- 	if [ $xmax -ne 0 ]; then
- 		range="$range::$xmax"
- 		lines=$((xmax-xmin))
- 	fi
-
--	wc_lines=`cat "$file" | wc -l`
-+	wc_lines=$(cat "$file" | wc -l)
- 	if [ $? -ne 0 ] || [ "$wc_lines" -eq 0 ] ; then
- 		wc_lines=$lines
- 	fi
-@@ -78,7 +94,7 @@ do_slabs_plotting()
- 		xtic_rotate=90
- 	fi
-
--gnuplot -p << EOF
-+$(command -v gnuplot) -p << EOF
- #!/usr/bin/env gnuplot
-
- set terminal png enhanced size $width,$height large
-@@ -113,14 +129,14 @@ do_totals_plotting()
- 	for i in "${t_files[@]}"; do
- 		check_file_exist "$i"
-
--		file="$file"`basename "$i"`
-+		file="$file"$(basename "$i")
- 		gnuplot_cmd="$gnuplot_cmd '$i' $range using 1 title\
- 			'$i Memory usage' with lines,"
- 		gnuplot_cmd="$gnuplot_cmd '' $range using 2 title \
- 			'$i Loss' with lines,"
- 	done
-
--gnuplot -p << EOF
-+$(command -v gnuplot) -p << EOF
- #!/usr/bin/env gnuplot
-
- set terminal png enhanced size $width,$height large
-@@ -148,26 +164,26 @@ do_preprocess()
-
- 	# use only 'TOP' slab (biggest memory usage or loss)
- 	let lines=3
--	out=`basename "$in"`"-slabs-by-loss"
--	`cat "$in" | grep -A "$lines" 'Slabs sorted by loss' |\
-+	out=$(basename "$in")"-slabs-by-loss"
-+	$(cat "$in" | grep -A "$lines" 'Slabs sorted by loss' |\
- 		grep -E -iv '\-\-|Name|Slabs'\
--		| awk '{print $1" "$4+$2*$3" "$4}' > "$out"`
-+		| awk '{print $1" "$4+$2*$3" "$4}' > "$out")
- 	if [ $? -eq 0 ]; then
- 		do_slabs_plotting "$out"
- 	fi
-
- 	let lines=3
--	out=`basename "$in"`"-slabs-by-size"
--	`cat "$in" | grep -A "$lines" 'Slabs sorted by size' |\
-+	out=$(basename "$in")"-slabs-by-size"
-+	$(cat "$in" | grep -A "$lines" 'Slabs sorted by size' |\
- 		grep -E -iv '\-\-|Name|Slabs'\
--		| awk '{print $1" "$4" "$4-$2*$3}' > "$out"`
-+		| awk '{print $1" "$4" "$4-$2*$3}' > "$out")
- 	if [ $? -eq 0 ]; then
- 		do_slabs_plotting "$out"
- 	fi
-
--	out=`basename "$in"`"-totals"
--	`cat "$in" | grep "Memory used" |\
--		awk '{print $3" "$7}' > "$out"`
-+	out=$(basename "$in")"-totals"
-+	$(cat "$in" | grep "Memory used" |\
-+		awk '{print $3" "$7}' > "$out")
- 	if [ $? -eq 0 ]; then
- 		t_files[0]=$out
- 		do_totals_plotting
---
+diff --git a/Documentation/filesystems/f2fs.rst b/Documentation/filesystems/f2fs.rst
+index 440e4ae74e44..03b1efa6d3b2 100644
+--- a/Documentation/filesystems/f2fs.rst
++++ b/Documentation/filesystems/f2fs.rst
+@@ -238,9 +238,9 @@ usrjquota=<file>	 Appoint specified file and type during mount, so that quota
+ grpjquota=<file>	 information can be properly updated during recovery flow,
+ prjjquota=<file>	 <quota file>: must be in root directory;
+ jqfmt=<quota type>	 <quota type>: [vfsold,vfsv0,vfsv1].
+-offusrjquota		 Turn off user journalled quota.
+-offgrpjquota		 Turn off group journalled quota.
+-offprjjquota		 Turn off project journalled quota.
++usrjquota=		 Turn off user journalled quota.
++grpjquota=		 Turn off group journalled quota.
++prjjquota=		 Turn off project journalled quota.
+ quota			 Enable plain user disk quota accounting.
+ noquota			 Disable all plain disk quota option.
+ alloc_mode=%s		 Adjust block allocation policy, which supports "reuse"
+-- 
 2.49.0
 
 
