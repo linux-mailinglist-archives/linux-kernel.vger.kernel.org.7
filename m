@@ -1,88 +1,105 @@
-Return-Path: <linux-kernel+bounces-713893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC22FAF5FCF
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 19:20:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21363AF5FD4
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 19:21:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8543F3A9B1C
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 17:20:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E99F816813C
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 17:21:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5872E30112D;
-	Wed,  2 Jul 2025 17:20:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26AD3303DF2;
+	Wed,  2 Jul 2025 17:20:50 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42FED2F50A2;
-	Wed,  2 Jul 2025 17:20:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6021D303DDC
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 17:20:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751476842; cv=none; b=q1AdYz1p5Qi1hmtakDRTogECMuWk6zqRaBPzAbByak/DGDNqki1cOgBmXrWP/8JrxESMJwdwrI3n0vb0TxVybbNdgjP7+VU+lY/hMraqcNJiEIHB5SfwqZUAiALAArbm+1yrFHLgkEOevBTLw83vS2AFtgw7ftO+AkOIhN+cQxQ=
+	t=1751476849; cv=none; b=G1V2dEF/O2XPM5lZWSAQfh7KaJYi2B4tJ7oxF2m97rW70h0TdamgNprKX8Stp4J1GtvW+6U8/VTulM6muKtpSKBZoiK2gwHGXcNYJm+M++y/oUzVNLf+Eeeqzn9QNZxAq7FMM5tak8gh/NZ6WuOilQbHErvCEO1X66siGBiLjAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751476842; c=relaxed/simple;
-	bh=u2KdsjMl87c02z1ElvoTqJJEGUWbL7jzufaq0GTNTrQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tjPFvScgfZ0Ijj0G0JCTsD6qiiIp5bXPavI+Q2nbcU7pZTWMplz3TOBZYu1zw0NaMFVzmtFzR8oDCoS0ZvCZ/gYN5QAGp7yO/47WCL2Kdz4AH5uWh9hJQuo4pRWD6Qp8I8XzLT3doPD8UAPGcI9gcN5H7hJZ5oG5zgwrc8mvo1I=
+	s=arc-20240116; t=1751476849; c=relaxed/simple;
+	bh=Oy7O6hGcdvfwO2s1KCbDKzmLZt+/4BEMN8r3Rj1P+bY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jjoG23sHYUb2ye8C7/Ci0UwJr7MsmTFYN+cebquABuKZfiE1cScy5TKo6NPQ0eQw83j6OMZSzcC3E8EraGl2jvZfUBbZOkaGCVd0bC7znjySlTLM3sRvOgW17hEY/sVIxBg844AhLt312u5qCFcOYjpbOYpAxW3RqiaLXkQIeyM=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6AC5A22C7;
-	Wed,  2 Jul 2025 10:20:24 -0700 (PDT)
-Received: from localhost (e132581.arm.com [10.1.196.87])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C4FEE3F66E;
-	Wed,  2 Jul 2025 10:20:38 -0700 (PDT)
-Date: Wed, 2 Jul 2025 18:20:36 +0100
-From: Leo Yan <leo.yan@arm.com>
-To: Breno Leitao <leitao@debian.org>
-Cc: cov@codeaurora.org, rmk+kernel@armlinux.org.uk, mark.rutland@arm.com,
-	catalin.marinas@arm.com, linux-serial@vger.kernel.org,
-	rmikey@meta.com, linux-arm-kernel@lists.infradead.org,
-	usamaarif642@gmail.com, linux-kernel@vger.kernel.org,
-	paulmck@kernel.org
-Subject: Re: arm64: csdlock at early boot due to slow serial (?)
-Message-ID: <20250702172036.GC1039028@e132581.arm.com>
-References: <aGVn/SnOvwWewkOW@gmail.com>
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0216322D9;
+	Wed,  2 Jul 2025 10:20:33 -0700 (PDT)
+Received: from [10.57.29.161] (unknown [10.57.29.161])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2A5AF3F66E;
+	Wed,  2 Jul 2025 10:20:45 -0700 (PDT)
+Message-ID: <ec98776a-318e-4dc1-9d40-e9d8b1c4c28f@arm.com>
+Date: Wed, 2 Jul 2025 18:20:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aGVn/SnOvwWewkOW@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: mtd: rawnand: atmel: ECC error after update to kernel 6.6
+To: Zixun LI <admin@hifiphile.com>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Vignesh Raghavendra <vigneshr@ti.com>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Nicolas Ferre <nicolas.ferre@microchip.com>,
+ Richard Weinberger <richard@nod.at>,
+ Miquel Raynal <miquel.raynal@bootlin.com>, linux-mtd@lists.infradead.org,
+ linux-kernel@vger.kernel.org,
+ SoC support' <linux-arm-kernel@lists.infradead.org>,
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+ Ada Couprie Diaz <ada.coupriediaz@arm.com>
+References: <CA+GyqebQnWQ3fj4Lrb4-hvzRpphuqw+jh4B9En1j2NDTNFumvQ@mail.gmail.com>
+ <599c677a-ace0-41fe-b264-51de0fa7badf@arm.com>
+ <CA+GyqebFpav_ixDyp84-XA2WcQdrm_t6nfaKckm98tt5MpM2EA@mail.gmail.com>
+From: Ada Couprie Diaz <ada.coupriediaz@arm.com>
+Content-Language: en-US, en-GB
+Organization: Arm Ltd.
+In-Reply-To: <CA+GyqebFpav_ixDyp84-XA2WcQdrm_t6nfaKckm98tt5MpM2EA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Breno,
+On 01/07/2025 19:04, Zixun LI wrote:
 
-On Wed, Jul 02, 2025 at 10:10:21AM -0700, Breno Leitao wrote:
+> On Tue, Jul 1, 2025 at 5:49 PM Ada Couprie Diaz <ada.coupriediaz@arm.com> wrote:
+>> Hi,
+>>
+>> I've written a small patch below that I think should fix the issue, but again
+>> I don't know if that's upstreamable as-is.
+>>
+>>> Best regards,
+>>> Zixun LI
+>>>
+>>> [1] https://github.com/torvalds/linux/blob/19583ca584d6f574384e17fe7613dfaeadcdc4a6/drivers/mtd/nand/atmel_nand.c#L1058
+>>> [2] https://github.com/torvalds/linux/blob/ffc253263a1375a65fa6c9f62a893e9767fbebfa/drivers/mtd/nand/raw/atmel/pmecc.c#L772
+>>>
+>> Hopefully that can help !
+>> Best regards,
+>> Ada
+>>
+> Hi Ada,
+> Thank you for looking into this. Internally I've written the same patch as
+> yours and it works fine.
 
-[...]
+Glad to know that you already have a working solution and that I wasn't too far off !
+I got interested and wanted to dig into it, I hope it didn't come off wrong.
 
-> Further debugging revealed the following sequence with the pl011 registers:
-> 
-> 	1) uart_console_write()
-> 	2) REG_FR has BUSY | RXFE | TXFF for a while (~1k cpu_relax())
-> 	3) RXFE and TXFF are cleaned, and BUSY stay on for another 17k-19k cpu_relax()
-> 
-> Michael has reported a hardware issue where the BUSY bit could get
-> stuck (see commit d8a4995bcea1: "tty: pl011: Work around QDF2400 E44 stuck BUSY
-> bit"), which is very similar. TXFE goes down, but BUSY is(?) still stuck for long.
-> 
-> If I am having the same hardware issue, I suppose I need to change that logic
-> to exist the cpu_relax() loop by checking when Transmit FIFO Empty (TXFE) is 0
-> instead of BUSY.
-> 
-> Anyway, any one familar with this weird behaviour?
+> What's more interesting is the issue happens depending on chip individual
+> difference or aging. Among 3 chips tested, two with date code of 1933 and
+> one with 2223. The 1st one has many ECC errors as in the mail, 2nd one
+> has less errors, while the 3rd one passed the nandtest without error.
+> Maybe that's why this issue is overlooked.
 
-To be clear, I am not familiar with pl011 driver.
+Really interesting behaviour, that could indeed explain how it might 
+have been missed during the original refactor as it seems it was tested 
+with similar SoCs.
 
-For the first step, could you confirm the UART port is only used by
-Linux kernel?
-
-In some cases, if normal world and secure world share the same UART
-port, it can cause the UART state machine malfunction and long wait.
-
-Thanks,
-Leo
+> Best regards,
+> Zixun LI
+Best regards,
+Ada
 
