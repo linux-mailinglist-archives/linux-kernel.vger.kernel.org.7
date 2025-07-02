@@ -1,38 +1,38 @@
-Return-Path: <linux-kernel+bounces-712942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-712923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F05BAF1110
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 12:02:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 358C2AF109B
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 11:52:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 95BE07A494D
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 10:00:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 732AB3BD66C
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 09:51:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E95725392D;
-	Wed,  2 Jul 2025 10:01:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDFDA2475C2;
+	Wed,  2 Jul 2025 09:51:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=thundersoft.com header.i=@thundersoft.com header.b="CCVhNbF0"
-Received: from mail-m49202.qiye.163.com (mail-m49202.qiye.163.com [45.254.49.202])
+	dkim=pass (1024-bit key) header.d=thundersoft.com header.i=@thundersoft.com header.b="joicoOyL"
+Received: from mail-m19731103.qiye.163.com (mail-m19731103.qiye.163.com [220.197.31.103])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 773CB24DCF6;
-	Wed,  2 Jul 2025 10:01:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAC2B2309B0;
+	Wed,  2 Jul 2025 09:51:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.103
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751450516; cv=none; b=YY5dIUv5Tg25+bfoTe3VKi/whOdNgrKaCb2hWVdb7eZtU5fB4igHEV05FgAcevC90oVz70ZM0p4RRm7gi9zkJ2RxhxmiyNFZPobkNGUHK7R8oRSyuzk234mY2b599sZ58GxhrHwtODsk6cwsrA3EKNwv9PAXALHPE052n7qVDeY=
+	t=1751449915; cv=none; b=fg7W/ZJmvDsYZIxoUtBMj+Hd1OLY9gu/xLTJoRps+6WOuboEuG5+R9yX4UY2s7CoTYYPFLbeqny4RYHFRN1ILBP5pMu2c6VvmEPqfsiTk2uG/gt0J1LW3vp38mviiq/UXK9IlNrOnajg1lpkB5t4XHzrWXFVpPm6ORCxQHArvZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751450516; c=relaxed/simple;
-	bh=i9OB2XoW87G6P7CVuqhw+Zp1R6CIsj11Qr8nH7WUQ4k=;
+	s=arc-20240116; t=1751449915; c=relaxed/simple;
+	bh=1EDFj4goj5CsQ5wj3psPIN+ghrdp1Uo32Zl1NGBk7fg=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=jjCYxiKYagHhc/FiPV4ih6xyeLrdYs4qSeCkk8J3J8xFGu+EnQh56sa5hv9fw8LQXcQGlBdSjhiYksmCC+NUO2sSuCPdhsVJMRk4Q6B0vUh9g0zZK1t2gPq0XgCLtCgLbfSAF+gpxnNiMxgFdIlNUo8Dg6rQLcqyxcILNHqh1AQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=thundersoft.com; spf=pass smtp.mailfrom=thundersoft.com; dkim=pass (1024-bit key) header.d=thundersoft.com header.i=@thundersoft.com header.b=CCVhNbF0; arc=none smtp.client-ip=45.254.49.202
+	 MIME-Version; b=MFiDgNVf0FbkzNu+2RdILHDvchKa+GKYuZyPAawKckNpDqudE1tDdQlnScokDpU7Y4JVfbFeMksh29MIaU75Dwm5GqUq+j0RFx2kYGEk1L6E2URwu8Q5+74fLlh3/gW7uZEXK/u8hlnHpIHdYWG90mL4YO5T4AvR8Z806r34I+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=thundersoft.com; spf=pass smtp.mailfrom=thundersoft.com; dkim=pass (1024-bit key) header.d=thundersoft.com header.i=@thundersoft.com header.b=joicoOyL; arc=none smtp.client-ip=220.197.31.103
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=thundersoft.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thundersoft.com
 Received: from localhost.localdomain (unknown [117.184.129.134])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 1aaa9ed42;
-	Wed, 2 Jul 2025 17:46:33 +0800 (GMT+08:00)
+	by smtp.qiye.163.com (Hmail) with ESMTP id 1aaa9ed49;
+	Wed, 2 Jul 2025 17:46:35 +0800 (GMT+08:00)
 From: Albert Yang <yangzh0906@thundersoft.com>
 To: robh@kernel.org,
 	krzk+dt@kernel.org,
@@ -66,9 +66,9 @@ Cc: linux-arm-kernel@lists.infradead.org,
 	shanchun1218@gmail.com,
 	ben.chuang@genesyslogic.com.tw,
 	Albert Yang <yangzh0906@thundersoft.com>
-Subject: [PATCH v2 3/8] arm64: Kconfig: add ARCH_BST for bst silicons
-Date: Wed,  2 Jul 2025 17:44:39 +0800
-Message-Id: <20250702094444.3523973-4-yangzh0906@thundersoft.com>
+Subject: [PATCH v2 4/8] dt-bindings: mmc: add binding for BST DWCMSHC SDHCI controller
+Date: Wed,  2 Jul 2025 17:44:40 +0800
+Message-Id: <20250702094444.3523973-5-yangzh0906@thundersoft.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20250702094444.3523973-1-yangzh0906@thundersoft.com>
 References: <20250528085403.481055-1-yangzh0906@thundersoft.com>
@@ -81,58 +81,121 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlCHkNOVk9LQktMGRpOSBgYH1YVFAkWGhdVEwETFh
-	oSFyQUDg9ZV1kYEgtZQVlKSkxVSkNPVUpJQlVKSE9ZV1kWGg8SFR0UWUFZT0tIVUpLSUhCS0NVSk
-	tLVUpCWQY+
-X-HM-Tid: 0a97ca87e53409cckunmee1cabff3ebb07
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlDGhhKVkgdS08YGExNTk5IQlYVFAkWGhdVEwETFh
+	oSFyQUDg9ZV1kYEgtZQVlKSkxVSkNPVUpJQlVKSE9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpOTE5VSk
+	tLVUpCS0tZBg++
+X-HM-Tid: 0a97ca87ec9609cckunmee1cabff3ebb45
 X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Nxg6DAw5HjE5LE9RQiIzHUkP
-	TC8aCi5VSlVKTE5KT09CTkJPQkxPVTMWGhIXVQIaFRwBE0tCS007DxMOFR8eCQgUHQ9VGBQWRVlX
-	WRILWUFZSkpMVUpDT1VKSUJVSkhPWVdZCAFZQUlMSU43Bg++
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6MDo6Ejo6LDE3Ck8iHSE0HQIC
+	NQwKCzNVSlVKTE5KT09CTkJMSk5CVTMWGhIXVQIaFRwBE0tCS007DxMOFR8eCQgUHQ9VGBQWRVlX
+	WRILWUFZSkpMVUpDT1VKSUJVSkhPWVdZCAFZQU9ITkw3Bg++
 DKIM-Signature:a=rsa-sha256;
-	b=CCVhNbF0z/nZNzKXzKPmTCziV/mfP8r7/JXYSuX3+o352hI3g6Kd+ZBKmVA2IicGO6JRd2Fv501c/80xty3Xoc6C9D1Fk8SXqWl+jay/xIqLslItLvj1HV/8BynCZlGPmq7wpK9nT9EFSJP0rrE9PrdQfzgP4wfgYZcHo+W1q0c=; c=relaxed/relaxed; s=default; d=thundersoft.com; v=1;
-	bh=+mZ281H0S02t7176D+bqxjl4chkVEj1RFfKyhGtpJ7c=;
+	b=joicoOyLfPcI5Htb1jQL3vfoaIeY1lc6q9SmjGU0vYGNsKgX5FlzEe//fUMFt+F2Dt5msY0bIJHRnbNv2d+Ki7OV8xn3wNKMXXvBaG4Q66kys7HQLCJrgjS6tDstwINmLA7RWk/T5myjQBO8memOyK9cx2gDTqhwHD5Wld7+YVM=; c=relaxed/relaxed; s=default; d=thundersoft.com; v=1;
+	bh=TfcFw4Er+lRQGjZg8dmF9mso3a6O4zW0NF5yIyCmuEU=;
 	h=date:mime-version:subject:message-id:from;
 
-Add ARCH_BST for bst SoC series support.
+Add device tree binding documentation for the Black Sesame Technologies
+(BST) DWCMSHC SDHCI controller.
+
+This binding describes the required and optional properties for the
+bst,dwcmshc-sdhci compatible controller, including register layout,
+interrupts, bus width, clock configuration, and other controller-specific
+features.
+
+---
+Changes for v2:
+- Simplified description, removed redundant paragraphs
+- Updated $schema to reference mmc-specific scheme
+- Corrected compatible to add soc name
+(bst,c1200-dwcmshc-sdhci)
+- Removed all redundant property descriptions
+- Dropped invalid mmc_crm_base/size properties, use reg for all address
+ranges
+- Cleaned up required properties to only essential entries
+- Standardized example DTS format, fixed reg syntax and property
+ordering
+- Removed additionalProperties: true
 
 Signed-off-by: Ge Gordon <gordon.ge@bst.ai>
 Signed-off-by: Albert Yang <yangzh0906@thundersoft.com>
 ---
-Changes for v2:
-- Placed the configuration entry in correct alphabetical order
-- Used generic family name (ARCH_BST) instead of SoC-specific naming
-- Followed upstream kernel naming and description conventions
----
- arch/arm64/Kconfig.platforms | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ .../bindings/mmc/bst,dwcmshc-sdhci.yaml       | 67 +++++++++++++++++++
+ 1 file changed, 67 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mmc/bst,dwcmshc-sdhci.yaml
 
-diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-index a541bb029aa4..4412d54b224d 100644
---- a/arch/arm64/Kconfig.platforms
-+++ b/arch/arm64/Kconfig.platforms
-@@ -106,6 +106,14 @@ config ARCH_BLAIZE
- 	help
- 	  This enables support for the Blaize SoC family
- 
-+config ARCH_BST
-+	bool "Black Sesame Technologies SoC Family"
-+	help
-+	  This enables support for Black Sesame Technologies (BST) SoC family.
-+	  BST produces automotive-grade system-on-chips for intelligent driving,
-+	  focusing on computer vision and AI capabilities. The BST C1200 family
-+	  includes SoCs for ADAS and autonomous driving applications.
+diff --git a/Documentation/devicetree/bindings/mmc/bst,dwcmshc-sdhci.yaml b/Documentation/devicetree/bindings/mmc/bst,dwcmshc-sdhci.yaml
+new file mode 100644
+index 000000000000..699dc404caac
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mmc/bst,dwcmshc-sdhci.yaml
+@@ -0,0 +1,67 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/mmc/bst,dwcmshc-sdhci.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
- config ARCH_EXYNOS
- 	bool "Samsung Exynos SoC family"
- 	select COMMON_CLK_SAMSUNG
-@@ -402,4 +410,6 @@ config ARCH_ZYNQMP
- 	help
- 	  This enables support for Xilinx ZynqMP Family
- 
++title: Black Sesame Technologies DWCMSHC SDHCI Controller
 +
++maintainers:
++  - Ge Gordon <gordon.ge@bst.ai>
 +
- endmenu # "Platform selection"
++allOf:
++  - $ref: mmc-controller.yaml#
++
++properties:
++  compatible:
++    const: bst,c1200-dwcmshc-sdhci
++
++  reg:
++    maxItems: 2
++    description: |
++      Register base addresses and sizes for the SDHCI controller.
++      First entry is the core SDHCI registers, second entry is the
++      CRM registers.
++
++  interrupts:
++    maxItems: 1
++
++  clocks:
++    maxItems: 1
++
++  clock-names:
++    items:
++      - const: core
++
++  memory-region:
++    maxItems: 1
++
++  dma-coherent: true
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - clocks
++  - clock-names
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++
++    mmc@22200000 {
++        compatible = "bst,c1200-dwcmshc-sdhci";
++        reg = <0x0 0x22200000 0x0 0x1000>,
++              <0x0 0x23006000 0x0 0x1000>;
++        interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>;
++        clocks = <&clk_mmc>;
++        clock-names = "core";
++        memory-region = <&mmc0_reserved>;
++        max-frequency = <200000000>;
++        bus-width = <8>;
++        non-removable;
++        dma-coherent;
++        status = "disabled";
++    };
 -- 
 2.25.1
 
