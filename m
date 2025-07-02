@@ -1,116 +1,139 @@
-Return-Path: <linux-kernel+bounces-712705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-712707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 498F5AF0DAA
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 10:18:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50CB3AF0DB7
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 10:21:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 139CE480347
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 08:17:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C9CF4E4794
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 08:21:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EC44231853;
-	Wed,  2 Jul 2025 08:18:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ksi7vW75"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8918E4C7F;
-	Wed,  2 Jul 2025 08:18:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F241236454;
+	Wed,  2 Jul 2025 08:20:54 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74BCD1E5B6D;
+	Wed,  2 Jul 2025 08:20:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751444293; cv=none; b=M35iHjcZ5cn9g/ANNFXbJq0+tq1BkDTHxpCHHGWWx5+DbB2ilENLstZSBcPqoSrlIOYPfbax9+ugZbxoyn6rAgee8OCoGsZ0/IgwCSt6oSQEWXGEg6tBtFe94LXIQ2mALmb3/FEgV+fo78uJPHxvUEeq/2H8M1Quq8pobyalIyA=
+	t=1751444454; cv=none; b=tgE5g7+mzFIriWgW4E77g1v/QUyWXWIJf6bmvsPYSsINvu+eaYBx6gyF3duFfaV5whzaYGRV+5SimlXOvEXkwEIaD7Th1Q8kEBKzsLeY1fk5i+HQt8gY6jKcDgcppL3QQuv9JlbvLBEM0BkZYtLYYD60/UUHrYkVZ3ONfbI2omI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751444293; c=relaxed/simple;
-	bh=2X0ZuQ8tzFdR6e2MR2On9LEIa13O9/MXfufV8TG6ztM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qD7I+mpgr3VK8o/dB1Y8RrP0qC68CJwDSYrK/il6h1Pk+JGW4txjSOMLr3MxoLOlj+FLCh0UZYTSqpKMFT0ZLfUYGo3rL8pg4PNpqqz5Z2mrrgWYdIRTfl2ECjxDZP3/xeLrHYf7H3sCpGsp4cDFZ5Uq0MR/TnoUiFiLlTmAx/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ksi7vW75; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751444293; x=1782980293;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=2X0ZuQ8tzFdR6e2MR2On9LEIa13O9/MXfufV8TG6ztM=;
-  b=Ksi7vW75rFUvzDCbn1oUpebGd7XezmYP09AaD+VXAgTto540m/7nlnOp
-   xHXbO7LwHMzx1NzCBbnqJpRKrOtD6mIgfOR4U8yYjQRbZCbrng1GhUnYm
-   tCUmdgPpDbTMMoWWfOJBNATzO3YUxzFEm2SkfEO0DuKqP0otmfKVui52K
-   2HeL7VFH48XuIImJKeLU0tme1hrNt+NjTvuCZmx9bfgM4XTqQMWYe1LJY
-   FxR2Svhl3459gl3NrWQG2PbBrrxRA1MhIQCq+u6MedZ1Ds5j/y/7tKu61
-   832obxq1IbqIdMUZmVroGxMc9e4RODYpFlIGivsC3HaHNNtNy1kktO/uW
-   w==;
-X-CSE-ConnectionGUID: 2C9a5GGVTUCfAkIMx6/gFQ==
-X-CSE-MsgGUID: /mN88kp4QaK9jJbXX6Xg0A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11481"; a="76273338"
-X-IronPort-AV: E=Sophos;i="6.16,281,1744095600"; 
-   d="scan'208";a="76273338"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2025 01:18:11 -0700
-X-CSE-ConnectionGUID: V/cJjtAyTYGnRh1wrMD2NQ==
-X-CSE-MsgGUID: evUFckWIRwumD47fT08CWg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,281,1744095600"; 
-   d="scan'208";a="154334327"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2025 01:18:07 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1uWsfM-0000000BrY2-2PLC;
-	Wed, 02 Jul 2025 11:18:04 +0300
-Date: Wed, 2 Jul 2025 11:18:04 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Li Ming <ming.li@zohomail.com>
-Cc: akpm@linux-foundation.org, bhelgaas@google.com,
-	ilpo.jarvinen@linux.intel.com, dave@stgolabs.net,
-	jonathan.cameron@huawei.com, dave.jiang@intel.com,
-	alison.schofield@intel.com, vishal.l.verma@intel.com,
-	ira.weiny@intel.com, dan.j.williams@intel.com,
-	shiju.jose@huawei.com, linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] resource: Introduce a new helper
- resource_contains_addr()
-Message-ID: <aGTrPKiFUfRsY6D_@smile.fi.intel.com>
-References: <20250702072008.468371-1-ming.li@zohomail.com>
- <aGTq5MKCYBO3H9Gg@smile.fi.intel.com>
+	s=arc-20240116; t=1751444454; c=relaxed/simple;
+	bh=eL/d+ZF8/YwG2i7e33qcbNOChozOQUzOE16BHM7lC4Q=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=IzMSOcDn8xSSrxpZ7PNAtj/0QohJZ5t+9DROK4YkYjwKtEDzvA2k+/Qd5SssEh6Xt7F6Ykd9L9jxMMq1O4Sz2BIphmgoic8i2NUUTODBXsF0zFzIhSc5tJhp3LvHNQvcW2vM/TxIc7jkw5QG71NXOuz2N5RpXAdr/6CfSN3LQ9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.20.42.62])
+	by gateway (Coremail) with SMTP id _____8DxjXLe62RoABYhAQ--.6468S3;
+	Wed, 02 Jul 2025 16:20:46 +0800 (CST)
+Received: from [10.20.42.62] (unknown [10.20.42.62])
+	by front1 (Coremail) with SMTP id qMiowJCxocLa62RoBnoGAA--.36762S3;
+	Wed, 02 Jul 2025 16:20:45 +0800 (CST)
+Subject: Re: [RFC] x86/kvm: Use native qspinlock by default when realtime
+ hinted
+To: Liangyan <liangyan.peng@bytedance.com>, pbonzini@redhat.com,
+ vkuznets@redhat.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com, hpa@zytor.com
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org, kvm@vger.kernel.org
+References: <20250702064218.894-1-liangyan.peng@bytedance.com>
+From: Bibo Mao <maobibo@loongson.cn>
+Message-ID: <806e3449-a7b1-fa57-b220-b791428fb28b@loongson.cn>
+Date: Wed, 2 Jul 2025 16:19:11 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aGTq5MKCYBO3H9Gg@smile.fi.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+In-Reply-To: <20250702064218.894-1-liangyan.peng@bytedance.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowJCxocLa62RoBnoGAA--.36762S3
+X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBj93XoW7Kr18trykJw1Utr1fJw15Jrc_yoW8ZFW5pF
+	W5JF9avFWxXr1FvasrAFyvgr15WayDGw15uasrWryrtF1Yqr93Kr1kCr1rZw1YqFyxWa1S
+	vF1FqF48Ca4DXFXCm3ZEXasCq-sJn29KB7ZKAUJUUUUx529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUPYb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
+	GcCE3s1ln4kS14v26r126r1DM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2
+	x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r126r1D
+	McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7
+	I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0EwIxGrwCF
+	x2IqxVCFs4IE7xkEbVWUJVW8JwCFI7km07C267AKxVWUAVWUtwC20s026c02F40E14v26r
+	1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij
+	64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr
+	0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF
+	0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07jFApnUUUUU=
 
-On Wed, Jul 02, 2025 at 11:16:36AM +0300, Andy Shevchenko wrote:
-> On Wed, Jul 02, 2025 at 03:20:06PM +0800, Li Ming wrote:
-> > In CXL subsystem, many functions need to check an address availability
-> > by checking if the resource range contains the address. Providing a new
-> > helper function resource_contains_addr() to check if the resource range
-> > contains the input address.
+
+
+On 2025/7/2 下午2:42, Liangyan wrote:
+> When KVM_HINTS_REALTIME is set and KVM_FEATURE_PV_UNHALT is clear,
+> currently guest will use virt_spin_lock.
+> Since KVM_HINTS_REALTIME is set, use native qspinlock should be safe
+> and have better performance than virt_spin_lock.
+Just be curious, do you have actual data where native qspinlock has 
+better performance than virt_spin_lock()?
+
+By my understanding, qspinlock is not friendly with VM. When lock is 
+released, it is acquired with one by one order in contending queue. If 
+the first vCPU in contending queue is preempted, the other vCPUs can not 
+get lock. On physical machine it is almost impossible that CPU 
+contending lock is preempted.
+
+Regards
+Bibo Mao
 > 
-> resources are about ranges and not addresses. At bare minimum naming sucks
-> here. Also there is no symmetry with the intersection API. But I would argue
-
-I meant overlaps, sorry for the confusion.
-
-> to use resource_contains() and just provide necessary parameter with both
-> start and end to be set at the same value.
+> Signed-off-by: Liangyan <liangyan.peng@bytedance.com>
+> ---
+>   arch/x86/kernel/kvm.c | 18 +++++++++---------
+>   1 file changed, 9 insertions(+), 9 deletions(-)
 > 
-> 	struct resource r = DEFINE_RES...(addr);
+> diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
+> index 921c1c783bc1..9080544a4007 100644
+> --- a/arch/x86/kernel/kvm.c
+> +++ b/arch/x86/kernel/kvm.c
+> @@ -1072,6 +1072,15 @@ static void kvm_wait(u8 *ptr, u8 val)
+>    */
+>   void __init kvm_spinlock_init(void)
+>   {
+> +	/*
+> +	 * Disable PV spinlocks and use native qspinlock when dedicated pCPUs
+> +	 * are available.
+> +	 */
+> +	if (kvm_para_has_hint(KVM_HINTS_REALTIME)) {
+> +		pr_info("PV spinlocks disabled with KVM_HINTS_REALTIME hints\n");
+> +		goto out;
+> +	}
+> +
+>   	/*
+>   	 * In case host doesn't support KVM_FEATURE_PV_UNHALT there is still an
+>   	 * advantage of keeping virt_spin_lock_key enabled: virt_spin_lock() is
+> @@ -1082,15 +1091,6 @@ void __init kvm_spinlock_init(void)
+>   		return;
+>   	}
+>   
+> -	/*
+> -	 * Disable PV spinlocks and use native qspinlock when dedicated pCPUs
+> -	 * are available.
+> -	 */
+> -	if (kvm_para_has_hint(KVM_HINTS_REALTIME)) {
+> -		pr_info("PV spinlocks disabled with KVM_HINTS_REALTIME hints\n");
+> -		goto out;
+> -	}
+> -
+>   	if (num_possible_cpus() == 1) {
+>   		pr_info("PV spinlocks disabled, single CPU\n");
+>   		goto out;
 > 
-> 	if (resource_contains, res, &r)
-> 		...do stuff...
-
--- 
-With Best Regards,
-Andy Shevchenko
-
 
 
