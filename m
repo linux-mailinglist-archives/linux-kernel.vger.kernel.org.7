@@ -1,618 +1,378 @@
-Return-Path: <linux-kernel+bounces-712645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-712647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB826AF0C8D
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 09:26:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4685AF0C93
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 09:29:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9F8E1898330
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 07:27:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1BEB3ADC6B
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 07:28:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C78A922DA0C;
-	Wed,  2 Jul 2025 07:26:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EBB822DA1B;
+	Wed,  2 Jul 2025 07:29:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="E7p5OuCL"
-Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="vntlFDdd"
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2040.outbound.protection.outlook.com [40.107.100.40])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BEA41A5BA4;
-	Wed,  2 Jul 2025 07:26:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751441199; cv=none; b=RlFWgHc7hZYTGvaIxmQ+Ebft45GcBabS412uFYeTtCwwbTaPi0AdcRaPoBExwYflg/JMqlzqcq56MnmSpMW1N5bFHYKzU1IdhqkcNVssHYOFCGilMIy9QKEekv9MOKd15+5RIBTbfVxqZw9bEK9BJDEAlDIe5z5l6+rVMyHO3Gs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751441199; c=relaxed/simple;
-	bh=xPH4Dg980CBqcKchGjGg6ihIfDaeksXeD86PHEi8g2U=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=Q9nwpR5HujzjgMuzUuM1Ne3amUypj6R19LgRQ4eM5vh9YXdI92v+1LUSrqGk5PT3vcbT7h6z7T68u97e30PvQ3fZjAdAxckcjAWAFaAg7gBbqo9vjGDyfClENcWf9b11fMH5p6/a84swv5knTISEYZKPsR9ZcuQJgqsdH7/0cGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=E7p5OuCL; arc=none smtp.client-ip=193.68.50.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
-Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id C2842A01EB;
-	Wed,  2 Jul 2025 09:26:33 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:from:from:message-id:mime-version:reply-to:subject:subject:to
-	:to; s=mail; bh=L9mawu75BttQ0R8C0ZKgWcwI6qvXco1im84vXfksbO0=; b=
-	E7p5OuCL+Tm2kGTpFi22oIrg11BIW/490a0M3wYYzBlE7oqkHBDTqlJDNZBLeMxt
-	EsKeby/UcPKxqV+ZIC4MPMVr+FeEUEd/Nu/0ikiVUntYE9Kcx+Gp+lXr/u/jl21w
-	RPJIr2nWPDPejTs9b7D/2sX3vllk8IsdIoCXTq4DXRjNho838srhtBztkcvDSzmL
-	pj737mIY/GejPhP8EhmkDpjHOJPycuap7jOgxTM4MO804duewTXOUviIIrY60kqE
-	GLU5j8AXOf7JdkJ6I6F4h3aTJSaUD96eZhMaHFDMyOQ9MCofj8aC5cFOb9yEAl2q
-	ktCFdCnj9C0XNZgedd0nuFRHCwQqanuf0yN1gpjxj6FH8gJLWGFXR7DXtOYC+L+S
-	GqpagFIb5XRkxtKeNzniOmaJMKZM5AW6XY7tt9TPXKNN3r2hTwr7e+YO/A8Bok/q
-	wzTeAnXzXf8auzF37U1tKfSmSxegyryu0HO5NGgJGLTyUGFTzh8gNDgLovT3r1+O
-	Orgdf943/FA9fPzeXy7y7XQfKYN2JFk6WVgcXMYOY6mZuUCi/NTJFCT10ePun9TM
-	h7EGwuYl8vLQinH3VnXeP/L7emLxToanIhCESNk4CjHQLslbFNAx3gYtpp/Gb3nO
-	yz4L4lfGM95yh8KyCrkyZeICnhYxPIFq8GvRGkFMMko=
-From: =?utf-8?q?Bence_Cs=C3=B3k=C3=A1s?= <csokas.bence@prolan.hu>
-Date: Wed, 2 Jul 2025 09:26:30 +0200
-Subject: [PATCH] arm: DT: imx6: hummingboard: Replace license text comment
- with SPDX identifier
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 638261B424F;
+	Wed,  2 Jul 2025 07:29:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.40
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751441346; cv=fail; b=JN85lgCiDoa7f4Dayy5UICluNBHQgQTbOg3xM/FdEFDBRMYSvpIFa9oHD05CJoB2GUhkDIduQXRxaGWzTbpRPYS9ORnzwXsz6G539xhHGYLSh4CynsC0od1aFLO47fDXdywpmoLz3SOUG7LGas5ea4ChVfJr8Fppqhnd9hlZxRo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751441346; c=relaxed/simple;
+	bh=M/x8KZ6/uTPkW6VG6sMFR84G5/O5cOCLHroqX+56bFI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=G9YydS+H6gsRA/6Oxb4S+JZIOTd+z9yr23prGTU0lHWuzxJEDFaVDeIA4UhHmdtHvZr3PdEP7TW44uWyiQCjkj6IdN0iJJyKLvzXswON98z25uoRRtxaob5CaRA6tcuMQ4egNFfppYVY9EsVZ3i7hjmvkUHhtSlV4VYXyBZP5cE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=vntlFDdd; arc=fail smtp.client-ip=40.107.100.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=nZ9vi3cr7Ryjk7gso9T1tgAGUPIw8gsw5cEyhqRy6ff42Rp7Nc5HXBE2vboocvNnsyBlyKdyVcOrXhhbmvFGoMpVJflUNAABaW7JYPq5lt6wdVJwtLj8iG8jC0sKVDfZpVmJ+Q0SuJoF0Zi29hzJJuBAOs+y1FSEcA5SopNtbAp8D1qzG+FdfUqEdwSiLJJZiBdbMlg8npn5x8IFKHIzTSSsRsX7ObpNMz/kbZASeuZv4vb/H5kwlN69S13fXp33GP4rHtUAyo7SIXarViDebQ8X77bBtJUp47Vlzq1y8xEt7fwtDk73rqK4wIjMyyUiku4TLG85CXRDx5g7m3XBsA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=87vRPEoSoVMRg2cW+tsTcXFq+Wsb9sTy1u4FjqeZfZg=;
+ b=qmT4/FpAmu+/Mj0ucfkWg5NgT6UarRCyjMfyWJRxCYYcnhZEqYuufo+N9vXF9WAQe/wq7pm4e2x4SdF89tD9tL+LNHbbKBQsafcOlgg9SU3RuNu0oVjs/aBVZiHmU6gTx32aMfSgleP8feAq3GqnegV8U1Nc+zz3Qx/bpvlzDVoXCmw/wFASh/SzGeX8gNc6QfWJEte1R7uImDGu6d3ayuWo8ljeu5TKlJgPuh1fTPwvaYzaIBk4EsQ6/Gh0HOiB55MgIDlS7pwLJSrRMdS2t3CBb2GsxFTyFYBJmhmYdIlTGLgotSVL7islywmSdEMCd26EzfHWgc1Fi4f/oMXgsg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=87vRPEoSoVMRg2cW+tsTcXFq+Wsb9sTy1u4FjqeZfZg=;
+ b=vntlFDddvLwooIOUMhz7KXSskRL/ihD+ijejqjJnG0Z0Vmw7uirnb56rVw2fRxAt7+NoUCwF0zuVVdcX5CxlZ6Glpt/k/shX58ufQ7kS48XCWD/JQZ5Vsd04s5AOxxRBnmL1HE8f90yMJ9G2wsacUOt737SJCOAhnbe3FICTxHU=
+Received: from PH7P220CA0105.NAMP220.PROD.OUTLOOK.COM (2603:10b6:510:32d::20)
+ by CH1PPF12253E83C.namprd12.prod.outlook.com (2603:10b6:61f:fc00::606) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.25; Wed, 2 Jul
+ 2025 07:28:56 +0000
+Received: from CO1PEPF000044F9.namprd21.prod.outlook.com
+ (2603:10b6:510:32d:cafe::4c) by PH7P220CA0105.outlook.office365.com
+ (2603:10b6:510:32d::20) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8901.21 via Frontend Transport; Wed,
+ 2 Jul 2025 07:28:56 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ CO1PEPF000044F9.mail.protection.outlook.com (10.167.241.199) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8922.1 via Frontend Transport; Wed, 2 Jul 2025 07:28:55 +0000
+Received: from SATLEXMB05.amd.com (10.181.40.146) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 2 Jul
+ 2025 02:28:55 -0500
+Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB05.amd.com
+ (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 2 Jul
+ 2025 02:28:54 -0500
+Received: from [10.65.159.153] (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Wed, 2 Jul 2025 02:28:51 -0500
+Message-ID: <558ad3d6-7349-40f1-ba06-0fa46701b247@amd.com>
+Date: Wed, 2 Jul 2025 15:28:50 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] drm/amdgpu: move GTT to SHM after eviction for
+ hibernation
+To: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, "Zhang,
+ GuoQing (Sam)" <GuoQing.Zhang@amd.com>, "rafael@kernel.org"
+	<rafael@kernel.org>, "len.brown@intel.com" <len.brown@intel.com>,
+	"pavel@kernel.org" <pavel@kernel.org>, "Deucher, Alexander"
+	<Alexander.Deucher@amd.com>, "Limonciello, Mario"
+	<Mario.Limonciello@amd.com>, "Lazar, Lijo" <Lijo.Lazar@amd.com>
+CC: "Zhao, Victor" <Victor.Zhao@amd.com>, "Chang, HaiJun"
+	<HaiJun.Chang@amd.com>, "Ma, Qing (Mark)" <Qing.Ma@amd.com>,
+	"amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20250630104116.3050306-1-guoqing.zhang@amd.com>
+ <20250630104116.3050306-2-guoqing.zhang@amd.com>
+ <ce04e266-6c3f-4256-aade-bafca8609ab3@amd.com>
+ <DM4PR12MB5937FFB3E121E489A261785DE541A@DM4PR12MB5937.namprd12.prod.outlook.com>
+ <ba843972-f564-4817-8651-b3b776c5f375@amd.com>
+Content-Language: en-US
+From: Samuel Zhang <guoqzhan@amd.com>
+In-Reply-To: <ba843972-f564-4817-8651-b3b776c5f375@amd.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-Message-ID: <20250702-hb-dts-lic-v1-1-bf15c0a74577@prolan.hu>
-X-B4-Tracking: v=1; b=H4sIACXfZGgC/x3MTQrCQAxA4auUrA3MD7bgVYqLTBqdgI4lKSKU3
- t3R5bd4bwcXU3G4DDuYvNX11TriaQCu1O6CunRDCukcppCwFlw2x4cyMtEYOMecY4IerCY3/fx
- n87W7kAsWo8b1t3iSb2JwHF+EY3AWdQAAAA==
-To: Russell King <linux@armlinux.org.uk>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam
-	<festevam@gmail.com>
-CC: <devicetree@vger.kernel.org>, <imx@lists.linux.dev>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	Rabeeh Khoury <rabeeh@solid-run.com>, =?utf-8?q?Bence_Cs=C3=B3k=C3=A1s?=
-	<csokas.bence@prolan.hu>
-X-Mailer: b4 0.13.0
-X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1751441191;VERSION=7994;MC=2363341622;ID=348886;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
-X-ESET-Antispam: OK
-X-EsetResult: clean, is OK
-X-EsetId: 37303A29BB64155D6C7364
-
-Replace verbatim license text with a `SPDX-License-Identifier`
-
-The comment heades mis-attributes this license to be "X11", but the
-license text does not include the last line "Except as contained in this
-notice, the name of the X Consortium shall not be used in advertising or
-otherwise to promote the sale, use or other dealings in this Software
-without prior written authorization from the X Consortium.". Therefore,
-this license is actually equivalent to the SPDX "MIT" license (confirmed
-by text diffing).
-
-On top, half of the files have the fragment "either version 2 of the
-License" for some reason, and not follow up with "or any later version".
-So the resulting SPDX license is still "GPL-2.0-only".
-
-Cc: Rabeeh Khoury <rabeeh@solid-run.com>
-Signed-off-by: Bence Csókás <csokas.bence@prolan.hu>
----
- .../nxp/imx/imx6dl-hummingboard2-emmc-som-v15.dts  | 39 +---------------------
- .../dts/nxp/imx/imx6dl-hummingboard2-som-v15.dts   | 39 +---------------------
- arch/arm/boot/dts/nxp/imx/imx6dl-hummingboard2.dts | 38 +--------------------
- arch/arm/boot/dts/nxp/imx/imx6dl-solidsense.dts    | 38 +--------------------
- .../nxp/imx/imx6q-hummingboard2-emmc-som-v15.dts   | 39 +---------------------
- .../dts/nxp/imx/imx6q-hummingboard2-som-v15.dts    | 39 +---------------------
- arch/arm/boot/dts/nxp/imx/imx6q-hummingboard2.dts  | 38 +--------------------
- arch/arm/boot/dts/nxp/imx/imx6q-solidsense.dts     | 38 +--------------------
- .../dts/nxp/imx/imx6qdl-hummingboard2-emmc.dtsi    | 39 +---------------------
- .../boot/dts/nxp/imx/imx6qdl-hummingboard2.dtsi    | 38 +--------------------
- 10 files changed, 10 insertions(+), 375 deletions(-)
-
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6dl-hummingboard2-emmc-som-v15.dts b/arch/arm/boot/dts/nxp/imx/imx6dl-hummingboard2-emmc-som-v15.dts
-index 80313c13bcdb..71cf5ce84a99 100644
---- a/arch/arm/boot/dts/nxp/imx/imx6dl-hummingboard2-emmc-som-v15.dts
-+++ b/arch/arm/boot/dts/nxp/imx/imx6dl-hummingboard2-emmc-som-v15.dts
-@@ -1,45 +1,8 @@
-+// SPDX-License-Identifier: (GPL-2.0-only OR MIT)
- /*
-  * Device Tree file for SolidRun HummingBoard2
-  * Copyright (C) 2015 Rabeeh Khoury <rabeeh@solid-run.com>
-  * Based on work by Russell King
-- *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPL or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This file is free software; you can redistribute it and/or
-- *     modify it under the terms of the GNU General Public License as
-- *     published by the Free Software Foundation; either version 2 of the
-- *     License.
-- *
-- *     This file is distributed in the hope that it will be useful
-- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *     GNU General Public License for more details.
-- *
-- * Or, alternatively
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED , WITHOUT WARRANTY OF ANY KIND
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- /dts-v1/;
- 
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6dl-hummingboard2-som-v15.dts b/arch/arm/boot/dts/nxp/imx/imx6dl-hummingboard2-som-v15.dts
-index e61ef1156f8b..fed260a9fdc4 100644
---- a/arch/arm/boot/dts/nxp/imx/imx6dl-hummingboard2-som-v15.dts
-+++ b/arch/arm/boot/dts/nxp/imx/imx6dl-hummingboard2-som-v15.dts
-@@ -1,45 +1,8 @@
-+// SPDX-License-Identifier: (GPL-2.0-only OR MIT)
- /*
-  * Device Tree file for SolidRun HummingBoard2
-  * Copyright (C) 2015 Rabeeh Khoury <rabeeh@solid-run.com>
-  * Based on work by Russell King
-- *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPL or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This file is free software; you can redistribute it and/or
-- *     modify it under the terms of the GNU General Public License as
-- *     published by the Free Software Foundation; either version 2 of the
-- *     License.
-- *
-- *     This file is distributed in the hope that it will be useful
-- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *     GNU General Public License for more details.
-- *
-- * Or, alternatively
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED , WITHOUT WARRANTY OF ANY KIND
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- /dts-v1/;
- 
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6dl-hummingboard2.dts b/arch/arm/boot/dts/nxp/imx/imx6dl-hummingboard2.dts
-index b12cd87f3f94..4e176db56840 100644
---- a/arch/arm/boot/dts/nxp/imx/imx6dl-hummingboard2.dts
-+++ b/arch/arm/boot/dts/nxp/imx/imx6dl-hummingboard2.dts
-@@ -1,43 +1,7 @@
-+// SPDX-License-Identifier: (GPL-2.0-only OR MIT)
- /*
-  * Copyright (C) 2015 Rabeeh Khoury <rabeeh@solid-run.com>
-  * Based on dt work by Russell King
-- *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPL or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This file is free software; you can redistribute it and/or
-- *     modify it under the terms of the GNU General Public License
-- *     version 2 as published by the Free Software Foundation.
-- *
-- *     This file is distributed in the hope that it will be useful,
-- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *     GNU General Public License for more details.
-- *
-- * Or, alternatively,
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use,
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- /dts-v1/;
- 
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6dl-solidsense.dts b/arch/arm/boot/dts/nxp/imx/imx6dl-solidsense.dts
-index 2a3699adbed0..fdced9daec4d 100644
---- a/arch/arm/boot/dts/nxp/imx/imx6dl-solidsense.dts
-+++ b/arch/arm/boot/dts/nxp/imx/imx6dl-solidsense.dts
-@@ -1,43 +1,7 @@
-+// SPDX-License-Identifier: (GPL-2.0-only OR MIT)
- /*
-  * Copyright (C) 2015 Rabeeh Khoury <rabeeh@solid-run.com>
-  * Based on dt work by Russell King
-- *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPL or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This file is free software; you can redistribute it and/or
-- *     modify it under the terms of the GNU General Public License
-- *     version 2 as published by the Free Software Foundation.
-- *
-- *     This file is distributed in the hope that it will be useful,
-- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *     GNU General Public License for more details.
-- *
-- * Or, alternatively,
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use,
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- /dts-v1/;
- 
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6q-hummingboard2-emmc-som-v15.dts b/arch/arm/boot/dts/nxp/imx/imx6q-hummingboard2-emmc-som-v15.dts
-index 1998ebfa0fe0..af458873b893 100644
---- a/arch/arm/boot/dts/nxp/imx/imx6q-hummingboard2-emmc-som-v15.dts
-+++ b/arch/arm/boot/dts/nxp/imx/imx6q-hummingboard2-emmc-som-v15.dts
-@@ -1,45 +1,8 @@
-+// SPDX-License-Identifier: (GPL-2.0-only OR MIT)
- /*
-  * Device Tree file for SolidRun HummingBoard2
-  * Copyright (C) 2015 Rabeeh Khoury <rabeeh@solid-run.com>
-  * Based on work by Russell King
-- *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPL or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This file is free software; you can redistribute it and/or
-- *     modify it under the terms of the GNU General Public License as
-- *     published by the Free Software Foundation; either version 2 of the
-- *     License.
-- *
-- *     This file is distributed in the hope that it will be useful
-- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *     GNU General Public License for more details.
-- *
-- * Or, alternatively
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED , WITHOUT WARRANTY OF ANY KIND
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- /dts-v1/;
- 
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6q-hummingboard2-som-v15.dts b/arch/arm/boot/dts/nxp/imx/imx6q-hummingboard2-som-v15.dts
-index d3ad7329cd6d..509724df7f82 100644
---- a/arch/arm/boot/dts/nxp/imx/imx6q-hummingboard2-som-v15.dts
-+++ b/arch/arm/boot/dts/nxp/imx/imx6q-hummingboard2-som-v15.dts
-@@ -1,45 +1,8 @@
-+// SPDX-License-Identifier: (GPL-2.0-only OR MIT)
- /*
-  * Device Tree file for SolidRun HummingBoard2
-  * Copyright (C) 2015 Rabeeh Khoury <rabeeh@solid-run.com>
-  * Based on work by Russell King
-- *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPL or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This file is free software; you can redistribute it and/or
-- *     modify it under the terms of the GNU General Public License as
-- *     published by the Free Software Foundation; either version 2 of the
-- *     License.
-- *
-- *     This file is distributed in the hope that it will be useful
-- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *     GNU General Public License for more details.
-- *
-- * Or, alternatively
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED , WITHOUT WARRANTY OF ANY KIND
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- /dts-v1/;
- 
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6q-hummingboard2.dts b/arch/arm/boot/dts/nxp/imx/imx6q-hummingboard2.dts
-index 5249f53dcdbc..704ba5b91efa 100644
---- a/arch/arm/boot/dts/nxp/imx/imx6q-hummingboard2.dts
-+++ b/arch/arm/boot/dts/nxp/imx/imx6q-hummingboard2.dts
-@@ -1,43 +1,7 @@
-+// SPDX-License-Identifier: (GPL-2.0-only OR MIT)
- /*
-  * Copyright (C) 2015 Rabeeh Khoury <rabeeh@solid-run.com>
-  * Based on dt work by Russell King
-- *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPL or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This file is free software; you can redistribute it and/or
-- *     modify it under the terms of the GNU General Public License
-- *     version 2 as published by the Free Software Foundation.
-- *
-- *     This file is distributed in the hope that it will be useful,
-- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *     GNU General Public License for more details.
-- *
-- * Or, alternatively,
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use,
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- /dts-v1/;
- 
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6q-solidsense.dts b/arch/arm/boot/dts/nxp/imx/imx6q-solidsense.dts
-index 0e6a325df363..d929f131ff41 100644
---- a/arch/arm/boot/dts/nxp/imx/imx6q-solidsense.dts
-+++ b/arch/arm/boot/dts/nxp/imx/imx6q-solidsense.dts
-@@ -1,43 +1,7 @@
-+// SPDX-License-Identifier: (GPL-2.0-only OR MIT)
- /*
-  * Copyright (C) 2015 Rabeeh Khoury <rabeeh@solid-run.com>
-  * Based on dt work by Russell King
-- *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPL or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This file is free software; you can redistribute it and/or
-- *     modify it under the terms of the GNU General Public License
-- *     version 2 as published by the Free Software Foundation.
-- *
-- *     This file is distributed in the hope that it will be useful,
-- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *     GNU General Public License for more details.
-- *
-- * Or, alternatively,
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use,
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- /dts-v1/;
- 
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6qdl-hummingboard2-emmc.dtsi b/arch/arm/boot/dts/nxp/imx/imx6qdl-hummingboard2-emmc.dtsi
-index c3efb001c515..87b41d770e80 100644
---- a/arch/arm/boot/dts/nxp/imx/imx6qdl-hummingboard2-emmc.dtsi
-+++ b/arch/arm/boot/dts/nxp/imx/imx6qdl-hummingboard2-emmc.dtsi
-@@ -1,44 +1,7 @@
-+// SPDX-License-Identifier: (GPL-2.0-only OR MIT)
- /*
-  * Device Tree file for SolidRun HummingBoard2
-  * Copyright (C) 2015 Rabeeh Khoury <rabeeh@solid-run.com>
-- *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPL or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This file is free software; you can redistribute it and/or
-- *     modify it under the terms of the GNU General Public License as
-- *     published by the Free Software Foundation; either version 2 of the
-- *     License.
-- *
-- *     This file is distributed in the hope that it will be useful,
-- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *     GNU General Public License for more details.
-- *
-- * Or, alternatively,
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- 
- &iomuxc {
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6qdl-hummingboard2.dtsi b/arch/arm/boot/dts/nxp/imx/imx6qdl-hummingboard2.dtsi
-index 3069e1738ba2..1e41e6fdd5b4 100644
---- a/arch/arm/boot/dts/nxp/imx/imx6qdl-hummingboard2.dtsi
-+++ b/arch/arm/boot/dts/nxp/imx/imx6qdl-hummingboard2.dtsi
-@@ -1,42 +1,6 @@
-+// SPDX-License-Identifier: (GPL-2.0-only OR MIT)
- /*
-  * Copyright (C) 2015 Rabeeh Khoury <rabeeh@solid-run.com>
-- *
-- * This file is dual-licensed: you can use it either under the terms
-- * of the GPL or the X11 license, at your option. Note that this dual
-- * licensing only applies to this file, and not this project as a
-- * whole.
-- *
-- *  a) This file is free software; you can redistribute it and/or
-- *     modify it under the terms of the GNU General Public License
-- *     version 2 as published by the Free Software Foundation.
-- *
-- *     This file is distributed in the hope that it will be useful,
-- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *     GNU General Public License for more details.
-- *
-- * Or, alternatively,
-- *
-- *  b) Permission is hereby granted, free of charge, to any person
-- *     obtaining a copy of this software and associated documentation
-- *     files (the "Software"), to deal in the Software without
-- *     restriction, including without limitation the rights to use,
-- *     copy, modify, merge, publish, distribute, sublicense, and/or
-- *     sell copies of the Software, and to permit persons to whom the
-- *     Software is furnished to do so, subject to the following
-- *     conditions:
-- *
-- *     The above copyright notice and this permission notice shall be
-- *     included in all copies or substantial portions of the Software.
-- *
-- *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-- *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-- *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-- *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-- *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- #include <dt-bindings/sound/fsl-imx-audmux.h>
- 
-
----
-base-commit: 66701750d5565c574af42bef0b789ce0203e3071
-change-id: 20250702-hb-dts-lic-caa60c313312
-
-Best regards,
--- 
-Bence Csókás <csokas.bence@prolan.hu>
+Received-SPF: None (SATLEXMB05.amd.com: guoqzhan@amd.com does not designate
+ permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PEPF000044F9:EE_|CH1PPF12253E83C:EE_
+X-MS-Office365-Filtering-Correlation-Id: 041192a2-30cd-43f6-dd17-08ddb93a1a6c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|82310400026|1800799024|376014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?MGM5VVJuN0RLZHZ3K0hmUEZZazRoMThEZktmZmx5RVRaSk4rVC9PQyt5MzJZ?=
+ =?utf-8?B?WnZyQ0d3ckpaQ3dIVllnSVBaMVhna3ExRGltMW5VemRUUERreWpoR3dmR1BK?=
+ =?utf-8?B?TWpWRmZCbEIxYVhGQU4yWFFlQzJIcFNjSlJKT3p3KzNaUUZ0Zkl5NTB2V1Zi?=
+ =?utf-8?B?S0czTUkxZ0N1Y2FlTHcrbU5SOE10VFoxV1MvNUZWR1pOd1pObXRKTXBqcDlO?=
+ =?utf-8?B?SlBPNjhwUi9JelQrYzJjTWl6alZNazVHWEVDTk0xWmd1ZXFnb1VIS0NEdXk1?=
+ =?utf-8?B?dkMzV1hoSEVIMXZMY0pUY0JkVkU2WW9KUWR5am1kRHlhVDM5dERGMDBoSzZ5?=
+ =?utf-8?B?RzE4RXNwVWVrczdvRU5MQjVMSXFnQnlPVE02eHJLdzlIQkFXRCtrSnd4VlFs?=
+ =?utf-8?B?TlorcUx1dkpZTWhuckw2RUp4QUxvV056bFl2a2NSQUhwQkxZTjRQcmFOazhk?=
+ =?utf-8?B?aUk0aUpCcVhJdWdxendXa3c3T1RXQzJ6SXNhd1VJdWpRbFFHVmg3SHJYWVdC?=
+ =?utf-8?B?R29MaHlSeFc3dTQ2aXF5K05VaHFuaUF1OVFXRUFBWmV6QWxvOEpETkVqUlJE?=
+ =?utf-8?B?NGozMW1DV0MrQXpoTWVnd1FOYndBZlBQM3FFRy96b05ndGpuTE85bGUyNzFt?=
+ =?utf-8?B?WUZsQzVGVmVyQkkrdUNacmpEaERWYU43NVRHQUVlV01QcU9zOE5wM3N4TjdV?=
+ =?utf-8?B?a0xYRzNibHYyK0wwQU9qK0xKcW9na1V2Nkl6eWlZamdXa2RCbEJySUpYeDF6?=
+ =?utf-8?B?U25Yc2VKT0VWYzFCVEZ5Ri9KTVE2ajNadWg2SHlOSC9SWUhnd0VlbDZkU2ht?=
+ =?utf-8?B?cm8zK3A0dGpkaGFoSWEzMGM4Q1FlVmpRaEZnSVk5cVBuZXlDdVIvSXlIL3Rw?=
+ =?utf-8?B?NkRGbld6NnJjYWVERVZ4R0h0TWNTWHUyQi9MVWtuYWpPeFN2U3JzTkJuS3h2?=
+ =?utf-8?B?RXR0NnhTclYvai9LWmZEa2NNWDNJdWYvSDFBN0czUGs4K3BxSUtkR1VzTUtJ?=
+ =?utf-8?B?QWZtWlRQay9wZUx2bkFYK0F6NWFmUGFIVVFrT2lYcjBxWUNiaTRjMjN0dTNw?=
+ =?utf-8?B?MzhjY2lhRlNSeVhjMFpBK1VDclVvOXM0THFmUG1uVHNzS3UvZCs5V0NQZUlw?=
+ =?utf-8?B?SmxTS2gyWkUzd1R2QSszVkFhcVpwWEM4TFh0SlBTTW9pUzJPSVYxeWt6NnRP?=
+ =?utf-8?B?UTl2UXlwV0FRVXF2RHFjamc5aGhtcHRiMWgvOCtwUHJxQTFkV3VLUmZKOU5W?=
+ =?utf-8?B?czBVN2h4anZxeFFNVGZuZ3pnUkhpdHdwRnBSc1NpenFDYm82WEpzdDlaQWVG?=
+ =?utf-8?B?b2dBdEUzTDhJVEVhcTdtOVBwODZLMEZ6d01PSy9EdktWdE9INFZEVDJOck1Z?=
+ =?utf-8?B?NlBLanJiMHZBcXFHcTRBUHdjMm5UOFQyYkF3M0N2NURzU3FYNXFzeGE3UXll?=
+ =?utf-8?B?VG9mSjZVQ0RVcHJyd3U2MlV3cHhEKzh4WHA5dnk4YkI0S2hwNU1SSlNocVlE?=
+ =?utf-8?B?N05zMGExRFAzdU1TQ2Y5M1hiOVpyTmNBaDhrc05SMHlBLzI3eWd6c3RReXM2?=
+ =?utf-8?B?clNJZENVS2Z6NnErMXB2ZFlSY0Z4UnAwUm43azV0MFgzNXpybGo1NlJBcEs4?=
+ =?utf-8?B?MENNVHhDdGVwV1gxTkwrd1NwODJhc2ZLSHhkWWw1OXFVTXZQS0VjTVJmNmdC?=
+ =?utf-8?B?Vk53R0xQY2MyeFA5bE9JbXpJWk50MndFVmtMa0tZSXhWK2lnbmIyZ3NCeVVN?=
+ =?utf-8?B?Q09ERDFKUm1UTWxhcDdYby9yUnJPUmxaR0xJd0V5UlVaV1kxNzB0WTZ4aDJI?=
+ =?utf-8?B?Skd2Q1phekd0cFhPalJ6SVVFREFBUkFoaFphN09nSkpkUnhNUnVCOEY3MFhJ?=
+ =?utf-8?B?SEhuVkNtV3ZqRnY0bXVVZWJsTXpweWNXQThMMWl4b0lyQ0tSejVqYS9wMTdM?=
+ =?utf-8?B?Qzg3RlZTamo1VlVGQjR1ZWZmTWlodG1DOXljd3ZsbTc4eTZSMnJZbmNCSmFP?=
+ =?utf-8?B?c2k3NmQwTnIxQmVVMXJsdk95NjRRT3ZFVlpPbjFpK2ZsWHdFN21hQ1dVeUUv?=
+ =?utf-8?B?M2xOUzNZaFg2RzR3VXZUem5KM0hIUkcxdGlFZz09?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(1800799024)(376014)(921020);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Jul 2025 07:28:55.7726
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 041192a2-30cd-43f6-dd17-08ddb93a1a6c
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CO1PEPF000044F9.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH1PPF12253E83C
 
 
+On 2025/7/1 16:22, Christian König wrote:
+> On 01.07.25 10:18, Zhang, GuoQing (Sam) wrote:
+>> [AMD Official Use Only - AMD Internal Distribution Only]
+>>
+>>
+>> Hi Christian,
+>>
+>>   
+>>
+>> Thank you for the feedback.
+>>
+>>   
+>>
+>> For “return ret < 0 ? ret : 0;”, it is equivalent to “return ret;” since ret is always <= 0 after the loop.
+> No it isn't.
+>
+> ttm_global_swapout() returns the number of pages swapped out and only a negative error code if something went wrong.
+
+
+/**
+  * move GTT BOs to shmem for hibernation.
+  *
+  * returns 0 on success, negative on failure.
+  */
+int ttm_device_prepare_hibernation(void)
+{
+     struct ttm_operation_ctx ctx = {
+         .interruptible = false,
+         .no_wait_gpu = false,
+         .force_alloc = true
+     };
+     int ret;
+
+     do {
+         ret = ttm_global_swapout(&ctx, GFP_KERNEL);
+     } while (ret > 0);
+     return ret;
+}
+
+This is the new code version.
+If ttm_global_swapout() return positive number, the while loop will 
+continue to the next iteration.
+The while loop stops only when ttm_global_swapout() returns 0 or 
+negative number. In both case, the new function can just return the ret.
+
+The ret values printed in the do while loop:
+[   53.745892] [TTM DEVICE] ttm_device_prepare_hibernation:164 ret 512
+[   53.950975] [TTM DEVICE] ttm_device_prepare_hibernation:164 ret 35840
+[   53.951713] [TTM DEVICE] ttm_device_prepare_hibernation:164 ret 9
+[   67.712196] [TTM DEVICE] ttm_device_prepare_hibernation:164 ret 2187264
+[   67.713726] [TTM DEVICE] ttm_device_prepare_hibernation:164 ret 512
+[   67.759212] [TTM DEVICE] ttm_device_prepare_hibernation:164 ret 32768
+[   67.761946] [TTM DEVICE] ttm_device_prepare_hibernation:164 ret 1024
+[   67.762685] [TTM DEVICE] ttm_device_prepare_hibernation:164 ret 85
+[   67.763518] [TTM DEVICE] ttm_device_prepare_hibernation:164 ret 175
+[   67.767318] [TTM DEVICE] ttm_device_prepare_hibernation:164 ret 2367
+[   67.767942] [TTM DEVICE] ttm_device_prepare_hibernation:164 ret 1
+[   67.768499] [TTM DEVICE] ttm_device_prepare_hibernation:164 ret 1
+[   67.769054] [TTM DEVICE] ttm_device_prepare_hibernation:164 ret 1
+...
+[   67.783554] [TTM DEVICE] ttm_device_prepare_hibernation:164 ret 1
+[   67.785755] [TTM DEVICE] ttm_device_prepare_hibernation:164 ret 1
+[   67.788607] [TTM DEVICE] ttm_device_prepare_hibernation:164 ret 1
+[   67.789906] [TTM DEVICE] ttm_device_prepare_hibernation:164 ret 0
+
+
+Regards
+Sam
+
+
+
+>
+> And it's probably not a good idea to return that from the new function.
+>
+> Regards,
+> Christian.
+>
+>>   
+>>
+>> For all other comments, I will revise the patch accordingly in v2.
+>>
+>>   
+>>
+>> Regards
+>>
+>> Sam
+>>
+>>   
+>>
+>>   
+>>
+>> *From: *Koenig, Christian <Christian.Koenig@amd.com>
+>> *Date: *Monday, June 30, 2025 at 19:54
+>> *To: *Zhang, GuoQing (Sam) <GuoQing.Zhang@amd.com>, rafael@kernel.org <rafael@kernel.org>, len.brown@intel.com <len.brown@intel.com>, pavel@kernel.org <pavel@kernel.org>, Deucher, Alexander <Alexander.Deucher@amd.com>, Limonciello, Mario <Mario.Limonciello@amd.com>, Lazar, Lijo <Lijo.Lazar@amd.com>
+>> *Cc: *Zhao, Victor <Victor.Zhao@amd.com>, Chang, HaiJun <HaiJun.Chang@amd.com>, Ma, Qing (Mark) <Qing.Ma@amd.com>, amd-gfx@lists.freedesktop.org <amd-gfx@lists.freedesktop.org>, dri-devel@lists.freedesktop.org <dri-devel@lists.freedesktop.org>, linux-pm@vger.kernel.org <linux-pm@vger.kernel.org>, linux-kernel@vger.kernel.org <linux-kernel@vger.kernel.org>
+>> *Subject: *Re: [PATCH 1/3] drm/amdgpu: move GTT to SHM after eviction for hibernation
+>>
+>> On 30.06.25 12:41, Samuel Zhang wrote:
+>>> When hibernate with data center dGPUs, huge number of VRAM BOs evicted
+>>> to GTT and takes too much system memory. This will cause hibernation
+>>> fail due to insufficient memory for creating the hibernation image.
+>>>
+>>> Move GTT BOs to shmem in KMD, then shmem to swap disk in kernel
+>>> hibernation code to make room for hibernation image.
+>> This should probably be two patches, one for TTM and then an amdgpu patch to forward the event.
+>>
+>>> Signed-off-by: Samuel Zhang <guoqing.zhang@amd.com>
+>>> ---
+>>>    drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c | 13 ++++++++++++-
+>>>    drivers/gpu/drm/ttm/ttm_resource.c      | 18 ++++++++++++++++++
+>>>    include/drm/ttm/ttm_resource.h          |  1 +
+>>>    3 files changed, 31 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
+>>> index 4d57269c9ca8..5aede907a591 100644
+>>> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
+>>> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
+>>> @@ -2889,6 +2889,7 @@ int amdgpu_fill_buffer(struct amdgpu_bo *bo,
+>>>    int amdgpu_ttm_evict_resources(struct amdgpu_device *adev, int mem_type)
+>>>    {
+>>>          struct ttm_resource_manager *man;
+>>> +     int r;
+>>>    
+>>>          switch (mem_type) {
+>>>          case TTM_PL_VRAM:
+>>> @@ -2903,7 +2904,17 @@ int amdgpu_ttm_evict_resources(struct amdgpu_device *adev, int mem_type)
+>>>                  return -EINVAL;
+>>>          }
+>>>    
+>>> -     return ttm_resource_manager_evict_all(&adev->mman.bdev, man);
+>>> +     r = ttm_resource_manager_evict_all(&adev->mman.bdev, man);
+>>> +     if (r) {
+>>> +             DRM_ERROR("Failed to evict memory type %d\n", mem_type);
+>>> +             return r;
+>>> +     }
+>>> +     if (adev->in_s4 && mem_type == TTM_PL_VRAM) {
+>>> +             r = ttm_resource_manager_swapout();
+>>> +             if (r)
+>>> +                     DRM_ERROR("Failed to swap out, %d\n", r);
+>>> +     }
+>>> +     return r;
+>>>    }
+>>>    
+>>>    #if defined(CONFIG_DEBUG_FS)
+>>> diff --git a/drivers/gpu/drm/ttm/ttm_resource.c b/drivers/gpu/drm/ttm/ttm_resource.c
+>>> index fd41b56e2c66..07b1f5a5afc2 100644
+>>> --- a/drivers/gpu/drm/ttm/ttm_resource.c
+>>> +++ b/drivers/gpu/drm/ttm/ttm_resource.c
+>>> @@ -534,6 +534,24 @@ void ttm_resource_manager_init(struct ttm_resource_manager *man,
+>>>    }
+>>>    EXPORT_SYMBOL(ttm_resource_manager_init);
+>>>    
+>>> +int ttm_resource_manager_swapout(void)
+>> This needs documentation, better placement and a better name.
+>>
+>> First of all put it into ttm_device.c instead of the resource manager.
+>>
+>> Then call it something like ttm_device_prepare_hibernation or similar.
+>>
+>>
+>>> +{
+>>> +     struct ttm_operation_ctx ctx = {
+>>> +             .interruptible = false,
+>>> +             .no_wait_gpu = false,
+>>> +             .force_alloc = true
+>>> +     };
+>>> +     int ret;
+>>> +
+>>> +     while (true) {
+>> Make that:
+>>
+>> do {
+>>          ret = ...
+>> } while (ret > 0);
+>>
+>>> +             ret = ttm_global_swapout(&ctx, GFP_KERNEL);
+>>> +             if (ret <= 0)
+>>> +                     break;
+>>> +     }
+>>> +     return ret;
+>> It's rather pointless to return the number of swapped out pages.
+>>
+>> Make that "return ret < 0 ? ret : 0;
+>>
+>> Regards,
+>> Christian.
+>>
+>>> +}
+>>> +EXPORT_SYMBOL(ttm_resource_manager_swapout);
+>>> +
+>>>    /*
+>>>     * ttm_resource_manager_evict_all
+>>>     *
+>>> diff --git a/include/drm/ttm/ttm_resource.h b/include/drm/ttm/ttm_resource.h
+>>> index b873be9597e2..46181758068e 100644
+>>> --- a/include/drm/ttm/ttm_resource.h
+>>> +++ b/include/drm/ttm/ttm_resource.h
+>>> @@ -463,6 +463,7 @@ void ttm_resource_manager_init(struct ttm_resource_manager *man,
+>>>    
+>>>    int ttm_resource_manager_evict_all(struct ttm_device *bdev,
+>>>                                     struct ttm_resource_manager *man);
+>>> +int ttm_resource_manager_swapout(void);
+>>>    
+>>>    uint64_t ttm_resource_manager_usage(struct ttm_resource_manager *man);
+>>>    void ttm_resource_manager_debug(struct ttm_resource_manager *man,
 
