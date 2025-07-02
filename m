@@ -1,106 +1,127 @@
-Return-Path: <linux-kernel+bounces-713210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-712289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0FA4AF14F4
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:06:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5A3FAF0729
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 02:06:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C60531C26C48
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 12:06:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B77327AED92
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 00:04:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A3A326D4E7;
-	Wed,  2 Jul 2025 12:05:49 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D2A5A55;
+	Wed,  2 Jul 2025 00:06:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="CVNb94Iv"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1C9826B77A;
-	Wed,  2 Jul 2025 12:05:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06B67163
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 00:06:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751457949; cv=none; b=n3A8oxhdbaqaeyxQhQ4sfiumrTY8vhIbTMCuKyQe0wzsUir0jFpzus0xJmouB7xhtls2pPO/qO6COQlQtvQdRwJos4BtJRb/oBapk+dwn5JbAMxY9ETERfUsK7cpfyVrOU1A9VLJkqITgxVAkt08sJj8jc/kBpJZP+9V3JJyT1g=
+	t=1751414765; cv=none; b=LsLhY97PS6FYnNehKPQKRezLOHxVOsSbfRZf1wJVQ20KnaaBnPe6+0kJqq+TOulLse2gPEWMjPQvkdsfb/u458unaNByJ7jIL5cLmm8qC1B6upc/u5aKTkkTWtTpQmNfIHABcnH94uotevhOdy3VYp2cHhOOdp9flRcJ4UGJjno=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751457949; c=relaxed/simple;
-	bh=xow1Fjv6ss9sNC2NMRzpU0M7suQLL8EpW5X7MD7TVuk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QzR4rmAgZgFlDwDcqCZ1o1doG20YUCDIroT+unCB+oNvpgoD0uwtaxCrgd6963eJv9raMnwezi+tlcTmvBdPd+yaPqmQlJ0woa+368nvGs7WXTljw1x+BblToeQfQVUYqiuVdXAbrNgOK+hWsCB++pjxaDNaPYv/v4LnLKeGsgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [141.14.220.36] (g36.guest.molgen.mpg.de [141.14.220.36])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id E691F61E647AC;
-	Wed, 02 Jul 2025 14:05:17 +0200 (CEST)
-Message-ID: <2684a01d-58e4-437d-a031-08054ec00455@molgen.mpg.de>
-Date: Wed, 2 Jul 2025 14:05:17 +0200
+	s=arc-20240116; t=1751414765; c=relaxed/simple;
+	bh=bIMTi4MWsgaUbmZu8ndOxvFLqagge7bVFXfE8u72634=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RCNOw8WZUzFaDUoY/o/bfVJznbviX18vPEK8IygXEPHIjuyZEYbJN/UqoJXy+Casl3ACSfQTrml+5nz06cIuOeF6XxXj6Gr2dU5+ZzePnNUl555kQ/ejE8jBIaLNPRbQjlfOV/BBFQjDfjCKbrdrZeXJ4nBKTIi4tv/2H39CCl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=CVNb94Iv; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3a6cd1a6fecso6632086f8f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Jul 2025 17:06:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1751414760; x=1752019560; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ce3zDRJVoRRIoVuOih+y1uZIYHn+OOhDiG27OLlb9rE=;
+        b=CVNb94IvQLjV3Kc0WC6Ibs+Hn96TZhMGBiKW0BKCKqBQ/sFqmF8HLm7AQUDUtwqAF5
+         P4svXkkMAxLVTWrrF7uLZUjdace7iRHzoET/dR+5G9BMn64vwp8OcDUU2h81O41g8kV+
+         RDHL7G9RcMRjTwfBpDBDQi2QDm0w/RyiptwPLehfdv7Y0yXGeRNwCMwvx4cnngNMO4lc
+         mVg8pEanOfRbrUKOmPkQFIIBAk6mqV7Q1BUjBaNQMGET9F/atmK+hTYylh5hOTa7VBbz
+         MAFBmwvN5C46Shv1i+iv7K07DHXgxLZWHFPygr6k1W6aVQcR0neULyutljOw5NvQ3kgL
+         JboA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751414760; x=1752019560;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ce3zDRJVoRRIoVuOih+y1uZIYHn+OOhDiG27OLlb9rE=;
+        b=osyrBhanX4XEsSB9wX/HD40pXw/fYwmAM2hDM8TZxiNEwiP7fvedyOVSZqS7S5w0A1
+         LaEGA0ke5bka2Q7/MkhIC9YcFJgj5Lf6DLp5obmcne3ayVRu014s6iolaB02ML7H2oTt
+         OllgGv4mdeCni8c+lwHWrILMPTeHayuROCZVQOAhM+kSIT/cofVqlrUK9zHGNdqaKQTS
+         1Yrh//aXbVcqKYs+1blsNbMyZ8lRAnlB9pFyhYtdAGDQsrPbIVPS4KKWdzgREvTlHk2R
+         8r6pzzsdpX2uySFJkkP8yKssY/gVMtTfIHdImx53G33OQguxGmo9/4LrgcVad40ZqTpN
+         2Ksg==
+X-Forwarded-Encrypted: i=1; AJvYcCUF/7C4sKqlyadA1xnBOrlM4Km9hK37qs075E6I691EvcXqGmDi1vmK70+xVDDazkCwqU721/blal6deP8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzxo+u1hZCFY8TQW+MAv5RVL01WxMIDj9SN5hOxrK+KMrEjrNMe
+	AIou3Ndl4JIizPjvM3Z2jiPqlxdamYX80atJa5a2pIqjqI/+JERKhUluXo33IxdroA==
+X-Gm-Gg: ASbGncvDLlgJdxGa8UClOUeByaBy5gf11go3xu8ayCf7NAkP6BaNCzGspf04IPl+0li
+	eTi2jd0sp1jdnEi6E3BptCOtwaIvou2r5dBerHAqDbRDEezAte5qdkjzqiSfroekiDk8awnFTqw
+	uxIo28Oqql91PA2TImrGe8WWc1O9BdsrzI8xWK7rbDnAqJYPQFER9OLMgBY0WUdutQvHcvgmLmp
+	wkcweNDHohNU4UVnMvJnWhaYvutlaShwiu+SqWmDciFrjkJQnTr88hJdIQeTaiWiwFeH1bCSgZT
+	Q9eXbgJ5v1g9D4e/fSTATAV2tWDrPkn7WFDNsgw/lB2Wemv3ke5SDcyaq3B1+w==
+X-Google-Smtp-Source: AGHT+IHgFK+x5iOOCR7s+Jwca4C328dxRJPFWJLVCE70nVrrFL6mJkkvUSJeMxzZnHxSrAYyY3US1Q==
+X-Received: by 2002:a05:6000:2dc1:b0:3a4:d83a:eb4c with SMTP id ffacd0b85a97d-3b2013f8c90mr292003f8f.57.1751414760277;
+        Tue, 01 Jul 2025 17:06:00 -0700 (PDT)
+Received: from MiWiFi-CR6608-srv ([202.127.77.110])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-318c14fd6b5sm12475850a91.35.2025.07.01.17.05.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Jul 2025 17:05:59 -0700 (PDT)
+Date: Wed, 2 Jul 2025 08:05:23 -0400
+From: Wei Gao <wegao@suse.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Terry Tritton <terry.tritton@linaro.org>, Shuah Khan <shuah@kernel.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
+	ttritton@google.com, linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] selftests/futex: Convert 32bit timespec struct to
+ 64bit version for 32bit compatibility mode
+Message-ID: <aGUggwe_gJon_2E3@MiWiFi-CR6608-srv>
+References: <20250701142313.9880-1-terry.tritton@linaro.org>
+ <87ikkblkff.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] Bluetooth: ISO: Support SOCK_RCVTSTAMP via CMSG for
- ISO sockets
-To: Yang Li <yang.li@amlogic.com>
-Cc: Marcel Holtmann <marcel@holtmann.org>,
- Johan Hedberg <johan.hedberg@gmail.com>,
- Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, linux-bluetooth@vger.kernel.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250702-iso_ts-v2-1-723d199c8068@amlogic.com>
-Content-Language: en-US
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-In-Reply-To: <20250702-iso_ts-v2-1-723d199c8068@amlogic.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87ikkblkff.ffs@tglx>
 
-Dear Li,
-
-
-Thank you for your patch.
-
-
-Am 02.07.25 um 13:35 schrieb Yang Li via B4 Relay:
-> From: Yang Li <yang.li@amlogic.com>
+On Tue, Jul 01, 2025 at 10:34:28PM +0200, Thomas Gleixner wrote:
+> On Tue, Jul 01 2025 at 15:23, Terry Tritton wrote:
+> > Futex_waitv can not accept old_timespec32 struct, so userspace should
+> > convert it from 32bit to 64bit before syscall in 32bit compatible mode.
+> >
+> > This fix is based off [1]
+> >
+> > Link: https://lore.kernel.org/all/20231203235117.29677-1-wegao@suse.com/ [1]
+> >
+> > Signed-off-by: Wei Gao <wegao@suse.com>
+> > Signed-off-by: Terry Tritton <terry.tritton@linaro.org>
 > 
-> User-space applications (e.g., PipeWire) depend on
-> ISO-formatted timestamps for precise audio sync.
-
-Does PipeWire log anything? It’d be great if you could add how to 
-reproduce the issue including the PipeWire version.
-
-> Signed-off-by: Yang Li <yang.li@amlogic.com>
-> ---
-> Changes in v2:
-> - Support SOCK_RCVTSTAMPNS via CMSG for ISO sockets
-> - Link to v1: https://lore.kernel.org/r/20250429-iso_ts-v1-1-e586f30de6cb@amlogic.com
-> ---
->   net/bluetooth/iso.c | 3 +++
->   1 file changed, 3 insertions(+)
+> This is still wrong.
 > 
-> diff --git a/net/bluetooth/iso.c b/net/bluetooth/iso.c
-> index fc22782cbeeb..6927c593a1d6 100644
-> --- a/net/bluetooth/iso.c
-> +++ b/net/bluetooth/iso.c
-> @@ -2308,6 +2308,9 @@ void iso_recv(struct hci_conn *hcon, struct sk_buff *skb, u16 flags)
->   				goto drop;
->   			}
->   
-> +			/* Record the timestamp to skb*/
-> +			skb->skb_mstamp_ns = le32_to_cpu(hdr->ts);
-> +
->   			len = __le16_to_cpu(hdr->slen);
->   		} else {
->   			struct hci_iso_data_hdr *hdr;
+> If it is based on someone else work, then you need to attribute it
+> Originally-by and omit the Signed-off-by of the original author.
+> 
+> If you just picked it up and adopted it to a later kernel version then
+> you need to add 'From: Original Author' and preserve his Signed-off-by.
 
-Kind regards,
+@Terry @Thomas, Thank you both for the mention in the commit. I appreciate being included.
+I guess above options both good.
 
-Paul
+> 
+> If you collaborated with him, then you want to use Co-developed-by.
+> 
+> All of this is documented in Documentation/process/
+> 
 
