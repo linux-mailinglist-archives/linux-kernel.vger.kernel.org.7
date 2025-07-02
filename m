@@ -1,146 +1,220 @@
-Return-Path: <linux-kernel+bounces-714012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9A78AF61AF
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 20:42:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A12FAF6162
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 20:37:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 299121C28688
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 18:42:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66CC84E557D
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 18:37:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6F7E2F7CE6;
-	Wed,  2 Jul 2025 18:40:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sartura.hr header.i=@sartura.hr header.b="bpKlO2zr"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 155AC248F54;
+	Wed,  2 Jul 2025 18:37:06 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0012.hostedemail.com [216.40.44.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD3E92F7CE3
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 18:40:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C48A2E4992;
+	Wed,  2 Jul 2025 18:37:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751481622; cv=none; b=EQL3iztmQuA9fCOJB2xbr985PEcVEEwstoDhb/n5ij979kB5deAk3ikA+r8hBAI96KImLokEnOIFW5YCH6rhJkHUfEsERDIx5J9Zng1HZxVMYyPCHCDl1H6uBlTjXLYC8D2PrkcJrGDkwsGHXXg5r8/wng9OFDgjeFWSG73MkoE=
+	t=1751481425; cv=none; b=oBHieAtVy3/3dlAM7ifVpeC8kVRpv1VfyCv9uBXqKKWHlBwJdbODQdAvgdX3G1zYjYrjymeVhquJTDfn6nD2zX9ISZNaqEPZ6dJh9bSgWbvlhQ433e32hu4GEcIKXBTqy7nAsH3gFqlJBuLGoYgiT5Y6aT50AosgB/JPPkbd0/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751481622; c=relaxed/simple;
-	bh=uR10k/MNsD2KTqxwxNLmNVi+dmMLfNBNQQvEqJsmDa0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=I5yfVrqOpoJLvDvxAokKF8p1+vsq5YJ72yRp3b+asRU8r7KkIaX5+jOEUinnZu+WlQx8yrriSfYUG/pQN4CeC7CK2V8uCFFRDW1KpAsWM0BDdoqrTGO+3fotLfCAE0vb0VPC+GT7pPirk8K7WgtS15qd+aRRVe/9TdrFIAhdFEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sartura.hr; spf=pass smtp.mailfrom=sartura.hr; dkim=pass (2048-bit key) header.d=sartura.hr header.i=@sartura.hr header.b=bpKlO2zr; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sartura.hr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sartura.hr
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2350b1b9129so32529075ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 11:40:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sartura.hr; s=sartura; t=1751481620; x=1752086420; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DbnTNMFdG2kGnp4zBFs5MgPMup5zL0Zfe8VUfuWUBv8=;
-        b=bpKlO2zreZ4Dw49+XpbddUTu/s8vYAQrprCuWs4FMzPVmKsaPdOuGCsWR7P1CqUmbg
-         aQXF8g30FFZD5HNZyapB4pHSUbOyYpShNABIOSJeF7xGeUWbj4AX/3ZV1HDR54SHW6Rb
-         Z3I2jzQ9kzZ7gNPHpWswVYvPn+vp4X6sGWtxGhoDSfhtEvRs+TdGQdFYGEl399uTOuM9
-         q4F0gD+M1bd1ywcOJgEP3AkYT573RvKvzsJjjUXed9oHnxqOHG3qpQ6WfelMU9UwhLBc
-         5m0gvn/DJ+suKGPTJMvaf7teqS/TEBabuLP2Y/uTeE7cMjkuNPOo6sGA8HYDgDcceTdF
-         kQBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751481620; x=1752086420;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DbnTNMFdG2kGnp4zBFs5MgPMup5zL0Zfe8VUfuWUBv8=;
-        b=gHJN5SGJBYrrW9PpYGwqj9QtsUbfwm+M5oRm8JXn14xQ05xwAfAvxPOrpnao/PIXoi
-         +Y6FiraFWI1WrYrmM+b3/b6mq5lh08NZSBZ4Tch7tRdA/54RI4P5QL0KJJl8Z4K6zCP0
-         QY2ZNSCvauEQk8eQMQ6jsxoIoFbxjsr2n91tsgkoH79gNYsJxT+p3vTf6KsNylTr+c28
-         lFRzztybqG2+DXZt4SDxrn0PhNmQF4vhRAGfdiuuJU9Fcba7dKHHOajR+lOvSpGlyFSq
-         NEoKMY3iOt7p82xp/XGJgJIZCy6/Yhs9dm/kSNvdvXsBBrZs0HMIvhg56S8p/vErb/zg
-         7Zdg==
-X-Forwarded-Encrypted: i=1; AJvYcCUHJvzIGQIQwt7BNm4NGDrmXbt2sY6cbFiIXl9EahfwcqOFwND5JjDhSDxLo7/QrMTacbrTxbODmLRreqI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOAZ3Bt+Xoh9xHb08mOZKAs7tM0K0VjHiEi1m4/oZPBJuvl7jB
-	mOODeFqSCRba9eiZW+Yot34iqaX2ICyLVpQHHnNiIfg4PNYUKx8Khakg0+HHckhp7L4=
-X-Gm-Gg: ASbGncszNnljGEWn31JW85acwEFVC72rfpUfr7246BqLrSGSCj84pFgE4WXqcV0le9a
-	Gk0cPTezEIVZJJNlSV3AEPeu+6F/8Qrb+Va2VQem2q881dVpHaKqsh7gDuIVFxHkKxsRc0aEuOG
-	niF5cPB8mTfyTaF37si40OOobFOIsr44TjERRk0w+vX5oUFVR08z6/n2qQdJu/TjxhJQPPlBMeB
-	C4sbxG/SDHZsoNp7d3+71A7/ZkC0YfyTsFVrtQDXrjdGaN8sHvb9d5azlkBGLpKOXfOp8GF08Q1
-	4JytkG+GBrxqMM9e0JLKgF9cieNm7T6WtSX71qoNDJeoZRHMMcApHBKmbiOOPuQfp0FMnZKrfmQ
-	aTiRHRWClzzJUY/OTgdZVIlQ=
-X-Google-Smtp-Source: AGHT+IG4Ha6X6nXWuDRiiAtD/IybzMavhr6X2melJ3MACMJlG77wfbwOcD6VvpmvkGPoSxTpUxzwhg==
-X-Received: by 2002:a17:902:e751:b0:235:2403:77c7 with SMTP id d9443c01a7336-23c797b92e4mr4443315ad.37.1751481620268;
-        Wed, 02 Jul 2025 11:40:20 -0700 (PDT)
-Received: from fedora (cpe-94-253-164-144.zg.cable.xnet.hr. [94.253.164.144])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-23acb2f39bdsm143034195ad.80.2025.07.02.11.40.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Jul 2025 11:40:19 -0700 (PDT)
-From: Robert Marko <robert.marko@sartura.hr>
-To: linux@armlinux.org.uk,
-	nicolas.ferre@microchip.com,
-	alexandre.belloni@bootlin.com,
-	claudiu.beznea@tuxon.dev,
-	catalin.marinas@arm.com,
-	will@kernel.org,
-	olivia@selenic.com,
-	herbert@gondor.apana.org.au,
-	davem@davemloft.net,
-	vkoul@kernel.org,
-	andi.shyti@kernel.org,
-	lee@kernel.org,
-	broonie@kernel.org,
-	gregkh@linuxfoundation.org,
-	jirislaby@kernel.org,
-	arnd@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-crypto@vger.kernel.org,
-	dmaengine@vger.kernel.org,
-	linux-i2c@vger.kernel.org,
-	linux-spi@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	o.rempel@pengutronix.de,
-	daniel.machon@microchip.com
-Cc: luka.perkov@sartura.hr,
-	Robert Marko <robert.marko@sartura.hr>
-Subject: [PATCH v8 10/10] crypto: atmel-aes: make it selectable for ARCH_MICROCHIP
-Date: Wed,  2 Jul 2025 20:36:08 +0200
-Message-ID: <20250702183856.1727275-11-robert.marko@sartura.hr>
-X-Mailer: git-send-email 2.50.0
-In-Reply-To: <20250702183856.1727275-1-robert.marko@sartura.hr>
-References: <20250702183856.1727275-1-robert.marko@sartura.hr>
+	s=arc-20240116; t=1751481425; c=relaxed/simple;
+	bh=mDuuDEo7hJVCDmiNn9b+8+ybz+apZqRUyfPLZwxi2sI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=R3/SUSQEcU72BfmwfJB/TURz1V79+1VJeWt0BXOhsER9KbG8pzxqPdVa5P7tjIwV+ZZbzBeMRy0X7hCBoOzQ2mKdkIeFmpm8lRvDnOt6gGRxathDO2ggPb2IVX+UQcl6xAyhTxU3uYn/AXYXTL4zqqWSFORHKMxVnV9ZcfdxKio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf06.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay06.hostedemail.com (Postfix) with ESMTP id C682E10652D;
+	Wed,  2 Jul 2025 18:37:01 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf06.hostedemail.com (Postfix) with ESMTPA id 15B6420011;
+	Wed,  2 Jul 2025 18:36:58 +0000 (UTC)
+Date: Wed, 2 Jul 2025 14:36:57 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: LKML <linux-kernel@vger.kernel.org>, Linux trace kernel
+ <linux-trace-kernel@vger.kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Gabriele Paoloni <gpaoloni@redhat.com>
+Subject: [PATCH] tracing: Remove EVENT_FILE_FL_SOFT_MODE flag
+Message-ID: <20250702143657.18dd1882@batman.local.home>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: zoean7keiabjx1k5d1bz7phkybkdfp9d
+X-Rspamd-Server: rspamout07
+X-Rspamd-Queue-Id: 15B6420011
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1/EnB+sZHxoyfhuA9GO4s6x+pfSn9COnK0=
+X-HE-Tag: 1751481418-778989
+X-HE-Meta: U2FsdGVkX1+8nu+gn7WrnX5rXzbbSRWGkevilAlr9elubWiAqZkiMWe/x5OEuyVbcAU+z+qojtWY8SDe/uiAcKcrOnu1dEtUV69PRaHeTSLjfvDsFqsYiBIwfe/6qV07+/tlz2wu6GzLLT2FejYSkAEXo1KY2d/0pDWVkYcydXxHm8YwXkawVsPyzmFwxKIoYuNy2ejNcl2IS6voRoK1+ZC8X9BbaSYyWw8arbOPgo5DymalCF15iBgG7J16M+CzAGf1DkNUkd/8rOpVPVUUH7Hb2AyUZJzkhtwRCMUVUm9XHD0jlz8XiqvgpX7q5Mz/vv6XiCEna+QInxwU0TAgLbz/rOy9rd8hbHjp8JPFbtip3rVjDyPHvJQBjCvrq+abtdmCsjwjHX2qymyFUWecTg==
 
-LAN969x uses the Atmel crypto, so make it selectable for ARCH_MICROCHIP to
-avoid needing to update depends in future if other Microchip SoC-s use it
-as well.
+From: Steven Rostedt <rostedt@goodmis.org>
 
-Signed-off-by: Robert Marko <robert.marko@sartura.hr>
+When soft disabling of trace events was first created, it needed to have a
+way to know if a file had a user that was using it with soft disabled (for
+triggers that need to enable or disable events from a context that can not
+really enable or disable the event, it would set SOFT_DISABLED to state it
+is disabled). The flag SOFT_MODE was used to denote that an event had a
+user that would enable or disable it via the SOFT_DISABLED flag.
+
+Commit 1cf4c0732db3c ("tracing: Modify soft-mode only if there's no other
+referrer") fixed a bug where if two users were using the SOFT_DISABLED
+flag the accounting would get messed up as the SOFT_MODE flag could only
+handle one user. That commit added the sm_ref counter which kept track of
+how many users were using the event in "soft mode". This made the
+SOFT_MODE flag redundant as it should only be set if the sm_ref counter is
+non zero.
+
+Remove the SOFT_MODE flag and just use the sm_ref counter to know the
+event is in soft mode or not. This makes the code a bit simpler.
+
+Link: https://lore.kernel.org/all/20250702111908.03759998@batman.local.home/
+
+Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
-Changes in v8:
-* Use ARCH_MICROCHIP for depends as its now selected by both ARM and ARM64
-Microchip SoC-s
+ include/linux/trace_events.h |  3 ---
+ kernel/trace/trace_events.c  | 24 ++++++++++++------------
+ 2 files changed, 12 insertions(+), 15 deletions(-)
 
- drivers/crypto/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/crypto/Kconfig b/drivers/crypto/Kconfig
-index 04b4c43b6bae..7c1717c35b76 100644
---- a/drivers/crypto/Kconfig
-+++ b/drivers/crypto/Kconfig
-@@ -439,7 +439,7 @@ config CRYPTO_DEV_ATMEL_AUTHENC
+diff --git a/include/linux/trace_events.h b/include/linux/trace_events.h
+index fa9cf4292dff..04307a19cde3 100644
+--- a/include/linux/trace_events.h
++++ b/include/linux/trace_events.h
+@@ -480,7 +480,6 @@ enum {
+ 	EVENT_FILE_FL_RECORDED_TGID_BIT,
+ 	EVENT_FILE_FL_FILTERED_BIT,
+ 	EVENT_FILE_FL_NO_SET_FILTER_BIT,
+-	EVENT_FILE_FL_SOFT_MODE_BIT,
+ 	EVENT_FILE_FL_SOFT_DISABLED_BIT,
+ 	EVENT_FILE_FL_TRIGGER_MODE_BIT,
+ 	EVENT_FILE_FL_TRIGGER_COND_BIT,
+@@ -618,7 +617,6 @@ extern int __kprobe_event_add_fields(struct dynevent_cmd *cmd, ...);
+  *  RECORDED_TGID - The tgids should be recorded at sched_switch
+  *  FILTERED	  - The event has a filter attached
+  *  NO_SET_FILTER - Set when filter has error and is to be ignored
+- *  SOFT_MODE     - The event is enabled/disabled by SOFT_DISABLED
+  *  SOFT_DISABLED - When set, do not trace the event (even though its
+  *                   tracepoint may be enabled)
+  *  TRIGGER_MODE  - When set, invoke the triggers associated with the event
+@@ -633,7 +631,6 @@ enum {
+ 	EVENT_FILE_FL_RECORDED_TGID	= (1 << EVENT_FILE_FL_RECORDED_TGID_BIT),
+ 	EVENT_FILE_FL_FILTERED		= (1 << EVENT_FILE_FL_FILTERED_BIT),
+ 	EVENT_FILE_FL_NO_SET_FILTER	= (1 << EVENT_FILE_FL_NO_SET_FILTER_BIT),
+-	EVENT_FILE_FL_SOFT_MODE		= (1 << EVENT_FILE_FL_SOFT_MODE_BIT),
+ 	EVENT_FILE_FL_SOFT_DISABLED	= (1 << EVENT_FILE_FL_SOFT_DISABLED_BIT),
+ 	EVENT_FILE_FL_TRIGGER_MODE	= (1 << EVENT_FILE_FL_TRIGGER_MODE_BIT),
+ 	EVENT_FILE_FL_TRIGGER_COND	= (1 << EVENT_FILE_FL_TRIGGER_COND_BIT),
+diff --git a/kernel/trace/trace_events.c b/kernel/trace/trace_events.c
+index 120531268abf..0980f4def360 100644
+--- a/kernel/trace/trace_events.c
++++ b/kernel/trace/trace_events.c
+@@ -768,6 +768,7 @@ static int __ftrace_event_enable_disable(struct trace_event_file *file,
+ {
+ 	struct trace_event_call *call = file->event_call;
+ 	struct trace_array *tr = file->tr;
++	bool soft_mode = atomic_read(&file->sm_ref) != 0;
+ 	int ret = 0;
+ 	int disable;
  
- config CRYPTO_DEV_ATMEL_AES
- 	tristate "Support for Atmel AES hw accelerator"
--	depends on ARCH_AT91 || COMPILE_TEST
-+	depends on ARCH_MICROCHIP || COMPILE_TEST
- 	select CRYPTO_AES
- 	select CRYPTO_AEAD
- 	select CRYPTO_SKCIPHER
+@@ -782,7 +783,7 @@ static int __ftrace_event_enable_disable(struct trace_event_file *file,
+ 		 * is set we do not want the event to be enabled before we
+ 		 * clear the bit.
+ 		 *
+-		 * When soft_disable is not set but the SOFT_MODE flag is,
++		 * When soft_disable is not set but the soft_mode is,
+ 		 * we do nothing. Do not disable the tracepoint, otherwise
+ 		 * "soft enable"s (clearing the SOFT_DISABLED bit) wont work.
+ 		 */
+@@ -790,11 +791,11 @@ static int __ftrace_event_enable_disable(struct trace_event_file *file,
+ 			if (atomic_dec_return(&file->sm_ref) > 0)
+ 				break;
+ 			disable = file->flags & EVENT_FILE_FL_SOFT_DISABLED;
+-			clear_bit(EVENT_FILE_FL_SOFT_MODE_BIT, &file->flags);
++			soft_mode = false;
+ 			/* Disable use of trace_buffered_event */
+ 			trace_buffered_event_disable();
+ 		} else
+-			disable = !(file->flags & EVENT_FILE_FL_SOFT_MODE);
++			disable = !soft_mode;
+ 
+ 		if (disable && (file->flags & EVENT_FILE_FL_ENABLED)) {
+ 			clear_bit(EVENT_FILE_FL_ENABLED_BIT, &file->flags);
+@@ -812,8 +813,8 @@ static int __ftrace_event_enable_disable(struct trace_event_file *file,
+ 
+ 			WARN_ON_ONCE(ret);
+ 		}
+-		/* If in SOFT_MODE, just set the SOFT_DISABLE_BIT, else clear it */
+-		if (file->flags & EVENT_FILE_FL_SOFT_MODE)
++		/* If in soft mode, just set the SOFT_DISABLE_BIT, else clear it */
++		if (soft_mode)
+ 			set_bit(EVENT_FILE_FL_SOFT_DISABLED_BIT, &file->flags);
+ 		else
+ 			clear_bit(EVENT_FILE_FL_SOFT_DISABLED_BIT, &file->flags);
+@@ -823,7 +824,7 @@ static int __ftrace_event_enable_disable(struct trace_event_file *file,
+ 		 * When soft_disable is set and enable is set, we want to
+ 		 * register the tracepoint for the event, but leave the event
+ 		 * as is. That means, if the event was already enabled, we do
+-		 * nothing (but set SOFT_MODE). If the event is disabled, we
++		 * nothing (but set soft_mode). If the event is disabled, we
+ 		 * set SOFT_DISABLED before enabling the event tracepoint, so
+ 		 * it still seems to be disabled.
+ 		 */
+@@ -832,7 +833,7 @@ static int __ftrace_event_enable_disable(struct trace_event_file *file,
+ 		else {
+ 			if (atomic_inc_return(&file->sm_ref) > 1)
+ 				break;
+-			set_bit(EVENT_FILE_FL_SOFT_MODE_BIT, &file->flags);
++			soft_mode = true;
+ 			/* Enable use of trace_buffered_event */
+ 			trace_buffered_event_enable();
+ 		}
+@@ -840,7 +841,7 @@ static int __ftrace_event_enable_disable(struct trace_event_file *file,
+ 		if (!(file->flags & EVENT_FILE_FL_ENABLED)) {
+ 			bool cmd = false, tgid = false;
+ 
+-			/* Keep the event disabled, when going to SOFT_MODE. */
++			/* Keep the event disabled, when going to soft mode. */
+ 			if (soft_disable)
+ 				set_bit(EVENT_FILE_FL_SOFT_DISABLED_BIT, &file->flags);
+ 
+@@ -1792,8 +1793,7 @@ event_enable_read(struct file *filp, char __user *ubuf, size_t cnt,
+ 	    !(flags & EVENT_FILE_FL_SOFT_DISABLED))
+ 		strcpy(buf, "1");
+ 
+-	if (flags & EVENT_FILE_FL_SOFT_DISABLED ||
+-	    flags & EVENT_FILE_FL_SOFT_MODE)
++	if (atomic_read(&file->sm_ref) != 0)
+ 		strcat(buf, "*");
+ 
+ 	strcat(buf, "\n");
+@@ -3584,7 +3584,7 @@ static int probe_remove_event_call(struct trace_event_call *call)
+ 			continue;
+ 		/*
+ 		 * We can't rely on ftrace_event_enable_disable(enable => 0)
+-		 * we are going to do, EVENT_FILE_FL_SOFT_MODE can suppress
++		 * we are going to do, soft mode can suppress
+ 		 * TRACE_REG_UNREGISTER.
+ 		 */
+ 		if (file->flags & EVENT_FILE_FL_ENABLED)
+@@ -3997,7 +3997,7 @@ static int free_probe_data(void *data)
+ 
+ 	edata->ref--;
+ 	if (!edata->ref) {
+-		/* Remove the SOFT_MODE flag */
++		/* Remove soft mode */
+ 		__ftrace_event_enable_disable(edata->file, 0, 1);
+ 		trace_event_put_ref(edata->file->event_call);
+ 		kfree(edata);
 -- 
-2.50.0
+2.47.2
 
 
