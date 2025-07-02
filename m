@@ -1,102 +1,109 @@
-Return-Path: <linux-kernel+bounces-713694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6AB8AF5D3B
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 17:35:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FB3DAF5D5B
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 17:40:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0008817D924
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 15:35:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CEA581887E2A
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 15:36:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C470A2E7BA6;
-	Wed,  2 Jul 2025 15:30:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oQjZ8wsg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A13852F2C79;
+	Wed,  2 Jul 2025 15:31:33 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 272BE1C84CD;
-	Wed,  2 Jul 2025 15:30:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1ECA2DCF54;
+	Wed,  2 Jul 2025 15:31:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751470207; cv=none; b=UKVTbkJfSQzB03O6R5W2EY2h0D9luzHgbG+lszrKXhgzSVdQERx74BA9lD1JEPlsb/0xdsbjClHBGl18d3PrV8XuOGieLEzMOIuyG+dskPd6iKZaC2FV8yj0tVVdtyR5EEspzWiRWCCpP7+QUMTRM4TFeXbBbA/AIsWuIzkFd8Q=
+	t=1751470293; cv=none; b=umzcJMc/nUS8oIlAUqhBqnGeETAg1/07CmP0Zw8Sz2pXB141fKKNHHJ82fjQyCIhpyr2dFeYje7VngZigxfv2llIDqWCw/PkjBJ9C1vr9pZm66WaVkhPE2Gl06qG8MjoJLGy+FNm4WjdrHVrFrwMVju2bwjqXhB15ONSBj4iE1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751470207; c=relaxed/simple;
-	bh=1hB7Zt6/rC5KgiBrbFJS8tkSgdS8qaxfYi4Ore/zPkk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=efAUTadAEuvpvRJzvVwS+uUKfvtbqoEohx0IWQfLx3gIyR+ooCSyglbDUcvCHoSuMt0W+Qd1sTDfGHe4bDNIzgU4vLjKTupw9T02JjbmNXgZ2i3tUehRl+FkcqGC4ZXXLADxG+0TPnZSx+fZ+Zt5kFlGCikHf95x10fHLAzz2qk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oQjZ8wsg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 416F6C4CEE7;
-	Wed,  2 Jul 2025 15:30:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751470206;
-	bh=1hB7Zt6/rC5KgiBrbFJS8tkSgdS8qaxfYi4Ore/zPkk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oQjZ8wsg7xexe1fb1H5E/QPkW4Oxb32rgzlfDzw5je0/rgRzrjasgqXZdKqMUFOht
-	 UhhSnbaPqc+MP65Uul8jywX2R3iIQacDKEt25Pyz34N7pV48pwLn88EJjv+WopyVMm
-	 CUC1gRcp1+Bz5qP7Dt2MUbc+G1X8nIjrpo45uKIHMy0iEkszX3GlJdBVayxBejpR1v
-	 mVeNzBsX3mssaa2J2UY1jfWIJf8sbzhA55FNRg3+xn8kUziMHacbNEkEYPk+2ormEK
-	 phkd2yhtTkXB5DIEfJk9AuVhVuplk4e8vwsroDkuAdUkXg0lp1zWXpOA5cCQ1GtZLF
-	 hkwfap89cvlfg==
-Date: Wed, 2 Jul 2025 16:30:01 +0100
-From: Lee Jones <lee@kernel.org>
-To: Michael Walle <mwalle@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, Julien Panis <jpanis@baylibre.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v2 0/7] mfd: tps6594: Add TI TPS652G1 support
-Message-ID: <20250702153001.GV10134@google.com>
-References: <20250613114518.1772109-1-mwalle@kernel.org>
+	s=arc-20240116; t=1751470293; c=relaxed/simple;
+	bh=uen+p/SpnS8I1WQoDUDT9JW1oagT5qtNuCnGAgbM+E4=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LnOwQQ3YxycF3ey9Ga8rz8Nc77XWMQ//Q8h27Z1dSPP8DqaZ9eadfdojIsPLRxfzKgqKONgMoxehglcqk8G3p4jbzcCWhTqpmwSG0sQiu0Zk1cbBYToBSFo9qNXfEX7NbxcpWkegqou71NbDrKK4FY/I/CtgD82+YXeK40x2llY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bXP1Z48Fjz6L54f;
+	Wed,  2 Jul 2025 23:28:34 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 2070814022E;
+	Wed,  2 Jul 2025 23:31:28 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 2 Jul
+ 2025 17:31:27 +0200
+Date: Wed, 2 Jul 2025 16:31:26 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+CC: David Lechner <dlechner@baylibre.com>, Lars-Peter Clausen
+	<lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, Jonathan
+ Cameron <jic23@kernel.org>, Nuno =?ISO-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Robert Budai <robert.budai@analog.com>, "Andy Shevchenko" <andy@kernel.org>,
+	<linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] iio: imu: adis16550: rework clock range test
+Message-ID: <20250702163126.000007ac@huawei.com>
+In-Reply-To: <aGVNhIwn7CXO_lpP@smile.fi.intel.com>
+References: <20250702-iio-imu-adis16550-rework-clock-range-test-v1-1-b45f3a3b0dc1@baylibre.com>
+	<aGVIBVsFPcVw3lN6@smile.fi.intel.com>
+	<aGVJPRmn1-HUBb40@smile.fi.intel.com>
+	<3778ad13-3b62-4f68-946d-b861b0df4272@baylibre.com>
+	<aGVNhIwn7CXO_lpP@smile.fi.intel.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250613114518.1772109-1-mwalle@kernel.org>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500006.china.huawei.com (7.191.161.198) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Fri, 13 Jun 2025, Michael Walle wrote:
+On Wed, 2 Jul 2025 18:17:24 +0300
+Andy Shevchenko <andriy.shevchenko@intel.com> wrote:
 
-> Add support for the TI TPS652G1 PMIC which is a stripped down
-> version of the TPS65224. Support for the latter has already been
-> merged. Refactor the regulator driver to ease adding new devices.
-> After doing that adding the TPS652G1 variant is really straight
-> forward. Some care has to be taken by the interrupt handling (of the
-> regulator part) because there interrupts are used for voltage
-> monitoring which this variant doesn't have.
+> On Wed, Jul 02, 2025 at 10:07:17AM -0500, David Lechner wrote:
+> > On 7/2/25 9:59 AM, Andy Shevchenko wrote:  
+> > > On Wed, Jul 02, 2025 at 05:53:57PM +0300, Andy Shevchenko wrote:  
+> > >> On Wed, Jul 02, 2025 at 09:27:45AM -0500, David Lechner wrote:  
+> > >>> Rework the clock rate range test to test if sync_mode_data != NULL
+> > >>> instead of testing if the for loop index variable. This makes it easier
+> > >>> for static analyzers to see that we aren't using an uninitialized
+> > >>> sync_mode_data [1].  
+> > >>
+> > >> But at the same time it makes it not to be the usual pattern.,,  
+> > > 
+> > > Reading the static analyser output I think the first hunk is only what we need,
+> > > but this is still false positive and it's problem of that static
+> > > analyser. Have you filed a bug there? (My point is that modifying the code for
+> > > the advantage of false positives of some static analyser is wrong road to go
+> > > in my opinion.)  
+> > 
+> > I agree that we shouldn't fix this _only_ to make the static analyzer
+> > happy. But I had to think quite a bit harder to see that the existing
+> > code was correct compared to what I have proposed here.
+> > 
+> > But if this is a common pattern that I just haven't learned to identify
+> > at a glance yet and everybody else can easily see that the existing code
+> > is correct, then perhaps it isn't worth the change.  
 > 
-> Michael Walle (7):
->   mfd: tps6594: Add TI TPS652G1 support
->   misc: tps6594-pfsm: Add TI TPS652G1 PMIC PFSM
->   pinctrl: pinctrl-tps6594: Add TPS652G1 PMIC pinctrl and GPIO
->   regulator: tps6594-regulator: remove interrupt_count
->   regulator: tps6594-regulator: remove hardcoded buck config
->   regulator: tps6594-regulator: refactor variant descriptions
->   regulator: tps6594-regulator: Add TI TPS652G1 PMIC regulators
+> To me checking against index variable (when it's integer, obviously) is correct
+> thing to do and regular pattern. OTOH, if the "index" is a pointer and rather
+> we call it "iterator", the angle of view is different because in some cases
+> it may lead to stale or invalid value which might be mistakenly dereferenced or
+> speculated (see more in the discussion about list entry APIs [entry is a
+> keyword here] and if list_entry_is_head() is a good approach.)
 > 
->  drivers/mfd/tps6594-core.c            |  88 ++++++++++-
->  drivers/mfd/tps6594-i2c.c             |  10 +-
->  drivers/mfd/tps6594-spi.c             |  10 +-
->  drivers/misc/tps6594-pfsm.c           |  31 ++--
->  drivers/pinctrl/pinctrl-tps6594.c     |  35 ++++
->  drivers/regulator/tps6594-regulator.c | 219 +++++++++++++++-----------
->  include/linux/mfd/tps6594.h           |   1 +
->  7 files changed, 284 insertions(+), 110 deletions(-)
 
-Doesn't apply.
+Original code looks fine to me and is a very common pattern.  So I'd argue
+the static analyzer needs some work.
 
-Please rebase onto v6.16-rc1.
-
--- 
-Lee Jones [李琼斯]
+Jonathan
 
