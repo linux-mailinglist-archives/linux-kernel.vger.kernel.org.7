@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-713230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5BC7AF1522
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:14:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90616AF1521
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:14:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 137383BADF9
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 12:14:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C9891899066
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 12:14:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94EE9275106;
-	Wed,  2 Jul 2025 12:13:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0BCA2749EE;
+	Wed,  2 Jul 2025 12:13:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jrb8Lu05"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="l0ZaEpv2"
 Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 529382741C2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52A2D2741D6
 	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 12:13:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751458383; cv=none; b=ENc6C8FHf0d1ZN4KYjqyIbJRBRlvd33NzZ/lsa9FwopWGiQ+2wfUlcWxcV+Z0pO990K2E1XDkPhtDdmN7a++zl2n6HKMxXoWkMGcpdXYHWMXeqwPwCO/A+DO+JSXdLYus/0DG6gDQXwnOe9PTlET9PSXkff7eVuoUZJ4/9E9qUY=
+	t=1751458382; cv=none; b=ut5nViOgJRxFIZYkV69dVtJRVjwB0Tg+2Of3G1kaaK+cWE0kqnljsycI6hU5p+1ayw7C5G3GkGSmib0uvZUxdaAuNf+ADHedhmztbeoSN0XllOglpyD1oXk1bZ5c77977K4k+mN2v9SI1j3s+DMA4YesIooI0CaoKt8jYDMIXJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751458383; c=relaxed/simple;
-	bh=J3pXaPLLZcksnCZhDxc8yeL5D5Q4Iphi1855xC+UhSE=;
+	s=arc-20240116; t=1751458382; c=relaxed/simple;
+	bh=sn/9YguX9wsJ7H743gFTLgL75AEOpC28E9r9+nFp4LY=;
 	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=n5ue8jey3I+S+QC8VZGUaBmj43drTxp65+Eh0AkiMxPaSRHFY6b4jkKkmKFtXgm1XH8fI8K2vKRkeNndtzgwa4aPjI+j2GJsfXzszC46iXSJ6nAX/gbJ6+BdxF2qIm//A2hiXm8DysUVjho40zkPoh0nUmmIjddCyzwVOM4jKGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=jrb8Lu05; arc=none smtp.client-ip=90.155.50.34
+	 Content-Type; b=nT17xFfU13DYZVJcsTT0WHZsr+tfsM73iLRUEWfuPdTibI5f3WGbzIvNXK6aeh7bhrkS8V/3/aeysfbFoOYTLR3+EOuWiAmUXYvoKqm7aeNSzy0G87ViSm+0ejcvrHP3U5p2FAarFG5joT9Ssk9i2v+69EAPSHNO21Su8FydT6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=l0ZaEpv2; arc=none smtp.client-ip=90.155.50.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:References:
 	Subject:Cc:To:From:Date:Message-ID:Sender:Reply-To:Content-Transfer-Encoding:
 	Content-ID:Content-Description:In-Reply-To;
-	bh=WehO0N/doWNKmSVaorZhtP5NEdHamhAqluYVdptD3h0=; b=jrb8Lu05VSzkOsQb4ZTL12XcDh
-	9LONe8K1xgIWpgM229M+/Wcn7Sf6lxHd7k812Ac+5EBSxvfLvJujvTFTJtqKR0o7w/4vSgP69MnJE
-	xk4RHLDZjMtViSbHWnBdx2DLoRQncRPUOmZOFVvi5kFo1i2pR56TYcK98ONEdxo1TwozK5b/mu0b2
-	U/zjH5ByTTuhcPPZfh9xoSPR/9LZV+0tbE0YdB3wojPg0yPPxO84kXrMyqNqkapWVGy7eR1IzSeWX
-	p8O2IaUE8zOLSeYcnI3aonIqIZStAdIW/Rw9YultwW4/tCmy0pqyxs6rO4ZZGuA84i7DCpFYUStgU
-	GFWcXXww==;
+	bh=Dw8xA6ngL28O6QU6IT+BVPABKR27cDANTRoGcxg6l5Y=; b=l0ZaEpv23O9u00BzRxhV7qxG6Z
+	IQb+McSra8y/t/KNYhzzlv9fQAISdT+8hLgsxfUEieTQFOPYYT7QJkBrCLKi4eW3nV3MZ2NjsMG2P
+	icLgMMNVHdz2NLdwWHrds5ccCfR4qifhAB2vgmoU0KcylUNdFyoZLQoHv8CwUc1Ja6svhof/Fj/1H
+	MrLpr7zM4V1J1ZJm3sjPBauPBu6KQDOVX/rAVb1De3cBD9bDu3TfHa1X+oRZKzdzsBXdcriIS4fXv
+	pCQTt5aUOu3ojwctF65f4sQAdmqn3r8OlQfBmU2Gmq602Mj71PKq5WU14IQVWsZFvSxGtRCat/Ver
+	7tBgTGUA==;
 Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
 	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uWwKV-00000009lF3-3Thw;
+	id 1uWwKV-00000009lF4-3VbW;
 	Wed, 02 Jul 2025 12:12:47 +0000
 Received: by noisy.programming.kicks-ass.net (Postfix, from userid 0)
-	id C3F4430017D; Wed, 02 Jul 2025 14:12:46 +0200 (CEST)
-Message-ID: <20250702121158.582321755@infradead.org>
+	id C7DD23001C0; Wed, 02 Jul 2025 14:12:46 +0200 (CEST)
+Message-ID: <20250702121158.703344062@infradead.org>
 User-Agent: quilt/0.68
-Date: Wed, 02 Jul 2025 13:49:27 +0200
+Date: Wed, 02 Jul 2025 13:49:28 +0200
 From: Peter Zijlstra <peterz@infradead.org>
 To: mingo@redhat.com,
  juri.lelli@redhat.com,
@@ -61,7 +61,7 @@ To: mingo@redhat.com,
  clm@meta.com
 Cc: linux-kernel@vger.kernel.org,
  peterz@infradead.org
-Subject: [PATCH v2 03/12] sched: Optimize ttwu() / select_task_rq()
+Subject: [PATCH v2 04/12] sched: Use lock guard in ttwu_runnable()
 References: <20250702114924.091581796@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -71,67 +71,76 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 
-Optimize ttwu() by pushing select_idle_siblings() up above waiting for
-on_cpu(). This allows making use of the cycles otherwise spend waiting
-to search for an idle CPU.
-
-One little detail is that since the task we're looking for an idle CPU
-for might still be on the CPU, that CPU won't report as running the
-idle task, and thus won't find his own CPU idle, even when it is.
-
-To compensate, remove the 'rq->curr == rq->idle' condition from
-idle_cpu() -- it doesn't really make sense anyway.
-
-Additionally, Chris found (concurrently) that perf-c2c reported that
-test as being a cache-miss monster.
+Reflow and get rid of 'ret' variable.
 
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://lkml.kernel.org/r/20250520101727.620602459@infradead.org
+Link: https://lkml.kernel.org/r/20250520101727.732703833@infradead.org
 ---
- kernel/sched/core.c     |    5 +++--
- kernel/sched/syscalls.c |    3 ---
- 2 files changed, 3 insertions(+), 5 deletions(-)
+ kernel/sched/core.c  |   36 ++++++++++++++++--------------------
+ kernel/sched/sched.h |    5 +++++
+ 2 files changed, 21 insertions(+), 20 deletions(-)
 
 --- a/kernel/sched/core.c
 +++ b/kernel/sched/core.c
-@@ -3593,7 +3593,7 @@ int select_task_rq(struct task_struct *p
- 		cpu = p->sched_class->select_task_rq(p, cpu, *wake_flags);
- 		*wake_flags |= WF_RQ_SELECTED;
- 	} else {
--		cpu = cpumask_any(p->cpus_ptr);
-+		cpu = task_cpu(p);
- 	}
- 
- 	/*
-@@ -4309,6 +4309,8 @@ int try_to_wake_up(struct task_struct *p
- 		    ttwu_queue_wakelist(p, task_cpu(p), wake_flags))
- 			break;
- 
-+		cpu = select_task_rq(p, p->wake_cpu, &wake_flags);
-+
- 		/*
- 		 * If the owning (remote) CPU is still in the middle of schedule() with
- 		 * this task as prev, wait until it's done referencing the task.
-@@ -4320,7 +4322,6 @@ int try_to_wake_up(struct task_struct *p
- 		 */
- 		smp_cond_load_acquire(&p->on_cpu, !VAL);
- 
--		cpu = select_task_rq(p, p->wake_cpu, &wake_flags);
- 		if (task_cpu(p) != cpu) {
- 			if (p->in_iowait) {
- 				delayacct_blkio_end(p);
---- a/kernel/sched/syscalls.c
-+++ b/kernel/sched/syscalls.c
-@@ -203,9 +203,6 @@ int idle_cpu(int cpu)
+@@ -3754,28 +3754,24 @@ ttwu_do_activate(struct rq *rq, struct t
+  */
+ static int ttwu_runnable(struct task_struct *p, int wake_flags)
  {
- 	struct rq *rq = cpu_rq(cpu);
+-	struct rq_flags rf;
+-	struct rq *rq;
+-	int ret = 0;
++	CLASS(__task_rq_lock, guard)(p);
++	struct rq *rq = guard.rq;
  
--	if (rq->curr != rq->idle)
--		return 0;
--
- 	if (rq->nr_running)
- 		return 0;
+-	rq = __task_rq_lock(p, &rf);
+-	if (task_on_rq_queued(p)) {
+-		update_rq_clock(rq);
+-		if (p->se.sched_delayed)
+-			enqueue_task(rq, p, ENQUEUE_NOCLOCK | ENQUEUE_DELAYED);
+-		if (!task_on_cpu(rq, p)) {
+-			/*
+-			 * When on_rq && !on_cpu the task is preempted, see if
+-			 * it should preempt the task that is current now.
+-			 */
+-			wakeup_preempt(rq, p, wake_flags);
+-		}
+-		ttwu_do_wakeup(p);
+-		ret = 1;
+-	}
+-	__task_rq_unlock(rq, &rf);
++	if (!task_on_rq_queued(p))
++		return 0;
  
+-	return ret;
++	update_rq_clock(rq);
++	if (p->se.sched_delayed)
++		enqueue_task(rq, p, ENQUEUE_NOCLOCK | ENQUEUE_DELAYED);
++	if (!task_on_cpu(rq, p)) {
++		/*
++		 * When on_rq && !on_cpu the task is preempted, see if
++		 * it should preempt the task that is current now.
++		 */
++		wakeup_preempt(rq, p, wake_flags);
++	}
++	ttwu_do_wakeup(p);
++	return 1;
+ }
+ 
+ void sched_ttwu_pending(void *arg)
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -1806,6 +1806,11 @@ task_rq_unlock(struct rq *rq, struct tas
+ 	raw_spin_unlock_irqrestore(&p->pi_lock, rf->flags);
+ }
+ 
++DEFINE_LOCK_GUARD_1(__task_rq_lock, struct task_struct,
++		    _T->rq = __task_rq_lock(_T->lock, &_T->rf),
++		    __task_rq_unlock(_T->rq, &_T->rf),
++		    struct rq *rq; struct rq_flags rf)
++
+ DEFINE_LOCK_GUARD_1(task_rq_lock, struct task_struct,
+ 		    _T->rq = task_rq_lock(_T->lock, &_T->rf),
+ 		    task_rq_unlock(_T->rq, _T->lock, &_T->rf),
 
 
 
