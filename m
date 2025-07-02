@@ -1,38 +1,38 @@
-Return-Path: <linux-kernel+bounces-713088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-712990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DDE2AF1321
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 13:05:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D012AAF11AD
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 12:22:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD7D53B7894
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 11:04:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 274EF1C26591
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 10:22:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 162EB264A61;
-	Wed,  2 Jul 2025 11:02:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76169253938;
+	Wed,  2 Jul 2025 10:22:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=thundersoft.com header.i=@thundersoft.com header.b="LcD177pC"
-Received: from mail-m32100.qiye.163.com (mail-m32100.qiye.163.com [220.197.32.100])
+	dkim=pass (1024-bit key) header.d=thundersoft.com header.i=@thundersoft.com header.b="R9lyRD54"
+Received: from mail-m49223.qiye.163.com (mail-m49223.qiye.163.com [45.254.49.223])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC042221F37;
-	Wed,  2 Jul 2025 11:02:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF88B225776;
+	Wed,  2 Jul 2025 10:22:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751454138; cv=none; b=uoVFCsf5AwTp0HWtQ86fuFnErh1VYd/h5601xhZfYPtkw5Bh3ffXGIjkMTQNSBirpixyzHxZUdBBDh0P6kg6C3PiHknn7qoUWgCj9PXCsw+jTIWzjZWzipVAFuGPm96sF4aBRqfydSV+v6UgH8gReiM6RTSVUvboFZ+SL+3Z4og=
+	t=1751451732; cv=none; b=OueQSNsJJdtelBKsEcMuYZw8LYtErNgoUG1O6IyXXcqcCVwHb3NvlN0EeEp2mW1OqRVwcgK3xFx1Ghe+RpCOgPrGAFrh+kELMPsA4HMdtjLmizN48MGJhRAMOjLYnXURkM889hnpnNB8YmmIR03Yv2CAnf7peG1xxKj9ylJ7Dqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751454138; c=relaxed/simple;
-	bh=kgU0nR5T2dnMIfBxf0LYdE0M+4042kRTIUsHe+PjCFY=;
+	s=arc-20240116; t=1751451732; c=relaxed/simple;
+	bh=j9+o2KKNhw+NXIR8agJ3G8ETowsJUJLb46/hC12GG5Q=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=RX7zeibFjxe+9+Ip4g4tVWzkriTa6aI81CijAwE5dhWwd1Bq1G+C8zFbRRBYJqcKA+TBB6uk2/K/cqYYXyhitrbW0aDgGLn4AuIUXx+v8NV0oFw/CvdJhr+aEwu6hIxz59vrUN4xzBtdSA5SmP8iqOq2GyTzcnmOi3ebAaGL7Do=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=thundersoft.com; spf=pass smtp.mailfrom=thundersoft.com; dkim=pass (1024-bit key) header.d=thundersoft.com header.i=@thundersoft.com header.b=LcD177pC; arc=none smtp.client-ip=220.197.32.100
+	 MIME-Version; b=rDZh5vfRKU8J0EZ5e83LWDTRl4IPv+DiDIGUxgdKTnr21VYFH9Kgc3iO+erUMcET0ce/ALg/DhRgnpd9trrnAB/DTLeHZPXzcmbyPmJj+3LfeUyrQxEcIU1yN46/lW1FYY8DK529IoRqPetETR14qsiPnP0DiYohBKr4JeSp1hg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=thundersoft.com; spf=pass smtp.mailfrom=thundersoft.com; dkim=pass (1024-bit key) header.d=thundersoft.com header.i=@thundersoft.com header.b=R9lyRD54; arc=none smtp.client-ip=45.254.49.223
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=thundersoft.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thundersoft.com
 Received: from localhost.localdomain (unknown [117.184.129.134])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 1aaa9ed5f;
-	Wed, 2 Jul 2025 17:46:39 +0800 (GMT+08:00)
+	by smtp.qiye.163.com (Hmail) with ESMTP id 1aaa9ed6b;
+	Wed, 2 Jul 2025 17:46:41 +0800 (GMT+08:00)
 From: Albert Yang <yangzh0906@thundersoft.com>
 To: robh@kernel.org,
 	krzk+dt@kernel.org,
@@ -66,9 +66,9 @@ Cc: linux-arm-kernel@lists.infradead.org,
 	shanchun1218@gmail.com,
 	ben.chuang@genesyslogic.com.tw,
 	Albert Yang <yangzh0906@thundersoft.com>
-Subject: [PATCH v2 6/8] arm64: dts: bst: add support for Black Sesame Technologies C1200 CDCU1.0 board and defconfig
-Date: Wed,  2 Jul 2025 17:44:42 +0800
-Message-Id: <20250702094444.3523973-7-yangzh0906@thundersoft.com>
+Subject: [PATCH v2 7/8] arm64: defconfig: enable BST C1200 DWCMSHC SDHCI controller
+Date: Wed,  2 Jul 2025 17:44:43 +0800
+Message-Id: <20250702094444.3523973-8-yangzh0906@thundersoft.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20250702094444.3523973-1-yangzh0906@thundersoft.com>
 References: <20250528085403.481055-1-yangzh0906@thundersoft.com>
@@ -81,277 +81,45 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkZGh1KVhkZSh5IShofGEIZQlYVFAkWGhdVEwETFh
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlDSUJCVhgaHR1OT0xMSx1MHVYVFAkWGhdVEwETFh
 	oSFyQUDg9ZV1kYEgtZQVlKSkxVSkNPVUpJQlVKSE9ZV1kWGg8SFR0UWUFZT0tIVUpLSUhCS0NVSk
 	tLVUpCWQY+
-X-HM-Tid: 0a97ca87fe7709cckunmee1cabff3ebbc1
+X-HM-Tid: 0a97ca88063009cckunmee1cabff3ebc08
 X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6NxQ6FRw6ATE9S082Kxo#HU4K
-	SktPChJVSlVKTE5KT09CTUtKTkhLVTMWGhIXVQIaFRwBE0tCS007DxMOFR8eCQgUHQ9VGBQWRVlX
-	WRILWUFZSkpMVUpDT1VKSUJVSkhPWVdZCAFZQUNOSEg3Bg++
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Ny46Fgw4FzErGk80QhkOHUwd
+	IjoKFDdVSlVKTE5KT09CTUtIT05IVTMWGhIXVQIaFRwBE0tCS007DxMOFR8eCQgUHQ9VGBQWRVlX
+	WRILWUFZSkpMVUpDT1VKSUJVSkhPWVdZCAFZQUlISUk3Bg++
 DKIM-Signature:a=rsa-sha256;
-	b=LcD177pCHl9iMO/5tUAt9Aup0ONwc3+JngKUJx11307DXxj7xrMMLTfrkru6dy9fG5OqClUhFsen0OXjZr3TQkj6TkPZbRato/YtS6S3q4HxRwn3mjk/5qP8dqv6YM2UrPx63HayhL6GMD7TkHzCDa5meJI89+FfSMnivNyI5SM=; c=relaxed/relaxed; s=default; d=thundersoft.com; v=1;
-	bh=7zX9xAz2D0jYqJzruhcDB4kWgwhYwe/xmi9zdJYXp4s=;
+	b=R9lyRD54Sd2OSBXZOeyjBa35mm+g96MMrnIt2kvkDlTYu3kRcoCuzYY0U2D7Gzudg67W3pnoe5K6jnrW1+/uXPFQaNXNawf7h4diraXb5uDEllw/WY9jjbGY1wVICrUII2PnhUu9iQfOiWyzVySSlUZAolI9SkPZ88dbqxSS3Y0=; c=relaxed/relaxed; s=default; d=thundersoft.com; v=1;
+	bh=sSxvWs1jHzibMyZ86YFGGKkxcE98EspXtSKi7G7lkyg=;
 	h=date:mime-version:subject:message-id:from;
 
-Add device tree support for the Black Sesame Technologies (BST) C1200
-CDCU1.0 ADAS 4C2G platform. This platform is based on the BST C1200 SoC
-family.
+Enable the BST C1200 DWCMSHC SDHCI controller driver
+(CONFIG_MMC_SDHCI_BST)
+in the ARM64 defconfig to support eMMC/SD card access on Black Sesame
+Technologies C1200 series SoCs.
 
-The changes include:
-- Adding a new BST device tree directory
-- Adding Makefile entries to build the BST platform device trees
-- Adding the device tree for the BST C1200 CDCU1.0 ADAS 4C2G board
-
-This board features a quad-core Cortex-A78 CPU, and various peripherals
-including UART, MMC, watchdog timer, and interrupt controller.
-
----
-Changes for v2:
-1. Reorganized memory map into discrete regions
-2. Updated MMC controller definition:
-   - Split into core/CRM register regions
-   - Removed deprecated properties
-   - Updated compatible string
-3. Standardized interrupt definitions and numeric formats
-4. Removed reserved-memory node (superseded by bounce buffers)
-5. Added root compatible string for platform identification
-6. Add soc defconfig
+This driver provides hardware-specific implementation for the Synopsys
+DesignWare Mobile Storage Host Controller integrated in BST SoCs.
 
 Signed-off-by: Ge Gordon <gordon.ge@bst.ai>
 Signed-off-by: Albert Yang <yangzh0906@thundersoft.com>
 ---
- arch/arm64/boot/dts/Makefile                  |   1 +
- arch/arm64/boot/dts/bst/Makefile              |   2 +
- .../dts/bst/bstc1200-cdcu1.0-adas_4c2g.dts    |  60 +++++++++
- arch/arm64/boot/dts/bst/bstc1200.dtsi         | 117 ++++++++++++++++++
- arch/arm64/configs/defconfig                  |   1 +
- 5 files changed, 181 insertions(+)
- create mode 100644 arch/arm64/boot/dts/bst/Makefile
- create mode 100644 arch/arm64/boot/dts/bst/bstc1200-cdcu1.0-adas_4c2g.dts
- create mode 100644 arch/arm64/boot/dts/bst/bstc1200.dtsi
+ arch/arm64/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/boot/dts/Makefile b/arch/arm64/boot/dts/Makefile
-index 79b73a21ddc2..a39b6cafb644 100644
---- a/arch/arm64/boot/dts/Makefile
-+++ b/arch/arm64/boot/dts/Makefile
-@@ -12,6 +12,7 @@ subdir-y += arm
- subdir-y += bitmain
- subdir-y += blaize
- subdir-y += broadcom
-+subdir-y += bst
- subdir-y += cavium
- subdir-y += exynos
- subdir-y += freescale
-diff --git a/arch/arm64/boot/dts/bst/Makefile b/arch/arm64/boot/dts/bst/Makefile
-new file mode 100644
-index 000000000000..4c1b8b4cdad8
---- /dev/null
-+++ b/arch/arm64/boot/dts/bst/Makefile
-@@ -0,0 +1,2 @@
-+# SPDX-License-Identifier: GPL-2.0
-+dtb-$(CONFIG_ARCH_BST) += bstc1200-cdcu1.0-adas_4c2g.dtb
-diff --git a/arch/arm64/boot/dts/bst/bstc1200-cdcu1.0-adas_4c2g.dts b/arch/arm64/boot/dts/bst/bstc1200-cdcu1.0-adas_4c2g.dts
-new file mode 100644
-index 000000000000..4036e0ac2e1d
---- /dev/null
-+++ b/arch/arm64/boot/dts/bst/bstc1200-cdcu1.0-adas_4c2g.dts
-@@ -0,0 +1,60 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/dts-v1/;
-+
-+#include "bstc1200.dtsi"
-+
-+/ {
-+	model = "BST C1200-96 CDCU1.0 4C2G";
-+	compatible = "bst,c1200-cdcu1.0-adas-4c2g", "bst,c1200";
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	memory@810000000 {
-+		device_type = "memory";
-+		reg = <0x8 0x10000000 0x0 0x30000000>;
-+	};
-+
-+	memory@8c0000000 {
-+		device_type = "memory";
-+		reg = <0x8 0xc0000000 0x1 0x0>;
-+	};
-+
-+	memory@c00000000 {
-+		device_type = "memory";
-+		reg = <0xc 0x0 0x0 0x40000000>;
-+	};
-+
-+	memory@800254000 {
-+		device_type = "memory";
-+		reg = <0x8 0x254000 0x0 0x1000>;
-+	};
-+
-+	memory@800151000 {
-+		device_type = "memory";
-+		reg = <0x8 0x151000 0x0 0x1000>;
-+	};
-+
-+	reserved-memory {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		mmc0_reserved: mmc0@5160000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x0 0x5160000 0x0 0x10000>;
-+			no-map;
-+		};
-+	};
-+};
-+
-+&uart0 {
-+	status = "okay";
-+};
-+
-+&mmc0 {
-+	status = "okay";
-+	memory-region = <&mmc0_reserved>;
-+};
-+
-diff --git a/arch/arm64/boot/dts/bst/bstc1200.dtsi b/arch/arm64/boot/dts/bst/bstc1200.dtsi
-new file mode 100644
-index 000000000000..ddff2cb82cb0
---- /dev/null
-+++ b/arch/arm64/boot/dts/bst/bstc1200.dtsi
-@@ -0,0 +1,117 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/interrupt-controller/irq.h>
-+
-+/ {
-+	compatible = "bst,c1200";
-+	#address-cells = <2>;
-+	#size-cells = <2>;
-+
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		cpu@0 {
-+			compatible = "arm,cortex-a78";
-+			device_type = "cpu";
-+			enable-method = "psci";
-+			next-level-cache = <&l2_cache>;
-+			reg = <0>;
-+		};
-+
-+		cpu@1 {
-+			compatible = "arm,cortex-a78";
-+			device_type = "cpu";
-+			enable-method = "psci";
-+			next-level-cache = <&l2_cache>;
-+			reg = <0x100>;
-+		};
-+
-+		cpu@2 {
-+			compatible = "arm,cortex-a78";
-+			device_type = "cpu";
-+			enable-method = "psci";
-+			next-level-cache = <&l2_cache>;
-+			reg = <0x200>;
-+		};
-+
-+		cpu@3 {
-+			compatible = "arm,cortex-a78";
-+			device_type = "cpu";
-+			enable-method = "psci";
-+			next-level-cache = <&l2_cache>;
-+			reg = <0x300>;
-+		};
-+
-+		l2_cache: l2-cache-1 {
-+			compatible = "cache";
-+			cache-level = <2>;
-+			cache-unified;
-+		};
-+	};
-+
-+	clk_mmc: clock-4000000 {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <4000000>;
-+	};
-+
-+	timer {
-+		compatible = "arm,armv8-timer";
-+		interrupt-parent = <&gic>;
-+		always-on;
-+		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>;
-+	};
-+
-+	soc: soc@0 {
-+		compatible = "simple-bus";
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges = <0x0 0x0 0x0 0x0 0xffffffff 0xffffffff>;
-+		interrupt-parent = <&gic>;
-+
-+		mmc0: mmc@22200000 {
-+			compatible = "bst,c1200-dwcmshc-sdhci";
-+			reg = <0x0 0x22200000 0x0 0x1000>,
-+			      <0x0 0x23006000 0x0 0x1000>;
-+			interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clk_mmc>;
-+			clock-names = "core";
-+			max-frequency = <200000000>;
-+			bus-width = <8>;
-+			non-removable;
-+			dma-coherent;
-+			status = "disabled";
-+		};
-+
-+		uart0: serial@20008000 {
-+			compatible = "snps,dw-apb-uart";
-+			reg = <0x0 0x20008000 0x0 0x1000>;
-+			interrupts = <GIC_SPI 211 IRQ_TYPE_LEVEL_HIGH>;
-+			clock-frequency = <25000000>;
-+			reg-shift = <2>;
-+			reg-io-width = <4>;
-+			status = "disabled";
-+		};
-+
-+		gic: interrupt-controller@32800000 {
-+			compatible = "arm,gic-v3";
-+			#interrupt-cells = <3>;
-+			#address-cells = <2>;
-+			#size-cells = <2>;
-+			interrupt-controller;
-+			ranges;
-+			reg = <0x0 0x32800000 0x0 0x10000>,
-+			      <0x0 0x32880000 0x0 0x100000>;
-+			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>;
-+		};
-+	};
-+
-+	psci {
-+		compatible = "arm,psci-1.0";
-+		method = "smc";
-+	};
-+};
 diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 897fc686e6a9..0a1cfaa19688 100644
+index 0a1cfaa19688..8daf8cf3dc97 100644
 --- a/arch/arm64/configs/defconfig
 +++ b/arch/arm64/configs/defconfig
-@@ -45,6 +45,7 @@ CONFIG_ARCH_BCMBCA=y
- CONFIG_ARCH_BRCMSTB=y
- CONFIG_ARCH_BERLIN=y
- CONFIG_ARCH_BLAIZE=y
-+CONFIG_ARCH_BST=y
- CONFIG_ARCH_EXYNOS=y
- CONFIG_ARCH_SPARX5=y
- CONFIG_ARCH_K3=y
+@@ -1188,6 +1188,7 @@ CONFIG_MMC_SDHCI_CADENCE=y
+ CONFIG_MMC_SDHCI_ESDHC_IMX=y
+ CONFIG_MMC_SDHCI_TEGRA=y
+ CONFIG_MMC_SDHCI_F_SDH30=y
++CONFIG_MMC_SDHCI_BST=y
+ CONFIG_MMC_MESON_GX=y
+ CONFIG_MMC_SDHCI_MSM=y
+ CONFIG_MMC_SPI=y
 -- 
 2.25.1
 
