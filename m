@@ -1,237 +1,263 @@
-Return-Path: <linux-kernel+bounces-713354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93162AF587D
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 15:21:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BC42AF5803
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 15:11:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A2257B9F3A
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 13:16:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEB354A4D86
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 13:09:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF3F327AC35;
-	Wed,  2 Jul 2025 13:16:09 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69EE71E5B70;
+	Wed,  2 Jul 2025 13:09:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RwOsIme3"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B2D727702D;
-	Wed,  2 Jul 2025 13:15:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751462169; cv=none; b=FWHcw12AOVf/mHvpESPkFJ5Z40j7jhoZydcQlgrLjpaJqW21173h3TFNF9a1btoY8+JRU8jex2e2Xz0yN+IDpguZ8pelrNLUSPnjmYW2234YjHsGcDteMb9alIrxYfH0CwDs5DYtTUytCuTvmgBLHagbrypL4fp9OVAN3slJavg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751462169; c=relaxed/simple;
-	bh=3f4gcrnMSKnMOdj6g/xhAF++jPkWPplseWiRneurOfM=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jqoM3Y0C4aHQ6rm4NhYOCEr/0mUIUkeWiWom0uy6D/Q0nr9JAX5JOkvh0ohs9bC4pq1dv6hSVn0lNP5w3Nooch49nJGYnMfq+/8rz7k/8dkVV6X58u1Qv/vLKXEwWsyghocP/pObm3ZkOPBeOP9AgcY+GPfusMQ+pvS3xfarQrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4bXL3C3MP1ztSk3;
-	Wed,  2 Jul 2025 21:14:47 +0800 (CST)
-Received: from kwepemk100013.china.huawei.com (unknown [7.202.194.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id 3FB8414010D;
-	Wed,  2 Jul 2025 21:15:55 +0800 (CST)
-Received: from localhost.localdomain (10.90.31.46) by
- kwepemk100013.china.huawei.com (7.202.194.61) with Microsoft SMTP Server
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA937275850;
+	Wed,  2 Jul 2025 13:09:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751461784; cv=fail; b=nLfqOlMC4Tc29OOSU3IRcQIx6Ovbqk7SsVBcSKxL0RwA8HYPunlz93xmcqC4Wj3QyUNGX8sAkR3pX/DebHqCfGbqlySv7OaimoivWl3/9v0dRxiiAWM8FzzP4xcJNuqtZZFyfaxDjvU5YEDpGw3agCtsYIqz+lrHk4Ve/1GZHMU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751461784; c=relaxed/simple;
+	bh=PY1EJ26qPoFgll/Xnadsrd1E1IYKtXFVoKt/44QMD2k=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=uvkVo1/CppMLSlBAeuHEabPigzJBoJLv/BtqoEK5lxVKBYOdFOInTn5gbyK8U7PjG3rt5DHD7jnrSsHuUuIuouikgODZSEKSrX8NEIQK3ZRbYmhS/0JoiQtyUynVHIiZ713jigvDWf3WAQuUZWaHLAIVdb4218cib51JHno2Je8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RwOsIme3; arc=fail smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751461783; x=1782997783;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=PY1EJ26qPoFgll/Xnadsrd1E1IYKtXFVoKt/44QMD2k=;
+  b=RwOsIme38G+u+yJ/j/epxjQAbn5wKkxpwc3mvO4uGq8PScjpc30njDfq
+   I/Mk5y6mYgB48LML+4j75H/4r4eHGHBhlp14a3yRBDi1WYkQcCdB7FsbR
+   24FAsZYFZ0RTaakVakwnPj6foB2BG+lMp51Svm49I2Hf5EwET8c5EnJzh
+   eUiIuXJOMInDMxSXyne+FwGFViglpE8JowdYHI7zKXuhdflHLthvVBOr8
+   wiri0fDiI5MOdZBp2kH8Y2/PRAT30U82EOvjzhTq7zPnZa71NDLBJiy2/
+   D0txOfuhSfGqsw1xIKgIqJy3eao1xfosG0ZM8LX/EYGzcIwXTFcP7h/Ib
+   Q==;
+X-CSE-ConnectionGUID: zrEgFqtRRSSmmEfEP/cGvw==
+X-CSE-MsgGUID: gzRkEIzFQqaSe/V5+DkJGA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11482"; a="57563551"
+X-IronPort-AV: E=Sophos;i="6.16,281,1744095600"; 
+   d="scan'208";a="57563551"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2025 06:09:14 -0700
+X-CSE-ConnectionGUID: mJeA0g8YRiCyI0O3XenecQ==
+X-CSE-MsgGUID: VWhKlF/kQ6S9lSzzP6cTDA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,281,1744095600"; 
+   d="scan'208";a="185016557"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2025 06:09:13 -0700
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 2 Jul 2025 21:15:54 +0800
-From: Jijie Shao <shaojijie@huawei.com>
-To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <andrew+netdev@lunn.ch>, <horms@kernel.org>
-CC: <shenjian15@huawei.com>, <liuyonglong@huawei.com>,
-	<chenhao418@huawei.com>, <jonathan.cameron@huawei.com>,
-	<shameerali.kolothum.thodi@huawei.com>, <salil.mehta@huawei.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<shaojijie@huawei.com>
-Subject: [PATCH net 4/4] net: hns3: default enable tx bounce buffer when smmu enabled
-Date: Wed, 2 Jul 2025 21:09:01 +0800
-Message-ID: <20250702130901.2879031-5-shaojijie@huawei.com>
-X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20250702130901.2879031-1-shaojijie@huawei.com>
-References: <20250702130901.2879031-1-shaojijie@huawei.com>
+ 15.2.1544.25; Wed, 2 Jul 2025 06:09:13 -0700
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25 via Frontend Transport; Wed, 2 Jul 2025 06:09:13 -0700
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (40.107.102.77)
+ by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Wed, 2 Jul 2025 06:09:12 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=j9Yio+VG9n5Oq1pSDz/QEMJamJahEJQ4PafrumbVY0EVjx9nekxJVeEhXGaPxoj4d6NpcV80eG6ljGuDCbgpASsYvHX3cpidPOp/hK2n/SkpLQ7aySY44rcoa97cnZvdqa/byFqLg0UI0FG4ZgeK21gxSluBLaW9CJra9770oL0BRNKrD3KfRcuHp5vj84GESxWh1Q4fF34kitDJgxr/PrzUGJ/5NbzeMwX14mGRK/QCIHANYypzciDLiOMgzFXUNZ2i0mZAOOQO5pEX1gTCt1AteQwX/pSLKZaz4oDeFY6qPG2rivYEgHOTuvPQA1CYLRNB5Uk1s6YAuG/SLaPAOw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=nw3EBDuZN5M+9A8O60p/C6I7h1rsZzoP3zzG18Oh+Ho=;
+ b=lwCtznkWKcmh7WsnfLuVDkqKvA5Xm+6V9J4ZC2FnrE/icGsPM7rFdGQ0tJoIJkjVrX/zF9wy98yII1hAwlx/VvP6HDaXXzi8LYF9Iq0eW3uvQfPxIMm1jxL4C0qX4dGwISmIG9XX8inLw5shIVpIIV258khm2NCC+KcTadlV8xEVruJm4khnoV3Aiqf96bOLzKaNPuxU8eiiOKRvxP2lYhPvIFP59l9bqHetso0mtiZZ7ii9X/8QG8R3BTtLmGJMofaq/VZB//gAb947PoitXAYKMHZOv6fvyyDwiRQ2aSv0UpvUDGsG8zRzzqkWfJkk+kXlL20CUWS2NeoUn4iLhg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from DM3PPF208195D8D.namprd11.prod.outlook.com
+ (2603:10b6:f:fc00::f13) by CYYPR11MB8329.namprd11.prod.outlook.com
+ (2603:10b6:930:c7::20) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8880.31; Wed, 2 Jul
+ 2025 13:09:11 +0000
+Received: from DM3PPF208195D8D.namprd11.prod.outlook.com
+ ([fe80::9c2a:ba60:c5fe:6a64]) by DM3PPF208195D8D.namprd11.prod.outlook.com
+ ([fe80::9c2a:ba60:c5fe:6a64%5]) with mapi id 15.20.8857.026; Wed, 2 Jul 2025
+ 13:09:10 +0000
+From: "Kandpal, Suraj" <suraj.kandpal@intel.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>, Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>
+CC: Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann
+	<tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter
+	<simona@ffwll.ch>, "Nikula, Jani" <jani.nikula@intel.com>, "Deak, Imre"
+	<imre.deak@intel.com>, "Murthy, Arun R" <arun.r.murthy@intel.com>, "Dmitry
+ Baryshkov" <lumag@kernel.org>, Andy Yan <andy.yan@rock-chips.com>, "Dave
+ Airlie" <airlied@redhat.com>, "dri-devel@lists.freedesktop.org"
+	<dri-devel@lists.freedesktop.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org"
+	<kernel-janitors@vger.kernel.org>
+Subject: RE: [PATCH] drm/dp: Clean up white space in
+ drm_edp_backlight_probe_state()
+Thread-Topic: [PATCH] drm/dp: Clean up white space in
+ drm_edp_backlight_probe_state()
+Thread-Index: AQHb61CYyo10iQGAfkCqedIKzRgWr7QezizA
+Date: Wed, 2 Jul 2025 13:09:10 +0000
+Message-ID: <DM3PPF208195D8D423BDB8FC477429FCA3BE340A@DM3PPF208195D8D.namprd11.prod.outlook.com>
+References: <30b896c2-ae71-4cf2-9511-2713da7e1632@sabinyo.mountain>
+In-Reply-To: <30b896c2-ae71-4cf2-9511-2713da7e1632@sabinyo.mountain>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DM3PPF208195D8D:EE_|CYYPR11MB8329:EE_
+x-ms-office365-filtering-correlation-id: 69581193-4fa8-46ee-cda6-08ddb969a2ac
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014|38070700018;
+x-microsoft-antispam-message-info: =?us-ascii?Q?Sy2h5bP/h9SdjuY4dQeVViOcZ8VeXAdLdEAayt2TY+YSV1QGATj2Og3SyjY/?=
+ =?us-ascii?Q?6FQA+m27ShVrWpUyPW0MbVnq4k05xOAivIiEeNNpTWmdJ3Cgm0WViNP6RWry?=
+ =?us-ascii?Q?WHF0nhKwvcBtZgU9w7Kd5fnnKYm9bQh/lJGWN1+CnvLa6XRrHY0cqWN5EKFm?=
+ =?us-ascii?Q?abA1+mbsEu8vuVfqKPW3q0O/ItyyaMAD+D7kVsDtLDrAeUOLI2oKVQAcItok?=
+ =?us-ascii?Q?IpW55nOkrB4E3+G23VESQ+S7abj3+rQ3Ila/Dt2aTFPZAcsYd7gYecDoGaFf?=
+ =?us-ascii?Q?f4EmYahzLMP/u+8TZ/mRUHUHg+w4q9mqv4LeArKIWmKGcaHhvoPG9NV5y7xd?=
+ =?us-ascii?Q?jkkaw6zK5uCB2G+HlUATMPbTddXuq1rx8r8RAj34S63aUjKmUwb/CreB5yJO?=
+ =?us-ascii?Q?1W+iolxz53td0bOjPq2YTu9F1JPKGI2uxa0gKMfoDfMN5uLAqpu5WwRDnKDX?=
+ =?us-ascii?Q?akyLAxoG/QJXvOJObDMmXaorCOshKdsETBMkcc1wq4NW8FzfM9Iy9R5ZUHCY?=
+ =?us-ascii?Q?u+nJnGbYU4OFtNt6lH+4fN1fuyLe1MSTh3rMER0FLjOvRzQZi/Bfpjo/PGNV?=
+ =?us-ascii?Q?bvX0D60oK2Bskqka4qlZxEN9F7CvZ/34Tumh0BshapbFa65aZifndhEgrqEL?=
+ =?us-ascii?Q?5lw4mRB3Zkstq8ybi1iNZJqh1DAUDtfOwtO3/6ipFUjTrogoG5to9nSZdcRD?=
+ =?us-ascii?Q?vXdii0OU51vv7rLuVvHpyC4CYZgw1VZbc6XXk+xtexWDS0BOe1Q2uIQfU6dw?=
+ =?us-ascii?Q?zJezPknHxFyHPayHirR+nfZtG0HDZFkz03cy/athqf8OG6vLOZGvKS/elCMe?=
+ =?us-ascii?Q?7axongub1vNrfLb0ghM3nhjXxbapCvQYO/62IJHEQfcCH6FqtASbhoZO3fvn?=
+ =?us-ascii?Q?QYGWfy32FQAuOS7EUsZOHkpFhrrMFPYwfLHaPUl1UNHQH0NI3O6IXTQ0i6sm?=
+ =?us-ascii?Q?g4cX4uoHD6PKgpCBpM7s7k10ghfmNhitJWT1H/fGlRH7rWYIqMkdSTgfp4if?=
+ =?us-ascii?Q?7CrVY63OnZq3MRex8G82dudrd2bQNQu2Djcm2BIgQXuoTD5Lz+pbT0uxYUXW?=
+ =?us-ascii?Q?xiViGhKzxYoPXOc4unOC+BlQuNzwg5K0TA/V/Yu0+RtB7w+pN7eP6FAR4IaM?=
+ =?us-ascii?Q?QfJ+TwryIzO2uPruCe3wRVbHvHLkcI6+2NF6hBz11baiT854ObgE+l7sE5vE?=
+ =?us-ascii?Q?8gQyyWxyTZvwEACf2ZP/s+7N0JR79VhOx3lq/2wsZ/9WsUYfsTON7kTp60bk?=
+ =?us-ascii?Q?xrrGngHHCPl9GD8O5j7jGbNkPDAdty4Thasn7RVKjQRM5hW8G7nwxzOcpq18?=
+ =?us-ascii?Q?my51UG8Kxdvnv17t3ZYsYC29qWane7zPJTfXBq1Id265TamvxbL1F8e3rcIF?=
+ =?us-ascii?Q?VdDEBEc4X9zhtr+V0Pv32zXCEpV/0DCLOPgEDXPpp2XWeZVdUbch35oEPRGF?=
+ =?us-ascii?Q?BcwtNG8FJ98QGYgJpo8zf0LbBVohyV6RBB4wDjZlG7G5E+LxiEKUmQ=3D=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM3PPF208195D8D.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?KZSS5b+5WZRDYkwcbG9qRBjYMSNRjyGu0B2oi40ghS5M36neoSW4PMKgWK3z?=
+ =?us-ascii?Q?7/LpLr186x45QwgTL7iP+F/iIT7fT5JpWHfEgg+spvCIEg5+FRqv/hEvQw4f?=
+ =?us-ascii?Q?VX91s4xs7vTRtDrVbKoiGkKNhqTxecPSKal0fiIFTMyoJZcIg0NtY8QLKHld?=
+ =?us-ascii?Q?8DTXPFcqe2XKfJoBOdLJyxE82b1xWGZMaieykY+7fxg7QCWrK6H8L/QhvfKw?=
+ =?us-ascii?Q?uF7dRc1Sh4lfK8LRA4g2tZRrQGVxwzYLnvyckpldmwwCqP8OeFXfkYLBxf6n?=
+ =?us-ascii?Q?weRkzoVqMVYMgJ+SgLpq150ExP1qVSfqqBbcbVHQADiPzJpqKPRbA2haNwAD?=
+ =?us-ascii?Q?zCHK/RGVpnBMVGG9hlORZeInPN7mmTivFotIJbASWW4cjGxMjPj5p7MPUYD+?=
+ =?us-ascii?Q?cCLg+nV2jn19wuIPs5LMVJ1kOuLVjvNV0zYHDmJfv91LpMDWIz7CgcrnlkEO?=
+ =?us-ascii?Q?GjKY5wsvNVMDuNlDADw3R08UHexMRLU1yGkgJNwZRbIRSeuONIHXChVozskx?=
+ =?us-ascii?Q?LX10VwxqR3ysm+1MDn0EmxGlzMLeWM+MhCriDfVzfTYrivuD/c0eGQmxbRFe?=
+ =?us-ascii?Q?wzW8uxSMSV8eEtMREuNL6FFRkaOVMI+YkzdCKtfG8hWlQC252KWiys50fxNF?=
+ =?us-ascii?Q?o/0TC2WeUHwvoaoP2tqrFyYrATH3Rco7jHYlgvGB7COGV61vzpyW3ILK6mt7?=
+ =?us-ascii?Q?Fvlbv7B2tPo1WjQQVnUsgUT07UW7YdcOf/P6cl+hr4NdoT53y7my5Syze8jV?=
+ =?us-ascii?Q?Swky8p8LgQBBE0VeOPlpFsEK/LZEBDvEk/qombE7Hib3jD+totUFoValxXu5?=
+ =?us-ascii?Q?3NJE11n27bvpyduZS9wJQ2kdXeJF04Z8LR2QP5/R6EI4MsAsdZpeLBWbgO9D?=
+ =?us-ascii?Q?BL6nmKCgaplHdiBuCL5TMHdPLx2gesPSwhgEp0CMLmy4zNwcyo2W3oONecZS?=
+ =?us-ascii?Q?Mm2Xyvr4sBFrMNs6eKmtY9YLqYvzvK88neBXKC8NlCqnCgJryjxfpl3O7jPQ?=
+ =?us-ascii?Q?wlf925IbBbVv6TRkqLZbV5OUuGZ4tZzjnme5fHrt/1wvhOAQUZ01QOCwEIV0?=
+ =?us-ascii?Q?F4zuFAPq869rDRUwQ7B4GkZiXAk6mvNGFjuQm9JK5wvaY/nib3ll841gezOc?=
+ =?us-ascii?Q?LLT2knT9BeF+7FCLrgycUDoagvXp5OA9NsFcl8waq1j4P11aeNvu0CwPqApG?=
+ =?us-ascii?Q?Wg0aWMPGy68gjY4uRytwu6VYrjP2gxEZ/t79s5qW3Quxv9fpePsKRxpBE3pH?=
+ =?us-ascii?Q?4rX0WfTIJwYE51mOCbM6g1jI0ftlhYP9kKx0uB7j3uEhxQbpHLKKrSouYA2/?=
+ =?us-ascii?Q?Bmck36bzIfQXELrsrY/wRH4h0gJLMaDVFVtO6iGwSGT7d0yT7WPhP/IdR03b?=
+ =?us-ascii?Q?6ZzVLuOoW9Jn76pivJabaxSgHrmWBnWcHbvFCYgci9I42e8xrWh/XkzhLqOX?=
+ =?us-ascii?Q?LekY5KOIpebxRpbmnGFHphwuUzm/Ie8B3eKYYlmB9lgtadfi7VV7S4ox2K4A?=
+ =?us-ascii?Q?0ROfeRKOjliawD7OQZ+aGO/GlQGwP2hQ9Mpk5nS9+pref/OwzHbhcl+NFc8a?=
+ =?us-ascii?Q?EBAgErKlvGHvAu3/wqx1HyLFUdjfZPanaGs8XuP4?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
- kwepemk100013.china.huawei.com (7.202.194.61)
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DM3PPF208195D8D.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 69581193-4fa8-46ee-cda6-08ddb969a2ac
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Jul 2025 13:09:10.8045
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: ctIP4rmk9sHIm41ZA6WegNTguHAvhyhncErDPt2huOJLgXpMflOW432FPgLbyPYj7uB8aoLnE+L3ix3GzCewww==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYYPR11MB8329
+X-OriginatorOrg: intel.com
 
-The SMMU engine on HIP09 chip has a hardware issue.
-SMMU pagetable prefetch features may prefetch and use a invalid PTE
-even the PTE is valid at that time. This will cause the device trigger
-fake pagefaults. The solution is to avoid prefetching by adding a
-SYNC command when smmu mapping a iova. But the performance of nic has a
-sharp drop. Then we do this workaround, always enable tx bounce buffer,
-avoid mapping/unmapping on TX path.
 
-This issue only affects HNS3, so we always enable
-tx bounce buffer when smmu enabled to improve performance.
 
-Fixes: 295ba232a8c3 ("net: hns3: add device version to replace pci revision")
-Signed-off-by: Jian Shen <shenjian15@huawei.com>
-Signed-off-by: Jijie Shao <shaojijie@huawei.com>
----
- .../net/ethernet/hisilicon/hns3/hns3_enet.c   | 31 +++++++++++++++++
- .../net/ethernet/hisilicon/hns3/hns3_enet.h   |  2 ++
- .../ethernet/hisilicon/hns3/hns3_ethtool.c    | 33 +++++++++++++++++++
- 3 files changed, 66 insertions(+)
+> -----Original Message-----
+> From: Dan Carpenter <dan.carpenter@linaro.org>
+> Sent: Wednesday, July 2, 2025 6:25 PM
+> To: Kandpal, Suraj <suraj.kandpal@intel.com>; Maarten Lankhorst
+> <maarten.lankhorst@linux.intel.com>
+> Cc: Maxime Ripard <mripard@kernel.org>; Thomas Zimmermann
+> <tzimmermann@suse.de>; David Airlie <airlied@gmail.com>; Simona Vetter
+> <simona@ffwll.ch>; Nikula, Jani <jani.nikula@intel.com>; Deak, Imre
+> <imre.deak@intel.com>; Murthy, Arun R <arun.r.murthy@intel.com>; Dmitry
+> Baryshkov <lumag@kernel.org>; Andy Yan <andy.yan@rock-chips.com>; Dave
+> Airlie <airlied@redhat.com>; dri-devel@lists.freedesktop.org; linux-
+> kernel@vger.kernel.org; kernel-janitors@vger.kernel.org
+> Subject: [PATCH] drm/dp: Clean up white space in
+> drm_edp_backlight_probe_state()
+>=20
+> This code needs to be indented one more tab.
+>=20
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-index 49fcee7a6d0f..b028ca9a67a5 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-@@ -11,6 +11,7 @@
- #include <linux/irq.h>
- #include <linux/ip.h>
- #include <linux/ipv6.h>
-+#include <linux/iommu.h>
- #include <linux/module.h>
- #include <linux/pci.h>
- #include <linux/skbuff.h>
-@@ -1039,6 +1040,8 @@ static bool hns3_can_use_tx_sgl(struct hns3_enet_ring *ring,
- static void hns3_init_tx_spare_buffer(struct hns3_enet_ring *ring)
- {
- 	u32 alloc_size = ring->tqp->handle->kinfo.tx_spare_buf_size;
-+	struct net_device *netdev = ring_to_netdev(ring);
-+	struct hns3_nic_priv *priv = netdev_priv(netdev);
- 	struct hns3_tx_spare *tx_spare;
- 	struct page *page;
- 	dma_addr_t dma;
-@@ -1080,6 +1083,7 @@ static void hns3_init_tx_spare_buffer(struct hns3_enet_ring *ring)
- 	tx_spare->buf = page_address(page);
- 	tx_spare->len = PAGE_SIZE << order;
- 	ring->tx_spare = tx_spare;
-+	ring->tx_copybreak = priv->tx_copybreak;
- 	return;
- 
- dma_mapping_error:
-@@ -4874,6 +4878,30 @@ static void hns3_nic_dealloc_vector_data(struct hns3_nic_priv *priv)
- 	devm_kfree(&pdev->dev, priv->tqp_vector);
- }
- 
-+static void hns3_update_tx_spare_buf_config(struct hns3_nic_priv *priv)
-+{
-+#define HNS3_MIN_SPARE_BUF_SIZE (2 * 1024 * 1024)
-+#define HNS3_MAX_PACKET_SIZE (64 * 1024)
-+
-+	struct iommu_domain *domain = iommu_get_domain_for_dev(priv->dev);
-+	struct hnae3_ae_dev *ae_dev = hns3_get_ae_dev(priv->ae_handle);
-+	struct hnae3_handle *handle = priv->ae_handle;
-+
-+	if (ae_dev->dev_version < HNAE3_DEVICE_VERSION_V3)
-+		return;
-+
-+	if (!(domain && iommu_is_dma_domain(domain)))
-+		return;
-+
-+	priv->min_tx_copybreak = HNS3_MAX_PACKET_SIZE;
-+	priv->min_tx_spare_buf_size = HNS3_MIN_SPARE_BUF_SIZE;
-+
-+	if (priv->tx_copybreak < priv->min_tx_copybreak)
-+		priv->tx_copybreak = priv->min_tx_copybreak;
-+	if (handle->kinfo.tx_spare_buf_size < priv->min_tx_spare_buf_size)
-+		handle->kinfo.tx_spare_buf_size = priv->min_tx_spare_buf_size;
-+}
-+
- static void hns3_ring_get_cfg(struct hnae3_queue *q, struct hns3_nic_priv *priv,
- 			      unsigned int ring_type)
- {
-@@ -5107,6 +5135,7 @@ int hns3_init_all_ring(struct hns3_nic_priv *priv)
- 	int i, j;
- 	int ret;
- 
-+	hns3_update_tx_spare_buf_config(priv);
- 	for (i = 0; i < ring_num; i++) {
- 		ret = hns3_alloc_ring_memory(&priv->ring[i]);
- 		if (ret) {
-@@ -5311,6 +5340,8 @@ static int hns3_client_init(struct hnae3_handle *handle)
- 	priv->ae_handle = handle;
- 	priv->tx_timeout_count = 0;
- 	priv->max_non_tso_bd_num = ae_dev->dev_specs.max_non_tso_bd_num;
-+	priv->min_tx_copybreak = 0;
-+	priv->min_tx_spare_buf_size = 0;
- 	set_bit(HNS3_NIC_STATE_DOWN, &priv->state);
- 
- 	handle->msg_enable = netif_msg_init(debug, DEFAULT_MSG_LEVEL);
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h
-index d3bad5d1b888..933e3527ed82 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h
-@@ -596,6 +596,8 @@ struct hns3_nic_priv {
- 	struct hns3_enet_coalesce rx_coal;
- 	u32 tx_copybreak;
- 	u32 rx_copybreak;
-+	u32 min_tx_copybreak;
-+	u32 min_tx_spare_buf_size;
- };
- 
- union l3_hdr_info {
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c b/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
-index d5454e126c85..a752d0e3db3a 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
-@@ -1927,6 +1927,31 @@ static int hns3_set_tx_spare_buf_size(struct net_device *netdev,
- 	return ret;
- }
- 
-+static int hns3_check_tx_copybreak(struct net_device *netdev, u32 copybreak)
-+{
-+	struct hns3_nic_priv *priv = netdev_priv(netdev);
-+
-+	if (copybreak < priv->min_tx_copybreak) {
-+		netdev_err(netdev, "tx copybreak %u should be no less than %u!\n",
-+			   copybreak, priv->min_tx_copybreak);
-+		return -EINVAL;
-+	}
-+	return 0;
-+}
-+
-+static int hns3_check_tx_spare_buf_size(struct net_device *netdev, u32 buf_size)
-+{
-+	struct hns3_nic_priv *priv = netdev_priv(netdev);
-+
-+	if (buf_size < priv->min_tx_spare_buf_size) {
-+		netdev_err(netdev,
-+			   "tx spare buf size %u should be no less than %u!\n",
-+			   buf_size, priv->min_tx_spare_buf_size);
-+		return -EINVAL;
-+	}
-+	return 0;
-+}
-+
- static int hns3_set_tunable(struct net_device *netdev,
- 			    const struct ethtool_tunable *tuna,
- 			    const void *data)
-@@ -1943,6 +1968,10 @@ static int hns3_set_tunable(struct net_device *netdev,
- 
- 	switch (tuna->id) {
- 	case ETHTOOL_TX_COPYBREAK:
-+		ret = hns3_check_tx_copybreak(netdev, *(u32 *)data);
-+		if (ret)
-+			return ret;
-+
- 		priv->tx_copybreak = *(u32 *)data;
- 
- 		for (i = 0; i < h->kinfo.num_tqps; i++)
-@@ -1957,6 +1986,10 @@ static int hns3_set_tunable(struct net_device *netdev,
- 
- 		break;
- 	case ETHTOOL_TX_COPYBREAK_BUF_SIZE:
-+		ret = hns3_check_tx_spare_buf_size(netdev, *(u32 *)data);
-+		if (ret)
-+			return ret;
-+
- 		old_tx_spare_buf_size = h->kinfo.tx_spare_buf_size;
- 		new_tx_spare_buf_size = *(u32 *)data;
- 		netdev_info(netdev, "request to set tx spare buf size from %u to %u\n",
--- 
-2.33.0
+LGTM,
+Reviewed-by: Suraj Kandpal <suraj.kandpal@intel.com>
+
+> ---
+>  drivers/gpu/drm/display/drm_dp_helper.c | 14 +++++++-------
+>  1 file changed, 7 insertions(+), 7 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/display/drm_dp_helper.c
+> b/drivers/gpu/drm/display/drm_dp_helper.c
+> index db7896c7edb8..1c3920297906 100644
+> --- a/drivers/gpu/drm/display/drm_dp_helper.c
+> +++ b/drivers/gpu/drm/display/drm_dp_helper.c
+> @@ -4245,14 +4245,14 @@ drm_edp_backlight_probe_state(struct
+> drm_dp_aux *aux, struct drm_edp_backlight_i
+>  					    "%s: Failed to read backlight level:
+> %d\n",
+>  					    aux->name, ret);
+>  				return ret;
+> -		}
+> +			}
+>=20
+> -		/*
+> -		 * Incase luminance is set we want to send the value back in
+> nits but since
+> -		 * DP_EDP_PANEL_TARGET_LUMINANCE stores values in
+> millinits we need to divide
+> -		 * by 1000.
+> -		 */
+> -		return (buf[0] | buf[1] << 8 | buf[2] << 16) / 1000;
+> +			/*
+> +			 * Incase luminance is set we want to send the value
+> back in nits but
+> +			 * since DP_EDP_PANEL_TARGET_LUMINANCE stores
+> values in millinits we
+> +			 * need to divide by 1000.
+> +			 */
+> +			return (buf[0] | buf[1] << 8 | buf[2] << 16) / 1000;
+>  		} else {
+>  			ret =3D drm_dp_dpcd_read_data(aux,
+> DP_EDP_BACKLIGHT_BRIGHTNESS_MSB,
+>  						    buf, size);
+> --
+> 2.47.2
 
 
