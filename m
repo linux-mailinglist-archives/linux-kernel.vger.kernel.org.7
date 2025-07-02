@@ -1,198 +1,172 @@
-Return-Path: <linux-kernel+bounces-713509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0D04AF5AC4
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 16:14:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EA0EAF5ADF
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 16:16:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D2F416A0AC
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:13:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B5501C418F5
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:16:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E8872BEC20;
-	Wed,  2 Jul 2025 14:13:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A5612EA466;
+	Wed,  2 Jul 2025 14:15:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="b2PaRKIH"
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="dBDQHoEX"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC49427A121
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 14:13:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 664562E9EB2;
+	Wed,  2 Jul 2025 14:15:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751465606; cv=none; b=LcToOncrRBjWoPQRl/71yqSzQ0sBXQgrQbrbfCOhTcu0rhjQox5BsVhBwg1jq2nOtcAdIjSuwNKStScwpr7WNVbpdnLVP60uMOCcdud1Vs5knCYhQnVnbSGWeJwv/xTnBAxNgyNjmNbacWWSMVSyfBuJHp6EMNlYSWTl+L4AkGY=
+	t=1751465746; cv=none; b=pLWc7OHIb+aFdkPAThZIZHtamQY0sd2DjKXy/qlR0W6LW/S7BfuXSWpE13Ue/2o2jL5uHqCdGuc9caKt5bFOoVsSHH1z9sF04oNFfv9pBo7phDArEXBNAQO54IzMQrBNdOICaW5+D/CziL5n+ZN56WqZDsSUOqbNp1mL2Mc4tuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751465606; c=relaxed/simple;
-	bh=T2cbnqQkqCu7yJ1ibRZfqew237LIDEtBM6zvXy3oISY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=euPvtPzZPLVU/O/icuFkyThurpCCFP1sXGeIOwnWAiOJhul2SD+FuelZsilOOqWXi2xtv2XixTI7KHpees8Gk0M0sr5S2I0fDXN6ZaHE/RQzy5yhyXEW+V32QCG283pnbWuXUVwitHxVW/cdrgenSBJCHjv4T+pOkXs8DhIWgjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=b2PaRKIH; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4a58d95ea53so74979741cf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 07:13:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1751465603; x=1752070403; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=LI2D5V4EggMWsDP/C9ghbDqwYMTHQ8Upr7Uk1D8akao=;
-        b=b2PaRKIHNS83igXP3/qMRz9J+6Llacyao2+jWyTXEBLy23E7u50tuB07aAONdHK9yL
-         bX6+QsJpcwBlZLT2r8WVVztPiB+myLlg/aIdcKA/FYrZcjPkILIfLj8XW6Nf6G/5PEbw
-         EzaantsYhzeHe8POJSFwxpkYtrUDw29BoFk2YFyWDT4hHvxBgb31szrd2dciGRriPgR7
-         m5pyxwkgzLt5iYIUWEWHMbQum8TgivKQYkrO4Od5Kwk2igFFwXQk6eGAdtlCecUACW6i
-         MAjXjqj2HpeTts1286h2hQSY0HmKB++2IOIgseGHYcqoCu2zokua7GnnucQQgnSanEsC
-         5W5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751465603; x=1752070403;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LI2D5V4EggMWsDP/C9ghbDqwYMTHQ8Upr7Uk1D8akao=;
-        b=qWwnw4MHIKYLItSaC0vIoICnUPSezsu/3+mu+wCiXUuR1wD/EMwDY/ALvIp6n5Wu33
-         xr6HfGOHmzE5vZ6sjToQChn9Huuzy/xKcu7meOXGdwXly/KWR/Sg/gJ10rlvz247EAAz
-         Zi6tTFhKZOaSSLZYrh0XPe5tis6jbcKXGm8rjIfUDaeAYE/9ATc540748c+BBvSp0N+/
-         O9lQRhBssIBa5WBzzi9KeYOtCaosMZm2C3indGlZuvI59DJ8wGhE752Gi2jnAFtdWBIO
-         D7wf/qeWFIHGa/A5by2pCA22dbJnb9dYhXXI+N+pTkgEChAejur1VW1btTbxR4W9fkM0
-         o0cw==
-X-Forwarded-Encrypted: i=1; AJvYcCWLlTzfndE82TFM5xuqfXfg95iM4ilPkHYD5k0VIGR6dmbrb/26zOPjtzX8ylEomN6oaXnjHoutUWeZ+TQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzZ0XXvl0mSirSkP+XWmdahHhhLDYuVMlB+xU/Pw7Rr85RsR6q
-	J54vMwvRGckIkR81CNAeAZDB8iGJqp1CLXQ2DEEWDSyiqNZEMQ908GFbSZOwq1Gqx6I=
-X-Gm-Gg: ASbGnctcqfuycXc0YiNMVTBqIKcc3Zdh0Yi9GAB1vHhj1JvktFZFCAZLKprN8QsxDn0
-	z7KnYGTeMxLtDSin6ZG9kYNyPMt2wbHuyCERE5BZU+4ZCzoyi190gVVhEtGnY5w5tnAniJ4TCWl
-	jRDaQgcSgBThnGZ9Yud2f64yqPXZAjMU88oK4ymjC0K8NW4PrUpLEurNmb9XWNngsKbMu/14bbx
-	zM+DWvuqkMdxsunzUDkjznutnStDIc2IrMwEcew6STtZKBpTL+IVReOe+ueLab7xYQ/nd2RDRqf
-	tP+pmHWxwZIAaKQQyx1tdtDPJKoMsmozM0aY
-X-Google-Smtp-Source: AGHT+IFGejWlBdta72VP8k4wECxNZ4C8RRbrgrTD+eMk+Zg9yBG/xm3+F7tKfuIfEoyh6KMev8oSSw==
-X-Received: by 2002:a05:622a:1109:b0:4a7:81f6:331e with SMTP id d75a77b69052e-4a977bdec57mr34518361cf.6.1751465603229;
-        Wed, 02 Jul 2025 07:13:23 -0700 (PDT)
-Received: from ziepe.ca ([130.41.10.202])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4a7fc1061d3sm92215001cf.15.2025.07.02.07.13.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Jul 2025 07:13:22 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1uWyDB-00000004jk4-3JNi;
-	Wed, 02 Jul 2025 11:13:21 -0300
-Date: Wed, 2 Jul 2025 11:13:21 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Vishal Annapurve <vannapurve@google.com>
-Cc: Yan Zhao <yan.y.zhao@intel.com>, Alexey Kardashevskiy <aik@amd.com>,
-	Fuad Tabba <tabba@google.com>,
-	Ackerley Tng <ackerleytng@google.com>, kvm@vger.kernel.org,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, x86@kernel.org,
-	linux-fsdevel@vger.kernel.org, ajones@ventanamicro.com,
-	akpm@linux-foundation.org, amoorthy@google.com,
-	anthony.yznaga@oracle.com, anup@brainfault.org,
-	aou@eecs.berkeley.edu, bfoster@redhat.com,
-	binbin.wu@linux.intel.com, brauner@kernel.org,
-	catalin.marinas@arm.com, chao.p.peng@intel.com,
-	chenhuacai@kernel.org, dave.hansen@intel.com, david@redhat.com,
-	dmatlack@google.com, dwmw@amazon.co.uk, erdemaktas@google.com,
-	fan.du@intel.com, fvdl@google.com, graf@amazon.com,
-	haibo1.xu@intel.com, hch@infradead.org, hughd@google.com,
-	ira.weiny@intel.com, isaku.yamahata@intel.com, jack@suse.cz,
-	james.morse@arm.com, jarkko@kernel.org, jgowans@amazon.com,
-	jhubbard@nvidia.com, jroedel@suse.de, jthoughton@google.com,
-	jun.miao@intel.com, kai.huang@intel.com, keirf@google.com,
-	kent.overstreet@linux.dev, kirill.shutemov@intel.com,
-	liam.merwick@oracle.com, maciej.wieczor-retman@intel.com,
-	mail@maciej.szmigiero.name, maz@kernel.org, mic@digikod.net,
-	michael.roth@amd.com, mpe@ellerman.id.au, muchun.song@linux.dev,
-	nikunj@amd.com, nsaenz@amazon.es, oliver.upton@linux.dev,
-	palmer@dabbelt.com, pankaj.gupta@amd.com, paul.walmsley@sifive.com,
-	pbonzini@redhat.com, pdurrant@amazon.co.uk, peterx@redhat.com,
-	pgonda@google.com, pvorel@suse.cz, qperret@google.com,
-	quic_cvanscha@quicinc.com, quic_eberman@quicinc.com,
-	quic_mnalajal@quicinc.com, quic_pderrin@quicinc.com,
-	quic_pheragu@quicinc.com, quic_svaddagi@quicinc.com,
-	quic_tsoni@quicinc.com, richard.weiyang@gmail.com,
-	rick.p.edgecombe@intel.com, rientjes@google.com,
-	roypat@amazon.co.uk, rppt@kernel.org, seanjc@google.com,
-	shuah@kernel.org, steven.price@arm.com, steven.sistare@oracle.com,
-	suzuki.poulose@arm.com, thomas.lendacky@amd.com,
-	usama.arif@bytedance.com, vbabka@suse.cz, viro@zeniv.linux.org.uk,
-	vkuznets@redhat.com, wei.w.wang@intel.com, will@kernel.org,
-	willy@infradead.org, xiaoyao.li@intel.com, yilun.xu@intel.com,
-	yuzenghui@huawei.com, zhiquan1.li@intel.com
-Subject: Re: [RFC PATCH v2 04/51] KVM: guest_memfd: Introduce
- KVM_GMEM_CONVERT_SHARED/PRIVATE ioctls
-Message-ID: <20250702141321.GC904431@ziepe.ca>
-References: <d3832fd95a03aad562705872cbda5b3d248ca321.1747264138.git.ackerleytng@google.com>
- <CA+EHjTxtHOgichL=UvAzczoqS1608RSUNn5HbmBw2NceO941ng@mail.gmail.com>
- <CAGtprH8eR_S50xDnnMLHNCuXrN2Lv_0mBRzA_pcTtNbnVvdv2A@mail.gmail.com>
- <CA+EHjTwjKVkw2_AK0Y0-eth1dVW7ZW2Sk=73LL9NeQYAPpxPiw@mail.gmail.com>
- <CAGtprH_Evyc7tLhDB0t0fN+BUx5qeqWq8A2yZ5-ijbJ5UJ5f-g@mail.gmail.com>
- <9502503f-e0c2-489e-99b0-94146f9b6f85@amd.com>
- <20250624130811.GB72557@ziepe.ca>
- <CAGtprH_qh8sEY3s-JucW3n1Wvoq7jdVZDDokvG5HzPf0HV2=pg@mail.gmail.com>
- <aGTvTbPHuXbvj59t@yzhao56-desk.sh.intel.com>
- <CAGtprH9-njcgQjGZvGbbVX+i8D-qPUOkKFHbOWA20962niLTcw@mail.gmail.com>
+	s=arc-20240116; t=1751465746; c=relaxed/simple;
+	bh=AjSA6Bdq5vB9w+D1KK5HtFTazyanZB6oZ2EEmsWUSP4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=VTGVPIFfOOVdqbzO4v8ClVYej6Ew7nMLCnL3cYlbCum4yVzVu2F2wUrLEWCuuShkDYVDvfOLZ9J9MgM6ZYCQR0wCS5uMPTyyjBq7+pO9fwEGIIEE00Q+sv+PWoetGBpQnW+3XBg75Wg1tRK74NMvVp7M/Rki+lbLgfJs/VDJNzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=dBDQHoEX; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 562DIwPT009778;
+	Wed, 2 Jul 2025 16:15:22 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	VR6E01Xg6J6Izs0olt9dR6pYp+S5ROquFthL7GlUqPs=; b=dBDQHoEXqF/md8Ai
+	OKxTINMTwYY9+MXakIisn2u4OHsDwVaws4+1VieBQiNXPftGP0VE8IKDZH79YV9C
+	gDu+8iKUecC6lTA5ex8FURzdpDRCP4m/LQweQkCWaJTIbkrTllzw7aH+Rxeuwntn
+	utlstZrXHzSVULtL2Cc2OeUtYOrfnxH6LYJk/mWHDIEXpYkQRK9ktb31DLmb16v8
+	IQ4M7f9TAHR4Q0aCT0gLzcFyIT99ZXhPfBCV/NcxixuYXHjqrUI8h1A2+IEiQK0n
+	OkuVflyw9cWVeufHcOel2SUgz5K4BtxO8qghv8cKOOkUm6NRS9TCAHbMDBGTCt8h
+	+QRk2A==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 47j5tmb9wc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 02 Jul 2025 16:15:22 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 46F9340050;
+	Wed,  2 Jul 2025 16:14:05 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 22C18BB2448;
+	Wed,  2 Jul 2025 16:13:50 +0200 (CEST)
+Received: from [10.48.86.185] (10.48.86.185) by SHFDAG1NODE2.st.com
+ (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 2 Jul
+ 2025 16:13:49 +0200
+Message-ID: <164e93e7-b9b1-45ff-8418-3a381b2bc781@foss.st.com>
+Date: Wed, 2 Jul 2025 16:13:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 06/13] perf: stm32: introduce DDRPERFM driver
+To: Philipp Zabel <p.zabel@pengutronix.de>, Will Deacon <will@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime
+ Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Gatien
+ Chevallier <gatien.chevallier@foss.st.com>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Gabriel Fernandez
+	<gabriel.fernandez@foss.st.com>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-perf-users@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>
+References: <20250623-ddrperfm-upstream-v1-0-7dffff168090@foss.st.com>
+ <20250623-ddrperfm-upstream-v1-6-7dffff168090@foss.st.com>
+ <5d4cf5bff7733421c8a031493742ba6a21e98583.camel@pengutronix.de>
+Content-Language: en-US
+From: Clement LE GOFFIC <clement.legoffic@foss.st.com>
+In-Reply-To: <5d4cf5bff7733421c8a031493742ba6a21e98583.camel@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGtprH9-njcgQjGZvGbbVX+i8D-qPUOkKFHbOWA20962niLTcw@mail.gmail.com>
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-02_02,2025-07-02_01,2025-03-28_01
 
-On Wed, Jul 02, 2025 at 06:54:10AM -0700, Vishal Annapurve wrote:
-> On Wed, Jul 2, 2025 at 1:38 AM Yan Zhao <yan.y.zhao@intel.com> wrote:
-> >
-> > On Tue, Jun 24, 2025 at 07:10:38AM -0700, Vishal Annapurve wrote:
-> > > On Tue, Jun 24, 2025 at 6:08 AM Jason Gunthorpe <jgg@ziepe.ca> wrote:
-> > > >
-> > > > On Tue, Jun 24, 2025 at 06:23:54PM +1000, Alexey Kardashevskiy wrote:
-> > > >
-> > > > > Now, I am rebasing my RFC on top of this patchset and it fails in
-> > > > > kvm_gmem_has_safe_refcount() as IOMMU holds references to all these
-> > > > > folios in my RFC.
-> > > > >
-> > > > > So what is the expected sequence here? The userspace unmaps a DMA
-> > > > > page and maps it back right away, all from the userspace? The end
-> > > > > result will be the exactly same which seems useless. And IOMMU TLB
-> > >
-> > >  As Jason described, ideally IOMMU just like KVM, should just:
-> > > 1) Directly rely on guest_memfd for pinning -> no page refcounts taken
-> > > by IOMMU stack
-> > In TDX connect, TDX module and TDs do not trust VMM. So, it's the TDs to inform
-> > TDX module about which pages are used by it for DMAs purposes.
-> > So, if a page is regarded as pinned by TDs for DMA, the TDX module will fail the
-> > unmap of the pages from S-EPT.
+Hi Philip
 
-I don't see this as having much to do with iommufd.
+On 6/30/25 10:38, Philipp Zabel wrote:
+> On Mo, 2025-06-23 at 11:27 +0200, Clément Le Goffic wrote:
+>> Introduce the driver for the DDR Performance Monitor available on
+>> STM32MPU SoC.
+>>
+>> On STM32MP2 platforms, the DDRPERFM allows to monitor up to 8 DDR events
+>> that come from the DDR Controller such as read or write events.
+>>
+>> On STM32MP1 platforms, the DDRPERFM cannot monitor any event on any
+>> counter, there is a notion of set of events.
+>> Events from different sets cannot be monitored at the same time.
+>> The first chosen event selects the set.
+>> The set is coded in the first two bytes of the config value which is on 4
+>> bytes.
+>>
+>> On STM32MP25x series, the DDRPERFM clock is shared with the DDR controller
+>> and may be secured by bootloaders.
+>> Access controllers allow to check access to a resource. Use the access
+>> controller defined in the devicetree to know about the access to the
+>> DDRPERFM clock.
+>>
+>> Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
+>> ---
+>>   drivers/perf/Kconfig         |  11 +
+>>   drivers/perf/Makefile        |   1 +
+>>   drivers/perf/stm32_ddr_pmu.c | 893 +++++++++++++++++++++++++++++++++++++++++++
+>>   3 files changed, 905 insertions(+)
+>>
+> [...]
+>> diff --git a/drivers/perf/stm32_ddr_pmu.c b/drivers/perf/stm32_ddr_pmu.c
+>> new file mode 100644
+>> index 000000000000..c0bce1f446a0
+>> --- /dev/null
+>> +++ b/drivers/perf/stm32_ddr_pmu.c
+>> @@ -0,0 +1,893 @@
+> [...]
+>> +	if (of_property_present(pdev->dev.of_node, "resets")) {
+>> +		rst = devm_reset_control_get(&pdev->dev, NULL);
+> 
+> Use devm_reset_control_get_optional_exclusive() instead. It returns
+> NULL if the device tree doesn't contain a resets property.
 
-iommufd will somehow support the T=1 iommu inside the TDX module but
-it won't have an IOAS for it since the VMM does not control the
-translation.
+Ok I will have a look, thank you
 
-The discussion here is for the T=0 iommu which is controlled by
-iommufd and does have an IOAS. It should be popoulated with all the
-shared pages from the guestmemfd.
+> 
+>> +		if (IS_ERR(rst)) {
+>> +			dev_err(&pdev->dev, "Failed to get reset\n");
+> 
+> Please consider using dev_err_probe() instead.
 
-> > If IOMMU side does not increase refcount, IMHO, some way to indicate that
-> > certain PFNs are used by TDs for DMA is still required, so guest_memfd can
-> > reject the request before attempting the actual unmap.
+Ok
 
-This has to be delt with between the TDX module and KVM. When KVM
-gives pages to become secure it may not be able to get them back..
+>> +			ret = PTR_ERR(rst);
+>> +			goto err_clk;
+>> +		}
+>> +		reset_control_assert(rst);
+>> +		reset_control_deassert(rst);
+> 
+> These can be done unconditionally, as they are no-ops for rst == NULL.
 
-This problem has nothing to do with iommufd.
+Indeed
 
-But generally I expect that the T=1 iommu follows the S-EPT entirely
-and there is no notion of pages "locked for dma". If DMA is ongoing
-and a page is made non-secure then the DMA fails.
-
-Obviously in a mode where there is a vPCI device we will need all the
-pages to be pinned in the guestmemfd to prevent any kind of
-migrations. Only shared/private conversions should change the page
-around.
-
-Maybe this needs to be an integral functionality in guestmemfd?
-
-Jason
+Best regards,
+Clément
 
