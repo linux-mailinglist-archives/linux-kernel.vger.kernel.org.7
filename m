@@ -1,237 +1,228 @@
-Return-Path: <linux-kernel+bounces-713321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C61CAF2ACF
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 15:06:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B55B3AF164A
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:59:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24BB51C4236C
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 13:06:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 553CD7AF5FD
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 12:57:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 506DB27F737;
-	Wed,  2 Jul 2025 13:04:23 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA4DD275850;
+	Wed,  2 Jul 2025 12:58:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AZnD0coe"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18BC527A456;
-	Wed,  2 Jul 2025 13:04:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E0F32750F2
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 12:58:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751461462; cv=none; b=O7V8T4rngiHjAfil4oysJuOLiG3IHt1dJGV37Xz8eYSoNLY7Ph7K/roedUII4eKqp/CJ88cUnFSWLlYZNwd8lUbK1rhnDk98r0cM8irt8IQFELMKJcEVO1WGp5vUroj0gggR1USu4Fg6wLFsK4JJmlQxMbOKWD/Imr4wE8TMRUw=
+	t=1751461097; cv=none; b=rtszK3tCCYlLdXlgXYA7cRzHG/zy7Yqx1GjH5yR1tH+BStT5//IKeK5xWvz+HeY0c9WbsNeeB+yh1gbM6u+nStWSHs4Us6nhND2bpYkuhHudH1LgfLMXT3k7uS9XpNkBqMLrLR2NLrChwGjz+fmuf0o9p6QUcCc2caxfsKVKgBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751461462; c=relaxed/simple;
-	bh=3f4gcrnMSKnMOdj6g/xhAF++jPkWPplseWiRneurOfM=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jkRTfmIfK6lFJkxgePRh7L5O9T2YUsCipefbQtU0EJWxa+FaGgZoPzhktX8K94rfOQB4DzR7o+h6uCQtBgAbde4czENE1JLaFq2DmhvMgyjguk57PCXDUh9s7Q7FqWhQDwKO0YQ+NPLCg28039Bcs9jU4l4iyjhNFH3vruQhFtE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4bXKmC5NfVz1R7Ys;
-	Wed,  2 Jul 2025 21:01:47 +0800 (CST)
-Received: from kwepemk100013.china.huawei.com (unknown [7.202.194.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id CF2331A016C;
-	Wed,  2 Jul 2025 21:04:18 +0800 (CST)
-Received: from localhost.localdomain (10.90.31.46) by
- kwepemk100013.china.huawei.com (7.202.194.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 2 Jul 2025 21:04:18 +0800
-From: Jijie Shao <shaojijie@huawei.com>
-To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <andrew+netdev@lunn.ch>, <horms@kernel.org>
-CC: <shenjian15@huawei.com>, <liuyonglong@huawei.com>,
-	<chenhao418@huawei.com>, <jonathan.cameron@huawei.com>,
-	<shameerali.kolothum.thodi@huawei.com>, <salil.mehta@huawei.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<shaojijie@huawei.com>
-Subject: [PATCH net-next 4/4] net: hns3: default enable tx bounce buffer when smmu enabled
-Date: Wed, 2 Jul 2025 20:57:31 +0800
-Message-ID: <20250702125731.2875331-5-shaojijie@huawei.com>
-X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20250702125731.2875331-1-shaojijie@huawei.com>
-References: <20250702125731.2875331-1-shaojijie@huawei.com>
+	s=arc-20240116; t=1751461097; c=relaxed/simple;
+	bh=V7r/fq1V/3GvSDpgRjWu2WC8E8m1RPRUaD194Yp/3rM=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=OjVabPF9auvU8/U+JO3Tz5IYavvIn9W5A1trfHLPfPwfCKrAvlTKw7ie2KfM/+136zNuyXcGuyOmUQ67FC5k/25FjhhRIPq7Ig6lyTFXJyT//SEFnKSKrCycxFrvQY3TJJGWhWU61esa7QUPPgulejTyaZg/Z1GwW7/O/7BSChE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AZnD0coe; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751461096; x=1782997096;
+  h=date:from:to:cc:subject:message-id;
+  bh=V7r/fq1V/3GvSDpgRjWu2WC8E8m1RPRUaD194Yp/3rM=;
+  b=AZnD0coerJaTX16wJvybulg3NMSKtUD1BONRPxC4A3TbRwJkR2wpNRD8
+   XzBy+rg+itUJ45BnEo09cDT2pmOtRwy/Yz4Rs8EC55l9acpzQGScTPMyH
+   XNL9oAIQwH9+QBjga/Cbb/HRp12izdE4foZWdB66oFH8tuT/iQ6fYt3Er
+   3N7Yp7T8PssVd18johC7+R/2yuQPAyd0ZQ6LogZ68sUPsx3wlKqBUGhup
+   uNxLKBIEMTJZ/9mRG5bUCM0urXyOVM8TP1IRjG0GXP/wLdu4r6C1EuEUO
+   Yoo7bB9qpWc0j2OtQlfYob16iBMKbANva35Zh2nFveUC1hvw6zkcU95a3
+   w==;
+X-CSE-ConnectionGUID: FvEIHGPbTWSlWHIwGMY8XA==
+X-CSE-MsgGUID: GTtQPzqNSf+FDrg8LLb+ew==
+X-IronPort-AV: E=McAfee;i="6800,10657,11482"; a="57560870"
+X-IronPort-AV: E=Sophos;i="6.16,281,1744095600"; 
+   d="scan'208";a="57560870"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2025 05:58:15 -0700
+X-CSE-ConnectionGUID: pm7ZYKxaR2OA5I8FuKrZRA==
+X-CSE-MsgGUID: R8f9axd5QISTbdi6y/ASUQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,281,1744095600"; 
+   d="scan'208";a="153521239"
+Received: from lkp-server01.sh.intel.com (HELO 0b2900756c14) ([10.239.97.150])
+  by orviesa006.jf.intel.com with ESMTP; 02 Jul 2025 05:58:13 -0700
+Received: from kbuild by 0b2900756c14 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uWx2R-0000e3-0o;
+	Wed, 02 Jul 2025 12:58:11 +0000
+Date: Wed, 02 Jul 2025 20:58:00 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:tip/urgent] BUILD SUCCESS
+ dcbeca101fec9464eb0356f897b36cad29024bad
+Message-ID: <202507022048.xKHlASjn-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
- kwepemk100013.china.huawei.com (7.202.194.61)
 
-The SMMU engine on HIP09 chip has a hardware issue.
-SMMU pagetable prefetch features may prefetch and use a invalid PTE
-even the PTE is valid at that time. This will cause the device trigger
-fake pagefaults. The solution is to avoid prefetching by adding a
-SYNC command when smmu mapping a iova. But the performance of nic has a
-sharp drop. Then we do this workaround, always enable tx bounce buffer,
-avoid mapping/unmapping on TX path.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git tip/urgent
+branch HEAD: dcbeca101fec9464eb0356f897b36cad29024bad  Merge x86/urgent into tip/urgent
 
-This issue only affects HNS3, so we always enable
-tx bounce buffer when smmu enabled to improve performance.
+elapsed time: 1454m
 
-Fixes: 295ba232a8c3 ("net: hns3: add device version to replace pci revision")
-Signed-off-by: Jian Shen <shenjian15@huawei.com>
-Signed-off-by: Jijie Shao <shaojijie@huawei.com>
----
- .../net/ethernet/hisilicon/hns3/hns3_enet.c   | 31 +++++++++++++++++
- .../net/ethernet/hisilicon/hns3/hns3_enet.h   |  2 ++
- .../ethernet/hisilicon/hns3/hns3_ethtool.c    | 33 +++++++++++++++++++
- 3 files changed, 66 insertions(+)
+configs tested: 136
+configs skipped: 2
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-index 49fcee7a6d0f..b028ca9a67a5 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-@@ -11,6 +11,7 @@
- #include <linux/irq.h>
- #include <linux/ip.h>
- #include <linux/ipv6.h>
-+#include <linux/iommu.h>
- #include <linux/module.h>
- #include <linux/pci.h>
- #include <linux/skbuff.h>
-@@ -1039,6 +1040,8 @@ static bool hns3_can_use_tx_sgl(struct hns3_enet_ring *ring,
- static void hns3_init_tx_spare_buffer(struct hns3_enet_ring *ring)
- {
- 	u32 alloc_size = ring->tqp->handle->kinfo.tx_spare_buf_size;
-+	struct net_device *netdev = ring_to_netdev(ring);
-+	struct hns3_nic_priv *priv = netdev_priv(netdev);
- 	struct hns3_tx_spare *tx_spare;
- 	struct page *page;
- 	dma_addr_t dma;
-@@ -1080,6 +1083,7 @@ static void hns3_init_tx_spare_buffer(struct hns3_enet_ring *ring)
- 	tx_spare->buf = page_address(page);
- 	tx_spare->len = PAGE_SIZE << order;
- 	ring->tx_spare = tx_spare;
-+	ring->tx_copybreak = priv->tx_copybreak;
- 	return;
- 
- dma_mapping_error:
-@@ -4874,6 +4878,30 @@ static void hns3_nic_dealloc_vector_data(struct hns3_nic_priv *priv)
- 	devm_kfree(&pdev->dev, priv->tqp_vector);
- }
- 
-+static void hns3_update_tx_spare_buf_config(struct hns3_nic_priv *priv)
-+{
-+#define HNS3_MIN_SPARE_BUF_SIZE (2 * 1024 * 1024)
-+#define HNS3_MAX_PACKET_SIZE (64 * 1024)
-+
-+	struct iommu_domain *domain = iommu_get_domain_for_dev(priv->dev);
-+	struct hnae3_ae_dev *ae_dev = hns3_get_ae_dev(priv->ae_handle);
-+	struct hnae3_handle *handle = priv->ae_handle;
-+
-+	if (ae_dev->dev_version < HNAE3_DEVICE_VERSION_V3)
-+		return;
-+
-+	if (!(domain && iommu_is_dma_domain(domain)))
-+		return;
-+
-+	priv->min_tx_copybreak = HNS3_MAX_PACKET_SIZE;
-+	priv->min_tx_spare_buf_size = HNS3_MIN_SPARE_BUF_SIZE;
-+
-+	if (priv->tx_copybreak < priv->min_tx_copybreak)
-+		priv->tx_copybreak = priv->min_tx_copybreak;
-+	if (handle->kinfo.tx_spare_buf_size < priv->min_tx_spare_buf_size)
-+		handle->kinfo.tx_spare_buf_size = priv->min_tx_spare_buf_size;
-+}
-+
- static void hns3_ring_get_cfg(struct hnae3_queue *q, struct hns3_nic_priv *priv,
- 			      unsigned int ring_type)
- {
-@@ -5107,6 +5135,7 @@ int hns3_init_all_ring(struct hns3_nic_priv *priv)
- 	int i, j;
- 	int ret;
- 
-+	hns3_update_tx_spare_buf_config(priv);
- 	for (i = 0; i < ring_num; i++) {
- 		ret = hns3_alloc_ring_memory(&priv->ring[i]);
- 		if (ret) {
-@@ -5311,6 +5340,8 @@ static int hns3_client_init(struct hnae3_handle *handle)
- 	priv->ae_handle = handle;
- 	priv->tx_timeout_count = 0;
- 	priv->max_non_tso_bd_num = ae_dev->dev_specs.max_non_tso_bd_num;
-+	priv->min_tx_copybreak = 0;
-+	priv->min_tx_spare_buf_size = 0;
- 	set_bit(HNS3_NIC_STATE_DOWN, &priv->state);
- 
- 	handle->msg_enable = netif_msg_init(debug, DEFAULT_MSG_LEVEL);
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h
-index d3bad5d1b888..933e3527ed82 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h
-@@ -596,6 +596,8 @@ struct hns3_nic_priv {
- 	struct hns3_enet_coalesce rx_coal;
- 	u32 tx_copybreak;
- 	u32 rx_copybreak;
-+	u32 min_tx_copybreak;
-+	u32 min_tx_spare_buf_size;
- };
- 
- union l3_hdr_info {
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c b/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
-index d5454e126c85..a752d0e3db3a 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
-@@ -1927,6 +1927,31 @@ static int hns3_set_tx_spare_buf_size(struct net_device *netdev,
- 	return ret;
- }
- 
-+static int hns3_check_tx_copybreak(struct net_device *netdev, u32 copybreak)
-+{
-+	struct hns3_nic_priv *priv = netdev_priv(netdev);
-+
-+	if (copybreak < priv->min_tx_copybreak) {
-+		netdev_err(netdev, "tx copybreak %u should be no less than %u!\n",
-+			   copybreak, priv->min_tx_copybreak);
-+		return -EINVAL;
-+	}
-+	return 0;
-+}
-+
-+static int hns3_check_tx_spare_buf_size(struct net_device *netdev, u32 buf_size)
-+{
-+	struct hns3_nic_priv *priv = netdev_priv(netdev);
-+
-+	if (buf_size < priv->min_tx_spare_buf_size) {
-+		netdev_err(netdev,
-+			   "tx spare buf size %u should be no less than %u!\n",
-+			   buf_size, priv->min_tx_spare_buf_size);
-+		return -EINVAL;
-+	}
-+	return 0;
-+}
-+
- static int hns3_set_tunable(struct net_device *netdev,
- 			    const struct ethtool_tunable *tuna,
- 			    const void *data)
-@@ -1943,6 +1968,10 @@ static int hns3_set_tunable(struct net_device *netdev,
- 
- 	switch (tuna->id) {
- 	case ETHTOOL_TX_COPYBREAK:
-+		ret = hns3_check_tx_copybreak(netdev, *(u32 *)data);
-+		if (ret)
-+			return ret;
-+
- 		priv->tx_copybreak = *(u32 *)data;
- 
- 		for (i = 0; i < h->kinfo.num_tqps; i++)
-@@ -1957,6 +1986,10 @@ static int hns3_set_tunable(struct net_device *netdev,
- 
- 		break;
- 	case ETHTOOL_TX_COPYBREAK_BUF_SIZE:
-+		ret = hns3_check_tx_spare_buf_size(netdev, *(u32 *)data);
-+		if (ret)
-+			return ret;
-+
- 		old_tx_spare_buf_size = h->kinfo.tx_spare_buf_size;
- 		new_tx_spare_buf_size = *(u32 *)data;
- 		netdev_info(netdev, "request to set tx spare buf size from %u to %u\n",
--- 
-2.33.0
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
+tested configs:
+alpha                             allnoconfig    gcc-15.1.0
+alpha                            allyesconfig    gcc-15.1.0
+alpha                               defconfig    gcc-15.1.0
+arc                              allmodconfig    gcc-15.1.0
+arc                               allnoconfig    gcc-15.1.0
+arc                              allyesconfig    gcc-15.1.0
+arc                                 defconfig    gcc-15.1.0
+arc                   randconfig-001-20250701    gcc-13.3.0
+arc                   randconfig-002-20250701    gcc-15.1.0
+arc                        vdk_hs38_defconfig    gcc-15.1.0
+arm                              allmodconfig    gcc-15.1.0
+arm                               allnoconfig    clang-21
+arm                              allyesconfig    gcc-15.1.0
+arm                                 defconfig    clang-21
+arm                      integrator_defconfig    clang-21
+arm                        multi_v7_defconfig    gcc-15.1.0
+arm                        mvebu_v7_defconfig    clang-21
+arm                   randconfig-001-20250701    clang-17
+arm                   randconfig-002-20250701    gcc-8.5.0
+arm                   randconfig-003-20250701    clang-21
+arm                   randconfig-004-20250701    clang-21
+arm                         wpcm450_defconfig    gcc-15.1.0
+arm64                            allmodconfig    clang-19
+arm64                             allnoconfig    gcc-15.1.0
+arm64                 randconfig-001-20250701    clang-21
+arm64                 randconfig-002-20250701    gcc-15.1.0
+arm64                 randconfig-003-20250701    clang-18
+arm64                 randconfig-004-20250701    gcc-8.5.0
+csky                              allnoconfig    gcc-15.1.0
+csky                                defconfig    gcc-15.1.0
+csky                  randconfig-001-20250701    gcc-11.5.0
+csky                  randconfig-002-20250701    gcc-10.5.0
+hexagon                          allmodconfig    clang-17
+hexagon                           allnoconfig    clang-21
+hexagon                          allyesconfig    clang-21
+hexagon                             defconfig    clang-21
+hexagon               randconfig-001-20250701    clang-21
+hexagon               randconfig-002-20250701    clang-21
+i386                             allmodconfig    gcc-12
+i386                              allnoconfig    gcc-12
+i386        buildonly-randconfig-001-20250701    gcc-12
+i386        buildonly-randconfig-002-20250701    gcc-12
+i386        buildonly-randconfig-003-20250701    gcc-12
+i386        buildonly-randconfig-004-20250701    gcc-12
+i386        buildonly-randconfig-005-20250701    gcc-12
+i386        buildonly-randconfig-006-20250701    clang-20
+i386                                defconfig    clang-20
+loongarch                        allmodconfig    gcc-15.1.0
+loongarch                         allnoconfig    gcc-15.1.0
+loongarch             randconfig-001-20250701    gcc-13.3.0
+loongarch             randconfig-002-20250701    gcc-15.1.0
+m68k                             allmodconfig    gcc-15.1.0
+m68k                              allnoconfig    gcc-15.1.0
+m68k                             allyesconfig    gcc-15.1.0
+m68k                        m5307c3_defconfig    gcc-15.1.0
+m68k                           virt_defconfig    gcc-15.1.0
+microblaze                       allmodconfig    gcc-15.1.0
+microblaze                        allnoconfig    gcc-15.1.0
+microblaze                       allyesconfig    gcc-15.1.0
+mips                              allnoconfig    gcc-15.1.0
+mips                         rt305x_defconfig    clang-21
+nios2                             allnoconfig    gcc-14.2.0
+nios2                 randconfig-001-20250701    gcc-14.2.0
+nios2                 randconfig-002-20250701    gcc-13.3.0
+openrisc                          allnoconfig    gcc-15.1.0
+openrisc                         allyesconfig    gcc-15.1.0
+openrisc                            defconfig    gcc-15.1.0
+openrisc                 simple_smp_defconfig    gcc-15.1.0
+parisc                           allmodconfig    gcc-15.1.0
+parisc                            allnoconfig    gcc-15.1.0
+parisc                           allyesconfig    gcc-15.1.0
+parisc                              defconfig    gcc-15.1.0
+parisc                randconfig-001-20250701    gcc-14.3.0
+parisc                randconfig-002-20250701    gcc-10.5.0
+powerpc                          allmodconfig    gcc-15.1.0
+powerpc                           allnoconfig    gcc-15.1.0
+powerpc                          allyesconfig    clang-21
+powerpc                       ebony_defconfig    clang-21
+powerpc               randconfig-001-20250701    gcc-13.3.0
+powerpc               randconfig-002-20250701    clang-21
+powerpc               randconfig-003-20250701    clang-21
+powerpc                     sequoia_defconfig    clang-17
+powerpc64             randconfig-001-20250701    clang-21
+powerpc64             randconfig-002-20250701    clang-21
+powerpc64             randconfig-003-20250701    gcc-10.5.0
+riscv                            allmodconfig    clang-21
+riscv                             allnoconfig    gcc-15.1.0
+riscv                            allyesconfig    clang-16
+riscv                               defconfig    clang-21
+riscv                 randconfig-001-20250701    gcc-14.3.0
+riscv                 randconfig-002-20250701    gcc-10.5.0
+s390                             allmodconfig    clang-18
+s390                              allnoconfig    clang-21
+s390                             allyesconfig    gcc-15.1.0
+s390                                defconfig    clang-21
+s390                  randconfig-001-20250701    gcc-9.3.0
+s390                  randconfig-002-20250701    clang-17
+sh                               allmodconfig    gcc-15.1.0
+sh                                allnoconfig    gcc-15.1.0
+sh                               allyesconfig    gcc-15.1.0
+sh                                  defconfig    gcc-15.1.0
+sh                        edosk7705_defconfig    gcc-15.1.0
+sh                    randconfig-001-20250701    gcc-15.1.0
+sh                    randconfig-002-20250701    gcc-13.3.0
+sh                           se7722_defconfig    gcc-15.1.0
+sh                        sh7763rdp_defconfig    gcc-15.1.0
+sh                  sh7785lcr_32bit_defconfig    gcc-15.1.0
+sparc                            allmodconfig    gcc-15.1.0
+sparc                             allnoconfig    gcc-15.1.0
+sparc                 randconfig-001-20250701    gcc-10.3.0
+sparc                 randconfig-002-20250701    gcc-15.1.0
+sparc64                             defconfig    gcc-15.1.0
+sparc64               randconfig-001-20250701    gcc-8.5.0
+sparc64               randconfig-002-20250701    gcc-12.4.0
+um                               allmodconfig    clang-19
+um                                allnoconfig    clang-21
+um                               allyesconfig    gcc-12
+um                                  defconfig    clang-21
+um                             i386_defconfig    gcc-12
+um                    randconfig-001-20250701    gcc-12
+um                    randconfig-002-20250701    gcc-12
+um                           x86_64_defconfig    clang-21
+x86_64                            allnoconfig    clang-20
+x86_64                           allyesconfig    clang-20
+x86_64      buildonly-randconfig-001-20250701    gcc-12
+x86_64      buildonly-randconfig-002-20250701    gcc-12
+x86_64      buildonly-randconfig-003-20250701    gcc-12
+x86_64      buildonly-randconfig-004-20250701    gcc-12
+x86_64      buildonly-randconfig-005-20250701    clang-20
+x86_64      buildonly-randconfig-006-20250701    clang-20
+x86_64                              defconfig    gcc-11
+x86_64                          rhel-9.4-rust    clang-18
+xtensa                            allnoconfig    gcc-15.1.0
+xtensa                  cadence_csp_defconfig    gcc-15.1.0
+xtensa                randconfig-001-20250701    gcc-15.1.0
+xtensa                randconfig-002-20250701    gcc-13.3.0
+
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
