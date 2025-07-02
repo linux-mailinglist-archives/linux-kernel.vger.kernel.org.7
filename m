@@ -1,81 +1,100 @@
-Return-Path: <linux-kernel+bounces-713658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22BF2AF5CE9
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 17:27:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C36EAF5CF3
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 17:28:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A9997A18A3
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 15:26:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C95407A93F8
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 15:27:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 310A72D94A2;
-	Wed,  2 Jul 2025 15:27:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zt0vwIIr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9155F288CA4
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 15:27:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC52730B9BE;
+	Wed,  2 Jul 2025 15:27:26 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 945C6307AE7
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 15:27:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751470029; cv=none; b=HmtEdPwK6qy+zXKy0INoGG3GV4jX2d9Yz0GvWPn+kk1cmgbtuGKynPIYIp7vOywwt9pwYyWlvihh9U5wo2fJDWmoZU57Y2OBo8Zev6raT0Nl6bASTHElLRPjUqk86jdKJB+YM03kfY9sJxBsuCxCSaM04QR/xnW0Dj4HOniQ3hE=
+	t=1751470045; cv=none; b=Hcq1WBeAjG94RcwcIelPIUyw+7DWuQjwe0OnKQWjcAfHeATlTFEYpzF+jfbVC+gz4LXgC5Gw6XbTbq35Ap0XC3fgrJdB5a0y5my9qHKe0XLxKbbJXlqEtZJZLeDBsU2Op8nvs39Qh7UC6hzTue6buRgAnz3+cR/RPAUsCij75c4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751470029; c=relaxed/simple;
-	bh=btDnX36bweTfeOT9edsZTI/3vFG2DCSyHJ5Lt0omg/I=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=TI9H6Me5sZhSq8rD1rqKy0qDo4KwQoEQItUK+YeTzXeMKopVRtsJoKb+m8zgmBLHoYFrHOgJxfEKuKn0iYzU94BUtJPBVTusRab6IH/HlBiK2DMwazaNQWmlsHBy2+XnOGvFcRdJmY1UQOLlulOfoaDTjCj7hi1BL2w168R02PA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zt0vwIIr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47AFCC4CEF1;
-	Wed,  2 Jul 2025 15:27:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751470029;
-	bh=btDnX36bweTfeOT9edsZTI/3vFG2DCSyHJ5Lt0omg/I=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=Zt0vwIIrGa7R70px+yAEo+iDEfer2Mb7ZSjOEaELxAo+4WBb48dhCzJsarLm4WPl0
-	 jniJ8XKAO6dnaRM+7d4ZgmbxLSuUCP16vmmH3Awkm7CNlgDTt7k3miQKPBRRAg/IsF
-	 ZwtEFEdllSUXZtwlECq+zuf/KJrBsuBaxpbPtb3XLStQycCmGJnjVQQc+RebeQYsww
-	 +5mS1GyzsidDrRVNgRElEijPubHu5g7h+V5VFuV4qYW605+y3VV628Lz9Pyx08m0Zp
-	 G5Y54Fslk3knT+xyTmORBcRTfAb2qP9brUr85br0yRyd/DqzCiVNa5nRgqr4YHAQo6
-	 GCnD2W3FlPvUg==
-From: Lee Jones <lee@kernel.org>
-To: patches@opensource.cirrus.com, linux-kernel@vger.kernel.org, 
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Lee Jones <lee@kernel.org>
-In-Reply-To: <20250626155951.325683-1-andriy.shevchenko@linux.intel.com>
-References: <20250626155951.325683-1-andriy.shevchenko@linux.intel.com>
-Subject: Re: (subset) [PATCH v1 1/1] mfd: wm8350-core: Don't use "proxy"
- headers
-Message-Id: <175147002801.3040896.1326709487140753425.b4-ty@kernel.org>
-Date: Wed, 02 Jul 2025 16:27:08 +0100
+	s=arc-20240116; t=1751470045; c=relaxed/simple;
+	bh=M3/80kpsa4xWwNqVJyJW0/eXqUkX09OuOdKOgEXibd4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BVXL9C0C8m38IwDYF7lnFXJOSq58JLCkPrBCh/YfXyPC1PkK3UOWfZACRwZ7tOdoC/Dfv9dPTqlaX+Mm8EbwIvZR+GXm6lGYW845b0O1UjdZH0GUuadSMSQdDlN99pYTN/4Vsb3Wzt85EL4SJwDyRU9wUx+ZtI3k6kkt1naOQRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 19A2A3024;
+	Wed,  2 Jul 2025 08:27:08 -0700 (PDT)
+Received: from localhost (e132581.arm.com [10.1.196.87])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 689C43F6A8;
+	Wed,  2 Jul 2025 08:27:22 -0700 (PDT)
+Date: Wed, 2 Jul 2025 16:27:20 +0100
+From: Leo Yan <leo.yan@arm.com>
+To: Junhao He <hejunhao3@huawei.com>
+Cc: suzuki.poulose@arm.com, james.clark@arm.com, anshuman.khandual@arm.com,
+	coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linuxarm@huawei.com,
+	jonathan.cameron@huawei.com, yangyicong@huawei.com,
+	prime.zeng@hisilicon.com
+Subject: Re: [PATCH v2 1/3] coresight: tmc: Add missing doc of
+ tmc_drvdata::reading
+Message-ID: <20250702152720.GA794930@e132581.arm.com>
+References: <20250620075412.952934-1-hejunhao3@huawei.com>
+ <20250620075412.952934-2-hejunhao3@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.15-dev-c81fc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250620075412.952934-2-hejunhao3@huawei.com>
 
-On Thu, 26 Jun 2025 18:59:51 +0300, Andy Shevchenko wrote:
-> Update header inclusions to follow IWYU (Include What You Use)
-> principle.
+On Fri, Jun 20, 2025 at 03:54:10PM +0800, Junhao He wrote:
+> From: Yicong Yang <yangyicong@hisilicon.com>
 > 
-> Note that kernel.h is discouraged to be included as it's written
-> at the top of that file.
+> tmc_drvdata::reading is used to indicate whether a reading process
+> is performed through /dev/xyz.tmc. Document it.
 > 
+> Reviewed-by: James Clark <james.clark@linaro.org>
+> Signed-off-by: Yicong Yang <yangyicong@hisilicon.com>
+> Signed-off-by: Junhao He <hejunhao3@huawei.com>
+> ---
+>  drivers/hwtracing/coresight/coresight-tmc.h | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> [...]
+> diff --git a/drivers/hwtracing/coresight/coresight-tmc.h b/drivers/hwtracing/coresight/coresight-tmc.h
+> index 6541a27a018e..3ca0d40c580d 100644
+> --- a/drivers/hwtracing/coresight/coresight-tmc.h
+> +++ b/drivers/hwtracing/coresight/coresight-tmc.h
+> @@ -220,6 +220,7 @@ struct tmc_resrv_buf {
+>   * @pid:	Process ID of the process that owns the session that is using
+>   *		this component. For example this would be the pid of the Perf
+>   *		process.
+> + * @reading:	buffer's in the reading through "/dev/xyz.tmc" entry
 
-Applied, thanks!
+Are you working on the latest code base? For example, the mainline
+kernel or coresight next branch.
 
-[1/1] mfd: wm8350-core: Don't use "proxy" headers
-      commit: 4fe2e96c88afde2f06485f90b7b01e2a45eb99e4
+The latest code already has comment for reading, and I saw a duplicated
+"reading" field in tmc_drvdata.
 
---
-Lee Jones [李琼斯]
+The tmc_resrv_buf structure does not have the fields "pid",
+"stop_on_flush", "buf", etc. They have been moved into the tmc_drvdata
+structure.
 
+Thanks,
+Leo
+
+>   * @stop_on_flush: Stop on flush trigger user configuration.
+>   * @buf:	Snapshot of the trace data for ETF/ETB.
+>   * @etr_buf:	details of buffer used in TMC-ETR
+> -- 
+> 2.33.0
+> 
 
