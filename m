@@ -1,177 +1,126 @@
-Return-Path: <linux-kernel+bounces-712836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-712838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF16EAF0FA9
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 11:17:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C827FAF0FB4
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 11:19:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F7544E6B3C
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 09:17:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A044447568
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 09:17:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3506625C81B;
-	Wed,  2 Jul 2025 09:14:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="g/bBa63l"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3ED5246BD8;
+	Wed,  2 Jul 2025 09:14:46 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C5B825525A
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 09:14:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7614124111D;
+	Wed,  2 Jul 2025 09:14:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751447668; cv=none; b=hJEetyDGYCPlKWA+4z/8WF++Y1crDWso1pcN7IB7SYvwJ5m+aEnAG3+g8ONbkYa6FlJrVXLsA2V35T/f4PTa1UrR6tEyzTGgArY+ru9NIbiARIGo2TjrooPNqO3eK6pek8LqZe0OwExFu/deYQ62/yJzh+DUi9ojGO4VGnHUxrE=
+	t=1751447686; cv=none; b=sAAfsCTB2LiWP6zvh/geVue3T95FP1RKEPd8/nkXfniDSTt9FPgWuNik0Svn/CXoivtgUZ1x0utvtq7NW/y0r1s6eSDOhAiDBmd+XdiKn+xBnSXhsKfBni91/b+t5tRYaRBuKiWGj2gKqqCoFO7G4BOSMWZFmN/SBZw9pUPDEEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751447668; c=relaxed/simple;
-	bh=NN72aqjpwJSv2irviEDiSUqnOMzC4st1teZcnfhIUJs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Zbjzai8Et/yNT7all3guU/4XoB//Na9ghKUl6PWPzn+IYUwi4a30gLf5Pn1sBW1PHa3n9IlS9LgiU8eZFC8XG6LkXV3S3hOMpO4qdIYhGjx/piz09qU4LvSlrZd9z97dq7HoExpHP/F7rXyfEzKqEg39gXsu2Z5J9GziW8UOF9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=g/bBa63l; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3a54690d369so3939428f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 02:14:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1751447665; x=1752052465; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Zmv3tRKIBVq49AP27DBsRvEkqxDC0NdKZdExvK5QdPc=;
-        b=g/bBa63lD/jr6iRfDzYLsFEwsb9Dksnzy+gQCdTT3JluZVP8StBAnYHpmzyaLlaktn
-         0pkR+aoGn4kxpAIZaLJaswAKVkEESQDR2k1PKQS2CTjITRb3EfPFRvAesnunaGkmG6if
-         Tffs+uCl4Lcp6Ti59LkwGVHNqQhDXhKNqJ+fQZMyX+dnHOQzwqNb4+3ixg0CnhKgP65P
-         ul5Y0g8zUy99e231hoiEYKR3XQHLZ6MrpD8r0BNhc93LrDlsk79it6I4mMhrpDXDV0ad
-         PHXUx2Er89zMRCiZGNNe2gM3Kc3q22ksIZV6onkNXCgwdPWCHtJzf+nNzEgjefX3AerQ
-         T8Ow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751447665; x=1752052465;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Zmv3tRKIBVq49AP27DBsRvEkqxDC0NdKZdExvK5QdPc=;
-        b=PVS/VldltbqVWuBLJCYfFoA1ootCvVVxCEgUto5m5+5+KSxjue0umgsDHi889PnZh4
-         3njXsSwehDKAh+TjnugNiAVGVvyYnFekJiRVwsDvoe88ztWu+xzl3r/WzaIm5F/23/s1
-         D9JBlxg18RULG/8vi6Mjklf1rA+sNtv/NiHOXXuFm9RvuiW3Uu4UL8Ajhgi2zKuFPBZA
-         6N9ulMPq7tyBo5+3EcfSfWbfspkJqm6GQeDKT90oeAm1QKeky1E9YfJKo9GU20ko2CB5
-         s/qqsX7UozrGHsacldiwB+tRbGWVscSqB1EgNroriQd48zgmpxJmFAmG7fkVLjB4NtPb
-         1FRw==
-X-Forwarded-Encrypted: i=1; AJvYcCVW4G9ak2yJQ7hrI8Z+gMWo/2VmGz7W/zPDM5l0ou0HUDAEaCruB+ComLN2rOuqLCLfOjR8eKhWPNRXANk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5reD4DogNv/3kN5A9kuqF+A3c9dzscMGcFOJV6rpapdhtrPJQ
-	T17gs+uZD0z2HVFlYtIpiD3mmQeP9ShLts3n6pTb6B49Rn5WQcpvqUBh44RW66DZ0+s=
-X-Gm-Gg: ASbGncv8R+GqsCLi2iCy27t3SEuniylMFIo+FqOgVvjhNYJLzVX4mB7PIufLq7bcMbj
-	r3KeblXElbclY+zE3Tp0B2w/9mYdSE6XoBpvtQumPMAoHCg1Undc/wh2Ts94BzAQ2KmTpJNf6Ii
-	9CO8Ctcy7DDEAgsi/JniOUdCGRboVOZsDzYsNBvzluA0lkemkEBzq+AWgV69E40yYSGVYyF9S8p
-	7Ik7IVrMuXMg+3eTRu01v7RxEzEzia18gjll3GyFZZr7e8WrJOnbBbwvr1vGfvyRv6TJI+z7fjn
-	/SR7cCKcS+ZMYJtH3fqEkHnN6de9FFvwmi40I1bpofUM4oDo11hNxg==
-X-Google-Smtp-Source: AGHT+IGTmm4jTikwN2VGwBNAxx51rzCBt9ao4TX3exq/7NZm6Hiin2DGw8Q7fWQBOSkwwMPNJ/w3zw==
-X-Received: by 2002:a05:6000:2509:b0:3a4:f7ae:77ca with SMTP id ffacd0b85a97d-3b1fdc20aa1mr1411408f8f.3.1751447664576;
-        Wed, 02 Jul 2025 02:14:24 -0700 (PDT)
-Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:8827:d0e:25e:834a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a88c7e6f8bsm16027213f8f.17.2025.07.02.02.14.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Jul 2025 02:14:24 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Wed, 02 Jul 2025 11:14:13 +0200
-Subject: [PATCH 12/12] gpio: tps6586x: use new GPIO line value setter
- callbacks
+	s=arc-20240116; t=1751447686; c=relaxed/simple;
+	bh=fins2nf4nlvSpl6nY+hYPifI0DB6eGw9hwvdzJ7z/D8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Wpx1nPxXBmIzLL5OhEqmpIWnfA5PoWOw9z7Dcv5kz41ceZXEDmGe8I2mPhufRon4Q/iWhhnYPn3pjX482PFeonA0v8Nc2fTvcTgOea/fp9T3KetNkDgf/KDL7oKlw66l5JEF+Ls1SQ6EOFSCQqJw45vHhKLJGFwySWahxPal1NU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4bXDdW3NyNzvQB9;
+	Wed,  2 Jul 2025 17:10:39 +0800 (CST)
+Received: from dggemv712-chm.china.huawei.com (unknown [10.1.198.32])
+	by mail.maildlp.com (Postfix) with ESMTPS id 66D7B140277;
+	Wed,  2 Jul 2025 17:14:40 +0800 (CST)
+Received: from kwepemn200010.china.huawei.com (7.202.194.133) by
+ dggemv712-chm.china.huawei.com (10.1.198.32) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 2 Jul 2025 17:14:40 +0800
+Received: from [10.174.178.56] (10.174.178.56) by
+ kwepemn200010.china.huawei.com (7.202.194.133) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 2 Jul 2025 17:14:39 +0800
+Message-ID: <506d8c4e-c317-4c85-9bcf-695596551d28@huawei.com>
+Date: Wed, 2 Jul 2025 17:14:38 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250702-gpiochip-set-rv-gpio-round3-v1-12-0d23be74f71d@linaro.org>
-References: <20250702-gpiochip-set-rv-gpio-round3-v1-0-0d23be74f71d@linaro.org>
-In-Reply-To: <20250702-gpiochip-set-rv-gpio-round3-v1-0-0d23be74f71d@linaro.org>
-To: Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, 
- Thierry Reding <thierry.reding@gmail.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>, Robert Richter <rric@kernel.org>, 
- Aaro Koskinen <aaro.koskinen@iki.fi>, 
- Andreas Kemnade <andreas@kemnade.info>, Kevin Hilman <khilman@baylibre.com>, 
- Roger Quadros <rogerq@kernel.org>, Tony Lindgren <tony@atomide.com>
-Cc: linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, 
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2077;
- i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
- bh=dzEZyQb/TffciTBuglIB85TDIVsqFc54rkSmHofFPX8=;
- b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBoZPhhtYULyctCIg0hBfEEWvehjyvTXWYFEXCBG
- SErYwBkd42JAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCaGT4YQAKCRARpy6gFHHX
- cjVFEACPDNGwDFvzi5UCZgFldPon9+X/rScnJUb2vh/WsnJHJyD/0LaFIwkAQtbCOo1CqKXzY75
- D6wnIjv5S7bEKT2CTsx1I2Z8T+Sn7pBZ82Kmz33kLiX6cKNG2ghc7Vxmy1T66bOQIQNQZ3UgURT
- s5YaykSkWDjUQOv//cCjbByPlw8IpEo3oVT6a6hpZSO1AsmWzBTRfv1l1JxAWexfPzwqBLJg8fb
- DGCEXceEl5X6LtC2WvCRbtUQDGNf9qcM2XFLIvYANLs1LFw8VVfmPN44DlwBxbACf2G/Ig5Btlz
- tblCQgh2mbB8V/O9UmbJ60UmJ5iEb/Z2rG8GoIYr10rxm/yGz1A1z6VFH06Uepa1UPkjqQQyHXn
- kYFjn1grhI6OzTB7nUqKd8+ktUppIJBeaPAB7yoU11sr96MdVvBopa2syhHl7EI6RVdc6QmCwxl
- I9UVisYsVV9WOHJCCmE7xrSOBM1ySQMdrHFZpDJcxoWV+W7iuMwKVe05/2zXzgcM2nLZEfL/ISC
- eigHTL3e+d7vFQidKXf2qWeEz09CdSozw/8fhwUg2HwIu/9EyLrw3bNlJ3CN2iqlUTQ/PeYoegZ
- YQj2GmsteV+0fJm3FWKKc7FdD3dlU25KwVEsfqD8jQicxUcPJ4Mn8cTvqexel3TncXL9NSIkmBG
- YNjyg562TerE/NA==
-X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
- fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
+User-Agent: Mozilla Thunderbird
+Subject: Re: [QUESTION] problems report: rcu_read_unlock_special() called in
+ irq_exit() causes dead loop
+To: Joel Fernandes <joelagnelf@nvidia.com>, <paulmck@kernel.org>, "Xiongfeng
+ Wang" <wangxiongfeng2@huawei.com>
+CC: Joel Fernandes <joel@joelfernandes.org>, <ankur.a.arora@oracle.com>,
+	Frederic Weisbecker <frederic@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+	<neeraj.upadhyay@kernel.org>, <urezki@gmail.com>, <rcu@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, "Wangshaobo (bobo)"
+	<bobo.shaobowang@huawei.com>, Xie XiuQi <xiexiuqi@huawei.com>
+References: <9acd5f9f-6732-7701-6880-4b51190aa070@huawei.com>
+ <CAEXW_YRC=f6i3KOd_uhuH=xAOCG7mW7-LwtA4+_fc8FMjfRHeg@mail.gmail.com>
+ <3ce6f3ce-5dfb-8c59-cb7b-4619b70f8d25@huawei.com>
+ <20250603185939.GA1109523@joelnvbox>
+ <066e8121-c6c5-48ac-b35a-e6430d986dff@nvidia.com>
+ <a82784fd-d51e-4ea2-9d5c-43db971a3074@nvidia.com>
+ <c448118b-9f7e-4c29-d6b3-a66e70f7163f@huawei.com>
+ <a963b475-72cd-474d-96d4-9e651fc8f857@paulmck-laptop>
+ <e7354668-2573-4564-834b-44d76d983222@nvidia.com>
+ <09e4d018-3db4-404e-a8f0-041cdee15a62@huawei.com>
+ <279d2f06-d4f7-46e1-9678-999a2d19b710@nvidia.com>
+Content-Language: en-GB
+From: Qi Xi <xiqi2@huawei.com>
+In-Reply-To: <279d2f06-d4f7-46e1-9678-999a2d19b710@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
+ kwepemn200010.china.huawei.com (7.202.194.133)
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Hi Joel,
 
-struct gpio_chip now has callbacks for setting line values that return
-an integer, allowing to indicate failures. Convert the driver to using
-them.
+After applying the 2 patches, the problem still exists. Compared to the 
+previous fixes which did solve the problem, the difference is 
+ct_in_irq() in the first patch.
 
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- drivers/gpio/gpio-tps6586x.c | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+I am wondering why "nesting != CT_NESTING_IRQ_NONIDLE" is added?
 
-diff --git a/drivers/gpio/gpio-tps6586x.c b/drivers/gpio/gpio-tps6586x.c
-index d277aa951143ccf9560bd77d461786f120e46a52..f1ced092f38a5e491378fec2d80dcc1eb1182cbd 100644
---- a/drivers/gpio/gpio-tps6586x.c
-+++ b/drivers/gpio/gpio-tps6586x.c
-@@ -40,13 +40,13 @@ static int tps6586x_gpio_get(struct gpio_chip *gc, unsigned offset)
- 	return !!(val & (1 << offset));
- }
- 
--static void tps6586x_gpio_set(struct gpio_chip *gc, unsigned offset,
--			      int value)
-+static int tps6586x_gpio_set(struct gpio_chip *gc, unsigned int offset,
-+			     int value)
- {
- 	struct tps6586x_gpio *tps6586x_gpio = gpiochip_get_data(gc);
- 
--	tps6586x_update(tps6586x_gpio->parent, TPS6586X_GPIOSET2,
--			value << offset, 1 << offset);
-+	return tps6586x_update(tps6586x_gpio->parent, TPS6586X_GPIOSET2,
-+			       value << offset, 1 << offset);
- }
- 
- static int tps6586x_gpio_output(struct gpio_chip *gc, unsigned offset,
-@@ -54,8 +54,11 @@ static int tps6586x_gpio_output(struct gpio_chip *gc, unsigned offset,
- {
- 	struct tps6586x_gpio *tps6586x_gpio = gpiochip_get_data(gc);
- 	uint8_t val, mask;
-+	int ret;
- 
--	tps6586x_gpio_set(gc, offset, value);
-+	ret = tps6586x_gpio_set(gc, offset, value);
-+	if (ret)
-+		return ret;
- 
- 	val = 0x1 << (offset * 2);
- 	mask = 0x3 << (offset * 2);
-@@ -95,7 +98,7 @@ static int tps6586x_gpio_probe(struct platform_device *pdev)
- 
- 	/* FIXME: add handling of GPIOs as dedicated inputs */
- 	tps6586x_gpio->gpio_chip.direction_output = tps6586x_gpio_output;
--	tps6586x_gpio->gpio_chip.set	= tps6586x_gpio_set;
-+	tps6586x_gpio->gpio_chip.set_rv	= tps6586x_gpio_set;
- 	tps6586x_gpio->gpio_chip.get	= tps6586x_gpio_get;
- 	tps6586x_gpio->gpio_chip.to_irq	= tps6586x_gpio_to_irq;
- 
 
--- 
-2.48.1
+(previous fix: problem is solved)
 
++bool ct_in_irq(void)
++{
++    return ct_nmi_nesting() != 0;
++}
+
+(current fix: problem still exists)
+
++bool ct_in_irq(void)
++{
++    long nesting = ct_nmi_nesting();
++
++    return (nesting && nesting != CT_NESTING_IRQ_NONIDLE);
++}
+
+
+On 2025/7/1 21:29, Joel Fernandes wrote:
+>
+> On 7/1/2025 5:20 AM, Qi Xi wrote:
+>> Hello everyone,
+>>
+>> Friendly ping about this problem :)
+>>
+> Ah, thanks for checking. The fix is slated for kernel 6.17.
+>
+> If you want to test it, could you apply it in advance from the RCU tree?
+>
+> You need these 2:
+>
+> https://git.kernel.org/pub/scm/linux/kernel/git/rcu/linux.git/commit/?h=next&id=6758c93749f8bf09b9282f100c5dd0a5c501f91c
+>
+> https://git.kernel.org/pub/scm/linux/kernel/git/rcu/linux.git/commit/?h=next&id=3cd298bf3bb69e3bca6abfe97e1b44ffa37f3dee
+>
+> Thanks.
 
