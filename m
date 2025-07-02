@@ -1,430 +1,236 @@
-Return-Path: <linux-kernel+bounces-713063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4457AF12D1
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 12:59:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38703AF1223
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 12:41:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F57C7B2F0D
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 10:57:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D1BD164FB4
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 10:41:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A79AF25DAFC;
-	Wed,  2 Jul 2025 10:56:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 376A12571D8;
+	Wed,  2 Jul 2025 10:40:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g2YW5KlH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="DLhAkNIz";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="IjE3Feu5"
+Received: from fout-a5-smtp.messagingengine.com (fout-a5-smtp.messagingengine.com [103.168.172.148])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F1BE25DB0C;
-	Wed,  2 Jul 2025 10:56:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8F15244693;
+	Wed,  2 Jul 2025 10:40:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751453800; cv=none; b=Ow12jHLutQF4uJLajDvYqtOmgX1lnfDA3qaSPoRKr0j5xJnTSwd5z5jwivoI3kpIavFQLOTIDN0HRxm9LOpFmcAoum7wFdGVfg3YTTjdBel2KRAyu5T8Awa1aHqXZQ7Qg29PCgq17srm66HNw9Eu4l2zMR32KXwl+IGOqZLREAw=
+	t=1751452856; cv=none; b=nmMVZOBiMhugcXNoIaiQHZ9G9jxOL4nFZk6Rse4T1IUFz4rWcklbRJKA6UmK2ozZXMNgv3SxBMLvDy1fQSTXZQ1cLytNYpcRDjT0O38iDd2FULMoSCYkoTc2nCrQrP44wlYqYVBxdIlZiz1/OitX0VErEdx8PjfNT5pJZJK3u+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751453800; c=relaxed/simple;
-	bh=qiy3S/IosP5v7tFLu6mQoJBkT+oZKHlJCEp70J0xwdQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=fzgOUn7Q1Kr1yUt7lukfiKcVbefP35N7eyTn8iMzffSM7jzklt4Q9cH/tJX9UqnVIXd4Y6RZaKj1qLXJsaQHAPKc7P3G/rUsc7kh09P6A5yftapLDIuUoYMyukUoaWjOgCUT/MNcboG5ywQitqb06BvqpK8WuoqiX1jH+JvRW8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g2YW5KlH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3AABC4CEED;
-	Wed,  2 Jul 2025 10:56:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751453800;
-	bh=qiy3S/IosP5v7tFLu6mQoJBkT+oZKHlJCEp70J0xwdQ=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=g2YW5KlHIJM3r8t0eJlMgpIdVm5RvvEXoYCxXlcL3jvpr+mMOpdrL6crxuXOPbtDv
-	 ZaCuXeIw1WE90J+msqi86zdK8mgJ2akX/WRteQzNBMRDWKdD40SNWbvcKF9V0S1Mk6
-	 nUwFZO3Jsj2sePjqN4xlUOHuiPK75UcEX4q9y2hu2W2fDRun4MTw8K/SvYmaKSkg62
-	 aJP0QrV6bePzlpbPG1ZWK13tI9JyzLcHBmqTZN9N5Mp//JkR20wMym3ar0hnwuAmOr
-	 edzkGdb8jYCU8KeY7LutfoDjEQysa29j8jMfm3X/M+1Fg6uMEJqzUl7nW8k8hjfOzH
-	 gY4pFi1eVyFvQ==
-From: Mark Brown <broonie@kernel.org>
-Date: Wed, 02 Jul 2025 11:39:13 +0100
-Subject: [PATCH v18 8/8] selftests/clone3: Test shadow stack support
+	s=arc-20240116; t=1751452856; c=relaxed/simple;
+	bh=KAOjTDNNfMtSybxzzyF1oxwUo5aPUGM4sbjOFZt9Egw=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=iKV36f/3iG/asv8wPWr1INZS4It40TY+KW8DcAoO/0YOTNpSpXIJjbTdZvBRt8/0Q72SrspLFrOyiwcyORHOFe47jhEC4m0I0ZVq+pPvXqQ5/n3NtuyjUT35Fi5WKDgft/eWKOjgX3ormoUA4R46o6kSVkwBmYFgPLxNa2xJxW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=DLhAkNIz; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=IjE3Feu5; arc=none smtp.client-ip=103.168.172.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfout.phl.internal (Postfix) with ESMTP id E59EEEC0476;
+	Wed,  2 Jul 2025 06:40:53 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Wed, 02 Jul 2025 06:40:53 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1751452853;
+	 x=1751539253; bh=f+jtoViYxyDT44gIcm4ScVTqk+vWq1DU/+tdfl4XPXA=; b=
+	DLhAkNIzpkFpF2GoJ3uXO9a8+MQ6k2VWe4RnvK7qkowKYBtldXKEwql0AgYcTQjB
+	6C2WGef0oMQSUwiBTATwXRq1fdyId9dRkKldfFsUIkHvy3SGsHKcWikPXoGKSLLt
+	v2wip6qoJcj8hM+PDREDXIZcj2EkeQ7if5I0NYHooVwe/TjMg7M5vGMutHYK4zpf
+	JKC0nmlrS5+XaiYx0750b6NaXOi+l2CW/8JTaK/kEl2xcjoPDZzqDhBiCCp9loXn
+	E1egiloLO7fam3tP42RGmEVWVsaCYom6LmTgVzHnipHhtuXbyUBAPYzjC4XuyTOZ
+	E8VuUPkwCcc1E3QhpOxIMg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1751452853; x=
+	1751539253; bh=f+jtoViYxyDT44gIcm4ScVTqk+vWq1DU/+tdfl4XPXA=; b=I
+	jE3Feu53gTguVKZDRL2kpkOVMb0KpmQUwmy9BL89R82YGxQ5JpXq9mLZMvBykJdW
+	VUnxvpLKIYW8/e27LfyQMFUtMZJ9qsDWtBije6DVCVDkc2eXN6XzNQej9/cxdVSe
+	W7xNPLZs5DT0w76kYx/QXxUJkRdLWas8mPwQar8G5dxRsSMjzktgv/JdS+PjC7+/
+	Js1sxemUhjDPWstGJDvLdLNJqd1BRuCif5Mz7kI9XRY53e4/9nVSHUcV8R33O2OY
+	eCMG2IOhSds33jp2qgoKhriLBP5/HLWA7F2uZi1OX1oYCKNigZCGUVv4GPPYcv5q
+	goVcU8Lu1AUUSGjBIQ0Tg==
+X-ME-Sender: <xms:swxlaBcENGwyRdD3Lol3wY3YSNcqCO9oHyZae2kSARGeSYHVgoruRQ>
+    <xme:swxlaPOD_MyZkjrHVqAMOiN_BgP7IyrLpyYVV5odiVEkfJkQrvK12v7S2pcZs3Nl8
+    qQzw6DmdViY81zIqi8>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddujedukecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
+    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
+    hnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffgvedugeduveelvdekhfdvieen
+    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
+    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopeefuddpmhhouggvpehsmhhtphhouhht
+    pdhrtghpthhtoheptggrthgrlhhinhdrmhgrrhhinhgrshesrghrmhdrtghomhdprhgtph
+    htthhopehgohhrughonhdrghgvsegsshhtrdgrihdprhgtphhtthhopegsshhtqdhuphhs
+    thhrvggrmhessghsthgrihdrthhophdprhgtphhtthhopegsihhgfhhoohhtsegtlhgrsh
+    hsfhhunhdrtghnpdhrtghpthhtohepnhhfrhgrphhrrgguohestgholhhlrggsohhrrgdr
+    tghomhdprhgtphhtthhopegsvghnrdgthhhurghnghesghgvnhgvshihshhlohhgihgtrd
+    gtohhmrdhtfidprhgtphhtthhopehvihgtthhorhdrshhhihhhsehgvghnvghshihslhho
+    ghhitgdrtghomhdrthifpdhrtghpthhtohepghgvvghrthdorhgvnhgvshgrshesghhlih
+    guvghrrdgsvgdprhgtphhtthhopehgvggvrhhtrdhuhihtthgvrhhhohgvvhgvnhesghhm
+    rghilhdrtghomh
+X-ME-Proxy: <xmx:swxlaKjYdHsDdvduhQ0MEcXOW8CMKc87KCvkl6RjdvJ5XPD31U32gA>
+    <xmx:tAxlaK-bKjsdkvf85XBjTrRBq9bNDPMHJlelsR42NkRo33k7eUCebQ>
+    <xmx:tAxlaNtHm_x50MZxO88JkjSADPwfsDVmVUJ6WcBMuB3nd79uTugexQ>
+    <xmx:tAxlaJH2drl5pDUEuk4-L-F6GF3voZF2Kooj9dHI5mlDWaiEzFexTw>
+    <xmx:tQxlaDuN7y1Aicd_OJNllKymHr1i7ALXMocCOAl2OmgXckDib_xxzhcp>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id D7AA1700065; Wed,  2 Jul 2025 06:40:51 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+X-ThreadId: Tf7f6c885039edc57
+Date: Wed, 02 Jul 2025 12:40:31 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "yangzh0906@thundersoft.com" <yangzh0906@thundersoft.com>,
+ "Rob Herring" <robh@kernel.org>, krzk+dt@kernel.org,
+ "Krzysztof Kozlowski" <krzk@kernel.org>,
+ "Conor Dooley" <conor+dt@kernel.org>, "gordon.ge" <gordon.ge@bst.ai>,
+ "Catalin Marinas" <catalin.marinas@arm.com>,
+ "Geert Uytterhoeven" <geert.uytterhoeven@gmail.com>,
+ "Will Deacon" <will@kernel.org>, "Ulf Hansson" <ulf.hansson@linaro.org>,
+ "Adrian Hunter" <adrian.hunter@intel.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org,
+ "linux-mmc @ vger . kernel . org" <linux-mmc@vger.kernel.org>,
+ soc@lists.linux.dev, bst-upstream <bst-upstream@bstai.top>,
+ "Neil Armstrong" <neil.armstrong@linaro.org>,
+ "Jonathan Cameron" <jonathan.cameron@huawei.com>, bigfoot@classfun.cn,
+ kever.yang@rock-chips.com, "Manivannan Sadhasivam" <mani@kernel.org>,
+ "Geert Uytterhoeven" <geert+renesas@glider.be>,
+ "Bjorn Andersson" <andersson@kernel.org>, "Nishanth Menon" <nm@ti.com>,
+ =?UTF-8?Q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>,
+ "Taniya Das" <quic_tdas@quicinc.com>, "Eric Biggers" <ebiggers@google.com>,
+ "Victor Shih" <victor.shih@genesyslogic.com.tw>,
+ "Shan-Chun Hung" <shanchun1218@gmail.com>,
+ "Ben Chuang" <ben.chuang@genesyslogic.com.tw>
+Message-Id: <53ba18c1-4554-4d77-84fd-d921febb7559@app.fastmail.com>
+In-Reply-To: <20250702094444.3523973-6-yangzh0906@thundersoft.com>
+References: <20250528085403.481055-1-yangzh0906@thundersoft.com>
+ <20250702094444.3523973-1-yangzh0906@thundersoft.com>
+ <20250702094444.3523973-6-yangzh0906@thundersoft.com>
+Subject: Re: [PATCH v2 5/8] mmc: sdhci: add Black Sesame Technologies BST C1200
+ controller driver
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250702-clone3-shadow-stack-v18-8-7965d2b694db@kernel.org>
-References: <20250702-clone3-shadow-stack-v18-0-7965d2b694db@kernel.org>
-In-Reply-To: <20250702-clone3-shadow-stack-v18-0-7965d2b694db@kernel.org>
-To: "Rick P. Edgecombe" <rick.p.edgecombe@intel.com>, 
- Deepak Gupta <debug@rivosinc.com>, Szabolcs Nagy <Szabolcs.Nagy@arm.com>, 
- "H.J. Lu" <hjl.tools@gmail.com>, Florian Weimer <fweimer@redhat.com>, 
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
- Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
- Vincent Guittot <vincent.guittot@linaro.org>, 
- Dietmar Eggemann <dietmar.eggemann@arm.com>, 
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, 
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>, 
- Christian Brauner <brauner@kernel.org>, Shuah Khan <shuah@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>, 
- Will Deacon <will@kernel.org>, jannh@google.com, bsegall@google.com, 
- Andrew Morton <akpm@linux-foundation.org>, 
- Yury Khrustalev <yury.khrustalev@arm.com>, 
- Wilco Dijkstra <wilco.dijkstra@arm.com>, linux-kselftest@vger.kernel.org, 
- linux-api@vger.kernel.org, Mark Brown <broonie@kernel.org>, 
- Kees Cook <kees@kernel.org>, Shuah Khan <skhan@linuxfoundation.org>
-X-Mailer: b4 0.15-dev-cff91
-X-Developer-Signature: v=1; a=openpgp-sha256; l=10188; i=broonie@kernel.org;
- h=from:subject:message-id; bh=qiy3S/IosP5v7tFLu6mQoJBkT+oZKHlJCEp70J0xwdQ=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBoZRAwcBwUlUqohRD1WKGejd1WgkKYILtTEJgPr
- r7hJqossraJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCaGUQMAAKCRAk1otyXVSH
- 0HDuB/9EIORBw29Uoo94OX9fKUuX1Yrg+nh/+0pxlM20q6UEAm0ksXkjiE03MCjHnwuL3MV5/AV
- 3UI4doBnhcMbUtJ/6tztaNSBh+wsRITwlOjnUMBg6LXYvRJiiBb4Bh+1jdsec64hpb2SXLGwmf6
- TRG/gC/IO00PB7CKcCaTznNq8+MYweonzJfKt7T15nw+IGef9JyBEtmHS59LEHGsprgRXsvi1cl
- /C0jI3f3Jof0RVSpz8mBv+k3YfiP2ikIOucbniIB5hi+PN48wJi4oqQZr10cT2XUuBqkMV7SPTF
- ZqTwpfqCMcOmAgJI/gn7Gi9hBbSKW4gGWT6hEopEaSp4enPM
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-Add basic test coverage for specifying the shadow stack for a newly
-created thread via clone3(), including coverage of the newly extended
-argument structure.  We check that a user specified shadow stack can be
-provided, and that invalid combinations of parameters are rejected.
+On Wed, Jul 2, 2025, at 11:44, Albert Yang wrote:
 
-In order to facilitate testing on systems without userspace shadow stack
-support we manually enable shadow stacks on startup, this is architecture
-specific due to the use of an arch_prctl() on x86. Due to interactions with
-potential userspace locking of features we actually detect support for
-shadow stacks on the running system by attempting to allocate a shadow
-stack page during initialisation using map_shadow_stack(), warning if this
-succeeds when the enable failed.
+> +
+> +config MMC_SDHCI_BST
+> +	tristate "SDHCI OF support for the BST DWC MSHC"
+> +	depends on ARCH_BST || COMPILE_TEST
+> +	depends on MMC_SDHCI_PLTFM
+> +	depends on OF
+> +	help
+> +	  This selects Synopsys DesignWare Cores Mobile Storage Controller
+> +	  support.
 
-In order to allow testing of user configured shadow stacks on
-architectures with that feature we need to ensure that we do not return
-from the function where the clone3() syscall is called in the child
-process, doing so would trigger a shadow stack underflow.  To do this we
-use inline assembly rather than the standard syscall wrapper to call
-clone3().  In order to avoid surprises we also use a syscall rather than
-the libc exit() function., this should be overly cautious.
+The description does not mention the actual device it's for
+but only DesignWare.
 
-Acked-by: Shuah Khan <skhan@linuxfoundation.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- tools/testing/selftests/clone3/clone3.c           | 143 +++++++++++++++++++++-
- tools/testing/selftests/clone3/clone3_selftests.h |  63 ++++++++++
- 2 files changed, 205 insertions(+), 1 deletion(-)
+Try to keep this sorted alphabetically between the other
+CONFIG_MMC_SDHCI_* backends
 
-diff --git a/tools/testing/selftests/clone3/clone3.c b/tools/testing/selftests/clone3/clone3.c
-index 5b8b7d640e70..6fd2b3238e2c 100644
---- a/tools/testing/selftests/clone3/clone3.c
-+++ b/tools/testing/selftests/clone3/clone3.c
-@@ -3,6 +3,7 @@
- /* Based on Christian Brauner's clone3() example */
- 
- #define _GNU_SOURCE
-+#include <asm/mman.h>
- #include <errno.h>
- #include <inttypes.h>
- #include <linux/types.h>
-@@ -11,6 +12,7 @@
- #include <stdint.h>
- #include <stdio.h>
- #include <stdlib.h>
-+#include <sys/mman.h>
- #include <sys/syscall.h>
- #include <sys/types.h>
- #include <sys/un.h>
-@@ -19,8 +21,12 @@
- #include <sched.h>
- 
- #include "../kselftest.h"
-+#include "../ksft_shstk.h"
- #include "clone3_selftests.h"
- 
-+static bool shadow_stack_supported;
-+static size_t max_supported_args_size;
-+
- enum test_mode {
- 	CLONE3_ARGS_NO_TEST,
- 	CLONE3_ARGS_ALL_0,
-@@ -28,6 +34,10 @@ enum test_mode {
- 	CLONE3_ARGS_INVAL_EXIT_SIGNAL_NEG,
- 	CLONE3_ARGS_INVAL_EXIT_SIGNAL_CSIG,
- 	CLONE3_ARGS_INVAL_EXIT_SIGNAL_NSIG,
-+	CLONE3_ARGS_SHADOW_STACK,
-+	CLONE3_ARGS_SHADOW_STACK_MISALIGNED,
-+	CLONE3_ARGS_SHADOW_STACK_NO_TOKEN,
-+	CLONE3_ARGS_SHADOW_STACK_NORMAL_MEMORY,
- };
- 
- typedef bool (*filter_function)(void);
-@@ -44,6 +54,44 @@ struct test {
- 	filter_function filter;
- };
- 
-+
-+/*
-+ * We check for shadow stack support by attempting to use
-+ * map_shadow_stack() since features may have been locked by the
-+ * dynamic linker resulting in spurious errors when we attempt to
-+ * enable on startup.  We warn if the enable failed.
-+ */
-+static void test_shadow_stack_supported(void)
-+{
-+	long ret;
-+
-+	ret = syscall(__NR_map_shadow_stack, 0, getpagesize(), 0);
-+	if (ret == -1) {
-+		ksft_print_msg("map_shadow_stack() not supported\n");
-+	} else if ((void *)ret == MAP_FAILED) {
-+		ksft_print_msg("Failed to map shadow stack\n");
-+	} else {
-+		ksft_print_msg("Shadow stack supportd\n");
-+		shadow_stack_supported = true;
-+
-+		if (!shadow_stack_enabled)
-+			ksft_print_msg("Mapped but did not enable shadow stack\n");
-+	}
-+}
-+
-+static void *get_shadow_stack_page(unsigned long flags)
-+{
-+	unsigned long long page;
-+
-+	page = syscall(__NR_map_shadow_stack, 0, getpagesize(), flags);
-+	if ((void *)page == MAP_FAILED) {
-+		ksft_print_msg("map_shadow_stack() failed: %d\n", errno);
-+		return 0;
-+	}
-+
-+	return (void *)page;
-+}
-+
- static int call_clone3(uint64_t flags, size_t size, enum test_mode test_mode)
- {
- 	struct __clone_args args = {
-@@ -57,6 +105,7 @@ static int call_clone3(uint64_t flags, size_t size, enum test_mode test_mode)
- 	} args_ext;
- 
- 	pid_t pid = -1;
-+	void *p;
- 	int status;
- 
- 	memset(&args_ext, 0, sizeof(args_ext));
-@@ -89,6 +138,26 @@ static int call_clone3(uint64_t flags, size_t size, enum test_mode test_mode)
- 	case CLONE3_ARGS_INVAL_EXIT_SIGNAL_NSIG:
- 		args.exit_signal = 0x00000000000000f0ULL;
- 		break;
-+	case CLONE3_ARGS_SHADOW_STACK:
-+		p = get_shadow_stack_page(SHADOW_STACK_SET_TOKEN);
-+		p += getpagesize() - sizeof(void *);
-+		args.shadow_stack_token = (unsigned long long)p;
-+		break;
-+	case CLONE3_ARGS_SHADOW_STACK_MISALIGNED:
-+		p = get_shadow_stack_page(SHADOW_STACK_SET_TOKEN);
-+		p += getpagesize() - sizeof(void *) - 1;
-+		args.shadow_stack_token = (unsigned long long)p;
-+		break;
-+	case CLONE3_ARGS_SHADOW_STACK_NORMAL_MEMORY:
-+		p = malloc(getpagesize());
-+		p += getpagesize() - sizeof(void *);
-+		args.shadow_stack_token = (unsigned long long)p;
-+		break;
-+	case CLONE3_ARGS_SHADOW_STACK_NO_TOKEN:
-+		p = get_shadow_stack_page(0);
-+		p += getpagesize() - sizeof(void *);
-+		args.shadow_stack_token = (unsigned long long)p;
-+		break;
- 	}
- 
- 	memcpy(&args_ext.args, &args, sizeof(struct __clone_args));
-@@ -102,7 +171,12 @@ static int call_clone3(uint64_t flags, size_t size, enum test_mode test_mode)
- 
- 	if (pid == 0) {
- 		ksft_print_msg("I am the child, my PID is %d\n", getpid());
--		_exit(EXIT_SUCCESS);
-+		/*
-+		 * Use a raw syscall to ensure we don't get issues
-+		 * with manually specified shadow stack and exit handlers.
-+		 */
-+		syscall(__NR_exit, EXIT_SUCCESS);
-+		ksft_print_msg("CHILD FAILED TO EXIT PID is %d\n", getpid());
- 	}
- 
- 	ksft_print_msg("I am the parent (%d). My child's pid is %d\n",
-@@ -184,6 +258,26 @@ static bool no_timenamespace(void)
- 	return true;
- }
- 
-+static bool have_shadow_stack(void)
-+{
-+	if (shadow_stack_supported) {
-+		ksft_print_msg("Shadow stack supported\n");
-+		return true;
-+	}
-+
-+	return false;
-+}
-+
-+static bool no_shadow_stack(void)
-+{
-+	if (!shadow_stack_supported) {
-+		ksft_print_msg("Shadow stack not supported\n");
-+		return true;
-+	}
-+
-+	return false;
-+}
-+
- static size_t page_size_plus_8(void)
- {
- 	return getpagesize() + 8;
-@@ -327,6 +421,50 @@ static const struct test tests[] = {
- 		.expected = -EINVAL,
- 		.test_mode = CLONE3_ARGS_NO_TEST,
- 	},
-+	{
-+		.name = "Shadow stack on system with shadow stack",
-+		.size = 0,
-+		.expected = 0,
-+		.e2big_valid = true,
-+		.test_mode = CLONE3_ARGS_SHADOW_STACK,
-+		.filter = no_shadow_stack,
-+	},
-+	{
-+		.name = "Shadow stack with misaligned address",
-+		.flags = CLONE_VM,
-+		.size = 0,
-+		.expected = -EINVAL,
-+		.e2big_valid = true,
-+		.test_mode = CLONE3_ARGS_SHADOW_STACK_MISALIGNED,
-+		.filter = no_shadow_stack,
-+	},
-+	{
-+		.name = "Shadow stack with normal memory",
-+		.flags = CLONE_VM,
-+		.size = 0,
-+		.expected = -EFAULT,
-+		.e2big_valid = true,
-+		.test_mode = CLONE3_ARGS_SHADOW_STACK_NORMAL_MEMORY,
-+		.filter = no_shadow_stack,
-+	},
-+	{
-+		.name = "Shadow stack with no token",
-+		.flags = CLONE_VM,
-+		.size = 0,
-+		.expected = -EINVAL,
-+		.e2big_valid = true,
-+		.test_mode = CLONE3_ARGS_SHADOW_STACK_NO_TOKEN,
-+		.filter = no_shadow_stack,
-+	},
-+	{
-+		.name = "Shadow stack on system without shadow stack",
-+		.flags = CLONE_VM,
-+		.size = 0,
-+		.expected = -EFAULT,
-+		.e2big_valid = true,
-+		.test_mode = CLONE3_ARGS_SHADOW_STACK_NORMAL_MEMORY,
-+		.filter = have_shadow_stack,
-+	},
- };
- 
- int main(int argc, char *argv[])
-@@ -334,9 +472,12 @@ int main(int argc, char *argv[])
- 	size_t size;
- 	int i;
- 
-+	enable_shadow_stack();
-+
- 	ksft_print_header();
- 	ksft_set_plan(ARRAY_SIZE(tests));
- 	test_clone3_supported();
-+	test_shadow_stack_supported();
- 
- 	for (i = 0; i < ARRAY_SIZE(tests); i++)
- 		test_clone3(&tests[i]);
-diff --git a/tools/testing/selftests/clone3/clone3_selftests.h b/tools/testing/selftests/clone3/clone3_selftests.h
-index 939b26c86d42..8151c4fc971a 100644
---- a/tools/testing/selftests/clone3/clone3_selftests.h
-+++ b/tools/testing/selftests/clone3/clone3_selftests.h
-@@ -31,12 +31,75 @@ struct __clone_args {
- 	__aligned_u64 set_tid;
- 	__aligned_u64 set_tid_size;
- 	__aligned_u64 cgroup;
-+#ifndef CLONE_ARGS_SIZE_VER2
-+#define CLONE_ARGS_SIZE_VER2 88	/* sizeof third published struct */
-+#endif
-+	__aligned_u64 shadow_stack_token;
-+#ifndef CLONE_ARGS_SIZE_VER3
-+#define CLONE_ARGS_SIZE_VER3 96 /* sizeof fourth published struct */
-+#endif
- };
- 
-+/*
-+ * For architectures with shadow stack support we need to be
-+ * absolutely sure that the clone3() syscall will be inline and not a
-+ * function call so we open code.
-+ */
-+#ifdef __x86_64__
-+static __always_inline pid_t sys_clone3(struct __clone_args *args, size_t size)
-+{
-+	register long _num  __asm__ ("rax") = __NR_clone3;
-+	register long _args __asm__ ("rdi") = (long)(args);
-+	register long _size __asm__ ("rsi") = (long)(size);
-+	long ret;
-+
-+	__asm__ volatile (
-+		"syscall\n"
-+		: "=a"(ret)
-+		: "r"(_args), "r"(_size),
-+		  "0"(_num)
-+		: "rcx", "r11", "memory", "cc"
-+	);
-+
-+	if (ret < 0) {
-+		errno = -ret;
-+		return -1;
-+	}
-+
-+	return ret;
-+}
-+#elif defined(__aarch64__)
-+static __always_inline pid_t sys_clone3(struct __clone_args *args, size_t size)
-+{
-+	register long _num  __asm__ ("x8") = __NR_clone3;
-+	register long _args __asm__ ("x0") = (long)(args);
-+	register long _size __asm__ ("x1") = (long)(size);
-+	register long arg2 __asm__ ("x2") = 0;
-+	register long arg3 __asm__ ("x3") = 0;
-+	register long arg4 __asm__ ("x4") = 0;
-+
-+	__asm__ volatile (
-+		"svc #0\n"
-+		: "=r"(_args)
-+		: "r"(_args), "r"(_size),
-+		  "r"(_num), "r"(arg2),
-+		  "r"(arg3), "r"(arg4)
-+		: "memory", "cc"
-+	);
-+
-+	if ((int)_args < 0) {
-+		errno = -((int)_args);
-+		return -1;
-+	}
-+
-+	return _args;
-+}
-+#else
- static pid_t sys_clone3(struct __clone_args *args, size_t size)
- {
- 	return syscall(__NR_clone3, args, size);
- }
-+#endif
- 
- static inline void test_clone3_supported(void)
- {
+> +
+> +struct dwcmshc_priv {
+> +	void __iomem *crm_reg_base;
+> +	u32 phy_crm_reg_base;
+> +	u32 phy_crm_reg_size;
+> +};
 
--- 
-2.39.5
+You are only using the first member here, the phy_crm_reg_base
+and phy_crm_reg_size are assigned during probe but not referenced
+later.  devm_platform_ioremap_resource() should help simplify
+that code further.
 
+> +
+> +static void bst_write_phys_bst(void __iomem *addr, u32 value)
+> +{
+> +	iowrite32(value, addr);
+> +}
+
+You always pass priv->crm_reg_base into this helper, so
+it would be simpler to make it take the sdhci_pltfm_host
+pointer and the offset instead of the address.
+
+> +static int bst_sdhci_reallocate_bounce_buffer(struct sdhci_host *host)
+> +{
+> +	struct mmc_host *mmc = host->mmc;
+> +	unsigned int max_blocks;
+> +	unsigned int bounce_size;
+> +	int ret;
+> +
+> +	/*
+> +	 * Cap the bounce buffer at 64KB. Using a bigger bounce buffer
+> +	 * has diminishing returns, this is probably because SD/MMC
+> +	 * cards are usually optimized to handle this size of requests.
+> +	 */
+> +	bounce_size = SZ_32K;
+
+The comment says 64K, but the size you use is 32K.
+
+
+> +	/* Get CRM registers from the second reg entry */
+> +	crm_res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+
+devm_platform_ioremap_resource()
+
+> +	/*
+> +	 * Hardware limitation workaround:
+> +	 *
+> +	 * Our platform supports 64-bit physical addressing, but the eMMC
+> +	 * controller's SRAM-based DMA engine is constrained to a 32-bit
+> +	 * address space. When using the standard SDHCI interface, which
+> +	 * allocates DDR-based DMA buffers with 64-bit addresses, the
+> +	 * dma_map_single() operation fails because the DMA engine cannot
+> +	 * handle addresses beyond 32 bits.
+> +	 *
+> +	 * To resolve this hardware limitation, we implement a bounce buffer
+> +	 * allocated via dma_alloc_coherent() to satisfy DMA addressing
+> +	 * constraints.
+> +	 */
+> +	err = bst_sdhci_reallocate_bounce_buffer(host);
+
+Having an explanation here makes sense, but I don't think this
+captures what is actually going on, in particular:
+
+- dma_alloc_coherent() being backed by an SRAM that is under
+  the 4GB boundary
+- the problem that the SoC is configured that all of DRAM
+  is outside of ZONE_DMA32
+- The type of hardware bug that leads to 64-bit DMA being
+  broken in this SoC.
+
+I still have some hope that the hardware is not actually
+that broken and you can get it working normally, in one
+of these ways:
+- enabling 64-bit addressing in the parent bus
+- enabling SMMU translation for the parent bus
+- configuring the parent bus or the sdhci itself to
+  access the first 4GB of RAM, and describing the
+  offset in dma-ranges
+- moving the start of RAM in a global SoC config
+
+It is rather unlikely that the SoC designer chose to
+integrate a 32-bit-only device without adding some
+way to configure it to access RAM.
+
+      Arnd
 
