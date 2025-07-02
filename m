@@ -1,166 +1,165 @@
-Return-Path: <linux-kernel+bounces-713333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9045AF530F
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 15:09:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFFE2AF5749
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 15:10:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C8C9189E724
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 13:10:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 065A216DEC3
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 13:10:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97BFD26658A;
-	Wed,  2 Jul 2025 13:09:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 808ED2749E7;
+	Wed,  2 Jul 2025 13:10:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="PeMl1KbJ"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="OxJo/61J";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Oioy0nL0"
+Received: from fhigh-b2-smtp.messagingengine.com (fhigh-b2-smtp.messagingengine.com [202.12.124.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9310C1E5B70
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 13:09:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1CBD238171;
+	Wed,  2 Jul 2025 13:10:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751461780; cv=none; b=gFgvhejAf72eWrYRpAH+6O9YlDFkRFn42YX4I5icS+S/E5LQGoCY7CsUf1rZMHFIA1j6Cm5QgD/NbRqsI5Pmzxrw/+g4sEIrmyXESTUg3KIk01iAqXCniL2ou+XU94Siyae3vX46oai9y6xx3DxdM0IJ0T7XItJlD4V7dlawrJU=
+	t=1751461838; cv=none; b=M3P0TSDdeYHGd+GPtNfAiqQEZHnTzZB3t/Hq0KsIa4L5ljlC1BjwFw/DyxFOFXH8SBNgkZOjunSXzNWmyM3XBhG+LDD/Ne6P3VAYGMKz8czxIUzgNrewFzJUCYCWwd5ZUijB0fPbgvITl0I60TdkFgb3bVELPWyj0Kn+y6MlUGY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751461780; c=relaxed/simple;
-	bh=T0T50epQYXSTIcomIRVA4pTMk0v0FrjObGdzIlNlzY0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j+GR9bAmaQxEdUxhPbi1abnBMs/4AykoKkJv6tEe6BHRqwlOMqxAETQ0cKeUKKTrBu0+3zAKXc9o1HCCGjQabIH/V1PlTIxzPGAH27RqBa8FceKVakfvUUPS12VXmXCZZnXILUVlNukcMI76BEYQgwRz8lq8ilW3dmrQfVewoXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=PeMl1KbJ; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 4235A40E0205;
-	Wed,  2 Jul 2025 13:09:36 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id T9VHxsU5LReM; Wed,  2 Jul 2025 13:09:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1751461771; bh=wjkdRehXZRzRYjP4NRRWzsslHj3FiEjq733eglR4EgQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PeMl1KbJpVbPUqHbEEtF+uKgxwoYsdqkxHkhM6OdQptt5pxSi+Oy2L64LjmkdoSp+
-	 wyaNZaGdAbSIM4Inbi8XmJMz09zSmlvnhV0RAtwdF4BNV0vzMsB9e4ulskUT/dSc3d
-	 b7Tt9LK+BPcVZVhAcNhgH5Bsw7rYx5C7kVftvSADBc0BFUIyTR87pxIFy7AAaXnL+k
-	 /xAjyjBXx2BWHQFNBI9yEkPllZNam4U46RczSxUdbc1i5HcDOeEzERlvAyloj4kNku
-	 KgAnupimy9b9S5pPnS74bKpC5j7jjfSGLgumbp8tEeeBgQBI/1g/fNHlFBofV+t6ov
-	 GkPavETo4hpEkO7fjheARhsME3mmzRFCknxnh/kMmmAF2LpHRM/EuOnSgNesZM3DBy
-	 w9IQl8YixJZeZbPQ6VKoe3KtgyNdRG/KPolVndj4k4AcwqgjXxJU2f6G+LZNcGvlQ/
-	 Snrj8Ti0WLQKJpFfkM80/c/3wESP62VXkdaH3fOVhFZ+UH9aAI/g9i9JI392js38Fr
-	 RW8tgQEP6VSTBORN1TxDwp85eCReYhfEpN/QOExge+vbY9F+DPClc9bREMLZ66uwl4
-	 TaCuqqUWEP9/Cwc9K/BTkKI1SFf//uX6YKOuDJtbSwpXP1JHI7/AQ/RtZ3RypWQK0e
-	 S3UymDOZgyK5651yCvx0PTnE=
-Received: from zn.tnic (p57969c58.dip0.t-ipconnect.de [87.150.156.88])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 6A27240E021C;
-	Wed,  2 Jul 2025 13:09:22 +0000 (UTC)
-Date: Wed, 2 Jul 2025 15:09:15 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: kernel test robot <lkp@intel.com>, Thomas Gleixner <tglx@linutronix.de>,
-	llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org, x86@kernel.org,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Jinjie Ruan <ruanjinjie@huawei.com>
-Subject: Re: [tip:master 19/19] include/linux/irq-entry-common.h:201:2:
- error: unexpected token
-Message-ID: <20250702130915.GEaGUve86iYnv337_Z@fat_crate.local>
-References: <202507020528.N0LtekXt-lkp@intel.com>
- <20250702123240.GDaGUm6Le4KLL7o_91@fat_crate.local>
- <aGUtCveV8Ev17_FS@J2N7QTR9R3.cambridge.arm.com>
+	s=arc-20240116; t=1751461838; c=relaxed/simple;
+	bh=9XLrbCw1N01QjplnBFVI2vCLvEjPgQ/3fvn7M31CDMM=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=b7j0mJf9ORzelPY4+JgNeTg+bvSF7Qli0gdESdDaOgxBKmK0sHPJO/dozsvyAKVoztlG984Zwc5B5jnXfVTa/yRXu7sfMrxTYZbGPP10Aw91HgQvkTQTxY45C923s0/xXK9q+W4GZv0EUr1xz6r6AaOVC6o+R4QgTM947Az9Mqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=OxJo/61J; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Oioy0nL0; arc=none smtp.client-ip=202.12.124.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 76C7E7A011C;
+	Wed,  2 Jul 2025 09:10:34 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Wed, 02 Jul 2025 09:10:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1751461834;
+	 x=1751548234; bh=CM3Dw6fk0gSQNr36cfugEFxzFt86GurJoNVnL/gx6DQ=; b=
+	OxJo/61J9FxWBD5vXi51ni4VO3YDjHIsSBVAI1jDDpHYnFBAVYW+lcRzpOhHKJ/L
+	FDRH5eroTw9O8Vol6a/LcRcPGdSQd/VJu0CV/uBp0K2wx9W3XO/yo3ehYO1ZzzFl
+	/VE6KY1I4YU5aKjdcjrp6hKwTI6FbAc6NzqCY8qi9038GWPAroOJ1qvS1RbZ3bxk
+	hMDOZgasYMA3Kzw/dY9me9pZjGES+x0hWnzAjOxMcJETVZs7ck3GrDwWI2WdYkZZ
+	NOXrrvGQal52e26lbILJWmHz15Q/98duAYC3PZv5irq2pSK81pS+3qsUdfwYfdep
+	B3GmKnD7dk0bApFwVV8Pqw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1751461834; x=
+	1751548234; bh=CM3Dw6fk0gSQNr36cfugEFxzFt86GurJoNVnL/gx6DQ=; b=O
+	ioy0nL0UuuH/VEUCszIpHiwpflPl8+BXJ816b/fzc9Jp/RTFeZKdsQoIplenPgBS
+	AfP7YF9hlZsZCXXxRWp5sT789xeYk/625OGxxhRrc3Fw/rG+T7dj8lkEq8AO+YQp
+	sJCYVVB6NtOj//m0bfOCFdCVapIGPF2IBbqqH2i5mx97VEe8zTGXRql24q/FIjVT
+	SBUbNrEtoGsaV8FMlA96CCEhBS1frY9ryRX981Tf1ufnoxOmYG/JzY8yMv27fAlQ
+	w0Cj0vqdiRKtX38OuCnYjLzAHO1wVWRng+5tgGS+FyyWtJkI1nyn2uCEbr/ZzdJE
+	toxKktTfKs+HjCJrKC4bA==
+X-ME-Sender: <xms:yC9laH3rtdKfBplfWPFJcQbY5j5AKXtVIWrfLx-N7hyea5W56mf3eg>
+    <xme:yC9laGGuOe4L0aNp-mefHz2cjYFE6UfxUJMuhnr1LoDh0tJk4fCdWuX3JQm4gIxiI
+    aNz2KMooFRX-jupWxs>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddujeegkecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
+    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
+    hnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffgvedugeduveelvdekhfdvieen
+    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
+    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopedvuddpmhhouggvpehsmhhtphhouhht
+    pdhrtghpthhtoheptggrthgrlhhinhdrmhgrrhhinhgrshesrghrmhdrtghomhdprhgtph
+    htthhopehmrghrkhdrrhhuthhlrghnugesrghrmhdrtghomhdprhgtphhtthhopehsrghs
+    tghhrgdrsghishgthhhofhhfsegrrhhmrdgtohhmpdhrtghpthhtohepthhimhhothhhhi
+    drhhgrhigvshesrghrmhdrtghomhdprhgtphhtthhopehsfhhrsegtrghnsgdrrghuuhhg
+    rdhorhhgrdgruhdprhgtphhtthhopegshhgvlhhgrggrshesghhoohhglhgvrdgtohhmpd
+    hrtghpthhtohepjhhonhgrthhhrghnrdgtrghmvghrohhnsehhuhgrfigvihdrtghomhdp
+    rhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjh
+    hirhhishhlrggshieskhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:yC9laH69BhhdIzMOjdAALm72oNgRutcG7Q4g4hoSRIetagBiwpVjHQ>
+    <xmx:yC9laM1OKYIG1lJfC1tCMaok8A9Eo361dNg47oYEE2W6vej_M0sFzw>
+    <xmx:yC9laKF_oi88OqTJZV_fCnh3MYBsX-Vnbiyp-bA95w3kd0U_xYKz-A>
+    <xmx:yC9laN-ZLQ6oSxli4TXPq31FzgpUCl6ph9hE5TdtWMUBl1fyGr9SPQ>
+    <xmx:yi9laEmXJtgcOFm7oVPKQmrrLqGk_gvqYdiWuvDo3A679EPdanbb0P1v>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id D2377700065; Wed,  2 Jul 2025 09:10:32 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <aGUtCveV8Ev17_FS@J2N7QTR9R3.cambridge.arm.com>
+X-ThreadId: T8b561bdf24069c70
+Date: Wed, 02 Jul 2025 15:10:12 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Lorenzo Pieralisi" <lpieralisi@kernel.org>,
+ "Jonathan Cameron" <Jonathan.Cameron@huawei.com>,
+ "Thomas Gleixner" <tglx@linutronix.de>,
+ "Catalin Marinas" <catalin.marinas@arm.com>, "Marc Zyngier" <maz@kernel.org>,
+ "Stephen Rothwell" <sfr@canb.auug.org.au>
+Cc: "Rob Herring" <robh@kernel.org>,
+ "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+ "Conor Dooley" <conor+dt@kernel.org>, "Will Deacon" <will@kernel.org>,
+ "Sascha Bischoff" <sascha.bischoff@arm.com>,
+ "Timothy Hayes" <timothy.hayes@arm.com>,
+ "Bjorn Helgaas" <bhelgaas@google.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ "Peter Maydell" <peter.maydell@linaro.org>,
+ "Mark Rutland" <mark.rutland@arm.com>, "Jiri Slaby" <jirislaby@kernel.org>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-pci@vger.kernel.org
+Message-Id: <09dd654f-c7d7-4046-92a7-ee4e9f8076d3@app.fastmail.com>
+In-Reply-To: <aGUqEkascwGFD9x+@lpieralisi>
+References: <20250626-gicv5-host-v6-0-48e046af4642@kernel.org>
+ <20250626-gicv5-host-v6-20-48e046af4642@kernel.org>
+ <20250702124019.00006b01@huawei.com> <aGUqEkascwGFD9x+@lpieralisi>
+Subject: Re: [PATCH v6 20/31] irqchip/gic-v5: Add GICv5 PPI support
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-Hey,
+On Wed, Jul 2, 2025, at 14:46, Lorenzo Pieralisi wrote:
+> On Wed, Jul 02, 2025 at 12:40:19PM +0100, Jonathan Cameron wrote:
+>> On Thu, 26 Jun 2025 12:26:11 +0200
+>> Lorenzo Pieralisi <lpieralisi@kernel.org> wrote:
+>> 
+>> > The GICv5 CPU interface implements support for PE-Private Peripheral
+>> > Interrupts (PPI), that are handled (enabled/prioritized/delivered)
+>> > entirely within the CPU interface hardware.
+>> 
+>> I can't remember where I got to last time so if I repeat stuff that
+>> you already responded to, feel free to just ignore me this time ;)
+>> 
+>> All superficial stuff. Feel free to completely ignore if you like.
+>
+> We are at v6.16-rc4, series has been on the lists for 3 months, it has
+> been reviewed and we would like to get it into v6.17 if possible and
+> deemed reasonable, I am asking you folks please, what should I do ?
+>
+> I can send a v7 with the changes requested below (no bug fixes there)
+> - it is fine by me - but I need to know please asap if we have a
+> plan to get this upstream this cycle.
 
-On Wed, Jul 02, 2025 at 01:58:50PM +0100, Mark Rutland wrote:
-> Hi Boris,
-> 
-> [ adding Linux and Jinjie, since this is almost certainly due to the
->   irqentry split ]
-> 
-> On Wed, Jul 02, 2025 at 02:32:40PM +0200, Borislav Petkov wrote:
-> > On Wed, Jul 02, 2025 at 05:56:06AM +0800, kernel test robot wrote:
-> > > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git master
-> > > head:   104f02a7798f7e8aba25545f9d485035532260b2
-> > > commit: 104f02a7798f7e8aba25545f9d485035532260b2 [19/19] Merge core/entry into tip/master
-> > > config: s390-allmodconfig (https://download.01.org/0day-ci/archive/20250702/202507020528.N0LtekXt-lkp@intel.com/config)
-> > > compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-> > > reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250702/202507020528.N0LtekXt-lkp@intel.com/reproduce)
-> > 
-> > I'm trying to follow your reproducer and installed binutils-s390x-linux-gnu.
-> > 
-> > However: 
-> > 
-> > make CC=clang HOSTCC=clang W=1 ARCH=s390 arch/s390/ 
-> >   SYNC    include/config/auto.conf.cmd
-> >   CALL    scripts/checksyscalls.sh
-> >   VDSO    arch/s390/kernel/vdso64/vdso64.so.dbg
-> > ld: unrecognised emulation mode: elf64_s390
-> > Supported emulations: elf_x86_64 elf32_x86_64 elf_i386 elf_iamcu i386pep i386pe
-> > make[2]: *** [arch/s390/kernel/vdso64/Makefile:53: arch/s390/kernel/vdso64/vdso64.so.dbg] Error 1
-> > make[1]: *** [arch/s390/Makefile:150: vdso_prepare] Error 2
-> > make: *** [Makefile:248: __sub-make] Error 2
-> > 
-> > My linker can't do s390. So I need something else which your system has.
-> 
-> IIUC you can build with `LLVM=1` rather than `CC=clang` to force the use of
-> LLD (which should support s390 even if you don't have a GNU LD that does).
+I think the priority right now should be to get the series into
+linux-next, as there is a good chance that the added regression
+testing will uncover some problem that you should fix.
 
-I was just typing:
+I had another look at all your patches, mainly to see how much
+of them actually change existing code, and there is thankfully
+very little of that. Without actual gicv5 hardware implementations
+there is very low risk in adding the new driver as well: anything
+that still comes up can be fixed on top of v6 or a v7 if you send
+it again.
 
-Nathan says:
+I assume that Thomas will make this a separate branch in the tip
+tree, given the size of the series. If he still wants to wait for
+more feedback or changes before adding it to tip, I would suggest
+you ask Stephen to add your latest branch to linux-next in the
+meantime.
 
-"You need to supply CROSS_COMPILE=s390x-linux-gnu- or use LLVM=-19 to avoid the ld error."
-
-:-)
-
-> I have script to use the kernel.org GCC/LLVM builds from:
-> 
->   https://www.kernel.org/pub/tools/crosstool/
->   https://cdn.kernel.org/pub/tools/llvm/
-> 
-> ... and I can reproduce this with:
-> 
->   [mark@lakrids:~/src/linux]% git clean -qfdx
->   [mark@lakrids:~/src/linux]% usekorg-llvm 18.1.6 make LLVM=1 ARCH=s390 -s allmodconfig
->   [mark@lakrids:~/src/linux]% usekorg-llvm 18.1.6 make LLVM=1 ARCH=s390 -s  
-> 
-> ... where that last step blows up with:
-> 
-> | init/main.c:972:6: error: unexpected token
-> |   972 |         if (WARN(!irqs_disabled(),
-> |       |             ^
-> 
-> ... plus a whole bucnh of other gunk.
-> 
-> I'll take a look, and hopefully Linus and Jinie can too.
-
-Thanks.
-
-It looks to me like that BUGVERBOSE stuff in tip/core/bugs and it warns
-because core/entry starts using it when it gets merged to the rest of the tip
-pile.
-
-Lemme show it to Peter.
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+    Arnd
 
