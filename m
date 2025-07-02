@@ -1,79 +1,53 @@
-Return-Path: <linux-kernel+bounces-713238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4627BAF1544
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:17:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADDAEAF153E
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:17:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DCCA1C43465
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 12:17:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4CBD16B5C8
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 12:17:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78F8D274FC1;
-	Wed,  2 Jul 2025 12:15:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0639B275B09;
+	Wed,  2 Jul 2025 12:16:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CBJA5grf"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="i/9d4Nvs"
+Received: from outbound.pv.icloud.com (p-west1-cluster3-host1-snip4-3.eps.apple.com [57.103.66.116])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 126252749E6
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 12:15:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9C7D275AE8
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 12:16:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=57.103.66.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751458531; cv=none; b=C70FJy59LPptCDSG3G8zmD2wCn0Jcecf6T4Yv1gpCB96f6vwnlmXr/MoRd4O4hlj1foWWBtX+nq4WvCRTddUbtXSMKEGtSw0l//ex5qsMDC/bLq9JD3Wf4YszTJoNKq+L+6Sh+yOk45SZuVWG0ej1+LdsrwOOlGR8RMAm0lMIOA=
+	t=1751458574; cv=none; b=amygnz7E8eqIzJ8dsPEFpTMaQe+TwBGtIqdUqfh+G9azamNhyd3kF7/ADSe7bTronyru2VKmB4QaaspuW/nC4cUAwZy03fv/NKaAycK8kPZJjqdIcpdr5P5NCmfIkVW0wRQtPrRPQ+PB3NEIk75Nh7mYEb/bA6HLEM/Lt4nS8D0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751458531; c=relaxed/simple;
-	bh=Sonnye7hZy2wt/2sdkee8anX7maKzoAKHEmbBG3T8tA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=FF4LGCCRYvgPolXur6GoTmlWobky7/w0X/lPptCj6ECEri3AFaAc9jYdQ1/xlZaCH5WsGMiKEuRiNcUTK0kAeviBU4yHg1CK3aH2cXX4ltdpNg2ZxcZfbRrv3h8NrX9OpYZwH1ptHTs6fG7PlM71DDIHe9yLY7QpxC1sfVm3b6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CBJA5grf; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4537fdec39fso14390645e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 05:15:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1751458528; x=1752063328; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=x9pvwsjMWPA9nQD+iBKKTHpsU97t1wWZ+fWjmxW/6k4=;
-        b=CBJA5grfPo7uThx18W4+K4wM2sAUrX5doEu77eyR6b7Akxr7rMCwfSHynjWM+tNklw
-         +7c0DZrdi8mpCNtKjWS+XIXcQX6bk6yv7z7ncjzYBcfVF92VNhMpFyofp7bP7F0oW1AS
-         YEwgEwQqPqc6PKBs519K3R1y9hY5RleQQoBrw+p7MAfymks2KAz9XES6kqYt41/6cZyS
-         xZte1f23kIYlx/WLK/Kis2xZjwfY/fPd6lrMwRwuMPUG7BFrD8sO9LiVqRVSSDq+DJ3y
-         hH4vEW/vzwy1nU/omZRP60ByaQF1DpQzziJ/nQkkdGxyRdwkOdWa+BINcVmD41HjtP4f
-         5VDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751458528; x=1752063328;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=x9pvwsjMWPA9nQD+iBKKTHpsU97t1wWZ+fWjmxW/6k4=;
-        b=qlD8W+R/vvbt9PEMxl3Pa3x6Un70n4fBjlBUNezLHB4SesyDorS2oMJJnVHS08M+tz
-         OPZcUbcHjINo3Mpxrx+BW+Q1G3291ndm5qlDrwObL4zwsBKZKeWx69VO5MFSzBBwSeFP
-         Zu0G4aSAK/oYinUFCFREgjcQt2mUULWo1thEifZKivEJkqnVk0fvfSlZPdfdZfMt/vQP
-         +IPPtdoxGNvCKw2c7KfZGIFq1ptxEfN8EqRup7T89aMi1w0NHZvciz+an4qDm/96XlMH
-         IsHMbXjD27Qe+UmoovGc5I4U9xSd7HIDn19Wl8+Qtitw/TwAHQUNB3t3YhfD+1x03uIh
-         clYw==
-X-Forwarded-Encrypted: i=1; AJvYcCUIguLaNBGSChKvclF7ZDPzptSz7p6wS3mVkaCZY34Dhgzbbu28c4BJoCXol7ZmUAgZlSu5eYx6f6m7Zbc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGey08JzWBhR/ntRkljCZE+0/st2JjjzamAeCE43gvzb1XEySg
-	UR8USSBsWKrn3sNKXy7ulH3c3kSD4/bj6/VFZIwLD98G+O3TgMLHV53nh5DdO63luXTMUxc4n9+
-	Rey3/
-X-Gm-Gg: ASbGnctQY+jxCAtKAT6hI5gSp8FYQDTnemjDeWUunR7eoWL+ldHNr1gZsGd5d8cnr51
-	Tld3cOdJBAqYS3jQJ+zkdi3BBscMDADay3sjc+qWA+v9/toMxGVOyrw4K81HdOWh+ppQ7Vr6Mvr
-	ORd096ALv3qOIVsvMQ7/HvMrDP0Wp0hHKo5CiZVFjH+fRm/nUEcTlrwAKjR9K8RSPtx0wrBT1km
-	E8NV0wfFVMdz390hEt8x3iiEAZoEWxuyFbQnbDeKBCSyczrktvOo+qFbxU33jGXHEhiu/W4IfGE
-	A3qyj7avDTID+wzp2pvKSA/2bMBKYfMm3kJT2dBgPempCXFHCk8Tsgve/OyyEYdk4EQqXAnSFdY
-	eGqrWi5QKZiiym7rH
-X-Google-Smtp-Source: AGHT+IELgg5UZzqaTlSfiyc6Ytkoj6C/RHdaT40F4scmmqS3AYJLBC3dMjYCI068eBu4lplMXDVdzA==
-X-Received: by 2002:a05:600c:4f13:b0:43c:f6c6:578c with SMTP id 5b1f17b1804b1-454a36ec540mr34363525e9.15.1751458528249;
-        Wed, 02 Jul 2025 05:15:28 -0700 (PDT)
-Received: from gpeter-l.roam.corp.google.com ([145.224.66.164])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-453823ad01csm228256345e9.22.2025.07.02.05.15.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Jul 2025 05:15:27 -0700 (PDT)
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Wed, 02 Jul 2025 13:15:24 +0100
-Subject: [PATCH] pinctrl: samsung: Fix gs101 irq chip
+	s=arc-20240116; t=1751458574; c=relaxed/simple;
+	bh=qrKJY2wYU/yhK5QTAhlH8URv2UJSsEuIBA9BpxeI22k=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=lQ/lkESdy4oVY13hwZPTaFbnji1kvlT/cXh0wywYvsgF4FuVjn5y5gWLq/CY3lgPQWlG3L100RZaq/zV26Px0AzzwJ7Z8sqUHeA1Se6kJPPXWUsf6dwOHywtPrOFxyApUzSDIM+vP+9PTwdUZU+7t9ysyr42u+3iWs80AOxC5qI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=i/9d4Nvs; arc=none smtp.client-ip=57.103.66.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; bh=VRwlDT/BH79/yE2YqJN90DXNi0Yb5SBnT/B8S1o4f7Y=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:x-icloud-hme;
+	b=i/9d4NvsTEjZK8NfbslyPdfyYvxci8D/QGWDvc22xuko+iqIXA8THbd2EImWskLCF
+	 tDOKtS27w/U+k1O6ddiJbggj2d4dTc4N5NP5e0GAkTW7DKABDhXbjzfaEk6sda6FzX
+	 cZQiILqjJUC0W1yC2yDXU1mer8FRWVQ7t3Y1/e4xIXHVdJeSjnJpoVfOoVsXDHDXLo
+	 jnyTJsnZBFwqRH/o54BZAIZYYEVQ6OtPI7ldwCrkammtt4GfzLe3zJviN8yAkzw3vo
+	 6mpKapEQgxC2TGserNKvnroel7O5YqpYb27NFiwjmnWq9wPCoEZ4lFZCPRKh38DwJ2
+	 ve7eVvvL+RfOg==
+Received: from outbound.pv.icloud.com (unknown [127.0.0.2])
+	by outbound.pv.icloud.com (Postfix) with ESMTPS id 6D5A3180032B;
+	Wed,  2 Jul 2025 12:16:08 +0000 (UTC)
+Received: from [192.168.1.26] (pv-asmtp-me-k8s.p00.prod.me.com [17.56.9.36])
+	by outbound.pv.icloud.com (Postfix) with ESMTPSA id 698901800283;
+	Wed,  2 Jul 2025 12:16:05 +0000 (UTC)
+From: Zijun Hu <zijun_hu@icloud.com>
+Subject: [PATCH v3 0/8] char: misc: Various cleanup for miscdevice
+Date: Wed, 02 Jul 2025 20:15:28 +0800
+Message-Id: <20250702-rfc_miscdev-v3-0-d8925de7893d@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,75 +55,79 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250702-fix-gs101-irqchip-v1-1-ccc84b44ad72@linaro.org>
-X-B4-Tracking: v=1; b=H4sIANsiZWgC/x2MywqAIBAAfyX23MJq734lOoRuuhcrhQjCf086D
- szMC4mjcIK5eiHyLUmOUEDVFRi/BccotjBo0h0NpHGXB11SpFDiZbycOFqlbdNPbUsGSndGLtL
- /XNacPzMOKGhjAAAA
-X-Change-ID: 20250702-fix-gs101-irqchip-8d12d369440c
-To: Krzysztof Kozlowski <krzk@kernel.org>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Alim Akhtar <alim.akhtar@samsung.com>, 
- Linus Walleij <linus.walleij@linaro.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
- Peter Griffin <peter.griffin@linaro.org>
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOAiZWgC/23OQQrCMBCF4auUrJ2STogFV95DiqTJxAZMo0kNS
+ undTbsR0c3Av5iPN7NE0VFih2pmkbJLLowlxK5ielDjhcCZ0gw5St7yBqLVZ++SNpRBSGOEaLh
+ uNWfl4xbJuuemnbrSNgYP0xBJfYw98i8jN9CANQqlkRyVaI8hpfr+UFcdvK/LWeXBpSnE1zYz4
+ +r/X5QROAjqEXsrhejpV+uWZXkDfSiisPcAAAA=
+X-Change-ID: 20250701-rfc_miscdev-35dd3310c7c0
+To: Arnd Bergmann <arnd@arndb.de>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, 
+ Helge Deller <deller@gmx.de>, "David S. Miller" <davem@davemloft.net>, 
+ Andreas Larsson <andreas@gaisler.com>
+Cc: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>, 
+ Zijun Hu <zijun_hu@icloud.com>, linux-kernel@vger.kernel.org, 
+ linux-parisc@vger.kernel.org, sparclinux@vger.kernel.org, 
+ Zijun Hu <zijun.hu@oss.qualcomm.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1589;
- i=peter.griffin@linaro.org; h=from:subject:message-id;
- bh=Sonnye7hZy2wt/2sdkee8anX7maKzoAKHEmbBG3T8tA=;
- b=owEBbQKS/ZANAwAKAc7ouNYCNHK6AcsmYgBoZSLecwK0sxfmoygPy9wJSjKSBq78rF5mEbSPI
- jagEn353PyJAjMEAAEKAB0WIQQO/I5vVXh1DVa1SfzO6LjWAjRyugUCaGUi3gAKCRDO6LjWAjRy
- ujWQD/9dX1YTX9ZBnRCltukRwwg2+Ex5ETtEJVtNrSYJtAj6JDjMCK32q+2ExEr8o4nxkdDbNZq
- tcQqwCP3OtUaNf5+cZALlUvIrAB9j7MfFyhCK+4V3um44lc60sulhIZZ9X427vxU6Oy2DovBzpn
- 1/22Zjj3t2R9QmskA4AlInV2Rhr3PkPEeQGNS8xa5YGt0kV+oPVPJG94ckz6k0zUh2cvaFeuLfZ
- aPe9UVsynX81YvNMCyFXHB3aH81kI0VBciFnhcky7rL24T7ir+8tADpsIa5rrw9jFYrIWyRv5jy
- AgdOP44wde/WX6EnfhCJHFnQZG8LnefXO9dl0CykpuwsOXzssPy4QjFDm5ZWNHGB/K4t//kezHa
- 9Z/xVRjGJrPI3aS5fvcIgx7kDjGkMSLFln7PadJmY2QzYMB8YJqe7IzXbu3jJ/lMBslF8K1RUNB
- 6EQNW4j3/5j0SmdweFTVhgH6TmxLbKEYqblLtss4jgFvUI1d4eqTlYKzJyQoVsWOliXDsL1/Pa4
- NZSYa+eSrD0GMcItjGp9a6g4VPJcOG+9JgTcU+9kc5VzedjCQP7RrYcXkS2ysi4emDOh5K1sXrV
- bIYsUU73Un5KFJlI4nJsce3Zg58KY/Lm/r4SWokTVsUB/BaD4BGPkOl4lVPNR2nHk4NFvTe1Lwc
- rrGx4t9wNbgLsJQ==
-X-Developer-Key: i=peter.griffin@linaro.org; a=openpgp;
- fpr=0EFC8E6F5578750D56B549FCCEE8B8D6023472BA
+X-Proofpoint-GUID: IZdpUBihHIUJ4H975Clqze2p8xOWzqIS
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzAyMDA5OSBTYWx0ZWRfX0KKTaG5l8+0e
+ AErf9Au7AjAN/RotbYpPiZxHcEppyP6t8dg0KU9dSa/tqijTKwdHjkDQrbyUt/DjHqQ0Oh23c67
+ F4PY4/LPppw/f6+HJHE4grjqsRvqvyNGIEjKRhO6KCMXtstE6eOIagO7BDHd/KUJeavAARLMlk2
+ N5wZgwHNgr1KPXGZCKSkx2FMcOMoCZOZ0yEntWhVlgKNrBtnST4DPaUwosgofkRSmilhrYyNd57
+ 7WyVisdz9QuXUWDpdrA+Tb8JxNLSDJnhR+PAaZostkaLYBG2emD43wTrXZv3TdTOALBlHxGEQ=
+X-Proofpoint-ORIG-GUID: IZdpUBihHIUJ4H975Clqze2p8xOWzqIS
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-02_01,2025-06-27_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0
+ adultscore=0 mlxscore=0 mlxlogscore=990 suspectscore=0 phishscore=0
+ bulkscore=0 spamscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.22.0-2506060001 definitions=main-2507020099
 
-When adding the dedicated gs101_wkup_irq_chip struct to support the eint
-wakeup mask the .eint_con, eint_mask and .eint_pend fields were missed. The
-result is that irqs on gs101 for the buttons etc are broken.
+This patch series is to do cleanup for:
 
-Reported-by: André Draszik <andre.draszik@linaro.org>
-Fixes: 2642f55d44ce ("pinctrl: samsung: add support for gs101 wakeup mask programming")
-Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+- Miscdevice APIs
+- Miscdevice kunit test cases
+- Drivers which use miscdevice APIs
+
+Signed-off-by: Zijun Hu <zijun.hu@oss.qualcomm.com>
 ---
-Note: no Closes tag as issue was reported on private chat. Permission has
-been obtained for using the Reported-by tag.
----
- drivers/pinctrl/samsung/pinctrl-exynos.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
-index 5554768d465fe0d8bf6e423b2e835965cde5d8f5..81fe0b08a9af5682421e5a5533a6cb4c9561cd24 100644
---- a/drivers/pinctrl/samsung/pinctrl-exynos.c
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
-@@ -665,6 +665,9 @@ static const struct exynos_irq_chip gs101_wkup_irq_chip __initconst = {
- 		.irq_request_resources = exynos_irq_request_resources,
- 		.irq_release_resources = exynos_irq_release_resources,
- 	},
-+	.eint_con = EXYNOS7_WKUP_ECON_OFFSET,
-+	.eint_mask = EXYNOS7_WKUP_EMASK_OFFSET,
-+	.eint_pend = EXYNOS7_WKUP_EPEND_OFFSET,
- 	.eint_num_wakeup_reg = 3,
- 	.eint_wake_mask_reg = GS101_EINT_WAKEUP_MASK,
- 	.set_eint_wakeup_mask = gs101_pinctrl_set_eint_wakeup_mask,
+Previous discussion link:
+https://lore.kernel.org/all/20250620-rfc_miscdev-v1-1-fda25d502a37@oss.qualcomm.com
 
 ---
-base-commit: 2aeda9592360c200085898a258c4754bfe879921
-change-id: 20250702-fix-gs101-irqchip-8d12d369440c
+Changes in v3:
+- Drop the change which allocates 4 fixed minors for watchdog
+- Correct tile and commit message
+- Link to v2: https://lore.kernel.org/r/20250701-rfc_miscdev-v2-0-3eb22bf533be@oss.qualcomm.com
+
+---
+Zijun Hu (8):
+      char: misc: Move drivers/misc/misc_minor_kunit.c to drivers/char/
+      char: misc: Adapt and add test cases for simple minor space division
+      char: misc: Disallow registering miscdevice whose minor > MISC_DYNAMIC_MINOR
+      char: misc: Add a reentry test case about dynamic minor request
+      char: misc: Make registering miscdevice reentry who wants dynamic minor
+      char: misc: Does not request module for miscdevice with dynamic minor
+      char: misc: Register fixed minor EISA_EEPROM_MINOR in linux/miscdevice.h
+      sparc: kernel: apc: Remove macro APC_MINOR definition
+
+ arch/sparc/kernel/apc.c                   |  3 +-
+ drivers/char/Makefile                     |  1 +
+ drivers/char/misc.c                       | 16 +++++-
+ drivers/{misc => char}/misc_minor_kunit.c | 95 +++++++++++++++++++++----------
+ drivers/misc/Makefile                     |  1 -
+ drivers/parisc/eisa_eeprom.c              |  2 -
+ include/linux/miscdevice.h                |  9 +++
+ 7 files changed, 89 insertions(+), 38 deletions(-)
+---
+base-commit: 626e89412dfb88766d90d842af4d9ec432d8526f
+change-id: 20250701-rfc_miscdev-35dd3310c7c0
 
 Best regards,
 -- 
-Peter Griffin <peter.griffin@linaro.org>
+Zijun Hu <zijun.hu@oss.qualcomm.com>
 
 
