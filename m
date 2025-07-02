@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-714095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0F41AF631C
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 22:15:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00A4EAF6321
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 22:16:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E05A6188C92B
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 20:16:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BAC1C4A78FA
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 20:15:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D71B303DCE;
-	Wed,  2 Jul 2025 20:14:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24421315508;
+	Wed,  2 Jul 2025 20:14:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RUc6lWKn"
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ws4rS4bL"
+Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7488D30114B;
-	Wed,  2 Jul 2025 20:14:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7256430E83B;
+	Wed,  2 Jul 2025 20:14:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751487279; cv=none; b=hZQU5tdJbkl/sL10gE5EvJXfgIZBxX1CoQVc3vgovrPrXJa1eFC4BQja3nnZw9QQvyTazI7BiAr2WLDGiVqtGyCdkoCppxWYOjcPrCaKoLkUyajCpcId7poj3vG1iSPvAYutmcxB0oY2dtH2Iir8miTMxpsxYgJBOf0o4XJS4+0=
+	t=1751487285; cv=none; b=pN06I2rNkmkMogeJE2k2VhR7F81RZ0dsy3nsF3ClkRmmgVPSTdXfRDs19Jx9FP7JMDyyLAfuViL1hVsoxMWTARdU4LwT1sWjY+rGrp0gvQGv9pPT9kiehy8IIxqxaMMwoNTrPrBw3cSisQyank2k+0LKT9+BOO4ugGuGX8PSa6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751487279; c=relaxed/simple;
-	bh=7ntNinQfVlf+pugu/WTlvuD/GFP+GYiXqJRcWk0ejH4=;
+	s=arc-20240116; t=1751487285; c=relaxed/simple;
+	bh=ya5MwjEB1xHq/yOFXYAj+pDIdDIqM4iOdvLYL2l39jY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=si3fyzTXh236Hyg9d4Zrao9vdivufNNR+4Tsk/AqNMJ5ppSxI9dsqfAcb47r4TXacjA5HF83YAJRPSqtX8g0bQxsB0ogi0ShgImnLL0EJluB2AkSyMo07vBk5y6FjH3UoK0dEBbDnZRHZSFxzWvdYprg1a1LoHtaziBtHIK+rXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RUc6lWKn; arc=none smtp.client-ip=209.85.219.182
+	 MIME-Version; b=oWN7wK7OzigiJAwio3DRKjrVjwVYmE7qvVN0rG6850vM7dMhK7+mHaNSCGxRRK3TT3YHiqewJMYwp2t9WlJ7Ov7aDwk84/5UI2yBVZm1/cGv7s5g+sWuFpazfd3keeZ5/dV8+Lv8Z8t9ieXNrPFiXCpeUpkDxdFlyVp4RKiasMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ws4rS4bL; arc=none smtp.client-ip=209.85.219.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e898fb745beso151891276.1;
-        Wed, 02 Jul 2025 13:14:37 -0700 (PDT)
+Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e733a6ff491so4577269276.2;
+        Wed, 02 Jul 2025 13:14:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751487276; x=1752092076; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1751487282; x=1752092082; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Ws2fCY+40qz7qYM2UXMSStun9zyhHrsexuHO2VyV7ZQ=;
-        b=RUc6lWKn0fkF+1RhTc7oTkYGODDZt+ZREs0COufJevs/jWkvLCabJIb9ZOLqXxGIry
-         7DP5WqquMnHOfRDdJSmFAB7Kx5pCENsYb0CMtyEgXMhzHjqMGMICMZkjR5YLwlWikO3G
-         kjdUvnvZl2A/gGeBhr/81EHfZJUXMlbKmYKW4SbOp0yz4TppP3gr9027vyPNA+ECVqJJ
-         LDwxFNPaKw4KNilU6r4rtMpijCF02iWafiWY5sv4V5ADD9/+1dlXEBGklwNsHQt9QUyW
-         2tMSh7VtsWqwQtMlkOh1ZWmRXJDc1DUOcWfryYkkG3gJRAdJj+7qwJ+AuWHwtNfRMH/P
-         Ds0A==
+        bh=ux7vTJe4Gmqx6TiCWWLEznlY/hR11iXVrOjLOOQ9hBo=;
+        b=Ws4rS4bL830Phqud6A4DvuvgzKHiOIUu1g6zfWCqZK5UYpWNc7OXnZUNRI28YSlcTB
+         qE1dYssFUtzXJjUJEwyqScQZ8SxRXWWzrnlR4IDTnqSI8YVr3nsuwsobenCCrKg/6X0g
+         C89CBTdjOMDwEolKOHMqVRaNFxupu6DC75iq0GFgPfJLoXeGBeiyr1u00U1fH1+2dBA+
+         Vxn3NmI3pwyvUYa0IdcdEgcfLkchrOXQucEyBS+aPiVacjaqDe4xK0tcnV5JCSXcKG08
+         fP8cVOqgDhK4FU+ppt38KK9PhG2eKCHzxCgpI/sJiSZ6a+OQXe8CQ8BOspq20AUP7BnO
+         L/3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751487276; x=1752092076;
+        d=1e100.net; s=20230601; t=1751487282; x=1752092082;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Ws2fCY+40qz7qYM2UXMSStun9zyhHrsexuHO2VyV7ZQ=;
-        b=Wx/DEN63433RE3wpPqDALls7DE9wgFk5IIUnjyRMKTA8SPBMfQLnMFlLe3nhJKukA7
-         nG6JH36X7dQzH+MfPPGOeHKwriSNxffwZrS4IaPMSk1tKsFFB3zBtWVjur8+vK923VRd
-         EkJDEfgih70+ENmQUmNx8u9XGDis3/nrFdYu79zdVghnRf7yV038OQSwMWiY5GwGff8Q
-         TBpMDnzAsSa7ZRH4wfFuB+OlramozGGBxR7DoDTxWPwe94O9J8BX8PTZOOVJuGJWIZnd
-         5BjIMcyyTDFUUG1WnnFeW+5uK16sw7u3nGtON10QWzV7McQb08QJTqVGxrCIY2bQHVeW
-         T8qA==
-X-Forwarded-Encrypted: i=1; AJvYcCU/oq/ZYXXnKdkrx9wGkdqm4ltoz+MozDwERLivCTKoxj+SYQPIwWQiYUPzX31APk1LgDX79FRdt9M=@vger.kernel.org, AJvYcCXy+PAu3u3RB3mADStGAWyNt9j6fYuy4a2sxd/YqJlE/2/K1c4SMYbRF9nmIyffdOoz/54YmNIHQFYaLqsl@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxi4/cDRJUESPmp0cVhJYHZgDZe3ueUr30uXB1qGTI8uFbb6XAG
-	YNsAqCk2XlmICraKZxCZ2rqTAoq0JLgKyo84C0TSk41UEGGj0GrmO0bJ
-X-Gm-Gg: ASbGnct3ZyV3lK203OLQ7ureGImuQNLfiNPqHmZmS3KzM2jWOeGo7YtqF7628uqxGkA
-	MfnW6bnKKrdf3D7/q21KC4AB2ZxSB59rZEoNWfN8/Gb+UHsfbu+iOg+l/6Nu/pet2raOQSM42Jm
-	cc0Uon3+S6ukLvHbKsmAfWEgsHJKfFJDm5t6VOUTjXnEWj3e8YFbSE8pAhSyse9ZLqH90m+zlen
-	ch3FS6B/cMF6AQpHm45nn4Gr7Vlocia+4Qlazb/O9Gf1B/sCxzKaEPcKptk/X9pSbLVa/HjKjT4
-	YyxpBwI9ZsbV1Mz4o5C0/TJifrxRSTJcciGln/fHGdA9MUP8RqhysRpLL+cRnMmXHPqd8ZIIW2k
-	mwSVFWYM=
-X-Google-Smtp-Source: AGHT+IFMh0Zpmv4j5OzZGutnmhihaCWP4mrmEUdEh5Fn5yyRhW1DwP6dI+488wgyAG0GH6wDYQKuKQ==
-X-Received: by 2002:a05:690c:8686:10b0:70e:4d8:5cab with SMTP id 00721157ae682-716590c7964mr10179957b3.2.1751487276493;
-        Wed, 02 Jul 2025 13:14:36 -0700 (PDT)
+        bh=ux7vTJe4Gmqx6TiCWWLEznlY/hR11iXVrOjLOOQ9hBo=;
+        b=pCvRrmYwx4h0cm8ed/zXQ4ScLCChdULFlW4Rql6GvSsJVMAqpJLciPF8QkEwbBVlXG
+         Ed7GrkykDLiLRuyG3NKo5YbgCddr4C2KEfGhq6HaKlTwHJZUh6RG/Vgt2joXkNg1uECJ
+         jFTABuEo3USl3IDoSpAUMQ8VzEuVdG0/+xH+TAzCRD3cCWzuPBluFk3btP7znC2/77YM
+         hjK9vGBxAHKCNQP/JCpcbUwo2jptQTJd1OYlXFkuY1zC2p2m7ZohzmqcCZpSRPc1q7oW
+         XkX1Uda62TkOkN/+6KmDJQ0S0aermzIz/6zEPUpg8kbV2bW5+IDEJgwFbP0upvdXkkfC
+         97iA==
+X-Forwarded-Encrypted: i=1; AJvYcCVAvChTWr4e/dSLtX+cvH3xpvinjzAgOVhhXmKuexvxkhftBC2YIaBNcLRPjUj2bwnPIOrsDIvW5AqOswnb@vger.kernel.org, AJvYcCWVyKGVibDG5kDJ6mZRUClZIVyITpsa0X2HLicIEB+Qwbc7PYKPujlCzhs4l3Z7RT8Vzyv2tnuxSBg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzF/ilUN6DnPPnf4jj9+YdbxxkvHsgiQ22p4XqxJNHr9Mlkx479
+	uk1h3jrv6fLIwF3pmsEy7LqahHFAlmXvtYKRepgh8hmr5p6RG62BhGUu
+X-Gm-Gg: ASbGncu2vWTpH3q77Oc50lgNZM+GaTi3xbPAdgn/BljWOvy08mW2ywvJHuAjOifvzJx
+	QdQff4t68GM2JK0nyQS5EIrvtfkwAH3Z12N1g0ZD/SJdYUxAz/L9pdkYpB1KKr4ZQnHGD/DQPkX
+	YlIWGdIyWKtwcYsCcXWnELCisr6Jc2EIpRq9NJlF/LHG6b51l24yzrRBSDUk+xrc+pALtxiIr34
+	gikF5eCh3u6Q0z1NE7hNPUOEUaYtWM/Hh/xnJAM8fQnPJTj93IPBwtVDdbPNT6o8IBVqKkm2cOL
+	7Mm+Gpf2hWpD7oM00IcwHm5u0fGdk4bsoed9hUqwovZCcSUTmDYZ5hDSJZozU1i1xLIXUrS0kda
+	yk68CWCdc6YG+hRz3Mw==
+X-Google-Smtp-Source: AGHT+IHA+gOuV+brpZwRwERkJ7yj/jSN/p3J3iXUigSwyqpIrYWnlxAOmwngxwZ6r4wEWO6YRW3O0Q==
+X-Received: by 2002:a05:690c:6002:b0:70e:a1e:d9f8 with SMTP id 00721157ae682-716590c4d46mr15751777b3.22.1751487281890;
+        Wed, 02 Jul 2025 13:14:41 -0700 (PDT)
 Received: from bijan-laptop.attlocal.net ([2600:1700:680e:c000:873e:8f35:7cd8:3fe3])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-71515cb4347sm26124157b3.83.2025.07.02.13.14.32
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-71515cb4347sm26124157b3.83.2025.07.02.13.14.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Jul 2025 13:14:36 -0700 (PDT)
+        Wed, 02 Jul 2025 13:14:41 -0700 (PDT)
 From: Bijan Tabatabai <bijan311@gmail.com>
 To: damon@lists.linux.dev,
 	linux-mm@kvack.org,
@@ -85,10 +85,11 @@ Cc: sj@kernel.org,
 	venkataravis@micron.com,
 	emirakhur@micron.com,
 	ajayjoshi@micron.com,
-	vtavarespetr@micron.com
-Subject: [RFC PATCH v3 07/13] mm/damon/core: Commit damos->target_nid/migrate_dests
-Date: Wed,  2 Jul 2025 15:13:30 -0500
-Message-ID: <20250702201337.5780-8-bijan311@gmail.com>
+	vtavarespetr@micron.com,
+	Ravi Shankar Jonnalagadda <ravis.opensrc@micron.com>
+Subject: [RFC PATCH v3 08/13] mm/damon: Move migration helpers from paddr to ops-common
+Date: Wed,  2 Jul 2025 15:13:31 -0500
+Message-ID: <20250702201337.5780-9-bijan311@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250702201337.5780-1-bijan311@gmail.com>
 References: <20250702201337.5780-1-bijan311@gmail.com>
@@ -102,73 +103,321 @@ Content-Transfer-Encoding: 8bit
 
 From: Bijan Tabatabai <bijantabatab@micron.com>
 
-When committing new scheme parameters from the sysfs, copy the
-target_nid and migrate_dests of the source schemes into the destination
-schemes.
+This patch moves the damon_pa_migrate_pages function along with its
+corresponding helper functions from paddr to ops-common. The function
+prefix of "damon_pa_" was also changed to just "damon_" accordingly.
 
+This patch will allow page migration to be available to vaddr schemes as
+well as paddr schemes.
+
+Co-developed-by: Ravi Shankar Jonnalagadda <ravis.opensrc@micron.com>
+Signed-off-by: Ravi Shankar Jonnalagadda <ravis.opensrc@micron.com>
 Signed-off-by: Bijan Tabatabai <bijantabatab@micron.com>
 ---
- mm/damon/core.c | 40 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 40 insertions(+)
+ mm/damon/ops-common.c | 120 +++++++++++++++++++++++++++++++++++++++++
+ mm/damon/ops-common.h |   2 +
+ mm/damon/paddr.c      | 122 +-----------------------------------------
+ 3 files changed, 123 insertions(+), 121 deletions(-)
 
-diff --git a/mm/damon/core.c b/mm/damon/core.c
-index a4c3cfe531df..0565aae8d1fa 100644
---- a/mm/damon/core.c
-+++ b/mm/damon/core.c
-@@ -943,6 +943,41 @@ static void damos_set_filters_default_reject(struct damos *s)
- 		damos_filters_default_reject(&s->ops_filters);
- }
+diff --git a/mm/damon/ops-common.c b/mm/damon/ops-common.c
+index b43620fee6bb..918158ef3d99 100644
+--- a/mm/damon/ops-common.c
++++ b/mm/damon/ops-common.c
+@@ -5,6 +5,7 @@
+  * Author: SeongJae Park <sj@kernel.org>
+  */
  
-+static int damos_commit_dests(struct damos *dst, struct damos *src)
++#include <linux/migrate.h>
+ #include <linux/mmu_notifier.h>
+ #include <linux/page_idle.h>
+ #include <linux/pagemap.h>
+@@ -12,6 +13,7 @@
+ #include <linux/swap.h>
+ #include <linux/swapops.h>
+ 
++#include "../internal.h"
+ #include "ops-common.h"
+ 
+ /*
+@@ -138,3 +140,121 @@ int damon_cold_score(struct damon_ctx *c, struct damon_region *r,
+ 	/* Return coldness of the region */
+ 	return DAMOS_MAX_SCORE - hotness;
+ }
++
++static unsigned int __damon_migrate_folio_list(
++		struct list_head *migrate_folios, struct pglist_data *pgdat,
++		int target_nid)
 +{
-+	struct damos_migrate_dests *dst_dests, *src_dests;
++	unsigned int nr_succeeded = 0;
++	struct migration_target_control mtc = {
++		/*
++		 * Allocate from 'node', or fail quickly and quietly.
++		 * When this happens, 'page' will likely just be discarded
++		 * instead of migrated.
++		 */
++		.gfp_mask = (GFP_HIGHUSER_MOVABLE & ~__GFP_RECLAIM) |
++			__GFP_NOWARN | __GFP_NOMEMALLOC | GFP_NOWAIT,
++		.nid = target_nid,
++	};
 +
-+	dst_dests = &dst->migrate_dests;
-+	src_dests = &src->migrate_dests;
++	if (pgdat->node_id == target_nid || target_nid == NUMA_NO_NODE)
++		return 0;
 +
-+	if (dst_dests->nr_dests != src_dests->nr_dests) {
-+		kfree(dst_dests->node_id_arr);
-+		kfree(dst_dests->weight_arr);
++	if (list_empty(migrate_folios))
++		return 0;
 +
-+		dst_dests->node_id_arr = kmalloc_array(src_dests->nr_dests,
-+			sizeof(*dst_dests->node_id_arr), GFP_KERNEL);
-+		if (!dst_dests->node_id_arr) {
-+			dst_dests->weight_arr = NULL;
-+			return -ENOMEM;
-+		}
++	/* Migration ignores all cpuset and mempolicy settings */
++	migrate_pages(migrate_folios, alloc_migration_target, NULL,
++		      (unsigned long)&mtc, MIGRATE_ASYNC, MR_DAMON,
++		      &nr_succeeded);
 +
-+		dst_dests->weight_arr = kmalloc_array(src_dests->nr_dests,
-+			sizeof(*dst_dests->weight_arr), GFP_KERNEL);
-+		if (!dst_dests->weight_arr) {
-+			/* ->node_id_arr will be freed by scheme destruction */
-+			return -ENOMEM;
-+		}
-+	}
-+
-+	dst_dests->nr_dests = src_dests->nr_dests;
-+	for (int i = 0; i < src_dests->nr_dests; i++) {
-+		dst_dests->node_id_arr[i] = src_dests->node_id_arr[i];
-+		dst_dests->weight_arr[i] = src_dests->weight_arr[i];
-+	}
-+
-+	return 0;
++	return nr_succeeded;
 +}
 +
- static int damos_commit_filters(struct damos *dst, struct damos *src)
- {
- 	int err;
-@@ -983,6 +1018,11 @@ static int damos_commit(struct damos *dst, struct damos *src)
- 
- 	dst->wmarks = src->wmarks;
- 
-+	dst->target_nid = src->target_nid;
-+	err = damos_commit_dests(dst, src);
-+	if (err)
-+		return err;
++static unsigned int damon_migrate_folio_list(struct list_head *folio_list,
++						struct pglist_data *pgdat,
++						int target_nid)
++{
++	unsigned int nr_migrated = 0;
++	struct folio *folio;
++	LIST_HEAD(ret_folios);
++	LIST_HEAD(migrate_folios);
 +
- 	err = damos_commit_filters(dst, src);
- 	return err;
++	while (!list_empty(folio_list)) {
++		struct folio *folio;
++
++		cond_resched();
++
++		folio = lru_to_folio(folio_list);
++		list_del(&folio->lru);
++
++		if (!folio_trylock(folio))
++			goto keep;
++
++		/* Relocate its contents to another node. */
++		list_add(&folio->lru, &migrate_folios);
++		folio_unlock(folio);
++		continue;
++keep:
++		list_add(&folio->lru, &ret_folios);
++	}
++	/* 'folio_list' is always empty here */
++
++	/* Migrate folios selected for migration */
++	nr_migrated += __damon_migrate_folio_list(
++			&migrate_folios, pgdat, target_nid);
++	/*
++	 * Folios that could not be migrated are still in @migrate_folios.  Add
++	 * those back on @folio_list
++	 */
++	if (!list_empty(&migrate_folios))
++		list_splice_init(&migrate_folios, folio_list);
++
++	try_to_unmap_flush();
++
++	list_splice(&ret_folios, folio_list);
++
++	while (!list_empty(folio_list)) {
++		folio = lru_to_folio(folio_list);
++		list_del(&folio->lru);
++		folio_putback_lru(folio);
++	}
++
++	return nr_migrated;
++}
++
++unsigned long damon_migrate_pages(struct list_head *folio_list, int target_nid)
++{
++	int nid;
++	unsigned long nr_migrated = 0;
++	LIST_HEAD(node_folio_list);
++	unsigned int noreclaim_flag;
++
++	if (list_empty(folio_list))
++		return nr_migrated;
++
++	noreclaim_flag = memalloc_noreclaim_save();
++
++	nid = folio_nid(lru_to_folio(folio_list));
++	do {
++		struct folio *folio = lru_to_folio(folio_list);
++
++		if (nid == folio_nid(folio)) {
++			list_move(&folio->lru, &node_folio_list);
++			continue;
++		}
++
++		nr_migrated += damon_migrate_folio_list(&node_folio_list,
++							   NODE_DATA(nid),
++							   target_nid);
++		nid = folio_nid(lru_to_folio(folio_list));
++	} while (!list_empty(folio_list));
++
++	nr_migrated += damon_migrate_folio_list(&node_folio_list,
++						   NODE_DATA(nid),
++						   target_nid);
++
++	memalloc_noreclaim_restore(noreclaim_flag);
++
++	return nr_migrated;
++}
+diff --git a/mm/damon/ops-common.h b/mm/damon/ops-common.h
+index cc9f5da9c012..54209a7e70e6 100644
+--- a/mm/damon/ops-common.h
++++ b/mm/damon/ops-common.h
+@@ -16,3 +16,5 @@ int damon_cold_score(struct damon_ctx *c, struct damon_region *r,
+ 			struct damos *s);
+ int damon_hot_score(struct damon_ctx *c, struct damon_region *r,
+ 			struct damos *s);
++
++unsigned long damon_migrate_pages(struct list_head *folio_list, int target_nid);
+diff --git a/mm/damon/paddr.c b/mm/damon/paddr.c
+index fcab148e6865..48e3e6fed636 100644
+--- a/mm/damon/paddr.c
++++ b/mm/damon/paddr.c
+@@ -13,7 +13,6 @@
+ #include <linux/rmap.h>
+ #include <linux/swap.h>
+ #include <linux/memory-tiers.h>
+-#include <linux/migrate.h>
+ #include <linux/mm_inline.h>
+ 
+ #include "../internal.h"
+@@ -381,125 +380,6 @@ static unsigned long damon_pa_deactivate_pages(struct damon_region *r,
+ 			sz_filter_passed);
  }
+ 
+-static unsigned int __damon_pa_migrate_folio_list(
+-		struct list_head *migrate_folios, struct pglist_data *pgdat,
+-		int target_nid)
+-{
+-	unsigned int nr_succeeded = 0;
+-	struct migration_target_control mtc = {
+-		/*
+-		 * Allocate from 'node', or fail quickly and quietly.
+-		 * When this happens, 'page' will likely just be discarded
+-		 * instead of migrated.
+-		 */
+-		.gfp_mask = (GFP_HIGHUSER_MOVABLE & ~__GFP_RECLAIM) |
+-			__GFP_NOWARN | __GFP_NOMEMALLOC | GFP_NOWAIT,
+-		.nid = target_nid,
+-	};
+-
+-	if (pgdat->node_id == target_nid || target_nid == NUMA_NO_NODE)
+-		return 0;
+-
+-	if (list_empty(migrate_folios))
+-		return 0;
+-
+-	/* Migration ignores all cpuset and mempolicy settings */
+-	migrate_pages(migrate_folios, alloc_migration_target, NULL,
+-		      (unsigned long)&mtc, MIGRATE_ASYNC, MR_DAMON,
+-		      &nr_succeeded);
+-
+-	return nr_succeeded;
+-}
+-
+-static unsigned int damon_pa_migrate_folio_list(struct list_head *folio_list,
+-						struct pglist_data *pgdat,
+-						int target_nid)
+-{
+-	unsigned int nr_migrated = 0;
+-	struct folio *folio;
+-	LIST_HEAD(ret_folios);
+-	LIST_HEAD(migrate_folios);
+-
+-	while (!list_empty(folio_list)) {
+-		struct folio *folio;
+-
+-		cond_resched();
+-
+-		folio = lru_to_folio(folio_list);
+-		list_del(&folio->lru);
+-
+-		if (!folio_trylock(folio))
+-			goto keep;
+-
+-		/* Relocate its contents to another node. */
+-		list_add(&folio->lru, &migrate_folios);
+-		folio_unlock(folio);
+-		continue;
+-keep:
+-		list_add(&folio->lru, &ret_folios);
+-	}
+-	/* 'folio_list' is always empty here */
+-
+-	/* Migrate folios selected for migration */
+-	nr_migrated += __damon_pa_migrate_folio_list(
+-			&migrate_folios, pgdat, target_nid);
+-	/*
+-	 * Folios that could not be migrated are still in @migrate_folios.  Add
+-	 * those back on @folio_list
+-	 */
+-	if (!list_empty(&migrate_folios))
+-		list_splice_init(&migrate_folios, folio_list);
+-
+-	try_to_unmap_flush();
+-
+-	list_splice(&ret_folios, folio_list);
+-
+-	while (!list_empty(folio_list)) {
+-		folio = lru_to_folio(folio_list);
+-		list_del(&folio->lru);
+-		folio_putback_lru(folio);
+-	}
+-
+-	return nr_migrated;
+-}
+-
+-static unsigned long damon_pa_migrate_pages(struct list_head *folio_list,
+-					    int target_nid)
+-{
+-	int nid;
+-	unsigned long nr_migrated = 0;
+-	LIST_HEAD(node_folio_list);
+-	unsigned int noreclaim_flag;
+-
+-	if (list_empty(folio_list))
+-		return nr_migrated;
+-
+-	noreclaim_flag = memalloc_noreclaim_save();
+-
+-	nid = folio_nid(lru_to_folio(folio_list));
+-	do {
+-		struct folio *folio = lru_to_folio(folio_list);
+-
+-		if (nid == folio_nid(folio)) {
+-			list_move(&folio->lru, &node_folio_list);
+-			continue;
+-		}
+-
+-		nr_migrated += damon_pa_migrate_folio_list(&node_folio_list,
+-							   NODE_DATA(nid),
+-							   target_nid);
+-		nid = folio_nid(lru_to_folio(folio_list));
+-	} while (!list_empty(folio_list));
+-
+-	nr_migrated += damon_pa_migrate_folio_list(&node_folio_list,
+-						   NODE_DATA(nid),
+-						   target_nid);
+-
+-	memalloc_noreclaim_restore(noreclaim_flag);
+-
+-	return nr_migrated;
+-}
+-
+ static unsigned long damon_pa_migrate(struct damon_region *r, struct damos *s,
+ 		unsigned long *sz_filter_passed)
+ {
+@@ -527,7 +407,7 @@ static unsigned long damon_pa_migrate(struct damon_region *r, struct damos *s,
+ 		addr += folio_size(folio);
+ 		folio_put(folio);
+ 	}
+-	applied = damon_pa_migrate_pages(&folio_list, s->target_nid);
++	applied = damon_migrate_pages(&folio_list, s->target_nid);
+ 	cond_resched();
+ 	s->last_applied = folio;
+ 	return applied * PAGE_SIZE;
 -- 
 2.43.5
 
