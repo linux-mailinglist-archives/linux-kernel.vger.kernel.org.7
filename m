@@ -1,508 +1,169 @@
-Return-Path: <linux-kernel+bounces-712548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-712553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96A9EAF0B1C
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 08:02:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7F60AF0B26
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 08:03:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3C2217D6AC
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 06:02:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 94B4B7B2F94
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 06:01:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 982B41FECAF;
-	Wed,  2 Jul 2025 06:01:51 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0476A1F4E34
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 06:01:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC83F221577;
+	Wed,  2 Jul 2025 06:02:53 +0000 (UTC)
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1387C1FDA89;
+	Wed,  2 Jul 2025 06:02:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751436110; cv=none; b=NgF2myzhPYIoL3rp60DJ/BspQIf7Uq4TS6bpktgg+SvoMEhjkIbqpHK+XYk2JtiackrLYw5bhj+M01eSkmi+HpDxR5AsfxvAM6mp9S8lakV6eWbYwh5tF5X3JIUmvpB2diPOp5H3Py1Bavba+hOR5f8MdiOLKHTAKSTg9NH7TdE=
+	t=1751436173; cv=none; b=cduT0ZiXoXKAV5Eqz7YzOqH/4HI5Eh8gnvLNOqcXi2dBD/PahWLVFhJ7rXoIkcLxs5kSc2AROhFC5B62o5SMJdYpHRzdEc8kwUdd3Jn1uyxJhC1UIpNggNla1F9AXPs3Jl2RzRGVHeQls/+u0b+F9Mx08hKe0SAvg4Wy32Y9DKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751436110; c=relaxed/simple;
-	bh=gp0S4bCO5Iyudd5nA1KkHAlNDS1pIFB9YuB6hCYDwTc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r6Caw/ERCXxLRF6hnzYs5aHuqv8JDE8OVbR1tVinxFAw9koChL3F2dvcu6FXE34djcpjPs2AtPiyNGpiPYJD1F9+CNHYgmM5DTwUzMKWN/Rw+yYUNhgO5fd24hjGjU1g/uc4wm9RS5XdwO9xLNZH8PB9IbzFG9+du4geSnUy8Jo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-669ff7000002311f-1f-6864cb47d395
-Date: Wed, 2 Jul 2025 15:01:38 +0900
-From: Byungchul Park <byungchul@sk.com>
-To: Yeoreum Yun <yeoreum.yun@arm.com>
-Cc: ryabinin.a.a@gmail.com, glider@google.com, andreyknvl@gmail.com,
-	dvyukov@google.com, vincenzo.frascino@arm.com,
-	kpm@linux-foundation.org, bigeasy@linutronix.de,
-	clrkwllms@kernel.org, rostedt@goodmis.org,
-	max.byungchul.park@gmail.com, kasan-dev@googlegroups.com,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	linux-rt-devel@lists.linux.dev, nd@arm.com,
-	Yunseong Kim <ysk@kzalloc.com>, kernel_team@skhynix.com
-Subject: Re: [PATCH] kasan: don't call find_vm_area() in in_interrupt() for
- possible deadlock
-Message-ID: <20250702060138.GA5358@system.software.com>
-References: <20250701203545.216719-1-yeoreum.yun@arm.com>
+	s=arc-20240116; t=1751436173; c=relaxed/simple;
+	bh=ou/wPExACHBZHOwewEIgbrMSFrrYFf9rkftnRUvoLAg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Tn2mkE3OVe/kXu7UxxFOBqpdLbDAfor0XW1eC8dr+zkzLngcFAqbe3o+jm+3+WU/hNpFcy3De5EdwnwZYi9ttFupbcvI4qwCmj65bkmyZ3d3+DCOyAAWSCTEQWHqQF5ZA5Qoo+Pf50C/6TPTV+oYRWM7EJD/K/s43hdAkjrQqKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from [127.0.0.2] (unknown [210.73.43.2])
+	by APP-01 (Coremail) with SMTP id qwCowAC3pqpny2RomPduAA--.1282S2;
+	Wed, 02 Jul 2025 14:02:15 +0800 (CST)
+From: Vivian Wang <wangruikang@iscas.ac.cn>
+Subject: [PATCH net-next v3 0/5] Add Ethernet MAC support for SpacemiT K1
+Date: Wed, 02 Jul 2025 14:01:39 +0800
+Message-Id: <20250702-net-k1-emac-v3-0-882dc55404f3@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250701203545.216719-1-yeoreum.yun@arm.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrFIsWRmVeSWpSXmKPExsXC9ZZnka776ZQMg751phbfJ05nt5h2cRKz
-	xbIn/5gsJjxsY7do/7iX2WLFs/tMFpc/LGO2uLxrDpvFvTX/WS0urb7AYnFhYi+rxZnlPcwW
-	+zoeMFkc37qF2WLvv58sFnO/GFp8Wb2KzUHQY828NYweO2fdZfdo2XeL3WPBplKPPRNPsnls
-	WtUJJD5NYvdY+PsFs8e7c+fYPU7M+M3i8WLzTEaPz5vkAniiuGxSUnMyy1KL9O0SuDJezVjG
-	WPBjEWPFjy/T2BoYX7czdjFyckgImEgs27CKBcbuPTYPzGYRUJFYtfkpO4jNJqAucePGT2YQ
-	W0RAVWJx+xmgGi4OZoG1zBI3Jp8CKxIWiJd4Mu0CaxcjBwevgLnE7Pv8IKaQgKXExKehIBW8
-	AoISJ2c+ARvPLKAlcePfSyaQEmYBaYnl/zhAwpwCVhI/dx4AGygqoCxxYNtxJpBNEgLr2CXe
-	zJnFBnGmpMTBFTdYJjAKzEIydhaSsbMQxi5gZF7FKJSZV5abmJljopdRmZdZoZecn7uJERiD
-	y2r/RO9g/HQh+BCjAAejEg/viSvJGUKsiWXFlbmHGCU4mJVEePlkgUK8KYmVValF+fFFpTmp
-	xYcYpTlYlMR5jb6VpwgJpCeWpGanphakFsFkmTg4pRoYZ++pe7BZk1OH5XHqfLOTLNPyshX4
-	izZpLQ+y3Ve+6K5JpM3sRVnHp+WIm4k3eF5SWO1iZKQqGMC4e9/5ib38lufWcrqf+Vm9+k6k
-	2uzj16cz+8Zsu9/ypvDmtvfLv8tpXTSqrtP3SCv1PhCWtyLUMWNvVt3ryof3Qhdqec9s6Tsl
-	wv/9jsZrJZbijERDLeai4kQAgU9+Fb0CAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprIIsWRmVeSWpSXmKPExsXC5WfdrOt+OiXD4Ph0dYvvE6ezW0y7OInZ
-	YtmTf0wWEx62sVu0f9zLbLHi2X0mi8NzT7JaXP6wjNni8q45bBb31vxntbi0+gKLxYWJvawW
-	Z5b3MFvs63jAZHF86xZmi73/frJYzP1iaPFl9So2ByGPNfPWMHrsnHWX3aNl3y12jwWbSj32
-	TDzJ5rFpVSeQ+DSJ3WPh7xfMHu/OnWP3ODHjN4vHi80zGT0Wv/jA5PF5k1wAbxSXTUpqTmZZ
-	apG+XQJXxqsZyxgLfixirPjxZRpbA+PrdsYuRk4OCQETid5j81hAbBYBFYlVm5+yg9hsAuoS
-	N278ZAaxRQRUJRa3nwGq4eJgFljLLHFj8imwImGBeIkn0y6wdjFycPAKmEvMvs8PYgoJWEpM
-	fBoKUsErIChxcuYTsPHMAloSN/69ZAIpYRaQllj+jwMkzClgJfFz5wGwgaICyhIHth1nmsDI
-	OwtJ9ywk3bMQuhcwMq9iFMnMK8tNzMwx1SvOzqjMy6zQS87P3cQIjKhltX8m7mD8ctn9EKMA
-	B6MSD++Bs8kZQqyJZcWVuYcYJTiYlUR4+WSBQrwpiZVVqUX58UWlOanFhxilOViUxHm9wlMT
-	hATSE0tSs1NTC1KLYLJMHJxSDYzb5l34/1RHMmStwJ1o36tbI9tPF/9g5zY/ycCVtfdEvEjn
-	GR3n/gdPtzOb7tg4T/uWS/MDc5eAC0vTX0561Ldh5fSLjF/ui+6Q3JJqzL3xSUrC2exdKQmX
-	s90UFusZ1r05rpat9uvQiQWdJru+dGRLNhpPNylpMjsb5ngo8011ctTFs1+ZvgoosRRnJBpq
-	MRcVJwIA6gU926QCAAA=
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEPLZGgC/3WQ3U7DMAxGX6XKNa7itE1/hKa+B+IiS5wtgrYjy
+ crQ1Hcn7UDaJLi07HP82VcWyDsKrMuuzNPsgpvGVBRPGdNHNR4InEk1E1xUXHIJI0V4Q6BBaSg
+ IG6x4Q0qWLBEnT9ZdNtsLWwdHukT2eut4+jgnffxp71Ug0NMwuNhls8xRgte4WgYKQW2Lu+z5t
+ hcLjohFm6PgWHMBKcC7Id97F3SIyufJtPsbrkQBQqyZgzlqBzMmWhJXxhhbl23ZH2iM05RP/vC
+ PQiZF4s2gYH8OFMBbDZ/utLo4aI5lyRuRYto+5VEhVzrX4267/OhCnPzX9uAZt9N/b3r45U2lp
+ W2pQi5lfa/aTLO4p5tHWiS6LW1leS1ErZpHelmWb6vpXgbqAQAA
+X-Change-ID: 20250606-net-k1-emac-3e181508ea64
+To: Andrew Lunn <andrew+netdev@lunn.ch>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>, 
+ Vivian Wang <wangruikang@iscas.ac.cn>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Alexandre Ghiti <alex@ghiti.fr>
+Cc: Vivian Wang <uwu@dram.page>, Lukas Bulwahn <lukas.bulwahn@redhat.com>, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Parthiban Veerasooran <Parthiban.Veerasooran@microchip.com>, 
+ netdev@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
+ linux-kernel@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>
+X-Mailer: b4 0.14.2
+X-CM-TRANSID:qwCowAC3pqpny2RomPduAA--.1282S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxur1fCw4fKFyxZr4rWryfWFg_yoWrJFW7pF
+	WxurZxuws5Jr4xKws7uw4xuayFganYyw13WFyUKryrXw1q9FWUJrsakr45AF1UZrW5Jw1f
+	tr4kZr1xuFsrAr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBj14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26F4j6r4UJwAm72CE4IkC6x0Yz7v_Jr
+	0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E
+	8cxan2IY04v7MxkF7I0En4kS14v26r4a6rW5MxkIecxEwVAFwVW8AwCF04k20xvY0x0EwI
+	xGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480
+	Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcVC0I7
+	IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k2
+	6cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0pRpyIUUUUUU=
+X-CM-SenderInfo: pzdqw2pxlnt03j6l2u1dvotugofq/
 
-On Tue, Jul 01, 2025 at 09:35:45PM +0100, Yeoreum Yun wrote:
-> 
-> 
-> Caution: External Email. Please take care when clicking links or opening attachments.
-> 
-> 
-> 
-> 
-> 
-> 
-> In below senario, kasan causes deadlock while reporting vm area informaion:
-> 
-> CPU0                                CPU1
-> vmalloc();
->  alloc_vmap_area();
->   spin_lock(&vn->busy.lock)
-			^
-	Here, it should be spin_lock_bh(&vn->busy.lock).
+SpacemiT K1 has two gigabit Ethernet MACs with RGMII and RMII support.
+Add a driver for them, as well as the supporting devicetree and bindings
+updates.
 
->                                     spin_lock_bh(&some_lock);
->    <interrupt occurs>
->    <in softirq>
->    spin_lock(&some_lock);
->                                     <access invalid address>
->                                     kasan_report();
->                                      print_report();
->                                       print_address_description();
->                                        kasan_find_vm_area();
->                                         find_vm_area();
->                                          spin_lock(&vn->busy.lock) // deadlock!
-						^
-		It should be spin_lock_bh(&vn->busy.lock), since it can
-		be within a critical section of *spin_lock_bh*() to
-		avoid a deadlock with softirq involved.
+Tested on BananaPi BPI-F3 and Milk-V Jupiter.
 
-	Byungchul
+I would like to note that even though some bit field names superficially
+resemble that of DesignWare MAC, all other differences point to it in
+fact being a custom design.
 
-> To resolve this possible deadlock, don't call find_vm_area()
-> to prevent possible deadlock while kasan reports vm area information.
-> 
-> Fixes: c056a364e954 ("kasan: print virtual mapping info in reports")
-> Reported-by: Yunseong Kim <ysk@kzalloc.com>
-> Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
-> ---
-> Below report is from Yunseong Kim using DEPT:
-> 
-> ===================================================
-> DEPT: Circular dependency has been detected.
-> 6.15.0-rc6-00043-ga83a69ec7f9f #5 Not tainted
-> ---------------------------------------------------
-> summary
-> ---------------------------------------------------
-> *** DEADLOCK ***
-> 
-> context A
->    [S] lock(report_lock:0)
->    [W] lock(&vn->busy.lock:0)
->    [E] unlock(report_lock:0)
-> 
-> context B
->    [S] lock(&tb->tb6_lock:0)
->    [W] lock(report_lock:0)
->    [E] unlock(&tb->tb6_lock:0)
-> 
-> context C
->    [S] write_lock(&ndev->lock:0)
->    [W] lock(&tb->tb6_lock:0)
->    [E] write_unlock(&ndev->lock:0)
-> 
-> context D
->    [S] lock(&vn->busy.lock:0)
->    [W] write_lock(&ndev->lock:0)
->    [E] unlock(&vn->busy.lock:0)
-> 
-> [S]: start of the event context
-> [W]: the wait blocked
-> [E]: the event not reachable
-> ---------------------------------------------------
-> context A's detail
-> ---------------------------------------------------
-> context A
->    [S] lock(report_lock:0)
->    [W] lock(&vn->busy.lock:0)
->    [E] unlock(report_lock:0)
-> 
-> [S] lock(report_lock:0):
-> [<ffff800080bd2600>] start_report mm/kasan/report.c:215 [inline]
-> [<ffff800080bd2600>] kasan_report+0x74/0x1d4 mm/kasan/report.c:623
-> stacktrace:
->       __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
->       _raw_spin_lock_irqsave+0x88/0xd8 kernel/locking/spinlock.c:162
->       start_report mm/kasan/report.c:215 [inline]
->       kasan_report+0x74/0x1d4 mm/kasan/report.c:623
->       __asan_report_load4_noabort+0x20/0x2c mm/kasan/report_generic.c:380
->       fib6_ifdown+0x67c/0x6bc net/ipv6/route.c:4910
->       fib6_clean_node+0x23c/0x4e0 net/ipv6/ip6_fib.c:2199
->       fib6_walk_continue+0x38c/0x774 net/ipv6/ip6_fib.c:2124
->       fib6_walk+0x158/0x31c net/ipv6/ip6_fib.c:2172
->       fib6_clean_tree+0xe0/0x128 net/ipv6/ip6_fib.c:2252
->       __fib6_clean_all+0x104/0x2b8 net/ipv6/ip6_fib.c:2268
->       fib6_clean_all+0x3c/0x50 net/ipv6/ip6_fib.c:2279
->       rt6_sync_down_dev net/ipv6/route.c:4951 [inline]
->       rt6_disable_ip+0x270/0x840 net/ipv6/route.c:4956
->       addrconf_ifdown.isra.0+0x104/0x175c net/ipv6/addrconf.c:3857
->       addrconf_notify+0x3a0/0x1688 net/ipv6/addrconf.c:3780
->       notifier_call_chain+0x94/0x50c kernel/notifier.c:85
->       raw_notifier_call_chain+0x3c/0x50 kernel/notifier.c:453
->       call_netdevice_notifiers_info+0xb8/0x150 net/core/dev.c:2176
-> 
-> [W] lock(&vn->busy.lock:0):
-> [<ffff800080ae57a0>] spin_lock include/linux/spinlock.h:351 [inline]
-> [<ffff800080ae57a0>] find_vmap_area+0xa0/0x228 mm/vmalloc.c:2418
-> stacktrace:
->       spin_lock include/linux/spinlock.h:351 [inline]
->       find_vmap_area+0xa0/0x228 mm/vmalloc.c:2418
->       find_vm_area+0x20/0x68 mm/vmalloc.c:3208
->       kasan_find_vm_area mm/kasan/report.c:398 [inline]
->       print_address_description mm/kasan/report.c:432 [inline]
->       print_report+0x3d8/0x54c mm/kasan/report.c:521
->       kasan_report+0xb8/0x1d4 mm/kasan/report.c:634
->       __asan_report_load4_noabort+0x20/0x2c mm/kasan/report_generic.c:380
->       fib6_ifdown+0x67c/0x6bc net/ipv6/route.c:4910
->       fib6_clean_node+0x23c/0x4e0 net/ipv6/ip6_fib.c:2199
->       fib6_walk_continue+0x38c/0x774 net/ipv6/ip6_fib.c:2124
->       fib6_walk+0x158/0x31c net/ipv6/ip6_fib.c:2172
->       fib6_clean_tree+0xe0/0x128 net/ipv6/ip6_fib.c:2252
->       __fib6_clean_all+0x104/0x2b8 net/ipv6/ip6_fib.c:2268
->       fib6_clean_all+0x3c/0x50 net/ipv6/ip6_fib.c:2279
->       rt6_sync_down_dev net/ipv6/route.c:4951 [inline]
->       rt6_disable_ip+0x270/0x840 net/ipv6/route.c:4956
->       addrconf_ifdown.isra.0+0x104/0x175c net/ipv6/addrconf.c:3857
->       addrconf_notify+0x3a0/0x1688 net/ipv6/addrconf.c:3780
->       notifier_call_chain+0x94/0x50c kernel/notifier.c:85
-> 
-> [E] unlock(report_lock:0):
-> (N/A)
-> ---------------------------------------------------
-> context B's detail
-> ---------------------------------------------------
-> context B
->    [S] lock(&tb->tb6_lock:0)
->    [W] lock(report_lock:0)
->    [E] unlock(&tb->tb6_lock:0)
-> 
-> [S] lock(&tb->tb6_lock:0):
-> [<ffff80008a172d10>] spin_lock_bh include/linux/spinlock.h:356 [inline]
-> [<ffff80008a172d10>] __fib6_clean_all+0xe8/0x2b8 net/ipv6/ip6_fib.c:2267
-> stacktrace:
->       __raw_spin_lock_bh include/linux/spinlock_api_smp.h:126 [inline]
->       _raw_spin_lock_bh+0x80/0xd0 kernel/locking/spinlock.c:178
->       spin_lock_bh include/linux/spinlock.h:356 [inline]
->       __fib6_clean_all+0xe8/0x2b8 net/ipv6/ip6_fib.c:2267
->       fib6_clean_all+0x3c/0x50 net/ipv6/ip6_fib.c:2279
->       rt6_sync_down_dev net/ipv6/route.c:4951 [inline]
->       rt6_disable_ip+0x270/0x840 net/ipv6/route.c:4956
->       addrconf_ifdown.isra.0+0x104/0x175c net/ipv6/addrconf.c:3857
->       addrconf_notify+0x3a0/0x1688 net/ipv6/addrconf.c:3780
->       notifier_call_chain+0x94/0x50c kernel/notifier.c:85
->       raw_notifier_call_chain+0x3c/0x50 kernel/notifier.c:453
->       call_netdevice_notifiers_info+0xb8/0x150 net/core/dev.c:2176
->       call_netdevice_notifiers_extack net/core/dev.c:2214 [inline]
->       call_netdevice_notifiers net/core/dev.c:2228 [inline]
->       dev_close_many+0x290/0x4b8 net/core/dev.c:1731
->       unregister_netdevice_many_notify+0x574/0x1fa0 net/core/dev.c:11940
->       unregister_netdevice_many net/core/dev.c:12034 [inline]
->       unregister_netdevice_queue+0x2b8/0x390 net/core/dev.c:11877
->       unregister_netdevice include/linux/netdevice.h:3374 [inline]
->       __tun_detach+0xec4/0x1180 drivers/net/tun.c:620
->       tun_detach drivers/net/tun.c:636 [inline]
->       tun_chr_close+0xa4/0x248 drivers/net/tun.c:3390
->       __fput+0x374/0xa30 fs/file_table.c:465
->       ____fput+0x20/0x3c fs/file_table.c:493
-> 
-> [W] lock(report_lock:0):
-> [<ffff800080bd2600>] start_report mm/kasan/report.c:215 [inline]
-> [<ffff800080bd2600>] kasan_report+0x74/0x1d4 mm/kasan/report.c:623
-> stacktrace:
->       __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
->       _raw_spin_lock_irqsave+0x6c/0xd8 kernel/locking/spinlock.c:162
->       start_report mm/kasan/report.c:215 [inline]
->       kasan_report+0x74/0x1d4 mm/kasan/report.c:623
->       __asan_report_load4_noabort+0x20/0x2c mm/kasan/report_generic.c:380
->       fib6_ifdown+0x67c/0x6bc net/ipv6/route.c:4910
->       fib6_clean_node+0x23c/0x4e0 net/ipv6/ip6_fib.c:2199
->       fib6_walk_continue+0x38c/0x774 net/ipv6/ip6_fib.c:2124
->       fib6_walk+0x158/0x31c net/ipv6/ip6_fib.c:2172
->       fib6_clean_tree+0xe0/0x128 net/ipv6/ip6_fib.c:2252
->       __fib6_clean_all+0x104/0x2b8 net/ipv6/ip6_fib.c:2268
->       fib6_clean_all+0x3c/0x50 net/ipv6/ip6_fib.c:2279
->       rt6_sync_down_dev net/ipv6/route.c:4951 [inline]
->       rt6_disable_ip+0x270/0x840 net/ipv6/route.c:4956
->       addrconf_ifdown.isra.0+0x104/0x175c net/ipv6/addrconf.c:3857
->       addrconf_notify+0x3a0/0x1688 net/ipv6/addrconf.c:3780
->       notifier_call_chain+0x94/0x50c kernel/notifier.c:85
->       raw_notifier_call_chain+0x3c/0x50 kernel/notifier.c:453
->       call_netdevice_notifiers_info+0xb8/0x150 net/core/dev.c:2176
-> 
-> [E] unlock(&tb->tb6_lock:0):
-> (N/A)
-> ---------------------------------------------------
-> context C's detail
-> ---------------------------------------------------
-> context C
->    [S] write_lock(&ndev->lock:0)
->    [W] lock(&tb->tb6_lock:0)
->    [E] write_unlock(&ndev->lock:0)
-> 
-> [S] write_lock(&ndev->lock:0):
-> [<ffff80008a133bd8>] addrconf_permanent_addr net/ipv6/addrconf.c:3622 [inline]
-> [<ffff80008a133bd8>] addrconf_notify+0xab4/0x1688 net/ipv6/addrconf.c:3698
-> stacktrace:
->       __raw_write_lock_bh include/linux/rwlock_api_smp.h:202 [inline]
->       _raw_write_lock_bh+0x88/0xd4 kernel/locking/spinlock.c:334
->       addrconf_permanent_addr net/ipv6/addrconf.c:3622 [inline]
->       addrconf_notify+0xab4/0x1688 net/ipv6/addrconf.c:3698
->       notifier_call_chain+0x94/0x50c kernel/notifier.c:85
->       raw_notifier_call_chain+0x3c/0x50 kernel/notifier.c:453
->       call_netdevice_notifiers_info+0xb8/0x150 net/core/dev.c:2176
->       call_netdevice_notifiers_extack net/core/dev.c:2214 [inline]
->       call_netdevice_notifiers net/core/dev.c:2228 [inline]
->       __dev_notify_flags+0x114/0x294 net/core/dev.c:9393
->       netif_change_flags+0x108/0x160 net/core/dev.c:9422
->       do_setlink.isra.0+0x960/0x3464 net/core/rtnetlink.c:3152
->       rtnl_changelink net/core/rtnetlink.c:3769 [inline]
->       __rtnl_newlink net/core/rtnetlink.c:3928 [inline]
->       rtnl_newlink+0x1080/0x1a1c net/core/rtnetlink.c:4065
->       rtnetlink_rcv_msg+0x82c/0xc30 net/core/rtnetlink.c:6955
->       netlink_rcv_skb+0x218/0x400 net/netlink/af_netlink.c:2534
->       rtnetlink_rcv+0x28/0x38 net/core/rtnetlink.c:6982
->       netlink_unicast_kernel net/netlink/af_netlink.c:1313 [inline]
->       netlink_unicast+0x50c/0x778 net/netlink/af_netlink.c:1339
->       netlink_sendmsg+0x794/0xc28 net/netlink/af_netlink.c:1883
->       sock_sendmsg_nosec net/socket.c:712 [inline]
->       __sock_sendmsg+0xe0/0x1a0 net/socket.c:727
->       __sys_sendto+0x238/0x2fc net/socket.c:2180
-> 
-> [W] lock(&tb->tb6_lock:0):
-> [<ffff80008a1643fc>] spin_lock_bh include/linux/spinlock.h:356 [inline]
-> [<ffff80008a1643fc>] __ip6_ins_rt net/ipv6/route.c:1350 [inline]
-> [<ffff80008a1643fc>] ip6_route_add+0x7c/0x220 net/ipv6/route.c:3900
-> stacktrace:
->       __raw_spin_lock_bh include/linux/spinlock_api_smp.h:126 [inline]
->       _raw_spin_lock_bh+0x5c/0xd0 kernel/locking/spinlock.c:178
->       spin_lock_bh include/linux/spinlock.h:356 [inline]
->       __ip6_ins_rt net/ipv6/route.c:1350 [inline]
->       ip6_route_add+0x7c/0x220 net/ipv6/route.c:3900
->       addrconf_prefix_route+0x28c/0x494 net/ipv6/addrconf.c:2487
->       fixup_permanent_addr net/ipv6/addrconf.c:3602 [inline]
->       addrconf_permanent_addr net/ipv6/addrconf.c:3626 [inline]
->       addrconf_notify+0xfd0/0x1688 net/ipv6/addrconf.c:3698
->       notifier_call_chain+0x94/0x50c kernel/notifier.c:85
->       raw_notifier_call_chain+0x3c/0x50 kernel/notifier.c:453
->       call_netdevice_notifiers_info+0xb8/0x150 net/core/dev.c:2176
->       call_netdevice_notifiers_extack net/core/dev.c:2214 [inline]
->       call_netdevice_notifiers net/core/dev.c:2228 [inline]
->       __dev_notify_flags+0x114/0x294 net/core/dev.c:9393
->       netif_change_flags+0x108/0x160 net/core/dev.c:9422
->       do_setlink.isra.0+0x960/0x3464 net/core/rtnetlink.c:3152
->       rtnl_changelink net/core/rtnetlink.c:3769 [inline]
->       __rtnl_newlink net/core/rtnetlink.c:3928 [inline]
->       rtnl_newlink+0x1080/0x1a1c net/core/rtnetlink.c:4065
->       rtnetlink_rcv_msg+0x82c/0xc30 net/core/rtnetlink.c:6955
->       netlink_rcv_skb+0x218/0x400 net/netlink/af_netlink.c:2534
->       rtnetlink_rcv+0x28/0x38 net/core/rtnetlink.c:6982
->       netlink_unicast_kernel net/netlink/af_netlink.c:1313 [inline]
->       netlink_unicast+0x50c/0x778 net/netlink/af_netlink.c:1339
->       netlink_sendmsg+0x794/0xc28 net/netlink/af_netlink.c:1883
-> 
-> [E] write_unlock(&ndev->lock:0):
-> (N/A)
-> ---------------------------------------------------
-> context D's detail
-> ---------------------------------------------------
-> context D
->    [S] lock(&vn->busy.lock:0)
->    [W] write_lock(&ndev->lock:0)
->    [E] unlock(&vn->busy.lock:0)
-> 
-> [S] lock(&vn->busy.lock:0):
-> [<ffff800080adcf80>] spin_lock include/linux/spinlock.h:351 [inline]
-> [<ffff800080adcf80>] alloc_vmap_area+0x800/0x26d0 mm/vmalloc.c:2027
-> stacktrace:
->       __raw_spin_lock include/linux/spinlock_api_smp.h:133 [inline]
->       _raw_spin_lock+0x78/0xc0 kernel/locking/spinlock.c:154
->       spin_lock include/linux/spinlock.h:351 [inline]
->       alloc_vmap_area+0x800/0x26d0 mm/vmalloc.c:2027
->       __get_vm_area_node+0x1c8/0x360 mm/vmalloc.c:3138
->       __vmalloc_node_range_noprof+0x168/0x10d4 mm/vmalloc.c:3805
->       __vmalloc_node_noprof+0x130/0x178 mm/vmalloc.c:3908
->       vzalloc_noprof+0x3c/0x54 mm/vmalloc.c:3981
->       alloc_counters net/ipv6/netfilter/ip6_tables.c:815 [inline]
->       copy_entries_to_user net/ipv6/netfilter/ip6_tables.c:837 [inline]
->       get_entries net/ipv6/netfilter/ip6_tables.c:1039 [inline]
->       do_ip6t_get_ctl+0x520/0xad0 net/ipv6/netfilter/ip6_tables.c:1677
->       nf_getsockopt+0x8c/0x10c net/netfilter/nf_sockopt.c:116
->       ipv6_getsockopt+0x24c/0x460 net/ipv6/ipv6_sockglue.c:1493
->       tcp_getsockopt+0x98/0x120 net/ipv4/tcp.c:4727
->       sock_common_getsockopt+0x9c/0xcc net/core/sock.c:3867
->       do_sock_getsockopt+0x308/0x57c net/socket.c:2357
->       __sys_getsockopt+0xec/0x188 net/socket.c:2386
->       __do_sys_getsockopt net/socket.c:2393 [inline]
->       __se_sys_getsockopt net/socket.c:2390 [inline]
->       __arm64_sys_getsockopt+0xa8/0x110 net/socket.c:2390
->       __invoke_syscall arch/arm64/kernel/syscall.c:36 [inline]
->       invoke_syscall+0x88/0x2e0 arch/arm64/kernel/syscall.c:50
->       el0_svc_common.constprop.0+0xe8/0x2e0 arch/arm64/kernel/syscall.c:139
-> 
-> [W] write_lock(&ndev->lock:0):
-> [<ffff80008a127f20>] addrconf_rs_timer+0xa0/0x730 net/ipv6/addrconf.c:4025
-> stacktrace:
->       __raw_write_lock include/linux/rwlock_api_smp.h:209 [inline]
->       _raw_write_lock+0x5c/0xd0 kernel/locking/spinlock.c:300
->       addrconf_rs_timer+0xa0/0x730 net/ipv6/addrconf.c:4025
->       call_timer_fn+0x204/0x964 kernel/time/timer.c:1789
->       expire_timers kernel/time/timer.c:1840 [inline]
->       __run_timers+0x830/0xb00 kernel/time/timer.c:2414
->       __run_timer_base kernel/time/timer.c:2426 [inline]
->       __run_timer_base kernel/time/timer.c:2418 [inline]
->       run_timer_base+0x124/0x198 kernel/time/timer.c:2435
->       run_timer_softirq+0x20/0x58 kernel/time/timer.c:2445
->       handle_softirqs+0x30c/0xdc0 kernel/softirq.c:579
->       __do_softirq+0x14/0x20 kernel/softirq.c:613
->       ____do_softirq+0x14/0x20 arch/arm64/kernel/irq.c:81
->       call_on_irq_stack+0x24/0x30 arch/arm64/kernel/entry.S:891
->       do_softirq_own_stack+0x20/0x40 arch/arm64/kernel/irq.c:86
->       invoke_softirq kernel/softirq.c:460 [inline]
->       __irq_exit_rcu+0x400/0x560 kernel/softirq.c:680
->       irq_exit_rcu+0x14/0x80 kernel/softirq.c:696
->       __el1_irq arch/arm64/kernel/entry-common.c:561 [inline]
->       el1_interrupt+0x38/0x54 arch/arm64/kernel/entry-common.c:575
->       el1h_64_irq_handler+0x18/0x24 arch/arm64/kernel/entry-common.c:580
->       el1h_64_irq+0x6c/0x70 arch/arm64/kernel/entry.S:596
-> 
-> [E] unlock(&vn->busy.lock:0):
-> (N/A)
-> ---------------------------------------------------
-> information that might be helpful
-> ---------------------------------------------------
-> CPU: 1 UID: 0 PID: 19536 Comm: syz.4.2592 Not tainted 6.15.0-rc6-00043-ga83a69ec7f9f #5 PREEMPT
-> Hardware name: QEMU KVM Virtual Machine, BIOS 2025.02-8 05/13/2025
-> Call trace:
->  dump_backtrace arch/arm64/kernel/stacktrace.c:449 [inline] (C)
->  show_stack+0x34/0x80 arch/arm64/kernel/stacktrace.c:466 (C)
->  __dump_stack lib/dump_stack.c:94 [inline]
->  dump_stack_lvl+0x104/0x180 lib/dump_stack.c:120
->  dump_stack+0x20/0x2c lib/dump_stack.c:129
->  print_circle kernel/dependency/dept.c:928 [inline]
->  cb_check_dl kernel/dependency/dept.c:1362 [inline]
->  cb_check_dl+0x1080/0x10ec kernel/dependency/dept.c:1356
->  bfs+0x4d8/0x630 kernel/dependency/dept.c:980
->  check_dl_bfs kernel/dependency/dept.c:1381 [inline]
->  add_dep+0x1cc/0x364 kernel/dependency/dept.c:1710
->  add_wait kernel/dependency/dept.c:1829 [inline]
->  __dept_wait+0x60c/0x16e0 kernel/dependency/dept.c:2585
->  dept_wait kernel/dependency/dept.c:2666 [inline]
->  dept_wait+0x168/0x1a8 kernel/dependency/dept.c:2640
->  __raw_spin_lock include/linux/spinlock_api_smp.h:133 [inline]
->  _raw_spin_lock+0x54/0xc0 kernel/locking/spinlock.c:154
->  spin_lock include/linux/spinlock.h:351 [inline]
->  find_vmap_area+0xa0/0x228 mm/vmalloc.c:2418
->  find_vm_area+0x20/0x68 mm/vmalloc.c:3208
->  kasan_find_vm_area mm/kasan/report.c:398 [inline]
->  print_address_description mm/kasan/report.c:432 [inline]
->  print_report+0x3d8/0x54c mm/kasan/report.c:521
->  kasan_report+0xb8/0x1d4 mm/kasan/report.c:634
->  __asan_report_load4_noabort+0x20/0x2c mm/kasan/report_generic.c:380
->  fib6_ifdown+0x67c/0x6bc net/ipv6/route.c:4910
->  fib6_clean_node+0x23c/0x4e0 net/ipv6/ip6_fib.c:2199
->  fib6_walk_continue+0x38c/0x774 net/ipv6/ip6_fib.c:2124
->  fib6_walk+0x158/0x31c net/ipv6/ip6_fib.c:2172
->  fib6_clean_tree+0xe0/0x128 net/ipv6/ip6_fib.c:2252
->  __fib6_clean_all+0x104/0x2b8 net/ipv6/ip6_fib.c:2268
->  fib6_clean_all+0x3c/0x50 net/ipv6/ip6_fib.c:2279
->  rt6_sync_down_dev net/ipv6/route.c:4951 [inline]
->  rt6_disable_ip+0x270/0x840 net/ipv6/route.c:4956
->  addrconf_ifdown.isra.0+0x104/0x175c net/ipv6/addrconf.c:3857
->  addrconf_notify+0x3a0/0x1688 net/ipv6/addrconf.c:3780
->  notifier_call_chain+0x94/0x50c kernel/notifier.c:85
->  raw_notifier_call_chain+0x3c/0x50 kernel/notifier.c:453
->  call_netdevice_notifiers_info+0xb8/0x150 net/core/dev.c:2176
->  call_netdevice_notifiers_extack net/core/dev.c:2214 [inline]
->  call_netdevice_notifiers net/core/dev.c:2228 [inline]
->  dev_close_many+0x290/0x4b8 net/core/dev.c:1731
->  unregister_netdevice_many_notify+0x574/0x1fa0 net/core/dev.c:11940
->  unregister_netdevice_many net/core/dev.c:12034 [inline]
->  unregister_netdevice_queue+0x2b8/0x390 net/core/dev.c:11877
->  unregister_netdevice include/linux/netdevice.h:3374 [inline]
->  __tun_detach+0xec4/0x1180 drivers/net/tun.c:620
->  tun_detach drivers/net/tun.c:636 [inline]
->  tun_chr_close+0xa4/0x248 drivers/net/tun.c:3390
->  __fput+0x374/0xa30 fs/file_table.c:465
->  ____fput+0x20/0x3c fs/file_table.c:493
->  task_work_run+0x154/0x278 kernel/task_work.c:227
->  exit_task_work include/linux/task_work.h:40 [inline]
->  do_exit+0x950/0x23a8 kernel/exit.c:953
->  do_group_exit+0xc0/0x248 kernel/exit.c:1103
->  get_signal+0x1f98/0x20cc kernel/signal.c:3034
->  do_signal+0x200/0x880 arch/arm64/kernel/signal.c:1658
->  do_notify_resume+0x1a0/0x26c arch/arm64/kernel/entry-common.c:148
->  exit_to_user_mode_prepare arch/arm64/kernel/entry-common.c:169 [inline]
->  exit_to_user_mode arch/arm64/kernel/entry-common.c:178 [inline]
->  el0_svc+0xf8/0x188 arch/arm64/kernel/entry-common.c:745
->  el0t_64_sync_handler+0x10c/0x140 arch/arm64/kernel/entry-common.c:762
->  el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
-> 
-> ---
->  mm/kasan/report.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/mm/kasan/report.c b/mm/kasan/report.c
-> index 8357e1a33699..61c590e8005e 100644
-> --- a/mm/kasan/report.c
-> +++ b/mm/kasan/report.c
-> @@ -387,7 +387,7 @@ static inline struct vm_struct *kasan_find_vm_area(void *addr)
->         static DEFINE_WAIT_OVERRIDE_MAP(vmalloc_map, LD_WAIT_SLEEP);
->         struct vm_struct *va;
-> 
-> -       if (IS_ENABLED(CONFIG_PREEMPT_RT))
-> +       if (IS_ENABLED(CONFIG_PREEMPT_RT) || in_interrupt())
->                 return NULL;
-> 
->         /*
-> --
-> LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
-> 
+Based on SpacemiT drivers [1].
+
+This series depends on reset controller support [2] and DMA buses [3]
+for K1. There are some minor conflicts resulting from both touching
+k1.dtsi, but it should just both be adding nodes.
+
+These patches can also be pulled from:
+
+https://github.com/dramforever/linux/tree/k1/ethernet/v3
+
+[1]: https://github.com/spacemit-com/linux-k1x
+[2]: https://lore.kernel.org/all/20250613011139.1201702-1-elder@riscstar.com
+[3]: https://lore.kernel.org/all/20250623-k1-dma-buses-rfc-wip-v1-0-c0144082061f@iscas.ac.cn
+
+---
+Changes in v3:
+- Refactored and simplified emac_tx_mem_map
+- Addressed other minor v2 review comments
+- Removed what was patch 3 in v2, depend on DMA buses instead
+- DT nodes in alphabetical order where appropriate
+- Link to v2: https://lore.kernel.org/r/20250618-net-k1-emac-v2-0-94f5f07227a8@iscas.ac.cn
+
+Changes in v2:
+- dts: Put eth0 and eth1 nodes under a bus with dma-ranges
+- dts: Added Milk-V Jupiter
+- Fix typo in emac_init_hw() that broke the driver (Oops!)
+- Reformatted line lengths to under 80
+- Addressed other v1 review comments
+- Link to v1: https://lore.kernel.org/r/20250613-net-k1-emac-v1-0-cc6f9e510667@iscas.ac.cn
+
+---
+Vivian Wang (5):
+      dt-bindings: net: Add support for SpacemiT K1
+      net: spacemit: Add K1 Ethernet MAC
+      riscv: dts: spacemit: Add Ethernet support for K1
+      riscv: dts: spacemit: Add Ethernet support for BPI-F3
+      riscv: dts: spacemit: Add Ethernet support for Jupiter
+
+ .../devicetree/bindings/net/spacemit,k1-emac.yaml  |   81 +
+ arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts    |   46 +
+ arch/riscv/boot/dts/spacemit/k1-milkv-jupiter.dts  |   46 +
+ arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi       |   48 +
+ arch/riscv/boot/dts/spacemit/k1.dtsi               |   22 +
+ drivers/net/ethernet/Kconfig                       |    1 +
+ drivers/net/ethernet/Makefile                      |    1 +
+ drivers/net/ethernet/spacemit/Kconfig              |   29 +
+ drivers/net/ethernet/spacemit/Makefile             |    6 +
+ drivers/net/ethernet/spacemit/k1_emac.c            | 1884 ++++++++++++++++++++
+ drivers/net/ethernet/spacemit/k1_emac.h            |  420 +++++
+ 11 files changed, 2584 insertions(+)
+---
+base-commit: d9946fe286439c2aeaa7953b8c316efe5b83d515
+change-id: 20250606-net-k1-emac-3e181508ea64
+prerequisite-message-id: <20250613011139.1201702-1-elder@riscstar.com>
+prerequisite-patch-id: 2c73c63bef3640e63243ddcf3c07b108d45f6816
+prerequisite-patch-id: 0faba75db33c96a588e722c4f2b3862c4cbdaeae
+prerequisite-patch-id: 5db8688ef86188ec091145fae9e14b2211cd2b8c
+prerequisite-patch-id: e0fe84381637dc888d996a79ea717ff0e3441bd1
+prerequisite-patch-id: 2fc0ef1c2fcda92ad83400da5aadaf194fe78627
+prerequisite-patch-id: bfa54447803e5642059c386e2bd96297e691d0bf
+prerequisite-message-id: <20250523-22-k1-sdhci-v1-1-6e0adddf7494@gentoo.org>
+prerequisite-patch-id: 53fc23b06e26ab0ebb2c52ee09f4b2cffab889e2
+prerequisite-message-id: <20250623-k1-dma-buses-rfc-wip-v1-0-c0144082061f@iscas.ac.cn>
+prerequisite-patch-id: 7f04dcf6f82a9a9fa3a8a78ae4992571f85eb6ca
+prerequisite-patch-id: 291c9bcd2ce688e08a8ab57c6d274a57cac6b33c
+prerequisite-patch-id: 957d7285e8d2a7698beb0c25cb0f6ea733246af0
+
+Best regards,
+-- 
+Vivian "dramforever" Wang
+
 
