@@ -1,110 +1,79 @@
-Return-Path: <linux-kernel+bounces-712552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-712536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FE17AF0B30
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 08:04:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92DA1AF0B01
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 07:59:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D76D53BEE48
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 06:02:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFED63B0AD0
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 05:58:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA4B8202C2A;
-	Wed,  2 Jul 2025 06:02:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CEkudyYT"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 387FD200BA1;
+	Wed,  2 Jul 2025 05:59:03 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9AB01FDA89
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 06:02:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ADEC1F91D6;
+	Wed,  2 Jul 2025 05:58:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751436152; cv=none; b=snanf8EHC2Qkf3viKpqOVLCerlE5EFYxX6DHaxkWg+AbYZ0sto/cFucfBlUVJObSJ7n/IYfAgDuTfxczXPe8pmw6yEzulWCwZOFITbr5sWpoGQ4AbGsPz6Vji2d7MSKhn7w1hy1/kVmpyVjrfAK8mm27eoquzLXZma1N2n4x0t8=
+	t=1751435942; cv=none; b=HXXE1v9KQufu+SRRmNnyGMJsX5WnPWvJXx2pstxkPPteS+HQzBodyZ6x9gOQwtaFTldMFOmfhaAa3FZOpx5Ej1fhhHfU+dipMPLOmUZSjY+10nobarFYWWoa87xLCdFMwRGLNmajQ1yYjhroB/6ZlhEvh28EAckiOcDHC0ZRGfA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751436152; c=relaxed/simple;
-	bh=KsDa0dapENPz5lMBPiueXxkXVedRNjXG9mMzmcErq9k=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qVpopZdORgoKfUYDrJcTIMySFN92pMpB9WwpatT/ICLOh/4RpGI8w16Exc7IRyTnthlvS80cDwBYJul6DLGs7NH6TOad3lIuOEXROMAtpGnSczdOG/OSlxFX6km65XSzrn6GmeY/fgKu71jgPzXu3QcaiTTCiO0xvla67J1wcCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CEkudyYT; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1751436149;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nIGpPqgNzgq47EY5ZTEnTs1FneYRqT/zHlE7fmslHU8=;
-	b=CEkudyYT8gvyAG5K5o9PXfT2ya5g9TObKuc45vKeYfGPJxYMes+v9u/kbhxM5wJR44K1o9
-	JPuyy0Vcnj0ns+YB2ve2Q2cuRwb1w6FI59QUci6m0015RgA7JR/YuL3+mQMmyaX2f0saoJ
-	PW8Oz1vd30VUpcUDb+Zh5jm0mi0f61k=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-636-exMEV-qmP7mWzW_W7wlbDA-1; Wed,
- 02 Jul 2025 02:02:25 -0400
-X-MC-Unique: exMEV-qmP7mWzW_W7wlbDA-1
-X-Mimecast-MFC-AGG-ID: exMEV-qmP7mWzW_W7wlbDA_1751436141
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3F2E51955ECA;
-	Wed,  2 Jul 2025 06:02:21 +0000 (UTC)
-Received: from h1.redhat.com (unknown [10.22.88.112])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1B00618003FC;
-	Wed,  2 Jul 2025 06:02:05 +0000 (UTC)
-From: Nico Pache <npache@redhat.com>
-To: linux-mm@kvack.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Cc: david@redhat.com,
-	ziy@nvidia.com,
-	baolin.wang@linux.alibaba.com,
-	lorenzo.stoakes@oracle.com,
-	Liam.Howlett@oracle.com,
-	ryan.roberts@arm.com,
-	dev.jain@arm.com,
-	corbet@lwn.net,
-	rostedt@goodmis.org,
-	mhiramat@kernel.org,
-	mathieu.desnoyers@efficios.com,
-	akpm@linux-foundation.org,
-	baohua@kernel.org,
-	willy@infradead.org,
-	peterx@redhat.com,
-	wangkefeng.wang@huawei.com,
-	usamaarif642@gmail.com,
-	sunnanyong@huawei.com,
-	vishal.moola@gmail.com,
-	thomas.hellstrom@linux.intel.com,
-	yang@os.amperecomputing.com,
-	kirill.shutemov@linux.intel.com,
-	aarcange@redhat.com,
-	raquini@redhat.com,
-	anshuman.khandual@arm.com,
-	catalin.marinas@arm.com,
-	tiwai@suse.de,
-	will@kernel.org,
-	dave.hansen@linux.intel.com,
-	jack@suse.cz,
-	cl@gentwo.org,
-	jglisse@google.com,
-	surenb@google.com,
-	zokeefe@google.com,
-	hannes@cmpxchg.org,
-	rientjes@google.com,
-	mhocko@suse.com,
-	rdunlap@infradead.org,
-	Bagas Sanjaya <bagasdotme@gmail.com>
-Subject: [PATCH v8 15/15] Documentation: mm: update the admin guide for mTHP collapse
-Date: Tue,  1 Jul 2025 23:57:42 -0600
-Message-ID: <20250702055742.102808-16-npache@redhat.com>
-In-Reply-To: <20250702055742.102808-1-npache@redhat.com>
-References: <20250702055742.102808-1-npache@redhat.com>
+	s=arc-20240116; t=1751435942; c=relaxed/simple;
+	bh=rOPJfFvYLMt2aMxdrfURBB3a2acHffrvMFqWCri8pCM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jcxXBm15csfKJZogwyFYL0YW1K7L+lX6//aXbZrkp4AG3dzLoq73vtmqYhzaFPLgfGfGV34TXmut3MGIizvkjYV7lHzBpAZjAzUBd+I9OhAV9TylM7A/5AP6YHym6mEQ1T9g3wR95a39MUOhA6OOlFoqwuIaU+rIVYoKBLeKOKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: a03a0776570911f0b29709d653e92f7d-20250702
+X-CTIC-Tags:
+	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CC_NO_NAME, HR_CTE_8B
+	HR_CTT_MISS, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME
+	HR_SJ_DIGIT_LEN, HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM
+	HR_SJ_PHRASE, HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT
+	HR_TO_NAME, IP_TRUSTED, SRC_TRUSTED, DN_TRUSTED, SA_TRUSTED
+	SA_EXISTED, SN_TRUSTED, SN_EXISTED, SPF_NOPASS, DKIM_NOPASS
+	DMARC_NOPASS, CIE_BAD, CIE_GOOD, CIE_GOOD_SPF, GTI_FG_BS
+	GTI_RG_INFO, GTI_C_BU, AMN_T1, AMN_GOOD, AMN_C_TI
+	AMN_C_BU, ABX_MISS_RDNS
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:d1a93923-6fd2-4d2a-8024-96123f6089dc,IP:10,
+	URL:0,TC:0,Content:0,EDM:0,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
+	N:release,TS:5
+X-CID-INFO: VERSION:1.1.45,REQID:d1a93923-6fd2-4d2a-8024-96123f6089dc,IP:10,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:5
+X-CID-META: VersionHash:6493067,CLOUDID:08011c1b33491dbfe8e0cc537b249386,BulkI
+	D:2507021358526PKVIA5B,BulkQuantity:0,Recheck:0,SF:19|24|38|44|66|72|78|10
+	2,TC:nil,Content:0|50,EDM:-3,IP:-2,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,B
+	EC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI
+X-UUID: a03a0776570911f0b29709d653e92f7d-20250702
+X-User: zhaochenguang@kylinos.cn
+Received: from localhost.localdomain [(223.70.159.239)] by mailgw.kylinos.cn
+	(envelope-from <zhaochenguang@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
+	with ESMTP id 1140224877; Wed, 02 Jul 2025 13:58:50 +0800
+From: Chenguang Zhao <zhaochenguang@kylinos.cn>
+To: Paul Moore <paul@paul-moore.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	David Ahern <dsahern@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>
+Cc: Chenguang Zhao <zhaochenguang@kylinos.cn>,
+	netdev@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] net: ipv6: Fix spelling mistake
+Date: Wed,  2 Jul 2025 13:58:20 +0800
+Message-Id: <20250702055820.112190-1-zhaochenguang@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -112,62 +81,44 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-Now that we can collapse to mTHPs lets update the admin guide to
-reflect these changes and provide proper guidence on how to utilize it.
+change 'Maximium' to 'Maximum'
 
-Reviewed-by: Bagas Sanjaya <bagasdotme@gmail.com>
-Signed-off-by: Nico Pache <npache@redhat.com>
+Signed-off-by: Chenguang Zhao <zhaochenguang@kylinos.cn>
 ---
- Documentation/admin-guide/mm/transhuge.rst | 19 +++++++++++++------
- 1 file changed, 13 insertions(+), 6 deletions(-)
+ net/ipv6/calipso.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
-index dff8d5985f0f..878796b4d7d3 100644
---- a/Documentation/admin-guide/mm/transhuge.rst
-+++ b/Documentation/admin-guide/mm/transhuge.rst
-@@ -63,7 +63,7 @@ often.
- THP can be enabled system wide or restricted to certain tasks or even
- memory ranges inside task's address space. Unless THP is completely
- disabled, there is ``khugepaged`` daemon that scans memory and
--collapses sequences of basic pages into PMD-sized huge pages.
-+collapses sequences of basic pages into huge pages.
+diff --git a/net/ipv6/calipso.c b/net/ipv6/calipso.c
+index 62618a058b8f..39da428f632e 100644
+--- a/net/ipv6/calipso.c
++++ b/net/ipv6/calipso.c
+@@ -32,7 +32,7 @@
+ #include <linux/unaligned.h>
+ #include <linux/crc-ccitt.h>
  
- The THP behaviour is controlled via :ref:`sysfs <thp_sysfs>`
- interface and using madvise(2) and prctl(2) system calls.
-@@ -144,6 +144,18 @@ hugepage sizes have enabled="never". If enabling multiple hugepage
- sizes, the kernel will select the most appropriate enabled size for a
- given allocation.
+-/* Maximium size of the calipso option including
++/* Maximum size of the calipso option including
+  * the two-byte TLV header.
+  */
+ #define CALIPSO_OPT_LEN_MAX (2 + 252)
+@@ -42,13 +42,13 @@
+  */
+ #define CALIPSO_HDR_LEN (2 + 8)
  
-+khugepaged uses max_ptes_none scaled to the order of the enabled mTHP size
-+to determine collapses. When using mTHPs it's recommended to set
-+max_ptes_none low-- ideally less than HPAGE_PMD_NR / 2 (255 on 4k page
-+size). This will prevent undesired "creep" behavior that leads to
-+continuously collapsing to the largest mTHP size; when we collapse, we are
-+bringing in new non-zero pages that will, on a subsequent scan, cause the
-+max_ptes_none check of the +1 order to always be satisfied. By limiting
-+this to less than half the current order, we make sure we don't cause this
-+feedback loop. max_ptes_shared and max_ptes_swap have no effect when
-+collapsing to a mTHP, and mTHP collapse will fail on shared or swapped out
-+pages.
-+
- It's also possible to limit defrag efforts in the VM to generate
- anonymous hugepages in case they're not immediately free to madvise
- regions or to never try to defrag memory and simply fallback to regular
-@@ -221,11 +233,6 @@ top-level control are "never")
- Khugepaged controls
- -------------------
+-/* Maximium size of the calipso option including
++/* Maximum size of the calipso option including
+  * the two-byte TLV header and upto 3 bytes of
+  * leading pad and 7 bytes of trailing pad.
+  */
+ #define CALIPSO_OPT_LEN_MAX_WITH_PAD (3 + CALIPSO_OPT_LEN_MAX + 7)
  
--.. note::
--   khugepaged currently only searches for opportunities to collapse to
--   PMD-sized THP and no attempt is made to collapse to other THP
--   sizes.
--
- khugepaged runs usually at low frequency so while one may not want to
- invoke defrag algorithms synchronously during the page faults, it
- should be worth invoking defrag at least in khugepaged. However it's
+- /* Maximium size of u32 aligned buffer required to hold calipso
++ /* Maximum size of u32 aligned buffer required to hold calipso
+   * option.  Max of 3 initial pad bytes starting from buffer + 3.
+   * i.e. the worst case is when the previous tlv finishes on 4n + 3.
+   */
 -- 
-2.49.0
+2.25.1
 
 
