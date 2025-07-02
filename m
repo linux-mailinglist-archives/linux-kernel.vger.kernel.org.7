@@ -1,111 +1,173 @@
-Return-Path: <linux-kernel+bounces-713356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C15F5AF5860
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 15:19:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBE1AAF586D
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 15:20:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF1FD1BC3058
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 13:18:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0F033BB4F3
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 13:18:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72003276037;
-	Wed,  2 Jul 2025 13:16:22 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45F9E22A4DB
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 13:16:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 270D527933C;
+	Wed,  2 Jul 2025 13:16:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OFpLAVJ9"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D4F4277031
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 13:16:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751462182; cv=none; b=D54uUNQKfio8bKzhFupfxtWDz1aQFm0J/EPilhsA+6epr4g1q8oS+8nXdJUCT4MM0la+vLr8eVjYL4Bg/BFLOkFfaQOpr0VCNOckFMItrEAVvJV5DTwQCFQRymC7OhGfrEHiLFV5/6Azu3jBncXno1kKHD5WqhEnZQxlE44Uug4=
+	t=1751462200; cv=none; b=fQWYymBQSJfbZsym7cjvVER61C1d4AbDh852V3tWPRc3I6jsEvQ5AMizI+W7egQECXnAUSo2Mop6FDV/8kV6CxiUe60cxbYww+2UmCgX6/xmLuhK4cmWYWzzFqzBkhR7EV5BsdYcsyYQxGvbScrdzqTcl6gU22rJk2q6R7KdGF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751462182; c=relaxed/simple;
-	bh=eoh/0ngUiWGnFNUZX8+EKdsHmE8O2b7KxJ6G+VXBozU=;
+	s=arc-20240116; t=1751462200; c=relaxed/simple;
+	bh=1j1LyNigN5AHD08zHiexmmDlfFxiEshK30KkAloLUzs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J+CzmwOMCrMYI+EWiuzwRs4Lrpev35zT2Jnb+lV/wthEdJCmQ8hpHm7nEAKhs6RSz4K+oKcqYH0q1DPKs3aj3O77reI61jYUGEC/bXtzoJH9HzEe5cTMqNCq0lJAwzlL/dQej7fGW6B66mleqYiJ6m/QfMi/ZrIsjI9ehCdMQPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C381C152B;
-	Wed,  2 Jul 2025 06:16:04 -0700 (PDT)
-Received: from J2N7QTR9R3.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 402C23F58B;
-	Wed,  2 Jul 2025 06:16:18 -0700 (PDT)
-Date: Wed, 2 Jul 2025 14:16:15 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: kernel test robot <lkp@intel.com>, Thomas Gleixner <tglx@linutronix.de>,
-	llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org, x86@kernel.org,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Jinjie Ruan <ruanjinjie@huawei.com>
-Subject: Re: [tip:master 19/19] include/linux/irq-entry-common.h:201:2:
- error: unexpected token
-Message-ID: <aGUxH--v32Bv4T81@J2N7QTR9R3.cambridge.arm.com>
-References: <202507020528.N0LtekXt-lkp@intel.com>
- <20250702123240.GDaGUm6Le4KLL7o_91@fat_crate.local>
- <aGUtCveV8Ev17_FS@J2N7QTR9R3.cambridge.arm.com>
- <20250702130915.GEaGUve86iYnv337_Z@fat_crate.local>
+	 Content-Type:Content-Disposition:In-Reply-To; b=pMfKAo2GIiwTGKt7T0kv5OsPhuNkzh2hIMPv2duAA4wopwvjjUQmX/A0zLVBZWEO4Ay8E3bjWNY0zi+Bx+40c+Fteb9w5dqi2lPO/dlAnGQhW2of3NsBAkXBbv2T/32wpnaXICT8lHu+nchzVYh7ytX9qNc8o191qiqw/UgrVxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OFpLAVJ9; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1751462196;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sy4nWTHPkpPaaqEvDu9i4dBMnt5aD41NB3JYr++qf2M=;
+	b=OFpLAVJ9oUFP22/fqBDFeDG2TxYkk269JUXoghx6Xy/AoVsGzPGiuJLpDgBLs/cM4TC+NQ
+	ODguOszPhSit7aUOrHml/aHiA6dH0DVBPgOsbrx1hhyerxpiAqwA2aAHHzUieOPi9R7bdH
+	LpLhE1tUfkJ45jNm1iag+zQ8Qtci26g=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-502-pOO5whkkOqSgUNaijgjZ3g-1; Wed, 02 Jul 2025 09:16:35 -0400
+X-MC-Unique: pOO5whkkOqSgUNaijgjZ3g-1
+X-Mimecast-MFC-AGG-ID: pOO5whkkOqSgUNaijgjZ3g_1751462194
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-43e9b0fd00cso37116695e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 06:16:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751462194; x=1752066994;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sy4nWTHPkpPaaqEvDu9i4dBMnt5aD41NB3JYr++qf2M=;
+        b=iAnlNtNVnDWIWkNj/Tryk985KjGTAVj+llQrONIdbb6/Zv3zjJWgWC1QhxM2ey0l2K
+         EIpyw15yVSKhtjzTOZbPcTAtPHdsxp8MOq7EEa0YlpUVXxlRMXWIICzcb5bXpYikrxh7
+         CSnuFGrK365Wl0rwl2th2wwsDi+YjlVDDLzcvu76ojNLXUdi8YEy/BbyckDg+pam7fqv
+         OIaUZS3NlaYgTg7C2V0QcaXPIc0/1QpSOy/Uj3GnqjXcLhOpuMr0p06UHrDW/GxBwVEt
+         5csr9etn6rBdCVRd0MlwQhDxjnrUwZof7gfXm+Hh7iVQKQkaRPjrODguqNIGQaeKf0AM
+         qPGg==
+X-Forwarded-Encrypted: i=1; AJvYcCX49/KuGrSpNrZiuAHuEsZLJwgOlALsN0vp8ZoiCbnAAhDkHpOPTXqL+iik8vM4aUAx33oP1S3UOHTSPAw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxwfaggzwHDrXtmhUjWiiExMnxOTwXC/GeUTwWtIDAsUCsfymju
+	7Gr5gkvX49apkQM7jn3PzDgJjSxPVFbDnGpIMiWv5S+SJcm188ldIKICAJfojg6N4+rAQAvvvX/
+	ypMUgz0XxMm/fG9UDR+LsdrRXFc7IFzRkLY5povV2LRWAhJTf5wZvsnU5LdsOm1DU1Q==
+X-Gm-Gg: ASbGnctUMeSCEJrWB9PE+F/585QmgvkxUfRMpyCp+NYdo7O3iFw5YRByIN3tzJZMN+W
+	BbQV2rNM5beR/r8MeY3gw10mBkppmXp1Ld2fdaQzqdx7fXUSeJgc6YvYVtiePPTCrT8mGgFA1VX
+	hRdM8YBKmHFlEHoNcb3+NYcYAgSlnRImYR2Tqpy0N0mqJbh19iT+0TGDbSGf42cag5jNQpjcA9G
+	1TmaSI4ZGoyF95L1BJTq4myq10xcFNxPAUNW7gbZBvtTu6zpJnK4eRXpuYmH7EvxC1qhzEu3b4E
+	TsqIrCgX1nHSpCzReMRy/SdbuLa6
+X-Received: by 2002:a05:600c:c0dc:b0:453:45f1:9c96 with SMTP id 5b1f17b1804b1-454a3c610camr23628715e9.14.1751462193950;
+        Wed, 02 Jul 2025 06:16:33 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEK+MShUn1qdie/bqB3hm1XM6IQ/XjWSETD0pYwme5TdPq6afvGUkaA/cLuoccNQG7Dhu4OBw==
+X-Received: by 2002:a05:600c:c0dc:b0:453:45f1:9c96 with SMTP id 5b1f17b1804b1-454a3c610camr23628285e9.14.1751462193306;
+        Wed, 02 Jul 2025 06:16:33 -0700 (PDT)
+Received: from sgarzare-redhat ([193.207.164.126])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a88c7e72c1sm15900209f8f.1.2025.07.02.06.16.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Jul 2025 06:16:32 -0700 (PDT)
+Date: Wed, 2 Jul 2025 15:16:19 +0200
+From: Stefano Garzarella <sgarzare@redhat.com>
+To: David Laight <david.laight.linux@gmail.com>
+Cc: Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org, 
+	Keir Fraser <keirf@google.com>, Steven Moreland <smoreland@google.com>, 
+	Frederick Mayle <fmayle@google.com>, Stefan Hajnoczi <stefanha@redhat.com>, 
+	"Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
+	Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>, netdev@vger.kernel.org, virtualization@lists.linux.dev
+Subject: Re: [PATCH v2 4/8] vsock/virtio: Resize receive buffers so that each
+ SKB fits in a page
+Message-ID: <3s4lvbnzdj72dcvvh2nnx4s7skyco4pbpwuyycccqv3iudqhnn@5szfvvgxojkb>
+References: <20250701164507.14883-1-will@kernel.org>
+ <20250701164507.14883-5-will@kernel.org>
+ <20250701201400.52442b0e@pumpkin>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <20250702130915.GEaGUve86iYnv337_Z@fat_crate.local>
+In-Reply-To: <20250701201400.52442b0e@pumpkin>
 
-On Wed, Jul 02, 2025 at 03:09:15PM +0200, Borislav Petkov wrote:
-> Hey,
-> 
-> On Wed, Jul 02, 2025 at 01:58:50PM +0100, Mark Rutland wrote:
-> > Hi Boris,
-> > 
-> > [ adding Linux and Jinjie, since this is almost certainly due to the
-> >   irqentry split ]
+On Tue, Jul 01, 2025 at 08:14:00PM +0100, David Laight wrote:
+>On Tue,  1 Jul 2025 17:45:03 +0100
+>Will Deacon <will@kernel.org> wrote:
+>
+>> When allocating receive buffers for the vsock virtio RX virtqueue, an
+>> SKB is allocated with a 4140 data payload (the 44-byte packet header +
+>> VIRTIO_VSOCK_DEFAULT_RX_BUF_SIZE). Even when factoring in the SKB
+>> overhead, the resulting 8KiB allocation thanks to the rounding in
+>> kmalloc_reserve() is wasteful (~3700 unusable bytes) and results in a
+>> higher-order page allocation for the sake of a few hundred bytes of
+>> packet data.
+>>
+>> Limit the vsock virtio RX buffers to a page per SKB, resulting in much
+>> better memory utilisation and removing the need to allocate higher-order
+>> pages entirely.
+>>
+>> Signed-off-by: Will Deacon <will@kernel.org>
+>> ---
+>>  include/linux/virtio_vsock.h     | 1 -
+>>  net/vmw_vsock/virtio_transport.c | 7 ++++++-
+>>  2 files changed, 6 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/include/linux/virtio_vsock.h b/include/linux/virtio_vsock.h
+>> index eb6980aa19fd..1b5731186095 100644
+>> --- a/include/linux/virtio_vsock.h
+>> +++ b/include/linux/virtio_vsock.h
+>> @@ -109,7 +109,6 @@ static inline size_t virtio_vsock_skb_len(struct sk_buff *skb)
+>>  	return (size_t)(skb_end_pointer(skb) - skb->head);
+>>  }
+>>
+>> -#define VIRTIO_VSOCK_DEFAULT_RX_BUF_SIZE	(1024 * 4)
+>>  #define VIRTIO_VSOCK_MAX_BUF_SIZE		0xFFFFFFFFUL
+>>  #define VIRTIO_VSOCK_MAX_PKT_BUF_SIZE		(1024 * 64)
+>>
+>> diff --git a/net/vmw_vsock/virtio_transport.c b/net/vmw_vsock/virtio_transport.c
+>> index 488e6ddc6ffa..3daba06ed499 100644
+>> --- a/net/vmw_vsock/virtio_transport.c
+>> +++ b/net/vmw_vsock/virtio_transport.c
+>> @@ -307,7 +307,12 @@ virtio_transport_cancel_pkt(struct vsock_sock *vsk)
+>>
+>>  static void virtio_vsock_rx_fill(struct virtio_vsock *vsock)
+>>  {
+>> -	int total_len = VIRTIO_VSOCK_DEFAULT_RX_BUF_SIZE + VIRTIO_VSOCK_SKB_HEADROOM;
+>> +	/* Dimension the SKB so that the entire thing fits exactly into
+>> +	 * a single page. This avoids wasting memory due to alloc_skb()
+>> +	 * rounding up to the next page order and also means that we
+>> +	 * don't leave higher-order pages sitting around in the RX queue.
+>> +	 */
+>> +	int total_len = SKB_WITH_OVERHEAD(PAGE_SIZE);
+>
+>Should that be an explicit 4096?
+>Otherwise it is very wasteful of memory on systems with large pages.
 
-I was wrong about the above, sorry for the noise!
+This is a good point!
 
-> It looks to me like that BUGVERBOSE stuff in tip/core/bugs and it warns
-> because core/entry starts using it when it gets merged to the rest of the tip
-> pile.
+What about SKB_WITH_OVERHEAD(VIRTIO_VSOCK_DEFAULT_RX_BUF_SIZE) ?
 
-Yep; my bisect fingers:
+Thanks,
+Stefano
 
-  b940c7b8ea92 ("bugs/s390: Use 'cond_str' in __EMIT_BUG()")
+>
+>	David
+>
+>>  	struct scatterlist pkt, *p;
+>>  	struct virtqueue *vq;
+>>  	struct sk_buff *skb;
+>
+>
 
-| git bisect start
-| # bad: [104f02a7798f7e8aba25545f9d485035532260b2] Merge core/entry into tip/master
-| git bisect bad 104f02a7798f7e8aba25545f9d485035532260b2
-| # bad: [959770cda97b75bc831267fd939408ec58139cb5] Merge locking/core into tip/master
-| git bisect bad 959770cda97b75bc831267fd939408ec58139cb5
-| # good: [86731a2a651e58953fc949573895f2fa6d456841] Linux 6.16-rc3
-| git bisect good 86731a2a651e58953fc949573895f2fa6d456841
-| # good: [7abdafd2343ab199367c8243d6a5f06a9aa6976b] Merge tag 'drm-fixes-2025-06-28' of https://gitlab.freedesktop.org/drm/kernel
-| git bisect good 7abdafd2343ab199367c8243d6a5f06a9aa6976b
-| # good: [2d41eb1b4a70fd8f3ca7f08ed209ae5c8037af62] Merge x86/kconfig into tip/master
-| git bisect good 2d41eb1b4a70fd8f3ca7f08ed209ae5c8037af62
-| # good: [b7770ed895ab888d0626802a83939f6a30c35576] Merge x86/bugs into tip/master
-| git bisect good b7770ed895ab888d0626802a83939f6a30c35576
-| # bad: [244efb663e9ead81d3d258d81f38a38af02e09de] Merge core/bugs into tip/master
-| git bisect bad 244efb663e9ead81d3d258d81f38a38af02e09de
-| # bad: [e7e26cfad96c57c81156693cbf63032d899fe7c9] bugs/s390: Remove private WARN_ON() implementation
-| git bisect bad e7e26cfad96c57c81156693cbf63032d899fe7c9
-| # good: [66e94df0dd272b057899b8cdbca906ea1306d7a1] bugs/LoongArch: Pass in 'cond_str' to __BUG_ENTRY()
-| git bisect good 66e94df0dd272b057899b8cdbca906ea1306d7a1
-| # bad: [4218dedd47c79946bc9e6214f50c0d16096873ce] bugs/riscv: Pass in 'cond_str' to __BUG_FLAGS()
-| git bisect bad 4218dedd47c79946bc9e6214f50c0d16096873ce
-| # good: [7d9e9021ad7e9dac89b8262fbf95630ead7a787a] bugs/s390: Pass in 'cond_str' to __EMIT_BUG()
-| git bisect good 7d9e9021ad7e9dac89b8262fbf95630ead7a787a
-| # bad: [b940c7b8ea921fae7a99d305e819883d8311669e] bugs/s390: Use 'cond_str' in __EMIT_BUG()
-| git bisect bad b940c7b8ea921fae7a99d305e819883d8311669e
-| # first bad commit: [b940c7b8ea921fae7a99d305e819883d8311669e] bugs/s390: Use 'cond_str' in __EMIT_BUG()  
-
-> Lemme show it to Peter.
-
-Sounds like a plan.
-
-Mark.
 
