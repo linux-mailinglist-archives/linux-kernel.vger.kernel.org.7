@@ -1,128 +1,214 @@
-Return-Path: <linux-kernel+bounces-713504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4449AF5AA9
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 16:11:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AF318AF5AB7
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 16:12:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15E8E1620A7
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:11:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E31B3164481
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:12:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A03972BD597;
-	Wed,  2 Jul 2025 14:11:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 580772BD5AE;
+	Wed,  2 Jul 2025 14:12:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XM2yBL9z";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="iChPUFrS"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UHgxogd/"
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DD08284B3F;
-	Wed,  2 Jul 2025 14:11:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19BBF2BD59E;
+	Wed,  2 Jul 2025 14:12:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751465507; cv=none; b=XKM5UPn6db3CIlZVOyEIqyKrNqMv56gSIXiMULV0ycAFUyp54t2fD4QqJHVieGZpxO+7MJ1Sovlx7i3P1B0lIY61bfqGS9AOEh6u5B0tYd7fUyi8Ziu7/YQqq/Jp/zZyqhyrgNBkg0YYQUDLQlw+wYPJ46SMNQzDyVxnF3PhDYM=
+	t=1751465560; cv=none; b=KQDlzjtPvFMdIItTxaiG3XDJNv6mNa2wLumQGeO8j1Ul2mkY4E0OgoFtytL5OA9xUKBQvTN0d0ZfHmcnQ70WZt2GSYtxtzFLa67I3k+P8LA56hp2DtHj9LZ9aGfkH3bpJKr/miKC2z386Pc3/q4CsKgZFsXdW7QMFFAYfD9glUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751465507; c=relaxed/simple;
-	bh=jkqGUunWYtC/6FAcQVLaqUo6B0iJuiNRSN0NLvfkka0=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=F/12yMiNKdkuyMLClwFQvBMO8LRVaYwE62BJM6uEwKzdV49YTAERaiykik/N8DzLpVkkF39oI+Yz+WkCeSK1YhRJkPTokaTssv+OC3lPl00kbfn0KWfvmEqIcAtIJ+TBSz4QdiUext2dljQudRwpXb30PCxq52oietV2jR6vTb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XM2yBL9z; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=iChPUFrS; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 02 Jul 2025 14:11:42 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1751465503;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dVB66cXrAO/u4wGJRc/4ma1ZhCHcA+OO3ptdgLPprAc=;
-	b=XM2yBL9zmZ393NkvFj/1PHS/LWRRK08GAaLm6L2EIHCqLDDGk1RWXtwFUDPYC2OtST70P6
-	6xUR+FVGCKOdv1r7LyeTNTzbQtgWCn3pKxuW9U60B+vf0K53HFiP7qPUcx+xbwyrNOmJ2O
-	FS1V/DBRGw5V7WqS/oaYSXxJWdwsnu/uCRzgrVhkYNv5czqcOBwAHSKhWorTJuaCS8CSqq
-	n5l+Tnxx4v1vzwdxuZe095olzOXWC6gnHVjP1aPtUh3QkMtNXTy6UBvcuWCWef8A5LgqVF
-	CwfVXpt/wdDSFMB3obXrRMyW7aHtDFu/FjqHB1fxrtwIucwp8TAXJM1y9C4gxg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1751465503;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dVB66cXrAO/u4wGJRc/4ma1ZhCHcA+OO3ptdgLPprAc=;
-	b=iChPUFrSsbDxcUAHxnjFlylj5rZ/O9zsc7Z8F6EAf/fYoa8wA4Mzs0ZtfZyYxG+BElO0IM
-	Uf3EomiH+pajfwAw==
-From: "tip-bot2 for Geert Uytterhoeven" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/drivers] irqchip/renesas-rzv2h: Remove unneeded includes
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
- Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: =?utf-8?q?=3Cd4fbffc39af2eaa7bc50a0a97ffb3a22e3c4cb6a=2E17514?=
- =?utf-8?q?46168=2Egit=2Egeert+renesas=40glider=2Ebe=3E?=
-References: =?utf-8?q?=3Cd4fbffc39af2eaa7bc50a0a97ffb3a22e3c4cb6a=2E175144?=
- =?utf-8?q?6168=2Egit=2Egeert+renesas=40glider=2Ebe=3E?=
+	s=arc-20240116; t=1751465560; c=relaxed/simple;
+	bh=Dm6xqHk0RBgx7vLihZyB1iyak1emMrW4rq8J0I4i8o4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZlyUfpzqTPhTiqo7K6c9SfXm/lgyt9Y/yFlueWAWByBfz0DmN36TQ5hT/tjjRGp2/FmWLBmeSsjb09icPDAdTlIULPo0SYb0+YAuYIudcxQonlLp9c3dGTTqbg+ubXULL2tZnZn/FaizrffZ2wHEJHOeGMF7O2NONjeRGZb73dc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UHgxogd/; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-b321bd36a41so3965924a12.2;
+        Wed, 02 Jul 2025 07:12:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751465555; x=1752070355; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3hi0b4Q2TMU9s9ow4O1FxnYpGW2LdSH037wzbnfcLAI=;
+        b=UHgxogd/e2vGa8mbXR0Ryy0YrcG83M1VqWf+KuzZqVLCBaobO/1gDIRxF6h5ZHpclf
+         1hDAxIbT26J+e46c0hYZ1WLHcUp/WBp8K6fsU0pHP7/ZGQQA/mzWkNJS15SwT5q3GmJp
+         35zIbo38vxOluo0YLt864gYpQh0HCNUH2LKz9nBJJ2PC4wR4n3ex1Sq8m6Dn7k5HOo7p
+         F5tprdjz9MtM1bEj/uRufs7poW/H7h7l6t2FKOtInqNNLpD4JmGFvFn/9RQCRpxbUd+o
+         jXdhODCa8KjT81recq+ixZiAGMunRlmTbUQzNBufWFAvHw2uj7f856KaDXg2BkuG0/Hc
+         OmSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751465555; x=1752070355;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=3hi0b4Q2TMU9s9ow4O1FxnYpGW2LdSH037wzbnfcLAI=;
+        b=Tax2hcW/14/rshrtzjm3E1q7/B/C0qMrTRMcuFpMO3vS76Uxe+GTU+ibTokwlcWvsc
+         SSritfsSmGL46i0k9gT0tmzeDOglUayZ2nCw8oOquulUi2ity5oH+pA5z4Ff7QWFggfo
+         LDYctO6ZWEy2CBwei61OFp2yJz2Xs4X8US2g3YwJ/wAkc6FdOmckDOc69XkfIpiQozI4
+         6DjmtS+vi6uWeh9TLbHfhYER5G4WzdnbBcw4/YMZ4PILNyWe891YiQSaEC7i3tzxm819
+         CtXRkUhpp04irKIvTY3aYrivsxZvMEc404ox9ZRZXCTrKNtsZSmHf19cm6VcKRQ4Upca
+         NKXw==
+X-Forwarded-Encrypted: i=1; AJvYcCUOniCKDhgDCCVgUIEBZ0HW0kGhLKtRRoQ1s/cVn8ALYiX2f1U2t0TXGOP1/KyXgt+xzd1Jnaa1hKWE8yuNsQ==@vger.kernel.org, AJvYcCV8MMG+VWc1+LRY/8Nd3GawytSrzz1zUk6T+t7d78haBJLdlt3OuIoYKXI2BZXGY2Yaovt9g3QkUh5iqQ==@vger.kernel.org, AJvYcCVeX1sopL+Q0IW/sBsrJJ8vBA7KmMrqqAf9QZIVpQPycWH+QILO2jiefx40cP31FWBBT3lSCvRMSVbzK76J@vger.kernel.org, AJvYcCWoivTaPMihWtJnHa4F7FsegHAuvTtW39Uz6Q48cjVYpWfB0ivgvoz317ydDPG3B/VlqNKS+JERfRtjsw==@vger.kernel.org, AJvYcCXSlbXAUHmBnv0jqw4JBGILStDgs+jG7qdsGbwN69Zh2/6rw3A9uw/jDiIj9DmEzDLMy36BQAmzyeFr@vger.kernel.org
+X-Gm-Message-State: AOJu0YzpFaBB3/GB06zPjVGqI3a8E9KuaIzxmA+q1WNauyUt0sXG0689
+	i11Bb6/tgv7KCm8O6UqvpU96kuucTPWDgimJv82OQhCZIbJ06coPtd25
+X-Gm-Gg: ASbGncse17autRLbKo7wvsMqi7sv4xUAFj4TV3w5OSPayzbUFHp03nwqsFY938bQPx2
+	3GzF/8zGTGrjW+18JhBfRLb1/+ndY2EFuFp7sxJoMH8ttJ041wITc9gH8bxpEK4NBZq7lw3o+FF
+	JKF7dFLcSR3LItJy9qtqwtjv7IWzeStXbeIScNdJxzMdbmMRyuMxHuP1LwyOMGJxsqfmMYk0T+b
+	wNxSAfMjGoUSpbe/ljnqd8t213EYXMo+sE1cNo6y+HPK2SJL7+jEpSIHRDVCNBB5SrFXA4NVTQS
+	mC3d982wBqRnByvOb159jFtBt7P1ASks7pmBe+gE+omGFGOtjwzXsDtNBzXe32UxXBFRmKIgzN5
+	THjntgwD4/1F7YcSsDY1oW014ct5/iIwtqZteqVI=
+X-Google-Smtp-Source: AGHT+IFKRDLioih13g48ycaXA5K8ysUyKk1vSQvjV96+wwiKTloc/oO2WVx/lFSAoNhOajXgeeSAFQ==
+X-Received: by 2002:a05:6a20:a126:b0:21d:fd1:9be with SMTP id adf61e73a8af0-222d7de1c90mr4563817637.12.1751465555071;
+        Wed, 02 Jul 2025 07:12:35 -0700 (PDT)
+Received: from ?IPV6:240e:305:798e:6800:ad23:906d:e07c:8a1e? ([240e:305:798e:6800:ad23:906d:e07c:8a1e])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74af56ce9f3sm14100034b3a.122.2025.07.02.07.12.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 02 Jul 2025 07:12:34 -0700 (PDT)
+Message-ID: <54a85ec6-992d-4685-9031-114ba634e0a3@gmail.com>
+Date: Wed, 2 Jul 2025 22:12:20 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <175146550236.406.13772230982074344211.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/4] fs: change write_begin/write_end interface to take
+ struct kiocb *
+To: Matthew Wilcox <willy@infradead.org>
+Cc: "tytso@mit.edu" <tytso@mit.edu>, "hch@infradead.org" <hch@infradead.org>,
+ "adilger.kernel@dilger.ca" <adilger.kernel@dilger.ca>,
+ "brauner@kernel.org" <brauner@kernel.org>,
+ "jani.nikula@linux.intel.com" <jani.nikula@linux.intel.com>,
+ "rodrigo.vivi@intel.com" <rodrigo.vivi@intel.com>,
+ "tursulin@ursulin.net" <tursulin@ursulin.net>,
+ "airlied@gmail.com" <airlied@gmail.com>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
+ "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+ "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ "linux-mm@kvack.org" <linux-mm@kvack.org>,
+ "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "chentao325@qq.com" <chentao325@qq.com>,
+ "frank.li@vivo.com" <frank.li@vivo.com>
+References: <20250627110257.1870826-1-chentaotao@didiglobal.com>
+ <20250627110257.1870826-4-chentaotao@didiglobal.com>
+ <aF68sKzx24P1q54h@casper.infradead.org>
+From: Taotao Chen <chentt325@gmail.com>
+In-Reply-To: <aF68sKzx24P1q54h@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-The following commit has been merged into the irq/drivers branch of tip:
 
-Commit-ID:     41a5f82885e152c364e587ab30df4e582e96b73a
-Gitweb:        https://git.kernel.org/tip/41a5f82885e152c364e587ab30df4e582e96b73a
-Author:        Geert Uytterhoeven <geert+renesas@glider.be>
-AuthorDate:    Wed, 02 Jul 2025 10:53:54 +02:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Wed, 02 Jul 2025 16:05:36 +02:00
+在 2025/6/27 23:45, Matthew Wilcox 写道:
+> On Fri, Jun 27, 2025 at 11:03:11AM +0000, 陈涛涛 Taotao Chen wrote:
+>> diff --git a/fs/exfat/file.c b/fs/exfat/file.c
+>> index 841a5b18e3df..fdc2fa1e5c41 100644
+>> --- a/fs/exfat/file.c
+>> +++ b/fs/exfat/file.c
+>> @@ -532,10 +532,12 @@ int exfat_file_fsync(struct file *filp, loff_t start, loff_t end, int datasync)
+>>   	return blkdev_issue_flush(inode->i_sb->s_bdev);
+>>   }
+>>   
+>> -static int exfat_extend_valid_size(struct file *file, loff_t new_valid_size)
+>> +static int exfat_extend_valid_size(const struct kiocb *iocb,
+>> +				   loff_t new_valid_size)
+>>   {
+>>   	int err;
+>>   	loff_t pos;
+>> +	struct file *file = iocb->ki_filp;
+>>   	struct inode *inode = file_inode(file);
+>>   	struct exfat_inode_info *ei = EXFAT_I(inode);
+>>   	struct address_space *mapping = inode->i_mapping;
+>> @@ -551,14 +553,14 @@ static int exfat_extend_valid_size(struct file *file, loff_t new_valid_size)
+>>   		if (pos + len > new_valid_size)
+>>   			len = new_valid_size - pos;
+>>   
+>> -		err = ops->write_begin(file, mapping, pos, len, &folio, NULL);
+>> +		err = ops->write_begin(iocb, mapping, pos, len, &folio, NULL);
+>>   		if (err)
+>>   			goto out;
+>>   
+>>   		off = offset_in_folio(folio, pos);
+>>   		folio_zero_new_buffers(folio, off, off + len);
+>>   
+>> -		err = ops->write_end(file, mapping, pos, len, len, folio, NULL);
+>> +		err = ops->write_end(iocb, mapping, pos, len, len, folio, NULL);
+>>   		if (err < 0)
+>>   			goto out;
+>>   		pos += len;
+>> @@ -604,7 +606,7 @@ static ssize_t exfat_file_write_iter(struct kiocb *iocb, struct iov_iter *iter)
+>>   	}
+>>   
+>>   	if (pos > valid_size) {
+>> -		ret = exfat_extend_valid_size(file, pos);
+>> +		ret = exfat_extend_valid_size(iocb, pos);
+>>   		if (ret < 0 && ret != -ENOSPC) {
+>>   			exfat_err(inode->i_sb,
+>>   				"write: fail to zero from %llu to %llu(%zd)",
+>> @@ -655,8 +657,11 @@ static vm_fault_t exfat_page_mkwrite(struct vm_fault *vmf)
+>>   	struct file *file = vma->vm_file;
+>>   	struct inode *inode = file_inode(file);
+>>   	struct exfat_inode_info *ei = EXFAT_I(inode);
+>> +	struct kiocb iocb;
+>>   	loff_t start, end;
+>>   
+>> +	init_sync_kiocb(&iocb, file);
+>> +
+>>   	if (!inode_trylock(inode))
+>>   		return VM_FAULT_RETRY;
+>>   
+>> @@ -665,7 +670,7 @@ static vm_fault_t exfat_page_mkwrite(struct vm_fault *vmf)
+>>   			start + vma->vm_end - vma->vm_start);
+>>   
+>>   	if (ei->valid_size < end) {
+>> -		err = exfat_extend_valid_size(file, end);
+>> +		err = exfat_extend_valid_size(&iocb, end);
+>>   		if (err < 0) {
+>>   			inode_unlock(inode);
+>>   			return vmf_fs_error(err);
+> This is unnecessary work.  The only ->write_begin/write_end that we'll
+> see here is exfat_write_begin() / exfat_write_end() which don't actually
+> need iocb (or file).  Traditionally we pass NULL in these situations,
+> but the exfat people probably weren't aware of this convention.
+>
+> exfat_extend_valid_size() only uses the file it's passed to get the
+> inode, and both callers already have the inode.  So I'd change
+> exfat_extend_valid_size() to take an inode instead of a file as its
+> first argument, then you can skip the creation of an iocb in
+> exfat_page_mkwrite().
 
-irqchip/renesas-rzv2h: Remove unneeded includes
 
-The RZ/V2H ICU driver does not use clocks, of_address, or syscore.
+My initial goal was to maintain consistency with the updated ->write_begin/
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/d4fbffc39af2eaa7bc50a0a97ffb3a22e3c4cb6a.1751446168.git.geert+renesas@glider.be
+->write_end interfaces. That meant passing the iocb to avoid special cases
 
----
- drivers/irqchip/irq-renesas-rzv2h.c | 3 ---
- 1 file changed, 3 deletions(-)
+and keep the changes minimal and safe.
 
-diff --git a/drivers/irqchip/irq-renesas-rzv2h.c b/drivers/irqchip/irq-renesas-rzv2h.c
-index 3daa5de..9018d9c 100644
---- a/drivers/irqchip/irq-renesas-rzv2h.c
-+++ b/drivers/irqchip/irq-renesas-rzv2h.c
-@@ -11,18 +11,15 @@
- 
- #include <linux/bitfield.h>
- #include <linux/cleanup.h>
--#include <linux/clk.h>
- #include <linux/err.h>
- #include <linux/io.h>
- #include <linux/irqchip.h>
- #include <linux/irqchip/irq-renesas-rzv2h.h>
- #include <linux/irqdomain.h>
--#include <linux/of_address.h>
- #include <linux/of_platform.h>
- #include <linux/pm_runtime.h>
- #include <linux/reset.h>
- #include <linux/spinlock.h>
--#include <linux/syscore_ops.h>
- 
- /* DT "interrupts" indexes */
- #define ICU_IRQ_START				1
+But you're right, since exfat_write_begin() and exfat_write_end() don't 
+use the
+
+iocb or file pointer, passing NULL is fine, and having 
+exfat_extend_valid_size()
+
+directly take an inode makes the code simpler and clearer.
+
+
+In addition, inside the ntfs_extend_initialized_size() function, I also 
+set the iocb
+
+parameter to NULL when calling ntfs_write_begin() and ntfs_write_end().
+
+
+
 
