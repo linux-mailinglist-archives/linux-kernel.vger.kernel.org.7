@@ -1,129 +1,160 @@
-Return-Path: <linux-kernel+bounces-713480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67007AF5A59
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 16:00:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EB18AF5A58
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 16:00:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C0F04E6E4A
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:00:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 564F21C22E44
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:00:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4165286D6F;
-	Wed,  2 Jul 2025 14:00:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DC60286406;
+	Wed,  2 Jul 2025 14:00:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=listout.xyz header.i=@listout.xyz header.b="y2GkHQz2"
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="p8k4UJsN"
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0481828688C
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 14:00:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18EE028469A
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 14:00:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751464815; cv=none; b=LMzc1wI544W5bR70nc55ACiXO7Ham6NqyJNXa7eP2EVvNSN2PmelhzIB+b2R7fWMOswYxpvSI4UjusSi72cH7sf/dls/A8aHHcTQtVY8lsCNEdNYeO/s0MrtXMLYoI/FRlfyx7ffJAg8YN2veDs3Gn8dO8YuJsjGCS60AbjmLOo=
+	t=1751464810; cv=none; b=OCNdD3++mbdZotNCsKyKNCG4CT835G/Td7apNjxz8ZXx5vN3Q3iEOnHRO60vdn+Tlr3jODA7XCT1fEgdcDuAODGEy/9EYiDlr52sE7ToC5CvEGc5mv8sSfReXSgC3+Mdo1TjTOrQa37+A65m0zWtWzRUtJyM6cnOvij6VM0lZA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751464815; c=relaxed/simple;
-	bh=8BkaOVft+W2bYAK2FXK/p+ptB3nhhLtqcS7ezMLmfIc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=izahAsxlT+MTkQV7wCYp5ng/X2TVWA6lw/F1dgS5SswX/VK5M11NPNZMfwY3w2WNOwK4s2sh8RjMCQfVWz+w5Vv3HyFGOJlFnb0AOjkjbsRH2/06F5tVoZ3AlLk7McHHNs9h7Ik6y0jie65lIR/3Aer/DBGMuzfFTOiNLSxyovY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=listout.xyz; spf=pass smtp.mailfrom=listout.xyz; dkim=pass (2048-bit key) header.d=listout.xyz header.i=@listout.xyz header.b=y2GkHQz2; arc=none smtp.client-ip=80.241.56.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=listout.xyz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=listout.xyz
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4bXM3Y1Qtdz9tdp;
-	Wed,  2 Jul 2025 16:00:09 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=listout.xyz; s=MBO0001;
-	t=1751464809;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=RT/fvfvkATMUMVde7NV2a6COYwtEX90/2hkOIdHqpjE=;
-	b=y2GkHQz2UQEHOFp2GM9wtjhZcPgazeBmjcMYg9bLJvm2P365bMuBdX4ScmMm3uTLlaX0YQ
-	zFgwBWbg4G/u/ZnUGLhhUih1G0MVKHftnZIKzfGpIJB0YdUBW6FjULE8eP/b8j7vboSgfI
-	Qqb4gzzZnBfawzHDshQMzGcIpb3VHVNlsuUpMyXh4WzFL76OWBBfiDKjzXVEyluSbUbjWH
-	lO8CDAEw5yukzAlrkuWkZcJ8UiqEm4OHsJ2Ieo2S/wGrRjqeKPfvC7AZ2J32zNfqI4XbBh
-	In7zofENoKK73Pq5YkTxyUwsTZf7dgxXuTZVExjwORwnkHnR0Ocb1cMQPoEung==
-From: Brahmajit Das <listout@listout.xyz>
-To: linux-kernel@vger.kernel.org
-Cc: alexander.usyskin@intel.com,
-	tomas.winkler@intel.com,
-	gregkh@linuxfoundation.org
-Subject: [PATCH v2] samples: mei: Fix building on musl libc
-Date: Wed,  2 Jul 2025 19:29:55 +0530
-Message-ID: <20250702135955.24955-1-listout@listout.xyz>
+	s=arc-20240116; t=1751464810; c=relaxed/simple;
+	bh=334YBk5ho3itaFbhHkxVkPmHyXwS6qZYCVudfb1UGFk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dFBj1Ty6IdTDRk9q5rl5LsoP/VwJnfOVRIdnmJj9xkfojtJuhy3TnPaQbX1p2s0c1QAftf+pSsV3ryB0svnXZ9FOYJvik5ramorHaOmYqpWsadeT/RyYGb3EasuUd4lkB3r5ZsyIjtnwpSVLg/9P6rCuzA0/CA+wYni6L031nm0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=p8k4UJsN; arc=none smtp.client-ip=209.85.160.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4a44b9b2af8so24645511cf.3
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 07:00:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1751464808; x=1752069608; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IAy5pJVipOegXkcFxex+Nx+8U9RPqLz52WABvUkCFNQ=;
+        b=p8k4UJsNFmJH8dmxp6Hogh2jRnL0joItbMbK/ovZlfPGo7l1EYY3pDfyeu0s9zTc6+
+         mi2JtYEaTsfSJ0e/BxovsivoZMeXc0ixXlmLTeFFGvapAbbbY6qcFU3I1Lf45SmuCHOz
+         IxVyOmK6c2MVNLciiRam9SGV9suzpBkGImYc+/0vH9F5jXEkKLnvJ+dbQeRNRQMX0BAe
+         ss0hDkTEKXM8oK+fHkeRehHwdEYMKWczTBgkquJZZX1oTHTXqaGZZphrINtXXdTj9dCr
+         oDfhtGaEpuA3yQYkZrEl7gxGymlJIi7YhqnVAHDanAapl2BSbIDUXii3wdLPSNz9g6bP
+         CCbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751464808; x=1752069608;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IAy5pJVipOegXkcFxex+Nx+8U9RPqLz52WABvUkCFNQ=;
+        b=e2/cdumfpRn6VVGgrkvaSb6nv4YotQ9ZrLfGz4jSmKMGDZGqkuOFHiqlLrVmdvnItb
+         glMKlVkJas1vz+rj1m2thz6APcDu9SRq/mGb5NobwVtqPKWMtTkI/GtaKcjghg9lk7GA
+         91OJTp74Edv5CWnIvWET1MObq7J0oYTdlKX4siGNWLJU7HusarMy0frrLNYdbW+GYm8s
+         PTiakmjhZ6ZLgbKuqBkQc0nf7tLnzHAG9/1LkqyVermxcf4iG+Q1OHJBhqYFeIFhtMjD
+         2dBoZKsOnsQ0624cn/ifTmkxQs88v0Y6sREfcvmyc1knekrTzglAMs2+KA8KpjMXeVl3
+         hG6g==
+X-Forwarded-Encrypted: i=1; AJvYcCV0XBqKL9PMnUQGnJUmd/QDaagG9iNSX4bF+GIbHI8vYq9Ve3iOsOLSIoZewybFWInGKAf8deIMxe/s2qk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmXGrRcHBjCV/aE1oWbNy1FL4XhV/PQUCEw6T8Nnna3QcBvtqz
+	5WS3f8qmChz0uwBsLgVtqlhCB/pNhU3DZnI9UWLOnIrBBxV2uGbUc4lPJKuXBjRDP5MEauzsVGm
+	eGy1nwXRgmxdpN8YGwo0LhSxq/P05zzwUqxLyPp/X
+X-Gm-Gg: ASbGncvDI1mVy3ZF3DyUBFIhLqV02JYW3Qqh3pSZHswQbK3G69VW1qCtByBMqk5nX/5
+	NzRapuANDL5xSEuSijmE6ixiA7cBgJONVVS2Zmzyw78ezK9NRipBe3mgQhn4kfasZ2s9Q8bOP9i
+	lIw8H/ZBeApcA83+uXnB2KBmOtYRYa3WgxM9f9/IGbVQ==
+X-Google-Smtp-Source: AGHT+IGWIeV9qlCekPD5yvT3T7J12NSgNsep3S9VUDAzDmKLUwM3JtsT6ag92QX7EemHeWzXB4REymZEuWjnsHWsI2o=
+X-Received: by 2002:ac8:5f53:0:b0:4a8:182f:3514 with SMTP id
+ d75a77b69052e-4a976a204f4mr49474191cf.49.1751464806530; Wed, 02 Jul 2025
+ 07:00:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 4bXM3Y1Qtdz9tdp
+References: <20250702110039.15038-1-jiayuan.chen@linux.dev> <c9c5d36bc516e70171d1bb1974806e16020fbff1@linux.dev>
+In-Reply-To: <c9c5d36bc516e70171d1bb1974806e16020fbff1@linux.dev>
+From: Eric Dumazet <edumazet@google.com>
+Date: Wed, 2 Jul 2025 06:59:55 -0700
+X-Gm-Features: Ac12FXwp8XZXi4rEalR7Po7yvbkYy9PGyrgDLaG4STeExITm6ZjzUqu2xPuLOTk
+Message-ID: <CANn89iJdGZq0HW3+uGLCMtekC7G5cPnHChCJFCUhvzuzPuhsrA@mail.gmail.com>
+Subject: Re: [PATCH net-next v1] tcp: Correct signedness in skb remaining
+ space calculation
+To: Jiayuan Chen <jiayuan.chen@linux.dev>
+Cc: netdev@vger.kernel.org, mrpre@163.com, 
+	Neal Cardwell <ncardwell@google.com>, Kuniyuki Iwashima <kuniyu@google.com>, 
+	"David S. Miller" <davem@davemloft.net>, David Ahern <dsahern@kernel.org>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	David Howells <dhowells@redhat.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The header bits/wordsize.h is glibc specific and on building on musl
-with allyesconfig results in
+On Wed, Jul 2, 2025 at 6:42=E2=80=AFAM Jiayuan Chen <jiayuan.chen@linux.dev=
+> wrote:
+>
+> July 2, 2025 at 19:00, "Jiayuan Chen" <jiayuan.chen@linux.dev> wrote:
+>
+>
+> >
+> > The calculation for the remaining space, 'copy =3D size_goal - skb->len=
+',
+> >
+> > was prone to an integer promotion bug that prevented copy from ever bei=
+ng
+> >
+> > negative.
+> >
+> > The variable types involved are:
+> >
+> > copy: ssize_t (long)
+> >
+> > size_goal: int
+> >
+> > skb->len: unsigned int
+> >
+> > Due to C's type promotion rules, the signed size_goal is converted to a=
+n
+> >
+> > unsigned int to match skb->len before the subtraction. The result is an
+> >
+> > unsigned int.
+> >
+> > When this unsigned int result is then assigned to the s64 copy variable=
+,
+> >
+> > it is zero-extended, preserving its non-negative value. Consequently,
+> >
+> > copy is always >=3D 0.
+> >
+>
+> To better explain this problem, consider the following example:
+> '''
+> #include <sys/types.h>
+> #include <stdio.h>
+> int size_goal =3D 536;
+> unsigned int skblen =3D 1131;
+>
+> void main() {
+>         ssize_t copy =3D 0;
+>         copy =3D size_goal - skblen;
+>         printf("wrong: %zd\n", copy);
+>
+>         copy =3D size_goal - (ssize_t)skblen;
+>         printf("correct: %zd\n", copy);
+>         return;
+> }
+> '''
+> Output:
+> '''
+> wrong: 4294966701
+> correct: -595
+> '''
 
-samples/mei/mei-amt-version.c:77:10: fatal error: bits/wordsize.h: No such file or directory
-   77 | #include <bits/wordsize.h>
-      |          ^~~~~~~~~~~~~~~~~
+Can you explain how one skb could have more bytes (skb->len) than size_goal=
+ ?
 
-mei-amt-version.c build file without bits/wordsize.h on musl and glibc.
+If we are under this condition, we already have a prior bug ?
 
-However on musl we get the follwing error without sys/time.h
-
-samples/mei/mei-amt-version.c: In function 'mei_recv_msg':
-samples/mei/mei-amt-version.c:159:24: error: storage size of 'tv' isn't known
-  159 |         struct timeval tv;
-      |                        ^~
-samples/mei/mei-amt-version.c:160:9: error: unknown type name 'fd_set'
-  160 |         fd_set set;
-      |         ^~~~~~
-samples/mei/mei-amt-version.c:168:9: error: implicit declaration of function 'FD_ZERO' [-Wimplicit-function-declaration]
-  168 |         FD_ZERO(&set);
-      |         ^~~~~~~
-samples/mei/mei-amt-version.c:169:9: error: implicit declaration of function 'FD_SET'; did you mean 'L_SET'? [-Wimplicit-function-declaration]
-  169 |         FD_SET(me->fd, &set);
-      |         ^~~~~~
-      |         L_SET
-samples/mei/mei-amt-version.c:170:14: error: implicit declaration of function 'select' [-Wimplicit-function-declaration]
-  170 |         rc = select(me->fd + 1, &set, NULL, NULL, &tv);
-      |              ^~~~~~
-samples/mei/mei-amt-version.c:171:23: error: implicit declaration of function 'FD_ISSET' [-Wimplicit-function-declaration]
-  171 |         if (rc > 0 && FD_ISSET(me->fd, &set)) {
-      |                       ^~~~~~~~
-samples/mei/mei-amt-version.c:159:24: warning: unused variable 'tv' [-Wunused-variable]
-  159 |         struct timeval tv;
-      |                        ^~
-
-Hence the the file has been included.
-
-Fixes: c52827cc4ddf ("staging/mei: add mei user space example")
-Signed-off-by: Brahmajit Das <listout@listout.xyz>
----
- samples/mei/mei-amt-version.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/samples/mei/mei-amt-version.c b/samples/mei/mei-amt-version.c
-index 867debd3b912..1d7254bcb44c 100644
---- a/samples/mei/mei-amt-version.c
-+++ b/samples/mei/mei-amt-version.c
-@@ -69,11 +69,11 @@
- #include <string.h>
- #include <fcntl.h>
- #include <sys/ioctl.h>
-+#include <sys/time.h>
- #include <unistd.h>
- #include <errno.h>
- #include <stdint.h>
- #include <stdbool.h>
--#include <bits/wordsize.h>
- #include <linux/mei.h>
- 
- /*****************************************************************************
--- 
-2.50.0
-
+Please describe how you caught this issue.
 
