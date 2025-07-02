@@ -1,485 +1,630 @@
-Return-Path: <linux-kernel+bounces-712338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-712334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0539AF07BF
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 03:06:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C33FEAF07B7
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 03:05:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04D014E13FE
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 01:06:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E5341894991
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 01:05:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55B0713B298;
-	Wed,  2 Jul 2025 01:05:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9981F17A2EC;
+	Wed,  2 Jul 2025 01:05:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mKymX8KG"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="agDXy5Nf"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9174413635E
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 01:05:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 484EB145FE8
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 01:04:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751418343; cv=none; b=uswivDQVpVi6Asvrj9VUa2GD4689LjcVvUSfXqktxUvYwb+I/YDwbwjHm1WpiUv3zmp65PzRSysEtwbVyGu9fp9hoouTOBRnNqKlSqSZi/On+0P7GsUsW+01AjhHTeXyG5CZ/M5SDPN0IkdP+zAYA7dRc7V8+SwSzLQuYZ+z/MY=
+	t=1751418301; cv=none; b=QvaYmmEkFlDM0AP4IoGU+DrXCy1u/arV4TKpzq5cVHQCglEmGyBidzIDMp8aFHxUxiHBkHhWfTWMD5ZYVFoRHCmkQ4unQFg2j0c98ig9knn5pn4p737CEbniz+cGE4jwTME+nkZGpLWKt/pnvtTUGxlm3VwBWnZ54KjmjHGQgus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751418343; c=relaxed/simple;
-	bh=f2UjTPl4HUGhaJZGvJzyLZ61geaJfkxh73V9CoWdrVc=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=mD1ee0huutV7Kn+ixWwFE9yzC0cOzhsQW78RKXMVLyCOUVTCjniI5wzeR3V4IUCB63ZI/HztpnehC/odK4MLknixaKb2SxHSezYRk7KcRYe7MAGWkDlu92+sCBOZjn2FUqlM5+xzJxzRpKyui+kVRK3BKYm1IRLTMo8NUrV9Qe8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ynaffit.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mKymX8KG; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ynaffit.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-7489d1f5e9fso9243176b3a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Jul 2025 18:05:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1751418341; x=1752023141; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=M/pcrYvaU6t8T3R2xq0AsGjXqPB0jvdSPEGz2fSJtgo=;
-        b=mKymX8KG/TsADw9rQANNgx4O04IItLsIxbZr73MeowEK/ivhYqKqOD6CgzIfHiZerC
-         WLi0oJ+/VQsUy2ecPG5840a2OfDhUX5MB9Zeo65NF+MsHGpNURA+hbkQQAye/JwWEODL
-         RRXo38QSXacAxyPVBuyuIvbbP0954LdvDdQFtgwRdDtdvqN1F27axJCjbWnqiaij0JO6
-         zoAFTun7BG5LZJjaGWePwmapEuHOC2n+70TvzgTrudr3u3sst9oMj772n/b3S2xbY+i+
-         DJ+lHdUogvEkJ+rIflFWa2ke7pmZqFV5eGaTPEOpC2+xmwW11SFxKGQ23saRYnS0SUtl
-         KREw==
+	s=arc-20240116; t=1751418301; c=relaxed/simple;
+	bh=HAi8XTCbUi9ctG7s2cBfvBed60TDj55oXZJqKL1myWY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EGyVBspCf3268Ko1HaWQ4/m7IoW0yYN0JKHNryPscb55276FSxa2m33A230rsEr7NqJKsvXsUSD73C9hgWmQ5XAJUX2lFHGAo7TQKXenOPLysmzGcqAHg590CZ+Mu+ffQsFZ/ukyGbV6nAmud0nipbGC5+69Vd3qUozx4+KYM0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=agDXy5Nf; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1751418298;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Y7e2iNuz6UMxuCJt+XXUmdNcGsesfcYP95Zgq3Kiu+4=;
+	b=agDXy5NfAl4u9XK3u77El7TgV0qZ+5Ug1s/sUoasFWJE+cnpW655pyj4iVNdnjrjaVMQvB
+	pLQG6fU3nRfETPpdwY5d6mL+xRrV5RlBY6iDzeD9xBtyW6dlSj0cYrjEaGEq3XAgAQPO8m
+	lmfbjAUUKRvc+nNxEc9lVgHlJX55wBM=
+Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com
+ [209.85.214.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-493-4QXzd4uEO-OcI9cTjMWsnA-1; Tue, 01 Jul 2025 21:04:56 -0400
+X-MC-Unique: 4QXzd4uEO-OcI9cTjMWsnA-1
+X-Mimecast-MFC-AGG-ID: 4QXzd4uEO-OcI9cTjMWsnA_1751418296
+Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-235196dfc50so55153735ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Jul 2025 18:04:56 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751418341; x=1752023141;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=M/pcrYvaU6t8T3R2xq0AsGjXqPB0jvdSPEGz2fSJtgo=;
-        b=LggAp5B5lI16c4f19/aA9gvYK7THV5vedr3HXNWreZS3u+9lA2nPaE9EO/pihhK6VF
-         ZBGnRDnLJHhvI8p6+GN6fOAHv9qH8Xmk5oGIp5XYfY9s8LFMG+MJnJ4PtTktlYlvvA9+
-         EbKae4R5ZRkD82TKuTDsM4o5zA7u2gvBnZCqoXrnKnPTTwJ9zljjVxyBVx8Ibaqy+el7
-         uEQnj8XPq4mHJ/ZhWcZxBtH7E9LwG4abM8AbIqqbhGs7LDeeZ6AKUhUVnGJFfR25Ic85
-         w6duQoAF0DRA1yGhFcDXCWbEVrU2Qo5sJL7CbxGDVBQv3w8PMuWNA0JgoABphlM7inOz
-         n5Wg==
-X-Gm-Message-State: AOJu0Yxp+tCTmLcgJp4v9HJ94f2JwX8YLKDYrtF6KT589r9qf94GE1fl
-	kfn3W3nEENlCmFourRBOh2ZC8uM2RMW0rHz4LFKHm0bfTxevpaAKEmEB7aSJ8wn/H7KdvZORAQn
-	Iid43JkWiy6CgqX2dvXjc9V9J/hih+wlJHGKOGhx6nN1sKp2yJnOYVt6REK/P37bewrGUJQphjR
-	w6MT/QMABJj5j0IX1mE4d4a2V4uYbQ/bmLLuMEbrZZr07e1Ct7Lw==
-X-Google-Smtp-Source: AGHT+IG5NLCTHeOaDLRDPmmOHIoEu82NGYVy1EMlQGWadW+vYXwIaO+BajMV3PWLuKbGBx45Tays0awo8y1u
-X-Received: from pfqn28.prod.google.com ([2002:aa7:985c:0:b0:746:1fcb:a9cc])
- (user=ynaffit job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:6a0a:b0:1f5:717b:46dc
- with SMTP id adf61e73a8af0-222d7e8389amr1975822637.27.1751418340836; Tue, 01
- Jul 2025 18:05:40 -0700 (PDT)
-Date: Tue,  1 Jul 2025 18:04:45 -0700
-In-Reply-To: <20250702010447.2994412-1-ynaffit@google.com>
+        d=1e100.net; s=20230601; t=1751418296; x=1752023096;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y7e2iNuz6UMxuCJt+XXUmdNcGsesfcYP95Zgq3Kiu+4=;
+        b=WgmlLMZo2gt36s8cmhpqaocuW7W27RUGJJxJ0xbsLSYV6p1CiTuJQqj8N0MWSRKxCs
+         rz3cuHf4UdKjZ9+wlxoYSeqlH+eJQi5e4wV/mw2zsduYlD2Fo7vBZyjD1zs43U5vxcZJ
+         /6QhswQGaxXIr6CyXCLtWDo7kq1v4/gpua1rwlGK7HgqRC8DeeqEXml0wbh31X/TMj0b
+         szvJOGMaVFEyv7V/AgO2eOB5yPyihFFuG+sBwtPMG0GcGOdQAbMy9Gi7Tb2Jvs/cGX5Q
+         nyHNzaTosizENIBjBM5Q/aBAuFNsbiGC5Uiy/+Em6xjpvu/AiezAKg5Ic2HEaqLhIQRY
+         kahQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVnE5oixMfk4/xVOn2WtCXRpPlY2OXvabHnWa11isgPo7EILVsz2/MksxAMwJ0dODDo49vEAlXN052Y/5s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdwnrnnrSmCWblKKf2ij0SkWuiQCVt3rYCcFbX7P1M/HuLc0Wp
+	I6vvcMI2boXqTf4n2QFLD7R4XBmSvNDRJds7SeyP9tc20+N3h3c2XUeWbZs1ns8f1+ibRVfco5n
+	+JreTVv9UxVzhaKwew0giOSnvcxOrRbqkmWay1apitxdMosNBssxNoAyAORRlZtPP6w==
+X-Gm-Gg: ASbGncvSwtNgVEuk9PzuNPeIF7FhwyfBP4rV9oS6eQ0DSD+FMrdyoCpUaG5zeQr2JX3
+	AyHetE+zKQ/AfUm0oxrAcIA9kZ+Klqki3onpFuhPV8Fr32ili6AXGKQX1gHxKL1sVBPTYIyk9WT
+	LRJuWh7/wMorenV8kZNmaRriqfs5gXGukzXM4uNSluB9a9fVEmPihhHmzdExW0kkfM8s0diKuzW
+	CG+08en1S0kwDAcUQRL2dnPL6Xk4JFXEeHKgfZtJOLs9iWSHQKfiKegasYbZ8bk/pMlcmBBAtTG
+	8QxQGHmLHijxo5VY/6uMOhWXroGNEf+qgmF7LthCUwAtTHUg4duot9Txcv6T8Q==
+X-Received: by 2002:a17:903:3d0f:b0:215:b1e3:c051 with SMTP id d9443c01a7336-23c6e7849e6mr8884115ad.11.1751418295518;
+        Tue, 01 Jul 2025 18:04:55 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFHOXu/xZ6csxfliZUO8Wh+5iggHLkbPkDpGniLYRwXHCeihkHJH2+rb6i8+X+baqZXhpUZaA==
+X-Received: by 2002:a17:903:3d0f:b0:215:b1e3:c051 with SMTP id d9443c01a7336-23c6e7849e6mr8883735ad.11.1751418294924;
+        Tue, 01 Jul 2025 18:04:54 -0700 (PDT)
+Received: from [192.168.68.51] (n175-34-62-5.mrk21.qld.optusnet.com.au. [175.34.62.5])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23acb3c6e09sm115339825ad.227.2025.07.01.18.04.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 01 Jul 2025 18:04:54 -0700 (PDT)
+Message-ID: <bb75b5fd-7186-4c93-80ff-0a398dc6c78d@redhat.com>
+Date: Wed, 2 Jul 2025 11:04:46 +1000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250702010447.2994412-1-ynaffit@google.com>
-X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
-Message-ID: <20250702010447.2994412-6-ynaffit@google.com>
-Subject: [PATCH v2 5/5] binder: encapsulate individual alloc test cases
-From: Tiffany Yang <ynaffit@google.com>
-To: linux-kernel@vger.kernel.org
-Cc: keescook@google.com, kernel-team@android.com, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"=?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?=" <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
-	Joel Fernandes <joelagnelf@nvidia.com>, Christian Brauner <brauner@kernel.org>, 
-	Carlos Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>, 
-	Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, 
-	Rae Moar <rmoar@google.com>, linux-kselftest@vger.kernel.org, 
-	kunit-dev@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 20/43] arm64: RME: Runtime faulting of memory
+To: Steven Price <steven.price@arm.com>, kvm@vger.kernel.org,
+ kvmarm@lists.linux.dev
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
+ Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
+ Oliver Upton <oliver.upton@linux.dev>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
+ <yuzenghui@huawei.com>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Joey Gouly <joey.gouly@arm.com>,
+ Alexandru Elisei <alexandru.elisei@arm.com>,
+ Christoffer Dall <christoffer.dall@arm.com>, Fuad Tabba <tabba@google.com>,
+ linux-coco@lists.linux.dev,
+ Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
+ Shanker Donthineni <sdonthineni@nvidia.com>, Alper Gun
+ <alpergun@google.com>, "Aneesh Kumar K . V" <aneesh.kumar@kernel.org>,
+ Emi Kisanuki <fj0570is@fujitsu.com>
+References: <20250611104844.245235-1-steven.price@arm.com>
+ <20250611104844.245235-21-steven.price@arm.com>
+Content-Language: en-US
+From: Gavin Shan <gshan@redhat.com>
+In-Reply-To: <20250611104844.245235-21-steven.price@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Each case tested by the binder allocator test is defined by 3 parameters:
-the end alignment type of each requested buffer allocation, whether those
-buffers share the front or back pages of the allotted address space, and
-the order in which those buffers should be released. The alignment type
-represents how a binder buffer may be laid out within or across page
-boundaries and relative to other buffers, and it's used along with
-whether the buffers cover part (sharing the front pages) of or all
-(sharing the back pages) of the vma to calculate the sizes passed into
-each test.
+On 6/11/25 8:48 PM, Steven Price wrote:
+> At runtime if the realm guest accesses memory which hasn't yet been
+> mapped then KVM needs to either populate the region or fault the guest.
+> 
+> For memory in the lower (protected) region of IPA a fresh page is
+> provided to the RMM which will zero the contents. For memory in the
+> upper (shared) region of IPA, the memory from the memslot is mapped
+> into the realm VM non secure.
+> 
+> Signed-off-by: Steven Price <steven.price@arm.com>
+> ---
+> Changes since v8:
+>   * Propagate the may_block flag.
+>   * Minor comments and coding style changes.
+> Changes since v7:
+>   * Remove redundant WARN_ONs for realm_create_rtt_levels() - it will
+>     internally WARN when necessary.
+> Changes since v6:
+>   * Handle PAGE_SIZE being larger than RMM granule size.
+>   * Some minor renaming following review comments.
+> Changes since v5:
+>   * Reduce use of struct page in preparation for supporting the RMM
+>     having a different page size to the host.
+>   * Handle a race when delegating a page where another CPU has faulted on
+>     a the same page (and already delegated the physical page) but not yet
+>     mapped it. In this case simply return to the guest to either use the
+>     mapping from the other CPU (or refault if the race is lost).
+>   * The changes to populate_par_region() are moved into the previous
+>     patch where they belong.
+> Changes since v4:
+>   * Code cleanup following review feedback.
+>   * Drop the PTE_SHARED bit when creating unprotected page table entries.
+>     This is now set by the RMM and the host has no control of it and the
+>     spec requires the bit to be set to zero.
+> Changes since v2:
+>   * Avoid leaking memory if failing to map it in the realm.
+>   * Correctly mask RTT based on LPA2 flag (see rtt_get_phys()).
+>   * Adapt to changes in previous patches.
+> ---
+>   arch/arm64/include/asm/kvm_emulate.h |  10 ++
+>   arch/arm64/include/asm/kvm_rme.h     |  10 ++
+>   arch/arm64/kvm/mmu.c                 | 133 ++++++++++++++++++++-
+>   arch/arm64/kvm/rme.c                 | 165 +++++++++++++++++++++++++++
+>   4 files changed, 312 insertions(+), 6 deletions(-)
+> 
 
-binder_alloc_test_alloc recursively generates each possible arrangement
-of alignment types and then tests that the binder_alloc code tracks pages
-correctly when those buffers are allocated and then freed in every
-possible order at both ends of the address space. While they provide
-comprehensive coverage, they are poor candidates to be represented as
-KUnit test cases, which must be statically enumerated. For 5 buffers and
-5 end alignment types, the test case array would have 750,000 entries.
-This change structures the recursive calls into meaningful test cases so
-that failures are easier to interpret.
+With @may_block set to true in kvm_free_stage2_pgd(), as commented previously.
+With below nitpicks addressed:
 
-Signed-off-by: Tiffany Yang <ynaffit@google.com>
----
-v2:
-* Fix build warning Reported-by: kernel test robot <lkp@intel.com>
-  Closes: https://lore.kernel.org/oe-kbuild-all/202506281959.hfOTIUjS-lkp@intel.com/
----
- drivers/android/tests/binder_alloc_kunit.c | 234 ++++++++++++++++-----
- 1 file changed, 181 insertions(+), 53 deletions(-)
+Reviewed-by: Gavin Shan <gshan@redhat.com>
 
-diff --git a/drivers/android/tests/binder_alloc_kunit.c b/drivers/android/tests/binder_alloc_kunit.c
-index 9e185e2036e5..02aa4a135eb5 100644
---- a/drivers/android/tests/binder_alloc_kunit.c
-+++ b/drivers/android/tests/binder_alloc_kunit.c
-@@ -24,7 +24,16 @@ MODULE_IMPORT_NS("EXPORTED_FOR_KUNIT_TESTING");
- #define BUFFER_NUM 5
- #define BUFFER_MIN_SIZE (PAGE_SIZE / 8)
- 
--static int binder_alloc_test_failures;
-+#define FREESEQ_BUFLEN ((3 * BUFFER_NUM) + 1)
-+
-+#define ALIGN_TYPE_STRLEN (12)
-+
-+#define ALIGNMENTS_BUFLEN (((ALIGN_TYPE_STRLEN + 6) * BUFFER_NUM) + 1)
-+
-+#define PRINT_ALL_CASES (0)
-+
-+/* 5^5 alignment combinations * 2 places to share pages * 5! free sequences */
-+#define TOTAL_EXHAUSTIVE_CASES (3125 * 2 * 120)
- 
- /**
-  * enum buf_end_align_type - Page alignment of a buffer
-@@ -86,18 +95,49 @@ enum buf_end_align_type {
- 	LOOP_END,
- };
- 
--static void pr_err_size_seq(struct kunit *test, size_t *sizes, int *seq)
-+static const char *const buf_end_align_type_strs[LOOP_END] = {
-+	[SAME_PAGE_UNALIGNED] = "SP_UNALIGNED",
-+	[SAME_PAGE_ALIGNED]   = " SP_ALIGNED ",
-+	[NEXT_PAGE_UNALIGNED] = "NP_UNALIGNED",
-+	[NEXT_PAGE_ALIGNED]   = " NP_ALIGNED ",
-+	[NEXT_NEXT_UNALIGNED] = "NN_UNALIGNED",
-+};
-+
-+struct binder_alloc_test_case_info {
-+	size_t *buffer_sizes;
-+	int *free_sequence;
-+	char alignments[ALIGNMENTS_BUFLEN];
-+	bool front_pages;
-+};
-+
-+static void stringify_free_seq(struct kunit *test, int *seq, char *buf,
-+			       size_t buf_len)
- {
-+	size_t bytes = 0;
- 	int i;
- 
--	kunit_err(test, "alloc sizes: ");
--	for (i = 0; i < BUFFER_NUM; i++)
--		pr_cont("[%zu]", sizes[i]);
--	pr_cont("\n");
--	kunit_err(test, "free seq: ");
--	for (i = 0; i < BUFFER_NUM; i++)
--		pr_cont("[%d]", seq[i]);
--	pr_cont("\n");
-+	for (i = 0; i < BUFFER_NUM; i++) {
-+		bytes += snprintf(buf + bytes, buf_len - bytes, "[%d]", seq[i]);
-+		if (bytes >= buf_len)
-+			break;
-+	}
-+	KUNIT_EXPECT_LT(test, bytes, buf_len);
-+}
-+
-+static void stringify_alignments(struct kunit *test, int *alignments,
-+				 char *buf, size_t buf_len)
-+{
-+	size_t bytes = 0;
-+	int i;
-+
-+	for (i = 0; i < BUFFER_NUM; i++) {
-+		bytes += snprintf(buf + bytes, buf_len - bytes, "[ %d:%s ]", i,
-+				  buf_end_align_type_strs[alignments[i]]);
-+		if (bytes >= buf_len)
-+			break;
-+	}
-+
-+	KUNIT_EXPECT_LT(test, bytes, buf_len);
- }
- 
- static bool check_buffer_pages_allocated(struct kunit *test,
-@@ -124,28 +164,30 @@ static bool check_buffer_pages_allocated(struct kunit *test,
- 	return true;
- }
- 
--static void binder_alloc_test_alloc_buf(struct kunit *test,
--					struct binder_alloc *alloc,
--					struct binder_buffer *buffers[],
--					size_t *sizes, int *seq)
-+static unsigned long binder_alloc_test_alloc_buf(struct kunit *test,
-+						 struct binder_alloc *alloc,
-+						 struct binder_buffer *buffers[],
-+						 size_t *sizes, int *seq)
- {
-+	unsigned long failures = 0;
- 	int i;
- 
- 	for (i = 0; i < BUFFER_NUM; i++) {
- 		buffers[i] = binder_alloc_new_buf(alloc, sizes[i], 0, 0, 0);
- 		if (IS_ERR(buffers[i]) ||
--		    !check_buffer_pages_allocated(test, alloc, buffers[i], sizes[i])) {
--			pr_err_size_seq(test, sizes, seq);
--			binder_alloc_test_failures++;
--		}
-+		    !check_buffer_pages_allocated(test, alloc, buffers[i], sizes[i]))
-+			failures++;
- 	}
-+
-+	return failures;
- }
- 
--static void binder_alloc_test_free_buf(struct kunit *test,
--				       struct binder_alloc *alloc,
--				       struct binder_buffer *buffers[],
--				       size_t *sizes, int *seq, size_t end)
-+static unsigned long binder_alloc_test_free_buf(struct kunit *test,
-+						struct binder_alloc *alloc,
-+						struct binder_buffer *buffers[],
-+						size_t *sizes, int *seq, size_t end)
- {
-+	unsigned long failures = 0;
- 	int i;
- 
- 	for (i = 0; i < BUFFER_NUM; i++)
-@@ -153,17 +195,19 @@ static void binder_alloc_test_free_buf(struct kunit *test,
- 
- 	for (i = 0; i <= (end - 1) / PAGE_SIZE; i++) {
- 		if (list_empty(page_to_lru(alloc->pages[i]))) {
--			pr_err_size_seq(test, sizes, seq);
- 			kunit_err(test, "expect lru but is %s at page index %d\n",
- 				  alloc->pages[i] ? "alloc" : "free", i);
--			binder_alloc_test_failures++;
-+			failures++;
- 		}
- 	}
-+
-+	return failures;
- }
- 
--static void binder_alloc_test_free_page(struct kunit *test,
--					struct binder_alloc *alloc)
-+static unsigned long binder_alloc_test_free_page(struct kunit *test,
-+						 struct binder_alloc *alloc)
- {
-+	unsigned long failures = 0;
- 	unsigned long count;
- 	int i;
- 
-@@ -177,27 +221,70 @@ static void binder_alloc_test_free_page(struct kunit *test,
- 			kunit_err(test, "expect free but is %s at page index %d\n",
- 				  list_empty(page_to_lru(alloc->pages[i])) ?
- 				  "alloc" : "lru", i);
--			binder_alloc_test_failures++;
-+			failures++;
- 		}
- 	}
-+
-+	return failures;
- }
- 
--static void binder_alloc_test_alloc_free(struct kunit *test,
-+/* Executes one full test run for the given test case. */
-+static bool binder_alloc_test_alloc_free(struct kunit *test,
- 					 struct binder_alloc *alloc,
--					 size_t *sizes, int *seq, size_t end)
-+					 struct binder_alloc_test_case_info *tc,
-+					 size_t end)
- {
-+	unsigned long pages = PAGE_ALIGN(end) / PAGE_SIZE;
- 	struct binder_buffer *buffers[BUFFER_NUM];
--
--	binder_alloc_test_alloc_buf(test, alloc, buffers, sizes, seq);
--	binder_alloc_test_free_buf(test, alloc, buffers, sizes, seq, end);
-+	unsigned long failures;
-+	bool failed = false;
-+
-+	failures = binder_alloc_test_alloc_buf(test, alloc, buffers,
-+					       tc->buffer_sizes,
-+					       tc->free_sequence);
-+	failed = failed || failures;
-+	KUNIT_EXPECT_EQ_MSG(test, failures, 0,
-+			    "Initial allocation failed: %lu/%u buffers with errors",
-+			    failures, BUFFER_NUM);
-+
-+	failures = binder_alloc_test_free_buf(test, alloc, buffers,
-+					      tc->buffer_sizes,
-+					      tc->free_sequence, end);
-+	failed = failed || failures;
-+	KUNIT_EXPECT_EQ_MSG(test, failures, 0,
-+			    "Initial buffers not freed correctly: %lu/%lu pages not on lru list",
-+			    failures, pages);
- 
- 	/* Allocate from lru. */
--	binder_alloc_test_alloc_buf(test, alloc, buffers, sizes, seq);
--	if (list_lru_count(alloc->freelist))
--		kunit_err(test, "lru list should be empty but is not\n");
--
--	binder_alloc_test_free_buf(test, alloc, buffers, sizes, seq, end);
--	binder_alloc_test_free_page(test, alloc);
-+	failures = binder_alloc_test_alloc_buf(test, alloc, buffers,
-+					       tc->buffer_sizes,
-+					       tc->free_sequence);
-+	failed = failed || failures;
-+	KUNIT_EXPECT_EQ_MSG(test, failures, 0,
-+			    "Reallocation failed: %lu/%u buffers with errors",
-+			    failures, BUFFER_NUM);
-+
-+	failures = list_lru_count(alloc->freelist);
-+	failed = failed || failures;
-+	KUNIT_EXPECT_EQ_MSG(test, failures, 0,
-+			    "lru list should be empty after reallocation but still has %lu pages",
-+			    failures);
-+
-+	failures = binder_alloc_test_free_buf(test, alloc, buffers,
-+					      tc->buffer_sizes,
-+					      tc->free_sequence, end);
-+	failed = failed || failures;
-+	KUNIT_EXPECT_EQ_MSG(test, failures, 0,
-+			    "Reallocated buffers not freed correctly: %lu/%lu pages not on lru list",
-+			    failures, pages);
-+
-+	failures = binder_alloc_test_free_page(test, alloc);
-+	failed = failed || failures;
-+	KUNIT_EXPECT_EQ_MSG(test, failures, 0,
-+			    "Failed to clean up allocated pages: %lu/%lu pages still installed",
-+			    failures, (alloc->buffer_size / PAGE_SIZE));
-+
-+	return failed;
- }
- 
- static bool is_dup(int *seq, int index, int val)
-@@ -213,24 +300,44 @@ static bool is_dup(int *seq, int index, int val)
- 
- /* Generate BUFFER_NUM factorial free orders. */
- static void permute_frees(struct kunit *test, struct binder_alloc *alloc,
--			  size_t *sizes, int *seq, int index, size_t end)
-+			  struct binder_alloc_test_case_info *tc,
-+			  unsigned long *runs, unsigned long *failures,
-+			  int index, size_t end)
- {
-+	bool case_failed;
- 	int i;
- 
- 	if (index == BUFFER_NUM) {
--		binder_alloc_test_alloc_free(test, alloc, sizes, seq, end);
-+		char freeseq_buf[FREESEQ_BUFLEN];
-+
-+		case_failed = binder_alloc_test_alloc_free(test, alloc, tc, end);
-+		*runs += 1;
-+		*failures += case_failed;
-+
-+		if (case_failed || PRINT_ALL_CASES) {
-+			stringify_free_seq(test, tc->free_sequence, freeseq_buf,
-+					   FREESEQ_BUFLEN);
-+			kunit_err(test, "case %lu: [%s] | %s - %s - %s", *runs,
-+				  case_failed ? "FAILED" : "PASSED",
-+				  tc->front_pages ? "front" : "back ",
-+				  tc->alignments, freeseq_buf);
-+		}
-+
- 		return;
- 	}
- 	for (i = 0; i < BUFFER_NUM; i++) {
--		if (is_dup(seq, index, i))
-+		if (is_dup(tc->free_sequence, index, i))
- 			continue;
--		seq[index] = i;
--		permute_frees(test, alloc, sizes, seq, index + 1, end);
-+		tc->free_sequence[index] = i;
-+		permute_frees(test, alloc, tc, runs, failures, index + 1, end);
- 	}
- }
- 
--static void gen_buf_sizes(struct kunit *test, struct binder_alloc *alloc,
--			  size_t *end_offset)
-+static void gen_buf_sizes(struct kunit *test,
-+			  struct binder_alloc *alloc,
-+			  struct binder_alloc_test_case_info *tc,
-+			  size_t *end_offset, unsigned long *runs,
-+			  unsigned long *failures)
- {
- 	size_t last_offset, offset = 0;
- 	size_t front_sizes[BUFFER_NUM];
-@@ -238,31 +345,45 @@ static void gen_buf_sizes(struct kunit *test, struct binder_alloc *alloc,
- 	int seq[BUFFER_NUM] = {0};
- 	int i;
- 
-+	tc->free_sequence = seq;
- 	for (i = 0; i < BUFFER_NUM; i++) {
- 		last_offset = offset;
- 		offset = end_offset[i];
- 		front_sizes[i] = offset - last_offset;
- 		back_sizes[BUFFER_NUM - i - 1] = front_sizes[i];
- 	}
-+	back_sizes[0] += alloc->buffer_size - end_offset[BUFFER_NUM - 1];
-+
- 	/*
- 	 * Buffers share the first or last few pages.
- 	 * Only BUFFER_NUM - 1 buffer sizes are adjustable since
- 	 * we need one giant buffer before getting to the last page.
- 	 */
--	back_sizes[0] += alloc->buffer_size - end_offset[BUFFER_NUM - 1];
--	permute_frees(test, alloc, front_sizes, seq, 0,
-+	tc->front_pages = true;
-+	tc->buffer_sizes = front_sizes;
-+	permute_frees(test, alloc, tc, runs, failures, 0,
- 		      end_offset[BUFFER_NUM - 1]);
--	permute_frees(test, alloc, back_sizes, seq, 0, alloc->buffer_size);
-+
-+	tc->front_pages = false;
-+	tc->buffer_sizes = back_sizes;
-+	permute_frees(test, alloc, tc, runs, failures, 0, alloc->buffer_size);
- }
- 
- static void gen_buf_offsets(struct kunit *test, struct binder_alloc *alloc,
--			    size_t *end_offset, int index)
-+			    size_t *end_offset, int *alignments,
-+			    unsigned long *runs, unsigned long *failures,
-+			    int index)
- {
- 	size_t end, prev;
- 	int align;
- 
- 	if (index == BUFFER_NUM) {
--		gen_buf_sizes(test, alloc, end_offset);
-+		struct binder_alloc_test_case_info tc = {0};
-+
-+		stringify_alignments(test, alignments, tc.alignments,
-+				     ALIGNMENTS_BUFLEN);
-+
-+		gen_buf_sizes(test, alloc, &tc, end_offset, runs, failures);
- 		return;
- 	}
- 	prev = index == 0 ? 0 : end_offset[index - 1];
-@@ -276,7 +397,9 @@ static void gen_buf_offsets(struct kunit *test, struct binder_alloc *alloc,
- 		else
- 			end += BUFFER_MIN_SIZE;
- 		end_offset[index] = end;
--		gen_buf_offsets(test, alloc, end_offset, index + 1);
-+		alignments[index] = align;
-+		gen_buf_offsets(test, alloc, end_offset, alignments, runs,
-+				failures, index + 1);
- 	}
- }
- 
-@@ -328,10 +451,15 @@ static void binder_alloc_exhaustive_test(struct kunit *test)
- {
- 	struct binder_alloc_test *priv = test->priv;
- 	size_t end_offset[BUFFER_NUM];
-+	int alignments[BUFFER_NUM];
-+	unsigned long failures = 0;
-+	unsigned long runs = 0;
- 
--	gen_buf_offsets(test, &priv->alloc, end_offset, 0);
-+	gen_buf_offsets(test, &priv->alloc, end_offset, alignments, &runs,
-+			&failures, 0);
- 
--	KUNIT_EXPECT_EQ(test, binder_alloc_test_failures, 0);
-+	KUNIT_EXPECT_EQ(test, runs, TOTAL_EXHAUSTIVE_CASES);
-+	KUNIT_EXPECT_EQ(test, failures, 0);
- }
- 
- /* ===== End test cases ===== */
--- 
-2.50.0.727.gbf7dc18ff4-goog
+> diff --git a/arch/arm64/include/asm/kvm_emulate.h b/arch/arm64/include/asm/kvm_emulate.h
+> index 302a691b3723..126c98cded90 100644
+> --- a/arch/arm64/include/asm/kvm_emulate.h
+> +++ b/arch/arm64/include/asm/kvm_emulate.h
+> @@ -709,6 +709,16 @@ static inline bool kvm_realm_is_created(struct kvm *kvm)
+>   	return kvm_is_realm(kvm) && kvm_realm_state(kvm) != REALM_STATE_NONE;
+>   }
+>   
+> +static inline gpa_t kvm_gpa_from_fault(struct kvm *kvm, phys_addr_t ipa)
+> +{
+> +	if (kvm_is_realm(kvm)) {
+> +		struct realm *realm = &kvm->arch.realm;
+> +
+> +		return ipa & ~BIT(realm->ia_bits - 1);
+> +	}
+> +	return ipa;
+> +}
+> +
+
+It may be more clearer with something like below. Note non-coco VM is still
+preferred than coco VM.
+
+static inline gpa_t kvm_gpa_from_fault(struct kvm *kvm, phys_addr_t ipa)
+{
+	if (!kvm_is_realm(kvm)
+		return ipa;
+
+	return ipa & ~BIT(kvm->arch.realm->ia_bits -1);		
+}
+
+>   static inline bool vcpu_is_rec(struct kvm_vcpu *vcpu)
+>   {
+>   	if (static_branch_unlikely(&kvm_rme_is_available))
+> diff --git a/arch/arm64/include/asm/kvm_rme.h b/arch/arm64/include/asm/kvm_rme.h
+> index 321970779669..df88ae51b7c9 100644
+> --- a/arch/arm64/include/asm/kvm_rme.h
+> +++ b/arch/arm64/include/asm/kvm_rme.h
+> @@ -110,6 +110,16 @@ void kvm_realm_unmap_range(struct kvm *kvm,
+>   			   unsigned long size,
+>   			   bool unmap_private,
+>   			   bool may_block);
+> +int realm_map_protected(struct realm *realm,
+> +			unsigned long base_ipa,
+> +			kvm_pfn_t pfn,
+> +			unsigned long size,
+> +			struct kvm_mmu_memory_cache *memcache);
+> +int realm_map_non_secure(struct realm *realm,
+> +			 unsigned long ipa,
+> +			 kvm_pfn_t pfn,
+> +			 unsigned long size,
+> +			 struct kvm_mmu_memory_cache *memcache);
+>   
+>   static inline bool kvm_realm_is_private_address(struct realm *realm,
+>   						unsigned long addr)
+> diff --git a/arch/arm64/kvm/mmu.c b/arch/arm64/kvm/mmu.c
+> index 37403eaa5699..1dc644ea26ce 100644
+> --- a/arch/arm64/kvm/mmu.c
+> +++ b/arch/arm64/kvm/mmu.c
+> @@ -338,8 +338,14 @@ static void __unmap_stage2_range(struct kvm_s2_mmu *mmu, phys_addr_t start, u64
+>   
+>   	lockdep_assert_held_write(&kvm->mmu_lock);
+>   	WARN_ON(size & ~PAGE_MASK);
+> -	WARN_ON(stage2_apply_range(mmu, start, end, KVM_PGT_FN(kvm_pgtable_stage2_unmap),
+> -				   may_block));
+> +
+> +	if (kvm_is_realm(kvm))
+> +		kvm_realm_unmap_range(kvm, start, size, !only_shared,
+> +				      may_block);
+> +	else
+> +		WARN_ON(stage2_apply_range(mmu, start, end,
+> +					   KVM_PGT_FN(kvm_pgtable_stage2_unmap),
+> +					   may_block));
+>   }
+>  
+
+{} is needed here.
+  
+>   void kvm_stage2_unmap_range(struct kvm_s2_mmu *mmu, phys_addr_t start,
+> @@ -359,7 +365,10 @@ static void stage2_flush_memslot(struct kvm *kvm,
+>   	phys_addr_t addr = memslot->base_gfn << PAGE_SHIFT;
+>   	phys_addr_t end = addr + PAGE_SIZE * memslot->npages;
+>   
+> -	kvm_stage2_flush_range(&kvm->arch.mmu, addr, end);
+> +	if (kvm_is_realm(kvm))
+> +		kvm_realm_unmap_range(kvm, addr, end - addr, false, true);
+> +	else
+> +		kvm_stage2_flush_range(&kvm->arch.mmu, addr, end);
+>   }
+>   
+>   /**
+> @@ -1053,6 +1062,10 @@ void stage2_unmap_vm(struct kvm *kvm)
+>   	struct kvm_memory_slot *memslot;
+>   	int idx, bkt;
+>   
+> +	/* For realms this is handled by the RMM so nothing to do here */
+> +	if (kvm_is_realm(kvm))
+> +		return;
+> +
+>   	idx = srcu_read_lock(&kvm->srcu);
+>   	mmap_read_lock(current->mm);
+>   	write_lock(&kvm->mmu_lock);
+> @@ -1078,6 +1091,9 @@ void kvm_free_stage2_pgd(struct kvm_s2_mmu *mmu)
+>   	if (kvm_is_realm(kvm) &&
+>   	    (kvm_realm_state(kvm) != REALM_STATE_DEAD &&
+>   	     kvm_realm_state(kvm) != REALM_STATE_NONE)) {
+> +		struct realm *realm = &kvm->arch.realm;
+> +
+> +		kvm_stage2_unmap_range(mmu, 0, BIT(realm->ia_bits - 1), false);
+>   		write_unlock(&kvm->mmu_lock);
+>   		kvm_realm_destroy_rtts(kvm, pgt->ia_bits);
+>   
+> @@ -1486,6 +1502,85 @@ static bool kvm_vma_mte_allowed(struct vm_area_struct *vma)
+>   	return vma->vm_flags & VM_MTE_ALLOWED;
+>   }
+>   
+> +static int realm_map_ipa(struct kvm *kvm, phys_addr_t ipa,
+> +			 kvm_pfn_t pfn, unsigned long map_size,
+> +			 enum kvm_pgtable_prot prot,
+> +			 struct kvm_mmu_memory_cache *memcache)
+> +{
+> +	struct realm *realm = &kvm->arch.realm;
+> +
+> +	/*
+> +	 * Write permission is required for now even though it's possible to
+> +	 * map unprotected pages (granules) as read-only. It's impossible to
+> +	 * map protected pages (granules) as read-only.
+> +	 */
+> +	if (WARN_ON(!(prot & KVM_PGTABLE_PROT_W)))
+> +		return -EFAULT;
+> +
+> +	ipa = ALIGN_DOWN(ipa, PAGE_SIZE);
+> +
+
+Empty line can be dropped.
+
+> +	if (!kvm_realm_is_private_address(realm, ipa))
+> +		return realm_map_non_secure(realm, ipa, pfn, map_size,
+> +					    memcache);
+> +
+> +	return realm_map_protected(realm, ipa, pfn, map_size, memcache);
+> +}
+> +
+> +static int private_memslot_fault(struct kvm_vcpu *vcpu,
+> +				 phys_addr_t fault_ipa,
+> +				 struct kvm_memory_slot *memslot)
+> +{
+> +	struct kvm *kvm = vcpu->kvm;
+> +	gpa_t gpa = kvm_gpa_from_fault(kvm, fault_ipa);
+> +	gfn_t gfn = gpa >> PAGE_SHIFT;
+> +	bool is_priv_gfn = kvm_mem_is_private(kvm, gfn);
+> +	struct kvm_mmu_memory_cache *memcache = &vcpu->arch.mmu_page_cache;
+> +	struct page *page;
+> +	kvm_pfn_t pfn;
+> +	int ret;
+> +	/*
+> +	 * For Realms, the shared address is an alias of the private GPA with
+> +	 * the top bit set. Thus is the fault address matches the GPA then it
+> +	 * is the private alias.
+> +	 */
+> +	bool is_priv_fault = (gpa == fault_ipa);
+> +
+> +	if (is_priv_gfn != is_priv_fault) {
+> +		kvm_prepare_memory_fault_exit(vcpu, gpa, PAGE_SIZE,
+> +					      kvm_is_write_fault(vcpu), false,
+> +					      is_priv_fault);
+> +
+> +		/*
+> +		 * KVM_EXIT_MEMORY_FAULT requires an return code of -EFAULT,
+> +		 * see the API documentation
+> +		 */
+> +		return -EFAULT;
+> +	}
+> +
+> +	if (!is_priv_fault) {
+> +		/* Not a private mapping, handling normally */
+> +		return -EINVAL;
+> +	}
+> +
+> +	ret = kvm_mmu_topup_memory_cache(memcache,
+> +					 kvm_mmu_cache_min_pages(vcpu->arch.hw_mmu));
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = kvm_gmem_get_pfn(kvm, memslot, gfn, &pfn, &page, NULL);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* FIXME: Should be able to use bigger than PAGE_SIZE mappings */
+> +	ret = realm_map_ipa(kvm, fault_ipa, pfn, PAGE_SIZE, KVM_PGTABLE_PROT_W,
+> +			    memcache);
+> +	if (!ret)
+> +		return 1; /* Handled */
+> +
+> +	put_page(page);
+> +	return ret;
+> +}
+> +
+>   static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+>   			  struct kvm_s2_trans *nested,
+>   			  struct kvm_memory_slot *memslot, unsigned long hva,
+> @@ -1513,6 +1608,14 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+>   	if (fault_is_perm)
+>   		fault_granule = kvm_vcpu_trap_get_perm_fault_granule(vcpu);
+>   	write_fault = kvm_is_write_fault(vcpu);
+> +
+> +	/*
+> +	 * Realms cannot map protected pages read-only
+> +	 * FIXME: It should be possible to map unprotected pages read-only
+> +	 */
+> +	if (vcpu_is_rec(vcpu))
+> +		write_fault = true;
+> +
+>   	exec_fault = kvm_vcpu_trap_is_exec_fault(vcpu);
+>   	VM_BUG_ON(write_fault && exec_fault);
+>   
+> @@ -1630,7 +1733,7 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+>   		ipa &= ~(vma_pagesize - 1);
+>   	}
+>   
+> -	gfn = ipa >> PAGE_SHIFT;
+> +	gfn = kvm_gpa_from_fault(kvm, ipa) >> PAGE_SHIFT;
+>   	mte_allowed = kvm_vma_mte_allowed(vma);
+>   
+>   	vfio_allow_any_uc = vma->vm_flags & VM_ALLOW_ANY_UNCACHED;
+> @@ -1763,6 +1866,9 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+>   		 */
+>   		prot &= ~KVM_NV_GUEST_MAP_SZ;
+>   		ret = KVM_PGT_FN(kvm_pgtable_stage2_relax_perms)(pgt, fault_ipa, prot, flags);
+> +	} else if (kvm_is_realm(kvm)) {
+> +		ret = realm_map_ipa(kvm, fault_ipa, pfn, vma_pagesize,
+> +				    prot, memcache);
+>   	} else {
+>   		ret = KVM_PGT_FN(kvm_pgtable_stage2_map)(pgt, fault_ipa, vma_pagesize,
+>   					     __pfn_to_phys(pfn), prot,
+> @@ -1911,8 +2017,15 @@ int kvm_handle_guest_abort(struct kvm_vcpu *vcpu)
+>   		nested = &nested_trans;
+>   	}
+>   
+> -	gfn = ipa >> PAGE_SHIFT;
+> +	gfn = kvm_gpa_from_fault(vcpu->kvm, ipa) >> PAGE_SHIFT;
+>   	memslot = gfn_to_memslot(vcpu->kvm, gfn);
+> +
+> +	if (kvm_slot_can_be_private(memslot)) {
+> +		ret = private_memslot_fault(vcpu, ipa, memslot);
+> +		if (ret != -EINVAL)
+> +			goto out;
+> +	}
+> +
+>   	hva = gfn_to_hva_memslot_prot(memslot, gfn, &writable);
+>   	write_fault = kvm_is_write_fault(vcpu);
+>   	if (kvm_is_error_hva(hva) || (write_fault && !writable)) {
+> @@ -1956,7 +2069,7 @@ int kvm_handle_guest_abort(struct kvm_vcpu *vcpu)
+>   		 * of the page size.
+>   		 */
+>   		ipa |= kvm_vcpu_get_hfar(vcpu) & GENMASK(11, 0);
+> -		ret = io_mem_abort(vcpu, ipa);
+> +		ret = io_mem_abort(vcpu, kvm_gpa_from_fault(vcpu->kvm, ipa));
+>   		goto out_unlock;
+>   	}
+>   
+> @@ -2004,6 +2117,10 @@ bool kvm_age_gfn(struct kvm *kvm, struct kvm_gfn_range *range)
+>   	if (!kvm->arch.mmu.pgt)
+>   		return false;
+>   
+> +	/* We don't support aging for Realms */
+> +	if (kvm_is_realm(kvm))
+> +		return true;
+> +
+>   	return KVM_PGT_FN(kvm_pgtable_stage2_test_clear_young)(kvm->arch.mmu.pgt,
+>   						   range->start << PAGE_SHIFT,
+>   						   size, true);
+> @@ -2020,6 +2137,10 @@ bool kvm_test_age_gfn(struct kvm *kvm, struct kvm_gfn_range *range)
+>   	if (!kvm->arch.mmu.pgt)
+>   		return false;
+>   
+> +	/* We don't support aging for Realms */
+> +	if (kvm_is_realm(kvm))
+> +		return true;
+> +
+>   	return KVM_PGT_FN(kvm_pgtable_stage2_test_clear_young)(kvm->arch.mmu.pgt,
+>   						   range->start << PAGE_SHIFT,
+>   						   size, false);
+> diff --git a/arch/arm64/kvm/rme.c b/arch/arm64/kvm/rme.c
+> index d7bb11583506..0fe55e369782 100644
+> --- a/arch/arm64/kvm/rme.c
+> +++ b/arch/arm64/kvm/rme.c
+> @@ -750,6 +750,171 @@ static int realm_create_protected_data_page(struct realm *realm,
+>   	return -ENXIO;
+>   }
+>   
+> +static int fold_rtt(struct realm *realm, unsigned long addr, int level)
+> +{
+> +	phys_addr_t rtt_addr;
+> +	int ret;
+> +
+> +	ret = realm_rtt_fold(realm, addr, level, &rtt_addr);
+> +	if (ret)
+> +		return ret;
+> +
+> +	free_rtt(rtt_addr);
+> +
+> +	return 0;
+> +}
+> +
+> +int realm_map_protected(struct realm *realm,
+> +			unsigned long ipa,
+> +			kvm_pfn_t pfn,
+> +			unsigned long map_size,
+> +			struct kvm_mmu_memory_cache *memcache)
+> +{
+> +	phys_addr_t phys = __pfn_to_phys(pfn);
+> +	phys_addr_t rd = virt_to_phys(realm->rd);
+> +	unsigned long base_ipa = ipa;
+> +	unsigned long size;
+> +	int map_level = IS_ALIGNED(map_size, RMM_L2_BLOCK_SIZE) ?
+> +			RMM_RTT_BLOCK_LEVEL : RMM_RTT_MAX_LEVEL;
+> +	int ret = 0;
+> +
+> +	if (WARN_ON(!IS_ALIGNED(map_size, RMM_PAGE_SIZE) ||
+> +		    !IS_ALIGNED(ipa, map_size)))
+> +		return -EINVAL;
+> +
+> +	if (map_level < RMM_RTT_MAX_LEVEL) {
+> +		/*
+> +		 * A temporary RTT is needed during the map, precreate it,
+> +		 * however if there is an error (e.g. missing parent tables)
+> +		 * this will be handled below.
+> +		 */
+> +		realm_create_rtt_levels(realm, ipa, map_level,
+> +					RMM_RTT_MAX_LEVEL, memcache);
+> +	}
+> +
+> +	for (size = 0; size < map_size; size += RMM_PAGE_SIZE) {
+> +		if (rmi_granule_delegate(phys)) {
+> +			/*
+> +			 * It's likely we raced with another VCPU on the same
+> +			 * fault. Assume the other VCPU has handled the fault
+> +			 * and return to the guest.
+> +			 */
+> +			return 0;
+> +		}
+> +
+> +		ret = rmi_data_create_unknown(rd, phys, ipa);
+> +
+> +		if (RMI_RETURN_STATUS(ret) == RMI_ERROR_RTT) {
+> +			/* Create missing RTTs and retry */
+> +			int level = RMI_RETURN_INDEX(ret);
+> +
+> +			WARN_ON(level == RMM_RTT_MAX_LEVEL);
+> +
+
+Unnecessary empty line.
+
+> +			ret = realm_create_rtt_levels(realm, ipa, level,
+> +						      RMM_RTT_MAX_LEVEL,
+> +						      memcache);
+> +			if (ret)
+> +				goto err_undelegate;
+> +
+> +			ret = rmi_data_create_unknown(rd, phys, ipa);
+> +		}
+> +
+> +		if (WARN_ON(ret))
+> +			goto err_undelegate;
+> +
+> +		phys += RMM_PAGE_SIZE;
+> +		ipa += RMM_PAGE_SIZE;
+> +	}
+> +
+> +	if (map_size == RMM_L2_BLOCK_SIZE) {
+> +		ret = fold_rtt(realm, base_ipa, map_level + 1);
+> +		if (WARN_ON(ret))
+> +			goto err;
+> +	}
+> +
+> +	return 0;
+> +
+> +err_undelegate:
+> +	if (WARN_ON(rmi_granule_undelegate(phys))) {
+> +		/* Page can't be returned to NS world so is lost */
+> +		get_page(phys_to_page(phys));
+> +	}
+> +err:
+> +	while (size > 0) {
+> +		unsigned long data, top;
+> +
+> +		phys -= RMM_PAGE_SIZE;
+> +		size -= RMM_PAGE_SIZE;
+> +		ipa -= RMM_PAGE_SIZE;
+> +
+> +		WARN_ON(rmi_data_destroy(rd, ipa, &data, &top));
+> +
+> +		if (WARN_ON(rmi_granule_undelegate(phys))) {
+> +			/* Page can't be returned to NS world so is lost */
+> +			get_page(phys_to_page(phys));
+> +		}
+> +	}
+> +	return -ENXIO;
+> +}
+> +
+> +int realm_map_non_secure(struct realm *realm,
+> +			 unsigned long ipa,
+> +			 kvm_pfn_t pfn,
+> +			 unsigned long size,
+> +			 struct kvm_mmu_memory_cache *memcache)
+> +{
+> +	phys_addr_t rd = virt_to_phys(realm->rd);
+> +	phys_addr_t phys = __pfn_to_phys(pfn);
+> +	unsigned long offset;
+> +	/* TODO: Support block mappings */
+> +	int map_level = RMM_RTT_MAX_LEVEL;
+> +	int map_size = rme_rtt_level_mapsize(map_level);
+> +	int ret = 0;
+> +
+> +	if (WARN_ON(!IS_ALIGNED(size, RMM_PAGE_SIZE) ||
+> +		    !IS_ALIGNED(ipa, size)))
+> +		return -EINVAL;
+> +
+> +	for (offset = 0; offset < size; offset += map_size) {
+> +		/*
+> +		 * realm_map_ipa() enforces that the memory is writable,
+> +		 * so for now we permit both read and write.
+> +		 */
+> +		unsigned long desc = phys |
+> +				     PTE_S2_MEMATTR(MT_S2_FWB_NORMAL) |
+> +				     KVM_PTE_LEAF_ATTR_LO_S2_S2AP_R |
+> +				     KVM_PTE_LEAF_ATTR_LO_S2_S2AP_W;
+> +		ret = rmi_rtt_map_unprotected(rd, ipa, map_level, desc);
+> +
+> +		if (RMI_RETURN_STATUS(ret) == RMI_ERROR_RTT) {
+> +			/* Create missing RTTs and retry */
+> +			int level = RMI_RETURN_INDEX(ret);
+> +
+> +			ret = realm_create_rtt_levels(realm, ipa, level,
+> +						      map_level, memcache);
+> +			if (ret)
+> +				return -ENXIO;
+> +
+> +			ret = rmi_rtt_map_unprotected(rd, ipa, map_level, desc);
+> +		}
+> +		/*
+> +		 * RMI_ERROR_RTT can be reported for two reasons: either the
+> +		 * RTT tables are not there, or there is an RTTE already
+> +		 * present for the address.  The above call to create RTTs
+> +		 * handles the first case, and in the second case this
+> +		 * indicates that another thread has already populated the RTTE
+> +		 * for us, so we can ignore the error and continue.
+> +		 */
+> +		if (ret && RMI_RETURN_STATUS(ret) != RMI_ERROR_RTT)
+> +			return -ENXIO;
+> +
+> +		ipa += map_size;
+> +		phys += map_size;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>   static int populate_region(struct kvm *kvm,
+>   			   phys_addr_t ipa_base,
+>   			   phys_addr_t ipa_end,
+
+Thanks,
+Gavin
 
 
