@@ -1,127 +1,154 @@
-Return-Path: <linux-kernel+bounces-712989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-712991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FDADAF11AA
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 12:22:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02555AF11B4
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 12:23:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98DC41C26212
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 10:22:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D27844432A
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 10:22:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40276253B68;
-	Wed,  2 Jul 2025 10:21:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACF58253B7B;
+	Wed,  2 Jul 2025 10:22:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gKb9H5tj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fYtr3UPI"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90EA0226CE1;
-	Wed,  2 Jul 2025 10:21:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4330E254B1B
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 10:22:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751451718; cv=none; b=ErtYBKOIlUx457rlf1kZ7SHebXLbx4KMCf4poPXhKjPmWHvsLrB0OgtBRnjt44SRhgeeDoNJEOOLIMFmH3u8ws5lbMD+5UpoOVnPJEm+9Rx+5Itob5m7644SL8l0m/hUe+h+Va0GgKDg7JpOpEM0DB8I4GH41LMHusMzAeCB8MM=
+	t=1751451737; cv=none; b=CPzgrSzp4WDse7mZelUEAmBpcLZLI1Nh0gvA/066Rr3ZdCstI3NpfkVQMaejmLAodj4hT7AOWwCnjpM2uZ0EXjLrtWuvTP3GWEYPPixKwjy3Uu6ZrHNDJSrEGd/zkrVEWL812ps8JL4LXftcLC3ok7f+aVRo9hgFyaydZdUxvzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751451718; c=relaxed/simple;
-	bh=dev3dwMQN1yzY1rh7c/NWkAu3zaem3ULhrEy2Os6A3k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HcHYegp5MWqKj7LmAGUjGMKwp5Sp8e9q7Gtx2LMpJUljHMM9H0sDa9EChJ8Q2G13es62Pafw0QSTmQyrxZHH0jbqc/IZ2mJqHhQdxRmI/306ZkJOxV0dw7CG5n0aBHjHQ7fjbqoYNdg+R585gwmvR+9UpDLumXsz0Pj0gfZYnnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gKb9H5tj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1151EC4CEF4;
-	Wed,  2 Jul 2025 10:21:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751451718;
-	bh=dev3dwMQN1yzY1rh7c/NWkAu3zaem3ULhrEy2Os6A3k=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=gKb9H5tjCKMpWdrmwlrz4o511Ue55dDLqhHuWDZQwxHTV2jvlbA4Bxo/YrK8TzDQ2
-	 GeyXY3dZHvu27WNWPlSyx4VUXfBtWXq0kfulrZewtKrJYEge60w+7ZwYJ2U0iX9Ukm
-	 u0rLb6x15YkOmZxjW1GTjqtI/nrdKvSkY04sImgXHd+t5xcT4Mc4Aq79bV5ljFe1vQ
-	 j7aC5qkma6xcP7DN8IYGBTKehW8g5unXI7947p0EIo/457fBaZ1cFXoEhbiGvtFLB1
-	 UcoBNTD5y0fUfHeLz+gBXnsLRXaV1CEJvZ2e35dzE9JJMd6SA4oQLnVEOVJtE464gW
-	 7/i1Z5O/GD9gg==
-Received: by mail-oi1-f169.google.com with SMTP id 5614622812f47-40a7322f081so1014040b6e.3;
-        Wed, 02 Jul 2025 03:21:58 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVefSB4rD8MaagsKqjYG0+8y3Y9R6cEUYQwFvsBlttg4o+R852DhN5Glul9wgSrTyjUmOHKczTChhSEVCec@vger.kernel.org, AJvYcCWf/tkyfWCIeW7bXX3Kk1VKy8VuRqmZ8JNkRDU+sUddgxubd09zTLUe/O7Xv241IgdnI7RA8T5dVHyv@vger.kernel.org, AJvYcCWx460XCh5wzO8e8xJRXxRkdcC6jyygxdLSO0vdUBnjbqO35P1XepB3k4c6ohPircW2ibxL4DPOh4OxGg==@vger.kernel.org, AJvYcCXIH/YM1ordZjBOWQGdTa/J4hQnVV6Ejf8rJCXjS3g4al4oJZVvUW/O0ABTz2Qq6avgHtJfV6wWSgUK@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEqxuopzDImb3Z5+rdtyoPtjBwjtEWsFOSupVnK5BBphD7Oa2e
-	7/ap3nevCpKx3rTFHFK12zp2PXygxfOlE9R+g+nekKr6aEsO3hFG72IH+uFkfv0c20Z52Wb9UUx
-	qdqTahqUQrIB15F+VxI8UWcvmzBoczAg=
-X-Google-Smtp-Source: AGHT+IE2Kkk8T0ZbVBmpiOQbam/pLa6wG5+XN/RreLIx2X9wnWq0x8o9JpWoqRvdPgQY0h9YV/+fKkFjda3J6bwfL00=
-X-Received: by 2002:a05:6808:1b99:b0:3f9:aeb6:6eac with SMTP id
- 5614622812f47-40b889192f1mr1729652b6e.30.1751451717345; Wed, 02 Jul 2025
- 03:21:57 -0700 (PDT)
+	s=arc-20240116; t=1751451737; c=relaxed/simple;
+	bh=mkRBaO6sFEsyEwMWNKBmYyY+/tTAEW4N56/rVgdTsGE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=I+jsxnsdsv1luI+1v/ZGlSIaidhYfouIo9YRtU9khWgd/YSk3+8roCT8sqj/a1sg9TXwFivmYulBKjoeCvHT7Hxx85XXtPUYCZfPXO19ksXC+PkGdIrZQxd0+07lfvMYKf3T2xZrxvWF2YgqDQmELTLwGmpI7Kb599cCs2leLkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fYtr3UPI; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-450ce3a2dd5so33474545e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 03:22:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1751451733; x=1752056533; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=J3z7HDKWq14/Rf/7W5PSUqbSzAkGXyN4UWZk2FxpZbs=;
+        b=fYtr3UPIysdb4iPSOot3HEGJ2msMf3WvGgojHrnMVa8MO6lcwZQTYrFHxNsi7Wovqf
+         zRfQLAjE3R1ChKz0bdWwFrNjE3OYhZGfhUyOzfXmVW1pXJNmgiqVSwitxEvZElaPVnuo
+         4i5hSkCQOOnBiPGUH8BtQ8bhGsuDuuhLtSBJVliXXLjCcIampBwuNlpDpgg240yvMA/a
+         /TpuVZxey43c85KusVvqWt3yUlW482yMDaiF94VX1rkCWbKrwsLB52WWlzgzfotWpayO
+         LnD6bMcS/71APzEFGrzQdH0D4L8gL2f2MBIXPGfMPF5am9vfUZmuML5NL1RZ36+yMz3r
+         a2SQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751451733; x=1752056533;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=J3z7HDKWq14/Rf/7W5PSUqbSzAkGXyN4UWZk2FxpZbs=;
+        b=DxTGaCZ6q1mKR8gab/ExloT8LoNp4IcpKB8KVKWEajMB+bnt8t7ijMfTREkwycAALL
+         da97Ysf4yK82Z+gqgoI6u4/njbPg7SOtEBFeEg3O1qHIZcw7n0oPp9ThCaLuK6DFt7pF
+         i0eqK4+jjhSuUJj05n8rx0KBpCL71MuABg5vCz3DPaKL9URw616HtvsZHg7d1RH4KuQe
+         n42+65YUoGCyi53i9PoFQ2LzAU8tUMW0qtrgwnl602pzH45YDQel1c3GWwoP9dQPt3IK
+         DM5h5xYS/9IyKdU7u7+d4kRbhA0atEYzJe60arHO8zkahIS3Pvj27F1yr8P9MSBu2Qjx
+         DdEg==
+X-Forwarded-Encrypted: i=1; AJvYcCW64lhw2OyZuLQ3nCvgESSEJfctW8pm1C/QroJH48KPvT5pd9Ni8jNex/5CteSPX53eJXQdWoQVr3mbQo4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzAkn/7obAtD4yurEFvOJhTR7a1PK42KfroS1fRNk4BBvV37vqx
+	Y9ooD+fW183dJ0l+SuBm7K2Qn6OquPEx01tYgenVzfOwIybdZrZjsWIPUtyGOzWaJws=
+X-Gm-Gg: ASbGncvjlAsP83xYg+V6AEiy1jqdeBD1rYqrvkWN2BAqm98NxBIaRE++EyZGqLCnk4l
+	oD81GBJBV6BWsN+ak7v2ev9g6wCxZ6swg4N7EJzPGPNSDddrxQdIiDsb/8xzkzFfY7jBLekBfSf
+	aLMlQa9XyT1VoupeHJUlQqD2udHPbstdyvw2umjvqLonreiUbPL6I+89sG8YJV5G6oqe08jBDJT
+	TpC+Kvb88Hl2RCPtFjPnhTyV+/Z3sNFUJ/JPy7oX3lkNn4xNkpmils9wX7zrrclf7uabjam5h0k
+	wPQBfC7S1odf6/nV2xmNXAMZyZ7J4SNm1QVrNyNB9Dg2HlMLc/SaoKve1WxOCLLg5AhVLYW78ja
+	+SLvAUid8LUWUMH8GJZSg/umlD0Haj4JmcPuj9kBtzZZsu5UMs9pghJZfRqBJPqRC60ye9+g=
+X-Google-Smtp-Source: AGHT+IHtRMzhbL6QsN9H974H+fxsiNS5bFCmumvbhYvPgTdjTPW4usMEO3Wmz4ct4XCnUJJtbPwGYg==
+X-Received: by 2002:a05:6000:18ad:b0:3a5:783f:528a with SMTP id ffacd0b85a97d-3b201aacd01mr1888649f8f.59.1751451733312;
+        Wed, 02 Jul 2025 03:22:13 -0700 (PDT)
+Received: from green.cable.virginm.net (nail-04-b2-v4wan-166353-cust693.vm26.cable.virginm.net. [82.35.130.182])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a892e5972bsm15840504f8f.68.2025.07.02.03.22.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Jul 2025 03:22:12 -0700 (PDT)
+From: Terry Tritton <terry.tritton@linaro.org>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Shuah Khan <shuah@kernel.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
+Cc: ttritton@google.com,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Terry Tritton <terry.tritton@linaro.org>,
+	Wei Gao <wegao@suse.com>
+Subject: [PATCH v3] selftests/futex: Convert 32bit timespec struct to 64bit version for 32bit compatibility mode
+Date: Wed,  2 Jul 2025 11:21:57 +0100
+Message-Id: <20250702102157.5222-1-terry.tritton@linaro.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250702051345.1460497-1-apatel@ventanamicro.com> <20250702051345.1460497-17-apatel@ventanamicro.com>
-In-Reply-To: <20250702051345.1460497-17-apatel@ventanamicro.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 2 Jul 2025 12:21:45 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0gkCtxMWvgjS+CXOgC2QzCFFQ1bX6XA_D2HCOuGwT67kg@mail.gmail.com>
-X-Gm-Features: Ac12FXwD-4N8bNKSBtHuf_106cJhbwii5ybB7cDrqtVYJiIXKxNBIQd1GfJzRU8
-Message-ID: <CAJZ5v0gkCtxMWvgjS+CXOgC2QzCFFQ1bX6XA_D2HCOuGwT67kg@mail.gmail.com>
-Subject: Re: [PATCH v7 16/24] ACPI: scan: Update honor list for RPMI System MSI
-To: Anup Patel <apatel@ventanamicro.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jassi Brar <jassisinghbrar@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	"Rafael J . Wysocki" <rafael@kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Alexandre Ghiti <alex@ghiti.fr>, Len Brown <lenb@kernel.org>, Sunil V L <sunilvl@ventanamicro.com>, 
-	Rahul Pathak <rpathak@ventanamicro.com>, Leyfoon Tan <leyfoon.tan@starfivetech.com>, 
-	Atish Patra <atish.patra@linux.dev>, Andrew Jones <ajones@ventanamicro.com>, 
-	Samuel Holland <samuel.holland@sifive.com>, Anup Patel <anup@brainfault.org>, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-acpi@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Atish Patra <atishp@rivosinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 2, 2025 at 7:16=E2=80=AFAM Anup Patel <apatel@ventanamicro.com>=
- wrote:
->
-> From: Sunil V L <sunilvl@ventanamicro.com>
->
-> The RPMI System MSI interrupt controller (just like PLIC and APLIC)
-> needs to probed prior to devices like GED which use interrupts provided
-> by it. Also, it has dependency on the SBI MPXY mailbox device.
->
-> Add HIDs of RPMI System MSI and SBI MPXY mailbox devices to the honor
-> list so that those dependencies are handled.
->
-> Reviewed-by: Atish Patra <atishp@rivosinc.com>
-> Signed-off-by: Sunil V L <sunilvl@ventanamicro.com>
-> Signed-off-by: Anup Patel <apatel@ventanamicro.com>
+Futex_waitv can not accept old_timespec32 struct, so userspace should
+convert it from 32bit to 64bit before syscall in 32bit compatible mode.
 
-This is fine by me, so
+This fix is based off [1]
 
-Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Link: https://lore.kernel.org/all/20231203235117.29677-1-wegao@suse.com/ [1]
 
-> ---
->  drivers/acpi/scan.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
-> index fb1fe9f3b1a3..54181b03b345 100644
-> --- a/drivers/acpi/scan.c
-> +++ b/drivers/acpi/scan.c
-> @@ -858,6 +858,8 @@ static const char * const acpi_honor_dep_ids[] =3D {
->         "INTC10CF", /* IVSC (MTL) driver must be loaded to allow i2c acce=
-ss to camera sensors */
->         "RSCV0001", /* RISC-V PLIC */
->         "RSCV0002", /* RISC-V APLIC */
-> +       "RSCV0005", /* RISC-V SBI MPXY MBOX */
-> +       "RSCV0006", /* RISC-V RPMI SYSMSI */
->         "PNP0C0F",  /* PCI Link Device */
->         NULL
->  };
-> --
-> 2.43.0
->
+Originally-by: Wei Gao <wegao@suse.com>
+Signed-off-by: Terry Tritton <terry.tritton@linaro.org>
+---
+Changes in v3:
+- Fix signed-off-by chain but for real this time
+
+Changes in v2:
+- Fix signed-off-by chain
+
+ .../testing/selftests/futex/include/futex2test.h  | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+
+diff --git a/tools/testing/selftests/futex/include/futex2test.h b/tools/testing/selftests/futex/include/futex2test.h
+index ea79662405bc..6780e51eb2d6 100644
+--- a/tools/testing/selftests/futex/include/futex2test.h
++++ b/tools/testing/selftests/futex/include/futex2test.h
+@@ -55,6 +55,13 @@ struct futex32_numa {
+ 	futex_t numa;
+ };
+ 
++#if !defined(__LP64__)
++struct timespec64 {
++	int64_t tv_sec;
++	int64_t tv_nsec;
++};
++#endif
++
+ /**
+  * futex_waitv - Wait at multiple futexes, wake on any
+  * @waiters:    Array of waiters
+@@ -65,7 +72,15 @@ struct futex32_numa {
+ static inline int futex_waitv(volatile struct futex_waitv *waiters, unsigned long nr_waiters,
+ 			      unsigned long flags, struct timespec *timo, clockid_t clockid)
+ {
++#if !defined(__LP64__)
++	struct timespec64 timo64 = {0};
++
++	timo64.tv_sec = timo->tv_sec;
++	timo64.tv_nsec = timo->tv_nsec;
++	return syscall(__NR_futex_waitv, waiters, nr_waiters, flags, &timo64, clockid);
++#else
+ 	return syscall(__NR_futex_waitv, waiters, nr_waiters, flags, timo, clockid);
++#endif
+ }
+ 
+ /*
+-- 
+2.39.5
+
 
