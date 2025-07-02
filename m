@@ -1,160 +1,135 @@
-Return-Path: <linux-kernel+bounces-713843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC59BAF5F16
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 18:51:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EFA5AF5F21
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 18:52:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9A081C46437
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 16:50:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3828C3A2381
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 16:51:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58A2D2DCF48;
-	Wed,  2 Jul 2025 16:48:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 375F4303DC3;
+	Wed,  2 Jul 2025 16:50:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="bHjAd2gL"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="OFVq1j/s"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEC8F275AF9
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 16:48:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC1A02F5301;
+	Wed,  2 Jul 2025 16:49:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751474929; cv=none; b=llrSi2QRumkNCdx7Ywrj9ntOMhusoi4rRtMGib+dDnrO5wMi73WXrTK0qWPRjweO2qMAqTsRfHRHuDVcBOBT6uHmC2wsFKqOWMc3QS64NVotDaDwwEfbFtUBbHRrwDS/ZBq6sNZqTeZrBtFn+1mEfeQdqKIs0/uuPdH3wxErXbc=
+	t=1751475001; cv=none; b=B+wGr2RYP7WxRlPAmn1jVbgh7r8+d4UxrN6IPidmfdBrNBjA8LFZVCMlLjN7EVG2mu0/IedNaUo9tw+SEimo5jWEFCJ3uZe9dkFPVABzjfD5kAf94JiilDGg13gCrP9l6azdfXYWN670WWUYINm5XDA3XsCH77ULNfQ5mTKR9oU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751474929; c=relaxed/simple;
-	bh=UVwuQqNuVkaXad1gSP5IG0Q61XDJHBqnS6AA8i/xzYQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=hoamr5WFFyMmMzRUGunBOwgHCuu4MOZZbMb2uXYYvIBtEBdrDRNKL0IcDKxrDUueWby+DpKT+wTV1BVYfpoV7D4huKz2ptvbLB/JbGR9PcVPb3SJCMU2LSGadQ6LKf4Olh2RB4UxFgZELdJ3qzhtkLnjLo+s+SFcR7D6btBiGYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=bHjAd2gL; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-453398e90e9so38964825e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 09:48:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1751474926; x=1752079726; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=f41VpQcQDm5IrtOyRO5moqw5pFrZWSUi6EXtMoj+mX0=;
-        b=bHjAd2gLxET9+u9RzOj/7+9NlNNt0oDeA91mJIln/hWuyfGOgQUXLZRX6Zc0vNZFXi
-         wPNLnucOy0iSPsS3e7XVgbKizO7PwdqlNgr+AGlDN1rsCxFtvYB1q5ff0vl2z8sNYNak
-         0vlPhXyGl2DlmcUlgeO4KVeZftoeKrFEgNFCWcL8UpOgePp8R9677jX7W2sGojAF/YYr
-         oT2mZI5ZqvdrXkffaeG3CfFYpjxm3SxfFUpR7+7kfK6WOxSoHX1DrX0cSivnzk5dNk9J
-         39sqH4RTZcLT+U2NbJau9qo4PPuEPR7ATU8WR5b9LAmFS0B3P3KfSA+Nz7CcDjkbInpd
-         qovw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751474926; x=1752079726;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=f41VpQcQDm5IrtOyRO5moqw5pFrZWSUi6EXtMoj+mX0=;
-        b=XFONDUxAoIvpexRu9LR+oCFS7VXOk4RchhS/mhpeP3dmsLEqPDT4BvgzKQvM1LCaWu
-         Im23BmwyqPZUtTbm/DqrPZvWrRvs7WdWkvAc9msizEfzXrkeq7M3q6yz+yLLwmw0kS/d
-         l9pUzv2NSTb2RZ05grUI5aNle8wv4ArnnKM29FJzywoRK4q3TBF8SOpzcjQMdaIiUE+K
-         ad4ueVtzcDDCFCeVTj7p/HC+jMxJfEypbwmsebrDEDTwYCMtSK8paKvR55wNMIoF2NLi
-         JM+eVlkTb8R5gGFzFGsBQh6g+opFITc2JhjF0z0l03rLFLEoSVrwJcwQgbRwhM1+VfJs
-         a20w==
-X-Forwarded-Encrypted: i=1; AJvYcCXfuszKfcCGqXb/1SMwTXfkEWnaawuxYotXsgEv88S245FzmdvG6/ZhroCUP/PbbW949STtGaW7JElOqaU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzq5PahJ15SqbJ44LCiEFgc04Pr1jPr+dLVYU0sB43BJe4FL2Kv
-	eNm8ZBB12IEgSRtz1gHnhB4oPUOb9wXICbwI7ESPvB1zdTAWa9MBZ1WquXxXA+NiV32Ql7nlBC9
-	fqmAe
-X-Gm-Gg: ASbGncvUz6pQT+wF9s5kyJplIUxoukkvDX8n7s/YrPQtjt+ou1rnihEIqAbgS0QrbTt
-	o0mqq9wlAYCIERXVfVtxBSaRWFAwA4Y72rN27Jn/rajs89eG7XkmQq26nf7Q+3QDX4eVq/azSFp
-	vDahJjywG2GTwKoSYO9hiyVkS3NlszfFTCe5ifnpyIc5ecZITiTw+07ItreKE/ZK6YNl/OKnn+6
-	pO+hPSwLxwymveDzlcKuJhiCj5soxEzu/Pv5CpZoEHbBLVCtrbIOmiZorQqg+EtKmOgCbZYLiyq
-	N4MiPUNs3izWmcE0ZOuhxjnXGLAjX/e+whPplEqEqdqvxh0/BcNbNBhdM50FPhZPFnei7+Em1P4
-	aonU9jYIBGqY=
-X-Google-Smtp-Source: AGHT+IEF430UREJHH7vf0pRs8CX/hqo233o+9B3pP4zeXlWCCJogYacSw896jaCZMSOhbI2fQ/nmhw==
-X-Received: by 2002:a05:600c:3488:b0:43b:ce36:7574 with SMTP id 5b1f17b1804b1-454a9c70d55mr4198985e9.11.1751474926049;
-        Wed, 02 Jul 2025 09:48:46 -0700 (PDT)
-Received: from toaster.baylibre.com ([2a01:e0a:3c5:5fb1:5542:4bad:e07b:9489])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-454a9bac51bsm2871155e9.39.2025.07.02.09.48.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Jul 2025 09:48:45 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-Date: Wed, 02 Jul 2025 18:48:34 +0200
-Subject: [PATCH v3 2/2] NTB: epf: Add Renesas rcar support
+	s=arc-20240116; t=1751475001; c=relaxed/simple;
+	bh=KCfJ8jhu0SYLV1nBNl7a47jC35wRMQQG4JlHQemj4Ng=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=S9KJWu7C8dWZz9k+wb9GYRGX0fGKLIBrDC+mh4p/+ugTP82qqNPg4TAWUwR1P0yyr8EEWtt8mqkL/+jIRCuTulW0v/PLNYF5RrgR2qm15i3dds1H/8PQ9Vg5FeBGZnytyepEjbPSKF+wtEu4HUkwc+ecpouXtRHk6vhmDRodm0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=OFVq1j/s; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 562GnRN93653967;
+	Wed, 2 Jul 2025 11:49:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1751474967;
+	bh=6voHMaTmzsAIVMby00VUz7wlumfn8xCD0RgkHw8QEaI=;
+	h=From:To:CC:Subject:Date;
+	b=OFVq1j/sM7qelaK5FCuaF0wsJv7WRSCDDhBFbit++l6tzMzGyv8xdP3t8h48JHJlU
+	 8Rm9kyIWquyPb25FXpSPM9+PSEMvDcvN2I+RIEtMsORo2vlNvVYv+c+UosYGLdiRBu
+	 B4uRQkTsObvqq1pd9Ruhr1iM1TRwOf0su49z4KPE=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 562GnRZo1020814
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Wed, 2 Jul 2025 11:49:27 -0500
+Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 2
+ Jul 2025 11:49:27 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Wed, 2 Jul 2025 11:49:26 -0500
+Received: from DMZ007XYY.dhcp.ti.com (dmz007xyy.dhcp.ti.com [128.247.29.251])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 562GnQ5L3771376;
+	Wed, 2 Jul 2025 11:49:26 -0500
+From: Shree Ramamoorthy <s-ramamoorthy@ti.com>
+To: <aaro.koskinen@iki.fi>, <andreas@kemnade.info>, <khilman@baylibre.com>,
+        <rogerq@kernel.org>, <tony@atomide.com>, <linus.walleij@linaro.org>,
+        <brgl@bgdev.pl>, <linux-omap@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>
+CC: <m-leonard@ti.com>, <praneeth@ti.com>, <jcormier@criticallink.com>
+Subject: [PATCH v5 0/2] Add TI TPS65214 PMIC GPIO Support
+Date: Wed, 2 Jul 2025 11:49:24 -0500
+Message-ID: <20250702164926.2990958-1-s-ramamoorthy@ti.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250702-ntb-rcar-support-v3-2-4268d9c85eb7@baylibre.com>
-References: <20250702-ntb-rcar-support-v3-0-4268d9c85eb7@baylibre.com>
-In-Reply-To: <20250702-ntb-rcar-support-v3-0-4268d9c85eb7@baylibre.com>
-To: Jon Mason <jdmason@kudzu.us>, Dave Jiang <dave.jiang@intel.com>, 
- Allen Hubbe <allenbh@gmail.com>
-Cc: ntb@lists.linux.dev, linux-kernel@vger.kernel.org, 
- Frank Li <Frank.li@nxp.com>, 
- Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, 
- Yuya Hamamachi <yuya.hamamachi.sx@renesas.com>, 
- Jerome Brunet <jbrunet@baylibre.com>, Frank Li <Frank.Li@nxp.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1368; i=jbrunet@baylibre.com;
- h=from:subject:message-id; bh=UVwuQqNuVkaXad1gSP5IG0Q61XDJHBqnS6AA8i/xzYQ=;
- b=owEBbQKS/ZANAwAKAeb8Dxw38tqFAcsmYgBoZWLqPkQ+LD2rVrcvB3II9FHT3xPQiO7pwu8rj
- 0U8zFjJPAaJAjMEAAEKAB0WIQT04VmuGPP1bV8btxvm/A8cN/LahQUCaGVi6gAKCRDm/A8cN/La
- hRe3D/914t0bWXIEhiaKx0rY8Bb1mK9VHQPQrSfCF7xX9dpRlnDBeGng8EKipRl5t6y6twhVFFj
- 7U+655hs2loVYgumvp6rnAAQlaEnXnHIn7oKxtTKr3F55qe5rdMuv97MjiVCdBJvRtvybjG1SQU
- +rq2dREWzYN40rR0kHmtEge/aenhIavHWRV0PziaqoR4wIzwKFRDimFEzSgBieqt3HaEqUYfTeU
- SNfcniEQncvHADCCXGgLZFRZazKfZ8pET3DLzihPxdL4H5SX0h13/U2fkCmcuWM7QSZeNhcNGrv
- PqYE15tCerYqrZ5fWkxygVT674pya5BsKBP66m1Dfl2mn2z/qmewZNPQ0M9rWm4qGau5gUwfMiL
- w/TWiPzJ1wDUBucNIS3HL3/VovbCTVxy+EhCE+TNcRHyiLXmVHuyVJwApWgUfNnhSXd/vogJMZn
- GD977JAkR+MXzSdI8QETyaNCnSzmVPLQnc9hfmuckTnKQWnXYm6qC4mfcWAWPk5NmOx5foNFej5
- dK0HH1EU00/LbXHXuuGO4+y3YHQTiCRqe5GLlxnmA6u6QvJJfy6kIssYbmmtFCRY+0ueHUK10J6
- dZonA8PPbLPaKjkXodCMQtbBZZ5qwupNjMTDkCtG6fa9PZ18YkggXMyIeMMr+o5gi7LjC7AADyS
- E5rBvbkvV6l2SRg==
-X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
- fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Add virtual non-transparent bridge support for Renesas rcar platform
+The related MFD series was integrated in mainline during 6.15 cycle [0].
 
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+TPS65214 is a Power Management Integrated Circuit (PMIC) that has 
+significant register map overlap with TPS65219. The series introduces
+TPS65214 and restructures the existing driver to support multiple devices.
+
+TPS65215's GPIO specs are the same as TPS65219, so the "tps65219-gpio"
+compatible string is assigned to two devices in the TPS65219 MFD driver.
+No additional support is required in the GPIO driver for TPS65215.
+
+- TPS65214 has 1 GPIO & 1 GPO, whereas TPS65219/TPS65215 both have 1 GPIO &
+  2 GPOs.
+- TPS65214' GPIO direction can be changed with register GENERAL_CONFIG and 
+  bit GPIO_CONFIG during device operation.
+- TPS65219's MULTI_DEVICE_ENABLE bit in register MFP_1_CFG maps to
+  TPS65214's GPIO_VSEL_CONFIG bit.
+
+TPS65214 Datasheet: https://www.ti.com/lit/gpn/TPS65214
+TPS65214 TRM: https://www.ti.com/lit/pdf/slvud30
+TPS65215 TRM: https://www.ti.com/lit/pdf/slvucw5/
+
+Signed-off-by: Shree Ramamoorthy <s-ramamoorthy@ti.com>
+Tested-by: Jonathan Cormier <jcormier@criticallink.com>
 ---
- drivers/ntb/hw/epf/ntb_hw_epf.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+Change Log:
+v4 -> v5:
+- Consolidate from 3 to 2 patches
+- Add specific TPS65215 info to Patch 1 comments + commit message
+- Remove chip_data struct
+- Add separate dev-specific template_chip structs
+- Add dev-specific change_direction functions + assignment in probe
+- Add PMIC GPIO mapping explanation in comments for future users
+- Add TPS65214 GPIO0 direction mask macro
+- Rename _GPIO0_OFFSET in patch 1, in addition to _IDX macro
+- Update cover letter + add TPS65214 datasheet link
+v3 -> v4:
+- Update cover letter
+- Rebase for 6.16 cycle
+v2 -> v3:
+- Correct gpio_chip.ngpio line to use .offset field
+- Remove unnecessary newlines
+v1 -> v2:
+- have any PMIC lists be in alpha-numeric order: TPS65215, then TPS65219
+- remove comma after terminator
+- Add driver prefix to chip_data struct
+---
+[0]: https://lore.kernel.org/all/173928615760.2233464.12306998726512431222.b4-ty@kernel.org/
 
-diff --git a/drivers/ntb/hw/epf/ntb_hw_epf.c b/drivers/ntb/hw/epf/ntb_hw_epf.c
-index 2b51156e01b0f22ef282d80c08c22af92f49307b..d3ecf25a516253e4e774e3bd835745509ef128ba 100644
---- a/drivers/ntb/hw/epf/ntb_hw_epf.c
-+++ b/drivers/ntb/hw/epf/ntb_hw_epf.c
-@@ -747,6 +747,16 @@ static const enum pci_barno mx8_map[NTB_BAR_NUM] = {
- 	[BAR_MW4]	= NO_BAR
- };
- 
-+static const enum pci_barno rcar_barno[NTB_BAR_NUM] = {
-+	[BAR_CONFIG]	= BAR_0,
-+	[BAR_PEER_SPAD]	= BAR_0,
-+	[BAR_DB]	= BAR_4,
-+	[BAR_MW1]	= BAR_2,
-+	[BAR_MW2]	= NO_BAR,
-+	[BAR_MW3]	= NO_BAR,
-+	[BAR_MW4]	= NO_BAR,
-+};
-+
- static const struct pci_device_id ntb_epf_pci_tbl[] = {
- 	{
- 		PCI_DEVICE(PCI_VENDOR_ID_TI, PCI_DEVICE_ID_TI_J721E),
-@@ -758,6 +768,11 @@ static const struct pci_device_id ntb_epf_pci_tbl[] = {
- 		.class = PCI_CLASS_MEMORY_RAM << 8, .class_mask = 0xffff00,
- 		.driver_data = (kernel_ulong_t)mx8_map,
- 	},
-+	{
-+		PCI_DEVICE(PCI_VENDOR_ID_RENESAS, 0x0030),
-+		.class = PCI_CLASS_MEMORY_RAM << 8, .class_mask = 0xffff00,
-+		.driver_data = (kernel_ulong_t)rcar_barno,
-+	},
- 	{ },
- };
- 
+Shree Ramamoorthy (2):
+  gpio: tps65219: Update _IDX & _OFFSET macro prefix
+  gpio: tps65219: Add support for TI TPS65214 PMIC
+
+ drivers/gpio/gpio-tps65219.c | 116 ++++++++++++++++++++++++++++++-----
+ 1 file changed, 102 insertions(+), 14 deletions(-)
 
 -- 
-2.47.2
+2.43.0
 
 
