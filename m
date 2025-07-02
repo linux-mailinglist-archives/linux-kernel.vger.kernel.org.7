@@ -1,133 +1,134 @@
-Return-Path: <linux-kernel+bounces-713517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E9E4AF5AE3
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 16:16:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4702AAF5ADC
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 16:16:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 669DF1C41A65
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:16:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52CB11C24BA3
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:16:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B0CF2EAB70;
-	Wed,  2 Jul 2025 14:15:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B744A2E54C3;
+	Wed,  2 Jul 2025 14:15:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NqnGC/ha"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="tJo7WgSG"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F7E12E92A9;
-	Wed,  2 Jul 2025 14:15:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E9E22D661A;
+	Wed,  2 Jul 2025 14:15:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751465746; cv=none; b=CvDRCf1EMG8YjVR/Yw2MIP1TmFs8XTGDc+a1gh9tnaSKf5Ey2PEhUCXORB72t5l7eMS8Dw0Cds3p3r7VjlMPO+IYcxK1r1osVTMcwIuRXd1F5udRFcJf02p6Z2rs6F2ykn2+ywFP9tHPo9Glh37K8ZX8oe9+g8P4NDRsJAyQvNU=
+	t=1751465735; cv=none; b=QYFJuGBT6sC6TqrSQHYlC+3whL5m6Jf26QGd7ntrzKxVIo18o/2P7cKEeNu32w6ero/f7j89BNUYVHv1yxmXwHpdXgyUgKldf7nAzCX9f5E9yKiogQpnRkkXoV5S0LQcF0LvA9QQFTlF1B4BpPfI7FvfvO+uGjUIlDyYffX2Fi4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751465746; c=relaxed/simple;
-	bh=hgVRR0PR/ckdvyIGS+3hX9AlKTj2YA2xeoGPQSp3j2U=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=IZ5A8/3qs9brtsmC6g6kt4o9tfvXmYt/bcIrvXEzVFKxzqQzC8q1wC5ZZTXspLj0ZX1ErQdSnuRe532enqpRawJ/MjZ+drMPbKXiPAOYP7+Hqc2ZSWxYDxKy4JrWU0DyyhOis92L9mSVqaoC1+VrdFpup+oCb/fwHO9RmyGLzxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NqnGC/ha; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-450cf0120cdso45878185e9.2;
-        Wed, 02 Jul 2025 07:15:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751465743; x=1752070543; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=aRZoP19mVo+xouu+rD216ylrbdoQ3y6C2mRJgbjte3E=;
-        b=NqnGC/hafxF8eNkpoGDhrJ4+tPwPj1Ax+5kt4hyHS/rGmNZfEGnZiXEFU+nJYEpFoL
-         P4vg6JVSxCSyV9N8ig/F9jr/iQmyWktCL7IOuEkP6xm69MBVCQTtxMMIZ1GCoFnYhnTQ
-         tctfcmFueMaIlqTFo6a8ROghh/PFm5BYMFxIBUjySRhIycJHYxtcdgLO0leRnKz8kjYQ
-         eTGrVkXFu/6gjptbooXGrwomIs3c7+NVBQn/ncpNvImTLDRcfhb9rqOtR3yOiUfUQmzE
-         hzj6tL9IP+ihXXH5ThxQyHq8fi8aUacUbIE2gA7jMP8wGoEN2L2oTAOstOx7YpAbQ1CN
-         Jerg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751465743; x=1752070543;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aRZoP19mVo+xouu+rD216ylrbdoQ3y6C2mRJgbjte3E=;
-        b=S0Txyx9lOmWoQdmV3rK3PK24puvX+feGNsp8gyhwfNwYIM7VFMbSbZv7RezyKWusYc
-         dmxF4YowsRERHHtP5TIQnke7IWzgjTfqpg/IY0U10ag4p+TO0YGstovEQEeh5nMyftZM
-         PoL0FTNOxINZ2smEa3QKrjRotPZLhcQ24e/CPv88a4WMlxc9ceJoqR2VXFSsZ8P1Hlrd
-         rSyRbRMjVpom9XkHTsq+RGhaE+kDa37BGUNuJFJ/2wXNmFMshVuf5Kv9Fsrc9AB4sptM
-         lne4gUWoD+ysESc0BH27+q98x1XMXJIBJyOdoy932a9Q1+AyeJ4eaL/XpUGz19S09uP0
-         5PqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUlWgGEIzUEtyJqYJRwM+7fnTu3fyNApoef/hP2SZbiM0ddjc6KzUvOwOTPiCE9ciWy+G53/jVRCP2Eltk=@vger.kernel.org, AJvYcCVreNWHzA0TxrZt1ucIRUNu4MofXIGNMT6vEKginxHz36kQ5sTnrvVvyXI9DdGIv2Bnhu2Uomcc@vger.kernel.org
-X-Gm-Message-State: AOJu0YwA/50wZGmT9hCwqziMS1MQUnSQzb3qPTGLyu7bbA8+/kZUvtJa
-	paQWzdBnM7PylpepalbAo5Qz3cjPR0F0bdtesB6qmemlTGUCAVVo5iEluVgzW5GI
-X-Gm-Gg: ASbGncvHrBdeTUDdQ7zTklvwu4F+dWeFKWLriNxmd0DEm+LcOPzyrpzynv/7hWeD6w8
-	OTfjmyJ1bkpgFqS/5pw5y+NzVznHs4/ayr6uxzPEy9URQIwgETDC7HYpDKqRpeljFa4u3BTuJZ6
-	VHfpciuv3uL4MgcJyvYIpLWroMrOgfw/eTmOoxq9Fa+aRos1s2td2UlZorgHM7MAy+z5nUHIPXf
-	eV4SuzY7hf7BXsq+Ie3HUrOkk30EIu/hz3THaX8bYpdSiCBj23X+mZPahLtSvqXlinxFBTyIiCE
-	znLwnoUB6L0dXSM0gxlmGxaXozGecNTh0AIwM3+IJmslM0nckfoFHfFuvboAXqdqK9nKv3tEBt4
-	=
-X-Google-Smtp-Source: AGHT+IGKvUHBAcdt7Y5rZZoCKXs2ZNpvgRwAwjxch2Y9eD+LU5/6F49qKav6+2grsiDSPNdbmoOjmQ==
-X-Received: by 2002:a05:600c:638e:b0:453:59c2:e4f8 with SMTP id 5b1f17b1804b1-454a36d80d6mr29507715e9.1.1751465742339;
-        Wed, 02 Jul 2025 07:15:42 -0700 (PDT)
-Received: from localhost.localdomain ([45.128.133.218])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4538a4215dbsm198343375e9.35.2025.07.02.07.15.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Jul 2025 07:15:41 -0700 (PDT)
-From: Oscar Maes <oscmaes92@gmail.com>
-To: netdev@vger.kernel.org
-Cc: davem@davemloft.net,
-	dsahern@kernel.org,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	horms@kernel.org,
-	stable@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Oscar Maes <oscmaes92@gmail.com>
-Subject: [PATCH net] net: ipv4: fix incorrect MTU in broadcast routes
-Date: Wed,  2 Jul 2025 16:15:15 +0200
-Message-Id: <20250702141515.9414-1-oscmaes92@gmail.com>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1751465735; c=relaxed/simple;
+	bh=MkniHqRw9b3MaQ+mcWhZbTFhUvqpVB25nxYyo5HQKj8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Znf3Z/rQjmnI97losEGtosTyrNCYmGLFFGB1j/L4+rKzLiC3oVbhMMNgnfvmMnVeB+FpwYRvoc8PFYc0L7KBDxIgw66dpK0sdfiEiTZp1VmP2V/RSp3FBswfRnTHD4NDBz/k3ScU8RzeWu950U6Vx1joTkR7ObVLuLhn2a7keF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=tJo7WgSG; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 562BhBdC013840;
+	Wed, 2 Jul 2025 14:15:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:message-id:mime-version:subject:to; s=
+	pp1; bh=N80s6nuGaOh/KQRu5TjyRxgHd2kV+QHDetxMISGXa3E=; b=tJo7WgSG
+	ENC/RPYaIwM+gz3nuz6vzHFXI8EyXg458FXGQgTYIZ3pBhe2OB4zyL8kzayoDFk2
+	OX4GsKFGMOYBXYY6tYjPVSgV5xA8iu3ykjtMokJX5wCB7Ck4HKE9GKsVnA4fcMYQ
+	jzvBT+V9NOGQo0gXJ1A6WD8ey2vT6VabATuTTmeRhULYwoVlZ7qMkHopdVGIGObr
+	8uFzWOfNiXlEgFtzjgx6qRhyw4lseg74xktV6Tii0xwRT7L17Y6PeUvJKiEHH/cF
+	m2GVVwG1+v+fhK/ZWK1TMrv3BffxeoD38NeUXtqdNyZfwW986DrE79fpBX+xtuZn
+	NA4vMbq0PfoFJw==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47j5tte15h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 02 Jul 2025 14:15:31 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 562BkRXt021430;
+	Wed, 2 Jul 2025 14:15:30 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 47jwe3fm4e-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 02 Jul 2025 14:15:30 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 562EFQSC57999752
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 2 Jul 2025 14:15:27 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E1DAF2004B;
+	Wed,  2 Jul 2025 14:15:26 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C610420043;
+	Wed,  2 Jul 2025 14:15:26 +0000 (GMT)
+Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Wed,  2 Jul 2025 14:15:26 +0000 (GMT)
+Date: Wed, 2 Jul 2025 16:15:25 +0200
+From: Alexander Gordeev <agordeev@linux.ibm.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Vasily Gorbik <gor@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] s390 fixes for 6.16-rc5
+Message-ID: <02f08dcb-fcdf-45a9-a598-c252018153cf@agordeev.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: m-xxCBSHblO8UGPY3FbQT-y3s-tW8khw
+X-Authority-Analysis: v=2.4 cv=UtNjN/wB c=1 sm=1 tr=0 ts=68653f03 cx=c_pps a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17 a=kj9zAlcOel0A:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=mer6NMo88nUfkAoASwYA:9 a=CjuIK1q_8ugA:10
+X-Proofpoint-ORIG-GUID: m-xxCBSHblO8UGPY3FbQT-y3s-tW8khw
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzAyMDExMiBTYWx0ZWRfX88NMjP5dUccm Hhg6lQmFs97UIzherdukCzoCV7hlyCjzm17TAtkTLLy1uixF3TrYqP80ZXWNpdOth7mbIvLlYUD oFHofn0xlzySxOiV1+TtQRyokrPW5Ob67tceN7q49EGemVt46nkvoLClkFPUEespU6it6qw5EMv
+ K9JzxlxFbp1efi8f94FELirmiop+w9NyHe7BukxUb+5vl+6EmYOxCQUJSDNqrxTsCtWnK4AD2b2 PSimiOuE+3Q2EVtIPuV5wXFj3Zl5uPM+dAgncxtGOWl2IBb8V7wm7/MKO54Ob0jO75ShgkgoybZ f9XCRJJQMAzTukg7DR38iKfQ7Ham9ycShpo7TO70ArcGXuqSAS1WBjZT2g7K6Wmo03T8vXGwf9s
+ 7evNTTjtvEIFy+GafacDE46zWGamNwAqI2BrmGz6OWAbnryyOwXkY+AUGYR7FHXVj3fD8bCr
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-02_01,2025-07-02_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ priorityscore=1501 phishscore=0 mlxscore=0 spamscore=0 mlxlogscore=685
+ adultscore=0 clxscore=1015 lowpriorityscore=0 bulkscore=0 impostorscore=0
+ malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507020112
 
-Currently, __mkroute_output overrules the MTU value configured for
-broadcast routes.
+Hi Linus,
 
-This buggy behaviour can be reproduced with:
+please pull s390 fixes for 6.16-rc5.
 
-ip link set dev eth1 mtu 9000
-ip route del broadcast 192.168.0.255 dev eth1 proto kernel scope link src 192.168.0.2
-ip route add broadcast 192.168.0.255 dev eth1 proto kernel scope link src 192.168.0.2 mtu 1500
+Thanks,
+Alexander
 
-The maximum packet size should be 1500, but it is actually 8000:
 
-ping -b 192.168.0.255 -s 8000
+The following changes since commit 7f8073cfb04a97842fe891ca50dad60afd1e3121:
 
-Fix __mkroute_output to allow MTU values to be configured for
-for broadcast routes (to support a mixed-MTU local-area-network).
+  s390/ptrace: Fix pointer dereferencing in regs_get_kernel_stack_nth() (2025-06-17 18:15:25 +0200)
 
-Signed-off-by: Oscar Maes <oscmaes92@gmail.com>
----
- net/ipv4/route.c | 1 -
- 1 file changed, 1 deletion(-)
+are available in the Git repository at:
 
-diff --git a/net/ipv4/route.c b/net/ipv4/route.c
-index fccb05fb3..a2a3b6482 100644
---- a/net/ipv4/route.c
-+++ b/net/ipv4/route.c
-@@ -2585,7 +2585,6 @@ static struct rtable *__mkroute_output(const struct fib_result *res,
- 	do_cache = true;
- 	if (type == RTN_BROADCAST) {
- 		flags |= RTCF_BROADCAST | RTCF_LOCAL;
--		fi = NULL;
- 	} else if (type == RTN_MULTICAST) {
- 		flags |= RTCF_MULTICAST | RTCF_LOCAL;
- 		if (!ip_check_mc_rcu(in_dev, fl4->daddr, fl4->saddr,
--- 
-2.39.5
+  git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git tags/s390-6.16-4
 
+for you to fetch changes up to 62355f1f87b8c7f8785a8dd3cd5ca6e5b513566a:
+
+  s390/pci: Allow automatic recovery with minimal driver support (2025-06-28 18:59:00 +0200)
+
+----------------------------------------------------------------
+s390 fixes for 6.16-rc5
+
+- Fix PCI error recovery and bring it in line with AER/EEH
+
+----------------------------------------------------------------
+Niklas Schnelle (3):
+      s390/pci: Fix stale function handles in error handling
+      s390/pci: Do not try re-enabling load/store if device is disabled
+      s390/pci: Allow automatic recovery with minimal driver support
+
+ arch/s390/pci/pci_event.c | 59 +++++++++++++++++++++++++++++++++++------------
+ 1 file changed, 44 insertions(+), 15 deletions(-)
 
