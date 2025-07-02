@@ -1,300 +1,242 @@
-Return-Path: <linux-kernel+bounces-712863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-712865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1228AF0FF7
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 11:29:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C775BAF1000
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 11:33:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12A781C248FA
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 09:30:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03FD516BB65
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 09:33:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BBB42459CD;
-	Wed,  2 Jul 2025 09:29:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA8EE241686;
+	Wed,  2 Jul 2025 09:33:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QyCN716q"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="tqI6CrMT"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2064.outbound.protection.outlook.com [40.107.94.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1AF51F463A
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 09:29:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751448576; cv=none; b=HX1dBzwwqWVeCwCFAUuh2QrIpm/AqumnbdwCHcRvz1Qti51IiXwb6IFgbX/r8TlRYTuM18e780Dewx07M0353+TVY7xbop4aMRrVj60uxFxSIRn0HaVhJIcNmE7pF8QmlsMBPWr0LM6r5elJaK3/oK50bMz8iNUTqYkKSqIgHnc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751448576; c=relaxed/simple;
-	bh=3IOT08xYGGOvXZTXp7TKeWO/UH9Cj94SVaKjLaY4KTQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FCcXJ0+xpby49PqS1MFCOGuF9oX41Ge9VB1A8usWx4xyU9GR3+/p/dIXJPbHv482VyG61vKgXuyVt5OePFKpvA7eQeJ8N2kLP/WRjQofoflJqsPGQOS8xGctJsmTtPs3AL/oWfARBV1o3GIWAahG4GS00s3jSjJac2jkxr8LgaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QyCN716q; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1751448573;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ppRF9PFAqofYSOZMKV6AN5ZHS/0FmpTYSWJ/9tUppWg=;
-	b=QyCN716qdk4yu8y1da7kFq7g3tBCHyij7+LxduwU3yBFcIMQIZ19ELo45a6buhyFxzPjq6
-	gercPmHggnTUjyRBvSMaKyJ4ii70KZMbZYuEkOqOjijuCrnbsK5d1P8UfdPHrKuJx7k3i1
-	pXlR13m/j9rOJIFtqk8NTL8yEajkrmE=
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
- [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-157-4ZMi5sHBPc2JknxQ1iOiWA-1; Wed, 02 Jul 2025 05:29:32 -0400
-X-MC-Unique: 4ZMi5sHBPc2JknxQ1iOiWA-1
-X-Mimecast-MFC-AGG-ID: 4ZMi5sHBPc2JknxQ1iOiWA_1751448571
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-3132c8437ffso4953050a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 02:29:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751448571; x=1752053371;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ppRF9PFAqofYSOZMKV6AN5ZHS/0FmpTYSWJ/9tUppWg=;
-        b=lM5Us/iDxBcpErgWJJIfuGypa0JNFJMD6uJAT7PAlUdrl4FXl4YGeGikDCR8f3euH9
-         xPav9kl/WjOugs4vH7/VitRU4/Ytx+fXJ4orGtyNQoSgkcUnXh5ayV+FDHfE5S7bV5Ub
-         Zwk7pVxd0AEoV2/ZFr91g5+I+iVC5r0ReufNnQhdllOVRyY91YF+9vVQY7Cqq3zK/E4d
-         oz5xqtCQboSZJoXjHN26TpdYUYUgHQr+G8zevUvuYpwCe5g6bQhqnkwo/I174LFETsCF
-         eI8OJjYFpQmfr3bTNO5uEcJUpCcc5PnWUjhy8VZEiL1q+DK6pUUj8VjYocGjh741wBwK
-         moNA==
-X-Forwarded-Encrypted: i=1; AJvYcCU/5P5tlAovFtKYZc8LCcGJV19IVNbDbBQcRpYlhA70UuMVmc6ScK04TtUskE34NlNwqhAz1BL11UYgNe0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwoSGEh6/slwx9b/Z4dJ88QztWAiX4AhgTVuF01x2IeTMcWs+xr
-	vPWaYyqp1fFguuu/Zry5PyWJklK3ud8ZcgEBWa9LyscD7SqPPVkLMful1XVoTN+qWmAFX2nQ/ME
-	QBo2qatK1XRa/tciXHoCfb+aabz0+8TZe1d5Fh4fsF5OuTZamIYDmAiDbV7tVn//qkaX1MqTs6L
-	11S7n3YxniRCQVLPXpphgOAvsbp8MduAT8mSPFErld
-X-Gm-Gg: ASbGncuINf/6ubrmDa63h5EZ6InYZBADIZHGRURJgk/tAFhpJLQTEHaTC8EqpRrqs/S
-	6GiR19xHPOKH/DfQTrSqthzGegw3Il0R1L/p+tSKl+WfJrBUdv8j3vUEli19ePqOyjucp+Q5AqB
-	t+
-X-Received: by 2002:a17:90b:2703:b0:311:ffe8:20e6 with SMTP id 98e67ed59e1d1-31a90b1a2c3mr3265930a91.3.1751448571097;
-        Wed, 02 Jul 2025 02:29:31 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEdg0tKr6FWtYLrHrlNHOfmvrc4Alber6vRgRHUTpt+P817ZRuH7iGLs8DiPeATIDmYwaU1LJ0w14prxAgjh38=
-X-Received: by 2002:a17:90b:2703:b0:311:ffe8:20e6 with SMTP id
- 98e67ed59e1d1-31a90b1a2c3mr3265895a91.3.1751448570603; Wed, 02 Jul 2025
- 02:29:30 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 352F419E81F
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 09:33:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.64
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751448791; cv=fail; b=lH8IjsN6eAzzqQuK2YLxU0uw5f0foa7IWCa428pQ+b7/Kx8qhn5fytMxBzrnc5j2oPIfAeEvhpzdly0q777AzAMfXYYG/PsyMlN8/5BUX99IbJ2+fKt2N38msoFZnJ5+a4C66+oiRQneAG8V8pW6uZIN8dxSCkWCb/PzaWxXnds=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751448791; c=relaxed/simple;
+	bh=VAdQGkQ8Fb4m6A5sOw9uSBimE73cvWxijQ2O6CFMaRQ=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=FR250ILyzIBo1DfEyoAuoaQ6Z0WM5F3Xy/JcPZOgx3MStR/EZOjCic9um9YM2HUZlIK/xagaCtrEjdXdeDvw1Bn8HTHkY/INlDVTyryZ6/RoG36VCr3W5+WkR9KhOfOsgxhx6GRCiuQqqKWxoFFbpwYgyj8fBcB7qLXq1uCShHg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=tqI6CrMT; arc=fail smtp.client-ip=40.107.94.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=PG9PmdWgVLiAejn3MCKA+aLg6w6XajqVBdkK1yenm9QBljkgsipZ3ySIoMap1rwH9nkRKN6T+KaDn3GxAddl0NLVHbghDkhMJJg6hxsM+mYbUgom+ANHALhdMfmh1JS63IAv+VRI9yA8fnaqeNf2CcdVSXsd+MW9rcWPQ1jL1xyXHpL66zUUDd2hYier4lOnap2NuG2iMWcEsww9aycLj9W9BHVZRu+hP5GLd+WGCFqk3I/EnC5kNS3j/RwK6HYxJ42BfgBflZbaKd21SC8Xr6D/Xt0zvfEvAPiKgSRz8GYWTPNqUO2+boBmOV7DuWkJ6HnXWu6yD9DGw3DPhqma1A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=VAdQGkQ8Fb4m6A5sOw9uSBimE73cvWxijQ2O6CFMaRQ=;
+ b=CFOs7eMvSgRrFAMgTLSQHGH+fQLhC5v20SIrbbEhdCO6JZdnhrrmEaLJzGlUw2aAoFIHj+I5phEZBFvNV8cM7H/jMXb/S0RCSFGG7hKxlfuFXkt5N8iBGwcIZRCJ9p/KZO2y8PfVSXnKGCC9GAWWL5jo3U0Dc4/sLdOW2r9zMDq+WZJlKKF8cis+/4OMoaMDirbUfnl2qOBMDm7CLR9ALU0fWQY2n9FzEBFOhDORkfDflSU1vGgzgoJ3wFgbXzxBDqivlgDE23vxI19MNR2AjmMuhuaLvH2goeT9jSFLgizvkExBV9qofN1SmqJCLBz+ff8aNpnKJqRi2d5wbeyJ5Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=VAdQGkQ8Fb4m6A5sOw9uSBimE73cvWxijQ2O6CFMaRQ=;
+ b=tqI6CrMTzNgLFdzRUdTyMPmxwQIStxTTKfB3ABrXaJtpxklFxgXUIvrPL8fFA3yfL26LeCLRqocNAsE2sgk0551xHKg0QwYI3AqseZdMH7SQhS9gv4A0jBkAdCRReXcGQeJtrWYMuaQI2EZl+GAp61ir5xBL+NP9E6BkE+5SbrePcvzXpIBWe4myoa9SBmoTGmIpAozhLoELMZLFpua7tlzayfbdSCFcaH8p/t+t1QDGqP33c6oTLa8sYBl1vazyquv24nTdyrfIWbAlAM3xDdstY7+pCyBCv8fxtGA8ogK9Eyu5PdK/otumNZpDPtthDts6utgriJ7YVngneb5aDA==
+Received: from SA1PR12MB7199.namprd12.prod.outlook.com (2603:10b6:806:2bc::21)
+ by SJ5PPFFA661D690.namprd12.prod.outlook.com (2603:10b6:a0f:fc02::9ab) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8857.21; Wed, 2 Jul
+ 2025 09:33:07 +0000
+Received: from SA1PR12MB7199.namprd12.prod.outlook.com
+ ([fe80::ae1b:d89a:dfb6:37c2]) by SA1PR12MB7199.namprd12.prod.outlook.com
+ ([fe80::ae1b:d89a:dfb6:37c2%3]) with mapi id 15.20.8901.018; Wed, 2 Jul 2025
+ 09:33:07 +0000
+From: Ankit Agrawal <ankita@nvidia.com>
+To: Jason Gunthorpe <jgg@nvidia.com>, "maz@kernel.org" <maz@kernel.org>,
+	"oliver.upton@linux.dev" <oliver.upton@linux.dev>, "joey.gouly@arm.com"
+	<joey.gouly@arm.com>, "suzuki.poulose@arm.com" <suzuki.poulose@arm.com>,
+	"yuzenghui@huawei.com" <yuzenghui@huawei.com>, "catalin.marinas@arm.com"
+	<catalin.marinas@arm.com>, "will@kernel.org" <will@kernel.org>,
+	"ryan.roberts@arm.com" <ryan.roberts@arm.com>, "shahuang@redhat.com"
+	<shahuang@redhat.com>, "lpieralisi@kernel.org" <lpieralisi@kernel.org>,
+	"david@redhat.com" <david@redhat.com>, "ddutile@redhat.com"
+	<ddutile@redhat.com>, "seanjc@google.com" <seanjc@google.com>
+CC: Aniket Agashe <aniketa@nvidia.com>, Neo Jia <cjia@nvidia.com>, Kirti
+ Wankhede <kwankhede@nvidia.com>, Krishnakant Jaju <kjaju@nvidia.com>, "Tarun
+ Gupta (SW-GPU)" <targupta@nvidia.com>, Vikram Sethi <vsethi@nvidia.com>, Andy
+ Currid <acurrid@nvidia.com>, Alistair Popple <apopple@nvidia.com>, John
+ Hubbard <jhubbard@nvidia.com>, Dan Williams <danw@nvidia.com>, Zhi Wang
+	<zhiw@nvidia.com>, Matt Ochs <mochs@nvidia.com>, Uday Dhoke
+	<udhoke@nvidia.com>, Dheeraj Nigam <dnigam@nvidia.com>,
+	"alex.williamson@redhat.com" <alex.williamson@redhat.com>,
+	"sebastianene@google.com" <sebastianene@google.com>, "coltonlewis@google.com"
+	<coltonlewis@google.com>, "kevin.tian@intel.com" <kevin.tian@intel.com>,
+	"yi.l.liu@intel.com" <yi.l.liu@intel.com>, "ardb@kernel.org"
+	<ardb@kernel.org>, "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"gshan@redhat.com" <gshan@redhat.com>, "linux-mm@kvack.org"
+	<linux-mm@kvack.org>, "tabba@google.com" <tabba@google.com>,
+	"qperret@google.com" <qperret@google.com>, "kvmarm@lists.linux.dev"
+	<kvmarm@lists.linux.dev>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "maobibo@loongson.cn"
+	<maobibo@loongson.cn>
+Subject: Re: [PATCH v9 0/6] KVM: arm64: Map GPU device memory as cacheable
+Thread-Topic: [PATCH v9 0/6] KVM: arm64: Map GPU device memory as cacheable
+Thread-Index: AQHb4mPxHvLAi7AU2UCiiYmQowcOkbQeo1Ok
+Date: Wed, 2 Jul 2025 09:33:06 +0000
+Message-ID:
+ <SA1PR12MB7199F8346F2CA802E9F3965DB040A@SA1PR12MB7199.namprd12.prod.outlook.com>
+References: <20250621042111.3992-1-ankita@nvidia.com>
+In-Reply-To: <20250621042111.3992-1-ankita@nvidia.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SA1PR12MB7199:EE_|SJ5PPFFA661D690:EE_
+x-ms-office365-filtering-correlation-id: c0d51525-ed16-4999-e36f-08ddb94b7398
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|376014|7416014|366016|38070700018|921020;
+x-microsoft-antispam-message-info:
+ =?iso-8859-1?Q?Tb1tyz2rKdAal7dbRBiT878tQ1eV0AWkGaC1/wtp+dd4vtvC4EEGwxAq3M?=
+ =?iso-8859-1?Q?eGm4u3Tfm48u6T8bdmlOvc1DV2IxA1YMV8+NySJrckAgKxn9iT6LoeYEX1?=
+ =?iso-8859-1?Q?xhNn5pBZP8SVUDINjV0HmHHneQPOz5anVsGSYfTXRybtOiKcyud8mAB8CD?=
+ =?iso-8859-1?Q?yc3j55nxnRkMUaWnEd6lR7HwG/j1MO/6JzCHxF79AopLY0b9hHTLQIaS5x?=
+ =?iso-8859-1?Q?+gvjX/L2XD2cEt1uYTY4+Ac76wCz7XJPrl5WDywQN9yp+qDJXbGpS44ZBp?=
+ =?iso-8859-1?Q?B0RbTSaFLTPbZsMcNmnHuVVeKyiuwTDhtAFHk0hKINtHDxGAYR2JpQTXZ0?=
+ =?iso-8859-1?Q?fEMgkf0gVtnV1QDBQp9rboaJ3fhUHzwC+RLQSN/egO0k0EZgY2Y7ltKGDU?=
+ =?iso-8859-1?Q?p7U4qN1mR3OHBvgPBDBqVBoPDgRzg3zjoxSYTIw5HIqIzOa1u9cAjgdvdK?=
+ =?iso-8859-1?Q?wqtXGO9tL4+wAweNlW269w/NTEJ/RGRUUSCJi03GkvYCTWHg9WmZBCDbUH?=
+ =?iso-8859-1?Q?R/cPvl4GgVlmhDmAQiNpve5hIVbqZ/B/Qi42L0NvI64GAcFc2j23qIc721?=
+ =?iso-8859-1?Q?H/nilBcdEYjc1IyjQAxv2qaih5xolExhWEGT+rNXQ1HHi41cmfnoRhGPH4?=
+ =?iso-8859-1?Q?II1wU+OvNFQ72KIwYj0OG7BQOcwmXjsb6TC/Bv1yj4RFzNTDM2CYOK1B2F?=
+ =?iso-8859-1?Q?Zy9c60cREJ9r6FjtssqmBsSSaPxHWyby8y8HdI/yyc4vX8B+wRlHiFQzcs?=
+ =?iso-8859-1?Q?1H2MzR1jB4u/Nsn4BtI4mz+0G4rUfsP3VowU/aX4cfYIi1mSrqolIGF7yx?=
+ =?iso-8859-1?Q?BQzbz3Q4d9+1RGuV8sUtTb/EBk97NqK/+5vj1DCJJ0hgrY4B/fD/6qrSbj?=
+ =?iso-8859-1?Q?ZAorFNqdwtOojjMaUb8pK5xkNUTfX6XebiLWlSZl+5KrU7qxLCWLPulFhU?=
+ =?iso-8859-1?Q?taRe+iTNw+R5dZ99j88k50uvvOqL2JghcyFtynmNPB53QJRrsOynByP4nu?=
+ =?iso-8859-1?Q?D6M1IwgBUAI7t4AcJ4ciqt/nThnI6/bsN1AQFSVJANZHaEVe45Dx1sjOcM?=
+ =?iso-8859-1?Q?U4c7jjpDeMY+mPpwmAR/CrCXKBcHqKq4X+vW3NBlZ9PoYbB8SNkYwFlant?=
+ =?iso-8859-1?Q?wjOfA7yJlh4uXGmt4/5Ieh9Y0Z0mjyxrQeRETUc6rmDr4byy9ZUV64r9bj?=
+ =?iso-8859-1?Q?4yE6873SQqu/zpE8loDxNQgSZppCsQqAvW0BkVeCel4B1hACJruVbGlD3b?=
+ =?iso-8859-1?Q?eD6l7wYqjkjVgowc/NEWp+Ntf205V1hIecl2QF8kTiL9shMs1qzKXqmKo6?=
+ =?iso-8859-1?Q?4rsxFEtuhIyhp4jIg/5KRNGYn3uktHjIscpDOwTADn+BBPjI2yat+Cd2ze?=
+ =?iso-8859-1?Q?8Vg2hE80sWDKc3gxxGXsugpUY0N4ypuZZmkso0fSKCcndfF3OlWAMyRk0X?=
+ =?iso-8859-1?Q?rS89fbqwcj4sug74PrW6TcckPs8vWKW8ZetUnKTZbzgRL6kJmw/dc1q9qC?=
+ =?iso-8859-1?Q?vKtzmIpToGAuzh4q7gKxHEKcgnvOMTV9Jp4fBntxnFAyh974Ijsk5k1QGe?=
+ =?iso-8859-1?Q?y3JbqQQ=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR12MB7199.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(38070700018)(921020);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?iso-8859-1?Q?+2+Sh0PSy7/g5M2FMKfXC2kWZKVCpumIv7QL2x8FubcuD1K6QM3vlzz47z?=
+ =?iso-8859-1?Q?ss6LwPFI8VcMjYHlYEbtCvZ7VzPFAPtOilPObt2MpxDNaeQj5mF1N13bRr?=
+ =?iso-8859-1?Q?+RIjlbSlXBMDIt99hLilZf4ImOco6IGwip2iuvZjEApRvRJ7oHJymBKWzz?=
+ =?iso-8859-1?Q?1FDercG+ZmjobKZlhAI3J64VJgaQTY5OfPL7jNAW8H//xOfzZj/oRQLPeH?=
+ =?iso-8859-1?Q?XkbkGoUbdcTd41VupvOi1CNzbB4iIPiUqvMIGBP4NW0xw5yKDWUHJ3Gw9l?=
+ =?iso-8859-1?Q?E3RGe7wg+H3tb6LHmEIngakTc/GDaOE7FYwGEiWnviO0+bYYl90k4oizFl?=
+ =?iso-8859-1?Q?J6LVXWl7Ykto9Iaw1q97uju/eDO5D6NL54mO9IkqcXSTsdsIvTmTSxkTCn?=
+ =?iso-8859-1?Q?76oTCAQq8w2+f1PyfsBKjjo1m7kfyMdpiKETmZaKVijsN5wp2V8yJkPmhf?=
+ =?iso-8859-1?Q?K3JMKoDeeen1yIkZvQdwAnYSmzwZ36xm27z/CRCJrm1onT7uMfyubAKNJO?=
+ =?iso-8859-1?Q?/N/2LpxTpYakkuyEHwlwqW5oBBrfM+R5xwpLhoKpJndCVidEd1Z1b/lTyI?=
+ =?iso-8859-1?Q?mGysRGVU9QE8xD6CFA6iMk77TJlWFulat9c1paRlDm/cePR1fnxpknczOp?=
+ =?iso-8859-1?Q?JKVcXiiS5xzqgg29wtkynC8q+7zpq6nVhWiwSQF3FMXeVqd10f9OWf7GPH?=
+ =?iso-8859-1?Q?MOjMzTgUKNT4qjGdMARbIHizLKTuHcBNPW38To/13yLd55F4w5aIfAtwJK?=
+ =?iso-8859-1?Q?p2vQbMxcJH+9WuW/KJWQDmZHDtyEL6LXUw8kkE3txNaarYPFZYWXj9VRo/?=
+ =?iso-8859-1?Q?qwtyxw4j3cmeNkJdtazgSF1W/mdmAZpzlb0JHDq4GdL81Y9T+x7PDSbHFq?=
+ =?iso-8859-1?Q?Nq+0mEkAuEFaawuzcVrpoIDEcB2hfAdYt7Yvo52lRjAJhxxBmlGAzoSgmU?=
+ =?iso-8859-1?Q?yayGl0/AXHwugkJg6gxh5cioJzGissN9K6PILnTfSW4iCUVcpq+pv69TX2?=
+ =?iso-8859-1?Q?L3kVKcc75iTfNAe2ttxmKCylTC97xqOq/vE3NG+YxmSa7skCQKvQgl07hg?=
+ =?iso-8859-1?Q?wt3qyYqPziY5Fm6c90gy0da3prntSoUWmh6vF2k3e2ImguOnWsxWRV/m4j?=
+ =?iso-8859-1?Q?EKSBz6dyTTinEqjvKRpFf2kM0PrauOI9DgqbxWREMFKyGIxKRXCZtg6Jyi?=
+ =?iso-8859-1?Q?T4BcPl96eCk0c8hDtp+/Q+AC/ZsZdyTGJZEmDHgZLgSzf9eYnmnL76XWZO?=
+ =?iso-8859-1?Q?yuzh8dQ4/TDU11CYvE2zgtR903VChi16phMbenBkBgwMM8Whdjh9gO/k/5?=
+ =?iso-8859-1?Q?sbkd8ZZDIK3HvOqo7JJ3Fpl4t3fTcqGtakINyFCVfbgcuAZdzK52Go7eL4?=
+ =?iso-8859-1?Q?qaB/6MK6farHg/tv0eWVagUV9uU7oeZKF1s++CwpMbx3XQIgdK2j5E2+rf?=
+ =?iso-8859-1?Q?u2+fBic9AvjMcUb+7woe1NxiwaXVqmR/OvH7MmrApRiaexD+b5jve7Vsv0?=
+ =?iso-8859-1?Q?eJyK8aOQfC5HzeQSEOXBNEIJaGxotzm+0D9XhXEtRf+17ShAFj2mcH+HTj?=
+ =?iso-8859-1?Q?DQr+FMpTIPr/vcvV9aUba4Mtsc2Nf2toFSoZ/3yT+/5oqqSM1nTk+Gxe93?=
+ =?iso-8859-1?Q?a69oIF8g3E/Xc=3D?=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250616082518.10411-1-jasowang@redhat.com> <20250616082518.10411-20-jasowang@redhat.com>
- <20250701024602-mutt-send-email-mst@kernel.org>
-In-Reply-To: <20250701024602-mutt-send-email-mst@kernel.org>
-From: Jason Wang <jasowang@redhat.com>
-Date: Wed, 2 Jul 2025 17:29:18 +0800
-X-Gm-Features: Ac12FXwObd67L1Pf1WmOzhZvAaUA5FhEvAcHp_e4q4OSxXQCZdJt_PPbR_3zZi8
-Message-ID: <CACGkMEuzTYPcDMamptLMQpSZu3gWxYx1Sr2nJef+pyuo2m35XQ@mail.gmail.com>
-Subject: Re: [PATCH V3 19/19] virtio_ring: add in order support
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: xuanzhuo@linux.alibaba.com, eperezma@redhat.com, 
-	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SA1PR12MB7199.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c0d51525-ed16-4999-e36f-08ddb94b7398
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Jul 2025 09:33:06.9045
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: bS53zGTec7sVWMaIbRPKB4c9zpSRb/NwukWvEaOeDONX3GQJv14RghnawDwLqv/fq5zU+SoXv34xg2oeHlYRkA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ5PPFFA661D690
 
-On Tue, Jul 1, 2025 at 2:57=E2=80=AFPM Michael S. Tsirkin <mst@redhat.com> =
-wrote:
->
-> On Mon, Jun 16, 2025 at 04:25:17PM +0800, Jason Wang wrote:
-> > This patch implements in order support for both split virtqueue and
-> > packed virtqueue.
->
-> I'd like to see more motivation for this work, documented.
-> It's not really performance, not as it stands, see below:
->
-> >
-> > Benchmark with KVM guest + testpmd on the host shows:
-> >
-> > For split virtqueue: no obvious differences were noticed
-> >
-> > For packed virtqueue:
-> >
-> > 1) RX gets 3.1% PPS improvements from 6.3 Mpps to 6.5 Mpps
-> > 2) TX gets 4.6% PPS improvements from 8.6 Mpps to 9.0 Mpps
-> >
->
-> That's a very modest improvement for a lot of code.
-> I also note you put in some batching just for in-order.
-> Which could also explain the gains maybe?
-> What if you just put in a simple implementation with no
-> batching tricks? do you still see a gain?
-
-It is used to implement the batch used updating.
-
-"""
-Some devices always use descriptors in the same order in which they
-have been made available. These devices can offer the
-VIRTIO_F_IN_ORDER feature. If negotiated, this knowledge allows
-devices to notify the use of a batch of buffers to the driver by only
-writing out a single used ring entry with the id corresponding to the
-head entry of the descriptor chain describing the last buffer in the
-batch.
-"""
-
-DPDK implements this behavior, so it's a must for the virtio driver.
-
-> Does any hardware implement this? Maybe that can demonstrate
-> bigger gains.
-
-Maybe but I don't have one in my hand.
-
-For performance, I think it should be sufficient as a starter. I can
-say in the next version something like "more optimizations could be
-done on top"
-
-Note that the patch that introduces packed virtqueue, there's not even
-any numbers:
-
-commit 1ce9e6055fa0a9043405c5604cf19169ec5379ff
-Author: Tiwei Bie <tiwei.bie@intel.com>
-Date:   Wed Nov 21 18:03:27 2018 +0800
-
-    virtio_ring: introduce packed ring support
-
-    Introduce the packed ring support. Packed ring can only be
-    created by vring_create_virtqueue() and each chunk of packed
-    ring will be allocated individually. Packed ring can not be
-    created on preallocated memory by vring_new_virtqueue() or
-    the likes currently.
-
-    Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
-    Signed-off-by: David S. Miller <davem@davemloft.net>
-
->
->
-> > Signed-off-by: Jason Wang <jasowang@redhat.com>
-> > ---
-> >  drivers/virtio/virtio_ring.c | 423 +++++++++++++++++++++++++++++++++--
-> >  1 file changed, 402 insertions(+), 21 deletions(-)
-> >
-> > diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.=
-c
-> > index 27a9459a0555..21d456392ba0 100644
-> > --- a/drivers/virtio/virtio_ring.c
-> > +++ b/drivers/virtio/virtio_ring.c
-> > @@ -70,11 +70,14 @@
-> >  enum vq_layout {
-> >       SPLIT =3D 0,
-> >       PACKED,
-> > +     SPLIT_IN_ORDER,
-> > +     PACKED_IN_ORDER,
-> >       VQ_TYPE_MAX,
-> >  };
-> >
-> >  struct vring_desc_state_split {
-> >       void *data;                     /* Data for callback. */
-> > +     u32 total_len;                  /* Buffer Length */
-> >
-> >       /* Indirect desc table and extra table, if any. These two will be
-> >        * allocated together. So we won't stress more to the memory allo=
-cator.
-> > @@ -84,6 +87,7 @@ struct vring_desc_state_split {
-> >
-> >  struct vring_desc_state_packed {
-> >       void *data;                     /* Data for callback. */
-> > +     u32 total_len;                  /* Buffer Length */
-> >
-> >       /* Indirect desc table and extra table, if any. These two will be
-> >        * allocated together. So we won't stress more to the memory allo=
-cator.
->
-> We are bloating up the cache footprint for everyone,
-> so there's a chance of regressions.
-> Pls include benchmark for in order off, to make sure we
-> are not regressing.
-
-Ok.
-
-> How big was the ring?
-
-256.
-
-> Worth trying with a biggish one, where there is more cache
-> pressure.
-
-Ok.
-
->
->
-> Why not have a separate state for in-order?
-
-It can work.
-
->
->
->
-> > @@ -206,6 +210,12 @@ struct vring_virtqueue {
-> >
-> >       /* Head of free buffer list. */
-> >       unsigned int free_head;
-> > +
-> > +     /* Head of the batched used buffers, vq->num means no batching */
-> > +     unsigned int batch_head;
-> > +
-> > +     unsigned int batch_len;
-> > +
->
-> Are these two only used for in-order? Please document that.
-
-Yes, I will do that.
-
-> I also want some documentation about the batching trickery
-> used please.
-> What is batched, when, how is batching flushed, why are we
-> only batching in-order ...
-
-I'm not sure I get things like this, what you want seems to be the
-behaviour of the device which has been stated by the spec or I may
-miss something here.
-
->
->
->
->
-> >       /* Number we've added since last sync. */
-> >       unsigned int num_added;
-> >
-> > @@ -256,10 +266,14 @@ static void vring_free(struct virtqueue *_vq);
-> >
-> >  #define to_vvq(_vq) container_of_const(_vq, struct vring_virtqueue, vq=
-)
-> >
-> > -
-> >  static inline bool virtqueue_is_packed(const struct vring_virtqueue *v=
-q)
-> >  {
-> > -     return vq->layout =3D=3D PACKED;
-> > +     return vq->layout =3D=3D PACKED || vq->layout =3D=3D PACKED_IN_OR=
-DER;
-> > +}
-> > +
-> > +static inline bool virtqueue_is_in_order(const struct vring_virtqueue =
-*vq)
-> > +{
-> > +     return vq->layout =3D=3D SPLIT_IN_ORDER || vq->layout =3D=3D PACK=
-ED_IN_ORDER;
-> >  }
-> >
-> >  static bool virtqueue_use_indirect(const struct vring_virtqueue *vq,
-> > @@ -570,7 +584,7 @@ static inline int virtqueue_add_split(struct vring_=
-virtqueue *vq,
-> >       struct vring_desc_extra *extra;
-> >       struct scatterlist *sg;
-> >       struct vring_desc *desc;
-> > -     unsigned int i, n, c, avail, descs_used, err_idx;
-> > +     unsigned int i, n, c, avail, descs_used, err_idx, total_len =3D 0=
-;
->
->
-> I would add a comment here:
->
-> /* Total length for in-order */
-> unsigned int total_len =3D 0;
-
-Ok.
-
-Thanks
-
+> Grace based platforms such as Grace Hopper/Blackwell Superchips have=0A=
+> CPU accessible cache coherent GPU memory. The GPU device memory is=0A=
+> essentially a DDR memory and retains properties such as cacheability,=0A=
+> unaligned accesses, atomics and handling of executable faults. This=0A=
+> requires the device memory to be mapped as NORMAL in stage-2.=0A=
+>=0A=
+> Today KVM forces the memory to either NORMAL or DEVICE_nGnRE depending=0A=
+> on whether the memory region is added to the kernel. The KVM code is=0A=
+> thus restrictive and prevents device memory that is not added to the=0A=
+> kernel to be marked as cacheable. The patch aims to solve this.=0A=
+>=0A=
+> A cachebility check is made by consulting the VMA pgprot value. If=0A=
+> the pgprot mapping type is cacheable, it is considered safe to be=0A=
+> mapped cacheable as the KVM S2 will have the same Normal memory type=0A=
+> as the VMA has in the S1 and KVM has no additional responsibility=0A=
+> for safety.=0A=
+>=0A=
+> Note when FWB (Force Write Back) is not enabled, the kernel expects to=0A=
+> trivially do cache management by flushing the memory by linearly=0A=
+> converting a kvm_pte to phys_addr to a KVA. The cache management thus=0A=
+> relies on memory being mapped. Since the GPU device memory is not kernel=
+=0A=
+> mapped, exit when the FWB is not supported. Similarly, ARM64_HAS_CACHE_DI=
+C=0A=
+> allows KVM to avoid flushing the icache and turns icache_inval_pou() into=
+=0A=
+> a NOP. So the cacheable PFNMAP is made contingent on these two hardware=
+=0A=
+> features.=0A=
+>=0A=
+> The ability to safely do the cacheable mapping of PFNMAP is exposed=0A=
+> through a KVM capability for userspace consumption.=0A=
+>=0A=
+> The changes are heavily influenced by the discussions among=0A=
+> maintainers Marc Zyngier and Oliver Upton besides Jason Gunthorpe,=0A=
+> Catalin Marinas, David Hildenbrand, Sean Christopherson [1]. Many=0A=
+> thanks for their valuable suggestions.=0A=
+>=0A=
+> Applied over next-20250610 and tested on the Grace Blackwell=0A=
+> platform by booting up VM, loading NVIDIA module [2] and running=0A=
+> nvidia-smi in the VM.=0A=
+>=0A=
+> To run CUDA workloads, there is a dependency on the IOMMUFD and the=0A=
+> Nested Page Table patches being worked on separately by Nicolin Chen.=0A=
+> (nicolinc@nvidia.com). NVIDIA has provided git repositories which=0A=
+> includes all the requisite kernel [3] and Qemu [4] patches in case=0A=
+> one wants to try.=0A=
+>=0A=
+> v8 -> v9=0A=
+> 1. Included MIXEDMAP to also be considered for cacheable mapping.=0A=
+> (Jason Gunthorpe).=0A=
+> 2. Minor text nits (Jason Gunthorpe).=0A=
+=0A=
+Humble reminder for review.=
 
