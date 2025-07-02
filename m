@@ -1,119 +1,111 @@
-Return-Path: <linux-kernel+bounces-713258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F11FAF157E
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:23:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3876AF1586
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:24:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CDAD188F766
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 12:23:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B514B167E33
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 12:24:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11F5026B747;
-	Wed,  2 Jul 2025 12:23:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F030A271458;
+	Wed,  2 Jul 2025 12:24:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MW+iytsb"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="F0SCA7CM"
+Received: from out.smtpout.orange.fr (out-70.smtpout.orange.fr [193.252.22.70])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 315C923C51D;
-	Wed,  2 Jul 2025 12:23:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D47C526B747;
+	Wed,  2 Jul 2025 12:24:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751458982; cv=none; b=sbGHQqeWhyYGCuyou3xB0dQf931tWdSsNb1k19FT//VgkBbH03LfjvH28eRUkKXlQN61MsYkCzVS2HaxG3vkCn/cYuazG7vkr1/COk0Bm6YEp2o8J3FilFjWRfcD5BR89UtWrIPWwEFRTMn2qYp2031J8lvxjzq5lyscOMnKIhg=
+	t=1751459053; cv=none; b=lRd0j7vjm9sK/RMrHyERGQEGK6F96W+d1P/Vpa5I8qSRmi/CGIkuZ3E318OmokpI2plrmENImxMB8UI2DNqOOVHgX3xbsVeU96kW41g5+P7cglz/AqRJL8J+eHQObvYlBEBdOtt5kkMQNl879Wp4aYynStghZL73R7TKVpHSGwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751458982; c=relaxed/simple;
-	bh=fREP5uY0BPsOOovX90mnsOMYhXpfAS5vZic75Y4Sdfw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DUJTiYCI0LkfuNNT7qQ5LMOeCYGIGbhTz6cnZQ6G0lZqDILa5Dd1Hj7Hn6OATtZRjNPcgeav8tAWC9rhYkbNSw3dd2gwhK6nT0IkvU8N9fVuX11GsJhmdODFtqAhZ+J7kkOfpcONvOTbgpD3sdsoFQUutWFNlFm2g6CoebGR47Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MW+iytsb; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-237d849253fso8380405ad.1;
-        Wed, 02 Jul 2025 05:23:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751458980; x=1752063780; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FBtX4bnh7p2M5lSlgCIn0wi3z0x3439amoEBAePG8to=;
-        b=MW+iytsbeM2j3PtrybtvRTGfHgrgBVhxJVYqdIriOXef4XhjCxNly2l4wx9IBRnRn4
-         mAdgFktImtl/UKmJruCKGTRRIucrefpvqtD7mfcMXQkP9I6Wq5p34XZL8bRzP4CDzOfI
-         AJbiEc+dSH78OCyDckMnP8qPMHQCy1Qj90MI+7jBNtV914KjDqDYyzKx6eCmfrLIJdPN
-         80QvUUFEhhYANyavSI/5JC1Us34T+wZowRBzU/eELzSgHLXiD5pg+CNE/ObMK05Ms5PI
-         FWVtHfZpfDtPlTedsxgXoTZ0QAHxxphQDQJellaKXwDJI7zKAsdnJKWfaJDjPc8ySRJ6
-         PjuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751458980; x=1752063780;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FBtX4bnh7p2M5lSlgCIn0wi3z0x3439amoEBAePG8to=;
-        b=h1GsVDMPi14VBZYhEA8Nld0C3WEuQcfp7hKYSBrPvRkppHcedMxHW1eEJU+Cw6A588
-         +9AGl4g6qY5oCDH9xMQuD5HHndXK8jScrQSNwHGjvaz7U6usroAJrA/OfOrR6lM0SFlA
-         TAepJ94NGLlZG/3wZ8sGKxovGdgfl6eyWWOlgoNqX1fezUVMXP3ghZXLvGHTJUiGFWSC
-         nj16YzxtCA1MLVzElZNTwlFrJ8NhxYrcQ7CYTNttZPh/L31q1AKrXH+CUZCj0erCB6To
-         jz420pB+sKPV0+rUs5RB4CZwilU2fNWTLlh7Lh+BT/tfJjIZTPYzkD9Ip802dR9brTdH
-         F5lw==
-X-Forwarded-Encrypted: i=1; AJvYcCV4zWUA5Y+AoSa/Q7m701L5ysSPAK905PGMRwor2GjXv4BHRvYDUEusDf/vYk/n4VV6vkT6DTvq5+exrhg=@vger.kernel.org, AJvYcCWkoUXhCpyF4exUxl9KPIHhHXeBO3GYgn1dtCE+tH/llchcrTYtw71RFBW6QgQBRp0OuvOd53hIk5v0zrat6+s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBqxEa7J2SA4sVPZUGdssps+GLoBJ+TGo82exhwk5LtvRotALT
-	Rnymnl9XBBvumAud2JHWAhK8q4cNiGDXiisAX9Pl8oPTRCT3BO2nYau4Qcw2amHYeNB9iT2YjhT
-	B6vBi5l8ODgEhlvYDv6IPjSDJCYvX+qk=
-X-Gm-Gg: ASbGncsUIP32pyoJX5ihDH5TJWE7t8idQtY9Mv66CuL6JRf2fH/gjT4v9SwSs9cWrDJ
-	PnfpzKriRud6GoWFedna5UwTFsDcT94Ck5D2VL9tLZ91MIEa7qn8zotJrXMabs+sI177y1APaV5
-	f9uaobzMzl5CA5XGQCnoIjQ4dFCnZpWY5nt3D1auhYimTi8Z2qJPFf+w==
-X-Google-Smtp-Source: AGHT+IGaqJyYhggeG721JJ4/fmgCESbVOWGVHhm0ynvxKE68LqDEj8YXYZyBFKj4YpmC8KsySEtf8DWxJD/hRu3T7zw=
-X-Received: by 2002:a17:902:d2c6:b0:235:e8da:8f4 with SMTP id
- d9443c01a7336-23c6e399caemr15514945ad.0.1751458980446; Wed, 02 Jul 2025
- 05:23:00 -0700 (PDT)
+	s=arc-20240116; t=1751459053; c=relaxed/simple;
+	bh=FnTPS7XrucGy4Vkovkr4+yG8KSsot54yCzj6ft7QxKQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ekEy5oqFL3CA6aWQYGdQbOGG/pVBwQrnBi7bibYcYpeSS63sfmrKCuZIf/ciuOKK65AvA/lR3u7jp3iPBWJneY3p3YsJvmh4GRu4M1xHHoAGfv4OUTLaxtoa78xkHR0j7VoblgY7+M1dAzebO564FNGxvEbygXoxLKx3PkgJAQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=F0SCA7CM; arc=none smtp.client-ip=193.252.22.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [172.16.82.72] ([124.33.176.97])
+	by smtp.orange.fr with ESMTPA
+	id WwUKuU4efLcVHWwULu3zCl; Wed, 02 Jul 2025 14:23:01 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1751458981;
+	bh=6AUGzcNiTKnyYAvQQAMQveENbbz1AubdZ1CqkeZ4AEo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=F0SCA7CMjk17ST1ESJdj+eX//PXF9chUocEUvBpjdh5rL4IVLdMtIia1TN5zJO63d
+	 T6d61cwVkyQjCftcAhb2/Z2pCL8Q25tyb2g0DloaWReUEblvJ6V4/6ZwkQBLKy2/T5
+	 c/5xiaMvxcHNfckmhGNqjRe/rSZrZOBLgSycwgjXlr3JHCMBugQ7g6uL4V0YplWDeq
+	 2xmE8SL9z007D34L7dsonXCovBvg3PcCfxMkINQtOTBW0QYOJshJBx8jfqLOm6L9w3
+	 jkyIOjUudFyA7areOCqSBZmb50djcikGZkxsC0zQAjXmli96rzwU6tCW3ExM7N6bI7
+	 WQ4W8E0PPJHpQ==
+X-ME-Helo: [172.16.82.72]
+X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
+X-ME-Date: Wed, 02 Jul 2025 14:23:01 +0200
+X-ME-IP: 124.33.176.97
+Message-ID: <23dbf1ed-543c-4765-91a6-b54db2d49150@wanadoo.fr>
+Date: Wed, 2 Jul 2025 21:22:56 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <kyrCsGDYN5QdXPkUe4OxMxU2UzHfJ-vH5z643gA-_KFJIaew0duyMXU0yfTrGN5ZCNaecP8Yu2kIXKXMoWS2lA==@protonmail.internalid>
- <20250701001809.496389-1-fujita.tomonori@gmail.com> <874ivvvvjw.fsf@kernel.org>
-In-Reply-To: <874ivvvvjw.fsf@kernel.org>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Wed, 2 Jul 2025 14:22:48 +0200
-X-Gm-Features: Ac12FXzjaQ5tesk3zQF6RCPQntL7FqLypPEeYCvAD6PznWlZKWbTlzKXlgeLcX4
-Message-ID: <CANiq72ntFkvN983N3x=AKMd6fW2yXb8d0LB1LT3c20oYmPCiGg@mail.gmail.com>
-Subject: Re: [PATCH v1] rust: time: Add examples with doctest for Delta
-To: Andreas Hindborg <a.hindborg@kernel.org>
-Cc: FUJITA Tomonori <fujita.tomonori@gmail.com>, alex.gaynor@gmail.com, ojeda@kernel.org, 
-	aliceryhl@google.com, anna-maria@linutronix.de, bjorn3_gh@protonmail.com, 
-	boqun.feng@gmail.com, dakr@kernel.org, frederic@kernel.org, gary@garyguo.net, 
-	jstultz@google.com, linux-kernel@vger.kernel.org, lossin@kernel.org, 
-	lyude@redhat.com, rust-for-linux@vger.kernel.org, sboyd@kernel.org, 
-	tglx@linutronix.de, tmgross@umich.edu
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] can: rcar_canfd: Drop unused macros
+To: Biju Das <biju.das.jz@bp.renesas.com>,
+ Marc Kleine-Budde <mkl@pengutronix.de>,
+ Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: linux-can@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+ Biju Das <biju.das.au@gmail.com>, Magnus Damm <magnus.damm@gmail.com>
+References: <20250702120539.98490-1-biju.das.jz@bp.renesas.com>
+Content-Language: en-US
+From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Autocrypt: addr=mailhol.vincent@wanadoo.fr; keydata=
+ xjMEZluomRYJKwYBBAHaRw8BAQdAf+/PnQvy9LCWNSJLbhc+AOUsR2cNVonvxhDk/KcW7FvN
+ LFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI+wrIEExYKAFoC
+ GwMFCQp/CJcFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AWIQTtj3AFdOZ/IOV06OKrX+uI
+ bbuZwgUCZx41XhgYaGtwczovL2tleXMub3BlbnBncC5vcmcACgkQq1/riG27mcIYiwEAkgKK
+ BJ+ANKwhTAAvL1XeApQ+2NNNEwFWzipVAGvTRigA+wUeyB3UQwZrwb7jsQuBXxhk3lL45HF5
+ 8+y4bQCUCqYGzjgEZx4y8xIKKwYBBAGXVQEFAQEHQJrbYZzu0JG5w8gxE6EtQe6LmxKMqP6E
+ yR33sA+BR9pLAwEIB8J+BBgWCgAmFiEE7Y9wBXTmfyDldOjiq1/riG27mcIFAmceMvMCGwwF
+ CQPCZwAACgkQq1/riG27mcJU7QEA+LmpFhfQ1aij/L8VzsZwr/S44HCzcz5+jkxnVVQ5LZ4B
+ ANOCpYEY+CYrld5XZvM8h2EntNnzxHHuhjfDOQ3MAkEK
+In-Reply-To: <20250702120539.98490-1-biju.das.jz@bp.renesas.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 2, 2025 at 10:36=E2=80=AFAM Andreas Hindborg <a.hindborg@kernel=
-.org> wrote:
->
-> I think this kind of test would be better suited for the new `#[test]`
-> macro. Would you agree?
+On 02/07/2025 at 21:05, Biju Das wrote:
+> Drop unused macros from the rcar_canfd.c.
+> 
+> Reported-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+> Closes: https://lore.kernel.org/all/7ff93ff9-f578-4be2-bdc6-5b09eab64fe6@wanadoo.fr/
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 
-I don't mind seeing the edge cases, since the behavior is mentioned in
-the docs, just like sometimes we show e.g. the `Err`/`None` cases in
-other functions etc., and it may help to further highlight that this
-can actually return possibly unexpected values.
+Reviewed-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
 
-It is also what the standard library does, at least in some similar cases, =
-e.g.
+> ---
+> v1->v2:
+>  * Dropped the Rb tags.
+>  * Restored simple simple bit definitions as it serve as documentation.
+>  * Restored register offsets will become anonymous gaps when the register
+>    offsets are replaced by C structs.
 
-    https://doc.rust-lang.org/std/primitive.i64.html#method.saturating_add
+When you refactor into the C structs, there is no problem to give a proper name
+to a field which is unused. First, the struct clearly shows that this field is
+part of a group whereas this relation is less obvious with the macros, second,
+it takes little real estate: just one field name (less distraction when a human
+parses the code compared to the macro) and finally, as a bonus point, you do not
+get a W=2 warning spam.
 
-Maybe instead we can help making it a bit more readable, e.g. avoiding
-the intermediate variable to have a single line plus using a `# use
-Delta` to further reduce the line length?
 
-Also adding a newline between the "normal" case and the saturation
-cases would probably help too.
+Yours sincerely,
+Vincent Mailhol
 
-Cheers,
-Miguel
 
