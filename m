@@ -1,233 +1,187 @@
-Return-Path: <linux-kernel+bounces-712912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-712914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DEF8AF1079
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 11:49:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3775AF1089
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 11:50:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F8B21C41B99
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 09:47:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 329F4522197
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 09:47:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 032C424C692;
-	Wed,  2 Jul 2025 09:46:33 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18FF223C8C7;
+	Wed,  2 Jul 2025 09:47:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fyhjKVqI"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6592C219A8D
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 09:46:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC97823B63E;
+	Wed,  2 Jul 2025 09:47:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751449592; cv=none; b=eNV0OPL2A00wl8v3zwXbsLGNbOxC+whgNUBmbNYPSyVF7kIl8OPqb8iKkWBIIeiLTp6cZj3+Pf16Y3g4iuveatle6GXYMmsCiqKqhd2X+irGaas8kggFxZqDssNsZtKPosUwHSHmEqNIQBBPMkN+BKaVDM2upg3YoHQ0QMcH0cU=
+	t=1751449661; cv=none; b=S70gQQbNRuroIa7qJwv6ixM/u5t7ZwF54zUdGD+jaT2XoRb/Xv3Dnq2/Ps/1IBYefOlLIZk+4bCCyFtfxHvHzkWZhatvwSOHIL3YDTvPTweO91Br38NxAuHV5bksZf+U9J4vu8emtMz/F8SJPCdPT13Geo/D8Qg59jyh95PTuJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751449592; c=relaxed/simple;
-	bh=fcqLwKrtBfo+Rc0zgHHKHepYzHt0trmddqrZRYjg/Xs=;
+	s=arc-20240116; t=1751449661; c=relaxed/simple;
+	bh=QquxLZIFBNYCLtfN2WN90KA9i4NdGTFGsp2moSfYXE4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YqlSDe4kCwZo8M51b3TW78ielpKv/Srw8nzhEVOLo7t0ojQrZkvCT3MOpsE2Z3w7PhOoTCrXJWsxKMcRlm5yEuyyl8hSJAOwZrNjx4l4ysxizMT9EWaqW7hoa9dzqC1Vs69EyZYuIpilCOa4NN0B5gy4oFyq9G/NBpyiWRTIIJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uWu2Z-0007ke-ED; Wed, 02 Jul 2025 11:46:07 +0200
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uWu2X-006PhV-26;
-	Wed, 02 Jul 2025 11:46:05 +0200
-Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uWu2X-00DaqA-1k;
-	Wed, 02 Jul 2025 11:46:05 +0200
-Date: Wed, 2 Jul 2025 11:46:05 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Lukas Wunner <lukas@wunner.de>
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	kernel@pengutronix.de, linux-kernel@vger.kernel.org,
-	Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
-	Andre Edich <andre.edich@microchip.com>
-Subject: Re: [PATCH net v1 4/4] net: phy: smsc: Disable IRQ support to
- prevent link state corruption
-Message-ID: <aGT_3SpVVzJFzT6B@pengutronix.de>
-References: <20250701122146.35579-1-o.rempel@pengutronix.de>
- <20250701122146.35579-5-o.rempel@pengutronix.de>
- <aGPba6fX1bqgVfYC@wunner.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=iPPNVc4hjkx4ZU9eL3RaehdIUsx+OeHEQxWcu+YOAhMSxlQy5+ijrZBGO5WC1qMxhTfE13mwlSU4UE0qohMrOVXqOei3IuC/Kb5T9Ds6zx2S42KPSH4WU4vJkasijH0ANC8Xa5SbRIMs4dFwM06j2kG3WxWxASxGN3bYZw0g0XI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fyhjKVqI; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751449660; x=1782985660;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=QquxLZIFBNYCLtfN2WN90KA9i4NdGTFGsp2moSfYXE4=;
+  b=fyhjKVqIUkxJb1JKT2G3z8DrvoAhm64ajH18/4AL9eTwL4sKR3L+zEKd
+   WoFJzqiZoqsYj38FYd6ATJhl9wx/7FLhganpuoIRJlY/WMG7w3PwszVJ+
+   RiPR798CF8rF+OMhUYRiQxTxTaDxOdxiea7AXahS0cnzjM4XYTjPdA2YJ
+   2IP7EnC/O8XcZ/C+Xvhq+j1/b88dxgCRLZU8RSQrJPSYr5UbEaQCeSuMq
+   HvghIS88wu+qdatejZ4yU9L7LBkEMDVGccJssUVtKrvBpf41yjvxHCK4n
+   RP9nrxGvm1gjtav27jhE7dioWsRgoFik+H+uU3nzCEilEWI2M9iu4K026
+   Q==;
+X-CSE-ConnectionGUID: n+fzfk3QQ1CDo6Vjuen9HQ==
+X-CSE-MsgGUID: nlaHByvfR5W1VGMsWkXO0g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11481"; a="52968088"
+X-IronPort-AV: E=Sophos;i="6.16,281,1744095600"; 
+   d="scan'208";a="52968088"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2025 02:47:38 -0700
+X-CSE-ConnectionGUID: LkxK1xTYTBadfjlqZ0+zdg==
+X-CSE-MsgGUID: kgMQFbTfRx2+ltJURfIKBQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,281,1744095600"; 
+   d="scan'208";a="154180676"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa007.jf.intel.com with ESMTP; 02 Jul 2025 02:47:26 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id 427B11E0; Wed, 02 Jul 2025 12:47:24 +0300 (EEST)
+Date: Wed, 2 Jul 2025 12:47:24 +0300
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Sohil Mehta <sohil.mehta@intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Ard Biesheuvel <ardb@kernel.org>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>, 
+	Xiongwei Song <xiongwei.song@windriver.com>, Xin Li <xin3.li@intel.com>, 
+	"Mike Rapoport (IBM)" <rppt@kernel.org>, Brijesh Singh <brijesh.singh@amd.com>, 
+	Michael Roth <michael.roth@amd.com>, Tony Luck <tony.luck@intel.com>, 
+	Alexey Kardashevskiy <aik@amd.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Ingo Molnar <mingo@kernel.org>, 
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, Daniel Sneddon <daniel.sneddon@linux.intel.com>, 
+	Kai Huang <kai.huang@intel.com>, Sandipan Das <sandipan.das@amd.com>, 
+	Breno Leitao <leitao@debian.org>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
+	Alexei Starovoitov <ast@kernel.org>, Hou Tao <houtao1@huawei.com>, Juergen Gross <jgross@suse.com>, 
+	Vegard Nossum <vegard.nossum@oracle.com>, Kees Cook <kees@kernel.org>, Eric Biggers <ebiggers@google.com>, 
+	Jason Gunthorpe <jgg@ziepe.ca>, "Masami Hiramatsu (Google)" <mhiramat@kernel.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Yuntao Wang <ytcoode@gmail.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Tejun Heo <tj@kernel.org>, Changbin Du <changbin.du@huawei.com>, 
+	Huang Shijie <shijie@os.amperecomputing.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Namhyung Kim <namhyung@kernel.org>, Arnaldo Carvalho de Melo <acme@redhat.com>, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org, 
+	linux-mm@kvack.org
+Subject: Re: [PATCHv8 04/17] x86/cpu: Defer CR pinning setup until after EFI
+ initialization
+Message-ID: <5s25fkpxv6p3ai2iagtgyqhpt3c4cv54q6lgeeebizsseediyy@wl4epcc7i35a>
+References: <20250701095849.2360685-1-kirill.shutemov@linux.intel.com>
+ <20250701095849.2360685-5-kirill.shutemov@linux.intel.com>
+ <080df169-0f47-40ea-b7b3-4d1a35bee151@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aGPba6fX1bqgVfYC@wunner.de>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <080df169-0f47-40ea-b7b3-4d1a35bee151@intel.com>
 
-Hi Lukas,
-
-On Tue, Jul 01, 2025 at 02:58:19PM +0200, Lukas Wunner wrote:
-> On Tue, Jul 01, 2025 at 02:21:46PM +0200, Oleksij Rempel wrote:
-> > Disable interrupt handling for the LAN87xx PHY to prevent the network
-> > interface from entering a corrupted state after rapid configuration
-> > changes.
+On Tue, Jul 01, 2025 at 12:03:01PM -0700, Sohil Mehta wrote:
+> On 7/1/2025 2:58 AM, Kirill A. Shutemov wrote:
+> > From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 > > 
-> > When the link configuration is changed quickly, the PHY can get stuck in
-> > a non-functional state. In this state, 'ethtool' reports that a link is
-> > present, but 'ip link' shows NO-CARRIER, and the interface is unable to
-> > transfer data.
-> [...]
-> > --- a/drivers/net/phy/smsc.c
-> > +++ b/drivers/net/phy/smsc.c
-> > @@ -746,10 +746,6 @@ static struct phy_driver smsc_phy_driver[] = {
-> >  	.soft_reset	= smsc_phy_reset,
-> >  	.config_aneg	= lan87xx_config_aneg,
+> > In order to map the EFI runtime services, set_virtual_address_map()
+> > needs to be called, which resides in the lower half of the address
+> > space. This means that LASS needs to be temporarily disabled around
+> > this call. This can only be done before the CR pinning is set up.
+> > 
+> > Move CR pinning setup behind the EFI initialization.
+> > 
+> > Wrapping efi_enter_virtual_mode() into lass_disable/enable_enforcement()
+> 
+> I believe this should be lass_stac()/clac() since we reverted to the
+> original naming.
+
+Doh. Will fix.
+
+> > is not enough because AC flag gates data accesses, but not instruction
+> > fetch. Clearing the CR4 bit is required.
+> > 
+> > Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+> > Suggested-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> > Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> > ---
+> >  arch/x86/kernel/cpu/common.c | 5 ++++-
+> >  1 file changed, 4 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+> > index 4f430be285de..9918121e0adc 100644
+> > --- a/arch/x86/kernel/cpu/common.c
+> > +++ b/arch/x86/kernel/cpu/common.c
+> > @@ -2081,7 +2081,6 @@ static __init void identify_boot_cpu(void)
+> >  	enable_sep_cpu();
+> >  #endif
+> >  	cpu_detect_tlb(&boot_cpu_data);
+> > -	setup_cr_pinning();
 > >  
-> > -	/* IRQ related */
-> > -	.config_intr	= smsc_phy_config_intr,
-> > -	.handle_interrupt = smsc_phy_handle_interrupt,
-> > -
+> >  	tsx_init();
+> >  	tdx_init();
+> > @@ -2532,10 +2531,14 @@ void __init arch_cpu_finalize_init(void)
+> >  
+> >  	/*
+> >  	 * This needs to follow the FPU initializtion, since EFI depends on it.
+> > +	 *
+> > +	 * EFI twiddles CR4.LASS. Do it before CR pinning.
+> >  	 */
+> >  	if (efi_enabled(EFI_RUNTIME_SERVICES))
+> >  		efi_enter_virtual_mode();
+> >  
+> > +	setup_cr_pinning();
+> > +
 > 
-> Well, that's not good.  I guess this means that the interrupt is
-> polled again, so we basically go back to the suboptimal behavior
-> prior to 1ce8b37241ed?
-
-Not fully. It will disable interrupt support only for the embedded PHY,
-other types of interrupts should work as expected.
-
-> Without support for interrupt handling, we can't take advantage
-> of the GPIOs on the chip for interrupt generation.  Nor can we
-> properly support runtime PM if no cable is attached.
-
-Hm... the PHY smsc driver is not using EDPD mode by default if PHY
-interrupts are enabled. Or do you mean other kind of PM?
-
-> What's the actual root cause?  Is it the issue described in this
-> paragraph of 1ce8b37241ed's commit message?
+> Instead of EFI toggling CR4.LASS, why not defer the first LASS
+> activation itself?
 > 
->     Normally the PHY interrupt should be masked until the PHY driver has
->     cleared it.  However masking requires a (sleeping) USB transaction and
->     interrupts are received in (non-sleepable) softirq context.  I decided
->     not to mask the interrupt at all (by using the dummy_irq_chip's noop
->     ->irq_mask() callback):  The USB interrupt endpoint is polled in 1 msec
->     intervals and normally that's sufficient to wake the PHY driver's IRQ
->     thread and have it clear the interrupt.  If it does take longer, worst
->     thing that can happen is the IRQ thread is woken again.  No big deal.
-
-I'm not sure. It seems to be not the problem.
-
-> There must be better options than going back to polling.
-> E.g. inserting delays to avoid the PHY getting wedged.
+> i.e.
 > 
-> TBH I did test this thoroughly back in the day and never
-> witnessed the issue.
+> 	if (efi_enabled(EFI_RUNTIME_SERVICES))
+> 		efi_enter_virtual_mode();
+> 
+> 	setup_lass();
+> 
+> 	setup_cr_pinning();
+> 
+> 
+> This way, we can avoid the following patch (#5) altogether.
 
-I did some testing back in time too. It worked and still works normally
-in the autoneg mode.
+That's definitely an option.
 
-What is not working as expected is the fixed mode, especially 10 mbit
-fixed mode.
+The benefit of current approach is that the enforcement is enabled
+earlier and cover more boot code, providing marginal protection
+improvement.
 
-Here are my current testing results:
+I also like that related security features (SMEP/SMAP/UMIP/LASS) are
+enabled in the same place.
 
-# configure 10 mbit forced mode:
-ethtool -s eth0 autoneg off speed 10 duplex half
-# attach cable (can be done wothout reataching cable)
-[10174.585150] smsc_phy_handle_interrupt: MII_LAN83C185_ISF = 0x0098
-[10174.586760] smsc_phy_handle_interrupt: MII_LAN83C185_ISF = 0x0098
-[10174.594636] lan87xx_read_status: link: no, speed: 10, duplex: half, autoneg: off
-[10174.602777] lan87xx_read_status: link: no, speed: 10, duplex: half, autoneg: off
-[10174.841458] smsc_phy_handle_interrupt: MII_LAN83C185_ISF = 0x0098
-[10174.843017] smsc_phy_handle_interrupt: MII_LAN83C185_ISF = 0x0098
-[10174.850619] lan87xx_read_status: link: no, speed: 10, duplex: half, autoneg: off
-[10174.857026] lan87xx_read_status: link: no, speed: 10, duplex: half, autoneg: off
-[10175.425513] smsc_phy_handle_interrupt: MII_LAN83C185_ISF = 0x0098
-[10175.427046] smsc_phy_handle_interrupt: MII_LAN83C185_ISF = 0x0098
-[10175.434871] lan87xx_read_status: link: no, speed: 10, duplex: half, autoneg: off
-[10175.441332] lan87xx_read_status: link: no, speed: 10, duplex: half, autoneg: off
+In the end it is a judgement call.
 
-At this point no more interrupts will come and link up state will not be
-detected. Replugging cable will have same result.
-
-The worst part - unplugging the cable may trigger an endless interrupt storm
-(which is some times reproducible in the 10Mbit forced mode):
-[ 1584.132799] smsc_phy_handle_interrupt: MII_LAN83C185_ISF = 0x0098
-[ 1584.134220] smsc_phy_handle_interrupt: MII_LAN83C185_ISF = 0x0098
-[ 1584.389134] smsc_phy_handle_interrupt: MII_LAN83C185_ISF = 0x0098
-[ 1584.390591] smsc_phy_handle_interrupt: MII_LAN83C185_ISF = 0x0098
-[ 1584.644757] smsc_phy_handle_interrupt: MII_LAN83C185_ISF = 0x0098
-[ 1584.646177] smsc_phy_handle_interrupt: MII_LAN83C185_ISF = 0x0098
-[ 1584.900781] smsc_phy_handle_interrupt: MII_LAN83C185_ISF = 0x0098
-[ 1584.902305] smsc_phy_handle_interrupt: MII_LAN83C185_ISF = 0x0098
-[ 1585.158416] smsc_phy_handle_interrupt: MII_LAN83C185_ISF = 0x0098
-
-With latest kernel we can use adaptive polling, wich I added now for
-testing. Here are the results:
-
-[ 2200.702427] lan87xx_read_status: link: no, speed: 10, duplex: half, autoneg: off
-[ 2200.948552] smsc95xx 1-1.1:1.0 enu1u1: intdata: 0x00008000
-[ 2200.949640] smsc95xx 1-1.1:1.0 enu1u1: intdata: 0x00008000
-[ 2200.950182] smsc95xx 1-1.1:1.0 enu1u1: intdata: 0x00008000
-[ 2200.951374] smsc_phy_handle_interrupt: MII_LAN83C185_ISF = 0x0098
-[ 2200.953186] smsc_phy_handle_interrupt: MII_LAN83C185_ISF = 0x0098
-[ 2200.959234] lan87xx_read_status: link: no, speed: 10, duplex: half, autoneg: off
-[ 2201.204270] smsc95xx 1-1.1:1.0 enu1u1: intdata: 0x00008000
-[ 2201.205284] smsc95xx 1-1.1:1.0 enu1u1: intdata: 0x00008000
-[ 2201.207139] smsc_phy_handle_interrupt: MII_LAN83C185_ISF = 0x0098
-[ 2201.208825] smsc_phy_handle_interrupt: MII_LAN83C185_ISF = 0x0098
-[ 2201.216406] lan87xx_read_status: link: no, speed: 10, duplex: half, autoneg: off
-[ 2201.460548] smsc95xx 1-1.1:1.0 enu1u1: intdata: 0x00008000
-[ 2201.461618] smsc95xx 1-1.1:1.0 enu1u1: intdata: 0x00008000
-[ 2201.462181] smsc95xx 1-1.1:1.0 enu1u1: intdata: 0x00008000
-[ 2201.463273] smsc_phy_handle_interrupt: MII_LAN83C185_ISF = 0x0098
-[ 2201.464764] smsc_phy_handle_interrupt: MII_LAN83C185_ISF = 0x0098
-[ 2201.471066] lan87xx_read_status: link: no, speed: 10, duplex: half, autoneg: off
-[ 2201.716547] smsc95xx 1-1.1:1.0 enu1u1: intdata: 0x00008000
-[ 2201.717607] smsc95xx 1-1.1:1.0 enu1u1: intdata: 0x00008000
-[ 2201.718235] smsc95xx 1-1.1:1.0 enu1u1: intdata: 0x00008000
-[ 2201.719267] smsc_phy_handle_interrupt: MII_LAN83C185_ISF = 0x0098
-[ 2201.721035] smsc_phy_handle_interrupt: MII_LAN83C185_ISF = 0x0098
-[ 2201.727488] lan87xx_read_status: link: no, speed: 10, duplex: half, autoneg: off
-[ 2201.972542] smsc95xx 1-1.1:1.0 enu1u1: intdata: 0x00008000
-[ 2201.973614] smsc95xx 1-1.1:1.0 enu1u1: intdata: 0x00008000
-[ 2201.974176] smsc95xx 1-1.1:1.0 enu1u1: intdata: 0x00008000
-[ 2201.975321] smsc_phy_handle_interrupt: MII_LAN83C185_ISF = 0x0098
-[ 2201.977078] smsc_phy_handle_interrupt: MII_LAN83C185_ISF = 0x0098
-[ 2201.983500] lan87xx_read_status: link: no, speed: 10, duplex: half, autoneg: off
-[ 2202.228538] smsc95xx 1-1.1:1.0 enu1u1: intdata: 0x00008000
-[ 2202.229615] smsc95xx 1-1.1:1.0 enu1u1: intdata: 0x00008000
-[ 2202.230174] smsc95xx 1-1.1:1.0 enu1u1: intdata: 0x00008000
-[ 2202.231292] smsc_phy_handle_interrupt: MII_LAN83C185_ISF = 0x0098
-[ 2202.233038] smsc_phy_handle_interrupt: MII_LAN83C185_ISF = 0x0098
-[ 2202.238972] lan87xx_read_status: link: no, speed: 10, duplex: half, autoneg: off
-[ 2202.239018] smsc_phy_get_next_update: next update in 250 jiffies
-[ 2203.258566] lan87xx_read_status: link: yes, speed: 10, duplex: half, autoneg: off
-[ 2203.258756] smsc95xx 1-1.1:1.0 enu1u1: Link is Up - 10Mbps/Half - flow control off
-
-With adaptive polling we can use both. Since IRQ down interrupt works as
-expected, we can use low frequency polling (one per 30 seconds) in link up
-state. On link down state, after last interrupt poll one time per second
-for 30 seconds, then switch to low frequency polling (one per 30
-seconds).
-
-I need to figure out haw to handle an interrupt storm.
+Maintainers, any preference?
 
 -- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+  Kiryl Shutsemau / Kirill A. Shutemov
 
