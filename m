@@ -1,193 +1,133 @@
-Return-Path: <linux-kernel+bounces-713514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A33AAF5AD8
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 16:15:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E9E4AF5AE3
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 16:16:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A28D84A648E
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:15:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 669DF1C41A65
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:16:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7530327A121;
-	Wed,  2 Jul 2025 14:15:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B0CF2EAB70;
+	Wed,  2 Jul 2025 14:15:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RE77afpI"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NqnGC/ha"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4B302C178E;
-	Wed,  2 Jul 2025 14:15:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F7E12E92A9;
+	Wed,  2 Jul 2025 14:15:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751465708; cv=none; b=UiombGsVTMQkUsqSSn80tO1I/dx29oSK8tOQn1jKtOguY7LRgP7PAIyKehoPLByUvbGs7zUTEE+c5th8Lhxl/zqiFtmG5PdBI7ETFoO0Qbll/ewMiSG2oqkz9MhqjpxAW7d+dIdsiZcsMXomrToU9zSzxcz1xZVtchrd9la/lzc=
+	t=1751465746; cv=none; b=CvDRCf1EMG8YjVR/Yw2MIP1TmFs8XTGDc+a1gh9tnaSKf5Ey2PEhUCXORB72t5l7eMS8Dw0Cds3p3r7VjlMPO+IYcxK1r1osVTMcwIuRXd1F5udRFcJf02p6Z2rs6F2ykn2+ywFP9tHPo9Glh37K8ZX8oe9+g8P4NDRsJAyQvNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751465708; c=relaxed/simple;
-	bh=d5uoh19yxFqx6sK5ttcyq10lXnHTCWAggukYDRXajT0=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=XzfhhMgKUD7znr5D3MwQ9Z4MNfuAi0mt5kBBd6In5UVPMoYpcPz6KgUEqk6MVOdODpK63fDsgcdJ3jb8EVF7DhHYRmds32AVbNj+hxUsUp+fxYvcw9x0jCNEhw4UbWL5iOOlBdQogyeuEDIPcDjb7KcDeo93P3qPhlO9lSG5O0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RE77afpI; arc=none smtp.client-ip=209.85.208.46
+	s=arc-20240116; t=1751465746; c=relaxed/simple;
+	bh=hgVRR0PR/ckdvyIGS+3hX9AlKTj2YA2xeoGPQSp3j2U=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=IZ5A8/3qs9brtsmC6g6kt4o9tfvXmYt/bcIrvXEzVFKxzqQzC8q1wC5ZZTXspLj0ZX1ErQdSnuRe532enqpRawJ/MjZ+drMPbKXiPAOYP7+Hqc2ZSWxYDxKy4JrWU0DyyhOis92L9mSVqaoC1+VrdFpup+oCb/fwHO9RmyGLzxI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NqnGC/ha; arc=none smtp.client-ip=209.85.128.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-60707b740a6so7089460a12.0;
-        Wed, 02 Jul 2025 07:15:06 -0700 (PDT)
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-450cf0120cdso45878185e9.2;
+        Wed, 02 Jul 2025 07:15:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751465705; x=1752070505; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Ge8cq6uMbt9t+bUAaC+G6fQUxnqQJz/zQaWC4Noi8MI=;
-        b=RE77afpI//crx9yjNRjqNIkVzlnQQWL1pOdrZ8FRK04AJqZYDRiaprgHZPAsp3tqqm
-         3AaaJ0hjQ3x7bHzUpgPtyT7WzHkpv+Lo14/P+cmWNs4US6pXYN75jdvg1JogEnQB42/1
-         Lz604AEw75amqTU1bEFzLxnZt4XZmzSwp7DlYsYE8Gs9ge8SyWe9vAQTEY28qHddR/vo
-         ucVqlaXavNtYVBcYhduLUggc2NJwyet53fZNpfFEOG/e/4Xd/+ij01wbnPfqUk+WFq92
-         /MMiFqHyzCTnOxgVGNJI6kfqnelxSJmFHhqDOZ72THl0xkkk+AhTZpuIIh2752pLCw8l
-         0STQ==
+        d=gmail.com; s=20230601; t=1751465743; x=1752070543; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=aRZoP19mVo+xouu+rD216ylrbdoQ3y6C2mRJgbjte3E=;
+        b=NqnGC/hafxF8eNkpoGDhrJ4+tPwPj1Ax+5kt4hyHS/rGmNZfEGnZiXEFU+nJYEpFoL
+         P4vg6JVSxCSyV9N8ig/F9jr/iQmyWktCL7IOuEkP6xm69MBVCQTtxMMIZ1GCoFnYhnTQ
+         tctfcmFueMaIlqTFo6a8ROghh/PFm5BYMFxIBUjySRhIycJHYxtcdgLO0leRnKz8kjYQ
+         eTGrVkXFu/6gjptbooXGrwomIs3c7+NVBQn/ncpNvImTLDRcfhb9rqOtR3yOiUfUQmzE
+         hzj6tL9IP+ihXXH5ThxQyHq8fi8aUacUbIE2gA7jMP8wGoEN2L2oTAOstOx7YpAbQ1CN
+         Jerg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751465705; x=1752070505;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ge8cq6uMbt9t+bUAaC+G6fQUxnqQJz/zQaWC4Noi8MI=;
-        b=mqhCWeIFgmb9T3PX31sNiFY/OQJpmeKf43Gf6R0WTyYYqQ4/62q1w9Fcwtfu4IIgtI
-         dXNx238g0dg/DCN0Ao+R+9exOmcxv2wEzQZQd0wrP/5YFlmrKHhhIDAgWPs7dP1LEx6a
-         giSXQqGaEAAJLi58fYEyA93ZVIGiR/7MVQr00uAnV0HQBqApgMS2Yby9znci2WttB+8t
-         tF4U7y403U4EIgjj7cQX03v24/8sucx8aFFHkQwC3Kl0OXR8sY2b4Hp2vUV6w5H96MfC
-         5li3YrZp8OLty7WzLvj51oUm+uQGRGGkNm0Fw4+QTeOt1maTT7Mhojr+pz6U8PXLfp7a
-         IY8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWKHJQvqJL4vck/ls0lok0lX1bEYmwTs7fSYSrgFLcDnlvaEaXhJ0vhW9YGP+4VGEn3BXlN5FdGAQJXhnEY@vger.kernel.org, AJvYcCWQpFPWHqUIHAnf63NS+9ZZb5VHE/nNzHfHXoLYTyZVCMrZruDhDRhqcFoC+K+63CSJYkOwi1yZehI=@vger.kernel.org, AJvYcCXID5xQVm2FpPbuBkPRhdXp1nmoly6JdU4m/T9HSFisoYjNqY8KOlYk7Kg9G+OsxOE3oX67rAmTOOwfIg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzN18teKZ6OS/+gxwODxPYoZ4Jb8DcbuA2wFh9NriEMQ4M0SHw7
-	22ZPofPx6MxJ4sd0xbrvBMUODJ4HfCMCv2a8M8sMRUXeI7gQObD/sHEN
-X-Gm-Gg: ASbGnctyBBZlqAsn5EZWnfCiVQ7Gp1teDBKsuyGwNDe9nzk83PAXlVnJUe7QfS/PQmq
-	42VNzbuSh4ZeCPEvjBiBBEDRyZorfHttRYcK0y25Rv409PyC3jQ7gC0gpBaUvq4WdKezLRpWXPe
-	YGx6yByK8yJWz8VUyWI3o9sJTVdGLz/DW2xXs+gKwQVT4MO9AWusJJ2aEj8f3weJP9XI9uINVWh
-	9btROQd8xro8HT37o9GmiNJQZLc1pt5rb2+nN+WaFr+aljNTKrKy5eTWZYNXPXN2O4w2HH1/PV5
-	iJF4QVPuuaZFEjDWldOK0F9kTJKyKZmuExVUovy57ciryQyFjaLaUKyMAEnFBH2+oMr2SNMPh/y
-	WKONRP4mcxYLkJVRYl888cvLGhz8XYzK6
-X-Google-Smtp-Source: AGHT+IHd8th8DxuBlZIOOIpxG5BirHhAP4zcid9RIJhvhiltbyTblS1FYKs0knm08Gq5EYUrkam3vw==
-X-Received: by 2002:a05:6402:2748:b0:60b:9f77:e514 with SMTP id 4fb4d7f45d1cf-60e52cc6896mr2681925a12.10.1751465704824;
-        Wed, 02 Jul 2025 07:15:04 -0700 (PDT)
-Received: from ?IPV6:2a03:83e0:1126:4:7e:645c:aa81:5180? ([2620:10d:c092:500::7:3d29])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-60e5818db90sm895836a12.56.2025.07.02.07.15.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Jul 2025 07:15:04 -0700 (PDT)
-Message-ID: <6d8832bb-b5a7-4cd9-b92c-c93f2c1fe182@gmail.com>
-Date: Wed, 2 Jul 2025 15:15:01 +0100
+        d=1e100.net; s=20230601; t=1751465743; x=1752070543;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aRZoP19mVo+xouu+rD216ylrbdoQ3y6C2mRJgbjte3E=;
+        b=S0Txyx9lOmWoQdmV3rK3PK24puvX+feGNsp8gyhwfNwYIM7VFMbSbZv7RezyKWusYc
+         dmxF4YowsRERHHtP5TIQnke7IWzgjTfqpg/IY0U10ag4p+TO0YGstovEQEeh5nMyftZM
+         PoL0FTNOxINZ2smEa3QKrjRotPZLhcQ24e/CPv88a4WMlxc9ceJoqR2VXFSsZ8P1Hlrd
+         rSyRbRMjVpom9XkHTsq+RGhaE+kDa37BGUNuJFJ/2wXNmFMshVuf5Kv9Fsrc9AB4sptM
+         lne4gUWoD+ysESc0BH27+q98x1XMXJIBJyOdoy932a9Q1+AyeJ4eaL/XpUGz19S09uP0
+         5PqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUlWgGEIzUEtyJqYJRwM+7fnTu3fyNApoef/hP2SZbiM0ddjc6KzUvOwOTPiCE9ciWy+G53/jVRCP2Eltk=@vger.kernel.org, AJvYcCVreNWHzA0TxrZt1ucIRUNu4MofXIGNMT6vEKginxHz36kQ5sTnrvVvyXI9DdGIv2Bnhu2Uomcc@vger.kernel.org
+X-Gm-Message-State: AOJu0YwA/50wZGmT9hCwqziMS1MQUnSQzb3qPTGLyu7bbA8+/kZUvtJa
+	paQWzdBnM7PylpepalbAo5Qz3cjPR0F0bdtesB6qmemlTGUCAVVo5iEluVgzW5GI
+X-Gm-Gg: ASbGncvHrBdeTUDdQ7zTklvwu4F+dWeFKWLriNxmd0DEm+LcOPzyrpzynv/7hWeD6w8
+	OTfjmyJ1bkpgFqS/5pw5y+NzVznHs4/ayr6uxzPEy9URQIwgETDC7HYpDKqRpeljFa4u3BTuJZ6
+	VHfpciuv3uL4MgcJyvYIpLWroMrOgfw/eTmOoxq9Fa+aRos1s2td2UlZorgHM7MAy+z5nUHIPXf
+	eV4SuzY7hf7BXsq+Ie3HUrOkk30EIu/hz3THaX8bYpdSiCBj23X+mZPahLtSvqXlinxFBTyIiCE
+	znLwnoUB6L0dXSM0gxlmGxaXozGecNTh0AIwM3+IJmslM0nckfoFHfFuvboAXqdqK9nKv3tEBt4
+	=
+X-Google-Smtp-Source: AGHT+IGKvUHBAcdt7Y5rZZoCKXs2ZNpvgRwAwjxch2Y9eD+LU5/6F49qKav6+2grsiDSPNdbmoOjmQ==
+X-Received: by 2002:a05:600c:638e:b0:453:59c2:e4f8 with SMTP id 5b1f17b1804b1-454a36d80d6mr29507715e9.1.1751465742339;
+        Wed, 02 Jul 2025 07:15:42 -0700 (PDT)
+Received: from localhost.localdomain ([45.128.133.218])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4538a4215dbsm198343375e9.35.2025.07.02.07.15.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Jul 2025 07:15:41 -0700 (PDT)
+From: Oscar Maes <oscmaes92@gmail.com>
+To: netdev@vger.kernel.org
+Cc: davem@davemloft.net,
+	dsahern@kernel.org,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org,
+	stable@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Oscar Maes <oscmaes92@gmail.com>
+Subject: [PATCH net] net: ipv4: fix incorrect MTU in broadcast routes
+Date: Wed,  2 Jul 2025 16:15:15 +0200
+Message-Id: <20250702141515.9414-1-oscmaes92@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Usama Arif <usamaarif642@gmail.com>
-Subject: Re: [DISCUSSION] proposed mctl() API
-To: David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: Shakeel Butt <shakeel.butt@linux.dev>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
- Arnd Bergmann <arnd@arndb.de>, Christian Brauner <brauner@kernel.org>,
- SeongJae Park <sj@kernel.org>, Mike Rapoport <rppt@kernel.org>,
- Johannes Weiner <hannes@cmpxchg.org>, Barry Song <21cnbao@gmail.com>,
- linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-api@vger.kernel.org, Pedro Falcato <pfalcato@suse.de>,
- Matthew Wilcox <willy@infradead.org>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-References: <85778a76-7dc8-4ea8-8827-acb45f74ee05@lucifer.local>
- <e166592f-aeb3-4573-bb73-270a2eb90be3@gmail.com>
- <d7ccb47b-7124-45e9-ace0-b0fa49f881ef@lucifer.local>
- <f8db6b39-f11a-4378-8976-4169f4674e85@gmail.com>
- <fcaa7ce6-3f03-4e3d-aa9f-1b1b53ed88f5@lucifer.local>
- <2fd7f80c-2b13-4478-900a-d65547586db3@gmail.com>
-Content-Language: en-US
-In-Reply-To: <2fd7f80c-2b13-4478-900a-d65547586db3@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-> As I replied to Matthew in [1], it would be amazing if it was not needed, but thats not
-> how it works in the medium term and I dont think it will work even in the long term.
-> I will paste my answer from [1] below as well:
-> 
-> If we have 2 workloads on the same server, For e.g. one is database where THPs 
-> just dont do well, but the other one is AI where THPs do really well. How
-> will the kernel monitor that the database workload is performing worse
-> and the AI one isnt?
-> 
-> I added THP shrinker to hopefully try and do this automatically, and it does
-> really help. But unfortunately it is not a complete solution.
-> There are severely memory bound workloads where even a tiny increase
-> in memory will lead to an OOM. And if you colocate the container thats running
-> that workload with one in which we will benefit with THPs, we unfortunately
-> can't just rely on the system doing the right thing.
-> 
-> It would be awesome if THPs are truly transparent and don't require
-> any input, but unfortunately I don't think that there is a solution
-> for this with just kernel monitoring.
-> 
-> This is just a big hint from the user. If the global system policy is madvise
-> and the workload owner has done their own benchmarks and see benefits
-> with always, they set DEFAULT_MADV_HUGEPAGE for the process to optin as "always".
-> If the global system policy is always and the workload owner has done their own 
-> benchmarks and see worse results with always, they set DEFAULT_MADV_NOHUGEPAGE for 
-> the process to optin as "madvise". 
-> 
-> [1] https://lore.kernel.org/all/162c14e6-0b16-4698-bd76-735037ea0d73@gmail.com/
-> 
-> 
-> I havent seen activity on this thread over the past week, but I was hoping
-> we can reach a consensus on which approach to use, prctl or mctl.
-> If its mctl and if you don't think this should be done, please let me know
-> if you would like me to work on this instead. This is a valid big realworld
-> usecase that is a real blocker for deploying THPs in workloads in servers.
-> 
+Currently, __mkroute_output overrules the MTU value configured for
+broadcast routes.
 
-Hi!
+This buggy behaviour can be reproduced with:
 
-Just wanted to check if anyone has any thoughts on this?
+ip link set dev eth1 mtu 9000
+ip route del broadcast 192.168.0.255 dev eth1 proto kernel scope link src 192.168.0.2
+ip route add broadcast 192.168.0.255 dev eth1 proto kernel scope link src 192.168.0.2 mtu 1500
 
-I think we are all in agreement for the long term eventual goal, have THP just work
-and be default enabled. From our perspective, we (meta) have spent a significant
-amount of time and effort over the last 18 months trying to make changes/optimizations
-where we could actually have it so and can transparently and reliably get hugepages.
-This includes the THP shrinker [1], changes to allocator and reclaim/compaction code
-to reduce fragmentation [2] and reducing type mixing [3].
-We want to continue spending more time and resources in trying to achieve this.
+The maximum packet size should be 1500, but it is actually 8000:
 
-But in the current state, not being able to selectively enable THPs always for certain
-workloads is a significant blocker in trying to roll it out at hyperscaler levels, and
-from the attempts made by others, I do believe its a problem others are facing as well.
-Our long term aim is to have transparent_hugepage/enabled set to always across the fleet.
-But for that we need to have the ability to enable it selectively for workloads that
-show benefit, try and solve problems that come up in production when it is enabled,
-and see why for those that regress. This can not be done with just transparent_hugepage/enabled
-for hyperscalers which run vastly different types of containerized workloads on the same
-machine.
+ping -b 192.168.0.255 -s 8000
 
-There have been multiple efforts from different people on trying to address similar
-problems (including via cgroup[4] and bpf[5]). IMHO, its quite clear that unfortunately
-just having a system wide setting for THP is not enough at the moment or in the near future,
-especially when running workloads that have completely different characteristic on the same server.
+Fix __mkroute_output to allow MTU values to be configured for
+for broadcast routes (to support a mixed-MTU local-area-network).
 
+Signed-off-by: Oscar Maes <oscmaes92@gmail.com>
+---
+ net/ipv4/route.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-In terms of the approach of doing this, IMHO, I dont think the way to do this
-is controversial. After the great feedback from Lorenzo on the prctl series, the
-approach would be for userpsace to make a call that just does for_each_vma of the process,
-madvises the VMAs, and changes the mm->def_flags for the process. We are not making changes
-to the pagefaulting path (thp_vma_allowable_orders has no code change which is awesome).
-In terms of what the call is going to be, there has been a lot of debate (and my preference
-of prctl is clear), I am ok with either with prctl or mctl, as it should not change
-the actual implementation. If there is consensus, I would love to send a RFC for how the
-prctl or mctl solution would look like.
+diff --git a/net/ipv4/route.c b/net/ipv4/route.c
+index fccb05fb3..a2a3b6482 100644
+--- a/net/ipv4/route.c
++++ b/net/ipv4/route.c
+@@ -2585,7 +2585,6 @@ static struct rtable *__mkroute_output(const struct fib_result *res,
+ 	do_cache = true;
+ 	if (type == RTN_BROADCAST) {
+ 		flags |= RTCF_BROADCAST | RTCF_LOCAL;
+-		fi = NULL;
+ 	} else if (type == RTN_MULTICAST) {
+ 		flags |= RTCF_MULTICAST | RTCF_LOCAL;
+ 		if (!ip_check_mc_rcu(in_dev, fl4->daddr, fl4->saddr,
+-- 
+2.39.5
 
-
-[1] https://lore.kernel.org/all/20240830100438.3623486-1-usamaarif642@gmail.com/
-[2] https://lore.kernel.org/all/20250313210647.1314586-1-hannes@cmpxchg.org/
-[3] https://lore.kernel.org/all/20240320180429.678181-1-hannes@cmpxchg.org/
-[4] https://lore.kernel.org/linux-mm/20241030083311.965933-1-gutierrez.asier@huawei-partners.com/
-[5] https://lore.kernel.org/all/20250520060504.20251-1-laoar.shao@gmail.com/
-
-Thanks,
-Usama
 
