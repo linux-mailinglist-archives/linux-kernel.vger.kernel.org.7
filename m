@@ -1,470 +1,152 @@
-Return-Path: <linux-kernel+bounces-712627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-712629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60A84AF0C47
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 09:13:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 667A2AF0C50
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 09:16:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C1421C064F8
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 07:14:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 302157A27D6
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 07:14:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FA2822A4E4;
-	Wed,  2 Jul 2025 07:13:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2FCF226D10;
+	Wed,  2 Jul 2025 07:16:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oHysoo3e"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fni0EvRW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4774818EAB;
-	Wed,  2 Jul 2025 07:13:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1091B14A60C;
+	Wed,  2 Jul 2025 07:16:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751440423; cv=none; b=WKuKUUPY/FgSQMFawU47nupyYgS+XMO0o74a0cnLUsWa07GvcDiEFQE3W9OfNS1SMx7ffbrCJ28xlRg57cQBflnkNWHznRaxJGRSfppPJNEgFl7res2D2kfGJrW0IOCuDJ/ex3TcZRjZCvDdp9ycyTzkAW0nmaM4XuHNtW1oB8I=
+	t=1751440567; cv=none; b=OL8AfuYJXWgZCB8kKRJnw0YUCJJF/O4UywNr0vTFfxiPQrGjpQra2P4yoXgrt6TYkNhjU2453frtT3oAviJ+9PJmmmwgT8udVAl9IjrfzgQ/x2OcVCaOmcKv/Ns4SqsladUEUrzB+9wTi+ch1I2hOAOS5VeGq/YD3oFYOGr8Fss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751440423; c=relaxed/simple;
-	bh=fMb7qkyIL05M6PVmQgqY3NmHUrJFgW+GaqQoqPtVyFY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sKrO0owRetcvoDOXyMxKug4bfFqqKjzw7CmaWe3SmIM6vx+o4wbPYbLTAJt+h6vXfeM3zQ+bSx2VD7OgY7+gYgzG4rvkIZs3Fu4/uaKpGzflD53RiHyMAmMVsQnXOy2TAwHhKZ/f3ah5w+gEjo/HzWdI3PUHfs99tEC5RpU6Chs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oHysoo3e; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1AECEC4CEEE;
-	Wed,  2 Jul 2025 07:13:38 +0000 (UTC)
+	s=arc-20240116; t=1751440567; c=relaxed/simple;
+	bh=uuuPtNcVey8RE2kFPOXint0yiPIHAawaHehEcmz1wBE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mYa2hTOjX1hXaSBk776Drsp1UDHMZsGXQvcZZWYGDBU7i/0iI5T0Wbz8IiOTGxiFQHM3V6PZOD+lsoHY8efAL6IQzYb8PuOl9lj1ctBximXS/35Hz/5uQQ7c4F0qq+O8rQHHOS4BqT708jdIp1RNxxvGONaC8mDX5k0Bw4BSBhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fni0EvRW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED44FC4CEEF;
+	Wed,  2 Jul 2025 07:16:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751440421;
-	bh=fMb7qkyIL05M6PVmQgqY3NmHUrJFgW+GaqQoqPtVyFY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=oHysoo3eS2WcL+wlBnT/aQB2WejukmPkWXQ9UfJL2skbfxTDoGe3pxUSZAn8+CqJs
-	 Iy/rvrpnoSy4YzlEV5UdKOtGKCktbPr/D5u2GVycse3gXNSqhV0xPylAX99/34JHLp
-	 jP22pM2X9LC92iGxf3zZzvQm1kleguMHz6T3qy6F7sRglDDRvqVLxbW7KFrmdZicEi
-	 G9UlXTFLNNQINSBRmkU+Dfg1qLRs2vI1F5xGo80NDugxOHZ+2HvGdKb/iziKpc9UmI
-	 sT4mQP+xW655d6YNt1IdliKgAb/eq4a8LOaY7sLM2qcZV0oDO7tXbJsOg0CEUI+UzE
-	 QUhb6BwyYDxlg==
-Message-ID: <5cba2560-075c-4cd3-998e-30bd4ebb1d8b@kernel.org>
-Date: Wed, 2 Jul 2025 09:13:36 +0200
+	s=k20201202; t=1751440565;
+	bh=uuuPtNcVey8RE2kFPOXint0yiPIHAawaHehEcmz1wBE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Fni0EvRWJdQyx6IRNG6gmmCoz2nj+h9CK/XrmFqrwAbCiUNsvBaKEj6RwsKCKJ7FR
+	 0+PElKm1/A1DDcYWHQ72WuOvyauOTPRE5KBa5Y85py1psG/sud4sr0Gda6TJyjHdRT
+	 /oPBdwoy9jbMwpyY/18GTSnwGigJSWSBmB7mNCCHcAJkcFY3yFhASAjoDwCz+cjd2r
+	 hRMxKCDsJuyzlXO8ML4moqyR/SwpMUdcIjMUiSaoLVP8VyHN6sJ0orfHVIgYB+6iFM
+	 NJpnEd7UUbV7QHbHi7KULoe5f8KhrVPQ33ZFyay3O4zDlSIiHbziKDFkQVTq4LDRj9
+	 R728Nw4TYrnWg==
+Date: Wed, 2 Jul 2025 09:16:02 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: =?utf-8?B?w4FsdmFybyBGZXJuw6FuZGV6?= Rojas <noltari@gmail.com>
+Cc: jdelvare@suse.com, linux@roeck-us.net, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, corbet@lwn.net, linux-hwmon@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] dt-bindings: hwmon: Add Microchip EMC2101 support
+Message-ID: <20250702-silent-capable-ferret-397cf8@krzk-bin>
+References: <20250701181228.1196102-1-noltari@gmail.com>
+ <20250701181228.1196102-3-noltari@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] Add a driver for the NIR-enhanced Mira220
- 1600x1400 global shutter image sensor.
-To: Philippe Baetens <philippebaetens@gmail.com>, mchehab@kernel.org,
- robh@kernel.org, conor+dt@kernel.org, krzk+dt@kernel.org
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <aGP7j-8Beu-ekPT1@raspberrypi>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <aGP7j-8Beu-ekPT1@raspberrypi>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250701181228.1196102-3-noltari@gmail.com>
 
-On 01/07/2025 17:15, Philippe Baetens wrote:
-> This driver implements 12b, 10b and 8b RAW RGB color format.
-> The output datarate is
-> 1500Mbit/s, 2 lane. Framerate is up to 90 fps.
-> Note: this sensor does not support analog gain.
-> 
-> Signed-off-by: philippe baetens <philippebaetens@gmail.com>
+On Tue, Jul 01, 2025 at 08:12:27PM +0200, =C3=81lvaro Fern=C3=A1ndez Rojas =
+wrote:
+> Introduce yaml schema for Microchip emc2101 pwm fan controller with
+> temperature monitoring.
+>=20
+> Signed-off-by: =C3=81lvaro Fern=C3=A1ndez Rojas <noltari@gmail.com>
 > ---
-> Changes in v3:
-> 	- Add people to mailing list
-> 	- Improve commit description
-> Changes in v2:
-> 	- Fix checkpatch warnings
-
-Subject: missing prefixes
-Subject: no full stop, this is not a sentence. Look at git log how this
-is created.
-
-> ---
->  drivers/media/i2c/Kconfig   |   39 +
->  drivers/media/i2c/Makefile  |    3 +
->  drivers/media/i2c/mira220.c | 1973 +++++++++++++++++++++++++++++++++++
->  3 files changed, 2015 insertions(+)
->  create mode 100644 drivers/media/i2c/mira220.c
-> 
-> diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
-> index e68202954..0267f2440 100644
-> --- a/drivers/media/i2c/Kconfig
-> +++ b/drivers/media/i2c/Kconfig
-> @@ -127,6 +127,31 @@ config VIDEO_HI847
->            To compile this driver as a module, choose M here: the
->            module will be called hi847.
->  
-> +config VIDEO_PONCHA110
-
-What is this?
-
-> +	tristate "ams PONCHA110 sensor support"
-> +	depends on I2C && VIDEO_DEV
-> +	select MEDIA_CONTROLLER
-> +	select VIDEO_V4L2_SUBDEV_API
-> +	select V4L2_FWNODE
-> +	help
-> +	  This is a Video4Linux2 sensor driver for the ams
-> +	  PONCHA110 camera.
+>  .../bindings/hwmon/microchip,emc2101.yaml     | 79 +++++++++++++++++++
+>  1 file changed, 79 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/hwmon/microchip,emc=
+2101.yaml
+>=20
+>  v2: add missing properties.
+>=20
+> diff --git a/Documentation/devicetree/bindings/hwmon/microchip,emc2101.ya=
+ml b/Documentation/devicetree/bindings/hwmon/microchip,emc2101.yaml
+> new file mode 100644
+> index 000000000000..0966559d373e
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/hwmon/microchip,emc2101.yaml
+> @@ -0,0 +1,79 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/hwmon/microchip,emc2101.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +	  To compile this driver as a module, choose M here: the
-> +	  module will be called poncha110.
+> +title: Microchip EMC2101 SMBus compliant PWM fan controller
 > +
-> +config VIDEO_PONCHA110COLOR
-
-Hm?
-
-> +	tristate "ams PONCHA110COLOR sensor support"
-> +	depends on I2C && VIDEO_DEV
-> +	select MEDIA_CONTROLLER
-> +	select VIDEO_V4L2_SUBDEV_API
-> +	select V4L2_FWNODE
-> +	help
-> +	  This is a Video4Linux2 sensor driver for the ams
-> +	  PONCHA110 camera.
+> +maintainers:
+> +  - =C3=81lvaro Fern=C3=A1ndez Rojas <noltari@gmail.com>
 > +
-> +	  To compile this driver as a module, choose M here: the
-> +	  module will be called poncha110.
->  config VIDEO_IMX208
->  	tristate "Sony IMX208 sensor support"
->  	help
-> @@ -269,6 +294,20 @@ config VIDEO_IMX415
->  config VIDEO_MAX9271_LIB
->  	tristate
->  
-> +config VIDEO_MIRA220
-> +	tristate "ams MIRA220 sensor support"
-> +	depends on I2C && VIDEO_DEV
-> +	select MEDIA_CONTROLLER
-> +	select VIDEO_V4L2_SUBDEV_API
-> +	select V4L2_CCI_I2C
-> +	select V4L2_FWNODE
-> +	help
-> +	  This is a Video4Linux2 sensor driver for the ams
-> +	  MIRA220 camera.
+> +description:
+> +  Microchip EMC2101 pwm controller which supports up to 1 fan, 1 internal
+> +  temperature sensor, 1 external temperature sensor and an 8 entry look
+> +  up table to create a programmable temperature response.
 > +
-> +	  To compile this driver as a module, choose M here: the
-> +	  module will be called mira220.
-> +
->  config VIDEO_MT9M001
->  	tristate "mt9m001 support"
->  	help
-> diff --git a/drivers/media/i2c/Makefile b/drivers/media/i2c/Makefile
-> index 5873d2943..3b5e9d242 100644
-> --- a/drivers/media/i2c/Makefile
-> +++ b/drivers/media/i2c/Makefile
-> @@ -45,6 +45,8 @@ obj-$(CONFIG_VIDEO_HI556) += hi556.o
->  obj-$(CONFIG_VIDEO_HI846) += hi846.o
->  obj-$(CONFIG_VIDEO_HI847) += hi847.o
->  obj-$(CONFIG_VIDEO_I2C) += video-i2c.o
-> +obj-$(CONFIG_VIDEO_PONCHA110)	+= poncha110.o
-> +obj-$(CONFIG_VIDEO_PONCHA110COLOR)	+= poncha110color.o
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - microchip,emc2101
+> +      - microchip,emc2101-r
 
-What?
-
-
-...
+Nothing in description explains what 'r' is.
 
 > +
-> +struct mira220 {
+> +  reg:
+> +    maxItems: 1
+> +
+> +  '#address-cells':
+> +    const: 1
+> +
+> +  '#size-cells':
+> +    const: 0
+> +
+> +  '#pwm-cells':
+> +    const: 2
+> +    description: |
+> +      Number of cells in a PWM specifier.
+> +      - cell 0: The PWM frequency
+> +      - cell 1: The PWM polarity: 0 or PWM_POLARITY_INVERTED
+> +
+> +patternProperties:
+> +  '^fan@0$':
 
-Type declarations go before variable definitions.
+This is just 'fan', not a pattern. See other bidnings.
 
-> +	struct v4l2_subdev sd;
-> +	struct media_pad pad;
-> +
-> +	struct v4l2_mbus_framefmt fmt;
-> +
-> +	struct clk *xclk; /* system clock to MIRA220 */
-> +	u32 xclk_freq;
-> +
-> +	struct regulator_bulk_data supplies[MIRA220_NUM_SUPPLIES];
-> +
-> +	struct v4l2_ctrl_handler ctrl_handler;
-> +	struct v4l2_ctrl *pixel_rate;
-> +	struct v4l2_ctrl *vflip;
-> +	struct v4l2_ctrl *hflip;
-> +	struct v4l2_ctrl *vblank;
-> +	struct v4l2_ctrl *hblank;
-> +	struct v4l2_ctrl *exposure;
-> +	struct v4l2_ctrl *gain;
-> +
-> +	/* Current mode */
-> +	const struct mira220_mode *mode;
-> +
-> +	struct mutex mutex; //comment
-> +	/* mutex ensures correct initialization */
-> +
-> +	struct regmap *regmap;
-> +};
-> +
-> +static inline struct mira220 *to_mira220(struct v4l2_subdev *_sd)
-> +{
-> +	return container_of(_sd, struct mira220, sd);
-> +}
-> +
-> +/* Power/clock management functions */
-> +static int mira220_power_on(struct device *dev)
-> +{
-> +	struct i2c_client *client = to_i2c_client(dev);
-> +	struct v4l2_subdev *sd = i2c_get_clientdata(client);
-> +	struct mira220 *mira220 = to_mira220(sd);
-> +	int ret = -EINVAL;
-> +
-> +	ret = regulator_bulk_enable(MIRA220_NUM_SUPPLIES, mira220->supplies);
-> +	if (ret) {
-> +		dev_err(&client->dev, "%s: failed to enable regulators\n",
-> +			__func__);
-> +		goto reg_off;
-> +	}
-> +	ret = clk_prepare_enable(mira220->xclk);
-> +	if (ret) {
-> +		dev_err(&client->dev, "%s: failed to enable clock\n", __func__);
-> +		goto clk_off;
-> +	}
-> +	fsleep(MIRA220_XCLR_MIN_DELAY_US);
+> +    $ref: fan-common.yaml#
+> +    unevaluatedProperties: false
+> +    properties:
+> +      reg:
+> +        description:
+> +          The fan number used to determine the associated PWM channel.
 
-No. Look at your probe code, this makes no sense.
+I can tell you: 0. Cannot be any other PWM channel.
 
+> +        maxItems: 1
 > +
-> +	return 0;
+> +    required:
+> +      - reg
 > +
-> +clk_off:
-> +	clk_disable_unprepare(mira220->xclk);
-> +reg_off:
-> +	ret = regulator_bulk_disable(MIRA220_NUM_SUPPLIES, mira220->supplies);
-
-So you return 0 on error?
-Why are you disabling regulators which were not enabled? This is wrong -
-bug.
-
-> +	return ret;
-> +}
-> +
-> +static int mira220_power_off(struct device *dev)
-> +{
-> +	struct i2c_client *client = to_i2c_client(dev);
-> +	struct v4l2_subdev *sd = i2c_get_clientdata(client);
-> +	struct mira220 *mira220 = to_mira220(sd);
-> +	(void)mira220;
-> +
-> +	clk_disable_unprepare(mira220->xclk);
-> +	regulator_bulk_disable(MIRA220_NUM_SUPPLIES, mira220->supplies);
-> +
-> +	return 0;
-> +}
-> +
-
-
-...
-
-> +
-> +static int mira220_probe(struct i2c_client *client)
-> +{
-> +	struct device *dev = &client->dev;
-> +	struct mira220 *mira220;
-> +	int ret;
-> +
-> +	mira220 = devm_kzalloc(&client->dev, sizeof(*mira220), GFP_KERNEL);
-> +	if (!mira220)
-> +		return -ENOMEM;
-> +
-> +	v4l2_i2c_subdev_init(&mira220->sd, client, &mira220_subdev_ops);
-> +	mira220->sd.internal_ops = &mira220_internal_ops;
-> +
-> +	mira220->regmap = devm_cci_regmap_init_i2c(client, 16);
-> +	if (IS_ERR(mira220->regmap))
-> +		return dev_err_probe(dev, PTR_ERR(mira220->regmap),
-> +				     "failed to initialize CCI\n");
-
-Blank line
-
-> +	/* Get system clock (xclk) */
-> +	mira220->xclk = devm_clk_get(dev, NULL);
-> +	if (IS_ERR(mira220->xclk)) {
-> +		dev_err(dev, "failed to get xclk\n");
-> +		return PTR_ERR(mira220->xclk);
-
-Syntax is: return dev_err_probe()
-
-> +	}
-> +	mira220->xclk_freq = clk_get_rate(mira220->xclk);
-> +	if (mira220->xclk_freq != MIRA220_SUPPORTED_XCLK_FREQ) {
-> +		dev_err(dev, "xclk frequency not supported: %d Hz\n",
-> +			mira220->xclk_freq);
-> +		return -EINVAL;
-
-return dev_err_probe
-
-> +	}
-> +
-> +	ret = mira220_get_regulators(mira220);
-> +	if (ret) {
-> +		dev_err(dev, "failed to get regulators\n");
-> +		return ret;
-
-Same
-
-> +	}
-> +
-> +	fsleep(10000);
-
-Uh... Why? This sleep makes no sense at all.
-
-> +
-> +	// The sensor must be powered for mira220_identify_module()
-> +	// to be able to read the CHIP_ID register
-> +
-> +	 ret = mira220_power_on(dev);
-> +	if (ret)
-> +		return ret;
-
-You just slept here!
-
-> +
-> +	fsleep(100000);
-
-Oh... so entire probe is delayed by 100 ms + 10 ms (!!!). This is just
-some arbitrary and not suspicious delay. Maybe you miss regulator ramps,
-but 100 ms here is just wrong.
-
-> +
-> +	ret = mira220_identify_module(mira220);
-> +	if (ret)
-> +		goto error_power_off;
-> +
-> +	/* Set default mode to max resolution */
-> +	mira220->mode = &supported_modes[0];
-> +
-> +	ret = mira220_init_controls(mira220);
-> +	if (ret)
-> +		goto error_power_off;
-> +
-> +	/* Initialize subdev */
-> +	mira220->sd.internal_ops = &mira220_internal_ops;
-> +	mira220->sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE |
-> +		V4L2_SUBDEV_FL_HAS_EVENTS;
-> +	mira220->sd.entity.function = MEDIA_ENT_F_CAM_SENSOR;
-> +
-> +	/* Initialize source pads */
-> +	mira220->pad.flags = MEDIA_PAD_FL_SOURCE;
-> +
-> +	ret = media_entity_pads_init(&mira220->sd.entity, 1, &mira220->pad);
-> +	if (ret) {
-> +		dev_err_probe(dev, ret, "failed to init entity pads\n");
-> +		goto error_handler_free;
-> +	}
-> +
-> +	mira220->sd.state_lock = mira220->ctrl_handler.lock;
-> +	ret = v4l2_subdev_init_finalize(&mira220->sd);
-> +	if (ret < 0) {
-> +		dev_err_probe(dev, ret, "subdev init error\n");
-> +		goto error_media_entity;
-> +	}
-> +
-> +	ret = v4l2_async_register_subdev_sensor(&mira220->sd);
-> +	if (ret < 0) {
-> +		dev_err_probe(dev, ret,
-> +			      "failed to register sensor sub-device\n");
-> +		goto error_subdev_cleanup;
-> +	}
-> +
-> +	/* Enable runtime PM and turn off the device */
-> +	pm_runtime_set_active(dev);
-> +	pm_runtime_enable(dev);
-> +	pm_runtime_idle(dev);
-> +
-> +	return 0;
-> +
-> +error_subdev_cleanup:
-> +	v4l2_subdev_cleanup(&mira220->sd);
-> +
-> +error_media_entity:
-> +	media_entity_cleanup(&mira220->sd.entity);
-> +
-> +error_handler_free:
-> +	mira220_free_controls(mira220);
-> +
-> +error_power_off:
-> +	mira220_power_off(dev);
-> +
-> +	return ret;
-> +}
-> +
-> +static void mira220_remove(struct i2c_client *client)
-> +{
-> +	struct v4l2_subdev *sd = i2c_get_clientdata(client);
-> +	struct mira220 *mira220 = to_mira220(sd);
-> +
-> +	v4l2_async_unregister_subdev(sd);
-> +	media_entity_cleanup(&sd->entity);
-> +	mira220_free_controls(mira220);
-> +
-> +	pm_runtime_disable(&client->dev);
-> +	if (!pm_runtime_status_suspended(&client->dev))
-> +		mira220_power_off(&client->dev);
-> +	pm_runtime_set_suspended(&client->dev);
-> +}
-> +
-> +static const struct dev_pm_ops mira220_pm_ops = {
-> +		SET_RUNTIME_PM_OPS(mira220_power_off, mira220_power_on, NULL)
-> +};
-> +
-> +static const struct of_device_id mira220_dt_ids[] = {
-> +	{ .compatible = "ams,mira220" },
-> +	{ /* sentinel */ } };
-
-}; is always in new line.
-
-> +MODULE_DEVICE_TABLE(of, mira220_dt_ids);
-> +
-
-
+> +required:
+> +  - compatible
+> +  - reg
 
 Best regards,
 Krzysztof
+
 
