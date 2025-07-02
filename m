@@ -1,126 +1,149 @@
-Return-Path: <linux-kernel+bounces-713615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4792AF5C5A
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 17:12:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4DB9AF5C62
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 17:13:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2B9416B0DC
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 15:12:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D903D7AC37A
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 15:12:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B167F2D374E;
-	Wed,  2 Jul 2025 15:12:52 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0012.hostedemail.com [216.40.44.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C0D51C84A0;
+	Wed,  2 Jul 2025 15:13:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="HS3suiYz"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0641D2D372C;
-	Wed,  2 Jul 2025 15:12:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF72C2D3726;
+	Wed,  2 Jul 2025 15:13:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751469172; cv=none; b=cyphPplvsqZmT1CjOlAsCaFgI4Uq4nd+bLRB//nzf+xPSrH7pA2Tr2Czj7XZTSXIrTUa6FHmy3fXV4PN6phuiYMgeVAJqOHIKk8KIzuaf6lWjGcP+27B9SAzzSr/FT7zqRAg6tUwAYPEcnB6FyCP9IAxZ2+orgj24zXltVBkY08=
+	t=1751469214; cv=none; b=Bi5+IncnGkey8cGVwSytLaT8whrNVf49EFG8xwwl12ZTbAhWlWSTtJE5Ttl0tNw5/YrbnTvrDMgBcv40Aj3P/EF5HksM49Ejz8h9ixQQbJJx3clpRtXY9GsyHtWcbZ+SkUcFABJjyjlI183IvUqlOSdv31lVIxxRm85BGzYB/bg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751469172; c=relaxed/simple;
-	bh=ymsnVIG0erULraCd4BNu3B+drsHLAexyq03O+NpiP0w=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=o2Z7V9LIBT3bi8bS8V4vA9uxoEpA3xW4chMExWtSV+c3iSX3583bZUgjCRxlfQ20VLb6gtCd8T+CUOcdWpfEUdvje+kc/ZJtwmuYPb45poUrLpsIWNnltZU4qhDHMyID5B+QrhyDvV/vvDc38yWMOUkjQj24Oy+ckkmVmDEqnHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf16.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay02.hostedemail.com (Postfix) with ESMTP id 74B55123D32;
-	Wed,  2 Jul 2025 15:12:48 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf16.hostedemail.com (Postfix) with ESMTPA id 706952000F;
-	Wed,  2 Jul 2025 15:12:46 +0000 (UTC)
-Date: Wed, 2 Jul 2025 11:12:45 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Gabriele Paoloni <gpaoloni@redhat.com>
-Cc: mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- acarmina@redhat.com, chuck.wolber@boeing.com
-Subject: Re: [RFC PATCH 2/2] tracing: add testable specifications for
- event_enable_write/read
-Message-ID: <20250702111245.1fa23138@batman.local.home>
-In-Reply-To: <CA+wEVJarZben=F3Dw0A8_tvAAR7-qb4PrjCj0AGFoq=DH1RJwg@mail.gmail.com>
-References: <20250612104349.5047-1-gpaoloni@redhat.com>
-	<20250612104349.5047-3-gpaoloni@redhat.com>
-	<20250701181119.7b0bc5d6@batman.local.home>
-	<CA+wEVJarZben=F3Dw0A8_tvAAR7-qb4PrjCj0AGFoq=DH1RJwg@mail.gmail.com>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1751469214; c=relaxed/simple;
+	bh=ztBqQJeSt6XmLxkH8AgL8AaagruSAXxb7MRd1Fe1tqI=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=Flz43aq527JutCOckd28PMLPbmrqPysZdAOcjvhOZ2ADdX1R1vBTt6rsIhantdKtYD7r7tz1CvTIc32/8ixypb3ju8BnTaiGEo4rDU4bftVt5ynpoIpDYjl61ZcfXE/ZHkwTMlyUdxhwiMnFX92BYJRfxgvufJoZ51LHxXyM/fA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=HS3suiYz; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 562EJM7R024904;
+	Wed, 2 Jul 2025 15:13:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=C1feAWETzSEvnrAm1Fn8O1
+	ECAHwkbb7sCvHiC87JnzY=; b=HS3suiYz/q0buQDqCAy15+nexkexOXKJCEIyvs
+	3O6PEGKaiZJOQCW3eCoPTftryNWf+5sQFyOWn5xqEl9TtLvdwEBSjpMeiiSVMAok
+	uzJveu/J7yGOpYqzStivCdSL+uguxjH8s85gSNrn71d7USOl0b/pyIQ4rTXTpoFi
+	PepvgLCofVsB1jPV1/Q7zomUZ4vjICfHozmppTI6qqav2UfgG7sdHUOKpeyeWJ5S
+	BSFtv5m0BmyJ8qlL7vaRxiwy1MMPDEaoUZ2ORbMti5O0ohxxKIGkEOmzg5zKfsbX
+	UjdIEobJDWF0KtxS/AJG7npbrKDaqKN10mtYTzQZImr56NHw==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47j8024x28-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 02 Jul 2025 15:13:29 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 562FDRSn010528
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 2 Jul 2025 15:13:27 GMT
+Received: from hu-skakitap-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Wed, 2 Jul 2025 08:13:23 -0700
+From: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+Subject: [PATCH v3 0/2] Add video clock controller DT support for sc8180x
+Date: Wed, 2 Jul 2025 20:43:12 +0530
+Message-ID: <20250702-sc8180x-videocc-dt-v3-0-916d443d8a38@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 706952000F
-X-Rspamd-Server: rspamout02
-X-Stat-Signature: 1madwbwa4gt3iih9kydkp3qf4qjw6wz6
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1/1FB+LOdu3E8ndipBvVyP/V38SBjmAr/M=
-X-HE-Tag: 1751469166-946527
-X-HE-Meta: U2FsdGVkX1/1cNiMpd+Evb2QXlsQ6lNsAcRkdpUgwP2lWcDAIXGUy4k2+zRji8MXWkzX/JFCyGVdlyyieQwm1lATxyGyjNoaxlreRY+7q1RUQu+/leMwfLhBnyleO+g+kRzu8W7YJhummudVJwsGW/4T+igjzRjeMKMf/K/JJGQ8jD5butSJsIa0+Gg7dJKlvNDIVN/011tK0rBHhub1fV25bWbPHURa21AxePK5i6GcQHc/MxnN2GE855ifmgZjJMTKBomwLIiLsvqQZhvdk/rg8HdfGf6THKEOaJIuqEK5uysQa8qVTx5Bgeo0iNl0zKXi1nrECJIDAf5uN7cqv2DKLZ7SnIm7HDBgN/PDZNPYmMbtSeth1pVBlwz3WPNKUzb9ohGAHdw=
+X-B4-Tracking: v=1; b=H4sIAIhMZWgC/33NwQ6CMAzG8VcxO1vTDhjoyfcwHqQb0oOgGy4Yw
+ rs7uBgT4/H/Jf11UsF5cUEdNpPyLkqQvkuRbTeK20t3dSA2tdKoCzQ6g8AVVThCFOt6ZrAD5I4
+ zxtJQU1mVDu/eNTKu6OmcupUw9P61/oi0rH+5SECwt5qQKUeDeHw8haXjHfc3tYBRf5AS6SeiA
+ aHGwtbGMFNjvpF5nt8Vv0aY+wAAAA==
+X-Change-ID: 20250623-sc8180x-videocc-dt-4ec3c0761f8d
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+CC: Ajit Pandey <quic_ajipan@quicinc.com>,
+        Imran Shaik
+	<quic_imrashai@quicinc.com>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        "Jagadeesh
+ Kona" <quic_jkona@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        Satya Priya Kakitapalli
+	<quic_skakitap@quicinc.com>
+X-Mailer: b4 0.14.2
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: QA9b2gclp2hudqi1JZt5ghtNJRQoDo3w
+X-Authority-Analysis: v=2.4 cv=YPWfyQGx c=1 sm=1 tr=0 ts=68654c99 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8
+ a=COk6AnOGAAAA:8 a=yiBUYm-Hlfb03F32K2EA:9 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: QA9b2gclp2hudqi1JZt5ghtNJRQoDo3w
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzAyMDEyNSBTYWx0ZWRfXz7lL8mtw3ANp
+ AJhjgGOV1lZGR/RDokcPfdfZI33kqF56Kv+mPabzQk+M6plCxXDk2Kzs1u8qayMWrpFlYBAvn8q
+ sMSXD85RQaaYk7gZlC30dGsVrRfA9vWBBcSbLtjsDeQRmqUzKQDk3RE2APXghHCT2gd1HsMn6cC
+ w03jw9OmgJtctT1Md9VLCeJIGKZn+EocIPW7grjnXNn2tk0kgvvJxr4rk8VSx2bGl4GgmcQBnwO
+ Yq0LE8mAVVMsxcgc9kFaFerh+cUp0brlo4BAkCPTdjq/qqG8iOcSHPDvLJBgCNXCACJMojxPyLB
+ WCsM0hv99KXOo0rordb2PaQ5LxxdFaefgL6lngg0+jO3rfG8keuos3i/5xfJ5UXF/SB59DsxBwP
+ NRn6xEmp5ItjYcqy1PPOtzrPko5C8qxFfksLyKHQrEmVIts7YCpFEQtJhU9adSM1OLyCjrcL
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-02_02,2025-07-02_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 mlxlogscore=867 mlxscore=0 malwarescore=0 suspectscore=0
+ lowpriorityscore=0 clxscore=1015 impostorscore=0 adultscore=0
+ priorityscore=1501 bulkscore=0 phishscore=0 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507020125
 
-On Wed, 2 Jul 2025 16:59:29 +0200
-Gabriele Paoloni <gpaoloni@redhat.com> wrote:
+Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+---
+Changes in v3:
+- Fix the yaml binding indentation warnings.
+- Link to v2: https://lore.kernel.org/r/20250701-sc8180x-videocc-dt-v2-0-b05db66cc1f6@quicinc.com
 
-> Mmm got it. What about
-> 
-> * Function's expectations:
-> * - This function shall lock the global event_mutex before performing any
-> *   operation on the target event file and unlock it after all operations on
-> *   the target event file have completed;
+Changes in v2:
+- Introduce new compatible for sc8180x videocc and use sm8150 as
+  fallback. 
+- Add new patch to update the bindings accordingly.
+- Link to v1: https://lore.kernel.org/r/20250623-sc8180x-videocc-dt-v1-1-9d210c140600@quicinc.com
 
-Since 99% of the time that a lock is taken in a function it is
-released, I think that should be the default assumption here, and only
-when a lock is taken and not release, that should be explicitly called
-out.
+---
+Satya Priya Kakitapalli (2):
+      dt-bindings: clock: qcom,videocc: Add sc8180x compatible
+      arm64: dts: qcom: sc8180x: Add video clock controller node
 
-And also we should remove "This function" we know that these
-requirements are for this function.
+ .../devicetree/bindings/clock/qcom,videocc.yaml       | 19 ++++++++++++-------
+ arch/arm64/boot/dts/qcom/sc8180x.dtsi                 | 15 +++++++++++++++
+ 2 files changed, 27 insertions(+), 7 deletions(-)
+---
+base-commit: 5d4809e25903ab8e74034c1f23c787fd26d52934
+change-id: 20250623-sc8180x-videocc-dt-4ec3c0761f8d
 
-  - The global event_mutex shall be taken before performing any
-    operation on the target event.
-
-Should be good enough.
-
-If the lock can be released and taken again, that too should be
-explicit in the requirements otherwise it is assumed it is taken once
-and not released until the operation is completed.
-
-> *
-> * - This function shall format the string copied to userspace according to
-> *   the status flags retrieved from the target event file:
-> *    - The first character shall be set to "1" if the enabled flag is
-> set AND the
-> *      soft_disabled flag is not set, else it shall be set to "0";
-> *    - The second character is optional and shall be set to "*" if either the
-> *      soft_disabled flag or the soft_mode flag is set;
-> *   - The string shall be terminated by a newline ("\n") and any remaining
-> *      character shall be set to "0";
-
- - The string copied to user space shall be formatted according to the
-   status flags from the target event file:
-
-   - If the enable flag is set AND the soft_disable flag is not set then
-     the first character shall be set to "1" ELSE it shall be set to "0"
-
-   - If either the soft_disable fag or the soft_mode flag is set then the
-     second character shall be set to "*" ELSE it is skipped.
-
-I think the above is easier to read and is a bit more consolidated.
-Stating the status then the effect is also easier to read.
-
--- Steve
-
-
-> *
-> * - This function shall invoke simple_read_from_buffer() to perform the copy
-> *   of the kernel space string to ubuf.
-> 
-> (pls note that the check on cnt has been removed in v3 that is out already)
+Best regards,
+-- 
+Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
 
 
