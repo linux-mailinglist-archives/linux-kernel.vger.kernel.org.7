@@ -1,59 +1,59 @@
-Return-Path: <linux-kernel+bounces-713446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20D7EAF59BF
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 15:42:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3808AF59B8
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 15:42:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 153F64E23B8
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 13:42:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2EC3A5219E6
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 13:42:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07B03295519;
-	Wed,  2 Jul 2025 13:39:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78A3628A71B;
+	Wed,  2 Jul 2025 13:38:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b="TqPekNS9"
-Received: from mailtransmit05.runbox.com (mailtransmit05.runbox.com [185.226.149.38])
+	dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b="twIQfRG8"
+Received: from mailtransmit04.runbox.com (mailtransmit04.runbox.com [185.226.149.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4501428A1F5;
-	Wed,  2 Jul 2025 13:38:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.226.149.38
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED81228983F
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 13:38:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.226.149.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751463541; cv=none; b=Kkg5JvRFeNx0AIylS2rUooSziokt/cSJM9uKooxBLd6ASm4ULxJl8VgTIy+bt3Hvi/0KLafLqyEQXGT3lNlaIAjN0R8w8uaRbK+RDb9BBgKImkjNV78T2akZg5SSg168D6bpmRt0qLvszqNSckEegyCFzc4eSdR34OZ0PiFtv4Q=
+	t=1751463538; cv=none; b=KaGTJEb08RWSXP1HffyhxzAUI76ILAySrXKeuz3oby9fqo4SgpTc8Se/pSNzagmMfPoxOC/kDKymxSXtG2GnwSXSA7iCVb957ATmVow6AE6ad71MAVIbceLH/vvio4YWmh0JxwY7Te6piGSY7XXcO+IJ5guyxmgOhwx1R6BNk2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751463541; c=relaxed/simple;
-	bh=xJyaNJQ7LbzJGPjFyc9HUYGLS31iY7vm48JnwuM2+hg=;
+	s=arc-20240116; t=1751463538; c=relaxed/simple;
+	bh=7oqwIalbg6zgFWyQYltaEI+okvEaE/eUEvw96Z3S2es=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=aw/yQgfHnORnbOVEkJsOQ3Z1c27ZxRcks6O5sZ7q83UAAzgpjTZx4zD0QmrCgqw+EU2KMqvqJmNqoCLGLbSRl7FXITXaFLD4M7c0TGyWEH/Una0D+L4bRQlliDnmME0iaNb3UWmdyxFL0n+J2vytRgAAdi3zE64N+Z5lz/cEsRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co; spf=pass smtp.mailfrom=rbox.co; dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b=TqPekNS9; arc=none smtp.client-ip=185.226.149.38
+	 In-Reply-To:To:Cc; b=Hv2z3NmLUxxsbFubTQSPqUAU/y1Dx5+kqc0X+RU5+cZjmtcl4uentBlcWhv4uIfPOc9WXqgEqYlFOvI3QQJfhanh0DbvoANV32MQtrCMZpYa2OTvUid4OfqKQ2k0KRHzCigVHYBah7XjbBzam8cRQ1G/YZzg1AV6buFB0ajehTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co; spf=pass smtp.mailfrom=rbox.co; dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b=twIQfRG8; arc=none smtp.client-ip=185.226.149.37
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rbox.co
-Received: from mailtransmit03.runbox ([10.9.9.163] helo=aibo.runbox.com)
-	by mailtransmit05.runbox.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+Received: from mailtransmit02.runbox ([10.9.9.162] helo=aibo.runbox.com)
+	by mailtransmit04.runbox.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
 	(Exim 4.93)
 	(envelope-from <mhal@rbox.co>)
-	id 1uWxfs-00GxS8-DM; Wed, 02 Jul 2025 15:38:56 +0200
+	id 1uWxfr-00GcMe-2U; Wed, 02 Jul 2025 15:38:55 +0200
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=rbox.co;
 	s=selector2; h=Cc:To:In-Reply-To:References:Message-Id:
 	Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:Date:From;
-	bh=QANjNkCZa2tpxhq6eTHKRMBXrJr14UZJplu1Q4IRXac=; b=TqPekNS99PHx54hoQEU9loZqjp
-	I/9vGeflCOEd86fcAvOThawzMsvnuMzT8nG7NWkB68wh9BaY8JV6vrGYUL15kdQGghnmVMIXIBWQ3
-	7m4zYyzpdBYQfIYyLv66Rysr1KQ4bLWuuzH9ALKXf09/fUKnmBGg3ZHnjZez2078Vxz+zx04EmPcd
-	+xus3xE9/yFHYzBNZD2IAhKflHXOoCAe7KgdTapqcuGC1cjnkjgo5BiVvZx9xAy8k5bRBVYDdvL1J
-	yJ2n9pfbyGwC8AL+qth5DEOKhM/WeRIpxJGssUdmj8/mnzXfVDRqn0Ki8lvdYaz0/oHZoC07vpNXl
-	4Ggg6qpA==;
+	bh=3kxEmPLnragLTHLWVkSfmPayQlA6UO7668ntOUDzlyE=; b=twIQfRG8s6M9NII9XrArJJgjD0
+	DjrvGQxTkAbzPAWDVGTM51nyvveplh1sFFwCO/VUw4u7x8ooJtp4xPmAKLTlam/aDa9yWf/55iPmy
+	jxkfMZ+hwGY8BZQmJ9lPGnvgIKs8tV6dD23QdbvKy7KzHsDJh0N5S10suj90S+CUQ2m/W2oMlOHWg
+	DODZIcPZbmkhl9ATjxt3L1vcXk98MnQcSx/MvEOcDk9K4hdaIy9usWI1f7EExp5btaMsh3qrn629+
+	4L1tw4gU7UqQawbaxJFdUtqvreEm5G6PFXkW0CF3f9F8DHN4D/AfN5BhjTugx6kRhtj7nIl8C/PDz
+	0vpH4ZVg==;
 Received: from [10.9.9.73] (helo=submission02.runbox)
-	by mailtransmit03.runbox with esmtp (Exim 4.86_2)
+	by mailtransmit02.runbox with esmtp (Exim 4.86_2)
 	(envelope-from <mhal@rbox.co>)
-	id 1uWxfr-0005Hm-TU; Wed, 02 Jul 2025 15:38:56 +0200
+	id 1uWxfq-0006FY-NM; Wed, 02 Jul 2025 15:38:54 +0200
 Received: by submission02.runbox with esmtpsa  [Authenticated ID (604044)]  (TLS1.2:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
 	(Exim 4.93)
-	id 1uWxfm-009LQl-68; Wed, 02 Jul 2025 15:38:50 +0200
+	id 1uWxfm-009LQl-Oc; Wed, 02 Jul 2025 15:38:50 +0200
 From: Michal Luczaj <mhal@rbox.co>
-Date: Wed, 02 Jul 2025 15:38:43 +0200
-Subject: [PATCH net v3 1/3] vsock: Fix transport_{g2h,h2g} TOCTOU
+Date: Wed, 02 Jul 2025 15:38:44 +0200
+Subject: [PATCH net v3 2/3] vsock: Fix transport_* TOCTOU
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,7 +62,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250702-vsock-transports-toctou-v3-1-0a7e2e692987@rbox.co>
+Message-Id: <20250702-vsock-transports-toctou-v3-2-0a7e2e692987@rbox.co>
 References: <20250702-vsock-transports-toctou-v3-0-0a7e2e692987@rbox.co>
 In-Reply-To: <20250702-vsock-transports-toctou-v3-0-0a7e2e692987@rbox.co>
 To: Stefano Garzarella <sgarzare@redhat.com>, 
@@ -73,90 +73,99 @@ Cc: virtualization@lists.linux.dev, netdev@vger.kernel.org,
  linux-kernel@vger.kernel.org, Michal Luczaj <mhal@rbox.co>
 X-Mailer: b4 0.14.2
 
-vsock_find_cid() and vsock_dev_do_ioctl() may race with module unload.
-transport_{g2h,h2g} may become NULL after the NULL check.
+Transport assignment may race with module unload. Protect new_transport
+from becoming a stale pointer.
 
-Introduce vsock_transport_local_cid() to protect from a potential
-null-ptr-deref.
+This also takes care of an insecure call in vsock_use_local_transport();
+add a lockdep assert.
 
-KASAN: null-ptr-deref in range [0x0000000000000118-0x000000000000011f]
-RIP: 0010:vsock_find_cid+0x47/0x90
+BUG: unable to handle page fault for address: fffffbfff8056000
+Oops: Oops: 0000 [#1] SMP KASAN
+RIP: 0010:vsock_assign_transport+0x366/0x600
 Call Trace:
- __vsock_bind+0x4b2/0x720
- vsock_bind+0x90/0xe0
- __sys_bind+0x14d/0x1e0
- __x64_sys_bind+0x6e/0xc0
- do_syscall_64+0x92/0x1c0
- entry_SYSCALL_64_after_hwframe+0x4b/0x53
-
-KASAN: null-ptr-deref in range [0x0000000000000118-0x000000000000011f]
-RIP: 0010:vsock_dev_do_ioctl.isra.0+0x58/0xf0
-Call Trace:
- __x64_sys_ioctl+0x12d/0x190
+ vsock_connect+0x59c/0xc40
+ __sys_connect+0xe8/0x100
+ __x64_sys_connect+0x6e/0xc0
  do_syscall_64+0x92/0x1c0
  entry_SYSCALL_64_after_hwframe+0x4b/0x53
 
 Fixes: c0cfa2d8a788 ("vsock: add multi-transports support")
-Suggested-by: Stefano Garzarella <sgarzare@redhat.com>
+Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
 Signed-off-by: Michal Luczaj <mhal@rbox.co>
 ---
- net/vmw_vsock/af_vsock.c | 27 +++++++++++++++++++++------
- 1 file changed, 21 insertions(+), 6 deletions(-)
+ net/vmw_vsock/af_vsock.c | 28 +++++++++++++++++++++++-----
+ 1 file changed, 23 insertions(+), 5 deletions(-)
 
 diff --git a/net/vmw_vsock/af_vsock.c b/net/vmw_vsock/af_vsock.c
-index 2e7a3034e965db30b6ee295370d866e6d8b1c341..39473b9e0829f240045262aef00cbae82a425dcc 100644
+index 39473b9e0829f240045262aef00cbae82a425dcc..9b2af5c63f7c2ae575c160415bd77208a3980835 100644
 --- a/net/vmw_vsock/af_vsock.c
 +++ b/net/vmw_vsock/af_vsock.c
-@@ -531,9 +531,25 @@ int vsock_assign_transport(struct vsock_sock *vsk, struct vsock_sock *psk)
+@@ -407,6 +407,8 @@ EXPORT_SYMBOL_GPL(vsock_enqueue_accept);
+ 
+ static bool vsock_use_local_transport(unsigned int remote_cid)
+ {
++	lockdep_assert_held(&vsock_register_mutex);
++
+ 	if (!transport_local)
+ 		return false;
+ 
+@@ -464,6 +466,8 @@ int vsock_assign_transport(struct vsock_sock *vsk, struct vsock_sock *psk)
+ 
+ 	remote_flags = vsk->remote_addr.svm_flags;
+ 
++	mutex_lock(&vsock_register_mutex);
++
+ 	switch (sk->sk_type) {
+ 	case SOCK_DGRAM:
+ 		new_transport = transport_dgram;
+@@ -479,12 +483,15 @@ int vsock_assign_transport(struct vsock_sock *vsk, struct vsock_sock *psk)
+ 			new_transport = transport_h2g;
+ 		break;
+ 	default:
+-		return -ESOCKTNOSUPPORT;
++		ret = -ESOCKTNOSUPPORT;
++		goto err;
+ 	}
+ 
+ 	if (vsk->transport) {
+-		if (vsk->transport == new_transport)
+-			return 0;
++		if (vsk->transport == new_transport) {
++			ret = 0;
++			goto err;
++		}
+ 
+ 		/* transport->release() must be called with sock lock acquired.
+ 		 * This path can only be taken during vsock_connect(), where we
+@@ -508,8 +515,16 @@ int vsock_assign_transport(struct vsock_sock *vsk, struct vsock_sock *psk)
+ 	/* We increase the module refcnt to prevent the transport unloading
+ 	 * while there are open sockets assigned to it.
+ 	 */
+-	if (!new_transport || !try_module_get(new_transport->module))
+-		return -ENODEV;
++	if (!new_transport || !try_module_get(new_transport->module)) {
++		ret = -ENODEV;
++		goto err;
++	}
++
++	/* It's safe to release the mutex after a successful try_module_get().
++	 * Whichever transport `new_transport` points at, it won't go await
++	 * until the last module_put() below or in vsock_deassign_transport().
++	 */
++	mutex_unlock(&vsock_register_mutex);
+ 
+ 	if (sk->sk_type == SOCK_SEQPACKET) {
+ 		if (!new_transport->seqpacket_allow ||
+@@ -528,6 +543,9 @@ int vsock_assign_transport(struct vsock_sock *vsk, struct vsock_sock *psk)
+ 	vsk->transport = new_transport;
+ 
+ 	return 0;
++err:
++	mutex_unlock(&vsock_register_mutex);
++	return ret;
  }
  EXPORT_SYMBOL_GPL(vsock_assign_transport);
  
-+/*
-+ * Provide safe access to static transport_{h2g,g2h,dgram,local} callbacks.
-+ * Otherwise we may race with module removal. Do not use on `vsk->transport`.
-+ */
-+static u32 vsock_registered_transport_cid(const struct vsock_transport **transport)
-+{
-+	u32 cid = VMADDR_CID_ANY;
-+
-+	mutex_lock(&vsock_register_mutex);
-+	if (*transport)
-+		cid = (*transport)->get_local_cid();
-+	mutex_unlock(&vsock_register_mutex);
-+
-+	return cid;
-+}
-+
- bool vsock_find_cid(unsigned int cid)
- {
--	if (transport_g2h && cid == transport_g2h->get_local_cid())
-+	if (cid == vsock_registered_transport_cid(&transport_g2h))
- 		return true;
- 
- 	if (transport_h2g && cid == VMADDR_CID_HOST)
-@@ -2536,18 +2552,17 @@ static long vsock_dev_do_ioctl(struct file *filp,
- 			       unsigned int cmd, void __user *ptr)
- {
- 	u32 __user *p = ptr;
--	u32 cid = VMADDR_CID_ANY;
- 	int retval = 0;
-+	u32 cid;
- 
- 	switch (cmd) {
- 	case IOCTL_VM_SOCKETS_GET_LOCAL_CID:
- 		/* To be compatible with the VMCI behavior, we prioritize the
- 		 * guest CID instead of well-know host CID (VMADDR_CID_HOST).
- 		 */
--		if (transport_g2h)
--			cid = transport_g2h->get_local_cid();
--		else if (transport_h2g)
--			cid = transport_h2g->get_local_cid();
-+		cid = vsock_registered_transport_cid(&transport_g2h);
-+		if (cid == VMADDR_CID_ANY)
-+			cid = vsock_registered_transport_cid(&transport_h2g);
- 
- 		if (put_user(cid, p) != 0)
- 			retval = -EFAULT;
 
 -- 
 2.49.0
