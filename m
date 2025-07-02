@@ -1,132 +1,156 @@
-Return-Path: <linux-kernel+bounces-713768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1619BAF5E2D
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 18:13:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE94AAF5E40
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 18:15:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 492511C438F5
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 16:13:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 692C07AFEDF
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 16:13:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A1992EE5E7;
-	Wed,  2 Jul 2025 16:12:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B08C72F49E0;
+	Wed,  2 Jul 2025 16:14:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XcajqwIA"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NRDsjv9c"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F09942F5327
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 16:12:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA8EE2F365B;
+	Wed,  2 Jul 2025 16:14:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751472754; cv=none; b=l/VkNZXQ02SqvDE7IhMWHl5axvL+ujsCXQ7NvPJ/eo/ONIO+8mbTP8W02uAQ3dZX2e7TYPSesS9myVtjp2qqqIYAuiaO97h5cNo7ko+9dBEAkrhOEjd9xVW0Ic39oxgPdbMhI86PDOeWTRNkMQ3fUMp6HXa4dUFjx37l6U3JxYg=
+	t=1751472848; cv=none; b=d5yRT+5NNa8ORWK7faTym/oI9bb1H2CzTEpT8Z+HaTy48JfHoXhjhwyClysQ29OQJ/6u/e6E8NgSoOPjlIjGkQQ7x9CazkUzxgYq6Pu65rSE2YXZNkg/vf/NTL8Z+50biRTxv1zMHTYPehzNZqEpuhiiZ46HVcgrAAFJbBw9i5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751472754; c=relaxed/simple;
-	bh=Sum3p1qWbHYTUe1b7sJiD0ptw0dscGjPm28F6ydHQfc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ksZzNYpbuEzfV1PV6n54M0BBQo+WwXKjR2PcLGxLFXUZqtsYlmO2ViwfaG0l7bcjQ7s9kE+R/MQ4XrjT9p6UD6D2fGb+KDz6Ib6bfj69RiTBUDpqrcmew+Mc7SBQNQKXFfObTUxLntxSTKL1D3dNE/tyO28kb295dk876U7s8no=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XcajqwIA; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1751472752;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fYGC1e7sjBNRXLMw9xhFOcR1EiYfaaj3YxfulV+gTOw=;
-	b=XcajqwIA9l/DUbnBxhp8nJA1Tev3Qcwm2S9w796vdFBsA+k3jgYxM5J6Qi5BUfLv2M0Vb8
-	hcNqJ8LNgwnA8D3W9Qed3GHq3KxkkCf6WXNl/fM+GQAOhUD1d2oBi94RcoLyxKc/xaCjPw
-	fL9L8BBLDONm8NDl3SREEjZS9ftPq94=
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
- [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-479--8m2qAbQOU2ow48Yvjg02Q-1; Wed, 02 Jul 2025 12:12:31 -0400
-X-MC-Unique: -8m2qAbQOU2ow48Yvjg02Q-1
-X-Mimecast-MFC-AGG-ID: -8m2qAbQOU2ow48Yvjg02Q_1751472750
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7d3e90c3a81so433080985a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 09:12:31 -0700 (PDT)
+	s=arc-20240116; t=1751472848; c=relaxed/simple;
+	bh=9P/Pp8H05sTTonSNOeiD8PXpPn6itkrTXxZVOJmVe80=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=RXT4zBNe90lSRYt9l+5NzVc/5AUF1zB2Lq0DH1d2Y2ntrCrzXT94qS6CYKS3rgIIT4ITYWHcKOt9eT3MMdNfPeiR4FJgmSXKrT4US8E7UIjxS2SVSBvPSvfCs635h3n3jk6zdovJ+jnDhULfw6jchDt7WTyzXoQyE20mE/wbayM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NRDsjv9c; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-74b50c71b0aso642705b3a.0;
+        Wed, 02 Jul 2025 09:14:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751472846; x=1752077646; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=0c/84mBXTtb1I5DJ3f//CNcOZAIu4pgnp07Yr6FAASE=;
+        b=NRDsjv9cKERfSlwXrrDW2QOY8hcAvPzsw2z0ZLgwhsT4J0mlmj8Sr0YoFTQ7ykFKXq
+         CF1nRQHrd1SlpdBqXYXxkLNhezm5OLbkNnR0yZFtITrDX/FwVZnYyjageXi0tF3tu1Sj
+         /2pzIa+AX1jcs+pAzvE2Fh3gKwS5zbOASimBfGtvaxdhNjmPACxOyoin44ZPqjOoMNBs
+         EiPCfe66TiKFRAOUdKJDuWdVf8VaiVXCJlBhk4gt6dCkWYscyVEu4Xknr84c0WM7JTRY
+         IQGzYqpkfzRSRsJOdOIbXmd8IlobJwwP/MRMsBXimo/xAnQrPr5CD5E5JfDqcZ4qOfxt
+         +evQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751472750; x=1752077550;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fYGC1e7sjBNRXLMw9xhFOcR1EiYfaaj3YxfulV+gTOw=;
-        b=Konf+czJTVHWeYp7jltzAEUEuHKtw2Dm0etVBPLcGjY6mxtJj7WhoB9WBP1oZ8aUtg
-         Shdw/7/gGH0+PGRMne6kQGPjt6ZUDT7tEWWM7ClHKs1EDET91/nhq5c8voJ+7oi9zIh7
-         2PpYH60uhS67TP6YRmHiO+PEuo84p5yX16aghlg9pjSI4vNEyWhWTG/CZ25AJB9lfuB9
-         ZRd70xfyDbTLjXRVCdPTW5iLhQ4xEuWoyBqK5uvu9LxKitSBHdR3yBSylDXn0vCLyGjL
-         auYGFlFdl8dwBfY/kjVwpqNJslITFZCEDmfIRGEcMeBJPPecs9T70KC0oXql1z1wVYa+
-         iOEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXCxqDVCTn0rXgFAaTnGLtSjYonAuSWsxKD+F6AKboF3BuNobENgEXcyulIDVTrqJaohvw1tt+rd9EOdQ0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRVaHADHWF5joVsA0i7w1zZJi9f5Czv/2WEjxYde6t94sn1ulD
-	Vq86P2UYkIg3sN36A+27OkKdHahCcl8EufIYIcYq+xh3wzs0fERDljXuGHABAFt78dJ+tm5Vb8b
-	0VPwpBCHKTaj2pNzRekmimZ5WlW2JG/0R4/TYZQnLTajqq2RYHjwbKQmdtQqWeoqxkA==
-X-Gm-Gg: ASbGnctcO96+5yrK2mPwcnjv8DznwCj1FksXkMHNr7I7EcAtBLAa4AFa8YfaWnCpvZM
-	2RlgRTRRn9ub+tT70a6G8Hog9e0cHfFNaa6X+TI5m12WBCZbEjQTMRFaLgMJMjEQWZnwFT4Vn94
-	qTi/ssX8ScZXn3KDaGtSuFvMx8kGwtRT00Uve80bdJz1wZGMBl3C5zH3rjOHyVUO55iT8DScfit
-	ogd4aGNhDcB4rg8Sf/a1jkh426HQ8KzaSgxo4d3pU9SbPfChAhbHHr87aopudKwX4hEXChkt+6z
-	D2DPM6+0qKCyHuxz0AWEGbydFe7QaUbBi5YZHz0uwl0ANGVy+5XdiPaxuZZC3y2+koR8ja1TtdV
-	2yduDoA==
-X-Received: by 2002:a05:620a:4492:b0:7d4:5b4b:530c with SMTP id af79cd13be357-7d5c479071cmr519537185a.35.1751472750245;
-        Wed, 02 Jul 2025 09:12:30 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEpMjHbzyM3WwQm44w9W/nWqycIJ9HJ4DREbycb3mIOG8Z/RY6NfgQr6ikfjWRDEzfAcct5Ug==
-X-Received: by 2002:a05:620a:4492:b0:7d4:5b4b:530c with SMTP id af79cd13be357-7d5c479071cmr519532585a.35.1751472749812;
-        Wed, 02 Jul 2025 09:12:29 -0700 (PDT)
-Received: from jlelli-thinkpadt14gen4.remote.csb (host-2-102-80-182.as13285.net. [2.102.80.182])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7d45ac68268sm564344785a.68.2025.07.02.09.12.27
+        d=1e100.net; s=20230601; t=1751472846; x=1752077646;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0c/84mBXTtb1I5DJ3f//CNcOZAIu4pgnp07Yr6FAASE=;
+        b=Ot5bNaT9um3WmcVxFTu2rkN8Jw5VvWlaJLwQttSjSIcERM1yBclRmwuMIutTQjyYV/
+         XtTkk8SI+BZs80BRbOgojJrj2lYMFuHLbfHIWQvh/AHuofeflcF0chuAYL21uo9F85pA
+         EYZhzz/lJISWJXJdmvDsoBlrcK/wcDvF1FxV2LBHhQB96qbLMDDvwK/miwnf0S2bHmhG
+         o3JMyEZZCM848AFcWrAx6kDeP+54czCtzZScd8m3VAC1A64TW0p+x+69/HObBIwWPP0c
+         bhcGJuVakshzbX30FaNvFJRBqA0FIAj4g7cH54tSrKm2/EyDXZxM8GXelWm+2gGjVJq+
+         koWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWjozXAB+8HMk2ToaBLhHrEAn35fLTswpajCDrZiMQ8cM+6xQpuaQ6P3VKpeLvPTwbbsHwsC3DLrFI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQpbp1dWa/zK3hqdy2ZeCGtEBxBk7iINgymuFETj4FzURTx35D
+	D5o3yBq4hO/S/LlUXNddgBccVBIBgbzClEmrR5zRrkqas1Ht65upWxsP
+X-Gm-Gg: ASbGncveCuVX8ErahJkGDcKuX8cKMT6BcNWSWylqhMlZY/Vu9sGXFcQO/xJzY5cxeX8
+	rEOIfdL1CRCEw5n3AEImD7lHg3nmvQXNJVcLMSZCMOs6kUOFl/oUcVnEwbJHtwa4enQnKRcV34w
+	2ROCCvnO05kNmgTXvYdpsaMWahEBnR0WEnh2YPa0Enw1Jc+mOjhDPcGOy6kt8cyaDNp9ysxE6py
+	X5RrZgaD45gjJ3gNhq73+k9b09oSgNOpLoUYWF07+1QMRFyAs/g1n8Qvo6PPjEv6ILsRVejBZkX
+	ev8Vz7uyBu9SA9loKbA4jICEFdxjWH5mEoUQXp+FDdNeGUcXePVCiX7BJTXay00ZJEbJ+pHgQVz
+	wkIZYD3k=
+X-Google-Smtp-Source: AGHT+IEVOoy1Wg3zr/ivZW5QJMDsut3/0p00VNy9N/gGgSjttY9YOrjPlh1fZzMAA62oF74U2z1nzQ==
+X-Received: by 2002:a05:6a21:62c6:b0:220:82c7:309c with SMTP id adf61e73a8af0-222d7db195bmr6344370637.7.1751472845622;
+        Wed, 02 Jul 2025 09:14:05 -0700 (PDT)
+Received: from localhost.localdomain ([2405:201:c408:a02c:2fc6:2cad:e985:b61d])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b35016ee1e0sm9385740a12.54.2025.07.02.09.14.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Jul 2025 09:12:28 -0700 (PDT)
-Date: Wed, 2 Jul 2025 17:12:24 +0100
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: mingo@redhat.com, vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-	vschneid@redhat.com, clm@meta.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 02/12] sched/deadline: Less agressive dl_server
- handling
-Message-ID: <aGVaaJif1metVJpA@jlelli-thinkpadt14gen4.remote.csb>
-References: <20250702114924.091581796@infradead.org>
- <20250702121158.465086194@infradead.org>
+        Wed, 02 Jul 2025 09:14:05 -0700 (PDT)
+From: Kevin Paul Reddy Janagari <kevinpaul468@gmail.com>
+To: airlied@gmail.com,
+	simona@ffwll.ch,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	corbet@lwn.net,
+	dri-devel@lists.freedesktop.org,
+	linux-doc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	kevinpaul468@gmail.com
+Subject: [PATCH v3] workaround for Sphinx false positive preventing indexing
+Date: Wed,  2 Jul 2025 21:43:37 +0530
+Message-Id: <20250702161337.69943-1-kevinpaul468@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250702121158.465086194@infradead.org>
+Content-Transfer-Encoding: 8bit
 
-Hi Peter,
+Functions drm_format_info, drm_modeset_lock, drm_ioctl_flags are not being
+indexed in the documentation because there are structs with the same name
+and sphinx is only indexing one of them, Added them to namespaces as a
+workaround for suppressing the warnings and indexing the functions
 
-On 02/07/25 13:49, Peter Zijlstra wrote:
-> Chris reported that commit 5f6bd380c7bd ("sched/rt: Remove default
-> bandwidth control") caused a significant dip in his favourite
-> benchmark of the day. Simply disabling dl_server cured things.
-> 
-> His workload hammers the 0->1, 1->0 transitions, and the
-> dl_server_{start,stop}() overhead kills it -- fairly obviously a bad
-> idea in hind sight and all that.
-> 
-> Change things around to only disable the dl_server when there has not
-> been a fair task around for a whole period. Since the default period
-> is 1 second, this ensures the benchmark never trips this, overhead
-> gone.
-> 
-> Fixes: 557a6bfc662c ("sched/fair: Add trivial fair server")
-> Reported-by: Chris Mason <clm@meta.com>
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> Link: https://lkml.kernel.org/r/20250520101727.507378961@infradead.org
-> ---
+This is a bug of Sphinx >=3.1, first reported by Mauro in September 2020
+Link: https://github.com/sphinx-doc/sphinx/issues/8241
+Open Pull Request
+Link: https://github.com/sphinx-doc/sphinx/pull/8313
 
-This looks good to me.
+Signed-off-by: Kevin Paul Reddy Janagari <kevinpaul468@gmail.com>
+---
+ Documentation/gpu/drm-kms.rst  | 4 ++++
+ Documentation/gpu/drm-uapi.rst | 2 ++
+ 2 files changed, 6 insertions(+)
 
-Reviewed-by: Juri Lelli <juri.lelli@redhat.com>
-Acked-by: Juri Lelli <juri.lelli@redhat.com>
-
-Thanks!
-Juri
+diff --git a/Documentation/gpu/drm-kms.rst b/Documentation/gpu/drm-kms.rst
+index abfe220764e1..b18a99869b6d 100644
+--- a/Documentation/gpu/drm-kms.rst
++++ b/Documentation/gpu/drm-kms.rst
+@@ -357,8 +357,10 @@ Format Functions Reference
+ .. kernel-doc:: include/drm/drm_fourcc.h
+    :internal:
+ 
++.. c:namespace-push:: gpu_drm
+ .. kernel-doc:: drivers/gpu/drm/drm_fourcc.c
+    :export:
++.. c:namespace-pop::
+ 
+ .. _kms_dumb_buffer_objects:
+ 
+@@ -473,8 +475,10 @@ KMS Locking
+ .. kernel-doc:: include/drm/drm_modeset_lock.h
+    :internal:
+ 
++.. c:namespace:: gpu_drm
+ .. kernel-doc:: drivers/gpu/drm/drm_modeset_lock.c
+    :export:
++.. c:namespace-pop::
+ 
+ KMS Properties
+ ==============
+diff --git a/Documentation/gpu/drm-uapi.rst b/Documentation/gpu/drm-uapi.rst
+index 69f72e71a96e..e9d7b7282a19 100644
+--- a/Documentation/gpu/drm-uapi.rst
++++ b/Documentation/gpu/drm-uapi.rst
+@@ -554,8 +554,10 @@ DRM specific patterns. Note that ENOTTY has the slightly unintuitive meaning of
+ .. kernel-doc:: include/drm/drm_ioctl.h
+    :internal:
+ 
++.. c:namespace-push:: gpu_drm
+ .. kernel-doc:: drivers/gpu/drm/drm_ioctl.c
+    :export:
++.. c:namespace-pop::
+ 
+ .. kernel-doc:: drivers/gpu/drm/drm_ioc32.c
+    :export:
+-- 
+2.39.5
 
 
