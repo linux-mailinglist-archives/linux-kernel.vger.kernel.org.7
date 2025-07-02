@@ -1,169 +1,106 @@
-Return-Path: <linux-kernel+bounces-713959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 007C5AF60C1
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 20:04:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F033AF60C5
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 20:05:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BE073B299E
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 18:04:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0CB9524C56
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 18:05:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AED230E857;
-	Wed,  2 Jul 2025 18:04:36 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71B7F30E84F;
+	Wed,  2 Jul 2025 18:05:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="CMVonJkI"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67EF2303DFD
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 18:04:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751479476; cv=none; b=MP4W5DXyAQ1tlqcGicuiRy7pk5+A+8KQxoZ1bQ3mkLEZm1ZV4HlsODacOp52HuBN09GuJRvHxLebgtDr7bewcHLcct1+FV6Zw4H7beYI5XHMe3sK0+e0YjtMBZ1xi11RGn5rlPOXCEdzF7e0oaTtumuN6Z0c3GRc+29OUfp41kg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751479476; c=relaxed/simple;
-	bh=MeGhe2mttaKHpCVGJgrYdXNCwVK11eBfRyYgPxHqVJI=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=prNMgMhELOcIDH7sdnjjcu3N+eInsaHic9xocrtYreUro38anSB8xmBpRIKoYIKNj6tO5RjmaM4Ww4AYfK4uZoZe+4vo2B4B2654miEf0tXk8Mx+6NYDU2t6L53W2gACD22tgAB/FY3vDynQLPshI1SGb/+w15QbVIK8bK4GBMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3df4d2a8b5eso51455135ab.3
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 11:04:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751479473; x=1752084273;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=tWF48hCLYWTcAUa93f/lkLlH9TGxtsXE9JeXqdiBcZI=;
-        b=M/yJBRCqdiE0BDAA93ARnyVPS2kMpvVUQqFpZgElg0MRaLa+/7sw/1erkYYjPGIYsH
-         fG+OQJbPpWxlDNsGptwWSq6HBZEMbvCXq9BYN/l2xAgZx839TyEvrb972HWwPeaAFIpN
-         jhm/crtJf89F6+Hy9TcIPG/jzckxrhJ/1B3t38kvSe9lFeAlRYbD+7koLAY6dyqcUhZN
-         blDqenZSa2HbplpXCQxF9Nr23FvNHE/Himsn2xhUCpIhbYH9AfC9LiWB5S5mVa2gP8Ce
-         +LznFaOknYDzPNB2IiZ1OLUDhaDRNNTqtNlruRWFpLoDhKokDFcfobTrM6i/aIKynJm4
-         RvEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV7jPpZa7I4hNUpWWcFCCtMrKNq8K6S/8Hlg+h5OwPOMmZ7A69aBasg1lKY/eMD/t9vIrz2itVZdCsCXNY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVlPKuHOTsyzFIrgI3FZcTBP8TMVKSx8lZZpVWvotdy7l7cEK4
-	lntblQ9BDwXw8bC8f8UESsalLnlusrV7HMIc0vnR2Awf2L1WA3p96t1vUq7SHlYuyuM175yaL25
-	FlLEEmYXXcOJ97qZr4mZFZaA4uNL/NMgUlNJdP+Y8+9ZGXscp44EAazYSw18=
-X-Google-Smtp-Source: AGHT+IEDDPHJ6rByvRwtWViZclAbpUat+tBrzPzW5bYNpP27gP4LoBLScAVZMw2cVIFqPF5yFIuoPmFXMeliS+GLfYdnNv8By5RB
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8D2630E820;
+	Wed,  2 Jul 2025 18:05:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751479525; cv=pass; b=ovxRdFe1e/1oo05o8/Tp6OJGTWiZKnKEcq5KyrLgGDVKGsyiz5H4o2Y1cxJixBPFOIeZCwBsvid6WYnq6bBUul/9ubLCQu4nSG4uyuneWuyzdiX1s+mQLMCl8n8Y6ZNErXZ99LlJHXHWgzMFFmo+CIeThGHLz0kq0Za7a+0jnqs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751479525; c=relaxed/simple;
+	bh=+1iN/ppiWwYuvQ7aCaXfQ7OMEU4L9uJfsI6J8cVpacY=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=hJy2+c5zvigZQlZgm31Pf2MMORcueqwm0FCtSXAOi+g4NTUrmRmk9aXH8LPZTXdNux+DOTzJ7C9ywRBElhhjH0PCHzq5fHXLnqytf2jY4qguiMnCqs7SFMJZgdPv4+PLttMsX6BnnnFH09lco18cWTW9UK/5LlsdlS/85oPVtvM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=CMVonJkI; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1751479497; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=QH8wTollkzQby69pfxpum3+Kf9+wHf/5VLA/6m9TpxuUf7j1VU/jGDEL0/Q33FpLhqcdRdiDppekkmWNVuPc4veJfN3CWSq1czqC7Y9C6IN2P9iRTtjfwGiqUi4RtNOyJ9HWrkix6tuK8lQBs+E6ktlC3j2oiaRAPfGUT9J3z0Y=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1751479497; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=+1iN/ppiWwYuvQ7aCaXfQ7OMEU4L9uJfsI6J8cVpacY=; 
+	b=O4TWemNMkb0z9a/Qo+i/7VH6TOTh0RI2GTkb2wVWvCPMSsKj4Ke63tXtWhsigdv8o9vSKY7BRbMoCudOknkuF97hOAwwrNGuceV29/DIPAIHwV+YUEHgfsU4eCQ0HHC8/WcZqyB2fT3Vaj1Lst3UIKDqNSzCNjNDHHigOxWEIR8=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1751479497;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=+1iN/ppiWwYuvQ7aCaXfQ7OMEU4L9uJfsI6J8cVpacY=;
+	b=CMVonJkI3FOXki4E9S1Lw2D4TR6kWLHAjYC+NDVPz7Q3wJfvy0XuinO9FGwQK8DQ
+	SU5H59RD/Cksxm2UbE9ji4GyUTUyYRV7bWyy+ey8JhHicSXqHZdtnVb5fj4Z+5n8Pp1
+	fvzaNv1XqAD75IhvFWDpcCqfYC8uSYlT4PDypVbc=
+Received: by mx.zohomail.com with SMTPS id 1751479496117758.5462233195104;
+	Wed, 2 Jul 2025 11:04:56 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3008:b0:3df:4ad5:3a71 with SMTP id
- e9e14a558f8ab-3e0549c5d57mr46047685ab.11.1751479473494; Wed, 02 Jul 2025
- 11:04:33 -0700 (PDT)
-Date: Wed, 02 Jul 2025 11:04:33 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <686574b1.a70a0220.2b31f5.0002.GAE@google.com>
-Subject: [syzbot] [fs?] possible deadlock in __simple_recursive_removal
-From: syzbot <syzbot+6d7771315ecb9233f395@syzkaller.appspotmail.com>
-To: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
+Subject: Re: [PATCH v11 1/4] rust: io: add resource abstraction
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <CANiq72khZQMQcyp7uVjMz--U1dbbnx7K3pU1Eu=ZN6SXi98TZw@mail.gmail.com>
+Date: Wed, 2 Jul 2025 15:04:34 -0300
+Cc: Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Danilo Krummrich <dakr@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ =?utf-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ Mika Westerberg <mika.westerberg@linux.intel.com>,
+ Ying Huang <huang.ying.caritas@gmail.com>,
+ Benno Lossin <lossin@kernel.org>,
+ linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org,
+ Fiona Behrens <me@kloenk.dev>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <14F43E80-7DCF-4825-BB08-6D3B5CE6A698@collabora.com>
+References: <20250701-topics-tyr-platform_iomem-v11-0-6cd5d5061151@collabora.com>
+ <20250701-topics-tyr-platform_iomem-v11-1-6cd5d5061151@collabora.com>
+ <CANiq72khZQMQcyp7uVjMz--U1dbbnx7K3pU1Eu=ZN6SXi98TZw@mail.gmail.com>
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+X-Mailer: Apple Mail (2.3826.600.51.1.1)
+X-ZohoMailClient: External
 
-Hello,
+Hi Miguel,
 
-syzbot found the following issue on:
-
-HEAD commit:    50c8770a42fa Add linux-next specific files for 20250702
-git tree:       linux-next
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=152d348c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=70c16e4e191115d4
-dashboard link: https://syzkaller.appspot.com/bug?extid=6d7771315ecb9233f395
-compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=106bd770580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=164b048c580000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/3d4ef6bedc5b/disk-50c8770a.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/15b7565dc0ef/vmlinux-50c8770a.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/3b397342a62b/bzImage-50c8770a.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+6d7771315ecb9233f395@syzkaller.appspotmail.com
-
-============================================
-WARNING: possible recursive locking detected
-6.16.0-rc4-next-20250702-syzkaller #0 Not tainted
---------------------------------------------
-syz-executor365/5837 is trying to acquire lock:
-ffff8880792cc650 (&sb->s_type->i_mutex_key#15){+.+.}-{4:4}, at: inode_lock include/linux/fs.h:869 [inline]
-ffff8880792cc650 (&sb->s_type->i_mutex_key#15){+.+.}-{4:4}, at: __simple_recursive_removal+0x95/0x510 fs/libfs.c:614
-
-but task is already holding lock:
-ffff888027bf0148 (&sb->s_type->i_mutex_key#15){+.+.}-{4:4}, at: inode_lock include/linux/fs.h:869 [inline]
-ffff888027bf0148 (&sb->s_type->i_mutex_key#15){+.+.}-{4:4}, at: bm_entry_write+0x289/0x540 fs/binfmt_misc.c:737
-
-other info that might help us debug this:
- Possible unsafe locking scenario:
-
-       CPU0
-       ----
-  lock(&sb->s_type->i_mutex_key#15);
-  lock(&sb->s_type->i_mutex_key#15);
-
- *** DEADLOCK ***
-
- May be due to missing lock nesting notation
-
-2 locks held by syz-executor365/5837:
- #0: ffff88807e5fc428 (sb_writers#8){.+.+}-{0:0}, at: file_start_write include/linux/fs.h:3098 [inline]
- #0: ffff88807e5fc428 (sb_writers#8){.+.+}-{0:0}, at: vfs_write+0x211/0xa90 fs/read_write.c:682
- #1: ffff888027bf0148 (&sb->s_type->i_mutex_key#15){+.+.}-{4:4}, at: inode_lock include/linux/fs.h:869 [inline]
- #1: ffff888027bf0148 (&sb->s_type->i_mutex_key#15){+.+.}-{4:4}, at: bm_entry_write+0x289/0x540 fs/binfmt_misc.c:737
-
-stack backtrace:
-CPU: 0 UID: 0 PID: 5837 Comm: syz-executor365 Not tainted 6.16.0-rc4-next-20250702-syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- print_deadlock_bug+0x28b/0x2a0 kernel/locking/lockdep.c:3044
- check_deadlock kernel/locking/lockdep.c:3096 [inline]
- validate_chain+0x1a3f/0x2140 kernel/locking/lockdep.c:3898
- __lock_acquire+0xab9/0xd20 kernel/locking/lockdep.c:5240
- lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5871
- down_write+0x96/0x1f0 kernel/locking/rwsem.c:1577
- inode_lock include/linux/fs.h:869 [inline]
- __simple_recursive_removal+0x95/0x510 fs/libfs.c:614
- remove_binfmt_handler fs/binfmt_misc.c:694 [inline]
- bm_entry_write+0x4f7/0x540 fs/binfmt_misc.c:749
- vfs_write+0x27e/0xa90 fs/read_write.c:684
- ksys_write+0x145/0x250 fs/read_write.c:738
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f147e7aa369
-Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffed0db9fa8 EFLAGS: 00000246 ORIG_RAX
+>=20
+> "Safe", periods at the end. (few instances)
+>=20
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Is it only about the periods, or is there any issues with the word
+=E2=80=9CSafe=E2=80=9D itself (and/or its capitalization?)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+=E2=80=94 Daniel=
 
