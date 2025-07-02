@@ -1,299 +1,169 @@
-Return-Path: <linux-kernel+bounces-713483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92BEAAF5A5F
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 16:01:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E441DAF5A6A
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 16:03:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A140447AA2
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:01:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C9C24E6ECF
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:03:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCCC115747D;
-	Wed,  2 Jul 2025 14:01:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A878B28640A;
+	Wed,  2 Jul 2025 14:02:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="igWP6Uve"
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dWjV0Gld"
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 668736FC5
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 14:01:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 970B0275AFF
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 14:02:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751464896; cv=none; b=W+tMp3OoPuZ7ObBax0ED23kpXn7i+WePTHJXlbKPbc+FI/IYHtMuS8K7Nz/Gsk7uV//RfCcpX+KpMaBEMwun6J3Cth/rxdOGsxsacpARsPXRc7PjIfANYO/uM5fMGyWiX6AnlFpUyw35AJhqSubgqbJGgzoDtbCnUPV4oIuQaAY=
+	t=1751464962; cv=none; b=sQfwWWSKrONdnBat4rAZ5Y6GXhAyrKkZMN4S21JxgkjEru9gEfoRn0w0zPyfLdzHrlJieMKOOONXJimXCU2TNBhnk5wywo1S/lWyvcKrJ9iDGweParN3zIACn+OjOW7+Q1PxAWI/2nMIHVomtjLUbd4p/tHWehZEXzDsIJon+2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751464896; c=relaxed/simple;
-	bh=7ur8WwZ7CikILjOqdrWIi0wh6UgznR4Wb+UhLSWIeB8=;
+	s=arc-20240116; t=1751464962; c=relaxed/simple;
+	bh=au8lDoPnHHAjIaSnJ99Ta7vYDcZpfeKmxV6mR/w0U/4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=K3qrsHufZlOGwmjtjfqtyhcf6LGmhnnvNWNuTs3LAT6VJcbv2dc0TPhda7puaJi4ja8+tTj8/e9e2PlBVQ2vvGQMo9HGy7S1kg4CPEw6eFV8HR2Xg+G7JFtsWNkrydjeh7DPpaugDtt2h3b6YfEtqeNc+XOH+XKXeb2zWN30ii8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=igWP6Uve; arc=none smtp.client-ip=209.85.215.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7fd35b301bdso5051748a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 07:01:34 -0700 (PDT)
+	 To:Cc:Content-Type; b=FJdNUPCAM9pE4vAgWTnFAxAcBlyEUSSRUClxtFsCct4NZPJjbAb1upAEJGNOj/HUmrf9xI3Mk4ZHGcTpVZRwf32cVB6xfJvpliic6Mb9d+3TbQG1KoP+HHEwq6Nz7e5wq4f1sX3BIpSYQuLBRzwIFyy69t39ctgirXHQtcsWLZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dWjV0Gld; arc=none smtp.client-ip=209.85.160.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4a752944794so77563291cf.3
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 07:02:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751464894; x=1752069694; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=QO1kxLEhQdwObzXYkHGYcAuf/NFzNzXCcRMRjKdSjMQ=;
-        b=igWP6UveRrZynXBdukHxx4pcoeZDhozQswTq26O+Ky1A5JDRl2BFFI3tx/lgckSDmC
-         J7Pnxk43rsMkz/HPPt9G4A49H//D56/eJnMGqgfa6CY5cVGbriDXNcDc7PI9wS8xCZKM
-         5yP4eAdMoeEMG7Ca0lMz5vyPsQ1RA6+fhdDC5ZGYJPj/3uWvfSO1PXeYoIoZaQCCuaJE
-         hXdEQqwVkB6c0xLRszvdmWHLZM4526WFIPVzIEu0LF/d6R0HhOtsEqaLe9NgHAy0sr3l
-         qx4LdlfWdh7qM3xZ8fDYLwUzZPnzLUYtOqyhmXthajY3r+93A2PksJEmn1MjxnBToCf6
-         zHug==
+        d=google.com; s=20230601; t=1751464959; x=1752069759; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uDsxmFPSdS4IlYHnsA2Um+LGtK/4VYhWhmhj+jKqT6U=;
+        b=dWjV0Gldu4Cyqla30dtsPn/XR8fgc1Z4kJJkYmuGXCLl7wosxuKVM7YpboqFWgc2hx
+         DduMcKrpfT5i/dyKp2KQ8i+Ap0bQd7DW+JqAI3unKNcxrikojcmAjLDc3f1ZsbpsHqPO
+         j9tTho+K6qLiFW4tqj67bV+ydclUPxMXpai2T7XbkTgmTksEAgDp1YDGc5MzZz5wbdb7
+         QDW6T+auj/n6zgvgRJS0oP8QKKOxsTKkU1gfOMYBN8irvnOAtlnvKXB4gGC/7CQUZ3D2
+         M4QCiUgpqnVshXacL/hUFGMLBKzPDC+7+8WuWS5Xm2nriEb9hgvE/Cwz385fRVtt2Bgk
+         CoEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751464894; x=1752069694;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QO1kxLEhQdwObzXYkHGYcAuf/NFzNzXCcRMRjKdSjMQ=;
-        b=bsB+qvZMVJb1zjL3xDH0W7/I4olkBJsG3luHqTg+H2hHsBMjhrTVG4/EhR2deHXCP/
-         ILnJTvgIxc0e/n265ugbYhmO6usJHVGBKRoe/OLNE3qRLP8gYbKrTqa0dLcIw+L3Q8jg
-         2h/oHoh9958tbExT/bs/HEe1/xLIevxaI/wHinnCABC6v/mr9sPRz6XDnF2HjURgM8nv
-         mJKwLW+VXHl/0Lr8PYxpp0sWFMDIuvUTsKQ7xmCo7U9eJTHyZ79PDCynaa2FUKIskMhr
-         OenQhlSoiX6WlxrxRYxaK9MJtgNpLHRHxa5I94Y0gvEm5mrwMk85BxPs5iPwXBIdnFsf
-         4Quw==
-X-Forwarded-Encrypted: i=1; AJvYcCVDC5DhTvHJdnd8VMMyz3f2O4MulliqXamjQ0qbi1BdprwDpzaImOX3qVwDw43o/nG8yQ56PpsglRquHAo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxvkrQ/vHpLbdszninM3GAGQybZ2E+v14VeGbS5WyK62LfR+tp/
-	GgaMZYeM0WSeEFAD7r4r4rzy6nDO4RALHD9/6uB7xM0ao5PWzGm4vHAFlHukW476x8AC0ht+eyl
-	gxngiPEM56zhQJ3DWhEfvPO5kL/E66ZIpXQhAbvc=
-X-Gm-Gg: ASbGncvf41p+2KLsvy6clTyxJh5bgiMyQWHSdwBBh6buBMpYamcLC0HHn5IB20AIwcG
-	s41vldNrfESgc5b9/ubfI82X8mKbd0AZnk6YXhZEX+Rpxye2TZB5m5URg20IvjRGWxjstK3jjHb
-	YqzU5QS75EWU2hf6/xLbBG79SOvxovH5HW5NIqGJB0HQnsuw==
-X-Google-Smtp-Source: AGHT+IGIG8c+lqWMr2WK3XUTrLfH1GKp+/JJ5CUz0C5+T1dHqbAdNzFKJ/rUgpyFphCq9obTJJfKQ426CCV4bniHh+c=
-X-Received: by 2002:a17:90b:2703:b0:311:ffe8:20e6 with SMTP id
- 98e67ed59e1d1-31a90b1a2c3mr4335825a91.3.1751464891509; Wed, 02 Jul 2025
- 07:01:31 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1751464959; x=1752069759;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uDsxmFPSdS4IlYHnsA2Um+LGtK/4VYhWhmhj+jKqT6U=;
+        b=sHuoSAhCM6Ap1jeuX4y4dwOL3ncIootmr9rJjE1EbEpNP+NSaclD4NXQ8JN80CCjri
+         jkrX6PpETn7Mq+8DnuVNzOYHRER6vKkKK5W1x8Tm2ByAPDJT3FZHOLjPYGWumMfe7h5E
+         jnoVtFvGFxMu5TyZjNsqrh79J7aEaF5J5Y/B8+bm72e2wQPENhWsVcRYCJZ2TUliJFsT
+         EJvSvn351qMTR+5Gxieo1cTxD5OeQEyzKhF83ZQ8h+JQmEqMC2Pr88z4ce1VMCxZW5i0
+         wg08vPhLd7atgXkquUc4u4hD4no02I14BIjHEesPOWYxv5vGnMgcL3NGcvOd8/PSqFvf
+         0OAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUB6k5vTSqsmRnRpnKFpdrDOAPlR7BzFFTFLbD3uOj+m0CwT4980B6cKTkkZ+ftbOsil7hMt99mPBkKDRQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOQWGFgZ7TZNHh+rqX00OdVgcRD9FhsJSbnhFFnE0Kwu+5bVpM
+	CejQdlI3X9ktc5wyo2xx9mdwVJc2Wef3peaZFD501h8ou8hVSgXceP71FHgDZPGB26cykmX4uXU
+	UzgC2Xq5HPa8p9byS8mW8Oj/SjBFmfO82ej7aEmMV
+X-Gm-Gg: ASbGncuFrwSss5vmIGjXF28kliqS5FpcI/ORkJClWdhWbgJjJnUjdW3exevL05gTEpM
+	ecVMrUsRT3FN4kQ/2iyoDi6Dq0MfzxkXR8Tr//3DtS/xjsRLrflvbg6vf70kKHK8QxM11jLT3dU
+	Vq2voFLpctBcJbTKAYsRp2JQpm0ZwqDY4LLRHwaDptGA==
+X-Google-Smtp-Source: AGHT+IFbF9G6vh3MukO6aBJpYKW/hcKdIcWaNoMxfXYUo16gF6b9Evfx/JNl1SrWK1BIXK+jeyYf2F/GkWqpIYJIhE0=
+X-Received: by 2002:a05:622a:11c5:b0:4a7:f9ab:7899 with SMTP id
+ d75a77b69052e-4a976a53c98mr49828831cf.35.1751464959071; Wed, 02 Jul 2025
+ 07:02:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250508165620.15321-1-aha310510@gmail.com> <aBzuh0qb1UPrT86s@pc636>
- <aBzxqiX7unwAqVCY@pc636> <CAO9qdTF3vN5veO3HhGbrq-CkfR1fH_3ueCLjtcY8LOYKCG2mjg@mail.gmail.com>
- <aGUas7_fcLS07mnL@pc636>
-In-Reply-To: <aGUas7_fcLS07mnL@pc636>
-From: Jeongjun Park <aha310510@gmail.com>
-Date: Wed, 2 Jul 2025 23:01:23 +0900
-X-Gm-Features: Ac12FXytpEGD61xI4gVjPopOBnQBPCerPdInR-Lnu5k7RupgGAgjAz_65MrIBXQ
-Message-ID: <CAO9qdTGJ14Gz3nzi+pn--POFP-VK_Rsege6TpATSXubLm7GAUA@mail.gmail.com>
-Subject: Re: [PATCH v6] mm/vmalloc: fix data race in show_numa_info()
-To: Uladzislau Rezki <urezki@gmail.com>
-Cc: akpm@linux-foundation.org, edumazet@google.com, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org
+References: <20250702110039.15038-1-jiayuan.chen@linux.dev>
+ <c9c5d36bc516e70171d1bb1974806e16020fbff1@linux.dev> <CANn89iJdGZq0HW3+uGLCMtekC7G5cPnHChCJFCUhvzuzPuhsrA@mail.gmail.com>
+In-Reply-To: <CANn89iJdGZq0HW3+uGLCMtekC7G5cPnHChCJFCUhvzuzPuhsrA@mail.gmail.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Wed, 2 Jul 2025 07:02:27 -0700
+X-Gm-Features: Ac12FXwMIS3lW_uVU7P4nhYxGHAR81RWZmByuPLVEv6OHHFXnWu1Z9-FbDLxxPo
+Message-ID: <CANn89iJD6ZYCBBT_qsgm_HJ5Xrups1evzp9ej=UYGP5sv6oG_A@mail.gmail.com>
+Subject: Re: [PATCH net-next v1] tcp: Correct signedness in skb remaining
+ space calculation
+To: Jiayuan Chen <jiayuan.chen@linux.dev>
+Cc: netdev@vger.kernel.org, mrpre@163.com, 
+	Neal Cardwell <ncardwell@google.com>, Kuniyuki Iwashima <kuniyu@google.com>, 
+	"David S. Miller" <davem@davemloft.net>, David Ahern <dsahern@kernel.org>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	David Howells <dhowells@redhat.com>, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Uladzislau Rezki <urezki@gmail.com> wrote:
+On Wed, Jul 2, 2025 at 6:59=E2=80=AFAM Eric Dumazet <edumazet@google.com> w=
+rote:
 >
-> On Wed, Jul 02, 2025 at 01:01:13AM +0900, Jeongjun Park wrote:
-> > Uladzislau Rezki <urezki@gmail.com> wrote:
-> > >
-> > > On Thu, May 08, 2025 at 07:48:55PM +0200, Uladzislau Rezki wrote:
-> > > > On Fri, May 09, 2025 at 01:56:20AM +0900, Jeongjun Park wrote:
-> > > > > The following data-race was found in show_numa_info():
-> > > > >
-> > > > > ==================================================================
-> > > > > BUG: KCSAN: data-race in vmalloc_info_show / vmalloc_info_show
-> > > > >
-> > > > > read to 0xffff88800971fe30 of 4 bytes by task 8289 on cpu 0:
-> > > > >  show_numa_info mm/vmalloc.c:4936 [inline]
-> > > > >  vmalloc_info_show+0x5a8/0x7e0 mm/vmalloc.c:5016
-> > > > >  seq_read_iter+0x373/0xb40 fs/seq_file.c:230
-> > > > >  proc_reg_read_iter+0x11e/0x170 fs/proc/inode.c:299
-> > > > > ....
-> > > > >
-> > > > > write to 0xffff88800971fe30 of 4 bytes by task 8287 on cpu 1:
-> > > > >  show_numa_info mm/vmalloc.c:4934 [inline]
-> > > > >  vmalloc_info_show+0x38f/0x7e0 mm/vmalloc.c:5016
-> > > > >  seq_read_iter+0x373/0xb40 fs/seq_file.c:230
-> > > > >  proc_reg_read_iter+0x11e/0x170 fs/proc/inode.c:299
-> > > > > ....
-> > > > >
-> > > > > value changed: 0x0000008f -> 0x00000000
-> > > > > ==================================================================
-> > > > >
-> > > > > According to this report,there is a read/write data-race because m->private
-> > > > > is accessible to multiple CPUs. To fix this, instead of allocating the heap
-> > > > > in proc_vmalloc_init() and passing the heap address to m->private,
-> > > > > vmalloc_info_show() should allocate the heap.
-> > > > >
-> > > > > Fixes: a47a126ad5ea ("vmallocinfo: add NUMA information")
-> > > > > Suggested-by: Eric Dumazet <edumazet@google.com>
-> > > > > Suggested-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
-> > > > > Suggested-by: Andrew Morton <akpm@linux-foundation.org>
-> > > > > Signed-off-by: Jeongjun Park <aha310510@gmail.com>
-> > > > > ---
-> > > > > v6: Change CONFIG_NUMA to must be check before doing any work related to the counters array.
-> > > > > - Link to v5: https://lore.kernel.org/all/20250508160800.12540-1-aha310510@gmail.com/
-> > > > > v5: Change heap to be allocated only when CONFIG_NUMA is enabled
-> > > > > - Link to v4: https://lore.kernel.org/all/20250508065558.149091-1-aha310510@gmail.com/
-> > > > > v4: Change the way counters array heap is allocated, per Andrew Morton's suggestion.
-> > > > >     And fix it to call smp_rmb() in the correct location.
-> > > > > - Link to v3: https://lore.kernel.org/all/20250507142552.9446-1-aha310510@gmail.com/
-> > > > > v3: Following Uladzislau Rezki's suggestion, we check v->flags beforehand
-> > > > >     to avoid printing uninitialized members of vm_struct.
-> > > > > - Link to v2: https://lore.kernel.org/all/20250506082520.84153-1-aha310510@gmail.com/
-> > > > > v2: Refactoring some functions and fix patch as per Eric Dumazet suggestion
-> > > > > - Link to v1: https://lore.kernel.org/all/20250505171948.24410-1-aha310510@gmail.com/
-> > > > > ---
-> > > > >  mm/vmalloc.c | 63 +++++++++++++++++++++++++++++-----------------------
-> > > > >  1 file changed, 35 insertions(+), 28 deletions(-)
-> > > > >
-> > > > > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> > > > > index 3ed720a787ec..c1ea9713a1c0 100644
-> > > > > --- a/mm/vmalloc.c
-> > > > > +++ b/mm/vmalloc.c
-> > > > > @@ -3100,7 +3100,7 @@ static void clear_vm_uninitialized_flag(struct vm_struct *vm)
-> > > > >     /*
-> > > > >      * Before removing VM_UNINITIALIZED,
-> > > > >      * we should make sure that vm has proper values.
-> > > > > -    * Pair with smp_rmb() in show_numa_info().
-> > > > > +    * Pair with smp_rmb() in vread_iter() and vmalloc_info_show().
-> > > > >      */
-> > > > >     smp_wmb();
-> > > > >     vm->flags &= ~VM_UNINITIALIZED;
-> > > > > @@ -4914,28 +4914,29 @@ bool vmalloc_dump_obj(void *object)
-> > > > >  #endif
-> > > > >
-> > > > >  #ifdef CONFIG_PROC_FS
-> > > > > -static void show_numa_info(struct seq_file *m, struct vm_struct *v)
-> > > > > -{
-> > > > > -   if (IS_ENABLED(CONFIG_NUMA)) {
-> > > > > -           unsigned int nr, *counters = m->private;
-> > > > > -           unsigned int step = 1U << vm_area_page_order(v);
-> > > > >
-> > > > > -           if (!counters)
-> > > > > -                   return;
-> > > > > +/*
-> > > > > + * Print number of pages allocated on each memory node.
-> > > > > + *
-> > > > > + * This function can only be called if CONFIG_NUMA is enabled
-> > > > > + * and VM_UNINITIALIZED bit in v->flags is disabled.
-> > > > > + */
-> > > > > +static void show_numa_info(struct seq_file *m, struct vm_struct *v,
-> > > > > +                            unsigned int *counters)
-> > > > > +{
-> > > > > +   unsigned int nr;
-> > > > > +   unsigned int step = 1U << vm_area_page_order(v);
-> > > > >
-> > > > > -           if (v->flags & VM_UNINITIALIZED)
-> > > > > -                   return;
-> > > > > -           /* Pair with smp_wmb() in clear_vm_uninitialized_flag() */
-> > > > > -           smp_rmb();
-> > > > > +   if (!counters)
-> > > > > +           return;
-> > > > >
-> > > > > -           memset(counters, 0, nr_node_ids * sizeof(unsigned int));
-> > > > > +   memset(counters, 0, nr_node_ids * sizeof(unsigned int));
-> > > > >
-> > > > > -           for (nr = 0; nr < v->nr_pages; nr += step)
-> > > > > -                   counters[page_to_nid(v->pages[nr])] += step;
-> > > > > -           for_each_node_state(nr, N_HIGH_MEMORY)
-> > > > > -                   if (counters[nr])
-> > > > > -                           seq_printf(m, " N%u=%u", nr, counters[nr]);
-> > > > > -   }
-> > > > > +   for (nr = 0; nr < v->nr_pages; nr += step)
-> > > > > +           counters[page_to_nid(v->pages[nr])] += step;
-> > > > > +   for_each_node_state(nr, N_HIGH_MEMORY)
-> > > > > +           if (counters[nr])
-> > > > > +                   seq_printf(m, " N%u=%u", nr, counters[nr]);
-> > > > >  }
-> > > > >
-> > > > >  static void show_purge_info(struct seq_file *m)
-> > > > > @@ -4962,8 +4963,12 @@ static int vmalloc_info_show(struct seq_file *m, void *p)
-> > > > >     struct vmap_node *vn;
-> > > > >     struct vmap_area *va;
-> > > > >     struct vm_struct *v;
-> > > > > +   unsigned int *counters;
-> > > > >     int i;
-> > > > >
-> > > > > +   if (IS_ENABLED(CONFIG_NUMA))
-> > > > > +           counters = kmalloc(nr_node_ids * sizeof(unsigned int), GFP_KERNEL);
-> > > > > +
-> > > > >     for (i = 0; i < nr_vmap_nodes; i++) {
-> > > > >             vn = &vmap_nodes[i];
-> > > > >
-> > > > > @@ -4979,6 +4984,11 @@ static int vmalloc_info_show(struct seq_file *m, void *p)
-> > > > >                     }
-> > > > >
-> > > > >                     v = va->vm;
-> > > > > +                   if (v->flags & VM_UNINITIALIZED)
-> > > > > +                           continue;
-> > > > > +
-> > > > > +                   /* Pair with smp_wmb() in clear_vm_uninitialized_flag() */
-> > > > > +                   smp_rmb();
-> > > > >
-> > > > >                     seq_printf(m, "0x%pK-0x%pK %7ld",
-> > > > >                             v->addr, v->addr + v->size, v->size);
-> > > > > @@ -5013,7 +5023,9 @@ static int vmalloc_info_show(struct seq_file *m, void *p)
-> > > > >                     if (is_vmalloc_addr(v->pages))
-> > > > >                             seq_puts(m, " vpages");
-> > > > >
-> > > > > -                   show_numa_info(m, v);
-> > > > > +                   if (IS_ENABLED(CONFIG_NUMA))
-> > > > > +                           show_numa_info(m, v, counters);
-> > > > > +
-> > > > >                     seq_putc(m, '\n');
-> > > > >             }
-> > > > >             spin_unlock(&vn->busy.lock);
-> > > > > @@ -5023,19 +5035,14 @@ static int vmalloc_info_show(struct seq_file *m, void *p)
-> > > > >      * As a final step, dump "unpurged" areas.
-> > > > >      */
-> > > > >     show_purge_info(m);
-> > > > > +   if (IS_ENABLED(CONFIG_NUMA))
-> > > > > +           kfree(counters);
-> > > > >     return 0;
-> > > > >  }
-> > > > >
-> > > > >  static int __init proc_vmalloc_init(void)
-> > > > >  {
-> > > > > -   void *priv_data = NULL;
-> > > > > -
-> > > > > -   if (IS_ENABLED(CONFIG_NUMA))
-> > > > > -           priv_data = kmalloc(nr_node_ids * sizeof(unsigned int), GFP_KERNEL);
-> > > > > -
-> > > > > -   proc_create_single_data("vmallocinfo",
-> > > > > -           0400, NULL, vmalloc_info_show, priv_data);
-> > > > > -
-> > > > > +   proc_create_single("vmallocinfo", 0400, NULL, vmalloc_info_show);
-> > > > >     return 0;
-> > > > >  }
-> > > > >  module_init(proc_vmalloc_init);
-> > > > > --
-> > > > LGTM:
-> > > >
-> > > > Reviewed-by: "Uladzislau Rezki (Sony)" <urezki@gmail.com>
-> > > >
-> > > > Thank you!
-> > > >
-> > > Also one thing i have just noticed. The "Fixes tag" should be updated to
-> > > this: Fixes: 8e1d743f2c26 ("mm: vmalloc: support multiple nodes in vmallocinfo")
-> > >
-> > > the below one should not be blamed:
-> > >
-> > > Fixes: a47a126ad5ea ("vmallocinfo: add NUMA information")
-> > >
-> > > Thanks!
-> > >
-> > > --
-> > > Uladzislau Rezki
+> On Wed, Jul 2, 2025 at 6:42=E2=80=AFAM Jiayuan Chen <jiayuan.chen@linux.d=
+ev> wrote:
 > >
-> > I've been looking through the stable tree and it seems like this issue
-> > still exists in the stable tree, so I think this patch needs to be
-> > backported.
+> > July 2, 2025 at 19:00, "Jiayuan Chen" <jiayuan.chen@linux.dev> wrote:
 > >
-> > What do you think?
 > >
-> If the stable does not have it, we should backport it. But it has to be
-> done only for those where a vmap-node logic is in place. It was delivered
-> starting from the v6.9 kernel version.
+> > >
+> > > The calculation for the remaining space, 'copy =3D size_goal - skb->l=
+en',
+> > >
+> > > was prone to an integer promotion bug that prevented copy from ever b=
+eing
+> > >
+> > > negative.
+> > >
+> > > The variable types involved are:
+> > >
+> > > copy: ssize_t (long)
+> > >
+> > > size_goal: int
+> > >
+> > > skb->len: unsigned int
+> > >
+> > > Due to C's type promotion rules, the signed size_goal is converted to=
+ an
+> > >
+> > > unsigned int to match skb->len before the subtraction. The result is =
+an
+> > >
+> > > unsigned int.
+> > >
+> > > When this unsigned int result is then assigned to the s64 copy variab=
+le,
+> > >
+> > > it is zero-extended, preserving its non-negative value. Consequently,
+> > >
+> > > copy is always >=3D 0.
+> > >
+> >
+> > To better explain this problem, consider the following example:
+> > '''
+> > #include <sys/types.h>
+> > #include <stdio.h>
+> > int size_goal =3D 536;
+> > unsigned int skblen =3D 1131;
+> >
+> > void main() {
+> >         ssize_t copy =3D 0;
+> >         copy =3D size_goal - skblen;
+> >         printf("wrong: %zd\n", copy);
+> >
+> >         copy =3D size_goal - (ssize_t)skblen;
+> >         printf("correct: %zd\n", copy);
+> >         return;
+> > }
+> > '''
+> > Output:
+> > '''
+> > wrong: 4294966701
+> > correct: -595
+> > '''
 >
+> Can you explain how one skb could have more bytes (skb->len) than size_go=
+al ?
+>
+> If we are under this condition, we already have a prior bug ?
+>
+> Please describe how you caught this issue.
 
-Then I guess I should backport to 6.12, 6.15. Thanks for letting me know!
+Also, not sure why copy variable had to be changed from "int" to "ssize_t"
 
-Regards,
-Jeongjun Park
+A nicer patch (without a cast) would be to make it an "int" again/
 
