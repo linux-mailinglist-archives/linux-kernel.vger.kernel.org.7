@@ -1,57 +1,56 @@
-Return-Path: <linux-kernel+bounces-714222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18843AF6533
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 00:28:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63327AF6539
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 00:29:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BF704E2539
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 22:27:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1887D7A6813
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 22:28:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C2BB254876;
-	Wed,  2 Jul 2025 22:26:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C9FB246BCF;
+	Wed,  2 Jul 2025 22:29:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RnLBfCzB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=siemens.com header.i=alexander.sverdlin@siemens.com header.b="iNwrVb4X"
+Received: from mta-64-226.siemens.flowmailer.net (mta-64-226.siemens.flowmailer.net [185.136.64.226])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59268246798;
-	Wed,  2 Jul 2025 22:26:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CAD2BA2D
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 22:29:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.64.226
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751495209; cv=none; b=E16YVudcQeyZne9d2O/UMbGyv6cHlZ4FBtAD/JRxh5kDD0CVmcgjN8YRcQUlQeUo7JLqvKx6GepN89pIORDXZkQIQKuvcw+co9yDVaSQUIUCjGA9deBUr0r4cCxRfdx6U5C0DYxyp0yEJdbPz3UQE798tIy1Wj/ZiNZwoWvgdqE=
+	t=1751495368; cv=none; b=Usiloc4vDg/kJ/Yei6cUpiQwc7paDsjwHpcNtJ5EmzVMm9uo4YMij5eggHlXuzhHDXH2LYGEvjZsqIwvZl9zrnl65fadn9yT1EP6e0JAjMrAOT75v76wlgepkzZblS3I73/k9nn8xK30gk0fivZ0bXeK9ZcAuq3VRsYO1L4sPsc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751495209; c=relaxed/simple;
-	bh=WEwAmw0sdYNez5L1vUl1rRfRRukQ9tqNIhTwwTy8CgM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gjYrqmkDtgtTClSmZhH3fq7ijt6cXAYYXqic9m7k07+izpmFrygUvxDZ0IJtsY+F8seQV7ug4L2mfJPwmPpDnyGUtXGnAat2eFvfYN83T3G8xTGlSA20t6GXTfMrnO9kgrT1BNcA+/9yBk89KprZOkR1sbZseMqe4Ic9XndDLio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RnLBfCzB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5D62C4CEE7;
-	Wed,  2 Jul 2025 22:26:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751495208;
-	bh=WEwAmw0sdYNez5L1vUl1rRfRRukQ9tqNIhTwwTy8CgM=;
-	h=From:To:Cc:Subject:Date:From;
-	b=RnLBfCzBsWfdRzYvZkbkp+iDzQd7Y0t2ZUXz8eQh9oKeyVP0Lad+EVL9srQlOg3xZ
-	 bSWUGAR3B3AwqH1wureNffb/S7pKrETLsYFisuzfawOa1jBuaf0C8QcCM/+yNJZw3L
-	 QCrQbn1RMrJG8vRy/7Ig2vHK6iriZ8av+wKeEFUtGRAvUa6A5uMf2Jv34PGoivyLG3
-	 JKq4SDBvXzN8U/EhVT1k2czdORo+br7NcBdRg4hPwpp3+VRykprSXle3mK4uhvhU3e
-	 +jgob49UI+kT9PEH1VwW/1cG3IAcC4uqRXLPGpMEuGg6QP54YQxKl2uIHeL1W7Pqo2
-	 8v41FX4ragmbg==
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Mark Brown <broonie@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Gregory CLEMENT <gregory.clement@bootlin.com>
-Cc: linux-spi@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] spi: dt-bindings: Convert marvell,orion-spi to DT schema
-Date: Wed,  2 Jul 2025 17:26:42 -0500
-Message-ID: <20250702222643.2761617-1-robh@kernel.org>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1751495368; c=relaxed/simple;
+	bh=1HjfBJmpquWx0sI3AlG0fpXwHDxN3DSwVGc5PCBebPE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NrdAc/iOJDO7nbGbnRXIw53FVxaftHYe5PHrXP4YYoHpjTuWAoD5H4DJvDxyjqEs/yqBUgfkwnZe7dhZV/6lSWOIZr0VxNGj6dMqQAFfGT3lb5bQ4TdYo0dcO7Y8s5VUDQMK7kfLtOr9JxPoe+9F7lx1COEH3O2v0oLmnDDZXCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=alexander.sverdlin@siemens.com header.b=iNwrVb4X; arc=none smtp.client-ip=185.136.64.226
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
+Received: by mta-64-226.siemens.flowmailer.net with ESMTPSA id 20250702222916ca624d31c9e36a2c46
+        for <linux-kernel@vger.kernel.org>;
+        Thu, 03 Jul 2025 00:29:16 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=alexander.sverdlin@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
+ bh=8K7+NkkI5KyKo1597u2GdjHkWsakhR2KOTTYNF0g4jo=;
+ b=iNwrVb4XCXJPMrr8oybFHigri/p2sqZfT7WIqxzZsN+DG/bY4JBpaIFvBJ4ozbz63FZhsN
+ EmdDfnpaUS4zhMZWXoCJiPaXS+3bQFd4Gyu5ySQkY+CzuFPCwnzImLLQKGPCheaidMSZV9pU
+ 1p0mjf8w5t2Q3ABpcQj+m6nolGAzfd3Yikie/Gkg4IEGHj7yK3zsqfDUbJQUnihp0U5iSBkv
+ LeeFARkdEfVmLoAPbTwk/L4V8vmGjIfD4gJJT+Dndr+ZUZ3csXmSy8lEFwrZNTpholS8NM6C
+ wD53HLQsnr37ty66soqHa+qJrtFkyxMTdWeea/1kRzWaJsIFqE9lvAow==;
+From: "A. Sverdlin" <alexander.sverdlin@siemens.com>
+To: linux-kernel@vger.kernel.org
+Cc: Alexander Sverdlin <alexander.sverdlin@siemens.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Michael Walle <mwalle@kernel.org>,
+	Hui Wang <hui.wang@canonical.com>
+Subject: [PATCH] eeprom: at25: convert to spi-mem API
+Date: Thu,  3 Jul 2025 00:28:22 +0200
+Message-ID: <20250702222823.864803-1-alexander.sverdlin@siemens.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,218 +58,549 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-456497:519-21489:flowmailer
 
-Convert the Marvell Orion SPI binding to schema.
+From: Alexander Sverdlin <alexander.sverdlin@siemens.com>
 
-Update compatible strings to what is in use. Generally,
-"marvell,orion-spi" is a fallback compatible, but newer variants only
-use "marvell,armada-380-spi".
+Replace the RAW SPI accesses with spi-mem API. The latter will fall back to
+RAW SPI accesses if spi-mem callbacks are not implemented by a controller
+driver.
 
-Mark cell-index as deprecated and not required as some instances don't
-use it already.
+Notable advantages:
+- read function now allocates a bounce buffer for SPI DMA compatibility,
+  similar to write function;
+- the driver can now be used in conjunction with SPI controller drivers
+  providing spi-mem API only, e.g. spi-nxp-fspi.
+- during the initial probe the driver polls busy/ready status bit for 25ms
+  instead of giving up instantly and hoping that the FW didn't write the
+  EEPROM
 
-Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+Notes:
+- mutex_lock() has been dropped from fm25_aux_read() because the latter is
+  only being called in probe phase and therefore cannot race with
+  at25_ee_read() or at25_ee_write()
+
+Quick 4KB block size test with CY15B102Q 256KB F-RAM over spi_omap2_mcspi
+driver (no spi-mem ops provided, fallback to raw SPI inside spi-mem):
+
+OP	| throughput, KB/s	| change
+--------+-----------------------+-------
+write	| 1717.847 -> 1656.684	| -3.6%
+read	| 1115.868 -> 1059.367	| -5.1%
+
+The lower throughtput probably comes from the 3 messages per SPI transfer
+inside spi-mem instead of hand-crafted 2 messages per transfer in the
+former at25 code. However, if the raw SPI access is not preserved, then
+the driver doesn't grow from the lines-of-code perspective and subjectively
+could be considered even a bit simpler.
+
+Higher performance impact on the read operation could be explained by the
+newly introduced bounce buffer in read operation. I didn't find any
+explanation or guarantee, why would a bounce buffer be not needed on the
+read side, so I assume it's a pure luck that nobody read EEPROM into
+some variable on stack on an architecture where kernel stack would be
+not DMA-able.
+
+Cc: Michael Walle <mwalle@kernel.org>
+Cc: Hui Wang <hui.wang@canonical.com>
+Link: https://lore.kernel.org/all/28ab8b72afee1af59b628f7389f0d7f5@kernel.org/
+Signed-off-by: Alexander Sverdlin <alexander.sverdlin@siemens.com>
 ---
- .../bindings/spi/marvell,orion-spi.yaml       | 102 ++++++++++++++++++
- .../devicetree/bindings/spi/spi-orion.txt     |  79 --------------
- 2 files changed, 102 insertions(+), 79 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/spi/marvell,orion-spi.yaml
- delete mode 100644 Documentation/devicetree/bindings/spi/spi-orion.txt
+ drivers/misc/eeprom/Kconfig |   1 +
+ drivers/misc/eeprom/at25.c  | 321 ++++++++++++++++++------------------
+ 2 files changed, 162 insertions(+), 160 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/spi/marvell,orion-spi.yaml b/Documentation/devicetree/bindings/spi/marvell,orion-spi.yaml
-new file mode 100644
-index 000000000000..7f5ec1d7f59b
---- /dev/null
-+++ b/Documentation/devicetree/bindings/spi/marvell,orion-spi.yaml
-@@ -0,0 +1,102 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/spi/marvell,orion-spi.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/drivers/misc/eeprom/Kconfig b/drivers/misc/eeprom/Kconfig
+index cb1c4b8e7fd37..0bef5b93bd6dc 100644
+--- a/drivers/misc/eeprom/Kconfig
++++ b/drivers/misc/eeprom/Kconfig
+@@ -37,6 +37,7 @@ config EEPROM_AT25
+ 	depends on SPI && SYSFS
+ 	select NVMEM
+ 	select NVMEM_SYSFS
++	select SPI_MEM
+ 	help
+ 	  Enable this driver to get read/write support to most SPI EEPROMs
+ 	  and Cypress FRAMs,
+diff --git a/drivers/misc/eeprom/at25.c b/drivers/misc/eeprom/at25.c
+index 595ceb9a71261..20611320e7152 100644
+--- a/drivers/misc/eeprom/at25.c
++++ b/drivers/misc/eeprom/at25.c
+@@ -7,8 +7,10 @@
+  */
+ 
+ #include <linux/bits.h>
++#include <linux/cleanup.h>
+ #include <linux/delay.h>
+ #include <linux/device.h>
++#include <linux/iopoll.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+ #include <linux/property.h>
+@@ -17,6 +19,7 @@
+ 
+ #include <linux/spi/eeprom.h>
+ #include <linux/spi/spi.h>
++#include <linux/spi/spi-mem.h>
+ 
+ #include <linux/nvmem-provider.h>
+ 
+@@ -35,13 +38,12 @@
+ 
+ struct at25_data {
+ 	struct spi_eeprom	chip;
+-	struct spi_device	*spi;
++	struct spi_mem		*spimem;
+ 	struct mutex		lock;
+ 	unsigned		addrlen;
+ 	struct nvmem_config	nvmem_config;
+ 	struct nvmem_device	*nvmem;
+ 	u8 sernum[FM25_SN_LEN];
+-	u8 command[EE_MAXADDRLEN + 1];
+ };
+ 
+ #define	AT25_WREN	0x06		/* latch the write enable */
+@@ -74,20 +76,29 @@ struct at25_data {
+ 
+ #define	io_limit	PAGE_SIZE	/* bytes */
+ 
++/* Handle the address MSB as part of instruction byte */
++static u8 at25_instr(struct at25_data *at25, u8 instr, unsigned int off)
++{
++	if (!(at25->chip.flags & EE_INSTR_BIT3_IS_ADDR))
++		return instr;
++	if (off < BIT(at25->addrlen * 8))
++		return instr;
++	return instr | AT25_INSTR_BIT3;
++}
 +
-+title: Marvell Orion SPI controller
+ static int at25_ee_read(void *priv, unsigned int offset,
+ 			void *val, size_t count)
+ {
++	u8 *bounce __free(kfree) = kmalloc(min(count, io_limit), GFP_KERNEL);
+ 	struct at25_data *at25 = priv;
+ 	char *buf = val;
+-	size_t max_chunk = spi_max_transfer_size(at25->spi);
+ 	unsigned int msg_offset = offset;
+ 	size_t bytes_left = count;
+ 	size_t segment;
+-	u8			*cp;
+-	ssize_t			status;
+-	struct spi_transfer	t[2];
+-	struct spi_message	m;
+-	u8			instr;
++	int status;
 +
-+maintainers:
-+  - Andrew Lunn <andrew@lunn.ch>
-+  - Gregory CLEMENT <gregory.clement@bootlin.com>
-+
-+allOf:
-+  - $ref: /schemas/spi/spi-controller.yaml#
-+
-+properties:
-+  compatible:
-+    oneOf:
-+      - enum:
-+          - marvell,orion-spi
-+          - marvell,armada-380-spi  # For ap80x and cp11x
-+      - items:
-+          - enum:
-+              - marvell,armada-370-spi
-+              - marvell,armada-375-spi
-+              - marvell,armada-380-spi
-+              - marvell,armada-390-spi
-+              - marvell,armada-xp-spi
-+          - const: marvell,orion-spi
-+
-+  cell-index:
-+    description: Instance id for the SPI controller
-+    deprecated: true
-+
-+  reg:
-+    minItems: 1
-+    items:
-+      - description: control registers
-+      - description: CS0 MBUS target/attribute registers for direct mode
-+      - description: CS1 MBUS target/attribute registers for direct mode
-+      - description: CS2 MBUS target/attribute registers for direct mode
-+      - description: CS3 MBUS target/attribute registers for direct mode
-+      - description: CS4 MBUS target/attribute registers for direct mode
-+      - description: CS5 MBUS target/attribute registers for direct mode
-+      - description: CS6 MBUS target/attribute registers for direct mode
-+      - description: CS7 MBUS target/attribute registers for direct mode
-+
-+  clocks:
-+    minItems: 1
-+    maxItems: 2
-+
-+  clock-names:
-+    items:
-+      - const: core
-+      - const: axi
-+
-+  interrupts:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    spi@10600 {
-+      compatible = "marvell,orion-spi";
-+      #address-cells = <1>;
-+      #size-cells = <0>;
-+      cell-index = <0>;
-+      reg = <0x10600 0x28>;
-+      clocks = <&coreclk 0>;
-+      interrupts = <23>;
-+    };
-+  - |
-+    #define MBUS_ID(target,attributes) (((target) << 24) | ((attributes) << 16))
-+
-+    bus {
-+        #address-cells = <2>;
-+        #size-cells = <1>;
-+
-+        spi@10600 {
-+          compatible = "marvell,orion-spi";
-+          #address-cells = <1>;
-+          #size-cells = <0>;
-+          cell-index = <0>;
-+          reg = <MBUS_ID(0xf0, 0x01) 0x10600 0x28>, /* control */
-+                <MBUS_ID(0x01, 0x1e) 0 0xffffffff>, /* CS0 */
-+                <MBUS_ID(0x01, 0x5e) 0 0xffffffff>, /* CS1 */
-+                <MBUS_ID(0x01, 0x9e) 0 0xffffffff>, /* CS2 */
-+                <MBUS_ID(0x01, 0xde) 0 0xffffffff>, /* CS3 */
-+                <MBUS_ID(0x01, 0x1f) 0 0xffffffff>, /* CS4 */
-+                <MBUS_ID(0x01, 0x5f) 0 0xffffffff>, /* CS5 */
-+                <MBUS_ID(0x01, 0x9f) 0 0xffffffff>, /* CS6 */
-+                <MBUS_ID(0x01, 0xdf) 0 0xffffffff>; /* CS7 */
-+          clocks = <&coreclk 0>;
-+          interrupts = <23>;
-+        };
-+    };
-diff --git a/Documentation/devicetree/bindings/spi/spi-orion.txt b/Documentation/devicetree/bindings/spi/spi-orion.txt
-deleted file mode 100644
-index 8434a65fc12a..000000000000
---- a/Documentation/devicetree/bindings/spi/spi-orion.txt
-+++ /dev/null
-@@ -1,79 +0,0 @@
--Marvell Orion SPI device
++	if (!bounce)
++		return -ENOMEM;
+ 
+ 	if (unlikely(offset >= at25->chip.byte_len))
+ 		return -EINVAL;
+@@ -97,87 +108,67 @@ static int at25_ee_read(void *priv, unsigned int offset,
+ 		return -EINVAL;
+ 
+ 	do {
+-		segment = min(bytes_left, max_chunk);
+-		cp = at25->command;
++		struct spi_mem_op op;
+ 
+-		instr = AT25_READ;
+-		if (at25->chip.flags & EE_INSTR_BIT3_IS_ADDR)
+-			if (msg_offset >= BIT(at25->addrlen * 8))
+-				instr |= AT25_INSTR_BIT3;
++		segment = min(bytes_left, io_limit);
+ 
+-		mutex_lock(&at25->lock);
++		op = (struct spi_mem_op)SPI_MEM_OP(SPI_MEM_OP_CMD(at25_instr(at25, AT25_READ,
++									     msg_offset), 1),
++						   SPI_MEM_OP_ADDR(at25->addrlen, msg_offset, 1),
++						   SPI_MEM_OP_NO_DUMMY,
++						   SPI_MEM_OP_DATA_IN(segment, bounce, 1));
+ 
+-		*cp++ = instr;
 -
--Required properties:
--- compatible : should be on of the following:
--    - "marvell,orion-spi" for the Orion, mv78x00, Kirkwood and Dove SoCs
--    - "marvell,armada-370-spi", for the Armada 370 SoCs
--    - "marvell,armada-375-spi", for the Armada 375 SoCs
--    - "marvell,armada-380-spi", for the Armada 38x SoCs
--    - "marvell,armada-390-spi", for the Armada 39x SoCs
--    - "marvell,armada-xp-spi", for the Armada XP SoCs
--- reg : offset and length of the register set for the device.
--	This property can optionally have additional entries to configure
--	the SPI direct access mode that some of the Marvell SoCs support
--	additionally to the normal indirect access (PIO) mode. The values
--	for the MBus "target" and "attribute" are defined in the Marvell
--	SoC "Functional Specifications" Manual in the chapter "Marvell
--	Core Processor Address Decoding".
--	The eight register sets following the control registers refer to
--	chip-select lines 0 through 7 respectively.
--- cell-index : Which of multiple SPI controllers is this.
--- clocks : pointers to the reference clocks for this device, the first
--	   one is the one used for the clock on the spi bus, the
--	   second one is optional and is the clock used for the
--	   functional part of the controller
+-		/* 8/16/24-bit address is written MSB first */
+-		switch (at25->addrlen) {
+-		default:	/* case 3 */
+-			*cp++ = msg_offset >> 16;
+-			fallthrough;
+-		case 2:
+-			*cp++ = msg_offset >> 8;
+-			fallthrough;
+-		case 1:
+-		case 0:	/* can't happen: for better code generation */
+-			*cp++ = msg_offset >> 0;
+-		}
 -
--Optional properties:
--- interrupts : Is currently not used.
--- clock-names : names of used clocks, mandatory if the second clock is
--		used, the name must be "core", and "axi" (the latter
--		is only for Armada 7K/8K).
+-		spi_message_init(&m);
+-		memset(t, 0, sizeof(t));
 -
+-		t[0].tx_buf = at25->command;
+-		t[0].len = at25->addrlen + 1;
+-		spi_message_add_tail(&t[0], &m);
 -
--Example:
--       spi@10600 {
--	       compatible = "marvell,orion-spi";
--	       #address-cells = <1>;
--	       #size-cells = <0>;
--	       cell-index = <0>;
--	       reg = <0x10600 0x28>;
--	       interrupts = <23>;
--       };
+-		t[1].rx_buf = buf;
+-		t[1].len = segment;
+-		spi_message_add_tail(&t[1], &m);
 -
--Example with SPI direct mode support (optionally):
--	spi0: spi@10600 {
--		compatible = "marvell,orion-spi";
--		#address-cells = <1>;
--		#size-cells = <0>;
--		cell-index = <0>;
--		reg = <MBUS_ID(0xf0, 0x01) 0x10600 0x28>, /* control */
--		      <MBUS_ID(0x01, 0x1e) 0 0xffffffff>, /* CS0 */
--		      <MBUS_ID(0x01, 0x5e) 0 0xffffffff>, /* CS1 */
--		      <MBUS_ID(0x01, 0x9e) 0 0xffffffff>, /* CS2 */
--		      <MBUS_ID(0x01, 0xde) 0 0xffffffff>, /* CS3 */
--		      <MBUS_ID(0x01, 0x1f) 0 0xffffffff>, /* CS4 */
--		      <MBUS_ID(0x01, 0x5f) 0 0xffffffff>, /* CS5 */
--		      <MBUS_ID(0x01, 0x9f) 0 0xffffffff>, /* CS6 */
--		      <MBUS_ID(0x01, 0xdf) 0 0xffffffff>; /* CS7 */
--		interrupts = <23>;
--	};
+-		status = spi_sync(at25->spi, &m);
++		status = spi_mem_adjust_op_size(at25->spimem, &op);
++		if (status)
++			return status;
++		segment = op.data.nbytes;
+ 
++		mutex_lock(&at25->lock);
++		status = spi_mem_exec_op(at25->spimem, &op);
+ 		mutex_unlock(&at25->lock);
 -
--To enable the direct mode, the board specific 'ranges' property in the
--'soc' node needs to add the entries for the desired SPI controllers
--and its chip-selects that are used in the direct mode instead of PIO
--mode. Here an example for this (SPI controller 0, device 1 and SPI
--controller 1, device 2 are used in direct mode. All other SPI device
--are used in the default indirect (PIO) mode):
--	soc {
--		/*
--		 * Enable the SPI direct access by configuring an entry
--		 * here in the board-specific ranges property
--		 */
--		ranges = <MBUS_ID(0xf0, 0x01) 0 0 0xf1000000 0x100000>,	/* internal regs */
--			 <MBUS_ID(0x01, 0x1d) 0 0 0xfff00000 0x100000>,	/* BootROM       */
--			 <MBUS_ID(0x01, 0x5e) 0 0 0xf1100000 0x10000>,	/* SPI0-DEV1 */
--			 <MBUS_ID(0x01, 0x9a) 0 0 0xf1110000 0x10000>;	/* SPI1-DEV2 */
+ 		if (status)
+ 			return status;
++		memcpy(buf, bounce, segment);
+ 
+ 		msg_offset += segment;
+ 		buf += segment;
+ 		bytes_left -= segment;
+ 	} while (bytes_left > 0);
+ 
+-	dev_dbg(&at25->spi->dev, "read %zu bytes at %d\n",
++	dev_dbg(&at25->spimem->spi->dev, "read %zu bytes at %d\n",
+ 		count, offset);
+ 	return 0;
+ }
+ 
+-/* Read extra registers as ID or serial number */
++/*
++ * Read extra registers as ID or serial number
++ *
++ * Allow for the callers to provide @buf on stack (not necessary DMA-capable)
++ * by allocating a bounce buffer internally.
++ */
+ static int fm25_aux_read(struct at25_data *at25, u8 *buf, uint8_t command,
+ 			 int len)
+ {
++	u8 *bounce __free(kfree) = kmalloc(len, GFP_KERNEL);
++	struct spi_mem_op op;
+ 	int status;
+-	struct spi_transfer t[2];
+-	struct spi_message m;
 -
--For further information on the MBus bindings, please see the MBus
--DT documentation:
--Documentation/devicetree/bindings/bus/mvebu-mbus.txt
+-	spi_message_init(&m);
+-	memset(t, 0, sizeof(t));
+ 
+-	t[0].tx_buf = at25->command;
+-	t[0].len = 1;
+-	spi_message_add_tail(&t[0], &m);
+-
+-	t[1].rx_buf = buf;
+-	t[1].len = len;
+-	spi_message_add_tail(&t[1], &m);
++	if (!bounce)
++		return -ENOMEM;
+ 
+-	mutex_lock(&at25->lock);
++	op = (struct spi_mem_op)SPI_MEM_OP(SPI_MEM_OP_CMD(command, 1),
++					   SPI_MEM_OP_NO_ADDR,
++					   SPI_MEM_OP_NO_DUMMY,
++					   SPI_MEM_OP_DATA_IN(len, bounce, 1));
+ 
+-	at25->command[0] = command;
++	status = spi_mem_exec_op(at25->spimem, &op);
++	dev_dbg(&at25->spimem->spi->dev, "read %d aux bytes --> %d\n", len, status);
++	if (status)
++		return status;
+ 
+-	status = spi_sync(at25->spi, &m);
+-	dev_dbg(&at25->spi->dev, "read %d aux bytes --> %d\n", len, status);
++	memcpy(buf, bounce, len);
+ 
+-	mutex_unlock(&at25->lock);
+-	return status;
++	return 0;
+ }
+ 
+ static ssize_t sernum_show(struct device *dev, struct device_attribute *attr, char *buf)
+@@ -195,14 +186,47 @@ static struct attribute *sernum_attrs[] = {
+ };
+ ATTRIBUTE_GROUPS(sernum);
+ 
++/*
++ * Poll Read Status Register with timeout
++ *
++ * Return:
++ * 0, if the chip is ready
++ * [positive] Status Register value as-is, if the chip is busy
++ * [negative] error code in case of read failure
++ */
++static int at25_wait_ready(struct at25_data *at25)
++{
++	u8 *bounce __free(kfree) = kmalloc(1, GFP_KERNEL);
++	struct spi_mem_op op;
++	int status;
++
++	if (!bounce)
++		return -ENOMEM;
++
++	op = (struct spi_mem_op)SPI_MEM_OP(SPI_MEM_OP_CMD(AT25_RDSR, 1),
++					   SPI_MEM_OP_NO_ADDR,
++					   SPI_MEM_OP_NO_DUMMY,
++					   SPI_MEM_OP_DATA_IN(1, bounce, 1));
++
++	read_poll_timeout(spi_mem_exec_op, status,
++			  status || !(bounce[0] & AT25_SR_nRDY), false,
++			  USEC_PER_MSEC, USEC_PER_MSEC * EE_TIMEOUT,
++			  at25->spimem, &op);
++	if (status < 0)
++		return status;
++	if (!(bounce[0] & AT25_SR_nRDY))
++		return 0;
++
++	return bounce[0];
++}
++
+ static int at25_ee_write(void *priv, unsigned int off, void *val, size_t count)
+ {
++	u8 *bounce __free(kfree) = kmalloc(min(count, io_limit), GFP_KERNEL);
+ 	struct at25_data *at25 = priv;
+-	size_t maxsz = spi_max_transfer_size(at25->spi);
+ 	const char *buf = val;
+-	int			status = 0;
+-	unsigned		buf_size;
+-	u8			*bounce;
++	unsigned int buf_size;
++	int status;
+ 
+ 	if (unlikely(off >= at25->chip.byte_len))
+ 		return -EFBIG;
+@@ -211,11 +235,8 @@ static int at25_ee_write(void *priv, unsigned int off, void *val, size_t count)
+ 	if (unlikely(!count))
+ 		return -EINVAL;
+ 
+-	/* Temp buffer starts with command and address */
+ 	buf_size = at25->chip.page_size;
+-	if (buf_size > io_limit)
+-		buf_size = io_limit;
+-	bounce = kmalloc(buf_size + at25->addrlen + 1, GFP_KERNEL);
++
+ 	if (!bounce)
+ 		return -ENOMEM;
+ 
+@@ -223,85 +244,64 @@ static int at25_ee_write(void *priv, unsigned int off, void *val, size_t count)
+ 	 * For write, rollover is within the page ... so we write at
+ 	 * most one page, then manually roll over to the next page.
+ 	 */
+-	mutex_lock(&at25->lock);
++	guard(mutex)(&at25->lock);
+ 	do {
+-		unsigned long	timeout, retries;
+-		unsigned	segment;
+-		unsigned	offset = off;
+-		u8		*cp = bounce;
+-		int		sr;
+-		u8		instr;
+-
+-		*cp = AT25_WREN;
+-		status = spi_write(at25->spi, cp, 1);
+-		if (status < 0) {
+-			dev_dbg(&at25->spi->dev, "WREN --> %d\n", status);
+-			break;
+-		}
+-
+-		instr = AT25_WRITE;
+-		if (at25->chip.flags & EE_INSTR_BIT3_IS_ADDR)
+-			if (offset >= BIT(at25->addrlen * 8))
+-				instr |= AT25_INSTR_BIT3;
+-		*cp++ = instr;
++		struct spi_mem_op op = SPI_MEM_OP(SPI_MEM_OP_CMD(AT25_WREN, 1),
++						  SPI_MEM_OP_NO_ADDR,
++						  SPI_MEM_OP_NO_DUMMY,
++						  SPI_MEM_OP_NO_DATA);
++		unsigned int segment;
+ 
+-		/* 8/16/24-bit address is written MSB first */
+-		switch (at25->addrlen) {
+-		default:	/* case 3 */
+-			*cp++ = offset >> 16;
+-			fallthrough;
+-		case 2:
+-			*cp++ = offset >> 8;
+-			fallthrough;
+-		case 1:
+-		case 0:	/* can't happen: for better code generation */
+-			*cp++ = offset >> 0;
++		status = spi_mem_exec_op(at25->spimem, &op);
++		if (status < 0) {
++			dev_dbg(&at25->spimem->spi->dev, "WREN --> %d\n", status);
++			return status;
+ 		}
+ 
+ 		/* Write as much of a page as we can */
+-		segment = buf_size - (offset % buf_size);
++		segment = buf_size - (off % buf_size);
+ 		if (segment > count)
+ 			segment = count;
+-		if (segment > maxsz)
+-			segment = maxsz;
+-		memcpy(cp, buf, segment);
+-		status = spi_write(at25->spi, bounce,
+-				segment + at25->addrlen + 1);
+-		dev_dbg(&at25->spi->dev, "write %u bytes at %u --> %d\n",
+-			segment, offset, status);
+-		if (status < 0)
+-			break;
++		if (segment > io_limit)
++			segment = io_limit;
++
++		op = (struct spi_mem_op)SPI_MEM_OP(SPI_MEM_OP_CMD(at25_instr(at25, AT25_WRITE, off),
++								  1),
++						   SPI_MEM_OP_ADDR(at25->addrlen, off, 1),
++						   SPI_MEM_OP_NO_DUMMY,
++						   SPI_MEM_OP_DATA_OUT(segment, bounce, 1));
++
++		status = spi_mem_adjust_op_size(at25->spimem, &op);
++		if (status)
++			return status;
++		segment = op.data.nbytes;
++
++		memcpy(bounce, buf, segment);
++
++		status = spi_mem_exec_op(at25->spimem, &op);
++		dev_dbg(&at25->spimem->spi->dev, "write %u bytes at %u --> %d\n",
++			segment, off, status);
++		if (status)
++			return status;
+ 
+ 		/*
+ 		 * REVISIT this should detect (or prevent) failed writes
+ 		 * to read-only sections of the EEPROM...
+ 		 */
+ 
+-		/* Wait for non-busy status */
+-		timeout = jiffies + msecs_to_jiffies(EE_TIMEOUT);
+-		retries = 0;
+-		do {
+-
+-			sr = spi_w8r8(at25->spi, AT25_RDSR);
+-			if (sr < 0 || (sr & AT25_SR_nRDY)) {
+-				dev_dbg(&at25->spi->dev,
+-					"rdsr --> %d (%02x)\n", sr, sr);
+-				/* at HZ=100, this is sloooow */
+-				msleep(1);
+-				continue;
+-			}
+-			if (!(sr & AT25_SR_nRDY))
+-				break;
+-		} while (retries++ < 3 || time_before_eq(jiffies, timeout));
+-
+-		if ((sr < 0) || (sr & AT25_SR_nRDY)) {
+-			dev_err(&at25->spi->dev,
++		status = at25_wait_ready(at25);
++		if (status < 0) {
++			dev_err_probe(&at25->spimem->spi->dev, status,
++				      "Read Status Redister command failed\n");
++			return status;
++		}
++		if (status) {
++			dev_dbg(&at25->spimem->spi->dev,
++				"Status %02x\n", status);
++			dev_err(&at25->spimem->spi->dev,
+ 				"write %u bytes offset %u, timeout after %u msecs\n",
+-				segment, offset,
+-				jiffies_to_msecs(jiffies -
+-					(timeout - EE_TIMEOUT)));
+-			status = -ETIMEDOUT;
+-			break;
++				segment, off, EE_TIMEOUT);
++			return -ETIMEDOUT;
+ 		}
+ 
+ 		off += segment;
+@@ -310,9 +310,6 @@ static int at25_ee_write(void *priv, unsigned int off, void *val, size_t count)
+ 
+ 	} while (count > 0);
+ 
+-	mutex_unlock(&at25->lock);
+-
+-	kfree(bounce);
+ 	return status;
+ }
+ 
+@@ -429,31 +426,33 @@ static const struct spi_device_id at25_spi_ids[] = {
+ };
+ MODULE_DEVICE_TABLE(spi, at25_spi_ids);
+ 
+-static int at25_probe(struct spi_device *spi)
++static int at25_probe(struct spi_mem *mem)
+ {
+-	struct at25_data	*at25 = NULL;
+-	int			err;
+-	int			sr;
++	struct spi_device *spi = mem->spi;
+ 	struct spi_eeprom *pdata;
++	struct at25_data *at25;
+ 	bool is_fram;
++	int err;
++
++	at25 = devm_kzalloc(&spi->dev, sizeof(*at25), GFP_KERNEL);
++	if (!at25)
++		return -ENOMEM;
++
++	at25->spimem = mem;
+ 
+ 	/*
+ 	 * Ping the chip ... the status register is pretty portable,
+-	 * unlike probing manufacturer IDs. We do expect that system
+-	 * firmware didn't write it in the past few milliseconds!
++	 * unlike probing manufacturer IDs.
+ 	 */
+-	sr = spi_w8r8(spi, AT25_RDSR);
+-	if (sr < 0 || sr & AT25_SR_nRDY) {
+-		dev_dbg(&spi->dev, "rdsr --> %d (%02x)\n", sr, sr);
++	err = at25_wait_ready(at25);
++	if (err < 0)
++		return dev_err_probe(&spi->dev, err, "Read Status Register command failed\n");
++	if (err) {
++		dev_err(&spi->dev, "Not ready (%02x)\n", err);
+ 		return -ENXIO;
+ 	}
+ 
+-	at25 = devm_kzalloc(&spi->dev, sizeof(*at25), GFP_KERNEL);
+-	if (!at25)
+-		return -ENOMEM;
+-
+ 	mutex_init(&at25->lock);
+-	at25->spi = spi;
+ 	spi_set_drvdata(spi, at25);
+ 
+ 	is_fram = fwnode_device_is_compatible(dev_fwnode(&spi->dev), "cypress,fm25");
+@@ -514,17 +513,19 @@ static int at25_probe(struct spi_device *spi)
+ 
+ /*-------------------------------------------------------------------------*/
+ 
+-static struct spi_driver at25_driver = {
+-	.driver = {
+-		.name		= "at25",
+-		.of_match_table = at25_of_match,
+-		.dev_groups	= sernum_groups,
++static struct spi_mem_driver at25_driver = {
++	.spidrv = {
++		.driver = {
++			.name		= "at25",
++			.of_match_table = at25_of_match,
++			.dev_groups	= sernum_groups,
++		},
++		.id_table	= at25_spi_ids,
+ 	},
+ 	.probe		= at25_probe,
+-	.id_table	= at25_spi_ids,
+ };
+ 
+-module_spi_driver(at25_driver);
++module_spi_mem_driver(at25_driver);
+ 
+ MODULE_DESCRIPTION("Driver for most SPI EEPROMs");
+ MODULE_AUTHOR("David Brownell");
 -- 
-2.47.2
+2.50.0
 
 
