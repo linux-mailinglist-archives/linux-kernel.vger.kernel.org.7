@@ -1,95 +1,118 @@
-Return-Path: <linux-kernel+bounces-712295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-712297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08950AF0739
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 02:20:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 854FEAF073C
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 02:23:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 01CAE4A649B
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 00:19:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76790441013
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 00:22:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 751D4111BF;
-	Wed,  2 Jul 2025 00:19:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C7AF4A1A;
+	Wed,  2 Jul 2025 00:23:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dol2VaEa"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hNBwJEwy"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4C9C611E;
-	Wed,  2 Jul 2025 00:19:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BF411C32;
+	Wed,  2 Jul 2025 00:23:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751415583; cv=none; b=Mt8DKA4QkNNlUf2L0Ptm5QUc7qDTT9lQDLx7FD2M2zW6xyMl8fST5R/LMF9ZMbMxzCejM0gdyQC1M1gD0BFy8qX+q2NfCm6jSwhV1dRTxOoNbOdzOxhCHPEzXyUd3Aegbv/mW6ROQhiKPANR3UVLckSmdzy2v8+DORTaWYDuyVg=
+	t=1751415787; cv=none; b=auRry7TAetkDt+1bXTQvZDBhAPMsD3lNCL9qm7fDEyrAbeLEay/iw6iat+uNamh2UJ2rKR6bbprKzLPwbYo9+CxVM6QtAvBMzECe1B+pB0805V8k1HM1kKd1NND8BmraF4rMR1h/pMBReYAlDkrGnMAf06nrldTHaMGlJfbuBEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751415583; c=relaxed/simple;
-	bh=4DaWXPHuR88RaLcmPll2/wduEqRs83p/WfrwXFl1YNg=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=aTYsidNCOg8kG0oSekrkV5Ltcz3ut4h/v553QKF3ZbN9qIsB9pCx6FTVqYgl05EFZ8KEzFTtr38XORLeUmiK+UbG7qnwmv9XGi7C+fborrlCkNaws6qcYYYtHApw68RZV97nsqauJxWeasRiW5Lom6hppQH+cAikjkwaCB2V3no=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dol2VaEa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B207DC4CEEB;
-	Wed,  2 Jul 2025 00:19:43 +0000 (UTC)
+	s=arc-20240116; t=1751415787; c=relaxed/simple;
+	bh=yojyvkE35IyqeWXBaopmtqHNdC508aa/FvWO3L7mqDw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e1Ljbei3rAolbfmb5yurK8QU47B4tOHQtleopqp8B0fGNROgX2qybXj4fKwpXziLseW4Nd7Unv2Z4QAjsoFH4ZAhzoijnySJszAVWyw6sPuFaZBeGIBqXWkK9CMHm6U0jZc327L+LBlFpB3l/n9SOfPSenqmcVAo4loHbzTNGJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hNBwJEwy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0246CC4CEEB;
+	Wed,  2 Jul 2025 00:23:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751415583;
-	bh=4DaWXPHuR88RaLcmPll2/wduEqRs83p/WfrwXFl1YNg=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=Dol2VaEa9NrRUPqszDVzPaQCEXXbzfMIz6L6cVL458UL/YaEu9NiRSvCSqNi8ocyy
-	 TBJ57U6HvVDSJZUgEbSoWGK9kf/rMzlQb1w/pG1v8sRmiUHVFsN8AbzA+/FHv2rRos
-	 kZlZry+J18C+fUDCW17t3SM6jeD/Qb1mhIr9WJHXbSqeQ9i1ukhsTgyOO/YbY9LSn9
-	 S5/7ffwDA2KZCyvAD8XEw4MXQnBtRVG2QgE8Vj93jESMGssthk7iK6BQOg7N799/ru
-	 xqi0YAc9fSXHw+aDePnhOhbi5Q16ODA2qiLcpXFUKHN1FCxsRnYS7HnZRVMgEzoLfh
-	 t6wx3UIB1EfmA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADE4A383BA06;
-	Wed,  2 Jul 2025 00:20:09 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1751415787;
+	bh=yojyvkE35IyqeWXBaopmtqHNdC508aa/FvWO3L7mqDw=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=hNBwJEwy40erhcmsUL9sJPWWvwZnR+Ndz0hgps90NRE5icxZ0qE8PvIbV7tdnlNSx
+	 xeqTNcAweA7NdrRJOHeXQLizoWkRlaQVwq2G20VwAhMGc/MZs6PQKm/QlSvqvmTUIX
+	 c4H7pZFuGCVZcFCYlWjatlbKSVRv1+KSkvVZGgrehEOMHm3n+h5/Yjp/EJYo6q1McD
+	 oPUksFD1QsSogsBMdsJVDfezc0mvV0n3iYy7CD1433JhSVJx2s5tN5yXRqS+X7jCen
+	 VhPuBOshb6H3Y96jaJJ83yteG9F3LbGRUPFb9usnV9uqwVQp1E5h70ZlL69vydJaDT
+	 /KLHlG2Gzb74Q==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id A31FBCE0E63; Tue,  1 Jul 2025 17:23:06 -0700 (PDT)
+Date: Tue, 1 Jul 2025 17:23:06 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: rcu@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, kernel-team@meta.com, rostedt@goodmis.org,
+	Christoph Hellwig <hch@infradead.org>
+Subject: [PATCH v2 0/5] Remove SRCU-lite in favor of SRCU-fast
+Message-ID: <2994ade2-bd06-4ba7-bcc9-be4d0d15ea0c@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <e5dd6af2-fdbf-4773-9732-13b84ca13a12@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v2] sfc: siena: eliminate xdp_rxq_info_valid
- using
- XDP base API
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175141560850.155437.10463020454884868658.git-patchwork-notify@kernel.org>
-Date: Wed, 02 Jul 2025 00:20:08 +0000
-References: <20250628051033.51133-1-wangfushuai@baidu.com>
-In-Reply-To: <20250628051033.51133-1-wangfushuai@baidu.com>
-To: Fushuai Wang <wangfushuai@baidu.com>
-Cc: ecree.xilinx@gmail.com, andrew+netdev@lunn.ch, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- netdev@vger.kernel.org, linux-net-drivers@amd.com,
- linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e5dd6af2-fdbf-4773-9732-13b84ca13a12@paulmck-laptop>
 
-Hello:
+Hello!
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+This series removes the deprecated SRCU-lite flavor.
 
-On Sat, 28 Jun 2025 13:10:33 +0800 you wrote:
-> Commit d48523cb88e0 ("sfc: Copy shared files needed for Siena (part 2)")
-> use xdp_rxq_info_valid to track failures of xdp_rxq_info_reg().
-> However, this driver-maintained state becomes redundant since the XDP
-> framework already provides xdp_rxq_info_is_reg() for checking registration
-> status.
-> 
-> Signed-off-by: Fushuai Wang <wangfushuai@baidu.com>
-> 
-> [...]
+Both SRCU-lite and SRCU-fast provide faster readers by dropping the
+smp_mb() call from their lock and unlock primitives.  The price of this
+is a pair of added RCU grace periods during the SRCU grace period.
 
-Here is the summary with links:
-  - [net-next,v2] sfc: siena: eliminate xdp_rxq_info_valid using XDP base API
-    https://git.kernel.org/netdev/net-next/c/ca899622c528
+SRCU-fast also adds NMI safety for architectures that have NMIs but do
+not have NMI-safe per-CPU operations.  In addition, srcu_read_lock_fast()
+returns a per-CPU pointer rather than an integer, which provides a further
+speedup compared to SRCU-lite by getting rid of array-index calculations.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+There is a trivial mapping from the SRCU-lite API to that of SRCU-fast,
+so we do not expect any transition issues.  In addition, while SRCU-lite
+remains in the kernel, checkpatch.pl will warn about added SRCU-lite
+use cases.
+
+Further read-side speedups are possible, but they amount to only about
+half a nanosecond out of about two nanoseconds (measured on my x86
+laptop), and they might require some changes to existing SRCU code.
+These changes are trivial, but we need to see a solid need for the
+additional performance before inconveniencing existing users.
+
+1.	Remove support for SRCU-lite.
+
+2.	Remove SRCU-lite scenarios.
+
+3.	Remove support for SRCU-lite.
+
+4.	Remove SRCU-lite implementation.
+
+5.	Remove SRCU-lite deprecation.
 
 
+Changes since v1:
+
+o	Add short explanation of SRCU-lite and SRCU-fast.
+
+						Thanx, Paul
+
+------------------------------------------------------------------------
+
+ b/include/linux/srcu.h                                     |    2 
+ b/include/linux/srcutiny.h                                 |    3 
+ b/include/linux/srcutree.h                                 |   38 ----------
+ b/kernel/rcu/rcutorture.c                                  |    7 -
+ b/kernel/rcu/refscale.c                                    |   32 --------
+ b/scripts/checkpatch.pl                                    |    2 
+ b/tools/testing/selftests/rcutorture/configs/rcu/CFLIST    |    1 
+ include/linux/srcu.h                                       |   47 -------------
+ tools/testing/selftests/rcutorture/configs/rcu/SRCU-L      |   10 --
+ tools/testing/selftests/rcutorture/configs/rcu/SRCU-L.boot |    3 
+ 10 files changed, 4 insertions(+), 141 deletions(-)
 
