@@ -1,227 +1,183 @@
-Return-Path: <linux-kernel+bounces-713906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00117AF5FEA
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 19:24:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3186DAF5FF4
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 19:27:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E24134A5856
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 17:24:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9BFB441B94
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 17:26:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67DA23093CE;
-	Wed,  2 Jul 2025 17:24:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A30D330114D;
+	Wed,  2 Jul 2025 17:27:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LL3ah2Qb"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="OBE855KH"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2052.outbound.protection.outlook.com [40.107.223.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DDF9303DEF
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 17:24:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751477053; cv=none; b=kEExsI6NdmrADrip+G9Rtu8iqKgcQjJTJ+Dr5um9mzqvaCSJj9KHRoLkCKhN4MPKw7AzpXrtt2Ru87eOuFZ7tK3TfnjcdcQwdII4byIZgDQAaQ/RDjeb+nn5c6yu9MFaOuPAITJLLPvBwV3BhpH3ahYs4nLSFAErP7iZz+dX/jI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751477053; c=relaxed/simple;
-	bh=j6tSWM2MmtY5Snd+L4biN9q/QN5sydD46OZT01T8stI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j3YQoeGK5vc+J9DfZM0rLPuDgUQC0mIleviIymt4rKj/tX4c62BT7yvk7kZe8orlPMWsCmbzcWRT9WG5KlYKrn3t85l/4bqroJsaWLZ3Y4KTvsa/h9SJCuYR300JLc/8pXlVNPMVBDwe4UFHC5eIZQlc39xRvKD7hv0Bt909uFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LL3ah2Qb; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1751477050;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=c8KEZC8yTTm9+bnWl3UEjRdviwfr4vXyezEnpJMb554=;
-	b=LL3ah2QbCTrEA4f0ykideJEtv8iv4ra86cTi1ZVhJ2jCNXnqLaBternZj/6rjoYY+T1i4u
-	XHrJgz2I7FazTudYkGSXqGMMh7J8yiFR2+MjhnN7KHcT139LalQRN6GEMBhPtG6ED6bEae
-	/y2j5KlflHx3UpHvxz6FS/N+n8NBfgE=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-574-gItbovekNCigTZxyek7IUA-1; Wed, 02 Jul 2025 13:24:07 -0400
-X-MC-Unique: gItbovekNCigTZxyek7IUA-1
-X-Mimecast-MFC-AGG-ID: gItbovekNCigTZxyek7IUA_1751477046
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4538a2f4212so33993655e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 10:24:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751477046; x=1752081846;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=c8KEZC8yTTm9+bnWl3UEjRdviwfr4vXyezEnpJMb554=;
-        b=Z44orGEZZJsfh1NXce2qnRs8M2mtI3e/y8qcWGmtwtq8JZ5/CY9SDRjoBTztwEpSul
-         T6VUeyGC9ekiz5wxIH+S6c7qAYQUfOd/BrSlE+r5PqRg/x+5Q8RLU57/2mzhU/RkRMjg
-         nvUjkn7p7HRIckY/GxOmrArAW6S3uI+hrszQ5v7QvEfizcRWR4JAkkg/ERtZuBZujm4a
-         z/yvXyLIMdgWC3mojM5AzNFOvKuPYdZO5IxqsD5U8QMk309emsI55mtZ+6P+1W7YAdGI
-         6tNSgsV4xUNfQ/szQ9M8O8n+AGTrFE3O+ISd/jzVCOaPKas0leL+g2BQrz+ldKxhwx0x
-         OtBQ==
-X-Gm-Message-State: AOJu0Yw+uk3KHJhhPFdDuvzQrGgM/VkMM7r4F2SOCzI3C5hXZaSeUxmF
-	xjk78lzdZYiSaNUa1YE5nW28+q8yCe8x3jnN58Nx6R4UrTyg1cPfDFG6eJdQ/eYVXA73FvumDqn
-	mA1Ra+pVM6tPQxpgkilopIrOfan3PdsiADbYRZXX6Kjz1U5G30xxG6BxzQtajuSz1p0KqmWCexW
-	qDxAfX6WwAwmM7qbsq3cy5ht/IV3s7D2xrqgcezMoFz60=
-X-Gm-Gg: ASbGnctk/25kJByMz4/7I24B338JOXsxFmnz6/38e9l8WVPkG3Q6iTl+h7UO9tZ+K+Q
-	DFzPhExWZ2r3iaMdmRJC9wOek7axZVkU98riAsFEjkPECTDHUbiFRzAm82sIlnV7Eb/XHd/ac5K
-	AEKZkCmTDNe74RcDLI6AuUhiHes7UJRJeG26pVM+w/rajYqdMlxEwOIRDPVe6THU8HnfhFNCOqF
-	DfQ5rLhig0QKAkYKr9PpArmY7SC1PQxr5iQCVa51fvH7pkG4PeqIMAsdPyi3d8Df/G3OcIoJzJ+
-	CBwAt6tI2nl7u2iM
-X-Received: by 2002:a05:600c:3b01:b0:453:99f:b1b0 with SMTP id 5b1f17b1804b1-454a3706e45mr36329565e9.20.1751477046060;
-        Wed, 02 Jul 2025 10:24:06 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFosKF1NCfMbIU3NzAVisdfjF4e5AD2s5+xgd8/X8JSTXHMAiyyyuhYZOoZYqj6SD4ZbEvIKA==
-X-Received: by 2002:a05:600c:3b01:b0:453:99f:b1b0 with SMTP id 5b1f17b1804b1-454a3706e45mr36329185e9.20.1751477045515;
-        Wed, 02 Jul 2025 10:24:05 -0700 (PDT)
-Received: from redhat.com ([2a0d:6fc0:152e:1400:856d:9957:3ec3:1ddc])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454a9972d83sm3773415e9.11.2025.07.02.10.24.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Jul 2025 10:24:05 -0700 (PDT)
-Date: Wed, 2 Jul 2025 13:24:02 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-	stefanha@redhat.com, alok.a.tiwari@oracle.com,
-	Parav Pandit <parav@nvidia.com>, virtualization@lists.linux.dev
-Subject: Re: [PATCH RFC v3] pci: report surprise removal event
-Message-ID: <20250702132314-mutt-send-email-mst@kernel.org>
-References: <1eac13450ade12cc98b15c5864e5bcd57f9e9882.1751440755.git.mst@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A7C1664C6;
+	Wed,  2 Jul 2025 17:27:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.52
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751477226; cv=fail; b=N+zXp27ll6CCb+s54jp7/d4kSRRcgESnO5/Vx6BttrnJ/GpcfLRLrV+JqkJLU9S3ZFcGmB4vjdZXZeyrIUJny4fUjoP0yRDZl4gEUTDth4iD6bjuuuX6tf6zfRGo+yj12hMx54fp+C0C8fd2lAVAFTb5vFR2gpoaV47oN8DpMrc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751477226; c=relaxed/simple;
+	bh=Uj0/keuQaTQG0MCuK9lX8Ug3HyLCW38J8FAKxI6n/eE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Q5wF2RcVzPhNRvjhSMuxnI/+Sdxm4Eq0b9Znmmf2RYIjklBIFSIoIkRo8p4taP72PyJmQrB862bcU2ljG+WvAUos9JESIKvHr86z2njUbCfQw7qOM57dnrarZQ3GNttRb1I/mgSMble1N2dhFnytywYXSTdWvEuzOqq5Fbk9EjE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=OBE855KH; arc=fail smtp.client-ip=40.107.223.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QxgUmTmuw6cpHPF4NtZIJi1uBT4l5QOA2PEpVd7dg7VHCvmzi7RUsyKn2az0SkutO4SB66nKYkf3aGKwictEy7BSp01nsGl+KubjznQDLXG3fXANs7p1MjM09hrwEWzbH3Mcizl9kxp52DITWsYJHWHZXqSH3m7eUxhThVeHk7XqULTIIsuNo0Up/NOyUrdVocQwMS1/woUwevLfSIPdnTDtRGECjNdSObF5ahvIexex3LWdEvdxbZSKDOmEnwJbth0IHJf1Wfp28NdL2yoLsb/N6mJOBH9dsaW1e8KD8/WTOaap7TvhGTyoLE6pYPT8MyWMF+nZccfzb+7iURsTOQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=dFWLzwxF+We65ejBgKtQ0ZK/Qzwfr+EZYdOVC3SRBwg=;
+ b=G8E2FJEB7n1/CXirsPj/Nb/NT8SHzK0qOEEc311yBD3lA8482LJvSlinE0VCbV/saYyCLaRRTmJzw7db1b6pBOZ8rDCHAO/FIt2vvH/yf/6c0LcseG/dzZBj5EDPrxsSaSTtg0i40nLtEwKjDf0OOM5bCU691KjfKlpVTPJbg+GsVGanTOzmqVZ0UmfKhjPD8v508AuseGIgAnZ2kCCHEB9Lw4RxapI11XfAnO3PkM4JlqLZkfyzBqjRMKqgAOTpkUqtavjO/Qb2eGFylsye23PgrngQxDOZ75q0uPZQsdFWfvK88gv29VEMqIY+e4VYq3r9RY++sPHk/7Nt7Ux4eQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=google.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dFWLzwxF+We65ejBgKtQ0ZK/Qzwfr+EZYdOVC3SRBwg=;
+ b=OBE855KHx1auLjxQrnC1OhqadVvuJW7RkaBHZyJbC8jov7bTuBb3FBCY4vgAfPtT+88sPp2lU9ty8j/WAjuc3CHHQnUCOhug+rUtPdoyPYpK1K1Q0Btej773jOvo4Mou6Jn3Tw2o2PB3P4eoOuvzOn40UOMfleQujZ/EJXCx0cvZ768lFoItmlrV4kPoOaFFzabhqLaQBsfm/QS28NpymvJiamP231apwwLHthD7JAhw9STPn29NaZoyYUZEZQqpCDI152voFWh4MTozgxVoAQONwNoV01tzbSN4GKq294R2NBDN5ABvh8c0SnxHJTikdL4WOOM7Yu3oN1RYqTEz2Q==
+Received: from BN0PR04CA0173.namprd04.prod.outlook.com (2603:10b6:408:eb::28)
+ by SN7PR12MB7321.namprd12.prod.outlook.com (2603:10b6:806:298::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8857.29; Wed, 2 Jul
+ 2025 17:27:03 +0000
+Received: from BN1PEPF00004681.namprd03.prod.outlook.com
+ (2603:10b6:408:eb:cafe::56) by BN0PR04CA0173.outlook.office365.com
+ (2603:10b6:408:eb::28) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8901.20 via Frontend Transport; Wed,
+ 2 Jul 2025 17:27:02 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ BN1PEPF00004681.mail.protection.outlook.com (10.167.243.87) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8901.15 via Frontend Transport; Wed, 2 Jul 2025 17:27:02 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 2 Jul 2025
+ 10:26:40 -0700
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Wed, 2 Jul
+ 2025 10:26:39 -0700
+Received: from f42.dev-l-178 (10.127.8.9) by mail.nvidia.com (10.129.68.10)
+ with Microsoft SMTP Server id 15.2.1544.14 via Frontend Transport; Wed, 2 Jul
+ 2025 10:26:35 -0700
+From: Dragos Tatulea <dtatulea@nvidia.com>
+To: <almasrymina@google.com>, <asml.silence@gmail.com>, "David S. Miller"
+	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman
+	<horms@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>, Jens Axboe
+	<axboe@kernel.dk>, Saeed Mahameed <saeedm@nvidia.com>, Tariq Toukan
+	<tariqt@nvidia.com>, Leon Romanovsky <leon@kernel.org>
+CC: Dragos Tatulea <dtatulea@nvidia.com>, <cratiu@nvidia.com>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<io-uring@vger.kernel.org>, <linux-rdma@vger.kernel.org>
+Subject: [RFC net-next 0/4] devmem/io_uring: Allow devices without parent PCI device
+Date: Wed, 2 Jul 2025 20:24:22 +0300
+Message-ID: <20250702172433.1738947-1-dtatulea@nvidia.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1eac13450ade12cc98b15c5864e5bcd57f9e9882.1751440755.git.mst@redhat.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN1PEPF00004681:EE_|SN7PR12MB7321:EE_
+X-MS-Office365-Filtering-Correlation-Id: cf1e31ab-d63e-4769-b5b1-08ddb98da8c9
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|7416014|82310400026|376014|1800799024|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?dgmnHkGxar6wFWnBYRzf66OmjIoUWc4UbjXkhGU80vHCToq5q9rOe345PJ8u?=
+ =?us-ascii?Q?lLEMDayIxqyQe/t3BvEqN0szY0DNAFZMYDXlKBIcZegON1pexPqda3HZnSK4?=
+ =?us-ascii?Q?6X5MKRfC7sD6tZnZLLcqNUGOiiN/9UwCSzgMhJBwziSdo5wATjc+DBbjRM57?=
+ =?us-ascii?Q?UrOzMKjo+QyZ3z92kOCcBWdt/wpTr585KuRp9hQIznI7w+uKqhbmMpmQcX5k?=
+ =?us-ascii?Q?H7itBfNJ68ZUFxfK/beP8MUszlYRplsy7R+hG1/obz3G7wyKuQkGY8D46fid?=
+ =?us-ascii?Q?zy+9jO/l98iHat/gDfLW5rTTAcOtD2nFcf5s/OwexKKcfn1G63HWWSVsPHC3?=
+ =?us-ascii?Q?P0XO1cXAzWNOIPy5SUjCo361sCgfbceoucZgy/+lfEcrcVG/zjU2JbCiTSGf?=
+ =?us-ascii?Q?tE5n16PfA2QRatK7GpPLa3DdxEbxAf5iEVlj+vS0U8CUeMxIw3ejZoBOuk1f?=
+ =?us-ascii?Q?xZnUirShlI7J2EfwJ6b1hNMMuyullqw06unFVIxuYIUGvixRnjp1cHEJl2lK?=
+ =?us-ascii?Q?WVzyV2kl3qziB2GdMiSdxL52ZgBLFt8RJMSB+OCgy8TOfFN2h5PFrINUt1ml?=
+ =?us-ascii?Q?RJOmAe67CoytG28MAIw9S3mRzyMyHy+qlaIzraUbA/EIA0ml76Es46jgo6JC?=
+ =?us-ascii?Q?Bns6koahiO2D6LP9BjIXddnYfJh9GvpS14nDYsLu6WNPYXsuBXwSFHO+7A0r?=
+ =?us-ascii?Q?fXM923CjngAZ/dP01/oYsGm96GbfaWVPEP4/DU2ELBblPrRaOVjvo7ok7E80?=
+ =?us-ascii?Q?GaHEPBSiw+k+PMpcOJ38t15ZM3yXMv0LcESdJwV3OvK5fu2IrDBZh78+vGsH?=
+ =?us-ascii?Q?9ZOc6c5wjYCUAD3d8/ChRD/xL3UpYWXra/YNZ0LQqE4eBpiRDjb9+YJqFv44?=
+ =?us-ascii?Q?bh8x1X4JEzE8EZ5dBVq0JZArphYiXuuf871QGLod9MYt1ihSngDZ08T0SYTd?=
+ =?us-ascii?Q?Xw8Lx4hh1zt8rPn3FZJuBk31sM/Gozzgj7aY3HwB8zAdVHNIRG/myisQnJ8R?=
+ =?us-ascii?Q?fXHWXD+dLCJAx20ACvYKMnpk8XHKpoQfa3C9+qPukRLl/X7HRgXJ9YD86Vtu?=
+ =?us-ascii?Q?DIVUgaPI+aFIfy6nkcf7hLSaIFCOkG1ckbQ5x4I6dgScORiDO94Am8/CYSl/?=
+ =?us-ascii?Q?Y3VtMlFPuCMauGVL7mBUPMI43mPcI+kmycaz9mtWHCu1icO3VRRNrjVSGrMs?=
+ =?us-ascii?Q?FiihHN4oiaFPNAAb7av1UjIOo+IyPsv/Ur2U9CCFusau/YH3t1XmFecMPA7x?=
+ =?us-ascii?Q?D/15WxllgTt5UQDNUSrYDqDmwYPDN5qnyrLKzgeyS62VC0ACtVTzfcqts/Gk?=
+ =?us-ascii?Q?2/zwSXJ2atHsbSyKzaggDLRUDFgCjX1OyI0ftGWeWL/+5z0Pv/4Vgm7S9DwV?=
+ =?us-ascii?Q?6FlxJKuLdaCx1kBxxwCDw7qXoYZBl5tlGFjssRS/CjWiHzQ3Yw+q9TTvCSHt?=
+ =?us-ascii?Q?DdCXM+3TdctcdMQBP4XoR+TxPDwwkRjAXMRRWjLQLr1F4Nuq7VlZcFndYsfx?=
+ =?us-ascii?Q?sjfAa6iwIA2DDUN9wpSxjPQijJE3IGDqrqnc+VpN6yV5fl9USLmKa2gPPg?=
+ =?us-ascii?Q?=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(7416014)(82310400026)(376014)(1800799024)(921020);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Jul 2025 17:27:02.7960
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: cf1e31ab-d63e-4769-b5b1-08ddb98da8c9
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN1PEPF00004681.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7321
 
-On Wed, Jul 02, 2025 at 03:20:52AM -0400, Michael S. Tsirkin wrote:
-> At the moment, in case of a surprise removal, the regular remove
-> callback is invoked, exclusively.  This works well, because mostly, the
-> cleanup would be the same.
-> 
-> However, there's a race: imagine device removal was initiated by a user
-> action, such as driver unbind, and it in turn initiated some cleanup and
-> is now waiting for an interrupt from the device. If the device is now
-> surprise-removed, that never arrives and the remove callback hangs
-> forever.
-> 
-> For example, this was reported for virtio-blk:
-> 
-> 	1. the graceful removal is ongoing in the remove() callback, where disk
-> 	   deletion del_gendisk() is ongoing, which waits for the requests +to
-> 	   complete,
-> 
-> 	2. Now few requests are yet to complete, and surprise removal started.
-> 
-> 	At this point, virtio block driver will not get notified by the driver
-> 	core layer, because it is likely serializing remove() happening by
-> 	+user/driver unload and PCI hotplug driver-initiated device removal.  So
-> 	vblk driver doesn't know that device is removed, block layer is waiting
-> 	for requests completions to arrive which it never gets.  So
-> 	del_gendisk() gets stuck.
-> 
-> Drivers can artificially add timeouts to handle that, but it can be
-> flaky.
-> 
-> Instead, let's add a way for the driver to be notified about the
-> disconnect. It can then do any necessary cleanup, knowing that the
-> device is inactive.
-> 
-> Since cleanups can take a long time, this takes an approach
-> of a work struct that the driver initiates and enables
-> on probe, and tears down on remove.
-> 
-> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-> ---
-> 
+The io_uring and devmem code is assuming that the parent device of the
+netdev is a DMA capable device. This is not always the case.
 
-Parav what do you think of this patch? This you can try
-using this in virtio blk to address the hang you
-reported?
+Some devices do have a DMA capable device that can be used, but not as
+parent: mlx5 SFs have an auxdev as parent, but they do have an
+associated PCI device.
 
-> Compile tested only.
-> 
-> Note: this minimizes core code. I considered a more elaborate API
-> that would be easier to use, but decided to be conservative until
-> there are multiple users.
-> 
-> changes from v2
-> 	v2 was corrupted, fat fingers :(
-> 
-> changes from v1:
->         switched to a WQ, with APIs to enable/disable
->         added motivation
-> 
-> 
->  drivers/pci/pci.h   |  6 ++++++
->  include/linux/pci.h | 27 +++++++++++++++++++++++++++
->  2 files changed, 33 insertions(+)
-> 
-> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-> index b81e99cd4b62..208b4cab534b 100644
-> --- a/drivers/pci/pci.h
-> +++ b/drivers/pci/pci.h
-> @@ -549,6 +549,12 @@ static inline int pci_dev_set_disconnected(struct pci_dev *dev, void *unused)
->  	pci_dev_set_io_state(dev, pci_channel_io_perm_failure);
->  	pci_doe_disconnected(dev);
->  
-> +	if (READ_ONCE(dev->disconnect_work_enable)) {
-> +		/* Make sure work is up to date. */
-> +		smp_rmb();
-> +		schedule_work(&dev->disconnect_work);
-> +	}
-> +
->  	return 0;
->  }
->  
-> diff --git a/include/linux/pci.h b/include/linux/pci.h
-> index 51e2bd6405cd..b2168c5d0679 100644
-> --- a/include/linux/pci.h
-> +++ b/include/linux/pci.h
-> @@ -550,6 +550,10 @@ struct pci_dev {
->  	/* These methods index pci_reset_fn_methods[] */
->  	u8 reset_methods[PCI_NUM_RESET_METHODS]; /* In priority order */
->  
-> +	/* Report disconnect events */
-> +	u8 disconnect_work_enable;
-> +	struct work_struct disconnect_work;
-> +
->  #ifdef CONFIG_PCIE_TPH
->  	u16		tph_cap;	/* TPH capability offset */
->  	u8		tph_mode;	/* TPH mode */
-> @@ -2657,6 +2661,29 @@ static inline bool pci_is_dev_assigned(struct pci_dev *pdev)
->  	return (pdev->dev_flags & PCI_DEV_FLAGS_ASSIGNED) == PCI_DEV_FLAGS_ASSIGNED;
->  }
->  
-> +/*
-> + * Caller must initialize @pdev->disconnect_work before invoking this.
-> + * Caller also must check pci_device_is_present afterwards, since
-> + * if device is already gone when this is called, work will not run.
-> + */
-> +static inline void pci_set_disconnect_work(struct pci_dev *pdev)
-> +{
-> +	/* Make sure WQ has been initialized already */
-> +	smp_wmb();
-> +
-> +	WRITE_ONCE(pdev->disconnect_work_enable, 0x1);
-> +}
-> +
-> +static inline void pci_clear_disconnect_work(struct pci_dev *pdev)
-> +{
-> +	WRITE_ONCE(pdev->disconnect_work_enable, 0x0);
-> +
-> +	/* Make sure to stop using work from now on. */
-> +	smp_wmb();
-> +
-> +	cancel_work_sync(&pdev->disconnect_work);
-> +}
-> +
->  /**
->   * pci_ari_enabled - query ARI forwarding status
->   * @bus: the PCI bus
-> -- 
-> MST
+Also, if DMA is not supported the operation should be blocked. Otherwise
+the mapping will return success with 0 mapped entries and the caller
+will consider the mapping as succesful.
+
+This RFC is supposed to start the discussion on the best way to:
+- Block the binding operation early if not supported.
+- Allow devices that support this usecase but don't have a
+  parent device as a PCI device.
+
+Dragos Tatulea (4):
+  net: Allow non parent devices to be used for ZC DMA
+  io_uring/zcrx: Use the new netdev_get_dma_dev() API
+  net: devmem: Use the new netdev_get_dma_dev() API
+  net/mlx5e: Enable HDS zerocopy flows for SFs
+
+ drivers/net/ethernet/mellanox/mlx5/core/en_main.c |  3 +++
+ include/linux/netdevice.h                         | 13 +++++++++++++
+ io_uring/zcrx.c                                   |  2 +-
+ net/core/devmem.c                                 | 10 +++++++++-
+ 4 files changed, 26 insertions(+), 2 deletions(-)
+
+-- 
+2.50.0
 
 
