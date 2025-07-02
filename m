@@ -1,86 +1,62 @@
-Return-Path: <linux-kernel+bounces-712934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-712936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27B94AF10C0
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 11:57:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6A9EAF10C8
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 11:58:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E01A97A16A6
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 09:55:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BC34170EB9
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 09:58:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5EF2247DEA;
-	Wed,  2 Jul 2025 09:57:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13833248F5F;
+	Wed,  2 Jul 2025 09:58:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CRbNUBRd"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="LcgduZoe"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EF7D1E5B6D
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 09:57:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE83821B9D6;
+	Wed,  2 Jul 2025 09:58:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751450235; cv=none; b=JXvYjHQbm058T8mnD/U85oXuFO9TinL+TjIUviOdflw8UzNFENasJOMwRAG6SrQPR4+zpvJJkpE8YIDf6oFf/YdCcpY2idO94elXlSsNgywf5cM6ynTHVYZAakTd8KMI2otK2HtYe2EcPLV5DrxabA5NXHd5XkJnAuL/OQpBpY0=
+	t=1751450300; cv=none; b=AbumCCRnpoa7iaPgKPgr9ZCHbNLJpUegSefsEGJE7AQI9XUHks6vVgWOwVEpQW620I5+NhQ004LWcyDwaiBijqSLLumhtCyzWgS2rrNODIVPvqJWYAVG2rw9RD4X16QsIv4ZUIyswQOvZhbVhMT13tBfxI1dYlQ5OYxOXpOErC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751450235; c=relaxed/simple;
-	bh=IbmoAK6KfNMGR09htAo693uG5h39ZwlNorBNKuR9ldA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Z82C6zsOv4LvmxQJh45wNo9RzfFpMed3DX+sC8V0gb0yLTrFWBprE3mYy0AujRPvxcHam8ACzAxZjYz7jB32y8JK0V+n6AGN9dhybC9gzePHbkRgGR+rJ64iKjdWwAFBy444GuNA/Ovm59JsFMIC0uhAgHM67IbfRKNd+NTuWo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CRbNUBRd; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1751450233;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=B3XTbmiJEq13XDHOk1FZ1KuGU85tSUiXUu+TUSHg/gY=;
-	b=CRbNUBRdrd8Ni/aMt+1leocvGlTp/5jzIcGFO+nOB/tgh8DkqWvvknolI9MtI2qbJlg+Rl
-	L+V4pcgE/gQ6alGmej/xCuo8fHOGc86FIRRhZc2i0eekY/QBsRm7uROtEF2whjMzrmaNLc
-	2eXd2yIESaRO2c0bnkGWGthr78R+VtI=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-653-pAoU34iFMd26ZVdAZkS3qQ-1; Wed, 02 Jul 2025 05:57:12 -0400
-X-MC-Unique: pAoU34iFMd26ZVdAZkS3qQ-1
-X-Mimecast-MFC-AGG-ID: pAoU34iFMd26ZVdAZkS3qQ_1751450231
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-450d6768d4dso25230425e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 02:57:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751450231; x=1752055031;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=B3XTbmiJEq13XDHOk1FZ1KuGU85tSUiXUu+TUSHg/gY=;
-        b=r30i58oyVLNPayiX9g3QCV+asxliNG4G6V4vHc0J6VWqzLQr7LPhNcPUJ/LJrYbZ9O
-         MGxHGQR67hYJ7ELDEzHW73r46mLm8gVuNGTUdO1ePZ5FRkGa1KFehAhQ8LgNWPdG5Xvs
-         q+jYOtbjZJmetodaBbGdLNDJZcMsZOrJnKAsDYkqKXumyVPJ4BXPxFvkPjtrUhTdu6UN
-         9KQSmtSzaQMYNLzATAQhvRDLrEqT8/UJI0kZZfnJCgdaDFEmcc4rHvupZ/cAGvyi8RT0
-         CiqxR3noDhnvY/5GpP5oB49Im4DEK254ZB/juq2c6bmldG36Xup9nyOQ+UGy/v6mtkLI
-         vk1w==
-X-Forwarded-Encrypted: i=1; AJvYcCWTAq/+qt2DLqMgyXZzwEOlAWvcUT9j/fmEVzo8WhRO5G+bOnTX8XpZELiZNbfuK9ylIi+KbwMkRVECNNY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqhkPrilg/vir5g4wsiGDqEzBOI85Y0QDDvk7j39cLspUrHYZ+
-	LLVc+IWXeEY14a+kZV1FAIfit8pcB89kSKKxSsAipSpRyyEULhmzsGhj/+67wGVLZ/YBTsHCFqP
-	AfA8IxpfxSWJt/agDhygTPjKB2jOnhEeSJgtLB4r0FgJGotY9zZByZ19csmPr9SsHkg==
-X-Gm-Gg: ASbGncvhFLxDSY75Byl1wsQBQG44V5GCchQV6PrIqMCIf1PL75R/3oomRlbte781A3c
-	vkoTy7sI/9y3/8aqQSUaxx2ho7hoDfS0ogW3afZqugTmrD5z7P8kSycc70T/MLlytqFpFwppUNG
-	4r5xh+gcoxLz72B9TBxuQSHTzfNnvicekcly8w//e0VFHzbzla4n4TLOQNrLERY5YLrO0jW2sF1
-	baLuZwpJkw9pgQVsjMS/hR5DlbkMJQ2HFcXSfc64IYWRLNPp7hoi/GNch5+XRzGpiPkcVztB6ig
-	MqfR/IeLN1NDOje1qJhwzI4NpJO49twSjrU/STOJWtGFSofON2AQ01A=
-X-Received: by 2002:a05:600c:3b9c:b0:450:ceb2:67dd with SMTP id 5b1f17b1804b1-454a3741524mr19163515e9.33.1751450230692;
-        Wed, 02 Jul 2025 02:57:10 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGzP2YqoikjnnEh7eg0FezTi1nGNM4xV41MMHvMv78Y0WVESxCQVeHHMmC0Qpwtmi+C46p2Xw==
-X-Received: by 2002:a05:600c:3b9c:b0:450:ceb2:67dd with SMTP id 5b1f17b1804b1-454a3741524mr19163235e9.33.1751450230171;
-        Wed, 02 Jul 2025 02:57:10 -0700 (PDT)
-Received: from ?IPV6:2a09:80c0:192:0:5dac:bf3d:c41:c3e7? ([2a09:80c0:192:0:5dac:bf3d:c41:c3e7])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a88c7fa5easm15334671f8f.26.2025.07.02.02.57.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Jul 2025 02:57:09 -0700 (PDT)
-Message-ID: <c1144447-6b67-48d3-b37c-5f1ca6a9b4a7@redhat.com>
-Date: Wed, 2 Jul 2025 11:57:08 +0200
+	s=arc-20240116; t=1751450300; c=relaxed/simple;
+	bh=yfplu+IybJ/rIPsisymgLSYrMZAW+veThvWdMZBknTo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ozsfG7WkqUN95I1/JfxBuzOUix/4llYkDz1FHORJ3p2IH1b0BA7D1+N/rgNQFxAuMr0M+QoDRlh6UKdiQuQ933xbfqLd8suULIm1UvXNPBrLouqYkQCCppLvnFFh0VCOFyo51JgihuZTmFr6gFl8b9NNzKMKJ0sw6ozFNsTBG0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=LcgduZoe; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5626OK2d025364;
+	Wed, 2 Jul 2025 09:58:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	TlTuoRYc85ZU1I6UU0g5G25mTjIeRsMqpm0KeSXhRkM=; b=LcgduZoeVX5rSk56
+	E1GhlJ/9xVNDKSdRfOKVR5x9wa2C+ujrj3uEAxL8k1nvt++VaqFMIJrn/6Scg/Zh
+	Q4a3QgEFBnPn2OcLy3ZTfptbNXmKOvLQPsX/xc/LMB9wwE7WNjwTgMGPoA/M9G4z
+	EIyFKxVmKfX54Aolc7deecQXOjLnoH2xpQrxBsOWGROkI+UQNa03ZdBlsWBeMsUn
+	fEvhvsyPaaaqj+bT7FX3JO2JT8Jf/OReUO69IxgQhMVhlUzGrz7SlrPnDjxrWo0U
+	20a2dqpLwRGx2w/3PZWRtb0oW1eSIiOs+sD3T0W/OroMlOWdviAnx72APAmN1lt2
+	zsWbLA==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47kd64sbd5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 02 Jul 2025 09:58:13 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5629wCZX011929
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 2 Jul 2025 09:58:12 GMT
+Received: from [10.216.7.186] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Wed, 2 Jul
+ 2025 02:58:04 -0700
+Message-ID: <25808d55-7633-4986-9e32-58571c149af9@quicinc.com>
+Date: Wed, 2 Jul 2025 15:27:16 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,143 +64,132 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/4] vfio/type1: optimize vfio_pin_pages_remote() and
- vfio_unpin_pages_remote() for large folio
-To: lizhe.67@bytedance.com
-Cc: alex.williamson@redhat.com, jgg@nvidia.com, jgg@ziepe.ca,
- kvm@vger.kernel.org, linux-kernel@vger.kernel.org, peterx@redhat.com
-References: <6508ccf7-5ce0-4274-9afb-a41bf192d81b@redhat.com>
- <20250702093824.78538-1-lizhe.67@bytedance.com>
-From: David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH] arm64: dts: qcom: sc7280: Add support for two additional
+ DDR frequencies
+To: Trilok Soni <quic_tsoni@quicinc.com>,
+        <cros-qcom-dts-watchers@chromium.org>, <andersson@kernel.org>,
+        <konradybcio@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <kernel@quicinc.com>
+References: <20250701074334.1782967-1-quic_pussin@quicinc.com>
+ <0c0e3732-54e3-4a4c-ac44-3175180298fd@quicinc.com>
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20250702093824.78538-1-lizhe.67@bytedance.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Pushpendra Singh <quic_pussin@quicinc.com>
+In-Reply-To: <0c0e3732-54e3-4a4c-ac44-3175180298fd@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=Z+PsHGRA c=1 sm=1 tr=0 ts=686502b5 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=COk6AnOGAAAA:8
+ a=EUspDBNiAAAA:8 a=nyc-0TqUprqe_HWS510A:9 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzAyMDA4MCBTYWx0ZWRfX49r1PhZq7//f
+ p/J9J8b4aBdDrm2cp0riOOFs4+vWckxCadEQD6d7+WlCMkjQes7+E1YwMtdW2z32T75lvu26wuv
+ 6ic/7cOLTGP8eyZTzxPWB6jZmCWzrz0Nu4IEXFbM6TfhZGJ9hQidI4Yu4VWlwbAjH0yhLDZNL6F
+ 8eOvPxTDVQYSGyFbpSX+9CZ56dWyhr5w1HE05WtoPjWFTd8u1/YYTsG5IYJN08iaMgQfnxn7isG
+ JeTtZBZtI2VCLdLUzT0pcPooR5Sdrq94PadQ2NN7mpZRugRAmbtRgcoXbVurzeuFO1hF4MzTuyP
+ 4Sanm9apekfAYrtEez+rodDnSAonxSH5aVHDERKfTXqrksb22W3Pgw9TVCVH134JgQtLwAOqo5s
+ /IUNx++6R6GLJd4Vt76cpK7g2hyLbpPaDqYgbYF/tF+9x6Ix3Qspy95b6KnXgX451TrzDtwE
+X-Proofpoint-GUID: Jho3U1duj_7gvC2OaP6Wi2uybEi8GMo_
+X-Proofpoint-ORIG-GUID: Jho3U1duj_7gvC2OaP6Wi2uybEi8GMo_
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-02_01,2025-06-27_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 lowpriorityscore=0 clxscore=1015 malwarescore=0 mlxlogscore=954
+ spamscore=0 adultscore=0 mlxscore=0 priorityscore=1501 bulkscore=0
+ impostorscore=0 suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507020080
 
-On 02.07.25 11:38, lizhe.67@bytedance.com wrote:
-> On Wed, 2 Jul 2025 10:15:29 +0200, david@redhat.com wrote:
-> 
->> Jason mentioned in reply to the other series that, ideally, vfio
->> shouldn't be messing with folios at all.
+On 7/1/2025 11:43 PM, Trilok Soni wrote:
+> On 7/1/2025 12:43 AM, Pushpendra Singh wrote:
+>> Cc: kernel@quicinc.com, kernel@oss.qualcomm.com
 >>
->> While we now do that on the unpin side, we still do it at the pin side.
+>> The SC7280 SoC now supports two additional frequencies. This patch
+>> add those frequencies to the BWMON OPP table and updates the frequency
+>> mapping table accordingly.
+>>
+>> These changes do not impact existing platforms, as the updated mapping
+>> only affects the highest OPP. On any given platform, this will continue
+>> to vote for the maximum available OPP.
+>>
+>> Change-Id: Id3a91e065c49848d9af18e5c3edee0836cb693e5
 > 
-> Yes.
+> Why Change-Id? 
+
+CC is a typo and fixed the Change-id in V2.
+
+>> Signed-off-by: Pushpendra Singh <quic_pussin@quicinc.com>
+>> ---
+>>  arch/arm64/boot/dts/qcom/sc7280.dtsi | 18 ++++++++++++------
+>>  1 file changed, 12 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/sc7280.dtsi b/arch/arm64/boot/dts/qcom/sc7280.dtsi
+>> index 64a2abd30100..cb945abf0475 100644
+>> --- a/arch/arm64/boot/dts/qcom/sc7280.dtsi
+>> +++ b/arch/arm64/boot/dts/qcom/sc7280.dtsi
+>> @@ -620,12 +620,12 @@ cpu4_opp_2208mhz: opp-2208000000 {
+>>  
+>>  		cpu4_opp_2400mhz: opp-2400000000 {
+>>  			opp-hz = /bits/ 64 <2400000000>;
+>> -			opp-peak-kBps = <8532000 48537600>;
+>> +			opp-peak-kBps = <12787200 48537600>;
+>>  		};
+>>  
+>>  		cpu4_opp_2611mhz: opp-2611200000 {
+>>  			opp-hz = /bits/ 64 <2611200000>;
+>> -			opp-peak-kBps = <8532000 48537600>;
+>> +			opp-peak-kBps = <12787200 48537600>;
+>>  		};
+>>  	};
+>>  
+>> @@ -685,22 +685,22 @@ cpu7_opp_2381mhz: opp-2380800000 {
+>>  
+>>  		cpu7_opp_2400mhz: opp-2400000000 {
+>>  			opp-hz = /bits/ 64 <2400000000>;
+>> -			opp-peak-kBps = <8532000 48537600>;
+>> +			opp-peak-kBps = <12787200 48537600>;
+>>  		};
+>>  
+>>  		cpu7_opp_2515mhz: opp-2515200000 {
+>>  			opp-hz = /bits/ 64 <2515200000>;
+>> -			opp-peak-kBps = <8532000 48537600>;
+>> +			opp-peak-kBps = <12787200 48537600>;
+>>  		};
+>>  
+>>  		cpu7_opp_2707mhz: opp-2707200000 {
+>>  			opp-hz = /bits/ 64 <2707200000>;
+>> -			opp-peak-kBps = <8532000 48537600>;
+>> +			opp-peak-kBps = <12787200 48537600>;
+>>  		};
+>>  
+>>  		cpu7_opp_3014mhz: opp-3014400000 {
+>>  			opp-hz = /bits/ 64 <3014400000>;
+>> -			opp-peak-kBps = <8532000 48537600>;
+>> +			opp-peak-kBps = <12787200 48537600>;
+>>  		};
+>>  	};
+>>  
+>> @@ -4013,6 +4013,12 @@ opp-6 {
+>>  				opp-7 {
+>>  					opp-peak-kBps = <8532000>;
+>>  				};
+>> +				opp-8 {
+>> +					opp-peak-kBps = <10944000>;
+>> +				};
+>> +				opp-9 {
+>> +					opp-peak-kBps = <12787200>;
+>> +				};
+>>  			};
+>>  		};
+>>  
 > 
->> Which makes me wonder if we can avoid folios in patch #1 in
->> contig_pages(), and simply collect pages that correspond to consecutive
->> PFNs.
 > 
-> In my opinion, comparing whether the pfns of two pages are contiguous
-> is relatively inefficient. Using folios might be a more efficient
-> solution.
-
-	buffer[i + 1] == nth_page(buffer[i], 1)
-
-Is extremely efficient, except on
-
-	#if defined(CONFIG_SPARSEMEM) && !defined(CONFIG_SPARSEMEM_VMEMMAP)
-
-Because it's essentially
-
-	buffer[i + 1] == buffer[i] + 1
-
-But with that config it's less efficient
-
-	buffer[i + 1] == pfn_to_page(page_to_pfn(buffer[i]) + 1)
-
-That could be optimized (if we care about the config), assuming that we don't cross
-memory sections (e.g., 128 MiB on x86).
-
-See page_ext_iter_next_fast_possible(), that optimized for something similar.
-
-So based on the first page, one could easily determine how far to batch
-using the simple
-
-	buffer[i + 1] == buffer[i] + 1
-
-comparison.
-
-That would mean that one could exceed a folio, in theory.
-
-> 
-> Given that 'page' is already in use within vfio, it seems that adopting
-> 'folio' wouldn't be particularly troublesome? If you have any better
-> suggestions, I sincerely hope you would share them with me.
-
-One challenge in the future will likely be that not all pages that we can
-GUP will belong to folios. We would possibly be able to handle that by
-checking if the page actually belongs to a folio.
-
-Not dealing with folios where avoidable would be easier.
-
-> 
->> What was the reason again, that contig_pages() would not exceed a single
->> folio?
-> 
-> Regarding this issue, I think Alex and I are on the same page[1]. For a
-> folio, all of its pages have the same invalid or reserved state. In
-> the function vfio_pin_pages_remote(), we need to ensure that the state
-> is the same as the previous pfn (through variable 'rsvd' and function
-> is_invalid_reserved_pfn()). Therefore, we do not want the return value
-> of contig_pages() to exceed a single folio.
-
-If we obtained a page from GUP, is_invalid_reserved_pfn() would only trigger
-for the shared zeropage. but that one can no longer be returned from FOLL_LONGTERM.
-
-So if you know the pages came from GUP, I would assume they are never invalid_reserved?
-
-Again, just a thought on how to apply something similar as done for the unpin case, avoiding
-messing with folios.
-
--- 
-Cheers,
-
-David / dhildenb
 
 
