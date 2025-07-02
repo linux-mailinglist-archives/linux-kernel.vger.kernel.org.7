@@ -1,176 +1,142 @@
-Return-Path: <linux-kernel+bounces-714033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 665D1AF6229
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 20:59:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08895AF6209
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 20:57:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22EA24A07C0
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 18:59:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26F64523D3C
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 18:57:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5FB12DF3D9;
-	Wed,  2 Jul 2025 18:59:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D7832BE634;
+	Wed,  2 Jul 2025 18:57:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rI+mAvpv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l5dIntmv"
+Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AD062BE652;
-	Wed,  2 Jul 2025 18:59:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AC842F7CE2;
+	Wed,  2 Jul 2025 18:57:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751482751; cv=none; b=RgL2USYlYeRVZDKV3jvvMFSNOvR5WKjhipqmbwhDVAbwvkl/RM7jXmiBt5gtUJ716rcl4iTonJZwf6Qv33Ggi0esKLpI70m6hLgRD+r4hQ6nfCTFQXLeaGL6nQeI1FHNODjot+LNCxIaIKEVhOeidosuK3xB0OASjTamurA8tc4=
+	t=1751482635; cv=none; b=T0G3roFewziXUqwpaUGNVvi1vPR0S6pxxggD3g13Dn0IgkkoJOMTf9HpwyCkaTQfYxgUuvpUJ4juMXkkuvaA/pHx7GZdXDWpejia5hUQE2cSfzd3Wst03BiVNn2bBkq7wPIUmbwhcxt2wW0oBfAmm2T7//lLMDTVhqxzv/qnL38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751482751; c=relaxed/simple;
-	bh=G9ajOubBK0mV1nv4EGWaDIXhIH3bnL8BAka8nigN7uQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Pl2zrw8M6kVGk8p3vHQv9E6icBH7z3ghFzXbfAzgJKSpN2Cmp/P6emHQiCKFALjPIxKx6U0bXwK876aW+nUwHOk9+ZTnFW+fRCd2PDP013SbMjLO8dJe8W9MS6o9RL+V4Y1PTPIDxyFip4fS1N+kzL8yThIdH4cnekES0EQAapY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rI+mAvpv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id A5D15C4CEF8;
-	Wed,  2 Jul 2025 18:59:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751482750;
-	bh=G9ajOubBK0mV1nv4EGWaDIXhIH3bnL8BAka8nigN7uQ=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=rI+mAvpvrft9HnBl0xgdMLu13XjHSyZsrQv/vTQtLUXnp24R4Bjfn883IdT3LjWYI
-	 W88bLL5qbf351oioDpzVZv/SmNttP2ShipcJViIHH5riuylM6iIM2kBXeFt23q7Ebz
-	 OjdlAa7RR0cvRAKtKOvmF/glWaxIqqklUJOU8oc/kNpUUr1JXegCk4Qq32IUno/wWv
-	 6f+yQqZnn790RvezHvGxY5bEaNa68NF/OwsynWLgwIkVqOIUWAY2l1P07o8BO45JuZ
-	 GnjxQj5XiVk2kt7hVd4hBcgTaulObqbfettMqRQ8vkNd1tETcIfPufo/TfwAGhEEM1
-	 xomzR/VBmhXTQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98953C83038;
-	Wed,  2 Jul 2025 18:59:10 +0000 (UTC)
-From: Jens Glathe via B4 Relay <devnull+jens.glathe.oldschoolsolutions.biz@kernel.org>
-Date: Wed, 02 Jul 2025 20:59:09 +0200
-Subject: [PATCH 3/3] arm64: dts: qcom: x1-hp-x14: Add support for X1P42100
- HP Omnibook X14
+	s=arc-20240116; t=1751482635; c=relaxed/simple;
+	bh=kC3Ij0+TwzLPJxztlRCaWKRcoSyo8G6Yo4Whg2rzTmk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IeUsI+FHU6tuDjQkRJOd2tse8qvweqzo2g+gG5iJ30Io9KAGniGy3vmLMBtoMJASmW2Ngh8jbNqvBg1txMujzsRqOKahFZqJCOBhi1wsT4ZHOJos4vDtWrRNwFkP23sNRHBgMOWe5Nlo4o9grtgZ9uK3TXINsAWtqF+U4G1aNsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l5dIntmv; arc=none smtp.client-ip=209.85.222.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7d402c901cbso662829385a.3;
+        Wed, 02 Jul 2025 11:57:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751482633; x=1752087433; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=kZIAXJvKauaAlRkK7qxQW9qPzH50AGsUAE8RQQJUH+Y=;
+        b=l5dIntmv5gBD/Be/Dqr/8HjR8lnXUy71WaB8vAxr/KBygeJkh/Ult/xV5NlMMmI4ES
+         8Bua5rVADe9UY4NUj8lE0XayyFo3mkb2sTQ67UYn9jTSIR8QmUlwdeq2XJPcFHX9bgfC
+         6nGHwiEbi4G5kO4Bq2FTpYFm1/x2qMcDlFBlKMunUQrSLfVWhqNeaDgIt19KUuiNeoPn
+         fMUsps6GiiJCLpxmxR2yp5JZszSoTjJaFPjZuRq5SoGU06MC7n+bE4CqNQa6YomG2GsZ
+         BlfOKGX46jR8iYz5lZ6kRM4CDojvqmq5eiMM47q8A3gIcf48Ko4UwxOuXSC062AFQfqJ
+         da0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751482633; x=1752087433;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kZIAXJvKauaAlRkK7qxQW9qPzH50AGsUAE8RQQJUH+Y=;
+        b=eT1sBOTPc/UB5IMSKBDDHT7Q5QoQ9Ai666tY8XKE7xRPeCmPQII+6w42AGCtHaQE6b
+         EXWEwKvP8BdP9wYq86cJQ2vuJrm4klLa+Bp2Y9yuBra5lVQO4NZxTRFZMikbEKm02+1M
+         +p6lnPbpgUt/YI2Akahj4Q6kZXni3STREcfb4CTvSVE9WU5XNPfahhSWtg1b7wZagyfQ
+         cMqY96EZgBxDZlqGT4W7Ypjjt8i2R6EAoQgtxMXMUp8YdFP4/Q20xP/EavU9T7d8l0zk
+         0rlBYKAkP7lBj3S4Y/actHAL6sd1iTS+Bm7UJK5VGDD8j7RLfyATXu0NseB9lr2cuQ6u
+         Tn+w==
+X-Forwarded-Encrypted: i=1; AJvYcCWMLZzbTYm80phW/XUDd+HuKjzKsutGvRf3yiJWeG1ZRScI9NanpEbgiMaD8pOU7HxQzkgsMEm2rV3cRcki@vger.kernel.org, AJvYcCXT7SzJF0GkpuBEVs2HGj2JU0CVtBR73MRHXw4moFFkM8C6C2ZOAwpwdYjAUWt82Z6Z1YEe6Gs0wY8e@vger.kernel.org, AJvYcCXcY7XDKra33ME9vsw4oT8e1wlpK7Un6p58xuvlk4e3AQhNkbisySeyV/mzmA1NhWs8Yaydiuzo3z8o@vger.kernel.org, AJvYcCXqtdGLVkK5wP67CbgcEj810Yr+6UXMGXdN3SYJM9bCfO5Ug1r+kiJls6pMLNU/YE1vVa7gp/D8qXf8qA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyF8o8ivc6vXUNCpAARedPzMa8nHdZbhx8Q3xRpe41b4HkTrt6G
+	RFFCG7dIgrZiJiSvjuVxHrzI9SSf2wVzMTClMoBHbD2NuyrXEXj4DURu
+X-Gm-Gg: ASbGnctNcQVN7HEpDOgKuTTidPY7+CgiCvynako/jMj7eRIR1TZ5IYX0TiSTkZKdJI3
+	aY5zjP6dmMFWkOoWss29L/IGZR+J2yPE8Ndz+NydAgB6xny5C+fQcMYSfcanvn0vQMkFdTeEUrB
+	25zfogu4aABmLoo0WvI9rw9DPHX6Vlmr73PxhLSjxqGUpoOCNDGH4R5kYVFQVMp9Hlw3RpWMQ2C
+	1R+l+GRymWQMBRLQG2BYXnyJKqgUJQws24enmp60wSiptMKUFkfjSHJeYZLrz+Lo6sFTtagVrbi
+	KdTdUCdERVlxljM++xUkbsOf9YyZWMdwp5NTLxUKjQx1FsZxDe6pIJdpDgWw2nr7tegsVg==
+X-Google-Smtp-Source: AGHT+IEDEXEIqda75EtSySR3EUVNGEIZON8yl5WQFsWtxwa8n1GITiIvSiibTZKgp2uaIs7UnnNvOw==
+X-Received: by 2002:a05:620a:4489:b0:7cd:5b2a:979e with SMTP id af79cd13be357-7d5c470457emr455087985a.30.1751482632870;
+        Wed, 02 Jul 2025 11:57:12 -0700 (PDT)
+Received: from localhost ([2804:30c:b15:b200:425a:de22:1d7f:2d4b])
+        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7d443139b31sm990700685a.7.2025.07.02.11.57.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Jul 2025 11:57:12 -0700 (PDT)
+Date: Wed, 2 Jul 2025 15:59:12 -0300
+From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: Marcelo Schmitt <marcelo.schmitt@analog.com>, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, jic23@kernel.org, lars@metafoo.de,
+	Michael.Hennerich@analog.com, dlechner@baylibre.com,
+	nuno.sa@analog.com, andy@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, linus.walleij@linaro.org,
+	brgl@bgdev.pl, broonie@kernel.org, lgirdwood@gmail.com
+Subject: Re: [PATCH v7 00/12] iio: adc: Add support for AD4170 series of ADCs
+Message-ID: <aGWBgLLtOzVGwXek@debian-BULLSEYE-live-builder-AMD64>
+References: <cover.1751289747.git.marcelo.schmitt@analog.com>
+ <aGTpNNaW7cXC18Jt@smile.fi.intel.com>
+ <aGUfapky2uh2tsFt@debian-BULLSEYE-live-builder-AMD64>
+ <aGUi7r2dgnbqLOAH@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250702-hp-x14-x1p-v1-3-219356e83207@oldschoolsolutions.biz>
-References: <20250702-hp-x14-x1p-v1-0-219356e83207@oldschoolsolutions.biz>
-In-Reply-To: <20250702-hp-x14-x1p-v1-0-219356e83207@oldschoolsolutions.biz>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Jens Glathe <jens.glathe@oldschoolsolutions.biz>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1751482749; l=3024;
- i=jens.glathe@oldschoolsolutions.biz; s=20240919;
- h=from:subject:message-id;
- bh=4qMZRflZvpbOAQk9PzwxdZC2Sz1ND1a5zbEF77TvE3E=;
- b=PBDhD5Cmu3OX5b7d4hrsrMnIQPNHYlmcY7nT7/SGC8W4Wqjx2ZKP5ow6o9VKyuHJv3LXNDosI
- vuw0gwiiRtSArX/IfoSzbLSRijI01iO5TDbGun+44BfcpDJwiET6NyL
-X-Developer-Key: i=jens.glathe@oldschoolsolutions.biz; a=ed25519;
- pk=JcRJqJc/y8LsxOlPakALD3juGfOKmFBWtO+GfELMJVg=
-X-Endpoint-Received: by B4 Relay for
- jens.glathe@oldschoolsolutions.biz/20240919 with auth_id=216
-X-Original-From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
-Reply-To: jens.glathe@oldschoolsolutions.biz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aGUi7r2dgnbqLOAH@smile.fi.intel.com>
 
-From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+On 07/02, Andy Shevchenko wrote:
+> On Wed, Jul 02, 2025 at 09:00:42AM -0300, Marcelo Schmitt wrote:
+> > On 07/02, Andy Shevchenko wrote:
+> > > On Mon, Jun 30, 2025 at 10:57:32AM -0300, Marcelo Schmitt wrote:
+> 
+> ...
+> 
+> > > >  6 files changed, 3601 insertions(+)
+> > > 
+> > > This is weird. At least patches 11 & 12 have '-' lines...
+> > > 
+> > Yeah, sorry about that. These ADCs are fancy such that the base driver is about
+> > 1500 LoCs due to channel setup handling and support for multiple combinations of
+> > voltage references and channel setups.
+> > 
+> > About the '-' lines, I will rework ad4170_parse_channel_node() on earlier
+> > patches to avoid 3 line removals in patch 11. Patch 12 is only makes sense
+> > after patch 7 and I think it would lead to '-' lines if coming before patch 10
+> > since both increment the number of IIO channels. Anyway, I'll see how to further
+> > reduce the number of lines being removed.
+> 
+> My point is that the above statistics is mangled and I don't know how I can
+> trust the contents of this series if it already lied about that.
 
-These laptops are the same as the already known 14-fe0xxx models, but
-with a Purwa SoC, SKU number 14-fe1xxx. [1]
+Looks like git format-patch summarizes the changes from all patches when
+printing the statistics to the cover letter. Also, git format-patch doc [1]
+says the 'changes' dirstat option (default behavior) doesn't count
+rearranged lines as much as other changes. There are cover letters of other
+patch sets where the number of '-' lines don't match the sum of lines
+removed by each patch. [2] and [3] are examples of that.
 
-The supported features are the same as for the original Omnibook X14:
+[1]: https://git-scm.com/docs/git-format-patch
+[2]: https://lore.kernel.org/linux-iio/20250630-losd-3-inv-icm42600-add-wom-support-v6-0-5bb0c84800d9@tdk.com/
+[3]: https://lore.kernel.org/linux-iio/20250627-iio-adc-ad7173-add-spi-offload-support-v2-0-f49c55599113@baylibre.com/
 
-- Keyboard (no function keys though)
-- Display
-- PWM brightness control
-- Touchpad
-- Touchscreen
-- PCIe ports (pcie4, pcie6a)
-- USB type-c, type-a
-- WCN6855 Wifi-6E
-- WCN6855 Bluetooth
-- ADSP and CDSP
-- X1 GPU
-- GPIO Keys (Lid switch)
-- Audio definition (works via USB and with internal speakers)
+This set doesn't remove stuff that existed prior to it so I think it makes
+sense the cover letter to show that lines are only being added.
 
-https://www.hp.com/us-en/shop/pdp/hp-omnibook-x-laptop-next-gen-ai-pc-14-fe100-14-a4nd1av-1#techSpecs
+I'll send v8 with the change I mentioned earlier. Unless patches 11 and 12
+already look good the way they are in v7.
 
-Signed-off-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
----
- arch/arm64/boot/dts/qcom/Makefile                  |  2 +
- .../boot/dts/qcom/x1p42100-hp-omnibook-x14.dts     | 44 ++++++++++++++++++++++
- 2 files changed, 46 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
-index 4bfa926b6a0850c3c459bcba28129c559d50a7cf..63bf3ccc11124a70efb09782b57970b274d80d49 100644
---- a/arch/arm64/boot/dts/qcom/Makefile
-+++ b/arch/arm64/boot/dts/qcom/Makefile
-@@ -333,3 +333,5 @@ x1p42100-asus-zenbook-a14-el2-dtbs	:= x1p42100-asus-zenbook-a14.dtb x1-el2.dtbo
- dtb-$(CONFIG_ARCH_QCOM)	+= x1p42100-asus-zenbook-a14.dtb x1p42100-asus-zenbook-a14-el2.dtb
- x1p42100-crd-el2-dtbs	:= x1p42100-crd.dtb x1-el2.dtbo
- dtb-$(CONFIG_ARCH_QCOM)	+= x1p42100-crd.dtb x1p42100-crd-el2.dtb
-+x1p42100-hp-omnibook-x14-el2-dtbs := x1p42100-hp-omnibook-x14.dtb x1-el2.dtbo
-+dtb-$(CONFIG_ARCH_QCOM)	+= x1p42100-hp-omnibook-x14.dtb x1p42100-hp-omnibook-x14-el2.dtb
-diff --git a/arch/arm64/boot/dts/qcom/x1p42100-hp-omnibook-x14.dts b/arch/arm64/boot/dts/qcom/x1p42100-hp-omnibook-x14.dts
-new file mode 100644
-index 0000000000000000000000000000000000000000..a6b5faeae27aa69ef07d8b2846ff9e6ffb43c954
---- /dev/null
-+++ b/arch/arm64/boot/dts/qcom/x1p42100-hp-omnibook-x14.dts
-@@ -0,0 +1,44 @@
-+// SPDX-License-Identifier: BSD-3-Clause
-+/*
-+ * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
-+ * Copyright (c) 2024, Xilin Wu <wuxilin123@gmail.com>
-+ * Copyright (c) 2025 Jens Glathe
-+ */
-+
-+/dts-v1/;
-+
-+#include "x1p42100.dtsi"
-+#include "x1e80100-pmics.dtsi"
-+#include "x1-hp-omnibook-x14.dtsi"
-+/delete-node/ &pmc8380_6;
-+/delete-node/ &pmc8380_6_thermal;
-+/delete-node/ &pm8010;
-+/delete-node/ &pm8010_thermal;
-+
-+/ {
-+	model = "HP Omnibook X 14-fe1";
-+	compatible = "hp,omnibook-x14-fe1", "qcom,x1p42100";
-+	chassis-type = "laptop";
-+};
-+
-+&gpu {
-+	status = "okay";
-+
-+	zap-shader {
-+		firmware-name = "qcom/x1p42100/hp/omnibook-x14/qcdxkmsucpurwa.mbn";
-+	};
-+};
-+
-+&remoteproc_adsp {
-+	firmware-name = "qcom/x1p42100/hp/omnibook-x14/qcadsp8380.mbn",
-+			"qcom/x1p42100/hp/omnibook-x14/adsp_dtbs.elf";
-+
-+	status = "okay";
-+};
-+
-+&remoteproc_cdsp {
-+	firmware-name = "qcom/x1p42100/hp/omnibook-x14/qccdsp8380.mbn",
-+			"qcom/x1p42100/hp/omnibook-x14/cdsp_dtbs.elf";
-+
-+	status = "okay";
-+};
-
--- 
-2.48.1
-
-
+Best regards,
+Marcelo
 
