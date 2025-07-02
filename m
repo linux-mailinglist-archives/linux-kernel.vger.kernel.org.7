@@ -1,277 +1,273 @@
-Return-Path: <linux-kernel+bounces-713728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65F88AF5DA5
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 17:52:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F2D1AF5DA9
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 17:54:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94B0717ADE7
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 15:52:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 735B01C23E44
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 15:54:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 936202E7BA4;
-	Wed,  2 Jul 2025 15:52:28 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A31B2E7BB9;
+	Wed,  2 Jul 2025 15:54:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="JcaKcfzG"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 286363196A3
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 15:52:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B26793196D8;
+	Wed,  2 Jul 2025 15:54:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751471547; cv=none; b=DhrFoajXlfo5f8kp0UR3C72TyhFw5a5GLX3BwFfhdmxIpAmZlwXekenvXtxEiAZ70NKqGuJLhpqAv8/FbbZGAgET0EUZh9uOQSYyzGD09PRA2jaHXev6Hk5T0EVLKSBDiebrN0/tE7dLf7ZHqhHFPKS3SWwoPJAvnKCjpuy3wz0=
+	t=1751471668; cv=none; b=ayTM8OpNqfHbHIOc7dTctKv5wULlR60LM6vIvZbw6mcQ0FvOcnUTVFEglK5zXGcO6+JoWzDB6288tHp8KpJO0izxGLcXsdK74ACTDwtQBwo7iGoU/AWszOt/0uO6o3b+TBzvLkpqG55E3SxhhaRGoCnwfmzdsep5UfGEReYZYIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751471547; c=relaxed/simple;
-	bh=EKjGXiFN00GIPDQgDrbn1nyQjKhsapJn8ddASHSThF8=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=NYrBVn32LvckrhRETfPLljdzUKSG/vRlrgzZyeLgL5WvNdIOLI2QpI3TZpP7OW0XawQZDxbSl1CiOwNVXepftbSKTJVUeTdAYErrFaet8DiNz/0KhIkDO9l+6fJQBKQIqbXd39IuPJEXnxmoP8xXPS/AEzZ+4NEjU5W1Xeb9+Dg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3df2e89fc8aso56978245ab.2
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 08:52:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751471545; x=1752076345;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=cN8mYzo5FBmuFkWim2a0jWGJX55lrKzHtBCwmXXY/Kg=;
-        b=WbFUwQ+Vyn4LGTtPzB28lyADVEwaNd+VLBq9jneQRzoh3GDExMYPOJpCreQRFtIop+
-         CoEnBDxM/4OqzUtQwcPiqnnLiMl/mpxqEBDKAeh7baE5cP6N1ZUepIln5cbBpUvCp0tn
-         bu7+vhL+jsfak6m/qkYksowJ9NweEkvOW5BCrAQJD42jj2dhu9yOnwYOLcFiqYO5zZf7
-         ozKmfODYDt8nblCztiufsiSPAIInnzJCvkISsOkclIxrr+ZY0esv5VAubQf04Bkhm2zc
-         IeLYFOFy/GOIrUR3XglSLXNsh+59x3Jrkrur9Z/fvsMKrT48LPjvDbOMsmcvtyoFLlxT
-         xsQg==
-X-Forwarded-Encrypted: i=1; AJvYcCWfDvW/Z9VIiSY2lm4b5FA/D4/atw50omND6b0FQ2kLGqOQDuRyX9f+91ru3vnJTaRXJ1TvkKW3e2MtpyI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNy1HO3T2NOSyAWVnBsYNaY+OJtH9jkf2bmzt0ZmUzbHmO7SN4
-	ZVMGdi/4pQwG5CQ2uMgZzZNAgqlXQ+W1m2iETP18J4HRwAB7gY8K9kG3Ppq8xMnQoxWh78rq1ew
-	g9/5CHusg3A48E1E+BnxHJ40hWDxy0wn0ML9mBrTMzhIAIj8SINZbh3jIHGE=
-X-Google-Smtp-Source: AGHT+IEk9VHGhxmALpwL9xlHwrwBAlnIJzUpnpkmkEI5lcE4kbqtcZuc8RH0PJDAaFO8gtWolChHpi8L+GZlUmk9JoofAQjSwfx0
+	s=arc-20240116; t=1751471668; c=relaxed/simple;
+	bh=1F43+7fwHzAd9yWVEVAylcR0AdP9hhm3Sf59ofmBB58=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bPfrqt/eZwY0mfUV5FcglScq2AbOfQcB4st54aqzIuRzI1v1kKadmLCx8s8XHGUIDrxomjfLQcC4qRFbTpDGibrCtU2Q3x1rbVMK7V3+1Cfu2Ri4r1tuOu1OmkAe5OlOj7rWBx4SYcm/9pXgTr0POhkZGjjfiCtIlO6vKCJJ8g0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=JcaKcfzG; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 562ESsmV014229;
+	Wed, 2 Jul 2025 15:53:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=LtTTnJ
+	nGndDo0Uo8vt93cMjsCMckI6r3gJDGK3u+F90=; b=JcaKcfzGh/3gSovt2lTpqj
+	6XsqPupj0l9CqN+wDXUTkecMFjp6/lqX93y47jJWblLwiapVh1CIfCToGimL7A8/
+	sZR6fDJMmdlTfgtd+8ttLzEydPUUzmD09ccS1LNP1XDz1Cazjjify/uVztKqG78Q
+	hcIXQ2ey4TR4TDABacjdiHsVljKUsknwGPCR/OUwoFmXNVJLDy19X1lorBPKOvmO
+	aq2AbxVs9C2etk6VT8gYD2EAAKykjqhFs5ZCA/6pIwJOYhCp83ka906IvWm601KM
+	3pV/+MWP4fbZx2yRHzpv8axHMb2Csff99ppmUpv9VQ92wP0AWlo+rldluAxlzTSQ
+	==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47j84dejsb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 02 Jul 2025 15:53:12 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 562F7mZZ021354;
+	Wed, 2 Jul 2025 15:53:11 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 47jwe3g0dk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 02 Jul 2025 15:53:11 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 562Fr7In43385296
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 2 Jul 2025 15:53:07 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6FAB320043;
+	Wed,  2 Jul 2025 15:53:07 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1CB8D20040;
+	Wed,  2 Jul 2025 15:53:07 +0000 (GMT)
+Received: from [9.152.222.224] (unknown [9.152.222.224])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Wed,  2 Jul 2025 15:53:07 +0000 (GMT)
+Message-ID: <d0aa861d-e1bb-4ab4-8ccb-d9fdc39738a9@linux.ibm.com>
+Date: Wed, 2 Jul 2025 17:53:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3983:b0:3dd:d653:5a05 with SMTP id
- e9e14a558f8ab-3e054923d74mr45389065ab.3.1751471545369; Wed, 02 Jul 2025
- 08:52:25 -0700 (PDT)
-Date: Wed, 02 Jul 2025 08:52:25 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <686555b9.a00a0220.270cb1.0002.GAE@google.com>
-Subject: [syzbot] [io-uring?] INFO: task hung in vfs_coredump
-From: syzbot <syzbot+c29db0c6705a06cb65f2@syzkaller.appspotmail.com>
-To: anna-maria@linutronix.de, axboe@kernel.dk, frederic@kernel.org, 
-	io-uring@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com, tglx@linutronix.de
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v12 07/14] unwind_user/deferred: Make unwind deferral
+ requests NMI-safe
+To: Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
+        linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org,
+        x86@kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Josh Poimboeuf <jpoimboe@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+        Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Indu Bhagat <indu.bhagat@oracle.com>,
+        "Jose E. Marchesi" <jemarch@gnu.org>,
+        Beau Belgrave <beaub@linux.microsoft.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>, Florian Weimer <fweimer@redhat.com>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>
+References: <20250701005321.942306427@goodmis.org>
+ <20250701005451.737614486@goodmis.org>
+Content-Language: en-US
+From: Jens Remus <jremus@linux.ibm.com>
+Organization: IBM Deutschland Research & Development GmbH
+In-Reply-To: <20250701005451.737614486@goodmis.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: 8koNIRB4XGfsbHXgfXDECKQMOD4e7nav
+X-Proofpoint-GUID: 8koNIRB4XGfsbHXgfXDECKQMOD4e7nav
+X-Authority-Analysis: v=2.4 cv=Ib6HWXqa c=1 sm=1 tr=0 ts=686555e8 cx=c_pps a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VnNF1IyMAAAA:8 a=yazbiPPT3PS1vEbXeL8A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzAyMDEzMCBTYWx0ZWRfXy+OmPy/xqIQ1 2E0dcXZu0Cm8CupqOR5zUrGy115/Hfy36QAnvQjKNhd17eA6mVNY08i3UDck4207Ka8gCzY8j/E AkCUeVAegpnfURtjZuvRef9nh1QM3oFPyeKduEL+mB3sqRwUzSQG68EwiU861JMP6INc/5QZAqy
+ ys5JEXKaQJrmlrU0FHIdOlNoj5Sivhlk3JW5kKLGLgaJDk0+ULJmkAMvC5Yb16I6RTbZk+cQlS3 H1jL430VO91K3KVJ859HZzMQCupPqRQ93x/jzte9eaTvQpTaMEXuqs5W+bELmS6DsL1gYCg3+Q1 R+zvCZTi+dxTscoMvHOx3Z3UgKsvFg9DOMr4mvq0bvhfkkX5MeXoA1wgh+U6MY4mv20rKnO5e4f
+ zV189DnjZREklahV4FN/i0Xv2kPGXh2Ym/WaSmGCM0g/HoDmkYcp5GMTlq8mH+pJnZaLrIdL
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-02_02,2025-07-02_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 suspectscore=0
+ clxscore=1015 mlxlogscore=999 lowpriorityscore=0 impostorscore=0
+ mlxscore=0 malwarescore=0 spamscore=0 priorityscore=1501 adultscore=0
+ bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507020130
 
-Hello,
+Hello Steve!
 
-syzbot found the following issue on:
+On 01.07.2025 02:53, Steven Rostedt wrote:
+> Make unwind_deferred_request() NMI-safe so tracers in NMI context can
+> call it and safely request a user space stacktrace when the task exits.
 
-HEAD commit:    2aeda9592360 Add linux-next specific files for 20250627
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=12f9a982580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=7f5c1d958b70bf47
-dashboard link: https://syzkaller.appspot.com/bug?extid=c29db0c6705a06cb65f2
-compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14ff688c580000
+> diff --git a/include/linux/unwind_deferred_types.h b/include/linux/unwind_deferred_types.h
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/d532560074a3/disk-2aeda959.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/483001f76864/vmlinux-2aeda959.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/8f233cdc1c77/bzImage-2aeda959.xz
+> @@ -2,6 +2,9 @@
+>  #ifndef _LINUX_UNWIND_USER_DEFERRED_TYPES_H
+>  #define _LINUX_UNWIND_USER_DEFERRED_TYPES_H
+>  
+> +#include <asm/local64.h>
+> +#include <asm/local.h>
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+c29db0c6705a06cb65f2@syzkaller.appspotmail.com
-
-INFO: task syz.0.23:6175 blocked for more than 143 seconds.
-      Not tainted 6.16.0-rc3-next-20250627-syzkaller #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz.0.23        state:D stack:27624 pid:6175  tgid:6170  ppid:5972   task_flags:0x400640 flags:0x00004006
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5313 [inline]
- __schedule+0x16f5/0x4d00 kernel/sched/core.c:6696
- __schedule_loop kernel/sched/core.c:6774 [inline]
- schedule+0x165/0x360 kernel/sched/core.c:6789
- schedule_timeout+0x9a/0x270 kernel/time/sleep_timeout.c:75
- do_wait_for_common kernel/sched/completion.c:100 [inline]
- __wait_for_common+0x3da/0x710 kernel/sched/completion.c:121
- wait_for_common kernel/sched/completion.c:132 [inline]
- wait_for_completion_state+0x1c/0x40 kernel/sched/completion.c:269
- coredump_wait fs/coredump.c:534 [inline]
- vfs_coredump+0x8c2/0x2ab0 fs/coredump.c:1128
- get_signal+0x1109/0x1340 kernel/signal.c:3019
- arch_do_signal_or_restart+0x9a/0x750 arch/x86/kernel/signal.c:337
- exit_to_user_mode_loop+0x75/0x110 kernel/entry/common.c:111
- exit_to_user_mode_prepare include/linux/entry-common.h:330 [inline]
- syscall_exit_to_user_mode_work include/linux/entry-common.h:414 [inline]
- syscall_exit_to_user_mode include/linux/entry-common.h:449 [inline]
- do_syscall_64+0x2bd/0x3b0 arch/x86/entry/syscall_64.c:100
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f612984f830
-RSP: 002b:00007f612a722b38 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
-RAX: 0000000000000000 RBX: 00007f6129bb6088 RCX: 00007f612998e929
-RDX: 00007f612a722b40 RSI: 00007f612a722c70 RDI: 000000000000000b
-RBP: 00007f6129bb6080 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007f6129bb608c
-R13: 0000000000000000 R14: 00007fff3502f910 R15: 00007fff3502f9f8
- </TASK>
-
-Showing all locks held in the system:
-1 lock held by khungtaskd/31:
- #0: ffffffff8e13bf20 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
- #0: ffffffff8e13bf20 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:841 [inline]
- #0: ffffffff8e13bf20 (rcu_read_lock){....}-{1:3}, at: debug_show_all_locks+0x2e/0x180 kernel/locking/lockdep.c:6770
-3 locks held by kworker/u9:1/5156:
- #0: ffff88804419a148 ((wq_completion)hci7){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3214 [inline]
- #0: ffff88804419a148 ((wq_completion)hci7){+.+.}-{0:0}, at: process_scheduled_works+0x9b4/0x17b0 kernel/workqueue.c:3322
- #1: ffffc9001023fbc0 ((work_completion)(&hdev->power_on)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3215 [inline]
- #1: ffffc9001023fbc0 ((work_completion)(&hdev->power_on)){+.+.}-{0:0}, at: process_scheduled_works+0x9ef/0x17b0 kernel/workqueue.c:3322
- #2: ffff888020f40dc0 (&hdev->req_lock){+.+.}-{4:4}, at: hci_dev_do_open net/bluetooth/hci_core.c:428 [inline]
- #2: ffff888020f40dc0 (&hdev->req_lock){+.+.}-{4:4}, at: hci_power_on+0x1ac/0x680 net/bluetooth/hci_core.c:959
-2 locks held by getty/5598:
- #0: ffff8880303340a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
- #1: ffffc9000331b2f0 (&ldata->atomic_read_lock){+.+.}-{4:4}, at: n_tty_read+0x43e/0x1400 drivers/tty/n_tty.c:2222
-1 lock held by syz.0.23/6171:
-1 lock held by syz.2.43/6314:
-1 lock held by syz.3.47/6351:
-1 lock held by syz.4.49/6392:
-1 lock held by syz.5.51/6429:
-1 lock held by syz.6.54/6471:
-1 lock held by dhcpcd/6476:
- #0: ffff888077ab0e08 (&sb->s_type->i_mutex_key#11){+.+.}-{4:4}, at: inode_lock include/linux/fs.h:869 [inline]
- #0: ffff888077ab0e08 (&sb->s_type->i_mutex_key#11){+.+.}-{4:4}, at: __sock_release net/socket.c:648 [inline]
- #0: ffff888077ab0e08 (&sb->s_type->i_mutex_key#11){+.+.}-{4:4}, at: sock_close+0x9b/0x240 net/socket.c:1439
-2 locks held by dhcpcd/6477:
- #0: ffff88805fcdc258 (sk_lock-AF_PACKET){+.+.}-{0:0}, at: lock_sock include/net/sock.h:1667 [inline]
- #0: ffff88805fcdc258 (sk_lock-AF_PACKET){+.+.}-{0:0}, at: packet_do_bind+0x32/0xcd0 net/packet/af_packet.c:3252
- #1: ffffffff8e141a38 (rcu_state.exp_mutex){+.+.}-{4:4}, at: exp_funnel_lock kernel/rcu/tree_exp.h:343 [inline]
- #1: ffffffff8e141a38 (rcu_state.exp_mutex){+.+.}-{4:4}, at: synchronize_rcu_expedited+0x3b9/0x730 kernel/rcu/tree_exp.h:967
-1 lock held by dhcpcd/6478:
- #0: ffff888044c5a258 (sk_lock-AF_PACKET){+.+.}-{0:0}, at: lock_sock include/net/sock.h:1667 [inline]
- #0: ffff888044c5a258 (sk_lock-AF_PACKET){+.+.}-{0:0}, at: packet_do_bind+0x32/0xcd0 net/packet/af_packet.c:3252
-1 lock held by syz-executor/6480:
-2 locks held by dhcpcd/6483:
- #0: ffff888079892258 (sk_lock-AF_PACKET){+.+.}-{0:0}, at: lock_sock include/net/sock.h:1667 [inline]
- #0: ffff888079892258 (sk_lock-AF_PACKET){+.+.}-{0:0}, at: packet_do_bind+0x32/0xcd0 net/packet/af_packet.c:3252
- #1: ffffffff8e141a38 (rcu_state.exp_mutex){+.+.}-{4:4}, at: exp_funnel_lock kernel/rcu/tree_exp.h:343 [inline]
- #1: ffffffff8e141a38 (rcu_state.exp_mutex){+.+.}-{4:4}, at: synchronize_rcu_expedited+0x3b9/0x730 kernel/rcu/tree_exp.h:967
-
-=============================================
-
-NMI backtrace for cpu 1
-CPU: 1 UID: 0 PID: 31 Comm: khungtaskd Not tainted 6.16.0-rc3-next-20250627-syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- nmi_cpu_backtrace+0x39e/0x3d0 lib/nmi_backtrace.c:113
- nmi_trigger_cpumask_backtrace+0x17a/0x300 lib/nmi_backtrace.c:62
- trigger_all_cpu_backtrace include/linux/nmi.h:160 [inline]
- check_hung_uninterruptible_tasks kernel/hung_task.c:307 [inline]
- watchdog+0xfee/0x1030 kernel/hung_task.c:470
- kthread+0x711/0x8a0 kernel/kthread.c:463
- ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-Sending NMI from CPU 1 to CPUs 0:
-NMI backtrace for cpu 0
-CPU: 0 UID: 0 PID: 6314 Comm: syz.2.43 Not tainted 6.16.0-rc3-next-20250627-syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-RIP: 0010:arch_atomic_read arch/x86/include/asm/atomic.h:23 [inline]
-RIP: 0010:raw_atomic_read include/linux/atomic/atomic-arch-fallback.h:457 [inline]
-RIP: 0010:rcu_is_watching_curr_cpu include/linux/context_tracking.h:128 [inline]
-RIP: 0010:rcu_is_watching+0x5a/0xb0 kernel/rcu/tree.c:751
-Code: f0 48 c1 e8 03 42 80 3c 38 00 74 08 4c 89 f7 e8 7c 42 7d 00 48 c7 c3 18 4f a1 92 49 03 1e 48 89 d8 48 c1 e8 03 42 0f b6 04 38 <84> c0 75 34 8b 03 65 ff 0d 89 90 f9 10 74 11 83 e0 04 c1 e8 02 5b
-RSP: 0018:ffffc900000079a8 EFLAGS: 00000802
-RAX: 0000000000000000 RBX: ffff8880b8632f18 RCX: 1370d027c6756400
-RDX: 0000000000000000 RSI: ffffffff8be31f60 RDI: ffffffff8be31f20
-RBP: ffffffff81745448 R08: 0000000000000000 R09: 0000000000000000
-R10: dffffc0000000000 R11: fffffbfff33acaae R12: 0000000000000002
-R13: ffffffff8e13bfe0 R14: ffffffff8dbb8cb0 R15: dffffc0000000000
-FS:  00007f61f8d9d6c0(0000) GS:ffff888125c1e000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055a134a81660 CR3: 000000007fa0a000 CR4: 00000000003526f0
-Call Trace:
- <IRQ>
- trace_lock_acquire include/trace/events/lock.h:24 [inline]
- lock_acquire+0x5f/0x360 kernel/locking/lockdep.c:5834
- rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
- rcu_read_lock_sched include/linux/rcupdate.h:932 [inline]
- pfn_valid include/linux/mmzone.h:2163 [inline]
- __virt_addr_valid+0x1e5/0x5c0 arch/x86/mm/physaddr.c:65
- kasan_addr_to_slab+0xf/0x90 mm/kasan/common.c:37
- kasan_record_aux_stack+0xf/0xd0 mm/kasan/generic.c:533
- insert_work+0x3d/0x330 kernel/workqueue.c:2187
- __queue_work+0xbaf/0xfb0 kernel/workqueue.c:2346
- call_timer_fn+0x17b/0x5f0 kernel/time/timer.c:1747
- expire_timers kernel/time/timer.c:1793 [inline]
- __run_timers kernel/time/timer.c:2372 [inline]
- __run_timer_base+0x646/0x860 kernel/time/timer.c:2384
- run_timer_base kernel/time/timer.c:2393 [inline]
- run_timer_softirq+0xb7/0x180 kernel/time/timer.c:2403
- handle_softirqs+0x286/0x870 kernel/softirq.c:579
- __do_softirq kernel/softirq.c:613 [inline]
- invoke_softirq kernel/softirq.c:453 [inline]
- __irq_exit_rcu+0xca/0x1f0 kernel/softirq.c:680
- irq_exit_rcu+0x9/0x30 kernel/softirq.c:696
- instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1050 [inline]
- sysvec_apic_timer_interrupt+0xa6/0xc0 arch/x86/kernel/apic/apic.c:1050
- </IRQ>
- <TASK>
- asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
-RIP: 0010:lock_acquire+0x175/0x360 kernel/locking/lockdep.c:5875
-Code: 00 00 00 00 9c 8f 44 24 30 f7 44 24 30 00 02 00 00 0f 85 cd 00 00 00 f7 44 24 08 00 02 00 00 74 01 fb 65 48 8b 05 5b 83 02 11 <48> 3b 44 24 58 0f 85 f2 00 00 00 48 83 c4 60 5b 41 5c 41 5d 41 5e
-RSP: 0018:ffffc90003e6f980 EFLAGS: 00000206
-RAX: 1370d027c6756400 RBX: 0000000000000000 RCX: 1370d027c6756400
-RDX: 0000000000000000 RSI: ffffffff8db80736 RDI: ffffffff8be31f80
-RBP: ffffffff84bc6539 R08: 0000000000000000 R09: ffffffff84bc6539
-R10: ffffc90003e6fb00 R11: fffff520007cdf65 R12: 0000000000000000
-R13: ffff88806038c0a8 R14: 0000000000000001 R15: 0000000000000246
- __mutex_lock_common kernel/locking/mutex.c:602 [inline]
- __mutex_lock+0x182/0xe80 kernel/locking/mutex.c:747
- io_cqring_do_overflow_flush+0x19/0x30 io_uring/io_uring.c:665
- io_cqring_wait io_uring/io_uring.c:2701 [inline]
- __do_sys_io_uring_enter io_uring/io_uring.c:3508 [inline]
- __se_sys_io_uring_enter+0x1fce/0x2b20 io_uring/io_uring.c:3403
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f61f7f8e929
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f61f8d9d038 EFLAGS: 00000246 ORIG_RAX: 00000000000001aa
-RAX: ffffffffffffffda RBX: 00007f61f81b5fa0 RCX: 00007f61f7f8e929
-RDX: 0000000000001797 RSI: 0000000000000001 RDI: 0000000000000003
-RBP: 00007f61f8010b39 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000001 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007f61f81b5fa0 R15: 00007ffcfc501968
- </TASK>
+This creates the following circular dependency, that breaks the build on
+s390 as follows, whenever local64.h is included first, so that local64_t
+is not yet defined when unwind_deferred_types.h gets included down the
+line:
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Circular dependency:
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+include/linux/unwind_deferred_types.h
+arch/<arch>/include/generated/asm/local64.h
+include/asm-generic/local64.h
+include/linux/percpu.h
+include/linux/sched.h
+include/linux/unwind_deferred_types.h
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+Compile error on s390:
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+  CC      net/ipv4/proc.o
+In file included from ./include/linux/sched.h:49,
+                 from ./include/linux/percpu.h:12,
+                 from ./include/asm-generic/local64.h:5,
+                 from ./arch/s390/include/generated/asm/local64.h:1,
+                 from ./include/linux/u64_stats_sync.h:71,
+                 from ./include/net/snmp.h:47,
+                 from ./include/net/netns/mib.h:5,
+                 from ./include/net/net_namespace.h:17,
+                 from net/ipv4/proc.c:31:
+./include/linux/unwind_deferred_types.h:17:9: error: unknown type name ‘local64_t’; did you mean ‘local_t’?
+   17 |         local64_t               timestamp;
+      |         ^~~~~~~~~
+      |         local_t
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
 
-If you want to undo deduplication, reply with:
-#syz undup
+Reason it fails on s390:
+
+net/ipv4/proc.c
++- include/net/net_namespace.h
+   +- include/net/netns/mib.h
+      +- include/net/snmp.h
+         +- include/linux/u64_stats_sync.h
+            +- arch/s390/include/generated/asm/local64.h   <-- ISSUE: local64.h gets included before unwind_deferred_types.h
+               +- include/asm-generic/local64.h
+                  +- include/linux/percpu.h
+                     +- include/linux/sched.h
+                        +- include/linux/unwind_deferred_types.h   <-- ERROR: local64_t not yet defined
+
+
+Reason it does not fail on x86:
+
+net/ipv4/proc.c
++- include/net/net_namespace.h
+   +- include/linux/workqueue.h
+   |  +- include/linux/timer.h
+   |     +- include/linux/ktime.h
+   |        +- include/linux/jiffies.h
+   |           +- include/linux/time.h
+   |               +- include/linux/time32.h
+   |                  +- include/linux/timex.h
+   |                     +- arch/x86/include/asm/timex.h
+   |                        +- arch/x86/include/asm/tsc.h
+   |                           +- arch/x86/include/asm/msr.h
+   |                              +- include/linux/percpu.h
+   |                                 +- include/linux/sched.h
+   |                                    +- include/linux/unwind_deferred_types.h   <-- OK: unwind_deferred_types.h gets included before local64.h
+   |                                       +- arch/x86/include/generated/asm/local64.h
+   |                                          +- include/asm-generic/local64.h
+   |                                           [ +- include/linux/percpu.h ]
+   +- include/net/netns/mib.h
+      +- include/net/snmp.h
+         +- include/linux/u64_stats_sync.h
+            +- arch/x86/include/generated/asm/local64.h   <-- OK: local64.h comes after unwind_deferred_types.h
+             [ +- include/asm-generic/local64.h ]
+                [ +- include/linux/percpu.h ]
+                   [ +- include/linux/sched.h ]
+                      [ +- include/linux/unwind_deferred_types.h ]
+
+
+My colleague Heiko Carstens (on Cc) suggested the following potential fix
+that breaks the circular dependency, provided local[64].h does not ever
+need percpu.h.  At least I verified that defconfig x86 and s390 builds
+still work.
+
+diff --git a/include/asm-generic/local.h b/include/asm-generic/local.h
+index 7f97018df66f..3e7ce6a9e18e 100644
+--- a/include/asm-generic/local.h
++++ b/include/asm-generic/local.h
+@@ -2,7 +2,6 @@
+ #ifndef _ASM_GENERIC_LOCAL_H
+ #define _ASM_GENERIC_LOCAL_H
+ 
+-#include <linux/percpu.h>
+ #include <linux/atomic.h>
+ #include <asm/types.h>
+ 
+diff --git a/include/asm-generic/local64.h b/include/asm-generic/local64.h
+index 14963a7a6253..1f9af89916cb 100644
+--- a/include/asm-generic/local64.h
++++ b/include/asm-generic/local64.h
+@@ -2,7 +2,6 @@
+ #ifndef _ASM_GENERIC_LOCAL64_H
+ #define _ASM_GENERIC_LOCAL64_H
+ 
+-#include <linux/percpu.h>
+ #include <asm/types.h>
+
+> +
+>  struct unwind_cache {
+>  	unsigned int		nr_entries;
+>  	unsigned long		entries[];
+> @@ -10,8 +13,8 @@ struct unwind_cache {
+>  struct unwind_task_info {
+>  	struct unwind_cache	*cache;
+>  	struct callback_head	work;
+> -	u64			timestamp;
+> -	int			pending;
+> +	local64_t		timestamp;
+> +	local_t			pending;
+>  };
+>  
+>  #endif /* _LINUX_UNWIND_USER_DEFERRED_TYPES_H */
+
+Regards,
+Jens
+-- 
+Jens Remus
+Linux on Z Development (D3303)
++49-7031-16-1128 Office
+jremus@de.ibm.com
+
+IBM
+
+IBM Deutschland Research & Development GmbH; Vorsitzender des Aufsichtsrats: Wolfgang Wendt; Geschäftsführung: David Faller; Sitz der Gesellschaft: Böblingen; Registergericht: Amtsgericht Stuttgart, HRB 243294
+IBM Data Privacy Statement: https://www.ibm.com/privacy/
+
 
