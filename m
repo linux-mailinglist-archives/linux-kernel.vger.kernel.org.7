@@ -1,131 +1,301 @@
-Return-Path: <linux-kernel+bounces-712822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-712823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EA6CAF0F70
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 11:14:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A26FAF0F77
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 11:15:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C49451C24CBC
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 09:15:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72F1E1727E4
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 09:15:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE30D242D74;
-	Wed,  2 Jul 2025 09:14:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF0A6244686;
+	Wed,  2 Jul 2025 09:14:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b90bYBqD"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jHlhj9HE"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BABA4219A8D;
-	Wed,  2 Jul 2025 09:14:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751447643; cv=none; b=gXE9WJ8QlPHGGguZFeTHIYailiaVLxgflva+T0urd5DfjmjsdcbCeNLk2/lz4s/CjqoEIxn1OBjomcgs7sVtwaZ5VtJJD1cwAdNmE7WKXf/8I+ybjy14gByMmA/hwuPF3qiGGjvBLx2o65nrZqCkBcb0p0sdjJhdTKj1vq0xvnE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751447643; c=relaxed/simple;
-	bh=arp/RXJFijFrUN/wQbLbSmWxuyiKJielKbqEREc+Y6U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ol2jHyHFefd1KDiCciCbGw+4/t2ig1nMLAMeluIeg2AdQ8/XGQzAryF9mTD9m5H8MZqbwMG9GmKrm3X4HUg77BvrjmHq29owajkEjx3b59JxJXiFhG21FkIgyLvtET9RC6sTFzfNL1rW3xBYi3sqOYs/v99RVaRYE3/9srhkHVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b90bYBqD; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-60c5b7cae8bso7024594a12.1;
-        Wed, 02 Jul 2025 02:14:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751447640; x=1752052440; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=YOnKL2iySZqX8VVh+L223ZxSRCRPq10Nr2PZwBL+7sg=;
-        b=b90bYBqDrbJrzU3s3ghZlttO3/Zv+ncaWuah9dZLZUAWFNNfVGDoTNtIRlv39Cf0pX
-         tCaGaXmi/r5ON9Z5j3Fn+SoC+Dn0Xyb8oNjIk9Auep1VYxQgupMfCKHDqxigomHkhmwm
-         5MGopEKNMF7nzSIEi1fW+y/A+S+XvevZiV0mtBf/4a/60ei9MCJ1+qyHYY/DB3HZCGyw
-         rHUQCEQwLH0CmPJVFeD+SYAztkugfgAQoyQHUPn/IC0s8RVtW3RxlVWixLiMrYFFSU3v
-         aP9aEPEdYvwD4esDuZH2H6RGzPHKpgW2Y1sEW1mEdzDMHU8vdTtp5NdE0WwHe2WXngyQ
-         E4Kw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751447640; x=1752052440;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YOnKL2iySZqX8VVh+L223ZxSRCRPq10Nr2PZwBL+7sg=;
-        b=Meh2qccrN75Psdg8tQKvBVFn/EE0hibpNSg6vPRlQ9nyt0pITdrAWzlOeoQQeZrNfU
-         JGNyL3qSS0Xwf240W8ZW1K2lPCoiuUM3igURkcpED00vjLUfQRC0CvD6+falUp/cYswT
-         GXDb8TJqu1xglM0acUefSajQ4nNcm1ZwZQjHNHNC/g5fOEZzKQgM0I6iTetwRa6cXd30
-         Rbdai8rBIwk7nKUrJWXQYLJI8aRhI+Hz1FbYww5ThHPoJQ6xMdCWm5YAeBeJkjcPpZnc
-         iuwoUFAGjLHTsPWKOI61QzXqFziuTNZY2U+V6HDFWtlhaph0m8aFsx5+uItWibfpRJKj
-         CcYA==
-X-Forwarded-Encrypted: i=1; AJvYcCUw4zEoPjHzrMXRKgiFkVCWOGDqCESVj2C4sk5vQCFdeUArs53i7gfDsAgrgD8TTAf0Mo3w01Lt/FSN6xYv6Q==@vger.kernel.org, AJvYcCV8o9/QKj23j9ONlAi58V3TV6OCQpg1QqIUAeJnOPhNVX2am2a90iIYjTUraZgX0Ooqf/KRhXI+2xe3@vger.kernel.org, AJvYcCViAhHhrL4Y6OlxvjAh71MMY5h6K6XFLfjyzuyZxqsMa5Z7w486tYr7/EWRJXqKsxMEkfWJ/TFlrPM=@vger.kernel.org, AJvYcCWDnLP2Auo2dC6CEPbMA9O/TeH5bD3BvmW9B7HP7gcoZtduAhuQjy5IRnXnayG0mS2VWvNLKVvW8Q==@vger.kernel.org, AJvYcCWVNlHl7mM7UN+YZT+skqUg8fvjB2Rq5NtcsutyxERRwIxMdVOEPckQIF2/VR9CwxoU0IYJG8Bogv/ezNCW@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9eiT/JP11azitllBg1w+YkG2PVxV0EPwrTIufMS3ACOMF2Hr/
-	AKVLNcLmZEL6TjI5t1fPeHiOtwjkE0XlGEU2RTm+M6D6wcOpw+62qpR3acvQjDPEwgiW0+0reeu
-	8oQaq4oGqN1fNqI4DY4USwDTydTJ8kAQ=
-X-Gm-Gg: ASbGnctg5wiXqaUbbJPpc/bjndt1NN1bb7DALM2h+UUwaW3lUYwEABSMhH0vCJnDdLm
-	8SszhGfO8t+cgmZspNG1ie4fX504GbBPxSdITP94Mfow+UBaeo/3g9JgS567gDMPN1CC7qbcXg1
-	IjgXU8RpMJanE+OU4YqO+siPsxnRp3RG5MZYMBDLGPSbGoZPUgCY5XqQ==
-X-Google-Smtp-Source: AGHT+IGlk8ck2yGJiSvYpbNFUVRsx8Y0aQIabBLOLnPDFVgvwubtNKreUJ+vATAAMAwvHsiBczX2MScCqWUycc9KxFQ=
-X-Received: by 2002:a17:907:94c3:b0:add:ed3a:e792 with SMTP id
- a640c23a62f3a-ae3c2da9581mr192429266b.47.1751447639461; Wed, 02 Jul 2025
- 02:13:59 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7B0F243968
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 09:14:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.11
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751447652; cv=fail; b=Avm2eCbfGtP37+YuV7ZrnB28i2PEXJ4lyg4JiF7qbAdoMpqiCUrp8Th7QyxbAYMdT4HAJLuhltBEr6Z6NuH18/eY59p7D4rITUnSvbcCEItFjMZxMxRS5O9NiO+neKSnOBmCvUZxfoBcHKlOMNoGHub61pdMzkDaxdQ5pNUtjsQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751447652; c=relaxed/simple;
+	bh=BOm/KiEy/Xfki5wlSaykoaAtxKnC2YLYo4/ZB4w9gaw=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=hPmts+03yBIlWyrwwWJcm8SG6PuhyznOSjqJQMFCQ70f75jG70AxwGrxcyy3GE79DyBu/Fi1/PPSLtGF2WKqmz/TQZqAFKq49yKh+jYAmjn/Aa1VQSj8BUUVuww+Obw7WsGRBD+s0h5nBV68i/1zA8j+HjKTj4FN4XoMLlKbwRs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jHlhj9HE; arc=fail smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751447651; x=1782983651;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=BOm/KiEy/Xfki5wlSaykoaAtxKnC2YLYo4/ZB4w9gaw=;
+  b=jHlhj9HEEC8O22McX/MkjCl6Z2OKgFEo14luGw6ZhbJQRB83wVafPMr8
+   kv4e+vVT39g0Uf195zTzdNgD9XBDtaqna5PMsnlzr13re/WEGBJ2vDwcr
+   iWhp/JNRvzL4yvTtPUu3mzGkIaGVDOMgSfESrA5KMYWTRAgMV2ayICHs5
+   SKNXmXQdYxAICwBLjar8AFDauLVFaaO1xXvsyd4fQzsv3ZY1dRL9F4auu
+   3sOr/ic5kgH0PLUp/mL6ot5dfMkOS9nrLmKHDGVkD6ZrjHBB6E7qqNiUG
+   v9f/2Fsf4VX5XNkUwermDiUNBerllLP1vVYEEZkSm4xRS+sX3SveqtvS3
+   A==;
+X-CSE-ConnectionGUID: UOOOoD3WT2mFo410ZGJ9Ow==
+X-CSE-MsgGUID: /+FtMvNuS2qeQG1lMQzQzQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11481"; a="64333167"
+X-IronPort-AV: E=Sophos;i="6.16,281,1744095600"; 
+   d="scan'208";a="64333167"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2025 02:14:02 -0700
+X-CSE-ConnectionGUID: lsBwKQP1RkK07Giysz9Uxw==
+X-CSE-MsgGUID: 6IYVDm8zSpKEM6C0AEMWFw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,281,1744095600"; 
+   d="scan'208";a="154505386"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2025 02:13:56 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Wed, 2 Jul 2025 02:13:53 -0700
+Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25 via Frontend Transport; Wed, 2 Jul 2025 02:13:53 -0700
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (40.107.223.87)
+ by edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Wed, 2 Jul 2025 02:13:53 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=tq9r0d9HijV8t19eqnfuZcigUHk0vc2fERuifz7HyZODxqOGmh2MtU1t7xS7nNmYryY0ghjILFYeX5frgkecr23egpXqr8xIviKTf3usi7ELlIq8Qu0UMlDLxMaacHIJZrv8WelzP4opNb3HujTXHT1LTJ0+xh8pLa0B5D2kejNiwylqCfSfISqjKzPi5mtF82CfluDgK8XNuRG6tt4klFYrc5FzF67UWoMVdn+Tx4RyagYW3h+pwQRfq+IkKprGraHBfBZCNwi4wNQSyjtBMmHM3Nn9p2Q8NF7LxN/+nCH0J7BOOLHiGxjkvzbb0rI42J+BK0H4vRT317P7zYJeCQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=FRig8S7m9fBBxSoFs9Mn9FHbx97rCkH94gqf+v04hO0=;
+ b=DTZC6FaYDiOEiv8yigipwSbNddXl0ILoSq6rILBABUmPLq2jOVyo3z9LWn7focUre2ausg77hLTehjHf+c31t4NSguwjxaQYNZpK5JIEWDPg/IDkNmjvnMEMxeHlgDxCTJTYEk4J+mhmcLo3CvIYcPnSH7PGD7NN+1fBCQei/wYRBrlN1NnPEh3pUfkpZxtrUexZagdKhkiS/fsAkeAtqklJ3y3J6r0khieqF1AuBDwHEsv4A50XnGsjbKWyLG9lKjoGuG7DZTURVwlKlcn00gkGxuNzwMj6XDISyKCufCmlmfvWxNZHiN4Nlaj9RPfc5nKcFbisWxuE455MEjThug==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from BN9PR11MB5276.namprd11.prod.outlook.com (2603:10b6:408:135::18)
+ by SA3PR11MB7653.namprd11.prod.outlook.com (2603:10b6:806:306::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8880.17; Wed, 2 Jul
+ 2025 09:13:50 +0000
+Received: from BN9PR11MB5276.namprd11.prod.outlook.com
+ ([fe80::b576:d3bd:c8e0:4bc1]) by BN9PR11MB5276.namprd11.prod.outlook.com
+ ([fe80::b576:d3bd:c8e0:4bc1%4]) with mapi id 15.20.8880.029; Wed, 2 Jul 2025
+ 09:13:50 +0000
+From: "Tian, Kevin" <kevin.tian@intel.com>
+To: Xu Yilun <yilun.xu@linux.intel.com>, Jason Gunthorpe <jgg@nvidia.com>
+CC: "will@kernel.org" <will@kernel.org>, "aneesh.kumar@kernel.org"
+	<aneesh.kumar@kernel.org>, "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"joro@8bytes.org" <joro@8bytes.org>, "robin.murphy@arm.com"
+	<robin.murphy@arm.com>, "shuah@kernel.org" <shuah@kernel.org>,
+	"nicolinc@nvidia.com" <nicolinc@nvidia.com>, "aik@amd.com" <aik@amd.com>,
+	"Williams, Dan J" <dan.j.williams@intel.com>, "baolu.lu@linux.intel.com"
+	<baolu.lu@linux.intel.com>, "Xu, Yilun" <yilun.xu@intel.com>
+Subject: RE: [PATCH v3 2/5] iommufd: Destroy vdevice on idevice destroy
+Thread-Topic: [PATCH v3 2/5] iommufd: Destroy vdevice on idevice destroy
+Thread-Index: AQHb5xYEfELQkUiNkEe0HWCoTdGXH7QbQMYwgABBzACAAEwAgIABNaOAgAAwqoCAAO2bgIAAcaJA
+Date: Wed, 2 Jul 2025 09:13:50 +0000
+Message-ID: <BN9PR11MB52769790C63FFCDC711E80DB8C40A@BN9PR11MB5276.namprd11.prod.outlook.com>
+References: <20250627033809.1730752-1-yilun.xu@linux.intel.com>
+ <20250627033809.1730752-3-yilun.xu@linux.intel.com>
+ <BL1PR11MB52712CE938B57E41C34580908C46A@BL1PR11MB5271.namprd11.prod.outlook.com>
+ <aGJkitx6wjfQ888t@yilunxu-OptiPlex-7050> <20250630145051.GY167785@nvidia.com>
+ <aGOoCa3BkV7KrwVz@yilunxu-OptiPlex-7050> <20250701121315.GD167785@nvidia.com>
+ <aGSYLVmV17g832Ta@yilunxu-OptiPlex-7050>
+In-Reply-To: <aGSYLVmV17g832Ta@yilunxu-OptiPlex-7050>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BN9PR11MB5276:EE_|SA3PR11MB7653:EE_
+x-ms-office365-filtering-correlation-id: 1b4d2e97-4fb1-4025-9372-08ddb948c22d
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024|38070700018;
+x-microsoft-antispam-message-info: =?us-ascii?Q?Y9HXV/2v6Ux0YWnTOc+t7nhfrdEEkcRJ1OBc6tLFJHW2UkEv4U6bpBeI7hCc?=
+ =?us-ascii?Q?zWAdXGgTOwVUkgcXW8DgyiK20JbmZkp6dhqHRPQEDKAgtDdVwtHTf2EwFnim?=
+ =?us-ascii?Q?+F8F7jhttE7nlBeryUO3ecy/zXS2yxiZG2m6x4XaucMDM+Zdc25CStK1CRGm?=
+ =?us-ascii?Q?m4c6YZcCNjv8Xb3ptw3Vv/ebzQrHzWSjQenI/U09j96eqhktzMAJ8SQEAeAt?=
+ =?us-ascii?Q?ic8NgYc/Ue/HJK9BTMT/E0qS+1e098QbYGWwwxusF4L+wA/J3B/91BJVSbi9?=
+ =?us-ascii?Q?kypg7sfq4tMHnWyDuMwJURP1gkt3ak5GCVxpB6ph8Nx48ubRCf8LySPak8px?=
+ =?us-ascii?Q?KTPlgGyrgZER+oiQp0EParv9GCipDfe8i1vNhoPjAM1DhoRTtsM9ToL7U7m4?=
+ =?us-ascii?Q?KomZm5xOvGtWkmhK2S1oHf9o6asnybjfbEz7kk90T6MAIaY0OXFrn0sB8tlK?=
+ =?us-ascii?Q?Ssc2TY5A1Z3BKszw48Eq+nEu3Gwl7rFVqLX32qr8ys3niiZW/45X2LXsY8kN?=
+ =?us-ascii?Q?xulaVzH4griVF6NKKsJaknzpTVgja6yIlaIF5nEaSMgQs/JIe4ZJNxX+grJ6?=
+ =?us-ascii?Q?OL2QYB9V+yCMlLDUEuko42qX/wtOrvQMZNuTBf+awE0BgJ6+ukdhFUhSWmQn?=
+ =?us-ascii?Q?tszEtAvqy7NeDnictiOVMt2C8qbzfcPmsMrNNMwzWP5f0JrOZR2dSFitAJlu?=
+ =?us-ascii?Q?7Qgy1xHfsVfoNNrdqvgRTqUucS6qQZx52lCs9KvgkG3YB+1vNoUgyJVc02nF?=
+ =?us-ascii?Q?S5pHWkX7wEVOvdLBnjmCTTHCZacjv7SxDg/LU2yiMPNBxqFQPNIzxfWqzDlQ?=
+ =?us-ascii?Q?EAcd3HJEi8RuqVyKG5qVwABxUlXNWsqLOL3bA7xqOZz7e5ZNWtoL+4LiGcsR?=
+ =?us-ascii?Q?w4gAY0CNS/Sv25nGGWuSsQAlYSOmddaJFT4ZnC4gwXjCRAY9gkgmdHQ2azDo?=
+ =?us-ascii?Q?+d9xeohiNxd1vwevbM5qxZDv5huTRCU5ph16zLvPhsCnENNeiH3td06Mp23H?=
+ =?us-ascii?Q?sM/aUOg6dQhNKtkbZ53/nRcbPBI+1ZL5V4tJLOKG47hRj+mo0GM3eoDOTenV?=
+ =?us-ascii?Q?ciO36mWUhVuQ7n6E9EJjaeU0Di2MC7GAFAy+4nZAKd9VEZ42qDJsP3RV7XEQ?=
+ =?us-ascii?Q?3AxuX4B8fGLZn+7ha//QyVkcOBYogkCw5prPmAOFIDYPe65NgAIZPu8GWMqc?=
+ =?us-ascii?Q?3rwQJFe97tS7jiFfIij9NkUMCeuLFiaShekt2QJNqdwdnh1UB5vlogbXVU+/?=
+ =?us-ascii?Q?slAtr8Cil6vzsPUhWsIBOLEMoJbmJsXzlKB3bgyuncRlsg5fqrg28aSXpzpj?=
+ =?us-ascii?Q?hng5MrD4ZByB+UY2/MsVsg1bt9ctuUt2xZzUSxKlr9wCr8XNhUAnqjPJShpB?=
+ =?us-ascii?Q?zfyU8lS1bsFm/nUr/TEQva3A0orIYiadSP5pr00yQI3+B93bhh2vxdfoY5uI?=
+ =?us-ascii?Q?Iayva0KatjkbJc9qxJ80qt7NNYfcveDFSFHNrLfK1XeT4ADlxzoV7UOMZHbm?=
+ =?us-ascii?Q?YxmzlN1AG7HSgYY=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR11MB5276.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?b4HfK9PiJgJc9r73mVuXcHo7eF1FB1hsVTYKd/hjcZK6Vf1+ksRd7FMw444g?=
+ =?us-ascii?Q?7SxBI6ExHwH/OQfNSfKGQNk+uLl9EWuV1VuDjsgWuCGv2Z9vmAHPTNEd3Ri+?=
+ =?us-ascii?Q?kss9NcutCBPP6kKy5Ir3rbDEkFuj9mkwD1WnGY3QSNgciwbeAwPsu+WE3hdc?=
+ =?us-ascii?Q?kIbcNW5M7yVxRhuYQYE1yJdqw+pCmel4a/NUv/88TxQdGqmRCnz+IJ7vojcj?=
+ =?us-ascii?Q?/9QrrmK6eZWz96lEz+grc6MNdmb3zhMeuOQvilu1Yo9kcOnRJdhwLOqb3hNR?=
+ =?us-ascii?Q?zopqnn5I03QqlEozaIcx+qey3jeP6CRj/74D3yPAjusp174ckttaHcLa/Rz5?=
+ =?us-ascii?Q?3hmpeXakM+ocbvPFrrZ+Y207B4cm+oCNYyzMY6Qo8rE1uBpTQoBXb3tdEXVy?=
+ =?us-ascii?Q?QAKksP7pBtA5lkDyphEDtLuvQ5/1rqqGfTJHQ5tYepnCBsrIpTX6NoP0ff2u?=
+ =?us-ascii?Q?UsHPq6qDa0w9LhSLsM8SgZSLUzx6jVfsZ3iH/bhGWysXombbvHNP7PwX2RJX?=
+ =?us-ascii?Q?xKCQYZZrVSSLNWfQb7PnVkTQf7I127BMMKHyieT7qNdDikq17SpjoaoU2LPF?=
+ =?us-ascii?Q?Ck4kQcERbfnqcQdOaY5on68udhm58QhoOEScXf5MK+kxsAn7UVwxIurqfpgX?=
+ =?us-ascii?Q?vRHbQ1katIsb72G45cQzWLvRcqVR3ezLsLI0Z1aKD6msJt4iaNJStzRTZZVc?=
+ =?us-ascii?Q?xTLZsikvZwWqzyuQPISuadL4+asNAFM4e8q8/QP2I3/Aqai2KtDgKf07EkM3?=
+ =?us-ascii?Q?7KmOMW0Yd4gukuoHrAIoO0PbFzs70fsc1oebg/1P0T9Sduhl9PY7YOU0MaDJ?=
+ =?us-ascii?Q?uQ0399yi7p0L3vKVhSGBv22SYN8Gb50RfNJzsq14udbEnp79K9wwVzWkqBB/?=
+ =?us-ascii?Q?rlNRAK2zhKHMHFAGIIc7u6yhJjEoTSKYnNrn1QSgxuUVbkaB0GSlCR7dG2k8?=
+ =?us-ascii?Q?52IWybzvmrojSb4Jg49OX2U7+w//LPs1mW2yKhSjc3T5DVCB+eeEVhLZj/IG?=
+ =?us-ascii?Q?XH5hchrxJe0g1yj3UMStob0oqVCrwXf40GnaxsiTm+O5fFp/Hlf1U5Ruerdy?=
+ =?us-ascii?Q?YJfIB6uBDAU2Nwc9TSl3ma3ujG6Fx5JY5U0XvyNCeXE60mCVwvrKSGrW6TMX?=
+ =?us-ascii?Q?AiJ/cteDSNf03DmtvVxo9brTH22m9vEasafFyc9gzjf4msbeM59gAII7ZIye?=
+ =?us-ascii?Q?H9w1Fphkh+UeFIylPOtFCvKd9+vbrxs1oMD19ZEqKtqXLUMMnVPACAhdy3ye?=
+ =?us-ascii?Q?g1NeE2q00hbqJV78BmvK9CtUTQyeguaKs/10KglAzravlMUfJiOAGPsG3cnP?=
+ =?us-ascii?Q?haWK8tXNauRTDrzBG4uEjRSMLbQD2qc8ZUKQ2m3xaZ6s2zyAjqA1a5ViYk7v?=
+ =?us-ascii?Q?tCX4pIVPklrOo9veMo2XE4Uvk85zzt2yOdLC97nkHWLzL3Ln3ZqsQVh4gdba?=
+ =?us-ascii?Q?DpkiqLBHMgndTBmlzbleGFUChFSpstQedATbbbd/l0x/xUgkZZcf0ActLRvy?=
+ =?us-ascii?Q?ihULgUwUDUsbcpt15guzsCyhf5Oa0XjCKcIoKnz50HeO45d3AQYJKfoD6BcT?=
+ =?us-ascii?Q?6JjutmMXsKTvjGkjfEPGr+1tiidFY9AvQRrDe5N3?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250630-xattrat-syscall-v6-0-c4e3bc35227b@kernel.org>
- <20250630-xattrat-syscall-v6-6-c4e3bc35227b@kernel.org> <20250701-bauzaun-riskieren-595464ef81c4@brauner>
-In-Reply-To: <20250701-bauzaun-riskieren-595464ef81c4@brauner>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Wed, 2 Jul 2025 11:13:48 +0200
-X-Gm-Features: Ac12FXwQ_wZQ_QCTo4zCnlXIsD2UE88jy3YPrf_EnnTl4HhmrEsOq9hi_uihdY0
-Message-ID: <CAOQ4uxjfs=YJmgj0CfJ1NxuPaHgh4B6Vou6jG-WBoi1hGdSDdQ@mail.gmail.com>
-Subject: Re: [PATCH v6 6/6] fs: introduce file_getattr and file_setattr syscalls
-To: Christian Brauner <brauner@kernel.org>
-Cc: Andrey Albershteyn <aalbersh@redhat.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Jan Kara <jack@suse.cz>, =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>, 
-	Paul Moore <paul@paul-moore.com>, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-xfs@vger.kernel.org, selinux@vger.kernel.org, 
-	Andrey Albershteyn <aalbersh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BN9PR11MB5276.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1b4d2e97-4fb1-4025-9372-08ddb948c22d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Jul 2025 09:13:50.2389
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: ttWIgjSAXaWTLRC0lK1etIKE/Am4HGQwTpTNT4ckWZpDIJco4d7B7Zv0az7P7jiTx33HX27z5kKm+m9mrZYCSw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR11MB7653
+X-OriginatorOrg: intel.com
 
-> > +/*
-> > + * Variable size structure for file_[sg]et_attr().
-> > + *
-> > + * Note. This is alternative to the structure 'struct fileattr'/'struct fsxattr'.
-> > + * As this structure is passed to/from userspace with its size, this can
-> > + * be versioned based on the size.
-> > + */
-> > +struct fsx_fileattr {
-> > +     __u32   fsx_xflags;     /* xflags field value (get/set) */
-> > +     __u32   fsx_extsize;    /* extsize field value (get/set)*/
-> > +     __u32   fsx_nextents;   /* nextents field value (get)   */
-> > +     __u32   fsx_projid;     /* project identifier (get/set) */
-> > +     __u32   fsx_cowextsize; /* CoW extsize field value (get/set) */
->
-> This misses a:
->
-> __u32 __spare;
->
-> so there's no holes in the struct. :)
+> From: Xu Yilun <yilun.xu@linux.intel.com>
+> Sent: Wednesday, July 2, 2025 10:24 AM
+>=20
+> On Tue, Jul 01, 2025 at 09:13:15AM -0300, Jason Gunthorpe wrote:
+> > On Tue, Jul 01, 2025 at 05:19:05PM +0800, Xu Yilun wrote:
+> > > On Mon, Jun 30, 2025 at 11:50:51AM -0300, Jason Gunthorpe wrote:
+> > > > On Mon, Jun 30, 2025 at 06:18:50PM +0800, Xu Yilun wrote:
+> > > >
+> > > > > I need to reconsider this, seems we need a dedicated vdev lock to
+> > > > > synchronize concurrent vdev abort/destroy.
+> > > >
+> > > > It is not possible to be concurrent
+> > > >
+> > > > destroy is only called once after it is no longer possible to call
+> > > > abort.
+> > >
+> > > I'm almost about to drop the "abort twice" idea. [1]
+> > >
+> > > [1]: https://lore.kernel.org/linux-
+> iommu/20250625123832.GF167785@nvidia.com/
+> > >
+> > > See from the flow below,
+> > >
+> > >   T1. iommufd_device_unbind(idev)
+> > > 	iommufd_device_destroy(obj)
+> > > 		mutex_lock(&idev->igroup->lock)
+> > >  		iommufd_vdevice_abort(idev->vdev.obj)
+> > > 		mutex_unlock(&idev->igroup->lock)
+> > > 	kfree(obj)
+> > >
+> > >   T2. iommufd_destroy(vdev_id)
+> > > 	iommufd_vdevice_destroy(obj)
+> > > 		mutex_lock(&vdev->idev->igroup->lock)
+> > > 		iommufd_vdevice_abort(obj);
+> > > 		mutex_unlock(&vdev->idev->igroup->lock)
+> > > 	kfree(obj)
+> > >
+> > > iommufd_vdevice_destroy() will access idev->igroup->lock, but it is
+> > > possible the idev is already freed at that time:
+> > >
+> > >                                             iommufd_destroy(vdev_id)
+> > >                                             iommufd_vdevice_destroy(o=
+bj)
+> > >   iommufd_device_unbind(idev)
+> > >   iommufd_device_destroy(obj)
+> > >   mutex_lock(&idev->igroup->lock)
+> > >                                             mutex_lock(&vdev->idev->i=
+group->lock) (wait)
+> > >   iommufd_vdevice_abort(idev->vdev.obj)
+> > >   mutex_unlock(&idev->igroup->lock)
+> > >   kfree(obj)
+> > >                                             mutex_lock(&vdev->idev->i=
+group->lock) (PANIC)
+> > >                                             iommufd_vdevice_abort(obj=
+)
+> > >                                             ...
+> >
+> > Yes, you can't touch idev inside the destroy function at all, under
+> > any version. idev is only valid if you have a refcount on vdev.
+> >
+> > But why are you touching this lock? Arrange things so abort doesn't
+> > touch the idev??
+>=20
+> idev has a pointer idev->vdev to track the vdev's lifecycle.
+> idev->igroup->lock protects the pointer. At the end of
+> iommufd_vdevice_destroy() this pointer should be NULLed so that idev
+> knows vdev is really destroyed.
+>=20
+> I haven't found a safer way for vdev to sync up its validness with idev
+> w/o touching idev.
+>=20
+> I was thinking of using vdev->idev and some vdev lock for tracking
+> instead. Then iommufd_vdevice_abort() doesn't touch idev. But it is
+> still the same, just switch to put idev in risk:
+>=20
+>=20
+>                                                iommufd_destroy(vdev_id)
+>                                                iommufd_vdevice_destroy(ob=
+j)
+>   iommufd_device_unbind(idev)
+>   iommufd_device_destroy(obj)
+>                                                mutex_lock(&vdev->some_loc=
+k)
+>   mutex_lock(&idev->vdev->some_lock) (wait)
 
-Adding __spare and not verifying that it is zeroed gets us to the
-point that we are not able to replace __spare with a real field later.
+panic could happen here, between acquiring idev->vdev and
+mutex(vdev->some_lock) as vdev might be destroyed/freed=20
+in-between.
 
-I suggest to resolve this hole as Darrick and Pali suggested by making it
-__u64 fsx_xflags
+>                                                iommufd_vdevice_abort(obj)
+>                                                mutex_unlock(&vdev->some_l=
+ock)
+>                                                kfree(obj)
+>   mutex_lock(&idev->vdev->some_lock) (PANIC)
+>   iommufd_vdevice_abort(idev->vdev.obj)
+>   ...
+>=20
 
-w.r.t Darrick's comment, I kind of like it that the name for the UAPI
-struct (fsxattr)
-differs from the name of the kernel internal representation (fileattr), but
-I agree that fsx_fileattr does not give a good hint on what it is.
+I cannot find a safe way either, except using certain global lock.
 
-I think that renaming struct fsx_fileattr to struct fsxattr64 along
-with changing the
-width of fsx_xflags will help reduce the confusion of users.
-
-What do you guys think?
-
-Thanks,
-Amir.
+but comparing to that I'd prefer to the original wait approach...
 
