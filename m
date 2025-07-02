@@ -1,65 +1,70 @@
-Return-Path: <linux-kernel+bounces-712714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-712712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1087AF0DE2
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 10:25:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7ECEDAF0DDC
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 10:24:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 245FC1C25E1E
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 08:24:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09924485C58
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 08:23:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79810238149;
-	Wed,  2 Jul 2025 08:24:05 +0000 (UTC)
-Received: from leonov.paulk.fr (leonov.paulk.fr [185.233.101.22])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49B0F238C07;
+	Wed,  2 Jul 2025 08:23:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ZqDN41Ac"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F7CC238144;
-	Wed,  2 Jul 2025 08:24:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.233.101.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1521D236454;
+	Wed,  2 Jul 2025 08:23:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751444645; cv=none; b=S3GC2MT7gbhFWQ33jC0Uv+pxLPWh6H7pBAaMoKhfMSovx6rc9rVvatzgFRbDYwvVNbVm4TJ+EVX7Ap+4aRKhQ+i5gXrrQGpYEPSpakqLR02TsB814/lwgy2AIIJSFYYkHGHt6cSSzG/uQMrDDKFMVEnE0emhRh65oZE29Kg0CYU=
+	t=1751444629; cv=none; b=htABGpgG/bzMiiFlNz+jhlRf5shfG4N1tjxFmPyczgSoPrGoZbyri6CYND/IaQ8crIgRk9VYEHjmjK608UuGUzXvCXm4LqriYk+8r9qQdJZ524pUvCmvhs7Ap8GlG8Svq2YW3cqbZR1hI3gCI598h57mS5lmcYCWBj7huIB+kko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751444645; c=relaxed/simple;
-	bh=8kK/21NkJz+jMn49WLjQQ6ERfOGrwVnuFssPmLcQ7io=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=f182/Yur9wsy9CWCIFaDGhNMWqR1WWp0yO5ezslQ84OYWr9qWJO3eqJvKzM8x8d2EQvIkcxAeiuxUf+sC31ckEfcQAWsHv7KmzHhKdXXMw9jNYaat0YAMAEEGJVJMfy5Eg7OWUAtSQiZyJoF2DM17JbZIPB47XQX2Bqr2opundA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sys-base.io; spf=pass smtp.mailfrom=sys-base.io; arc=none smtp.client-ip=185.233.101.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sys-base.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sys-base.io
-Received: from laika.paulk.fr (12.234.24.109.rev.sfr.net [109.24.234.12])
-	by leonov.paulk.fr (Postfix) with ESMTPS id 876F11F00036;
-	Wed,  2 Jul 2025 08:24:01 +0000 (UTC)
-Received: by laika.paulk.fr (Postfix, from userid 65534)
-	id 18055AC98C9; Wed,  2 Jul 2025 08:24:01 +0000 (UTC)
-X-Spam-Level: *
-Received: from localhost.localdomain (unknown [192.168.1.64])
-	by laika.paulk.fr (Postfix) with ESMTP id 104AFAC98BE;
-	Wed,  2 Jul 2025 08:22:33 +0000 (UTC)
-From: Paul Kocialkowski <paulk@sys-base.io>
-To: dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,
-	Jessica Zhang <quic_jesszhan@quicinc.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Sam Ravnborg <sam@ravnborg.org>,
-	Paul Kocialkowski <paulk@sys-base.io>
-Subject: [PATCH v2 2/2] drm/panel: simple: Add Olimex LCD-OLinuXino-5CTS support
-Date: Wed,  2 Jul 2025 10:22:30 +0200
-Message-ID: <20250702082230.1291953-2-paulk@sys-base.io>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250702082230.1291953-1-paulk@sys-base.io>
-References: <20250702082230.1291953-1-paulk@sys-base.io>
+	s=arc-20240116; t=1751444629; c=relaxed/simple;
+	bh=TnTZWQEv6aP07Li4wv89brHGE/hSleLFrq/Arjw54G4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UotI4bw0LtM+IntDxsNj+4tv0VjES2uS9EFKJJQFuBfDji1Mjvfv8jfgs2RMed60eF9LxnJoRfSGHGHCOYJuNkZW86p+Q9W3YgOIHX9G+fLIRw09BJTuNPaAgrxiCiShfVHAXl2f/RLyXnWCJg10cWgyk44o5LbQuCGBUcNIBqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ZqDN41Ac; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5626OQI4025163;
+	Wed, 2 Jul 2025 08:23:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=vpHjl/i8yfCIVgLeheCx4j
+	GxJihPaQqVDQpuy+Ffza4=; b=ZqDN41AcEV5Skw8K96ChoWwEp4hKuYOxhQpPGT
+	v/43SVjKNA6Rqwwjc+c9r7WYaGdqLLeFGF1Ahd12XQXLOOrgv5+PHqYiV6zQWsrn
+	dBwwQfvitPm0VNsuczZXn+tiqOZjnYdFjptA7jgKoCJw2ymvbjD4L2VvoVO471tX
+	MTLfncrfiC5W7P+FR0QvZvjkBYxXAPe81vPRYc3EKNz4I5t8yutAn0Msu9iVGTQ0
+	d2eNcBKpBxkAyPPPXaJA3uuV+f4maIGxGkKcgIANogM0/VTVoAGXvQdgUIcAzbHk
+	zMWmgb7jOPE2pjy8E1YZzGlw4aARkHaXmf9Sw5/Tv8sZn5kg==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47kd64s0f7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 02 Jul 2025 08:23:34 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5628NXdr024434
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 2 Jul 2025 08:23:33 GMT
+Received: from hu-gkohli-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Wed, 2 Jul 2025 01:23:29 -0700
+From: Gaurav Kohli <quic_gkohli@quicinc.com>
+To: <amitk@kernel.org>, <daniel.lezcano@linaro.org>, <rui.zhang@intel.com>,
+        <lukasz.luba@arm.com>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <andersson@kernel.org>, <konradybcio@kernel.org>
+CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <quic_manafm@quicinc.com>,
+        Gaurav Kohli
+	<quic_gkohli@quicinc.com>
+Subject: [PATCH v6 0/2] Enable TSENS and thermal zone for QCS615 SoC 
+Date: Wed, 2 Jul 2025 13:53:09 +0530
+Message-ID: <20250702082311.4123461-1-quic_gkohli@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,60 +72,70 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=Z+PsHGRA c=1 sm=1 tr=0 ts=6864ec86 cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8
+ a=EUspDBNiAAAA:8 a=JfOcGDDDXtGUpYJnmSUA:9 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzAyMDA2NyBTYWx0ZWRfX821RtU3edJGM
+ iFjWHWKTK0KQn5xIM5aEBOuIPuQ/tyTQJze5SbTIQRxWarPiqUcUNa2qu7cYYWSl5JmJaZlnoky
+ urGVmZl/wP7/HpIoTknJqOFrPGPd8dijL4w+Jy5TpA6qSBf0Z+Ms1HCuUQlOmFsMKJHUJWF2ts3
+ RDHGZEIOPr5KGA9bc7pkpljwq8A8IYLcelUuYJasLHGKO8McF49gPfUgmvfuns76TknCsbzCaKB
+ X/hZz3+Q34cCBgsX2+XKuMnqLacVw1GDOMLUDF9n3I1qAHsOfPXjI8VywtutMOBf1OmqpK857U9
+ gUYTtDfvf1FS4ZPgwJ3a4+m/PX0Lm1JR1wIwu0sPPGnkvNOPkxPddzASHds3rxyoI7yCtKTsYz4
+ zGjA+wQy6Q23z+k1aOW/L185vf3so5KqFGXjBDwlpQbJYP4U7OHlz3VD3aC541IsvOc3lfj1
+X-Proofpoint-GUID: xcx_5chvyHZXVRPvUJghoYg0KHTmCkvf
+X-Proofpoint-ORIG-GUID: xcx_5chvyHZXVRPvUJghoYg0KHTmCkvf
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-01_02,2025-06-27_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 lowpriorityscore=0 clxscore=1015 malwarescore=0 mlxlogscore=954
+ spamscore=0 adultscore=0 mlxscore=0 priorityscore=1501 bulkscore=0
+ impostorscore=0 suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507020067
 
-Add support for the Olimex LCD-OLinuXino-5CTS, a 5-inch TFT LCD panel
-with a mode operating at 33.3 MHz.
+Adding compatible string in TSENS dt-bindings, device node
+for TSENS controller and Thermal zone support.
 
-Signed-off-by: Paul Kocialkowski <paulk@sys-base.io>
 ---
- drivers/gpu/drm/panel/panel-simple.c | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+Changes in v6:
+- Fix thermal sensor dt alignment issues.
+- Link to v5: https://lore.kernel.org/linux-devicetree/20250625043626.2743155-1-quic_gkohli@quicinc.com/
 
-diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
-index 0a3b26bb4d73..b3d7a0eeabd5 100644
---- a/drivers/gpu/drm/panel/panel-simple.c
-+++ b/drivers/gpu/drm/panel/panel-simple.c
-@@ -3655,6 +3655,29 @@ static const struct panel_desc olimex_lcd_olinuxino_43ts = {
- 	.bus_format = MEDIA_BUS_FMT_RGB888_1X24,
- };
- 
-+static const struct drm_display_mode olimex_lcd_olinuxino_5cts_mode = {
-+	.clock = 33300,
-+	.hdisplay = 800,
-+	.hsync_start = 800 + 210,
-+	.hsync_end = 800 + 210 + 20,
-+	.htotal = 800 + 210 + 20 + 26,
-+	.vdisplay = 480,
-+	.vsync_start = 480 + 22,
-+	.vsync_end = 480 + 22 + 10,
-+	.vtotal = 480 + 22 + 10 + 13,
-+};
-+
-+static const struct panel_desc olimex_lcd_olinuxino_5cts = {
-+	.modes = &olimex_lcd_olinuxino_5cts_mode,
-+	.num_modes = 1,
-+	.size = {
-+		.width = 154,
-+		.height = 86,
-+	},
-+	.bus_format = MEDIA_BUS_FMT_RGB888_1X24,
-+};
-+
-+
- static const struct display_timing ontat_kd50g21_40nt_a1_timing = {
- 	.pixelclock = { 30000000, 30000000, 50000000 },
- 	.hactive = { 800, 800, 800 },
-@@ -5214,6 +5237,9 @@ static const struct of_device_id platform_of_match[] = {
- 	}, {
- 		.compatible = "olimex,lcd-olinuxino-43-ts",
- 		.data = &olimex_lcd_olinuxino_43ts,
-+	}, {
-+		.compatible = "olimex,lcd-olinuxino-5-cts",
-+		.data = &olimex_lcd_olinuxino_5cts,
- 	}, {
- 		.compatible = "ontat,kd50g21-40nt-a1",
- 		.data = &ontat_kd50g21_40nt_a1,
+Changes in v5:
+- Fix git patch edit error.
+- Link to v4: https://lore.kernel.org/linux-devicetree/20250624064945.764245-1-quic_gkohli@quicinc.com/
+
+Changes in v4:
+- Fix naming of thermal sensor.
+- Link to v3: https://lore.kernel.org/linux-devicetree/20250613112402.2203617-1-quic_gkohli@quicinc.com/
+
+Changes in v3:
+- Add critical for all trips.
+- Link to v2: https://lore.kernel.org/linux-devicetree/cover.1744955863.git.gkohli@qti.qualcomm.com/
+
+Changes in v2:
+- Drop the passive trip point and add critical for CPU thermal zones.
+- Rearrange the tsens dt node and fix the address part.
+- Fix the commit subject with target name.
+- Link to v1: https://lore.kernel.org/linux-devicetree/cover.1744292503.git.quic_gkohli@quicinc.com/
+---
+
+Gaurav Kohli (2):
+  dt-bindings: thermal: tsens: Add QCS615 compatible
+  arm64: dts: qcom: qcs615: Enable TSENS support for QCS615 SoC
+
+ .../bindings/thermal/qcom-tsens.yaml          |   1 +
+ arch/arm64/boot/dts/qcom/qcs615.dtsi          | 205 ++++++++++++++++++
+ 2 files changed, 206 insertions(+)
+
 -- 
-2.49.0
+2.34.1
 
 
