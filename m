@@ -1,316 +1,153 @@
-Return-Path: <linux-kernel+bounces-713135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6250AF13D2
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 13:26:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2110AF13DE
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 13:29:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 381937ADE54
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 11:25:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 099AC1C25436
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 11:30:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 948E8264A65;
-	Wed,  2 Jul 2025 11:26:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 084D8264A89;
+	Wed,  2 Jul 2025 11:29:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="kizCZh+i"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="pBo3l1Dz"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D7C52367D3;
-	Wed,  2 Jul 2025 11:26:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA62B2367D3
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 11:29:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751455576; cv=none; b=kDxtlwDeJmW5lMb8fqhVJhmicO2vz4C04cO94a2pRcypxADKO5uACdR9p/wy5WMnvxU7z2a7QWCbK0BVA8reGI5JOKFEioBzWvWy8qLaVb83ukBD0reEW55POC2BA6vcDV2FZxhYMv6g3TnO5d5KtTZxNJxB68BZK54ix+67vPY=
+	t=1751455785; cv=none; b=q130YmJqCA1IhzWqHEAolbMrOQ4Kmap3IbxNtKOqZlWCFH8tK0VxzX5HUa7bMsm/acCPWRFYhjt4IkK5EVb7yGBXBstKJWfJYG0/29E/JbJ2BZ5J5oWnivjHoOB1tNQUUwuNFL2QLK3FfqLfCjcy3LapA3Phdvy9xxQqJVHsvH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751455576; c=relaxed/simple;
-	bh=JUP0benIUiAciX/cEg3tKgV8xXEzSwbPiJWJswxP0OQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HYrzazL5ak2X6nMaGUPyj9MxnsWJkf8olAPrd5GRPzEA9o4hmgqc/oJb95Wg7iQ/de175BsmMDzTEQy6HctOYPIvpighplvCXpUUjQb6Q/syzvWwD4JSyW3jrce503WQpyA6TeekrAgtpB5/FYg+p1NM2EFDKaIE88xAIq7M1pY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=kizCZh+i; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=ns2w6N9Pjlk+8B2/l+fxUqcQUBBJ4EGiVr4r9E2WKwY=; b=kizCZh+ijbuiIlJvnQBSd5hmQW
-	8S79AdZQFGP1dHRcu2uIDgWSpM59qBMq2B92l24sJ+10rQqTFvSBGO0O8UciTzSJ30AKuFudPRJ39
-	e5nNfhceKYT+gHeFLKCjGhLTagvEYhIwpIdFuEbs5Fo/AN/wdppEvsnDHtyI5UmrDMwH+zDbSdEML
-	Rmf0hJJQL2t4zaVri03LHVAZXOkAG4+kBiBFtHWETvFCj2RcWaXVmtKiuvUQN2SSI0E7bBlApu2/i
-	4aY3cpOEw/4m5SmNULDDuzRM8yIlL5fZXNsi6amqI5gVW74fx4l+85hULODDFjamO5wQ3V3tFWQZr
-	bnHQ9wCw==;
-Received: from [81.79.92.254] (helo=[192.168.0.101])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1uWvb3-00BQeD-Fg; Wed, 02 Jul 2025 13:25:49 +0200
-Message-ID: <9a070a66-f6fd-45b4-958c-c6e9f3487a0c@igalia.com>
-Date: Wed, 2 Jul 2025 12:25:48 +0100
+	s=arc-20240116; t=1751455785; c=relaxed/simple;
+	bh=LdphP1xXhKqZSYVvlZ50dcoluhElu4dQEdExDpFusYc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FhYyVCnbQqNZxFWw8BhAxI7lVli7qz4q3YzN5CWPKy84lRT8yYhLcc9byqD9qQ2oVXz3N8+Ylly0xRNjhw6k1lhTOesAzajgB06Z+Ud4CGOQgp4RcxPakzMcnA6icUMNyqLM3KN/JErwT5BDR/lHC0YHUeIyJTL94VSMdtL0UWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=pBo3l1Dz; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5624VR2W008074;
+	Wed, 2 Jul 2025 11:29:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=p/YBTsHarJnrR0kdVvkZX9N74PaI8WBrZluviimBl
+	Yo=; b=pBo3l1DzSXJS4N2dhr2KEfSliVsCb5Vy/3hUHJUoxTuMCsaQavmf+xMBc
+	iXOFJA4Mpfj7Y/lClpWLX24oBNWlyyC1mqyLNA2hYsq7ceBEhXU3HbS2naZNeVKr
+	jG8iQWSbAQ+OfavYAvf/4DxFNvyX0idNxnpRmY/saJvtLWfJYQAWKg/NNxpoeBU5
+	VCeU8pMlgyZYdiEbjdDxaYwOCxZrKSAwQIYSgGDQS2AZRTWkIR+HdwvyCHH+Vj1+
+	dBoH1T1tJTGdcPS8jdetleeMYOOe7ABGGg0etjyGhCURZQG9VUjGjP5AAVFvcJar
+	Lq8TEbUI6lz0Xi9kJk/o7Nbo7xqEQ==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47j7wrn4g9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 02 Jul 2025 11:29:10 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 562B6f0n012548;
+	Wed, 2 Jul 2025 11:29:09 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47j7wrn4g4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 02 Jul 2025 11:29:09 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 562AfvpQ012054;
+	Wed, 2 Jul 2025 11:29:08 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 47jv7my4qs-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 02 Jul 2025 11:29:08 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 562BT6M751970374
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 2 Jul 2025 11:29:06 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3A8AA20049;
+	Wed,  2 Jul 2025 11:29:06 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D335820040;
+	Wed,  2 Jul 2025 11:29:03 +0000 (GMT)
+Received: from ltczz402-lp1.aus.stglabs.ibm.com (unknown [9.40.194.31])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Wed,  2 Jul 2025 11:29:03 +0000 (GMT)
+From: Donet Tom <donettom@linux.ibm.com>
+To: David Hildenbrand <david@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Oscar Salvador <osalvador@suse.de>, Zi Yan <ziy@nvidia.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Ritesh Harjani <ritesh.list@gmail.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, "Rafael J . Wysocki" <rafael@kernel.org>,
+        Danilo Krummrich <dakr@kernel.org>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Alison Schofield <alison.schofield@intel.com>,
+        Yury Norov <yury.norov@gmail.com>, Dave Jiang <dave.jiang@intel.com>,
+        KAMEZAWA Hiroyuki <kamezawa.hiroyu@jp.fujitsu.com>,
+        Donet Tom <donettom@linux.ibm.com>
+Subject: [PATCH] drivers/base/node: Handle error properly in register_one_node()
+Date: Wed,  2 Jul 2025 06:28:56 -0500
+Message-ID: <20250702112856.295176-1-donettom@linux.ibm.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/6] drm/sched/tests: Port to cancel_job()
-To: phasta@kernel.org, Lyude Paul <lyude@redhat.com>,
- Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Matthew Brost <matthew.brost@intel.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Sumit Semwal <sumit.semwal@linaro.org>,
- Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>
-Cc: dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- linaro-mm-sig@lists.linaro.org
-References: <20250701132142.76899-3-phasta@kernel.org>
- <20250701132142.76899-5-phasta@kernel.org>
- <f9b55d5b-0018-4850-a9b7-2f267467e957@igalia.com>
- <6762d33b4fe8e7b264a7403f228e6ec6723ae623.camel@mailbox.org>
-Content-Language: en-GB
-From: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
-In-Reply-To: <6762d33b4fe8e7b264a7403f228e6ec6723ae623.camel@mailbox.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=E/PNpbdl c=1 sm=1 tr=0 ts=68651806 cx=c_pps a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17 a=Wb1JkmetP80A:10 a=VnNF1IyMAAAA:8 a=VrXgkTA_NDOggtd2K6IA:9
+X-Proofpoint-GUID: RSfRXe1pJUfoStl0RtYoKOyEq5Zpp2lP
+X-Proofpoint-ORIG-GUID: AXXZW-3Kuz0pGuqr65ZFqcOPMRIsj9Vf
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzAyMDA5MSBTYWx0ZWRfX1ev3hEi+ylHe yiNfqCrt3gKXzzEZzKqJkV/jwwjFVSD8xwrLTgR1D4tmdNv7B0CQzk2SXj41dT+Jmp5P1U0lJS5 aRrwUAMtfFmHBieZtAxXIQh6TjjoPt6yqQw9Gqf3PFJS1Oj2YTrpEL0XvM0qIRXtmvUTiflRgU+
+ fFGyBi/n7ndAt7aPUPO++z6ysIq7H5SyTnBN5bixY7SzW3D8iLatwDN4Wy6Il6wj/zWGBlTecJ8 Osl7b3TbQJ5RcdtdCYleNWtqjo8O6OPbOucX/cZfM5IIGZyCAjJ+NnWBQrTeDqrzsbggEeXjYmt fKYHrE1xpn0boSvrT8NmVYmhvZjb0WS1klcyUKL3cVll3dv3ALhlY4Pk1PZh2RDfRvTOtn+m3vv
+ 5kcQRNonSu/q9bRfYarUpouEF7edpSofRT2aamfthN8GXsZVt2aLDnoD3gVxokD3lMa1gOyh
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-02_01,2025-06-27_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 spamscore=0
+ bulkscore=0 priorityscore=1501 phishscore=0 suspectscore=0 mlxlogscore=953
+ lowpriorityscore=0 mlxscore=0 clxscore=1011 adultscore=0 impostorscore=0
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507020091
 
+If register_node() returns an error, it is not handled correctly.
+The function will proceed further and try to register CPUs under the
+node, which is not correct.
 
-On 02/07/2025 11:56, Philipp Stanner wrote:
-> On Wed, 2025-07-02 at 11:36 +0100, Tvrtko Ursulin wrote:
->>
->> On 01/07/2025 14:21, Philipp Stanner wrote:
->>> The GPU Scheduler now supports a new callback, cancel_job(), which
->>> lets
->>> the scheduler cancel all jobs which might not yet be freed when
->>> drm_sched_fini() runs. Using this callback allows for significantly
->>> simplifying the mock scheduler teardown code.
->>>
->>> Implement the cancel_job() callback and adjust the code where
->>> necessary.
->>
->> Cross referencing against my version I think you missed this hunk:
->>
->> --- a/drivers/gpu/drm/scheduler/tests/sched_tests.h
->> +++ b/drivers/gpu/drm/scheduler/tests/sched_tests.h
->> @@ -49,7 +49,6 @@ struct drm_mock_scheduler {
->>
->>    	spinlock_t		lock;
->>    	struct list_head	job_list;
->> -	struct list_head	done_list;
->>
->>    	struct {
->>    		u64		context;
->>
-> 
-> Right, overlooked that one.
-> 
->>
->> I also had this:
->>
->> @@ -97,7 +96,8 @@ struct drm_mock_sched_job {
->>    	struct completion	done;
->>
->>    #define DRM_MOCK_SCHED_JOB_DONE		0x1
->> -#define DRM_MOCK_SCHED_JOB_TIMEDOUT	0x2
->> +#define DRM_MOCK_SCHED_JOB_CANCELED	0x2
->> +#define DRM_MOCK_SCHED_JOB_TIMEDOUT	0x4
->>
->> And was setting it in the callback. And since we should add a test to
->> explicitly cover the new callback, and just the callback, that could
->> make it very easy to do it.
-> 
-> What do you imagine that to look like? The scheduler only invokes the
-> callback on tear down.
-> 
-> We also don't have tests that only test free_job() and the like, do
-> we?
-> 
-> You cannot test a callback for the scheduler, because the callback is
-> implemented in the driver.
-> 
-> Callbacks are tested by using the scheduler. In this case, it's tested
-> the intended way by the unit tests invoking drm_sched_free().
+So, in this patch, if register_node() returns an error, we return
+immediately from the function.
 
-Something like (untested):
+Signed-off-by: Donet Tom <donettom@linux.ibm.com>
+---
 
-static void drm_sched_test_cleanup(struct kunit *test)
-{
-	struct drm_mock_sched_entity *entity;
-	struct drm_mock_scheduler *sched;
-	struct drm_mock_sched_job job;
-	bool done;
+This patch is based on the mm-unstable branch.
 
-	/*
-	 * Check that the job cancel callback gets invoked by the scheduler.
-	 */
+Fixes: 76b67ed9dce6 ("[PATCH] node hotplug: register cpu: remove node struct")
 
-	sched = drm_mock_sched_new(test, MAX_SCHEDULE_TIMEOUT);
-	entity = drm_mock_sched_entity_new(test,
-					   DRM_SCHED_PRIORITY_NORMAL,
-					   sched);
+The issue has been present since the above commit, which is
+quite old. Should I add a Fixes: tag and backport it to all
+kernels that have this commit?
+---
+ drivers/base/node.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-	job = drm_mock_sched_job_new(test, entity);
-	drm_mock_sched_job_submit(job);
-	done = drm_mock_sched_job_wait_scheduled(job, HZ);
-	KUNIT_ASSERT_TRUE(test, done);
-
-	drm_mock_sched_entity_free(entity);
-	drm_mock_sched_fini(sched);
-
-	KUNIT_ASSERT_TRUE(test, job->flags & DRM_MOCK_SCHED_JOB_CANCELED);
-}
-
-Or via the hw fence status.
-
-Regards,
-
-Tvrtko
-
->>> Signed-off-by: Philipp Stanner <phasta@kernel.org>
->>> ---
->>>    .../gpu/drm/scheduler/tests/mock_scheduler.c  | 66 +++++++-------
->>> -----
->>>    1 file changed, 23 insertions(+), 43 deletions(-)
->>>
->>> diff --git a/drivers/gpu/drm/scheduler/tests/mock_scheduler.c
->>> b/drivers/gpu/drm/scheduler/tests/mock_scheduler.c
->>> index 49d067fecd67..2d3169d95200 100644
->>> --- a/drivers/gpu/drm/scheduler/tests/mock_scheduler.c
->>> +++ b/drivers/gpu/drm/scheduler/tests/mock_scheduler.c
->>> @@ -63,7 +63,7 @@ static void drm_mock_sched_job_complete(struct
->>> drm_mock_sched_job *job)
->>>    	lockdep_assert_held(&sched->lock);
->>>    
->>>    	job->flags |= DRM_MOCK_SCHED_JOB_DONE;
->>> -	list_move_tail(&job->link, &sched->done_list);
->>> +	list_del(&job->link);
->>>    	dma_fence_signal_locked(&job->hw_fence);
->>>    	complete(&job->done);
->>>    }
->>> @@ -236,26 +236,39 @@ mock_sched_timedout_job(struct drm_sched_job
->>> *sched_job)
->>>    
->>>    static void mock_sched_free_job(struct drm_sched_job *sched_job)
->>>    {
->>> -	struct drm_mock_scheduler *sched =
->>> -			drm_sched_to_mock_sched(sched_job->sched);
->>>    	struct drm_mock_sched_job *job =
->>> drm_sched_job_to_mock_job(sched_job);
->>> -	unsigned long flags;
->>>    
->>> -	/* Remove from the scheduler done list. */
->>> -	spin_lock_irqsave(&sched->lock, flags);
->>> -	list_del(&job->link);
->>> -	spin_unlock_irqrestore(&sched->lock, flags);
->>>    	dma_fence_put(&job->hw_fence);
->>> -
->>>    	drm_sched_job_cleanup(sched_job);
->>>    
->>>    	/* Mock job itself is freed by the kunit framework. */
->>>    }
->>>    
->>> +static void mock_sched_cancel_job(struct drm_sched_job *sched_job)
->>> +{
->>> +	struct drm_mock_scheduler *sched =
->>> drm_sched_to_mock_sched(sched_job->sched);
->>> +	struct drm_mock_sched_job *job =
->>> drm_sched_job_to_mock_job(sched_job);
->>> +	unsigned long flags;
->>> +
->>> +	hrtimer_cancel(&job->timer);
->>> +
->>> +	spin_lock_irqsave(&sched->lock, flags);
->>> +	if (!dma_fence_is_signaled_locked(&job->hw_fence)) {
->>> +		list_del(&job->link);
->>> +		dma_fence_set_error(&job->hw_fence, -ECANCELED);
->>> +		dma_fence_signal_locked(&job->hw_fence);
->>> +	}
->>> +	spin_unlock_irqrestore(&sched->lock, flags);
->>> +
->>> +	/* The GPU Scheduler will call
->>> drm_sched_backend_ops.free_job(), still.
->>> +	 * Mock job itself is freed by the kunit framework. */
->>
->> /*
->>    * Multiline comment style to stay consistent, at least in this
->> file.
->>    */
->>
->> The rest looks good, but I need to revisit the timeout/free handling
->> since it has been a while and you changed it recently.
->>
->> Regards,
->>
->> Tvrtko
->>
->>> +}
->>> +
->>>    static const struct drm_sched_backend_ops drm_mock_scheduler_ops
->>> = {
->>>    	.run_job = mock_sched_run_job,
->>>    	.timedout_job = mock_sched_timedout_job,
->>> -	.free_job = mock_sched_free_job
->>> +	.free_job = mock_sched_free_job,
->>> +	.cancel_job = mock_sched_cancel_job,
->>>    };
->>>    
->>>    /**
->>> @@ -289,7 +302,6 @@ struct drm_mock_scheduler
->>> *drm_mock_sched_new(struct kunit *test, long timeout)
->>>    	sched->hw_timeline.context = dma_fence_context_alloc(1);
->>>    	atomic_set(&sched->hw_timeline.next_seqno, 0);
->>>    	INIT_LIST_HEAD(&sched->job_list);
->>> -	INIT_LIST_HEAD(&sched->done_list);
->>>    	spin_lock_init(&sched->lock);
->>>    
->>>    	return sched;
->>> @@ -304,38 +316,6 @@ struct drm_mock_scheduler
->>> *drm_mock_sched_new(struct kunit *test, long timeout)
->>>     */
->>>    void drm_mock_sched_fini(struct drm_mock_scheduler *sched)
->>>    {
->>> -	struct drm_mock_sched_job *job, *next;
->>> -	unsigned long flags;
->>> -	LIST_HEAD(list);
->>> -
->>> -	drm_sched_wqueue_stop(&sched->base);
->>> -
->>> -	/* Force complete all unfinished jobs. */
->>> -	spin_lock_irqsave(&sched->lock, flags);
->>> -	list_for_each_entry_safe(job, next, &sched->job_list,
->>> link)
->>> -		list_move_tail(&job->link, &list);
->>> -	spin_unlock_irqrestore(&sched->lock, flags);
->>> -
->>> -	list_for_each_entry(job, &list, link)
->>> -		hrtimer_cancel(&job->timer);
->>> -
->>> -	spin_lock_irqsave(&sched->lock, flags);
->>> -	list_for_each_entry_safe(job, next, &list, link)
->>> -		drm_mock_sched_job_complete(job);
->>> -	spin_unlock_irqrestore(&sched->lock, flags);
->>> -
->>> -	/*
->>> -	 * Free completed jobs and jobs not yet processed by the
->>> DRM scheduler
->>> -	 * free worker.
->>> -	 */
->>> -	spin_lock_irqsave(&sched->lock, flags);
->>> -	list_for_each_entry_safe(job, next, &sched->done_list,
->>> link)
->>> -		list_move_tail(&job->link, &list);
->>> -	spin_unlock_irqrestore(&sched->lock, flags);
->>> -
->>> -	list_for_each_entry_safe(job, next, &list, link)
->>> -		mock_sched_free_job(&job->base);
->>> -
->>>    	drm_sched_fini(&sched->base);
->>>    }
->>>    
->>
-> 
+diff --git a/drivers/base/node.c b/drivers/base/node.c
+index bef84f01712f..aec991b4c0b2 100644
+--- a/drivers/base/node.c
++++ b/drivers/base/node.c
+@@ -885,6 +885,8 @@ int register_one_node(int nid)
+ 	node_devices[nid] = node;
+ 
+ 	error = register_node(node_devices[nid], nid);
++	if (error)
++		return error;
+ 
+ 	/* link cpu under this node */
+ 	for_each_present_cpu(cpu) {
+-- 
+2.47.1
 
 
