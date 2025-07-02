@@ -1,212 +1,139 @@
-Return-Path: <linux-kernel+bounces-713341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C05FAAF583E
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 15:14:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E1F2AF5849
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 15:15:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 705267B874E
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 13:12:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F0AC3A0FBB
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 13:14:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17D22277011;
-	Wed,  2 Jul 2025 13:13:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7312727877F;
+	Wed,  2 Jul 2025 13:14:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GvhrY1t7"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="FcvHW1+q"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7377276052
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 13:13:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751461994; cv=none; b=c+YkwzXXRC3PHrLC8uzTlP4oeAmF6nV+spvtymf2Lv2ezX0cdAVz4tSQ0+WW8oggkBdpu9Sb2RHLPzQQ2wnncMhzBr7+00n3cnuRwFp0ofMFhwerox+YZ6kjSCDUOVJwvptgEDL4HJvATxZEyeCTEgfPVwT5h2AB580svg+CF3k=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751461994; c=relaxed/simple;
-	bh=dAOlhPBz2wPebLfmNnzHJOLRL03SgOBd++Mx+Znx8bM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=C/sSDMz3ugBs+WRyiSoXl80g2uMui4juovqJHJkr4gs49qvFMCxDcL7OPbEPRF1WtJcB9IrgxqhicaWWmNpQO2Us/hxPZ/v4fbgddydOhEcnwLUORifPYVmHTEJTzmcy3qJaBFvhIssNXEsEwm5rkqD9rK6ucvPiJnS3UJJsXG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GvhrY1t7; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-237f18108d2so408475ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 06:13:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1751461992; x=1752066792; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dAOlhPBz2wPebLfmNnzHJOLRL03SgOBd++Mx+Znx8bM=;
-        b=GvhrY1t7pThXp9CFIEGDuKshpVUek1wzBsiGqii1XC+dlPyPpQ5G/aOIt1TbKijJ2Q
-         VwbtO0F8U3zDqPTcWQaYvDPcreVfHMCx8JcnS8RzpuExeEHkR/ldvqal5MEQQDo55oZs
-         lsLsO767BNe2JT59YmCL18woySQGzowrPnhO4W7NA1mpx31FjnHx/jPgWTRdvqQmTg/y
-         iSKuHj6cd2pq4X3ID/d40cjlDliQKLVwCxWrDKrbftPE7X+YnIIv4csdPFCIR7Jy+d3s
-         OVmTh/bwHH8GZf9dTs95UOdpm0+1X8akHVbtgmBcSvx3rsZtbv6ss7aT5GMfWs7oS6jC
-         jj/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751461992; x=1752066792;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dAOlhPBz2wPebLfmNnzHJOLRL03SgOBd++Mx+Znx8bM=;
-        b=fvP60Ppc//c0MNlVKFpUUVTLf06wsuDhiIyf6wGMpxz+1+mrHbzn7ILxvADHzQW9JI
-         FsBmUnx84QRPRqoII7ywdSAxmpEsXHYhyI2HQk0iBQT+QkoGmROXEzuITFKWxiF9t7bO
-         nWLQcwlX04u/Qrz9Mbk6fBn9bJEDQaM3chkYtyCXJFnYLCy5rSjQWK0M6JHViBPN1BG/
-         2PSGePipkCMuwClZo43W9Etga/K9Nm8wblMLYFy7rlmx+5wYcF80acD85KhPLoyifYjC
-         elsCerEw1jZFGmRAeakuzP2eYy9REqYlZdztxyNCN8amfDykug9JXYI4DDyPjb7w71ad
-         82QQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVEXz7IaXG61hCTc6eZk2USCc234Pc5I6qIdjQp7gSQt2OIbUnkMtIcB8XA4ue5oQKr2ZpRiVGhEEbxMO4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzpNZEEk83g7bwxXDXYRre0/iihMWDpD9nMf2ZxNWzuftInn20R
-	LqIjplaFxGE4QOomb7iqA1hP/XF7WNfM6tUt+2vX+euV76P+DOKLrfQ7rB0qzLVxOFG0QPbOG0D
-	NGrjfIukKaE4jQBVmwh/TSjJyp3B1dzPmN7wLx4KR
-X-Gm-Gg: ASbGncvzINFZIiHLdEwsgM1KrnX8mm/yw3E8wwma/iDwwAqDNoUHcy2cKHtkdzziJs+
-	z8fdjUb1wo8cnNbU22F46Q1rKXAZQFFkXFQitWusxl7I6qrr1Vmyou9Upruk8JvgojgghAZeVpB
-	iPIjJj/+CgJ5C2u7YHlPGFmbNe185aw1riCOoa7V3njeByx6FSvfxlXaEpbJSUJY8yGshMoeyIn
-	Wkq
-X-Google-Smtp-Source: AGHT+IGiNo0qmiuCOrbiLb3P3KkQpm+pgszYXHUjNQwhUsop38fqkh0XgzhxCVLlVitPDgUOFept+dx2nbky8QWC7fI=
-X-Received: by 2002:a17:902:e74c:b0:231:ddc9:7b82 with SMTP id
- d9443c01a7336-23c5ffbdd1bmr5968075ad.13.1751461991553; Wed, 02 Jul 2025
- 06:13:11 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F0F3275AFF;
+	Wed,  2 Jul 2025 13:14:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751462085; cv=pass; b=eCKMPZlA+EaZvJiQg0zt4IMxiQSED9niH/QCKBt4Q6xL7MTRJ4Llr3K05Px/OYANhmX+tUgQzvemBjFsDSpm8+6vtlARmMj1ht1A+c/SrCMGbZh/J51pFj1QZHgvxgHxiRbq3p5ZvyNRiQuWO0pzmcW0U7CGkTcfL1AAvfZ+jS0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751462085; c=relaxed/simple;
+	bh=ZDkq31mV+uhs8Uuyx642C5Fpj1d+m5wEOZRDd4QkaEw=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=hZKOnV+TwuVCwKnXB3KYMen1THX3RddFuBeauBHXK3LMMZ5qzOIJYeGyKchcHwMY9jWJZg83Eim6p/JRGkfIxjR5l3/AsVVb5JlMkfR3xyp0TrlLnZsOMEIE9LpkLbo1zZJJ0AzdgKfjIEWeCAhz8r581+GFbujZRivFDyoXGPw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=FcvHW1+q; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1751462063; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=iFbSwsqhBq4otegwQvzoqZyVGvcdPzxgFMjb6bFPdZejdHH3cYY+gJ3tTpSiMFjQf2hjroON1zAMUPSJdgEt841nVxf7M4gU2t39XFgMrMhIOUVJvbPlBiHWERfp1OO0gRXE/rp9Ars73I1IrHRqq+D7SbumD9q+gnElF8crjTM=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1751462063; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=0kWiHd1qdcCThaYd52BxxMVESal++GotlrEBuaZtyTM=; 
+	b=TsGFs8xpYKSXsZWuExsySZPAs8CwwpaLOJpng9ry5Tc6BlV7xa19Oy6KKGPg86JWI0mXMI95Muco9ekQk1zdiUVj807wuHCV+4rJHWdwZxAfyVrhiczb3YFMMh31v6X7BNZEvTI4X4CrHbsMEgbV8NHk7QqvV2bJaWwXent38IQ=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1751462063;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=0kWiHd1qdcCThaYd52BxxMVESal++GotlrEBuaZtyTM=;
+	b=FcvHW1+q1t7ckCOg8MdYfRkE56KyDnsJCf+jD5k9ut0l6dOglS9qCFYlpHnqW09B
+	O5ETE/51fQ72dO1D87oyanUSq1U7aNxMwGtSWDbnnJ+iGiWxSrdx8Mn8y37/wX+ssuT
+	KJflbKxwJ56WHigsyr5yn6WURm/Xlr11A/erw+0s=
+Received: by mx.zohomail.com with SMTPS id 1751462060902807.575235946391;
+	Wed, 2 Jul 2025 06:14:20 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <a3cace55ee878fefc50c68bb2b1fa38851a67dd8.camel@intel.com>
- <diqzms9vju5j.fsf@ackerleytng-ctop.c.googlers.com> <447bae3b7f5f2439b0cb4eb77976d9be843f689b.camel@intel.com>
- <zlxgzuoqwrbuf54wfqycnuxzxz2yduqtsjinr5uq4ss7iuk2rt@qaaolzwsy6ki>
- <4cbdfd3128a6dcc67df41b47336a4479a07bf1bd.camel@intel.com>
- <diqz5xghjca4.fsf@ackerleytng-ctop.c.googlers.com> <aGJxU95VvQvQ3bj6@yzhao56-desk.sh.intel.com>
- <a40d2c0105652dfcc01169775d6852bd4729c0a3.camel@intel.com>
- <aGOr90RZDLEJhieE@yzhao56-desk.sh.intel.com> <CAGtprH86-HkfnTMmwdPsKgXxjTomvMWWAeCuZKSieb5o6MvRPQ@mail.gmail.com>
- <aGTzqyIYE4K+cR0M@yzhao56-desk.sh.intel.com>
-In-Reply-To: <aGTzqyIYE4K+cR0M@yzhao56-desk.sh.intel.com>
-From: Vishal Annapurve <vannapurve@google.com>
-Date: Wed, 2 Jul 2025 06:12:59 -0700
-X-Gm-Features: Ac12FXwol7XJ4YZIuCvFuAN3sjH-MLaRmSIA8AZV3-FI8kv1fXw9cYuf0FKXr0I
-Message-ID: <CAGtprH9zqKwhTuWV4WtGrvrbQ-0FmM1DA1PkE-LO59UKP_wAig@mail.gmail.com>
-Subject: Re: [RFC PATCH 08/21] KVM: TDX: Increase/decrease folio ref for huge pages
-To: Yan Zhao <yan.y.zhao@intel.com>
-Cc: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>, 
-	"ackerleytng@google.com" <ackerleytng@google.com>, "Shutemov, Kirill" <kirill.shutemov@intel.com>, 
-	"Li, Xiaoyao" <xiaoyao.li@intel.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
-	"Hansen, Dave" <dave.hansen@intel.com>, "david@redhat.com" <david@redhat.com>, 
-	"thomas.lendacky@amd.com" <thomas.lendacky@amd.com>, "tabba@google.com" <tabba@google.com>, 
-	"vbabka@suse.cz" <vbabka@suse.cz>, "quic_eberman@quicinc.com" <quic_eberman@quicinc.com>, 
-	"michael.roth@amd.com" <michael.roth@amd.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "seanjc@google.com" <seanjc@google.com>, 
-	"Peng, Chao P" <chao.p.peng@intel.com>, "Du, Fan" <fan.du@intel.com>, 
-	"Yamahata, Isaku" <isaku.yamahata@intel.com>, "pbonzini@redhat.com" <pbonzini@redhat.com>, 
-	"binbin.wu@linux.intel.com" <binbin.wu@linux.intel.com>, "Weiny, Ira" <ira.weiny@intel.com>, 
-	"Li, Zhiquan1" <zhiquan1.li@intel.com>, "jroedel@suse.de" <jroedel@suse.de>, 
-	"Miao, Jun" <jun.miao@intel.com>, "pgonda@google.com" <pgonda@google.com>, 
-	"x86@kernel.org" <x86@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
+Subject: Re: [PATCH v6 1/2] rust: regulator: add a bare minimum regulator
+ abstraction
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <CAH5fLgg1-K6x0wRO79mt4fGvJeNanr9Km75=1Z9G0gy-WbeU2g@mail.gmail.com>
+Date: Wed, 2 Jul 2025 10:14:04 -0300
+Cc: Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Trevor Gross <tmgross@umich.edu>,
+ Danilo Krummrich <dakr@kernel.org>,
+ Boris Brezillon <boris.brezillon@collabora.com>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>,
+ Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>,
+ linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org
 Content-Transfer-Encoding: quoted-printable
+Message-Id: <0FD01582-58D1-4DC2-89DB-A4C8771F7750@collabora.com>
+References: <20250627-topics-tyr-regulator-v6-0-1d015219b454@collabora.com>
+ <20250627-topics-tyr-regulator-v6-1-1d015219b454@collabora.com>
+ <CAH5fLgj_eKuo=E7HPgmd1bJNfidGUS37MM1QqRaQ_MJ2kTgCmg@mail.gmail.com>
+ <1DFECD1D-9445-4D59-A727-37C527B5DFF5@collabora.com>
+ <CAH5fLgg1-K6x0wRO79mt4fGvJeNanr9Km75=1Z9G0gy-WbeU2g@mail.gmail.com>
+To: Alice Ryhl <aliceryhl@google.com>
+X-Mailer: Apple Mail (2.3826.600.51.1.1)
+X-ZohoMailClient: External
 
-On Wed, Jul 2, 2025 at 1:56=E2=80=AFAM Yan Zhao <yan.y.zhao@intel.com> wrot=
-e:
->
-> On Tue, Jul 01, 2025 at 06:32:38AM -0700, Vishal Annapurve wrote:
-> > On Tue, Jul 1, 2025 at 2:38=E2=80=AFAM Yan Zhao <yan.y.zhao@intel.com> =
-wrote:
-> > >
-> > > On Tue, Jul 01, 2025 at 01:55:43AM +0800, Edgecombe, Rick P wrote:
-> > > > So for this we can do something similar. Have the arch/x86 side of =
-TDX grow a
-> > > > new tdx_buggy_shutdown(). Have it do an all-cpu IPI to kick CPUs ou=
-t of
-> > > > SEAMMODE, wbivnd, and set a "no more seamcalls" bool. Then any SEAM=
-CALLs after
-> > > > that will return a TDX_BUGGY_SHUTDOWN error, or similar. All TDs in=
- the system
-> > > > die. Zap/cleanup paths return success in the buggy shutdown case.
-> > > All TDs in the system die could be too severe for unmap errors due to=
- KVM bugs.
-> >
-> > At this point, I don't see a way to quantify how bad a KVM bug can get
-> > unless you have explicit ideas about the severity. We should work on
-> > minimizing KVM side bugs too and assuming it would be a rare
-> > occurrence I think it's ok to take this intrusive measure.
-> >
-> > >
-> > > > Does it fit? Or, can you guys argue that the failures here are actu=
-ally non-
-> > > > special cases that are worth more complex recovery? I remember we t=
-alked about
-> > > > IOMMU patterns that are similar, but it seems like the remaining ca=
-ses under
-> > > > discussion are about TDX bugs.
-> > > I didn't mention TDX connect previously to avoid introducing unnecess=
-ary
-> > > complexity.
-> > >
-> > > For TDX connect, S-EPT is used for private mappings in IOMMU. Unmap c=
-ould
-> > > therefore fail due to pages being pinned for DMA.
-> >
-> > We are discussing this scenario already[1], where the host will not
-> > pin the pages used by secure DMA for the same reasons why we can't
-> > have KVM pin the guest_memfd pages mapped in SEPT. Is there some other
-> > kind of pinning you are referring to?
-> >
-> > If there is an ordering in which pages should be unmapped e.g. first
-> > in secure IOMMU and then KVM SEPT, then we can ensure the right
-> > ordering between invalidation callbacks from guest_memfd.
-> It's pinning from a different perspective.
-> Please check
-> https://lore.kernel.org/all/aGTvTbPHuXbvj59t@yzhao56-desk.sh.intel.com.
->
-> > [1] https://lore.kernel.org/lkml/CAGtprH_qh8sEY3s-JucW3n1Wvoq7jdVZDDokv=
-G5HzPf0HV2=3Dpg@mail.gmail.com/#t
-> >
-> > >
-> > > So, my thinking was that if that happens, KVM could set a special fla=
-g to folios
-> > > pinned for private DMA.
-> > >
-> > > Then guest_memfd could check the special flag before allowing private=
--to-shared
-> > > conversion, or punch hole.
-> > > guest_memfd could check this special flag and choose to poison or lea=
-k the
-> > > folio.
-> > >
-> > > Otherwise, if we choose tdx_buggy_shutdown() to "do an all-cpu IPI to=
- kick CPUs
-> > > out of SEAMMODE, wbivnd, and set a "no more seamcalls" bool", DMAs ma=
-y still
-> > > have access to the private pages mapped in S-EPT.
-> >
-> > guest_memfd will have to ensure that pages are unmapped from secure
-> > IOMMU pagetables before allowing them to be used by the host.
-> >
-> > If secure IOMMU pagetables unmapping fails, I would assume it fails in
-> > the similar category of rare "KVM/TDX module/IOMMUFD" bug and I think
-> > it makes sense to do the same tdx_buggy_shutdown() with such failures
-> > as well.
-> tdx_buggy_shutdown() should then
-> do an all-cpu IPI to kick CPU out of SEAMMODE, wbivnd, and set a "no more
-> seamcalls" bool" and informing IOMMUF/VFIO to stop devices.
->
-> BTW, is the "no more seamcall" set by KVM at the per-VM level?
 
-No more seamcall here would be the host level.
+>=20
+>>>> +impl<T: RegulatorState + 'static> Drop for Regulator<T> {
+>>>> +    fn drop(&mut self) {
+>>>> +        if core::any::TypeId::of::<T>() =3D=3D =
+core::any::TypeId::of::<Enabled>() {
+>>>=20
+>>> I would avoid this kind of logic. Instead, you can add an
+>>> `disable_on_drop()` method or constant to the trait and check it =
+here.
+>>>=20
+>>> Alice
+>>>=20
+>>=20
+>> Can you expand on this?
+>=20
+> Along these lines:
+>=20
+> pub trait RegulatorState: 'static {
+>    const DISABLE_ON_DROP: bool;
+> }
+>=20
+> impl RegulatorState for Enabled {
+>    const DISABLE_ON_DROP: bool =3D true;
+> }
+> impl RegulatorState for Disabled {
+>    const DISABLE_ON_DROP: bool =3D false;
+> }
+> impl RegulatorState for Dynamic {
+>    const DISABLE_ON_DROP: bool =3D false;
+> }
+>=20
+> impl<T: RegulatorState> Drop for Regulator<T> {
+>    fn drop(&mut self) {
+>        if T::DISABLE_ON_DROP {
+>            unsafe { bindings::regulator_disable(self.inner.as_ptr()) =
+};
+>        }
+>        unsafe { bindings::regulator_put(self.inner.as_ptr()) };
+>    }
+> }
 
-> If it's per-VM, other TDs could still entering SEAMMODE. So, potential
-> corruption is still possible.
-> Besides, with "no more seamcalls" upon unmapping failure of a GFN, how to
-> reclaim other pages which might succeed otherwise?
+Ah, that indeed looks better, thanks.
 
-I would think that with no more seamcall on the host, KVM TDX logic
-could safely reclaim all the pages using the WBINVD method.
+=E2=80=94 Daniel
 
->
-> This approach seems very complex.
 
-With "informing IOMMUF/VFIO to stop devices" specially only for secure
-devices, I agree this could become hard to orchestrate unless Dan
-Williams or somebody else has better insights here.
 
