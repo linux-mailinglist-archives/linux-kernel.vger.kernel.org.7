@@ -1,302 +1,183 @@
-Return-Path: <linux-kernel+bounces-713592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B78A1AF5BFF
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 17:00:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E015FAF5C05
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 17:01:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 730207B1AB1
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:58:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EC034A7596
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:59:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F1A72D0C8B;
-	Wed,  2 Jul 2025 14:59:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D5F5275874;
+	Wed,  2 Jul 2025 14:59:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OeCspEXl"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jwQ49Yot"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB4782D0C83
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 14:59:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 641D42D0C67;
+	Wed,  2 Jul 2025 14:59:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751468385; cv=none; b=FNfCelgymttdRTN8C5F/GtezpySiBcOXxzZcfu0UBsJIOC+7nct9c8EA9uoCMdh/w0bsIV7odAefU3K1WBa3q9a2xz+evhYGNWRc+s5ilE4ohHi4mVAPhmaL7vZYbh2HuVadlDoB57puEC1BXXev6ESzOW3k90GgGqjy2rsNiVw=
+	t=1751468387; cv=none; b=FFFf8FSmUS84l6c+XbqsKfZrZsdagfgfjO5J+lrC6YphfkBZLHPEehXphGWa75xUJ2e1h8YEQo0aaXPBTx7aP4o4r4u+ptifwntE2290E1PkxRwi30ajMfbJhS11Lui+GQFb/gICFDQ7Jj5mI7oxKMKDawQYlirNFAsDjWuxoHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751468385; c=relaxed/simple;
-	bh=MOf9trQewdjP9QfMxCyQxGBJEk5G1TY2psuXiXdC7T0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gPhxrzOEGEU0z/nDQC1Pq6jdout4vORSwnGDgBLa2lR4hI3UtwUwhId61QKt5wre3rNt36kWbn8vNL7wZB5sR7prvBe5wTmIejfi9NZyS07RysX97TiBRzyANWJPI8CrE/TKZdtVN3H7gEMSUihhoiZ22ubfoVAxehTKHNTvhnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OeCspEXl; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1751468382;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5wmUNCEXGfxpkIjajzYmk6EkSKovbjZO5NJ8vG4giDo=;
-	b=OeCspEXluY1+zJDDWmCiIaaoXFqnM8ODUR1p8Jne+kp0PTQw+ebJrVs6vXOF76KCPoWpyY
-	qD+0CNdIWDu9JxlbNc4XLcuCPC8753WFqjfByIW71U4mBxXmhfmkngECbMr9Q04yA6t5rK
-	lbhEiZ2ZxoBw3rQnJh5wFwzG1cRdn18=
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
- [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-615--Itd4LGVMbK4yaDl1xNx2g-1; Wed, 02 Jul 2025 10:59:41 -0400
-X-MC-Unique: -Itd4LGVMbK4yaDl1xNx2g-1
-X-Mimecast-MFC-AGG-ID: -Itd4LGVMbK4yaDl1xNx2g_1751468381
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4a762876813so115354891cf.2
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 07:59:41 -0700 (PDT)
+	s=arc-20240116; t=1751468387; c=relaxed/simple;
+	bh=fs0CjMey3bO82t/QWIEcxcaffE8u3Amxc93FWTHJHOg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=uW51kZugvzS6OJ9Cu/yt5mucZ7+ot8JAR1GIt4+j0qnOVRzD3LUojMxVO183iPd5ldoDrYheFp9GFduKRN5EdOd2urLM5nOaO0I8IzApiiL25D52SQW0CS5w7ukmfU3aOfwRgTu2ALruaV5Nyx2ieNr+554UbuHW9neGXtblz0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jwQ49Yot; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-553dceb345eso5489917e87.1;
+        Wed, 02 Jul 2025 07:59:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751468382; x=1752073182; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=HIHNyOTsqAfeOMHAWemDKg4C0xGlnmJ0N8JxEgXyV0I=;
+        b=jwQ49YotQq3a9rTIGtP/+ZAe8OPh3Cv5rcThVbbc6UsnKyaV4P+ZPXMuzfGS/9lyfw
+         9a8DJ45yyHnpqfZOWG5CYTnQVvGyT2S8GbYiwcW182d1p3hPrtygIZo2Cydn9Ozwh1rE
+         ENEZCcM4u4pj61UgoC/FQTjw7G7o2ypuv1v9FR5qLNw+8MW5skmimhSSNtgHzKvocYDk
+         VcHufJ4FHBvzUMjXaVRRfXL0kCecacnreZoQfphIr2Pnxp2tNIP7veyvFGyLbU92dWDa
+         kiLFIVpC8/p1jvodHP2LXQQJmyeRq5LPex8RxAMt0tTidFkGmLgcbzsfsK9GPx7dHg79
+         /54A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751468381; x=1752073181;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5wmUNCEXGfxpkIjajzYmk6EkSKovbjZO5NJ8vG4giDo=;
-        b=SylFPYOd57gJgy2TGg1NpkDcwVOL6rSKTNE+uokjPTO0gedFYbdE6rw81onOiNYQe/
-         LGtVHbaB6HaT3T8pYxeIkuyCxLDhw+053tz2VTePhyNNobcseGsCupavvX70I66Hjauy
-         QBLkf8M7ELDQOu66ixtHMOX42e2H/iE6STaaAWusce279LKA2iJaYoM1Go+2yOxztQAF
-         /Q4HwsWd4GEuHbsABA8SeipCbn/lw8ejXinFGNMi9MutmhkyTWCoziHSWprSj0NI263E
-         AGuxyXrL4e6zaYz8dm8g4Rb1tI8a4d2gaWru5ZjaKMYDcZY2SxptIE9KFbbEwXXLGJpI
-         D1aw==
-X-Forwarded-Encrypted: i=1; AJvYcCXZj54Z58MkxnC/pwWAeRhrihRkW79TIOT7jj1qpnWwQZ3zA41SdE4HvcrJOtTRNNPvlJlw4fsOOZnALhk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwpXw2nEsr0gf+/6kxyoVFC6pOrFfjNsFqOq/JLOCKYTPIw6uxH
-	L8PiPmpdQjr1XTPF/Fo7Wa0colqGPSUQ+Kt8dpW4EsEzA55RDOfeR9AhyHQcuaVnmReG3YSueFJ
-	Nkj7ysWLg8mUpRds7Pg32BO0i0sDzH0lUeC0VYZIwaia4weObZnice+lMQ9jbc4KF7mHidZoOpM
-	UsChD4iFMlx8GFIQkuevt3FR1Oj7WOQ4TNqM7SoNEo
-X-Gm-Gg: ASbGncvCVXswJm1LelI+h9Kkv1BWVI6/3v62wVLpIXKo++UpATreg9tODbaEbciOcSN
-	dw0WXbTLy2Ge44yteXuHD1bHsaYlCKULTvGllsT+PHOjH1jfkFFxs/SHOgr3uLj5Y/BTeawU/S4
-	+XuSywSh/vx94JjOOFuXwc1HszCDuWuh9Lk5Et
-X-Received: by 2002:ac8:59c3:0:b0:4a7:9d00:770 with SMTP id d75a77b69052e-4a97695c4ccmr59023101cf.18.1751468380790;
-        Wed, 02 Jul 2025 07:59:40 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFaNepOgpyCeBhihJKbBjhYJfTKbzKignekI+Aoo8Q5tFXFCyz52XXraXwenwRW0BoW0Ph2rhWB/eSU22HbCzI=
-X-Received: by 2002:ac8:59c3:0:b0:4a7:9d00:770 with SMTP id
- d75a77b69052e-4a97695c4ccmr59022491cf.18.1751468380212; Wed, 02 Jul 2025
- 07:59:40 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1751468382; x=1752073182;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HIHNyOTsqAfeOMHAWemDKg4C0xGlnmJ0N8JxEgXyV0I=;
+        b=aHo2oTemH7X8rKv+Rg0wwHKzKZk35yCraVPi65gqdzx9jvUvMfvagg9fyNbHVsaXIF
+         gOurJi917cSVSKGPhy4GVa24xYdBgVkysEYD8otMwd7VxZt91W/txOlN6JvX+rk32Sqi
+         iXe6dCVQKywojhmR4zQiZtD+fyUrp0akYutikSkqv8JdqTC1qPrgiMc/MhrF/UawhNKv
+         va8Zifq/dUQmFqhJej0bYnl2VWfXJLCb2+l/acyGZH1SfrMuqLp1tJ9iYoDPMi6mbe9y
+         eeWcO73JkeXQmXMW7AiTgFzo4L8MRxeRBQlZ8xZNRdunZsQG6trVMlRYnQLjZcuMFBmM
+         QaYg==
+X-Forwarded-Encrypted: i=1; AJvYcCUiRNWpUTYDzKFVyzay0L+HnPez8wr4SD5PkQMjUWb3MTOhwQEY/CBJxbQQbTQY9SYRNBU603HaZ/h7Ur4=@vger.kernel.org, AJvYcCX3LTXDtWp0UacLNyO0zjLJSiz3I/QWt79pog8um2lKblIk0yQBtTujnRZqD1XE1UfW9JxI@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyazl2mkIdGzvDiuguKgwH6OSqWTyVzJelr9QNpCqV2PoUdqeFm
+	XfSoFCVxbizaM9siAJeNSwF+A8dhpqnSd3C8af8khhPijIuvo6gOZCKA
+X-Gm-Gg: ASbGncv/ndjIEsgdYwCxNqr2oDl2I/il2eCXUWy63ad8bVSKFYDVm/Rw674T08cCUPq
+	JKq6yWXDR33iNTl0bUvn0HTFRUVkLuf7dZpfiyRWdtzyuPqQAz1aX7QfMV59dKYHpOmm1E2PzuG
+	5VegOcxvBwFrwo70SjOAq9bhriAtlTRAOJrJ0R4atXdHDjpp7nNTLpxD07g2FH3ISYOPYTPtUJq
+	os6SF104oa1pbQNhsBiQj85GEepopJA22RBaBRHPAw4UQW2Gc1GE+hdqbvzZ1isYNE4OSMFJq+9
+	bYtg66dj/1re4jOTW5Od6mPknhyzxttIVk2qljGZUH/WU1dSWQ89VXmD/g==
+X-Google-Smtp-Source: AGHT+IFABYnSIbMhTZdwm6kglZiidnRRkfk7mI5btiZ201N3xFV670NENb350xQ2zky6CNXsrPC7lg==
+X-Received: by 2002:a05:6512:1307:b0:553:2375:c6ea with SMTP id 2adb3069b0e04-556283c7090mr1439638e87.50.1751468382064;
+        Wed, 02 Jul 2025 07:59:42 -0700 (PDT)
+Received: from pc638.lan ([2001:9b1:d5a0:a500:2d8:61ff:fec9:d743])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5550b24010esm2166907e87.50.2025.07.02.07.59.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Jul 2025 07:59:41 -0700 (PDT)
+From: "Uladzislau Rezki (Sony)" <urezki@gmail.com>
+To: "Paul E . McKenney" <paulmck@kernel.org>,
+	Neeraj upadhyay <Neeraj.Upadhyay@amd.com>
+Cc: Joel Fernandes <joel@joelfernandes.org>,
+	RCU <rcu@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Joel Fernandes <joelagnelf@nvidia.com>
+Subject: [PATCH v3 1/2] rcu: Enable rcu_normal_wake_from_gp on small systems
+Date: Wed,  2 Jul 2025 16:59:36 +0200
+Message-Id: <20250702145938.66459-1-urezki@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250612104349.5047-1-gpaoloni@redhat.com> <20250612104349.5047-3-gpaoloni@redhat.com>
- <20250701181119.7b0bc5d6@batman.local.home>
-In-Reply-To: <20250701181119.7b0bc5d6@batman.local.home>
-From: Gabriele Paoloni <gpaoloni@redhat.com>
-Date: Wed, 2 Jul 2025 16:59:29 +0200
-X-Gm-Features: Ac12FXxtKwj8zXgnkqrF16vYUbKFGK3Hp-aUHpbvEVWbN2O1dqS4y6-MCyKKAKM
-Message-ID: <CA+wEVJarZben=F3Dw0A8_tvAAR7-qb4PrjCj0AGFoq=DH1RJwg@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/2] tracing: add testable specifications for event_enable_write/read
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: mhiramat@kernel.org, mathieu.desnoyers@efficios.com, 
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	acarmina@redhat.com, chuck.wolber@boeing.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 2, 2025 at 12:11=E2=80=AFAM Steven Rostedt <rostedt@goodmis.org=
-> wrote:
->
-> On Thu, 12 Jun 2025 12:43:49 +0200
-> Gabriele Paoloni <gpaoloni@redhat.com> wrote:
->
-> > This patch implements the documentation of event_enable_write and
-> > event_enable_read in the form of testable function's expectations.
-> >
-> > Signed-off-by: Gabriele Paoloni <gpaoloni@redhat.com>
-> > ---
-> >  kernel/trace/trace_events.c | 72 +++++++++++++++++++++++++++++++++++++
-> >  1 file changed, 72 insertions(+)
-> >
-> > diff --git a/kernel/trace/trace_events.c b/kernel/trace/trace_events.c
-> > index 5e84ef01d0c8..eb3c5e6e557d 100644
-> > --- a/kernel/trace/trace_events.c
-> > +++ b/kernel/trace/trace_events.c
-> > @@ -1771,6 +1771,46 @@ static void p_stop(struct seq_file *m, void *p)
-> >       mutex_unlock(&event_mutex);
-> >  }
-> >
-> > +/**
-> > + * event_enable_read - read from a trace event file to retrieve its st=
-atus.
-> > + * @filp: file pointer associated with the target trace event;
-> > + * @ubuf: user space buffer where the event status is copied to;
-> > + * @cnt: number of bytes to be copied to the user space buffer;
->
-> Why is the above ending with semicolons?
+Automatically enable the rcu_normal_wake_from_gp parameter on
+systems with a small number of CPUs. The activation threshold
+is set to 16 CPUs.
 
-Sorry it should be a full stop, I'll fix it in v4.
+This helps to reduce a latency of normal synchronize_rcu() API
+by waking up GP-waiters earlier and decoupling synchronize_rcu()
+callers from regular callback handling.
 
->
-> > + * @ppos: the current position in the buffer.
-> > + *
-> > + * This is a way for user space executables to retrieve the status of =
-a
-> > + * specific event
-> > + *
-> > + * Function's expectations:
-> > + * - This function shall lock the global event_mutex before performing=
- any
-> > + *   operation on the target event file and unlock it after all operat=
-ions on
-> > + *   the target event file have completed;
-> > + * - This function shall retrieve the status flags from the file assoc=
-iated
-> > + *   with the target event;
-> > + * - This function shall format the string to report the event status =
-to user
-> > + *   space:
-> > + *   - The first character of the string to be copied to user space sh=
-all be
-> > + *     set to "1" if the enabled flag is set AND the soft_disabled fla=
-g is not
-> > + *     set, else it shall be set to "0";
-> > + *   - The second character of the string to be copied to user space s=
-hall be
-> > + *     set to "*" if either the soft_disabled flag or the soft_mode fl=
-ag is
-> > + *     set, else it shall be set to "\n";
-> > + *   - The third character of the string to be copied to user space sh=
-all b
-> > + *     set to "\n" if either the soft_disabled flag or the soft_mode f=
-lag is
-> > + *     set, else it shall be set to "0";
-> > + *   - Any other character in the string to be copied to user space sh=
-all be
-> > + *     set to "0";
->
-> The above could use some new lines. Like between each bullet. My
-> eyesight isn't as good anymore and I find reading gobs of text more
-> difficult. Newlines give my eyes a break.
->
-> I know this is being written so that a tool could parse it, but also
-> needs to be parsed by aging developers. ;-)
+A benchmark running 64 parallel jobs(system with 64 CPUs) invoking
+synchronize_rcu() demonstrates a notable latency reduction with the
+setting enabled.
 
-Agreed, I'll fix it in v4.
+Latency distribution (microseconds):
 
->
-> > + * - This function shall check if the requested cnt bytes are equal or=
- greater
-> > + *   than the length of the string to be copied to user space (else a
-> > + *   corrupted event status could be reported);
-> > + * - This function shall invoke simple_read_from_buffer() to perform t=
-he copy
-> > + *   of the kernel space string to ubuf.
->
-> Hmm, and it is also verbose. This is a relatively simple function, and
-> it caused quite a bit of requirements. I wonder if it could be
-> shortened a bit. Otherwise more complex and larger functions are going
-> to be overwhelming and likely not acceptable. And those are the
-> functions that I think this will benefit the most!
+<default>
+ 0      - 9999   : 1
+ 10000  - 19999  : 4
+ 20000  - 29999  : 399
+ 30000  - 39999  : 3197
+ 40000  - 49999  : 10428
+ 50000  - 59999  : 17363
+ 60000  - 69999  : 15529
+ 70000  - 79999  : 9287
+ 80000  - 89999  : 4249
+ 90000  - 99999  : 1915
+ 100000 - 109999 : 922
+ 110000 - 119999 : 390
+ 120000 - 129999 : 187
+ ...
+<default>
 
-Mmm got it. What about
+<rcu_normal_wake_from_gp>
+ 0      - 9999  : 1
+ 10000  - 19999 : 234
+ 20000  - 29999 : 6678
+ 30000  - 39999 : 33463
+ 40000  - 49999 : 20669
+ 50000  - 59999 : 2766
+ 60000  - 69999 : 183
+ ...
+<rcu_normal_wake_from_gp>
 
-* Function's expectations:
-* - This function shall lock the global event_mutex before performing any
-*   operation on the target event file and unlock it after all operations o=
-n
-*   the target event file have completed;
-*
-* - This function shall format the string copied to userspace according to
-*   the status flags retrieved from the target event file:
-*    - The first character shall be set to "1" if the enabled flag is
-set AND the
-*      soft_disabled flag is not set, else it shall be set to "0";
-*    - The second character is optional and shall be set to "*" if either t=
-he
-*      soft_disabled flag or the soft_mode flag is set;
-*   - The string shall be terminated by a newline ("\n") and any remaining
-*      character shall be set to "0";
-*
-* - This function shall invoke simple_read_from_buffer() to perform the cop=
-y
-*   of the kernel space string to ubuf.
+Reviewed-by: Joel Fernandes <joelagnelf@nvidia.com>
+Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+---
+ kernel/rcu/tree.c | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
-(pls note that the check on cnt has been removed in v3 that is out already)
-
->
-> > + *
-> > + * Returns the number of copied bytes on success, -ENODEV if the event=
- file
-> > + * cannot be retrieved from the input filp, -EINVAL if cnt is less tha=
-n the
-> > + * length of the string to be copied to ubuf, any error returned by
-> > + * simple_read_from_buffer
->
-> Returns should be formatted better where each return value is on a
-> separate line.
-
-Understood, I'll fix this in v4
-
-Many Thanks!
-Gab
-
-
->
-> -- Steve
->
-> > + */
-> >  static ssize_t
-> >  event_enable_read(struct file *filp, char __user *ubuf, size_t cnt,
-> >                 loff_t *ppos)
-> > @@ -1808,6 +1848,38 @@ event_enable_read(struct file *filp, char __user=
- *ubuf, size_t cnt,
-> >       return simple_read_from_buffer(ubuf, cnt, ppos, buf, strlen(buf))=
-;
-> >  }
-> >
-> > +/**
-> > + * event_enable_write - write to a trace event file to enable/disable =
-it.
-> > + * @filp: file pointer associated with the target trace event;
-> > + * @ubuf: user space buffer where the enable/disable value is copied f=
-rom;
-> > + * @cnt: number of bytes to be copied from the user space buffer;
-> > + * @ppos: the current position in the buffer.
-> > + *
-> > + * This is a way for user space executables to enable or disable event
-> > + * recording.
-> > + *
-> > + * Function's expectations:
-> > + * - This function shall copy cnt bytes from the input ubuf buffer to =
-a kernel
-> > + *   space buffer (or the whole input ubuf if cnt is larger than ubuf =
-size)
-> > + *   and shall convert the string within the kernel space buffer into =
-a decimal
-> > + *   base format number;
-> > + * - This function shall lock the global event_mutex before performing=
- any
-> > + *   operation on the target event file and unlock it after all operat=
-ions on
-> > + *   the target event file have completed;
-> > + * - This function shall check the size of the per-cpu ring-buffers us=
-ed for
-> > + *   the event trace data and, if smaller than TRACE_BUF_SIZE_DEFAULT,=
- expand
-> > + *   them to TRACE_BUF_SIZE_DEFAULT bytes (sizes larger than
-> > + *   TRACE_BUF_SIZE_DEFAULT are not allowed);
-> > + * - This function shall invoke ftrace_event_enable_disable to enable =
-or
-> > + *   disable the target trace event according to the value read from u=
-ser space
-> > + *   (0 - disable, 1 - enable);
-> > + *
-> > + * Returns 0 on success, any error returned by kstrtoul_from_user, -EN=
-ODEV if
-> > + * the event file cannot be retrieved from the input filp, any error r=
-eturned by
-> > + * tracing_update_buffers, any error returned by ftrace_event_enable_d=
-isable,
-> > + * -EINVAL if the value copied from the user space ubuf is different f=
-rom 0 or
-> > + *  1.
-> > + */
-> >  static ssize_t
-> >  event_enable_write(struct file *filp, const char __user *ubuf, size_t =
-cnt,
-> >                  loff_t *ppos)
->
+diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+index e8a4b720d7d2..b88ceb35cebd 100644
+--- a/kernel/rcu/tree.c
++++ b/kernel/rcu/tree.c
+@@ -1625,8 +1625,10 @@ static void rcu_sr_put_wait_head(struct llist_node *node)
+ 	atomic_set_release(&sr_wn->inuse, 0);
+ }
+ 
+-/* Disabled by default. */
+-static int rcu_normal_wake_from_gp;
++/* Enable rcu_normal_wake_from_gp automatically on small systems. */
++#define WAKE_FROM_GP_CPU_THRESHOLD 16
++
++static int rcu_normal_wake_from_gp = -1;
+ module_param(rcu_normal_wake_from_gp, int, 0644);
+ static struct workqueue_struct *sync_wq;
+ 
+@@ -3239,7 +3241,7 @@ static void synchronize_rcu_normal(void)
+ 
+ 	trace_rcu_sr_normal(rcu_state.name, &rs.head, TPS("request"));
+ 
+-	if (!READ_ONCE(rcu_normal_wake_from_gp)) {
++	if (READ_ONCE(rcu_normal_wake_from_gp) < 1) {
+ 		wait_rcu_gp(call_rcu_hurry);
+ 		goto trace_complete_out;
+ 	}
+@@ -4843,6 +4845,12 @@ void __init rcu_init(void)
+ 	sync_wq = alloc_workqueue("sync_wq", WQ_MEM_RECLAIM, 0);
+ 	WARN_ON(!sync_wq);
+ 
++	/* Respect if explicitly disabled via a boot parameter. */
++	if (rcu_normal_wake_from_gp < 0) {
++		if (num_possible_cpus() <= WAKE_FROM_GP_CPU_THRESHOLD)
++			rcu_normal_wake_from_gp = 1;
++	}
++
+ 	/* Fill in default value for rcutree.qovld boot parameter. */
+ 	/* -After- the rcu_node ->lock fields are initialized! */
+ 	if (qovld < 0)
+-- 
+2.39.5
 
 
