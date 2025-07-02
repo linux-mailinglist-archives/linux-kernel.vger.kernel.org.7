@@ -1,156 +1,203 @@
-Return-Path: <linux-kernel+bounces-713552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04372AF5B50
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 16:41:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E0B8AF5B5E
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 16:41:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 135845200C7
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:41:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FB1A483A93
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:41:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D549930748C;
-	Wed,  2 Jul 2025 14:41:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gKOKf0uL"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 052D9309DBE;
+	Wed,  2 Jul 2025 14:41:12 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0012.hostedemail.com [216.40.44.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43388307AF3
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 14:41:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D31433093BA;
+	Wed,  2 Jul 2025 14:41:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751467264; cv=none; b=HKAEvFxgPSrbpH5PezXTGmD5e6GcNOJiakPha4kCIJLNOH2TVjTZuf+Kyy+ZseFlK38lO6ML7jdAigL088apL2Pk3uLxqPaA497dXiY4QERMhIRD6GdOrvQKBXHQmUP2MwdtEwqkW212peln8xxX82E7ucvXS1LaL/5djmaA/cQ=
+	t=1751467271; cv=none; b=pWMlaRGcAmaOIcE2IFhgyE9E7qyDFJSq5TitW/MxqyTBUNefvkDGd3xtvyr+YBoXlSF+vSnqm9OKayUDEOSty0FiNuRPQx2OpM2obm4m2gWrkOj7O1UzqTDTCMnVyIU894soFEb2YFRSfPUTZWyII9ofkDNgxVTCYEBAi13eSiM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751467264; c=relaxed/simple;
-	bh=mZF2UqPVsiH2rz0Y3FEEnO3lQKIhugaLHTZFjtoPwUk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eRsbJNZsgnGA2SKfC2o0xm1ZwSP8FQrYLCzi5asPZmHttxVBw52sj0zv27sATiubKKqO1sv2Er9OBNHNFihzkepUsT2lP3dBJBQY3eS9Yct2lQhlmJECZZ2w7W2K2f9aBYL89k97toXSjMWRE8y47SJ7HNmStpFObborckGVLQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gKOKf0uL; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-553dceb342aso4150288e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 07:41:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1751467260; x=1752072060; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=98PzJdityG0SlvleABMB/pGAMlOmwWmHSfdYpaRc+uw=;
-        b=gKOKf0uLbp3VSylawENZ41zAqKqCorrUxfJjkhHYjceFMvLVryS8Y3e3lVsznus7VP
-         g/AgpNP28aR2WTuRsyD+LIRUAKMUdfI/7yEr1a//ozTxMr6X+SFdvfJLz0uORpNZQXh9
-         yBH0Uk0HQ+oWV5AIfSkZYkzUS9TncgwA6Ucjs4+BOYo2DR8dSj8H6+c5Aq7OzJmgE3Gs
-         5xaHAzOamdTzyh+s1joXDBrbKR6hOZCFDXb88SZZfPsX2xiieEZNfwdHwZJNkO6t7u/3
-         beZ3gt1mT4s6Gr+aLv0aZ8Zv5UfJwt+AxDqmksgU7w3YCK6G1f0pPdoOduELVfs7bKLo
-         NRUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751467260; x=1752072060;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=98PzJdityG0SlvleABMB/pGAMlOmwWmHSfdYpaRc+uw=;
-        b=uo6jZpNXPdfEPi/ueOXJjgnPexxAIjEs0DocqMOCZTxGeBqsLnhmGGGJuHbq7H/eUG
-         M+OMbvi47oNyY4lL4sxMJEjFOVdAtG6sTn4JZAjvbT7qBE68crTy9zcsfY/5LstEi7vC
-         t6S9vBjP+feUoJSDOYSQYsrBmplsNrxnnB+K1YTcJZ+6yFkEjWc8iC6tBQM+jWsIeGFB
-         +wdvyLn0lAHo2Axi36BDKxVeebWTOGqj55InWuBsDKUycB7JVWkBhDUWyMNK8gxsvUuy
-         q+ELfL9RkMtNouLotGNY08xdhuj7pt9z1NSRfeA7Lvadcv83dCtexAS7L59KSqfR9aEV
-         HsPw==
-X-Forwarded-Encrypted: i=1; AJvYcCVZ0B9pyV+/A6JqE3FThORn8u58iVh+n53jiSuRO7QGad1RbdLx9YyXIBURF1M18vd0mTt4XWoulL8wFVA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0l+f0T0dsSFHiEcm7gcN14LKSdmhmg7g+63/ZJp9a+zA3Vuvi
-	82MrpQ1VkqaFb12kZbP5YtCxiTmFD+fti35iNi1HKu36gz+6fnh1v7G/T1dGZTt7gW+9QcWe5dC
-	O+Fwg
-X-Gm-Gg: ASbGncsaTRH//W9lXg/E+hJcFYF70f8Q7Uz8IrzyfKT0eYJ8SwWgnxW+4rpRIRCChTd
-	KzdnD86e8q0YYOpCNNSsgh6r7f60paH/hH2AWloU2GzSNW9MIyVV7CPyd5IG3ZbJbETub/LNO5K
-	LpOhf5lA4tKhRowmN5ZWj8YHuf0KJLiOU+8c8hemHHhNr1GH0YIzTjcacpZy3AYaLFYlXidwLBz
-	vGpZUnphKeMNLWHMdf7FQ1oSewc3G0Of9CyeRwl4/jmZi56JUQW/pvYOeFqQZB+ucWhOQ4puXfB
-	uWKrk+HVsYD1X40DNQsUfLeCGkL4J7XW36v9pKU9eJk9OnncFg4RG5eSdGnxjsH1ZGRU8224f6b
-	nerE0yBj8pjxVIsisFkEIR0451XS8G70jYFqR
-X-Google-Smtp-Source: AGHT+IEQJk+3ZM5WHnNjbhQ/1w9G+7dhsU/8kGSvdH0GxP5RtDlizISYJdnkdwnZOlCw4iqiGgpsXw==
-X-Received: by 2002:a05:6512:1290:b0:553:d122:f8e1 with SMTP id 2adb3069b0e04-556283556e9mr1116776e87.43.1751467260205;
-        Wed, 02 Jul 2025 07:41:00 -0700 (PDT)
-Received: from uffe-tuxpro14.. (h-178-174-189-39.A498.priv.bahnhof.se. [178.174.189.39])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55627987c8csm295213e87.253.2025.07.02.07.40.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Jul 2025 07:40:59 -0700 (PDT)
-From: Ulf Hansson <ulf.hansson@linaro.org>
-To: Linus <torvalds@linux-foundation.org>,
-	linux-mmc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [GIT PULL] MMC fixes for v6.16-rc5
-Date: Wed,  2 Jul 2025 16:40:58 +0200
-Message-ID: <20250702144058.29486-1-ulf.hansson@linaro.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1751467271; c=relaxed/simple;
+	bh=WRet4M06rog+wFdfSt2px7AmtWl6KzJ+GTWBH8UUvQY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EJ1hVbjPrC0Zhu3AEV0lmye4Azfl42MHIEBg0sYetQdr0mLmBH42gN88nWsqF66fAzuXmCrgHLTQXdPY0dBGZf7qtQozGI17nnS1kL2KzL3YTohPwVNHx4enOsv7Fi2OtZ4SGS5lBIlnNpGTt2jw/c6/C81zxusx5VfFCAa/Yb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf19.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay06.hostedemail.com (Postfix) with ESMTP id 1C9041063CA;
+	Wed,  2 Jul 2025 14:41:02 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf19.hostedemail.com (Postfix) with ESMTPA id 5652F20025;
+	Wed,  2 Jul 2025 14:41:00 +0000 (UTC)
+Date: Wed, 2 Jul 2025 10:40:58 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Gabriele Paoloni <gpaoloni@redhat.com>
+Cc: mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH RESEND] tracing: add kernel documentation for
+ trace_array_set_clr_event, trace_set_clr_event and supporting functions
+Message-ID: <20250702104058.3cf9c1a3@batman.local.home>
+In-Reply-To: <CA+wEVJY2a_ERXemup7EefPPXHOv8DAfyauuP6Mn5vHYFkbbBcQ@mail.gmail.com>
+References: <20250620085618.4489-1-gpaoloni@redhat.com>
+	<20250701195939.3e297e20@gandalf.local.home>
+	<CA+wEVJY2a_ERXemup7EefPPXHOv8DAfyauuP6Mn5vHYFkbbBcQ@mail.gmail.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: jtbz5wbqdes6fx3uhtmo84wsziofmoii
+X-Rspamd-Server: rspamout04
+X-Rspamd-Queue-Id: 5652F20025
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1/AALfJX9sgK9zLsCiTDOxcYJjjbo838Wg=
+X-HE-Tag: 1751467260-89356
+X-HE-Meta: U2FsdGVkX19yJuGCQVlnZnoTB83Km9/4pS0xoC+zzuZdM+PxY17LjHGlbmKyMFPG8w/X+IMvW2Z+E2Z2zP+kqO+qFKOADnQeXF4S3M6bxI/Jtc+o3XAJktF9e6IjOj37ojVb5Eg2Nsq+GKdoJmdfII6Tgz9mWeiC0vbLVlWK3iRCHzcHFNuNptn1abZAaDCmjXiWFsMwGgCgHJW1bsfC42VKfX4OLuCHTjLB/8RxoQYv+eaQ2ESMENTkqbpab9dgrP0Ft1lVhIT4HCBLn6DRe7sxs+v5TkT6esWyo+Mjx+dO/Xid6jg8Ky7sDJTAXisNHDtLyyDFXQnnXlRtQFvhmfKIrjqgx76l
 
-Hi Linus,
+On Wed, 2 Jul 2025 15:45:41 +0200
+Gabriele Paoloni <gpaoloni@redhat.com> wrote:
 
-Here's a PR with a couple of MMC fixes intended for v6.16-rc5. Details about the
-highlights are as usual found in the signed tag.
+> >  
+> > > For each of the documented functions, as part of the extensive
+> > > description, a set of "Function's expectations" are described in
+> > > a way that facilitate:
+> > > 1) evaluating the current code and any proposed modification
+> > >    to behave as described;
+> > > 2) writing kernel tests to verify the code to behave as described.
+> > >
+> > > Signed-off-by: Gabriele Paoloni <gpaoloni@redhat.com>
+> > > ---
+> > > Re-sending as no feedbacks have been received.  
+> 
+> Now that I am reading this I realized that I missed the most important
+> discussion comments from v1, so I am adding them back here inline
+> below (BTW one more reason to avoid RESENDs):
+> 
+> While working on the documentation of __ftrace_event_enable_disable,
+> I realized that the EVENT_FILE_FL_SOFT_MODE flag is mainly used
+> internally in the function itself, whereas it is EVENT_FILE_FL_SOFT_DISABLED
+> that prevents tracing the event.
+> In this perspective I see that, starting from the initial state, if for
+> a specific event we invoke __ftrace_event_enable_disable with enable=1
+> and soft_disable=0, the EVENT_FILE_FL_ENABLED is set whereas
+> EVENT_FILE_FL_SOFT_MODE and EVENT_FILE_FL_SOFT_DISABLED are not.
+> Now if for that event we invoke __ftrace_event_enable_disable again with
+> enable=1 and soft_disable=1, EVENT_FILE_FL_ENABLED stays set,
+> EVENT_FILE_FL_SOFT_MODE is set, while EVENT_FILE_FL_SOFT_DISABLED
+> remains not set. Instead if from the initial state we directly invoke
+> __ftrace_event_enable_disable with enable=1 and soft_disable=1, all
+> the status flag mentioned above are all set (EVENT_FILE_FL_ENABLED,
+> EVENT_FILE_FL_SOFT_MODE and EVENT_FILE_FL_SOFT_DISABLED).
+> Now I wonder if:
+> a) such a behaviour is consistent with the code expectation;
 
-Please pull this in!
+Yes, and I verified it by looking at the comments in the code. But this
+should have been documented at the top of the function too.
 
-Kind regards
-Ulf Hansson
+> b) if it would make sense to have a standard enable invocation followed
+>    by a soft enable invocation to end up in the same state as a single
+>    invocation of soft enable;
 
+No, because the two need to be done together.
 
-The following changes since commit 19272b37aa4f83ca52bdf9c16d5d81bdd1354494:
+> c) eventually if we could get rid of the soft_mode flag and simplify
+>    the code to only use the soft_disabled flag.
 
-  Linux 6.16-rc1 (2025-06-08 13:44:43 -0700)
+The reason for the soft_mode flag is that this needs to handle two
+users of the same event. One has it enabled (no soft mode at all) and
+the other has it disabled in a soft mode.
 
-are available in the Git repository at:
+The SOFT_MODE flag is to state that there's at least one user that is
+using this in soft mode and has it disabled.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git tags/mmc-v6.16-rc1
+Let me explain the purpose of SOFT_MODE.
 
-for you to fetch changes up to ec54c0a20709ed6e56f40a8d59eee725c31a916b:
+When you echo 1 into the enable file of an event it enables the event
+and it starts tracing immediately. This would be: enable=1 soft_disable=0.
 
-  mtk-sd: reset host->mrq on prepare_data() error (2025-06-25 14:42:51 +0200)
+Same for echoing in 0 into the enable file. It would disable the event:
+enable=0 soft_disable=0.
 
-----------------------------------------------------------------
-MMC core:
- - Apply BROKEN_SD_DISCARD quirk earlier during init
- - Silence some confusing error messages for SD UHS-II cards
+To enable or disable an event, it requires an expensive update to the
+static branches to turn the nops in the code into calls to the tracing
+infrastructure.
 
-MMC host:
- - mtk-sd: Prevent memory corruption from DMA map failure
- - mtk-sd: Fix a pagefault in dma_unmap_sg() for not prepared data
- - sdhci: Revert "Disable SD card clock before changing parameters"
- - sdhci-of-k1: Fix error code in probe()
- - sdhci-uhs2: Silence some confusing error messages for SD UHS-II cards
+Now we have a feature where you could enable one event when another
+event is hit with specific fields (or any field).
 
-----------------------------------------------------------------
-Avri Altman (1):
-      mmc: core: sd: Apply BROKEN_SD_DISCARD quirk earlier
+  echo 'enable_event:irq:irq_handler_entry if next_comm=="migrate"' > /sys/kernel/tracing/events/sched/sched_switch/trigger
 
-Dan Carpenter (1):
-      mmc: sdhci-of-k1: Fix error code in probe()
+The above adds a trigger to the sched_switch event where if the
+next_comm is "migrate", it will enable the irq:irq_handler_entry event.
 
-Masami Hiramatsu (Google) (2):
-      mtk-sd: Fix a pagefault in dma_unmap_sg() for not prepared data
-      mtk-sd: Prevent memory corruption from DMA map failure
+But to enable an event from an event handler which doesn't allow
+sleeping or locking, it can't simply call
+__ftrace_event_enable_disable() to enable the event. That would most
+likely cause a kernel crash or lockup if it did.
 
-Sergey Senozhatsky (1):
-      mtk-sd: reset host->mrq on prepare_data() error
+To handle this case, when the trigger is added, it enables the event
+but puts the event into "soft mode" disabled. The trigger code would
+call __ftrace_event_enable_disable() with enable=1 and soft_disable=1.
+Meaning, "enable this event, but also set the soft_disable bit".
 
-Ulf Hansson (1):
-      Revert "mmc: sdhci: Disable SD card clock before changing parameters"
+This enables the event with the soft_disable flag set. That means, the
+irq_handler_entry event will call into the tracing system every time.
+But because the SOFT_DISABLE is set in the event, it will simply do
+nothing.
 
-Victor Shih (3):
-      mmc: core: Adjust some error messages for SD UHS-II cards
-      mmc: sdhci: Add a helper function for dump register in dynamic debug mode
-      mmc: sdhci-uhs2: Adjust some error messages and register dump for SD UHS-II card
+After doing the above trigger:
 
- drivers/mmc/core/quirks.h      | 12 ++++++------
- drivers/mmc/core/sd_uhs2.c     |  4 ++--
- drivers/mmc/host/mtk-sd.c      | 21 +++++++++++++++++++--
- drivers/mmc/host/sdhci-of-k1.c |  3 ++-
- drivers/mmc/host/sdhci-uhs2.c  | 20 ++++++++++----------
- drivers/mmc/host/sdhci.c       |  9 ++-------
- drivers/mmc/host/sdhci.h       | 16 ++++++++++++++++
- 7 files changed, 57 insertions(+), 28 deletions(-)
+  # cat /sys/kernel/tracing/events/irq/irq_handler_entry/enable 
+  0*
+
+That means it's disabled in "soft mode".
+
+But let's say I also want to enable the event!
+
+  # echo 1 > /sys/kernel/tracing/events/irq/irq_handler_entry/enable 
+  # cat /sys/kernel/tracing/events/irq/irq_handler_entry/enable 
+  1*
+
+The above called __ftrace_event_enable_disable() with: enable=1 and soft_disable=0.
+
+Which means "enable this event for real". Well, it can't forget that
+there's a trigger on it. But the event shouldn't be ignored when
+triggered, so it will clear the SOFT_DISABLE flag and have the event be
+traced.
+
+But if we disable it again:
+
+  # echo 0 > /sys/kernel/tracing/events/irq/irq_handler_entry/enable 
+  # cat /sys/kernel/tracing/events/irq/irq_handler_entry/enable 
+  0*
+
+It must still remember that there's a user that has this event soft
+disabled and may enable it in the future.
+
+When the trigger fires, it will clear the SOFT_DISABLE bit making the
+event "enabled".
+
+The __ftrace_event_enable_disable() needs to keep track of all the
+users that have this event enabled but will switch between soft disable
+and enable. To add itself, it calls this function with enable=1
+soft_disable=1 and to remove itself, it calls it with enable=0 and
+soft_disable=1.
+
+Now technically, the SOFT_MODE bit should only be set iff the ref count
+is greater than zero. But it's easier to test a flag than to always
+test a ref count.
+
+Hope that explains this better. And yes, it can get somewhat confusing,
+which is why I said this is a good function to document the
+requirements for ;-)
+
+-- Steve
 
