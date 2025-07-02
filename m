@@ -1,105 +1,111 @@
-Return-Path: <linux-kernel+bounces-714048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8472FAF6290
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 21:25:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F011AAF6298
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 21:26:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AEAD77AC6E0
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 19:23:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BDD8A7AF9ED
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 19:25:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A5132BE65E;
-	Wed,  2 Jul 2025 19:25:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76FDE2BE65E;
+	Wed,  2 Jul 2025 19:26:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="ByItZai0"
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s9VqZc2u"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43EBD2BE652
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 19:24:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA9D8270ECB;
+	Wed,  2 Jul 2025 19:26:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751484301; cv=none; b=XIJGr2WBNcAdZMULth6gVU9UP/WoyiE2ZGurkTKMhbil5e5kZ860wu1xCLJbK74XzHEwmKOoiAcrfawRkJUbukDvwp03Wkbfh4YbaSbHiOQQfTpjbPy5mSeA8ItVlMW7T/+7NVN3/b7S2hXIM9dfFCfgHna2zrcNFM/jHWNBy68=
+	t=1751484385; cv=none; b=fypbWIbUpQ6T5jP1TxwUr8aZvwYyqJWhrvJwHs2elqNu2JZ55fgxtcTYibDlHhYWFD4Mej1mC32MYsBXZxdYyg/7YysOX4JUXpRn6/AGJZx7v3qzjcPAG/mtMz9QLCpFRa1xugLtgqq5Hq3QmWpTU1tRz9O3ncsAo3CT8CvTLkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751484301; c=relaxed/simple;
-	bh=KK4ynMiBHY0thbjaKNOn/kUYd4MYbYdKNVAr0/lf4n4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=M0yb8llQ252ra9L0kuv+1vz5x+6CEpXxJ0GGhAMy1ROfY0WiiuytnqK1ooVriK/F+wxtV4K7dNEwRC8Z9vSSTfp9u4C05wnOlZIDx3BtSWnmIjUdcUg1vKlncYZQUAPAao2zJZc+XBx5IUGLExp8nVkcU5SyL4BNB+PWhe2mDyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=ByItZai0; arc=none smtp.client-ip=209.85.219.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e81f311a86fso5668743276.3
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 12:24:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1751484297; x=1752089097; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RisGUs6Qykk07nJw80m0Ftg7mf8erIx6Cg/HctC8ynk=;
-        b=ByItZai0w8MGT3rkQg9Fse6epWc0z7aza9psyjNIslDY02rb45inRL5w27IE/oJ11f
-         toscM2B9hzhUCDHK15bMnsPE/Di2s1Fnzup6bh7976ZiwfV/heNX4UwBgb9ogSoco/OL
-         k8ON+PSZdN4V8YpzO6Y9Ggr/S6rKfC40f5GbvphbrqMm9Xzo20823UAr62YyCVa6TdV6
-         5kiXFi6zt5BX5S4WFny3X9Qf+qxgCUBdRgJ/F/hF0BTnYamqKTtPEijdzi4/9ClftHUD
-         oAJ5qjAaRWbqoSuQSZK8e4mnB9jHFs9k/8Ko8BjapzrR+Z4FqGj85d7nSwCD1SUGYz/q
-         GIxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751484297; x=1752089097;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RisGUs6Qykk07nJw80m0Ftg7mf8erIx6Cg/HctC8ynk=;
-        b=vUmVZFlV6lWaEjbc0LGn1CfQwKo/m5bisk8rNc8Z6qFU+9eykXDX8XhtjrciUY5KCn
-         bwe654tdcj5tRscxxJdyqF6/ttEifszcsqpWQTmXy3hqe9qX8Ry6PomsJm7OZCjsYJy5
-         n7oe1XyE1/FWZa4scw1c1XJ5wOfhfbGACDjuj4v/9czaCmMJhd4HqokAg2qrtud1hbWn
-         K8NAQ0kmL3KAb8/FYKS1F0DrfH4n29SFzWj4wV70IoLilaEVi1NMyOlPcxsnbxpTjalc
-         x3VyfSVmZpiq2Vkl/fxqR3RFvgwy5Qgtg3NtSCjvC4eWsmBl3qUVbipl3uqJmjPxC6VN
-         +CjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWB9jqUSJpjFxYpDwOMLQdaIGqjznmBzVixLJQALXYoypE8/NAucVReUxJ+aB3T2Z/l3UuPiqkz2q17h38=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEKZhDuTkstKlqMt+evEoFqcqDEMdIyaM4cl8zw3i/1fdNiY0B
-	93HN2FsWlPTpcduro71RSyTXaNVpGp+IQ8obsVQO1tq/mViReSwjg1AnUKbD3+QoQoTzdqCZ250
-	+xSle4FPABQT9F3Lf4GGE/qmnyWpEKCNpsr3KUH2v
-X-Gm-Gg: ASbGncvnarorJjx4LdwbIiTDeIztUdP2BA/WNbF0Qw8c8/LdC9Z+gEr95M4Gmfy1aaL
-	Zf3/MlFqvB9+2Ge1V+6RF/ouW1NhXUMYa3ihF1lXOSebt3+RPUe8liax5ydZaA0uvLYE/sDPAzu
-	caYXXbL/o7KueAZQc72t7STWWVn/sfqy+ooidqb0zOKpE=
-X-Google-Smtp-Source: AGHT+IHvhasAtxRO9RpFu2NYbRrcynF3zeEZltmoq9Luzh1btO4Igu87XYFa3nEiA/TfmY8TNO2agVgG/zRUYfJtTIM=
-X-Received: by 2002:a05:690c:6486:b0:70e:185b:356d with SMTP id
- 00721157ae682-7164d398834mr54967477b3.14.1751484297140; Wed, 02 Jul 2025
- 12:24:57 -0700 (PDT)
+	s=arc-20240116; t=1751484385; c=relaxed/simple;
+	bh=GpPi9wOBi7C3jjvU4V8pYmSE5merOth92NItvmAnnJY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KlMdqOBJ4VNs0RT9pCn8ioLHY9AAE7gaDoADpStgdCJck/YXudJ7r9RvU2uZAn4Ocf2xU0dTUtX6e7+6gXX/3NUvaya03ZPrXma1vfZ50lh4wI5GB9i+Ot9sdEGNTyZSXEmRQwTmgGl5owk4gvRXtwtstluwkaJSF9oqC0L+7sg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s9VqZc2u; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4298EC4CEE7;
+	Wed,  2 Jul 2025 19:26:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751484385;
+	bh=GpPi9wOBi7C3jjvU4V8pYmSE5merOth92NItvmAnnJY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=s9VqZc2uScNupz5RiyJKrkeyc/RhXPj7B8PqYC0NSU7jgadvkuC5KRG9GQsExvrH4
+	 1JD14vqYuic+VfdWdHa1DD2tg67s8eD7SKPRtnqCTuWBMsUtoaP9Z2pNnv+CZLvN6j
+	 sL67Ka5P1gaP5I+LRFKE9U8YV6iLHlwYewPM27PN9oOJ2oLGb5i+PG+QeFGN4CaX6e
+	 DnhW+tqAh3AkCeAaW3FOMLBUx31l4gRP7a0YOs7VmNnjxSmC8a7yshNwjk2P01wKfE
+	 HTmCXGoTXHQrcb4KyBxQeJ47YX4CCRI3ExB+HY/F3z5I9B4ZtVF6rNLvfmfYRyBK/d
+	 I5OUyVFXbobBQ==
+Date: Wed, 2 Jul 2025 21:26:18 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Stephen Boyd <sboyd@kernel.org>, linux-pm@vger.kernel.org,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Michael Grzeschik <m.grzeschik@pengutronix.de>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Abel Vesa <abel.vesa@linaro.org>, Peng Fan <peng.fan@oss.nxp.com>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Johan Hovold <johan@kernel.org>,
+	Maulik Shah <maulik.shah@oss.qualcomm.com>,
+	Michal Simek <michal.simek@amd.com>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Hiago De Franco <hiago.franco@toradex.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 17/24] driver core: Export get_dev_from_fwnode()
+Message-ID: <aGWH2mH6iZJ3s3lL@pollux>
+References: <20250701114733.636510-1-ulf.hansson@linaro.org>
+ <20250701114733.636510-18-ulf.hansson@linaro.org>
+ <2025070205-ignore-passive-17b4@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250702055820.112190-1-zhaochenguang@kylinos.cn>
-In-Reply-To: <20250702055820.112190-1-zhaochenguang@kylinos.cn>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 2 Jul 2025 15:24:46 -0400
-X-Gm-Features: Ac12FXyjMghT7240fFXsw7E25qCJfe8hMIplSYH8wjk3i5VEZLbQ2yBp0Z1HQmU
-Message-ID: <CAHC9VhTg7cwXu17tHMgSJF3ZRWjA_ozZg3TK3aLJOs2X4QBJ=w@mail.gmail.com>
-Subject: Re: [PATCH] net: ipv6: Fix spelling mistake
-To: Chenguang Zhao <zhaochenguang@kylinos.cn>
-Cc: "David S. Miller" <davem@davemloft.net>, David Ahern <dsahern@kernel.org>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Simon Horman <horms@kernel.org>, netdev@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2025070205-ignore-passive-17b4@gregkh>
 
-On Wed, Jul 2, 2025 at 1:59=E2=80=AFAM Chenguang Zhao <zhaochenguang@kylino=
-s.cn> wrote:
->
-> change 'Maximium' to 'Maximum'
->
-> Signed-off-by: Chenguang Zhao <zhaochenguang@kylinos.cn>
-> ---
->  net/ipv6/calipso.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+On Wed, Jul 02, 2025 at 09:34:12AM +0200, Greg Kroah-Hartman wrote:
+> On Tue, Jul 01, 2025 at 01:47:19PM +0200, Ulf Hansson wrote:
+> > It has turned out get_dev_from_fwnode() is useful at a few other places
+> > outside of the driver core, as in gpiolib.c for example. Therefore let's
+> > make it available as a common helper function.
+> > 
+> > Suggested-by: Saravana Kannan <saravanak@google.com>
+> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > Tested-by: Hiago De Franco <hiago.franco@toradex.com> # Colibri iMX8X
+> > Tested-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com> # TI AM62A,Xilinx ZynqMP ZCU106
+> > Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+> > ---
+> >  drivers/base/core.c    | 8 ++++++--
+> >  include/linux/device.h | 1 +
+> >  2 files changed, 7 insertions(+), 2 deletions(-)
+> > 
+> 
+> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Acked-by: Paul Moore <paul@paul-moore.com>
+I'm a bit concerned about exporting get_dev_from_fwnode() -- at least without a
+clear note on that this helper should be used with caution.
 
---=20
-paul-moore.com
+AFAIK, a struct fwnode_handle instance does not have a reference count for its
+struct device pointer.
+
+Hence, calling get_dev_from_fwnode() with a valid fwnode handle is not enough.
+The caller also needs to ensure that the device the fwnode has a pointer to has
+not been released yet.
+
+If this really needs to be exported, can we please add documentation covering
+this properly?
+
+- Danilo
 
