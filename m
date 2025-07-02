@@ -1,127 +1,157 @@
-Return-Path: <linux-kernel+bounces-713801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3246CAF5E9F
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 18:32:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 31264AF5EE2
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 18:40:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A299D3A925C
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 16:31:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D77F3B06E8
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 16:39:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 155AB2D0C8E;
-	Wed,  2 Jul 2025 16:31:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39B6F2F5091;
+	Wed,  2 Jul 2025 16:39:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LIjXtCoc"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W+rChE9M"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC20E179A7;
-	Wed,  2 Jul 2025 16:31:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 050472F508D
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 16:39:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751473915; cv=none; b=CGcFNh0e9xB4Nw+qs2XuX2LK+uSrItyD/4IjXLAUKdYxYOT/H52VvDOZyh/s1TLUwfWyxKVm9Nqd29E9fBu3moB+ug2n6G6zrxkgO49NaRYOkbhxnhawVbGmmp6mxTXSeU+7OGke/hPxI41vsdzTFKdcYFOAlRQv23cGTd4OXiQ=
+	t=1751474362; cv=none; b=meSrhBpKa18+XL5ilTEx8keRaGwYuqpySutiVOaLl6KZWF+rpvu8TOrY+2Cqw5C9RT/uim2WSEx7jQcwbqZUNRrCgLIb7aVs5XD1G2c7cvllYI4gHVJf8nxNIlWHO27NigLRMiPhhuCo0CjlAajX2xgNJmeMTnLAWQCbfmO/GY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751473915; c=relaxed/simple;
-	bh=IrCNo4PC0NsD0HLz0/9tt4ktA9q6Z/+LdaUaSaX08Bs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VkAD4SV4txE8WCzDXtXdLxCnouMmyzd5kUVjVPO1OrUxQSdIr5xjF9PQyJvi3XRCCh/VpcZHNvcBmsYI7g1F+gvBhcf2iOdovR2gTbrP0vKjdPA7OsElm52/C6PDhJDNUE4zhZCPE0CUBQLuJsSA3z/H6D6LmpK3m8U+kBcuaZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LIjXtCoc; arc=none smtp.client-ip=198.175.65.19
+	s=arc-20240116; t=1751474362; c=relaxed/simple;
+	bh=mkZtPVIJxNSdFw1wPgvwv6fkAXp9yv5nGBIFnYnZ650=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bdgbz+zggOybA4en+WferC7h/1pJRRSlXt7OOWIkAJ+RalrCDB/3g4gA+kNbxPNoQ6fjVt5zm/5vBlwi7IY4RdHe194usycWGoT6KcL/q6teSQNbpCyDmbpDMTAqw9bQbYM5+Ns4JqPImaPzxXmHx9GA8CSb4U1RvV0RX8c+5Uo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W+rChE9M; arc=none smtp.client-ip=198.175.65.15
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751473914; x=1783009914;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=IrCNo4PC0NsD0HLz0/9tt4ktA9q6Z/+LdaUaSaX08Bs=;
-  b=LIjXtCocoBCU7G+Yjv+QUsHlFtbec55yYweV31gx53/c3mgR7NlxVn3n
-   a5f8jJgS8rc0jqGXxLpjgkv9mQZp/OgwnQuSHpuIP1pmIsSovGPghK5CF
-   f64YF6ZSpS2julppBJ+S5mJSJStzhuX/rEcPhfUbn9gv3UAf3oeg3Vmun
-   0k/7APO2ZC37apILd3QLI6iz1FibguCrdrlymy8rvlFLiDdJJsQgSbfaI
-   NAjWBD8JVWsjgLLB+3WiUdGMND/sYJ1c1OFeT9AsqOKL0p0DHhBvFgboN
-   HnbHWvjCoxRNF2yUsQ3S0QaVVpjgAF6k1xYZ9qytQSAYDPrp2GDDLDgCs
-   Q==;
-X-CSE-ConnectionGUID: xyF0ZTR4TCG7oNhfQSyQ6w==
-X-CSE-MsgGUID: zK/D4CSOSq29a1TVdVDULQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11482"; a="53656282"
+  t=1751474361; x=1783010361;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=mkZtPVIJxNSdFw1wPgvwv6fkAXp9yv5nGBIFnYnZ650=;
+  b=W+rChE9MK/+iAGA+2U1/KOz/UNs0LoWZl0LZBwrF7hlhAP8QA+a1+PlA
+   C0sCT4OExZ224g7VRZ/kgu15iibwcQS3tqUYF7B/BleHKgB1MI0OTGZFF
+   44C8M6AEuDSR0fsx7G4v6xz82m6mH6DM2fkH9R4F7oyLELzIEvz3KK1Wh
+   MrZ4DY5OjIVfc0WbUP9H32svzj7Jzww+MaQGS5kqZdCZcSDHN3n6htlX6
+   D7tMLXQUV/1DfgW6kJsrv+fMOeRDAYjkq4MxsyT2CAmUUbo8hgSV7VvrW
+   irCfq2GMvcfvlmKJ+1pgaIZL+0zRoA33nws5WZSFHvNxzMgx/7EXlqMwe
+   w==;
+X-CSE-ConnectionGUID: 2SFHJmubQvyvN8u3dMvhYQ==
+X-CSE-MsgGUID: sze6evWKSfqyPBhFhFwqdQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11482"; a="57459028"
 X-IronPort-AV: E=Sophos;i="6.16,281,1744095600"; 
-   d="scan'208";a="53656282"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2025 09:31:33 -0700
-X-CSE-ConnectionGUID: o41iukwUTKKgv6CK8P0eiQ==
-X-CSE-MsgGUID: TJ1zwm1GSr6100lGBcwqBQ==
+   d="scan'208";a="57459028"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2025 09:39:20 -0700
+X-CSE-ConnectionGUID: +6bmY5Z1QaiCFOPx0aXT/w==
+X-CSE-MsgGUID: s05pUEKxSAqwk/RSkNnYWA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.16,281,1744095600"; 
-   d="scan'208";a="153576647"
-Received: from agluck-desk3.sc.intel.com (HELO agluck-desk3) ([172.25.103.51])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2025 09:31:32 -0700
-Date: Wed, 2 Jul 2025 09:31:30 -0700
-From: "Luck, Tony" <tony.luck@intel.com>
-To: Breno Leitao <leitao@debian.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
-	James Morse <james.morse@arm.com>, Borislav Petkov <bp@alien8.de>,
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-team@meta.com
-Subject: Re: [PATCH] acpi/ghes: add TAINT_MACHINE_CHECK on GHES panic path
-Message-ID: <aGVe4nv18dRHHV16@agluck-desk3>
-References: <20250702-add_tain-v1-1-9187b10914b9@debian.org>
+   d="scan'208";a="185154451"
+Received: from chenyu-dev.sh.intel.com ([10.239.62.107])
+  by orviesa002.jf.intel.com with ESMTP; 02 Jul 2025 09:39:16 -0700
+From: Chen Yu <yu.c.chen@intel.com>
+To: Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>,
+	Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Tim Chen <tim.c.chen@intel.com>,
+	linux-kernel@vger.kernel.org,
+	Chen Yu <yu.c.chen@intel.com>,
+	Jirka Hladky <jhladky@redhat.com>,
+	Srikanth Aithal <Srikanth.Aithal@amd.com>,
+	Suneeth D <Suneeth.D@amd.com>,
+	Libo Chen <libo.chen@oracle.com>
+Subject: [PATCH] sched/numa: Fix NULL pointer access to mm_struct durng task swap
+Date: Thu,  3 Jul 2025 00:32:47 +0800
+Message-Id: <20250702163247.324439-1-yu.c.chen@intel.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250702-add_tain-v1-1-9187b10914b9@debian.org>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 02, 2025 at 08:39:51AM -0700, Breno Leitao wrote:
-> When a GHES (Generic Hardware Error Source) triggers a panic, add the
-> TAINT_MACHINE_CHECK taint flag to the kernel. This explicitly marks the
+It was reported that after Commit ad6b26b6a0a7
+("sched/numa: add statistics of numa balance task"),
+a NULL pointer exception[1] occurs when accessing
+p->mm. The following race condition was found to
+trigger this bug: After a swap task candidate is
+chosen during NUMA balancing, its mm_struct is
+released due to task exit. Later, when the task
+swapping is performed, p->mm is NULL, which causes
+the problem:
 
-While it might not strictly be a machine check that caused GHES to
-panic, it seems close enough from the available TAINT options.
+CPU0                                   CPU1
+:
+...
+task_numa_migrate
+   task_numa_find_cpu
+    task_numa_compare
+      # a normal task p is chosen
+      env->best_task = p
 
-So unless someone feels it would be better to create a new TAINT
-flag (TAINT_FATAL_GHES? TAINT_FIRMWARE_REPORTED_FATAL_ERRROR?)
-then this seems OK to me.
+                                        # p exit:
+                                        exit_signals(p);
+                                           p->flags |= PF_EXITING
+                                        exit_mm
+                                           p->mm = NULL;
 
-Reviewed-by: Tony Luck <tony.luck@intel.com>
+    migrate_swap_stop
+      __migrate_swap_task((arg->src_task, arg->dst_cpu)
+       count_memcg_event_mm(p->mm, NUMA_TASK_SWAP)# p->mm is NULL
 
-> kernel as tainted due to a machine check event, improving diagnostics
-> and post-mortem analysis. The taint is set with LOCKDEP_STILL_OK to
-> indicate lockdep remains valid.
-> 
-> At large scale deployment, this helps to quickly determin panics that
-> are coming due to hardware failures.
-> 
-> Signed-off-by: Breno Leitao <leitao@debian.org>
-> ---
->  drivers/acpi/apei/ghes.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
-> index f0584ccad4519..3d44f926afe8e 100644
-> --- a/drivers/acpi/apei/ghes.c
-> +++ b/drivers/acpi/apei/ghes.c
-> @@ -1088,6 +1088,8 @@ static void __ghes_panic(struct ghes *ghes,
->  
->  	__ghes_print_estatus(KERN_EMERG, ghes->generic, estatus);
->  
-> +	add_taint(TAINT_MACHINE_CHECK, LOCKDEP_STILL_OK);
-> +
->  	ghes_clear_estatus(ghes, estatus, buf_paddr, fixmap_idx);
->  
->  	if (!panic_timeout)
-> 
-> ---
-> base-commit: e96ee511c906c59b7c4e6efd9d9b33917730e000
-> change-id: 20250702-add_tain-902925f3eb96
-> 
-> Best regards,
-> --  
-> Breno Leitao <leitao@debian.org>
-> 
+Fix this issue by checking if the task has the PF_EXITING
+flag set in migrate_swap_stop(). If it does, skip updating
+the memcg events. Additionally, log a warning if p->mm is
+NULL to facilitate future debugging.
+
+Fixes: ad6b26b6a0a7 ("sched/numa: add statistics of numa balance task")
+Reported-by: Jirka Hladky <jhladky@redhat.com>
+Closes: https://lore.kernel.org/all/CAE4VaGBLJxpd=NeRJXpSCuw=REhC5LWJpC29kDy-Zh2ZDyzQZA@mail.gmail.com/
+Reported-by: Srikanth Aithal <Srikanth.Aithal@amd.com>
+Reported-by: Suneeth D <Suneeth.D@amd.com>
+Suggested-by: Libo Chen <libo.chen@oracle.com>
+Signed-off-by: Chen Yu <yu.c.chen@intel.com>
+---
+ kernel/sched/core.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 8988d38d46a3..4e06bb955dad 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -3364,7 +3364,14 @@ static void __migrate_swap_task(struct task_struct *p, int cpu)
+ {
+ 	__schedstat_inc(p->stats.numa_task_swapped);
+ 	count_vm_numa_event(NUMA_TASK_SWAP);
+-	count_memcg_event_mm(p->mm, NUMA_TASK_SWAP);
++	/* exiting task has NULL mm */
++	if (!(p->flags & PF_EXITING)) {
++		WARN_ONCE(!p->mm, "swap task %d %s %x has no mm\n",
++			  p->pid, p->comm, p->flags);
++
++		if (p->mm)
++			count_memcg_event_mm(p->mm, NUMA_TASK_SWAP);
++	}
+ 
+ 	if (task_on_rq_queued(p)) {
+ 		struct rq *src_rq, *dst_rq;
+-- 
+2.25.1
+
 
