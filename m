@@ -1,121 +1,111 @@
-Return-Path: <linux-kernel+bounces-712344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-712346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 548F1AF07D6
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 03:18:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B017BAF07DC
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 03:20:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF3EF4E1694
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 01:18:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1113A4E1ABF
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 01:20:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5677814A62B;
-	Wed,  2 Jul 2025 01:18:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IvoeSzGM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C93DB149DE8;
+	Wed,  2 Jul 2025 01:20:08 +0000 (UTC)
+Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAF7B3C30;
-	Wed,  2 Jul 2025 01:18:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 841223C30;
+	Wed,  2 Jul 2025 01:20:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751419124; cv=none; b=PAJjm1cBr5hoa61/DeMzmmGy8rmOMV1PZuVUMjBNx9UiTpEHTB6BZ41JuRNAUNPvfxbF9/ekNFfxvT1dPD1jgninnLWFN2Eq8kJ8V7Z+fx4mZU5YFWRzF2SLve+38fld9NOprMMkrB9P4KbotoDpB4h4u7kiAM9cXWQzYRszEDM=
+	t=1751419208; cv=none; b=oTD+WVsQetdgluG/gr0sTmCIuGDwbsbefyXjQcGDgjLyAk2W4L416nKwqS7VAyHrPB8cqiWttbx39MIlDlPDAer1EpcYESjhf6plEBjpRm6ju42ORUM0WCXsX9JZOIcyqOspDKlF4vLz6v649ipgOnmoBegaUa3y8xktL+qBcT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751419124; c=relaxed/simple;
-	bh=Q3ZlQcXLusGO7or5b6gbAN76N6KRrX9bFVhn/AXPoDQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=tQk+3EIcjh8guQEXY+i6QVOtF+HZfDM0MpADhhXc23fN1LLu+nIhhUXMgZTsuiHk1+PlkxwhYsJ+ZYQWvfoPDuzP27SjFpd0jy3zWE2jkkzVgmo2xGIlRKR2sg8C5hUhJg/219R0dpwWJxW/lerGw1zhaXIq5GGD8KwqvKYD/GU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IvoeSzGM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 1C881C4CEEB;
-	Wed,  2 Jul 2025 01:18:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751419124;
-	bh=Q3ZlQcXLusGO7or5b6gbAN76N6KRrX9bFVhn/AXPoDQ=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=IvoeSzGMjkbTzs0OeT9pXsMaTabkeloJwgX2wcUdGzxUBxcm35JbpaDV/P7Aev0Ko
-	 clmqIktb3nuNauaNRqv4wjxWTyPiUGyH0UQ3a3NwFI5Z5323Xx3wwDjVjKmKvae+DU
-	 ErraIGxYRnfNTaNjwApvEqdpODrO+2IEH0OD/zLCReh7RJmqOKo9MjX8++ByP7I1M8
-	 oTCqT1L6O5DDK1U2z2vRfWts3nuXSTKZ1XnoxULF5pwSX+5agAXcJNST2hb37u/vs/
-	 v1TiDnffzf23FO9VTF4eGb7x/vunKnnEAJI8Wz9vkJ6x661or9hAzGr7sJDmlyuh+v
-	 T+C4KwqvBy3+A==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08F31C7EE30;
-	Wed,  2 Jul 2025 01:18:44 +0000 (UTC)
-From: Yang Li via B4 Relay <devnull+yang.li.amlogic.com@kernel.org>
-Date: Wed, 02 Jul 2025 09:18:42 +0800
-Subject: [PATCH] Bluetooth: hci_core: lookup pa sync need check BIG sync
- state
+	s=arc-20240116; t=1751419208; c=relaxed/simple;
+	bh=Hs3i768dwPsoUxNaz+oZSekXJNx0gsy8vC4jq+H4f0U=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=su3hE7L1pVJ89mLlo5NXCF1fOIR20NJC2qN9VshAEI5V2pTXu8D2NADDeNlaKftA4RFoorZrgpLd1971BQl8253Bv46MfC5iHOEm1pfcZQ8z0MBY0pGIRGqauLsEXaKzj7vCmsoszQn27TTZ0LxapOmN7NYVCinev+jjv8WH1Mw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
+Received: from TWMBX01.aspeed.com (192.168.0.62) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Wed, 2 Jul
+ 2025 09:19:56 +0800
+Received: from mail.aspeedtech.com (192.168.10.13) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
+ Transport; Wed, 2 Jul 2025 09:19:56 +0800
+From: Jammy Huang <jammy_huang@aspeedtech.com>
+To: <jassisinghbrar@gmail.com>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <joel@jms.id.au>, <andrew@codeconstruct.com.au>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-aspeed@lists.ozlabs.org>
+Subject: [PATCH v6 0/2] ASPEED: Add mailbox driver for AST2700 series
+Date: Wed, 2 Jul 2025 09:19:54 +0800
+Message-ID: <20250702011956.47479-1-jammy_huang@aspeedtech.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250702-pa_sync-v1-1-7a96f5c2d012@amlogic.com>
-X-B4-Tracking: v=1; b=H4sIAPGIZGgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDcwND3YLE+OLKvGRdo7Rk87RkyzRTS6NkJaDqgqLUtMwKsEnRsbW1AGv
- pFS1ZAAAA
-To: Marcel Holtmann <marcel@holtmann.org>, 
- Johan Hedberg <johan.hedberg@gmail.com>, 
- Luiz Augusto von Dentz <luiz.dentz@gmail.com>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Simon Horman <horms@kernel.org>
-Cc: linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Yang Li <yang.li@amlogic.com>
-X-Mailer: b4 0.13-dev-f0463
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1751419122; l=1160;
- i=yang.li@amlogic.com; s=20240418; h=from:subject:message-id;
- bh=GHF9U6GehkWVyzq0OzaU+JceT54aR44ovVM4Bx+2rpk=;
- b=eXovFOziL0YnMbRRQ5YVkV12C93VSCnu6TecapyGQ2OjfXYA8mgRc/OPiy0TVXdTOs0FztD/E
- qjG/4wvabekCKCj+qnJaf73QtkMQbVoB6oNjkiZn2XkfU256Ep1Eq37
-X-Developer-Key: i=yang.li@amlogic.com; a=ed25519;
- pk=86OaNWMr3XECW9HGNhkJ4HdR2eYA5SEAegQ3td2UCCs=
-X-Endpoint-Received: by B4 Relay for yang.li@amlogic.com/20240418 with
- auth_id=180
-X-Original-From: Yang Li <yang.li@amlogic.com>
-Reply-To: yang.li@amlogic.com
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-From: Yang Li <yang.li@amlogic.com>
+Add mailbox controller driver for AST27XX SoCs, which provides
+independent tx/rx mailbox between different processors. There are 4
+channels for each tx/rx mailbox and each channel has an 32-byte FIFO.
 
-Ignore the big sync connections, we are looking for the PA
-sync connection that was created as a result of the PA sync
-established event.
-
-Signed-off-by: Yang Li <yang.li@amlogic.com>
----
- include/net/bluetooth/hci_core.h | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/include/net/bluetooth/hci_core.h b/include/net/bluetooth/hci_core.h
-index 3ce1fb6f5822..646b0c5fd7a5 100644
---- a/include/net/bluetooth/hci_core.h
-+++ b/include/net/bluetooth/hci_core.h
-@@ -1400,6 +1400,13 @@ hci_conn_hash_lookup_pa_sync_handle(struct hci_dev *hdev, __u16 sync_handle)
- 		if (c->type != BIS_LINK)
- 			continue;
+ v6 changes:
+  - Update document
+     1. Update description to preserve paragraphs.
+     2. Update for property, reg.
+     3. Add reg-names.
+     4. Add 'Reviewed-by' from Krok.
+  - Update driver
+     1. Use devm_platform_ioremap_resource_byname since we add reg-names now.
+     2. Update error code for ch not enabled. 
  
-+		/* Ignore the big sync connections, we are looking
-+		 * for the PA sync connection that was created as
-+		 * a result of the PA sync established event.
-+		 */
-+		if (test_bit(HCI_CONN_BIG_SYNC, &c->flags))
-+			continue;
-+
- 		/* Ignore the listen hcon, we are looking
- 		 * for the child hcon that was created as
- 		 * a result of the PA sync established event.
+ v5 changes:
+  - Update document
+     1. Separate reg from 1 to 2. 1st is tx controller; 2nd is rx.
+     2. Remove 'Reviewed-by' since the patch has changed.
+  - Update driver, no functional changes.
+     1. Update since there is 2 reg base now.
+     2. Refine reg definitions
+     3. Add spinlock to protect registers
+     4. Use bool as return value for ast2700_mbox_tx_done
+     5. Rename variable from drv_data to dev_data.
 
----
-base-commit: 3bc46213b81278f3a9df0324768e152de71eb9fe
-change-id: 20250701-pa_sync-2fc7fc9f592c
+ v4 changes:
+  - Update driver, no functional changes.
+     1. Remove unused variable, rx_buff, in struct ast2700_mbox.
+     2. Remove unneeded cast on device_get_match_data.
+     3. Remove the usage of writel/readl_relaxed.
+     4. Improve readability.
+ v3 changes:
+  - Correct document
+     1. Use 32-bit addressing in dts example property, reg.
+ v2 changes:
+  - Update document
+     1. Correct error in dts example.
+     2. Drop description for mbox-cell per suggestion previously.
 
-Best regards,
+Jammy Huang (2):
+  dt-bindings: mailbox: Add ASPEED AST2700 series SoC
+  mailbox: aspeed: add mailbox driver for AST27XX series SoC
+
+ .../mailbox/aspeed,ast2700-mailbox.yaml       |  68 +++++
+ drivers/mailbox/Kconfig                       |   8 +
+ drivers/mailbox/Makefile                      |   2 +
+ drivers/mailbox/ast2700-mailbox.c             | 240 ++++++++++++++++++
+ 4 files changed, 318 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mailbox/aspeed,ast2700-mailbox.yaml
+ create mode 100644 drivers/mailbox/ast2700-mailbox.c
+
+
+base-commit: ec7714e4947909190ffb3041a03311a975350fe0
 -- 
-Yang Li <yang.li@amlogic.com>
-
+2.25.1
 
 
