@@ -1,190 +1,275 @@
-Return-Path: <linux-kernel+bounces-713260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19A37AF1581
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:24:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4688AF1595
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:25:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16D353AC583
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 12:23:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 300434E1256
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 12:25:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E87526A090;
-	Wed,  2 Jul 2025 12:24:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04BF7270578;
+	Wed,  2 Jul 2025 12:25:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="QyATK5xu"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bk3JnrS1"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD72813AA53
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 12:24:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0DB52701BF;
+	Wed,  2 Jul 2025 12:25:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751459048; cv=none; b=Rd9aWtwW9WZziJDY/e+kaHBWbW8QFVZNLssCPK8YybKtHCdCRoKLN4bW8wY5hiIvO0/4OXmZGJ4fLujjo2CGKx0CMFA0+Lc+dLIkAXxtyU8DHQ+uDKmbOCVHNWQn1MzI69Q3nV648nGT6ELuiNYvccH9XMfGWkqTIZaZDPy1tdI=
+	t=1751459114; cv=none; b=pjxql43iwfLRM04jr/NKG7h0j+Y4fnEapIvbkpof8EreyS5tXLF9TxwDjbZBhcez5rfu4736N0IyKvO4s95iTEz5DySvmYHNvqV4Kaye9EsIWVXPxwbM1PZNcyFBXl7+s4fMnoUGX9s8XQN5igtLwUc86y8ImeMnJNs44/VvQvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751459048; c=relaxed/simple;
-	bh=O1QOsfQKfSBvWRmSVxSzFdhWW+0snVjTcsBpLdZpgOo=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=WZf1CTQG/S1AnZwpfC/gKMjscd1PC+GOUHulCHF1lyhJMSq1xjhwtwmdpz8b9KzNcT2B3U+w0QnApGcqRePo2PKyODFVJfA38FywRB32MRsVAirIt71iYo648tUgaEY2/aI+JHN/vKbWvhfg50VMrN6pVcTYsdC97aPrKHC3uJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=QyATK5xu; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-748f5a4a423so2710499b3a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 05:24:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1751459046; x=1752063846; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=aZZQ0b9PR4kHg3DyEsxDVtoWqZbIHgud0yNfUX8vIa0=;
-        b=QyATK5xuvBU8dCSgFiYMeERp70YYyC4IIGC7+PHi7bYltCoNCdaogk68pLRG8jEtr/
-         4J3agww+4THUTs9qVsFKZKTzhfu8Z9kBXa5glKAz7Q0d/Mfn7RfTQzdBfojBz45N4nCu
-         aDAx/7wuVMC2rDhX2ur0uLntwdELLrGB2YrOcdRiuHAohwogv66KAyHc3HFvD20CIzyP
-         nzqPyFE5vWvthpKTxPQizgvMFOQUvbQOfIvYpeazzstn5THEqcqJufM7+tcB59fvGz0d
-         Sa5A/dZn7eIpGoJ+G4x8nkIaKuz8dPKOTx/2BwyJ/MGwpLdwSqNfys9lDpLgEyABM6EM
-         ZSEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751459046; x=1752063846;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aZZQ0b9PR4kHg3DyEsxDVtoWqZbIHgud0yNfUX8vIa0=;
-        b=tBs6u45g1OyvMUaKbrxRYAbOLWi6t8P7ZzKAnVWqzIUDJtrXJnX4xYv3pNAw47iduY
-         rLeXSGeBR05oblUk4UhbY2roDujROPlqsmfVDBU2B/QNG0PyR3soTe6wTzhl0ChXbk72
-         gbUeJyEP8xNH2bdEE9M+3d8bcWW33Q93nKoEQbNtik/GCyLfFpnQeEf3rRtSoXuJr+8H
-         VriCsSHbqcTUzUIf+7owY89fz2FWiiikEx38qFKDV+zuKU5XoD8vUT2/qymWX5TXV7SR
-         D+BktCn1TIRtAfKN+4pdZ8pepN+Qn3bI4vBxKsLax4Yb8OX4kgE5N3X4LPEsyI1pBk2Q
-         EJVw==
-X-Gm-Message-State: AOJu0YyF3vV94gSGEiMTUoqb5O8nIQnP+5LAgYkVvnXwBm56/1Ykf/eX
-	gh/KuL5HhryqFgw+lzdBp1t7MjDLCRd/rWrY5FDk9x7cpmIkMx8UwSrW9GK7r/uOPo4=
-X-Gm-Gg: ASbGnctEXDaDwi9dLAUIhR1i6z+u0D2Y2lg8fz5YT4nicD5WuiWg2atA0LwVerq+UhD
-	0FySGDskfSiiFedH4TAdid+pYox+T+J5sbn63Z/KoqIy1VE7WsSA6LOh3b8Zr8TbOT5Rt9ijWRP
-	wc9OHDeWg4pqOxexoRmMnjkKlLrztBVa+PuJsYJcHbOnmNOngCiHEfqf//3pFa0AuJWRgULuqMz
-	z/tIHulS8k8SpOepi0CAzFScZyZ4WyflS6xxRQBRdtY9rY6ERlgrNIudBeXlKP7gvLBccVsmCGo
-	iM+i4KsV2kFb1R1LUd24YdGFO1Ai/pIf///udzuP9IvaHtLfCX7iq3uJvHkA9kkvzPSbkv7GJCO
-	McumRJRLzi+rwQBzf494g7ZnZPwSoFSAFc9zN
-X-Google-Smtp-Source: AGHT+IETkeRfDcmNB9+WEm2yGsnJ6OgHgpRfUmc69FAO+OZBAHjIaiAqF+dsmTgGpCmrfOlIUgPTQA==
-X-Received: by 2002:a05:6a21:48d:b0:21f:5aa1:3124 with SMTP id adf61e73a8af0-222d7df0870mr5638079637.13.1751459046175;
-        Wed, 02 Jul 2025 05:24:06 -0700 (PDT)
-Received: from ?IPV6:fdbd:ff1:ce00:1d76:cc0:e1b1:8778:e58c? ([2001:c10:ff04:0:1000::8])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b34e31beab2sm13027706a12.47.2025.07.02.05.24.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Jul 2025 05:24:05 -0700 (PDT)
-From: Liangyan <liangyan.peng@bytedance.com>
-X-Google-Original-From: Liangyan <liangyan.peng@google.com>
-Message-ID: <8145bb17-8ba4-4d9d-a995-5f8b09db99c4@google.com>
-Date: Wed, 2 Jul 2025 20:23:58 +0800
+	s=arc-20240116; t=1751459114; c=relaxed/simple;
+	bh=awyRL1yYt8sOIPQl7z6BBiYEjvvn7LK2Bmvq7YpEkfw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cQ2CTh3sosC4YQVF0fho676mfGOpJu8CgvvTLIOVsZuNWYm0TlNDbphbOcNPIdKU1HfqhkubGOaZ7FPTAU6DToD6y0DbtScCKE6iJAUJ85tAqqxF1pfDqwI/78S01br0srMxhH4k8E1l73KpJiuEH0uGfaaLf14vWB7kTjOK6os=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bk3JnrS1; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751459112; x=1782995112;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=awyRL1yYt8sOIPQl7z6BBiYEjvvn7LK2Bmvq7YpEkfw=;
+  b=bk3JnrS1Ww7x+GBKUSSk0jejwCBclPI+qcIuZY0lSEMqnudW5ZqAPqfn
+   9bEWyHwlcGEMHf+T4+oeQizEsMjoDXrw/B/iuAV5xKKqBOLprR6he2gcv
+   O//gumla51+9tDcoc9JwH0xbXz5fe+ELM53vg8G8dUcnWdNh2nutZStx4
+   MLaO+bBYQdT7TABRVl4OoBmkaqbLWRkprwXbe5NK59YvE07HI8M57TVGa
+   oiJuspE5uhS2y6O5zJgKp51p8v40Wc8IGU80Raayqm+wfR8aHUcYpWKZt
+   3XwKHzVTvADtHkP/Tx811E3lTfKu+BkkRinrMqvS+vtuuiPROOJt4xxwZ
+   A==;
+X-CSE-ConnectionGUID: ZogthvQYQXWhNvzNkjUSJg==
+X-CSE-MsgGUID: PsfbVNHXRg+oKq8tKU4IAA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11482"; a="64796959"
+X-IronPort-AV: E=Sophos;i="6.16,281,1744095600"; 
+   d="scan'208";a="64796959"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2025 05:25:12 -0700
+X-CSE-ConnectionGUID: M/pd+uxBSpqle+u6j1dQ6g==
+X-CSE-MsgGUID: Gn+FyFxnSqCVVTdscJqX0A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,281,1744095600"; 
+   d="scan'208";a="153685464"
+Received: from lkp-server01.sh.intel.com (HELO 0b2900756c14) ([10.239.97.150])
+  by fmviesa007.fm.intel.com with ESMTP; 02 Jul 2025 05:25:08 -0700
+Received: from kbuild by 0b2900756c14 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uWwWQ-0000cR-1H;
+	Wed, 02 Jul 2025 12:25:06 +0000
+Date: Wed, 2 Jul 2025 20:24:11 +0800
+From: kernel test robot <lkp@intel.com>
+To: Shankari Anand <shankari.ak0208@gmail.com>,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	patches@lists.linux.dev
+Cc: oe-kbuild-all@lists.linux.dev, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Shankari Anand <shankari.ak0208@gmail.com>
+Subject: Re: [PATCH v2 2/2] rust: update ARef and AlwaysRefCounted call sites
+ to import from sync::aref
+Message-ID: <202507022055.C7y9sGGN-lkp@intel.com>
+References: <20250625111133.698481-2-shankari.ak0208@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [External] Re: [RFC] x86/kvm: Use native qspinlock by default
- when realtime hinted
-To: Bibo Mao <maobibo@loongson.cn>, Liangyan <liangyan.peng@bytedance.com>,
- pbonzini@redhat.com, vkuznets@redhat.com, tglx@linutronix.de,
- mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
- wanpengli@tencent.com
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org, kvm@vger.kernel.org
-References: <20250702064218.894-1-liangyan.peng@bytedance.com>
- <806e3449-a7b1-fa57-b220-b791428fb28b@loongson.cn>
-Content-Language: en-US
-In-Reply-To: <806e3449-a7b1-fa57-b220-b791428fb28b@loongson.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250625111133.698481-2-shankari.ak0208@gmail.com>
 
-We test that unixbench spawn has big improvement in Intel 8582c 120-CPU 
-guest vm if switch to qspinlock.
+Hi Shankari,
 
-Command: ./Run -c 120 spawn
+kernel test robot noticed the following build errors:
 
-Use virt_spin_lock:
-System Benchmarks Partial Index   BASELINE       RESULT  INDEX
-Process Creation                     126.0      71878.4   5704.6
-                                                         ========
-System Benchmarks Index Score (Partial Only)              5704.6
+[auto build test ERROR on 0303584766b7bdb6564c7e8f13e0b59b6ef44984]
 
+url:    https://github.com/intel-lab-lkp/linux/commits/Shankari-Anand/rust-update-ARef-and-AlwaysRefCounted-call-sites-to-import-from-sync-aref/20250625-191416
+base:   0303584766b7bdb6564c7e8f13e0b59b6ef44984
+patch link:    https://lore.kernel.org/r/20250625111133.698481-2-shankari.ak0208%40gmail.com
+patch subject: [PATCH v2 2/2] rust: update ARef and AlwaysRefCounted call sites to import from sync::aref
+config: x86_64-rhel-9.4-rust (https://download.01.org/0day-ci/archive/20250702/202507022055.C7y9sGGN-lkp@intel.com/config)
+compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
+rustc: rustc 1.78.0 (9b00956e5 2024-04-29)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250702/202507022055.C7y9sGGN-lkp@intel.com/reproduce)
 
-Use qspinlock:
-System Benchmarks Partial Index   BASELINE       RESULT    INDEX
-Process Creation                     126.0     173566.6  13775.1
-                                                         ========
-System Benchmarks Index Score (Partial Only              13775.1
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507022055.C7y9sGGN-lkp@intel.com/
 
+All errors (new ones prefixed by >>):
 
-Regards,
-Liangyan
+   PATH=/opt/cross/clang-18/bin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+   INFO PATH=/opt/cross/rustc-1.78.0-bindgen-0.65.1/cargo/bin:/opt/cross/clang-18/bin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+   /usr/bin/timeout -k 100 12h /usr/bin/make KCFLAGS= -fno-crash-diagnostics -Wno-error=return-type -Wreturn-type -funsigned-char -Wundef W=1 --keep-going LLVM=1 -j32 -C source O=/kbuild/obj/consumer/x86_64-rhel-9.4-rust ARCH=x86_64 SHELL=/bin/bash rustfmtcheck
+   make: Entering directory '/kbuild/src/consumer'
+   make[1]: Entering directory '/kbuild/obj/consumer/x86_64-rhel-9.4-rust'
+>> Diff in drivers/gpu/drm/nova/driver.rs at line 1:
+    // SPDX-License-Identifier: GPL-2.0
+    
+   -use kernel::{auxiliary, c_str, device::Core, drm, drm::gem, drm::ioctl, prelude::*, sync::aref::ARef};
+   +use kernel::{
+   +    auxiliary, c_str, device::Core, drm, drm::gem, drm::ioctl, prelude::*, sync::aref::ARef,
+   +};
+    
+    use crate::file::File;
+    use crate::gem::NovaObject;
+>> Diff in drivers/gpu/drm/nova/driver.rs at line 1:
+    // SPDX-License-Identifier: GPL-2.0
+    
+   -use kernel::{auxiliary, c_str, device::Core, drm, drm::gem, drm::ioctl, prelude::*, sync::aref::ARef};
+   +use kernel::{
+   +    auxiliary, c_str, device::Core, drm, drm::gem, drm::ioctl, prelude::*, sync::aref::ARef,
+   +};
+    
+    use crate::file::File;
+    use crate::gem::NovaObject;
+   Diff in rust/kernel/sync/aref.rs at line 10:
+    //!
+    //! For Rust-managed objects, prefer using [`Arc`](crate::sync::Arc) instead.
+    
+   -use core::{
+   -    marker::PhantomData,
+   -    mem::ManuallyDrop,
+   -    ops::Deref,
+   -    ptr::NonNull,
+   -};
+   +use core::{marker::PhantomData, mem::ManuallyDrop, ops::Deref, ptr::NonNull};
+    
+    /// Trait for types that are _always_ reference-counted.
+    ///
+>> Diff in rust/kernel/cred.rs at line 8:
+    //!
+    //! Reference: <https://www.kernel.org/doc/html/latest/security/credentials.html>
+    
+   -use crate::{
+   -    bindings,
+   -    task::Kuid,
+   -    sync::aref::AlwaysRefCounted,
+   -    types::Opaque,
+   -};
+   +use crate::{bindings, sync::aref::AlwaysRefCounted, task::Kuid, types::Opaque};
+    
+    /// Wraps the kernel's `struct cred`.
+    ///
+>> Diff in rust/kernel/device.rs at line 4:
+    //!
+    //! C header: [`include/linux/device.h`](srctree/include/linux/device.h)
+    
+   -use crate::{
+   -    bindings,
+   -    str::CStr,
+   -    sync::aref::ARef,
+   -    types::Opaque,
+   -};
+   +use crate::{bindings, str::CStr, sync::aref::ARef, types::Opaque};
+    use core::{fmt, marker::PhantomData, ptr};
+    
+    #[cfg(CONFIG_PRINTK)]
+   Diff in rust/kernel/pid_namespace.rs at line 7:
+    //! C header: [`include/linux/pid_namespace.h`](srctree/include/linux/pid_namespace.h) and
+    //! [`include/linux/pid.h`](srctree/include/linux/pid.h)
+    
+   -use crate::{
+   -    bindings,
+   -    sync::aref::AlwaysRefCounted,
+   -    types::Opaque,
+   -};
+   +use crate::{bindings, sync::aref::AlwaysRefCounted, types::Opaque};
+    use core::ptr;
+    
+    /// Wraps the kernel's `struct pid_namespace`. Thread safe.
+   Diff in rust/kernel/sync/aref.rs at line 10:
+    //!
+    //! For Rust-managed objects, prefer using [`Arc`](crate::sync::Arc) instead.
+    
+   -use core::{
+   -    marker::PhantomData,
+   -    mem::ManuallyDrop,
+   -    ops::Deref,
+   -    ptr::NonNull,
+   -};
+   +use core::{marker::PhantomData, mem::ManuallyDrop, ops::Deref, ptr::NonNull};
+    
+    /// Trait for types that are _always_ reference-counted.
+    ///
+   Diff in rust/kernel/pid_namespace.rs at line 7:
+    //! C header: [`include/linux/pid_namespace.h`](srctree/include/linux/pid_namespace.h) and
+    //! [`include/linux/pid.h`](srctree/include/linux/pid.h)
+    
+   -use crate::{
+   -    bindings,
+   -    sync::aref::AlwaysRefCounted,
+   -    types::Opaque,
+   -};
+   +use crate::{bindings, sync::aref::AlwaysRefCounted, types::Opaque};
+    use core::ptr;
+    
+    /// Wraps the kernel's `struct pid_namespace`. Thread safe.
+   Diff in rust/kernel/sync/aref.rs at line 10:
+    //!
+    //! For Rust-managed objects, prefer using [`Arc`](crate::sync::Arc) instead.
+    
+   -use core::{
+   -    marker::PhantomData,
+   -    mem::ManuallyDrop,
+   -    ops::Deref,
+   -    ptr::NonNull,
+   -};
+   +use core::{marker::PhantomData, mem::ManuallyDrop, ops::Deref, ptr::NonNull};
+    
+    /// Trait for types that are _always_ reference-counted.
+    ///
+>> Diff in rust/kernel/cred.rs at line 8:
+    //!
+    //! Reference: <https://www.kernel.org/doc/html/latest/security/credentials.html>
+    
+   -use crate::{
+   -    bindings,
+   -    task::Kuid,
+   -    sync::aref::AlwaysRefCounted,
+   -    types::Opaque,
+   -};
+   +use crate::{bindings, sync::aref::AlwaysRefCounted, task::Kuid, types::Opaque};
+    
+    /// Wraps the kernel's `struct cred`.
+    ///
+>> Diff in rust/kernel/device.rs at line 4:
+    //!
+    //! C header: [`include/linux/device.h`](srctree/include/linux/device.h)
+    
+   -use crate::{
+   -    bindings,
+   -    str::CStr,
+   -    sync::aref::ARef,
+   -    types::Opaque,
+   -};
+   +use crate::{bindings, str::CStr, sync::aref::ARef, types::Opaque};
+    use core::{fmt, marker::PhantomData, ptr};
+    
+    #[cfg(CONFIG_PRINTK)]
+   make[2]: *** [Makefile:1831: rustfmt] Error 123
+   make[2]: Target 'rustfmtcheck' not remade because of errors.
+   make[1]: Leaving directory '/kbuild/obj/consumer/x86_64-rhel-9.4-rust'
+   make[1]: *** [Makefile:248: __sub-make] Error 2
+   make[1]: Target 'rustfmtcheck' not remade because of errors.
+   make: *** [Makefile:248: __sub-make] Error 2
+   make: Target 'rustfmtcheck' not remade because of errors.
+   make: Leaving directory '/kbuild/src/consumer'
 
-On 2025/7/2 16:19, Bibo Mao wrote:
-> 
-> 
-> On 2025/7/2 下午2:42, Liangyan wrote:
->> When KVM_HINTS_REALTIME is set and KVM_FEATURE_PV_UNHALT is clear,
->> currently guest will use virt_spin_lock.
->> Since KVM_HINTS_REALTIME is set, use native qspinlock should be safe
->> and have better performance than virt_spin_lock.
-> Just be curious, do you have actual data where native qspinlock has 
-> better performance than virt_spin_lock()?
-> 
-> By my understanding, qspinlock is not friendly with VM. When lock is 
-> released, it is acquired with one by one order in contending queue. If 
-> the first vCPU in contending queue is preempted, the other vCPUs can not 
-> get lock. On physical machine it is almost impossible that CPU 
-> contending lock is preempted.
-> 
-> Regards
-> Bibo Mao
->>
->> Signed-off-by: Liangyan <liangyan.peng@bytedance.com>
->> ---
->>   arch/x86/kernel/kvm.c | 18 +++++++++---------
->>   1 file changed, 9 insertions(+), 9 deletions(-)
->>
->> diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
->> index 921c1c783bc1..9080544a4007 100644
->> --- a/arch/x86/kernel/kvm.c
->> +++ b/arch/x86/kernel/kvm.c
->> @@ -1072,6 +1072,15 @@ static void kvm_wait(u8 *ptr, u8 val)
->>    */
->>   void __init kvm_spinlock_init(void)
->>   {
->> +    /*
->> +     * Disable PV spinlocks and use native qspinlock when dedicated 
->> pCPUs
->> +     * are available.
->> +     */
->> +    if (kvm_para_has_hint(KVM_HINTS_REALTIME)) {
->> +        pr_info("PV spinlocks disabled with KVM_HINTS_REALTIME 
->> hints\n");
->> +        goto out;
->> +    }
->> +
->>       /*
->>        * In case host doesn't support KVM_FEATURE_PV_UNHALT there is 
->> still an
->>        * advantage of keeping virt_spin_lock_key enabled: 
->> virt_spin_lock() is
->> @@ -1082,15 +1091,6 @@ void __init kvm_spinlock_init(void)
->>           return;
->>       }
->> -    /*
->> -     * Disable PV spinlocks and use native qspinlock when dedicated 
->> pCPUs
->> -     * are available.
->> -     */
->> -    if (kvm_para_has_hint(KVM_HINTS_REALTIME)) {
->> -        pr_info("PV spinlocks disabled with KVM_HINTS_REALTIME 
->> hints\n");
->> -        goto out;
->> -    }
->> -
->>       if (num_possible_cpus() == 1) {
->>           pr_info("PV spinlocks disabled, single CPU\n");
->>           goto out;
->>
-> 
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
