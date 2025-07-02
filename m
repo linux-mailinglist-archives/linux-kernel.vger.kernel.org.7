@@ -1,139 +1,188 @@
-Return-Path: <linux-kernel+bounces-712894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-712885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B47BCAF1042
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 11:43:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 65E1BAF1032
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 11:41:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDCFC521419
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 09:42:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1BE5171941
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 09:40:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2FBE2571BC;
-	Wed,  2 Jul 2025 09:40:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0688E24DCF9;
+	Wed,  2 Jul 2025 09:39:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="PrMjVQDO"
-Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DADx7Gs5";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="+Fnw+crH"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE326253B7B;
-	Wed,  2 Jul 2025 09:40:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6859247297;
+	Wed,  2 Jul 2025 09:39:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751449227; cv=none; b=qTN16uUMydAnk2v1EuG5zqll9sE2wJiGcSRH/zAqA4pfqosXU7Qmv75RP1Fw4rcJSmvu7t/XiFwLR3LQ2VoJOUdp0JKg+T625tcUHuoh2TL2W+9tadaN1CNJzKjOz2FV+Syr27VmQxHFo/EsWiRzLy5d+6pnBCcG8ohqStYhHP8=
+	t=1751449181; cv=none; b=uzC/2obtvAMwRmw3uhThLEJUbfICsmWiZdrQ2dWIpSj9XinmNqroX37CuxLkykiWvmTdce/AFEf/rg8xtqsdnAHL1YERUYBN7G4+LgcfS6ix+3zBOWIJbquNdqQgaa4BAAKt1xxfK9xnzehLrOkrrGSyhCT0gFLjnYUVGKbtxp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751449227; c=relaxed/simple;
-	bh=SWBV92Aw9D0MuSpaoBqozv/60pjWKAg+MXiW9xCAc6c=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bV/pggfOenwEoFWvcOMXvuKD1oh2nWHldP073fziR3V1v1tP73otHw1XQf4/5Gm7EvlLm7+gPGMHPkAJ4kRUZ7ppb37iXXyttg0jy4paDp7GD997KWhx/CttP1k666XmR6FZFWMMNV616JhW53/d24YO0b46qlqIaVRdpjDisak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=PrMjVQDO; arc=none smtp.client-ip=83.149.199.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
-Received: from fedora.intra.ispras.ru (unknown [10.10.165.14])
-	by mail.ispras.ru (Postfix) with ESMTPSA id F0A1F40777A0;
-	Wed,  2 Jul 2025 09:40:14 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru F0A1F40777A0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
-	s=default; t=1751449215;
-	bh=qJ+yQ7bGSosbW+GSIN8nYNUzz74OZS3bFx3ImJMdxjc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=PrMjVQDOuV6INje+Bv9Z+cGrKOK8S9K8eyZArGjs0VJivj5duZuvSefw9+t4C6GVw
-	 Q3gByugtGFN3jiyRiYpDWL1aiZzOQ2n7iEDH2KhIeDsbDjvsHHIeutJ5JmtTu5EKyA
-	 PLheMnJmGL/ZeyMdsIMxtIQjhO/3biVkyIkNmm6E=
-From: Fedor Pchelkin <pchelkin@ispras.ru>
-To: Carlos Maiolino <cem@kernel.org>,
-	"Darrick J. Wong" <djwong@kernel.org>
-Cc: Fedor Pchelkin <pchelkin@ispras.ru>,
-	Christoph Hellwig <hch@lst.de>,
-	linux-xfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org
-Subject: [PATCH v2 6/6] xfs: refactor xfs_btree_diff_two_ptrs() to take advantage of cmp_int()
-Date: Wed,  2 Jul 2025 12:39:33 +0300
-Message-ID: <20250702093935.123798-7-pchelkin@ispras.ru>
-X-Mailer: git-send-email 2.50.0
-In-Reply-To: <20250702093935.123798-1-pchelkin@ispras.ru>
-References: <20250702093935.123798-1-pchelkin@ispras.ru>
+	s=arc-20240116; t=1751449181; c=relaxed/simple;
+	bh=pFfRtSm1nfVwd8I1W0M4HDCGj4ZuRd/Raq3zwaQ2dL4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=uPQzfEtyVqbtn78Fb1XZRH+pCFAVIFof75vAVgm9G7Ncb5xHSTmw/UA3DZHujxh3N1K53rDGulJmu/ZoIUKrpSLlc0XMw5Z9f8sYA0vT0Xgn1zRFpqJ8/WuCkZBKEVBOfT9jNzXdOrGyQ3ycz+LclpDTY5G4IGJxKODgOJHv6cU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DADx7Gs5; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=+Fnw+crH; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1751449177;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=10CYibGvwIVYchOvUOxwjyPV91vxtw5BqVOM0fUyS28=;
+	b=DADx7Gs5oChS8tz124E7PgQoyjZN6PFOt4xrJCp3IqgpGjjCcEC5wYQyUQRUMjZf40GGtd
+	7+o2D0aaPfDvvMnZxlGuhwqZfMHc/MjsHF/bn3YTBPhaD9J1sP7pxpDE92CKIwJKalhrsF
+	S231rF82KkiFdKdaZsK8Ubl4tM+TWB5FuWXcTdgo/XGhYO+RDMlwxoq03lZLxjgeZNdswe
+	M8PcHw4GMz+LIGmpReA+V8d2XAyKB7X+LSo9IxVsQ9crJJx/uJSfevHeKTpxBGQlFCMqQ8
+	dBLVOa5OlWGb+B13Xq8S+Y2YlLBKmxsBLO4QGSV34yQlzcSj6tWDMkNPHO0V3A==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1751449177;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=10CYibGvwIVYchOvUOxwjyPV91vxtw5BqVOM0fUyS28=;
+	b=+Fnw+crHy4xmKh/dT5Ygf/U+FvNoiyjfkNEflf8c5EM8g/kWZhBsHHPEN5bLiR0h4eM84O
+	qN71oJUcjhDkrRDg==
+To: Gabriele Monaco <gmonaco@redhat.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>, Andy
+ Lutomirski <luto@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, Masami
+ Hiramatsu <mhiramat@kernel.org>, Ingo Molnar <mingo@kernel.org>, Mark
+ Rutland <mark.rutland@arm.com>, linux-arm-kernel@lists.infradead.org,
+ linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] tracing: Fix inconsistency in irq tracking on NMIs
+In-Reply-To: <5097b17cc506af60ca718aba5a0a10e0fda01440.camel@redhat.com>
+References: <20250625120823.60600-1-gmonaco@redhat.com>
+ <20250701125459.GL1613200@noisy.programming.kicks-ass.net>
+ <5097b17cc506af60ca718aba5a0a10e0fda01440.camel@redhat.com>
+Date: Wed, 02 Jul 2025 11:39:37 +0200
+Message-ID: <87cyajkk2u.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Use cmp_int() to yield the result of a three-way-comparison instead of
-performing subtractions with extra casts. Thus also rename the function
-to make its name clearer in purpose.
+On Wed, Jul 02 2025 at 09:18, Gabriele Monaco wrote:
+> On Tue, 2025-07-01 at 14:54 +0200, Peter Zijlstra wrote:
+> I could probably only fix this without even considering NMIs when
+> interrupts are disabled, but I believe if that happens, the tracepoints
+> would report something wrong, since using tracing_irq_cpu alone does:
+>
+> local_irq_disable -> trace_irq_off
+>   nmi_enter -> no trace
+>   nmi_exit -> trace_irq_on
+>   // here interrupts are still off, aren't they?
+> local_irq_enable -> no trace
+>
+> The idea that I described poorly, was to use tracing_irq_cpu in a way
+> that the first context disabling interrupts fires the tracepoint
+> (current behaviour), but when it's time to enable interrupts, an NMI
+> which didn't disable interrupts shouldn't trace but let the next
+> context trace.
+...
+> [1] - https://lore.kernel.org/lkml/87sejup1fe.ffs@tglx
 
-Found by Linux Verification Center (linuxtesting.org).
+As I told you before:
 
-Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
----
+ "As you correctly described, the two states are asynchronous in the
+  context of NMIs, so the obvious thing is to treat them as seperate
+  entities so that the trace really contains the off/on events
+  independent of lockdep enablement and lockdep's internal state. No?"
 
-v2: rename the "diff_two_ptrs" part (Darrick)
+So I would have expected that you look at the lockdep implementation and
+figure out why that one works correctly. Let's have a look at it:
 
- fs/xfs/libxfs/xfs_btree.c | 8 ++++----
- fs/xfs/libxfs/xfs_btree.h | 6 +++---
- fs/xfs/scrub/btree.c      | 2 +-
- 3 files changed, 8 insertions(+), 8 deletions(-)
+nmi_entry()
+   irq_state.lockdep = lockdep_hardirqs_enabled();
 
-diff --git a/fs/xfs/libxfs/xfs_btree.c b/fs/xfs/libxfs/xfs_btree.c
-index d3591728998e..a61211d253f1 100644
---- a/fs/xfs/libxfs/xfs_btree.c
-+++ b/fs/xfs/libxfs/xfs_btree.c
-@@ -5353,15 +5353,15 @@ xfs_btree_count_blocks(
- }
- 
- /* Compare two btree pointers. */
--int64_t
--xfs_btree_diff_two_ptrs(
-+int
-+xfs_btree_cmp_two_ptrs(
- 	struct xfs_btree_cur		*cur,
- 	const union xfs_btree_ptr	*a,
- 	const union xfs_btree_ptr	*b)
- {
- 	if (cur->bc_ops->ptr_len == XFS_BTREE_LONG_PTR_LEN)
--		return (int64_t)be64_to_cpu(a->l) - be64_to_cpu(b->l);
--	return (int64_t)be32_to_cpu(a->s) - be32_to_cpu(b->s);
-+		return cmp_int(be64_to_cpu(a->l), be64_to_cpu(b->l));
-+	return cmp_int(be32_to_cpu(a->s), be32_to_cpu(b->s));
- }
- 
- struct xfs_btree_has_records {
-diff --git a/fs/xfs/libxfs/xfs_btree.h b/fs/xfs/libxfs/xfs_btree.h
-index 1bf20d509ac9..60e78572e725 100644
---- a/fs/xfs/libxfs/xfs_btree.h
-+++ b/fs/xfs/libxfs/xfs_btree.h
-@@ -519,9 +519,9 @@ struct xfs_btree_block *xfs_btree_get_block(struct xfs_btree_cur *cur,
- 		int level, struct xfs_buf **bpp);
- bool xfs_btree_ptr_is_null(struct xfs_btree_cur *cur,
- 		const union xfs_btree_ptr *ptr);
--int64_t xfs_btree_diff_two_ptrs(struct xfs_btree_cur *cur,
--				const union xfs_btree_ptr *a,
--				const union xfs_btree_ptr *b);
-+int xfs_btree_cmp_two_ptrs(struct xfs_btree_cur *cur,
-+			   const union xfs_btree_ptr *a,
-+			   const union xfs_btree_ptr *b);
- void xfs_btree_get_sibling(struct xfs_btree_cur *cur,
- 			   struct xfs_btree_block *block,
- 			   union xfs_btree_ptr *ptr, int lr);
-diff --git a/fs/xfs/scrub/btree.c b/fs/xfs/scrub/btree.c
-index fe678a0438bc..cd6f0ff382a7 100644
---- a/fs/xfs/scrub/btree.c
-+++ b/fs/xfs/scrub/btree.c
-@@ -306,7 +306,7 @@ xchk_btree_block_check_sibling(
- 	if (pbp)
- 		xchk_buffer_recheck(bs->sc, pbp);
- 
--	if (xfs_btree_diff_two_ptrs(cur, pp, sibling))
-+	if (xfs_btree_cmp_two_ptrs(cur, pp, sibling))
- 		xchk_btree_set_corrupt(bs->sc, cur, level);
- out:
- 	xfs_btree_del_cursor(ncur, XFS_BTREE_ERROR);
--- 
-2.50.0
+   lockdep_hardirqs_off(CALLER_ADDR0);
+   ...
+   return irq_state;
 
+nmi_exit(irq_state)
+
+   if (irq_state.lockdep)
+	lockdep_hardirqs_on(CALLER_ADDR0);
+
+On NMI entry the internal state of lockdep tracking is recorded and
+lockdep_hardirqs_off() handles a redundant off gracefully. As I said it
+might be arguable to invoke it only when irq_state.lockdep == true, but
+that's a cosmetic or performance issue not a correctness problem.
+
+On NMI exit lockdep_hardirqs_on() is only invoked when the lockdep internal
+state at entry was 'enabled' so it can restore the state correctly.
+
+If you model the tracer exactly the same way:
+
+   irq_state.lockdep = lockdep_hardirqs_enabled();
+   irq_state.tracer = tracer_hardirqs_enabled();
+   ....
+
+   You get the idea...
+
+That will be "correct" in terms of sequencing depending on your trace side
+implementation:
+
+  trace_hardirqs_off()
+        if (trace_hardirqs_enabled()) {
+        	trace_irqs_enabled = false;     // A
+                emit_trace(OFF);	        // B
+
+If the NMI hits before A, everything is fine because it will record a
+ON->OFF transition on NMI entry and a OFF->ON transition on NMI
+exit. Then the interrupted context records a ON->OFF transition again.
+
+If it hits between A and B, then the NMI tracing wont do anything
+because enabled state is already false, but the resulting trace
+sequencing is messed up:
+
+     irqs on
+     ...
+     nmi_entry
+     nmi_exit
+     irqs off
+
+IOW, it misses the ON->OFF OFF->ON transitions in the NMI.
+
+So you want to do it the other way round:
+
+  trace_hardirqs_off()
+        if (trace_hardirqs_enabled()) {
+                emit_trace(OFF);	        // A
+        	trace_irqs_enabled = false;     // B
+
+If the NMI hits before A, everything is fine because it will record a
+ON->OFF transition on NMI entry and a OFF->ON transition on NMI
+exit. Then the interrupted context records a ON->OFF transition again.
+
+If it hits between A and B then you get a duplicate
+
+     irqs on
+     ...
+     irqs off
+     nmi_entry
+     irqs off
+     irqs on
+     nmi_exit
+
+There is nothing you can do about it, but that's easy enough to filter
+out, no?
+
+I'm pretty sure you can figure out how that should be modeled on the
+on() side of affairs.
+
+Thanks,
+
+        tglx
 
