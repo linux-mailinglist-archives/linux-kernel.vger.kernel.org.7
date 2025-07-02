@@ -1,120 +1,109 @@
-Return-Path: <linux-kernel+bounces-712998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56D9BAF11CE
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 12:26:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88A9AAF11D5
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 12:27:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B18F81C26EB1
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 10:26:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9FCF77AF53F
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 10:26:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC64C256C76;
-	Wed,  2 Jul 2025 10:26:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2E2A2580CC;
+	Wed,  2 Jul 2025 10:27:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b="mGb7Bmlz"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XfaFzWnQ"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77CEB254858
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 10:26:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 948A023BD0F
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 10:27:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751451973; cv=none; b=FRfRM4B6MFite61kVpAuPt/T0oPXekiPiN+urVFM5MSkgEsmNiw+X5qkpE1uZvN0KbQWLx/rDzVN5K6yBAY57oGA86QsQxCKjkzlBkByYPVHyEiKgMKvnQWaox5D3ECnrNEsQNBCuFU0uBHl9zjQWVq3dya+UBIQZTAscoRis5E=
+	t=1751452044; cv=none; b=U4NtxHJkmBcYrUp1f38Q4yotI9k39pt+KTNs4EtxDGjRxw1okpk5L2XtX+Ya6+OOgEODPvwIHY4RYkqGA/Ps/8snb3Vt9oxwleoAqfTWLLYXNi/MpDjme5yieMQz/tYactviyigkUzephxNSyJmwuRUQYbkVVc6J1TPU5+26f7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751451973; c=relaxed/simple;
-	bh=A7Ag2M/xCPgnbM81/Ed1DfzL0YgWiPbRTDK/kNWLRz4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pMzonNnZK+zc/QPvrqzsfMoBMRNowdiosQuiA7Xmfn+3xMYW7k0ZJZMqgHBXppnoAd+rq/hpZRQf6mkKmbDLJ0W27xd7VKDJN14xYqKaUG0J2s0H2+84eJRJRdVXjLtyL2bg0Ln2kvIn0HWGDBlNWXdhk1XjSLvmWZHV2MA/OAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us; spf=none smtp.mailfrom=resnulli.us; dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b=mGb7Bmlz; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=resnulli.us
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-453634d8609so47197845e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 03:26:11 -0700 (PDT)
+	s=arc-20240116; t=1751452044; c=relaxed/simple;
+	bh=e/2DidzQn91ralezgjwJALoi1TnJjVxKoJXQdqSYZ3c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qZABE2VW1QOPbZechTVk4JcJm8JIthUBPvkw3OsZ64imDFm+pO74vO33I0maYNQTRgOH6/+iGiJ+Vn67txGxoDahDklLGbB5iWxuLm/kIWNcFz1/b+aQKCLefLtzVATLJx8qS2IqjotSSdrSbw7yOUiK35GILIbW26WkIitMte4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XfaFzWnQ; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3a365a6804eso3561953f8f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 03:27:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20230601.gappssmtp.com; s=20230601; t=1751451970; x=1752056770; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=yN3/Rce9O/Hh8jlflcA/tOl9nLaEQorrzHfucHxWn78=;
-        b=mGb7Bmlz5/GUSD+zaFlQiXe4qbRmr+J7MCz76Kw6ja5yYPuwSBnB/0kEVLxM9abifM
-         ZvwkBIcyzD5eaygzZdztn/QN0ZOkXhetgxNo3mn40WWpAEMsuj5Gx4pum/JA69pCOP2k
-         +GBT5oJkj0Ga8rXxr1/6mpaGntuhSjAScFxktzwC0ZlhPeZbBNEQrwINQ62lKqXNTPjz
-         ZMn3Uj664DcLFuZihjd3bZudbJTDgUAI8yYMrKTzIfsR3y3nyLzxygYfuFHlkUWGNT1e
-         UTUuo4MtxoJg4rPu5IwfiMVDw8EOW1mbTyfXRUOAl78sp2DQ8m7MXAANO6C+MM6D3SIv
-         NFLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751451970; x=1752056770;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1751452041; x=1752056841; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=yN3/Rce9O/Hh8jlflcA/tOl9nLaEQorrzHfucHxWn78=;
-        b=fN8AQRsFZXedY+hD+RP8w6hYnH+uGokF/RNmZYXdDlyXFM2SoKhv1mDNpWp7mCXkwV
-         drJAdMIg8BS0zkIgRnoE0LsPBRw9uzKJig9Cpssxamv3L3TryKrLgvdHUNa9DfATlSF1
-         NzbxVpm7V/1f59aX5nj4zr3VvfsxjKG9HX1suOW0+uGG8SWxVbk+1ditZUCArpiPX0km
-         PgL2/l9WhqPENLsjC1IhYneXMF8Xf2LywBg1WfkJEWMNWVg9kLNhEBK338XW8ezJNbNF
-         TmSZ3knaODzHiX8MmvyfoEuqwvr8WWX30hDMcMUOuqzJj8dE9/g6s61RDi5MBpDaXFqy
-         7BVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU5OluaPcZrCPBi/iClttSxhmanNzPZD7reIpr6bGJmdxTJxh0ivbapeK0T+1T3NtmiovdyND/37770ngg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMMz/DtK2/GlGdAVwVt399wPGaQLVNGbsWKIAyiCvjWNYxk3NI
-	fKb6iT4Us/Ro/eenYflWuKKy7e86wZUy8iXXc8ZDIgWCku1HxQQ82Pn0oksCVjrtjao=
-X-Gm-Gg: ASbGncuGtFr/kBggrsA2oHgMQy5qoA182AFP1xq4UGhiCjqT/LkKI4a3KSlPk6DvpM7
-	6Nlf2gDvQLSsY2qe/SmuCwG1fqYSD9ZcCtHCWmZg0dBPifoNt9+OJ6WoUNfu/tfvHlnBhzN3/A/
-	mLyp9mx0yMbMOYSwAGnuaIg48Q3CRJP6IM17cr+2l2kiPYoGL4Ec+sizbPx+ljQaFM084Pje29h
-	9BfL1KnO3tM3Xwu5WIgRDOPedKkSq7sfHqgp+DwTgt24kw27PoIKvrFCmaoUE+NxzG1k91QTSLa
-	Dj8SsvepHGvqLya56Ui/D/HYtAFakw1/TDQpX7AMIdVOJAi4WhARHSncvhxpcWpYSDsCow==
-X-Google-Smtp-Source: AGHT+IE3Ue/jFuqGKk2j82UXQrlkpofLQZxfY4sZQlx7+9veKW80qJCzF944xSFEweUYweW+L+RcHQ==
-X-Received: by 2002:a05:600c:698e:b0:43b:cc42:c54f with SMTP id 5b1f17b1804b1-454a36ec56amr26467775e9.14.1751451969448;
-        Wed, 02 Jul 2025 03:26:09 -0700 (PDT)
-Received: from jiri-mlt ([193.47.165.251])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a88c7e6f8bsm16191924f8f.17.2025.07.02.03.26.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Jul 2025 03:26:08 -0700 (PDT)
-Date: Wed, 2 Jul 2025 12:25:57 +0200
-From: Jiri Pirko <jiri@resnulli.us>
-To: Ivan Vecera <ivecera@redhat.com>
-Cc: netdev@vger.kernel.org, Vadim Fedorenko <vadim.fedorenko@linux.dev>, 
-	Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Prathosh Satish <Prathosh.Satish@microchip.com>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Jonathan Corbet <corbet@lwn.net>, Jason Gunthorpe <jgg@ziepe.ca>, 
-	Shannon Nelson <shannon.nelson@amd.com>, Dave Jiang <dave.jiang@intel.com>, 
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, Michal Schmidt <mschmidt@redhat.com>, 
-	Petr Oros <poros@redhat.com>
-Subject: Re: [PATCH net-next v12 04/14] dpll: zl3073x: Add support for
- devlink device info
-Message-ID: <x23jvoo4eycl5whishhsy2qpb5qajsqcx36amltwkqwu5xuj7s@ghg47je4hbjt>
-References: <20250629191049.64398-1-ivecera@redhat.com>
- <20250629191049.64398-5-ivecera@redhat.com>
+        bh=e/2DidzQn91ralezgjwJALoi1TnJjVxKoJXQdqSYZ3c=;
+        b=XfaFzWnQEuptvfWwIZRlXOtONgn6f/ci1l4ctOx6ghUq0jWxepAi8x/GI8HmuAkIiz
+         UOQ+ZD15fwAH7baXX5Xs1tOECYHtUBgp6vw60jGCSO990NLk8TNRLTNQgpJD8OrSqAmQ
+         0+TyY1H4Sht8vD9elPtTC7WuYvF5gP5j8ssU8G8+1s8Sz88A1K36W9NLUw72altdB1cg
+         Gao1dq5rZOpipHiu9hWWsWiFDDSm5jN8UwUW9fFEfV3uNpzuHzZIcQ9/G5nA8I1PG284
+         +M2ivZsi/yY/4KrLtgmcTMp1jcO8D/LEQAJflqfdbzSLT1ThwKZi8hF8xQ4bhVShbKrY
+         y12Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751452041; x=1752056841;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=e/2DidzQn91ralezgjwJALoi1TnJjVxKoJXQdqSYZ3c=;
+        b=MY1G+n4/XaEV89CZK+D4EgAUB0xJDoK8QzyHY/tHZiy396A0L1MWOwvR9AnItecggh
+         Su+Cw4MHt4WJHCBv1VWKKQmMQro+/nvHcw9XKX019o3ITHhKFRXzawiFyTVu00jW6GjC
+         FB/sZ0xOluHSxDMpTxthGYRqQMmeeWUt4qKzJlTZW3CgzhUalfCVsZaRAEER6kJLa0Ys
+         MCWXWGpucf6Xaz6QCyYjaeioMoLBt2mcXTjzEJTumKfn7FbThdFF5dlURPtEzsStTfNd
+         L64QVep7HSca5s2I3/OdrsVRf8ec82TEZHJBUydCLDQ/z3C5cYXy9Vfd+HO6ikEcoS3a
+         2UjA==
+X-Forwarded-Encrypted: i=1; AJvYcCUiyKo5Zz399697kexrNl6zb32nB6B+Y/F/7qCKDo1t2yGa2Y8XO9QPKQlfjnIlWskplWNNZJUlQxZ7oPY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKB/CFle8FHTtWwADP2DBtjM7TUVz5sdNit5z98CsLkuh1nQS3
+	mw/GBc6+w0z27vhTSxDkuGnSe5TLjR/XvJOVFzbFLXG7GR+5bIPWcFZ9rrgi/abgXpuA79L80OC
+	qesti4XkzouPfELNJvTlre0dcfW5caeLHpedGP8KC
+X-Gm-Gg: ASbGncu1yiyUB/NuAMdcflzv2aMJH2KuxIuWzEWXznID5FrrJFKxnW9Cs7dY9drmrB8
+	GV90EvdZ7pmiV68OwP3BHY4dGvOrvySnSoGmcseqx9tFyIXzzcVU2WPzeZu4q9+kbQYcJfHolOa
+	pEdvYDQim8i+0mnEwX0kONr6WadAOtKYCt3JrDppKRI3nrYNVn21ryVCjcraOjhYAkMLI4lgU=
+X-Google-Smtp-Source: AGHT+IHcDKa52ZbBh7xXAnCYNxMEK3W7ps/ysJeG6YWWhxazrmmr2AVmHplNPOuhkyB9cQitMM0Mw35ydX0IITJf55A=
+X-Received: by 2002:a05:6000:1ac9:b0:3a1:f5c4:b81b with SMTP id
+ ffacd0b85a97d-3b1fe1e69b5mr1844476f8f.23.1751452040702; Wed, 02 Jul 2025
+ 03:27:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250629191049.64398-5-ivecera@redhat.com>
+References: <20250623-topic-panthor-rs-genmask-v7-1-9f986951e7b5@collabora.com>
+In-Reply-To: <20250623-topic-panthor-rs-genmask-v7-1-9f986951e7b5@collabora.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Wed, 2 Jul 2025 12:27:07 +0200
+X-Gm-Features: Ac12FXzlflXkEllqBb8Mz1-lOflGv_eOwPN42WDgahWL-HLwQCBTeDY1VvFELhc
+Message-ID: <CAH5fLgicRxTsjpBKXDrcJSibOq7HQOsTXdKEBnH1-K8Jt=S-xA@mail.gmail.com>
+Subject: Re: [PATCH v7] rust: kernel: add support for bits/genmask macros
+To: Daniel Almeida <daniel.almeida@collabora.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Benno Lossin <lossin@kernel.org>, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Sun, Jun 29, 2025 at 09:10:39PM +0200, ivecera@redhat.com wrote:
+On Mon, Jun 23, 2025 at 10:18=E2=80=AFPM Daniel Almeida
+<daniel.almeida@collabora.com> wrote:
+>
+> In light of bindgen being unable to generate bindings for macros, and
+> owing to the widespread use of these macros in drivers, manually define
+> the bit and genmask C macros in Rust.
+>
+> The *_checked version of the functions provide runtime checking while
+> the const version performs compile-time assertions on the arguments via
+> the build_assert!() macro.
+>
+> Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
 
-[...]
+Is it intentional that the macros are not available for usize?
 
->+	snprintf(buf, sizeof(buf), "%lu.%lu.%lu.%lu",
->+		 FIELD_GET(GENMASK(31, 24), cfg_ver),
->+		 FIELD_GET(GENMASK(23, 16), cfg_ver),
->+		 FIELD_GET(GENMASK(15, 8), cfg_ver),
->+		 FIELD_GET(GENMASK(7, 0), cfg_ver));
->+
->+	return devlink_info_version_running_put(req, "cfg.custom_ver", buf);
-
-Nit:
-
-It's redundant to put "ver" string into version name. Also, isn't it
-rather "custom_config" or "custom_cfg"?
-
-
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
