@@ -1,186 +1,179 @@
-Return-Path: <linux-kernel+bounces-712745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-712747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5394AF0E3B
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 10:42:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FCD9AF0E44
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 10:43:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 304B8170EBB
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 08:42:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C6BC1C205FD
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 08:44:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A773323956A;
-	Wed,  2 Jul 2025 08:42:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF96523BCF7;
+	Wed,  2 Jul 2025 08:43:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="KPvIdnrf";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="1tT4+xW/";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="KPvIdnrf";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="1tT4+xW/"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="OnKdYIJO"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 659C1238177
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 08:42:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAA9C23A995;
+	Wed,  2 Jul 2025 08:43:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751445742; cv=none; b=ZNRrSINEoq+EVtIcS7+L6gG8g7bab144HYW1Td/VIMDZR2vwXxpVwxIZUUCMVQqt/7SZqnof9D22Y65q6RCSWS30IiCesBNP358WaTIrJrazZkP7Ct5+561CzJANlXc8qUpAiMWn/WjAD+I7gtsohVHB3ZYybAScUW2Qj6BoPOY=
+	t=1751445817; cv=none; b=lAdx9wzKkVwbwVtoG+SHrTWEH8ml53slJK/9oTaxLrRzChqvYG6luv7c3ggkNFRh8dEpxHTWS0BAmlAeNgnDcM5Sl9tuEIPL1YUULIL5kLmMUbBuQdwlos6uiEA2x0z3hQsU2dksov93+TzpA3eEDxTDO9X31Ge4sFVEkn/vtbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751445742; c=relaxed/simple;
-	bh=n3lGFbe4VAuGNEMCQBO8DFMLi0H9T5mjz8s6f0ODa3E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sEm843bBNq04FHS0Ai6MoyhWc9JBVaba+byARrsI+hbfIAs7h0VFaMVkTRbZg2KGq14lv46jSAIxws2uB2UPYjK0QmZF9+IppFdid8mWUxOid4lae3PuPuWSVl/UXVJ3s1RRE54askWx1ozAqPFBloyhV9M421hzT0f7l/wEkfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=KPvIdnrf; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=1tT4+xW/; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=KPvIdnrf; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=1tT4+xW/; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 7DF342116E;
-	Wed,  2 Jul 2025 08:42:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1751445737; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jU2bqc1mBirNwkpAEUTKLOgtJSq8z+qHvFX/1pA5K3g=;
-	b=KPvIdnrf2W5r/V8c0HlZjQsYbIa913azRk6tifhUjd1gfC/R6iakGDF7DNruBeci4IDTKT
-	jX07h5GlvmqRiJpJ7n0+bjSNHKQ/tVDfHuQOl8IhM1QPfmwjJ6oRFvSapbJi4cXLitUzJ5
-	h1bXqsGoq1DzndVnxfqTrJJGopeMw9Y=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1751445737;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jU2bqc1mBirNwkpAEUTKLOgtJSq8z+qHvFX/1pA5K3g=;
-	b=1tT4+xW/ZzRfq9fMuYAiXP/y58cdzahxouxX1YBZav2YWJWxcqQXLMOx2yGca/05YoUpm0
-	r43CuAimn8u0kCAQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=KPvIdnrf;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="1tT4+xW/"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1751445737; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jU2bqc1mBirNwkpAEUTKLOgtJSq8z+qHvFX/1pA5K3g=;
-	b=KPvIdnrf2W5r/V8c0HlZjQsYbIa913azRk6tifhUjd1gfC/R6iakGDF7DNruBeci4IDTKT
-	jX07h5GlvmqRiJpJ7n0+bjSNHKQ/tVDfHuQOl8IhM1QPfmwjJ6oRFvSapbJi4cXLitUzJ5
-	h1bXqsGoq1DzndVnxfqTrJJGopeMw9Y=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1751445737;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jU2bqc1mBirNwkpAEUTKLOgtJSq8z+qHvFX/1pA5K3g=;
-	b=1tT4+xW/ZzRfq9fMuYAiXP/y58cdzahxouxX1YBZav2YWJWxcqQXLMOx2yGca/05YoUpm0
-	r43CuAimn8u0kCAQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 514151369C;
-	Wed,  2 Jul 2025 08:42:16 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id AR7VEOjwZGgsUgAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Wed, 02 Jul 2025 08:42:16 +0000
-Date: Wed, 2 Jul 2025 10:42:14 +0200
-From: Oscar Salvador <osalvador@suse.de>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
-	Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>, Zi Yan <ziy@nvidia.com>,
-	Matthew Brost <matthew.brost@intel.com>,
-	Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
-	Byungchul Park <byungchul@sk.com>,
-	Gregory Price <gourry@gourry.net>,
-	Ying Huang <ying.huang@linux.alibaba.com>,
-	Alistair Popple <apopple@nvidia.com>,
-	Pedro Falcato <pfalcato@suse.de>, Rik van Riel <riel@surriel.com>,
-	Harry Yoo <harry.yoo@oracle.com>
-Subject: Re: [PATCH v1 2/4] mm: smaller folio_pte_batch() improvements
-Message-ID: <aGTw5ipC-ITJGfv0@localhost.localdomain>
-References: <20250627115510.3273675-1-david@redhat.com>
- <20250627115510.3273675-3-david@redhat.com>
+	s=arc-20240116; t=1751445817; c=relaxed/simple;
+	bh=/Mj9IbvLmcEdXds6zDfjwnUJ2vNA7j8nuWO6n4VjrAo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Kr09WIohx0Fgyi7Q5V8r4kKqylv91z99UE5Lp/ptv09iVosSmB8s1XjFi1EptNe/RvNrOHikzymALXP+nHtmM/Q5UhU8ARl0h4J8SGWbvd24jsahvUxaamp2iXo9LY3sOuDCSIs5uvo13GghhbpfL9ek14YZwNzz16GW13WV0y8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=OnKdYIJO; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5622U1Sk020544;
+	Wed, 2 Jul 2025 08:43:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	5RbAHSbae8Jj29ZSVUOTUguuPqjViFL1e6ZVXS1jCfM=; b=OnKdYIJOX6kzgIG8
+	FV16+1iUUADbnb2TMJxRqharHmeXLLVOUrxS7d+YgGmVfKsXerCrndtTsDldyAvz
+	kxumGv5iYwwat7kIxw2wulzNc9VT8Zp5Zrk1+/C1UUSx2zThH/20yt/rWonQE3Oz
+	k0f6W5XaOi7lJK352QnAcjtoP1X8eB+BNiUsZXzWa5HKRr+uBLVXtw73bO4gTZ+4
+	7DQ23C2tcEaRtctCutfQBom1elKcfPwJp+sHGG9iAEFuF8LoYehusXtydKbUEv+7
+	LVYR19vjPc99RLUeYnnmGsr4VO2pHpFY8hN45HuPRe54LIIq5NOXlPCwfUZTaAzR
+	kilxNA==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47mhxn2h0d-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 02 Jul 2025 08:43:25 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5628hOmg031410
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 2 Jul 2025 08:43:24 GMT
+Received: from [10.217.217.109] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Wed, 2 Jul
+ 2025 01:43:19 -0700
+Message-ID: <4884d189-e43a-4932-af52-e1987bd7106c@quicinc.com>
+Date: Wed, 2 Jul 2025 14:13:14 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250627115510.3273675-3-david@redhat.com>
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Queue-Id: 7DF342116E
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[22];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[vger.kernel.org,kvack.org,linux-foundation.org,oracle.com,suse.cz,google.com,kernel.org,suse.com,nvidia.com,intel.com,gmail.com,sk.com,gourry.net,linux.alibaba.com,suse.de,surriel.com];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:dkim,suse.de:email,localhost.localdomain:mid]
-X-Spam-Score: -3.01
-X-Spam-Level: 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v10 01/10] clk: qcom: clk-alpha-pll: Add support for
+ dynamic update for slewing PLLs
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        "Catalin
+ Marinas" <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Ajit
+ Pandey <quic_ajipan@quicinc.com>,
+        Imran Shaik <quic_imrashai@quicinc.com>,
+        "Jagadeesh Kona" <quic_jkona@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20250625-qcs615-mm-v10-clock-controllers-v10-0-ec48255f90d8@quicinc.com>
+ <20250625-qcs615-mm-v10-clock-controllers-v10-1-ec48255f90d8@quicinc.com>
+ <trwdfk2oz2udtbiqxh3ybuqbvasfqywmqxgi4xyvsknz6svs2r@icpp7snpq6c5>
+ <44dddd3f-d2d2-4d4b-831a-21e6d9050445@quicinc.com>
+ <667ac51f-d19d-4832-9aa6-97d9a86e0068@oss.qualcomm.com>
+Content-Language: en-US
+From: Taniya Das <quic_tdas@quicinc.com>
+In-Reply-To: <667ac51f-d19d-4832-9aa6-97d9a86e0068@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzAyMDA2OSBTYWx0ZWRfX8VcgtUhyolYE
+ VzR1RXp2VdwzTnrCopUKekm8qLZdpBh04QtuOXo8dJbDQSw6Xdzy5vJXf0uwXBd0gE1aa6GsjHo
+ Eq+UP46sNtfjAeq0r6rmQR+hFAGW8QHhIQPsFG02d9wVQjZEnsWHUlimx8kgUQDz2Tx5T08bBWz
+ uNuIKtPGXHKOL3uraFUOsUTvmz3poHoZ/yUzl+H9asmRwnfqfQeWF1I+IZP50hIQ6VxFYyaAR5E
+ wHEV9PYb8SU80DNxm+H//JlkA2n8jatGeYH2Ki3+D62sWbv1C1iLh3PLNmC2LKwriw7ZwchtZJ3
+ akOnR5a/x4eHFOkcnUDFkP2mUp9EVM0qKDSMkb2FV4YNUnZBDbCmxJ22apKKaBEJCiPm6e8Oyip
+ 1H+wf4BEMLPTPrqbZXcRldcfRexN0Anbj//UTVeDhHD33hH2BmEQxNhIAj9P1m0NaToa5yMR
+X-Authority-Analysis: v=2.4 cv=EbvIQOmC c=1 sm=1 tr=0 ts=6864f12d cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=COk6AnOGAAAA:8
+ a=O75FsbJ6qr0OxAJT8SUA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: z_qDogjY66KuJUuri63Fz3YxX51oqibx
+X-Proofpoint-GUID: z_qDogjY66KuJUuri63Fz3YxX51oqibx
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-02_01,2025-06-27_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 mlxscore=0 priorityscore=1501 mlxlogscore=999 lowpriorityscore=0
+ malwarescore=0 adultscore=0 clxscore=1015 bulkscore=0 impostorscore=0
+ spamscore=0 suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507020069
 
-On Fri, Jun 27, 2025 at 01:55:08PM +0200, David Hildenbrand wrote:
-> Let's clean up a bit:
-> 
-> (1) No need for start_ptep vs. ptep anymore, we can simply use ptep
-> 
-> (2) Let's switch to "unsigned int" for everything
-> 
-> (3) We can simplify the code by leaving the pte unchanged after the
->     pte_same() check.
-> 
-> (4) Clarify that we should never exceed a single VMA; it indicates a
->     problem in the caller.
-> 
-> No functional change intended.
-> 
-> Signed-off-by: David Hildenbrand <david@redhat.com>
 
-Hi David :-),
 
-I have to confess that I fell in the same trap as Lorenzo wrt.
-__pte_batch_clear_ignored changing the pte value.
-So I'm not sure if it would be nice to place a little comment in
-__pte_batch_clear_ignored claryfing that pte's value remains unchanged ?
+On 6/27/2025 6:07 PM, Dmitry Baryshkov wrote:
+> On 27/06/2025 13:13, Taniya Das wrote:
+>>
+>>
+>> On 6/25/2025 5:17 PM, Dmitry Baryshkov wrote:
+>>> On Wed, Jun 25, 2025 at 04:13:26PM +0530, Taniya Das wrote:
+>>>> The alpha PLLs which slew to a new frequency at runtime would require
+>>>> the PLL to calibrate at the mid point of the VCO. Add the new PLL ops
+>>>> which can support the slewing of the PLL to a new frequency.
+>>>>
+>>>> Reviewed-by: Imran Shaik <quic_imrashai@quicinc.com>
+>>>> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+>>>> ---
+>>>>   drivers/clk/qcom/clk-alpha-pll.c | 169 +++++++++++++++++++++++++++
+>>>> ++++++++++++
+>>>>   drivers/clk/qcom/clk-alpha-pll.h |   1 +
+>>>>   2 files changed, 170 insertions(+)
+>>>>
+>>
+>>>> +    /*
+>>>> +     * Dynamic pll update will not support switching frequencies
+>>>> across
+>>>> +     * vco ranges. In those cases fall back to normal alpha set rate.
+>>>> +     */
+>>>> +    if (curr_vco->val != vco->val)
+>>>> +        return clk_alpha_pll_set_rate(hw, rate, parent_rate);
+>>>> +
+>>>> +    a <<= ALPHA_REG_BITWIDTH - ALPHA_BITWIDTH;
+>>>> +
+>>>> +    regmap_write(pll->clkr.regmap, PLL_L_VAL(pll), l);
+>>>> +    regmap_write(pll->clkr.regmap, PLL_ALPHA_VAL(pll),
+>>>> lower_32_bits(a));
+>>>> +    regmap_write(pll->clkr.regmap, PLL_ALPHA_VAL_U(pll),
+>>>> upper_32_bits(a));
+>>>
+>>> We have code that does this in __clk_alpha_pll_set_rate() and now you
+>>> are adding two more copies. Please extract PLL_L_VAL, PLL_ALPHA_VAL and
+>>> PLL_USER_CTL / PLL_VCO_MASK into a helper function.
+>>>
+>>
+>> Dmitry, I was thinking of implementing the following as a reusable
+>> helper since it can be leveraged by most of the functions. I'd
+>> appreciate your suggestions or feedback.
+> 
+> The code below looks good to me. Please use 'alpha' instead of 'a'.
 
-Reviewed-by: Oscar Salvador <osalvador@suse.de>
+Thanks, I will use 'alpha' in the next patch.
 
- 
--- 
-Oscar Salvador
-SUSE Labs
+
+Taniya
+
 
