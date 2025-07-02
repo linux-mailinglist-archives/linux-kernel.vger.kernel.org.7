@@ -1,178 +1,195 @@
-Return-Path: <linux-kernel+bounces-713503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF5E4AF5AA4
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 16:11:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 040D6AF5AAF
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 16:12:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E2E73B354B
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:10:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23C80162D69
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:12:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B0BE2BD59E;
-	Wed,  2 Jul 2025 14:11:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 615692BD5A7;
+	Wed,  2 Jul 2025 14:12:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="kzQa8lv5";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="cIRDrzBS";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="kzQa8lv5";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="cIRDrzBS"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JzVfcQmI"
+Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C03B29DB8F
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 14:11:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E4172BD597
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 14:12:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751465463; cv=none; b=q3WN+S7DDGdYq8vysPW3ZQXn5TDImABfzSnV5iBUoc3jazrtLfdm/POb/UBVRcysyLBp/9dxSd8UiINX2bdMqqbDDgoTW+uHt2MZefyvOuYRDjGTPI9TzTbYlZw5Q+95xL+5Qylh9LIjOqP4QvmUgs+TDRIGSecbktBATlUQfz0=
+	t=1751465529; cv=none; b=td6EYVdRODZnrRBsQVLDlTqikUExYqHJhHMU0z5r8U3FaGn0mtsYMOLsTWUxavNFIGvMO9pyCvZ8X9ZufRDNpQEFL+0AfC8jFy/sgmt2AakIL8XN7KFs4fPjIrLzxmtNqRH0Xd5w/uLJlqY+pH70fvAo0+cgFcriFew7mWGMCuE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751465463; c=relaxed/simple;
-	bh=XH9LIv5DjlEQvQUcxLjrQnIy5UoheiabMEDO0Yq4lQE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=allvYH0ku/A/fEp4h2TCcb6nxXJbKNJp66piSrU5S7q3wPQTtFHYmaZX16zbZz+u+lT7+wlvCJ/iMnoqJqjK1j/Ls2XbWEvVPJrlZXStkc0hGNLPs0vejTRVb0KudCmZcpjArZXn8q0b6S5XbERs0ukH8X1HPDVYiyFl5JErqt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=kzQa8lv5; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=cIRDrzBS; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=kzQa8lv5; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=cIRDrzBS; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 502A32118C;
-	Wed,  2 Jul 2025 14:11:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1751465460; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ec4lvPxD+Im5OIbkkiVJgxQ8vvdCpvany66SPb/hpS4=;
-	b=kzQa8lv5lBQUYWHF9ifqwnq6aMlcduVzP03mFXQ+tUioxTxz8qXQtmTcPE7sSV/tenXq6z
-	XVSqbMCJtHH1wgZbCZQzmhSWyj385W3HgUvNv7SZnpBjS7ans50VgPcUs/45B6Sznb39ds
-	BG8ZeCLs8c8SFbxpajWbmGJ+AuFWO9k=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1751465460;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ec4lvPxD+Im5OIbkkiVJgxQ8vvdCpvany66SPb/hpS4=;
-	b=cIRDrzBSuQju3UVyA+EqGnxxwKVCdf9Y//plPC83pYurqQn6ZoJ58mrG5X7d3Bdsj3yQVW
-	GG2wYlZbRVvMyYBw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=kzQa8lv5;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=cIRDrzBS
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1751465460; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ec4lvPxD+Im5OIbkkiVJgxQ8vvdCpvany66SPb/hpS4=;
-	b=kzQa8lv5lBQUYWHF9ifqwnq6aMlcduVzP03mFXQ+tUioxTxz8qXQtmTcPE7sSV/tenXq6z
-	XVSqbMCJtHH1wgZbCZQzmhSWyj385W3HgUvNv7SZnpBjS7ans50VgPcUs/45B6Sznb39ds
-	BG8ZeCLs8c8SFbxpajWbmGJ+AuFWO9k=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1751465460;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ec4lvPxD+Im5OIbkkiVJgxQ8vvdCpvany66SPb/hpS4=;
-	b=cIRDrzBSuQju3UVyA+EqGnxxwKVCdf9Y//plPC83pYurqQn6ZoJ58mrG5X7d3Bdsj3yQVW
-	GG2wYlZbRVvMyYBw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4687713A24;
-	Wed,  2 Jul 2025 14:11:00 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id V242EfQ9ZWgtQAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 02 Jul 2025 14:11:00 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 02AB7A0A55; Wed,  2 Jul 2025 16:10:59 +0200 (CEST)
-Date: Wed, 2 Jul 2025 16:10:59 +0200
-From: Jan Kara <jack@suse.cz>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.cz, 
-	ojaswin@linux.ibm.com, sashal@kernel.org, yi.zhang@huawei.com, libaokun1@huawei.com, 
-	yukuai3@huawei.com, yangerkun@huawei.com
-Subject: Re: [PATCH v3 04/10] ext4: refactor the block allocation process of
- ext4_page_mkwrite()
-Message-ID: <y66ier4j3kqxagrm4ztdls4iqxpggaj2bt4nwtsi2hen2bgnn3@ph3cev64ie6w>
-References: <20250701130635.4079595-1-yi.zhang@huaweicloud.com>
- <20250701130635.4079595-5-yi.zhang@huaweicloud.com>
+	s=arc-20240116; t=1751465529; c=relaxed/simple;
+	bh=JRJPH4m3gHOL8iOAGjaKdf0GbC0HHnVxh4Krznoo3KI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RBD/C1SFejNDBrpLOLkCFrxuRSpxoiJcl+VMrfJZqc70FuHMtPPzhDvaeOrOdc9FPrWulQGAG1yeOGGt5pkA3mj2BOlHkG1pzhZ3nC3XIQyoMoID9VRQAVfiuoe/y99ZQJ1RaFzIv7EMK5ogJxkQsipQSQiL4b3sbK83C1a0GHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JzVfcQmI; arc=none smtp.client-ip=209.85.219.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e812c817de0so3818693276.0
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 07:12:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1751465526; x=1752070326; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=1mPoU1UCDxjl6IWc+jKm50U28f8v3ln7LdhgS9xFHd8=;
+        b=JzVfcQmIhRCBHkY7YMzvyyFHMH69W22USFiAIMlmWmJViWurdbP3UXDxOUX/ZB56DH
+         hriNNwFVMwhrsnyiXPsNHLdpwjXlAG2x+RN9Q44qwoBOFBbdXt1KEqsvlGpS550s0Xk9
+         wCrC1VKfTa4IMjvM3dLfwA/PYLwedmkAUXB+xPSJBbLsBAfjM9n+qNtzysq6H1G/qPix
+         +OruNqP2iKwIQPLiWDoDjNFmDj7wxRhmOqn/8b4FqR27y7826azVnBmT4XnY/JcXfYrM
+         sN08NyOhntVoojALkTFFZERbXodeU2OqZN9wWLhfwJOHfzn43EZRRv+nTDnxxxKdzA+N
+         tNVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751465526; x=1752070326;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1mPoU1UCDxjl6IWc+jKm50U28f8v3ln7LdhgS9xFHd8=;
+        b=PXdgJRdlc5y94g3KG04bzFLxkM5T9iO2G7vZZ3wOeWhzX6GF5wfmVa5z0VtKGhWbmB
+         w3rDZNv2kHY2gZx3qa0z1O8jpehQu73LlT+3iwr+0SiG97J7SdpkfuTxUFoXa9KcP7y7
+         2TERIJhPcBiGz6+2+iAAr3eo6sm6eHLwmYzfwRBdzKjXGKt7rgRpurs1UnaqqYXZGkng
+         zM5TLhyke3YwuzNDlmHLJ8LJHWFz6j6AxptG5QLpVTw7fqtDQvseBkghPa2xlfGyTIRM
+         s6KoLnqKKqY38C2GJEqHHqQIhC4qWtdjg2KhPCc99wKw1NCImD51J6y7oJvFC7zTA109
+         Tiyg==
+X-Forwarded-Encrypted: i=1; AJvYcCU2+ICzRzqVDTyxM+ARouOd4GGLtGBrePoc134Ox4KDHCFnClPkpjhWoKd2cZ5CVcv9crdte3WQ5Ziw7B4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3GC1LQxhZXdRBnDFBFC9hIpSQtASC015+bFogrg+TckRKREos
+	h0pPOgAMf3458n1cqb7yHcJtgpR9aXzkwE6Ws2yuPAO0v/A2i87mg+Wo4a/E95L/4bYixdPk+F0
+	0n2wxUwCJeCrIMMM68z++/jjqzGFC4vnk741T5KFyWg==
+X-Gm-Gg: ASbGncv9AJxuCjLN9sAMSdZ1jqh0r15lVPrf4LuqpGPih8qpON6zP9pcWfgRdwg0r86
+	yJZQJ/i4aQ95ljzNiBtMLWvzeQH7rz92Zd3Y0WjOXVKJqQGJWRs93ZZk4H53xO4eGs73wopzH16
+	fiVAEoK13pZiWKj96HfZuYjr8g6t5j1UjhOg0lNbrcL/KG
+X-Google-Smtp-Source: AGHT+IHPaXrxmHFVKX7Eql3EMD5x4On0T3oI0issqDZiJ0MoiOv4sD7i0/jMP72156cYMAUC8axQa4qkX4Dj4M+kpkU=
+X-Received: by 2002:a05:690c:6213:b0:70e:7882:ea91 with SMTP id
+ 00721157ae682-7164d4b88d2mr41815867b3.35.1751465525819; Wed, 02 Jul 2025
+ 07:12:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250701130635.4079595-5-yi.zhang@huaweicloud.com>
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[13];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:email,huawei.com:email]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 502A32118C
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Score: -4.01
+References: <5018768.GXAFRqVoOG@rjwysocki.net>
+In-Reply-To: <5018768.GXAFRqVoOG@rjwysocki.net>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 2 Jul 2025 16:11:30 +0200
+X-Gm-Features: Ac12FXynITunG4rG5UQO1EB1vzYUCxa7rAXh-RE6XqfZ0CLPy3V92JuMPVtw6hI
+Message-ID: <CAPDyKFp35SjpQmEQ02u7ZbsaFftaett_rBBf-7hbsBpGWH08hw@mail.gmail.com>
+Subject: Re: [PATCH v3 0/9] PM: Reconcile different driver options for runtime
+ PM integration with system sleep
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Linux ACPI <linux-acpi@vger.kernel.org>, Linux PCI <linux-pci@vger.kernel.org>, 
+	Mika Westerberg <mika.westerberg@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue 01-07-25 21:06:29, Zhang Yi wrote:
-> From: Zhang Yi <yi.zhang@huawei.com>
-> 
-> The block allocation process and error handling in ext4_page_mkwrite()
-> is complex now. Refactor it by introducing a new helper function,
-> ext4_block_page_mkwrite(). It will call ext4_block_write_begin() to
-> allocate blocks instead of directly calling block_page_mkwrite().
-> Preparing to implement retry logic in a subsequent patch to address
-> situations where the reserved journal credits are insufficient.
-> Additionally, this modification will help prevent potential deadlocks
-> that may occur when waiting for folio writeback while holding the
-> transaction handle.
-> 
-> Suggested-by: Jan Kara <jack@suse.cz>
-> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+On Fri, 27 Jun 2025 at 21:29, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+>
+> Hi Everyone,
+>
+> This is an update of the series the v2 of which was posted yesterday:
+>
+> https://lore.kernel.org/linux-pm/5015172.GXAFRqVoOG@rjwysocki.net/
+>
+> and the v1 is here:
+>
+> https://lore.kernel.org/linux-pm/22759968.EfDdHjke4D@rjwysocki.net/
+>
+> This update reorders the patches (again), updates the changelogs of some of
+> them and changes the subject of one patch slightly.  It also adds a kerneldoc
+> comment to a new function in patch [5/9].
+>
+> This part of the cover letter still applies:
+>
+> "This series addresses a couple of issues related to the integration of runtime
+> PM with system sleep I was talking about at the OSMP-summit 2025:
+>
+> https://lwn.net/Articles/1021332/
+>
+> Most importantly, DPM_FLAG_SMART_SUSPEND cannot be used along with
+> pm_runtime_force_suspend/resume() due to some conflicting expectations
+> about the handling of device runtime PM status between these functions
+> and the PM core.
+>
+> Also pm_runtime_force_suspend/resume() currently cannot be used in PCI
+> drivers and in drivers that collaborate with the general ACPI PM domain
+> because they both don't expect their mid-layer runtime PM callbacks to
+> be invoked during system-wide suspend and resume.
+>
+> Patch [1/9] is a preparatory cleanup changing the code to use 'true' and
+> 'false' as needs_force_resume flag values for consistency."
+>
+> Patch [2/9] (which was [3/9] in v2) puts pm_runtime_force_resume() and one
+> other function that is only used during system sleep transitions under
+> CONFIG_PM_SLEEP.
+>
+> Patch [3/9] (which was [5/9] in v2) causes the smart_suspend flag to be taken
+> into account by pm_runtime_force_resume() which allows it to resume devices
+> with smart_suspend set whose runtime PM status has been changed to RPM_ACTIVE
+> by the PM core at the beginning of system resume.  After this patch, drivers
+> that use pm_runtime_force_suspend/resume() can also set DPM_FLAG_SMART_SUSPEND
+> which may be useful, for example, if devices handled by them are involved in
+> dependency chains with other devices setting DPM_FLAG_SMART_SUSPEND.
+>
+> Since patches [1,3/9] have been reviewed already and patch [2/9] should not
+> be particularly controversial, I think that patches [1-3/9] are good to go.
+>
+> Patch [4/9] (which was [2/9] in v2), makes pm_runtime_reinit() clear
+> needs_force_resume in case it was set during driver remove.
+>
+> Patch [5/9] (which was [4/9] in v2) makes pm_runtime_force_suspend() check
+> needs_force_resume along with the device's runtime PM status upfront, and bail
+> out if it is set, which allows runtime PM status updates to be eliminated from
+> both that function and pm_runtime_force_resume().  I recalled too late that
+> it was actually necessary for the PCI PM and ACPI PM to work with
+> pm_runtime_force_suspend() correctly after the subsequent changes and that
+> patch [3/9] did not depend on it.  I have also realized that patch [5/9]
+> potentially unbreaks drivers that call pm_runtime_force_suspend() from their
+> "remove" callbacks (see the patch changelog for a bit of an explanation).
+>
+> Patch [6/9] (which has not been changed since v2) makes the code for getting a
+> runtime PM callback for a device a bit more straightforward, in preparation for
+> the subsequent changes.
+>
+> Patch [7/9] introduces a new device PM flag called strict_midlayer that
+> can be set by middle layer code which doesn't want its runtime PM
+> callbacks to be used during system-wide PM transitions, like the PCI bus
+> type and the ACPI PM domain, and updates pm_runtime_force_suspend/resume()
+> to take that flag into account.  Its changelog has been updated since v2 and
+> there is a new kerneldoc comment for dev_pm_set_strict_midlayer().
+>
+> Patch [8/9] modifies the ACPI PM "prepare" and "complete" callback functions,
+> used by the general ACPI PM domain and by the ACPI LPSS PM domain, to set and
+> clear strict_midlayer, respectively, which allows drivers collaborating with it
+> to use pm_runtime_force_suspend/resume().  The changelog of this patch has been
+> made a bit more precise since v2.
+>
+> That may be useful if such a driver wants to be able to work with different
+> PM domains on different systems.  It may want to work with the general ACPI PM
+> domain on systems using ACPI, or with another PM domain (or even multiple PM
+> domains at the same time) on systems without ACPI, and it may want to use
+> pm_runtime_force_suspend/resume() as its system-wide PM callbacks.
+>
+> Patch [9/9] updates the PCI bus type to set and clear, respectively, strict_midlayer
+> for all PCI devices in its "prepare" and "complete" PM callbacks, in case some
+> PCI drivers want to use pm_runtime_force_suspend/resume() in the future.  They
+> will still need to set DPM_FLAG_SMART_SUSPEND to avoid resuming their devices during
+> system suspend, but now they may also use pm_runtime_force_suspend/resume() as
+> suspend callbacks for the "regular suspend" phase of device suspend (or invoke
+> these functions from their suspend callbacks).  The changelog of this patch has
+> been made a bit more precise since v2, like the changelog of patch [8/9].
+>
+> As usual, please refer to individual patch changelogs for more details.
+>
+> Thanks!
+>
 
-Looks good! Feel free to add:
+For the v3 series, please add:
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-One typo fix below:
-
-> +	/* Start jorunal and allocate blocks */
-		 ^^^ journal
-
-> +	err = ext4_block_page_mkwrite(inode, folio, get_block);
->  	if (err == -ENOSPC && ext4_should_retry_alloc(inode->i_sb, &retries))
->  		goto retry_alloc;
->  out_ret:
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Kind regards
+Uffe
 
