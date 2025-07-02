@@ -1,122 +1,147 @@
-Return-Path: <linux-kernel+bounces-713654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1EABAF5CFB
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 17:28:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99D71AF5D24
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 17:32:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5AA8B1C467C2
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 15:26:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8554C4E1368
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 15:30:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5A1E2F199D;
-	Wed,  2 Jul 2025 15:26:24 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 143D92D46BE;
-	Wed,  2 Jul 2025 15:26:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABBFD301143;
+	Wed,  2 Jul 2025 15:27:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Y7lUA4ZS"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 562992FD590
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 15:27:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751469984; cv=none; b=pmaBlOi2B3dGEqrtuMnWRZ8IZEoFiftrkBwewngfKulxkAvk83zdOTGe1NSnDpOyDQnyy46ZwIhDvGE+4XBPKhU1HUR+nSfBDL9hwkBq/ogG1Ea25D1C2t9ukCxMH9SkLj2/oj7qYZEdEbGNkJz3OhwWWm+8V2c7Q3bHXovMowo=
+	t=1751470061; cv=none; b=mKc9OHefoQ+TX2u0VJ9FhC66e/rY61goMSkL3H2KhAhsxuAfexzFJrrpkDGMUXyC3uoiZSl3FsF8LxJoOwMu86+AuRWBhmOXyvFKUcONyQoiF2EMdKhz+PzFhT6AMZp7NuAHY9CbxOvfKL0VUvVuQJ4/Ale8t/YmblJIgHQYHRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751469984; c=relaxed/simple;
-	bh=6YuNdY3/SCUsFVGNpash/jquxmzlvddlqK/RpCd8Kfg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Huw/RdhM47CHC4k66Xrdugjgm3pKg1UpYSMaOiGeHwdQ7AfGJDeYWV/CYQc/6A/Msvt+WUuHc1nUxqtpKFK6BJSXO4sCMc6ia+pG0w+KvO5jvwNB3tpEkxJvxksJeS4MrSb6kelOTyuix3SuK44A6D76gyMo2CUSXJV0FdQ85HY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B9BDB2F9D;
-	Wed,  2 Jul 2025 08:26:07 -0700 (PDT)
-Received: from bogus (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D1BDC3F6A8;
-	Wed,  2 Jul 2025 08:26:20 -0700 (PDT)
-Date: Wed, 2 Jul 2025 16:26:18 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Peng Fan <peng.fan@oss.nxp.com>
-Cc: Peng Fan <peng.fan@nxp.com>, Dhruva Gole <d-gole@ti.com>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	"arm-scmi@vger.kernel.org" <arm-scmi@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Ranjani Vaidyanathan <ranjani.vaidyanathan@nxp.com>,
-	Chuck Cannon <chuck.cannon@nxp.com>
-Subject: Re: [PATCH 2/2] firmware: arm_scmi: power_control: Set
- SCMI_SYSPOWER_IDLE in pm resume
-Message-ID: <20250702-apricot-anteater-of-fertility-92ebc2@sudeepholla>
-References: <20250620-scmi-pm-v1-0-c2f02cae5122@nxp.com>
- <20250620-scmi-pm-v1-2-c2f02cae5122@nxp.com>
- <20250623125750.kzwndmcf5yo3siao@lcpd911>
- <20250623142957.GA10415@nxa18884-linux>
- <20250623-organic-foamy-tamarin-fefa30@sudeepholla>
- <PAXPR04MB8459E323E3C77A96272BC1728878A@PAXPR04MB8459.eurprd04.prod.outlook.com>
- <20250624-agile-moth-of-blizzard-c7babf@sudeepholla>
- <20250624145807.GA14878@nxa18884-linux>
- <20250701150735.GD20538@nxa18884-linux>
+	s=arc-20240116; t=1751470061; c=relaxed/simple;
+	bh=72WOcl72YOlZwt+/CKTosZbQzCnfjCTjpwRm9zwOmLc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=h9fMkiRJvF4frrBhIIfHUQIUed955fUytuqLkDnMrTTildp1jBVtm/iJITNTTLExyGS2OwQKKnPYkVjVJChyq8+t3N80Lu5ljck/rHaXfVk2RdvA18xi+eWX7vACdjWlisOe4Ly+jQ19yM4mi1DDcU9LaHxvAQK5ScQcp3sJ6VQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Y7lUA4ZS; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3a53359dea5so2643911f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 08:27:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1751470053; x=1752074853; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xRqhnX04LSAiYdBNDlTGLugmcAxHcjqdN/6E4HSJk+A=;
+        b=Y7lUA4ZSqhBtP+2TbjqM8dW0KKVMIjzQhgEOZ/rKu1guCZUjmbIewI7M/z18cEHE0x
+         EWm9CTS1NpKOY8O/R5fpIAXy3pKCksNwX4E0KtX6JP5TvVWnU7lAFAKXDuuVssbngYWz
+         hGqa4YF1JHFZfw4HQ9lmkgU5KKuhgUzYBO+M3NrvT1inxTuiK+tXxNrqdDxyL3HApazz
+         zC3fF/4TlOjf9rQSlo7XWZkRvDDtU7y/pkdDxrc47qz5taLo+2JwNJ+3FpbGN9FefYV+
+         r9e0YCuhWn7Gdaw1BeT15B9/MoXA1rNKgvuS0ZfTaEAnF65uU506DrslHkWb8QXfjbPU
+         TbIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751470053; x=1752074853;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xRqhnX04LSAiYdBNDlTGLugmcAxHcjqdN/6E4HSJk+A=;
+        b=N4K2/4jZDz4Ky7qv/7r0AhF0Mn2c6/2Ft0O8imGgentnNCQisjtWUQn0tmMYjwgjRM
+         i9iPIztsBizpIJsWmAcNCzx5fL5GOH4f9sBePmjYkoytfDkaqWr9jBcxkheKTxA7Xabz
+         zZfYQGIQqFwfLyBlJ34GZ9GJ19XqbSyrHWSpP5vZBO4Lkn/1eNCD37PTRm+qi6uwvYHD
+         5CZyAP3MzDY1ywr2nxrkLYLrB5swikavfRvgBCKf5Ydj96mhFQpbAP1PknYfH6xQoH3W
+         hNOxkABnUG722XSiNtzkLf482ag/UZNhltMN9m42wGQY94C1ay5n2Dk1gKRX6Ag7ZXLS
+         vSDw==
+X-Forwarded-Encrypted: i=1; AJvYcCUjtnDM68LZKsm7CTmgV0uXuhrBWPuc/S8MY4sT1FEp34mxXXrDV/JxCqW+MyDCWCF+5CRXDJ/iKSA6ouY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdZoVwXYf0BOez8YQw/TE0B1/HW7mjw0Ms0s9MCFUjIk3Ak7u6
+	2gyzNc84hclfsvsL8II1NFJbFoHumLcmQZH5tWhHoPVLbK0p8MLHe/ib5qQBphlFDtcPIoJZ6Pc
+	SdERe
+X-Gm-Gg: ASbGncuyxCX3+3Jy28VMElQCSbLSkQ82dzuDhmAgr+Q8+2sxAODgP226MqY4Y507aTC
+	haTRwjWpjphGGoywvYrKtgwWrsaWKDtwIwjgBaPamvZSgsKTgT18OSaOAiim6iwvyHFHA0eJTnq
+	DLQJJ9KAW2q8pDyI1Crzvm+rWpK98E0rUU+CiS8MYNs1qi42M3L5NNNW+j3a8fiGGosXCyofFnB
+	2Y0Zei+WCpXwtjbUUECVxzsLhGgGN+qowlvS0OVCMke8D/TSfBnTr7Sq+ZFmdyhfVoHNnQ9St7Q
+	1OmVj9uuo/Ui5A9jlJemyxEfXAmIU9zSVdh7BSEQKOhXER9+0oTm9LDHSMVj5+f8tMImy1124em
+	X
+X-Google-Smtp-Source: AGHT+IEkrWJkT0jsE1v5Sbwsc1H2qjJUcmDvZLYQeK6P1AEgJPv+8a/qmcAydC68v1anXCkcKA0llQ==
+X-Received: by 2002:a05:6000:2892:b0:3a4:dc93:1e87 with SMTP id ffacd0b85a97d-3b1fe5bf209mr2942390f8f.1.1751470053311;
+        Wed, 02 Jul 2025 08:27:33 -0700 (PDT)
+Received: from toaster.baylibre.com ([2a01:e0a:3c5:5fb1:5542:4bad:e07b:9489])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-454a9bcf35csm869205e9.20.2025.07.02.08.27.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Jul 2025 08:27:32 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+Date: Wed, 02 Jul 2025 17:26:18 +0200
+Subject: [PATCH 20/26] clk: amlogic: drop CLK_SET_RATE_PARENT from
+ peripheral clocks
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250701150735.GD20538@nxa18884-linux>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250702-meson-clk-cleanup-24-v1-20-e163c9a1fc21@baylibre.com>
+References: <20250702-meson-clk-cleanup-24-v1-0-e163c9a1fc21@baylibre.com>
+In-Reply-To: <20250702-meson-clk-cleanup-24-v1-0-e163c9a1fc21@baylibre.com>
+To: Neil Armstrong <neil.armstrong@linaro.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Kevin Hilman <khilman@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1121; i=jbrunet@baylibre.com;
+ h=from:subject:message-id; bh=72WOcl72YOlZwt+/CKTosZbQzCnfjCTjpwRm9zwOmLc=;
+ b=owEBbQKS/ZANAwAKAeb8Dxw38tqFAcsmYgBoZU/IeRDPmxst5O+ATDGbnAky0+Ta4bbSx6FjZ
+ 33IFnNXNSOJAjMEAAEKAB0WIQT04VmuGPP1bV8btxvm/A8cN/LahQUCaGVPyAAKCRDm/A8cN/La
+ hTqUD/402wWVc1/QpJrESo1iekdMPyOcCOngi36a+3w2IOCWeiaSJ5OmxFZTEqneuVl/ktn6/YB
+ LQ8Q0HtYKDoo5oNEuUk26FVS/zHZw4MTQA4ZvuXszW5tN2MbBbmIouy5GJctPismKE/VJYanSXI
+ kYTnEJWUcNNHj5N7vjLwm4gj1RkK3Fzijp14/Om/dLyXfa0yMKpWm1GA0CRa0ucSigkYruOjPPj
+ xyD1eUXSFxkovtt1yyN+bCLneu7b0r//0JC0aT8pleORi/pW8tNqeNzX/E1+jClOlbe6AgjTlDI
+ aBAkmX2ETqjuLstTtEvoL8Ky9DGblp1/5+f8AyIwTzBI2EOcJml604N/uJ2C6+4jznQ1rcrOFLW
+ ISBBLyh6njHps/wpWkR48MQiYi4BLASafnqDPIQXUfda5/WdOHmLiEWA+cWLNPXMpbdasDCJy/M
+ fH4Vl0UatF6Xl/MvwX2BK4rOJ+Cb0shVVOXlcQKrdQIi8nhZ5Ky+k3QTm0BA7oU0J24ourJz4m/
+ GB6wnTo+3EOMUREoOAkAD3sccNGpJmj2zng3y++ceG1gA0Hf1zRC+MFunedrzJU2SRIma17R+HE
+ xTcLYY2rqfOJYt9DF41rIeMQeaKk709jaBF1kZhfftq1eD63j/Q6YQtrSgiH1EQ2tZ73q/uORvG
+ hSaSgQt8SpTbh9w==
+X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
+ fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
 
-On Tue, Jul 01, 2025 at 11:07:35PM +0800, Peng Fan wrote:
-> Hi Sudeep,
-> 
-> On Tue, Jun 24, 2025 at 10:58:07PM +0800, Peng Fan wrote:
-> >On Tue, Jun 24, 2025 at 11:21:52AM +0100, Sudeep Holla wrote:
-> >>On Tue, Jun 24, 2025 at 01:23:10AM +0000, Peng Fan wrote:
-> >>> > 
-> >>> > Just to summarise my understanding here at very high level, the issue
-> >>> > exists as the second notification by an agent to the Linux to suspend
-> >>> > the system wakes up the system from suspend state. Since the
-> >>> > interrupts are enabled before the thaw_processes() (which eventually
-> >>> > continues the execution of scmi_suspend_work_func() to set the state
-> >>> > to SCMI_SYSPOWER_IDLE, the scmi_userspace_notifier() is executed
-> >>> > much before and ends up ignoring the request as the state is still not
-> >>> > set to SCMI_SYSPOWER_IDLE. There is a race which your patch is
-> >>> > addressing.
-> >>> 
-> >>> Thanks for writing this down, It is very correct and clear.
-> >>> 
-> >>
-> >>While I am not against adding bus PM ops as it can be useful elsewhere,
-> >>just wonder if this usecase is a good use of it. Does setting the state
-> >>before the pm_suspend() call suffice. I still need to think through the
-> >>possible race with that solution, but just asking you to check if that
-> >
-> >There is race condition if setting the state to SCMI_SYSPOWER_IDLE before
-> >pm_suspend.
-> >
-> >The 2nd suspend notification could runs into pm_suspend again
-> >before pm_suspend update system_state to SYSTEM_SUSPEND, if my understanding
-> >is correct.
-> >
-> >Per pm_suspend->enter_state,
-> >"Make sure that no one else is trying to put the system into a sleep state",
-> >not sure, but I think better not let pm_suspend to handle the race condition.
-> >
-> >Since syspower only has one per system(linux), the other approach is to
-> >use syscore, but need a global variable for state in scmi_power_control.c,
-> >because syscore_suspend/resume does not have parameter.
-> >
-> >we need to set state back to IDLE after linux wakeup and before kernel
-> >thread scheduling. I only see two interfaces to achieve:
-> >PM ops or syscore ops.
-> 
-> Not sure you have time to give a look. I plan to post V2 later this
-> week. In V2, I would still use pm ops.
-> 
+On Amlogic SoCs, the rate of a peripheral clock should not be changed,
+let alone the rate of the parent PLL.
 
-Sure, please go ahead and post. I didn't get time to look at it in depth.
-I agree with your comment for now, will take a look at it again with your v2.
+These clocks are meant to be used as provided by the parent PLL. Changing
+the rate would be dangerous and would likely break a lot of devices running
+from the same PLL.
+
+Don't propagate any rate change request that may come from these clocks and
+drop the corresponding flag.
+
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ drivers/clk/meson/meson-clkc-utils.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/meson/meson-clkc-utils.h b/drivers/clk/meson/meson-clkc-utils.h
+index 0c228a6723bb2bddc0b9a4f92515f05850a5613a..3e1fb7efe6da1f5d8e55993541d12d40464a47f5 100644
+--- a/drivers/clk/meson/meson-clkc-utils.h
++++ b/drivers/clk/meson/meson-clkc-utils.h
+@@ -38,7 +38,7 @@ struct clk_regmap _name = {						\
+ 		.ops = _ops,						\
+ 		.parent_hws = (const struct clk_hw *[]) { _pname },	\
+ 		.num_parents = 1,					\
+-		.flags = (CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED),	\
++		.flags = CLK_IGNORE_UNUSED,				\
+ 	},								\
+ }
+ 
 
 -- 
-Regards,
-Sudeep
+2.47.2
+
 
