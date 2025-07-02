@@ -1,218 +1,107 @@
-Return-Path: <linux-kernel+bounces-712638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-712642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A92A2AF0C6E
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 09:21:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23731AF0C7D
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 09:22:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 929831C2152E
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 07:21:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B70DF7B10A6
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 07:20:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4921422D7A7;
-	Wed,  2 Jul 2025 07:20:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LNq4hjC+"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77FB422F384;
+	Wed,  2 Jul 2025 07:21:56 +0000 (UTC)
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E65221E47AE
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 07:20:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4F571DF977;
+	Wed,  2 Jul 2025 07:21:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751440858; cv=none; b=rbeQ6bVleUXiQRTwkMR0fbkBfT4jWaMrrfl6fY2K2XMJgU3owhBjh1jxppLty9LCTaj6lnd9oc5ZKq+7KiXubfCVkOCW+2We7Ef15Qiybi1KVcccL6NfJzT4iyaQ7JGZ1lkopNcGcjmSThY700KQbYw7gPdUfC/AYw8SjmRtITA=
+	t=1751440916; cv=none; b=mwMliEePsU6qy8l2OzvqApqBHxXVxRBxZtsYke/0TKvGFRTxceh6pg425qCwFi3p4AikLVwzterO0srjamUV1p6V2+hrztsgW74kcKnliQm+0x/+sTTY+UoT1SSq2d7eAFzXtKAOpF45H9gI+uXU8DoJ094Kms2eX8uZKWl0Bx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751440858; c=relaxed/simple;
-	bh=rDdbRQ2GykeER2SnX1xkF1pAGy/+zzWxsZ+2SzCxzYg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=USco6JaPDmfajVGEfuz4YaXx+TVk4uQ97IQlJkJCf2EaAY/yBlcdp7uHcOI5gYmukKDTMHMEiGy/uyhYwCOK/xw+AO2v/qKMpla+NUmapOX4hXsnVVG4gEstew02yn/ReqfBIxGtBCgqos3RSn2vE635eqxNG8WT6DxXINTBJ7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LNq4hjC+; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1751440855;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=3UQYnC1Uj+FP/5u+XpjAfPehyEkGumzn9sTZOVjMEoY=;
-	b=LNq4hjC+LHDCyykwPPzFH7pTTRIuaqM3qaZqMqmzhPngxkkKGherOVZTrUHhqE22eEPbvt
-	1ed74vyFdBT9muCW876LrcjyHtAhE34LqZF0gXUlK/AiETn/GfZVdOwquTElnYcWEXhOEw
-	wSEsQ+Sy6jhc9tKZhtIr3gyx3ed299A=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-153-9b2eoFVgOp2kU7u0UoqdIg-1; Wed, 02 Jul 2025 03:20:54 -0400
-X-MC-Unique: 9b2eoFVgOp2kU7u0UoqdIg-1
-X-Mimecast-MFC-AGG-ID: 9b2eoFVgOp2kU7u0UoqdIg_1751440853
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-453a190819bso21198505e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 00:20:54 -0700 (PDT)
+	s=arc-20240116; t=1751440916; c=relaxed/simple;
+	bh=hg/fpzh0iibuHgzu9OoE8pUDa3xBOZXjJIvugVRypCg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PNhZX5MVQpq0oQT2FbQXu1apQYCskhhOrl3b/y4JrIMY6n+VUuuRLHFJ2Y17LCKzzdifRI6CzmVYNttTEMtT98CeXJoR7WISjOlqpM0AAyha+XaBo0YYohWGo5p+YgrYBft1VUiOlnwtc4Kk0gSTgy7ZdrU0dC2naPwoybSOw8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-32addf54a00so34284241fa.1;
+        Wed, 02 Jul 2025 00:21:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751440853; x=1752045653;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3UQYnC1Uj+FP/5u+XpjAfPehyEkGumzn9sTZOVjMEoY=;
-        b=Va46+t4AGWCppoc9WUYB4KNb0DJ9wVHcYRrNOzyAFGv9Oqskaeki20bH/MkAGhW9uc
-         lNf9uocNduzXkRZDPHo736NPZRZGsYZ2AYx9Qy2Y3N9v5gk0QUDJKh/AL3YKQ4Jkdtdh
-         OjaYF+pB34W4u8Zez2+Pz7NA4qVEp0PFfwXfmOjAIFrnsgCnJlxCESqpfmGaeVVPPHGc
-         pFK6PKbTOOvwsn6OYETgMyNmIcrJD3+zc/S4vlJjL8j9Yr0SgsYT3a3ntdsnlSWuo2yE
-         Vjt15QuKRkoyFYUTA3PzHWXnzEmAdFp52sdzsoWZARyF+MjRyZ2kBGASE/+OE5sh8SgH
-         I+8w==
-X-Gm-Message-State: AOJu0YzAvtaMaphKoJxcItvuxFupeFyrrFCesVwfWqE2ncJZC/Eh6CUj
-	d+H+cCj4G7RX9iMSSFDpHRikmiTDALfmtY9N8jyWy50MTtTZy6j3OJZiIsYg67vKO4ymAFgSuem
-	PEeEZt/y3cvFhe9wAux5+NuLQjN0cPsrvBRPDZYleSBIsaXv2Ne0F5ird/K3qdF/dP40hK004TQ
-	G0V4KZAE7FLoJLxduyX55JQxGLMjj6JZEpFlVtwa6LGUQ=
-X-Gm-Gg: ASbGncsadMnDGgHPzpMLEWMH8UO82X5YUDsIeOYUCBNCieQHEa/8jwl0E+tqOyvQJBn
-	Q+C1CpvWwThiPmXFWI2cTnBkTZ8FPUZmvv8m8hdRknu5EIww9LmwQc9+w/mWXngdel8bo/BwKmJ
-	fRJIXCzFvNQM3XB5OAZzCuGljPkv+HWSSjM/zFDGjH6zsiMOHM1RGE+aZ6m4gxMmFhhOBh7mo7U
-	iS9S1aA3lQbY5yME7XQCSeOAj2viH0QTo8Tv8WfgtXJICShE7ccV05hn2Skxh5sO5e2ilbSoW9z
-	RSyQ6FrUZfv108CY
-X-Received: by 2002:a05:600c:4686:b0:43d:fa59:af97 with SMTP id 5b1f17b1804b1-454a373566emr14889325e9.32.1751440852843;
-        Wed, 02 Jul 2025 00:20:52 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFU12Z8ggQ0R6Z0B/hxd+EmZh3IQvavd5AT/0Ts/FptyhpCk8URLdlTDVsIsvjAtWLz35dAzQ==
-X-Received: by 2002:a05:600c:4686:b0:43d:fa59:af97 with SMTP id 5b1f17b1804b1-454a373566emr14889055e9.32.1751440852301;
-        Wed, 02 Jul 2025 00:20:52 -0700 (PDT)
-Received: from redhat.com ([2a0d:6fc0:152e:1400:856d:9957:3ec3:1ddc])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-453823ad01csm220359205e9.22.2025.07.02.00.20.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Jul 2025 00:20:51 -0700 (PDT)
-Date: Wed, 2 Jul 2025 03:20:50 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org
-Subject: [PATCH RFC v3] pci: report surprise removal event
-Message-ID: <1eac13450ade12cc98b15c5864e5bcd57f9e9882.1751440755.git.mst@redhat.com>
+        d=1e100.net; s=20230601; t=1751440907; x=1752045707;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hg/fpzh0iibuHgzu9OoE8pUDa3xBOZXjJIvugVRypCg=;
+        b=Vejqni5DMN1uW2nmcJA7oQdfqsYG9yb3CjIt4Rpo3LWm6LPDQ64Kk6q503lY9A5aob
+         GX5tphyWWXVzk82FyptVu6G3hGkbiWIwG/pTukDvwD5JSd+XnWXEQYWf6Sp/oe65dg7L
+         iaAiXG/f3VApjAL4bCXfh5YiaCog+sI7c8oC1/Z7LcP8Px7qIFV0PL3gny/Bh05E3fre
+         Lr7VhSniFuPs26GLYUGhuxeoGZj73yi0j+H48zTD69zl4+fq71G8nt8whN326W14PeSB
+         qnIiLtMskXN8ruO4+ZakoW4nVkQM/9AFKZGzqAFx4Gy/rsZMGx/59oBlndj5cKHtQ7ab
+         XCzw==
+X-Forwarded-Encrypted: i=1; AJvYcCUGyyXLOQmeqZhUQhXbymfvC+yuBA27zDOy1PYaJ49tpSLEKDtWkSwWR3AWKYLL5IRNHHv4B3tMDrN8I5WM@vger.kernel.org, AJvYcCUtVZAw4y1kZwg450/VWycek/waB5jdjBepgIRBvzVHKKXAeBI/i2cabH56/0ahzSDoxn4pkMsbU2hOLA==@vger.kernel.org, AJvYcCVGVnWdSCs6FUQEMSKhdrPfSbfiyMIDtzW4zdISde4SKvkKnmYljx0AiT/RJkCuCEXTlYY8hPxrcOPH@vger.kernel.org, AJvYcCXdrJ2nfZMjvStzm9NTswAiNacjb/3REuGFv2LVFSwLopp9RYFDrncifVI411EwTTSh2iJMYL/mE8h6@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvDmJqnFctUbin0gtOgva+v48+dvPEzvwQkmCyqu9I15mn7SwP
+	knWt5LUUriuLHNQQ13kC6MDw99mkOdxwemSSvZapWl7DhhF/8JZ3MjXzz9rNjAP/
+X-Gm-Gg: ASbGncv/LaoyPB6FIh4v6f86SXHQFHzworeq4U4Kwc9cygAiLrW5T7CDTGa+f5tdOiP
+	5vSc4RPOXv1o1jgGK1JrrJUT2FnmqYPfZLOAj084mc1EoKqmBbhEonL2NYwinka2OYOwBX44Gcj
+	i7v4E1UUClcbVPlSfNU/NFejUtKbI0hoIOTyBWpbQ+Q5Ca6aKTV6M7nyluDYYrVSMNSH6l5TPZx
+	FfRleYsuIgKgBOoMX3hc0nSS/izQmXIAzwNMixnttNTpT/1liKqCrUTuXIhrEJRk4MGj2wDalmn
+	xn5xm/pVfvgplOapYRCktS+SaNoJ6ogbYHSIz+XdJu+ksHoUu9zw8kBLe0yOvzyT25GS7g2jOQB
+	DrBFLqe6vYCxM3e1lSk4=
+X-Google-Smtp-Source: AGHT+IHgLRqkzL+NlyH8Y6vVuR8370P3PmAbmab6X52g4MP/vDndubojlp9QRSfXIxwvisq4oLRqMA==
+X-Received: by 2002:a05:6512:3ba6:b0:553:24bb:daa1 with SMTP id 2adb3069b0e04-5562829f64dmr616313e87.11.1751440906742;
+        Wed, 02 Jul 2025 00:21:46 -0700 (PDT)
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com. [209.85.208.179])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5550b2c5e6esm2056383e87.156.2025.07.02.00.21.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 02 Jul 2025 00:21:45 -0700 (PDT)
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-32b43cce9efso33353911fa.3;
+        Wed, 02 Jul 2025 00:21:45 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU0wwoySBpjLrgSHrtrl/b0FSEySBxY6scQIaEULw88HLqwX9P73b0fM9jtFjbjr7iubQpmrxifM+fFzg==@vger.kernel.org, AJvYcCUolpaqVoLQqb1N8wwTecjngshn9OzEu7QVTJ698PjumqY0lqVtcKznYNCXljHGDrFEpNmPrJrl2uf2@vger.kernel.org, AJvYcCWOXOZ6+6W5B7k30IbhssfBQWiO8gVIfTeVEYtF5z/TQjcCia4FlYorpVQVFA3G/+3sqfXnKqsNjmhL@vger.kernel.org, AJvYcCXA0xoWBOtN5TQAt06UVlQrN/nRHnvjZRz4QLotZx7EqbOhqO/YVkc8gGQNlaBISUS+sYCBMD9EerWMuv9K@vger.kernel.org
+X-Received: by 2002:a2e:881a:0:b0:32a:6e77:3e57 with SMTP id
+ 38308e7fff4ca-32e00059701mr5163051fa.21.1751440904870; Wed, 02 Jul 2025
+ 00:21:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email 2.27.0.106.g8ac3dc51b1
-X-Mutt-Fcc: =sent
+References: <20250701201124.812882-1-paulk@sys-base.io> <20250701201124.812882-2-paulk@sys-base.io>
+In-Reply-To: <20250701201124.812882-2-paulk@sys-base.io>
+Reply-To: wens@csie.org
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Wed, 2 Jul 2025 15:21:32 +0800
+X-Gmail-Original-Message-ID: <CAGb2v65KrLwM+gQEWFVrzCcGPL+Fdhmb9b0FTJGkxrDqv4ucig@mail.gmail.com>
+X-Gm-Features: Ac12FXzCUNmtlDRkeXVtg02FaWchFlhOllywrVEAHXAtLHX_qmyxYGIEnu1zURg
+Message-ID: <CAGb2v65KrLwM+gQEWFVrzCcGPL+Fdhmb9b0FTJGkxrDqv4ucig@mail.gmail.com>
+Subject: Re: [PATCH 1/5] pinctrl: sunxi: v3s: Fix wrong comment about UART2 pinmux
+To: Paul Kocialkowski <paulk@sys-base.io>
+Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linux-gpio@vger.kernel.org, 
+	Yong Deng <yong.deng@magewell.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Maxime Ripard <mripard@kernel.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Linus Walleij <linus.walleij@linaro.org>, Icenowy Zheng <icenowy@aosc.xyz>, 
+	Andre Przywara <andre.przywara@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-At the moment, in case of a surprise removal, the regular remove
-callback is invoked, exclusively.  This works well, because mostly, the
-cleanup would be the same.
+On Wed, Jul 2, 2025 at 4:13=E2=80=AFAM Paul Kocialkowski <paulk@sys-base.io=
+> wrote:
+>
+> The original comment doesn't match the pin attribution, probably due
+> to a hasty copy/paste.
+>
+> Signed-off-by: Paul Kocialkowski <paulk@sys-base.io>
 
-However, there's a race: imagine device removal was initiated by a user
-action, such as driver unbind, and it in turn initiated some cleanup and
-is now waiting for an interrupt from the device. If the device is now
-surprise-removed, that never arrives and the remove callback hangs
-forever.
-
-For example, this was reported for virtio-blk:
-
-	1. the graceful removal is ongoing in the remove() callback, where disk
-	   deletion del_gendisk() is ongoing, which waits for the requests +to
-	   complete,
-
-	2. Now few requests are yet to complete, and surprise removal started.
-
-	At this point, virtio block driver will not get notified by the driver
-	core layer, because it is likely serializing remove() happening by
-	+user/driver unload and PCI hotplug driver-initiated device removal.  So
-	vblk driver doesn't know that device is removed, block layer is waiting
-	for requests completions to arrive which it never gets.  So
-	del_gendisk() gets stuck.
-
-Drivers can artificially add timeouts to handle that, but it can be
-flaky.
-
-Instead, let's add a way for the driver to be notified about the
-disconnect. It can then do any necessary cleanup, knowing that the
-device is inactive.
-
-Since cleanups can take a long time, this takes an approach
-of a work struct that the driver initiates and enables
-on probe, and tears down on remove.
-
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
----
-
-
-Compile tested only.
-
-Note: this minimizes core code. I considered a more elaborate API
-that would be easier to use, but decided to be conservative until
-there are multiple users.
-
-changes from v2
-	v2 was corrupted, fat fingers :(
-
-changes from v1:
-        switched to a WQ, with APIs to enable/disable
-        added motivation
-
-
- drivers/pci/pci.h   |  6 ++++++
- include/linux/pci.h | 27 +++++++++++++++++++++++++++
- 2 files changed, 33 insertions(+)
-
-diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-index b81e99cd4b62..208b4cab534b 100644
---- a/drivers/pci/pci.h
-+++ b/drivers/pci/pci.h
-@@ -549,6 +549,12 @@ static inline int pci_dev_set_disconnected(struct pci_dev *dev, void *unused)
- 	pci_dev_set_io_state(dev, pci_channel_io_perm_failure);
- 	pci_doe_disconnected(dev);
- 
-+	if (READ_ONCE(dev->disconnect_work_enable)) {
-+		/* Make sure work is up to date. */
-+		smp_rmb();
-+		schedule_work(&dev->disconnect_work);
-+	}
-+
- 	return 0;
- }
- 
-diff --git a/include/linux/pci.h b/include/linux/pci.h
-index 51e2bd6405cd..b2168c5d0679 100644
---- a/include/linux/pci.h
-+++ b/include/linux/pci.h
-@@ -550,6 +550,10 @@ struct pci_dev {
- 	/* These methods index pci_reset_fn_methods[] */
- 	u8 reset_methods[PCI_NUM_RESET_METHODS]; /* In priority order */
- 
-+	/* Report disconnect events */
-+	u8 disconnect_work_enable;
-+	struct work_struct disconnect_work;
-+
- #ifdef CONFIG_PCIE_TPH
- 	u16		tph_cap;	/* TPH capability offset */
- 	u8		tph_mode;	/* TPH mode */
-@@ -2657,6 +2661,29 @@ static inline bool pci_is_dev_assigned(struct pci_dev *pdev)
- 	return (pdev->dev_flags & PCI_DEV_FLAGS_ASSIGNED) == PCI_DEV_FLAGS_ASSIGNED;
- }
- 
-+/*
-+ * Caller must initialize @pdev->disconnect_work before invoking this.
-+ * Caller also must check pci_device_is_present afterwards, since
-+ * if device is already gone when this is called, work will not run.
-+ */
-+static inline void pci_set_disconnect_work(struct pci_dev *pdev)
-+{
-+	/* Make sure WQ has been initialized already */
-+	smp_wmb();
-+
-+	WRITE_ONCE(pdev->disconnect_work_enable, 0x1);
-+}
-+
-+static inline void pci_clear_disconnect_work(struct pci_dev *pdev)
-+{
-+	WRITE_ONCE(pdev->disconnect_work_enable, 0x0);
-+
-+	/* Make sure to stop using work from now on. */
-+	smp_wmb();
-+
-+	cancel_work_sync(&pdev->disconnect_work);
-+}
-+
- /**
-  * pci_ari_enabled - query ARI forwarding status
-  * @bus: the PCI bus
--- 
-MST
-
+Acked-by Chen-Yu Tsai <wens@csie.org>
 
