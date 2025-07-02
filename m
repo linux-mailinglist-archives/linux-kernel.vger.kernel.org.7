@@ -1,42 +1,52 @@
-Return-Path: <linux-kernel+bounces-713361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 875B1AF5874
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 15:20:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CB40AF152D
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:16:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A94AE18931B8
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 13:19:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4814416C4B7
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 12:16:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15155276047;
-	Wed,  2 Jul 2025 13:19:04 +0000 (UTC)
-Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92A0227735;
-	Wed,  2 Jul 2025 13:18:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23FB32737EA;
+	Wed,  2 Jul 2025 12:15:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="vI4ozzoZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BFC3272E63
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 12:15:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751462343; cv=none; b=fkHqb3EWEj47KOQzpsZAZzZOUrjxswyy5EmKCwtincB6YsxtW6q6nJLl92bm6gmW/nDdJ6UcZfgMPnmTMDAnfvg0NdsQVhMNhld8xsxNLA7f93gqZevhds0vLQbWCGfgZGeRknAyf6FDAEHb6ZzvdZYSGsBmgzkEPeafqQpI7UI=
+	t=1751458505; cv=none; b=doI/VnNy4MlZH4FirFh7K/TCJb0L++odrUlFk2sk7k4gHZ5JVog35q8WzRHc4Xi0uyljIr4MIuS+OA8vPrkOI4k9DUGkdf1z9Pl/U61biIlaBknCUtShPBzU5OgwB0RFXu4I+bDKZ3EPFHfBN2mTMWwMytjw0rF7dD/AgZef5OE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751462343; c=relaxed/simple;
-	bh=QAwDg8AZhLOV8WryL5g2y7bANhcj6k8F/gQErZRvyrw=;
+	s=arc-20240116; t=1751458505; c=relaxed/simple;
+	bh=akPTbRh9xMG47/R20NIuOQU2Px8bQ+12hNRrojY1fxc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aVQEHykEB5c2Hw3qHSPsmuzBhvDMga8sYnLe3aTbz8gDiMt5zagYO4TnjAJP11xsDXPyz/Q6kpplhNAoNo3yJ0x4MeoT2pt4I9DbxOpmnSmdqf0Z/CwQzmibC6mqOzlechiCt2bpr6M8f+iLOvLgogPepLFRcFahSWYwcrsWUnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
-Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
-	id 1uWwab-00058Q-00; Wed, 02 Jul 2025 14:29:25 +0200
-Received: by alpha.franken.de (Postfix, from userid 1000)
-	id 989A3C0C1C; Wed,  2 Jul 2025 14:14:47 +0200 (CEST)
-Date: Wed, 2 Jul 2025 14:14:47 +0200
-From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mips: boot: use 'targets' instead of extra-y in Makefile
-Message-ID: <aGUit7vdpeC1jVm8@alpha.franken.de>
-References: <20250608015136.2960777-1-masahiroy@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=VlU7KnlpKq2stEbH8p7t7p+i6M3aUJJG4VnQacVqiU9TuXAvEEAvwn5W+wF0UQ3Vr5DQyctFuUwsakmjed7olYWpH2gCPRWG2QK17S/gq0YrJkedK8hoJorKEFJSnO22hQTYKs5qKBVPTGQzDbi1JuPv70LbSCRqwzb76RoJS2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=vI4ozzoZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BE21C4CEF0;
+	Wed,  2 Jul 2025 12:15:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1751458504;
+	bh=akPTbRh9xMG47/R20NIuOQU2Px8bQ+12hNRrojY1fxc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vI4ozzoZtQ5PNBjC+A9+4BFVlE0U2FqKGkNJFIiMK4aeG68RG4FYNcduR/xmI8Jti
+	 KhQFUSE7/NeAQ5Uz03IqjJPEKmhWfMTEWh1ddsvGmivE31lN5K3C87uK76qhUxiIa2
+	 ZrEioOUDmu2POb6ktD0uiY1MLShUmx4LSIRE276o=
+Date: Wed, 2 Jul 2025 14:15:01 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Brahmajit Das <listout@listout.xyz>
+Cc: linux-kernel@vger.kernel.org, alexander.usyskin@intel.com,
+	tomas.winkler@intel.com
+Subject: Re: [PATCH] samples: mei: Fix building on musl libc
+Message-ID: <2025070253-helpline-smokeless-e94b@gregkh>
+References: <20250701160726.22406-1-listout@listout.xyz>
+ <2025070224-unheard-viscous-58a5@gregkh>
+ <m3mqhfb2xeoje7hmwzlkdqih7d2pqiu3quyqsj5zyj77el6pb6@ik2ohi4spp4r>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -45,45 +55,29 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250608015136.2960777-1-masahiroy@kernel.org>
+In-Reply-To: <m3mqhfb2xeoje7hmwzlkdqih7d2pqiu3quyqsj5zyj77el6pb6@ik2ohi4spp4r>
 
-On Sun, Jun 08, 2025 at 10:51:34AM +0900, Masahiro Yamada wrote:
-> vmlinux.bin.* files are built as prerequisites of other objects.
-> There is no need to use extra-y, which is planned for deprecation.
+On Wed, Jul 02, 2025 at 05:17:33PM +0530, Brahmajit Das wrote:
+> On 02.07.2025 07:45, Greg KH wrote:
+> > On Tue, Jul 01, 2025 at 09:37:26PM +0530, Brahmajit Das wrote:
+> ... snip ...
+> > > 
+> > > Signed-off-by: Brahmajit Das <listout@listout.xyz>
+> > > ---
+> > >  samples/mei/mei-amt-version.c | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > What commit id does this fix?
+> > 
+> > thanks,
+> > 
+> > greg k-h
 > 
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> ---
-> 
->  arch/mips/boot/Makefile | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/mips/boot/Makefile b/arch/mips/boot/Makefile
-> index 196c44fa72d9..8473c4671702 100644
-> --- a/arch/mips/boot/Makefile
-> +++ b/arch/mips/boot/Makefile
-> @@ -54,10 +54,10 @@ UIMAGE_ENTRYADDR = $(VMLINUX_ENTRY_ADDRESS)
->  # Compressed vmlinux images
->  #
->  
-> -extra-y += vmlinux.bin.bz2
-> -extra-y += vmlinux.bin.gz
-> -extra-y += vmlinux.bin.lzma
-> -extra-y += vmlinux.bin.lzo
-> +targets += vmlinux.bin.bz2
-> +targets += vmlinux.bin.gz
-> +targets += vmlinux.bin.lzma
-> +targets += vmlinux.bin.lzo
->  
->  $(obj)/vmlinux.bin.bz2: $(obj)/vmlinux.bin FORCE
->  	$(call if_changed,bzip2)
-> -- 
-> 2.43.0
+> The (both) changes were introduced by commit c52827cc4ddf3 (staging/mei:
+> add mei user space example).
+> Shall I resend the patch with a Fixes tag?
 
-applied to mips-next.
+A fixes tag would be great, th anks.
 
-Thomas.
-
--- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
+greg k-h
 
