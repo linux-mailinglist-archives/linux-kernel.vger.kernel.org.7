@@ -1,129 +1,88 @@
-Return-Path: <linux-kernel+bounces-713299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51D3EAF163A
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:57:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A744AF1F8A
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 15:05:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 219814A727E
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 12:57:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 940D54A01C0
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 13:05:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B5F0275105;
-	Wed,  2 Jul 2025 12:57:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="P9mFCleB"
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26AEE27A461;
+	Wed,  2 Jul 2025 13:04:21 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A19BB275104
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 12:57:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F3F027A444;
+	Wed,  2 Jul 2025 13:04:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751461051; cv=none; b=MZ5tQdrGBOJRlTvxtmaCve5UsL+vpHNF8pd3Lk/OoQhuezMj/RmUWpItM7NF1vyP+5syFdI2oXmgMcqY2MOePZu7WBRabwy2vEOVqbnCIDQmT7RJTbKgBFwK3Au+onrT2yA1Hne7regn98CHShJdSi3iqZNPG1JLYAN8gLZ2bds=
+	t=1751461460; cv=none; b=DLN9kC6/DNi5PbnCFFjV17tIWAfdXOebPEVtQzjXpgNG/FP/Aa1V+eULcSixYpgPCkSV70it8RkesmiJjWlgBLQNrdgnG/sKAmljtB+YDrKJndYJsPmu7iHJ70tfxH46G1tdW2MrtECfMDWciaxim8MHhNISxE/bXwwU9U0hvO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751461051; c=relaxed/simple;
-	bh=MkBWoexUNuPm89yzPO9r953l1XFedX2yqDktEhA1TuA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Zgqgec8C2CemXeyFG8RrwQC/QuQLLl8Wy4a36p8I5g4gTZUeIzAYwEwL76ZX2YqGDbblFXbSujtfH9E7ayoHzfSncLfStSTpThUzxUTQ44Xx0iboS9/u4y65g+bSqh7vUR10SlU/vXrsTUZOqxNflBRWZIZQqC526V72P/I8IMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=P9mFCleB; arc=none smtp.client-ip=209.85.222.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7d3900f90f6so412239585a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 05:57:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1751461047; x=1752065847; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=p1U/jcJUt63/R9ojtJdyruc5PkgT9HoGw/OOSpSJ154=;
-        b=P9mFCleBocJg7k62fstc6AF8qbEQelyuzhLdz0POfDWpOv6o68Fb3iWlQAeCpWwZ2g
-         EWhIbNE4eu2d6kvawbhIMbEz6B6qJBKsUA16lUiGgFm4M6pDy43N/8xVh/UTEyTbm6wJ
-         WsboMueXheasQPWLSF/PbtDiOmUZ1cbdqC8rnLVAAGZZ/xmz7pnMkXOj2hJJYWRWgNfA
-         BNBn3P+pwaTX6YORtEAMmR+fQC4xlY3GfWen3TUG6DkClcLPZmBD91b3abfWNnDOvF9S
-         i6U1vyOaqqTYKLVCS02hT4pixeT4g2/VBdtpg3vvHHwgSuPK000ERFHx7lVr1CSuIRw1
-         UMEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751461047; x=1752065847;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=p1U/jcJUt63/R9ojtJdyruc5PkgT9HoGw/OOSpSJ154=;
-        b=otVFtYf19ldZ1mx3wrUJpxlD1+kc8Al4c5sV37OF+jISz7s3JgZhgHPd7pgNqYtX7x
-         PGAtI6hnTlsFDmsNVdN1KnwEXGTiT/Iirra6qecNpjdiVhCykRi3tj1b/KE7E3be8C7p
-         j2nWthP5yZ0jWNzHUem9iMBax63jKilkZ3r88Q45Otb2DHXgak+7vIApkhPON9e6CuhN
-         6H5QAbBmXArGZOQi/YF3bI5Diauyjx9/ErZs4PeCYIwJp/zXxFniFVIx4jMIeizypazf
-         hNPT/lHZd5InBLCRyPXuhjuqui8Ubfn0wIe2zllGfDvW96aiurMShHguC4wHEzmF+8aQ
-         23qw==
-X-Gm-Message-State: AOJu0YzAF1aEAc5/bqJb3IZcf7c8a6DuznVB9SJyUiV+BS370yeEPfEj
-	qTW/zbUok7o4+XZGBcrnRIi50xbEozoDyBUBGLeUz81nKoaLuMzAaQJO+qAfltAS9dA=
-X-Gm-Gg: ASbGncsGJhvFbNAKjUf/snOAy36nlyO6t6xpPENYmmMyjrmZZv2/9akwo/iLNZSF4MR
-	yF5PRyoioFnomOGELGkhzwZts2FM9tnt63MIyP+U+ZpeSEPHko1xLdndZrnVfojtp1Fn4sNORw7
-	AbMvEMWKWMjCBlervdcqKCzBS/6oUDQmmkSEMvIxKOy8nqIu1cN/KN4BIWY1enOtXhWTeYetFnm
-	GJFfsUX2J1XP4fdsKs8M3yDGVzPbXDpufizzyxRvLE7PySQhMOrH55faae2P0kzPiYx7VI1SEdl
-	ViHINy5RsO6q2wmFmpLs1qzKdZpcaUGRPhzS
-X-Google-Smtp-Source: AGHT+IHUMiBPjG0eWEZJypXuRy9Vl0pcPIQatE88RekI/5Jeu9Byi7LTA10RE7s734tKjAic64bqaQ==
-X-Received: by 2002:a05:620a:2492:b0:7d4:4c7b:9701 with SMTP id af79cd13be357-7d5c47831e7mr344047785a.35.1751461047340;
-        Wed, 02 Jul 2025 05:57:27 -0700 (PDT)
-Received: from ziepe.ca ([130.41.10.202])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7d443204feesm933663885a.56.2025.07.02.05.57.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Jul 2025 05:57:26 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1uWx1h-00000004bTR-3GW4;
-	Wed, 02 Jul 2025 09:57:25 -0300
-Date: Wed, 2 Jul 2025 09:57:25 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: linux-kernel@vger.kernel.org, keyrings@vger.kernel.org,
-	Stefan Berger <stefanb@linux.ibm.com>,
-	Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>,
-	Peter Huewe <peterhuewe@gmx.de>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	David Howells <dhowells@redhat.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	"open list:TPM DEVICE DRIVER" <linux-integrity@vger.kernel.org>,
-	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH v4] tpm: Managed allocations for tpm_buf instances
-Message-ID: <20250702125725.GA904431@ziepe.ca>
-References: <20250701145136.82726-1-jarkko@kernel.org>
+	s=arc-20240116; t=1751461460; c=relaxed/simple;
+	bh=dj15Mi3BU8ND26XFMCNBWgqqYOyprcrvH39r/bX6qVk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HWcDUg60AqogK6Q72CCkzi3b/NgPGZSoxJoyN4ztcfoMKM3iIzdLqQDSrpQ023qLHG9FqhJNNr4sMNo1K/d7HNW1gCwyM2rVduCXemrrIA1qtYy0VxtKMxnjtOpVhSLfYZZJlCinMfP3/D1/Ii9zJYTSrwYlykAe+fSUaMtB7PQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4bXKm94f0Vz1R7nZ;
+	Wed,  2 Jul 2025 21:01:45 +0800 (CST)
+Received: from kwepemk100013.china.huawei.com (unknown [7.202.194.61])
+	by mail.maildlp.com (Postfix) with ESMTPS id B90A9140279;
+	Wed,  2 Jul 2025 21:04:16 +0800 (CST)
+Received: from localhost.localdomain (10.90.31.46) by
+ kwepemk100013.china.huawei.com (7.202.194.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 2 Jul 2025 21:04:16 +0800
+From: Jijie Shao <shaojijie@huawei.com>
+To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <andrew+netdev@lunn.ch>, <horms@kernel.org>
+CC: <shenjian15@huawei.com>, <liuyonglong@huawei.com>,
+	<chenhao418@huawei.com>, <jonathan.cameron@huawei.com>,
+	<shameerali.kolothum.thodi@huawei.com>, <salil.mehta@huawei.com>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<shaojijie@huawei.com>
+Subject: [PATCH net-next 0/4] There are some bugfix for the HNS3 ethernet driver
+Date: Wed, 2 Jul 2025 20:57:27 +0800
+Message-ID: <20250702125731.2875331-1-shaojijie@huawei.com>
+X-Mailer: git-send-email 2.30.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250701145136.82726-1-jarkko@kernel.org>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
+ kwepemk100013.china.huawei.com (7.202.194.61)
 
-On Tue, Jul 01, 2025 at 05:51:35PM +0300, Jarkko Sakkinen wrote:
-> @@ -32,28 +32,30 @@ struct tpm_readpubek_out {
->  static ssize_t pubek_show(struct device *dev, struct device_attribute *attr,
->  			  char *buf)
->  {
-> -	struct tpm_buf tpm_buf;
-> +	struct tpm_buf *tpm_buf __free(kfree) = NULL;
->  	struct tpm_readpubek_out *out;
->  	int i;
->  	char *str = buf;
->  	struct tpm_chip *chip = to_tpm_chip(dev);
->  	char anti_replay[20];
->  
-> +	tpm_buf = tpm_buf_alloc();
-> +	if (!tpm_buf)
-> +		return -ENOMEM;
+There are some bugfix for the HNS3 ethernet driver
 
-apprently this isn't the style guide, you are supposed to write:
+Hao Lan (1):
+  net: hns3: fixed vf get max channels bug
 
-  	char anti_replay[20];
+Jian Shen (1):
+  net: hns3: fix concurrent setting vlan filter issue
 
-	struct tpm_buf *tpm_buf __free(kfree) =  tpm_buf_alloc();
-	if (!tpm_buf)
-		return -ENOMEM;
+Jijie Shao (1):
+  net: hns3: default enable tx bounce buffer when smmu enabled
 
-Jason
+Yonglong Liu (1):
+  net: hns3: disable interrupt when ptp init failed
+
+ .../net/ethernet/hisilicon/hns3/hns3_enet.c   | 31 ++++++++++++++++
+ .../net/ethernet/hisilicon/hns3/hns3_enet.h   |  2 ++
+ .../ethernet/hisilicon/hns3/hns3_ethtool.c    | 33 +++++++++++++++++
+ .../hisilicon/hns3/hns3pf/hclge_main.c        | 36 +++++++++++--------
+ .../hisilicon/hns3/hns3pf/hclge_ptp.c         |  9 +++--
+ .../hisilicon/hns3/hns3vf/hclgevf_main.c      |  6 +---
+ 6 files changed, 94 insertions(+), 23 deletions(-)
+
+-- 
+2.33.0
+
 
