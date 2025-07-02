@@ -1,170 +1,124 @@
-Return-Path: <linux-kernel+bounces-714025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C10FDAF61E3
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 20:54:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF3D5AF620B
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 20:57:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF27F1C23133
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 18:54:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5402523E0D
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 18:57:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CABA427A469;
-	Wed,  2 Jul 2025 18:53:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 303292727F7;
+	Wed,  2 Jul 2025 18:57:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iCjgBl3i"
-Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dS4AbLBd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE1B92F7D0E;
-	Wed,  2 Jul 2025 18:53:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CA702F7CE2;
+	Wed,  2 Jul 2025 18:57:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751482438; cv=none; b=uorV4CHkPJ3aKmWuGraYdw1177hr9U/DvKcqHmZF28/2OV2IaGEe+W6WdAW958iqCHtV9CG99xgOPbKwt74xb5oQZ6ZibpEi3NV6bzyHKq2FP8kd6/hlqBUrhFM0H37IOIep3TttrCFYbB9LoEvB92NI4aUURjCpeoiRayI+lMg=
+	t=1751482641; cv=none; b=MIaGoEsJXBIu/p+lDVWrRpp6giQq/s27/Sox8Qz75wUeSA+rjHuq8VNIwZboVMxEsZt4NY0r7ogsnju28KI3X2fQdEbKv4tohPkD7boP224tDAK7RU3Y3gfrFfYL0kk3JvGVOqCFEw9a7kp5abZM/2HGgAhSpTOmCJi7lN8+dJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751482438; c=relaxed/simple;
-	bh=sWVfMaKLsECjIyi5MUgKTM26UVwF4aLhRuw9374xhxQ=;
+	s=arc-20240116; t=1751482641; c=relaxed/simple;
+	bh=oAuYWwMlcoUOMp7fNhysK7uclvqFv4Y+nGaAFChmaZk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=T2wbFYJiika3mP3YBhrwOpeRGPcnfteWUjOEwuCg29wpnZFj1+GDzKDlXgN59rhVGZs9GoApYiorFFYLUs0W+OLevGgtBNpnkMWzJidfhqNBGARSPe17W6j/RJPiZ9DoAwu5hvi6zBpIDr9tWoJ0c4Y8A4cQGB2xM2xoozJDweM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iCjgBl3i; arc=none smtp.client-ip=209.85.221.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-5315ebfda19so1667190e0c.1;
-        Wed, 02 Jul 2025 11:53:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751482435; x=1752087235; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rGpr20X06c4IYo1szuAw6hcwGxTmHbpUqGh7ovFyqx4=;
-        b=iCjgBl3i/cB40u/qIsnEdp4/Z+ReveL717OnrbZ4O0oGIDKLvJJJ0lqw+c/+mjJynQ
-         mMvSaRc05GEFHFtyL6gIYv/nscog79y+IZUuxrE03ob10hFfaFApQ5UzBHINRdf04LOu
-         9t51p0Pt/GTIPCcQ2DRKVAxB+j0i+cMQ8nzQhkvNjCF/5duDS38Sp88eDP4Q/QdyDQGI
-         rcoa+YqkgHLhT6bqOi5xTTMTkWHIG4u5QVwGQLfiys8N/edXnnQ2ri7Ijn4qW979nvRn
-         s9NIpb7Z898H0sVJHdx1VZt+qowztp6gCOkmB4R/SvmMgVQ0QT1I1OFpw28G2UmsYu+0
-         GrkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751482435; x=1752087235;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rGpr20X06c4IYo1szuAw6hcwGxTmHbpUqGh7ovFyqx4=;
-        b=hbYXFOS2fnMRdaweuJb2KMFdlrgkDcmzjCdw391ii370/r3g8ffHZCw+jDEZOsPRCB
-         m+EQ1yqXROmemrSWLfvZ5j2yv4XjS+NxzuOuxnaPy41mQi/rlt79oRWqeuCSCqjsYN3c
-         q7dI4xy5t1vCf5ow0W36QWUqgf+TI1jRmq8/njXUvU78MuTj6Ow1KjbHCMFQotiK8bfB
-         j6OnobgU3aQVP3Iy7u/CkpArRnBVWLvTT8CIS2HuILGc5s6o8Nfd/8CiW0Tkz2RO0nOk
-         l/teb7szssROH0D0m601oQz5kd3szalIQgU2vjmdZt+t5Nv2N8CRSREwUQVDNjxZpdkS
-         PusA==
-X-Forwarded-Encrypted: i=1; AJvYcCUTm7dbOpuGHKzWDq4UMOYA0ZzG+4ICcGh03kNVQL0AqQnMTanvLH4r+VtV+AKv5vU85fLNnidF4Ll0IQk=@vger.kernel.org, AJvYcCXR5X3qpCVCDI5m/9TR5XUMBXmNeAgtt4lXmCJsuvdOde30kcBPyfKF3vb7XjQvMXwb+SNq4+RY0WDM3kmKjISc3Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzeGMUEMImbO50HPtNMM9h1qz9TI2QX7BHgOGuyeW9T2t/BEUNg
-	bMmZAQ8O4BrkeQVZPcJ7+Eq2OE8l8pzGAAq+B4/yLTucB/MVIkQwNHf9QyTsPmBcUeIFYKwoyid
-	lh8Q2YDCFavrqKQDHuOY/nDy9Y6PKj98=
-X-Gm-Gg: ASbGncuOUf2pTHEK7eBUyWI5u4Wmrd8xqOMNDPXz8bhS57kDbSgeVK0okYcrAtuKRxs
-	2q5YxBNILTRPO0977F3MkKDiRPqaooeElxE79GtwsraWuhcXVFBYp4fiswkVEANM80tOOJ7XI5I
-	ZGS2YqSij+NVG2by/h02Sbz93htmrYqwFKLdMZzZ6L3Sk=
-X-Google-Smtp-Source: AGHT+IGQcNbkNCL1zSuxVw3ayQxDPwY4K6hVoovbfKHpavfr6RyQNOABf7c8aYnbDaPOxGOpHCrKfzNVskqnsSbi53g=
-X-Received: by 2002:a05:6122:553:b0:531:2d3a:32aa with SMTP id
- 71dfb90a1353d-53466603979mr626634e0c.0.1751482435572; Wed, 02 Jul 2025
- 11:53:55 -0700 (PDT)
+	 To:Cc:Content-Type; b=mgPA+bLcy7REWSZIVsEEUjiS6Lt4TqWjlGRQ5l0P+2dxxV/VgFplh5reDAGnc+yfnnWN3Ygsyuputrk1xqYonH8f7aVOoIVQrCYu1BBE/HcGAuoYHivk4EM8/iPY/GP4xuQUp8lLIKXCF40SEGrPnGmkwGMzL+u4Z1QqpXBd1WU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dS4AbLBd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58111C4CEEE;
+	Wed,  2 Jul 2025 18:57:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751482641;
+	bh=oAuYWwMlcoUOMp7fNhysK7uclvqFv4Y+nGaAFChmaZk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=dS4AbLBdF5J/y7IDK4f9Xr4xeCHicSFDNyYvpT/kfowNEsMQYG9HevkEMhjtbP8CD
+	 ZSTJfI2qQXiyaoYCYIBdWi78PJ2MGzkPxmRBMlc2M3qi1jaF9jzUbKjIGLtxdKaOxA
+	 PUY8mi6d2nB40J6eTIeyJBgqin8gnrSaWsX+DOcfVhr2c3hvpTsrZrFH5V3gjNn7C1
+	 qjyA+7WobDqTLoFAmDWM4MZwSBwvkQhOUp0NTPalXCge9fored9PsEtBz2YC2YtTSk
+	 hF61su1kvAN9mQf/JfOHgoilu1doiJDp4IPgj9Jh8BQfk2TBUo33abe2CEuRhZHa8R
+	 4FEcPfGPqZP2g==
+Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-60be827f2b7so141884eaf.0;
+        Wed, 02 Jul 2025 11:57:21 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVfAkIChIkeSy6ikL6o+a+GmLLPIPSGwy0Ik4uBjtM45HJHfqx4/JugaOGU6QxKVzB07ryXKVdLO2DpySk=@vger.kernel.org, AJvYcCWj1458pAGOEaBfwXpx3r4KXTKlsY3UZReuJhQ9hKnqE61OMpvv+p2RGCiwO7Lg78Ksj0+JLG1Tuew=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwW+MN/YI8PZlurSSQFUwz2gwxuZR0SefeofWlXNzCn5BB6jcJj
+	cG1yrxPFMSqAw4kRLEPZPGUsEg0tNGor/B0RQ1xHRuuq+Yh32I2pBkxLrYH6JjZS58SyMiAIZgD
+	ZyB9vR4ivBftQytaa9/jDhvKqSMJc440=
+X-Google-Smtp-Source: AGHT+IFP1YS20zKCA03/uE1QUW5rL9pMJhvUrlaZQJ5bihmEEMLvJ/fS/OBD5RwvXkhn2ZjCno+yFWcWUj3+oDHl+QU=
+X-Received: by 2002:a4a:ec4c:0:b0:611:3e54:8d0a with SMTP id
+ 006d021491bc7-6137e862d21mr549827eaf.1.1751482640540; Wed, 02 Jul 2025
+ 11:57:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250618215843.109941-1-usmanakinyemi202@gmail.com>
-In-Reply-To: <20250618215843.109941-1-usmanakinyemi202@gmail.com>
-From: Usman Akinyemi <usmanakinyemi202@gmail.com>
-Date: Thu, 3 Jul 2025 00:23:44 +0530
-X-Gm-Features: Ac12FXwVWPAC1aru0ELPnfULxHDKrh4sVJoMhmHfgf5DdxsrpMCb4mBVcWpGxi0
-Message-ID: <CAPSxiM_hKOdMkpsogs8dhX3S=Fz42noOFM1KFTYmaBBwK6g23w@mail.gmail.com>
-Subject: Re: [PATCH] perf/x86: Replace strncpy() with memcpy() for vendor string
-To: peterz@infradead.org, mingo@redhat.com, acme@kernel.org, 
-	namhyung@kernel.org
-Cc: mark.rutland@arm.com, alexander.shishkin@linux.intel.com, jolsa@kernel.org, 
-	irogers@google.com, adrian.hunter@intel.com, kan.liang@linux.intel.com, 
-	james.clark@linaro.org, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org, 
-	linux-kernel-mentees@lists.linux.dev
+References: <20250619035355.33402-1-zhangzihuan@kylinos.cn> <20250619035355.33402-5-zhangzihuan@kylinos.cn>
+In-Reply-To: <20250619035355.33402-5-zhangzihuan@kylinos.cn>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 2 Jul 2025 20:57:08 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0hR37in6uikFGgtM+PjXuSCQSc7mk0uLwwniNUKZvnZng@mail.gmail.com>
+X-Gm-Features: Ac12FXz1Jq7KszMG7oyR4xMkecASU-xjA2tkI-uMdUtmxNDCJjvElllZ4S2qQSM
+Message-ID: <CAJZ5v0hR37in6uikFGgtM+PjXuSCQSc7mk0uLwwniNUKZvnZng@mail.gmail.com>
+Subject: Re: [PATCH v2 4/4] PM: suspend: Simplify state check using sleep_state_supported()
+To: Zihuan Zhang <zhangzihuan@kylinos.cn>
+Cc: rafael@kernel.org, pavel@kernel.org, len.brown@intel.com, 
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 19, 2025 at 3:28=E2=80=AFAM Usman Akinyemi
-<usmanakinyemi202@gmail.com> wrote:
+On Thu, Jun 19, 2025 at 5:54=E2=80=AFAM Zihuan Zhang <zhangzihuan@kylinos.c=
+n> wrote:
 >
-> strncpy() is unsafe for fixed-size binary data as
-> it may not NUL-terminate and is deprecated for such
-> usage. Since we're copying raw CPUID register values,
-> memcpy() is the correct and safe choice.
+> Currently enter_state() open-codes state validation using
+> `if (state =3D=3D PM_SUSPEND_TO_IDLE) ... else if (!valid_state(state)) .=
+..`.
 >
-> Signed-off-by: Usman Akinyemi <usmanakinyemi202@gmail.com>
+> This can be simplified by calling sleep_state_supported(), which already
+> encodes this logic. This improves clarity and reduces duplication.
+>
+> Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
 > ---
->  tools/perf/arch/x86/util/header.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+>  kernel/power/suspend.c | 14 ++++----------
+>  1 file changed, 4 insertions(+), 10 deletions(-)
 >
-> diff --git a/tools/perf/arch/x86/util/header.c b/tools/perf/arch/x86/util=
-/header.c
-> index 412977f8aa83..43ba55627817 100644
-> --- a/tools/perf/arch/x86/util/header.c
-> +++ b/tools/perf/arch/x86/util/header.c
-> @@ -16,9 +16,9 @@ void get_cpuid_0(char *vendor, unsigned int *lvl)
->         unsigned int b, c, d;
+> diff --git a/kernel/power/suspend.c b/kernel/power/suspend.c
+> index 16172ca22f21..b95c7a80ef20 100644
+> --- a/kernel/power/suspend.c
+> +++ b/kernel/power/suspend.c
+> @@ -571,16 +571,10 @@ static int enter_state(suspend_state_t state)
+>         int error;
 >
->         cpuid(0, 0, lvl, &b, &c, &d);
-> -       strncpy(&vendor[0], (char *)(&b), 4);
-> -       strncpy(&vendor[4], (char *)(&d), 4);
-> -       strncpy(&vendor[8], (char *)(&c), 4);
-> +       memcpy(&vendor[0], (char *)(&b), 4);
-> +       memcpy(&vendor[4], (char *)(&d), 4);
-> +       memcpy(&vendor[8], (char *)(&c), 4);
->         vendor[12] =3D '\0';
->  }
->
-Hello,
+>         trace_suspend_resume(TPS("suspend_enter"), state, true);
+> -       if (state =3D=3D PM_SUSPEND_TO_IDLE) {
+> -#ifdef CONFIG_PM_DEBUG
+> -               if (pm_test_level !=3D TEST_NONE && pm_test_level <=3D TE=
+ST_CPUS) {
+> -                       pr_warn("Unsupported test mode for suspend to idl=
+e, please choose none/freezer/devices/platform.\n");
+> -                       return -EAGAIN;
+> -               }
+> -#endif
+> -       } else if (!valid_state(state)) {
+> -               return -EINVAL;
+> -       }
+> +
+> +       if (!sleep_state_supported(state))
+> +               return -ENOSYS;
+> +
 
-I am just bringing attention to this patch.
+The code before and after is obviously not the same, so no.
 
-I have not received any comments about it.
+If you do a cleanup, don't change the behavior.
 
-Thank you.
-Usman Akinyemi.
-> --
-> 2.49.0
->
+If you want to change the behavior, there needs to be a good enough
+reason.  A cleanup is not it.
 
-On Thu, Jun 19, 2025 at 3:28=E2=80=AFAM Usman Akinyemi
-<usmanakinyemi202@gmail.com> wrote:
->
-> strncpy() is unsafe for fixed-size binary data as
-> it may not NUL-terminate and is deprecated for such
-> usage. Since we're copying raw CPUID register values,
-> memcpy() is the correct and safe choice.
->
-> Signed-off-by: Usman Akinyemi <usmanakinyemi202@gmail.com>
-> ---
->  tools/perf/arch/x86/util/header.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/tools/perf/arch/x86/util/header.c b/tools/perf/arch/x86/util=
-/header.c
-> index 412977f8aa83..43ba55627817 100644
-> --- a/tools/perf/arch/x86/util/header.c
-> +++ b/tools/perf/arch/x86/util/header.c
-> @@ -16,9 +16,9 @@ void get_cpuid_0(char *vendor, unsigned int *lvl)
->         unsigned int b, c, d;
->
->         cpuid(0, 0, lvl, &b, &c, &d);
-> -       strncpy(&vendor[0], (char *)(&b), 4);
-> -       strncpy(&vendor[4], (char *)(&d), 4);
-> -       strncpy(&vendor[8], (char *)(&c), 4);
-> +       memcpy(&vendor[0], (char *)(&b), 4);
-> +       memcpy(&vendor[4], (char *)(&d), 4);
-> +       memcpy(&vendor[8], (char *)(&c), 4);
->         vendor[12] =3D '\0';
->  }
+>         if (!mutex_trylock(&system_transition_mutex))
+>                 return -EBUSY;
 >
 > --
-> 2.49.0
->
 
