@@ -1,174 +1,200 @@
-Return-Path: <linux-kernel+bounces-713219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC8C7AF1516
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:12:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 877F2AF152C
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:16:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B97867AB772
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 12:10:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1EB3F1C4312A
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 12:15:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B9AD26FDA5;
-	Wed,  2 Jul 2025 12:11:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7B89278773;
+	Wed,  2 Jul 2025 12:13:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sRi+xsZ9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ad6CQ57t"
+Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B70D23D2A3;
-	Wed,  2 Jul 2025 12:11:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEE5E274B42
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 12:13:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751458300; cv=none; b=GYL8e7FWyecC6yVZj3eusrT5ct3UR0e3R3V5ACji+Up+mIs3wqVkx4X7cuAgLmje1Dp9DCB66cuvjs3kmX+XCFVGkSMqptce+xHEY4L97az0EbqLN5Q3LknGjmyCQeitQiCMD3j6phNXWRca63+zJq54R7Rv98W31MYNlvlDJJk=
+	t=1751458384; cv=none; b=rkKtkpDQ8OugOGb5PWPkAe8ya2AF3icFC21I9BGOv4OPS8W2AnY1INropzWb1p3QAO7DHxeVazBBSUoHQBYwgRiJyjdUN9xHddSwb0pbR4OpIRoQqFdAk+FcE839TVJAnx85S6bYuYi2tcJFGwV6AEUlQyW/v6ZERwNs2TXKlQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751458300; c=relaxed/simple;
-	bh=C6TFBmrfVjExnWTXpHpcNDBsptXWGqMJMSNbdjB9Dsc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GRRnSQvOk0TbakKzreDPrXjdPfNhzFsgUIY9xUQQsq8tBImBrlfH3DRCNwaAyf83eCvtoMeydisdAAccsV3T71tC2BhBSK6RWweMfYO6nk5RY24st4QlKRhapakzWv7NLcJSsZYMoAbQuktXyrqCB2gERxDBU79ArIiRrnN2Dl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sRi+xsZ9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EEB1C4CEED;
-	Wed,  2 Jul 2025 12:11:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751458299;
-	bh=C6TFBmrfVjExnWTXpHpcNDBsptXWGqMJMSNbdjB9Dsc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=sRi+xsZ9QbF3yUiq3dqKYF/zZrk8tOZF45+9yTlxFrJoS5sBraE58BkNmSIofx3Yq
-	 HGCgTyMkOyDjGMSU7hI1YJENxKCTG5XF/+1JdLPu155hvc94K8lFNmTbFdsYvWuac2
-	 FwZh9B7T+GllpGaw2JdtHo8FDQgXureyBOMnE4BX99e3eSpimPHIUIHeEJi54CkPFQ
-	 gziXP66tWp6o29He2NAqbx+kL6n9JhK7BZuxrSWTJULHRu6iRVWrTvlNC68ommt+Lq
-	 BwQcCzavA2Kjb5Z6l6GXdh6DCjFIPsj2aeBM7RrMbLrhbrfTF4Dz0GymJ3P3mfVhdY
-	 eqBAH/vWgG7Yw==
-Message-ID: <1cc6f462-dfd2-46ed-8534-a44812ef1cbd@kernel.org>
-Date: Wed, 2 Jul 2025 14:11:35 +0200
+	s=arc-20240116; t=1751458384; c=relaxed/simple;
+	bh=oClDJcT0mTELwPMf1uIqlxpRObpfhkuJDcTpu4d7ylI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cOHqSv2WH4R1dzrnR/Ldwq2dfGc0gwEM6Xcz9binm3qL+cbfHcvKerYp1PbZUfeyejz4UGWCB4QYbWD+ACa8GxCE/BJZ+cDaZ1PCC2UU8lLfqZf6yGl0Tf4NOP+f8+XRaiQLZtaDa4qxfxLu59ONMSfOR+3p2dUvVHzuyDNA480=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ad6CQ57t; arc=none smtp.client-ip=209.85.219.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e8187601f85so5975978276.2
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 05:13:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1751458382; x=1752063182; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=9gk4s+SONPpEB34QsQQb13XEXrE5uFgXKOQWW3pBsTo=;
+        b=ad6CQ57twtnzZ2FeSCplJsw4oZ8pQTTWrc86OBlc4QMTXiJQVwJcykh4II/LSoYIaC
+         CbJCZPpOY6x8dlBHn/LUJ+k09mDahR1jIfxEtwCwbi30YMYKa5JztVF/L3Siek+Lhnhs
+         zj99UMvx3/hm/m621hfQ0omx59BIWxhKVraQLnbPMYSfoi2Gj+Cukn4wzNuqMnX6ykHJ
+         NCTF988haTQggTaNupeC4+5gbq0mZteU/qIHDU5GJ5rNW5PmbpSaGODzA+ObMRPKDpJD
+         FRFVOQhQuy2/qj4TvHJiOY3IJPVxWdAd0/Hn1sNpWgBewMxyqVArS3IDT8RoOlO69DKZ
+         32xw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751458382; x=1752063182;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9gk4s+SONPpEB34QsQQb13XEXrE5uFgXKOQWW3pBsTo=;
+        b=Z+QeNaGPotr0VvAN+L8V9VmN8ZDF9D5U7u59ZX2yPKYtCTjU4EfygKqHC4RtqRIUuU
+         16HxXMhJXjZ2pEE/PzVxTXrMDrs2o4mSlZVku5Tspiet33ZPtkVhI5pP8R52mwK2278W
+         IpgkNsyygdC1SzHFYtwcNmaKj/Uwbg8N7kB6YIB+GEtvGEyt1HnRpUD/EalLkbbUXtlx
+         KS0fn3/Pf9IUTFa0Qh6Vbbg/6hpeGPV7BKvtDSqAxd9ZKmghyVHrr3piDOlTqkN0LYgn
+         RkagksPkzBVOiOAtxXuprDHBn2UD64s7jmwUc08HREnJgbUNkmxHMpilOJoqd2A3Pvj3
+         DFbw==
+X-Forwarded-Encrypted: i=1; AJvYcCWuFD1jvs98zOMRkN3cdFlzZPRvzRzKYAD290rrAAZbNCFHkRbgHXSfcDJzL1CtSFoRe7dYUDIFZuXlfMs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDAlae8wWb9SL0y7NFxKOZOUpe+LCNL64PUxZPdobVS+MjQKjp
+	x7z7bh+2C8va4+unvip3o6OlTOh7opBvVXsJOAFjYkORq84dwfcEUj6hzIe+D+2OKdwS6PveBwj
+	/ZrgbwZJUTcyflcEiCAQsxyGI0gk6pIR2m/KdqpiTow==
+X-Gm-Gg: ASbGncsS4EcwfqVzBV2uNSfsDBH3u0mRd2XuuG6lt02ahqB2af3/0hGzLGuHbrfWeMr
+	fMh/GVzAedTNPr9ulkBEPjYZDEhzmFPoq90tBfhodztSaIfJVI1SRJoABXQrOro9lKOnmJI4pEw
+	RGHreZXAec2K2rJ+6C0jf1mtV1sBvdFgzQ4n+U+lHFM/nYkNK8VTaZv2Q=
+X-Google-Smtp-Source: AGHT+IG3NWai+ZP/un1xZG3CzZCkLzSMLJaFL3JR+EQ/9jK23FydSpvbz+8ZOtgLz/en/MyFioW+0zHkRi1p3FqLmno=
+X-Received: by 2002:a05:690c:4a0b:b0:6fb:a696:b23b with SMTP id
+ 00721157ae682-7164d571f91mr35480447b3.33.1751458376965; Wed, 02 Jul 2025
+ 05:12:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/5] media: dt-bindings: add non-pixel property in iris
- schema
-To: Vikash Garodia <quic_vgarodia@quicinc.com>,
- Dikshita Agarwal <quic_dikshita@quicinc.com>,
- Abhinav Kumar <abhinav.kumar@linux.dev>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250627-video_cb-v3-0-51e18c0ffbce@quicinc.com>
- <20250627-video_cb-v3-1-51e18c0ffbce@quicinc.com>
- <6fd3fa34-69e1-484f-ad6f-8caa852f1a6c@kernel.org>
- <dc6e82a1-82be-b8b8-31c3-8b85447d4e43@quicinc.com>
- <8b88cea4-b9f2-4365-829c-2a255aed6c69@kernel.org>
- <ae23ebae-3101-4a73-2bbd-0dabb4efaba1@quicinc.com>
- <45fdf98c-32f7-4b5f-889c-6d2f1fa5fbd6@kernel.org>
- <87d0795e-82d5-3274-4909-dd795d082295@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <87d0795e-82d5-3274-4909-dd795d082295@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250613-pmdomain-hierarchy-onecell-v3-0-5c770676fce7@baylibre.com>
+ <20250613-pmdomain-hierarchy-onecell-v3-2-5c770676fce7@baylibre.com>
+ <CAPDyKFrO9rb0eDb2qO+EGaVjOFG=7emgca8511XACDhWY=dt5g@mail.gmail.com>
+ <7hsejzp4xg.fsf@baylibre.com> <CAPDyKFo-iPBPgkM43q+5cGR2sptkLk4E6TAERCQbCu24o1RfFQ@mail.gmail.com>
+ <7hcyb1os9y.fsf@baylibre.com> <CAPDyKFpTgAmLBq2ZExPoxWM0wL756zH96vW7M6wHSA1MTTG1wA@mail.gmail.com>
+ <7hjz4tnlg6.fsf@baylibre.com>
+In-Reply-To: <7hjz4tnlg6.fsf@baylibre.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 2 Jul 2025 14:12:20 +0200
+X-Gm-Features: Ac12FXx099YexnSX3D-jd8HuUZnwt5D-jZ9PNizBBy6pBlCC473WjWV1dygsTok
+Message-ID: <CAPDyKFrY2kNaP=Hk-81B4WEGxyKUTYqBWJHQKtHnyTPWTFUOEQ@mail.gmail.com>
+Subject: Re: [PATCH RFC v3 2/2] pmdomain: core: add support for subdomains
+ using power-domain-map
+To: Kevin Hilman <khilman@baylibre.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, devicetree@vger.kernel.org, 
+	linux-pm@vger.kernel.org, arm-scmi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 02/07/2025 14:08, Vikash Garodia wrote:
-> 
-> On 7/2/2025 5:28 PM, Krzysztof Kozlowski wrote:
->> On 02/07/2025 13:55, Vikash Garodia wrote:
->>>
->>>
->>> On 7/2/2025 5:17 PM, Krzysztof Kozlowski wrote:
->>>> On 02/07/2025 13:45, Vikash Garodia wrote:
->>>>>
->>>>> On 7/2/2025 4:53 PM, Krzysztof Kozlowski wrote:
->>>>>> On 27/06/2025 17:48, Vikash Garodia wrote:
->>>>>>> +
->>>>>>>      video-codec@aa00000 {
->>>>>>>          compatible = "qcom,sm8550-iris";
->>>>>>>          reg = <0x0aa00000 0xf0000>;
->>>>>>> @@ -144,12 +176,16 @@ examples:
->>>>>>>          resets = <&gcc GCC_VIDEO_AXI0_CLK_ARES>;
->>>>>>>          reset-names = "bus";
->>>>>>>  
->>>>>>> -        iommus = <&apps_smmu 0x1940 0x0000>,
->>>>>>> -                 <&apps_smmu 0x1947 0x0000>;
->>>>>>> +        iommus = <&apps_smmu 0x1947 0x0000>;
->>>>>>
->>>>>> I missed, that's technically ABI break and nothing in commit msg
->>>>>> explains that. You need to clearly explain the reasons and impact.
->>>>> No, it is not. Interface works well with old or new approach.
->>>>
->>>>
->>>> You changed the order of IOMMUs, so yes it is. Which interface works
->>>> well - FreeBSD? Or other? You are changing ABI for every user.
->>> Why do i need to change, when without changing would work as well ?
->> ? I don't understand. I made a statement, not a question. You are doing
->> this - you are changing the ABI.
->>
->> Which item was the first IOMMU before and which was second?
->>
->> Which item is the first IOMMU now?
-> Old approach - max 2 iommus interface - <SID-A, SID-B>
-> New approach - min 1/max 2, iommu interface - <SID-B>, child - <SID-A>
+On Mon, 30 Jun 2025 at 20:17, Kevin Hilman <khilman@baylibre.com> wrote:
+>
+> Ulf Hansson <ulf.hansson@linaro.org> writes:
+>
+> > [...]
+> >
+> >> I've done an implementation with struct device_node *.  This works
+> >> better (IMO) than struct of_phandle_args * because the caller (in my
+> >> case scmi_pm_domain.c) already has device nodes, but not phandle args.
+> >>
+> >> The result will be that the pmdomain helper will call
+> >> pm_genpd_add_subdomain() instead of of_genpd_add_subdomain().
+> >>
+> >> Below[1] is the current working version, which includes adding the
+> >> helper to the PM domain core and showing the usage by the SCMI provider.
+> >>
+> >> How does this look?
+> >
+> > It's a lot better in my opinion. Although, I have a few comments below.
+> >
+> >>
+> >> Note that doing this at provider creation time instead of
+> >> <genpd>->attach_dev() time will require some changes to
+> >> of_parse_phandle_with_args_map() because that function expects to be
+> >> called for a device that has a `power-domains = <provider>` property,
+> >> not for the provider itself.  But I have it working with some local
+> >> changes to make that helper work if called for the provider directly.
+> >> If you're OK with the PM domains approach, I'll post another rev of this
+> >> series which includes the OF changes for review by DT maintainers.
+> >>
+> >> Kevin
+> >>
+> >> [1]
+> >> ---
+> >>  drivers/pmdomain/arm/scmi_pm_domain.c | 12 ++++++++--
+> >>  drivers/pmdomain/core.c               | 34 +++++++++++++++++++++++++++
+> >>  include/linux/pm_domain.h             | 11 ++++++++-
+> >>  3 files changed, 54 insertions(+), 3 deletions(-)
+> >>
+> >> diff --git a/drivers/pmdomain/arm/scmi_pm_domain.c b/drivers/pmdomain/arm/scmi_pm_domain.c
+> >> index a7784a8bb5db..8197447e9d17 100644
+> >> --- a/drivers/pmdomain/arm/scmi_pm_domain.c
+> >> +++ b/drivers/pmdomain/arm/scmi_pm_domain.c
+> >> @@ -54,7 +54,7 @@ static int scmi_pd_power_off(struct generic_pm_domain *domain)
+> >>
+> >>  static int scmi_pm_domain_probe(struct scmi_device *sdev)
+> >>  {
+> >> -       int num_domains, i;
+> >> +       int num_domains, i, ret;
+> >>         struct device *dev = &sdev->dev;
+> >>         struct device_node *np = dev->of_node;
+> >>         struct scmi_pm_domain *scmi_pd;
+> >> @@ -115,7 +115,15 @@ static int scmi_pm_domain_probe(struct scmi_device *sdev)
+> >>
+> >>         dev_set_drvdata(dev, scmi_pd_data);
+> >>
+> >> -       return of_genpd_add_provider_onecell(np, scmi_pd_data);
+> >> +       ret = of_genpd_add_provider_onecell(np, scmi_pd_data);
+> >> +       if (ret)
+> >> +               return ret;
+> >> +
+> >> +       /* check for (optional) subdomain mapping with power-domain-map */
+> >> +       for (i = 0; i < num_domains; i++, scmi_pd++)
+> >> +               of_genpd_add_subdomain_map(np, domains[i], i);
+> >> +
+> >> +       return ret;
+> >>  }
+> >>
+> >>  static void scmi_pm_domain_remove(struct scmi_device *sdev)
+> >> diff --git a/drivers/pmdomain/core.c b/drivers/pmdomain/core.c
+> >> index 88819659df83..3ede4baa4bee 100644
+> >> --- a/drivers/pmdomain/core.c
+> >> +++ b/drivers/pmdomain/core.c
+> >> @@ -3220,6 +3220,40 @@ int of_genpd_parse_idle_states(struct device_node *dn,
+> >>  }
+> >>  EXPORT_SYMBOL_GPL(of_genpd_parse_idle_states);
+> >>
+> >> +int of_genpd_add_subdomain_map(struct device_node *np,
+> >> +                              struct generic_pm_domain *domain,
+> >> +                              int index)
+> >
+> > Providing the struct generic_pm_domain *domain as an in-parameter for
+> > the child-domain seems unnecessary and limiting to me.
+> >
+> > Instead I think we should parse the power-domain-map DT property at
+> > 'index', to find the corresponding child-domain's specifier/index and
+> > its corresponding parent-domain.
+> >
+> > In other words, we don't need the struct generic_pm_domain *domain as
+> > an in-parameter, right?
+>
+> I'm not sure I follow.  The `struct generic pm_domain *domain` is the
+> SCMI child domain.  From the map, we use the index to find the parent
+> domain.  And then we add the child as a subdomain of the parent.
+>
+> Are you suggesting that I (re)parse the DT for to find the child domain
+> also?
 
-So you changed first IOMMU entry, first IOMMU master and that is
-technically ABI break.
+Correct!
 
-> 
-> If both works, how is interchanging impacting any existing hardware OR breaking
-> ABI ?
+The DT property ("power-domains-map") that you added in patch1/2,
+contains all the information so let's just parse it and assign
+child/parent domains based on it.
 
-Because you change the entries. The ordering of lists - not iommus which
-do not matter for Linux here - was discussed many times, so just refer
-to that discussions.
-
-
-
-Best regards,
-Krzysztof
+Kind regards
+Uffe
 
