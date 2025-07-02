@@ -1,190 +1,165 @@
-Return-Path: <linux-kernel+bounces-712682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-712684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E43D6AF0D46
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 09:56:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 079AAAF0D4D
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 09:57:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CA3F4E262E
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 07:56:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 411A04E2873
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 07:57:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70A002343AF;
-	Wed,  2 Jul 2025 07:55:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BC1F235346;
+	Wed,  2 Jul 2025 07:57:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="c7C0pW7o"
-Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jDAJOT7H"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F9BD22F770
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 07:55:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90DCF211F;
+	Wed,  2 Jul 2025 07:57:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751442947; cv=none; b=otlf49obe969HbmCAoohRkg8W8/hDmoOjBw6LvlMAwhGg72OQuVRV36T2o+nOKtvod7sAh2axdpYekBcqP4r4Csu9nRQ53jsE1PT1j7bHIE7KON2uw7ziXu9lCyEzxahBp/PPJMsl1o2bSecDeJx/O2CQXwe6xY1q3JY5YzdUWA=
+	t=1751443022; cv=none; b=t3T72Ht9UB0PEUfniZlKb+cA8yM9SN4XbAGWEEFxl9Dvx8UWIfs6AN2GPqdKiQ6g2qVEeHqt7MXtPIiz8IAFe221ekZv1bc3QrRDxWjrp1WmPufSK2GnsPqwwAkiYLJ+G2sDFVkVVqApw2FGYjGgTexmp2kIUBAS5LO0n1NWg3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751442947; c=relaxed/simple;
-	bh=/bfTAQ8PzsZmt2DNsy/cU3MuVs3Qmjip+JzAsJ/5Ho4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=W6CwsAj7WoFlA39O2YAVGK8jjAhQraX3qmrxtZUabT6NV7qufOtoLlNrsmuNKQ6WEfcSRI/IgnFq4SlTPCkUes0AP1ejBHmYzMTTiXZAjCo+Mo2wPvxkOeHu0yLdFOtC5qxb+txD+VBdDE/RcS5PmrmvuBTQS1VI9r8JfhNQSs0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=c7C0pW7o; arc=none smtp.client-ip=209.85.222.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-7d45b80368dso361498985a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 00:55:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1751442945; x=1752047745; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hSsKRhJBE8lRElFRL+IhPaHJkxl0mfdl4lEoqNBz1WY=;
-        b=c7C0pW7oqd2uWSFBw7EvZmhsR9UXtzRs7ZiYepXDW/BH8Bc9aj65Hy0ABFW66oimT2
-         Y0IhDsE9tRDunor7Dzr9IFARFCwuuuGWdifvYHInIIPQ5AhV5jwfm6q2EN4NzOFFXBU/
-         KHCSgiOoTMJzzHx9oAPC8aaZZwhrtot8JMmapB0CNqJjkVLioIi3obQ1fXZ61wmyYv8Y
-         1PA/LI2ygFGzF8eCaUWrB0RRPuzO6bybT4/ELSoFPJHRaqNlu5rq5UXnuRQbrlh6KT+8
-         h+I+USCFUtE1bBq/SEDJnPFHR9GQqp9HcALJsOahd0uGMu7sBndNmIr0s2V6PGR0yScA
-         /Avw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751442945; x=1752047745;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hSsKRhJBE8lRElFRL+IhPaHJkxl0mfdl4lEoqNBz1WY=;
-        b=XYN6ma04ivoxBLoa4e1dzbLJ0pWdk7Uq0An/t4eh7QBMVW22bfcNPG/sf9SqO7nDdd
-         okPOAFyU14Cc3r6w+lf2TYjOmlr2+RLmoNf5SMePOleUunVcASOyVEbjrzTOu+evCE3G
-         ITITaukveOoLiS83s9B1CKMVBO2cr/vFjPZXNgrfNfR06ouihUF0BQHBhGD3c5w8FxJV
-         IKg9bhnVO+2udba3IGIfwaaxj0y0qjXmBwcJo+r3SABsnIImlrfjXGPu6UujboH7emsd
-         NbN33jqE47JPjKEot5magvTR8hdYShqh6R1i1yXJW2Bnusmzve9bIq94ZVkrmJCs+2ON
-         KBtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU5mNFnK5juPHMNl+NMsvrOhz6IwSZTd8pyWG1gmGl8HHLquhjFgxNXF0Q8YijGVPuQrsS+Tuhh5QZ102E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRcHdVjVv0o87OIH6csaB5swTgWIQmPOXh2xnYoNwEQLkncQ5z
-	1XiFtUK+tyrMh1+eXwJFxJdSeVrwofUHRPo1Sbg+EmPxI9pB4Yh94dWBHOPARPA6gJsZte4gALr
-	tuBjjki4dlOtfDnADvXvG9glbZioIBe+IJjccVfwD
-X-Gm-Gg: ASbGncvTbPY+hAB9TdWvvNWCRDPDw6WK+Gp/5wK+4f4GQU43uhW3wIcBWucr503bgyA
-	BazmKQPVbLyU8rJgsjeU8BogvgTgCcDBkxcOsC/9czjGBTVt7VOrFCfnUFnwKD7AdONtRidW9Pv
-	aRlR8okUPpQnxvj3fnj+ZYQBuGQGwLbb7rbiTYfe8UGYE=
-X-Google-Smtp-Source: AGHT+IHCyXllKRxOEY7OadGO0pjo3HQtu0upzCM1g8cmtNwLNoJJQlkdBq44unTbmV/NdltyxBdXqgv+SeGiljq+rds=
-X-Received: by 2002:a05:620a:63c1:b0:7d3:f51e:d775 with SMTP id
- af79cd13be357-7d5c46a30acmr270076985a.24.1751442944691; Wed, 02 Jul 2025
- 00:55:44 -0700 (PDT)
+	s=arc-20240116; t=1751443022; c=relaxed/simple;
+	bh=iPRdlhGWfx9VLtmj4Qr358Ma925NEGSXkWBmva+PDXA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=plkB7jo3AHMw9b8GRYXVf0e6H++nt1Wt5nO9rgDI6HxMSJyDrl6KjdLUXbq3g+S5cH4K978mUalvmEL3kcmwmUw7DNPTovnyF6TJzvSRqhbz0IDmg0dbDrJXPE5GeiD5GBPJXVsZPol9lS1R3kiCkw7l7vurvdtp7TBw7N65/7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jDAJOT7H; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D4BDC4CEED;
+	Wed,  2 Jul 2025 07:56:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751443022;
+	bh=iPRdlhGWfx9VLtmj4Qr358Ma925NEGSXkWBmva+PDXA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=jDAJOT7HLum6yiMRluiGc4tMSFC54IRmLsQrSvdr2uOF6JHJgGCg3CpR9fHpPRDNy
+	 j5g2vjUhlis20IrYgZ9S2CfzylqaQ9ayGZ8GA72tEsMogJciaC0a+g9eHB8KXv5YK9
+	 y7XQV8ecp2z/J3SjobB3j/rGb3CVKpQF3wexh+SrXIns+8W70gUfT+NcYlhusCGB/b
+	 tiNebM/8pvcgVwXhS/sIxMbUYIBziCMDvbrVi8jbpUPkcxvakHCJB9QbzY25s2Kke9
+	 AsKGkUI7mW/57u+FwKv0XSEL2Kg1IWZme0S6itxsB8+0y+L+shI39jyHpMg+g6e2RF
+	 JGtMVN77NvWhw==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Benno Lossin" <lossin@kernel.org>
+Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Alex Gaynor"
+ <alex.gaynor@gmail.com>,  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo"
+ <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,  "Alice
+ Ryhl" <aliceryhl@google.com>,  "Masahiro Yamada" <masahiroy@kernel.org>,
+  "Nathan Chancellor" <nathan@kernel.org>,  "Luis Chamberlain"
+ <mcgrof@kernel.org>,  "Danilo Krummrich" <dakr@kernel.org>,  "Nicolas
+ Schier" <nicolas.schier@linux.dev>,  "Trevor Gross" <tmgross@umich.edu>,
+  "Adam Bratschi-Kaye" <ark.email@gmail.com>,
+  <rust-for-linux@vger.kernel.org>,  <linux-kernel@vger.kernel.org>,
+  <linux-kbuild@vger.kernel.org>,  "Petr Pavlu" <petr.pavlu@suse.com>,
+  "Sami Tolvanen" <samitolvanen@google.com>,  "Daniel Gomez"
+ <da.gomez@samsung.com>,  "Simona Vetter" <simona.vetter@ffwll.ch>,  "Greg
+ KH" <gregkh@linuxfoundation.org>,  "Fiona Behrens" <me@kloenk.dev>,
+  "Daniel Almeida" <daniel.almeida@collabora.com>,
+  <linux-modules@vger.kernel.org>
+Subject: Re: [PATCH v13 2/6] rust: introduce module_param module
+In-Reply-To: <DB0U12HAEVZ6.JKFPI2UQHDRY@kernel.org> (Benno Lossin's message of
+	"Tue, 01 Jul 2025 17:43:29 +0200")
+References: <20250612-module-params-v3-v13-0-bc219cd1a3f8@kernel.org>
+	<DATW0XWNN45X.1L2WMZ41JJ5O8@kernel.org> <87v7om4jhq.fsf@kernel.org>
+	<RPPvXQKnjK77Kp9mKaiFxbNj1fTHKb_I7_nbY81fZop-Wz8n5TTi4_lpXP9U9AwjocvZKqJPI8PGKufJn9cIzQ==@protonmail.internalid>
+	<DAU0J3T0IEVM.2K7ZRQOVOHF8H@kernel.org> <878qlh4aj1.fsf@kernel.org>
+	<87plepzke5.fsf@kernel.org>
+	<xFouVLxX1_t1mH69FDYwlIhBlI72M0IzQEKn0ntG_wT9z7V5DtbxiwVP_frH_yiS-Gf0q_AhqetbLmuvJ_yP5Q==@protonmail.internalid>
+	<DAX65TRN0TGP.25VZ9DYV86XWY@kernel.org> <87wm8txysl.fsf@kernel.org>
+	<9G3W1seaM7elcwWXaeoaa2nfpFYCf-AmBdvZhACGP13KGUtTPVMwGNYdTQsdtp8ru7GIP3-UYTzXscC1MRUKrg==@protonmail.internalid>
+	<DAZV8OGL8BMH.11SLXBXQ17ZJ9@kernel.org> <87h5zxxtdw.fsf@kernel.org>
+	<H78pT7YnQEhAXdxzl_hhnGVUiQuFpibB21_bjH658fMz_5JYbwsPLYYVh8u1gYnzK3N3ilTEAvqOpkuptVx3rg==@protonmail.internalid>
+	<DB03MZI2FCOW.2JBFL3TY38FK@kernel.org> <87bjq4xpv7.fsf@kernel.org>
+	<ffROWpeKczrWSBlKYov2atJG-QD5l5fUOb2dVCNkWlcT9h6DJpa4joGQpjqtYyLP7HX227fCAayyDQunZ464XQ==@protonmail.internalid>
+	<DB0LKI8BO3HZ.3FF03JN4364RM@kernel.org> <87zfdovvz4.fsf@kernel.org>
+	<UQ6WtusvCeJPizlUr0kA7_g7RGdSRfQ6L29hClAXDKsNlWbtAgmCu_glKbUSeyy3I_NKvN5BJW9HbeHleAhRmw==@protonmail.internalid>
+	<DB0U12HAEVZ6.JKFPI2UQHDRY@kernel.org>
+User-Agent: mu4e 1.12.9; emacs 30.1
+Date: Wed, 02 Jul 2025 09:56:50 +0200
+Message-ID: <87tt3vvxdp.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250702033600.254-1-linma@zju.edu.cn>
-In-Reply-To: <20250702033600.254-1-linma@zju.edu.cn>
-From: Eric Dumazet <edumazet@google.com>
-Date: Wed, 2 Jul 2025 00:55:33 -0700
-X-Gm-Features: Ac12FXyYuewkGoZYfRbx4pTkZDsGN8U0H1xKQQf2LmCa8nMOtxTffaLw31dtXwM
-Message-ID: <CANn89i+OJTG6YT1paZRigUuPB9gggL7p+sPym3_rZywKCaYqzQ@mail.gmail.com>
-Subject: Re: [PATCH net] net: atm: Fix incorrect net_device lec check
-To: Lin Ma <linma@zju.edu.cn>
-Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, 
-	mingo@kernel.org, tglx@linutronix.de, pwn9uin@gmail.com, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Tue, Jul 1, 2025 at 8:36=E2=80=AFPM Lin Ma <linma@zju.edu.cn> wrote:
->
-> There are two sites in atm mpoa code that believe the fetched object
-> net_device is of lec type. However, both of them do just name checking
-> to ensure that the device name starts with "lec" pattern string.
->
-> That is, malicious user can hijack this by creating another device
-> starting with that pattern, thereby causing type confusion. For example,
-> create a *team* interface with lecX name, bind that interface and send
-> messages will get a crash like below:
->
-> [   18.450000] kernel tried to execute NX-protected page - exploit attemp=
-t? (uid: 0)
-> [   18.452366] BUG: unable to handle page fault for address: ffff88800570=
-2a70
-> [   18.454253] #PF: supervisor instruction fetch in kernel mode
-> [   18.455058] #PF: error_code(0x0011) - permissions violation
-> [   18.455366] PGD 3801067 P4D 3801067 PUD 3802067 PMD 80000000056000e3
-> [   18.455725] Oops: 0011 [#1] PREEMPT SMP PTI
-> [   18.455966] CPU: 0 PID: 130 Comm: trigger Not tainted 6.1.90 #7
-> [   18.456921] RIP: 0010:0xffff888005702a70
-> [   18.457151] Code: .....
-> [   18.458168] RSP: 0018:ffffc90000677bf8 EFLAGS: 00010286
-> [   18.458461] RAX: ffff888005702a70 RBX: ffff888005702000 RCX: 000000000=
-000001b
-> [   18.458850] RDX: ffffc90000677c10 RSI: ffff88800565e0a8 RDI: ffff88800=
-5702000
-> [   18.459248] RBP: ffffc90000677c68 R08: 0000000000000000 R09: 000000000=
-0000000
-> [   18.459644] R10: 0000000000000000 R11: ffff888005702a70 R12: ffff88800=
-556c000
-> [   18.460033] R13: ffff888005964900 R14: ffff8880054b4000 R15: ffff88800=
-54b5000
-> [   18.460425] FS:  0000785e61b5a740(0000) GS:ffff88807dc00000(0000) knlG=
-S:0000000000000000
-> [   18.460872] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [   18.461183] CR2: ffff888005702a70 CR3: 00000000054c2000 CR4: 000000000=
-00006f0
-> [   18.461580] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 000000000=
-0000000
-> [   18.461974] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 000000000=
-0000400
-> [   18.462368] Call Trace:
-> [   18.462518]  <TASK>
-> [   18.462645]  ? __die_body+0x64/0xb0
-> [   18.462856]  ? page_fault_oops+0x353/0x3e0
-> [   18.463092]  ? exc_page_fault+0xaf/0xd0
-> [   18.463322]  ? asm_exc_page_fault+0x22/0x30
-> [   18.463589]  ? msg_from_mpoad+0x431/0x9d0
-> [   18.463820]  ? vcc_sendmsg+0x165/0x3b0
-> [   18.464031]  vcc_sendmsg+0x20a/0x3b0
-> [   18.464238]  ? wake_bit_function+0x80/0x80
-> [   18.464511]  __sys_sendto+0x38c/0x3a0
-> [   18.464729]  ? percpu_counter_add_batch+0x87/0xb0
-> [   18.465002]  __x64_sys_sendto+0x22/0x30
-> [   18.465219]  do_syscall_64+0x6c/0xa0
-> [   18.465465]  ? preempt_count_add+0x54/0xb0
-> [   18.465697]  ? up_read+0x37/0x80
-> [   18.465883]  ? do_user_addr_fault+0x25e/0x5b0
-> [   18.466126]  ? exit_to_user_mode_prepare+0x12/0xb0
-> [   18.466435]  entry_SYSCALL_64_after_hwframe+0x6e/0xd8
-> [   18.466727] RIP: 0033:0x785e61be4407
-> [   18.467948] RSP: 002b:00007ffe61ae2150 EFLAGS: 00000202 ORIG_RAX: 0000=
-00000000002c
-> [   18.468368] RAX: ffffffffffffffda RBX: 0000785e61b5a740 RCX: 0000785e6=
-1be4407
-> [   18.468758] RDX: 000000000000019c RSI: 00007ffe61ae21c0 RDI: 000000000=
-0000003
-> [   18.469149] RBP: 00007ffe61ae2370 R08: 0000000000000000 R09: 000000000=
-0000000
-> [   18.469542] R10: 0000000000000000 R11: 0000000000000202 R12: 000000000=
-0000000
-> [   18.469936] R13: 00007ffe61ae2498 R14: 0000785e61d74000 R15: 000057bdd=
-cbabd98
->
-> Refer to other net_device related subsystem, checking netlink_ops seems
-> like the correct way out, e.g., see how xgbe_netdev_event() validates
-> the netdev object. Hence, add correct comparison with lec_netdev_ops to
-> safeguard the casting.
->
-> By the way, this bug dates back to pre-git history (2.3.15), hence use
-> the first reference for tracking.
->
-> Signed-off-by: Lin Ma <linma@zju.edu.cn>
-> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-> ---
->  net/atm/mpc.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
->
-> diff --git a/net/atm/mpc.c b/net/atm/mpc.c
-> index f6b447bba329..96ea134e22fe 100644
-> --- a/net/atm/mpc.c
-> +++ b/net/atm/mpc.c
-> @@ -275,6 +275,9 @@ static struct net_device *find_lec_by_itfnum(int itf)
->         sprintf(name, "lec%d", itf);
->         dev =3D dev_get_by_name(&init_net, name);
->
-> +       if (dev->netdev_ops !=3D lec_netdev_ops)
+"Benno Lossin" <lossin@kernel.org> writes:
 
-This will crash if dev is NULL
+> On Tue Jul 1, 2025 at 4:14 PM CEST, Andreas Hindborg wrote:
+>> "Benno Lossin" <lossin@kernel.org> writes:
+>>> On Tue Jul 1, 2025 at 10:43 AM CEST, Andreas Hindborg wrote:
+>>>> No, I am OK for now with configfs.
+>>>>
+>>>> But, progress is still great. How about if we add a copy accessor
+>>>> instead for now, I think you proposed that a few million emails ago:
+>>>>
+>>>>     pub fn get(&self) -> T;
+>>>>
+>>>> or maybe rename:
+>>>>
+>>>>     pub fn copy(&self) -> T;
+>>>>
+>>>> Then we are fine safety wise for now, right? It is even sensible for
+>>>> these `T: Copy` types.
+>>>
+>>> That is better than getting a reference, but still someone could read at
+>>> the same time that a write is happening (though we need some new
+>>> abstractions AFAIK?). But I fear that we forget about this issue,
+>>> because it'll be some time until we land parameters that are `!Copy` (if
+>>> at all...)
+>>
+>> No, that could not happen when we are not allowing custom parsing or
+>> sysfs access. Regarding forgetting, I already added a `NOTE` on `!Copy`,
+>> and I would add one on this issue as well.
+>
+> Ultimately this is something for Miguel to decide. I would support an
+> unsafe accessor (we should also make it `-> T`), since there it "can't
+> go wrong", any UB is the fault of the user of the API. It also serves as
+> a good reminder, since a `NOTE` comment shouldn't be something
+> guaranteeing safety (we do have some of these global invariants, but I
+> feel like this one is too tribal and doesn't usually come up, so I feel
+> like it's more dangerous).
+
+I see no reason for making it unsafe when it is safe?
+
+
+    /// Get a copy of the parameter value.
+    ///
+    /// # Note
+    ///
+    /// When this method is called in `const` context, the default
+    /// parameter value will be returned. During module initialization, the
+    /// kernel will populate the parameter with the value supplied at module
+    /// load time or kernel boot time.
+    // NOTE: When sysfs access to parameters are enabled, we have to pass in a
+    // held lock guard here.
+    //
+    // NOTE: When we begin supporting custom parameter parsing with user
+    // supplied code, this method must be synchronized.
+    pub const fn copy(&self) -> T {
+        // SAFETY: As we only support read only parameters with no sysfs
+        // exposure, the kernel will not touch the parameter data after module
+        // initialization. The kernel will update the parameters serially, so we
+        // will not race with other accesses.
+        unsafe { *self.data.get() }
+    }
+
+>
+> I think we should also move this patchset along, we could also opt for
+> no accessor at all :) Then it isn't really useful without the downstream
+> accessor function, but that can come after.
+
+I would rather not merge it without an access method. Then it is just
+dead code, and we will not notice if we break it.
+
+
+Best regards,
+Andreas Hindborg
+
+
+
 
