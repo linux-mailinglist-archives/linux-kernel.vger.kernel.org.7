@@ -1,108 +1,136 @@
-Return-Path: <linux-kernel+bounces-713112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77E5BAF1374
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 13:16:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF19FAF137F
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 13:17:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4FD11C24181
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 11:17:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EEE8717B486
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 11:17:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F78826562D;
-	Wed,  2 Jul 2025 11:16:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF28F25EFB6;
+	Wed,  2 Jul 2025 11:17:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="igw5TDlM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WmZ/CyvD"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF01D2652B4
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 11:16:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0FD92528EF
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 11:17:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751454982; cv=none; b=bZ7pbIzmZVGHS8YtVeuNj5M5N/cL0ui8KyZ9P+z/vicxDRhvH5wmeWdAuCH70ZzNyVuQW1QXieKgF9a8c4R5SbTdjL7ZlOZLmaFoCzrasemErG+5bW+lAxFSp3Czy0icl5dmrdiUcgxDVNyvq8r6WgSOX3l+vm7yQjBBJ1C/mrM=
+	t=1751455042; cv=none; b=WJWXnpRzypUELVPzpiBnKJ6nkwholphuEBNIynExHuD3tZEI7BNgDAaowbedcLPD6GtrRNiKOOc2UgEcSmZXF4QhVpgLtzWR59eDYymV9bJV9CHve3DIIrZvY4NttDqRfch9om9FikL/55CifpxQ2LJY2sWRqL40fhpzCTUoniU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751454982; c=relaxed/simple;
-	bh=WLv6kMUNDvp/npyieXA0KsxaoL75iDkMGxmkeaZEDxI=;
+	s=arc-20240116; t=1751455042; c=relaxed/simple;
+	bh=8N56+TGylsQY7gFnKtTRVknM2MRo5gOpmc2AwA02aio=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hZgxio6z5PDyh3ZAgsIExnXrFvxMcs+eghwJfxD5fpNQM/9uS1xNBcSWn++rD3jPsMmdHU/bXXlM7iUQKcgtsVHPL/1gWCIKAHfmdH9jJQno9NzWbrp56JYxdS86bpLHgl4fNCRjYxI8Dr8Vx4hr9xtZZmLtAeTeAeYpKuTn5hU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=igw5TDlM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B84FC4CEED;
-	Wed,  2 Jul 2025 11:16:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751454982;
-	bh=WLv6kMUNDvp/npyieXA0KsxaoL75iDkMGxmkeaZEDxI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=igw5TDlMuxL/IqSJWZQ26IZUTkyWBFkDpgsvTdtU0mIXalHQ6on7V+MIb9ZziMuk5
-	 PE+M1wwvJpCyeWKclIXQCj7N342u0nMBZ1A/g4OoFaFzqbAwSLA2/fRNla/PtTyA8l
-	 hdkvKi6jGpkR8yo78iQTNRrQv5wIzNY2xaVOciFq5qf/Szq/95Fo4NWoPYQxMNJWOj
-	 YL6/xUVps3EfwODVV0hcxo5fWEjLFMfW+woeBYvwDhs9np5ontek5Nbj5yR2EUm0KP
-	 lNf+UBvGS73Wv1QmBhAvwfwPVO4YlOognn+bZ7Y4ajwb4sA7V3Y2O/lLepxczLosqr
-	 xocSD4R/uRooA==
-Date: Wed, 2 Jul 2025 12:16:16 +0100
-From: Mark Brown <broonie@kernel.org>
-To: kan.liang@linux.intel.com
-Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-	namhyung@kernel.org, tglx@linutronix.de,
-	dave.hansen@linux.intel.com, irogers@google.com,
-	adrian.hunter@intel.com, jolsa@kernel.org,
-	alexander.shishkin@linux.intel.com, linux-kernel@vger.kernel.org,
-	dapeng1.mi@linux.intel.com, ak@linux.intel.com, zide.chen@intel.com,
-	mark.rutland@arm.com, ravi.bangoria@amd.com
-Subject: Re: [RFC PATCH V2 06/13] perf: Support SIMD registers
-Message-ID: <69afb239-da54-452d-8ab4-2d80dbdf8dce@sirena.org.uk>
-References: <20250626195610.405379-1-kan.liang@linux.intel.com>
- <20250626195610.405379-7-kan.liang@linux.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=EEVgInLwJUcO9uP1y0V6iqDztz/EWYGNWY88JxrrtAy3ieTBfRzkZDqumTAj+svlFFKrrOQKVpdAHKloKQuJmpcBHco39wGXq169FaZp3dUPFFc2FSrWilsf8lmpXycoZD63f6SqpMSVs3vbj5WmIgNBei7Xo4hYcjB6xJpfRGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WmZ/CyvD; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1751455038;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wldKfbxnDfMUjnGQMZxO+EJVdKQ4uPilVamWozU75kA=;
+	b=WmZ/CyvDp8hWgurY5blr21m7uMd61Ll8G/emFFymjxvWSrEZgV6kYBcIk7oJKhYRuGJajU
+	22fIf0oClYIyaseEjoS9ZqFrfb6ci1wSbVelwIXmGIgSzjS6hSCco3G+2T/TWNf0F861KT
+	NxJms/NSsHAgoC5FV47v/kV0FlwnL7U=
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
+ [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-515-yHpwSfg6MqOl_rUtJA8Ugg-1; Wed, 02 Jul 2025 07:17:17 -0400
+X-MC-Unique: yHpwSfg6MqOl_rUtJA8Ugg-1
+X-Mimecast-MFC-AGG-ID: yHpwSfg6MqOl_rUtJA8Ugg_1751455037
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4a38007c7bdso106314621cf.3
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 04:17:17 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751455037; x=1752059837;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wldKfbxnDfMUjnGQMZxO+EJVdKQ4uPilVamWozU75kA=;
+        b=W+WdyFCoUTpAJ5mbZ1YnKF9Zf1Bu3Xo3tnSLoW0Z3e61NwLARCex6XzxZS5ufb+zrH
+         usLKSmzfZDdBF04sLuTJTImesU1DCQ015HRd6GYcV+1ZpzrxAvRN2UTzs2hkoqg8mo+l
+         rYx9DuE5a1aljG2oKgAsED0czZl+Ku6zRf0eja4rb9kVDhgkcRDYI9+3J9hq5QBTHLD2
+         Vpo8dPMO1l0gPvoL1HQBaA3VxgVarTu/3HDLAKlzwn/vDixKgjdQnIaCRQH1lmIeOuRN
+         MSKCYA6/b5fYmmPZJXG9g0UrkT9momvebPp/t8opdDJyWvC+jVqyAl7wb+PVlEVBVhWw
+         59GQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW000PhXeCMgzzAL1AFYjhTWUiFzfCtZRL8TS8KQ9wowoCF2b+6yB4PHekKqogJm6+kOV6/eJhnaaVUed8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/tL/LFudZRfHK7U08tAtWVcvSXSRX4vxWurNZiQ82lPv03nPL
+	hYdzfsqxkhPZDfVaE8YwraM9xoSzVM4+4aPc4c18PcoOiKrsCIG5EZBK8VFJiOolp10860o8Bqg
+	cWM3PKzICusX0kvpLkRRnLvpZyStzPhekiZYjP4uoOZ0dVSYTIU9MeIx19zwhIjrD5GQU8YEYmw
+	==
+X-Gm-Gg: ASbGncsPKucStkXwQCx+JjPxUfTOGb0vj28aOgU+K/fTcjoisAemkAM2Lhg/GaLGBZ+
+	HDdtvII/lNsxBVs22WtGBOSCEWxq53f8Pom4yRHEeDtysM8SI52XkC407jLA8/qdOWsFDMwQ2q0
+	S+y1oZ+81xmsizgssEqf9O4RLqA5wDe9BboXCWogtUu3VCBKn2yJ43VOP7Pcx1W3uv2UaDtjhJF
+	/x7aD8ESM8wsHMS+NrK2NLr2JOvCacgRxC9dj4rlXn3kaVRKNYxph82Qi0ZIeRqviTtWB9gaBzY
+	z29Wl0d8Gyvp38XD3ma9q6X/fafj
+X-Received: by 2002:a05:622a:4892:b0:4a4:39a6:93c4 with SMTP id d75a77b69052e-4a9769152aamr42028571cf.21.1751455036586;
+        Wed, 02 Jul 2025 04:17:16 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEyX529Bjf/JHbkZ9z4pNDGbh4lbiaMrqb6Gqb4GFhbQWEzxXEP/dakYHu4BYJfkNuEVi7vkQ==
+X-Received: by 2002:a05:622a:4892:b0:4a4:39a6:93c4 with SMTP id d75a77b69052e-4a9769152aamr42027891cf.21.1751455036019;
+        Wed, 02 Jul 2025 04:17:16 -0700 (PDT)
+Received: from sgarzare-redhat ([193.207.164.126])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4a7fc57d8acsm89956541cf.63.2025.07.02.04.17.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Jul 2025 04:17:15 -0700 (PDT)
+Date: Wed, 2 Jul 2025 13:17:07 +0200
+From: Stefano Garzarella <sgarzare@redhat.com>
+To: Luigi Leonardi <leonardi@redhat.com>
+Cc: Michal Luczaj <mhal@rbox.co>, virtualization@lists.linux.dev, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v5 1/2] vsock/test: Add macros to identify
+ transports
+Message-ID: <hv4ufpmyuyzreh4n4tofco4mlbge3cqvuvfnpadek4scov3jyi@f72cscihqcsw>
+References: <20250630-test_vsock-v5-0-2492e141e80b@redhat.com>
+ <20250630-test_vsock-v5-1-2492e141e80b@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="PqM+omoIMPGPGl7I"
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <20250626195610.405379-7-kan.liang@linux.intel.com>
-X-Cookie: You should go home.
+In-Reply-To: <20250630-test_vsock-v5-1-2492e141e80b@redhat.com>
 
+On Mon, Jun 30, 2025 at 06:33:03PM +0200, Luigi Leonardi wrote:
+>Add three new macros: TRANSPORTS_G2H, TRANSPORTS_H2G and
+>TRANSPORTS_LOCAL.
+>They can be used to identify the type of the transport(s) loaded when
+>using the `get_transports()` function.
+>
+>Suggested-by: Stefano Garzarella <sgarzare@redhat.com>
+>Signed-off-by: Luigi Leonardi <leonardi@redhat.com>
+>---
+> tools/testing/vsock/util.h | 4 ++++
+> 1 file changed, 4 insertions(+)
 
---PqM+omoIMPGPGl7I
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
 
-On Thu, Jun 26, 2025 at 12:56:03PM -0700, kan.liang@linux.intel.com wrote:
+>
+>diff --git a/tools/testing/vsock/util.h b/tools/testing/vsock/util.h
+>index 71895192cc02313bf52784e2f77aa3b0c28a0c94..fdd4649fe2d49f57c93c4aa5dfbb37b710c65918 100644
+>--- a/tools/testing/vsock/util.h
+>+++ b/tools/testing/vsock/util.h
+>@@ -33,6 +33,10 @@ static const char * const transport_ksyms[] = {
+> static_assert(ARRAY_SIZE(transport_ksyms) == TRANSPORT_NUM);
+> static_assert(BITS_PER_TYPE(int) >= TRANSPORT_NUM);
+>
+>+#define TRANSPORTS_G2H   (TRANSPORT_VIRTIO | TRANSPORT_VMCI | TRANSPORT_HYPERV)
+>+#define TRANSPORTS_H2G   (TRANSPORT_VHOST | TRANSPORT_VMCI)
+>+#define TRANSPORTS_LOCAL (TRANSPORT_LOOPBACK)
+>+
+> /* Tests can either run as the client or the server */
+> enum test_mode {
+> 	TEST_MODE_UNSET,
+>
+>-- 
+>2.50.0
+>
 
->  	 *	{ u64			abi; # enum perf_sample_regs_abi
-> -	 *	  u64			regs[weight(mask)]; } && PERF_SAMPLE_REGS_USER
-> +	 *	  u64			regs[weight(mask)];
-> +	 *	  struct {
-> +	 *		u16 nr_vectors;
-> +	 *		u16 vector_qwords;
-> +	 *		u16 nr_pred;
-> +	 *		u16 pred_qwords;
-> +	 *		u64 data[nr_vectors * vector_qwords + nr_pred * pred_qwords];
-> +	 *	  } && (abi & PERF_SAMPLE_REGS_ABI_SIMD)
-> +	 *	} && PERF_SAMPLE_REGS_USER
-
-I'm not super familiar with perf but I think this should work for arm64,
-it supplies the vector length through the _qwords and we can handle FFR
-being optional by varying the number of predicate registers.
-
---PqM+omoIMPGPGl7I
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmhlFP8ACgkQJNaLcl1U
-h9DGFQf/R5EGZ7vANuZCxohUindvxCaxIvxhOPVb9yu3A/75ATNrRK27Z4nqpooi
-q5sfss5jo52540RFXz3J54jfId952YxC0yZMLGPhBFualjzstMCEiyjLzBe86MAi
-1jKoU1gTdZI2iBpaVvT8bWKg80QnC/vqt0h7qbtxPCWGCuCNjMwsikWSkj60maYO
-QF8TtrZQeQpyqprCVNW0kkzGT8kSV51oWohEQfg4S4HbfXmZKBD6y3CjMnDi9R28
-aLcFA++/HYAFbvxx59aJEyBvkJfVi7tkxyjefs3kQQ69BDYmd0lmSGf07m2Aq7ba
-XZ4ULQjOSC6gkzAg5p5jzmTZ3PJ0xQ==
-=Tr1S
------END PGP SIGNATURE-----
-
---PqM+omoIMPGPGl7I--
 
