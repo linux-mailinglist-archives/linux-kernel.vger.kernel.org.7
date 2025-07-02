@@ -1,193 +1,165 @@
-Return-Path: <linux-kernel+bounces-713016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8B54AF120D
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 12:37:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61128AF1205
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 12:36:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29F07524B3F
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 10:37:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3625189D9A5
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 10:36:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50F732580FE;
-	Wed,  2 Jul 2025 10:36:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66385257AC2;
+	Wed,  2 Jul 2025 10:36:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="PC8AzE/T"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gMa3wkpW"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1B3D25DD12;
-	Wed,  2 Jul 2025 10:36:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18E2423A9BB
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 10:36:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751452582; cv=none; b=SnA9vjjWurIqWGDGcLsqKqWhs461NyaKLBzRz0QoQkKouDCY8vzWe+vfkjJnjYriqa8u3e5xHbdKUioSbcZCWt3cmfsBv9p7CNOngT4Dq2v3AhAWoE6MjC/SjGRFz7JFN2+gluDp2dNKn7rf3kqj7Cdh1b+epPNYA1CXM2hd8Pw=
+	t=1751452576; cv=none; b=LpnpXubhfjlhQplMB3d0YAYyB6VlcacJ0fMhmoSz9NYqKpaRberYdeayrkAHYbeVj2ZCTsrcksKzQ4Ck0yjQO7ck2LK/3Oy3l85sYH32OAOjtZBbgK8AXwQ4PXIwIHVkAe+Q0x5lgnc50THnKoZRnP4K1QVdDQGe5byxFvi+rNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751452582; c=relaxed/simple;
-	bh=XK9k3Mh6uQMbWe9PXpjQuuqE3KxexxUEdn6IH4a+Wug=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=DboFzIsAS8ekLE5At8OfVOcWBT1taoLwp9RWcQ2cagCcSaSvhc9R8eDESfESLtzlyK9PtNmwhxWjLv/QREwVw2r6HzqCWi+ZmucTKoC2FIsgS0tp1G+uFlSID9uQKwBQVyvQf9xYFFXaABn7NzPuAn0eQUHkDvs946r8BuiPI6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=PC8AzE/T; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5627Egim032396;
-	Wed, 2 Jul 2025 10:36:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=sq85Q/vJxoA
-	eidtGD92wyNYWRLccThyg6rGim2z8SQw=; b=PC8AzE/TBEuVbfRsNoDMiGYs3kW
-	1jILZjkGZAv5ZkEW81lWD1L80+t9iVMeQNw9kzROEm6r8Z6S/P7styLaTXlapIc4
-	5ytpSv0GJfk0sOApWYoz6zDyjDlbhUEIqwlsz9d+lNKLXSx8CdEAw9hoYmi7vhQs
-	dDBVAg9xZY0lwL+0jKvfPjCaGR8m71Bb7MQHcGIlUBU2wRmrt209SP1TJ3mqNyAm
-	OPVsrSQ6yIv7QjNDm2pNmpRfVhMB0E1mxUWmfbeMFVZREDlekSynwXLKAqEw+fkD
-	BiYR0Cw+yJz7pLjWq9nCLEDHWe4hrOmuuWukxwx84+QnVWoXJoiq/FSLArg==
-Received: from aptaippmta01.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47j63kcbvc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 02 Jul 2025 10:36:08 +0000 (GMT)
-Received: from pps.filterd (APTAIPPMTA01.qualcomm.com [127.0.0.1])
-	by APTAIPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 562Aa6Ke012330;
-	Wed, 2 Jul 2025 10:36:06 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 47j9fmbe7m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 02 Jul 2025 10:36:06 +0000
-Received: from APTAIPPMTA01.qualcomm.com (APTAIPPMTA01.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 562Aa5u5012319;
-	Wed, 2 Jul 2025 10:36:05 GMT
-Received: from cse-cd02-lnx.ap.qualcomm.com (cse-cd02-lnx.qualcomm.com [10.64.75.246])
-	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 562Aa4sm012313
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 02 Jul 2025 10:36:05 +0000
-Received: by cse-cd02-lnx.ap.qualcomm.com (Postfix, from userid 4438065)
-	id C36CE3921; Wed,  2 Jul 2025 18:36:03 +0800 (CST)
-From: Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>
-To: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
-        krzk+dt@kernel.org, conor+dt@kernel.org, jingoohan1@gmail.com,
-        mani@kernel.org, lpieralisi@kernel.org, kwilczynski@kernel.org,
-        bhelgaas@google.com, johan+linaro@kernel.org, vkoul@kernel.org,
-        kishon@kernel.org, neil.armstrong@linaro.org, abel.vesa@linaro.org,
-        kw@linux.com
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-phy@lists.infradead.org, qiang.yu@oss.qualcomm.com,
-        quic_krichai@quicinc.com, quic_vbadigan@quicinc.com,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>
-Subject: [PATCH v7 3/3] arm64: dts: qcom: qcs615-ride: Enable PCIe interface
-Date: Wed,  2 Jul 2025 18:35:49 +0800
-Message-Id: <20250702103549.712039-4-ziyue.zhang@oss.qualcomm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250702103549.712039-1-ziyue.zhang@oss.qualcomm.com>
-References: <20250702103549.712039-1-ziyue.zhang@oss.qualcomm.com>
+	s=arc-20240116; t=1751452576; c=relaxed/simple;
+	bh=6BTLf6ISHYhGDHXF3MGnZEjV5r61LiIu1vIg8OUZarg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QDzCpvrFEC/DT8PC5LHg6JpFxzWwYWKvmkXYTJCN1yPCS4SW1BwOJ1cYKCHHBuTrHoJBf9lBudIEwMy+uev8b9LGTn2WKh/zqfPVVVW1gK4x38/3L8pJiYMEdiPj3rQF1iEMUGyXx9bIDGet0tHfnrwaI5WmbqPr7vtyeH7npWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gMa3wkpW; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4531e146a24so39439105e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 03:36:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1751452573; x=1752057373; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6oydJRIGVVKdcs3hBftgXn5qMgnpv/cqDs2EcUz8BAU=;
+        b=gMa3wkpWnkxKiETKZJZXf0rMLlShA/I12UuaMZ8+iWA+Jb24cPPKBOs18MeIHGcHWT
+         ArkKYi8/sbes5TH0rZI5vglSAaLIj2uQynhvUmH61KnrYXGh0gjfpT5XezuwJy2OreDJ
+         hwrEV6gM1kWtwdKiXfKXC3aWxO9yDpWRyNSqFKcBwoRzs3dbqJkgGolf9vHOMlp6So9v
+         lRZ3LhxmT8eR18eT8P7SazWs3Mc8JnjAQJ6wrDprPIPet/90l9OgTCES7RJW/ocFnr49
+         4ZihM1nLB69jg0rT20Wm1l3Z02wxpihxnQs5FaZojToNZOuHp2ZHtvsqQMA5l2OyzQzW
+         GU6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751452573; x=1752057373;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6oydJRIGVVKdcs3hBftgXn5qMgnpv/cqDs2EcUz8BAU=;
+        b=UDC8t4YgXAAm9WHse/vU+yF28WVNspatYmRXhEIvIbM+RsIaHwc/qNt/b9PoVSb8xo
+         WPVC7cySkbQXCMny5TwgA4ht9ey3S9AOd6RVg4oaUSuuouKO+HwEPMXtJZTXkOUsYjUA
+         bInuqFhfZJK2tJE+pGMfus7LO1MPbQEnhCtuKNrBvo+iNxpBBA75nK6k7XEA2fgHyet4
+         8gw8HuC5mQ5OvxmPQF8OCRYTSfOGBms18NTwN6SMJDTICn762L7VcGqzwfdqU41h2QqV
+         2S76QS0VbRUWo17ziFP9kIqimJN/rkHUUoeV0Uwa4iyQJtTwL3VHs6hldJpal0mBfuwR
+         v79A==
+X-Forwarded-Encrypted: i=1; AJvYcCWrsrwSDTnDMm2sCe3I2LqHeaLKOmwSiJkuN5N/ISJ0QP4HY7WD2F/qMIEZuE3wUq14WfFOmLl7Ef5uaCk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzK8Pq1EzEvpO2IADLRCpsWI+SeiT83XJY1e9syLXFP09fvwdR1
+	aKPTl+cTLqIg+gM+TsF0hEyFDxqRpBDeJSm0IbyYtxDmRjEZB5MgAMLTPJWD2EB1m236mNgUW/8
+	pOzsiyoY9zjxsm8lSBc1tNlZI+O6hfSi8Xqbbxx46
+X-Gm-Gg: ASbGncuPMiD0cvyjXJjTcdGJi9th+36ufMtt2aLaB7iC/ze6Ig3p6o7pjn58qWETUTu
+	jzAfEzDNtdgEukxlALSYUfeC4yX8V+awrOGxex8duM+PMIqPB4GnDGvYe1LNCLt47FHpMiwq7a0
+	O9D3Xn8HyTCul9oVlNtcFopocogaceLLOGDCkkndhLFQUEl5lNerNqhw380x59tp4VOHxfEEA=
+X-Google-Smtp-Source: AGHT+IHK/x5WENREUpSHoDaQ69usNW4N3SQvoSrE1suA0H1FYCXOehqGtWeSnIlRb5GgVDCjkODseqJ5xuPgXXWM4ZY=
+X-Received: by 2002:a05:6000:4914:b0:3a4:eef5:dece with SMTP id
+ ffacd0b85a97d-3b1ff9f5966mr2009149f8f.35.1751452573053; Wed, 02 Jul 2025
+ 03:36:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=ZKfXmW7b c=1 sm=1 tr=0 ts=68650b98 cx=c_pps
- a=nuhDOHQX5FNHPW3J6Bj6AA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=Wb1JkmetP80A:10 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8 a=3zbVK_edIv7hY8gRkFcA:9
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzAyMDA4NSBTYWx0ZWRfX5gP0jVyw5WmV
- qIoB1ce43OiP2iRNr1iPqj8+ub5hmZL7vFBfI1gaD8zqPw04UPedPHOL1NHzOt2PM+Q1s6jMeF1
- 9RrGq0KV71JD09QXMB/xWNT4iKvvhoW5Pc4jzGSCXqF+DsVmN/SvYY2RkIFIIHsq4aXFacT2EMf
- 2YyTg6KQNdAnkMZwYk4h0KF4LyIeJnwZdEWhUHULUEIrbXEvxEzlKBHOv7FfsVf00+PeQw7z4dI
- eaZISpnbsliHENusQ7hXjJuWDIdD835KcYHcWRacOirDuNncdxaGz/DOhQc4fpMcqe+tNSrykLC
- waR4TklANnyPU5Owcutj6DHpQubI6uvvMYYwWilNxy4YwDpWe8H8Kz+qWKdcgPYi/9S7kSpDWAq
- F7TMwZnhVmhcUgLiZ2znmnxV1x+wlG1Y5JEornUknVXymSsTfzRloQiEPqO+GB1K0R1SAtCf
-X-Proofpoint-ORIG-GUID: KpGtbZB3FqYwxc-2XnjX6OWJfBwzZGcM
-X-Proofpoint-GUID: KpGtbZB3FqYwxc-2XnjX6OWJfBwzZGcM
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-02_01,2025-06-27_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 mlxscore=0 mlxlogscore=999 spamscore=0 suspectscore=0
- bulkscore=0 priorityscore=1501 lowpriorityscore=0 phishscore=0
- impostorscore=0 malwarescore=0 clxscore=1011 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507020085
+References: <20250627-topics-tyr-regulator-v6-0-1d015219b454@collabora.com> <20250627-topics-tyr-regulator-v6-1-1d015219b454@collabora.com>
+In-Reply-To: <20250627-topics-tyr-regulator-v6-1-1d015219b454@collabora.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Wed, 2 Jul 2025 12:35:59 +0200
+X-Gm-Features: Ac12FXypzQds4qro7YK4zyY01V_sHxEReb9QyIQVZtL_ChhNn2gilP91w2R4vCQ
+Message-ID: <CAH5fLgj_eKuo=E7HPgmd1bJNfidGUS37MM1QqRaQ_MJ2kTgCmg@mail.gmail.com>
+Subject: Re: [PATCH v6 1/2] rust: regulator: add a bare minimum regulator abstraction
+To: Daniel Almeida <daniel.almeida@collabora.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
+	Boris Brezillon <boris.brezillon@collabora.com>, 
+	Sebastian Reichel <sebastian.reichel@collabora.com>, Liam Girdwood <lgirdwood@gmail.com>, 
+	Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+On Fri, Jun 27, 2025 at 7:11=E2=80=AFPM Daniel Almeida
+<daniel.almeida@collabora.com> wrote:
+>
+> Add a bare minimum regulator abstraction to be used by Rust drivers.
+> This abstraction adds a small subset of the regulator API, which is
+> thought to be sufficient for the drivers we have now.
+>
+> Regulators provide the power needed by many hardware blocks and thus are
+> likely to be needed by a lot of drivers.
+>
+> It was tested on rk3588, where it was used to power up the "mali"
+> regulator in order to power up the GPU.
+>
+> Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
 
-Add platform configurations in devicetree for PCIe, board related
-gpios, PMIC regulators, etc.
+Overall looks reasonable to me.
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-Signed-off-by: Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>
----
- arch/arm64/boot/dts/qcom/qcs615-ride.dts | 42 ++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
+> +/// A trait that abstracts the ability to check if a [`Regulator`] is en=
+abled.
+> +pub trait IsEnabled: RegulatorState {}
+> +impl IsEnabled for Disabled {}
+> +impl IsEnabled for Dynamic {}
 
-diff --git a/arch/arm64/boot/dts/qcom/qcs615-ride.dts b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-index a6652e4817d1..011f8ae077c2 100644
---- a/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-+++ b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-@@ -217,6 +217,23 @@ &gcc {
- 		 <&sleep_clk>;
- };
- 
-+&pcie {
-+	perst-gpios = <&tlmm 101 GPIO_ACTIVE_LOW>;
-+	wake-gpios = <&tlmm 100 GPIO_ACTIVE_HIGH>;
-+
-+	pinctrl-0 = <&pcie_default_state>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+};
-+
-+&pcie_phy {
-+	vdda-phy-supply = <&vreg_l5a>;
-+	vdda-pll-supply = <&vreg_l12a>;
-+
-+	status = "okay";
-+};
-+
- &pm8150_gpios {
- 	usb2_en: usb2-en-state {
- 		pins = "gpio10";
-@@ -256,6 +273,31 @@ &rpmhcc {
- 	clocks = <&xo_board_clk>;
- };
- 
-+&tlmm {
-+	pcie_default_state: pcie-default-state {
-+		clkreq-pins {
-+			pins = "gpio90";
-+			function = "pcie_clk_req";
-+			drive-strength = <2>;
-+			bias-pull-up;
-+		};
-+
-+		perst-pins {
-+			pins = "gpio101";
-+			function = "gpio";
-+			drive-strength = <2>;
-+			bias-pull-down;
-+		};
-+
-+		wake-pins {
-+			pins = "gpio100";
-+			function = "gpio";
-+			drive-strength = <2>;
-+			bias-pull-up;
-+		};
-+	};
-+};
-+
- &sdhc_1 {
- 	pinctrl-0 = <&sdc1_state_on>;
- 	pinctrl-1 = <&sdc1_state_off>;
--- 
-2.34.1
+Naming-wise, it's a bit weird that IsEnabled applies to everything
+*but* enabled. And also, the is_enabled() method should probably exist
+for only Dynamic anyway?
 
+> +/// ## Using [`Regulator<Dynamic>`]
+> +///
+> +/// This example mimics the behavior of the C API, where the user is in
+> +/// control of the enabled reference count. This is useful for drivers t=
+hat
+> +/// might call enable and disable to manage the `enable` reference count=
+ at
+> +/// runtime, perhaps as a result of `open()` and `close()` calls or what=
+ever
+> +/// other driver-specific or subsystem-specific hooks.
+> +///
+> +/// ```
+> +/// # use kernel::prelude::*;
+> +/// # use kernel::c_str;
+> +/// # use kernel::device::Device;
+> +/// # use kernel::regulator::{Regulator, Dynamic};
+> +/// struct PrivateData {
+> +///     regulator: Regulator<Dynamic>,
+> +/// }
+> +///
+> +/// // A fictictious probe function that obtains a regulator and sets it=
+ up.
+> +/// fn probe(dev: &Device, data: &mut PrivateData) -> Result<PrivateData=
+> {
+
+The `data` argument is unused. It looks like it should be removed.
+
+> +pub struct Regulator<State =3D Dynamic>
+> +where
+> +    State: RegulatorState + 'static,
+
+You can add `: 'static` to the trait itself to avoid having it here.
+
+> +impl<T: RegulatorState + 'static> Drop for Regulator<T> {
+> +    fn drop(&mut self) {
+> +        if core::any::TypeId::of::<T>() =3D=3D core::any::TypeId::of::<E=
+nabled>() {
+
+I would avoid this kind of logic. Instead, you can add an
+`disable_on_drop()` method or constant to the trait and check it here.
+
+Alice
 
