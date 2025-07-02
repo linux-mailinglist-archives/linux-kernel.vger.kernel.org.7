@@ -1,125 +1,119 @@
-Return-Path: <linux-kernel+bounces-713249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E490AF1557
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:19:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 164A6AF1546
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:18:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3689E52157F
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 12:19:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35F4F1C274BA
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 12:17:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D1EB27A135;
-	Wed,  2 Jul 2025 12:16:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 218972750F2;
+	Wed,  2 Jul 2025 12:16:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="ygTm1hMl"
-Received: from outbound.pv.icloud.com (p-west1-cluster5-host6-snip4-10.eps.apple.com [57.103.66.151])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KxVSZt+x"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81DC2273D9D
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 12:16:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=57.103.66.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08F01264F8A;
+	Wed,  2 Jul 2025 12:15:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751458595; cv=none; b=SQoIqcpUTaat2KBMxt2bHzfC642N266t9oWHkNkUyUtTvdUrZ5O9bcqrvaldUV3TnW5tznvJWrooKx5nLsJcfk6O3tQRDAc5+tZAcyCrqPCxZfu/Bix/3r5azkf9qBniHrLdr3b9kXkMtOj1sljigJ1y2SJy7PvMvyffECiQc0E=
+	t=1751458559; cv=none; b=pnvGinhLdjmjFEob2JPff75aumqA1KXXrs8vEHr4RScEVrsR7WoVnoE0gDv723dFZaMQwhsdkoo2otmS/3L+RjvCQ1cQT/1abyDqe94d5ZhmnRQPlkhAsxv/CSCXF+ymGSHslnHGNm2YhyS6lF+0n4asEBQh8QyeqjZxjJrChGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751458595; c=relaxed/simple;
-	bh=rUPc6HarIFgYCi5PCcb/6kreZya/jVbJye2++gX7mpw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=LXETsWsGZeDc2UugrmAGa1JfcDcVslMpi55zV8MjhXRNlgX863SL0Clx947FIWgu5QpItalV0gAmvDkYqZlnWALYBTPcX7+3xXVIeNBcs9ztXKcJ6ImsmJGiK4SvMWkZ/LeeKwjYEN4ZVdXrBUWLWgA1V03urcRllCjbqfzujJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=ygTm1hMl; arc=none smtp.client-ip=57.103.66.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; bh=MxR3vmUTXOypUpeb+mW6WO9zX6HevJTvOmfA6oc0iJM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:x-icloud-hme;
-	b=ygTm1hMlAgK3bOAbflYvbUoUF2HQHzhCEjMeszabytsCrEmSfEmfziaOzro5ljQql
-	 uzDm5mcmcHKZ2fTc6+2z7+qa1WIaNr5P78GZJ199ULDOjE1zeH6wK2zBQGcdbOkohI
-	 9CAtBvxUyp3nE1zjeo12EHEPodyHXYhnN0PaUNBFYmBOggHzzyD0mqGht5x6c03h2L
-	 VYvOj/xdR/XZaHs/rp3tl+pONK5M9e9NOi6Laxg3Q0SeKyVAyttB6bt+9tqjpaJn5s
-	 gkfWnnmBcxm5o+WygaZeiexTp//rCNU57ZKM4PLXC5qhFlklu9amr6g+RT7sfSy7dy
-	 Z+UvPYZ9AAyOw==
-Received: from outbound.pv.icloud.com (unknown [127.0.0.2])
-	by outbound.pv.icloud.com (Postfix) with ESMTPS id 83A96180030C;
-	Wed,  2 Jul 2025 12:16:29 +0000 (UTC)
-Received: from [192.168.1.26] (pv-asmtp-me-k8s.p00.prod.me.com [17.56.9.36])
-	by outbound.pv.icloud.com (Postfix) with ESMTPSA id 5B86B18001DF;
-	Wed,  2 Jul 2025 12:16:25 +0000 (UTC)
-From: Zijun Hu <zijun_hu@icloud.com>
-Date: Wed, 02 Jul 2025 20:15:36 +0800
-Subject: [PATCH v3 8/8] sparc: kernel: apc: Remove macro APC_MINOR
- definition
+	s=arc-20240116; t=1751458559; c=relaxed/simple;
+	bh=H7f/0HhF6bi70fjqZ5YqMeABusSJvQvwmnvNfoqGHw8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lBtCLmRSMyVvPSCDUqLAKxgwY0OuwNS6IOYrrWu5J+QhRYopvat0BIbDQ5GQIuTcPCI1ZRZ0890DNEE/KQ0okm4b1sCSkSyDjcUE62rSPNo6qsPydL6dSoAir95wMBXrGrPivNMtr8SZRpWEwxo8bqQlE5a5e0MqQS7kwboSTvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KxVSZt+x; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751458559; x=1782994559;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=H7f/0HhF6bi70fjqZ5YqMeABusSJvQvwmnvNfoqGHw8=;
+  b=KxVSZt+xDYge8n/qDPBLp3xVlkuGhlmx0hMXtvhl1kQ44uxc4r99viCd
+   pVQZHKKyUWpLx2TrIN8tVvoJz25vmLD9PHuItuVjQY6Yjl25yhP18olWV
+   6FmQuuFEDpuMd/mVlh7mj0Bwrwrmxfa3qFJol823a2qdQnplVMXRUVQO4
+   ajwH0XME86Kw8L9s9UB3fCThqiIYux79uqR3ZkKnA0RTI03QFngkQ5iaN
+   dH4+9GAGG9hDcaOuQc+v+dJX0dpXXCsyXpVTYlB6PiiG41a8jcLgKmOpg
+   yfxPrCZnrYk6uXBsLzVTU0UIDctNBV5P/fyldYIIppBNscySkrFd0rgOH
+   A==;
+X-CSE-ConnectionGUID: 17wQb5CaTo+q1bJ/HKbfhA==
+X-CSE-MsgGUID: 0NobnaFXQMaD9UuSNscTwg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11482"; a="63995004"
+X-IronPort-AV: E=Sophos;i="6.16,281,1744095600"; 
+   d="scan'208";a="63995004"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2025 05:15:51 -0700
+X-CSE-ConnectionGUID: 6h2EqwByTs2HfWDaWsAkEA==
+X-CSE-MsgGUID: o3DHRwUOQPCqGQJFxsVhaw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,281,1744095600"; 
+   d="scan'208";a="154132374"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2025 05:15:46 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1uWwNL-0000000Bui3-10OS;
+	Wed, 02 Jul 2025 15:15:43 +0300
+Date: Wed, 2 Jul 2025 15:15:42 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+Cc: Marcelo Schmitt <marcelo.schmitt@analog.com>, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, jic23@kernel.org, lars@metafoo.de,
+	Michael.Hennerich@analog.com, dlechner@baylibre.com,
+	nuno.sa@analog.com, andy@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, linus.walleij@linaro.org,
+	brgl@bgdev.pl, broonie@kernel.org, lgirdwood@gmail.com
+Subject: Re: [PATCH v7 00/12] iio: adc: Add support for AD4170 series of ADCs
+Message-ID: <aGUi7r2dgnbqLOAH@smile.fi.intel.com>
+References: <cover.1751289747.git.marcelo.schmitt@analog.com>
+ <aGTpNNaW7cXC18Jt@smile.fi.intel.com>
+ <aGUfapky2uh2tsFt@debian-BULLSEYE-live-builder-AMD64>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250702-rfc_miscdev-v3-8-d8925de7893d@oss.qualcomm.com>
-References: <20250702-rfc_miscdev-v3-0-d8925de7893d@oss.qualcomm.com>
-In-Reply-To: <20250702-rfc_miscdev-v3-0-d8925de7893d@oss.qualcomm.com>
-To: Arnd Bergmann <arnd@arndb.de>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, 
- Helge Deller <deller@gmx.de>, "David S. Miller" <davem@davemloft.net>, 
- Andreas Larsson <andreas@gaisler.com>
-Cc: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>, 
- Zijun Hu <zijun_hu@icloud.com>, linux-kernel@vger.kernel.org, 
- linux-parisc@vger.kernel.org, sparclinux@vger.kernel.org, 
- Zijun Hu <zijun.hu@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzAyMDA5OSBTYWx0ZWRfX7jPqGiP88Bvt
- Mrf1fBR0qVNhm09VK837cmQ4sdZUtGUMbl7z2TGTkB7cD60w3wvDQAT+wEGHIU93q8Y/LvtZ74T
- STWYXmjeCBLQBEc/KORCrdGkRxzZbpXMq5h+vDTEKUW9MSdAgW7IDWz0FhH4LEfP05a48Kah6ZS
- k7LB7SwLis2pH6s/Aa+1SXiFpornkcpKetRdbq8i5UDiX6ZEIjF4P/yICUcW5tnx6TfsBWmoOvo
- MInE3+vN5yM4z/fATQUbKCPvcCt5AaEA918+QilAkz4b9j8se7Bz1HnIhoEU1XtIqj1hJALBg=
-X-Proofpoint-GUID: peyGdAL9Mvibq29xXykg2jRsJePrf_mP
-X-Proofpoint-ORIG-GUID: peyGdAL9Mvibq29xXykg2jRsJePrf_mP
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-02_01,2025-06-27_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0
- mlxscore=0 clxscore=1015 suspectscore=0 bulkscore=0 phishscore=0
- mlxlogscore=999 spamscore=0 malwarescore=0 classifier=spam adjust=0
- reason=mlx scancount=1 engine=8.22.0-2506060001 definitions=main-2507020099
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aGUfapky2uh2tsFt@debian-BULLSEYE-live-builder-AMD64>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-From: Zijun Hu <zijun.hu@oss.qualcomm.com>
+On Wed, Jul 02, 2025 at 09:00:42AM -0300, Marcelo Schmitt wrote:
+> On 07/02, Andy Shevchenko wrote:
+> > On Mon, Jun 30, 2025 at 10:57:32AM -0300, Marcelo Schmitt wrote:
 
-Macro APC_MINOR is defined as MISC_DYNAMIC_MINOR to request dynamic
-minor, but its name 'APC_MINOR' looks like fixed minor.
+...
 
-Remove the macro definition and directly use MISC_DYNAMIC_MINOR instead.
+> > >  6 files changed, 3601 insertions(+)
+> > 
+> > This is weird. At least patches 11 & 12 have '-' lines...
+> > 
+> Yeah, sorry about that. These ADCs are fancy such that the base driver is about
+> 1500 LoCs due to channel setup handling and support for multiple combinations of
+> voltage references and channel setups.
+> 
+> About the '-' lines, I will rework ad4170_parse_channel_node() on earlier
+> patches to avoid 3 line removals in patch 11. Patch 12 is only makes sense
+> after patch 7 and I think it would lead to '-' lines if coming before patch 10
+> since both increment the number of IIO channels. Anyway, I'll see how to further
+> reduce the number of lines being removed.
 
-Signed-off-by: Zijun Hu <zijun.hu@oss.qualcomm.com>
----
- arch/sparc/kernel/apc.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/arch/sparc/kernel/apc.c b/arch/sparc/kernel/apc.c
-index d44725d37e30f388bf8cf19d72baf720f94da084..849db20e7165cdf48d4d36cf770dd6aaaa191b41 100644
---- a/arch/sparc/kernel/apc.c
-+++ b/arch/sparc/kernel/apc.c
-@@ -28,7 +28,6 @@
-  * #define APC_DEBUG_LED
-  */
- 
--#define APC_MINOR	MISC_DYNAMIC_MINOR
- #define APC_OBPNAME	"power-management"
- #define APC_DEVNAME "apc"
- 
-@@ -138,7 +137,7 @@ static const struct file_operations apc_fops = {
- 	.llseek =		noop_llseek,
- };
- 
--static struct miscdevice apc_miscdev = { APC_MINOR, APC_DEVNAME, &apc_fops };
-+static struct miscdevice apc_miscdev = { MISC_DYNAMIC_MINOR, APC_DEVNAME, &apc_fops };
- 
- static int apc_probe(struct platform_device *op)
- {
+My point is that the above statistics is mangled and I don't know how I can
+trust the contents of this series if it already lied about that.
 
 -- 
-2.34.1
+With Best Regards,
+Andy Shevchenko
+
 
 
