@@ -1,99 +1,152 @@
-Return-Path: <linux-kernel+bounces-714017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CA12AF61C9
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 20:47:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39F99AF6231
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 21:00:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F278A7A7EB6
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 18:46:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92868524547
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 19:00:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91F732BE635;
-	Wed,  2 Jul 2025 18:47:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01F112D9EE1;
+	Wed,  2 Jul 2025 18:59:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NtTnCluC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=tnxip.de header.i=@tnxip.de header.b="iE/jubqi";
+	dkim=permerror (0-bit key) header.d=tnxip.de header.i=@tnxip.de header.b="fjDuO26c";
+	dkim=pass (1024-bit key) header.d=tnxip.de header.i=@tnxip.de header.b="SW26/YE6";
+	dkim=permerror (0-bit key) header.d=tnxip.de header.i=@tnxip.de header.b="b/DrPuw6"
+Received: from mail.tnxip.de (mail.tnxip.de [49.12.77.104])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3BCD2F7D07;
-	Wed,  2 Jul 2025 18:47:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D9402BE651;
+	Wed,  2 Jul 2025 18:59:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=49.12.77.104
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751482052; cv=none; b=E78aSVv7X4GuiZEtbWln0Y637ofBaXq9pK9cQ7owPRiPWyGjwx66FVDZj7dMIG3186YM75VE33ktbngzAL23Q+nC5bKMT1a5GJJf80mWIfsEeGlPfuaNhDBtxzi+5BRxDWN2Jh3mVRNV0NaE+fZKPg4JhhpH+Dcny50D5rT5sp0=
+	t=1751482788; cv=none; b=qnyJnC3GPFCI3fZ3zPYwhRzGLBMaygt7hEvx3T9ab3hMhash+Ag67/9EFXh1X8JY6E9nK/2cEJTpnITGKU1Fr/ft98Tb/wQ29LLbypj5s8fJSno2Fgg67YwQMfUwU62K5sJyP7Onf8dbf3liRIWYGfE9s9SVN8Rg2pS0nkxSvB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751482052; c=relaxed/simple;
-	bh=urZtsqWwOJhSQf6BJio6DtJ58Ptki5mkWpBNQK5au1g=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=I+d6KESvvQN0s3+k1tT8bm2HZIheWkoO0f6KH06qIhuraTs2xpMcz+B+3ldE/XkP3aQLKel2+Mzt8kcB39vQyEC1efEXcmrTHHP63gv3fV25KApdI8f4VLFwOami9mUZy3julNy0daA7a3QVjyHe+LrJmIB1D3nGT6FPRLtbxFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NtTnCluC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01742C4CEE7;
-	Wed,  2 Jul 2025 18:47:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751482051;
-	bh=urZtsqWwOJhSQf6BJio6DtJ58Ptki5mkWpBNQK5au1g=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=NtTnCluCW6K3OmHZvzLAR9+57BQhXtTHx/AVdwGAUf2iuo1Aerne5Kdbd15ViaIu6
-	 8FpzUqcwykIQEg687Hubs/pyPP++v9SWXn3TIHy9dMa1sPMzvQegm1Nr9z87QUky+W
-	 3ny0Ica0XI+4/XEyeEgik6IUkHoJIYUVQxeqXqR/cgsfKZbnAWMySc6MSUQBO6Gb/Z
-	 tx0NkXSY9HtmIec3CZEZgIpbVmGMeYA2B/UEycJLjehmsP7v6RuOw7MREBDQFakeff
-	 AGWgzgikNi/c6VYojooPLjQ4N0PNBGFQ6QeToVBYR53NoAHT4qt3b/bpa1DdJdNzWi
-	 5ALCrQ/0Af5ig==
+	s=arc-20240116; t=1751482788; c=relaxed/simple;
+	bh=QHrXzmhcjq+tf7zFyEmmqMNmhAWNPWCstCoYDwuWjt4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cXQ4nqDK014vOIaA4u9ai0rhoHw+XAyK2Onk1DeVzYujocoU9fwB3OJglVPHJt+nptawRwpWIYSKLr+gmn+LR+EF7nmLFgOx4gxBzqJrfgGvzNa6sGKG4qNC9qSgnR4xQYm1wbeDWi0f9JGhY8X4diIbOOrw/vWJLYx0KP6ow28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tnxip.de; spf=pass smtp.mailfrom=tnxip.de; dkim=pass (1024-bit key) header.d=tnxip.de header.i=@tnxip.de header.b=iE/jubqi; dkim=permerror (0-bit key) header.d=tnxip.de header.i=@tnxip.de header.b=fjDuO26c; dkim=pass (1024-bit key) header.d=tnxip.de header.i=@tnxip.de header.b=SW26/YE6; dkim=permerror (0-bit key) header.d=tnxip.de header.i=@tnxip.de header.b=b/DrPuw6; arc=none smtp.client-ip=49.12.77.104
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tnxip.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tnxip.de
+Received: from gw.tnxip.de (unknown [IPv6:fdc7:1cc3:ec03:1:41c4:f6bf:9765:d776])
+	by mail.tnxip.de (Postfix) with ESMTPS id D18DD1F508;
+	Wed,  2 Jul 2025 20:49:53 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tnxip.de; s=mail-vps;
+	t=1751482193;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QHrXzmhcjq+tf7zFyEmmqMNmhAWNPWCstCoYDwuWjt4=;
+	b=iE/jubqic12yzgfhguECgeXwFLfaUdG2lbDggyuFT+JWIUHNFDBlFSVu/9MgMtlVdOLcoz
+	H/coId7izuylyqJ+hqijSp5ID+bPXU+7vwcurTVEsOiqTbiC501yu7CMJBKfpVXLBuYPh7
+	HxHpmOpr1Z7xUOBZ4aP78nMgzHHHhOk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=tnxip.de;
+	s=mail-vps-ed; t=1751482193;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QHrXzmhcjq+tf7zFyEmmqMNmhAWNPWCstCoYDwuWjt4=;
+	b=fjDuO26crbRSF0bVmRO+lJSefRPFWJRBYPGhr+dDlMSMAnchwjBB8rNZPjfMX733mGTh60
+	+bY5NGp4tGSfhZCw==
+Received: from [IPV6:2a04:4540:8c04:1600:d42:34ad:c501:6cc5] (unknown [IPv6:2a04:4540:8c04:1600:d42:34ad:c501:6cc5])
+	by gw.tnxip.de (Postfix) with ESMTPSA id 8478B3800000000017FE8;
+	Wed, 02 Jul 2025 20:49:32 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tnxip.de; s=mail-gw;
+	t=1751482193;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QHrXzmhcjq+tf7zFyEmmqMNmhAWNPWCstCoYDwuWjt4=;
+	b=SW26/YE6Nkw2wtr2YrG7+Q3tv/OJT1Wg1NHQYybgyPXTvQr/+iTwJCJm5/QjI+LD25TJn2
+	kTk6d88O3HIkpMXnUUP1+f1PiPQ2Q/Btf8PaghEhxVeKpevNAirIpx4huYwgtaH9V4NK2F
+	l9xwKzgQPaHi7ZjV8QZ9TUtDr6ZnErA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=tnxip.de;
+	s=mail-gw-ed; t=1751482193;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QHrXzmhcjq+tf7zFyEmmqMNmhAWNPWCstCoYDwuWjt4=;
+	b=b/DrPuw6PzjFdtZoIVuocUtrnF94Giab5lQ0S7r/Lr8J1GpMMxzkHVXIR/QdR13+r5EcWi
+	fDXrA+72zNNjplDw==
+Message-ID: <a448243d-8ef8-48d8-afbc-2c45068c882c@tnxip.de>
+Date: Wed, 2 Jul 2025 20:49:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Betterbird (Linux)
+Subject: Re: [GIT PULL] bcachefs fixes for 6.16-rc4
+To: Kent Overstreet <kent.overstreet@linux.dev>,
+ "Carl E. Thompson" <cet@carlthompson.net>
+Cc: John Stoffel <john@stoffel.org>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <ahdf2izzsmggnhlqlojsnqaedlfbhomrxrtwd2accir365aqtt@6q52cm56jmuf>
+ <CAHk-=wi+k8E4kWR8c-nREP0+EA4D+=rz5j0Hdk3N6cWgfE03-Q@mail.gmail.com>
+ <xl2fyyjk4kjcszcgypirhoyflxojzeyxkzoevvxsmo26mklq7i@jw2ou76lh2py>
+ <26723.62463.967566.748222@quad.stoffel.home>
+ <gq2c4qlivewr2j5tp6cubfouvr42jww4ilhx3l55cxmbeotejk@emoy2z2ztmi2>
+ <751434463.112.1751478094192@mail.carlthompson.net>
+ <fomli5univuatcdc7syty56wffm4uvslocxkufks27otyix7fl@6c5i7w7g64qo>
+Content-Language: en-US, de-DE
+From: =?UTF-8?Q?Malte_Schr=C3=B6der?= <malte.schroeder@tnxip.de>
+In-Reply-To: <fomli5univuatcdc7syty56wffm4uvslocxkufks27otyix7fl@6c5i7w7g64qo>
 Content-Type: text/plain; charset=UTF-8
-Date: Wed, 02 Jul 2025 20:47:25 +0200
-Message-Id: <DB1SKFOR9W3I.1MBT3C6FGBWH7@kernel.org>
-Cc: <airlied@gmail.com>, <simona@ffwll.ch>, <ojeda@kernel.org>,
- <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>, <gary@garyguo.net>,
- <bjorn3_gh@protonmail.com>, <a.hindborg@kernel.org>,
- <aliceryhl@google.com>, <tmgross@umich.edu>, <rafael@kernel.org>,
- <viresh.kumar@linaro.org>, <gregkh@linuxfoundation.org>,
- <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
- <tzimmermann@suse.de>, <davidgow@google.com>, <nm@ti.com>
-Subject: Re: [PATCH v4 2/6] rust: switch to `#[expect(...)]` in init and
- kunit
-From: "Benno Lossin" <lossin@kernel.org>
-To: =?utf-8?q?Onur_=C3=96zkan?= <work@onurozkan.dev>,
- <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-pm@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
- <kunit-dev@googlegroups.com>
-X-Mailer: aerc 0.20.1
-References: <20250701053557.20859-1-work@onurozkan.dev>
- <20250701053557.20859-3-work@onurozkan.dev>
-In-Reply-To: <20250701053557.20859-3-work@onurozkan.dev>
+Content-Transfer-Encoding: 8bit
 
-	=20
-On Tue Jul 1, 2025 at 7:35 AM CEST, Onur =C3=96zkan wrote:
-> This makes it clear that the warning is expected not just
-> ignored, so we don't end up having various unnecessary
-> linting rules in the codebase.
+On 02.07.25 19:53, Kent Overstreet wrote:
+> On Wed, Jul 02, 2025 at 10:41:34AM -0700, Carl E. Thompson wrote:
+>> Kent, at this point in bcachefs' development you want complete control
+>> over your development processes and timetable that you simply can't
+>> get in the mainline kernel. It's in your own best interest for you to
+>> develop out-of-tree for now.
+> Carl, all I'm doing is stating up front what it's going to take to get
+> this done right.
 >
-> Some parts of the codebase already use this approach, this
-> patch just applies it more broadly.
+> I'm not particularly pushing one way or the other for bcachefs to stay
+> in; there are pros and cons either way. It'll be disruptive for it to be
+> out, but if the alternative is disrupting process too much and driving
+> Linus and I completely completely nuts, that's ok.
 >
-> No functional changes.
+> Everyone please be patient. This is a 10+ year process, no one thing is
+> make or break.
 >
-> Signed-off-by: Onur =C3=96zkan <work@onurozkan.dev>
-> ---
->  rust/kernel/init.rs  | 6 +++---
->  rust/kernel/kunit.rs | 2 +-
->  2 files changed, 4 insertions(+), 4 deletions(-)
+So as a user usually hanging out on IRC and running Kent's trees:
 
-@Miguel are you going to pick this eventually, or do you think it should=20
-have a new version with the right splitting?=09
+I think most of those people actually testing bcachefs are either
+running bcachefs-master, -rc or some outdated distro kernel. From my
+perspective I'd think it would be good enough to push for-upstream
+during the merge window and then only provide further patches if there
+where regressions or some really bad bug appears that actually eats data
+(like the one that bit me). If it's "just" stability fixes, well, if
+people running a distro kernel hit those bugs they'll need to build a
+-rc kernel anyways to get fixes, those could just build bcachefs-master.
+When running Linus' tree I am aware and accept that I am not running the
+absolutely latest code.
 
----
-Cheers,
-Benno
+I've had some pretty bad experience with amdgpu requiring out of tree
+patches to get my system running free of glitches, which took months to
+get into upstream. It's annoying, but I accept that.
+
+I'd rather have a slightly outdated bcachefs in kernel than not at all.
+It is good to have a distro kernel I can fall back to if I mess up my
+own kernel building ;)
 
 
+my 0.02€
 
+/Malte
 
 
