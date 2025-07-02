@@ -1,179 +1,206 @@
-Return-Path: <linux-kernel+bounces-713307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83AA0AF164C
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 15:00:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22C4CAF1654
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 15:01:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40E7D165958
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 13:00:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 925577B0955
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 12:58:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B799223AE9B;
-	Wed,  2 Jul 2025 13:00:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="fb9g8+7z"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE0DF16419
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 13:00:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C295E27585D;
+	Wed,  2 Jul 2025 13:00:05 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 941AC275851
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 13:00:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751461229; cv=none; b=kI6nodFYfgIIY+a6t6vJ4qlFuazQuK7ktHs+DOEoIXVnAf8+xMew4HAxKr7hHAIh1CjHi/4f4xCqiqsmpOc6cK87ObS77cGJbnvSrBBkSOUMJkKIUT9bJXOAX8CrowuApLALxWwwO5O+6L+TsvNL3gS85/9VRckwCfuoQWHCRCE=
+	t=1751461205; cv=none; b=D6HoIZTDo2Z908qv+XrQoEsRvRMBWX+W0+vXt8Ld3HlTwZDoZVmJu7qNInYJD3HnHyroe4cAmV2q8l7GIdxKgPkFrYrmPH/+FuuGkuWVmd3u/FR7N4cPW/XdS6E29X+c8xLYtDcMe8eWL5vLL9X2OV8GY6tnZl48JUAjCC6xteY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751461229; c=relaxed/simple;
-	bh=Yk9qC/IYj4Usq6fCJCPVpqbiT9Jx2NXRdkYpUbmh0/Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eoUzkXIAMXJ9/Qr9u6ubd08GA5p09lh3I0GHT9JgtovlUCg6JN9mlGaTOmdzXtOq/T8WArXvWxzgwkBY7Y4BIyP4WoeI32jql6OQEdgzwxWp6tTimPFT0ULqsYAd2RRQND/SefuHzjp0DU6uTDQoLhqE3DXIUGceIwFiQOabp+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=fb9g8+7z; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 562CJuXK024196;
-	Wed, 2 Jul 2025 13:00:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=bLlw0I
-	hp/VdZCZ2+GtdOUnEATEqBJuEkrFclzXEetRc=; b=fb9g8+7z/kMBWRIEKq5TiI
-	enlqcXvyptw0aW6wKGj0i/5Z80aQg8nmfidUY1aq2S5RZQ2lJQgnIuEQt5fqBFbv
-	3eQO56WMFz7hN3i1qdqGPR60PmJhkPTrkiG5q8lP1ACir6zaBTExlOQim7njybp8
-	yduomSmZsauM2FIWTFge8TOgHWbvDB8LGmhawlVRUUcCYoq5JM6h3BSIjPzfcN5C
-	FV8xbUO2ES7BRfHdaZEmwUuQhOjdO8ZexFgkkANGLhdjNXBuOJMzIAj2xbWMovc0
-	RQNmlG8Ry+LCDVST/SGFNMHrK76iAwxsn5zTxobpBMuNWghDLOz5nWMvLZDUHq4g
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47j84ddj86-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 02 Jul 2025 13:00:04 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 562CMYS6028163;
-	Wed, 2 Jul 2025 13:00:04 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47j84ddj81-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 02 Jul 2025 13:00:03 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 562B3OpB012027;
-	Wed, 2 Jul 2025 13:00:02 GMT
-Received: from smtprelay07.dal12v.mail.ibm.com ([172.16.1.9])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 47jv7myg0r-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 02 Jul 2025 13:00:02 +0000
-Received: from smtpav04.dal12v.mail.ibm.com (smtpav04.dal12v.mail.ibm.com [10.241.53.103])
-	by smtprelay07.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 562D01g07144110
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 2 Jul 2025 13:00:02 GMT
-Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D3F3658052;
-	Wed,  2 Jul 2025 13:00:01 +0000 (GMT)
-Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6D80E58056;
-	Wed,  2 Jul 2025 12:59:57 +0000 (GMT)
-Received: from [9.109.245.113] (unknown [9.109.245.113])
-	by smtpav04.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Wed,  2 Jul 2025 12:59:57 +0000 (GMT)
-Message-ID: <83012fcc-36ca-41fe-8e2e-949f1ba8adf3@linux.ibm.com>
-Date: Wed, 2 Jul 2025 18:29:56 +0530
+	s=arc-20240116; t=1751461205; c=relaxed/simple;
+	bh=1XQY2y1nQnHhezrjkMBlLaRc5RG+HJsC077eRt6Totg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CZGxUC2/399HhqhfQTyi5bQlEzpqDDOE3PXVO5RgZ5A6JDhF2SvXMosAhkLtw8TDqB74/tpKAfDZCbLWgB6TsgHuqGUO0KvpbcduJ5miJBj/AkFFcj7Pa66wcioTSqd/R6HzE3FR2Wcktd2D4Y965tC9TR9PeBcN7h7CHw1Kop4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 29C121424;
+	Wed,  2 Jul 2025 05:59:48 -0700 (PDT)
+Received: from J2N7QTR9R3.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 67B023F58B;
+	Wed,  2 Jul 2025 06:00:02 -0700 (PDT)
+Date: Wed, 2 Jul 2025 14:00:00 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: kernel test robot <lkp@intel.com>
+Cc: x86-ml <x86@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [tip:master] BUILD REGRESSION
+ 104f02a7798f7e8aba25545f9d485035532260b2
+Message-ID: <aGUtUH3eVE_T7IVa@J2N7QTR9R3.cambridge.arm.com>
+References: <202507022036.gBgIDWyi-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drivers/base/node: Handle error properly in
- register_one_node()
-To: Oscar Salvador <osalvador@suse.de>
-Cc: David Hildenbrand <david@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>, Zi Yan <ziy@nvidia.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ritesh Harjani <ritesh.list@gmail.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, "Rafael J . Wysocki" <rafael@kernel.org>,
-        Danilo Krummrich <dakr@kernel.org>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Alison Schofield <alison.schofield@intel.com>,
-        Yury Norov <yury.norov@gmail.com>, Dave Jiang <dave.jiang@intel.com>,
-        KAMEZAWA Hiroyuki <kamezawa.hiroyu@jp.fujitsu.com>
-References: <20250702112856.295176-1-donettom@linux.ibm.com>
- <aGUqQbybFXd6uJu-@localhost.localdomain>
-Content-Language: en-US
-From: Donet Tom <donettom@linux.ibm.com>
-In-Reply-To: <aGUqQbybFXd6uJu-@localhost.localdomain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: KsvhkdlY5mZVFFCwx_OZVlYOTrN9kZJI
-X-Proofpoint-GUID: CODY8eJDmmBxGMhQC2uqcGZLUk512KwG
-X-Authority-Analysis: v=2.4 cv=Ib6HWXqa c=1 sm=1 tr=0 ts=68652d54 cx=c_pps a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8 a=rKeXGq08CVa402lCTmoA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzAyMDEwMCBTYWx0ZWRfX3hT/yjabbT3i w/gdG81JKjWeRY4nV949pIJZDhff9p1NgP7Ku529LOfV4LGMRRmxYAAjbJ1bamjdZe3Yod7YlVS pRBaJ8yFMuj269SNSwp5M01PXzjkfS7HTVWBxwsaQ6iKdkSGpvZ02CN/ep15xk+steqpOTeZsWV
- uflasJ8/57Ep0FVSryBCMGSa8DJDudBIoaIokFEGjjM6zZm1XfRNi26DCG/y8Mw/tgOi3ftfMud XGq4U/dlbKDUUzvC004ZRRizXBiJA8L7Z75iZyXC9j043lhaaofi8hvECe0/V8Qxjq+UOUnM33R rASaq6yySQbVvzKt46fsXc6wdW+soOa216/TKi42aCdaWshhVXfBTjMBoPeyRMBSrf1fKf7O7u2
- TDB5WnN44T2Cn+3ZowPXVPVOFE6FJJJYiYDvSi/Fie1R1TbThON/lp9f+qVULgxeyOs1ZbRM
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-02_01,2025-06-27_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 suspectscore=0
- clxscore=1015 mlxlogscore=842 lowpriorityscore=0 impostorscore=0
- mlxscore=0 malwarescore=0 spamscore=0 priorityscore=1501 adultscore=0
- bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507020100
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202507022036.gBgIDWyi-lkp@intel.com>
 
+On Wed, Jul 02, 2025 at 08:47:51PM +0800, kernel test robot wrote:
+> tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git master
+> branch HEAD: 104f02a7798f7e8aba25545f9d485035532260b2  Merge core/entry into tip/master
+> 
+> Error/Warning (recently discovered and may have been fixed):
+> 
+>     https://lore.kernel.org/oe-kbuild-all/202507020528.N0LtekXt-lkp@intel.com
+> 
+>     drivers/net/ethernet/intel/iavf/iavf_main.c:2399:2: error: unexpected token
+>     include/linux/irq-entry-common.h:201:2: error: unexpected token
+> 
+> Error/Warning ids grouped by kconfigs:
+> 
+> recent_errors
+> `-- s390-allmodconfig
+>     |-- drivers-net-ethernet-intel-iavf-iavf_main.c:error:unexpected-token
+>     `-- include-linux-irq-entry-common.h:error:unexpected-token
 
-On 7/2/25 6:16 PM, Oscar Salvador wrote:
-> On Wed, Jul 02, 2025 at 06:28:56AM -0500, Donet Tom wrote:
->> If register_node() returns an error, it is not handled correctly.
->> The function will proceed further and try to register CPUs under the
->> node, which is not correct.
->>
->> So, in this patch, if register_node() returns an error, we return
->> immediately from the function.
->>
->> Signed-off-by: Donet Tom <donettom@linux.ibm.com>
->> ---
->>
-> ...
->> diff --git a/drivers/base/node.c b/drivers/base/node.c
->> index bef84f01712f..aec991b4c0b2 100644
->> --- a/drivers/base/node.c
->> +++ b/drivers/base/node.c
->> @@ -885,6 +885,8 @@ int register_one_node(int nid)
->>   	node_devices[nid] = node;
->>   
->>   	error = register_node(node_devices[nid], nid);
->> +	if (error)
->> +		return error;
-> Ok, all current callers (based on mm-unstable) panic or BUG() if this fails,
-> but powerpc, in init_phb_dynamic(), which keeps on going.
-> Unless it panics somewhere down the road as well.
->
-> So I think we need to:
->
->   node_devices[nid] = NULL
->   kfree(node)
->
->   ?
+For the sake of the archive, this is the same issue being discussed at:
 
+  https://lore.kernel.org/oe-kbuild-all/202507020528.N0LtekXt-lkp@intel.com/#t
 
-Yes, I will add this too.
+Mark.
 
-But one question: if register_node() fails, is it okay to continue, or 
-should we panic?
-
-What is the correct way to handle this?
-
-
-> Also, once Hannes fix lands, we might need that as well.
->
-> Anyway, I'd suggest you hold on until Hannes fix lands, so we can later
-> rebase all your mem-hotplug on top of that [1].
-
-Sure
-
-
->
-> [1] https://lore.kernel.org/linux-mm/86f89a65-f0f6-4462-9eea-ac691de2f3b6@suse.de/T/#mbf392eb390b8053f96be50da3b40dfd9b62dd389
->
->
+> 
+> elapsed time: 1444m
+> 
+> configs tested: 117
+> configs skipped: 3
+> 
+> tested configs:
+> alpha                             allnoconfig    gcc-15.1.0
+> alpha                            allyesconfig    gcc-15.1.0
+> arc                               allnoconfig    gcc-15.1.0
+> arc                   randconfig-001-20250701    gcc-13.3.0
+> arc                   randconfig-002-20250701    gcc-15.1.0
+> arm                               allnoconfig    clang-21
+> arm                          pxa3xx_defconfig    clang-21
+> arm                   randconfig-001-20250701    clang-17
+> arm                   randconfig-002-20250701    gcc-8.5.0
+> arm                   randconfig-003-20250701    clang-21
+> arm                   randconfig-004-20250701    clang-21
+> arm                           tegra_defconfig    gcc-15.1.0
+> arm                         vf610m4_defconfig    gcc-15.1.0
+> arm64                             allnoconfig    gcc-15.1.0
+> arm64                 randconfig-001-20250701    clang-21
+> arm64                 randconfig-002-20250701    gcc-15.1.0
+> arm64                 randconfig-003-20250701    clang-18
+> arm64                 randconfig-004-20250701    gcc-8.5.0
+> csky                              allnoconfig    gcc-15.1.0
+> csky                  randconfig-001-20250701    gcc-11.5.0
+> csky                  randconfig-002-20250701    gcc-10.5.0
+> hexagon                          allmodconfig    clang-17
+> hexagon                           allnoconfig    clang-21
+> hexagon                          allyesconfig    clang-21
+> hexagon               randconfig-001-20250701    clang-21
+> hexagon               randconfig-002-20250701    clang-21
+> i386                             allmodconfig    gcc-12
+> i386                              allnoconfig    gcc-12
+> i386        buildonly-randconfig-001-20250701    gcc-12
+> i386        buildonly-randconfig-002-20250701    gcc-12
+> i386        buildonly-randconfig-003-20250701    gcc-12
+> i386        buildonly-randconfig-004-20250701    gcc-12
+> i386        buildonly-randconfig-005-20250701    gcc-12
+> i386        buildonly-randconfig-006-20250701    clang-20
+> i386                                defconfig    clang-20
+> loongarch                        allmodconfig    gcc-15.1.0
+> loongarch                         allnoconfig    gcc-15.1.0
+> loongarch             randconfig-001-20250701    gcc-13.3.0
+> loongarch             randconfig-002-20250701    gcc-15.1.0
+> m68k                             allmodconfig    gcc-15.1.0
+> m68k                              allnoconfig    gcc-15.1.0
+> m68k                             allyesconfig    gcc-15.1.0
+> microblaze                       allmodconfig    gcc-15.1.0
+> microblaze                        allnoconfig    gcc-15.1.0
+> microblaze                       allyesconfig    gcc-15.1.0
+> mips                              allnoconfig    gcc-15.1.0
+> mips                          eyeq6_defconfig    clang-21
+> mips                           gcw0_defconfig    clang-21
+> mips                            gpr_defconfig    clang-18
+> nios2                             allnoconfig    gcc-14.2.0
+> nios2                 randconfig-001-20250701    gcc-14.2.0
+> nios2                 randconfig-002-20250701    gcc-13.3.0
+> openrisc                          allnoconfig    gcc-15.1.0
+> openrisc                         allyesconfig    gcc-15.1.0
+> openrisc                            defconfig    gcc-15.1.0
+> parisc                           allmodconfig    gcc-15.1.0
+> parisc                            allnoconfig    gcc-15.1.0
+> parisc                           allyesconfig    gcc-15.1.0
+> parisc                              defconfig    gcc-15.1.0
+> parisc                randconfig-001-20250701    gcc-14.3.0
+> parisc                randconfig-002-20250701    gcc-10.5.0
+> parisc64                         alldefconfig    gcc-15.1.0
+> powerpc                          allmodconfig    gcc-15.1.0
+> powerpc                           allnoconfig    gcc-15.1.0
+> powerpc                          allyesconfig    clang-21
+> powerpc               randconfig-001-20250701    gcc-13.3.0
+> powerpc               randconfig-002-20250701    clang-21
+> powerpc               randconfig-003-20250701    clang-21
+> powerpc                     sequoia_defconfig    clang-17
+> powerpc64             randconfig-001-20250701    clang-21
+> powerpc64             randconfig-002-20250701    clang-21
+> powerpc64             randconfig-003-20250701    gcc-10.5.0
+> riscv                            allmodconfig    clang-21
+> riscv                             allnoconfig    gcc-15.1.0
+> riscv                            allyesconfig    clang-16
+> riscv                               defconfig    clang-21
+> riscv                 randconfig-001-20250701    gcc-14.3.0
+> riscv                 randconfig-002-20250701    gcc-10.5.0
+> s390                             allmodconfig    clang-18
+> s390                              allnoconfig    clang-21
+> s390                             allyesconfig    gcc-15.1.0
+> s390                  randconfig-001-20250701    gcc-9.3.0
+> s390                  randconfig-002-20250701    clang-17
+> sh                               allmodconfig    gcc-15.1.0
+> sh                                allnoconfig    gcc-15.1.0
+> sh                               allyesconfig    gcc-15.1.0
+> sh                         apsh4a3a_defconfig    gcc-15.1.0
+> sh                         ecovec24_defconfig    gcc-15.1.0
+> sh                             espt_defconfig    gcc-15.1.0
+> sh                    randconfig-001-20250701    gcc-15.1.0
+> sh                    randconfig-002-20250701    gcc-13.3.0
+> sh                   secureedge5410_defconfig    gcc-15.1.0
+> sh                        sh7757lcr_defconfig    gcc-15.1.0
+> sparc                            allmodconfig    gcc-15.1.0
+> sparc                             allnoconfig    gcc-15.1.0
+> sparc                 randconfig-001-20250701    gcc-10.3.0
+> sparc                 randconfig-002-20250701    gcc-15.1.0
+> sparc64               randconfig-001-20250701    gcc-8.5.0
+> sparc64               randconfig-002-20250701    gcc-12.4.0
+> um                               allmodconfig    clang-19
+> um                                allnoconfig    clang-21
+> um                               allyesconfig    gcc-12
+> um                    randconfig-001-20250701    gcc-12
+> um                    randconfig-002-20250701    gcc-12
+> x86_64                            allnoconfig    clang-20
+> x86_64                           allyesconfig    clang-20
+> x86_64      buildonly-randconfig-001-20250701    gcc-12
+> x86_64      buildonly-randconfig-002-20250701    gcc-12
+> x86_64      buildonly-randconfig-003-20250701    gcc-12
+> x86_64      buildonly-randconfig-004-20250701    gcc-12
+> x86_64      buildonly-randconfig-005-20250701    clang-20
+> x86_64      buildonly-randconfig-006-20250701    clang-20
+> x86_64                              defconfig    gcc-11
+> x86_64                          rhel-9.4-rust    clang-18
+> xtensa                            allnoconfig    gcc-15.1.0
+> xtensa                randconfig-001-20250701    gcc-15.1.0
+> xtensa                randconfig-002-20250701    gcc-13.3.0
+> 
+> --
+> 0-DAY CI Kernel Test Service
+> https://github.com/intel/lkp-tests/wiki
+> 
 
