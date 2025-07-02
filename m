@@ -1,289 +1,89 @@
-Return-Path: <linux-kernel+bounces-713235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7BDEAF152B
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:16:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 875B1AF5874
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 15:20:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFECB168AC7
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 12:16:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A94AE18931B8
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 13:19:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB220271442;
-	Wed,  2 Jul 2025 12:14:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PwDEweiw"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33AB626F44F
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 12:14:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15155276047;
+	Wed,  2 Jul 2025 13:19:04 +0000 (UTC)
+Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92A0227735;
+	Wed,  2 Jul 2025 13:18:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751458498; cv=none; b=dmNFJ2RiaQ3sqVWso98qRrCqJzerzx8MHUix0gt46Mp4Dgf0vaXN7hehi5FZT1zVy8TElnsm8VCohI4YysWPMLQDhbQ154Ki/hP6E19yWuh3QBo0S7r1Q4NpEedwwmcpoPjObrip/F1L95YxNcLeccixDtTQeF3Uifu1aiXa/CY=
+	t=1751462343; cv=none; b=fkHqb3EWEj47KOQzpsZAZzZOUrjxswyy5EmKCwtincB6YsxtW6q6nJLl92bm6gmW/nDdJ6UcZfgMPnmTMDAnfvg0NdsQVhMNhld8xsxNLA7f93gqZevhds0vLQbWCGfgZGeRknAyf6FDAEHb6ZzvdZYSGsBmgzkEPeafqQpI7UI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751458498; c=relaxed/simple;
-	bh=ffD3C6JZUyoRI83QKvcvL24B6KroLiNu6UXcdP25Wq8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Zq/EJXplxflETRaVdKXYCEYCW/Flcy3oOm5dh7Ay0L/9nVFKXcsJ5lYQep5nTKLjgnpTg817H2SHnGRvfTffmUl+bCn9lYWO2tc++TFVmTDCxQN8cUKHCLnzDNIOWFJkTtCcMM/nrLPKqYrY2TYHkTqOdbhru2zY46c3eNTFbVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PwDEweiw; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1751458495;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LiyZulwdL2gLsLXPBc0GHmqwjrdGSfYjPd+ELklP7Qo=;
-	b=PwDEweiwyM4m7d+fzGKo/gRJrotQiTrhcfDuPG8NKld5W6FRjm3vSQ5VPoru2K2jsD0Woe
-	xcIChJEYLKFR5iJdLgHsM66092rpKMv7sWk5AQLCEy1pQ8ukJG6f88tLWEVV3wu2bOXjEA
-	JndfEDd7ewoa3SZefrJ2oldUXARSG34=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-567-8PDotQUjNhacadSIS9XYBg-1; Wed,
- 02 Jul 2025 08:14:50 -0400
-X-MC-Unique: 8PDotQUjNhacadSIS9XYBg-1
-X-Mimecast-MFC-AGG-ID: 8PDotQUjNhacadSIS9XYBg_1751458488
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 365311800287;
-	Wed,  2 Jul 2025 12:14:48 +0000 (UTC)
-Received: from RHTRH0061144 (unknown [10.22.65.59])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E0F7A19560AB;
-	Wed,  2 Jul 2025 12:14:45 +0000 (UTC)
-From: Aaron Conole <aconole@redhat.com>
-To: Ilya Maximets <i.maximets@ovn.org>
-Cc: netdev@vger.kernel.org,  "David S. Miller" <davem@davemloft.net>,  Eric
- Dumazet <edumazet@google.com>,  Jakub Kicinski <kuba@kernel.org>,  Paolo
- Abeni <pabeni@redhat.com>,  Simon Horman <horms@kernel.org>,
-  dev@openvswitch.org,  linux-kernel@vger.kernel.org,  Eelco Chaudron
- <echaudro@redhat.com>
-Subject: Re: [PATCH net-next] net: openvswitch: allow providing upcall pid
- for the 'execute' command
-In-Reply-To: <20250627220219.1504221-1-i.maximets@ovn.org> (Ilya Maximets's
-	message of "Sat, 28 Jun 2025 00:01:33 +0200")
-References: <20250627220219.1504221-1-i.maximets@ovn.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
-Date: Wed, 02 Jul 2025 08:14:43 -0400
-Message-ID: <f7tms9mssb0.fsf@redhat.com>
+	s=arc-20240116; t=1751462343; c=relaxed/simple;
+	bh=QAwDg8AZhLOV8WryL5g2y7bANhcj6k8F/gQErZRvyrw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aVQEHykEB5c2Hw3qHSPsmuzBhvDMga8sYnLe3aTbz8gDiMt5zagYO4TnjAJP11xsDXPyz/Q6kpplhNAoNo3yJ0x4MeoT2pt4I9DbxOpmnSmdqf0Z/CwQzmibC6mqOzlechiCt2bpr6M8f+iLOvLgogPepLFRcFahSWYwcrsWUnk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
+Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
+	id 1uWwab-00058Q-00; Wed, 02 Jul 2025 14:29:25 +0200
+Received: by alpha.franken.de (Postfix, from userid 1000)
+	id 989A3C0C1C; Wed,  2 Jul 2025 14:14:47 +0200 (CEST)
+Date: Wed, 2 Jul 2025 14:14:47 +0200
+From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mips: boot: use 'targets' instead of extra-y in Makefile
+Message-ID: <aGUit7vdpeC1jVm8@alpha.franken.de>
+References: <20250608015136.2960777-1-masahiroy@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250608015136.2960777-1-masahiroy@kernel.org>
 
-Ilya Maximets <i.maximets@ovn.org> writes:
-
-> When a packet enters OVS datapath and there is no flow to handle it,
-> packet goes to userspace through a MISS upcall.  With per-CPU upcall
-> dispatch mechanism, we're using the current CPU id to select the
-> Netlink PID on which to send this packet.  This allows us to send
-> packets from the same traffic flow through the same handler.
->
-> The handler will process the packet, install required flow into the
-> kernel and re-inject the original packet via OVS_PACKET_CMD_EXECUTE.
->
-> While handling OVS_PACKET_CMD_EXECUTE, however, we may hit a
-> recirculation action that will pass the (likely modified) packet
-> through the flow lookup again.  And if the flow is not found, the
-> packet will be sent to userspace again through another MISS upcall.
->
-> However, the handler thread in userspace is likely running on a
-> different CPU core, and the OVS_PACKET_CMD_EXECUTE request is handled
-> in the syscall context of that thread.  So, when the time comes to
-> send the packet through another upcall, the per-CPU dispatch will
-> choose a different Netlink PID, and this packet will end up processed
-> by a different handler thread on a different CPU.
-
-Just wondering but why can't we choose the existing core handler when
-running the packet_cmd_execute?  For example, when looking into the
-per-cpu table we know what the current core is, can we just queue to
-that one?  I actually thought that's what the PER_CPU dispatch mode was
-supposed to do.  Or is it that we want to make sure we keep the
-association between the skbuff for re-injection always?
-
-> The process continues as long as there are new recirculations, each
-> time the packet goes to a different handler thread before it is sent
-> out of the OVS datapath to the destination port.  In real setups the
-> number of recirculations can go up to 4 or 5, sometimes more.
-
-Is it because the userspace handler threads are being rescheduled across
-CPUs?  Do we still see this behavior if we pinned each handler thread to
-a specific CPU rather than letting the scheduler make the decision?
-
-> There is always a chance to re-order packets while processing upcalls,
-> because userspace will first install the flow and then re-inject the
-> original packet.  So, there is a race window when the flow is already
-> installed and the second packet can match it and be forwarded to the
-> destination before the first packet is re-injected.  But the fact that
-> packets are going through multiple upcalls handled by different
-> userspace threads makes the reordering noticeably more likely, because
-> we not only have a race between the kernel and a userspace handler
-> (which is hard to avoid), but also between multiple userspace handlers.
->
-> For example, let's assume that 10 packets got enqueued through a MISS
-> upcall for handler-1, it will start processing them, will install the
-> flow into the kernel and start re-injecting packets back, from where
-> they will go through another MISS to handler-2.  Handler-2 will install
-> the flow into the kernel and start re-injecting the packets, while
-> handler-1 continues to re-inject the last of the 10 packets, they will
-> hit the flow installed by handler-2 and be forwarded without going to
-> the handler-2, while handler-2 still re-injects the first of these 10
-> packets.  Given multiple recirculations and misses, these 10 packets
-> may end up completely mixed up on the output from the datapath.
->
-> Let's allow userspace to specify on which Netlink PID the packets
-> should be upcalled while processing OVS_PACKET_CMD_EXECUTE.
-> This makes it possible to ensure that all the packets are processed
-> by the same handler thread in the userspace even with them being
-> upcalled multiple times in the process.  Packets will remain in order
-> since they will be enqueued to the same socket and re-injected in the
-> same order.  This doesn't eliminate re-ordering as stated above, since
-> we still have a race between kernel and the userspace thread, but it
-> allows to eliminate races between multiple userspace threads.
->
-> Userspace knows the PID of the socket on which the original upcall is
-> received, so there is no need to send it up from the kernel.
->
-> Solution requires storing the value somewhere for the duration of the
-> packet processing.  There are two potential places for this: our skb
-> extension or the per-CPU storage.  It's not clear which is better,
-> so just following currently used scheme of storing this kind of things
-> along the skb.
-
-With this change we're almost full on the OVS sk_buff control block.
-Might be good to mention it in the commit message if you're respinning.
-
-> Signed-off-by: Ilya Maximets <i.maximets@ovn.org>
+On Sun, Jun 08, 2025 at 10:51:34AM +0900, Masahiro Yamada wrote:
+> vmlinux.bin.* files are built as prerequisites of other objects.
+> There is no need to use extra-y, which is planned for deprecation.
+> 
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
 > ---
->  include/uapi/linux/openvswitch.h |  6 ++++++
->  net/openvswitch/actions.c        |  6 ++++--
->  net/openvswitch/datapath.c       | 10 +++++++++-
->  net/openvswitch/datapath.h       |  3 +++
->  net/openvswitch/vport.c          |  1 +
->  5 files changed, 23 insertions(+), 3 deletions(-)
->
-> diff --git a/include/uapi/linux/openvswitch.h b/include/uapi/linux/openvswitch.h
-> index 3a701bd1f31b..3092c2c6f1d2 100644
-> --- a/include/uapi/linux/openvswitch.h
-> +++ b/include/uapi/linux/openvswitch.h
-> @@ -186,6 +186,11 @@ enum ovs_packet_cmd {
->   * %OVS_PACKET_ATTR_USERSPACE action specify the Maximum received fragment
->   * size.
->   * @OVS_PACKET_ATTR_HASH: Packet hash info (e.g. hash, sw_hash and l4_hash in skb).
-> + * @OVS_PACKET_ATTR_UPCALL_PID: Netlink PID to use for upcalls while
-> + * processing %OVS_PACKET_CMD_EXECUTE.  Takes precedence over all other ways
-> + * to determine the Netlink PID including %OVS_USERSPACE_ATTR_PID,
-> + * %OVS_DP_ATTR_UPCALL_PID, %OVS_DP_ATTR_PER_CPU_PIDS and the
-> + * %OVS_VPORT_ATTR_UPCALL_PID.
->   *
->   * These attributes follow the &struct ovs_header within the Generic Netlink
->   * payload for %OVS_PACKET_* commands.
-> @@ -205,6 +210,7 @@ enum ovs_packet_attr {
->  	OVS_PACKET_ATTR_MRU,	    /* Maximum received IP fragment size. */
->  	OVS_PACKET_ATTR_LEN,	    /* Packet size before truncation. */
->  	OVS_PACKET_ATTR_HASH,	    /* Packet hash. */
-> +	OVS_PACKET_ATTR_UPCALL_PID, /* u32 Netlink PID. */
->  	__OVS_PACKET_ATTR_MAX
->  };
+> 
+>  arch/mips/boot/Makefile | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/arch/mips/boot/Makefile b/arch/mips/boot/Makefile
+> index 196c44fa72d9..8473c4671702 100644
+> --- a/arch/mips/boot/Makefile
+> +++ b/arch/mips/boot/Makefile
+> @@ -54,10 +54,10 @@ UIMAGE_ENTRYADDR = $(VMLINUX_ENTRY_ADDRESS)
+>  # Compressed vmlinux images
+>  #
 >  
-> diff --git a/net/openvswitch/actions.c b/net/openvswitch/actions.c
-> index 3add108340bf..2832e0794197 100644
-> --- a/net/openvswitch/actions.c
-> +++ b/net/openvswitch/actions.c
-> @@ -941,8 +941,10 @@ static int output_userspace(struct datapath *dp, struct sk_buff *skb,
->  			break;
+> -extra-y += vmlinux.bin.bz2
+> -extra-y += vmlinux.bin.gz
+> -extra-y += vmlinux.bin.lzma
+> -extra-y += vmlinux.bin.lzo
+> +targets += vmlinux.bin.bz2
+> +targets += vmlinux.bin.gz
+> +targets += vmlinux.bin.lzma
+> +targets += vmlinux.bin.lzo
 >  
->  		case OVS_USERSPACE_ATTR_PID:
-> -			if (dp->user_features &
-> -			    OVS_DP_F_DISPATCH_UPCALL_PER_CPU)
-> +			if (OVS_CB(skb)->upcall_pid)
-> +				upcall.portid = OVS_CB(skb)->upcall_pid;
-> +			else if (dp->user_features &
-> +				 OVS_DP_F_DISPATCH_UPCALL_PER_CPU)
->  				upcall.portid =
->  				  ovs_dp_get_upcall_portid(dp,
->  							   smp_processor_id());
-> diff --git a/net/openvswitch/datapath.c b/net/openvswitch/datapath.c
-> index b990dc83504f..ec08ce72f439 100644
-> --- a/net/openvswitch/datapath.c
-> +++ b/net/openvswitch/datapath.c
-> @@ -267,7 +267,9 @@ void ovs_dp_process_packet(struct sk_buff *skb, struct sw_flow_key *key)
->  		memset(&upcall, 0, sizeof(upcall));
->  		upcall.cmd = OVS_PACKET_CMD_MISS;
->  
-> -		if (dp->user_features & OVS_DP_F_DISPATCH_UPCALL_PER_CPU)
-> +		if (OVS_CB(skb)->upcall_pid)
-> +			upcall.portid = OVS_CB(skb)->upcall_pid;
-> +		else if (dp->user_features & OVS_DP_F_DISPATCH_UPCALL_PER_CPU)
->  			upcall.portid =
->  			    ovs_dp_get_upcall_portid(dp, smp_processor_id());
->  		else
-> @@ -616,6 +618,7 @@ static int ovs_packet_cmd_execute(struct sk_buff *skb, struct genl_info *info)
->  	struct sw_flow_actions *sf_acts;
->  	struct datapath *dp;
->  	struct vport *input_vport;
-> +	u32 upcall_pid = 0;
->  	u16 mru = 0;
->  	u64 hash;
->  	int len;
-> @@ -651,6 +654,10 @@ static int ovs_packet_cmd_execute(struct sk_buff *skb, struct genl_info *info)
->  			       !!(hash & OVS_PACKET_HASH_L4_BIT));
->  	}
->  
-> +	if (a[OVS_PACKET_ATTR_UPCALL_PID])
-> +		upcall_pid = nla_get_u32(a[OVS_PACKET_ATTR_UPCALL_PID]);
-> +	OVS_CB(packet)->upcall_pid = upcall_pid;
-> +
->  	/* Build an sw_flow for sending this packet. */
->  	flow = ovs_flow_alloc();
->  	err = PTR_ERR(flow);
-> @@ -719,6 +726,7 @@ static const struct nla_policy packet_policy[OVS_PACKET_ATTR_MAX + 1] = {
->  	[OVS_PACKET_ATTR_PROBE] = { .type = NLA_FLAG },
->  	[OVS_PACKET_ATTR_MRU] = { .type = NLA_U16 },
->  	[OVS_PACKET_ATTR_HASH] = { .type = NLA_U64 },
-> +	[OVS_PACKET_ATTR_UPCALL_PID] = { .type = NLA_U32 },
->  };
->  
->  static const struct genl_small_ops dp_packet_genl_ops[] = {
-> diff --git a/net/openvswitch/datapath.h b/net/openvswitch/datapath.h
-> index cfeb817a1889..db0c3e69d66c 100644
-> --- a/net/openvswitch/datapath.h
-> +++ b/net/openvswitch/datapath.h
-> @@ -121,6 +121,8 @@ struct datapath {
->   * @cutlen: The number of bytes from the packet end to be removed.
->   * @probability: The sampling probability that was applied to this skb; 0 means
->   * no sampling has occurred; U32_MAX means 100% probability.
-> + * @upcall_pid: Netlink socket PID to use for sending this packet to userspace;
-> + * 0 means "not set" and default per-CPU or per-vport dispatch should be used.
->   */
->  struct ovs_skb_cb {
->  	struct vport		*input_vport;
-> @@ -128,6 +130,7 @@ struct ovs_skb_cb {
->  	u16			acts_origlen;
->  	u32			cutlen;
->  	u32			probability;
-> +	u32			upcall_pid;
->  };
->  #define OVS_CB(skb) ((struct ovs_skb_cb *)(skb)->cb)
->  
-> diff --git a/net/openvswitch/vport.c b/net/openvswitch/vport.c
-> index 8732f6e51ae5..6bbbc16ab778 100644
-> --- a/net/openvswitch/vport.c
-> +++ b/net/openvswitch/vport.c
-> @@ -501,6 +501,7 @@ int ovs_vport_receive(struct vport *vport, struct sk_buff *skb,
->  	OVS_CB(skb)->mru = 0;
->  	OVS_CB(skb)->cutlen = 0;
->  	OVS_CB(skb)->probability = 0;
-> +	OVS_CB(skb)->upcall_pid = 0;
->  	if (unlikely(dev_net(skb->dev) != ovs_dp_get_net(vport->dp))) {
->  		u32 mark;
+>  $(obj)/vmlinux.bin.bz2: $(obj)/vmlinux.bin FORCE
+>  	$(call if_changed,bzip2)
+> -- 
+> 2.43.0
 
+applied to mips-next.
+
+Thomas.
+
+-- 
+Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
+good idea.                                                [ RFC1925, 2.3 ]
 
