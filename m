@@ -1,161 +1,290 @@
-Return-Path: <linux-kernel+bounces-712518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-712525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30A5FAF0AB7
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 07:27:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A8CE4AF0ADC
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 07:48:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 160CC1C02BD0
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 05:28:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8E6A1C04A23
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 05:48:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24FB21F1301;
-	Wed,  2 Jul 2025 05:27:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=public-files.de header.i=frank-w@public-files.de header.b="YQtF32II"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2D6E10F9;
-	Wed,  2 Jul 2025 05:27:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9A741F91D6;
+	Wed,  2 Jul 2025 05:48:17 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35ED7199FAB;
+	Wed,  2 Jul 2025 05:48:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751434059; cv=none; b=Hl8tN7fiIMWG7V/MKmC9uNDLmWpbTZDjeN8CMwzvzB8/mR46QgK0zgkkRQiXnF1x3pW6byEJTkkqXJa3ObDZvILpjPWY52GppaNI7UXNoF4iljSahBDU6OIpP4TTsdBtS+xNrMcBAFSj/N1JsiN8YY8OZFgejXHB0Z4SYH8QMCw=
+	t=1751435297; cv=none; b=l0M1fK20M9AtvbPzKIV3uJ9kVMNDK0/DomV/ME8gQEvLXeIZv5AIS0Iay5eF4S0t/oBvAh/j/oagJqymg3ZTmvXjNTxHD1jw/U6/KBjLXmVgFb2nHCDzoiU0CIKGmR8QUYe6wwFJYXLhIhM3DRyR/UuUUmCbr6hLmmrpCpaBfaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751434059; c=relaxed/simple;
-	bh=snNUAsnORcKOYh9hKd9fSgC1zweCJ39RM4mwSSIpfc0=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=a2jkYeJb5JN7/uUTR3CLpvVAfvoYFluqI+mq/LkXiZDQIsfOPSU1FN3q9nG4wIMKizZJxfe2tvVX9d/d7rejDK2VPCcSstXMMaWsluOc9NAiuwLNAVsWiEcIZ0kKfBA6DUYxVuv1GA0Vm6hXRIX3xvVMuvmej6JqDelZrdNFSAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=public-files.de; spf=pass smtp.mailfrom=public-files.de; dkim=pass (2048-bit key) header.d=public-files.de header.i=frank-w@public-files.de header.b=YQtF32II; arc=none smtp.client-ip=212.227.17.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=public-files.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=public-files.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=public-files.de;
-	s=s31663417; t=1751434019; x=1752038819; i=frank-w@public-files.de;
-	bh=ocX+LiR9BtypRDOe9giWuZ6zdLW4XcmiYNpdeZQm2ws=;
-	h=X-UI-Sender-Class:Date:From:To:CC:Subject:Reply-to:In-Reply-To:
-	 References:Message-ID:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=YQtF32IIGW1bOIhg/DGGFGZbk++Yq3n5VM1OhIjZgh9ILMQqSVF4TmRQVcWg2RGR
-	 Oq3pSuhaDly5IghK1NeTXez4Oo0/XJ0JzHhfg/CJE6fod1fsAGwg34COavNQzEzhj
-	 tkJF3NI2z5U+KZJf/+JkzwGIRm0v1cU3o2ORmuyYxFKEZ66YwNXVP1o5p6v+RWS2K
-	 eWcsQ0F3QPAOxk4/fzUIGGgfFJqEn/e5DIHvdwcVB2SIPx/eraW4KSZT6LO8h0+4K
-	 HYNF/YW6bU7WolpJhkVS5HdpsGu2GFA/Kqm7LOLUx9VYlDclz7ukV4bf9ywR8uSLy
-	 UTNwa/ekcFrhbVrAfQ==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [127.0.0.1] ([194.15.85.168]) by mail.gmx.net (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MWici-1uD1xL1XCK-00PXM7; Wed, 02
- Jul 2025 07:26:59 +0200
-Date: Wed, 02 Jul 2025 07:26:52 +0200
-From: Frank Wunderlich <frank-w@public-files.de>
-To: Frank Wunderlich <linux@fw-web.de>, MyungJoo Ham <myungjoo.ham@samsung.com>,
- Kyungmin Park <kyungmin.park@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Georgi Djakov <djakov@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
- Vladimir Oltean <olteanv@gmail.com>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-CC: Johnson Wang <johnson.wang@mediatek.com>,
- =?UTF-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>,
- Landen Chao <Landen.Chao@mediatek.com>, DENG Qingfang <dqfext@gmail.com>,
- Sean Wang <sean.wang@mediatek.com>, Daniel Golle <daniel@makrotopia.org>,
- Lorenzo Bianconi <lorenzo@kernel.org>, Felix Fietkau <nbd@nbd.name>,
- linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH v7 00/14] further mt7988 devicetree work
-User-Agent: K-9 Mail for Android
-Reply-to: frank-w@public-files.de
-In-Reply-To: <20250628165451.85884-1-linux@fw-web.de>
-References: <20250628165451.85884-1-linux@fw-web.de>
-Message-ID: <41FC3305-F6B9-4EBF-BC26-0203A7F3329E@public-files.de>
+	s=arc-20240116; t=1751435297; c=relaxed/simple;
+	bh=4hD4MOimnEYWCD4hSnlRjGStBdpJEfn2L1ZQnbN4BHY=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=t5kH1dl+FDfcKy0hjKevXxNH0kYnAWKlrlLSx7MgKjxHBSJiUw8/JWNksvT2vge4yDyTU3YidBIYzdXh15B0kczDffQC3bRlysOSwDj6uWFGh0J2CKvLLeOT9TEwFTv8plJ5NYBsfC6yHS33Ud5K74aj29ynuDz2iB64FYxLOwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-669ff7000002311f-fd-6864c492d922
+From: Byungchul Park <byungchul@sk.com>
+To: willy@infradead.org,
+	netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	kernel_team@skhynix.com,
+	kuba@kernel.org,
+	almasrymina@google.com,
+	ilias.apalodimas@linaro.org,
+	harry.yoo@oracle.com,
+	hawk@kernel.org,
+	akpm@linux-foundation.org,
+	davem@davemloft.net,
+	john.fastabend@gmail.com,
+	andrew+netdev@lunn.ch,
+	asml.silence@gmail.com,
+	toke@redhat.com,
+	tariqt@nvidia.com,
+	edumazet@google.com,
+	pabeni@redhat.com,
+	saeedm@nvidia.com,
+	leon@kernel.org,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	david@redhat.com,
+	lorenzo.stoakes@oracle.com,
+	Liam.Howlett@oracle.com,
+	vbabka@suse.cz,
+	rppt@kernel.org,
+	surenb@google.com,
+	mhocko@suse.com,
+	horms@kernel.org,
+	linux-rdma@vger.kernel.org,
+	bpf@vger.kernel.org,
+	vishal.moola@gmail.com,
+	hannes@cmpxchg.org,
+	ziy@nvidia.com,
+	jackmanb@google.com
+Subject: [PATCH net-next v8 0/5] Split netmem from struct page
+Date: Wed,  2 Jul 2025 14:32:51 +0900
+Message-Id: <20250702053256.4594-1-byungchul@sk.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAAzXRW0hTcRwHcP87Z+ccl4s1xU6OMpYhSa60GT9DzB6C40MQ6kv5oMMd3Eg3
+	mXfpYjmShi7TCtMZs8jbrMW8TTGrudTQSixr5WWy0oK8kNrw1sV1efvw/cL35Uthwi48gFKq
+	sliNSpYmJng4b87nTmi5Xa44WFwfAgZzMwGmlTyon7JywdDUjmB5dYyEJXs/AXdr3RgYXmlx
+	+G5ew2C6z0WCyXICnHUzOHQXd2DgujpAQKl2HYNHq/MkXLI2cGC4Xc+F62v3MOgonCLhdZeB
+	gMnmX1yYsZXi8LyqEQenPgb6jP7gHpxFYDd3cMBdUkNAxYiRgI9aJ4KRXhcO1Rf1CMw9Di6s
+	r2xuVD+bJGOCmN7ZBYxpbXzPYTqrJkjGaMlmWhpCGJ1jBGMsTVcIxrJYTjLjb7sJZqByHWc6
+	rUscprRonmC+TX/AmYWeUYIxt47izJDRTp7cdpoXJWfTlDms5kB0Mk9hqGjnZBRBnsN6CytE
+	s/t1yJuiBVJ6ftJM6BD1xz9WhZ6YEATTDscq5rGfIIxecvXjOsSjMMF9grY3j5GewlcQTbeM
+	rxEe44K9dH1zPfKYv7kzMfwT+7sfSJsePvnnOZKuqYv/6x300wYHXoa2GJFXExIqVTnpMmWa
+	VKLIVynzJCnqdAvafLTu3EaiFS0Ox9uQgEJiH/7AmxSFkCvLycxPtyGawsR+/K07NyO+XJZf
+	wGrUSZrsNDbThkQULt7OD3fnyoWCVFkWe4ZlM1jN/5ZDeQcUIto4P1CmP/pZGnEqcGUpLoLS
+	T+VmqKWlgZ8GbyepbMHvEo7vERVdiNq3K9IZ8UXygJ96rS3ucLTqpXmjIPx80Vl1kr9FgSWl
+	y2PnDEEBQy+IY6HhIqMmeVkbENs27qt5PJRrK5dc3jANiqjIyhKp68gNV8LX2puHvHY75LQx
+	UYxnKmRhIZgmU/Ybuabfrs0CAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAAzWRa0hTcRyG+++cnR2Hi8M0O2kWjCSw1IyCH6VD6UOnQJEKor7k1IMbblM2
+	NTUEb91Ep+kC0wkLSd2cTKboDBOZ84ZU4o2VVxZKgqmpTTcz24K+Pbwv7/PlJTFhIx5MypTZ
+	rEopkYsIPs5PvF4aUWNPk14yHZ0CndlEQNt+HrQsW7mgM3Yj2HXP8WDHPkJA01sXBrrPZTj8
+	MnswWBl28qDNkgBLzas49D3vwcBZNUpAZdkBBh/cGzwosbZyYLBxjAsT3RouaD3vMOgpWubB
+	1HsdAYumIy6s2ipxGKs34LCkiYNhfRC4xtcR2M09HHBVNBJQO6kn4FvZEoLJQScODcUaBOZ+
+	BxcO9r2OhqFFXlwYM7i+iTFdhi8cprd+gcfoLTlMZ2s4U+6YxBiL8SXBWLZreMz8bB/BjNYd
+	4EyvdYfDVJZuEMzPla84s9k/QzBN37c4jLlrBk8SPuTHpLFyWS6rihIn86W62m5OVinkOaxv
+	sCK0frEckSRNXaEP3cJy5EcS1Hna4XBjPg6koukd5whejvgkRrUTtN00x/MVAZSY7pz3ED7G
+	qTC6xdSCfCzwehYm/vwb09RZuq1jAKtGpB4dM6JAmTJXIZHJr0aqM6T5SlleZGqmwoK8pzUX
+	/n5lRbtTN22IIpHIXzDwMVUq5Epy1fkKG6JJTBQoOB7qjQRpkvwCVpX5SJUjZ9U2FELiopOC
+	2/fZZCGVLslmM1g2i1X9bzmkX3ARyiI1a9IfFxRhuo5707sljwPaP7WaomOnE18DfQKT9hvO
+	nD7X/1SVnrK8528UxnfHxKQUJBmGiPHRJzvXDivsjllbQry2ulNYl5ozv7aoFWv3CiOCjC2u
+	8X1P8VZghPRBX6ygK/yZcPuFouIWGRpyeauq3T+q4cZd8ZbrjsYgwtVSSXQ4plJL/gLMc8aZ
+	sAIAAA==
+X-CFilter-Loop: Reflected
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:+0ij2U4Sm1jTDlnh1aeuBvKJA+kgKHBWGyfwk5h8SLM8bOL5I+b
- urRm0KZG1vEjPM3lmK/DKQtdzqxf6yJmNBy9coNRFfmn0VihR74jyuyoebpSLYzFy1v+v3u
- vSznWJtdRDX4jentQ7yg63BjAtKB8yMXmkZY5DB1xcRhpRU2e/B3BuVKEM9Ytrk0ItKBqMo
- GgUWENJ4VwIVQTFp5HkSQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Nq+lDfMhpeQ=;aBgJLF/kLqYk+izV8BvM8GZXlux
- 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
+
+Hi all,
+
+In this version, I'm posting non-controversial patches first since there
+are pending works that should be based on this series so that those can
+be started shortly.  I will post the rest later.
+
+The MM subsystem is trying to reduce struct page to a single pointer.
+The first step towards that is splitting struct page by its individual
+users, as has already been done with folio and slab.  This patchset does
+that for netmem which is used for page pools.
+
+Matthew Wilcox tried and stopped the same work, you can see in:
+
+   https://lore.kernel.org/linux-mm/20230111042214.907030-1-willy@infradead.org/
+
+Mina Almasry already has done a lot fo prerequisite works by luck.  I
+stacked my patches on the top of his work e.i. netmem.
+
+I focused on removing the page pool members in struct page this time,
+not moving the allocation code of page pool from net to mm.  It can be
+done later if needed.
+
+The final patch removing the page pool fields will be submitted once
+all the converting work of page to netmem are done:
+
+   1. converting of libeth_fqe by Tony Nguyen.
+   2. converting of mlx5 by Tariq Toukan.
+   3. converting of prueth_swdata.
+   4. converting of freescale driver.
+
+For our discussion, I'm sharing what the final patch looks like the
+following.
+
+	Byungchul
+--8<--
+commit 1847d9890f798456b21ccb27aac7545303048492
+Author: Byungchul Park <byungchul@sk.com>
+Date:   Wed May 28 20:44:55 2025 +0900
+
+    mm, netmem: remove the page pool members in struct page
+    
+    Now that all the users of the page pool members in struct page have been
+    gone, the members can be removed from struct page.
+    
+    However, since struct netmem_desc still uses the space in struct page,
+    the important offsets should be checked properly, until struct
+    netmem_desc has its own instance from slab.
+    
+    Remove the page pool members in struct page and modify static checkers
+    for the offsets.
+    
+    Signed-off-by: Byungchul Park <byungchul@sk.com>
+
+diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+index 32ba5126e221..db2fe0d0ebbf 100644
+--- a/include/linux/mm_types.h
++++ b/include/linux/mm_types.h
+@@ -120,17 +120,6 @@ struct page {
+ 			 */
+ 			unsigned long private;
+ 		};
+-		struct {	/* page_pool used by netstack */
+-			/**
+-			 * @pp_magic: magic value to avoid recycling non
+-			 * page_pool allocated pages.
+-			 */
+-			unsigned long pp_magic;
+-			struct page_pool *pp;
+-			unsigned long _pp_mapping_pad;
+-			unsigned long dma_addr;
+-			atomic_long_t pp_ref_count;
+-		};
+ 		struct {	/* Tail pages of compound page */
+ 			unsigned long compound_head;	/* Bit zero is set */
+ 		};
+diff --git a/include/net/netmem.h b/include/net/netmem.h
+index 8f354ae7d5c3..3414f184d018 100644
+--- a/include/net/netmem.h
++++ b/include/net/netmem.h
+@@ -42,11 +42,8 @@ struct netmem_desc {
+ 	static_assert(offsetof(struct page, pg) == \
+ 		      offsetof(struct netmem_desc, desc))
+ NETMEM_DESC_ASSERT_OFFSET(flags, _flags);
+-NETMEM_DESC_ASSERT_OFFSET(pp_magic, pp_magic);
+-NETMEM_DESC_ASSERT_OFFSET(pp, pp);
+-NETMEM_DESC_ASSERT_OFFSET(_pp_mapping_pad, _pp_mapping_pad);
+-NETMEM_DESC_ASSERT_OFFSET(dma_addr, dma_addr);
+-NETMEM_DESC_ASSERT_OFFSET(pp_ref_count, pp_ref_count);
++NETMEM_DESC_ASSERT_OFFSET(lru, pp_magic);
++NETMEM_DESC_ASSERT_OFFSET(mapping, _pp_mapping_pad);
+ #undef NETMEM_DESC_ASSERT_OFFSET
+ 
+ /*
+---
+Changes from v7 (no actual updates):
+	1. Exclude "netmem: introduce struct netmem_desc mirroring
+	   struct page" that might be controversial.
+	2. Exclude "netmem: introduce a netmem API,
+	   virt_to_head_netmem()" since there are no users.
+
+Changes from v6 (no actual updates):
+	1. Rebase on net-next/main as of Jun 25.
+	2. Supplement a comment describing struct net_iov.
+	3. Exclude a controversial patch, "page_pool: access ->pp_magic
+	   through struct netmem_desc in page_pool_page_is_pp()".
+	4. Exclude "netmem: remove __netmem_get_pp()" since the API
+	   started to be used again by libeth.
+
+Changes from v5 (no actual updates):
+	1. Rebase on net-next/main as of Jun 20.
+	2. Add given 'Reviewed-by's and 'Acked-by's, thanks to all.
+	3. Add missing cc's.
+
+Changes from v4:
+	1. Add given 'Reviewed-by's, thanks to all.
+	2. Exclude potentially controversial patches.
+
+Changes from v3:
+	1. Relocates ->owner and ->type of net_iov out of netmem_desc
+	   and make them be net_iov specific.
+	2. Remove __force when casting struct page to struct netmem_desc.
+
+Changes from v2:
+	1. Introduce a netmem API, virt_to_head_netmem(), and use it
+	   when it's needed.
+	2. Introduce struct netmem_desc as a new struct and union'ed
+	   with the existing fields in struct net_iov.
+	3. Make page_pool_page_is_pp() access ->pp_magic through struct
+	   netmem_desc instead of struct page.
+	4. Move netmem alloc APIs from include/net/netmem.h to
+	   net/core/netmem_priv.h.
+	5. Apply trivial feedbacks, thanks to Mina, Pavel, and Toke.
+	6. Add given 'Reviewed-by's, thanks to Mina.
+
+Changes from v1:
+	1. Rebase on net-next's main as of May 26.
+	2. Check checkpatch.pl, feedbacked by SJ Park.
+	3. Add converting of page to netmem in mt76.
+	4. Revert 'mlx5: use netmem descriptor and APIs for page pool'
+	   since it's on-going by Tariq Toukan.  I will wait for his
+	   work to be done.
+	5. Revert 'page_pool: use netmem APIs to access page->pp_magic
+	   in page_pool_page_is_pp()' since we need more discussion.
+	6. Revert 'mm, netmem: remove the page pool members in struct
+	   page' since there are some prerequisite works to remove the
+	   page pool fields from struct page.  I can submit this patch
+	   separatedly later.
+	7. Cancel relocating a page pool member in struct page.
+	8. Modify static assert for offests and size of struct
+	   netmem_desc.
+
+Changes from rfc:
+	1. Rebase on net-next's main branch.
+	   https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git/
+	2. Fix a build error reported by kernel test robot.
+	   https://lore.kernel.org/all/202505100932.uzAMBW1y-lkp@intel.com/
+	3. Add given 'Reviewed-by's, thanks to Mina and Ilias.
+	4. Do static_assert() on the size of struct netmem_desc instead
+	   of placing place-holder in struct page, feedbacked by
+	   Matthew.
+	5. Do struct_group_tagged(netmem_desc) on struct net_iov instead
+	   of wholly renaming it to strcut netmem_desc, feedbacked by
+	   Mina and Pavel.
+
+Byungchul Park (5):
+  page_pool: rename page_pool_return_page() to page_pool_return_netmem()
+  page_pool: rename __page_pool_release_page_dma() to
+    __page_pool_release_netmem_dma()
+  page_pool: rename __page_pool_alloc_pages_slow() to
+    __page_pool_alloc_netmems_slow()
+  netmem: use _Generic to cover const casting for page_to_netmem()
+  page_pool: make page_pool_get_dma_addr() just wrap
+    page_pool_get_dma_addr_netmem()
+
+ include/net/netmem.h            |  7 +++----
+ include/net/page_pool/helpers.h |  7 +------
+ net/core/page_pool.c            | 36 ++++++++++++++++-----------------
+ 3 files changed, 22 insertions(+), 28 deletions(-)
 
 
->Frank Wunderlich (14):
-=2E=2E=2E
->  dt-bindings: net: dsa: mediatek,mt7530: add dsa-port definition for
->    mt7988
->  dt-bindings: net: dsa: mediatek,mt7530: add internal mdio bus
->  dt-bindings: interconnect: add mt7988-cci compatible
->  arm64: dts: mediatek: mt7988: add cci node
-=2E=2E=2E
->  arm64: dts: mediatek: mt7988a-bpi-r4: add proc-supply for cci
->  arm64: dts: mediatek: mt7988a-bpi-r4: drop unused pins
->  arm64: dts: mediatek: mt7988a-bpi-r4: add gpio leds
-=2E=2E=2E
+base-commit: 8dacfd92dbefee829ca555a860e86108fdd1d55b
+-- 
+2.17.1
 
-Hi Angelo,
-
-Maybe you can take the already reviewed
-patches (except exthernet + switch) so i do
-not need to resend them again and again
-and spam people too much because of the
-ethernet binding changes?
-regards Frank
 
