@@ -1,205 +1,114 @@
-Return-Path: <linux-kernel+bounces-713325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A56DAF4D09
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19397AF4D08
 	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 15:08:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E0F43BA5AB
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 13:07:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A0B8B7B817E
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 13:06:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 855F7277026;
-	Wed,  2 Jul 2025 13:05:14 +0000 (UTC)
-Received: from relay15.mail.gandi.net (relay15.mail.gandi.net [217.70.178.235])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A844927816B;
+	Wed,  2 Jul 2025 13:06:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="asR0ylms"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D248275AF8;
-	Wed,  2 Jul 2025 13:05:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.235
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751461514; cv=none; b=dZ8FBT69XXbHt0IYto84PI7K6ZXwIYWGjcH8SZnWJCX8NbW19VtmV6rmHGpUSwcs3wgK3uUe3Ty4jQVEIjn0R+eqvzlbGqUN6L5HLxfh/+FRhTeThwAoxA23K6i4kzQF23aHTnopfswhs0GRUHD+zsakSc5NQnH06PWi50a5L68=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751461514; c=relaxed/simple;
-	bh=6DbrUrjzqWPuGW013KxBtcgEZYWvCNIy8XMvL+T0r2M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VvggNev95GcUFjF3dYvF99tn8Bie/awmgnBcDWsbAL30pZSo8Aznw79yfTgacD6+GMZN8v+Jl+WIK2O8KQp0ooN7Z89LlRfNIA1BXqR9FCmm48dZjL7fRhT7OdYdH1/UPzvB9u8BUXCYxzRnb1CjAC/UfyDMdJHZdDT+ZGG194Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.178.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 330F344211;
-	Wed,  2 Jul 2025 13:05:07 +0000 (UTC)
-Message-ID: <6d478129-324a-4c5a-8258-4abe3d0732d6@ghiti.fr>
-Date: Wed, 2 Jul 2025 15:05:06 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 666B126771B;
+	Wed,  2 Jul 2025 13:06:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751461570; cv=pass; b=pmFkEfc2KULVbg4HC36ikLEjbjHdb2mto8hBnLmLMb1qXosHU1nfrtOkDE1KKFWfxOqdvCRGSnU/+P61s8CP998+/cmvcW+0E+fWDm1EuFG01+oAgWt/v6t13Yk66OPBhEBpuuOy1DqIot7VcbM5hciyTXZ09+1LOfh2/nVQlF0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751461570; c=relaxed/simple;
+	bh=sfT5q1GCk139yZl1ZuQRka7S8TZTkbjz7Bsz+AfeQxM=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=ol3wS+QIzMVSSltyBE+T+oS3Xzo+sphdycB4XOivHcghosOLIGGKZwdx1Yj7xuPiFyh7jyHS1f6+C+5HBJmb39oEA0yGZ1BU4n/Gau5A0aaLfy8CdOk8/44Yh9hV1naM2JQwhOVUWAXh6JE3BMT6VRckU84t0l8T4GJS/dg/d3E=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=asR0ylms; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1751461550; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=mw/uMhCZAtozQK8r5zEYobiHKhAsQJ6FtLPilglRlmmbdNerjdFfrou2pnwG8WVrvSKFq72mAiDnwJ3Hj+G55W01gbQRCMGZLsPaU07+v4TmPK9+PoeUovxjMudIfCFJg7k3E2qP16gWlFin08o2xZDhsGV4sA39OGhJx6GLYPk=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1751461550; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=sfT5q1GCk139yZl1ZuQRka7S8TZTkbjz7Bsz+AfeQxM=; 
+	b=Me2RxfMQJqoAmUYXCncVN+j9vXzFTz23DLOGF6LBPsSkxxq2yJaKB7tCKbZ5RC7pQR5ILcyfnC4h5TSqCozQ+7rce6KUTV7WYEJBkfjUWNHqzgyXZLQ6atZqdCI0LzEC0h7TBNm2a9M+/hlFclj8nvHSLR3ytMqPXMu2m6nqdd8=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1751461550;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=sfT5q1GCk139yZl1ZuQRka7S8TZTkbjz7Bsz+AfeQxM=;
+	b=asR0ylmsiL5OlGhDTmx9mTyfpVj8EyXzsuoogSadSza1PuGApeBCoZiTX/+jFWrC
+	NogYShRFABZZ3iJGJpEouZcz/JxQ4POXP+EuCdOVcOcm5U26U8teTmLfzs7YlEtJ5YR
+	7V6zWbTduYK1oJ2Zkk6I3e8NQBA9ZG0UGZlO5gqo=
+Received: by mx.zohomail.com with SMTPS id 1751461547793174.49808757376593;
+	Wed, 2 Jul 2025 06:05:47 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [REGRESSION] Random oops on SG2042 with Linux 6.16-rc and dynamic
- ftrace
-To: Yao Zi <ziyao@disroot.org>, Andy Chiu <andybnac@gmail.com>,
- alexghiti@rivosinc.com, palmer@dabbelt.com, Andy Chiu
- <andy.chiu@sifive.com>, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?=
- <bjorn@rivosinc.com>, Mark Rutland <mark.rutland@arm.com>,
- puranjay12@gmail.com, paul.walmsley@sifive.com, greentime.hu@sifive.com,
- nick.hu@sifive.com, nylon.chen@sifive.com, eric.lin@sifive.com,
- vicent.chen@sifive.com, zong.li@sifive.com, yongxuan.wang@sifive.com,
- samuel.holland@sifive.com, olivia.chu@sifive.com, c2232430@gmail.com
-Cc: Han Gao <rabenda.cn@gmail.com>, Vivian Wang <wangruikang@iscas.ac.cn>,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- regressions@lists.linux.dev, linux-riscv@lists.infradead.org
-References: <aGODMpq7TGINddzM@pie.lan>
- <b060e694-caa0-4aa5-ac67-75531a5f60eb@ghiti.fr> <aGUO8L7oXpvEpvZo@pie.lan>
-Content-Language: en-US
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <aGUO8L7oXpvEpvZo@pie.lan>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddujeegjecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpeetlhgvgigrnhgurhgvucfihhhithhiuceorghlvgigsehghhhithhirdhfrheqnecuggftrfgrthhtvghrnhepudffueegvddtgeeluefhueetteeugeeffeekhfehffdvudfhgedvheduudekffegnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghdpihhnfhhrrgguvggrugdrohhrghenucfkphepvddttddumeekiedumeeffeekvdemvghfledtmeejlegutdemleelfhgtmeeirghfsgemhedvtdelnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvddttddumeekiedumeeffeekvdemvghfledtmeejlegutdemleelfhgtmeeirghfsgemhedvtdelpdhhvghloheplgfkrfggieemvddttddumeekiedumeeffeekvdemvghfledtmeejlegutdemleelfhgtmeeirghfsgemhedvtdelngdpmhgrihhlfhhrohhmpegrlhgvgiesghhhihhtihdrfhhrpdhnsggprhgtphhtthhopedvhedprhgtphhtthhopeiiihihrghoseguihhsrhhoohhtrdhorhhgpdhrtghpthhtoheprghnugihsghnrggtsehgmhgrihhlrdgtohhmpdhrt
- ghpthhtoheprghlvgigghhhihhtihesrhhivhhoshhinhgtrdgtohhmpdhrtghpthhtohepphgrlhhmvghrsegurggssggvlhhtrdgtohhmpdhrtghpthhtoheprghnugihrdgthhhiuhesshhifhhivhgvrdgtohhmpdhrtghpthhtohepsghjohhrnhesrhhivhhoshhinhgtrdgtohhmpdhrtghpthhtohepmhgrrhhkrdhruhhtlhgrnhgusegrrhhmrdgtohhmpdhrtghpthhtohepphhurhgrnhhjrgihuddvsehgmhgrihhlrdgtohhm
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
+Subject: Re: [PATCH v7] rust: kernel: add support for bits/genmask macros
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <CAH5fLgicRxTsjpBKXDrcJSibOq7HQOsTXdKEBnH1-K8Jt=S-xA@mail.gmail.com>
+Date: Wed, 2 Jul 2025 10:05:33 -0300
+Cc: Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Trevor Gross <tmgross@umich.edu>,
+ Danilo Krummrich <dakr@kernel.org>,
+ Alexandre Courbot <acourbot@nvidia.com>,
+ Benno Lossin <lossin@kernel.org>,
+ linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <067C1035-2FD5-4186-A45C-F6F7444F05E2@collabora.com>
+References: <20250623-topic-panthor-rs-genmask-v7-1-9f986951e7b5@collabora.com>
+ <CAH5fLgicRxTsjpBKXDrcJSibOq7HQOsTXdKEBnH1-K8Jt=S-xA@mail.gmail.com>
+To: Alice Ryhl <aliceryhl@google.com>
+X-Mailer: Apple Mail (2.3826.600.51.1.1)
+X-ZohoMailClient: External
 
-Hi Yao,
+Hi Alice,
 
-On 7/2/25 12:50, Yao Zi wrote:
-> On Tue, Jul 01, 2025 at 02:27:32PM +0200, Alexandre Ghiti wrote:
->> Hi Yao,
->>
->> On 7/1/25 08:41, Yao Zi wrote:
->>> Linux v6.16 built with dynamic ftrace randomly oops or triggers
->>> ftrace_bug() on Sophgo SG2042 when booting systemd-based userspace,
-> ...
->
->>> Not sure either reverting the commits or fixing them up is a better
->>> idea, but anyway the fatal first issue shouidn't go into the stable
->>> release.
->> Let's fix this, we were expecting issues with dynamic ftrace :)
->>
->> So the following diff fixes all the issues you mentioned (not the first
->> crash though, I'll let you test and see if it works better, I don't have
->> this board):
-> Thanks for the fix! I've tested it with both QEMU and SG2042, it does
-> fix the lockdep failures as well as the boot time crash on SG2042. The
-> boot-time crash is caused by the race so will disappear as long as we
-> fix the race.
->
->> diff --git a/arch/riscv/kernel/ftrace.c b/arch/riscv/kernel/ftrace.c
->> index 4c6c24380cfd9..97ced537aa1e0 100644
->> --- a/arch/riscv/kernel/ftrace.c
->> +++ b/arch/riscv/kernel/ftrace.c
->> @@ -14,6 +14,16 @@
->>   #include <asm/text-patching.h>
->>
->>   #ifdef CONFIG_DYNAMIC_FTRACE
->> +void ftrace_arch_code_modify_prepare(void)
->> +{
->> +       mutex_lock(&text_mutex);
->> +}
->> +
->> +void ftrace_arch_code_modify_post_process(void)
->> +{
->> +       mutex_unlock(&text_mutex);
->> +}
->> +
->>   unsigned long ftrace_call_adjust(unsigned long addr)
->>   {
->>          if (IS_ENABLED(CONFIG_DYNAMIC_FTRACE_WITH_CALL_OPS))
->> @@ -29,10 +39,8 @@ unsigned long arch_ftrace_get_symaddr(unsigned long
->> fentry_ip)
->>
->>   void arch_ftrace_update_code(int command)
->>   {
->> -       mutex_lock(&text_mutex);
->>          command |= FTRACE_MAY_SLEEP;
->>          ftrace_modify_all_code(command);
->> -       mutex_unlock(&text_mutex);
->>          flush_icache_all();
->>   }
->>
->> @@ -149,16 +157,17 @@ int ftrace_init_nop(struct module *mod, struct
->> dyn_ftrace *rec)
->>          unsigned int nops[2], offset;
->>          int ret;
->>
->> +       mutex_lock(&text_mutex);
-> Besides using the guard API, could we swap the order between
-> ftrace_rec_set_nop_ops() and calculation of the nops array? This shrinks
-> the critical region a little.
+> On 2 Jul 2025, at 07:27, Alice Ryhl <aliceryhl@google.com> wrote:
+>=20
+> On Mon, Jun 23, 2025 at 10:18=E2=80=AFPM Daniel Almeida
+> <daniel.almeida@collabora.com> wrote:
+>>=20
+>> In light of bindgen being unable to generate bindings for macros, and
+>> owing to the widespread use of these macros in drivers, manually =
+define
+>> the bit and genmask C macros in Rust.
+>>=20
+>> The *_checked version of the functions provide runtime checking while
+>> the const version performs compile-time assertions on the arguments =
+via
+>> the build_assert!() macro.
+>>=20
+>> Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
+>=20
+> Is it intentional that the macros are not available for usize?
+>=20
+> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
 
-If you don't mind, I won't, I don't like initializing stuff which could 
-never be used in case of error.
+Not intentional, but do we need it?
 
+I really have no idea whether it=E2=80=99d be useful really.
 
->
-> With or without the change, here's my tag,
->
-> Tested-by: Yao Zi <ziyao@disroot.org>
->
-> and also
->
-> Reported-by: Han Gao <rabenda.cn@gmail.com>
-> Reported-by: Vivian Wang <wangruikang@iscas.ac.cn>
->
-> for their first-hand report of boot-time crash and analysis for the
-> first lock issue.
-
-
-I'll add all those tags in the patch I'll send today (or tomorrow if the 
-CI is slow).
-
-Thanks again for the great bug report, really appreciated.
-
-Alex
-
-
->
-> Regards,
-> Yao Zi
->
->>          ret = ftrace_rec_set_nop_ops(rec);
->>          if (ret)
->> -               return ret;
->> +               goto end;
->>
->>          offset = (unsigned long) &ftrace_caller - pc;
->>          nops[0] = to_auipc_t0(offset);
->>          nops[1] = RISCV_INSN_NOP4;
->>
->> -       mutex_lock(&text_mutex);
->>          ret = patch_insn_write((void *)pc, nops, 2 * MCOUNT_INSN_SIZE);
->> +end:
->>          mutex_unlock(&text_mutex);
->>
->>          return ret;
->>
->> Andy is also taking a look, I'll let him confirm the above fix is correct.
->>
->> Thanks for the thorough report!
->>
->> Alex
->>
->>
->>> Thanks for your suggestions on the problems.
->>>
->>> Regards,
->>> Yao Zi
->>>
->>> [1]: https://lore.kernel.org/all/20250407180838.42877-1-andybnac@gmail.com/
->>>
->>> #regzbot introduced: 881dadf0792c
->>>
->>> _______________________________________________
->>> linux-riscv mailing list
->>> linux-riscv@lists.infradead.org
->>> http://lists.infradead.org/mailman/listinfo/linux-riscv
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+=E2=80=94 Daniel=
 
