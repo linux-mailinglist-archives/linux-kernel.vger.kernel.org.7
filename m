@@ -1,1078 +1,322 @@
-Return-Path: <linux-kernel+bounces-713747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A30CAF5DDF
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 18:00:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC20CAF5DC2
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 17:57:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3C6737B32B5
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 15:58:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D59C487DF6
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 15:56:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67BE02F2C50;
-	Wed,  2 Jul 2025 15:57:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6AFB2F3634;
+	Wed,  2 Jul 2025 15:56:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="eRGssw13"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2040.outbound.protection.outlook.com [40.107.243.40])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZcC2xYBm"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08188303DD6;
-	Wed,  2 Jul 2025 15:56:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.40
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD04C2E7BA9;
+	Wed,  2 Jul 2025 15:56:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.11
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751471821; cv=fail; b=ZMkDR+ExA3jw8oV00ORUbeCh6j16pcs9ePBd+oFMnq2CNvDCj2zUMvc2W1ZzYskD7Oci9Ab4QCnX9qnYij/EQTOt+OeVVshXtY2TqGKr4Do0VypPgaA8smErXyyoWYS0DXLOR6qWtDj6+VdjJ9Mlozq+pGzq3FPg07fyzdwq/yc=
+	t=1751471800; cv=fail; b=DtMacUF60Tu2KNhIFRX6/sc76tgm/6YKkQDjC5+xKeRx9cqZEasfktfeiMG/Ry3OnGzqGgJSRQbI0gSbNtDi3wyLreWkGbjqXUA3F3NKLCBqTKgvx9f0pzyZfyxKigVzq8ui0NhPuEJZSBR5KQloS0OAIlSw7FiUIuF0d02BpPM=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751471821; c=relaxed/simple;
-	bh=HwiknwkpbljvFlFtsAD7c9d8p7ZAXT2DI/qJyK3kYrs=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NKceG8USyFX45zT5u/LBChBbsErZmyD0qr9ZqLbZfseiVburucwSpImEnEsFkWWr+VAB173y5bu54Yh3fnQc4agwzjnLF/aFJI6CJKKRKkLTXKG2ndTcVbQKloDtkMRItKnj1vjwQ8BPiJTeyFMkw0U5qHVvI/45yHwujkfSrjg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=eRGssw13; arc=fail smtp.client-ip=40.107.243.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	s=arc-20240116; t=1751471800; c=relaxed/simple;
+	bh=MLiQ6UyqsLEa1jKvn3sU3jm19jfKJ/3PGvOB6PvcMqQ=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=kgszKZpML0xiKVAfnBrcH8zDugtoCLJZMLQkbX13JTUu0U55NRh3nVVA8F4pl6sTuu+EhxVVnVMuBiW5b1zxk4jHU4ZXXiIgNs7kYvlgKMoIq9FVT7KQktGzLYQzFqRIGD0KY6ujZAjtSZadqpwt6R6CbCQKDsQ/g2/j5d1djo8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZcC2xYBm; arc=fail smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751471799; x=1783007799;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=MLiQ6UyqsLEa1jKvn3sU3jm19jfKJ/3PGvOB6PvcMqQ=;
+  b=ZcC2xYBmqApGtGgAwIWrARPBuhdwvB7vmufE2kxeGlfp0O3Tw8g0AaLR
+   WGnGoIipJNB2H6VMn5qmoBnWlDBVZeHLBzHEPRt5mc70MbVIJQjYfXLDP
+   Ehq6pyPQE0hdXWwlAXjvdP3INLKnPToZpYE/MHXbtyh4LthlqJU20bXT6
+   0NuwlLfEwEeNn50SKhSwJD9vHbEwoioLZVOn7zp1vE03jh3cbJtq9WZyH
+   KzSNJbHgfcs7DrNDBTJwUklkKhKmQxGBQu4+MV7was611Nu1lhb6F/xKL
+   8M/nHHXWWPhX/zPrKwpXhC6ZeCeVpiI0jpSQDBZEdSl4fz5R7jVvgTsc1
+   w==;
+X-CSE-ConnectionGUID: SVkmPAr8QIywYy+3tvOTlQ==
+X-CSE-MsgGUID: dDfKGb9WRdSiU7rU1Xw9fg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11482"; a="64019402"
+X-IronPort-AV: E=Sophos;i="6.16,281,1744095600"; 
+   d="scan'208";a="64019402"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2025 08:56:38 -0700
+X-CSE-ConnectionGUID: FsSV6yXaSfuiB+5slGbzUQ==
+X-CSE-MsgGUID: VpcrbAB+SISNv9X8iKewPg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,281,1744095600"; 
+   d="scan'208";a="177791850"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2025 08:56:36 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Wed, 2 Jul 2025 08:56:36 -0700
+Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25 via Frontend Transport; Wed, 2 Jul 2025 08:56:36 -0700
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (40.107.220.74)
+ by edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Wed, 2 Jul 2025 08:56:36 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Rk4kNn5C4psgt7lPqdM2awZYmUhzAutvXkEl+8Sd6cMvjhj9dNSHHeE6p8KzA01VnlH0gsJZ3GqWIy/xWxA10+kMNyiO0zVlmY14Ko8qsTdw3kicG4j5yVKc+I5XTiW+D5hN/ivuXr3uWnGvgXDncuO9vhNX2Vowu/i8+mWSeFTEGvzOUXli3FB9i5BOytVVpveubLl8iIJe4tFsqEgXbS25lD+xsOD5+aU1Avt5g/4JiuutGDzQGJmgzoNElF1G+GG4Y5/tRvIcBN2QDpfYgoylonY94sRfmvjyaTnr5S+awFYH51gHa5P+rNzb970gbGJsQtNQ5p7B9VajdUvBkw==
+ b=LLz+TP8x5uMvOLo6ymCQ4lc9wO3lv3BFxXeTJSiEmkv4ATD7/0a3TtzLDfHpOQ3A/o2Si3iH2gtMR+9FwNwdHzR39RV2eXu4NCiuewueIr5424NI4RcZECTyxTST7FAaBKlknf6Ps95d/8M6eZhWwr6OpJ4f6jKWndo+e/8q31/ZE3WuxjPNaHmJUog6c8oq8qV7NiwtCaekd8VvnUdM3v7Lm+jmDuZoHv5fk6iwE+LMTJWZTg3muNJjhzF95+MevCe65VcAZEyBtBS2bzo+0pSQ0krG8IGm2IG5DW3W9s7cDSRXFaOcRvhCcTYJNBOJjf4sFw2spP8XGD+P+2BAow==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=03+hix+gmPnEV0IxFrNb7C9JryMm9TekMt4qzXD1VWs=;
- b=wt9CPK0AJ/Mob/RnGnkO3O8zkp0/dKhAW3jJ/QE5zKKyxOWtR0f4hFjdcrHovXQq05WcbTVoVQmm2FMDLR6/llpgsuTkT5o2yntJtdDqo6SRNsWs/2FbW6//fO7K61+TqCJef0ItC/SR9QZRkDzxp/IN3O1up3dWEKDGAUUfL8bvoVr1MVLvAG9lL/+iHknu/ow6y+ttwjcLLt1MWNDpaqsplffLVt/GyjeLrIddywE9bTFF/YQvLX2r5k1caDp0BudaDcgMMCO2ZXB4+F7wSEiQ38i20O0yKaZFRG9RatsXp5ZgeHPraaso0G52ygHLrUzgcReAfr46b/shqnhD8g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=03+hix+gmPnEV0IxFrNb7C9JryMm9TekMt4qzXD1VWs=;
- b=eRGssw13pYuAjz8nfzceCGEq8vPYJEwRtU776s3vYmXigPVXwAWgGsj6VAH5rvanpE2bHTevvlFN9OIQBAJ1TkWHInPV/FQBdoYLVKdSLqDLKfwqBF/1D9cfOWiO/0aJ1xlUAlT8RZyKnkhRvBE9BS4g53DnDvXSGDOzX1Vp7QY=
-Received: from CH2PR15CA0011.namprd15.prod.outlook.com (2603:10b6:610:51::21)
- by PH7PR12MB6443.namprd12.prod.outlook.com (2603:10b6:510:1f9::5) with
+ bh=MLiQ6UyqsLEa1jKvn3sU3jm19jfKJ/3PGvOB6PvcMqQ=;
+ b=jF6tmhlz5uaoM7rBcYMU4EXzQcCMm0DT+ucOOYmNvQ2pQPles1HcirTzh5LbXJlxovHY2HMFJy6iQUoqYedvyABg8EZNmABBQ2n1Jcei/hiEsUMM8BCCFWxJROdUb9atD23Rrskv4mGpblci5dXnrhNYcV66pb4OhbV+6z59swFCzxyATLZR3+oCsoASSfWUM3Gng2P0z6d0iQiFoUl8zS/B6WLPiYanto51xyrExKXT8VmbvwyGrDXCmqEfMXfXdFmScJz8FZcdi7VTNmAPg1oS9l1qVb5pdfn+1wEa0lkkMO2Z5jlExYIqmRd71G/4V2iwka8q18E2++Wq//N3aw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from IA3PR11MB9254.namprd11.prod.outlook.com (2603:10b6:208:573::10)
+ by CH3PR11MB7868.namprd11.prod.outlook.com (2603:10b6:610:12e::5) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8880.31; Wed, 2 Jul
- 2025 15:56:49 +0000
-Received: from CH3PEPF00000013.namprd21.prod.outlook.com
- (2603:10b6:610:51:cafe::1f) by CH2PR15CA0011.outlook.office365.com
- (2603:10b6:610:51::21) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8901.19 via Frontend Transport; Wed,
- 2 Jul 2025 15:56:49 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
-Received: from SATLEXMB03.amd.com (165.204.84.17) by
- CH3PEPF00000013.mail.protection.outlook.com (10.167.244.118) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8922.1 via Frontend Transport; Wed, 2 Jul 2025 15:56:49 +0000
-Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 2 Jul
- 2025 10:56:48 -0500
-Received: from xsjgregoryw50.xilinx.com (10.180.168.240) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Wed, 2 Jul 2025 10:56:48 -0500
-From: Gregory Williams <gregory.williams@amd.com>
-To: <ogabbay@kernel.org>, <michal.simek@amd.com>, <robh@kernel.org>
-CC: Gregory Williams <gregory.williams@amd.com>,
-	<dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH V1 9/9] accel: amd-ai-engine: Adds AI Engine reset operations
-Date: Wed, 2 Jul 2025 08:56:30 -0700
-Message-ID: <20250702155630.1737227-10-gregory.williams@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250702155630.1737227-1-gregory.williams@amd.com>
-References: <20250702155630.1737227-1-gregory.williams@amd.com>
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8880.23; Wed, 2 Jul
+ 2025 15:56:34 +0000
+Received: from IA3PR11MB9254.namprd11.prod.outlook.com
+ ([fe80::8547:f00:c13c:8fc7]) by IA3PR11MB9254.namprd11.prod.outlook.com
+ ([fe80::8547:f00:c13c:8fc7%5]) with mapi id 15.20.8857.016; Wed, 2 Jul 2025
+ 15:56:34 +0000
+From: "Song, Yoong Siang" <yoong.siang.song@intel.com>
+To: Stanislav Fomichev <stfomichev@gmail.com>
+CC: "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Jonathan Corbet
+	<corbet@lwn.net>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
+	<daniel@iogearbox.net>, Jesper Dangaard Brouer <hawk@kernel.org>, "John
+ Fastabend" <john.fastabend@gmail.com>, Stanislav Fomichev <sdf@fomichev.me>,
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, "Yonghong
+ Song" <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, Hao Luo
+	<haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko
+	<mykolal@fb.com>, Shuah Khan <shuah@kernel.org>, "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>, "linux-doc@vger.kernel.org"
+	<linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>
+Subject: RE: [PATCH bpf-next 2/2] selftests/bpf: Enhance XDP Rx Metadata
+ Handling
+Thread-Topic: [PATCH bpf-next 2/2] selftests/bpf: Enhance XDP Rx Metadata
+ Handling
+Thread-Index: AQHb6kEMHPOPYZSFok6IH5vzoGeGvLQddqWAgACgmGCAABl5kIAAw/mAgAAHb3A=
+Date: Wed, 2 Jul 2025 15:56:34 +0000
+Message-ID: <IA3PR11MB92541178AAF28F03639A9435D840A@IA3PR11MB9254.namprd11.prod.outlook.com>
+References: <20250701042940.3272325-1-yoong.siang.song@intel.com>
+ <20250701042940.3272325-3-yoong.siang.song@intel.com>
+ <aGQNWXe6FBks8D3U@mini-arch>
+ <IA3PR11MB925416396633E361F37E819DD840A@IA3PR11MB9254.namprd11.prod.outlook.com>
+ <IA3PR11MB9254C961FD048793FD0013EAD840A@IA3PR11MB9254.namprd11.prod.outlook.com>
+ <aGVN01flIJzvCo6S@mini-arch>
+In-Reply-To: <aGVN01flIJzvCo6S@mini-arch>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: IA3PR11MB9254:EE_|CH3PR11MB7868:EE_
+x-ms-office365-filtering-correlation-id: 07c6ecd9-1d0a-4a4c-a1ea-08ddb981052f
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|1800799024|366016|7416014|38070700018;
+x-microsoft-antispam-message-info: =?utf-8?B?M0xHVEpnb3QyeDFucmMyNFhSRm44aHFqZXoyT1Brc0xpVkdYVkYyRzVPK0JP?=
+ =?utf-8?B?WjJrT2tsR21uQUVRcGhXS0lScjQ3N1R4UnpieXg1bU1sMm0wS3EyMzFJZjdN?=
+ =?utf-8?B?UUJZcE5oWGV4L2Z3L04vVVRtcjhSamRJVmVnOVRJRjFtZTlzZmptTWFIcXlx?=
+ =?utf-8?B?M1NOd0dadzVjMHZMaDNTbG9OWEljWnJmNFkzRE9ieExUeGtYdlR0Y2hSeSsr?=
+ =?utf-8?B?Q0JFbDB3ZGNHalhtbmFQUmM3WjcyeC84TWZLZGhzQ0h1VzR2UUFpR0RwODYv?=
+ =?utf-8?B?YTJUcDVYTzZZbkphZjdGa1dzemN6c0ROaE5sbElkaXJzeXRpY0ZYaWMrdXNF?=
+ =?utf-8?B?WEJoRHBVOGwxaVZmRkFnNFMwRVUwS3RVdVZia2l4K2FLSlgyOXVoc0JSc29W?=
+ =?utf-8?B?dDFmc2V4bCt2WXgvRGQ4cnp1cDZhY0MwcXhYeThGaE9JczY0YmFWNklnajFU?=
+ =?utf-8?B?YStmM1QwZUp2MnFHZUU0Mnl3WWFFRTFqZEg3cG1tN2FRMU4zc3AxS1M1TnUx?=
+ =?utf-8?B?dzN4UWxpR0d1OUhBUS82WVI0K013UVc4VkY5VWNTNnltWENLTDdEbHpqTjBi?=
+ =?utf-8?B?RG9lUjVmeUtFdCtxTmNUQmkzaERVVEQwZnNaMWd1YlloZkxNN2dRSkdtc0Fs?=
+ =?utf-8?B?RzNrNU1LSTlIa0N1dTVRRUxiR2x6bVIvMmsvMEhyQ0NNa3A4eXdmUU1UQVd1?=
+ =?utf-8?B?SnluUnBldkJGWEF0b3Q2UmppY3MxcldibFowQmZyUjJXTHRTZm5aYzFwQWx4?=
+ =?utf-8?B?RTBlTHhwR1pvOEpiOHlKd20vK3BwcENnbmV6clYxNDY4TFNTdERrSHBLV29L?=
+ =?utf-8?B?cWU1b0F2cWJMY3BrMmswb0l5SStYdEtvYjVmTnUzSDFQNlFWNTkyTEhmNmR4?=
+ =?utf-8?B?Nk90UEF1Zk0yRGRzY2V6b0lzYnk1ZTFDTUpDUngvOWNySlNFaThuSFY0OEpy?=
+ =?utf-8?B?U1pKNVZsaVUwK3QxbTV0b1dmTU9hbncya05GckpId0JBQ3dQb2ticlhCRUhI?=
+ =?utf-8?B?U2J1aW93WXdLQkNBR0M4VUYyQ1VqKzB4ZENQbGNWNWhmOU8xWW1McDNCNjg4?=
+ =?utf-8?B?TkF1bm4xU2lTUkhDK3RYRGx3UGJYTjd5V1RMZElxbG1XT0tHanBiMUdSZzh0?=
+ =?utf-8?B?RDNhYitoU21OZkhxTFllTXdRUWdzRmkyQnkxaFVuSFZKR0RIK0s3ejlDbTFU?=
+ =?utf-8?B?cXBOeG83cEJYcDVUWnB4cDBQQUZVOUNjUVZ5MFViMVRkYllsTGYvN1VsK3ZH?=
+ =?utf-8?B?T2JuT21tTTlJSVc4SnJlVHRUZzhKaTZPNnp0UUxvR0o3d0EzRVhlL1RTOVhO?=
+ =?utf-8?B?akovdGFPdk9NWkZudzJhelI4aHU0c1VkZUtCNTVPUlBURUJmb2p0c1V6R2xt?=
+ =?utf-8?B?KzhVd05RVXlZZGc0SGRIYmw3TGVscUJjckwwQVBRRHhZZnhFS2FqaVFvUmty?=
+ =?utf-8?B?VWY2SG9FaTNpUU1wcDAyNTZrL2Y3dHJJRFRGQkdvTkNiTUJtRnFFZXZMZG1n?=
+ =?utf-8?B?OWgzTElXWXByM0hKVTdSVXpGNVlBeHh3aWdSYlI4c0dlTzVjNHlDVWgxcGxH?=
+ =?utf-8?B?b1BURlBPaUVOMWluWjZvaDRiS1U3ckcrSHNrd1lCQUZLcFREcjZ2VUFycWkw?=
+ =?utf-8?B?NHFsd01wOVJ5ZlBzeEo4VXoxLy8wSXlYeE9VclpDWlVra1I0M3Z2VXZFZnZv?=
+ =?utf-8?B?cExJSW9jdmRoTFN4dVkvckMzUkRPV3ljeGd5a2RyUUFIc0JEcUZOZWtjenlN?=
+ =?utf-8?B?NW1SSWJJdFNMRk4vN3FjY0pIVUQxelFBeG15YnlPQzRBc0FxdzVzM3dFSWl6?=
+ =?utf-8?B?Ym54VDVGNk0xM0lWTW5NOFFQMFdZM1lZdHNTK1pRK2ZEUkdPd3piVXdQRmho?=
+ =?utf-8?B?RjErbDNpU1ZUeFRSMXFYYjFmTjg1UWVzWlVpOWVxaXFhUjVyb0szSnhsTVNZ?=
+ =?utf-8?B?OXR6TkRYZy9zWWFITjNSbFk5SVAwQ0VTZHJPVFVITEpmaEZZdGxTUUN2TTZR?=
+ =?utf-8?Q?1gU2uIpl96pqDUra7lceIVAMyD9FCg=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA3PR11MB9254.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(7416014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?UndORVBnL1JmdkszaWxvak1CUktUZXhHU3lDUFVMeFFjMFozQXl0Vkpxdy80?=
+ =?utf-8?B?RmNQZEVnK291enp6a3BTR1Rpd2EvaDZ3WDhuekp6U1duNlNYMFhWTENlQ3dr?=
+ =?utf-8?B?Q0svMmsvMFdkV0N1UGQ4bjczYW9tZVZMcHVIY050VkRlQzZWZTFRblVMZ2tv?=
+ =?utf-8?B?VFZEWmUyRUFhUUpONTdpSnN1SkdOVjdaRXRaSUZhclFObWFLekp3NDE3VGJ4?=
+ =?utf-8?B?TDU5NVAwWi91RTNGV2pCSzA2MGN3NmdOVjJqRzNacHR0Nk9hdWhzTmVQd3Zy?=
+ =?utf-8?B?a01CQ2cvWHVhQ3ZqNmkzVzZQa1pCdWxabElyRzZOdmlIdWYveGd3clVxdFRu?=
+ =?utf-8?B?eEI4a1F3RlR4eHdhc1dwMnk2dEVmWjdrNW1MSFlWeEEvdzhDMUNla1VaOHV1?=
+ =?utf-8?B?T2cxWmVCUjJiQ0hlU1ZFVk9tcngwV3YyWlk1a1VUc2pyRkNheTdiS1cyMUVo?=
+ =?utf-8?B?ejNTSWZBSTNmRTQ2dUJZdFJPR0NyUFdSRUFZSWw1ZSsyb1RhRzRvOW5ZcWFW?=
+ =?utf-8?B?ZG5xdnBReHpZM1V6c2ZLelp1dDg4ZmJsajE4N2MraEo5ZnJMSGJxdFRBS1pE?=
+ =?utf-8?B?MG1GUmI1dnhVOWJkdE8wQkNyOFk1c0VtWi9MZEI4WnFUMXFod3gzSzlreXhL?=
+ =?utf-8?B?VjhlaHVrQXpXV3ZWQU9UdUo5ekxqYjNza3hRZFordWFYMHJEOVpEZmIrVW4w?=
+ =?utf-8?B?VXNoWTJ2Q2VNRmUvK1hEVFRERWRxZ0IwaFJmS0hpeXNkRDRVTnNBQ1k5dXZl?=
+ =?utf-8?B?Y2h1Y1Z5ei9kVlZueE82eGJHM1NtR1hJbXB5VDNPUjNic3R1RG8zNEdEczlW?=
+ =?utf-8?B?MFVoQVRBaTkya1VvTEJ2eGh6WHFvdXQ0ZEdPQnNIRFg5bDQ2c25HWTdaU05C?=
+ =?utf-8?B?SVJvWHRzdjZEUStoaU42S3IwNDNQcEJrbVUycjJRSDlCSkllelluQ0NrY3JS?=
+ =?utf-8?B?cS9LT0tjSWlsMFVQbU1pWGtEeUdTVE9ZVnliRDBYV3RzRGVuTGQzenM1cHdD?=
+ =?utf-8?B?ZE9xMWF5VUlUT1d2RWkyandrNUZNK0NpdW9CbXh1OVo1NFdMQTZmNktVYitN?=
+ =?utf-8?B?NUorU05Fb2c2V0JVVVNueHMrU3NSNE9JVjREb0toby9HRTZoa2JaRUtMdTlG?=
+ =?utf-8?B?VytrNlEvdnY2NTFPQXdNOTVCUmh5WnBpdjhxaFF0RHRGUGVxbTV0aVhPRjRa?=
+ =?utf-8?B?TnFuL2dkMUl0bmJweHdybXJUbXRMQ1MxUFJwb2Uxa3IzZk5MSTZBc1Y5R1NC?=
+ =?utf-8?B?SkUvckZEdm5NSEZFMHdQbTBiSEZlWFB4eCtkeWxqQk1EVUU4ZXZ6TGZYTHU3?=
+ =?utf-8?B?M3o5UHZQcXNWTW1wdnE3UjJPTGREdXdHZ2hXMWRXUENvdG5Xd01tcmRueEl6?=
+ =?utf-8?B?dGMxcjd4b01uMnFoSDZZVTBHU1NpcmsxLzZROVBXR21JZGlONEx2RFM1cnls?=
+ =?utf-8?B?Q3J4dDFEUjA5ZHd5aGhtdk9SR215R1dYM3ltdW5YWUtuakVGMFpBQ0hQZTgr?=
+ =?utf-8?B?N3V6LzJ6RytZZFkyQnZGei9ZUHluQm1DNThaZFhERWJwQml4TDM0Y3dwaW0z?=
+ =?utf-8?B?NzdiQSs0dUk5Y3plaVFJN01rMjRhRVlaVGEzZlFQdWRDN2UrUWdETFJVZ0xZ?=
+ =?utf-8?B?bXJJUlMzeXNvcEl4ZEpSQ1FiSlR2a2JKb0kvUFBjZWdVOHV5K211akFkU2Jp?=
+ =?utf-8?B?OUhEM2R2YlhST2tTMXl6MnJ4emhnWDRHSTA5elBRQW9OclNBTVUzWllEM0Ny?=
+ =?utf-8?B?end0UW9kNUpsYUdWSmx2NGduWGw0TUlaYnlWa1NvQVg4RzZnQVJVUVdKUlVI?=
+ =?utf-8?B?S0tobXExTVQ0a0UrMFVHYTlyblZkcURhaDBwUlJ1MkEwUkFjUHJ6VllsL1Ax?=
+ =?utf-8?B?WDlUMHpTMFRUTkF3WForVVMvTWlJSVVwQk1CelFxbXZIZUxIdEJpQmwwMDVH?=
+ =?utf-8?B?d0tzWUtsYWpwR29HMFYybXVwcTJUS0NrUnhTdmNjUExzWndkL3ZTRE8vQUIx?=
+ =?utf-8?B?WC84M2NqMkljNzRjbnB5US9EMkVsaW8vQ202QTd2U1N2eHBXenNrWkp5Q3ho?=
+ =?utf-8?B?cmZ6a1BVeWN3RFNUMlI4US94UVVSOUhwZjd6U3ZONi8vUlNCVnZNSnJIYlJk?=
+ =?utf-8?B?NnJkdktRYzFneWMyNG9EVjRHek1reCtDcUhnWW5TYm9uYzJFRnVqdGxjKytH?=
+ =?utf-8?B?Vnc9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-Received-SPF: None (SATLEXMB03.amd.com: gregory.williams@amd.com does not
- designate permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PEPF00000013:EE_|PH7PR12MB6443:EE_
-X-MS-Office365-Filtering-Correlation-Id: c1b93edc-35d8-4f64-a579-08ddb9810dfe
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?4j59BGTA7m7o0PrMsEUj+mXNBJvSDBRrZV6nQB0AanvsQYnT86z/p5hUd69G?=
- =?us-ascii?Q?C5TPJIhs+C033synbqNaqrHdLOzg4qKyuucGkdtY6/f+XkS6wBdJfcKguqFz?=
- =?us-ascii?Q?4KN5TdlB5jqWlMw7LUa+r4L9/3KhCmIoN/+08DAO5CN9EpfqlNe640r936Oo?=
- =?us-ascii?Q?5rrt2GZoDaaG764+owji6KdpXNqE6dybY8Cy3uo5lm6RePncTitxx8arQ0ie?=
- =?us-ascii?Q?YOxpCXu5eoDlXsqJEkEaM99KrbGIVjLv94NyRn5C9KRkXola6bEYYHQL4Q15?=
- =?us-ascii?Q?KsOseGTspBJmcMlND1pPFjNoV9xozU2Qk37mxYa6jxSbZq+lc5bZZhWCl3xs?=
- =?us-ascii?Q?/ypQ9TcaMs5KEt/Jt3pDPsHU2Xs8CbsDRbStN06CA0wRjvmQksTR2R6rR1qO?=
- =?us-ascii?Q?aPnRHUgz+Act7YxmuOhq3zbFNDaV5kap3UoGiwFV2tKuFlREeRhmLf4Nvrhx?=
- =?us-ascii?Q?4dXH9GA9H+qbN3yi4OM0pSGeWOJmRKqhJeuWrnfTWWaB8eKAnqr8jkucEhRO?=
- =?us-ascii?Q?cTxwGxemVzhrwowC/BCruNfML7mUey4uhMRjHeHy+X1GI60h/h7bQNhqFqJO?=
- =?us-ascii?Q?mPg29k3pJFZoFjeJs7paTkcahX+8ue7QiJ99DpbFyuOfH0v2HBBZGPvnMrC6?=
- =?us-ascii?Q?r+mwd4rbYDSnKtJ4EhhUD1nIILdH/HCwVlbYDUNW1KKxBZDOHL2r7/hvUp3m?=
- =?us-ascii?Q?nB+0xmIwoRC0MVhGpi2eKuuFtCzcYjxHMwCnzyQbNCMFrPCfuJMI+BGTmJ59?=
- =?us-ascii?Q?je6SzHn9su3AEoACgE9389SpbJTtV+zg6ZSr4vRZGgeOuUsBZzkUZpPzZK4t?=
- =?us-ascii?Q?44q65/hwwHbmVaIMGHtbKZValJLTd5grrktWTHzA7VPXVjUWx/OwfM5VFBPM?=
- =?us-ascii?Q?tTORjkc+G0D3nl983S2Q76SFvxe+qimcG5VKGCGo1jn857Z5gwPu7Nfi4VJj?=
- =?us-ascii?Q?U/D9lAxb5kfM+qqrq1FS1MmgVsJ96N+8HAs35qRuTa1tnSf9TNKZyqtoo0zs?=
- =?us-ascii?Q?xo6t2+3sj2I0TPg/+cS3zzGUq6e+QqVtqLcClnaMJFgauim/an3ormi7kFVi?=
- =?us-ascii?Q?ax8mKCMtXiPL3sWy2v4fxSsjFbb7hdjOoAjt7brbRP8uwcI2WIlw8s3KZVkV?=
- =?us-ascii?Q?CdV38HLkye0LnfYegNgphxD4sqT2XTRPQJxZLrLpI+vNDKidhKkn+4b8iC1i?=
- =?us-ascii?Q?174TwqvRyqvKM774yrZz6sNC+oRwYx9otPpJfhhY/giWoNLTU9yvTf8PHl0O?=
- =?us-ascii?Q?ETjeY2Np2uuCweMAnJyR2tYzWlOkIqNSiuCGV1QQBuLAxumMbTIyJAMlxwVO?=
- =?us-ascii?Q?dJWthFaXa8TvcgZ54pHO6tpDOWg4oWY6fqO4ZiSjmOa4qKxxtb0M6k61lMsJ?=
- =?us-ascii?Q?SocwnbimQkC6wg1R0WiFPo2ivmYN3yzA9fcdIVNlHraHos8iCXlMKNULjMp5?=
- =?us-ascii?Q?iX1aN5DtldDnKv5/wgLRzOs2SqsQcZpOutfgUtLivjt0pA17+AhfWZstjViv?=
- =?us-ascii?Q?JU/8K7QRFgQE7Or89OU2va6LcGQO704ei6yG?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Jul 2025 15:56:49.2651
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: IA3PR11MB9254.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 07c6ecd9-1d0a-4a4c-a1ea-08ddb981052f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Jul 2025 15:56:34.5207
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: c1b93edc-35d8-4f64-a579-08ddb9810dfe
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH3PEPF00000013.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6443
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: cZ1iMYN/IVVyW+0VbnbKRDogCUmcRieZ0MNy902ahthIXN32cCDuq8qtm7YcUMf/zywZuEWZjNp9btGbPKfRNT76gjWjV5kcBW4lHor0hyQ=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR11MB7868
+X-OriginatorOrg: intel.com
 
-Adds AI Engine hardware reset functionality. Adds call to
-initialize and teardown partitions. Partition initialize resets
-columns, resets shim tiles, sets up AXIMM error reporting, ungates column
-clocks, sets up partition isolation, and zeroizes all tile memories.
-Teardown resets columns, resets shim tiles, zeroizes all tile
-memories, and gates column clocks.
-
-Signed-off-by: Gregory Williams <gregory.williams@amd.com>
----
- drivers/accel/amd-ai-engine/Makefile          |   3 +-
- drivers/accel/amd-ai-engine/ai-engine-aie.c   | 104 ++++++
- drivers/accel/amd-ai-engine/ai-engine-aieml.c | 105 ++++++
- drivers/accel/amd-ai-engine/ai-engine-clock.c |  16 +-
- .../accel/amd-ai-engine/ai-engine-internal.h  |  45 +++
- drivers/accel/amd-ai-engine/ai-engine-part.c  |  31 ++
- drivers/accel/amd-ai-engine/ai-engine-res.c   |  16 +
- drivers/accel/amd-ai-engine/ai-engine-reset.c | 300 ++++++++++++++++++
- include/linux/amd-ai-engine.h                 |  24 ++
- 9 files changed, 629 insertions(+), 15 deletions(-)
- create mode 100644 drivers/accel/amd-ai-engine/ai-engine-reset.c
-
-diff --git a/drivers/accel/amd-ai-engine/Makefile b/drivers/accel/amd-ai-engine/Makefile
-index 66cbce4705ea..8522222f330a 100644
---- a/drivers/accel/amd-ai-engine/Makefile
-+++ b/drivers/accel/amd-ai-engine/Makefile
-@@ -11,4 +11,5 @@ amd-aie-$(CONFIG_DRM_ACCEL_AMDAIE) := \
- 	ai-engine-clock.o	\
- 	ai-engine-dev.o		\
- 	ai-engine-part.o	\
--	ai-engine-res.o
-+	ai-engine-res.o		\
-+	ai-engine-reset.o
-diff --git a/drivers/accel/amd-ai-engine/ai-engine-aie.c b/drivers/accel/amd-ai-engine/ai-engine-aie.c
-index 056db0b7be0e..23733d384a2e 100644
---- a/drivers/accel/amd-ai-engine/ai-engine-aie.c
-+++ b/drivers/accel/amd-ai-engine/ai-engine-aie.c
-@@ -22,7 +22,14 @@
-  * Register offsets
-  */
- #define AIE_SHIMPL_CLKCNTR_REGOFF		0x00036040U
-+#define AIE_SHIMPL_TILECTRL_REGOFF		0x00036030U
-+
-+#define AIE_TILE_CORE_AMH3_PART3_REGOFF		0x000307a0U
- #define AIE_TILE_CORE_CLKCNTR_REGOFF		0x00036040U
-+#define AIE_TILE_CORE_LC_REGOFF			0x00030520U
-+#define AIE_TILE_CORE_R0_REGOFF			0x00030000U
-+#define AIE_TILE_CORE_TILECTRL_REGOFF		0x00036030U
-+#define AIE_TILE_CORE_VRL0_REGOFF		0x00030530U
- 
- /*
-  * Register masks
-@@ -32,6 +39,27 @@
- #define AIE_TILE_CLKCNTR_COLBUF_MASK		BIT(0)
- #define AIE_TILE_CLKCNTR_NEXTCLK_MASK		BIT(1)
- 
-+static const struct aie_tile_regs aie_core_32bit_regs = {
-+	.attribute = AIE_TILE_TYPE_TILE << AIE_REGS_ATTR_TILE_TYPE_SHIFT,
-+	.soff = AIE_TILE_CORE_R0_REGOFF,
-+	.eoff = AIE_TILE_CORE_LC_REGOFF,
-+};
-+
-+static const struct aie_tile_regs aie_core_128bit_regs = {
-+	.attribute = AIE_TILE_TYPE_TILE << AIE_REGS_ATTR_TILE_TYPE_SHIFT,
-+	.soff = AIE_TILE_CORE_VRL0_REGOFF,
-+	.eoff = AIE_TILE_CORE_AMH3_PART3_REGOFF,
-+};
-+
-+static const struct aie_core_regs_attr aie_core_regs[] = {
-+	{.core_regs = &aie_core_32bit_regs,
-+	 .width = 1,
-+	},
-+	{.core_regs = &aie_core_128bit_regs,
-+	 .width = 4,
-+	},
-+};
-+
- static u32 aie_get_tile_type(struct aie_device *adev, struct aie_location *loc)
- {
- 	if (loc->row)
-@@ -79,6 +107,43 @@ static unsigned int aie_get_mem_info(struct aie_device *adev,
- 	return NUM_TYPES_OF_MEM;
- }
- 
-+/**
-+ * aie_part_clear_mems() - clear memories of every tile in a partition
-+ * @apart: AI engine partition
-+ *
-+ * Return: return 0 always.
-+ */
-+static int aie_part_clear_mems(struct aie_partition *apart)
-+{
-+	struct aie_part_mem *pmems = apart->pmems;
-+	struct aie_device *adev = apart->adev;
-+	u32 i;
-+
-+	/* Clear each type of memories in the partition */
-+	for (i = 0; i < NUM_TYPES_OF_MEM; i++) {
-+		struct aie_mem *mem = &pmems[i].mem;
-+		struct aie_range *range = &mem->range;
-+		u32 c, r;
-+
-+		for (c = range->start.col;
-+		     c < range->start.col + range->size.col; c++) {
-+			for (r = range->start.row;
-+			     r < range->start.row + range->size.row; r++) {
-+				struct aie_location loc;
-+				u32 memoff;
-+
-+				loc.col = c;
-+				loc.row = r;
-+				memoff = aie_cal_regoff(adev, loc, mem->offset);
-+				memset_io(apart->aperture->base + memoff, 0,
-+					  mem->size);
-+			}
-+		}
-+	}
-+
-+	return 0;
-+}
-+
- /* aie_scan_part_clocks() - scan clocks of a partition
-  * @apart: AI engine partition
-  *
-@@ -294,11 +359,48 @@ static int aie_set_part_clocks(struct aie_partition *apart)
- 
- 	return 0;
- }
-+
-+/**
-+ * aie_set_tile_isolation() - Set isolation boundary of AI engine tile
-+ * @apart: AI engine partition
-+ * @loc: Location of tile
-+ * @dir: Direction to block
-+ *
-+ * Possible direction values are:
-+ *      - AIE_ISOLATE_EAST_MASK
-+ *      - AIE_ISOLATE_NORTH_MASK
-+ *      - AIE_ISOLATE_WEST_MASK
-+ *      - AIE_ISOLATE_SOUTH_MASK
-+ *      - AIE_ISOLATE_ALL_MASK
-+ *      - or "OR" of multiple values
-+ */
-+static void aie_set_tile_isolation(struct aie_partition *apart,
-+				   struct aie_location *loc, u8 dir)
-+{
-+	struct aie_aperture *aperture = apart->aperture;
-+	struct aie_device *adev = apart->adev;
-+	void __iomem *va;
-+	u32 ttype, val;
-+
-+	val = (u32)dir;
-+	ttype = aie_get_tile_type(adev, loc);
-+	if (ttype == AIE_TILE_TYPE_TILE) {
-+		va = aperture->base +
-+		     aie_cal_regoff(adev, *loc, AIE_TILE_CORE_TILECTRL_REGOFF);
-+	} else {
-+		va = aperture->base +
-+		     aie_cal_regoff(adev, *loc, AIE_SHIMPL_TILECTRL_REGOFF);
-+	}
-+	writel(val, va);
-+}
-+
- static const struct aie_tile_operations aie_ops = {
- 	.get_tile_type = aie_get_tile_type,
- 	.get_mem_info = aie_get_mem_info,
-+	.mem_clear = aie_part_clear_mems,
- 	.scan_part_clocks = aie_scan_part_clocks,
- 	.set_part_clocks = aie_set_part_clocks,
-+	.set_tile_isolation = aie_set_tile_isolation,
- };
- 
- /**
-@@ -316,4 +418,6 @@ void aie_device_init(struct aie_device *adev)
- 	adev->col_shift = AIE_COL_SHIFT;
- 	adev->row_shift = AIE_ROW_SHIFT;
- 	adev->ops = &aie_ops;
-+	adev->num_core_regs = ARRAY_SIZE(aie_core_regs);
-+	adev->core_regs = aie_core_regs;
- }
-diff --git a/drivers/accel/amd-ai-engine/ai-engine-aieml.c b/drivers/accel/amd-ai-engine/ai-engine-aieml.c
-index 7730609ff7c0..4ceb51ea13af 100644
---- a/drivers/accel/amd-ai-engine/ai-engine-aieml.c
-+++ b/drivers/accel/amd-ai-engine/ai-engine-aieml.c
-@@ -27,6 +27,17 @@
-  * Register offsets
-  */
- #define AIEML_SHIMPL_COLCLOCK_CTRL_REGOFF		0x000fff20U
-+#define AIEML_SHIMPL_TILECTRL_REGOFF			0x00036030U
-+
-+#define AIEML_MEMORY_TILECTRL_REGOFF			0x00096030U
-+
-+#define AIEML_TILE_COREMOD_AMLL0_PART1_REGOFF		0x00030000U
-+#define AIEML_TILE_COREMOD_AMHH8_PART2_REGOFF		0x00030470U
-+#define AIEML_TILE_COREMOD_R0_REGOFF			0x00030c00U
-+#define AIEML_TILE_COREMOD_R31_REGOFF			0x00030df0U
-+#define AIEML_TILE_COREMOD_TILECTRL_REGOFF		0x00036030U
-+#define AIEML_TILE_COREMOD_WL0_PART1_REGOFF		0x00030800U
-+#define AIEML_TILE_COREMOD_WH11_PART2_REGOFF		0x00030af0U
- 
- /*
-  * Register masks
-@@ -34,6 +45,36 @@
- #define AIEML_SHIMPL_COLRESET_CTRL_MASK			GENMASK(1, 0)
- #define AIEML_SHIMPL_COLCLOCK_CTRL_MASK			GENMASK(1, 0)
- 
-+static const struct aie_tile_regs aieml_core_amxx_regs = {
-+	.attribute = AIE_TILE_TYPE_TILE << AIE_REGS_ATTR_TILE_TYPE_SHIFT,
-+	.soff = AIEML_TILE_COREMOD_AMLL0_PART1_REGOFF,
-+	.eoff = AIEML_TILE_COREMOD_AMHH8_PART2_REGOFF,
-+};
-+
-+static const struct aie_tile_regs aieml_core_wx_regs = {
-+	.attribute = AIE_TILE_TYPE_TILE << AIE_REGS_ATTR_TILE_TYPE_SHIFT,
-+	.soff = AIEML_TILE_COREMOD_WL0_PART1_REGOFF,
-+	.eoff = AIEML_TILE_COREMOD_WH11_PART2_REGOFF,
-+};
-+
-+static const struct aie_tile_regs aieml_core_32bit_regs = {
-+	.attribute = AIE_TILE_TYPE_TILE << AIE_REGS_ATTR_TILE_TYPE_SHIFT,
-+	.soff = AIEML_TILE_COREMOD_R0_REGOFF,
-+	.eoff = AIEML_TILE_COREMOD_R31_REGOFF,
-+};
-+
-+static const struct aie_core_regs_attr aieml_core_regs[] = {
-+	{.core_regs = &aieml_core_amxx_regs,
-+	 .width = 4,
-+	},
-+	{.core_regs = &aieml_core_wx_regs,
-+	 .width = 4,
-+	},
-+	{.core_regs = &aieml_core_32bit_regs,
-+	 .width = 1,
-+	},
-+};
-+
- static u32 aieml_get_tile_type(struct aie_device *adev,
- 			       struct aie_location *loc)
- {
-@@ -96,6 +137,27 @@ static unsigned int aieml_get_mem_info(struct aie_device *adev,
- 	return NUM_TYPES_OF_MEM;
- }
- 
-+/**
-+ * aieml_part_clear_mems() - clear memories of every tile in a partition
-+ * @apart: AI engine partition
-+ *
-+ * Return: return 0 for success, error code for failure
-+ */
-+static int aieml_part_clear_mems(struct aie_partition *apart)
-+{
-+	struct aie_range *range = &apart->range;
-+	u32 node_id = apart->adev->pm_node_id;
-+	int ret;
-+
-+	ret = zynqmp_pm_aie_operation(node_id, range->start.col,
-+				      range->size.col,
-+				      XILINX_AIE_OPS_ZEROISATION);
-+	if (ret < 0)
-+		dev_err(apart->aperture->dev, "failed to clear memory for partition\n");
-+
-+	return ret;
-+}
-+
- /* aieml_scan_part_clocks() - scan clocks of a partition
-  * @apart: AI engine partition
-  *
-@@ -232,11 +294,52 @@ static int aieml_set_part_clocks(struct aie_partition *apart)
- 	return 0;
- }
- 
-+/**
-+ * aieml_set_tile_isolation() - Set isolation boundary of AI engile tile
-+ * @apart: AI engine partition
-+ * @loc: Location of tile
-+ * @dir: Direction to block
-+ *
-+ * Possible direction values are:
-+ *      - AIE_ISOLATE_EAST_MASK
-+ *      - AIE_ISOLATE_NORTH_MASK
-+ *      - AIE_ISOLATE_WEST_MASK
-+ *      - AIE_ISOLATE_SOUTH_MASK
-+ *      - AIE_ISOLATE_ALL_MASK
-+ *      - or "OR" of multiple values
-+ */
-+static void aieml_set_tile_isolation(struct aie_partition *apart,
-+				     struct aie_location *loc, u8 dir)
-+{
-+	struct aie_aperture *aperture = apart->aperture;
-+	struct aie_device *adev = apart->adev;
-+	void __iomem *va;
-+	u32 ttype, val;
-+
-+	/* For AIEML device, dir input will match register mask */
-+	val = (u32)dir;
-+	ttype = aieml_get_tile_type(adev, loc);
-+	if (ttype == AIE_TILE_TYPE_TILE) {
-+		va = aperture->base +
-+		     aie_cal_regoff(adev, *loc,
-+				    AIEML_TILE_COREMOD_TILECTRL_REGOFF);
-+	} else if (ttype == AIE_TILE_TYPE_MEMORY) {
-+		va = aperture->base +
-+		     aie_cal_regoff(adev, *loc, AIEML_MEMORY_TILECTRL_REGOFF);
-+	} else {
-+		va = aperture->base +
-+		     aie_cal_regoff(adev, *loc, AIEML_SHIMPL_TILECTRL_REGOFF);
-+	}
-+	writel(val, va);
-+}
-+
- static const struct aie_tile_operations aieml_ops = {
- 	.get_tile_type = aieml_get_tile_type,
- 	.get_mem_info = aieml_get_mem_info,
-+	.mem_clear = aieml_part_clear_mems,
- 	.scan_part_clocks = aieml_scan_part_clocks,
- 	.set_part_clocks = aieml_set_part_clocks,
-+	.set_tile_isolation = aieml_set_tile_isolation,
- };
- 
- /**
-@@ -254,4 +357,6 @@ void aieml_device_init(struct aie_device *adev)
- 	adev->col_shift = AIEML_COL_SHIFT;
- 	adev->row_shift = AIEML_ROW_SHIFT;
- 	adev->ops = &aieml_ops;
-+	adev->num_core_regs = ARRAY_SIZE(aieml_core_regs);
-+	adev->core_regs = aieml_core_regs;
- }
-diff --git a/drivers/accel/amd-ai-engine/ai-engine-clock.c b/drivers/accel/amd-ai-engine/ai-engine-clock.c
-index 646ec1d1658c..6cf1348f135f 100644
---- a/drivers/accel/amd-ai-engine/ai-engine-clock.c
-+++ b/drivers/accel/amd-ai-engine/ai-engine-clock.c
-@@ -81,9 +81,6 @@ bool aie_part_check_clk_enable_loc(struct aie_partition *apart,
- int aie_part_request_tiles(struct aie_partition *apart, int num_tiles,
- 			   struct aie_location *locs)
- {
--	int ret;
--
--	mutex_lock(&apart->mlock);
- 	if (num_tiles == 0) {
- 		aie_resource_set(&apart->tiles_inuse, 0,
- 				 apart->tiles_inuse.total);
-@@ -102,10 +99,7 @@ int aie_part_request_tiles(struct aie_partition *apart, int num_tiles,
- 				aie_resource_set(&apart->tiles_inuse, bit, 1);
- 		}
- 	}
--	ret = apart->adev->ops->set_part_clocks(apart);
--	mutex_unlock(&apart->mlock);
--
--	return ret;
-+	return apart->adev->ops->set_part_clocks(apart);
- }
- 
- /**
-@@ -121,9 +115,6 @@ int aie_part_request_tiles(struct aie_partition *apart, int num_tiles,
- int aie_part_release_tiles(struct aie_partition *apart, int num_tiles,
- 			   struct aie_location *locs)
- {
--	int ret;
--
--	mutex_lock(&apart->mlock);
- 	if (num_tiles == 0) {
- 		aie_resource_clear(&apart->tiles_inuse, 0,
- 				   apart->tiles_inuse.total);
-@@ -143,10 +134,7 @@ int aie_part_release_tiles(struct aie_partition *apart, int num_tiles,
- 		}
- 	}
- 
--	ret = apart->adev->ops->set_part_clocks(apart);
--	mutex_unlock(&apart->mlock);
--
--	return ret;
-+	return apart->adev->ops->set_part_clocks(apart);
- }
- 
- /**
-diff --git a/drivers/accel/amd-ai-engine/ai-engine-internal.h b/drivers/accel/amd-ai-engine/ai-engine-internal.h
-index 13a39c4e3331..864fe5d57be4 100644
---- a/drivers/accel/amd-ai-engine/ai-engine-internal.h
-+++ b/drivers/accel/amd-ai-engine/ai-engine-internal.h
-@@ -23,6 +23,9 @@
- 
- #define KBYTES(n)		((n) * SZ_1K)
- 
-+/* AIE core registers step size */
-+#define AIE_CORE_REGS_STEP	0x10
-+
- /*
-  * Macros for AI engine tile type bitmasks
-  */
-@@ -40,6 +43,24 @@ enum aie_tile_type {
- #define AIE_TILE_TYPE_MASK_SHIMNOC	BIT(AIE_TILE_TYPE_SHIMNOC)
- #define AIE_TILE_TYPE_MASK_MEMORY	BIT(AIE_TILE_TYPE_MEMORY)
- 
-+/*
-+ * Macros for attribute property of AI engine registers accessed by kernel
-+ * 0 - 7 bits: tile type bits
-+ * 8 - 15 bits: permission bits. If it is 1, it allows write from userspace
-+ */
-+#define AIE_REGS_ATTR_TILE_TYPE_SHIFT	0U
-+#define AIE_REGS_ATTR_PERM_SHIFT	8U
-+#define AIE_REGS_ATTR_TILE_TYPE_MASK	GENMASK(AIE_REGS_ATTR_PERM_SHIFT - 1, \
-+						AIE_REGS_ATTR_TILE_TYPE_SHIFT)
-+#define AIE_REGS_ATTR_PERM_MASK		GENMASK(15, \
-+						AIE_REGS_ATTR_PERM_SHIFT)
-+
-+#define AIE_ISOLATE_EAST_MASK		BIT(3)
-+#define AIE_ISOLATE_NORTH_MASK		BIT(2)
-+#define AIE_ISOLATE_WEST_MASK		BIT(1)
-+#define AIE_ISOLATE_SOUTH_MASK		BIT(0)
-+#define AIE_ISOLATE_ALL_MASK		GENMASK(3, 0)
-+
- /**
-  * struct aie_tile_regs - contiguous range of AI engine register
-  *			  within an AI engine tile
-@@ -133,10 +154,21 @@ struct aie_tile_attr {
- 	const enum aie_module_type *mods;
- };
- 
-+/**
-+ * struct aie_core_regs_attr - AI engine core register attributes structure
-+ * @core_regs: core registers
-+ * @width: number of 32 bit words
-+ */
-+struct aie_core_regs_attr {
-+	const struct aie_tile_regs *core_regs;
-+	u32 width;
-+};
-+
- /**
-  * struct aie_tile_operations - AI engine device operations
-  * @get_tile_type: get type of tile based on tile operation
-  * @get_mem_info: get different types of memories information
-+ * @mem_clear: clear data memory banks of the partition.
-  * @scan_part_clocks: scan partition modules to check whether the modules are
-  *		      clock gated or not, and update the soft clock states
-  *		      structure. It is required to be called when the partition
-@@ -149,6 +181,7 @@ struct aie_tile_attr {
-  *		     caller to apply partition lock before calling this
-  *		     function. The caller function will need to set the bitmap
-  *		     on which tiles are required to be clocked on.
-+ * @set_tile_isolation: set tile isolation boundary for input direction.
-  * Different AI engine device version has its own device
-  * operation.
-  */
-@@ -157,8 +190,11 @@ struct aie_tile_operations {
- 	unsigned int (*get_mem_info)(struct aie_device *adev,
- 				     struct aie_range *range,
- 				     struct aie_part_mem *pmem);
-+	int (*mem_clear)(struct aie_partition *apart);
- 	int (*scan_part_clocks)(struct aie_partition *apart);
- 	int (*set_part_clocks)(struct aie_partition *apart);
-+	void (*set_tile_isolation)(struct aie_partition *apart,
-+				   struct aie_location *loc, u8 dir);
- };
- 
- /**
-@@ -167,12 +203,14 @@ struct aie_tile_operations {
-  * @dev: device pointer for the AI engine device
-  * @mlock: protection for AI engine device operations
-  * @clk: AI enigne device clock
-+ * @core_regs: array of core registers
-  * @ops: tile operations
-  * @array_shift: array address shift
-  * @col_shift: column address shift
-  * @row_shift: row address shift
-  * @dev_gen: aie hardware device generation
-  * @pm_node_id: AI Engine platform management node ID
-+ * @num_core_regs: number of core registers range
-  * @ttype_attr: tile type attributes
-  */
- struct aie_device {
-@@ -180,12 +218,14 @@ struct aie_device {
- 	struct device *dev;
- 	struct mutex mlock; /* protection for AI engine apertures */
- 	struct clk *clk;
-+	const struct aie_core_regs_attr *core_regs;
- 	const struct aie_tile_operations *ops;
- 	u32 array_shift;
- 	u32 col_shift;
- 	u32 row_shift;
- 	u32 dev_gen;
- 	u32 pm_node_id;
-+	u32 num_core_regs;
- 	struct aie_tile_attr ttype_attr[AIE_TILE_TYPE_MAX];
- };
- 
-@@ -301,6 +341,10 @@ int aie_part_request_tiles(struct aie_partition *apart, int num_tiles,
- 			   struct aie_location *locs);
- int aie_part_release_tiles(struct aie_partition *apart, int num_tiles,
- 			   struct aie_location *locs);
-+int aie_part_clean(struct aie_partition *apart);
-+int aie_part_initialize(struct aie_partition *apart,
-+			struct aie_partition_init_args *args);
-+int aie_part_teardown(struct aie_partition *apart);
- int aie_resource_initialize(struct aie_resource *res, int count);
- void aie_resource_uninitialize(struct aie_resource *res);
- int aie_resource_check_region(struct aie_resource *res, u32 start,
-@@ -310,6 +354,7 @@ int aie_resource_get_region(struct aie_resource *res, u32 start,
- void aie_resource_put_region(struct aie_resource *res, int start, u32 count);
- int aie_resource_set(struct aie_resource *res, u32 start, u32 count);
- int aie_resource_clear(struct aie_resource *res, u32 start, u32 count);
-+int aie_resource_clear_all(struct aie_resource *res);
- bool aie_resource_testbit(struct aie_resource *res, u32 bit);
- 
- #endif /* AIE_INTERNAL_H */
-diff --git a/drivers/accel/amd-ai-engine/ai-engine-part.c b/drivers/accel/amd-ai-engine/ai-engine-part.c
-index 878597eff202..97bb10d11309 100644
---- a/drivers/accel/amd-ai-engine/ai-engine-part.c
-+++ b/drivers/accel/amd-ai-engine/ai-engine-part.c
-@@ -12,6 +12,35 @@
- 
- #include "ai-engine-internal.h"
- 
-+/*
-+ * aie_partition_initialize() - Initialize AI engine partition
-+ * @apart: AI engine partition instance
-+ * @args: User initialization options
-+ *
-+ * Return: 0 for success, negative value for failure
-+ */
-+int aie_partition_initialize(void *apart, struct aie_partition_init_args *args)
-+{
-+	if (!apart)
-+		return -EINVAL;
-+	return aie_part_initialize((struct aie_partition *)apart, args);
-+}
-+EXPORT_SYMBOL_GPL(aie_partition_initialize);
-+
-+/*
-+ * aie_partition_reset() - Reset AI engine partition
-+ * @apart: AI engine partition instance
-+ *
-+ * Return: 0 for success, negative value for failure
-+ */
-+int aie_partition_teardown(void *apart)
-+{
-+	if (!apart)
-+		return -EINVAL;
-+	return aie_part_teardown((struct aie_partition *)apart);
-+}
-+EXPORT_SYMBOL_GPL(aie_partition_teardown);
-+
- /**
-  * aie_part_create_mems_info() - creates array to store the AI engine partition
-  *				 different memories types information
-@@ -58,6 +87,8 @@ void aie_part_release(struct aie_partition *apart)
- {
- 	struct aie_aperture *aperture = apart->aperture;
- 
-+	/* aie_part_clean() will do hardware reset */
-+	aie_part_clean(apart);
- 	aie_part_set_freq(apart, 0);
- 	mutex_lock(&aperture->mlock);
- 	aie_resource_put_region(&aperture->cols_res,
-diff --git a/drivers/accel/amd-ai-engine/ai-engine-res.c b/drivers/accel/amd-ai-engine/ai-engine-res.c
-index d71a3a5f7b29..eff41986d5b6 100644
---- a/drivers/accel/amd-ai-engine/ai-engine-res.c
-+++ b/drivers/accel/amd-ai-engine/ai-engine-res.c
-@@ -151,6 +151,22 @@ int aie_resource_clear(struct aie_resource *res, u32 start, u32 count)
- 	return 0;
- }
- 
-+/**
-+ * aie_resource_clear_all() - clear all the AI engine resource bits
-+ * @res: pointer to AI engine resource
-+ * @return: 0 for success and negative value for failure
-+ *
-+ * This function clears all the bits in the resource.
-+ */
-+int aie_resource_clear_all(struct aie_resource *res)
-+{
-+	if (!res || !res->bitmap)
-+		return -EINVAL;
-+
-+	bitmap_clear(res->bitmap, 0, res->total);
-+	return 0;
-+}
-+
- /**
-  * aie_resource_testbit() - test if a bit is set in a AI engine resource
-  * @res: pointer to AI engine resource
-diff --git a/drivers/accel/amd-ai-engine/ai-engine-reset.c b/drivers/accel/amd-ai-engine/ai-engine-reset.c
-new file mode 100644
-index 000000000000..650811063232
---- /dev/null
-+++ b/drivers/accel/amd-ai-engine/ai-engine-reset.c
-@@ -0,0 +1,300 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * AMD AI Engine device driver reset implementation
-+ *
-+ * Copyright (C) 2025 Advanced Micro Devices, Inc.
-+ */
-+
-+#include <linux/amd-ai-engine.h>
-+#include <linux/firmware/xlnx-zynqmp.h>
-+#include <linux/io.h>
-+#include <linux/mutex.h>
-+
-+#include "ai-engine-internal.h"
-+
-+/**
-+ * aie_part_clear_core_regs_of_tile() - clear registers of aie core
-+ * @apart: AI engine partition
-+ * @loc: location of aie tile to clear
-+ */
-+static void aie_part_clear_core_regs_of_tile(struct aie_partition *apart,
-+					     struct aie_location loc)
-+{
-+	struct aie_device *adev = apart->adev;
-+	struct aie_aperture *aperture = apart->aperture;
-+	const struct aie_core_regs_attr *regs = adev->core_regs;
-+	u32 i;
-+
-+	for (i = 0; i < adev->num_core_regs; i++) {
-+		u32 j, soff, eoff, reg;
-+
-+		soff = aie_cal_regoff(adev, loc, regs[i].core_regs->soff);
-+		eoff = aie_cal_regoff(adev, loc, regs[i].core_regs->eoff);
-+
-+		for (reg = soff; reg <= eoff; reg += AIE_CORE_REGS_STEP) {
-+			for (j = 0; j < regs[i].width; j++)
-+				writel(0, aperture->base + reg + j * 4);
-+		}
-+	}
-+}
-+
-+/**
-+ * aie_part_clear_core_regs - clear registers of aie core of a partition
-+ * @apart: AI engine partition
-+ */
-+static void aie_part_clear_core_regs(struct aie_partition *apart)
-+{
-+	struct aie_range *range = &apart->range;
-+	u32 c, r;
-+
-+	/* clear core registers for each tile in the partition */
-+	for (c = range->start.col; c < range->start.col + range->size.col;
-+			c++) {
-+		for (r = range->start.row;
-+				r < range->start.row + range->size.row; r++) {
-+			struct aie_location loc;
-+			u32 ttype;
-+
-+			loc.row = r;
-+			loc.col = c;
-+			ttype = apart->adev->ops->get_tile_type(apart->adev,
-+								&loc);
-+			if (ttype == AIE_TILE_TYPE_TILE &&
-+			    aie_part_check_clk_enable_loc(apart, &loc))
-+				aie_part_clear_core_regs_of_tile(apart, loc);
-+		}
-+	}
-+}
-+
-+/**
-+ * aie_part_clean() - reset and clear AI engine partition
-+ * @apart: AI engine partition
-+ *
-+ * Return: 0 for success and negative value for failure
-+ *
-+ * This function will:
-+ *  * gate all the columns
-+ *  * reset AI engine partition columns
-+ *  * reset AI engine shims
-+ *  * clear the memories
-+ *  * clear core registers
-+ *  * gate all the tiles in a partition
-+ *  * update clock state bitmap
-+ *
-+ * This function will not validate the partition, the caller will need to
-+ * provide a valid AI engine partition.
-+ */
-+int aie_part_clean(struct aie_partition *apart)
-+{
-+	u32 node_id = apart->adev->pm_node_id;
-+	int ret;
-+
-+	mutex_lock(&apart->mlock);
-+	ret = zynqmp_pm_aie_operation(node_id, apart->range.start.col,
-+				      apart->range.size.col,
-+				      XILINX_AIE_OPS_DIS_COL_CLK_BUFF);
-+	if (ret < 0)
-+		goto exit;
-+
-+	ret = zynqmp_pm_aie_operation(node_id, apart->range.start.col,
-+				      apart->range.size.col,
-+				      XILINX_AIE_OPS_COL_RST |
-+				      XILINX_AIE_OPS_SHIM_RST);
-+	if (ret < 0)
-+		goto exit;
-+
-+	ret = zynqmp_pm_aie_operation(node_id, apart->range.start.col,
-+				      apart->range.size.col,
-+				      XILINX_AIE_OPS_ENB_COL_CLK_BUFF);
-+	if (ret < 0)
-+		goto exit;
-+
-+	apart->adev->ops->mem_clear(apart);
-+	aie_part_clear_core_regs(apart);
-+	ret = zynqmp_pm_aie_operation(node_id, apart->range.start.col,
-+				      apart->range.size.col,
-+				      XILINX_AIE_OPS_DIS_COL_CLK_BUFF);
-+	if (ret < 0)
-+		goto exit;
-+
-+	aie_resource_clear_all(&apart->cores_clk_state);
-+
-+exit:
-+	mutex_unlock(&apart->mlock);
-+	return ret;
-+}
-+
-+/**
-+ * aie_part_init_isolation() - Set isolation boundary of AI engine partition
-+ * @apart: AI engine partition
-+ */
-+static void aie_part_init_isolation(struct aie_partition *apart)
-+{
-+	struct aie_range *range = &apart->range;
-+	u32 c, r;
-+	u8 dir;
-+
-+	for (c = range->start.col;
-+	     c < range->start.col + range->size.col; c++) {
-+		if (c == range->start.col)
-+			dir = AIE_ISOLATE_WEST_MASK;
-+		else if (c == (range->start.col + range->size.col - 1))
-+			dir = AIE_ISOLATE_EAST_MASK;
-+		else
-+			dir = 0;
-+
-+		for (r = range->start.row;
-+		     r < range->start.row + range->size.row; r++) {
-+			struct aie_location loc;
-+
-+			loc.col = c;
-+			loc.row = r;
-+			apart->adev->ops->set_tile_isolation(apart, &loc, dir);
-+		}
-+	}
-+}
-+
-+/**
-+ * aie_part_initialize() - AI engine partition initialization
-+ * @apart: AI engine partition
-+ * @args: User initialization options
-+ *
-+ * Return: 0 for success and negative value for failure
-+ *
-+ * This function will:
-+ * - gate all columns
-+ * - enable column reset
-+ * - ungate all columns
-+ * - disable column reset
-+ * - reset shim tiles
-+ * - setup axi mm to raise events
-+ * - setup partition isolation
-+ * - zeroize memory
-+ */
-+int aie_part_initialize(struct aie_partition *apart,
-+			struct aie_partition_init_args *args)
-+{
-+	u32 node_id = apart->adev->pm_node_id;
-+	int ret;
-+
-+	if (!args)
-+		return -EINVAL;
-+
-+	mutex_lock(&apart->mlock);
-+
-+	/* Clear resources */
-+	aie_resource_clear_all(&apart->tiles_inuse);
-+	aie_resource_clear_all(&apart->cores_clk_state);
-+
-+	/* This operation will do first 4 steps of sequence */
-+	if (args->init_opts & AIE_PART_INIT_OPT_COLUMN_RST) {
-+		ret = zynqmp_pm_aie_operation(node_id, apart->range.start.col,
-+					      apart->range.size.col,
-+					      XILINX_AIE_OPS_COL_RST);
-+		if (ret < 0)
-+			goto exit;
-+	}
-+
-+	/* Reset Shims */
-+	if (args->init_opts & AIE_PART_INIT_OPT_SHIM_RST) {
-+		ret = zynqmp_pm_aie_operation(node_id, apart->range.start.col,
-+					      apart->range.size.col,
-+					      XILINX_AIE_OPS_SHIM_RST);
-+		if (ret < 0)
-+			goto exit;
-+	}
-+
-+	/* Setup AXIMM events */
-+	if (args->init_opts & AIE_PART_INIT_OPT_BLOCK_NOCAXIMMERR) {
-+		ret = zynqmp_pm_aie_operation(node_id, apart->range.start.col,
-+					      apart->range.size.col,
-+					      XILINX_AIE_OPS_ENB_AXI_MM_ERR_EVENT);
-+		if (ret < 0)
-+			goto exit;
-+	}
-+
-+	/* Setup partition isolation */
-+	if (args->init_opts & AIE_PART_INIT_OPT_ISOLATE)
-+		aie_part_init_isolation(apart);
-+
-+	/* Zeroize memory */
-+	if (args->init_opts & AIE_PART_INIT_OPT_ZEROIZEMEM) {
-+		ret = zynqmp_pm_aie_operation(node_id, apart->range.start.col,
-+					      apart->range.size.col,
-+					      XILINX_AIE_OPS_ZEROISATION);
-+		if (ret < 0)
-+			goto exit;
-+	}
-+
-+	/* Set L2 interrupt */
-+	ret = zynqmp_pm_aie_operation(node_id, apart->range.start.col,
-+				      apart->range.size.col,
-+				      XILINX_AIE_OPS_SET_L2_CTRL_NPI_INTR);
-+	if (ret < 0)
-+		goto exit;
-+
-+	/* Request tile locations */
-+	ret = aie_part_request_tiles(apart, args->num_tiles, args->locs);
-+
-+exit:
-+	mutex_unlock(&apart->mlock);
-+	return ret;
-+}
-+
-+/**
-+ * aie_part_teardown() - AI engine partition teardown
-+ * @apart: AI engine partition
-+ *
-+ * Return: 0 for success and negative value for failure
-+ *
-+ * This function will:
-+ * - gate all columns
-+ * - enable column reset
-+ * - ungate all columns
-+ * - disable column reset
-+ * - reset shim tiles
-+ * - zeroize memory
-+ * - gate all columns
-+ */
-+int aie_part_teardown(struct aie_partition *apart)
-+{
-+	u32 node_id = apart->adev->pm_node_id;
-+	int ret;
-+
-+	mutex_lock(&apart->mlock);
-+
-+	/* This operation will do first 4 steps of sequence */
-+	ret = zynqmp_pm_aie_operation(node_id, apart->range.start.col,
-+				      apart->range.size.col,
-+				      XILINX_AIE_OPS_COL_RST);
-+	if (ret < 0)
-+		goto exit;
-+
-+	/* Reset shims */
-+	ret = zynqmp_pm_aie_operation(node_id, apart->range.start.col,
-+				      apart->range.size.col,
-+				      XILINX_AIE_OPS_SHIM_RST);
-+	if (ret < 0)
-+		goto exit;
-+
-+	/* Zeroize mem */
-+	ret = zynqmp_pm_aie_operation(node_id, apart->range.start.col,
-+				      apart->range.size.col,
-+				      XILINX_AIE_OPS_ZEROISATION);
-+	if (ret < 0)
-+		goto exit;
-+
-+	/* Gate all columns */
-+	ret = zynqmp_pm_aie_operation(node_id, apart->range.start.col,
-+				      apart->range.size.col,
-+				      XILINX_AIE_OPS_DIS_COL_CLK_BUFF);
-+	if (ret < 0)
-+		goto exit;
-+
-+	/* Clear tile_inuse bitmap */
-+	ret = aie_part_release_tiles(apart, 0U, NULL);
-+
-+exit:
-+	mutex_unlock(&apart->mlock);
-+	return ret;
-+}
-diff --git a/include/linux/amd-ai-engine.h b/include/linux/amd-ai-engine.h
-index f1f6543f9eae..3e4ae8cb5e91 100644
---- a/include/linux/amd-ai-engine.h
-+++ b/include/linux/amd-ai-engine.h
-@@ -12,6 +12,16 @@
- #include <linux/list.h>
- #include <linux/mutex.h>
- 
-+/*
-+ * AI engine partition initialize options
-+ */
-+#define AIE_PART_INIT_OPT_COLUMN_RST		BIT(0)
-+#define AIE_PART_INIT_OPT_SHIM_RST		BIT(1)
-+#define AIE_PART_INIT_OPT_BLOCK_NOCAXIMMERR	BIT(2)
-+#define AIE_PART_INIT_OPT_ISOLATE		BIT(3)
-+#define AIE_PART_INIT_OPT_ZEROIZEMEM		BIT(4)
-+#define AIE_PART_INIT_OPT_DEFAULT		GENMASK(3, 0)
-+
- /**
-  * struct aie_partition_req - AIE request partition arguments
-  * @start_col: start column of the partition
-@@ -40,8 +50,22 @@ struct aie_location {
- 	u32 row;
- };
- 
-+/**
-+ * struct aie_partition_init_args - AIE partition initialization arguments
-+ * @locs: Allocated array of tile locations that will be used
-+ * @num_tiles: Number of tiles to use
-+ * @init_opts: Partition initialization options
-+ */
-+struct aie_partition_init_args {
-+	struct aie_location *locs;
-+	u32 num_tiles;
-+	u32 init_opts;
-+};
-+
- void *aie_partition_request(struct device *dev, struct aie_partition_req *req);
- void aie_partition_release(void *apart);
-+int aie_partition_initialize(void *apart, struct aie_partition_init_args *args);
-+int aie_partition_teardown(void *apart);
- int aie_partition_set_freq_req(void *apart, u64 freq);
- int aie_partition_get_freq(void *apart, u64 *freq);
- int aie_partition_get_freq_req(void *apart, u64 *freq);
--- 
-2.34.1
-
+T24gV2VkbmVzZGF5LCBKdWx5IDIsIDIwMjUgMTE6MTkgUE0sIFN0YW5pc2xhdiBGb21pY2hldiA8
+c3Rmb21pY2hldkBnbWFpbC5jb20+IHdyb3RlOg0KPk9uIDA3LzAyLCBTb25nLCBZb29uZyBTaWFu
+ZyB3cm90ZToNCj4+IE9uIFdlZG5lc2RheSwgSnVseSAyLCAyMDI1IDEwOjIzIEFNLCBTb25nLCBZ
+b29uZyBTaWFuZw0KPjx5b29uZy5zaWFuZy5zb25nQGludGVsLmNvbT4gd3JvdGU6DQo+PiA+T24g
+V2VkbmVzZGF5LCBKdWx5IDIsIDIwMjUgMTI6MzEgQU0sIFN0YW5pc2xhdiBGb21pY2hldg0KPjxz
+dGZvbWljaGV2QGdtYWlsLmNvbT4NCj4+ID53cm90ZToNCj4+ID4+T24gMDcvMDEsIFNvbmcgWW9v
+bmcgU2lhbmcgd3JvdGU6DQo+PiA+Pj4gSW50cm9kdWNlIHRoZSBYRFBfTUVUQURBVEFfU0laRSBt
+YWNybyB0byBlbnN1cmUgdGhhdCB1c2VyIGFwcGxpY2F0aW9ucyBjYW4NCj4+ID4+PiBjb25zaXN0
+ZW50bHkgcmV0cmlldmUgdGhlIGNvcnJlY3QgbG9jYXRpb24gb2Ygc3RydWN0IHhkcF9tZXRhLg0K
+Pj4gPj4+DQo+PiA+Pj4gUHJpb3IgdG8gdGhpcyBjb21taXQsIHRoZSBYRFAgcHJvZ3JhbSBhZGp1
+c3RlZCB0aGUgZGF0YV9tZXRhIGJhY2t3YXJkIGJ5DQo+PiA+Pj4gdGhlIHNpemUgb2Ygc3RydWN0
+IHhkcF9tZXRhLCB3aGlsZSB0aGUgdXNlciBhcHBsaWNhdGlvbiByZXRyaWV2ZWQgdGhlIGRhdGEN
+Cj4+ID4+PiBieSBjYWxjdWxhdGluZyBiYWNrd2FyZCBmcm9tIHRoZSBkYXRhIHBvaW50ZXIuIFRo
+aXMgYXBwcm9hY2ggb25seSB3b3JrZWQgaWYNCj4+ID4+PiB4ZHBfYnVmZi0+ZGF0YV9tZXRhIHdh
+cyBlcXVhbCB0byB4ZHBfYnVmZi0+ZGF0YSBiZWZvcmUgY2FsbGluZw0KPj4gPj4+IGJwZl94ZHBf
+YWRqdXN0X21ldGEuDQo+PiA+Pj4NCj4+ID4+PiBXaXRoIHRoZSBpbnRyb2R1Y3Rpb24gb2YgWERQ
+X01FVEFEQVRBX1NJWkUsIGJvdGggdGhlIFhEUCBwcm9ncmFtIGFuZCB1c2VyDQo+PiA+Pj4gYXBw
+bGljYXRpb24gbm93IGNhbGN1bGF0ZSBhbmQgaWRlbnRpZnkgdGhlIGxvY2F0aW9uIG9mIHN0cnVj
+dCB4ZHBfbWV0YSBmcm9tDQo+PiA+Pj4gdGhlIGRhdGEgcG9pbnRlci4gVGhpcyBlbnN1cmVzIHRo
+ZSBpbXBsZW1lbnRhdGlvbiByZW1haW5zIGZ1bmN0aW9uYWwgZXZlbg0KPj4gPj4+IHdoZW4gdGhl
+cmUgaXMgZGV2aWNlLXJlc2VydmVkIG1ldGFkYXRhLCBtYWtpbmcgdGhlIHRlc3RzIG1vcmUgcG9y
+dGFibGUNCj4+ID4+PiBhY3Jvc3MgZGlmZmVyZW50IE5JQ3MuDQo+PiA+Pj4NCj4+ID4+PiBTaWdu
+ZWQtb2ZmLWJ5OiBTb25nIFlvb25nIFNpYW5nIDx5b29uZy5zaWFuZy5zb25nQGludGVsLmNvbT4N
+Cj4+ID4+PiAtLS0NCj4+ID4+PiAgdG9vbHMvdGVzdGluZy9zZWxmdGVzdHMvYnBmL3Byb2dfdGVz
+dHMveGRwX21ldGFkYXRhLmMgfCAgMiArLQ0KPj4gPj4+ICB0b29scy90ZXN0aW5nL3NlbGZ0ZXN0
+cy9icGYvcHJvZ3MveGRwX2h3X21ldGFkYXRhLmMgICB8IDEwICsrKysrKysrKy0NCj4+ID4+PiAg
+dG9vbHMvdGVzdGluZy9zZWxmdGVzdHMvYnBmL3Byb2dzL3hkcF9tZXRhZGF0YS5jICAgICAgfCAg
+OCArKysrKysrLQ0KPj4gPj4+ICB0b29scy90ZXN0aW5nL3NlbGZ0ZXN0cy9icGYveGRwX2h3X21l
+dGFkYXRhLmMgICAgICAgICB8ICAyICstDQo+PiA+Pj4gIHRvb2xzL3Rlc3Rpbmcvc2VsZnRlc3Rz
+L2JwZi94ZHBfbWV0YWRhdGEuaCAgICAgICAgICAgIHwgIDcgKysrKysrKw0KPj4gPj4+ICA1IGZp
+bGVzIGNoYW5nZWQsIDI1IGluc2VydGlvbnMoKyksIDQgZGVsZXRpb25zKC0pDQo+PiA+Pj4NCj4+
+ID4+PiBkaWZmIC0tZ2l0IGEvdG9vbHMvdGVzdGluZy9zZWxmdGVzdHMvYnBmL3Byb2dfdGVzdHMv
+eGRwX21ldGFkYXRhLmMNCj4+ID4+Yi90b29scy90ZXN0aW5nL3NlbGZ0ZXN0cy9icGYvcHJvZ190
+ZXN0cy94ZHBfbWV0YWRhdGEuYw0KPj4gPj4+IGluZGV4IDE5ZjkyYWZmYzJkYS4uOGQ2YzI2MzM2
+OThiIDEwMDY0NA0KPj4gPj4+IC0tLSBhL3Rvb2xzL3Rlc3Rpbmcvc2VsZnRlc3RzL2JwZi9wcm9n
+X3Rlc3RzL3hkcF9tZXRhZGF0YS5jDQo+PiA+Pj4gKysrIGIvdG9vbHMvdGVzdGluZy9zZWxmdGVz
+dHMvYnBmL3Byb2dfdGVzdHMveGRwX21ldGFkYXRhLmMNCj4+ID4+PiBAQCAtMzAyLDcgKzMwMiw3
+IEBAIHN0YXRpYyBpbnQgdmVyaWZ5X3hza19tZXRhZGF0YShzdHJ1Y3QgeHNrICp4c2ssIGJvb2wN
+Cj4+ID4+c2VudF9mcm9tX2FmX3hkcCkNCj4+ID4+Pg0KPj4gPj4+ICAJLyogY3VzdG9tIG1ldGFk
+YXRhICovDQo+PiA+Pj4NCj4+ID4+PiAtCW1ldGEgPSBkYXRhIC0gc2l6ZW9mKHN0cnVjdCB4ZHBf
+bWV0YSk7DQo+PiA+Pj4gKwltZXRhID0gZGF0YSAtIFhEUF9NRVRBREFUQV9TSVpFOw0KPj4gPj4+
+DQo+PiA+Pj4gIAlpZiAoIUFTU0VSVF9ORVEobWV0YS0+cnhfdGltZXN0YW1wLCAwLCAicnhfdGlt
+ZXN0YW1wIikpDQo+PiA+Pj4gIAkJcmV0dXJuIC0xOw0KPj4gPj4+IGRpZmYgLS1naXQgYS90b29s
+cy90ZXN0aW5nL3NlbGZ0ZXN0cy9icGYvcHJvZ3MveGRwX2h3X21ldGFkYXRhLmMNCj4+ID4+Yi90
+b29scy90ZXN0aW5nL3NlbGZ0ZXN0cy9icGYvcHJvZ3MveGRwX2h3X21ldGFkYXRhLmMNCj4+ID4+
+PiBpbmRleCAzMzBlY2UyZWFiZGIuLjcyMjQyYWMxY2RjZCAxMDA2NDQNCj4+ID4+PiAtLS0gYS90
+b29scy90ZXN0aW5nL3NlbGZ0ZXN0cy9icGYvcHJvZ3MveGRwX2h3X21ldGFkYXRhLmMNCj4+ID4+
+PiArKysgYi90b29scy90ZXN0aW5nL3NlbGZ0ZXN0cy9icGYvcHJvZ3MveGRwX2h3X21ldGFkYXRh
+LmMNCj4+ID4+PiBAQCAtMjcsNiArMjcsNyBAQCBleHRlcm4gaW50IGJwZl94ZHBfbWV0YWRhdGFf
+cnhfdmxhbl90YWcoY29uc3Qgc3RydWN0DQo+PiA+PnhkcF9tZCAqY3R4LA0KPj4gPj4+ICBTRUMo
+InhkcC5mcmFncyIpDQo+PiA+Pj4gIGludCByeChzdHJ1Y3QgeGRwX21kICpjdHgpDQo+PiA+Pj4g
+IHsNCj4+ID4+PiArCWludCBtZXRhbGVuX3VzZWQsIG1ldGFsZW5fdG9fYWRqdXN0Ow0KPj4gPj4+
+ICAJdm9pZCAqZGF0YSwgKmRhdGFfbWV0YSwgKmRhdGFfZW5kOw0KPj4gPj4+ICAJc3RydWN0IGlw
+djZoZHIgKmlwNmggPSBOVUxMOw0KPj4gPj4+ICAJc3RydWN0IHVkcGhkciAqdWRwID0gTlVMTDsN
+Cj4+ID4+PiBAQCAtNzIsNyArNzMsMTQgQEAgaW50IHJ4KHN0cnVjdCB4ZHBfbWQgKmN0eCkNCj4+
+ID4+PiAgCQlyZXR1cm4gWERQX1BBU1M7DQo+PiA+Pj4gIAl9DQo+PiA+Pj4NCj4+ID4+PiAtCWVy
+ciA9IGJwZl94ZHBfYWRqdXN0X21ldGEoY3R4LCAtKGludClzaXplb2Yoc3RydWN0IHhkcF9tZXRh
+KSk7DQo+PiA+Pg0KPj4gPj5bLi5dDQo+PiA+Pg0KPj4gPj4+ICsJbWV0YWxlbl91c2VkID0gY3R4
+LT5kYXRhIC0gY3R4LT5kYXRhX21ldGE7DQo+PiA+Pg0KPj4gPj5JcyB0aGUgaW50ZW50IGhlcmUg
+dG8gcXVlcnkgaG93IG11Y2ggbWV0YWRhdGEgaGFzIGJlZW4gY29uc3VtZWQvcmVzZXJ2ZWQNCj4+
+ID4+YnkgdGhlIGRyaXZlcj8NCj4+ID5ZZXMuDQo+PiA+DQo+PiA+Pkxvb2tpbmcgYXQgSUdDIGl0
+IGhhcyB0aGUgZm9sbG93aW5nIGNvZGUvY29tbWVudDoNCj4+ID4+DQo+PiA+PgliaS0+eGRwLT5k
+YXRhICs9IElHQ19UU19IRFJfTEVOOw0KPj4gPj4NCj4+ID4+CS8qIEhXIHRpbWVzdGFtcCBoYXMg
+YmVlbiBjb3BpZWQgaW50byBsb2NhbCB2YXJpYWJsZS4gTWV0YWRhdGENCj4+ID4+CSAqIGxlbmd0
+aCB3aGVuIFhEUCBwcm9ncmFtIGlzIGNhbGxlZCBzaG91bGQgYmUgMC4NCj4+ID4+CSAqLw0KPj4g
+Pj4JYmktPnhkcC0+ZGF0YV9tZXRhICs9IElHQ19UU19IRFJfTEVOOw0KPj4gPj4NCj4+ID4+QXJl
+IHlvdSBzdXJlIHRoYXQgbWV0YWRhdGEgc2l6ZSBpcyBjb3JyZWN0bHkgZXhwb3NlZCB0byB0aGUg
+YnBmIHByb2dyYW0/DQo+PiA+WW91IGFyZSByaWdodCwgdGhlIGN1cnJlbnQgaWdjIGRyaXZlciBk
+aWRuJ3QgZXhwb3NlIHRoZSBtZXRhZGF0YSBzaXplIGNvcnJlY3RseS4NCj4+ID5JIHN1Ym1pdHRl
+ZCBbMV0gdG8gZml4IGl0Lg0KPj4gPg0KPj4gPlsxXSBodHRwczovL3BhdGNod29yay5vemxhYnMu
+b3JnL3Byb2plY3QvaW50ZWwtd2lyZWQtDQo+PiA+bGFuL3BhdGNoLzIwMjUwNzAxMDgwOTU1LjMy
+NzMxMzctMS15b29uZy5zaWFuZy5zb25nQGludGVsLmNvbS8NCj4+ID4NCj4+ID4+DQo+PiA+Pk15
+IGFzc3VtcHRpb25zIHdhcyB0aGF0IHdlIHNob3VsZCBqdXN0IHVuY29uZGl0aW9uYWxseSBkbw0K
+PmJwZl94ZHBfYWRqdXN0X21ldGENCj4+ID4+d2l0aCAtWERQX01FVEFEQVRBX1NJWkUgYW5kIHRo
+YXQgc2hvdWxkIGJlIGdvb2QgZW5vdWdoLg0KPj4gPg0KPj4gPlRoZSBjaGVja2luZyBpcyBqdXN0
+IGZvciBwcmVjYXV0aW9ucy4gTm8gcHJvYmxlbSBpZiBkaXJlY3RseSBhZGp1c3QgdGhlIG1ldGEN
+Cj4+ID51bmNvbmRpdGlvbmFsbHkuDQo+PiA+VGhhdCB3aWxsIHNhdmUgcHJvY2Vzc2luZyB0aW1l
+IGZvciBlYWNoIHBhY2tldCBhcyB3ZWxsLg0KPj4gPkkgd2lsbCByZW1vdmUgdGhlIGNoZWNraW5n
+IGFuZCBzdWJtaXQgdjIuDQo+PiA+DQo+PiA+VGhhbmtzICYgUmVnYXJkcw0KPj4gPlNpYW5nDQo+
+PiA+DQo+Pg0KPj4gSGkgU3RhbmlzbGF2IEZvbWljaGV2LA0KPj4NCj4+IEkgc3VibWl0dGVkIHYy
+LiBCdXQgYWZ0ZXIgdGhhdCwgSSB0aGluayB0d2ljZS4gSU1ITywNCj4+IGVyciA9IGJwZl94ZHBf
+YWRqdXN0X21ldGEoY3R4LCAoaW50KShjdHgtPmRhdGEgLSBjdHgtPmRhdGFfbWV0YSAtDQo+WERQ
+X01FVEFEQVRBX1NJWkUpKTsNCj4+IGlzIGJldHRlciB0aGFuDQo+PiBlcnIgPSBicGZfeGRwX2Fk
+anVzdF9tZXRhKGN0eCwgLShpbnQpWERQX01FVEFEQVRBX1NJWkUpOw0KPj4gYmVjYXVzZSBpdCBp
+cyBtb3JlIHJvYnVzdC4NCj4+DQo+PiBBbnkgdGhvdWdodHM/DQo+DQo+TXkgcHJlZmVyZW5jZSBp
+cyBvbiBrZWVwaW5nIGV2ZXJ5dGhpbmcgYXMgaXMgYW5kIGNvbnZlcnRpbmcgdG8NCj4tKGludClY
+RFBfTUVUQURBVEFfU0laRS4gTWFraW5nIElHQyBwcm9wZXJseSBleHBvc2UgKHRlbXBvcmFyeSkg
+bWV0YWRhdGEgbGVuDQo+aXMgYSB1c2VyIHZpc2libGUgY2hhbmdlLCBub3Qgc3VyZSB3ZSBoYXZl
+IGEgZ29vZCBqdXN0aWZpY2F0aW9uPw0KDQpUaGFuayB5b3UgZm9yIHlvdXIgZmVlZGJhY2suIEkg
+YWdyZWUgdGhhdCB3ZSBkb24ndCBoYXZlIGEgc3Ryb25nIGp1c3RpZmljYXRpb24NCmZvciBtYWtp
+bmcgdGhlIG1ldGFkYXRhIGxlbmd0aCB1c2VyLXZpc2libGUgYXQgdGhpcyB0aW1lLiBJIGNvbmN1
+ciB3aXRoIHlvdXINCnByZWZlcmVuY2UgdG8ga2VlcCBldmVyeXRoaW5nIGFzIGlzIGFuZCBwcm9j
+ZWVkIHdpdGggLShpbnQpWERQX01FVEFEQVRBX1NJWkUuDQoNCkJ0dywgZG8geW91IHRoaW5rIHdo
+ZXRoZXIgbXkgZmlyc3QgcGF0Y2ggd2hpY2ggY2hhbmdlcyB0aGUgZG9jdW1lbnRhdGlvbiBpcw0K
+c3RpbGwgbmVlZGVkIG9yIG5vdD8NCg0K
 
