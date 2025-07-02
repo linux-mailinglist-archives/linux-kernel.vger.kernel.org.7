@@ -1,156 +1,130 @@
-Return-Path: <linux-kernel+bounces-712514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-712494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D137AF0AAA
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 07:22:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 057B4AF0A73
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 07:17:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1460487599
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 05:20:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BFB83BD837
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 05:16:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E06111DEFDB;
-	Wed,  2 Jul 2025 05:17:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C954A221FCC;
+	Wed,  2 Jul 2025 05:15:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="CUCd63pG"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JrPshvA4"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0106221FD6
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 05:17:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 936E4221FCA;
+	Wed,  2 Jul 2025 05:15:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751433430; cv=none; b=b21Swm4XdCcjNFQzPI1Qp9s3ZHxSeBjHp2fC2LU91+7DWeKZR/VTZxahugS+Ukac9M8PJO3GcauPp1RcLF6OHCPtdeiuwBfvh8WfuFW6xgqhUSK3pCXh3KItyDw9EDUMbuQYqBGZy5Wu7wTCaQmv+wZafSPkAMkda3VkvzAGPQw=
+	t=1751433344; cv=none; b=Wc5as4u+yrHXmOKChs4X8/xP0ARj0w5/k32hwVm1ecHJcs4VXMi6ZAp+gxcQOTHvjqLgnksvHVMqPa+LbvX/mCe1jHTsb0VYIBS/0/e5XsqDgwItcC878miZvpa60I3fVyeynQ6MxwSPDUO+WpmmC0Pxtwy0Ceo7kWG48OU34BY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751433430; c=relaxed/simple;
-	bh=SIZVTA1dBlDgHWuqKkMeHUlssl6BYErjNhZuMkc2v6w=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cRWxRUl/mJ19c47ol1g7XCXRdh4q4hYk35tqZXK9E/tgCdTS2GfdJKVwgHmSDvpNFo+epsj+34BX+EwgJVhOt05BVZqKe6Qo00OEPCoekyTHzO7JHk2JZEr4yGD6T3kncOd5bpG0AlgLhap9s2WdmAhqWBEpxeYi3duy9ehkrZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=CUCd63pG; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2353a2bc210so37520445ad.2
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Jul 2025 22:17:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1751433428; x=1752038228; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=t84+O6WBdBY0SCc3BtWc+Gw5ZYyMJomoxrVu9jQtsgg=;
-        b=CUCd63pGeGu4fUzMEvMVeiJTYiKkqwGwjNi21xlBefLtX/hUB1ogxNyQDNZrl/P1iN
-         feJFYgm2b18q4Oirn5PGBEtFyvn8x70pW1I/3mFb7UdRn4q6TSlB2blJ4sChn8XmSCwQ
-         s9rfXaikuXMpNZC6KVi7uZd7oO7glF9aCF2bZSSN9WdahH3lF5mQcDtLFoueSnSu/kJy
-         N1t3yG3FX4dQQGGY49xs4MfXUexnM3TNJ8Ii88lno/lERrej6ydoNqAAhs1FJQ7pGOFs
-         iZWFGRlI5ugSEG9Zsb3a7mzq/ytyNK2FTow2ak7ocZnGoWxWw67Ag6VCrpW/4gcrz6m4
-         vvaw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751433428; x=1752038228;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=t84+O6WBdBY0SCc3BtWc+Gw5ZYyMJomoxrVu9jQtsgg=;
-        b=OUne4m/CuOkLe2zuzoHMx8i0NSCHlTYjSUrE6zB4yudqGeo2QBhyIkTbcn1wFAj3Cc
-         XdWWc1Eenbui9j6gvU6T9V4hm5VtQBBu/iC9klJJQPOEiF/W81kd/5pYRxFU79KHaCNk
-         ol+kbPTJAiVex6BTSiADUNVufvYa58GapeQ4kl9B/L/gsIZHq/UwgRv8KftlRROaKyjc
-         wIJpZCkrWZuLT1ZbX+jB8TWjPwZrmrw9RpzSJizDcp32G/fTQn3j+MFtF1O4hfWpOQ+M
-         MUHwFBKrb2u5Z48fzR0Q0PTa7FuJ1g/95rQs0zWpDltVw+1OOhzVu+eos3ZiOLbAVShk
-         RZhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXaAe40/Uke2VQbA9kNKvlHjNCPk+9Vg+zpIYDqS9o+6Zsf0Gu7Ls0h7ld6IaJVLW+apJYRfneNSgiy8P0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyp3TFQUGJLh98Jq7Ot0uZWYc3FZjNEv/az1E1IpKLPiGYeKVW3
-	mveCZ85PkBIMfTp4fwX4YpQ3yTQP+EA/Sfp7ODNjSHOefxMc9Dt+8B8rFh6clJyU4OE=
-X-Gm-Gg: ASbGncudIJNt+f5UGanxtNwKoIDgA0s8SYlaOZzo8mAQWzWWErY6P9EFA43Ma1Zy744
-	Mby3SP7wP/Pn99L4nQWkmMhXvOrrpQtVscaWGphMyA7dbg+FuXzWtoHAbxsbsk6e7HuyIaCHuR0
-	WaoV5+BHvTDP1PpZIdNbg2a4IYAYh1ngFJxzX61xtE21ZFOLfW4RKf1lZV57gVELZzrNNSEb55p
-	vCv/QIPu/NfUhJSTz9J5HQvvrhyoRQDnHgnUiIkM31lsWIdOWoh2X3zZ7/QpJeHdG6JNJgh+wf7
-	cpAXOx8fh1a+XZgt+p7PYKYm0+ZQxGzX7Qtn5xB6/eHIIkWdTgNoziEd9Lh+Zywdiu2qW7Ti4uw
-	dhOwcxgc08hMn6dIK
-X-Google-Smtp-Source: AGHT+IHF9jCGgWd1zPtdr7P6gyUcMpmB+BURtwnVFT7vtNKBR1DlMS0ym17Nq8ulkiJ1AGOTzoV1rA==
-X-Received: by 2002:a17:902:cf4f:b0:235:27b6:a897 with SMTP id d9443c01a7336-23c6e552a2bmr15106685ad.34.1751433427932;
-        Tue, 01 Jul 2025 22:17:07 -0700 (PDT)
-Received: from localhost.localdomain ([14.141.91.70])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23c6fe31933sm4719595ad.220.2025.07.01.22.17.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Jul 2025 22:17:07 -0700 (PDT)
-From: Anup Patel <apatel@ventanamicro.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-Cc: Palmer Dabbelt <palmer@dabbelt.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	Len Brown <lenb@kernel.org>,
-	Sunil V L <sunilvl@ventanamicro.com>,
-	Rahul Pathak <rpathak@ventanamicro.com>,
-	Leyfoon Tan <leyfoon.tan@starfivetech.com>,
-	Atish Patra <atish.patra@linux.dev>,
-	Andrew Jones <ajones@ventanamicro.com>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Anup Patel <anup@brainfault.org>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Anup Patel <apatel@ventanamicro.com>
-Subject: [PATCH v7 24/24] MAINTAINERS: Add entry for RISC-V RPMI and MPXY drivers
-Date: Wed,  2 Jul 2025 10:43:45 +0530
-Message-ID: <20250702051345.1460497-25-apatel@ventanamicro.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250702051345.1460497-1-apatel@ventanamicro.com>
-References: <20250702051345.1460497-1-apatel@ventanamicro.com>
+	s=arc-20240116; t=1751433344; c=relaxed/simple;
+	bh=yA/VFyXgbsNQmFMOwhT88/9R1hkxNmEietIiNZ5dXEs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=I+6Vp9fUvMqCaftxA9au02Onxn80JE9GLgzH2ruNbko69yyAhLcNpDwXQtv0tYMMV2GRNfSWsOuFE7rC40pWXRyJymhDPKiGlh+GWPIEV7g036YVkX/ILCCxWVPea14qiDf5UwhPFLwMjd+wJ+/9VMwwt8brFXjm6yL0s16PdKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JrPshvA4; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751433343; x=1782969343;
+  h=message-id:date:mime-version:subject:to:references:from:
+   in-reply-to:content-transfer-encoding;
+  bh=yA/VFyXgbsNQmFMOwhT88/9R1hkxNmEietIiNZ5dXEs=;
+  b=JrPshvA4DAbeHm97OcT1DZ3zBFbElQ7EpadkKyhgd/Jn0mXVuX7JAkqf
+   hAIKYWcubkk95IaDM9WMnMxynr9Y6Cbt0Kej2DtsbQczxUuMDphcoKh27
+   2TnH32vB3fMPOc9sjj5BKDDdNuhdrlAiDxT9Vx/tVwkoxG1ydoaT1zlv4
+   2RGM0AVxu/V/Nd0Q2r0bfpKQXXSya2JXFdXJ5EFV9LoVIj2MyT3WmWCYl
+   dsMn9DP6GnlnhUnjm8xfEuUeHxce+pnyH/A39MHyqt4gVoAb371XbZyF1
+   pGKGI1LIEnqZOOUHigp6UaVVy4keAyo1vL8hzWpuJaKvew7MzGMd6wXX7
+   g==;
+X-CSE-ConnectionGUID: 9SkMQcdORMmqPRkBQf5rRg==
+X-CSE-MsgGUID: JRSS3i14TXCmFaGro3MaHQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11481"; a="53583406"
+X-IronPort-AV: E=Sophos;i="6.16,281,1744095600"; 
+   d="scan'208";a="53583406"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2025 22:15:42 -0700
+X-CSE-ConnectionGUID: oTaVz3k6S1qnLv+V1IVrug==
+X-CSE-MsgGUID: reW8n6DgSlCO/tJh9SjkFw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,281,1744095600"; 
+   d="scan'208";a="153748196"
+Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2025 22:15:39 -0700
+Message-ID: <7d2214f3-3b54-4b74-a18b-aca1fdf4fdb4@linux.intel.com>
+Date: Wed, 2 Jul 2025 13:14:12 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [REGRESSION][BISECTED] Performance Regression in IOMMU/VT-d Since
+ Kernel 6.10
+To: Ioanna Alifieraki <ioanna-maria.alifieraki@canonical.com>,
+ kevin.tian@intel.com, jroedel@suse.de, robin.murphy@arm.com,
+ will@kernel.org, joro@8bytes.org, dwmw2@infradead.org,
+ iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
+ regressions@lists.linux.dev, stable@vger.kernel.org
+References: <20250701171154.52435-1-ioanna-maria.alifieraki@canonical.com>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <20250701171154.52435-1-ioanna-maria.alifieraki@canonical.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Add Rahul and myself as maintainers for RISC-V RPMI and MPXY drivers.
+On 7/2/25 01:11, Ioanna Alifieraki wrote:
+> #regzbot introduced: 129dab6e1286
+> 
+> Hello everyone,
+> 
+> We've identified a performance regression that starts with linux
+> kernel 6.10 and persists through 6.16(tested at commit e540341508ce).
+> Bisection pointed to commit:
+> 129dab6e1286 ("iommu/vt-d: Use cache_tag_flush_range_np() in iotlb_sync_map").
+> 
+> The issue occurs when running fio against two NVMe devices located
+> under the same PCIe bridge (dual-port NVMe configuration). Performance
+> drops compared to configurations where the devices are on different
+> bridges.
+> 
+> Observed Performance:
+> - Before the commit: ~6150 MiB/s, regardless of NVMe device placement.
+> - After the commit:
+>    -- Same PCIe bridge: ~4985 MiB/s
+>    -- Different PCIe bridges: ~6150 MiB/s
+> 
+> 
+> Currently we can only reproduce the issue on a Z3 metal instance on
+> gcp. I suspect the issue can be reproducible if you have a dual port
+> nvme on any machine.
+> At [1] there's a more detailed description of the issue and details
+> on the reproducer.
 
-Signed-off-by: Anup Patel <apatel@ventanamicro.com>
----
- MAINTAINERS | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+This test was running on bare metal hardware instead of any
+virtualization guest, right? If that's the case,
+cache_tag_flush_range_np() is almost a no-op.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 4bac4ea21b64..c22434a2756b 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -21397,6 +21397,21 @@ F:	drivers/perf/riscv_pmu.c
- F:	drivers/perf/riscv_pmu_legacy.c
- F:	drivers/perf/riscv_pmu_sbi.c
- 
-+RISC-V RPMI AND MPXY DRIVERS
-+M:	Rahul Pathak <rahul@summations.net>
-+M:	Anup Patel <anup@brainfault.org>
-+L:	linux-riscv@lists.infradead.org
-+F:	Documentation/devicetree/bindings/clock/riscv,rpmi-clock.yaml
-+F:	Documentation/devicetree/bindings/clock/riscv,rpmi-mpxy-clock.yaml
-+F:	Documentation/devicetree/bindings/interrupt-controller/riscv,rpmi-mpxy-system-msi.yaml
-+F:	Documentation/devicetree/bindings/interrupt-controller/riscv,rpmi-system-msi.yaml
-+F:	Documentation/devicetree/bindings/mailbox/riscv,rpmi-shmem-mbox.yaml
-+F:	Documentation/devicetree/bindings/mailbox/riscv,sbi-mpxy-mbox.yaml
-+F:	drivers/clk/clk-rpmi.c
-+F:	drivers/irqchip/irq-riscv-rpmi-sysmsi.c
-+F:	drivers/mailbox/riscv-sbi-mpxy-mbox.c
-+F:	include/linux/mailbox/riscv-rpmi-message.h
-+
- RISC-V SPACEMIT SoC Support
- M:	Yixun Lan <dlan@gentoo.org>
- L:	linux-riscv@lists.infradead.org
--- 
-2.43.0
+Can you please show me the capability register of the IOMMU by:
 
+#cat /sys/bus/pci/devices/[pci_dev_name]/iommu/intel-iommu/cap
+
+> 
+> Could you please advise on the appropriate path forward to mitigate or
+> address this regression?
+> 
+> Thanks,
+> Jo
+> 
+> [1] https://bugs.launchpad.net/ubuntu/+source/linux/+bug/2115738
+
+Thanks,
+baolu
 
