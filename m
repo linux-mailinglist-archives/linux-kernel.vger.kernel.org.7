@@ -1,125 +1,118 @@
-Return-Path: <linux-kernel+bounces-713612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8725AF5C40
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 17:08:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FFF8AF5C45
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 17:08:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 72B157B36FA
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 15:06:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 014E9189D293
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 15:08:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CB0030E846;
-	Wed,  2 Jul 2025 15:07:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51AB32D374A;
+	Wed,  2 Jul 2025 15:07:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="rpglmKEv"
-Received: from mail-oo1-f49.google.com (mail-oo1-f49.google.com [209.85.161.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BN8TerN7"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6C2030B9B0
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 15:07:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 150172D3739;
+	Wed,  2 Jul 2025 15:07:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751468842; cv=none; b=EvSwMdUMAhz2AlmnLGsUc0LOm5jhCUU4HbTrTXvQMqdIW452fdQYts6FC1vPJO06tAtw+R3FPrWFPT7KIyUuUGYOSFTSXvZMscdSznyes8HO3FL0Zh5iZ33yXTrhyqjZNEhGtEJQZJw7wWWgtaBDWF2CBAHTK2p5dNngAT1/PNw=
+	t=1751468878; cv=none; b=AkFSJSb3e5W9ZYOke47GDotpMndITEiRbbqep89jxVJwY4c2tmBE5Qrs5umBo0Lk/DeCKutMehGVSv8Cw9MNFJeqhT/kU5wax8YDgMJHGsO5TQ3g2yQXskS/jRJOGxh//Vo51b3bqeIa8EL3epMvZhqWeL+U2oxX9lO9wU4riQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751468842; c=relaxed/simple;
-	bh=cn2NRI5mu8mp2JvptDQmdNR3iEYDCKiW6RwP36IdYcE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RRgdVd/AXAeTQUQT07LcDnHhdlECfoEQ2BmUCj6N4XHiKLWQTXHqUWmLN9F5ukylfwOICLQ+1srdRsaojo5stbtN1/NkIg3NNESWyzN+i0Is5e6AxOZn88HCXimQFkVazJLCwiRIJlSsKpfoUuyIH4B+MrRDidrMQ05NjaEoVHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=rpglmKEv; arc=none smtp.client-ip=209.85.161.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-61208b86da2so158360eaf.2
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 08:07:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1751468840; x=1752073640; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Z+yF8Byfsy0CuO73SgfsROHb/6ylMyJG4365Xzkg/tU=;
-        b=rpglmKEvds1+pdW7sRoDilSXNV5TzQif0EQwoG8XN2LeqUU2czx1bgjNhLhrW4lDYo
-         eP+ZKGkcTeq06R/knz5JOXuOfAH6J4HzfFpwDV1OygWgLfshsYK5zD+HoaZahX+vF1qC
-         BkgyYnKmlyUNlwOle0bSVvcKOW5CobavEyL0Pb4ElGjUCGVdWp+e8HO8ZMZCjiSFnT17
-         OBrF1tOZyLob92vmiYSDTZP9ZYqwmuwuEzbZ7kuylC9LSXXSuxNJXnHoKGzo4JQXFAsi
-         O1ZOI2CU91ZqVDCs0Iecuic4KsUe6Duv4c7xidaTRd08/dsNKTg31q3DRM9uv21BAswI
-         ZqtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751468840; x=1752073640;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z+yF8Byfsy0CuO73SgfsROHb/6ylMyJG4365Xzkg/tU=;
-        b=n6BKWwYRWqMQtjA3C7thDNqfYQ/ZsCBouGf9lHwTgj1qmeoYfH2JE00c9g2yjOvVuQ
-         dBO9rNIvzRoG78rjwKGhTZrkzhxVdOpKdnpReN/9vE0NH5HnIqIqXtTqCvIeqCbUGVTg
-         /SxtO1OrDLnXa+WiVIQE3g926xkozW8drGJmhq/K+ol3KUdGi7o63MhNmxAsr64cOhaS
-         F43RhtUwLor4UEovmrkJlQn/QaOFK9/BphLB3Y3wDcR7iXs+WZcWCQZHf4Bkr5rI6T0P
-         pqRNulKMmuZUHkDJPQMdCQavUDqyz8JiTD/8bFwBMDXPw7lWOztCSBGrjwkBp30Ks6PR
-         NcJw==
-X-Forwarded-Encrypted: i=1; AJvYcCUVzjp4qhMde5vQ+GbOlqsaYtTKSeKs8vtusp3+pQVtQag0Zq9FFkKOzvSlwmu2WpLomg2EpZl+y3vJle0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzcPjtKnQ+QmJuNGxQWamk/8Tw787+Unmt4bHnmlGuOQobLKPG7
-	D4IHY6QqvRzWHPHrtKcwTM/hxmI/R7LTP0X59qm5YYMhRC75s7FnzhXJ19S61w9N0Jo=
-X-Gm-Gg: ASbGncvXlHOHeasi88LxkttysT+3Alsln4cLDr5D+gf+V59eq7Y8FML/zNLHn74NjVW
-	/Evrp8D6IHsfFd2BdysIv6Yy5ELYMDvVK+JgjgoEAm8tuoss3XyFnrDumS9yfuxUubpTK9n1/UN
-	ti1zGlrCv4QZFM6HHv4/qJVTscxNyC3zc/HkcThJi/SPDvlY2JggTYvTD+WZwXGqJxKYVZ2bQ5I
-	48syUj+aLK8YyGrVwVK2opfL/CMJMLAGK9J4+yj6CWIS+WjdkT82ua9+oTzedn7DTbTCnVc2Xb8
-	vbOJu/yXNuR+lQlzrccW1iXt381gIvPu8cS2Jmh+/a+UAXziV4v2PgevMH/TJFO5O6cUKZ+qU2A
-	NxhQv0oqb4rt9mpC3kq5RQKS635sQpV/qlmrHNN8=
-X-Google-Smtp-Source: AGHT+IE1PW5FUH+qwlJtTOdD0wGyWz6EDOBzlYeJCn84Z90rIwVxi1VgT+rOkeUbBg33/zG427zvaQ==
-X-Received: by 2002:a05:6820:1994:b0:611:9a4d:fc44 with SMTP id 006d021491bc7-61201244fcfmr2268633eaf.3.1751468839839;
-        Wed, 02 Jul 2025 08:07:19 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:5c00:24f0:997b:5458? ([2600:8803:e7e4:1d00:5c00:24f0:997b:5458])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-611b8474da2sm1700798eaf.6.2025.07.02.08.07.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Jul 2025 08:07:18 -0700 (PDT)
-Message-ID: <3778ad13-3b62-4f68-946d-b861b0df4272@baylibre.com>
-Date: Wed, 2 Jul 2025 10:07:17 -0500
+	s=arc-20240116; t=1751468878; c=relaxed/simple;
+	bh=Ee+bd0jw4bqeEr+/W544zg+oeHVNqDzCX2e0zaohiyE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UadVk+bIHJmYGHGmQEMnEXIZr5QPbjGXcRKrKGYL8WiQrCaZaMa7i3qvbAtsDVc2jpBnHdh5wZ5TlcW3ZkNZ+TDZuIZDoWe9hTVqo1Vm6vXA5El8DZIisMGyIKNA0j8K9ioIzgKs8ak04kf/x6qY4gvIG0WwYbIHk77BBcqX278=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=BN8TerN7; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=mRETQHgJjXJ0ep3jOM3xiPYKuBNHEdiIRN9HCejwg2E=; b=BN8TerN7Mb7LDGMt4ibgafL2M3
+	NZ3UJzXRDJC2fnlzUA3KoKd7OSYCZxeJxpP6wBb562TUNe+s8qlemGdIu80hlo6FFw2C6FDqV50FI
+	39fVi+6/t9nURxqoJz3Ao+LtvLkXWnTKC7KQ8Yb3cu7znq/CTx/xnTSC8Y0NJ8X1kDEuWKwsrPcCj
+	lf+K3dnPUZQ6mKRTd0BE6vctPT+CL+py6JHvQK9zL0IJN+TE+XtPRIvG185EvevMGct+sZmBrz84h
+	gKbsne7KnvE53rfT5m8GQbSrwPQDbMy5XPMGpUIQ4qXaRT4FErM7/qIFAImVNkcr3HB4U6YeIef/Z
+	oXAK4sSQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uWz3k-0000000AAex-1hWG;
+	Wed, 02 Jul 2025 15:07:40 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 581D5300158; Wed, 02 Jul 2025 17:07:39 +0200 (CEST)
+Date: Wed, 2 Jul 2025 17:07:39 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Mark Rutland <mark.rutland@arm.com>, hca@linux.ibm.com
+Cc: Borislav Petkov <bp@alien8.de>, kernel test robot <lkp@intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>, llvm@lists.linux.dev,
+	oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	x86@kernel.org, Linus Walleij <linus.walleij@linaro.org>,
+	Jinjie Ruan <ruanjinjie@huawei.com>
+Subject: Re: [tip:master 19/19] include/linux/irq-entry-common.h:201:2:
+ error: unexpected token
+Message-ID: <20250702150739.GT1613376@noisy.programming.kicks-ass.net>
+References: <202507020528.N0LtekXt-lkp@intel.com>
+ <20250702123240.GDaGUm6Le4KLL7o_91@fat_crate.local>
+ <aGUtCveV8Ev17_FS@J2N7QTR9R3.cambridge.arm.com>
+ <20250702130915.GEaGUve86iYnv337_Z@fat_crate.local>
+ <aGUxH--v32Bv4T81@J2N7QTR9R3.cambridge.arm.com>
+ <20250702132415.GFaGUy_6q0dZZI9AX3@fat_crate.local>
+ <aGU_IY70Jt4bcbf2@J2N7QTR9R3.cambridge.arm.com>
+ <20250702145425.GS1613376@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] iio: imu: adis16550: rework clock range test
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <nuno.sa@analog.com>, Robert Budai <robert.budai@analog.com>,
- Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250702-iio-imu-adis16550-rework-clock-range-test-v1-1-b45f3a3b0dc1@baylibre.com>
- <aGVIBVsFPcVw3lN6@smile.fi.intel.com> <aGVJPRmn1-HUBb40@smile.fi.intel.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <aGVJPRmn1-HUBb40@smile.fi.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250702145425.GS1613376@noisy.programming.kicks-ass.net>
 
-On 7/2/25 9:59 AM, Andy Shevchenko wrote:
-> On Wed, Jul 02, 2025 at 05:53:57PM +0300, Andy Shevchenko wrote:
->> On Wed, Jul 02, 2025 at 09:27:45AM -0500, David Lechner wrote:
->>> Rework the clock rate range test to test if sync_mode_data != NULL
->>> instead of testing if the for loop index variable. This makes it easier
->>> for static analyzers to see that we aren't using an uninitialized
->>> sync_mode_data [1].
->>
->> But at the same time it makes it not to be the usual pattern.,,
+On Wed, Jul 02, 2025 at 04:54:25PM +0200, Peter Zijlstra wrote:
+> On Wed, Jul 02, 2025 at 03:16:01PM +0100, Mark Rutland wrote:
+> > On Wed, Jul 02, 2025 at 03:24:15PM +0200, Borislav Petkov wrote:
+> > > On Wed, Jul 02, 2025 at 02:16:15PM +0100, Mark Rutland wrote:
+> > > > Sounds like a plan.
+> > > 
+> > > As we figured out on IRC:
+> > > 
+> > > https://lore.kernel.org/all/20250616-loongarch-fix-warn-cond-llvm-ias-v1-1-6c6d90bb4466@kernel.org/
+> > > 
+> > > "clang's integrated assembler only supports concatenating strings with
+> > > '.ascii'. There was discussion of allowing '.string' / '.asciz' but it
+> > > was decided against [1] because it was undesirable to match the behavior
+> > > of released binutils at the time, where"
+> > > 
+> > > and this seems to fix it here:
+> > > 
+> > > ---
+> > > diff --git a/arch/s390/include/asm/bug.h b/arch/s390/include/asm/bug.h
+> > > index a185855ab158..46d9eb64bd18 100644
+> > > --- a/arch/s390/include/asm/bug.h
+> > > +++ b/arch/s390/include/asm/bug.h
+> > > @@ -9,7 +9,7 @@
+> > >  #else
+> > >  #define __BUGVERBOSE_LOCATION(file, line)			\
+> > >  		.pushsection .rodata.str, "aMS", @progbits, 1;	\
+> > > -	10002:	.string file;					\
+> > > +	10002:	.ascii file;					\
+> > >  		.popsection;					\
+> > >  								\
+> > >  		.long 10002b - .;				\
+> > > 
+> > 
+> > IIUC this also needs a trailing "\0" as per the link above, or this
+> > won't get a NUL-terminator (but will build just fine).
 > 
-> Reading the static analyser output I think the first hunk is only what we need,
-> but this is still false positive and it's problem of that static
-> analyser. Have you filed a bug there? (My point is that modifying the code for
-> the advantage of false positives of some static analyser is wrong road to go
-> in my opinion.)
-> 
+> Yup, I ran into this before. Let me go fix that commit.
 
-I agree that we shouldn't fix this _only_ to make the static analyzer
-happy. But I had to think quite a bit harder to see that the existing
-code was correct compared to what I have proposed here.
-
-But if this is a common pattern that I just haven't learned to identify
-at a glance yet and everybody else can easily see that the existing code
-is correct, then perhaps it isn't worth the change.
+ + e7e26cfad96c...2a20b2730147 core/bugs -> core/bugs (forced update)
 
 
