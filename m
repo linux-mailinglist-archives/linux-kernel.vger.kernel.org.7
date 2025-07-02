@@ -1,79 +1,143 @@
-Return-Path: <linux-kernel+bounces-712341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-712343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC672AF07C8
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 03:09:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79BD9AF07CF
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 03:12:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3BE05424DE0
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 01:09:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0AA01C06106
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 01:12:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C981514B950;
-	Wed,  2 Jul 2025 01:09:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fbu//ySj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F115E149C64;
+	Wed,  2 Jul 2025 01:12:20 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2311172637;
-	Wed,  2 Jul 2025 01:09:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C0FF1C6B4;
+	Wed,  2 Jul 2025 01:12:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751418569; cv=none; b=pxkNwQUux8r8kPa0MqerM2T/r3YS9ZVjHKMshroAhmj6wC/3bxKNrG+CK9okQuFAe+R+EcbtO0B2jQ+ZD7B1PbVVU8tL62rnL2pRy12nJT6tcLlG/GXegaPt7hR6HEkFNjU7uDQRazM3UVK6hUhQy1MdExxaPskMdephvpwQI3M=
+	t=1751418740; cv=none; b=Ob223oFXCCpVvFnnMIIXHhHU3xInQtnV/YvErcrHM3wFMb6BO4HrGSYNl/UmqhaNv9guH62BieMM4i47GDKPpJ51KTIvhqlM141oKaxtPLhD8UZIAxVAORebJ3oQodWtXQvH9LpwSe82temdqgg8LFtVv68+MykDmiBxy2gD9Tw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751418569; c=relaxed/simple;
-	bh=0o0wRFAYo3frYpL5CxH0azZzaVynr7Ij6Crcq1EUnCQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CR+/DjqJKhsnkFJhixNDb3stZ+V+LcFstXN5q+CvaB3DHOzGLRvS2lj9DyJ+2Q4EEsoRrht19a7yaOzdAdKl3JWN2sknzB2f2RjuuJpQ0x1BYIsQ68XmJd44BIeTULwFO69F4mV5fAMTwjRxzA+fygf1azNa6GaN3Wu2o3EEdmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fbu//ySj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42ACAC4CEEB;
-	Wed,  2 Jul 2025 01:09:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751418568;
-	bh=0o0wRFAYo3frYpL5CxH0azZzaVynr7Ij6Crcq1EUnCQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=fbu//ySjN7rgghkCLKMhxM8JGuQ2LFhZ+EZjmyqdIv1UZH58VP4w4nOLJ/rQsvDHY
-	 23RHVpIRmF21q2UQ3mJ0K96j4bwOer6Peag4rXo0gMM3o94V/eX4tL5zPotWLJ5H7z
-	 3E2qH54C2Sn78sQge3a6wYexGzXBZi07v1okJk72+A0xtR8dTD7/5Ved8K2rCgktwC
-	 CMLWiocn3WjhEphwjn76cPP2Zcwh5lAoYWAgx/nJF2hdjPlXm3pTjB3R6XJBFHSbHz
-	 btcJPQ9r3XXZugHrbHPzGutb2f2w5tz4pETQykJbio76byyOgV4j8VHKuZX2Wj8Jgk
-	 0snCnFpHRWAyA==
-Date: Tue, 1 Jul 2025 18:09:27 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Xuewei Niu <niuxuewei97@gmail.com>
-Cc: sgarzare@redhat.com, mst@redhat.com, pabeni@redhat.com,
- jasowang@redhat.com, xuanzhuo@linux.alibaba.com, davem@davemloft.net,
- netdev@vger.kernel.org, stefanha@redhat.com, leonardi@redhat.com,
- decui@microsoft.com, virtualization@lists.linux.dev, kvm@vger.kernel.org,
- linux-kernel@vger.kernel.org, fupan.lfp@antgroup.com, Xuewei Niu
- <niuxuewei.nxw@antgroup.com>
-Subject: Re: [RESEND PATCH net-next v4 0/4] vsock: Introduce SIOCINQ ioctl
- support
-Message-ID: <20250701180927.2cafbb5c@kernel.org>
-In-Reply-To: <20250630075727.210462-1-niuxuewei.nxw@antgroup.com>
-References: <20250630075727.210462-1-niuxuewei.nxw@antgroup.com>
+	s=arc-20240116; t=1751418740; c=relaxed/simple;
+	bh=N5+gz5om4Byi90spvxYFYA2quL0W1CQzGIFb7DubHi4=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=gQgJjZLMM1XyMJ+uYaFaD180fY0Lz6V5ZIxBp6oBbvgw1L2ADFbx03n6GRiGKXubOIopErQionouwD7oEUeJtaB8zbaYSeD47L0e6OH5JETIMbT6Us6Hizseg/0XZ0u5luK0I+idWS13DakCHOqiLHeUeLq5J8GEACKr4g7usb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bX21W0QgpzYQvCD;
+	Wed,  2 Jul 2025 09:12:15 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.252])
+	by mail.maildlp.com (Postfix) with ESMTP id E50021A08DC;
+	Wed,  2 Jul 2025 09:12:13 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP3 (Coremail) with SMTP id _Ch0CgB3JSNph2RotTN7AQ--.3691S3;
+	Wed, 02 Jul 2025 09:12:11 +0800 (CST)
+Subject: Re: [PATCH] nbd: fix false lockdep deadlock warning
+To: Nilay Shroff <nilay@linux.ibm.com>, Yu Kuai <yukuai1@huaweicloud.com>,
+ Ming Lei <ming.lei@redhat.com>
+Cc: josef@toxicpanda.com, axboe@kernel.dk, hch@infradead.org, hare@suse.de,
+ linux-block@vger.kernel.org, nbd@other.debian.org,
+ linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
+ johnny.chenyi@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
+References: <20250627092348.1527323-1-yukuai1@huaweicloud.com>
+ <aF56oVEzTygIOUTN@fedora>
+ <c2fbaacc-62a1-4a98-4157-2637b7f242b7@huaweicloud.com>
+ <197b6dca-56be-438d-a60f-21011367c5ed@linux.ibm.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <99b4afce-de05-ddcb-2634-b19214cf4534@huaweicloud.com>
+Date: Wed, 2 Jul 2025 09:12:09 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <197b6dca-56be-438d-a60f-21011367c5ed@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_Ch0CgB3JSNph2RotTN7AQ--.3691S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7urW7Ww4xAFWfZrW5WrWfKrg_yoW8Xr45pF
+	ZYkFW7GrW5K3ZYq34jkw1UCFWrCr1DJa1Dtr1UWa47CrWUZrZY9r40qrnIgryUJrWkJr1U
+	ta4YyF43uw43ZrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBF14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x
+	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
+	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcV
+	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF
+	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
+	CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUd-B_UUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Mon, 30 Jun 2025 15:57:23 +0800 Xuewei Niu wrote:
-> Introduce SIOCINQ ioctl support for vsock, indicating the length of unread
-> bytes.
+Hi,
+
+在 2025/07/01 21:28, Nilay Shroff 写道:
 > 
-> Similar with SIOCOUTQ ioctl, the information is transport-dependent.
+> 
+> On 6/28/25 6:18 AM, Yu Kuai wrote:
+>> Hi,
+>>
+>> 在 2025/06/27 19:04, Ming Lei 写道:
+>>> I guess the patch in the following link may be simper, both two take
+>>> similar approach:
+>>>
+>>> https://lore.kernel.org/linux-block/aFjbavzLAFO0Q7n1@fedora/
+>>
+>> I this the above approach has concurrent problems if nbd_start_device
+>> concurrent with nbd_start_device:
+>>
+>> t1:
+>> nbd_start_device
+>> lock
+>> num_connections = 1
+>> unlock
+>>      t2:
+>>      nbd_add_socket
+>>      lock
+>>      config->num_connections++
+>>      unlock
+>>          t3:
+>>          nbd_start_device
+>>          lock
+>>          num_connections = 2
+>>          unlock
+>>          blk_mq_update_nr_hw_queues
+>>
+>> blk_mq_update_nr_hw_queues
+>> //nr_hw_queues updated to 1 before failure
+>> return -EINVAL
+>>
+> 
+> In the above case, yes I see that t1 would return -EINVAL (as
+> config->num_connections doesn't match with num_connections)
+> but then t3 would succeed to update nr_hw_queue (as both
+> config->num_connections and num_connections set to 2 this
+> time). Isn't it? If yes, then the above patch (from Ming)
+> seems good.
 
-This series does not apply cleanly on current net-next.
-Please rebase & repost.
-Please note that we request that repost do not happen more often than
-24 hours apart:
-https://www.kernel.org/doc/html/next/process/maintainer-netdev.html
--- 
-pw-bot: cr
+Emm, I'm confused, If you agree with the concurrent process, then
+t3 update nr_hw_queues to 2 first and return sucess, later t1 update
+nr_hw_queues back to 1 and return failure.
+
+Thanks,
+Kuai
+
+> 
+> Thanks,
+> --Nilay
+> .
+> 
+
 
