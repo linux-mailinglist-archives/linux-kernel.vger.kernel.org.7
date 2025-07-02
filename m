@@ -1,139 +1,142 @@
-Return-Path: <linux-kernel+bounces-713006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-712995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51AD1AF11EC
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 12:31:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CD3BAF11C5
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 12:24:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F9D1178556
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 10:31:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 697083B0D20
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 10:24:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07651253B64;
-	Wed,  2 Jul 2025 10:30:59 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A7F9254858;
+	Wed,  2 Jul 2025 10:24:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sy4gjWkt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B478238C0C;
-	Wed,  2 Jul 2025 10:30:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB258226CE1;
+	Wed,  2 Jul 2025 10:24:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751452258; cv=none; b=JRcih80wGxwI/M+rfEknxVB6v6zk3++kbUhUbIn7iKQSEtTbdGYKfxfUS+ojm26FkkiBS1O2dKh9MXzXys4ucyvYsDK+OeVU1pXJHu2/BNPeakvSAfxj4ZTtn/OoSumFYoIk2xjud31XpWC+7X/gkXGnXM6iv/RUa1hRrQgYyUs=
+	t=1751451859; cv=none; b=lIqXtVpjseaeef0OzYGnjCdv4T0aQqnScbgd1nhgUz9r3KvVfAEsdaZuN/NupUypuEm511NXD1UJrDQn2UA/ykN8IYsv99e0i+3it878v48XV8s5aKjaC5+7cPSHVdjp9Ukr6t0vHLlr62J9ola7dG1++jKaQFWcEZJIIYmPHxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751452258; c=relaxed/simple;
-	bh=PwaLIRZZ+zNd55Wo4Lwsq2k0+RwAv0Yy8uSElGUCDoo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=b2p/oU8bN0CXNdWdYMnm30+db6hpFFtOUvkWUsJde6pWqialplMAZmQjh86+lmhZ1czV+GetDGyLry6QoTjW/TMv3a2KsnrL1zeadwtb2THzrHZiIqg0jpRYgBXaRlbd0+nzMtQdg+hjQtoXhMWMmDNNFH7qX/9I3FpjpHgbgtA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4bXGQ55LvJzKHMyb;
-	Wed,  2 Jul 2025 18:30:53 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.252])
-	by mail.maildlp.com (Postfix) with ESMTP id 28A341A07FA;
-	Wed,  2 Jul 2025 18:30:52 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP3 (Coremail) with SMTP id _Ch0CgCHNSNaCmVoxoqlAQ--.14629S4;
-	Wed, 02 Jul 2025 18:30:52 +0800 (CST)
-From: Zheng Qixing <zhengqixing@huaweicloud.com>
-To: song@kernel.org,
-	yukuai3@huawei.com
-Cc: linux-raid@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	yi.zhang@huawei.com,
-	yangerkun@huawei.com,
-	houtao1@huawei.com,
-	zhengqixing@huawei.com
-Subject: [PATCH] md/raid1,raid10: strip REQ_NOWAIT from member bios
-Date: Wed,  2 Jul 2025 18:23:41 +0800
-Message-Id: <20250702102341.1969154-1-zhengqixing@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1751451859; c=relaxed/simple;
+	bh=UsmMxrbxBsbKyiArM7KRaDTrVIVqy9Mb7Xi3fjN+Fgk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MZNPe2Q4pJqHmKnlOWGcLoWSIZK6b76Kp3d+wsWwyQB5TZqag9shu6zt1jD+WKchIFJT8l6OxKCZqHtDflziAXUQi5aUV2aLu4U1FHvgmelItVUIuI54Cw7NaTkGVLlZOsiINdbBlHzwOnwIt7NWCUOLeYR2aYTAfrIPEmBaLeE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sy4gjWkt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF1A3C4CEED;
+	Wed,  2 Jul 2025 10:24:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751451858;
+	bh=UsmMxrbxBsbKyiArM7KRaDTrVIVqy9Mb7Xi3fjN+Fgk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=sy4gjWktF2eOQn1Onxy8QfsZqy5IEKNW4Blt/5ZfCEOj6k7yZic23QjjnnlkMHtBk
+	 0wSDelUsD6efXFANDXvGe2I63DxT6KgXwUWq4GNLXVqVfkS0CylAIog2EPih2YxrJ+
+	 AizBjWdzehnJtDe7LG83kXFcTPEoXwwqGJJWO2sNfsSwIsP0NJPuFvt7PM1ntdLEPu
+	 vPkbKFqTUWAtAnvLCzSAWN/3zshtwMnxse8OY0Db9FwEa5E1oEBeBWndEJKw+1Rw55
+	 F8tbujyVhS+5Qs53uKTWSsUL8xLTdAEbcVPmFXGL17SpeRqZ3XhQBxM+Cp5EBUpezY
+	 182zxPxBUYd9A==
+Message-ID: <c9160561-3792-4230-a7f6-57caf35f9a1d@kernel.org>
+Date: Wed, 2 Jul 2025 12:24:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_Ch0CgCHNSNaCmVoxoqlAQ--.14629S4
-X-Coremail-Antispam: 1UD129KBjvJXoWxJr47Zw4xAw4ruF18uFWfKrg_yoW8uFyfp3
-	9rKa4rZrW5G34rZF1jyayDuayFqwsFga9FkrWxJ3yfZryavFyDWa1rXay0grn8XFn5ury7
-	ZFn0yrsrWF45JFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUyEb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI
-	7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
-	Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY
-	6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6x
-	AIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY
-	1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1veHDUUUUU==
-X-CM-SenderInfo: x2kh0wptl0x03j6k3tpzhluzxrxghudrp/
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/8] dt-bindings: vendor-prefixes: Add Black Sesame
+ Technologies Co., Ltd.
+To: Albert Yang <yangzh0906@thundersoft.com>, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, gordon.ge@bst.ai,
+ catalin.marinas@arm.com, geert.uytterhoeven@gmail.com, will@kernel.org,
+ ulf.hansson@linaro.org, adrian.hunter@intel.com, arnd@arndb.de
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-mmc@vger.kernel.org, soc@lists.linux.dev,
+ bst-upstream@bstai.top, neil.armstrong@linaro.org,
+ jonathan.cameron@huawei.com, bigfoot@classfun.cn, kever.yang@rock-chips.com,
+ mani@kernel.org, geert+renesas@glider.be, andersson@kernel.org, nm@ti.com,
+ nfraprado@collabora.com, quic_tdas@quicinc.com, ebiggers@google.com,
+ victor.shih@genesyslogic.com.tw, shanchun1218@gmail.com,
+ ben.chuang@genesyslogic.com.tw
+References: <20250528085403.481055-1-yangzh0906@thundersoft.com>
+ <20250702094444.3523973-1-yangzh0906@thundersoft.com>
+ <20250702094444.3523973-2-yangzh0906@thundersoft.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250702094444.3523973-2-yangzh0906@thundersoft.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Zheng Qixing <zhengqixing@huawei.com>
+On 02/07/2025 11:44, Albert Yang wrote:
+> Black Sesame Technologies Co., Ltd.s a leading automotive-grade
+> computing SoC and SoC-based
+> intelligent vehicle solution provider. Link: https://bst.ai/.
+> 
+> Acked-by: Rob Herring (Arm) <robh@kernel.org>
+> Signed-off-by: Ge Gordon <gordon.ge@bst.ai>
+> Signed-off-by: Albert Yang <yangzh0906@thundersoft.com>
+> ---
+Why is this attached to v1?
 
-RAID layers don't implement proper non-blocking semantics for
-REQ_NOWAIT, making the flag potentially misleading when propagated
-to member disks.
+Where is the changelog?
 
-This patch clear REQ_NOWAIT from cloned bios in raid1/raid10. Retain
-original bio's REQ_NOWAIT flag for upper layer error handling.
+Most of your emails did not reach mailing list. I also did not get them.
 
-Maybe we can implement non-blocking I/O handling mechanisms within
-RAID in future work.
+... and the huge amount of CC list, mostly redundant and not relevant to
+this work, could explain that. Don't Cc random people.
 
-Signed-off-by: Zheng Qixing <zhengqixing@huawei.com>
----
- drivers/md/raid1.c  | 3 ++-
- drivers/md/raid10.c | 2 ++
- 2 files changed, 4 insertions(+), 1 deletion(-)
+Anyway, fix above points - all three - and resend after 24h at least. Or
+consider using b4 relay, if this hits rejections/spam.
 
-diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
-index 19c5a0ce5a40..213ad5b7e20b 100644
---- a/drivers/md/raid1.c
-+++ b/drivers/md/raid1.c
-@@ -1399,7 +1399,7 @@ static void raid1_read_request(struct mddev *mddev, struct bio *bio,
- 	}
- 	read_bio = bio_alloc_clone(mirror->rdev->bdev, bio, gfp,
- 				   &mddev->bio_set);
--
-+	read_bio->bi_opf &= ~REQ_NOWAIT;
- 	r1_bio->bios[rdisk] = read_bio;
- 
- 	read_bio->bi_iter.bi_sector = r1_bio->sector +
-@@ -1649,6 +1649,7 @@ static void raid1_write_request(struct mddev *mddev, struct bio *bio,
- 				wait_for_serialization(rdev, r1_bio);
- 		}
- 
-+		mbio->bi_opf &= ~REQ_NOWAIT;
- 		r1_bio->bios[i] = mbio;
- 
- 		mbio->bi_iter.bi_sector	= (r1_bio->sector + rdev->data_offset);
-diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
-index b74780af4c22..951b9b443cd1 100644
---- a/drivers/md/raid10.c
-+++ b/drivers/md/raid10.c
-@@ -1221,6 +1221,7 @@ static void raid10_read_request(struct mddev *mddev, struct bio *bio,
- 		r10_bio->master_bio = bio;
- 	}
- 	read_bio = bio_alloc_clone(rdev->bdev, bio, gfp, &mddev->bio_set);
-+	read_bio->bi_opf &= ~REQ_NOWAIT;
- 
- 	r10_bio->devs[slot].bio = read_bio;
- 	r10_bio->devs[slot].rdev = rdev;
-@@ -1256,6 +1257,7 @@ static void raid10_write_one_disk(struct mddev *mddev, struct r10bio *r10_bio,
- 			     conf->mirrors[devnum].rdev;
- 
- 	mbio = bio_alloc_clone(rdev->bdev, bio, GFP_NOIO, &mddev->bio_set);
-+	mbio->bi_opf &= ~REQ_NOWAIT;
- 	if (replacement)
- 		r10_bio->devs[n_copy].repl_bio = mbio;
- 	else
--- 
-2.39.2
+Best regards,
+Krzysztof
 
 
