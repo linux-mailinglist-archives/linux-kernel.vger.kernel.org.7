@@ -1,195 +1,133 @@
-Return-Path: <linux-kernel+bounces-713876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D99ADAF5F81
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 19:09:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F2F38AF5FC0
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 19:17:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2EAE1C40680
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 17:09:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 963BA189970D
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 17:18:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57D7F286409;
-	Wed,  2 Jul 2025 17:08:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31B402FF49F;
+	Wed,  2 Jul 2025 17:17:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="ousz9wXP"
-Received: from smtp-fw-80007.amazon.com (smtp-fw-80007.amazon.com [99.78.197.218])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=surriel.com header.i=@surriel.com header.b="A9MZSMYY"
+Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 192B62749E5
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 17:08:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BDED1D63CD
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 17:17:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751476133; cv=none; b=F005MlnRPtRampJrEIyKhKxhIzJsmHq7zUKU35CGCOTJXqVhJX1XrPtO16BtAUBLx9eH3oDT+mWPvUSs9FGnLNY7gdFXqncj6BtswYCWSy1iy0zmIUmXvo6+mpwRSBoOve3TREWfVHleyj4/9SkUOTd10quHB5DnVNfFHqWZ2VI=
+	t=1751476661; cv=none; b=iLKFVdDAcRtvnmoRUk8jM7EDWltYmAHQ0u7bAHt9Qk+biG64ejweo6KaU2Pcy4OyuyXQYmOnYbAfLDErqmcE6TFwH1bYsU4QV/fPInkTY9EvFj840uLcaQlnrh+nxeTOp5a0N4Txv+7783HB6vYeIgTAOPbgi3u0KRVD7xuEbr0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751476133; c=relaxed/simple;
-	bh=nHHaZGvcPq95A5vMLvVPDFhdv/sCx/ax7McJGeucM5I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=OZCGQXOt9O0SfdJmbX+PrEN4qX6sj43BsywGuGoUnjLGONkXQb8w6AeE1GcLgAq/zYg62k4RvDtwDlVQEINjGr0LmAo7vtX8TMLiV9cPEm5KXhiGDBWeUJnSDsQNvHruKA5RXaS84b4Eg4n51A9TxrvXRuj21ppCJMfa9a3oGA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=ousz9wXP; arc=none smtp.client-ip=99.78.197.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
-  t=1751476132; x=1783012132;
-  h=message-id:date:mime-version:reply-to:subject:to:cc:
-   references:from:in-reply-to:content-transfer-encoding;
-  bh=H3hxr2Fy/BBV4dpcyVkROyueSBD9Z+ON9jAG+cUHzRk=;
-  b=ousz9wXPg/xIee4P7dVrCqMVdV4tqLS4jz1k6TNpVlHUy31+fTPvSsHa
-   5VSHvyKr8JNlkEsKK7SU6x8hS2fur6/OV7KeP+vjy3U3s2V3ZV1dV5n8S
-   Bf7T9FWMvpgG2W5Rbii6eznygVXdxdh8yphujyjPGMW7isF9I7akL0gc8
-   T+Wflg4QgqntTqR+TkVZ+zdCBpM8e8qChY2vKwRrEJCFINX6G8UJNror5
-   QRNOMNbMh9JiWqP78fhfWUem/8lRnBgxjJ2ir8ozelvijukFolykNCiYf
-   42iutafnPTXNY+GvVU1cP+8mph33rJnhS1neDvx1mIIWP5GEHvofc8EP7
-   w==;
-X-IronPort-AV: E=Sophos;i="6.16,281,1744070400"; 
-   d="scan'208";a="421152674"
-Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.210])
-  by smtp-border-fw-80007.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2025 17:08:49 +0000
-Received: from EX19MTAEUA002.ant.amazon.com [10.0.17.79:5972]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.32.240:2525] with esmtp (Farcaster)
- id 344cae8f-1feb-414e-987a-7036a54f2bb1; Wed, 2 Jul 2025 17:08:48 +0000 (UTC)
-X-Farcaster-Flow-ID: 344cae8f-1feb-414e-987a-7036a54f2bb1
-Received: from EX19D022EUC002.ant.amazon.com (10.252.51.137) by
- EX19MTAEUA002.ant.amazon.com (10.252.50.126) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Wed, 2 Jul 2025 17:08:47 +0000
-Received: from [192.168.3.69] (10.106.83.11) by EX19D022EUC002.ant.amazon.com
- (10.252.51.137) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14; Wed, 2 Jul 2025
- 17:08:46 +0000
-Message-ID: <cda7c46b-c474-48f4-b703-e2f988470f3b@amazon.com>
-Date: Wed, 2 Jul 2025 18:08:44 +0100
+	s=arc-20240116; t=1751476661; c=relaxed/simple;
+	bh=JuILf2t5Lj67QUYAWuV8nzpSXojcfdjsSzuHWCuFoa4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=FZx30Pw1vQBh4zKmIX4rdT+pQ6OJ2bWUIszTVKTKXK9k5A7yW0ZTD8sGJ/uvEXR2m/HddvuMPvaSlr7MhRmF6+uMcOnW2WR7YlLsr10gnPTHuRzt/6XntQ07xWKl2waJMML2d044kV5zDFp4G3opsOcqUpPSppA0WBX25jbwNAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=surriel.com; dkim=pass (2048-bit key) header.d=surriel.com header.i=@surriel.com header.b=A9MZSMYY; arc=none smtp.client-ip=96.67.55.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=surriel.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=surriel.com
+	; s=mail; h=MIME-Version:Content-Transfer-Encoding:Content-Type:References:
+	In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=JuILf2t5Lj67QUYAWuV8nzpSXojcfdjsSzuHWCuFoa4=; b=A9MZSMYYh6JqxgKw76SnfQryti
+	KKq8xvyKdtK8smrGizLYv4d7yQWxFq+OyhLEc9qSTojqAsusJuwt9iJFy5hJ+3XbfmYiSB7ciaTYV
+	J7vjqZ9IK+kXU8iHFBRQtNH2CttOuTcdUeSNhD9RdE6LPoACvwfWtPGKMnksnGdmd73jMByw3ofl8
+	P1cewnXnWek8V1ZFpxPyDh6iY9t08J7CYFblpd3LnAKBwW/8BtZ8MjxeILaNayGBmSRnALCSLvhFM
+	em+Aq4BqawmLbL5hEOm5lUvlgglldeWAbsQ37C+acYn+BLsaRIhSKp+cnWsKGFOtIl/RDisVNjtMg
+	5ZUvhiQg==;
+Received: from fangorn.home.surriel.com ([10.0.13.7])
+	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.97.1)
+	(envelope-from <riel@surriel.com>)
+	id 1uX0xC-0000000059R-3cwE;
+	Wed, 02 Jul 2025 13:09:02 -0400
+Message-ID: <f73e23f363b780a0e33e8b0ab7171a2128e16df6.camel@surriel.com>
+Subject: Re: [syzbot] [kernel?] KASAN: slab-use-after-free Write in
+ flush_tlb_func
+From: Rik van Riel <riel@surriel.com>
+To: Jann Horn <jannh@google.com>
+Cc: syzbot <syzbot+084b6e5bc1016723a9c4@syzkaller.appspotmail.com>, 
+	bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, 
+	linux-kernel@vger.kernel.org, luto@kernel.org, mingo@redhat.com, 
+	neeraj.upadhyay@kernel.org, paulmck@kernel.org, peterz@infradead.org, 
+	syzkaller-bugs@googlegroups.com, tglx@linutronix.de, x86@kernel.org, 
+	yury.norov@gmail.com, kernel-team <kernel-team@meta.com>, David Hildenbrand
+	 <david@redhat.com>
+Date: Wed, 02 Jul 2025 13:09:02 -0400
+In-Reply-To: <CAG48ez2_4D17XMrEb7+5fwq0RFDFDCsY5OjTB7uaXEzdybxshA@mail.gmail.com>
+References: <68653927.a70a0220.3b7e22.245d.GAE@google.com>
+	 <366d45aea0b64cfc82c0988ae5fe6863bbd28261.camel@surriel.com>
+	 <CAG48ez2_4D17XMrEb7+5fwq0RFDFDCsY5OjTB7uaXEzdybxshA@mail.gmail.com>
+Autocrypt: addr=riel@surriel.com; prefer-encrypt=mutual;
+ keydata=mQENBFIt3aUBCADCK0LicyCYyMa0E1lodCDUBf6G+6C5UXKG1jEYwQu49cc/gUBTTk33A
+ eo2hjn4JinVaPF3zfZprnKMEGGv4dHvEOCPWiNhlz5RtqH3SKJllq2dpeMS9RqbMvDA36rlJIIo47
+ Z/nl6IA8MDhSqyqdnTY8z7LnQHqq16jAqwo7Ll9qALXz4yG1ZdSCmo80VPetBZZPw7WMjo+1hByv/
+ lvdFnLfiQ52tayuuC1r9x2qZ/SYWd2M4p/f5CLmvG9UcnkbYFsKWz8bwOBWKg1PQcaYHLx06sHGdY
+ dIDaeVvkIfMFwAprSo5EFU+aes2VB2ZjugOTbkkW2aPSWTRsBhPHhV6dABEBAAG0HlJpayB2YW4gU
+ mllbCA8cmllbEByZWRoYXQuY29tPokBHwQwAQIACQUCW5LcVgIdIAAKCRDOed6ShMTeg05SB/986o
+ gEgdq4byrtaBQKFg5LWfd8e+h+QzLOg/T8mSS3dJzFXe5JBOfvYg7Bj47xXi9I5sM+I9Lu9+1XVb/
+ r2rGJrU1DwA09TnmyFtK76bgMF0sBEh1ECILYNQTEIemzNFwOWLZZlEhZFRJsZyX+mtEp/WQIygHV
+ WjwuP69VJw+fPQvLOGn4j8W9QXuvhha7u1QJ7mYx4dLGHrZlHdwDsqpvWsW+3rsIqs1BBe5/Itz9o
+ 6y9gLNtQzwmSDioV8KhF85VmYInslhv5tUtMEppfdTLyX4SUKh8ftNIVmH9mXyRCZclSoa6IMd635
+ Jq1Pj2/Lp64tOzSvN5Y9zaiCc5FucXtB9SaWsgdmFuIFJpZWwgPHJpZWxAc3VycmllbC5jb20+iQE
+ +BBMBAgAoBQJSLd2lAhsjBQkSzAMABgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRDOed6ShMTe
+ g4PpB/0ZivKYFt0LaB22ssWUrBoeNWCP1NY/lkq2QbPhR3agLB7ZXI97PF2z/5QD9Fuy/FD/jddPx
+ KRTvFCtHcEzTOcFjBmf52uqgt3U40H9GM++0IM0yHusd9EzlaWsbp09vsAV2DwdqS69x9RPbvE/Ne
+ fO5subhocH76okcF/aQiQ+oj2j6LJZGBJBVigOHg+4zyzdDgKM+jp0bvDI51KQ4XfxV593OhvkS3z
+ 3FPx0CE7l62WhWrieHyBblqvkTYgJ6dq4bsYpqxxGJOkQ47WpEUx6onH+rImWmPJbSYGhwBzTo0Mm
+ G1Nb1qGPG+mTrSmJjDRxrwf1zjmYqQreWVSFEt26tBpSaWsgdmFuIFJpZWwgPHJpZWxAZmIuY29tP
+ okBPgQTAQIAKAUCW5LbiAIbIwUJEswDAAYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQznneko
+ TE3oOUEQgAsrGxjTC1bGtZyuvyQPcXclap11Ogib6rQywGYu6/Mnkbd6hbyY3wpdyQii/cas2S44N
+ cQj8HkGv91JLVE24/Wt0gITPCH3rLVJJDGQxprHTVDs1t1RAbsbp0XTksZPCNWDGYIBo2aHDwErhI
+ omYQ0Xluo1WBtH/UmHgirHvclsou1Ks9jyTxiPyUKRfae7GNOFiX99+ZlB27P3t8CjtSO831Ij0Ip
+ QrfooZ21YVlUKw0Wy6Ll8EyefyrEYSh8KTm8dQj4O7xxvdg865TLeLpho5PwDRF+/mR3qi8CdGbkE
+ c4pYZQO8UDXUN4S+pe0aTeTqlYw8rRHWF9TnvtpcNzZw==
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: <kalyazin@amazon.com>
-Subject: Re: [PATCH v2 1/4] mm: Introduce vm_uffd_ops API
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Suren Baghdasaryan
-	<surenb@google.com>
-CC: Peter Xu <peterx@redhat.com>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>, Vlastimil Babka <vbabka@suse.cz>, Muchun Song
-	<muchun.song@linux.dev>, Mike Rapoport <rppt@kernel.org>, Hugh Dickins
-	<hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>, James Houghton
-	<jthoughton@google.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	"Michal Hocko" <mhocko@suse.com>, David Hildenbrand <david@redhat.com>,
-	"Andrea Arcangeli" <aarcange@redhat.com>, Oscar Salvador <osalvador@suse.de>,
-	"Axel Rasmussen" <axelrasmussen@google.com>, Ujwal Kundur
-	<ujwal.kundur@gmail.com>
-References: <20250627154655.2085903-1-peterx@redhat.com>
- <20250627154655.2085903-2-peterx@redhat.com>
- <aaaca9d4-b8df-45b8-a3a4-a431c99f26c7@lucifer.local>
- <CAJuCfpHN6vpDx+UNPEzJgZ_qD9USTJZ_+yZzQg2BpF_aRpufYw@mail.gmail.com>
- <982f4f94-f0bf-45dd-9003-081b76e57027@lucifer.local>
-Content-Language: en-US
-From: Nikita Kalyazin <kalyazin@amazon.com>
-Autocrypt: addr=kalyazin@amazon.com; keydata=
- xjMEY+ZIvRYJKwYBBAHaRw8BAQdA9FwYskD/5BFmiiTgktstviS9svHeszG2JfIkUqjxf+/N
- JU5pa2l0YSBLYWx5YXppbiA8a2FseWF6aW5AYW1hem9uLmNvbT7CjwQTFggANxYhBGhhGDEy
- BjLQwD9FsK+SyiCpmmTzBQJnrNfABQkFps9DAhsDBAsJCAcFFQgJCgsFFgIDAQAACgkQr5LK
- IKmaZPOpfgD/exazh4C2Z8fNEz54YLJ6tuFEgQrVQPX6nQ/PfQi2+dwBAMGTpZcj9Z9NvSe1
- CmmKYnYjhzGxzjBs8itSUvWIcMsFzjgEY+ZIvRIKKwYBBAGXVQEFAQEHQCqd7/nb2tb36vZt
- ubg1iBLCSDctMlKHsQTp7wCnEc4RAwEIB8J+BBgWCAAmFiEEaGEYMTIGMtDAP0Wwr5LKIKma
- ZPMFAmes18AFCQWmz0MCGwwACgkQr5LKIKmaZPNTlQEA+q+rGFn7273rOAg+rxPty0M8lJbT
- i2kGo8RmPPLu650A/1kWgz1AnenQUYzTAFnZrKSsXAw5WoHaDLBz9kiO5pAK
-In-Reply-To: <982f4f94-f0bf-45dd-9003-081b76e57027@lucifer.local>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: EX19D013EUB002.ant.amazon.com (10.252.51.109) To
- EX19D022EUC002.ant.amazon.com (10.252.51.137)
 
+On Wed, 2025-07-02 at 18:53 +0200, Jann Horn wrote:
+>=20
 
+> TLB flushes via IPIs on x86 are always synchronous, right?
+> flush_tlb_func is only referenced from native_flush_tlb_multi() in
+> calls to on_each_cpu_mask() (with wait=3Dtrue) or
+> on_each_cpu_cond_mask() (with wait=3D1).
+> So I think this is not an issue, unless you're claiming that we call
+> native_flush_tlb_multi() with an already-freed info->mm?
+>=20
+It looks like there are a least some cases where
+try_to_unmap() can call flush_tlb_range() with
+an mm that belongs to some other process.
 
-On 02/07/2025 16:56, Lorenzo Stoakes wrote:
-> On Tue, Jul 01, 2025 at 10:04:28AM -0700, Suren Baghdasaryan wrote:
->> On Mon, Jun 30, 2025 at 3:16 AM Lorenzo Stoakes
->> <lorenzo.stoakes@oracle.com> wrote:
->>> This feels like you're trying to put mm functionality outside of mm?
->>
->> To second that, two things stick out for me here:
->> 1. uffd_copy and uffd_get_folio seem to be at different abstraction
->> levels. uffd_copy is almost the entire copy operation for VM_SHARED
->> VMAs while uffd_get_folio is a small part of the continue operation.
->> 2. shmem_mfill_atomic_pte which becomes uffd_copy for shmem in the
->> last patch is quite a complex function which itself calls some IMO
->> pretty internal functions like mfill_atomic_install_pte(). Expecting
->> modules to implement such functionality seems like a stretch to me but
->> maybe this is for some specialized modules which are written by mm
->> experts only?
-> 
-> To echo what Liam said - I don't think we can truly rely on expertise here
-> (we make enough mistakes in core mm for that to be a dubious proposition
-> even tere :) and even if experts were involved, having core mm
-> functionality outside of core mm carries significant risk - we are
-> constantly changing things, including assumptions around sensitive topics
-> such as locking (think VMA locking) - having code elsewhere significantly
-> increases the risk of missing things.
-> 
-> I am also absolutely, to be frank, not going to accept us EXPORT()'ing
-> anything core.
-> 
-> Page table manipulation really must rely in core mm and arch code only, it
-> is easily some of the most subtle, confusing and dangerous code in mm (I
-> have spent subtantial hours banging my head against it recently), and again
-> - subject to constant change.
-> 
-> But to come back to Liam's comments and to reiterate what I was referring
-> to earlier, even permitting drivers to have access to VMAs is _highly_
-> problematic and has resulted in very real bugs and subtle issues that took
-> many hours, much stress + gnashing of teeth to adress.
+I don't know whether that is an issue.
 
-The main target of this change is the implementation of UFFD for 
-KVM/guest_memfd (examples: [1], [2]) to avoid bringing KVM-specific code 
-into the mm codebase.  We usually mean KVM by the "drivers" in this 
-context, and it is already somewhat "knowledgeable" of the mm.  I don't 
-think there are existing use cases for other drivers to implement this 
-at the moment.
+> And I think the bisected commit really is the buggy one: It looks at
+> "nr_cpus", which tracks *how many CPUs we have to IPI*, but assumes
+> that "nr_cpus" tracks *how many CPUs we posted work to*. Those
+> numbers
+> are not the same: If we post work to a CPU that already had IPI work
+> pending, we just add a list entry without sending another IPI.
+>=20
+Good point, we do need to wait when we enqueue
+work, even if we do not send an IPI anywhere!
 
-Although I can't see new exports in this series, there is now a way to 
-limit exports to particular modules [3].  Would it help if we only do it 
-for KVM initially (if/when actually needed)?
+You are right that the bisected commit is buggy
+and should be reverted.
 
-[1] 
-https://lore.kernel.org/all/114133f5-0282-463d-9d65-3143aa658806@amazon.com/
-[2] 
-https://lore.kernel.org/all/7666ee96-6f09-4dc1-8cb2-002a2d2a29cf@amazon.com/
-[3] 
-https://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git/commit/?h=kbuild&id=707f853d7fa3ce323a6875487890c213e34d81a0
-
-Thanks,
-Nikita
-
-> 
-> The very thing of:
-> 
-> xxx
-> <hand off sensitive mutable state X, Y, Z to driver>
-> yyy
-> 
-> Means that between xxx and yyy we can make literally no assumptions about
-> what just happened to all handed off state. A single instance of this has
-> caused mayhem, if we did this in such a way as to affect the _many_ uffd
-> hooks we could have a realy serious problem.
-> 
-> So - what seems really positive about this series is the _generalisation_
-> and _abstraction_ of uffd functionality.
-> 
-> That is something I appreciate and I think uffd sorely needs, in fact if we
-> could find a way to not need to do:
-> 
-> if (some_uffd_predicate())
->          some_uffd_specific_fn();
-> 
-> That'd be incredible.
-> 
-> So I think the answer here is to do something like this, and to keep all
-> the mm-specific code in core mm.
-> 
-> Thanks, Lorenzo
-
+--=20
+All Rights Reversed.
 
