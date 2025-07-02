@@ -1,164 +1,176 @@
-Return-Path: <linux-kernel+bounces-712999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9234EAF11D4
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 12:27:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79929AF123F
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 12:46:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 314023BC931
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 10:27:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E17B1C27197
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 10:47:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95D88254AFF;
-	Wed,  2 Jul 2025 10:27:18 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C87782571D4;
+	Wed,  2 Jul 2025 10:46:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="oDIt/6cU"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9DBF17A2E6;
-	Wed,  2 Jul 2025 10:27:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BABB524E4BD
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 10:46:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751452038; cv=none; b=fkKgu4suyJxdyEQRk50dTqLJtKRmK23DuiEpsJcZUYP4FIaoNrVSsYcGoEcOG2WAnwufxgccETzfvyGfiogCAFvY5Fz75XUa9TYiVpAe3wi/qCDAV01Q5WJlxSLAfslHo4D8wKlUFG3R/H1qXMGXcQ25HUzzWUNt+mQzZCn6St8=
+	t=1751453207; cv=none; b=K7t8ghQytKd5w/lcGiatNppq0Jj9VQk8CloryxOFlZSOAs2TIBiWpT0P9XYSlb1iy5TSmCovAXuteUvtsFhi5sKiEN8WCVvABuGWp5jlclFgc5WIfYnmXx3dVvfhDKhQWs8V7NtnxB+/3rk1Hk74qLHS7fHnKTO7e5pxGEjr0qg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751452038; c=relaxed/simple;
-	bh=VwCvQamL3OLboOtaKpp5/6Nma/BoEDweaCfWoWZixfc=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=rRlbgpcOBZdavtmlREtiunbg6SObVUwnUK6FkDErNInBYBI/exjQ0ZUmlrfX+Kg/issklUMu0T4LtZoM/WTGEfJWVk5y/3evaWM4HbIrXyUBnOXE2YN7vUkDJ0UUz/sJECanM3343325aDg7LOkvz89U8JEPanX8JxSiL69yrqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.163])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4bXGHp59Cxz2BdVx;
-	Wed,  2 Jul 2025 18:25:26 +0800 (CST)
-Received: from dggpemf500016.china.huawei.com (unknown [7.185.36.197])
-	by mail.maildlp.com (Postfix) with ESMTPS id 99D4C180042;
-	Wed,  2 Jul 2025 18:27:12 +0800 (CST)
-Received: from huawei.com (10.175.124.27) by dggpemf500016.china.huawei.com
- (7.185.36.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 2 Jul
- 2025 18:27:11 +0800
-From: Wang Liang <wangliang74@huawei.com>
-To: <davem@davemloft.net>, <dsahern@kernel.org>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>, <horms@kernel.org>
-CC: <yuehaibing@huawei.com>, <zhangchangzhong@huawei.com>,
-	<wangliang74@huawei.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH net-next] net: replace ADDRLABEL with dynamic debug
-Date: Wed, 2 Jul 2025 18:44:17 +0800
-Message-ID: <20250702104417.1526138-1-wangliang74@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1751453207; c=relaxed/simple;
+	bh=hflC/7EECoo+FWEYujbHOxOfZC61B76JoGLGfoAngoM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=h745nEJN3whKPN+IoFhr8Jlmc+mEzsbfBWkVhevCjhdmApaNBU6XJColkpb47mEJ/MaAvhQ7dsctpDh8wowD1Z21U6qaTXlzo2PCLfT3Z9PsF+cswiPQxQ7ks4H6upmx8c3DHjajRjnkSRPeExsmC2fjZ7Zu/V5G8M33Zl/preg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=oDIt/6cU; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5626pBeU025201
+	for <linux-kernel@vger.kernel.org>; Wed, 2 Jul 2025 10:46:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	aHOxsE8EA5bCxjxcI+SDUjFcl+31uQAcsQipjX1gMnQ=; b=oDIt/6cU0of3O2Zm
+	tgpG2eB+nl45Av9pnRBhnYscFSBV+pZvylbh+9csIk5RtLOnvq4FMvw3VLII+EzF
+	xVJoiqiRAvP0IF/wBFu2kHvwuLwM//EkAVqtCMOoAfNyHSZvAM4LdtRsm6zDwo+T
+	QUcjHVbZD/08vYQkYZg2vRIOEscHGWuz34lXjWt7JsK3CthRBoshzjV+PbZG5Zcf
+	AOrRlW+mAnk62VZN6I6AUueYsXpqaNgy8ttZTxOfKcfBSxceMYDpyQcmbjDPmvHF
+	JhsG94EHmfzYwZzTCicqBOxveSmqQQHKiz2OmTC+gINBsgo43u1DszLw2NqnNifn
+	pOKvMw==
+Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com [209.85.210.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47kd64sgjx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 10:46:44 +0000 (GMT)
+Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-748e1e474f8so6908829b3a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 03:46:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751453203; x=1752058003;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=aHOxsE8EA5bCxjxcI+SDUjFcl+31uQAcsQipjX1gMnQ=;
+        b=fvVDaEf/nzgM6RhOhhcLGoFB737+Nf24OiY4S9ULGxHeq1Nc6TbHj/TUn36K8DRSxO
+         paTEWA4oLYKdtlFsWQs6wdh+ZPQau691/OXigDyDUAgPLDS6b3ThnDrjfl5upNPl3pYD
+         DVfePg7v6msH/6+kf0pxxuI8bQSrC+RT/WlB3B2UwAuk/7+j5Os/XXQnKdoQB+ICQSzy
+         dRPtptjKmWcxhwDTi8NrYZcFozEp5n6in3TGEo4mEKB7DD6S74vWm3hgtkAdGI7u0lf7
+         pmxKwS/XpKB0ARzePyyBpHRwsvODtKbGHt0A9nA7bjYFxbueJBdpMt0Lcm2EDZPjwSpG
+         VR9A==
+X-Forwarded-Encrypted: i=1; AJvYcCXZakfPWj5Y5TNsAGIScmMKaxg5LZRVmU+9wFFwXYDqirmnShhQKey/1wyOEkAwMwVanvitZEUlgwxuW5I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxeCkRxsNBuQLwR4Tit63jm2ILEd8j69b7Gz0loRPIcFrnqZ3hn
+	E5WJZ2OExq8spqdWnEhCaAY8nu+Se+QOtOUsLBlS042+dCz+bctFnivn+3flXi+1/xQG1h7AQMH
+	AS+wwggWGF9KEBydc9vqrboldEcoFwYn6Ym7UnVI7Ck1IPzqlqQPd+B1yQ1LXvzVrCzk=
+X-Gm-Gg: ASbGncuGrxH22i2g4yrq3MlcuPaJWoIawfCflZA7HMJdEyKPcEgFLMXwgdgDq9EOWNK
+	4KAovfGbIqjySc16nyNwFkw9eVIep6N2vtePSTZ2rchc4YIU8BR62pH5cSNBV1Yb9Q6w+drM61o
+	JV6qNlqeygwdZflvjFsihtRO2Ba+NWlQR8VTf40xHVTQpwFfxs2WketNDnYoDtKbK1XVdMiCwlG
+	S047xH6GpPZeHGOWIW79hkMaW6nsgtT/Hheq1oO3h0K+gPL1jFzfRHxPzX8uGx7e19VcWt82HHl
+	IW8UOtbrv/K3HInfZCwPi+4xXjVTYqa8oL1KqXQ23sPs3XFaaFjzuhr0DNhFJdc=
+X-Received: by 2002:a05:6a00:929e:b0:748:e1e4:71d9 with SMTP id d2e1a72fcca58-74b512a4b63mr3111394b3a.22.1751453203284;
+        Wed, 02 Jul 2025 03:46:43 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGA7+CiZe4GA2cMk4Bhuat5NfBqDvPTJs1RWS1RavlKQ1uFs+BBJ1Y7wgYQ7e7I4vItRWBvcQ==
+X-Received: by 2002:a05:6a00:929e:b0:748:e1e4:71d9 with SMTP id d2e1a72fcca58-74b512a4b63mr3111356b3a.22.1751453202802;
+        Wed, 02 Jul 2025 03:46:42 -0700 (PDT)
+Received: from [10.151.37.217] ([202.46.23.19])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74af541bdeasm14377283b3a.53.2025.07.02.03.46.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 02 Jul 2025 03:46:42 -0700 (PDT)
+Message-ID: <37695966-1d7c-46c3-9717-30da4e8d1930@oss.qualcomm.com>
+Date: Wed, 2 Jul 2025 16:16:37 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/7] dt-bindings: sram: qcom,imem: Document Qualcomm IPQ
+ SoC's IMEM compatibles
+Content-Language: en-US
+To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20250702-imem-v1-0-12d49b1ceff0@oss.qualcomm.com>
+ <20250702-imem-v1-1-12d49b1ceff0@oss.qualcomm.com>
+ <a68f46f0-8053-4d9f-96f7-55de33bb301f@kernel.org>
+From: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
+In-Reply-To: <a68f46f0-8053-4d9f-96f7-55de33bb301f@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
- dggpemf500016.china.huawei.com (7.185.36.197)
+X-Authority-Analysis: v=2.4 cv=Z+PsHGRA c=1 sm=1 tr=0 ts=68650e14 cx=c_pps
+ a=mDZGXZTwRPZaeRUbqKGCBw==:117 a=j4ogTh8yFefVWWEFDRgCtg==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
+ a=z-AMgQe07C8pQQwPwfQA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=zc0IvFSfCIW2DFIPzwfm:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzAyMDA4NyBTYWx0ZWRfX9mbpLt0tjQ/c
+ CHmfUPhEXSAmgNiehjovpqFr7RLOK5TppBtBQafa8F4nCrqiejfW6mhWhx7JKpbYbinrI8WZ9wK
+ qlRe7jwI/3BtoFaXoCtgI64baP/OTvn9c52hI4tHum/3ZL2taO2KkeWJZvDduZcvwb1HdIuU4i3
+ Fu0LGvqP4wgAzvinFT5zjxAFVieu0GX+WtsGvfckIXeOv8lhaHenouPCZ7ruxsgIrF6Og/fKJmk
+ IQFJiHgsIBKdmUaQJj97aztPFhRPN027nVLWQqGMAmcaQft7geqwcAkPL11FJUWjmL3n14l9B/J
+ CCs5pZAi/V4X1j/ifWVBQ1I7I9Go/3AAw3nKWPJEGSCFTDIb0JaC9fsD7szMPlxc6x9OlHhv539
+ BZm3n10iRN0zXeFXKsV3fb5MvM5vuA7XE0zE115ul6/dL5D+4ON3V6qSY/YU0GSgXwvUZY7N
+X-Proofpoint-GUID: jRsuH2DQWMkKKQ4Qg49EhYjf9lVribYR
+X-Proofpoint-ORIG-GUID: jRsuH2DQWMkKKQ4Qg49EhYjf9lVribYR
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-02_01,2025-06-27_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 lowpriorityscore=0 clxscore=1015 malwarescore=0 mlxlogscore=810
+ spamscore=0 adultscore=0 mlxscore=0 priorityscore=1501 bulkscore=0
+ impostorscore=0 suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507020087
 
-ADDRLABEL only works when it was set in compilation phase. Replace it with
-net_dbg_ratelimited().
 
-Signed-off-by: Wang Liang <wangliang74@huawei.com>
----
- net/ipv6/addrlabel.c | 32 +++++++++++---------------------
- 1 file changed, 11 insertions(+), 21 deletions(-)
+On 7/2/2025 3:49 PM, Krzysztof Kozlowski wrote:
+> On 02/07/2025 12:17, Kathiravan Thirumoorthy wrote:
+>> IMEM is present in the Qualcomm's IPQ SoCs as well. Document the same.
+>>
+>> Signed-off-by: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
+>> ---
+>>   Documentation/devicetree/bindings/sram/qcom,imem.yaml | 6 ++++++
+>>   1 file changed, 6 insertions(+)
+>
+> Where is the changelog? This is not a v1.
 
-diff --git a/net/ipv6/addrlabel.c b/net/ipv6/addrlabel.c
-index fb63ffbcfc64..567efd626ab4 100644
---- a/net/ipv6/addrlabel.c
-+++ b/net/ipv6/addrlabel.c
-@@ -20,12 +20,6 @@
- #include <linux/netlink.h>
- #include <linux/rtnetlink.h>
- 
--#if 0
--#define ADDRLABEL(x...) printk(x)
--#else
--#define ADDRLABEL(x...) do { ; } while (0)
--#endif
--
- /*
-  * Policy Table
-  */
-@@ -150,8 +144,8 @@ u32 ipv6_addr_label(struct net *net,
- 	label = p ? p->label : IPV6_ADDR_LABEL_DEFAULT;
- 	rcu_read_unlock();
- 
--	ADDRLABEL(KERN_DEBUG "%s(addr=%pI6, type=%d, ifindex=%d) => %08x\n",
--		  __func__, addr, type, ifindex, label);
-+	net_dbg_ratelimited("%s(addr=%pI6, type=%d, ifindex=%d) => %08x\n", __func__, addr, type,
-+			    ifindex, label);
- 
- 	return label;
- }
-@@ -164,8 +158,8 @@ static struct ip6addrlbl_entry *ip6addrlbl_alloc(const struct in6_addr *prefix,
- 	struct ip6addrlbl_entry *newp;
- 	int addrtype;
- 
--	ADDRLABEL(KERN_DEBUG "%s(prefix=%pI6, prefixlen=%d, ifindex=%d, label=%u)\n",
--		  __func__, prefix, prefixlen, ifindex, (unsigned int)label);
-+	net_dbg_ratelimited("%s(prefix=%pI6, prefixlen=%d, ifindex=%d, label=%u)\n", __func__,
-+			    prefix, prefixlen, ifindex, (unsigned int)label);
- 
- 	addrtype = ipv6_addr_type(prefix) & (IPV6_ADDR_MAPPED | IPV6_ADDR_COMPATv4 | IPV6_ADDR_LOOPBACK);
- 
-@@ -207,8 +201,7 @@ static int __ip6addrlbl_add(struct net *net, struct ip6addrlbl_entry *newp,
- 	struct hlist_node *n;
- 	int ret = 0;
- 
--	ADDRLABEL(KERN_DEBUG "%s(newp=%p, replace=%d)\n", __func__, newp,
--		  replace);
-+	net_dbg_ratelimited("%s(newp=%p, replace=%d)\n", __func__, newp, replace);
- 
- 	hlist_for_each_entry_safe(p, n,	&net->ipv6.ip6addrlbl_table.head, list) {
- 		if (p->prefixlen == newp->prefixlen &&
-@@ -247,9 +240,8 @@ static int ip6addrlbl_add(struct net *net,
- 	struct ip6addrlbl_entry *newp;
- 	int ret = 0;
- 
--	ADDRLABEL(KERN_DEBUG "%s(prefix=%pI6, prefixlen=%d, ifindex=%d, label=%u, replace=%d)\n",
--		  __func__, prefix, prefixlen, ifindex, (unsigned int)label,
--		  replace);
-+	net_dbg_ratelimited("%s(prefix=%pI6, prefixlen=%d, ifindex=%d, label=%u, replace=%d)\n",
-+			    __func__, prefix, prefixlen, ifindex, (unsigned int)label, replace);
- 
- 	newp = ip6addrlbl_alloc(prefix, prefixlen, ifindex, label);
- 	if (IS_ERR(newp))
-@@ -271,8 +263,8 @@ static int __ip6addrlbl_del(struct net *net,
- 	struct hlist_node *n;
- 	int ret = -ESRCH;
- 
--	ADDRLABEL(KERN_DEBUG "%s(prefix=%pI6, prefixlen=%d, ifindex=%d)\n",
--		  __func__, prefix, prefixlen, ifindex);
-+	net_dbg_ratelimited("%s(prefix=%pI6, prefixlen=%d, ifindex=%d)\n", __func__, prefix,
-+			    prefixlen, ifindex);
- 
- 	hlist_for_each_entry_safe(p, n, &net->ipv6.ip6addrlbl_table.head, list) {
- 		if (p->prefixlen == prefixlen &&
-@@ -294,8 +286,8 @@ static int ip6addrlbl_del(struct net *net,
- 	struct in6_addr prefix_buf;
- 	int ret;
- 
--	ADDRLABEL(KERN_DEBUG "%s(prefix=%pI6, prefixlen=%d, ifindex=%d)\n",
--		  __func__, prefix, prefixlen, ifindex);
-+	net_dbg_ratelimited("%s(prefix=%pI6, prefixlen=%d, ifindex=%d)\n", __func__, prefix,
-+			    prefixlen, ifindex);
- 
- 	ipv6_addr_prefix(&prefix_buf, prefix, prefixlen);
- 	spin_lock(&net->ipv6.ip6addrlbl_table.lock);
-@@ -312,8 +304,6 @@ static int __net_init ip6addrlbl_net_init(struct net *net)
- 	int err;
- 	int i;
- 
--	ADDRLABEL(KERN_DEBUG "%s\n", __func__);
--
- 	spin_lock_init(&net->ipv6.ip6addrlbl_table.lock);
- 	INIT_HLIST_HEAD(&net->ipv6.ip6addrlbl_table.head);
- 
--- 
-2.34.1
+This is the v1. The series[1] I pointed out describes only for the 
+IPQ5424 SoC. Since I have added few more SoCs, thought v1 is the 
+appropriate numbering.
 
+[1] 
+https://lore.kernel.org/linux-arm-msm/20250610-wdt_reset_reason-v5-0-2d2835160ab5@oss.qualcomm.com/
+
+>
+>> diff --git a/Documentation/devicetree/bindings/sram/qcom,imem.yaml b/Documentation/devicetree/bindings/sram/qcom,imem.yaml
+>> index 72d35e30c439ccf4901d937f838fe7c7a81f33b1..48e2f332e0e9fc9fa4147fa12d9c6c70a77fafda 100644
+>> --- a/Documentation/devicetree/bindings/sram/qcom,imem.yaml
+>> +++ b/Documentation/devicetree/bindings/sram/qcom,imem.yaml
+>> @@ -18,6 +18,12 @@ properties:
+>>       items:
+>>         - enum:
+>>             - qcom,apq8064-imem
+>> +          - qcom,ipq8074-imem
+>> +          - qcom,ipq6018-imem
+>> +          - qcom,ipq5018-imem
+>> +          - qcom,ipq9574-imem
+>> +          - qcom,ipq5332-imem
+>> +          - qcom,ipq5424-imem
+> Random order, no, follow existing style. This applies for every qcom
+> binding and you received such feedbacks in the past.
+
+Apologies — I arranged them based on the evolutionary order of SoCs. 
+I’ll correct this in v2 and ensure it’s handled properly in the future.
+
+>
+> Best regards,
+> Krzysztof
 
