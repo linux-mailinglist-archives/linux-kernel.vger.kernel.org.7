@@ -1,109 +1,96 @@
-Return-Path: <linux-kernel+bounces-712867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-712869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7235CAF1007
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 11:34:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25ED9AF100B
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 11:36:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 609A17A22D2
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 09:32:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7507D1C24494
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 09:36:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46E1424888F;
-	Wed,  2 Jul 2025 09:33:45 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AAF824466C;
-	Wed,  2 Jul 2025 09:33:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A3E5245023;
+	Wed,  2 Jul 2025 09:36:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="C38/B7bU"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A352241686
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 09:36:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751448824; cv=none; b=fGdn67jXXkZQ6/SvedL/OQ/vynX2lZgYDAoCNCgAnt56SEppxcsqKJru+fjwomuaA9ck50Pyw14HiTSucKp5d8FVmh1Cwd9ttb6iIWj2i3+dkAsU8O3byFJciPGje0EMBxUOVkSeNrjLfAI93fNVFMMmQRGp+2eLCgPkd91H/nw=
+	t=1751448965; cv=none; b=eDmNxkL3CP8d6n8+xwjrUOyaSzheYfbUFKRSqQ0g2f3QXz2OYRG5pLaCPSg/5Jq7C1xf4gFfG7eMbkqtGWiBynFZU5GwggZGLDGLnKLjhgR1sYsNGu6RLbljw7rPMVpfXNntnsFqZOvD8aeMg94H13hbZvqXx7HoIDBroFFaTgg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751448824; c=relaxed/simple;
-	bh=b9CRuRPjH8bn+fiDF02AF7R2oNXbNMiUBSe4EfhH6DA=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=QwW+lZV8JBjLXmoaMM5DBZg7fP+RbeTNPLVLPzJcMTvXEyx1A5t0YyZ5uyvjfBr96SKSW6MQlNgsGa39rYAHPdvxKuKn64+sfFrglwePdsCZprDre78cAJL3r6fzqt0NwS4JqjJjXYbhTKGI9xR1bY4ETrhJhQnq6ysIdXYAyO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4bXF8675DMzKHMx3;
-	Wed,  2 Jul 2025 17:33:42 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.252])
-	by mail.maildlp.com (Postfix) with ESMTP id 63E8F1A083E;
-	Wed,  2 Jul 2025 17:33:41 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP3 (Coremail) with SMTP id _Ch0CgBnxyT0_GRoOT2hAQ--.44744S3;
-	Wed, 02 Jul 2025 17:33:41 +0800 (CST)
-Subject: Re: [PATCH v2 3/5] md/raid10: set chunk_sectors limit
-To: John Garry <john.g.garry@oracle.com>, agk@redhat.com, snitzer@kernel.org,
- mpatocka@redhat.com, song@kernel.org, hch@lst.de, nilay@linux.ibm.com,
- axboe@kernel.dk
-Cc: dm-devel@lists.linux.dev, linux-kernel@vger.kernel.org,
- linux-raid@vger.kernel.org, linux-block@vger.kernel.org,
- ojaswin@linux.ibm.com, martin.petersen@oracle.com,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20250618083737.4084373-1-john.g.garry@oracle.com>
- <20250618083737.4084373-4-john.g.garry@oracle.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <13b0be8a-298d-e2eb-aae4-f37273ab2ee2@huaweicloud.com>
-Date: Wed, 2 Jul 2025 17:33:40 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1751448965; c=relaxed/simple;
+	bh=7oRIEP5UtnFc5FK7u4RflcYax4wSTjDpA97IHUqwvaU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CiIwXtVykSbZ++Ig2XT1B2D5CmefWckH8KIymmJA2DW1AVDR1JT9LGDMLTS8cz9S1UrjKiWjLmtkVYIFvJWKtRnfGrsn+AoBFzYvgRVsbZtKqaWQEo5dAo5HtsC2g3ZV3Frw1cnZBDLcKlAnesPZQDoQkj1sVO/RY+rRsGh2wIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=C38/B7bU; arc=none smtp.client-ip=117.135.210.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=Us
+	lz7FvHhcwqapI5iKOUTZYj8lUbm1/lNoJBmLXfYp4=; b=C38/B7bU+qXZ6OlTxR
+	2sIgekTofbc1U8F3a8D8pF/7uHrsFbrakUZ78sVD4NH9yZZylNL69jR1iMjQzIVc
+	uvis5Pq7zxaLDNhIejyL4m+6aHwhoNaIi5TRA4+gEn65OHruXGqTHR2nl14nBYah
+	RHUcsLijsQlYAqMrt4vNTfHqU=
+Received: from localhost.localdomain (unknown [])
+	by gzsmtp4 (Coremail) with SMTP id PygvCgAnw5Ff_WRoRqnHAw--.5230S2;
+	Wed, 02 Jul 2025 17:35:29 +0800 (CST)
+From: 18810879172@163.com
+To: akpm@linux-foundation.org
+Cc: david@redhat.com,
+	zhengqi.arch@bytedance.com,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	wangxuewen <wangxuewen@kylinos.cn>
+Subject: [PATCH v1] mm/vmscan: Account hwpoisoned folios in reclaim statistics
+Date: Wed,  2 Jul 2025 17:34:40 +0800
+Message-Id: <20250702093440.146967-1-18810879172@163.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250618083737.4084373-4-john.g.garry@oracle.com>
-Content-Type: text/plain; charset=gbk; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_Ch0CgBnxyT0_GRoOT2hAQ--.44744S3
-X-Coremail-Antispam: 1UD129KBjvdXoWruFy8WFWxKr1rAFWUGr4rXwb_yoWfZrcEga
-	4fZF13Xr1I9r1I9w1jkF1SkrW5X348WFn7ZFy3Kr45X3WrWF18CFyj934rCa1YyFy2qF1q
-	yrs7ua1FyF1kZjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbaxYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
-	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
-	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x02
-	67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7I2V7IY0VAS
-	07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4
-	IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1r
-	MI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJV
-	WUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j
-	6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYx
-	BIdaVFxhVjvjDU0xZFpf9x07UQ6p9UUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+X-CM-TRANSID:PygvCgAnw5Ff_WRoRqnHAw--.5230S2
+X-Coremail-Antispam: 1Uf129KBjvdXoWrKryfKryfCrW5KF4Utw47Jwb_yoWDCrg_Ca
+	ykuw1YgrWUJas5JFy5CrZ3JF9aqr90kFW8CFykJF17Aa4Yy34fZr4Ikr4UA3yUXr4YyFZ8
+	J3Z5ZrWSyr17CjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU8OJ57UUUUU==
+X-CM-SenderInfo: rprymiyqyxmiixs6il2tof0z/1tbiYh5+9WhkzRNKJgABsI
 
-ÔÚ 2025/06/18 16:37, John Garry Ð´µÀ:
-> Same as done for raid0, set chunk_sectors limit to appropriately set the
-> atomic write size limit.
-> 
-> Signed-off-by: John Garry <john.g.garry@oracle.com>
-> ---
->   drivers/md/raid10.c | 1 +
->   1 file changed, 1 insertion(+)
-> 
+From: wangxuewen <wangxuewen@kylinos.cn>
 
-Reviewed-by: Yu Kuai <yukuai3@huawei.com>
+When encountering a hardware-poisoned folio in shrink_folio_list(),
+we unmap and release the folio but fail to account it in the reclaim
+statistics (sc->nr_reclaimed). This leads to an undercount of
+actually reclaimed pages, potentially causing unnecessary additional
+reclaim pressure.
 
-> diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
-> index b74780af4c22..97065bb26f43 100644
-> --- a/drivers/md/raid10.c
-> +++ b/drivers/md/raid10.c
-> @@ -4004,6 +4004,7 @@ static int raid10_set_queue_limits(struct mddev *mddev)
->   	md_init_stacking_limits(&lim);
->   	lim.max_write_zeroes_sectors = 0;
->   	lim.io_min = mddev->chunk_sectors << 9;
-> +	lim.chunk_sectors = mddev->chunk_sectors;
->   	lim.io_opt = lim.io_min * raid10_nr_stripes(conf);
->   	lim.features |= BLK_FEAT_ATOMIC_WRITES;
->   	err = mddev_stack_rdev_limits(mddev, &lim, MDDEV_STACK_INTEGRITY);
-> 
+Fix this by adding sc->nr_reclaimed += folio_nr_pages(folio) after
+folio_put() in the hwpoison handling block. This matches the accounting
+done in other reclaim paths.
+
+Signed-off-by: wangxuewen <wangxuewen@kylinos.cn>
+---
+ mm/vmscan.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index f8dfd2864bbf..4c612f4b6e66 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -1141,6 +1141,7 @@ static unsigned int shrink_folio_list(struct list_head *folio_list,
+ 			unmap_poisoned_folio(folio, folio_pfn(folio), false);
+ 			folio_unlock(folio);
+ 			folio_put(folio);
++			sc->nr_reclaimed += folio_nr_pages(folio);
+ 			continue;
+ 		}
+ 
+-- 
+2.34.1
 
 
