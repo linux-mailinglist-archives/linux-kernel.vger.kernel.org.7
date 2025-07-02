@@ -1,218 +1,137 @@
-Return-Path: <linux-kernel+bounces-713625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 631DAAF5C7F
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 17:16:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 941C5AF5C77
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 17:15:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A0DD485664
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 15:15:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57B54480D35
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 15:14:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76B522F5312;
-	Wed,  2 Jul 2025 15:15:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2571C2D375A;
+	Wed,  2 Jul 2025 15:14:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="RQNWozAT"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=6wind.com header.i=@6wind.com header.b="hgj7CF5X"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 315D5309DB6;
-	Wed,  2 Jul 2025 15:15:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC35D2D3758
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 15:14:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751469310; cv=none; b=FEaoBjLEx2nxALr+pf1I2E0FHE3kkuJi5Aso8Vx8DoKIp49HP3GiK6ywwJzFWfPjG7aEcNyTUzcTgIBDrCZ0o7Z6IWrfiJ7M9IUGH79U3iaz+b+kZoeY/eTDRpt5Vdht+q/r5Lm81D7ToKANFuFe3WUxW7N4gDXBWmU3x79oJ5w=
+	t=1751469287; cv=none; b=S+2kb7E1i0tnAp99N/YtOVujdXU64rwT6riQBb4GS8RMbKSB98TfoMjYJT+DTVKOtexsr4uBc66qIgfrp1L3WcJcymmehqpCl8yAdQvq/SleDo6eNlbQvcbF/ljDMbHPZRjZ5BTwFVlgKYbdo+Lcaow/+5k+bZ4PKhoAeh5gtOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751469310; c=relaxed/simple;
-	bh=rMtiv8YhynFvbsomd0RDzdkphRuywmb5Mi8W2Ow6GbE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=a/DU8TjNZZWzn1Y1oJwhFJrkEMw2bXhKTGwzhiVNyO67sS+ja6qHHEXy4QmOOjvT5Huz0Kkwy0xLEipX7kiyS7E8hWuZVlqXRvOlFrSXqXOvuKUxkw6Ft/xnO9cTKaLNq4g2HVgWr8+ehIfM5ng58es0Hw5ePvdgFx3Aa4VdItI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=RQNWozAT; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56289uS1024893;
-	Wed, 2 Jul 2025 15:14:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=e4wK+4rwZxs
-	fbxeM4+gkxG8Wyl3xF7TFhgrE9SEs9zg=; b=RQNWozAT7pTp+mKQhCA7oi/lhtn
-	HMrQEtXirKZcGrqY/Rq741eXGjT1Dr82TRs7CaZgeRvALTRc8kNa4mwDdmjhulch
-	UN+Qs/Q79rUeiTSHBtWI4gWOL+6uMxM14xAM5c+YjiN/NlKakKulp3i0DSzeRy2z
-	XNtwHAOhxHGb9679N7O2k5RBo6Ci1jgu8Y5lCOHRDmyS3TTPWgcJj/9ba25vyFIy
-	4+oXUp4d5gvlfZLNVtV03EpgKZGxe2sXTZ24mx7kPXfKMlzJS1nPAf9UF05aoUeV
-	f7KIiLSFxwiOJZlMiETijkNcuVoKyj53lM2Ivw1EDfLovPj3b8/gpinSzZA==
-Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47j8024x5h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 02 Jul 2025 15:14:48 +0000 (GMT)
-Received: from pps.filterd (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 562FEihF025534;
-	Wed, 2 Jul 2025 15:14:45 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 47j9fm57pw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Wed, 02 Jul 2025 15:14:44 +0000
-Received: from APBLRPPMTA01.qualcomm.com (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 562FEi6R025529;
-	Wed, 2 Jul 2025 15:14:44 GMT
-Received: from hu-maiyas-hyd.qualcomm.com (hu-nitirawa-hyd.qualcomm.com [10.213.109.152])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTP id 562FEiUK025525;
-	Wed, 02 Jul 2025 15:14:44 +0000
-Received: by hu-maiyas-hyd.qualcomm.com (Postfix, from userid 2342877)
-	id CB87D61C6C3; Wed,  2 Jul 2025 20:44:43 +0530 (+0530)
-From: Nitin Rawat <quic_nitirawa@quicinc.com>
-To: mani@kernel.org, James.Bottomley@HansenPartnership.com,
-        martin.petersen@oracle.com, bvanassche@acm.org,
-        neil.armstrong@linaro.org, konrad.dybcio@oss.qualcomm.com
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-scsi@vger.kernel.org, Nitin Rawat <quic_nitirawa@quicinc.com>
-Subject: [PATCH V1 2/2] scsi: ufs: qcom: Enable QUnipro Internal Clock Gating
-Date: Wed,  2 Jul 2025 20:44:41 +0530
-Message-ID: <20250702151441.8061-3-quic_nitirawa@quicinc.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250702151441.8061-1-quic_nitirawa@quicinc.com>
-References: <20250702151441.8061-1-quic_nitirawa@quicinc.com>
+	s=arc-20240116; t=1751469287; c=relaxed/simple;
+	bh=yaVBx55pkpJNbZV76DxOYDdkdg83DTB4UJfRN30uAUU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FE5xQc1aejsIMs0KL89poq3sSxlfz2vcAmk28mgycwLN+yYvAQvbVopYhqOESxfBVtouDeBscs0TidS3RBSSapVKOlY7uTVmlyq/5Qwl4JdoveX1UsmcK9L/5zO6/9dfTSa/6aSneI27i/dxEq2MV/hgmnbX0k7abkcphGv1biw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=6wind.com; spf=pass smtp.mailfrom=6wind.com; dkim=pass (2048-bit key) header.d=6wind.com header.i=@6wind.com header.b=hgj7CF5X; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=6wind.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=6wind.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-453486940fdso2938555e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 08:14:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=6wind.com; s=google; t=1751469284; x=1752074084; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:content-language
+         :from:references:cc:to:subject:reply-to:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=UEoVGeWwa967fvIBUVo89T5bXVjlB0iBy8jqhf/tJrs=;
+        b=hgj7CF5XM/KkjRz2zeqbsKGjecfDV6rgAUAqvMUjJnQQ+Ik20mq+aMIMnhmeF9ynPv
+         hqk76fVLs8p8tzlUIz0j0x0V9jpFxxjtNAgs7mxVfhlJfHZWmh2q39ZX7DjZlB1QtvfQ
+         UJSioHVgOc9HvQngqscbJPXWrX0YH/nDJ176Xo67USXuuh9HStoiusVBrd5b8UoJwHku
+         8Vvw0xXYvUVgO+xPQYxPfqB2TeeqxVS74IVo/CnQpliuTsRvGQ/QrMNaWNampRPB7jhQ
+         dVU6kP9eegKJF+iGo91AyWJ4nV5Y3IoyIzHZ46K5WHkpGiib3+HmVx/TzPjSPQVizJ6D
+         iYaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751469284; x=1752074084;
+        h=content-transfer-encoding:in-reply-to:organization:content-language
+         :from:references:cc:to:subject:reply-to:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UEoVGeWwa967fvIBUVo89T5bXVjlB0iBy8jqhf/tJrs=;
+        b=M0aLT9Zy7eVgnl4wj7x/9tBjdqAOH68W8/amOOfia9KCK45wOl4M4kfEBjLdb4onD3
+         m/uTnAJKsxH3jZH7HZP6pSnWScw5DQFG8ZVXklwnY+b1yS8n3iW46yr5+C+16zQTbgbD
+         BwjfI+TRgzPm4uT2YD7BR/u/fJ/w/kZXLyR3QKMANb2ze9xXnMdDz+cSOtu4UdMbylHe
+         6AMsbl7icfBygv5QFdes6rpE0PriPC3JFWoA+iGPLfgmp3/L1RVLyYzZtfXVuUPXHOuI
+         dudyXk4sSk6jiTpZvSiOzm8yh/5OjC9pxAHyl2FFFUifBZqdNi4FKXdn+1LY/OCskHCr
+         GiAg==
+X-Forwarded-Encrypted: i=1; AJvYcCXcAaYsGPpRd55m2Wi/uvBgSSCdU7Ix9kUgX/v+jMsukBpNIsaxdUheJu0SiqzEILbe6WGckm1X0gh90PU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTV1NWRCgxItSdAMieJo6UfXv92+IqLPpKcmAfOgCdvR2GwEb8
+	iFgNG6VeFCNvsKLuQ1dteB/9QQCIgumyoDMjyJS67smTQ0lgkDvmg5E6f1vqW1XYDZ8=
+X-Gm-Gg: ASbGncvobbsbkmsmviLtsBWVvGrxIKtc+yeXiCQCe4Rw64Zinf84qKKFzY51gD4diWj
+	iy9lcLISz1K5OJ0G38tAVGB9Ttc4ujNGHsLCCgnV2ZR5tVMwuZnMteaX+T4aV+VuRlymJJzaci5
+	sVl075r5pg73j1tPd1H8xnMXniRDvChLPFcazA+TO0IMTHbnrx6vKhJ8YLusNUD4IpEn3Zlr3lC
+	pvnnsu1Ig89CDVC0mrQ+JpktzQikSmN7M3iIHhCnJe+3SLrW2l7GiMJBzE4zNq3+ajY4m3yK6sF
+	9E0w3275fEzcid4RDeBUXjjQOGsO5W4OrBRqhxzLRFoEA0o2s9MMQvqcdyzxCdSsx15skMAkmL3
+	wa6izVddg3zQnDTlpDZL2wp5YrEyN2pGQxI+6t+8yOUOlHnU4Aw==
+X-Google-Smtp-Source: AGHT+IFuleqdyS0khXY7Uz8FGznztsWK0eHC3JXALUeyVBqdO7v0cvafSoEuAYV4iYOGyHxNKvOhVQ==
+X-Received: by 2002:a05:600c:8685:b0:442:fff5:5185 with SMTP id 5b1f17b1804b1-454a4ebf6e5mr7212645e9.6.1751469284075;
+        Wed, 02 Jul 2025 08:14:44 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:b41:c160:5568:c43d:79bc:c2ec? ([2a01:e0a:b41:c160:5568:c43d:79bc:c2ec])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a88c7e78e8sm16736852f8f.19.2025.07.02.08.14.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 02 Jul 2025 08:14:43 -0700 (PDT)
+Message-ID: <7c47cfb6-c1f1-42a1-8137-37f8f03fa970@6wind.com>
+Date: Wed, 2 Jul 2025 17:14:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Reply-To: nicolas.dichtel@6wind.com
+Subject: Re: [PATCH v3] ipv6: add `force_forwarding` sysctl to enable
+ per-interface forwarding
+To: Jakub Kicinski <kuba@kernel.org>, Gabriel Goller <g.goller@proxmox.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+ David Ahern <dsahern@kernel.org>, netdev@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250702074619.139031-1-g.goller@proxmox.com>
+ <20250702073458.3294b431@kernel.org>
+From: Nicolas Dichtel <nicolas.dichtel@6wind.com>
+Content-Language: en-US
+Organization: 6WIND
+In-Reply-To: <20250702073458.3294b431@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: BpyLdfUUr919O-huM3sd44IzLmdLBFWH
-X-Authority-Analysis: v=2.4 cv=YPWfyQGx c=1 sm=1 tr=0 ts=68654ce8 cx=c_pps
- a=Ou0eQOY4+eZoSc0qltEV5Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
- a=Wb1JkmetP80A:10 a=COk6AnOGAAAA:8 a=ntjNA1mAdOrbGcrCdYgA:9
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: BpyLdfUUr919O-huM3sd44IzLmdLBFWH
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzAyMDEyNSBTYWx0ZWRfX0coFgFvjhVrd
- 4NNft5wjBZy4GWC8Xcw3ohEA68tvHJ6xVSDqWp27NHUCa5ljcz6ZNa49/hcbNYNAc5q+7CClXVr
- TEgBNT2tw64xc50z0jEFIn6rlkHE0AvqexgzZriR3rQWQLQt+q/BlAP0jtlMnOKoBS8dUghfjmL
- UMy4LmeYnHRc4pu6CC4RLhtLhqYoxOVHkKj0ViAkiYNIJz3dbTjvJa09AGpBX9Ssy0iaICyN0Q5
- s8OPrPy45BQqF92BxoOZFAzTSuThQeRl0IJTmH5QKAI5T/oyrz4dJKZYKTfjJGIbdHMjpY+ewc5
- uc7MuP16WWO67yQaKYQk4UAWhZYgXQQCqJ730UySK8L3ZqjM3uwyWMCMRluBZ9mHnn8PFBS7MUK
- JeShV5f/IZbiLKWeJl+w5LzjU9DjGDpPKm1u5O/k7dRQRmWvMOPzGvRhBbdh8k3IjzF48PIP
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-02_02,2025-07-02_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 mlxlogscore=999 mlxscore=0 malwarescore=0 suspectscore=0
- lowpriorityscore=0 clxscore=1015 impostorscore=0 adultscore=0
- priorityscore=1501 bulkscore=0 phishscore=0 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507020125
 
-Enable internal clock gating for QUnipro by setting the following
-attributes to 1 during host controller initialization:
-- DL_VS_CLK_CFG
-- PA_VS_CLK_CFG_REG
-- DME_VS_CORE_CLK_CTRL.DME_HW_CGC_EN
+Le 02/07/2025 à 16:34, Jakub Kicinski a écrit :
+> On Wed,  2 Jul 2025 09:46:18 +0200 Gabriel Goller wrote:
+>> It is currently impossible to enable ipv6 forwarding on a per-interface
+>> basis like in ipv4. To enable forwarding on an ipv6 interface we need to
+>> enable it on all interfaces and disable it on the other interfaces using
+>> a netfilter rule. This is especially cumbersome if you have lots of
+>> interface and only want to enable forwarding on a few. According to the
+>> sysctl docs [0] the `net.ipv6.conf.all.forwarding` enables forwarding
+>> for all interfaces, while the interface-specific
+>> `net.ipv6.conf.<interface>.forwarding` configures the interface
+>> Host/Router configuration.
+>>
+>> Introduce a new sysctl flag `force_forwarding`, which can be set on every
+>> interface. The ip6_forwarding function will then check if the global
+>> forwarding flag OR the force_forwarding flag is active and forward the
+>> packet.
+> 
+> Should we invert the polarity? It appears that the condition below only
+> let's this setting _disable_ forwarding. IMO calling it "force" suggests
+> to the user that it will force it to be enabled.
+Not sure to follow you. When force_forwarding is set to 1 the forwarding is
+always enabled.
 
-This change is necessary to support the internal clock gating mechanism
-in Qualcomm UFS host controller.
+sysctl | all.forwarding | iface.force_forwarding | packet processing from iface
+       |      0         |           0            |        no forward
+       |      0         |           1            |         forward
+       |      1         |           0            |         forward
+       |      1         |           1            |         forward
 
-Signed-off-by: Nitin Rawat <quic_nitirawa@quicinc.com>
----
- drivers/ufs/host/ufs-qcom.c | 21 +++++++++++++++++++++
- drivers/ufs/host/ufs-qcom.h | 35 +++++++++++++++++++++++++++++++++++
- 2 files changed, 56 insertions(+)
-
-diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
-index dfdc52333a96..25b5f83b049c 100644
---- a/drivers/ufs/host/ufs-qcom.c
-+++ b/drivers/ufs/host/ufs-qcom.c
-@@ -558,11 +558,32 @@ static int ufs_qcom_power_up_sequence(struct ufs_hba *hba)
-  */
- static void ufs_qcom_enable_hw_clk_gating(struct ufs_hba *hba)
- {
-+	int err = 0;
-+
-+	/* Enable UTP internal clock gating */
- 	ufshcd_rmwl(hba, REG_UFS_CFG2_CGC_EN_ALL, REG_UFS_CFG2_CGC_EN_ALL,
- 		    REG_UFS_CFG2);
-
- 	/* Ensure that HW clock gating is enabled before next operations */
- 	ufshcd_readl(hba, REG_UFS_CFG2);
-+
-+	/* Enable Unipro internal clock gating */
-+	err = ufshcd_dme_rmw(hba, DL_VS_CLK_CFG_MASK,
-+			     DL_VS_CLK_CFG_MASK, DL_VS_CLK_CFG);
-+	if (err)
-+		goto out;
-+
-+	err = ufshcd_dme_rmw(hba, PA_VS_CLK_CFG_REG_MASK,
-+			     PA_VS_CLK_CFG_REG_MASK, PA_VS_CLK_CFG_REG);
-+	if (err)
-+		goto out;
-+
-+	err = ufshcd_dme_rmw(hba, DME_VS_CORE_CLK_CTRL_DME_HW_CGC_EN,
-+			     DME_VS_CORE_CLK_CTRL_DME_HW_CGC_EN,
-+			     DME_VS_CORE_CLK_CTRL);
-+out:
-+	if (err)
-+		dev_err(hba->dev, "hw clk gating enabled failed\n");
- }
-
- static int ufs_qcom_hce_enable_notify(struct ufs_hba *hba,
-diff --git a/drivers/ufs/host/ufs-qcom.h b/drivers/ufs/host/ufs-qcom.h
-index 0a5cfc2dd4f7..d8ad3cb3bd1c 100644
---- a/drivers/ufs/host/ufs-qcom.h
-+++ b/drivers/ufs/host/ufs-qcom.h
-@@ -24,6 +24,15 @@
-
- #define UFS_QCOM_LIMIT_HS_RATE		PA_HS_MODE_B
-
-+/* bit and mask definitions for PA_VS_CLK_CFG_REG attribute */
-+#define PA_VS_CLK_CFG_REG      0x9004
-+#define PA_VS_CLK_CFG_REG_MASK GENMASK(8, 0)
-+
-+/* bit and mask definitions for DL_VS_CLK_CFG attribute */
-+#define DL_VS_CLK_CFG          0xA00B
-+#define DL_VS_CLK_CFG_MASK GENMASK(9, 0)
-+#define DME_VS_CORE_CLK_CTRL_DME_HW_CGC_EN             BIT(9)
-+
- /* QCOM UFS host controller vendor specific registers */
- enum {
- 	REG_UFS_SYS1CLK_1US                 = 0xC0,
-@@ -234,6 +243,32 @@ static inline void ufs_qcom_deassert_reset(struct ufs_hba *hba)
- 	ufshcd_readl(hba, REG_UFS_CFG1);
- }
-
-+/**
-+ * ufshcd_dme_rmw - get modify set a dme attribute
-+ * @hba - per adapter instance
-+ * @mask - mask to apply on read value
-+ * @val - actual value to write
-+ * @attr - dme attribute
-+ */
-+static inline int ufshcd_dme_rmw(struct ufs_hba *hba, u32 mask,
-+				 u32 val, u32 attr)
-+{
-+	u32 cfg = 0;
-+	int err = 0;
-+
-+	err = ufshcd_dme_get(hba, UIC_ARG_MIB(attr), &cfg);
-+	if (err)
-+		goto out;
-+
-+	cfg &= ~mask;
-+	cfg |= (val & mask);
-+
-+	err = ufshcd_dme_set(hba, UIC_ARG_MIB(attr), cfg);
-+
-+out:
-+	return err;
-+}
-+
- /* Host controller hardware version: major.minor.step */
- struct ufs_hw_version {
- 	u16 step;
---
-2.48.1
-
+> 
+> Nicolas, how do you feel about asking for a selftest here? 
+> The functionality is fairly trivial from datapath PoV, but feels odd 
+> to merge uAPI these days without a selftest..
+No problem, let's do it right.
 
