@@ -1,230 +1,157 @@
-Return-Path: <linux-kernel+bounces-712925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-712927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DDAEAF10A4
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 11:52:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9725BAF10A8
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 11:53:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 321A83BD23C
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 09:52:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 521753BDDE1
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 09:52:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 219D32472B6;
-	Wed,  2 Jul 2025 09:52:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC90B24466C;
+	Wed,  2 Jul 2025 09:52:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="JZ6i3CMo";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Xey2+BFy"
-Received: from fhigh-a5-smtp.messagingengine.com (fhigh-a5-smtp.messagingengine.com [103.168.172.156])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="jE3U8Tmb";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="jE3U8Tmb"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03CF02309B0;
-	Wed,  2 Jul 2025 09:52:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66414248F58
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 09:52:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751449938; cv=none; b=e6a3zcK0oVbNGUJ7//C9vOfoIn5jPzEPIJtPEpTAZylEXlU2v4Mc89HlJhAQKX+9xTNFtw5nB2jkun2WQyEcsZShnp+XUPD/RLvNJEXijCaUgQhLD9WIjfX4c2uDyDUCaGc2gn4XLnWfb8HgFNdhkK+c6++lwoBxQkd/0ylNtwI=
+	t=1751449943; cv=none; b=Lx4l56jnYxUOjsnsc2Fk5tIEgNtxuMN0OVXiGBgZAqbWGZCMGgCU3ov/KpFUTHowFNEWOZC9Z3dHWEwB1rhvQR8BYOHBhDV2ZsdZ2JFxs5IdZFtn9FiyBiODCN8dFH8E45BaQqiHXHlmjCWzy2f5a+sl6RfHmCWToQ4wpbrxs9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751449938; c=relaxed/simple;
-	bh=t7hUPk24kDVHIa2LNkQ4Y82m0m2rLmvPET320gcUK5o=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=Sr950GfM7jv6mdZnZPjAhG7Tqv6VISPEZBjbBHKwn3dJ1iaypSPx7PvohdR2zwKE+TcQudJxCZmNwyJ+4gT1SFWU+3w/J9WksHn5ePKB1hQzHePZNzsn7Zjn9o7HFmYYdMIWIzXDrNq50Gpm2luXx7pz1B5O9MiPhJcKbnOSrGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=JZ6i3CMo; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Xey2+BFy; arc=none smtp.client-ip=103.168.172.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id E4ED414002F1;
-	Wed,  2 Jul 2025 05:52:13 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-05.internal (MEProxy); Wed, 02 Jul 2025 05:52:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1751449933;
-	 x=1751536333; bh=2YEzbtJvwijZ2p+S0uXHj/8W9vMDLgGXxAH7Q6EK2fs=; b=
-	JZ6i3CMoiycU945nJIMw1Bic84YQqTlMRdq6VsJcOlKh9BdkhXvhK0GuNI5yVlR9
-	P1yY0zfmTJwtbCS508MJbsJ4HokVZ40G72sTGuEhLCIe6I1DDJPPjwX9pOj/b2kY
-	I47EG0Qs5iuhGDQl5ZvfhZLSDElBbKM49HO85f21Dc1qzBZBT9OjTIXEtbQZm1ee
-	PSlnPCuHq4w7nGLz5gUNBTiow3llHeEltPYVg7VGK7f6xwDPL1/60ZyBI53/7QjI
-	iYjGRUEuZEuJ35e5SNG/qmqg/gx55y7l0HqmpvHURbhw/AxxyHAsDTMU/5xeroRa
-	Nptbe7HLRBqJLHWwW2i2og==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1751449933; x=
-	1751536333; bh=2YEzbtJvwijZ2p+S0uXHj/8W9vMDLgGXxAH7Q6EK2fs=; b=X
-	ey2+BFylnofvC6zhDGuLlegKjp+WYQFUJNZfii2JMYaMGzuzQav/TVduoc1Rk85g
-	vQ6ZgxUTnMAmfT+mvyZRomnNHW5clmzy+gZ/EchGf683imOExnIlnhRk1/0mNKPn
-	cs/rWebCYrJ6qcMj5qy0uR3eEWHVO1X3yEBPbtw9QPw6FET4yQyuPahKU8FE+fFw
-	BBTu807cu4R1CXQgyOdSFPwCyRm6U9/x+y6LCqRAsuFiF+DZn8gQeVKDc4RCY7X0
-	CVwSIeXdTD/GUuShvKGH1AaxkmWNmRl6YzBl2rJkhIWW0yw4oTiuUczb+cOzuMtp
-	LBXy0m3iurzh03fDRzFUw==
-X-ME-Sender: <xms:SwFlaMYwZXrcrY5mAS1VReAwIEJMRsniXtJX6lE9I5i_hjK3DoftFg>
-    <xme:SwFlaHbEZfmXOnjWWVsQ21SChuUd6FYpi1kywkm4iiDZoS8Hp_lipsDfwQC1t0apd
-    Puf8knDxQi_x2PGkHs>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddujedtkecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenogfuuh
-    hsphgvtghtffhomhgrihhnucdlgeelmdenucfjughrpefoggffhffvvefkjghfufgtgfes
-    thejredtredttdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnug
-    esrghrnhgusgdruggvqeenucggtffrrghtthgvrhhnpefgtdegieeuudfgudfhjeelhfdu
-    vddtfefgheehleettedvieekveevuddtkeetvdenucffohhmrghinhepghhoohhglhgvrd
-    gtohhmnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhep
-    rghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepudegpdhmohguvgepshhmth
-    hpohhuthdprhgtphhtthhopehgohhrughonhdrghgvsegsshhtrdgrihdprhgtphhtthho
-    pegsshhtqdhuphhsthhrvggrmhessghsthgrihdrthhophdprhgtphhtthhopegrnhhgvg
-    hlohhgihhorggttghhihhnohdruggvlhhrvghgnhhosegtohhllhgrsghorhgrrdgtohhm
-    pdhrtghpthhtohepsggvnhdrtghhuhgrnhhgsehgvghnvghshihslhhoghhitgdrtghomh
-    drthifpdhrtghpthhtohepvhhitghtohhrrdhshhhihhesghgvnhgvshihshhlohhgihgt
-    rdgtohhmrdhtfidprhgtphhtthhopehgvggvrhhtodhrvghnvghsrghssehglhhiuggvrh
-    drsggvpdhrtghpthhtohepphgsrhhosghinhhsohhnsehgmhgrihhlrdgtohhmpdhrtghp
-    thhtohepshhhrghntghhuhhnuddvudeksehgmhgrihhlrdgtohhmpdhrtghpthhtoheprg
-    gurhhirghnrdhhuhhnthgvrhesihhnthgvlhdrtghomh
-X-ME-Proxy: <xmx:SwFlaG8C_wY40GX8OzkP4VR2-3tzar6bPRPWwnTPMdMom1X9UfUeAg>
-    <xmx:SwFlaGov-9tjbNIgKuBTKCvqCnT4MDLD-_jcNVq5RGuB8hDLI6moTA>
-    <xmx:SwFlaHowiDQQ84mJ1QEAUxcyvQ4ChT0sSJMS3giqhvV5BRBXM-EdFQ>
-    <xmx:SwFlaETc6LaWbnPOZwJOHfvTLQsr4ZyJ9K8GPv6pXPPVtt3kdmBhcQ>
-    <xmx:TQFlaF5Ykdng2vdIs4q3sObLSgAcZbki-WT22-T_9yb2L68PwE9lUXMe>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id B24C3700065; Wed,  2 Jul 2025 05:52:11 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1751449943; c=relaxed/simple;
+	bh=nWguKm98NSzK4z+eOPTSvPWnNpe9yhLlYOSHW7pDYPY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Fuqo7euiLXIxglhfFFxPPTysuEl6vPRAFYhwUuT2SFHbbCwqk3iLkPAblrhYUfqkqm5QKLqgMr81A3b7tZh6hVWkF1n6YmQvKiyphq8OUfahJCTO0bq5Onoz60MA5BVuR+wug7CVCBOY6H2Qa3YZBE5wxTZbSWjVG4ZYlhUv/Ew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=jE3U8Tmb; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=jE3U8Tmb; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from pathway.suse.cz (unknown [10.100.208.146])
+	by smtp-out2.suse.de (Postfix) with ESMTP id 4253D1F445;
+	Wed,  2 Jul 2025 09:52:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1751449939; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=7oYXkeMUJuIJ1tp286p2B7f7F5Z4QHeSEILjcK1G4+o=;
+	b=jE3U8TmbU8snttgEbj3Gl+Ik3CZElBUEV4s+wvUjFfc6KhfPOWeT3yJhXxnx5+f67eNG7G
+	VBOWfUrNNo9UX+A+xLER+sXJlOPtI1d298PeGn+LCyifMP4fj81Vb372DBdecbjVfvjvOk
+	76TYzU3dD+hs4Cf9jNX43XMkM/MMYjg=
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1751449939; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=7oYXkeMUJuIJ1tp286p2B7f7F5Z4QHeSEILjcK1G4+o=;
+	b=jE3U8TmbU8snttgEbj3Gl+Ik3CZElBUEV4s+wvUjFfc6KhfPOWeT3yJhXxnx5+f67eNG7G
+	VBOWfUrNNo9UX+A+xLER+sXJlOPtI1d298PeGn+LCyifMP4fj81Vb372DBdecbjVfvjvOk
+	76TYzU3dD+hs4Cf9jNX43XMkM/MMYjg=
+From: Petr Mladek <pmladek@suse.com>
+To: =?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+	John Ogness <john.ogness@linutronix.de>,
+	Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Kees Cook <kees@kernel.org>,
+	"Gustavo A . R . Silva" <gustavoars@kernel.org>,
+	David Gow <davidgow@google.com>,
+	Arnd Bergmann <arnd@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org,
+	Petr Mladek <pmladek@suse.com>
+Subject: [PATCH 0/3] printk: KUnit: Followup fixes for the new KUnit test
+Date: Wed,  2 Jul 2025 11:51:54 +0200
+Message-ID: <20250702095157.110916-1-pmladek@suse.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: Tedb66c89affcaf60
-Date: Wed, 02 Jul 2025 11:51:40 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "yangzh0906@thundersoft.com" <yangzh0906@thundersoft.com>,
- "Adrian Hunter" <adrian.hunter@intel.com>,
- "Ulf Hansson" <ulf.hansson@linaro.org>, "gordon.ge" <gordon.ge@bst.ai>
-Cc: bst-upstream <bst-upstream@bstai.top>,
- "linux-mmc @ vger . kernel . org" <linux-mmc@vger.kernel.org>,
- linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
- linux-kernel <linux-kernel@vger.kernel.org>,
- "Geert Uytterhoeven" <geert+renesas@glider.be>,
- "Victor Shih" <victor.shih@genesyslogic.com.tw>,
- "Shan-Chun Hung" <shanchun1218@gmail.com>,
- "AngeloGioacchino Del Regno" <angelogioacchino.delregno@collabora.com>,
- "Peter Robinson" <pbrobinson@gmail.com>,
- "Ben Chuang" <ben.chuang@genesyslogic.com.tw>
-Message-Id: <5408ab19-3313-494f-a091-46d5ee58b65c@app.fastmail.com>
-In-Reply-To: <202507021657587315993@thundersoft.com>
-References: <20250528085453.481320-1-yangzh0906@thundersoft.com>
- <87619781-629b-4393-8c14-b34483a7c734@intel.com>
- <202506271822530452465@thundersoft.com>
- <b6bf0b53-8812-4099-b5d3-39e7fd264777@intel.com>
- <5c0909b4-f3f6-401d-9a17-8560c5a1d7c0@app.fastmail.com>
- <202507021657587315993@thundersoft.com>
-Subject: Re: [PATCH v1 5/9] mmc: sdhci: add Black Sesame Technologies BST C1200
- controller driver
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spamd-Result: default: False [-3.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[13];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_ZERO(0.00)[0];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:mid]
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spam-Score: -3.30
 
-On Wed, Jul 2, 2025, at 10:57, yangzh0906@thundersoft.com wrote:
->>On Fri, Jun 27, 2025, at 15:19, Adrian Hunter wrote:
->>> On 27/06/2025 13:22, yangzh0906@thundersoft.com wrote:
->> 
->>I would not expect an standard SDHCI to be broken like this any more,
->>and if it is, I think the SDHCI_QUIRK2_BROKEN_64_BIT_DMA quirk is
->>more appropriate than overriding the dma_set_mask() operation.
->
-> I add SDHCI_QUIRK2_BROKEN_64_BIT_DMA in quirks2
->  static const struct sdhci_pltfm_data sdhci_dwcmshc_pdata = {
-> .ops = &sdhci_dwcmshc_ops,
-> .quirks = SDHCI_QUIRK_DELAY_AFTER_POWER |
->   SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN |
->   SDHCI_QUIRK_INVERTED_WRITE_PROTECT,
-> .quirks2 = SDHCI_QUIRK2_BROKEN_64_BIT_DMA |
->    SDHCI_QUIRK2_BROKEN_DDR50 |
->    SDHCI_QUIRK2_TUNING_WORK_AROUND |
->    SDHCI_QUIRK2_ACMD23_BROKEN,
-> };
+Hi,
 
->>What sometimes happens though is that the SoC integration itself is
->>broken, and a 64-bit capable DMA master like SDHCI is connected
->>to a 32-bit bus. In this case the DMA limitation should be
->>described in the device tree, using the "dma-ranges" property
->>of the broken bus node. The SDHCI code then still sets the correct
->>64-bit DMA mask according for the device, but the dma_map_single()
->>still uses an swiotlb bounce buffer or the IOMMU to work around
->>the bus restriction.
->
-> add the dma-ranges in dts node as below
-> mmc0: mmc@22200000 {
-> compatible = "bst,c1200-dwcmshc-sdhci";
-> reg = <0x0 0x22200000 0x0 0x1000>,
->       <0x0 0x23006000 0x0 0x1000>;
-> interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>;
-> clocks = <&clk_mmc>;
-> clock-names = "core";
-> max-frequency = <200000000>;
-> bus-width = <8>;
-> non-removable;
-> dma-coherent;
-> dma-ranges = <0x0 0x0 0x0 0x0 0x1 0x0>;
-> };
+this patchset puts together some followup fixes for the new KUnit test
+which were discussed on several locations.
 
-The dma-ranges property makes no sense as part of the device.
-It describes how DMA addresses are translated by a bus, so
-it has to be part of the parent node.
+1st patch:
 
-As I tried to explain, you should only need to either set
-the SDHCI device to 'SDHCI_QUIRK2_BROKEN_64_BIT_DMA' /or/
-describe the bus translation, but not both.
+  + adds a comment exaplaing why the test ignores pr_reserve() failures.
 
-Try to find out what the limitation is. If you have a datasheet
-for the chip, it should either describe an erratum if the
-sdhci device is known to be defective, or list the address
-width of the internal link.
+  + was proposed at https://lore.kernel.org/r/aFUiQESkXjFIGqez@pathway.suse.cz
 
-The 'dma-coherent' flag in the bst,c1200-dwcmshc-sdhci node is
-suspicious as well: unless all DMA masters on this SoC are
-cache-coherent, the mmc host is likely not the first thing
-that the hardware designers used a coherent port for.
+  + Thomas Weißschuh added into v4 of the original patch but I have already
+    comitted v3 in the meantime, see
+    https://lore.kernel.org/r/20250620-printk-ringbuffer-test-v4-1-8df873f1f3e0@linutronix.de
 
-If you bounce all the transfers through an SRAM, it probably
-still works correctly regardless of the dma-coherent flag,
-but if you manage to configure ZONE_DMA32 RAM for SWIOTLB,
-then the 'dma-coherent' flag must only be if the DMA master
-is actually coherent with the CPU caches.
 
->>>>  To resolve this hardware limitation, we implement a bounce buffer allocated via >> dma_alloc_coherent() to satisfy DMA addressing constraints.
->>>
->>> The bounce buffer should not be needed to satisfy DMA addressing
->>> constraints.  It is used when SDHCI ADMA (scatter/gather) is broken.
->> 
->>I wonder if the actual problem here is not the addressing limit
->>but instead the coherency protocol. If the DMA master is cache
->>coherent but listed as non-coherent in DT, or vice versa, there will
->>be data corruption for all addresses, and using a dma_alloc_coherent()
->>bounce buffer may hide this.
->
-> Finally, the kernel will raise swiotlb_map error. 
-> I put the corresponding kernel log and driver files into it, 
-> https://drive.google.com/file/d/10HQE6lr3W-XyqoI7OUBjQzJxwPCaEkpz/view?usp=sharing, 
-> https://drive.google.com/file/d/1F8Hn2a7kPjZfSWiX525iSk634UHMo0Ph/view?usp=sharing
+2nd patch:
 
-I see that there is no 32-bit addressable RAM in the system at
-all, the lowest bit of system memory starts at 0x800254000 (32GB)
+  + dynamically allocates a cpu bitmap to make the code safe even on systems
+    with many CPUs.
 
-[    0.000000] Early memory node ranges
-[    0.000000]   node   0: [mem 0x0000000800254000-0x0000000800254fff]
-[    0.000000]   node   0: [mem 0x0000000810000000-0x000000083fffffff]
-[    0.000000]   node   0: [mem 0x00000008c0000000-0x00000009bfffffff]
-[    0.000000]   node   0: [mem 0x0000000c00000000-0x0000000c3fffffff]
+  + v1 was set by Arnd Bergmann but it had some problems, see
+    https://lore.kernel.org/r/20250620192554.2234184-1-arnd@kernel.org
 
-Maybe this is something that can be set up differently by the boot
-loader, otherwise this won't be the only last problem with 32-bit
-DMA you see on this chip.
+  + This version just integreates the proposed fixes from
+    https://lore.kernel.org/r/aFkuqaFn3BOvsPT-@pathway.suse.cz
 
-Try to configure it so that there is at least 1GB of RAM in ZONE_DMA32,
-or in the ideal case move all of the MMIO out of the way so all of
-RAM can stay contiguous starting at a low address.
 
-      Arnd
+3rd patch:
+
+  + stores "size" instead on "len" in struct prbtest_rbdata so that
+    is can be used to check code sanity by __counted_by(size).
+
+  + fixes https://lore.kernel.org/r/eaea66b9-266a-46e7-980d-33f40ad4b215@sabinyo.mountain
+
+  + it is based on the idea from Thomas Weißschuh, see
+    20250626082605-c5fbbb88-f6cc-4659-bea0-a283cdb58e81@linutronix.de
+
+
+Sigh, I should have asked people to send new patches. But this looked
+easier and I wanted to clean the table.
+
+
+Arnd Bergmann (1):
+  printk: kunit: support offstack cpumask
+
+Petr Mladek (2):
+  printk: ringbuffer: Explain why the KUnit test ignores failed writes
+  printk: kunit: Fix __counted_by() in struct prbtest_rbdata
+
+ kernel/printk/printk_ringbuffer_kunit_test.c | 78 +++++++++++++-------
+ 1 file changed, 52 insertions(+), 26 deletions(-)
+
+-- 
+2.50.0
+
 
