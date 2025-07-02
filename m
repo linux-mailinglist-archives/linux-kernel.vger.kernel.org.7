@@ -1,156 +1,120 @@
-Return-Path: <linux-kernel+bounces-712996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-712998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C0C5AF11C6
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 12:25:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56D9BAF11CE
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 12:26:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE6C7170F79
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 10:25:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B18F81C26EB1
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 10:26:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 757CA255E4E;
-	Wed,  2 Jul 2025 10:25:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC64C256C76;
+	Wed,  2 Jul 2025 10:26:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="knAEC3y/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b="mGb7Bmlz"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C195123BD0F;
-	Wed,  2 Jul 2025 10:25:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77CEB254858
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 10:26:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751451935; cv=none; b=GRPvMhLPpEPhEiUZbNf04411HCtZ/08nRYqHpvc9wMB/LfPKyl1htXp4VR+P7ervl+YlgFHLiickeWTvDb+EwltKXfFxqmZ1LYNBM0BBmyzI1Ux0mxhVGBeYdHgwOROT0aPXTgU7No/fLwYq5QWplNxw9pHAU699euGwcfzH+d8=
+	t=1751451973; cv=none; b=FRfRM4B6MFite61kVpAuPt/T0oPXekiPiN+urVFM5MSkgEsmNiw+X5qkpE1uZvN0KbQWLx/rDzVN5K6yBAY57oGA86QsQxCKjkzlBkByYPVHyEiKgMKvnQWaox5D3ECnrNEsQNBCuFU0uBHl9zjQWVq3dya+UBIQZTAscoRis5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751451935; c=relaxed/simple;
-	bh=+DJPfc5ReWfCD+fO+gUhNAzTKw+5C48YNgQHh7V1074=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=txqwHyF9wi4F1ursc4gOw2ATwDM06ntowvDifyy2+mxLWO+5NeoqN4EyCHWN8ZKKGEUfoPkmhhmU+u/vmRyu22SzM0VlUy7GfaK9CP0gZa0leZe644UOAacGLk/fzI60tw6A0i+1CPzjjFLqebCH1VtLJcOJgcvYDO1dvMtj+CY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=knAEC3y/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C126FC4CEED;
-	Wed,  2 Jul 2025 10:25:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751451935;
-	bh=+DJPfc5ReWfCD+fO+gUhNAzTKw+5C48YNgQHh7V1074=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=knAEC3y/na3KKl/jzy09sDZVuzAyHjef7lCAb3w/Q/YuDUIhfwY2szkqUzg8LugR2
-	 sAOo/sFWJHqRTtmv9hnPO6bw8ShhWf6Dm6a+Pr5tEhT5FnbIGuVohafX7Jd+PqaPe9
-	 3tTJV4LY+jB5MzA9PwuCX9n4gop0YdwGWn49rz8ABbl7Ng1vvIb6i40fWpdgpxzJa/
-	 kHLr4mHkFhteRuf/inOPKaSqv0kBfkxGkpvcSkHO6MG+NR0cKqF3LVQV1qSyebCN7P
-	 ypfnt89OGRohLuYaRgd+7Su0fQbs4jFSitsIrJIdedNS0ro59bULMA78TT6Jsmwmxi
-	 Q2R+dIU5u5/Sg==
-Message-ID: <0a7fb511-8dbb-4f3a-890c-133505b79e19@kernel.org>
-Date: Wed, 2 Jul 2025 12:25:26 +0200
+	s=arc-20240116; t=1751451973; c=relaxed/simple;
+	bh=A7Ag2M/xCPgnbM81/Ed1DfzL0YgWiPbRTDK/kNWLRz4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pMzonNnZK+zc/QPvrqzsfMoBMRNowdiosQuiA7Xmfn+3xMYW7k0ZJZMqgHBXppnoAd+rq/hpZRQf6mkKmbDLJ0W27xd7VKDJN14xYqKaUG0J2s0H2+84eJRJRdVXjLtyL2bg0Ln2kvIn0HWGDBlNWXdhk1XjSLvmWZHV2MA/OAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us; spf=none smtp.mailfrom=resnulli.us; dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b=mGb7Bmlz; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=resnulli.us
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-453634d8609so47197845e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 03:26:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=resnulli-us.20230601.gappssmtp.com; s=20230601; t=1751451970; x=1752056770; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=yN3/Rce9O/Hh8jlflcA/tOl9nLaEQorrzHfucHxWn78=;
+        b=mGb7Bmlz5/GUSD+zaFlQiXe4qbRmr+J7MCz76Kw6ja5yYPuwSBnB/0kEVLxM9abifM
+         ZvwkBIcyzD5eaygzZdztn/QN0ZOkXhetgxNo3mn40WWpAEMsuj5Gx4pum/JA69pCOP2k
+         +GBT5oJkj0Ga8rXxr1/6mpaGntuhSjAScFxktzwC0ZlhPeZbBNEQrwINQ62lKqXNTPjz
+         ZMn3Uj664DcLFuZihjd3bZudbJTDgUAI8yYMrKTzIfsR3y3nyLzxygYfuFHlkUWGNT1e
+         UTUuo4MtxoJg4rPu5IwfiMVDw8EOW1mbTyfXRUOAl78sp2DQ8m7MXAANO6C+MM6D3SIv
+         NFLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751451970; x=1752056770;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yN3/Rce9O/Hh8jlflcA/tOl9nLaEQorrzHfucHxWn78=;
+        b=fN8AQRsFZXedY+hD+RP8w6hYnH+uGokF/RNmZYXdDlyXFM2SoKhv1mDNpWp7mCXkwV
+         drJAdMIg8BS0zkIgRnoE0LsPBRw9uzKJig9Cpssxamv3L3TryKrLgvdHUNa9DfATlSF1
+         NzbxVpm7V/1f59aX5nj4zr3VvfsxjKG9HX1suOW0+uGG8SWxVbk+1ditZUCArpiPX0km
+         PgL2/l9WhqPENLsjC1IhYneXMF8Xf2LywBg1WfkJEWMNWVg9kLNhEBK338XW8ezJNbNF
+         TmSZ3knaODzHiX8MmvyfoEuqwvr8WWX30hDMcMUOuqzJj8dE9/g6s61RDi5MBpDaXFqy
+         7BVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU5OluaPcZrCPBi/iClttSxhmanNzPZD7reIpr6bGJmdxTJxh0ivbapeK0T+1T3NtmiovdyND/37770ngg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMMz/DtK2/GlGdAVwVt399wPGaQLVNGbsWKIAyiCvjWNYxk3NI
+	fKb6iT4Us/Ro/eenYflWuKKy7e86wZUy8iXXc8ZDIgWCku1HxQQ82Pn0oksCVjrtjao=
+X-Gm-Gg: ASbGncuGtFr/kBggrsA2oHgMQy5qoA182AFP1xq4UGhiCjqT/LkKI4a3KSlPk6DvpM7
+	6Nlf2gDvQLSsY2qe/SmuCwG1fqYSD9ZcCtHCWmZg0dBPifoNt9+OJ6WoUNfu/tfvHlnBhzN3/A/
+	mLyp9mx0yMbMOYSwAGnuaIg48Q3CRJP6IM17cr+2l2kiPYoGL4Ec+sizbPx+ljQaFM084Pje29h
+	9BfL1KnO3tM3Xwu5WIgRDOPedKkSq7sfHqgp+DwTgt24kw27PoIKvrFCmaoUE+NxzG1k91QTSLa
+	Dj8SsvepHGvqLya56Ui/D/HYtAFakw1/TDQpX7AMIdVOJAi4WhARHSncvhxpcWpYSDsCow==
+X-Google-Smtp-Source: AGHT+IE3Ue/jFuqGKk2j82UXQrlkpofLQZxfY4sZQlx7+9veKW80qJCzF944xSFEweUYweW+L+RcHQ==
+X-Received: by 2002:a05:600c:698e:b0:43b:cc42:c54f with SMTP id 5b1f17b1804b1-454a36ec56amr26467775e9.14.1751451969448;
+        Wed, 02 Jul 2025 03:26:09 -0700 (PDT)
+Received: from jiri-mlt ([193.47.165.251])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a88c7e6f8bsm16191924f8f.17.2025.07.02.03.26.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Jul 2025 03:26:08 -0700 (PDT)
+Date: Wed, 2 Jul 2025 12:25:57 +0200
+From: Jiri Pirko <jiri@resnulli.us>
+To: Ivan Vecera <ivecera@redhat.com>
+Cc: netdev@vger.kernel.org, Vadim Fedorenko <vadim.fedorenko@linux.dev>, 
+	Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Prathosh Satish <Prathosh.Satish@microchip.com>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	Jonathan Corbet <corbet@lwn.net>, Jason Gunthorpe <jgg@ziepe.ca>, 
+	Shannon Nelson <shannon.nelson@amd.com>, Dave Jiang <dave.jiang@intel.com>, 
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, Michal Schmidt <mschmidt@redhat.com>, 
+	Petr Oros <poros@redhat.com>
+Subject: Re: [PATCH net-next v12 04/14] dpll: zl3073x: Add support for
+ devlink device info
+Message-ID: <x23jvoo4eycl5whishhsy2qpb5qajsqcx36amltwkqwu5xuj7s@ghg47je4hbjt>
+References: <20250629191049.64398-1-ivecera@redhat.com>
+ <20250629191049.64398-5-ivecera@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 7/8] arm64: defconfig: enable BST C1200 DWCMSHC SDHCI
- controller
-To: Albert Yang <yangzh0906@thundersoft.com>, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, gordon.ge@bst.ai,
- catalin.marinas@arm.com, geert.uytterhoeven@gmail.com, will@kernel.org,
- ulf.hansson@linaro.org, adrian.hunter@intel.com, arnd@arndb.de
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-mmc@vger.kernel.org, soc@lists.linux.dev,
- bst-upstream@bstai.top, neil.armstrong@linaro.org,
- jonathan.cameron@huawei.com, bigfoot@classfun.cn, kever.yang@rock-chips.com,
- mani@kernel.org, geert+renesas@glider.be, andersson@kernel.org, nm@ti.com,
- nfraprado@collabora.com, quic_tdas@quicinc.com, ebiggers@google.com,
- victor.shih@genesyslogic.com.tw, shanchun1218@gmail.com,
- ben.chuang@genesyslogic.com.tw
-References: <20250528085403.481055-1-yangzh0906@thundersoft.com>
- <20250702094444.3523973-1-yangzh0906@thundersoft.com>
- <20250702094444.3523973-8-yangzh0906@thundersoft.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250702094444.3523973-8-yangzh0906@thundersoft.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250629191049.64398-5-ivecera@redhat.com>
 
-On 02/07/2025 11:44, Albert Yang wrote:
-> Enable the BST C1200 DWCMSHC SDHCI controller driver
-> (CONFIG_MMC_SDHCI_BST)
-> in the ARM64 defconfig to support eMMC/SD card access on Black Sesame
-> Technologies C1200 series SoCs.
+Sun, Jun 29, 2025 at 09:10:39PM +0200, ivecera@redhat.com wrote:
 
-Please wrap commit message according to Linux coding style / submission
-process (neither too early nor over the limit):
-https://elixir.bootlin.com/linux/v6.4-rc1/source/Documentation/process/submitting-patches.rst#L597
+[...]
 
-> 
-> This driver provides hardware-specific implementation for the Synopsys
-> DesignWare Mobile Storage Host Controller integrated in BST SoCs.
+>+	snprintf(buf, sizeof(buf), "%lu.%lu.%lu.%lu",
+>+		 FIELD_GET(GENMASK(31, 24), cfg_ver),
+>+		 FIELD_GET(GENMASK(23, 16), cfg_ver),
+>+		 FIELD_GET(GENMASK(15, 8), cfg_ver),
+>+		 FIELD_GET(GENMASK(7, 0), cfg_ver));
+>+
+>+	return devlink_info_version_running_put(req, "cfg.custom_ver", buf);
 
-Redundant, this duplicates earlier paragraph.
+Nit:
 
-> 
-> Signed-off-by: Ge Gordon <gordon.ge@bst.ai>
-> Signed-off-by: Albert Yang <yangzh0906@thundersoft.com>
-> ---
->  arch/arm64/configs/defconfig | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-> index 0a1cfaa19688..8daf8cf3dc97 100644
-> --- a/arch/arm64/configs/defconfig
-> +++ b/arch/arm64/configs/defconfig
-> @@ -1188,6 +1188,7 @@ CONFIG_MMC_SDHCI_CADENCE=y
->  CONFIG_MMC_SDHCI_ESDHC_IMX=y
->  CONFIG_MMC_SDHCI_TEGRA=y
->  CONFIG_MMC_SDHCI_F_SDH30=y
-> +CONFIG_MMC_SDHCI_BST=y
-This makes little sense without your arch. :/ Send one defconfig patch
-enabling everything wha tis necessary.
+It's redundant to put "ver" string into version name. Also, isn't it
+rather "custom_config" or "custom_cfg"?
 
-Best regards,
-Krzysztof
 
 
