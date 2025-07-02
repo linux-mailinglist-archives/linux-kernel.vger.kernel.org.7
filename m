@@ -1,116 +1,188 @@
-Return-Path: <linux-kernel+bounces-713154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B02CAF142A
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 13:40:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C124AAF1428
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 13:40:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0FF4F7A223F
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 11:38:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA76A1BC4D1C
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 11:40:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2848C26B956;
-	Wed,  2 Jul 2025 11:38:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D6C8266B5D;
+	Wed,  2 Jul 2025 11:38:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Boed4aJN"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oKuHx5Xm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2A9A265630
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 11:38:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99C9C225A31;
+	Wed,  2 Jul 2025 11:38:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751456299; cv=none; b=CoYaLpMfToaQY8fjUEj8lVA/NTS3+bJuS34G/Q/vhtKGLslSSVe5z9SZG5gC8XseUghsMM8cbWgxKrYk6CA0G0/qAioCYD18uVhxgfcqXQydIGCDS5ezI4JDvzorC6oClDlN0QVTR4THlY+nl9I3D0y5NcarHVUuGJmigN83/Sg=
+	t=1751456326; cv=none; b=aI59W70qMYM4fQ3TIg/dsXQ+Vxt/0K/6URaqBzQCLuMUjks4ZZT+YQ19L4v/zOEjQ5nVAzRFui2NjW1LirwS6kmo012sscp8bC9sxKXuCVk3/slKtrPM6G3SOcYeF3yZk2ri1N+LX1qN5e8RE2pAM0+EVDP03amdZ1tTRH9fGzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751456299; c=relaxed/simple;
-	bh=cdS71tAI3Nx8q7bq1BIepQO374y9DFYjtTkJEkJFAg0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JmLo6uE9AouCmJW4Bx2/6dTAqz8A3vGXhBK9rQX79cd3eP63MEUH1QUnUuQ4ESFKJCFBwDacOCJhTEct8EbqiA6Qa5z4x+DqcyCbVcFF/3BfUcwXmv4owjgyziPw0d00dkt5fhnLRoXh2pM5yiRw8zJFDFY726rT2nvg1gWAMy0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Boed4aJN; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1751456296;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jeaR/weAU/4mIF4C+gkIt+G1cKiX/aTOOLald2KG+J8=;
-	b=Boed4aJNVqFAcVFmmzusKkanSAbx/4US7NpaaVq+iJsLQh3KpBE7Dd9DIa7lU4GhwjLLJu
-	cYY4XE+E06Euzw77UpCFHQ3BzDM9usYxm9NJeILQumuaMXzmcjgejeF3zfJ7GKfW8NCqzX
-	Q2hIxTlvJaL/rbsfy2Rg7U8NeX7MznE=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-658-v3vjMe8DNs-zc9D7_xlaJg-1; Wed,
- 02 Jul 2025 07:38:15 -0400
-X-MC-Unique: v3vjMe8DNs-zc9D7_xlaJg-1
-X-Mimecast-MFC-AGG-ID: v3vjMe8DNs-zc9D7_xlaJg_1751456293
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 84708180028B;
-	Wed,  2 Jul 2025 11:38:12 +0000 (UTC)
-Received: from [10.45.226.95] (unknown [10.45.226.95])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 7A8721956087;
-	Wed,  2 Jul 2025 11:38:05 +0000 (UTC)
-Message-ID: <351c8eb7-26b2-4435-a6cf-6dac36e55ad9@redhat.com>
-Date: Wed, 2 Jul 2025 13:38:03 +0200
+	s=arc-20240116; t=1751456326; c=relaxed/simple;
+	bh=6D65NQrcz7NwOKOr8hiTmabKhGb17NOweOxgq2rLoRU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SBpoKhhIHnqpggB+QTWl+9L9JA8BUXa5IFUAUlM/czuMEAe2UWa5R9qF3VrDoMtPzr5tRuiVgw5EEm3bJiYKTVju9oXV7qXWNGe5r1KhbJGmIUyn1tU2cG7Wnp4J2FXiKxzFZf647xDeWw4E09d17zQ5u5+7KOsedVnVbcQJKf0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oKuHx5Xm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01412C4CEED;
+	Wed,  2 Jul 2025 11:38:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751456326;
+	bh=6D65NQrcz7NwOKOr8hiTmabKhGb17NOweOxgq2rLoRU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oKuHx5XmFRNHZtV5pSfKZMRhbFK9Q/V8oBQttSQwv9h1BoZj2mm169T+YyXbMPl35
+	 MkWW3EY3dKtbc8PrPx3G1R0Hz0CZYoKi1R8NejVaAjeAQBNFp1H67e0eSXN49NUzyU
+	 8nWheZ/Z3Ej0ul4a/+WASK+txRA2lLb1VhQgkZ+OVdYhxvh+BpWMr88wnW7FyPmn0Y
+	 YwYHjIcQsY0BF3n/c7nHKDYuObm3MF0BchGYbyrLOXQUFsI7fOupP6s8YttGBDroTl
+	 C2Go5SyvImfXwciAAzFTpR5fLmc736by4kg3aDbnHQXBU8rCI/Q2gEvGnhQym960Mp
+	 LBq5wdH5IqiYg==
+Date: Wed, 2 Jul 2025 12:38:41 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Jorge Marques <gastmaier@gmail.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Jorge Marques <jorge.marques@analog.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Frank Li <Frank.Li@nxp.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-i3c@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] dt-bindings: i3c: Add adi-i3c-master
+Message-ID: <20250702-armchair-favorite-c734b53444e2@spud>
+References: <20250626-adi-i3c-master-v4-0-3846a1f66d5e@analog.com>
+ <20250626-adi-i3c-master-v4-1-3846a1f66d5e@analog.com>
+ <20250627-steadfast-ferret-of-expertise-5c8ff2@krzk-bin>
+ <tl5fckhrivaqfyzwyb2o2a7gykpigwend7z2nduqgbbej3hqbs@vxxtsadhtdmt>
+ <41782ded-908b-46ef-8f75-4d2565476b7c@kernel.org>
+ <cfi6rzhco2ba6pcbk57l7tblimuks5jnpgaly7nbedbrpyhtma@u46if22kurwk>
+ <v2ybju75bpjdqxfkell47nlkeyal36ylmnqt2yvpncxnmp2irb@pygx56jsyxkr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v12 04/14] dpll: zl3073x: Add support for devlink
- device info
-To: Jiri Pirko <jiri@resnulli.us>
-Cc: netdev@vger.kernel.org, Vadim Fedorenko <vadim.fedorenko@linux.dev>,
- Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Prathosh Satish <Prathosh.Satish@microchip.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
- Jason Gunthorpe <jgg@ziepe.ca>, Shannon Nelson <shannon.nelson@amd.com>,
- Dave Jiang <dave.jiang@intel.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- Michal Schmidt <mschmidt@redhat.com>, Petr Oros <poros@redhat.com>
-References: <20250629191049.64398-1-ivecera@redhat.com>
- <20250629191049.64398-5-ivecera@redhat.com>
- <x23jvoo4eycl5whishhsy2qpb5qajsqcx36amltwkqwu5xuj7s@ghg47je4hbjt>
-Content-Language: en-US
-From: Ivan Vecera <ivecera@redhat.com>
-In-Reply-To: <x23jvoo4eycl5whishhsy2qpb5qajsqcx36amltwkqwu5xuj7s@ghg47je4hbjt>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="AzTkVZ/OYZqMKI4S"
+Content-Disposition: inline
+In-Reply-To: <v2ybju75bpjdqxfkell47nlkeyal36ylmnqt2yvpncxnmp2irb@pygx56jsyxkr>
 
-On 02. 07. 25 12:25 odp., Jiri Pirko wrote:
-> Sun, Jun 29, 2025 at 09:10:39PM +0200, ivecera@redhat.com wrote:
-> 
-> [...]
-> 
->> +	snprintf(buf, sizeof(buf), "%lu.%lu.%lu.%lu",
->> +		 FIELD_GET(GENMASK(31, 24), cfg_ver),
->> +		 FIELD_GET(GENMASK(23, 16), cfg_ver),
->> +		 FIELD_GET(GENMASK(15, 8), cfg_ver),
->> +		 FIELD_GET(GENMASK(7, 0), cfg_ver));
->> +
->> +	return devlink_info_version_running_put(req, "cfg.custom_ver", buf);
-> 
-> Nit:
-> 
-> It's redundant to put "ver" string into version name. Also, isn't it
-> rather "custom_config" or "custom_cfg"?
 
-As per datasheet, this is configuration custom version.
+--AzTkVZ/OYZqMKI4S
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I.
+On Wed, Jul 02, 2025 at 12:58:00PM +0200, Jorge Marques wrote:
+> On Fri, Jun 27, 2025 at 06:02:26PM +0200, Jorge Marques wrote:
+> > On Fri, Jun 27, 2025 at 04:49:19PM +0200, Krzysztof Kozlowski wrote:
+> > > On 27/06/2025 16:38, Jorge Marques wrote:
+> > > > On Fri, Jun 27, 2025 at 08:56:55AM +0200, Krzysztof Kozlowski wrote:
+> > > >> On Thu, Jun 26, 2025 at 12:07:36PM +0200, Jorge Marques wrote:
+> > > >>> Add bindings doc for ADI I3C Controller IP core, a FPGA synthesiz=
+able IP
+> > > >>> core that implements the MIPI I3C Basic controller specification.
+> > > >>
+> > > >> How did you resolve my last comment? I don't see any explanation -
+> > > >> neither here nor in the binding description. Binding description is
+> > > >> actually better place, I think now.
+> > > >>
+> > > >> Best regards,
+> > > >> Krzysztof
+> > > >>
+> > > >=20
+> > > > Hi Krzysztof,
+> > > >=20
+> > > > I forgot to condense out discussion on v4.
+> > > > What about this binding description:
+> > > >=20
+> > > >   description: |
+> > > >     FPGA-based I3C controller designed to interface with I3C and I2C
+> > > >     peripherals, implementing a subset of the I3C-basic specificati=
+on.
+> > > >     The IP core is tested on arm, microblaze, and arm64 architectur=
+es.
+> > > >     It takes one or two clocks, axi and i3c. If only axi is provide=
+d,
+> > > >     then there is no clock signal to the i3c input clock pin and axi
+> > >=20
+> > > This is obvious from the schema, drop.
+> > Ack.
+> >=20
+> > >=20
+> > > >     clock drives the whole IP. The compatible is suffixed by 1.00.a
+> > > >     foreseeing future controllers by Analog Devices Inc. and breaki=
+ng
+> > > >     changes.
+> > >=20
+> > > I don't understand that. How are you breaking any changes? And how
+> > > 1.00.a predicts future? I don't think this reflects previous discussi=
+on.
+> > > Why you were asked to go with v1.00.a?
+> > The -1.00.a suffix came from this discussion:
+> >  =20
+> >   https://lore.kernel.org/linux-i3c/ildi2pup2zkyv4stuknkrjysex3yzsbrrsr=
+wbgcc4xgvdhwrdd@7qh4y6mutgy2/
+> >=20
+> > Other adi bindings use this suffix. I personally wouldn't add any suffix
+> > unless told otherwise, as I expressed on the thread. Should I drop it?
+> > or suffix it with something else?
 
+>=20
+> I went after the reason of the historically -1.00.a suffix and
+> discovered that they came into existence due to AMD Xilinx auto
+> generation devicetree tool SDTGen
+> https://github.com/Xilinx/system-device-tree-xlnx
+> that would automatically suffix with the IP version, defaulting to 1.00.a,
+> and for a seamless experience, the were copied over to the dt-bindings.
+>=20
+> The adi,axi-pwmgen dt-binding went more creative and suffixed with
+> -2.00.a, while never enforcing Vivado to yield the devicetree with such
+> value (Major version is asserted in the driver through reg access, the
+> current core version is v2.1.1)
+>=20
+> Testing on my side (AMD Xilinx Vivado 2024.2), it seems Vivado now
+> defaults to 1.0, so the previous bindings from the other IPs are not
+> accurate anymore, either, (axi-pwmgen auto gens
+> `compatible =3D "xlnx,axi-pwm-gen-1.0";` (`xlnx` instead of `adi`, also)).
+>=20
+> For fun, the current Vivado version thinks the devicetree node for the
+> i3c master should be as follows:
+>=20
+>   i3c_host_interface: i3c_controller_host_interface@44a00000 {
+>           compatible =3D "xlnx,i3c-controller-host-interface-1.0";
+>           reg =3D <0x44a00000 0x10000>;
+>           clocks =3D <&clkc 15>;
+>           clock-names =3D "s_axi_aclk";
+>   };
+>=20
+> Let me know if we can drop the suffix, or replace with something else.
+> The current register defined core version is v0.1.0.
+
+Please, as I requested in the original thread, add versioning
+information. I'm clearly not asking you to make up some garbage version
+number, or to add "1.00a" if that's not an accurate version (and never
+did AFAICT). If 0.1.0 is the version of the IP core, I'd like you to use
+that.
+
+If other ADI IP cores are using crap version numbers that came from
+some Xilinx tooling that don't represent the actual versions of the IPs,
+that's probably something you should mention to your colleagues that
+maintain those bindings.
+
+--AzTkVZ/OYZqMKI4S
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaGUaQQAKCRB4tDGHoIJi
+0opmAP90ILv17HBwblHZxoE06P46Yei39DKWzTDARH4j+CqtygEA90BCiZRJSpUP
+Hnr5ERbaqQ4vUWt8259P3N6dpG43SAM=
+=0JJi
+-----END PGP SIGNATURE-----
+
+--AzTkVZ/OYZqMKI4S--
 
