@@ -1,138 +1,139 @@
-Return-Path: <linux-kernel+bounces-712746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-712728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CB6FAF0E40
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 10:43:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65B03AF0E0F
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 10:31:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DCF34163EC1
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 08:43:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90C9D485EC4
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 08:29:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA942239E92;
-	Wed,  2 Jul 2025 08:42:53 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5C39239E91;
+	Wed,  2 Jul 2025 08:30:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a9ym5aiF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 745F922DA1B;
-	Wed,  2 Jul 2025 08:42:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F240023817D;
+	Wed,  2 Jul 2025 08:30:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751445773; cv=none; b=k7lHisfOH6PsNiBsmuBQ2xZoWuqkL/RwdY39REVWMgINurnQv6Pb3bsGCGMzew+8ScDH00lFNctaftpZYJi6uGID5vwmi4Xo87VWgB68FZKl9fQXFCp+vIZ2OA/iKi0+QK7vqYLjzG8IRC2yLZmXHg2U9GXn8Ww8zuvTJRSlM+A=
+	t=1751445013; cv=none; b=S6pdp66oe6TEW2d580zDlK3HDhrCCoT0gbd5yCICPh/IzHX4kcsoOcM0n2BCC4vkFhyZAzRJ8mH2lI7NOOA+72qTQXdwPgkG/HoSfzO5xkNzODBwJ0AdEtcc35lfkr30prlZttdhvy8m0hkucRvNxwaUDzXb/A1XBKV8vm8KZ2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751445773; c=relaxed/simple;
-	bh=ZWncWZqL3YVF7XFQNnWoJCmyi0/LyOh5Xf815k+EKh0=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=l9IKspGw6K80TZ8I/4+TeAmNFq9AvdPCSynUcdsZdQfYbfZD6PleZnRWA0Eqlvski7os5H1yinFLl0wWwVVHQjQ0Q2tUQs6iUPulrHqTFBXvYLNja6/MNpCawgLyvjHue9T8yEsm5ikPQl57VT4vSfFJp0eM3QVW6rqVBQLxVjw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4bXCzJ696Qz2BdTy;
-	Wed,  2 Jul 2025 16:41:00 +0800 (CST)
-Received: from kwepemo200008.china.huawei.com (unknown [7.202.195.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id 9F8ED140278;
-	Wed,  2 Jul 2025 16:42:46 +0800 (CST)
-Received: from huawei.com (10.67.175.28) by kwepemo200008.china.huawei.com
- (7.202.195.61) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 2 Jul
- 2025 16:42:45 +0800
-From: Xinyu Zheng <zhengxinyu6@huawei.com>
-To: <mst@redhat.com>, <jasowang@redhat.com>, <pbonzini@redhat.com>,
-	<stefanha@redhat.com>, <virtualization@lists.linux-foundation.org>,
-	<kvm@vger.kernel.org>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <gregkh@linuxfoundation.org>,
-	<stable@vger.kernel.org>
-CC: <zhengxinyu6@huawei.com>
-Subject: [PATCH v5.10] vhost-scsi: protect vq->log_used with vq->mutex
-Date: Wed, 2 Jul 2025 08:29:45 +0000
-Message-ID: <20250702082945.4164475-1-zhengxinyu6@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1751445013; c=relaxed/simple;
+	bh=gn8Zc85bDvq6Yw8JF2nDhKZdd2hRMJcauN+/NgAcs8k=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=gCLzkbarGwMjBeNBLrrlQuRGOi4Nvh1+S6EJl0ZFAgtKg5h6GFfuBrV21neMohoBFcbv9U10n0O+7xmDacT5TTVIjarSvSnvyljGJkqSG2NQv2cPMJGkpzgBNAbLsB057DKhvEjJiJxy2tRPslLI/YE5B4tazDx0+3A84lVKPw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a9ym5aiF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C50C2C4CEF1;
+	Wed,  2 Jul 2025 08:30:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751445012;
+	bh=gn8Zc85bDvq6Yw8JF2nDhKZdd2hRMJcauN+/NgAcs8k=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=a9ym5aiFDlphY7bTPOEHI3m+wdRV61RZgi9V815irDzEy7y72+ZUMLd2+ve6+ufzf
+	 7y8p4mu0euNoB1x52LivNm11DSwd9Sa65Hbum8084GbJHE3rN0SpjWrDpNwCDpsOs6
+	 Pm3PHHHSrfRhjelqtzFW+n5yW/qbTFsAJDnpuJNkmolklTny1b9xFxIl9qynO5F0Hm
+	 BR7Etk53j/KVX5IQF2zeOAKjpxM0zm54MMDeVsnIRAhJVRAjWpeNwJTa60E1xWeeJi
+	 yU9WCiIWDD9a2Xgijciy64PEk92flAv2vg9GoAAfJNdWMuExGRHTln0fF8iVkNsJSp
+	 4BUSs6vjXDkEw==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Benno Lossin" <lossin@kernel.org>
+Cc: "Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com>,  "Miguel Ojeda"
+ <ojeda@kernel.org>,  "Alex Gaynor" <alex.gaynor@gmail.com>,  "Boqun Feng"
+ <boqun.feng@gmail.com>,  "Gary Guo" <gary@garyguo.net>,  =?utf-8?Q?Bj?=
+ =?utf-8?Q?=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,  "Alice Ryhl" <aliceryhl@google.com>,
+  "Masahiro Yamada" <masahiroy@kernel.org>,  "Nathan Chancellor"
+ <nathan@kernel.org>,  "Luis Chamberlain" <mcgrof@kernel.org>,  "Danilo
+ Krummrich" <dakr@kernel.org>,  "Nicolas Schier"
+ <nicolas.schier@linux.dev>,  "Trevor Gross" <tmgross@umich.edu>,  "Adam
+ Bratschi-Kaye" <ark.email@gmail.com>,  <rust-for-linux@vger.kernel.org>,
+  <linux-kernel@vger.kernel.org>,  <linux-kbuild@vger.kernel.org>,  "Petr
+ Pavlu" <petr.pavlu@suse.com>,  "Sami Tolvanen" <samitolvanen@google.com>,
+  "Daniel Gomez" <da.gomez@samsung.com>,  "Simona Vetter"
+ <simona.vetter@ffwll.ch>,  "Greg KH" <gregkh@linuxfoundation.org>,  "Fiona
+ Behrens" <me@kloenk.dev>,  "Daniel Almeida"
+ <daniel.almeida@collabora.com>,  <linux-modules@vger.kernel.org>
+Subject: Re: [PATCH v13 2/6] rust: introduce module_param module
+In-Reply-To: <DB0VJ9HRT0VG.GT9HOT7J29EL@kernel.org> (Benno Lossin's message of
+	"Tue, 01 Jul 2025 18:54:16 +0200")
+References: <20250612-module-params-v3-v13-0-bc219cd1a3f8@kernel.org>
+	<RPPvXQKnjK77Kp9mKaiFxbNj1fTHKb_I7_nbY81fZop-Wz8n5TTi4_lpXP9U9AwjocvZKqJPI8PGKufJn9cIzQ==@protonmail.internalid>
+	<DAU0J3T0IEVM.2K7ZRQOVOHF8H@kernel.org> <878qlh4aj1.fsf@kernel.org>
+	<87plepzke5.fsf@kernel.org>
+	<xFouVLxX1_t1mH69FDYwlIhBlI72M0IzQEKn0ntG_wT9z7V5DtbxiwVP_frH_yiS-Gf0q_AhqetbLmuvJ_yP5Q==@protonmail.internalid>
+	<DAX65TRN0TGP.25VZ9DYV86XWY@kernel.org> <87wm8txysl.fsf@kernel.org>
+	<9G3W1seaM7elcwWXaeoaa2nfpFYCf-AmBdvZhACGP13KGUtTPVMwGNYdTQsdtp8ru7GIP3-UYTzXscC1MRUKrg==@protonmail.internalid>
+	<DAZV8OGL8BMH.11SLXBXQ17ZJ9@kernel.org> <87h5zxxtdw.fsf@kernel.org>
+	<H78pT7YnQEhAXdxzl_hhnGVUiQuFpibB21_bjH658fMz_5JYbwsPLYYVh8u1gYnzK3N3ilTEAvqOpkuptVx3rg==@protonmail.internalid>
+	<DB03MZI2FCOW.2JBFL3TY38FK@kernel.org> <87bjq4xpv7.fsf@kernel.org>
+	<ffROWpeKczrWSBlKYov2atJG-QD5l5fUOb2dVCNkWlcT9h6DJpa4joGQpjqtYyLP7HX227fCAayyDQunZ464XQ==@protonmail.internalid>
+	<DB0LKI8BO3HZ.3FF03JN4364RM@kernel.org> <87zfdovvz4.fsf@kernel.org>
+	<DB0U12HAEVZ6.JKFPI2UQHDRY@kernel.org>
+	<CANiq72kFUSFgBv7Es3Mhe4HUaSPZk0EVW=JaMdaAGHsQOxYN6w@mail.gmail.com>
+	<DLItXbaTBCeUnpS5vUdbrgE6pmpI-SNBpTVnLMea7RLdHat3KNnjpuhSseC9m0X6Nk8q3cCRBLc-Q7IoEcvIog==@protonmail.internalid>
+	<DB0VJ9HRT0VG.GT9HOT7J29EL@kernel.org>
+User-Agent: mu4e 1.12.9; emacs 30.1
+Date: Wed, 02 Jul 2025 10:30:03 +0200
+Message-ID: <87frffvvuc.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
- kwepemo200008.china.huawei.com (7.202.195.61)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-From: Dongli Zhang <dongli.zhang@oracle.com>
+"Benno Lossin" <lossin@kernel.org> writes:
 
-[ Upstream commit f591cf9fce724e5075cc67488c43c6e39e8cbe27 ]
+> On Tue Jul 1, 2025 at 6:27 PM CEST, Miguel Ojeda wrote:
+>> On Tue, Jul 1, 2025 at 5:43=E2=80=AFPM Benno Lossin <lossin@kernel.org> =
+wrote:
+>>>
+>>> Ultimately this is something for Miguel to decide.
+>>
+>> Only if you all cannot get to an agreement ;)
+>
+> :)
+>
+>> If Andreas wants to have it already added, then I would say just mark
+>> it `unsafe` as Benno recommends (possibly with an overbearing
+>> precondition), given it has proven subtle/forgettable enough and that,
+>> if I understand correctly, it would actually become unsafe if someone
+>> "just" added "reasonably-looking code" elsewhere.
+>
+> Yeah, if we added code that ran at the same time as the parameter
+> parsing (such as custom parameter parsing or a way to start a "thread"
+> before the parsing is completed) it would be a problem.
 
-The vhost-scsi completion path may access vq->log_base when vq->log_used is
-already set to false.
+Guys, we are not going to accidentally add this. I do not think this is
+a valid concern.
 
-    vhost-thread                       QEMU-thread
+>
+>> That way we have an incentive to make it safe later on and, more
+>> importantly, to think again about it when such a patch lands,
+>> justifying it properly. And it could plausibly protect out-of-tree
+>> users, too.
+>>
+>> This is all assuming that we will not have many users of this added
+>> right away (in a cycle or two), i.e. assuming it will be easy to
+>> change callers later on (if only to remove the `unsafe {}`).
+>
+> Yeah we would add internal synchronization and could keep the API the
+> same (except removing unsafe of course).
 
-vhost_scsi_complete_cmd_work()
--> vhost_add_used()
-   -> vhost_add_used_n()
-      if (unlikely(vq->log_used))
-                                      QEMU disables vq->log_used
-                                      via VHOST_SET_VRING_ADDR.
-                                      mutex_lock(&vq->mutex);
-                                      vq->log_used = false now!
-                                      mutex_unlock(&vq->mutex);
+That is true. But I am not going to add an unsafe block to a driver just
+to read module parameters. If we cannot reach agreement on merging this
+with the `copy` access method, I would rather wait on a locking version.
 
-				      QEMU gfree(vq->log_base)
-        log_used()
-        -> log_write(vq->log_base)
 
-Assuming the VMM is QEMU. The vq->log_base is from QEMU userpace and can be
-reclaimed via gfree(). As a result, this causes invalid memory writes to
-QEMU userspace.
+Best regards,
+Andreas Hindborg
 
-The control queue path has the same issue.
-
-CVE-2025-38074
-Cc: stable@vger.kernel.org#5.10.x
-Cc: gregkh@linuxfoundation.org
-Signed-off-by: Dongli Zhang <dongli.zhang@oracle.com>
-Acked-by: Jason Wang <jasowang@redhat.com>
-Reviewed-by: Mike Christie <michael.christie@oracle.com>
-Message-Id: <20250403063028.16045-2-dongli.zhang@oracle.com>
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
-[ Conflicts in drivers/vhost/scsi.c
-  bacause vhost_scsi_complete_cmd_work() has been refactored. ]
-Signed-off-by: Xinyu Zheng <zhengxinyu6@huawei.com>
----
- drivers/vhost/scsi.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/vhost/scsi.c b/drivers/vhost/scsi.c
-index a23a65e7d828..fcde3752b4f1 100644
---- a/drivers/vhost/scsi.c
-+++ b/drivers/vhost/scsi.c
-@@ -579,8 +579,10 @@ static void vhost_scsi_complete_cmd_work(struct vhost_work *work)
- 		ret = copy_to_iter(&v_rsp, sizeof(v_rsp), &iov_iter);
- 		if (likely(ret == sizeof(v_rsp))) {
- 			struct vhost_scsi_virtqueue *q;
--			vhost_add_used(cmd->tvc_vq, cmd->tvc_vq_desc, 0);
- 			q = container_of(cmd->tvc_vq, struct vhost_scsi_virtqueue, vq);
-+			mutex_lock(&q->vq.mutex);
-+			vhost_add_used(cmd->tvc_vq, cmd->tvc_vq_desc, 0);
-+			mutex_unlock(&q->vq.mutex);
- 			vq = q - vs->vqs;
- 			__set_bit(vq, signal);
- 		} else
-@@ -1193,8 +1195,11 @@ static void vhost_scsi_tmf_resp_work(struct vhost_work *work)
- 	else
- 		resp_code = VIRTIO_SCSI_S_FUNCTION_REJECTED;
- 
-+	mutex_lock(&tmf->svq->vq.mutex);
- 	vhost_scsi_send_tmf_resp(tmf->vhost, &tmf->svq->vq, tmf->in_iovs,
- 				 tmf->vq_desc, &tmf->resp_iov, resp_code);
-+	mutex_unlock(&tmf->svq->vq.mutex);
-+
- 	vhost_scsi_release_tmf_res(tmf);
- }
- 
--- 
-2.34.1
 
 
