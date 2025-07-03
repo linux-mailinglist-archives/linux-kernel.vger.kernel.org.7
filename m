@@ -1,119 +1,150 @@
-Return-Path: <linux-kernel+bounces-715484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-715486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 734EAAF769B
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 16:05:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FB7DAF769C
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 16:05:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 605827B2571
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 14:03:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AAB3B4A20E6
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 14:05:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D59B42E7658;
-	Thu,  3 Jul 2025 14:04:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 773CE1A83F5;
+	Thu,  3 Jul 2025 14:05:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F/Cwf+bb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HXlJH26f"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39FD4EC2;
-	Thu,  3 Jul 2025 14:04:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35924126C03
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 14:05:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751551472; cv=none; b=VmTmduFDS1sQz5t7P5fGq2UXvkmCuM125Mo6o6YC5YUPAHbVRZ+sYNT8wg4BrAbQCtz2fKIPcOIhFXaPiwh90aMDzjykpIr/0oWiKew0PL4ewDgCCK+ZkxSivMyZbQeKbAGpbSCj4RSUbGngy9ZVAPK8+zmfiD5G4BD3sCp1ydQ=
+	t=1751551542; cv=none; b=qVYTWkYTcSWiQD9se1XXuS23WMqvqMQNDQHtr3VCUv6rWEPduKd7XJWBp+xuzUqLU2HkFVQqrm+zWiN40zGfFlzB4z5eUcH11VZysSDK+uIOVsygnPYr2ZSLQdvr9shNJMqoC4HKBSdo0x05kszmhBjZMCqx06ketc/0X/y6X2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751551472; c=relaxed/simple;
-	bh=XxFehov2mpyqjrTtvjAVi3gAe6jCIoB4PFQTddnMFdY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pdgnOp5ZQExGqA3/VE/98sVvL1bWYu2p8ApaWzC2JO5haRhP6sMJQ+QMY7lsvmm2HDyaaIkwnQ/7pZmedRhSOfR2NYcliPEt3i6808pQiFRKkvmJE4fFud3RJdKq1FBvXHJmBuBOWt/VjG9B9GINkuyV4BWDLsVCe7oV/a81+cM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F/Cwf+bb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46E8CC4CEE3;
-	Thu,  3 Jul 2025 14:04:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751551470;
-	bh=XxFehov2mpyqjrTtvjAVi3gAe6jCIoB4PFQTddnMFdY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=F/Cwf+bbcCzXtqyRWcaw4ikovxESzc/UpTNm7gRGtdzl8oQwo9LPXXUrE2aFeMAdb
-	 kzKVYYqRPHSV186y8va1pfRLb4rFlmMCSG8XRx+msLspJBhZcVNJ+fsNQ8GsKewpz8
-	 LcA4Wkbad7br2dmqv1Zk2APBk+ud7hqvqumqxAMlDJ7CbQ9XYtGkyWZQdbh4jpVQ+G
-	 CCPv0oD8V/Qn0WpkGyoAkTJS5FZkZmgzvU5znOSigFFniQ5+TZH3CXqIhvu/0upNlx
-	 rvuUpHoxQ2n0jFmedY477roeIEQhtk5KZjcmONq8G8q8pDMt6mqv3pwUI9bAhZTZIV
-	 By/6X0eHjGI8g==
-Date: Thu, 3 Jul 2025 16:04:24 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Benno Lossin <lossin@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Matthew Maurer <mmaurer@google.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Timur Tabi <ttabi@nvidia.com>, linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org,
-	Dirk Behme <dirk.behme@de.bosch.com>
-Subject: Re: [PATCH v8 4/6] rust: debugfs: Support arbitrary owned backing
- for File
-Message-ID: <aGaN6PT-w9b2pQOr@pollux>
-References: <2025070131-icon-quarters-0c16@gregkh>
- <aGPtCBB6nWTNJuwK@pollux>
- <2025070137-tartar-juncture-fcd2@gregkh>
- <aGP6d2-jJy5rtjMK@pollux>
- <aGZVUqangIR-c4aW@google.com>
- <DB2COGYW20C5.2YN1TFXR87UTS@kernel.org>
- <CAH5fLgjaNzOHNxa+XY1c2V5A1H2RhWP9gHAAmHx=9LN9CbHq=Q@mail.gmail.com>
- <2025070349-tricky-arguable-5362@gregkh>
- <aGZ3q0PEmZ7lV4I-@pollux>
- <DB2GJB0ZRCSN.32R6OOCOMSO2Q@kernel.org>
+	s=arc-20240116; t=1751551542; c=relaxed/simple;
+	bh=RFhmM+0SWORGoM20VwdPsAHkqBELRVeudXp7nbrppv8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=O+YQsr6WiK/+MP6KewYNpCkBvQwpbdgUVk6UCR2zyanCjwOcXnZeu9PP2Y543hQfWruKTDaM7RBLYvwGanpZSmeqajkzjJ/kpAQVUUljz87KE5YjjiD2I+V0mZKFfrpcn5kww9/mljHvCzDMPMeGOqrARRdgsEF1ma5ROAg+7SI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HXlJH26f; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-54d98aa5981so8188791e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Jul 2025 07:05:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751551539; x=1752156339; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=JmUr7a9e0PATdvV0LHXQVvdSyYTobgcYcqniNe1h/bk=;
+        b=HXlJH26f5UrDs70ngFYWiXmKL/HotS0aQKKSQvA29Vviwh+netlCyWGbO2b9Y2kiMr
+         BcUkPU9eoBe52kkMp7avGurvDJlM38kyNjY+UV0DvWFXarnha2wWXs7Rn4h8spyswvIf
+         2hQQy9tP2Xjeu6diD5k2YzMYfkdinOlgf3VNkeuRb3liRBFsf+iv5H4QXb5WBOcK+rfm
+         gUQhpn0H4Agk3ouwDOC+YEHavCa9zGgGhRBY59XcMQvYLIaBGSoRjqK96BAQCMZkr1m5
+         ySYtXgIm2hJ/8c07PrKHAU8KNufClvNeMTKpM0NmZU6vIxY4Uprk35JpqCukCyTYj4KS
+         aJBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751551539; x=1752156339;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JmUr7a9e0PATdvV0LHXQVvdSyYTobgcYcqniNe1h/bk=;
+        b=qrqsZRUeaW6QQ1zU0mj04b8g/E9R355HV99r3xarAsdSn4quIHfNvrDE5kH1sCWNsr
+         zCKMsGUNDk5VnW3DpJ8qZbQeAqIt6QGzEghP10PMT1Bmj5xhgUOEq0BNl/5XBvjMbA6k
+         E8pzDURLBNz6VgoNvWhANaCYEfnDBwvrOgNNJ+GVbAho6dc7x25eyIL7Hkxe7ucuyBHE
+         D16p/kK7OIJ0f9XwdLhKZpVLGQgqdNuTx9sgK4CauJr22F6cPNA23/rBC9n7Tto7zv6R
+         BKIAVH2oGFnhOcmm36cklgzgESjFNSuZ5+RYAYofEzmET6ONOq7HtRIgA4J2nuna2YeI
+         gziA==
+X-Forwarded-Encrypted: i=1; AJvYcCVs6/guNpXwssWzy/g/Ar4zknuAo5dUJCj6TBKFJGCnA2s+J8v4uzfrp1O5CtdPvEQARwSWYLh6xKtyX+I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCR6MhcsllJwk8X6xMsU9piuuoG/GCX5nwgz6yWni/xH2g/M8z
+	sAcinxeVkSXVSVgHUv9T6TlyvOPn1xGFn9qHCLXPnsWssvy4BXuhbl4k
+X-Gm-Gg: ASbGncs8RiRu4EIAJ5l6yEbimhVotP65Tm9ydNSddx3zM5OXtA58OSrMS8Htmfb0OHQ
+	VuQZY6g3gGvmftcuCJ7Q1REGbhQ/Weg6tZbvbvUzKPhwSuCCGCjTY6YkBTozfIkP/2LL/PKWPHh
+	8mV0B9oOIP+8HonmaEykQ84bYqsWspOhK6KbFJkA/ipafxN2uoH7BXBLccIXl/ic+lx08iTmWPm
+	Mum5g7mYjnEQl6fDJLETpJdxXWTv+HsQOkLhumMRDyOxMT6oobI+HG1gg/pZgW+Nah1awODu0YP
+	RnMU8xe2MO8FxNRwLfNwWJe+tya9BwJ5j1LqbneuukVxTDqZ7YaYTrR3uRbhkJNppV6ytJx5/QI
+	rs95FgPJApw==
+X-Google-Smtp-Source: AGHT+IH3oVtukEMZKjnNjSNsZF/v94pisXnFb81xGOvkRQiVVqdLP6ILpVrCEuXxOzNZO5u54DBolA==
+X-Received: by 2002:a05:6512:12d1:b0:553:3178:2928 with SMTP id 2adb3069b0e04-556282c250bmr2919602e87.16.1751551538784;
+        Thu, 03 Jul 2025 07:05:38 -0700 (PDT)
+Received: from localhost.localdomain ([80.87.144.137])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5550b2a73ebsm2442274e87.101.2025.07.03.07.05.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Jul 2025 07:05:38 -0700 (PDT)
+From: Alexander Kochetkov <al.kochet@gmail.com>
+To: Russell King <linux@armlinux.org.uk>,
+	Heiko Stuebner <heiko@sntech.de>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: Alexander Kochetkov <al.kochet@gmail.com>
+Subject: [PATCH] ARM: rockchip: fix kernel hang during smp initialization
+Date: Thu,  3 Jul 2025 17:04:53 +0300
+Message-ID: <20250703140453.1273027-1-al.kochet@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DB2GJB0ZRCSN.32R6OOCOMSO2Q@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jul 03, 2025 at 03:34:23PM +0200, Benno Lossin wrote:
-> On Thu Jul 3, 2025 at 2:29 PM CEST, Danilo Krummrich wrote:
-> > So, what I'm trying to say is, I think it's a good thing if fields that are
-> > protected by the same lock can't be exposed through separate files, because it
-> > means that the fields only make sense in the context of each other.
-> 
-> I think that even the pin-init API can have multiple files for different
-> elements of the locked structure, you just need to nest `File`:
-> 
->     #[pin_data]
->     struct Process {
->         task: ARef<Task>,
->         #[pin]
->         inner: File<File<SpinLock<ProcessInner>>>,
->     }
->     
->     pub(crate) struct ProcessInner {
->         threads: RBTree<i32, Arc<Thread>>,
->         max_threads: u32,
->     }
-> 
-> Now you can do:
-> 
->     pin_init!(Process {
->         inner <- dir.create_file(
->             "threads",
->             dir.create_file("max_threads", new_spinlock!(...)),
->         ),
->         // ...
->     })
-> 
-> But I'd say this will at least raise eyebrows for the reviewers, which
-> is good, since it catches the footgun.
+In order to bring up secondary CPUs main CPU write trampoline
+code to SRAM. The trampoline code is written while secondary
+CPUs are powered on (at least that true for RK3188 CPU).
+Sometimes that leads to kernel hang. Probably because secondary
+CPU execute trampoline code while kernel doesn't expect.
 
-Heh! I didn't even think of this trick. I agree, this should at least raise some
-eyebrows. :)
+The patch moves SRAM initialization step to the point where all
+secondary CPUs are powered down.
+
+That fixes rarely hangs on RK3188:
+[    0.091568] CPU0: thread -1, cpu 0, socket 0, mpidr 80000000
+[    0.091996] rockchip_smp_prepare_cpus: ncores 4
+
+Signed-off-by: Alexander Kochetkov <al.kochet@gmail.com>
+---
+ arch/arm/mach-rockchip/platsmp.c | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
+
+diff --git a/arch/arm/mach-rockchip/platsmp.c b/arch/arm/mach-rockchip/platsmp.c
+index 36915a073c23..f432d22bfed8 100644
+--- a/arch/arm/mach-rockchip/platsmp.c
++++ b/arch/arm/mach-rockchip/platsmp.c
+@@ -279,11 +279,6 @@ static void __init rockchip_smp_prepare_cpus(unsigned int max_cpus)
+ 	}
+ 
+ 	if (read_cpuid_part() == ARM_CPU_PART_CORTEX_A9) {
+-		if (rockchip_smp_prepare_sram(node)) {
+-			of_node_put(node);
+-			return;
+-		}
+-
+ 		/* enable the SCU power domain */
+ 		pmu_set_power_domain(PMU_PWRDN_SCU, true);
+ 
+@@ -316,11 +311,19 @@ static void __init rockchip_smp_prepare_cpus(unsigned int max_cpus)
+ 		asm ("mrc p15, 1, %0, c9, c0, 2\n" : "=r" (l2ctlr));
+ 		ncores = ((l2ctlr >> 24) & 0x3) + 1;
+ 	}
+-	of_node_put(node);
+ 
+ 	/* Make sure that all cores except the first are really off */
+ 	for (i = 1; i < ncores; i++)
+ 		pmu_set_power_domain(0 + i, false);
++
++	if (read_cpuid_part() == ARM_CPU_PART_CORTEX_A9) {
++		if (rockchip_smp_prepare_sram(node)) {
++			of_node_put(node);
++			return;
++		}
++	}
++
++	of_node_put(node);
+ }
+ 
+ static void __init rk3036_smp_prepare_cpus(unsigned int max_cpus)
+-- 
+2.43.0
+
 
