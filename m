@@ -1,70 +1,67 @@
-Return-Path: <linux-kernel+bounces-714320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 490A1AF6685
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 02:12:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 843FAAF667B
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 02:10:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 232CC7B499B
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 00:11:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45A32488259
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 00:09:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAE752114;
-	Thu,  3 Jul 2025 00:12:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA57C2566;
+	Thu,  3 Jul 2025 00:10:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ACBwzBDs"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="ZBoHmU5B"
+Received: from smtp153-166.sina.com.cn (smtp153-166.sina.com.cn [61.135.153.166])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B4B3136E;
-	Thu,  3 Jul 2025 00:12:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07674A2D
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 00:10:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=61.135.153.166
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751501549; cv=none; b=eMTuwoYhfT2izJR3Ig1nHhL+8xnLsXsR3Je7TZwPLONRp5LuUJfoD90HZLIDbdaIyFPQ1EMHhOydHR16hg6wXRoA08DnKTwZRT9H8Kc7cIo7fXKYHdUaY3OylZ2Rvyrd/HOgRK8k++Ff3yCYRwynP1Rp9Zkya8/GAg2j3IJulUw=
+	t=1751501413; cv=none; b=DkFGTAmra6AfchJrnh0TUSWeyuZ2mEEQacQ6u21Ig3WmEhmVOXiiLfrNCdPs0n8PNYG+0zy3TDR0EFmSs/1Foorsc0MU6I1tpGSClgj8bJRok+Z/HDvaKqE1shXlNFuqFQx6iYCLefyIVJ/u2GvaCH7DPEwwkcprppvrWYPlm7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751501549; c=relaxed/simple;
-	bh=xcaAV4fgHILHGbeXPuCYVyWzm4CjE9OTYgdu4iXec/w=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kikfwI6En0nAv4EnwDkpB9cOlGSDtE3mUq7JmZmtsiAE0kJezsPAhJk9cKMdBPPVtOyD38eajXH960QEHyVsC7DZwRVnLvQuM92j+fZvIqaS/Ji9GltavXGlGDqSU+TA9Jjgy0YFrbjBF4biQ8i58d9ErC9lDgv3uK8PjocJvsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ACBwzBDs; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 56306flX4061309;
-	Wed, 2 Jul 2025 19:06:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1751501201;
-	bh=zTShQvNmYJsUbdqrutBggdEFTR1g+rS+ikJtmUsfF60=;
-	h=From:To:CC:Subject:Date;
-	b=ACBwzBDsLK/nxNfHEcv2fQdi6OiJJjVzof6WNTafSjEVQbZZT+NrcM4HEgrE9dVoh
-	 +9qg0wgtKESB4XyZkGOM63Whp++YJtDaBKx6NYLHglvEENV8mqXtG70Yf4BOQRHqfu
-	 2w7ta5irKRaR0FCNQ5UiqM/NnFUdN6vEWmAln1FU=
-Received: from DFLE110.ent.ti.com (dfle110.ent.ti.com [10.64.6.31])
-	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 56306fCv1313797
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Wed, 2 Jul 2025 19:06:41 -0500
-Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 2
- Jul 2025 19:06:41 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Wed, 2 Jul 2025 19:06:41 -0500
-Received: from lelvem-mr06.itg.ti.com ([10.250.165.138])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 56306ZSx4057921;
-	Wed, 2 Jul 2025 19:06:36 -0500
-From: Baojun Xu <baojun.xu@ti.com>
-To: <tiwai@suse.de>
-CC: <broonie@kernel.org>, <andriy.shevchenko@linux.intel.com>,
-        <alsa-devel@alsa-project.org>, <shenghao-ding@ti.com>, <navada@ti.com>,
-        <13916275206@139.com>, <v-hampiholi@ti.com>, <v-po@ti.com>,
-        <linux-sound@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <baojun.xu@ti.com>
-Subject: [PATCH v1] ALSA: hda/tas2781: Add bus name in device name check
-Date: Thu, 3 Jul 2025 08:06:08 +0800
-Message-ID: <20250703000608.20815-1-baojun.xu@ti.com>
-X-Mailer: git-send-email 2.43.0.windows.1
+	s=arc-20240116; t=1751501413; c=relaxed/simple;
+	bh=rRPioumneuiJaVlhzjVZhRS9MlUjEeHTutmHxkuuMrk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=LrZEsCdn+IKukDa47sdsNln0NHoxokTk5ghGHFSR2VToLvKGr2L6P7ZZSb9SluAgBqVx7ad6S7dPTIddh+ZaoY/zBik4WtZ7il+pAon7gt/GKeSd55t4CClvX5j88wFbTbb1Zp+y8iOfNGL9Cl0VyWcu35fCBB12UuFte652Vqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=ZBoHmU5B; arc=none smtp.client-ip=61.135.153.166
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1751501406;
+	bh=6m40dybLDUQecOAnZiZrJZiryDjKCDJTyHboSV03wXA=;
+	h=From:Subject:Date:Message-ID;
+	b=ZBoHmU5B/teard6miBHBnZeg+LCnkfglt2V3HTavUlBjYsX34bnZgrgI4ED7hH5cO
+	 Uj/Xyqm3QIMvFJLPz4XX8ujHej0WBIdK76s4pCKw4HF/dRGTthoLKaVMIlprEag6tn
+	 HEmoW08PPU1YiDGA9VfWBHxCYhcr5Y6zUsrUJqoI=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.33) with ESMTP
+	id 6865CA5400002D5F; Thu, 3 Jul 2025 08:09:58 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 313486685340
+X-SMAIL-UIID: F0653F4ED50045D6A8531C61B87761C7-20250703-080958-1
+From: Hillf Danton <hdanton@sina.com>
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: syzbot <syzbot+d630bd89141124cc543e@syzkaller.appspotmail.com>,
+	gregkh@linuxfoundation.org,
+	linux-kernel@vger.kernel.org,
+	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	linux-usb@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [usb?] INFO: task hung in hub_activate (3)
+Date: Thu,  3 Jul 2025 08:09:45 +0800
+Message-ID: <20250703000946.2200-1-hdanton@sina.com>
+In-Reply-To: <fc5f7057-1c91-4354-89d5-f8bdeeae988a@rowland.harvard.edu>
+References: <68648254.a70a0220.3b7e22.20c4.GAE@google.com> <20250702080515.2160-1-hdanton@sina.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,31 +69,74 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Device name start from bus name, as we use strstarts()
-to do compare, need add it for TXNW2781 device.
+On Wed, 2 Jul 2025 10:34:51 -0400 Alan Stern wrote:
+> On Wed, Jul 02, 2025 at 04:05:14PM +0800, Hillf Danton wrote:
+> > On Tue, 01 Jul 2025 17:50:28 -0700
+> > > Hello,
+> > > 
+> > > syzbot found the following issue on:
+> > > 
+> > > HEAD commit:    1343433ed389 Add linux-next specific files for 20250630
+> > > git tree:       linux-next
+> > > console output: https://syzkaller.appspot.com/x/log.txt?x=10d1f88c580000
+> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=66357ac5b0466f16
+> > > dashboard link: https://syzkaller.appspot.com/bug?extid=d630bd89141124cc543e
+> > > compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
+> > > 
+> > > Unfortunately, I don't have any reproducer for this issue yet.
+> > > 
+> > > Downloadable assets:
+> > > disk image: https://storage.googleapis.com/syzbot-assets/b005e1db0f8c/disk-1343433e.raw.xz
+> > > vmlinux: https://storage.googleapis.com/syzbot-assets/cb3aa8bfd514/vmlinux-1343433e.xz
+> > > kernel image: https://storage.googleapis.com/syzbot-assets/e01227599a09/bzImage-1343433e.xz
+> > > 
+> > > IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> > > Reported-by: syzbot+d630bd89141124cc543e@syzkaller.appspotmail.com
+> > > 
+> > > INFO: task kworker/0:0:9 blocked for more than 143 seconds.
+> > >       Not tainted 6.16.0-rc4-next-20250630-syzkaller #0
+> > > "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> > > task:kworker/0:0     state:D stack:21240 pid:9     tgid:9     ppid:2      task_flags:0x4208060 flags:0x00004000
+> > > Workqueue: events_power_efficient hub_init_func2
+> > > Call Trace:
+> > >  <TASK>
+> > >  context_switch kernel/sched/core.c:5313 [inline]
+> > >  __schedule+0x16f5/0x4d00 kernel/sched/core.c:6696
+> > >  __schedule_loop kernel/sched/core.c:6774 [inline]
+> > >  schedule+0x165/0x360 kernel/sched/core.c:6789
+> > >  schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6846
+> > >  __mutex_lock_common kernel/locking/mutex.c:679 [inline]
+> > >  __mutex_lock+0x724/0xe80 kernel/locking/mutex.c:747
+> > >  device_lock include/linux/device.h:884 [inline]
+> > >  hub_activate+0xb7/0x1ea0 drivers/usb/core/hub.c:1096
+> > >  process_one_work kernel/workqueue.c:3239 [inline]
+> > >  process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3322
+> > >  worker_thread+0x8a0/0xda0 kernel/workqueue.c:3403
+> > >  kthread+0x70e/0x8a0 kernel/kthread.c:463
+> > >  ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
+> > >  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+> > >  </TASK>
+> > 
+> > Due to lockdep_set_novalidate_class(&dev->mutex) in device_initialize(),
+> > task hung instead of deadlock is reported once more.
+> > 
+> > 	kworker/0:0:9		kworker/0:5:5923
+> > 	---			---
+> > 	hub_init_func2()	usb_disconnect()
+> > 				device_lock()
+> > 	device_lock()		hub_disconnect()
+> > 				hub_quiesce()
+> > 				flush_delayed_work(&hub->init_work);
+> > 	*** DEADLOCK ***
+> 
+> This analysis looks right.  How would you fix the deadlock?  Make 
+> hub_disconnect do device_unlock() and device_lock() around the 
+> flush_delayed_work() call?
+> 
+I will try it once a reproducer is available.
 
-Signed-off-by: Baojun Xu <baojun.xu@ti.com>
----
- sound/pci/hda/tas2781_hda_i2c.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hillf
 
-diff --git a/sound/pci/hda/tas2781_hda_i2c.c b/sound/pci/hda/tas2781_hda_i2c.c
-index b9cdbca95..530c2266a 100644
---- a/sound/pci/hda/tas2781_hda_i2c.c
-+++ b/sound/pci/hda/tas2781_hda_i2c.c
-@@ -588,7 +588,7 @@ static int tas2781_hda_i2c_probe(struct i2c_client *clt)
- 		hda_priv->save_calibration = tas2781_save_calibration;
- 		tas_hda->priv->global_addr = TAS2781_GLOBAL_ADDR;
- 	} else if (strstarts(dev_name(&clt->dev),
--			     "TXNW2781:00-tas2781-hda.0")) {
-+			     "i2c-TXNW2781:00-tas2781-hda.0")) {
- 		device_name = "TXNW2781";
- 		hda_priv->save_calibration = tas2781_save_calibration;
- 		tas_hda->priv->global_addr = TAS2781_GLOBAL_ADDR;
--- 
-2.43.0
-
+> Alan Stern
 
