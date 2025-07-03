@@ -1,55 +1,55 @@
-Return-Path: <linux-kernel+bounces-715935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-715936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CCD5AF7FE2
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 20:23:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2044EAF7FE5
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 20:24:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 85AFE7A69E3
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 18:22:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F92D4E75A3
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 18:23:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69AEC2F5C36;
-	Thu,  3 Jul 2025 18:21:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 951292F6F88;
+	Thu,  3 Jul 2025 18:21:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nabijaczleweli.xyz header.i=@nabijaczleweli.xyz header.b="lONNnLqh"
+	dkim=pass (2048-bit key) header.d=nabijaczleweli.xyz header.i=@nabijaczleweli.xyz header.b="KwjzmyrN"
 Received: from tarta.nabijaczleweli.xyz (tarta.nabijaczleweli.xyz [139.28.40.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89DB22F509F;
-	Thu,  3 Jul 2025 18:21:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A77732F5473;
+	Thu,  3 Jul 2025 18:21:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=139.28.40.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751566881; cv=none; b=pNSQM7+5b0zFl3SSJZylBnyR7Vq8scWRBAD52yCDVEL6/ySK+42Lp9lNeLCH/s5C63QQ6Ty295+MwTDdjocvamY9ITPP5D1HuAauA6sFfP3qm03iU/x0ZhnY39ox7YawhDWHxCx96XGps8na/jpVEiE/5wto6ZFks5pclK6xMrM=
+	t=1751566883; cv=none; b=QvTD3IcpOgFXFNbvqCVZSMfg7EM8nwwiWErMZXKopuHm2/g0Cnw6fNGA1+6N91eHkfHT6Y0NQhL2fHWZ0GdzYRtwmBfLhor4IAuPlAVsHZOhdqnzUQxhYMkJ8XLqTPl6sk3W6lSqPcR/4Im2zfV4I0PiVThRNfwT1P27IKNpF4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751566881; c=relaxed/simple;
-	bh=FF2x/28XJUnk5eS0Smdkvo3YNlb+ZyKmV07f5R0f6VQ=;
+	s=arc-20240116; t=1751566883; c=relaxed/simple;
+	bh=3iACZNAuN9nKVxr6mJF18JcL732AdKXi3lsmFG3/zmo=;
 	h=Date:From:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=bVu1/3h68Wy2hDN7d9f63N1+yjgXZ/ak3EcHHYn+GvwpY1fEuSCk26bpSKXQe/MRRjF2kwcH8zhnFw1fe+1hvQmXRL5jUiHPhtB3xEsyB6cSMKmpXftqRhviOD/oUN/k9lmUyHyjE+FhX1sVYuoTdBcgtPYnvd84LVajH7xt5qw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nabijaczleweli.xyz; spf=pass smtp.mailfrom=nabijaczleweli.xyz; dkim=pass (2048-bit key) header.d=nabijaczleweli.xyz header.i=@nabijaczleweli.xyz header.b=lONNnLqh; arc=none smtp.client-ip=139.28.40.42
+	 Content-Disposition; b=EGN7agZx0ElMi/yQ3ioUBcFG6plFUhqyF3XDEKomoH3dgphrbTcD8Ys3Kwgw5QGTCB2p7GGtN30GQpti5WAJe77NHJ8pe9HdyJoXZ5TGMMZ2J+qCColK8b0AChqPP0J8P+Lz8xdNmh0kPW0mFBAZ4HLT9OjfxZxRqPp1eYeSjfA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nabijaczleweli.xyz; spf=pass smtp.mailfrom=nabijaczleweli.xyz; dkim=pass (2048-bit key) header.d=nabijaczleweli.xyz header.i=@nabijaczleweli.xyz header.b=KwjzmyrN; arc=none smtp.client-ip=139.28.40.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nabijaczleweli.xyz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nabijaczleweli.xyz
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nabijaczleweli.xyz;
-	s=202505; t=1751566876;
-	bh=FF2x/28XJUnk5eS0Smdkvo3YNlb+ZyKmV07f5R0f6VQ=;
+	s=202505; t=1751566878;
+	bh=3iACZNAuN9nKVxr6mJF18JcL732AdKXi3lsmFG3/zmo=;
 	h=Date:From:Cc:Subject:From;
-	b=lONNnLqhJ0KitUUpjBZa/OZoHJk37bxbaxHnF+JWOqEQVBUj3KM1tb589togSNXJx
-	 6r96k88vXm0MfxGL3v3PUQDGtH9FDVrW2XwGnNFYWvjeF6R/5gMcZ7VR0NM3Dhgipi
-	 CZ/AGJMeV0m+sKtLZYheeiUL/RtHm41SLOcxDi9BDRxua3Sw+jrc7BdKR+FFhys6ed
-	 jD3NZ5Y8Y6vqWSMkkqgB6rvyTrvT8G5f6gMZJ54nRBSvjt54z6Ss887jQuQL8+RksH
-	 uclXNyLsjHD2xRj94X0JgFb/btinTVSXfhi3qqOb5TP5uaYKH0Z+T4jVuv48zGJIhh
-	 1X9+/662JwwPw==
+	b=KwjzmyrNdvojjc0FcGCE4iEx2w6ieVuZpIDxq20ZnVErb15tistzsPmUQSFb6yzwD
+	 SxSzrBdMgDP3qVCHxyNglGpZb4uM6fNg6XdFm3OMaXVtyW4XKldDhE+L/Mvq41GnJm
+	 AGDoOm9Y/seeIENghfba7IEm5OhawmuL/CJUC6ZCWjylw7sGfcRNSKhGwxSjEWcql3
+	 u2uSJvQ9j/SObFBbxcGFWPRUqGL4qGB2FbMrcK4WIwnBsJK8voDIjQPxFJsiM14DjX
+	 oemdUoREirEX9UQqjtFmoXD0yqiDPkKHvHpsG4Jvxnu64VN2TqmAmsjzbgmgNYuiC+
+	 7ms5vSygZ3n6A==
 Received: from tarta.nabijaczleweli.xyz (unknown [192.168.1.250])
-	by tarta.nabijaczleweli.xyz (Postfix) with ESMTPSA id CEFD26B4;
-	Thu,  3 Jul 2025 20:21:16 +0200 (CEST)
-Date: Thu, 3 Jul 2025 20:21:16 +0200
+	by tarta.nabijaczleweli.xyz (Postfix) with ESMTPSA id DA6826B6;
+	Thu,  3 Jul 2025 20:21:18 +0200 (CEST)
+Date: Thu, 3 Jul 2025 20:21:18 +0200
 From: 
 	Ahelenia =?utf-8?Q?Ziemia=C5=84ska?= <nabijaczleweli@nabijaczleweli.xyz>
-Cc: Chas Williams <3chas3@gmail.com>, 
-	linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] atm: lanai: fix "take a while" typo
-Message-ID: <mn5rh6i773csmcrpfcr6bogvv2auypz2jwjn6dap2rxousxnw5@tarta.nabijaczleweli.xyz>
+Cc: Coly Li <colyli@kernel.org>, 
+	Kent Overstreet <kent.overstreet@linux.dev>, linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] bcache: fix "for/take a while" typos
+Message-ID: <vabrss3eucpl4xhvyrqflqj4rgtpzhv76wjtlqldlafdonkgjr@tarta.nabijaczleweli.xyz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,12 +57,12 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="rcjykay5rnmkaem3"
+	protocol="application/pgp-signature"; boundary="4ylhdbo5nsuet76i"
 Content-Disposition: inline
 User-Agent: NeoMutt/20231221-2-4202cf-dirty
 
 
---rcjykay5rnmkaem3
+--4ylhdbo5nsuet76i
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -72,45 +72,62 @@ Signed-off-by: Ahelenia Ziemia=C5=84ska <nabijaczleweli@nabijaczleweli.xyz>
 v1: https://lore.kernel.org/lkml/h2ieddqja5jfrnuh3mvlxt6njrvp352t5rfzp2cvnr=
 ufop6tch@tarta.nabijaczleweli.xyz/t/#u
 
- drivers/atm/lanai.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/md/bcache/bcache.h  | 2 +-
+ drivers/md/bcache/request.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/atm/lanai.c b/drivers/atm/lanai.c
-index 2a1fe3080712..0dfa2cdc897c 100644
---- a/drivers/atm/lanai.c
-+++ b/drivers/atm/lanai.c
-@@ -755,7 +755,7 @@ static void lanai_shutdown_rx_vci(const struct lanai_vc=
-c *lvcc)
- /* Shutdown transmitting on card.
-  * Unfortunately the lanai needs us to wait until all the data
-  * drains out of the buffer before we can dealloc it, so this
-- * can take awhile -- up to 370ms for a full 128KB buffer
-+ * can take a while -- up to 370ms for a full 128KB buffer
-  * assuming everone else is quiet.  In theory the time is
-  * boundless if there's a CBR VCC holding things up.
-  */
+diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
+index 1d33e40d26ea..7318d9800370 100644
+--- a/drivers/md/bcache/bcache.h
++++ b/drivers/md/bcache/bcache.h
+@@ -499,7 +499,7 @@ struct gc_stat {
+  * won't automatically reattach).
+  *
+  * CACHE_SET_STOPPING always gets set first when we're closing down a cach=
+e set;
+- * we'll continue to run normally for awhile with CACHE_SET_STOPPING set (=
+i.e.
++ * we'll continue to run normally for a while with CACHE_SET_STOPPING set =
+(i.e.
+  * flushing dirty data).
+  *
+  * CACHE_SET_RUNNING means all cache devices have been registered and jour=
+nal
+diff --git a/drivers/md/bcache/request.c b/drivers/md/bcache/request.c
+index af345dc6fde1..87b4341cb42c 100644
+--- a/drivers/md/bcache/request.c
++++ b/drivers/md/bcache/request.c
+@@ -257,7 +257,7 @@ static CLOSURE_CALLBACK(bch_data_insert_start)
+=20
+ 	/*
+ 	 * But if it's not a writeback write we'd rather just bail out if
+-	 * there aren't any buckets ready to write to - it might take awhile and
++	 * there aren't any buckets ready to write to - it might take a while and
+ 	 * we might be starving btree writes for gc or something.
+ 	 */
+=20
 --=20
 2.39.5
 
---rcjykay5rnmkaem3
+--4ylhdbo5nsuet76i
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEfWlHToQCjFzAxEFjvP0LAY0mWPEFAmhmyhwACgkQvP0LAY0m
-WPFhBw//QYc1hyRpocO5wKStP3c0G519ANKWysbhqHlkw5/sYp1VyoKzTDCZZ/im
-rDRHXA95tYp0Xjr8lB6yUcjQ5oCxXGEgRUzuLowY01E37cQuAkpoHLVZApcsf5x6
-qhp5bG+draBhzeYQc2Y5WHx3oA6FczZdV+KyvZ+XqYbQsQmnxqhEET+0MT4wqcG6
-9h7gqMCAKDW6sqrXMzoitAXV5AdSpBS9xEDKAdzD53/NM8D5PdN1/l4EKl9xfrDd
-spgtWkf5BGIVEtYkzAaV0Pd6GpFXd17qhNPfkf6gzUFRd6ks+fmlMlpc4i0uNmhH
-XtbghkJ4rUiKOwOQlVCX/iTyooTS1wCMVvD1AXSiDKusKr8r6RqB+IGJTAjG6BBp
-ed+S+uk/daPScVKA2XS9c168wL+DiSt0f/ypUyg6tkPV0c2zmhRxFUrxr+Lm3wXk
-Hxxz5wDAKnotSlMHr9krzLjAqS2jPaHX+gyMHWKhrx6jYvOSYxBAwi14Ywn/Vlaz
-pJuxvdADaNRh4yf+4dAA+n/FyuQhRhsoGe0zHEBf31Jti9twpFr8D5eGHbdFvzMs
-2/5/H65IgrMOUzGK23gWJA8BW2/rsUDImlKuou36Rpml1vMRU1bs5X0aGU8Sje6N
-npeh9ackoAlyvtJndgZxHhNgRyOWDwHoH4lPN89/4rfEyutF+Hk=
-=wSrb
+iQIzBAABCgAdFiEEfWlHToQCjFzAxEFjvP0LAY0mWPEFAmhmyh4ACgkQvP0LAY0m
+WPFb/RAAhUaZGYwDjdqRoAqZ4TvfB2hAZg6+r8naz2z9DlDKdiucWHCfxZ8j/CR8
+OuVvLwMIQkh2KCkNMCcBJ51T9J1AaZ6UM3B56Hf3v9u9wElZPXMv27o9lzc9fZJq
+ypB61rP0y5vtdCVzQmbIlYtrxrPsRzq9U8GdrmrK8uGqTQPb0O9F/G5HTjet2pcc
+jGcADzjMrAcFiro3Ziqt3rCOwK61Cr7CYwhOPbG+6EkhpqUBIb+OhrpCJdSsoAaN
+yJemqHbaZruMcPJc4ffMMynsYski334LEDmSlu+VurnUCW9lnFgULDqHUCFbYKzn
+Vfe1sGzc/LQk9l12ewpWc+koL8RtCBq10vdY3zR5xoZsam3Lp8O+x/VPH3rhQXJ+
+aR39gT5gaRNfhPPRUtDIxWJfRF27oQ0Vq13Gv9qMzKkUvMJXwOtkrwW2bEMMFXZq
+HYERpHtdTsbcsrmFVSd1MNQRZrO6kjcqk08VNWEGCryrNyAjcWBd3krCFH1a75/a
+xnWti6sLbSDVOoJgZgFZQT/Z3JEVAZW/2x7UInS/6Kd0nixcc9nXOTMKW6+D70WQ
+hwBgxqD/sq7+NTxT7imQwL1gtLz4KOkFYF6T/5P9dpArI9HCndRrefqFskZcIzX6
+AP/pieZyhqKsQBJVEv1g5Z61MYwBL7UIXGFVUGexM8ohsuOELuY=
+=X+wZ
 -----END PGP SIGNATURE-----
 
---rcjykay5rnmkaem3--
+--4ylhdbo5nsuet76i--
 
