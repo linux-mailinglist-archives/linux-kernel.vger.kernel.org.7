@@ -1,172 +1,113 @@
-Return-Path: <linux-kernel+bounces-715776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-715783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47431AF7DAA
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 18:22:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3846AF7DE6
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 18:30:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9915F4A28A5
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 16:21:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07CFF1C84464
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 16:27:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C04424DCF8;
-	Thu,  3 Jul 2025 16:22:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FA0B24EA81;
+	Thu,  3 Jul 2025 16:26:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="nPjVjOhH"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KBUEAZ87"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B383157E99;
-	Thu,  3 Jul 2025 16:22:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ED1B24DD0C;
+	Thu,  3 Jul 2025 16:26:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751559722; cv=none; b=MOgwN9AvWCQtJJmipMhPUK57HGeMlQCpwXFBE4sUanMWcpRqAbUUsbElFYVk5z0MVAdijW8TYRmFtOu5D8PBcnMkY1tqm048p0+t4k1Jn/AeG7X4/keSPlL2X1dLQcOPK07u3OlyPodr6BAmssY1qq7h8bVkXeKU030uEOvIGHg=
+	t=1751560007; cv=none; b=UD7it9fJEviHrUcmKDEoFscMmM5ssR2EIPKed6BcrF5XDzgRBSUQIyWhEQu6eAVV2cJe0W1Mf0M093c5qe/p92taJShhUhImazyc4EXKxg4a/hfMv7yB0dpNBgPQXYxOaEoucoxXC/Zoc++ru1jq0evDJ8QA/A3rDLeZZ5CjcVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751559722; c=relaxed/simple;
-	bh=qsElSjws3oA4dpN+ZkpRfZW49vQ5t5xw1uuPlsuVDnQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RxZSr1a06y2dTuv2EynDD75NOrEhb4f9k+WRpJQmxrS41QPEYARgHpuV8/uvL6+kzw0KZNLMVJDgPqStIIIt9DoAXCiqA7paXqrAuLDFFOVv+SA3h5jomVZfdOwZMXWrd2M/BTt+Vm3f9K8C+XzWE1ea9qolBkbjFlfkmUyo6lM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=nPjVjOhH; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 563BMSVt001883;
-	Thu, 3 Jul 2025 16:21:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=i8NkVe
-	LpEBDLuD6THW1Trv/bMVVo2C2v0DHjwQo3bG8=; b=nPjVjOhH5nq/W9IrKkYFwE
-	yFP0QDNtTxXvm0SbaV+ruC9KKFuXRmsUQjZgM3XIljJMTig51wjj9HGddeV9urDg
-	MvLcOHE/yQHBEvm7FGyeU3qu5YGtdd7FKC8cIGTim87eQsBRWI2pEnalw6h8pr8C
-	9lJuMhSO3KLP2Kia3b67Kq07PSpTcir+F9HlPkkQ0+VivUv7/OMX1xk/TRltepGm
-	C2nfj2kDzcDkHh/gE58CVD66eZPRmVyCp/QJxd3csmEOWqW1cnk7uqtvAraZEwln
-	C0pzjf1KtO+ZPrLncSFrgs1Y3KjEnqxw1qL6SbIxw211yeiTQyOPaBwZMidA19rQ
-	==
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47j84dn1d9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 03 Jul 2025 16:21:15 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 563EQ8r2012027;
-	Thu, 3 Jul 2025 16:21:14 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 47jv7n5qsu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 03 Jul 2025 16:21:14 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 563GLCAi34800222
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 3 Jul 2025 16:21:12 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0E9EB2004D;
-	Thu,  3 Jul 2025 16:21:12 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A78D72004B;
-	Thu,  3 Jul 2025 16:21:11 +0000 (GMT)
-Received: from [9.152.222.224] (unknown [9.152.222.224])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Thu,  3 Jul 2025 16:21:11 +0000 (GMT)
-Message-ID: <d4fb9d4c-13d6-41fc-8c17-dee6cc0a77eb@linux.ibm.com>
-Date: Thu, 3 Jul 2025 18:21:10 +0200
+	s=arc-20240116; t=1751560007; c=relaxed/simple;
+	bh=OzkE5YzGv4a64gH/xm2Y6n/iTkv2o7eX4zO+nwD0Ap8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ewFaNDhOjDAqugBNJvh8oPYOMF2yov1IHD3UebocItG4dN8+Ar+YzdIYKvnInkgV/ty85k7vOIUZASupG/i/sBecnKGuOlvwOlf2codxQHqwmVM4lKyHjUZLLEaFt3f8mARP3dwNSiLtDf9m2Pf+uGG21taQM8Y2ULo7BcoKF/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KBUEAZ87; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B930C4CEE3;
+	Thu,  3 Jul 2025 16:26:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751560007;
+	bh=OzkE5YzGv4a64gH/xm2Y6n/iTkv2o7eX4zO+nwD0Ap8=;
+	h=From:Subject:Date:To:Cc:From;
+	b=KBUEAZ87bw/Y/xEK0apWiSR911PTT0LR9C1AwPeoI8I/PEvYcPORmV+Mkx6jR+Df1
+	 0V+VW7maFgzuWXElMdIjqDQTp3GksChr0n6TuZa3CDlzN6YwtufdZfHQK7GTaFsHX7
+	 ekvX+aqtiNOyko08UVP/Ja+Z+dP9Qgz40rtqhpqFx6kWLONK3BDLgk9hbCtZDIhI7r
+	 q5cuXSPqJIUjW2H9DnAU4F0xf4+3oc4lXQU5hEsPzZIb5fn+qkiRb2zviruLhgOnei
+	 etnJzpcXYHqHdzCaPw5jYX3KXOG6wRkfFZWnrcX8KsYza7xfW78R5AjRBmy+JTOCte
+	 uVUc9ZGTylEIQ==
+From: Mark Brown <broonie@kernel.org>
+Subject: [PATCH v2 0/3] arm64: Support FEAT_LSFE (Large System Float
+ Extension)
+Date: Thu, 03 Jul 2025 17:23:21 +0100
+Message-Id: <20250703-arm64-lsfe-v2-0-eced80999cb4@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v12 02/14] unwind_user: Add frame pointer support
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-        bpf@vger.kernel.org, x86@kernel.org,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Josh Poimboeuf <jpoimboe@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
-        Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Indu Bhagat <indu.bhagat@oracle.com>,
-        "Jose E. Marchesi" <jemarch@gnu.org>,
-        Beau Belgrave <beaub@linux.microsoft.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>, Florian Weimer <fweimer@redhat.com>
-References: <20250701005321.942306427@goodmis.org>
- <20250701005450.888492528@goodmis.org>
- <CAHk-=wiWOYB4c3E-Cc=D89j0txbN4AGqm0j1dojqHq3uzJ+LqQ@mail.gmail.com>
- <20250630225603.72c84e67@gandalf.local.home>
- <a6a460e6-8cff-4353-a9e1-2e071d28e993@linux.ibm.com>
- <20250702195058.7ebb026d@gandalf.local.home>
-Content-Language: en-US
-From: Jens Remus <jremus@linux.ibm.com>
-Organization: IBM Deutschland Research & Development GmbH
-In-Reply-To: <20250702195058.7ebb026d@gandalf.local.home>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: vzwp24uTChfZOwCfiOSdmh2MJX-g-FDG
-X-Proofpoint-GUID: vzwp24uTChfZOwCfiOSdmh2MJX-g-FDG
-X-Authority-Analysis: v=2.4 cv=Ib6HWXqa c=1 sm=1 tr=0 ts=6866adfb cx=c_pps a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8 a=0MvmVg10__VCTnNSAJcA:9 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzAzMDEzNCBTYWx0ZWRfX4i3gZy03aGTn +UyaW6pjuXxS9HBDjaXxdAFGU2vVeZTksbcysv33oK/sWDQiXVcfPLUmrHJ4m69D+GZQp/TQGAl L9+GhDLjrIf41Wf8l5R2ONu7t+KnAs+ozcDvq/JU5vtji49/+InHQdseR7XeJRxgVsVtNtFV++n
- ZkeJMIg6Kv7Ay9NJUIoGxlQOVi9VHpJcEFSm5DmPKBN/b6RZHFUs58w/eva3KqFPaveo0JNcRfA zVNoWYABKaDb+7MSOPgCRSgzbWW15BkLouqf6ZGH5oyX67uUgWM9ib5vqlnuBXcumVgNPxbgTfv 8GUUHRsvaF4Ep1gxGTv5DLl3aPKwTSEWupRD4rVB3HRppt/dTgeZTcJ/FiWtZVgNSKVeZTbA6Xp
- lidc9L96tzI29OyW8iKor/pKr2quVuuhpdWeU/V3Stzrl7VPzuoqvL1ubSs9uymwtbMgZZLP
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-03_04,2025-07-02_04,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 suspectscore=0
- clxscore=1015 mlxlogscore=999 lowpriorityscore=0 impostorscore=0
- mlxscore=0 malwarescore=0 spamscore=0 priorityscore=1501 adultscore=0
- bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507030134
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHquZmgC/03M0QrCIBTG8VcZ5zpDTd3qqveIXZg7btLSOMYoh
+ u+eDYIu/x98vxUyUsAMp2YFwiXkkGINuWvATTaOyMJQGySXmhupmaW7UWzOHhnvBHf+2NnBSai
+ HB6EPrw279LWnkJ+J3pu9iO/6Y9p/ZhGMM9MdtHDq6lslzjekiPM+0Qh9KeUDMRaQiaUAAAA=
+X-Change-ID: 20250625-arm64-lsfe-0810cf98adc2
+To: Catalin Marinas <catalin.marinas@arm.com>, 
+ Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+ Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+ Joey Gouly <joey.gouly@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
+ Shuah Khan <shuah@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev, 
+ linux-kselftest@vger.kernel.org, Mark Brown <broonie@kernel.org>
+X-Mailer: b4 0.15-dev-cff91
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1238; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=OzkE5YzGv4a64gH/xm2Y6n/iTkv2o7eX4zO+nwD0Ap8=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBoZq9AOYzU26i6ZGFfSMwLvu537cdZGFtRz7FCh
+ kPlYrEAQmiJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCaGavQAAKCRAk1otyXVSH
+ 0BalB/4//XC+LdiJOx3alnA2tkZQLlecke6VHexYSrI5wWWv/VqWKzMe+67IwtuwVS1YxdIwqBR
+ jMy2TvSlbqfHwxEajUP44zJONeBXOxbgV1j4wZpE1v/r1/QZ9PO/vwhf/jdxDrBkv0ijDGlmMAM
+ y1v4N/0LHVxAh+kIRd1AyML94OJa0vieDFPzbFE09L0fUC9nd2mlCsYw+wtNnbGQWgZRnwt04LS
+ CFbkevJNSqCSEk3X1wulPJdgL5UfC/5jkH/fShyn3vklO6G30NWR7be0mYhSyAvnJ2b7wNdrBSs
+ EsZGUBw4nGVF5O0Zo3tWbTFYRLZFZvNvD7S9S+HiKXDA6aaJ
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-On 03.07.2025 01:50, Steven Rostedt wrote:
-> On Tue, 1 Jul 2025 17:36:55 +0200
-> Jens Remus <jremus@linux.ibm.com> wrote:
-> 
->> On s390 the prev_frame_sp may be equal to curr_frame_sp for the topmost
->> frame, as long as the topmost function did not allocate any stack.  For
->> instance when early in the prologue or when in a leaf function that does
->> not require any stack space.  My s390 sframe support patches would
->> therefore currently change above check to:
->>
->> 	/* stack going in wrong direction? */
->> 	if (sp <= state->sp - topmost)
->> 		goto done;
-> 
-> How do you calculate "topmost" then?
-> 
-> Is it another field you add to "state"?
+FEAT_LSFE is optional from v9.5, it adds new instructions for atomic
+memory operations with floating point values.  We have no immediate use
+for it in kernel, provide a hwcap so userspace can discover it and allow
+the ID register field to be exposed to KVM guests.
 
-Correct.  It is a boolean set to true in unwind_user_start() and set to
-false in unwind_user_next() when updating the state.
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+Changes in v2:
+- Fix result of vi dropping in hwcap test.
+- Link to v1: https://lore.kernel.org/r/20250627-arm64-lsfe-v1-0-68351c4bf741@kernel.org
 
-I assume most architectures need above change, as their SP at function
-entry should be equal to the SP at call site (unlike x86-64 due to CALL).
+---
+Mark Brown (3):
+      arm64/hwcap: Add hwcap for FEAT_LSFE
+      KVM: arm64: Expose FEAT_LSFE to guests
+      kselftest/arm64: Add lsfe to the hwcaps test
 
-s390 also needs this information to allow restoring of FP/RA saved in
-other registers (instead of on the stack) only for the topmost frame.
-For any other frame arbitrary register contents would not be available,
-as user unwind only unwinds SP, FP, and RA.
+ Documentation/arch/arm64/elf_hwcaps.rst   |  4 ++++
+ arch/arm64/include/asm/hwcap.h            |  1 +
+ arch/arm64/include/uapi/asm/hwcap.h       |  1 +
+ arch/arm64/kernel/cpufeature.c            |  2 ++
+ arch/arm64/kernel/cpuinfo.c               |  1 +
+ arch/arm64/kvm/sys_regs.c                 |  4 +++-
+ tools/testing/selftests/arm64/abi/hwcap.c | 21 +++++++++++++++++++++
+ 7 files changed, 33 insertions(+), 1 deletion(-)
+---
+base-commit: 86731a2a651e58953fc949573895f2fa6d456841
+change-id: 20250625-arm64-lsfe-0810cf98adc2
 
-I would post my s390 sframe support patches as RFC once you have
-provided a merged sframe branch as discussed in:
-https://lore.kernel.org/all/20250702124737.565934b5@batman.local.home/
-
-Regards,
-Jens
--- 
-Jens Remus
-Linux on Z Development (D3303)
-+49-7031-16-1128 Office
-jremus@de.ibm.com
-
-IBM
-
-IBM Deutschland Research & Development GmbH; Vorsitzender des Aufsichtsrats: Wolfgang Wendt; Geschäftsführung: David Faller; Sitz der Gesellschaft: Böblingen; Registergericht: Amtsgericht Stuttgart, HRB 243294
-IBM Data Privacy Statement: https://www.ibm.com/privacy/
+Best regards,
+--  
+Mark Brown <broonie@kernel.org>
 
 
