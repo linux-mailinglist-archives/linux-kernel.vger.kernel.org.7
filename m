@@ -1,335 +1,331 @@
-Return-Path: <linux-kernel+bounces-714632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 840A8AF6A69
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 08:36:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8983AF6A62
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 08:34:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 069A17A906F
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 06:35:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1587418869AB
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 06:35:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 919C12918EB;
-	Thu,  3 Jul 2025 06:36:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E38E526B0B3;
+	Thu,  3 Jul 2025 06:34:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="el+VRyW1"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mj2fTKo2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18FDF18B47C;
-	Thu,  3 Jul 2025 06:36:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751524595; cv=fail; b=FLfVv2dfzJ7/3sjr+XDoXHq6imuDe/dHd9FIL3zhBSt+zp3HLfasdTbWHpEeHU3VBqwxkKOhK3Z1HCtUFE1/CXNqk9e85p2gQGtLImK2sz7fpBIre/NDTNMYC+1YMl/RcPajACKgweRm4NXdcK81tzFDBiMfz5KVbZQDHVcUqEY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751524595; c=relaxed/simple;
-	bh=IHN5fESVlMJzHxm2BlZU7Rg4rkWGJmB0BhmWHT64PHI=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=RpZppN9V0MhaqjIznfgLind4U2ol66psVu7YRP0Y1eMjuetv7IulQvwtWdLpkdDSQWLT8bRU+cSzMhFV/wLKNtCb364xdvB9sUiwLUQ23xDRzdcU0DL9+ONb3V2+ssfuQuIN9OKURAcEb0UJafPWKzwmo+JpeoFS97FuWnFY2wM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=el+VRyW1; arc=fail smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751524594; x=1783060594;
-  h=date:from:to:cc:subject:message-id:reply-to:references:
-   content-transfer-encoding:in-reply-to:mime-version;
-  bh=IHN5fESVlMJzHxm2BlZU7Rg4rkWGJmB0BhmWHT64PHI=;
-  b=el+VRyW1xAgcW3bzUTqR/Ttg7GHF0ovm067Fiy7gDJZLaK8sLaDV+ZVb
-   aLxLv9iOIHT8gXcfppltAICXSGPlIlO5LWIoOhu4U8clQ2ls3h3hDHusx
-   13W5iRBS7NGUmhup4PmesOjX/nHRpo/2Kikaj52e0q1bCSZZd6s7tpAI7
-   Ly94nS7+bBP4+rCZasGmYfXGWhrHGubJTkc5DdsHMbYzM7gvAgSgIOQ1f
-   r3r+Xi0L0eZTYvuOgS0RzUYswRRuaEVPByy02O4v5UZmWQE2nIdCCSvPY
-   hnuoIT7l1kTXI+JOMI6uB03coyEFkt7G4JfJSN1PrPBfBr/r0Osb8HLu2
-   A==;
-X-CSE-ConnectionGUID: iw9LdA3kRjGmF6AvfLr+FQ==
-X-CSE-MsgGUID: KebyOUSKSGi1+jUNANqR0g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11482"; a="65293742"
-X-IronPort-AV: E=Sophos;i="6.16,283,1744095600"; 
-   d="scan'208";a="65293742"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2025 23:36:33 -0700
-X-CSE-ConnectionGUID: 0PFAUQ3fRQWBA8qOKa5OMQ==
-X-CSE-MsgGUID: tLnpm+bVTq2+LOtBqVoL6A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,283,1744095600"; 
-   d="scan'208";a="153694726"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
-  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2025 23:36:33 -0700
-Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Wed, 2 Jul 2025 23:36:32 -0700
-Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25 via Frontend Transport; Wed, 2 Jul 2025 23:36:32 -0700
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (40.107.95.86) by
- edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Wed, 2 Jul 2025 23:36:32 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Nms/ko73tA+XW0h+zCHKpsvSWaTJ1e+QjAf1voIL+4c6Al0yXcbTsGVCKLeQDps4HtqG1B6tCxy77MyYd3OfYARq/56ReYwpdZxYjpicBsv/7yWz+1kvTZd3ydrio08DNkXEzVdtugjrE0LVGhVbUUKz2ACUO0Ys8Nro3b6jcxwoKREtpQZYIZA9vl1fJ/0d6uUboEnufZaqFTIgo1oSmjoitAFDeUGp1n1dgLPtda5kvEWBPi8DLolsD+eY88DRhTKentqRRy+UbD7Vm8c4KUWNFOSxnBUtn/QMcCe8iGVUfNJz8gmOXCnedJlHtBc3lfVwoVKOD1Wwsrv1HSTbUA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=MinwbpYG/PGwnx924vKkhQVkSpdZK6Z79WS3XiNJTjM=;
- b=om4VjVMPHGs6UQgOMGVh4oL7R84BD8VzeJcKRJ0xbeiqwDIn8LNHEm/Eq4/t2rKauw4eyWmNx5T1X8c9pWKFKxoVdZigIefHoh+WrmLiZXEcU2Tyocykg1qq/ubr/he/oidpkafih/IMbE+TJFc0svDyHqRV3uBH+Q1FwYkPbCmmlAJBq8SWDPURSHAiDEOMrVldnn6PM/uwCFOPYc6TW0QVY3gkQvIPcOUXHIDa6tvyF3DRkMuFnpxH6EMzqrK861dZlH+BQVEk5rQ8OcGJJMSWngCUNNeC8Kj0M6cAHHvQs/rnN0YUuUqdMyZ/yV5KzS+NqLNZpZAueF6nqv59Bg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS7PR11MB5966.namprd11.prod.outlook.com (2603:10b6:8:71::6) by
- IA1PR11MB7855.namprd11.prod.outlook.com (2603:10b6:208:3f8::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.20; Thu, 3 Jul
- 2025 06:36:29 +0000
-Received: from DS7PR11MB5966.namprd11.prod.outlook.com
- ([fe80::e971:d8f4:66c4:12ca]) by DS7PR11MB5966.namprd11.prod.outlook.com
- ([fe80::e971:d8f4:66c4:12ca%5]) with mapi id 15.20.8901.018; Thu, 3 Jul 2025
- 06:36:29 +0000
-Date: Thu, 3 Jul 2025 14:33:54 +0800
-From: Yan Zhao <yan.y.zhao@intel.com>
-To: Michael Roth <michael.roth@amd.com>
-CC: Vishal Annapurve <vannapurve@google.com>, Ackerley Tng
-	<ackerleytng@google.com>, <kvm@vger.kernel.org>,
-	<linux-coco@lists.linux.dev>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>, <jroedel@suse.de>, <thomas.lendacky@amd.com>,
-	<pbonzini@redhat.com>, <seanjc@google.com>, <vbabka@suse.cz>,
-	<amit.shah@amd.com>, <pratikrajesh.sampat@amd.com>, <ashish.kalra@amd.com>,
-	<liam.merwick@oracle.com>, <david@redhat.com>, <quic_eberman@quicinc.com>
-Subject: Re: [PATCH 3/5] KVM: gmem: Hold filemap invalidate lock while
- allocating/preparing folios
-Message-ID: <aGYkUjdvChdZWTXF@yzhao56-desk.sh.intel.com>
-Reply-To: Yan Zhao <yan.y.zhao@intel.com>
-References: <diqzjz7azkmf.fsf@ackerleytng-ctop.c.googlers.com>
- <diqz8qmsfs5u.fsf@ackerleytng-ctop.c.googlers.com>
- <aC1221wU6Mby3Lo3@yzhao56-desk.sh.intel.com>
- <CAGtprH_chB5_D3ba=yqgg-ZGGE2ONpoMdB=4_O4S6k7jXcoHHw@mail.gmail.com>
- <aD5QVdH0pJeAn3+r@yzhao56-desk.sh.intel.com>
- <CAGtprH_XFpnBf_ZtEAs2MiZNJYhs4i+kJpmAj0QRVhcqWBqDsQ@mail.gmail.com>
- <aErK25Oo5VJna40z@yzhao56-desk.sh.intel.com>
- <20250613180418.bo4vqveigxsq2ouu@amd.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250613180418.bo4vqveigxsq2ouu@amd.com>
-X-ClientProxiedBy: SI2PR02CA0019.apcprd02.prod.outlook.com
- (2603:1096:4:195::13) To DS7PR11MB5966.namprd11.prod.outlook.com
- (2603:10b6:8:71::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 164AB7462
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 06:34:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751524482; cv=none; b=oSeLdhhQxqLRnGdIoHytxEa3vhIKcWARQ2lErzj8dmIG33B4LxfD7xCsHKakbpXZFEZ6Pyl/zGTiAivr1tuGpqtnWWjolQEVM1yu8zkauwe+RMHaVpPn0/HJYb8w0fgekfJod+dRGkLokGwevSZkIghtIQfFhu//nhJf0B1hVC8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751524482; c=relaxed/simple;
+	bh=tq5qt+6P0CRypqJqjs96Km7hhccho/PyjWolgRIOGyA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IZU8DN6GFtsgdgm1S/FPLIrREQrUs9sA+EMsKM9GcpZvpvaBVC8VyJslSAIUeit42Rkn4Fj+/w369lX5/2wZ+O+jofXNNgAcVX63M5VO00DzCzI6iveM2GgaUjz9utdd9iVb6cp/0bNYdzGC1AGQ4sBlCQbXBVp1R4e4Vc7T9iM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mj2fTKo2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D649EC4CEE3;
+	Thu,  3 Jul 2025 06:34:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751524481;
+	bh=tq5qt+6P0CRypqJqjs96Km7hhccho/PyjWolgRIOGyA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=mj2fTKo20vpPUUiMjbiI0CWx2RGqq6FIVurFv7ooDu5aPxrZdtAhTwjkLDLANBpTy
+	 2o2gr/0PxNdHgw3D+NF1Mdttvwk5kG0akKzSFy/FEVh/7P6vz0Ww8UmPNm0DWDAGYT
+	 Mb71PVnqBhnOGobelcM5DZG6+h3TbTACS0YzmDq6SeDlVjSo3LC0xp66rEpScNKOUR
+	 jAhUtkNExzKTudYJGdI+oW0cjHsCJ5G//BZqa/OnrfmTDsN+wfcgRm9ohAtlw9ysdt
+	 obhccR7WKshJN+154OiHushQZMR015e3wXdZQJKizF9fZJTX6+EEHq5qlqOpt4ScFs
+	 TFMkH3wLarMCA==
+From: Chao Yu <chao@kernel.org>
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	Chao Yu <chao@kernel.org>,
+	stable@kernel.org
+Subject: [PATCH] f2fs: fix to avoid panic in f2fs_evict_inode
+Date: Thu,  3 Jul 2025 14:34:34 +0800
+Message-ID: <20250703063434.1319213-1-chao@kernel.org>
+X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR11MB5966:EE_|IA1PR11MB7855:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1b5f69d8-1c82-4a1f-f95f-08ddb9fbf186
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?aE05c3dsSkYvQjdERS9jclBtcUhtaHozNUtjdzQwVnphRVhKRHVCYklZMHB3?=
- =?utf-8?B?MWRNRGlXWmpIdW5GS1UyNzB1b1Q4ZFRpMmRUL1dGb0hCVmpwSE5BNUNPNXJm?=
- =?utf-8?B?WG85K3pmOHVkVG1VdXo1UHNhblE5a21jaHdqY0o1aVZwNWliY2FpbzZXTGcr?=
- =?utf-8?B?VWhtNVNuNVJ4MXlpejN3OVVzN2tNbFl1RHhscS9pUUhXRDl4T2dUL3F5MkxV?=
- =?utf-8?B?NXBMdHhrZzhhR1ZTZGt4NVhONHV0aitSWWs2Q1N2cG15cXR1ZG9kc3YrK1RZ?=
- =?utf-8?B?aUtETkJ6aEVNRE9oQ2s3d0ZmTHBRc1BTRzQzYUcra1hWZUlzMHRCbVJ6ZHMv?=
- =?utf-8?B?ZVFjeVErQ01Cb3kyYy9iT0htQnd2dzNucnY5N0QvWVo4dis0dG9XWGZpbHUw?=
- =?utf-8?B?dU1jTWhVRXpFT1JyZE9MaUhPS1huMkdVZUdCc2p4ZjVTVU9NY1U1MzZVbWFF?=
- =?utf-8?B?RU9veHhtZEJGeWwrZUYyTlF1RlloOUREZUxvY3M1RWRqT0ZkNTZtbGlpSzEx?=
- =?utf-8?B?TE5XYzhhcUd0cVFOci9FTXMyWjg3b3dhMDNIcGQrMEpvcmljQjViaWFWeTIr?=
- =?utf-8?B?Ykp4TEJqK0xlSVdIQXNQMXgzQ1puWlJJWkFmamFXb3g0V3JkUkE2bjg3U1B5?=
- =?utf-8?B?OUFtUW55bjV1MXUxb1drNGcyYU9YQWZMK1MraGhaZUtvWStrR2o1dEZyQnAz?=
- =?utf-8?B?eU1oYlpVWjVFbFZJV0hZODhZQ0V5YXFtTzQ3UWgraU9wenJwY3ZBQmtzTDZY?=
- =?utf-8?B?YWd2dUZ0eEpMZ0xDaHVhVHlvUnY5L3FFSUZoL0RSVklUeVpOdlpmT3FmbGo0?=
- =?utf-8?B?MjRHcmpQRE9hVHY2TjBscVB1Snd6V25QL3VVZ2h6cmJpdzMyeE1BZWhvOGU1?=
- =?utf-8?B?RFVNUFpSaFRod3AxZTVrVWF2MkJLRTlpaGdyUGxVQS9hSDZXSmpsZUlMc0Ew?=
- =?utf-8?B?dXlob3ZwOG8xMWpPMFEySkdsNTVrNFI1Si9mK0tXNUF0ZU1sMG45TWZ2ZDFM?=
- =?utf-8?B?TEwvNlVVMHFBQ2tYelRRZzl3aTZuV1RMcFRIL29UZlVQV0tnSDlhYks4NzFo?=
- =?utf-8?B?UHdDZk1pSC9tR3BLOTZHS005akNKcFFuK1BRb1ZOUk51NGRCSXdWWXVCSUR2?=
- =?utf-8?B?QlFvM3JvaTNJbjBLU1VlUCtsMGhVVk1OcWJQK0Zhd3NUay9MRVR5U1IwcS91?=
- =?utf-8?B?MnVmMldVZjE5VWJHTlFTZmtMNk15THNxemxodThCRS9WNWhhT2hERFZBak5T?=
- =?utf-8?B?TDQ3R3NUMkt0TWZnU09IajhzK0szNFpIdTYrK2VVdWNCK21iS1l0Y2RzLzB2?=
- =?utf-8?B?N1BHTkJrM2Fqc3ZSTDZ6UUxwZ21oc2NHNWZnemRSTExSV3VmcWdOTDRNMmxs?=
- =?utf-8?B?TERkYmJvNjBMVmZuQytoN3RsRzdXTU50R1J6MHYxMUpmdEJJeXUvNUNjV0xZ?=
- =?utf-8?B?alF2MlZvMXpEaitpL0djMHJRTDJLQlF6R093cTQvTkdHNzNZWWtrRDZvYUFq?=
- =?utf-8?B?WUZldE1oSmpJa09uU256alZtOFRkWXpGSEgyWEJpMlJMWjZaaDlkbmFrRGFG?=
- =?utf-8?B?b01JeHhJbzdGaXp1MjZqVEZxd3hVWGs0WEhNTXIzSjA3VUV6TTJWOWd1M09l?=
- =?utf-8?B?VEZPWWR5WHQ2MEw5WWMrVVlSOWxCdUpFWkNrZjV6QkdCWmdmSU1laitsNnVz?=
- =?utf-8?B?bWtmbzB3emREOTNRa1k0d2JpZlErcTNnWFB2dG94TW1jajErN2xGN0ZmL2U4?=
- =?utf-8?B?cmhhSTN6MzQwNGZzVjlLUFVPdDFLYVpzOHMxcjRudnlQRjlvTkxRY3pwSjRD?=
- =?utf-8?B?cVIxMm84R2xpYU5HdGJVTGlFdlovMlc0eTlNUVRtb2lDdnNvd2k4YnBwMXUz?=
- =?utf-8?B?OEtXaXRjb1dzbXp5VVF2eExsVis3TEFCU0pnKzhybFRRSDdQNHN4Nnc0QkNu?=
- =?utf-8?Q?R51fWVNS5kY=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR11MB5966.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?LzBKeHF6d0V3T0FhWmNHZ2swWUFqWHdmdTE4cnc5S3pTeEdMaCsrM2RNT0RR?=
- =?utf-8?B?TG95RkNxTDlyWHc2TkhrZEhCTlE2U2JyUytoSTZEaVJza05rbzZhSmdyUUln?=
- =?utf-8?B?ak85d1NOOUtjZlh5OSs2THEycjYzc0xKa3Bnb2hGRHI1QnNHNmcvZEJTYkJx?=
- =?utf-8?B?MXl5VmdqR3RLOEdnSVVCVlYxMWxFdnZURkE0c0k2bHlUMHhZUFFHdmxuSnZ2?=
- =?utf-8?B?bDRodXliSkxlS3REZnFDNkxkdFk2N1M5dnVZUkJLVHFwV0hYa3ZDaE93ZCtq?=
- =?utf-8?B?bGVvSmVKRVd5aDl6cHdIa1FGajd1azJlclFhVGU2TG5RbjIycGNNYUlmSGJ3?=
- =?utf-8?B?NEhHNGRFcERkak45d2ZlblpuTllCdkdzd1NaS0MyUVRpQkg0d1FOL0lUbGtE?=
- =?utf-8?B?cGJJY2FGRkdYRWFYc2l5NEFjUWtPN05LMGp0SXd2OWhqVnpOdjJFdlB4d2dl?=
- =?utf-8?B?ckhZaFYrd2JlTXM4ZTBjY2I0cVVGQWhlaVJjbWVoVWFFWWxyOGJ6dFB4V2kw?=
- =?utf-8?B?clVRUUFzNjZ3Y2wvbTdhczU4RkJXV2xDOFpWdG1oY2VkVXBxZWI3NWpYVlB1?=
- =?utf-8?B?YjBGbTRHSFJBVFUxdkt2NGtRSFdTUUFEVjJmakdzMmIvdWdwNWJ1RVh3Nnls?=
- =?utf-8?B?Z05NdHZUbGo4YTNEQ3BDMmZkQjJ1WVdXU1dNRTVVKzdsbW8zNkljSWVoNXVP?=
- =?utf-8?B?TXlnSDBhNnQyaGdmTnYrTzQ1RXoxbmtQcHFKSGV6UUZ6ZDMvbk9pWXQzQkp0?=
- =?utf-8?B?RnhXUVI1eE9iNE1zZ0V2TzJtSVNaRGhpQ2xHL1NUTkNFWUZBNU5YYjJSNTZz?=
- =?utf-8?B?bFNhdXVKdyttNDM5SkFzMTdpTjRKMFVUYWlUeTV6V3dSOU1NTm1ORHFEY1JE?=
- =?utf-8?B?U0Y1Qm1hVEk0Rjc3cTF0Z3FpbExlNDNyVVVTUnBJSEJTZTErM04rdW10K2ZU?=
- =?utf-8?B?aUEycHdkMGNLb0xRZkphTFJnSjRIWW1sUEQ5YldiVmRBWkNxakJtL1FESUtV?=
- =?utf-8?B?R1hEdDRMZzQ0SW4vcFJrRFYrUmJCS1dqL1JIcVJmUGd1RlpPNG5rV1E5b1cx?=
- =?utf-8?B?NFR0YzBWZGtYWGI5WjZQbE40Z3dQZlB1WGdUbEsvTWg2UCt4QjdIYUhDeEt3?=
- =?utf-8?B?b1ZyN0FpUUdpWUlHRDNsWm1wdFNFTGt6Zk9uYTY2WlhKSlBFdFJXVWhsRDRZ?=
- =?utf-8?B?UXhFNm0wMlV2azhXSm0rZU0wNjVFYnVTMUUvLzRIaHJBRFMxYjNXWlpINW15?=
- =?utf-8?B?OG5RVE5wNFBtbHFMUEZwNnphUXBSQzd4bWk1Yk5DcTdzTXlnNThZNGhtSURs?=
- =?utf-8?B?WXB5Y09wOGxJRUd5Y3Rha3d1RVVibTl0WlplK3FLNE1lcXJWTHFuUWV6a2ZS?=
- =?utf-8?B?T0NwQVZVV0F6bmE2UDVycTdlWkZVZGdVOU9QRW8vZDhGR1I5emJ3cVlFR0gx?=
- =?utf-8?B?Uml6UDhST1luSnk0Mlo5WTRuNTBRbmhDNFBmOFlRM0dVUHdVeWxscFQyQi9R?=
- =?utf-8?B?Umsva3poZW1SWjAzK2tmNkE0SFlMUU5UME5taVprWUVJSDdLU2YwVGdQZTBj?=
- =?utf-8?B?SDNrUkhlODZlUEFhcEdzYllsOGdWWmV3SEVDSlNKS0M2bEZmTDVYSTBMM0Z1?=
- =?utf-8?B?VVNyU1IwVHdXMjBlaDhVZGpFb0RwMnFwMTlQbVIwNmRDTGNhRkg1RVNTUyts?=
- =?utf-8?B?VWhFZng2MjZDTUlQS01xcUFuK0c4ZGtGSEM0MmdHdnB2NFR1YkNQQkdLUWxS?=
- =?utf-8?B?MEI3Q0lkR3ZoaGE3cmpDcklHbkhsVjZ2ZkNPRVBHTnEvaDNZWVhXdmZPZFpY?=
- =?utf-8?B?TWtKWTh6MFRWOW9IMi9HTTVPc2NiWW82WWpKclZ3bHpBcEdWVXVpdTlLeXMx?=
- =?utf-8?B?UldDSEN2dHQ0NnBRc1N6eHdSdTVMRkY1UFNNOTI1VkF6VndTMlM2TkZFMlVw?=
- =?utf-8?B?b1Q5ajRhVzY4VnRvZG1LNG9NaWNMcFR0U0pQdFBBRHY2NFRLNi9CWmZTdGNH?=
- =?utf-8?B?aFFOVUJxamJYVVU2N1dlbVdnMkRPMzVKSnNYWGJNZmxBM2hmdm9uSFdscFFw?=
- =?utf-8?B?V0pINUJOSHZxdndKQXNWNkNVTmowNHpRTWEydFh3OThjYTBPT2xnbmdhRHBY?=
- =?utf-8?Q?fLnxjzIUCdb/CgLCJCq6I2Icq?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1b5f69d8-1c82-4a1f-f95f-08ddb9fbf186
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR11MB5966.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jul 2025 06:36:29.7708
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: xJKv3/W1WexY+pNTtSw5fwwyBZ5xRPHyHDi7WmIO1t29S7LKbKLiuQOgy9HEVGGP8r0y7czAtz62hY4XUMnUSw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB7855
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jun 13, 2025 at 01:04:18PM -0500, Michael Roth wrote:
-> On Thu, Jun 12, 2025 at 08:40:59PM +0800, Yan Zhao wrote:
-> > On Tue, Jun 03, 2025 at 11:28:35PM -0700, Vishal Annapurve wrote:
-> > > On Mon, Jun 2, 2025 at 6:34 PM Yan Zhao <yan.y.zhao@intel.com> wrote:
-> > > >
-> > > > On Mon, Jun 02, 2025 at 06:05:32PM -0700, Vishal Annapurve wrote:
-> > > > > On Tue, May 20, 2025 at 11:49 PM Yan Zhao <yan.y.zhao@intel.com> wrote:
-> > > > > >
-> > > > > > On Mon, May 19, 2025 at 10:04:45AM -0700, Ackerley Tng wrote:
-> > > > > > > Ackerley Tng <ackerleytng@google.com> writes:
-> > > > > > >
-> > > > > > > > Yan Zhao <yan.y.zhao@intel.com> writes:
-> > > > > > > >
-> > > > > > > >> On Fri, Mar 14, 2025 at 05:20:21PM +0800, Yan Zhao wrote:
-> > > > > > > >>> This patch would cause host deadlock when booting up a TDX VM even if huge page
-> > > > > > > >>> is turned off. I currently reverted this patch. No further debug yet.
-> > > > > > > >> This is because kvm_gmem_populate() takes filemap invalidation lock, and for
-> > > > > > > >> TDX, kvm_gmem_populate() further invokes kvm_gmem_get_pfn(), causing deadlock.
-> > > > > > > >>
-> > > > > > > >> kvm_gmem_populate
-> > > > > > > >>   filemap_invalidate_lock
-> > > > > > > >>   post_populate
-> > > > > > > >>     tdx_gmem_post_populate
-> > > > > > > >>       kvm_tdp_map_page
-> > > > > > > >>        kvm_mmu_do_page_fault
-> > > > > > > >>          kvm_tdp_page_fault
-> > > > > > > >>       kvm_tdp_mmu_page_fault
-> > > > > > > >>         kvm_mmu_faultin_pfn
-> > > > > > > >>           __kvm_mmu_faultin_pfn
-> > > > > > > >>             kvm_mmu_faultin_pfn_private
-> > > > > > > >>               kvm_gmem_get_pfn
-> > > > > > > >>                 filemap_invalidate_lock_shared
-> > > > > > > >>
-> > > > > > > >> Though, kvm_gmem_populate() is able to take shared filemap invalidation lock,
-> > > > > > > >> (then no deadlock), lockdep would still warn "Possible unsafe locking scenario:
-> > > > > > > >> ...DEADLOCK" due to the recursive shared lock, since commit e918188611f0
-> > > > > > > >> ("locking: More accurate annotations for read_lock()").
-> > > > > > > >>
-> > > > > > > >
-> > > > > > > > Thank you for investigating. This should be fixed in the next revision.
-> > > > > > > >
-> > > > > > >
-> > > > > > > This was not fixed in v2 [1], I misunderstood this locking issue.
-> > > > > > >
-> > > > > > > IIUC kvm_gmem_populate() gets a pfn via __kvm_gmem_get_pfn(), then calls
-> > > > > > > part of the KVM fault handler to map the pfn into secure EPTs, then
-> > > > > > > calls the TDX module for the copy+encrypt.
-> > > > > > >
-> > > > > > > Regarding this lock, seems like KVM'S MMU lock is already held while TDX
-> > > > > > > does the copy+encrypt. Why must the filemap_invalidate_lock() also be
-> > > > > > > held throughout the process?
-> > > > > > If kvm_gmem_populate() does not hold filemap invalidate lock around all
-> > > > > > requested pages, what value should it return after kvm_gmem_punch_hole() zaps a
-> > > > > > mapping it just successfully installed?
-> > > > > >
-> > > > > > TDX currently only holds the read kvm->mmu_lock in tdx_gmem_post_populate() when
-> > > > > > CONFIG_KVM_PROVE_MMU is enabled, due to both slots_lock and the filemap
-> > > > > > invalidate lock being taken in kvm_gmem_populate().
-> > > > >
-> > > > > Does TDX need kvm_gmem_populate path just to ensure SEPT ranges are
-> > > > > not zapped during tdh_mem_page_add and tdh_mr_extend operations? Would
-> > > > > holding KVM MMU read lock during these operations sufficient to avoid
-> > > > > having to do this back and forth between TDX and gmem layers?
-> > > > I think the problem here is because in kvm_gmem_populate(),
-> > > > "__kvm_gmem_get_pfn(), post_populate(), and kvm_gmem_mark_prepared()"
-> > > > must be wrapped in filemap invalidate lock (shared or exclusive), right?
-> > > >
-> > > > Then, in TDX's post_populate() callback, the filemap invalidate lock is held
-> > > > again by kvm_tdp_map_page() --> ... ->kvm_gmem_get_pfn().
-> > > 
-> > > I am contesting the need of kvm_gmem_populate path altogether for TDX.
-> > > Can you help me understand what problem does kvm_gmem_populate path
-> > > help with for TDX?
-> > There is a long discussion on the list about this.
-> > 
-> > Basically TDX needs 3 steps for KVM_TDX_INIT_MEM_REGION.
-> > 1. Get the PFN
-> > 2. map the mirror page table
-> > 3. invoking tdh_mem_page_add().
-> > Holding filemap invalidation lock around the 3 steps helps ensure that the PFN
-> > passed to tdh_mem_page_add() is a valid one.
-> 
-> Since those requirements are already satisfied with kvm_gmem_populate(),
-> then maybe this issue is more with the fact that tdh_mem_page_add() is
-> making a separate call to kvm_gmem_get_pfn() even though the callback
-> has been handed a stable PFN that's protected with the filemap
-> invalidate lock.
-> 
-> Maybe some variant of kvm_tdp_map_page()/kvm_mmu_do_page_fault() that
-> can be handed the PFN and related fields up-front rather than grabbing
-> them later would be a more direct way to solve this? That would give us
-> more flexibility on the approaches I mentioned in my other response for
-> how to protect shareability state.
+As syzbot [1] reported as below:
 
-I prefer Vishal's proposal over this one.
+R10: 0000000000000100 R11: 0000000000000206 R12: 00007ffe17473450
+R13: 00007f28b1c10854 R14: 000000000000dae5 R15: 00007ffe17474520
+ </TASK>
+---[ end trace 0000000000000000 ]---
+==================================================================
+BUG: KASAN: use-after-free in __list_del_entry_valid+0xa6/0x130 lib/list_debug.c:62
+Read of size 8 at addr ffff88812d962278 by task syz-executor/564
 
-> This also seems more correct in the sense that the current path triggers:
-> 
->   tdx_gmem_post_populate
->     kvm_tdp_mmu_page_fault
->       kvm_gmem_get_pfn
->         kvm_gmem_prepare_folio
-> 
-> even the kvm_gmem_populate() intentially avoids call kvm_gmem_get_pfn() in
-> favor of __kvm_gmem_get_pfn() specifically to avoid triggering the preparation
-> hooks, since kvm_gmem_populate() is a special case of preparation that needs
-> to be handled seperately/differently from the fault-time hooks.
-> 
-> This probably doesn't affect TDX because TDX doesn't make use of prepare
-> hooks, but since it's complicating things here it seems like we should address
-> it directly rather than work around it. Maybe it could even be floated as a
-> patch directly against kvm/next?
-Posted an RFC for discussion.
-https://lore.kernel.org/lkml/20250703062641.3247-1-yan.y.zhao@intel.com/
+CPU: 1 PID: 564 Comm: syz-executor Tainted: G        W          6.1.129-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+Call Trace:
+ <TASK>
+ __dump_stack+0x21/0x24 lib/dump_stack.c:88
+ dump_stack_lvl+0xee/0x158 lib/dump_stack.c:106
+ print_address_description+0x71/0x210 mm/kasan/report.c:316
+ print_report+0x4a/0x60 mm/kasan/report.c:427
+ kasan_report+0x122/0x150 mm/kasan/report.c:531
+ __asan_report_load8_noabort+0x14/0x20 mm/kasan/report_generic.c:351
+ __list_del_entry_valid+0xa6/0x130 lib/list_debug.c:62
+ __list_del_entry include/linux/list.h:134 [inline]
+ list_del_init include/linux/list.h:206 [inline]
+ f2fs_inode_synced+0xf7/0x2e0 fs/f2fs/super.c:1531
+ f2fs_update_inode+0x74/0x1c40 fs/f2fs/inode.c:585
+ f2fs_update_inode_page+0x137/0x170 fs/f2fs/inode.c:703
+ f2fs_write_inode+0x4ec/0x770 fs/f2fs/inode.c:731
+ write_inode fs/fs-writeback.c:1460 [inline]
+ __writeback_single_inode+0x4a0/0xab0 fs/fs-writeback.c:1677
+ writeback_single_inode+0x221/0x8b0 fs/fs-writeback.c:1733
+ sync_inode_metadata+0xb6/0x110 fs/fs-writeback.c:2789
+ f2fs_sync_inode_meta+0x16d/0x2a0 fs/f2fs/checkpoint.c:1159
+ block_operations fs/f2fs/checkpoint.c:1269 [inline]
+ f2fs_write_checkpoint+0xca3/0x2100 fs/f2fs/checkpoint.c:1658
+ kill_f2fs_super+0x231/0x390 fs/f2fs/super.c:4668
+ deactivate_locked_super+0x98/0x100 fs/super.c:332
+ deactivate_super+0xaf/0xe0 fs/super.c:363
+ cleanup_mnt+0x45f/0x4e0 fs/namespace.c:1186
+ __cleanup_mnt+0x19/0x20 fs/namespace.c:1193
+ task_work_run+0x1c6/0x230 kernel/task_work.c:203
+ exit_task_work include/linux/task_work.h:39 [inline]
+ do_exit+0x9fb/0x2410 kernel/exit.c:871
+ do_group_exit+0x210/0x2d0 kernel/exit.c:1021
+ __do_sys_exit_group kernel/exit.c:1032 [inline]
+ __se_sys_exit_group kernel/exit.c:1030 [inline]
+ __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1030
+ x64_sys_call+0x7b4/0x9a0 arch/x86/include/generated/asm/syscalls_64.h:232
+ do_syscall_x64 arch/x86/entry/common.c:51 [inline]
+ do_syscall_64+0x4c/0xa0 arch/x86/entry/common.c:81
+ entry_SYSCALL_64_after_hwframe+0x68/0xd2
+RIP: 0033:0x7f28b1b8e169
+Code: Unable to access opcode bytes at 0x7f28b1b8e13f.
+RSP: 002b:00007ffe174710a8 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+RAX: ffffffffffffffda RBX: 00007f28b1c10879 RCX: 00007f28b1b8e169
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000001
+RBP: 0000000000000002 R08: 00007ffe1746ee47 R09: 00007ffe17472360
+R10: 0000000000000009 R11: 0000000000000246 R12: 00007ffe17472360
+R13: 00007f28b1c10854 R14: 000000000000dae5 R15: 00007ffe17474520
+ </TASK>
 
-Thanks
-Yan
+Allocated by task 569:
+ kasan_save_stack mm/kasan/common.c:45 [inline]
+ kasan_set_track+0x4b/0x70 mm/kasan/common.c:52
+ kasan_save_alloc_info+0x25/0x30 mm/kasan/generic.c:505
+ __kasan_slab_alloc+0x72/0x80 mm/kasan/common.c:328
+ kasan_slab_alloc include/linux/kasan.h:201 [inline]
+ slab_post_alloc_hook+0x4f/0x2c0 mm/slab.h:737
+ slab_alloc_node mm/slub.c:3398 [inline]
+ slab_alloc mm/slub.c:3406 [inline]
+ __kmem_cache_alloc_lru mm/slub.c:3413 [inline]
+ kmem_cache_alloc_lru+0x104/0x220 mm/slub.c:3429
+ alloc_inode_sb include/linux/fs.h:3245 [inline]
+ f2fs_alloc_inode+0x2d/0x340 fs/f2fs/super.c:1419
+ alloc_inode fs/inode.c:261 [inline]
+ iget_locked+0x186/0x880 fs/inode.c:1373
+ f2fs_iget+0x55/0x4c60 fs/f2fs/inode.c:483
+ f2fs_lookup+0x366/0xab0 fs/f2fs/namei.c:487
+ __lookup_slow+0x2a3/0x3d0 fs/namei.c:1690
+ lookup_slow+0x57/0x70 fs/namei.c:1707
+ walk_component+0x2e6/0x410 fs/namei.c:1998
+ lookup_last fs/namei.c:2455 [inline]
+ path_lookupat+0x180/0x490 fs/namei.c:2479
+ filename_lookup+0x1f0/0x500 fs/namei.c:2508
+ vfs_statx+0x10b/0x660 fs/stat.c:229
+ vfs_fstatat fs/stat.c:267 [inline]
+ vfs_lstat include/linux/fs.h:3424 [inline]
+ __do_sys_newlstat fs/stat.c:423 [inline]
+ __se_sys_newlstat+0xd5/0x350 fs/stat.c:417
+ __x64_sys_newlstat+0x5b/0x70 fs/stat.c:417
+ x64_sys_call+0x393/0x9a0 arch/x86/include/generated/asm/syscalls_64.h:7
+ do_syscall_x64 arch/x86/entry/common.c:51 [inline]
+ do_syscall_64+0x4c/0xa0 arch/x86/entry/common.c:81
+ entry_SYSCALL_64_after_hwframe+0x68/0xd2
+
+Freed by task 13:
+ kasan_save_stack mm/kasan/common.c:45 [inline]
+ kasan_set_track+0x4b/0x70 mm/kasan/common.c:52
+ kasan_save_free_info+0x31/0x50 mm/kasan/generic.c:516
+ ____kasan_slab_free+0x132/0x180 mm/kasan/common.c:236
+ __kasan_slab_free+0x11/0x20 mm/kasan/common.c:244
+ kasan_slab_free include/linux/kasan.h:177 [inline]
+ slab_free_hook mm/slub.c:1724 [inline]
+ slab_free_freelist_hook+0xc2/0x190 mm/slub.c:1750
+ slab_free mm/slub.c:3661 [inline]
+ kmem_cache_free+0x12d/0x2a0 mm/slub.c:3683
+ f2fs_free_inode+0x24/0x30 fs/f2fs/super.c:1562
+ i_callback+0x4c/0x70 fs/inode.c:250
+ rcu_do_batch+0x503/0xb80 kernel/rcu/tree.c:2297
+ rcu_core+0x5a2/0xe70 kernel/rcu/tree.c:2557
+ rcu_core_si+0x9/0x10 kernel/rcu/tree.c:2574
+ handle_softirqs+0x178/0x500 kernel/softirq.c:578
+ run_ksoftirqd+0x28/0x30 kernel/softirq.c:945
+ smpboot_thread_fn+0x45a/0x8c0 kernel/smpboot.c:164
+ kthread+0x270/0x310 kernel/kthread.c:376
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:295
+
+Last potentially related work creation:
+ kasan_save_stack+0x3a/0x60 mm/kasan/common.c:45
+ __kasan_record_aux_stack+0xb6/0xc0 mm/kasan/generic.c:486
+ kasan_record_aux_stack_noalloc+0xb/0x10 mm/kasan/generic.c:496
+ call_rcu+0xd4/0xf70 kernel/rcu/tree.c:2845
+ destroy_inode fs/inode.c:316 [inline]
+ evict+0x7da/0x870 fs/inode.c:720
+ iput_final fs/inode.c:1834 [inline]
+ iput+0x62b/0x830 fs/inode.c:1860
+ do_unlinkat+0x356/0x540 fs/namei.c:4397
+ __do_sys_unlink fs/namei.c:4438 [inline]
+ __se_sys_unlink fs/namei.c:4436 [inline]
+ __x64_sys_unlink+0x49/0x50 fs/namei.c:4436
+ x64_sys_call+0x958/0x9a0 arch/x86/include/generated/asm/syscalls_64.h:88
+ do_syscall_x64 arch/x86/entry/common.c:51 [inline]
+ do_syscall_64+0x4c/0xa0 arch/x86/entry/common.c:81
+ entry_SYSCALL_64_after_hwframe+0x68/0xd2
+
+The buggy address belongs to the object at ffff88812d961f20
+ which belongs to the cache f2fs_inode_cache of size 1200
+The buggy address is located 856 bytes inside of
+ 1200-byte region [ffff88812d961f20, ffff88812d9623d0)
+
+The buggy address belongs to the physical page:
+page:ffffea0004b65800 refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x12d960
+head:ffffea0004b65800 order:2 compound_mapcount:0 compound_pincount:0
+flags: 0x4000000000010200(slab|head|zone=1)
+raw: 4000000000010200 0000000000000000 dead000000000122 ffff88810a94c500
+raw: 0000000000000000 00000000800c000c 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 2, migratetype Reclaimable, gfp_mask 0x1d2050(__GFP_IO|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC|__GFP_HARDWALL|__GFP_RECLAIMABLE), pid 569, tgid 568 (syz.2.16), ts 55943246141, free_ts 0
+ set_page_owner include/linux/page_owner.h:31 [inline]
+ post_alloc_hook+0x1d0/0x1f0 mm/page_alloc.c:2532
+ prep_new_page mm/page_alloc.c:2539 [inline]
+ get_page_from_freelist+0x2e63/0x2ef0 mm/page_alloc.c:4328
+ __alloc_pages+0x235/0x4b0 mm/page_alloc.c:5605
+ alloc_slab_page include/linux/gfp.h:-1 [inline]
+ allocate_slab mm/slub.c:1939 [inline]
+ new_slab+0xec/0x4b0 mm/slub.c:1992
+ ___slab_alloc+0x6f6/0xb50 mm/slub.c:3180
+ __slab_alloc+0x5e/0xa0 mm/slub.c:3279
+ slab_alloc_node mm/slub.c:3364 [inline]
+ slab_alloc mm/slub.c:3406 [inline]
+ __kmem_cache_alloc_lru mm/slub.c:3413 [inline]
+ kmem_cache_alloc_lru+0x13f/0x220 mm/slub.c:3429
+ alloc_inode_sb include/linux/fs.h:3245 [inline]
+ f2fs_alloc_inode+0x2d/0x340 fs/f2fs/super.c:1419
+ alloc_inode fs/inode.c:261 [inline]
+ iget_locked+0x186/0x880 fs/inode.c:1373
+ f2fs_iget+0x55/0x4c60 fs/f2fs/inode.c:483
+ f2fs_fill_super+0x3ad7/0x6bb0 fs/f2fs/super.c:4293
+ mount_bdev+0x2ae/0x3e0 fs/super.c:1443
+ f2fs_mount+0x34/0x40 fs/f2fs/super.c:4642
+ legacy_get_tree+0xea/0x190 fs/fs_context.c:632
+ vfs_get_tree+0x89/0x260 fs/super.c:1573
+ do_new_mount+0x25a/0xa20 fs/namespace.c:3056
+page_owner free stack trace missing
+
+Memory state around the buggy address:
+ ffff88812d962100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff88812d962180: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>ffff88812d962200: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                                                ^
+ ffff88812d962280: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff88812d962300: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+
+[1] https://syzkaller.appspot.com/x/report.txt?x=13448368580000
+
+This bug can be reproduced w/ the reproducer [2], once we enable
+CONFIG_F2FS_CHECK_FS config, the reproducer will trigger panic as below,
+so the direct reason of this bug is the same as the one below patch [3]
+fixed.
+
+kernel BUG at fs/f2fs/inode.c:857!
+RIP: 0010:f2fs_evict_inode+0x1204/0x1a20
+Call Trace:
+ <TASK>
+ evict+0x32a/0x7a0
+ do_unlinkat+0x37b/0x5b0
+ __x64_sys_unlink+0xad/0x100
+ do_syscall_64+0x5a/0xb0
+ entry_SYSCALL_64_after_hwframe+0x6e/0xd8
+RIP: 0010:f2fs_evict_inode+0x1204/0x1a20
+
+[2] https://syzkaller.appspot.com/x/repro.c?x=17495ccc580000
+[3] https://lore.kernel.org/linux-f2fs-devel/20250702120321.1080759-1-chao@kernel.org
+
+Tracepoints before panic:
+
+f2fs_unlink_enter: dev = (7,0), dir ino = 3, i_size = 4096, i_blocks = 8, name = file1
+f2fs_unlink_exit: dev = (7,0), ino = 7, ret = 0
+f2fs_evict_inode: dev = (7,0), ino = 7, pino = 3, i_mode = 0x81ed, i_size = 10, i_nlink = 0, i_blocks = 0, i_advise = 0x0
+f2fs_truncate_node: dev = (7,0), ino = 7, nid = 8, block_address = 0x3c05
+
+f2fs_unlink_enter: dev = (7,0), dir ino = 3, i_size = 4096, i_blocks = 8, name = file3
+f2fs_unlink_exit: dev = (7,0), ino = 8, ret = 0
+f2fs_evict_inode: dev = (7,0), ino = 8, pino = 3, i_mode = 0x81ed, i_size = 9000, i_nlink = 0, i_blocks = 24, i_advise = 0x4
+f2fs_truncate: dev = (7,0), ino = 8, pino = 3, i_mode = 0x81ed, i_size = 0, i_nlink = 0, i_blocks = 24, i_advise = 0x4
+f2fs_truncate_blocks_enter: dev = (7,0), ino = 8, i_size = 0, i_blocks = 24, start file offset = 0
+f2fs_truncate_blocks_exit: dev = (7,0), ino = 8, ret = -2
+
+The root cause is: in the fuzzed image, dnode #8 belongs to inode #7,
+after inode #7 eviction, dnode #8 was dropped.
+
+However there is dirent that has ino #8, so, once we unlink file3, in
+f2fs_evict_inode(), both f2fs_truncate() and f2fs_update_inode_page()
+will fail due to we can not load node #8, result in we missed to call
+f2fs_inode_synced() to clear inode dirty status.
+
+Let's fix this by calling f2fs_inode_synced() in error path of
+f2fs_evict_inode().
+
+PS: As I verified, the reproducer [2] can trigger this bug in v6.1.129,
+but it failed in v6.16-rc4, this is because the testcase will stop due to
+other corruption has been detected by f2fs:
+
+F2FS-fs (loop0): inconsistent node block, node_type:2, nid:8, node_footer[nid:8,ino:8,ofs:0,cpver:5013063228981249506,blkaddr:15366]
+F2FS-fs (loop0): f2fs_lookup: inode (ino=9) has zero i_nlink
+
+Cc: stable@kernel.org
+Closes: https://syzkaller.appspot.com/x/report.txt?x=13448368580000
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+ fs/f2fs/inode.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index d3c6f3202b69..fc774de1c752 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -933,6 +933,19 @@ void f2fs_evict_inode(struct inode *inode)
+ 		f2fs_update_inode_page(inode);
+ 		if (dquot_initialize_needed(inode))
+ 			set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
++
++		/*
++		 * If both f2fs_truncate() and f2fs_update_inode_page() failed
++		 * due to fuzzed corrupted inode, call f2fs_inode_synced() to
++		 * avoid triggering later f2fs_bug_on().
++		 */
++		if (is_inode_flag_set(inode, FI_DIRTY_INODE)) {
++			f2fs_warn(sbi,
++				"f2fs_evict_inode: inode is dirty, ino:%lu",
++				inode->i_ino);
++			f2fs_inode_synced(inode);
++			set_sbi_flag(sbi, SBI_NEED_FSCK);
++		}
+ 	}
+ 	if (freeze_protected)
+ 		sb_end_intwrite(inode->i_sb);
+-- 
+2.49.0
+
 
