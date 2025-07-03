@@ -1,190 +1,156 @@
-Return-Path: <linux-kernel+bounces-714415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80AC6AF67B4
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 04:05:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94DD9AF67B7
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 04:07:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA6693AAB0E
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 02:05:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3602A4A5B0B
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 02:07:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 777D715573F;
-	Thu,  3 Jul 2025 02:05:22 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06E731D5173;
+	Thu,  3 Jul 2025 02:07:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AL/j4SVL"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 990BA2F32;
-	Thu,  3 Jul 2025 02:05:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7D1678F3B
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 02:07:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751508322; cv=none; b=CwZui8Yj3ygO/WE5vr8cvS/hDuJNx5Fcw6Tr4okQc2JHB4GCDJrF849V2XVTq0w/Vv4CIdgWQWxrV8dV7TatNU4FmDFvrWoqAYz21pg6UWT98FJ1jZdwJO3ad3VtrLBfJPMnh+BhQQRGlOmqAFHMyi6uUkYJlV6VT/QcY1hK6qM=
+	t=1751508462; cv=none; b=L67b3J5x/fc6KGKYqqcfFd+BqDaAChOZFVDab/vpKMrfAoaGLuo1zXCmEwEsxUaeiE/k/BxSMt9eI7G1Gw1vj8iHH8cR5DlxR/Q07HH59/lFpwTTDHQElXMSoNY+oqOUfl2aX8BW0i2dJ46C+xKI1nPxxy5CCkOi++dTcNOZdGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751508322; c=relaxed/simple;
-	bh=wz2hO77el1aq9zOCPG42YTLU5SEI6sVB4Utc4vOYjmM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DLxHCstQ1VWq17PZL7zIkcySddMWKqXyj0ZjnEElF+xWgxxhQfKyIGZ3Sh21kTwOunzce50/aDpMvkmdheuBytI9Xz+ap/EQStHZTogNN+uW45kDjeHqVFsDazkBATXH5jdi1IjGEkRkA5mlDoGWNVL811hv0PxrQyBFAzfnSX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bXg8D62y5zYQvMY;
-	Thu,  3 Jul 2025 10:05:16 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.252])
-	by mail.maildlp.com (Postfix) with ESMTP id B01BB1A0E8C;
-	Thu,  3 Jul 2025 10:05:15 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP3 (Coremail) with SMTP id _Ch0CgAHaCVa5WVo2TfrAQ--.65001S3;
-	Thu, 03 Jul 2025 10:05:15 +0800 (CST)
-Message-ID: <fa74ce4b-6dd0-4f65-8daf-36faa94709ef@huaweicloud.com>
-Date: Thu, 3 Jul 2025 10:05:14 +0800
+	s=arc-20240116; t=1751508462; c=relaxed/simple;
+	bh=24G3epBX1KBvYzJEf8cy04InC7gA20oodLz2dmjVIc0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QFeaYznc9PK2q12mgn99l7OZKRu/JdxC6UXLU+Xq+N/DgVxqjhLCPtOIN8sGZUi4kkt+5bfmNqPSrEC7IN+6F7iAlFRkLFpP78tp/DwDJybnvFJNLiCWbDk8xePe7UrYXnNbTMpJnQKSUjyCMx7zKWxvm16bRvGTfeHyUnjlsnw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AL/j4SVL; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-60c3aafae23so1077938a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 19:07:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751508459; x=1752113259; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UzkypJTa2aDOnGhEUSNksvIYvW5r2jEVvJtvSkexsCs=;
+        b=AL/j4SVLNLL1efqkKeC/PXEVnBZ9N2dy0llDrZrvqpG/kiFtcEz6eangSpdY8jtRbR
+         TkuqJPeM9DBnV3+AsxfFmwnPDsbyATveIfN6OC4tiRUmXnmoYx02MTLQ9jjRDkcaX8L0
+         Xfkqqgp/t1nGMKDH4Iq8NcfyxSPjUNzOmMsKmSJSxNbfaAFBrVgjUgbFVQUwWehBdSb9
+         IuMClnXu3lj19PwUzYBwUL1rsC0P7Rpthc5WXV+yy8rLiEQlDvFEJJZxjscsAKqIBzon
+         MOEljj1gLgbRgwDfIkMKtltVfIPxMCDmd64MR7ztXO5p11pE9S+rKoR4EcbswCKBmK0t
+         7UGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751508459; x=1752113259;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UzkypJTa2aDOnGhEUSNksvIYvW5r2jEVvJtvSkexsCs=;
+        b=M71rMjD+qqkLmVw2L2+r99fGvmPRMSH0p0xVDwLoicG7VV2LQLGA6/8iDA66VLvzlR
+         ppXVvDW3Xop6D3lHAuNy+1/JgS0uEPAxVroB4G0J6CxX8fzBScsB+YKGUmBWffUTcPXg
+         I8tK/u/sjYZIeKghs1jxi5qvR0VTQ39eB5t0YUQyCpXZdCG5MZxFFYLAWLvw11gLZgkM
+         pHHHiCDTCl2z4j0PhMnAJi8pwq90hhok4fxKEjJ6MzJPW3tPB0fXFPz+y1BpQ30Qr7GZ
+         FWbVcPDIhhbZPQjmTgvDsXFNxW4qtnsHUMbyFYr5DuDMSL7gidiZQNrBWX9KjAqtjC7k
+         cGpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWtC6knYgyiRU3y4mHlL3fftQQyQB6OV1WuWCGe//a1QF67IuK5bF5Nw6lb84CxLlTHcQBuJjdHU/4OTOA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxopAaFodYdlm0TGSOgIxP10a6fMPW25y3hedRGayD3MHODIYVV
+	cZ2eZzqfaLzyi7AXLidShHJtK8kc/QU3CvBpKN7WzkVc1xLdwRHgAnQKKVefiSSI4XNXR7fSouQ
+	tHViitppha/IgOh4rnmL9GVxTuD7YaWY=
+X-Gm-Gg: ASbGncvMWgdnCeK9zl+e5zYRMfxCRLzAuCiuITiRi6CG9KCsaQXw6leK9H9U8CQ74ne
+	srJCFVkYbQFMoZTNrVSteuaHWF4NlJPh0w+lCnvDw7jC7xG4XKS4oCBx2TnhEiFfo8cOt+HMmfo
+	Fa5yoxrkwSd8V7A4d/gfpYDL+e6eQ/b8CyRrlCEkwhfQ==
+X-Google-Smtp-Source: AGHT+IF218GiZpeI/D+rXXzILlAv1cDE70/cS0aOmmY37xRfNjnVhepbNq4j1eM5FlQuPv33Nwb46LfderGxoJgZ+S8=
+X-Received: by 2002:a17:907:1c97:b0:ae3:c777:6e5e with SMTP id
+ a640c23a62f3a-ae3dd25aca9mr88160166b.19.1751508458811; Wed, 02 Jul 2025
+ 19:07:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 03/10] ext4: fix stale data if it bail out of the
- extents mapping loop
-To: Jan Kara <jack@suse.cz>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
- ojaswin@linux.ibm.com, sashal@kernel.org, yi.zhang@huawei.com,
- libaokun1@huawei.com, yukuai3@huawei.com, yangerkun@huawei.com
-References: <20250701130635.4079595-1-yi.zhang@huaweicloud.com>
- <20250701130635.4079595-4-yi.zhang@huaweicloud.com>
- <hybrquimicexphjrsgcqawpdwtkauemo7ckolnnoygvd5zbtg4@epiqru756uip>
-Content-Language: en-US
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-In-Reply-To: <hybrquimicexphjrsgcqawpdwtkauemo7ckolnnoygvd5zbtg4@epiqru756uip>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:_Ch0CgAHaCVa5WVo2TfrAQ--.65001S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxur1kXw17ArW7Wr15JF1kXwb_yoW5ur47pF
-	WSkan8CF48Jayakr92qF4DZryIk393ZrW7Jay7Ga4ayFn0kr9akr1fK3WY9FW5Jry8Jay0
-	vF4Utw17W3WDAFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
-	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
-	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
-	ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
-	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
-	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IUb
-	mii3UUUUU==
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+References: <78b06d1c7ae0677868e0c7498b589af163313c8d.1750939357.git.zhoubinbin@loongson.cn>
+ <202507021011.sDAHGinj-lkp@intel.com> <20250702162318.GZ10134@google.com>
+In-Reply-To: <20250702162318.GZ10134@google.com>
+From: Binbin Zhou <zhoubb.aaron@gmail.com>
+Date: Thu, 3 Jul 2025 10:07:26 +0800
+X-Gm-Features: Ac12FXxvQYgSR_pb1CaQhAd5356-n99IGXBSgkWflU0a6alpsxti5PcQ-gLfDuE
+Message-ID: <CAMpQs4+hrJ8B4wZRmCH2T7wLAwnmD8_WH2OpNLWH64AbanZ-pw@mail.gmail.com>
+Subject: Re: [PATCH v6 2/3] mfd: ls2kbmc: Add Loongson-2K BMC reset function support
+To: Lee Jones <lee@kernel.org>
+Cc: kernel test robot <lkp@intel.com>, Binbin Zhou <zhoubinbin@loongson.cn>, 
+	Huacai Chen <chenhuacai@loongson.cn>, Corey Minyard <minyard@acm.org>, oe-kbuild-all@lists.linux.dev, 
+	Xuerui Wang <kernel@xen0n.name>, loongarch@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	openipmi-developer@lists.sourceforge.net, jeffbai@aosc.io, 
+	kexybiscuit@aosc.io, wangyao@lemote.com, Chong Qiao <qiaochong@loongson.cn>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2025/7/2 22:07, Jan Kara wrote:
-> On Tue 01-07-25 21:06:28, Zhang Yi wrote:
->> From: Zhang Yi <yi.zhang@huawei.com>
->>
->> During the process of writing back folios, if
->> mpage_map_and_submit_extent() exits the extent mapping loop due to an
->> ENOSPC or ENOMEM error, it may result in stale data or filesystem
->> inconsistency in environments where the block size is smaller than the
->> folio size.
->>
->> When mapping a discontinuous folio in mpage_map_and_submit_extent(),
->> some buffers may have already be mapped. If we exit the mapping loop
->> prematurely, the folio data within the mapped range will not be written
->> back, and the file's disk size will not be updated. Once the transaction
->> that includes this range of extents is committed, this can lead to stale
->> data or filesystem inconsistency.
->>
->> Fix this by submitting the current processing partially mapped folio.
->>
->> Suggested-by: Jan Kara <jack@suse.cz>
->> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
-> 
-> Looks good. Feel free to add:
-> 
-> Reviewed-by: Jan Kara <jack@suse.cz>
-> 
-> Just one naming suggestion below:
-> 
->> +/*
->> + * This is used to submit mapped buffers in a single folio that is not fully
->> + * mapped for various reasons, such as insufficient space or journal credits.
->> + */
->> +static int mpage_submit_buffers(struct mpage_da_data *mpd)
-> 
-> mpage_submit_buffers() sounds somewhat generic. How about
-> mpage_submit_partial_folio()?
-> 
-> 								Honza
+Hi Lee:
+
+On Thu, Jul 3, 2025 at 12:23=E2=80=AFAM Lee Jones <lee@kernel.org> wrote:
 >
+> On Wed, 02 Jul 2025, kernel test robot wrote:
+>
+> > Hi Binbin,
+> >
+> > kernel test robot noticed the following build errors:
+> >
+> > [auto build test ERROR on 3d77b3cc7cc8115d89fa14eaf601e56372953484]
+> >
+> > url:    https://github.com/intel-lab-lkp/linux/commits/Binbin-Zhou/mfd-=
+ls2kbmc-Introduce-Loongson-2K-BMC-core-driver/20250626-203353
+> > base:   3d77b3cc7cc8115d89fa14eaf601e56372953484
+> > patch link:    https://lore.kernel.org/r/78b06d1c7ae0677868e0c7498b589a=
+f163313c8d.1750939357.git.zhoubinbin%40loongson.cn
+> > patch subject: [PATCH v6 2/3] mfd: ls2kbmc: Add Loongson-2K BMC reset f=
+unction support
+> > config: sparc64-allmodconfig (https://download.01.org/0day-ci/archive/2=
+0250702/202507021011.sDAHGinj-lkp@intel.com/config)
+> > compiler: sparc64-linux-gcc (GCC) 15.1.0
+> > reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci/arc=
+hive/20250702/202507021011.sDAHGinj-lkp@intel.com/reproduce)
+> >
+> > If you fix the issue in a separate patch/commit (i.e. not just a new ve=
+rsion of
+> > the same patch/commit), kindly add following tags
+> > | Reported-by: kernel test robot <lkp@intel.com>
+> > | Closes: https://lore.kernel.org/oe-kbuild-all/202507021011.sDAHGinj-l=
+kp@intel.com/
+> >
+> > All errors (new ones prefixed by >>):
+> >
+> >    drivers/mfd/ls2k-bmc-core.c: In function 'ls2k_bmc_pdata_initial':
+> > >> drivers/mfd/ls2k-bmc-core.c:349:15: error: implicit declaration of f=
+unction 'acpi_register_gsi' [-Wimplicit-function-declaration]
+> >      349 |         irq =3D acpi_register_gsi(NULL, gsi, ACPI_EDGE_SENSI=
+TIVE, ACPI_ACTIVE_LOW);
+> >          |               ^~~~~~~~~~~~~~~~~
+> > >> drivers/mfd/ls2k-bmc-core.c:376:9: error: implicit declaration of fu=
+nction 'acpi_unregister_gsi'; did you mean 'arch_unregister_cpu'? [-Wimplic=
+it-function-declaration]
+> >      376 |         acpi_unregister_gsi(gsi);
+> >          |         ^~~~~~~~~~~~~~~~~~~
+> >          |         arch_unregister_cpu
+>
+> Is this error valid?
 
-Yeah, mpage_submit_partial_folio looks better to me.
+Emm...
 
-Thanks,
-Yi.
+This error does exist if ACPI_GENERIC_GSI is not selected.
+I will add this dependency in the next version.
 
+depends on PCI && ACPI_GENERIC_GSI
 
->> +{
->> +	struct inode *inode = mpd->inode;
->> +	struct folio *folio;
->> +	loff_t pos;
->> +	int ret;
->> +
->> +	folio = filemap_get_folio(inode->i_mapping,
->> +				  mpd->start_pos >> PAGE_SHIFT);
->> +	if (IS_ERR(folio))
->> +		return PTR_ERR(folio);
->> +	/*
->> +	 * The mapped position should be within the current processing folio
->> +	 * but must not be the folio start position.
->> +	 */
->> +	pos = mpd->map.m_lblk << inode->i_blkbits;
->> +	if (WARN_ON_ONCE((folio_pos(folio) == pos) ||
->> +			 !folio_contains(folio, pos >> PAGE_SHIFT)))
->> +		return -EINVAL;
->> +
->> +	ret = mpage_submit_folio(mpd, folio);
->> +	if (ret)
->> +		goto out;
->> +	/*
->> +	 * Update start_pos to prevent this folio from being released in
->> +	 * mpage_release_unused_pages(), it will be reset to the aligned folio
->> +	 * pos when this folio is written again in the next round. Additionally,
->> +	 * do not update wbc->nr_to_write here, as it will be updated once the
->> +	 * entire folio has finished processing.
->> +	 */
->> +	mpd->start_pos = pos;
->> +out:
->> +	folio_unlock(folio);
->> +	folio_put(folio);
->> +	return ret;
->> +}
->> +
->>  /*
->>   * mpage_map_and_submit_extent - map extent starting at mpd->lblk of length
->>   *				 mpd->len and submit pages underlying it for IO
->> @@ -2411,8 +2452,16 @@ static int mpage_map_and_submit_extent(handle_t *handle,
->>  			 */
->>  			if ((err == -ENOMEM) ||
->>  			    (err == -ENOSPC && ext4_count_free_clusters(sb))) {
->> -				if (progress)
->> +				/*
->> +				 * We may have already allocated extents for
->> +				 * some bhs inside the folio, issue the
->> +				 * corresponding data to prevent stale data.
->> +				 */
->> +				if (progress) {
->> +					if (mpage_submit_buffers(mpd))
->> +						goto invalidate_dirty_pages;
->>  					goto update_disksize;
->> +				}
->>  				return err;
->>  			}
->>  			ext4_msg(sb, KERN_CRIT,
->> -- 
->> 2.46.1
->>
+>
+> --
+> Lee Jones [=E6=9D=8E=E7=90=BC=E6=96=AF]
 
+--=20
+Thanks.
+Binbin
 
