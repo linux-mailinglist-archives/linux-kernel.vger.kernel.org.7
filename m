@@ -1,90 +1,126 @@
-Return-Path: <linux-kernel+bounces-715824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-715827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98594AF7E3C
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 18:56:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85BB1AF7E41
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 18:57:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 597E73B49A2
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 16:55:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CC3D189B916
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 16:57:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC6052550AD;
-	Thu,  3 Jul 2025 16:56:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D96325B30C;
+	Thu,  3 Jul 2025 16:57:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Qve4Ujc+";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="MGbBHLR8"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DeXGHAXh"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E739E1804A
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 16:56:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 035FB258CF1;
+	Thu,  3 Jul 2025 16:57:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751561775; cv=none; b=bk4hyVCOBmPqFBpu/ajTFjv+aVpkX/+svIh8ecBVLDS8f7FYThiN4MfUP2J+BnQJTCHn3jGE2E9u5unRsPLIstBmr5H6ESP+a5a6CgPiAOD9pNF3bdhOjeayDnvvv0SZtBNQCXm/meoTTIOEFtOCAMfbJ6oERqfeHWcYpF98RNc=
+	t=1751561822; cv=none; b=tlItnVMV+VGDZKGs6MZkF0ynt7c5eO7ah7FuRio3dIflR9ZK03v8RFHhX/CsATKHmn1KtG/EOi0awpMfFRC9kv3NGxzQFbMW91NLmxL88TQsz9GixbSKuA2FvHz2rI2Gx7eRmqI6V/UX9V+3OtW5sMTdn+tnrEo3NaxeCcspkeQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751561775; c=relaxed/simple;
-	bh=2u1r5WhkbWRJ4A8OZRQFXYhcLgU7v3KG8yidx97jCsw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=psRJJARZDR9XgOegaykhTKFyCBLUtiItrRn/NHA/ya/NOjgY7L98YKXyhGMGGVDbyysckOGpu7ngXB6PA0HM+Fqzc18hUW8mbvQJddje8ac2Y+HC4KI5ttYIpoY3lWAuup8c9VleVatM57unuOPEpC4nri2+HsRQ43dKI/LaC90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Qve4Ujc+; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=MGbBHLR8; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1751561772;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nIGeJMLrzyx/RfyUTZprCydDkvwjop7CmikTg7OBOeE=;
-	b=Qve4Ujc+JgShf2KfvxJZvolt0pXpLbEDVkrNMFOQOLqVidJQRavk4c0co50BXzO3MhVYfq
-	dgm8MPq8aqQIEtNZNoCJ2NnovDmeBd3bAU3LiSLlICaPmDEwd8otOqTp+xPmH54gndviKz
-	0Koww5nJvavYehGxmV5Iq6aklz4ipijlTFBVMTR6yHNdRDRmKZFjlghJad9l+D0vu9Vq80
-	Nezso7CVAzn8YPefwa3H/nouWEgMNaKZtqJxhiR02+iTifsydw1ffkIbpXLW5DgcAxex9Y
-	PaeLOEbt8JlXPW/HrqV8847hXbg5ZS266B+hhenwBDbQ/SNV2BEMojG4AMdvmg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1751561772;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nIGeJMLrzyx/RfyUTZprCydDkvwjop7CmikTg7OBOeE=;
-	b=MGbBHLR864EdiZtsEkbKp2OK+JQUWG8uNORePPT7JB+2V6ZUbdROvE2yV+d8ux/NzTc+Ww
-	hJe3pY3Hb/ApUhDA==
-To: Rik van Riel <riel@surriel.com>, Yury Norov <yury.norov@gmail.com>
-Cc: Jann Horn <jannh@google.com>, syzbot
- <syzbot+084b6e5bc1016723a9c4@syzkaller.appspotmail.com>, bp@alien8.de,
- dave.hansen@linux.intel.com, hpa@zytor.com, linux-kernel@vger.kernel.org,
- luto@kernel.org, mingo@redhat.com, neeraj.upadhyay@kernel.org,
- paulmck@kernel.org, peterz@infradead.org, syzkaller-bugs@googlegroups.com,
- x86@kernel.org, kernel-team <kernel-team@meta.com>, David Hildenbrand
- <david@redhat.com>
-Subject: Re: [PATCH] smp: Wait for enqueued work regardless of IPI sent
-In-Reply-To: <20250702135954.7a00497d@fangorn>
-References: <68653927.a70a0220.3b7e22.245d.GAE@google.com>
- <366d45aea0b64cfc82c0988ae5fe6863bbd28261.camel@surriel.com>
- <CAG48ez2_4D17XMrEb7+5fwq0RFDFDCsY5OjTB7uaXEzdybxshA@mail.gmail.com>
- <CAG48ez1VMw=aE88eTfk9BscrmS7axJG=j_TrTui+htLF9-4Wqw@mail.gmail.com>
- <874ivuldog.ffs@tglx> <aGVwAtUi8eKNT8Jy@yury>
- <20250702135954.7a00497d@fangorn>
-Date: Thu, 03 Jul 2025 18:56:11 +0200
-Message-ID: <87ikk9tdqs.ffs@tglx>
+	s=arc-20240116; t=1751561822; c=relaxed/simple;
+	bh=0gNRnHp0lYcF48lsVadyWaPO5wqh2fr3pWkBS9xX3i4=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=llgS1DosGU9841bhUUCyJuLmHo2h27xaSZJukQbWmq4B2d0x3KhoYavotRnxilbp9Ec0OCyoUGkK1z+N4imnAB3ia/+LFI7nNEGRPAotZ65fCSUv60wTNY3v1trW5jOhPoGs4pAp3XCpZAFwzGdkAs4IEFGti5zsygpkuLnkxBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DeXGHAXh; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751561821; x=1783097821;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=0gNRnHp0lYcF48lsVadyWaPO5wqh2fr3pWkBS9xX3i4=;
+  b=DeXGHAXhvKCECVk1XAUGbEbEoxlzsvfhsBJ6vkXxgCR7YOMOOE16DImZ
+   XXrlf8wyW0g4BZ8fsMqZEBSFbHgcQ9C1B5n4CSvHMoMFyhUb/uzmCL/7k
+   kAH7/DxKCkFbq6S/+bLG+uQoZ7EvOY8NhbbEdAwZ9mIBKBZNq26nu+kV5
+   zOk5M2+87N5sB4nTVhkW451d5x71DZM1BxMkXj1y6FRTXdquTeL4UY7D9
+   Ae1uUyU+ouHGglawJD3WqliPXnWDtDkxjFeWh8wOdGurYijBTJENzhxrV
+   S35eB9qxxksv+NO6ghfxUlQrFk56LZ6TkBdIf6Dl70LKIh16ONDG+4thF
+   w==;
+X-CSE-ConnectionGUID: vNV8CHUKQvmDf1cidN2opA==
+X-CSE-MsgGUID: aNN2OfjqRQqZIH2/OHleKg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11483"; a="53992517"
+X-IronPort-AV: E=Sophos;i="6.16,284,1744095600"; 
+   d="scan'208";a="53992517"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2025 09:56:54 -0700
+X-CSE-ConnectionGUID: e6jn6gNZTquTIpHXvdM/gA==
+X-CSE-MsgGUID: K6pqvlZNS0itNtLCuLhSbQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,284,1744095600"; 
+   d="scan'208";a="154554262"
+Received: from kanliang-dev.jf.intel.com ([10.165.154.102])
+  by orviesa007.jf.intel.com with ESMTP; 03 Jul 2025 09:56:53 -0700
+From: kan.liang@linux.intel.com
+To: peterz@infradead.org,
+	mingo@redhat.com,
+	acme@kernel.org,
+	namhyung@kernel.org,
+	irogers@google.com,
+	linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Cc: dapeng1.mi@linux.intel.com,
+	Kan Liang <kan.liang@linux.intel.com>
+Subject: [PATCH V3 2/4] perf/x86/intel/uncore: Support customized MMIO map size
+Date: Thu,  3 Jul 2025 09:56:12 -0700
+Message-Id: <20250703165614.606446-3-kan.liang@linux.intel.com>
+X-Mailer: git-send-email 2.38.1
+In-Reply-To: <20250703165614.606446-1-kan.liang@linux.intel.com>
+References: <20250703165614.606446-1-kan.liang@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 02 2025 at 13:59, Rik van Riel wrote:
-> Thomas, please let me know if you already reverted Yury's patch,
-> and want me to re-send this without the last hunk.
+From: Kan Liang <kan.liang@linux.intel.com>
 
-I did so immediately after saying so in my previous reply. It's gone in
-tip and next.
+For a server platform, the MMIO map size is always 0x4000. However, a
+client platform may have a smaller map size.
 
-Thanks,
+Make the map size customizable.
 
-        tglx
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+---
+ arch/x86/events/intel/uncore_discovery.c | 2 +-
+ arch/x86/events/intel/uncore_snbep.c     | 2 ++
+ 2 files changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/arch/x86/events/intel/uncore_discovery.c b/arch/x86/events/intel/uncore_discovery.c
+index 8680f66c3e34..142cf714bfe2 100644
+--- a/arch/x86/events/intel/uncore_discovery.c
++++ b/arch/x86/events/intel/uncore_discovery.c
+@@ -650,7 +650,7 @@ void intel_generic_uncore_mmio_init_box(struct intel_uncore_box *box)
+ 	}
+ 
+ 	addr = unit->addr;
+-	box->io_addr = ioremap(addr, UNCORE_GENERIC_MMIO_SIZE);
++	box->io_addr = ioremap(addr, type->mmio_map_size);
+ 	if (!box->io_addr) {
+ 		pr_warn("Uncore type %d box %d: ioremap error for 0x%llx.\n",
+ 			type->type_id, unit->id, (unsigned long long)addr);
+diff --git a/arch/x86/events/intel/uncore_snbep.c b/arch/x86/events/intel/uncore_snbep.c
+index 76d96df1475a..2f5c2eb1ce0c 100644
+--- a/arch/x86/events/intel/uncore_snbep.c
++++ b/arch/x86/events/intel/uncore_snbep.c
+@@ -6408,6 +6408,8 @@ static void uncore_type_customized_copy(struct intel_uncore_type *to_type,
+ 		to_type->get_topology = from_type->get_topology;
+ 	if (from_type->cleanup_mapping)
+ 		to_type->cleanup_mapping = from_type->cleanup_mapping;
++	if (from_type->mmio_map_size)
++		to_type->mmio_map_size = from_type->mmio_map_size;
+ }
+ 
+ static struct intel_uncore_type **
+-- 
+2.38.1
+
 
