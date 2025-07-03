@@ -1,116 +1,180 @@
-Return-Path: <linux-kernel+bounces-714472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB6E7AF685F
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 04:54:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 403F5AF6826
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 04:40:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 526E21C426EB
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 02:55:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 915831C44011
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 02:40:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A56B621ADB5;
-	Thu,  3 Jul 2025 02:54:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28C2621A435;
+	Thu,  3 Jul 2025 02:40:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="HavHrXb4"
-Received: from m16.mail.126.com (m16.mail.126.com [117.135.210.9])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9D8C23BE;
-	Thu,  3 Jul 2025 02:54:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.9
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lzIa/Msx"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D96E218584
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 02:40:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751511290; cv=none; b=e1zHLOxOey/CUiCbyAnozN1q3bNyN0dlN43ERRuMHMF6cNjFcbL0WQir9JGS5QAXfZ+Rx0Y4D6u38PTdamnc2d/4w3ysS+QABDRJtXNiVriWgFsCLK2hKW3nB7NBGbwONp3EUfekUO7jhI/5WxnpQ4iPzv+5Wl1zkf5SllKwN80=
+	t=1751510417; cv=none; b=XIS7mVgfftDxqMk6wcHFjROnrQAiS8L5RQz4vjWamdffW3ljWVFcAPkdn7+COyibccvwxmRiKNYjJ+28O72yBSjzQwkcOWchwgYiSIoFTKMo3hSUnY4eVGKstbBf0c3ArVOS4XrsxMDnQCrAlgMAYIBl83C6q924o0dtYw6a+YA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751511290; c=relaxed/simple;
-	bh=5WYfMc5xlqprXqGplo8TPRTwoTJcHq8cNIKht6TcDnM=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=P+fFE11oKocdnxaL/c2aEnreIKi3McsCNoBGR9G3lT4RyZRXLWoKeQgXJTciZi9kHRdmwV0LgDmdVT1Lkb92VgzY45mymYZu8D7amO8P+509zwY1n38ISI4zTklloCFAMAbvhUjLZ7h3npFIMXmtoBI2WWRKRGnMuzpoEI1CgRk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=HavHrXb4; arc=none smtp.client-ip=117.135.210.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id; bh=RNGiMRA7tuQYaNu
-	ZL6aNqt4/FrG725yke/AkkJExntU=; b=HavHrXb4n7y1jl4SFU67iohdY9hlFac
-	nVJw3fz3JqKzheZtNn87cqcdMyJYJV8cJ4F0U7r8AvffxQ0Wu2X8cTmc7ay/Rhbd
-	NEo8tPF6HzazIgXBnFj/Mj6zQvcAfGlWNs/cm08EKXZDK5CjcIZGpSzzeelUnwN3
-	xtxpPAMZJXiw=
-Received: from hg-OptiPlex-7040.hygon.cn (unknown [])
-	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wDHz3Iv7WVo3yJGAw--.37667S2;
-	Thu, 03 Jul 2025 10:38:40 +0800 (CST)
-From: yangge1116@126.com
-To: ardb@kernel.org
-Cc: jarkko@kernel.org,
-	sathyanarayanan.kuppuswamy@linux.intel.com,
-	ilias.apalodimas@linaro.org,
-	jgg@ziepe.ca,
-	linux-efi@vger.kernel.org,
+	s=arc-20240116; t=1751510417; c=relaxed/simple;
+	bh=9zbpsDQ/VLO8HS3X8a/sdtuKYGSkgguA3kE8ZvQJbVs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=N4+WvjWJEect2QjegSf5WCBhILIzj9bRjZS6NH8bVon2NkKX0Vwc2/Nja8ZKY1ICXr64jnzzXV+WyOnrS3YR+radET0+h3U+JF4kxQ4OLaMs/sa/2+O8YEVUdOzCBA2K3bH2QcFOCZbZXSRUq9AjEvVlRVHDI9RlwansEHAOazk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lzIa/Msx; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-74ad4533ac5so432104b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 19:40:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751510415; x=1752115215; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=YIGZjKYpefB43h3SleWEiKb7qfKsUPvOFzJhtBGdavI=;
+        b=lzIa/MsxBLIWH9EbtpwrZqdllXRQ11v1mq4y1Yys0d1iw54T5SxMnNurn7XZmt6szI
+         Vi1QhCWpEbZAkkmgMtatbiTsX1DsIZmOoLx6fW7pWwWaGv86M/Z5imhCIOTFKzLe38hg
+         HOg4HIgIv23pFo7tNG1xso1WbB63W3JPnJmh6LTCePoxh2tfaDtcVStq2rMFRLB/Rapr
+         MVfHzNrt0RJaacD+hLpkUdD3kAADOj0xueFjQDxvNOPx2TwcT8rrUejoQNwad9hcgvJn
+         /Y/bghB5MAsiYR4TCJ73EQiGkGpVeTA83ed4HqWxALRevCpybEpKJcc/R+Nw7anSPDsw
+         x1iQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751510415; x=1752115215;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YIGZjKYpefB43h3SleWEiKb7qfKsUPvOFzJhtBGdavI=;
+        b=vr2UYPuU6S1Jjn9Yol13CTdhq4r/sNjbt+BY9utwK3eqiUYD6oXvI5qAHhonu7920t
+         b8nZe6Qkd14sjbaNP8OsV/+cUwGxTPH18p0HcPX1f843nxIW/8ZRwYP2+O2FH1Dv7n5X
+         jfEXfjA6+rnJ+7kIEmnhpIXZVDm2Q1V82ZcxAxZKBshmLdQP0sT72aw9Lk8mQREB+s+N
+         3bd6mqWxF7vItIqKqG4GQeOWzX1tkOUyO64Uoo5w9LOxUs5nqmdigz5+O0V1UtcXGxeH
+         m0glSRXvc+IQF0z6MsLo+j07eDAyNxVk/FMNdGKQcpyGJ0HZOaL8/kda3jlnYI1epMet
+         CZGw==
+X-Forwarded-Encrypted: i=1; AJvYcCU7kcgHhIkPtC9pKWP4ajrBM4OP3Bambbvwn8oSg4wUd1v/1fZLWo0KHECWQ1K3YpPWprmEGHyxX+6rxlU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxs0uy1yUH6bzcj7WTCuFWZ9Z6kvvu4APy/LSg23BZ1G3aBnONL
+	7nLPLOM7zQXZBidm3kESG//X561Tz0he5ix44AXNOQjWt17i308sEJwg
+X-Gm-Gg: ASbGncsl1NyzN17lqEO0gGMxxSMemEkGUP3fcbHgiMiAReZscRwHFAA1XT+x8IjMeYt
+	T8th9Jrnj8svpvAoyHuBHcXx8w6GIwji5SuFd3IsJHOH94DHt10zmqRRBALnRTQbpBViVf/fQ9e
+	658tQ8dEsW1+djvznfLCV9XP2PvKqfVKF46yLTX9+8fkm9LlyS26c8FGThvR08ewdVyxO0H8HJ7
+	eqWlmi48X8OTb1wV8NrzNqU9+9YAAqFU91HO/ci6knL4J2SvjGhGcL9Uc4inwi5PZwCV7qbqBGu
+	m9P27RC5NipNeM6xyqDeZeXKrrNDe26XiTD3T0rwIcZWBh4NcqxxOhQqtqy4h7G9QTWX6RBIlon
+	yr4vaBuduOJaKl80=
+X-Google-Smtp-Source: AGHT+IFj9S+Fx0WGqU+h/+2EUe4iTujac5xzUy8L36JCmyRv8r5DxDrUoDq6sz1S8Iu3CG0JGYTd9Q==
+X-Received: by 2002:a05:6a20:2588:b0:218:17a2:4421 with SMTP id adf61e73a8af0-22482a34a8dmr816405637.10.1751510415118;
+        Wed, 02 Jul 2025 19:40:15 -0700 (PDT)
+Received: from localhost.localdomain ([210.184.73.204])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b362cef26dfsm4709952a12.46.2025.07.02.19.40.08
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Wed, 02 Jul 2025 19:40:14 -0700 (PDT)
+From: Hao Jia <jiahao.kernel@gmail.com>
+To: akpm@linux-foundation.org,
+	yuzhao@google.com,
+	yuanchu@google.com,
+	shakeel.butt@linux.dev,
+	mhocko@kernel.org,
+	lorenzo.stoakes@oracle.com,
+	kinseyho@google.com,
+	hannes@cmpxchg.org,
+	gthelen@google.com,
+	david@redhat.com,
+	axelrasmussen@google.com,
+	zhengqi.arch@bytedance.com
+Cc: linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	liuzixing@hygon.cn,
-	Ge Yang <yangge1116@126.com>
-Subject: [PATCH] efi/tpm: Fix the issue where the CC platforms event log header can't be correctly identified
-Date: Thu,  3 Jul 2025 10:38:37 +0800
-Message-Id: <1751510317-12152-1-git-send-email-yangge1116@126.com>
-X-Mailer: git-send-email 2.7.4
-X-CM-TRANSID:_____wDHz3Iv7WVo3yJGAw--.37667S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxJryxCF4UKF4rtF1UXFyrZwb_yoW8Zry8p3
-	ZrGrnakr95try2gr93Zw18Cw4UA395CrZrGFykKw10yr98Wr92qayjg345K3WfGrZrJFZ8
-	Wa4jqr17Ca4UZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zRoKZXUUUUU=
-X-CM-SenderInfo: 51dqwwjhrrila6rslhhfrp/1tbiOgZ-G2hl5F7-FQAAsF
+	Hao Jia <jiahao1@lixiang.com>
+Subject: [PATCH v2] mm/mglru: Stop try_to_inc_min_seq() if min_seq[type] has not increased
+Date: Thu,  3 Jul 2025 10:39:46 +0800
+Message-Id: <20250703023946.65315-1-jiahao.kernel@gmail.com>
+X-Mailer: git-send-email 2.39.2 (Apple Git-143)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-From: Ge Yang <yangge1116@126.com>
+From: Hao Jia <jiahao1@lixiang.com>
 
-Since commit d228814b1913 ("efi/libstub: Add get_event_log() support
-for CC platforms") reuses TPM2 support code for the CC platforms, when
-launching a TDX virtual machine with coco measurement enabled, the
-following error log is generated:
+In try_to_inc_min_seq(), if min_seq[type] has not increased. In other
+words, min_seq[type] == lrugen->min_seq[type]. Then we should return
+directly to avoid unnecessary overhead later.
 
-[Firmware Bug]: Failed to parse event in TPM Final Events Log
+Corollary: If min_seq[type] of both anonymous and file is not increased,
+try_to_inc_min_seq() will fail.
 
-Call Trace:
-efi_config_parse_tables()
-  efi_tpm_eventlog_init()
-    tpm2_calc_event_log_size()
-      __calc_tpm2_event_size()
+Proof:
+It is known that min_seq[type] has not increased, that is, min_seq[type]
+is equal to lrugen->min_seq[type], then the following:
 
-The pcr_idx value in the Intel TDX log header is 1, causing the
-function __calc_tpm2_event_size() to fail to recognize the log header,
-ultimately leading to the "Failed to parse event in TPM Final Events
-Log" error.
+case 1: min_seq[type] has not been reassigned and changed before
+judgment min_seq[type] <= lrugen->min_seq[type].
+Then the subsequent min_seq[type] <= lrugen->min_seq[type] judgment
+will always be true.
 
-According to UEFI Spec 2.10 Section 38.4.1: For Tdx, TPM PCR 0 maps to
-MRTD, so the log header uses TPM PCR 1. To successfully parse the TDX
-event log header, the check for a pcr_idx value of 0 has been removed
-here, and it appears that this will not affect other functionalities.
+case 2: min_seq[type] is reassigned to seq, before judgment
+min_seq[type] <= lrugen->min_seq[type].
+Then at least the condition of min_seq[type] > seq must be met
+before min_seq[type] will be reassigned to seq.
+That is to say, before the reassignment, lrugen->min_seq[type] > seq
+is met, and then min_seq[type] = seq.
+Then the following min_seq[type](seq) <= lrugen->min_seq[type] judgment
+is always true.
 
-Link: https://uefi.org/specs/UEFI/2.10/38_Confidential_Computing.html#intel-trust-domain-extension
-Fixes: d228814b1913 ("efi/libstub: Add get_event_log() support for CC platforms")
-Signed-off-by: Ge Yang <yangge1116@126.com>
-Cc: stable@vger.kernel.org
+Therefore, in try_to_inc_min_seq(), If min_seq[type] of both anonymous
+and file is not increased, we can return false directly to avoid
+unnecessary overhead.
+
+Suggested-by: Yuanchu Xie <yuanchu@google.com>
+Signed-off-by: Hao Jia <jiahao1@lixiang.com>
 ---
- include/linux/tpm_eventlog.h | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+v1 to v2:
+ - Modify commit message to make proof clearer.
+ - Use one bool to detect any increments in min_seq[type], suggested by Yuanchu Xie.
 
-diff --git a/include/linux/tpm_eventlog.h b/include/linux/tpm_eventlog.h
-index 891368e..05c0ae5 100644
---- a/include/linux/tpm_eventlog.h
-+++ b/include/linux/tpm_eventlog.h
-@@ -202,8 +202,7 @@ static __always_inline u32 __calc_tpm2_event_size(struct tcg_pcr_event2_head *ev
- 	event_type = event->event_type;
+Link to v1: https://lore.kernel.org/all/20250630080603.36171-1-jiahao.kernel@gmail.com
+
+ mm/vmscan.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index d48e8d365502..d5b6924aeb8f 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -3919,6 +3919,7 @@ static bool try_to_inc_min_seq(struct lruvec *lruvec, int swappiness)
+ {
+ 	int gen, type, zone;
+ 	bool success = false;
++	bool seq_inc_flag = false;
+ 	struct lru_gen_folio *lrugen = &lruvec->lrugen;
+ 	DEFINE_MIN_SEQ(lruvec);
  
- 	/* Verify that it's the log header */
--	if (event_header->pcr_idx != 0 ||
--	    event_header->event_type != NO_ACTION ||
-+	if (event_header->event_type != NO_ACTION ||
- 	    memcmp(event_header->digest, zero_digest, sizeof(zero_digest))) {
- 		size = 0;
- 		goto out;
+@@ -3935,11 +3936,20 @@ static bool try_to_inc_min_seq(struct lruvec *lruvec, int swappiness)
+ 			}
+ 
+ 			min_seq[type]++;
++			seq_inc_flag = true;
+ 		}
+ next:
+ 		;
+ 	}
+ 
++	/*
++	 * If min_seq[type] of both anonymous and file is not increased,
++	 * we can directly return false to avoid unnecessary checking
++	 * overhead later.
++	 */
++	if (!seq_inc_flag)
++		return success;
++
+ 	/* see the comment on lru_gen_folio */
+ 	if (swappiness && swappiness <= MAX_SWAPPINESS) {
+ 		unsigned long seq = lrugen->max_seq - MIN_NR_GENS;
 -- 
-2.7.4
+2.34.1
 
 
