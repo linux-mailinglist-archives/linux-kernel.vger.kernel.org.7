@@ -1,177 +1,177 @@
-Return-Path: <linux-kernel+bounces-714618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18A4FAF6A47
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 08:28:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB66FAF6A31
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 08:20:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD33F3BBFBA
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 06:28:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3FD81C222BD
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 06:20:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E21A291C35;
-	Thu,  3 Jul 2025 06:28:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC92D27A904;
+	Thu,  3 Jul 2025 06:19:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="yPQ8Hje4"
-Received: from out162-62-58-216.mail.qq.com (out162-62-58-216.mail.qq.com [162.62.58.216])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="2VWvod62";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="yZ7/bd4p";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="2VWvod62";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="yZ7/bd4p"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0504934CF5;
-	Thu,  3 Jul 2025 06:28:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 932F728DF12
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 06:19:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751524107; cv=none; b=eOiDnEc9+NsM3R2V+H/6bcS51/B64k7M4LBEf4evgafS2VzodvhvVIzqV4FGYicy7waneDgLhsKP987oheAuY2VqWM1JrTS4YyTI7HTDgTKVx9puWAeMUNgW4llegXHQJdzTUSXCWdgjiCY2xsL/Czc+Nw+5zJwvj7VTUiU0kgE=
+	t=1751523590; cv=none; b=iUhvqLQGRzh/xfVWxV5QPq3U8oYYcOJSK6Kq16wvBq9n09N6wG9q5lQgt47MyKKIy+8G7HDGM+q5BxRFlnaU9iayMfHbtkDd8KQ206pBDR/bZxeXCfztmbttkGP1lViT5Uo/+GWNz/rgdjCcFSwypwR8MW/gvljnUudDp7qgWvc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751524107; c=relaxed/simple;
-	bh=k2fQ15blhXnokoZCixT/LqKBpaoOPiZz7TLHKu3xLxE=;
-	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=XiSIWW1AAav4UrZUcrrz7Me8iIJ+RU3eKxDqcywDsU+M0vg9FVCpm/SUW+ahTI8ZN8Lc9v7bFKV1jUSsMStlwKm9dtG0cH63jzIF6pNef4wIFJMgV7pIY6bUDgGcRlKQ/xnuH8rLN2kQYG155cagzDm815KuomSV8QnbRltxKiU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=yPQ8Hje4; arc=none smtp.client-ip=162.62.58.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-	s=s201512; t=1751523797;
-	bh=nE5o0ZqeNH5gAh0+GhcCOmyyvJ/oaeaGfaV8MIneIgk=;
-	h=From:To:Cc:Subject:Date;
-	b=yPQ8Hje4K5Rz2pz7rPuUdFaKpeGnsnW6ZKqh6DJvGKFxwFZm86d3AJ4b2l0DhxhDQ
-	 xTh8ehxF1h5X/0e9HdKrM+NHRuq2eFX/CUllhDEMbl2TXWH7VEXLfgykgRFqG1R9no
-	 NNs9jdKyKoo7nExLuWVG2jxYhKKEu2fu5SUDbl/s=
-Received: from meizu-Precision-3660.meizu.com ([14.21.33.154])
-	by newxmesmtplogicsvrsza28-0.qq.com (NewEsmtp) with SMTP
-	id 5CF33025; Thu, 03 Jul 2025 14:23:15 +0800
-X-QQ-mid: xmsmtpt1751523795tikroen7m
-Message-ID: <tencent_D06DEE8D71295798F385BCC52FACAE96A207@qq.com>
-X-QQ-XMAILINFO: MMwjR1C73eIs3QfeLzO2lVtLnj7bWfRMm+8Iu0tVq8lBrc+Mi/7zpRftqsC4Ri
-	 1fRium/jka+geMb5PIdCC69ZnQ0NMT4kzyQJS3hg7IplUlc81FMbJS+cojkr6C2Bk2EtsnGI/vxY
-	 krvAPKvVhdo8+UIq5J/kc4penx/O/3ZFBGt8Xk+r2R780k/b2a6akT2+3wOyfR8xkVUTeEwyGfv6
-	 DnuMPJxxLbYQkg56ZPmptat9fdKz7rmhFGP+PylC71fwSfNVdIKTyNTA/84RLkCu68EwjBve5imp
-	 CwN37vk6C9KwXmy4xH64r48lPIbDAQRRwQRmvIkX3RyXP3NrGiM6hcawzxfqQllVnMttX+cU8r+Z
-	 erOjQ50Ae/17BLE269goMX5zA9GN7v8NWPV3mnVHsg76xnBj6Vrm7RveJLAuivF4unib933y2x40
-	 rB28NWy2cWWJRPCFgEwY7yzIM8F9cZ5+8Gmm+xYWhnH375TutQ/wG9L2idy1EEW1p1XmYGFAMjXR
-	 DoHEU9Nnfb0vBnFAO5rg3twDSvki62rA16hEc4QjVDZ8H6rDCnzEbQL4ZzxXAj0ClXLX8tFPVXRn
-	 QRVLxxHNSvYOGbbNvy+CMbLOTHV7jYAxc+DlsmdfkFKbvcC+bPdJ77VblOuKc8jPaOR2tic/bwGZ
-	 JhqiodUEP4DvymwKvF+QXzv8J6XgbbXZ/ISO3AbgG3RDVgmK3GlRT9uJf+TC2qtOqPIOI/p9bA7w
-	 UE78ZWNVzIq72TT4+LkEqfZLoZ3DTZbuyL+pUwTQ8eO0PnYXUOq7rUBUp4lv4Y3p49viJEacU8LY
-	 oqiudUAlYvszwWMeYusMXnb7oU1vEbfnUWJ8Lri0uLKF7+nbHd0B5CIK40aLV5RPndm2h8Gf5TOH
-	 2SrEYqwJE2qriBBq83IEk+4gbK0ZEiIl14kPPydDYxb6V5a7zVQaxJeIQflilCzPtWj2DQesS4OA
-	 kSyilN/9oF6//2nJ6ydnbepamIQa4+zhKi9apeIb+QAdrMW0nKsUQ3Af85K62FzgAz00pBTZeI/c
-	 e3Zg+eSAF117X1/pPuzkRsGqxGdfAi8NQhV9fRRg==
-X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
-From: Yuwen Chen <ywen.chen@foxmail.com>
-To: ebiggers@kernel.org,
-	tytso@mit.edu,
-	herbert@gondor.apana.org.au,
-	davem@davemloft.net,
-	jaegeuk@kernel.org
-Cc: linux-fscrypt@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-crypto@vger.kernel.org,
-	Yuwen Chen <ywen.chen@foxmail.com>
-Subject: [PATCH] fscrypt: improve filename encryption and decryption performance
-Date: Thu,  3 Jul 2025 14:19:01 +0800
-X-OQ-MSGID: <20250703061901.3662034-1-ywen.chen@foxmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1751523590; c=relaxed/simple;
+	bh=bnRLGPo7uTXckbWJF4fZ3k2DHsWuhvAUBbsAXUkwySo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ANFfClA0bHoIGMZYm6/lEMQZAorYugeN53Cz8Sbn+jMXEUXc1lOsTa3ive3UVYXZkSKvxKyOXvsiqDdkh8UkEWuoc2wlYqc3b0+UpUlMsX9LOIGaJiotjZA1wuQnEUx2QZ0FtvAyRiwzyYQCE4r4VdH4sbUDSjOgHeds3Q/JgJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=2VWvod62; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=yZ7/bd4p; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=2VWvod62; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=yZ7/bd4p; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 5E0D91F38D;
+	Thu,  3 Jul 2025 06:19:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1751523581; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ohV0h+/at6s8qhvJO3e6EntcK+gCsiWXFp09ll+hPYY=;
+	b=2VWvod62vCm9Hz7UlC9/Y0GGgwIai2bGXmyRhNz3r6p46dWFHZHDWY3ac/tbabjsiLuCDK
+	stHMSVVU4UAaz9VMOlh+e4olCBzZOnXBSf/0bp59yA6zg5A0FYIoTbZ4A7izhZTYPmYzui
+	b7o64TJ0sZWTN9QPJQJbczZk5Qw/9Kw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1751523581;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ohV0h+/at6s8qhvJO3e6EntcK+gCsiWXFp09ll+hPYY=;
+	b=yZ7/bd4pV5+WVZBt2lQ7otvpAa8smuyu3SzsXqMqKO1WEadpZ7JamTU12JEVFGTQuTeaPO
+	0Irq/m6uVOghHaCA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=2VWvod62;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="yZ7/bd4p"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1751523581; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ohV0h+/at6s8qhvJO3e6EntcK+gCsiWXFp09ll+hPYY=;
+	b=2VWvod62vCm9Hz7UlC9/Y0GGgwIai2bGXmyRhNz3r6p46dWFHZHDWY3ac/tbabjsiLuCDK
+	stHMSVVU4UAaz9VMOlh+e4olCBzZOnXBSf/0bp59yA6zg5A0FYIoTbZ4A7izhZTYPmYzui
+	b7o64TJ0sZWTN9QPJQJbczZk5Qw/9Kw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1751523581;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ohV0h+/at6s8qhvJO3e6EntcK+gCsiWXFp09ll+hPYY=;
+	b=yZ7/bd4pV5+WVZBt2lQ7otvpAa8smuyu3SzsXqMqKO1WEadpZ7JamTU12JEVFGTQuTeaPO
+	0Irq/m6uVOghHaCA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 17F711368E;
+	Thu,  3 Jul 2025 06:19:40 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id I3a9A/wgZmhZRgAAD6G6ig
+	(envelope-from <hare@suse.de>); Thu, 03 Jul 2025 06:19:40 +0000
+Message-ID: <1ec7dfeb-b5d6-4aac-9567-db1ab7f9531d@suse.de>
+Date: Thu, 3 Jul 2025 08:19:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 02/10] genirq/affinity: Add cpumask to struct
+ irq_affinity
+To: Daniel Wagner <wagi@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+ Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>,
+ Sagi Grimberg <sagi@grimberg.me>, "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Aaron Tomlin <atomlin@atomlin.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Costa Shulyupin
+ <costa.shul@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+ Valentin Schneider <vschneid@redhat.com>, Waiman Long <llong@redhat.com>,
+ Ming Lei <ming.lei@redhat.com>, Frederic Weisbecker <frederic@kernel.org>,
+ Mel Gorman <mgorman@suse.de>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+ linux-nvme@lists.infradead.org, megaraidlinux.pdl@broadcom.com,
+ linux-scsi@vger.kernel.org, storagedev@microchip.com,
+ virtualization@lists.linux.dev, GR-QLogic-Storage-Upstream@marvell.com
+References: <20250702-isolcpus-io-queues-v7-0-557aa7eacce4@kernel.org>
+ <20250702-isolcpus-io-queues-v7-2-557aa7eacce4@kernel.org>
+Content-Language: en-US
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <20250702-isolcpus-io-queues-v7-2-557aa7eacce4@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[25];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_SOME(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	R_RATELIMIT(0.00)[to_ip_from(RLdd7zpc331qgmz6gw8s9zsqsb)];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid,suse.de:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 5E0D91F38D
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Score: -4.51
 
-With the CONFIG_UNICODE configuration enabled, the fname_decrypt
-and fscrypt_fname_encrypt functions may be called very frequently.
-Since filenames are generally short, the frequent invocation of
-memory allocation and release operations by these two functions
-will lead to very poor performance.
+On 7/2/25 18:33, Daniel Wagner wrote:
+> Pass a cpumask to irq_create_affinity_masks as an additional constraint
+> to consider when creating the affinity masks. This allows the caller to
+> exclude specific CPUs, e.g., isolated CPUs (see the 'isolcpus' kernel
+> command-line parameter).
+> 
+> Signed-off-by: Daniel Wagner <wagi@kernel.org>
+> ---
+>   include/linux/interrupt.h | 16 ++++++++++------
+>   kernel/irq/affinity.c     | 12 ++++++++++--
+>   2 files changed, 20 insertions(+), 8 deletions(-)
+> 
+Reviewed-by: Hannes Reinecke <hare@suse.de>
 
-Signed-off-by: Yuwen Chen <ywen.chen@foxmail.com>
----
- fs/crypto/fname.c         | 11 +++--------
- include/crypto/skcipher.h |  9 +++++++++
- 2 files changed, 12 insertions(+), 8 deletions(-)
+Cheers,
 
-diff --git a/fs/crypto/fname.c b/fs/crypto/fname.c
-index 010f9c0a4c2f1..a3cc30ff3586b 100644
---- a/fs/crypto/fname.c
-+++ b/fs/crypto/fname.c
-@@ -77,6 +77,7 @@ static inline bool fscrypt_is_dot_dotdot(const struct qstr *str)
- 	return is_dot_dotdot(str->name, str->len);
- }
- 
-+#define MAX_SKCIPHER_REQSIZE (384)
- /**
-  * fscrypt_fname_encrypt() - encrypt a filename
-  * @inode: inode of the parent directory (for regular filenames)
-@@ -92,10 +93,10 @@ static inline bool fscrypt_is_dot_dotdot(const struct qstr *str)
- int fscrypt_fname_encrypt(const struct inode *inode, const struct qstr *iname,
- 			  u8 *out, unsigned int olen)
- {
--	struct skcipher_request *req = NULL;
- 	DECLARE_CRYPTO_WAIT(wait);
- 	const struct fscrypt_inode_info *ci = inode->i_crypt_info;
- 	struct crypto_skcipher *tfm = ci->ci_enc_key.tfm;
-+	SKCIPHER_REQUEST_ON_STACK(req, tfm, MAX_SKCIPHER_REQSIZE);
- 	union fscrypt_iv iv;
- 	struct scatterlist sg;
- 	int res;
-@@ -124,7 +125,6 @@ int fscrypt_fname_encrypt(const struct inode *inode, const struct qstr *iname,
- 
- 	/* Do the encryption */
- 	res = crypto_wait_req(crypto_skcipher_encrypt(req), &wait);
--	skcipher_request_free(req);
- 	if (res < 0) {
- 		fscrypt_err(inode, "Filename encryption failed: %d", res);
- 		return res;
-@@ -148,18 +148,14 @@ static int fname_decrypt(const struct inode *inode,
- 			 const struct fscrypt_str *iname,
- 			 struct fscrypt_str *oname)
- {
--	struct skcipher_request *req = NULL;
- 	DECLARE_CRYPTO_WAIT(wait);
- 	struct scatterlist src_sg, dst_sg;
- 	const struct fscrypt_inode_info *ci = inode->i_crypt_info;
- 	struct crypto_skcipher *tfm = ci->ci_enc_key.tfm;
-+	SKCIPHER_REQUEST_ON_STACK(req, tfm, MAX_SKCIPHER_REQSIZE);
- 	union fscrypt_iv iv;
- 	int res;
- 
--	/* Allocate request */
--	req = skcipher_request_alloc(tfm, GFP_NOFS);
--	if (!req)
--		return -ENOMEM;
- 	skcipher_request_set_callback(req,
- 		CRYPTO_TFM_REQ_MAY_BACKLOG | CRYPTO_TFM_REQ_MAY_SLEEP,
- 		crypto_req_done, &wait);
-@@ -172,7 +168,6 @@ static int fname_decrypt(const struct inode *inode,
- 	sg_init_one(&dst_sg, oname->name, oname->len);
- 	skcipher_request_set_crypt(req, &src_sg, &dst_sg, iname->len, &iv);
- 	res = crypto_wait_req(crypto_skcipher_decrypt(req), &wait);
--	skcipher_request_free(req);
- 	if (res < 0) {
- 		fscrypt_err(inode, "Filename decryption failed: %d", res);
- 		return res;
-diff --git a/include/crypto/skcipher.h b/include/crypto/skcipher.h
-index 9e5853464345b..ff2c5ac9252ff 100644
---- a/include/crypto/skcipher.h
-+++ b/include/crypto/skcipher.h
-@@ -226,6 +226,15 @@ struct lskcipher_alg {
- 			crypto_sync_skcipher_tfm((_tfm)), \
- 		 (void *)__##name##_desc)
- 
-+
-+#define SKCIPHER_REQUEST_ON_STACK(name, _tfm, reqsize) \
-+	char __##name##_desc[sizeof(struct skcipher_request) + reqsize \
-+		] CRYPTO_MINALIGN_ATTR; \
-+	struct skcipher_request *name = \
-+		(((struct skcipher_request *)__##name##_desc)->base.tfm = \
-+			crypto_skcipher_tfm((_tfm)), \
-+		 (void *)__##name##_desc)
-+
- /**
-  * DOC: Symmetric Key Cipher API
-  *
+Hannes
 -- 
-2.34.1
-
+Dr. Hannes Reinecke                  Kernel Storage Architect
+hare@suse.de                                +49 911 74053 688
+SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
