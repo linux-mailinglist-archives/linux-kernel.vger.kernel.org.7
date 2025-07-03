@@ -1,129 +1,129 @@
-Return-Path: <linux-kernel+bounces-715679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-715681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE15DAF7C92
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 17:40:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBB3CAF7C8C
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 17:39:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 678D03B4234
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 15:35:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 664B517DAE1
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 15:37:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC73022173A;
-	Thu,  3 Jul 2025 15:36:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5237422578A;
+	Thu,  3 Jul 2025 15:37:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qwb9gvWJ"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gXtgXu5y"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BB5E1A2545;
-	Thu,  3 Jul 2025 15:36:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B5D22DE6F8
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 15:36:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751556970; cv=none; b=nxxTzpnZqHULpY41f1NqEgMbmdGTLv0GOdAFLTaeA0lOcKq61HHaBlYxb5iaZwGRABmp82D/cq58LYf56HfMnT0oiX/O8EP9wOTtQrbJQXE+647cG2cdn7V826dx1GEtfNbKEvLrkMcLM6BrDjrwPLxhqB0f0oDLnSZWlCN+wt0=
+	t=1751557019; cv=none; b=SWLdWkvOIGAP4bE6iCbYCqTSnyquTXmbTWJDeC3e3wf3rmMDPm0ftji5ppsxDi1UrtpqFyE4wbN85JswKQb8lNa1b384N4hSvGHdUo6+X2AVFYfdg4fCInuZBIGu18FDPQIr41/Ag9QZfxQ2hJ1ql/OlyEDv606Ti7Hoplhd2J8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751556970; c=relaxed/simple;
-	bh=2G5I9ZzG9yjrij4WFXM4JUOGhKPUcmmPVs9pnSIs/Wc=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=meBfazJctDD7B4Mns+P63NTQon+jG91r5lHPI6XFpLjIccMcCzVV7eAvtzweW0EsyQvZ/bE5B9EGbqoeVEQbQpHTOm5m6xh70xDo1OkDTxm+6/ecGG+s/DPN9A7wkfK8/y/BlPSH9MQ+DD1C58mIq8nZH0ILfAThLixY89OnLmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qwb9gvWJ; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5535652f42cso39837e87.2;
-        Thu, 03 Jul 2025 08:36:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751556967; x=1752161767; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=HApDpWOeyUX3Z+9UGcv6amhDxGy0QeLAJcPFfZICILU=;
-        b=Qwb9gvWJV6WAIzEBvmCKJoXcTojIHl1FhWlS1R73wavTexunx7fUyHpfldcHrAWqbQ
-         xBljQAG3P813uUaHmatLoW7mYio5XZIj5a6uiJrjfTgnL7qLFgkSpZ150JxxgRL2W894
-         AfUF4/a4z5jXtet59sQwb7Hzcl6r92WK2B4N1zpEnbhO79OqHOoO24Ay3ZFyoYCA/VHf
-         UbTjnEbmDjbjHeCGI5dRXu6gMkrEKE2m/YD14ANG9m+vD3obG5kwhjgakn8TUirAytbs
-         4xaBTMB5lu8iqkU/Qy3Rjx+Q5yYCEvyBOTjmM2qucWCJf2Rd3VFeISA2/5140YiRsxvs
-         AuCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751556967; x=1752161767;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HApDpWOeyUX3Z+9UGcv6amhDxGy0QeLAJcPFfZICILU=;
-        b=dZayrA3BfeJB58EH674iqPv6a/AgMTYTH+ikhd0YxYbHdJ9xhs13EbSoRpCeZ2P+T7
-         jYQTgqiJYKNTTr2UFRYRkkW9mVj1hFTFuLnpMc3XPJIAoENHr9g4jUIom5YwK5LUStg5
-         cOjI068Ec/isydY8RkXxbBFtt7YeAbZtSnv3aDeTwZqKqMpVl3c8aFVunL6pOXZXfV6v
-         AKtnTKvE90WpmvwzxoAdenIkvQlhTIoBEgZ0j1gONVNrLjMIXf3JrpuJtHxVRW1ddFaV
-         hBFW1ND9UOTzRxoDpehvNln+OLQ/MfINdOFZSLr/E/lwxhm1RG2XpSBhr2orONW9cxYt
-         ac7g==
-X-Forwarded-Encrypted: i=1; AJvYcCWBiIEO0TiKvWitTu+VrCtIHpoTzTB3CMRh/+mO9dJLCDB6+z9YHf/hVhbcwCE+cKNtZLavBeyo/cmpQCg=@vger.kernel.org, AJvYcCX3wm/lKSdiYXVYA3UWn2iJMgOQVTBAyByE/bMkzaj6Cinr9RTEOv3oCxZTJGhQV99aAV6o@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRJqGHt/DuMQSSx92Zt+QFi25zpGTcVJLcnHn+3tcgTDhgyOpS
-	jwelcKobPFnTQ9jR68NIwSyPrktc5QF/uSyCkOkQQ4xUP44anTPMrSOQAipGHQ==
-X-Gm-Gg: ASbGncvO12Pbm5HgzaI1KngwRmnbTveUzTGRuzZ37pxFidXfucbBTUAl/aUYydvLOby
-	wfhO3gLYTbVdm14f/M04vmW5GaYMUQ3r9zomphK8wuUEyK8nvFRq7WC5YHjk7CgtVgCGqj8IpVj
-	zYdoj4GPJBQ78mvYkouQWejLN1kVdL08RwHRCCJ6UHyVssMka2t/JsfHKPLi0dL+zrwnDKW0+7A
-	U8a5IkNQlLpuSwXqS7frvXrvUtNNcKoGesNtjlQF13wRASla8xD+nQzMmqLHDSfDCAXjGp+9xIW
-	xMVTI8mkZzGp4vGXLjX33lD0x2Eu6guxaVqdt52FV3G+ijAFagZzN9IFV0oSkd7EUhcAlj25vRy
-	jthowWYG54bk=
-X-Google-Smtp-Source: AGHT+IGfIgmXFwoivrCu2LKr0j0KhwMIyS3oiIX4QSGJ4eOg65zgCZhe6DcRajyDGesAQiwgpUIt3A==
-X-Received: by 2002:a05:6512:1104:b0:553:a64a:18b0 with SMTP id 2adb3069b0e04-55628344807mr2818073e87.42.1751556966260;
-        Thu, 03 Jul 2025 08:36:06 -0700 (PDT)
-Received: from pc636 (host-95-203-1-180.mobileonline.telia.com. [95.203.1.180])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-556384cea54sm5685e87.247.2025.07.03.08.36.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Jul 2025 08:36:05 -0700 (PDT)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date: Thu, 3 Jul 2025 17:36:02 +0200
-To: Neeraj upadhyay <Neeraj.Upadhyay@amd.com>
-Cc: "Paul E . McKenney" <paulmck@kernel.org>,
-	Neeraj upadhyay <Neeraj.Upadhyay@amd.com>,
-	Joel Fernandes <joel@joelfernandes.org>, RCU <rcu@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Joel Fernandes <joelagnelf@nvidia.com>
-Subject: Re: [PATCH v3 2/2] Documentation/kernel-parameters: Update
- rcu_normal_wake_from_gp doc
-Message-ID: <aGajYsyMTAD17WIY@pc636>
-References: <20250702145938.66459-1-urezki@gmail.com>
- <20250702145938.66459-2-urezki@gmail.com>
+	s=arc-20240116; t=1751557019; c=relaxed/simple;
+	bh=HjhLvZ/H1P2qjBwChvmJUpJrRBCOZ7tQGFPyGBSuZ7E=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=Xv61Ls/xmgDKfLLqQjtCL2KMXFVLKewzloQxdU8ljZ9It7mB+K5YaOx2dHwkdXLpNF4vT2DKjTpmWuBYJB3uIm2AUxVdqpYibaRrudq05scebioH83YOSKrng8NXJ6ppj92AAOZUH3sqotf8c/71EraYPcZflzbOWnkozyIWPuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gXtgXu5y; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1751557017;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7ZIDgAzyBTQUEBiTF8A+c8zCA7OsCfb4nYut225EcXo=;
+	b=gXtgXu5yYF8aRdP5nm+SIik5jWmZU4aoXuwnkkCePOXfx99kolsLRoeevpV4cQYuGNJzJR
+	iCwFcGSeOIiNTm1PxolzQPY20/zVcNqldjxz0/CW6Ec4L4PIBYsmg97IzOcOUgX8BeDAk1
+	/sEQKMEnEU+A6WQ5z4MwmCdb0MUHb68=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-37-xJKfPUenPTaLJA_uasGIVw-1; Thu,
+ 03 Jul 2025 11:36:53 -0400
+X-MC-Unique: xJKfPUenPTaLJA_uasGIVw-1
+X-Mimecast-MFC-AGG-ID: xJKfPUenPTaLJA_uasGIVw_1751557011
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 918041955D4E;
+	Thu,  3 Jul 2025 15:36:50 +0000 (UTC)
+Received: from [10.22.80.10] (unknown [10.22.80.10])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 333D11956087;
+	Thu,  3 Jul 2025 15:36:45 +0000 (UTC)
+Date: Thu, 3 Jul 2025 17:36:38 +0200 (CEST)
+From: Mikulas Patocka <mpatocka@redhat.com>
+To: John Garry <john.g.garry@oracle.com>
+cc: axboe@kernel.dk, agk@redhat.com, snitzer@kernel.org, song@kernel.org, 
+    yukuai3@huawei.com, hch@lst.de, nilay@linux.ibm.com, 
+    dm-devel@lists.linux.dev, linux-kernel@vger.kernel.org, 
+    linux-raid@vger.kernel.org, linux-block@vger.kernel.org, 
+    ojaswin@linux.ibm.com, martin.petersen@oracle.com
+Subject: Re: [PATCH v3 5/5] block: use chunk_sectors when evaluating stacked
+ atomic write limits
+In-Reply-To: <f7f342de-1087-47f6-a0c1-e41574abe985@oracle.com>
+Message-ID: <8b5e009a-9e2a-4542-69fb-fc6d47287255@redhat.com>
+References: <20250703114613.9124-1-john.g.garry@oracle.com> <20250703114613.9124-6-john.g.garry@oracle.com> <b7bd63a0-7aa6-2fb3-0a2b-23285b9fc5fc@redhat.com> <f7f342de-1087-47f6-a0c1-e41574abe985@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250702145938.66459-2-urezki@gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On Wed, Jul 02, 2025 at 04:59:37PM +0200, Uladzislau Rezki (Sony) wrote:
-> Update the documentation about rcu_normal_wake_from_gp parameter.
-> 
-> Reviewed-by: Joel Fernandes <joelagnelf@nvidia.com>
-> Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
-> ---
->  Documentation/admin-guide/kernel-parameters.txt | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> index f1f2c0874da9..f7e4bee2b823 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -5485,7 +5485,8 @@
->  			echo 1 > /sys/module/rcutree/parameters/rcu_normal_wake_from_gp
->  			or pass a boot parameter "rcutree.rcu_normal_wake_from_gp=1"
->  
-> -			Default is 0.
-> +			Default is 1 if num_possible_cpus() <= 16 and it is not explicitly
-> +			disabled by the boot parameter passing 0.
->  
->  	rcuscale.gp_async= [KNL]
->  			Measure performance of asynchronous
-> -- 
-> 2.39.5
-> 
-Same this one. Are you planning?
 
---
-Uladzislau Rezki
+
+On Thu, 3 Jul 2025, John Garry wrote:
+
+> > >   -/* Check stacking of first bottom device */
+> > > -static bool blk_stack_atomic_writes_head(struct queue_limits *t,
+> > > -				struct queue_limits *b)
+> > > +static void blk_stack_atomic_writes_chunk_sectors(struct queue_limits *t)
+> > >   {
+> > > -	if (b->atomic_write_hw_boundary &&
+> > > -	    !blk_stack_atomic_writes_boundary_head(t, b))
+> > > -		return false;
+> > > +	unsigned int chunk_bytes = t->chunk_sectors << SECTOR_SHIFT;
+> > 
+> > What about integer overflow?
+> 
+> I suppose theoretically it could happen, and I'm happy to change.
+> 
+> However there seems to be precedent in assuming it won't:
+> 
+> - in stripe_op_hints(), we hold chunk_size in an unsigned int
+> - in raid0_set_limits(), we hold mddev->chunk_sectors << 9 in lim.io_min,
+> which is an unsigned int type.
+> 
+> Please let me know your thoughts on also changing these sort of instances. Is
+> it realistic to expect chunk_bytes > UINT_MAX?
+> 
+> Thanks,
+> John
+
+dm-stripe can be created with a stripe size that is more than 0xffffffff 
+bytes.
+
+Though, the integer overflow already exists in the existing dm-stripe 
+target:
+static void stripe_io_hints(struct dm_target *ti,
+                            struct queue_limits *limits)
+{
+        struct stripe_c *sc = ti->private;
+        unsigned int chunk_size = sc->chunk_size << SECTOR_SHIFT;
+
+        limits->io_min = chunk_size;
+        limits->io_opt = chunk_size * sc->stripes;
+}
+What should we set there as io_min and io_opt if sc->chunk_size << 
+SECTOR_SHIFT overflows? Should we set nothing?
+
+Mikulas
+
 
