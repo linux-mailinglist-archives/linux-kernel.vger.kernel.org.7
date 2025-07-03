@@ -1,135 +1,297 @@
-Return-Path: <linux-kernel+bounces-716156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E47EAF82BE
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 23:39:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 521B2AF82C3
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 23:42:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB18A1C8866C
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 21:39:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84DEE3BFB1D
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 21:41:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C7A82C0307;
-	Thu,  3 Jul 2025 21:38:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1B9C2BF013;
+	Thu,  3 Jul 2025 21:42:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FcnmSzi8"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eyAaunPr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F01B42BE62C;
-	Thu,  3 Jul 2025 21:38:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22EAE28A1F8;
+	Thu,  3 Jul 2025 21:42:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751578722; cv=none; b=jFlC3DTZAtI3Mvw+f/z/whhJRKb4BApwjxsXd2s/rVvTrnwIgGSxVwpUEpVna2JWyF7XTVfGfbYT10lqG4gLVBtcnAIYGqJCshZermbYzAx9+A5Pa5hkjcVIZk1wUY16qxEh/H9P6vF6eYwsa4q8LCEJzaaiVX6Xse6SHkWewfk=
+	t=1751578929; cv=none; b=FQAJaKhohijA0aTztUncmErmGt37yEQ0M5Jb3a1uIwI+enJ13C+dZswWqnHKrSSPO6PZrFlP/UyhbmMbYkO4ef+QzL62KteseRQroOAwPqChZUCinG8jHzL7BjBd8ZXiHkGlmyTaCtemQPYXbaOoGY95pIZW9vdyLXD+1ASl+1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751578722; c=relaxed/simple;
-	bh=pHNodlGoraqosvL2in94YD46DI6OCuusa8x3ST+BCu8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YSzbT4SNIeEZmSlAiDs+sAid1kdstNJBP5y3r/uUGKTQ/HmYCYlb1RLCRs6j9htceKpzPJyqmsVF9vQHoN9N6P628sJ7rNiA7gx9QWv8nRUW1DnUCBPBAfpgRNzE/wkdrss4PwocRQ80W6KeYZBQZf6Tmhzic1zEvFGc4xqv4jw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FcnmSzi8; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-234d3103237so807595ad.0;
-        Thu, 03 Jul 2025 14:38:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751578720; x=1752183520; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pHNodlGoraqosvL2in94YD46DI6OCuusa8x3ST+BCu8=;
-        b=FcnmSzi84dDk2lm76LMKwizrQ+eGwTY5zrUJVXvtbii13HCQK8i0XfjYz+B/vTl+/M
-         nQsIFk3c4MydDh2VdMx8Kz703OxLsGIuKQuz0gktpESi3PdNzCszrAzbQdhzWcNOpDBt
-         nuyIjcgaqmfOeWt9zwfrResJA+FrYwd+TapyhI55t2Rz17GSdEBm3Glomv8PESEh96H2
-         4tKxnpHWRVp8iZ4EOLZrGks8bXorirRW1LY4cWqu5o+Jx6Y9SzxLrGJts6+LEct+Qbcp
-         irV0O8dM8vl4yFUJo81cwDWL15/3RhaN7OI7hiGDZipWZPxpPyaQr4+yKPb1Nzm5GY2k
-         WcOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751578720; x=1752183520;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pHNodlGoraqosvL2in94YD46DI6OCuusa8x3ST+BCu8=;
-        b=XgInk6G7S1X1jmy1ozBVcBXMF1bjI2qeQKP+BV6P1CBWdhEjxlj4w6cNJI/OMVBLVg
-         6TiZTesn/lU9iNIuLBI0UxbcfeJLRQo+/PZa6p+XcE555qI95/6RdHcRbMlTEKloJtVB
-         hTn6XpH9J0OP8Hr5BtRP8pXJTyq/X27cyVGOfR57fFVOiOtBB+Gh3A3Fwcm3Fy4ADaVo
-         iKj88cUByWIDHf/OtsUfCGZO7md3YVR3T9HZrDnBW5tpyrSCloCpmLeoebqru1s/LUaT
-         q7tFp1v2vemQ2wlU+eWAxVwFUaYCZyeGWhcC0f/+TYGl3wWKcMGcesX9/0iTShJlylMe
-         qWCg==
-X-Forwarded-Encrypted: i=1; AJvYcCU2QHXolY4XjJ7t89g3iqcFma7TpMicYnyS4Jh+7uybDCFQYib2bL4RQDre6CyYREq5BRnNVlVi2zLb@vger.kernel.org, AJvYcCUQNaTbuixnYMb0k4j5NyET9IEtP40MHavZgJy8zBytIreyHMsRsea2F2eSmRHEx0WZ2W7ddef7iWar@vger.kernel.org, AJvYcCUZvuyOSEB+clTw2H49kKw6DGwJTFj5ONXo59Oij3bD3SjAF6taF/BOkxf31EDgL8EBkjR2nqb3VvfqMgNvPbY=@vger.kernel.org, AJvYcCUcK9Cu9kCOfGT6qOI15mSlRxaE0BI6wcSDhmvgIK7I4hF/Y8qRZ0LFD4XKOdStQuOil9VfdC2UpYQkPZkQ+HV9@vger.kernel.org, AJvYcCVhJ7SiVoGYbbO+bEocPC2WF0S0B+X5m21EU6XY12C+Kqb9V7GGZLgHGOJ5fXfJemXAij37AlITDKA=@vger.kernel.org, AJvYcCVlWgkosT3wMsrUGZ1qgNRbL1UEgusCSkMvSqnlRb2h5KjXtgBjz1wyYi2pmLJlWF55Fl6XQZgsGJk7dTU=@vger.kernel.org, AJvYcCWcQLtTdK1qlw+wDAqpAiSnpnC9YKhob4/lsX6iBJUKgJo/gmUDC5uYacECW34Uat3n1YbZgztuDdvt@vger.kernel.org, AJvYcCXlqkd/tNPaLHePeKwXdE+4UAtcqxjbSAUS5GIGGwvllYLlJytGLzn40EcKKKHRb573x4+y1Fjv@vger.kernel.org, AJvYcCXstNJwUgubTKXrqnjvPxxFIotS6uWl6E/dz/nrd9sbcIo3BUdaGAAwJzY4vH4s1C6f5X/KYlCxEdsiJlB7@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0faTRB1KTYiMpCoYWg6uYiCRCAb0+I5Cd+7UkDRY+a3aeEkfA
-	/pfJ38h3n/w1korh6K5xWmxXknsrAsKEjDp8qArp2M+yNzZfKgVzntSymAhEtxXa/CaB/f8pD9D
-	6q1YAqYNX0CAUaaFv9Ev2aID0HOdZm6I=
-X-Gm-Gg: ASbGncshFcuPe2Oz+0tR+mm8DnVt0lMWnPAzLI1dRawceSV/nJhaxZjylwZb6Q60R1w
-	6YiFDfkZ5Ov1yq0+vk4rXi+uhxgmcp0lzz5734NUsM15RvOmwcWiJcqJRuz4JhuVG0RTvVcnUL8
-	Edyu3G1Uf9Bz9ceN5NJgM4c1ooNDIb1zMW3rC/KkkiNRg=
-X-Google-Smtp-Source: AGHT+IELtB5XgtVh1TIl503YSOBpKDzFFV0lUuu4UGNcygnKkLkVRq6ABgmlhe/GC2s+Ns1XtRhxYcb0/TcFag3V8H0=
-X-Received: by 2002:a17:902:c404:b0:234:f4a3:f73e with SMTP id
- d9443c01a7336-23c85ec795bmr1697845ad.9.1751578720047; Thu, 03 Jul 2025
- 14:38:40 -0700 (PDT)
+	s=arc-20240116; t=1751578929; c=relaxed/simple;
+	bh=JIc216TD6Fdsg8JjBU1n2EPcafEU6cCdPeEtNvKR04c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nSJOZeGXXHipg26VSf6F13bRucnTOEi8O0ixxrOqrfjgFUQFvP0qZ4qIdOD73bcjgRyQSfwZXBxboePnEcebli4zr2IflS5k5tKYg38uSOxrS8dibaU4WPw+deNorCks5LH2iw4gsucQQxS6geYoYOxHhTJYt2+1C+G74zoLt7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eyAaunPr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4300EC4CEE3;
+	Thu,  3 Jul 2025 21:42:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751578928;
+	bh=JIc216TD6Fdsg8JjBU1n2EPcafEU6cCdPeEtNvKR04c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eyAaunPrYungqOwFO5XP03ITzASFwg9OJxBO9iYAYeaIT2EZXDwtB5uzaG99eC9tk
+	 gQFglakosCsIV/ZfScD4paPjDopDp866pfW0YfHZskfGeZsI2HfL+8cIiJP0AoNXdv
+	 u/XFzEriM0yLPnBgEbPBaalKOgzXAtWLzmtCklge3V9aVy1IzEzGjbc+axXBQLzisw
+	 fjiC9v0wSDNe05v+KW5WS5/Xr9d+8vRefI0oEjJ1lDm04+/WOAanADer4wmt3UqQCC
+	 3/AF1epUemQk+qACRydnAg9V3M8Xklq4hRKgORi3+g05V6aH1GAh/ztu3vtPOev4tN
+	 WHk9AGCrAQ1bQ==
+Date: Thu, 3 Jul 2025 23:42:00 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Michal Wilczynski <m.wilczynski@samsung.com>
+Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Drew Fustini <fustini@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-pwm@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v7 3/8] rust: pwm: Add core 'Device' and 'Chip' object
+ wrappers
+Message-ID: <aGb5KNWKwTbLgteI@pollux>
+References: <20250702-rust-next-pwm-working-fan-for-sending-v7-0-67ef39ff1d29@samsung.com>
+ <CGME20250702134957eucas1p1d84f2ed3014cf98ea3a077c7fae6dea6@eucas1p1.samsung.com>
+ <20250702-rust-next-pwm-working-fan-for-sending-v7-3-67ef39ff1d29@samsung.com>
+ <aGVMnmoepIVSS0yK@pollux>
+ <6d9ce601-b81e-4c2a-b9c3-4cba6fa87b8b@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250701-cstr-core-v13-0-29f7d3eb97a6@gmail.com>
- <20250701-cstr-core-v13-2-29f7d3eb97a6@gmail.com> <DB2BDSN1JH51.14ZZPETJORBC6@kernel.org>
- <CAJ-ks9nC=AyBPXRY3nJ0NuZvjFskzMcOkVNrBEfXD2hZ5uRntQ@mail.gmail.com>
- <DB2IJ9HBIM0W.3N0JVGKX558QI@kernel.org> <CAJ-ks9nF5+m+_bn0Pzi9yU0pw0TyN7Fs4x--mQ4ygyHz4A6hzg@mail.gmail.com>
- <34c00dfa-8302-45ee-8d80-58b97a08e52e@lunn.ch>
-In-Reply-To: <34c00dfa-8302-45ee-8d80-58b97a08e52e@lunn.ch>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Thu, 3 Jul 2025 23:38:27 +0200
-X-Gm-Features: Ac12FXwdXJJ0hQiiGaabkdHfelYANMQVK7rSTVhFAhKXDapeaUgG2_fvXL2LwP0
-Message-ID: <CANiq72ksOG10vc36UDdBytsM-LT7PdgjcZ9B0dkqSETH6a0ezA@mail.gmail.com>
-Subject: Re: [PATCH v13 2/5] rust: support formatting of foreign types
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Tamir Duberstein <tamird@gmail.com>, Benno Lossin <lossin@kernel.org>, 
-	Michal Rostecki <vadorovsky@protonmail.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, Brendan Higgins <brendan.higgins@linux.dev>, 
-	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, 
-	Danilo Krummrich <dakr@kernel.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, 
-	FUJITA Tomonori <fujita.tomonori@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Saravana Kannan <saravanak@google.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, 
-	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
-	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
-	Heiner Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Jens Axboe <axboe@kernel.dk>, 
-	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
-	Leon Romanovsky <leon@kernel.org>, Breno Leitao <leitao@debian.org>, 
-	Viresh Kumar <viresh.kumar@linaro.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	kunit-dev@googlegroups.com, dri-devel@lists.freedesktop.org, 
-	netdev@vger.kernel.org, devicetree@vger.kernel.org, llvm@lists.linux.dev, 
-	linux-pci@vger.kernel.org, nouveau@lists.freedesktop.org, 
-	linux-block@vger.kernel.org, linux-pm@vger.kernel.org, 
-	linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6d9ce601-b81e-4c2a-b9c3-4cba6fa87b8b@samsung.com>
 
-On Thu, Jul 3, 2025 at 11:28=E2=80=AFPM Andrew Lunn <andrew@lunn.ch> wrote:
->
-> A small patch tends to be more obviously correct than a big patch. The
-> commit message is more focused and helpful because it refers to a
-> small chunk of code. Because the commit message is more focused, it
-> can answer questions reviewers might ask, before they ask them. If i
+On Thu, Jul 03, 2025 at 01:37:43PM +0200, Michal Wilczynski wrote:
+> 
+> 
+> On 7/2/25 17:13, Danilo Krummrich wrote:
+> > On Wed, Jul 02, 2025 at 03:45:31PM +0200, Michal Wilczynski wrote:
+> >> Building on the basic data types, this commit introduces the central
+> >> object abstractions for the PWM subsystem: Device and Chip. It also
+> >> includes the core trait implementations that make the Chip wrapper a
+> >> complete, safe, and managed object.
+> >>
+> >> The main components of this change are:
+> >>  - Device and Chip Structs: These structs wrap the underlying struct
+> >>    pwm_device and struct pwm_chip C objects, providing safe, idiomatic
+> >>    methods to access their fields.
+> >>
+> >>  - High-Level `Device` API: Exposes safe wrappers for the modern
+> >>    `waveform` API, allowing consumers to apply, read, and pre-validate
+> >>    hardware configurations.
+> >>
+> >>  - Core Trait Implementations for Chip:
+> >>     - AlwaysRefCounted: Links the Chip's lifetime to its embedded
+> >>       struct device reference counter. This enables automatic lifetime
+> >>       management via ARef.
+> >>     - Send and Sync: Marks the Chip wrapper as safe for use across
+> >>       threads. This is sound because the C core handles all necessary
+> >>       locking for the underlying object's state.
+> >>
+> >> These wrappers and traits form a robust foundation for building PWM
+> >> drivers in Rust.
+> >>
+> >> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
+> > 
+> > Few more comments below, with those fixed:
+> > 
+> > 	Reviewed-by: Danilo Krummrich <dakr@kernel.org>
+> > 
+> >> +/// Wrapper for a PWM device [`struct pwm_device`](srctree/include/linux/pwm.h).
+> >> +#[repr(transparent)]
+> >> +pub struct Device(Opaque<bindings::pwm_device>);
+> >> +
+> >> +impl Device {
+> > 
+> > <snip>
+> > 
+> >> +    /// Gets a reference to the parent `Chip` that this device belongs to.
+> >> +    pub fn chip(&self) -> &Chip {
+> >> +        // SAFETY: `self.as_raw()` provides a valid pointer. (*self.as_raw()).chip
+> >> +        // is assumed to be a valid pointer to `pwm_chip` managed by the kernel.
+> >> +        // Chip::as_ref's safety conditions must be met.
+> >> +        unsafe { Chip::as_ref((*self.as_raw()).chip) }
+> > 
+> > I assume the C API does guarantee that a struct pwm_device *always* holds a
+> > valid pointer to a struct pwm_chip?
+> > 
+> >> +
+> >> +/// Wrapper for a PWM chip/controller ([`struct pwm_chip`](srctree/include/linux/pwm.h)).
+> >> +#[repr(transparent)]
+> >> +pub struct Chip(Opaque<bindings::pwm_chip>);
+> >> +
+> >> +impl Chip {
+> >> +    /// Creates a reference to a [`Chip`] from a valid pointer.
+> >> +    ///
+> >> +    /// # Safety
+> >> +    ///
+> >> +    /// The caller must ensure that `ptr` is valid and remains valid for the lifetime of the
+> >> +    /// returned [`Chip`] reference.
+> >> +    pub(crate) unsafe fn as_ref<'a>(ptr: *mut bindings::pwm_chip) -> &'a Self {
+> >> +        // SAFETY: The safety requirements guarantee the validity of the dereference, while the
+> >> +        // `Chip` type being transparent makes the cast ok.
+> >> +        unsafe { &*ptr.cast::<Self>() }
+> >> +    }
+> >> +
+> >> +    /// Returns a raw pointer to the underlying `pwm_chip`.
+> >> +    pub(crate) fn as_raw(&self) -> *mut bindings::pwm_chip {
+> >> +        self.0.get()
+> >> +    }
+> >> +
+> >> +    /// Gets the number of PWM channels (hardware PWMs) on this chip.
+> >> +    pub fn npwm(&self) -> u32 {
+> >> +        // SAFETY: `self.as_raw()` provides a valid pointer for `self`'s lifetime.
+> >> +        unsafe { (*self.as_raw()).npwm }
+> >> +    }
+> >> +
+> >> +    /// Returns `true` if the chip supports atomic operations for configuration.
+> >> +    pub fn is_atomic(&self) -> bool {
+> >> +        // SAFETY: `self.as_raw()` provides a valid pointer for `self`'s lifetime.
+> >> +        unsafe { (*self.as_raw()).atomic }
+> >> +    }
+> >> +
+> >> +    /// Returns a reference to the embedded `struct device` abstraction.
+> >> +    pub fn device(&self) -> &device::Device {
+> >> +        // SAFETY: `self.as_raw()` provides a valid pointer to `bindings::pwm_chip`.
+> >> +        // The `dev` field is an instance of `bindings::device` embedded within `pwm_chip`.
+> >> +        // Taking a pointer to this embedded field is valid.
+> >> +        // `device::Device` is `#[repr(transparent)]`.
+> >> +        // The lifetime of the returned reference is tied to `self`.
+> >> +        let dev_field_ptr = unsafe { core::ptr::addr_of!((*self.as_raw()).dev) };
+> > 
+> > I think you can use `&raw` instead.
+> > 
+> >> +        // SAFETY: `dev_field_ptr` is a valid pointer to `bindings::device`.
+> >> +        // Casting and dereferencing is safe due to `repr(transparent)` and lifetime.
+> >> +        unsafe { &*(dev_field_ptr.cast::<device::Device>()) }
+> > 
+> > Please use Device::as_ref() instead.
+> > 
+> >> +    }
+> >> +
+> >> +    /// Gets the *typed* driver-specific data associated with this chip's embedded device.
+> >> +    pub fn drvdata<T: 'static>(&self) -> &T {
+> > 
+> > You need to make the whole Chip structure generic over T, i.e.
+> > Chip<T: ForeignOwnable>.
+> > 
+> > Otherwise the API is unsafe, since the caller can pass in any T when calling
+> > `chip.drvdata()` regardless of whether you actually stored as private data
+> > through Chip::new().
+> 
+> You were right that the original drvdata<T>() method was unsafe. The
+> most direct fix, making Chip generic to Chip<T>, unfortunately creates a
+> significant cascade effect:
+> 
+> - If Chip becomes Chip<T>, then anything holding it, like ARef, must
+>   become ARef<Chip<T>>.
+> 
+> - This in turn forces container structs like Registration to become
+>   generic (Registration<T>).
+> 
+> - Finally, the PwmOps trait itself needs to be aware of T, which
+>   complicates the trait and all driver implementations.
+> 
+> This chain reaction adds a lot of complexity. To avoid it, I've
+> figured an alternative:
+> 
+> The new idea keeps Chip simple and non generic but ensures type safety
+> through two main improvements to the abstraction layer:
+> 
+> 1. A Thread Safe DriverData Wrapper
+> 
+> The pwm.rs module now provides a generic pwm::DriverData<T> struct. Its
+> only job is to wrap the driver's private data and provide the necessary
+> unsafe impl Send + Sync.
+> 
+> // In `rust/kernel/pwm.rs`
+> // SAFETY: The contained data is guaranteed by the kernel to have
+> // synchronized access during callbacks.
+> pub struct DriverData<T>(T);
+> unsafe impl<T: Send> Send for DriverData<T> {}
+> unsafe impl<T: Sync> Sync for DriverData<T> {}
 
-Yeah, also better for smaller reverts, as well as typically easier to
-backport if needed, etc.
+I think you don't need to implement them explicitly, it's automatically derived
+from T.
 
-Cheers,
-Miguel
+> 
+> // In the driver's `probe` function
+> let safe_data = pwm::DriverData::new(Th1520PwmDriverData{ });
+> 
+> 2. A More Ergonomic PwmOps Trait
+> 
+> The PwmOps trait methods now receive the driver's data directly as
+> &self, which is much more intuitive. We achieve this by providing a
+> default associated type for the data owner, which removes boilerplate
+> from the driver.
+> 
+> // In `rust/kernel/pwm.rs`
+> pub trait PwmOps: 'static + Sized {
+>     type Owner: Deref<Target = DriverData<Self>> + ForeignOwnable =
+>         Pin<KBox<DriverData<Self>>>;
+>     /// For now I'm getting compiler error here: `associated type defaults are unstable`
+>     /// So the driver would need to specify this for now, until this feature
+>     /// is stable
+> 
+> 
+>     // Methods now receive `&self`, making them much cleaner to implement.
+>     fn round_waveform_tohw(&self, chip: &Chip, pwm: &Device, wf: &Waveform) -> Result<...>;
+> }
+> 
+> // In the driver
+> impl pwm::PwmOps for Th1520PwmDriverData {
+>     type WfHw = Th1520WfHw;
+
+Shouldn't this be:
+
+	type Owner = Pin<KBox<DriverData<Self>>>;
+
+> 
+>     fn round_waveform_tohw(&self, chip: &pwm::Chip, ...) -> Result<...> {
+
+If you accept any ForeignOwnable, I think this has to be Owner::Borrowed.
+
+>         // no drvdata() call here :-)
+>         let rate_hz = self.clk.rate().as_hz();
+>         // ...
+>     }
+> }
+> 
+> This solution seem to address to issue you've pointed (as the user of
+> the API never deals with drvdata directly at this point), while making
+> it easier to develop PWM drivers in Rust.
+> 
+> Please let me know what you think.
+
+In DRM [1][2] we used the approach I proposed, but at a first glance what you
+propose seems like it should work as well.
+
+Drivers having to set the Owner type seems a bit unfortunate, but otherwise it
+seems like a matter of personal preference.
+
+Although, I just notice, isn't this broken if a driver sets Owner to something
+else than Self?
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/rust/kernel/drm/device.rs
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/rust/kernel/drm/driver.rs
 
