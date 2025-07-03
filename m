@@ -1,103 +1,143 @@
-Return-Path: <linux-kernel+bounces-714994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9ADDEAF6F5A
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 11:54:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA19AAF6F46
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 11:52:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B81AE167D8A
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 09:54:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8EE71C46F7A
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 09:53:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E74FB2E03F6;
-	Thu,  3 Jul 2025 09:54:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="bAHTcEfK"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D40E2D6632;
-	Thu,  3 Jul 2025 09:54:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBCC62E03ED;
+	Thu,  3 Jul 2025 09:52:46 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF5432DFF2C;
+	Thu,  3 Jul 2025 09:52:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751536474; cv=none; b=t2ihWeVzc9Zwo8fGz5x9ASi1AS9RGHUmb3LpwjwrAWGI0Tf6c1/DmTRTZM2oVooKitvpBvajfgFFBtUnm788fvNkOU2BXnkEGiSJUnJ5x62XocX1WbLJwj0CS5rQKbKVOTraApxctvzXhUBPcYxdWbiBdTPTTz01Gq4Q5UstPU8=
+	t=1751536366; cv=none; b=M6LUIzyIKNZ8XF9ACDDuza3lRruJQGDS4xh2qanRsepwPGaUYsHatXD5o/dANgePBdIIKa4aD3AXqlvyFefZz3Jugy2B2PMT1TGiq8WEVM7rwCzFUVaOmYfA0D1XTn4lHX+J6RzfHGX2EaJQhsr/MdA3FboCj+V15/ppGWf934E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751536474; c=relaxed/simple;
-	bh=M30E5phtsRgNt9bWOudN+Wz7g5IN3dIUI9pAYWfH0GI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rEJfRb5NErvfibJsvYOT94IdwOMmRGBj0S50rM0V6PaVRiETpkAfy5bTvzG7UWO6TV9aTE0C0ZIsT+PVDPY8lUZ+gd1RNqL5xxlErlim3+/IG/WtB8hYIfnO26gH5n65JQ8+3dwcECVh86PItpm/hlwPZsIIfL832LBoZ3YQ3FM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=bAHTcEfK; arc=none smtp.client-ip=117.135.210.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=zq
-	yqcmzFSBUDYjqKQmxZony3sGHurYaKa67pNQBSGA4=; b=bAHTcEfKSMHDjwiSZg
-	hJQ1k1nBR2UbZQb12xuRQuvCRQ9Xd9enEtlTpuU7z7n35kSLjZdBvnz2rD+e/ads
-	0g3RaJ0Ewzwe+dgE76P5mbh4YmVGgUTsIGrL4i6Co093ISlPjAWJJE1/9RuZ7pss
-	5zW9hO6D75dXQQmvKzQxzCc3U=
-Received: from icess-ProLiant-DL380-Gen10.. (unknown [])
-	by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id _____wDXz5_hUmZo74LVCA--.57467S4;
-	Thu, 03 Jul 2025 17:52:34 +0800 (CST)
-From: Haoxiang Li <haoxiang_li2024@163.com>
-To: anthony.l.nguyen@intel.com,
-	przemyslaw.kitszel@intel.com,
-	andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com
-Cc: intel-wired-lan@lists.osuosl.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Haoxiang Li <haoxiang_li2024@163.com>,
-	stable@vger.kernel.org,
-	Michal Swiatkowski <michal.swiatkowski@linux.intel.com>,
-	Aleksandr Loktionov <aleksandr.loktionov@intel.com>
-Subject: [PATCH v2] ice: Fix a null pointer dereference in ice_copy_and_init_pkg()
-Date: Thu,  3 Jul 2025 17:52:32 +0800
-Message-Id: <20250703095232.2539006-1-haoxiang_li2024@163.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1751536366; c=relaxed/simple;
+	bh=relfWXnrPhkcPVxI2hsN+5MmYdAWWBCpDSurS9C7OhM=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=CSAx7xRX58kHKZeLVkYufbrWMwuPAeUotlqyuqvrsLH9BAd38go0UOnrSfqmnziyVTvC++Qnp7otPsDgjLdNdIx6gzMpbP8zCax6ptpTxrCNKYnna246yQkI4A5fDWpu1PNBrtmOLyyYbBvKBEuM+hFPiH8uL4PsYs2kMQNoNA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bXsVz1FC3z6DJ7R;
+	Thu,  3 Jul 2025 17:52:11 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id D21611402F0;
+	Thu,  3 Jul 2025 17:52:39 +0800 (CST)
+Received: from frapeml500007.china.huawei.com (7.182.85.172) by
+ frapeml500008.china.huawei.com (7.182.85.71) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 3 Jul 2025 11:52:39 +0200
+Received: from frapeml500007.china.huawei.com ([7.182.85.172]) by
+ frapeml500007.china.huawei.com ([7.182.85.172]) with mapi id 15.01.2507.039;
+ Thu, 3 Jul 2025 11:52:39 +0200
+From: Shiju Jose <shiju.jose@huawei.com>
+To: Li Ming <ming.li@zohomail.com>, "akpm@linux-foundation.org"
+	<akpm@linux-foundation.org>, "andriy.shevchenko@linux.intel.com"
+	<andriy.shevchenko@linux.intel.com>, "bhelgaas@google.com"
+	<bhelgaas@google.com>, "ilpo.jarvinen@linux.intel.com"
+	<ilpo.jarvinen@linux.intel.com>, "dave@stgolabs.net" <dave@stgolabs.net>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>, "dave.jiang@intel.com"
+	<dave.jiang@intel.com>, "alison.schofield@intel.com"
+	<alison.schofield@intel.com>, "vishal.l.verma@intel.com"
+	<vishal.l.verma@intel.com>, "ira.weiny@intel.com" <ira.weiny@intel.com>,
+	"dan.j.williams@intel.com" <dan.j.williams@intel.com>
+CC: "linux-cxl@vger.kernel.org" <linux-cxl@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v2 2/3] cxl/edac: Fix wrong dpa checking for PPR operation
+Thread-Topic: [PATCH v2 2/3] cxl/edac: Fix wrong dpa checking for PPR
+ operation
+Thread-Index: AQHb6yHtbMaErxclN06w38KqXsN4c7QgJJ4A
+Date: Thu, 3 Jul 2025 09:52:39 +0000
+Message-ID: <e30e60570f1b4dc99a1c2b42f4c613ac@huawei.com>
+References: <20250702072008.468371-1-ming.li@zohomail.com>
+ <20250702072008.468371-2-ming.li@zohomail.com>
+In-Reply-To: <20250702072008.468371-2-ming.li@zohomail.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDXz5_hUmZo74LVCA--.57467S4
-X-Coremail-Antispam: 1Uf129KBjvdXoWruF1fXw1Duw47JFyDWr1xKrg_yoWkKFg_uw
-	4FvFyfArWUKr1F9w4YkF47Z34FyF1kXFykua12k39Y9w15GryDXa4DZr9xXr4qgF1DuFnx
-	Ars3JasFyFy2qjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sRKiiSDUUUUU==
-X-CM-SenderInfo: xkdr5xpdqjszblsqjki6rwjhhfrp/xtbBEgB-bmhmSx75sAAAsR
 
-Add check for the return value of devm_kmemdup()
-to prevent potential null pointer dereference.
+>-----Original Message-----
+>From: Li Ming <ming.li@zohomail.com>
+>Sent: 02 July 2025 08:20
+>To: akpm@linux-foundation.org; andriy.shevchenko@linux.intel.com;
+>bhelgaas@google.com; ilpo.jarvinen@linux.intel.com; dave@stgolabs.net;
+>Jonathan Cameron <jonathan.cameron@huawei.com>; dave.jiang@intel.com;
+>alison.schofield@intel.com; vishal.l.verma@intel.com; ira.weiny@intel.com;
+>dan.j.williams@intel.com; Shiju Jose <shiju.jose@huawei.com>
+>Cc: linux-cxl@vger.kernel.org; linux-kernel@vger.kernel.org; Li Ming
+><ming.li@zohomail.com>
+>Subject: [PATCH v2 2/3] cxl/edac: Fix wrong dpa checking for PPR operation
+>
+>DPA 0 is considered invalid in cxl_do_ppr(), but per Table 8-143. "Get Par=
+tition
+>Info Output Payload" in CXL r3.2 section 8.2.10.9.2.1 "Get Partition Info(=
+Opcode
+>4100h)", it mentions that DPA 0 is a valid address of a CXL device. So the=
+ correct
+>implementation should be checking if the DPA is in the DPA range of the CX=
+L
+>device rather than checking if the DPA is equal to 0.
+>
+>Fixes: be9b359e056a ("cxl/edac: Add CXL memory device soft PPR control
+>feature")
+>Signed-off-by: Li Ming <ming.li@zohomail.com>
+Hi Ming,
+Thanks for the fix.=20
 
-Fixes: c76488109616 ("ice: Implement Dynamic Device Personalization (DDP) download")
-Cc: stable@vger.kernel.org
-Signed-off-by: Haoxiang Li <haoxiang_li2024@163.com>
-Reviewed-by: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
-Reviewed-by: Aleksandr Loktionov <aleksandr.loktionov@intel.com>
----
-Changes in v2:
-- modify the Fixes commit number. Thanks, Michal!
----
- drivers/net/ethernet/intel/ice/ice_ddp.c | 2 ++
- 1 file changed, 2 insertions(+)
+Just found that, along with Table 8-143,  CXL spec 3.2 Device Decode Logic =
+(Page 576) describes as
+"The DPA mappings for a device typically start at 'DPA 0' for Decoder[0] an=
+d=20
+are sequentially accumulated with each additional decoder used"
 
-diff --git a/drivers/net/ethernet/intel/ice/ice_ddp.c b/drivers/net/ethernet/intel/ice/ice_ddp.c
-index 59323c019544..351824dc3c62 100644
---- a/drivers/net/ethernet/intel/ice/ice_ddp.c
-+++ b/drivers/net/ethernet/intel/ice/ice_ddp.c
-@@ -2301,6 +2301,8 @@ enum ice_ddp_state ice_copy_and_init_pkg(struct ice_hw *hw, const u8 *buf,
- 		return ICE_DDP_PKG_ERR;
- 
- 	buf_copy = devm_kmemdup(ice_hw_to_dev(hw), buf, len, GFP_KERNEL);
-+	if (!buf_copy)
-+		return ICE_DDP_PKG_ERR;
- 
- 	state = ice_init_pkg(hw, buf_copy, len);
- 	if (!ice_is_init_pkg_successful(state)) {
--- 
-2.25.1
+Tested-by: Shiju Jose <shiju.jose@huawei.com>
+Reviewed-by: Shiju Jose <shiju.jose@huawei.com>
+>---
+> drivers/cxl/core/edac.c | 5 ++++-
+> 1 file changed, 4 insertions(+), 1 deletion(-)
+>
+>diff --git a/drivers/cxl/core/edac.c b/drivers/cxl/core/edac.c index
+>623aaa4439c4..1cf65b1538b9 100644
+>--- a/drivers/cxl/core/edac.c
+>+++ b/drivers/cxl/core/edac.c
+>@@ -1923,8 +1923,11 @@ static int cxl_ppr_set_nibble_mask(struct device
+>*dev, void *drv_data,  static int cxl_do_ppr(struct device *dev, void *drv=
+_data,
+>u32 val)  {
+> 	struct cxl_ppr_context *cxl_ppr_ctx =3D drv_data;
+>+	struct cxl_memdev *cxlmd =3D cxl_ppr_ctx->cxlmd;
+>+	struct cxl_dev_state *cxlds =3D cxlmd->cxlds;
+>
+>-	if (!cxl_ppr_ctx->dpa || val !=3D EDAC_DO_MEM_REPAIR)
+>+	if (!resource_contains_addr(&cxlds->dpa_res, cxl_ppr_ctx->dpa) ||
+>+	    val !=3D EDAC_DO_MEM_REPAIR)
+> 		return -EINVAL;
+>
+> 	return cxl_mem_perform_ppr(cxl_ppr_ctx);
+>--
+>2.34.1
 
+
+Thanks,
+Shiju
 
