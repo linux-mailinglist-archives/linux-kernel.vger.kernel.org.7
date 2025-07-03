@@ -1,122 +1,102 @@
-Return-Path: <linux-kernel+bounces-715697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-715692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B773EAF7CB3
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 17:44:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EBA1AF7CA9
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 17:43:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44E09162A07
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 15:42:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8D2C4A4E1E
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 15:41:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03ACB2EF9B8;
-	Thu,  3 Jul 2025 15:42:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B109F223DD0;
+	Thu,  3 Jul 2025 15:41:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="QkQWGDr7"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b="NZ0/NoFB"
+Received: from hr2.samba.org (hr2.samba.org [144.76.82.148])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9726A22A4DA;
-	Thu,  3 Jul 2025 15:42:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4D722DE6F5
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 15:41:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.76.82.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751557344; cv=none; b=uK24GS7Sar9RGx2RnGaxqEnO0EJrJKVUiNaw5HMtvgXY4lfRbWb2HcKFyl8fWD3Yx4VR8ClZSYzFFz1/PdHG/tozP/kc41GqCvK9knIr22n/jkPCLUZWny9W8ScIy2gdZMeJvgNxOclw4hKPCdidYi2Cpp5nPnz7z/oAG/13ctU=
+	t=1751557293; cv=none; b=MPNyEdDuxcDiWCeDQ9EtA+hlckdHvti7CRiwE58y6tpvifaij7p+eVx1FHFdgkHspCb7Ye8I6rm3EH2RNVgKz9rW5LVjMinJJHiDBJOQXuIlajLYUKOrG6uBzgu/nX7TSwysvDlnWh7+p9gaqI5vcUee9E46kNKYvCX+yG62meE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751557344; c=relaxed/simple;
-	bh=OXXezo9jCjAPl/UpmJAtt4tT5kGKJpblJSn0+4s/R7Q=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=LvYWGHSD9P4u75ezNcpurr8614G82KfcriBN9jd/H8Yx+YfkAXdQ5nMy0l4HrTZM9fXcmOdZt2bH5ZQygC2Px7itcRIuBvzRPAnYwD0GgdKeZm2eTQ1fcE/TNfiqWK1PiwLoDxsGzFIFXs6NJYpMrJhgCSJ4feIsRTVazKVOuwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=QkQWGDr7; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1751557340;
-	bh=OXXezo9jCjAPl/UpmJAtt4tT5kGKJpblJSn0+4s/R7Q=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=QkQWGDr7oijzoJ/CcZpmfAsXzc2dhIE1KfQkr7shBqz81sJIhCpgghJzVcQXfdATO
-	 adlhFw/0DYmtGoDgMP2bSKdBZs3ZjCDbOYBxM+1AVYVo63cgR7+cEAw253NQIkdQyJ
-	 pEHHh5O0QN5Q3sBovTXm4UZTPz324D1sFlAog1oKKpQDliEtYzCYXJ3C801OPXRBtO
-	 F3+sZbWMrDaIMXPrajESgKxbdIBfR4+foUn1s2rvlqz0CUGsG1d96RMTn1LnNQSYN8
-	 CzHYOOaqMOpM5ZfiUZf19j+ziUlaoafgh26+q48GbK08wPv7hRf4iL4Ms+6Up361Hf
-	 i02dbupo2OeEw==
-Received: from yukiji.home (amontpellier-657-1-116-247.w83-113.abo.wanadoo.fr [83.113.51.247])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: laeyraud)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 1FD2617E0EC0;
-	Thu,  3 Jul 2025 17:42:20 +0200 (CEST)
-From: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
-Date: Thu, 03 Jul 2025 17:41:05 +0200
-Subject: [PATCH 3/3] arm64: dts: mediatek: mt8395-genio-1200-evk: Add
- MT6359 PMIC key support
+	s=arc-20240116; t=1751557293; c=relaxed/simple;
+	bh=avKNQlEwag9ANl/TUQTXF+fV4m5lNCNOG560eEoeItI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VDP6Jtoq//A7766hnbbGAMQ9D94P2oRLG5i1VwL2YE3jNMrPuFPK8mE+OPAFTtEu90yK97EeWcZup9A8jfbX1FzXGdSEr76my9KApmGoY+jkUhOWJksl2Mso+dFxDGRjAArp6T07Tb1ve4rhCxnAtoM/omRWExo8U6mXBPScd1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=samba.org; spf=pass smtp.mailfrom=samba.org; dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b=NZ0/NoFB; arc=none smtp.client-ip=144.76.82.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=samba.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samba.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
+	s=42; h=Message-ID:Cc:To:From:Date;
+	bh=0K14Nftf7MCxiLuTCgqd/9TubX2MuFP2HFIC0ZIZGVQ=; b=NZ0/NoFBt3VqRhzaZ/IhvzX0eX
+	SQiTYR9TpEkaVnFuTiE8Z1P/gbc/4/A3oLYy6pFn8rq4YNVI7ldx6wdaixmbGnQT31SDDlNENY+Jt
+	TW9y/S24YnEy+1JomhMbPY7YpZLSjs0XQxrXN6RAu3xP9EFKPuXBLwOMqTrD1ifv1W629Ki/FuJ+I
+	6b//5jlYKiq4uI3gV0b62t7Nx55uhoOI5I4mm6a8jZ4nFd3n/I/ChhvNOaAOzaZOWYTq4cxLgnLsX
+	T4os+ny8DZ8I7cvt1w/xXN7WI6zv0+axF4D82sh11PznVm5Jew66fvk/3Vr/5rNkT8NRY4AZPPSXP
+	nOtj7uo6iN4w71LOCfA/weAmYh9ekJek/3/Zz1/o2n8H7kQ1d5Bmm3/q8bZrxcGO7EWBo5JM6bTAC
+	Fjddj18gBGHGoWw7/i/5yvmdmSWmF19VsWRKnDRWtCWyyDuvbBFJoqrxLQYbvIksQO1SUvoLB0ggY
+	AcN7p04GfYaD3UblQ39n4zwt;
+Received: from [127.0.0.2] (localhost [127.0.0.1])
+	by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__CHACHA20_POLY1305:256)
+	(Exim)
+	id 1uXM3n-00DoHg-0I;
+	Thu, 03 Jul 2025 15:41:16 +0000
+Date: Thu, 3 Jul 2025 08:41:08 -0700
+From: Jeremy Allison <jra@samba.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Stuart Hayes <stuart.w.hayes@gmail.com>, linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Martin Belanger <Martin.Belanger@dell.com>,
+	Oliver O'Halloran <oohall@gmail.com>,
+	Daniel Wagner <dwagner@suse.de>, Keith Busch <kbusch@kernel.org>,
+	Lukas Wunner <lukas@wunner.de>, David Jeffery <djeffery@redhat.com>,
+	Jeremy Allison <jallison@ciq.com>, Jens Axboe <axboe@fb.com>,
+	Sagi Grimberg <sagi@grimberg.me>, linux-nvme@lists.infradead.org,
+	Nathan Chancellor <nathan@kernel.org>,
+	Jan Kiszka <jan.kiszka@seimens.com>,
+	Bert Karwatzki <spasswolf@web.de>, sultan@kerneltoast.com,
+	jra@samba.org
+Subject: Re: [PATCH v10 0/5] shut down devices asynchronously
+Message-ID: <aGaklKejxefXTQB4@jeremy-HP-Z840-Workstation>
+Reply-To: Jeremy Allison <jra@samba.org>
+References: <20250625201853.84062-1-stuart.w.hayes@gmail.com>
+ <20250703114656.GE17686@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250703-add-mt6359-pmic-keys-support-v1-3-21a4d2774e34@collabora.com>
-References: <20250703-add-mt6359-pmic-keys-support-v1-0-21a4d2774e34@collabora.com>
-In-Reply-To: <20250703-add-mt6359-pmic-keys-support-v1-0-21a4d2774e34@collabora.com>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: kernel@collabora.com, linux-input@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org, 
- Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1751557337; l=1095;
- i=louisalexis.eyraud@collabora.com; s=20250113; h=from:subject:message-id;
- bh=OXXezo9jCjAPl/UpmJAtt4tT5kGKJpblJSn0+4s/R7Q=;
- b=7QKFk6Yce77TlmxpQVpDSTveC0jBucm9jpilEQAqsvQ5BKzG2pC3sDQRkDKqSC6iqomdV5jTd
- da5pjVybZWxAA8ZjU7FOsjYWqVDSTY5NeHQa6NL1joHXGzf1OAGu15D
-X-Developer-Key: i=louisalexis.eyraud@collabora.com; a=ed25519;
- pk=CHFBDB2Kqh4EHc6JIqFn69GhxJJAzc0Zr4e8QxtumuM=
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20250703114656.GE17686@lst.de>
 
-Add in mt8395-genio-1200-evk devicetree file a sub node in pmic for
-the mt6359-keys compatible to add the Power and Home MT6359 PMIC keys
-support.
+On Thu, Jul 03, 2025 at 01:46:56PM +0200, Christoph Hellwig wrote:
+>On Wed, Jun 25, 2025 at 03:18:48PM -0500, Stuart Hayes wrote:
+>> Address resource and timing issues when spawning a unique async thread
+>> for every device during shutdown:
+>>   * Make the asynchronous threads able to shut down multiple devices,
+>>     instead of spawning a unique thread for every device.
+>>   * Modify core kernel async code with a custom wake function so it
+>>     doesn't wake up threads waiting to synchronize every time the cookie
+>>     changes
+>
+>Given all these thread spawning issues, why can't we just go back
+>to the approach that kicks off shutdown asynchronously and then waits
+>for it without spawning all these threads?
 
-Signed-off-by: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
----
- arch/arm64/boot/dts/mediatek/mt8395-genio-1200-evk.dts | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+It isn't just an nvme issue. Red Hat found the same issue
+with SCSI devices.
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8395-genio-1200-evk.dts b/arch/arm64/boot/dts/mediatek/mt8395-genio-1200-evk.dts
-index 9f0734731b5ef3c6b86693a389adc399707d5212..cf8cd37f570845a836a97564fd64a6a9a0e4e4d0 100644
---- a/arch/arm64/boot/dts/mediatek/mt8395-genio-1200-evk.dts
-+++ b/arch/arm64/boot/dts/mediatek/mt8395-genio-1200-evk.dts
-@@ -990,6 +990,21 @@ pins {
- 
- &pmic {
- 	interrupts-extended = <&pio 222 IRQ_TYPE_LEVEL_HIGH>;
-+
-+	mt6359keys: keys {
-+		compatible = "mediatek,mt6359-keys";
-+		mediatek,long-press-mode = <1>;
-+		power-off-time-sec = <0>;
-+
-+		power-key {
-+			linux,keycodes = <KEY_POWER>;
-+			wakeup-source;
-+		};
-+
-+		home {
-+			linux,keycodes = <KEY_HOME>;
-+		};
-+	};
- };
- 
- &scp {
+My colleague Sultan Alsawaf posted a simpler fix for the
+earlier patch here:
 
--- 
-2.50.0
+https://lists.infradead.org/pipermail/linux-nvme/2025-January/053666.html
 
+Maybe this could be explored.
 
