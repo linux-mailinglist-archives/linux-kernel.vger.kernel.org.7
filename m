@@ -1,150 +1,154 @@
-Return-Path: <linux-kernel+bounces-714965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8789BAF6EF9
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 11:42:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1620DAF6F15
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 11:46:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B780F1C81D83
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 09:42:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 886541C82C72
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 09:45:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 053C72D8DB9;
-	Thu,  3 Jul 2025 09:41:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g4/IS8Xi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EB442DAFB0;
+	Thu,  3 Jul 2025 09:44:35 +0000 (UTC)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44AA524A066;
-	Thu,  3 Jul 2025 09:41:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D2322D9EF1;
+	Thu,  3 Jul 2025 09:44:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751535707; cv=none; b=kPBzzjf853iQMziiX8iHEY5/TNbz6XHlvMIX7lE7ukeyjGtrNmZpFxtCxiYOS12+E4KzsfqAhn39ZBvUe1CIM8dHTNz15fZaHXGnypSItVOhfAW3m/pc9UTP7QX6YpDP+bpcQo2XosJvCXV/G+3/vQsysTqgXs/7VFHsJvxUPRM=
+	t=1751535874; cv=none; b=t6qxAPDD3nOH65aUF7fMhRq8zOss+ZOYWRqhW6bguBkM1zMN0g6PhhLCqdFZEv5onXuERfd7nVSaRzcCIHTK8h3IR9nI5iORNtIoRnWCJ5vOrzGVcc4rd+8XsJ6aDl3f3uX/5AXyB4Z53RAgbLjIXCJX+gjyTxJNiWqEw8NA78s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751535707; c=relaxed/simple;
-	bh=riGzzi9pBWq3TiE+T6e2pPP/NHDUwf6mM2BBQKLzBnw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sQoawBBmFM3YM5Y0B2HiGrvrA2kirocKTretE+DcyOmvZJU/BEr6n6cSVP83I6PHNJ+4t7vWWRQ/W9TToGsgNSatebvaeVaoBmjFUQffwTfR8DIXAkagASAXw6O92RYAP7Cl2n0okt317VI7SsgRFcwFySqxKGzHTE2zzuOcjEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g4/IS8Xi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61BAFC4CEE3;
-	Thu,  3 Jul 2025 09:41:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751535706;
-	bh=riGzzi9pBWq3TiE+T6e2pPP/NHDUwf6mM2BBQKLzBnw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=g4/IS8XiGIPIr2y7EuL0PEaqaR/77cOWrRhsFdJFVPfP7p65CfCwsYHYD+iKOJgpJ
-	 7cZZMOGfln8vhhyB/oJ2bvb+DarZoKqqCxXELLC3oOh85iafDTCsHefIKM6U9RIsdy
-	 jLDQLJ8NePVnY7SYtd/kLIORMJ8try5yRol/fL44cIg6vTKjLcEQ55b08Fbj/VsqjW
-	 NSTcU4Q/IInmMFZRfCht7p+7YXw7Fy2MgwkGBoMuUG9Mas1kflbdL14pRqGeeLvtcv
-	 6Cbqb9ydPlZlbHI8jEd12kb9ONPhVJ8N+ZEAFNX5iKga+Wky/RUeeQLlxybzz1v979
-	 jHYhG0LKs/xZQ==
-Date: Thu, 3 Jul 2025 11:41:44 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: Thomas Zimmermann <tzimmermann@suse.de>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Luca Weiss <luca.weiss@fairphone.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Javier Martinez Canillas <javierm@redhat.com>, Helge Deller <deller@gmx.de>, linux-fbdev@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/5] dt-bindings: display: simple-framebuffer: Add
- interconnects property
-Message-ID: <20250703-light-baboon-of-experiment-179ca3@houat>
-References: <20250623-simple-drm-fb-icc-v2-1-f69b86cd3d7d@fairphone.com>
- <20250627-mysterious-optimistic-bird-acaafb@krzk-bin>
- <DAX7ZB27SBPV.2Y0I09TVSF3TT@fairphone.com>
- <1129bc60-f9cb-40be-9869-8ffa3b3c9748@kernel.org>
- <8a3ad930-bfb1-4531-9d34-fdf7d437f352@redhat.com>
- <85521ded-734d-48e8-8f76-c57739102ded@kernel.org>
- <e534d496-6ce0-46c8-835d-94b3346446a7@redhat.com>
- <6e4253dd-cd73-4302-b9df-44c8c311eb22@kernel.org>
- <e2159868-f31d-4d35-b6b1-2cbd1a9d249b@suse.de>
- <f5fe3fe1-903a-48ca-9249-b77bc07dbc77@redhat.com>
+	s=arc-20240116; t=1751535874; c=relaxed/simple;
+	bh=KF1VSv/L3DD18N5w7Yh4+QaBemHVdr9M/1GmhGh0VUc=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=kjo8O3YzlpyQ6mWQK3W9xVZRF+V7JlKWgnmUAVlZ9e4kqFZlfy1UAtkHO/553ERMb/exO+cfTq7gphVJMfFoXdsWULetx/a/Ir2/BsI+esgvopBsVj8ZgUVnKHuy7Z8+oYsz2g535I09ZZIhGqcksuQHmhtZ9Z+C2m6RMaiAsvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from [127.0.0.2] (unknown [210.73.43.2])
+	by APP-03 (Coremail) with SMTP id rQCowAAHX4DWUGZouhe1AA--.40630S2;
+	Thu, 03 Jul 2025 17:43:51 +0800 (CST)
+From: Vivian Wang <wangruikang@iscas.ac.cn>
+Subject: [PATCH net-next v4 0/2] Add Ethernet MAC support for SpacemiT K1
+Date: Thu, 03 Jul 2025 17:42:01 +0800
+Message-Id: <20250703-net-k1-emac-v4-0-686d09c4cfa8@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="c6ua5moqjda34b32"
-Content-Disposition: inline
-In-Reply-To: <f5fe3fe1-903a-48ca-9249-b77bc07dbc77@redhat.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGlQZmgC/2XOTW7DIBAF4KtYrIvFv0lWvUfVBZ0MCaqMU6AoV
+ eS7l5BIrZXlaN73Zq4kYwqYyX64koQ15LDENqiXgcDJxSPScGgzEUxoZpihEQv95BRnB1Qit1w
+ zi84o0sQ5oQ+X3vZGbsGIl0Le75uEX9+tvjzWHy4jhWWeQ9kP1Yzc0AS8h08hlyX99J8q7+n7e
+ S435yunjAIYv0PNmTHTa8jg8uhghNibqviv7VaLpnfKa88mISZnn7X80xMTWy2btlYcQGvFlJd
+ bva7rL/PpObxbAQAA
+X-Change-ID: 20250606-net-k1-emac-3e181508ea64
+To: Andrew Lunn <andrew+netdev@lunn.ch>, Jakub Kicinski <kuba@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>, 
+ Vivian Wang <wangruikang@iscas.ac.cn>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Paolo Abeni <pabeni@redhat.com>, Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Vivian Wang <uwu@dram.page>, 
+ Vadim Fedorenko <vadim.fedorenko@linux.dev>, 
+ Junhui Liu <junhui.liu@pigmoral.tech>, Simon Horman <horms@kernel.org>, 
+ Maxime Chevallier <maxime.chevallier@bootlin.com>, netdev@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, 
+ spacemit@lists.linux.dev, linux-kernel@vger.kernel.org, 
+ Conor Dooley <conor.dooley@microchip.com>
+X-Mailer: b4 0.14.2
+X-CM-TRANSID:rQCowAAHX4DWUGZouhe1AA--.40630S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxur43Kw1ftw13Jry5Jr1DWrg_yoW5GryUpa
+	y8AF9akw48trW2gFs7Aw4xuF4fXan5tw13WF13t395Xa1qyFyUJryFkw45Cr1UZrZ3Jry7
+	tr45ZF1kCa4DA3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBEb7Iv0xC_Kw4lb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I2
+	0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
+	A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xII
+	jxv20xvEc7CjxVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I
+	8E87Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
+	64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AKxVW8JVWxJw
+	Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAG
+	YxC7M4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS14v26r4a6rW5MxkIecxEwVAFwV
+	W8uwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v2
+	6r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2
+	Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_
+	Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMI
+	IF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07jnb1nUUUUU
+	=
+X-CM-SenderInfo: pzdqw2pxlnt03j6l2u1dvotugofq/
 
+SpacemiT K1 has two gigabit Ethernet MACs with RGMII and RMII support.
+Add devicetree bindings and driver for it. DTS changes will be submitted
+separately.
 
---c6ua5moqjda34b32
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 1/5] dt-bindings: display: simple-framebuffer: Add
- interconnects property
-MIME-Version: 1.0
+Tested on BananaPi BPI-F3 and Milk-V Jupiter.
 
-On Thu, Jul 03, 2025 at 10:34:23AM +0200, Hans de Goede wrote:
-> Hi Thomas,
->=20
-> On 3-Jul-25 8:47 AM, Thomas Zimmermann wrote:
-> > Hi
-> >=20
-> > Am 02.07.25 um 22:43 schrieb Krzysztof Kozlowski:
-> >> On 30/06/2025 10:40, Hans de Goede wrote:
-> >>>> No one asks to drop them from the driver. I only want specific front
-> >>>> compatible which will list and constrain the properties. It is not
-> >>>> contradictory to your statements, U-boot support, driver support. I
-> >>>> really do not see ANY argument why this cannot follow standard DT ru=
-les.
-> >>> So what you are saying is that you want something like:
-> >>>
-> >>> framebuffer0: framebuffer@1d385000 {
-> >>> =A0=A0=A0=A0compatible =3D "qcom.simple-framebuffer-sm8650-mdss", "si=
-mple-framebuffer";
-> >>> }
-> >>>
-> >>> and that the binding for qcom.simple-framebuffer-sm8650-mdss
-> >>> can then list interconnects ?
-> >> IMO yes (after adjusting above to coding style), but as mentioned in
-> >> other response you can just get an ack or opinion from Rob or Conor.
-> >=20
-> > But does that work with *any* device that requires interconnects? The n=
-ext such simple-framebuffer device should work out of the box *without* the=
- kernel knowing anything about it. That's one of the key features of the si=
-mple-framebuffer.=A0 If we have to maintainer per-device feature sets, it b=
-reaks that assumption.
->=20
-> The driver code for this can still be generic and since the driver
-> will bind to the fallback plain "simple-framebuffer" compatible
-> this should also work for new platforms.
->=20
-> The e.g. "qcom.simple-framebuffer-sm8650-mdss" compatible would
-> purely be something in the dt-bindings to document which simplefb
-> implementations will have interconnects and which ones will not.
->=20
-> The driver does not necessarily need to check these more
-> precise compatibles, it can still just check for the generic
-> presence of interconnects.
+I would like to note that even though some bit field names superficially
+resemble that of DesignWare MAC, all other differences point to it in
+fact being a custom design.
 
-This ship has kind of sailed though. This binding has been used by
-plenty of firmwares and bootloaders over the years, and has been
-deployed on plenty of devices already.
+Based on SpacemiT drivers [1].
 
-Good luck fixing it in all of them, and then updating every device.
+For convenience of testing, these patches and related DTS changes are
+also available at:
 
-Maxime
+https://github.com/dramforever/linux/tree/k1/ethernet/v4
 
---c6ua5moqjda34b32
-Content-Type: application/pgp-signature; name="signature.asc"
+[1]: https://github.com/spacemit-com/linux-k1x
 
------BEGIN PGP SIGNATURE-----
+---
+Changes in v4:
+- Resource handling on probe and remove: timer_delete_sync and
+  of_phy_deregister_fixed_link
+- Drop DTS changes and dependencies (will send through SpacemiT tree)
+- Minor changes:
+  - Remove redundant phy_stop() and setting of ndev->phydev
+  - Fix error checking for emac_open in emac_resume
+  - Fix one missed dev_err -> dev_err_probe
+  - Fix type of emac_start_xmit
+  - Fix one missed reverse xmas tree formatting
+  - Rename some functions for consistency between emac_* and ndo_*
+- Link to v3: https://lore.kernel.org/r/20250702-net-k1-emac-v3-0-882dc55404f3@iscas.ac.cn
 
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaGZQUwAKCRAnX84Zoj2+
-doTXAYDVbK22x22DCT03oqgv9cGGTe21PbF5mAR7hsmYGSg2N5tHGlWLZlG67vWp
-wGWbyrkBf0XcIZouuZWz3lOjzcYuoySP9CFwI+WiAS/NvYYWyJi4mRknxTI3HVss
-Ck6VIzTtfg==
-=q6R+
------END PGP SIGNATURE-----
+Changes in v3:
+- Refactored and simplified emac_tx_mem_map
+- Addressed other minor v2 review comments
+- Removed what was patch 3 in v2, depend on DMA buses instead
+- DT nodes in alphabetical order where appropriate
+- Link to v2: https://lore.kernel.org/r/20250618-net-k1-emac-v2-0-94f5f07227a8@iscas.ac.cn
 
---c6ua5moqjda34b32--
+Changes in v2:
+- dts: Put eth0 and eth1 nodes under a bus with dma-ranges
+- dts: Added Milk-V Jupiter
+- Fix typo in emac_init_hw() that broke the driver (Oops!)
+- Reformatted line lengths to under 80
+- Addressed other v1 review comments
+- Link to v1: https://lore.kernel.org/r/20250613-net-k1-emac-v1-0-cc6f9e510667@iscas.ac.cn
+
+---
+Vivian Wang (2):
+      dt-bindings: net: Add support for SpacemiT K1
+      net: spacemit: Add K1 Ethernet MAC
+
+ .../devicetree/bindings/net/spacemit,k1-emac.yaml  |   81 +
+ drivers/net/ethernet/Kconfig                       |    1 +
+ drivers/net/ethernet/Makefile                      |    1 +
+ drivers/net/ethernet/spacemit/Kconfig              |   29 +
+ drivers/net/ethernet/spacemit/Makefile             |    6 +
+ drivers/net/ethernet/spacemit/k1_emac.c            | 1891 ++++++++++++++++++++
+ drivers/net/ethernet/spacemit/k1_emac.h            |  420 +++++
+ 7 files changed, 2429 insertions(+)
+---
+base-commit: d9946fe286439c2aeaa7953b8c316efe5b83d515
+change-id: 20250606-net-k1-emac-3e181508ea64
+
+Best regards,
+-- 
+Vivian "dramforever" Wang
+
 
