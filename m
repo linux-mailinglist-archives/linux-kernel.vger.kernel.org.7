@@ -1,146 +1,118 @@
-Return-Path: <linux-kernel+bounces-714861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 701E1AF6D6D
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 10:48:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 089F2AF6D96
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 10:49:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE03E1C803E1
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 08:48:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0469B1699D4
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 08:49:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF1DD2D0C91;
-	Thu,  3 Jul 2025 08:48:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50C952D375D;
+	Thu,  3 Jul 2025 08:48:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cH88g/aS"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YInoDZzd"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E44951B415F
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 08:48:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 288B02D372A
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 08:48:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751532507; cv=none; b=mV2eSbSrAQ+P0FSrd4XLH6x07RylqDiCJkXtstbeUCwQkZ+F6HOEOhfHrxDK2m3FhY37pCRZylJOY+Mqe8K14spLj1aOnSY6WmP+SepqLify+WHprKZIG5Pl+jDDuiTfKuqXbyEqngH//ZghuhYqXBSpQg4ufsht/C0VC/2yDwk=
+	t=1751532528; cv=none; b=Fd9m2pfybO0pA93Tn84gBkPjo0yW3fn7FhuhEEUjHCJLSpsHonfuqTkAhXBIINexugr1QwPP6y0ji1XBPB+JJepAnpHUxvAW/dUHfad3U1eJUYsE67hySgi6oiAQ7uk5lhG1XNSwgO0A7g/KRN/QRzsIlFttMz6wSVV3fsho320=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751532507; c=relaxed/simple;
-	bh=Z4RUc6Gbwf0nFs7S38pgF7gJ69XRpnkcl9klBzAiOQQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ScUe5pGZ6Kvke19Zo7ZK1+aQe4gGk3ZU/SZn4OZkklhJqEoIIAZMmOx1RX82raKIauYrKWi/uO7oO38Fn9chKqmTpImbbTu20dt6kOMs9WFCbwTmGWUn3r2QfaKFZn3xCMbsPZqWVbRUouIdAt/0KM1TAoeYLhM3ovmDs0V0Hos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cH88g/aS; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-3122368d7c4so6375940a91.1
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Jul 2025 01:48:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751532505; x=1752137305; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=D3Z107VnaAMLtYbjfxHTZ3Ws4rPY5VMWknkGImN8dII=;
-        b=cH88g/aSjPKgsm5v1vqgHZl0SewDpPVfIQGBTI6+ZXosBjJwoRTMjFGgGlvOCMbaoK
-         En+M7q1kkvsHTciFl/XZkhHFVLq6vKbSX91gjTke3p2uQIQQPMjLCf7GQBV0vjv6dr+9
-         nw76AnAT+SuXD+nl/dJ9aoCOrgClcP62uAHROxNkpm0YngGqL8rW9EQdNlK1RK+RPxdG
-         GlnK3IbFV/h3rKcKp2KbbS0w70Ih07S31VePEvame1rHGf3bXyMU8/MtvuhTnWpQraC4
-         jYyS9ev3VZX5JycVTbIa+s9c9n/XSFzckeMKBWNGZ+jdKO9nxJ3sIW/brjS51TemWovc
-         s6ig==
+	s=arc-20240116; t=1751532528; c=relaxed/simple;
+	bh=/RTepCs0dztAoAhV3cYzw3AFqbONWKbO7CPOvH6DzM0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cCQKsfnFJj9YdUGDs1C5nFfkPs1n9QALD3Ar+jen3eyslX5Ddk4eMPH5WCH1WJtET2vOlJM8yeLsWFwl5sacfUupl2kepfsrOO0DpXHmVuwdXyyFafJcgTu4ZIOdZC8I6h5TjXMVVL/yH/mvkQ+mxOMrhgMWSOJdkAmpP+HP5EM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YInoDZzd; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1751532526;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=m5A+/MxsYcbYH1goxrESZ9WwNmbDxLlkxrFPCFIvbec=;
+	b=YInoDZzdfLJQ8eeFdicZDIWq5fcrqElfyghwPW230FEhwLJQj/pXBu3lAir6RSzv2dwyBY
+	uC53DXbk8VU50vfx1eCnDy7X+gE4Kmd0J5GaFIQP4D8yOme9FLD5bfWSJdZX49Mdo21Qef
+	O8c0+tKBHcL1dDBlHZiY+y2bGyoMB4c=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-133-tN31sjvfM4Wj77aCduWmAg-1; Thu, 03 Jul 2025 04:48:45 -0400
+X-MC-Unique: tN31sjvfM4Wj77aCduWmAg-1
+X-Mimecast-MFC-AGG-ID: tN31sjvfM4Wj77aCduWmAg_1751532524
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3a4f7ebfd00so3835101f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Jul 2025 01:48:44 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751532505; x=1752137305;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=D3Z107VnaAMLtYbjfxHTZ3Ws4rPY5VMWknkGImN8dII=;
-        b=uy3YPiCwX/IB6WE5kpR5wmSh5wpVsiWvNH++h3Qi1TX5aSF0MVAaUL/aq1iVFisDtV
-         kvCpcNRT/yFXp71lfq9zl3EuLZN0rNXg/xGw7rFibty6XF30/VZJyN8rCL6cfRmQWhIt
-         jkJoZlqXfwpwzWOkB8FPa4wbWGHQ6hl7i8hufM77xsKpGskDvgILkV6FTNlaOlaDvhG+
-         63rlYnvR8oxBFIvUF3rFkyA1pMP2tDTHShwCkxZVZ5tG7OrxwgP4FqrV+eVJjmP6b1xp
-         Kpg5Ro+wRPPLLARye2EWzg+aFS5YQUoXvHbMwvikgVWtcHB6PbRa8MNGkAa4thOJMVoS
-         LOTw==
-X-Forwarded-Encrypted: i=1; AJvYcCVtUjnUfBjR16GDBo5znw/A4hy1fk6ymumCQ01huQs7eILq3oMwaSf5uisW2kK00AOZF1quCVoKQSFdC/M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YymPN3x0oNipLb8DD4CoM7P2g+6UOkCdtVf2byNqFGSHPK7C0kw
-	va2Ir+ZMaf3OJP2+EdwXdhgYY8A48bjpNNdu4CzF/RpVOxX+mDsE0Myz
-X-Gm-Gg: ASbGncvuTdxLWX5JgxFHUh6ll5+UocwXw5s1B9T+rOOcLVCaKgQN65M4UG797IFiqMR
-	LonoDXIfqGd9cEVV0CeHMNOpN9Nhaaz+bMbCEfwuUyb6GYKLvfd0XeSkwBaqy9QdMPUTxjlf7gu
-	j+chstkGwfgaxNdzAe+u1nZd0w7hSiFgrkPPeILBod069G5TTrRjSPLiZwLuzuMuUMNcSc3i2IA
-	1o5PxrYUEQyeIjR0YFK3RoNn8GpFOSop/C2CgH2AuCEF7LLhyd/cCgWJZz48XVryWPlSDYVrNx7
-	5nLApVbcPQAC9M1YtUYyO5h9esqEgmI3AaAG5b4N7zXN7Oj3+IvuCWTfAg==
-X-Google-Smtp-Source: AGHT+IFTOtu+9aAXgOpMaoBZ0/mn07PugNdJ048Y9jIQJXy0X3cY4WnEabZiSrdDycIabLApQUg2Vw==
-X-Received: by 2002:a17:90b:4d0f:b0:311:9c1f:8522 with SMTP id 98e67ed59e1d1-31a9deae29bmr2995436a91.10.1751532505321;
-        Thu, 03 Jul 2025 01:48:25 -0700 (PDT)
-Received: from nyaos.. ([202.212.79.55])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23acb2f069csm145433795ad.59.2025.07.03.01.48.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Jul 2025 01:48:24 -0700 (PDT)
-From: ChenMiao <chenmiao.ku@gmail.com>
-To: Linux RISCV <linux-riscv@lists.infradead.org>
-Cc: chenmiao <chenmiao.ku@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] riscv: ftrace: Fix the logic issue in DYNAMIC_FTRACE selection
-Date: Thu,  3 Jul 2025 08:48:18 +0000
-Message-ID: <20250703084818.394491-1-chenmiao.ku@gmail.com>
-X-Mailer: git-send-email 2.45.2
+        d=1e100.net; s=20230601; t=1751532523; x=1752137323;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=m5A+/MxsYcbYH1goxrESZ9WwNmbDxLlkxrFPCFIvbec=;
+        b=hxtlvfOITI2PMSbcTj/zswBt61tD3c4ITBzkaEzh+Nk/NMKzHbDctETRtfec8z1dxx
+         SVtmayi0F/UGcq1HTvOUEcbDZosymFwj+ItqY8ZC2yvULxs8FzLpz0XubqAAg+ze2YEX
+         PGkWBPQW39IUyY291GsMgWpIEGB4j9J1+eDrOP046ouOGOhhQRc7NBjBsOwAE9OE+EyO
+         2vyFLOmP/9M/w1JzmxLdaz70ZlV67SM/7ew7CxgzTyOEMXMA2Auj9QJSZ2nTsMRb0mAx
+         XZFYO1rVn0Xt1Qw8oSRU0u1ArTzvoYjmGa4U3VIjzClihE2rlQ1/Hg+ugz3Md7FY/r0v
+         80MA==
+X-Forwarded-Encrypted: i=1; AJvYcCXyRJJbtKoEwTDjlyMnDAkfrwhHnGoXeLL5JXLkUFEN7uPObbs4J3/WgEt0+7J4h0FBffu1kUpBzcxdbqE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKn8RoLmySvW8smA9QYzGqdkozMkGdNdmaNj/s0Vsb8qgrCx5j
+	IXE8JCXzUT8DSh+1N3Nq9Snf1lr3gRXchdL8JKzxrtNTaQ5NNuB7H0K0NGE1vdmpE9E7lx2enhC
+	PG35qr+zm95BTFweoHegIytJGZQy99Wm/9IqzrrZaIzN5KiZ/KwZyF0V98eCRyyvOLaAPPx2VqM
+	ct
+X-Gm-Gg: ASbGncvJReJ20uOgZ/EDm7TBPFb63Qk937Z0TssT0u5SB+LRcIrIp2fYjiug7N3eDOi
+	9M6Z6N8fTjjCS4FyBntH3jP4A4r9CbjZpAybH31BQjuZgHfcNV3Wrey51+tE4QgafGuB39NW2Tx
+	sqlJtT3RYm0WZd3p2pdkVpnVzgLB81b2L1+FeMOZfjz6DYxDn2nFkjYqeRvTZG9B+FqbPXnUDvh
+	60yjx0zkQTbHAnrSU7QqEew4hr1YTAdkDbQlbTG+H2kBTsd9vLW1UZZoGM62BOkeKkWGXERnxyl
+	J1dZZMNCsKAWTc2tbzYStUCmkG3eeDiXUTDcKntdakktx2ALdNjLm3H9382DEpQ3NzY=
+X-Received: by 2002:a05:6000:1ac9:b0:3a1:f5c4:b81b with SMTP id ffacd0b85a97d-3b1fe1e69b5mr5343056f8f.23.1751532523279;
+        Thu, 03 Jul 2025 01:48:43 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEwJWsJ9Bcq221tnNZUrZgPxYaGKS2ioIMyKtLjbCKUp7n/zy8XxkU4Y6rahZ2XUyogggC6pg==
+X-Received: by 2002:a05:6000:1ac9:b0:3a1:f5c4:b81b with SMTP id ffacd0b85a97d-3b1fe1e69b5mr5343032f8f.23.1751532522882;
+        Thu, 03 Jul 2025 01:48:42 -0700 (PDT)
+Received: from ?IPV6:2a0d:3344:270a:b10:5fbf:faa5:ef2b:6314? ([2a0d:3344:270a:b10:5fbf:faa5:ef2b:6314])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454a999c632sm20422205e9.23.2025.07.03.01.48.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 03 Jul 2025 01:48:42 -0700 (PDT)
+Message-ID: <e7275f92-5107-48d2-9a47-435b73c62ef4@redhat.com>
+Date: Thu, 3 Jul 2025 10:48:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] skbuff: Add MSG_MORE flag to optimize large packet
+ transmission
+To: Feng Yang <yangfeng59949@163.com>, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, horms@kernel.org, willemb@google.com,
+ almasrymina@google.com, kerneljasonxing@gmail.com, ebiggers@google.com,
+ asml.silence@gmail.com, aleksander.lobakin@intel.com, stfomichev@gmail.com,
+ david.laight.linux@gmail.com
+Cc: yangfeng@kylinos.cn, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250630071029.76482-1-yangfeng59949@163.com>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20250630071029.76482-1-yangfeng59949@163.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-From: chenmiao <chenmiao.ku@gmail.com>
+On 6/30/25 9:10 AM, Feng Yang wrote:
+> From: Feng Yang <yangfeng@kylinos.cn>
+> 
+> The "MSG_MORE" flag is added to improve the transmission performance of large packets.
+> The improvement is more significant for TCP, while there is a slight enhancement for UDP.
 
-When I was reading the source code of ftrace, I learned that
-ftrace has two types: static and dynamic. Initially, I planned
-to prioritize reading the static source code, so I disabled
-the enable dynamic option in RISCV.
+I'm sorry for the conflicting input, but i fear we can't do this for
+UDP: unconditionally changing the wire packet layout may break the
+application, and or at very least incur in unexpected fragmentation issues.
 
-[*]   Kernel Function Tracer
-[ ]   Kernel Function Graph Tracer
-[ ]   enable/disable function tracing dynamically (NEW)
-
-However, when I tried to compile it, the build failed.
-
-./include/linux/ftrace.h:190:16: error: implicit declaration of
-function ‘arch_ftrace_get_regs’; did you mean ‘arch_ftrace_regs’?
-[-Wimplicit-function-declaration]
-  190 |         return arch_ftrace_get_regs(fregs);
-      |                ^~~~~~~~~~~~~~~~~~~~
-      |                arch_ftrace_regs
-
-After comparing it with the ARM64 architecture, I found that
-ARM64 automatically enables DYNAMIC_FTRACE by default once
-FUNCTION_TRACER is turned on, and this cannot be set to "no".
-Therefore, I believe the optional DYNAMIC_FTRACE setting in
-RISC-V has a logic flaw—if FUNCTION_TRACER is enabled,
-DYNAMIC_FTRACE should also be enabled, and vice versa. Moreover,
-it's clear that RISC-V lacks the necessary support to successfully
-compile the kernel when DYNAMIC_FTRACE is disabled.
-
-[*]   Kernel Function Tracer
-[ ]   Kernel Function Graph Tracer
--*-   enable/disable function tracing dynamically
-
-Signed-off-by: chenmiao <chenmiao.ku@gmail.com>
----
- arch/riscv/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-index 36061f473..f7fc8b460 100644
---- a/arch/riscv/Kconfig
-+++ b/arch/riscv/Kconfig
-@@ -97,6 +97,7 @@ config RISCV
- 	select CLONE_BACKWARDS
- 	select COMMON_CLK
- 	select CPU_PM if CPU_IDLE || HIBERNATION || SUSPEND
-+	select DYNAMIC_FTRACE if FUNCTION_TRACER
- 	select EDAC_SUPPORT
- 	select FRAME_POINTER if PERF_EVENTS || (FUNCTION_TRACER && !DYNAMIC_FTRACE)
- 	select FTRACE_MCOUNT_USE_PATCHABLE_FUNCTION_ENTRY if DYNAMIC_FTRACE
--- 
-2.45.2
+/P
 
 
