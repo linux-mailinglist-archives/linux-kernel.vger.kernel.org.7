@@ -1,80 +1,93 @@
-Return-Path: <linux-kernel+bounces-714910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF226AF6E5B
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 11:17:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84547AF6E64
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 11:19:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F35134A189C
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 09:17:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F70E7A684F
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 09:17:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24C1B2D3A90;
-	Thu,  3 Jul 2025 09:16:56 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02A2B220F36
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 09:16:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CB5C2D4B69;
+	Thu,  3 Jul 2025 09:19:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="BozjETpJ"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6C47220F36;
+	Thu,  3 Jul 2025 09:19:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751534215; cv=none; b=T1EFvxZh5KVq8RXkyxcOPgwH3cfbnCBfLEw4aEaejkbzYCcreEgfj2TdSohbBRbY6IP7nsuiOYoNM+lL0+s7iBwfRoIVJ/lQuQu963X1XSo6vLRZWFUWxQ9KnQ2AaArXrY+ewEm45k77o+Pz64zHcPrU+NAXhqTdPMEetcZ46go=
+	t=1751534348; cv=none; b=NoCgTI0qTu4S5zHOA3CR0S+oUOfzq5xAo506XR/UdbRHa39hxlfE+IE5k+FZPuxUYy7MiSLGymvKrxl9yrWhkkQOimra3+96A0ivhWGvUARKAlLPzxWuX3Lcg7+J3PcKSpmznlr7XHp2qBwECJ5WroAoj1Dj/fFYDHmDgK/f2wU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751534215; c=relaxed/simple;
-	bh=QMDx7f88cknzGh+MwyPL+ZIHDAomtr32IJprmUxtYR8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=vBOEn6dy73xmiA8UVfnFqH46ypdcsacezrq2J9zUrCLTuwMfDqzFDfRAIyT9FXEawwacP2e5NzmoAKqvPC4tuc0M+fOhdNZfiGRj7SzU4k5ijtqJJTP2yR+A3s1MJOsVfUqgBulJFfDipQkhymeWXZyVNYk/IkHp8gmU1GdqDoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1uXG3h-0007OT-U2; Thu, 03 Jul 2025 11:16:45 +0200
-Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1uXG3h-006ZxO-2A;
-	Thu, 03 Jul 2025 11:16:45 +0200
-Received: from pza by lupine with local (Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1uXG3h-0006CY-1x;
-	Thu, 03 Jul 2025 11:16:45 +0200
-Message-ID: <eaa7d6a40e76cee8ae02293ce272f22fbce9d7b9.camel@pengutronix.de>
-Subject: Re: [PATCH] dt-bindings: reset: Convert snps,dw-reset to DT schema
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: "Rob Herring (Arm)" <robh@kernel.org>, Krzysztof Kozlowski
-	 <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Thu, 03 Jul 2025 11:16:45 +0200
-In-Reply-To: <20250702222609.2760718-1-robh@kernel.org>
-References: <20250702222609.2760718-1-robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1751534348; c=relaxed/simple;
+	bh=mudUgVynJuJafwVX5xamx0csOLRV0MYSKdUkzB/pXp4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ELaDwbNd1jE60UCpFRRMA2yzPpK/zhKn8VdyxLRSIvf9W7F+qQ1iRb6rFT2eJhuMnMBz1x7dTm7S0S90qwYvRAFTvHpNN7+S6kXRrm7CTVRSO1EU6N9aFShqn3MAt46won3XLE2g7gjPWrqyjRLHX+QtwUdQktiy0C+23LIHlVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=BozjETpJ; arc=none smtp.client-ip=220.197.31.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=vp
+	QhnFt17a1wgpLJCNic/2Fw7OSARgJos+DEJHnUG9Q=; b=BozjETpJpjQP86pLcv
+	oGfCF4To8YRHgz2RKhBJ3Y6+jTJmXa7gIERvlHczzKp06vHzTAbx2ZseAUAHbcDT
+	WQNOGacvYRzcCMpEYetsGGj3UOyfkKx0xsbW8FmfxNvc1vHxiT4G3VGX8+aMARPb
+	ScRe6FNjPPkqBQmo3NgAYy410=
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [])
+	by gzga-smtp-mtada-g0-4 (Coremail) with SMTP id _____wD3H7SJSmZoX54YCQ--.21258S4;
+	Thu, 03 Jul 2025 17:16:58 +0800 (CST)
+From: Haoxiang Li <haoxiang_li2024@163.com>
+To: steffen.klassert@secunet.com,
+	herbert@gondor.apana.org.au,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Haoxiang Li <haoxiang_li2024@163.com>
+Subject: [PATCH] af_key: Add check for the return value of pfkey_sadb2xfrm_user_sec_ctx()
+Date: Thu,  3 Jul 2025 17:16:46 +0800
+Message-Id: <20250703091646.2533337-1-haoxiang_li2024@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD3H7SJSmZoX54YCQ--.21258S4
+X-Coremail-Antispam: 1Uf129KBjvdXoW7GF4UuF1DXFyDAFWUuFW3Wrg_yoWxtFX_CF
+	y0v3Z5Jr45tr9akr4qy3WfZr98X3yrGwsYga9Iqr95J3yDtr48KrWkuFn3GrW3WryUZF4U
+	XF93Xa90vrn8JjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sRtVyI7UUUUU==
+X-CM-SenderInfo: xkdr5xpdqjszblsqjki6rwjhhfrp/xtbBkBt-bmhmRMHOMwAAss
 
-On Mi, 2025-07-02 at 17:26 -0500, Rob Herring (Arm) wrote:
-> Convert the Synopsys Designware Reset Controller binding to schema. It
-> is a straight forward conversion.
+Add check for the return value of pfkey_sadb2xfrm_user_sec_ctx()
+to prevent potential errors.
 
-Applied to reset/next, thanks!
+Signed-off-by: Haoxiang Li <haoxiang_li2024@163.com>
+---
+ net/key/af_key.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-[1/1] dt-bindings: reset: Convert snps,dw-reset to DT schema
-      https://git.pengutronix.de/cgit/pza/linux/commit/?id=3D196dbace0824
+diff --git a/net/key/af_key.c b/net/key/af_key.c
+index efc2a91f4c48..e7318cea1f3a 100644
+--- a/net/key/af_key.c
++++ b/net/key/af_key.c
+@@ -3335,6 +3335,9 @@ static struct xfrm_policy *pfkey_compile_policy(struct sock *sk, int opt,
+ 		if ((*dir = verify_sec_ctx_len(p)))
+ 			goto out;
+ 		uctx = pfkey_sadb2xfrm_user_sec_ctx(sec_ctx, GFP_ATOMIC);
++		if (!uctx)
++			goto out;
++
+ 		*dir = security_xfrm_policy_alloc(&xp->security, uctx, GFP_ATOMIC);
+ 		kfree(uctx);
+ 
+-- 
+2.25.1
 
-regards
-Philipp
 
