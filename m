@@ -1,78 +1,54 @@
-Return-Path: <linux-kernel+bounces-715517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-715520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECA7FAF770F
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 16:18:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51C28AF7728
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 16:21:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E77E481171
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 14:17:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78178172CF0
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 14:19:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44AAD2E7F05;
-	Thu,  3 Jul 2025 14:18:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="nERA4Hgm"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 219E51F16B
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 14:18:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 399792EA159;
+	Thu,  3 Jul 2025 14:19:10 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64DCF18A6A7;
+	Thu,  3 Jul 2025 14:19:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751552293; cv=none; b=T0xRxCo7n+bY5yLcciTUO/sVb5AKLcxFr/Nu31F4bpjt14NcfHn1Udgt7aFTcEFeGpYCGv89Zy68ltwgNBMhN/8F/u3ULXN0yZCZGcKq5UaqN4aTUWTlGCUD4sRXsPs9XHmL9x6fsLhPhX9a/ztj+i//yMUahYmHqYOoWndpho4=
+	t=1751552349; cv=none; b=Ma2E8f6D4gTZpTiplfkFGLjwC/Vk+hDOk8MfEElnUb3WJPBjCB1lr6roS05/7LGMFATavRyDk1Gv4fQnfUs8bdwgG5DMprtrO1x3mfRlZ6FYgxUpBlLEa5Ei+g7GLwuDyCbfjiaGflWFc9qQNeq63OePqum+KQKr/7ceMuXnbMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751552293; c=relaxed/simple;
-	bh=wpw6THsxoQ6lyx+aA9t26PtYvpISh9DjUBLUOIGn5Bg=;
+	s=arc-20240116; t=1751552349; c=relaxed/simple;
+	bh=RXl2AD1m2IYSvA9DnaRUoy0bq5NdmV6BO5rT6wHMAHI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ulKGyT8vg0nQ1zvMpcl0h1Mt1WwnzdmBhnLSfA8Hj1Jxo4zFXknp8q8MqORZcMXSwvexXhmsKVOom1q3BXI6oDnmgC/vfkRzXboIY5CfAg7s8m1YU4rBBP7oAAzyzor0l0B3vpQjksMCqvrm/BmeRG+Ev8e80o+UPyfj9SrNbWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=nERA4Hgm; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=AKLWlW8+xE1RwDXEj2cQ4ZLcSshnVsEivj9Wr5lzUDg=; b=nERA4Hgm0/x5xuid2x6DsddIX2
-	2RXt4laaPRLiEAA7967yMYuaqIDpsY3PhLLGf98Slds/43V86DnK8lWpmBeLp0jXZaGUwe3xatyvb
-	PvnD3M2ZROsVxfgOesT3IYeEdDuJL8q1w1gDMpI//eRfxS1UU8ayEUjgdn3dMuoMd3/drnZuPZpmF
-	RU+3xNGo6ThJqjcmr14V7dyNbP3Sug5MzaimikXSG4iKOmu3Kf3SDe5ly/CAYlk5pgC92YlPPNpjO
-	GCTpDkCCnK7Mu2+emmxBK8ZwbHGq1ajjcDHRyWFaArNycxMLSnrEP+XWdCf8hZNu7UKxyIol3Iet0
-	fkr3dDew==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uXKlF-00000007hVI-0tkK;
-	Thu, 03 Jul 2025 14:18:01 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 16D7530017D; Thu, 03 Jul 2025 16:18:00 +0200 (CEST)
-Date: Thu, 3 Jul 2025 16:18:00 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Libo Chen <libo.chen@oracle.com>
-Cc: "Chen, Yu C" <yu.c.chen@intel.com>, Michal Hocko <mhocko@suse.com>,
-	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Tim Chen <tim.c.chen@intel.com>, linux-kernel@vger.kernel.org,
-	Jirka Hladky <jhladky@redhat.com>,
-	Srikanth Aithal <Srikanth.Aithal@amd.com>,
-	Suneeth D <Suneeth.D@amd.com>
-Subject: Re: [PATCH] sched/numa: Fix NULL pointer access to mm_struct durng
- task swap
-Message-ID: <20250703141800.GX1613200@noisy.programming.kicks-ass.net>
-References: <20250702163247.324439-1-yu.c.chen@intel.com>
- <20250703072608.GS1613200@noisy.programming.kicks-ass.net>
- <aGZNTtJuCyHJE_25@tiehlicka>
- <20250703115006.GT1613200@noisy.programming.kicks-ass.net>
- <aGZxFRVxHouLaMPg@tiehlicka>
- <b4891cca-4da3-4411-bc9c-669118bf825a@intel.com>
- <e944b504-a852-4f07-a514-7dd99e63b888@oracle.com>
- <20250703123626.GW1613200@noisy.programming.kicks-ass.net>
- <0182cc94-c557-4ce5-b245-fb1fd54bc59b@oracle.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=QEsntS5xlAhB8Wx8P9exaUCH2HPwmOzyjabykNxCw4OpdV/EGE78D2zAOlSZqyT9FhInGpfdtLRprDv2rexoLiq/rpM1KUM+J2Ov+cIM5WxCi5ZsKYwZXtnp/DTs5sZR/QAmvpLxCuUMHyXc0PNHz0JXZIeKCxFhATjvXamD8EA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 463221596;
+	Thu,  3 Jul 2025 07:18:53 -0700 (PDT)
+Received: from localhost (e132581.arm.com [10.1.196.87])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4150E3F66E;
+	Thu,  3 Jul 2025 07:19:07 -0700 (PDT)
+Date: Thu, 3 Jul 2025 15:19:05 +0100
+From: Leo Yan <leo.yan@arm.com>
+To: Mao Jinlong <quic_jinlmao@quicinc.com>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Mike Leach <mike.leach@linaro.org>,
+	James Clark <james.clark@arm.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>, coresight@lists.linaro.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v8 2/2] coresight: Add label sysfs node support
+Message-ID: <20250703141905.GE1039028@e132581.arm.com>
+References: <20250703130453.4265-1-quic_jinlmao@quicinc.com>
+ <20250703130453.4265-3-quic_jinlmao@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,53 +57,101 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0182cc94-c557-4ce5-b245-fb1fd54bc59b@oracle.com>
+In-Reply-To: <20250703130453.4265-3-quic_jinlmao@quicinc.com>
 
-On Thu, Jul 03, 2025 at 06:57:04AM -0700, Libo Chen wrote:
+On Thu, Jul 03, 2025 at 09:04:53PM +0800, Mao Jinlong wrote:
+
+[...]
+
+> +static ssize_t label_show(struct device *dev,
+> +		struct device_attribute *attr, char *buf)
+> +{
+> +
+> +	const char *str;
+> +	int ret = 0;
+
+No need to init ret to 0.
+
+> +	ret = fwnode_property_read_string(dev_fwnode(dev), "label", &str);
+> +	if (ret == 0)
+> +		return scnprintf(buf, PAGE_SIZE, "%s\n", str);
+> +	else
+> +		return ret;
+> +}
+> +static DEVICE_ATTR_RO(label);
+> +
+>  static struct attribute *coresight_sink_attrs[] = {
+>  	&dev_attr_enable_sink.attr,
+> +	&dev_attr_label.attr,
+>  	NULL,
+>  };
+>  ATTRIBUTE_GROUPS(coresight_sink);
+>  
+>  static struct attribute *coresight_source_attrs[] = {
+>  	&dev_attr_enable_source.attr,
+> +	&dev_attr_label.attr,
+>  	NULL,
+>  };
+>  ATTRIBUTE_GROUPS(coresight_source);
+>  
+> +static struct attribute *coresight_link_attrs[] = {
+> +	&dev_attr_label.attr,
+> +	NULL,
+> +};
+> +ATTRIBUTE_GROUPS(coresight_link);
+> +
+> +static struct attribute *coresight_helper_attrs[] = {
+> +	&dev_attr_label.attr,
+> +	NULL,
+> +};
+> +ATTRIBUTE_GROUPS(coresight_helper);
+> +
+
+This change adds a 'label' entry for source, link, helper, and sink
+components, but the documentation has only updated for three components:
+CTI, funnel, and TPDM.
+
+Should we also update the documentation for all relevant components,
+such as ETM, ETR, etc.?
+
+Additionally, patch 01 is missing the update to the ETM yaml file for
+the new property. I checked patch v4 [1], which includes a change to
+etm.yaml, but this change was dropped since v5. I briefly read the
+v4 discussion thread and didn't see any mention of removing the ETM
+related change. Did you see any particular issue when add label for
+ETM devices?
+
+Overall, this series is fine for me. Just please ensure that all
+relevant components are covered for completeness.
+
+Thanks,
+Leo
+
+[1] https://patchwork.kernel.org/project/linux-arm-msm/cover/20240703122340.26864-1-quic_jinlmao@quicinc.com/
+
+>  const struct device_type coresight_dev_type[] = {
+>  	[CORESIGHT_DEV_TYPE_SINK] = {
+>  		.name = "sink",
+> @@ -390,6 +420,7 @@ const struct device_type coresight_dev_type[] = {
+>  	},
+>  	[CORESIGHT_DEV_TYPE_LINK] = {
+>  		.name = "link",
+> +		.groups = coresight_link_groups,
+>  	},
+>  	[CORESIGHT_DEV_TYPE_LINKSINK] = {
+>  		.name = "linksink",
+> @@ -401,6 +432,7 @@ const struct device_type coresight_dev_type[] = {
+>  	},
+>  	[CORESIGHT_DEV_TYPE_HELPER] = {
+>  		.name = "helper",
+> +		.groups = coresight_helper_groups,
+>  	}
+>  };
+>  /* Ensure the enum matches the names and groups */
+> -- 
+> 2.17.1
 > 
-> 
-> On 7/3/25 05:36, Peter Zijlstra wrote:
-> > On Thu, Jul 03, 2025 at 05:20:47AM -0700, Libo Chen wrote:
-> > 
-> >> I agree. The other parts, schedstat and vmstat, are still quite helpful.
-> >> Also tracepoints are more expensive than counters once enabled, I think
-> >> that's too much for just counting numbers.
-> > 
-> > I'm not generally a fan of eBPF, but supposedly it is really good for
-> > stuff like this. 
-> > 
-> 
-> Yeah but not nearly as good as, for example, __schedstat_inc(var) which
-> probably only takes a few CPU cycles if var is in the right place. eBPF
-> is gonna take a whole bunch of sequences to even get to updating an eBPF
-> map which itself is much more expensive than __schedstat_inc(var).
-> 
-> For one, __migrate_swap_task() happens when dst node is fully busy (most
-> likely src node is full as well), so the overhead of ebpf could be quite
-> noticeable.
-
-But that overhead is only paid if you actually care about the numbers;
-most people don't.
-
-We already stick static branches in many of the accounting paths --
-because we know they hurt.
-
-But look at this:
-
-        __schedstat_inc(p->stats.numa_task_swapped);
-        count_vm_numa_event(NUMA_TASK_SWAP);
-        count_memcg_event_mm(p->mm, NUMA_TASK_SWAP);
-
-that is _3_ different counters, 3 cachelines touched. For what?
-
-Would not a single:
-
-	trace_numa_task_swap_tp(p);
-
-be much saner? It translates into a single no-op; no lines touched. Only
-when someone wants the numbers do we attach to the tracepoint and start
-collecting things.
-
-Is the collecting more expensive; maybe. But the rest of us will be
-better of, no?
+> _______________________________________________
+> CoreSight mailing list -- coresight@lists.linaro.org
+> To unsubscribe send an email to coresight-leave@lists.linaro.org
 
