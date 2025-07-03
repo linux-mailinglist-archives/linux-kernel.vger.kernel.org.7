@@ -1,96 +1,117 @@
-Return-Path: <linux-kernel+bounces-715655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-715645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FC75AF7C5F
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 17:35:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3273DAF7BF7
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 17:30:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32F476E6B13
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 15:25:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7384B1CC0C85
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 15:21:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7A132EF9BD;
-	Thu,  3 Jul 2025 15:24:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A3462F0020;
+	Thu,  3 Jul 2025 15:20:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="FO7Aq2Cl"
-Received: from smtpout.efficios.com (smtpout.efficios.com [158.69.130.18])
+	dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b="0OrHD9pb"
+Received: from mailtransmit04.runbox.com (mailtransmit04.runbox.com [185.226.149.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D91662DE6F8
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 15:24:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=158.69.130.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC8F02EFDAF;
+	Thu,  3 Jul 2025 15:20:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.226.149.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751556294; cv=none; b=jBiU9t0nKfa+at12a4vGH8PMnaw8JziXZp6bf5nPCAGaMqp7xDZeNRK8yioPJVEKJJ+mt3CsCvGfYxzBpU5tLoda1yEmGSIwOHENJ6m4ejy8NgwQvbya7j6UeVPgIR1XMzmUrbHRgFkJRbQwBttRFhWP6gBIlmBAESHcFYTFt9I=
+	t=1751556006; cv=none; b=TrcwF+EV/zkavAoLNmbHyOANMk+06KBi1QP7qv0fQZ7oy8W2LGEKz5+Bv5nmMLycqM0WAhcQhsiBfTzE+1GD3VFq1oP9048xIWILp05axkLF6ilAMieS67Xr1IeDaSIw6rc0ZCh87bppDyLxW8myjE/lZPT+gBnNLrSUPuxWUDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751556294; c=relaxed/simple;
-	bh=nimh2wrjzwUAubhNUrY5HI4y+sVu3X6UHelg6hWX5Iw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TlHEgWiaYEIzYIZPPm2fbhtGyUYDMOAkDqhjy073VOw3H8wQ04xPG/jXfrs7dygcsJEV22jj0LptIpFfwJYrjzH1QqkB1cVwtBYlOlL2s5qxmSbaId0/dF5c7zRqXMDnNkfDDb3h88sqb9xOfkxv/nCPA+uIY/5sx/yvCzqGVgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=FO7Aq2Cl; arc=none smtp.client-ip=158.69.130.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1751555897;
-	bh=nimh2wrjzwUAubhNUrY5HI4y+sVu3X6UHelg6hWX5Iw=;
-	h=From:To:Cc:Subject:Date:From;
-	b=FO7Aq2ClsUX1EoSVIZCdxcOBGyeAP0Q8vbYOBVli0RT+wf3JQSe8U+kVT3Q0HoDmQ
-	 Pp4lPVGsJYT5CM9ZpogZHN9j5gyw5Bh+EXs+NuKPaNZhiYMSxxzJqgjBpQgrlVf2hZ
-	 VIJM4iPRuu1zWClibnKE6m1Ew7NZ5KE+3t5FTtLfA1hEHneKXim9m1yfU9F7il7Tu4
-	 0wooZEVwet5xwEYt5KVP9HfxS4e4X6t1Deivm4bnmkviPNq7GOb65BhgjQ00JBnanE
-	 0XKCVz9vklRpkVByfo9h6QsG0qor6Ny1pBmTHGU4in6FfSipr1RhfsLF//Z6k6iTeC
-	 DJZFJHZq8WJeA==
-Received: from thinkos.internal.efficios.com (192-222-132-26.qc.cable.ebox.net [192.222.132.26])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4bY0lF4Lhhz1Mhg;
-	Thu,  3 Jul 2025 11:18:17 -0400 (EDT)
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: 
-Date: Thu,  3 Jul 2025 11:18:14 -0400
-Message-Id: <20250703151816.9786-1-mathieu.desnoyers@efficios.com>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1751556006; c=relaxed/simple;
+	bh=WXDTGdP8LV2OdLBV2fawDgbjiGfDbWOsOGS4OT5h28k=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=W+NVclPDrAA9PNpK1lLw8KFZGjaAtr40pChlBYBObvB9ZM2qkC2LkiZDw/8chtQ3paeLJ4xCo6PB+8OhHjTEUPp/xq1o2RclhkKXtk527z8xyWwz0psPNHivkwsVhRh8HMNM8B+8S9FnWTGW/TDSpN2xIuLfYeZKudED1IPWvv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co; spf=pass smtp.mailfrom=rbox.co; dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b=0OrHD9pb; arc=none smtp.client-ip=185.226.149.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rbox.co
+Received: from mailtransmit03.runbox ([10.9.9.163] helo=aibo.runbox.com)
+	by mailtransmit04.runbox.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.93)
+	(envelope-from <mhal@rbox.co>)
+	id 1uXLj5-000pBt-R7; Thu, 03 Jul 2025 17:19:51 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=rbox.co;
+	s=selector2; h=Cc:To:Content-Transfer-Encoding:Content-Type:MIME-Version:
+	Message-Id:Date:Subject:From; bh=EJBbOdRMlb7fC04E5yAV9/cTzwhdRgdAxVTABcEKhoI=
+	; b=0OrHD9pbLQMTK3Q1IdxasyAVmmsHYMxjvtibfxnAvmqXTk+NSVm3uKb7LcGQYYD3czSMXUh35
+	0zU1Dt3feILpaShKmrdTHHAfzbH1gbiCkiEObEQPY3cbVGuy797LLTdIoj45n1SdjNEKLZouwcYGd
+	ZcHzK5kfrr8AJgsRYD3GnZp+NbYb0vdUIQQ3oPvCegdv3cb2UMkePLbSjI5vps20ZVPQdGZ4uWLeK
+	jeGtupEF5JJNvuNeJHOlxvo+V4R7EL+Mfk5hoc93UHcJeojYdMKpkpgMAEgw173T0b5CQ1yY9sQFO
+	vcg66Ai9Pu4pfxBMvQwUI232QO8VGTAuAUvAxw==;
+Received: from [10.9.9.73] (helo=submission02.runbox)
+	by mailtransmit03.runbox with esmtp (Exim 4.86_2)
+	(envelope-from <mhal@rbox.co>)
+	id 1uXLiz-0006bx-MI; Thu, 03 Jul 2025 17:19:45 +0200
+Received: by submission02.runbox with esmtpsa  [Authenticated ID (604044)]  (TLS1.2:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.93)
+	id 1uXLhj-001WIY-Gy; Thu, 03 Jul 2025 17:18:27 +0200
+From: Michal Luczaj <mhal@rbox.co>
+Subject: [PATCH net v4 0/3] vsock: Fix transport_{h2g,g2h,dgram,local}
+ TOCTOU issues
+Date: Thu, 03 Jul 2025 17:18:17 +0200
+Message-Id: <20250703-vsock-transports-toctou-v4-0-98f0eb530747@rbox.co>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADmfZmgC/3XOTQ7CIBAF4KsY1mKm09IfV97DuCgwWmJSGkBS0
+ /TuIpvqoss3k/fNLMyTM+TZ+bAwR9F4Y8cUquOBqaEfH8SNTpkhoACBJY/eqicPrh/9ZF3wPFg
+ V7ItXshG6U9i3IFhqT47uZs7ylY0U2C0NB+ODde98LRZ5leG6aHfhWHDgWqNG0tSlHy5O2vmkb
+ BYj/igI+womBZCkRpCFhvJfKTelAdxXyq/SN4RUd9i1zaas6/oBWIA8yk0BAAA=
+X-Change-ID: 20250523-vsock-transports-toctou-4b75d9c2a805
+To: Stefano Garzarella <sgarzare@redhat.com>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Simon Horman <horms@kernel.org>, Stefan Hajnoczi <stefanha@redhat.com>
+Cc: virtualization@lists.linux.dev, netdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Michal Luczaj <mhal@rbox.co>
+X-Mailer: b4 0.14.2
 
-From 8b020924c24dd1d0914ab04961b15ac040e59b70 Mon Sep 17 00:00:00 2001
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Date: Thu, 3 Jul 2025 11:14:45 -0400
-Subject: [RFC PATCH v4 0/2] mm: Fix OOM killer inaccuracy on large many-core systems
+transport_{h2g,g2h,dgram,local} may become NULL on vsock_core_unregister().
+Make sure a poorly timed `rmmod transport` won't lead to a NULL/stale
+pointer dereference.
 
-Introduce hierarchical per-cpu counters and use them for rss tracking to
-fix the per-mm RSS tracking which has become too inaccurate for OOM
-killer purposes on large many-core systems.
+Note that these oopses are pretty unlikely to happen in the wild. Splats
+were collected after sprinkling kernel with mdelay()s.
 
-The approach proposed here is to replace this by the hierarchical
-per-cpu counters, which bounds the inaccuracy based on the system
-topology with O(N*logN).
+Signed-off-by: Michal Luczaj <mhal@rbox.co>
+---
+Changes in v4:
+- Fix a typo in a comment [Stefano]
+- Link to v3: https://lore.kernel.org/r/20250702-vsock-transports-toctou-v3-0-0a7e2e692987@rbox.co
 
-Testing and feedback are welcome!
+Changes in v3:
+- Static transport_* CID getter rename and comment [Stefano]
+- Link to v2: https://lore.kernel.org/r/20250620-vsock-transports-toctou-v2-0-02ebd20b1d03@rbox.co
 
-Thanks,
+Changes in v2:
+- Introduce a helper function to get local CIDs safely [Stefano]
+- Rename goto label to indicate an error path, explain why releasing
+  vsock_register_mutex after try_module_get() is safe [Stefano]
+- Link to v1: https://lore.kernel.org/r/20250618-vsock-transports-toctou-v1-0-dd2d2ede9052@rbox.co
 
-Mathieu
+---
+Michal Luczaj (3):
+      vsock: Fix transport_{g2h,h2g} TOCTOU
+      vsock: Fix transport_* TOCTOU
+      vsock: Fix IOCTL_VM_SOCKETS_GET_LOCAL_CID to check also `transport_local`
 
-Mathieu Desnoyers (2):
-  lib: Introduce hierarchical per-cpu counters
-  mm: Fix OOM killer inaccuracy on large many-core systems
+ net/vmw_vsock/af_vsock.c | 57 ++++++++++++++++++++++++++++++++++++++----------
+ 1 file changed, 46 insertions(+), 11 deletions(-)
+---
+base-commit: 223e2288f4b8c262a864e2c03964ffac91744cd5
+change-id: 20250523-vsock-transports-toctou-4b75d9c2a805
 
- include/linux/mm.h                  |   8 +-
- include/linux/mm_types.h            |   4 +-
- include/linux/percpu_counter_tree.h | 108 ++++++++
- include/trace/events/kmem.h         |   2 +-
- kernel/fork.c                       |  31 ++-
- lib/Makefile                        |   1 +
- lib/percpu_counter_tree.c           | 393 ++++++++++++++++++++++++++++
- 7 files changed, 530 insertions(+), 17 deletions(-)
- create mode 100644 include/linux/percpu_counter_tree.h
- create mode 100644 lib/percpu_counter_tree.c
-
+Best regards,
 -- 
-2.39.5
+Michal Luczaj <mhal@rbox.co>
+
 
