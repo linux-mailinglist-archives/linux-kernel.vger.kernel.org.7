@@ -1,140 +1,161 @@
-Return-Path: <linux-kernel+bounces-715612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-715615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A958AF7A8F
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 17:15:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87501AF7A7C
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 17:14:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6443E189D280
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 15:09:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99716175A8F
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 15:10:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D21A2EE96D;
-	Thu,  3 Jul 2025 15:09:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3017F2EE973;
+	Thu,  3 Jul 2025 15:09:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ULlZrb7S"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="dBCiMoyQ"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 178D62ED16D;
-	Thu,  3 Jul 2025 15:09:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDE421E9B3D;
+	Thu,  3 Jul 2025 15:09:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751555372; cv=none; b=cYttprR6zPFaeRQF6ufKW8BdqRr1jaD6LH0TTL0ITGdsL4crh2POBB7t4+kx8agy6AH0w/Xd3NHSVPK2QNOUvnS5TQwdspy6K3Mg3LRnFle6HTeoFDMRyjmMNdyhMsUz/K22mjMnfjoCXeR1yxY64xIOmeS2z4H8ScE1gXx5LWo=
+	t=1751555396; cv=none; b=jg9kRtyvQdhc38mIwxitAwXbJMbzUhYmyS8AejDBVIZEldNuOSxet8d0uoSNFnAVCqSI1f5IreHCmdcK0vVOc2iKfmq36oPzH3lENe+6Ok0m4WejGSUkbdM1Qd3eRxWH0+NdCT8uJKkNeJdml8oxHe+vbArhP796MfFtdUrLsAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751555372; c=relaxed/simple;
-	bh=5r2HFBXGqiJbMnELA3izs0vFEPy1VpuRoyBi3VXCRC0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ddZfMPYvwELhZvJZj1Rql0bwa1PLpVXDB+Dd/4v+m2togDm0bTA9TvBFivL8pp9govfx2dDpzkYcFpa18iXfGjksSAHZC0eBEdMDooxrTchQKIRGJUQxcpUD9iB1WrK54Cl0WZuJB4yypa/k8jEm2HrO6BYYff0vAf1cQL2DK7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ULlZrb7S; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751555372; x=1783091372;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=5r2HFBXGqiJbMnELA3izs0vFEPy1VpuRoyBi3VXCRC0=;
-  b=ULlZrb7ScveNpJOs/R3asTYtebUfrR2W/2bqadWVMd5l1V825KYSK2yh
-   WDVP+P05zb8mwGU3tkreEZ5vfxN/GaNj55SHDXptaaTY7I3FqcRkOJBL4
-   U5hdZuTe3DoyOgnuToLdkb1ZLlTQ+lqpagEwhPvy0eTIRFvxZ6MMYg4qp
-   kxKmQtjN+EpfeZWlbBrX0mc6JB3mPVASyW4uIjHAmwmHf/0arhlkxNcPT
-   6VW1GI+oGCW5iyF1zTblpg5Bg7J7N+SWi6zz2s4Lt/ajfEi8aT54nvZOb
-   9kXsS0lnAQo8iO6ZA/UT0HZx7fvNuCvi/rA7fVfJ2eFlhP7CYMOU/B6Am
-   Q==;
-X-CSE-ConnectionGUID: ui1ul/J9TKejczL766yJzw==
-X-CSE-MsgGUID: JMM9fRfXTQCmj4EOQuHEMg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11483"; a="64129197"
-X-IronPort-AV: E=Sophos;i="6.16,284,1744095600"; 
-   d="scan'208";a="64129197"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2025 08:09:27 -0700
-X-CSE-ConnectionGUID: ecdvsozjQIu7ySN+1HW9TQ==
-X-CSE-MsgGUID: GgdvLPP+SjW1ulIRoLI1gg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,284,1744095600"; 
-   d="scan'208";a="154488587"
-Received: from lkp-server01.sh.intel.com (HELO 0b2900756c14) ([10.239.97.150])
-  by fmviesa006.fm.intel.com with ESMTP; 03 Jul 2025 08:09:24 -0700
-Received: from kbuild by 0b2900756c14 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uXLYw-0002Gx-25;
-	Thu, 03 Jul 2025 15:09:22 +0000
-Date: Thu, 3 Jul 2025 23:09:05 +0800
-From: kernel test robot <lkp@intel.com>
-To: Shuan He <heshuan@bytedance.com>, bhelgaas@google.com,
-	cuiyunhui@bytedance.com
-Cc: oe-kbuild-all@lists.linux.dev, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, heshuan@bytedance.com,
-	sunilvl@ventanamicro.com
-Subject: Re: [PATCH] PCI: Fix pci devices double register WARN in the kernel
- starting process
-Message-ID: <202507032253.sXSgz4lH-lkp@intel.com>
-References: <20250702155112.40124-2-heshuan@bytedance.com>
+	s=arc-20240116; t=1751555396; c=relaxed/simple;
+	bh=w5RnSFtp0MN5u7g8v7grTd4Pv2Ujqg7NjWQkyG/E58U=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=hboeFoG1weK0XdnXTPyyQwryLlr/jvcfplUHvefLYi8ffSBcAgL5CU4pESFX6NA8GiLno0EgB7OwunJBq4vXtot1UTVAagW2X3CAV3zCcRrmQT2rpGvsPxXTFmw5leCq4ETtFAH40gPBRYgx2mHxyeZJDF98fwGltXaxfgYA5B0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=dBCiMoyQ; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 563ErnVF018568;
+	Thu, 3 Jul 2025 15:09:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=e1wKDrG+9ZY7B+fLpLH2lU
+	EiCYmLinZ7W5F89oxGRj0=; b=dBCiMoyQFIJG6ZzBmMBNs1WaOhwB9SKUyOyP2n
+	BFImKXBL3P8iwsTz9YJEFmY3XZFW2wODnaDZLQSy2Imx9LGVLVkQWE49/Zd7turv
+	HuNmhpOB1Cuo3AluwpL2cUu+uYrt+nmJTESvXeBfJBSEQLm5dcBZd1vFP5lvjXJQ
+	dhHwbNfXQJ0W03fteNEM0okQ966sQB4VLXutnMybbBnLOnvwAGYrGO7Xm9tyAZUj
+	6G/bT7C7aOogRUdJ3i4twNqu7zn2uVJxiwWC6KBmYsexFEsATkEVUSOWBrR2UYo9
+	IGPxRxBeqKZgR7JVcu3YYF9lA0voEfq2Mze8P/WdOhAQAiZw==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47j8fxs014-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 03 Jul 2025 15:09:49 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 563F9nAq008711
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 3 Jul 2025 15:09:49 GMT
+Received: from hu-vpernami-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Thu, 3 Jul 2025 08:09:47 -0700
+From: Vivek.Pernamitta@quicinc.com
+Subject: [PATCH 0/5] bus: mhi: host: Enable SRIOV support in MHI driver
+Date: Thu, 3 Jul 2025 20:39:39 +0530
+Message-ID: <20250703-sriov_vdev_next-20250630-v1-0-87071d1047e3@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250702155112.40124-2-heshuan@bytedance.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADOdZmgC/x2MUQqAIBAFrxL7nbAWJnSViKh81f5YaEgQ3j3pc
+ xhmXooIgkh99VJAkiinL6DritZj9juUuMLUcGPYslYxyJmm5JAmj+dWv+haVgxYs2njuF2o5Ff
+ AJs+/HsacPxE8UzpqAAAA
+X-Change-ID: 20250701-sriov_vdev_next-20250630-0ee75f15d03b
+To: Manivannan Sadhasivam <mani@kernel.org>
+CC: <mhi@lists.linux.dev>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Vivek Pernamitta <quic_vpernami@quicinc.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1751555387; l=2212;
+ i=<quic_vpernami@quicinc.com>; s=20241114; h=from:subject:message-id;
+ bh=w5RnSFtp0MN5u7g8v7grTd4Pv2Ujqg7NjWQkyG/E58U=;
+ b=cbXtbUes05/PcdMKrMpYfXlW2609qbdatu58Es0hU4/jo6oz383K2A2CyoFb3hGiaqry5oAZ0
+ Aa7mEM41+rLBb70ZDHdj8fX+C29JKldhUGkwge0V2T2WHjrYl3gu0yV
+X-Developer-Key: i=<quic_vpernami@quicinc.com>; a=ed25519;
+ pk=HDwn8xReb8K52LA6/CJc6S9Zik8gDCZ5LO4Cypff71Y=
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzAzMDEyNyBTYWx0ZWRfX8110F29U2NZq
+ 1HQyw8TGNwM85MBzdnee8JgpSGo0b5JXkmPkmtSQeCx1KeNL95Pwbdzl6MwwgM/PBu25i7ahWIp
+ 6pgTpOHxGqm1M7oEfcEZubKOkELp1WifSkHDHm4O8BPat5JuxTVKGQIymMGVGQxxC9x6L8sbHk7
+ ADxsil4DWs3Bnc89qm0thgRR2idBiMNr5s7CSIMHL8PjcGODtZlEQmUhpvrtR8RCXCxQd9oqkPl
+ 99jlOSt0xfSILpMNU1SWWfwRGLn/CZYtv8YaWg9fh0UbHyf6XpHwJrufIMirjU1PqHltFTvhypP
+ yQMVSl2DxgGandAEwJ7EoWWy6KFjdy8v4VvBfH6x+8rBzBU17K0KbLHfvXdrp5Vyw8V8Y8lH1E5
+ 3nMK5ZFS+SXGtZ0tlkl5E7oQ10atzxSn4cZ5c/M604M4Sfio81JjRtstB5c6x/K8QmRivTOQ
+X-Proofpoint-GUID: X7kcvPHc_lm0LmZxQvkLFXlQ1FfcIQ-i
+X-Proofpoint-ORIG-GUID: X7kcvPHc_lm0LmZxQvkLFXlQ1FfcIQ-i
+X-Authority-Analysis: v=2.4 cv=TqPmhCXh c=1 sm=1 tr=0 ts=68669d3e cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=COk6AnOGAAAA:8
+ a=IZ3J-Pvvv7PwYCIF5DoA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-03_04,2025-07-02_04,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 bulkscore=0 mlxlogscore=862 suspectscore=0 adultscore=0
+ phishscore=0 malwarescore=0 clxscore=1011 lowpriorityscore=0 mlxscore=0
+ impostorscore=0 spamscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507030127
 
-Hi Shuan,
+This patch introduces several enhancements for the SRIOV support in MHI driver
+focusing on enabling SRIOV and improving the MHI driver removal process.
 
-kernel test robot noticed the following build errors:
+- Add support to enable SRIOV.
 
-[auto build test ERROR on pci/next]
-[also build test ERROR on pci/for-linus linus/master v6.16-rc4 next-20250703]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+- Add support to read SUBSYSTEM_VENDOR_ID for VF's to check status.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Shuan-He/PCI-Fix-pci-devices-double-register-WARN-in-the-kernel-starting-process/20250703-035442
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git next
-patch link:    https://lore.kernel.org/r/20250702155112.40124-2-heshuan%40bytedance.com
-patch subject: [PATCH] PCI: Fix pci devices double register WARN in the kernel starting process
-config: alpha-allnoconfig (https://download.01.org/0day-ci/archive/20250703/202507032253.sXSgz4lH-lkp@intel.com/config)
-compiler: alpha-linux-gcc (GCC) 15.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250703/202507032253.sXSgz4lH-lkp@intel.com/reproduce)
+- Implement support for separate controller configurations for both
+  Virtual Functions (VF) and Physical Functions (PF).
+  The PF takes on a supervisory role and will have bootup information
+  such as SAHARA, DIAG, and NDB (for file system sync data, etc.).
+  VFs can handle function-specific data transfers, such as data plane
+  or hardware data.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507032253.sXSgz4lH-lkp@intel.com/
+- Perform a graceful removal of the MHI driver. Upon driver removal,
+  the host driver will perform a SOC_RESET on the driver remove callback.
+  This ensures device reset gracefully.
+  
+- honor sys_err at power_up state
+  In mhi_sync_power_up() host waits for device to enter in to mission mode
+  but SYS_ERR is an valid state, If device sends an SYS_ERR host will bail
+  out for wait_event_timeout() as MHI is in error state and calls
+  mhi_power_down which will teardown MHI driver probe.
+  If there is any SYS_ERR, sys_err handler needs to process SYS_ERR state
+  and queues the next state transition for device to bring in to Mission
+  mode, so mhi_sync_power_up() will wait for device to enter in to
+  mission mode.
 
-All errors (new ones prefixed by >>):
+Signed-off-by: 
 
-   drivers/pci/proc.c: In function 'pci_proc_init':
->> drivers/pci/proc.c:476:25: error: too many arguments to function 'pci_dev_assign_added'; expected 1, have 2
-     476 |                         pci_dev_assign_added(dev, true);
-         |                         ^~~~~~~~~~~~~~~~~~~~      ~~~~
-   In file included from drivers/pci/proc.c:18:
-   drivers/pci/pci.h:577:20: note: declared here
-     577 | static inline void pci_dev_assign_added(struct pci_dev *dev)
-         |                    ^~~~~~~~~~~~~~~~~~~~
+---
+Vivek Pernamitta (5):
+      bus: mhi: host: pci_generic: Add SRIOV support for PCIe device
+      bus: mhi: host: Add support for separate controller configurations for VF and PF
+      bus: mhi: host: pci_generic: Read SUBSYSTEM_VENDOR_ID for VF's to check status
+      bus: mhi: host: pci_generic: Remove MHI driver and ensure graceful device recovery
+      bus: host: mhi: Need to honor sys_err at power_up state
 
+ drivers/bus/mhi/host/internal.h    |  2 ++
+ drivers/bus/mhi/host/pci_generic.c | 51 +++++++++++++++++++++++++++++++++-----
+ drivers/bus/mhi/host/pm.c          |  2 +-
+ 3 files changed, 48 insertions(+), 7 deletions(-)
+---
+base-commit: 1343433ed38923a21425c602e92120a1f1db5f7a
+change-id: 20250701-sriov_vdev_next-20250630-0ee75f15d03b
 
-vim +/pci_dev_assign_added +476 drivers/pci/proc.c
-
-   463	
-   464	static int __init pci_proc_init(void)
-   465	{
-   466		struct pci_dev *dev = NULL;
-   467		proc_bus_pci_dir = proc_mkdir("bus/pci", NULL);
-   468		proc_create_seq("devices", 0, proc_bus_pci_dir,
-   469			    &proc_bus_pci_devices_op);
-   470		proc_initialized = 1;
-   471		pci_lock_rescan_remove();
-   472		for_each_pci_dev(dev) {
-   473			if (pci_dev_is_added(dev))
-   474				continue;
-   475			if (!pci_proc_attach_device(dev))
- > 476				pci_dev_assign_added(dev, true);
-
+Best regards,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Vivek Pernamitta <<quic_vpernami@quicinc.com>>
+
 
