@@ -1,136 +1,105 @@
-Return-Path: <linux-kernel+bounces-714619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F0A9AF6A4A
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 08:28:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E467FAF6A53
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 08:29:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31DB53BC27B
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 06:28:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1602317A639
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 06:29:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A618429344A;
-	Thu,  3 Jul 2025 06:28:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D866291C33;
+	Thu,  3 Jul 2025 06:29:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xACxaZEt"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e8strBBn"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 113C9291166
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 06:28:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1F47291C35
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 06:29:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751524108; cv=none; b=u3l+tUX2N3QnPKKeE1WNOGUjlLP7k0PSML6w4auV3kRaOxSmSlOYeYgr0tT64ClckSPry/CIPNMPybTRqr12WJqv6/OsdD0AxiQ+TTMHl1Pwfk0Sz0rv+WWw9EwY17Oh+jnOCSTnQ2QuLcegFJCBnMnBzE7NruC5VU+d30gcD/U=
+	t=1751524182; cv=none; b=A872wn1Q1V2uaC4cq0N+UMxv+2PDR3RRhf2UjSmyR5wVYQZdC6ffJEZUi/k85DB3bk+6AUZirZ56BO0cI1P+QJOwO2Rpy3pFH5etnZs0JSV0z2ce0bpOJ07dO9+51gb1euxRXAk9ySZ3l2LTy35z4BpRqWE1ljhG1iOr33OBYao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751524108; c=relaxed/simple;
-	bh=MO59kQdKIQ3jRqDULHDpVDumKyq+YbjeeZVE+XaSpoE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=KCMdJMUbHMdTnDEsHJWqvBNWlHKdVSJWNy+63C6DbJHGxsRzQAhfrYUqA/fye2uLdiNdSLDExOX/vAzMLKJuVGYY8kgtrqvEwq38pE9JIHt12fUz0IBAWT3ZakwKuo8WVGoRESuvdsEhGj0YUyW1ZWT3CsNO/Jbo5dA0sWx6akY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xACxaZEt; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3a54690d369so4963899f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 23:28:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1751524104; x=1752128904; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=MO59kQdKIQ3jRqDULHDpVDumKyq+YbjeeZVE+XaSpoE=;
-        b=xACxaZEtZzNddQVaa69kh/phyWzwSRWQdUHdNE5V+SqhMVH2BpcAWZkmwfrX8rCIh/
-         6kirOdzkO33H4dimHfcc7LNDuSf4u1ErTsT2eION8QZS2uSmUju8kholZu51b18MmUzU
-         RnJYhc2Ppxb3VNMlDUxNZSDQmISKWm3Y8GxbRdjbkYnUSKWWI8ZpHiKIDUoqyFXmCW2h
-         uVgr4L/HIuUlSFsfakqR2wsjWZA1/LfU5rlGEnLhbEuLdRS1JMIHao/mbmFX3uN5kLns
-         pEfMwIICqPvR/Qz4j7WdxGV/Vg75yTIHrYzQbKCTgQlv2I0oPDWEp81E1HoT3Hoba3Qj
-         UorA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751524104; x=1752128904;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=MO59kQdKIQ3jRqDULHDpVDumKyq+YbjeeZVE+XaSpoE=;
-        b=w14uhkHyo1WHJCgvnUZn7pyjbcmhn+h5iNVEAiZOTk7pxhw73MsZ2DCPYVFElKY3Mm
-         /YH9WqAkTCZ9xd7vdgXYwUWMfPZtheVOCOUe+i2iaFITDlTEkEnpd+Y95hHeiGTvJa6N
-         MD4C4i8WJz6Cp7w8d9Ufl0NHXRBDO5c0lVzLFPekT9M34oJoDzz/4EUuw9lEuxZ4iG9U
-         rTLouezLaL5CTsdQF71W2ziP4hi5cO76MQb3scUgrahPlo4R6bjZoT+vDB9cv7qOqJ8K
-         2S6201fEwwGWbTtu/4oOW6d70fIEZXFGb0I+EV1v4ZL/8fOd6gBxE2LfgVE0n3//yNzU
-         aqeA==
-X-Forwarded-Encrypted: i=1; AJvYcCVCK+dWD0+3yHvdu0gL4AtypoA6ig5gO36R1tQJ2dpE8Xhp9dU6vg9B1kpE+SRLuiGgp1eHHRVS+kalzZE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNvM5tKSoizYUERQa5jF4Dh+ZriDFjo0rtmkvmXMNMoJC2pwGx
-	953Y9NIclcNBBZgHOuRZDh0nh6wSpM+fM/Gl1480q9oScvFWBiWuYnKFrxcQ6CPKM6U=
-X-Gm-Gg: ASbGncszQpD/z89kRhTCgGIiKCUjt0esEz0uq02qoHI0R5xW/yOSAtsC+oBQUdwnXfE
-	kND8s50UgZ8YwGOk1Tqzw7Rf+u+TUdgWFbnWBF1CmY66oupQSjp62WcQvFE1EjkwibhCV3X7jSx
-	3Mwhv7hV9SFYSRxalQU1bt/wssMqurhVwgvStjRF1/pGwAkkdaxP3/s64jmbtOpYQBaowu2SEg3
-	7T9/sC2zkssPR8jt3TgL0wX98hXElXM+T1O+DczqVjlkr2yvtfVF2u5BGlguL0xPiCMua63DU7x
-	Z6cGJhH+iY8hIM8RTjhGR7UlTVgfFTtfyIKcn6S0jAUTrTWGkARMVJq8qOM20J/A78HRButgMRm
-	l
-X-Google-Smtp-Source: AGHT+IF5h/wZ6d5NNeUR6agDG/7PLqUPnsk7I84b3H4DX8EaAsYMBom8LuJRN2UToI44f6ice+Jz5g==
-X-Received: by 2002:a05:6000:703:b0:3a4:f6ba:51c8 with SMTP id ffacd0b85a97d-3b1fe5c082fmr4402569f8f.14.1751524104371;
-        Wed, 02 Jul 2025 23:28:24 -0700 (PDT)
-Received: from [10.1.1.59] ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454a997b1ecsm17126905e9.11.2025.07.02.23.28.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Jul 2025 23:28:23 -0700 (PDT)
-Message-ID: <e3a974d1f7fd1ed2a631d3ddf46eceec3a386615.camel@linaro.org>
-Subject: Re: [PATCH v3 bpf-next 1/4] kernfs: remove iattr_mutex
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Song Liu <song@kernel.org>, bpf@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, kernel-team@meta.com,
- andrii@kernel.org, 	eddyz87@gmail.com, ast@kernel.org,
- daniel@iogearbox.net, martin.lau@linux.dev, 	viro@zeniv.linux.org.uk,
- jack@suse.cz, kpsingh@kernel.org, 	mattbobrowski@google.com,
- amir73il@gmail.com, gregkh@linuxfoundation.org, 	tj@kernel.org,
- daan.j.demeyer@gmail.com, Will McVicker <willmcvicker@google.com>,  Peter
- Griffin <peter.griffin@linaro.org>, Tudor Ambarus
- <tudor.ambarus@linaro.org>, kernel-team@android.com
-Date: Thu, 03 Jul 2025 07:28:22 +0100
-In-Reply-To: <20250702-hochmoderne-abklatsch-af9c605b57b2@brauner>
-References: <20250623063854.1896364-1-song@kernel.org>
-	 <20250623063854.1896364-2-song@kernel.org>
-	 <78b13bcdae82ade95e88f315682966051f461dde.camel@linaro.org>
-	 <20250702-hochmoderne-abklatsch-af9c605b57b2@brauner>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1-1+build1 
+	s=arc-20240116; t=1751524182; c=relaxed/simple;
+	bh=90nTFynEDHsaWXX962iTaj2KmuXCT2e7KKha/ny7pSc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=SCauu5XRWUVxGl8DKuvFO6jU8VnG0o2OV2LmutaaOEpSim0C9BuD0/TLx4y0GXnhnmuRHYCxRfXqgxUkUtTmgod3GQYu3WJdcj9oETOsiNsysT+EzO5OfbaEO9Ew9uCw7EgRFRv6cQ6VkSenfGa3z6CJruzfs7G4JzqP8GdTnNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e8strBBn; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751524181; x=1783060181;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=90nTFynEDHsaWXX962iTaj2KmuXCT2e7KKha/ny7pSc=;
+  b=e8strBBnNS11hCJi0BWruWl2G7nQiP2yPmnycDVspc2dOEMj1sRElUD6
+   4HjkRYReXw31NnPGuRYTXU8XDvEwJAf31o0xD4gH1w5IAmmjNhyA+3AiX
+   +S0rWFc/e663Ni5ACR9cJt9+TEFzL7IMJll7XHljKxbjtmrB23RVMvEAM
+   Zx5weJf10ielPFTWavT5wVA8pFWL4iEbOOBuLN5Yr5E1iiuEHzIztlX5P
+   72O6MBdIecoBngz8jRyJx0C/2Ik9VDHd/+Qzawu7q83Frjqkumkzns70N
+   Ihp+dGJyzFXw7IbvtnKhbsJK43apLa/WHtWfMO5SYFhCT85CcUM1tj1mK
+   A==;
+X-CSE-ConnectionGUID: EGXCcFY9QlmnVjoJX47Ifg==
+X-CSE-MsgGUID: zNEA5xgwSoKq/LhkakUOlQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11482"; a="53978747"
+X-IronPort-AV: E=Sophos;i="6.16,283,1744095600"; 
+   d="scan'208";a="53978747"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2025 23:29:40 -0700
+X-CSE-ConnectionGUID: MiGruOc4RDisykkXGGh/Eg==
+X-CSE-MsgGUID: O7OGD8FYSSi9naEIzL+pIQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,283,1744095600"; 
+   d="scan'208";a="153693361"
+Received: from igk-lkp-server01.igk.intel.com (HELO 030a839a1121) ([10.91.175.65])
+  by orviesa010.jf.intel.com with ESMTP; 02 Jul 2025 23:29:39 -0700
+Received: from kbuild by 030a839a1121 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uXDRw-0000Qb-2S;
+	Thu, 03 Jul 2025 06:29:36 +0000
+Date: Thu, 3 Jul 2025 08:28:37 +0200
+From: kernel test robot <lkp@intel.com>
+To: Matthias Fend <matthias.fend@emfend.at>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org, Lee Jones <lee@kernel.org>
+Subject: ld.lld: error: undefined symbol: v4l2_flash_release
+Message-ID: <202507030815.770r4UoZ-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Wed, 2025-07-02 at 14:17 +0200, Christian Brauner wrote:
-> I'm folding:
->=20
-> diff --git a/fs/kernfs/inode.c b/fs/kernfs/inode.c
-> index 3c293a5a21b1..457f91c412d4 100644
-> --- a/fs/kernfs/inode.c
-> +++ b/fs/kernfs/inode.c
-> @@ -142,9 +142,9 @@ ssize_t kernfs_iop_listxattr(struct dentry *dentry, c=
-har *buf, size_t size)
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct kernfs_node *kn =3D ker=
-nfs_dentry_node(dentry);
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct kernfs_iattrs *attrs;
->=20
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 attrs =3D kernfs_iattrs_noalloc(kn)=
-;
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 attrs =3D kernfs_iattrs(kn);
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!attrs)
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 return -ENODATA;
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 return -ENOMEM;
->=20
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return simple_xattr_list(d_ino=
-de(dentry), &attrs->xattrs, buf, size);
-> =C2=A0}
->=20
-> which brings it back to the old behavior.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   b4911fb0b060899e4eebca0151eb56deb86921ec
+commit: b338a2ae9b316df1d81b5289badcc8cbbbfe1b2b leds: tps6131x: Add support for Texas Instruments TPS6131X flash LED driver
+date:   6 weeks ago
+config: x86_64-buildonly-randconfig-2002-20250703 (https://download.01.org/0day-ci/archive/20250703/202507030815.770r4UoZ-lkp@intel.com/config)
+compiler: clang version 20.1.7 (https://github.com/llvm/llvm-project 6146a88f60492b520a36f8f8f3231e15f3cc6082)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250703/202507030815.770r4UoZ-lkp@intel.com/reproduce)
 
-Yes, that makes sense and works for me too.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507030815.770r4UoZ-lkp@intel.com/
 
-Thanks Christian!
+All errors (new ones prefixed by >>):
+
+>> ld.lld: error: undefined symbol: v4l2_flash_release
+   >>> referenced by leds-tps6131x.c:792 (drivers/leds/flash/leds-tps6131x.c:792)
+   >>>               vmlinux.o:(tps6131x_remove)
+--
+>> ld.lld: error: undefined symbol: v4l2_flash_init
+   >>> referenced by leds-tps6131x.c:728 (drivers/leds/flash/leds-tps6131x.c:728)
+   >>>               vmlinux.o:(tps6131x_v4l2_setup)
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
