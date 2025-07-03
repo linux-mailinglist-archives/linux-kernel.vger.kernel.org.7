@@ -1,189 +1,187 @@
-Return-Path: <linux-kernel+bounces-715333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-715329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8665AF7462
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 14:40:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59B1FAF7453
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 14:38:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BDFE1C428A1
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 12:40:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB6124A53FF
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 12:38:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 223682E612A;
-	Thu,  3 Jul 2025 12:39:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4C362E62BF;
+	Thu,  3 Jul 2025 12:38:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=astralinux.ru header.i=@astralinux.ru header.b="05MTyX4I"
-Received: from mail-gw02.astralinux.ru (mail-gw02.astralinux.ru [93.188.205.243])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="c07+vPHx"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEF222E7643;
-	Thu,  3 Jul 2025 12:39:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.188.205.243
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BEAC2E4256
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 12:38:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751546362; cv=none; b=J/QIN0moRksa9grgrZcKtgwsmXAHTwsPCklLf5aT6kCC6EeRaLtIzsLilgpao0fNxsz5lCi6gSiVyVq2vkbON/OI8H03Rd5M0vkRpjNY32X65a/o3zLuMA4i96nxAs0lg+cC1B0XaP2Y/mgqnCI2sApgWVaWYs4B9jaxu0MejGg=
+	t=1751546320; cv=none; b=MWvfPii9e8+s9jppUGxrw3eTfR54Y1PzWvAM0hK11eD4KOFyfR5P7QtvcnB19ScpLbv1ET+4kJRcoAxkFqkaNN3sikKz0wF/leJqOFV9V8EI6aZjIqyoX5nO1BMxLJzYEMA7dKdu/0q8dKRdgTUfiVJjGhcUcDd7QMSUEX6Wp5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751546362; c=relaxed/simple;
-	bh=dnPaUSVSFnBxHAuvBN3ugpTqEkDkWs7TpZEV1h+4drE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XCwaaWW+WeIyHThMyCtJ/EBavSZdNcJM4etYPhWG20tsxzg9G2NulxkVGRxoZazGoIvdRzyPvhEFHPAv3UOF1aC+YsrLRK1uC4cy8XBIByBILc24qfaUcn1dbeZZ25SBQhcTmrIpVVzd2wpXyj/4XEe67c4ZerU5mT6r4IiFhtk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astralinux.ru; spf=pass smtp.mailfrom=astralinux.ru; dkim=pass (2048-bit key) header.d=astralinux.ru header.i=@astralinux.ru header.b=05MTyX4I; arc=none smtp.client-ip=93.188.205.243
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astralinux.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=astralinux.ru
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=astralinux.ru;
-	s=mail; t=1751546352;
-	bh=dnPaUSVSFnBxHAuvBN3ugpTqEkDkWs7TpZEV1h+4drE=;
-	h=From:To:Cc:Subject:Date:From;
-	b=05MTyX4ITmjSMjBJJ4gpDexb0esJniSCqDHJD837JQ0h6PBDCH36iDwSgrT/ddafZ
-	 bp/okzXoVjAhluguf3FRJ7A27UMyv+fDezNQa6l+YMDKfIZgAYAu2kCepJeT2k7eKO
-	 u2JJ/V33II2dJkW94CiMrjaB+FRtvUHs5D65M9K0Jm5LW28/vCDm9tuBA0wsIauzS5
-	 vZuV+uBlGkqwG0s9BJo02gh5CkaXsGwvbL/tQrDDjcnWWY24GkDZpEZgFh+vFM45uy
-	 625C9VzW9jG6lSHp+av4vYzYB9CC9gUMUTd0+ufsdYYh2VYfpCzQiKjfEPzHpD7OX6
-	 SfbJcCkgUjWcA==
-Received: from gca-msk-a-srv-ksmg01.astralinux.ru (localhost [127.0.0.1])
-	by mail-gw02.astralinux.ru (Postfix) with ESMTP id B6CB81FA37;
-	Thu,  3 Jul 2025 15:39:12 +0300 (MSK)
-Received: from new-mail.astralinux.ru (unknown [10.177.185.198])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail-gw02.astralinux.ru (Postfix) with ESMTPS;
-	Thu,  3 Jul 2025 15:39:10 +0300 (MSK)
-Received: from localhost.localdomain (unknown [10.190.6.76])
-	by new-mail.astralinux.ru (Postfix) with ESMTPA id 4bXxBy4vVBz16Hny;
-	Thu,  3 Jul 2025 15:38:34 +0300 (MSK)
-From: Anastasia Belova <abelova@astralinux.ru>
-To: stable@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Anastasia Belova <abelova@astralinux.ru>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-	Paul Mackerras <paulus@samba.org>,
-	Sasha Levin <sashal@kernel.org>,
-	Gavin Shan <gwshan@linux.vnet.ibm.com>,
-	Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>,
-	Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org,
-	David Dai <zdai@linux.ibm.com>,
-	Sachin Sant <sachinp@linux.ibm.com>
-Subject: [PATCH 5.10] powerpc/pseries: Fix use after free in remove_phb_dynamic()
-Date: Thu,  3 Jul 2025 15:38:30 +0300
-Message-ID: <20250703123831.29005-1-abelova@astralinux.ru>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1751546320; c=relaxed/simple;
+	bh=blvhHAuvKd0z+M6UM8fJg7hW66Y0sZvUde7gR9VDZFc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Z7eBuQAICp73nj+AMfDmOTvl4NbPkFtlVDAP9mb6969oXaHRQs+MeGcDuekYso0Bi8V4kS6saWtRIVNXMUVLztb1+0r1/9682sTRJqQ5YT9Mf7UXidZMLWgLy8R6WuwcMT4olnFLQb9XvxkzozxElCxutnORXpLT45LraGVyinU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=c07+vPHx; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5639tmsJ005534
+	for <linux-kernel@vger.kernel.org>; Thu, 3 Jul 2025 12:38:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Qh8aZ053Ew1qTcqO548gAuyDU01MqTeC46OFogIdvLU=; b=c07+vPHx3IKsaKNJ
+	+53zzbImtZLBaVhX0gRwKtESHcuUKKzex75Hisgg7BKtV2h2MORMWrimj02M1qKA
+	6Il+GHeP/ycLt1WdHxuqsodzLwnK/+XSd4NLEfy/sp3D1V2RhAgyT9UMJ722Vws8
+	GHbDeqon/n0jBwk3zeazACWa1hXYNSCx9JM0NC0cGfYXCA4sPYIno4tWj4p4SdpX
+	gUkEVZ5glqNFNNM7u6AY2sf1gFt2cdn/nHWZs1C9vWneLMctqLki16etuQLb3fVX
+	Lw7GZiAtwnFhIsDnXZaq1ooNaQp0Ws7LpVbdfUQlPS8DkU8vZuVO3PD0f8IaayQj
+	uptZsw==
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47j7qmgbdw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 03 Jul 2025 12:38:37 +0000 (GMT)
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6facbe71504so26409456d6.2
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Jul 2025 05:38:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751546316; x=1752151116;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Qh8aZ053Ew1qTcqO548gAuyDU01MqTeC46OFogIdvLU=;
+        b=VMQ+Ed7MyXx6M9+K6MKAcw09LvWQQQZBLS+3wK8KyfuqDTTcWuXEIY+fjpBAhR6n8e
+         OLtA4wW32XjCW5b4YrKXiI++DV+txQfUMY9jJkrSjB6phKD0zOXs2IqDRgfVeiI3dINV
+         hc22mGn4MywBYeAQmOAzkbBf3KlXxrLQc2S66HZ9e7ITSv6RI5CrUbVRnFArTVpqPgsF
+         Y/CadPvwBWhD6IZa4c2+Tfb1gHyqAG+N3fxdOZFl+dzFRA+PbRu9Oi7KGGGdAQR40sMf
+         B9SPnGCdxg32+IkADm1h6StAKphp7zgcIQ8LDkXN7KskInqhXHOLAF6tQYzonk3JP0GR
+         ytxg==
+X-Forwarded-Encrypted: i=1; AJvYcCVsSZh8nbhRlZMeHRsrzqS4g0xOf5Ih2LKd1uIsDMcMrrOMcYuTLy7RfSJNPlt5gMUTrtDY30V7GsZYc7k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRveqK6SYMixUxZ4uhD4rXLJRqjYos0BH8Tk9BkA+RiQ5YZziT
+	cZMsAouxD4bxRH8nn9YTG2LeiaOo6JNr+1XXYOxPLW8mkdqhew6pYX2M9VLflvpc3VdTaYz11zt
+	i9v9tGTzT8bDTs1xq7GrpbG7zxo9YkMIHiCD3kz0Mgjv8BVbW/E74YJBfE9EPK9TpqjI=
+X-Gm-Gg: ASbGnctlWfoxk+rKyCnRIXvfCYYprjn5VPL7lp4HJZ10Q8am2GKshiauIuVuUFHufgL
+	xT//KxevIIpwss4W6FD1Tp9Zrh+VI/5i8zeHqoL0UUpZPAXxParrzOAdLlhwIT+NDTzSI8olgkH
+	5G8oFDY1Aehj22rLZSt4VbvkIxZzE5JSuIV8THX9R3axSxCMc1JtmsDDE6qMmRU2ii+dEKAKwwr
+	XN4pNfXnWY74ly+OOCTxeQq+fJrWLr5FaJF4/mIV3DckQ1CYGcbFcDCZTi+nu9V4K3kXWDcrmnS
+	M+FzjFtxEOIJ+A90RsR151wc+oChNcOHHaicSjnoJhxDBEswkf6/L19wmw96GzssyyX8VrRx5kb
+	7w/cw8C51
+X-Received: by 2002:a05:620a:28c3:b0:7d3:b0a3:6aa7 with SMTP id af79cd13be357-7d5d3eb6529mr119135485a.3.1751546316490;
+        Thu, 03 Jul 2025 05:38:36 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHwk4eFNYt3i3rxN0XJmcdLSCwy/gouEpTFY2xPCM13VPaFLKLCRNVsyEKzUlz6/p28jLHr6A==
+X-Received: by 2002:a05:620a:28c3:b0:7d3:b0a3:6aa7 with SMTP id af79cd13be357-7d5d3eb6529mr119134985a.3.1751546316055;
+        Thu, 03 Jul 2025 05:38:36 -0700 (PDT)
+Received: from [192.168.1.114] (83.9.29.190.neoplus.adsl.tpnet.pl. [83.9.29.190])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae353ca20fesm1272538066b.174.2025.07.03.05.38.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 03 Jul 2025 05:38:35 -0700 (PDT)
+Message-ID: <1ad2ca1e-1d57-4ad8-a057-ab0d804f1d49@oss.qualcomm.com>
+Date: Thu, 3 Jul 2025 14:38:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-KSMG-AntiPhishing: NotDetected, bases: 2025/07/03 11:46:00
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Envelope-From: abelova@astralinux.ru
-X-KSMG-AntiSpam-Info: LuaCore: 63 0.3.63 9cc2b4b18bf16653fda093d2c494e542ac094a39, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, lore.kernel.org:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;astralinux.ru:7.1.1;new-mail.astralinux.ru:7.1.1;127.0.0.199:7.1.2, FromAlignment: s
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiSpam-Lua-Profiles: 194527 [Jul 03 2025]
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Version: 6.1.1.11
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.0.7854, bases: 2025/07/03 05:31:00 #27614197
-X-KSMG-AntiVirus-Status: NotDetected, skipped
-X-KSMG-LinksScanning: NotDetected, bases: 2025/07/03 11:46:00
-X-KSMG-Message-Action: skipped
-X-KSMG-Rule-ID: 1
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/5] Introduce "non-pixel" sub node within iris video
+ node
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Cc: Vikash Garodia <quic_vgarodia@quicinc.com>,
+        Dikshita Agarwal <quic_dikshita@quicinc.com>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>, linux-media@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20250627-video_cb-v3-0-51e18c0ffbce@quicinc.com>
+ <5f90547d-945a-4e26-b36c-75f2d8a1af97@kernel.org>
+ <eab8d79f-7188-9537-9176-3e4d22f0978a@quicinc.com>
+ <5ad418d9-8199-43c9-a477-1e3b939c054c@kernel.org>
+ <7b6db4fa-2f73-376d-4eb3-64c1c7e6cda3@quicinc.com>
+ <f5ebf0d6-2f0b-45cc-b99a-b786e5df9edc@linaro.org>
+ <5qsgbqml367yq6g5vb4lotrzulojqhi5zlwwribze373a63qrn@rxi4kwyt66m2>
+ <4f38058d-a2f1-4ac5-b234-228cfb2e85ff@kernel.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <4f38058d-a2f1-4ac5-b234-228cfb2e85ff@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=C4TpyRP+ c=1 sm=1 tr=0 ts=686679cd cx=c_pps
+ a=7E5Bxpl4vBhpaufnMqZlrw==:117 a=fKQzr7EGRj+VoE0XNsDNvQ==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=V26NVJm5TTlvxhDq-ocA:9
+ a=QEXdDO2ut3YA:10 a=pJ04lnu7RYOZP9TFuWaZ:22
+X-Proofpoint-ORIG-GUID: b7Ob9geRURD1rPUcLAMrSTSDZLqFd0v2
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzAzMDEwNSBTYWx0ZWRfX2Ir3+s6zUbrN
+ 6QMO/4IkNj1Kj4jrrUcCTleFJO2mDp01/83V6iRy4La1V7saxwx87tcwZblRg8G4cPDZrVkoQpY
+ uhswd0PfTtwk78DB2au3jEf5xQWCndu7sC4PkFa68JV90zchWIXYozuB1i7XWhFJ1dl2vu2ilJa
+ x77Omvt5yPrblC10NTHT5Zq/sgPkIHdD6Ekg/9Qpxj08HdSiwHfUvguff3YFVjQk+ifMkEb84mZ
+ +NjmK0ahZZxogCbOJTtWU12pzS1SBeTdHChd4yJdwNOgK9aK4ZeCo7i0+fBjol+uX1JXXhfT+tP
+ UNdIJInZx0PvdG4pM7VLIlLDerkmvnsT1CFLxBqNJORJCPfo+/CmGl9Tw8WKSI/VgFFfZOB58nR
+ F+otwVoJzCG4bpDK/0Rx3vfZfj97p64c90n0rJp0vdNzYUf4gYv7gl+ikVSTVpM4e3bUgfmE
+X-Proofpoint-GUID: b7Ob9geRURD1rPUcLAMrSTSDZLqFd0v2
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-03_03,2025-07-02_04,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 phishscore=0 suspectscore=0 bulkscore=0 lowpriorityscore=0
+ clxscore=1015 priorityscore=1501 spamscore=0 mlxscore=0 mlxlogscore=935
+ adultscore=0 malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507030105
 
-From: Michael Ellerman <mpe@ellerman.id.au>
 
-[ Upstream commit fe2640bd7a62f1f7c3f55fbda31084085075bc30 ]
 
-In remove_phb_dynamic() we use &phb->io_resource, after we've called
-device_unregister(&host_bridge->dev). But the unregister may have freed
-phb, because pcibios_free_controller_deferred() is the release function
-for the host_bridge.
+On 03-Jul-25 09:27, Krzysztof Kozlowski wrote:
+> On 03/07/2025 00:26, Dmitry Baryshkov wrote:
+>> On Wed, Jul 02, 2025 at 01:06:17PM +0100, Bryan O'Donoghue wrote:
+>>> On 02/07/2025 13:01, Vikash Garodia wrote:
+>>>>> Anyway, in other messages I explained what is missing. You are changing
+>>>>> existing hardware and you clearly must explain how existing hardware is
+>>>>> affected, how can we reproduce it, how users are affected.
+>>>> Exactly all of these i have explained in the commit message. The limitation with
+>>>> existing hardware binding usage and how my new approach mitigates that limition.
+>>>>
+>>>> Coming to usecase, i made a generic comment saying usecases which needs higher
+>>>> IOVA, i can add the explicit detail about usecase like 8k or higher
+>>>> concurrencies like 32 or higher concurrent sessions.
+>>>
+>>> Why not make this change for a new SoC, instead of an existing ?
+>>
+>> Because we definitely want to improve support for older SoCs too.
+> 
+> Older SoCs came with completely new drivers and bindings, instead of
+> evolving existing Venus, so they for sure came with correct code and
+> correct binding.
 
-If there are no outstanding references when we call device_unregister()
-then phb will be freed out from under us.
+No, this is a terrible assumption to make, and we've been
+through this time and time again - a huge portion of the code
+submitted in the early days of linux-arm-msm did the bare minimum
+to present a feature, without giving much thought to the sanity of
+hw description, be it on a block or platform level.
 
-This has gone mainly unnoticed, but with slub_debug and page_poison
-enabled it can lead to a crash:
+That's why we're still adding clocks to mdss, regulators to camera
+etc. etc. to this day. And it's only going to get worse when there
+will be a need or will to add S2disk support with register
+save/restore..
 
-  PID: 7574   TASK: c0000000d492cb80  CPU: 13  COMMAND: "drmgr"
-   #0 [c0000000e4f075a0] crash_kexec at c00000000027d7dc
-   #1 [c0000000e4f075d0] oops_end at c000000000029608
-   #2 [c0000000e4f07650] __bad_page_fault at c0000000000904b4
-   #3 [c0000000e4f076c0] do_bad_slb_fault at c00000000009a5a8
-   #4 [c0000000e4f076f0] data_access_slb_common_virt at c000000000008b30
-   Data SLB Access [380] exception frame:
-   R0:  c000000000167250    R1:  c0000000e4f07a00    R2:  c000000002a46100
-   R3:  c000000002b39ce8    R4:  00000000000000c0    R5:  00000000000000a9
-   R6:  3894674d000000c0    R7:  0000000000000000    R8:  00000000000000ff
-   R9:  0000000000000100    R10: 6b6b6b6b6b6b6b6b    R11: 0000000000008000
-   R12: c00000000023da80    R13: c0000009ffd38b00    R14: 0000000000000000
-   R15: 000000011c87f0f0    R16: 0000000000000006    R17: 0000000000000003
-   R18: 0000000000000002    R19: 0000000000000004    R20: 0000000000000005
-   R21: 000000011c87ede8    R22: 000000011c87c5a8    R23: 000000011c87d3a0
-   R24: 0000000000000000    R25: 0000000000000001    R26: c0000000e4f07cc8
-   R27: c00000004d1cc400    R28: c0080000031d00e8    R29: c00000004d23d800
-   R30: c00000004d1d2400    R31: c00000004d1d2540
-   NIP: c000000000167258    MSR: 8000000000009033    OR3: c000000000e9f474
-   CTR: 0000000000000000    LR:  c000000000167250    XER: 0000000020040003
-   CCR: 0000000024088420    MQ:  0000000000000000    DAR: 6b6b6b6b6b6b6ba3
-   DSISR: c0000000e4f07920     Syscall Result: fffffffffffffff2
-   [NIP  : release_resource+56]
-   [LR   : release_resource+48]
-   #5 [c0000000e4f07a00] release_resource at c000000000167258  (unreliable)
-   #6 [c0000000e4f07a30] remove_phb_dynamic at c000000000105648
-   #7 [c0000000e4f07ab0] dlpar_remove_slot at c0080000031a09e8 [rpadlpar_io]
-   #8 [c0000000e4f07b50] remove_slot_store at c0080000031a0b9c [rpadlpar_io]
-   #9 [c0000000e4f07be0] kobj_attr_store at c000000000817d8c
-  #10 [c0000000e4f07c00] sysfs_kf_write at c00000000063e504
-  #11 [c0000000e4f07c20] kernfs_fop_write_iter at c00000000063d868
-  #12 [c0000000e4f07c70] new_sync_write at c00000000054339c
-  #13 [c0000000e4f07d10] vfs_write at c000000000546624
-  #14 [c0000000e4f07d60] ksys_write at c0000000005469f4
-  #15 [c0000000e4f07db0] system_call_exception at c000000000030840
-  #16 [c0000000e4f07e10] system_call_vectored_common at c00000000000c168
+Konrad
 
-To avoid it, we can take a reference to the host_bridge->dev until we're
-done using phb. Then when we drop the reference the phb will be freed.
-
-Fixes: 2dd9c11b9d4d ("powerpc/pseries: use pci_host_bridge.release_fn() to kfree(phb)")
-Reported-by: David Dai <zdai@linux.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Tested-by: Sachin Sant <sachinp@linux.ibm.com>
-Link: https://lore.kernel.org/r/20220318034219.1188008-1-mpe@ellerman.id.au
-Signed-off-by: Sasha Levin <sashal@kernel.org>
-Signed-off-by: Anastasia Belova <abelova@astralinux.ru>
----
-Backport fix for CVE-2022-49196
- arch/powerpc/platforms/pseries/pci_dlpar.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/arch/powerpc/platforms/pseries/pci_dlpar.c b/arch/powerpc/platforms/pseries/pci_dlpar.c
-index a8f9140a24fa..325871d6f5b0 100644
---- a/arch/powerpc/platforms/pseries/pci_dlpar.c
-+++ b/arch/powerpc/platforms/pseries/pci_dlpar.c
-@@ -74,6 +74,9 @@ int remove_phb_dynamic(struct pci_controller *phb)
- 		}
- 	}
- 
-+	/* Keep a reference so phb isn't freed yet */
-+	get_device(&host_bridge->dev);
-+
- 	/* Remove the PCI bus and unregister the bridge device from sysfs */
- 	phb->bus = NULL;
- 	pci_remove_bus(b);
-@@ -97,6 +100,7 @@ int remove_phb_dynamic(struct pci_controller *phb)
- 	 * the pcibios_free_controller_deferred() callback;
- 	 * see pseries_root_bridge_prepare().
- 	 */
-+	put_device(&host_bridge->dev);
- 
- 	return 0;
- }
--- 
-2.43.0
-
+> 
+> That was one of the reasons why duplicating venus was accepted: to get
+> things right, so obviously your argument cannot be true, right?
+> 
+> Best regards,
+> Krzysztof
+> 
 
