@@ -1,89 +1,104 @@
-Return-Path: <linux-kernel+bounces-715145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-715180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77E30AF719E
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 13:07:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EBEAAF7246
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 13:30:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FB11188A228
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 11:07:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 612871C82C4B
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 11:30:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8D762E54CC;
-	Thu,  3 Jul 2025 11:05:16 +0000 (UTC)
-Received: from proxmox-new.maurer-it.com (proxmox-new.maurer-it.com [94.136.29.106])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D52292DE713;
+	Thu,  3 Jul 2025 11:30:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="hqt2k/3H"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13EE72D193C;
-	Thu,  3 Jul 2025 11:05:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.136.29.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64610238C0D;
+	Thu,  3 Jul 2025 11:30:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751540716; cv=none; b=YGH7iWorqVyPUezReotphBKSiKxpCJCY/AKzSG2+hP71pr1zoAsfbOnCqIiBbgD5fwNAKj3hnstB6f/oFvL7yzjo0uSvTRZtXkZH/raU+GQo4Pwh3r6nAVduqRBV2EeKxuq4uRjMnKCTQIiKxEyjtG2BNIo2qCjLJPHV/WtMIqc=
+	t=1751542231; cv=none; b=M2NDt551bPSKsUjs1Q8b/1ftgI3oKdjxv2VRf/yTdsplBP3XDfjRWMqkx8cHqzYoKI3xCwe4HrDtsNAKHUfDQlpDls2Jy53Xjqt0rU9bxVztx4lI6aG80XHJwoCrcO+nwXGRRWm+Nz98tHFOaAAT6Fdnuzlq/CEUY9uO7u+ezNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751540716; c=relaxed/simple;
-	bh=9tkZXPXcsHuWWnloRIZizHQqFD7Jkc66m8088svhd9o=;
+	s=arc-20240116; t=1751542231; c=relaxed/simple;
+	bh=L7YD3bHig/KW6hapzYsFVB3o8PsscrReJ+ureajmCy8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mqvA1aQ4MdRN3/E5lOiJTRU82BQalHFy3/d4eBYYk03EB/UKfwn6+g7UHKwF0cHxAwfHHWB6QB9u0ffkloIbLGSMVFMsfShHO3/jdEvEP8u9OuynKJ0pA3WF/kT7LY0w6Or1LgPN0AQehUJuji/Zqj4N6GIRbrBEotzNhtjXku8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=proxmox.com; spf=pass smtp.mailfrom=proxmox.com; arc=none smtp.client-ip=94.136.29.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=proxmox.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proxmox.com
-Received: from proxmox-new.maurer-it.com (localhost.localdomain [127.0.0.1])
-	by proxmox-new.maurer-it.com (Proxmox) with ESMTP id 342FD479E2;
-	Thu,  3 Jul 2025 13:05:12 +0200 (CEST)
-Date: Thu, 3 Jul 2025 13:05:11 +0200
-From: Gabriel Goller <g.goller@proxmox.com>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Nicolas Dichtel <nicolas.dichtel@6wind.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Jonathan Corbet <corbet@lwn.net>, David Ahern <dsahern@kernel.org>, netdev@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] ipv6: add `force_forwarding` sysctl to enable
- per-interface forwarding
-Message-ID: <bes2ehifwb25xwbxg6dog27hi63vzn2phnhtiibed3wgazjpms@cwcrjo3ky7xq>
-Mail-Followup-To: Jakub Kicinski <kuba@kernel.org>, 
-	Nicolas Dichtel <nicolas.dichtel@6wind.com>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Jonathan Corbet <corbet@lwn.net>, David Ahern <dsahern@kernel.org>, netdev@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250702074619.139031-1-g.goller@proxmox.com>
- <20250702073458.3294b431@kernel.org>
- <7c47cfb6-c1f1-42a1-8137-37f8f03fa970@6wind.com>
- <20250702091055.3d70a5ee@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nI7FiasdKW0OcLvmAgVnTiRHevhZz5PJBKfMse9+joLXkGYw5cGnw9SR3TCI2UYxhQtZNUsdWYUy11VxJ4utGCKce2hJyvOBrjMTy3878qFRJ0XDYVnDIwhqTC9Ynx/y0IdZOSl0Dvkua1jhG7WQe+Ybp8bzYqngDjlJpjAUQ1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=hqt2k/3H; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
+	:Subject; bh=LBJrcyiBOP+fKWC86q9OLSIWWY9q5SKuo2qTzUlY+xc=; b=hqt2k/3HEQ+RZnol
+	RIjVdzxgNpdQGlZes4130Xgmi6OemrIPekHDequ5ozE01sXgf5hMbuPu/p4dixrk3un9XJcBKB9s2
+	dFu3eloIsSnhRLmEwUH4wWdsL8EFIrY8r5/9QdSPRvyBe8DQTEtepAWNcSlWmxnML4QHhyQwD9s/9
+	BKY5mHmk3Omcm7FPJBBwMPzXzXU1df9ckr5O4K6VGb8cWTITfhywDBOSh48i5LD49UTwQAQZ0ZzKt
+	fAbTh6jZPkxYGhH4TpiWHQjlAzi/DOAkqvH6vEa85OnpKlJVMDMbtJ4ioZTTgn7h5vbivvgStWvjJ
+	wNuQt8L7U578HY74EQ==;
+Received: from dg by mx.treblig.org with local (Exim 4.96)
+	(envelope-from <dg@treblig.org>)
+	id 1uXHlH-00DqYX-0z;
+	Thu, 03 Jul 2025 11:05:51 +0000
+Date: Thu, 3 Jul 2025 11:05:51 +0000
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Lee Jones <lee@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the mfd tree
+Message-ID: <aGZkDynnq2Li4EdN@gallifrey>
+References: <20250703142348.45bb8d28@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250702091055.3d70a5ee@kernel.org>
-User-Agent: NeoMutt/20241002-35-39f9a6
+In-Reply-To: <20250703142348.45bb8d28@canb.auug.org.au>
+X-Chocolate: 70 percent or better cocoa solids preferably
+X-Operating-System: Linux/6.1.0-34-amd64 (x86_64)
+X-Uptime: 11:03:54 up 66 days, 19:17,  1 user,  load average: 0.05, 0.01, 0.00
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
-On 02.07.2025 09:10, Jakub Kicinski wrote:
->On Wed, 2 Jul 2025 17:14:42 +0200 Nicolas Dichtel wrote:
->> > Should we invert the polarity? It appears that the condition below only
->> > let's this setting _disable_ forwarding. IMO calling it "force" suggests
->> > to the user that it will force it to be enabled.
->> Not sure to follow you. When force_forwarding is set to 1 the forwarding is
->> always enabled.
->>
->> sysctl | all.forwarding | iface.force_forwarding | packet processing from iface
->>        |      0         |           0            |        no forward
->>        |      0         |           1            |         forward
->>        |      1         |           0            |         forward
->>        |      1         |           1            |         forward
->
->Ugh, I can't read comparisons to zero.
->Let's switch to more sane logic:
->
->	if (idev && !READ_ONCE(idev->cnf.force_forwarding) &&
->	    !READ_ONCE(net->ipv6.devconf_all->forwarding))
+* Stephen Rothwell (sfr@canb.auug.org.au) wrote:
+> Hi all,
+> 
+> After merging the mfd tree, today's linux-next build (x86_64 allmodconfig)
+> failed like this:
+> 
+> drivers/media/radio/radio-wl1273.c:12:10: fatal error: linux/mfd/wl1273-core.h: No such file or directory
+>    12 | #include <linux/mfd/wl1273-core.h>
+>       |          ^~~~~~~~~~~~~~~~~~~~~~~~~
+> sound/soc/codecs/wl1273.c:10:10: fatal error: linux/mfd/wl1273-core.h: No such file or directory
+>    10 | #include <linux/mfd/wl1273-core.h>
+>       |          ^~~~~~~~~~~~~~~~~~~~~~~~~
+> 
+> Caused by commit
+> 
+>   17f5c6fa85e5 ("mfd: wl1273-core: Remove the header")
 
-Agree!
+OK, so I see Lee has picked up 3/4 and 4/4 in the
+series, but the one that removes the radio-wl1273.c is the
+first one in the series; see 
+  https://lore.kernel.org/all/20250625133258.78133-1-linux@treblig.org/
 
-Thanks for the review.
+> I have used the mfd tree from next-20250702 for today.
 
+Dave
+
+> -- 
+> Cheers,
+> Stephen Rothwell
+
+
+-- 
+ -----Open up your eyes, open up your mind, open up your code -------   
+/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+\        dave @ treblig.org |                               | In Hex /
+ \ _________________________|_____ http://www.treblig.org   |_______/
 
