@@ -1,136 +1,140 @@
-Return-Path: <linux-kernel+bounces-715516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-715518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 967F8AF770C
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 16:18:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC6F4AF7714
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 16:19:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FA7A565E95
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 14:17:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D09AC481CD4
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 14:18:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 708112E8E0B;
-	Thu,  3 Jul 2025 14:17:06 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 750C52E9756;
+	Thu,  3 Jul 2025 14:18:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FJka/BVM"
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B01ED2E7F05;
-	Thu,  3 Jul 2025 14:17:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EBE12E62C4
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 14:18:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751552226; cv=none; b=sZOUsk6v/q8mzfWBl6vpqRMpxZ73B/XtpnjAGSe2kswto2dpzzgdAS/NXm/vv1UzVKyPCBZ5FMf7D6nUI7WAe6qyWhkacGDhWOqKhHc7sFoWwslUJQMirUR7BPpAFdQ117Eu50xs0/Lt/ztJ2gP2t6iusIIcTfGK2h4TeCXSsU8=
+	t=1751552301; cv=none; b=pU+/3NgZLBe2CdNWvNRBGGAhvC2svMuySPd4bFiwQiyKdKfOt09iNIzEHRjPAEeRrv5lvAv+U0fKfdL9H+usYbR95yA4iIb+TvgHipNlFrtrTnOIqPxUXdb092F2Z1t0V7PtQOdBa5dkp/jaxClHjSHnlAQEcc4ffZFqfUHl564=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751552226; c=relaxed/simple;
-	bh=lCKLpqueK88GUgqdWwqfrXQ/O1O8CPEQNkMDi9HGhJ8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=cP7PONr+ICWYoEc0XHbBMfmq7EUsmg1mJyWIiWDLMEAspeXmVk6b6miN1USONT0wNhNBuILruAZMGdB1d6OAWVjjA1f6PkwdzswcIT+oCHOC2qlm/3chX2tkolSBqI9d56oxQMAw5yLh1kCmdRZOvBE1wAqqcLHXozyK8fR9XdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4bXzHt2SNqz1GCFw;
-	Thu,  3 Jul 2025 22:12:58 +0800 (CST)
-Received: from kwepemg500017.china.huawei.com (unknown [7.202.181.81])
-	by mail.maildlp.com (Postfix) with ESMTPS id C708318006C;
-	Thu,  3 Jul 2025 22:16:59 +0800 (CST)
-Received: from [10.174.179.155] (10.174.179.155) by
- kwepemg500017.china.huawei.com (7.202.181.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 3 Jul 2025 22:16:58 +0800
-Message-ID: <563d1da8-abd8-48e6-9aab-5a4f13859995@huawei.com>
-Date: Thu, 3 Jul 2025 22:16:58 +0800
+	s=arc-20240116; t=1751552301; c=relaxed/simple;
+	bh=lDEriJrBoc3Z+FCyx3l8NGEqH25UvL1Vt5miiyOmCZk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YhuX6oXLmup0cziMmXMiXTRBsdJ95M2Dk2eTFkPxCwkJvS1di0H+kv/KrJ7a8jFLlhYMK0P8yGDdnpwYvI+PuTiQkCR8+cDaCn9jeoREM83FLSf66n8mN/+j1B9avufEHhea3OwlXP9bqjb4NY0BixMiVL4lfGIxh+jBNIm6PAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FJka/BVM; arc=none smtp.client-ip=209.85.128.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-7086dcab64bso53452837b3.1
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Jul 2025 07:18:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1751552298; x=1752157098; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=lDEriJrBoc3Z+FCyx3l8NGEqH25UvL1Vt5miiyOmCZk=;
+        b=FJka/BVMMa+CcS/D4YzLm9Y/gi+MKnnj/rNU9tmjKjS45mywk7ii/fVMjrRmJpKpbB
+         jMVcr6S9WjGSDkBcxWG2BFzItagHdmlaOUCTgKA+iYeSKfXvKLFlV9ExcqaQREPYDz7B
+         9wsI2/ionZg6qtwcxMf3suOy9MnqaMC5Elhn4mjCMzREwMNbtMWX9v0V0hwmTvfuX9gm
+         l3CDEN5XjV7ey8b90migl09S8IHVfUZO8E2cTRm7A9EIEA1z61hJ3OpALVHQnLLHmZHv
+         CE4YEvBsbMDARxEAzAAbQ935pIgVBt4PtvlagID95K27lRykHMjHARP8QK0WoocRXpYm
+         XroQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751552298; x=1752157098;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lDEriJrBoc3Z+FCyx3l8NGEqH25UvL1Vt5miiyOmCZk=;
+        b=wArkbjGGjL5NrIDUJkzdkv2TTH7EAIZK9CzK1QhQXySMdO86DaveHZecyry6H8puqc
+         daeji9r9479BGpXfSj1zGqyYq/7uDeg4BN8vANmsOglkRZb2Sygl5lmEEMkwCs9Y+W5v
+         1giI81fkNBTVx3JQ+KUkcyJueLFyxMn2L/0AaeiCJOgTgr5exPRdgd1hErOx9JGc9RPo
+         lCkYc5s5pFu9s49Ga4EBdV94ttjuCazU8HUQCc60SbLj5q+bwrK6oxT818OV04yFw6CR
+         7pDO1lj4sOXfsCJ7FsKXR626pCR2SLXOP4mW1D9htm8jOZb9prGFLnxHvh6rEWn+7qMN
+         QlRw==
+X-Forwarded-Encrypted: i=1; AJvYcCVF6/0B5i0mude6SBTx4ENNtSW74r+eRwuMlxGqJdqrri+/9BrbTXTbmfwMGlXMg32O4tnUmYNvBECDqOU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPlH1uNPFeaNXvgv9WtMrDt3tdij/V4H0eFuyNVOSe2Zf4j2bS
+	MElimYQ42sLbx97ULAwSFBVR96N5HEL2hROb0kZZqWVwMuoUV+FkDd5PqUV5mYFacbalbZia/pO
+	+THLMBcrLzDT8Mhq6fKxZ6SwSr3kRPV1li/Mytt2PfA==
+X-Gm-Gg: ASbGnctR8d3K2/C7B8mPuvdAgnEo1a3SMM61VAs2llopjjLqNZFUipT6LJjoz+E7KUn
+	EXGX+Mr+3ePJm5FBG8zZ77zKV1STcAGIf3WRm6i0q9tljkddGN/a01T20rgWTIN4jPmxyWn02uw
+	mm4nJcn6hGhfqG5RSdhDetqrPgq/w1MoQZGhvPH8tAhef3
+X-Google-Smtp-Source: AGHT+IHKCVcm58iGQvDz5IlH+nt0wPYjDF0vM/IkWNqcRP0IW3DHZFT+X09mtu99FrvVXSO9bQ0r4w8ZqDRsbPuqnNs=
+X-Received: by 2002:a05:690c:4:b0:70d:ed5d:b4b4 with SMTP id
+ 00721157ae682-7164d3f1568mr98778977b3.24.1751552298210; Thu, 03 Jul 2025
+ 07:18:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: =?UTF-8?B?TW96aWxsYSBUaHVuZGVyYmlyZCDmtYvor5XniYg=?=
-Subject: Re: CVE-2022-50031: scsi: iscsi: Fix HW conn removal use after free
-To: Greg Kroah-Hartman <gregkh@kernel.org>
-CC: <cve@kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-cve-announce@vger.kernel.org>, <lduncan@suse.com>,
-	<cleech@redhat.com>, Mike Christie <michael.christie@oracle.com>,
-	<James.Bottomley@HansenPartnership.com>, <martin.petersen@oracle.com>,
-	<open-iscsi@googlegroups.com>, <linux-scsi@vger.kernel.org>, yangerkun
-	<yangerkun@huawei.com>, "zhangyi (F)" <yi.zhang@huawei.com>, Hou Tao
-	<houtao1@huawei.com>, "yukuai (C)" <yukuai3@huawei.com>,
-	"chengzhihao1@huawei.com" <chengzhihao1@huawei.com>
-References: <2025061839-CVE-2022-50031-f2bc@gregkh>
-From: Li Lingfeng <lilingfeng3@huawei.com>
-In-Reply-To: <2025061839-CVE-2022-50031-f2bc@gregkh>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
- kwepemg500017.china.huawei.com (7.202.181.81)
+References: <20250701100659.3310386-1-quic_sartgarg@quicinc.com>
+ <c7lpaij5f5monr7zfeqitncwnau22iollid2gs7okyorlegtmg@jlq65x7ipp25> <9db5d1d4-1965-4334-9540-fbb66498d7d5@oss.qualcomm.com>
+In-Reply-To: <9db5d1d4-1965-4334-9540-fbb66498d7d5@oss.qualcomm.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 3 Jul 2025 16:17:42 +0200
+X-Gm-Features: Ac12FXxdoEtdtcX4FMKf6jgOtjpthIQIwg_rwvmCiwfJ9Oh4FD81OkKMZc8cM-Q
+Message-ID: <CAPDyKFqh9tUrNGRj3xnRGtT=YxX5XhhMcWPCTATdon_joVHqAw@mail.gmail.com>
+Subject: Re: [PATCH V3] mmc: sdhci-msm: Ensure SD card power isn't ON when
+ card removed
+To: Sarthak Garg <quic_sartgarg@quicinc.com>, 
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>, linux-arm-msm@vger.kernel.org, 
+	linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	quic_cang@quicinc.com, quic_nguyenb@quicinc.com, quic_rampraka@quicinc.com, 
+	quic_pragalla@quicinc.com, quic_sayalil@quicinc.com, 
+	quic_nitirawa@quicinc.com, quic_bhaskarv@quicinc.com, kernel@oss.qualcomm.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi, Greg
+On Tue, 1 Jul 2025 at 14:09, Konrad Dybcio
+<konrad.dybcio@oss.qualcomm.com> wrote:
+>
+>
+>
+> On 01-Jul-25 12:27, Dmitry Baryshkov wrote:
+> > On Tue, Jul 01, 2025 at 03:36:59PM +0530, Sarthak Garg wrote:
+> >> Many mobile phones feature multi-card tray designs, where the same
+> >> tray is used for both SD and SIM cards. If the SD card is placed
+> >> at the outermost location in the tray, the SIM card may come in
+> >> contact with SD card power-supply while removing the tray, possibly
+> >> resulting in SIM damage.
+> >>
+> >> To prevent that, make sure the SD card is really inserted by reading
+> >> the Card Detect pin state. If it's not, turn off the power in
+> >> sdhci_msm_check_power_status() and also set the BUS_FAIL power state
+> >> on the controller as part of pwr_irq handling for BUS_ON request.
+> >>
+> >> Signed-off-by: Sarthak Garg <quic_sartgarg@quicinc.com>
+> >> Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+> >
+> > Should this be handled by the MMC core instead?
 
-在 2025/6/18 19:01, Greg Kroah-Hartman 写道:
-> From: Greg Kroah-Hartman <gregkh@kernel.org>
->
-> Description
-> ===========
->
-> In the Linux kernel, the following vulnerability has been resolved:
->
-> scsi: iscsi: Fix HW conn removal use after free
->
-> If qla4xxx doesn't remove the connection before the session, the iSCSI
-> class tries to remove the connection for it. We were doing a
-> iscsi_put_conn() in the iter function which is not needed and will result
-> in a use after free because iscsi_remove_conn() will free the connection.
->
-> The Linux kernel CVE team has assigned CVE-2022-50031 to this issue.
->
->
-> Affected and fixed versions
-> ===========================
->
-> 	Fixed in 5.19.4 with commit 0483ffc02ebb953124c592485a5c48ac4ffae5fe
-> 	Fixed in 6.0 with commit c577ab7ba5f3bf9062db8a58b6e89d4fe370447e
->
-> Please see https://www.kernel.org for a full list of currently supported
-> kernel versions by the kernel community.
->
-> Unaffected versions might change over time as fixes are backported to
-> older supported kernel versions.  The official CVE entry at
-> 	https://cve.org/CVERecord/?id=CVE-2022-50031
-> will be updated if fixes are backported, please check that for the most
-> up to date information about this issue.
->
->
-> Affected files
-> ==============
->
-> The file(s) affected by this issue are:
-> 	drivers/scsi/scsi_transport_iscsi.c
->
->
-> Mitigation
-> ==========
->
-> The Linux kernel CVE team recommends that you update to the latest
-> stable kernel version for this, and many other bugfixes.  Individual
-> changes are never tested alone, but rather are part of a larger kernel
-> release.  Cherry-picking individual commits is not recommended or
-> supported by the Linux kernel community at all.  If however, updating to
-> the latest release is impossible, the individual changes to resolve this
-> issue can be found at these commits:
-> 	https://git.kernel.org/stable/c/0483ffc02ebb953124c592485a5c48ac4ffae5fe
-> 	https://git.kernel.org/stable/c/c577ab7ba5f3bf9062db8a58b6e89d4fe370447e
->
-Based on the details described in the linked discussion, I have concerns
-that this patch may not fully resolve the Use-After-Free vulnerability.
-Instead, it appears the changes could potentially introduce memory leak
-issues.
-Given these concerns, I'd recommend ​rejecting this CVE until we can
-thoroughly investigate and validate the complete solution.
+Ideally, yes, but honestly I am not sure how.
 
-Link: 
-https://lore.kernel.org/all/0b0a0bcf-b805-5041-9923-37ad391169c0@huaweicloud.com/
+The current support by the core, detects that cards are being removed
+and then it schedules the actual removal/power-off to be managed from
+a punted work. This seems too slow for this kind of use-case.
 
-Thanks,
-Lingfeng
+If the core would try to inform the host at an earlier stage, as soon
+as the mmc core detects that the card is being removed, would that be
+soon enough?
+
+>
+> If possible, yes, but if it only works because our hw-specific
+> sdhci_msm_check_power_status() behaves a certain way, it's good
+> to go as is. I have no clue if that's the case.
+>
+> Konrad
+
+I agree, sdhci_msm_check_power_status() is certainly HW specific.
+
+That said, I decided to apply this as is, for next, thanks!
+
+Kind regards
+Uffe
 
