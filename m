@@ -1,106 +1,125 @@
-Return-Path: <linux-kernel+bounces-715567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-715563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4BCEAF77BA
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 16:37:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04308AF77B0
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 16:36:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 443444E1C94
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 14:37:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF23A4A1195
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 14:36:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C3E12EE5E3;
-	Thu,  3 Jul 2025 14:37:22 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF87F2ED16E;
+	Thu,  3 Jul 2025 14:36:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ccq7GgnF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5576B2ED86C;
-	Thu,  3 Jul 2025 14:37:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E50F17FAC2;
+	Thu,  3 Jul 2025 14:36:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751553441; cv=none; b=Y2wyHkw6oEkyz9y4duf3ilA8FbUlfdJ5byb4W7iROCUg3y1wlXwlAuHkpM9eYYggKI+K07NTFheztw33Y/Ic2j1UNfCMOHNM4UWxB2V4gQ4dNpJAq3qoKmkxanIS67Ku16DzwlWBpk8uWacgA6Q8Wpbc7ThJMQR2OFCRUm9xXP0=
+	t=1751553368; cv=none; b=EZ0WtOLFIU1KTuN82Mxqgbf3yMMuKL5zeIwEaS+nri1e8FYShtLcINI+zRj0nQ8T2Nx05xZVsZ5D6d5cZH7rogHFJTUXi8p7olmbapXqecGrpfcwdwsd0avvmvsVj2Jf5xCDlQbdNSEcMMleSM+q0rd5hvqYU1vVhv1snsnB4k0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751553441; c=relaxed/simple;
-	bh=iphZ0xLbalXMFojOT6bd7BRieX/Qbn1y8a8/nwka6Ws=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
-	 In-Reply-To:Content-Type; b=ET+fEFyfY7kHjXvpc3OcXPvZiaQ1qywEMl+IOCRRvLBS/v8KXd7Bi4bexweCkv4TF7JhOyacz4Sh5s9DimxgtTacA0HgdgX/7FBtTG8RzaKlPB6F1WJLP5P1p06LIYfHB/zUmMCZVF7qiq88z2JpkGMuh4GfHhgzrLbc2FWJzjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [141.14.220.36] (g36.guest.molgen.mpg.de [141.14.220.36])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 9F6E3601D7115;
-	Thu, 03 Jul 2025 16:35:33 +0200 (CEST)
-Message-ID: <6be1c1c6-8d8a-49e3-bb14-dc8fcbfc2c50@molgen.mpg.de>
-Date: Thu, 3 Jul 2025 16:35:32 +0200
+	s=arc-20240116; t=1751553368; c=relaxed/simple;
+	bh=pvG7xe6BGbrfAKTfLgoDx+709pfuEK1E7qCKVSKlUn8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tRVDxLivlTU5ou3HA1IeW6xdg42dGg+uxhqWsXrzqwol1d7I/O1xBCUuEFzn5U0Z8yfWcPXWHsyu7khqtFw6XK+eCKZ03CWi15s3AQqY2FeDUhLFtU4sEiyw+hWO1f/iYgyHfSy3dZGQde7MpX0Ck00+MAmwsAc1XpUbdWfrznI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ccq7GgnF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5564C4AF09;
+	Thu,  3 Jul 2025 14:36:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751553367;
+	bh=pvG7xe6BGbrfAKTfLgoDx+709pfuEK1E7qCKVSKlUn8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Ccq7GgnF0NuNYeTP/kVe4NStb8lu5PFyyKieEqXXKWkXfKqcQwBWG58NtsVofqMfv
+	 zLjYaWXNfLN5XWLHffYl8NBoVmSRIIUHzRFN1EUqEBlJz8jtBvmVC+jn9FUSklDh6g
+	 ylcZKUBEuSQ73LNXPxJJI7eiLmUA7e1voaFv9xTBGK3W7muS7H+trpX4XoM+oCxT46
+	 K6GKyEQYa+nXfhsvSl2eIym2Kxp4YvBwAEoyJN5FL5xF49BfSP0h7O0K0TX+br96Hx
+	 a9DjCxUilIvhY79jm0ayAep+zIN87Vten0v7Oa8KM6v7X4oof0tVeBAMJjoEy4+sNi
+	 X1eE8iHclIDnQ==
+Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-60d63174f05so7286eaf.0;
+        Thu, 03 Jul 2025 07:36:07 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWw6Zh2spd1G0/LvlnbGOnZe20gbu4JjqNiTX8wnJXif4ODgs41rQt4YbABRZ9KwTQG7W3bdOEkQtWSiyk=@vger.kernel.org, AJvYcCXweO/+Ho+Op2GyWc/rySQwbbJSUQfVBcEo484DxpB3VUf8KBEfFQLx1rbqCQbVoruRbUZEAmO9ZBU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYt7Asya+K2vFDpqzSg5hGu9oapu2ZIwcgCQx2E0/3psXMyA1O
+	6t3h+XEfpVIGUupImCqkBDwmjMyu7wE2Te1ZgfR6a/GKOQv/l4sDw1c1mbqvdgL1NQ2im1+KGjj
+	9WMVEgHi/QTrQUy+b/+36CZOdpqEbmOg=
+X-Google-Smtp-Source: AGHT+IEkhvn+8jNU8o3fMR9sAH17KtdXghaVznuEOh1N6nMSzEeABnDR+qkAPL7IcARL4Hda9+wwliIPwgpysrkaXUI=
+X-Received: by 2002:a05:6820:2913:b0:613:872a:7b0b with SMTP id
+ 006d021491bc7-613872a7e73mr1287331eaf.1.1751553366919; Thu, 03 Jul 2025
+ 07:36:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/7] Bluetooth: btrtl: Fix typo
-To: Bastien Nocera <hadess@hadess.net>
-References: <20250703142542.985248-1-hadess@hadess.net>
- <20250703142542.985248-4-hadess@hadess.net>
-Content-Language: en-US
-Cc: trivial@kernel.org, Marcel Holtmann <marcel@holtmann.org>,
- Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
- Sean Wang <sean.wang@mediatek.com>, Matthias Brugger
- <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>,
- Alyssa Rosenzweig <alyssa@rosenzweig.io>, Neal Gompa <neal@gompa.dev>,
- Johan Hedberg <johan.hedberg@gmail.com>, Ingo Molnar <mingo@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>, Al Viro <viro@zeniv.linux.org.uk>,
- Kees Cook <kees@kernel.org>, Erick Archer <erick.archer@outlook.com>,
- Chris Lu <chris.lu@mediatek.com>, linux-bluetooth@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, asahi@lists.linux.dev
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-In-Reply-To: <20250703142542.985248-4-hadess@hadess.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250617084650.341262-1-quic_zhonhan@quicinc.com>
+In-Reply-To: <20250617084650.341262-1-quic_zhonhan@quicinc.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 3 Jul 2025 16:35:55 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0hbuQ8sRctAB7eC3JTr5TrDBnu5yjjG82HrSiJ23_99bQ@mail.gmail.com>
+X-Gm-Features: Ac12FXwX-Q0wtKZ01ONvEW8u-19Nxyc4fwRb1remFu35TrXz9gluPQ6gcBRSo-w
+Message-ID: <CAJZ5v0hbuQ8sRctAB7eC3JTr5TrDBnu5yjjG82HrSiJ23_99bQ@mail.gmail.com>
+Subject: Re: [PATCH] PM: sleep: Drop superfluous might_sleep() calls
+To: Zhongqiu Han <quic_zhonhan@quicinc.com>
+Cc: rafael@kernel.org, len.brown@intel.com, pavel@kernel.org, 
+	gregkh@linuxfoundation.org, dakr@kernel.org, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Dear Bastien,
-
-
-Am 03.07.25 um 16:24 schrieb Bastien Nocera:
-> Found by codespell.
-> 
-> Signed-off-by: Bastien Nocera <hadess@hadess.net>
+On Tue, Jun 17, 2025 at 10:47=E2=80=AFAM Zhongqiu Han <quic_zhonhan@quicinc=
+.com> wrote:
+>
+> Drop superfluous might_sleep() calls from dpm_resume(), dpm_complete(),
+> and dpm_prepare(). These functions already invoke primitives that
+> implicitly check for sleep in atomic context:
+>
+> - dpm_resume() and dpm_complete() invoke mutex_lock(), which internally
+>   triggers might_sleep()
+> - dpm_prepare() calls wait_for_device_probe(), which internally uses
+>   flush_work(), and thus might_sleep()
+>
+> These annotations are unnecessary and can be dropped to reduce clutter.
+>
+> Signed-off-by: Zhongqiu Han <quic_zhonhan@quicinc.com>
 > ---
->   drivers/bluetooth/btrtl.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/bluetooth/btrtl.c b/drivers/bluetooth/btrtl.c
-> index 7838c89e529e..3d137944c458 100644
-> --- a/drivers/bluetooth/btrtl.c
-> +++ b/drivers/bluetooth/btrtl.c
-> @@ -693,7 +693,7 @@ static int rtlbt_parse_firmware(struct hci_dev *hdev,
->   
->   	/* Loop from the end of the firmware parsing instructions, until
->   	 * we find an instruction that identifies the "project ID" for the
-> -	 * hardware supported by this firwmare file.
-> +	 * hardware supported by this firmwmare file.
+>  drivers/base/power/main.c | 3 ---
+>  1 file changed, 3 deletions(-)
+>
+> diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
+> index eebe699fdf4f..0f40c00c1401 100644
+> --- a/drivers/base/power/main.c
+> +++ b/drivers/base/power/main.c
+> @@ -1095,7 +1095,6 @@ void dpm_resume(pm_message_t state)
+>         ktime_t starttime =3D ktime_get();
+>
+>         trace_suspend_resume(TPS("dpm_resume"), state.event, true);
+> -       might_sleep();
+>
+>         pm_transition =3D state;
+>         async_error =3D 0;
+> @@ -1198,7 +1197,6 @@ void dpm_complete(pm_message_t state)
+>         struct list_head list;
+>
+>         trace_suspend_resume(TPS("dpm_complete"), state.event, true);
+> -       might_sleep();
+>
+>         INIT_LIST_HEAD(&list);
+>         mutex_lock(&dpm_list_mtx);
+> @@ -2109,7 +2107,6 @@ int dpm_prepare(pm_message_t state)
+>         int error =3D 0;
+>
+>         trace_suspend_resume(TPS("dpm_prepare"), state.event, true);
+> -       might_sleep();
+>
+>         /*
+>          * Give a chance for the known devices to complete their probes, =
+before
+> --
 
-Without the second m.
-
->   	 * Once we have that, we double-check that project_id is suitable
->   	 * for the hardware we are working with.
->   	 */
-
-
-Kind regards,
-
-Paul
-
-
-PS: Should you resend, it’d be great if you wrote in the summary/title 
-if it’s in a comment or in a log string.
+Applied as 6.17 material, thanks!
 
