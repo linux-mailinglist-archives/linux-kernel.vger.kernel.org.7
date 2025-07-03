@@ -1,64 +1,63 @@
-Return-Path: <linux-kernel+bounces-716110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 953DBAF81E3
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 22:21:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 927C2AF81EB
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 22:24:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 223F41BC7CD4
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 20:22:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4964C7A3F0C
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 20:22:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF07A29B21C;
-	Thu,  3 Jul 2025 20:21:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D99092BCF67;
+	Thu,  3 Jul 2025 20:24:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Zx4FMsX4";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4qoKC9bm"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lKtbPDmT";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="7rGKH7cx"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C2DD2BCF51
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 20:21:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D58BE225A59
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 20:24:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751574098; cv=none; b=SOTZsYfnGXefkD7/5FCVeJf/hnQVr4lFUwBTBemnHx1taTMyFXsAemLZ86dBQ3cKJK9uq8WgnRIp0ztdNG7AdU8FzSYX+lhpn6PbL93JW+MvB+FWqT+9cfGox8j+9lqZMxDrtohTFtgBE1uynFlSpg97VZIL5Ahk7rDk+B0qX10=
+	t=1751574249; cv=none; b=cssFNAbO5VChs8N3eiwpT3DK7gavYuH1uUXHqaQFMjK0LaNcAKXrJ87dbwzVfGTN44GWtRDOz/fE2efCjOpRYyYgeLFUiRqEe1K3RLEeIVbnJv7utnGJlx89uxluEQdGXZBr9e0X3HONG30MZRHVmRPcoC4hpO5W6egrtCwrhMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751574098; c=relaxed/simple;
-	bh=pyS7Y6GIrPU10d/ryQJM3Wqvm4C9Tt6BQzqo0p89Cyk=;
+	s=arc-20240116; t=1751574249; c=relaxed/simple;
+	bh=GRsTaNULSrSAkx7VXyWDx1hl++8OF/riyHlBO/W+qJ4=;
 	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=BOHHI/d7HNVxcr4JVGrt/gLvlCwOCjLSjVp/I8gUn1DZlcV0JRfEHDUtHX/rg4bhyB7ws61Mt7JFCkpdTWaCaP7bciuGqWKhdmQnJYgtmXIdkgH9rXAMxBbIj99mlTHqoUBcSwv/ougw8Xv4MC7nS6XsESP1kOYzCymHfkGty3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Zx4FMsX4; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4qoKC9bm; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version:Content-Type; b=gccpe9vD/uIy8lkTk9WSKwCzrXZ3ZepbriXtu/JUSmS09ZPMorze1RJ2SDlNQ56FUdRK3LMxb+NDLYQVqds8tfqnSvEygKU9LACXtoyg8CSoPsNJ0n1o56ur70uNDwzsZfTuxLztFWIrzQzOc5kPvFcpDSSvz0iw18G/mjMUfME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lKtbPDmT; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=7rGKH7cx; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: Thomas Gleixner <tglx@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1751574092;
+	s=2020; t=1751574244;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=aSp3/iXHDvBtL6PbWGs8D+kj6lt5OBJlh2r7j0tPdGE=;
-	b=Zx4FMsX4jXEQ1xo270ycn9VnZ07F8ww81sc1+SzvfjAzVum7GL8LueoXr2H6qRQhlQwp/0
-	UNnwMoOQ7PxBcD/e0/SqBe1QVcjQEtcTtJpBuiUwcdRJBC6PqcAh061MdFO+ZLpNtU+CRs
-	x3K9ge9VM0BNDxDOJR2K3Y67zD9NvvqdhdFRpWPUfgfqFFo/23Ad7P99V+hQ87sqoKlOUH
-	IQFdQzv6F5PbpNqx8lkZC2r499PMOPTU/Nq9xFe0JwFHTd0dw520spimbv/m8zReU74V9o
-	wi1mfPdHaf7xk6W9k+XhfMnKtTqOhXA+F9ukzpp7J1g5nCzIU8ABR8KVSe0O8Q==
+	bh=M5W++ly1IWQpo/hueV2LyDMVa9bmZ+YID9jU522lcOo=;
+	b=lKtbPDmTaoLJJm/N/K8jCOt+CkW+itsX4+g/Hbc+theRbOyycIWz7oTcEtpNKK4YLQjKMH
+	1E0gxYq70R8vVDE3JtlRkcfQZd3HGF2PqjVBeHM11q/wQQCCcRLlQg/YUMbFcx/tXb4y0R
+	HOnV/KYmYcVIZuFawh0DISW1/CGw6XoQcY/fryryQ2jQBNkwhIcHNNWmjxOE+khNVshgbr
+	YB18Ns09qbCoieeZ4pVjX9+rp6r5QQ4w5QO2tCz5qaVIbAiRvlxfpPSmViC5dRy1dnaZen
+	Lb5AzBcKNPl/98EvyvAIiCJyPtmeiCZjKcvKME0SIyOwVjDaXdBwWKQCSW+YnQ==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1751574092;
+	s=2020e; t=1751574244;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=aSp3/iXHDvBtL6PbWGs8D+kj6lt5OBJlh2r7j0tPdGE=;
-	b=4qoKC9bmn1Nf+GqK8v3tvWutfgG00IqGFI7x8lyHJGzEP1bHjMhgVffpKBNUCFUZX7PeHW
-	l7hGh0HuHzF5O5BQ==
+	bh=M5W++ly1IWQpo/hueV2LyDMVa9bmZ+YID9jU522lcOo=;
+	b=7rGKH7cx83k8OXv+S27eHCjy/4Ga8mYQD61CPypf2LbkOCpBCpxoQ1X17L+FbXR22886+J
+	3sCwYuedYMmYlFBQ==
 To: Himanshu Madhani <himanshu.madhani@oracle.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+ linux-kernel@vger.kernel.org
 Subject: Re: System hang with latest kernel v6.16.0-rc1 (rc2 & rc3)
-In-Reply-To: <7279DC28-17BF-4A28-96ED-7AE9857BC2E3@oracle.com>
-References: <ABB1DAF0-048A-4373-9007-988D20F359DD@oracle.com>
- <7279DC28-17BF-4A28-96ED-7AE9857BC2E3@oracle.com>
-Date: Thu, 03 Jul 2025 22:21:31 +0200
-Message-ID: <87a55lt48k.ffs@tglx>
+In-Reply-To: <bf397c89-bd76-4559-908e-cc921e554b71@oracle.com>
+References: <bf397c89-bd76-4559-908e-cc921e554b71@oracle.com>
+Date: Thu, 03 Jul 2025 22:24:02 +0200
+Message-ID: <875xg9t44d.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,97 +66,11 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain
 
-On Thu, Jul 03 2025 at 18:32, Himanshu Madhani wrote:
-> On Jul 3, 2025, at 11:27, Himanshu Madhani <himanshu.madhani@oracle.com> wrote:
-> Git-bisect point to this merge commit
->
-> commit 6376c0770656f3bdf7f411faf068371b6932aeca
-> Merge: 5e8bbb2caa4e 29857e6f4e30
-> Author: Linus Torvalds <torvalds@linux-foundation.org>
-> Date:   Tue May 27 09:01:26 2025 -0700
->
->    Merge tag 'timers-clocksource-2025-05-25' of git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
->
->    Pull clocksource updates from Thomas Gleixner:
->     "Updates for clocksource/clockevent drivers:
->
->       - The final conversion of text formatted device tree binding to
->         schemas
->
->       - A new driver fot the System Timer Module on S32G NXP SoCs
->
->       - A new driver fot the Econet HPT timer
->
->       - The usual improvements and device tree binding updates"
+On Thu, Jul 03 2025 at 12:31, Himanshu Madhani wrote:
+> We are seeing kernel hang while booting after new 6.16-rc1 kernel is 
+> installed.
 
-That obviously does not make sense, so your bisect got side ways.
-
-> Following further in this commit, I only see this following series
-> that had changes which may or may not be related to hang.
->
-> https://lore.kernel.org/all/20250429065337.117370076@linutronix.de/
-
-They are not. There is a hint in both backtraces:
-
-> [  514.305717]  schedule_preempt_disabled+0x15/0x30
-> [  514.360954]  __mutex_lock.constprop.0+0x4be/0x8a0
-> [  514.417232]  msi_domain_get_virq+0xcc/0x110
-> [  514.467279]  pci_msix_write_tph_tag+0x3c/0x100
-
-and
-
-> [  525.930478]  schedule_preempt_disabled+0x15/0x30
-> [  525.985718]  __mutex_lock.constprop.0+0x4be/0x8a0
-> [  526.041993]  msi_domain_get_virq+0xcc/0x110
-> [  526.092031]  pci_msix_write_tph_tag+0x3c/0x100
-
-pci_msix_write_tph_tag() is the function which ends up trying to lock
-the mutex and gets stuck. This function was introduced with commit
-
-  d5124a9957b2 ("PCI/MSI: Provide a sane mechanism for TPH")
-
-and the subsequent commit
-
-  71296eae5887 ("PCI/TPH: Replace the broken MSI-X control word update")
-
-flipped the TPH code over to use that.
-
-The problem is obvious and if you would have enabled
-CONFIG_PROVE_LOCKING then you would have got the reason presented on a
-silver tablet in dmesg. I encourage you to do so nevertheless.
-
-I definitely screwed that one up in the most stupid way.
-
-As I had no idea how to exercise that code path I did not test it. It
-seems this code is not really tested by any of the CI stuff either
-before it hits Linus tree and as some folks start testing only post rc1
-it takes some time to surface :( 
-
-The fix is as obvious as the problem. See uncompiled and untested patch
-below. If it solves the problem, which it should, feel free to take it
-and create a proper patch with changelog and Fixes tag yourself (Adding
-Suggested-by: Thomas ... is good enough). Otherwise let me know, and I
-take care of it in my copious spare time :)
-
-Thanks,
-
-        tglx
----
-diff --git a/drivers/pci/msi/msi.c b/drivers/pci/msi/msi.c
-index 6ede55a7c5e6..eb26f3816922 100644
---- a/drivers/pci/msi/msi.c
-+++ b/drivers/pci/msi/msi.c
-@@ -934,10 +934,11 @@ int pci_msix_write_tph_tag(struct pci_dev *pdev, unsigned int index, u16 tag)
- 	if (!pdev->msix_enabled)
- 		return -ENXIO;
- 
--	guard(msi_descs_lock)(&pdev->dev);
- 	virq = msi_get_virq(&pdev->dev, index);
- 	if (!virq)
- 		return -ENXIO;
-+
-+	guard(msi_descs_lock)(&pdev->dev);
- 	/*
- 	 * This is a horrible hack, but short of implementing a PCI
- 	 * specific interrupt chip callback and a huge pile of
+Please don't resend stuff within a few hours just because nobody
+replies. People live in different time zones and are not waiting in
+front of their computer for your important messages.
 
