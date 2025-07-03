@@ -1,142 +1,162 @@
-Return-Path: <linux-kernel+bounces-715201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-715203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8BC4AF7288
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 13:37:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDAF1AF7287
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 13:37:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 697C41C84308
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 11:36:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B4B0D7ACE32
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 11:35:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C57222E6D28;
-	Thu,  3 Jul 2025 11:35:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iHP3Puzl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EF492E49A3;
+	Thu,  3 Jul 2025 11:36:31 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10CE72E5435;
-	Thu,  3 Jul 2025 11:35:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0E122E4279;
+	Thu,  3 Jul 2025 11:36:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751542525; cv=none; b=NPTSNJf8LNscCRNNEPNeal46mRckUwERwYG6D4xvm6NCfFl30jqagLhyu8sw3J1gmGAoPeideJqWlgGhdpc0wp0FDIIBGK0bI1mCeRuOb5Z6Ijs7zjZPfQLPAlDta9ts7TmK1LkYQCDjWMoQ27dAOiMrUQnDsoCmHmO0LAB+A+Y=
+	t=1751542591; cv=none; b=efa7bUz7NEJPP8Wjb36QgO740maQbWqH7bRHFHm+AqrdtYBzgDqJiws/27TaYmnhAVy75g+w6GkK76LrD4AbIi4ShlMl6VeANILMOqIYIE+MbmIdUbdbglR9hFcUsBipUcvsXwZ9mjyM6vq2eLOchWMXR240ZzNqqfi+musPdIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751542525; c=relaxed/simple;
-	bh=iSS8+4ktDjQQal/Izc/e4a1912EIEcFPw/W3ep+lPhU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=acv14ATnb03yzpjJv5IrsPPsZyIcYCO5A97leWslxMFkw9sMeXvEh7EqFHTZDvm90bR1iLR2pq64Wwl4GkeXQYoFw9H8g1Jtfq+THcTCU8lWtKDHZDN2d4t+Be7hQi0w0WwiBR1wBQytTMW5ApD/TcN10JrghMxrtxvi5t0M0+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iHP3Puzl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50CDDC4CEE3;
-	Thu,  3 Jul 2025 11:35:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751542524;
-	bh=iSS8+4ktDjQQal/Izc/e4a1912EIEcFPw/W3ep+lPhU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=iHP3Puzlrl4C1iSVy0iMw2brSiOaYeJHp9fruydJn+wXj+RlicgbsWgQM5O2TnFts
-	 AeOMq1gDXJKcwPbAMs597mmv7J2jCPJRDCq9sSArXiJPcDoLI2B0kQYOELa3TcezSZ
-	 l28cALWDyxCWjfdUmAMH0SRqqa/IrUpsVz+XDwZppaHzkk1W354pPB3SHw/3EonBme
-	 VYGGfow9mek3TumBwYKkDmb0O1RiUDUq4FMn+zAaCQaiJkskwmusjHKdsN3Q/CAKXG
-	 GwYebczr5OT0KiLSy+4yMMbf6uynsRI377whlh+II9hwJbiqvYkBUV9JUX/zpX/ZnL
-	 ForDGvBHRWyIQ==
-Message-ID: <cdc33ace-0979-426e-a1db-b90c8310e8af@kernel.org>
-Date: Thu, 3 Jul 2025 13:35:16 +0200
+	s=arc-20240116; t=1751542591; c=relaxed/simple;
+	bh=Sy5KK+ahsW1yAaKri1MbI11E8xyt8D6mK1pL569PzGA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dzCbqxIusMJgH8Mn6n38uag2zlPgrwLErbnq9YDsYXQ2YB0X4n9lx8rzykbZNcEm8kcRkdESS17iOPCDtlhA3zEgn25CohOhotSeBcSHn0TkuHHD7hSqGx86f0DhTgmQqOO+Ak1BZG7zTGb0WM1sWtGeQQas/W4rRQRq+sOjHk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.98.2)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1uXIES-000000004sT-1IDF;
+	Thu, 03 Jul 2025 11:36:00 +0000
+Date: Thu, 3 Jul 2025 12:35:56 +0100
+From: Daniel Golle <daniel@makrotopia.org>
+To: "Frank Wunderlich (linux)" <linux@fw-web.de>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, frank-w@public-files.de,
+	MyungJoo Ham <myungjoo.ham@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Johnson Wang <johnson.wang@mediatek.com>,
+	=?utf-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>,
+	Landen Chao <Landen.Chao@mediatek.com>,
+	DENG Qingfang <dqfext@gmail.com>,
+	Sean Wang <sean.wang@mediatek.com>,
+	Lorenzo Bianconi <lorenzo@kernel.org>, Felix Fietkau <nbd@nbd.name>,
+	linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH v7 01/14] dt-bindings: net: mediatek,net: allow irq names
+Message-ID: <aGZrHMnpMMzNkIjF@makrotopia.org>
+References: <20250628165451.85884-1-linux@fw-web.de>
+ <20250628165451.85884-2-linux@fw-web.de>
+ <20250701-wisteria-walrus-of-perfection-bdfbec@krzk-bin>
+ <9AF787EF-A184-4492-A6F1-50B069D780E7@public-files.de>
+ <158755b2-7b1c-4b1c-8577-b00acbfadbdc@kernel.org>
+ <b68435e3e44de0532fc1e0c2e7f7bf54@fw-web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 3/9] ASoC: qcom: dt-bindings: qcom,lpass-va-macro:
- Update bindings for clocks to support ADSP
-To: Prasad Kumpatla <quic_pkumpatl@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Srinivas Kandagatla <srini@kernel.org>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org,
- linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org,
- kernel@oss.qualcomm.com, Mohammad Rafi Shaik <quic_mohs@quicinc.com>
-References: <20250625082927.31038-1-quic_pkumpatl@quicinc.com>
- <20250625082927.31038-4-quic_pkumpatl@quicinc.com>
- <14e0e012-0283-4a17-8cb1-fe96785b11ac@kernel.org>
- <8fa30d8f-8737-4bda-a5dd-d7deb8f0896c@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <8fa30d8f-8737-4bda-a5dd-d7deb8f0896c@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b68435e3e44de0532fc1e0c2e7f7bf54@fw-web.de>
 
-On 03/07/2025 13:18, Prasad Kumpatla wrote:
->>
->>> enabled using power domains in lpass-va-macro which is not applicable
->>> for ADSP based platform.
->>>
->>> Reference:
->>>   - qcom,lpass-tx-macro.yaml
->>>   - qcom,lpass-rx-macro.yaml
->>
->> I don't understand this reference.
+On Thu, Jul 03, 2025 at 01:01:40PM +0200, Frank Wunderlich (linux) wrote:
+> Am 2025-07-02 08:27, schrieb Krzysztof Kozlowski:
+> > On 01/07/2025 12:51, Frank Wunderlich wrote:
+> > > Am 1. Juli 2025 08:44:02 MESZ schrieb Krzysztof Kozlowski
+> > > <krzk@kernel.org>:
+> > > > On Sat, Jun 28, 2025 at 06:54:36PM +0200, Frank Wunderlich wrote:
+> > > > > From: Frank Wunderlich <frank-w@public-files.de>
+> > > > > 
+> > > > > In preparation for MT7988 and RSS/LRO allow the interrupt-names
+> > > > 
+> > > > Why? What preparation, what is the purpose of adding the names,
+> > > > what do
+> > > > they solve?
+> > > 
+> > > Devicetree handled by the mtk_eth_soc driver have
+> > > a wild mix of shared and non-shared irq definitions
+> > > accessed by index (shared use index 0,
+> > > non-shared
+> > > using 1+2). Some soc have only 3 FE irqs (like mt7622).
+> > > 
+> > > This makes it unclear which irq is used for what
+> > > on which SoC. Adding names for irq cleans this a bit
+> > > in device tree and driver.
+> > 
+> > It's implied ABI now, even if the binding did not express that. But
+> > interrupt-names are not necessary to express that at all. Look at other
+> > bindings: we express the list by describing the items:
+> > items:
+> >   - description: foo
+> >   - ... bar
 > 
-> Please refer below link for more info. Which is similar kind of 
-> properties used.
+> ok, so i need to define descriptions for all interrupts instead of only
+> increasing the count. Ok, was not clear to me.
 > 
-> https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git/tree/Documentation/devicetree/bindings/sound/qcom,lpass-rx-macro.yaml#n72
+> so something like this:
 > 
-> https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git/tree/Documentation/devicetree/bindings/sound/qcom,lpass-tx-macro.yaml#n77
-I don't understand what is has to do with commit msg. Please
-explain/describe in the commit msg the hardware, not point to external
-references. No one is going to look to other files to understand why
-this commit is like that. This commit must stand on its own.
+> item0: on SoCs with shared IRQ (mt762[18]) used for RX+TX, on other free to
+> be used
+> item1: on non-shared SoCs used for TX
+> item2: on non-shared SoCs used for RX (except RSS/LRO is used)
+> item3: reserved / currently unused
+> item4-7: IRQs for RSS/LRO
 
-Best regards,
-Krzysztof
+These descriptions match the current *software* use of those interrupts,
+however, DT should describe the hardware and esp. item0 up to item3 could
+be used in different ways in the future (by programming MTK_FE_INT_GRP
+register differently).
+
+I think using interrupt-names fe0...fe3 and pdma0...pdma3 is still the
+best option, so the driver can request the interrupts by name which is
+much more readable in the driver code and SoC's dtsi than relying on a
+specific order.
+
+> > 
+> > There were only 4 before and you do not explain why all devices get 8.
+> > You mentioned that MT7988 has 8 but now make 8 for all other variants!
+> > 
+> > Why you are not answering this question?
+> 
+> The original binding excluded the 4 RSS/LRO IRQs as this is an optional
+> feature not
+> yet available in driver. It is needed to get the full speed on the 10G
+> interfaces.
+> MT7988 is the first SoC which has 10G MACs. Older Socs like mt7986 and
+> mt7981 can also
+> support RSS/LRO to reduce cpu load. But here we will run into the "new
+> kernel - old
+> devicetree" issue, if we try to upstream this. Maybe we do not add this
+> because these
+> only have 2.5G MACs.
+
+It might be important to note that
+
+MT7621, MT7628: 1 IRQ
+MT7622, MT7623: 3 IRQs (only two used by the driver for now)
+MT7981, MT7986: 4 IRQs (only two used by the driver for now)
+
+While older SoCs MT7981 and MT7986 have limited support for *either LRO
+or RSS* in hardware, only MT7988 got 4 frame-engine IRQs like MT7981 and
+MT7986 and an additional 4 IRQs for the 4 RX DMA rings on top of that,
+so a total of 8, and can do both RSS and LRO.
 
