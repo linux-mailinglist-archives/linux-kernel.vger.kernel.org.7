@@ -1,94 +1,90 @@
-Return-Path: <linux-kernel+bounces-715006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5840FAF6F7E
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 11:58:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1E17AF6E7D
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 11:22:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4ABA4E596A
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 09:58:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E53A188BA5E
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 09:23:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE2E92E0408;
-	Thu,  3 Jul 2025 09:57:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=thundersoft.com header.i=@thundersoft.com header.b="NBqBLOYn"
-Received: from mail-m49236.qiye.163.com (mail-m49236.qiye.163.com [45.254.49.236])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 947342D6622;
+	Thu,  3 Jul 2025 09:22:42 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D48D2DCF68
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 09:57:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.236
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3BE72D6614
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 09:22:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751536671; cv=none; b=oT5ycuOe0sxmj91Tx3vKZ4SPtPyirXUj3njoFkvXJ2LqsvK0iPVAa68SEqDZyOtUfNWZSqgXqTfaxfYh5defebWUU4ljopxXnZKyS3XXXaPt+MxhTR044aWvsBqZsG0L5Ni+bAaLNf/Jr9dGhOIbH50+9OafKZVnJhSRLuMqG1c=
+	t=1751534562; cv=none; b=pCeCy5du3fui+Z2jdHU6KtpnBXBf4+ns5bEnSbqOndvnjryVwBY4/P5dGvWM22942Z2Kh4/kot2kYMSvBx4o5OKB0G1wibepSevIzchsvE9oMyYsQ23mNNUJhquRMC5uzGYLQ00yUanBNYeqMDdipODZpRVDOHniag0iWHEVDZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751536671; c=relaxed/simple;
-	bh=vVskXXiuyCBJ3SlftbGvCJVwgWO/SADLWkCG/dfPZn8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=NS26P81teBN82iAt8IjhIJEg7Jwqs5u5MgH3CWRmxPyY2piqBaJvA7ZEJk8oM3NgsDRFg16u05PfieZZezMM14vpozzvwDqAbR1RvdPHb/Gh5ftIlqyma48x1ETY+B9XwWu05hudn9BDooRPB+GWFu1ZQfDepWV+d5YctrgCihM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=thundersoft.com; spf=pass smtp.mailfrom=thundersoft.com; dkim=pass (1024-bit key) header.d=thundersoft.com header.i=@thundersoft.com header.b=NBqBLOYn; arc=none smtp.client-ip=45.254.49.236
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=thundersoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thundersoft.com
-Received: from localhost.localdomain (unknown [117.184.129.134])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 1accb52e0;
-	Thu, 3 Jul 2025 17:22:14 +0800 (GMT+08:00)
-From: Albert Yang <yangzh0906@thundersoft.com>
-To: krzk@kernel.org
-Cc: catalin.marinas@arm.com,
-	will@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/8] arm64: Kconfig: add ARCH_BST for bst silicons
-Date: Thu,  3 Jul 2025 17:22:13 +0800
-Message-Id: <20250703092213.222474-1-yangzh0906@thundersoft.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <d676ddc8-0e4a-456a-8aa2-15ba898c44de@kernel.org>
-References: <d676ddc8-0e4a-456a-8aa2-15ba898c44de@kernel.org>
+	s=arc-20240116; t=1751534562; c=relaxed/simple;
+	bh=h0OYEhRgg6QSJuxBR6K/CBtNlaG4cBCtpSWy04aBlmc=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=KHLaQ6imKlw1oYuz9GcOMSRjWONtIQKunX9c+4vwr5He9kbcgUwdftNfri2eFz6jZK4nWqf5rypbrm+AAHcHcvBHQTOuGJYWuCSEYhaAqxY2uWmkfD6F/++KRm866Ez1AsSHT2bb12tXKtZj83xSs5VKiWMrBZfN6/vc7Hnvmn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-86cf9bad8e9so579364139f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Jul 2025 02:22:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751534560; x=1752139360;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5tCAySEFqv3epv6j+Rlkm/8+5LnRbIWUydqjhwg4UTY=;
+        b=IFPg3B3o6FiDPKRJ3PJfQ6m23ZQHyD2ssnCtn+IDQj6AkCIVj8chU41iNldjrues5K
+         Rikmpf5lTCcYB5D+9osaZ3cyTzcJTznRQQlu50row1FZXp+GMy0pmxHGnnibs+V4JDe/
+         IL8FSbQGTYNjNCyLVCSB3y/1Bc+o6niQ8a5Lpch6nsZgCUt25BmFLL6OqpT780vJFDgO
+         0jzfxC7erG2iiU6BtKbTPIqiHGzPlFJkAnvEaI5QaxMOVJQJtX80HGkuT5Dysi8skNwS
+         Jvx5HfELISv3xg5q6w3xF+1GhVaYp79u2j5epMgVgLOUWETBT5oEdBmMpcSlWVm52e1r
+         ZN/w==
+X-Gm-Message-State: AOJu0YzA1iN9ItC8HK4PrcEQE0IVC794THVOcXWUlxmh3TExMR/nt5HE
+	RdRXdmEecmnz0QKZjNON9alsopcOUeqUFH2fEYEkpeMli1lj9vAiv/Z7IJEJIV+e0yWy2BMWLBt
+	Ysj+NN1rnlcbX23t7SEOshRZkSK7gHCE0JnNum3Fh7voFsAf36KmgfGi0dWM=
+X-Google-Smtp-Source: AGHT+IEeVvk3UPo5gaggsFanR8r8mY4VsatSTXd29CqUZbuTZWFlAcaUVi0B8/xNB8gMR4tUjIXLQZOSoZfFW+RKG+hJ65XoCYXw
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlDGEoeVk9NTE9LHxofHRofTVYVFAkWGhdVEwETFh
-	oSFyQUDg9ZV1kYEgtZQVlKSkxVSkNPVUpJQlVKSE9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpOTE5VSk
-	tLVUpCS0tZBg++
-X-HM-Tid: 0a97cf97ff7f09cckunmb83f96175e4255
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Mjo6Mxw5MjE9HkI8Fj0NH0hK
-	EEoaCQlVSlVKTE5KTkhPTkhOTUlPVTMWGhIXVQIaFRwBE0tCS007DxMOFR8eCQgUHQ9VGBQWRVlX
-	WRILWUFZSkpMVUpDT1VKSUJVSkhPWVdZCAFZQUpDSUo3Bg++
-DKIM-Signature:a=rsa-sha256;
-	b=NBqBLOYnDCn/2rlXT10GVPpUFrc06QR5PA2DEARJJ7Tko0jmjtlrXKxUA2Cftzxp685Pr3C8FNS/0yWYMPoajYQWahA0ElXugzahBEfppwO7wNcJodTmNCGQMi+mLRcqMN5HNLsRBSYZMeh3ZadBWoj9xVAVZhb3Iss9h5bXsEY=; c=relaxed/relaxed; s=default; d=thundersoft.com; v=1;
-	bh=srX6kH0UrTbZhO+d3+7kFfFmGiVeOERQzXEmjHHH1Q0=;
-	h=date:mime-version:subject:message-id:from;
+X-Received: by 2002:a05:6602:7190:b0:86c:fdb3:2798 with SMTP id
+ ca18e2360f4ac-876c6a7fb36mr769096139f.11.1751534559896; Thu, 03 Jul 2025
+ 02:22:39 -0700 (PDT)
+Date: Thu, 03 Jul 2025 02:22:39 -0700
+In-Reply-To: <68656f4c.a70a0220.2b31f5.0000.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68664bdf.a70a0220.5d25f.0863.GAE@google.com>
+Subject: Re: [syzbot] Re: [syzbot] [nfs?] [net?] possible deadlock in rpc_close_pipes
+From: syzbot <syzbot+169de184e9defe7fe709@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Krzysztof,
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-Thank you for the feedback.
+***
 
-> All your patches come in some big delays (this one came 2.5h later).
-> Maybe there is something with mail server on your side?
+Subject: Re: [syzbot] [nfs?] [net?] possible deadlock in rpc_close_pipes
+Author: lizhi.xu@windriver.com
 
-You are right, there seems to be an issue with mail delivery timing. I will investigate this and consider using b4 send for future submissions to ensure reliable delivery.
+#syz test
 
-> Why this change?
-
-You are absolutely correct to point this out. The extra blank lines at the end of the file were added accidentally and serve no purpose. I have removed them.
-
-Changes made:
-1. Removed the unnecessary blank lines at the end of Kconfig.platforms
-2. Corrected changelog placement:
-   - Initially I incorrectly placed changelog in the commit message
-   - Per Linux kernel documentation, changelog should be placed after the "---" separator
-   - Removed changelog from commit message to follow proper kernel conventions
-   - The changelog will be included after "---" when sending patches via git format-patch
-
-The updated commit properly describes the purpose and scope of the configuration option without any extraneous whitespace changes, and follows correct Linux kernel commit message format.
-
-Best regards,
-Albert Yang
+diff --git a/net/sunrpc/rpc_pipe.c b/net/sunrpc/rpc_pipe.c
+index 0bd1df2ebb47..e30270e5883a 100644
+--- a/net/sunrpc/rpc_pipe.c
++++ b/net/sunrpc/rpc_pipe.c
+@@ -175,7 +175,7 @@ rpc_close_pipes(struct dentry *dentry)
+ 	int need_release;
+ 	LIST_HEAD(free_list);
+ 
+-	inode_lock(inode);
++	inode_lock_nested(inode, I_MUTEX_CHILD);
+ 	spin_lock(&pipe->lock);
+ 	need_release = pipe->nreaders != 0 || pipe->nwriters != 0;
+ 	pipe->nreaders = 0;
 
