@@ -1,132 +1,86 @@
-Return-Path: <linux-kernel+bounces-715150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-715147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53888AF71C7
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 13:11:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B243AF71AB
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 13:08:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD0E516DCA7
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 11:08:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4AC837AE351
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 11:06:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B27D22D78F;
-	Thu,  3 Jul 2025 11:08:23 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3EF22E173B;
-	Thu,  3 Jul 2025 11:08:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15CCE244667;
+	Thu,  3 Jul 2025 11:08:08 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 433272DE70B
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 11:08:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751540903; cv=none; b=KvyWs9h/IpE/ig4U+xVDOybJqYXf6uRZexA/bnIK3ky71A0r7SLYeJo3Evtq30neCh/o/p+Odf3BRChtFFW/Wz2U81qhj6qK5pp7QEyOBFgVvEwEcAnHguViQJNJua7DftXV4f8aEssgbS+eP3LHOUJkLvK7NWbKycldlq3+/fY=
+	t=1751540887; cv=none; b=DhaFJ5cA3cRZyocZ2AXcmaWhcsvarv8FMUUKXlen2aJvPWTRnmWxNxPnDFZ1mymtLkjqWaiY7WyPl82T7OdRnllwD5XnBBVrC+7o4kUOpqD1nSrhxgdLd3mxA4u65QxMjWXcXDgqw4LaC+ulYrEUeSG8MDxKWSfg+CiN9TNdHUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751540903; c=relaxed/simple;
-	bh=8bUXCSo65pFuL9K7IKGHK785dYGPeGX435gMmbBZl8I=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=AeSB1dwfwvBmasApW//3gfcYArTbIRAHYAbzGTYc5bMK1ZyEDAKh0fTkxT9yBSCjBfpccpx449aKSCcKLDCUMyUtsr/7+PL5TEEOYfLIWyg/2QHG7mEW5bF4HJcbUUahtimIjEY3Kz7vAbWtsirp5sw9zqoPh04GUCEu2OFkcS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
-X-CSE-ConnectionGUID: JN4MplTaR6CRhVIxAG6TIw==
-X-CSE-MsgGUID: Ow2QnL7bQpSsRM+ot9wbNQ==
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 03 Jul 2025 20:08:14 +0900
-Received: from [127.0.1.1] (unknown [10.226.78.19])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 2A29140015C3;
-	Thu,  3 Jul 2025 20:08:11 +0900 (JST)
-From: Michael Dege <michael.dege@renesas.com>
-Date: Thu, 03 Jul 2025 13:07:24 +0200
-Subject: [PATCH v4 2/2] phy: renesas: r8a779f0-ether-serdes: add new step
- added to latest datasheet
+	s=arc-20240116; t=1751540887; c=relaxed/simple;
+	bh=MPSNj8tWw+VyxLZS+h/0hvZHLTe44L3A2V+Y/Oyilck=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Z+pgAWUJwiwfDRZhnJzYThZbD/SCZ1mGv9CYP+0nW0KTd8S4ZYT0yImLJrL+YVrj02y1lMf1SYht1tZ6Iosxt2hiKtktkPD+1W83s2xOIjs8tgd3Duy0CbpXJ+7wVGFdyoRg4bNDoAHDEqiI5I24dmld493uI80XrUICeCCT5Ts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3df4d2a8b5eso59276525ab.3
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Jul 2025 04:08:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751540885; x=1752145685;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=U4NOZMlABcLY/rRXPDEgzMXy+AfZ4u/sPTCtTPJWoXo=;
+        b=VIgZCIxDvQxbDeLEdXVaJutiLDS3zFpjlOI9or7Y18yVZQh/0ObYtr7Ki8iXo9sm2E
+         cUAnUbhVdg5HD+39qLD/hm/l3f8iop7bwN7xsduNIzkkVvOqewdxXf1ENUoY8xploup9
+         PHHGkg8qM3uwwuYSWq39qc7ABTmw4gePUiO1abd6xfXOCnjcCmmOCZWZ8dmiPrWv9n7B
+         piI0k64eBpo7XxvqZaCc4P579jo+gN4K5Z+Y7bc1U2BfNaKRMmxWgocH4emm6NrGDfTZ
+         q50mTpMHlP1siQspQXfPNOI/go0f/RvdIYmjCbDq7TR2GNwrag+w1DR1UVViBCFHUYRj
+         VlOA==
+X-Gm-Message-State: AOJu0YzN5vlh0ad4lck9xhLXuLJUI40XJdf0CLQm/zlsi+dT+ZeeKsCT
+	Jqf/NZG58isU1CedKLUJEsOTRDutLGHkhtplURdqHesGTPdAaieGR9gU3Nq08SwMsaquZsY87Vq
+	65jXtSMgg68HDEck2rtR1AtA/4XaVJ++lAicrm5GH0topvXIs+aknB5/wNBA=
+X-Google-Smtp-Source: AGHT+IGjfCTIqp1nGBlW2xfdPPDOGHzxZNhNTr2JKAqarzF+tInjrXMTgjqlwOEpagmjMezHd13oA8r+n2mVLV3mH05dbvjwpqi8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250703-renesas-serdes-update-v4-2-1db5629cac2b@renesas.com>
-References: <20250703-renesas-serdes-update-v4-0-1db5629cac2b@renesas.com>
-In-Reply-To: <20250703-renesas-serdes-update-v4-0-1db5629cac2b@renesas.com>
-To: Vinod Koul <vkoul@kernel.org>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, 
- Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: Michael Dege <michael.dege@renesas.com>, 
- =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
- linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org, 
- linux-renesas-soc@vger.kernel.org
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1751540886; l=2379;
- i=michael.dege@renesas.com; s=20250523; h=from:subject:message-id;
- bh=8bUXCSo65pFuL9K7IKGHK785dYGPeGX435gMmbBZl8I=;
- b=N+7Y1YmhEfzvZj8B4ak0niBxiWyifklTIn5OXhVwstLDCXpiZLn3r+9uKNMYjS8DlMiqlGs04
- SK/OcKCtFGtAQY9of/Pi/4ZppshAU35xAvr+7asFlc90N539Nt39CZ/
-X-Developer-Key: i=michael.dege@renesas.com; a=ed25519;
- pk=+gYTlVQ3/MlOju88OuKnXA7MlapP4lYqJn1F81HZGSo=
+X-Received: by 2002:a05:6e02:2167:b0:3df:3271:6aba with SMTP id
+ e9e14a558f8ab-3e0549ea181mr64021555ab.15.1751540885402; Thu, 03 Jul 2025
+ 04:08:05 -0700 (PDT)
+Date: Thu, 03 Jul 2025 04:08:05 -0700
+In-Reply-To: <20250703092137.1888114-1-lizhi.xu@windriver.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68666495.050a0220.37fcff.0001.GAE@google.com>
+Subject: Re: [syzbot] [fs?] possible deadlock in __simple_recursive_removal
+From: syzbot <syzbot+6d7771315ecb9233f395@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, lizhi.xu@windriver.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-R-Car S4-8 datasheet Rev.1.20 describes some additional register
-settings at the end of the initialization.
+Hello,
 
-Signed-off-by: Michael Dege <michael.dege@renesas.com>
----
- drivers/phy/renesas/r8a779f0-ether-serdes.c | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-diff --git a/drivers/phy/renesas/r8a779f0-ether-serdes.c b/drivers/phy/renesas/r8a779f0-ether-serdes.c
-index ed83c46f6d00c255852cc5af867c89ab0d0db02a..8a6b6f366fe376d21f5fee7795893f5aac0feae4 100644
---- a/drivers/phy/renesas/r8a779f0-ether-serdes.c
-+++ b/drivers/phy/renesas/r8a779f0-ether-serdes.c
-@@ -49,6 +49,13 @@ static void r8a779f0_eth_serdes_write32(void __iomem *addr, u32 offs, u32 bank,
- 	iowrite32(data, addr + offs);
- }
- 
-+static u32 r8a779f0_eth_serdes_read32(void __iomem *addr, u32 offs,  u32 bank)
-+{
-+	iowrite32(bank, addr + R8A779F0_ETH_SERDES_BANK_SELECT);
-+
-+	return ioread32(addr + offs);
-+}
-+
- static int
- r8a779f0_eth_serdes_reg_wait(struct r8a779f0_eth_serdes_channel *channel,
- 			     u32 offs, u32 bank, u32 mask, u32 expected)
-@@ -319,6 +326,7 @@ static int r8a779f0_eth_serdes_hw_init_late(struct r8a779f0_eth_serdes_channel
- *channel)
- {
- 	int ret;
-+	u32 val;
- 
- 	ret = r8a779f0_eth_serdes_chan_setting(channel);
- 	if (ret)
-@@ -332,6 +340,26 @@ static int r8a779f0_eth_serdes_hw_init_late(struct r8a779f0_eth_serdes_channel
- 
- 	r8a779f0_eth_serdes_write32(channel->addr, 0x03d0, 0x380, 0x0000);
- 
-+	val = r8a779f0_eth_serdes_read32(channel->addr, 0x00c0, 0x180);
-+	r8a779f0_eth_serdes_write32(channel->addr, 0x00c0, 0x180, val | BIT(8));
-+	ret = r8a779f0_eth_serdes_reg_wait(channel, 0x0100, 0x180, BIT(0), 1);
-+	if (ret)
-+		return ret;
-+	r8a779f0_eth_serdes_write32(channel->addr, 0x00c0, 0x180, val & ~BIT(8));
-+	ret = r8a779f0_eth_serdes_reg_wait(channel, 0x0100, 0x180, BIT(0), 0);
-+	if (ret)
-+		return ret;
-+
-+	val = r8a779f0_eth_serdes_read32(channel->addr, 0x0144, 0x180);
-+	r8a779f0_eth_serdes_write32(channel->addr, 0x0144, 0x180, val | BIT(4));
-+	ret = r8a779f0_eth_serdes_reg_wait(channel, 0x0180, 0x180, BIT(0), 1);
-+	if (ret)
-+		return ret;
-+	r8a779f0_eth_serdes_write32(channel->addr, 0x0144, 0x180, val & ~BIT(4));
-+	ret = r8a779f0_eth_serdes_reg_wait(channel, 0x0180, 0x180, BIT(0), 0);
-+	if (ret)
-+		return ret;
-+
- 	return r8a779f0_eth_serdes_monitor_linkup(channel);
- }
- 
+Reported-by: syzbot+6d7771315ecb9233f395@syzkaller.appspotmail.com
+Tested-by: syzbot+6d7771315ecb9233f395@syzkaller.appspotmail.com
 
--- 
-2.25.1
+Tested on:
 
+commit:         8d6c5833 Add linux-next specific files for 20250703
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=17e40582580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=223eb69834aa2df6
+dashboard link: https://syzkaller.appspot.com/bug?extid=6d7771315ecb9233f395
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=127ff982580000
+
+Note: testing is done by a robot and is best-effort only.
 
