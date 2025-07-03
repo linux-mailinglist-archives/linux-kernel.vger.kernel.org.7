@@ -1,35 +1,35 @@
-Return-Path: <linux-kernel+bounces-715851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-715852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C0ACAF7E82
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 19:18:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27D36AF7E84
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 19:19:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69A321CA18C5
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 17:19:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 782E34E57AA
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 17:18:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61EAB288CA3;
-	Thu,  3 Jul 2025 17:18:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FD7C289E03;
+	Thu,  3 Jul 2025 17:18:36 +0000 (UTC)
 Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F315E288C8E;
-	Thu,  3 Jul 2025 17:18:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BCC2289349;
+	Thu,  3 Jul 2025 17:18:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751563113; cv=none; b=N6GgwMMK2mFVKmvpCRrFm4pmSribDKYMcuMbMTUr/nKxJ+dFQoogoVD4ySk3wbZb0MTBwoj046NSpFogZIVcxgMdB2zSycHxBbT+zs1ID0gQFak1qzhZ7cnq4AbouaNZUmsLqWPdUubVjvT6DH12h0bFEo3x1YA/bFNVvOVF8Iw=
+	t=1751563116; cv=none; b=kZS22TgK16hwP2NbBCVkuuvt2nrYlu634LokCJvGQyXOc46q5yLPyZADciLKgQfCi5duiJvAN9X66AXaDR88GiCUZErxQg3WJJapzIjYg4u3foC55yiDtsXc8TP4i8sdjj6aSEay9qIZVw+dAo8xIDEpvP6V1yBMxhwuzSSE3zI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751563113; c=relaxed/simple;
-	bh=7ljjhOgAH4JvFLSL1WOVYiTEt54iov2GeC8isgGID54=;
+	s=arc-20240116; t=1751563116; c=relaxed/simple;
+	bh=wh+FG9ThWMaAow7vm26UwKu04jPrutnOEIBXiTtwkOA=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YJMRwWEFb1YJQfh1TYSh9Ah61O06f+zRhcbvI/EyyRrUNLmfZm4g/WDn7Dd/n3gje76jTcpW85PZM2QpqoWkmo+QB/wETSOn6ltwDy/3Tc0fh7QZuqhJIoe9sx4NAlZ+DJ0HbGSxoR6/r3Paydm1INsLuf4Ydj4XprOSROdj3Mk=
+	 MIME-Version; b=ZJe4PGmELC05o1Sf0orb0jLeGOLiS4uAqfelMeGteHHNqzrjTFc0OZVIUDkuX9F7IEYBKYsuidiFvrMgWezTdCnn5/IBn4wSGA7VwR2OImND32Hz4gOtDK/aLDlSn37TJQRM27WFE8QrPEwJDcvnkETq18UOOdMtJjoK+KS87HE=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hadess.net; spf=pass smtp.mailfrom=hadess.net; arc=none smtp.client-ip=217.70.183.198
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hadess.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hadess.net
-Received: by mail.gandi.net (Postfix) with ESMTPSA id A55B9442BC;
-	Thu,  3 Jul 2025 17:18:27 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 08A6C442C1;
+	Thu,  3 Jul 2025 17:18:29 +0000 (UTC)
 From: Bastien Nocera <hadess@hadess.net>
 To: trivial@kernel.org,
 	Marcel Holtmann <marcel@holtmann.org>,
@@ -54,9 +54,9 @@ To: trivial@kernel.org,
 	linux-mediatek@lists.infradead.org,
 	linux-arm-kernel@lists.infradead.org,
 	asahi@lists.linux.dev
-Subject: [PATCH v2 1/7] Bluetooth: btintel: Fix typo in comment
-Date: Thu,  3 Jul 2025 19:16:55 +0200
-Message-ID: <20250703171815.1011001-2-hadess@hadess.net>
+Subject: [PATCH v2 2/7] Bluetooth: btmtk: Fix typo in log string
+Date: Thu,  3 Jul 2025 19:16:56 +0200
+Message-ID: <20250703171815.1011001-3-hadess@hadess.net>
 X-Mailer: git-send-email 2.50.0
 In-Reply-To: <20250703171815.1011001-1-hadess@hadess.net>
 References: <20250703171815.1011001-1-hadess@hadess.net>
@@ -69,7 +69,7 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-GND-State: clean
 X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddvtdekiecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpeeurghsthhivghnucfpohgtvghrrgcuoehhrgguvghssheshhgruggvshhsrdhnvghtqeenucggtffrrghtthgvrhhnpeekteetgeettdehieduiedttdetffelleehtdejkeeluedvgfffvdevteetudfhkeenucfkphepvdgrtddumegvfeegmegvtgejfeemtghfvddtmeejudgurgemfegsugemvddtrgelmedufeefnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegvfeegmegvtgejfeemtghfvddtmeejudgurgemfegsugemvddtrgelmedufeefpdhhvghlohepohhlihhmphhitgdpmhgrihhlfhhrohhmpehhrgguvghssheshhgruggvshhsrdhnvghtpdhnsggprhgtphhtthhopedvfedprhgtphhtthhopehtrhhivhhirghlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehmrghrtggvlheshhholhhtmhgrnhhnrdhorhhgpdhrtghpthhtoheplhhuihiirdguvghnthiisehgmhgrihhlrdgtohhmpdhrtghpthhtohepshgvrghnrdifrghnghesmhgvughirghtvghkrdgtohhmpdhrtghpthhtohepmhgrthhth
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddvtdekiecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpeeurghsthhivghnucfpohgtvghrrgcuoehhrgguvghssheshhgruggvshhsrdhnvghtqeenucggtffrrghtthgvrhhnpeekteetgeettdehieduiedttdetffelleehtdejkeeluedvgfffvdevteetudfhkeenucfkphepvdgrtddumegvfeegmegvtgejfeemtghfvddtmeejudgurgemfegsugemvddtrgelmedufeefnecuvehluhhsthgvrhfuihiivgepudenucfrrghrrghmpehinhgvthepvdgrtddumegvfeegmegvtgejfeemtghfvddtmeejudgurgemfegsugemvddtrgelmedufeefpdhhvghlohepohhlihhmphhitgdpmhgrihhlfhhrohhmpehhrgguvghssheshhgruggvshhsrdhnvghtpdhnsggprhgtphhtthhopedvfedprhgtphhtthhopehtrhhivhhirghlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehmrghrtggvlheshhholhhtmhgrnhhnrdhorhhgpdhrtghpthhtoheplhhuihiirdguvghnthiisehgmhgrihhlrdgtohhmpdhrtghpthhtohepshgvrghnrdifrghnghesmhgvughirghtvghkrdgtohhmpdhrtghpthhtohepmhgrthhth
  hhirghsrdgsghhgsehgmhgrihhlrdgtohhmpdhrtghpthhtoheprghnghgvlhhoghhiohgrtggthhhinhhordguvghlrhgvghhnohestgholhhlrggsohhrrgdrtghomhdprhgtphhtthhopehsvhgvnheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhesjhgrnhhnrghurdhnvght
 X-GND-Sasl: hadess@hadess.net
 
@@ -77,22 +77,22 @@ Found by codespell.
 
 Signed-off-by: Bastien Nocera <hadess@hadess.net>
 ---
- drivers/bluetooth/btintel.c | 2 +-
+ drivers/bluetooth/btmtkuart.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/bluetooth/btintel.c b/drivers/bluetooth/btintel.c
-index 55cc1652bfe4..7cf834089696 100644
---- a/drivers/bluetooth/btintel.c
-+++ b/drivers/bluetooth/btintel.c
-@@ -555,7 +555,7 @@ int btintel_parse_version_tlv(struct hci_dev *hdev,
- 	/* Consume Command Complete Status field */
- 	skb_pull(skb, 1);
+diff --git a/drivers/bluetooth/btmtkuart.c b/drivers/bluetooth/btmtkuart.c
+index c97e260fcb0c..4208ebecd560 100644
+--- a/drivers/bluetooth/btmtkuart.c
++++ b/drivers/bluetooth/btmtkuart.c
+@@ -316,7 +316,7 @@ mtk_stp_split(struct btmtkuart_dev *bdev, const unsigned char *data, int count,
  
--	/* Event parameters contatin multiple TLVs. Read each of them
-+	/* Event parameters contain multiple TLVs. Read each of them
- 	 * and only keep the required data. Also, it use existing legacy
- 	 * version field like hw_platform, hw_variant, and fw_variant
- 	 * to keep the existing setup flow
+ 		/* Resync STP when unexpected data is being read */
+ 		if (shdr->prefix != 0x80 || bdev->stp_dlen > 2048) {
+-			bt_dev_err(bdev->hdev, "stp format unexpect (%d, %d)",
++			bt_dev_err(bdev->hdev, "stp format unexpected (%d, %d)",
+ 				   shdr->prefix, bdev->stp_dlen);
+ 			bdev->stp_cursor = 2;
+ 			bdev->stp_dlen = 0;
 -- 
 2.50.0
 
