@@ -1,403 +1,511 @@
-Return-Path: <linux-kernel+bounces-716155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B0B0AF82B4
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 23:36:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07B7BAF82C0
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 23:39:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 927E03B5973
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 21:35:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E5A31889187
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 21:39:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9CB82BEC26;
-	Thu,  3 Jul 2025 21:36:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B97842BEC5E;
+	Thu,  3 Jul 2025 21:39:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="oa/idDJA"
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ixQtK2Fe"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D094D29A300
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 21:36:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751578569; cv=none; b=qaQoyMj4yROZf5eizsMyFUCs1CZTN8OuakN/r7pAcJGeGma9OjV8rM2a57frb9iBxmBoU/qdFpDmM+kMYlwPGDsUSTj2mnE3vpYFJGdRUJ8i/EUm678hZrVrL+C54wjGLixTMFL8if58EuhGjZZ7sAyAAua6bXNY9fCh2pXlp7U=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751578569; c=relaxed/simple;
-	bh=lMjmIbbrKCapHNvacndT3CYesc+OgdSuDb/BnQRGjRI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=amuXJrYhJl9G0PmpWSRJgteX5zwHG9DeAoq9vAtYr8uYFoM4KhJ5LQ3vPC9/3XsYOh5TcsKOxypga9yWsxcYrWTv9Z2U4FwTTIpvoZYuPmdLLvpaR5lY+h8QVsxzZbwu/rzpFM/8YB+wsSo5t5WFxPaE79/xKwiNeYWjpJbXafY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=oa/idDJA; arc=none smtp.client-ip=185.125.188.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-vs1-f71.google.com (mail-vs1-f71.google.com [209.85.217.71])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id D9BDF3F6B0
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 21:35:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1751578558;
-	bh=bWTBBR3tcfcCVwCDO6Z84tS0/UdOmqTNNcVmWEaK54c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type;
-	b=oa/idDJAap/AXBGXzn51KUAiKdU4FQ4oy4CVpcnO6zr/gbwxfdTE2ArsOOfGU8sWg
-	 +z2F+Kqh501YFEAjG2Rxe0FxFS0aBQ+vuM5QvKuB48rZtWjm2IXYlB+deHP/YvjcJL
-	 V8kPkCEnJjGu+rAt9/MY7OC5KmeRpoH/avFs/snjFM4FlxT5ool+ARD3ZbbMFfZ4Ye
-	 zRRxc1hMLz54dMuUsqrDvQH4fZPh6BI0uuMErOm+FVbnd/luVfLcytJDTtqbwlOTKH
-	 aLaj5Fzfi0q1N8glXQAc3xWTB0sBkAKxYPoDvOFKdSwa+O7CgsLie7Bn4e8JsQo7Jv
-	 7moVbdu3SKT6w==
-Received: by mail-vs1-f71.google.com with SMTP id ada2fe7eead31-4d5ef3b8038so85460137.1
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Jul 2025 14:35:58 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751578557; x=1752183357;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bWTBBR3tcfcCVwCDO6Z84tS0/UdOmqTNNcVmWEaK54c=;
-        b=a+WxLStk0xHSb2gEYDE4bia5aYc5trurtsxfTyyUQUKuBLYiEOYHZimu7N2r/cmZB7
-         d5lcJwkgR6/aFbx11ML9/fJKU3NTcItpT3BIxKF8iVUL7V7i4GXATlRYP0khnEqfO7AE
-         GoBcrff3sUDxsf1bZ2pk8P9ZqdugayZ5y0HqdUL4vv8FQzhWljL/jxURmemjrRaLwdHB
-         mJ0lCqeBAmD4FuHiIdvsRgkZnBKw2HYwm5IBk/uZXlVtrEttMr+/BtFt4pW/7m3xbIRf
-         k9AfUm4xbJPWmxZjg36S/R7ku0bj2WkT/+vR8QrBWfp9Y8ZYJZj2e8FyztgyHEDM/JhD
-         /Zhg==
-X-Gm-Message-State: AOJu0Yzub8eihM/nNAukzFrqOsh7w+HM5lrhFvYhqUo3Lcjt7w5YruOz
-	jpAD20iXwuUAGjre7E9rmZa9lqhYXFts1VyEt6ICVFazmgxeP3VNZ/8L+1ZBJoaCpKeRqqKKmbw
-	nIiQ5Ya+7Vs80tJ6k7ug1jXIaojbYmBgv3RC3UEQAYjL2RbnQ5MzvmmFJhQf1jffa/s7UiXWxyx
-	Bz91C/d75xsr2Utm8Bq3xia4FKvWpUBOUY07Pz2b9P2ZMbXwaV7J9QZhY4
-X-Gm-Gg: ASbGncsUOlAeilkGH/qrzLmSSvkObAdnavQkHyRZ33U6rjPBfCDL2fnjXlx+bXI3iAT
-	FbFwOXspESdy9KpZCQ0XUcPhipill08zhJYhrHYSBRNwtLPEtvrFH49vPoqvRT9f/rc2KRCIDdX
-	kOdXKq
-X-Received: by 2002:a05:6102:8016:b0:4e6:d995:94f9 with SMTP id ada2fe7eead31-4f2ee1ab3a4mr527031137.12.1751578557041;
-        Thu, 03 Jul 2025 14:35:57 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEs8JP0V1kADGywsst8bal2/wb6N1RrkMLmV2Gjw43MXO4S6TS4rzjt/nP4+sUjYqQWdRkeW6U5Q5+FItLuA88=
-X-Received: by 2002:a05:6102:8016:b0:4e6:d995:94f9 with SMTP id
- ada2fe7eead31-4f2ee1ab3a4mr527022137.12.1751578556645; Thu, 03 Jul 2025
- 14:35:56 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 975612BE7A8
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 21:39:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.18
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751578744; cv=fail; b=CO30G/UMjnvYdj8QR56dny/LZhiFIHOUik0CQYQmRu51piD4KICf7fIa2xEjYFQmih0AmyruQ1glw7rM9v4DdKjxNHXpMzhFzMCoBwTU7oW0CtwtwWsulJdvQeOnAz0oE8IpVFZcfcxZPG55A97F3Fyc+lmdkkrzNPHZ86tBLAI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751578744; c=relaxed/simple;
+	bh=r59rTeeMnoNvRebYR5cERZDTnVbkgcbncI0chrFdJJg=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=mNDtbltaTPtDLufrnkiq2gZG4rR3EGS3Kkux8pFT7teSBQkifb5FClALteh/JagrnfBX4au9BxWq2nzL7pKnAALVuhHMW4dht0N9Zj3wJxaYTiD4mdBrBy98YVwfeDW3Cn9AbnOWZ4nTjib8P9bTbMJy1PwyTFMwE0ly28IZ8/Q=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ixQtK2Fe; arc=fail smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751578743; x=1783114743;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=r59rTeeMnoNvRebYR5cERZDTnVbkgcbncI0chrFdJJg=;
+  b=ixQtK2FedUuPcTm3NbZiLLEI4aKyxJkfELZdsJ3S3ZZweeVTHS1pxnSC
+   H0s3HTOTO5BMlo2babj7EmI1+bwJ4B9uyRDROeCPb6qLwPnd1B2KjEvow
+   Wq+CDTBvgxsjIpgpiXbOvbSrecMHyN31jdpj8GAx9NWgKAQmktbFewSm+
+   Y1yrM+I/N+7RZX3piz0qnonrWVtjhVWhLgowqbJtVAYpFV6hTF8KiXQGR
+   Wtd11VGh8trj6FzWBRLi+FhzzmP3tUOtP99M/euf3vZ9udF8L5HH4T0+b
+   GHLkHQjdHneAyejH7tu6szhpMYXc7qILBg8zb7dkupZUEPiDiO0cNVj6k
+   Q==;
+X-CSE-ConnectionGUID: KD/aG/W/T3iditare4dK+A==
+X-CSE-MsgGUID: 4KK4pWCWTFK0LSXKIMiinA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11483"; a="54034861"
+X-IronPort-AV: E=Sophos;i="6.16,285,1744095600"; 
+   d="scan'208";a="54034861"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2025 14:39:03 -0700
+X-CSE-ConnectionGUID: YrXdFSomTxKgluwLQnfumA==
+X-CSE-MsgGUID: L4Vk0e0GTXO796bCZ/xO3A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,285,1744095600"; 
+   d="scan'208";a="155233150"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2025 14:39:01 -0700
+Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Thu, 3 Jul 2025 14:39:01 -0700
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25 via Frontend Transport; Thu, 3 Jul 2025 14:39:01 -0700
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (40.107.101.81)
+ by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Thu, 3 Jul 2025 14:39:00 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=md4nIdCmvkXCnzj9tWAwUamyWYCk4khw4YUPrQ+MSpNdeFyU+Cs4L59qB6suwmPh7gATtbwqWEsl9BpC/ZewzABrNbqcwOZlNvvvLfupudlrJSRmbCBLeCVrL3rOaje+TB4CIcXlr6ZLoB21Y4fGeqEkdiDHty5efS3VLM/6MgcNSEGJmX3JlUWLYdc3De1MPavIxOtsyq68xgGrQDmhRxEbvVehBFyJU0j5RLuJP1mkLWk6GiGhqC97E1U98Ujp5sbBL23qx1zKp4YOIXrftLfO9e8Zf2huUve+f7gQBhX9yOT030rt/LOpLM4tpgpq3bAhThJWXQLswbhN9szT8Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Wmu1hT8/mA0ovD90SCSh7fMAyrYeSV6ycy8YmoE993E=;
+ b=tZrib7wjNTwGxU/98Tzi6yRb7qO2akCcD/dSJXApBTFkzRh/qRDxpJiXRP0mrDUz+Y4o1/8SLsj9O7LXeWVPdTib2Vgfb4gpqAfypS85zTtse+zCYFdtsCZNKYRvjxyy/Ggwh/lE7o5gXNHH5j7UBhi5jStgKYy0Em96fUPe/+B08vpDr5PTu2BK7lr3F8rzQ+QtIxP+y7ACkbbvH39D5ZoGiZyUONT0CdKye+/P7h/vVLPAwUTY3ZKkTGGQt+UFCF9yYmNIstC/FojlMchqiucI5Q/44v0YOxk1OFcCJdVV6hBhkqAeVpvnlicHgOWy9qxdMuyvq95Do5TDu3DCHA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from PH7PR11MB7605.namprd11.prod.outlook.com (2603:10b6:510:277::5)
+ by PH8PR11MB6732.namprd11.prod.outlook.com (2603:10b6:510:1c8::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.19; Thu, 3 Jul
+ 2025 21:38:18 +0000
+Received: from PH7PR11MB7605.namprd11.prod.outlook.com
+ ([fe80::d720:25db:67bb:6f50]) by PH7PR11MB7605.namprd11.prod.outlook.com
+ ([fe80::d720:25db:67bb:6f50%4]) with mapi id 15.20.8857.025; Thu, 3 Jul 2025
+ 21:38:18 +0000
+Message-ID: <82ca3a0f-fa4c-46ec-b7c4-3a53932a386f@intel.com>
+Date: Thu, 3 Jul 2025 14:38:17 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 05/10] drm/xe/xe_late_bind_fw: Load late binding
+ firmware
+To: Badal Nilawar <badal.nilawar@intel.com>, <intel-xe@lists.freedesktop.org>,
+	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+CC: <anshuman.gupta@intel.com>, <rodrigo.vivi@intel.com>,
+	<alexander.usyskin@intel.com>, <gregkh@linuxfoundation.org>
+References: <20250703193106.954536-1-badal.nilawar@intel.com>
+ <20250703193106.954536-6-badal.nilawar@intel.com>
+Content-Language: en-US
+From: Daniele Ceraolo Spurio <daniele.ceraolospurio@intel.com>
+In-Reply-To: <20250703193106.954536-6-badal.nilawar@intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BYAPR05CA0029.namprd05.prod.outlook.com
+ (2603:10b6:a03:c0::42) To PH7PR11MB7605.namprd11.prod.outlook.com
+ (2603:10b6:510:277::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250701083922.97928-1-aleksandr.mikhalitsyn@canonical.com>
- <20250701083922.97928-9-aleksandr.mikhalitsyn@canonical.com> <CAAVpQUDFzPBJmCeawhaHL5Twjxk8obLZW9UPH0HfD_5BYpjh_w@mail.gmail.com>
-In-Reply-To: <CAAVpQUDFzPBJmCeawhaHL5Twjxk8obLZW9UPH0HfD_5BYpjh_w@mail.gmail.com>
-From: Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-Date: Thu, 3 Jul 2025 23:35:45 +0200
-X-Gm-Features: Ac12FXyeeJVA73E3LrFMGuvn0EDeHuAYD44eCvPPXqmKAveYKS08quI8ryvRj9s
-Message-ID: <CAEivzxc_CxQ5AS8KaFS9LEsHhzzyLyuEgqcp--JQJ6X6Rj-s+A@mail.gmail.com>
-Subject: Re: [PATCH net-next v2 4/6] af_unix: stash pidfs dentry when needed
-To: Kuniyuki Iwashima <kuniyu@google.com>
-Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Leon Romanovsky <leon@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Christian Brauner <brauner@kernel.org>, 
-	Lennart Poettering <mzxreary@0pointer.de>, Luca Boccassi <bluca@debian.org>, 
-	David Rheinsberg <david@readahead.eu>, Willem de Bruijn <willemb@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR11MB7605:EE_|PH8PR11MB6732:EE_
+X-MS-Office365-Filtering-Correlation-Id: 24ee4450-c6ab-491b-233d-08ddba79ece9
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?RG9FZCtuaDByYkdCTXRFcVNlQnFNekxKa1lpeTgwbExzMXl2M0NlanVxWHpk?=
+ =?utf-8?B?V2xXMDhSQjRrbVVacEZ1dTArYVhaRlptWDJBODZUTlBTYStkYVlCS05HT0V3?=
+ =?utf-8?B?SDQ1OXM3SGo1YXo3eFBjUTJVMUpKbVpuVEZiVmo0VndFcHpSR29kR1RYZ2tQ?=
+ =?utf-8?B?UGE0bFhLaHp3VURvWUFYMlYwSXJVNVJ2cFM1a2ZyV2d4YTU1ME02OWw2eitQ?=
+ =?utf-8?B?YlRWdWp1dStSSWZiYXpJSTVReG9SdTkyNHV0YzM2SFFYdk92UTNGQi9PWEtp?=
+ =?utf-8?B?dXdqWXBzL0xwWkhZVFcxenJIS3dEdFN4SFZCUEF2VEhQWGRwSlBpa3RiZ0lH?=
+ =?utf-8?B?Y2s2ekM5VStGc0JrcWFsS3BodFdKZGt4Wm41Yzk5ZG1LbWlvY2o5V2tkYlJB?=
+ =?utf-8?B?eU1sTzdDMVN5Nm11bW5qc0phWXdCRHVzTmMwVkRSUXQwYVVWZlgxTWFjVTA2?=
+ =?utf-8?B?ZWc5ODF4KzIzR09iSUhWbUI2NjJVQVpIbkptTFl1THlLVy9CdGVNd0lsaEpp?=
+ =?utf-8?B?eW1Qakt1bXgzdUdFbmFQaTRWamVJVVN4d1ZyUzJkZjNudktvTDgvRlQ3NDRW?=
+ =?utf-8?B?M2w2U216SVpIcVZBb2hMcWt3Rnh3bkhwNEU1NjlHQy8rNmhkVlVONVFLaEVu?=
+ =?utf-8?B?NTg2TFh2cVgyQkhIdTRQYlFQbGRTSTVpOWxvMHJCWTlUSjhpVFgrT0ZCT3lP?=
+ =?utf-8?B?U1RZNS9GZHZXaDNoQVVBd243V3pFMGZQS1h1b3h3QVRra1cxRWNOM3hzeExp?=
+ =?utf-8?B?V3VVSTQxZVdQVFdNQUpmNjhyOExxT1JPTjdDei8waGQ5emtZVEJyK1IyZ1F5?=
+ =?utf-8?B?aytWa1FLaHVUVjRFdVR6TG54SU5acTg1L0Q0bzNORllrcWJ1aTJRU3E4UjdE?=
+ =?utf-8?B?NUJUbUVDdjJFblgxRlJaT3lwSklIN0RxbzZhQUdMY29YT3FVL21RVXJSVlRu?=
+ =?utf-8?B?RkltNWVxOWRXQ0VtUXBWRGtzNmNFUkNnUG0zVWszWEFCSXgzRjFxdUlEZ0tH?=
+ =?utf-8?B?R281YmFwREJaM3RMc3UrSjhnSWpya1ZVZWpxMytWL0g4T2VGQVl0Q0pyR0Zi?=
+ =?utf-8?B?bDMwcGROQUVBL2FOVkxrR3VqVjBPT2ZJZjVFanVhNDM4ZWIvVStFODdVSENQ?=
+ =?utf-8?B?V29KYVQ2WSszTXBrNGhzSU5XU1RxVVFLLytNb3VZYkNqMXEvSnV6NDM1U1RP?=
+ =?utf-8?B?VTBRa0hUTDBoVjQzcjdpNlZaalo0V0RtR3dJU1g0bnh0L3pYRWJxSmN3Zjky?=
+ =?utf-8?B?SlVWTEVWVHd6OEk4ZTJVYXkzREhRSVVNanFpanB5dU9QbmJtdlYzcDZUbmJI?=
+ =?utf-8?B?eUlsTjV3VlBCUHMxSXRPNTlDaWcwQURYT2NPL0EwSUNqa3Y2ZTJLZmVqQWRm?=
+ =?utf-8?B?QndqdDFuaHVwZllFUXNsb2pVWWFISk16M1pxQkdoOGg3a2Q3cFU4K1hsY3F3?=
+ =?utf-8?B?djVLbE1MSmszOHRwUnA4TEhVZDBqS2VLWEdaSllHdU9hRkNGd3M4b0pTNi9R?=
+ =?utf-8?B?OVBndE1MZ1ZLa2QxdThwdEdCTzZ6Q1FDVGUrY1dVN2NZUTRGdGFYVzJlVS9B?=
+ =?utf-8?B?RFBKVER6QVQyQUFndkc4ZHVlT094NUsrUk54SFRXZjNYL3AvamxnN0J5QWFJ?=
+ =?utf-8?B?ejlTL1VTbnRuelhvcHRjNHp2T1pIUGZmVlZkTklqV1BSTWFMdXVVM00zKzNQ?=
+ =?utf-8?B?eGp2a2xacnJqcVg2SEQvcC80OFF5U2gzbHgzYzZNaEwxeCtjKzAwT2J0cHNq?=
+ =?utf-8?B?bUZMR3psdWRST1lRcEJyMjZScHlaQjduT1JHek9Yb3pUd1JHZEdZcStxOURE?=
+ =?utf-8?B?ZzFSdzdqMUFKTFo1dmVHVkRsR2lVUGtnTTI3SlY1ZUVReFdvYWhudVlOV082?=
+ =?utf-8?B?THJaRFBMVkhKMGw0Tkp0ZlRIZG0xamhEK0wzVWNrYmFCUHZBUFdJaDUzTm9D?=
+ =?utf-8?Q?DRSTtTI5NkY=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR11MB7605.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?TGhHdmRtMXpnS0VRVWc0TzZJZllDOEtFdEFqZ045UTdHL2VtRUtQRjdvTi83?=
+ =?utf-8?B?eklFZEZWUDVNaFBpVS96dG5QUkFwQllsRFlzdlFKOWlpZW1FR1Y2K3o5QUMv?=
+ =?utf-8?B?NEJ3SjlRZVRvaE5MR1o3MFduOXIzRmZFWnlORVE1R1QyVUNMd0Iva0ZyS1B3?=
+ =?utf-8?B?NmhVR1NabWpBZWhVZlZOU2N1K1p6R0NXL0hIMCt5WDRpclVzdGRvdEV0RUQy?=
+ =?utf-8?B?L2N1U25xQ0VuTzZwWHZ4Wnp6dGEyUHNjU2hSUGR0Tlk1Q09sSjQ5OXFYSGNM?=
+ =?utf-8?B?czkrMjF3SWFyS0NTRmJidzBoWE5YRUV6aDk1NkRnZU43WkNENDYxalNWVlhr?=
+ =?utf-8?B?YWZyeFVMZFlNSGhLcS90a3hKdU15WEZNdDNDYmZ4RjlLSXdpdTFEcUFHRjU5?=
+ =?utf-8?B?VlBGYTFsZkZuaytJSzcyL1FrVkpVNHExa3MxU09UUVprVENIdTU0QlR5RGg1?=
+ =?utf-8?B?SmoxbWFyU1pTOFVWTXUvN01Ob3pTbnZEZEdDakxGd2d2Lzg5ZElDUkFkU2o3?=
+ =?utf-8?B?ZTdqVUl4RW83K3FNNURsVjZZMUo1eUprREd5OUpWR1ZobW5iVmVGaFJVSGpF?=
+ =?utf-8?B?Y2ZYRG1TRVhzQmY2a2tvSEFkZ0RkVnFKRCt6emxDZUhlN3Q2VFhuc0lPR2g4?=
+ =?utf-8?B?cUxCQzdrd3JtTGVaQjVZb1JJSCsvTjRRQldoT2ZoSUVMQVY0TFNZVHc3YmJR?=
+ =?utf-8?B?eXJWS3VkUDFId1BLd2FENldJTUxrK2lzaEJ0cmZyK0lEZkdzdXN4bis2Um8x?=
+ =?utf-8?B?SWpqTmdxK3c5VG5XUzFNZFQvQW1FVUVEUzBzLzFDUUtFQUozbFJaMVkyUnRh?=
+ =?utf-8?B?R3MvVUdJRlQ1L3QycVpZWGtFOXRqaHFtdWd0d28zWDlib3ZPOVBRTE9ZWXRC?=
+ =?utf-8?B?YWNnVDk5ZTN4UUlyWW5WVmJBczZCbVd5RnhQcUpYcEQyYWgvMVJTcWp3TktO?=
+ =?utf-8?B?Vm8rZy9uMEZrMFNWYURITGdlM3RtQ0ZtK2swdEw5Z2FjTTFhUWlqbmRLTGdG?=
+ =?utf-8?B?cU40RDJBa2x4UDd6YmMwSWxmRytsaFZoR25SdkVGbzVpQmFsZmxDaDhmUVFG?=
+ =?utf-8?B?TG82YnpqaXpYYjJBWTlEb2xGbVM0R2ZWTFVIdHNEREpEL0tETDNQQ2JVdHZr?=
+ =?utf-8?B?SG9GamN2NU5nM2pFek9kdlZLcnh6ejZSdDdscGFYSFp2Q2U4V3NyZVdPanJi?=
+ =?utf-8?B?T0dka1NQa1NCMFltTVIvU3lhdk9HUnZocjYvR1BVOVhuY1BnQVNmWndxUWtq?=
+ =?utf-8?B?SVloZXM4NDZHMDJVMDJ4aVhXcVRaLzZCRm1rRG4rSVFYNzZlZXpEWHJWY3d2?=
+ =?utf-8?B?QWthWmdPaThhM0lHMlZsbkpObmFlNXF2Z3JENTlxd0h0M1FNcG9XZ1lVZ0VE?=
+ =?utf-8?B?QlI5OGQrS1kzSjBCVGZuS1h3VmxFUW5jckNTdVp5SjFXUVJBTXdORkFBcWR0?=
+ =?utf-8?B?bVV4NFdtNWIzL3g2VVdtRnMrUmpDTmtFQjE5UHlIOUZKRzVaU0VhNUpmVVJi?=
+ =?utf-8?B?Wk9odlBLQzUxekNoc0I3RHlWaGI0UStIMHhsTngyK3RIQW5iQVJIazIzMVR3?=
+ =?utf-8?B?YlpqclkzRm95Vzg0Vkt1cjdxTlA5VUlTb013VVdCOWs0d0tLZVRLcFUwN25Q?=
+ =?utf-8?B?ZmlMZERKTXRFQ01BdlBEKzE0MGF3YStPenpIZjRTd3B2YUhrQUJEdjdLZVhm?=
+ =?utf-8?B?aEZpU3lycWt0anNOWHMvVGVCSW8wM0RlUFR2T1VlNTVHNDAxK3dTOXJXbjZW?=
+ =?utf-8?B?V2M5UDVZQzFzT2ZyME9saGFGc2s4TXNNS2FZczJSQVRoNDBCQlZNMnVTamdm?=
+ =?utf-8?B?Qm1COUdUY2IvRUNFVGNDc3k2QXRaZFR3dndDVlRwWDdRSXJpY1J5NWZsUDRM?=
+ =?utf-8?B?VjQrWEhVTHNjYjFST0tWVDZDend6UDAwK1greHNzTzhia3hOK05aMEMvL1By?=
+ =?utf-8?B?QzRsS3hLWW1wNm1xZmpSa3VPckRJSG5VS2dnTDBvQUpESnVqbDg3UDBpQ1hk?=
+ =?utf-8?B?ZzMrNHlXVlR3UFhmd0FtWm8xdURXTW9xcDFrM0MyWTdCaTdxbjJCYjhmNnFL?=
+ =?utf-8?B?bE1iNlRzNm1qamcxejF2U3dEUmMxOFJtcEFoSEFmUWRIOGJmYnVBc3BvYjZJ?=
+ =?utf-8?B?czVsOCtBWG9NUWRZaEpqdUJkT2FieFFaaVVVek42bnJEQXgrbi9ZbkFyeFJJ?=
+ =?utf-8?Q?8Y+eAJvt46ClaGXQ5akiuhw=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 24ee4450-c6ab-491b-233d-08ddba79ece9
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR11MB7605.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jul 2025 21:38:18.6274
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Ahl8WtJAX/5qgDo4Clop8eLgXBHfl/ALf0iA1pdRiuX9wmEu2mu2z/LcSs6c1W73Zc79xLIi6LhcQ+DHP80Vh3ldNupioEcrY0/5iN1ER2w=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR11MB6732
+X-OriginatorOrg: intel.com
 
-On Thu, Jul 3, 2025 at 3:53=E2=80=AFAM Kuniyuki Iwashima <kuniyu@google.com=
-> wrote:
->
-> On Tue, Jul 1, 2025 at 1:41=E2=80=AFAM Alexander Mikhalitsyn
-> <aleksandr.mikhalitsyn@canonical.com> wrote:
-> >
-> > We need to ensure that pidfs dentry is allocated when we meet any
-> > struct pid for the first time. This will allows us to open pidfd
-> > even after the task it corresponds to is reaped.
-> >
-> > Basically, we need to identify all places where we fill skb/scm_cookie
-> > with struct pid reference for the first time and call pidfs_register_pi=
-d().
-> >
-> > Tricky thing here is that we have a few places where this happends
-> > depending on what userspace is doing:
-> > - [__scm_replace_pid()] explicitly sending an SCM_CREDENTIALS message
-> >                         and specified pid in a numeric format
-> > - [unix_maybe_add_creds()] enabled SO_PASSCRED/SO_PASSPIDFD but
-> >                            didn't send SCM_CREDENTIALS explicitly
-> > - [scm_send()] force_creds is true. Netlink case.
-> >
-> > Cc: linux-kernel@vger.kernel.org
-> > Cc: netdev@vger.kernel.org
-> > Cc: "David S. Miller" <davem@davemloft.net>
-> > Cc: Eric Dumazet <edumazet@google.com>
-> > Cc: Jakub Kicinski <kuba@kernel.org>
-> > Cc: Paolo Abeni <pabeni@redhat.com>
-> > Cc: Simon Horman <horms@kernel.org>
-> > Cc: Leon Romanovsky <leon@kernel.org>
-> > Cc: Arnd Bergmann <arnd@arndb.de>
-> > Cc: Christian Brauner <brauner@kernel.org>
-> > Cc: Kuniyuki Iwashima <kuniyu@google.com>
-> > Cc: Lennart Poettering <mzxreary@0pointer.de>
-> > Cc: Luca Boccassi <bluca@debian.org>
-> > Cc: David Rheinsberg <david@readahead.eu>
-> > Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.c=
-om>
-> > ---
-> > v2:
-> >         - renamed __skb_set_pid() -> unix_set_pid_to_skb() [ as Kuniyuk=
-i suggested ]
-> >         - get rid of extra helper (__scm_set_cred()) I've introduced be=
-fore [ as Kuniyuki suggested ]
-> >         - s/__inline__/inline/ for functions I touched [ as Kuniyuki su=
-ggested ]
-> >         - get rid of chunk in unix_destruct_scm() with NULLifying UNIXC=
-B(skb).pid [ as Kuniyuki suggested ]
-> >         - added proper error handling in scm_send() for scm_set_cred() =
-return value [ found by me during rework ]
-> > ---
-> >  include/net/scm.h  | 32 ++++++++++++++++++++++++--------
-> >  net/core/scm.c     |  6 ++++++
-> >  net/unix/af_unix.c | 33 +++++++++++++++++++++++++++++----
-> >  3 files changed, 59 insertions(+), 12 deletions(-)
-> >
-> > diff --git a/include/net/scm.h b/include/net/scm.h
-> > index 84c4707e78a5..597a40779269 100644
-> > --- a/include/net/scm.h
-> > +++ b/include/net/scm.h
-> > @@ -8,6 +8,7 @@
-> >  #include <linux/file.h>
-> >  #include <linux/security.h>
-> >  #include <linux/pid.h>
-> > +#include <linux/pidfs.h>
-> >  #include <linux/nsproxy.h>
-> >  #include <linux/sched/signal.h>
-> >  #include <net/compat.h>
-> > @@ -66,19 +67,28 @@ static __inline__ void unix_get_peersec_dgram(struc=
-t socket *sock, struct scm_co
-> >  { }
-> >  #endif /* CONFIG_SECURITY_NETWORK */
-> >
-> > -static __inline__ void scm_set_cred(struct scm_cookie *scm,
-> > -                                   struct pid *pid, kuid_t uid, kgid_t=
- gid)
-> > +static inline int scm_set_cred(struct scm_cookie *scm,
-> > +                              struct pid *pid, bool pidfs_register,
-> > +                              kuid_t uid, kgid_t gid)
-> >  {
-> > -       scm->pid  =3D get_pid(pid);
-> > +       if (pidfs_register) {
-> > +               int err =3D pidfs_register_pid(pid);
-> > +               if (err)
-> > +                       return err;
-> > +       }
-> > +
-> > +       scm->pid =3D get_pid(pid);
-> > +
-> >         scm->creds.pid =3D pid_vnr(pid);
-> >         scm->creds.uid =3D uid;
-> >         scm->creds.gid =3D gid;
-> > +       return 0;
-> >  }
-> >
-> >  static __inline__ void scm_destroy_cred(struct scm_cookie *scm)
-> >  {
-> >         put_pid(scm->pid);
-> > -       scm->pid  =3D NULL;
-> > +       scm->pid =3D NULL;
->
-> Could you split these double-space changes to another
-> patch to make review easier ?
 
-Hi Kuniyuki,
 
-Sure, will do!
+On 7/3/2025 12:31 PM, Badal Nilawar wrote:
+> Load late binding firmware
+>
+> v2:
+>   - s/EAGAIN/EBUSY/
+>   - Flush worker in suspend and driver unload (Daniele)
+> v3:
+>   - Use retry interval of 6s, in steps of 200ms, to allow
+>     other OS components release MEI CL handle (Sasha)
+> v4:
+>   - return -ENODEV if component not added (Daniele)
+>   - parse and print status returned by csc
+> v5:
+>   - Use payload to check firmware valid (Daniele)
+>   - Obtain the RPM reference before scheduling the worker to
+>     ensure the device remains awake until the worker completes
+>     firmware loading (Rodrigo)
+> v6:
+>   - In case of error donot re-attempt fw download (Daniele)
+>
+> Signed-off-by: Badal Nilawar <badal.nilawar@intel.com>
+> ---
+>   drivers/gpu/drm/xe/xe_late_bind_fw.c       | 155 ++++++++++++++++++++-
+>   drivers/gpu/drm/xe/xe_late_bind_fw.h       |   1 +
+>   drivers/gpu/drm/xe/xe_late_bind_fw_types.h |   7 +
+>   3 files changed, 162 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/xe/xe_late_bind_fw.c b/drivers/gpu/drm/xe/xe_late_bind_fw.c
+> index ab83ab06aee7..4e8a2256802d 100644
+> --- a/drivers/gpu/drm/xe/xe_late_bind_fw.c
+> +++ b/drivers/gpu/drm/xe/xe_late_bind_fw.c
+> @@ -16,6 +16,20 @@
+>   #include "xe_late_bind_fw.h"
+>   #include "xe_pcode.h"
+>   #include "xe_pcode_api.h"
+> +#include "xe_pm.h"
+> +
+> +/*
+> + * The component should load quite quickly in most cases, but it could take
+> + * a bit. Using a very big timeout just to cover the worst case scenario
+> + */
+> +#define LB_INIT_TIMEOUT_MS 20000
+> +
+> +/*
+> + * Retry interval set to 6 seconds, in steps of 200 ms, to allow time for
+> + * other OS components to release the MEI CL handle
+> + */
+> +#define LB_FW_LOAD_RETRY_MAXCOUNT 30
+> +#define LB_FW_LOAD_RETRY_PAUSE_MS 200
+>   
+>   static const u32 fw_id_to_type[] = {
+>   		[XE_LB_FW_FAN_CONTROL] = CSC_LATE_BINDING_TYPE_FAN_CONTROL,
+> @@ -31,6 +45,30 @@ late_bind_to_xe(struct xe_late_bind *late_bind)
+>   	return container_of(late_bind, struct xe_device, late_bind);
+>   }
+>   
+> +static const char *xe_late_bind_parse_status(uint32_t status)
+> +{
+> +	switch (status) {
+> +	case CSC_LATE_BINDING_STATUS_SUCCESS:
+> +		return "success";
+> +	case CSC_LATE_BINDING_STATUS_4ID_MISMATCH:
+> +		return "4Id Mismatch";
+> +	case CSC_LATE_BINDING_STATUS_ARB_FAILURE:
+> +		return "ARB Failure";
+> +	case CSC_LATE_BINDING_STATUS_GENERAL_ERROR:
+> +		return "General Error";
+> +	case CSC_LATE_BINDING_STATUS_INVALID_PARAMS:
+> +		return "Invalid Params";
+> +	case CSC_LATE_BINDING_STATUS_INVALID_SIGNATURE:
+> +		return "Invalid Signature";
+> +	case CSC_LATE_BINDING_STATUS_INVALID_PAYLOAD:
+> +		return "Invalid Payload";
+> +	case CSC_LATE_BINDING_STATUS_TIMEOUT:
+> +		return "Timeout";
+> +	default:
+> +		return "Unknown error";
+> +	}
+> +}
+> +
+>   static int xe_late_bind_fw_num_fans(struct xe_late_bind *late_bind)
+>   {
+>   	struct xe_device *xe = late_bind_to_xe(late_bind);
+> @@ -44,6 +82,99 @@ static int xe_late_bind_fw_num_fans(struct xe_late_bind *late_bind)
+>   		return 0;
+>   }
+>   
+> +static void xe_late_bind_wait_for_worker_completion(struct xe_late_bind *late_bind)
+> +{
+> +	struct xe_device *xe = late_bind_to_xe(late_bind);
+> +	struct xe_late_bind_fw *lbfw;
+> +	int fw_id;
+> +
+> +	for (fw_id = 0; fw_id < XE_LB_FW_MAX_ID; fw_id++) {
+> +		lbfw = &late_bind->late_bind_fw[fw_id];
+> +		if (lbfw->payload && late_bind->wq) {
+> +			drm_dbg(&xe->drm, "Flush work: load %s firmware\n",
+> +				fw_id_to_name[lbfw->id]);
+> +			flush_work(&lbfw->work);
+> +		}
+> +	}
+> +}
+> +
+> +static void xe_late_bind_work(struct work_struct *work)
+> +{
+> +	struct xe_late_bind_fw *lbfw = container_of(work, struct xe_late_bind_fw, work);
+> +	struct xe_late_bind *late_bind = container_of(lbfw, struct xe_late_bind,
+> +						      late_bind_fw[lbfw->id]);
+> +	struct xe_device *xe = late_bind_to_xe(late_bind);
+> +	int retry = LB_FW_LOAD_RETRY_MAXCOUNT;
+> +	int ret;
+> +	int slept;
+> +
+> +	xe_device_assert_mem_access(xe);
+> +
+> +	/* we can queue this before the component is bound */
+> +	for (slept = 0; slept < LB_INIT_TIMEOUT_MS; slept += 100) {
+> +		if (late_bind->component.ops)
+> +			break;
+> +		msleep(100);
+> +	}
+> +
+> +	if (!late_bind->component.ops) {
+> +		drm_err(&xe->drm, "Late bind component not bound\n");
+> +		/* Do not re-attempt fw load */
+> +		drmm_kfree(&xe->drm, (void *)lbfw->payload);
+> +		lbfw->payload = NULL;
+> +		goto out;
+> +	}
+> +
+> +	drm_dbg(&xe->drm, "Load %s firmware\n", fw_id_to_name[lbfw->id]);
+> +
+> +	do {
+> +		ret = late_bind->component.ops->push_config(late_bind->component.mei_dev,
+> +							    lbfw->type, lbfw->flags,
+> +							    lbfw->payload, lbfw->payload_size);
+> +		if (!ret)
+> +			break;
+> +		msleep(LB_FW_LOAD_RETRY_PAUSE_MS);
+> +	} while (--retry && ret == -EBUSY);
+> +
+> +	if (!ret) {
+> +		drm_dbg(&xe->drm, "Load %s firmware successful\n",
+> +			fw_id_to_name[lbfw->id]);
+> +		goto out;
+> +	}
+> +
+> +	if (ret > 0)
+> +		drm_err(&xe->drm, "Load %s firmware failed with err %d, %s\n",
+> +			fw_id_to_name[lbfw->id], ret, xe_late_bind_parse_status(ret));
+> +	else
+> +		drm_err(&xe->drm, "Load %s firmware failed with err %d",
+> +			fw_id_to_name[lbfw->id], ret);
+> +	/* Do not re-attempt fw load */
+> +	drmm_kfree(&xe->drm, (void *)lbfw->payload);
+> +	lbfw->payload = NULL;
+> +
+> +out:
+> +	xe_pm_runtime_put(xe);
+> +}
+> +
+> +int xe_late_bind_fw_load(struct xe_late_bind *late_bind)
+> +{
+> +	struct xe_device *xe = late_bind_to_xe(late_bind);
+> +	struct xe_late_bind_fw *lbfw;
+> +	int fw_id;
+> +
+> +	if (!late_bind->component_added)
+> +		return -ENODEV;
+> +
+> +	for (fw_id = 0; fw_id < XE_LB_FW_MAX_ID; fw_id++) {
+> +		lbfw = &late_bind->late_bind_fw[fw_id];
+> +		if (lbfw->payload) {
+> +			xe_pm_runtime_get_noresume(xe);
+> +			queue_work(late_bind->wq, &lbfw->work);
+> +		}
+> +	}
+> +	return 0;
+> +}
+> +
+>   static int __xe_late_bind_fw_init(struct xe_late_bind *late_bind, u32 fw_id)
+>   {
+>   	struct xe_device *xe = late_bind_to_xe(late_bind);
+> @@ -97,6 +228,7 @@ static int __xe_late_bind_fw_init(struct xe_late_bind *late_bind, u32 fw_id)
+>   
+>   	memcpy((void *)lb_fw->payload, fw->data, lb_fw->payload_size);
+>   	release_firmware(fw);
+> +	INIT_WORK(&lb_fw->work, xe_late_bind_work);
+>   
+>   	return 0;
+>   }
+> @@ -106,11 +238,16 @@ static int xe_late_bind_fw_init(struct xe_late_bind *late_bind)
+>   	int ret;
+>   	int fw_id;
+>   
+> +	late_bind->wq = alloc_ordered_workqueue("late-bind-ordered-wq", 0);
+> +	if (!late_bind->wq)
+> +		return -ENOMEM;
+> +
+>   	for (fw_id = 0; fw_id < XE_LB_FW_MAX_ID; fw_id++) {
+>   		ret = __xe_late_bind_fw_init(late_bind, fw_id);
+>   		if (ret)
+>   			return ret;
+>   	}
+> +
+>   	return 0;
+>   }
+>   
+> @@ -132,6 +269,8 @@ static void xe_late_bind_component_unbind(struct device *xe_kdev,
+>   	struct xe_device *xe = kdev_to_xe_device(xe_kdev);
+>   	struct xe_late_bind *late_bind = &xe->late_bind;
+>   
+> +	xe_late_bind_wait_for_worker_completion(late_bind);
+> +
+>   	late_bind->component.ops = NULL;
+>   }
+>   
+> @@ -145,7 +284,15 @@ static void xe_late_bind_remove(void *arg)
+>   	struct xe_late_bind *late_bind = arg;
+>   	struct xe_device *xe = late_bind_to_xe(late_bind);
+>   
+> +	xe_late_bind_wait_for_worker_completion(late_bind);
+> +
+> +	late_bind->component_added = false;
+> +
+>   	component_del(xe->drm.dev, &xe_late_bind_component_ops);
+> +	if (late_bind->wq) {
+> +		destroy_workqueue(late_bind->wq);
+> +		late_bind->wq = NULL;
+> +	}
+>   }
+>   
+>   /**
+> @@ -173,9 +320,15 @@ int xe_late_bind_init(struct xe_late_bind *late_bind)
+>   		return err;
+>   	}
+>   
+> +	late_bind->component_added = true;
+> +
+>   	err = devm_add_action_or_reset(xe->drm.dev, xe_late_bind_remove, late_bind);
+>   	if (err)
+>   		return err;
+>   
+> -	return xe_late_bind_fw_init(late_bind);
+> +	err = xe_late_bind_fw_init(late_bind);
+> +	if (err)
+> +		return err;
+> +
+> +	return xe_late_bind_fw_load(late_bind);
+>   }
+> diff --git a/drivers/gpu/drm/xe/xe_late_bind_fw.h b/drivers/gpu/drm/xe/xe_late_bind_fw.h
+> index 4c73571c3e62..28d56ed2bfdc 100644
+> --- a/drivers/gpu/drm/xe/xe_late_bind_fw.h
+> +++ b/drivers/gpu/drm/xe/xe_late_bind_fw.h
+> @@ -11,5 +11,6 @@
+>   struct xe_late_bind;
+>   
+>   int xe_late_bind_init(struct xe_late_bind *late_bind);
+> +int xe_late_bind_fw_load(struct xe_late_bind *late_bind);
+>   
+>   #endif
+> diff --git a/drivers/gpu/drm/xe/xe_late_bind_fw_types.h b/drivers/gpu/drm/xe/xe_late_bind_fw_types.h
+> index cd3143256a7c..f650cb8641b3 100644
+> --- a/drivers/gpu/drm/xe/xe_late_bind_fw_types.h
+> +++ b/drivers/gpu/drm/xe/xe_late_bind_fw_types.h
+> @@ -9,6 +9,7 @@
+>   #include <linux/iosys-map.h>
+>   #include <linux/mutex.h>
+>   #include <linux/types.h>
+> +#include <linux/workqueue.h>
+>   
+>   #define XE_LB_MAX_PAYLOAD_SIZE SZ_4K
+>   
+> @@ -36,6 +37,8 @@ struct xe_late_bind_fw {
+>   	const u8  *payload;
+>   	/** @late_bind_fw.payload_size: late binding blob payload_size */
+>   	size_t payload_size;
+> +	/** @late_bind_fw.work: worker to upload latebind blob */
+> +	struct work_struct work;
+>   };
+>   
+>   /**
+> @@ -60,6 +63,10 @@ struct xe_late_bind {
+>   	struct xe_late_bind_component component;
+>   	/** @late_bind.late_bind_fw: late binding firmware array */
+>   	struct xe_late_bind_fw late_bind_fw[XE_LB_FW_MAX_ID];
+> +	/** @late_bind.wq: workqueue to submit request to download late bind blob */
+> +	struct workqueue_struct *wq;
+> +	/** @late_bind.component_added: whether the component has been added */
+> +	bool component_added;
 
->
->
-> >  }
-> >
-> >  static __inline__ void scm_destroy(struct scm_cookie *scm)
-> > @@ -88,14 +98,20 @@ static __inline__ void scm_destroy(struct scm_cooki=
-e *scm)
-> >                 __scm_destroy(scm);
-> >  }
-> >
-> > -static __inline__ int scm_send(struct socket *sock, struct msghdr *msg=
-,
-> > -                              struct scm_cookie *scm, bool forcecreds)
-> > +static inline int scm_send(struct socket *sock, struct msghdr *msg,
-> > +                          struct scm_cookie *scm, bool forcecreds)
-> >  {
-> >         memset(scm, 0, sizeof(*scm));
-> >         scm->creds.uid =3D INVALID_UID;
-> >         scm->creds.gid =3D INVALID_GID;
-> > -       if (forcecreds)
-> > -               scm_set_cred(scm, task_tgid(current), current_uid(), cu=
-rrent_gid());
-> > +
-> > +       if (forcecreds) {
-> > +               int err =3D scm_set_cred(scm, task_tgid(current), true,
-> > +                                      current_uid(), current_gid());
->
-> Do we need to pass true here ?
->
-> Given this series affects scm_pidfd_recv(), we don't need to
-> touch netlink path that is not allowed to call scm_recv_unix() ?
->
-> Then, all callers pass false to scm_set_cred() and
-> pidfs_register_pid() there will be unnecessary.
+The hooks run by CI spotted issues with the docs here. With those addressed:
 
-I agree. While it is safe to call pidfd_register_pid() for the netlink
-case too (and get pidfs dentry allocated),
-it is not really useful. Thanks for noticing this!
+Reviewed-by: Daniele Ceraolo Spurio <daniele.ceraolospurio@intel.com>
 
->
->
-> > +               if (err)
-> > +                       return err;
-> > +       }
-> > +
-> >         unix_get_peersec_dgram(sock, scm);
-> >         if (msg->msg_controllen <=3D 0)
-> >                 return 0;
-> > diff --git a/net/core/scm.c b/net/core/scm.c
-> > index 68441c024dd8..50dfec6f8a2b 100644
-> > --- a/net/core/scm.c
-> > +++ b/net/core/scm.c
-> > @@ -147,9 +147,15 @@ EXPORT_SYMBOL(__scm_destroy);
-> >
-> >  static inline int __scm_replace_pid(struct scm_cookie *scm, struct pid=
- *pid)
-> >  {
-> > +       int err;
-> > +
-> >         /* drop all previous references */
-> >         scm_destroy_cred(scm);
-> >
-> > +       err =3D pidfs_register_pid(pid);
-> > +       if (err)
-> > +               return err;
-> > +
-> >         scm->pid =3D pid;
-> >         scm->creds.pid =3D pid_vnr(pid);
-> >         return 0;
-> > diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
-> > index df2174d9904d..18c677683ddc 100644
-> > --- a/net/unix/af_unix.c
-> > +++ b/net/unix/af_unix.c
-> > @@ -1924,12 +1924,27 @@ static void unix_peek_fds(struct scm_cookie *sc=
-m, struct sk_buff *skb)
-> >         scm->fp =3D scm_fp_dup(UNIXCB(skb).fp);
-> >  }
-> >
-> > +static int unix_set_pid_to_skb(struct sk_buff *skb, struct pid *pid, b=
-ool pidfs_register)
-> > +{
-> > +       if (pidfs_register) {
-> > +               int err;
-> > +
-> > +               err =3D pidfs_register_pid(pid);
-> > +               if (err)
-> > +                       return err;
-> > +       }
-> > +
-> > +       UNIXCB(skb).pid =3D get_pid(pid);
-> > +       return 0;
-> > +}
-> > +
-> >  static void unix_destruct_scm(struct sk_buff *skb)
-> >  {
-> >         struct scm_cookie scm;
-> >
-> >         memset(&scm, 0, sizeof(scm));
-> > -       scm.pid  =3D UNIXCB(skb).pid;
-> > +       scm.pid =3D UNIXCB(skb).pid;
-> > +
-> >         if (UNIXCB(skb).fp)
-> >                 unix_detach_fds(&scm, skb);
-> >
-> > @@ -1943,7 +1958,10 @@ static int unix_scm_to_skb(struct scm_cookie *sc=
-m, struct sk_buff *skb, bool sen
-> >  {
-> >         int err =3D 0;
-> >
-> > -       UNIXCB(skb).pid =3D get_pid(scm->pid);
-> > +       err =3D unix_set_pid_to_skb(skb, scm->pid, false);
-> > +       if (unlikely(err))
->
-> This does not fail too.
->
-> Perhaps keep get_pid() here and move pidfs_register_pid()
-> to unix_maybe_add_creds(), that will look simpler.
+Daniele
 
-You are absolutely right. Thanks for pointing this out!
-Actually, this was really useful when pidfs_get_pid()/pidfs_put_pid()
-API was a thing [1],
-because in unix_set_pid_to_skb() we would call pidfs_get_pid() *or*
-pidfs_register_pid().
+>   };
+>   
+>   #endif
 
-But now, when lifetime rules for pidfs dentries are changed we don't
-have pidfs_get_pid()/pidfs_put_pid() API
-and we don't need this unix_set_pid_to_skb() helper anymore. So,
-basically it's post-vfs-rebase leftovers.
-
-[1] https://github.com/mihalicyn/linux/commit/6a80e241feeea40e9068922eac045=
-2566deccc61#diff-0553d076c243e06ae312480cb8cb52f1cebe1d80fc099d3842593e12c9=
-e0d4f3R1920-R1930
-
-Kind regards,
-Alex
-
->
->
-> > +               return err;
-> > +
-> >         UNIXCB(skb).uid =3D scm->creds.uid;
-> >         UNIXCB(skb).gid =3D scm->creds.gid;
-> >         UNIXCB(skb).fp =3D NULL;
-> > @@ -1957,7 +1975,8 @@ static int unix_scm_to_skb(struct scm_cookie *scm=
-, struct sk_buff *skb, bool sen
-> >
-> >  static void unix_skb_to_scm(struct sk_buff *skb, struct scm_cookie *sc=
-m)
-> >  {
-> > -       scm_set_cred(scm, UNIXCB(skb).pid, UNIXCB(skb).uid, UNIXCB(skb)=
-.gid);
-> > +       /* scm_set_cred() can't fail when pidfs_register =3D=3D false *=
-/
-> > +       scm_set_cred(scm, UNIXCB(skb).pid, false, UNIXCB(skb).uid, UNIX=
-CB(skb).gid);
-> >         unix_set_secdata(scm, skb);
-> >  }
-> >
-> > @@ -1971,6 +1990,7 @@ static void unix_skb_to_scm(struct sk_buff *skb, =
-struct scm_cookie *scm)
-> >   * We include credentials if source or destination socket
-> >   * asserted SOCK_PASSCRED.
-> >   *
-> > + * Context: May sleep.
-> >   * Return: On success zero, on error a negative error code is returned=
-.
-> >   */
-> >  static int unix_maybe_add_creds(struct sk_buff *skb, const struct sock=
- *sk,
-> > @@ -1980,7 +2000,12 @@ static int unix_maybe_add_creds(struct sk_buff *=
-skb, const struct sock *sk,
-> >                 return 0;
-> >
-> >         if (unix_may_passcred(sk) || unix_may_passcred(other)) {
->
-> I forgot to mention that this part will conflict with net-next.
->
-> I guess Christian will take this series via vfs tree ?
->
->
-> > -               UNIXCB(skb).pid =3D get_pid(task_tgid(current));
-> > +               int err;
-> > +
-> > +               err =3D unix_set_pid_to_skb(skb, task_tgid(current), tr=
-ue);
-> > +               if (unlikely(err))
-> > +                       return err;
-> > +
-> >                 current_uid_gid(&UNIXCB(skb).uid, &UNIXCB(skb).gid);
-> >         }
-> >
-> > --
-> > 2.43.0
-> >
 
