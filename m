@@ -1,202 +1,167 @@
-Return-Path: <linux-kernel+bounces-714445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3081CAF6802
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 04:30:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 376B7AF67EF
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 04:28:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10F951C4696F
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 02:30:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8FC24A1C6B
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 02:28:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C33B22FF37;
-	Thu,  3 Jul 2025 02:28:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3A9F1E5B70;
+	Thu,  3 Jul 2025 02:28:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="V1Cc7eRn"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gXx4bsi2"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 620441E9B3D;
-	Thu,  3 Jul 2025 02:28:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BB661DED5F
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 02:28:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751509727; cv=none; b=Jyr7CrVMYYKLLqnEZAny+urSg5zYWGhFsTEOQERc4XBXlZJcUSCe+e320YU68LqRWLEevujfyITrlKkIGSQDGs1+Hxoi5NT4NXX9/XhEGivzsvZwLGfksCmY+Wovo+Vdrenk2DF1heeT08wmpBWXfrOuVa2Vu7OtjWXIXmm7Ilo=
+	t=1751509719; cv=none; b=Z+06zfrP7zSAD5M7lQCAWmLurRA/qKRLqapXjfq2WETnywbZVCIXjtYOsaYNvE2xpVoYnVajYc6Y1Eq+o1CnCMdyZPcdJ92CtEgxEUhN8p0ADcnF+ERriTvc+AEW23W/RyxintKmorZ8gQz/An/QuD3GAIo12isaPEdR5tvw8Zs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751509727; c=relaxed/simple;
-	bh=O7I8j48HlYBDhUEVb9ZCLo9KU+Zf/hvRKPdw65xL0wY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lqJDr874KEVLUZMKB34Bkn8gUnQ8md93nEPckbVEeMH3ahetxyLjzjvUx3PTmbwiUjQIOutxNlVOLDcireeoDxBg6vnjMX2PGPQNneaFagt+aUVMKXGZ6UQcWncNxZZe/f+twbq3eA1le8i4aOkye9zl7PRF0NpEHgDWZfKCR+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=V1Cc7eRn; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751509726; x=1783045726;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=O7I8j48HlYBDhUEVb9ZCLo9KU+Zf/hvRKPdw65xL0wY=;
-  b=V1Cc7eRnbhqgVSy+Q8p9IUvRWf/kY8PgN+yCF/G0fjZ9J+ci77Vh05qv
-   anzsHVz2vR2pDYCdcoJPJ1ojIv9a8SslawLO9ejXjvYEMLgQWweCqI804
-   nbgNxGALZH1EmDbf6BLVx9Z63iM/0Boc5PHymwXzNM9A+zbVOImlB31hA
-   rFWMIYt8QKeQlB0O6zEi/pyb8OfSyQVpzYGcsPY8qievufLx1Piz2tEV+
-   NRw4oqiQxanoHUkHWYKkkhv93WyOzIPot9tKDBo4p6TTfim6DX5+KDv1L
-   Qrtjx95q4ISZSsPMdDcgDoQqYDdLQaJfBgEBiDjntMGPdk51SvzJWGXip
-   A==;
-X-CSE-ConnectionGUID: B6JgatueTy+8I+KOXwYGpQ==
-X-CSE-MsgGUID: u0q7qVuQSf+cmaVJl+zYrg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11482"; a="41450243"
-X-IronPort-AV: E=Sophos;i="6.16,283,1744095600"; 
-   d="scan'208";a="41450243"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2025 19:28:42 -0700
-X-CSE-ConnectionGUID: cbWRAzWaSs6xgYHBA3K01A==
-X-CSE-MsgGUID: zY2tifA5TDyy9EkeDcQqTQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,283,1744095600"; 
-   d="scan'208";a="154594046"
-Received: from mgerlach-mobl1.amr.corp.intel.com (HELO debox1-desk4.lan) ([10.124.223.28])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2025 19:28:41 -0700
-From: "David E. Box" <david.e.box@linux.intel.com>
-To: linux-kernel@vger.kernel.org,
-	platform-driver-x86@vger.kernel.org,
-	david.e.box@linux.intel.com,
-	srinivas.pandruvada@linux.intel.com,
-	andriy.shevchenko@linux.intel.com,
-	ilpo.jarvinen@linux.intel.com,
-	tony.luck@intel.com,
-	xi.pardee@linux.intel.com
-Cc: hdegoede@redhat.com
-Subject: [PATCH V3 07/15] platform/x86/intel/vsec: Add new Discovery feature
-Date: Wed,  2 Jul 2025 19:28:22 -0700
-Message-ID: <20250703022832.1302928-8-david.e.box@linux.intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250703022832.1302928-1-david.e.box@linux.intel.com>
-References: <20250703022832.1302928-1-david.e.box@linux.intel.com>
+	s=arc-20240116; t=1751509719; c=relaxed/simple;
+	bh=oI+NQH+nFJLnW1KEYVWh8bCi6cQjiUciyVOdI8RQ9jc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PSkkpE23CcC0FP+98gUqaIFbZh9FRKcDzh12B2jDVXZd/lPlDXOOp6ZrH5R/cQQC/upXLkAHa7CHlLO3vhisQJiVKDCPk6XNQVj7l2h4PxjjxeRnhip2bPa9qY19YJsjDu61i2g1PnOiNIHUempZtZjr/iD+LoYwPNMBNxJ3UI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=gXx4bsi2; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-7399a2dc13fso6223487b3a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 19:28:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1751509717; x=1752114517; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=t2nTXIo+CvpirZ9A1QVaQpQOlJd4MreiW9qDAdilxYI=;
+        b=gXx4bsi27gy8C/9QSu11WuXlJ2tNIZ3xTcmLj8+js07ghOG5/TIusM5Enf3iism0En
+         LmMygaeq8TWHzB9s/5xAZZToWDjJ4CDaNCf2uVze4KKKUP/UZAjcOEs04St4fAhgxXkp
+         tfG9A3LuLXDxV2Ty3D18qbtZxQN6L2LF3KZAY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751509717; x=1752114517;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=t2nTXIo+CvpirZ9A1QVaQpQOlJd4MreiW9qDAdilxYI=;
+        b=gPRZya4r053ASQk0QoxniCnsLP7FEq8yaLP4pDM+fjzZvfeqRMD8PQzsRnObyOWOoU
+         4LlHi+qEePTg0aQ90W2lF+zWPu9a+vk04Mh1Isq4NWfUzfIgcjqYi5504FM/05CxI4Oa
+         ZhXJeEi6Q4Yvz2OWOUnHT5knSnowQ3pjPeqlUIZqZuCJJjehB5wCyBhGAFcsE3H7c8jm
+         XaZv7HW7/Q/ZI6i65TNwTv6hvD9RetbOQAcmEb16ruOmiAv9UeZ4kxvEcFjzudEe+erG
+         RIKF3AOyhd57BbiGOL8qnZuG0GLtfAovxwHFVC/hRgRUd9gUGcPNAc/5eb7nHrzY6+xL
+         gsJw==
+X-Forwarded-Encrypted: i=1; AJvYcCV4e6Hr+ld2S6yxpJR6+z/VHodWQwldvAvaYOLXhMJRqcmScC2KWWu2Ch7bKDU7wtgGd4Iw7qKWiWBS0ho=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIoIkkmgE41JlMsdUl+Nhy9iW4ruoqK2y202/twlrMPxvPxbJa
+	/4nSGfEZ9Gv2RskdryheMJ07c7RvH8pff7lbVIwD1uUArPB7eGmctgfqFjsFPWvY7g==
+X-Gm-Gg: ASbGncsdF0Tyq8Txubf6lmKJkZgawj25BvgPtueGrgpBv6aHYUNItlIk4kVpsIgMfiq
+	tg19Jen7hm7GvMuw5i9wEoMuqP39mO6rfYGrLvNRdWNHWXyMDyBa6cWN9HEXPAmf/EH9H7XgW2m
+	8fh1sdMt20M0VBEIzdzvJvN9nwXuJ6XMIe+o3y3i2GaZNckKgfXJ7ljkDWBh50uw3lg9xaAwoUy
+	vo7hG5an+yFWpcrrkBivPTkQ372N2JeQUcLxIb0CmR3yfh2JbQvIz3RHbghsW/PHUFPdHyFq3oP
+	3EqMA2YxWZe3HSGZfkuFrovmGvpMkwB5DBfA6WVQcDEErnLirWamQ5oChiBlOFb8uA==
+X-Google-Smtp-Source: AGHT+IF0mvA6yS/npwsiNYiL0/8VVavPM/4qMbTse5ZctfFIAIwQSgruKczXUi/oxdeocj+35zKyHA==
+X-Received: by 2002:a05:6a00:3d11:b0:748:de24:1ade with SMTP id d2e1a72fcca58-74c9980d533mr2410295b3a.7.1751509716701;
+        Wed, 02 Jul 2025 19:28:36 -0700 (PDT)
+Received: from google.com ([2401:fa00:8f:203:8e3f:7c33:158f:349b])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74af541d23fsm15895056b3a.59.2025.07.02.19.28.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Jul 2025 19:28:35 -0700 (PDT)
+Date: Thu, 3 Jul 2025 11:28:23 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: David Hildenbrand <david@redhat.com>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-doc@vger.kernel.org, 
+	linuxppc-dev@lists.ozlabs.org, virtualization@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
+	Andrew Morton <akpm@linux-foundation.org>, Jonathan Corbet <corbet@lwn.net>, 
+	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
+	Jerrin Shaji George <jerrin.shaji-george@broadcom.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Michael S. Tsirkin" <mst@redhat.com>, 
+	Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+	Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Zi Yan <ziy@nvidia.com>, 
+	Matthew Brost <matthew.brost@intel.com>, Joshua Hahn <joshua.hahnjy@gmail.com>, 
+	Rakie Kim <rakie.kim@sk.com>, Byungchul Park <byungchul@sk.com>, 
+	Gregory Price <gourry@gourry.net>, Ying Huang <ying.huang@linux.alibaba.com>, 
+	Alistair Popple <apopple@nvidia.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
+	Michal Hocko <mhocko@suse.com>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
+	Minchan Kim <minchan@kernel.org>, Brendan Jackman <jackmanb@google.com>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Jason Gunthorpe <jgg@ziepe.ca>, 
+	John Hubbard <jhubbard@nvidia.com>, Peter Xu <peterx@redhat.com>, Xu Xin <xu.xin16@zte.com.cn>, 
+	Chengming Zhou <chengming.zhou@linux.dev>, Miaohe Lin <linmiaohe@huawei.com>, 
+	Naoya Horiguchi <nao.horiguchi@gmail.com>, Oscar Salvador <osalvador@suse.de>, 
+	Rik van Riel <riel@surriel.com>, Harry Yoo <harry.yoo@oracle.com>, 
+	Qi Zheng <zhengqi.arch@bytedance.com>, Shakeel Butt <shakeel.butt@linux.dev>
+Subject: Re: [PATCH v1 12/29] mm/zsmalloc: stop using __ClearPageMovable()
+Message-ID: <5thkl2h5qan5gm7putqd4o6yn5ht2c5zeei5qbjoni677xr7po@kbfokuekiubj>
+References: <20250630130011.330477-1-david@redhat.com>
+ <20250630130011.330477-13-david@redhat.com>
+ <zmsay3nrpmjec5n7v44svfa7iwl6vklqan4dgjn4wpvsr5hqt7@cqfwdvhncgrg>
+ <757cf6b9-730b-4b12-9a3d-27699e20e3ac@redhat.com>
+ <ugm7j66msq2w2hd3jg3thsxd2mv7vudozal3nblnfemclvut64@yp7d6vgesath>
+ <11de6ae0-d4ec-43d5-a82e-146d82f17fff@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <11de6ae0-d4ec-43d5-a82e-146d82f17fff@redhat.com>
 
-Add the PCIe VSEC ID for new Intel Platform Monitoring Technology
-Capability Discovery feature. Discovery provides detailed information for
-the various Intel VSEC features. Also make the driver a supplier for
-TPMI and Telemetry drivers which will use the information.
+On (25/07/02 12:55), David Hildenbrand wrote:
+> On 02.07.25 12:10, Sergey Senozhatsky wrote:
+> > On (25/07/02 10:25), David Hildenbrand wrote:
+> > > On 02.07.25 10:11, Sergey Senozhatsky wrote:
+> > > > On (25/06/30 14:59), David Hildenbrand wrote:
+> > > > [..]
+> > > > >    static int zs_page_migrate(struct page *newpage, struct page *page,
+> > > > > @@ -1736,6 +1736,13 @@ static int zs_page_migrate(struct page *newpage, struct page *page,
+> > > > >    	unsigned long old_obj, new_obj;
+> > > > >    	unsigned int obj_idx;
+> > > > > +	/*
+> > > > > +	 * TODO: nothing prevents a zspage from getting destroyed while
+> > > > > +	 * isolated: we should disallow that and defer it.
+> > > > > +	 */
+> > > > 
+> > > > Can you elaborate?
+> > > 
+> > > We can only free a zspage in free_zspage() while the page is locked.
+> > > 
+> > > After we isolated a zspage page for migration (under page lock!), we drop
+> >                        ^^ a physical page? (IOW zspage chain page?)
+> > 
+> > > the lock again, to retake the lock when trying to migrate it.
+> > > 
+> > > That means, there is a window where a zspage can be freed although the page
+> > > is isolated for migration.
+> > 
+> > I see, thanks.  Looks somewhat fragile.  Is this a new thing?
+> 
+> No, it's been like that forever. And I was surprised that only zsmalloc
+> behaves that way
 
-Signed-off-by: David E. Box <david.e.box@linux.intel.com>
----
+Oh, that makes two of us.
 
-Changes in v3:
-  - No changes
+> > > While we currently keep that working (as far as I can see), in the future we
+> > > want to remove that support from the core.
+> > 
+> > Maybe comment can more explicitly distinguish zspage isolation and
+> > physical page (zspage chain) isolation?  zspages can get isolated
+> > for compaction (defragmentation), for instance, which is a different
+> > form of isolation.
+> 
+> Well, it's confusing, as we have MM compaction (-> migration) and apparently
+> zs_compact.
 
-Changes in v2:
-  - Add missing comma in oobmsm_deps[]
+True.
 
- drivers/platform/x86/intel/vsec.c | 26 ++++++++++++++++++++++++--
- include/linux/intel_vsec.h        |  4 +++-
- 2 files changed, 27 insertions(+), 3 deletions(-)
+> I'll try to clarify that we are talking about isolation for page migration
+> purposes.
 
-diff --git a/drivers/platform/x86/intel/vsec.c b/drivers/platform/x86/intel=
-/vsec.c
-index 30e558af6888..4d76f1ac3c8c 100644
---- a/drivers/platform/x86/intel/vsec.c
-+++ b/drivers/platform/x86/intel/vsec.c
-@@ -66,6 +66,9 @@ static const char *intel_vsec_name(enum intel_vsec_id id)
- 	case VSEC_ID_TPMI:
- 		return "tpmi";
-=20
-+	case VSEC_ID_DISCOVERY:
-+		return "discovery";
-+
- 	default:
- 		return NULL;
- 	}
-@@ -84,6 +87,8 @@ static bool intel_vsec_supported(u16 id, unsigned long ca=
-ps)
- 		return !!(caps & VSEC_CAP_SDSI);
- 	case VSEC_ID_TPMI:
- 		return !!(caps & VSEC_CAP_TPMI);
-+	case VSEC_ID_DISCOVERY:
-+		return !!(caps & VSEC_CAP_DISCOVERY);
- 	default:
- 		return false;
- 	}
-@@ -138,6 +143,8 @@ static bool vsec_driver_present(int cap_id)
- 		return IS_ENABLED(CONFIG_INTEL_SDSI);
- 	case VSEC_CAP_TPMI:
- 		return IS_ENABLED(CONFIG_INTEL_TPMI);
-+	case VSEC_CAP_DISCOVERY:
-+		return IS_ENABLED(CONFIG_INTEL_PMT_DISCOVERY);
- 	default:
- 		return false;
- 	}
-@@ -392,6 +399,9 @@ static int get_cap_id(u32 header_id, unsigned long *cap=
-_id)
- 	case VSEC_ID_TPMI:
- 		*cap_id =3D ilog2(VSEC_CAP_TPMI);
- 		break;
-+	case VSEC_ID_DISCOVERY:
-+		*cap_id =3D ilog2(VSEC_CAP_DISCOVERY);
-+		break;
- 	default:
- 		return -EINVAL;
- 	}
-@@ -681,14 +691,26 @@ static const struct intel_vsec_platform_info mtl_info=
- =3D {
- 	.caps =3D VSEC_CAP_TELEMETRY,
- };
-=20
-+static const struct vsec_feature_dependency oobmsm_deps[] =3D {
-+	{
-+		.feature =3D VSEC_CAP_TELEMETRY,
-+		.supplier_bitmap =3D VSEC_CAP_DISCOVERY,
-+	},
-+};
-+
- /* OOBMSM info */
- static const struct intel_vsec_platform_info oobmsm_info =3D {
--	.caps =3D VSEC_CAP_TELEMETRY | VSEC_CAP_SDSI | VSEC_CAP_TPMI,
-+	.caps =3D VSEC_CAP_TELEMETRY | VSEC_CAP_SDSI | VSEC_CAP_TPMI |
-+		VSEC_CAP_DISCOVERY,
-+	.deps =3D oobmsm_deps,
-+	.num_deps =3D ARRAY_SIZE(oobmsm_deps),
- };
-=20
- /* DMR OOBMSM info */
- static const struct intel_vsec_platform_info dmr_oobmsm_info =3D {
--	.caps =3D VSEC_CAP_TELEMETRY | VSEC_CAP_TPMI,
-+	.caps =3D VSEC_CAP_TELEMETRY | VSEC_CAP_TPMI | VSEC_CAP_DISCOVERY,
-+	.deps =3D oobmsm_deps,
-+	.num_deps =3D ARRAY_SIZE(oobmsm_deps),
- };
-=20
- /* TGL info */
-diff --git a/include/linux/intel_vsec.h b/include/linux/intel_vsec.h
-index 71067afaca99..a07796d7d43b 100644
---- a/include/linux/intel_vsec.h
-+++ b/include/linux/intel_vsec.h
-@@ -16,7 +16,8 @@
- #define VSEC_CAP_CRASHLOG	BIT(3)
- #define VSEC_CAP_SDSI		BIT(4)
- #define VSEC_CAP_TPMI		BIT(5)
--#define VSEC_FEATURE_COUNT	6
-+#define VSEC_CAP_DISCOVERY	BIT(6)
-+#define VSEC_FEATURE_COUNT	7
-=20
- /* Intel DVSEC offsets */
- #define INTEL_DVSEC_ENTRIES		0xA
-@@ -33,6 +34,7 @@ enum intel_vsec_id {
- 	VSEC_ID_TELEMETRY	=3D 2,
- 	VSEC_ID_WATCHER		=3D 3,
- 	VSEC_ID_CRASHLOG	=3D 4,
-+	VSEC_ID_DISCOVERY	=3D 12,
- 	VSEC_ID_SDSI		=3D 65,
- 	VSEC_ID_TPMI		=3D 66,
- };
---=20
-2.43.0
-
+Thanks.
 
