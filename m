@@ -1,91 +1,97 @@
-Return-Path: <linux-kernel+bounces-715804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-715806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AABF9AF7E0A
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 18:39:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6C78AF7E0D
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 18:40:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A65E584BE0
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 16:39:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4E34544FC8
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 16:39:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D557D25A2B2;
-	Thu,  3 Jul 2025 16:39:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 553062566E9;
+	Thu,  3 Jul 2025 16:39:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V0mYxwTW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DJuR/T0G";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="VDi6FmiS"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40F3B259CB9
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 16:39:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40E372580E2
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 16:39:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751560780; cv=none; b=Gi4hJ+5Kcxwiw9EQvzc4RCkOakBl1PcSyIYWlea99ppF0pPtYPDxJR2RgRRl3DbbNDksuxwIlBMWwalAO6uDx5JYUH/0JPEHa0AhRw3E8/Aq0G8qeGwNfgW377xKgm9/xmGIcu3X9akMOY8uVOWm/RcFTC2v9478TTsF8hxkWiI=
+	t=1751560793; cv=none; b=BmRuZL/62sIKiciidv1+W0DnRlL13Lm8m+avznalBK3rlsaujroMzhPesuxCIhMmw2iyf3ka4jo6VWZL1cPMlI8WdpDIYuP7I6y2+3c3Dge7fXDfz9flFod4uklNlZ0A12wKbBQKyMgC/3jnFvKlQ4dbe2jWvsYbjHD2eyXIm2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751560780; c=relaxed/simple;
-	bh=WdgPxngTX8VmRp7AvbeAk+y0bbhMCt+pYEZaff3TjUA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MgI9roebIArwWYBxVbRay6NZDaO8aWBOCp/KtU8CQqF88BvRb/H/bQVzC2vg0VNH4XEWYbE7TBVBRAkwpYDWRqOoTl+TWAczSY6uRItEgszjHL+t8f0NcXbk6Fjrst6j9ou1bsf8NYy25tqWZMhES3dhbRfh10Haw0MjYJdBSf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V0mYxwTW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8ADE2C4CEED;
-	Thu,  3 Jul 2025 16:39:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751560778;
-	bh=WdgPxngTX8VmRp7AvbeAk+y0bbhMCt+pYEZaff3TjUA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=V0mYxwTWgqT/SaprqM4Hz6+4OMFs+JMUZzMUJ60f95xXTdHt51yfk6ZV5y6Wsoro0
-	 xKbmUKPPH8SNta23aMCBepvlF+5wcnHxa71GVF27dLN52/3dkFpIDddZGvS4+Qg9uf
-	 LCPifV0I7r/wDTcJsJxYhoJKdbQ89wkENODISw5LymzTgQvBrOio2pecjBs1fCJmWL
-	 Tl3QKoV7sjPJw8qhSF/87Ow5rfgkdM+yDX4HmIzH7P9KdMMDH2yKmaOs8LxnaDJq9l
-	 B7gxoPs/KGpSlCDmDd3P0ljdicWj1tG32DJ19q2M9j5+z76T38wwJNJRTY17wmLaro
-	 EzNXDdVlBZmqQ==
-Date: Thu, 3 Jul 2025 06:39:37 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Dennis Zhou <dennis@kernel.org>
-Cc: Jeongjun Park <aha310510@gmail.com>,
-	"Christoph Lameter (Ampere)" <cl@gentwo.org>,
-	akpm@linux-foundation.org, vbabka@suse.cz, rientjes@google.com,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	syzbot+e5bd32b79413e86f389e@syzkaller.appspotmail.com
-Subject: Re: [PATCH] mm/percpu: prevent concurrency problem for
- pcpu_nr_populated read with spin lock
-Message-ID: <aGaySZ-CO4l9PrC_@slm.duckdns.org>
-References: <20250702082749.141616-1-aha310510@gmail.com>
- <7b7d353f-f38b-3205-8fd4-1072dbf69cb6@gentwo.org>
- <CAO9qdTEidRnO4O_D7Z1jKZTyJadFyEyWBnfitTz8t1CdBaM1nw@mail.gmail.com>
- <aGYaXcB1CaA3BKEa@snowbird>
+	s=arc-20240116; t=1751560793; c=relaxed/simple;
+	bh=01jH8r428sLMr1d83sAv7rayhaGU9MJiVCYZ+lKY90Y=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=C7S/IdcEfcVhmLXoD8z/z88OStAKvvyYDpCDd/sHgSsmRVhQQTZ8uSNzk0/feKNPeysdnw/UMVD+x9FVEpyJycFjn2DBcksixt6xkZmHIJSZu3EDQkc1ZFiHrmNdW3OUKXiREhNB2AszoZu1P8PD8foL5fJpi+m1ALFscKrVsXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DJuR/T0G; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=VDi6FmiS; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1751560789;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jjOLwEZEZwj6P2cZondP2eaYEZTd2Boa5qjSBHDModI=;
+	b=DJuR/T0GsNfopXDnSPcTyaZ77QMbyWDWudCydZqj1R20l4csZI3pzmc6P8WYaOjMUxKQs/
+	2ZSqUQJ/lc/+z7OGomXF/F8zgIkgL55T6x3pOq5PXga8aIfajQC9Xb2q/LtGBALayPZ7gy
+	+ZV6B7NjyWGdkQvcaO2nSF//VKsZ5sbnVJEWQJrSEMkcU0M2GqNLAj6bz/8hUVDkNPQMq6
+	JR4tHEirmSORHx08aAjw/ia8ykAhe6VGAjvH00Br3HTIx5CoLrsnDr0ithECDHVkCqee1G
+	jqlVo8ZdLWw0hWRTd4BbXcXx3jr1h9XUL9JgsAvV5ghOlx1Mc4zciIAO2frPqw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1751560789;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jjOLwEZEZwj6P2cZondP2eaYEZTd2Boa5qjSBHDModI=;
+	b=VDi6FmiSJTl7dRJH5WanB3BzmI9QfNeyqElOW0KK/ZxJkACgTIdSDNc79HsNI+KjvOpSVZ
+	ejAsrSbh+puqqvCg==
+To: Nam Cao <namcao@linutronix.de>, Johannes Berg <johannes@sipsolutions.net>
+Cc: Marc Zyngier <maz@kernel.org>, Richard Weinberger <richard@nod.at>,
+ Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+ linux-um@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/1] um: virt-pci: Switch to
+ msi_create_parent_irq_domain()
+In-Reply-To: <20250630070249.oVVkmFZg@linutronix.de>
+References: <cover.1751266049.git.namcao@linutronix.de>
+ <5f0bd8e877e7bfdfb1a7e99d6b126caf6a7eea48.1751266049.git.namcao@linutronix.de>
+ <e64a4c40b0234fc265a74cb60633117dc6911518.camel@sipsolutions.net>
+ <20250630070249.oVVkmFZg@linutronix.de>
+Date: Thu, 03 Jul 2025 18:39:48 +0200
+Message-ID: <87plehtei3.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aGYaXcB1CaA3BKEa@snowbird>
+Content-Type: text/plain
 
-On Wed, Jul 02, 2025 at 10:51:25PM -0700, Dennis Zhou wrote:
-> > However, since pcpu_nr_pages(), which performs a read operation on
-> > pcpu_nr_populated, is not protected by pcpu_lock, races between read/write
-> > can easily occur.
-> > 
-> > Therefore, I think it is appropriate to protect it through pcpu_lock
-> > according to the comment written in the definition of pcpu_nr_populated.
-> 
-> You're right that this is a race condition, but this was an intention
-> choice done because the value read here is only being used to pass
-> information to userspace for /proc/meminfo. As Christoph mentioned, the
-> caller of pcpu_nr_pages() will never see an invalid value nor does it
-> really matter either.
+Johannes,
 
-This isn't an actual race condition. The value can be read atomically and an
-unprotected read can't lead to a result which wouldn't be possible when
-reading under the lock. ie. Whether the lock is added or not, the end result
-doesn't change. It's just that syzbot can't tell the difference.
+On Mon, Jun 30 2025 at 09:02, Nam Cao wrote:
+> On Mon, Jun 30, 2025 at 08:55:54AM +0200, Johannes Berg wrote:
+>> On Mon, 2025-06-30 at 08:51 +0200, Nam Cao wrote:
+>> > Move away from the legacy MSI domain setup, switch to use
+>> > msi_create_parent_irq_domain().
+>> > 
+>> 
+>> Do you want this to go through the UML tree, or is it a dependency
+>> somewhere else? In the latter case, I suppose you can add
+>
+> Please take it into the UML tree.
+>
+>> Acked-by: Johannes Berg <johannes@sipsolutions.net>
+>> Tested-by: Johannes Berg <johannes@sipsolutions.net>
 
-Thanks.
+are you picking this up or want me to queue it?
 
--- 
-tejun
+Thanks,
+
+        tglx
 
