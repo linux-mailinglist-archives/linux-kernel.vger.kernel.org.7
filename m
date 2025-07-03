@@ -1,131 +1,161 @@
-Return-Path: <linux-kernel+bounces-714737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65FF2AF6BE5
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 09:46:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77FEEAF6BC8
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 09:40:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88EB117D12B
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 07:46:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADE541C4673F
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 07:40:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52B4629A9D2;
-	Thu,  3 Jul 2025 07:46:24 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 549F429A309;
+	Thu,  3 Jul 2025 07:40:01 +0000 (UTC)
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86F4C225D6;
-	Thu,  3 Jul 2025 07:46:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77327299943;
+	Thu,  3 Jul 2025 07:39:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751528783; cv=none; b=TJHah3plaTj6VUitSMWjBp1UmWTn4ibjLi/xzec4udhKgbuIYtqbPt4Jpihtn8WueFwPvVG22fgJGJ5pUQtJ6JlZbNicoTO/lpzdpFYvdgG20robXYtpkDqyuw7h+BqkZcLX1ennHYPAL8P9pcEDhffp3FOrgeX1lEDBgV9zh6A=
+	t=1751528400; cv=none; b=QqgXr1+ntGlubKt780CYi18HRYvZJludIx1+IR2Sx1yk689rC8K8YlqwEfDqgB9DBxuVFXEMkbAQCEgvcOvfh3T4yW4+u8Fw4cnyVKy80AEDp7Oa7VKR3tTDR+h1Un5pOD6SCMHkaNwWtzrBGXFyiV7HoJS7+i5V+ZQfnnyTnFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751528783; c=relaxed/simple;
-	bh=r+YD10tRzN1dJakfT1q5TkAhM+OPXTqhuC53H/TYa6Q=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=jAhMyUbqzDWFO2zBplDtStuTLCEqKA5SF0DAQPbKS6AvAbOW8GdgmtTIeRFM0hJxZ6YMYMR8pg9eq6XJDnvK4fhvdcpkiyti4gsN17fzpgly4VFTCgPW9zYUFGC0NQZXS3kON+EafJa0GTR5lvse8l4rXlTrL3EtRyvqL1ovAFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bXpjm3VGYzYQv88;
-	Thu,  3 Jul 2025 15:46:20 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.252])
-	by mail.maildlp.com (Postfix) with ESMTP id 591C51A1268;
-	Thu,  3 Jul 2025 15:46:19 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP3 (Coremail) with SMTP id _Ch0CgAXeCVINWZohPkEAg--.7195S5;
-	Thu, 03 Jul 2025 15:46:19 +0800 (CST)
-From: libaokun@huaweicloud.com
-To: linux-ext4@vger.kernel.org
-Cc: tytso@mit.edu,
-	adilger.kernel@dilger.ca,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	yi.zhang@huawei.com,
-	yangerkun@huawei.com,
-	libaokun1@huawei.com,
-	libaokun@huaweicloud.com
-Subject: [PATCH 2/2] ext4: preserve SB_I_VERSION on remount
-Date: Thu,  3 Jul 2025 15:39:03 +0800
-Message-Id: <20250703073903.6952-2-libaokun@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20250703073903.6952-1-libaokun@huaweicloud.com>
-References: <20250703073903.6952-1-libaokun@huaweicloud.com>
+	s=arc-20240116; t=1751528400; c=relaxed/simple;
+	bh=rP0931FnXUSCvb/X8h4nM50BVTqhHPVNYhVe4tbfi+E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Q7IW3VAcLCDPXmHoXnnXiUy9FB9Rum9nDkKqbJymX1QTf51bC7/KPCCLI+cYH5wQ3xxZxLGPyGzgXdgzfNJvYEqI2gVGZVRvOV96QlWKTCM3WRXvCgdM9Yu6E5Me69MGB3MuhWxzcYRRIe8SBgD+zbaaOQ8xcjiSswUwqrvTavA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from [192.168.33.13] (unknown [210.73.43.2])
+	by APP-01 (Coremail) with SMTP id qwCowADnEqemM2ZoIjmpAA--.20643S2;
+	Thu, 03 Jul 2025 15:39:19 +0800 (CST)
+Message-ID: <a9cad07c-0973-43c3-89f3-95b856b575df@iscas.ac.cn>
+Date: Thu, 3 Jul 2025 15:39:18 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_Ch0CgAXeCVINWZohPkEAg--.7195S5
-X-Coremail-Antispam: 1UD129KBjvJXoW7AFWUWr48KFy8Aw17XrWkWFg_yoW8WrWDpr
-	1rCw10kr18XFn5uan7Gaykua43Aa4kCFyUurW8Ww13W3sFywnrKrZ7KFyYyFZ7XF4fXrsa
-	vF1I9F13XFyjyFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUPv14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_Jr4l82xGYIkIc2
-	x26xkF7I0E14v26r1I6r4UM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0
-	Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJw
-	A2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq3wAS
-	0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2
-	IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0
-	Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwAKzVCY07xG64k0F24lc7CjxV
-	Aaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2Iq
-	xVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r
-	1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY
-	6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67
-	AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuY
-	vjfUegAzUUUUU
-X-CM-SenderInfo: 5olet0hnxqqx5xdzvxpfor3voofrz/1tbiAgASBWhlEHNZ8AAAsS
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v3 0/5] Add Ethernet MAC support for SpacemiT K1
+To: Simon Horman <horms@kernel.org>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Alexandre Ghiti <alex@ghiti.fr>, Vivian Wang <uwu@dram.page>,
+ Lukas Bulwahn <lukas.bulwahn@redhat.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Parthiban Veerasooran <Parthiban.Veerasooran@microchip.com>,
+ netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
+ linux-kernel@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>
+References: <20250702-net-k1-emac-v3-0-882dc55404f3@iscas.ac.cn>
+ <20250703072317.GK41770@horms.kernel.org>
+Content-Language: en-US
+From: Vivian Wang <wangruikang@iscas.ac.cn>
+In-Reply-To: <20250703072317.GK41770@horms.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:qwCowADnEqemM2ZoIjmpAA--.20643S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxurWkXryDZFy7KrWUCry8Zrb_yoW5AF15pa
+	y8uFs0k3yDtrWxGrsruwnF9F40vws5tF15W3W8tryrua9xCF10yrZ2kr15uayDurZ3Cr12
+	yF1UAF1kGF98AFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9ab7Iv0xC_Kw4lb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I2
+	0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
+	A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xII
+	jxv20xvEc7CjxVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I
+	8E87Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
+	64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r126r1DMcIj6I8E87Iv67AKxVW8JVWxJw
+	Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l
+	c7CjxVAaw2AFwI0_GFv_Wrylc2xSY4AK67AK6r4xMxAIw28IcxkI7VAKI48JMxC20s026x
+	CaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_
+	JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r
+	1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_
+	Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8Jr
+	UvcSsGvfC2KfnxnUUI43ZEXa7IUYvjg3UUUUU==
+X-CM-SenderInfo: pzdqw2pxlnt03j6l2u1dvotugofq/
 
-From: Baokun Li <libaokun1@huawei.com>
+Hi Simon,
 
-IMA testing revealed that after an ext4 remount, file accesses triggered
-full measurements even without modifications, instead of skipping as
-expected when i_version is unchanged.
+On 7/3/25 15:23, Simon Horman wrote:
+> On Wed, Jul 02, 2025 at 02:01:39PM +0800, Vivian Wang wrote:
+>> SpacemiT K1 has two gigabit Ethernet MACs with RGMII and RMII support.
+>> Add a driver for them, as well as the supporting devicetree and bindings
+>> updates.
+>>
+>> Tested on BananaPi BPI-F3 and Milk-V Jupiter.
+>>
+>> I would like to note that even though some bit field names superficially
+>> resemble that of DesignWare MAC, all other differences point to it in
+>> fact being a custom design.
+>>
+>> Based on SpacemiT drivers [1].
+>>
+>> This series depends on reset controller support [2] and DMA buses [3]
+>> for K1. There are some minor conflicts resulting from both touching
+>> k1.dtsi, but it should just both be adding nodes.
+>>
+>> These patches can also be pulled from:
+>>
+>> https://github.com/dramforever/linux/tree/k1/ethernet/v3
+>>
+>> [1]: https://github.com/spacemit-com/linux-k1x
+>> [2]: https://lore.kernel.org/all/20250613011139.1201702-1-elder@riscstar.com
+>> [3]: https://lore.kernel.org/all/20250623-k1-dma-buses-rfc-wip-v1-0-c0144082061f@iscas.ac.cn
+>>
+>> ---
+>> Changes in v3:
+>> - Refactored and simplified emac_tx_mem_map
+>> - Addressed other minor v2 review comments
+>> - Removed what was patch 3 in v2, depend on DMA buses instead
+>> - DT nodes in alphabetical order where appropriate
+>> - Link to v2: https://lore.kernel.org/r/20250618-net-k1-emac-v2-0-94f5f07227a8@iscas.ac.cn
+>>
+>> Changes in v2:
+>> - dts: Put eth0 and eth1 nodes under a bus with dma-ranges
+>> - dts: Added Milk-V Jupiter
+>> - Fix typo in emac_init_hw() that broke the driver (Oops!)
+>> - Reformatted line lengths to under 80
+>> - Addressed other v1 review comments
+>> - Link to v1: https://lore.kernel.org/r/20250613-net-k1-emac-v1-0-cc6f9e510667@iscas.ac.cn
+>>
+>> ---
+>> Vivian Wang (5):
+>>       dt-bindings: net: Add support for SpacemiT K1
+>>       net: spacemit: Add K1 Ethernet MAC
+>>       riscv: dts: spacemit: Add Ethernet support for K1
+>>       riscv: dts: spacemit: Add Ethernet support for BPI-F3
+>>       riscv: dts: spacemit: Add Ethernet support for Jupiter
+> I'm unsure on the plan for merging this.  But it seems to me that the first
+> two patches ought to go though net-next. But in order for patches to
+> proceed through net-next the entire series ought to apply on that tree - so
+> CI can run.
+>
+> I'm not sure on the way forward.  But perhaps splitting the series in two:
+> the first two patches for net-next; and, the riscv patches targeted elsewhere
+> makes sense?
 
-Debugging showed `SB_I_VERSION` was cleared in reconfigure_super() during
-remount due to commit 1ff20307393e ("ext4: unconditionally enable the
-i_version counter") removing the fix from commit 960e0ab63b2e ("ext4: fix
-i_version handling on remount").
+Oops. I had not considered this originally, since v1 only depended on
+the reset stuff, which seemed like it was going to be taken up at
+v6.16-rc1. That did not happen, and this unfortunately also gained a
+dependency on DMA buses. So:
 
-To rectify this, `SB_I_VERSION` is always set for `fc->sb_flags` in
-ext4_init_fs_context(), instead of `sb->s_flags` in __ext4_fill_super(),
-ensuring it persists across all mounts.
+I will send a v4 fixing suggestions here but with only patch 1 and 2,
+i.e. bindings and driver. The DTS changes will go through the SpacemiT tree.
 
-Fixes: 1ff20307393e ("ext4: unconditionally enable the i_version counter")
-Signed-off-by: Baokun Li <libaokun1@huawei.com>
----
- fs/ext4/super.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Thanks for the suggestion.
 
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index 9203518786e4..ed1b36bd51c8 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -1998,6 +1998,9 @@ int ext4_init_fs_context(struct fs_context *fc)
- 	fc->fs_private = ctx;
- 	fc->ops = &ext4_context_ops;
- 
-+	/* i_version is always enabled now */
-+	fc->sb_flags |= SB_I_VERSION;
-+
- 	return 0;
- }
- 
-@@ -5316,9 +5319,6 @@ static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
- 	sb->s_flags = (sb->s_flags & ~SB_POSIXACL) |
- 		(test_opt(sb, POSIX_ACL) ? SB_POSIXACL : 0);
- 
--	/* i_version is always enabled now */
--	sb->s_flags |= SB_I_VERSION;
--
- 	/* HSM events are allowed by default. */
- 	sb->s_iflags |= SB_I_ALLOW_HSM;
- 
--- 
-2.46.1
+Regards,
+Vivian "dramforever" Wang
+
+> </2c>
 
 
