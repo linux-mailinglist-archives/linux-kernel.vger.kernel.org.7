@@ -1,119 +1,146 @@
-Return-Path: <linux-kernel+bounces-715828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-715830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AA95AF7E42
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 18:57:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6091CAF7E45
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 18:58:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB54B3BA1F5
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 16:57:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B96881CA1279
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 16:58:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77A1A25C83E;
-	Thu,  3 Jul 2025 16:57:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDDC418DB29;
+	Thu,  3 Jul 2025 16:57:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OvFiMj41"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="KnwLr/Ls"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E76D25A35A;
-	Thu,  3 Jul 2025 16:57:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C3F7254B03
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 16:57:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751561823; cv=none; b=D84Ck2xLgXiQ5C964Pq7nIAMNDPZFg8B6jSqa1zXd6iXvd9OwmC62CKdFolPpZPY/rLHHcY4NBCVfMbgfd6FPyjLRrbgpSCOldy0F/prZVN/S48lGbqokmHSwdtPk+yCUaHwi4+5Im3HfJPmmWBK0N8f51NeUoeEFLoseS2rUUI=
+	t=1751561879; cv=none; b=MCICwjSdpqCcO/axdXPQVKgHHLet2gShyRIskWt1vjXZTs1rzv3rypsvfk+o9ES7pMZLvGtlZbkkEtpDEcFqOqzZsgzH+cQ0Z3h9g844JKrkFyo61Q/3ZMc2w4Qek+5UKd8GZBZ5Ncx8grEdX3kwmwRdvJBchxLQ4Et1qKvyAPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751561823; c=relaxed/simple;
-	bh=pOUkHTeSo9LMNRHv1Rw3zA1/OZeSTDnWdy8XZfiuXyg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=MShTdoWgWz5Lr5/nhsCLqwhyNuEiMi4GXtgb90+175KBHEBkPh9+1L9IEtkC4lmwOYpscolhvq+cV+17eJP7G2jWHNUOv9XBuDZdoL0GpDXzJ10dir3kxhGFtvOccDw7evz9SCrVMALULq4+T1QKiIoxMDbAvOnP/1OLJ7OZc6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OvFiMj41; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751561822; x=1783097822;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=pOUkHTeSo9LMNRHv1Rw3zA1/OZeSTDnWdy8XZfiuXyg=;
-  b=OvFiMj419M2sJ/Xw0nEO5bVtykVcjxB9tBEPdfnoDpBx4QhJywjNgt3j
-   9G5BVpZJJS85PqoYMPzQRZ+5FGh3RWTpQAvBejoIV5AnywRMLRa8FyHBA
-   kE4LS3sO2eR5gBhXK40cyo68FL2ZUJ/LyIKUuktIyhTP2J0jfHZJord8b
-   e/lSswl3qniY6AfKcINjhbfeX7b3shBQ/KYZf7D5qgyC/GRaL4RuzIcIG
-   kduq3derLUzBC9PVGYbT/qY/tNo7nJ8+jTH6UI1qgE6UuPALnxz82W0Hf
-   8o/RhLs/hyyMa5WVQiYiejHvR1eMTjVCnjsSBA4u8M2FYbaUIq4BL1IOG
-   Q==;
-X-CSE-ConnectionGUID: 5tlyAtjnQySjmdKpJXOd2g==
-X-CSE-MsgGUID: QcvumkLASoeylKMER2HmHw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11483"; a="53992528"
-X-IronPort-AV: E=Sophos;i="6.16,284,1744095600"; 
-   d="scan'208";a="53992528"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2025 09:56:54 -0700
-X-CSE-ConnectionGUID: jgZ1Ay3rSjSPCNSenZGIwg==
-X-CSE-MsgGUID: fiICh+k+T2i3M4eE289VHg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,284,1744095600"; 
-   d="scan'208";a="154554264"
-Received: from kanliang-dev.jf.intel.com ([10.165.154.102])
-  by orviesa007.jf.intel.com with ESMTP; 03 Jul 2025 09:56:54 -0700
-From: kan.liang@linux.intel.com
-To: peterz@infradead.org,
-	mingo@redhat.com,
-	acme@kernel.org,
-	namhyung@kernel.org,
-	irogers@google.com,
-	linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org
-Cc: dapeng1.mi@linux.intel.com,
-	Kan Liang <kan.liang@linux.intel.com>
-Subject: [PATCH V3 4/4] perf/x86/intel/uncore: Add iMC freerunning for Panther Lake
-Date: Thu,  3 Jul 2025 09:56:14 -0700
-Message-Id: <20250703165614.606446-5-kan.liang@linux.intel.com>
-X-Mailer: git-send-email 2.38.1
-In-Reply-To: <20250703165614.606446-1-kan.liang@linux.intel.com>
-References: <20250703165614.606446-1-kan.liang@linux.intel.com>
+	s=arc-20240116; t=1751561879; c=relaxed/simple;
+	bh=F2cRwTeL5Q02MUSGx0I7upITT+Oj9nP6G9v3ZnYL8d0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Dvs/uFKX4bcvJSW23cP9VU+xZjunW8GKulK1kyuPH16nzuBo6f7hEiz7F7TiY+PjgJgxEw8XPylKIySfjLSJz/NVGR6A6DAImhTkcbRhV6j2hXrFKjyRtSQ7BftqDSUA131iutGAd207F1QIqTvQIVgpYNT1lUYeyl6E/w7K0P0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=KnwLr/Ls; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ae3cd8fdd77so20089366b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Jul 2025 09:57:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1751561875; x=1752166675; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=DPbWJ5gECIxcFGRGN+7adOfD7zhRX4GszEmCOYZfHT0=;
+        b=KnwLr/LsNUolyvDinrwhQB+usO5dGsNN9tJU0LQIpONhFKyMM7Ma/58lVc0nlvZHPg
+         8wBxj7tt0Sbbxu3/rWS+bLtGqx7byDBi9Y/1fRHJ5/qkIy9DDamKo1yWSE6ehpQBXXlj
+         aZIaPo36SnTEc0DBcYBRt1d1AMfsmdR9ySq0g=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751561875; x=1752166675;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DPbWJ5gECIxcFGRGN+7adOfD7zhRX4GszEmCOYZfHT0=;
+        b=gJoYROJVbzlhIQ3OGU3AtiGvyxGv/aR/HumFYs7m/DqgEP6whYPvrQGMacUBJDpX1a
+         ABEWz7x6eTTECHgEzbqLt+1JWULcaB9FHHSg4u4WmLtAOOCaJP6cJ4ZZm687wIOqOiAB
+         6DvmUKjynfB8PB758P5LbGgQ+AASreb9Vo+wkRCR7eHP9jJnfBu5NjHE2bZKINqOUDMx
+         34z13jyna5r4uhwi2QlVYJctaE2Pi/jxUi/stqm9ENPGWVQ9eB16Cjsko5PpsT9S6u3U
+         LeK1V5lh0Txf5ML4Ll4kf/9NVWlEk7NTPw/nwW6nxWLX/VjjwzlZKgE3q/UTGbFUsYZ6
+         r6xA==
+X-Gm-Message-State: AOJu0YwJSHZ3AAb5/qVaEWOKv3KnkZ21E8BbFne6rsEeyR0sSRyh90uw
+	2eIQfJpaJGVNwnQom7dKZsxwfBUo8jytBhzW324aClcpZ4mLN2WrbIHN1awhwUbZzf6COf5lB9j
+	CoHMNjs4Yrw==
+X-Gm-Gg: ASbGncsMXCaF95Sw6vvGnqh7gALD7GWAKgUhImdBkpEnZjpedwttReQP57+A5qOLY03
+	vwLlKCFcrOP/oU33iuI1sRSQDfZ81Lqy1qvfKG61iMafzSltNvqWsIM6W2gU7hjo8PNVvMITO/d
+	Rq/n8rgjX2TJoABssFZLtXBuIXM9MFjGn3TNiHpSyzMxdnceTzlMYLTvsAsia0aJzhZjel1Dz8R
+	xJlKQKQ5xjIQb5bKly0t1cZYwnaYtoFXWlkgyZc79SvP2VOV+U80z0Qtlw5pDuHkhI6SREMrYOP
+	HZl5By4ttGRVRIvMDjOIGiXRNb0UFuMTQRilOoPJezHupqODrjt/8V+K24Q+kg8Vxh7dX0dpeSK
+	ZmUITJRnRfFEbE4Yjeb37Y+mPs5ggnRq6cDou
+X-Google-Smtp-Source: AGHT+IE2/emizdiPFd5id/CP41NPYP9WAEC7/EuI1EsN8ed1JLDU6eEt4dVntsX357M3gLy6/WCyig==
+X-Received: by 2002:a17:907:1ca3:b0:ae0:54b9:dc17 with SMTP id a640c23a62f3a-ae3c2a90a00mr809668666b.11.1751561875377;
+        Thu, 03 Jul 2025 09:57:55 -0700 (PDT)
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com. [209.85.218.47])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae3f6b02a2esm5770866b.119.2025.07.03.09.57.54
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 03 Jul 2025 09:57:54 -0700 (PDT)
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-ae3b336e936so16459866b.3
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Jul 2025 09:57:54 -0700 (PDT)
+X-Received: by 2002:a17:907:7f05:b0:ae0:dfa5:3520 with SMTP id
+ a640c23a62f3a-ae3c2c53817mr841638166b.31.1751561873784; Thu, 03 Jul 2025
+ 09:57:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250703115222.2d7c8cd5@batman.local.home>
+In-Reply-To: <20250703115222.2d7c8cd5@batman.local.home>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 3 Jul 2025 09:57:37 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjXjq7wJM-xnTCcGCxg2viUcN6JfHBETpvD94HX7HTHFQ@mail.gmail.com>
+X-Gm-Features: Ac12FXx0_b_6E6Blsv0QKfQcWy3HLbRStARf9mJgYWm5joFulPTlFaOEYVysL7s
+Message-ID: <CAHk-=wjXjq7wJM-xnTCcGCxg2viUcN6JfHBETpvD94HX7HTHFQ@mail.gmail.com>
+Subject: Re: [RFC][PATCH] ftrace: Make DYNAMIC_FTRACE always enabled for
+ architectures that support it
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, 
+	Linux trace kernel <linux-trace-kernel@vger.kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexandre Ghiti <alex@ghiti.fr>, ChenMiao <chenmiao.ku@gmail.com>, linux-arch@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-From: Kan Liang <kan.liang@linux.intel.com>
+On Thu, 3 Jul 2025 at 08:52, Steven Rostedt <rostedt@goodmis.org> wrote:
+>
+> Remove the prompt to pick DYNAMIC_FTRACE and simply enable it if the
+> architecture supports it.
 
-PTL uncore imc freerunning counters are the same as the previous HW.
+I don't disagree with removing pointless Kconfig options, but if we do
+this, we should do it properly.
 
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
----
- arch/x86/events/intel/uncore_snb.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+Because now we have that entirely pointless "HAVE_DYNAMIC_FTRACE*" set
+of config options. Which with this patch would be just stupid and
+extra indirection that makes things harder to see.
 
-diff --git a/arch/x86/events/intel/uncore_snb.c b/arch/x86/events/intel/uncore_snb.c
-index 817dddc1454d..a8c4afc9cdff 100644
---- a/arch/x86/events/intel/uncore_snb.c
-+++ b/arch/x86/events/intel/uncore_snb.c
-@@ -1905,9 +1905,17 @@ static struct intel_uncore_type *ptl_uncores[UNCORE_PTL_MAX_NUM_UNCORE_TYPES] =
- 	[UNCORE_PTL_TYPE_HBO] = &ptl_uncore_hbo,
- };
- 
-+#define UNCORE_PTL_MMIO_EXTRA_UNCORES		1
-+
-+static struct intel_uncore_type *ptl_mmio_extra_uncores[UNCORE_PTL_MMIO_EXTRA_UNCORES] = {
-+	&adl_uncore_imc_free_running,
-+};
-+
- void ptl_uncore_mmio_init(void)
- {
--	uncore_mmio_uncores = uncore_get_uncores(UNCORE_ACCESS_MMIO, 0, NULL,
-+	uncore_mmio_uncores = uncore_get_uncores(UNCORE_ACCESS_MMIO,
-+						 UNCORE_PTL_MMIO_EXTRA_UNCORES,
-+						 ptl_mmio_extra_uncores,
- 						 UNCORE_PTL_MAX_NUM_UNCORE_TYPES,
- 						 ptl_uncores);
- }
--- 
-2.38.1
+IOW, with this patch we'd have
 
+ (a) architectures that support dynamic ftrace will do
+
+        select HAVE_DYNAMIC_FTRACE
+        select HAVE_DYNAMIC_FTRACE_WITH_REGS
+
+     (or whatever combination)
+
+and then
+
+ (b) kernel/trace/Kconfig will just turn that into the proper
+DYNAMIC_FTRACE_xyz macros
+
+and when this no longer involves any questions, there is absolutely
+*zero* reason I can see for that pointless indirection through another
+config variables.
+
+Yes, yes, there's still the "depends on FUNCTION_TRACER" that
+technically is a "reason" for that indirection, but it seems to be a
+reall ybad one.
+
+IOW, I think that if we do this, we should just get rid of the
+"HAVE_DYNAMIC_FTRACE{_XYZ}" config variables entirely, and just make
+architectures say
+
+        select DYNAMIC_FTRACE if FUNCTION_TRACER
+
+because the "HAVE_xyz" config variables seem to add no actual value,
+only confusion.
+
+Or am I missing some reason for still having that extra config
+variable indirection?
+
+             Linus
 
