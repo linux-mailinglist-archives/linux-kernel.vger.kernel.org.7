@@ -1,288 +1,208 @@
-Return-Path: <linux-kernel+bounces-715908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-715906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B85CAF7F92
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 20:08:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB65EAF7F8D
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 20:08:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1F741BC7463
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 18:08:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3030A1BC5EC8
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 18:08:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52A722F2725;
-	Thu,  3 Jul 2025 18:08:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E47E12F235B;
+	Thu,  3 Jul 2025 18:08:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="pmpp0wrF"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SBV1J61u"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 827172E8887;
-	Thu,  3 Jul 2025 18:08:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9CDE257440;
+	Thu,  3 Jul 2025 18:08:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751566093; cv=none; b=iTjcadPq4uqkGSaT2WFVaQfvzFKZO4HChpOCZgtFYtgCC2ISFQK9ksQNOMR9xoN0Dim1ykiqwWLVJU0r9isFB2X2aZ03/f4MkUBckaqXdUDcnC9nt9HlTbU+tkByVXZjWTayh26CEKH7NQNTG5rLE9pbJOON1WZIILq+GZTGyRY=
+	t=1751566085; cv=none; b=lD9TuUY85PDDFB2dwOZ6W8uSE4AuafriPH1BcUGcmSkCmfl1sMUx0XXtUdApU13NQ8bj21SynOeKdaT6rBLGQQnNq5BNIlbCrIn3I0iRweGVk4njXpSEqxBUtSe+fI9ptnLd1Y2J5Tl6zi3eNVn2Ld7Sm67AX24J7MQbun0Yy4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751566093; c=relaxed/simple;
-	bh=YiqVQC3SEAez8UuppiBb1A/1oAVhrV1uDfIH1n4yS0A=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JbDs9dPievpyonODNTYxDu5HeKyju9bAngkmJFK8aquYXYHggiCTSY0RYowESWOJIi/JaeTkgR0jgg0zo9IENZ2zzFvTuigh2BJV5xC1kZJuJG0YRt01CeIkFiT+9NhwpCAig5BDWCtAHWIPZ3u1ErQEnRFQdJGkKZVAYaOUIas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=pmpp0wrF; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 563I7qYW084143;
-	Thu, 3 Jul 2025 13:07:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1751566072;
-	bh=ypas7tZObOqRmhztcSlepuuKBYdFBB7gJSb015XTayg=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=pmpp0wrF3Q5E14weLibWR8aIdvpDXEDiS4KQLDx5zMB+pEdRJ+rZG5NL/XkhabcA5
-	 RNksPs+ZTDGZk/eOTLv2d1jVa+gvPC4JP5XfgndfomNWO6/L/QcIw3Z+XKIDDA7wSv
-	 dF+aXutR/F5OY2FI7o5dSmzG2IF3cZvmL0ye5G5U=
-Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
-	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 563I7qHO2065817
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Thu, 3 Jul 2025 13:07:52 -0500
-Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 3
- Jul 2025 13:07:51 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Thu, 3 Jul 2025 13:07:52 -0500
-Received: from DMZ007XYY.dhcp.ti.com (dmz007xyy.dhcp.ti.com [128.247.29.251])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 563I7pSe1546973;
-	Thu, 3 Jul 2025 13:07:51 -0500
-From: Shree Ramamoorthy <s-ramamoorthy@ti.com>
-To: <aaro.koskinen@iki.fi>, <andreas@kemnade.info>, <khilman@baylibre.com>,
-        <rogerq@kernel.org>, <tony@atomide.com>, <linus.walleij@linaro.org>,
-        <brgl@bgdev.pl>, <linux-omap@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>
-CC: <m-leonard@ti.com>, <praneeth@ti.com>, <jcormier@criticallink.com>
-Subject: [PATCH v6 2/2] gpio: tps65219: Add support for TI TPS65214 PMIC
-Date: Thu, 3 Jul 2025 13:07:51 -0500
-Message-ID: <20250703180751.168755-3-s-ramamoorthy@ti.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250703180751.168755-1-s-ramamoorthy@ti.com>
-References: <20250703180751.168755-1-s-ramamoorthy@ti.com>
+	s=arc-20240116; t=1751566085; c=relaxed/simple;
+	bh=9bAuh6dWJdNdZ6d2BfBnvNZ6nPhKoTdR+nk5L+tyufg=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ek2+66NzWlWL9aOg85FY7sbiquKzd6FnkdzYCBxaniienZ5/K1tax/tSXdi7hb5ZmSYT1Hq2r1MVNhsWGc/Djlr1wnE9jDuQ8ZZ5Tg9wbhGyzwIAM1K6rWLABiAiNQXeF6gHAtf2FWv5O/UWP/hvQeuio+zY1IZxsy2X6av7rOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SBV1J61u; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3a536ecbf6fso44709f8f.2;
+        Thu, 03 Jul 2025 11:08:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751566082; x=1752170882; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:subject:cc:to:from:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=1IiF0VA5p0YusEsyqW44/emZaG2dB9nyyMFB5VdiCkE=;
+        b=SBV1J61u3eH323WOkIU0KQ8FAFCiYCZQ/dTy2Bl/AVqKyUfEib736KsR+fppi3qqeJ
+         pONXhe0IzaBmMZKUq4MrZpYWuGgc1YPe6F9dmY7Pyt3K8lvYzR6bgekGtelWd8iqgPlH
+         ghywmosUnLd33zhoHJ+dWWyVVaSE9uAQQVGW637E6Vif9fHMIINTI8cZnsxIMfJz6sk7
+         w6WdLrLvaBL6oMm98tagz9ABsu6f15DZLvlWem2SDfv8Npj9q2r5Vd9T6NV159NjL7vi
+         wle0zhsa7IIq16j2cYBuDwkYv84mwbC7/a1bQyf16yk1jacTKqFesoeWXeVHlFkOLDv2
+         ywAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751566082; x=1752170882;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:subject:cc:to:from:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1IiF0VA5p0YusEsyqW44/emZaG2dB9nyyMFB5VdiCkE=;
+        b=Yfamh/KRmQKVu+jzgOabu3WXX1jNA5pdDBm78WnkalJeJMaiSxnmAyfNzEhgswe4gP
+         qjYVRoZjsQsHEvtOwhopfwJOAe959362ZYgJNlL+zwHWwN8gjXPYupHhfPd1Ss2d72kE
+         mTDs1tCQ9pOiLuZnHKKpo7bynZ5Mi4x2BsiIdybcTzWYC+LW207qpxLziY8jPr+J1Miw
+         fdCcxcZxbijKkzBIgh5eiMIQ73wIRN24Q7bWyCZKjE2/TDy/cFuA2bqnfoHokdBF+fpw
+         vn8jGNMISveMG0f/b2xyqCzatucYx1Cvo4D61E6WN028EwDbknSuLHG6W5wEyYTqPVUv
+         zp3w==
+X-Forwarded-Encrypted: i=1; AJvYcCVEJKNrEZ1PPy7lWXOt2u/hH58iHcakp764+1BW/9MdO4fvNpngJu1WON8Zq746mJ0NEFFVKx8qC9k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+gVLXI9nRxLn8t5/fUw/4EHZjnVz5+qX6Xf/dpVZnVBadsv2i
+	mNQjrk06/el9jpEKSZ2xlpcanKxZZorBKPrdKgYGuEZEn+JAvBk6v3MX
+X-Gm-Gg: ASbGnct54QaKDdQMf0ZkEOt7GB2z6kRCEUEwgA2VJrvDphuXFNjg/eTX8OjMVsl4PZq
+	AvtYZZncu+iHLy5YlDyprXBF/LZ1Cf66iwj9RTciwbFMy5C3sk1NQkpeUfHuwFDhcCPO52Uvo4H
+	rEo+t6211kbGursTjHlLGjgTZpmWqxxrVLrd2EbopzLRuH+hGQ6YPBN2nDGBSLjfPWaA+CpPZOm
+	RqnsGnWUxs8yKxWXileMDcaZlukb9q9Kif1Pr8fG7OgM5HK5+wt2i7RLbInOkOupOt4Z2eE37si
+	kCagJUEFICpy7ULJWst33cap1nIySsduGAq4QcK/sbSYivy4m70iN++xrCLaHtUQGw9j6/2nvxw
+	LJf/nT+DvorF5y2LRbgRNICRsirCVlhafHg==
+X-Google-Smtp-Source: AGHT+IHPtpCI3kqVBSvghFQvo/CkKrax8KAwzVmFAG1q46Ldh8o2BsAP3fRlsHSTAVE8LD6WJRkjvQ==
+X-Received: by 2002:a05:6000:4a0d:b0:3a0:b308:8427 with SMTP id ffacd0b85a97d-3b1ffbdf5c6mr6988500f8f.37.1751566081862;
+        Thu, 03 Jul 2025 11:08:01 -0700 (PDT)
+Received: from Ansuel-XPS. (host-79-46-252-169.retail.telecomitalia.it. [79.46.252.169])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b471b9651dsm386691f8f.65.2025.07.03.11.08.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Jul 2025 11:08:01 -0700 (PDT)
+Message-ID: <6866c701.5d0a0220.2823e.2772@mx.google.com>
+X-Google-Original-Message-ID: <aGbG_ujOM-wOGNVl@Ansuel-XPS.>
+Date: Thu, 3 Jul 2025 20:07:58 +0200
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Benjamin Larsson <benjamin.larsson@genexis.eu>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Lorenzo Bianconi <lorenzo@kernel.org>
+Subject: Re: [PATCH v19] pwm: airoha: Add support for EN7581 SoC
+References: <20250630114504.8308-1-ansuelsmth@gmail.com>
+ <bwtk2nac2eo2jgf2lousguw7o34tzhz7mesdo3jfaf4gc3pri6@tff3h4f4274u>
+ <686434fb.050a0220.efc3e.909b@mx.google.com>
+ <wntjec4p7nepuauucwqwgwcresphjikln7cqchep3vjocpuo6u@6hjpkwcbvx7d>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+In-Reply-To: <wntjec4p7nepuauucwqwgwcresphjikln7cqchep3vjocpuo6u@6hjpkwcbvx7d>
 
-Add support for the TI TPS65214 PMIC with the addition of an id_table,
-separate TPS65214 template_chip, and device-specific _change_direction
-functions.
+On Wed, Jul 02, 2025 at 08:01:05AM +0200, Uwe Kleine-König wrote:
+> On Tue, Jul 01, 2025 at 09:20:24PM +0200, Christian Marangi wrote:
+> > On Tue, Jul 01, 2025 at 09:40:03AM +0200, Uwe Kleine-König wrote:
+> > > > +	shift = AIROHA_PWM_REG_CYCLE_CFG_SHIFT(shift);
+> > > > +
+> > > > +	/* Configure frequency divisor */
+> > > > +	mask = AIROHA_PWM_WAVE_GEN_CYCLE << shift;
+> > > > +	val = FIELD_PREP(AIROHA_PWM_WAVE_GEN_CYCLE, period_ticks) << shift;
+> > > > +	ret = regmap_update_bits(pc->regmap, AIROHA_PWM_REG_CYCLE_CFG_VALUE(offset),
+> > > > +				 mask, val);
+> > > > +	if (ret)
+> > > > +		return ret;
+> > > > +
+> > > > +	offset = bucket;
+> > > > +	shift = do_div(offset, AIROHA_PWM_BUCKET_PER_FLASH_PROD);
+> > > > +	shift = AIROHA_PWM_REG_GPIO_FLASH_PRD_SHIFT(shift);
+> > > > +
+> > > > +	/* Configure duty cycle */
+> > > > +	mask = AIROHA_PWM_GPIO_FLASH_PRD_HIGH << shift;
+> > > > +	val = FIELD_PREP(AIROHA_PWM_GPIO_FLASH_PRD_HIGH, duty_ticks) << shift;
+> > > > +	ret = regmap_update_bits(pc->regmap, AIROHA_PWM_REG_GPIO_FLASH_PRD_SET(offset),
+> > > > +				 mask, val);
+> > > > +	if (ret)
+> > > > +		return ret;
+> > > > +
+> > > > +	mask = AIROHA_PWM_GPIO_FLASH_PRD_LOW << shift;
+> > > > +	val = FIELD_PREP(AIROHA_PWM_GPIO_FLASH_PRD_LOW,
+> > > > +			 AIROHA_PWM_DUTY_FULL - duty_ticks) << shift;
+> > > > +	return regmap_update_bits(pc->regmap, AIROHA_PWM_REG_GPIO_FLASH_PRD_SET(offset),
+> > > > +				  mask, val);
+> > > 
+> > > Strange hardware, why do you have to configure both the high and the low
+> > > relative duty? What happens if AIROHA_PWM_GPIO_FLASH_PRD_LOW +
+> > > AIROHA_PWM_GPIO_FLASH_PRD_HIGH != AIROHA_PWM_DUTY_FULL?
+> > 
+> > From documentation it gets rejected and configured bucket doesn't work.
+> 
+> ok.
+> 
+> > > > [...]
+> > > > +	/*
+> > > > +	 * Duty is divided in 255 segment, normalize it to check if we
+> > > > +	 * can share a generator.
+> > > > +	 */
+> > > > +	duty_ns = DIV_U64_ROUND_UP(duty_ns * AIROHA_PWM_DUTY_FULL,
+> > > > +				   AIROHA_PWM_DUTY_FULL);
+> > > 
+> > > This looks bogus. This is just duty_ns = duty_ns, or what do I miss?
+> > > Also duty_ns is an u32 and AIROHA_PWM_DUTY_FULL an int, so there is no
+> > > need for a 64 bit division.
+> > 
+> > duty_ns * 255 goes beyond max u32.
+> 
+> In that case duty_ns * AIROHA_PWM_DUTY_FULL overflows to a smaller
+> value. Just because the value then is used by DIV_U64_ROUND_UP doesn't
+> fix the overflow. You need (u64)duty_ns * AIROHA_PWM_DUTY_FULL then.
+> 
+> > 225000000000.
+> > 
+> > Some revision ago it was asked to round also the duty_ns. And this is
+> > really to round_up duty in 255 segment.
+> 
+> Yes, and I identified this as the code that intends to do that. Please
+> double check this really works. I would claim you need:
+> 
+> 	duty_ns = DIV_ROUND_UP(duty_ns, AIROHA_PWM_DUTY_FULL) * AIROHA_PWM_DUTY_FULL;
+> 
+> here because no matter if you round up or down, dividing
+> n * AIROHA_PWM_DUTY_FULL by AIROHA_PWM_DUTY_FULL yields n.
+> 
 
-- Use platform_get_device_id() to assign dev-specific information.
-- Use different change_direction() functions since TPS65214's GPIO
-  configuration bits are changeable during device operation through bit
-  GPIO_CONFIG in GENERAL_CONFIG register.
-- Remove MODULE_ALIAS since it is now generated by MODULE_DEVICE_TABLE.
+Ok I made some test with a testing program to simulate various way to
+normalize the value and yes you are right there is a problem here.
 
-Reviewed-by: Jonathan Cormier <jcormier@criticallink.com>
-Tested-by: Jonathan Cormier <jcormier@criticallink.com>
-Signed-off-by: Shree Ramamoorthy <s-ramamoorthy@ti.com>
----
- drivers/gpio/gpio-tps65219.c | 95 +++++++++++++++++++++++++++++++++---
- 1 file changed, 88 insertions(+), 7 deletions(-)
+Also duty_ns = DIV_ROUND_UP(duty_ns, AIROHA_PWM_DUTY_FULL) *
+AIROHA_PWM_DUTY_FULL; doesn't really fit here.
 
-diff --git a/drivers/gpio/gpio-tps65219.c b/drivers/gpio/gpio-tps65219.c
-index 2355eec0cee6..f6a99402ae46 100644
---- a/drivers/gpio/gpio-tps65219.c
-+++ b/drivers/gpio/gpio-tps65219.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-- * GPIO driver for TI TPS65215/TPS65219 PMICs
-+ * GPIO driver for TI TPS65214/TPS65215/TPS65219 PMICs
-  *
-  * Copyright (C) 2022, 2025 Texas Instruments Incorporated - http://www.ti.com/
-  */
-@@ -13,10 +13,15 @@
- #include <linux/regmap.h>
- 
- #define TPS65219_GPIO0_DIR_MASK		BIT(3)
-+#define TPS65214_GPIO0_DIR_MASK		BIT(1)
- #define TPS6521X_GPIO0_OFFSET		2
- #define TPS6521X_GPIO0_IDX		0
- 
- /*
-+ * TPS65214 GPIO mapping
-+ * Linux gpio offset 0 -> GPIO (pin16) -> bit_offset 2
-+ * Linux gpio offset 1 -> GPO1 (pin9 ) -> bit_offset 0
-+ *
-  * TPS65215 & TPS65219 GPIO mapping
-  * Linux gpio offset 0 -> GPIO (pin16) -> bit_offset 2
-  * Linux gpio offset 1 -> GPO1 (pin8 ) -> bit_offset 0
-@@ -24,10 +29,26 @@
-  */
- 
- struct tps65219_gpio {
-+	int (*change_dir)(struct gpio_chip *gc, unsigned int offset, unsigned int dir);
- 	struct gpio_chip gpio_chip;
- 	struct tps65219 *tps;
- };
- 
-+static int tps65214_gpio_get_direction(struct gpio_chip *gc, unsigned int offset)
-+{
-+	struct tps65219_gpio *gpio = gpiochip_get_data(gc);
-+	int ret, val;
-+
-+	if (offset != TPS6521X_GPIO0_IDX)
-+		return GPIO_LINE_DIRECTION_OUT;
-+
-+	ret = regmap_read(gpio->tps->regmap, TPS65219_REG_GENERAL_CONFIG, &val);
-+	if (ret)
-+		return ret;
-+
-+	return !(val & TPS65214_GPIO0_DIR_MASK);
-+}
-+
- static int tps65219_gpio_get_direction(struct gpio_chip *gc, unsigned int offset)
- {
- 	struct tps65219_gpio *gpio = gpiochip_get_data(gc);
-@@ -119,6 +140,34 @@ static int tps65219_gpio_change_direction(struct gpio_chip *gc, unsigned int off
- 	return -ENOTSUPP;
- }
- 
-+static int tps65214_gpio_change_direction(struct gpio_chip *gc, unsigned int offset,
-+					  unsigned int direction)
-+{
-+	struct tps65219_gpio *gpio = gpiochip_get_data(gc);
-+	struct device *dev = gpio->tps->dev;
-+	int val, ret;
-+
-+	/* Verified if GPIO or GPO in parent function
-+	 * Masked value: 0 = GPIO, 1 = VSEL
-+	 */
-+	ret = regmap_read(gpio->tps->regmap, TPS65219_REG_MFP_1_CONFIG, &val);
-+	if (ret)
-+		return ret;
-+
-+	ret = !!(val & BIT(TPS65219_GPIO0_DIR_MASK));
-+	if (ret)
-+		dev_err(dev, "GPIO%d configured as VSEL, not GPIO\n", offset);
-+
-+	ret = regmap_update_bits(gpio->tps->regmap, TPS65219_REG_GENERAL_CONFIG,
-+				 TPS65214_GPIO0_DIR_MASK, direction);
-+	if (ret)
-+		dev_err(dev,
-+			"Fail to change direction to %u for GPIO%d.\n",
-+			direction, offset);
-+
-+	return ret;
-+}
-+
- static int tps65219_gpio_direction_input(struct gpio_chip *gc, unsigned int offset)
- {
- 	struct tps65219_gpio *gpio = gpiochip_get_data(gc);
-@@ -132,11 +181,13 @@ static int tps65219_gpio_direction_input(struct gpio_chip *gc, unsigned int offs
- 	if (tps65219_gpio_get_direction(gc, offset) == GPIO_LINE_DIRECTION_IN)
- 		return 0;
- 
--	return tps65219_gpio_change_direction(gc, offset, GPIO_LINE_DIRECTION_IN);
-+	return gpio->change_dir(gc, offset, GPIO_LINE_DIRECTION_IN);
- }
- 
- static int tps65219_gpio_direction_output(struct gpio_chip *gc, unsigned int offset, int value)
- {
-+	struct tps65219_gpio *gpio = gpiochip_get_data(gc);
-+
- 	tps65219_gpio_set(gc, offset, value);
- 	if (offset != TPS6521X_GPIO0_IDX)
- 		return 0;
-@@ -144,9 +195,22 @@ static int tps65219_gpio_direction_output(struct gpio_chip *gc, unsigned int off
- 	if (tps65219_gpio_get_direction(gc, offset) == GPIO_LINE_DIRECTION_OUT)
- 		return 0;
- 
--	return tps65219_gpio_change_direction(gc, offset, GPIO_LINE_DIRECTION_OUT);
-+	return gpio->change_dir(gc, offset, GPIO_LINE_DIRECTION_OUT);
- }
- 
-+static const struct gpio_chip tps65214_template_chip = {
-+	.label			= "tps65214-gpio",
-+	.owner			= THIS_MODULE,
-+	.get_direction		= tps65214_gpio_get_direction,
-+	.direction_input	= tps65219_gpio_direction_input,
-+	.direction_output	= tps65219_gpio_direction_output,
-+	.get			= tps65219_gpio_get,
-+	.set_rv			= tps65219_gpio_set,
-+	.base			= -1,
-+	.ngpio			= 2,
-+	.can_sleep		= true,
-+};
-+
- static const struct gpio_chip tps65219_template_chip = {
- 	.label			= "tps65219-gpio",
- 	.owner			= THIS_MODULE,
-@@ -154,7 +218,7 @@ static const struct gpio_chip tps65219_template_chip = {
- 	.direction_input	= tps65219_gpio_direction_input,
- 	.direction_output	= tps65219_gpio_direction_output,
- 	.get			= tps65219_gpio_get,
--	.set			= tps65219_gpio_set,
-+	.set_rv			= tps65219_gpio_set,
- 	.base			= -1,
- 	.ngpio			= 3,
- 	.can_sleep		= true,
-@@ -162,6 +226,7 @@ static const struct gpio_chip tps65219_template_chip = {
- 
- static int tps65219_gpio_probe(struct platform_device *pdev)
- {
-+	enum pmic_id chip = platform_get_device_id(pdev)->driver_data;
- 	struct tps65219 *tps = dev_get_drvdata(pdev->dev.parent);
- 	struct tps65219_gpio *gpio;
- 
-@@ -169,22 +234,38 @@ static int tps65219_gpio_probe(struct platform_device *pdev)
- 	if (!gpio)
- 		return -ENOMEM;
- 
-+	if (chip == TPS65214) {
-+		gpio->gpio_chip = tps65214_template_chip;
-+		gpio->change_dir = tps65214_gpio_change_direction;
-+	} else if (chip == TPS65219) {
-+		gpio->gpio_chip = tps65219_template_chip;
-+		gpio->change_dir = tps65219_gpio_change_direction;
-+	} else {
-+		return -ENODATA;
-+	}
-+
- 	gpio->tps = tps;
--	gpio->gpio_chip = tps65219_template_chip;
- 	gpio->gpio_chip.parent = tps->dev;
- 
- 	return devm_gpiochip_add_data(&pdev->dev, &gpio->gpio_chip, gpio);
- }
- 
-+static const struct platform_device_id tps6521x_gpio_id_table[] = {
-+	{ "tps65214-gpio", TPS65214 },
-+	{ "tps65219-gpio", TPS65219 },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(platform, tps6521x_gpio_id_table);
-+
- static struct platform_driver tps65219_gpio_driver = {
- 	.driver = {
- 		.name = "tps65219-gpio",
- 	},
- 	.probe = tps65219_gpio_probe,
-+	.id_table = tps6521x_gpio_id_table,
- };
- module_platform_driver(tps65219_gpio_driver);
- 
--MODULE_ALIAS("platform:tps65219-gpio");
- MODULE_AUTHOR("Jonathan Cormier <jcormier@criticallink.com>");
--MODULE_DESCRIPTION("TPS65215/TPS65219 GPIO driver");
-+MODULE_DESCRIPTION("TPS65214/TPS65215/TPS65219 GPIO driver");
- MODULE_LICENSE("GPL");
+The solution I found is the following
+
+DIV_U64_ROUND_UP(airoha_pwm_get_duty_ticks_from_ns(period, duty) * period, 255)
+
+and airoha_pwm_get_duty_ticks_from_ns is (duty * 255 / period)
+
+I also tested other viable way to reduce the redundant formula but the
+main problem is that on big numbers (example when duty = period, too
+many division error for integer division adds up (due to necessary
+rounding) so we end up with not precise number that the tick actually
+reflect or even goin beyond the period number (as duty must be <=
+period)
+
+But the thing is that since duty tick depends on period and now the
+bucket base everything on the tick, I really feel normalizing duty is
+not needed at all.
+
+With the working normalize we would have 
+
+duty_ns = DIV_U64_ROUND_UP(airoha_pwm_get_duty_ticks_from_ns(period, duty) * period, 255);
+
+duty_tick = airoha_pwm_get_duty_ticks_from_ns(period_ns, duty_ns) 
+
+With the normalization already done by
+airoha_pwm_get_duty_ticks_from_ns(period_ns, duty_ns).
+
+What do you think?
+
 -- 
-2.43.0
-
+	Ansuel
 
