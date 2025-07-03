@@ -1,65 +1,62 @@
-Return-Path: <linux-kernel+bounces-715541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-715531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66FCAAF7764
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 16:28:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC8A1AF774E
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 16:25:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C98D44E1C4E
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 14:27:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8A3D17BCD6C
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 14:23:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 240F52EE266;
-	Thu,  3 Jul 2025 14:26:16 +0000 (UTC)
-Received: from relay16.mail.gandi.net (relay16.mail.gandi.net [217.70.178.236])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA89D2EA16B;
+	Thu,  3 Jul 2025 14:25:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="SlwaRSxF"
+Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9A222ED848;
-	Thu,  3 Jul 2025 14:26:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.236
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66AA82EA158
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 14:24:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751552775; cv=none; b=PQUX+SZmPfFj9t0XJ5ftPjrsAzLEWRnRtunQwS81VTFiJlD/np6RzDyGaKxcLtJbO0cYL3+xR79bwkmx9JTzHzvWODh3nLp9NdjWvCA9wMX9OJV4TOqLE/IDHNRSD/26dHwxAg3xUHTZreDc5W/G+yS5ncQxu2zh4ebbU3nK9/U=
+	t=1751552701; cv=none; b=ie4g1bz2fLbkjCCecvfpVtD5pFYwJlvX1MAejPBPPIMB8fHLiARsykV0sC4sgbPyocBzocdIstBsvaJ0DqE88uS6ZHCYdDRLPHaTRSZQV35xcNlaOxKLMzt+HbpfKIyqfguUfv1sks5SYDkMpM1mz0BZyNsn+21C0dXGsKcj+Lw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751552775; c=relaxed/simple;
-	bh=J99JaJ4floWwfZaj+zZ6sO0yTygkK0zGjhShgkmfZFQ=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MoJjcsnTQkY652qd5v9xfXYF36OSb0UBTJkH4giUkb/FxXiLTFwgy7/5mUZAO76hgdMEcfvZY2lsMqaK2eOlQdeJopiXG74cSYZmSk27W0y2Sx7hcC6b0db2Cka/CdbTnVp6d6TYzigY9SSgYaJhaH1W8dd/hIjxhzN+oUTj7lA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hadess.net; spf=pass smtp.mailfrom=hadess.net; arc=none smtp.client-ip=217.70.178.236
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hadess.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hadess.net
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 236EB449C8;
-	Thu,  3 Jul 2025 14:26:10 +0000 (UTC)
-From: Bastien Nocera <hadess@hadess.net>
-To: trivial@kernel.org,
-	Marcel Holtmann <marcel@holtmann.org>,
-	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-	Sean Wang <sean.wang@mediatek.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Sven Peter <sven@kernel.org>,
-	Janne Grunau <j@jannau.net>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Neal Gompa <neal@gompa.dev>,
-	Johan Hedberg <johan.hedberg@gmail.com>,
-	Ingo Molnar <mingo@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Bastien Nocera <hadess@hadess.net>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Kees Cook <kees@kernel.org>,
-	Erick Archer <erick.archer@outlook.com>,
-	Chris Lu <chris.lu@mediatek.com>,
-	linux-bluetooth@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	asahi@lists.linux.dev
-Subject: [PATCH 7/7] Bluetooth: Fix typos
-Date: Thu,  3 Jul 2025 16:24:35 +0200
-Message-ID: <20250703142542.985248-8-hadess@hadess.net>
-X-Mailer: git-send-email 2.50.0
-In-Reply-To: <20250703142542.985248-1-hadess@hadess.net>
-References: <20250703142542.985248-1-hadess@hadess.net>
+	s=arc-20240116; t=1751552701; c=relaxed/simple;
+	bh=IB3QhT6znI80F0swDwqnAhPwb1Be+kKxBOX5V40joG4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bb/Tj2JE0GOVnZvBbW5Ibh4by7D2UaaSV1XXCeNYcQf3XR2k1lCma7hgn63w1NTJWT6CHPuyotzQAvfdCvYO6TwJ8g+4fZ/58h4K7e5L39wnEBPUPfsKeGFJaxfnIUcH7vcgbRJAgjmWGSUi3bhxFJh0fNz/Nlix5R73A6V6Iz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=SlwaRSxF; arc=none smtp.client-ip=95.215.58.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1751552697;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=6eLE6S+rhxIPN+jrOj2f4vJ4zw6L3esP7/0wSDddCRk=;
+	b=SlwaRSxFkqrj8/p5s7Hz4d3LF5UWxu7QBnL8Rnktqv8WnBS4ad81vpMJX5/E5dyd69qNzy
+	48NYS+YSEFrIrXj0AnA0ZneJAdrQUNGyAp64JzFHSD90Qg1lk2LsZs//jiRs5fcak1v2TS
+	IF8Aw4QS/RnVIXlJhmucqy+N/LZfBRE=
+From: Jiayuan Chen <jiayuan.chen@linux.dev>
+To: netdev@vger.kernel.org
+Cc: mrpre@163.com,
+	Jiayuan Chen <jiayuan.chen@linux.dev>,
+	syzbot+de6565462ab540f50e47@syzkaller.appspotmail.com,
+	Eric Dumazet <edumazet@google.com>,
+	Neal Cardwell <ncardwell@google.com>,
+	Kuniyuki Iwashima <kuniyu@google.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	David Ahern <dsahern@kernel.org>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	David Howells <dhowells@redhat.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next v2] tcp: Correct signedness in skb remaining spac calculation
+Date: Thu,  3 Jul 2025 22:24:42 +0800
+Message-ID: <20250703142443.13762-1-jiayuan.chen@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,97 +64,72 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddvtdehudcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpeeurghsthhivghnucfpohgtvghrrgcuoehhrgguvghssheshhgruggvshhsrdhnvghtqeenucggtffrrghtthgvrhhnpeekteetgeettdehieduiedttdetffelleehtdejkeeluedvgfffvdevteetudfhkeenucfkphepvdgrtddumegvfeegmegvtgejfeemtghfvddtmeejudgurgemfegsugemvddtrgelmedufeefnecuvehluhhsthgvrhfuihiivgepieenucfrrghrrghmpehinhgvthepvdgrtddumegvfeegmegvtgejfeemtghfvddtmeejudgurgemfegsugemvddtrgelmedufeefpdhhvghlohepohhlihhmphhitgdpmhgrihhlfhhrohhmpehhrgguvghssheshhgruggvshhsrdhnvghtpdhnsggprhgtphhtthhopedvfedprhgtphhtthhopehtrhhivhhirghlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehmrghrtggvlheshhholhhtmhgrnhhnrdhorhhgpdhrtghpthhtoheplhhuihiirdguvghnthiisehgmhgrihhlrdgtohhmpdhrtghpthhtohepshgvrghnrdifrghnghesmhgvughirghtvghkrdgtohhmpdhrtghpthhtohepmhgrthhth
- hhirghsrdgsghhgsehgmhgrihhlrdgtohhmpdhrtghpthhtoheprghnghgvlhhoghhiohgrtggthhhinhhordguvghlrhgvghhnohestgholhhlrggsohhrrgdrtghomhdprhgtphhtthhopehsvhgvnheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhesjhgrnhhnrghurdhnvght
+X-Migadu-Flow: FLOW_OUT
 
-Found by codespell.
+Syzkaller reported a bug [1] where sk->sk_forward_alloc can overflow.
 
-Signed-off-by: Bastien Nocera <hadess@hadess.net>
+When we send data, if an skb exists at the tail of the write queue, the
+kernel will attempt to append the new data to that skb. However, the code
+that checks for available space in the skb is flawed:
+'''
+copy = size_goal - skb->len
+'''
+
+The types of the variables involved are:
+'''
+copy: ssize_t (s64 on 64-bit systems)
+size_goal: int
+skb->len: unsigned int
+'''
+
+Due to C's type promotion rules, the signed size_goal is converted to an
+unsigned int to match skb->len before the subtraction. The result is an
+unsigned int.
+
+When this unsigned int result is then assigned to the s64 copy variable,
+it is zero-extended, preserving its non-negative value. Consequently, copy
+is always >= 0.
+
+Assume we are sending 2GB of data and size_goal has been adjusted to a
+value smaller than skb->len. The subtraction will result in copy holding a
+very large positive integer. In the subsequent logic, this large value is
+used to update sk->sk_forward_alloc, which can easily cause it to overflow.
+
+The syzkaller reproducer uses TCP_REPAIR to reliably create this
+condition. However, this can also occur in real-world scenarios. The
+tcp_bound_to_half_wnd() function can also reduce size_goal to a small
+value. This would cause the subsequent tcp_wmem_schedule() to set
+sk->sk_forward_alloc to a value close to INT_MAX. Further memory
+allocation requests would then cause sk_forward_alloc to wrap around and
+become negative.
+
+[1] https://syzkaller.appspot.com/bug?extid=de6565462ab540f50e4
+
+Reported-by: syzbot+de6565462ab540f50e47@syzkaller.appspotmail.com
+Fixes: 270a1c3de47e ("tcp: Support MSG_SPLICE_PAGES")
+Signed-off-by: Jiayuan Chen <jiayuan.chen@linux.dev>
+
 ---
- net/bluetooth/hci_conn.c  | 2 +-
- net/bluetooth/hci_event.c | 4 ++--
- net/bluetooth/hci_sync.c  | 2 +-
- net/bluetooth/lib.c       | 2 +-
- net/bluetooth/smp.c       | 2 +-
- 5 files changed, 6 insertions(+), 6 deletions(-)
+v1 -> v2: Added more commit message
+https://lore.kernel.org/netdev/20250702110039.15038-1-jiayuan.chen@linux.dev/
+---
+ net/ipv4/tcp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/bluetooth/hci_conn.c b/net/bluetooth/hci_conn.c
-index 4f379184df5b..cb360adbb6ec 100644
---- a/net/bluetooth/hci_conn.c
-+++ b/net/bluetooth/hci_conn.c
-@@ -814,7 +814,7 @@ static int hci_le_big_terminate(struct hci_dev *hdev, u8 big, struct hci_conn *c
-  *
-  * Detects if there any BIS left connected in a BIG
-  * broadcaster: Remove advertising instance and terminate BIG.
-- * broadcaster receiver: Teminate BIG sync and terminate PA sync.
-+ * broadcaster receiver: Terminate BIG sync and terminate PA sync.
-  */
- static void bis_cleanup(struct hci_conn *conn)
- {
-diff --git a/net/bluetooth/hci_event.c b/net/bluetooth/hci_event.c
-index 66052d6aaa1d..a546cb058e8e 100644
---- a/net/bluetooth/hci_event.c
-+++ b/net/bluetooth/hci_event.c
-@@ -5754,7 +5754,7 @@ static void le_conn_complete_evt(struct hci_dev *hdev, u8 status,
- 	conn->state = BT_CONFIG;
+diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
+index 8a3c99246d2e..803a419f4ea0 100644
+--- a/net/ipv4/tcp.c
++++ b/net/ipv4/tcp.c
+@@ -1176,7 +1176,7 @@ int tcp_sendmsg_locked(struct sock *sk, struct msghdr *msg, size_t size)
+ 		goto do_error;
  
- 	/* Store current advertising instance as connection advertising instance
--	 * when sotfware rotation is in use so it can be re-enabled when
-+	 * when software rotation is in use so it can be re-enabled when
- 	 * disconnected.
- 	 */
- 	if (!ext_adv_capable(hdev))
-@@ -7077,7 +7077,7 @@ static void hci_le_big_info_adv_report_evt(struct hci_dev *hdev, void *data,
- /* Entries in this table shall have their position according to the subevent
-  * opcode they handle so the use of the macros above is recommend since it does
-  * attempt to initialize at its proper index using Designated Initializers that
-- * way events without a callback function can be ommited.
-+ * way events without a callback function can be omitted.
-  */
- static const struct hci_le_ev {
- 	void (*func)(struct hci_dev *hdev, void *data, struct sk_buff *skb);
-diff --git a/net/bluetooth/hci_sync.c b/net/bluetooth/hci_sync.c
-index 6687f2a4d1eb..febad7922008 100644
---- a/net/bluetooth/hci_sync.c
-+++ b/net/bluetooth/hci_sync.c
-@@ -5633,7 +5633,7 @@ int hci_abort_conn_sync(struct hci_dev *hdev, struct hci_conn *conn, u8 reason)
- 	}
+ 	while (msg_data_left(msg)) {
+-		ssize_t copy = 0;
++		int copy = 0;
  
- 	/* Cleanup hci_conn object if it cannot be cancelled as it
--	 * likelly means the controller and host stack are out of sync
-+	 * likely means the controller and host stack are out of sync
- 	 * or in case of LE it was still scanning so it can be cleanup
- 	 * safely.
- 	 */
-diff --git a/net/bluetooth/lib.c b/net/bluetooth/lib.c
-index 43aa01fd07b9..305044a84478 100644
---- a/net/bluetooth/lib.c
-+++ b/net/bluetooth/lib.c
-@@ -54,7 +54,7 @@ EXPORT_SYMBOL(baswap);
-  * bt_to_errno() - Bluetooth error codes to standard errno
-  * @code: Bluetooth error code to be converted
-  *
-- * This function takes a Bluetooth error code as input and convets
-+ * This function takes a Bluetooth error code as input and converts
-  * it to an equivalent Unix/standard errno value.
-  *
-  * Return:
-diff --git a/net/bluetooth/smp.c b/net/bluetooth/smp.c
-index 47f359f24d1f..5b4ade03bdcc 100644
---- a/net/bluetooth/smp.c
-+++ b/net/bluetooth/smp.c
-@@ -3172,7 +3172,7 @@ static void smp_ready_cb(struct l2cap_chan *chan)
- 	/* No need to call l2cap_chan_hold() here since we already own
- 	 * the reference taken in smp_new_conn_cb(). This is just the
- 	 * first time that we tie it to a specific pointer. The code in
--	 * l2cap_core.c ensures that there's no risk this function wont
-+	 * l2cap_core.c ensures that there's no risk this function won't
- 	 * get called if smp_new_conn_cb was previously called.
- 	 */
- 	conn->smp = chan;
+ 		skb = tcp_write_queue_tail(sk);
+ 		if (skb)
 -- 
-2.50.0
+2.47.1
 
 
