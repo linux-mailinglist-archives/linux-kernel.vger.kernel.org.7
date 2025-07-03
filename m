@@ -1,190 +1,164 @@
-Return-Path: <linux-kernel+bounces-715349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-715354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3978FAF7497
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 14:49:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D993FAF74B3
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 14:52:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23531166ECE
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 12:49:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 781581C425C3
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 12:52:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAAE72E7184;
-	Thu,  3 Jul 2025 12:49:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A08E2E3B06;
+	Thu,  3 Jul 2025 12:51:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="C7E3Dbg9";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DQciNWqF"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8305D2E54BF;
-	Thu,  3 Jul 2025 12:49:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="pmle+Jf+"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6674029C33E;
+	Thu,  3 Jul 2025 12:51:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751546985; cv=none; b=WalUAK9y76JEBJs0QFI9+7uBNpLGb9i0J4kc/7a8yDINvbFGWePhjzXVymLmlB21r0CagvpZ7DIuc5tkI2rn/gkPMlzCbeYdIiNwKzlkFekiItxG929hNLBO+Poh0vVXvFgB9HmpwrrFgsDtrnFVK7UICqn0k8T0qTtnshSjtB0=
+	t=1751547115; cv=none; b=StH1wl57SyYeoUKwR52mKv+HvVYH0vIhbPzrqrpC3pfoeoucQzlKoUPZeXHQJWucHXnG3FWOp6RF9Ok98y/vHjRo1EG4E2RdTfs+0bfdI5t0dQMWsk7s66INKSJiF2R/fz/1RN2QWShHnlI6jjXTJaCaJMeFw2AOwY1pd6Ijd8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751546985; c=relaxed/simple;
-	bh=IdWOOvlRMfqTK0x5xPDEDQJQZYKBjvntK092U9eF7MM=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=RAkSG/hvQ4ETVTwrilmMHcMQrxeMQgJtUQlYv2Rh6p6QbRXSyrsZ2ZI2pJK5P/7kh0ZOiDiXcS7PfHWwMz96QfBZKtErDcttY/XBLFqrKHoIuRezJ9zjCzk7CAdpVQ6xsuHSMvMqqGlGHiwpMn1DfH70FEpB8f3V4q1wxbZ1Jl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=C7E3Dbg9; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DQciNWqF; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 03 Jul 2025 12:49:40 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1751546981;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BlcEuG15kT93IK5PKW81gN+wtC9gnI8l3WpgNIvutBo=;
-	b=C7E3Dbg9jkSFe4CxRLgVSLpuTA5xFHT8F+GjnEP/yO6iM//M2Qlmfw6156Lz6tUGBWbzHV
-	NTUspyPdkkCJykCxjxvHOE5XYg9i1Ei4TitJsqx03NcZze7LDzLNZhVh2FTjl4ZBly+Sc5
-	1BkDZ2gmcfdUCzv9Fx5YEa0KN/1DKHDphbLyovTQE/OAMrzKIpFZ3PC34ytAaWLyHRlKZj
-	yADhOGJHmtNJtMIwnE8IL1dZNEtnJJHnoNYmdcQC8UDPtbI+1Oe/PyqB/ovoCcK8pbei/j
-	wAcsEUYd1PrgmA8Pz6JmLbKFHUmOkl6B3JGghPpa7vmV1e/G5UIPkn+mkABYzw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1751546981;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BlcEuG15kT93IK5PKW81gN+wtC9gnI8l3WpgNIvutBo=;
-	b=DQciNWqFzIOR79aX6HzDTYxyJlFFZWha+YiCLd5+9vc947Niz9c9lqjwK1pmzzcO9BRDxl
-	K9fS2p/jTXbc+xCA==
-From: "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/ptp] timekeeping: Provide ktime_get_clock_ts64()
-Cc: Thomas Gleixner <tglx@linutronix.de>,
- Vadim Fedorenko <vadim.fedorenko@linux.dev>, John Stultz <jstultz@google.com>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250701132628.357686408@linutronix.de>
-References: <20250701132628.357686408@linutronix.de>
+	s=arc-20240116; t=1751547115; c=relaxed/simple;
+	bh=8cVsj7c6niP+JfkiPXl5ehru+xDsq0rqhBXJfP1pB7I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IzkPXwRckCYNselsE+J86N+RbPXF/SWGk9cWx46G26C4LKh781Ruu7GAyloynChM8xSBPKcCURDOXSNY2Il06xTWlY+WlmemfQuWBTiGc6wf8guRm0lYpTLWI1GxbntADZRVTt0mifYHN/lPTPqjCas0Dg59I0ZfWkLUBl0ks+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=pmle+Jf+; arc=none smtp.client-ip=117.135.210.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=3M
+	Ga7aUIUrsqSH5jzhVO2fccWDlbAAU4JB3lQ6tDZMI=; b=pmle+Jf+7uIoBLtNKD
+	xi1b+D8KcNunRsFTEJia3+2C6/zC0gicTdnwnl4yVUZjVDwsHptAhPc9f3D0hRbx
+	0s5RkxMaXBtwEYpvEYHNefuKt6VEqNljQ5iDvtEHNM7zHv9/vVDgXMIKXmD6BhgU
+	aIjZ429cMAPxWuk06/+TY8Q3Y=
+Received: from ProDesk.. (unknown [])
+	by gzga-smtp-mtada-g0-3 (Coremail) with SMTP id _____wAXBAyWfGZoVnrrCA--.37969S2;
+	Thu, 03 Jul 2025 20:50:34 +0800 (CST)
+From: Andy Yan <andyshrk@163.com>
+To: dmitry.baryshkov@oss.qualcomm.com
+Cc: mripard@kernel.org,
+	neil.armstrong@linaro.org,
+	dri-devel@lists.freedesktop.org,
+	dianders@chromium.org,
+	jani.nikula@intel.com,
+	lyude@redhat.com,
+	jonathanh@nvidia.com,
+	p.zabel@pengutronix.de,
+	simona@ffwll.ch,
+	victor.liu@nxp.com,
+	rfoss@kernel.org,
+	chunkuang.hu@kernel.org,
+	cristian.ciocaltea@collabora.com,
+	Laurent.pinchart@ideasonboard.com,
+	linux-arm-msm@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	freedreno@lists.freedesktop.org,
+	Andy Yan <andyshrk@163.com>
+Subject: [PATCH v3 0/2] Pass down connector to drm bridge detect hook
+Date: Thu,  3 Jul 2025 20:49:51 +0800
+Message-ID: <20250703125027.311109-1-andyshrk@163.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <175154698040.406.6091128422197349668.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wAXBAyWfGZoVnrrCA--.37969S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxAw48KrWfKF1UWr4UWr15urg_yoW5Kw4UpF
+	W2gFyavryxAF4aka1xAF18AF90y3Z7XFWrKry2v3sI93WFvF1UArsxAayrXryDGFyxJr12
+	ywn7GrWxGF12yaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zRSkshUUUUU=
+X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/xtbBkBx-XmhmehVGHAAAsW
 
-The following commit has been merged into the timers/ptp branch of tip:
 
-Commit-ID:     5b605dbee07dda8fd538af1f07cbf1baf0a49cbc
-Gitweb:        https://git.kernel.org/tip/5b605dbee07dda8fd538af1f07cbf1baf0a49cbc
-Author:        Thomas Gleixner <tglx@linutronix.de>
-AuthorDate:    Tue, 01 Jul 2025 15:26:58 +02:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Thu, 03 Jul 2025 14:18:06 +02:00
+In some application scenarios, we hope to get the corresponding
+connector when the bridge's detect hook is invoked.
 
-timekeeping: Provide ktime_get_clock_ts64()
+For example, we may want to call drm_dp_read_sink_count_cap(which needs
+a drm_connector) at the dp deteck hook, intel_dp and nouveau_dp do this
+at it's connector's detetc_ctx/detect hook.
 
-PTP implements an inline switch case for taking timestamps from various
-POSIX clock IDs, which already consumes quite some text space. Expanding it
-for auxiliary clocks really becomes too big for inlining.
+But for a bridge driver, it's detect hook is initiated by the connector,
+there is no connector passed down.
 
-Provide a out of line version. 
+In most cases, we can get the connector by
+drm_atomic_get_connector_for_encoder
+if the encoder attached to the bridge is enabled, however there will
+still be some scenarios where the detect hook of the bridge is called
+but the corresponding encoder has not been enabled yet. For instance,
+this occurs when the device is hot plug in for the first time.
 
-The function invalidates the timestamp in case the clock is invalid. The
-invalidation allows to implement a validation check without the need to
-propagate a return value through deep existing call chains.
+Since the call to bridge's detect is initiated by the connector, passing
+down the corresponding connector directly will make things simpler.
 
-Due to merge logistics this temporarily defines CLOCK_AUX[_LAST] if
-undefined, so that the plain branch, which does not contain any of the core
-timekeeper changes, can be pulled into the networking tree as prerequisite
-for the PTP side changes. These temporary defines are removed after that
-branch is merged into the tip::timers/ptp branch. That way the result in
--next or upstream in the next merge window has zero dependencies.
+Before preparing this patch, we have had some discussions on the details
+here[0].
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-Acked-by: John Stultz <jstultz@google.com>
-Link: https://lore.kernel.org/all/20250701132628.357686408@linutronix.de
+PATCH1 adjust the dp/hdmi_audio_* callback parameters order, make it
+maintain the same parameter order as get_modes and edid_read.
+PATCH2 add connector to detect hook.
 
----
- include/linux/timekeeping.h | 10 ++++++++++
- kernel/time/timekeeping.c   | 33 +++++++++++++++++++++++++++++++++
- 2 files changed, 43 insertions(+)
+[0]https://patchwork.freedesktop.org/patch/640712/?series=143573&rev=5
 
-diff --git a/include/linux/timekeeping.h b/include/linux/timekeeping.h
-index 5427736..4a4c277 100644
---- a/include/linux/timekeeping.h
-+++ b/include/linux/timekeeping.h
-@@ -44,6 +44,7 @@ extern void ktime_get_ts64(struct timespec64 *ts);
- extern void ktime_get_real_ts64(struct timespec64 *tv);
- extern void ktime_get_coarse_ts64(struct timespec64 *ts);
- extern void ktime_get_coarse_real_ts64(struct timespec64 *ts);
-+extern void ktime_get_clock_ts64(clockid_t id, struct timespec64 *ts);
- 
- /* Multigrain timestamp interfaces */
- extern void ktime_get_coarse_real_ts64_mg(struct timespec64 *ts);
-@@ -345,4 +346,13 @@ void read_persistent_wall_and_boot_offset(struct timespec64 *wall_clock,
- extern int update_persistent_clock64(struct timespec64 now);
- #endif
- 
-+/* Temporary workaround to avoid merge dependencies and cross tree messes */
-+#ifndef CLOCK_AUX
-+#define CLOCK_AUX			MAX_CLOCKS
-+#define MAX_AUX_CLOCKS			8
-+#define CLOCK_AUX_LAST			(CLOCK_AUX + MAX_AUX_CLOCKS - 1)
-+
-+static inline bool ktime_get_aux_ts64(clockid_t id, struct timespec64 *kt) { return false; }
-+#endif
-+
- #endif
-diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
-index a009c91..572e3bd 100644
---- a/kernel/time/timekeeping.c
-+++ b/kernel/time/timekeeping.c
-@@ -1573,6 +1573,39 @@ void ktime_get_raw_ts64(struct timespec64 *ts)
- }
- EXPORT_SYMBOL(ktime_get_raw_ts64);
- 
-+/**
-+ * ktime_get_clock_ts64 - Returns time of a clock in a timespec
-+ * @id:		POSIX clock ID of the clock to read
-+ * @ts:		Pointer to the timespec64 to be set
-+ *
-+ * The timestamp is invalidated (@ts->sec is set to -1) if the
-+ * clock @id is not available.
-+ */
-+void ktime_get_clock_ts64(clockid_t id, struct timespec64 *ts)
-+{
-+	/* Invalidate time stamp */
-+	ts->tv_sec = -1;
-+	ts->tv_nsec = 0;
-+
-+	switch (id) {
-+	case CLOCK_REALTIME:
-+		ktime_get_real_ts64(ts);
-+		return;
-+	case CLOCK_MONOTONIC:
-+		ktime_get_ts64(ts);
-+		return;
-+	case CLOCK_MONOTONIC_RAW:
-+		ktime_get_raw_ts64(ts);
-+		return;
-+	case CLOCK_AUX ... CLOCK_AUX_LAST:
-+		if (IS_ENABLED(CONFIG_POSIX_AUX_CLOCKS))
-+			ktime_get_aux_ts64(id, ts);
-+		return;
-+	default:
-+		WARN_ON_ONCE(1);
-+	}
-+}
-+EXPORT_SYMBOL_GPL(ktime_get_clock_ts64);
- 
- /**
-  * timekeeping_valid_for_hres - Check if timekeeping is suitable for hres
+Changes in v3:
+- Remove redundant SoB
+
+Changes in v2:
+- Make dp/hdmi_audio_* callback keep the same par get_modes
+
+Andy Yan (2):
+  drm/bridge: Make dp/hdmi_audio_* callback keep the same paramter order
+    with get_modes
+  drm/bridge: Pass down connector to drm bridge detect hook
+
+ drivers/gpu/drm/bridge/adv7511/adv7511.h      | 16 +++----
+ .../gpu/drm/bridge/adv7511/adv7511_audio.c    | 12 +++---
+ drivers/gpu/drm/bridge/adv7511/adv7511_cec.c  |  4 +-
+ drivers/gpu/drm/bridge/adv7511/adv7511_drv.c  |  3 +-
+ drivers/gpu/drm/bridge/analogix/anx7625.c     |  2 +-
+ .../drm/bridge/cadence/cdns-mhdp8546-core.c   |  3 +-
+ drivers/gpu/drm/bridge/chrontel-ch7033.c      |  2 +-
+ drivers/gpu/drm/bridge/display-connector.c    | 11 +++--
+ drivers/gpu/drm/bridge/ite-it6263.c           |  3 +-
+ drivers/gpu/drm/bridge/ite-it6505.c           |  2 +-
+ drivers/gpu/drm/bridge/ite-it66121.c          |  3 +-
+ drivers/gpu/drm/bridge/lontium-lt8912b.c      |  6 +--
+ drivers/gpu/drm/bridge/lontium-lt9611.c       | 15 +++----
+ drivers/gpu/drm/bridge/lontium-lt9611uxc.c    |  3 +-
+ .../bridge/megachips-stdpxxxx-ge-b850v3-fw.c  |  3 +-
+ drivers/gpu/drm/bridge/sii902x.c              |  3 +-
+ drivers/gpu/drm/bridge/simple-bridge.c        |  2 +-
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi-qp.c  | 14 +++----
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi.c     |  3 +-
+ drivers/gpu/drm/bridge/tc358767.c             |  5 ++-
+ drivers/gpu/drm/bridge/ti-sn65dsi86.c         |  3 +-
+ drivers/gpu/drm/bridge/ti-tfp410.c            |  2 +-
+ drivers/gpu/drm/bridge/ti-tpd12s015.c         |  8 +++-
+ .../gpu/drm/display/drm_bridge_connector.c    | 20 ++++-----
+ drivers/gpu/drm/drm_bridge.c                  |  5 ++-
+ drivers/gpu/drm/mediatek/mtk_dp.c             |  3 +-
+ drivers/gpu/drm/mediatek/mtk_hdmi.c           |  3 +-
+ drivers/gpu/drm/msm/dp/dp_audio.c             |  8 ++--
+ drivers/gpu/drm/msm/dp/dp_audio.h             |  8 ++--
+ drivers/gpu/drm/msm/dp/dp_drm.c               |  3 +-
+ drivers/gpu/drm/msm/hdmi/hdmi.h               | 10 ++---
+ drivers/gpu/drm/msm/hdmi/hdmi_audio.c         |  8 ++--
+ drivers/gpu/drm/msm/hdmi/hdmi_bridge.c        |  2 +-
+ drivers/gpu/drm/msm/hdmi/hdmi_hpd.c           |  4 +-
+ drivers/gpu/drm/rockchip/rk3066_hdmi.c        |  2 +-
+ drivers/gpu/drm/xlnx/zynqmp_dp.c              |  3 +-
+ include/drm/drm_bridge.h                      | 42 ++++++++++---------
+ 37 files changed, 139 insertions(+), 110 deletions(-)
+
+-- 
+2.43.0
+
+base-commit: 56e5375b23f342dfa3179395aacc1b47395fddf7
+branch: drm-misc-next
+
 
