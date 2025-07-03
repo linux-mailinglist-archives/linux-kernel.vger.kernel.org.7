@@ -1,82 +1,135 @@
-Return-Path: <linux-kernel+bounces-714505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F96BAF68BE
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 05:36:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C78B5AF6949
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 06:58:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DF094A79E5
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 03:36:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0668B4A4F2E
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 04:58:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FBFA238C34;
-	Thu,  3 Jul 2025 03:36:46 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69C7228DF1F;
+	Thu,  3 Jul 2025 04:58:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="py68uFdk"
+Received: from out162-62-58-69.mail.qq.com (out162-62-58-69.mail.qq.com [162.62.58.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AB022376E1;
-	Thu,  3 Jul 2025 03:36:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC0D428DF20
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 04:58:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751513805; cv=none; b=tYk2T79/yH4xj/XauMzq2bp0e7sp4LwWe/IZULAbn/vkFTH+Dhl5gN6jUuIw1N6KR3502V9VxAasoAFKBVYQ6FM1X06ihvurLQLdW3r1E1gNXubPliiWLQw+XVVyQ7JgLMi6lHBprVqR30ZWigUkpTfCc/DmeTskgDVpmHZe7SE=
+	t=1751518715; cv=none; b=OwZ0f1pc7Ss3EtARTziI/aWdt6rj56fSbZRbdx1yGy45H3anuNhAEGu8SHb/LStgITR2hy4bPWEj7vkzVW5402V50Ra9s3tJ4hKFPMHwsrLo67AXZP3FQGbd/flXSi4AGohi/L612yvReitGDINR93Z/QKmMCvsSs7XgcFm7Fxk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751513805; c=relaxed/simple;
-	bh=qufCM+a9ttb0lswuL1Vr+9sSMDwIKtcoIE0s5xR/GiE=;
-	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=XDi9MCqy+Rw45aHQSqu2dk6/Pn97+jdgqEzT0Q44sHVOO4GoooZNTVNA3ml72Cjn8EbV/QX7wY2Dq3Ljc+Q41lIIirrjsgPtKEh6v//yxszQArHPFeyTWIoYSprKl3/qz82inoc7S6OCD/8meZTJBnsABkU07AmFNoDlnV+ajA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4bXj7c4WKJz2BdV7;
-	Thu,  3 Jul 2025 11:34:52 +0800 (CST)
-Received: from kwepemk100013.china.huawei.com (unknown [7.202.194.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id 6AFF21A016C;
-	Thu,  3 Jul 2025 11:36:39 +0800 (CST)
-Received: from [10.67.120.192] (10.67.120.192) by
- kwepemk100013.china.huawei.com (7.202.194.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 3 Jul 2025 11:36:38 +0800
-Message-ID: <cb9826e0-8366-4b34-abce-fedd5882ba00@huawei.com>
-Date: Thu, 3 Jul 2025 11:36:37 +0800
+	s=arc-20240116; t=1751518715; c=relaxed/simple;
+	bh=J+IYp9jcZdc1FY0DvzsgVosWeeClBCVHm2ukBDFdTuQ=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=rEn56HY+g8KhXJSgWlbIqTyFnATsodedFpHXZxlGF4Zoh0vFRbi3bWUa4Fid/5FiaFu3QdPR8boZXpMbWEzsEgjhAf/vztqNEKgLngCj/oRxL7mczFPX0YhJmehUycREeuURkv19FNyq2ukIphMpPrk/YMiRZwcvAKjWG0DTxSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=py68uFdk; arc=none smtp.client-ip=162.62.58.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1751518706; bh=F+ILISzDjtPPxv3dgfZUBuIfwYunt431F1PsflXRPJM=;
+	h=From:To:Cc:Subject:Date;
+	b=py68uFdkN89y6N4kmuQbC0RXu40W3QxreBexCjtI45pj9rD1ASV7DtImJWaxLdTz6
+	 FgldKvVTtzwCzJ5kmtXzSA5JbVGJKebnGXjHkawj6e9SYa/yoe+d1VFtKyttJuQBPE
+	 VFNFkN0enawEdfmw2Uvhf24Z/BR3kC+HO/QJMJvk=
+Received: from VM-222-126-tencentos.localdomain ([14.116.239.37])
+	by newxmesmtplogicsvrszc13-1.qq.com (NewEsmtp) with SMTP
+	id 9E327C20; Thu, 03 Jul 2025 11:39:35 +0800
+X-QQ-mid: xmsmtpt1751513975trlfmosn8
+Message-ID: <tencent_4A53F3018A4E9A1EAECFAD853F6952D67B06@qq.com>
+X-QQ-XMAILINFO: OEnxXf6IMmheJ7ACWL7UaaRa8R2XU0uytHp9G+VfxLWKLXqiLR0EJcNmnngBLa
+	 UyD99zyxTwuxpuZaT0E9S6jYVq+Rj7ufMP7AYRjbLCFVwlDFeIae+t6y6ITtyJiW4h3gWhhyvbI7
+	 zK1imbEOGJ8Rtzh7+ZUWYCIqXRYbCWTdp2yDVnWGG+8ZqUmylc/MPwCKQ3MLVo+Cu1aUFqxLAY0D
+	 FXRfxjnx2dBBUhKJnVw6R/9ghxeMXbYi24sLdP/BYsUSykWcOli+KOOrx+sui4d1usOWMActFjiV
+	 HPNlLjvIV4LqaYH0eMl8A8ceOvo3f69kwCXN938j6BGKQjvwa++XNdLrygakREJkivRhowkRnp0x
+	 rr1A+aEf+Lqiub/fa2p3396BGJkHvgeXnvuA8pGEHsTEvlMGLLWDveLnEzC7dB9xYgfJYvQQ9oCP
+	 lCWAihZFX42H3qZEeAWPBxI3z8p+xiY73eatQZzBg4r6QC4Hg2SW3lvigq57s/Tx/fVVL/6qCaNz
+	 ta48b1UusOU+X9lRqibTE/v6ECfho7Pq4d2bpnSvKksjOxNvMVbEMTnwbf9rmmIzDLZ4lWLJnv6w
+	 UowmV0XYnomiN7sZjyd0Qszhyt6ahnMh5LhbBEDkenQIuLc2S2qkis3A/WJwl8PZKlkQ2qatVBVA
+	 eRNMVYsLvRMwiMSQenu0Kpkmu3lJm+oTwbq/rz9crU83PleXDABoVxSBle8OdRmcHi8KOdYbJIza
+	 XinphfatitXh2pR5ze6ewDHbgV2IiZ8YAqpTw2hmCeUL+yFsXd9Bd0thuCiDkPB09ovRVG9UMugv
+	 W5/Z0YbxgdF4QjhWpxNP5kb6DQjJBkSBGEi4R84g5FTdcg7UwWlrJh2NMdSX4rmcgB/J3h3H+P6W
+	 ScfUGubsKIECqTqvp/peOzK53dPaxQoSt2xpoWXME0gUevza5vIPF6kly6JCtcqwXCWf/HPSANMm
+	 kOPmZ4Nk773NdImwy6O14dHzVCyX2eSXIzCuqB1m34Qz4pCINi5uEx+eYMkDw7F6743cDZZdsmJU
+	 NlNn1NjxNf+SEPBfm0M1whDKjSo8987d0x1+w0EA9PGoUtfeFykOE3TH7XbXhDtxCpF49ybg==
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
+From: jackysliu <1972843537@qq.com>
+To: harry.wentland@amd.com
+Cc: sunpeng.li@amd.com,
+	siqueira@igalia.com,
+	alexander.deucher@amd.com,
+	christian.koenig@amd.com,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	alvin.lee2@amd.com,
+	aurabindo.pillai@amd.com,
+	Dillon.Varone@amd.com,
+	Austin.Zheng@amd.com,
+	Sung.Lee@amd.com,
+	mario.limonciello@amd.com,
+	Wayne.Lin@amd.com,
+	ryanseto@amd.com,
+	linux@treblig.org,
+	joshua.aberback@amd.com,
+	amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	jackysliu <1972843537@qq.com>,
+	jackysliu <Security@tencent.com>
+Subject: [PATCH] drm/amd/display:fix a Null pointer dereference vulnerability
+Date: Thu,  3 Jul 2025 11:39:28 +0800
+X-OQ-MSGID: <20250703033928.2201509-1-1972843537@qq.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-CC: <shaojijie@huawei.com>, <davem@davemloft.net>, <edumazet@google.com>,
-	<pabeni@redhat.com>, <andrew+netdev@lunn.ch>, <horms@kernel.org>,
-	<shenjian15@huawei.com>, <liuyonglong@huawei.com>, <chenhao418@huawei.com>,
-	<jonathan.cameron@huawei.com>, <shameerali.kolothum.thodi@huawei.com>,
-	<salil.mehta@huawei.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next 0/4] There are some bugfix for the HNS3 ethernet
- driver
-To: Jakub Kicinski <kuba@kernel.org>
-References: <20250702125731.2875331-1-shaojijie@huawei.com>
- <f3994ddd-9b9b-4bbb-bba4-89f7b4ae07f7@huawei.com>
- <20250702072301.51deaf72@kernel.org>
-From: Jijie Shao <shaojijie@huawei.com>
-In-Reply-To: <20250702072301.51deaf72@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
- kwepemk100013.china.huawei.com (7.202.194.61)
+Content-Transfer-Encoding: 8bit
 
+A null pointer dereference vulnerability exists in the AMD display driver's
+ (DC module) cleanup function dc_destruct().
+ When display control context (dc->ctx) construction fails
+ (due to memory allocation failure), this pointer remains NULL.
+During subsequent error handling when dc_destruct() is called,
+there's no NULL check before dereferencing the perf_trace member
+ (dc->ctx->perf_trace),
+ causing a kernel null pointer dereference crash
 
-on 2025/7/2 22:23, Jakub Kicinski wrote:
-> On Wed, 2 Jul 2025 21:07:19 +0800 Jijie Shao wrote:
->> on 2025/7/2 20:57, Jijie Shao wrote:
->>> There are some bugfix for the HNS3 ethernet driver
->> Sorry, ignore this patch set, they should be sent to net not net-next ...
-> You still should have waited 24h per:
-> https://www.kernel.org/doc/html/next/process/maintainer-netdev.html
+Signed-off-by: jackysliu <Security@tencent.com>
+---
+ drivers/gpu/drm/amd/display/dc/core/dc.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-
-Okay, I'll take note of that. Thank you.
-
+diff --git a/drivers/gpu/drm/amd/display/dc/core/dc.c b/drivers/gpu/drm/amd/display/dc/core/dc.c
+index 56d011a1323c..3bda0593f66f 100644
+--- a/drivers/gpu/drm/amd/display/dc/core/dc.c
++++ b/drivers/gpu/drm/amd/display/dc/core/dc.c
+@@ -934,6 +934,11 @@ static void dc_destruct(struct dc *dc)
+ 	if (dc->link_srv)
+ 		link_destroy_link_service(&dc->link_srv);
+ 
++	if (!dc->ctx) {
++		dm_error("%s: called with NULL ctx\n", __func__);
++		goto skip_ctx_cleanup;
++	}
++
+ 	if (dc->ctx->gpio_service)
+ 		dal_gpio_service_destroy(&dc->ctx->gpio_service);
+ 
+@@ -946,6 +951,7 @@ static void dc_destruct(struct dc *dc)
+ 	kfree(dc->ctx);
+ 	dc->ctx = NULL;
+ 
++skip_ctx_cleanup:
+ 	kfree(dc->bw_vbios);
+ 	dc->bw_vbios = NULL;
+ 
+-- 
+2.43.5
 
 
