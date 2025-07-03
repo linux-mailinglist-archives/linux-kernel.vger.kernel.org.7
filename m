@@ -1,135 +1,118 @@
-Return-Path: <linux-kernel+bounces-715786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-715778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19048AF7DEB
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 18:31:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BE45EAF7DC8
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 18:27:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D0F51CA03A1
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 16:28:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 95C241BC682B
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 16:24:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0633B25745F;
-	Thu,  3 Jul 2025 16:26:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD9F424DCF8;
+	Thu,  3 Jul 2025 16:24:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F9xYnMul"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZEgCWzvH"
+Received: from mail-oo1-f53.google.com (mail-oo1-f53.google.com [209.85.161.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DBB02550BA;
-	Thu,  3 Jul 2025 16:26:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC63728E17;
+	Thu,  3 Jul 2025 16:24:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751560017; cv=none; b=nnlsyNGcjzqmPlowdHZDGfiGMwjmJDH1cJvBbp6PCNTB7uaB1biXYhHIZajfFbMc0TDnXO9c9w1w9ovPGHdsbxLnyI3wNlqMoqb77fqZQQj6rqKhaUbWtrF2abhUQ/vOqwKg+sXVR12mQJ6jkJACB4qHPSGLk3XvuSL1LIqIk7o=
+	t=1751559853; cv=none; b=kUzlTFQPYzZ44FE50wWLksQRvVMfSPimbBuf8oScIoybmQGOy7G39naYbhrXn1x7GS/lfcyRuZHufZhHNQqo8dYrPvxkhmp9wqkIgzaepPc693tzzPgdDcMQPH+FSlwC855bJhPwJCakS6OmfkOioX8HX1iSt5iB87vCztsLUe0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751560017; c=relaxed/simple;
-	bh=0se/eq+gWDDz/zPGLfe64NetxynymgwpyPlKXYP8XIU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=TRcCSWFJybUQIbCzOy3ZrmrDXtqxlSbUs/QRebW9ATKsjNU5UVoLXsaEamHlRhaQE52jJ+F/UaxUl/SEhUZNZJhk0jB2iuM+7PjVSuBgP8L9HcoCzZppBykxQvJ/ZalbbOsqtimh46AtfyFDLurVZUBb/AMHCOb4KAeGY0TID+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F9xYnMul; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57858C4CEE3;
-	Thu,  3 Jul 2025 16:26:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751560015;
-	bh=0se/eq+gWDDz/zPGLfe64NetxynymgwpyPlKXYP8XIU=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=F9xYnMulVuNGNvAGTBMpLlkUdOXV29MzVXEe033VuqVu/tGe+RWsJngzdz4IffUZF
-	 TlFfr0OzdjCXXzY5GuscScdCqMN4WdRq00y7yQ79g33zU0CeoS7fDu5zmWPpovhul5
-	 ZpqA/v/ijUwmYLGzJmt8RMJ2UuKToISDuzKDPkyqtBjsZ0ev9agFlQ4yyBi80TBfV+
-	 c9pcjON/ohz7/AITWDxJYIcAcipay9tALB0V3775LUsr27Z0zso2ElZBpm547GWVvL
-	 /Seqd/LMJsI+P9t4/SG/wnc32xVf9Rwn8YlZIaCiUv6D0bP+sqI5ZeiRE+LEbZPRwp
-	 cUgjf2kBSiWFA==
-From: Mark Brown <broonie@kernel.org>
-Date: Thu, 03 Jul 2025 17:23:24 +0100
-Subject: [PATCH v2 3/3] kselftest/arm64: Add lsfe to the hwcaps test
+	s=arc-20240116; t=1751559853; c=relaxed/simple;
+	bh=ZattO5Mn2hbw8j6k+Ojc2VZsIcamMU7rl1sPrW/W0SA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=j9r8EWEqPeQfDMdKRFSxSN6MG57YKidd9raHC4Aix5j5fZfwOrHlruUiOwpnlwMY6jeGhMyXquLkwPHm5+hh6jLj84zSvgjb348dWBn49MOlXFqJi+mDzbYvjAsNH8Qv99hdJtdG0s4f4olgLY2QxRg5btBRfrA0b+bGB1sOyrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZEgCWzvH; arc=none smtp.client-ip=209.85.161.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-60f24b478e3so76176eaf.3;
+        Thu, 03 Jul 2025 09:24:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751559850; x=1752164650; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZattO5Mn2hbw8j6k+Ojc2VZsIcamMU7rl1sPrW/W0SA=;
+        b=ZEgCWzvHLTVHSgww+IzCSNfW+8Ih7H+5gTka5NGtzjwlOSTSd2yudGQfJaR6ZdLFE2
+         8woLK3hlCwW9YuvNC5lu2m3TlAGF4B1slPveL9pUCn+sSTTQfGQ7HZiwTysWgSTRxAjt
+         WTuOdxIrURSEihndDtlTLwtR/Wsnxxlbs//PIoY3v1eTZwUKYOwOmHmm5m+00hVTGE7f
+         2IJsra+44L7fAF0CX+rJE0HPDew+xxV7UiFM8DHLK2bPCsBGzTAJ3Mvzez9KHgMRtlRE
+         VTMDpUXxj8Kxru0CClgxJqafkskjYT3HW6hzlPnEJ33T4AOFDKCa7GA43pMMfwRZG028
+         M+nw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751559850; x=1752164650;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZattO5Mn2hbw8j6k+Ojc2VZsIcamMU7rl1sPrW/W0SA=;
+        b=FKooUpFvffqwboSoGTlO5sNeDuN2CyMVdrU5In0Se8kLc0nOGoCXGN2xRuNIw4WSrB
+         gxLAaeOLsDJpJFJpO20sFItlDNJkJ/Da+0mRljrXasGCAXiNKQMr1ARikB830ZQwj4lV
+         9fEQfOLu7oirpJQnxtsWQQS1Alrg41jHiHSVD+nMpXIfXizQ1gwsKyIMnNl5xEFiIXn3
+         pqBpFVJPtChjKr0zcqaWum+ZLuLyIG65sAAjgcEtzwAPANfUljRWi49ZaYADv4DhEV9S
+         FrBXMIJXLre45LZmd4BtUziN9zshSZ6FL6NBnBGOk51DGELOP0QkStNj+r7bJEGbNjvA
+         5UgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVN1x5rV7vgUlgkpvME3J63XGxpbwODzo/3p5/VyNUEVKWSnWJkIw1maJDeZtyalxYLuc2B0lfQKuqb@vger.kernel.org, AJvYcCWTOCiaWU8W2FULAqqLVFYSbPK5uJFIaxma2QXlRvCN+sJRNIPnweWhiLhj1ILoWl8AL32t36Zyd6mL8DLi@vger.kernel.org, AJvYcCXyVwLUlW+lney2jqoMPzaEuj0J08/aBKTYI4N0yEFmUo/ZM/9Cbxa27FTaXg1IjeCNF/IIE37urApwK/Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCAWBXn4NqLJTHGDYauzmsMJIL6CUMV8QXRPckv6AoCuBbpVYL
+	uNHtL/vJK4bwcXpjGKZuma09ip7ihMJ6OP94nV1LQN8am4YNEAZ+706hZx6KIdkMOIAjKI8dANc
+	4DGEzytVAseIERRs41dTQMsCe9cxSkqM=
+X-Gm-Gg: ASbGncsUCtAD2BAY19faOwhvax/2CsfivtnG5E2Rsjw2B3g6ks5bJO2h7FQ3dsl7+Un
+	rR3tvb/Ay91X4uV89eNxiq2krOZ6vMuFrgfy+Cs2t/bVxmD8hxjjZaQk/4+KJcKM1bY2q/OOYH0
+	nsIGyy67iEm3vVCn+K+GLuSCO0+zrh3YI8oopYbful
+X-Google-Smtp-Source: AGHT+IH23ww8t4Ksjbvw04Pw1dg6g23ybwLHvx+e9HpnjY0WklCP4KSUDd3Djui5CG6kL/P3nrBFNMGPKv5nAgOzn1k=
+X-Received: by 2002:a05:6820:c8f:b0:611:e00a:598d with SMTP id
+ 006d021491bc7-6120116d82fmr5594771eaf.8.1751559849936; Thu, 03 Jul 2025
+ 09:24:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250703-arm64-lsfe-v2-3-eced80999cb4@kernel.org>
-References: <20250703-arm64-lsfe-v2-0-eced80999cb4@kernel.org>
-In-Reply-To: <20250703-arm64-lsfe-v2-0-eced80999cb4@kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>, 
- Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
- Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
- Joey Gouly <joey.gouly@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
- Shuah Khan <shuah@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev, 
- linux-kselftest@vger.kernel.org, Mark Brown <broonie@kernel.org>
-X-Mailer: b4 0.15-dev-cff91
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1403; i=broonie@kernel.org;
- h=from:subject:message-id; bh=0se/eq+gWDDz/zPGLfe64NetxynymgwpyPlKXYP8XIU=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBoZq9DrX1z69CleuGaYuiPYfm4x17/sToCyk2zP
- Nm99VorSU2JATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCaGavQwAKCRAk1otyXVSH
- 0LtRB/45/MTmfubRL3pBtMgXgWZMq82PR/jkn5ACdHwS7IGViT7FD2ZmgEzsylFTLDfTmP4bjqb
- pbVkdOsCSZJylYyOKBy6J9aDXd7tjwVYbfLr1jFUylvwqe2j5aZ27QCwhe1PC+DOzTvNkqEzvEB
- UIUPledQkbmnZJXMySkE4RVNqUaTB8ws5T8BGrQjz+ncH0gVf+yZfXpkdxiXetLZ4QTqNj1FjDR
- ip9vM1mAiEyMlpLqJeNt0L/XcFLEWNFVgOO78k+oVlAMlESket+6r99C6oAxaBjOv9nmGxTRVCw
- 0i3NukLDRtFDCW/v6+sTv43stjBooDOAlxzXewZLYPF/ko5z
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+References: <20250526-p3450-mts-bug-v1-1-78500613f02c@gmail.com>
+ <CALHNRZ_7wChDsvpUnQHnOTT9VzT1Lgg8JYgg13AFV8Jg_3itwQ@mail.gmail.com> <nuicekbfdgjbfudtlul74ifsqckfg6itybb76bkzuaxfcp5ve5@yevlttgtobxy>
+In-Reply-To: <nuicekbfdgjbfudtlul74ifsqckfg6itybb76bkzuaxfcp5ve5@yevlttgtobxy>
+From: Nicolas Chauvet <kwizart@gmail.com>
+Date: Thu, 3 Jul 2025 18:23:58 +0200
+X-Gm-Features: Ac12FXxB8p0am1jeHuRsG3pEC3-oMtt-Xsi26v4UVhYH88yQRdtMwuJ6D3jOGbA
+Message-ID: <CABr+WTnn2qOXEMCiRDywySAxn0UeKAcx5XOJNpn731tXxbCPDQ@mail.gmail.com>
+Subject: Re: [PATCH RFC] arm64: tegra: Add reserved-memory node for P3450
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Aaron Kling <webgeek1234@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This feature has no traps associated with it so the SIGILL is not reliable.
+Le jeu. 3 juil. 2025 =C3=A0 13:00, Thierry Reding
+<thierry.reding@gmail.com> a =C3=A9crit :
+>
+> On Mon, May 26, 2025 at 02:07:35PM -0500, Aaron Kling wrote:
+> > On Mon, May 26, 2025 at 2:06=E2=80=AFPM Aaron Kling via B4 Relay
+> > <devnull+webgeek1234.gmail.com@kernel.org> wrote:
+> > >
+> > > From: Aaron Kling <webgeek1234@gmail.com>
+> > >
+> > > The Tegra210 L4T bootloader ram training will corrupt the in-ram kern=
+el
+> > > dt if no reserved-memory node exists. This prevents said bootloader f=
+rom
+> > > being able to boot a kernel without this node, unless a chainloaded
+> > > bootloader loads the dt. Add the node to eliminate the requirement fo=
+r
+> > > extra boot stages.
 
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- tools/testing/selftests/arm64/abi/hwcap.c | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+Is there any particular reason why this applies on jetson-nano but not
+jetson-tx1 (or any other l4t based boards ?)
+I wonder if it would be enough to boot an upstream kernel with the l4t
+bootloader (and no chainloaded upstream u-boot) as I cannot do the
+other way for some reason (using fedora based upstream u-boot cannot
+boot downstream l4t kernel anymore)
 
-diff --git a/tools/testing/selftests/arm64/abi/hwcap.c b/tools/testing/selftests/arm64/abi/hwcap.c
-index 35f521e5f41c..faa0f82f27e0 100644
---- a/tools/testing/selftests/arm64/abi/hwcap.c
-+++ b/tools/testing/selftests/arm64/abi/hwcap.c
-@@ -17,6 +17,8 @@
- #include <asm/sigcontext.h>
- #include <asm/unistd.h>
- 
-+#include <linux/auxvec.h>
-+
- #include "../../kselftest.h"
- 
- #define TESTS_PER_HWCAP 3
-@@ -165,6 +167,18 @@ static void lse128_sigill(void)
- 		     : "cc", "memory");
- }
- 
-+static void lsfe_sigill(void)
-+{
-+	float __attribute__ ((aligned (16))) mem = 0;
-+	register float *memp asm ("x0") = &mem;
-+
-+	/* LDFADD H0, H0, [X0] */
-+	asm volatile(".inst 0x7c200000"
-+		     : "+r" (memp)
-+		     :
-+		     : "cc", "memory");
-+}
-+
- static void lut_sigill(void)
- {
- 	/* LUTI2 V0.16B, { V0.16B }, V[0] */
-@@ -758,6 +772,13 @@ static const struct hwcap_data {
- 		.cpuinfo = "lse128",
- 		.sigill_fn = lse128_sigill,
- 	},
-+	{
-+		.name = "LSFE",
-+		.at_hwcap = AT_HWCAP3,
-+		.hwcap_bit = HWCAP3_LSFE,
-+		.cpuinfo = "lsfe",
-+		.sigill_fn = lsfe_sigill,
-+	},
- 	{
- 		.name = "LUT",
- 		.at_hwcap = AT_HWCAP2,
-
--- 
-2.39.5
-
+Thanks for the hints.
 
