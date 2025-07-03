@@ -1,104 +1,124 @@
-Return-Path: <linux-kernel+bounces-715404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-715406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF867AF758C
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 15:27:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CF6CAF7593
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 15:27:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1BCB83A95A3
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 13:26:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8644563167
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 13:27:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77F02176ADE;
-	Thu,  3 Jul 2025 13:27:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD7292E3B03;
+	Thu,  3 Jul 2025 13:27:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="uMJoD7xy";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="UMsmDlmo"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cCmmqMiS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9261381E;
-	Thu,  3 Jul 2025 13:27:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0286FC148;
+	Thu,  3 Jul 2025 13:27:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751549228; cv=none; b=lkk//vA4QIjmdeqgj3EMgGXDeep20gcIKMnB0XfWVTdiDeym/TbZJ0NuswPlip+vkWIMcVXFy8XCvRcBHEhugolKLxiFJja2hlS4X0fvB3S9Zrx2P2BnqHM4TbKFRFlLoR2weuY2hF9ijIYkLu5LgAQKx2pKIqlXTH9sx4icsyw=
+	t=1751549247; cv=none; b=UwD+4dz+hnFQkVz/1qG+dtDy/Li4FiZztbzDLrMAXOtIsb72JoxgIM9evl2VN9g+pLcdZix/8GCwN09EwTvQLhSKiy849sLZB1tn6q0Se2mVdXGlEhUk3ATZxDTK2LN6pI8ECQqerGQ2ZN9Zg41Q8IZrWXXArt+2869vTiF4Rqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751549228; c=relaxed/simple;
-	bh=81HmvwHeiUSGmL4dZb3PXIm6QmppJrUMFGfEmXnv22o=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=cGTir5AJN26tUQA/xJGLCHN8QI4b736jJ/BAEhWZd69Kkk2kCaqSqHz40Xo2ExLZxw82lPbgcSUw0xIjKoapFnOIsfF7+DeTzF4c714wAOt8zRUXb+zi7SqqHOy94BBjhulqjatV57LynvZR45zW5lMvaV/VMrx13vi3HXovpa4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=uMJoD7xy; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=UMsmDlmo; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1751549225;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=81HmvwHeiUSGmL4dZb3PXIm6QmppJrUMFGfEmXnv22o=;
-	b=uMJoD7xyJM4mpWpwx8uMkF61D3OSN7oknYYGpiM0XpxjAGlSQvf0htdfvIiG4r3WneeMP7
-	Iwx1xMt5aW5GeNFBIL0350ThYSJ5LQM/YLRnBt48879KJ2A37O82tISh6pIK8BLjtnamr/
-	rD94AjqQGVuFCVR2tJkO8l7Q/B0kt2v0fYdEV+lEx7VkqnVpIycWHJu6bE0M/ZHrjWOQIn
-	m/sf/quPagJMSw0dZVkdD47v/DqaTXVg71kmM2kQbiOw13Zmgc6UvLAOJFCVPGASfpyoX+
-	3Fohow0L/hJmKlIo/c5A9GOoaqoJAWjEHx8tO55Nkv/4O9hFvtb943kFp3zjkg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1751549225;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=81HmvwHeiUSGmL4dZb3PXIm6QmppJrUMFGfEmXnv22o=;
-	b=UMsmDlmo/89Km8xvhCIeKLe46rLrXMtkmUwJpQ03b0vjvL81Vo7JWNr+Fqtj9RRiktPFYy
-	vOYoRbBu4vYfvyAQ==
-To: Nam Cao <namcao@linutronix.de>, Marc Zyngier <maz@kernel.org>, Lorenzo
- Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?=
- <kwilczynski@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>, Rob
- Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, Karthikeyan
- Mitran <m.karthikeyan@mobiveil.co.in>, Hou Zhiqiang
- <Zhiqiang.Hou@nxp.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- Pali =?utf-8?Q?Roh=C3=A1r?= <pali@kernel.org>, "K . Y . Srinivasan"
- <kys@microsoft.com>,
- Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
- Dexuan Cui <decui@microsoft.com>, Joyce Ooi <joyce.ooi@intel.com>, Jim
- Quinlan <jim2101024@gmail.com>, Nicolas Saenz Julienne
- <nsaenz@kernel.org>, Florian Fainelli <florian.fainelli@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Ray Jui <rjui@broadcom.com>,
- Scott Branden <sbranden@broadcom.com>, Ryder Lee <ryder.lee@mediatek.com>,
- Jianjun Wang <jianjun.wang@mediatek.com>, Marek Vasut
- <marek.vasut+renesas@gmail.com>, Yoshihiro Shimoda
- <yoshihiro.shimoda.uh@renesas.com>, Michal Simek <michal.simek@amd.com>,
- Daire McNamara <daire.mcnamara@microchip.com>, Nirmal Patel
- <nirmal.patel@linux.intel.com>, Jonathan Derrick
- <jonathan.derrick@linux.dev>, Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
- linux-rpi-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- linux-renesas-soc@vger.kernel.org
-Cc: Nam Cao <namcao@linutronix.de>
-Subject: Re: [PATCH 10/16] PCI: xilinx-xdma: Switch to
- msi_create_parent_irq_domain()
-In-Reply-To: <b4620dc1808f217a69d0ae50700ffa12ffd657eb.1750858083.git.namcao@linutronix.de>
-References: <cover.1750858083.git.namcao@linutronix.de>
- <b4620dc1808f217a69d0ae50700ffa12ffd657eb.1750858083.git.namcao@linutronix.de>
-Date: Thu, 03 Jul 2025 15:27:04 +0200
-Message-ID: <87ldp5v1zr.ffs@tglx>
+	s=arc-20240116; t=1751549247; c=relaxed/simple;
+	bh=02Jt1Cymbs57OvvyqASB9yCoi82LcJgdykJmqeCnv8Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mMkGZ4bLIybJdAc/rE7cFAOt1+viRYOvjhsZHVerbkf+0kBR4epz2h2HHE1i4xdb7LsWN9PJKBP3jioP9NXyByroOREV8SW1YLPqcI1PTrJjwcGbUEX5czJNGkNplOO1+SXsHc3bYYczv0SZ3GW3jZM3qiCalPD9ZlTFxmal0hk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cCmmqMiS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D7ECC4CEE3;
+	Thu,  3 Jul 2025 13:27:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751549246;
+	bh=02Jt1Cymbs57OvvyqASB9yCoi82LcJgdykJmqeCnv8Y=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=cCmmqMiSMdW95nEPe1HJViQllZgFpmCY4isMnJBc6miFP3aSlDhfQg5wjWCPHBjUO
+	 jHIeWhmx8m/x5oTMYwK0pov1zIDGKIMVDEnEtNxEXKtts1KZ2e+bU816zmaE07OmaY
+	 vsGJqNigVBrmny+x/6apIvX4eGvR6RjhALEZ6hvMDFB4gVoeUWGD3HDIDGVEkoDAC0
+	 Fg1ZBJkg7bp+v9NK8JyV2aTfdU6REn1Ex58+/5nr3A6gL2RPe1L6saJxdppQTUV8LE
+	 qk0RP9lsJzodZ4eLLvskzTzyRiXaqlBfL/8EMYRLQDZ2cgzGfZLwYoSk4cD4S5ia8M
+	 dKDsCjqTRS9qQ==
+Message-ID: <720df841-8300-490a-af77-8d20f833c042@kernel.org>
+Date: Thu, 3 Jul 2025 15:27:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v8 5/5] page_pool: make page_pool_get_dma_addr()
+ just wrap page_pool_get_dma_addr_netmem()
+To: Byungchul Park <byungchul@sk.com>, willy@infradead.org,
+ netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ kernel_team@skhynix.com, kuba@kernel.org, almasrymina@google.com,
+ ilias.apalodimas@linaro.org, harry.yoo@oracle.com,
+ akpm@linux-foundation.org, davem@davemloft.net, john.fastabend@gmail.com,
+ andrew+netdev@lunn.ch, asml.silence@gmail.com, toke@redhat.com,
+ tariqt@nvidia.com, edumazet@google.com, pabeni@redhat.com,
+ saeedm@nvidia.com, leon@kernel.org, ast@kernel.org, daniel@iogearbox.net,
+ david@redhat.com, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
+ vbabka@suse.cz, rppt@kernel.org, surenb@google.com, mhocko@suse.com,
+ horms@kernel.org, linux-rdma@vger.kernel.org, bpf@vger.kernel.org,
+ vishal.moola@gmail.com, hannes@cmpxchg.org, ziy@nvidia.com,
+ jackmanb@google.com
+References: <20250702053256.4594-1-byungchul@sk.com>
+ <20250702053256.4594-6-byungchul@sk.com>
+Content-Language: en-US
+From: Jesper Dangaard Brouer <hawk@kernel.org>
+In-Reply-To: <20250702053256.4594-6-byungchul@sk.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jun 26 2025 at 16:48, Nam Cao wrote:
 
-> Move away from the legacy MSI domain setup, switch to use
-> msi_create_parent_irq_domain().
->
-> Signed-off-by: Nam Cao <namcao@linutronix.de>
 
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+On 02/07/2025 07.32, Byungchul Park wrote:
+> The page pool members in struct page cannot be removed unless it's not
+> allowed to access any of them via struct page.
+> 
+> Do not access 'page->dma_addr' directly in page_pool_get_dma_addr() but
+> just wrap page_pool_get_dma_addr_netmem() safely.
+> 
+> Signed-off-by: Byungchul Park <byungchul@sk.com>
+> Reviewed-by: Mina Almasry <almasrymina@google.com>
+> Reviewed-by: Ilias Apalodimas <ilias.apalodimas@linaro.org>
+> Reviewed-by: Toke Høiland-Jørgensen <toke@redhat.com>
+> Reviewed-by: Pavel Begunkov <asml.silence@gmail.com>
+> ---
+>   include/net/page_pool/helpers.h | 7 +------
+>   1 file changed, 1 insertion(+), 6 deletions(-)
+> 
+> diff --git a/include/net/page_pool/helpers.h b/include/net/page_pool/helpers.h
+> index 773fc65780b5..db180626be06 100644
+> --- a/include/net/page_pool/helpers.h
+> +++ b/include/net/page_pool/helpers.h
+> @@ -444,12 +444,7 @@ static inline dma_addr_t page_pool_get_dma_addr_netmem(netmem_ref netmem)
+>    */
+>   static inline dma_addr_t page_pool_get_dma_addr(const struct page *page)
+>   {
+> -	dma_addr_t ret = page->dma_addr;
+> -
+> -	if (PAGE_POOL_32BIT_ARCH_WITH_64BIT_DMA)
+> -		ret <<= PAGE_SHIFT;
+> -
+> -	return ret;
+> +	return page_pool_get_dma_addr_netmem(page_to_netmem(page));
+
+Wow - the amount of type casting shenanigans going on here make the code
+hard to follow.
+
+This code changes adds an extra "AND" operation, but we don't have a
+micro-benchmark that tests the performance of a DMA enabled page_pool,
+so I cannot tell if this add any overhead.  My experience tells me that
+this extra AND-operation will not be measurable.
+
+I see a lot of reviewed-by from people I trust, so you also get my 
+page_pool maintainer ack.
+
+Acked-by: Jesper Dangaard Brouer <hawk@kernel.org>
+
+--Jesper
 
