@@ -1,251 +1,203 @@
-Return-Path: <linux-kernel+bounces-714991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1659CAF6F47
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 11:53:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEDC2AF6F51
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 11:54:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DCF31C4786E
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 09:53:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4C555234A9
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 09:54:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C280B2E03E9;
-	Thu,  3 Jul 2025 09:53:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCF3A2E0B46;
+	Thu,  3 Jul 2025 09:53:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="K4dy94I1";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="irUAu815";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="K4dy94I1";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="irUAu815"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V1W0cLuA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 420042DFF17
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 09:53:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B98B2E040C;
+	Thu,  3 Jul 2025 09:53:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751536392; cv=none; b=fJpfK5/6DFkglpS4uslrQfUzr5ntDoBlFw1YTamZD4QTHZWPTFgAMh77c06N+kyzJyvYNww7M1fDAfidZW3BzKMD00ms+ZXpMzcT5FLJxDbJN+DRWWQo79JJJkCyGFlYECLhnqRHxj9RYOeTrT86X3tPHBzTodqqqTpuD5kinio=
+	t=1751536422; cv=none; b=GMUdovXEguOd0rhOSBx5mmpP0d5RgOvZ0IH7L4xN4mr/EWMBoTzPmowsGvGzUfcAJDkRTIG4lcDYnFCHlgkGNUGkw3dRYwBGMDbW//XNXV7gpH5Ox4J98e380LTSIHxbeLW60IaBYMiUoTYUSKc4hB4WFybPjeulCCJWeghu0tQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751536392; c=relaxed/simple;
-	bh=uPbguE/8OAOATIPW9RykVhl8O/CGv8inu1oPmLQ4M7Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hngDnlzSer+LV8gtNPb9RV9RtPW60z/2L9OyC5BvZpCyBwFTU34/cX2t5NXsOJwk/QbtQxHwkwDVEo1lKThtMqTkkAs59xt/1P32Ihav+CFjJ158OTPjuge0Jjp9j/uGuwpcD0xvWBJ5O6klGwmE6HUG9tsoIxU+ot7z/wSPLAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=K4dy94I1; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=irUAu815; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=K4dy94I1; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=irUAu815; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 5BC3B1F387;
-	Thu,  3 Jul 2025 09:53:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1751536388; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ASGLg+R2jtd9A6SKFohBR505MT0D8s64e+2Cx+0rS/M=;
-	b=K4dy94I1QjSIye0Zp/yef9GHWsU+jIvS48MkYq5jLeguRxsd7EYBiFBUsY7KJE4hOfHuJo
-	YkfP8c8Oho0dqO/80fXI6r4wdV8mYOB4lhDya4SuO09fqPyb+YuVVIIlpU4ed0yTuZoUbd
-	WR6nYYqToGZ6HNbPyQJ7jBDSpHPQHIY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1751536388;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ASGLg+R2jtd9A6SKFohBR505MT0D8s64e+2Cx+0rS/M=;
-	b=irUAu815G4wRehMLcBMN7OjR1KEfji/6qTkoGKDAZJ88hhvP5CzbApsBJquUg3ASCOPFxH
-	FM+fcLP4j/GMWcBg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=K4dy94I1;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=irUAu815
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1751536388; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ASGLg+R2jtd9A6SKFohBR505MT0D8s64e+2Cx+0rS/M=;
-	b=K4dy94I1QjSIye0Zp/yef9GHWsU+jIvS48MkYq5jLeguRxsd7EYBiFBUsY7KJE4hOfHuJo
-	YkfP8c8Oho0dqO/80fXI6r4wdV8mYOB4lhDya4SuO09fqPyb+YuVVIIlpU4ed0yTuZoUbd
-	WR6nYYqToGZ6HNbPyQJ7jBDSpHPQHIY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1751536388;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ASGLg+R2jtd9A6SKFohBR505MT0D8s64e+2Cx+0rS/M=;
-	b=irUAu815G4wRehMLcBMN7OjR1KEfji/6qTkoGKDAZJ88hhvP5CzbApsBJquUg3ASCOPFxH
-	FM+fcLP4j/GMWcBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E47D213721;
-	Thu,  3 Jul 2025 09:53:07 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 0nUZNQNTZmh7CQAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Thu, 03 Jul 2025 09:53:07 +0000
-Date: Thu, 3 Jul 2025 11:53:06 +0200
-From: Oscar Salvador <osalvador@suse.de>
-To: Mike Rapoport <rppt@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Alexandre Ghiti <alexghiti@rivosinc.com>,
-	David Hildenbrand <david@redhat.com>,
-	Pratyush Yadav <ptyadav@amazon.de>, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH 3/3] cma: move allocation from HIGHMEM to a helper
- function
-Message-ID: <aGZTApK8WxFrTxI0@localhost.localdomain>
-References: <20250702173605.2198924-1-rppt@kernel.org>
- <20250702173605.2198924-4-rppt@kernel.org>
+	s=arc-20240116; t=1751536422; c=relaxed/simple;
+	bh=Bi7+i0xNf9WQfukuXGjoBWe+6weV84Rvxqt6OcF2qAc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CZSfAM4CdQ8L2aD9/pKgwN2JMxMlDSn9BTFBElQlmfQdD/cTbY9ln7MaUmXg42tHt7B/f/hxruyJugc1nRJlkK+YvvEHSGUI9uESJKw8h4t2NGVrws0I+9t5DklCmTbnmAIDbp/4VYWDqGCOwIPhyTJ+RQBF50gbKVWsu+0zDwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V1W0cLuA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07ACFC4CEE3;
+	Thu,  3 Jul 2025 09:53:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751536421;
+	bh=Bi7+i0xNf9WQfukuXGjoBWe+6weV84Rvxqt6OcF2qAc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=V1W0cLuADda8+8dkcJQZ6ONYe+BTc32UJh52Ihb0I074zOxXB8bR/F9I+cB+BT2uG
+	 83MOZGrwN15ugDYfvoAakYItQIFz5xbrI4/99Z+I30+DnNpBB55+PtjKlvmhwU78O4
+	 APJnwZRgJydgdgkd1ekU9K2uZgCYZgM39prCX4/Hil1G60RlhqwbmWXpo7UOk4N2P5
+	 42bATMK7m3sl6psUl7bRE3udWeMHOPdxHztv6VJIgUSFgvG7gPvb1oSMtKlF5FeHZN
+	 MtdHcfFLj9SOoiOt2UynwTYVnXmg62qs0d5xunlTuPasgnB5lPZwh4oXDp+VDoeSd7
+	 cSj1VwLmkbn+g==
+Message-ID: <f096afa1-260e-4f8c-8595-3b41425b2964@kernel.org>
+Date: Thu, 3 Jul 2025 11:53:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250702173605.2198924-4-rppt@kernel.org>
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 5BC3B1F387
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Score: -4.51
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/2] ethernet: eswin: Add eic7700 ethernet driver
+To: weishangjuan@eswincomputing.com, andrew+netdev@lunn.ch,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
+ rmk+kernel@armlinux.org.uk, yong.liang.choong@linux.intel.com,
+ vladimir.oltean@nxp.com, jszhang@kernel.org, jan.petrous@oss.nxp.com,
+ prabhakar.mahadev-lad.rj@bp.renesas.com, inochiama@gmail.com,
+ boon.khai.ng@altera.com, dfustini@tenstorrent.com, 0x1207@gmail.com,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org
+Cc: ningyu@eswincomputing.com, linmin@eswincomputing.com,
+ lizhi2@eswincomputing.com
+References: <20250703091808.1092-1-weishangjuan@eswincomputing.com>
+ <20250703092015.1200-1-weishangjuan@eswincomputing.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250703092015.1200-1-weishangjuan@eswincomputing.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 02, 2025 at 08:36:05PM +0300, Mike Rapoport wrote:
-> From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
-> 
-> When CONFIG_HIGMEM is enabled, __cma_declare_contiguous_nid() first
-> tries to allocate the area from HIGHMEM and if that fails it falls back
-> to allocation from low memory.
-> 
-> Split allocation from HIGMEM into a helper function to further decouple
-> logic related to CONFIG_HIGHMEM.
-> 
-> Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-> ---
->  mm/cma.c | 52 +++++++++++++++++++++++++++++-----------------------
->  1 file changed, 29 insertions(+), 23 deletions(-)
-> 
-> diff --git a/mm/cma.c b/mm/cma.c
-> index 1df8ff312d99..0a24c46f3296 100644
-> --- a/mm/cma.c
-> +++ b/mm/cma.c
-> @@ -376,6 +376,30 @@ static int __init cma_fixed_reserve(phys_addr_t base, phys_addr_t size)
->  	return 0;
->  }
->  
-> +static phys_addr_t __init cma_alloc_highmem(phys_addr_t base, phys_addr_t size,
-> +			phys_addr_t align, phys_addr_t *limit, int nid)
-> +{
-> +	phys_addr_t addr = 0;
+On 03/07/2025 11:20, weishangjuan@eswincomputing.com wrote:
+> +	ret = of_property_read_u32_index(pdev->dev.of_node, "eswin,syscrg_csr", 1,
+> +					 &hsp_aclk_ctrl_offset);
+> +	if (ret)
+> +		return dev_err_probe(&pdev->dev, ret, "can't get hsp_aclk_ctrl_offset\n");
 > +
-> +	if (IS_ENABLED(CONFIG_HIGHMEM)) {
-> +		phys_addr_t highmem = __pa(high_memory - 1) + 1;
+> +	regmap_read(dwc_priv->crg_regmap, hsp_aclk_ctrl_offset, &hsp_aclk_ctrl_regset);
+> +	hsp_aclk_ctrl_regset |= (EIC7700_HSP_ACLK_CLKEN | EIC7700_HSP_ACLK_DIVSOR);
+> +	regmap_write(dwc_priv->crg_regmap, hsp_aclk_ctrl_offset, hsp_aclk_ctrl_regset);
 > +
-> +		/*
-> +		 * All pages in the reserved area must come from the same zone.
-> +		 * If the requested region crosses the low/high memory boundary,
-> +		 * try allocating from high memory first and fall back to low
-> +		 * memory in case of failure.
-> +		 */
-> +		if (base < highmem && *limit > highmem) {
-> +			addr = memblock_alloc_range_nid(size, align, highmem,
-> +							*limit, nid, true);
-> +			*limit = highmem;
-> +		}
-> +	}
+> +	ret = of_property_read_u32_index(pdev->dev.of_node, "eswin,syscrg_csr", 2,
+> +					 &hsp_cfg_ctrl_offset);
+> +	if (ret)
+> +		return dev_err_probe(&pdev->dev, ret, "can't get hsp_cfg_ctrl_offset\n");
+> +
+> +	regmap_write(dwc_priv->crg_regmap, hsp_cfg_ctrl_offset, EIC7700_HSP_CFG_CTRL_REGSET);
+> +
+> +	dwc_priv->hsp_regmap = syscon_regmap_lookup_by_phandle(pdev->dev.of_node,
+> +							       "eswin,hsp_sp_csr");
 
-Not a big deal, but maybe better to do it in one function? Maybe even move
-the CONFIG_PHYS_ADDR_T_64BIT block in there as well? So memblock_alloc_range_nid()
-calls would be contained in one place and the X86_64/HIGHMEM comments as
-well.
-Just a thought.
+There is no such property. I already said at v2 you cannot have
+undocumented ABI.
 
- diff --git a/mm/cma.c b/mm/cma.c
- index dd7643fc01db..532b56e6971a 100644
- --- a/mm/cma.c
- +++ b/mm/cma.c
- @@ -377,11 +377,12 @@ static int __init cma_fixed_reserve(phys_addr_t base, phys_addr_t size)
-  	return 0;
-  }
- 
- -static phys_addr_t __init cma_alloc_highmem(phys_addr_t base, phys_addr_t size,
- -			phys_addr_t align, phys_addr_t *limit, int nid)
- +static phys_addr_t __init cma_alloc_mem(phys_addr_t base, phys_addr_t size,
- +			phys_addr_t align, phys_addr_t limit, int nid)
-  {
-  	phys_addr_t addr = 0;
- 
- +	/* On systems with HIGHMEM try allocating from there first */
-  	if (IS_ENABLED(CONFIG_HIGHMEM)) {
-  		phys_addr_t highmem = __pa(high_memory - 1) + 1;
- 
- @@ -393,11 +394,15 @@ static phys_addr_t __init cma_alloc_highmem(phys_addr_t base, phys_addr_t size,
-  		 */
-  		if (base < highmem && *limit > highmem) {
-  			addr = memblock_alloc_range_nid(size, align, highmem,
- -							*limit, nid, true);
- +							limit, nid, true);
-  			*limit = highmem;
-  		}
-  	}
- 
- +	if (!addr)
- +		addr = memblock_alloc_range_nid(size, alignment, base,
- +						limit, nid, true);
- +
-  	return addr;
-  }
- 
- @@ -487,16 +492,8 @@ static int __init __cma_declare_contiguous_nid(phys_addr_t *basep,
-  		}
-  #endif
- 
- -		/* On systems with HIGHMEM try allocating from there first */
-  		if (!addr)
- -			addr = cma_alloc_highmem(base, size, alignment, &limit,
- -						 nid);
- -		if (!addr) {
- -			addr = memblock_alloc_range_nid(size, alignment, base,
- -					limit, nid, true);
- -			if (!addr)
- -				return -ENOMEM;
- -		}
- +			addr = cma_alloc_mem(base, size, alignment, limit, nid);
- 
-  		/*
-  		 * kmemleak scans/reads tracked objects for pointers to other
+> +	if (IS_ERR(dwc_priv->hsp_regmap))
+> +		return dev_err_probe(&pdev->dev, PTR_ERR(dwc_priv->hsp_regmap),
+> +				"Failed to get hsp_sp_csr regmap\n");
+> +
+> +	ret = of_property_read_u32_index(pdev->dev.of_node, "eswin,hsp_sp_csr", 2,
 
+NAK
+
+> +					 &eth_phy_ctrl_offset);
+> +	if (ret)
+> +		return dev_err_probe(&pdev->dev, ret, "can't get eth_phy_ctrl_offset\n");
+> +
+> +	regmap_read(dwc_priv->hsp_regmap, eth_phy_ctrl_offset, &eth_phy_ctrl_regset);
+> +	eth_phy_ctrl_regset |= (EIC7700_ETH_TX_CLK_SEL | EIC7700_ETH_PHY_INTF_SELI);
+> +	regmap_write(dwc_priv->hsp_regmap, eth_phy_ctrl_offset, eth_phy_ctrl_regset);
+> +
+> +	ret = of_property_read_u32_index(pdev->dev.of_node, "eswin,hsp_sp_csr", 3,
+> +					 &eth_axi_lp_ctrl_offset);
+> +	if (ret)
+> +		return dev_err_probe(&pdev->dev, ret, "can't get eth_axi_lp_ctrl_offset\n");
+> +
+> +	regmap_write(dwc_priv->hsp_regmap, eth_axi_lp_ctrl_offset, EIC7700_ETH_CSYSREQ_VAL);
+> +
+> +	plat_dat->clk_tx_i = devm_clk_get_enabled(&pdev->dev, "tx");
+> +	if (IS_ERR(plat_dat->clk_tx_i))
+> +		return dev_err_probe(&pdev->dev, PTR_ERR(plat_dat->clk_tx_i),
+> +				"error getting tx clock\n");
+> +
+> +	plat_dat->fix_mac_speed = eic7700_qos_fix_speed;
+> +	plat_dat->set_clk_tx_rate = stmmac_set_clk_tx_rate;
+> +	plat_dat->bsp_priv = dwc_priv;
+> +
+> +	ret = stmmac_dvr_probe(&pdev->dev, plat_dat, &stmmac_res);
+> +	if (ret)
+> +		return dev_err_probe(&pdev->dev, ret, "Failed to driver probe\n");
+> +
+> +	return ret;
+> +}
+> +
+> +static const struct of_device_id eic7700_dwmac_match[] = {
+> +	{ .compatible = "eswin,eic7700-qos-eth" },
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(of, eic7700_dwmac_match);
+> +
+> +static struct platform_driver eic7700_dwmac_driver = {
+> +	.probe  = eic7700_dwmac_probe,
+> +	.remove = stmmac_pltfr_remove,
+> +	.driver = {
+> +		.name           = "eic7700-eth-dwmac",
+> +		.pm             = &stmmac_pltfr_pm_ops,
+> +		.of_match_table = eic7700_dwmac_match,
+> +	},
+> +};
+> +module_platform_driver(eic7700_dwmac_driver);
+> +
+> +MODULE_AUTHOR("Eswin");
+
+Drop, that's not a person.
 
 
--- 
-Oscar Salvador
-SUSE Labs
+Best regards,
+Krzysztof
 
