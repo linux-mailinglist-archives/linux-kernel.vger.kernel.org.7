@@ -1,159 +1,230 @@
-Return-Path: <linux-kernel+bounces-715332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-715334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35459AF7459
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 14:39:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 480A0AF7464
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 14:40:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 536B44E1862
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 12:39:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EAF91C44F92
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 12:40:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7D172E717D;
-	Thu,  3 Jul 2025 12:39:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF78C2E6D3E;
+	Thu,  3 Jul 2025 12:39:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vzXpOSXZ";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FzUfzSgG"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Xp8gGQoH"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 711F82E5400;
-	Thu,  3 Jul 2025 12:39:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE2AB2E6114
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 12:39:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751546355; cv=none; b=BfaqyRyeaaPV9PLnYZELz0+CHrMEhihNrCEIbCNO7pdvNerOmCzcB9woVvAU4NWJ/xeJ0XHx52DNEv4y862IB4DLek5v0NZh2NdpKcy8KuXqjiOriBMWPDYN5rbCk6jCkp3/+2OmiDKmCeTxpx7NEpy8oN/Y1s8LlejILbRZfng=
+	t=1751546379; cv=none; b=TwQUYjQ+fiYo9txM1WiqrgrymHTCe+7JW7GmxBqMz45sMsk/hmsnvgv/xl/d4cW5mMvd4816VjajCnqNdSZDmLa71IB73DuxaDInZl0z7MVfNtmjaRsEMTuVIeuIi0tj2xcUE37HbSi7WkanmgK5fEDOm8ZAG82ABZnowlzDYQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751546355; c=relaxed/simple;
-	bh=sS5BJFq5yl1Cpp9kuGgfCMujzkfDmeSN9fqRocDqWZY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=eS3wEp0ttuxK5gB9ilz/01NuRW03+vHTJLCZC5WjchDwabZO4WMyGKbvmOzsUx0/o44kzmerDUFcHBO+kpAR3QbufearcVL7+5ANgII29LtT5HNLV2tden92NAMbg4vGrY2XuJuIWOFNr8F/NEoCNDpG7B/hqREq/tg4klOICTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vzXpOSXZ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FzUfzSgG; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1751546351;
+	s=arc-20240116; t=1751546379; c=relaxed/simple;
+	bh=jZQnj2z/DOc1XgDzZQWNW56cMJAgY58Qfkyd+rsZzYw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GjHi7EZbbdvi4I8ZG6Z2ctN80aoTwvwNPnUG4cWotqC4qghuI8CaDMBQY7ApTJZZ7M68t03h+wpD1aQWRzIb0fVh4p/6BIVQgFAvF5xH/S65sAxL9uqWeMCIJ5FYj6dY0Hd3n4RNJAnJjpA1XhA66C2E+IT8R2LqKWf65qa8Kn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Xp8gGQoH; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1751546376;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+Z0MqZuZk9ZorWcjtJWd2TxVCHlbiuTD5yZSdlZfeII=;
-	b=vzXpOSXZEV/ki4Fz56c1LN7R+SoJv7a0tWyetgyw+Vv2V+U76gNI8tlqrmISKPXQy2SY6D
-	0aqIr6/cHHuvlHMtZnazdEKO51Qb7fktkaM8LmoP47mIV/n8oERHZG4r7fNG9M1yvbgPsm
-	pgYQmojQGYmXDyHS4cfaLe0WeLAH2JSdJHdKq1vUJHD7EHAGXVDsqMMuf0+2VpUmHHV7wg
-	zE5IJjDCpmOvhkxkrrGUN7IBkErGnLEbnCOpVkstow06QoCV80pFViZkqdU2eV4I0PuNAr
-	jbuvUxzD0pMvKIfYqx1aVt31nmEGX36gXVOXfDG5764NtgD+A6Nwf5l1tFc1hw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1751546351;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+Z0MqZuZk9ZorWcjtJWd2TxVCHlbiuTD5yZSdlZfeII=;
-	b=FzUfzSgGPqvzHpwS71OnYN2WaJ+oJocoZiFsGmmcKJzDy6QxguVcuw8gMFoxVG2PvZI6Na
-	mYXsXWIucs0CCKDg==
-Date: Thu, 03 Jul 2025 14:38:55 +0200
-Subject: [PATCH 2/2] um/ptrace: Implement HAVE_SYSCALL_TRACEPOINTS
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Oi7wV4GKMcMHM1v/VB7INbDIKNe9eVceq3H9f21UYs0=;
+	b=Xp8gGQoHIhNAQjVECH4A7WZ/BxXgQxb3YIrN6oYuSZ6NU59c6TJ8qco5aVBcIR2xbrOxyd
+	qp6CzCu+eudTYVThJlb17b+jkYgObE7VP9IPH6cZk7cC29XZTe+WEt75u07ne4lDkCg1xh
+	gpsGV/uHX5o6tYYAqWmeeIrTq0zJXJE=
+Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
+ [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-542-WmKRaaXoN8OWJron7KWNYw-1; Thu, 03 Jul 2025 08:39:35 -0400
+X-MC-Unique: WmKRaaXoN8OWJron7KWNYw-1
+X-Mimecast-MFC-AGG-ID: WmKRaaXoN8OWJron7KWNYw_1751546375
+Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-ade81d27cddso775408466b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Jul 2025 05:39:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751546374; x=1752151174;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Oi7wV4GKMcMHM1v/VB7INbDIKNe9eVceq3H9f21UYs0=;
+        b=PWPBFYjVGPl/veLrVOI5yQVWhiNDis8iHBeqhig9vafKKMgZ1ElwxNzTLv+HajTK3e
+         AAHX4vjcSmdh+ULoUA6lyNxLwcXF9WeWOg8pjnzwLCU2O4AupbJkB5qzxZ17lgkHwLfl
+         3dNQgLmsmbESzXKdZnITdHoA5Vw1i7jM1nrtsWjI0blkUOhKtfrjFFwn2FZbSeu7mnba
+         7LS59eI3wCs549lEFgwZrr2fDAQ/QGSW0C+A3Z7akwk+nQrqovaUdNQVoAM9dlV1Kyrb
+         85QBBeHAXdSxh46WzudFHYFSkaMIiCv7PewrWrfaaT468T5/ZQnDU1ubRZRcuz80g1Fj
+         h01g==
+X-Forwarded-Encrypted: i=1; AJvYcCVN/P8F3T6F0t5sj10XjXy+Vl3X2Pl3kEgAu6Czhu0xlhjj98rcqIgbIepbcKo+fFWE/xPEzeafn7rVryo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzW+wsRHqDXYsDxCBFy9+8NrK/qISH9VuYqyJRDlEeufaNC/+Gx
+	/TeDpeSQO/9Yn7vX8opS5A+W9xuOMSBeq0T+K4EV7xhep/i/mAQ22AHfGKEgOxi9wUhu7CSlY2C
+	cr3M5guc+jXaQO9UNvTVxShl+X3YKM86js8HnmWdjLn3rMWD1X6K4JqLGwBntv7O7UQ==
+X-Gm-Gg: ASbGncsOh9+Q+lvxhZG+dgtBScifxEUpuVPgGyvQjxLwv1AbxRpJFHZ/NbivNk43nid
+	M1pLHYnIQGY28FbLi+NlLag0GtS9/lFwXSxTH4Q6RbZFy5P4+Vd7XWNGuTeV4XLqCxANLWTZs9x
+	Tn/rXD1MMQTDd0xMU8kgwKJM6LKsllVk6mSXCt7edJC/1U7CCmxrENL/cA/ii5BBLInMw25uOwH
+	FTVff2L7rFyLRFoBuFWQIXGGzTdbNihExlgZLrH2v98SntLVzq4ti7dL5bpYq9QpD83ol7Nzus8
+	en8jnncd5nds9XDRdG62HLWHad6+VTPbTsvfNnsxICUy
+X-Received: by 2002:a17:906:eecd:b0:ad8:9b5d:2c1e with SMTP id a640c23a62f3a-ae3d8c9dcb1mr329383166b.29.1751546374401;
+        Thu, 03 Jul 2025 05:39:34 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHvAzLYe4u7bVgIF4rIZO0Kh3Dh5wNxg2vLubpdGWNR3UdIrBCXy0Ue3tb6YegI5ciU5tlGPQ==
+X-Received: by 2002:a17:906:eecd:b0:ad8:9b5d:2c1e with SMTP id a640c23a62f3a-ae3d8c9dcb1mr329377766b.29.1751546373856;
+        Thu, 03 Jul 2025 05:39:33 -0700 (PDT)
+Received: from [10.32.64.156] (nat-pool-muc-t.redhat.com. [149.14.88.26])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae353c0136asm1283943666b.90.2025.07.03.05.39.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 03 Jul 2025 05:39:33 -0700 (PDT)
+Message-ID: <5e5e8d79-61b1-465d-ab5a-4fa82d401215@redhat.com>
+Date: Thu, 3 Jul 2025 14:39:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 01/14] mm/memory: drop highest_memmap_pfn sanity check
+ in vm_normal_page()
+To: Lance Yang <ioworker0@gmail.com>
+Cc: Oscar Salvador <osalvador@suse.de>, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, nvdimm@lists.linux.dev,
+ Andrew Morton <akpm@linux-foundation.org>, Juergen Gross <jgross@suse.com>,
+ Stefano Stabellini <sstabellini@kernel.org>,
+ Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
+ Dan Williams <dan.j.williams@intel.com>, Alistair Popple
+ <apopple@nvidia.com>, Matthew Wilcox <willy@infradead.org>,
+ Jan Kara <jack@suse.cz>, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Zi Yan <ziy@nvidia.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
+ Barry Song <baohua@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
+ Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
+ Michal Hocko <mhocko@suse.com>, Jann Horn <jannh@google.com>,
+ Pedro Falcato <pfalcato@suse.de>
+References: <20250617154345.2494405-1-david@redhat.com>
+ <20250617154345.2494405-2-david@redhat.com>
+ <aFVZCvOpIpBGAf9w@localhost.localdomain>
+ <c88c29d2-d887-4c5a-8b4e-0cf30e71d596@redhat.com>
+ <CABzRoyZtxBgJUZK4p0V1sPAqbNr=6S-aE1S68u8tKo=cZ2ELSw@mail.gmail.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
+ dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
+ QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
+ XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
+ Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
+ PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
+ WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
+ UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
+ jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
+ B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
+ ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
+ AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAl8Ox4kFCRKpKXgACgkQTd4Q
+ 9wD/g1oHcA//a6Tj7SBNjFNM1iNhWUo1lxAja0lpSodSnB2g4FCZ4R61SBR4l/psBL73xktp
+ rDHrx4aSpwkRP6Epu6mLvhlfjmkRG4OynJ5HG1gfv7RJJfnUdUM1z5kdS8JBrOhMJS2c/gPf
+ wv1TGRq2XdMPnfY2o0CxRqpcLkx4vBODvJGl2mQyJF/gPepdDfcT8/PY9BJ7FL6Hrq1gnAo4
+ 3Iv9qV0JiT2wmZciNyYQhmA1V6dyTRiQ4YAc31zOo2IM+xisPzeSHgw3ONY/XhYvfZ9r7W1l
+ pNQdc2G+o4Di9NPFHQQhDw3YTRR1opJaTlRDzxYxzU6ZnUUBghxt9cwUWTpfCktkMZiPSDGd
+ KgQBjnweV2jw9UOTxjb4LXqDjmSNkjDdQUOU69jGMUXgihvo4zhYcMX8F5gWdRtMR7DzW/YE
+ BgVcyxNkMIXoY1aYj6npHYiNQesQlqjU6azjbH70/SXKM5tNRplgW8TNprMDuntdvV9wNkFs
+ 9TyM02V5aWxFfI42+aivc4KEw69SE9KXwC7FSf5wXzuTot97N9Phj/Z3+jx443jo2NR34XgF
+ 89cct7wJMjOF7bBefo0fPPZQuIma0Zym71cP61OP/i11ahNye6HGKfxGCOcs5wW9kRQEk8P9
+ M/k2wt3mt/fCQnuP/mWutNPt95w9wSsUyATLmtNrwccz63XOwU0EVcufkQEQAOfX3n0g0fZz
+ Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
+ T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
+ 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
+ CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
+ NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
+ 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
+ 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
+ lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
+ AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
+ N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
+ AP+DWgUCXw7HsgUJEqkpoQAKCRBN3hD3AP+DWrrpD/4qS3dyVRxDcDHIlmguXjC1Q5tZTwNB
+ boaBTPHSy/Nksu0eY7x6HfQJ3xajVH32Ms6t1trDQmPx2iP5+7iDsb7OKAb5eOS8h+BEBDeq
+ 3ecsQDv0fFJOA9ag5O3LLNk+3x3q7e0uo06XMaY7UHS341ozXUUI7wC7iKfoUTv03iO9El5f
+ XpNMx/YrIMduZ2+nd9Di7o5+KIwlb2mAB9sTNHdMrXesX8eBL6T9b+MZJk+mZuPxKNVfEQMQ
+ a5SxUEADIPQTPNvBewdeI80yeOCrN+Zzwy/Mrx9EPeu59Y5vSJOx/z6OUImD/GhX7Xvkt3kq
+ Er5KTrJz3++B6SH9pum9PuoE/k+nntJkNMmQpR4MCBaV/J9gIOPGodDKnjdng+mXliF3Ptu6
+ 3oxc2RCyGzTlxyMwuc2U5Q7KtUNTdDe8T0uE+9b8BLMVQDDfJjqY0VVqSUwImzTDLX9S4g/8
+ kC4HRcclk8hpyhY2jKGluZO0awwTIMgVEzmTyBphDg/Gx7dZU1Xf8HFuE+UZ5UDHDTnwgv7E
+ th6RC9+WrhDNspZ9fJjKWRbveQgUFCpe1sa77LAw+XFrKmBHXp9ZVIe90RMe2tRL06BGiRZr
+ jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <CABzRoyZtxBgJUZK4p0V1sPAqbNr=6S-aE1S68u8tKo=cZ2ELSw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250703-uml-have_syscall_tracepoints-v1-2-23c1d3808578@linutronix.de>
-References: <20250703-uml-have_syscall_tracepoints-v1-0-23c1d3808578@linutronix.de>
-In-Reply-To: <20250703-uml-have_syscall_tracepoints-v1-0-23c1d3808578@linutronix.de>
-To: Richard Weinberger <richard@nod.at>, 
- Anton Ivanov <anton.ivanov@cambridgegreys.com>, 
- Johannes Berg <johannes@sipsolutions.net>, 
- Steven Rostedt <rostedt@goodmis.org>, 
- Masami Hiramatsu <mhiramat@kernel.org>, 
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: linux-um@lists.infradead.org, linux-kernel@vger.kernel.org, 
- linux-trace-kernel@vger.kernel.org, Nam Cao <namcao@linutronix.de>, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1751546346; l=2501;
- i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
- bh=sS5BJFq5yl1Cpp9kuGgfCMujzkfDmeSN9fqRocDqWZY=;
- b=sGqrzfKZ+sO/4nzPW8zOoYWd7/SFalzFdwiFKLOhLCnOKZyiaLC0lwAQxnyzYWV3KIvuw15HZ
- AZJ7dueIW2tBUs+uy/X0/KmVvlNUmUJC+ibbivqmdK9MkypSeTSxHxf
-X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
- pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 
-Implement syscall tracepoints through the generic tracing infrastructure.
+On 03.07.25 14:34, Lance Yang wrote:
+> On Mon, Jun 23, 2025 at 10:04 PM David Hildenbrand <david@redhat.com> wrote:
+>>
+>> On 20.06.25 14:50, Oscar Salvador wrote:
+>>> On Tue, Jun 17, 2025 at 05:43:32PM +0200, David Hildenbrand wrote:
+>>>> In 2009, we converted a VM_BUG_ON(!pfn_valid(pfn)) to the current
+>>>> highest_memmap_pfn sanity check in commit 22b31eec63e5 ("badpage:
+>>>> vm_normal_page use print_bad_pte"), because highest_memmap_pfn was
+>>>> readily available.
+>>>>
+>>>> Nowadays, this is the last remaining highest_memmap_pfn user, and this
+>>>> sanity check is not really triggering ... frequently.
+>>>>
+>>>> Let's convert it to VM_WARN_ON_ONCE(!pfn_valid(pfn)), so we can
+>>>> simplify and get rid of highest_memmap_pfn. Checking for
+>>>> pfn_to_online_page() might be even better, but it would not handle
+>>>> ZONE_DEVICE properly.
+>>>>
+>>>> Do the same in vm_normal_page_pmd(), where we don't even report a
+>>>> problem at all ...
+>>>>
+>>>> What might be better in the future is having a runtime option like
+>>>> page-table-check to enable such checks dynamically on-demand. Something
+>>>> for the future.
+>>>>
+>>>> Signed-off-by: David Hildenbrand <david@redhat.com>
+>>>
+>>
+>> Hi Oscar,
+>>
+>>> I'm confused, I'm missing something here.
+>>> Before this change we would return NULL if e.g: pfn > highest_memmap_pfn, but
+>>> now we just print the warning and call pfn_to_page() anyway.
+>>> AFAIK, pfn_to_page() doesn't return NULL?
+>>
+>> You're missing that vm_normal_page_pmd() was created as a copy from
+>> vm_normal_page() [history of the sanity check above], but as we don't
+>> have (and shouldn't have ...) print_bad_pmd(), we made the code look
+>> like this would be something that can just happen.
+>>
+>> "
+>> Do the same in vm_normal_page_pmd(), where we don't even report a
+>> problem at all ...
+>> "
+>>
+>> So we made something that should never happen a runtime sanity check
+>> without ever reporting a problem ...
+> 
+> IIUC, the reasoning is that because this case should never happen, we can
+> change the behavior from returning NULL to a "warn and continue" model?
 
-Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
-Reviewed-by: Nam Cao <namcao@linutronix.de>
----
- arch/um/Kconfig                   | 1 +
- arch/um/include/asm/thread_info.h | 2 ++
- arch/um/kernel/ptrace.c           | 9 +++++++++
- 3 files changed, 12 insertions(+)
+Well, yes. Point is, that check should have never been copy-pasted that 
+way, while dropping the actual warning :)
 
-diff --git a/arch/um/Kconfig b/arch/um/Kconfig
-index f08e8a7fac93d9f98384de02710542fd75d23553..c2d2d2d99bbe3f5a5dc4afaa69e02a520e326c2d 100644
---- a/arch/um/Kconfig
-+++ b/arch/um/Kconfig
-@@ -35,6 +35,7 @@ config UML
- 	select HAVE_RUST
- 	select ARCH_HAS_UBSAN
- 	select HAVE_ARCH_TRACEHOOK
-+	select HAVE_SYSCALL_TRACEPOINTS
- 	select THREAD_INFO_IN_TASK
- 
- config MMU
-diff --git a/arch/um/include/asm/thread_info.h b/arch/um/include/asm/thread_info.h
-index f9ad06fcc991a2b10e2aa6059880b993e3d60a2d..b8c021f97bd17515e4f9082206addfce05b9321e 100644
---- a/arch/um/include/asm/thread_info.h
-+++ b/arch/um/include/asm/thread_info.h
-@@ -43,6 +43,8 @@ struct thread_info {
- #define TIF_NOTIFY_RESUME	8
- #define TIF_SECCOMP		9	/* secure computing */
- #define TIF_SINGLESTEP		10	/* single stepping userspace */
-+#define TIF_SYSCALL_TRACEPOINT	11	/* syscall tracepoint instrumentation */
-+
- 
- #define _TIF_SYSCALL_TRACE	(1 << TIF_SYSCALL_TRACE)
- #define _TIF_SIGPENDING		(1 << TIF_SIGPENDING)
-diff --git a/arch/um/kernel/ptrace.c b/arch/um/kernel/ptrace.c
-index 2124624b7817439b8e1c962e8e6eb0e267db6f53..fdbb37b5c3996188d92cf307d31eeaeca1f0acce 100644
---- a/arch/um/kernel/ptrace.c
-+++ b/arch/um/kernel/ptrace.c
-@@ -9,6 +9,9 @@
- #include <linux/uaccess.h>
- #include <asm/ptrace-abi.h>
- 
-+#define CREATE_TRACE_POINTS
-+#include <trace/events/syscalls.h>
-+
- void user_enable_single_step(struct task_struct *child)
- {
- 	set_tsk_thread_flag(child, TIF_SINGLESTEP);
-@@ -126,6 +129,9 @@ int syscall_trace_enter(struct pt_regs *regs)
- 			    UPT_SYSCALL_ARG3(&regs->regs),
- 			    UPT_SYSCALL_ARG4(&regs->regs));
- 
-+	if (test_thread_flag(TIF_SYSCALL_TRACEPOINT))
-+		trace_sys_enter(regs, UPT_SYSCALL_NR(&regs->regs));
-+
- 	if (!test_thread_flag(TIF_SYSCALL_TRACE))
- 		return 0;
- 
-@@ -142,6 +148,9 @@ void syscall_trace_leave(struct pt_regs *regs)
- 	if (test_thread_flag(TIF_SINGLESTEP))
- 		send_sigtrap(&regs->regs, 0);
- 
-+	if (test_thread_flag(TIF_SYSCALL_TRACEPOINT))
-+		trace_sys_exit(regs, PT_REGS_SYSCALL_RET(regs));
-+
- 	if (!test_thread_flag(TIF_SYSCALL_TRACE))
- 		return;
- 
+It's a sanity check for something that should never happen, turned into 
+something that looks like it must be handled and would be valid to 
+encounter.
 
 -- 
-2.50.0
+Cheers,
+
+David / dhildenb
 
 
