@@ -1,139 +1,110 @@
-Return-Path: <linux-kernel+bounces-714376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37982AF6746
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 03:41:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D9D0AF6729
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 03:34:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D10F83B5808
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 01:41:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBFC8522A9E
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 01:34:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA41B194A67;
-	Thu,  3 Jul 2025 01:41:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b="r6Iy0lyY"
-Received: from jpms-ob02-os7.noc.sony.co.jp (jpms-ob02-os7.noc.sony.co.jp [211.125.139.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9443E192D87;
+	Thu,  3 Jul 2025 01:34:00 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22EC724B26;
-	Thu,  3 Jul 2025 01:41:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.125.139.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59A741853;
+	Thu,  3 Jul 2025 01:33:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751506891; cv=none; b=PoIX/QYCyGAls1yzkY/+G00f57KpcjkpnHR190fD5wjUYoQuRTaCqaBpTtLChnF9Z1yFAhBIzK34ffvI35aOUWdnRphIIl4eH0bOXpCw94WNHfeF+YGYXOs8bBl0bHIt77n6qfEnNNyduOjNu/mJGtD39CjOqpNBf/ApFDOT7fg=
+	t=1751506440; cv=none; b=XxTOnfNUVWBhTDQ+OfyKMutEbkG3NQLQWQv4HidMHddkKsteNcp0vqJLF7A0LpnIEa8KzGbdfVbUsEF8IMB4jttoEtXBotBU6TT6jHaSblhDNXNJ+A4F2txDB8I6SSQNPa52d3Z8/Py9tePkSBqc5p2q9Qc4qE3AjpZL6afOBOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751506891; c=relaxed/simple;
-	bh=2EceiW0EBoYu3OMAf0fB5Q4prjSjyExozqB+r6b+7U0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kVUTJmIG9VrDPaeR2W7JXlp9GCr/A62viL4G2gWDOudI+zijhDCwaaF3y8j1Yuc68J0u7Lm2ELTbuZkVm0bOUK121UjhOmk7M3zh8K4iKV9iDTD1z35brVx0z5Z1rfSH4/JtOtES0zpL33/gjkuGgVageeEMo86OCyw3eAUK+ZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com; spf=fail smtp.mailfrom=sony.com; dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b=r6Iy0lyY; arc=none smtp.client-ip=211.125.139.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=sony.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=sony.com; s=s1jp; t=1751506888; x=1783042888;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=BCu3mx1TAsqBn24Mp2CrmUIIO7P1rfXinDh/8nC5uu8=;
-  b=r6Iy0lyY+NtmiQJkIdhiS5tNGC6ZHUlaNGbxsGncN6N5Xc8Hdci3u8Jw
-   wS4KvHT8a9R3w/z01+v3+ao5/zYw4oCLBYRfIP0Hcud1+eIzC1nmpRsLx
-   FwmEb7ubvtYbpB4c7x8JwCwjQvMflNnZA8CuS5xzKSvYmzUBL3/JDOvVm
-   tDZmHAUNdH9B0eqjUN5mDwvDuUKwU4+voXTH6dZuR7Wk55J06778tby/r
-   ZW6uK3g+iCFz2dNBl1pskx8JMJ42CMWihAA72JrMUjonT7IOtKBlHPFME
-   2iZ6/ilzsm/ZXDnCEe7FJpBomQ1T87SLRmH1e7Ev/Xg19OMW0ndYDfvjO
-   g==;
-Received: from unknown (HELO jpmta-ob02-os7.noc.sony.co.jp) ([IPv6:2001:cf8:acf:1104::7])
-  by jpms-ob02-os7.noc.sony.co.jp with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2025 10:41:21 +0900
-X-IronPort-AV: E=Sophos;i="6.16,282,1744038000"; 
-   d="scan'208";a="4014289"
-Received: from unknown (HELO JPC00244420) ([IPv6:2001:cf8:1:573:0:dddd:eb3e:119e])
-  by jpmta-ob02-os7.noc.sony.co.jp with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2025 10:41:21 +0900
-Date: Thu, 3 Jul 2025 10:41:17 +0900
-From: Shashank Balaji <shashank.mahadasyam@sony.com>
-To: Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>
-Cc: Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
-	Shuah Khan <shuah@kernel.org>, cgroups@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Shinya Takumi <shinya.takumi@sony.com>
-Subject: Re: [PATCH 0/2] selftests/cgroup: better bound for cpu.max tests
-Message-ID: <aGXfvfKOjWlH3d0q@JPC00244420>
-References: <20250701-kselftest-cgroup-fix-cpu-max-v1-0-049507ad6832@sony.com>
- <4bqk62cqsv3b4sid76zf3jwvyswdym7bl5wf7r6ouwqvmmvsfv@qztfmjdd7nvc>
+	s=arc-20240116; t=1751506440; c=relaxed/simple;
+	bh=wB63E55R6GEbdZL69RCytBGhgs7kgufcm+3PucP2thk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OPfvliJ6RgyHfaM3jogR2dQ6vSPcsx2flcgTnRIgRF1l0SMJbYu2rBZ3ayyRIeOJGqCLIgY7b0VxUvhodxnH7n8ejVJ4EMb1+WZ4sBgSynsHU8Zymj3Um3tcL3vn+NmmG6gjPzJgRDEb76A2KmyDuQb/uyEeQQsnGJjxyyaXBzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4bXfQl0FsWztSk4;
+	Thu,  3 Jul 2025 09:32:47 +0800 (CST)
+Received: from kwepemg100016.china.huawei.com (unknown [7.202.181.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id B1F001400E3;
+	Thu,  3 Jul 2025 09:33:54 +0800 (CST)
+Received: from huawei.com (10.67.174.33) by kwepemg100016.china.huawei.com
+ (7.202.181.57) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 3 Jul
+ 2025 09:33:53 +0800
+From: GONG Ruiqi <gongruiqi1@huawei.com>
+To: Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu
+	<roberto.sassu@huawei.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>, Ard Biesheuvel <ardb@kernel.org>
+CC: Eric Snowberg <eric.snowberg@oracle.com>, Paul Moore
+	<paul@paul-moore.com>, James Morris <jmorris@namei.org>, "Serge E . Hallyn"
+	<serge@hallyn.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
+	<mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
+	<dave.hansen@linux.intel.com>, <x86@kernel.org>, "H . Peter Anvin"
+	<hpa@zytor.com>, <linux-kernel@vger.kernel.org>,
+	<linux-integrity@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
+	<linux-efi@vger.kernel.org>, <keyrings@vger.kernel.org>, Lu Jialin
+	<lujialin4@huawei.com>, <gongruiqi1@huawei.com>
+Subject: [PATCH v3 0/2] integrity: Extract secure boot enquiry function out of IMA
+Date: Thu, 3 Jul 2025 09:43:51 +0800
+Message-ID: <20250703014353.3366268-1-gongruiqi1@huawei.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <4bqk62cqsv3b4sid76zf3jwvyswdym7bl5wf7r6ouwqvmmvsfv@qztfmjdd7nvc>
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ kwepemg100016.china.huawei.com (7.202.181.57)
 
-Hi Michal, 
+v3:
+- Redesign the implementation. Keep the name of arch_ima_get_secureboot
+  to escape from the morass consisted of multiple arch and configs.
+- Rephrase the commit message.
+v2:
+- Fix compile errors for CONFIG_IMA_ARCH_POLICY=n on s390 & powerpc
 
-Thanks for the reply!
+---
 
-On Wed, Jul 02, 2025 at 02:34:29PM +0200, Michal Koutný wrote:
-> Hello Shashank.
-> 
-> On Tue, Jul 01, 2025 at 11:13:54PM +0900, Shashank Balaji <shashank.mahadasyam@sony.com> wrote:
-> > cpu.max selftests (both the normal one and the nested one) test the
-> > working of throttling by setting up cpu.max, running a cpu hog process
-> > for a specified duration, and comparing usage_usec as reported by
-> > cpu.stat with the duration of the cpu hog: they should be far enough.
-> > 
-> > Currently, this is done by using values_close, which has two problems:
-> > 
-> > 1. Semantic: values_close is used with an error percentage of 95%, which
-> >    one will not expect on seeing "values close". The intent it's
-> > actually going for is "values far".
-> > 
-> > 2. Accuracy: the tests can pass even if usage_usec is upto around double
-> >    the expected amount. That's too high of a margin for usage_usec.
-> > 
-> > Overall, this patchset improves the readability and accuracy of the
-> > cpu.max tests.
-> > 
-> > Signed-off-by: Shashank Balaji <shashank.mahadasyam@sony.com>
-> 
-> I think you're getting at an actual bug in the test definition. 
-> 
-> I think that the test_cpucg_max should either run hog_cpus_timed with
-> CPU_HOG_CLOCK_PROCESS instead of CPU_HOG_CLOCK_WALL to make sense or the
-> expected_usage_usec should be defined with the configured quota in mind
-> (i.e. 1/100).  (The latter seems to make the test more natural.)
+Hi,
 
-Going with the more natural way of sticking to CPU_HOG_CLOCK_WALL, the
-second patch does calculate expected_usage_usec based on the configured
-quota, as the code comment explains. So I'm guessesing we're on the same page
-about this?
+We encountered a boot failure issue in an in-house testing, where the
+kernel refused to load its modules since it couldn't verify their
+signature. The root cause turned out to be the early return of
+load_uefi_certs(), where arch_ima_get_secureboot() returned false
+unconditionally due to CONFIG_IMA_SECURE_AND_OR_TRUSTED_BOOT=n, even
+though the secure boot was enabled.
 
-> With such defined metrics, the asserted expression could be
-> 	values_close(usage_usec, expected_usage_usec, 10)
-> based on your numbers, error is around 20% so our helper's argument is
-> roughly half of that. (I'd be fine even with err=20 to prevent some
-> false positives.)
-> 
-> I think those changes could even be in one patch but I leave that up to
-> you. My comment to your 2nd patch is that I'd like to stick to relative
-> errors and keep positive values_close() predicate that's used in other
-> selftests too. (But those 95% in the current code are clumsy given two
-> different qualities are compared.)
+This patch set attempts to remove this implicit dependency by shifting
+the functionality of efi secure boot enquiry from IMA to the integrity
+subsystem, so that both certificate loading and IMA can make use of it
+independently.
 
-Do you mean something like,
+-Ruiqi
 
-	if (values_close(usage_usec, expected_usage_usec, 10))
-			goto cleanup;
+GONG Ruiqi (2):
+  x86/efi: Rename IMA-related function and macro of boot mode
+  integrity: Extract secure boot enquiry function out of IMA
 
-using the positive values_close() predicate. If so, I'm not sure I
-understand because if usage_usec and expected_usage_usec _are_ close,
-then we want the test to pass! We should be using the negative
-predicate.
+ arch/x86/include/asm/efi.h                    |  4 +-
+ arch/x86/platform/efi/efi.c                   |  2 +-
+ include/linux/integrity.h                     |  1 +
+ security/integrity/Makefile                   |  1 +
+ security/integrity/ima/ima_efi.c              | 42 +----------------
+ security/integrity/platform_certs/load_uefi.c |  3 +-
+ security/integrity/secureboot.c               | 46 +++++++++++++++++++
+ 7 files changed, 54 insertions(+), 45 deletions(-)
+ create mode 100644 security/integrity/secureboot.c
 
-And sure, I'll send v2 as a single patch.
+-- 
+2.25.1
 
-Thanks
-
-Shashank
 
