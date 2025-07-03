@@ -1,168 +1,111 @@
-Return-Path: <linux-kernel+bounces-715954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-715955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B25A8AF800C
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 20:33:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74168AF8014
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 20:34:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1990B581664
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 18:33:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D52D1CA2838
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 18:34:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E43512F2C7C;
-	Thu,  3 Jul 2025 18:33:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 412052F49EB;
+	Thu,  3 Jul 2025 18:33:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qwwzqZjc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e0GOz2Dg"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3366228A3E2;
-	Thu,  3 Jul 2025 18:33:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AEC91D5CE5;
+	Thu,  3 Jul 2025 18:33:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751567593; cv=none; b=ZSnCxJ5OuRLeq154Gur+yqeBBl0B3fDGzVj1DhWJIfP3VJ7vjf2/2wJVlT1F8Vrdd0Gzh2ovzunfT9eoJNOex6MyBt8mxnn+W0ScRXPKR6qPu21b5OxCyAwe+qO9sz28VDENV0c7NHRvtRN66xe87qDIR/JfsO4jxMo5CYk/vms=
+	t=1751567603; cv=none; b=k0Dv9SVc8qbrwo2JwNI/x5sDRT+PoJfVlI3NDe0fymPj15b81Pdks+ccSmRCuC/KcyStlXrcmJ/7Osst0kDC2xaY8NnR2DvnoX3IL5aKrc5vq/CXr0b+7ctfj9yHbwb2b70xSwRHeSK8RWecrSBQ9d8GdWmmaR/OdMa9oh+/Vs0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751567593; c=relaxed/simple;
-	bh=lnATMb/XmCNNMy1igSdCLxsZP2Vd/a/i5coedasJ6Ec=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=RiFznfOxZn+ZcrMocce+s2D9803ISFSvahxuJshF2ubWiAL5iRHbkiOhAR2vlGONqMgToDHCJNJbXNW56FuFudtVhfqJOL4HzW5Rl2B1/MvEIXQ7+iPdEN7ozh9IQIKtT1wxeZUjhNpxD1RtvqiJK1Q+VnlWJ91dgqMu02cL9/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qwwzqZjc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id C0AAAC4AF09;
-	Thu,  3 Jul 2025 18:33:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751567592;
-	bh=lnATMb/XmCNNMy1igSdCLxsZP2Vd/a/i5coedasJ6Ec=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=qwwzqZjcKtOl8/553fhUXtGV5cSS+O56najS82u0rLCWI5zFaQwv7KxGgmdECxS3U
-	 s2dkH5ydHtL1Xrb/O4ydhNxlIcwhLzhYLJEK75Yudxr95MZRHdFMyT/FH9aUq9OYtZ
-	 Lj4Gc4ESm9tQ1RCKRSeY1bmk/iF/oZbLqowhr0TVgrcBPr3mO3xtn/yXtcB6Yhy3nX
-	 y4mbGrRkH7p8JaNBQ/TAhSYiX5iVSecnD78N1MfwLRCfWx/CTGTRCiZG3+d05TPVlk
-	 OhIMHdeNtrbFiHQBTfgXD3J1C3AYtEEohNsePKJiThhvWfLsAZoJn7yGtefFj2E0sR
-	 /35+V/uFd7Edg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF646C83F0A;
-	Thu,  3 Jul 2025 18:33:12 +0000 (UTC)
-From: Frank Li via B4 Relay <devnull+Frank.Li.nxp.com@kernel.org>
-Date: Thu, 03 Jul 2025 14:33:08 -0400
-Subject: [PATCH v2 3/4] arm64: dts: imx8: add parallel CSI node
+	s=arc-20240116; t=1751567603; c=relaxed/simple;
+	bh=iY85BkZVGgoxJEu88tGytmKfxLrT4qHZK8r+PttF4yU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=q8Pf8wJ8pLNmOEoBOsHEozJm8h4VtianqnzvB6z1HLssNYwQEZPiREJVjAY/kqtPLBx6SuLBGOrMkgmiv+zwdfn54IfCxju3d24N8aLUCJ3j9QgVW+GR/JGS/5dZvZZOX1z1BjvHGxzBkDdFYaCahDC24lMA/Esz3oyIOIYNvEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e0GOz2Dg; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-32b50f357ecso2048771fa.2;
+        Thu, 03 Jul 2025 11:33:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751567600; x=1752172400; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Y8mXa+t6YUXZo7Fg3Xqd/oUrkEQP+PUVzRz3Oo94FoU=;
+        b=e0GOz2DgP5pF+RMhwiQYdixVuuBiNMs+KoTEbRTrWRmzIt+Zcxl+tYAD9+dQXvUSvm
+         P3uWgybfW6eLZnHljcWs4bNWBt9XKri7T8sEcRPZWWnR323K8MeGYor9oaMf8dVxFVlh
+         6qgxMiO/KeNbSTIiGY+MO/yCRPWviSxI3xHMJ7tyDqRC22OvX9/czYbAwD3J4pOhnp86
+         Tg1NS7mkWC59Q8jBrOQJgepka6Q6iGZB9+//vuF/KWmBms1QXcYP68lallhHc6gOF5Jp
+         in/pr0gpj7IET9vCMiDDIfJ3I4ae01RQ/MBPdeiyzV1rxVCyKUuqeGz0uWZs3ggtgPD5
+         od3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751567600; x=1752172400;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Y8mXa+t6YUXZo7Fg3Xqd/oUrkEQP+PUVzRz3Oo94FoU=;
+        b=nQSc45sJ8AfaVfp7WzLCvNz9yhaaM4Z4ICVn1aTwvo4jnV9c5sIuCAWVba7HeizdrU
+         mzhYKQe4OUnHLO7vEXBK9B1qfIhvcVVUBZJA6DVRcLY5TUiD6GrQPtsnmMchG49a6cL6
+         jgMIX9yOCiu3dfHklziP4CBL8kMgYj4lKeGJ+KazKJrF0IA2OxxdKVDK+71AT1Ovj6J4
+         1vA/abSkSQivaXPmW2DQpByF1c62HirBoqVBcNzlgaeP0Yhli+X8uNzyyOk44m6QSJof
+         ckNf4lmzVeQm9B0bmKinitTxbBfRahuekGXqhFsYUwEDul4obswfuU2msZ+dPZ3+3s7v
+         eJrA==
+X-Forwarded-Encrypted: i=1; AJvYcCV/U/jJQEdWRNF3FysZZ9t9sVGVJnTgIDQEhbscDrqxtWt1LIuo4FBFjettQy0pSTQQYUHd7gRdh34=@vger.kernel.org, AJvYcCVwzVGoU2qZanipLMfhkmsrDikgetTLl/tqSJPjrKFoiXgWEg4UdFGNp842fYklAM5zhcTDqKaKfcupQR0=@vger.kernel.org, AJvYcCXQiCo/ZSF/zP6IUj20hkFvidgodjyb5h9IyNQLBL2g+GpohyZC6mL62RM5fPyOlcq/3T82fFzZ2kQOPSg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTrD81w0fIvRIPKPVDHaqicbOCMQkMx7lRytzsxZn0yiUsGuoy
+	kXZ6vR51ksbvbQ6rhEXQk7gZzoZzjfdxP0xqbJCEt2lOOjqKW9Jc7JFsuoC00BF7BV2LKdm/dAi
+	V1beIDISRVNXR/lG5dZhFJqpRhQP4Q4Dy3y4wUuY=
+X-Gm-Gg: ASbGncsDfnZVviGZdhIwP+b/9e+RjNtdZV4E+4LtR4FW7xl/SLCavp+ZCCWc+gnMuD0
+	ms/zIzwQ4WRHfi3LAxtYcabQ8ozpgWH5uAM4/VD8Vb8cFGtGeJijD+MHxG0Hl8YcZ3DN34jI1Q5
+	8j8DbapVl7Y2eDPxPN3qysjhkJLKMKoWuGP588BseJYFk=
+X-Google-Smtp-Source: AGHT+IF4aaN60H2XWg6v+/Qj8Z244EqH2cUzPIpYmYhJXoZrcvEZvdNgze4bbKHNl+FZmlYaAo5AYWk3DruHq8QO/tQ=
+X-Received: by 2002:a05:6512:1381:b0:553:37e7:867c with SMTP id
+ 2adb3069b0e04-55628347062mr3215354e87.50.1751567599796; Thu, 03 Jul 2025
+ 11:33:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250703-imx8qxp_pcam-v2-3-188be85f06f1@nxp.com>
-References: <20250703-imx8qxp_pcam-v2-0-188be85f06f1@nxp.com>
-In-Reply-To: <20250703-imx8qxp_pcam-v2-0-188be85f06f1@nxp.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, Rui Miguel Silva <rmfrfs@gmail.com>, 
- Martin Kepplinger <martink@posteo.de>, Purism Kernel Team <kernel@puri.sm>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-media@vger.kernel.org, imx@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, Frank Li <Frank.Li@nxp.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1751567591; l=2229;
- i=Frank.Li@nxp.com; s=20240130; h=from:subject:message-id;
- bh=egvyIYm9Ny7RwG4VqCUmjTBkLSU8NimkbRJ5GJUfMCg=;
- b=0DiK8tKXGe724gjHRzMZk45Ar6ghYBLBifnXK2kF2u5SRCj3q649yBEdL/Rg9kJnjnsrMYMyP
- KvscQ92k649AaIVhdfok6kql5Di1O3TLWV46TiUjkLyRHXO0YE1oDIc
-X-Developer-Key: i=Frank.Li@nxp.com; a=ed25519;
- pk=I0L1sDUfPxpAkRvPKy7MdauTuSENRq+DnA+G4qcS94Q=
-X-Endpoint-Received: by B4 Relay for Frank.Li@nxp.com/20240130 with
- auth_id=121
-X-Original-From: Frank Li <Frank.Li@nxp.com>
-Reply-To: Frank.Li@nxp.com
+References: <20250702-tegra124-cpufreq-v5-0-66ab3640a570@gmail.com>
+ <20250702-tegra124-cpufreq-v5-3-66ab3640a570@gmail.com> <20250702081207.bzru3mtl56ns372v@vireshk-i7>
+In-Reply-To: <20250702081207.bzru3mtl56ns372v@vireshk-i7>
+From: Aaron Kling <webgeek1234@gmail.com>
+Date: Thu, 3 Jul 2025 13:33:08 -0500
+X-Gm-Features: Ac12FXzz5Yv8oiI05qYO9V66A8XCIkXZSe5g1pk_3izL2EhDAowW1MUYRp6QlbM
+Message-ID: <CALHNRZ_jzSGF2xTNMt_giEa4T6r6+qfhp-EubTViqYL7jYf=sw@mail.gmail.com>
+Subject: Re: [PATCH v5 3/3] cpufreq: tegra124: Allow building as a module
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Frank Li <Frank.Li@nxp.com>
+On Wed, Jul 2, 2025 at 3:12=E2=80=AFAM Viresh Kumar <viresh.kumar@linaro.or=
+g> wrote:
+>
+> On 02-07-25, 02:46, Aaron Kling via B4 Relay wrote:
+> > +static struct platform_device *platform_device;
+>
+> Maybe initialize this to an error value...
+>
+> > +static void __exit tegra_cpufreq_module_exit(void)
+> > +{
+> > +     if (platform_device && !IS_ERR(platform_device))
+>
+> ... and then this could be simplified ?
+>
+> Or use !IS_ERR_OR_NULL .
 
-Add parallel CSI nodes.
+Latter sounds better to me. I'll queue that up and send a new patchset
+in a couple days, pending any further comments.
 
-Signed-off-by: Frank Li <Frank.Li@nxp.com>
----
-changes in v2
-- update compatible string to match binding's change
----
- arch/arm64/boot/dts/freescale/imx8-ss-img.dtsi    | 13 +++++++++++
- arch/arm64/boot/dts/freescale/imx8qxp-ss-img.dtsi | 27 +++++++++++++++++++++++
- 2 files changed, 40 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/freescale/imx8-ss-img.dtsi b/arch/arm64/boot/dts/freescale/imx8-ss-img.dtsi
-index 2cf0f7208350a416d77b11140279d2f66f41498f..1f7bf9efdbca266fbda82d2bc84acd9a27ed0bd1 100644
---- a/arch/arm64/boot/dts/freescale/imx8-ss-img.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8-ss-img.dtsi
-@@ -224,6 +224,19 @@ irqsteer_parallel: irqsteer@58260000 {
- 		status = "disabled";
- 	};
- 
-+	parallel_csi: csi@58261000 {
-+		compatible = "fsl,imx8qxp-pcif";
-+		reg = <0x58261000 0x1000>;
-+		clocks = <&pi0_pxl_lpcg IMX_LPCG_CLK_0>,
-+			 <&pi0_ipg_lpcg IMX_LPCG_CLK_4>;
-+		clock-names = "pixel", "ipg";
-+		assigned-clocks = <&clk IMX_SC_R_PI_0 IMX_SC_PM_CLK_PER>;
-+		assigned-clock-parents = <&clk IMX_SC_R_PI_0_PLL IMX_SC_PM_CLK_PLL>;
-+		assigned-clock-rates = <160000000>;
-+		power-domains = <&pd IMX_SC_R_PI_0>;
-+		status = "disabled";
-+	};
-+
- 	pi0_ipg_lpcg: clock-controller@58263004 {
- 		compatible = "fsl,imx8qxp-lpcg";
- 		reg = <0x58263004 0x4>;
-diff --git a/arch/arm64/boot/dts/freescale/imx8qxp-ss-img.dtsi b/arch/arm64/boot/dts/freescale/imx8qxp-ss-img.dtsi
-index 50015f8dd4e43b507c879479e7320cb58ec8bf74..60aa43c45d15c8b0c2c425be52ed79458d8c96b9 100644
---- a/arch/arm64/boot/dts/freescale/imx8qxp-ss-img.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8qxp-ss-img.dtsi
-@@ -62,6 +62,14 @@ isi_in_2: endpoint {
- 				remote-endpoint = <&mipi_csi0_out>;
- 			};
- 		};
-+
-+		port@4 {
-+			reg = <4>;
-+
-+			isi_in_4: endpoint {
-+				remote-endpoint = <&parallel_csi_out>;
-+			};
-+		};
- 	};
- };
- 
-@@ -94,3 +102,22 @@ &jpegenc {
- &mipi_csi_1 {
- 	status = "disabled";
- };
-+
-+&parallel_csi {
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		port@0 {
-+			reg = <0>;
-+		};
-+
-+		port@1 {
-+			reg = <1>;
-+
-+			parallel_csi_out: endpoint {
-+				remote-endpoint = <&isi_in_4>;
-+			};
-+		};
-+	};
-+};
-
--- 
-2.34.1
-
-
+Aaron
 
