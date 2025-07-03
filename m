@@ -1,198 +1,210 @@
-Return-Path: <linux-kernel+bounces-714755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51B76AF6C18
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 09:55:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08B35AF6C46
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 10:00:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6DD16524427
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 07:54:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9035527597
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 07:57:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CFA729B767;
-	Thu,  3 Jul 2025 07:54:28 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C67BB2BDC17;
+	Thu,  3 Jul 2025 07:57:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Hfesy4Bs"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7683229B777;
-	Thu,  3 Jul 2025 07:54:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29AAA72632
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 07:57:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751529267; cv=none; b=TLsvaADLgy1t1lmDoKuPpR7FszlVp8HKCCAy3xqJDaApsiEGHC1mOlE8F1R53bx8oZ3FJCBT6yRFZJsD0/q18Yx0VoJML9xSGWpXiW2VMTPITyDd+aUK7v2vyUk1+M1B0t7ks33WqYhrSU0URTt1XFMo2SfL0Dq8in0ngfXv/wA=
+	t=1751529454; cv=none; b=A69h+ygHXwJCqBsJ6L7jTzAshzDsl0QCoCT2GYyorx8ahsjAeRF4D4KAVZiBw3rcm4DRbh+rEhMKHIbmzv2B3EYsQhP1/FfHWE6RHzMjxN+oz/PdtyHyfGvJLS9eBr7AhLxFZo91j4PkLUv/KmTUqyT3wRp+vjgNU2ipom0OaVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751529267; c=relaxed/simple;
-	bh=wFwlRHQBXlbvkr8JtQ9aPLQFmhdSqrS1iHXAl9Wv9+A=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PmGAWW2ldxOXmTc3OWX0qs/zWPW9891wwywHknDSJaKTye59oV1rU2SLMwmmhWqjySMlqNjhwk+rlcak4Qt3CuhAZDAcVCvkar9qz/TkAVEgoZHxmgiKN2gCkeVG2DsIjg3G4pV0WbO8r/P099en49pfUCIEVMT9nnyrrfKgQOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4bXppP5xZnz1GCFS;
-	Thu,  3 Jul 2025 15:50:21 +0800 (CST)
-Received: from dggemv705-chm.china.huawei.com (unknown [10.3.19.32])
-	by mail.maildlp.com (Postfix) with ESMTPS id 317EF180105;
-	Thu,  3 Jul 2025 15:54:23 +0800 (CST)
-Received: from kwepemq200002.china.huawei.com (7.202.195.90) by
- dggemv705-chm.china.huawei.com (10.3.19.32) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 3 Jul 2025 15:54:22 +0800
-Received: from localhost.localdomain (10.175.104.82) by
- kwepemq200002.china.huawei.com (7.202.195.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 3 Jul 2025 15:54:22 +0800
-From: Dong Chenchen <dongchenchen2@huawei.com>
-To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <horms@kernel.org>, <jiri@resnulli.us>,
-	<oscmaes92@gmail.com>, <linux@treblig.org>, <pedro.netdev@dondevamos.com>,
-	<idosch@idosch.org>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<zhangchangzhong@huawei.com>
-Subject: [PATCH net v2 2/2] selftests: Add test cases for vlan_filter modification during runtime
-Date: Thu, 3 Jul 2025 15:57:02 +0800
-Message-ID: <20250703075702.1063149-3-dongchenchen2@huawei.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250703075702.1063149-1-dongchenchen2@huawei.com>
-References: <20250703075702.1063149-1-dongchenchen2@huawei.com>
+	s=arc-20240116; t=1751529454; c=relaxed/simple;
+	bh=khezg3IIj7MvmXFuSB7KEBFnDPEBFKcJXKf/c6rTKr8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=Jg5NYs93U3taqqXok5P66mM0G2tBn9/0B4iUrY7C4i3S73n5DWmdWtUrsypKxXyjLBewrZyzCFMqDtsQhT8zSMYyWu3WXxioB0+2XRnbDrj8s5rLI6B9myi/tOzyBtM2gvXVHgHUVNhhkl6rUrRWW53aAt/nejzanOEidFljaF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Hfesy4Bs; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id A66E144499;
+	Thu,  3 Jul 2025 07:57:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1751529450;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=T2R1cUmcFf+ifCuobfbCjYsZ1SxCHAqephrzxhWkXK8=;
+	b=Hfesy4BsmKLsllxnIAp9RJCElsono+Ia/FbreQij8jZ28Nxvnp6jj3EcbW6ZZHgtK84jLg
+	oAnR0R1RY5fmzyD+QyJj5eb2ACRE7UR5l+FP0Wn7sb7fvbQ7fzmS8vZ33VG/Uj4clSsQmy
+	IduaAHBZykJculleiKFcwDg8yTimDpbLAWCQOoBkJGPn4rK4n7SCWVv448oT88TsxmY8dJ
+	JoGtrBo+yKk3Q8EgUWNVL5rZlyV+my1vGSyY4pL+HVmqSgYpFfgor3NatIcoVyg1A4sOq3
+	enMB0ZZQYp8/j/3fHOBCGg5sG/B6XHbEPb92sw2MXXo58PxiAOWUz2a5qE29Ug==
+From: Louis Chauvet <louis.chauvet@bootlin.com>
+Date: Thu, 03 Jul 2025 09:57:03 +0200
+Subject: [PATCH v7 7/8] drm/vkms: Create helper macro for YUV formats
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
- kwepemq200002.china.huawei.com (7.202.195.90)
+Message-Id: <20250703-b4-new-color-formats-v7-7-15fd8fd2e15c@bootlin.com>
+References: <20250703-b4-new-color-formats-v7-0-15fd8fd2e15c@bootlin.com>
+In-Reply-To: <20250703-b4-new-color-formats-v7-0-15fd8fd2e15c@bootlin.com>
+To: Melissa Wen <melissa.srw@gmail.com>, 
+ =?utf-8?q?Ma=C3=ADra_Canal?= <mairacanal@riseup.net>, 
+ Haneen Mohammed <hamohammed.sa@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Rodrigo Siqueira <siqueira@igalia.com>, 
+ Simona Vetter <simona.vetter@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, arthurgrillo@riseup.net, 
+ linux-kernel@vger.kernel.org, jeremie.dautheribes@bootlin.com, 
+ miquel.raynal@bootlin.com, thomas.petazzoni@bootlin.com, 
+ seanpaul@google.com, nicolejadeyee@google.com, 
+ Louis Chauvet <louis.chauvet@bootlin.com>, 
+ =?utf-8?q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5259;
+ i=louis.chauvet@bootlin.com; h=from:subject:message-id;
+ bh=khezg3IIj7MvmXFuSB7KEBFnDPEBFKcJXKf/c6rTKr8=;
+ b=owEBbQKS/ZANAwAIASCtLsZbECziAcsmYgBoZjfhFkIrR63g/XwFXy5WLy/58X/RmRSka/tyl
+ dXCTwio37GJAjMEAAEIAB0WIQRPj7g/vng8MQxQWQQgrS7GWxAs4gUCaGY34QAKCRAgrS7GWxAs
+ 4n6xD/42k3EQJfLshgIYBvWL4zgd+6pleNf7ZuSXaXvOrouh+W2AzAWY9TLymP89yjBRvsj+v87
+ EM1fuEVfcqRyMUBnpO4Ku1Gtjpi/gfhvuITm83LuFV9omBOjvcXR8o9T9TQ/w7ZWxmOKJp8xtEZ
+ HfrksjoTWfo2lC85r0PGnZ6x47oEGx7xiHR/IwCgSC2n6lIXnOVYKZDXmYupUNwa4Fn+8TxoGMS
+ pGe92qKKLxUCm/NijkJU37ygCL95xIACcS1ss1NKqTomQ+WJVbzGEvG46weKjb44jcTgkKfCrR7
+ HLMhVP9Pyyp0XpILc/d/TXNL+S81dSDKCxxT3oxDTr+uyTdxT8O+Luc88xs1tiXrPRcYl9E11+k
+ mTVZyeyeGdd9Jfhs2sOn6FXy5FAQgj88Ys/TwJiEffC/mmQ0Db1FSAbX37/2o6ozRt7JDmlCJ72
+ nqFrtD+qq4v51ir9yNAlGdZDBDFrCNICa5IsRWQfZJ+mQ+jSjV/By1RfKuT3IL+deItJUGwrm76
+ HWCxyNVg1gdMR3G8kuoqq1eMWktDFjTXS4jPHP6ZxRXIcfxZMXJ/nLibl/tXtgNNtVUCuJmS6Zg
+ h13l2V1eTTDewzPkart9wd4/sV1O+rF/FA+FlruwkEHmhJ/xRU25w0Mlm50n9Hc20Co1VcWZQKK
+ X59CsvjpXRp4B3A==
+X-Developer-Key: i=louis.chauvet@bootlin.com; a=openpgp;
+ fpr=8B7104AE9A272D6693F527F2EC1883F55E0B40A5
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduleejfecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephfffufggtgfgkfhfjgfvvefosehtkeertdertdejnecuhfhrohhmpefnohhuihhsucevhhgruhhvvghtuceolhhouhhishdrtghhrghuvhgvthessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnheptdeiveeiudehtddtgfethfduudefffduteekgeevueetudevheehieevtddttdeknecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgepheenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopegludelvddrudeikedrtddrvddtngdpmhgrihhlfhhrohhmpehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvtddprhgtphhtthhopehsihhmohhnrgesfhhffihllhdrtghhpdhrtghpthhtohephhgrmhhohhgrmhhmvggurdhsrgesghhmrghilhdrtghomhdprhgtphhtthhopehsvggrnhhprghulhesghhoohhglhgvrdgtohhmpdhrtghpthhtohepmhgvlhhishhsrgdrshhrfiesghhmrghilhdrtghomhdprhgtphhtthhopehnihgtohhlvghjrgguvgihvggvsehgohhoghhlvgdrtghomhdprhgtp
+ hhtthhopegrihhrlhhivggusehgmhgrihhlrdgtohhmpdhrtghpthhtoheprghrthhhuhhrghhrihhllhhosehrihhsvghuphdrnhgvthdprhgtphhtthhopehthhhomhgrshdrphgvthgriiiiohhnihessghoohhtlhhinhdrtghomh
+X-GND-Sasl: louis.chauvet@bootlin.com
 
-Add test cases for vlan_filter modification during runtime, which
-may triger null-ptr-ref or memory leak of vlan0.
+The callback functions for line conversion are almost identical for
+semi-planar formats. The generic READ_LINE_YUV_SEMIPLANAR macro
+generate all the required boilerplate to process a line from a
+semi-planar format.
 
-Signed-off-by: Dong Chenchen <dongchenchen2@huawei.com>
+Reviewed-by: Maíra Canal <mcanal@igalia.com>
+Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
 ---
- tools/testing/selftests/net/vlan_hw_filter.sh | 98 ++++++++++++++++---
- 1 file changed, 86 insertions(+), 12 deletions(-)
+ drivers/gpu/drm/vkms/vkms_formats.c | 75 ++++++++++++++++++++++++-------------
+ 1 file changed, 48 insertions(+), 27 deletions(-)
 
-diff --git a/tools/testing/selftests/net/vlan_hw_filter.sh b/tools/testing/selftests/net/vlan_hw_filter.sh
-index 7bc804ffaf7c..0fb56baf28e4 100755
---- a/tools/testing/selftests/net/vlan_hw_filter.sh
-+++ b/tools/testing/selftests/net/vlan_hw_filter.sh
-@@ -3,27 +3,101 @@
+diff --git a/drivers/gpu/drm/vkms/vkms_formats.c b/drivers/gpu/drm/vkms/vkms_formats.c
+index cec27a72bc48..639b1c7ca43e 100644
+--- a/drivers/gpu/drm/vkms/vkms_formats.c
++++ b/drivers/gpu/drm/vkms/vkms_formats.c
+@@ -479,35 +479,56 @@ READ_LINE(R8_read_line, px, u8, argb_u16_from_gray8, *px)
+  * - Convert YUV and YVU with the same function (a column swap is needed when setting up
+  * plane->conversion_matrix)
+  */
+-static void semi_planar_yuv_read_line(const struct vkms_plane_state *plane, int x_start,
+-				      int y_start, enum pixel_read_direction direction, int count,
+-				      struct pixel_argb_u16 out_pixel[])
+-{
+-	u8 *y_plane;
+-	u8 *uv_plane;
+-
+-	packed_pixels_addr_1x1(plane->frame_info, x_start, y_start, 0,
+-			       &y_plane);
+-	packed_pixels_addr_1x1(plane->frame_info,
+-			       x_start / plane->frame_info->fb->format->hsub,
+-			       y_start / plane->frame_info->fb->format->vsub, 1,
+-			       &uv_plane);
+-	int step_y = get_block_step_bytes(plane->frame_info->fb, direction, 0);
+-	int step_uv = get_block_step_bytes(plane->frame_info->fb, direction, 1);
+-	int subsampling = get_subsampling(plane->frame_info->fb->format, direction);
+-	int subsampling_offset = get_subsampling_offset(direction, x_start, y_start);
+-	const struct conversion_matrix *conversion_matrix = &plane->conversion_matrix;
  
- readonly NETNS="ns-$(mktemp -u XXXXXX)"
- 
-+ALL_TESTS="
-+	test_vlan_filter_check
-+	test_vlan0_del_crash_01
-+	test_vlan0_del_crash_02
-+	test_vlan0_del_crash_03
-+	test_vid0_memleak
-+"
-+
- ret=0
- 
-+setup() {
-+	ip netns add ${NETNS}
-+}
-+
- cleanup() {
--	ip netns del $NETNS
-+	ip netns del $NETNS 2>/dev/null
+-	for (int i = 0; i < count; i++) {
+-		*out_pixel = argb_u16_from_yuv161616(conversion_matrix, y_plane[0] * 257,
+-						     uv_plane[0] * 257, uv_plane[1] * 257);
+-		out_pixel += 1;
+-		y_plane += step_y;
+-		if ((i + subsampling_offset + 1) % subsampling == 0)
+-			uv_plane += step_uv;
+-	}
++/**
++ * READ_LINE_YUV_SEMIPLANAR() - Generic generator for a read_line function which can be used for yuv
++ * formats with two planes and block_w == block_h == 1.
++ *
++ * @function_name: Function name to generate
++ * @pixel_1_name: temporary pixel name for the first plane used in the @__VA_ARGS__ parameters
++ * @pixel_2_name: temporary pixel name for the second plane used in the @__VA_ARGS__ parameters
++ * @pixel_1_type: Used to specify the type you want to cast the pixel pointer on the plane 1
++ * @pixel_2_type: Used to specify the type you want to cast the pixel pointer on the plane 2
++ * @callback: Callback to call for each pixels. This function should take
++ *            (struct conversion_matrix*, @__VA_ARGS__) as parameter and return a pixel_argb_u16
++ * __VA_ARGS__: Argument to pass inside the callback. You can use @pixel_1_name and @pixel_2_name
++ *               to access current pixel values
++ */
++#define READ_LINE_YUV_SEMIPLANAR(function_name, pixel_1_name, pixel_2_name, pixel_1_type,	\
++				 pixel_2_type, callback, ...)					\
++static void function_name(const struct vkms_plane_state *plane, int x_start,			\
++		 int y_start, enum pixel_read_direction direction, int count,			\
++		 struct pixel_argb_u16 out_pixel[])						\
++{												\
++	u8 *plane_1;										\
++	u8 *plane_2;										\
++												\
++	packed_pixels_addr_1x1(plane->frame_info, x_start, y_start, 0,				\
++			       &plane_1);							\
++	packed_pixels_addr_1x1(plane->frame_info,						\
++			       x_start / plane->frame_info->fb->format->hsub,			\
++			       y_start / plane->frame_info->fb->format->vsub, 1,		\
++			       &plane_2);							\
++	int step_1 = get_block_step_bytes(plane->frame_info->fb, direction, 0);			\
++	int step_2 = get_block_step_bytes(plane->frame_info->fb, direction, 1);			\
++	int subsampling = get_subsampling(plane->frame_info->fb->format, direction);		\
++	int subsampling_offset = get_subsampling_offset(direction, x_start, y_start);		\
++	const struct conversion_matrix *conversion_matrix = &plane->conversion_matrix;		\
++												\
++	for (int i = 0; i < count; i++) {							\
++		pixel_1_type *(pixel_1_name) = (pixel_1_type *)plane_1;				\
++		pixel_2_type *(pixel_2_name) = (pixel_2_type *)plane_2;				\
++		*out_pixel = (callback)(conversion_matrix, __VA_ARGS__);			\
++		out_pixel += 1;									\
++		plane_1 += step_1;								\
++		if ((i + subsampling_offset + 1) % subsampling == 0)				\
++			plane_2 += step_2;							\
++	}											\
  }
  
- trap cleanup EXIT
- 
- fail() {
--    echo "ERROR: ${1:-unexpected return code} (ret: $_)" >&2
--    ret=1
-+	echo "ERROR: ${1:-unexpected return code} (ret: $_)" >&2
-+	ret=1
-+}
++READ_LINE_YUV_SEMIPLANAR(YUV888_semiplanar_read_line, y, uv, u8, u8, argb_u16_from_yuv161616,
++			 y[0] * 257, uv[0] * 257, uv[1] * 257)
 +
-+tests_run()
-+{
-+	local current_test
-+	for current_test in ${TESTS:-$ALL_TESTS}; do
-+		$current_test
-+	done
-+}
-+
-+test_vlan_filter_check() {
-+	setup
-+	ip netns exec ${NETNS} ip link add bond0 type bond mode 0
-+	ip netns exec ${NETNS} ip link add bond_slave_1 type veth peer veth2
-+	ip netns exec ${NETNS} ip link set bond_slave_1 master bond0
-+	ip netns exec ${NETNS} ethtool -K bond0 rx-vlan-filter off
-+	ip netns exec ${NETNS} ip link add link bond_slave_1 name bond_slave_1.0 type vlan id 0
-+	ip netns exec ${NETNS} ip link add link bond0 name bond0.0 type vlan id 0
-+	ip netns exec ${NETNS} ip link set bond_slave_1 nomaster
-+	ip netns exec ${NETNS} ip link del veth2 || fail "Please check vlan HW filter function"
-+	cleanup
- }
- 
--ip netns add ${NETNS}
--ip netns exec ${NETNS} ip link add bond0 type bond mode 0
--ip netns exec ${NETNS} ip link add bond_slave_1 type veth peer veth2
--ip netns exec ${NETNS} ip link set bond_slave_1 master bond0
--ip netns exec ${NETNS} ethtool -K bond0 rx-vlan-filter off
--ip netns exec ${NETNS} ip link add link bond_slave_1 name bond_slave_1.0 type vlan id 0
--ip netns exec ${NETNS} ip link add link bond0 name bond0.0 type vlan id 0
--ip netns exec ${NETNS} ip link set bond_slave_1 nomaster
--ip netns exec ${NETNS} ip link del veth2 || fail "Please check vlan HW filter function"
-+#enable vlan_filter feature of real_dev with vlan0 during running time
-+test_vlan0_del_crash_01() {
-+	setup
-+	ip netns exec ${NETNS} ip link add bond0 type bond mode 0
-+	ip netns exec ${NETNS} ip link add link bond0 name vlan0 type vlan id 0 protocol 802.1q
-+	ip netns exec ${NETNS} ethtool -K bond0 rx-vlan-filter off
-+	ip netns exec ${NETNS} ifconfig bond0 up
-+	ip netns exec ${NETNS} ethtool -K bond0 rx-vlan-filter on
-+	ip netns exec ${NETNS} ifconfig bond0 down
-+	ip netns exec ${NETNS} ifconfig bond0 up
-+	ip netns exec ${NETNS} ip link del vlan0 || fail "Please check vlan HW filter function"
-+	cleanup
-+}
-+
-+#enable vlan_filter feature and add vlan0 for real_dev during running time
-+test_vlan0_del_crash_02() {
-+	setup
-+	ip netns exec ${NETNS} ip link add bond0 type bond mode 0
-+	ip netns exec ${NETNS} ethtool -K bond0 rx-vlan-filter off
-+	ip netns exec ${NETNS} ifconfig bond0 up
-+	ip netns exec ${NETNS} ethtool -K bond0 rx-vlan-filter on
-+	ip netns exec ${NETNS} ip link add link bond0 name vlan0 type vlan id 0 protocol 802.1q
-+	ip netns exec ${NETNS} ifconfig bond0 down
-+	ip netns exec ${NETNS} ifconfig bond0 up
-+	ip netns exec ${NETNS} ip link del vlan0 || fail "Please check vlan HW filter function"
-+	cleanup
-+}
-+
-+#enable vlan_filter feature of real_dev during running time
-+#test kernel_bug of vlan unregister
-+test_vlan0_del_crash_03() {
-+	setup
-+	ip netns exec ${NETNS} ip link add bond0 type bond mode 0
-+	ip netns exec ${NETNS} ip link add link bond0 name vlan0 type vlan id 0 protocol 802.1q
-+	ip netns exec ${NETNS} ethtool -K bond0 rx-vlan-filter off
-+	ip netns exec ${NETNS} ifconfig bond0 up
-+	ip netns exec ${NETNS} ethtool -K bond0 rx-vlan-filter on
-+	ip netns exec ${NETNS} ifconfig bond0 down
-+	ip netns exec ${NETNS} ip link del vlan0 || fail "Please check vlan HW filter function"
-+	cleanup
-+}
-+
-+test_vid0_memleak() {
-+	setup
-+	ip netns exec ${NETNS} ip link add bond0 up type bond mode 0
-+	ip netns exec ${NETNS} ethtool -K bond0 rx-vlan-filter off
-+	ip netns exec ${NETNS} ip link del dev bond0 || fail "Please check vlan HW filter function"
-+	cleanup
-+}
- 
-+tests_run
- exit $ret
+ /*
+  * This callback can be used for YUV format where each color component is
+  * stored in a different plane (often called planar formats). It will
+@@ -703,7 +724,7 @@ pixel_read_line_t get_pixel_read_line_function(u32 format)
+ 	case DRM_FORMAT_NV21:
+ 	case DRM_FORMAT_NV61:
+ 	case DRM_FORMAT_NV42:
+-		return &semi_planar_yuv_read_line;
++		return &YUV888_semiplanar_read_line;
+ 	case DRM_FORMAT_YUV420:
+ 	case DRM_FORMAT_YUV422:
+ 	case DRM_FORMAT_YUV444:
+
 -- 
-2.25.1
+2.49.0
 
 
