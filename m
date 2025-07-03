@@ -1,101 +1,66 @@
-Return-Path: <linux-kernel+bounces-715219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-715217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E59BDAF72D3
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 13:48:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21B8BAF72C7
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 13:47:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 520007B44E7
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 11:46:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5B1547B39C2
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 11:45:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D17E2E7643;
-	Thu,  3 Jul 2025 11:46:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="SdzgeONL"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE3FE2E62BA;
+	Thu,  3 Jul 2025 11:46:03 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F4022E267B;
-	Thu,  3 Jul 2025 11:46:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AD912E54CE
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 11:46:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751543170; cv=none; b=tSAg8wfjB6bABj2GxhnR+stvn5FzA0hISUcpF6seFkLcVnHQ/x0PlR8DB6pBS8B2LA0ATipWff0JpXoN5ML73y50KpxkuGsOqREpEmWOD7Z1hT6CqWt13WPfGRQWOAQMB9GEY3oIhlyzATBxCwrSRUlXwRG/BgEkknKgtyZ4DTI=
+	t=1751543163; cv=none; b=dCvk3vYFQyT0/t0I6tE3rhFCeNYepuOyi5t9e3A3fbVSYj4BP7IDMQPtY2qSV854GDyjqjI0Jm8gie1d/inVO9nT1E+MaYwwg92EbGboxxYT7IIHJK400I/rbavHp+I0KycxJlYdUWL1rrITVcXpgdPHirtUNgw5IxbQ2WbZsCY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751543170; c=relaxed/simple;
-	bh=SaOLZYAvxBJHY9SXYKJzXOhjVc8dEjGQSwYhkSs/WXw=;
+	s=arc-20240116; t=1751543163; c=relaxed/simple;
+	bh=AQeKus+NxVxlEyU1UD6STBbKaFHVumBDSufn1Ex1cxc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ADiRyuFnRMaA6LJK3y9GYMFBHoj2ITQczJ7IHYGY3p8adHAWpYTgPLpcrg6jIoOGfrOdv0todnPDp5dL8Bd3HcOJJVrhTAkn7+UmbYPjkf7+TtWtu1qoBBM2xifluAEBvMErEneLbl0h5M08gJ2cp+9srEinbbh1kiW9xzHTiNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=SdzgeONL; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=LVjnHK2a2/GS8JYOQqAkvsSJ569rLPDcokWUDEILfso=; b=SdzgeONLE0Cs/spa7Ech+FjeJR
-	uUtVmD7cSnZ+6KeETxIeGJ0LCoLK580X2oh6bF3SdRoFLS9qASFrCRLqkuU8kF6S2ACiwM7IiOmiu
-	oBoszR+/N1SUVPi7YNRMxU4uJtkfnXpcrxOPlR13goCBbbNOenZLqK62kfj9sGUBHTcbF5g3FTVxw
-	n11VCCHII9HBNq41D32dMXZ9Fb7qBP0hL4b6s7oAcTeL2Bu0h4/MjCioH7Ztg72L0Euz6vKk6S1fn
-	IsDFZLUIoXwX4dv7bzSbFJsPiqNInlB60/tAjzguvvt+6wWAoyIzSL874/4HpJNxsguwpae0OdnVS
-	XWKn310Q==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uXIO1-0000000CwiZ-3tcP;
-	Thu, 03 Jul 2025 11:45:53 +0000
-Date: Thu, 3 Jul 2025 12:45:53 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: "hch@infradead.org" <hch@infradead.org>
-Cc: =?utf-8?B?6ZmI5rab5rab?= Taotao Chen <chentaotao@didiglobal.com>,
-	"tytso@mit.edu" <tytso@mit.edu>,
-	"adilger.kernel@dilger.ca" <adilger.kernel@dilger.ca>,
-	"brauner@kernel.org" <brauner@kernel.org>,
-	"jani.nikula@linux.intel.com" <jani.nikula@linux.intel.com>,
-	"rodrigo.vivi@intel.com" <rodrigo.vivi@intel.com>,
-	"tursulin@ursulin.net" <tursulin@ursulin.net>,
-	"airlied@gmail.com" <airlied@gmail.com>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
-	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-	"intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"chentao325@qq.com" <chentao325@qq.com>,
-	"frank.li@vivo.com" <frank.li@vivo.com>
-Subject: Re: [PATCH v3 4/4] ext4: support uncached buffered I/O
-Message-ID: <aGZtcSIryAj4zJtF@casper.infradead.org>
-References: <20250627110257.1870826-1-chentaotao@didiglobal.com>
- <20250627110257.1870826-5-chentaotao@didiglobal.com>
- <aF7OzbVwXqbJaLQA@casper.infradead.org>
- <aGIxiOeJ_-lmRmiT@infradead.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=sQApIAZjStRpHfJD/28EwD9icMG1/EWAvdCOLFwNweTYEewHlz1S7+3Q/1c5yWgb8U6X92bq7uc1ZntZqZuajIm1MHJK72qKaTHNkC/6I6dmjMPnmVs7azdNyNGzfd/fCWNt+knE/CgajW/NOQv3tB03vN6gF/wo2PHMbs7qAPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 8D7B667373; Thu,  3 Jul 2025 13:45:57 +0200 (CEST)
+Date: Thu, 3 Jul 2025 13:45:57 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Werner Sembach <wse@tuxedocomputers.com>
+Cc: Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+	Georg Gottleuber <ggo@tuxedocomputers.com>,
+	linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] nvme-pci: Add TUXEDO IBS Gen8 to Samsung sleep quirk
+Message-ID: <20250703114557.GD17686@lst.de>
+References: <20250701205630.64031-1-wse@tuxedocomputers.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aGIxiOeJ_-lmRmiT@infradead.org>
+In-Reply-To: <20250701205630.64031-1-wse@tuxedocomputers.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Sun, Jun 29, 2025 at 11:41:12PM -0700, hch@infradead.org wrote:
-> On Fri, Jun 27, 2025 at 06:03:09PM +0100, Matthew Wilcox wrote:
-> > On Fri, Jun 27, 2025 at 11:03:13AM +0000, 陈涛涛 Taotao Chen wrote:
-> > I think this needs to be:
-> > 
-> > 	if (iocb && iocb->ki_flags & IOCB_DONTCACHE)
-> > 
-> > because it's legit to call write_begin with a NULL argument.  The
-> > 'file' was always an optional argument, and we should preserve that
-> > optionality with this transformation.
+On Tue, Jul 01, 2025 at 10:55:49PM +0200, Werner Sembach wrote:
+> From: Georg Gottleuber <ggo@tuxedocomputers.com>
 > 
-> write_begin and write_end are only callbacks through helpers called
-> by the file system.  So if the file system never passes a NULL
-> file/kiocb it doesn't need to check for it.
+> On the TUXEDO InfinityBook S Gen8, a Samsung 990 Evo NVMe leads to
+> a high power consumption in s2idle sleep (3.5 watts).
+> 
+> This patch applies 'Force No Simple Suspend' quirk to achieve a sleep with
+> a lower power consumption, typically around 1 watts.
 
-Sure, but some of those helpers are non-obvious, like page_symlink().
+Why do we keep getting more and more of these quirks instead of
+getting the issue root caused and fixed?
 
 
