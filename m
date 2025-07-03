@@ -1,109 +1,170 @@
-Return-Path: <linux-kernel+bounces-715841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-715844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F6A9AF7E65
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 19:10:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC20FAF7E6B
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 19:12:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 704A91C86B39
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 17:11:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15F0E4E152B
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 17:11:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEEF625B31E;
-	Thu,  3 Jul 2025 17:10:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C35BF25A328;
+	Thu,  3 Jul 2025 17:12:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fkVZJJm1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bP2/7uC8"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 122E5134CB;
-	Thu,  3 Jul 2025 17:10:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E48D2258CE9
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 17:12:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751562631; cv=none; b=hCSbQOIlcBZ5yTRJwnQ2YZrjoGespQ1fnVmLJsgUUVpzbQvdEwEEfuKQaEaET+s2toEnni4Cm31e/ag5n84M//SHNGeRQqolRvqOZQwRrxRyxpXXB7AtkYBNlpxChPjg1LSQdGtMZl2ED5vrK49IxWFyFePSnwUFROP6GXeEF7M=
+	t=1751562733; cv=none; b=j2OP+l21wnWMrBMNSjaex5MOQhEHGfVHjN4jTC/YHNOD/hZ9uU0EEknTql4ccNgoT90/OI0NmoRXZQn6CqeRN22ctH4qHK9+n/y2dn63eJ+MkFfv97wLFn99U/fxc4zlhHXYmj9fgh8AT0Al50Tjb9Npoyxn9xcYDo6ZFEIWj2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751562631; c=relaxed/simple;
-	bh=VBNBTHMTAZlDZfjt9bZrrU4QHStDFo99Vh/bJIt/n/s=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=bNREYcxXecK+qZ6ADvZpdglAkfe51rRkwFwFV/qnqt74jC18oWO0yEhEkEDSM9QF7z4w27jEPqPsjEX9ceX6O3pA54Umq/seTVDOqosu2JSPY9CokIu4BvQv3K/IfsvQv8tG7rshgkmxR4hryYuNHWg/gY85eFhFszsivsupAwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fkVZJJm1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EEDDBC4CEED;
-	Thu,  3 Jul 2025 17:10:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751562630;
-	bh=VBNBTHMTAZlDZfjt9bZrrU4QHStDFo99Vh/bJIt/n/s=;
-	h=From:To:In-Reply-To:References:Subject:Date:From;
-	b=fkVZJJm1iGyGdp1Ja5Tu7Hch65JO16hxP0lASxwcxLGUwtJQu5KhA+/rbghPX8WOd
-	 n7HF7bEC35BDP86O+2jDjpro7I1wSGc0l8/kzK2wy2Wp8jyIWDFDNTZHSw9b5iLNcW
-	 Yyir5cL8JKJnM6WonM33j4aBQh/yJEW2ZiQV2ybl8LxoLn4vYm2mXZQYHT6Z0vMhsZ
-	 BxiIZSdLAnLWt1XC8t/lQzg1aQOHbpv0mR8aP0/jNKauYtj3QPVvTzy1p2CGCjqp74
-	 PRciY3DOiw0Lw2YQ0dr8aEsMBosEPslC8LW/bMSi26BkNmP4UeWl3j7o/KyDf+Wffj
-	 NsheR+fjLrhCw==
-From: Mark Brown <broonie@kernel.org>
-To: shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, 
- festevam@gmail.com, shengjiu.wang@gmail.com, Xiubo.Lee@gmail.com, 
- nicoleotsuka@gmail.com, lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, 
- cristian.marussi@arm.com, peng.fan@nxp.com, sudeep.holla@arm.com, 
- arnd@arndb.de, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, 
- linuxppc-dev@lists.ozlabs.org, Shengjiu Wang <shengjiu.wang@nxp.com>
-In-Reply-To: <20250620055229.965942-1-shengjiu.wang@nxp.com>
-References: <20250620055229.965942-1-shengjiu.wang@nxp.com>
-Subject: Re: [PATCH 0/2] ASoC: fsl_mqs: support MQS2 on i.MX94 platform
-Message-Id: <175156262671.651944.3516186569995786227.b4-ty@kernel.org>
-Date: Thu, 03 Jul 2025 18:10:26 +0100
+	s=arc-20240116; t=1751562733; c=relaxed/simple;
+	bh=Y+5PBjp3L+A/0PWkGIZorEGSdIsFWG49/tCq8S+8KQ4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dWS5YjyAS9GIV/afyF2/YpGk6bnhEnIayDg2OudMIo1RaRACFrLyPeVpXk5cFBDRxja0QEIKR/wI0kdQ9TeX31bWYZsv19CxLuv/YdxL+avAYHFgCyuIrPQQUViOgvp23v+Avo+Onm6VqnwfRoVOP1kFv+H+oTEuelgl0l3LRj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bP2/7uC8; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-553affea534so12392e87.2
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Jul 2025 10:12:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751562729; x=1752167529; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8JHsACmNVQDqMzth3zHYUx+TIWM589NbxHC9P7ivfVY=;
+        b=bP2/7uC8w1PaFxaY13Qj0L002wTMrAcjtVxbgyzU8doqcsqaBXKLAZCMRCgXU1cXw2
+         X0kxLfBt5rBSanHjBV7/xCGrS+n8gyuTglSh3rN+BQQCOTnweE11Dxp3uuPUQwjLDSfl
+         DM8KYjzNAhiEAuOnRl29dyMalxgfwSyAHzUmW+YDhh7rvzsFPTme38WKfYTXuGW+Ezcq
+         wxO2jPZ7CAmPzFEkg/q4Xiu5MNWBM+CVNr2EUeN25aX5W6sQbrF1D/SRDb/Dju7WcOlK
+         d6TUOPyHAWLmCXCKWm3dPjR3xp9n3neEcbTdbyVoRoxWDRsDhciRpvsOz4A4C588XTu2
+         AKmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751562729; x=1752167529;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8JHsACmNVQDqMzth3zHYUx+TIWM589NbxHC9P7ivfVY=;
+        b=eDRE2t1fU9gqeSF+wBRE19MfcD2jT/SzU8NRMrrjIYqfbgy7XCSCm+icnv8NdEEWgx
+         1VcwfrxLlLZod+UoGLplOerWMcMl4KwbZCYuOZ51uypuLPu/wQNRrg0aS3KE3nTpi0Ye
+         h2ZctRvr82JkFkws/o5T+kp1NXCEr5cw+qSlnWac8kSLimribbbHhi+6p82O4On5VfS4
+         z6uIKyBID88La7S5m+SfYxkYImMzqNwrGq2fsjjmPEB8W8A5GD29JXPEWN7X8P9G0JS6
+         sp33D+CHVNKnDOQAvNaFLhq7z6Wj7t5tkByBn57Z/yToeoy5q1jVu4nn+TdTUE4uruei
+         DqUg==
+X-Forwarded-Encrypted: i=1; AJvYcCURBDWOnAXFHM2QGww03Ca5kiEcTuh6/CE5vIR6nSBm5jR4LLOzsJld8U/zuCcIoIRpmGiVm6D/sZGb7kE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyORzhp3ncaXrgakORfN8nBmc6WPpbvZss/+KN7q0YYkkgzxhu2
+	MBGKRzjZqYb0Dco5hCALpCkdtS1W+QmSxeJZfCo822aykjH027NXpX9w
+X-Gm-Gg: ASbGncsx3LjBvhf4cwNbcV+cMUDQh1XokKzAB9XAKo/IsapNUJ3AfRE2FvR0af61M0g
+	xJXX52DsP8z64K3JfpVwasv6N69svQwwvGT8kmfhAT1r4fkr9SfJA/Je6845yOQWCZgxHgldWYA
+	7Pnfm4uaodejPee+Jvsd/1+WGhQaVFKu9jO3ZWLxZkTV0jvBFL9j9DoIQEdItjCacjdd6HpQA1z
+	9d74BrfGW81yeSIH+koYH4T2kGhg68onde9jzBcORX7ZH7rSU5HL1MBxAIYPAGlUmzKXA25JESZ
+	FMUd9qAKp1buBMwOsKh57zjK00zOAYrQKeMt04WUfJ4N4vPSAvmqP2qNEqIXn/nJpOyx
+X-Google-Smtp-Source: AGHT+IHSUdgs8rkjr+uLDoqm0WJNQiSMXBB+h8aK0WD+wavVOnlqZxsO6zfCCjPgM4KKxosilHQWvA==
+X-Received: by 2002:a05:6512:3ba6:b0:553:a2a2:21b6 with SMTP id 2adb3069b0e04-55632c86b8bmr327098e87.4.1751562728608;
+        Thu, 03 Jul 2025 10:12:08 -0700 (PDT)
+Received: from [10.214.35.248] ([80.93.240.68])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-556384a9e43sm24902e87.173.2025.07.03.10.12.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 03 Jul 2025 10:12:07 -0700 (PDT)
+Message-ID: <1a7f32a8-16ff-406c-9542-8d2ad628d7f4@gmail.com>
+Date: Thu, 3 Jul 2025 19:10:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] kasan: don't call find_vm_area() in in_interrupt() for
+ possible deadlock
+To: Yeoreum Yun <yeoreum.yun@arm.com>
+Cc: glider@google.com, andreyknvl@gmail.com, dvyukov@google.com,
+ vincenzo.frascino@arm.com, akpm@linux-foundation.org, bigeasy@linutronix.de,
+ clrkwllms@kernel.org, rostedt@goodmis.org, byungchul@sk.com,
+ max.byungchul.park@gmail.com, kasan-dev@googlegroups.com,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ linux-rt-devel@lists.linux.dev, Yunseong Kim <ysk@kzalloc.com>
+References: <20250701203545.216719-1-yeoreum.yun@arm.com>
+ <4599f645-f79c-4cce-b686-494428bb9e2a@gmail.com>
+ <aGVYoEueYjoC1hQh@e129823.arm.com>
+Content-Language: en-US
+From: Andrey Ryabinin <ryabinin.a.a@gmail.com>
+In-Reply-To: <aGVYoEueYjoC1hQh@e129823.arm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-cff91
 
-On Fri, 20 Jun 2025 13:52:27 +0800, Shengjiu Wang wrote:
-> ASoC: fsl_mqs: support MQS2 on i.MX94 platform
+
+
+On 7/2/25 6:04 PM, Yeoreum Yun wrote:
+> Hi Andrey,
 > 
-> Shengjiu Wang (2):
->   ASoC: fsl_mqs: Distinguish different modules by system manager indices
->   ASoC: fsl_mqs: rename system manager indices for i.MX95
+>>
+>> FYI some of email addresses in CC look corrupted, e.g. "kpm@linux-foundation.org", "nd@arm.com"
 > 
-> include/linux/firmware/imx/sm.h | 20 ++++++++++++++------
->  sound/soc/fsl/fsl_mqs.c         | 11 ++++++++---
->  2 files changed, 22 insertions(+), 9 deletions(-)
+> Sorry and Thanks to let me know :)
 > 
-> [...]
+>>
+>>> In below senario, kasan causes deadlock while reporting vm area informaion:
+>>>
+>>> CPU0                                CPU1
+>>> vmalloc();
+>>>  alloc_vmap_area();
+>>>   spin_lock(&vn->busy.lock)
+>>>                                     spin_lock_bh(&some_lock);
+>>>    <interrupt occurs>
+>>>    <in softirq>
+>>>    spin_lock(&some_lock);
+>>>                                     <access invalid address>
+>>>                                     kasan_report();
+>>>                                      print_report();
+>>>                                       print_address_description();
+>>>                                        kasan_find_vm_area();
+>>>                                         find_vm_area();
+>>>                                          spin_lock(&vn->busy.lock) // deadlock!
+>>>
+>> ...
+>>
+>>> diff --git a/mm/kasan/report.c b/mm/kasan/report.c
+>>> index 8357e1a33699..61c590e8005e 100644
+>>> --- a/mm/kasan/report.c
+>>> +++ b/mm/kasan/report.c
+>>> @@ -387,7 +387,7 @@ static inline struct vm_struct *kasan_find_vm_area(void *addr)
+>>>  	static DEFINE_WAIT_OVERRIDE_MAP(vmalloc_map, LD_WAIT_SLEEP);
+>>>  	struct vm_struct *va;
+>>>
+>>> -	if (IS_ENABLED(CONFIG_PREEMPT_RT))
+>>> +	if (IS_ENABLED(CONFIG_PREEMPT_RT) || in_interrupt())
+>>
+>> in_interrupt() returns true if BH disabled, so this indeed should avoid the deadlock.
+>> However, it seems we have similar problem with 'spin_lock_irq[save](&some_lock)' case and
+>> in_interrupt() check doesn't fix it.
+>> And adding irqs_disabled() check wouldn't make sense because print_report() always
+>>  runs with irqs disabled.
+>> I see no obvious way to fix this rather than remove find_vm_area() call completely and just
+>> print less info.
+> 
+> Right. unless there is API -- find_vm_area() with spin_trylock(),
+> kasan_find_vm_area() should be removed.
+> 
+> But, I'm not sure adding the new API used only bv kasan is better then
+> just remove kasan_find_vm_area().
+> 
+> Do you have any idea for this?
+> 
 
-Applied to
+I'd say the info from vm_struct is nice to have, but it's not essential for debugging.
+It's probably not worth trying to keep it, so I'd vote for for removing kasan_find_vm_area().
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-Thanks!
-
-[1/2] ASoC: fsl_mqs: Distinguish different modules by system manager indices
-      commit: 9931d2899eec3737f4e4fa9fc900be7329816e94
-[2/2] ASoC: fsl_mqs: rename system manager indices for i.MX95
-      commit: baee26a9d6cd3d3c6c3c03c56270aa647a67e4bd
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+> Thanks.
+> 
+> --
+> Sincerely,
+> Yeoreum Yun
 
 
