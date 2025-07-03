@@ -1,86 +1,104 @@
-Return-Path: <linux-kernel+bounces-714961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F90DAF6EEF
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 11:38:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B85EAAF6EF3
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 11:40:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A17E1889B7E
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 09:38:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8412E1C2456F
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 09:40:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93F5C2D877D;
-	Thu,  3 Jul 2025 09:38:08 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1B7C2D781C;
+	Thu,  3 Jul 2025 09:39:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GXV+6bY3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2D7D2D77FF
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 09:38:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39F01291C37;
+	Thu,  3 Jul 2025 09:39:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751535488; cv=none; b=UF8Eo9cfv/N74Hmwp9WdYHC4ZMs/k9Q6WG+/yIFNhMofhLyp+bM5trV80fvJ/qzma+s7NeusCoILiAy5BofWq0p0w2Crc1NuCPlVacJSWjhKrFMATCIcgVnsbK2qvJVv+d759JXar4oMJL66FZ6avQuJy9vtahhYpXE8YG3uX0M=
+	t=1751535586; cv=none; b=KvV9Vc7ecvNH2yED/91VXO9V0unBdNO1GwezI0ekwV3MUs8wDF2b7G/YxgjOAmUAaiJwEpYanRK24MsEG8MmNgVHr06nQj/opgYgR/AQXr/S54o6jJhenKfIZNXGjMoKw1lTt36fxjsCUGbTiyg5CqCtpYvPb5m6n+lntAGbLI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751535488; c=relaxed/simple;
-	bh=j0kHbGX/BbO2qGlKZQ3PP/Mb3tcTHQGxbuPFI3cbr+k=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=eGmsod2wSc8DDlFK6TPlI97mGlB7H7DxWxi98BSgiXqRSqJVIsfWZmfk2ZBsBBg+wbVa05v25RgfbZLL9llaVtnJllDcp2DoY/4GCkngDTzmxaIux2pAdJIr3L+pLRg5/8jfH9HRH19qL4InGBpNz1wOD952DlVyqBuzR5bDw24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-86cfea700daso458096139f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Jul 2025 02:38:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751535486; x=1752140286;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fLWF3XL1WFoc/ceE84KQzD8W4nX1um+AWtJuwHJWiOM=;
-        b=plTMmOxynqIXXoFgGrJL6bgCxtIfjU14CKJ3pPUCmF1AHLl5GGJ2DnIzVzKi+VSqXe
-         sF5/TiOWpje3GWWMw4sms4ugCosxX9ptMYpLO2J1kYoShHdC3z+tIJytNdPpK43xX2U6
-         HSPwdqOyvjtY5idIGLCUfCjXeUScK4n8N8tisMD11NKCPuH/lYA4SztOLVY0uxTPM7ap
-         NX7xShhkXMd2pWBAxuzlf9T+diba99wap2lj4yK1GToG+d6dOzd2I174RDkpaqCBHR/V
-         CryiMXGfPqZbmAbM3a0P9qArAXkHD96W52LIMOlYAbX2fMA2Hd9pb46g0IQcV534VwD7
-         4bVg==
-X-Gm-Message-State: AOJu0YxHuN88k8254f4nti2/SOlhrMIjm6dVadYB63YyQUh79ek3SGRB
-	8wZn6wEFJxdlv3Y6cpmB4FYFAf2Uny9YzK89ZviFXuzuwk6p4wu4lke46EPpnfN6Fgk0GY899Jz
-	O/Q9xGFH67cvRgrOocUjk1JevItB3agFTHic0CMLNEEqiQBgOAJOWGJFRoug=
-X-Google-Smtp-Source: AGHT+IHW0nK5K+tKIqlc5Rb9qYOLr9DlE0iYPzss1uUqUqc4i7Z51HnbtleF1XheoqmeR+vkO1c0WMcOwwlTucqKBrVWOQSfbiWS
+	s=arc-20240116; t=1751535586; c=relaxed/simple;
+	bh=ODf9SeJXknLRDbICjYsDqcjPJruZILYsOHMug+ircg0=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=ujrwOoIsp7OVUFbIaphY9kxJmrKS7KRq2zlOxDN+d0/qAB3cuPAufAzieopxI+3LkVFwk4I4s5xYCG+w4Tsi/ZHdC28f+Ta8NzPyhfEpP1uf6v//UsKhQCp0LceX49UU/tdEMrXFxB34YnoEdPWM1Acootkjgos5VjhBIWAtNw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GXV+6bY3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A66C6C4CEE3;
+	Thu,  3 Jul 2025 09:39:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751535583;
+	bh=ODf9SeJXknLRDbICjYsDqcjPJruZILYsOHMug+ircg0=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=GXV+6bY3MEwhu3tRKgKfyLwKCxNQBGfhs7i5IfgfFcqtzPbtUCdGpSYuLpF0/z+oq
+	 v0I0AknKHPj7X3zNynSLuB8jzwpWdr89a7ceCsOVTtYeuHFVWqC9r1q1fusVXsaXA+
+	 YqUvHUCycJ2kxW9t+NfV3daWE82+3+VIBie2ny+Xj0B9HleaFqdpgLXVuIyiDkr64Q
+	 ZmVOrtu5uF60Onkph8XM8DYMHoagyZVVpeS8X6VFBujaRijSrWT+x6nUCmkf7acKx/
+	 CTp59st/6lbRWHLn2Iz2K29gtkxU70fE713L+BQzunMzxYHVBzxEhmq47JVCEuxvGj
+	 MDAuhQyA8rizQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33F42383B273;
+	Thu,  3 Jul 2025 09:40:09 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:4147:b0:864:4b3a:9e3a with SMTP id
- ca18e2360f4ac-876c6aa2ad1mr778498139f.13.1751535485813; Thu, 03 Jul 2025
- 02:38:05 -0700 (PDT)
-Date: Thu, 03 Jul 2025 02:38:05 -0700
-In-Reply-To: <20250703025955.GJ1880847@ZenIV>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68664f7d.a70a0220.2b31f5.0018.GAE@google.com>
-Subject: Re: [syzbot] [nfs?] [net?] possible deadlock in rpc_close_pipes
-From: syzbot <syzbot+169de184e9defe7fe709@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net v3 0/2] virtio-net: xsk: rx: fix the frame's length
+ check
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <175153560802.1029220.2379425113852015641.git-patchwork-notify@kernel.org>
+Date: Thu, 03 Jul 2025 09:40:08 +0000
+References: <20250630151315.86722-1-minhquangbui99@gmail.com>
+In-Reply-To: <20250630151315.86722-1-minhquangbui99@gmail.com>
+To: Bui Quang Minh <minhquangbui99@gmail.com>
+Cc: netdev@vger.kernel.org, mst@redhat.com, jasowang@redhat.com,
+ xuanzhuo@linux.alibaba.com, eperezma@redhat.com, andrew+netdev@lunn.ch,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ ast@kernel.org, daniel@iogearbox.net, hawk@kernel.org,
+ john.fastabend@gmail.com, sdf@fomichev.me, virtualization@lists.linux.dev,
+ linux-kernel@vger.kernel.org, bpf@vger.kernel.org
 
-Hello,
+Hello:
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+This series was applied to netdev/net.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
 
-Reported-by: syzbot+169de184e9defe7fe709@syzkaller.appspotmail.com
-Tested-by: syzbot+169de184e9defe7fe709@syzkaller.appspotmail.com
+On Mon, 30 Jun 2025 22:13:13 +0700 you wrote:
+> Hi everyone,
+> 
+> This series contains 2 patches for the zerocopy XDP receive path in virtio
+> net
+> - Patch 1: there is a difference between first buffer and the following
+> buffers in this receive path. While the first buffer contains virtio
+> header, the following ones do not. So the length of the remaining region
+> for frame data is also different in 2 cases. The current maximum frame's
+> length check is only correct for the following buffers not the first one.
+> - Patch 2: no functional change. The tricky xdp->data adjustment due to
+> the above difference is moved to buf_to_xdp() so that this helper contains
+> all logic to build xdp_buff and the tricky adjustment does not scatter
+> over different functions.
+> 
+> [...]
 
-Tested on:
+Here is the summary with links:
+  - [net,v3,1/2] virtio-net: xsk: rx: fix the frame's length check
+    https://git.kernel.org/netdev/net/c/5177373c3131
+  - [net,v3,2/2] virtio-net: xsk: rx: move the xdp->data adjustment to buf_to_xdp()
+    (no matching commit)
 
-commit:         350db61f rpc_create_client_dir(): return 0 or -E...
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git work.rpc_pipe
-console output: https://syzkaller.appspot.com/x/log.txt?x=15970c8c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=af650e21e0ca5e40
-dashboard link: https://syzkaller.appspot.com/bug?extid=169de184e9defe7fe709
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-Note: no patches were applied.
-Note: testing is done by a robot and is best-effort only.
+
 
