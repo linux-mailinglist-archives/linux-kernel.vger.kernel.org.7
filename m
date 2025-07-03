@@ -1,83 +1,83 @@
-Return-Path: <linux-kernel+bounces-716189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9D75AF833F
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 00:22:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72399AF8346
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 00:23:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A04CE5830D7
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 22:22:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8CBD1C21152
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 22:23:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B766B29CB4A;
-	Thu,  3 Jul 2025 22:22:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5366E29344F;
+	Thu,  3 Jul 2025 22:23:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="BQXnpr9j"
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="Zzeosc0I"
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7CFB296153
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 22:22:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB8FF2882C5
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 22:23:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751581347; cv=none; b=r1bkDWV8G4qiZuciV6sqMzzHx5uvyHpJsqptxRBfI2jPB32+w7MAf+iUQqDzk1gcbrxPrngUg8F6nfvwNHuml2Ba5nwMzKdXKMvyZwDXC+FbKnlrXGc6LQWYUftIAat0CYGvDsgi91C56ucDGwtWGZVrbgpLavYycrvudJkT6Ao=
+	t=1751581410; cv=none; b=H4Kf0lBh+KDN5P/8IxjI5/drMZFDHG5bmmja6ytzqaEYmyrX+GIXRKK97gdKWIHmUQgpc3xuJX9pyRI6lj19Uj502JqViojGem4RO2E0l0Xb8TSdpJyskQH6hdqi8U2U2mBfd6BhAwLvT3rkNi9rDmyQmOCTy/dKhpPGtsUHdvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751581347; c=relaxed/simple;
+	s=arc-20240116; t=1751581410; c=relaxed/simple;
 	bh=D/PppK0hDftWiCKNXNsgHrcA+jFHhAFOCWiRLOQNwOQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Bm8raFmzxk+nIxCfmV3gwMkJZEBcD5kA5ddsh5vujBscAJqyYPvQjfAYDDpg7IXLVlGOGrGRGDyr4lJ+IE2sby5Hbu5aPJaZ7Fxdg7xSPIb0RVBLdtG9TDr6z4yg3uOkuhuxXOuUv8di8HQ1rsY81pIBSLaj09wdaNnvnJUtbnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=BQXnpr9j; arc=none smtp.client-ip=185.125.188.123
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VmdArHz3tjdIDUXSt3WC9iDX43IRvh8gksR4Jk38d12W21nH3ww/tM/V+F92gDD2N0h69SC+QJ+uGg4BPlaYxtgLLfVTkG+nrd8z7+dNseVjAc9ADl4+BaEVEeWyqnBFao/wK67J5tY8QAt9OfAOYUe0iepTZQFMtLkD65Y9mnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=Zzeosc0I; arc=none smtp.client-ip=185.125.188.122
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com [209.85.208.71])
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com [209.85.218.69])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id AC8953F91C
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 22:22:22 +0000 (UTC)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id C41613F691
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 22:23:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1751581342;
+	s=20210705; t=1751581406;
 	bh=47Hy/CVM+m+STHABdIjCLud+sfTnWYA0RBiwXCk0B4w=;
 	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version;
-	b=BQXnpr9jReXUVe8WKSeqxwV7Y+J8VaVdNlI31ORekAmStChoIwYHwbKpEdrCxfNOL
-	 y5xAGIhPXbuKhbcZR63ZznOfxTGQBmQIVVSogpbr0dECXSdslKELVdiVP9JGkyl7EX
-	 HlNCugjw+CH+3YVCRONgNuuVkgxV+jLjOhINmPnkYOg5uq/614EwxenB1V4/axFDJl
-	 x82Zrcxou2rDI4C62RuPs+zPmhhIpkgSSMGBVCO0A0ci58lMs6voRc2OClvhTOPSfP
-	 +fBh7Mws6hgyAEVobjxlhr0yIIcF/jF7e63FtmvTgTHUD64/nAWkrBjBTUkzYvsKNO
-	 tdMmQuMxE8NQw==
-Received: by mail-ed1-f71.google.com with SMTP id 4fb4d7f45d1cf-607206f0d57so253257a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Jul 2025 15:22:22 -0700 (PDT)
+	b=Zzeosc0IE311/XHsADk/4j99tqsq14D2+mJkIYxXIWY/u2H4wdeqKv9FHedvrjS1N
+	 UyhyDZ7+zr5d6u5AEbndWTaKtZBuVPS/IVRhnddjYsQd/aKhBvS2tYDw9T5yOLWX3o
+	 f/LIR98MA9iYW3I9+Fn81lfjm6cCz25uoIl8EcUHrYvoeITsEfounJo14fS48SIwKj
+	 AgmXFVhygutkacK+qkcAUmuInZSUAmx/3Aha7KE0mkkRcfmlEgT+93mf66+8IBzF5/
+	 OQTXCKkOV60J5xMgTZGhJrIciCuzsBjrLR/6veSnZp2cpAVc0PBPwt594ooff/sM1L
+	 lHdu5KRrSVbvg==
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-ae0d798398bso21642266b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Jul 2025 15:23:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751581338; x=1752186138;
+        d=1e100.net; s=20230601; t=1751581406; x=1752186206;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
         bh=47Hy/CVM+m+STHABdIjCLud+sfTnWYA0RBiwXCk0B4w=;
-        b=kbxoKBAA/Kflpdx3xrz6PBTrfdXEhRFJ9FOY0QPpowxH9TdKy8+F4eAXjomvLN5WQm
-         llQMT/NSSoy5nkvyW38PonSO1kps0NYNhBKr5bUVIye2UHHeXXRyR/VunDmXgTuJL4Lj
-         bRjUvVbb+3c8vgD8QYlXkA/09xbypjDRroySHes5fKYVm1mqN7tAcbezRj+y8tr2CaQO
-         p/rukPqNOVP1U2/NoGaJwS3eBV6b1JnLygy22ZK0cBRWuaI2rTxHWmPAcXlsIb5D7nW6
-         GC4JdM7X0unPSmdV8XQGKx5qFyJ+CgeRDLWdo1JvtCav7DfBgPe4AWG2n08e2vfA7fl9
-         GYkA==
-X-Forwarded-Encrypted: i=1; AJvYcCX31KGs+2WKq+Y03A5smQlP/Uq1EAV/TnH5JjOuCNA9mXFSx5W2X/+asnpzbgKlhzTFvygYK5BWg1KiV8c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yza3bfdn2cEKcXNsGYTZoi6rE9jpDUPpnNtsYcZ/7bU+TF6bJLb
-	cHrzJ7CAunPVYP3oJftn5CxTULZgxquB2LbpBLBJr/1BzGS6MwWxwWGllkA3mV29rVYORDPR9hX
-	nLMhLah/ehRzJW48OnD+l8EppYabsuASstunTBvMVafjTI7peFFvu3U21Cg7Ac6zWZV5STTfrlS
-	vkYO2O+A==
-X-Gm-Gg: ASbGncu21W+Fs04lI6+/Xh8Kmfc9a0fPXtZzTOAEsyn84jqt5qs0fDaubwrXWtwJjC7
-	oXueYNN25vYCYUKUxErmgLVf56NMPX5ntPjCbfcq91sovWH7mASgBfQ4HXRQEOPzthNz6m1mgzr
-	d3yu6oRgjhcZ0AZ8Ms8bvUkb+wUX+9vvpdzlZqtpAkfw56lerOhpKCfgBdOn7R86MQXSPUA0rlk
-	1ZiG6TYvTR9/VzfWg5aeF2XrXUhSgFGQ7mcF6VCs4FVJBzU523vkfq9bBjBCWgubn/i8jeyJ8G7
-	pXHuXQVwzYaXSJieEuSw3ah69+JSbofm6QLswxhocJdR/1EW+w==
-X-Received: by 2002:a05:6402:51ce:b0:608:66ce:14d1 with SMTP id 4fb4d7f45d1cf-60fd2f85538mr235494a12.6.1751581337636;
-        Thu, 03 Jul 2025 15:22:17 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGhQ34cQJM1kgpxELeCyd/hjVgdKzujKM6mLeKa4YjV8RfISmMTTZ4biTzP94cqtbiU+M/JVg==
-X-Received: by 2002:a05:6402:51ce:b0:608:66ce:14d1 with SMTP id 4fb4d7f45d1cf-60fd2f85538mr235469a12.6.1751581337198;
-        Thu, 03 Jul 2025 15:22:17 -0700 (PDT)
+        b=ciSoohYRsP8rDVSyMfSHAJnWq87oTQVt3/kBFtS0EprR3ppau3ogDlcsmimvNuODwF
+         C7ikQCxdk6iRHCOh8tzn0IFDgz/NTNsQHtX5ZphKjz4Kt46PJiUVL+jWWG2TwvLpOQsY
+         Vgb4hig0SBC30cv11OutXTR8itxI/Ctn+6dBTC0FgEcafLpcnTIayv1kGseXkVNkTaef
+         0A+E+RsG1x0M1J3jYevMi45b3N5fv3Tg6ZWRQ5G+I+6czLh+qLxRPJZB1OK/hyZ9uyyX
+         RuhOm2TmDygScTN/g24US2B9cCBRVd16o4u09o5rHFTt2mF4Vubj2PDQQmT6HVx6nd1f
+         /g7A==
+X-Forwarded-Encrypted: i=1; AJvYcCV4K7AXj8VIsyn5+Q+MrWtZwsslSe/KFb0p2icPhVXEaSpgWeaTMcrS06VPp4U3I9CcazEy1RRMZTv12xA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIWuhq4rviPG8nFfsZ1JWmTBLdZBM+r5kE8OXAlGPkSpSrhXvf
+	QkhaRJxgpVNA3vXhregxdNpN3WeWkAMUhuKE8rxc3ZsNpXx+C4v2aTnWjqZrT+BjxVifrO5pHSQ
+	q69JuA058W0wz7YWXLArT6rtSiNCqEoU7JoaDTW5CSZpsJ4nFqhpsEmLzHABRh/IZmD8Hp/ptip
+	16Jh4ZxQ==
+X-Gm-Gg: ASbGncvbqL8tR08CG+49Wv4hfc1FVDjiCmb06IojG/HqiCVEvQ+LX/1+P+WQ5DUwpNe
+	rO1EgBiCUOljFFRBV8B1z8NN96GkGs8t1nfF7orGa6QOuFw7yszkQGRfIxw0mu+p8eKdvPhJuA9
+	DxdgOgeSTJTHYV1dszr7h/voER2Izr8vOX0fXa63Fi+uoWLGxzjWJe+hRFJFHcoOv8CtdBeQbGX
+	sOyVZKv5ybeSpMBnQJFazgPg08hhGOJiFh14fPK9sOJJ2qLb5aE4daYAELI4eiX+f3rO/9gL+AF
+	3hCa7Xp3yygAkoHpu3OG7BvoMST1FEQ+viARz8vzzH3a8i40zw==
+X-Received: by 2002:a17:907:9494:b0:ae0:c976:cc84 with SMTP id a640c23a62f3a-ae3fbca004dmr20075866b.24.1751581405829;
+        Thu, 03 Jul 2025 15:23:25 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFikEpOsYGxSn0v73olb5O1tkvWNghVZKaq0AyowZz/zD/9S5S+ZxPRb0YNqMVPRMsgi4zVAA==
+X-Received: by 2002:a17:907:9494:b0:ae0:c976:cc84 with SMTP id a640c23a62f3a-ae3fbca004dmr20072866b.24.1751581405289;
+        Thu, 03 Jul 2025 15:23:25 -0700 (PDT)
 Received: from amikhalitsyn.lan ([178.24.219.243])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-60fcb2f3122sm352189a12.57.2025.07.03.15.22.15
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-60fcb1fb083sm355164a12.62.2025.07.03.15.23.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Jul 2025 15:22:16 -0700 (PDT)
+        Thu, 03 Jul 2025 15:23:24 -0700 (PDT)
 From: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
 To: kuniyu@google.com
 Cc: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>,
@@ -94,11 +94,10 @@ Cc: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>,
 	Lennart Poettering <mzxreary@0pointer.de>,
 	Luca Boccassi <bluca@debian.org>,
 	David Rheinsberg <david@readahead.eu>,
-	Kuniyuki Iwashima <kuniyu@amazon.com>,
 	Simon Horman <horms@kernel.org>
 Subject: [PATCH net-next v3 0/7] allow reaped pidfds receive in SCM_PIDFD
-Date: Fri,  4 Jul 2025 00:22:00 +0200
-Message-ID: <20250703222209.309633-1-aleksandr.mikhalitsyn@canonical.com>
+Date: Fri,  4 Jul 2025 00:23:04 +0200
+Message-ID: <20250703222314.309967-1-aleksandr.mikhalitsyn@canonical.com>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
