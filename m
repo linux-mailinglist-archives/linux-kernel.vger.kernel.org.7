@@ -1,249 +1,391 @@
-Return-Path: <linux-kernel+bounces-715369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-715371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65F9DAF74FA
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 15:05:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D683AF7500
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 15:06:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E00B17F33C
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 13:05:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 020D24E50B1
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 13:06:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02CE02E719D;
-	Thu,  3 Jul 2025 13:05:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71D972E8E0B;
+	Thu,  3 Jul 2025 13:05:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="iJYARejf"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="KDACpp1Q"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1D10B67A;
-	Thu,  3 Jul 2025 13:05:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5315123AB86;
+	Thu,  3 Jul 2025 13:05:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751547932; cv=none; b=s6kaqVmzjxvyWmlseN/Rf967446b24HfPgBP/LDStc4lVqhfQytuGbDZj3VyMDTTsi0q11k+NJ7TPnc81VZT62TWXXegJpBHviYyRC5yav71N5Gulf6R/9IMahpMQVVAZ+CyJKddcWV+k6LxGy4A3UTmrFiQGM+Qgz8haVCDg70=
+	t=1751547943; cv=none; b=r3yGnsbvoDCd91/BB2Rj0RDUrtEI//1qYNpXwwHD+mhvl+9wE2saS9iCZWwF/BbGQOMA94FimIULku/zkqtiVk1avExQH2Jvh+dByfTeQozfyy1HetF3VMA87WWp4sgjlF4Rg50zzdZXMfkDwQWk40BO5wz+n+aq+bnuEwjeetA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751547932; c=relaxed/simple;
-	bh=KWQWe/2rOMqjWmggideruA2h1ff7EC5EYkhc2XTmOi0=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=htkw7Bl6yG6nuuIvoJBC7LRd4khAFDKxWP2p75J2WaQsON9M1mcqs8VlX87wXWI8s8zatfYKLMWlVFrAOIWg1alWNm9LyhtT4LG4i3Bv9cStl/MOGWgDHVzmExoIEmF95CzH9+Hk1Y8vt4bdOi95oU5F8SUY0lqfjZ625Icj2f8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=iJYARejf; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5637ZEWF028430;
-	Thu, 3 Jul 2025 13:05:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=OQLVnRvv+YGw1jFayOnumqym
-	NCBejpVtWN727o3J2xc=; b=iJYARejfuOe+aaFoELolVcKyldstFRMkVnQLOaQF
-	STCqg7cpv7NHR+h/oB+djgTm42M+7e9yVsH0dTanevfE3DuyAz2lrwuBm3bRLI6w
-	+jskPcmPjwlqYWSC3yUc/BJ/+RkSRx8Exn7LDIMPgwVeeCcMcoax8lODXQYSPL+Y
-	r5fYz7tRKyQ6x/Uuv3+NzQy70y50dqUxP5CSdWDwtR8CTi4Q5zdC/Mt//9nDe7XY
-	RjU7nVMH3Uo/NPn7roYROiAphEJ9QXzbSZBbwVJnyWltaUj0v73lRHVlumdBoPuk
-	LrBh/pSUngKfvHZ1fkEdn4EI+LRNPMs6QWtOcCXwqtaE4w==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47j7bw0nnj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 03 Jul 2025 13:05:21 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 563D5KHe000970
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 3 Jul 2025 13:05:20 GMT
-Received: from jinlmao-gv.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.10; Thu, 3 Jul 2025 06:05:16 -0700
-From: Mao Jinlong <quic_jinlmao@quicinc.com>
-To: Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Mike Leach
-	<mike.leach@linaro.org>, James Clark <james.clark@arm.com>,
-        Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        "Bjorn
- Andersson" <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-CC: Mao Jinlong <quic_jinlmao@quicinc.com>, <coresight@lists.linaro.org>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>
-Subject: [PATCH v8 2/2] coresight: Add label sysfs node support
-Date: Thu, 3 Jul 2025 21:04:53 +0800
-Message-ID: <20250703130453.4265-3-quic_jinlmao@quicinc.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20250703130453.4265-1-quic_jinlmao@quicinc.com>
-References: <20250703130453.4265-1-quic_jinlmao@quicinc.com>
+	s=arc-20240116; t=1751547943; c=relaxed/simple;
+	bh=GpN8xHP63XM+oTXtjDyjENa6zCm9aLFaBITzhIXThVU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jBu8OUWrQxL9zEE6oVCZWwScm7H8ze4xbGIS7qM8gwQ63BItspbe83QuCs3CC8cLkYfFaqZ4LCmbTWo7tLH7iBgl3KF8D+kgo6U1ofofsHXbdJ2Ce82dEDLi3dQjLdENtKp0eIAnuyBQactjE8y8J7gI7Ecsuqu4pM9gc0DrDso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=KDACpp1Q; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1751547939;
+	bh=GpN8xHP63XM+oTXtjDyjENa6zCm9aLFaBITzhIXThVU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=KDACpp1QMNA461z1ue9x8IPlUIObuv3owwbXpsmhy/7s7y+cNE8tEQwkbHNVtAGXv
+	 DX2S4cgAFcTAxMhSBQXX/G25TJZinfcgxebypD+fShb5YQeZIaRRUbEqXti4KxZud5
+	 6TmA8LjhiGLj9Tf+54Dit/E/69zHbDceZIcll+NeEDzLWD1si2Dp0z+l2n+GRh5g7Q
+	 nYZEzXikzlJSBgn/4TYgft7oXmhI4h2kD90EqEzPCEhkf4JxbKkWauc2FdJkMEkvGG
+	 7q9LeqpcWAI56/TD50rWtCyZmux4fLksYhfgIv7OogR/cX2mGFr7V3KmSUXQYbF0DU
+	 auIIAMI3Loqhg==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id A313717E0506;
+	Thu,  3 Jul 2025 15:05:38 +0200 (CEST)
+Message-ID: <183a3b40-cd06-437a-84d9-9949965bf176@collabora.com>
+Date: Thu, 3 Jul 2025 15:05:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: yKGtCAjpT3fr4cKy89wmWtXVnIoNdt3N
-X-Authority-Analysis: v=2.4 cv=RJCzH5i+ c=1 sm=1 tr=0 ts=68668011 cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=Wb1JkmetP80A:10 a=COk6AnOGAAAA:8 a=KKAkSRfTAAAA:8
- a=3OtES_ux56hhsM0WwqAA:9 a=TjNXssC_j7lpFel5tvFf:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-ORIG-GUID: yKGtCAjpT3fr4cKy89wmWtXVnIoNdt3N
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzAzMDExMCBTYWx0ZWRfXyZ+a5XOXdK1X
- ywTR60Xx8YDbpSqXbEnpP57s2OFkZV3RVcOP+EMW37e+xlVxrYfcmizK/TaOlNO6ta2yj/Atubh
- jxs5M9HCV9gso1W91FA82WzfngW4drALkbGpmWA9NBHeVkam5ew9qdHgEwPNdT4YzmDZ9Cmn/9s
- lfKOgcPdMGuE4Sze4gOgoHj5iFAyDZmVUSFKF3a5/H+50HHjAQteHp32jckXhZhlkhrsZN6QE+v
- ig7MjplqeMdwrt6mE28K2jRFxVz+OUStgTrBuU2eG3sit7y1n7BDm2pkBS0SiKV3NWwNGmBFj/M
- 0oY5WUMAKA0SLDQ9VbKtaUJUVdM4xDeuhH/N7WlI7MG6NYdza9o6L0eg+f0Mo+GsW+5NbqcJZen
- y7+c1kWYYFn/0n7GcBTUK8te+q/m/vzap1iQs7WR41iQv96OMyr//I44Xay+T7sa5c4B/073
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-03_03,2025-07-02_04,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 impostorscore=0 priorityscore=1501 mlxlogscore=999 adultscore=0
- malwarescore=0 clxscore=1011 lowpriorityscore=0 mlxscore=0 phishscore=0
- bulkscore=0 suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507030110
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 4/5] iio: adc: mt6359: Add support for MediaTek MT6363
+ PMIC AUXADC
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ matthias.bgg@gmail.com, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ kernel@collabora.com
+References: <20250623120028.108809-1-angelogioacchino.delregno@collabora.com>
+ <20250623120028.108809-5-angelogioacchino.delregno@collabora.com>
+ <20250628170118.2bd3e68b@jic23-huawei>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20250628170118.2bd3e68b@jic23-huawei>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-For some coresight components like CTI and TPDM, there could be
-numerous of them. From the node name, we can only get the type and
-register address of the component. We can't identify the HW or the
-system the component belongs to. Add label sysfs node support for
-showing the intuitive name of the device.
+Il 28/06/25 18:01, Jonathan Cameron ha scritto:
+> On Mon, 23 Jun 2025 14:00:27 +0200
+> AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com> wrote:
+> 
+>> MediaTek MT6363 is a PMIC found on MT8196/MT6991 board designs
+>> and communicates with the SoC over SPMI.
+>>
+>> This PMIC integrates an Auxiliary ADC (AUXADC) which has a grand
+>> total of 54 ADC channels: 49 PMIC-internal channels, 2 external
+>> NTC thermistor channels and 2 generic ADC channels (mapped to 7
+>> PMIC ADC external inputs).
+>>
+>> To use a generic ADC channel it is necessary to enable one of
+>> the PMIC ADC inputs at a time and only then start the reading,
+>> so in this case it is possible to read only one external input
+>> for each generic ADC channel.
+>>
+>> Due to the lack of documentation, this implementation supports
+>> using only one generic ADC channel, hence supports reading only
+>> one external input at a time.
+>>
+>> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> Hi,
+> 
+> A few comments that may or may not overlap with Andy's review.
+> 
+> thanks,
+> 
+> Jonathan
+> 
+>> ---
+>>   drivers/iio/adc/mt6359-auxadc.c | 238 +++++++++++++++++++++++++++++---
+>>   1 file changed, 217 insertions(+), 21 deletions(-)
+>>
+>> diff --git a/drivers/iio/adc/mt6359-auxadc.c b/drivers/iio/adc/mt6359-auxadc.c
+>> index ae7b65f5f551..f49b0b6e78da 100644
+>> --- a/drivers/iio/adc/mt6359-auxadc.c
+>> +++ b/drivers/iio/adc/mt6359-auxadc.c
+> 
+>> +enum mtk_pmic_auxadc_flags {
+>> +	MTK_PMIC_AUXADC_IS_SPMI = BIT(0),
+>> +	MTK_PMIC_AUXADC_NO_RESET = BIT(1),
+>> +};
+> 
+> With just two bits I think flags obscures what is going on over
+> a pair of separate booleans.
+> 
 
-Signed-off-by: Mao Jinlong <quic_jinlmao@quicinc.com>
-Reviewed-by: Mike Leach <mike.leach@linaro.org>
----
- .../testing/sysfs-bus-coresight-devices-cti   |  6 ++++
- .../sysfs-bus-coresight-devices-funnel        |  6 ++++
- .../testing/sysfs-bus-coresight-devices-tpdm  |  6 ++++
- drivers/hwtracing/coresight/coresight-sysfs.c | 32 +++++++++++++++++++
- 4 files changed, 50 insertions(+)
+Okay, I'll change this to two booleans then!
 
-diff --git a/Documentation/ABI/testing/sysfs-bus-coresight-devices-cti b/Documentation/ABI/testing/sysfs-bus-coresight-devices-cti
-index a97b70f588da..55367bbc696f 100644
---- a/Documentation/ABI/testing/sysfs-bus-coresight-devices-cti
-+++ b/Documentation/ABI/testing/sysfs-bus-coresight-devices-cti
-@@ -239,3 +239,9 @@ Date:		March 2020
- KernelVersion:	5.7
- Contact:	Mike Leach or Mathieu Poirier
- Description:	(Write) Clear all channel / trigger programming.
-+
-+What:           /sys/bus/coresight/devices/<cti-name>/label
-+Date:           Jul 2025
-+KernelVersion   6.17
-+Contact:        Mao Jinlong <quic_jinlmao@quicinc.com>
-+Description:    (Read) Show hardware context information of device.
-diff --git a/Documentation/ABI/testing/sysfs-bus-coresight-devices-funnel b/Documentation/ABI/testing/sysfs-bus-coresight-devices-funnel
-index d75acda5e1b3..5578fa5f6f02 100644
---- a/Documentation/ABI/testing/sysfs-bus-coresight-devices-funnel
-+++ b/Documentation/ABI/testing/sysfs-bus-coresight-devices-funnel
-@@ -10,3 +10,9 @@ Date:		November 2014
- KernelVersion:	3.19
- Contact:	Mathieu Poirier <mathieu.poirier@linaro.org>
- Description:	(RW) Defines input port priority order.
-+
-+What:           /sys/bus/coresight/devices/<memory_map>.funnel/label
-+Date:           Jul 2025
-+KernelVersion   6.17
-+Contact:        Mao Jinlong <quic_jinlmao@quicinc.com>
-+Description:    (Read) Show hardware context information of device.
-diff --git a/Documentation/ABI/testing/sysfs-bus-coresight-devices-tpdm b/Documentation/ABI/testing/sysfs-bus-coresight-devices-tpdm
-index a341b08ae70b..e6d935e83042 100644
---- a/Documentation/ABI/testing/sysfs-bus-coresight-devices-tpdm
-+++ b/Documentation/ABI/testing/sysfs-bus-coresight-devices-tpdm
-@@ -272,3 +272,9 @@ KernelVersion	6.15
- Contact:	Jinlong Mao (QUIC) <quic_jinlmao@quicinc.com>, Tao Zhang (QUIC) <quic_taozha@quicinc.com>
- Description:
- 		(RW) Set/Get the enablement of the individual lane.
-+
-+What:           /sys/bus/coresight/devices/<tpdm-name>/label
-+Date:           Jul 2025
-+KernelVersion   6.17
-+Contact:        Mao Jinlong <quic_jinlmao@quicinc.com>
-+Description:    (Read) Show hardware context information of device.
-diff --git a/drivers/hwtracing/coresight/coresight-sysfs.c b/drivers/hwtracing/coresight/coresight-sysfs.c
-index feadaf065b53..e3d21c49814d 100644
---- a/drivers/hwtracing/coresight/coresight-sysfs.c
-+++ b/drivers/hwtracing/coresight/coresight-sysfs.c
-@@ -7,6 +7,7 @@
- #include <linux/device.h>
- #include <linux/idr.h>
- #include <linux/kernel.h>
-+#include <linux/property.h>
- 
- #include "coresight-priv.h"
- #include "coresight-trace-id.h"
-@@ -371,18 +372,47 @@ static ssize_t enable_source_store(struct device *dev,
- }
- static DEVICE_ATTR_RW(enable_source);
- 
-+static ssize_t label_show(struct device *dev,
-+		struct device_attribute *attr, char *buf)
-+{
-+
-+	const char *str;
-+	int ret = 0;
-+
-+	ret = fwnode_property_read_string(dev_fwnode(dev), "label", &str);
-+	if (ret == 0)
-+		return scnprintf(buf, PAGE_SIZE, "%s\n", str);
-+	else
-+		return ret;
-+}
-+static DEVICE_ATTR_RO(label);
-+
- static struct attribute *coresight_sink_attrs[] = {
- 	&dev_attr_enable_sink.attr,
-+	&dev_attr_label.attr,
- 	NULL,
- };
- ATTRIBUTE_GROUPS(coresight_sink);
- 
- static struct attribute *coresight_source_attrs[] = {
- 	&dev_attr_enable_source.attr,
-+	&dev_attr_label.attr,
- 	NULL,
- };
- ATTRIBUTE_GROUPS(coresight_source);
- 
-+static struct attribute *coresight_link_attrs[] = {
-+	&dev_attr_label.attr,
-+	NULL,
-+};
-+ATTRIBUTE_GROUPS(coresight_link);
-+
-+static struct attribute *coresight_helper_attrs[] = {
-+	&dev_attr_label.attr,
-+	NULL,
-+};
-+ATTRIBUTE_GROUPS(coresight_helper);
-+
- const struct device_type coresight_dev_type[] = {
- 	[CORESIGHT_DEV_TYPE_SINK] = {
- 		.name = "sink",
-@@ -390,6 +420,7 @@ const struct device_type coresight_dev_type[] = {
- 	},
- 	[CORESIGHT_DEV_TYPE_LINK] = {
- 		.name = "link",
-+		.groups = coresight_link_groups,
- 	},
- 	[CORESIGHT_DEV_TYPE_LINKSINK] = {
- 		.name = "linksink",
-@@ -401,6 +432,7 @@ const struct device_type coresight_dev_type[] = {
- 	},
- 	[CORESIGHT_DEV_TYPE_HELPER] = {
- 		.name = "helper",
-+		.groups = coresight_helper_groups,
- 	}
- };
- /* Ensure the enum matches the names and groups */
--- 
-2.17.1
+>>   };
+>> @@ -123,7 +155,9 @@ struct mtk_pmic_auxadc_chan {
+>>    * @desc:           PMIC AUXADC channel data
+>>    * @regs:           List of PMIC specific registers
+>>    * @sec_unlock_key: Security unlock key for HK_TOP writes
+>> + * @vref_mv:        AUXADC Reference Voltage (VREF) in millivolts
+>>    * @imp_adc_num:    ADC channel for battery impedance readings
+>> + * @flags:          Feature flags
+>>    * @read_imp:       Callback to read impedance channels
+>>    */
+>>   struct mtk_pmic_auxadc_info {
+>> @@ -133,22 +167,33 @@ struct mtk_pmic_auxadc_info {
+>>   	const struct mtk_pmic_auxadc_chan *desc;
+>>   	const u16 *regs;
+>>   	u16 sec_unlock_key;
+>> +	u16 vref_mv;
+> I'd not worry about the space saving here and instead make this a u32 so that
+> can avoid the casting when using this.
+> 
+
+Okay, will do.
+
+>>   	u8 imp_adc_num;
+>> +	u8 flags;
+> 
+> As above. Pair of bool preferred.
+> 
+>>   	int (*read_imp)(struct mt6359_auxadc *adc_dev,
+>>   			const struct iio_chan_spec *chan, int *vbat, int *ibat);
+>>   };
+> 
+>>   static void mt6358_stop_imp_conv(struct mt6359_auxadc *adc_dev)
+>>   {
+>>   	const struct mtk_pmic_auxadc_info *cinfo = adc_dev->chip_info;
+>> @@ -379,13 +488,13 @@ static int mt6359_read_imp(struct mt6359_auxadc *adc_dev,
+>>   	int ret;
+>>   
+>>   	/* Start conversion */
+>> -	regmap_write(regmap, cinfo->regs[PMIC_AUXADC_IMP0], MT6359_IMP0_CONV_EN);
+>> +	regmap_write(regmap, cinfo->regs[desc->req_idx], desc->req_mask);
+> 
+> Given desc->req_idx is not introduced in this patch, why is this needed now
+> but not previously?  Maybe this change belongs in a separate patch with
+> a description to explain that.
+> 
+
+Oh wow, many many many... many thanks for catching this!!!!
+
+This change was not supposed to be in this commit, as I had implemented both
+the IBAT and VBAT "IMP" for the 6363 but then left them out because I was in
+doubt whether to add them here or if they are read from the fuel gauge chip
+transparently and in firmware; I wouldn't even be able to test that on the
+MT8196 Chromebook that I'm bringing up, because the battery is managed by EC
+instead, unlike smartphones.
+
+I have to remove that from mt6359_read_imp, the addition was unintentional;
+only mt6359_auxadc_read_adc() should use it (and already did before this commit).
+
+>>   	ret = regmap_read_poll_timeout(regmap, cinfo->regs[desc->rdy_idx],
+>>   				       val, val & desc->rdy_mask,
+>>   				       IMP_POLL_DELAY_US, AUXADC_TIMEOUT_US);
+>>   
+>>   	/* Stop conversion regardless of the result */
+>> -	regmap_write(regmap, cinfo->regs[PMIC_AUXADC_IMP0], 0);
+>> +	regmap_write(regmap, cinfo->regs[desc->req_idx], 0);
+>>   	if (ret)
+>>   		return ret;
+>>   
+>> @@ -416,6 +525,7 @@ static const struct mtk_pmic_auxadc_info mt6357_chip_info = {
+>>   	.regs = mt6357_auxadc_regs,
+>>   	.imp_adc_num = MT6357_IMP_ADC_NUM,
+>>   	.read_imp = mt6358_read_imp,
+>> +	.vref_mv = 1800,
+>>   };
+>>   
+>>   static const struct mtk_pmic_auxadc_info mt6358_chip_info = {
+>> @@ -426,6 +536,7 @@ static const struct mtk_pmic_auxadc_info mt6358_chip_info = {
+>>   	.regs = mt6358_auxadc_regs,
+>>   	.imp_adc_num = MT6358_IMP_ADC_NUM,
+>>   	.read_imp = mt6358_read_imp,
+>> +	.vref_mv = 1800,
+>>   };
+>>   
+>>   static const struct mtk_pmic_auxadc_info mt6359_chip_info = {
+>> @@ -436,6 +547,17 @@ static const struct mtk_pmic_auxadc_info mt6359_chip_info = {
+>>   	.regs = mt6359_auxadc_regs,
+>>   	.sec_unlock_key = 0x6359,
+>>   	.read_imp = mt6359_read_imp,
+>> +	.vref_mv = 1800,
+> 
+> Add vref_mv and code using it in a precursor patch.  Not a problem that all
+> vref_mv will be 1800 at that point.  That way we can quickly see that it
+> has no affect on existing parts, and simplify what is present in this patch.
+> 
+
+Right, I agree. I'll move that addition to a separate patch.
+
+>> +};
+>> +
+>> +static const struct mtk_pmic_auxadc_info mt6363_chip_info = {
+>> +	.model_name = "MT6363",
+>> +	.channels = mt6363_auxadc_channels,
+>> +	.num_channels = ARRAY_SIZE(mt6363_auxadc_channels),
+>> +	.desc = mt6363_auxadc_ch_desc,
+>> +	.regs = mt6363_auxadc_regs,
+>> +	.flags = MTK_PMIC_AUXADC_IS_SPMI | MTK_PMIC_AUXADC_NO_RESET,
+>> +	.vref_mv = 1840,
+>>   };
+>>   
+>>   static void mt6359_auxadc_reset(struct mt6359_auxadc *adc_dev)
+>> @@ -464,27 +586,74 @@ static int mt6359_auxadc_read_adc(struct mt6359_auxadc *adc_dev,
+>>   	const struct mtk_pmic_auxadc_info *cinfo = adc_dev->chip_info;
+>>   	const struct mtk_pmic_auxadc_chan *desc = &cinfo->desc[chan->scan_index];
+>>   	struct regmap *regmap = adc_dev->regmap;
+>> -	u32 val;
+>> +	u32 reg, rdy_mask, val, lval;
+>> +	u8 ext_sel;
+>>   	int ret;
+>>   
+>> +	if (desc->ext_sel_idx >= 0) {
+>> +		ext_sel = FIELD_PREP(MT6363_EXT_PURES_MASK, desc->ext_sel_pu);
+>> +		ext_sel |= FIELD_PREP(MT6363_EXT_CHAN_MASK, desc->ext_sel_ch);
+>> +
+>> +		ret = regmap_update_bits(regmap, cinfo->regs[desc->ext_sel_idx],
+>> +					 MT6363_EXT_PURES_MASK | MT6363_EXT_CHAN_MASK,
+>> +					 ext_sel);
+>> +		if (ret)
+>> +			return ret;
+>> +	}
+>> +
+>>   	/* Request to start sampling for ADC channel */
+>>   	ret = regmap_write(regmap, cinfo->regs[desc->req_idx], desc->req_mask);
+>>   	if (ret)
+>> -		return ret;
+>> +		goto end;
+>>   
+>>   	/* Wait until all samples are averaged */
+>>   	fsleep(desc->num_samples * AUXADC_AVG_TIME_US);
+>>   
+>> -	ret = regmap_read_poll_timeout(regmap,
+>> -				       cinfo->regs[PMIC_AUXADC_ADC0] + (chan->address << 1),
+>> -				       val, val & PMIC_AUXADC_RDY_BIT,
+>> +	reg = cinfo->regs[PMIC_AUXADC_ADC0] + (chan->address << 1);
+>> +	rdy_mask = PMIC_AUXADC_RDY_BIT;
+>> +
+>> +	/*
+>> +	 * Even though for both PWRAP and SPMI cases the ADC HW signals that
+>> +	 * the data is ready by setting AUXADC_RDY_BIT, for SPMI the register
+>> +	 * read is only 8 bits long: for this case, the check has to be done
+>> +	 * on the ADC(x)_H register (high bits) and the rdy_mask needs to be
+>> +	 * shifted to the right by the same 8 bits.
+>> +	 */
+>> +	if (MTK_AUXADC_HAS_FLAG(cinfo, IS_SPMI)) {
+> 
+> This is getting close to the point where the complexity for the IS_SPMI case
+> is compled enough you'd be better off just splitting the code.  I'd try that
+> and see if it ends up neater than this.
+> 
+
+That was the first thing I did... but it's not so many changes... I'd be ending
+up almost completely duplicating this driver for no reason.
+
+I'm mostly sure that there won't be any more spmi-specific differences in the
+AuxADC, but if one day turns out I'm wrong, I guess we can always split the
+driver in two and move the SPMI platforms away... but again, I'm mostly sure
+that won't happen.
+
+>> +		rdy_mask >>= 8;
+>> +		reg += 1;
+>> +	}
+>> +
+>> +	ret = regmap_read_poll_timeout(regmap, reg, val, val & rdy_mask,
+>>   				       AUXADC_POLL_DELAY_US, AUXADC_TIMEOUT_US);
+>> -	if (ret)
+>> -		return ret;
+>> +	if (ret) {
+>> +		dev_dbg(adc_dev->dev, "ADC read timeout for chan %lu\n", chan->address);
+>> +		goto end;
+>> +	}
+>> +
+>> +	if (MTK_AUXADC_HAS_FLAG(cinfo, IS_SPMI)) {
+>> +		/* If the previous read succeeded, this can't fail */
+> 
+> As per discussion with Andy, I don't think we can ever assume that.
+> 
+
+I'll add all the checks around :-)
+
+>> +		regmap_read(regmap, reg - 1, &lval);
+>> +		val = (val << 8) | lval;
+>> +	}
+>>   
+>> -	/* Stop sampling */
+> 
+> If you have code that ends up with an internal goto for a specific
+> block, that often suggests you should be factoring some code out to simplify
+> the flow.
+> 
+> I would take everything between the activiate ADC GPIO and deactivate out
+> as another function.  That will still need a goto to get to the stop
+> sampling but then we won't have the dance below where we do some
+> stuff from the main code flow on error and then exit (with more after
+> that not run).
+> 
+
+Actually, I have removed the goto as well - I moved everything but the write
+to stop the sampling to a new function; I'm calling it, then stopping the
+sampling unconditionally, as was already done before.
+
+To let you understand, this is the description:
+/**
+  * mt6359_auxadc_sample_value() - Start ADC channel sampling and read value
+  * @adc_dev: Main driver structure
+  * @out:     Preallocated variable to store the value read from HW
+  *
+  * This function starts the sampling for an ADC channel, waits until all
+  * of the samples are averaged and then reads the value from the HW.
+  *
+  * Note that the caller must stop the ADC sampling on its own, as this
+  * function *never* stops it.
+  *
+  * Return:
+  * Negative number for error;
+  * Upon success returns zero and writes the read value to *out.
+  */
+
+...you can imagine the rest, or anyway I'm sending a v2 shortly :-)
+
+>> +end:
+>> +	/* Stop sampling unconditionally... */
+>>   	regmap_write(regmap, cinfo->regs[desc->req_idx], 0);
+>>   
+>> +	/* ...and deactivate the ADC GPIO if previously done */
+>> +	if (desc->ext_sel_idx >= 0) {
+>> +		ext_sel = FIELD_PREP(MT6363_EXT_PURES_MASK, MT6363_PULLUP_RES_OPEN);
+>> +
+>> +		regmap_update_bits(regmap, cinfo->regs[desc->ext_sel_idx],
+>> +				   MT6363_EXT_PURES_MASK, ext_sel);
+>> +	}
+>> +
+>> +	/* Check if we reached this point because of an error or regular flow */
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	/* Everything went fine, give back the ADC reading */
+>>   	*out = val & GENMASK(chan->scan_type.realbits - 1, 0);
+>>   	return 0;
+>>   }
+>> @@ -505,7 +674,7 @@ static int mt6359_auxadc_read_raw(struct iio_dev *indio_dev,
+>>   	int ret;
+>>   
+>>   	if (mask == IIO_CHAN_INFO_SCALE) {
+>> -		*val = desc->r_ratio.numerator * AUXADC_VOLT_FULL;
+>> +		*val = desc->r_ratio.numerator * (u32)cinfo->vref_mv;
+> 
+> As above.  If vref_mv was already a (u32) no need to cast here.
+
+Changed!
+
+Cheers,
+Angelo
+
+
 
 
