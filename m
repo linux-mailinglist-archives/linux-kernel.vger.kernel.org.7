@@ -1,176 +1,229 @@
-Return-Path: <linux-kernel+bounces-715094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-715088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 308EBAF708E
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 12:38:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC51FAF7091
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 12:38:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6696F1882676
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 10:38:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B43F87B56C2
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 10:34:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E67862E1744;
-	Thu,  3 Jul 2025 10:38:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D592F2E175C;
+	Thu,  3 Jul 2025 10:35:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OZdRnoNO"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Ww3b3Vf4"
+Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011027.outbound.protection.outlook.com [52.101.65.27])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA8661B95B;
-	Thu,  3 Jul 2025 10:37:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751539080; cv=none; b=R2GcfAcJbESSGpKURVFm3Qu8iO6X725glq8DyHvTgGR/AuzSK7PUanyzSWM5TFzKa1NTvmkxSN5COaa/KB4E2v7QyNXR6mTD1U024EFSnzj5z8Ww9HbyFabnGqw83g2I8jexywtiCbTMr3GGJP5+0HXE8BoT4vKpL63DzanThVU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751539080; c=relaxed/simple;
-	bh=S8KDLR3KN4A5JzZuRNFi9clwE0TaXll8SMiZK9Uhuxk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AsBq/Me/5QBhdjKTyZ5M0ov0nRZsdun2XEGsL7/S3PTyuCrrbFH617qzGdmvl91T4cI5WyBSlyJCPmHrrvzhPNfqFTvO9z39iqHx95Cnt+TlzY18CYT0bmK0EXj5+P9FdDkz/58+fc/WYi7t8DvNJTCefa0TTnN6XsqtmK3JBQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OZdRnoNO; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-450ce671a08so35892105e9.3;
-        Thu, 03 Jul 2025 03:37:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751539077; x=1752143877; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=S8KDLR3KN4A5JzZuRNFi9clwE0TaXll8SMiZK9Uhuxk=;
-        b=OZdRnoNOWSpN/CT3NvusEc+TDqtw4CEt2XtP7BgHR0Jy9pnsRSFF82e7iVv7LVHADQ
-         UeKQk+BI4pHik9svj19O4CYz/N+CNwWx3iDy+u3FISbezriEwqUn6DdXp1x6oytPHPHg
-         RXj1KjG+H0KiCT5mbiMSlu8zEaW9IuyNlegw++Ru16da73P80/dz3Y5B+RAytagcOQit
-         XCdU8wERlClrOeOCQbI7WD3NrBUDyPY7O4OVrZtL4FIqmhHszWoFDDHCEbgZQMWZyREp
-         k6goi1vN0/5LV14gWka4LOasLbe4zKtIr+NjA2cmY0K90uIyu/2vKsboEayjn14HJqQw
-         09qw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751539077; x=1752143877;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=S8KDLR3KN4A5JzZuRNFi9clwE0TaXll8SMiZK9Uhuxk=;
-        b=wqOFR2T4HI8dgupfm/RPWVS1s8Qz0Tq7qz9HpVrMEKIlW6uCDb5ruHAjeCZ6S6Q7zo
-         atU3SHk2fvGNfPWylCovW6hHKOOGGOq05/aYZ7FKRQMDjNZYv7pWuvP+LGMcAYl3wv55
-         VKaBBhmQ+0WuyeEYkCFZd77H+G1C+h10Blc5LuCeVyBVUgz1o3xQcmJVdeC+hY1Brs2q
-         Io6lyj3svh6WHmnTpQr6XWxtvdYhWlldpr5rJPUzCtyb/QWv46ZeotLmwxXmDHSFppqk
-         4ynDEjflH/H3z/dcrI/vD2veMzZnfVQCJYBbHhgl4qzdW31nsFVE7wAT0et8R+43uQB5
-         lpSA==
-X-Forwarded-Encrypted: i=1; AJvYcCUx2zqcrUExlEGghSCvTanDf8/+krxAA+3ErL1zkr6O6WQxRoJRhZ+sQCtdV6s/ygkgpuAqvXKDLdUN@vger.kernel.org, AJvYcCVPIAHl54I6Y58yE8MnuXin4xCMgCtW1lI3zMX1D0wdpuH7z1ut+19ys8EE2tuu1OmGjvW3r3GQjwEWjZs=@vger.kernel.org, AJvYcCXhRCIwCS0HVjTJVS+GETTCrgvkmGUkCkEy4ZcBwmAiXnZPvwIPct0hdU85X9KdkQos87QyL54meElDkJCq@vger.kernel.org
-X-Gm-Message-State: AOJu0YzcbSNJPXb45rcERHBmvHEC8lhqCh16GB6O/ypd7GC9c9sy6plp
-	C1QSpytaB6eGaF9Vof5tZO+ROp3U1ejzJhZdcNEfvt3uL+fSGnXqwG4CoJ+tNw==
-X-Gm-Gg: ASbGncvw2jlJhX/BDbuX9RFbZcsGANlWzbNy4QKH2gGTjst3hD1SZK4Jk6LV6ufM388
-	d+iMZ9HDVyKZ8vn4Q764XPcUKP2YLucp/Iygtxar4vX4OP/To22JM5KG36EoN6n5fjBDuh0caXI
-	PUbiAsPtIhP75kwo6YvHkdRYDUti56I9k+UPRwC5FogYcxXxgk7KwcWO1K4Vog5u2IRtdC25fC5
-	51gvue+fUfKUGyAJIhG4t/TTCQFr0e8HeVT6BR/k6KJb/wjAYoF1MrWKadjmYdGxwdjnVg9hZ5O
-	J69YpoIOn4XqWsSAapZ4uzXi8q+lDYOXoPTKIdPjdI6C5J+6NVYObCf3HWFj/7ZUQRoXo3kWAvm
-	QGbuQPg6sSitPJpMhoS9pTO8gidXnQWGo7StzHeOZ/wqBxCAK
-X-Google-Smtp-Source: AGHT+IHmrWAT4c7TivRqBn2eIdZNwMbKfo3PksYVKbh+dbdc1D4lvAcKnJar4ko4DWCGt7WYjOunNQ==
-X-Received: by 2002:a05:600c:4e90:b0:43d:fa59:cc8f with SMTP id 5b1f17b1804b1-454a373b017mr63305665e9.33.1751539076610;
-        Thu, 03 Jul 2025 03:37:56 -0700 (PDT)
-Received: from orome (p200300e41f4e9b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4e:9b00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454a9969f2asm23608785e9.8.2025.07.03.03.37.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Jul 2025 03:37:55 -0700 (PDT)
-Date: Thu, 3 Jul 2025 12:37:53 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Aaron Kling <webgeek1234@gmail.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Rob Herring <robh@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 0/4] memory: tegra210-emc: Support Device Tree EMC
- Tables
-Message-ID: <paksdvlwrbmdo7wg5cuzdazi4epu3oukxdavkkzoje2gw7aeuy@grsls7hp4khb>
-References: <20250508-tegra210-emc-dt-v2-0-d33dc20a1123@gmail.com>
- <qhhv27thjnbz7rtcfja767bpxjvwa6iivc2bphar7t2wobuzb7@aspkmrgp2ihy>
- <CALHNRZ-q7W9CfeD4ipmwFVqHm7oGfTgJpwNoVhfbSXFPDxF91Q@mail.gmail.com>
- <eba00bd5-fa1a-4cad-bb41-b395011235e1@kernel.org>
- <CALHNRZ_WPUM8wKSLcyyZm4jc9onBYiP3oLd=39k4=hoqLzHhrA@mail.gmail.com>
- <ckimvttxjgx44xhfql3nov3qbf35y73nbu3p4m63nqbi22vh37@6p2ji7he5toy>
- <CALHNRZ-r_U+ByS0FWxamv9ozzjBWdkqAh2wJOt3s3cMsX6K_kQ@mail.gmail.com>
- <CALHNRZ8qyu6wsTTnmRWtNgYL4XWR8G7TFammqTFPfHH5d==LbA@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A83691B95B;
+	Thu,  3 Jul 2025 10:35:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.27
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751538945; cv=fail; b=HjNhvh7ca1COw0+FqJEYOs/qaXa9FLyjfpKeIZbqkY/N2rXG1QFbl+AnPKE2Mij+XxZPffktBRYSC8Dvsa5CS4IY4DwgVX5Ud4C0v4vYK9zybASXVqM/lZJVKMxXYWLhyNibo77d19Lo1nvhLnT886xAr6C0IbLDmqPsVB26L2Q=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751538945; c=relaxed/simple;
+	bh=lYF3WUZFH5RO05e/y2sND3Ohr4TBZLENWgaNMSFcTVk=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=S/CgQBjtaCTAIVLSiluAZXItu4OVu8+3nAPmwCxt0fPZpfbemCDtyJVloBPTOwfE6D/68ZQFxiKBm28qercVnhxOlY9LEOafIW03kYNYK2SKtsTJNXrMhl7fVIngmjGke9rG+Ez2c5PxauuIKLY6mbHDBXNgu+UxojLhkNxiuiE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Ww3b3Vf4; arc=fail smtp.client-ip=52.101.65.27
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=VZmYrk4aIwG51hfs4T/vXc+83WBNAmkfLVrr5v0ptfPeC+0KV4mxk0Mq0B/E+PXVPNJ89lNAOJDSV4TM95HpBH5jIo1r/NutePbCn0GYuZbKgKbH54d56iaIdcsf67447W//wASf57gMBEW58ZlrMI3pAaLJCWQZKPYz7DFGfFKzcFPD5fn4lq++Ln4nvybJfg6oKhFt7xvypkyf/3ugTpcu2Jc9d9vVwbA7Voc82G2zFBWHRTBnfc2LXB028LBf+ZSY3TkrL2u1xa5eLoKEwPAxB8hQ3cBQXOUGENOW7u3OIFOy6BR8CMIXa9TrUvBfs6JqpaSK9ncPUiiFXqVXeQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=GpwR/d/rFAKgl1qato5iMAyoUqvgHGOTxvDlcz4P/+A=;
+ b=RYM78aNJ50fzvdJyl9YMz27kQ36dznZwQR9qh9a0n3UPGpgE2lUJ3ftQkLcP6qoRwslEYlfJxNZcdbaNroSmOw1+58okRwk5CT1Pi9rWAoNCHLBPsUrjfZvHz6rpfZFS4RRqB2pOtGXZ3FDAld5CY3Re+KNS5she8giPVAIGaUPLU3wlI0eNsdKgP1+4rVc9aVrrTZ9LNIgxGG14Y8n3/Og1Ux4hmUcvLguE9c2PyqSEvIROTVTf4NuClteChYrDKuLxq7vhVIvDpqPDKFdW441Jma192SwRmp8q6H83L6v0+l8vbg7E2d+hih0v+l9Gz9pH5sxzAt/Ezq/hqDB86g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=GpwR/d/rFAKgl1qato5iMAyoUqvgHGOTxvDlcz4P/+A=;
+ b=Ww3b3Vf4oDbs0R9BjlMoGhOiKop8xHgk9TAegQtPaLBjL+gL13kNRG++CGZPDK7oJ5JdxL4+rNl9VNFA+ZpZKRQOa8n183HIIslKLO3o2ss/z2ZhiQm2kbex8QBqsF5vUJ8iuVQkt3TGvXx9bXMAC8QkNdscUAr/Kwpbc5sAJMPYcvdvSmFLPLw5MdqAlx3B0UM8LqSiED0XrufoPE8PsnWlkJ+qkG+BQAulvTUzuYsrqc4les6O3OkUak36AN7ln2Vz9dI8q6rwkQ1TEXEzsr7EGQSZRmn205Qy6f8dYPhmy7rzjQqNIy9GOgzjLUX8Nqydc+ZFzSO+HKw7V+f3+g==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from DU2PR04MB8822.eurprd04.prod.outlook.com (2603:10a6:10:2e1::11)
+ by VI0PR04MB10928.eurprd04.prod.outlook.com (2603:10a6:800:261::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.20; Thu, 3 Jul
+ 2025 10:35:38 +0000
+Received: from DU2PR04MB8822.eurprd04.prod.outlook.com
+ ([fe80::4e24:c2c7:bd58:c5c7]) by DU2PR04MB8822.eurprd04.prod.outlook.com
+ ([fe80::4e24:c2c7:bd58:c5c7%6]) with mapi id 15.20.8901.021; Thu, 3 Jul 2025
+ 10:35:38 +0000
+From: Xu Yang <xu.yang_2@nxp.com>
+To: ezequiel@vanguardiasur.com.ar,
+	mchehab@kernel.org,
+	laurent.pinchart@ideasonboard.com,
+	hdegoede@redhat.com,
+	gregkh@linuxfoundation.org,
+	xu.yang_2@nxp.com,
+	mingo@kernel.org,
+	tglx@linutronix.de,
+	andriy.shevchenko@linux.intel.com,
+	viro@zeniv.linux.org.uk,
+	thomas.weissschuh@linutronix.de
+Cc: linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	imx@lists.linux.dev,
+	jun.li@nxp.com
+Subject: [PATCH v4 0/3] add dma noncoherent API
+Date: Thu,  3 Jul 2025 18:38:08 +0800
+Message-Id: <20250703103811.4048542-1-xu.yang_2@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: MA0PR01CA0050.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a01:ac::7) To DU2PR04MB8822.eurprd04.prod.outlook.com
+ (2603:10a6:10:2e1::11)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="6l4odblvq33rzphm"
-Content-Disposition: inline
-In-Reply-To: <CALHNRZ8qyu6wsTTnmRWtNgYL4XWR8G7TFammqTFPfHH5d==LbA@mail.gmail.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DU2PR04MB8822:EE_|VI0PR04MB10928:EE_
+X-MS-Office365-Filtering-Correlation-Id: 42c97dbf-b5ba-4130-9c78-08ddba1d59a8
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+ BCL:0;ARA:13230040|1800799024|19092799006|376014|52116014|7416014|366016|38350700014|921020;
+X-Microsoft-Antispam-Message-Info:
+ =?us-ascii?Q?fXCQ+slKnK35NMgUciriEHXDW1k9Q8La2zNDxdPSyuTWLM9HiDsScVuFJncc?=
+ =?us-ascii?Q?FHc5ftMCLr0pXlVBMwOIHm5jPLUhcIl0Wnxbr41TVwgIS6rwDTeG0t06WzVC?=
+ =?us-ascii?Q?bqQskjc0zGd55/KMeMVycXSnRIX6Ef2NTlGDLEqwdnFCh9Ep8zCRdoT7v1QZ?=
+ =?us-ascii?Q?NoVKRWyEq1/5Qj3GjhAUsYAvn0nHL0dNWbtOhO+ppWhQC/itoH/eSTAUK5zg?=
+ =?us-ascii?Q?AHlGrnRhXSm28mYr3RYvZG6sKNf065MUWFHloUwbzLP2BZRl5FVOrEfI+DQM?=
+ =?us-ascii?Q?pVVMQkZG5uYtBrmPo0/uWe5FCpgmp/XDJmCE4dm1e5QyzMmclsgCeklwGmOh?=
+ =?us-ascii?Q?teH6Z08olinh9pAn8pa9byuifvJAtH7bL9/ym0GteQ84Tkr7L/Tc+6hntVyR?=
+ =?us-ascii?Q?XMh7EkCNM5+REIOqB/DztBuw6aCM/5FwqyfI13T+ub2yqIWXgdbOzOWcZral?=
+ =?us-ascii?Q?QPXFYfeCyofHoSgOVXS1pZ6Ikfv3usPZ9N1byECZBnbZOxRXXe+1BXkUJEVg?=
+ =?us-ascii?Q?FXarehdnXwAq1u/Ku4sXUL/FshleiXRxc+WWDHv3xDpHC/l4T1AlRyRaLQZ+?=
+ =?us-ascii?Q?nx2EDS+JbEadP9RaJeHUST4TyHGQ2ggMLThh0h1np0EQQDeIQ4+3J4O92zBq?=
+ =?us-ascii?Q?zXtEc+traJ3fKW8k9qXZ8DBP+ghNHAALdU+kej3YyaNf5coR9NZ0jhcow1ii?=
+ =?us-ascii?Q?BtaPXvliGbG7OLelkEPlpAY3ADfrv/U0CmPCqugZFxu5WA4pjCtem28cJ1vR?=
+ =?us-ascii?Q?kVd8TmNEOdzfsurPO5c9Wy2q5B1SgQ7Gj5ikBW5qWEBw/skWsCot2GIVJHO1?=
+ =?us-ascii?Q?Y/8/PMDBOF8+jbfodqlb18weQVlqn0G5acokyvTPPIr7XvxD9Mc0RzocOXp/?=
+ =?us-ascii?Q?q+1+bNBV7HTAMORDnZgrZMdcyITUpi4zWgLY0HIW1vmMV+cwLYXKsDfDxoJF?=
+ =?us-ascii?Q?j4SibxY/+PNWx9QYrc2Uj208W41Et+HX5uzDuV/pjukSUaf57YXX2m+8/fXd?=
+ =?us-ascii?Q?xUoVMjE5NZyjJZHb8dlyGcWZT05lq/36vlyZoaf53D++vT5vm1wgsTDiFp1U?=
+ =?us-ascii?Q?hyI186+E5Hq8zmQINi/iBIddPXoRgFEliPKqNXJb2IUBuaKRwr+RKOjTTAWy?=
+ =?us-ascii?Q?rLPAn9aXbzinFszKY9Hkvw6lyHQQyX7W6h6+KKsDTkZXpaBRtUbEZWHstPfY?=
+ =?us-ascii?Q?1jM5adUMv9OkFH5u6m65g478tZ+7fRdXdq/WFf75nprxJNWfizOqX2AVBGYp?=
+ =?us-ascii?Q?mZj8naYHeqVzeSrhSuyWyvmOwXpxtp77YbQZWENLn34040ZAmy0T7fo4jFqT?=
+ =?us-ascii?Q?5Vnm0grQ4F1f67rRNTDXf+EH9+wrkcmZ/pHCGrAeT8BtanXH5f6zvYjbDT+k?=
+ =?us-ascii?Q?LyvJ8q3OpJJJNXG2KoMk8lBQxf76I0mKwmQ5XYovDeXPIxi9+ItD+RFklpZu?=
+ =?us-ascii?Q?bKAABN5SgYHA2qeL9tzOerjHomy/nIfuJ4fYzmJA4FCp//fMQ+pWjLFQ3oVa?=
+ =?us-ascii?Q?6P8gcOUL3cDcRD+nep1h2YUiNOPmUH5JTC5f?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU2PR04MB8822.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(19092799006)(376014)(52116014)(7416014)(366016)(38350700014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?us-ascii?Q?SsiKbEvt/Nhm2fKj0+gnIAS3G44O22kV3dmOtYZjFFE3WnxN+sKnYEvhNegN?=
+ =?us-ascii?Q?TrkciPEaQEc8jXKJcT4wNzznVLpscO8FwHqzpI2/ZzRKKtnObWVgShXyt+JQ?=
+ =?us-ascii?Q?dBonyYf/elEBp2FkNqBkLd1UOjuBNWjnZwWbX5z1Zqc+JMj1AHPQcgS03fi4?=
+ =?us-ascii?Q?+p/fbV47G6DrLTv/shq1k7nVgcaUI0P6luJouc0iZ9f8sjvs6C/O48bS9kix?=
+ =?us-ascii?Q?MLS0Ttx+ZBcw76HOEA5CylerRiqur2tQMJ8aT5xg2YkqMq4WMEDIDjvO8Ecg?=
+ =?us-ascii?Q?vv5a6s3Phkj0nb7YcK04lAL1gAfxngLlbR+dv771SNt4QNNOthWYTNvHH09Z?=
+ =?us-ascii?Q?L8FMHFZz4jRzdge+wj/eCEMP6zVrzY+kzl/X/0XtXjbt9BmVShSQVpDkRemL?=
+ =?us-ascii?Q?fN74fubVjOp8ci1vofP1nz40qb0r4puE7slopZTIlLDgMJpql9At1+luKG9F?=
+ =?us-ascii?Q?p3wIxbUM1Ry9hoQ01mBBVjNY8/iRaRWPqcJpZP2L5jg26pwXwyHXUJ+MOyDK?=
+ =?us-ascii?Q?h1dIoD7Ge1Mi3gTHPX26I4lEtGZoDmdnhzxnxEApKQun2eVT61jDR0hI0dfa?=
+ =?us-ascii?Q?TSrrNGtemyt5ZSwBpJxviIuV4a7EXuLpZ5UkR/cysGn2yrFJU977ecKvnm9o?=
+ =?us-ascii?Q?OxhuMTE5Q+qQex7gGFuB2Tn7i1hgDuVl+rBO2eUcTsgS2LRNfsaqb3bLXRf5?=
+ =?us-ascii?Q?W09NK89b4WT1N7s1SozgVlFfYfbJxsMwpH9wcKWTfQGg8H1sEBocg279pfYd?=
+ =?us-ascii?Q?naWaEly3RdMAOxC+CJ1VEnOWm40lvwpTDYhVcpnI4+AvZ+UQ9csyUEXc3nx0?=
+ =?us-ascii?Q?TlqSseoyxgLbKogEVcLLwAUptI/pOUYrDD9pKsqnsth6JXWdu0qIOZjukFjS?=
+ =?us-ascii?Q?Sxq3dxpKPQWY7SIr+Oi3oTiP9+OhUJr1HDkVvse756JApM4lgmIm4NkTMtC2?=
+ =?us-ascii?Q?/DtqXEeapS40VfjoVEHtRBuvgiPYnGBMPN56+OmYYpnnVGzu1yFrlM1XC6Cy?=
+ =?us-ascii?Q?ktTQoxsfsshpbuOXfvkAGvXBc9g4xkTsneDtDuyNXEo+4/DFyrGTSOvmc2K/?=
+ =?us-ascii?Q?6ny9WsePRE61OjaD+ujNhTD0d7dXfM41iQvIOKukdaFHO3CVRNKB9dh7c3Hm?=
+ =?us-ascii?Q?hb601R98TEEKCffJ1EzbSpOA7CHfXKKNxHsDRdrSDP2vAlEd/IJUvh71Wv8m?=
+ =?us-ascii?Q?tJ2FKFmhLr2lSK8MIOyPrxJNuXMDqEgIPdPFKHf6WtLl6n2AKIiPAhmRVAxh?=
+ =?us-ascii?Q?FEKzi4gLndWblIGQUoCYr5NP2RDxEp+qhay2UJ1neKYPPaz5CF1LHj7/uliC?=
+ =?us-ascii?Q?w6EuACddDwZyzPDf4R/mp0Rzk4PNI6VhnVM37kQ6LxJou1ffhkbAxY6FNp6I?=
+ =?us-ascii?Q?Ebr25caxxoZp1qKT9UAnjBmjBCTRAKHht/B4WRduwXmReFENvsS958frlsDj?=
+ =?us-ascii?Q?wgE41v0ejRJRfNPvF6CBmao9LwAYaIRV3iGpH8DMuq5OJz3bUOfSko/XahVi?=
+ =?us-ascii?Q?A0oLjam/In9ZcX6t6McR0pEjYK4l+4tLecsiVjgnh3xyjL+pqgPmN+kiUkR4?=
+ =?us-ascii?Q?m6yuwUxwvB68g9s3XHFVZBSPf4GAg5NGV9FMj2ik?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 42c97dbf-b5ba-4130-9c78-08ddba1d59a8
+X-MS-Exchange-CrossTenant-AuthSource: DU2PR04MB8822.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jul 2025 10:35:37.9870
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: SQEyLDTOKLKECoWxAVC3X9VJebMtosm9oZxVEa5hr0JkbykAnLZoB8s56R1qadP3MqIbJQyK+lAFBlYQHikhyA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB10928
 
+On architectures where there is no coherent caching such as ARM it's
+proved that using dma_alloc_noncontiguous API and handling manually
+the cache flushing will significantly improve performance.
 
---6l4odblvq33rzphm
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 0/4] memory: tegra210-emc: Support Device Tree EMC
- Tables
-MIME-Version: 1.0
+Refer to:
+commit 20e1dbf2bbe2 ("media: uvcvideo: Use dma_alloc_noncontiguous API")
+commit 68d0c3311ec1 ("media: stk1160: use dma_alloc_noncontiguous API")
 
-On Mon, Jun 30, 2025 at 02:26:06PM -0500, Aaron Kling wrote:
-> On Wed, May 28, 2025 at 12:41=E2=80=AFPM Aaron Kling <webgeek1234@gmail.c=
-om> wrote:
-> >
-> > On Thu, May 8, 2025 at 7:48=E2=80=AFAM Thierry Reding <thierry.reding@g=
-mail.com> wrote:
-> > >
-> > > On Thu, May 08, 2025 at 07:27:52AM -0500, Aaron Kling wrote:
-> > > [...]
-> > > > The devices I'm talking about are not yet end of life, so it is
-> > > > physically possible for them to get a bootloader update to conform =
-to
-> > > > the existing mainline model. But I'm just one guy trying to do 3rd
-> > > > party support for these devices, I can't affect what Nvidia does wi=
-th
-> > > > the signed bootloader on these devices. I'd love to be able to swap
-> > > > out an open source bootloader on these, but the secure boot setup
-> > > > prevents that.
-> > >
-> > > I've reached out to our Android team internally to see if there's
-> > > anything we can realistically do about this.
-> > >
-> > > Thierry
-> >
-> > Thierry, has there been any feedback about this?
-> >
->=20
-> Reminder about this question. Has there been any response from the
-> Nvidia Android team? Or do I/we need to continue pursuing independent
-> solutions?
+However, it's obvious that there is significant code duplication between
+these two commits. Besides, a potential user USB Monitor may read outdated
+data before the driver do DMA sync for CPU which will make the data
+unreliable.
 
-There's been no decision either way, but it's fairly complicated because
-the changes involved here are fairly large, even if the impact should be
-fairly low.
+To reduce code duplication and avoid USB Monitor result unreliable, this
+series will introduce DMA noncoherent API to USB core. And the USB core
+layer will manage synchronization itself.
 
-If all else fails, do we have other alternatives? I suspect that adding
-some sort of shim that runs prior to the kernel won't work because the
-EMC tables just aren't accessible from the bootloader anymore. Would it
-entail parsing the entirety of the DT EMC tables and transcribing them
-into some memory and pass that to the kernel?
+Then the last 2 patches have used the API.
 
-Thierry
+I have tested uvcvideo driver. But I haven't tested stk1160 driver as I
+don't have such boards. @Ezequiel Garcia, @Dafna Hirschfeld do you have
+time to test it? Your support on this would be greatly appreciated.
 
---6l4odblvq33rzphm
-Content-Type: application/pgp-signature; name="signature.asc"
+Changes in v4:
+ - improve if-else logic
+ - remove uvc_stream_to_dmadev()
 
------BEGIN PGP SIGNATURE-----
+Changes in v3:
+ - https://lore.kernel.org/all/20250702110222.3926355-1-xu.yang_2@nxp.com/
+ - put Return section at the end of description
+ - correct some abbreviations
+ - remove usb_dma_noncoherent_sync_for_cpu() and
+   usb_dma_noncoherent_sync_for_device()
+ - do DMA sync in usb_hcd_map_urb_for_dma() and
+   usb_hcd_unmap_urb_for_dma()
+ - call flush_kernel_vmap_range() for OUT transfers
+   and invalidate_kernel_vmap_range() for IN transfers 
 
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmhmXYEACgkQ3SOs138+
-s6HgjQ//Wq70ma/AbloC7zM04ZqjcPnMjF/13IN4/L7/rw6UeabNQKXLZTQTf/xS
-CC6ecCqWihM9jpUWZVRnWMoOFNQtiO/Jff6g1bYble4+KogUoSmO4mlYxAppDfi6
-wImZNu6hbsebADpK+4rreDpF0W8nfbVsH1m36/CnPUuUx6rS+I3mUzSYkze/k4R1
-nwtAirK0EBZn0C3EmDJ8P02dvhEA83qasa1nKscjfoTYKr3S8nGBTeU5EWs+vBJc
-u6wg+r0FePzLSPMmQHroKTZH7/Yzyw6beq8DJj3uS9oTxXq2xjIoIgkav6MwqyJI
-u9b/AdcdsBLrsP6Earlra2fiLyGxvpsd9FrZheeEJ6Af7IIJV6BAnE3lGe5U3DPc
-XQlGPeDnORGxQldyz+8UAExmlD3etgP4zSG+fsTUzIqDINJkkCmtN5Hbt9bPSPUf
-YdYhPZspYG/RR5662RW8xwpM9PPrWWLo5ZFKUO4A95+8KKjWkOojpt1hgFUHJBOy
-GGcRq1wc3dTcdaV3SI/FwJHp0kb5aOpXnM++cmj+tcZ4MI6+/Tv6mwi63eSxR7+D
-3N7MfrLzm0peznHTKx3x5o5wCejhFHTRs0bBv5WEAKMa2fMbEFD55k5tz0KemIL3
-c/rITPc/I/5QtRShfj67Q+ZXTNBRfOwhrY1k6wrOAz/wsL0Aqsg=
-=qXtn
------END PGP SIGNATURE-----
+Changes in v2:
+ - https://lore.kernel.org/all/20250627101939.3649295-1-xu.yang_2@nxp.com/
+ - handle it in USB core
 
---6l4odblvq33rzphm--
+v1:
+ - https://lore.kernel.org/linux-usb/20250614132446.251218-1-xu.yang_2@nxp.com/
+
+Xu Yang (3):
+  usb: core: add dma-noncoherent buffer alloc and free API
+  media: uvcvideo: use usb_alloc_noncoherent/usb_free_noncoherent()
+  media: stk1160: use usb_alloc_noncoherent/usb_free_noncoherent()
+
+ drivers/media/usb/stk1160/stk1160-v4l.c   |  4 --
+ drivers/media/usb/stk1160/stk1160-video.c | 43 ++++--------
+ drivers/media/usb/stk1160/stk1160.h       |  7 --
+ drivers/media/usb/uvc/uvc_video.c         | 61 ++++-------------
+ drivers/usb/core/hcd.c                    | 33 +++++++---
+ drivers/usb/core/usb.c                    | 80 +++++++++++++++++++++++
+ include/linux/usb.h                       | 11 ++++
+ 7 files changed, 141 insertions(+), 98 deletions(-)
+
+-- 
+2.34.1
+
 
