@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-714388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB547AF6760
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 03:51:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6D4DAF675E
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 03:50:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB43B523163
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 01:51:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B95647AD032
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 01:49:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 229A12222A0;
-	Thu,  3 Jul 2025 01:49:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 576DC20408A;
+	Thu,  3 Jul 2025 01:49:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jcQv0sHT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mCSI/dhW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 769DD214A7B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1E611F3FF4;
 	Thu,  3 Jul 2025 01:49:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751507387; cv=none; b=apFMHeTJyaCwfl6reQMkUmMe0VMaw8wR1ydoRWg8X5+iFSYYyQ4Em7OyvVEu/QhAa58Ut4/lPP25JNimvryX/5a/1GO6wDkZ1JLeEdpnosLI5sznRTPGuo2x7oKL9VSwCTku/eEfGvhGz05W64FLbUQe9+huqhADJuYEpbbkeDo=
+	t=1751507386; cv=none; b=Gjm762/iRXP4EPf519YQNeU7sbHTysq2S/qJTSRXzcZGBOqH18qi2Ms4gRFstTXKPw9PrH2fNTTFND/l+oFvR+dAyUKhmUlgLZX0d7wjLzD0SuGOIztWLsxFUJx7zMKYWhaKNQNXxqOltNeVp955yIcaTcDq1qp8j9fpo05LbAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751507387; c=relaxed/simple;
-	bh=qV50sNpmeQ+z4VHzK7ckgYbxgB6pDIXg/c1TlYYcuLw=;
+	s=arc-20240116; t=1751507386; c=relaxed/simple;
+	bh=QCu94DjYUjiUtTZcW4yZqzI5SrvSiYnBT9kSKjn/EJ8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Au6Pdr2aH8vHy/Ac/puVWGITVqXQoAgHyZz3mNL8iax7HVAkELuvb0d4Sw6KomxQJ9V3BlWsGSVNzdzwl0mXMyz3PgYA8X6n0YT0j8LdFWCwz2rTVerUz5Zxve2QUbaQRAdWUEvdNlKU1AoQpgz5+sEyzWyx5Qt8knFe1mVuldM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jcQv0sHT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE3EBC4CEF0;
-	Thu,  3 Jul 2025 01:49:45 +0000 (UTC)
+	 MIME-Version; b=qLdwBJ8wv/R7ggl1LjbtiolUD2CePsO8kZlcUpSN+49xniJ71sXsp2KKb15DF1Tj8tPgWMcsaziz7d9XQ/p75i8YEBILaA5QucsjVoWwC+VUSNmz4Vf2WOQICDwd2EuMm9sU/8UPGoVDcH2GoIv3oqKfXn8sWcUMlu7WOZ/KQBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mCSI/dhW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 390D2C4CEE7;
+	Thu,  3 Jul 2025 01:49:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1751507386;
-	bh=qV50sNpmeQ+z4VHzK7ckgYbxgB6pDIXg/c1TlYYcuLw=;
+	bh=QCu94DjYUjiUtTZcW4yZqzI5SrvSiYnBT9kSKjn/EJ8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=jcQv0sHTsdAz3whlyscoDezIa+gypvgDAxztngAUEdKWHhdk6kzq/Hqs2UNWlJC95
-	 eGlEPBU6imwAhOW8/cs6KyK6Yd1EpM0BiU2FYfxD8/psRSLtun+cR9DG4sLzIzaaoO
-	 tiEnbds8Nmz2qU/Afp8p6vmFyghKhYYUjLLdUXWDJhfLjkT08/T7VPVIXaZ87KAMqI
-	 KhXEGS6khkAWSFbABw0PcQPR+tpRIrtsNYDFPU4MB67tbnBx1C6sZPuTgULR6pzjPQ
-	 f0On84tKwFe7accZ64iluR9JTli3RwnbZmfzjYepge7aW/Sos4bju6Zz7ZgoWvnA24
-	 DFSNuLZ1SznDw==
+	b=mCSI/dhWVYf1M4Sve90pJAh6H2QgS+iMkDg8UvgTOK/zfdlRH85y57AGJNqOoOATw
+	 LYPXRIETYoWk7Gd4p6l9LGtLkDqmJk9HtEG7kIKP8vrWMrN1IzqbnODa6W3tfCwlCW
+	 NS5/6CZ26/kfImH7NpAz/WFxaIm7GwEmTArQngEZ2BT3vuEU4MgcVLGz2P52JRwFwA
+	 92kMVPmbjErMcERsdAWq6/lbKQa5naT2x03vby6LZ0LUdXaYiEd5J+mgtYXjnL2J6m
+	 MizK0RxR2hLbavFToP9zRkgJFWDEzztffbPhUwpmHNZ1WDrnNSjKJZUd7973oDUMJd
+	 Ir6B8NEljN3xA==
 From: Namhyung Kim <namhyung@kernel.org>
 To: Arnaldo Carvalho de Melo <acme@kernel.org>,
 	Ian Rogers <irogers@google.com>,
@@ -50,9 +50,9 @@ Cc: Jiri Olsa <jolsa@kernel.org>,
 	Ingo Molnar <mingo@kernel.org>,
 	LKML <linux-kernel@vger.kernel.org>,
 	linux-perf-users@vger.kernel.org
-Subject: [PATCH 6/8] perf sched: Use RC_CHK_EQUAL() to compare pointers
-Date: Wed,  2 Jul 2025 18:49:40 -0700
-Message-ID: <20250703014942.1369397-7-namhyung@kernel.org>
+Subject: [PATCH 7/8] perf sched: Fix memory leaks in 'perf sched latency'
+Date: Wed,  2 Jul 2025 18:49:41 -0700
+Message-ID: <20250703014942.1369397-8-namhyung@kernel.org>
 X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
 In-Reply-To: <20250703014942.1369397-1-namhyung@kernel.org>
 References: <20250703014942.1369397-1-namhyung@kernel.org>
@@ -64,27 +64,79 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-So that it can check two pointers to the same object properly when
-REFCNT_CHECKING is on.
+The work_atoms should be freed after use.  Add free_work_atoms() to
+make sure to release all.  It should use list_splice_init() when merging
+atoms to prevent accessing invalid pointers.
 
 Signed-off-by: Namhyung Kim <namhyung@kernel.org>
 ---
- tools/perf/builtin-sched.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/perf/builtin-sched.c | 27 ++++++++++++++++++++++++---
+ 1 file changed, 24 insertions(+), 3 deletions(-)
 
 diff --git a/tools/perf/builtin-sched.c b/tools/perf/builtin-sched.c
-index a6eb0462dd5be20f..087d4eaba5f7160d 100644
+index 087d4eaba5f7160d..4bbebd6ef2e4a791 100644
 --- a/tools/perf/builtin-sched.c
 +++ b/tools/perf/builtin-sched.c
-@@ -994,7 +994,7 @@ thread_atoms_search(struct rb_root_cached *root, struct thread *thread,
- 		else if (cmp < 0)
- 			node = node->rb_right;
- 		else {
--			BUG_ON(thread != atoms->thread);
-+			BUG_ON(!RC_CHK_EQUAL(thread, atoms->thread));
- 			return atoms;
+@@ -1111,6 +1111,21 @@ add_sched_in_event(struct work_atoms *atoms, u64 timestamp)
+ 	atoms->nb_atoms++;
+ }
+ 
++static void free_work_atoms(struct work_atoms *atoms)
++{
++	struct work_atom *atom, *tmp;
++
++	if (atoms == NULL)
++		return;
++
++	list_for_each_entry_safe(atom, tmp, &atoms->work_list, list) {
++		list_del(&atom->list);
++		free(atom);
++	}
++	thread__zput(atoms->thread);
++	free(atoms);
++}
++
+ static int latency_switch_event(struct perf_sched *sched,
+ 				struct evsel *evsel,
+ 				struct perf_sample *sample,
+@@ -3426,13 +3441,13 @@ static void __merge_work_atoms(struct rb_root_cached *root, struct work_atoms *d
+ 			this->total_runtime += data->total_runtime;
+ 			this->nb_atoms += data->nb_atoms;
+ 			this->total_lat += data->total_lat;
+-			list_splice(&data->work_list, &this->work_list);
++			list_splice_init(&data->work_list, &this->work_list);
+ 			if (this->max_lat < data->max_lat) {
+ 				this->max_lat = data->max_lat;
+ 				this->max_lat_start = data->max_lat_start;
+ 				this->max_lat_end = data->max_lat_end;
+ 			}
+-			zfree(&data);
++			free_work_atoms(data);
+ 			return;
  		}
  	}
+@@ -3511,7 +3526,6 @@ static int perf_sched__lat(struct perf_sched *sched)
+ 		work_list = rb_entry(next, struct work_atoms, node);
+ 		output_lat_thread(sched, work_list);
+ 		next = rb_next(next);
+-		thread__zput(work_list->thread);
+ 	}
+ 
+ 	printf(" -----------------------------------------------------------------------------------------------------------------\n");
+@@ -3525,6 +3539,13 @@ static int perf_sched__lat(struct perf_sched *sched)
+ 
+ 	rc = 0;
+ 
++	while ((next = rb_first_cached(&sched->sorted_atom_root))) {
++		struct work_atoms *data;
++
++		data = rb_entry(next, struct work_atoms, node);
++		rb_erase_cached(next, &sched->sorted_atom_root);
++		free_work_atoms(data);
++	}
+ out_free_cpus_switch_event:
+ 	free_cpus_switch_event(sched);
+ 	return rc;
 -- 
 2.50.0.727.gbf7dc18ff4-goog
 
