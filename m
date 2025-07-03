@@ -1,146 +1,113 @@
-Return-Path: <linux-kernel+bounces-714823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18DC0AF6CF5
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 10:32:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EA0EAF6CFD
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 10:32:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D9D93B139C
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 08:31:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 192191C404DC
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 08:33:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF7162D0C8A;
-	Thu,  3 Jul 2025 08:31:41 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB5482D0C71;
+	Thu,  3 Jul 2025 08:32:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="C3XNOLAz";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GMNRCD7X"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65E562C3274
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 08:31:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7EE42882B2
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 08:32:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751531501; cv=none; b=ZyRBRKB8lap+HGCqRY4dHu15pupXW4mdu15LoqTde690JipDog9eLYF53XI0auhTPWx66DaK0TL7GNjqoG2A3MsTKNemvzofeAE0hDQ9VmWBGnSEQMs64evNcZ1HRJBY9onmJ3vWDJC1U6i32EgniqQlRbF/lalib2ff9LZVQxo=
+	t=1751531567; cv=none; b=rZhmCbqskClkBX7r1nBnpubtY6IjVd/jnMZd3RKZqxgK2qIQzdSJx9gyd3BOoCJxcr/Mv2LvBDSXBRmxCIU61is7Dh3dgxwOgrjlbFDsRxGh4W1EiuNdlPPRnHTra+I11GnPUN4q8G6+OlVsBtyHbRFTtJpDjZlXmV19kkYOH/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751531501; c=relaxed/simple;
-	bh=/7pQrBULX82eRAQiAoBVqcEsotF1YuJcYS3E+/6Oc5s=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=iZEZ6LnIEMq01j3wdSbZ7Qy+CtnmIQkkXqlJPLx6OozelJRFdPXAXw5puMuKKsWQHATDYP3S0tpLQQ/WlZt62jvSKf4DNIeorGzzJavDfp/t9gcuHGj7KVfnQWce2+NwQfVow3ko14mKO+iTG0BBci6Qva0iVvk2kOmn0Y22mOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1uXFLq-0004el-KC; Thu, 03 Jul 2025 10:31:26 +0200
-Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1uXFLp-006ZQf-2V;
-	Thu, 03 Jul 2025 10:31:25 +0200
-Received: from pza by lupine with local (Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1uXFLp-0002j4-2E;
-	Thu, 03 Jul 2025 10:31:25 +0200
-Message-ID: <14af238d2106544147dfb1c7824787d6d54f1885.camel@pengutronix.de>
-Subject: Re: [PATCH v5 1/3] i2c: tegra: Fix reset error handling with ACPI
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Akhil R <akhilrajeev@nvidia.com>, andriy.shevchenko@linux.intel.com
-Cc: andi.shyti@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org, 
- digetx@gmail.com, jonathanh@nvidia.com, krzk+dt@kernel.org,
- ldewangan@nvidia.com,  linux-i2c@vger.kernel.org,
- linux-kernel@vger.kernel.org,  linux-tegra@vger.kernel.org,
- robh@kernel.org, thierry.reding@gmail.com
-Date: Thu, 03 Jul 2025 10:31:25 +0200
-In-Reply-To: <20250702171036.1892-1-akhilrajeev@nvidia.com>
-References: <aGVMr87HLrYGEw98@smile.fi.intel.com>
-	 <20250702171036.1892-1-akhilrajeev@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1751531567; c=relaxed/simple;
+	bh=pC4oyzU5QcKM+U5qjC1NfBHbms8A+3U9vcCj9TQL6tk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Ak476tom6r0VcBO4zsUlj6i4IkDKoSmqKi+vG9KbDCCRX/koEiAOZl/ETVZ2UbebIifzNZWfGYsKNHY4D2UqkMlhgZLVEfginYhiHq/k0FsYC3ae27rFFivg94mgpairXPZ4p41dnARvocPPDTOAgsM/4BteZ45MWk3Q2oQqM8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=C3XNOLAz; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GMNRCD7X; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1751531557;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=c6Y6DcRJJDZCyIgqWReUtxmgc9vatazYHbrU0BksGVE=;
+	b=C3XNOLAzLS/urbFkcLFvTb+ZdPxuZ43LuCep2RU8MIrd/Nw4lxzXRZ3X0gVDJG/FsXFZqR
+	jb3MhE3H7rgPtq5M7Ccwl/6ApBlLefgy/vQKIVOXtrJTep5j8+JJhuruk74OKr9orknzMd
+	z6idEgIOtuoOOZwRpb4MHw4UjHqRDtsF4YiLyr8MOe6XtZ1+Unp/YZbar1nx+2mPNLqGjz
+	ZOltl8UTJePhmKXHyYY45TdbbvLdz43nlW+Qi4fMlUSHBSVum5V8NiOYewWr23n6EfFwZM
+	3WwdEf6bYpkhBnDIsrU0BPbuUvMuGZ0C0sjsM1l3E4ZFHeR5GBZWmqaRlg2Z7A==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1751531557;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=c6Y6DcRJJDZCyIgqWReUtxmgc9vatazYHbrU0BksGVE=;
+	b=GMNRCD7X2h7I/71aIS8aF5NltnrAcTmrZHDhuIksBJn2MXOxpJlzx2n8QzuIEksL/i5H8b
+	n5FH9gAYafOrGrAA==
+To: Prakash Sangappa <prakash.sangappa@oracle.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, "rostedt@goodmis.org"
+ <rostedt@goodmis.org>, "mathieu.desnoyers@efficios.com"
+ <mathieu.desnoyers@efficios.com>, "bigeasy@linutronix.de"
+ <bigeasy@linutronix.de>, "kprateek.nayak@amd.com"
+ <kprateek.nayak@amd.com>, "vineethr@linux.ibm.com"
+ <vineethr@linux.ibm.com>
+Subject: Re: [PATCH V6 1/7] Sched: Scheduler time slice extension
+In-Reply-To: <E5C37D1C-F220-454B-B152-4E30C2D7827C@oracle.com>
+References: <20250701003749.50525-1-prakash.sangappa@oracle.com>
+ <20250701003749.50525-2-prakash.sangappa@oracle.com> <87cyakmhdv.ffs@tglx>
+ <20250701105653.GO1613376@noisy.programming.kicks-ass.net>
+ <87wm8skrzj.ffs@tglx> <E5C37D1C-F220-454B-B152-4E30C2D7827C@oracle.com>
+Date: Thu, 03 Jul 2025 10:32:36 +0200
+Message-ID: <87plehwu6z.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi Akhil,
+On Thu, Jul 03 2025 at 05:38, Prakash Sangappa wrote:
+>> On Jul 1, 2025, at 5:36=E2=80=AFAM, Thomas Gleixner <tglx@linutronix.de>=
+ wrote:
+>>
+>> Also if we go there and allow non-RT tasks to delay scheduling, then we
+>> need a control mechanism to enable/disable this mechanism on a per task
+>> or process basis. That way a RT system designer can prevent random
+>> user space tasks, which think they are the most important piece, from
+>> interfering with truly relevant RT tasks w/o going to chase down source
+>> code and hack it into submission.
+>
+> Could the per task  control mechanism be thru /proc?
 
-On Mi, 2025-07-02 at 22:40 +0530, Akhil R wrote:
-> On Wed, 2 Jul 2025 18:13:51 +0300, Andy Shevchenko wrote:
-> > > > +static int tegra_i2c_reset(struct tegra_i2c_dev *i2c_dev)
-> > > > +{
-> > > > +	acpi_handle handle =3D ACPI_HANDLE(i2c_dev->dev);
-> > > > +	int err;
-> > > > +
-> > > > +	if (handle) {
-> > > > +		err =3D acpi_evaluate_object(handle, "_RST", NULL, NULL);
-> > > > +		if (ACPI_FAILURE(err))
-> > > > +			return -EIO;
-> > > > +
-> > > > +		return 0;
-> > > > +	}
-> > > > +
-> > > > +	return reset_control_reset(i2c_dev->rst);
-> > >=20
-> > > It's better to be written other way around:
-> > >=20
-> > > 	acpi_handle handle;
-> > > 	int err;
-> > >=20
-> > > 	handle =3D ACPI_HANDLE(i2c_dev->dev);
-> > > 	if (!handle)
-> > > 		return reset_control_reset(i2c_dev->rst);
-> > >=20
-> > > 	err =3D acpi_evaluate_object(handle, "_RST", NULL, NULL);
-> > > 	if (ACPI_FAILURE(err))
-> > > 		return -EIO;
-> > >=20
-> > > 	return 0;
-> > >=20
-> > > > +}
-> > >=20
-> > > Other than that, LGTM,
-> > >=20
-> > > Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> >=20
-> > Actually I have to withdraw the tag. The above function is repetition o=
-f
-> > the device_reset() / device_reset_optional(). Please use that instead.
->=20
-> I did check that. But device_reset_optional() returns '0' if reset is
-> not available or when the reset succeeds. Then there is no option to
-> conditionally trigger the internal reset when the reset is not available.
->=20
-> Other option was to do the internal reset unconditionally. But then the
-> devices that do not have an internal reset will have to skip the reset
-> silently if the reset property is absent in the device tree (or _RST
-> method is absent in the ACPI table).
->=20
-> Though device_reset() returns error when reset is absent, it looks to
-> be not so straight-forward to detect from the return value that if there
-> is an actual error during reset or if the reset is absent.
+Is that a serious question?
 
-device_reset() should return -ENOENT if the reset is absent (as opposed
-to present but somehow broken). If there is any code path where this
-isn't the case, we should probably fix this.
+> Wonder how easy it will be to administer such control.
 
-In the ACPI case, -ENOENT is returned by __device_reset() if the "_RST"
-method is not found.
+Obviously it's horrible.
 
-In the OF case, -ENOENT is returned by __of_reset_control_get() if the
-requested id can't be found in a "reset-names" property, or if
-of_parse_phandle_with_args() returns -ENOENT for the "resets" (or
-"reset-gpios") property - that is, when this property doesn't exist or
-the entry indicated by the reset id is empty.
+That's what prctl() is for. Plus a proper inheritance mechanism on
+fork/exec along with a system wide default which can be controlled via
+the kernel command line.
 
+> Alternatively, can we have a config option to apply to LAZY only?
+> This will not provide the finer  control as you suggested.=20
 
-regards
-Philipp
+A config option is not solving anything; it's just a lazy hack to avoid
+the hard work of a proper and future proof ABI design.
+
+Thanks,
+
+        tglx
 
