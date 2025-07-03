@@ -1,76 +1,169 @@
-Return-Path: <linux-kernel+bounces-714907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBA94AF6E55
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 11:16:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0ED5AF6E54
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 11:16:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67376527DEE
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 09:14:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F83C481F31
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 09:15:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D3AE2D5418;
-	Thu,  3 Jul 2025 09:14:47 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0014.hostedemail.com [216.40.44.14])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30BBF28ECF4;
+	Thu,  3 Jul 2025 09:16:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=astralinux.ru header.i=@astralinux.ru header.b="apgLy2d+"
+Received: from mail-gw02.astralinux.ru (mail-gw02.astralinux.ru [93.188.205.243])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E236C296153
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 09:14:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D70DE2DE701;
+	Thu,  3 Jul 2025 09:15:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.188.205.243
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751534086; cv=none; b=i0+l13SkWPjicVqQKfnepR7SYjWORwBFha0lKuz+p1GZtQU6WwAye/HYqC3oeaQwj9ybVlqyZM6bijHS9NcY5R6kxbROwqsHAnLhzhKVw3LwvNuFUP6jm441EVxz96kKpxAkfuH3Ss0ZcemC3L6K+bbDOz2amL0Xd20ole4d87c=
+	t=1751534161; cv=none; b=WbTj7EQFE2i2RzNogMIAEbAx463LsAkZsNa/fiF25vvgcN+l1c1fvyhkbQ7/yatGsDJRyLGPxiHHYOJL281ndbUUbs7FylCgMgVFO98C5qQa7ORSC2zsKE32OtXopDE62af5uJphOt9kY0KLBcUYDwGJuEPO8QJL2rKwDJ4vDrM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751534086; c=relaxed/simple;
-	bh=pFMG0YaoJ+b0rfZbE7Qpyb7Kq2XHeo1Tzzmk0xxOBh8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=b4Js3BO+0JsEa1uhjv7KR3ji7vmw98ObHdwlSHggfzQOwLi7N47sSjGlYNat7rpork0+pSttkym/6GHq+k+K7AuuF3MRaCXpRrZEeG2mrx7bwcdPT4NEpNfQx38Pb3GwrDbrZvIWpsyAmTPz9hPqOs/jFnoFSQTnt5U6VQKPj2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com; spf=pass smtp.mailfrom=perches.com; arc=none smtp.client-ip=216.40.44.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=perches.com
-Received: from omf07.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay08.hostedemail.com (Postfix) with ESMTP id 296A6140767;
-	Thu,  3 Jul 2025 09:14:43 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf07.hostedemail.com (Postfix) with ESMTPA id DF0E12002E;
-	Thu,  3 Jul 2025 09:14:40 +0000 (UTC)
-Message-ID: <83e65ecbcc1a6af67a432a20d2a40bd80b945ee0.camel@perches.com>
-Subject: Re: [PATCH v4] checkpatch: Check for missing sentinels in ID arrays
-From: Joe Perches <joe@perches.com>
-To: Brian Norris <briannorris@chromium.org>, Andy Whitcroft
- <apw@canonical.com>,  Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, Dwaipayan Ray <dwaipayanray1@gmail.com>, 
- Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date: Thu, 03 Jul 2025 02:14:39 -0700
-In-Reply-To: <20250702235245.1007351-1-briannorris@chromium.org>
-References: <20250702235245.1007351-1-briannorris@chromium.org>
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	s=arc-20240116; t=1751534161; c=relaxed/simple;
+	bh=IXGjNYrCCJ7z//O8GYBQaRJVFFgl9rp2iE2vE4wR4HM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bBo2KSRrzsAyuE8f+uKbEdQtETcUqhMqrvoaMqUfHz42TR9nbJ33nvuDnYYXTTyvIvklbqeiV2eBzzd7GPJVkmZWSo/r6EdYtHnaN1OmHJR5eYuYQTAdwPS1F7N+56t+ZbYsP3FFALKEhgVU8ClkswxlXzG++Zfgl+QHXMgU6ds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astralinux.ru; spf=pass smtp.mailfrom=astralinux.ru; dkim=pass (2048-bit key) header.d=astralinux.ru header.i=@astralinux.ru header.b=apgLy2d+; arc=none smtp.client-ip=93.188.205.243
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astralinux.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=astralinux.ru
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=astralinux.ru;
+	s=mail; t=1751534152;
+	bh=IXGjNYrCCJ7z//O8GYBQaRJVFFgl9rp2iE2vE4wR4HM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=apgLy2d+CCDpyBhkSBMPO9MoRvsMvL//U5NfSIqC/B7MuKLu0kPh7SZd318nhY5Tz
+	 SkXrt17d2ZWrxzyLJWxEFDHmfJ4+RRPezHoaSXCAZ2OYm3pscQQyQaXw8s+Uuf7i8C
+	 mwvsMZDL3N29Rib5j5Kiy7cHBoQR+8U2L0FeyHqg1t2/PNVi0kARCDutT1fPLIt/Rs
+	 +qkS6VcFKmSQMC+D793ZOg5IiPbmuZ8jujUTjrFuqgs64895UNKWmULSce2laQPUW0
+	 34fS2CnrkbwB9Q2ZQmguYbDB3PErMjINHTdylAyWeecDyo1txWyIZSdeYaPd9ppDC5
+	 jW1cIDKkIr2Fg==
+Received: from gca-msk-a-srv-ksmg01.astralinux.ru (localhost [127.0.0.1])
+	by mail-gw02.astralinux.ru (Postfix) with ESMTP id D2AF41F707;
+	Thu,  3 Jul 2025 12:15:52 +0300 (MSK)
+Received: from new-mail.astralinux.ru (unknown [10.177.185.198])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail-gw02.astralinux.ru (Postfix) with ESMTPS;
+	Thu,  3 Jul 2025 12:15:50 +0300 (MSK)
+Received: from localhost.localdomain (unknown [10.190.6.76])
+	by new-mail.astralinux.ru (Postfix) with ESMTPA id 4bXrhy3qHMz16Hnq;
+	Thu,  3 Jul 2025 12:15:45 +0300 (MSK)
+From: Anastasia Belova <abelova@astralinux.ru>
+To: stable@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Anastasia Belova <abelova@astralinux.ru>,
+	Steve French <sfrench@samba.org>,
+	linux-cifs@vger.kernel.org,
+	samba-technical@lists.samba.org,
+	linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org,
+	Enzo Matsumiya <ematsumiya@suse.de>,
+	Ronnie Sahlberg <lsahlber@redhat.com>,
+	Steve French <stfrench@microsoft.com>
+Subject: [PATCH 5.10] cifs: fix small mempool leak in SMB2_negotiate()
+Date: Thu,  3 Jul 2025 12:15:28 +0300
+Message-ID: <20250703091529.129846-1-abelova@astralinux.ru>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Rspamd-Queue-Id: DF0E12002E
-X-Stat-Signature: o3w3y3w3p11afhnby3u45wzczkfx86mu
-X-Rspamd-Server: rspamout06
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Session-ID: U2FsdGVkX19OA/l/eAXftIseOTZ2q8WAkx41TDQGE94=
-X-HE-Tag: 1751534080-251449
-X-HE-Meta: U2FsdGVkX1+w2k13WXtPPzMt3eOf3uv8tNxeAqKIF9PxEmWgkvg4gv3XZjlPG2YUNKwq8iw4XDNGFX1torvavhhNinsJj9oOnoR156JcYStblMW9VXNC4chaqeSpETAL+5IeY9MfdWrKnawSLT3PKMYLyAzT+wjRcrV00BQriknDzMFxvGFMwaRj45lJBsUqxXAo2lSalFlBdnotQZHpsVXYO3R27j9g1qNBwXOEpQD9oNoHXVNvL/rUUy7zf8c0P4F9y+A9kUPJwY0RN237P5p0Y3dzmHD3iCLqYCefaGgD5SojdfY7kLiNJu40k7G7WDEZvV1jDNaAznjz3F+pG1HbSjldcMowPTln9w6IcZ3LPDnLurL362u/HvuypiU2kvdWRS78qq+oXW0Gbfn4tw==
+Content-Transfer-Encoding: 8bit
+X-KSMG-AntiPhishing: NotDetected
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Envelope-From: abelova@astralinux.ru
+X-KSMG-AntiSpam-Info: LuaCore: 63 0.3.63 9cc2b4b18bf16653fda093d2c494e542ac094a39, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, 127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;astralinux.ru:7.1.1;new-mail.astralinux.ru:7.1.1, FromAlignment: s
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiSpam-Lua-Profiles: 194515 [Jul 03 2025]
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Version: 6.1.1.11
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.0.7854, bases: 2025/07/03 05:31:00 #27614197
+X-KSMG-AntiVirus-Status: NotDetected, skipped
+X-KSMG-LinksScanning: NotDetected
+X-KSMG-Message-Action: skipped
+X-KSMG-Rule-ID: 1
 
-On Wed, 2025-07-02 at 16:52 -0700, Brian Norris wrote:
-> All of the ID tables based on <linux/mod_devicetable.h> (of_device_id,
-> pci_device_id, ...) require their arrays to end in an empty sentinel
-> value. That's usually spelled with an empty initializer entry (e.g.,
-> "{}"), but also sometimes with explicit 0 entries, field initializers
-> (e.g., '.id =3D ""'), or even a macro entry (like PCMCIA_DEVICE_NULL).
->=20
-> Without a sentinel, device-matching code may read out of bounds.
-[]
-> Signed-off-by: Brian Norris <briannorris@chromium.org>
+From: Enzo Matsumiya <ematsumiya@suse.de>
 
-Acked-by: Joe Perches <joe@perches.com>
+commit 27893dfc1285f80f80f46b3b8c95f5d15d2e66d0 upstream.
+
+In some cases of failure (dialect mismatches) in SMB2_negotiate(), after
+the request is sent, the checks would return -EIO when they should be
+rather setting rc = -EIO and jumping to neg_exit to free the response
+buffer from mempool.
+
+Signed-off-by: Enzo Matsumiya <ematsumiya@suse.de>
+Cc: stable@vger.kernel.org
+Reviewed-by: Ronnie Sahlberg <lsahlber@redhat.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Anastasia Belova <abelova@astralinux.ru>
+---
+Backport fix for CVE-2022-49938
+ fs/cifs/smb2pdu.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
+
+diff --git a/fs/cifs/smb2pdu.c b/fs/cifs/smb2pdu.c
+index 4197096e7fdb..fa75dc0a372d 100644
+--- a/fs/cifs/smb2pdu.c
++++ b/fs/cifs/smb2pdu.c
+@@ -883,23 +883,24 @@ SMB2_negotiate(const unsigned int xid, struct cifs_ses *ses)
+ 	} else if (rc != 0)
+ 		goto neg_exit;
+ 
++	rc = -EIO;
+ 	if (strcmp(server->vals->version_string,
+ 		   SMB3ANY_VERSION_STRING) == 0) {
+ 		if (rsp->DialectRevision == cpu_to_le16(SMB20_PROT_ID)) {
+ 			cifs_server_dbg(VFS,
+ 				"SMB2 dialect returned but not requested\n");
+-			return -EIO;
++			goto neg_exit;
+ 		} else if (rsp->DialectRevision == cpu_to_le16(SMB21_PROT_ID)) {
+ 			cifs_server_dbg(VFS,
+ 				"SMB2.1 dialect returned but not requested\n");
+-			return -EIO;
++			goto neg_exit;
+ 		}
+ 	} else if (strcmp(server->vals->version_string,
+ 		   SMBDEFAULT_VERSION_STRING) == 0) {
+ 		if (rsp->DialectRevision == cpu_to_le16(SMB20_PROT_ID)) {
+ 			cifs_server_dbg(VFS,
+ 				"SMB2 dialect returned but not requested\n");
+-			return -EIO;
++			goto neg_exit;
+ 		} else if (rsp->DialectRevision == cpu_to_le16(SMB21_PROT_ID)) {
+ 			/* ops set to 3.0 by default for default so update */
+ 			server->ops = &smb21_operations;
+@@ -913,7 +914,7 @@ SMB2_negotiate(const unsigned int xid, struct cifs_ses *ses)
+ 		/* if requested single dialect ensure returned dialect matched */
+ 		cifs_server_dbg(VFS, "Invalid 0x%x dialect returned: not requested\n",
+ 				le16_to_cpu(rsp->DialectRevision));
+-		return -EIO;
++		goto neg_exit;
+ 	}
+ 
+ 	cifs_dbg(FYI, "mode 0x%x\n", rsp->SecurityMode);
+@@ -931,9 +932,10 @@ SMB2_negotiate(const unsigned int xid, struct cifs_ses *ses)
+ 	else {
+ 		cifs_server_dbg(VFS, "Invalid dialect returned by server 0x%x\n",
+ 				le16_to_cpu(rsp->DialectRevision));
+-		rc = -EIO;
+ 		goto neg_exit;
+ 	}
++
++	rc = 0;
+ 	server->dialect = le16_to_cpu(rsp->DialectRevision);
+ 
+ 	/*
+-- 
+2.43.0
 
 
