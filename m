@@ -1,140 +1,101 @@
-Return-Path: <linux-kernel+bounces-715446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-715420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 166BEAF761B
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 15:48:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09132AF75C9
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 15:34:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 318961C274FE
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 13:49:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 089C548741C
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 13:34:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77CF62E7F0D;
-	Thu,  3 Jul 2025 13:48:21 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 888CA2E2EEA;
+	Thu,  3 Jul 2025 13:34:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="l1udAsok";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="fDwiMDAz"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C9B528B516;
-	Thu,  3 Jul 2025 13:48:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90F992222B4;
+	Thu,  3 Jul 2025 13:34:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751550501; cv=none; b=tFWC7S7QbAAoEedqm+e9DgAdsWfES2Uf03a4657qlOGewLLqvAFZOFE34VtOT3aon5W8ZT656cNTdnTZ7xM+l515bdlBBrsLa1whkitMgkEecse/xHLRTeScnGQcdXW/UCwLjTJXOaHdSL3Qy5L+7lakh0GZm6aZMMQ0WMLYoHY=
+	t=1751549674; cv=none; b=fvWOhKi3YSjNUE6D3sN9wCNDPxMEAPUdRmOWOe01D28PfteoUK9x7s5rryRIUxQGb/Ep97zN154uH6Q9OSYmzj6nKTB59YgpWZThTkQIY8icNjLggPs+sew3MdRe/ZzEEn8sgG1zJTnEPnsJxIZn7uik3wKYMPZk/PFwjFscXos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751550501; c=relaxed/simple;
-	bh=8IvgdlogpP7JuvdzwJQsuveomKygW/XCJS9EI4AtOQQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CA7MJHTfoyeFykBApoURGAQJcbzl3hYw0aRDe+SJD8TgjUReuHRe2sOw5kZdvDLmV9MHTByRevbA5qAJLLEqFajBPjyYMu2lYoSgSyH2I+4qo5dgxI13TLxwoQLuWGUsoUkEdG8dK4V6GDHN1Dw7nVUE8LtRH9rewg5AnOhMPAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bXylN3bTtzYQtrF;
-	Thu,  3 Jul 2025 21:48:16 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.252])
-	by mail.maildlp.com (Postfix) with ESMTP id 5C96B1A12D0;
-	Thu,  3 Jul 2025 21:48:15 +0800 (CST)
-Received: from hulk-vt.huawei.com (unknown [10.67.174.121])
-	by APP3 (Coremail) with SMTP id _Ch0CgDXOCYJimZoV+8fAg--.35082S2;
-	Thu, 03 Jul 2025 21:48:15 +0800 (CST)
-From: Chen Ridong <chenridong@huaweicloud.com>
-To: peterz@infradead.org,
-	rafael@kernel.org,
-	pavel@kernel.org,
-	timvp@google.com,
-	tj@kernel.org,
-	mkoutny@suse.com
-Cc: linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	lujialin4@huawei.com,
-	chenridong@huawei.com
-Subject: [PATCH next] sched,freezer: prevent tasks from escaping being frozen
-Date: Thu,  3 Jul 2025 13:34:27 +0000
-Message-Id: <20250703133427.3301899-1-chenridong@huaweicloud.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1751549674; c=relaxed/simple;
+	bh=ZIvwyQ4PUprtYpegCqSfNywCoxWQF3PgP8EXeWA7/BU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=c/RjJXrsSfGP4Odn2QxSK4skDfvDjvJ9wKEXYNZ3dy/nQLlgG/k6Q0jnmRZpnYNJTNTe7DO3aq2Z3FFv52dy2xKKXQpqQq3IndC7n0R7DdPMs9bIL+dlvosG2WUp0fMJBFK6dU8ai/aT5DSj4mVGQmRqjVZvkc/Qkc64Zl3uqRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=l1udAsok; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=fDwiMDAz; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1751549670;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZIvwyQ4PUprtYpegCqSfNywCoxWQF3PgP8EXeWA7/BU=;
+	b=l1udAsokKLScIuqBvN8DegegnRK49KLBCAG9FW+f93GZWXVy22m/JUJMzpZKqr3DX8VSMB
+	STSlh1a1KXjoDTb+Gx1SU6tNCMOhZPj+CArBPGQ45EBtN1Vt4DE7KCBq8jLXu79sPKoHeu
+	Fs91uIpUIN/PhcKQLGE/106p33KF/mxN2IlOOaGqbyrfMm3ISdeci1aP4IAwvjrRfobVHj
+	OXlDRtA2bDkYBIEnF0MLvV8G/TetnH/ZtFPRYj+3wNc4eDpFSKpJ6RPNplc64rQjKxaRgK
+	7XcDpYbDUt3yd6IF8rltbiBovk9J9B/r53Kox/ges44ZuFRAFqBEEQwVPBXVNw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1751549670;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZIvwyQ4PUprtYpegCqSfNywCoxWQF3PgP8EXeWA7/BU=;
+	b=fDwiMDAz/Q7eYBgrZ0taV3R9DNy4wR+6pGV4OJlldbXkJ3xPfiJNKJfVVOX2tncCUv3R4k
+	h+whtou+At064iDw==
+To: Nam Cao <namcao@linutronix.de>, Marc Zyngier <maz@kernel.org>, Lorenzo
+ Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?=
+ <kwilczynski@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>, Rob
+ Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+ linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, Karthikeyan
+ Mitran <m.karthikeyan@mobiveil.co.in>, Hou Zhiqiang
+ <Zhiqiang.Hou@nxp.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ Pali =?utf-8?Q?Roh=C3=A1r?= <pali@kernel.org>, "K . Y . Srinivasan"
+ <kys@microsoft.com>,
+ Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
+ Dexuan Cui <decui@microsoft.com>, Joyce Ooi <joyce.ooi@intel.com>, Jim
+ Quinlan <jim2101024@gmail.com>, Nicolas Saenz Julienne
+ <nsaenz@kernel.org>, Florian Fainelli <florian.fainelli@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, Ray Jui <rjui@broadcom.com>,
+ Scott Branden <sbranden@broadcom.com>, Ryder Lee <ryder.lee@mediatek.com>,
+ Jianjun Wang <jianjun.wang@mediatek.com>, Marek Vasut
+ <marek.vasut+renesas@gmail.com>, Yoshihiro Shimoda
+ <yoshihiro.shimoda.uh@renesas.com>, Michal Simek <michal.simek@amd.com>,
+ Daire McNamara <daire.mcnamara@microchip.com>, Nirmal Patel
+ <nirmal.patel@linux.intel.com>, Jonathan Derrick
+ <jonathan.derrick@linux.dev>, Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
+ linux-rpi-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ linux-renesas-soc@vger.kernel.org
+Cc: Nam Cao <namcao@linutronix.de>
+Subject: Re: [PATCH 15/16] PCI: vmd: Convert to lock guards
+In-Reply-To: <836cca37449c70922a2bea1fb13f37940a7a7132.1750858083.git.namcao@linutronix.de>
+References: <cover.1750858083.git.namcao@linutronix.de>
+ <836cca37449c70922a2bea1fb13f37940a7a7132.1750858083.git.namcao@linutronix.de>
+Date: Thu, 03 Jul 2025 15:34:29 +0200
+Message-ID: <877c0pv1ne.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_Ch0CgDXOCYJimZoV+8fAg--.35082S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Kr15JrykWFyUJrWDKF1xXwb_yoW8uFyUp3
-	95Wa1UGw10qr42ywnxta1v9398K39rJr4UG34kCF18Xa1YqasxWr4xCry3Wr4jvr1I9r9x
-	JayYg34SyayUCa7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvFb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0E
-	n4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I
-	0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWU
-	tVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcV
-	CY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAF
-	wI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvj
-	xUF1v3UUUUU
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+Content-Type: text/plain
 
-From: Chen Ridong <chenridong@huawei.com>
+On Thu, Jun 26 2025 at 16:48, Nam Cao wrote:
+> Convert lock/unlock pairs to lock guard and tidy up the code.
+>
+> Signed-off-by: Nam Cao <namcao@linutronix.de>
 
-The commit cff5f49d433f ("cgroup_freezer: cgroup_freezing: Check if not
-frozen") modified the cgroup_freezing() logic to also verify that the
-FROZEN flag is not set, which affects the return value of the freezing()
-function.
-
-In __refrigerator(), the FROZEN flag is set before checking whether the
-task should be frozen. This creates a race condition where:
-1. The task's FROZEN flag is set.
-2. The cgroup freezer state changes to FROZEN (Can be triggered by reading
-   freezer.state).
-3. freezing() is called and returns false.
-
-As a result, the task may escape being frozen when it should be.
-
-To fix this, move the setting of the FROZEN flag to occur just before
-schedule(). This ensures the flag is only set when we're certain the
-task must be switched out.
-
-Fixes: cff5f49d433f ("cgroup_freezer: cgroup_freezing: Check if not frozen")
-Reported-by: Zhong Jiawei<zhongjiawei1@huawei.com>
-Signed-off-by: Chen Ridong <chenridong@huawei.com>
----
- kernel/freezer.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/kernel/freezer.c b/kernel/freezer.c
-index 8d530d0949ff..89edd7550d27 100644
---- a/kernel/freezer.c
-+++ b/kernel/freezer.c
-@@ -71,12 +71,6 @@ bool __refrigerator(bool check_kthr_stop)
- 	for (;;) {
- 		bool freeze;
- 
--		raw_spin_lock_irq(&current->pi_lock);
--		WRITE_ONCE(current->__state, TASK_FROZEN);
--		/* unstale saved_state so that __thaw_task() will wake us up */
--		current->saved_state = TASK_RUNNING;
--		raw_spin_unlock_irq(&current->pi_lock);
--
- 		spin_lock_irq(&freezer_lock);
- 		freeze = freezing(current) && !(check_kthr_stop && kthread_should_stop());
- 		spin_unlock_irq(&freezer_lock);
-@@ -84,6 +78,12 @@ bool __refrigerator(bool check_kthr_stop)
- 		if (!freeze)
- 			break;
- 
-+		raw_spin_lock_irq(&current->pi_lock);
-+		WRITE_ONCE(current->__state, TASK_FROZEN);
-+		/* unstale saved_state so that __thaw_task() will wake us up */
-+		current->saved_state = TASK_RUNNING;
-+		raw_spin_unlock_irq(&current->pi_lock);
-+
- 		was_frozen = true;
- 		schedule();
- 	}
--- 
-2.34.1
-
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
 
