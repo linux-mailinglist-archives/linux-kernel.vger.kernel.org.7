@@ -1,164 +1,124 @@
-Return-Path: <linux-kernel+bounces-716043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB25CAF812B
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 21:15:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F16DAF8122
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 21:08:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BE771CA20C7
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 19:15:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEAC91C88122
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 19:08:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A7832F2C65;
-	Thu,  3 Jul 2025 19:15:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F2A22989B6;
+	Thu,  3 Jul 2025 19:08:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="aLJoApOJ"
-Received: from smtp.smtpout.orange.fr (smtp-81.smtpout.orange.fr [80.12.242.81])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="znr3S6uW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABA5B2F2347;
-	Thu,  3 Jul 2025 19:15:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE9431D5CE5;
+	Thu,  3 Jul 2025 19:08:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751570108; cv=none; b=QldXQG7cldBSChFgfuAeetA+kf7vRvJdERXYCrt82PGfi6G3m6bBoTawXRaj1PjSwOBV1ckBI4PYPQas7XR3U2aOVQrWOsnMctEiULi/MvBu85dGfOWMQb4159573j2ILo7svh/xykTG93xjb5yS1D7tDSgylfKym9DF5h5kw7Q=
+	t=1751569692; cv=none; b=q/grgXdUtLn1xH2ldZzUFJPZ9Z9N+PmYP2CSlLjYtr/2cj5yn9e7WUYBsPNNGmeaVckGx5V78gTc3Id3JX3StMkNKye8AsPkHLR12jtwG0SYzwSjGJQF05KrpQVdmxiz0j1nz6rKqNFneG+0uBXaWQaP1MI4TWo1o66RDrrB42I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751570108; c=relaxed/simple;
-	bh=quFgesJQX765rdt1fi6yptGzSszZVEQ2BE38W+7Yywk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LRdQT+Uwt9HSPGLGyRq/V+XuhewYQyCrABRGuwpUHDj02S/uYb0+DnvEuAsaOm5gsOjOVSJE4LVkoFxBFrUGWunKxVGd/fdAl4ObF4sVrBKjsdNMPObss1KoE1n/E2XWpFiNGVtH0gtf2r9N6ugVRr1rYuxFbh1ecFqo/47ble4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=aLJoApOJ; arc=none smtp.client-ip=80.12.242.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
- ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
-	by smtp.orange.fr with ESMTPA
-	id XPFcu2Q1bTY5mXPFcuUi59; Thu, 03 Jul 2025 21:05:42 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1751569542;
-	bh=T8p3xjVqVI/tRIrpOi6EWSLUaRRZHSg1oPB+NKQ4tT4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=aLJoApOJfC6omuYxSn1+vmUuNYrypDQEEoM3f0OWfzxsEmISQXjGij2N/4M/lTk0Q
-	 ao6hbI0J8bKuSOPE5uugku/f2A0kkYpCKLoNGs9h16IQP5nBFrpM5JiICj3cG3cvM1
-	 iDf1ayrJfEl2uUf1nXDei44tw2J6mN6znK1izNLqzvQ5qv9arDZT9ot7GMWHHRqwlf
-	 CuxtpEc9CLimno2lpDsfnfnmpqjJDnpkDyFZZdaP4iApk+DDjJUEfmBRr6b7MY0zEc
-	 iONE+jOJ8VKAE2RmDD7OfcXl1MzjwS81N5R0M3ARiXTypkO0hIHFG0Y9jGvMEmaRap
-	 XrC8SDkAA+u6g==
-X-ME-Helo: [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Thu, 03 Jul 2025 21:05:42 +0200
-X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
-Message-ID: <780d9307-4c47-4772-b527-bfd94486b931@wanadoo.fr>
-Date: Thu, 3 Jul 2025 21:05:40 +0200
+	s=arc-20240116; t=1751569692; c=relaxed/simple;
+	bh=OOHxmdACIVQQer+dO9X0b+FWtWrJwbSjdxM4TjscUmg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pT2YrW36FfrWLiD3ugdfw/nbY5TuzUc21PGH2FQAha6VWOcGnKMyNNz/sLpsOcVBV/wlfEKxwJvWMjJEh3nSUt8srK7pQmclY0pGW2R15zAz9qfEZrnqbnOHddp5cIPlSQ/uuliOUeZK1cUwuYRYkqyIBxFVr/LsQg4m5bHHYPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=znr3S6uW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1852C4CEE3;
+	Thu,  3 Jul 2025 19:08:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1751569692;
+	bh=OOHxmdACIVQQer+dO9X0b+FWtWrJwbSjdxM4TjscUmg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=znr3S6uWelYY4CwMnYAiyqbGe9vwf9zfTQXk8ghEajRiLvJow1IRZ+EmecTAbKUXW
+	 Bs5FmHRuGa9/93xIs0FLUlsS0OFZvYb5AHQNJA8M85zwd56A/UEV5HjGf1BA32e0Ni
+	 TgvQf6C2LUPVQeoJCA2/C3DGuFKGAfFjMJF74ZYM=
+Date: Thu, 3 Jul 2025 21:08:08 +0200
+From: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+To: Ryan Mann <rmann@ndigital.com>
+Cc: "johan@kernel.org" <johan@kernel.org>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] NDI FTDI USB driver support
+Message-ID: <2025070338-snorkel-monastery-994d@gregkh>
+References: <YQXPR01MB498723CF19D915DD09C8C0B5DF43A@YQXPR01MB4987.CANPRD01.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 2/2] gpio: tps65219: Add support for TI TPS65214 PMIC
-To: Shree Ramamoorthy <s-ramamoorthy@ti.com>, aaro.koskinen@iki.fi,
- andreas@kemnade.info, khilman@baylibre.com, rogerq@kernel.org,
- tony@atomide.com, linus.walleij@linaro.org, brgl@bgdev.pl,
- linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-gpio@vger.kernel.org
-Cc: m-leonard@ti.com, praneeth@ti.com, jcormier@criticallink.com
-References: <20250703180751.168755-1-s-ramamoorthy@ti.com>
- <20250703180751.168755-3-s-ramamoorthy@ti.com>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20250703180751.168755-3-s-ramamoorthy@ti.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YQXPR01MB498723CF19D915DD09C8C0B5DF43A@YQXPR01MB4987.CANPRD01.PROD.OUTLOOK.COM>
 
-Le 03/07/2025 à 20:07, Shree Ramamoorthy a écrit :
-> Add support for the TI TPS65214 PMIC with the addition of an id_table,
-> separate TPS65214 template_chip, and device-specific _change_direction
-> functions.
-> 
-> - Use platform_get_device_id() to assign dev-specific information.
-> - Use different change_direction() functions since TPS65214's GPIO
->    configuration bits are changeable during device operation through bit
->    GPIO_CONFIG in GENERAL_CONFIG register.
-> - Remove MODULE_ALIAS since it is now generated by MODULE_DEVICE_TABLE.
-> 
-> Reviewed-by: Jonathan Cormier <jcormier@criticallink.com>
-> Tested-by: Jonathan Cormier <jcormier@criticallink.com>
-> Signed-off-by: Shree Ramamoorthy <s-ramamoorthy@ti.com>
-> ---
+On Thu, Jul 03, 2025 at 06:53:06PM +0000, Ryan Mann wrote:
+> Hi John and Greg,
+> Tag: ndi-usb-serial-ftdi-6.16-rc4
+> Public branch: https://github.com/rmann-ndi/linux-kernel/tree/ndi_usb_serial_ftdi
+> This represents changes to the FTDI USB serial device drivers to support a new NDI (Northern Digital Inc.) product called the EMGUIDE GEMINI. The EMGUIDE GEMINI will support 1.2Mbaud the same as other NDI FTDI virtual COM port devices. It was noticed in making this change that the NDI Aurora was included in this "quirk", but it does not support rates as high as 1.2Mbaud, so it was replaced by the EMGUIDE.
+> Previous FTDI devices produced by NDI all used the FTDI VID (0x0403) and a very limited set of PIDs that Future Technology Devices allowed NDI to use (0xda70 to 0xda74). Since then, NDI has reserved its own VID (0x23f2), and used two of the PIDs for two experimental, non-production products that didn't use the FTDI chip for USB connection.
+> This patch adds the new VID as "FTDI_NDI_VID" in the ftdi_sio_ids.h header file. It also reserves PID 0x0003 for the EMGUIDE GEMINI, as well as stubbing out PIDs 0x0004 through 0x0009 for "future" NDI devices. In the unlikely event that the NDI hardware team chooses to implement the USB functionality using something other than FTDI chips, those "future device" lines may need to get removed.
+> As the EMGUIDE GEMINI product development has not been completed and the step to write over the default VID and PID has not been completed, these code changes have not been tested with an EMGUIDE GEMINI. However, the code changes were compiled successfully using Ubuntu 24.04 locally and tested as a module using an NDI Aurora system.
+> Thanks,
+> -------------------------------------
+> Ryan Mann
+> Software Development Lead
+> 103 Randall Drive
+> Waterloo, ON, Canada N2V 1C5
+> www.ndigital.com
 
-...
 
-> +static int tps65214_gpio_change_direction(struct gpio_chip *gc, unsigned int offset,
-> +					  unsigned int direction)
-> +{
-> +	struct tps65219_gpio *gpio = gpiochip_get_data(gc);
-> +	struct device *dev = gpio->tps->dev;
-> +	int val, ret;
-> +
-> +	/* Verified if GPIO or GPO in parent function
+Hi,
 
-Nitpick: should the /* be on a separate line?
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
 
-> +	 * Masked value: 0 = GPIO, 1 = VSEL
-> +	 */
-> +	ret = regmap_read(gpio->tps->regmap, TPS65219_REG_MFP_1_CONFIG, &val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = !!(val & BIT(TPS65219_GPIO0_DIR_MASK));
-> +	if (ret)
-> +		dev_err(dev, "GPIO%d configured as VSEL, not GPIO\n", offset);
-> +
-> +	ret = regmap_update_bits(gpio->tps->regmap, TPS65219_REG_GENERAL_CONFIG,
-> +				 TPS65214_GPIO0_DIR_MASK, direction);
-> +	if (ret)
-> +		dev_err(dev,
-> +			"Fail to change direction to %u for GPIO%d.\n",
+You are receiving this message because of the following common error(s)
+as indicated below:
 
-Nitpick: keep it on the previous line?
+- Your patch was attached, please place it inline so that it can be
+  applied directly from the email message itself.
 
-> +			direction, offset);
-> +
-> +	return ret;
-> +}
+- Your patch does not have a Signed-off-by: line.  Please read the
+  kernel file, Documentation/process/submitting-patches.rst and resend
+  it after adding that line.  Note, the line needs to be in the body of
+  the email, before the patch, not at the bottom of the patch or in the
+  email signature.
 
-...
+- You did not specify a description of why the patch is needed, or
+  possibly, any description at all, in the email body.  Please read the
+  section entitled "The canonical patch format" in the kernel file,
+  Documentation/process/submitting-patches.rst for what is needed in
+  order to properly describe the change.
 
-> +static const struct gpio_chip tps65214_template_chip = {
-> +	.label			= "tps65214-gpio",
-> +	.owner			= THIS_MODULE,
-> +	.get_direction		= tps65214_gpio_get_direction,
-> +	.direction_input	= tps65219_gpio_direction_input,
-> +	.direction_output	= tps65219_gpio_direction_output,
-> +	.get			= tps65219_gpio_get,
-> +	.set_rv			= tps65219_gpio_set,
-> +	.base			= -1,
-> +	.ngpio			= 2,
-> +	.can_sleep		= true,
-> +};
-> +
->   static const struct gpio_chip tps65219_template_chip = {
->   	.label			= "tps65219-gpio",
->   	.owner			= THIS_MODULE,
-> @@ -154,7 +218,7 @@ static const struct gpio_chip tps65219_template_chip = {
->   	.direction_input	= tps65219_gpio_direction_input,
->   	.direction_output	= tps65219_gpio_direction_output,
->   	.get			= tps65219_gpio_get,
-> -	.set			= tps65219_gpio_set,
-> +	.set_rv			= tps65219_gpio_set,
+- You did not write a descriptive Subject: for the patch, allowing Greg,
+  and everyone else, to know what this patch is all about.  Please read
+  the section entitled "The canonical patch format" in the kernel file,
+  Documentation/process/submitting-patches.rst for what a proper
+  Subject: line should look like.
 
-Is this correct? Does it even compile?
-tps65219_gpio_set() returns void and .set_rv() expects a return value.
+- It looks like you did not use your "real" name for the patch on either
+  the Signed-off-by: line, or the From: line (both of which have to
+  match).  Please read the kernel file,
+  Documentation/process/submitting-patches.rst for how to do this
+  correctly.
 
-(same for tps65214_template_chip above)
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
 
->   	.base			= -1,
->   	.ngpio			= 3,
->   	.can_sleep		= true,
+thanks,
 
-...
-
-CJ
+greg k-h's patch email bot
 
