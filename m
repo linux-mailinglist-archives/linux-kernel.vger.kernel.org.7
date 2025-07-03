@@ -1,171 +1,273 @@
-Return-Path: <linux-kernel+bounces-715254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-715250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2818FAF7335
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 14:04:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B516AF732C
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 14:03:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 972A77B848A
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 12:03:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3EA04E4AE5
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 12:03:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 093212E6D0D;
-	Thu,  3 Jul 2025 12:03:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F27AF2E2F12;
+	Thu,  3 Jul 2025 12:03:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T677CqwI"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="ayEG+PtL"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90B492E62C3;
-	Thu,  3 Jul 2025 12:03:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17DA8EEA9;
+	Thu,  3 Jul 2025 12:03:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751544233; cv=none; b=KOZRed3trAIZ/It3IdyDeMwM2NNp3Pvc/WV00fwKG0rtoeva3uMAkVA5hbbOu3gVleQ6zCWHhAcRNrtp1KM15rqlhPiPdyhpkCTW3IAGQp/ivBl3/mNsn0XsojWVYGSjI2O+9TTZRqRH4ipG6cgN07dsm2nqTWKpQgPPEHb1FPQ=
+	t=1751544206; cv=none; b=bjteR2WjY6oSR7NcqeR209RPpOOUJwPLzu0n6x2roJFLiqtJmOJhWYmRK0AZvonvpgafHjWcfhg8usr0FbSdtTmN4SgwT1PPB3Eo8JddCKlFKxldDYXNZTNRGpr9l8HIG0T68i98mZOPd8JdW9pt3GcjLDDmM+TqdQIJFV9qhRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751544233; c=relaxed/simple;
-	bh=jsD9YH9kuJbOz2Nw8fyYrbyTDwny+3LMZ7c8TI4cvqM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ngNsFy5tXcY3ufdO/OwjdiFktkmVFkeJCVQmvQib0NfdXGRCjAhHnyWYuU9X10W4eqPcoQ1Pcw9oao2VQQkkwNbO52N5ULFYPLQCnXd5PzHOJmRpTYmgtmgCn0urj0wg5BYrkIeGdHWObLE0BFz1zD2ktm8MESZ6AToH84C7Uus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T677CqwI; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-60bf5a08729so11012238a12.0;
-        Thu, 03 Jul 2025 05:03:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751544229; x=1752149029; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2bWYCB6WfPUI/fvWa8m+GGn4eYVfhW03+nxeFICCU4E=;
-        b=T677CqwIQBTTVG36ZVllrreSaZA5mGcG/wXNPZq6cFRZtlte5E2zrohaxGFTv64qoM
-         wHfqC40KninqcTxIO98mBXmbZCEl3U/wjliBSkTxQFpfbSOm78hdU04t+wj+iAOfWuT5
-         01LaLVMOzb80lS7OqXeKBavgmSUDoL3jUxMIycl0U9k/aL8xEGO8dvRdzHbDt5qkWGTP
-         X0334EAZUfn+KKLbM7vvT28Up9CMchX7b9PRzfWEc6yBImZe3ujKR0X28GeAgyo0ML9B
-         rEQ5kiQKMRw2aib66JZG3t0FjwlOuYu4BuRO9M3vGAPMrtdMkpGyRnuUE+ziIZcRgveC
-         nwBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751544229; x=1752149029;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2bWYCB6WfPUI/fvWa8m+GGn4eYVfhW03+nxeFICCU4E=;
-        b=V8MSEnOAbUWTamH+88jPoVTZ0VQ2dlkv0bKmahakNHT90Gz2By3TN2CDPKtttdCq1o
-         XH1uKAwsllW3QXGdII4DhmHp6cPj/zRrNYdwo6yFYIgfO+FYS/taozy89WQBomwWBgid
-         B8aNUfo/KwyriQg84rR5Bp+Uq/0vnr/AUjIrV1lxbATSMnyzB2fnePkOjY/A0Vne9CAB
-         DYNMLYeW21Pw7DXxpZ6DQzItX6xf5csvEZr9NEXq0Nhe2CZHF2DA6Vq5lbpcybmH2HcQ
-         PRM0y1evmjYBbOAD/vUAgcOcXrtkAUgOKFB28G7aFfSb1EQgPOA85EByAmmD4AILuJ3B
-         cHBA==
-X-Forwarded-Encrypted: i=1; AJvYcCWF/Qb9ogV4aEa3ytQ64fi1getzUpkmE39VEM6CzIpb2kCWbB/UvnfHIdkFv7TzkJ42M5FWS4p74EvjKogW@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxVdJjyDC7MKGNJu7rcKnS19Xx9HRCIXoqOv+ECNef0GQ4oned
-	Q8HaHMKo4gQhrB37jT/n9yozt4Rid8N0FtN1iFpxrNR/4uzXNe4Nc3/0xpOfJZIU
-X-Gm-Gg: ASbGncuMBKDIqeldCVJImIe9KlkiAHG1Jy3wjZyNoMJwF8xeyClCpSz2VgspST6+z9b
-	3k4JWJvC8R43+C/r8ELYOsl9wEADtgIWVLWL9RSh6umicupik59AWdEHvRMnuT0W9p0atPkW1E7
-	NLb5WQPc/Ns0p3yJHwnS72G+gXds4PAYHDqLSNkr8NABx5VEnHFzA72VYIft3Za41YF5PQ4hO+y
-	Or93bBZRM6HAPY46Ork+Ooxe4QeY+v6jgLpYDvaNbNTba/TGOg3CMo6PO0qVs938zVQYR/LiYS9
-	XQMqRJQS4m2a/xneoYLBDfWsL0IU8KVi9uHmp1Y21xZsAdWioCmUVF4EtFWjQRUVLMizSw8TGfn
-	PNsRqkeBe2BThmt0d2K2AvR82OaH9YveGbWYwObY=
-X-Google-Smtp-Source: AGHT+IEZYS9li2tfKun6TzOZdJNjRX1nV7xFW/O6jF6WWUakzeglVIQiROoz8XNYN3xnKYNHB5Y0vA==
-X-Received: by 2002:a50:d6cb:0:b0:60c:3c19:1e07 with SMTP id 4fb4d7f45d1cf-60e52cd3706mr4571413a12.15.1751544229356;
-        Thu, 03 Jul 2025 05:03:49 -0700 (PDT)
-Received: from Mac.lan (p5088513f.dip0.t-ipconnect.de. [80.136.81.63])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-60c83205eb0sm10563837a12.72.2025.07.03.05.03.48
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Thu, 03 Jul 2025 05:03:48 -0700 (PDT)
-From: Laura Brehm <laurajfbrehm@gmail.com>
-X-Google-Original-From: Laura Brehm <laurabrehm@hey.com>
-To: linux-kernel@vger.kernel.org
-Cc: Laura Brehm <laurabrehm@hey.com>,
-	brauner@kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH 2/2] coredump: fix PIDFD_INFO_COREDUMP ioctl check
-Date: Thu,  3 Jul 2025 14:02:44 +0200
-Message-Id: <20250703120244.96908-3-laurabrehm@hey.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <20250703120244.96908-1-laurabrehm@hey.com>
-References: <20250703120244.96908-1-laurabrehm@hey.com>
+	s=arc-20240116; t=1751544206; c=relaxed/simple;
+	bh=13Mtr8tfOpo/bjU47Z0Ixv/RqoqZx+pkZNbvLw+MH6E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r+K554ORNE55rd86EsHyHfgxEPY5qvlt8lOVgh3swoi8byA345KlyMVSOpkAOTEItzWyOLaFk0xrIuAwKsi9M0eqKyANYl91ST3ePa0nppS4MYSM+oQEJQszyNCJFaN+QnM3NZQrDJqV2ADj0UqR7ny6Nyk82k9ia+8zngI/0ik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=ayEG+PtL; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=0bLFCgSGsGWYqU1VUzp/98s4ncOYCMUP6PUrfSKkQ9I=; b=ayEG+PtL2NdfYFXcLmfnMMc+/o
+	REzK/c2hbPC5peR8ZFgtSTCGIwfArWZLcKgJZYlfV4CQSgckIAtgEpCBuc0U9ApE8zxEcdu84+/Vp
+	/8m8ibuEVYYA0mOJUFD3FeLs4FzBiiugflhOFF//Qlplz/DBrvsIu8Li98qAgzaldWJ08LShkNJMw
+	k678K+PC1fbvUgCwdIlPjRJGFyYe7M8RBdMckjrhpz9jEDTLsc53yiMyEQNgrFIdUmsxPZON/xTch
+	KRAGlD50wX7grhb9R40HOToRDopp9oo4HXTCggU+zZHztGDRVUjubbE2dbpddRVH+1FXWgZvCetN0
+	M2/p8Rbw==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:43908)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1uXIeh-0000gv-0k;
+	Thu, 03 Jul 2025 13:03:07 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1uXIeZ-00054e-1E;
+	Thu, 03 Jul 2025 13:02:59 +0100
+Date: Thu, 3 Jul 2025 13:02:59 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: weishangjuan@eswincomputing.com
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
+	yong.liang.choong@linux.intel.com, vladimir.oltean@nxp.com,
+	jszhang@kernel.org, jan.petrous@oss.nxp.com,
+	prabhakar.mahadev-lad.rj@bp.renesas.com, inochiama@gmail.com,
+	boon.khai.ng@altera.com, dfustini@tenstorrent.com, 0x1207@gmail.com,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, ningyu@eswincomputing.com,
+	linmin@eswincomputing.com, lizhi2@eswincomputing.com
+Subject: Re: [PATCH v3 2/2] ethernet: eswin: Add eic7700 ethernet driver
+Message-ID: <aGZxc-9C0rPVMsGH@shell.armlinux.org.uk>
+References: <20250703091808.1092-1-weishangjuan@eswincomputing.com>
+ <20250703092015.1200-1-weishangjuan@eswincomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250703092015.1200-1-weishangjuan@eswincomputing.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-In Commit 1d8db6fd698de1f73b1a7d72aea578fdd18d9a87 ("pidfs,
-coredump: add PIDFD_INFO_COREDUMP"), the following code was added:
+On Thu, Jul 03, 2025 at 05:20:15PM +0800, weishangjuan@eswincomputing.com wrote:
+> +static void eic7700_qos_fix_speed(void *priv, int speed, u32 mode)
+> +{
+> +	struct eic7700_qos_priv *dwc_priv = priv;
+> +	int i;
+> +
+> +	switch (speed) {
+> +	case SPEED_1000:
+> +		for (i = 0; i < 3; i++)
+> +			regmap_write(dwc_priv->hsp_regmap,
+> +				     dwc_priv->dly_hsp_reg[i],
+> +				     dwc_priv->dly_param_1000m[i]);
+> +		break;
+> +	case SPEED_100:
+> +		for (i = 0; i < 3; i++) {
+> +			regmap_write(dwc_priv->hsp_regmap,
+> +				     dwc_priv->dly_hsp_reg[i],
+> +				     dwc_priv->dly_param_100m[i]);
+> +		}
 
-    if (mask & PIDFD_INFO_COREDUMP) {
-        kinfo.mask |= PIDFD_INFO_COREDUMP;
-        kinfo.coredump_mask = READ_ONCE(pidfs_i(inode)->__pei.coredump_mask);
-    }
-    [...]
-    if (!(kinfo.mask & PIDFD_INFO_COREDUMP)) {
-        task_lock(task);
-        if (task->mm)
-            kinfo.coredump_mask = pidfs_coredump_mask(task->mm->flags);
-        task_unlock(task);
-    }
+The other two instances don't have the curley braces, why does this need
+it?
 
-The second bit in particular looks off to me - the condition in essence
-checks whether PIDFD_INFO_COREDUMP was **not** requested, and if so
-fetches the coredump_mask in kinfo, since it's checking !(kinfo.mask &
-PIDFD_INFO_COREDUMP), which is unconditionally set in the earlier hunk.
+> +		break;
+> +	case SPEED_10:
+> +		for (i = 0; i < 3; i++) {
+> +			regmap_write(dwc_priv->hsp_regmap,
+> +				     dwc_priv->dly_hsp_reg[i],
+> +				     dwc_priv->dly_param_10m[i]);
+> +		}
+> +		break;
+> +	default:
+> +		dev_err(dwc_priv->dev, "invalid speed %u\n", speed);
+> +		break;
+> +	}
 
-I'm tempted to assume the idea in the second hunk was to calculate the
-coredump mask if one was requested but fetched in the first hunk, in
-which case the check should be
-    if ((kinfo.mask & PIDFD_INFO_COREDUMP) && !(kinfo.coredump_mask))
-which might be more legibly written as
-    if ((mask & PIDFD_INFO_COREDUMP) && !(kinfo.coredump_mask))
+Overall, wouldn't:
 
-This could also instead be achieved by changing the first hunk to be:
+	const u32 *dly_param;
 
-    if (mask & PIDFD_INFO_COREDUMP) {
-	kinfo.coredump_mask = READ_ONCE(pidfs_i(inode)->__pei.coredump_mask);
-	if (kinfo.coredump_mask)
-	    kinfo.mask |= PIDFD_INFO_COREDUMP;
-    }
+	switch (speed) {
+	case SPEED_1000:
+		dly_param = dwc_priv->dly_param_1000m;
+		break;
+	... etc ...
+	default:
+		dly_param = NULL;
+		dev_err(dwc_priv->dev, "invalid speed %u\n", speed);
+		break;
+	}
 
-and the second hunk to:
+	if (dly_param)
+		for (i = 0; i < 3; i++)
+			regmap_write(dwc_priv->hsp_regmap,
+				     dwc_priv->dly_hsp_reg[i],
+				     dly_param[i]);
 
-    if ((mask & PIDFD_INFO_COREDUMP) && !(kinfo.mask & PIDFD_INFO_COREDUMP)) {
-	task_lock(task);
-        if (task->mm) {
-	    kinfo.coredump_mask = pidfs_coredump_mask(task->mm->flags);
-            kinfo.mask |= PIDFD_INFO_COREDUMP;
-        }
-        task_unlock(task);
-    }
+be more concise and easier to read?
 
-However, when looking at this, the supposition that the second hunk
-means to cover cases where the coredump info was requested but the first
-hunk failed to get it starts getting doubtful, so apologies if I'm
-completely off-base.
+> +}
+> +
+> +static int eic7700_dwmac_probe(struct platform_device *pdev)
+> +{
+> +	struct plat_stmmacenet_data *plat_dat;
+> +	struct stmmac_resources stmmac_res;
+> +	struct eic7700_qos_priv *dwc_priv;
+> +	u32 hsp_aclk_ctrl_offset;
+> +	u32 hsp_aclk_ctrl_regset;
+> +	u32 hsp_cfg_ctrl_offset;
+> +	u32 eth_axi_lp_ctrl_offset;
+> +	u32 eth_phy_ctrl_offset;
+> +	u32 eth_phy_ctrl_regset;
+> +	bool has_rx_dly = false;
+> +	bool has_tx_dly = false;
+> +	int ret;
+> +
+> +	ret = stmmac_get_platform_resources(pdev, &stmmac_res);
+> +	if (ret)
+> +		return dev_err_probe(&pdev->dev, ret,
+> +				"failed to get resources\n");
+> +
+> +	plat_dat = devm_stmmac_probe_config_dt(pdev, stmmac_res.mac);
+> +	if (IS_ERR(plat_dat))
+> +		return dev_err_probe(&pdev->dev, PTR_ERR(plat_dat),
+> +				"dt configuration failed\n");
+> +
+> +	dwc_priv = devm_kzalloc(&pdev->dev, sizeof(*dwc_priv), GFP_KERNEL);
+> +	if (!dwc_priv)
+> +		return -ENOMEM;
+> +
+> +	dwc_priv->dev = &pdev->dev;
+> +	dwc_priv->dly_param_1000m[0] = EIC7700_DELAY_VALUE0;
+> +	dwc_priv->dly_param_1000m[1] = EIC7700_DELAY_VALUE1;
+> +	dwc_priv->dly_param_1000m[2] = EIC7700_DELAY_VALUE0;
+> +	dwc_priv->dly_param_100m[0] = EIC7700_DELAY_VALUE0;
+> +	dwc_priv->dly_param_100m[1] = EIC7700_DELAY_VALUE1;
+> +	dwc_priv->dly_param_100m[2] = EIC7700_DELAY_VALUE0;
+> +	dwc_priv->dly_param_10m[0] = 0x0;
+> +	dwc_priv->dly_param_10m[1] = 0x0;
+> +	dwc_priv->dly_param_10m[2] = 0x0;
+> +
+> +	ret = of_property_read_u32(pdev->dev.of_node, "rx-internal-delay-ps",
+> +				   &dwc_priv->rx_delay_ps);
+> +	if (ret)
+> +		dev_dbg(&pdev->dev, "can't get rx-internal-delay-ps, ret(%d).", ret);
 
-This patch addresses the issue by fixing the check in the second hunk.
+Consider using %pe and ERR_PTR(ret) so that error codes can be
+translated to human readable strings. Ditto elsewhere.
 
-Signed-off-by: Laura Brehm <laurabrehm@hey.com>
-Cc: brauner@kernel.org
-Cc: linux-fsdevel@vger.kernel.org
----
- fs/pidfs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> +	else
+> +		has_rx_dly = true;
+> +
+> +	ret = of_property_read_u32(pdev->dev.of_node, "tx-internal-delay-ps",
+> +				   &dwc_priv->tx_delay_ps);
+> +	if (ret)
+> +		dev_dbg(&pdev->dev, "can't get tx-internal-delay-ps, ret(%d).", ret);
+> +	else
+> +		has_tx_dly = true;
+> +	if (has_rx_dly && has_tx_dly) {
+> +		eic7700_set_delay(dwc_priv->rx_delay_ps, dwc_priv->tx_delay_ps,
+> +				  &dwc_priv->dly_param_1000m[1]);
+> +		eic7700_set_delay(dwc_priv->rx_delay_ps, dwc_priv->tx_delay_ps,
+> +				  &dwc_priv->dly_param_100m[1]);
+> +		eic7700_set_delay(dwc_priv->rx_delay_ps, dwc_priv->tx_delay_ps,
+> +				  &dwc_priv->dly_param_10m[1]);
+> +	} else {
+> +		dev_dbg(&pdev->dev, " use default dly\n");
+> +	}
+> +
+> +	ret = of_property_read_variable_u32_array(pdev->dev.of_node, "eswin,dly_hsp_reg",
+> +						  &dwc_priv->dly_hsp_reg[0], 3, 0);
+> +	if (ret != 3) {
+> +		dev_err(&pdev->dev, "can't get delay hsp reg.ret(%d)\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	dwc_priv->crg_regmap = syscon_regmap_lookup_by_phandle(pdev->dev.of_node,
+> +							       "eswin,syscrg_csr");
+> +	if (IS_ERR(dwc_priv->crg_regmap))
+> +		return dev_err_probe(&pdev->dev, PTR_ERR(dwc_priv->crg_regmap),
+> +				"Failed to get syscrg_csr regmap\n");
+> +
+> +	ret = of_property_read_u32_index(pdev->dev.of_node, "eswin,syscrg_csr", 1,
+> +					 &hsp_aclk_ctrl_offset);
+> +	if (ret)
+> +		return dev_err_probe(&pdev->dev, ret, "can't get hsp_aclk_ctrl_offset\n");
+> +
+> +	regmap_read(dwc_priv->crg_regmap, hsp_aclk_ctrl_offset, &hsp_aclk_ctrl_regset);
+> +	hsp_aclk_ctrl_regset |= (EIC7700_HSP_ACLK_CLKEN | EIC7700_HSP_ACLK_DIVSOR);
+> +	regmap_write(dwc_priv->crg_regmap, hsp_aclk_ctrl_offset, hsp_aclk_ctrl_regset);
+> +
+> +	ret = of_property_read_u32_index(pdev->dev.of_node, "eswin,syscrg_csr", 2,
+> +					 &hsp_cfg_ctrl_offset);
+> +	if (ret)
+> +		return dev_err_probe(&pdev->dev, ret, "can't get hsp_cfg_ctrl_offset\n");
+> +
+> +	regmap_write(dwc_priv->crg_regmap, hsp_cfg_ctrl_offset, EIC7700_HSP_CFG_CTRL_REGSET);
+> +
+> +	dwc_priv->hsp_regmap = syscon_regmap_lookup_by_phandle(pdev->dev.of_node,
+> +							       "eswin,hsp_sp_csr");
+> +	if (IS_ERR(dwc_priv->hsp_regmap))
+> +		return dev_err_probe(&pdev->dev, PTR_ERR(dwc_priv->hsp_regmap),
+> +				"Failed to get hsp_sp_csr regmap\n");
+> +
+> +	ret = of_property_read_u32_index(pdev->dev.of_node, "eswin,hsp_sp_csr", 2,
+> +					 &eth_phy_ctrl_offset);
+> +	if (ret)
+> +		return dev_err_probe(&pdev->dev, ret, "can't get eth_phy_ctrl_offset\n");
+> +
+> +	regmap_read(dwc_priv->hsp_regmap, eth_phy_ctrl_offset, &eth_phy_ctrl_regset);
+> +	eth_phy_ctrl_regset |= (EIC7700_ETH_TX_CLK_SEL | EIC7700_ETH_PHY_INTF_SELI);
+> +	regmap_write(dwc_priv->hsp_regmap, eth_phy_ctrl_offset, eth_phy_ctrl_regset);
+> +
+> +	ret = of_property_read_u32_index(pdev->dev.of_node, "eswin,hsp_sp_csr", 3,
+> +					 &eth_axi_lp_ctrl_offset);
+> +	if (ret)
+> +		return dev_err_probe(&pdev->dev, ret, "can't get eth_axi_lp_ctrl_offset\n");
+> +
+> +	regmap_write(dwc_priv->hsp_regmap, eth_axi_lp_ctrl_offset, EIC7700_ETH_CSYSREQ_VAL);
+> +
 
-diff --git a/fs/pidfs.c b/fs/pidfs.c
-index 69919be1c9d8..4625e097e3a0 100644
---- a/fs/pidfs.c
-+++ b/fs/pidfs.c
-@@ -319,7 +319,7 @@ static long pidfd_info(struct file *file, unsigned int cmd, unsigned long arg)
- 	if (!c)
- 		return -ESRCH;
- 
--	if (!(kinfo.mask & PIDFD_INFO_COREDUMP)) {
-+	if ((kinfo.mask & PIDFD_INFO_COREDUMP) && !(kinfo.coredump_mask)) {
- 		task_lock(task);
- 		if (task->mm)
- 			kinfo.coredump_mask = pidfs_coredump_mask(task->mm->flags);
+Consider more sensible wrapping of this (netdev frowns at >80
+characters per line, except for message strings that should remain
+greppable.)
+
 -- 
-2.39.5 (Apple Git-154)
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
