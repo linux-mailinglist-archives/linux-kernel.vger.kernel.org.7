@@ -1,316 +1,280 @@
-Return-Path: <linux-kernel+bounces-714849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEA4AAF6D47
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 10:44:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D219AF6D4D
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 10:45:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AA5A3A3E28
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 08:44:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B32EE3AD3C5
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 08:44:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BCF02D29BA;
-	Thu,  3 Jul 2025 08:44:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F181A2D0C66;
+	Thu,  3 Jul 2025 08:45:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hSLHzwX0"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b="urLAB9rY"
+Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11023127.outbound.protection.outlook.com [40.107.44.127])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F2EF2DE6E8;
-	Thu,  3 Jul 2025 08:44:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751532277; cv=none; b=Hp/V2vlLF88zYaS81Ubamtlezoy0C5OjjqQnaKKMhw5+bDkywIJ05pEh/nK646UUWf4fRTPeOEoRzuSshNt5A4ArEu3U00nn/6ln21+/91bFi3mBHt7sRQNUgEgMOvdaLCFn/qSeE/GATd7wLRIoJXjVsLWB8GzGP/tZEoS3fFQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751532277; c=relaxed/simple;
-	bh=t1v1BAiPC1HqbbaE77FhyukVMmCQJb9YdgC5sR0nzEY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TNyvm7K9MG4LyuuUUhFBMtCTZ/BYvqkkx1mDml3nbKaSSZ14qI7nLtksgZ2jcu6Wr8ITu35AofOOkVdd+fY1cAcsuSyD/GR7X6Z3cwQfR/chy4DslqbAFgBkg2xppGfXHkLdfdT0ik1lEcZ/anx9F1bd91AS4bMAjeWbS+eEJkc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hSLHzwX0; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3a525eee2e3so4813186f8f.2;
-        Thu, 03 Jul 2025 01:44:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751532274; x=1752137074; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OFX/TAx6epCpcEo12wFWGJBoxHilKkIQzdhXF7nb3aU=;
-        b=hSLHzwX0mwsU0IUdvvEZDFOAm2nMhzahgMagW2KjxRYU6W+YTraVHBxKGC6grelySF
-         WRCAnJwG2N+k1KbfrXDt+8De/TEPTnPbE2laeFS7e5G3WHIDsTawRAYOaPTWQuTcM7BT
-         RqNHReRW6lQWzSmVE9Bhcff14xjVUzrDCiTHzVT76eE8zUXZfPeGpIDhiw5x4KQXxPPc
-         UQlFE2NxGN8guynuJYo0irraAoY62mlO+6EimJLPKvaDhbeZAMugw9T6Q4JzuDCTVE+5
-         YO8DJEUdM+zBrTM2wM6Xv1/uBN+I03HmWAKMp1ROHt0+wxKaRfgJ5hdDfVHOtfrU8mpS
-         Hfgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751532274; x=1752137074;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OFX/TAx6epCpcEo12wFWGJBoxHilKkIQzdhXF7nb3aU=;
-        b=QfbGctelrM5YFGvU/JF6bMvRm1uiaqrFi68E0aQ+bUhwNsfmpZNkuMMryI+HPesSpP
-         vrn6eaoKM+OI3aKt70pmo4RrvRom2hQ1XJghlu0ghUd+Oo8SEbGRhIOq8xzA+8V3LCfx
-         2USY0Dv7+nNEjDT4zKxEbaJLihAyNbnlKKWPj4ZmllAdQaiXJpRzpaWbTdV6YGB3bf57
-         Tz/Fpk8+SGZNX3xk2kOSFYFd8/+VWEOuLtvpqHdDRNqUxerEesmZc8omFhGfN5AgrAVS
-         hmQ2KdoVk9TcLS3XXyHwj/qT0XyUpZJOezkd3z1WhNlNIbMQEM2WYh+XDCD9klDr3x3Y
-         211Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVrMzZqgzkWGytgQUQ0LRf64rr1hsFR3I+OZag/IGc4/AWBCY+PGAHHNFx44CwjPxJaGN4pkc9whfOZF/hs@vger.kernel.org, AJvYcCWxxnX5cdES5UDTRo55I7r7NbR9IzDylWZQfzhHn6gNgFhGCNDwqXb1ayCjQR2YDQ2Xz1jw3gJHGAJ1@vger.kernel.org, AJvYcCXI94kZcU+SQPJRHDH/0ehjahwDQNxrDGdzNrYpKrK0C3UxmGtPvLDIy6ye/J9nPsw0AK1KvOzNlLA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/uhj+xmA+WbNT7GUarrv+zXaMIZD6eAxRcenszJikEZ27pjV9
-	xefm3IvyzbMpiRLLkkpS36NeXaPnaDS1P+HZpg/0ax93xgQC7ZRh+dUY
-X-Gm-Gg: ASbGncv37NYQ5gCdjLP53eO9Nf4CL3VX9oNSFCCfyugc4cmskZk2jWF/UVfKf6bsaAw
-	9UmH7eh7piFsg20MmWy6eW026tphPmL9FF8Sos5fzKcvG7shqSoNUlHnxtVwZyJl7SqLXp6nC1n
-	IHCMbDB/+J8TR0EHkFPtlntoqiUXO8FSF9wf4Tn9SrvIVzKBow7ILVHtLbdi3PcMe/dYYCB2lG0
-	97ZjR++HGpuBxrxChsmfHvCRrRdHbfYe7GUchYT7SHVoDS4LcPP83pLaesTdzB5lf2CR8wW25a7
-	ObpZk6D0/T7xXMMymuTmuO/N7JdY0sl1WWXfNS0orDuh2pvMok5cZEXnBVG1BWR50spyS00lQiV
-	OUbGkiBH0B+/yo6KM9Q==
-X-Google-Smtp-Source: AGHT+IGpJYcIiVB0V7dfxLr4hl+2St0WzP4p5xUbwUL9Q9cruWACk5HaqKiw36ESWFjGbUj0Mh/Z+w==
-X-Received: by 2002:a05:6000:26c4:b0:3a4:c909:ce16 with SMTP id ffacd0b85a97d-3b32fb30d66mr1813139f8f.49.1751532274119;
-        Thu, 03 Jul 2025 01:44:34 -0700 (PDT)
-Received: from pumpkin (host-92-21-58-28.as13285.net. [92.21.58.28])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a88c7e7386sm17869936f8f.20.2025.07.03.01.44.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Jul 2025 01:44:33 -0700 (PDT)
-Date: Thu, 3 Jul 2025 09:44:17 +0100
-From: David Laight <david.laight.linux@gmail.com>
-To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
- <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin"
- <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Ard Biesheuvel
- <ardb@kernel.org>, "Paul E. McKenney" <paulmck@kernel.org>, Josh Poimboeuf
- <jpoimboe@kernel.org>, Xiongwei Song <xiongwei.song@windriver.com>, Xin Li
- <xin3.li@intel.com>, "Mike Rapoport (IBM)" <rppt@kernel.org>, Brijesh Singh
- <brijesh.singh@amd.com>, Michael Roth <michael.roth@amd.com>, Tony Luck
- <tony.luck@intel.com>, Alexey Kardashevskiy <aik@amd.com>, Alexander
- Shishkin <alexander.shishkin@linux.intel.com>, Jonathan Corbet
- <corbet@lwn.net>, Sohil Mehta <sohil.mehta@intel.com>, Ingo Molnar
- <mingo@kernel.org>, Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, Daniel
- Sneddon <daniel.sneddon@linux.intel.com>, Kai Huang <kai.huang@intel.com>,
- Sandipan Das <sandipan.das@amd.com>, Breno Leitao <leitao@debian.org>, Rick
- Edgecombe <rick.p.edgecombe@intel.com>, Alexei Starovoitov
- <ast@kernel.org>, Hou Tao <houtao1@huawei.com>, Juergen Gross
- <jgross@suse.com>, Vegard Nossum <vegard.nossum@oracle.com>, Kees Cook
- <kees@kernel.org>, Eric Biggers <ebiggers@google.com>, Jason Gunthorpe
- <jgg@ziepe.ca>, "Masami Hiramatsu (Google)" <mhiramat@kernel.org>, Andrew
- Morton <akpm@linux-foundation.org>, Luis Chamberlain <mcgrof@kernel.org>,
- Yuntao Wang <ytcoode@gmail.com>, Rasmus Villemoes
- <linux@rasmusvillemoes.dk>, Christophe Leroy <christophe.leroy@csgroup.eu>,
- Tejun Heo <tj@kernel.org>, Changbin Du <changbin.du@huawei.com>, Huang
- Shijie <shijie@os.amperecomputing.com>, Geert Uytterhoeven
- <geert+renesas@glider.be>, Namhyung Kim <namhyung@kernel.org>, Arnaldo
- Carvalho de Melo <acme@redhat.com>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCHv8 02/17] x86/asm: Introduce inline memcpy and memset
-Message-ID: <20250703094417.165e5893@pumpkin>
-In-Reply-To: <20250701095849.2360685-3-kirill.shutemov@linux.intel.com>
-References: <20250701095849.2360685-1-kirill.shutemov@linux.intel.com>
-	<20250701095849.2360685-3-kirill.shutemov@linux.intel.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E59329AB1A;
+	Thu,  3 Jul 2025 08:45:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.127
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751532303; cv=fail; b=b1YThVSwvCRmD6DyRuRIzVqMZ6EDtLt4Kzx/BTCC/X6dyVb8Al7TxZT+yKfCiNJQRZSjq17SzhoTqUFmwIB3zhkjtfZ9sNx6GZK0J7dU6Tg1bpfGpxAILUSeqCsAqfDySrdAm2jYOhHfCljLZ1kg5JA4CweX8jnbmuO80a6Ed/I=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751532303; c=relaxed/simple;
+	bh=FXRIcZIy3ya1Q1PuZGmIc7XEtJGIrsN4d6PDC+wPKzo=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=ILSR0UnrmygKX4NQGRmFW9iuLumYE1wzhfnzyCCjGzf5Z++rJJMG1MPr4oUdsibGPnHI9kxJ4r7z4W2Op2PJ2vLSUtVAuejd+iSF9tIbAwUmnfeAD+45z0snr7cGjQqGFDew9PLCguggCd1EoCQDLZqsoEDrrxPSW7al+yy3Xws=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b=urLAB9rY; arc=fail smtp.client-ip=40.107.44.127
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=dY0FVpbaOn3f+hEbt4ONzpAYZHDCN4Qw5R9nMkNphptSLoJPGHlgZ3XhHVUY7xAQVSXoaczet52SELMrREzlGudhb9Of9Kn3LBtIHbm2/Iw0LzeGO0s+lvE3OBP5pb4BHXVPnlhEzOQ25OvdJHaqmQEQ0zx8eMOQXauUTf2g8ELW2yPI1MBclwGooPWZU0rJBxrClfVoYWm9DvJGvVHzGreqm2U6A0am3sUTxDhfLltfIE6DTLMt/JREjsXNPK6BkEnk/ywugG/zJHGnEB7P06L278+FR9n/QGqMlTZNouhDVYCHJbg37LfPptN186e+pbCDyFJ4lysE41u/VqaOdw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=tPKzPME3OkKVgVWDUqmcxZ2pjWgjSx/Z0KRlmEp/oYo=;
+ b=OET0VgPKer5dLxTX/SFpvJzjTs39diSPQDIcrEYDBJwcNEisetobLukjxXlk4QdaJJfjtP2FmAJwt/vimBoWy4S5wcjC549ZlMM9z9iCbc9hyBFMwRZgv7QraXAGAb0tX337/3KcMpXaDrScf0PtHVCrekvbjHNeYBT8OzLWrcFG0OBkUPWQiW8ATOXfg/Za0ya2fGpbniUv0sz3NQuv1JE8mO+InP+XdoGYENuobXfufAwTQb3hdth8ozGoLoyIVsEtEU6SYVRQhoq4gp2woGLRYTKxeXV8wAAQ4zbpM6zEQgmUrIZuZrXovdhD+hVmydYBU2zm0CuYOt4dhFFXfw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
+ dkim=pass header.d=amlogic.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tPKzPME3OkKVgVWDUqmcxZ2pjWgjSx/Z0KRlmEp/oYo=;
+ b=urLAB9rY45elmorS9gotS/uQTXkhpXibCb+bvzzdMA3rXOuLPnKIDmjO5oDtSKJfzzr9ju8O/gbF2E4vaozfAKv179fkRFMlNpn/gEzbFYqMMRkw/gNiNGYjliiMdvjZncS1ri2EG+qU+ZBGp557WFOJC5j32bLrPOGNtJRBFB1paa+amYg5HKVNs4Wv4dWI7uyUQ9hCGwCTFfyHK8LYIDChWXVDiNOMxGA3MDfaBlmX197CBzjYOZR+UPyIWnTyDVFMacKFSoD7Cb+JgCq1tC2Qj7oUdqkqXWD0NztZ4hmKUT8PtjnZit9x9IA5Ac80ka6HeELO5uhSP2XXLTwYcA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amlogic.com;
+Received: from JH0PR03MB7468.apcprd03.prod.outlook.com (2603:1096:990:16::12)
+ by SEYPR03MB7533.apcprd03.prod.outlook.com (2603:1096:101:147::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.20; Thu, 3 Jul
+ 2025 08:44:58 +0000
+Received: from JH0PR03MB7468.apcprd03.prod.outlook.com
+ ([fe80::4128:9446:1a0f:11fd]) by JH0PR03MB7468.apcprd03.prod.outlook.com
+ ([fe80::4128:9446:1a0f:11fd%7]) with mapi id 15.20.8880.021; Thu, 3 Jul 2025
+ 08:44:58 +0000
+Message-ID: <583badf5-26b0-431f-abe8-e411ef126c26@amlogic.com>
+Date: Thu, 3 Jul 2025 16:44:33 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Bluetooth: hci_event: Hold PA sync conn when BIG sync
+ established
+To: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Cc: Marcel Holtmann <marcel@holtmann.org>,
+ Johan Hedberg <johan.hedberg@gmail.com>, linux-bluetooth@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250702-hold_pa_sync-v1-1-3cbdd2c29c41@amlogic.com>
+ <CABBYNZJJJcjhwbDwYZxqxu-RHtyUd9T3Lvf-qEqgNfxfCsk+9w@mail.gmail.com>
+Content-Language: en-US
+From: Yang Li <yang.li@amlogic.com>
+In-Reply-To: <CABBYNZJJJcjhwbDwYZxqxu-RHtyUd9T3Lvf-qEqgNfxfCsk+9w@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SI1PR02CA0034.apcprd02.prod.outlook.com
+ (2603:1096:4:1f6::10) To JH0PR03MB7468.apcprd03.prod.outlook.com
+ (2603:1096:990:16::12)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: JH0PR03MB7468:EE_|SEYPR03MB7533:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6bb76516-2372-4aa2-a04c-08ddba0de419
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?c1Z4dzRTRzlTNElHMlo4M2s3NXFxUktYd3hvazgvWUdodzBPOUZLb0Z3VGo4?=
+ =?utf-8?B?NHhjenZpZ1NZaXdlc2VWT0d5a3Y0MWlrTkVxVWdvV0JUSkNEeU01NjhwOURw?=
+ =?utf-8?B?K0tiL2R5MWdOQVRMVDdxL05rS2lHWTNodEI0d0tPb2Z5SEZNS0lTQzZ4NW1T?=
+ =?utf-8?B?Q05sSzYybmozeXhtTkV1RVpRaHR5U3huaDdFaHFoYnFVQ1NiOVVDb0ZROU04?=
+ =?utf-8?B?cE9GKzNQZGlvNUZFYUVVVnk0c2VQdFZkRk1yTkRadHlMeHhPRTlVWkNUS25G?=
+ =?utf-8?B?MkxwMCszZ2NjaDdiZCszODkzTXIrUU94RmUxVUlyVEFGb0Zhbmk1ZEZoSDV2?=
+ =?utf-8?B?RWxkWVJOTHJNRWlKZkQ3TVNLVSttbTJvYjd0TTRtYW1wb0xoYmVoVWlkczI4?=
+ =?utf-8?B?LytDQWc3Nkc4Qy8wR1cvRzBZZVRNdGxySzV1OThycDQrSzJNQzBqanBNUkYv?=
+ =?utf-8?B?WjNWa0k2ZmRaTTRrNDQycEFrY052VUZKRWl4UlJDTHkwZHNWK2lDQVlGTXJi?=
+ =?utf-8?B?NHM0dUl0d21CUWp1aU1CaUlkb1l4UkVsbURjRXlBdGRNVmozK013a1huOXFu?=
+ =?utf-8?B?WWNDc1FNS29ESU1nSkpCTE5DMVFndkVnU3p0dVZ1STIzN3l3YTVqY2VUUm1y?=
+ =?utf-8?B?VDE5dEdTbUxtcUl6YVVnM2s4ZExXUFEyTHQ3OWVMd054RFhIUHlqeGFyRURq?=
+ =?utf-8?B?L2JaTTcvcTBXbSsySENDK2xHM3B6TG1kcHBsME1PNUNyTEZvUUZSOU8wU29x?=
+ =?utf-8?B?MDgzSGFZS1VEZU1sUExuZVl3bmdHSnh1QlBuMEhqZGZSR3h6bHhpOUlCR2F3?=
+ =?utf-8?B?ZVBncTZVYnFZQ1RiK3I0UmRJZ2VrRDRXcE9HWEJiL214WitlTzNHNld2dkU3?=
+ =?utf-8?B?a2dwZXdVSjRWMEpLNG1QdmtZeWZCRmp5UHl0YTZmK2lsMy9zWmZpd0RzQU1p?=
+ =?utf-8?B?RTBla2NzTG9YZXZrdDBSN0dzQUplSGJ4TlBqM1JOWVhqS3E0Z1lzcmhibW9r?=
+ =?utf-8?B?ekVVTk9NYXRxUUZuMmJkK2t5TDRwbU96Uys5UFQzcXNzK3h3Z2hyWGtqQk9a?=
+ =?utf-8?B?SnFEWGdRR2dVekJSUWtOQnJDdWJHNHo1ZXQ2KzNQY2c5L2duWTlPUnQxdnRK?=
+ =?utf-8?B?VGg1TjUrRTBvZUZVdVF2Z1Rjb051KzVvSS8rQXl3NjdPcW8ybjhwTVpKNE4v?=
+ =?utf-8?B?ejVtMTg5bjBBQk5uS3prNUZOWUQza0pFVDJBU05BZ3ZtS1Zoa3lYVEUwdzRL?=
+ =?utf-8?B?RGsyUnlkV1VEaktIeTFBNkk4RmphSmczNUlldng4WktBWEN1dnJTMWVwNmFl?=
+ =?utf-8?B?RWExNGVjTC9GNENXSk1aVW9VWG0zbnhNUDZiVmJjWGFwMDRIbktDRVcyS2NG?=
+ =?utf-8?B?YkVEWElHdWVSMFYwNnpWWldqUWQxTTJ5K2VtMDNPY0pXU3dJeFZLYWhaTFhO?=
+ =?utf-8?B?VjNTVWZLNEpNNnBhT0crM21CUHo2YVlZVkVoeW9xa096RVNoNTljWEdEcGFG?=
+ =?utf-8?B?eW0xNmF2Rkt0MW43TmNLMWVqbE5iaXlpeDRiOHJlYVNzaUVpUmxmMGdNT0pQ?=
+ =?utf-8?B?UGUzSTRMWXhTRkFWbVBPS0JRRlRsbjN1bFZDaHNRZFZ1bXZ3cEtwTG1QYkFh?=
+ =?utf-8?B?YzJPbitZSWVwVXhLdmJwajVmc2lPQTJ2c1kxWE9iMkhLVmkzODF0Uk9Ncy80?=
+ =?utf-8?B?SlBHSHZOM2M3dm5wczVuK0Y5ZHpkaVcwT3cxa1NSTklKR1MxZFhNbDE0Y1NR?=
+ =?utf-8?B?TjAxcWk2WFJPcmRkaWNnZGNCM3U2V3FqekNmdWlSNFN1azY4Vmd6SWZEMk1x?=
+ =?utf-8?B?TGxvL3V2amVCZXVJMThZK21WK2xMTTc3cDVvRW5Zay81bm1NN0pTcDVkSm82?=
+ =?utf-8?B?UXZtdGlhejcwbUlkZXRneVpkOHhpSXBwb3dla1B0d2R5L1hJQ1kzbUhiV0w1?=
+ =?utf-8?Q?SiOr1sT/yO0=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:JH0PR03MB7468.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?KzdmWWdhVUR6bXc5dVlLT2U3Q0c1Zk5XSXM2STZGNGhHUU85dmlMRmE2L1ps?=
+ =?utf-8?B?dWNMcXdCM3RDRFVlN3VicUNXblNnZjB4WnZ3TmVpbWdDVC9OTnBqY0hoQUEw?=
+ =?utf-8?B?eCswcUwrQnRXRUVUQ2xrblkxU05OZVUxWjBrV2ZZd0xUK25Sclc5U3duRW9M?=
+ =?utf-8?B?cnpNY2lsdm9BSnR2RUFnVmRaWEh0dUFsQlo4dEFTUEpzeTJPR2EzeUMxZ0dL?=
+ =?utf-8?B?TkVML1Y1ZDBIYmJEY0ZXNVF2QUo0bGhDck56Y0ovOHkrUXFwVHNCcUdYYmpP?=
+ =?utf-8?B?TFVaSlZSWFBFcVJuV21rNXpVaWw1T2hIQytKQnJLOUR1MzliMnUzTStEVW5Q?=
+ =?utf-8?B?NkZCeFIyYVMzUkNvZHJCYnFiSmgyV3ZQN2xjUUh5ckYyUlZDTGtxWThicSsy?=
+ =?utf-8?B?dzdzRzcra0Z0aExib05ueGEvQVBRd3FaZ01TYzN5THUxNmlTOTkwMW5ac1Rj?=
+ =?utf-8?B?TkZZR25Na0Z4alpCa1Y2UTRodnRQUHR4UkhHeUIrREIvQmVxY2hNaW43c3Aw?=
+ =?utf-8?B?VzNrd3JlODZVT2VSeHhscndVRngwVlFFZmJMaHFpd1JBR3FScS9JcHR6ZDFO?=
+ =?utf-8?B?RkRyRU8yeGpVTmluRUpDRi8rYndyVzFqT0RsUTJENDFuRm1oUmRvMG5LTU9v?=
+ =?utf-8?B?QURLQnpvWEY0SVJhNkhNdlBEcWxRT0tBNEFmUU9KckJabHcxVFl1OVp3WklT?=
+ =?utf-8?B?eFQ2aEJuNjhzaWV6VWdCZXJJT0VQS2o3TkVNWSt5Nnc2TkNqMC9pblQ2VU4r?=
+ =?utf-8?B?Ty9GL1ZHZzh6c0NTa05uVlp2WWM1ZVc1bGl3S1pyM25VaFFtSmE3WGNxZ2JC?=
+ =?utf-8?B?MEJ6OFZiTDJRQXI4aGJmOExKL1NvdVFvcUNEM2Q0a2NSS2Q5VktoN1grU3kw?=
+ =?utf-8?B?U1FBSjA1K2UwdVNWa2ZIY1hvQ2xDTE1PWTFFU1lNZnRrMXdyUjhxTkdtcnd5?=
+ =?utf-8?B?VUJiWWdCbi8ya3BiR3NJUmFJWmNnUjBoaWVWRXFjQUdMWmZIWHp2TXRIaTZi?=
+ =?utf-8?B?K0VUOHB6VklvcUtvcUhIbjJyejFSS0Q4elBUYVQrZjQ0dW4zVkYwTndxL1VD?=
+ =?utf-8?B?M2g0MDJMOFplNzA5dGZLa0dlVDVQR2l2dlhnbGI3VVUyYmlWbFBreHNCN2ZE?=
+ =?utf-8?B?WlpPUS8zTmJubmg4aUZ6Kyt1SCtKTVZJalJGbCt1dG8veGY5bm53eEY1Qm9i?=
+ =?utf-8?B?Y3dQNzgvbUhKdVIxSnBSdjlkaUpPbm5YQnFKVDdQdVRvQlE2SnF0VzNqTlRw?=
+ =?utf-8?B?MXV0RURhNkFjQ2JIb0VpbmUrNitMVXVMQ2daSHdPZWwwT2ROeDM5MzlPZDBD?=
+ =?utf-8?B?RnNtY1kwVitmY1NVa2hOV2xaQnVtV1NCcHBVb09UZnE5cWlmT1AyeTJaWUtJ?=
+ =?utf-8?B?YzI5eXRwWWJvbGZVVmlmbHdqWDVUOVoyYkVxKzBpZW1mbEhWTkdPOWp5MDNm?=
+ =?utf-8?B?dStXSU94NkllVkZLL3J0NFdnYSsrb2JJRE9QK2ZPOVhGQlpmUVpLL0dtenJG?=
+ =?utf-8?B?eEx1UWg4L1JlcCtwN25kRUFUUm44T3JCbmtuUmowQ1oyRDdDaUgzTGhrbloy?=
+ =?utf-8?B?ZmdDU3dkSlRrVG1Db29NdktNZWdDYXNzWUdlcU8rTVJqY082My9KRExGQS85?=
+ =?utf-8?B?dHZyL2VIdk9jRlI3bjdIQXJJWTlWM3NIdzN5cExaSTdadnNERUtNY21FaUFN?=
+ =?utf-8?B?cUoydUo1cHlKd2VZQkI0ZWkxRGZLQlpRM0wxc1p6bDZTc2hxanZIYmpLbjdC?=
+ =?utf-8?B?U2l5Rk51Zy9JdUpIdFpsU0orbzdHK2dWNlhvUzVzYklFRVZuWC8wU1owM0Zu?=
+ =?utf-8?B?S3ZNcnFVNTcra2hGQlV4aGd2NEd3N1ZGNFFtRXM5c1RXZmxDbURneGU2aSt2?=
+ =?utf-8?B?cGJXeEtiS3ZXYTJ0MmJrTVNISnE1RUV6TjlUdHhIbXhqdmQ2TEFncXY2TFhh?=
+ =?utf-8?B?emE0SEM1QS9hWHNzME4reS9zZjVXSnhHUmlaYlVPZnZFdFJOYlVvb2V2V21I?=
+ =?utf-8?B?cFdTUkpzRmhKVTRiRmNTNUhLVDU1VXZZN3V1RGxZM1A0b1NnZ05pajJrWG5Y?=
+ =?utf-8?B?dThMcXNXMnRTcWJEVGhyOWNLR2p1d3dVc1JVSlBOTkZ5NmRvbTRRQk5saEVI?=
+ =?utf-8?Q?4nebIQe9A0N1DzkmO1MavWESN?=
+X-OriginatorOrg: amlogic.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6bb76516-2372-4aa2-a04c-08ddba0de419
+X-MS-Exchange-CrossTenant-AuthSource: JH0PR03MB7468.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jul 2025 08:44:58.2120
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: iGFkcLZMWEUM9JuN2DUsH2uUVJ4DzkH+VNpJ6XL9M4lVveev1WRql2Ts9l7cBgvzqrjLg7VGqwuI2JofNe1Mhg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR03MB7533
 
-On Tue,  1 Jul 2025 12:58:31 +0300
-"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com> wrote:
+Hi Luiz,
+> [ EXTERNAL EMAIL ]
+>
+> Hi,
+>
+> On Tue, Jul 1, 2025 at 11:12 PM Yang Li via B4 Relay
+> <devnull+yang.li.amlogic.com@kernel.org> wrote:
+>> From: Yang Li <yang.li@amlogic.com>
+>>
+>> Hold PA sync connection to prevent cleanup during hci_conn_timeout.
+> You will need to do a better job explaining what is the issue here.
 
-> Extract memcpy and memset functions from copy_user_generic() and
-> __clear_user().
-> 
-> They can be used as inline memcpy and memset instead of the GCC builtins
-> whenever necessary. LASS requires them to handle text_poke.
 
-Except they contain the fault handlers so aren't generic calls.
+Since the PA sync connection is set to BT_CONNECTED in 
+hci_le_big_sync_established_evt, if its status is BT_CONNECTED when 
+hci_abort_conn_sync is called, hci_disconnect_sync() will be executed, 
+which will cause the PA sync connection to be deleted.
 
-> 
-> Originally-by: Peter Zijlstra <peterz@infradead.org>
-> Link: https://lore.kernel.org/all/20241029184840.GJ14555@noisy.programming.kicks-ass.net/
-> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> ---
->  arch/x86/include/asm/string.h     | 46 +++++++++++++++++++++++++++++++
->  arch/x86/include/asm/uaccess_64.h | 38 +++++++------------------
->  arch/x86/lib/clear_page_64.S      | 13 +++++++--
->  3 files changed, 67 insertions(+), 30 deletions(-)
-> 
-> diff --git a/arch/x86/include/asm/string.h b/arch/x86/include/asm/string.h
-> index c3c2c1914d65..17f6b5bfa8c1 100644
-> --- a/arch/x86/include/asm/string.h
-> +++ b/arch/x86/include/asm/string.h
-> @@ -1,6 +1,52 @@
->  /* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef _ASM_X86_STRING_H
-> +#define _ASM_X86_STRING_H
-> +
-> +#include <asm/asm.h>
-> +#include <asm/alternative.h>
-> +#include <asm/cpufeatures.h>
-> +
->  #ifdef CONFIG_X86_32
->  # include <asm/string_32.h>
->  #else
->  # include <asm/string_64.h>
->  #endif
-> +
-> +#ifdef CONFIG_X86_64
-> +#define ALT_64(orig, alt, feat) ALTERNATIVE(orig, alt, feat)
-> +#else
-> +#define ALT_64(orig, alt, feat) orig "\n"
-> +#endif
-> +
-> +static __always_inline void *__inline_memcpy(void *to, const void *from, size_t len)
-> +{
-> +	void *ret = to;
-> +
-> +	asm volatile("1:\n\t"
-> +		     ALT_64("rep movsb",
-> +			    "call rep_movs_alternative", ALT_NOT(X86_FEATURE_FSRM))
-> +		     "2:\n\t"
-> +		     _ASM_EXTABLE_UA(1b, 2b)
-> +		     : "+c" (len), "+D" (to), "+S" (from), ASM_CALL_CONSTRAINT
-> +		     : : "memory", _ASM_AX);
-> +
-> +	return ret + len;
-> +}
-> +
-> +static __always_inline void *__inline_memset(void *addr, int v, size_t len)
-> +{
-> +	void *ret = addr;
-> +
-> +	asm volatile("1:\n\t"
-> +		     ALT_64("rep stosb",
-> +			    "call rep_stos_alternative", ALT_NOT(X86_FEATURE_FSRM))
-> +		     "2:\n\t"
-> +		     _ASM_EXTABLE_UA(1b, 2b)
-> +		     : "+c" (len), "+D" (addr), ASM_CALL_CONSTRAINT
-> +		     : "a" ((uint8_t)v)
+int hci_abort_conn_sync(struct hci_dev *hdev, struct hci_conn *conn, u8 
+reason)
+{
+...
+     switch (conn->state) {
+     case BT_CONNECTED:
+     case BT_CONFIG:
+         err = hci_disconnect_sync(hdev, conn, reason);
+         break;
+...
 
-You shouldn't need the (uint8_t) cast (should that be (u8) anyway).
-At best it doesn't matter, at worst it will add code to mask with 0xff.
+stack trace as below:
 
-> +		     : "memory", _ASM_SI, _ASM_DX);
-> +
-> +	return ret + len;
-> +}
-> +
-> +#endif /* _ASM_X86_STRING_H */
-> diff --git a/arch/x86/include/asm/uaccess_64.h b/arch/x86/include/asm/uaccess_64.h
-> index c8a5ae35c871..eb531e13e659 100644
-> --- a/arch/x86/include/asm/uaccess_64.h
-> +++ b/arch/x86/include/asm/uaccess_64.h
-> @@ -13,6 +13,7 @@
->  #include <asm/page.h>
->  #include <asm/percpu.h>
->  #include <asm/runtime-const.h>
-> +#include <asm/string.h>
->  
->  /*
->   * Virtual variable: there's no actual backing store for this,
-> @@ -118,21 +119,12 @@ rep_movs_alternative(void *to, const void *from, unsigned len);
->  static __always_inline __must_check unsigned long
->  copy_user_generic(void *to, const void *from, unsigned long len)
->  {
-> +	void *ret;
-> +
->  	stac();
-> -	/*
-> -	 * If CPU has FSRM feature, use 'rep movs'.
-> -	 * Otherwise, use rep_movs_alternative.
-> -	 */
-> -	asm volatile(
-> -		"1:\n\t"
-> -		ALTERNATIVE("rep movsb",
-> -			    "call rep_movs_alternative", ALT_NOT(X86_FEATURE_FSRM))
-> -		"2:\n"
-> -		_ASM_EXTABLE_UA(1b, 2b)
-> -		:"+c" (len), "+D" (to), "+S" (from), ASM_CALL_CONSTRAINT
-> -		: : "memory", "rax");
-> +	ret = __inline_memcpy(to, from, len);
->  	clac();
-> -	return len;
-> +	return ret - to;
->  }
->  
->  static __always_inline __must_check unsigned long
-> @@ -178,25 +170,15 @@ rep_stos_alternative(void __user *addr, unsigned long len);
->  
->  static __always_inline __must_check unsigned long __clear_user(void __user *addr, unsigned long size)
->  {
-> +	void *ptr = (__force void *)addr;
-> +	void *ret;
-> +
->  	might_fault();
->  	stac();
-> -
-> -	/*
-> -	 * No memory constraint because it doesn't change any memory gcc
-> -	 * knows about.
-> -	 */
-> -	asm volatile(
-> -		"1:\n\t"
-> -		ALTERNATIVE("rep stosb",
-> -			    "call rep_stos_alternative", ALT_NOT(X86_FEATURE_FSRS))
-> -		"2:\n"
-> -	       _ASM_EXTABLE_UA(1b, 2b)
-> -	       : "+c" (size), "+D" (addr), ASM_CALL_CONSTRAINT
-> -	       : "a" (0));
-> -
-> +	ret = __inline_memset(ptr, 0, size);
->  	clac();
->  
-> -	return size;
-> +	return ret - ptr;
->  }
->  
->  static __always_inline unsigned long clear_user(void __user *to, unsigned long n)
-> diff --git a/arch/x86/lib/clear_page_64.S b/arch/x86/lib/clear_page_64.S
-> index a508e4a8c66a..47b613690f84 100644
-> --- a/arch/x86/lib/clear_page_64.S
-> +++ b/arch/x86/lib/clear_page_64.S
-> @@ -55,17 +55,26 @@ SYM_FUNC_END(clear_page_erms)
->  EXPORT_SYMBOL_GPL(clear_page_erms)
->  
->  /*
-> - * Default clear user-space.
-> + * Default memset.
->   * Input:
->   * rdi destination
-> + * rsi scratch
->   * rcx count
-> - * rax is zero
-> + * al is value
->   *
->   * Output:
->   * rcx: uncleared bytes or 0 if successful.
-> + * rdx: clobbered
->   */
->  SYM_FUNC_START(rep_stos_alternative)
->  	ANNOTATE_NOENDBR
-> +
-> +	movzbq %al, %rsi
-> +	movabs $0x0101010101010101, %rax
-> +
-> +	/* RDX:RAX = RAX * RSI */
-> +	mulq %rsi
+[   55.154495][0 T1966  d.] CPU: 0 PID: 1966 Comm: kworker/u9:0 Tainted: 
+G           O       6.6.77 #104
+[   55.155721][0 T1966  d.] Hardware name: Amlogic (DT)
+[   55.156336][0 T1966  d.] Workqueue: hci0 hci_cmd_sync_work
+[   55.157018][0 T1966  d.] Call trace:
+[   55.157461][0 T1966  d.]  dump_backtrace+0x94/0xec
+[   55.158056][0 T1966  d.]  show_stack+0x18/0x24
+[   55.158607][0 T1966  d.]  dump_stack_lvl+0x48/0x60
+[   55.159205][0 T1966  d.]  dump_stack+0x18/0x24
+[   55.159756][0 T1966  d.]  hci_conn_del+0x1c/0x12c
+[   55.160341][0 T1966  d.]  hci_conn_failed+0xdc/0x150
+[   55.160958][0 T1966  d.]  hci_abort_conn_sync+0x204/0x388
+[   55.161630][0 T1966  d.]  abort_conn_sync+0x58/0x80
+[   55.162237][0 T1966  d.]  hci_cmd_sync_work+0x94/0x100
+[   55.162877][0 T1966  d.]  process_one_work+0x168/0x444
+[   55.163516][0 T1966  d.]  worker_thread+0x378/0x3f4
+[   55.164122][0 T1966  d.]  kthread+0x108/0x10c
+[   55.164664][0 T1966  d.]  ret_from_fork+0x10/0x20
+[   55.165408][0 T1966  d.] hci0 hcon 000000004f36962c handle 3841 #PA 
+sync connection
 
-NAK - you can't do that here.
-Neither %rsi nor %rdx can be trashed.
-The function has a very explicit calling convention.
 
-It is also almost certainly a waste of time.
-Pretty much all the calls will be for a constant 0x00.
-Rename it all memzero() ...
+btmon trace:
 
-	David
+< HCI Command: Disconnect (0x01|0x0006) plen 3             #75 [hci0] 
+14.640630
+         Handle: 3841
+         Reason: Remote User Terminated Connection (0x13)
+ > HCI Event: Command Status (0x0f) plen 4                  #76 [hci0] 
+14.642103
+       Disconnect (0x01|0x0006) ncmd 1
+         Status: Invalid HCI Command Parameters (0x12)
 
-> +
->  	cmpq $64,%rcx
->  	jae .Lunrolled
->  
 
+So the current question is whether the PA sync connection, which is 
+marked as BT_CONNECTED, really needs to be disconnected.
+If it does need to be disconnected, then the PA sync terminate command 
+must be executed.
+However, in my opinion, the PA sync connection should not be disconnected.
+
+>
+>> Signed-off-by: Yang Li <yang.li@amlogic.com>
+>> ---
+>>   net/bluetooth/hci_event.c | 3 +++
+>>   1 file changed, 3 insertions(+)
+>>
+>> diff --git a/net/bluetooth/hci_event.c b/net/bluetooth/hci_event.c
+>> index e817c4a77f97..85ae1608e028 100644
+>> --- a/net/bluetooth/hci_event.c
+>> +++ b/net/bluetooth/hci_event.c
+>> @@ -6968,6 +6968,9 @@ static void hci_le_big_sync_established_evt(struct hci_dev *hdev, void *data,
+>>
+>>                  if (!ev->status) {
+>>                          conn->state = BT_CONNECTED;
+>> +                       /* Prevent cleanup in hci_conn_timeout. */
+>> +                       hci_conn_hold(conn);
+>> +
+>>                          set_bit(HCI_CONN_BIG_SYNC, &bis->flags);
+>>                          hci_debugfs_create_conn(conn);
+>>                          hci_conn_add_sysfs(conn);
+>>
+>> ---
+>> base-commit: 3bc46213b81278f3a9df0324768e152de71eb9fe
+>> change-id: 20250702-hold_pa_sync-91ca7a81adf0
+>>
+>> Best regards,
+>> --
+>> Yang Li <yang.li@amlogic.com>
+>>
+>>
+>
+> --
+> Luiz Augusto von Dentz
 
