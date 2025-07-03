@@ -1,194 +1,176 @@
-Return-Path: <linux-kernel+bounces-714969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E8A4AF6EFF
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 11:43:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D6A2AF6F06
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 11:43:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A94BF1C81D35
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 09:43:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 242054E1709
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 09:43:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF04F2D780F;
-	Thu,  3 Jul 2025 09:43:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3570E2D7810;
+	Thu,  3 Jul 2025 09:43:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S+8pTfm1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GA/KMNvy"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 477C3226CF8;
-	Thu,  3 Jul 2025 09:43:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEFF92D77FB;
+	Thu,  3 Jul 2025 09:43:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751535786; cv=none; b=lTM86eHQw7Fi2KZ/YgcDbCUEikhHfCz+8ysilSa4xQWwOf7MQOj1clTfVBf1VRuHtio9rhyBga6/UPDdNrG/p/DedalUszoFXV67gwbNOaAXG1nMT36EsVs64PEv1bYZQfTdXhDXk2KRzU7lsWuzAjsij/61/TyDi8x4a9HlbQs=
+	t=1751535822; cv=none; b=BO7c2NYB6pFuDCn5pXs65xaA7n3BkQjLU7AULgianYKo+fWWTkDx5Sa6kSTt19vLkMZ6pnpxI3lcFRTbcQ5LO0wAvuqppmPQF00IbgLIaSC713VtvGwJqRRPtJAhpdhbuTJbZbkxg91L7HvP91Lxrn9Tbk9+dxMubScVejIeQK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751535786; c=relaxed/simple;
-	bh=x7llXm1Wc1Knju/eXnjIz5voqe0e0IahnlFOhVrt2cQ=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=X8LPDYoIldXDhGRHhjIgpBjgNLyhpbRUMXXEWB7Th8J0gCb0FEmbDqecuwvaB9398ZrRlv6k0zyq8lhh3She2PiHNt4PczV/4CN5pOIqgQZ1KvuWXsffftxekYppEB43334I+ZTx5dMGGCDrvOE5twX/ny5oKtqisDDBgcx/tgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S+8pTfm1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24EF0C4CEEB;
-	Thu,  3 Jul 2025 09:43:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751535785;
-	bh=x7llXm1Wc1Knju/eXnjIz5voqe0e0IahnlFOhVrt2cQ=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=S+8pTfm1iFBwFfXg7bmM6ffdRoVHbLeyb5LLuNb+kMBbOt4pVR/BBn2AefrnafS6S
-	 4eqhQc5ZfvxRVzQ10FNcOcIITlalQELD0P3xhs0L6Abdp9rn9gZaW2Zh7+XaxTwdgp
-	 XH1tacsJm/VA3aRfjfIkpIHS8PMZGJWvlf2BFhQbtdHhMkAHHxjRVMHL7uHGUKB4D1
-	 R0bkL4kKW0zxZycOjvR5/1NxjWub41d6tl/fVMHyrq5Mj7XueQZx1zyKfND6SI8LqK
-	 Dlo5PvwxOF0472ERAhRFBraxna3u7GZy57e+AGoc7vCfblntF6kZUhBuzw2SFZD96H
-	 qIy4r52JCMiSA==
+	s=arc-20240116; t=1751535822; c=relaxed/simple;
+	bh=74sNjQK4bMhnkAul06LKeIboYlJTfjWjpSpL5D0y0v0=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=JucmM7Q31WnIL50nhLJaQQ7XwhsY3OMKKrPrHSG4NwrKa7y/El4BFedwVJ2av1eWq69ISBuwXC5E+Vk5ls+NxKwk9uXKTqg0o7JSKz+q7KJfzzA0UdRzCMqj0uoCKdewAvyMbUPLP6Sr6yOZ5QTP1eWh9MUjU2qFo0kqfVi85iU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GA/KMNvy; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751535821; x=1783071821;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=74sNjQK4bMhnkAul06LKeIboYlJTfjWjpSpL5D0y0v0=;
+  b=GA/KMNvywntkS4EM3zhv+uCpgXsEoEGdMm7kf8HgJQdLo/Yp73ayqf/Q
+   Tk1g57eZfTMHFIBXhKt4HTw7WuLqCd7sf++U5T3tjf+CCgz8Z8ULrqq7J
+   +v4btNPjEVAi787OCEhhImHCvwSKYFgOohYqE9k68vM7sx7o05nq7IFsB
+   HOZbUgUK6UXq9piESghbQKno4drnXWeOl8OSNnznnb3oD6QJxdW75Y3As
+   ypOkFBg1UcEHpmI48zwJ12BvDwhI9QU5SN2fT5K3n3pzzmHxnrKbE1ZxZ
+   4NqOVhaaOqy90NzV8GHZEM7Td0mC8qrv5HedF6tOW9cfartcudb9lQ5y5
+   g==;
+X-CSE-ConnectionGUID: gD5/IKWIRtqC8DUv9JzGtQ==
+X-CSE-MsgGUID: 6x2ieI+0Re2kn/J8KaG3NQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11482"; a="79287883"
+X-IronPort-AV: E=Sophos;i="6.16,283,1744095600"; 
+   d="scan'208";a="79287883"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2025 02:43:32 -0700
+X-CSE-ConnectionGUID: 6slLJaBXTna163eRzunTCw==
+X-CSE-MsgGUID: SBwyUM+UQQSHJ4fkq54PWg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,283,1744095600"; 
+   d="scan'208";a="158883865"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.117])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2025 02:43:27 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Thu, 3 Jul 2025 12:43:23 +0300 (EEST)
+To: Yen-Chi Huang <jesse.huang@portwell.com.tw>
+cc: Guenter Roeck <linux@roeck-us.net>, hansg@kernel.org, jdelvare@suse.com, 
+    LKML <linux-kernel@vger.kernel.org>, platform-driver-x86@vger.kernel.org, 
+    linux-hwmon@vger.kernel.org
+Subject: Re: [PATCH 2/2] platform/x86: portwell-ec: Add hwmon support for
+ voltage and temperature
+In-Reply-To: <62e4e647-9eb4-4329-89f4-6b2b897ba15b@portwell.com.tw>
+Message-ID: <ec0d2c2c-6849-7863-bf0a-f1abb1747b44@linux.intel.com>
+References: <a35d63e1-424f-48ac-bc97-cdb48929f40d@portwell.com.tw> <a25733d7-535c-44b8-973c-0bc0c99047c3@roeck-us.net> <62e4e647-9eb4-4329-89f4-6b2b897ba15b@portwell.com.tw>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 03 Jul 2025 11:42:59 +0200
-Message-Id: <DB2BM4UMCFQR.3SQWIRF7HDP09@kernel.org>
-Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Alice Ryhl" <aliceryhl@google.com>, "Masahiro
- Yamada" <masahiroy@kernel.org>, "Nathan Chancellor" <nathan@kernel.org>,
- "Luis Chamberlain" <mcgrof@kernel.org>, "Danilo Krummrich"
- <dakr@kernel.org>, "Nicolas Schier" <nicolas.schier@linux.dev>, "Trevor
- Gross" <tmgross@umich.edu>, "Adam Bratschi-Kaye" <ark.email@gmail.com>,
- <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-kbuild@vger.kernel.org>, "Petr Pavlu" <petr.pavlu@suse.com>, "Sami
- Tolvanen" <samitolvanen@google.com>, "Daniel Gomez" <da.gomez@samsung.com>,
- "Simona Vetter" <simona.vetter@ffwll.ch>, "Greg KH"
- <gregkh@linuxfoundation.org>, "Fiona Behrens" <me@kloenk.dev>, "Daniel
- Almeida" <daniel.almeida@collabora.com>, <linux-modules@vger.kernel.org>
-Subject: Re: [PATCH v14 1/7] rust: sync: add `OnceLock`
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Andreas Hindborg" <a.hindborg@kernel.org>
-X-Mailer: aerc 0.20.1
-References: <20250702-module-params-v3-v14-0-5b1cc32311af@kernel.org>
- <20250702-module-params-v3-v14-1-5b1cc32311af@kernel.org>
- <dO7tJL6M4FKz_QOo-Vbb0bZOybyXa9CkBI0SIIKeCGBHIjNHlpElEV0iPbNeXBa6elnsQXqrGS5AGXdGU5hefQ==@protonmail.internalid> <DB1NVTWHU7BN.2WGPMAY9LQYNW@kernel.org> <87bjq1ve6t.fsf@kernel.org>
-In-Reply-To: <87bjq1ve6t.fsf@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 
-On Thu Jul 3, 2025 at 11:03 AM CEST, Andreas Hindborg wrote:
-> "Benno Lossin" <lossin@kernel.org> writes:
->> On Wed Jul 2, 2025 at 3:18 PM CEST, Andreas Hindborg wrote:
->>> +///
->>> +/// # Example
->>> +///
->>> +/// ```
->>> +/// # use kernel::sync::once_lock::OnceLock;
->>> +/// let value =3D OnceLock::new();
->>> +/// assert_eq!(None, value.as_ref());
->>> +///
->>> +/// let status =3D value.populate(42u8);
->>> +/// assert_eq!(true, status);
->>> +/// assert_eq!(Some(&42u8), value.as_ref());
->>> +/// assert_eq!(Some(42u8), value.copy());
->>> +///
->>> +/// let status =3D value.populate(101u8);
->>> +/// assert_eq!(false, status);
->>> +/// assert_eq!(Some(&42u8), value.as_ref());
->>> +/// assert_eq!(Some(42u8), value.copy());
->>> +/// ```
->>> +pub struct OnceLock<T> {
->>> +    init: Atomic<u32>,
->>> +    value: Opaque<T>,
->>> +}
->>> +
->>> +impl<T> Default for OnceLock<T> {
->>> +    fn default() -> Self {
->>> +        Self::new()
->>> +    }
->>> +}
->>> +
->>> +impl<T> OnceLock<T> {
->>> +    /// Create a new [`OnceLock`].
->>> +    ///
->>> +    /// The returned instance will be empty.
->>> +    pub const fn new() -> Self {
->>> +        // INVARIANT: The container is empty and we set `init` to `0`.
->>> +        Self {
->>> +            value: Opaque::uninit(),
->>> +            init: Atomic::new(0),
->>> +        }
->>> +    }
->>> +
->>> +    /// Get a reference to the contained object.
->>> +    ///
->>> +    /// Returns [`None`] if this [`OnceLock`] is empty.
->>> +    pub fn as_ref(&self) -> Option<&T> {
->>> +        if self.init.load(Acquire) =3D=3D 2 {
->>> +            // SAFETY: As determined by the load above, the object is =
-ready for shared access.
->>
->>     // SAFETY: By the safety requirements of `Self`, `self.init =3D=3D 2=
-` means that `self.value` contains
->>     // a valid value.
+On Thu, 3 Jul 2025, Yen-Chi Huang wrote:
+
+> Hi Ilpo and Guenter,
+> 
+> Thank you both for the review and suggestions.  
+> Apologies for the missed cleanup in the includes.
+> 
+> On 6/27/2025 7:34 PM, Ilpo Jarvinen wrote:
+> > On Fri, 27 Jun 2025, jesse huang wrote:
+> 
+> >> +static const struct pwec_hwmon_data pwec_nano_hwmon_in[] = {
+> >> +	{ "Vcore", 0x20, 0x21, 3000 },
+> >> +	{ "VDIMM", 0x32, 0x33, 3000 },
+> >> +	{ "3.3V",  0x22, 0x23, 6000 },
+> >> +	{ "5V",    0x24, 0x25, 9600 },
+> >> +	{ "12V",   0x30, 0x31, 19800 },
+> > 
+> > Those registers appear to be always consecutive so it looks unnecessary to 
+> > store both.
+> 
+> Some ECs use little-endian while others use big-endian register ordering.
+> 
+> To maintain flexibility and support future boards with different endianness,
+> both registers are stored explicitly.
+
+When do we expect to see patches to support those other boards? I think 
+the endianness should be only added then, unless the patch is really 
+around the corner.
+
+Besides, wouldn't it make more sense to record the endianness instead if 
+the registers are always next to each other anyway? Do we expect there's 
+need to handle disjoint parts?
+
+> >> +static const struct pwec_hwmon_data pwec_nano_hwmon_temp[] = {
+> >> +	{ "System Temperature", 0x02, 0, 0 },
+> >> +};
+> >> +
+> >> +static const struct pwec_data pwec_board_data[] = {
+> >> +	[PWEC_BOARD_NANO6064] = {
+> >> +		.hwmon_in_data = pwec_nano_hwmon_in,
+> >> +		.hwmon_in_num = ARRAY_SIZE(pwec_nano_hwmon_in),
+> >> +		.hwmon_temp_data = pwec_nano_hwmon_temp,
+> >> +		.hwmon_temp_num = ARRAY_SIZE(pwec_nano_hwmon_temp),
+> >> +	},
+> >> +};
+> > 
+> > What's advantage of having these in an array?
+> 
+> To support multiple boards with different sensor configurations in a scalable way,
+> the hwmon data is structured as board-specific arrays.
+> 
+> I intend to store the hwmon configuration in the driver_data field of 
+> the dmi_system_id table.
 >
-> By the *type invariants* I guess?
+> This allows each board to carry its own sensor definitions, making it 
+> easier to add support for new boards without modifying the driver logic. 
+> Since the number of sensors may vary, the *_num fields in pwec_data are 
+> used to validate the index range in hwmon_ops callbacks, ensuring only
+> valid sensors are accessed.
 
-Oh yeah.
+I understand this. :-)
 
->>> +            Some(unsafe { &*self.value.get() })
->>> +        } else {
->>> +            None
->>> +        }
->>> +    }
->>> +
->>> +    /// Populate the [`OnceLock`].
->>> +    ///
->>> +    /// Returns `true` if the [`OnceLock`] was successfully populated.
->>> +    pub fn populate(&self, value: T) -> bool {
->>> +        // INVARIANT: We obtain exclusive access to the contained allo=
-cation and write 1 to
->>> +        // `init`.
->>> +        if let Ok(0) =3D self.init.cmpxchg(0, 1, Acquire) {
->>> +            // SAFETY: We obtained exclusive access to the contained o=
-bject.
->>> +            unsafe { core::ptr::write(self.value.get(), value) };
->>> +            // INVARIANT: We release our exclusive access and transiti=
-on the object to shared
->>> +            // access.
->>> +            self.init.store(2, Release);
->>> +            true
->>> +        } else {
->>> +            false
->>> +        }
->>> +    }
->>> +}
->>> +
->>> +impl<T: Copy> OnceLock<T> {
->>> +    /// Get a copy of the contained object.
->>> +    ///
->>> +    /// Returns [`None`] if the [`OnceLock`] is empty.
->>> +    pub fn copy(&self) -> Option<T> {
->>> +        if self.init.load(Acquire) =3D=3D 2 {
->>> +            // SAFETY: As determined by the load above, the object is =
-ready for shared access.
->>> +            Some(unsafe { *self.value.get() })
->>> +        } else {
->>> +            None
->>> +        }
->>
->> The impl can just be:
->>
->>     self.as_ref().copied()
->
-> Nice. I was thinking of dropping this method and just have callers do
->
->  my_once_lock.as_ref().map(|v| v.copied())
->
-> What do you think?
+I was just asking why you need to place them into an array and not just 
+have a separate struct for each board variation as is the usual pattern. 
+(For boards which can share the struct, the variable name is usually just 
+according to the firstly introduced board.)
 
-There is `Option::copied`, so no need for the `.map` call. I don't
-really have a preference, if users always want to access it by-value,
-then we should have `copy`.
+So you'd have e.g.
 
----
-Cheers,
-Benno
+static const struct pwec_hwmon_data pwec_board_data_nano6064 = {
+	.hwmon_in_data = ...,
+	...
+};
+
+Then when you have something else, you add another:
+
+static const struct pwec_hwmon_data pwec_board_data_xx = {
+	...
+};
+
+...Those can be put directly into driver_data without the intermediate 
+array. So why is the array necessary?
+
+> >> +		if (channel < data->hwmon_temp_num) {
+> >> +			*val = pwec_read(data->hwmon_temp_data[channel].lsb_reg) * 1000;
+> > 
+> > linux/units.h ?
+> 
+> "1000" will be replaced with MILLI in the next patch.
+
+As this seems temperature related(?), there's also DEGREE specific define 
+which would be preferred over that unitless define (if applicable, of 
+course).
+
+-- 
+ i.
+
 
