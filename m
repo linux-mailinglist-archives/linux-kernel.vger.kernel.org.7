@@ -1,122 +1,153 @@
-Return-Path: <linux-kernel+bounces-715485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-715464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D623AF7697
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 16:05:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 564EAAF766C
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 16:00:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E09374A2D77
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 14:05:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D4314E417B
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 14:00:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E44602E7658;
-	Thu,  3 Jul 2025 14:05:21 +0000 (UTC)
-Received: from mail.avm.de (mail.avm.de [212.42.244.119])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF50D2E7F3F;
+	Thu,  3 Jul 2025 14:00:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eJqeh6zS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEB0C19CC02;
-	Thu,  3 Jul 2025 14:05:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.42.244.119
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 425BE2E7F28;
+	Thu,  3 Jul 2025 14:00:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751551521; cv=none; b=rHSgG2C26Foi2ujjcgjmynZD7QOTpLPu8tWXiTMJMeo7ozsjF9q1xMdiOfrkqHPd8QxUHMwJXwguuRrUV8rFRsOGeSOegf4jd3FR82PjydjAglrTq3YHntQb+uj3np4nhakPv0hB7q2revxwOVIsX8vTSx/pB0oOAdqxjEpiNvM=
+	t=1751551213; cv=none; b=AhlVFY/z01afS1jQfyTGezw+slFJRju6e4/B9PJQoaPrDeCDcE+ayzPez6vVtxqEJiExniikq3MGHE6dZ0y+BckGJAAlnTlpvefxmToXQb3KlY6N139nGo574kzWs9zvY0aqqQiF1/nqVVAJaYMfidPKrd7XQIltHnSzMxxw5CY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751551521; c=relaxed/simple;
-	bh=U4ubF4srjWWEZmfciFKdSrN8FMIJ8HJdc+JOZAcLcv0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JfCTSlsp4xEWOtjCo0kRFqZOyTtSfPKpZnPCjw+W+1WZdsbW9n/GRgz9wDicrfNcs12BmhYId9uJ00DGh/eC+ZC6BRTF8lSh7+h977+5vgfsDL4hE2B5C/gXrAaVy+oX4soPoRYAsK9OpYJdRCTsQ/Oe91bhv01EFcrdhgnnAws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=avm.de; arc=none smtp.client-ip=212.42.244.119
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=avm.de
-Received: from [212.42.244.71] (helo=mail.avm.de)
-	by mail.avm.de with ESMTP (eXpurgate 4.53.4)
-	(envelope-from <n.schier@avm.de>)
-	id 68668cdb-bb09-7f0000032729-7f00000184c0-1
-	for <multiple-recipients>; Thu, 03 Jul 2025 15:59:55 +0200
-Received: from mail-auth.avm.de (dovecot-mx-01.avm.de [212.42.244.71])
-	by mail.avm.de (Postfix) with ESMTPS;
-	Thu,  3 Jul 2025 15:59:55 +0200 (CEST)
-Received: from buildd.core.avm.de (buildd-sv-01.avm.de [172.16.0.225])
-	by mail-auth.avm.de (Postfix) with ESMTPA id F25BE808E1;
-	Thu,  3 Jul 2025 15:59:54 +0200 (CEST)
-Received: from l-nschier-aarch64.ads.avm.de (unknown [IPv6:fde4:4c1b:acd5:6472::1])
-	by buildd.core.avm.de (Postfix) with ESMTPS id C8614189F02;
-	Thu,  3 Jul 2025 15:59:54 +0200 (CEST)
-Date: Thu, 3 Jul 2025 15:59:52 +0200
-From: Nicolas Schier <nicolas.schier@linux.dev>
-To: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-Cc: Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>, Willy Tarreau <w@1wt.eu>,
-	Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>,
-	Brendan Higgins <brendan.higgins@linux.dev>,
-	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>,
-	Shuah Khan <shuah@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
-	linux-doc@vger.kernel.org, workflows@vger.kernel.org
-Subject: Re: [PATCH v4 01/15] kbuild: userprogs: avoid duplication of flags
- inherited from kernel
-Message-ID: <20250703-fanatic-funky-jerboa-d8d82c@l-nschier-aarch64>
-References: <20250626-kunit-kselftests-v4-0-48760534fef5@linutronix.de>
- <20250626-kunit-kselftests-v4-1-48760534fef5@linutronix.de>
+	s=arc-20240116; t=1751551213; c=relaxed/simple;
+	bh=bS8ewtSLSyODzJSFSvjxtjK2e7VlFfrt/F7Wayo4+Wg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=X+84A6ZZAUIEQavhBF/lwDkMy97TSTHAQz2NVDruOiOOlZn8MQLSg42goWOmYWm7NZMt2SmPDQsPd5UMKb77677rmSn4hhYWEBpEBZQGR5N9bcDRASeH94F0KSH4vb+KM1HLLHTFViY6YyBlFPJAvU2EWbzdr2I8XiKkZm3e/iE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eJqeh6zS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFC6EC4CEE3;
+	Thu,  3 Jul 2025 14:00:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751551212;
+	bh=bS8ewtSLSyODzJSFSvjxtjK2e7VlFfrt/F7Wayo4+Wg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=eJqeh6zSkg9WFRZTeXgRmRYQx9rjA8JoMnuq8pV/Q60PMjseLIniIlXRNG3OKzIDW
+	 3g0qwEOI6tMrCNOdF+PyzMVOEBs+7w/QpybibLsVqVc49lAaaM95Rf0NRa3uBmEdsB
+	 6WQ9lSaBxyY8O0vq5yqYa7vFQiKX3WRKAPsr2c2322cVZEygOwKHwfEbRasXiQqsrT
+	 L1QsHSZOmOsX3UUC6behsQ7pbxMi+hHZ/Md3m9uXvt1/AaTx9snzg8+YU0ZJdcgERh
+	 SSY462IAwpK4TvxHo1JPUGOOyNY8zJ51SuZtFXAEwX0ApwhmT4VOtYfDiSzyLzzLEi
+	 yruf2ZMIHj6xw==
+Received: by mail-oo1-f43.google.com with SMTP id 006d021491bc7-6119b103132so705727eaf.1;
+        Thu, 03 Jul 2025 07:00:12 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCULcoHaK8UkUNgh+IvZ5rXgER2bkgY3zF76xBw3KzrpOSBYVSX7l+OhQ0sFeFnPdvvoehasqP/3H7c=@vger.kernel.org, AJvYcCXStXsZV63SDdjtYIJZH2W6QPBx183pbD4mOO72qS80J5o49AESJQRrJtFY/tm//MPg9XQ82NcWwWhn3Dk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw01jjn8mjtMzuqY3vCCmQAX0/rCiE85Lo3VP/gdDhn/xSCgUKS
+	QF72IFMPCdheR/ax+pSJXh/w9/cyR0ZuYCoVc7jcfgb47T63sltjaB9O49I1nimJUMWHs9Tq+ZF
+	M+qnR9MVldFs1PAIe5VaXnWUMlwu6LZk=
+X-Google-Smtp-Source: AGHT+IEtqzweRxuSZIv1vHCBO2l1eix9Pt0bsXN1JqFbQsdofN6fWnEOoAVOr0sNGnHWKREKgkJf01NZTDJ2RI8Tz94=
+X-Received: by 2002:a05:6820:c096:b0:611:5a9e:51c4 with SMTP id
+ 006d021491bc7-6138332f22amr921860eaf.4.1751551211388; Thu, 03 Jul 2025
+ 07:00:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="t5abbrXTdUbzxWZq"
-Content-Disposition: inline
-In-Reply-To: <20250626-kunit-kselftests-v4-1-48760534fef5@linutronix.de>
-Organization: AVM GmbH
-X-purgate-ID: 149429::1751551195-9E521740-0589DA78/0/0
-X-purgate-type: clean
-X-purgate-size: 1552
-X-purgate-Ad: Categorized by eleven eXpurgate (R) https://www.eleven.de
-X-purgate: This mail is considered clean (visit https://www.eleven.de for further information)
-X-purgate: clean
-
-
---t5abbrXTdUbzxWZq
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+References: <20250526010854.7834-1-tuhaowen@uniontech.com> <20250603010157.19121-1-tuhaowen@uniontech.com>
+In-Reply-To: <20250603010157.19121-1-tuhaowen@uniontech.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 3 Jul 2025 16:00:00 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0ie4gTuX4DQy874OoMiK7ujXYYvHKSL2QsrP=+c1bNfTA@mail.gmail.com>
+X-Gm-Features: Ac12FXzqdxY8uhqMCORQa7HbwE7yhCv5u_s87DSJVt0o0yojaEfnq2cj3c8HaEw
+Message-ID: <CAJZ5v0ie4gTuX4DQy874OoMiK7ujXYYvHKSL2QsrP=+c1bNfTA@mail.gmail.com>
+Subject: Re: [PATCH v4] PM/console: Fix the black screen issue
+To: tuhaowen <tuhaowen@uniontech.com>
+Cc: rafael@kernel.org, huangbibo@uniontech.com, len.brown@intel.com, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, pavel@kernel.org, 
+	wangyuli@uniontech.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 26, 2025 at 08:10:09AM +0200, Thomas Wei=C3=9Fschuh wrote:
-> The duplication makes maintenance harder. Changes need to be done in two
-> places and the lines will grow overly long.
->=20
-> Use an intermediary variable instead.
->=20
-> Signed-off-by: Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
+On Tue, Jun 3, 2025 at 3:02=E2=80=AFAM tuhaowen <tuhaowen@uniontech.com> wr=
+ote:
+>
+> When the computer enters sleep status without a monitor
+> connected, the system switches the console to the virtual
+> terminal tty63(SUSPEND_CONSOLE).
+>
+> If a monitor is subsequently connected before waking up,
+> the system skips the required VT restoration process
+> during wake-up, leaving the console on tty63 instead of
+> switching back to tty1.
+>
+> To fix this issue, a global flag vt_switch_done is introduced
+> to record whether the system has successfully switched to
+> the suspend console via vt_move_to_console() during suspend.
+>
+> If the switch was completed, vt_switch_done is set to 1.
+> Later during resume, this flag is checked to ensure that
+> the original console is restored properly by calling
+> vt_move_to_console(orig_fgconsole, 0).
+>
+> This prevents scenarios where the resume logic skips console
+> restoration due to incorrect detection of the console state,
+> especially when a monitor is reconnected before waking up.
+>
+> Signed-off-by: tuhaowen <tuhaowen@uniontech.com>
 > ---
->  Makefile | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
+> Changes in v4:
+> - Moved `vt_switch_done =3D false;` below the `if (orig_fgconsole >=3D 0)=
+`
+>   block to ensure it is only reset after a console switch has occurred.
+> - Link to v3: https://lore.kernel.org/all/20250526010854.7834-1-tuhaowen@=
+uniontech.com
+> - Link to v2: https://lore.kernel.org/all/20250516084011.29309-1-tuhaowen=
+@uniontech.com
+> - Link to v1: https://lore.kernel.org/all/20250516034643.22355-1-tuhaowen=
+@uniontech.com
+> ---
+>  kernel/power/console.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
+>
+> diff --git a/kernel/power/console.c b/kernel/power/console.c
+> index fcdf0e14a47d..19c48aa5355d 100644
+> --- a/kernel/power/console.c
+> +++ b/kernel/power/console.c
+> @@ -16,6 +16,7 @@
+>  #define SUSPEND_CONSOLE        (MAX_NR_CONSOLES-1)
+>
+>  static int orig_fgconsole, orig_kmsg;
+> +static bool vt_switch_done;
+>
+>  static DEFINE_MUTEX(vt_switch_mutex);
+>
+> @@ -136,17 +137,21 @@ void pm_prepare_console(void)
+>         if (orig_fgconsole < 0)
+>                 return;
+>
+> +       vt_switch_done =3D true;
+> +
+>         orig_kmsg =3D vt_kmsg_redirect(SUSPEND_CONSOLE);
+>         return;
+>  }
+>
+>  void pm_restore_console(void)
+>  {
+> -       if (!pm_vt_switch())
+> +       if (!pm_vt_switch() && !vt_switch_done)
+>                 return;
+>
+>         if (orig_fgconsole >=3D 0) {
+>                 vt_move_to_console(orig_fgconsole, 0);
+>                 vt_kmsg_redirect(orig_kmsg);
+>         }
+> +
+> +       vt_switch_done =3D false;
+>  }
+> --
 
-Reviewed-by: Nicolas Schier <n.schier@avm.de>
-
---t5abbrXTdUbzxWZq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEDv+Fiet06YHnC6RpiMa8nIiabbgFAmhmjNAACgkQiMa8nIia
-bbgZmw//bcwO/HfGc1WRkxirOFpym6UM5OMeFwy2HNnMeuYwMLndwLpxQj2aBTXw
-1WRml22MebaAASoxoZ6riV3r4Kag9NkMPvulsmQJzB03Kchn/xb8Y10jihgIcNDV
-LH9lmTS8bf70MArpID3Gv/aZIP987WoY5hqRU5SKzDG1YDHM3maYHahVlkqwWEg0
-0HN686vS/WFmju0DgtN8tE/lDFM7ZpSNT7OsdN9j209Z7vQOhEl5SND5YJB0pNJO
-X5uULV2EKBiWp1HYnwrxkL+nj8K0Tn57J7Wj5uTB+W+aoWhTEjZh8NszYkyxZ0aR
-hwboouhODGk9gvaYPzMXaUpigYgB9m72zz+HqabFWPjHMO1xFFUapoLfR02eOzjv
-6qeL8XI9ZA25RAYbkbv9NzbyJdlViDcAZuj0oszDolRsr51udM6Tf2qPlWYzm876
-usYVeOTcQI8y6lvR8q5u7BVV0XXZb9iRdSB9pkWo8VqRcL5x50Dtkx1b9FghzlKv
-JL0wm1h9yVUKhNROLaVpy7F1MO5+Nv7w/hlbIRCFGLbNO1FXqWiKlGiGYo6T31Z7
-sqAUYKz9fNgLzauk5U5L1QhjJ6sen6TYmFLousvkSV5ITrxyuoJftuRSEfcpNTB+
-0iQqp7a0kZ95r6+lexC72J3BRcl++lgfwKresIQ9tXDV5673MQE=
-=4nvN
------END PGP SIGNATURE-----
-
---t5abbrXTdUbzxWZq--
+Applied as 6.17 material, thanks!
 
