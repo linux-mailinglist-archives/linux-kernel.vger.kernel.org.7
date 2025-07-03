@@ -1,132 +1,188 @@
-Return-Path: <linux-kernel+bounces-715577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-715581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9E2DAF77F2
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 16:45:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EC81AF7820
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 16:47:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04A961C83D00
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 14:45:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A1F867BFF22
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 14:45:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BC632EBB8F;
-	Thu,  3 Jul 2025 14:45:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E9752EE29E;
+	Thu,  3 Jul 2025 14:46:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YMfjkxpv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pe97KF09"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FE0D2EE274;
-	Thu,  3 Jul 2025 14:45:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09A932E7620
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 14:46:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751553906; cv=none; b=Fxqbp6g/R6BCHG+SCv4HpLr9ELVH/Dn8J2tCGXkf2WTgDcLfDoYmtJwh7PSxmINsy8giGWqZ/nA7fgCANR0ZcKAaJOpDlWc2Hwv2EJ8mOXECa4digWIemeLrGXl2Uy2nnAcEKy9t6+8AxEUoJ3sShxZ1y69rXOAolnYC0mbHza8=
+	t=1751553975; cv=none; b=UkNGbj8YfsJSja+9rkQ7+abSPiXqLAwBsvgeM/xVb/USu3rKAbf1a+vwchJUoS0E1IGwxxUKJSHuYXSwSucgNz5OWRHdlDKca4X7lYGeAKRuxOlWBxXatuNMadhj9Lsl7zkqDKWcEY0+wPrxNlocdNzMhIm77N22qQ33FeFnVDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751553906; c=relaxed/simple;
-	bh=zTPoGsfvzf77TfbmCmPJCQTRAbMyUUIX1ms6SsgW3Wo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UQkRRZRVfhk8Q02LbH+vwM0ePcNusL6ut8GLpl3PfGO1dulIB2RO7Oj6WwNgfBtJou4TMDlFaNjxmGAvHDPaJKF/aN4Fqwe43lmbist6KPAeHj8jrSbvx0fdypWYfcbVUSFb517y3BUdT7uWFPOLQR203RPgNGI4+M80atGRvKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YMfjkxpv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 645FFC4CEED;
-	Thu,  3 Jul 2025 14:45:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751553906;
-	bh=zTPoGsfvzf77TfbmCmPJCQTRAbMyUUIX1ms6SsgW3Wo=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=YMfjkxpvfjVipk2YpIGFgFmaoWAQAgjaH5rkIFO6OVbWjDr0Ivm9GbxCqb4h51Dc6
-	 aMCE8WAtkLhZqeUQuIhZ0xsF0Jv1JeytACasPAMj1oJXQzHf2N8oeYq9lE97Z+/X9H
-	 KuJ+rQ3JqemgJR/KvDkzdmetQ/FF/VHLl6ib7NNQZP9ywSFI2jp5W7jHPkfcQW0NaF
-	 xjhE/SHy5vNzocI0I8j6cFg4UxmNJE3bCX/aBb0s6e/Oa6/F9pIPuSzliBI4LQIgXj
-	 JREa9dgoh2l2aitnKMOXNa8HIzxAcoKouPqPWLhrKZKt4ItnmWrb7zcDQuN2VxKHun
-	 G7CSN5SCWj6Yg==
-Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-40b859461easo19627b6e.1;
-        Thu, 03 Jul 2025 07:45:06 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWDXurDmm5zCnQ2VZ3Fg9g7vHjAClAD2TxHyws0IS6WKMLV4m9asBXy1Q2vBIWD2+PzmGUoblXaCPk=@vger.kernel.org, AJvYcCXZzqUPgMn0KNOwZ+mnzlcFAkXRTzAs4ualQmPguVKtm+NqyglaWlppENva4Ta5gdngWL0+aazVZHqgZrk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxoce91EY9l/RtEdx+Bs6NKqNGtKhrIPmWXYYeP6pmMTUq2fUD0
-	jkWDTebk1sLbZzwmWrS4xZKbWlrSAIgu7xbSsngcgVRcAGnX/qeZgxhuAWIAtFfXEAmWDlgr41d
-	BAPbsfmW4JQ4r57kYLF42/Tg2Gp/m6fk=
-X-Google-Smtp-Source: AGHT+IEIAPlGdI/PFCTjqa0TNr4AIU7IYU6kC3w2j01PIL1EvX3xYE4BETV/clcNcidt96xuZtuj91/nm2/Qmvl+66Y=
-X-Received: by 2002:a05:6808:118c:b0:406:6f21:8161 with SMTP id
- 5614622812f47-40c07b26667mr2863697b6e.9.1751553905713; Thu, 03 Jul 2025
- 07:45:05 -0700 (PDT)
+	s=arc-20240116; t=1751553975; c=relaxed/simple;
+	bh=072pcCvBMR7vtDKQsCrYBJuqlkcEW2Q3tlczFa12bes=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fNe6AF7AMbaoS7VsQ+iSk/ER8HAPkBO/wdwk04Xw7u5T20fwi8aSc3Pm7Qleb5M+ewd3EbLPke85Ykj96oyyVf5X9FBAW6UqOGOlQOAzzqIaf74tfvwyFjrhJhNaj4XfniBZwggucF2adQGa4m2N522T0a/7MdXRGVd65v9xjAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pe97KF09; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-237f18108d2so205845ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Jul 2025 07:46:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1751553973; x=1752158773; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZyBqVSoupq82KbFVVt6LJyI9rbtpg1wvjlbr52oP/Zs=;
+        b=pe97KF09BgQKKDcXvBjTyD5thKMVPjlLEj9vsiy1SF+kOVZMI3hdrThiA4DKsmB+aB
+         bxc2ukmwbFh9WgG5e5C8vF3LzlA5SpGsdReusVbSUyROmZ8/dJf1JzO0EQlPtkGxk1Er
+         6UETb8vAWwUpKdRX1fN3IwMHF+TYbT0e8fADzoNz/17MJZu4fyGv08RJ4Pcxl5/VaLm3
+         1x9F3uwSalFW/P+twGFyDIkYdqcNDws+mUKRnQMH9qLodyjTeVeXlFcZFcnzXyVuKMsw
+         sNgj0j7QsL06Ry0de97205tHproHHVw0HT+mo74BTVH7pxTLaTFVRUigJHBZbgfIgJb8
+         wgNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751553973; x=1752158773;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZyBqVSoupq82KbFVVt6LJyI9rbtpg1wvjlbr52oP/Zs=;
+        b=mf3tWI0SpIlxmFjdDg6cuJU9hoP/YCMDwnFuRW/kcGMUhfTM/cSq+VsO6Mmbba61VJ
+         +WI0EAr4nOfbvMa1eL4JD4VVuD/cRdfvOLtRBKjatGOfnKzBd36tDK2T5CCIGPuwq5QF
+         mYxXUb54bw4BVLqTZrM0dYsqcncMDL6LGTId3E3wMYFHZjAXhSNwYKC1r4fBoWZQeiKh
+         +1a71+300jAMy1oZ3apMXaiu3s7VvQQev7C6H+RxrW1EstZDxjhoIPctCZy3oQ7TrWLZ
+         TOcz5NW0vuS9j55kXpIuu60B8B8X9TFDLOvprh3s7DspYohWae1g3zDH2UD8GGnsgbXb
+         gSJA==
+X-Forwarded-Encrypted: i=1; AJvYcCWqDD72FQxoSA9e9wLYzMdqhOBayZIqiV73iYD7XQfJ3CxoOKKeoLCjk1DVWmCyjcclNv1CsTubqBveVKY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwodRcwnLsHVBXSAEkIRY/iL6f+OJWj1qsI8sGthODKZBjPO9VZ
+	vcBEXjkOM+lPlhXvw9apE/gP+pbb10dMR6kopqQlDD5isF4hojoFTM2vMki0iJQrxA==
+X-Gm-Gg: ASbGncuM9aYHtblHjvlPtGuWSE4sHiH5XWzrUkpWdzk+2w4+lk9zw+YVJxpXpf1icL4
+	kVIGOXP+LXo5CUWX9LgjYSIC0hGYFzyvWxhV6CdOdI66W0Wto0pPisHkp52ow/SvMqZMWTz7WZM
+	FEk5yl44jmWPwHke9vnnNg7gtgqLQbMPdvSktEYgZffEQXqiX0dgYrUDeRUMGkRTxlQaGl6XBHI
+	Iaj+LBrXU1sHCRa/0JdGP0HRe+skLnhbeYhVFXFHS5q8qV1obwur/kZj4f5bbrMO94jBnCs0Twf
+	hy9uwRr0ChvIgro4c579n4CDrbs7tw7OFvKXDHT1pEgZWEOiuAGtIfpJSantBoYKRNrabBC2eAt
+	tIstl+bUg+xjxpZnvlkTS8DtciEB7B0k=
+X-Google-Smtp-Source: AGHT+IE+IjimVm/cNBTQKKRIynsqnkmviMOQfy4mliRYK2mww3VHnjujL8mKkHcoqxy9cwNV6ZMlng==
+X-Received: by 2002:a17:902:c941:b0:22c:3cda:df11 with SMTP id d9443c01a7336-23c79b3ab97mr3276285ad.10.1751553972827;
+        Thu, 03 Jul 2025 07:46:12 -0700 (PDT)
+Received: from google.com (232.98.126.34.bc.googleusercontent.com. [34.126.98.232])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23acb2e39d4sm158508935ad.18.2025.07.03.07.46.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Jul 2025 07:46:12 -0700 (PDT)
+Date: Thu, 3 Jul 2025 14:46:03 +0000
+From: Pranjal Shrivastava <praan@google.com>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Nicolin Chen <nicolinc@nvidia.com>, kevin.tian@intel.com,
+	corbet@lwn.net, will@kernel.org, bagasdotme@gmail.com,
+	robin.murphy@arm.com, joro@8bytes.org, thierry.reding@gmail.com,
+	vdumpa@nvidia.com, jonathanh@nvidia.com, shuah@kernel.org,
+	jsnitsel@redhat.com, nathan@kernel.org, peterz@infradead.org,
+	yi.l.liu@intel.com, mshavit@google.com, zhangzekun11@huawei.com,
+	iommu@lists.linux.dev, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-tegra@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	patches@lists.linux.dev, mochs@nvidia.com, alok.a.tiwari@oracle.com,
+	vasant.hegde@amd.com, dwmw2@infradead.org, baolu.lu@linux.intel.com
+Subject: Re: [PATCH v7 27/28] iommu/tegra241-cmdqv: Add user-space use support
+Message-ID: <aGaXqwzfLwsgCH6n@google.com>
+References: <aGQ_F7Qx3scbbA-J@google.com>
+ <aGRDtYRXFLoT+PrI@Asurada-Nvidia>
+ <aGRIctg4T6cQECx4@google.com>
+ <aGRcPSwaJkTeUrMx@Asurada-Nvidia>
+ <aGRmaOORg-YDfncY@google.com>
+ <aGRozoIDIlgl9H9x@Asurada-Nvidia>
+ <aGR55PUBnwb8qT8U@google.com>
+ <aGSBTpY0nkdp2TTL@Asurada-Nvidia>
+ <aGSNmf5Q82xEbDpX@google.com>
+ <20250702180541.GD1139770@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250620-temp-v3-1-6becc6aeb66c@chromium.org>
-In-Reply-To: <20250620-temp-v3-1-6becc6aeb66c@chromium.org>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 3 Jul 2025 16:44:54 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0gUzFGxbR+en2JUaFvGt5vGY8z3LAJOba9f8RHoPrTvWQ@mail.gmail.com>
-X-Gm-Features: Ac12FXx6YEKyQuiC50Rz1nN2CRFIwyEsx33fJZtZTzMgo2QWuLvfp-9xLrSClvg
-Message-ID: <CAJZ5v0gUzFGxbR+en2JUaFvGt5vGY8z3LAJOba9f8RHoPrTvWQ@mail.gmail.com>
-Subject: Re: [PATCH v3] thermal: sysfs: Return ENODATA instead of EAGAIN for reads
-To: Hsin-Te Yuan <yuanhsinte@chromium.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250702180541.GD1139770@nvidia.com>
 
-On Fri, Jun 20, 2025 at 12:41=E2=80=AFPM Hsin-Te Yuan <yuanhsinte@chromium.=
-org> wrote:
->
-> According to POSIX spec, EAGAIN returned by read with O_NONBLOCK set
-> means the read would block. Hence, the common implementation in
-> nonblocking model will poll the file when the nonblocking read returns
-> EAGAIN. However, when the target file is thermal zone, this mechanism
-> will totally malfunction because thermal zone doesn't implement sysfs
-> notification and thus the poll will never return.
->
-> For example, the read in Golang implemnts such method and sometimes
-> hangs at reading some thermal zones via sysfs.
->
-> Change to throw ENODATA instead of EAGAIN to userspace.
->
-> Signed-off-by: Hsin-Te Yuan <yuanhsinte@chromium.org>
-> ---
-> Changes in v3:
-> - Refine the control flow and optimize the success case.
-> - Link to v2: https://lore.kernel.org/r/20250512-temp-v2-1-048be58eaaa5@c=
-hromium.org
->
-> Changes in v2:
-> - Modify commit message to make it clear
-> - Link to v1: https://lore.kernel.org/r/20250409-temp-v1-1-9a391d8c60fd@c=
-hromium.org
-> ---
->  drivers/thermal/thermal_sysfs.c | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/thermal/thermal_sysfs.c b/drivers/thermal/thermal_sy=
-sfs.c
-> index 24b9055a0b6c515b865e0d7e2db1d0de176ff767..d80612506a334ab739e7545cd=
-fe984ab4dffab7c 100644
-> --- a/drivers/thermal/thermal_sysfs.c
-> +++ b/drivers/thermal/thermal_sysfs.c
-> @@ -40,10 +40,13 @@ temp_show(struct device *dev, struct device_attribute=
- *attr, char *buf)
->
->         ret =3D thermal_zone_get_temp(tz, &temperature);
->
-> -       if (ret)
-> -               return ret;
-> +       if (!ret)
-> +               return sprintf(buf, "%d\n", temperature);
->
-> -       return sprintf(buf, "%d\n", temperature);
-> +       if (ret =3D=3D -EAGAIN)
-> +               return -ENODATA;
-> +
-> +       return ret;
->  }
->
->  static ssize_t
->
-> ---
+On Wed, Jul 02, 2025 at 03:05:41PM -0300, Jason Gunthorpe wrote:
+> On Wed, Jul 02, 2025 at 01:38:33AM +0000, Pranjal Shrivastava wrote:
+> > On Tue, Jul 01, 2025 at 05:46:06PM -0700, Nicolin Chen wrote:
+> > > On Wed, Jul 02, 2025 at 12:14:28AM +0000, Pranjal Shrivastava wrote:
+> > > > Thus, coming back to the two initial points:
+> > > > 
+> > > > 1) Issuing "non-invalidation" commands through .cache_invalidate could
+> > > >    be confusing, I'm not asking to change the op name here, but if we
+> > > >    plan to label it, let's label them as "Trapped commands" OR
+> > > >    "non-accelerated" commands as you suggested.
+> > > 
+> > > VCMDQ only accelerates limited invalidation commands, not all of
+> > > them: STE cache invalidation and CD cache invalidation commands
+> > > still go down to that op.
+> > > 
+> > 
+> > Right, I'm just saying the "other" non-accelerated commands that are
+> > NOT invalidations also go down that op. So, if we add a comment, let's 
+> > not call them "non-invalidation" commands.
+> 
+> There are no non-invalidation commands:
+> 
+> static int arm_vsmmu_convert_user_cmd(struct arm_vsmmu *vsmmu,
+> 				      struct arm_vsmmu_invalidation_cmd *cmd)
+> {
+> 	switch (cmd->cmd[0] & CMDQ_0_OP) {
+> 	case CMDQ_OP_TLBI_NSNH_ALL:
+> 	case CMDQ_OP_TLBI_NH_VA:
+> 	case CMDQ_OP_TLBI_NH_VAA:
+> 	case CMDQ_OP_TLBI_NH_ALL:
+> 	case CMDQ_OP_TLBI_NH_ASID:
+> 	case CMDQ_OP_ATC_INV:
+> 	case CMDQ_OP_CFGI_CD:
+> 	case CMDQ_OP_CFGI_CD_ALL:
+> 
+> Those are only invalidations.
+> 
+> CD invalidation can't go through the vCMDQ path.
+> 
 
-Applied as 6.17 material, thanks!
+Right.. I was however hoping we'd also trap commands like CMD_PRI_RESP
+and CMD_RESUME...I'm not sure if they should be accelerated via CMDQV..
+I guess I'll need to look and understand a little more if they are..
+
+> > > > 2) The "FIXME" confusion: The comment in arm_vsmmu_cache_invalidate
+> > > >    mentions we'd like to "fix" the issuing of commands through the main
+> > > >    cmdq and instead like to group by "type", if that "type" is the queue
+> > > >    type (which I assume it is because IOMMU_TYPE has to be arm-smmu-v3),
+> > > 
+> > > I recall that FIXME is noted by Jason at that time. And it should
+> > > be interpreted as "group by opcode", IIUIC.
+> > 
+> > I see.. I misunderstood that..
+> 
+> Yes, we could use the vCMDQ in the SMMU driver for invalidations which
+> would give some minor locking advantage. But it is not really
+> important to anyone.
+> 
+
+Alright, I see. Makes sense. Thanks for the clarification.
+
+> > > The thing is that for a host kernel that enabled in-kernel VCMDQs,
+> > > those trapped user commands can be just issued to the smmu->cmdq
+> > > or a vcmdq (picked via the get_secondary_cmdq impl_op).
+> > 
+> > Ohh.. so maybe some sort of a load balancing thing?
+> 
+> The goal of the SMMU driver when it detects CMDQV support is to route
+> all supported invalidations to CMDQV queues and then balance those
+> queues across CPUs to reduce lock contention.
+> 
+
+I see.. that makes sense.. so it's a relatively small gain (but a nice
+one). Thanks for clarifying!
+
+> Jason
+
+Praan
 
