@@ -1,142 +1,147 @@
-Return-Path: <linux-kernel+bounces-714850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01904AF6D4A
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 10:45:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3519AAF6D4F
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 10:45:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E5E33AB4A8
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 08:44:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B3A94E86EB
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 08:45:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8FF02D29B1;
-	Thu,  3 Jul 2025 08:44:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 676992BE651;
+	Thu,  3 Jul 2025 08:45:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="kM+MN+I7"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lb0pWSSX"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C81C52D23B9
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 08:44:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52EEB2D3A71
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 08:45:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751532299; cv=none; b=rZwpTP/LxNiebpt5stkJ+Fmn+8jhSl2OgfteTcAGKi8kJJ4Q5HnzG9f2ZGoZFVYjY575k5KIfiaeIA9H0g+7iV8yceRQJYkYHKDhpISOmC9zJh7WEZqjIppkVsg4bAwdc9iS+mQWgEo6gvwNrv7Jecyhy0ae8ZIGDX09+229r+A=
+	t=1751532313; cv=none; b=CHXYvAsBOWsMw//OmZYlEttSGkBSdXCVQDmF6xMl0YOgso5QouHdx+KBJ1n29LsmzcBxv/b03hNE9+oOjAehzMpcXq+bFdZZjxI0zL8IBmTxzMgnuka9T21D3NGZutFlxy4ps7s5flUDrQ81lzz1M5Ktr3aYrnd5D0cA9xdCRl4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751532299; c=relaxed/simple;
-	bh=6gaKodRI80WQO8fQlUHCc0R+9PKjGGkDa55qKeWpLes=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=tbjIp6MFzm3U5Jz4nVNhuA6kyfEUVV6XTsDRbay4PYgsD5urbmJBLn46tISwjAYgKzxS4ANQuFzDURi9xcO+ZX6AhcgpFtn8iavKBegAUpNrXBesulgpoRLKdXt9s3TcfwGYXxNbtMHcolE6cT4wcdNJUfk02ed6I2KpW8vPXE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=kM+MN+I7; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3a6d77b43c9so4955473f8f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Jul 2025 01:44:56 -0700 (PDT)
+	s=arc-20240116; t=1751532313; c=relaxed/simple;
+	bh=Z4RUc6Gbwf0nFs7S38pgF7gJ69XRpnkcl9klBzAiOQQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=K7bswzQqkxk5T+4C0kY/9dKQ5XScNR5cHADArMA4BoNh8RDNgkYqB1VcaiaCBDm1W6upJXzTYuBpLcKiIZAr1CeaB4neMG3QGZ7bGjPN/VlsMnqr/Sv3vTMJm13Fu1eVGrU02e1XUaGwQL1dsH4RiLj81/ZX+jm+G3eIucEC+XI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lb0pWSSX; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-739b3fe7ce8so8287463b3a.0;
+        Thu, 03 Jul 2025 01:45:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1751532295; x=1752137095; darn=vger.kernel.org;
-        h=mime-version:message-id:date:user-agent:references:in-reply-to
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=BCaJVrU9vvGCv3HMW8UcZSchVxJ9IX/Nuw4VRhiVqcc=;
-        b=kM+MN+I7CqOHwIeYYPBXmJJ/+tvg7clLy1DwG9LVrz3vtvKK6DgxjKigv+ENBAM9Tt
-         MCgZ94TYKJAD+Ye3jk0pA+Zq5TgEMONqEclO62uOpKlYnYMVpgih5j6FjBUSWjwh7I9t
-         kNwD8SL4SwN6vOWV4TRe6QKiNvJ+DHDqozhQsg8RgMR/n9nAgEwM9B2NIZylgmxx4BXC
-         9/YfEWryw8LuhG5ppfLRpRaEhWKcL0WJ9+ilGWJoWKsAICi6GHKnbYBUBZ4TS//1KmSh
-         JJos9y/aaWz/1+M4c/lpDbU9GeGdZA0gz+U4Qfg7kPS3ySueBQqb6jB3WGfGS2CYLhwM
-         WFlg==
+        d=gmail.com; s=20230601; t=1751532311; x=1752137111; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=D3Z107VnaAMLtYbjfxHTZ3Ws4rPY5VMWknkGImN8dII=;
+        b=lb0pWSSX0T6p+GE6061wGOuB5yct9Doc11N79oT4GhJw8xAhqpvVuJRbe1hjs3JKM4
+         M33z/e7LbK8SUtl6FOs5PwrKVKTCfcsfSlXzcZAJ6GA4Mib7X2YFhT3lOykYD9IrDHOB
+         kzzkNyKxoJHUG+bH5cDcigMBwnnZT6aRl0L70fgPhgNjGdYkIhLprltnoYd+cdlzVcAs
+         3AB5IoJcnVBHYuTlDfLWYXgUC8i1LyAIdzrSCIk/8iPFWtNWMJS6jNCFJOWhitKtkl7J
+         iJs8TX2CYS8Pjht5WV03gckmSHIjgeu3TT+ZOYLkWKgCE0gNGxGsb2+MDHFUOSykNEFk
+         IIXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751532295; x=1752137095;
-        h=mime-version:message-id:date:user-agent:references:in-reply-to
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BCaJVrU9vvGCv3HMW8UcZSchVxJ9IX/Nuw4VRhiVqcc=;
-        b=ZOTZpqq4gec3Yq70VhoIo9dzy4jVklBwK3+z77JoK1mUvSzp8EN2ZsfGBe7A/7yieq
-         kv+E2QqweWaRXLV0HHPe/myfs2dO77EfM4vTsdcZBhOnRw7TBrpRyC4YX/KlW7OQu4/u
-         BcH0bOotp4XRPsZpVOjMxVfQ7V9WSbem6QaDfsr623AmeDz/3eQg+loUXvQ2jHawt2TZ
-         2mBo8H3qZIN9EWAITha+pVxB6EQ4qqZXDnQFLlEb4AwXtvxJ2ihPJkYNHUDgDF0TS7KE
-         RriXkDMWkjbxF0XjC+WErespdUCi09O3Pyyk5gcVkwL8Fl5l+yd+hhsA5kTBfAIC1h1F
-         QbCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWs3Ye4YP3gvv4c90AZ8V0Vh3f1z/HlJZVZDZfhlUUbeXJ+JuiinzgptuJG5qAJlnb9T+AgM4a5jgf5qJA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTegns0X48BdFIFvgN7FpuP08bTChpSxa8nAgFcKVJRQgnIuF0
-	Z7vtDw9idy3WH4uwuuiAVfJXENHpXXuhp8K42XMryImcwWtdIKZe4kua6jsCAF3uiKU=
-X-Gm-Gg: ASbGnctGtPK24J0rwI7wi+qPqo6XubYSmzIW9CArM947S14O/n0yhgqIqDiVJ+8ixiD
-	SzeXuoDXR7vjTiHgwCOgLCuEwcpbPUEaJCfEn0M/VmHvd1yJtkXg0WHTcYj62Sw4WcjWO2RfseA
-	hk23Qcsa/wpzbd2+hPkNJuQds08ZUXQGiPF0XDLgSJwOXCkfivOdju84vzJyvvsJO465vaHFwqP
-	hJv4pgeIfbYMFvIygA0wWmiGwQca7F8+D8qAuLBSYO1IDJ78m2mIo2bzAxwErwTh8lq2AezK4fl
-	BjKGdVAOGhjOlL60ISDsAqnMlfe6u405Zd6zIl+/3cTxdwvIWOR2JFLFOETZtw==
-X-Google-Smtp-Source: AGHT+IF545q3PqJViLJ3tmQn2xNcqUD4C4aWOYfTnAGoUJX7T6e4Ign+bwQdPieifu8Yhl+1ojcvfw==
-X-Received: by 2002:a5d:5e84:0:b0:3b1:3466:6734 with SMTP id ffacd0b85a97d-3b32de6b0f1mr2108930f8f.44.1751532295095;
-        Thu, 03 Jul 2025 01:44:55 -0700 (PDT)
-Received: from localhost ([2a01:e0a:3c5:5fb1:1b4c:1be9:25d0:5634])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3a892e5f923sm17657514f8f.89.2025.07.03.01.44.54
+        d=1e100.net; s=20230601; t=1751532311; x=1752137111;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=D3Z107VnaAMLtYbjfxHTZ3Ws4rPY5VMWknkGImN8dII=;
+        b=oprCFLaelvE2xJlWhyyyMfqF3dw8vrSmS572wNt27aPaI/UzRQIIZD/8J2n33l9bJ5
+         4dVFQuianyDqnhJT6lRvdsDc+LJKeuOCAovWqsvB0o64xllrGQONF131CKOoBM/3LUcp
+         Vb1X804HiAY8LbuTN3VTmbKnJwozdkjW4x6JI6gnn90d/otDwCMd4a/eggd6UJUrESTs
+         22VwTJjestfy1S/x76deVY1y0JyBk1HXo3upUNLqnBw1mBLIdXUJ+iePuigweOgVi1Y2
+         ZX8N3MsU6blxY7j6VvdoEGpdA3bDkUGIFHD80dJtMbIYK25eGOYOAyGwTqU1hGeYRx06
+         S4mQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVZo5ezZ7Zvu8Mt4UNDiW2SCFtWf1srU4k8Pg9GEAMzIz9rZ0rObX9J1dnjtI0WJMO3CK3UiJ7UR8g4r54=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywej+OXQ8n8DI0iiLbpF8t4CrCdYv6kK1aG0NVE6kRbwmW9E3wS
+	JmvLdPEJX/SXc7H4nvc2AlnYRPKUmd50lbQF2ypdqMMiUsxFDSJ0W0we1jmnkQmQlv1CtFpf
+X-Gm-Gg: ASbGncuE/BBksXSblLMNcJNP80HdrYHVaEVHioo9bRVJRhkkBHg1PS5j89w/p4fd5fX
+	W3ryuJsJosCLRDx1e5jmuzKrPT9gyI49j0/gSHR+6Jh8c790KZBiyDaje/jH14quKemX1QUMWbv
+	SJlZQuq5tjdsqn/f5fjJeDB9LGGOfviDc3Z9hTyY09b5IDLrfOVls8EdnrUkqUEe/619llMxrlL
+	FJS2v24k3oNSt4syufRM9aAREpY6gdHMXcuGNqfJNUFAPC4U0fIXuy02jKrXYEtc8mGrQOUxWcP
+	R00M7s/k4t8ouqxcPg/j3RGMn+bciWVcvJv9cm2Np+Oj05EziTWLFBt31g==
+X-Google-Smtp-Source: AGHT+IEnjPIE4RkD8yeyExMffXHw1vkN2HUWnhx/66EOeXkQyVnH+BLsxBWYvtQaheJO0JIaL9o5zA==
+X-Received: by 2002:a05:6a21:498:b0:21a:e751:e048 with SMTP id adf61e73a8af0-222d7f086f0mr11000209637.35.1751532311182;
+        Thu, 03 Jul 2025 01:45:11 -0700 (PDT)
+Received: from nyaos.. ([202.212.79.55])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b34e3023a11sm12982398a12.25.2025.07.03.01.45.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Jul 2025 01:44:54 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Chuan Liu <chuan.liu@amlogic.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,  Michael Turquette
- <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>,  Kevin Hilman
- <khilman@baylibre.com>,  Martin Blumenstingl
- <martin.blumenstingl@googlemail.com>,  linux-amlogic@lists.infradead.org,
-  linux-clk@vger.kernel.org,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 26/26] clk: amlogic: c3-peripherals: use helper for
- basic composite clocks
-In-Reply-To: <27ae4f23-7a41-4810-9639-5bcc4cebc8dd@amlogic.com> (Chuan Liu's
-	message of "Thu, 3 Jul 2025 15:56:25 +0800")
-References: <20250702-meson-clk-cleanup-24-v1-0-e163c9a1fc21@baylibre.com>
-	<20250702-meson-clk-cleanup-24-v1-26-e163c9a1fc21@baylibre.com>
-	<27ae4f23-7a41-4810-9639-5bcc4cebc8dd@amlogic.com>
-User-Agent: mu4e 1.12.9; emacs 30.1
-Date: Thu, 03 Jul 2025 10:44:54 +0200
-Message-ID: <1jzfdlbr3t.fsf@starbuckisacylon.baylibre.com>
+        Thu, 03 Jul 2025 01:45:10 -0700 (PDT)
+From: ChenMiao <chenmiao.ku@gmail.com>
+To: Linux RISCV <linux-riscv@vger.kernel.org>
+Cc: chenmiao <chenmiao.ku@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] riscv: ftrace: Fix the logic issue in DYNAMIC_FTRACE selection
+Date: Thu,  3 Jul 2025 08:45:02 +0000
+Message-ID: <20250703084502.394406-1-chenmiao.ku@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu 03 Jul 2025 at 15:56, Chuan Liu <chuan.liu@amlogic.com> wrote:
+From: chenmiao <chenmiao.ku@gmail.com>
 
+When I was reading the source code of ftrace, I learned that
+ftrace has two types: static and dynamic. Initially, I planned
+to prioritize reading the static source code, so I disabled
+the enable dynamic option in RISCV.
 
->> +static C3_COMP_SEL(hcodec_1, VDEC3_CLK_CTRL, 9, 0x7, c3_hcodec_pre_parents);
->> +static C3_COMP_DIV(hcodec_1, VDEC3_CLK_CTRL, 0, 7);
->> +static C3_COMP_GATE(hcodec_1, VDEC3_CLK_CTRL, 8);
->
->
-> Note: hcodec_clk is a no-glitch clock. The current driver may fail to set
-> hcodec_clk properly. A previous patch attempted to fix this by adding a
-> flag,
-> but was abandoned as it introduced other issues.
-> (https://lore.kernel.org/all/f8c3b6e7-2f5d-493e-8254-2a27623f0d2e@amlogic.com/)
->
-> This macro won't be suitable if we revisit the flag approach later.
->
+[*]   Kernel Function Tracer
+[ ]   Kernel Function Graph Tracer
+[ ]   enable/disable function tracing dynamically (NEW)
 
-But it is now. As documented in the description, the purpose of these
-macro is to get the easy and repeating stuff out of the way, helping
-tricky things stand out.
+However, when I tried to compile it, the build failed.
 
-So when/if you fix this clock and you add tricky things, please drop the
-macro then and add some comments explaining what you do and why.
+./include/linux/ftrace.h:190:16: error: implicit declaration of
+function ‘arch_ftrace_get_regs’; did you mean ‘arch_ftrace_regs’?
+[-Wimplicit-function-declaration]
+  190 |         return arch_ftrace_get_regs(fregs);
+      |                ^~~~~~~~~~~~~~~~~~~~
+      |                arch_ftrace_regs
 
->
->>
->>   static const struct clk_parent_data c3_hcodec_parents[] = {
->>          { .hw = &c3_hcodec_0.hw },
->
->
-> [...]
->
->
->> --
->> 2.47.2
->>
->>
->> _______________________________________________
->> linux-amlogic mailing list
->> linux-amlogic@lists.infradead.org
->> http://lists.infradead.org/mailman/listinfo/linux-amlogic
+After comparing it with the ARM64 architecture, I found that
+ARM64 automatically enables DYNAMIC_FTRACE by default once
+FUNCTION_TRACER is turned on, and this cannot be set to "no".
+Therefore, I believe the optional DYNAMIC_FTRACE setting in
+RISC-V has a logic flaw—if FUNCTION_TRACER is enabled,
+DYNAMIC_FTRACE should also be enabled, and vice versa. Moreover,
+it's clear that RISC-V lacks the necessary support to successfully
+compile the kernel when DYNAMIC_FTRACE is disabled.
 
+[*]   Kernel Function Tracer
+[ ]   Kernel Function Graph Tracer
+-*-   enable/disable function tracing dynamically
+
+Signed-off-by: chenmiao <chenmiao.ku@gmail.com>
+---
+ arch/riscv/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+index 36061f473..f7fc8b460 100644
+--- a/arch/riscv/Kconfig
++++ b/arch/riscv/Kconfig
+@@ -97,6 +97,7 @@ config RISCV
+ 	select CLONE_BACKWARDS
+ 	select COMMON_CLK
+ 	select CPU_PM if CPU_IDLE || HIBERNATION || SUSPEND
++	select DYNAMIC_FTRACE if FUNCTION_TRACER
+ 	select EDAC_SUPPORT
+ 	select FRAME_POINTER if PERF_EVENTS || (FUNCTION_TRACER && !DYNAMIC_FTRACE)
+ 	select FTRACE_MCOUNT_USE_PATCHABLE_FUNCTION_ENTRY if DYNAMIC_FTRACE
 -- 
-Jerome
+2.45.2
+
 
