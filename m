@@ -1,135 +1,173 @@
-Return-Path: <linux-kernel+bounces-716416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-715017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69F8CAF8625
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 05:58:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8A1CAF6FA7
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 12:04:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0BB647B8FB2
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 03:57:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 498A0189326A
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 10:05:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 818D21EB9EB;
-	Fri,  4 Jul 2025 03:58:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6DFA2E174A;
+	Thu,  3 Jul 2025 10:04:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Sy5ykVVv"
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="gvFnyOSB"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 073561E5213
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 03:58:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E14142E03F6
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 10:04:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751601495; cv=none; b=iWpM1f7/cYh8GFbW++pAQ8Sa13TNKCjz3j0K6jA+ZuQHV+meTah/Q3+fhFulzeSKq3yyW19obw7+rguH51jB3Q1iSaJnAK5qMDV1T6J9/v9bR0KKClgscg3UjcKDNijbSC7+lRMCWQIYLn4g7/yG/lXZbKe7oF+hjON8uQyARxw=
+	t=1751537076; cv=none; b=bSALCUDxBo9zofChz8U8lpXxRUla6oRpW/llsU4Ua3wQhhJKEiP/LG6+rBNWq/dnPEbC7bPke9x3kxCoGZcjQ1TEbL04oCarWqjdWuCt7Qwn4e9zD+B23bL4AwudeN2Z6WB1p/lY4dx1fGpvqzbQ1wGCUsj30xkZPgLTJeJB69w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751601495; c=relaxed/simple;
-	bh=CwsW/v3kGTUgLenN3mCNVgbHpSdDlpbvzUgi56ChsA8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
-	 Content-Type:References; b=txk0iuaEPdF2n8M+bxMsx/Dk8FqfucP7JPrPiMv4NnSlfNFBJxVNK9UqRz51SVC9ug12iDHylAqAnn38dDOZseHZypYaMrRN1ZnUT0HFfVTL6WkqAFnaQKZPg6iwwFllHCG9RW7azn3SPKQZRf67LWtonnWwudo4GHjTV9eg/8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Sy5ykVVv; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250704035806epoutp01daf199b2f8b51c4342fcec23bc010c0b~O8EWBvYTU2664626646epoutp016
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 03:58:06 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250704035806epoutp01daf199b2f8b51c4342fcec23bc010c0b~O8EWBvYTU2664626646epoutp016
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1751601486;
-	bh=x/8gj71UJV86nP6lspRD9k7s8nGbai8aJQjsGNNfkWs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Sy5ykVVv9igqpbrP5eTn+ACaqNixyqCQJqmIqarv/c9xCb+XH518N4F8tsGuN6meQ
-	 wLMHXZFJBXmVuGd56oPNBUItOsjxPfYYpWTsJNPvjw6GK21ZZFZfTZ+F5jWxKGOdyt
-	 zmIDWub3p70R5y6CFiKvCITYFA7C0LqlI6nfY/QY=
-Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
-	20250704035805epcas5p320c4465b7969403a662650d43de3d573~O8EVMpvZo0399503995epcas5p3J;
-	Fri,  4 Jul 2025 03:58:05 +0000 (GMT)
-Received: from epcpadp2new (unknown [182.195.40.142]) by
-	epsnrtp01.localdomain (Postfix) with ESMTP id 4bYKbx3SWkz6B9m6; Fri,  4 Jul
-	2025 03:58:05 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250703100429epcas5p1dd84b9da7f710c941e856857e212f64a~Ota9A8bTr0702407024epcas5p1G;
-	Thu,  3 Jul 2025 10:04:29 +0000 (GMT)
-Received: from test-PowerEdge-R740xd (unknown [107.99.41.79]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250703100426epsmtip1b6479f8c372de8f2814a0faefe0c5332~Ota6ltdXZ2058220582epsmtip1u;
-	Thu,  3 Jul 2025 10:04:26 +0000 (GMT)
-Date: Thu, 3 Jul 2025 15:34:21 +0530
-From: Neeraj Kumar <s.neeraj@samsung.com>
-To: Ira Weiny <ira.weiny@intel.com>
-Cc: dan.j.williams@intel.com, dave@stgolabs.net,
-	jonathan.cameron@huawei.com, dave.jiang@intel.com,
-	alison.schofield@intel.com, vishal.l.verma@intel.com,
-	a.manzanares@samsung.com, nifan.cxl@gmail.com, anisa.su@samsung.com,
-	vishak.g@samsung.com, krish.reddy@samsung.com, arun.george@samsung.com,
-	alok.rathore@samsung.com, neeraj.kernel@gmail.com,
-	linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org,
-	nvdimm@lists.linux.dev, gost.dev@samsung.com, cpgs@samsung.com
-Subject: Re: [RFC PATCH 02/20] nvdimm/label: Prep patch to accommodate cxl
- lsa 2.1 support
-Message-ID: <158453976.61751601485478.JavaMail.epsvc@epcpadp2new>
+	s=arc-20240116; t=1751537076; c=relaxed/simple;
+	bh=cyTu142mWOH15jjQQR8zgkNVkfWZan1wub5jXvzfRWY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tphm2+QAI/Vt4hbTdcgkRbCULYlH86x7rlLt4Y3oCW6DDBNk8h3uhIAK/08+MpcUzkCyk0XkAZUCWW/hICeMu3QiHhWd+T6Sdbhn+/H/PVm6bW/rPQ5IYuSvU1qE+CaSy1OrwbO2sBH8eX78udF43bgcr8r45mCz44gBasMkLVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=gvFnyOSB; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56366Gs2007174
+	for <linux-kernel@vger.kernel.org>; Thu, 3 Jul 2025 10:04:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	oUtfiWChnTptD8GgF9Q1eg1hm3mYO2U2DifbMke4nQM=; b=gvFnyOSBx5Zh75xU
+	SLvcJThJvf6mWMXWPebbqcXw/LQKVtbzvTkao9o7jI2W3/eLsTxYdQOcYqabZbGQ
+	p+DRhgT1UPNJE3UiSUnW7SK+d6r+JHQ0Gnp50MYM119vTpQxOENAKRFxTIrI2uGV
+	Sx4otX5eeXvOsL5MJRxRr3N5bIdAgZ7pm12TeQjBbfboIvVwY33ocojvZkqnQ1gg
+	2kKZ9DcUj5Jvs4MWbh422O5U/tNiYfZC6fyzMDqc8yMjbaVDWOoB9IJycbJuIuz1
+	0anRYOh8dnf59cVcVUSQ9VK8ia2EoF5WYaXcUQ9DzSBgVpIa6fy69ZFLyZv9lsNF
+	TNHwFA==
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47napw2733-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 03 Jul 2025 10:04:33 +0000 (GMT)
+Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6fd1dcf1c5bso15889546d6.3
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Jul 2025 03:04:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751537072; x=1752141872;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=oUtfiWChnTptD8GgF9Q1eg1hm3mYO2U2DifbMke4nQM=;
+        b=izMvl0VlrVnXyr+EKhcHN9Fm+AQheNP7qL/PH50/5BSZ3/RTnXtRAaQKk7klAjG0YL
+         gPJLm9CBgtth34EYMSnQMjuCVGEJb+g1adCQadzV4i3OoRPwZ/GEd8mGRQQOnysSIqUN
+         3hKcKou4YxE2dirSgDiqe4/f0rZ6WIFrJWoOuCmsj6CuKyShrSCd/Xxj7epy8djG7a2f
+         UoCvw3i4b2gYlEkaKibl3lsv9SFD8MbGRFsfs9yOpifKkSM8q6xRHypHUvxXjQ5VLEx1
+         Da5Qeb/D251MkaPgd0XoPoRl/A+rb+xNEeIcv22zHBSeO4AQqPUnSbDXrYe1MD4YrmVS
+         +Dvw==
+X-Forwarded-Encrypted: i=1; AJvYcCXEAI9/0mOCTatyLqWAa4qOM1Ap33U62OtX1uF4YzeLzELY9lqSSe8sbmaBB5x/sL5XksII/pkSxHX/d9I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXjIbxUYD/LsgmzuJX2JO5l6dBotqIClfov5jhBKU4+Tg+qIZq
+	GSw+du37SYR39Acmfk+wW/7a9+zVNYbbn5iPfmkXb3U+1Git+w0vIHY12rZE1UQW1zTGxcp2eSu
+	fIgQD9pWDQbsosAZE/n1Lz+q59DE9i1qEv20PMV8HQE9OG0LB6Bzjoolp5vFDhjJLeH0=
+X-Gm-Gg: ASbGncvCZdTHxmrzz9SyzIqtk/q1eJY68l673O7TtDSw6v7Zxbxz6C0TcMWW+XPu8fz
+	XwYW/DKiA2CWoyI5h3fzVT4k21tzoOfwrWqtZOAkDVvNotQNJqv9aOMiVU2XMf39yAZ4fLy+isU
+	tpeM4zubosbLJh9XWkLllgsTPxkzS7OhKfqp9pxi8bQHydBqOclZiD3Sd8CKGNxWW3binQ4Xmph
+	d6z+zSPJwhakUNhzVki9rGYCUKx+X44Qmf5BzVVYy7wiCVz7QE/gmbtit5i7b0P3b2ukKry1Fa4
+	Pdker11cpOFYbdWHi2D1tnSNXz3veCR5qD8vJ4EWacHeGRsmvMP9pn8PHAqQ72XiBQPCpAsgGw7
+	XOSrh+juI
+X-Received: by 2002:a05:620a:170a:b0:7d3:c69e:267 with SMTP id af79cd13be357-7d5d3f81630mr79845385a.12.1751537072316;
+        Thu, 03 Jul 2025 03:04:32 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG2LJCfxQ4Vlc6G/INeD4FSxm9U7KnRLIwjqUdsVZx1frVxI2yUcjNbNlDmF6QyLAOxpw/4TA==
+X-Received: by 2002:a05:620a:170a:b0:7d3:c69e:267 with SMTP id af79cd13be357-7d5d3f81630mr79843585a.12.1751537071886;
+        Thu, 03 Jul 2025 03:04:31 -0700 (PDT)
+Received: from [192.168.1.114] (83.9.29.190.neoplus.adsl.tpnet.pl. [83.9.29.190])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-60e2a743d53sm4520080a12.28.2025.07.03.03.04.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 03 Jul 2025 03:04:31 -0700 (PDT)
+Message-ID: <a453bd90-b7c7-42eb-b769-b4c87b6dac12@oss.qualcomm.com>
+Date: Thu, 3 Jul 2025 12:04:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <6865728b489a7_30f2b72947b@iweiny-mobl.notmuch>
-X-CMS-MailID: 20250703100429epcas5p1dd84b9da7f710c941e856857e212f64a
-X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-	boundary="----h0bZ1fOXZXBKxlzn_9r8J_wZFA-mIVa_VlXZDLVzFug9RPyR=_ebefa_"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-X-CPGSPASS: Y
-X-Hop-Count: 3
-X-CMS-RootMailID: 20250617124011epcas5p2264e30ec58977907f80d311083265641
-References: <20250617123944.78345-1-s.neeraj@samsung.com>
-	<CGME20250617124011epcas5p2264e30ec58977907f80d311083265641@epcas5p2.samsung.com>
-	<700072760.81750165203833.JavaMail.epsvc@epcpadp1new>
-	<6865728b489a7_30f2b72947b@iweiny-mobl.notmuch>
-
-------h0bZ1fOXZXBKxlzn_9r8J_wZFA-mIVa_VlXZDLVzFug9RPyR=_ebefa_
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-Content-Disposition: inline
-
-On 02/07/25 12:55PM, Ira Weiny wrote:
->Neeraj Kumar wrote:
->> In order to accommodate cxl lsa 2.1 format region label, renamed
->> nd_namespace_label to nd_lsa_label.
->
->This does not really make it clear why a name change is required.
->
->Could you elaborate here?
-
-Hi Ira,
-
-LSA 2.1 format introduces region label, which can also reside into LSA
-along with only namespace label as per v1.1 and v1.2
-
-As both namespace and region labels are of same size, i.e, 256 bytes.
-Therefore I have introduced nd_lsa_label as following
-
-   struct nd_lsa_label {
-	union {
-		struct nd_namespace_label ns_label;
-		struct cxl_region_label rg_label;
-	};
-   };
-
-Sure, I will update commit message with above information in next
-patch-set.
-
-
-Thanks,
-Neeraj
-
-------h0bZ1fOXZXBKxlzn_9r8J_wZFA-mIVa_VlXZDLVzFug9RPyR=_ebefa_
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] dt-bindings: pinctrl: document the Milos Top Level
+ Mode Multiplexer
+To: Luca Weiss <luca.weiss@fairphone.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250702-sm7635-pinctrl-v2-0-c138624b9924@fairphone.com>
+ <20250702-sm7635-pinctrl-v2-1-c138624b9924@fairphone.com>
+ <20250703-daring-burgundy-limpet-a1c97e@krzk-bin>
+ <DB293G0PC5P8.13IW22M6DDESM@fairphone.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <DB293G0PC5P8.13IW22M6DDESM@fairphone.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=dIKmmPZb c=1 sm=1 tr=0 ts=686655b1 cx=c_pps
+ a=UgVkIMxJMSkC9lv97toC5g==:117 a=fKQzr7EGRj+VoE0XNsDNvQ==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
+ a=K2Eths-FuMJ0g_30MjIA:9 a=QEXdDO2ut3YA:10 a=1HOtulTD9v-eNWfpl4qZ:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzAzMDA4MiBTYWx0ZWRfX+5WFdcHr4Qsh
+ AUCHrlxHa1LE7tUOdNo9uFPW3Enf/lwVus9F0Uu63hpOK6mCPWsekh6UehE9gch0W+/5OGejxh2
+ /Y+h025GjH/I1igDdgoxzjt5Hb3aT9J1nGQPJF92KrvYDwYzM+ZBHQu4XmY2jYlm4Vw4dHuIJ4I
+ 5n/TDxobhlDQRTx51+MdVppY/OuoQ9LfUtSbIL+Ub47Aw8lHtORHaL3qhbeOfDRLW6y10XBmHCf
+ xqpH4QxR1ecylS2QitaFmYF3q1MLmxxk6GEllQO8RzoKtjPQh3bBUaXR2LiI2TMRYHX3SaChFr4
+ yZMuXNwdUtvui4dswNGKAJjSESX4tFXUuGrp0/N2wp9bN60MzRREZkFxdvjukjCIRdHhgHpdMvF
+ pX6zMOc7Msmv/b/KM3B36HLap2Kwu2YOT+r3RCubOTHEpN1spqQDh6CwfZjm0mgJvrVH86xI
+X-Proofpoint-GUID: SjTi-FtL_H0FuVFzwFwvGYatj93zCJOr
+X-Proofpoint-ORIG-GUID: SjTi-FtL_H0FuVFzwFwvGYatj93zCJOr
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-03_03,2025-07-02_04,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 priorityscore=1501 lowpriorityscore=0 spamscore=0 malwarescore=0
+ impostorscore=0 mlxscore=0 adultscore=0 mlxlogscore=999 phishscore=0
+ suspectscore=0 clxscore=1015 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507030082
 
 
-------h0bZ1fOXZXBKxlzn_9r8J_wZFA-mIVa_VlXZDLVzFug9RPyR=_ebefa_--
 
+On 03-Jul-25 09:44, Luca Weiss wrote:
+> On Thu Jul 3, 2025 at 9:41 AM CEST, Krzysztof Kozlowski wrote:
+>> On Wed, Jul 02, 2025 at 05:56:16PM +0200, Luca Weiss wrote:
+>>> Document the Top Level Mode Multiplexer on the Milos Platform.
+>>
+>> What is Milos platform? Does it have some sort of model number how we
+>> usually expect? Wasn't this SM7325 or similar?
+>>
+>> The problem with such new naming that it awfully sounds like family
+>> names, so just expand the name and explain it.
+> 
+> Please go argue with Bjorn/Konrad about this, wasn't my idea.
+> 
+> https://lore.kernel.org/linux-arm-msm/aGMI1Zv6D+K+vWZL@hu-bjorande-lv.qualcomm.com/
+> https://lore.kernel.org/linux-arm-msm/b98d305b-247f-415b-8675-50d073452feb@oss.qualcomm.com/
+
+Milos is the "real-est" name of this silicon. All the associated
+S[AM]|QC[MS]s are just variations of it, with different fusing.
+
+You'll stumble upon it across e.g. firmware build strings, as
+well as in any documentation pieces.
+
+There are various internal reasons for the switch, but the most
+obvious external-facing one is not to have the user buy a devkit
+and wonder whether they should use QCS9100 or QCS9075 DTB, and
+why there's zero drivers code for these magic numbers (they
+include SA8775P). We can simply point them to "codename" and
+all C code will refer to it as well.
+
+As for external reviewers not knowing what the platform name
+refers to, this is nothing new - AMD submits colorful fish names
+and it's broadly accepted practice
+
+Konrad
 
