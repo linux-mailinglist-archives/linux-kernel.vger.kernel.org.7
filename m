@@ -1,35 +1,35 @@
-Return-Path: <linux-kernel+bounces-715852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-715853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27D36AF7E84
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 19:19:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91101AF7E87
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 19:19:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 782E34E57AA
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 17:18:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8FDD1C484F0
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 17:19:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FD7C289E03;
-	Thu,  3 Jul 2025 17:18:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1510289E17;
+	Thu,  3 Jul 2025 17:18:38 +0000 (UTC)
 Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BCC2289349;
-	Thu,  3 Jul 2025 17:18:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36E80288C36;
+	Thu,  3 Jul 2025 17:18:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751563116; cv=none; b=kZS22TgK16hwP2NbBCVkuuvt2nrYlu634LokCJvGQyXOc46q5yLPyZADciLKgQfCi5duiJvAN9X66AXaDR88GiCUZErxQg3WJJapzIjYg4u3foC55yiDtsXc8TP4i8sdjj6aSEay9qIZVw+dAo8xIDEpvP6V1yBMxhwuzSSE3zI=
+	t=1751563118; cv=none; b=c5rxYAx2eu99d6L98pIT6GD8zdGXo+KJ7jW1odzzFFdkzcclp+RCVcSD8ii1TWxXt/WR/6WVRfJ6tGgFOn7QwXgBrYVLiZ++r/TWfL2FqjXAAMX7lNMFwyXk9VK9K1IkVqOm721SkU8SUnSERc3o6f9uH8YRxTlv1LuYyDN4bcs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751563116; c=relaxed/simple;
-	bh=wh+FG9ThWMaAow7vm26UwKu04jPrutnOEIBXiTtwkOA=;
+	s=arc-20240116; t=1751563118; c=relaxed/simple;
+	bh=NneS0bsQDQ6cT9/xkoEiGO9A7ogtAQaST8w15z36m18=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZJe4PGmELC05o1Sf0orb0jLeGOLiS4uAqfelMeGteHHNqzrjTFc0OZVIUDkuX9F7IEYBKYsuidiFvrMgWezTdCnn5/IBn4wSGA7VwR2OImND32Hz4gOtDK/aLDlSn37TJQRM27WFE8QrPEwJDcvnkETq18UOOdMtJjoK+KS87HE=
+	 MIME-Version; b=RHGU1EorAxanvWEP8w8il1nMdYEbo9juEAChDdM1e3rmifEBsGvuPq2G2mV20oPF/lo4o70OlegCbr7+8XJ98cwj2jhCTSK+toh11jlBfuWeVTA2Vmly4StcaHx99rdA1PA252tZwr5C3ZBKrDHQAflAD/zCRr+tU8zwte+v7cs=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hadess.net; spf=pass smtp.mailfrom=hadess.net; arc=none smtp.client-ip=217.70.183.198
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hadess.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hadess.net
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 08A6C442C1;
-	Thu,  3 Jul 2025 17:18:29 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 67760442BF;
+	Thu,  3 Jul 2025 17:18:32 +0000 (UTC)
 From: Bastien Nocera <hadess@hadess.net>
 To: trivial@kernel.org,
 	Marcel Holtmann <marcel@holtmann.org>,
@@ -54,9 +54,9 @@ To: trivial@kernel.org,
 	linux-mediatek@lists.infradead.org,
 	linux-arm-kernel@lists.infradead.org,
 	asahi@lists.linux.dev
-Subject: [PATCH v2 2/7] Bluetooth: btmtk: Fix typo in log string
-Date: Thu,  3 Jul 2025 19:16:56 +0200
-Message-ID: <20250703171815.1011001-3-hadess@hadess.net>
+Subject: [PATCH v2 3/7] Bluetooth: btrtl: Fix typo in comment
+Date: Thu,  3 Jul 2025 19:16:57 +0200
+Message-ID: <20250703171815.1011001-4-hadess@hadess.net>
 X-Mailer: git-send-email 2.50.0
 In-Reply-To: <20250703171815.1011001-1-hadess@hadess.net>
 References: <20250703171815.1011001-1-hadess@hadess.net>
@@ -77,22 +77,22 @@ Found by codespell.
 
 Signed-off-by: Bastien Nocera <hadess@hadess.net>
 ---
- drivers/bluetooth/btmtkuart.c | 2 +-
+ drivers/bluetooth/btrtl.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/bluetooth/btmtkuart.c b/drivers/bluetooth/btmtkuart.c
-index c97e260fcb0c..4208ebecd560 100644
---- a/drivers/bluetooth/btmtkuart.c
-+++ b/drivers/bluetooth/btmtkuart.c
-@@ -316,7 +316,7 @@ mtk_stp_split(struct btmtkuart_dev *bdev, const unsigned char *data, int count,
+diff --git a/drivers/bluetooth/btrtl.c b/drivers/bluetooth/btrtl.c
+index 7838c89e529e..7c556c37c659 100644
+--- a/drivers/bluetooth/btrtl.c
++++ b/drivers/bluetooth/btrtl.c
+@@ -693,7 +693,7 @@ static int rtlbt_parse_firmware(struct hci_dev *hdev,
  
- 		/* Resync STP when unexpected data is being read */
- 		if (shdr->prefix != 0x80 || bdev->stp_dlen > 2048) {
--			bt_dev_err(bdev->hdev, "stp format unexpect (%d, %d)",
-+			bt_dev_err(bdev->hdev, "stp format unexpected (%d, %d)",
- 				   shdr->prefix, bdev->stp_dlen);
- 			bdev->stp_cursor = 2;
- 			bdev->stp_dlen = 0;
+ 	/* Loop from the end of the firmware parsing instructions, until
+ 	 * we find an instruction that identifies the "project ID" for the
+-	 * hardware supported by this firwmare file.
++	 * hardware supported by this firmware file.
+ 	 * Once we have that, we double-check that project_id is suitable
+ 	 * for the hardware we are working with.
+ 	 */
 -- 
 2.50.0
 
