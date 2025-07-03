@@ -1,319 +1,98 @@
-Return-Path: <linux-kernel+bounces-715298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-715276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77ECBAF73D9
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 14:23:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8763BAF738C
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 14:16:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A92A1C85736
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 12:23:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 134AA1C47E6B
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 12:16:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFD542EE99C;
-	Thu,  3 Jul 2025 12:18:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LmturfIB"
-Received: from mail-pf1-f194.google.com (mail-pf1-f194.google.com [209.85.210.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B19632E0400;
+	Thu,  3 Jul 2025 12:15:54 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D0FD2EE97A;
-	Thu,  3 Jul 2025 12:18:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C58A32E4997
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 12:15:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751545099; cv=none; b=p7qY90zYH7bF/2QS1Kd0n9iys5nsJHcRdh0HzLZYluly64+r6f4XHjWdwngQsamRTVku3R6N5K2KXVLQYGo7Rcg1crc9gNK88sOU9zfXxwUCRehqLBjo7xKDAAc0gitEFeV8V69+tAlwsUMfBM6ejVvi/l0BLhGH2gZyuZ7j+7Q=
+	t=1751544954; cv=none; b=tDsqFvvzont95HiY1ms18gYJTDrCmiAFru8cg0Gd4FCT5m545n4iPj7pJhY3pbi0Wrsosv98t0IOc+atY69HP5koPWyPAXpN9fafEbZnfGn3LjyuQO5jpdMo+vwmBgjLYq4SjKwGYZaqMks1dk93RmoR2mRJUu4i4ae+vhhA2FQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751545099; c=relaxed/simple;
-	bh=A4maR+ym1UWBIiGpvABPayxYHENx7ob0ofT6FQcgEQk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ruQXeNWCEFRu+Xie4/3aWjbG6nWjemCadaG1LJt3S1n6fbfvoeuOMisR0epDUoWwTHAoYyj7C2FumzxlSTTDa7Mp5euS13Jo4Y62Hb9Y8lkYw5LyErQ822r7EscnTvn1LP34iy8DvzM4ux2qWO7KEHi9BnQofeThjSwl50t9jmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LmturfIB; arc=none smtp.client-ip=209.85.210.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f194.google.com with SMTP id d2e1a72fcca58-748fe69a7baso7422517b3a.3;
-        Thu, 03 Jul 2025 05:18:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751545097; x=1752149897; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=B2Y/tNEM0ulgYJ7h98kqdHkd9WCaMgRog3nRAxQgWOI=;
-        b=LmturfIBIldPjnr17qN2KJlib+XYI6iFy0kAvOZWp6ItNbPatFm1+1UZ2G7AAkhQuW
-         DlCnS/cIT2K/6rMTWOgoyjLCTyxDDWon43O3iTElYgZmb7HhUE18kl96E1jNJnZliJzh
-         vaCP3Z79fRMJbj0lukfodPtSk+GSPimZqSyplZJohaQM8eFFhGFxEKB9O0Ao5gyYNnSw
-         QA69nrP7vAgYk1BJsBc/wWOFsXSxW0VdTc9WsHMfA754c99/jToi//MWbFUy/nLzeIhe
-         ZsnYcLnVpLd2jQniDVnPceoleSLlRIuCDXhOqIYw78urglBveJEaBBQ8KJJM7ZtTvJcY
-         gqfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751545097; x=1752149897;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=B2Y/tNEM0ulgYJ7h98kqdHkd9WCaMgRog3nRAxQgWOI=;
-        b=pnJ1CyjEu6Cc1feKq2t9aaXE3K6N4RuvOv83CUCzBl1RHX2un+5U6CHbdQm09kLozl
-         /Dc1TdTNQRZ/cVgHDixnxVYRjpN7IDIneK+wM/zqxIrJCe6fD0Js3Kb4ExP1CTZ9Bol5
-         V5XQPkhYm639wgM7qSoDOEG0EVHwvrs1iVgHJz4RuGeZzmnuiHZwKChqizAh/DPang9j
-         4vIWQdfTd1PF092B1Arn4LTlbdFa/vVReP8hOGEAmEMrSOtXP2ultV3QutSj79sFmGqY
-         1XVyS718Wl+Yz/ZryNCoirZRGyOYwGXzUyCu/nw4CN/p8NTTVRy7zkAHiMay/R/DIVSc
-         5wIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVV/PeqddflT0+9NezB0mxWu4IpQ9kB0YIWvoypvMxn6luK5gW+ueJw0ENLnTlwaMXHwLvW/ur4S/S8LZs8Bqcn@vger.kernel.org, AJvYcCWMk7szsqD3/e1PVWoRuFkaTZ4DvU9oCelkX8M48RUH0PCN69WGSgkEjhVyD/033OzwIbEjh2vRXGOgaF4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDCROl2/WBXGOgpJ6QCsW8l+V6UO8052AwTJwo+7ewr2WfjR+5
-	mwr7r3nEYnPH4WKUTd2tVkUZ8Ji1kylHTLKv3DbeRfhvtzk6ocytTZDEgV2aXQXEMZPMNg==
-X-Gm-Gg: ASbGnctEe3I6+t+6QbO5/TO0TnJop5ltNBRiPurBY76wpiD83nhSGrj/QEPt+W8bSF7
-	MuEyh193FwUvKE9JDWqtBAC9SYSwyqSdUQMpgwQF4MQEhmsledrvU6mxUv+EjNpxHqoRKlXxenI
-	CLT5jrdsm4B/3dr4I2L+1ZkIbcCEM7B5cSkVzQlyvM4oMEWTFG2Yso/q9cDe9N1pRDlHRCtpsxV
-	E7eAANVlg2wYdR5o3fGK4llLHWgemkiZpXQDru5IE2fC+QzbjwQVjqqyedukh86PVsCo7Gx6pJh
-	Kad8FSV+M6/HE4zNxocytQGQnLw9/ZjnDkBoTC/ChXtft/kL0NjlBM7O8T4XGeDxrV0nwd4QVqG
-	Z1T0=
-X-Google-Smtp-Source: AGHT+IEJ/xANJXHVQ1ORXK8DAYjINsVZ3TBgS7WVSrfSzxWAZNAP+BDf5vO1EFMY3uxQr2+HmULR0A==
-X-Received: by 2002:a05:6a00:92a9:b0:748:f406:b09 with SMTP id d2e1a72fcca58-74b512c1b0amr8849811b3a.23.1751545096776;
-        Thu, 03 Jul 2025 05:18:16 -0700 (PDT)
-Received: from localhost.localdomain ([43.129.244.20])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74af5575895sm18591081b3a.94.2025.07.03.05.18.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Jul 2025 05:18:16 -0700 (PDT)
-From: Menglong Dong <menglong8.dong@gmail.com>
-X-Google-Original-From: Menglong Dong <dongml2@chinatelecom.cn>
-To: alexei.starovoitov@gmail.com,
-	rostedt@goodmis.org,
-	jolsa@kernel.org
-Cc: bpf@vger.kernel.org,
-	Menglong Dong <dongml2@chinatelecom.cn>,
-	Mykola Lysenko <mykolal@fb.com>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH bpf-next v2 18/18] selftests/bpf: add bench tests for tracing_multi
-Date: Thu,  3 Jul 2025 20:15:21 +0800
-Message-Id: <20250703121521.1874196-19-dongml2@chinatelecom.cn>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250703121521.1874196-1-dongml2@chinatelecom.cn>
-References: <20250703121521.1874196-1-dongml2@chinatelecom.cn>
+	s=arc-20240116; t=1751544954; c=relaxed/simple;
+	bh=2cwzRrKV6+OHwZtckoHPQp05vX7Ld1fXm8HhqxeAgyI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hmVw6poma8uc/NoayHBComOpVuPEaU3Wq9JzJlRpZkwyy4jPu3pZazCCgSI94YZFtTQzpHO1NySBWrT/sY6lrC3ebhYrSMPiOYkGh/sLAanZtAPzo/vr/NvprjjxKNSQ/g5/DMfiQSRbRhTrGOXVSIYNN1c0ovZ+9Fr1IC00XcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[127.0.0.1])
+	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
+	(envelope-from <a.fatoum@pengutronix.de>)
+	id 1uXIqt-0005tA-2D; Thu, 03 Jul 2025 14:15:43 +0200
+Message-ID: <cb30270f-18a7-4fc6-8c12-05255b82c5cf@pengutronix.de>
+Date: Thu, 3 Jul 2025 14:15:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2 2/2] arm64: dts: imx8mn: Configure DMA on UART2
+To: Adam Ford <aford173@gmail.com>, linux-arm-kernel@lists.infradead.org
+Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ aford@beaconembedded.com, linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>
+References: <20250703113810.73023-1-aford173@gmail.com>
+ <20250703113810.73023-2-aford173@gmail.com>
+From: Ahmad Fatoum <a.fatoum@pengutronix.de>
+Content-Language: en-US, de-DE, de-BE
+In-Reply-To: <20250703113810.73023-2-aford173@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
+X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Add bench testcase for fentry_multi, fexit_multi and fmodret_multi in
-bench_trigger.c.
+On 7/3/25 13:38, Adam Ford wrote:
+> UART2 is often used as the console, so the DMA was likely left
+> off on purpose, since it's recommended to not use the DMA on the
+> console. Because, the driver checks to see if the UART is used for
+> the console when determining if it should initialize DMA, it
+> should be safe to enable DMA on UART2 for all users.
+> 
+> Signed-off-by: Adam Ford <aford173@gmail.com>
 
-Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
----
-v2:
-- use the existing bpf bench framework instead of introducing new one
----
- tools/testing/selftests/bpf/bench.c           |  8 +++
- .../selftests/bpf/benchs/bench_trigger.c      | 72 +++++++++++++++++++
- .../selftests/bpf/benchs/run_bench_trigger.sh |  1 +
- .../selftests/bpf/progs/trigger_bench.c       | 22 ++++++
- 4 files changed, 103 insertions(+)
+Reviewed-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
 
-diff --git a/tools/testing/selftests/bpf/bench.c b/tools/testing/selftests/bpf/bench.c
-index ddd73d06a1eb..32f1e2e936c0 100644
---- a/tools/testing/selftests/bpf/bench.c
-+++ b/tools/testing/selftests/bpf/bench.c
-@@ -510,8 +510,12 @@ extern const struct bench bench_trig_kretprobe;
- extern const struct bench bench_trig_kprobe_multi;
- extern const struct bench bench_trig_kretprobe_multi;
- extern const struct bench bench_trig_fentry;
-+extern const struct bench bench_trig_fentry_multi;
-+extern const struct bench bench_trig_fentry_multi_all;
- extern const struct bench bench_trig_fexit;
-+extern const struct bench bench_trig_fexit_multi;
- extern const struct bench bench_trig_fmodret;
-+extern const struct bench bench_trig_fmodret_multi;
- extern const struct bench bench_trig_tp;
- extern const struct bench bench_trig_rawtp;
- 
-@@ -578,8 +582,12 @@ static const struct bench *benchs[] = {
- 	&bench_trig_kprobe_multi,
- 	&bench_trig_kretprobe_multi,
- 	&bench_trig_fentry,
-+	&bench_trig_fentry_multi,
-+	&bench_trig_fentry_multi_all,
- 	&bench_trig_fexit,
-+	&bench_trig_fexit_multi,
- 	&bench_trig_fmodret,
-+	&bench_trig_fmodret_multi,
- 	&bench_trig_tp,
- 	&bench_trig_rawtp,
- 	/* uprobes */
-diff --git a/tools/testing/selftests/bpf/benchs/bench_trigger.c b/tools/testing/selftests/bpf/benchs/bench_trigger.c
-index 82327657846e..a1844ee358f1 100644
---- a/tools/testing/selftests/bpf/benchs/bench_trigger.c
-+++ b/tools/testing/selftests/bpf/benchs/bench_trigger.c
-@@ -226,6 +226,54 @@ static void trigger_fentry_setup(void)
- 	attach_bpf(ctx.skel->progs.bench_trigger_fentry);
- }
- 
-+static void trigger_fentry_multi_setup(void)
-+{
-+	setup_ctx();
-+	bpf_program__set_autoload(ctx.skel->progs.bench_trigger_fentry_multi, true);
-+	load_ctx();
-+	attach_bpf(ctx.skel->progs.bench_trigger_fentry_multi);
-+}
-+
-+static void trigger_fentry_multi_all_setup(void)
-+{
-+	LIBBPF_OPTS(bpf_trace_multi_opts, opts);
-+	struct bpf_program *prog;
-+	struct bpf_link *link;
-+	char **syms = NULL;
-+	size_t cnt = 0;
-+	int i;
-+
-+	setup_ctx();
-+	prog = ctx.skel->progs.bench_trigger_fentry_multi;
-+	bpf_program__set_autoload(prog, true);
-+	load_ctx();
-+
-+	if (bpf_get_ksyms(&syms, &cnt, true)) {
-+		printf("failed to get ksyms\n");
-+		exit(1);
-+	}
-+
-+	for (i = 0; i < cnt; i++) {
-+		if (strcmp(syms[i], "bpf_get_numa_node_id") == 0)
-+			break;
-+	}
-+	if (i == cnt) {
-+		printf("bpf_get_numa_node_id not found in ksyms\n");
-+		exit(1);
-+	}
-+
-+	printf("found %zu ksyms\n", cnt);
-+	opts.syms = (const char **) syms;
-+	opts.cnt = cnt;
-+	opts.skip_invalid = true;
-+	link = bpf_program__attach_trace_multi_opts(prog, &opts);
-+	if (!link) {
-+		printf("failed to attach bench_trigger_fentry_multi to all\n");
-+		exit(1);
-+	}
-+	ctx.skel->links.bench_trigger_fentry_multi = link;
-+}
-+
- static void trigger_fexit_setup(void)
- {
- 	setup_ctx();
-@@ -234,6 +282,14 @@ static void trigger_fexit_setup(void)
- 	attach_bpf(ctx.skel->progs.bench_trigger_fexit);
- }
- 
-+static void trigger_fexit_multi_setup(void)
-+{
-+	setup_ctx();
-+	bpf_program__set_autoload(ctx.skel->progs.bench_trigger_fexit_multi, true);
-+	load_ctx();
-+	attach_bpf(ctx.skel->progs.bench_trigger_fexit_multi);
-+}
-+
- static void trigger_fmodret_setup(void)
- {
- 	setup_ctx();
-@@ -246,6 +302,18 @@ static void trigger_fmodret_setup(void)
- 	attach_bpf(ctx.skel->progs.bench_trigger_fmodret);
- }
- 
-+static void trigger_fmodret_multi_setup(void)
-+{
-+	setup_ctx();
-+	bpf_program__set_autoload(ctx.skel->progs.trigger_driver, false);
-+	bpf_program__set_autoload(ctx.skel->progs.trigger_driver_kfunc, true);
-+	bpf_program__set_autoload(ctx.skel->progs.bench_trigger_fmodret_multi, true);
-+	load_ctx();
-+	/* override driver program */
-+	ctx.driver_prog_fd = bpf_program__fd(ctx.skel->progs.trigger_driver_kfunc);
-+	attach_bpf(ctx.skel->progs.bench_trigger_fmodret_multi);
-+}
-+
- static void trigger_tp_setup(void)
- {
- 	setup_ctx();
-@@ -512,8 +580,12 @@ BENCH_TRIG_KERNEL(kretprobe, "kretprobe");
- BENCH_TRIG_KERNEL(kprobe_multi, "kprobe-multi");
- BENCH_TRIG_KERNEL(kretprobe_multi, "kretprobe-multi");
- BENCH_TRIG_KERNEL(fentry, "fentry");
-+BENCH_TRIG_KERNEL(fentry_multi, "fentry-multi");
-+BENCH_TRIG_KERNEL(fentry_multi_all, "fentry-multi-all");
- BENCH_TRIG_KERNEL(fexit, "fexit");
-+BENCH_TRIG_KERNEL(fexit_multi, "fexit-multi");
- BENCH_TRIG_KERNEL(fmodret, "fmodret");
-+BENCH_TRIG_KERNEL(fmodret_multi, "fmodret-multi");
- BENCH_TRIG_KERNEL(tp, "tp");
- BENCH_TRIG_KERNEL(rawtp, "rawtp");
- 
-diff --git a/tools/testing/selftests/bpf/benchs/run_bench_trigger.sh b/tools/testing/selftests/bpf/benchs/run_bench_trigger.sh
-index a690f5a68b6b..48a7f809d053 100755
---- a/tools/testing/selftests/bpf/benchs/run_bench_trigger.sh
-+++ b/tools/testing/selftests/bpf/benchs/run_bench_trigger.sh
-@@ -5,6 +5,7 @@ set -eufo pipefail
- def_tests=( \
- 	usermode-count kernel-count syscall-count \
- 	fentry fexit fmodret \
-+	fentry-multi fentry-multi-all fexit-multi fmodret-multi \
- 	rawtp tp \
- 	kprobe kprobe-multi \
- 	kretprobe kretprobe-multi \
-diff --git a/tools/testing/selftests/bpf/progs/trigger_bench.c b/tools/testing/selftests/bpf/progs/trigger_bench.c
-index 044a6d78923e..2ff1a7568080 100644
---- a/tools/testing/selftests/bpf/progs/trigger_bench.c
-+++ b/tools/testing/selftests/bpf/progs/trigger_bench.c
-@@ -111,6 +111,13 @@ int bench_trigger_fentry(void *ctx)
- 	return 0;
- }
- 
-+SEC("?fentry.multi/bpf_get_numa_node_id")
-+int bench_trigger_fentry_multi(void *ctx)
-+{
-+	inc_counter();
-+	return 0;
-+}
-+
- SEC("?fexit/bpf_get_numa_node_id")
- int bench_trigger_fexit(void *ctx)
- {
-@@ -118,6 +125,14 @@ int bench_trigger_fexit(void *ctx)
- 	return 0;
- }
- 
-+SEC("?fexit.multi/bpf_get_numa_node_id")
-+int bench_trigger_fexit_multi(void *ctx)
-+{
-+	inc_counter();
-+
-+	return 0;
-+}
-+
- SEC("?fmod_ret/bpf_modify_return_test_tp")
- int bench_trigger_fmodret(void *ctx)
- {
-@@ -125,6 +140,13 @@ int bench_trigger_fmodret(void *ctx)
- 	return -22;
- }
- 
-+SEC("?fmod_ret.multi/bpf_modify_return_test_tp")
-+int bench_trigger_fmodret_multi(void *ctx)
-+{
-+	inc_counter();
-+	return -22;
-+}
-+
- SEC("?tp/bpf_test_run/bpf_trigger_tp")
- int bench_trigger_tp(void *ctx)
- {
+> ---
+> V2:  Fix spelling errors in commit message
+> 
+> diff --git a/arch/arm64/boot/dts/freescale/imx8mn.dtsi b/arch/arm64/boot/dts/freescale/imx8mn.dtsi
+> index 848ba5e46ee6..b98b3d0ddf25 100644
+> --- a/arch/arm64/boot/dts/freescale/imx8mn.dtsi
+> +++ b/arch/arm64/boot/dts/freescale/imx8mn.dtsi
+> @@ -860,6 +860,8 @@ uart2: serial@30890000 {
+>  					clocks = <&clk IMX8MN_CLK_UART2_ROOT>,
+>  						 <&clk IMX8MN_CLK_UART2_ROOT>;
+>  					clock-names = "ipg", "per";
+> +					dmas = <&sdma1 24 4 0>, <&sdma1 25 4 0>;
+> +					dma-names = "rx", "tx";
+>  					status = "disabled";
+>  				};
+>  			};
+
 -- 
-2.39.5
+Pengutronix e.K.                  |                             |
+Steuerwalder Str. 21              | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany         | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686  | Fax:   +49-5121-206917-5555 |
 
 
