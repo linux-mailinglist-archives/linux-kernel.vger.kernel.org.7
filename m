@@ -1,155 +1,90 @@
-Return-Path: <linux-kernel+bounces-716109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98F85AF81E1
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 22:21:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FD22AF81C5
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 22:12:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27E361BC7E66
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 20:21:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 151DC7AF7F0
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 20:11:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C37042BE623;
-	Thu,  3 Jul 2025 20:21:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96E6B29B8DC;
+	Thu,  3 Jul 2025 20:12:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b="FiCglh9T"
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CC362BDC15;
-	Thu,  3 Jul 2025 20:21:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="ls7eTFKZ"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0787629AB05;
+	Thu,  3 Jul 2025 20:12:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751574089; cv=none; b=JaM8siO8v+n+SVmPeTTsDvhDbDbSo0otRYBjImkEQIqatQ4epp8wDFIYbvmJcJMT2/IVFr1gf7p3V14hMvjKs8kCEOXSOMwvxDYqhfRT8Gqf7+p1kDlnGZhU/4EV6sdZy4Vh/naYTa+5WC2kf9v4aSNU2ejRYQTnpP667eGh9rU=
+	t=1751573553; cv=none; b=P0wexDCyTlmCsNVri5aldfDHDwQY4Fw2UF9MeJt3D1cJUgAqwbfx1CIxdLfMsWSJ69bXXcgPyVDn0hwz02ZRYQ1WpxCFiBRg/gEqB8/32pB8mAfeflGzI3D9sPgSFDE+p/fHdR5LYU6oGPED6zOPiQg0qvzQUgHixlqu+/Fsne0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751574089; c=relaxed/simple;
-	bh=nxQiQkdudWPZBcNRA9KIQ7hVUyuUQb/8xkQyaumgNEE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TA/wa/Owi0AAMtIRcUR7dPc0GH82hkHN/YftZyJH4sY2znUNV71s6P8MMnz6dTlxgqlD9SW3WXxfoexCqwEq8hvNzxwFRg7+h85Xz5+alSQH7H/AClHHrXb4lOfvFhxKZe/o7H050kxxeIvWa/c0H4DBzKmJIN+MGBPvMQxE0M0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz; spf=pass smtp.mailfrom=ucw.cz; dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b=FiCglh9T; arc=none smtp.client-ip=46.255.230.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id 0D95D1C00AB; Thu,  3 Jul 2025 22:12:29 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
-	t=1751573549;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZgOphpMZQaLhZ23QXn+GUqOhSFA5+GAho7L5ktP0kac=;
-	b=FiCglh9Tms8WiSo2BtH3bmVpvbGxSAA+H8ByhHyEwFc5/ma9s41tmJrEqtguzLkvlWIiF6
-	uZM/wv6OEGMQQYm2Qghymc0jY08FVc4oavnkRCYR8Y7ZzPaJpKJ8U6nNQrFrqq4huTTvjh
-	UGiCg7Qtk6C7N7wGXUrLGYvqVroZ5Zg=
-Date: Thu, 3 Jul 2025 22:12:28 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc: t.antoine@uclouvain.be, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Dimitri Fedrau <dima.fedrau@gmail.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH v4 2/5] power: supply: add support for max77759 fuel gauge
-Message-ID: <aGbkLIFkMlihbJUt@duo.ucw.cz>
-References: <20250523-b4-gs101_max77759_fg-v4-0-b49904e35a34@uclouvain.be>
- <20250523-b4-gs101_max77759_fg-v4-2-b49904e35a34@uclouvain.be>
- <4cahu6dog7ly4ww6xyjmjigjfxs4m55mrnym2bjmzskscfvk34@guazy6wxbzfh>
+	s=arc-20240116; t=1751573553; c=relaxed/simple;
+	bh=gmh5ZoAgGsJKG8haTIpWu74Cwifbp8iS4hmC9GfBIAI=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=hNiYP+Z0bYITDSaVM0bmIN+m/GZiZGXw1ifpeqxxM6R9A8Pg3rciVnIul/Tv+Y9LgE78xIpq3JYNeRXbACg7Vmp8EOWHuPdSwTcu81AjYTh3tOtuNQHiH1Dzh3YKZtoFjqE7/rH+3qX+kKAMEtEhEqGmMlvLXuwBQ1kF8UtOaeY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=ls7eTFKZ; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1158)
+	id 8D6F3201B1B1; Thu,  3 Jul 2025 13:12:30 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 8D6F3201B1B1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1751573550;
+	bh=fXBcnpF5wIVxCrRcCZEh0GIQXdpGV1Dnj7t4XrnX4c4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=ls7eTFKZsvKQoWNUQapIL/zkupcDpzjxGfr7c1sN7smhoClWtQu99/wGy7wBisfWu
+	 rozp01tvzgZmxExhvPH5k532LdMzj8zUf7+pC0KrohrXMBy+gHbU5aB1GKuhxJi+Od
+	 6QepbLaA+tnxDTYTSLGBBj84EBkFbnTaNH1KvgXU=
+From: Hardik Garg <hargar@linux.microsoft.com>
+To: gregkh@linuxfoundation.org
+Cc: akpm@linux-foundation.org,
+	broonie@kernel.org,
+	conor@kernel.org,
+	f.fainelli@gmail.com,
+	hargar@microsoft.com,
+	jonathanh@nvidia.com,
+	linux-kernel@vger.kernel.org,
+	linux@roeck-us.net,
+	lkft-triage@lists.linaro.org,
+	patches@kernelci.org,
+	patches@lists.linux.dev,
+	pavel@denx.de,
+	rwarsow@gmx.de,
+	shuah@kernel.org,
+	srw@sladewatkins.net,
+	stable@vger.kernel.org,
+	sudipm.mukherjee@gmail.com,
+	torvalds@linux-foundation.org
+Subject: Re: [PATCH 6.15 000/263] 6.15.5-rc1 review
+Date: Thu,  3 Jul 2025 13:12:30 -0700
+Message-Id: <1751573550-30344-1-git-send-email-hargar@linux.microsoft.com>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <20250703144004.276210867@linuxfoundation.org>
+References: <20250703144004.276210867@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="eiYFnwelYqG2iU/c"
-Content-Disposition: inline
-In-Reply-To: <4cahu6dog7ly4ww6xyjmjigjfxs4m55mrnym2bjmzskscfvk34@guazy6wxbzfh>
+
+The kernel, bpf tool, and perf tool builds fine for v6.15.5-rc1 on x86 and arm64 Azure VM.
+
+Kernel binary size for x86 build:
+text      data      bss      dec       hex      filename
+31999332  14279706  6250496  52529534  321897e  vmlinux
+
+Kernel binary size for arm64 build:
+text      data      bss      dec       hex      filename
+37335764  15435073  1038480  53809317  33510a5  vmlinux
 
 
---eiYFnwelYqG2iU/c
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Tested-by: Hardik Garg <hargar@linux.microsoft.com>
 
-Hi!
 
-> > Other differences include the lack of V_BATT register to read the batte=
-ry
-> > level. The voltage must instead be read from V_CELL, the lowest voltage=
- of
-> > all cells. The mask to identify the chip is different. The computation =
-of
-> > the charge must also be changed to take into account TASKPERIOD, which
-> > can add a factor 2 to the result.
-> >=20
-> > Add support for the MAX77759 by taking into account all of those
-> > differences based on chip type.
-> >=20
-> > Do not advertise temp probes using the non-volatile memory as those are
-> > not available.
-> >=20
-> > The regmap was proposed by Andr=E9 Draszik in
-> >=20
-> > Link: https://lore.kernel.org/all/d1bade77b5281c1de6b2ddcb4dbbd033e455a=
-116.camel@linaro.org/
-> >=20
-> > Signed-off-by: Thomas Antoine <t.antoine@uclouvain.be>
-> > ---
-> >  drivers/power/supply/max1720x_battery.c | 265 ++++++++++++++++++++++++=
-++++----
-> >  1 file changed, 238 insertions(+), 27 deletions(-)
-> >=20
-> > diff --git a/drivers/power/supply/max1720x_battery.c b/drivers/power/su=
-pply/max1720x_battery.c
-> > index 68b5314ecf3a234f906ec8fe400e586855b69cd9..c9ad452ada9d0a2a51f37d0=
-4fd8c3260be522405 100644
-> > --- a/drivers/power/supply/max1720x_battery.c
-> > +++ b/drivers/power/supply/max1720x_battery.c
-> > @@ -37,6 +37,7 @@
-> >  #define MAX172XX_REPCAP			0x05	/* Average capacity */
-> >  #define MAX172XX_REPSOC			0x06	/* Percentage of charge */
-> >  #define MAX172XX_TEMP			0x08	/* Temperature */
-> > +#define MAX172XX_VCELL			0x09	/* Lowest cell voltage */
-> [...]
-> >  	case POWER_SUPPLY_PROP_VOLTAGE_NOW:
-> [...]
-> > +			ret =3D regmap_read(info->regmap, MAX172XX_VCELL, &reg_val);
-> > +			val->intval =3D max172xx_cell_voltage_to_ps(reg_val);
->=20
-> I haven't reviewed this fully due to all the feedback you already
-> got from Peter Griffin and the DT binding being broken, but something
-> that catched my eye:
->=20
-> POWER_SUPPLY_PROP_VOLTAGE_NOW provides the voltage of the whole
-> battery and not of a single cell. E.g. a typical Li-Ion battery
-> with two serial cells has a nominal voltage of roughly 7.4V while
-> each cell has just 3.7V.
 
-Phones normally only have one cell...
 
-Best regards,
-								Pavel
---=20
-I don't work for Nazis and criminals, and neither should you.
-Boycott Putin, Trump, and Musk!
-
---eiYFnwelYqG2iU/c
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaGbkLAAKCRAw5/Bqldv6
-8sYEAKCh0wimF36YRI80R6pAVmloU8qRRgCgnXM0UWB0vtffIz/feHaS3ubBHak=
-=t4+u
------END PGP SIGNATURE-----
-
---eiYFnwelYqG2iU/c--
+Thanks,
+Hardik
 
