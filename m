@@ -1,151 +1,174 @@
-Return-Path: <linux-kernel+bounces-716069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAF3CAF8173
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 21:38:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05B19AF8177
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 21:40:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 242C01C87B26
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 19:38:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4AE045817B8
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 19:40:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C9572F5C41;
-	Thu,  3 Jul 2025 19:38:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D60092F2C76;
+	Thu,  3 Jul 2025 19:40:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F56v2AnD"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="SUnsNcHM"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CE902DE6EE;
-	Thu,  3 Jul 2025 19:38:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A363B1E5B7A
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 19:40:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751571495; cv=none; b=Wk7ArStE3/bsswR+QF4Ignzv18VuRTOPZcpVS3UcRN81xNiY5byy6JFPph1r3jwOgZrbLztTrUVe9SY8jXLWp+/77bBkfXIuDGd60oKlqhsTG3SEkVhstlJo+EC8Dy8fOKQIAOIwGqkGus6WQYBXiM14wPZQynMRRXsDOyAdFgA=
+	t=1751571643; cv=none; b=AVTRxWY7yvbTwCjdBnmOEidLmaO0Yo1mN8ePqqzLtEADRv5Dsos67nx07eRZ6u5pfHR3sbSZ5Bz3t6chAEOsl/hSXeYyX8+lJ6p02pAu5wCJcM+uQC9vqYEeQGm+5pokhlvDySgHY/WzpGL5ZWRJZLOZ4jvaEhzckO9f3F2eH+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751571495; c=relaxed/simple;
-	bh=p5uOMFHvJwUGuJvmvYotmeGOkDlMkIpY+4J3jc724Sg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PSBiBxiuyak7mPXJ1ShKWyiFgpOGI9buzacFqFbJwJ2e/npaPgMd6RFeq68zJy+/GaHkoFSx4gExuXwOGZaOZBJP5dSju/8JIWBTiU50Rj313h3GrMkDPWv3LDP9i60jdt2SCTIIqEIafxdM1MVfnv5TtiSsaUuHRTO1BnhgFXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F56v2AnD; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-236377f00a1so3387635ad.3;
-        Thu, 03 Jul 2025 12:38:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751571493; x=1752176293; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=mfLY4ZIIX6c7Uf9FQfy3N6nezkDQGS+OMzVy2anSQiE=;
-        b=F56v2AnDkrsgjEEkpk7zKYrCvywGY6v5N/XHlU3Xn9tlu5XgZqIBpQM/jgmEFgGi6h
-         U+UZrwARUCmHInEdbNV4ndv/5pzmoOYCT+pI3Jzk3Eeh1K8sQslCTQDlZGPzwBSPwJ8y
-         RQIAe0yd6aqcnK9bYHpX5tbsp17LFo/8mhY5KOvoDSLa5WpDoisebi8Kr9erCd0PFumH
-         OjOqLgossOO8ZgoxRxr3nR26KX9IyAbdAID3DWrAL3IyLINYKvX2Z+tQlNK3w/JSEj45
-         TGNM0a7UVwtLaPlpZ1AsmXTmZPuikN/Yc5yMubLnWRmywCB0iy+IUdBrmEw0k/VU9L35
-         vpgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751571493; x=1752176293;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mfLY4ZIIX6c7Uf9FQfy3N6nezkDQGS+OMzVy2anSQiE=;
-        b=suuykLqj3KFA6Q8ZAuoXuwySD4TXS+zH9YVTAlaF2CIyd5X+vv9aWFzAdeLrdZkq9X
-         9FyLSgX/t5xOpOm8f4Z9Gee+BQKnF+o0SejH6mR8beH3CixQSElH3N0pP+CxMeyZSPsp
-         NlxPM8Lk8tnamnwoMIJuCYQC28JNsgEraRMX3356gbLgHNA6K4NhEJbdmA87/yO8oKAf
-         TNCP8sLEqFNHiI7CZ/ICLAzBDxmL/fiW9ekVOszQa909gQiFyoAq5mFQq6OroRR/CsVK
-         UYUCZpPldNsMhp7C8Qy8r9vdzdZONdKHwb4VfmN1mMVJsO3NHz7OWrAWbNCaNOpm84n0
-         sViw==
-X-Forwarded-Encrypted: i=1; AJvYcCUDN/p4mMBPwm3Z03z1e3c2tNVZLv4/2UeAqZ1uscRShpSya31PIo1/9pRz5U4j70lOTWpQBsgSyN0yNi8=@vger.kernel.org, AJvYcCUZTPfgvDcZ6DdNUM4GTu+5OIcNf3NmLF1U113DK3zirZOdXaAhO8ywS0gToCD2J95lCZsWNk4w6vCfbg6RsmA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmYvDHVs/dBbdiExFMf+zG/CvxcsVl2Oa1H7mjN7WPC99POWB7
-	+f/+PXmTT9G7foRRVrR0oaGkqZBXwYVy2jMJqtAMqxHvgIAZVTkfTtK+
-X-Gm-Gg: ASbGncvCbMQ7ApcDBkidalPyW/95SJEy6CrJCWFHYxCOhld6OtOutNV+42BtUDctlpw
-	pgniXl083WAnzalx1eD58SlstB1RKGXIC8Dwvzn8yUnjJGeSrwHOnvYeBywMCE4uLcf2nZzCqXq
-	FFNnTWJQv2+n4Qy5X5PSPBIeqL9kIgDmzP9qlJOQvNfRVvEZg6+8rZKF02UG4txXA1/lRvfQ0Af
-	3m5V6HQy/8Xaj6cUOUq8M0d7SUv+1iPbGxfgiDac34fHIJjkkRT50q5F5sGrRJPUl+tYt5qgPNv
-	e8fWKxj0JgvMnj6p3lb/N0omPg4LY9wxehHjsAlg7Brtq3Q32NCXsyEJTTICg+w=
-X-Google-Smtp-Source: AGHT+IEWpfYnkVr+s6TSpjhobBo4AZaEkt/VIFDfi8qDj8tp/r66E4q6OKPr5Gj3/ggnBkjffzqwxQ==
-X-Received: by 2002:a17:903:2f8d:b0:235:779:ede5 with SMTP id d9443c01a7336-23c6e5b6125mr114749925ad.40.1751571492849;
-        Thu, 03 Jul 2025 12:38:12 -0700 (PDT)
-Received: from p920.. ([2001:569:799a:1600:788:c50d:c37c:e870])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23c8431f1basm2947795ad.25.2025.07.03.12.38.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Jul 2025 12:38:12 -0700 (PDT)
-From: Moon Hee Lee <moonhee.lee.ca@gmail.com>
-To: johannes@sipsolutions.net
-Cc: nico.escande@gmail.com,
-	linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-kernel-mentees@lists.linux.dev,
-	syzbot+ededba317ddeca8b3f08@syzkaller.appspotmail.com,
-	skhan@linuxfoundation.org,
-	david.hunter.linux@gmail.com,
-	Moon Hee Lee <moonhee.lee.ca@gmail.com>
-Subject: [PATCH v2] wifi: mac80211: reject VHT opmode for unsupported channel widths
-Date: Thu,  3 Jul 2025 12:37:57 -0700
-Message-ID: <20250703193756.46622-2-moonhee.lee.ca@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1751571643; c=relaxed/simple;
+	bh=2m8PxdRxHpElgScrKxRSTqSGHOGx+ASr5kdiYmxMxa4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WplntsSq9n8SjXAi6t6GA75A8RnJFet85BSOECkUN4askwBfWUCgMjf6wDevvTyKkNZyKBBuXodE0WqrkOMdeutks09cSWbKqrfUV2ZnRo7krM5pRA+B23ZOFS5n1Hmf516seJH/fcYkIvXMJTxzET7kKlBPwG0EUrclFczNBso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=SUnsNcHM; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 563HdFxr005591;
+	Thu, 3 Jul 2025 19:39:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=W7OQFS
+	/yaBfu9Cy8nFHMVGYaT/1JEdtzhobo0Wf/0pA=; b=SUnsNcHMvAZXjGeQNQKE6P
+	WNR4d5SLHpDg5E45x6Ii9As5jW4Ba21NcMyuAobZlQkoEJGnVFoURQC+LY+czdqq
+	SjDrsuG4z72c5yvzXSESmNSErRLCNDLBRMR1YllLol41RfNkGf4Jj57yaBdHghGV
+	bSl5/LNMnakmGr+OLTLYh2mi3Lq2CWDptgoq38wD1EzHsB5poBvUEScFDkrdRJdP
+	PjnYrkdBxdfUDa9NCv7o2SaOtskPPTBzFKdkMPMYv75Kjy8BEnSDKWHSiPWcq/sm
+	p/NemK/NJB1R+gC5ask8NxY7+OfDE8Bq6lN3CBSbt5rHSbqi2ogrOfuYZS8jlxRQ
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47j5ttnrtf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 03 Jul 2025 19:39:58 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 563JdKuC029412;
+	Thu, 3 Jul 2025 19:39:57 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47j5ttnrtd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 03 Jul 2025 19:39:57 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 563GmO0j032225;
+	Thu, 3 Jul 2025 19:39:56 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 47ju40xmf5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 03 Jul 2025 19:39:56 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 563Jdswx45285710
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 3 Jul 2025 19:39:54 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D022820040;
+	Thu,  3 Jul 2025 19:39:54 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 066A020043;
+	Thu,  3 Jul 2025 19:39:51 +0000 (GMT)
+Received: from [9.39.27.83] (unknown [9.39.27.83])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Thu,  3 Jul 2025 19:39:50 +0000 (GMT)
+Message-ID: <ab5f9e1f-cdec-4993-822f-d9b64144ad7c@linux.ibm.com>
+Date: Fri, 4 Jul 2025 01:09:50 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC patch v3 04/20] sched: Avoid calculating the cpumask if the
+ system is overloaded
+To: Tim Chen <tim.c.chen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        K Prateek Nayak <kprateek.nayak@amd.com>
+Cc: Juri Lelli <juri.lelli@redhat.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+        Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+        Tim Chen <tim.c.chen@intel.com>,
+        Vincent Guittot
+ <vincent.guittot@linaro.org>,
+        Libo Chen <libo.chen@oracle.com>, Abel Wu <wuyun.abel@bytedance.com>,
+        Madadi Vineeth Reddy <vineethr@linux.ibm.com>,
+        Hillf Danton <hdanton@sina.com>, Len Brown <len.brown@intel.com>,
+        linux-kernel@vger.kernel.org, Chen Yu <yu.c.chen@intel.com>,
+        "Gautham R . Shenoy" <gautham.shenoy@amd.com>
+References: <cover.1750268218.git.tim.c.chen@linux.intel.com>
+ <2901db739c1792eb9ece08a2b8d3b8de32efd0eb.1750268218.git.tim.c.chen@linux.intel.com>
+From: Shrikanth Hegde <sshegde@linux.ibm.com>
+Content-Language: en-US
+In-Reply-To: <2901db739c1792eb9ece08a2b8d3b8de32efd0eb.1750268218.git.tim.c.chen@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: yYn0-nI3lOiJmPBAwQGwuA5dGKlQQpG6
+X-Authority-Analysis: v=2.4 cv=UtNjN/wB c=1 sm=1 tr=0 ts=6866dc8e cx=c_pps a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=zd2uoN0lAAAA:8 a=rTAms6j2cEy0gM8qKJMA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: dHksqMWDRRUkJ3XX22ZqXbVgtQSsWpFq
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzAzMDE2MCBTYWx0ZWRfXwJXbZxn1JG1/ JKkOYJ5a+PiJxzeEcrt1FeFVGPS8JaPD5mkUpzESrqgdWHtK5T5OSVegi8T2T66JwHzPBXLNPxi aGzpRXtSkv4EkZNSISL7mX8zUWE29Pn9FtQDMVspVT0I/jhtLKMzWzB/nUyjJZwVNgJLqTMmkET
+ rrxxwer9WW4VkeaoQDkKdwSeTDguJKN2tEvrSH4Lfi6J1aTkkCqcW79yHODfo4WkgqKuIxaQBoO xobXq59ZSvvi8Laa87BBxZCbl3IC9MMSfRAxhmBdljtloZjoRVW90IrHokPTnDmuM52n0t6WdBX vk2e2PcHdZ1NN47d04ywCnssiJXywOevmcrVlid640QYIDJ7RQ73Qv2zyk67g6j+b4gnFACbaWU
+ p8kMMPV3aD2ZxdDk2bsImrKcLb+isZlqkFscXw9zDt/CnTdwgqafSx/JH3/jmOvaqlAk8d/r
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-03_04,2025-07-02_04,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ priorityscore=1501 phishscore=0 mlxscore=0 spamscore=0 mlxlogscore=999
+ adultscore=0 clxscore=1011 lowpriorityscore=0 bulkscore=0 impostorscore=0
+ malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507030160
 
-VHT operating mode notifications are not defined for channel widths
-below 20 MHz. In particular, 5 MHz and 10 MHz are not valid under the
-VHT specification and must be rejected.
 
-Without this check, malformed notifications using these widths may
-reach ieee80211_chan_width_to_rx_bw(), leading to a WARN_ON due to
-invalid input. This issue was reported by syzbot.
 
-Reject these unsupported widths early in sta_link_apply_parameters()
-when opmode_notif is used. The accepted set includes 20, 40, 80, 160,
-and 80+80 MHz, which are valid for VHT. While 320 MHz is not defined
-for VHT, it is allowed to avoid rejecting HE or EHT clients that may
-still send a VHT opmode notification.
+On 6/18/25 23:57, Tim Chen wrote:
+> From: K Prateek Nayak <kprateek.nayak@amd.com>
+> 
+> If the SIS_UTIL cuts off idle cpu search, result of the cpumask_and() is
+> of no use. Since select_idle_cpu() can now be called twice per wake up
+> in the select_idle_sibling() due to cache aware wake up, this overhead
+> can be visible in benchmarks like hackbench.
+> 
+> To save some additional cycles, especially in cases where we target
+> the LLC frequently and the search bails out because the LLC is busy,
+> only calculate the cpumask if the system is not overloaded.
+> 
 
-Reported-by: syzbot+ededba317ddeca8b3f08@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=ededba317ddeca8b3f08
-Fixes: 751e7489c1d7 ("wifi: mac80211: expose ieee80211_chan_width_to_rx_bw() to drivers")
-Tested-by: syzbot+ededba317ddeca8b3f08@syzkaller.appspotmail.com
-Signed-off-by: Moon Hee Lee <moonhee.lee.ca@gmail.com>
----
-Changes in v2:
-- Dropped NL80211_CHAN_WIDTH_20_NOHT from the accepted channel widths.
-- Clarified in the commit message that 320 MHz is not defined for VHT
-  but still allowed to support HE/EHT clients that may send a VHT
-  opmode notification.
+This patch could be independent and should help in general.
+But changelog needs to be updated.
 
- net/mac80211/cfg.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
 
-diff --git a/net/mac80211/cfg.c b/net/mac80211/cfg.c
-index 56540c3701ed..d76643d46150 100644
---- a/net/mac80211/cfg.c
-+++ b/net/mac80211/cfg.c
-@@ -1981,6 +1981,20 @@ static int sta_link_apply_parameters(struct ieee80211_local *local,
- 	ieee80211_sta_init_nss(link_sta);
- 
- 	if (params->opmode_notif_used) {
-+		enum nl80211_chan_width width = link->conf->chanreq.oper.width;
-+
-+		switch (width) {
-+		case NL80211_CHAN_WIDTH_20:
-+		case NL80211_CHAN_WIDTH_40:
-+		case NL80211_CHAN_WIDTH_80:
-+		case NL80211_CHAN_WIDTH_160:
-+		case NL80211_CHAN_WIDTH_80P80:
-+		case NL80211_CHAN_WIDTH_320: /* not VHT, allowed for HE/EHT */
-+			break;
-+		default:
-+			return -EINVAL;
-+		}
-+
- 		/* returned value is only needed for rc update, but the
- 		 * rc isn't initialized here yet, so ignore it
- 		 */
--- 
-2.43.0
+> Signed-off-by: K Prateek Nayak <kprateek.nayak@amd.com>
+> ---
+>   kernel/sched/fair.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 567ad2a0cfa2..6a2678f9d44a 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -7918,8 +7918,6 @@ static int select_idle_cpu(struct task_struct *p, struct sched_domain *sd, bool
+>   	int i, cpu, idle_cpu = -1, nr = INT_MAX;
+>   	struct sched_domain_shared *sd_share;
+>   
+> -	cpumask_and(cpus, sched_domain_span(sd), p->cpus_ptr);
+> -
+>   	if (sched_feat(SIS_UTIL)) {
+>   		sd_share = rcu_dereference(per_cpu(sd_llc_shared, target));
+>   		if (sd_share) {
+> @@ -7931,6 +7929,8 @@ static int select_idle_cpu(struct task_struct *p, struct sched_domain *sd, bool
+>   		}
+>   	}
+>   
+> +	cpumask_and(cpus, sched_domain_span(sd), p->cpus_ptr);
+> +
+>   	if (static_branch_unlikely(&sched_cluster_active)) {
+>   		struct sched_group *sg = sd->groups;
+>   
 
 
