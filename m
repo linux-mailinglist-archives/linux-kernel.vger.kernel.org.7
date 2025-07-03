@@ -1,89 +1,90 @@
-Return-Path: <linux-kernel+bounces-714721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3106FAF6BB6
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 09:38:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A0F7AF6BBD
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 09:38:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 153A84A65A6
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 07:37:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F77C7A5A05
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 07:37:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ECFB298262;
-	Thu,  3 Jul 2025 07:37:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D53CC29994C;
+	Thu,  3 Jul 2025 07:38:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="eiu7Jusp"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ft1vF1I4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CB8E221F37
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 07:37:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31450298262;
+	Thu,  3 Jul 2025 07:38:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751528278; cv=none; b=AFIp0qr37ueSUs3eW6B22oRSWukXXzN25mHXVs+H27SHqvgkzr5sz48rAeZMRBDGJb635X1UbPbeAXNnag5jMuzjoCqNJXvevitrgYJ6iH65iu2/CfeO+83c+5CZyZny5f+vFxMfFMhemIJWPgBgoyS4A6BX9Q72qa7hR0/kV5M=
+	t=1751528297; cv=none; b=UHAuVMXLsSl56MF8eaDcqliQl5pknBP97YaVJYVIP04uD3rYHcxVBONb0fkEku1mQNRXwL3v2Pq8KqBUhXSzwsDszfVlUdD+KlvWbbR0ixJx2I5iTvy9RytR/aZHeWiyQvQ4izi3UEwjvxldejrZuhvPIUqJfhW/LL9NJhB1RGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751528278; c=relaxed/simple;
-	bh=6+Nmgrpjrk/W8tzwN3Mj9jg3OA9NorNAknPaeBNC1es=;
+	s=arc-20240116; t=1751528297; c=relaxed/simple;
+	bh=bPAdNa3X8EhTJmuygX9fPL1Pr2+T2oa+I0dsXMyn1Mc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SF/la3NRoeBE6G9CT67LR0lb/SNAk7B+leI6RjJ3sQdxckguQJZ/WRE+9wMpfsr3qvwbwZIfmlsgFX78M3tBQAeV0pDPMMP+gd1Tq7f5PqCBAjPByAcnSfxalLNPTMUjDZRq8hn2cgh1QfwGG0spYTYXrQRVKA7M0WVzCtQQm7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=eiu7Jusp; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=6+Nmgrpjrk/W8tzwN3Mj9jg3OA9NorNAknPaeBNC1es=; b=eiu7JuspPSM3lnhzfouk6r0P64
-	zJ3Hd5gLjhdC7JRLw7UJ+wd++ezp4USACcfb74UKVvucLiJbSul1UHD3WPjW8AWy0+o9VVSfeZsSj
-	pIHey+xn8qsoi+d1UyH5aCe2+6VWpCPGQDsCtAjFLXlSqc1zzw4WAaeNt3a+l0LaMrkC0EDz90/11
-	TKRXU+HiV160vj7XHVate/Yexgpp9v0hYxeDdyIZQ5AjdR4ZzQJ7jpD704om3tUDTUBB7nzQcsSIK
-	WPiVyvcRFFwlTTFwTY3ih3/JsOLW5AEC006nky5zaLtX2/ald9Y+vqJCDAR0i5cAbPA6e7IZAsD6r
-	ppIwo1uA==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uXEVp-00000007dff-1p5b;
-	Thu, 03 Jul 2025 07:37:41 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id EBE7E30017D; Thu, 03 Jul 2025 09:37:40 +0200 (CEST)
-Date: Thu, 3 Jul 2025 09:37:40 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Aaron Lu <ziqianlu@bytedance.com>
-Cc: Valentin Schneider <vschneid@redhat.com>,
-	Ben Segall <bsegall@google.com>,
-	K Prateek Nayak <kprateek.nayak@amd.com>,
-	Chengming Zhou <chengming.zhou@linux.dev>,
-	Josh Don <joshdon@google.com>, Ingo Molnar <mingo@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Xi Wang <xii@google.com>, linux-kernel@vger.kernel.org,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>, Mel Gorman <mgorman@suse.de>,
-	Chuyi Zhou <zhouchuyi@bytedance.com>,
-	Jan Kiszka <jan.kiszka@siemens.com>,
-	Florian Bezdeka <florian.bezdeka@siemens.com>
-Subject: Re: [PATCH v2 0/5] Defer throttle when task exits to user
-Message-ID: <20250703073740.GU1613376@noisy.programming.kicks-ass.net>
-References: <20250618081940.621-1-ziqianlu@bytedance.com>
- <20250701083123.GA2784928@bytedance>
+	 Content-Type:Content-Disposition:In-Reply-To; b=AEaM+cvJVvGOgO2vF0us377MYK61KOcNO12JH4PTqkXUDl84HWvgVxshEcorc79hD/FID62PqiAH/+jVwlUW9I+COceVGUqrsqUzK2aPoslrAiIgG2lRS1YwBbl70eXtJ3RyFs76vPA+yzx1Zz8OiQrLPENXVMtZUn3ZckRNMVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ft1vF1I4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EE2DC4CEE3;
+	Thu,  3 Jul 2025 07:38:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751528296;
+	bh=bPAdNa3X8EhTJmuygX9fPL1Pr2+T2oa+I0dsXMyn1Mc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ft1vF1I4iki46Sz33pbkWqT+1CaYUE1DFOm1VaBY8+ycOn5fpbIsyrONvLpQHwfxl
+	 3BWTzlzw+kLWfsMRehs4lE8YbUPBwI7KtpN3fJTMszPH8qW6SFbD2uyiimsmOI74xV
+	 RYqboYFAiMN8q5k5aEQs+VCyVLWyPWXX9c1xN8WyiaNJCp/gazkBsxG02Me4crP0t+
+	 HVlp6yQt3Uw98WTsvZ8LwyQt62SN9zkbf4q49IPGxEf9TlT1X6ioGzfPTWcRXkcpd4
+	 KFmdnPVNHa44Q0kB3zUTGsghsjRw3277FaQa/ZOHyD0cveb+a/n9doSc3knRfqhe6j
+	 E3dv9Pwr3Jv3g==
+Date: Thu, 3 Jul 2025 09:38:14 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
+Cc: jic23@kernel.org, dlechner@baylibre.com, nuno.sa@analog.com, 
+	andy@kernel.org, conor+dt@kernel.org, krzk+dt@kernel.org, robh@kernel.org, 
+	jean-baptiste.maneyrol@tdk.com, ~lkcamp/patches@lists.sr.ht, linux-iio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] dt-bindings: iio: pressure: add invensense,icp10100
+Message-ID: <20250703-rational-laughing-hedgehog-cc0eec@krzk-bin>
+References: <20250701221700.34921-1-rodrigo.gobbi.7@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250701083123.GA2784928@bytedance>
+In-Reply-To: <20250701221700.34921-1-rodrigo.gobbi.7@gmail.com>
 
-On Tue, Jul 01, 2025 at 04:31:23PM +0800, Aaron Lu wrote:
+On Tue, Jul 01, 2025 at 07:05:43PM -0300, Rodrigo Gobbi wrote:
+> +$id: http://devicetree.org/schemas/iio/pressure/invensense,icp10100.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: InvenSense ICP-101xx Barometric Pressure Sensors
+> +
+> +maintainers:
+> +  - Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>
+> +
+> +description: |
+> +  Support for ICP-101xx family: ICP-10100, ICP-10101, ICP-10110, ICP-10111.
 
-> I wonder is there any more comments about this series?
-> Is it going in the right direction?
+The problem with title and description here is that they do not match
+compatible. oneOf:
 
-I had a quick look yesterday, and things seem more or less agreeable.
-I see there has been some feedback from Ben that warrants a new version,
-so I'll try and keep an eye out for that one.
+1. Your statement is correct, but then compatibles are incomplete and
+will encourage people to use incomplete compatibles for e.g. ICP-10111.
+2. Compatible is correct but your statement is not correct, so then fix
+the statement - drop other devices.
 
-Thanks!
+Assuming 1 is closer to truth, then I suggest to express it with
+documenting these compatibles and using invensense,icp10100 as fallback.
+
+
+Best regards,
+Krzysztof
+
 
