@@ -1,183 +1,238 @@
-Return-Path: <linux-kernel+bounces-715666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-715662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03814AF7C6F
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 17:36:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E53F3AF7BE0
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 17:29:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA2F41CA2AF9
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 15:31:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D25B7B3C07
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 15:27:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1554B229B21;
-	Thu,  3 Jul 2025 15:30:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A386519CC3D;
+	Thu,  3 Jul 2025 15:28:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aGiSvIGq"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="VE0KPHD4"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFF462E41E;
-	Thu,  3 Jul 2025 15:30:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1653019F120
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 15:28:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751556625; cv=none; b=gXsO+X5c79OoUJacy4aa8UFOFjLcKw3YGPK23kPay/y4TbAzsqyaRxV/KE8E70/PpE1CyACLMcNNuTdRtxMRT1tiSYsSDXItSstF7qUWaOrmU5sn9965TYcYo/7G77/IsG5qp8GE8gw80EXzxlUWzIQeurAKTpvguvfjJrLoPrI=
+	t=1751556527; cv=none; b=tNfs3qUhhtMOAUIjH3zShVihkKQ1Eg+fbJq1sWK+qq7W2whlMsUcXUTHEYrsXuhpkIFKaRMTCLJb23uUf0F1AUFzSDTn2ep4arQd1PMh3a1zZ1MqNLxurFtKjedSJGbLD42KIGGKzaOYvKe4z36FoHTd1sHdSN/uDKwrD1jzV4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751556625; c=relaxed/simple;
-	bh=suwZtmA/bkO4pu6z6zqIT7/QlTmUTdBres8SXOQ//Do=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=qmV6vAW0sGWF+b+rPmodIxsyp8nOOHuJlxu35xrPiCiK4zOMVSTMgy8Xxx1PpJ1vT3WvbtEKC7j18VBLH4/rMUxK7kuiAQlbWFiZh43LSyNV2VSN42RaGowgcb3nV6i+xkIqmnPi7w8C5FAhwdREmqGGRCERmoZ2QPIB9tck/d0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aGiSvIGq; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-6088d856c6eso15101813a12.0;
-        Thu, 03 Jul 2025 08:30:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751556621; x=1752161421; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/DGs2fZZIChUDK1MfzACEqWRIQR03D4HhGtXUb2EUok=;
-        b=aGiSvIGqiCm1vLs4rDUPjpNAwIzJi+LNLwCvxqGNgUU9ZS12eRpUxwyqUBMXfKvPXa
-         pV9hJSMWFZRddb8lr8dUu7l2XLlnoCLB5mbzeDWHEuJexXbwpWhUGSyxzbQr5N9HkjEL
-         ptCC+zDPgxaKiV0wAps1y4JOD5S2jMLZapnIADc48Bpeu5FfREG2+5/gxY9KrLyTra0g
-         BjHVQ/kvKq3Zwfkj5+y/VSjc6oKz0vspLqURjly2dwKtk9xSVHdZpLvR8rITJPKLnp3F
-         2FuLFsOtvzFVle1fRC6LJz+bqoKKzIHAtiClWp1mFeNgNUcbo5gO4WBVHZaIjD1WdpX0
-         WeUg==
+	s=arc-20240116; t=1751556527; c=relaxed/simple;
+	bh=8CzUJQpMWoh2iCytXS+C8OvozoPZGZ3UARwoY554gH4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WY4TZAwhkirtjTkiuhuL5frGmRV8ZTogdBRkNLH0aqR7ml+bvqMzwbbvPMewtXc7XmDl9GqlqYfCgZY4DN44sPrEgs/+5SfCaddXaWarKEhd2A1LcTTgpGRkn+N9Psi06QkB+xfx3S2Tr2mka1G4afaSElJFGi28B9A/zvpubzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=VE0KPHD4; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 563D6J7B020476
+	for <linux-kernel@vger.kernel.org>; Thu, 3 Jul 2025 15:28:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	lB3GyQgbImWw0wJtLFROwCUwuZIRVk6wsudtXt6O2WY=; b=VE0KPHD4lxSt/UMe
+	U57ikihOWP3zDwVydsLozE4e8z/gNcvLkWQcryjj2C8iKia7UFSF2o7XAwFTVugR
+	RtNBfHLu4jEddjRHQGg7TMD9Y4NQIwKNmnl9Ff1I2RnCq0nWX/m0eqlciL5J8vTr
+	iQQ+u8N70tqWVyQ0MeTrnuEANVrASRw/Iqf8Yr/JdDiUfYJy7o2TEexI8EwZH1bj
+	EgTmgkze3pkLJ8fKUhcdA29wzRxmu49xtjno87Uy69X+blZYdT4+UDyZBb74qRUm
+	6VjCqAFCLIjd7mQw40dPFeHIVAnXOP50FCv+GUceZyx/+nRPRsxYLEPSvtd7htmo
+	0ifDfQ==
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47mhxn7mj6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 03 Jul 2025 15:28:44 +0000 (GMT)
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7d21080c26fso137268585a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Jul 2025 08:28:44 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751556621; x=1752161421;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/DGs2fZZIChUDK1MfzACEqWRIQR03D4HhGtXUb2EUok=;
-        b=POdaNyrONIU5Ndp4beLJvTIHnKzskV+9joEY6F9TXa9R7dM2aQwUJ+g5TtgiWEPIBM
-         oEaboMmo37hb9hAueBs/QlrnznhGPjp9AlKqQJ1fyq7QOsMFhMgZVnW5NP2WZe1ARhhn
-         YWMRFpmG2JLUJTNnjkyK3bqFSS9nfuSMDTksRc2eljmgv+txNo6F9tphBTwyrz7XuAI5
-         hqMGQUoivhC/T4tpx7RuTtnouYAVgSpU26zm9h8Sb/W7ZPMQ27R0reyBA7SIbj4yfSxD
-         sN/mkgVkbJaASBrZ27WNnQI3oydbkHjF5OePwZJjwkhaG6p9Rgk+mxtNvPpFkqFJbp0X
-         BIUw==
-X-Forwarded-Encrypted: i=1; AJvYcCUIAXhe/+MtxwJVKep2XC5H4+9AFEQR2rC4ssna+QNcfWg0fwXrqD3+EIsnTlhnpA0o5QMT5dMU@vger.kernel.org, AJvYcCWZtLcc2Kpb3b1KBxmyYIIbys4rX1uhsSQ2UPLdpQQy4m0kZpLKEFAQGoTCgNlgRS+Ci7kTwD0f9AOgF/k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YweUQrNzfltcSUnlNKKuAfIlRS9WPIIP9yxe03mL0KCHea3ZiK4
-	BU/Ie8MbMs26K+ljSwAEhqvalaWlrxmy6svjOBsP5A3J+FWvnw/EnhHhTWGHkaLN
-X-Gm-Gg: ASbGncsULYCr2UhQ4mJtYJjFQnbVT8CS/4yPdZ/B6UjoBOjLVivwkiCjn7VOy9+5xC/
-	sbAzd8Vzk4+TPyA43V8M2UZOnzhfFYxPFTI8E5NkPWkBdnbn1E4PX6nRogfbKKgz99uMTB7kjBf
-	FYYqsaI+2wmQXIALDU6YfHlJzf7mRL03fa3nAHLbPgs4qlP/tYA5yKgaRe7TC7/5hf5m1+HnTx8
-	Acrp4hbOMdke3Pun2cmJchnNpkQZ+PCRdM1KGZPKeFrHaKIMTh4zq9b/4m9JcspxhIxxCc+ytwj
-	DhD5axqEbSz2s+NyM0IUn8PQyVKkfb7GG1PuO2OD7E47odwEokJlZWXPMgCP4VD20ojO1M+zdGc
-	=
-X-Google-Smtp-Source: AGHT+IED0O8R+/wRKm2NKib20kCoJhGhXU1WtskJ9jN+V5+RleE3IEO24/3Xb4AIOoCNu78agUbhLw==
-X-Received: by 2002:a17:907:9490:b0:ae3:7b53:31b9 with SMTP id a640c23a62f3a-ae3d8c9dcd6mr313325866b.35.1751556620827;
-        Thu, 03 Jul 2025 08:30:20 -0700 (PDT)
-Received: from localhost.localdomain ([45.128.133.218])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae353c013cdsm1289978766b.93.2025.07.03.08.29.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Jul 2025 08:30:20 -0700 (PDT)
-From: Oscar Maes <oscmaes92@gmail.com>
-To: netdev@vger.kernel.org
-Cc: davem@davemloft.net,
-	dsahern@kernel.org,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	horms@kernel.org,
-	stable@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Oscar Maes <oscmaes92@gmail.com>
-Subject: [PATCH net v2 2/2] selftests: net: add test for variable PMTU in broadcast routes
-Date: Thu,  3 Jul 2025 17:28:38 +0200
-Message-Id: <20250703152838.2993-2-oscmaes92@gmail.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250703152838.2993-1-oscmaes92@gmail.com>
-References: <20250703152838.2993-1-oscmaes92@gmail.com>
+        d=1e100.net; s=20230601; t=1751556524; x=1752161324;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lB3GyQgbImWw0wJtLFROwCUwuZIRVk6wsudtXt6O2WY=;
+        b=ZuUw9mUp5ZktTLx05mjQE6fErIwYWmSDyFF2w7TxpIv3HZZP3y8ubK23FQu/qnTXwL
+         3sQEbiqneOJ8l7pmJSjLu0XyPaEbvQmkR+ynV5uu5EjDvM8hQ8d9j2IsQVVcWHZgx5DQ
+         RI/EGEZk8NNhc1DcbZr7siuBqlkjuKyeat8kAgbri2J/hLs4NDMK7+Th6rWHQLakFOCi
+         nOFENMcd0azIRQo8EMzPQ6j9Ynlin1cLEgXzClZniPSARL9aPTUSFcIY+aIL6r0zLbQr
+         n55Op2g26XwCHVaTyr3ov6zdIOHknlcQqNXaUIcqbjpZnp84d944V5cHM9CiLxEmqmpW
+         0OhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWlounuUU5VSXHk595yO9KouNzCKjHtp+BOweS87Id1gaORFfCmDrVi0WCt3Vim2hPaIucHxIgQ9JBMYOY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YypEPs0YTibDHg9lW5dP3Yp7hniE2pnwrvlHXNxbHbBkWIHUNSR
+	5pZ6Y2U3yWadjd/mxFT+E0SCjBEmNwwI4RK41SyL6w1hnDq3voAHNKmMyL0fSDxR3ILzJ8p9X0J
+	JZc3pBbriuYQsRM3HgtL6OyiIhPoKgr2pS1/9DYyilpPc7yJZhPMhT+/6+Qq8xOC12gY=
+X-Gm-Gg: ASbGncuqGS+Rj+T2m1bJaqzS/y/0NLV+/g6wWQoRBDBktMdc64FqVgNLFXBq4aNTW+n
+	+YPiEXd0ehoKnPW5sKchIBM8uJ8I08rCMwEhe3vYgosMXcn+ugkFymjEASZqdIMXa5s9yGe2C63
+	nyxtn9c8riVUg2xJ533iFDV50J0n15bP8MNVuz14vX3NiCvQRO0D/sJBXMo0I4938tb47TQh4dK
+	AWWV7Io1tTMsCtNR2FDJkyK5u+bUgmZfgiuFP+WYm0FPufBGdZNNE5121BtML7yVgLviONtpobE
+	ow3XIX4BANtdhu5jKCNJZgKejrrz+NvjL4X4VEF43aXyBbURp9Hx7CeSWEbVVNVpwb6fGAknv1p
+	JVMTudg==
+X-Received: by 2002:a05:620a:408a:b0:7c3:bae4:2339 with SMTP id af79cd13be357-7d5c476ce96mr338195885a.11.1751556523400;
+        Thu, 03 Jul 2025 08:28:43 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEYROatQiIdSRndOVo9BLkkhoc+SWGXG6ITnZGJxgqN8bVXUZzt8u+b3n1+LTxv13qnf9jpMQ==
+X-Received: by 2002:a05:620a:408a:b0:7c3:bae4:2339 with SMTP id af79cd13be357-7d5c476ce96mr338192585a.11.1751556522666;
+        Thu, 03 Jul 2025 08:28:42 -0700 (PDT)
+Received: from [192.168.1.106] (83.9.29.45.neoplus.adsl.tpnet.pl. [83.9.29.45])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae37e7508fdsm939819166b.106.2025.07.03.08.28.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 03 Jul 2025 08:28:41 -0700 (PDT)
+Message-ID: <6840d462-8269-4359-a6e5-d154842b62db@oss.qualcomm.com>
+Date: Thu, 3 Jul 2025 17:28:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/5] Introduce "non-pixel" sub node within iris video
+ node
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Cc: Vikash Garodia <quic_vgarodia@quicinc.com>,
+        Dikshita Agarwal <quic_dikshita@quicinc.com>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>, linux-media@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20250627-video_cb-v3-0-51e18c0ffbce@quicinc.com>
+ <5f90547d-945a-4e26-b36c-75f2d8a1af97@kernel.org>
+ <eab8d79f-7188-9537-9176-3e4d22f0978a@quicinc.com>
+ <5ad418d9-8199-43c9-a477-1e3b939c054c@kernel.org>
+ <7b6db4fa-2f73-376d-4eb3-64c1c7e6cda3@quicinc.com>
+ <f5ebf0d6-2f0b-45cc-b99a-b786e5df9edc@linaro.org>
+ <5qsgbqml367yq6g5vb4lotrzulojqhi5zlwwribze373a63qrn@rxi4kwyt66m2>
+ <4f38058d-a2f1-4ac5-b234-228cfb2e85ff@kernel.org>
+ <1ad2ca1e-1d57-4ad8-a057-ab0d804f1d49@oss.qualcomm.com>
+ <7da769b4-88e9-401f-bb21-0ff123818b9c@kernel.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <7da769b4-88e9-401f-bb21-0ff123818b9c@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzAzMDEyOSBTYWx0ZWRfX188f15o9ctUF
+ iFxls1BwfLou9PyCZ02EQJTUSUQTyiC/FY5ajBb5vfAjQWlP0miLyX/6imHc1Rr7x/ydOxidJY5
+ vmrLaG0pwDDr4hJXqKkPGc/2WMtCBuZqm2UkVoj+JJpnS2NVdLSfZspwI0jwkyUtXBqgpH0kimH
+ gpvghOZEQ7quL0eMSeeF3uo41buVIpHnT4ts66u0IazVU9Lt980Pa3Onrd+JrxilQbfmarFXHxz
+ rc4v79bfdoTgo+4cZNUzhUqWa5ZIGBz4Iz4ozv28b4miV1ZfEAMVXExI0BU3r4tTpvg2iacY4uz
+ VuO/hJybriEpGxOOJ6Bqto04OafEkEVDZXHSBip09lb7Vt6q4OJe8dvpjWOhvLnl63wr/yL1L6R
+ SbS800Ye8Fl4LKEMbE0TGtBQrTWmKC0e3LH2VJ30VFF0y5i4nPz7MgkZMP5qvvql6PdQ8zjC
+X-Authority-Analysis: v=2.4 cv=EbvIQOmC c=1 sm=1 tr=0 ts=6866a1ac cx=c_pps
+ a=qKBjSQ1v91RyAK45QCPf5w==:117 a=qmfFy4ndMtQ753Zl/n/b/A==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=gHlHN3BjToyBUNvogygA:9
+ a=QEXdDO2ut3YA:10 a=NFOGd7dJGGMPyQGDc5-O:22
+X-Proofpoint-ORIG-GUID: SbY7-fJYZYXoqX9QrXhMf4ILs8PRIQSG
+X-Proofpoint-GUID: SbY7-fJYZYXoqX9QrXhMf4ILs8PRIQSG
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-03_04,2025-07-02_04,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 mlxscore=0 priorityscore=1501 mlxlogscore=999 lowpriorityscore=0
+ malwarescore=0 adultscore=0 clxscore=1015 bulkscore=0 impostorscore=0
+ spamscore=0 suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507030129
 
-Added a test for variable PMTU in broadcast routes.
 
-This test uses iputils' ping and attempts to send a ping between
-two peers, which should result in a regular echo reply.
 
-This test will fail when the receiving peer does not receive the echo
-request due to a lack of packet fragmentation.
+On 03-Jul-25 14:54, Krzysztof Kozlowski wrote:
+> On 03/07/2025 14:38, Konrad Dybcio wrote:
+>>
+>>
+>> On 03-Jul-25 09:27, Krzysztof Kozlowski wrote:
+>>> On 03/07/2025 00:26, Dmitry Baryshkov wrote:
+>>>> On Wed, Jul 02, 2025 at 01:06:17PM +0100, Bryan O'Donoghue wrote:
+>>>>> On 02/07/2025 13:01, Vikash Garodia wrote:
+>>>>>>> Anyway, in other messages I explained what is missing. You are changing
+>>>>>>> existing hardware and you clearly must explain how existing hardware is
+>>>>>>> affected, how can we reproduce it, how users are affected.
+>>>>>> Exactly all of these i have explained in the commit message. The limitation with
+>>>>>> existing hardware binding usage and how my new approach mitigates that limition.
+>>>>>>
+>>>>>> Coming to usecase, i made a generic comment saying usecases which needs higher
+>>>>>> IOVA, i can add the explicit detail about usecase like 8k or higher
+>>>>>> concurrencies like 32 or higher concurrent sessions.
+>>>>>
+>>>>> Why not make this change for a new SoC, instead of an existing ?
+>>>>
+>>>> Because we definitely want to improve support for older SoCs too.
+>>>
+>>> Older SoCs came with completely new drivers and bindings, instead of
+>>> evolving existing Venus, so they for sure came with correct code and
+>>> correct binding.
+>>
+>> No, this is a terrible assumption to make, and we've been
+>> through this time and time again - a huge portion of the code
+>> submitted in the early days of linux-arm-msm did the bare minimum
+> 
+> We do not talk about early days of linux-arm-msm, but latest where they
+> rejected existing venus drivers and instead insisted on completely new
+> driver iris. This is a new code, so how early days are applicable?
+> 
+>> to present a feature, without giving much thought to the sanity of
+>> hw description, be it on a block or platform level.
+> 
+> You are saying that iris driver was again shoved without any sanity? It
+> should have never been merged then. Better to grow existing insanity
+> than allow to have two insanities - old venus and new iris.
 
-Signed-off-by: Oscar Maes <oscmaes92@gmail.com>
----
- tools/testing/selftests/net/Makefile          |  1 +
- tools/testing/selftests/net/broadcast_pmtu.sh | 47 +++++++++++++++++++
- 2 files changed, 48 insertions(+)
- create mode 100755 tools/testing/selftests/net/broadcast_pmtu.sh
+Iris was created with the hard requirement of being compatible with the
+bindings previously consumed by Venus. I think the logical consequences
+of that are rather clear.
 
-diff --git a/tools/testing/selftests/net/Makefile b/tools/testing/selftests/net/Makefile
-index 332f38761..f4aa94588 100644
---- a/tools/testing/selftests/net/Makefile
-+++ b/tools/testing/selftests/net/Makefile
-@@ -112,6 +112,7 @@ TEST_PROGS += skf_net_off.sh
- TEST_GEN_FILES += skf_net_off
- TEST_GEN_FILES += tfo
- TEST_PROGS += tfo_passive.sh
-+TEST_PROGS += broadcast_pmtu.sh
- 
- # YNL files, must be before "include ..lib.mk"
- YNL_GEN_FILES := busy_poller netlink-dumps
-diff --git a/tools/testing/selftests/net/broadcast_pmtu.sh b/tools/testing/selftests/net/broadcast_pmtu.sh
-new file mode 100755
-index 000000000..726eb5d25
---- /dev/null
-+++ b/tools/testing/selftests/net/broadcast_pmtu.sh
-@@ -0,0 +1,47 @@
-+#!/bin/bash
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# Ensures broadcast route MTU is respected
-+
-+CLIENT_NS=$(mktemp -u client-XXXXXXXX)
-+CLIENT_IP4="192.168.0.1/24"
-+CLIENT_BROADCAST_ADDRESS="192.168.0.255"
-+
-+SERVER_NS=$(mktemp -u server-XXXXXXXX)
-+SERVER_IP4="192.168.0.2/24"
-+
-+setup() {
-+	ip netns add "${CLIENT_NS}"
-+	ip netns add "${SERVER_NS}"
-+
-+	ip -net "${SERVER_NS}" link add link1 type veth peer name link0 netns "${CLIENT_NS}"
-+
-+	ip -net "${CLIENT_NS}" link set link0 up
-+	ip -net "${CLIENT_NS}" link set link0 mtu 9000
-+	ip -net "${CLIENT_NS}" addr add "${CLIENT_IP4}" dev link0
-+
-+	ip -net "${SERVER_NS}" link set link1 up
-+	ip -net "${SERVER_NS}" link set link1 mtu 1500
-+	ip -net "${SERVER_NS}" addr add "${SERVER_IP4}" dev link1
-+
-+	read -r -a CLIENT_BROADCAST_ENTRY <<< "$(ip -net "${CLIENT_NS}" route show table local type broadcast)"
-+	ip -net "${CLIENT_NS}" route del "${CLIENT_BROADCAST_ENTRY[@]}"
-+	ip -net "${CLIENT_NS}" route add "${CLIENT_BROADCAST_ENTRY[@]}" mtu 1500
-+
-+	ip net exec "${SERVER_NS}" sysctl -wq net.ipv4.icmp_echo_ignore_broadcasts=0
-+}
-+
-+cleanup() {
-+	ip -net "${SERVER_NS}" link del link1
-+	ip netns del "${CLIENT_NS}"
-+	ip netns del "${SERVER_NS}"
-+}
-+
-+trap cleanup EXIT
-+
-+setup &&
-+	echo "Testing for broadcast route MTU" &&
-+	ip net exec "${CLIENT_NS}" ping -f -M want -q -c 1 -s 8000 -w 1 -b "${CLIENT_BROADCAST_ADDRESS}" > /dev/null 2>&1
-+
-+exit $?
-+
--- 
-2.39.5
 
+Perhaps you're saying that the binding for "newer" ("not previously
+supported by venus") platforms should have included that from the start,
+and I agree, that would have been better, but hindsight's always 20/20.
+
+On a flip side, any additional requirements we talk about here, also
+apply (in reality/hw, not talking about current bindings/driver state) to
+every single "older" platform as well, and skipping them is pushing your
+luck every time you access the hardware.
+
+
+I also don't think it's fair to leave them in a permanently-suboptimal
+state just because the initial submission wasn't forward-looking to
+these previously-unimplemented requirements. I'd even say that if we
+want to fix it, we should do it sooner than later, before the bindings
+age and get more users that would care about breakage.
+
+Comparing against downstream, I only really see IOMMU specifics (binding
+SIDs to a PA range, which this series touches upon plus ensuring secure
+buffers are associated with a specific SID, which is done basically the
+same way) and (on some targets) an nvmem-cell for speedbinning.
+Everything else (PDs, clks, icc, irq, etc.), we've already covered.
+
+>> That's why we're still adding clocks to mdss, regulators to camera
+>> etc. etc. to this day. And it's only going to get worse when there
+>> will be a need or will to add S2disk support with register
+> 
+> We speak about iris here only.
+
+Sure, I'm using the other ones as an example to show you the actual
+root cause of the problem. It's the same "the initial bindings
+submission was not perfect and to make better use of the hardware, we
+need to describe more resources / describe them more precisely"
+problem that pops up every now and then and is actually difficult
+to prevent.
+
+Maybe we can have some sort of a broader conversation about whether
+bindings from before SOME_DATE or e.g. not older than N kernel releases
+back should be deemed volatile, but that is a story for another day.
+
+Back to the point, I actually think what this patchset does is
+resonable, especially given the address range and SMMU SID requirements
+that the OS *must* be aware of (or the device will crash after a
+translation fault / security violation).
+
+Konrad
 
