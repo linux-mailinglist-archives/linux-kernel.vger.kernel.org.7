@@ -1,109 +1,140 @@
-Return-Path: <linux-kernel+bounces-715419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-715446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81A8BAF75C5
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 15:34:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 166BEAF761B
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 15:48:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70696567482
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 13:34:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 318961C274FE
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 13:49:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 361AB2D3226;
-	Thu,  3 Jul 2025 13:34:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="awixeaz/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77CF62E7F0D;
+	Thu,  3 Jul 2025 13:48:21 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91BF118DB1A;
-	Thu,  3 Jul 2025 13:34:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C9B528B516;
+	Thu,  3 Jul 2025 13:48:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751549668; cv=none; b=iqFK8vsN3KWtaFzsVtbKtkIQuIgpSVbFa11IV70kS3OGugPVHxHT1ctPMBueXNwP/qaP7/EItFrlqFsrpm3yA8CivPf/dB7Prufyc3qQtSD64AuxXcs6m66IeEAD4LzOjyaWkM52CcDpSgm/RaZdO+Y310Jr0AdhVF5kZQrIT7Y=
+	t=1751550501; cv=none; b=tFWC7S7QbAAoEedqm+e9DgAdsWfES2Uf03a4657qlOGewLLqvAFZOFE34VtOT3aon5W8ZT656cNTdnTZ7xM+l515bdlBBrsLa1whkitMgkEecse/xHLRTeScnGQcdXW/UCwLjTJXOaHdSL3Qy5L+7lakh0GZm6aZMMQ0WMLYoHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751549668; c=relaxed/simple;
-	bh=FslVDeBg6EqBCZI8xcWRy/XpFKF0YeXIHs+VpfoIyzo=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=fSNVBL0qMPYtj8ZwjK8jIxUAzfYm72rxw2lfZwRK1EhDvBVm/xRQR9LGMunP761ixymeoniC5ZHvvuQodq8jU/tFLnGRsUgwsHUFXWJVcueq6erwR5r68hs88rJ7d0ZqhEqePwAfyI1lYl0pLwAhLjgjQFWY87BUgE+FE/vIb28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=awixeaz/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13034C4CEED;
-	Thu,  3 Jul 2025 13:34:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751549668;
-	bh=FslVDeBg6EqBCZI8xcWRy/XpFKF0YeXIHs+VpfoIyzo=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=awixeaz/v3h602wRJjurY8YIpwdQ65XhMMZ/tT2owQgq2icreVQbq8VdFS+avRX5b
-	 gJDVN8DbNReub6trulaNfvcJf9ZTw1zR6XVMuNhqxHmC2lhyIgXNM+m+kcR9ppCv8A
-	 4Oy9N9mElc6kzaptu2hgoGBWombo1OWzUnqT8AxCrCfqen+tn47BezctT6XQSlO24x
-	 U2DPjngmESU76q4nVVWz2XCY45FkzPmHr35C4shtYZ3njlXcdI3awnln3mZxhIfmdm
-	 hVIfJ5aVmU/PnHFfrsylAhBzGxweF0STyRivdIScH7DfoqmaAyB6xCOkV7k6lztXLK
-	 1HmCpoL/zJKMA==
+	s=arc-20240116; t=1751550501; c=relaxed/simple;
+	bh=8IvgdlogpP7JuvdzwJQsuveomKygW/XCJS9EI4AtOQQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CA7MJHTfoyeFykBApoURGAQJcbzl3hYw0aRDe+SJD8TgjUReuHRe2sOw5kZdvDLmV9MHTByRevbA5qAJLLEqFajBPjyYMu2lYoSgSyH2I+4qo5dgxI13TLxwoQLuWGUsoUkEdG8dK4V6GDHN1Dw7nVUE8LtRH9rewg5AnOhMPAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bXylN3bTtzYQtrF;
+	Thu,  3 Jul 2025 21:48:16 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.252])
+	by mail.maildlp.com (Postfix) with ESMTP id 5C96B1A12D0;
+	Thu,  3 Jul 2025 21:48:15 +0800 (CST)
+Received: from hulk-vt.huawei.com (unknown [10.67.174.121])
+	by APP3 (Coremail) with SMTP id _Ch0CgDXOCYJimZoV+8fAg--.35082S2;
+	Thu, 03 Jul 2025 21:48:15 +0800 (CST)
+From: Chen Ridong <chenridong@huaweicloud.com>
+To: peterz@infradead.org,
+	rafael@kernel.org,
+	pavel@kernel.org,
+	timvp@google.com,
+	tj@kernel.org,
+	mkoutny@suse.com
+Cc: linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	lujialin4@huawei.com,
+	chenridong@huawei.com
+Subject: [PATCH next] sched,freezer: prevent tasks from escaping being frozen
+Date: Thu,  3 Jul 2025 13:34:27 +0000
+Message-Id: <20250703133427.3301899-1-chenridong@huaweicloud.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 03 Jul 2025 15:34:23 +0200
-Message-Id: <DB2GJB0ZRCSN.32R6OOCOMSO2Q@kernel.org>
-Cc: "Alice Ryhl" <aliceryhl@google.com>, "Matthew Maurer"
- <mmaurer@google.com>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
- "Trevor Gross" <tmgross@umich.edu>, "Rafael J. Wysocki"
- <rafael@kernel.org>, "Sami Tolvanen" <samitolvanen@google.com>, "Timur
- Tabi" <ttabi@nvidia.com>, <linux-kernel@vger.kernel.org>,
- <rust-for-linux@vger.kernel.org>, "Dirk Behme" <dirk.behme@de.bosch.com>
-Subject: Re: [PATCH v8 4/6] rust: debugfs: Support arbitrary owned backing
- for File
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Danilo Krummrich" <dakr@kernel.org>, "Greg Kroah-Hartman"
- <gregkh@linuxfoundation.org>
-X-Mailer: aerc 0.20.1
-References: <CAGSQo02hyJncD1oTpUMgiSZeX5UYYY2p-WZTyroQJJ6fMnOrCQ@mail.gmail.com> <aGLUl7ZtuQBPoCuv@pollux> <2025070131-icon-quarters-0c16@gregkh> <aGPtCBB6nWTNJuwK@pollux> <2025070137-tartar-juncture-fcd2@gregkh> <aGP6d2-jJy5rtjMK@pollux> <aGZVUqangIR-c4aW@google.com> <DB2COGYW20C5.2YN1TFXR87UTS@kernel.org> <CAH5fLgjaNzOHNxa+XY1c2V5A1H2RhWP9gHAAmHx=9LN9CbHq=Q@mail.gmail.com> <2025070349-tricky-arguable-5362@gregkh> <aGZ3q0PEmZ7lV4I-@pollux>
-In-Reply-To: <aGZ3q0PEmZ7lV4I-@pollux>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_Ch0CgDXOCYJimZoV+8fAg--.35082S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Kr15JrykWFyUJrWDKF1xXwb_yoW8uFyUp3
+	95Wa1UGw10qr42ywnxta1v9398K39rJr4UG34kCF18Xa1YqasxWr4xCry3Wr4jvr1I9r9x
+	JayYg34SyayUCa7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvFb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0E
+	n4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I
+	0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWU
+	tVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcV
+	CY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAF
+	wI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvj
+	xUF1v3UUUUU
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-On Thu Jul 3, 2025 at 2:29 PM CEST, Danilo Krummrich wrote:
-> So, what I'm trying to say is, I think it's a good thing if fields that a=
-re
-> protected by the same lock can't be exposed through separate files, becau=
-se it
-> means that the fields only make sense in the context of each other.
+From: Chen Ridong <chenridong@huawei.com>
 
-I think that even the pin-init API can have multiple files for different
-elements of the locked structure, you just need to nest `File`:
+The commit cff5f49d433f ("cgroup_freezer: cgroup_freezing: Check if not
+frozen") modified the cgroup_freezing() logic to also verify that the
+FROZEN flag is not set, which affects the return value of the freezing()
+function.
 
-    #[pin_data]
-    struct Process {
-        task: ARef<Task>,
-        #[pin]
-        inner: File<File<SpinLock<ProcessInner>>>,
-    }
-   =20
-    pub(crate) struct ProcessInner {
-        threads: RBTree<i32, Arc<Thread>>,
-        max_threads: u32,
-    }
+In __refrigerator(), the FROZEN flag is set before checking whether the
+task should be frozen. This creates a race condition where:
+1. The task's FROZEN flag is set.
+2. The cgroup freezer state changes to FROZEN (Can be triggered by reading
+   freezer.state).
+3. freezing() is called and returns false.
 
-Now you can do:
+As a result, the task may escape being frozen when it should be.
 
-    pin_init!(Process {
-        inner <- dir.create_file(
-            "threads",
-            dir.create_file("max_threads", new_spinlock!(...)),
-        ),
-        // ...
-    })
+To fix this, move the setting of the FROZEN flag to occur just before
+schedule(). This ensures the flag is only set when we're certain the
+task must be switched out.
 
-But I'd say this will at least raise eyebrows for the reviewers, which
-is good, since it catches the footgun.
-
+Fixes: cff5f49d433f ("cgroup_freezer: cgroup_freezing: Check if not frozen")
+Reported-by: Zhong Jiawei<zhongjiawei1@huawei.com>
+Signed-off-by: Chen Ridong <chenridong@huawei.com>
 ---
-Cheers,
-Benno
+ kernel/freezer.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/kernel/freezer.c b/kernel/freezer.c
+index 8d530d0949ff..89edd7550d27 100644
+--- a/kernel/freezer.c
++++ b/kernel/freezer.c
+@@ -71,12 +71,6 @@ bool __refrigerator(bool check_kthr_stop)
+ 	for (;;) {
+ 		bool freeze;
+ 
+-		raw_spin_lock_irq(&current->pi_lock);
+-		WRITE_ONCE(current->__state, TASK_FROZEN);
+-		/* unstale saved_state so that __thaw_task() will wake us up */
+-		current->saved_state = TASK_RUNNING;
+-		raw_spin_unlock_irq(&current->pi_lock);
+-
+ 		spin_lock_irq(&freezer_lock);
+ 		freeze = freezing(current) && !(check_kthr_stop && kthread_should_stop());
+ 		spin_unlock_irq(&freezer_lock);
+@@ -84,6 +78,12 @@ bool __refrigerator(bool check_kthr_stop)
+ 		if (!freeze)
+ 			break;
+ 
++		raw_spin_lock_irq(&current->pi_lock);
++		WRITE_ONCE(current->__state, TASK_FROZEN);
++		/* unstale saved_state so that __thaw_task() will wake us up */
++		current->saved_state = TASK_RUNNING;
++		raw_spin_unlock_irq(&current->pi_lock);
++
+ 		was_frozen = true;
+ 		schedule();
+ 	}
+-- 
+2.34.1
+
 
