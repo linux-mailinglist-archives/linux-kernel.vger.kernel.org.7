@@ -1,120 +1,241 @@
-Return-Path: <linux-kernel+bounces-714631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B350AF6A68
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 08:36:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05961AF6A6C
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 08:37:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B15067A8E32
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 06:34:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A53AE3BC3F3
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 06:36:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B740728EBF1;
-	Thu,  3 Jul 2025 06:36:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B049291C22;
+	Thu,  3 Jul 2025 06:36:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="aaoehm5M"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TdtpLa6O"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAE062AE99
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 06:36:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 898042AE99;
+	Thu,  3 Jul 2025 06:36:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751524562; cv=none; b=YnXGmAck/FDgjltXAqpR5sK2WPU+vD79zWmyXPrci/rDossjpd76Kdh3oBTNZS5rqM4LGKvC80yy5i5uL46aRKSDmYt3eCXKzR5Z54HSn4iH/dxUSLvTVb2oBYmkbWD2RDQBAaA/Ksqr0amkNyD9iuskCGXId+4sErXh6tLodEQ=
+	t=1751524610; cv=none; b=nyNuO9eZpk2dwk8MDcRaubegiseL2KZFUZ7mCT2zapCc2FsTOHPnRg/dJkBZ/NTPZ5mSP6XCARhjSdwJjB8KmSRunbSf38R4ffzeL0FHr1Kzkb0gp7jovCyjPrOIY4pV9WNFVKbrNoa7AZu/76kz3xQMJ21GzOZarN+mWj5wdsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751524562; c=relaxed/simple;
-	bh=YTVVnVJ6PdWC/AKl489gZ/2Sl6Au8Ca1tG/ODoK6oOA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YHI/L48pPjZlz/bgX/TgYsDUupsQyhmMHOf+sbiZ+2Ba23Ti35D9H1xg2GALD4nw8icB0b/1CphBNe5KusqTeycND+DAcra0YtzWRfMPY+S63sBt/D8ldEh5QAb01DZXgsBSfS6Ig/8aBcIL6Mxgyyd3EyNUrOX+uAecNXq5hZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=aaoehm5M; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-234d3261631so55380515ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 23:36:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1751524560; x=1752129360; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=QIKd4XyqKz0WFU05jsmNNatyFr3GWpnfNcV6WEt42xQ=;
-        b=aaoehm5MJbBnlpjv9TaIa4TtSQnEdpiCcbI9jpOm/5BZQdWSofSDMXiURwceOFu3bl
-         SqcbOPXY55pqqA6akly7udwdEjsVf+o5oFKcxs7QWjNIxeEFl2wCFjiPg9F/b/gIA9BQ
-         5otTV4xzaUaNeCR6bqZntfnPn4Muxg7WgV2uGn0iS1JklOvSxmuYZqBpNSNLH5QmI7mX
-         itnq4R0nBW3TTv58Zh8uEgoCRg263PTXXGk2lIFDrRGCWZo7qsfVH74MwmeqXKNTyElU
-         0BnQiDXWVOLMpLAEHQrFJHAogCh2sAOvOX2kXl5/9esgUTpjEsEZm27vqodouyMVusVS
-         b8NQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751524560; x=1752129360;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QIKd4XyqKz0WFU05jsmNNatyFr3GWpnfNcV6WEt42xQ=;
-        b=TwjP2Qnx6LBZrfDvKbKMYhckpBBOO8rKF9ph6V3iPa1phQ9VImf3a/rBrjeQXasWW0
-         /3+qHGkSt6qgZUnkZm8yTP2NF3KXjlzAu/pjQ7a8WoAGUj0v6deJTbIS7AIex7Lo1bK2
-         i2tC5q38t8QOrMT4C0CYiZePiLg7eJZaUmM9W8tALnHJ3T8FaBnBjZhvM0eSdd/ddHNq
-         xTZ39Wtva+fljfsVtYbHClxFdkeglOic5HWcUBe2JBNnC1bL3MD3ZuF40mAGVnne39Lq
-         CENZ6tQSxmJR4VfB3atem64R3I6efZO7uopBJRkP9gtFX6tgFSB4OuCZBIn6Ziz94WiT
-         MYgA==
-X-Forwarded-Encrypted: i=1; AJvYcCW/hduiBN3DcHjUWDLh9wDX0b7MNTkwdq34x7je0EFItl6mmsEZt0tXkssEh12/enairx53rEgf7r8IF10=@vger.kernel.org
-X-Gm-Message-State: AOJu0YysgXkhrcXystLWeW/GXz+CwgMTvJ+5mXsNiGwVTsihxUGbJ2mH
-	S5u5UHLjRu2bbtEvPpCjLfyZ0UoFli+tL/w4x7k996tb6DDoUh1/lwoFQl9QjYvYUxI=
-X-Gm-Gg: ASbGncu1MyoIBYc49W1uJt0PeHRy2rwrpWrIpem09pFRVdBTvl2U3p1lqzkrJ8OsNsk
-	xvK0BsQalS8lAVaeu/9KlwRH5MO31DllXhqx7tjOIaUDMpHlnfPpIV5TlKFp4v0QK1a8lF/PqWZ
-	Ewd3I81NyLsoR9jrXypqs+/bSHBzjHZ9gqaSWML+J1CjJOw/FkJZEDDTiixEAeUpJL+ixB4naTS
-	exwQdApQYq+XdZp9nYhx+7MGASiBcnfhmJMcxbNlJ+O6mcPX4iTVVlZJdt45+yoc0vTPezVY5ix
-	L8NNIq0RP+iyE8RmizSpx+RYH1j6tugag4p2du35OWeymaqukZlJ5fZCe5X37KPGgmPjfQ==
-X-Google-Smtp-Source: AGHT+IFVznHzewXkRwXl+jlpU+/jlWH9G3uXJOnEyYhJffoLUHYr+wecCaP0uvRb31laWEgyZwnmrw==
-X-Received: by 2002:a17:902:da91:b0:234:bfcb:5c21 with SMTP id d9443c01a7336-23c797b28efmr33182915ad.19.1751524559978;
-        Wed, 02 Jul 2025 23:35:59 -0700 (PDT)
-Received: from sunil-laptop ([103.97.166.196])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23acb3ba5bdsm139341455ad.186.2025.07.02.23.35.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Jul 2025 23:35:59 -0700 (PDT)
-Date: Thu, 3 Jul 2025 12:05:51 +0530
-From: Sunil V L <sunilvl@ventanamicro.com>
-To: Shuan He <heshuan@bytedance.com>
-Cc: bhelgaas@google.com, cuiyunhui@bytedance.com, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC 0/1] PCI: Fix pci devices double register WARNING in the
- kernel starting process
-Message-ID: <aGYkx4a4eJUJorYp@sunil-laptop>
-References: <20250702155112.40124-1-heshuan@bytedance.com>
+	s=arc-20240116; t=1751524610; c=relaxed/simple;
+	bh=dSUkszJ4lcJpNTq3Dl2f1r5xOrk/U8o/wHIi5YJyF7c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jCbLAVxNhRjqXappRqTm8Jl1PESnM7sDKi+BrYNnnG8D52GwaRrvyPBG8n9/hzEUY5yZtWTCbSNIc4v49WSvQaNPhbI7aUucJlLrQiwbQjjDE/2iTTaBLb2Fg9aw03W0TilKoRD8hJ9I55Csvb7riB2NDC2x3ZqldcMxKC9vbzg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TdtpLa6O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78A3BC4CEE3;
+	Thu,  3 Jul 2025 06:36:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751524610;
+	bh=dSUkszJ4lcJpNTq3Dl2f1r5xOrk/U8o/wHIi5YJyF7c=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=TdtpLa6OJWh5hxj3g/hXsdN2bJaUNGz5zoCcbhF1wBp9BuoIynV/wxz0GdtsjfTEX
+	 ENjJskqJbY9MBaTvxPNvY3llufRVMf2bGCz8mY4FzuLTa++dGcmle8qbem+VngPBEJ
+	 QF1WmXJ+LHvGGq2+Myi7SkU2ubIV5GfrY2zealXidS1k/ueXjoQPXyIvZOCH0fa/64
+	 6WTJ/BdEcQdmZ9DiaFnraio99cwlhALDljIKIxg/9WZKgUHJjZsb/o+9a4M5WVFKFD
+	 0SdqDn3nY+NWWmaO3YB+lIxCZaRSyyuqxVqmld34CoC9l3kbtQf0Lzu4C/NmccJaj+
+	 TkDNeYDTAdxFQ==
+Message-ID: <9c75041d-a06a-49ef-92d1-011faeb39496@kernel.org>
+Date: Thu, 3 Jul 2025 08:36:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250702155112.40124-1-heshuan@bytedance.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 3/4] ASoC: dt-bindings: Add dt bindings for FS2104/5S
+ audio amplifiers
+To: Nick <nick.li@foursemi.com>, lgirdwood@gmail.com, broonie@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, perex@perex.cz,
+ tiwai@suse.com
+Cc: like.sin@gmail.com, xiaoming.yang@foursemi.com,
+ danyang.zheng@foursemi.com, linux-sound@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250703035639.7252-1-nick.li@foursemi.com>
+ <20250703035639.7252-4-nick.li@foursemi.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250703035639.7252-4-nick.li@foursemi.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 02, 2025 at 11:51:11PM +0800, Shuan He wrote:
-> Hi All.
-> I encountered a WARNING printed out during the kernel starting process
-> on my developing environment.
-> (with RISC-V arch, 6.12 kernel, and Debian 13 OS).
+On 03/07/2025 05:56, Nick wrote:
+> From: Nick Li <nick.li@foursemi.com>
 > 
-> WARN Trace:
-> [    0.518993] proc_dir_entry '000c:00/00.0' already registered
-> [    0.519187] WARNING: CPU: 2 PID: 179 at fs/proc/generic.c:375 proc_register+0xf6/0x180
-> [    0.519214] [<ffffffff804055a6>] proc_register+0xf6/0x180
-> [    0.519217] [<ffffffff80405a9e>] proc_create_data+0x3e/0x60
-> [    0.519220] [<ffffffff80616e44>] pci_proc_attach_device+0x74/0x130
-> [    0.509991] [<ffffffff805f1af2>] pci_bus_add_device+0x42/0x100
-> [    0.509997] [<ffffffff805f1c76>] pci_bus_add_devices+0xc6/0x110
-> [    0.519230] [<ffffffff8066763c>] acpi_pci_root_add+0x54c/0x810
-> [    0.519233] [<ffffffff8065d206>] acpi_bus_attach+0x196/0x2f0
-> [    0.519234] [<ffffffff8065d390>] acpi_scan_clear_dep_fn+0x30/0x70
-> [    0.519236] [<ffffffff800468fa>] process_one_work+0x19a/0x390
-> [    0.519239] [<ffffffff80047a6e>] worker_thread+0x2be/0x420
-> [    0.519241] [<ffffffff80050dc4>] kthread+0xc4/0xf0
-> [    0.519243] [<ffffffff80ad6ad2>] ret_from_fork+0xe/0x1c
+> This patch adds bindings for FourSemi FS2104/5S audio amplifiers
+> which can support both I2S and I2C interface.
 > 
-This should not happen. I suspect some issue in ACPI namespace/_PRT. Can
-you reproduce this on qemu virt machine?
+> Signed-off-by: Nick Li <nick.li@foursemi.com>
 
-Regards
-Sunil
+Your patches are not correctly ordered. Vendor prefix is supposed to be
+before is being used. Bindings are before their users.
 
+> ---
+>  .../bindings/sound/foursemi,fs210x.yaml       | 95 +++++++++++++++++++
+>  1 file changed, 95 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/sound/foursemi,fs210x.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/sound/foursemi,fs210x.yaml b/Documentation/devicetree/bindings/sound/foursemi,fs210x.yaml
+> new file mode 100644
+> index 000000000..3a1aba9b8
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/sound/foursemi,fs210x.yaml
+
+Choose one compatible as filename.
+
+> @@ -0,0 +1,95 @@
+> +# SPDX-License-Identifier: GPL-2.0-only
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/sound/foursemi,fs210x.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: FourSemi FS2104/5S Digital Audio Amplifier
+> +
+> +maintainers:
+> +  - Nick <nick.li@foursemi.com>
+> +
+> +description: |
+> +    The FS2104 is a 15W Inductor-Less, Stereo, Closed-Loop,
+> +    Digital Input Class-D Power Amplifier with Enhanced Signal Processing.
+> +    The FS2105S is a 30W Inductor-Less, Stereo, Closed-Loop,
+> +    Digital Input Class-D Power Amplifier with Enhanced Signal Processing.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - foursemi,fs2104
+> +      - foursemi,fs2105s
+
+Your driver suggests these are compatible, so express that with fallback.
+
+> +
+> +  reg:
+> +    maxItems: 1
+> +    description: |
+
+Do not need '|' unless you need to preserve formatting.
+
+> +      I2C address of the amplifier. Refer to datasheet for possible values:
+> +      0x68/0x69/0x6A/0x6B
+> +
+> +  clocks:
+> +    items:
+> +      - description: The clock of I2S BCLK
+> +
+> +  clock-names:
+> +    items:
+> +      - const: bclk
+> +
+> +  '#sound-dai-cells':
+> +    const: 0
+> +
+> +  pvdd-supply:
+> +    description: |
+
+Do not need '|' unless you need to preserve formatting.
+
+
+> +      Regulator for power supply(PVDD in datasheet).
+> +
+> +  dvdd-supply:
+> +    description: |
+
+Do not need '|' unless you need to preserve formatting.
+
+> +      Regulator for digital supply(DVDD in datasheet).
+> +
+> +  sdz-gpios:
+
+Use standard properties - see gpio-consumer-common
+
+> +    maxItems: 1
+> +    description: |
+> +      SDZ(Shut Down) pin is active low, it will power down the chip,
+> +      and then reset the chip to shut down state.
+> +
+> +  fs,fwm-name:
+
+No, use standard properties (see writing bindings)
+
+> +    description: |
+> +      The name of firmware that should be loaded for this
+> +      instance. The firmware is gernerated by FourSemi's tuning tool.
+> +    $ref: /schemas/types.yaml#/definitions/string
+> +
+> +  fs,dai-name:
+
+No, it's already in dai-common
+
+> +    description: |
+> +      The name of FS210x DAI, it can be set different name when
+> +      there are multiple FS210x devices in the system.
+> +    $ref: /schemas/types.yaml#/definitions/string
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - sdz-gpios
+> +  - fs,fwm-name
+> +  - '#sound-dai-cells'
+> +
+
+Missing ref to dai common
+
+> +additionalProperties: false
+
+And this should be unevaluatedProperties instead
+
+
+Best regards,
+Krzysztof
 
