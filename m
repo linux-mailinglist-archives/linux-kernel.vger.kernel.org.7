@@ -1,152 +1,245 @@
-Return-Path: <linux-kernel+bounces-714764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FE44AF6C3E
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 09:58:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 087F8AF6C1D
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 09:55:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 952324E4ACB
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 07:57:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7801D52609A
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 07:55:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B4EB29CB4D;
-	Thu,  3 Jul 2025 07:57:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="kqA+ZFRb"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E33F2BD593;
+	Thu,  3 Jul 2025 07:54:30 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A31529B783
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 07:57:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7689C29B783;
+	Thu,  3 Jul 2025 07:54:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751529452; cv=none; b=UNfLa3nNMOwW7Ibf38l71DUDDMoCvxip21QqvVL8VMiIqq3x6uhZw/KfYvzuMO6HDx10mq0cApDVAebNphxQ7J/RHtOtxqmeq2SCes+9/Ew9eh8U0MClC9CANEO2E10zqlzFrqz0cmwy4W4sZP9BvOevgzGo0P/8b9+GB6qyw8A=
+	t=1751529269; cv=none; b=RswG9GqyfjgF6VQnAI3tfVfcKaq6RD99l2n+5ILJnjYyvKaTG4URkem3wRx0Scvmrdmf4OxtQ+PJlHG3z3wNZHuXUi91pOBkZ29/M2cddtdNRCzlkZwC002pabmS9urWAVxVUdyUUbllJrikkkzkOTN+i43YuXheUWbp6iCKrHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751529452; c=relaxed/simple;
-	bh=2Jf/qjD85M4WSRxtEpGCluMxSP6BXTGF6SPxegmrRUA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=IRIU+ziyHfH04Bgw3FS3VmvyoZhZ3IAv8iaqM6gtkwz5lE0Alo7q3fA5uE32POyDNR1l9Aa3YDL7q+lOi2lT/qM2ofl/W6bMdqhHyZi6Ud7qpsmZnjcQ9d0H3qvUOs2okcnx4xU4xQ7R/6g0QRAMmX1245pdQJ3XQ/aTE31iRPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=kqA+ZFRb; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id B4F3E44498;
-	Thu,  3 Jul 2025 07:57:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1751529448;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xor3CjGzOLPr9kT51iYNqi58nPlYRydTENN8kwzKB+s=;
-	b=kqA+ZFRbFhdl7+v9Fqmdr92KU64nUi2uYmFQ4d5Dm0AUELC/5ZKqC3A6MpCw6gkezT7ZDr
-	mBoafnbCkFR7asRx8uCpIr+51fdhu4zPMGyPL9kpJIDNnqRngj87U72dExRulO4Ev6AU0V
-	yRAwdHXm81mtYstAzJd6l2UJBL1OeP+WapSAhTwXhKL4r3aKS9jHc04NbXTB8XIme/kT0v
-	e3wIw6zO1ma+GVXaZprNyXWzIgdvwNpSd9CKe/BB/UMs5euPh/37QKKSHxRTFpyqGzPLlB
-	cDKv8mBxe9/bn9Un7pr9bYF34D+MwDO9ZW5tptbB4wYGRyuw1cy1ATw+wW4K3g==
-From: Louis Chauvet <louis.chauvet@bootlin.com>
-Date: Thu, 03 Jul 2025 09:57:01 +0200
-Subject: [PATCH v7 5/8] drm/vkms: Add support for RGB888 formats
+	s=arc-20240116; t=1751529269; c=relaxed/simple;
+	bh=lt+M87RByfReAxvdmnUfBWNo3o235T3tR6JtwxzdkGI=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kz6r4CdWLgrtMRsjWW3rBq9zqqVQdIGmgJ0mVkpPXOcB8HvhXQ7n8W/jXby+nmeOhk//zTqlQzR8KnJh/KLGf9z1bDaoMA/9pBohYOkSWu8U9OZJ0WbwKIZFJZle7PzUYq8zu3kxKFkdBy6K5DE3pCxVb1GeGxPmllIOxOzlo5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4bXpr70gs8z1R8fv;
+	Thu,  3 Jul 2025 15:51:51 +0800 (CST)
+Received: from dggemv712-chm.china.huawei.com (unknown [10.1.198.32])
+	by mail.maildlp.com (Postfix) with ESMTPS id 8903E1A016C;
+	Thu,  3 Jul 2025 15:54:22 +0800 (CST)
+Received: from kwepemq200002.china.huawei.com (7.202.195.90) by
+ dggemv712-chm.china.huawei.com (10.1.198.32) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 3 Jul 2025 15:54:22 +0800
+Received: from localhost.localdomain (10.175.104.82) by
+ kwepemq200002.china.huawei.com (7.202.195.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 3 Jul 2025 15:54:21 +0800
+From: Dong Chenchen <dongchenchen2@huawei.com>
+To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <horms@kernel.org>, <jiri@resnulli.us>,
+	<oscmaes92@gmail.com>, <linux@treblig.org>, <pedro.netdev@dondevamos.com>,
+	<idosch@idosch.org>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<zhangchangzhong@huawei.com>
+Subject: [PATCH net v2 1/2] net: vlan: fix VLAN 0 refcount imbalance of toggling filtering during runtime
+Date: Thu, 3 Jul 2025 15:57:01 +0800
+Message-ID: <20250703075702.1063149-2-dongchenchen2@huawei.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20250703075702.1063149-1-dongchenchen2@huawei.com>
+References: <20250703075702.1063149-1-dongchenchen2@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250703-b4-new-color-formats-v7-5-15fd8fd2e15c@bootlin.com>
-References: <20250703-b4-new-color-formats-v7-0-15fd8fd2e15c@bootlin.com>
-In-Reply-To: <20250703-b4-new-color-formats-v7-0-15fd8fd2e15c@bootlin.com>
-To: Melissa Wen <melissa.srw@gmail.com>, 
- =?utf-8?q?Ma=C3=ADra_Canal?= <mairacanal@riseup.net>, 
- Haneen Mohammed <hamohammed.sa@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Rodrigo Siqueira <siqueira@igalia.com>, 
- Simona Vetter <simona.vetter@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, arthurgrillo@riseup.net, 
- linux-kernel@vger.kernel.org, jeremie.dautheribes@bootlin.com, 
- miquel.raynal@bootlin.com, thomas.petazzoni@bootlin.com, 
- seanpaul@google.com, nicolejadeyee@google.com, 
- Louis Chauvet <louis.chauvet@bootlin.com>, 
- =?utf-8?q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2003;
- i=louis.chauvet@bootlin.com; h=from:subject:message-id;
- bh=2Jf/qjD85M4WSRxtEpGCluMxSP6BXTGF6SPxegmrRUA=;
- b=owEBbQKS/ZANAwAIASCtLsZbECziAcsmYgBoZjfgKKG48v6367zrWTwGsloP2cj80JOQmpQVq
- Dnw875SqYmJAjMEAAEIAB0WIQRPj7g/vng8MQxQWQQgrS7GWxAs4gUCaGY34AAKCRAgrS7GWxAs
- 4h0KEACCIhqNAH7+RDj0/9EkGBUS6qQUkMr8rWNDStAtmHPVE5jMc2ReNdDTZJyWCOxKj3ecv/2
- MhHIIBngLYJez1gDWAP6U96SgoqPlDfOYmI65TjWZnOom+JZBBh5Rpg/xPEVgRQXNVXlg71aT9m
- g6jIqwaKa9X3v5wh0jtDjhC52kHFUghaqBtD8lnbAmXWA9hFs3nPCkVkj4gn6+nLlSvy6yxlQKA
- SQfllCiBFTUbrPku1UxsuS0CujxmfSPIpKCEe0KwchIMBDkkdySmYU+ESj3XO8/cIDpsC08oXfn
- PiNTVYcHHkoaLwOQcKQKNmdohWXQnM7Buy8x0/LcHUp/R9HydDpOWIt48odsHUmkpAJUgUOUvoi
- w10gj0ziSUpF+JAsjt/ERKcNlo8ZtLWiG1paTNpnymUlcdLWK5u7ZskwU0S2OYzdO4EaK+hLdN/
- 599HQDcU51VNJGeFYTZ0h0zE1DUUP+9J8eo4SE2wfkTZxaVc/DEPCxljGwtw67HTP3BuaSi4QwF
- atS7Jhoq40PzhgGzTnXYg9jbGNKD8xk+/v3EYAwcn7B/HRaU6tKKzCaW6CujCbcVU5Vi42Hyn5j
- KkvF2HfsnCMs0HuZk7/PpmFyaQ4VD4+zvlqf3IBAVmpUBXXbv3fhgWSFG88xRLa1ozCS1Lf4Jo0
- aKXg8Dzu5wqshRA==
-X-Developer-Key: i=louis.chauvet@bootlin.com; a=openpgp;
- fpr=8B7104AE9A272D6693F527F2EC1883F55E0B40A5
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduleejfecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephfffufggtgfgkfhfjgfvvefosehtkeertdertdejnecuhfhrohhmpefnohhuihhsucevhhgruhhvvghtuceolhhouhhishdrtghhrghuvhgvthessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnheptdeiveeiudehtddtgfethfduudefffduteekgeevueetudevheehieevtddttdeknecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopegludelvddrudeikedrtddrvddtngdpmhgrihhlfhhrohhmpehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvtddprhgtphhtthhopehsihhmohhnrgesfhhffihllhdrtghhpdhrtghpthhtohephhgrmhhohhgrmhhmvggurdhsrgesghhmrghilhdrtghomhdprhgtphhtthhopehsvggrnhhprghulhesghhoohhglhgvrdgtohhmpdhrtghpthhtohepmhgvlhhishhsrgdrshhrfiesghhmrghilhdrtghomhdprhgtphhtthhopehnihgtohhlvghjrgguvgihvggvsehgohhoghhlvgdrtghomhdprhgtp
- hhtthhopegrihhrlhhivggusehgmhgrihhlrdgtohhmpdhrtghpthhtoheprghrthhhuhhrghhrihhllhhosehrihhsvghuphdrnhgvthdprhgtphhtthhopehthhhomhgrshdrphgvthgriiiiohhnihessghoohhtlhhinhdrtghomh
-X-GND-Sasl: louis.chauvet@bootlin.com
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
+ kwepemq200002.china.huawei.com (7.202.195.90)
 
-Add the support for:
-- RGB888
-- BGR888
+8021q(vlan_device_event) will add VLAN 0 when enabling the device, and
+remove it on disabling it if NETIF_F_HW_VLAN_CTAG_FILTER set.
+However, if changing filter feature during netdev runtime,
+null-ptr-unref[1] or bug_on[2] will be triggered by unregister_vlan_dev()
+for refcount imbalance.
 
-Reviewed-by: Maíra Canal <mcanal@igalia.com>
-Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+[1]
+BUG: KASAN: null-ptr-deref in unregister_vlan_dev (net/8021q/vlan.h:90 net/8021q/vlan.c:110)
+Write of size 8 at addr 0000000000000000 by task ip/382
+CPU: 2 UID: 0 PID: 382 Comm: ip Not tainted 6.16.0-rc3 #60 PREEMPT(voluntary)
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
+BIOS rel-1.13.0-0-gf21b5a4aeb02-prebuilt.qemu.org 04/01/2014
+Call Trace:
+ <TASK>
+dump_stack_lvl (lib/dump_stack.c:123)
+kasan_report (mm/kasan/report.c:636)
+unregister_vlan_dev (net/8021q/vlan.h:90 net/8021q/vlan.c:110)
+rtnl_dellink (net/core/rtnetlink.c:3511 net/core/rtnetlink.c:3553)
+rtnetlink_rcv_msg (net/core/rtnetlink.c:6945)
+netlink_rcv_skb (net/netlink/af_netlink.c:2535)
+netlink_unicast (net/netlink/af_netlink.c:1314 net/netlink/af_netlink.c:1339)
+netlink_sendmsg (net/netlink/af_netlink.c:1883)
+____sys_sendmsg (net/socket.c:712 net/socket.c:727 net/socket.c:2566)
+
+[2]
+kernel BUG at net/8021q/vlan.c:99!
+Oops: invalid opcode: 0000 [#1] SMP KASAN PTI
+CPU: 0 UID: 0 PID: 382 Comm: ip Not tainted 6.16.0-rc3 #61 PREEMPT(voluntary)
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
+BIOS rel-1.13.0-0-gf21b5a4aeb02-prebuilt.qemu.org 04/01/2014
+RIP: 0010:unregister_vlan_dev (net/8021q/vlan.c:99 (discriminator 1))
+RSP: 0018:ffff88810badf310 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: ffff88810da84000 RCX: ffffffffb47ceb9a
+RDX: dffffc0000000000 RSI: 0000000000000008 RDI: ffff88810e8b43c8
+RBP: 0000000000000000 R08: 0000000000000000 R09: fffffbfff6cefe80
+R10: ffffffffb677f407 R11: ffff88810badf3c0 R12: ffff88810e8b4000
+R13: 0000000000000000 R14: ffff88810642a5c0 R15: 000000000000017e
+FS:  00007f1ff68c20c0(0000) GS:ffff888163a24000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f1ff5dad240 CR3: 0000000107e56000 CR4: 00000000000006f0
+Call Trace:
+ <TASK>
+rtnl_dellink (net/core/rtnetlink.c:3511 net/core/rtnetlink.c:3553)
+rtnetlink_rcv_msg (net/core/rtnetlink.c:6945)
+netlink_rcv_skb (net/netlink/af_netlink.c:2535)
+netlink_unicast (net/netlink/af_netlink.c:1314 net/netlink/af_netlink.c:1339)
+netlink_sendmsg (net/netlink/af_netlink.c:1883)
+____sys_sendmsg (net/socket.c:712 net/socket.c:727 net/socket.c:2566)
+___sys_sendmsg (net/socket.c:2622)
+__sys_sendmsg (net/socket.c:2652)
+do_syscall_64 (arch/x86/entry/syscall_64.c:63 arch/x86/entry/syscall_64.c:94)
+
+Root cause is as below:
+step1: add vlan0 for real_dev, such as bond, team.
+register_vlan_dev
+    vlan_vid_add(real_dev,htons(ETH_P_8021Q),0) //refcnt=1
+step2: disable vlan filter feature and enable real_dev
+step3: change filter from 0 to 1
+vlan_device_event
+    vlan_filter_push_vids
+    	ndo_vlan_rx_add_vid //No refcnt added to real_dev vlan0
+step4: real_dev down
+vlan_device_event
+    vlan_vid_del(dev, htons(ETH_P_8021Q), 0); //refcnt=0
+        vlan_info_rcu_free //free vlan0
+step5: real_dev up
+vlan_device_event
+    vlan_vid_add(dev, htons(ETH_P_8021Q), 0);
+        vlan_info_alloc //alloc new empty vid0. refcnt=1
+step6: delete vlan0
+unregister_vlan_dev
+    BUG_ON(!vlan_info); //will trigger it if step5 was not executed
+    vlan_group_set_device
+        array = vg->vlan_devices_arrays
+	//null-ptr-ref will be triggered after step5
+
+E.g. the following sequence can reproduce null-ptr-ref
+
+$ ip link add bond0 type bond mode 0
+$ ip link add link bond0 name vlan0 type vlan id 0 protocol 802.1q
+$ ethtool -K bond0 rx-vlan-filter off
+$ ifconfig bond0 up
+$ ethtool -K bond0 rx-vlan-filter on
+$ ifconfig bond0 down
+$ ifconfig bond0 up
+$ ip link del vlan0
+
+Add the auto_vid0 flag to track the refcount of vlan0, and use this
+flag to determine whether to dec refcount while disabling real_dev.
+
+Fixes: ad1afb003939 ("vlan_dev: VLAN 0 should be treated as "no vlan tag" (802.1p packet)")
+Reported-by: syzbot+a8b046e462915c65b10b@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=a8b046e462915c65b10b
+Co-developed-by: Ido Schimmel <idosch@idosch.org>
+Signed-off-by: Ido Schimmel <idosch@idosch.org>
+Signed-off-by: Dong Chenchen <dongchenchen2@huawei.com>
 ---
- drivers/gpu/drm/vkms/vkms_formats.c | 7 +++++++
- drivers/gpu/drm/vkms/vkms_plane.c   | 2 ++
- 2 files changed, 9 insertions(+)
+ net/8021q/vlan.c | 42 +++++++++++++++++++++++++++++++++---------
+ net/8021q/vlan.h |  1 +
+ 2 files changed, 34 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/gpu/drm/vkms/vkms_formats.c b/drivers/gpu/drm/vkms/vkms_formats.c
-index 544bb6795805..f1649d9bf430 100644
---- a/drivers/gpu/drm/vkms/vkms_formats.c
-+++ b/drivers/gpu/drm/vkms/vkms_formats.c
-@@ -455,6 +455,9 @@ READ_LINE_ARGB8888(ABGR8888_read_line, px, px[3], px[0], px[1], px[2])
- READ_LINE_ARGB8888(RGBA8888_read_line, px, px[0], px[3], px[2], px[1])
- READ_LINE_ARGB8888(BGRA8888_read_line, px, px[0], px[1], px[2], px[3])
+diff --git a/net/8021q/vlan.c b/net/8021q/vlan.c
+index 06908e37c3d9..9a6df8c1daf9 100644
+--- a/net/8021q/vlan.c
++++ b/net/8021q/vlan.c
+@@ -357,6 +357,35 @@ static int __vlan_device_event(struct net_device *dev, unsigned long event)
+ 	return err;
+ }
  
-+READ_LINE_ARGB8888(RGB888_read_line, px, 0xFF, px[2], px[1], px[0])
-+READ_LINE_ARGB8888(BGR888_read_line, px, 0xFF, px[0], px[1], px[2])
++static void vlan_vid0_add(struct net_device *dev)
++{
++	struct vlan_info *vlan_info;
++	int err;
 +
- READ_LINE_le16161616(ARGB16161616_read_line, px, px[3], px[2], px[1], px[0])
- READ_LINE_le16161616(ABGR16161616_read_line, px, px[3], px[0], px[1], px[2])
- READ_LINE_le16161616(XRGB16161616_read_line, px, cpu_to_le16(0xFFFF), px[2], px[1], px[0])
-@@ -676,6 +679,10 @@ pixel_read_line_t get_pixel_read_line_function(u32 format)
- 		return &XRGB8888_read_line;
- 	case DRM_FORMAT_XBGR8888:
- 		return &XBGR8888_read_line;
-+	case DRM_FORMAT_RGB888:
-+		return &RGB888_read_line;
-+	case DRM_FORMAT_BGR888:
-+		return &BGR888_read_line;
- 	case DRM_FORMAT_ARGB16161616:
- 		return &ARGB16161616_read_line;
- 	case DRM_FORMAT_ABGR16161616:
-diff --git a/drivers/gpu/drm/vkms/vkms_plane.c b/drivers/gpu/drm/vkms/vkms_plane.c
-index 6e7597ab935d..9f34f3a18d8c 100644
---- a/drivers/gpu/drm/vkms/vkms_plane.c
-+++ b/drivers/gpu/drm/vkms/vkms_plane.c
-@@ -19,6 +19,8 @@ static const u32 vkms_formats[] = {
- 	DRM_FORMAT_RGBA8888,
- 	DRM_FORMAT_XRGB8888,
- 	DRM_FORMAT_XBGR8888,
-+	DRM_FORMAT_RGB888,
-+	DRM_FORMAT_BGR888,
- 	DRM_FORMAT_XRGB16161616,
- 	DRM_FORMAT_XBGR16161616,
- 	DRM_FORMAT_ARGB16161616,
-
++	if (!(dev->features & NETIF_F_HW_VLAN_CTAG_FILTER))
++		return;
++
++	pr_info("adding VLAN 0 to HW filter on device %s\n", dev->name);
++
++	err = vlan_vid_add(dev, htons(ETH_P_8021Q), 0);
++	if (err)
++		return;
++
++	vlan_info = rtnl_dereference(dev->vlan_info);
++	vlan_info->auto_vid0 = true;
++}
++
++static void vlan_vid0_del(struct net_device *dev)
++{
++	struct vlan_info *vlan_info = rtnl_dereference(dev->vlan_info);
++
++	if (!vlan_info || !vlan_info->auto_vid0)
++		return;
++
++	vlan_info->auto_vid0 = false;
++	vlan_vid_del(dev, htons(ETH_P_8021Q), 0);
++}
++
+ static int vlan_device_event(struct notifier_block *unused, unsigned long event,
+ 			     void *ptr)
+ {
+@@ -378,15 +407,10 @@ static int vlan_device_event(struct notifier_block *unused, unsigned long event,
+ 			return notifier_from_errno(err);
+ 	}
+ 
+-	if ((event == NETDEV_UP) &&
+-	    (dev->features & NETIF_F_HW_VLAN_CTAG_FILTER)) {
+-		pr_info("adding VLAN 0 to HW filter on device %s\n",
+-			dev->name);
+-		vlan_vid_add(dev, htons(ETH_P_8021Q), 0);
+-	}
+-	if (event == NETDEV_DOWN &&
+-	    (dev->features & NETIF_F_HW_VLAN_CTAG_FILTER))
+-		vlan_vid_del(dev, htons(ETH_P_8021Q), 0);
++	if (event == NETDEV_UP)
++		vlan_vid0_add(dev);
++	else if (event == NETDEV_DOWN)
++		vlan_vid0_del(dev);
+ 
+ 	vlan_info = rtnl_dereference(dev->vlan_info);
+ 	if (!vlan_info)
+diff --git a/net/8021q/vlan.h b/net/8021q/vlan.h
+index 5eaf38875554..c7ffe591d593 100644
+--- a/net/8021q/vlan.h
++++ b/net/8021q/vlan.h
+@@ -33,6 +33,7 @@ struct vlan_info {
+ 	struct vlan_group	grp;
+ 	struct list_head	vid_list;
+ 	unsigned int		nr_vids;
++	bool			auto_vid0;
+ 	struct rcu_head		rcu;
+ };
+ 
 -- 
-2.49.0
+2.25.1
 
 
