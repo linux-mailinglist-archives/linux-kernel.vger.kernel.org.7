@@ -1,174 +1,129 @@
-Return-Path: <linux-kernel+bounces-714984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93F2CAF6F2E
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 11:51:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04F22AF6F39
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 11:51:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BA053A8994
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 09:50:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 326FE1649AD
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 09:51:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55C522E03E6;
-	Thu,  3 Jul 2025 09:51:03 +0000 (UTC)
-Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com [209.85.222.44])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FF972D8783;
+	Thu,  3 Jul 2025 09:51:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="2xRyu5kp"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DE792BD591;
-	Thu,  3 Jul 2025 09:51:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35E662E03E6
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 09:51:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751536262; cv=none; b=SXrzrgHzbQWv1279EHOGd+JKl7S2A00hnBuA9M7JOP1b6JwiWBkYHT6F3bGLI+72TbgyYSY/q0SucSma1VCV65cR5Uc6e3TPG2BLQvu/zjDN/7WQQWcFIXAZWDq32255TsfUghVgayMyzDiBgAD+mTHtNzuEs6kZEMSzwcs2yDg=
+	t=1751536296; cv=none; b=u7uUJCHAGNnP4fgF4zl18gbpo1pmy51f8HnubVYsvDfcmeBcAoym2U3EW0NwSdCO464ISY0IGMPikvbEs+k8+RoHBCOFom0InJIBQf9FZ6EGEOzZ3Ni6f8mBzhUGlZVYA/XdhSvmPEibu/XM1Q+70BRezNPPVgZkTjLFzLQ2n5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751536262; c=relaxed/simple;
-	bh=hG8K1aWvudNlPwAN883pKE3U+4Z+u61tte9vHKVgy4w=;
+	s=arc-20240116; t=1751536296; c=relaxed/simple;
+	bh=YpTyljxwyw07U4P0gHb4gnrakvNkh+/hIrM+ABJ+fj0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hVW7Ea/tdYdJWAwJfXnPHiVeXi6nvTZu3skuVwZ2N8LZDxxi+X3I/YYjK3SzuCrnXbVoNEaNhEuWJsLlhI1lYCQEbaZsoF5zGJPbmoC5OOyRAoTXV1w7eJWpAhEOkxKL78oDou3axI0iD6PE99geAcDeU4kZm+zP7qtKAKV+4w8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f44.google.com with SMTP id a1e0cc1a2514c-87f0efa51c0so1504237241.1;
-        Thu, 03 Jul 2025 02:51:00 -0700 (PDT)
+	 To:Cc:Content-Type; b=qb7koBwEXRHHOrIa+aZNmYKz+Hg5bPncyPD5Qz30CVk4NbaimS+8uRu2j9KSKtLnK/DaYgOK7izl3cVjOqZGpH39LCVU4pd9SMPJ3JomOMckUrlUwSN9mrO9HG7IU4bUpyX20NZt/PQ3FzfmoOgYf8DPIvCucJCVyKFwt4uoFpM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=2xRyu5kp; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5551a770828so4688494e87.1
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Jul 2025 02:51:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1751536292; x=1752141092; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Fm9C4xWfuuIKIxeM1FG7nAWF3Huvmfev7MnDCCzIEeo=;
+        b=2xRyu5kpBk32c8BFiGQ2GK2WOFFJHt38z+jgrUYl5ctvpo/ZGXTPEpt3mUnkXwlSnc
+         ONmpIfLJPriVZ9pppbTFbxn7Bc1ccQb9CZLX/d7Mjy2wWBuYacI19cLhdswRa8suDeHC
+         Vwviu3AzO0wopJY+YB5NtxbVIwQ/cVE+thlICj84t5BUg5Z8kqEmrKM1+v1f010xkmxv
+         NnIQb9F7JWSyn/L+jNjaRL7mmLCiyJVqYn+cdC62FTCgB8JEyC7R3FkHBv+2O+T9lGzb
+         ZuFcLFr9a2gSr6sX7eyaDB7hKh5bPq4zJ/PQrGpiP/8OUcnWtSKVy00b5dbaJbphxqJQ
+         Hgdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751536259; x=1752141059;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Xqd8yGqNLo9cuGqviDpXd5FpjhJYhFTdtFhMPVsQm4U=;
-        b=PBcoS4KTeCPS69Q5WSRao82An7Ii4Ytd0iRCEor2Yg7wGb+pHguLLLtNhlsG7JYvcc
-         ce1w0E8Le6A+G2RXqrKnDbxwWd9MmyaK7T7vFyPrEwm5fIK5q1KIy9azGG+VRPS0/FFt
-         NKUOHptQ5LdZo7/yJADwvc0tZjANdxnIu7hH4l49UeS7Z0QxOj1UyvvzUFrAyPcLtPzP
-         LNFqEQC58+qRoZFXeDRePQjrf0Fsnijsr1PlJ7L8SUvVj3j6dS+Q3fHZB3zBZScL1M9X
-         pJ4twZBKljuwreAkGWHe4AP9cHfFF4qp73/hGhmpCFGrGSCxIVLtkMSyuatXeZcU0HQ1
-         yfTA==
-X-Forwarded-Encrypted: i=1; AJvYcCVo5c0OTZvuSdOEcHSCnpFwregy5LMTos0hV+uF40yfXZidvMBC1izMvY5GU3uPI5+TfQJhkw5rH5Dz@vger.kernel.org, AJvYcCW62zE3e66MLLa030PLhedn+rrTaMhznw828iq9aLMlcCcTKnKRP2v6aao8WeXS7waaAW+iBrAfokTmMuxioNbUg5o=@vger.kernel.org, AJvYcCWWjkAR0QnZMD3AO3g87txl81cSkTLlGllUxrx60+oCCvHVoqYnBjnjl2y3s3U9/5AXFUeQ8aIRZY/hkObc@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHNaJ+2KxbXtOYbvqvsgtQuUMb/CbXXubS16voVOnVg9Hi6Vx3
-	u5vnONTigolmrvi3l4F8obrTXuibTbCllPjp9/5hh68u+TTNVDMDp7a+ZDSbwXQV
-X-Gm-Gg: ASbGncuqGLSzzyrYAinRaHRztFo0UiHBC0pdbfvpREVhaEy8b/vBcT1oLLFFpZJRVij
-	I044pytCSglCYXfLiU9QzAqb5dOf6QyEhisIG899x2tn/gGYbQOvZXMobweJviTWuhscBY7Bu/V
-	fbkYk+isadVnKLeGveGdoUjgXNE+ObDhNk+0zxfcxhyfnJ2jQ/K4IaRO6GFNGrDbOBaZ9S8HDc5
-	FjkD5gHI6d0hhs0vyUiVo1g9oOXXXATgBpiJ9SqIt6gi11UdBpomLDHmxg8hFQTEu3vbvvabBLP
-	dv5BOtJ29C/sLxvDlC/Tnx7A10sMPSVteB5e9a8mrU+8gtO4ecb7uymDJHDbHvt3dPJSg9KrgEo
-	FJWkc8oQ/qfArp762C5ghaNZZ
-X-Google-Smtp-Source: AGHT+IE7pJeV6/5U5pfkFvyC1Itlb26db2mr7L8RWDfGgaa8xV9iSuoj6D4PhU808nF5kvbaUXZqDA==
-X-Received: by 2002:a05:6102:4485:b0:4e9:add0:2828 with SMTP id ada2fe7eead31-4f1745a09camr2312949137.1.1751536258721;
-        Thu, 03 Jul 2025 02:50:58 -0700 (PDT)
-Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com. [209.85.217.46])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4ee4c7ec2cfsm2084553137.7.2025.07.03.02.50.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Jul 2025 02:50:58 -0700 (PDT)
-Received: by mail-vs1-f46.google.com with SMTP id ada2fe7eead31-4e9b26a5e45so3092065137.1;
-        Thu, 03 Jul 2025 02:50:58 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUgvlUGzoKqVxTLNay+afg7ztqIsOMlIZZ/jcCRD2dzUIpL+kSS9Bek/0Q0YbXlVqyv6wmE9Dba+EWe@vger.kernel.org, AJvYcCVwmrYp5Y5Hs1XjzhmwEnMcaE6LS/fSZun8ry5XDnWYuYoLqdOIPYHJUyGu64YqWztOwFJqRFiVVEmRb5+U@vger.kernel.org, AJvYcCW2Non3VUnTyLcFAGdgVmkzAYLpWrreMLu6N86okZOeyViQ4pqk5VT9X9Y4O9alZtUlQKhVLofnllfQCqbCtpIqUsY=@vger.kernel.org
-X-Received: by 2002:a05:6102:160d:b0:4eb:2eac:aaa0 with SMTP id
- ada2fe7eead31-4f17479d53fmr2481310137.19.1751536258137; Thu, 03 Jul 2025
- 02:50:58 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1751536292; x=1752141092;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Fm9C4xWfuuIKIxeM1FG7nAWF3Huvmfev7MnDCCzIEeo=;
+        b=JIHaKi7MkauIN/R+ZKIRsrm7U+lZpiIJ4hzu7gKeskDwhTu5mp5lb8ml46Ai0HgwfO
+         bMIdcNEQioG34GekrFQ9cdmKXUCyV0Oyijbgav1VfYRRwCECGapwVd3QOWV2g0dlStg8
+         pM+VbnNBOGquJ9fMyYwao7hAP2dTios9psUvzyo8qxAcixSkP/Z0TwWjla9yY0h0DGiQ
+         aL69OUHtafyB7HRHV0rMCL6HOWRWovmuXqnRoy1zeUUumeQcjoc417N7xZqJmCv9T7Gg
+         Dck5ebap/r6svaKLM0uIcnW0mjdmolhAT6S2o4T2+P4i3baVfi99fccLrzCCCY8cz7Me
+         qhdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUh4vuMxbK2uSsBxPC+h0r3aO8AR0easNM4RMPbIdc5n8p7t8FixJUoFApa/hjEiaSF4gR8TlgGCJSMZgA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx50Bk07foICKuKTmEBHfPKOSPF1vio+BiITfXpHFcbXWcn1Fbf
+	vSgMgEPk66dJxQbpx5blo/TXxp+LZJD/AcQv9JBv9Sa1igZy1e1D9O8E85DHu/gg0wAhepjYVIn
+	A5Xhwr6FghSh+qsm35Aq+Yxdc94Q8/bOI3IX3BtTIDg==
+X-Gm-Gg: ASbGncvFns2+Jgy3+TaOZejI6A7qFJfL/0CC8uVJPY/X3j83V8KNo6GUiypi/0cdwua
+	n5XUIpcV4B8m9MM0Cg+7HXOSkCfgoOboizN/qZfxY2ekyygZAisR91FyiopXp06LDAFEV++Ra6o
+	sx6GhL3JuUUuz6EpkbSHaVP5khxAoVfFPhyshKzeDgvFUOefX5Vr2UliPycSyxaqdSuQ5o5btYt
+	g==
+X-Google-Smtp-Source: AGHT+IFNLwhbBpukbVu0dvBLmLJ9QPZOvXagKslA4IQMG8t7aHrgsvuCJVnQ/Jp0X0+rUTcLV0jdkLs/XNf8N29ZrsA=
+X-Received: by 2002:a05:6512:3b29:b0:553:36b7:7b14 with SMTP id
+ 2adb3069b0e04-5562828523bmr2206635e87.37.1751536292037; Thu, 03 Jul 2025
+ 02:51:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250625153042.159690-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250625153042.159690-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20250625153042.159690-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 3 Jul 2025 11:50:46 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdV=9q8qw69BtErOQ-=qojBEppUZWbRdAzikCNg+pbnC4w@mail.gmail.com>
-X-Gm-Features: Ac12FXyFMmL_1m6_QnACLMWn2MDSc5_v8PXHpaccbRsEvJ4pd5SOniBUZ93DUFw
-Message-ID: <CAMuHMdV=9q8qw69BtErOQ-=qojBEppUZWbRdAzikCNg+pbnC4w@mail.gmail.com>
-Subject: Re: [PATCH 2/6] arm64: dts: renesas: r9a09g087: Add I2C controller nodes
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20250702164926.2990958-1-s-ramamoorthy@ti.com> <20250702164926.2990958-2-s-ramamoorthy@ti.com>
+In-Reply-To: <20250702164926.2990958-2-s-ramamoorthy@ti.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Thu, 3 Jul 2025 11:51:20 +0200
+X-Gm-Features: Ac12FXyCwoICVUr3Z51apCKRhZU7x6W4kGidAOB345u_C9-RSlabdFl5B5KxSls
+Message-ID: <CAMRc=Mdg8_Tq1PWAaOSzzPGUMu6-_3SvOy6F+n_Qv90arVyeLg@mail.gmail.com>
+Subject: Re: [PATCH v5 1/2] gpio: tps65219: Update _IDX & _OFFSET macro prefix
+To: Shree Ramamoorthy <s-ramamoorthy@ti.com>
+Cc: aaro.koskinen@iki.fi, andreas@kemnade.info, khilman@baylibre.com, 
+	rogerq@kernel.org, tony@atomide.com, linus.walleij@linaro.org, 
+	linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, m-leonard@ti.com, praneeth@ti.com, 
+	jcormier@criticallink.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Prabhakar,
-
-On Wed, 25 Jun 2025 at 17:31, Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Wed, Jul 2, 2025 at 6:51=E2=80=AFPM Shree Ramamoorthy <s-ramamoorthy@ti.=
+com> wrote:
 >
-> The Renesas RZ/N2H ("R9A09G087") SoC includes three I2C (RIIC) channels.
-> Adds the device tree nodes for all three I2C controllers to RZ/N2H
-> SoC DTSI.
+> TPS65215 and TPS65219 are overlapping PMIC devices. While their regulator
+> features differe, the GPIO features are the same. In the TPS65219 MFD
+> driver, the 2 PMICs share the same "tps65219-gpio" compatible string to
+> limit support for TPS65215 in this GPIO driver to comments.
 >
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-
-Thanks for your patch!
-
-> --- a/arch/arm64/boot/dts/renesas/r9a09g087.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r9a09g087.dtsi
-> @@ -90,6 +90,51 @@ sci0: serial@80005000 {
->                         status = "disabled";
->                 };
+> The TPS6521X_GPIO0_IDX and TPS6521X_GPIO0_OFFSET macro name prefixes are
+> updated to indicate these macros apply to both PMICs.
 >
-> +               i2c0: i2c@80088000 {
-> +                       compatible = "renesas,riic-r9a09g087", "renesas,riic-r9a09g077";
-> +                       reg = <0 0x80088000 0 0x400>;
-> +                       interrupts = <GIC_SPI 614 IRQ_TYPE_LEVEL_HIGH>,
-> +                                    <GIC_SPI 615 IRQ_TYPE_EDGE_RISING>,
-> +                                    <GIC_SPI 616 IRQ_TYPE_EDGE_RISING>,
-> +                                    <GIC_SPI 617 IRQ_TYPE_LEVEL_HIGH>;
-> +                       interrupt-names = "eei", "rxi", "txi", "tei";
-> +                       clocks = <&cpg CPG_MOD 100>;
-> +                       power-domains = <&cpg>;
-> +                       #address-cells = <1>;
-> +                       #size-cells = <0>;
-> +                       status = "disabled";
-> +               };
-> +
-> +               i2c1: i2c@80088004 {
+> Signed-off-by: Shree Ramamoorthy <s-ramamoorthy@ti.com>
+> Reviewed-by: Roger Quadros <rogerq@kernel.org>
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+>  drivers/gpio/gpio-tps65219.c | 27 +++++++++++++++++----------
+>  1 file changed, 17 insertions(+), 10 deletions(-)
+>
+> diff --git a/drivers/gpio/gpio-tps65219.c b/drivers/gpio/gpio-tps65219.c
+> index 526640c39a11..3c762103babc 100644
+> --- a/drivers/gpio/gpio-tps65219.c
+> +++ b/drivers/gpio/gpio-tps65219.c
+> @@ -1,8 +1,8 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  /*
+> - * GPIO driver for TI TPS65219 PMICs
+> + * GPIO driver for TI TPS65215/TPS65219 PMICs
+>   *
+> - * Copyright (C) 2022 Texas Instruments Incorporated - http://www.ti.com=
+/
+> + * Copyright (C) 2025 Texas Instruments Incorporated - http://www.ti.com=
+/
 
-80088400
+Should be 2022,2025.
 
-> +                       compatible = "renesas,riic-r9a09g087", "renesas,riic-r9a09g077";
-> +                       reg = <0 0x80088400 0 0x400>;
-> +                       interrupts = <GIC_SPI 618 IRQ_TYPE_LEVEL_HIGH>,
-> +                                    <GIC_SPI 619 IRQ_TYPE_EDGE_RISING>,
-> +                                    <GIC_SPI 620 IRQ_TYPE_EDGE_RISING>,
-> +                                    <GIC_SPI 621 IRQ_TYPE_LEVEL_HIGH>;
-> +                       interrupt-names = "eei", "rxi", "txi", "tei";
-> +                       clocks = <&cpg CPG_MOD 101>;
-> +                       power-domains = <&cpg>;
-> +                       #address-cells = <1>;
-> +                       #size-cells = <0>;
-> +                       status = "disabled";
-> +               };
-> +
-> +               i2c2: i2c@81008000 {
-> +                       compatible = "renesas,riic-r9a09g087", "renesas,riic-r9a09g077";
-> +                       reg = <0 0x81008000 0 0x400>;
-> +                       interrupts = <GIC_SPI 622 IRQ_TYPE_LEVEL_HIGH>,
-> +                                    <GIC_SPI 623 IRQ_TYPE_EDGE_RISING>,
-> +                                    <GIC_SPI 624 IRQ_TYPE_EDGE_RISING>,
-> +                                    <GIC_SPI 625 IRQ_TYPE_LEVEL_HIGH>;
-> +                       interrupt-names = "eei", "rxi", "txi", "tei";
-> +                       clocks = <&cpg CPG_MOD 501>;
-
-601
-
-> +                       power-domains = <&cpg>;
-> +                       #address-cells = <1>;
-> +                       #size-cells = <0>;
-> +                       status = "disabled";
-> +               };
-> +
->                 cpg: clock-controller@80280000 {
->                         compatible = "renesas,r9a09g087-cpg-mssr";
->                         reg = <0 0x80280000 0 0x1000>,
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Bart
 
