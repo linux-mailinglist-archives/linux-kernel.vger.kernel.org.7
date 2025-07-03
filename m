@@ -1,102 +1,86 @@
-Return-Path: <linux-kernel+bounces-714900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7EC1AF6E34
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 11:09:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A1C1AF6E3A
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 11:11:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55B423AF9BD
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 09:09:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B38334A5854
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 09:10:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AE852D4B7E;
-	Thu,  3 Jul 2025 09:09:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bSweQX75"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A975F2D46D9;
+	Thu,  3 Jul 2025 09:11:05 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2DBA2D4B57;
-	Thu,  3 Jul 2025 09:09:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E34C828DB4A
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 09:11:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751533786; cv=none; b=dkD/svZFEOXkD3YWsgowr3bE/v+Fjg95D54zXBvMrezIGpIWXVZGfA+zUK3uc6lY6u3RMmyPvnm8G5C0lbODgPHEI3IbqfQ9pZvsIR12b9b08zrtg+p+Doy30MlhE6W4tudsS0iaEi1r3zcaqIoUliaUkFmP2uPwlglRRzcbzAk=
+	t=1751533865; cv=none; b=nuZ6ffgem6/l+NjUV9UiDJBvDkdYf/LHZK/+CYDkJqukG3VHiV336V7bSs+AfJ7iXJ9S0hb1bOcCJfHCLEyaqFpYf2bUCEt4sgjbmXhsfYoAgAJI95hW5uMc1710RMBcrMSj+Jz2uc8dvju60aetMfDFpm/qAZ/xiSAJakVa+as=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751533786; c=relaxed/simple;
-	bh=Pg/UwjFOcZzuqyjOTqG0yIOy7JK3IesDORgQKCAf2ZQ=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=AN3yaDeJyoygRLRg4pw2V8jBiLPLP5skpEmn7DfT3GKeXdDc3K/t3KyZFUBiqKDVShtbGTKU5VXeW3At4E5lnAAu6skQha5I04UN8EBpT0V21b56BSunstF4PiWcXc5MI71C9IgpdkuPqJeGeBRKPdb9zF7e8s7GxpVFHROg0Y0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bSweQX75; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 245BBC4CEE3;
-	Thu,  3 Jul 2025 09:09:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751533786;
-	bh=Pg/UwjFOcZzuqyjOTqG0yIOy7JK3IesDORgQKCAf2ZQ=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=bSweQX75kAK9tCjdGOTMlv6rGVagwP2XSnsw0lGHOoPFAjo3pcmuA1hgooocTHAt5
-	 6LVqV9vCdR5yJ52Wy4wLk3EjralBAFl1Dmy0OviFMrqMehIGa91ND41yThVJsgUzZW
-	 DdoZUzq+iE9y6QmlUqyeRvw1VbDF2tx7nqaBuXidJ5/o9eY4/s81GkhOlVbdaNYIb7
-	 CG1SNAirLUSKNRHbHCMOSSHNguiEWwtel5eBlVpLB5K8N21JhcdzWOhD9VaxRYnLsJ
-	 Qc+rpzC50AWonr9gmsdRqZnKZPNie6VhMpXVLUg+EXrWntP22NLhXOjlziA66eAzlM
-	 qjS+NCAGgDTdQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE269383B273;
-	Thu,  3 Jul 2025 09:10:11 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1751533865; c=relaxed/simple;
+	bh=FSnWyhULt+8qNj/pQpL8m+1t/YkTEOioRkGgaHHVfg0=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=IMg5EVy9/WqWJbO49iwbsFLFneesajJTwTBYBkOLmf2Q2DkJAIjLrdrZJGvEK6afQ59q8F4utnmsYpmkL/ZP6ITi9ipIS7QOhlJfYBZaRxNnFCeFIX87MpJlBYkeLi1F3WdUkPUpdr6TYLffL9lz3lxm8fbjVzGA9szSFCTLs70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-8760733a107so759851239f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Jul 2025 02:11:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751533863; x=1752138663;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2Efdj3HghN61h5La1iiYSMoZDZpnzZ9XZixUD39oRCo=;
+        b=g9iKPkqJoCbZsj0PGlrK1D+IWMjgHRzC+DW5SJlpd4+nejhjn3H7tcRz1Jzc7cSMS9
+         B6ywTnvv16QtD0pviqPA+j+cWGFcgAFMxpfs4Not33n93bGOMpN5/QdfAD9o1l4Hsw8m
+         gcdnl9z9tajdtbUfNny5M8TSf3BWk4VJ+jYWk4Z2HkAhX/tY7wF0D75IrBsAKVp2F3pR
+         f3aMnB422o5qNezdT0tBeWeiaEpgT3aM6CFeh5j1QpbIrILLF+UDrkENvmavkTqREy1Z
+         a6XJzuuMaj+lVEFUeGk4aGvxhHzb8di+sfoZ9SJhe1wdsd+bmFfAmBfqty2rQqrgqxiI
+         Myhw==
+X-Gm-Message-State: AOJu0Yw6oYAUA2uZofBLDLO0ydWAEYNZAosOogqzUoFfJC8Wo+YrEr8F
+	Irny99iczp3RBTPdmjB/mHuSBfFAKnW7jvUN/fubsTTW5+PGLg4GH0V4dZbo/pdkOC8w75GgUFE
+	UwrzpCRDXK6bNZwMbqlnDCVVKxHWGFbI5g+XUDZMYqWO9is36TFz85x8Gozo=
+X-Google-Smtp-Source: AGHT+IF8L7KgUVlLdyNNFNxlBocn7RDmxwdr7FO2JdGzh7WBFHDh+QNUEQFU3HaQrFjnW6MGnROiNYri9EEEsJ/ye+zDBYKvknvQ
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net v2 0/3] virtio-net: fixes for mergeable XDP receive
- path
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175153381052.1020232.17030043875291925197.git-patchwork-notify@kernel.org>
-Date: Thu, 03 Jul 2025 09:10:10 +0000
-References: <20250630144212.48471-1-minhquangbui99@gmail.com>
-In-Reply-To: <20250630144212.48471-1-minhquangbui99@gmail.com>
-To: Bui Quang Minh <minhquangbui99@gmail.com>
-Cc: netdev@vger.kernel.org, mst@redhat.com, jasowang@redhat.com,
- xuanzhuo@linux.alibaba.com, eperezma@redhat.com, andrew+netdev@lunn.ch,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- ast@kernel.org, daniel@iogearbox.net, hawk@kernel.org,
- john.fastabend@gmail.com, sdf@fomichev.me, virtualization@lists.linux.dev,
- linux-kernel@vger.kernel.org, bpf@vger.kernel.org
+X-Received: by 2002:a05:6602:1501:b0:86c:f0d9:553 with SMTP id
+ ca18e2360f4ac-876d1e9d88emr398862439f.5.1751533863092; Thu, 03 Jul 2025
+ 02:11:03 -0700 (PDT)
+Date: Thu, 03 Jul 2025 02:11:03 -0700
+In-Reply-To: <20250703024751.1194841-1-lizhi.xu@windriver.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68664927.a70a0220.5d25f.0862.GAE@google.com>
+Subject: Re: [syzbot] [nfs?] [net?] possible deadlock in rpc_close_pipes
+From: syzbot <syzbot+169de184e9defe7fe709@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, lizhi.xu@windriver.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hello:
+Hello,
 
-This series was applied to netdev/net.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-On Mon, 30 Jun 2025 21:42:09 +0700 you wrote:
-> Hi everyone,
-> 
-> This series contains fixes for XDP receive path in virtio-net
-> - Patch 1: add a missing check for the received data length with our
-> allocated buffer size in mergeable mode.
-> - Patch 2: remove a redundant truesize check with PAGE_SIZE in mergeable
-> mode
-> - Patch 3: make the current repeated code use the check_mergeable_len to
-> check for received data length in mergeable mode
-> 
-> [...]
+Reported-by: syzbot+169de184e9defe7fe709@syzkaller.appspotmail.com
+Tested-by: syzbot+169de184e9defe7fe709@syzkaller.appspotmail.com
 
-Here is the summary with links:
-  - [net,v2,1/3] virtio-net: ensure the received length does not exceed allocated size
-    https://git.kernel.org/netdev/net/c/315dbdd7cdf6
-  - [net,v2,2/3] virtio-net: remove redundant truesize check with PAGE_SIZE
-    https://git.kernel.org/netdev/net/c/4be2193b3393
-  - [net,v2,3/3] virtio-net: use the check_mergeable_len helper
-    https://git.kernel.org/netdev/net/c/7d4a119e4582
+Tested on:
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+commit:         50c8770a Add linux-next specific files for 20250702
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=16dff982580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=76d012e863976d4c
+dashboard link: https://syzkaller.appspot.com/bug?extid=169de184e9defe7fe709
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1336f982580000
 
-
+Note: testing is done by a robot and is best-effort only.
 
