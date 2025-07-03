@@ -1,147 +1,109 @@
-Return-Path: <linux-kernel+bounces-715020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-715018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A97FAF6FB0
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 12:07:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60576AF6FAB
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 12:06:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5F353A5AAC
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 10:06:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1D07189D859
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 10:06:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 244902E2674;
-	Thu,  3 Jul 2025 10:06:12 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 055882E1738;
+	Thu,  3 Jul 2025 10:06:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="1Eo+gSlf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13EFC2E1C69;
-	Thu,  3 Jul 2025 10:06:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D90E1B95B;
+	Thu,  3 Jul 2025 10:06:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751537171; cv=none; b=n32VckriyCl4czQMQxJbiGmHifAhd3B22oTMh56VAcHZZSaz6XvRVCohKAizyurEXQBl2NSt0VD7mhzWR0wZxcs9oMoD1GguKcZWlgGTAr3Zg3IiMHqYt+8cv01qOrKY6ophSrVwayKIFqQCCbx5JanfdjqtMU8CRQ/lnYmeAm4=
+	t=1751537165; cv=none; b=TiChJYC0OXYCWGwB0++TdD518rnQcnsgQHoQW+/JUaTf2fjAHa0mF9gBwxGVr0T0XNicZhQQCD/8/uaAUFMP2VA0E9CRg910xWMQZbi5MiF19INftyHSOhT+sCikIFKcEksznWMGAeGSHhth+tDYXFzsJgcG/27VH/VC7c6QGTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751537171; c=relaxed/simple;
-	bh=Fpj1uwcH2xla2wofNQJx+8YAitM91souW9TIhCmfFPk=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GOY9cQOmAOdXVbba8fjHMxDH9sr+05AUWZD+fTjHovP5RmCR1uhUGU7oJ7pinEP8Efe/YZCItoYRnsmNm+allIwYhnyX5uYLCngLH64VeJiDh4Z8jh0MaaGqhfJGldtdnj/WnhY72ErAzaaJJXWkTKtAJkbUd2O2aRA9uK9KDBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bXspS1C2Xz67Q1Y;
-	Thu,  3 Jul 2025 18:05:36 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id D6BAD1402F5;
-	Thu,  3 Jul 2025 18:06:04 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 3 Jul
- 2025 12:06:04 +0200
-Date: Thu, 3 Jul 2025 11:06:02 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: "Bowman, Terry" <terry.bowman@amd.com>
-CC: <dave@stgolabs.net>, <dave.jiang@intel.com>, <alison.schofield@intel.com>,
-	<dan.j.williams@intel.com>, <bhelgaas@google.com>, <shiju.jose@huawei.com>,
-	<ming.li@zohomail.com>, <Smita.KoralahalliChannabasappa@amd.com>,
-	<rrichter@amd.com>, <dan.carpenter@linaro.org>,
-	<PradeepVineshReddy.Kodamati@amd.com>, <lukas@wunner.de>,
-	<Benjamin.Cheatham@amd.com>, <sathyanarayanan.kuppuswamy@linux.intel.com>,
-	<linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-pci@vger.kernel.org>
-Subject: Re: [PATCH v10 05/17] CXL/AER: Introduce kfifo for forwarding CXL
- errors
-Message-ID: <20250703110602.0000699c@huawei.com>
-In-Reply-To: <a76be312-9f27-491a-99d2-79815ed98d3e@amd.com>
-References: <20250626224252.1415009-1-terry.bowman@amd.com>
-	<20250626224252.1415009-6-terry.bowman@amd.com>
-	<20250627112429.00007155@huawei.com>
-	<a76be312-9f27-491a-99d2-79815ed98d3e@amd.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1751537165; c=relaxed/simple;
+	bh=tBa0DAg0qxrdIzcmLs3H1wllLTK3XwS1UCGg9u5oKHk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TeoN9vP0O4FJJLKEFFQ8O/HVL2nge7sjRcDMwociZyhvIZxgaEd7N5OROy0YW6ubUlKHiL77s33gJpgbfsoM+ALKg+fq50mgSFHQabpM+M++YOnRIclersSckvQVvtFki2JPmwuTJl42B/2t473V5J+0fIWMaH3YnUAzGKnd6OM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=1Eo+gSlf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84C8BC4CEE3;
+	Thu,  3 Jul 2025 10:06:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1751537164;
+	bh=tBa0DAg0qxrdIzcmLs3H1wllLTK3XwS1UCGg9u5oKHk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=1Eo+gSlfTRvBWoE7OSsEw0r9zCTwxyud4BviRS8WC6p3jYb+6851KPHdtVEZaSN4/
+	 cMIs4aDm31In029+81likJL1RxCk2mtUfPSckNj8SuKNYZGxwyCgBTIIH2d9dEk5ey
+	 IEkBRge+lljE2AdZMG6chetZ1eSkgKrVntzwfIHY=
+Date: Thu, 3 Jul 2025 12:06:02 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Jeongjun Park <aha310510@gmail.com>
+Cc: stable@vger.kernel.org, urezki@gmail.com, akpm@linux-foundation.org,
+	edumazet@google.com, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 6.15.y] mm/vmalloc: fix data race in show_numa_info()
+Message-ID: <2025070322-front-purchase-b66f@gregkh>
+References: <20250702153312.351080-1-aha310510@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: lhrpeml100005.china.huawei.com (7.191.160.25) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250702153312.351080-1-aha310510@gmail.com>
 
-On Wed, 2 Jul 2025 11:21:20 -0500
-"Bowman, Terry" <terry.bowman@amd.com> wrote:
+On Thu, Jul 03, 2025 at 12:33:12AM +0900, Jeongjun Park wrote:
+> commit 5c5f0468d172ddec2e333d738d2a1f85402cf0bc upstream.
+> 
+> The following data-race was found in show_numa_info():
+> 
+> ==================================================================
+> BUG: KCSAN: data-race in vmalloc_info_show / vmalloc_info_show
+> 
+> read to 0xffff88800971fe30 of 4 bytes by task 8289 on cpu 0:
+>  show_numa_info mm/vmalloc.c:4936 [inline]
+>  vmalloc_info_show+0x5a8/0x7e0 mm/vmalloc.c:5016
+>  seq_read_iter+0x373/0xb40 fs/seq_file.c:230
+>  proc_reg_read_iter+0x11e/0x170 fs/proc/inode.c:299
+> ....
+> 
+> write to 0xffff88800971fe30 of 4 bytes by task 8287 on cpu 1:
+>  show_numa_info mm/vmalloc.c:4934 [inline]
+>  vmalloc_info_show+0x38f/0x7e0 mm/vmalloc.c:5016
+>  seq_read_iter+0x373/0xb40 fs/seq_file.c:230
+>  proc_reg_read_iter+0x11e/0x170 fs/proc/inode.c:299
+> ....
+> 
+> value changed: 0x0000008f -> 0x00000000
+> ==================================================================
+> 
+> According to this report,there is a read/write data-race because
+> m->private is accessible to multiple CPUs.  To fix this, instead of
+> allocating the heap in proc_vmalloc_init() and passing the heap address to
+> m->private, vmalloc_info_show() should allocate the heap.
+> 
+> Link: https://lkml.kernel.org/r/20250508165620.15321-1-aha310510@gmail.com
+> Fixes: 8e1d743 ("mm: vmalloc: support multiple nodes in vmallocinfo")
 
-> On 6/27/2025 5:24 AM, Jonathan Cameron wrote:
-> > On Thu, 26 Jun 2025 17:42:40 -0500
-> > Terry Bowman <terry.bowman@amd.com> wrote:
-> > =20
-> >> CXL error handling will soon be moved from the AER driver into the CXL
-> >> driver. This requires a notification mechanism for the AER driver to s=
-hare
-> >> the AER interrupt with the CXL driver. The notification will be used
-> >> as an indication for the CXL drivers to handle and log the CXL RAS err=
-ors.
-> >>
-> >> First, introduce cxl/core/native_ras.c to contain changes for the CXL
-> >> driver's RAS native handling. This as an alternative to dropping the
-> >> changes into existing cxl/core/ras.c file with purpose to avoid #ifdef=
-s.
-> >> Introduce CXL Kconfig CXL_NATIVE_RAS, dependent on PCIEAER_CXL, to
-> >> conditionally compile the new file.
-> >>
-> >> Add a kfifo work queue to be used by the AER driver and CXL driver. Th=
-e AER
-> >> driver will be the sole kfifo producer adding work and the cxl_core wi=
-ll be
-> >> the sole kfifo consumer removing work. Add the boilerplate kfifo suppo=
-rt.
-> >>
-> >> Add CXL work queue handler registration functions in the AER driver. E=
-xport
-> >> the functions allowing CXL driver to access. Implement registration
-> >> functions for the CXL driver to assign or clear the work handler funct=
-ion.
-> >>
-> >> Introduce 'struct cxl_proto_err_info' to serve as the kfifo work data.=
- This
-> >> will contain the erring device's PCI SBDF details used to rediscover t=
-he
-> >> device after the CXL driver dequeues the kfifo work. The device redisc=
-overy
-> >> will be introduced along with the CXL handling in future patches.
-> >>
-> >> Signed-off-by: Terry Bowman <terry.bowman@amd.com> =20
-> > Hi Terry,
-> >
-> > Whilst it obviously makes patch preparation a bit more time consuming
-> > for series like this with many patches it can be useful to add a brief
-> > change log to the individual patches as well as the cover letter.
-> > That helps reviewers figure out where they need to look again.
-> >
-> > A few trivial things inline.
-> >
-> > With those fixed up
-> > Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
-> >
-> > Jonathan =20
->=20
-> Hi Jonathan,
->=20
-> Do you have an example you can point me to with a change log in the
-> individual patch? I want to make certain I change correctly.
->=20
-> =A0
-> > =20
-> >> ---
+Why did you change this line?
 
-You just put it here.  No particular formatting standard for it other than =
-making
-sure its after the --- so it doesn't end up in the git log.
-https://lore.kernel.org/all/2025070138-vigorous-negative-eae7@gregkh/
+> Signed-off-by: Jeongjun Park <aha310510@gmail.com>
+> Suggested-by: Eric Dumazet <edumazet@google.com>
+> Suggested-by: Andrew Morton <akpm@linux-foundation.org>
+> Reviewed-by: "Uladzislau Rezki (Sony)" <urezki@gmail.com>
+> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+> ---
+>  mm/vmalloc.c | 63 +++++++++++++++++++++++++++++-----------------------
+>  1 file changed, 35 insertions(+), 28 deletions(-)
 
-Is first example I scrolled down to.  This is a single patch series but
-the principle is the same.
+Please document what you changed from the original version, as this does
+not match what is in Linus's tree.
 
+thanks,
 
+greg k-h
 
