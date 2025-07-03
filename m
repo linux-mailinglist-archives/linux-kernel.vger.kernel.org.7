@@ -1,236 +1,189 @@
-Return-Path: <linux-kernel+bounces-715328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-715333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3757AF744E
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 14:38:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8665AF7462
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 14:40:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26A194A359E
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 12:38:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BDFE1C428A1
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 12:40:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 709642E49A3;
-	Thu,  3 Jul 2025 12:38:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 223682E612A;
+	Thu,  3 Jul 2025 12:39:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e4fGec5c"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=astralinux.ru header.i=@astralinux.ru header.b="05MTyX4I"
+Received: from mail-gw02.astralinux.ru (mail-gw02.astralinux.ru [93.188.205.243])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B526D2D9EF4;
-	Thu,  3 Jul 2025 12:38:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEF222E7643;
+	Thu,  3 Jul 2025 12:39:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.188.205.243
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751546296; cv=none; b=WsdULkBbyNwzQa4ldPyVmqmlsvnwFBIHYIA2CnfHqmfq4Q/K+zPuZKe4/q06f95mZ0vNcDjstYkIEuVpJYhiVijv/uB1CZwcS3HItRSwOYM6IIbrxPBu20pD3Z7tQbmB5juaOfz8aSl9/n33Kg1zdbykeEYLRc3lgYE1vQyPs8E=
+	t=1751546362; cv=none; b=J/QIN0moRksa9grgrZcKtgwsmXAHTwsPCklLf5aT6kCC6EeRaLtIzsLilgpao0fNxsz5lCi6gSiVyVq2vkbON/OI8H03Rd5M0vkRpjNY32X65a/o3zLuMA4i96nxAs0lg+cC1B0XaP2Y/mgqnCI2sApgWVaWYs4B9jaxu0MejGg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751546296; c=relaxed/simple;
-	bh=hWvVF87EVM3mwOjPFZe4ew5uoKrcihEE8r7VGd37jSU=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=t2ONiX3i9jZGZP2Zuv9G4aGt/R5xPFfz8PMNgWll4QVGzhDLfhNAjhEcDKcNRc3yrMGdsiSoqzZydCLAYydc55XHXFAXl5eenEt9YwSYHB+jDiwkJ5HuFlKRWjSpIaANU+BXBWb97vbwtQEBKjM+8x7vGO69rxlMWUbhCdg4MEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e4fGec5c; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AA61C4CEE3;
-	Thu,  3 Jul 2025 12:38:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751546295;
-	bh=hWvVF87EVM3mwOjPFZe4ew5uoKrcihEE8r7VGd37jSU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=e4fGec5c+a5XsC3kgG1v/EdvTMJUV2gZBtLRlD9DGZLuyOij9qKsXlWe5wLzV4kYk
-	 7/kMUudklu19iKKFI6MbnQqZSYYoBS7qBGNYHsY/tfCRZd39OEHYsUdSD7oowWMAhd
-	 +6PE5W2ct1AlegAX6RQn+R8Qzlne6LKm4Qw8WAHLMBBk9IIUe2yA6IOBnYXQxIq2Ax
-	 OUBjV8Ws9cCncRJrNtt1YIYtMH19OwSqBi3QMC9mzzD050ap35SFtTts9OUear417j
-	 VWkykKtpqImYAZ3cfD+WzyFs3/02DcMarY3emCiEJq2dgTbhK89uBBRqGJG1+sLPMR
-	 foN3vbumvs9Zw==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1uXJCf-00CJgJ-5K;
-	Thu, 03 Jul 2025 13:38:13 +0100
-Date: Thu, 03 Jul 2025 13:38:12 +0100
-Message-ID: <8634bdbgaz.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: perlarsen@google.com
-Cc: Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
+	s=arc-20240116; t=1751546362; c=relaxed/simple;
+	bh=dnPaUSVSFnBxHAuvBN3ugpTqEkDkWs7TpZEV1h+4drE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XCwaaWW+WeIyHThMyCtJ/EBavSZdNcJM4etYPhWG20tsxzg9G2NulxkVGRxoZazGoIvdRzyPvhEFHPAv3UOF1aC+YsrLRK1uC4cy8XBIByBILc24qfaUcn1dbeZZ25SBQhcTmrIpVVzd2wpXyj/4XEe67c4ZerU5mT6r4IiFhtk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astralinux.ru; spf=pass smtp.mailfrom=astralinux.ru; dkim=pass (2048-bit key) header.d=astralinux.ru header.i=@astralinux.ru header.b=05MTyX4I; arc=none smtp.client-ip=93.188.205.243
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astralinux.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=astralinux.ru
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=astralinux.ru;
+	s=mail; t=1751546352;
+	bh=dnPaUSVSFnBxHAuvBN3ugpTqEkDkWs7TpZEV1h+4drE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=05MTyX4ITmjSMjBJJ4gpDexb0esJniSCqDHJD837JQ0h6PBDCH36iDwSgrT/ddafZ
+	 bp/okzXoVjAhluguf3FRJ7A27UMyv+fDezNQa6l+YMDKfIZgAYAu2kCepJeT2k7eKO
+	 u2JJ/V33II2dJkW94CiMrjaB+FRtvUHs5D65M9K0Jm5LW28/vCDm9tuBA0wsIauzS5
+	 vZuV+uBlGkqwG0s9BJo02gh5CkaXsGwvbL/tQrDDjcnWWY24GkDZpEZgFh+vFM45uy
+	 625C9VzW9jG6lSHp+av4vYzYB9CC9gUMUTd0+ufsdYYh2VYfpCzQiKjfEPzHpD7OX6
+	 SfbJcCkgUjWcA==
+Received: from gca-msk-a-srv-ksmg01.astralinux.ru (localhost [127.0.0.1])
+	by mail-gw02.astralinux.ru (Postfix) with ESMTP id B6CB81FA37;
+	Thu,  3 Jul 2025 15:39:12 +0300 (MSK)
+Received: from new-mail.astralinux.ru (unknown [10.177.185.198])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail-gw02.astralinux.ru (Postfix) with ESMTPS;
+	Thu,  3 Jul 2025 15:39:10 +0300 (MSK)
+Received: from localhost.localdomain (unknown [10.190.6.76])
+	by new-mail.astralinux.ru (Postfix) with ESMTPA id 4bXxBy4vVBz16Hny;
+	Thu,  3 Jul 2025 15:38:34 +0300 (MSK)
+From: Anastasia Belova <abelova@astralinux.ru>
+To: stable@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Anastasia Belova <abelova@astralinux.ru>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+	Paul Mackerras <paulus@samba.org>,
+	Sasha Levin <sashal@kernel.org>,
+	Gavin Shan <gwshan@linux.vnet.ibm.com>,
+	Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>,
+	Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
+	linuxppc-dev@lists.ozlabs.org,
 	linux-kernel@vger.kernel.org,
-	ahomescu@google.com,
-	armellel@google.com,
-	arve@android.com,
-	ayrton@google.com,
-	qperret@google.com,
-	sebastianene@google.com,
-	qwandor@google.com
-Subject: Re: [PATCH v7 2/5] KVM: arm64: Use SMCCC 1.2 for FF-A initialization and in host handler
-In-Reply-To: <20250701-virtio-msg-ffa-v7-2-995afc3d385e@google.com>
-References: <20250701-virtio-msg-ffa-v7-0-995afc3d385e@google.com>
-	<20250701-virtio-msg-ffa-v7-2-995afc3d385e@google.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	lvc-project@linuxtesting.org,
+	David Dai <zdai@linux.ibm.com>,
+	Sachin Sant <sachinp@linux.ibm.com>
+Subject: [PATCH 5.10] powerpc/pseries: Fix use after free in remove_phb_dynamic()
+Date: Thu,  3 Jul 2025 15:38:30 +0300
+Message-ID: <20250703123831.29005-1-abelova@astralinux.ru>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: perlarsen@google.com, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, sudeep.holla@arm.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, ahomescu@google.com, armellel@google.com, arve@android.com, ayrton@google.com, qperret@google.com, sebastianene@google.com, qwandor@google.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-KSMG-AntiPhishing: NotDetected, bases: 2025/07/03 11:46:00
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Envelope-From: abelova@astralinux.ru
+X-KSMG-AntiSpam-Info: LuaCore: 63 0.3.63 9cc2b4b18bf16653fda093d2c494e542ac094a39, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, lore.kernel.org:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;astralinux.ru:7.1.1;new-mail.astralinux.ru:7.1.1;127.0.0.199:7.1.2, FromAlignment: s
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiSpam-Lua-Profiles: 194527 [Jul 03 2025]
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Version: 6.1.1.11
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.0.7854, bases: 2025/07/03 05:31:00 #27614197
+X-KSMG-AntiVirus-Status: NotDetected, skipped
+X-KSMG-LinksScanning: NotDetected, bases: 2025/07/03 11:46:00
+X-KSMG-Message-Action: skipped
+X-KSMG-Rule-ID: 1
 
-On Tue, 01 Jul 2025 23:06:35 +0100,
-Per Larsen via B4 Relay <devnull+perlarsen.google.com@kernel.org> wrote:
->=20
-> From: Per Larsen <perlarsen@google.com>
->=20
-> SMCCC 1.1 and prior allows four registers to be sent back as a result
-> of an FF-A interface. SMCCC 1.2 increases the number of results that can
-> be sent back to 8 and 16 for 32-bit and 64-bit SMC/HVCs respectively.
->=20
-> FF-A 1.0 references SMCCC 1.2 (reference [4] on page xi) and FF-A 1.2
-> explicitly requires SMCCC 1.2 so it should be safe to use this version
-> unconditionally. Moreover, it is simpler to implement FF-A features
-> without having to worry about compatibility with SMCCC 1.1 and older.
->=20
-> Update the FF-A initialization and host handler code to use SMCCC 1.2.
->=20
-> Signed-off-by: Per Larsen <perlarsen@google.com>
-> ---
->  arch/arm64/kvm/hyp/nvhe/Makefile |   1 +
->  arch/arm64/kvm/hyp/nvhe/ffa.c    | 193 +++++++++++++++++++++++++--------=
-------
->  2 files changed, 125 insertions(+), 69 deletions(-)
->=20
-> diff --git a/arch/arm64/kvm/hyp/nvhe/Makefile b/arch/arm64/kvm/hyp/nvhe/M=
-akefile
-> index a76522d63c3e630795db5972a99abc3d24bc5e26..f859a8fb41a25effea1edd977=
-bef889423153399 100644
-> --- a/arch/arm64/kvm/hyp/nvhe/Makefile
-> +++ b/arch/arm64/kvm/hyp/nvhe/Makefile
-> @@ -27,6 +27,7 @@ hyp-obj-y :=3D timer-sr.o sysreg-sr.o debug-sr.o switch=
-.o tlb.o hyp-init.o host.o
->  	 cache.o setup.o mm.o mem_protect.o sys_regs.o pkvm.o stacktrace.o ffa.o
->  hyp-obj-y +=3D ../vgic-v3-sr.o ../aarch32.o ../vgic-v2-cpuif-proxy.o ../=
-entry.o \
->  	 ../fpsimd.o ../hyp-entry.o ../exception.o ../pgtable.o
-> +hyp-obj-y +=3D ../../../kernel/smccc-call.o
->  hyp-obj-$(CONFIG_LIST_HARDENED) +=3D list_debug.o
->  hyp-obj-y +=3D $(lib-objs)
-> =20
-> diff --git a/arch/arm64/kvm/hyp/nvhe/ffa.c b/arch/arm64/kvm/hyp/nvhe/ffa.c
-> index 2c199d40811efb5bfae199c4a67d8ae3d9307357..65d241ba32403d014b43cc4ef=
-4d5bf9693813809 100644
-> --- a/arch/arm64/kvm/hyp/nvhe/ffa.c
-> +++ b/arch/arm64/kvm/hyp/nvhe/ffa.c
-> @@ -71,36 +71,68 @@ static u32 hyp_ffa_version;
->  static bool has_version_negotiated;
->  static hyp_spinlock_t version_lock;
-> =20
-> -static void ffa_to_smccc_error(struct arm_smccc_res *res, u64 ffa_errno)
-> +static void ffa_to_smccc_error(struct arm_smccc_1_2_regs *res, u64 ffa_e=
-rrno)
->  {
-> -	*res =3D (struct arm_smccc_res) {
-> +	*res =3D (struct arm_smccc_1_2_regs) {
->  		.a0	=3D FFA_ERROR,
->  		.a2	=3D ffa_errno,
->  	};
->  }
-> =20
-> -static void ffa_to_smccc_res_prop(struct arm_smccc_res *res, int ret, u6=
-4 prop)
-> +static void ffa_to_smccc_res_prop(struct arm_smccc_1_2_regs *res, int re=
-t, u64 prop)
->  {
->  	if (ret =3D=3D FFA_RET_SUCCESS) {
-> -		*res =3D (struct arm_smccc_res) { .a0 =3D FFA_SUCCESS,
-> -						.a2 =3D prop };
-> +		*res =3D (struct arm_smccc_1_2_regs) { .a0 =3D FFA_SUCCESS,
-> +						      .a2 =3D prop };
->  	} else {
->  		ffa_to_smccc_error(res, ret);
->  	}
->  }
-> =20
-> -static void ffa_to_smccc_res(struct arm_smccc_res *res, int ret)
-> +static void ffa_to_smccc_res(struct arm_smccc_1_2_regs *res, int ret)
->  {
->  	ffa_to_smccc_res_prop(res, ret, 0);
->  }
-> =20
->  static void ffa_set_retval(struct kvm_cpu_context *ctxt,
-> -			   struct arm_smccc_res *res)
-> +			   struct arm_smccc_1_2_regs *res)
->  {
-> +	DECLARE_REG(u64, func_id, ctxt, 0);
->  	cpu_reg(ctxt, 0) =3D res->a0;
->  	cpu_reg(ctxt, 1) =3D res->a1;
->  	cpu_reg(ctxt, 2) =3D res->a2;
->  	cpu_reg(ctxt, 3) =3D res->a3;
-> +	cpu_reg(ctxt, 4) =3D res->a4;
-> +	cpu_reg(ctxt, 5) =3D res->a5;
-> +	cpu_reg(ctxt, 6) =3D res->a6;
-> +	cpu_reg(ctxt, 7) =3D res->a7;
+From: Michael Ellerman <mpe@ellerman.id.au>
 
-=46rom DEN0028G 2.6:
+[ Upstream commit fe2640bd7a62f1f7c3f55fbda31084085075bc30 ]
 
-<quote>
-Registers W4-W7 must be preserved unless they contain results, as
-specified in the function definition.
-</quote>
+In remove_phb_dynamic() we use &phb->io_resource, after we've called
+device_unregister(&host_bridge->dev). But the unregister may have freed
+phb, because pcibios_free_controller_deferred() is the release function
+for the host_bridge.
 
-On what grounds can you blindly change these registers?
+If there are no outstanding references when we call device_unregister()
+then phb will be freed out from under us.
 
-> +
-> +	/*
-> +	 * DEN0028C 2.6: SMC32/HVC32 call from aarch64 must preserve x8-x30.
-> +	 *
-> +	 * The most straightforward approach is to look at the function ID
-> +	 * sent by the caller. However, the caller could send FFA_MSG_WAIT
-> +	 * which is a 32-bit interface but the reply could very well be 64-bit
-> +	 * such as FFA_FN64_MSG_SEND_DIRECT_REQ or FFA_MSG_SEND_DIRECT_REQ2.
-> +	 *
-> +	 * Instead, we could look at the function ID in the response (a0) but
-> +	 * that doesn't work either as FFA_VERSION responses put the version
-> +	 * number (or error code) in w0.
-> +	 *
-> +	 * Set x8-x17 iff response contains 64-bit function ID in a0.
-> +	 */
-> +	if (func_id !=3D FFA_VERSION && ARM_SMCCC_IS_64(res->a0)) {
-> +		cpu_reg(ctxt, 8) =3D res->a8;
-> +		cpu_reg(ctxt, 9) =3D res->a9;
-> +		cpu_reg(ctxt, 10) =3D res->a10;
-> +		cpu_reg(ctxt, 11) =3D res->a11;
-> +		cpu_reg(ctxt, 12) =3D res->a12;
-> +		cpu_reg(ctxt, 13) =3D res->a13;
-> +		cpu_reg(ctxt, 14) =3D res->a14;
-> +		cpu_reg(ctxt, 15) =3D res->a15;
-> +		cpu_reg(ctxt, 16) =3D res->a16;
-> +		cpu_reg(ctxt, 17) =3D res->a17;
-> +	}
->  }
+This has gone mainly unnoticed, but with slub_debug and page_poison
+enabled it can lead to a crash:
 
-I don't see how that can ever work.
+  PID: 7574   TASK: c0000000d492cb80  CPU: 13  COMMAND: "drmgr"
+   #0 [c0000000e4f075a0] crash_kexec at c00000000027d7dc
+   #1 [c0000000e4f075d0] oops_end at c000000000029608
+   #2 [c0000000e4f07650] __bad_page_fault at c0000000000904b4
+   #3 [c0000000e4f076c0] do_bad_slb_fault at c00000000009a5a8
+   #4 [c0000000e4f076f0] data_access_slb_common_virt at c000000000008b30
+   Data SLB Access [380] exception frame:
+   R0:  c000000000167250    R1:  c0000000e4f07a00    R2:  c000000002a46100
+   R3:  c000000002b39ce8    R4:  00000000000000c0    R5:  00000000000000a9
+   R6:  3894674d000000c0    R7:  0000000000000000    R8:  00000000000000ff
+   R9:  0000000000000100    R10: 6b6b6b6b6b6b6b6b    R11: 0000000000008000
+   R12: c00000000023da80    R13: c0000009ffd38b00    R14: 0000000000000000
+   R15: 000000011c87f0f0    R16: 0000000000000006    R17: 0000000000000003
+   R18: 0000000000000002    R19: 0000000000000004    R20: 0000000000000005
+   R21: 000000011c87ede8    R22: 000000011c87c5a8    R23: 000000011c87d3a0
+   R24: 0000000000000000    R25: 0000000000000001    R26: c0000000e4f07cc8
+   R27: c00000004d1cc400    R28: c0080000031d00e8    R29: c00000004d23d800
+   R30: c00000004d1d2400    R31: c00000004d1d2540
+   NIP: c000000000167258    MSR: 8000000000009033    OR3: c000000000e9f474
+   CTR: 0000000000000000    LR:  c000000000167250    XER: 0000000020040003
+   CCR: 0000000024088420    MQ:  0000000000000000    DAR: 6b6b6b6b6b6b6ba3
+   DSISR: c0000000e4f07920     Syscall Result: fffffffffffffff2
+   [NIP  : release_resource+56]
+   [LR   : release_resource+48]
+   #5 [c0000000e4f07a00] release_resource at c000000000167258  (unreliable)
+   #6 [c0000000e4f07a30] remove_phb_dynamic at c000000000105648
+   #7 [c0000000e4f07ab0] dlpar_remove_slot at c0080000031a09e8 [rpadlpar_io]
+   #8 [c0000000e4f07b50] remove_slot_store at c0080000031a0b9c [rpadlpar_io]
+   #9 [c0000000e4f07be0] kobj_attr_store at c000000000817d8c
+  #10 [c0000000e4f07c00] sysfs_kf_write at c00000000063e504
+  #11 [c0000000e4f07c20] kernfs_fop_write_iter at c00000000063d868
+  #12 [c0000000e4f07c70] new_sync_write at c00000000054339c
+  #13 [c0000000e4f07d10] vfs_write at c000000000546624
+  #14 [c0000000e4f07d60] ksys_write at c0000000005469f4
+  #15 [c0000000e4f07db0] system_call_exception at c000000000030840
+  #16 [c0000000e4f07e10] system_call_vectored_common at c00000000000c168
 
-Irrespective of how FFA_MSG_WAIT actually works (and I couldn't find
-anything in the spec that supports the above), the requester will
-fully expect its registers to be preserved based on the initial
-function type, and that alone. No ifs, no buts.
+To avoid it, we can take a reference to the host_bridge->dev until we're
+done using phb. Then when we drop the reference the phb will be freed.
 
-If what you describe can happen (please provide a convincing example),
-then the spec is doomed.
+Fixes: 2dd9c11b9d4d ("powerpc/pseries: use pci_host_bridge.release_fn() to kfree(phb)")
+Reported-by: David Dai <zdai@linux.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Tested-by: Sachin Sant <sachinp@linux.ibm.com>
+Link: https://lore.kernel.org/r/20220318034219.1188008-1-mpe@ellerman.id.au
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Anastasia Belova <abelova@astralinux.ru>
+---
+Backport fix for CVE-2022-49196
+ arch/powerpc/platforms/pseries/pci_dlpar.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-	M.
+diff --git a/arch/powerpc/platforms/pseries/pci_dlpar.c b/arch/powerpc/platforms/pseries/pci_dlpar.c
+index a8f9140a24fa..325871d6f5b0 100644
+--- a/arch/powerpc/platforms/pseries/pci_dlpar.c
++++ b/arch/powerpc/platforms/pseries/pci_dlpar.c
+@@ -74,6 +74,9 @@ int remove_phb_dynamic(struct pci_controller *phb)
+ 		}
+ 	}
+ 
++	/* Keep a reference so phb isn't freed yet */
++	get_device(&host_bridge->dev);
++
+ 	/* Remove the PCI bus and unregister the bridge device from sysfs */
+ 	phb->bus = NULL;
+ 	pci_remove_bus(b);
+@@ -97,6 +100,7 @@ int remove_phb_dynamic(struct pci_controller *phb)
+ 	 * the pcibios_free_controller_deferred() callback;
+ 	 * see pseries_root_bridge_prepare().
+ 	 */
++	put_device(&host_bridge->dev);
+ 
+ 	return 0;
+ }
+-- 
+2.43.0
 
---=20
-Without deviation from the norm, progress is not possible.
 
