@@ -1,65 +1,63 @@
-Return-Path: <linux-kernel+bounces-715546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-715548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E336AF776F
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 16:29:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0964DAF779B
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 16:33:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A9361888C59
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 14:29:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 98FD17BA596
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 14:28:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF63C2EAD08;
-	Thu,  3 Jul 2025 14:28:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 572F42EA47D;
+	Thu,  3 Jul 2025 14:29:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="UCX+Pa5e"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dr8QqkVZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7E572EACE9
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 14:28:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97D7129B789;
+	Thu,  3 Jul 2025 14:29:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751552914; cv=none; b=tI7DW6ljJus5jinLXsgoa0k3vkwqk0u0GxqeaHB0Pu3EvCawj1RuviKH9rcm9mb6gszY8FCUrKF9ZggS8sr2Sl5BGVYIBkIGSoglD4Y25nn61qY5ROYwwXLin63K585b930h0jRMxopfUdLRLklxuDrP/zZvaf87uhc2mOPLC/w=
+	t=1751552966; cv=none; b=kqUpIg+/l3W3oODU4B6PwloteIpzcmDmXBN+H6WtycAXUxbNK25so83m5YZebmD/2su21enerE0uoIaMGpNn7h+4pd+yUsm25T86IhQbf/HB8a8Q2PghpQJxoHu4NPhAfoBnzl/bTiMcYESENjUYlwPXU4ZufxPRZRWWc1Bz7g8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751552914; c=relaxed/simple;
-	bh=+swf/j3ikOTyTYQIR/Go7dMRoqwFsS1apHTuzUWKLJI=;
+	s=arc-20240116; t=1751552966; c=relaxed/simple;
+	bh=Wv4Ly+yjA1eTB3WL/QTAtPsGKoiMbeZftZxmfxTOncY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZzXFyJ3XeCdCgmkAnbwletxrFp/PZg15mw97Wo2fof3qBqlBFFUlEsiDWbqqfvrQSFtIePvfe6CJBNoJwujbk7wGW8KDtX61qhBL4jg5UwcK/CVnLRIgq1PQqclDW4WS7OWb+C9qwC4J4HBMFF/E2yneSW4WePxWqEqB8y+SJS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=UCX+Pa5e; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=W1Tq/L6ZAbocFgEmsUnCZvw0L6N9KDtQzADck8JeSDg=; b=UCX+Pa5eicmX2gXGXrzeTPpqJ4
-	33TmXxTL2Abo8OGhmCQ8Xj4xu9ygu9fKREIhq9pHNbhGFDHDt8UB8YhfdfH3n2DLMOW48FRH/gpX6
-	wstvY/0WV9nUuU5dbIkx9PkljRGmcy1byyCeEk7M7tETgyZ3scd3/9KUDWYJ1DRYo4AQ42kMc1R0Y
-	RsmQXRHodgeaXh3Xi+DZ7oecgz6caa5lMHsI9CuU3k0gfTJzUaxPRG7gLs9LATUCZ3jedCRdszpQD
-	beDIcdsDODbgyj6RtFYNIv0P7mDA78fNfqeiXL0E445RkTTJrySTEkVtvzj6i/9NYxnkuGikjXrC9
-	p/DqQ8dA==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uXKvH-0000000DM6m-1vam;
-	Thu, 03 Jul 2025 14:28:23 +0000
-Date: Thu, 3 Jul 2025 15:28:23 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Marcelo Tosatti <mtosatti@redhat.com>,
-	Michal Hocko <mhocko@kernel.org>, Oleg Nesterov <oleg@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org
-Subject: Re: [PATCH 6/6] mm: Drain LRUs upon resume to userspace on nohz_full
- CPUs
-Message-ID: <aGaTh2esRWr3L6IC@casper.infradead.org>
-References: <20250703140717.25703-1-frederic@kernel.org>
- <20250703140717.25703-7-frederic@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=TX6ttebqhkiQSNkVITDubLEL96lKePgSO7ZRJz//cCY+cz5pm15lnAbuvG53vhOnYOXVwf8esi6AslS8Chj4HMHZaZlHf7pT9mGLc1IUfg8HcS8ESlnD0zOVrthXViltdxprsjsqIimE8MDjI2MIq0flzXkOVzZsuPfLnReA6uE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dr8QqkVZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D681C4CEE3;
+	Thu,  3 Jul 2025 14:29:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751552966;
+	bh=Wv4Ly+yjA1eTB3WL/QTAtPsGKoiMbeZftZxmfxTOncY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Dr8QqkVZ30M5Svn3VRIByKw3xnPUVjD4k/DreYk1fbBropfMV+ue/tVWidivH6KNS
+	 SbjEx2ZLMMz8bYYlLkRk/MbPVBVfaOuU2tZVTwDmmshaIrXqqxdKw4Y4c0Nro6iBs+
+	 yhtpnK1gAGhu5UVrAbJTlwZF1z6RQvv80NvUevWaQZw6UOC1M+qQir+Rcbfuzq7rTq
+	 PlPhcX/HcOCVjyCfmxI2MSaLESxuwgwcZ64XaDzizTtdEFluCCzTj9/MmHHyvggJqA
+	 WOp9cxE0gWgybiJR45S7PeBuJVqcZYmonAVbgg+/BtRREILd8nKnwP2iR46vPS5X8Q
+	 ajTdOfn/xryMg==
+Date: Thu, 3 Jul 2025 08:29:23 -0600
+From: Keith Busch <kbusch@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Ben Copeland <ben.copeland@linaro.org>, linux-kernel@vger.kernel.org,
+	lkft-triage@lists.linaro.org, regressions@lists.linux.dev,
+	linux-nvme@lists.infradead.org,
+	Dan Carpenter <dan.carpenter@linaro.org>, axboe@kernel.dk,
+	sagi@grimberg.me, iommu@lists.linux.dev,
+	Leon Romanovsky <leonro@nvidia.com>
+Subject: Re: next-20250627: IOMMU DMA warning during NVMe I/O completion
+ after 06cae0e3f61c
+Message-ID: <aGaTw7SzermpfiD7@kbusch-mbp>
+References: <CAL0q8a6pOBZbWYdwKzC1U-PuH4rgf2miv0jcF=fWVZt_dUZHmw@mail.gmail.com>
+ <20250630133343.GA26040@lst.de>
+ <aGLyswGYD6Zai_sI@kbusch-mbp>
+ <20250701132936.GA18807@lst.de>
+ <aGRMilWhgF4z0WOf@kbusch-mbp>
+ <20250703093042.GA7387@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,21 +66,23 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250703140717.25703-7-frederic@kernel.org>
+In-Reply-To: <20250703093042.GA7387@lst.de>
 
-On Thu, Jul 03, 2025 at 04:07:17PM +0200, Frederic Weisbecker wrote:
-> +unsigned int folio_batch_add(struct folio_batch *fbatch,
-> +			     struct folio *folio)
-> +{
-> +	unsigned int ret;
-> +
-> +	fbatch->folios[fbatch->nr++] = folio;
-> +	ret = folio_batch_space(fbatch);
-> +	isolated_task_work_queue();
+On Thu, Jul 03, 2025 at 11:30:42AM +0200, Christoph Hellwig wrote:
+> I think the idea to reconstruct the dma addresses from PRPs should
+> be considered a failure by now.  It works fine for SGLs, but for
+> PRPs we're better off just stashing them away.  Bob, can you try
 
-Umm.  LRUs use folio_batches, but they are definitely not the only user
-of folio_batches.  Maybe you want to add a new lru_batch_add()
-abstraction, because this call is definitely being done at the wrong
-level.
+s/Bob/Ben
 
+> something like the patch below?  To be fully safe it needs a mempool,
+> and it could use some cleanups, but it does pass testing on my setup
+> here, so I'd love to see if if fixes your issue.
+
+Thanks for confirming.
+
+While this is starting to look a bit messy, I believe it's still an
+overall win: you've cut down the vector walking in the setup path from 3
+to 1, which reduces a non-trivial amount of overhead for even moderately
+sized IO.
 
