@@ -1,93 +1,167 @@
-Return-Path: <linux-kernel+bounces-716145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCF9BAF8285
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 23:14:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEAC5AF829E
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 23:27:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D622F3B3DF9
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 21:14:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6221C7AC5AA
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 21:26:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 152DC2BEC2E;
-	Thu,  3 Jul 2025 21:14:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CBF42BE623;
+	Thu,  3 Jul 2025 21:27:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dN6Y+S7/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=permerror (0-bit key) header.d=aaront.org header.i=@aaront.org header.b="dqoXjpFe";
+	dkim=pass (2048-bit key) header.d=aaront.org header.i=@aaront.org header.b="v/BVgkC3"
+Received: from smtp-out0.aaront.org (smtp-out0.aaront.org [52.10.12.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 657AE2BD5BF;
-	Thu,  3 Jul 2025 21:14:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C79A22BD595;
+	Thu,  3 Jul 2025 21:27:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.10.12.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751577280; cv=none; b=VjwK2soWxLFwGJZUd0qSQV+HXjPHqexujPf4nymdC9vZZ007hIUA2HOwRFEmE7XSWEqHfumK3iZeaITeiYxvAPZu8zvHdVc38l98/IdiL2pio8ZayNxoI7NOVpBtWEVncJxx6YBuBK5a2M/NMWRlQ7Xkcql4ofV3imZmcb0W5aA=
+	t=1751578051; cv=none; b=M6/5cW4JFqktNcONxJiHmh7JpXNqZpyfmH0wkeL8zMMZXu/L0hPhgRBXKoBdTTHQwrsFb/RfQWhrMFwA8LI8TcVJ6+y+OgltDO4MpyGlIt391YXvTvuqHiVC2ol2TDdyNDRj78NTfPb/2fkX5mZglk3dSJlD4Ws7677FlXswD28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751577280; c=relaxed/simple;
-	bh=dT3HXJdueQ/TtIh10MafcagW9grURrInOFDiHaE4YAE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f8IWzOgOfjFakIadpnEwQd5DiUzWQGdrbhs8oCwIGJGOKQ7LHEiHG4bDamsKyXdYZnuVC1/xp9OQ+bFPRGBKgAETOzNQwy3AICp25TV8xDYsKdmQsQzlaw1cV4+WfGnoHkj+LyoWPJAdDC39VrrjDYteU0ajecx47x1VLesqr74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dN6Y+S7/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 674D6C4CEE3;
-	Thu,  3 Jul 2025 21:14:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751577279;
-	bh=dT3HXJdueQ/TtIh10MafcagW9grURrInOFDiHaE4YAE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dN6Y+S7/irGC1QtJuoxuGkKwnvtHa2E3PZfRG8brGqKjhENIg5sioAaRoEwKW/GWg
-	 Px8Zee01GDBXIyQpKdR6AmE7H/hcij1i6TaDgl0enlVzXeIxJK5yCFCt0ELN3RZqi7
-	 MS1a85taNpTxP+e0HVLcTexZLqfXWIOHhlM8fIn5MlfpaViQm+0kGIVa6mwPb+yRQ7
-	 Eihg1+bDXPdvTdYpEgh7v8qNSiPA+o+by5E1lcu1KgZLi9yRRmoaF0N1iKi5Gm+Hyl
-	 AdexxqsUF/bp5/NP+pMeGcD+A3cJsi7TaRCzZFEx9PUac8awfMllymNHmf+v2xSIkC
-	 IiV/b5sRd2JzQ==
-Date: Thu, 3 Jul 2025 14:14:37 -0700
-From: Drew Fustini <fustini@kernel.org>
-To: Michal Wilczynski <m.wilczynski@samsung.com>
-Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>, Guo Ren <guoren@kernel.org>,
-	Fu Wei <wefu@redhat.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, linux-riscv@lists.infradead.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v7 7/8] riscv: dts: thead: Add PWM controller node
-Message-ID: <aGbyvc16om2v7Qpv@x1>
-References: <20250702-rust-next-pwm-working-fan-for-sending-v7-0-67ef39ff1d29@samsung.com>
- <CGME20250702135002eucas1p29d0a0393fec6158a3ca158ea09b61cf1@eucas1p2.samsung.com>
- <20250702-rust-next-pwm-working-fan-for-sending-v7-7-67ef39ff1d29@samsung.com>
+	s=arc-20240116; t=1751578051; c=relaxed/simple;
+	bh=/kZmNYWZNOTJQa4opCPhE9MeAHI82FTFippa+nVrA1o=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BQlXIgFcTFb0mU38VV4BxDl4smCiZLGx79alQEj/kDw4VA3yJnu5gooGUwCZPscZC0Im6eB6qhjUA3lI2PjHYNQfnR1XS/I8pECI1i13EGgVLErp0X7WTnjKYH9hQBpcbkwNmsp0nkbLCxys3TO8jce3kde9xAud7N4EUD6AmGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aaront.org; spf=pass smtp.mailfrom=aaront.org; dkim=permerror (0-bit key) header.d=aaront.org header.i=@aaront.org header.b=dqoXjpFe; dkim=pass (2048-bit key) header.d=aaront.org header.i=@aaront.org header.b=v/BVgkC3; arc=none smtp.client-ip=52.10.12.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aaront.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aaront.org
+Received: from smtp-send0.aaront.org (localhost [IPv6:::1])
+	by smtp-out0.aaront.org (Postfix) with ESMTP id 4bY8mq5CtwzMY;
+	Thu,  3 Jul 2025 21:20:11 +0000 (UTC)
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/simple; d=aaront.org;
+    h=from:to:cc:subject:date:message-id:mime-version
+    :content-transfer-encoding; s=3r7feyyp; bh=/kZmNYWZNOTJQa4opCPhE
+    9MeAHI82FTFippa+nVrA1o=; b=dqoXjpFePZxdEULpDnRSc1iIU4UTydj/TLfKH
+    HPMBaqlkHTLVMC3dGVYex9NVU6iBEYzQmXt8W7LxEMeYThhAQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=aaront.org; h=
+    from:to:cc:subject:date:message-id:mime-version
+    :content-transfer-encoding; s=4x7dsrm2; bh=/kZmNYWZNOTJQa4opCPhE
+    9MeAHI82FTFippa+nVrA1o=; b=v/BVgkC3yRTStqMBR2f8EZeF/HuMKVSqzUfqb
+    HxVf5nKI7XyG5CgmhaI4PA6+MoQIVykqJYaxMC4e9JYhTBMI8Oh9/3O1B3vQAJzA
+    yT2qo3NmNXZx/dWD34nULC8n6maD5SQR/xGNsh5iNgOJIrUxOV2McxS++VvkUKhq
+    dUDyj0q+yqm1NV4nNraI9k9HuU/OO/G1hgnJsho3gpx3WQRKYpNqNhP26Cf+J6UW
+    ZACEQtJm0eJV4qEn5NmRynCJAFU8SnrjpamGAqpqgz6HEktS8gABBh8nvkeNHtqe
+    icIBqKWKHm0g67l8+0EPGXIG9g2CgVUc+/O3lNR0i3LQ2J98w==
+Received: by smtp-send0.aaront.org (Postfix) id 4bY8mq323rzJm;
+	Thu,  3 Jul 2025 21:20:11 +0000 (UTC)
+From: Aaron Thompson <dev@aaront.org>
+To: nouveau@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	Lyude Paul <lyude@redhat.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Timur Tabi <ttabi@nvidia.com>
+Cc: linux-kernel@vger.kernel.org,
+	Aaron Thompson <dev@aaront.org>,
+	stable@vger.kernel.org
+Subject: [PATCH] drm/nouveau: Do not fail module init on debugfs errors
+Date: Thu,  3 Jul 2025 21:19:49 +0000
+Message-Id: <20250703211949.9916-1-dev@aaront.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250702-rust-next-pwm-working-fan-for-sending-v7-7-67ef39ff1d29@samsung.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 02, 2025 at 03:45:35PM +0200, Michal Wilczynski wrote:
-> Add the Device Tree node for the T-HEAD TH1520 SoC's PWM controller.
-> 
-> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
+From: Aaron Thompson <dev@aaront.org>
 
-Reviewed-by: Drew Fustini <fustini@kernel.org>
+If CONFIG_DEBUG_FS is enabled, nouveau_drm_init() returns an error if it
+fails to create the "nouveau" directory in debugfs. One case where that
+will happen is when debugfs access is restricted by
+CONFIG_DEBUG_FS_ALLOW_NONE or by the boot parameter debugfs=off, which
+cause the debugfs APIs to return -EPERM.
 
-I'll apply this to the thead-dt-for-next branch once the PWM driver is
-accepted by Uwe.
+So just ignore errors from debugfs. Note that nouveau_debugfs_root may
+be an error now, but that is a standard pattern for debugfs. From
+include/linux/debugfs.h:
 
-Thanks,
-Drew
+"NOTE: it's expected that most callers should _ignore_ the errors
+returned by this function. Other debugfs functions handle the fact that
+the "dentry" passed to them could be an error and they don't crash in
+that case. Drivers should generally work fine even if debugfs fails to
+init anyway."
+
+Fixes: 97118a1816d2 ("drm/nouveau: create module debugfs root")
+Cc: stable@vger.kernel.org
+Signed-off-by: Aaron Thompson <dev@aaront.org>
+---
+ drivers/gpu/drm/nouveau/nouveau_debugfs.c | 6 +-----
+ drivers/gpu/drm/nouveau/nouveau_debugfs.h | 5 ++---
+ drivers/gpu/drm/nouveau/nouveau_drm.c     | 4 +---
+ 3 files changed, 4 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/gpu/drm/nouveau/nouveau_debugfs.c b/drivers/gpu/drm/nouveau/nouveau_debugfs.c
+index 200e65a7cefc..c7869a639bef 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_debugfs.c
++++ b/drivers/gpu/drm/nouveau/nouveau_debugfs.c
+@@ -314,14 +314,10 @@ nouveau_debugfs_fini(struct nouveau_drm *drm)
+ 	drm->debugfs = NULL;
+ }
+ 
+-int
++void
+ nouveau_module_debugfs_init(void)
+ {
+ 	nouveau_debugfs_root = debugfs_create_dir("nouveau", NULL);
+-	if (IS_ERR(nouveau_debugfs_root))
+-		return PTR_ERR(nouveau_debugfs_root);
+-
+-	return 0;
+ }
+ 
+ void
+diff --git a/drivers/gpu/drm/nouveau/nouveau_debugfs.h b/drivers/gpu/drm/nouveau/nouveau_debugfs.h
+index b7617b344ee2..d05ed0e641c4 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_debugfs.h
++++ b/drivers/gpu/drm/nouveau/nouveau_debugfs.h
+@@ -24,7 +24,7 @@ extern void nouveau_debugfs_fini(struct nouveau_drm *);
+ 
+ extern struct dentry *nouveau_debugfs_root;
+ 
+-int  nouveau_module_debugfs_init(void);
++void nouveau_module_debugfs_init(void);
+ void nouveau_module_debugfs_fini(void);
+ #else
+ static inline void
+@@ -42,10 +42,9 @@ nouveau_debugfs_fini(struct nouveau_drm *drm)
+ {
+ }
+ 
+-static inline int
++static inline void
+ nouveau_module_debugfs_init(void)
+ {
+-	return 0;
+ }
+ 
+ static inline void
+diff --git a/drivers/gpu/drm/nouveau/nouveau_drm.c b/drivers/gpu/drm/nouveau/nouveau_drm.c
+index 0c82a63cd49d..1527b801f013 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_drm.c
++++ b/drivers/gpu/drm/nouveau/nouveau_drm.c
+@@ -1461,9 +1461,7 @@ nouveau_drm_init(void)
+ 	if (!nouveau_modeset)
+ 		return 0;
+ 
+-	ret = nouveau_module_debugfs_init();
+-	if (ret)
+-		return ret;
++	nouveau_module_debugfs_init();
+ 
+ #ifdef CONFIG_NOUVEAU_PLATFORM_DRIVER
+ 	platform_driver_register(&nouveau_platform_driver);
+
+base-commit: d0b3b7b22dfa1f4b515fd3a295b3fd958f9e81af
+-- 
+2.39.5
+
 
