@@ -1,160 +1,109 @@
-Return-Path: <linux-kernel+bounces-715619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-715613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FF2CAF7ABF
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 17:17:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F026AAF7A21
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 17:10:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF9D41CA3BB2
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 15:11:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6C99F7AB48D
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 15:08:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A2292F0E2D;
-	Thu,  3 Jul 2025 15:10:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6DCD2EF65A;
+	Thu,  3 Jul 2025 15:09:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="VSLxxtYV"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="uy3ebl3q"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB74D2F0C66;
-	Thu,  3 Jul 2025 15:10:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 952471E9B3D;
+	Thu,  3 Jul 2025 15:09:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751555404; cv=none; b=L6O1++U4JUF0Bt0j4GxNdSoqkq/jLcAxRK9wT4oW438jolau985Pm9GykB/0H7TdQDcxTn9IXxs44z8uwsreCrQTLHRpHBdOjikar1n0UL7R3t1EIPml94FLWNzeVuwxqmZEkgpVKnZrbRIeYnryT7ueJlFhwwbaZIHf3QNOtco=
+	t=1751555391; cv=none; b=BBdMKMEITyDlO74embN62UrEELgcWHNt/AFGVNj1p102XYt365Uq6DkA9Hb24zDtZX6G50GY0Ailnl62fn3j/3P/Wfwq3TeuvjwRvI1+T/cEJQVn8KifodXl1h31R2p2U8kgNvGPC1RB5ZwmfBKlndHXiQ74AfZOMtKwusnC0Cg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751555404; c=relaxed/simple;
-	bh=Nu8i87h6TCaRhnZcf7DE0uw7jIrV4h4OvpGTwt1RA0o=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=aB2GJju1lx3VWiNTQMGiqUPWkyIq6hsdGucUN/6jm2PsWe0EmylY+TgCoOx3T9hF1vFogdQTVGUJ5SfYHs4DHbi2RGaR3YG1OwYDsPuW9bYVXhdXmoUgs6tcLpcWo50KKogw8i+ykWFM1j14DRDHpj8s6vL9+lEGuLji9iESCsw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=VSLxxtYV; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 563ErnVG018568;
-	Thu, 3 Jul 2025 15:10:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	wduHtGPtkSKEjHRVStchLaRmO1KRr1DnfiqY9YEqJU8=; b=VSLxxtYVY7jfLswS
-	IQpEqDjTQgKcvZghnWrcHXevzfvOj6Nyc8pwdZW8/bh420SVHb/AecJuCMOwGmiq
-	E9XARXlGx//JCrDlr8kkpcTgVSJABwq4bAJkDgpzevt9S01jIWKWJhZB4MxpCU0k
-	jyr6mO7vv2/eyUIF/B6VQssLmCWU3XagzaPI9JRWP6JMtnTrvlbOyZecRTe4picC
-	+7lhyGy+LCHggFcZi4E+cmhv87FNMuXqbDJggUFMV5ABrAY8vpU9PEqIbLeVg14d
-	6vf5JbJnG1q5hD0IbtfwdK9smIHyASDS/uG6LjIOCctoW3DWhK+DEcki4nIx+gaM
-	velAUA==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47j8fxs01m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 03 Jul 2025 15:09:59 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 563F9wXm006223
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 3 Jul 2025 15:09:58 GMT
-Received: from hu-vpernami-hyd.qualcomm.com (10.80.80.8) by
- nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.10; Thu, 3 Jul 2025 08:09:57 -0700
-From: Vivek.Pernamitta@quicinc.com
-Date: Thu, 3 Jul 2025 20:39:44 +0530
-Subject: [PATCH 5/5] bus: host: mhi: Need to honor sys_err at power_up
- state
+	s=arc-20240116; t=1751555391; c=relaxed/simple;
+	bh=xUy68UuIxrFAKtXpuKTLBaZL8PxltNg2EI/H2YK9n5g=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=emgea5jhLivIw7cttXxrF4wGfJ/bA6SaAqeiX0toweeWV1qtw99b66pNl77G/0NtYreQpl+3L/AfE9CZr3t3i0nSQ5AvJrwDwCgk9bknKq8oF6h1LzD9S/H3jI2thOMriXhimhw8fBSegcy6K/azIomRXob3tRVfL9ft/7K85UA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=uy3ebl3q; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=GXuM67p34J7ZSKstZYD6B0wz0ShaFIP2wKz0lCTsjTY=;
+	t=1751555389; x=1752764989; b=uy3ebl3qLCjUQu8qQJWfuJcV13qtY9Uyi6xBrjIpFWctJLJ
+	WADu5fT8xB1oKtYMLA6hbTYmT/pwx8l/Af1yZRxOTkK8ehOKh5bXmXSOWkSkIrY1PIgsg63krmg71
+	IDu1+6A9zBE0OQ2S0q7TieIqJR0mTX00EntSazwXaHD1n+tuu0wMdlwWjMfpYeQr98IcAqJyVDR01
+	ZR8lWuqdSgC3okqlgZCe+7FxhDZh2LFTC0FufqCeH1VfJx+z226aDV1V0FDkFRIbt/KM9VXmCUU9I
+	82Gk1xH6HdCjrKNvBr56+4BWhUwct2H6LMt2slvbGHOFAQyG0mJ1BfV1EZguKT2w==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98.2)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1uXLZK-00000005Sbu-330E;
+	Thu, 03 Jul 2025 17:09:46 +0200
+Message-ID: <1f13328a55c54fb49d8ca1dd72bc5de23f161ac8.camel@sipsolutions.net>
+Subject: Re: [PATCH wireless-next] wifi: mac80211: reject VHT opmode for
+ unsupported channel widths
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Moonhee Lee <moonhee.lee.ca@gmail.com>, Nicolas Escande
+	 <nico.escande@gmail.com>
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-kernel-mentees@lists.linux.dev, 
+	syzbot+ededba317ddeca8b3f08@syzkaller.appspotmail.com
+Date: Thu, 03 Jul 2025 17:09:45 +0200
+In-Reply-To: <CAF3JpA7wM4JBdd6OvGS+hmv0UahcW=h4HrPNDwRNhduk8iKsWw@mail.gmail.com> (sfid-20250703_110226_928227_85F0E8E1)
+References: <20250702065908.430229-2-moonhee.lee.ca@gmail.com>
+	 <DB29OMQH4W9Z.1GPKEZBBIRSTS@gmail.com>
+	 <CAF3JpA7wM4JBdd6OvGS+hmv0UahcW=h4HrPNDwRNhduk8iKsWw@mail.gmail.com>
+	 (sfid-20250703_110226_928227_85F0E8E1)
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250703-sriov_vdev_next-20250630-v1-5-87071d1047e3@quicinc.com>
-References: <20250703-sriov_vdev_next-20250630-v1-0-87071d1047e3@quicinc.com>
-In-Reply-To: <20250703-sriov_vdev_next-20250630-v1-0-87071d1047e3@quicinc.com>
-To: Manivannan Sadhasivam <mani@kernel.org>
-CC: <mhi@lists.linux.dev>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Vivek Pernamitta <quic_vpernami@quicinc.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1751555387; l=2008;
- i=<quic_vpernami@quicinc.com>; s=20241114; h=from:subject:message-id;
- bh=hKiSjYqoF1Z6A9EbJR7RIbDt2Fq8yqPnNUfzdUwvZsg=;
- b=k4VGMhntpssdu4IWaCVy8hJ2nze84LfHDmOwoziqQ/4ud7avXRWcgG2VSyzLDbY2DCsyWWLEW
- Fc3yoBahLY0Cz4Ss53H91aU50SKFw9wztL5B8cUM3NS78AMZPf/t97X
-X-Developer-Key: i=<quic_vpernami@quicinc.com>; a=ed25519;
- pk=HDwn8xReb8K52LA6/CJc6S9Zik8gDCZ5LO4Cypff71Y=
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzAzMDEyNyBTYWx0ZWRfX9BwiUV8cSzpb
- gfetumcDfTZYbfZ0ZcdtrS3ky18JgZ4fms+on6BNNFANuihc1/WQCRu/xlMOYSrWIWP2WrqSqMy
- RH6wsGOeDmPZ3rN+E7KhbMlL8TrehNBhTeyZACMjhPgEEBNDMP6eLfx0q5BYup+nSHM+a3zjsx5
- m3v3W6KFdEJcH/pPWxCn/N1MpCKCpCmESUi6/Z5SzswNK+5K4UBcJebb3+aSGTKiCeMO0U+yj0v
- zpG6pa2uyBTfY9qR2O/4kgWOzWoCSeqS8SFHe1zT6q+09/AMPOx+ude5x3Nril2l1mjbOoXbUwM
- 0ACx+XRSHoU/uhjlamyDhWFeUEasJVVRgQ4mVOVkrWUooxKuiFNCPkLO7Z5Mt+2TwXHQfasx+0r
- Spj/e9am9tdinMebQCpP3DFZrbitvSC+LwhqkVO8RYayY7/P6LOPG9GlOtXtFeBTrqBwEaVG
-X-Proofpoint-GUID: _7uzgNr14hlPh2i8wKtJ4GtsLz7CcZv1
-X-Proofpoint-ORIG-GUID: _7uzgNr14hlPh2i8wKtJ4GtsLz7CcZv1
-X-Authority-Analysis: v=2.4 cv=TqPmhCXh c=1 sm=1 tr=0 ts=68669d48 cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=COk6AnOGAAAA:8
- a=89cOwND4bmROO382wosA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-03_04,2025-07-02_04,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 bulkscore=0 mlxlogscore=812 suspectscore=0 adultscore=0
- phishscore=0 malwarescore=0 clxscore=1011 lowpriorityscore=0 mlxscore=0
- impostorscore=0 spamscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507030127
+X-malware-bazaar: not-scanned
 
-From: Vivek Pernamitta <quic_vpernami@quicinc.com>
+On Thu, 2025-07-03 at 02:02 -0700, Moonhee Lee wrote:
+> Hi Nicolas,
+>=20
+> On Thu, Jul 3, 2025 at 1:12=E2=80=AFAM Nicolas Escande <nico.escande@gmai=
+l.com> wrote:
+>=20
+> > Is this really specific for VHT ? or for HE /EHT as well ?
+> >=20
+> > > +             switch (width) {
+> > > +             case NL80211_CHAN_WIDTH_20_NOHT:
+> > Because this seems weird for VHT
+> > > +             case NL80211_CHAN_WIDTH_320:
+> > And this did not exist for VHT either
 
-In mhi_sync_power_up() host waits for device to enter in to mission mode
-but SYS_ERR is an valid state, If device sends an SYS_ERR host will bail
-out for wait_event_timeout() as MHI is in error state and calls
-mhi_power_down which will teardown MHI driver probe.
+Yes, but see below.
 
-If there is any SYS_ERR, sys_err handler needs to process SYS_ERR state
-and queues the next state transition for device to bring in to Mission
-mode, so mhi_sync_power_up() will wait for device to enter in to
-mission mode.
+>=20
+> Thanks for the feedback. The intention was to handle VHT opmode notificat=
+ions,
+> as noted in the commit message, but the check incorrectly included widths=
+ that
+> are not valid for VHT, such as 20_NOHT and 320. I will update v2 to rejec=
+t any
+> invalid widths, not just 5 or 10 MHz, and restrict the check to the valid=
+ set
+> for VHT: 20, 40, 80, 160, and 80+80.
 
-Signed-off-by: Vivek Pernamitta <quic_vpernami@quicinc.com>
----
- drivers/bus/mhi/host/internal.h | 2 ++
- drivers/bus/mhi/host/pm.c       | 2 +-
- 2 files changed, 3 insertions(+), 1 deletion(-)
+I'm not entirely sure that'd be correct. 320 MHz can only be used on the
+6 GHz band, so clients must be at least HE, but I'm not sure that VHT
+opmode notification frames are completely illegal for them, even if
+they'd like use OMI instead.
 
-diff --git a/drivers/bus/mhi/host/internal.h b/drivers/bus/mhi/host/internal.h
-index 1054e67bb450d2634771d092ed42bbdd63380472..00e46176654d8dc2f28b1535d9ef68233266ff3b 100644
---- a/drivers/bus/mhi/host/internal.h
-+++ b/drivers/bus/mhi/host/internal.h
-@@ -170,6 +170,8 @@ enum mhi_pm_state {
- 							MHI_PM_IN_ERROR_STATE(pm_state))
- #define MHI_PM_IN_SUSPEND_STATE(pm_state)		(pm_state & \
- 							(MHI_PM_M3_ENTER | MHI_PM_M3))
-+#define MHI_PM_IN_BAD_STATE(pm_state)			((pm_state == MHI_PM_FW_DL_ERR) || \
-+							(pm_state >= MHI_PM_SYS_ERR_FAIL))
- 
- #define NR_OF_CMD_RINGS					1
- #define CMD_EL_PER_RING					128
-diff --git a/drivers/bus/mhi/host/pm.c b/drivers/bus/mhi/host/pm.c
-index 2af34980e14250cada75c981b690bc9581715212..ee50efc57cf713a7cf38a670cb49ab09a83b30ee 100644
---- a/drivers/bus/mhi/host/pm.c
-+++ b/drivers/bus/mhi/host/pm.c
-@@ -1280,7 +1280,7 @@ int mhi_sync_power_up(struct mhi_controller *mhi_cntrl)
- 		mhi_cntrl->ready_timeout_ms : mhi_cntrl->timeout_ms;
- 	wait_event_timeout(mhi_cntrl->state_event,
- 			   MHI_IN_MISSION_MODE(mhi_cntrl->ee) ||
--			   MHI_PM_IN_ERROR_STATE(mhi_cntrl->pm_state),
-+			   MHI_PM_IN_BAD_STATE(mhi_cntrl->pm_state),
- 			   msecs_to_jiffies(timeout_ms));
- 
- 	ret = (MHI_IN_MISSION_MODE(mhi_cntrl->ee)) ? 0 : -ETIMEDOUT;
+How did syzbot even manage to get a 10 MHz thing running though?
 
--- 
-2.34.1
-
+johannes
 
