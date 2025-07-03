@@ -1,85 +1,166 @@
-Return-Path: <linux-kernel+bounces-715623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-715626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 888FCAF7AD1
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 17:18:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7CD3AF7B04
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 17:20:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E949C3B4DFA
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 15:12:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BAA041C24BB0
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 15:14:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B3562EF672;
-	Thu,  3 Jul 2025 15:11:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A22DB2F2362;
+	Thu,  3 Jul 2025 15:12:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="kZ7FIOn3"
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dukQszSw"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B6772EE97A;
-	Thu,  3 Jul 2025 15:11:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 679B92EFD9A;
+	Thu,  3 Jul 2025 15:12:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751555483; cv=none; b=roYDYzSquBZg+t2diL/q8jy6y4EUgLFTnBcQsrLPwiCskOmq3MOXQFrxUGeyCUQh58MvgKJfLNYwR7nZcWb1GEGQ6bPBiuJTvAzYsYbN/TqFwHGZaD6+SBEm7TDDk24sltFTw94FoTMJ8sSmpIHdn3ieTg5G4oaNcs8TmxUdvK8=
+	t=1751555530; cv=none; b=ceb45tYm2HEBG7edeOZbiP5cu7z1NNi6kmT4k8trcP/tEOvpgU6kYhioaBd2sgmReZwP4okCT764bjuC48u4srD6FuZk1MHzPNXmqgmgg1/yGOQ2JcHScWjPWDO203TU1R5wzzUeewFEJ9D6qVjfU3YDaogo8jkNwHoIEK4505Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751555483; c=relaxed/simple;
-	bh=YOrVNoAD6vv/nBY0LzvyDWsjUUSZ20BfmbxL9gSwJlg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=CzhfWdYCB9K7bqd03oyOO37O2OCtNo5wAdIwPAtOy76gbjQvX3ut5JUa/GiMqgYbZ4DGBroXWY8fRWeUAOfz9Wep1N7sCjuOp/lgXskMhGHlW+ge5fwELWSSYQgwYKWwaZ+upwriRDoe4DRLdivpjIgUUhpZVJqlC4oyPczcBn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=kZ7FIOn3; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=YOrVNoAD6vv/nBY0LzvyDWsjUUSZ20BfmbxL9gSwJlg=;
-	t=1751555482; x=1752765082; b=kZ7FIOn3nd0E88h2EuXCG8bMRlzNOD+OGz65lQlKFH2CGe+
-	L+eFs91QJ2zWbgIbk5CiL8DgZYwXR+T/ysFBDgyMKmB5Bs5s9GtOrTPr7JmghuHyHwDAtdjEk+6oH
-	1GIiKjgOLl4IsICx2IULvjNHwue6IX3W6Sc5tmIHQi8tUvo1eCFSW9XbL8G/wtoMJ8diC9+AMbOZa
-	B81zjrt6O5burRe9Qb/H2y/1AlwHfAg9013PSsC64+hj/y0/PNZ4UPGnv9ZzRfsFrXVnXUKplYlKR
-	tWWjwdSu+hmD7gvuIHPEB4HMth58mOVe/XuSduD/fs5Ew58yKnbUNSndR9xrUERQ==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.98.2)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1uXLap-00000005Sg7-1Z0m;
-	Thu, 03 Jul 2025 17:11:19 +0200
-Message-ID: <6ecced8b962cf3a6f5056a87aa3442c49941e74c.camel@sipsolutions.net>
-Subject: Re: [PATCH wireless-next] wifi: mac80211: reject VHT opmode for
- unsupported channel widths
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Moonhee Lee <moonhee.lee.ca@gmail.com>, Nicolas Escande
-	 <nico.escande@gmail.com>
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-kernel-mentees@lists.linux.dev, 
-	syzbot+ededba317ddeca8b3f08@syzkaller.appspotmail.com
-Date: Thu, 03 Jul 2025 17:11:18 +0200
-In-Reply-To: <1f13328a55c54fb49d8ca1dd72bc5de23f161ac8.camel@sipsolutions.net>
-References: <20250702065908.430229-2-moonhee.lee.ca@gmail.com>
-		 <DB29OMQH4W9Z.1GPKEZBBIRSTS@gmail.com>
-		 <CAF3JpA7wM4JBdd6OvGS+hmv0UahcW=h4HrPNDwRNhduk8iKsWw@mail.gmail.com>
-		 (sfid-20250703_110226_928227_85F0E8E1) <1f13328a55c54fb49d8ca1dd72bc5de23f161ac8.camel@sipsolutions.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	s=arc-20240116; t=1751555530; c=relaxed/simple;
+	bh=zImvd/kgd1afrH/UXH2667AxFgtQy1j88l6X4nP2wM8=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=YI+wY2bJfn5Ll4KjOJLl+QHDRYbLagOAr1n6ASq8ayCNNGgNLKIflgzTsgoWQzqYa1vfU6c7wbc/6t7L+cNkfF2U+zDEfdSPQCDxvrEQ51TgeNs2IvMfY2tQSE3+JEvaIcxQjd3BTCsPudLoLcihr0QrlYIa5uflkNpqAAUQkgo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dukQszSw; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-553dceb345eso31476e87.1;
+        Thu, 03 Jul 2025 08:12:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751555527; x=1752160327; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FklnJtDo9yeFD4xiZdN1VsVaoDfKdcDRiLzMHURLjos=;
+        b=dukQszSwyyf0dWNR/FWT55M8sU7RzdjPcNqjwHTttppb40OdtJZQDJo94jEobdr3bQ
+         0cU6SYK5tXx5BvIjZ3VFW3e5mTzURFRh2I6M6zxJfwGL1cjyegZM4t9gsjXcCr7mIB+c
+         MYRz5Qgjajy4cZP2mo01GQ5zcHMuF2VsnM0wEZjnu9FjL9wm+GCPcaB1NEJ8samuHaPd
+         k0xGvz7wa8nfsQh9ywrnqtMyTmqON7Zk1daNGHeyrrQq+n/WbvLJK5bon4OWfYobJssJ
+         c+ZKiw0mltRRPzkFeSdem5HjvuqapIkoJh765u2mPKpu20g6LJdNtgj1wlii1H+7DI7g
+         RDyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751555527; x=1752160327;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FklnJtDo9yeFD4xiZdN1VsVaoDfKdcDRiLzMHURLjos=;
+        b=Z0/YouclRBHVW/YcOrH4/9RO6/xGqRzvMWk+H5eHgm3AlpJ2GImv18yDvmBF70tQl1
+         Y1q0f6hjg0y/lN2Atm4YfqOW+oUsTMNoYguekQenTdcocwljSOgubHEd3GS/DU43Sidy
+         3Z9ChcCLT4OuJyKARa6dH5xedbxad14ZWV+SPJbAxAXKU3PionQg4VUrVAa2xflxeIk8
+         Xe94nfkMhX5UlYamEBYTzDCIpUO8cszcPe9w2L7dkMUMmDwcclCvI/hTCavy0zuo9uoX
+         Ra5k4Bh5/Zk5VPRXHxR75oVBKOX8IThRYt0xuaADqStbX9moDBl2C64of5mu+LG7snHa
+         RW+w==
+X-Forwarded-Encrypted: i=1; AJvYcCWwF8JyPJ5LK+8upPMAWhpnlC0qkpsJF9rU0KkkSX1+UZxxldza0vp0AmRuJlkAU/SHGpvWc5/pUzM/lyQG@vger.kernel.org, AJvYcCXASotqKPJsWN5+OFeaOKtzUsDFzWLKicpyhLxuFsLx1Dk/69fQYZSZhSbFwNuCpJ7xXg8y0yRi77s=@vger.kernel.org, AJvYcCXPHgJY7Yaco3yaDIv+srEA5Mn97M2Cu0ORI4xoGWzgK15y5EPMfBrpP9/k5Wz9E25832PpmTiBknQj@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLg/s6ezsVKHsPhhCs6STzUudrlccfMdvs4+vzNJp1THUOmV3z
+	9DA4UB0kcsWGguuaMwNOzYL8HlaJJQwaUrOyNIVZICbo2qLr+cBLUkBa
+X-Gm-Gg: ASbGncuhggUX2sHvYpd+VweYQzUOQWrQHNcDl+3uCzW+/2EY2NmOBNE41QawsjqrLfB
+	oqW8aWJ+wjdbPvPtn3ijIORDPCrte8ysR9TAWn2hylWsADQ8xuuw0ZkOsrpjzD1C3TYHVLSOY+F
+	boeBj56DAY7NXzOPoQLrS6gq7O3MMLNwMDBFH0FManf7Zb2sT4TAib0NahzMFCGwHl7QwuIh5MM
+	5nmIULaQN/Mb8hOgmuTWF1lgaTH8s9LxhEiiYXEjlO2XjqwQ7QkRWLQJiidVRZQScN8TbYxx/N5
+	tW6RJI9hUjUYT8EsBIhF4clB+pGn9RKKe4pHleXbcTYZig8Aq/WWdz40g3vAmCn3uoher6k=
+X-Google-Smtp-Source: AGHT+IFObnwk1CUw/4SeBMAwtqp40i0kVp9nyZ7PpPHlgqYkcRXB6haIqde1G0SGKx5hXuFwxxb7Og==
+X-Received: by 2002:a05:6512:4025:b0:553:297b:3d4e with SMTP id 2adb3069b0e04-5562efc934fmr1450440e87.52.1751555526425;
+        Thu, 03 Jul 2025 08:12:06 -0700 (PDT)
+Received: from localhost.localdomain ([212.192.12.80])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-556384ae15esm725e87.178.2025.07.03.08.11.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Jul 2025 08:12:06 -0700 (PDT)
+From: iuncuim <iuncuim@gmail.com>
+To: Srinivas Kandagatla <srini@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Vasily Khoruzhick <anarsoul@gmail.com>,
+	Yangtao Li <tiny.windzz@gmail.com>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Lukasz Luba <lukasz.luba@arm.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Maxime Ripard <mripard@kernel.org>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org
+Subject: [PATCH v2 0/8] Allwinner: A523: add support for A523 THS0/1 controllers
+Date: Thu,  3 Jul 2025 23:11:24 +0800
+Message-ID: <20250703151132.2642378-1-iuncuim@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+Content-Transfer-Encoding: 8bit
 
-On Thu, 2025-07-03 at 17:09 +0200, Johannes Berg wrote:
->=20
-> How did syzbot even manage to get a 10 MHz thing running though?
->=20
+From: Mikhail Kalashnikov <iuncuim@gmail.com>
 
-n/m, it just did that quite explicitly. I really want to get rid of all
-that 5/10 MHz code, but we still have S1G so that might still happen
-anyway, and I expect for S1G VHT operating mode notification frames
-_are_ invalid.
+This patch series adds temperature sensor support for the Allwinner A523
+family of processors (same die with H728/A527/T527)
 
-johannes
+Changes:
+1) dt-bindings: nvmem: SID: Add binding for A523 SID controller
+ - added new patch
+
+2) dt-bindings: thermal: sun8i: Add A523 THS0/1 controllers
+ - changed clock order
+ - added additional nvmem cell with calibration data
+ - added requirements for new controllers
+ - added description
+
+3) thermal/drivers/sun8i: add gpadc clock
+ - removed unnecessary call to clk_prepare_enable() since
+ devm_clk_get_enabled()includes this
+
+4) thermal/drivers/sun8i: replace devm_reset_control_get to
+ - original function replaced with devm_reset_control_get_shared_deasserted()
+ - removed some of the repetitive code executed by 
+ devm_reset_control_get_shared_deasserted()
+
+5) thermal/drivers/sun8i: get calibration data from two nvmem cells
+ - added possibility to get calibration data from two independent cells
+
+6) thermal/drivers/sun8i: Add support for A523 THS0/1 controllers
+ - removed magic digits
+ - changed description of calibration data procedure for A523
+ - changed numbers of array elements with calibration data
+
+7) arm64: dts: allwinner: A523: Add SID controller node
+ - fix typo (sun50i->sun55i)
+
+8) arm64: dts: allwinner: A523: Add thermal sensors and zones
+ - cell with calibration data divided into two
+ - added passive trips for gpu
+ - added information that information obtained from BSP
+
+v1: https://lore.kernel.org/linux-sunxi/20250411003827.782544-1-iuncuim@gmail.com
+
+Mikhail Kalashnikov (8):
+  dt-bindings: nvmem: SID: Add binding for A523 SID controller
+  dt-bindings: thermal: sun8i: Add A523 THS0/1 controllers
+  thermal/drivers/sun8i: add gpadc clock
+  thermal/drivers/sun8i: replace devm_reset_control_get to
+    devm_reset_control_get_shared_deasserted
+  thermal/drivers/sun8i: get calibration data from two nvmem cells
+  thermal/drivers/sun8i: Add support for A523 THS0/1 controllers
+  arm64: dts: allwinner: A523: Add SID controller node
+  arm64: dts: allwinner: A523: Add thermal sensors and zones
+
+ .../nvmem/allwinner,sun4i-a10-sid.yaml        |   1 +
+ .../thermal/allwinner,sun8i-a83t-ths.yaml     |  49 +++-
+ .../arm64/boot/dts/allwinner/sun55i-a523.dtsi | 162 ++++++++++++
+ drivers/thermal/sun8i_thermal.c               | 240 ++++++++++++++----
+ 4 files changed, 406 insertions(+), 46 deletions(-)
+
+-- 
+2.49.0
+
 
