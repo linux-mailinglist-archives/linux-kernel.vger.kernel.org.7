@@ -1,138 +1,171 @@
-Return-Path: <linux-kernel+bounces-716092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2440AF81AF
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 21:59:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 145BBAF81B5
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 22:00:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10ADC1C28847
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 20:00:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AFE71C28929
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 20:01:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC1BE2FEE1C;
-	Thu,  3 Jul 2025 19:59:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 321DB29B8E2;
+	Thu,  3 Jul 2025 20:00:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FEw4D24y";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="gcOi8Aam"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="OMlezj5t"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 965FB25228C;
-	Thu,  3 Jul 2025 19:59:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F088238C21
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 20:00:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751572779; cv=none; b=YV6WVT0a2B9eDenLNn89E07eH8KNNWKVpQNhNmkmerjbtbdd14yomh+8xk57H5ksI2eiA5RtJlGB5utEqeAgq6glcp++lywp6GzmVZuY03ieBJfO2jhQY7h3NKrY87FFvEsWw8D5YvFJ3xuJm/kS2GJ34c95SXi0CHPkjyWjBa0=
+	t=1751572838; cv=none; b=l88oY7g89oamVQtWdJxe9hk68dkYGiJ5j7VPYJ+fKgScCRSFOuM52S0IKkncjSCijvLITk4joy/G08kOmIZNT2R7EfemLuZQ0iPfGz29mKX7PbJhJFYtkQbZG6QP6YMVhZU995Rp7egVQSwshSAkS/mBHY8YEfpnXZawbR+cLs4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751572779; c=relaxed/simple;
-	bh=lY55ECqDsxZNqp15zYLwy9T/g7qWxH7wryMpr3+Xu8A=;
-	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=umdomSU5dX1M9McU7Z2iHH0EvftDowNngl+Mech7ZSi0goYQ3znusofEFoe7pLG/PaAP/JQEii8X1Y7eYx0ni3L9iWSfk7zOjMNzXuXb9YLTgEkUh5wi22FR0TTEobQ4XEBYkN5J5CGbuZKogcou3gFmNi5JLIDSRjSNnvszkAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FEw4D24y; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=gcOi8Aam; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1751572775;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zgxsuIMDDXARhsRWgLrILUs/XsyS+TZEtoBBb/RsYm0=;
-	b=FEw4D24yX86GGy1rTWJ6zgH6Tlp5yOHO2h19VrQVJd4soMjXNtcLFhCIhBmDcIfo3afyMj
-	GH127yUbXDNuBwtaRHEi3ZdZq1EtVgrFX538bhU2DxEWijBcrYdtsbcPrHNXmmJo9oigK2
-	p8tlXD9sQkkbAEVYgixGuE4g/C1C8SERxleQFZ6JK4QAYdSnvoCipiRlj9XG1+zgC+PcYi
-	P1+WPyUM/DcSNaeacoqIXzqO0l/JuCUlWJVgJtqJD9sBqQW82ryw/C9BjBZLTQ2Ex85h76
-	JpECmRlt2nY9d/HdGO8XKDQWVUSZHBMUUcyw4iSOA9qF3eLPWuCRcbf7lfETnQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1751572775;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zgxsuIMDDXARhsRWgLrILUs/XsyS+TZEtoBBb/RsYm0=;
-	b=gcOi8AamD60gBuSLM6+XBj7cc6BNGHuWvnQ0nejzuIxbahpVhbP1ZuQex8HvkFndFkmXZR
-	hOi5o2qE1taW8LDw==
-To: Michael Kelley <mhklinux@outlook.com>, Nam Cao <namcao@linutronix.de>,
- Marc Zyngier <maz@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Manivannan
- Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>, Bjorn Helgaas
- <bhelgaas@google.com>, "linux-pci@vger.kernel.org"
- <linux-pci@vger.kernel.org>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, Karthikeyan Mitran
- <m.karthikeyan@mobiveil.co.in>, Hou Zhiqiang <Zhiqiang.Hou@nxp.com>,
- Thomas
- Petazzoni <thomas.petazzoni@bootlin.com>, Pali =?utf-8?Q?Roh=C3=A1r?=
- <pali@kernel.org>, "K
- . Y . Srinivasan" <kys@microsoft.com>, Haiyang Zhang
- <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, Dexuan Cui
- <decui@microsoft.com>, Joyce Ooi <joyce.ooi@intel.com>, Jim Quinlan
- <jim2101024@gmail.com>, Nicolas Saenz Julienne <nsaenz@kernel.org>,
- Florian
- Fainelli <florian.fainelli@broadcom.com>, Broadcom internal kernel review
- list <bcm-kernel-feedback-list@broadcom.com>, Ray Jui <rjui@broadcom.com>,
- Scott Branden <sbranden@broadcom.com>, Ryder Lee <ryder.lee@mediatek.com>,
- Jianjun Wang <jianjun.wang@mediatek.com>, Marek Vasut
- <marek.vasut+renesas@gmail.com>, Yoshihiro Shimoda
- <yoshihiro.shimoda.uh@renesas.com>, Michal Simek <michal.simek@amd.com>,
- Daire McNamara <daire.mcnamara@microchip.com>, Nirmal Patel
- <nirmal.patel@linux.intel.com>, Jonathan Derrick
- <jonathan.derrick@linux.dev>, Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>, "linux-hyperv@vger.kernel.org"
- <linux-hyperv@vger.kernel.org>, "linux-rpi-kernel@lists.infradead.org"
- <linux-rpi-kernel@lists.infradead.org>,
- "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
- "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH 14/16] PCI: hv: Switch to msi_create_parent_irq_domain()
-In-Reply-To: <SN6PR02MB4157A6F9B2ABD3C69CE5B521D443A@SN6PR02MB4157.namprd02.prod.outlook.com>
-References: <cover.1750858083.git.namcao@linutronix.de>
- <024f0122314198fe0a42fef01af53e8953a687ec.1750858083.git.namcao@linutronix.de>
- <SN6PR02MB4157A6F9B2ABD3C69CE5B521D443A@SN6PR02MB4157.namprd02.prod.outlook.com>
-Date: Thu, 03 Jul 2025 21:59:34 +0200
-Message-ID: <87cyaht595.ffs@tglx>
+	s=arc-20240116; t=1751572838; c=relaxed/simple;
+	bh=qKFvUB49lHcatphKfroWSPIVKGaEzIoelBiOCGdYo3Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bwGWb/Pwhq7bL2m/QGp4JV7Ms6j+pYM483z08/g7ep6IXHf+15jW5WH7iwefN3vCQc+6w3ONyC/gk2eb4EdnW4kDOe+l7iB34w8Wvw10yMPIv4RzJd2JzyJeKattqnctAUoO50z2fe8az8x7cWjrHPMokieVj+7vOZL3sqZ9nVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=OMlezj5t; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 563DgC0f012368;
+	Thu, 3 Jul 2025 20:00:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=rfgg8t
+	8fL/hN34JuDmn0Bl88k/NOnsZ4zYg/su5b01M=; b=OMlezj5t4NSESAQuj3aGYE
+	h9P2XLBRwwza2Bw1MbrP+WupHENiiX4PVp8pQnZEveccPLFmxjWEFhEQOPfVMjLz
+	ZKz01lcVNXvECob27++QN0n95eQem2STotL2EOB2dcXqbODi21OKfSQYtGrHfjPe
+	ry9ZtUl3JDVUyKtR8GsozxbkYaVuKbjf1q9RMuBPQt7HSJYxtZ3lhTx3tZL0PQ3D
+	dUjfRR3RUyFcSni5XP/LpZH4ZksW2mP95rcJ4g5C36XfjZBqNNjvBMY+OZS5yHai
+	DZtPiMBm1hkqTu3+XTUaKoeZb7faVOgz8Xl47xdLQlMPU3g1iO/BRdlog8JEpsPQ
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47j82g5fam-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 03 Jul 2025 20:00:17 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 563K0HIw001577;
+	Thu, 3 Jul 2025 20:00:17 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47j82g5fab-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 03 Jul 2025 20:00:16 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 563ISaCA021430;
+	Thu, 3 Jul 2025 20:00:15 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 47jwe3p8n7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 03 Jul 2025 20:00:15 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 563K0DOb46006722
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 3 Jul 2025 20:00:13 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 96C6B2004B;
+	Thu,  3 Jul 2025 20:00:13 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id EDEEF20043;
+	Thu,  3 Jul 2025 20:00:09 +0000 (GMT)
+Received: from [9.39.27.83] (unknown [9.39.27.83])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Thu,  3 Jul 2025 20:00:09 +0000 (GMT)
+Message-ID: <ddb9d558-d114-41db-9d4b-296fc2ecdbb4@linux.ibm.com>
+Date: Fri, 4 Jul 2025 01:30:09 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC patch v3 00/20] Cache aware scheduling
+To: K Prateek Nayak <kprateek.nayak@amd.com>, Tim Chen
+ <tim.c.chen@intel.com>,
+        Chen Yu <yu.c.chen@intel.com>
+Cc: Juri Lelli <juri.lelli@redhat.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+        Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Libo Chen <libo.chen@oracle.com>, Abel Wu <wuyun.abel@bytedance.com>,
+        Madadi Vineeth Reddy <vineethr@linux.ibm.com>,
+        Hillf Danton <hdanton@sina.com>, Len Brown <len.brown@intel.com>,
+        linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        "Gautham R . Shenoy" <gautham.shenoy@amd.com>
+References: <cover.1750268218.git.tim.c.chen@linux.intel.com>
+ <4cde5b36-4ef3-4dc8-a540-99287d621c7f@amd.com>
+From: Shrikanth Hegde <sshegde@linux.ibm.com>
+Content-Language: en-US
+In-Reply-To: <4cde5b36-4ef3-4dc8-a540-99287d621c7f@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: 9tBhavMIxa6KQexOOEUnQW_mSi6owUy1
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzAzMDE2MyBTYWx0ZWRfX8D7hzKnLMLPn EqAQTo75TktpbUF7WLa6c6HNTmCkdJVOL7IVxC87lWhdQffsFSBqrqgYRvUN3wEniAk3vCG71f5 oFIbkv9LMj5XghMHy2SS1nk7/mjeCsA6325sEg0JoxyKiXjzQ5N4D8s3RRvKIgerEcFSPUSY4As
+ BhXLbDngFEFCZr+U8SEl4WBh53Et2nDN5PjVCSpEqsyk008LD3Vll8+Myq0t7pGvzK1vlTHHeDv IDz2ccYCDRpyF/YCv1nFNJ0s8pj70lw90qsGmFhgtw/TSw2LOpP87ocoWjT7/jW8ojbtewu/mLj Xy2QubYEJ4eLsUGS6KA8U933+vet+OgZei7hmEKRnFZfshNE5hRvFbiNCmjzLYM9sKO1qpEtTND
+ PWsZpUXww2NuyDO0/B3aVIhHA+UYgLCCpjKTxFrlda5C6aVdQAxxU6+UfXjTL2bLTEJxgtGR
+X-Authority-Analysis: v=2.4 cv=LpeSymdc c=1 sm=1 tr=0 ts=6866e151 cx=c_pps a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=qOEF4q6Xsp6u27uDJ_8A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: JIaRkH9LHfAY8tSL0SkNpD9DgJXosAjw
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-03_05,2025-07-02_04,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ spamscore=0 bulkscore=0 lowpriorityscore=0 adultscore=0 clxscore=1015
+ impostorscore=0 mlxscore=0 mlxlogscore=999 phishscore=0 suspectscore=0
+ malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507030163
 
-On Thu, Jul 03 2025 at 17:41, Michael Kelley wrote:
-> From: Nam Cao <namcao@linutronix.de> Sent: Thursday, June 26, 2025 7:48 AM
->> 
->> Move away from the legacy MSI domain setup, switch to use
->> msi_create_parent_irq_domain().
->
-> From a build standpoint, this patch does not apply cleanly to
-> linux-next20250630. See also an issue below where a needed irq
-> function isn't exported.
 
-Does it conflict against the PCI tree?
+> 
+> tl;dr
+> 
+> o Benchmark that prefer co-location and run in threaded mode see
+>    a benefit including hackbench at high utilization and schbench
+>    at low utilization.
+> 
+> o schbench (both new and old but particularly the old) regresses
+>    quite a bit on the tial latency metric when #workers cross the
+>    LLC size.
+> 
+> o client-server benchmarks where client and servers are threads
+>    from different processes (netserver-netperf, tbench_srv-tbench,
+>    services of DeathStarBench) seem to noticeably regress due to
+>    lack of co-location between the communicating client and server.
+> 
+>    Not sure if WF_SYNC can be an indicator to temporarily ignore
+>    the preferred LLC hint.
+> 
+> o stream regresses in some runs where the occupancy metrics trip
+>    and assign a preferred LLC for all the stream threads bringing
+>    down performance in !50% of the runs.
+> 
 
-> At runtime, I've done basic smoke testing on an x86 VM in the Azure
-> cloud that has a Mellanox NIC VF and two NVMe devices as PCI devices.
-> So far everything looks good. But I'm still doing additional testing, and
-> I want to also test on an ARM64 VM. Please give me another day or two
-> to be completely satisfied.
+- When you have SMT systems, threads will go faster if they run in ST mode.
+If aggregation happens in a LLC, they might end up with lower IPC.
 
-Sure.
->> +static void hv_pcie_domain_free(struct irq_domain *d, unsigned int virq, unsigned int nr_irqs)
->> +{
->> +	struct msi_domain_info *info = d->host_data;
->> +
->> +	for (int i = 0; i < nr_irqs; i++)
->> +		hv_msi_free(d, info, virq + i);
->> +
->> +	irq_domain_free_irqs_top(d, virq, nr_irqs);
->
-> This code can be built as a module, so irq_domain_free_irqs_top() needs to be
-> exported, which it currently is not.
-
-Nam, can you please create a seperate patch, which exports this and take
-care of the conflict?
-
-Thanks,
-
-        tglx
+> Full data from my testing is as follows:
+> 
+> o Machine details
+> 
+> - 3rd Generation EPYC System
+> - 2 sockets each with 64C/128T
+> - NPS1 (Each socket is a NUMA node)
+> - C2 Disabled (POLL and C1(MWAIT) remained enabled)
+> 
+> o Kernel details
+> 
+> tip:      tip:sched/core at commit 914873bc7df9 ("Merge tag
+>             'x86-build-2025-05-25' of
+>             git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip")
+> 
+> llc-aware-lb-v3: tip + this series as is
+> 
+> 
 
