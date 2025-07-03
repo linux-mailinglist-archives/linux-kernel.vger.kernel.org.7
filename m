@@ -1,100 +1,75 @@
-Return-Path: <linux-kernel+bounces-715447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-715449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C08EAF7621
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 15:50:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65DF4AF7627
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 15:50:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A70F87B98B1
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 13:48:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95BDE179AD1
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 13:50:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11FC32E7198;
-	Thu,  3 Jul 2025 13:49:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 343F72E7634;
+	Thu,  3 Jul 2025 13:50:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="opJR6ktU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Wj76+C79"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E2E1288AD;
-	Thu,  3 Jul 2025 13:49:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 524DF2E6D35;
+	Thu,  3 Jul 2025 13:50:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751550586; cv=none; b=c32UCLpBRlhnBzPLGcusbkDhby1+Jl9PooFjAJM4GhXLvUJDZ3dAMrz09sUKWRU46h4PQMn+znEF7OtIgZPs5gxG3cMZNfuTLLBNa5ao9vwW0jZgQD5PyNOA/vyqv0NoZ6lrULG0DhQMIcYxRK3TDHnc8IQFM7Nw70E/DoVRdDw=
+	t=1751550629; cv=none; b=cT5XVA+QIWDlekmHQcPKNMmoU2TicQduiykZvNWcVvI1KoDYzNc9WPEraOh8zCY/SjtUyL9XkhtK/VdUZyGDvmkiXNycCCj55Y0Z8XeSipm7gxyiTsONOGy/ZVIQt/lRoz+Y2Y+V8s5J2w3VhL7lPqUqpnm7VuOQzugeOepwbjA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751550586; c=relaxed/simple;
-	bh=kPAjLXyowLhtCtDh0aOXOQEKznzaWQHyEqIjjgS/dww=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=pUBHBEm2bmycI1bL8ieY4ux9lPz+ruPKzznhjzrkzlIZGrK0Lrs5u5Yqo9Z0BKNDW4KmEdjMLZNLJpjIbj7ifMadOckB4C5ZBbt+8Zh3j3oQKwVWnTVZRJp6QEi5SUsEqC8cLvDc5AdK4x2acXs8laewLOGe9iVOnrIJZMjeMzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=opJR6ktU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35AF7C4CEE3;
-	Thu,  3 Jul 2025 13:49:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751550586;
-	bh=kPAjLXyowLhtCtDh0aOXOQEKznzaWQHyEqIjjgS/dww=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=opJR6ktUH2uajNPLTTbVI4mbMVydU2aU+HlA0tMHaJ9D0SnBofdALLEUZaQQnMpJa
-	 e2LT5/fs/wJSY09LYEOZkuUWEK+9dA6s3l1DTdUJ09VQSpelB9Kh50XtjsUfzovYbH
-	 Mx3ZwVFwythLraYOYIfZzJeKwrjNIrcyJHnviSAW3cW+i+X34evQ5ReNrwMtPHVS5L
-	 Ahcb4iq2l+7FA7o0utYrJnhMwVwBBgxwzBObmS2GiHtyyWWkh4cApPpUinRlqZVZzq
-	 p+vHPIXrM/Mp4KFFr8WUEhQjwvFiT9Oqkha3pMmnQFyJVukl5NKYwwNErx3mEz4zDg
-	 7tEew9DXx9oYg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADEF1383B273;
-	Thu,  3 Jul 2025 13:50:11 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1751550629; c=relaxed/simple;
+	bh=yBkyQVzTj11JeCCE8CwjO7US3wdU6W1CTw8UVQdITNA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rpECAZ4WWzhUKJ5oASMbbKTFP5Rkwrz6gH7DsBGu6UimAdy5frw54fiGqR7b9MHprKLMyVUoK8L661aDxomMjxKMZwaaREMb+HtXzHsZQDyBsqOL6JCYkK+tLstuGKiTnS9rJNjGJJy3A8Rn1GrguZ6Xw9LlD2qRql+4Q7oGVLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Wj76+C79; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Ab9+M0Wwt286fsDWoPAsSY/Y3oyNMaCJy+7VX1xGd4I=; b=Wj76+C79gmLbu6iFcE2+Q67mjF
+	DYQrCWxdTZrv5py4rxaC8uj0aMsyX0yjkjZ8osnFH2V84sHVTtZYpKfO3AHtaRgagiZmhKsbheMr+
+	zex7OCatCGmEbvVo5M15wEmJsAUiQxCN3C69NBQCI/GQVMrskNUrKz20VK63IXRGXoxxPWcyHUKSe
+	4Q7DZ5ol6HalqZEqusfBhkqF/jkZj2bGKxxUQNbhHOTsfxjisLOO1bHUPniDFVFcPa+nZstvRjw/k
+	+47iIupZNjV8BieF8HObH91KvQes/s6+dEJzxtwJPDGBLw30cQQlCE76dJsqfnXP5p7BmR5TvqNyh
+	kcxYVjqA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uXKKW-0000000BY8t-0aYF;
+	Thu, 03 Jul 2025 13:50:24 +0000
+Date: Thu, 3 Jul 2025 06:50:24 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Jinliang Zheng <alexjlzheng@gmail.com>
+Cc: djwong@kernel.org, alexjlzheng@tencent.com, brauner@kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-xfs@vger.kernel.org
+Subject: Re: [PATCH] iomap: avoid unnecessary ifs_set_range_uptodate() with
+ locks
+Message-ID: <aGaKoDhuw72wZ9dM@infradead.org>
+References: <20250701184737.GA9991@frogsfrogsfrogs>
+ <20250702120912.36380-1-alexjlzheng@tencent.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [patch V2 0/3] ptp: Provide support for auxiliary clocks for
- PTP_SYS_OFFSET_EXTENDED
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175155061051.1488621.18100322509615749135.git-patchwork-notify@kernel.org>
-Date: Thu, 03 Jul 2025 13:50:10 +0000
-References: <20250701130923.579834908@linutronix.de>
-In-Reply-To: <20250701130923.579834908@linutronix.de>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- richardcochran@gmail.com, christopher.s.hall@intel.com, jstultz@google.com,
- frederic@kernel.org, anna-maria@linutronix.de, mlichvar@redhat.com,
- werner.abt@meinberg-usa.com, dwmw2@infradead.org, sboyd@kernel.org,
- thomas.weissschuh@linutronix.de, kurt@linutronix.de, namcao@linutronix.de,
- atenart@kernel.org, pabeni@redhat.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250702120912.36380-1-alexjlzheng@tencent.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Hello:
+On Wed, Jul 02, 2025 at 08:09:12PM +0800, Jinliang Zheng wrote:
+> ltp and xfstests showed no noticeable errors caused by this patch.
 
-This series was applied to netdev/net-next.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
-
-On Tue,  1 Jul 2025 15:26:56 +0200 (CEST) you wrote:
-> This is a follow up to the V1 series, which can be found here:
-> 
->      https://lore.kernel.org/all/20250626124327.667087805@linutronix.de
-> 
-> to address the merge logistics problem, which I created myself.
-> 
-> Changes vs. V1:
-> 
-> [...]
-
-Here is the summary with links:
-  - [V2,1/3] timekeeping: Provide ktime_get_clock_ts64()
-    https://git.kernel.org/netdev/net-next/c/5b605dbee07d
-  - [V2,2/3] ptp: Use ktime_get_clock_ts64() for timestamping
-    https://git.kernel.org/netdev/net-next/c/4c09a4cebd03
-  - [V2,3/3] ptp: Enable auxiliary clocks for PTP_SYS_OFFSET_EXTENDED
-    https://git.kernel.org/netdev/net-next/c/17c395bba1a3
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+With what block and page size?  I guess it was block size < PAGE_SIZE
+as otherwise you wouldn't want to optimize this past, but just asking
+in case.
 
 
