@@ -1,171 +1,149 @@
-Return-Path: <linux-kernel+bounces-715643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-715647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB72EAF7BA9
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 17:26:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CE75AF7BCE
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 17:28:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93A485A2C22
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 15:20:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8DB11CA2331
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 15:22:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1CCA2EF9BD;
-	Thu,  3 Jul 2025 15:19:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C2412ECEBA;
+	Thu,  3 Jul 2025 15:20:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="WYW0qcLi"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="hsMjQ1Uj"
+Received: from smtpout.efficios.com (smtpout.efficios.com [158.69.130.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E47C2EAD10;
-	Thu,  3 Jul 2025 15:19:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B93E22258C;
+	Thu,  3 Jul 2025 15:20:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=158.69.130.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751555960; cv=none; b=Kf4TQDISydEONf0NBhH9z7hDdte3hLJJOtRd4Grhtx2Qkz8X/XWp/ATz1pO2DDnQokM+LEPKoyGP3rxeO/pw0Rn86h19d2MM5d1cjR/3f+5DdkbpldHt2sdaFH+CZ6YeHN0K3XhbFLecjjaEMTuezx2yvgK8ei9S5cmoRWTf+M8=
+	t=1751556046; cv=none; b=f4drJMk6qx5XQYArQDCBwew6gTMZF8gLeh1013RR1XjbGIWNVHcDD3C6cR1pIV78iyEp/wwUsETL3j+VUH2USQSRJQruM5lqdggFBCp3+lT2NPQJOo0okgCglYlviQ4nRL/zHGhN3GrVSR7Du+U3HGIFHP4VKKzDjpJBm1aXauU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751555960; c=relaxed/simple;
-	bh=7R1O2w50zFVFdltzoczZuuzjYk84Ji5n0+6r3bBzZuw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=L74oY4TMeaGYZ0r2aJMkQXkpLsLUFK4t/LhNC/Li2Qt9eMbawgU+nwa/hHeG1+SCiZ0nlXBeoYN0Tfg9/E67ROU1I3Avdqy1bQ2viAV5X7UfS245tr/OFVTQ4gQuwpWS1kCuLOScF/JXD2MAcnrmFE2OPNHvJvrQRKXnEBYdNCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=WYW0qcLi; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 36B6D4433D;
-	Thu,  3 Jul 2025 15:19:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1751555949;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3vPbA55GiZOX20WwUdHkWkbBRAgEIfKrszAkQo+WB4o=;
-	b=WYW0qcLiT4vUm+pNNStTnW831aKTemEVwc+gCHUY6xKk/NtXaJjaqxwxpWv2WdW0e2BQ4Y
-	kf0PKD0b6P8isXfU4Vc5vefI726O2iG2WkLgbXFskKMM5oJevjCE/gm5cjHtLPvTm6l8dj
-	sCbTHLYLLlWbpPWWYyAIDOk6AYyT7C3BWpi9/XugIR9g/kCp35W032g2NUESsKCpmkegcv
-	cBUWO9vPpc918ug03XtOwZCrPgr6tGumYbpULTMrSRc7HLdZ6Ve9ZsX/G/ubSAwH48J7Yp
-	HUxPkRrUHwUfbJwccKfKpsC0htQC1s9PagdzubfbLV3Taoavcmx8aY64gijLiA==
-Date: Thu, 3 Jul 2025 17:19:07 +0200
-From: Herve Codina <herve.codina@bootlin.com>
-To: Ayush Singh <ayush@beagleboard.org>
-Cc: conor+dt@kernel.org, devicetree@vger.kernel.org, krzk+dt@kernel.org,
- linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
- luca.ceresoli@bootlin.com, robh@kernel.org, thomas.petazzoni@bootlin.com,
- wsa+renesas@sang-engineering.com
-Subject: Re: [RFC PATCH 0/3] i2c: Introduce i2c bus extensions
-Message-ID: <20250703171907.12b00c43@bootlin.com>
-In-Reply-To: <8859d983-f4ff-498b-bb0b-eb84206ad969@beagleboard.org>
-References: <20250205173918.600037-1-herve.codina@bootlin.com>
-	<525877c8-6c64-45b3-b4aa-a52768e59b86@beagleboard.org>
-	<20250613093016.43230e3b@bootlin.com>
-	<8859d983-f4ff-498b-bb0b-eb84206ad969@beagleboard.org>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1751556046; c=relaxed/simple;
+	bh=PB9TNaTNKH+VQLSh3v9KswAy35tz1G3hodK352qbFh0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=oD5+KZN6P+kpUdOFhSdJYidFnHF/oZgn76BPWCTHoSVQ4ARoOYVnT4azjsCi4NlWSD6AsQSGb6wtf1GU8v12P9CeB9GyN1670WNTCP+3rw3rllJ0r9bKW3y7sP8PHP1NpGf2kPLKh5g/AsagV/qXMpnNnxIJQHI8VWO3QxyZmyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=hsMjQ1Uj; arc=none smtp.client-ip=158.69.130.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
+	s=smtpout1; t=1751556043;
+	bh=PB9TNaTNKH+VQLSh3v9KswAy35tz1G3hodK352qbFh0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=hsMjQ1UjeYUAI6Oe7nSGWF1+Nr/+Sqw2MrVx4+1/0gJQdMTK06RLvaprhIRASGqG9
+	 RcZnPQSuyrUPT1OOgJ22ChGvxS63+GAJD5WJ3XPfRLmvetcWBoj4YdBrAcsNW5C/cg
+	 XGEJCRfowXtFTXR96pYYqPUqYT+EmhG2bH+ysBilDq1Js3Pyr6WFT5gzLpKlRlFMoB
+	 9csxnfdECM8MLwwZPi5XFNh5eOu0II0K7X10WuyvC7YyttI49x7TXcL+87Ryc/atba
+	 wgV4UZhxI4jJJVKBfux+rZ8vNAEWviU50/OWQXk+ZhuCHu50ATLyEfm1hdLH1hVXeJ
+	 BPGro5PrcCVow==
+Received: from thinkos.internal.efficios.com (192-222-132-26.qc.cable.ebox.net [192.222.132.26])
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4bY0p26xl8z1MSc;
+	Thu,  3 Jul 2025 11:20:42 -0400 (EDT)
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Dennis Zhou <dennis@kernel.org>,
+	Tejun Heo <tj@kernel.org>,
+	Christoph Lameter <cl@linux.com>,
+	Martin Liu <liumartin@google.com>,
+	David Rientjes <rientjes@google.com>,
+	christian.koenig@amd.com,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Sweet Tea Dorminy <sweettea@google.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R . Howlett" <Liam.Howlett@Oracle.com>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Christian Brauner <brauner@kernel.org>,
+	Wei Yang <richard.weiyang@gmail.com>,
+	David Hildenbrand <david@redhat.com>,
+	Miaohe Lin <linmiaohe@huawei.com>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	linux-mm@kvack.org,
+	linux-trace-kernel@vger.kernel.org,
+	Yu Zhao <yuzhao@google.com>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Mateusz Guzik <mjguzik@gmail.com>,
+	Matthew Wilcox <willy@infradead.org>
+Subject: [RFC PATCH v4 0/2] mm: Fix OOM killer inaccuracy on large many-core systems
+Date: Thu,  3 Jul 2025 11:20:30 -0400
+Message-Id: <20250703152032.10507-1-mathieu.desnoyers@efficios.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddvtdeivdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthekredtredtjeenucfhrhhomhepjfgvrhhvvgcuvehoughinhgruceohhgvrhhvvgdrtghoughinhgrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeevleefvdeujedvheekvdegleevjefgtdeuieetveefhedvvdejleeuhedvfeetieenucffohhmrghinhepghhithhhuhgsrdgtohhmpdhkvghrnhgvlhdrohhrghdpsghoohhtlhhinhdrtghomhenucfkphepvdgrtddumegvtdgrmedvkeehmegsleektdemvgegtdgtmeeitgegfeemsgehsggsmegrgedvkeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemvgdtrgemvdekheemsgelkedtmegvgedttgemiegtgeefmegshegssgemrgegvdekpdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehhvghrvhgvrdgtohguihhnrgessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepuddtpdhrtghpthhtoheprgihuhhshhessggvrghglhgvsghorghrugdrohhrghdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhto
- hepuggvvhhitggvthhrvggvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhhriihkodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqihdvtgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrgh
-X-GND-Sasl: herve.codina@bootlin.com
 
-Hi Ayush,
+Introduce hierarchical per-cpu counters and use them for rss tracking to
+fix the per-mm RSS tracking which has become too inaccurate for OOM
+killer purposes on large many-core systems.
 
-On Thu, 3 Jul 2025 16:56:20 +0530
-Ayush Singh <ayush@beagleboard.org> wrote:
+The approach proposed here is to replace this by the hierarchical
+per-cpu counters, which bounds the inaccuracy based on the system
+topology with O(N*logN).
 
-> On 6/13/25 13:00, Herve Codina wrote:
-> 
-> > Hi Ayush,
-> >
-> > On Thu, 12 Jun 2025 13:22:45 +0530
-> > Ayush Singh <ayush@beagleboard.org> wrote:
-> >  
-> >> I have tested this patch series for use with pocketbeagle 2 connector
-> >> driver [0]. To get a better idea how it looks in real devicetree, see
-> >> the base tree [1] and the overlay [2]. Since it also used gpio and pwm
-> >> nexus nodes, along with providing pinmux for pins, it can provide a
-> >> better picture of how the different pieces (export-symbols, nexus nodes,
-> >> etc) look when combined.  
-> > Nice. Happy to see that I am no more alone with a system using these
-> > features.
-> >  
-> >>
-> >> I also have a question for Herve. Do you already have any working
-> >> patches for similar extension for SPI and UART in some private tree?  
-> > No, I didn't do anything related to SPI nor UART.
-> >
-> > On my system, no SPI nor UART are wired to my connector and so, I haven't
-> > got any needs to implement extension busses for SPI an UART (serial dev bus)
-> > nor any support for nexus nodes for other kind of components.
-> >
-> > Best regards,
-> > Hervé  
-> 
-> 
-> I have added SPI bus extension to my kernel tree [0]. Now, the techlab 
-> cape (other than mikrobus port) works using export-symbols + i2c and spi 
-> bus extension + eeprom auto detection.
-> 
-> 
-> Here is a list of everything currently working on the tree:
-> 
-> 1. EEPROM based auto-detection.
-> 
-> 2. SPI
-> 
-> 3. I2C
-> 
-> 4. PWM
-> 
-> 5. GPIO
-> 
-> 
-> Missing:
-> 
-> 1. UART (Don't have a cape that has something using the UART yet. Maybe 
-> need to experiment with MikroBUS).
-> 
-> 
-> Not quite sure what else to do to move things forward.
-> 
-> 
-> Best Regards,
-> 
-> Ayush Singh
-> 
-> 
-> [0]: https://github.com/Ayush1325/linux/tree/beagle-cape-v1
-> 
+Testing and feedback are welcome!
 
-I've just looked at your code related to SPI. It is closed to the I2C code
-and that's pretty nice!
+Thanks,
 
-I think to move forward we have to wrote the SPI bus extension binding and
-propose the binding + the code upstream.
+Mathieu
 
-Compared to I2C bus extension, only one repo is involved for SPI, the Linux
-kernel repo. On I2C bus extension, I am stuck on the binding which is a
-modification on the dtschema repo [0].
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Dennis Zhou <dennis@kernel.org>
+Cc: Tejun Heo <tj@kernel.org>
+Cc: Christoph Lameter <cl@linux.com>
+Cc: Martin Liu <liumartin@google.com>
+Cc: David Rientjes <rientjes@google.com>
+Cc: christian.koenig@amd.com
+Cc: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Sweet Tea Dorminy <sweettea@google.com>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: "Liam R . Howlett" <Liam.Howlett@Oracle.com>
+Cc: Suren Baghdasaryan <surenb@google.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Wei Yang <richard.weiyang@gmail.com>
+Cc: David Hildenbrand <david@redhat.com>
+Cc: Miaohe Lin <linmiaohe@huawei.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-mm@kvack.org
+Cc: linux-trace-kernel@vger.kernel.org
+Cc: Yu Zhao <yuzhao@google.com>
+Cc: Roman Gushchin <roman.gushchin@linux.dev>
+Cc: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Matthew Wilcox <willy@infradead.org>
 
-The SPI binding modifications for SPI bus extension will probably take place
-in spi-controller.yaml [1] and should be pretty close to modifications done
-for the I2C binding.
+Mathieu Desnoyers (2):
+  lib: Introduce hierarchical per-cpu counters
+  mm: Fix OOM killer inaccuracy on large many-core systems
 
-When one of the two series (I2C or SPI) is accepted, it will be easier
-for the other one to follow (Same concept, same kind of binding, same kind
-of code).
+ include/linux/mm.h                  |   8 +-
+ include/linux/mm_types.h            |   4 +-
+ include/linux/percpu_counter_tree.h | 108 ++++++++
+ include/trace/events/kmem.h         |   2 +-
+ kernel/fork.c                       |  31 ++-
+ lib/Makefile                        |   1 +
+ lib/percpu_counter_tree.c           | 393 ++++++++++++++++++++++++++++
+ 7 files changed, 530 insertions(+), 17 deletions(-)
+ create mode 100644 include/linux/percpu_counter_tree.h
+ create mode 100644 lib/percpu_counter_tree.c
 
-The advantage of the SPI series, I think, is that only one repo is involved.
-
-Best regards,
-Hervé
-
-[0]: https://lore.kernel.org/all/20250618082313.549140-1-herve.codina@bootlin.com/
-[1]: https://elixir.bootlin.com/linux/v6.16-rc4/source/Documentation/devicetree/bindings/spi/spi-controller.yaml
+-- 
+2.39.5
 
