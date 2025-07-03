@@ -1,133 +1,120 @@
-Return-Path: <linux-kernel+bounces-716149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3323EAF829C
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 23:27:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E3A8AF82A2
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 23:27:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDC1A6E19DC
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 21:26:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D3BB7AEE2C
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 21:26:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C50F2BE7C7;
-	Thu,  3 Jul 2025 21:27:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABE742BEC21;
+	Thu,  3 Jul 2025 21:27:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="y3WsPSGt"
-Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="Zv9tRpGk"
+Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BABB29B21C
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 21:27:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 806DC28688E
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 21:27:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751578023; cv=none; b=mAEcPmSnPxHqPKi04qwVlROpE4uDJFHb+yOlzhcK24/9dbDad1OM3FdY3At4djss+CBeNtXdDW2AIgL7mayWkbOLCdeVaNpmfc0Os5y6hnnn8gI60zcoQzo01tXnkbdkCZRenhMqaTerO7Qb9jpuZzuj1Pc0ChKMPY0IZaJocSU=
+	t=1751578066; cv=none; b=BDLcifATX5COTiWmqgtKJI1bJ6mscdupdprin0PePuSq6poWvLiZcwvvzt4QdStDTfEnQ50MtZ7xmG5clASbPxTjtoVbXl0luzCsDiuy7m1bJWwUqCh5CiAipe7MmoojFK83EgvhQ6etf7+f3V8AYVB3BvXlciyGboWlTJazBVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751578023; c=relaxed/simple;
-	bh=0eZUQlunxZ8ZDJSlGg5YWG682u4zGCezcHWcVBPA8Lc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=X9xODMtiqBELmWRmWCKqaza22coFicWJFhsO9SIDXBrMbQAAj8hDRi3JIsXWmbhhx+Ykyju3+p80igXMOuDPiLWmg86fTqh16Di/HcDjyFijiEvMwE5IK9wvV9StPBkkXmgb1jzOoUhIF3/JMd/KFBD+G35Ky414oUsjTyMjmQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=y3WsPSGt; arc=none smtp.client-ip=209.85.210.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-735a6faec9eso235830a34.3
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Jul 2025 14:27:00 -0700 (PDT)
+	s=arc-20240116; t=1751578066; c=relaxed/simple;
+	bh=pR1IIRHr8ArJ0Y+JNiMFcAvCzTUuROwWD3R7Ya4SR3Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gnVEh2r2clHsNPvlMQirtcOjUPYoOwBrP2JIQFQB5dyO48tFrY9z2HCqy1ZrI2MEpC9NXUmEYYmSE1pt99xutiEKV1SyGiPH9PEiS3psXiEo0Oevo4c+HZUxQxXam26KZVaDEJ6uRZNzUorql+O+q0qFXQMd9bv3mgJlDUdZSYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=Zv9tRpGk; arc=none smtp.client-ip=209.85.222.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
+Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7d3e7503333so39300085a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Jul 2025 14:27:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1751578019; x=1752182819; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0oJ8ujZlzaPcZCmdOGOROSSXlk7hultXH6uDj8y1p0g=;
-        b=y3WsPSGt6KofVFHQ15vJmM3j4/IE3YhCNFJXX/7eoDI9Idfalg08NbQzyTky8YYgb+
-         DZboWJZJQCMIzuBFdJMKcmP+uxMC7RCD93/YJi6G74oA4ysjv4lHdwACyHP9Q4jpcf3c
-         ktCAFiHdsD+hZHVuFa4V/Lob+dRRCL1BTkn0JeJfXn9IH107Ezg205pGN6P+qs87ei5O
-         SWU26vw47OrdvnEtc2HTcLD3oSi1USljWqxIlhN2r6BM+4TUaFuv0EpmU789CH22bqFY
-         Dro29edbfugyZgKnkG74Ve9tMdk/oIX7eVlxtYgJWlb1OvR2Bymo/MSCUHAWvRNya3oT
-         WLLQ==
+        d=rowland.harvard.edu; s=google; t=1751578063; x=1752182863; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=uU8YCv9CcoLMUipTRqeJpo55S+l6K/zToV39VgctkOo=;
+        b=Zv9tRpGkLIyynsSvDOZxT7vBTsqaNcVLmHPXaT9PLaOp7626SQUDxZsxrindIEeUBQ
+         i/GQhAiyJ7DpTuYEjBgFZC3aKwjT1fL2oxAHUdU/QJ3OEo+muWQISq36mv3f8ozQaEsR
+         VjOoNJzzLigwgVI00ry4ZBQ2ieAqt02BAQ7JKVDMM8XCDnGT/dJlOtTQjMcbN1mO/nrV
+         2Mhf06OaNv7xyq615uimzzJOdlBDU/EOdpB5IEvdSYBGR56yM5rOFqa0r3H9aJNcUTfB
+         dFUM6+FDn3ZG/xtjEJ0NeA3fOGWKCgP3gMf4wZZtblhMaEFevPcYIP6iYkmGtKiIRnLH
+         siFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751578019; x=1752182819;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0oJ8ujZlzaPcZCmdOGOROSSXlk7hultXH6uDj8y1p0g=;
-        b=KO4tCh5EpwW93bddIqljGLzjoszidKSV1rcKNYBm5iJgbeTVUUO7a58rh5clyzw0wr
-         9BkD2ydqOd0er7k7egn6OMnsehk03AvBggJfJ1PahDVxqevRPk3Mkwf0L4x5hytzqFX9
-         RS4RAvNmKNFuFSbQzlYblWmmJHl8VQy+kmOjKIPzSqFozSnf+WvH3DDd4PihHdpYp1kX
-         bKpTmU6W122Fvtb5c8gcoenO0R+C3VubQyp+sIhzf+HbnIYCNbyf2u8nt2d3YEK3YmDP
-         Bv8TWg179o9V88bifRgVvJWM/yNCYUYrJhho50HTlqeXiLqviKRcE7iGFedlumYC7xfQ
-         0AfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXzjDWo3ndUN9mlgkPQdZdEWekK3kRofFHFRhrimO318rZURBuNI6GpScMdGy4PunqRGGirhZ+al3xRhig=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxPqHPNOa7NkILBehdpqsNtZoQqKulm2JEqweOSZhD3bYJsPV24
-	ZXEvGQ4KRiiMe2Dulf4620vkpxvRCXMR19+PPCD6w9HXHmnhzGWsdUDmjWJBXovbX+M=
-X-Gm-Gg: ASbGncsbzMrxL4V+yN5glcbeXsHlgHLVollLuY9nS6P45swNBGUMe7TPCs1FRmg1Lc6
-	2ihZHDmxVMONXfzDursXrfWDPPm7kwL6aC79o7yL6XZ4Pp7u450eySvBfRBFhdm654P87GDr2F/
-	64MiCqCZzuVzicYBNq4wVmuRc0azFqahr/0+3xsnhcGJKSsdCzGmlExdSt8wHubACw0gDqaqFfe
-	F356D/SsIRZ1OC70YXmeAqJJZBg6YlKb78Sz/ebJR8me8jni82kPg3Bfg2cmGlGCHeLJuXkrApF
-	O1x+VyC9xIGIWphGyraQsidS2U+m0XBfTAmLvhiu9auZC1+Ng9t5cOEBVYKhaA3yWicDAUKSBzm
-	VcQn1mzxLt0dsKP6aGktiyuAnRxC3a+PqjNq/E28=
-X-Google-Smtp-Source: AGHT+IHgAPBq1aur/7S/6mcI4NLp7GN7zcjgxxqJEIA8K08LOieFpkPn8SZoEH61J9kn9BXdbBYAmQ==
-X-Received: by 2002:a05:6830:6b0c:b0:727:3439:5bdf with SMTP id 46e09a7af769-73ca12c508cmr453337a34.13.1751578019296;
-        Thu, 03 Jul 2025 14:26:59 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:4f2b:5167:10f4:c985? ([2600:8803:e7e4:1d00:4f2b:5167:10f4:c985])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-73c9f938346sm126011a34.53.2025.07.03.14.26.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Jul 2025 14:26:58 -0700 (PDT)
-Message-ID: <8f4b72bb-3c5f-4137-a4f9-5ce94631d3c1@baylibre.com>
-Date: Thu, 3 Jul 2025 16:26:58 -0500
+        d=1e100.net; s=20230601; t=1751578063; x=1752182863;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uU8YCv9CcoLMUipTRqeJpo55S+l6K/zToV39VgctkOo=;
+        b=d1nHzCJUjKYCQFG1yBjrLOXlbIFF8YyJ4R3YihLD4gpVJwiLKuWQlRgvE6tg6E2l2G
+         Bza6rsgGlgJ1kIk2bJ4ZL0zDsuG9dVZjPV3uB7AR3zvuH0l38HG2axWrzmg06GBpRNkm
+         pl4Li14yvAUZTJ7zi/6GTAx+MZdEmcBAEWC/zbpmu6W5syNGfaFveDM5GJGKG5ULn1LO
+         sybF2TA1JggbfZBYYuwyzKRjeNXR9WgfH+vQUsV60kiCguP4Vn8pNj5G9rxD8POPUzEk
+         KWXYy+PV/QsJlJYHY7KHHSWjfAX0odPMF2JX0WhF+YM0pRLSw6UxRgjCJBdq7BDAEzH8
+         jcJg==
+X-Forwarded-Encrypted: i=1; AJvYcCW3Pt/PS8a3v/nQdJEMJmHpkOVew74b2qzfyrSku7S8nU5nb0NuPcUwXQefbHSRj0GESWo/2qPGtX7ld6Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxox5ZA2BADvxYvfyXVbBpXmiRdF14o07yPgL9Q5ZgTtMA0FxIO
+	7RvvNJLIgnqnG3C67HFkypi2+ziMVz7W/IBidrgY2JJs7DrIvQSw8ICZ5RhAebQbBQ==
+X-Gm-Gg: ASbGnctm8LRNgL2W+nziEybT3DLwS7rPqhLXBJsXghD2WM1eXIaNQ+20jfcnUEfcNla
+	mjxdttxOLPKUxW248BONlrtZID/OICR8bTu31RLTFsd6CtaoYuEjhgQe+KKysa22JPiHjthiOfQ
+	sm1MtPIyOJP/NvEMGNgpisq8952ZqO0mTKnNQa4S7MVo+IztK2W39kqkFHVsbiqf2Sa8PC0rOsJ
+	2TtxEiLG3Sn1z5qxD11mFKYXdwuVEVJv8r+uydhzoOpVpWJvvBo1YBPM1vbTGPxkbTIraPxncYG
+	EdHr65uuu3RBaeURj2usoddNdUQ/d3H6eIebQiqXuKy76gBRoLBSRMRvb5aKXo4=
+X-Google-Smtp-Source: AGHT+IFayeYDIBHtgolb1suqZFOVVasoaMun4Cb8238l1PWvfo39hWVGjmS9btydEA6scnP1+J1ijA==
+X-Received: by 2002:a05:620a:2495:b0:7d5:d49d:3e29 with SMTP id af79cd13be357-7d5dcd0a63cmr70764785a.45.1751578063435;
+        Thu, 03 Jul 2025 14:27:43 -0700 (PDT)
+Received: from rowland.harvard.edu ([2601:19b:681:fd10::35a6])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7d5dbd94242sm54327185a.9.2025.07.03.14.27.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Jul 2025 14:27:42 -0700 (PDT)
+Date: Thu, 3 Jul 2025 17:27:39 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: Hillf Danton <hdanton@sina.com>, Mark Brown <broonie@kernel.org>,
+	Mathias Nyman <mathias.nyman@linux.intel.com>,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+	syzbot <syzbot+d630bd89141124cc543e@syzkaller.appspotmail.com>,
+	gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+	Boqun Feng <boqun.feng@gmail.com>, linux-usb@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [usb?] INFO: task hung in hub_activate (3)
+Message-ID: <b1657fab-b34f-4f52-94e7-333577cdb450@rowland.harvard.edu>
+References: <68648254.a70a0220.3b7e22.20c4.GAE@google.com>
+ <20250702080515.2160-1-hdanton@sina.com>
+ <20250703000946.2200-1-hdanton@sina.com>
+ <d73e0c09-b71e-40c9-af60-86b0dd6258e8@I-love.SAKURA.ne.jp>
+ <de8af03b-4948-47c4-b9f8-68f7e4112264@I-love.SAKURA.ne.jp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: trivial-devices: Add Garmin lidar-lite-v3
-To: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: ~lkcamp/patches@lists.sr.ht, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250701223341.36835-1-rodrigo.gobbi.7@gmail.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20250701223341.36835-1-rodrigo.gobbi.7@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <de8af03b-4948-47c4-b9f8-68f7e4112264@I-love.SAKURA.ne.jp>
 
-On 7/1/25 5:30 PM, Rodrigo Gobbi wrote:
-> The compatible grmn,lidar-lite-v3 is managed by the same
-> driver of pulsedlight,lidar-lite-v2, which is a trivial device.
-
-As a general rule of thumb, using the driver as justification for
-dt-bindings is never a good reason. The bindings describe the hardware,
-not the driver.
-
-Assuming I found the correct datasheet [1], I see a power enable pin
-and a mode control pin, so I would say that this isn't a trivial device.
-Therefore this will need it's own new file. We could at least add
-power-gpios and power-supply properties. How to handle the mode pin
-isn't so clear to me though, so might omit that for now.
-
-[1]: https://static.garmin.com/pumac/LIDAR_Lite_v3_Operation_Manual_and_Technical_Specifications.pdf
-
+On Thu, Jul 03, 2025 at 10:48:56AM +0900, Tetsuo Handa wrote:
+> On 2025/07/03 10:20, Tetsuo Handa wrote:
+> > Caused by commit 9bd9c8026341 ("usb: hub: Fix flushing of delayed work
+> > used for post resume purposes") with cc: stable.
+> > Shouldn't we revert that commit and seek for a different approach
+> > than wait for a reproducer?
+> > 
 > 
-> Signed-off-by: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
-> Fixes: b257c1a45e99 ("iio: pulsedlight-lidar-lite-v2: add lidar-lite-v3 property")
-> ---
->  Documentation/devicetree/bindings/trivial-devices.yaml | 2 ++
->  1 file changed, 2 insertions(+)
+> Sorry, wrong commit.
 > 
-> diff --git a/Documentation/devicetree/bindings/trivial-devices.yaml b/Documentation/devicetree/bindings/trivial-devices.yaml
-> index 8da408107e55..cd9d7d5eec51 100644
-> --- a/Documentation/devicetree/bindings/trivial-devices.yaml
-> +++ b/Documentation/devicetree/bindings/trivial-devices.yaml
-> @@ -107,6 +107,8 @@ properties:
->            - fsl,mpl3115
->              # MPR121: Proximity Capacitive Touch Sensor Controller
->            - fsl,mpr121
-> +            # Optical Distance Measurement Sensor
-> +          - grmn,lidar-lite-v3
->              # Honeywell Humidicon HIH-6130 humidity/temperature sensor
->            - honeywell,hi6130
->              # IBM Common Form Factor Power Supply Versions (all versions)
+> The line was added by commit a49e1e2e785f ("usb: hub: Fix flushing and
+> scheduling of delayed work that tunes runtime pm") with cc: stable.
 
+Mathias has posted a fix for this problem:
+
+https://lore.kernel.org/linux-usb/20250627164348.3982628-2-mathias.nyman@linux.intel.com/
+
+It hasn't gotten into Linus's tree yet.
+
+Alan Stern
 
