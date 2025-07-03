@@ -1,115 +1,85 @@
-Return-Path: <linux-kernel+bounces-715656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-715610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52A04AF7C30
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 17:32:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BA12AF7A6D
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 17:13:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39733585FF0
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 15:26:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE97B189BAB2
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 15:08:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26FD22135C5;
-	Thu,  3 Jul 2025 15:25:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 689F52EE29D;
+	Thu,  3 Jul 2025 15:08:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="TEuT0pQ/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TgHB/A2j"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8145A86348;
-	Thu,  3 Jul 2025 15:25:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C010622069F;
+	Thu,  3 Jul 2025 15:08:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751556315; cv=none; b=bzMOLdITlk2W3GUlusCn3NBFY9XudjKssC+WVISuXInydOBbCEg3d4o9m+yQfSjIYHbI9AxGZIAs8PTZqNG1rVLqHSYSJSTEOShE/U/98Q3bajnlvqGNIuJOslduGCm2v9a4Ymd6lJkM+U/x4PoI7l+FyCyv79mpMTOHfl5bcPw=
+	t=1751555303; cv=none; b=CWIyJ5/qLp/pbmQYyys5bqP0yTZaGNxpzZtnJxXIItAiC9q+ce0G17TbabFTuLgstUIAxiyF+UF/aM1YhLO7YHbK4V9sDXrgsT7oLEIOG3avWU+FasLxba6dCkzX+HbJ98bW9ID1NYu9jPycalQa83c1LLehtEJRvWTM+4Ny1Dg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751556315; c=relaxed/simple;
-	bh=r3+Unlqo2FtzbE9Z6aBKdXpwRkXeNoUleR1F70t0b7E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Abfsn1Fz28TJzV2HIfeo2HPDY6I3GlmEmqDnSv9hUMwQnxmL9a9Hooi+xTmCGz5G8OUW9FZwMl50M0D8VYPtLwl5K3/kAOBEMvVULRABdonrEeT/8x6H3vRvCk1LX/N5oKJ+RzGDWh7A0x+o83+irq1+xLyxSvWm6dhR2Bkqf+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=TEuT0pQ/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D69E4C4CEE3;
-	Thu,  3 Jul 2025 15:25:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1751556315;
-	bh=r3+Unlqo2FtzbE9Z6aBKdXpwRkXeNoUleR1F70t0b7E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TEuT0pQ/nkhZ5IFItc02fEx4881lwOelxh8aCbk992r235dN5Anqp5Pe7kz6Y6wcL
-	 EzY8/nupp35GIB9dtm1jztrcDuSES/YrUKzMAQziOtXjrjRXPDPB8jjGpSeQYv0H5U
-	 GUY+JqOIJAIWGIwNy83CipdZd8b6ZPeGXYVZ4fzI=
-Date: Thu, 3 Jul 2025 17:06:44 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: rafael@kernel.org, ojeda@kernel.org, alex.gaynor@gmail.com,
-	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
-	benno.lossin@proton.me, a.hindborg@kernel.org, aliceryhl@google.com,
-	tmgross@umich.edu, david.m.ertman@intel.com, ira.weiny@intel.com,
-	leon@kernel.org, kwilczynski@kernel.org, bhelgaas@google.com,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org
-Subject: Re: [PATCH 1/8] rust: device: introduce device::Internal
-Message-ID: <2025070329-ream-arrogance-0737@gregkh>
-References: <20250621195118.124245-1-dakr@kernel.org>
- <20250621195118.124245-2-dakr@kernel.org>
- <2025070110-renounce-blinks-b28f@gregkh>
- <aGO7a3dsRdcjdBnb@pollux>
- <aGPVcMEOImBA8RLB@pollux>
+	s=arc-20240116; t=1751555303; c=relaxed/simple;
+	bh=Gb914pc7tsoCoXqiZnvsCRpUXUTAG302g/C/bqi52gE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Rwx+CrD04f2tQ7361V4+SLHH30J9y59qN9nGxPAlrFlmYFsZVTLpELCNCyVrXtJhdoO4jJEO+2jgjXRAxG8GAjtGO5/O196A0ga2avwi8X21vl8tQkX/DUn1gcnYhTJPD9vw2D+8kceWcnFLzTN9pMVoBT4acVgW+Dqsy8aZZyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TgHB/A2j; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C9F9C4CEE3;
+	Thu,  3 Jul 2025 15:08:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751555303;
+	bh=Gb914pc7tsoCoXqiZnvsCRpUXUTAG302g/C/bqi52gE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=TgHB/A2jJ95+PyjWVexyghrisZx/+KIm3popnDjXIuedv/S7mYBFEi1rPNHklq/jZ
+	 OYPyLyTcQS4L1PDRdN9iEVkLRhU1D5TdnkWwR/SOuKloYIW9trutx91CQXkb9VVYLg
+	 D1M72Iz5RTYNPE58xveByR6e86Zkw4Mmg6DLViWfqdVR3q6QyR+Om0/b1Js7k4BWPW
+	 Trt1h2+Ik5JK8geQfanZ1jkvPL3AWzNMLk/YV3vFeKxXku8SGAgrE8+mKobDZEUasa
+	 ZRp3S9TMRWjzmqxlVfOS4Urv4vW7nEC1UQsWDMSI6ZVHzUq5oIA4X3pXMdLClX8tSX
+	 BGa+eiHqw3tJQ==
+From: Pratyush Yadav <pratyush@kernel.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>,  Pratyush Yadav
+ <pratyush@kernel.org>,  Michael Walle <mwalle@kernel.org>,  Miquel Raynal
+ <miquel.raynal@bootlin.com>,  Richard Weinberger <richard@nod.at>,
+  Vignesh Raghavendra <vigneshr@ti.com>,  Rob Herring <robh@kernel.org>,
+  Krzysztof Kozlowski <krzk+dt@kernel.org>,  Conor Dooley
+ <conor+dt@kernel.org>,  linux-mtd@lists.infradead.org (open list:SPI NOR
+ SUBSYSTEM),  devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND
+ FLATTENED DEVICE TREE BINDINGS),  linux-kernel@vger.kernel.org (open
+ list),  imx@lists.linux.dev
+Subject: Re: [PATCH 1/1] dt-bindings: mtd: jedec,spi-nor: Add atmel,at26*
+ compatible string
+In-Reply-To: <20250523155258.546003-1-Frank.Li@nxp.com>
+References: <20250523155258.546003-1-Frank.Li@nxp.com>
+Date: Thu, 03 Jul 2025 17:08:20 +0200
+Message-ID: <mafs0frfd1fdn.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aGPVcMEOImBA8RLB@pollux>
+Content-Type: text/plain
 
-On Tue, Jul 01, 2025 at 02:32:48PM +0200, Danilo Krummrich wrote:
-> On Tue, Jul 01, 2025 at 12:41:53PM +0200, Danilo Krummrich wrote:
-> > On Tue, Jul 01, 2025 at 11:26:47AM +0200, Greg KH wrote:
-> > > On Sat, Jun 21, 2025 at 09:43:27PM +0200, Danilo Krummrich wrote:
-> > > > Introduce an internal device context, which is semantically equivalent
-> > > > to the Core device context, but reserved for bus abstractions.
-> > > > 
-> > > > This allows implementing methods for the Device type, which are limited
-> > > > to be used within the core context of bus abstractions, i.e. restrict
-> > > > the availability for drivers.
-> > > > 
-> > > > Signed-off-by: Danilo Krummrich <dakr@kernel.org>
-> > > > ---
-> > > >  rust/kernel/device.rs | 14 ++++++++++++++
-> > > >  1 file changed, 14 insertions(+)
-> > > > 
-> > > > diff --git a/rust/kernel/device.rs b/rust/kernel/device.rs
-> > > > index 665f5ceadecc..e9094d8322d5 100644
-> > > > --- a/rust/kernel/device.rs
-> > > > +++ b/rust/kernel/device.rs
-> > > > @@ -261,6 +261,10 @@ pub trait DeviceContext: private::Sealed {}
-> > > >  /// any of the bus callbacks, such as `probe()`.
-> > > >  pub struct Core;
-> > > >  
-> > > > +/// Semantically the same as [`Core`] but reserved for internal usage of the corresponding bus
-> > > > +/// abstraction.
-> > > > +pub struct Internal;
-> > > 
-> > > Naming is hard :)
-> > > 
-> > > As this is ONLY for the bus code to touch, why not call it Bus_Internal?
-> > 
-> > BusInternal is better indeed!
-> 
-> I now remember that I first wanted to go for CoreInternal, but then went for
-> just Internal, since it thought it was unnecessary to be more specific. But I
-> now think CoreInternal would have been the correct pick.
+On Fri, May 23 2025, Frank Li wrote:
 
-Thanks for the long explainations that helped out a lot.  As I said on
-chat earlier, I agree with you now.  Can you respin this with
-CoreInternal and we can queue it up?
+> Add atmel,at26* compatible string to fix below CHECK_DTB warning:
+>
+> arch/arm/boot/dts/nxp/vf/vf610-twr.dtb: /soc/bus@40000000/spi@4002c000/at26df081a@0:
+>     failed to match any schema with compatible: ['atmel,at26df081a']
+>
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
 
-Worst thing that happens is the api doesn't work out and we rework it
-based on real users :)
+Applied to spi-nor/next. Thanks!
 
-thanks,
+[...]
 
-greg k-h
+-- 
+Regards,
+Pratyush Yadav
 
