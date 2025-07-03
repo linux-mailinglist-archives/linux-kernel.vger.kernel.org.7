@@ -1,327 +1,184 @@
-Return-Path: <linux-kernel+bounces-715091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-715095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB1EEAF708F
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 12:38:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 329A8AF70BE
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 12:42:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE7CD3A847C
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 10:36:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E55A7B6751
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 10:37:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 190942E4252;
-	Thu,  3 Jul 2025 10:36:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 372312E1742;
+	Thu,  3 Jul 2025 10:38:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="ZovBS5k5"
-Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazon11011050.outbound.protection.outlook.com [40.107.130.50])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Xke89Uvp"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2067.outbound.protection.outlook.com [40.107.220.67])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B1852E3B0A;
-	Thu,  3 Jul 2025 10:35:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.130.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A1C724B26;
+	Thu,  3 Jul 2025 10:38:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.67
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751538960; cv=fail; b=ZrbYqpYcEPBZgcVf1nWCKdxEZQSikqKSpVinb+rGEmarfuqtHBatZ7M+q6kJ4i4ef+THd+GuguwciiHbJK/unvo91GI1Yjm7O5fw78jw5rKAejQRAHer/Hy9A5IqO70R2zta7gkm4C+MblWJ+HSmvRImuECNgBbCha2nU8mLbeY=
+	t=1751539134; cv=fail; b=WZtXrubPoAEzZGaSVOdQs74cRYUR0sKQNPTrkAI5JBP+HlVh7PssZA6SfovdNcDdlQFDoTLyplUFez+W1ubEUiUt9RXL3iKFfu3p0F5NNg3t60nuV7dm1JVJK4svDsDYtdk8OimIpU8MXkmxcjlV/OVXm7rmNWyyY/17G3uBJJg=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751538960; c=relaxed/simple;
-	bh=X1r+fS34EO+oP6hvm2GwMZ6ZYVuh3L0ke5KSqG4aZbQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=EGwF0fqM576kmXvP6PFFp1abKtz07zGIfzFgm4Q1Nkt8SeaXMM5b/IY0bDccvZOr+FSgn0r85GyJKmUX99LQeXfSB69J1/T0rjHzmFRUHGPCH7hpeJcK7vvu6nQ704P13pO2Re7JqqVC7qVu0QWh7wY1KK0ABmZbHxZrVRONilY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=ZovBS5k5; arc=fail smtp.client-ip=40.107.130.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	s=arc-20240116; t=1751539134; c=relaxed/simple;
+	bh=bOXaV8lSkG3yms72/8MB2m2y66XqKPi8A/Ur5uHSnxA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=PdkHx70BrKQ2+O1TLJX52PLpk84goBU2uCSU1fiKeQ+/38HyTv8F82x8vHSOJFdt7or0X4B1wnCpOuW1ch4irN/zDN9L2AhKAq4uxCNTYlNtOnhWvRuWIfPMkFFghV0sYi85XykGzaf1oKN97pghOrXFozUMci8F3ythOXancCE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Xke89Uvp; arc=fail smtp.client-ip=40.107.220.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=lkbp4rh+NZHaMKf1TQu46Fdz3DeNvV7rj2GzVhHFdedrVDmO8By6UEUINSywradSXEMMxonqEFwZGgu+/AoCYXAcW8svmaBOudZomWOjbxb3AUzomlJ+mZZ85hc7HZO5CZswjYPX6gxf3v2Xv/SHfYXge4rUnXgapf+HiAR55lUJ4EMWm3q1s9LDlPthJOW8NPdN/iMF+OfIP+8HXeURP8g/4WEObeTblgm4UU7CEWKFAG3Ms4JvjnlbZ5A165b3xRl2QqdkzyTFJMkZrLucyE0+Lfhml5arGXPTfKNyqDwe4eaeaYUTH6zesPwKeEi+XmXoBZmTAOt67eg6ofADow==
+ b=aL/IvOJ8+ZtNML+DSKnX+h4P/RrXw31K3d70q3pbiwwfMhGhzzRtPSHzFpoZm2OA6VTOYVDIbVuXjPvD6ji84+VN4SWUY5ylA/07nRba9emT4LKhbPzIMh3L+tMxgPQ1xfLUma76HtSzt5StcdLcjzjS7qWAtEXtU8QAITvAichtaSK/x3LJZ2IUuKc+2muSUvFFUHf/wJ3c02+c+gUeTcMK3igOSX5o3mCBaGeATyT407kC0uUILdW1SJb7HK0CCI3b+SEBgYsBPV0ukaiiRjO0HMJ2FrSLxWQzBlp1bKl3pNjpnzWIlQ8/afa4Qvk9QCuASW2KXXQiXpRPVQ1Skw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=aSKy1xmXRvzEA2tWhXJskNFy7c382nQM50HD36q4zLI=;
- b=MXSpTaU3vZbitORJ+jM5lZglFHUPBZnuFZvPOxoTr5i1vzL+7OwU46XKB4Y+bprXSIihDxOauAyUPxWiEaIktfSeBmfShG+q8GDU/6LjMjcC94b5212oFvZP2AEgxr3H9Td5thqm9xdCjit6wF8RoV2BH6Y6n9FrlxyOxgK5cOCjdyFPw5zTwy32mONxhSHkeUdd0tKT+TZXQ1jA2PgEZovHk570kZcBOG0LcmPMhLR+O0+44df6ClaJZyDntF6TufMCIja43Ej10OXB3C/3ckCfYW30Bl0nqZTXCM6RqLdWvsxuP4Qyq6vbVnwpcohHIOWBXojJUGSvOD36z2dG4A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ bh=k3ljgyHqnVcMuqZITx1T0tvxKlSgfYPIJt8M/PtRyLw=;
+ b=HJkA0WV62wAtZBLNcJ+LKJn30wCkIWhenOFv5AmAth0SsCLgg+xk14NoKWfyIzVDIWvUVbEM+s1fFrWlsUQbckwOHSXACcOZVfFGEvBtemMPKEPA8FARuzmeu01ZxnGLC1q/WSTbB0VnqjjB+7qHA8aFc5Acr7fLYVMhq1XUFxbwqWYzXCiohEQqtyZfwTt5cEwQs0jJjs0H6vQVuqemyFq0Ke+yNcbvdWEaeJ5+2IXPam3SuA7HDPatbJwZ52lt/5oOEp0X8Pgrl9R39Tj0Mna9Eg9ASfXmuBEpf/LPnYPzbRfnAsqiu4nLMTA1SJ96ANbHSYPgzLinAAV/aTr14w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aSKy1xmXRvzEA2tWhXJskNFy7c382nQM50HD36q4zLI=;
- b=ZovBS5k56KmUue0sQ+yZCzRJBrXAPMu1r0X10/mArEQbB/qMQ2dwitNzPkC1x2k56a+cIigN/Lf0hODgl5driW02Nofof3pb7/0B64mCtbkprFhg/O7c7vxfvH2bqxxqzXIeCfDkpx9N3P6CmhGPl8hmKH+5cbYKI5jpucH6rGY3XvNBFITstfTtw+vvhB8ckZXqKrgYelJDZDUS5jnt+SoinvSggvWKo/MMDJpiYNRVd29ZbiqvhAsTDhvkHdWAZREfvKVBcejhfg09gtNIKZ3DtNpAAcFduSOBdGJ4mZEik9U00MbzBBVe3FT1ZdwObmTYxywtodeQ9j36PZfy+Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from DU2PR04MB8822.eurprd04.prod.outlook.com (2603:10a6:10:2e1::11)
- by AM8PR04MB7826.eurprd04.prod.outlook.com (2603:10a6:20b:234::12) with
+ bh=k3ljgyHqnVcMuqZITx1T0tvxKlSgfYPIJt8M/PtRyLw=;
+ b=Xke89Uvp/EvhlrJNvilz+UMsY2U0ez0vJnRBcvxTACw30CCVviXiWmR9mUm4Nb8O2yR79VGDF7/TeCztPe9d2vmiNz5AAQUiSalp45N7Gpxz3qXqzTmMYVzW5FlmkraQOJ0pr0y1JdeFEeqX3KmJ9PoEi9OPpxJQrX3srffzvhGRhrdSTGnJovsVxJV/Ue2ZkSJjts3FT/aOdtYX1ivGsiLZQRRQDPb523ab1IAA/DsalZkxuCmVnxzGeRyBLRsUa2NI5zfNfNBleUTZI9E1v96JfoiC9GIL//iIVkiqnQvatTCoYG3i85FtVr4wTWQjjaOHmvcM0YPiGhb4Og6Rlw==
+Received: from CH0PR03CA0185.namprd03.prod.outlook.com (2603:10b6:610:e4::10)
+ by CH3PR12MB7522.namprd12.prod.outlook.com (2603:10b6:610:142::17) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.20; Thu, 3 Jul
- 2025 10:35:55 +0000
-Received: from DU2PR04MB8822.eurprd04.prod.outlook.com
- ([fe80::4e24:c2c7:bd58:c5c7]) by DU2PR04MB8822.eurprd04.prod.outlook.com
- ([fe80::4e24:c2c7:bd58:c5c7%6]) with mapi id 15.20.8901.021; Thu, 3 Jul 2025
- 10:35:53 +0000
-From: Xu Yang <xu.yang_2@nxp.com>
-To: ezequiel@vanguardiasur.com.ar,
-	mchehab@kernel.org,
-	laurent.pinchart@ideasonboard.com,
-	hdegoede@redhat.com,
-	gregkh@linuxfoundation.org,
-	xu.yang_2@nxp.com,
-	mingo@kernel.org,
-	tglx@linutronix.de,
-	andriy.shevchenko@linux.intel.com,
-	viro@zeniv.linux.org.uk,
-	thomas.weissschuh@linutronix.de
-Cc: linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	imx@lists.linux.dev,
-	jun.li@nxp.com
-Subject: [PATCH v4 3/3] media: stk1160: use usb_alloc_noncoherent/usb_free_noncoherent()
-Date: Thu,  3 Jul 2025 18:38:11 +0800
-Message-Id: <20250703103811.4048542-4-xu.yang_2@nxp.com>
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.23; Thu, 3 Jul
+ 2025 10:38:49 +0000
+Received: from CH2PEPF0000013D.namprd02.prod.outlook.com
+ (2603:10b6:610:e4:cafe::c1) by CH0PR03CA0185.outlook.office365.com
+ (2603:10b6:610:e4::10) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8901.20 via Frontend Transport; Thu,
+ 3 Jul 2025 10:38:49 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ CH2PEPF0000013D.mail.protection.outlook.com (10.167.244.69) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8901.20 via Frontend Transport; Thu, 3 Jul 2025 10:38:49 +0000
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 3 Jul 2025
+ 03:38:40 -0700
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail204.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Thu, 3 Jul
+ 2025 03:38:40 -0700
+Received: from sumitg-l4t.nvidia.com (10.127.8.14) by mail.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server id 15.2.1544.14 via Frontend
+ Transport; Thu, 3 Jul 2025 03:38:37 -0700
+From: Sumit Gupta <sumitg@nvidia.com>
+To: <treding@nvidia.com>, <jonathanh@nvidia.com>, <robh@kernel.org>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+CC: <tbergstrom@nvidia.com>, <bbasu@nvidia.com>, <sumitg@nvidia.com>
+Subject: [PATCH v2 0/8] Support for Tegra264 and Tegra254 in CBB driver
+Date: Thu, 3 Jul 2025 16:08:21 +0530
+Message-ID: <20250703103829.1721024-1-sumitg@nvidia.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250703103811.4048542-1-xu.yang_2@nxp.com>
-References: <20250703103811.4048542-1-xu.yang_2@nxp.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: MA0PR01CA0050.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a01:ac::7) To DU2PR04MB8822.eurprd04.prod.outlook.com
- (2603:10a6:10:2e1::11)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-NVConfidentiality: public
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU2PR04MB8822:EE_|AM8PR04MB7826:EE_
-X-MS-Office365-Filtering-Correlation-Id: 78481ca1-c75e-42e1-6550-08ddba1d6322
-X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-TrafficTypeDiagnostic: CH2PEPF0000013D:EE_|CH3PR12MB7522:EE_
+X-MS-Office365-Filtering-Correlation-Id: efc30e90-ecfb-46bd-64b4-08ddba1dcbd3
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
- BCL:0;ARA:13230040|7416014|52116014|19092799006|376014|1800799024|366016|38350700014|921020;
+	BCL:0;ARA:13230040|1800799024|82310400026|36860700013|376014|13003099007;
 X-Microsoft-Antispam-Message-Info:
- =?us-ascii?Q?4CWgaBNi5NgkR+liz/zcLbMwk9nqBoHo4Dr3JvYO9J8nKMqSwEfjyT7hLgac?=
- =?us-ascii?Q?UYElwWBmpO36jS7n0d416NMvNYCqA36QFlGw+pkJTGr9dEcLoyJHjUApSvVt?=
- =?us-ascii?Q?A54v8fdAWX1koyBCnG0gtoN4LZLRm8O6og2jG8D3uk3xBDX2E5exFH6dVdgS?=
- =?us-ascii?Q?cPCTTou/Rj3avOG9WNga4MU6009Ok8Z24IVvCbSORiZJraUml0tsgU7yJfWY?=
- =?us-ascii?Q?ToDR6JYvvb9S/cHgJtnGo0pVaBzIev8NasoQiKgNbEr8nhM4A5Mtcr2sRFEj?=
- =?us-ascii?Q?g+43/WXs3swhSSgsjkn/T+MxEMH+5s0fmySAjVQ1BmSvqG/yF6bR4YUicjZm?=
- =?us-ascii?Q?DmDKrCBAzI9wIFPUkIzFeo29UCNaEPLpMJt7ywI0iZxCpbd2J8+CiOQuTZPU?=
- =?us-ascii?Q?/O0nkUfh6SUSmR6ILc0CyoTYXkgWiya49+Ziq2Jo+7vevhTm1ogk0rQtuXG6?=
- =?us-ascii?Q?fQG2owpeqaERcu/H9mahFwECFRyCBfh8IZlX1iH41epmnbO05By3ivWUKuRa?=
- =?us-ascii?Q?2qOpcy4JaW22yqVH9m7KkUq745Vc4MObKEnyC6BPORZDof+m5lH6heokC4T+?=
- =?us-ascii?Q?1gMiPLWi8nF/TwMhg6USwc82zB1hzZVIBvEmABhStSGCTAIE3fCxtNO8X1Qp?=
- =?us-ascii?Q?KTwYS6kn5OsO/lCU1Yqo9aEzfXQiBrfMfF9trHE/qo7VRtapJbTh0jOqKAq/?=
- =?us-ascii?Q?DivH73w2Qbc+tr7BK6Fu+fhP8WPxc0OJ2nX20YIEvGQh2J/BtLC2Q7vE7y08?=
- =?us-ascii?Q?1XQJ5xQxCD0fEMHsW6cPszEmCq5VCk/rSFG36gCqIkBNU7+xd2vIxNjV3iSQ?=
- =?us-ascii?Q?EQy0ZFhJFVKcnU8MCsAH3Wm0QBctuuHLIWYTlgZMTkTO7c63NfntkEv7lcgb?=
- =?us-ascii?Q?CjmQbJDptKmFfFnClzWuboVQPpO9EyuowGmv2kNz7J5z/RxvkK+H93FGl9xz?=
- =?us-ascii?Q?ZMlM9XVpZ5xzoC8N4SZf295HquoZm786HIfMflK/zBSHMWp3BMDQG2RSgvl4?=
- =?us-ascii?Q?GJ4TN6rtK2cRYcb6R/jtWoVOFY5N/TxHCxsYiieaXoZcFA9XD/PVcBE39MTl?=
- =?us-ascii?Q?GbV/hymuODqtR7hTnkn+2uLvp2gA3ivaQNmld70ERxkm48U4/JDttjAS5qF9?=
- =?us-ascii?Q?Xj8EbObz5lTKhWL4ujfkhofleTX/TnuBHU2SVgGOWah+3arbdxpwWV6Xn6ML?=
- =?us-ascii?Q?QOWawfccgL2DOdzCMUDGKcWGpkBA+BJ3LNmkNMJykPHTG/+UjP2wku1BTrgM?=
- =?us-ascii?Q?b8xRxXwR4z7sfrQBUllF9UzZRsyc0j8oSFg8R3o1Qo5r02KU8/C5fwJAtj1x?=
- =?us-ascii?Q?KaqsoWPZaoRre7DbiRZtLn9fp1MGFM+V5iD/Z5BcRh+APixHHD1jFzybmjtV?=
- =?us-ascii?Q?eCafn+B752auUURyGGzk1ZJiO1iC1p3QTAYgJApCesRjQSH689ZDztbS63O5?=
- =?us-ascii?Q?9h3KT3DY61gAxMbCPdoI07QJvXI3IPg0Ix9c2tmJ7ILEOvVq1rHtNrM56fNw?=
- =?us-ascii?Q?LgCpWjWSwX/Ka1Y=3D?=
+	=?us-ascii?Q?TF2ekwkF09a005fFqA8iK+RXcG9Y74VFpOMPrA3qsNadkY8J/FFkFR6X2MkF?=
+ =?us-ascii?Q?ao+n34ZCKRkUAnG+u2MWJK8WFc2SrA6jJ/oeH3vMnNn8ZWgTv6vfsklhs8Gh?=
+ =?us-ascii?Q?dP1SOxmmup0ZIjaqe6RZdiHarWLBoy08uQ6GnE3DS/FDm73TKA53WFTM/OIQ?=
+ =?us-ascii?Q?Ee4qsEPj6uWqksVDjvbYYJSdCnY9r9Y8rAGfw4Id+p0rYd1ly0TK8kZWA72a?=
+ =?us-ascii?Q?0xruQnvdu/vFTf0TFaF7vC11yHEnIzZ3ZGZ8queAJAa3CZGhIYa7Fo/18l/A?=
+ =?us-ascii?Q?uwu71SFkMRfs2MRYHeioPVrtRybmzGtMzCmxXixdzvFGvys31Vx12wTsdCU9?=
+ =?us-ascii?Q?iVQrhWoE7b/CWHrS0rciuwxlWP4BKm4pgssuXQ5F+VeugAqr2Kt0P76Sb7Lq?=
+ =?us-ascii?Q?WV/FN06mAt2Xn4BUqLxzxzr6IA8vz8fphi7RXtSygdutiSGLHxyJWFU/hnfh?=
+ =?us-ascii?Q?mWGwXmfDyKwMvCWVRg+v1xlpWw5qxTwAUB0sV7474mLV2Ddm9SHJav4UWWGM?=
+ =?us-ascii?Q?y4OREQU8sYuy9GvL4d6xlmGVNg3bFGUGlmqXXX7hrmfk4iU1Ozwcc8IjhtBI?=
+ =?us-ascii?Q?ECLeS6hr6RDo3YlweqBfTYzAmuO9JB/+gVPmS86HMxd5zCgBf1ZcQFwf8FTn?=
+ =?us-ascii?Q?PFCgtOlhV/jVfArROPJGIvnf5yyPTvygY7j4EBOIA+L0RC1fZ5U9jgAZP7L5?=
+ =?us-ascii?Q?hw/kLZXJzGxTa2JwW2ahppu9kbIUEJpkmDuTDkNPtWmjBsTDKmmlCe5kwVL9?=
+ =?us-ascii?Q?uCzAn8Ta9USGPyWgiswqTFJK5+K5wsTsNChqb7WA+RUdaYzY/K0LZEkxx/2b?=
+ =?us-ascii?Q?DVZ/m4u0YhjdHt6V0Yty+DBWkxUyuMYtSH7o305BNF0d25MPcKHC1+9FWfXd?=
+ =?us-ascii?Q?hmBbwSqY26ev0ykmIcwBFkEBw3SY/A1pgMZVCzvNtx8Wpbgg7hGn7UNvLXoM?=
+ =?us-ascii?Q?bKlZkU9oi+FIEFg0BPwGqcCkEzMPCvoly3Z7n8Jh0v3OupJYT0DhxmqsAmCQ?=
+ =?us-ascii?Q?Hcx9usjmRsCzS1q4LTP+q7mlvqhg8zuuqiPD9B1M+zGTbFmCxJE8SPgprMLn?=
+ =?us-ascii?Q?zlU/brau8MHvaKWq6v+b5so8b02auqDmPuqoY6oVwKtzBkeOKIlZ8DAIxg8M?=
+ =?us-ascii?Q?3hoUdKcUVP3ZZS9vxn+aAu2uGR5FNYqceJlimVOqtnRjLPHa5cG7Y91pcf64?=
+ =?us-ascii?Q?BC9fmBXsQ/SQ2vj4oCWj5TFAJPFZBi2zRia9He+HOoRdON87vjuJyt041SM5?=
+ =?us-ascii?Q?mt7ko+ZU3iSnsgLAPrD9TlKLxvLoMQWB/TNjrUQTkkL/JK999viVBz1z+9Qi?=
+ =?us-ascii?Q?k61k0wty/Yu1g21cxcXyM6OJOG8hKixDJ7kyRHxFQquSul0rvtKve3D8Jy4o?=
+ =?us-ascii?Q?FqvevX76DKsFAikdlCUHXUcqPlV8RFJG+NlwdsHa8SLTTG3Zh7z6NM/1yi8w?=
+ =?us-ascii?Q?IgdMswJzjJhxJYGHZ68frrAPZ1n7w4WHoXX/80H3glT/3jvCCdhF6yarWpnD?=
+ =?us-ascii?Q?lHdN1GVU/62KIwizkE+Gdi9EowhQLlC95BC5q3rEkCxcFw5zAf9HnjEaTg?=
+ =?us-ascii?Q?=3D=3D?=
 X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU2PR04MB8822.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(52116014)(19092799006)(376014)(1800799024)(366016)(38350700014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?us-ascii?Q?91/7lKicjMKvcdrbgqZhkbFMmRPex3przcSg1+15YZi/F/NtC97A9oN21Dfz?=
- =?us-ascii?Q?XFtU4oONl73nIqLMlSo8tH2nGVQh1KUejh/9i77KnCRQsFe8wIKyiabub8bQ?=
- =?us-ascii?Q?jRmPw0SFz1fS6Ykb6AbXyk3A4wmnBWC6ioLjKXNDplClEUcKxZN2vMKwFC3M?=
- =?us-ascii?Q?KjrQavVdBPMWTcdiPZRLqb7LvDpcn2CR0AuJhD6h7Jl+LGumNDQs+q0b4iA+?=
- =?us-ascii?Q?NBR1ZCIXG7S+g7TAMp2G/jaThvd4J/bFAjgHc/5R9qlTJIQRQKADzxJcUvW7?=
- =?us-ascii?Q?2CEZ3fWFKaxhVijixOMCaqTS9IcVmNKzQm6Oxe02oVhn/bcHXbsrAfHzO+Il?=
- =?us-ascii?Q?n6xp4cZEpcPo6kwKODIx+5uUj8sTmlGdy5gjUHsIKmgi6gV4lpicsEdOBdNa?=
- =?us-ascii?Q?lrdkwDZDtipv2RJ9B2BS+JchKu4M3Ucite3e485DlqvwIfBUGLgXAZa/40h0?=
- =?us-ascii?Q?BScHDB9G5NN1s16mJD1eMvh2oZQ+fsyRpWkAcfI9qMdSD34tbHoApfAGozoO?=
- =?us-ascii?Q?HysHDEFv8AWNIje6rfZ0U7xPlz+Y/r0SrblXtz5t3B2vrsou7NZg+fF30Zxx?=
- =?us-ascii?Q?sPwa9yr+WiKPrzFW1ndkHaz44471jZf9ZiBx1meIgN1qoAyhwl4a6VF4p80g?=
- =?us-ascii?Q?VtDTO927LHWPzCUYpVS65uedJEbvUeQITOIGbqlOeW+NFbIEe3h1cKpsUc+c?=
- =?us-ascii?Q?mR9wv8tEKYwKIb+qEP5GPkAVSSeB25yadAR+fml3tD/LrvlCsSeVVsveq4x1?=
- =?us-ascii?Q?rAC3UzbkNoO/BG8OfSq61z4pXDlj8znry5BtNaSIB9K1iZ+dR7e46wmA7oCK?=
- =?us-ascii?Q?9wwFwZH5WQKe9O3XyPODtrTmU0+2CNv2bVWowSJiVakbphJ/qYR5dQ9N78/e?=
- =?us-ascii?Q?ncRq2o0gNRNKqFLvBWbiKfI0NTd/CeHgnNcBqvngLfJkYNgDDuDDdKPPqKJF?=
- =?us-ascii?Q?o+y8T/gLp8352DPNK/4vBHRIfyy5HArnKStFTMSgpkCHhbYKtkvJB8FORGBQ?=
- =?us-ascii?Q?wBmqN+Pzetevwvd0oS0HJTvsGKAQWZgaEEwnqXToiivUspWIVscbRN8wshj+?=
- =?us-ascii?Q?9x2Wd8Uy9a/pVPJmhAmreiyn21aVIvgJup9J0z+P0kHBMnCTFR1qqER0YvTz?=
- =?us-ascii?Q?D7KExAm+vpepD9SdaPiZop8q7oZv8VQ5VcOzHAM+8x5gCZGWYzPl7shluQ0u?=
- =?us-ascii?Q?fqAqxix0GjdvjVJFSixC6b7f/2h0P3a4EhbJKetNz10fV+2VZImfXQsyJt8D?=
- =?us-ascii?Q?miGbqbjVD1a49FlrnBOka+TITcDpYWLoJ7dgTPXHFO7gvSYzZvirCjU8Ao8q?=
- =?us-ascii?Q?Z0QUy/qqLOsf4X+MZKAFemNbyh8Xl1WC9IKhYwb6UVk8dXjhhXLpXT/EtEKt?=
- =?us-ascii?Q?GdqFVUC1eA3uTjVFVy22osP88uGT4dThVasTQXt+5E3VU3AGqKAMNwUMb+DV?=
- =?us-ascii?Q?kOYqYLQo5XwN6EN7hokCvzfD3j8NfEa863iFvxnXYYaRzGgov2bXLtKp2cXc?=
- =?us-ascii?Q?o+F2/l3JiojW79fupDE/HNfXSqmrxHd4L4rOlS3/riAHl8kmsn56RLeB/qOC?=
- =?us-ascii?Q?dWZ99YcPMf9gCaRXvX7rSPAmQBaENTlJdQBQrntm?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 78481ca1-c75e-42e1-6550-08ddba1d6322
-X-MS-Exchange-CrossTenant-AuthSource: DU2PR04MB8822.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jul 2025 10:35:53.8485
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(36860700013)(376014)(13003099007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jul 2025 10:38:49.1463
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: cgPJruMX09ikIIhpM/llUFuklRVxoBDQy7QzroWbTr/IrfFRpZVMiGPZ1RdjqvqEY5ONwjKORHZ7ZnA05+QoQg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM8PR04MB7826
+X-MS-Exchange-CrossTenant-Network-Message-Id: efc30e90-ecfb-46bd-64b4-08ddba1dcbd3
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH2PEPF0000013D.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB7522
 
-This will use USB noncoherent API to alloc/free urb buffers, then
-stk1160 driver needn't to do dma sync operations by itself.
+This patch series adds support for Tegra264 and Tegra254 SoCs in the
+Tegra CBB driver. It also includes a fix and some improvements to
+make the driver more generic to add new SoC support.
 
-Signed-off-by: Xu Yang <xu.yang_2@nxp.com>
+The patches can be applied in sequence. Patch info:
+- Patch 1: Fix.
+- Patch 2: Change lingo from 'Master/Slave' to 'Initiator/Target'.
+- Patch 3 & 4: Improvements.
+- Patch 5: New feature for HW lookup.
+- Patch 6 & 7: Tegra264 SoC support.
+- Patch 8: Tegra254 SoC support.
 
 ---
-Changes in v4:
- - no changes
-Changes in v3:
- - no changes
----
- drivers/media/usb/stk1160/stk1160-v4l.c   |  4 ---
- drivers/media/usb/stk1160/stk1160-video.c | 43 ++++++-----------------
- drivers/media/usb/stk1160/stk1160.h       |  7 ----
- 3 files changed, 11 insertions(+), 43 deletions(-)
+v1[1] -> v2:
+- patch 8: change name from GB10 to Tegra254.
+- patch 6: added ACK from Krzysztof
 
-diff --git a/drivers/media/usb/stk1160/stk1160-v4l.c b/drivers/media/usb/stk1160/stk1160-v4l.c
-index 5ba3d9c4b3fb..715ce1dcb304 100644
---- a/drivers/media/usb/stk1160/stk1160-v4l.c
-+++ b/drivers/media/usb/stk1160/stk1160-v4l.c
-@@ -232,10 +232,6 @@ static int stk1160_start_streaming(struct stk1160 *dev)
- 
- 	/* submit urbs and enables IRQ */
- 	for (i = 0; i < dev->isoc_ctl.num_bufs; i++) {
--		struct stk1160_urb *stk_urb = &dev->isoc_ctl.urb_ctl[i];
--
--		dma_sync_sgtable_for_device(stk1160_get_dmadev(dev), stk_urb->sgt,
--					    DMA_FROM_DEVICE);
- 		rc = usb_submit_urb(dev->isoc_ctl.urb_ctl[i].urb, GFP_KERNEL);
- 		if (rc) {
- 			stk1160_err("cannot submit urb[%d] (%d)\n", i, rc);
-diff --git a/drivers/media/usb/stk1160/stk1160-video.c b/drivers/media/usb/stk1160/stk1160-video.c
-index 9cbd957ecc90..416cb74377eb 100644
---- a/drivers/media/usb/stk1160/stk1160-video.c
-+++ b/drivers/media/usb/stk1160/stk1160-video.c
-@@ -298,9 +298,7 @@ static void stk1160_process_isoc(struct stk1160 *dev, struct urb *urb)
- static void stk1160_isoc_irq(struct urb *urb)
- {
- 	int i, rc;
--	struct stk1160_urb *stk_urb = urb->context;
--	struct stk1160 *dev = stk_urb->dev;
--	struct device *dma_dev = stk1160_get_dmadev(dev);
-+	struct stk1160 *dev = urb->context;
- 
- 	switch (urb->status) {
- 	case 0:
-@@ -315,10 +313,6 @@ static void stk1160_isoc_irq(struct urb *urb)
- 		return;
- 	}
- 
--	invalidate_kernel_vmap_range(stk_urb->transfer_buffer,
--				     urb->transfer_buffer_length);
--	dma_sync_sgtable_for_cpu(dma_dev, stk_urb->sgt, DMA_FROM_DEVICE);
--
- 	stk1160_process_isoc(dev, urb);
- 
- 	/* Reset urb buffers */
-@@ -327,7 +321,6 @@ static void stk1160_isoc_irq(struct urb *urb)
- 		urb->iso_frame_desc[i].actual_length = 0;
- 	}
- 
--	dma_sync_sgtable_for_device(dma_dev, stk_urb->sgt, DMA_FROM_DEVICE);
- 	rc = usb_submit_urb(urb, GFP_ATOMIC);
- 	if (rc)
- 		stk1160_err("urb re-submit failed (%d)\n", rc);
-@@ -365,11 +358,9 @@ void stk1160_cancel_isoc(struct stk1160 *dev)
- 
- static void stk_free_urb(struct stk1160 *dev, struct stk1160_urb *stk_urb)
- {
--	struct device *dma_dev = stk1160_get_dmadev(dev);
--
--	dma_vunmap_noncontiguous(dma_dev, stk_urb->transfer_buffer);
--	dma_free_noncontiguous(dma_dev, stk_urb->urb->transfer_buffer_length,
--			       stk_urb->sgt, DMA_FROM_DEVICE);
-+	usb_free_noncoherent(dev->udev, stk_urb->urb->transfer_buffer_length,
-+			     stk_urb->transfer_buffer, DMA_FROM_DEVICE,
-+			     stk_urb->sgt);
- 	usb_free_urb(stk_urb->urb);
- 
- 	stk_urb->transfer_buffer = NULL;
-@@ -410,32 +401,19 @@ void stk1160_uninit_isoc(struct stk1160 *dev)
- static int stk1160_fill_urb(struct stk1160 *dev, struct stk1160_urb *stk_urb,
- 			    int sb_size, int max_packets)
- {
--	struct device *dma_dev = stk1160_get_dmadev(dev);
--
- 	stk_urb->urb = usb_alloc_urb(max_packets, GFP_KERNEL);
- 	if (!stk_urb->urb)
- 		return -ENOMEM;
--	stk_urb->sgt = dma_alloc_noncontiguous(dma_dev, sb_size,
--					       DMA_FROM_DEVICE, GFP_KERNEL, 0);
--
--	/*
--	 * If the buffer allocation failed, we exit but return 0 since
--	 * we allow the driver working with less buffers
--	 */
--	if (!stk_urb->sgt)
--		goto free_urb;
- 
--	stk_urb->transfer_buffer = dma_vmap_noncontiguous(dma_dev, sb_size,
--							  stk_urb->sgt);
-+	stk_urb->transfer_buffer = usb_alloc_noncoherent(dev->udev, sb_size,
-+							 GFP_KERNEL, &stk_urb->dma,
-+							 DMA_FROM_DEVICE, &stk_urb->sgt);
- 	if (!stk_urb->transfer_buffer)
--		goto free_sgt;
-+		goto free_urb;
- 
--	stk_urb->dma = stk_urb->sgt->sgl->dma_address;
- 	stk_urb->dev = dev;
- 	return 0;
--free_sgt:
--	dma_free_noncontiguous(dma_dev, sb_size, stk_urb->sgt, DMA_FROM_DEVICE);
--	stk_urb->sgt = NULL;
-+
- free_urb:
- 	usb_free_urb(stk_urb->urb);
- 	stk_urb->urb = NULL;
-@@ -494,12 +472,13 @@ int stk1160_alloc_isoc(struct stk1160 *dev)
- 		urb->transfer_buffer = dev->isoc_ctl.urb_ctl[i].transfer_buffer;
- 		urb->transfer_buffer_length = sb_size;
- 		urb->complete = stk1160_isoc_irq;
--		urb->context = &dev->isoc_ctl.urb_ctl[i];
-+		urb->context = dev;
- 		urb->interval = 1;
- 		urb->start_frame = 0;
- 		urb->number_of_packets = max_packets;
- 		urb->transfer_flags = URB_ISO_ASAP | URB_NO_TRANSFER_DMA_MAP;
- 		urb->transfer_dma = dev->isoc_ctl.urb_ctl[i].dma;
-+		urb->sgt = dev->isoc_ctl.urb_ctl[i].sgt;
- 
- 		k = 0;
- 		for (j = 0; j < max_packets; j++) {
-diff --git a/drivers/media/usb/stk1160/stk1160.h b/drivers/media/usb/stk1160/stk1160.h
-index 7b498d14ed7a..4cbcb0a03bab 100644
---- a/drivers/media/usb/stk1160/stk1160.h
-+++ b/drivers/media/usb/stk1160/stk1160.h
-@@ -16,8 +16,6 @@
- #include <media/videobuf2-v4l2.h>
- #include <media/v4l2-device.h>
- #include <media/v4l2-ctrls.h>
--#include <linux/usb.h>
--#include <linux/usb/hcd.h>
- 
- #define STK1160_VERSION		"0.9.5"
- #define STK1160_VERSION_NUM	0x000905
-@@ -195,8 +193,3 @@ void stk1160_select_input(struct stk1160 *dev);
- 
- /* Provided by stk1160-ac97.c */
- void stk1160_ac97_setup(struct stk1160 *dev);
--
--static inline struct device *stk1160_get_dmadev(struct stk1160 *dev)
--{
--	return bus_to_hcd(dev->udev->bus)->self.sysdev;
--}
+Sumit Gupta (8):
+  soc: tegra: cbb: clear err force register with err status
+  soc: tegra: cbb: change master-slave to initiator-target
+  soc: tegra: cbb: make error interrupt enable and status per SoC
+  soc: tegra: cbb: improve handling for per SoC fabric data
+  soc: tegra: cbb: support hw lookup to get timed out target address
+  dt-bindings: arm: tegra: Add NVIDIA Tegra264 CBB 2.0 binding
+  soc: tegra: cbb: add support for cbb fabrics in Tegra264
+  soc: tegra: cbb: add support for cbb fabrics in T254
+
+ .../arm/tegra/nvidia,tegra234-cbb.yaml        |   4 +
+ drivers/soc/tegra/cbb/tegra194-cbb.c          |  34 +-
+ drivers/soc/tegra/cbb/tegra234-cbb.c          | 758 ++++++++++++++----
+ 3 files changed, 606 insertions(+), 190 deletions(-)
+
+[1] https://lore.kernel.org/lkml/20250530133336.1419971-1-sumitg@nvidia.com/
+
 -- 
 2.34.1
 
