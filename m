@@ -1,181 +1,142 @@
-Return-Path: <linux-kernel+bounces-714666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1771CAF6AE1
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 08:59:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F32A4AF6AEC
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 09:00:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF0A33A8809
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 06:58:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5A9A67B1FC7
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 06:58:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BA82296141;
-	Thu,  3 Jul 2025 06:58:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94B70298CB6;
+	Thu,  3 Jul 2025 06:59:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="EAYHu3n9";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="bW2LB+Tw";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="EAYHu3n9";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="bW2LB+Tw"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DOmfveil"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13AB5293C6D
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 06:58:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D43AA292B42;
+	Thu,  3 Jul 2025 06:59:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751525938; cv=none; b=PQlTnycadJ1w4G49u0nJ5+9zMPuBNTUfcSlhB+Lw4br8kNB90qVdoy/LVGlUTzsVvfA3tmj1/yb4fFn1DeSMY0VcXDFv1qlj+4MFv8Y7dMbMuCuqaj1m7iSigAFzVIC7D5/XymB+tjTTMWbFSh/f0FWJgUXO9QWy94aSVtMiijo=
+	t=1751525956; cv=none; b=eq6MyvvlNJBPC5mlYMcXInHh9eG4XSFDvETlGL853t0WGNfF4xENpbdlrYGD7Y7hDVQQGur0QgqHyCkkfHWK2Hwm1/LDBTnyRSQoHcKXXYWjxxjvEmy9Zo3Qvff/88x9TUWGz24cbhfoxpoi2ZzO3JH/LztRs5eh5DYngVvGrlQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751525938; c=relaxed/simple;
-	bh=ORFK95pdE/a/p9yk/QkXLJouhq8Tba2lRrvY2NUCr5g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cO0Bcz2pQOM8Wxp2tx9cDbE28HeUfcQ1NgRUNKoTF+CBO0sIrY8xiWGwdb0t2oeXx+WUAhkbAtysWd4ctwMEciAStr0DS/ONuUQLwyGSnd5NCptbwicJKNSeDtdywwifbVBHbYF75qmgLBNjuQyRE/kUwP4P9+PwLrHAZzdBENs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=EAYHu3n9; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=bW2LB+Tw; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=EAYHu3n9; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=bW2LB+Tw; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 2F4131F38D;
-	Thu,  3 Jul 2025 06:58:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1751525935; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=feKfxtThbjBgMaSjHhS09nw5zr3XwlSISa7X5gVk0+0=;
-	b=EAYHu3n9YzKxuyVeU1KdYrVv4/IUwCAiNfG14WQsYl897617M5VXptV5S6ni8i5oBxqn7d
-	VzEG6q2C5IYNunQoBFmYmb+PYtS7/HGiYWZ21p3VBxWxjDtDO5NsH2Ik4TVw3VhiAYvw5A
-	h/XKUcEWslsg4xFJTd35jDoEGTMDUQI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1751525935;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=feKfxtThbjBgMaSjHhS09nw5zr3XwlSISa7X5gVk0+0=;
-	b=bW2LB+Tw7wBg50rxBT+vff05vehnW0/CYhOQ9U6UKnMkMQj7utbqGfnvZ3X7UwbvN/LoHC
-	Hagf9GaSqU/gcFDg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=EAYHu3n9;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=bW2LB+Tw
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1751525935; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=feKfxtThbjBgMaSjHhS09nw5zr3XwlSISa7X5gVk0+0=;
-	b=EAYHu3n9YzKxuyVeU1KdYrVv4/IUwCAiNfG14WQsYl897617M5VXptV5S6ni8i5oBxqn7d
-	VzEG6q2C5IYNunQoBFmYmb+PYtS7/HGiYWZ21p3VBxWxjDtDO5NsH2Ik4TVw3VhiAYvw5A
-	h/XKUcEWslsg4xFJTd35jDoEGTMDUQI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1751525935;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=feKfxtThbjBgMaSjHhS09nw5zr3XwlSISa7X5gVk0+0=;
-	b=bW2LB+Tw7wBg50rxBT+vff05vehnW0/CYhOQ9U6UKnMkMQj7utbqGfnvZ3X7UwbvN/LoHC
-	Hagf9GaSqU/gcFDg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2B83413721;
-	Thu,  3 Jul 2025 06:58:54 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 10nXCC4qZmhyUQAAD6G6ig
-	(envelope-from <hare@suse.de>); Thu, 03 Jul 2025 06:58:54 +0000
-Message-ID: <66bfaac0-03aa-4957-80a7-0f004bb2dc58@suse.de>
-Date: Thu, 3 Jul 2025 08:58:45 +0200
+	s=arc-20240116; t=1751525956; c=relaxed/simple;
+	bh=tQJdnJYlTNIs5lgbSl8DiVHPrsh3z/fqveMuaTC90Og=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=iGPe4l/HrVFetRuep78xKfDlqfadBxr6jP1co9ZWMmVJ3QvjogC2QmfoX7wr7VeDhc0UQ7R2gnQLD6FY0oM4HWFBx3LQ+m9fpk2bpLH0ljFPQsxPAZ8C++h15W6IwQE5/034xjzOTAKU/mXvGEtbWZ2GDf2J0yTWP8qo0ioBM3w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DOmfveil; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 67F0EC4CEE3;
+	Thu,  3 Jul 2025 06:59:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751525956;
+	bh=tQJdnJYlTNIs5lgbSl8DiVHPrsh3z/fqveMuaTC90Og=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=DOmfveilTtx0t/c5/RwXmiADFbeZITJU5cUD2pWtuxK0Cp0JCkROwyF/gM/kcXWMU
+	 rWLoCurzMjh5rkWxL72rCu5bf1EHoiRZgOR+/qwI73BtqFs7FrQu2vxP9zLBIGYryw
+	 2yRb6bBQzR9Iw8mVAwfQvNByeIXb2fgjUhlmTLDv5mqT7MR7rniSIO2YzH9Au82byZ
+	 OlNLkJ0zSOmjPXzsJVCAoh0fgDA2IZiUgdlA7NsLVYsyvA8OVAm2i1Rwty27UXtO5b
+	 EH8B+SLqqcB3J5hTjmpblMuVAzO6u4rtRN6doOU32ODd07z4BOlK7fk9IYEVdrTHJG
+	 1wuzoT6d04gGA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 537F7C83F03;
+	Thu,  3 Jul 2025 06:59:16 +0000 (UTC)
+From: Jens Glathe via B4 Relay <devnull+jens.glathe.oldschoolsolutions.biz@kernel.org>
+Subject: [PATCH v3 0/3] arm64: dts: qcom: x1-hp-x14: Add support for
+ X1P42100 HP Omnibook X14
+Date: Thu, 03 Jul 2025 08:59:10 +0200
+Message-Id: <20250703-hp-x14-x1p-v3-0-affe103b4356@oldschoolsolutions.biz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 09/10] blk-mq: prevent offlining hk CPUs with
- associated online isolated CPUs
-To: Daniel Wagner <wagi@kernel.org>, Jens Axboe <axboe@kernel.dk>,
- Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>,
- Sagi Grimberg <sagi@grimberg.me>, "Michael S. Tsirkin" <mst@redhat.com>
-Cc: Aaron Tomlin <atomlin@atomlin.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- Thomas Gleixner <tglx@linutronix.de>, Costa Shulyupin
- <costa.shul@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
- Valentin Schneider <vschneid@redhat.com>, Waiman Long <llong@redhat.com>,
- Ming Lei <ming.lei@redhat.com>, Frederic Weisbecker <frederic@kernel.org>,
- Mel Gorman <mgorman@suse.de>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
- linux-nvme@lists.infradead.org, megaraidlinux.pdl@broadcom.com,
- linux-scsi@vger.kernel.org, storagedev@microchip.com,
- virtualization@lists.linux.dev, GR-QLogic-Storage-Upstream@marvell.com
-References: <20250702-isolcpus-io-queues-v7-0-557aa7eacce4@kernel.org>
- <20250702-isolcpus-io-queues-v7-9-557aa7eacce4@kernel.org>
-Content-Language: en-US
-From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <20250702-isolcpus-io-queues-v7-9-557aa7eacce4@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[25];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	R_RATELIMIT(0.00)[to_ip_from(RLdd7zpc331qgmz6gw8s9zsqsb)];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:dkim,suse.de:mid,suse.de:email];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 2F4131F38D
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Score: -4.51
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAD4qZmgC/3XOwQ6DIAyA4VcxnMcCRVB22nssO6jgIDFiwBE34
+ 7uvep6HHv4m/dKVJBu9TeRWrCTa7JMPI4a4FKRzzfiy1BtsAgwkqxhQN9GFlzgTta2AvlRaGa0
+ IHkzR9n45sMcT2/k0h/g57Mz37V8mc8oocC2ksrUAVt3DYFLnQhhSGN4zfpSurf+S3cxw7gA6T
+ S9bWdeG60qfOtu2/QDJ7uTo+QAAAA==
+X-Change-ID: 20250702-hp-x14-x1p-eb32f4696d96
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1751525956; l=2124;
+ i=jens.glathe@oldschoolsolutions.biz; s=20240919;
+ h=from:subject:message-id;
+ bh=tQJdnJYlTNIs5lgbSl8DiVHPrsh3z/fqveMuaTC90Og=;
+ b=IYn8bd9kGEwYlsibDlmnND/7ucFXPmAwIBpJYyW+D9VKz+iOMZp/t1SKVxeyH+VMnaWrftfCr
+ Xp7lo6zh01pB3ck+4C2aOJDK6zT3EkXhNnoc3r15KUSwJTY0YSrttqH
+X-Developer-Key: i=jens.glathe@oldschoolsolutions.biz; a=ed25519;
+ pk=JcRJqJc/y8LsxOlPakALD3juGfOKmFBWtO+GfELMJVg=
+X-Endpoint-Received: by B4 Relay for
+ jens.glathe@oldschoolsolutions.biz/20240919 with auth_id=216
+X-Original-From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+Reply-To: jens.glathe@oldschoolsolutions.biz
 
-On 7/2/25 18:33, Daniel Wagner wrote:
-> When isolcpus=io_queue is enabled, and the last housekeeping CPU for a
-> given hctx goes offline, there would be no CPU left to handle I/O. To
-> prevent I/O stalls, prevent offlining housekeeping CPUs that are still
-> serving isolated CPUs.
-> 
-> When isolcpus=io_queue is enabled and the last housekeeping CPU
-> for a given hctx goes offline, no CPU would be left to handle I/O.
-> To prevent I/O stalls, disallow offlining housekeeping CPUs that are
-> still serving isolated CPUs.
-> 
-> Signed-off-by: Daniel Wagner <wagi@kernel.org>
-> ---
->   block/blk-mq.c | 42 ++++++++++++++++++++++++++++++++++++++++++
->   1 file changed, 42 insertions(+)
-> 
-Reviewed-by: Hannes Reinecke <hare@suse.de>
+This patch series adds support for the HP Omnibook X Laptop 14-fe1xxx. [1]
 
-Cheers,
+Since this is actually the same model as the 14-fe0xxx, but with an
+X1P-42-100 SoC (Purwa), it needs a slightly different device tree.
+To have as minimal duplicate definition as possible, the hp X14 gets 
+commonalized into a dtsi (and it stays compatible to the derived 
+device trees, like the Ultrabook G1q). 
 
-Hannes
+The supported features are the same as for the original Omnibook X14:
+
+- Keyboard (no function keys though)
+- Display
+- PWM brightness control
+- Touchpad
+- Touchscreen
+- PCIe ports (pcie4, pcie6a)
+- USB type-c, type-a
+- WCN6855 Wifi-6E
+- WCN6855 Bluetooth
+- ADSP and CDSP
+- X1 GPU
+- GPIO Keys (Lid switch)
+- Audio definition (works via USB and with internal speakers)
+
+[1]: https://www.hp.com/us-en/shop/pdp/hp-omnibook-x-laptop-next-gen-ai-pc-14-fe100-14-a4nd1av-1#techSpecs
+
+Signed-off-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+---
+Changes in v3:
+- removed copyright strings
+- amended changed commit message  
+- Link to v2: https://lore.kernel.org/r/20250702-hp-x14-x1p-v2-0-af5b588d1979@oldschoolsolutions.biz
+
+Changes in v2:
+- remove pm8010 handling
+- Link to v1: https://lore.kernel.org/r/20250702-hp-x14-x1p-v1-0-219356e83207@oldschoolsolutions.biz
+
+---
+Jens Glathe (3):
+      dt-bindings: arm: qcom: Split HP Omnibook X14 AI in SoC variants
+      arm64: dts: qcom: x1-hp-x14: Commonalize HP Omnibook X14 device tree
+      arm64: dts: qcom: x1-hp-x14: Add support for X1P42100 HP Omnibook X14
+
+ Documentation/devicetree/bindings/arm/qcom.yaml    |    3 +-
+ arch/arm64/boot/dts/qcom/Makefile                  |    2 +
+ arch/arm64/boot/dts/qcom/x1-hp-omnibook-x14.dtsi   | 1549 ++++++++++++++++++++
+ .../boot/dts/qcom/x1e80100-hp-omnibook-x14.dts     | 1544 +------------------
+ .../boot/dts/qcom/x1p42100-hp-omnibook-x14.dts     |   40 +
+ 5 files changed, 1596 insertions(+), 1542 deletions(-)
+---
+base-commit: 3f804361f3b9af33e00b90ec9cb5afcc96831e60
+change-id: 20250702-hp-x14-x1p-eb32f4696d96
+
+Best regards,
 -- 
-Dr. Hannes Reinecke                  Kernel Storage Architect
-hare@suse.de                                +49 911 74053 688
-SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
-HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
+Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+
+
 
