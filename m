@@ -1,133 +1,77 @@
-Return-Path: <linux-kernel+bounces-714470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0970DAF685B
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 04:54:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B595EAF6860
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 04:56:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4CEBF5225E4
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 02:54:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25F0D1C426F8
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 02:57:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB274218584;
-	Thu,  3 Jul 2025 02:54:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AD052192F8;
+	Thu,  3 Jul 2025 02:56:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ET8WjewA"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="EyCHZq2d"
+Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE8C523BE;
-	Thu,  3 Jul 2025 02:54:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66A7523BE
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 02:56:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751511255; cv=none; b=frNbiavJ1ZTxOWsiHOZsnJQhWgXCxcIc8yT6B8WCehxOl7lBHl13SfmQDnk3K/RpmLcWVVeFuTxe9fvQMj9dwwVUarR9YvlUXDiZdllGMh+dvEFXSEy8IcIUQFmRirvnTs6bPBmM/auAcERFz7kt3ifiCn4LvnuI0eba2rqvz0A=
+	t=1751511410; cv=none; b=oMhcGB5lgQ/cMz9VjN7xGk+Oo5w1pwL5J13NVpfuKpw0rPGCp2/XqgDkVrRU5WyIVpWW7XVN8Uh3Gjd4CtLeglUTooXK6clxfW1pYkN8nMSJtjy9GzJK6A4+TvzZKqJZi5wQSOMH0+eowNmIiATLgZtXhf75/+FEUiPYH1Zh/FY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751511255; c=relaxed/simple;
-	bh=VOBKR54EE5jCrpZGqJFlz8nauwn08Z16YfzFexX5IzY=;
+	s=arc-20240116; t=1751511410; c=relaxed/simple;
+	bh=7t1Juu1/vJhJ8KD6SaaDx4nPrBBxEzIbewlZVZv5gWM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Qyeu/lya69oJVChmAxkOJYhxSWQbzMgJPWaf3mJT1zWa6aYsjPZ5njnFpMtZXgpsVk8VYZ0nuD5OAcvdaJSiMgkGZF2k3bVmffcDej75mNQ5BFoHHj14j/cbI7jHpmrjC2EGSNo82TMqonPiTZal4Lr56MZQKxmXJJwQAByx9pg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ET8WjewA; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-235ef62066eso96619725ad.3;
-        Wed, 02 Jul 2025 19:54:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751511253; x=1752116053; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=AtdBQdeRqVsi7ZLQSvKypf+nVKVbYCrdNH/yCetNeKg=;
-        b=ET8WjewATZWEAWvLD4A0yxbfdo5qmoBAkWDu1Rtgg7Yi2jjOh6UK3XwcSZ0qW74rw2
-         gTyCusz/kUBBr/FTLxt1kEQRX2lqiw16JanOCRSAkyCRBPjNWqSgRQvcaQ4mxNJ+drkL
-         Y4PcLti6Mujs2HAvst3HiVEQ8t3YTUcSf9ExnFh/vS+9p04gGAWsFlS3U2+YSuPvm1VM
-         XZRainYNyeaidMT28HGj1dhK7D/AsWKtwNHxgzcCXgdbvPadnyMgu+VdbEaJZmgk2Vnh
-         bSUVzIIsE6CHFkTIYTOjNxAFXQc+T2WiSxRJCr61/xQW/l6UUN2qp7CO7MMhQsH6BTEF
-         GcRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751511253; x=1752116053;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AtdBQdeRqVsi7ZLQSvKypf+nVKVbYCrdNH/yCetNeKg=;
-        b=lM6TLGV7P3hjftzpaAI9ifc8qONaPqn9Ebw0nDEDRR11NzT2ZfEjoQWYAx4uJE55bL
-         4gAr1BactbSb5yeCSJrMdbJYFCU6HnEfwFONaLdvA4Gz6BD1kY/sPhzhUw3KkewJrIOR
-         gxWoLfY0D1Gsq6J3m/3JAVgqjcwTMDTzk9mhlTzaA3GKCF7s8xk861kjNKyRJfx+JhEA
-         pJmyFT/+2Sgsq+lgfBqiHGsNaNjSsVa8G0pIzZGeZJMYvqpJfi6zLlNvnxcozVA6TluU
-         qqTvZE4/PK3Ehczb9sy15MhU2CBRe9JysKQiej4jklcMLjwBOMTb7IkdyMrup8Qj0ie6
-         Jsxg==
-X-Forwarded-Encrypted: i=1; AJvYcCU8LyKY4XcIlTBZbf7gkwM7BGxwPJlkEo5YRFUiwiXF+3tdEmdVgKQ605d0btE9ViEUxxYSdO3+LeU=@vger.kernel.org, AJvYcCWU1suU+mnhDpuoGokdglkSr/zwOV8WD9q/jkJq+F5YL9FQ7jIXpbaSsFjml7b3qpLqhvNHGAue0YL0eTU6@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzn0o1ilZzwwbjcee/++97Z9JDl+PIXJzwfI2jqwsytcf0thXpH
-	vbXzvLRaNZHpSsDinfifxa3mEJ09ls9o3666atHYpedMDrBDVmIUhx1w
-X-Gm-Gg: ASbGncv9dqsfpksurDzzg6PbWP5ZkICRQT0D3oQE05hCK1wt0y6xmZb0gEwjKiyy6B+
-	YeKAC5yNFmL+t+0BvAVyCM6MgijKjKQZZzs9wuK9/ZWofkl81K+VG12N2l5KtTHrjsnwPEV+sOI
-	/4XIw4c9Yx+OcvvvpD9HSSLvKIbS+ywVSQ0sipiVUzwQB3ojHcvXiadG2RbOJt5irtLPxI1hSJr
-	6rlX+e1yKaOoJH3ay79stgdkeKTIjAZYh7TySSNs28ZBPVyUCUz9Zb2odZp3TWvNVLKjszbjupR
-	o3EMw76jlKTbCoKll0ymhviSn5B9qUL7xLB2VUC7bH2xexf2LUf/YbLoOxuw5L6cFCuGFQ==
-X-Google-Smtp-Source: AGHT+IFRJ49YIpr/b2Gv0vtGiodyLEBH8/c5aD1zMNAf5dwWMsJ5LYPcKAUmVV/H+VKfYucretlwpA==
-X-Received: by 2002:a17:902:e5c2:b0:231:c792:205 with SMTP id d9443c01a7336-23c6e4e2a2fmr79267915ad.4.1751511252914;
-        Wed, 02 Jul 2025 19:54:12 -0700 (PDT)
-Received: from [192.168.0.150] ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23acb2e21b2sm153163325ad.43.2025.07.02.19.54.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Jul 2025 19:54:12 -0700 (PDT)
-Message-ID: <e5c2ead0-7f8e-44e6-9af7-8addf7b7d016@gmail.com>
-Date: Thu, 3 Jul 2025 09:54:02 +0700
+	 In-Reply-To:Content-Type; b=tHCDzkkSjccCtjg2Ogd+KCV6vzhaMHViOa6c9353mJyEq9cht6RcMrHxAiCcMmJkS+Bw6vC+SIxVFsHrSB4ur4xRL4xRAnq93RVQNManjgK3lVGoteXSZjwA/SBk/Lnn92bMoEUSplQRO7m798CANiPnlD7ZXKy60FeE0uFuraI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=EyCHZq2d; arc=none smtp.client-ip=91.218.175.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <e680cfd4-8a03-42e9-a2f2-23a7b5d5bc1e@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1751511405;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UCxj7y2HUGKnQKz44JSIRWKaeF7tBFzgx7r+HHsY720=;
+	b=EyCHZq2dSOuRPM3V0dLjF1IIw8D8uw3SCHrvTZ3YKOr5LIcFVme7Ade6cKjBEArmYpy1DD
+	akVSF15mqsugIOcvhJcWMIOovhKSJR7NWnPdCsEz+9Z4X15uYHx+uSySCJCHlUEJwYP40E
+	+49WGxnxeYfSyttI3XwqOaX5+So77zk=
+Date: Thu, 3 Jul 2025 10:56:36 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] docs: document linked lists
-To: Jonathan Corbet <corbet@lwn.net>,
- Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Cc: Randy Dunlap <rdunlap@infradead.org>, kernel@collabora.com,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250702-linked-list-docs-v2-1-e36532f4b638@collabora.com>
- <aGXeyqygzKi2P-kP@archie.me> <87h5zum1ei.fsf@trenco.lwn.net>
+Subject: Re: [PATCH 3/5] panic: add 'panic_sys_info' sysctl to take human
+ readable string parameter
 Content-Language: en-US
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-In-Reply-To: <87h5zum1ei.fsf@trenco.lwn.net>
+To: Feng Tang <feng.tang@linux.alibaba.com>
+Cc: paulmck@kernel.org, john.ogness@linutronix.de,
+ Jonathan Corbet <corbet@lwn.net>, Steven Rostedt <rostedt@goodmis.org>,
+ Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
+ Petr Mladek <pmladek@suse.com>
+References: <20250703021004.42328-1-feng.tang@linux.alibaba.com>
+ <20250703021004.42328-4-feng.tang@linux.alibaba.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Lance Yang <lance.yang@linux.dev>
+In-Reply-To: <20250703021004.42328-4-feng.tang@linux.alibaba.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On 7/3/25 09:52, Jonathan Corbet wrote:
-> Bagas Sanjaya <bagasdotme@gmail.com> writes:
-> 
->> On Wed, Jul 02, 2025 at 10:24:47PM +0200, Nicolas Frattaroli wrote:
->>> +In State 2, we've added Grock after the list head::
->>> +
->>> +         .--------------------.
->>> +         v                    |
->>> +    .--------.     .-------.  |
->>> +    | clowns |---->| Grock |--'
->>> +    '--------'     '-------'
->>
->> Looks like the corners are a bit imbalanced (single quotes are taller than
->> dots). What about using plus instead? Like:
->>
->> ---- >8 ----
->> diff --git a/Documentation/core-api/list.rst b/Documentation/core-api/list.rst
->> index b0586056abb04d..bf92f44d7b2d06 100644
->> --- a/Documentation/core-api/list.rst
->> +++ b/Documentation/core-api/list.rst
->> @@ -148,11 +148,11 @@ clarity.
->>   
->>   In State 2, we've added Grock after the list head::
->>   
->> -         .--------------------.
->> +         +--------------------+
->>            v                    |
-> 
-> One might argue that it looks like a nice curve and should stay as-is.
-> 
-> This work is welcome and deserves a serious review, this wasn't it.
-> 
+[PATCH 3/5] panic: add 'panic_sys_info' sysctl to take human readable 
+string parameter
 
-OK, thanks!
+Just a minor nitpick on the subject line: it seems to be missing the
+"v3" tag, unlike the other patches in this series.
 
--- 
-An old man doll... just what I always wanted! - Clara
+Thanks,
+Lance
+
 
