@@ -1,167 +1,135 @@
-Return-Path: <linux-kernel+bounces-716150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEAC5AF829E
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 23:27:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 086B9AF828D
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 23:21:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6221C7AC5AA
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 21:26:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FFDC1C880C0
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 21:22:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CBF42BE623;
-	Thu,  3 Jul 2025 21:27:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FB742BD595;
+	Thu,  3 Jul 2025 21:21:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=permerror (0-bit key) header.d=aaront.org header.i=@aaront.org header.b="dqoXjpFe";
-	dkim=pass (2048-bit key) header.d=aaront.org header.i=@aaront.org header.b="v/BVgkC3"
-Received: from smtp-out0.aaront.org (smtp-out0.aaront.org [52.10.12.108])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="IYFrFYQO";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bWaXK53c"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C79A22BD595;
-	Thu,  3 Jul 2025 21:27:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.10.12.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0934B2AF19;
+	Thu,  3 Jul 2025 21:21:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751578051; cv=none; b=M6/5cW4JFqktNcONxJiHmh7JpXNqZpyfmH0wkeL8zMMZXu/L0hPhgRBXKoBdTTHQwrsFb/RfQWhrMFwA8LI8TcVJ6+y+OgltDO4MpyGlIt391YXvTvuqHiVC2ol2TDdyNDRj78NTfPb/2fkX5mZglk3dSJlD4Ws7677FlXswD28=
+	t=1751577708; cv=none; b=cWiWSYSJ+XBcpwBhB2QRpOgOJ9BH3MoadP+TFkZD5vw6d8FqSaVmn7SpmW2L9IkZPZFe+ZYYJ/Kwr9sloCfPtWiektHXtlA7785tLrrJrunWkVqVnAo42DyQdqdFwnOTKWw7/dBQ9fUFLGCJF49YOb7razQOV4Vm5q2KyShhQKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751578051; c=relaxed/simple;
-	bh=/kZmNYWZNOTJQa4opCPhE9MeAHI82FTFippa+nVrA1o=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BQlXIgFcTFb0mU38VV4BxDl4smCiZLGx79alQEj/kDw4VA3yJnu5gooGUwCZPscZC0Im6eB6qhjUA3lI2PjHYNQfnR1XS/I8pECI1i13EGgVLErp0X7WTnjKYH9hQBpcbkwNmsp0nkbLCxys3TO8jce3kde9xAud7N4EUD6AmGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aaront.org; spf=pass smtp.mailfrom=aaront.org; dkim=permerror (0-bit key) header.d=aaront.org header.i=@aaront.org header.b=dqoXjpFe; dkim=pass (2048-bit key) header.d=aaront.org header.i=@aaront.org header.b=v/BVgkC3; arc=none smtp.client-ip=52.10.12.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aaront.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aaront.org
-Received: from smtp-send0.aaront.org (localhost [IPv6:::1])
-	by smtp-out0.aaront.org (Postfix) with ESMTP id 4bY8mq5CtwzMY;
-	Thu,  3 Jul 2025 21:20:11 +0000 (UTC)
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/simple; d=aaront.org;
-    h=from:to:cc:subject:date:message-id:mime-version
-    :content-transfer-encoding; s=3r7feyyp; bh=/kZmNYWZNOTJQa4opCPhE
-    9MeAHI82FTFippa+nVrA1o=; b=dqoXjpFePZxdEULpDnRSc1iIU4UTydj/TLfKH
-    HPMBaqlkHTLVMC3dGVYex9NVU6iBEYzQmXt8W7LxEMeYThhAQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=aaront.org; h=
-    from:to:cc:subject:date:message-id:mime-version
-    :content-transfer-encoding; s=4x7dsrm2; bh=/kZmNYWZNOTJQa4opCPhE
-    9MeAHI82FTFippa+nVrA1o=; b=v/BVgkC3yRTStqMBR2f8EZeF/HuMKVSqzUfqb
-    HxVf5nKI7XyG5CgmhaI4PA6+MoQIVykqJYaxMC4e9JYhTBMI8Oh9/3O1B3vQAJzA
-    yT2qo3NmNXZx/dWD34nULC8n6maD5SQR/xGNsh5iNgOJIrUxOV2McxS++VvkUKhq
-    dUDyj0q+yqm1NV4nNraI9k9HuU/OO/G1hgnJsho3gpx3WQRKYpNqNhP26Cf+J6UW
-    ZACEQtJm0eJV4qEn5NmRynCJAFU8SnrjpamGAqpqgz6HEktS8gABBh8nvkeNHtqe
-    icIBqKWKHm0g67l8+0EPGXIG9g2CgVUc+/O3lNR0i3LQ2J98w==
-Received: by smtp-send0.aaront.org (Postfix) id 4bY8mq323rzJm;
-	Thu,  3 Jul 2025 21:20:11 +0000 (UTC)
-From: Aaron Thompson <dev@aaront.org>
-To: nouveau@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	Lyude Paul <lyude@redhat.com>,
-	Danilo Krummrich <dakr@kernel.org>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Timur Tabi <ttabi@nvidia.com>
-Cc: linux-kernel@vger.kernel.org,
-	Aaron Thompson <dev@aaront.org>,
-	stable@vger.kernel.org
-Subject: [PATCH] drm/nouveau: Do not fail module init on debugfs errors
-Date: Thu,  3 Jul 2025 21:19:49 +0000
-Message-Id: <20250703211949.9916-1-dev@aaront.org>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1751577708; c=relaxed/simple;
+	bh=doF1JUusy9fYnF34jAg32ZbtCJcXq0q2b/EreVr4l1w=;
+	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=WWrB6ZYPXT/Rhh/7ruB2Y1n9gfzrfhqgUVCI5kS4s0TKio5x7PE395Bbo0gbieRpY1vVtzoblhlu0mPGhr22XQ0+tfPl0E6FJlJmsG4OHH2HuEV66J3Z9Cc6mBeVyNfu3aDPRVhA5JbCTc9cvmpT/suhhVRM6Vn7U/VIP3N0b/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=IYFrFYQO; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bWaXK53c; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1751577705;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IuSfHDCBdrHLll9p6MJyRsE2HoBAkIn29Et99Ze6jio=;
+	b=IYFrFYQO1tfIhbWjskMeQI3itoJRVBQPFIp4KWK/W9o2gLiFMGY1NsFToYDsjlvCKSiKHo
+	H2S4Qu1mRNSIt3K3en8Fh1k0EUCNuiIQJaqguEEqYDN0eXSMkVU4zsEn5aS0o20XQrSoUf
+	VVyJfxNZz6//D3xUnzWPRP/Dp/prbUDboTms9jp+MIO+uSt89tu1tJp9LJtuC14NEgOaQN
+	1yGyOAagwpTVosMu3JunoyyswO9/WeIV2NloYE8HhIgb3bCR/Fimti4aZo4pCwA3LLOMjb
+	hZ4JjzeQKhS3AD3KbXyzmYIuJREaDa0ph/YnxVF60rigy3hMwNijBHtxkTXxoA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1751577705;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IuSfHDCBdrHLll9p6MJyRsE2HoBAkIn29Et99Ze6jio=;
+	b=bWaXK53cGighMH1SvpiRBNIK5QAIv7RA0O/M2RZwhs34n1vzCdNAXb5cYJ922PNXjSOsGq
+	qbgroTxaCeSOdKCQ==
+To: Michael Kelley <mhklinux@outlook.com>, Nam Cao <namcao@linutronix.de>,
+ Marc
+ Zyngier <maz@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Manivannan
+ Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>, Bjorn Helgaas
+ <bhelgaas@google.com>, "linux-pci@vger.kernel.org"
+ <linux-pci@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, Karthikeyan Mitran
+ <m.karthikeyan@mobiveil.co.in>, Hou Zhiqiang <Zhiqiang.Hou@nxp.com>,
+ Thomas
+ Petazzoni <thomas.petazzoni@bootlin.com>, Pali =?utf-8?Q?Roh=C3=A1r?=
+ <pali@kernel.org>, "K
+ . Y . Srinivasan" <kys@microsoft.com>, Haiyang Zhang
+ <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, Dexuan Cui
+ <decui@microsoft.com>, Joyce Ooi <joyce.ooi@intel.com>, Jim Quinlan
+ <jim2101024@gmail.com>, Nicolas Saenz Julienne <nsaenz@kernel.org>,
+ Florian
+ Fainelli <florian.fainelli@broadcom.com>, Broadcom internal kernel review
+ list <bcm-kernel-feedback-list@broadcom.com>, Ray Jui <rjui@broadcom.com>,
+ Scott Branden <sbranden@broadcom.com>, Ryder Lee <ryder.lee@mediatek.com>,
+ Jianjun Wang <jianjun.wang@mediatek.com>, Marek Vasut
+ <marek.vasut+renesas@gmail.com>, Yoshihiro Shimoda
+ <yoshihiro.shimoda.uh@renesas.com>, Michal Simek <michal.simek@amd.com>,
+ Daire McNamara <daire.mcnamara@microchip.com>, Nirmal Patel
+ <nirmal.patel@linux.intel.com>, Jonathan Derrick
+ <jonathan.derrick@linux.dev>, Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>, "linux-hyperv@vger.kernel.org"
+ <linux-hyperv@vger.kernel.org>, "linux-rpi-kernel@lists.infradead.org"
+ <linux-rpi-kernel@lists.infradead.org>,
+ "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+ "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH 14/16] PCI: hv: Switch to msi_create_parent_irq_domain()
+In-Reply-To: <SN6PR02MB41576745C28D8F49081B8E77D443A@SN6PR02MB4157.namprd02.prod.outlook.com>
+References: <cover.1750858083.git.namcao@linutronix.de>
+ <024f0122314198fe0a42fef01af53e8953a687ec.1750858083.git.namcao@linutronix.de>
+ <SN6PR02MB4157A6F9B2ABD3C69CE5B521D443A@SN6PR02MB4157.namprd02.prod.outlook.com>
+ <87cyaht595.ffs@tglx>
+ <SN6PR02MB41576745C28D8F49081B8E77D443A@SN6PR02MB4157.namprd02.prod.outlook.com>
+Date: Thu, 03 Jul 2025 23:21:44 +0200
+Message-ID: <87zfdlrmvr.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-From: Aaron Thompson <dev@aaront.org>
+On Thu, Jul 03 2025 at 20:15, Michael Kelley wrote:
+> From: Thomas Gleixner <tglx@linutronix.de> Sent: Thursday, July 3, 2025 1:00 PM
+>> Does it conflict against the PCI tree?
+>
+> There's no conflict in the "next" or "for-linus" tags in
+> https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git/.
+>
+> The conflict is with Patch 2 of this series:
+>
+> https://lore.kernel.org/linux-hyperv/1749650984-9193-1-git-send-email-shradhagupta@linux.microsoft.com/
+>
+> which is in netdev/net-next.
 
-If CONFIG_DEBUG_FS is enabled, nouveau_drm_init() returns an error if it
-fails to create the "nouveau" directory in debugfs. One case where that
-will happen is when debugfs access is restricted by
-CONFIG_DEBUG_FS_ALLOW_NONE or by the boot parameter debugfs=off, which
-cause the debugfs APIs to return -EPERM.
+That's a trivial one. There are two ways to handle it:
 
-So just ignore errors from debugfs. Note that nouveau_debugfs_root may
-be an error now, but that is a standard pattern for debugfs. From
-include/linux/debugfs.h:
+  1) Take it through the PCI tree and provide a conflict resolution for
+     linux-next and later for Linus as reference.
 
-"NOTE: it's expected that most callers should _ignore_ the errors
-returned by this function. Other debugfs functions handle the fact that
-the "dentry" passed to them could be an error and they don't crash in
-that case. Drivers should generally work fine even if debugfs fails to
-init anyway."
+  2) Route it through the net-next tree with an updated patch.
 
-Fixes: 97118a1816d2 ("drm/nouveau: create module debugfs root")
-Cc: stable@vger.kernel.org
-Signed-off-by: Aaron Thompson <dev@aaront.org>
----
- drivers/gpu/drm/nouveau/nouveau_debugfs.c | 6 +-----
- drivers/gpu/drm/nouveau/nouveau_debugfs.h | 5 ++---
- drivers/gpu/drm/nouveau/nouveau_drm.c     | 4 +---
- 3 files changed, 4 insertions(+), 11 deletions(-)
+As there are no further dependencies (aside of the missing export which
+is needed anyway) it's obvious to pick #2 as it creates the least
+headaches. Assumed that the PCI folks have no objections.
 
-diff --git a/drivers/gpu/drm/nouveau/nouveau_debugfs.c b/drivers/gpu/drm/nouveau/nouveau_debugfs.c
-index 200e65a7cefc..c7869a639bef 100644
---- a/drivers/gpu/drm/nouveau/nouveau_debugfs.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_debugfs.c
-@@ -314,14 +314,10 @@ nouveau_debugfs_fini(struct nouveau_drm *drm)
- 	drm->debugfs = NULL;
- }
- 
--int
-+void
- nouveau_module_debugfs_init(void)
- {
- 	nouveau_debugfs_root = debugfs_create_dir("nouveau", NULL);
--	if (IS_ERR(nouveau_debugfs_root))
--		return PTR_ERR(nouveau_debugfs_root);
--
--	return 0;
- }
- 
- void
-diff --git a/drivers/gpu/drm/nouveau/nouveau_debugfs.h b/drivers/gpu/drm/nouveau/nouveau_debugfs.h
-index b7617b344ee2..d05ed0e641c4 100644
---- a/drivers/gpu/drm/nouveau/nouveau_debugfs.h
-+++ b/drivers/gpu/drm/nouveau/nouveau_debugfs.h
-@@ -24,7 +24,7 @@ extern void nouveau_debugfs_fini(struct nouveau_drm *);
- 
- extern struct dentry *nouveau_debugfs_root;
- 
--int  nouveau_module_debugfs_init(void);
-+void nouveau_module_debugfs_init(void);
- void nouveau_module_debugfs_fini(void);
- #else
- static inline void
-@@ -42,10 +42,9 @@ nouveau_debugfs_fini(struct nouveau_drm *drm)
- {
- }
- 
--static inline int
-+static inline void
- nouveau_module_debugfs_init(void)
- {
--	return 0;
- }
- 
- static inline void
-diff --git a/drivers/gpu/drm/nouveau/nouveau_drm.c b/drivers/gpu/drm/nouveau/nouveau_drm.c
-index 0c82a63cd49d..1527b801f013 100644
---- a/drivers/gpu/drm/nouveau/nouveau_drm.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_drm.c
-@@ -1461,9 +1461,7 @@ nouveau_drm_init(void)
- 	if (!nouveau_modeset)
- 		return 0;
- 
--	ret = nouveau_module_debugfs_init();
--	if (ret)
--		return ret;
-+	nouveau_module_debugfs_init();
- 
- #ifdef CONFIG_NOUVEAU_PLATFORM_DRIVER
- 	platform_driver_register(&nouveau_platform_driver);
+Michael, as you have resolved the conflict already, can you please
+either take care of it yourself or provide the resolution here as
+reference for Nam?
 
-base-commit: d0b3b7b22dfa1f4b515fd3a295b3fd958f9e81af
--- 
-2.39.5
+Thanks,
 
+        tglx
 
