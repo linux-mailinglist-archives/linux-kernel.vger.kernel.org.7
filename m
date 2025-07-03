@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-714654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90686AF6ABF
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 08:48:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42707AF6AC4
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 08:50:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0E8118947AD
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 06:49:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A85AA7A434B
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 06:48:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D5612949F1;
-	Thu,  3 Jul 2025 06:48:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CF6F29550F;
+	Thu,  3 Jul 2025 06:50:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CcZLcNHZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PKC2LG9g"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F1A7291C14;
-	Thu,  3 Jul 2025 06:48:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D21A157A72;
+	Thu,  3 Jul 2025 06:50:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751525328; cv=none; b=iytnMD/6ayjws8YV3B6n29+9sOUfn59lPS7zSg3jaJdE59RX+V+kabt6tdEb/rNDl59QLzIqe6Yc9rnvEBfjmU2MT9SfUAIIkMP5nJmN33pVQg+Ou3IkUW9KlqZdyQjvsftvjtxzPcaXkvxH72JekHB8ItZf2pOYz0JvV8oijgM=
+	t=1751525416; cv=none; b=GHN0SS70RXMZDOjBP+eh44XVIXeUcdrFKeTxs7xqsJDTqpgFl72o6zaKEjEIhLDjl4OxsONKN6E3vS1Y0cKVmeRcIrihwivJYXqXnLNtUyrOpLm4BQFs/fcF1/JLj0U6MM1hBftb4sE3crUcJ66r1ZHqTL2gqaCQ6S7mupU3c0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751525328; c=relaxed/simple;
-	bh=1VQPJiHQXABe30NmXGDefMBoLl0++oujbjecxGtPiv4=;
+	s=arc-20240116; t=1751525416; c=relaxed/simple;
+	bh=flW0zDQf6il87dCp+A7XFLtktTCf1C6H2/Inww+FQxw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=H+0rTnVATZAeLxW7Vxb3cvgZwfDDSHXRw6UYJGPiE/jiARVj0zsN+3VCPPpNhfpvsa8u2xiW5MObzXTszxjUTEn56hCpiZEBdk5T7r9dFtBF5M1MZRfspDbmISdCRI8y64WzEH+PL8/4Cbj+Q48wrHtzyj0Ehqfjg0K8mcy0lTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CcZLcNHZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1BF0BC4CEE3;
-	Thu,  3 Jul 2025 06:48:45 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=XKJOhUjWtSPBvq/YtYRLEhZ3idrIr+kjlQjHBMLdp/zRt7/mdzsVifoKuOXgo+4N4XuPW1CO66/y7+O+oGG/v/A53xAkOU3k6haJ4TBh9mUylLZFkOAqp06sbw10cFoLv7pIxyWKWY7QNF0ZJGI7CXzqBqnUYmkI58b4VOC8DMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PKC2LG9g; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79EB0C4CEEE;
+	Thu,  3 Jul 2025 06:50:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751525328;
-	bh=1VQPJiHQXABe30NmXGDefMBoLl0++oujbjecxGtPiv4=;
+	s=k20201202; t=1751525416;
+	bh=flW0zDQf6il87dCp+A7XFLtktTCf1C6H2/Inww+FQxw=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=CcZLcNHZATmd7QcNs9h4sELglH7lOXLc1XnA1G9lMwxIwZFYQiugjplH3jEGaqSZs
-	 XgJCSJf68iEP6N4hLX7FZ8h+WAkjUjNpEVl5Ei1AzOogimbjWaqTFcqT4fv5zyHHSO
-	 jmCCcZiQlGs0+HAfKv8RIxmymET3WyDM/4OlZvOlLTCJnoGIm1TOsfqF4G6mv5mVDs
-	 yUkq614EIazqmKQ9XsaZGWhgD9QeeDfDJUFyiBLAK5cebDS+zfK5S+SH/QKvuq6TTA
-	 yqR63795AmuIioGDusooUrRVd2cTetDm36XPkeS4N6KzmwWTNVNPbhZetuPn1fQBl6
-	 a7dQRhx+9/GEg==
-Message-ID: <7533fd56-aeef-4685-a25f-d64b3f6a2d78@kernel.org>
-Date: Thu, 3 Jul 2025 08:48:44 +0200
+	b=PKC2LG9gILitGtBhKWQqFKwF+FaAOVSTNH5eAZV27icg0imHQLROOXG7TU6qtXKl8
+	 90QwUFyPKlaCE5rVtEGqT0GAyQOCNQUT5+d58wPpd+sp3vBrfMWsR1nvp6+gUMYwLo
+	 ugzAIpwE0K6u6Wgdb3pyXCHFK13Hul0q/j3uS6Z2SFtuSy1sbSYD9IPVfZtro/mWY6
+	 fHV2O1lWb2xYYrmI0ncJjo1bzRRw/Gp55UgfCVJvJxxhxWNVdPdq6TRONAZXZUWrCH
+	 Scch7Fzxon5eAhsCdSphtZ7ylzlq8aPLkmsGJTCNE9iUq+kFWeKg6dckp7S9aa8djq
+	 bq5VkQetsj4fg==
+Message-ID: <603b1938-2fc6-41d7-b751-1fcab44f1711@kernel.org>
+Date: Thu, 3 Jul 2025 08:50:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,13 +49,14 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V1 4/9] dt-bindings: soc: xilinx: Add AI engine DT binding
+Subject: Re: [PATCH V1 1/9] firmware: xilinx: Add IOCTL support for the AIE
+ run time operations
 To: Gregory Williams <gregory.williams@amd.com>, ogabbay@kernel.org,
  michal.simek@amd.com, robh@kernel.org
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
+Cc: Ronak Jain <ronak.jain@amd.com>, dri-devel@lists.freedesktop.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20250702155630.1737227-1-gregory.williams@amd.com>
- <20250702155630.1737227-5-gregory.williams@amd.com>
+ <20250702155630.1737227-2-gregory.williams@amd.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -101,231 +102,25 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250702155630.1737227-5-gregory.williams@amd.com>
+In-Reply-To: <20250702155630.1737227-2-gregory.williams@amd.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 02/07/2025 17:56, Gregory Williams wrote:
-> In the device tree, there will be device node for the AI engine device,
-> and device nodes for the statically configured AI engine apertures.
-
-No, describe the hardware, not DTS.
-
-> Apertures are an isolated set of columns with in the AI engine device
-> with their own address space and interrupt.
+> From: Ronak Jain <ronak.jain@amd.com>
 > 
-> Signed-off-by: Gregory Williams <gregory.williams@amd.com>
-> ---
->  .../bindings/soc/xilinx/xlnx,ai-engine.yaml   | 151 ++++++++++++++++++
->  1 file changed, 151 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/soc/xilinx/xlnx,ai-engine.yaml
+> Add IOCTL support for the AIE run time operations listed below
+> - Column Reset
+> - Shim Reset
+> - Enabling of column clock buffer
+> - Zeroisation of Program and data memories
+> - Disabling of column clock buffer
+> - Enabling AXI-MM error event
+> - Set L2 controller NPI INTR
 > 
-> diff --git a/Documentation/devicetree/bindings/soc/xilinx/xlnx,ai-engine.yaml b/Documentation/devicetree/bindings/soc/xilinx/xlnx,ai-engine.yaml
-> new file mode 100644
-> index 000000000000..7d9a36c56366
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/soc/xilinx/xlnx,ai-engine.yaml
+> Signed-off-by: Ronak Jain <ronak.jain@amd.com>
 
-Filename matching compatible.
-
-> @@ -0,0 +1,151 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/soc/xilinx/xlnx,ai-engine.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: AMD AI Engine
-
-That's really too generic...
-
-> +
-> +maintainers:
-> +  - Gregory Williams <gregory.williams@amd.com>
-> +
-> +description:
-> +  The AMD AI Engine is a tile processor with many cores (up to 400) that
-> +  can run in parallel. The data routing between cores is configured through
-> +  internal switches, and shim tiles interface with external interconnect, such
-> +  as memory or PL. One AI engine device can have multiple apertures, each
-> +  has its own address space and interrupt. At runtime application can create
-> +  multiple partitions within an aperture which are groups of columns of AI
-> +  engine tiles. Each AI engine partition is the minimum resetable unit for an
-> +  AI engine application.
-> +
-> +properties:
-> +  compatible:
-> +    const: xlnx,ai-engine-v2.0
-
-What does v2.0 stands for? Versioning is discouraged, unless mapping is
-well documented.
-
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  '#address-cells':
-> +    const: 2
-> +
-> +  '#size-cells':
-> +    const: 2
-> +
-> +  power-domains:
-
-Missing constraints.
-
-> +    description:
-> +      Platform management node id used to request power management services
-> +      from the firmware driver.
-
-Drop description, redundant.
-
-> +
-> +  xlnx,aie-gen:
-> +    $ref: /schemas/types.yaml#/definitions/uint8
-
-Why uint8?
-
-> +    description:
-> +      Hardware generation of AI engine device. E.g. the current values supported
-> +      are 1 (AIE) and 2 (AIEML).
-
-No clue what's that, but it is implied by compatible, isn't it?
-
-Missing constraints.
-
-> +
-> +  xlnx,shim-rows:
-> +    $ref: /schemas/types.yaml#/definitions/uint8-array
-> +    description:
-> +      start row and the number of rows of SHIM tiles of the AI engine device
-
-Implied by compatible.
-
-Missing constraints.
-
-
-> +
-> +  xlnx,core-rows:
-> +    $ref: /schemas/types.yaml#/definitions/uint8-array
-> +    description:
-> +      start row and the number of rows of core tiles of the AI engine device
-> +
-> +  xlnx,mem-rows:
-> +    $ref: /schemas/types.yaml#/definitions/uint8-array
-> +    description:
-> +      start row and the number of rows of memory tiles of the AI engine device
-> +
-
-Same comments everywhere.
-
-> +required:
-> +  - compatible
-> +  - reg
-> +  - power-domains
-> +  - xlnx,aie-gen
-> +  - xlnx,shim-rows
-> +  - xlnx,core-rows
-> +  - xlnx,mem-rows
-> +
-> +patternProperties:
-
-This goes after properties.
-
-> +  "^aperture@[0-9]+$":
-> +    type: object
-> +    description:
-> +      AI engine aperture which is a group of column based tiles of the
-> +      AI engine device. Each AI engine apertures isolated from the
-> +      other AI engine apertures. An AI engine aperture is defined by
-> +      AMD/Xilinx platform design tools.
-> +
-> +    properties:
-> +      compatible:
-> +        const: xlnx,ai-engine-aperture
-> +
-> +      reg:
-> +        description:
-> +          Physical base address and length of the aperture registers.
-> +          The AI engine address space assigned to Linux is defined by
-> +          Xilinx/AMD platform design tool.
-
-Missing constraints. Description is redundant - can it be anything else?
-
-Plus you clearly miss ranges.
-
-
-> +
-> +      interrupts:
-> +        maxItems: 3
-> +
-> +      interrupt-names:
-> +        items:
-> +          - const: interrupt1
-> +          - const: interrupt2
-> +          - const: interrupt3
-
-Useless names, drop entirely.
-
-> +
-> +      xlnx,columns:
-> +        $ref: /schemas/types.yaml#/definitions/uint32-array
-> +        description:
-> +          It describes the location of the aperture. It specifies the start
-> +          column and the number of columns. E.g. an aperture starts from
-> +          column 0 and there are 50 columns, it will be presented as <0 50>.
-
-Same comments as before
-
-> +
-> +      xlnx,node-id:
-> +        $ref: /schemas/types.yaml#/definitions/uint32
-> +        description:
-> +          AI engine aperture node ID, which is defined by AMD/Xilinx platform
-> +          design tool to identify the AI engine aperture in the firmware.
-
-No, you do not get node ID. Recently every day a patch comes for that...
-
-> +
-> +    required:
-> +      - compatible
-> +      - reg
-> +      - xlnx,columns
-> +      - xlnx,node-id
-> +
-> +    additionalProperties: false
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/power/xlnx-versal-power.h>
-> +    bus {
-> +      #address-cells = <2>;
-> +      #size-cells = <2>;
-> +      ai_engine: ai-engine@20000000000 {
-> +        compatible = "xlnx,ai-engine-v2.0";
-> +        reg = <0x200 0x00 0x01 0x00>;
-> +        #address-cells = <2>;
-> +        #size-cells = <2>;
-> +        power-domains = <&versal_firmware PM_DEV_AI>;
-> +        xlnx,aie-gen = /bits/ 8 <0x1>;
-> +        xlnx,core-rows = /bits/ 8 <1 8>;
-> +        xlnx,mem-rows = /bits/ 8 <0 0>;
-> +        xlnx,shim-rows = /bits/ 8 <0 1>
-
-This cannot be without ranges... I am surprised it actually works, but
-for sure was not tested and produces warnings.
-
-> +
-> +        aperture0: aperture@200000000000 {
-> +          /* 50 columns and 8 core tile rows + 1 SHIM row */
-> +          compatible = "xlnx,ai-engine-aperture";
-> +          reg = <0x200 0x0 0x1 0x0>;
-> +          interrupts = <0x0 0x94 0x4>,
-> +                       <0x0 0x95 0x4>,
-> +                       <0x0 0x96 0x4>;
-Use proper flags.
+Incomplete chain. Read submitting patches.
 
 Best regards,
 Krzysztof
