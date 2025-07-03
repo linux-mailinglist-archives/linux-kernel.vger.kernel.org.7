@@ -1,86 +1,81 @@
-Return-Path: <linux-kernel+bounces-714863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 089F2AF6D96
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 10:49:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5758AF6DAD
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 10:52:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0469B1699D4
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 08:49:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E8E5482F1E
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 08:51:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50C952D375D;
-	Thu,  3 Jul 2025 08:48:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF8DB2D238F;
+	Thu,  3 Jul 2025 08:52:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YInoDZzd"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="W8Ycyy8C"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 288B02D372A
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 08:48:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F4502DE6E3;
+	Thu,  3 Jul 2025 08:51:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751532528; cv=none; b=Fd9m2pfybO0pA93Tn84gBkPjo0yW3fn7FhuhEEUjHCJLSpsHonfuqTkAhXBIINexugr1QwPP6y0ji1XBPB+JJepAnpHUxvAW/dUHfad3U1eJUYsE67hySgi6oiAQ7uk5lhG1XNSwgO0A7g/KRN/QRzsIlFttMz6wSVV3fsho320=
+	t=1751532720; cv=none; b=MkSV6+cRvAQqFRdDrwfHzOq4bB42389MLUQGkUGdFwiHZxPhjhjF4RXCQkUCOd64XkGLHiaVlC9OPeueWHsgYIDxHBhKGpL58UieuYUv/aYVBqfJCoJmbuQPuPip1E4ucC7lCxb9HIDR7h8Ar+5502kkeuIokGe6Ygn98iH9FIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751532528; c=relaxed/simple;
-	bh=/RTepCs0dztAoAhV3cYzw3AFqbONWKbO7CPOvH6DzM0=;
+	s=arc-20240116; t=1751532720; c=relaxed/simple;
+	bh=THsAr3zlwlWaWma2DhD3Eakrzn0/u2RkvZ8x4APY8WQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cCQKsfnFJj9YdUGDs1C5nFfkPs1n9QALD3Ar+jen3eyslX5Ddk4eMPH5WCH1WJtET2vOlJM8yeLsWFwl5sacfUupl2kepfsrOO0DpXHmVuwdXyyFafJcgTu4ZIOdZC8I6h5TjXMVVL/yH/mvkQ+mxOMrhgMWSOJdkAmpP+HP5EM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YInoDZzd; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1751532526;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=m5A+/MxsYcbYH1goxrESZ9WwNmbDxLlkxrFPCFIvbec=;
-	b=YInoDZzdfLJQ8eeFdicZDIWq5fcrqElfyghwPW230FEhwLJQj/pXBu3lAir6RSzv2dwyBY
-	uC53DXbk8VU50vfx1eCnDy7X+gE4Kmd0J5GaFIQP4D8yOme9FLD5bfWSJdZX49Mdo21Qef
-	O8c0+tKBHcL1dDBlHZiY+y2bGyoMB4c=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-133-tN31sjvfM4Wj77aCduWmAg-1; Thu, 03 Jul 2025 04:48:45 -0400
-X-MC-Unique: tN31sjvfM4Wj77aCduWmAg-1
-X-Mimecast-MFC-AGG-ID: tN31sjvfM4Wj77aCduWmAg_1751532524
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3a4f7ebfd00so3835101f8f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Jul 2025 01:48:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751532523; x=1752137323;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=m5A+/MxsYcbYH1goxrESZ9WwNmbDxLlkxrFPCFIvbec=;
-        b=hxtlvfOITI2PMSbcTj/zswBt61tD3c4ITBzkaEzh+Nk/NMKzHbDctETRtfec8z1dxx
-         SVtmayi0F/UGcq1HTvOUEcbDZosymFwj+ItqY8ZC2yvULxs8FzLpz0XubqAAg+ze2YEX
-         PGkWBPQW39IUyY291GsMgWpIEGB4j9J1+eDrOP046ouOGOhhQRc7NBjBsOwAE9OE+EyO
-         2vyFLOmP/9M/w1JzmxLdaz70ZlV67SM/7ew7CxgzTyOEMXMA2Auj9QJSZ2nTsMRb0mAx
-         XZFYO1rVn0Xt1Qw8oSRU0u1ArTzvoYjmGa4U3VIjzClihE2rlQ1/Hg+ugz3Md7FY/r0v
-         80MA==
-X-Forwarded-Encrypted: i=1; AJvYcCXyRJJbtKoEwTDjlyMnDAkfrwhHnGoXeLL5JXLkUFEN7uPObbs4J3/WgEt0+7J4h0FBffu1kUpBzcxdbqE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKn8RoLmySvW8smA9QYzGqdkozMkGdNdmaNj/s0Vsb8qgrCx5j
-	IXE8JCXzUT8DSh+1N3Nq9Snf1lr3gRXchdL8JKzxrtNTaQ5NNuB7H0K0NGE1vdmpE9E7lx2enhC
-	PG35qr+zm95BTFweoHegIytJGZQy99Wm/9IqzrrZaIzN5KiZ/KwZyF0V98eCRyyvOLaAPPx2VqM
-	ct
-X-Gm-Gg: ASbGncvJReJ20uOgZ/EDm7TBPFb63Qk937Z0TssT0u5SB+LRcIrIp2fYjiug7N3eDOi
-	9M6Z6N8fTjjCS4FyBntH3jP4A4r9CbjZpAybH31BQjuZgHfcNV3Wrey51+tE4QgafGuB39NW2Tx
-	sqlJtT3RYm0WZd3p2pdkVpnVzgLB81b2L1+FeMOZfjz6DYxDn2nFkjYqeRvTZG9B+FqbPXnUDvh
-	60yjx0zkQTbHAnrSU7QqEew4hr1YTAdkDbQlbTG+H2kBTsd9vLW1UZZoGM62BOkeKkWGXERnxyl
-	J1dZZMNCsKAWTc2tbzYStUCmkG3eeDiXUTDcKntdakktx2ALdNjLm3H9382DEpQ3NzY=
-X-Received: by 2002:a05:6000:1ac9:b0:3a1:f5c4:b81b with SMTP id ffacd0b85a97d-3b1fe1e69b5mr5343056f8f.23.1751532523279;
-        Thu, 03 Jul 2025 01:48:43 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEwJWsJ9Bcq221tnNZUrZgPxYaGKS2ioIMyKtLjbCKUp7n/zy8XxkU4Y6rahZ2XUyogggC6pg==
-X-Received: by 2002:a05:6000:1ac9:b0:3a1:f5c4:b81b with SMTP id ffacd0b85a97d-3b1fe1e69b5mr5343032f8f.23.1751532522882;
-        Thu, 03 Jul 2025 01:48:42 -0700 (PDT)
-Received: from ?IPV6:2a0d:3344:270a:b10:5fbf:faa5:ef2b:6314? ([2a0d:3344:270a:b10:5fbf:faa5:ef2b:6314])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454a999c632sm20422205e9.23.2025.07.03.01.48.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Jul 2025 01:48:42 -0700 (PDT)
-Message-ID: <e7275f92-5107-48d2-9a47-435b73c62ef4@redhat.com>
-Date: Thu, 3 Jul 2025 10:48:40 +0200
+	 In-Reply-To:Content-Type; b=oROSzG1wLN2VqCMFxq8R4WWmi66+qDd17VL84+Q+YezzVbTqByFkQPksM4WfkjWvWQVDw0zrr4vxeo6fu2uRi8liFo2jtYCCXncue3+zV+FAD88h3URLs+1gltRBymhSdSXPw9ktmqimD1QO2+EeI2q/90Ky+Y4TE2ChiK9o+1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=W8Ycyy8C; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 562MlYEI024207;
+	Thu, 3 Jul 2025 08:51:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=/d2noo
+	saDdXdconM+7uuqyYqydbAnZBC//lI6fIfcVU=; b=W8Ycyy8C5pbkqZkGZ+T89Q
+	VgqAXjSHHT1AaSSEH0rV9qlmYZc07Ryj3z5XEi0MPipTkBonl+2MUZI2Tj3DnA7k
+	JLagB8gYSpDeSTu0lIpeM+ICbtzOeMF7pws+aZNATynTulPC4M7HLkE0sPCV3ABZ
+	NanVgLE64CzTCAbumm6mTmU1uHtnaLkA2nS/r4LpuvfBpjYZ/HEawoiVq7yhHKMk
+	6fr/PizvF+7NsftV9mwfVzUj3wF8htlxfWSRXW0ZNG8kI7XL1NhLQZK355TwIvGe
+	rbjG8KbJjBcwvqLQ/er4iZ/U4JXNVOoEwE5y7si+GZOQUQBgyDfDEoMC+N1POU8A
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47j6u226vc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 03 Jul 2025 08:51:35 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 5638i4Y5003197;
+	Thu, 3 Jul 2025 08:51:35 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47j6u226v8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 03 Jul 2025 08:51:35 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5636HAqx021106;
+	Thu, 3 Jul 2025 08:51:34 GMT
+Received: from smtprelay03.wdc07v.mail.ibm.com ([172.16.1.70])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 47jtqum3qa-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 03 Jul 2025 08:51:34 +0000
+Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
+	by smtprelay03.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5638pRoY20054692
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 3 Jul 2025 08:51:27 GMT
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7EBBB58043;
+	Thu,  3 Jul 2025 08:51:32 +0000 (GMT)
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id DB02258063;
+	Thu,  3 Jul 2025 08:51:24 +0000 (GMT)
+Received: from [9.109.245.113] (unknown [9.109.245.113])
+	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Thu,  3 Jul 2025 08:51:24 +0000 (GMT)
+Message-ID: <7b78974b-6841-4280-89c1-01bd835d4f27@linux.ibm.com>
+Date: Thu, 3 Jul 2025 14:21:22 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,31 +83,139 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] skbuff: Add MSG_MORE flag to optimize large packet
- transmission
-To: Feng Yang <yangfeng59949@163.com>, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, horms@kernel.org, willemb@google.com,
- almasrymina@google.com, kerneljasonxing@gmail.com, ebiggers@google.com,
- asml.silence@gmail.com, aleksander.lobakin@intel.com, stfomichev@gmail.com,
- david.laight.linux@gmail.com
-Cc: yangfeng@kylinos.cn, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250630071029.76482-1-yangfeng59949@163.com>
+Subject: Re: [PATCH v2 5/7] selftests/mm: Fix child process exit codes in
+ ksm_functional_tests
+To: David Hildenbrand <david@redhat.com>,
+        Aboorva Devarajan <aboorvad@linux.ibm.com>, akpm@linux-foundation.org,
+        Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, shuah@kernel.org,
+        pfalcato@suse.de, ziy@nvidia.com, baolin.wang@linux.alibaba.com,
+        npache@redhat.com, ryan.roberts@arm.com, dev.jain@arm.com,
+        baohua@kernel.org
+Cc: linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ritesh.list@gmail.com
+References: <20250703060656.54345-1-aboorvad@linux.ibm.com>
+ <20250703060656.54345-6-aboorvad@linux.ibm.com>
+ <9586f8ff-3b34-4613-853b-0c808fcbb9d2@redhat.com>
 Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20250630071029.76482-1-yangfeng59949@163.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Donet Tom <donettom@linux.ibm.com>
+In-Reply-To: <9586f8ff-3b34-4613-853b-0c808fcbb9d2@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: aWULfUbizkVbgs-hwJzrcyYummicWdpm
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzAzMDA3MSBTYWx0ZWRfX10b90fLzDQum H5vavubv3EkFWvXssp3EhUEd4tVsPs2pfbT5qWmg7SYZZDyqYoqbvg3U4XSHfEWEAILldoEgV3e uIPap7kI83M2ds6zkqMAfZq6s7yTyMdDURUNjBwvhRjc6AHXis+VdvZJ3t1qIUZc4EfQJ8CZEym
+ P/ReoaBQCpXxiVMYb/9Nb0Cd39isLUYI+/0egdS6tMd+mgKK19o+7dcTdjRFIVP3FUIWXEuT9xX PLGujQy8170pvGSZQd1+1bGTAoMxrDY3GC1KnoMwp/dkiQj192bHn2quLT2DpXiBZ8v5fIU35qm 7QtMxVRcDwYtBTid1ouifYthkpcBek36Tfq8RwOa7JlHGDSfVhh/gle2+YTl1ssWiK+toV3+4i+
+ l8MHAzcmpJgg5eD7tEX0nSfSIyXpLkuIqbQ4v3yIJTDyhSY7+3fgoMB65ej3NkDPoNfmyBZn
+X-Proofpoint-GUID: Xz2n13aL_c-D2xPk4qXlU5WW64L6zz6d
+X-Authority-Analysis: v=2.4 cv=GrRC+l1C c=1 sm=1 tr=0 ts=68664497 cx=c_pps a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VnNF1IyMAAAA:8 a=1mHyDwmyOsOsTL-LXCYA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-03_02,2025-07-02_04,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ priorityscore=1501 adultscore=0 mlxlogscore=999 mlxscore=0 impostorscore=0
+ phishscore=0 spamscore=0 suspectscore=0 bulkscore=0 malwarescore=0
+ lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507030071
 
-On 6/30/25 9:10 AM, Feng Yang wrote:
-> From: Feng Yang <yangfeng@kylinos.cn>
-> 
-> The "MSG_MORE" flag is added to improve the transmission performance of large packets.
-> The improvement is more significant for TCP, while there is a slight enhancement for UDP.
+Hi David
 
-I'm sorry for the conflicting input, but i fear we can't do this for
-UDP: unconditionally changing the wire packet layout may break the
-application, and or at very least incur in unexpected fragmentation issues.
+On 7/3/25 2:03 PM, David Hildenbrand wrote:
+> On 03.07.25 08:06, Aboorva Devarajan wrote:
+>> In ksm_functional_tests, test_child_ksm() returned negative values
+>> to indicate errors. However, when passed to exit(), these were
+>> interpreted as large unsigned values (e.g, -2 became 254), leading to
+>> incorrect handling in the parent process. As a result, some tests
+>> appeared to be skipped or silently failed.
+>>
+>> This patch changes test_child_ksm() to return positive error codes
+>> (1, 2, 3) and updates test_child_ksm_err() to interpret them correctly.
+>> This ensures the parent accurately detects and reports child process
+>> failures.
+>>
+>> --------------
+>> Before patch:
+>> --------------
+>> - [RUN] test_unmerge
+>> ok 1 Pages were unmerged
+>> ...
+>> - [RUN] test_prctl_fork
+>> - No pages got merged
+>> - [RUN] test_prctl_fork_exec
+>> ok 7 PR_SET_MEMORY_MERGE value is inherited
+>> ...
+>> Bail out! 1 out of 8 tests failed
+>> - Planned tests != run tests (9 != 8)
+>> - Totals: pass:7 fail:1 xfail:0 xpass:0 skip:0 error:0
+>>
+>> --------------
+>> After patch:
+>> --------------
+>> - [RUN] test_unmerge
+>> ok 1 Pages were unmerged
+>> ...
+>> - [RUN] test_prctl_fork
+>> - No pages got merged
+>> not ok 7 Merge in child failed
+>> - [RUN] test_prctl_fork_exec
+>> ok 8 PR_SET_MEMORY_MERGE value is inherited
+>> ...
+>> Bail out! 2 out of 9 tests failed
+>> - Totals: pass:7 fail:2 xfail:0 xpass:0 skip:0 error:0
+>>
+>> Fixes: 6c47de3be3a0 ("selftest/mm: ksm_functional_tests: extend test 
+>> case for ksm fork/exec")
+>> Signed-off-by: Aboorva Devarajan <aboorvad@linux.ibm.com>
+>
+> BTW, when I run the test, I get this weird output
+>
+> TAP version 13
+> 1..9
+> # [RUN] test_unmerge
+> ok 1 Pages were unmerged
+> # [RUN] test_unmerge_zero_pages
+> ok 2 KSM zero pages were unmerged
+> # [RUN] test_unmerge_discarded
+> ok 3 Pages were unmerged
+> # [RUN] test_unmerge_uffd_wp
+> ok 4 Pages were unmerged
+> # [RUN] test_prot_none
+> ok 5 Pages were unmerged
+> # [RUN] test_prctl
+> ok 6 Setting/clearing PR_SET_MEMORY_MERGE works
+> # [RUN] test_prctl_fork
+> ok 7 PR_SET_MEMORY_MERGE value is inherited
+> # [RUN] test_prctl_fork_exec
+>
+> ^ where is the test?
+>
+> # [RUN] test_prctl_unmerge
+> ok 8 Pages were unmerged
+> # Planned tests != run tests (9 != 8)
+> # Totals: pass:8 fail:0 xfail:0 xpass:0 skip:0 error:0
+>
+> ^ what?
+>
+> ok 8 PR_SET_MEMORY_MERGE value is inherited
+> # [RUN] test_prctl_unmerge
+> ok 9 Pages were unmerged
+> # Totals: pass:9 fail:0 xfail:0 xpass:0 skip:0 error:0
+>
+> ^ huh, what now?
+>
 
-/P
+The problem with the exec test is that it uses its own binary to exec.
+
+         } else if (child_pid == 0) {
+                 char *prg_name = "./ksm_functional_tests";
+                 char *argv_for_program[] = { prg_name, 
+FORK_EXEC_CHILD_PRG_NAME, NULL };
+
+                 execv(prg_name, argv_for_program);
+                 return;
+         }
+
+So we should run it on the same directory where the binary present.
+
 
 
