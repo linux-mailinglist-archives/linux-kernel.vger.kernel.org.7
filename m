@@ -1,167 +1,114 @@
-Return-Path: <linux-kernel+bounces-715605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-715607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9964AF79BC
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 17:05:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7AD8AF79EE
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 17:07:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC713585D9C
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 15:02:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92AE916E3BB
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 15:04:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 728FD2EE5F3;
-	Thu,  3 Jul 2025 15:02:17 +0000 (UTC)
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F42A2EE299;
+	Thu,  3 Jul 2025 15:03:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ciw/whlb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 352292E7BBE;
-	Thu,  3 Jul 2025 15:02:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 794C12B9A6;
+	Thu,  3 Jul 2025 15:03:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751554937; cv=none; b=fQF/VUe92hr/sQpR2An1YnhRLRv5g1TV1xHlf5Fo3ZSGHHh/O97QyGQoXDx7yVrj2KCF4MoG+wYM2d85WlAMwq7VlIox2NhWKEXlmlNVz17/D4TLd80Z3NWhNVQ/hUYFEiNtd06JGqgRU/xVE7NqbJo1JCkW7k+Gi0hoLtPRR6Q=
+	t=1751555036; cv=none; b=syo0fGgVxW+5OOt3rAVDw98FRBKMooG5/queiako1tXZpqVaCw7SP9QA2IUq4DdbsDbhzVkvwlquoDsdOkfwN17BnuTXE/ijAE28Q8o+0lAcqCe/3D7cnYtVhLKKyXn7OXhwEWamr3ywrkOavg4wgUsHeKz7hhMVuu62ewShr6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751554937; c=relaxed/simple;
-	bh=Zl8BffPR8rnREgtYfU4AlvafGOWoybBGrZam8tP38lc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LB1KrNKxHffnywSnH3dNYLANrFlK0/xM8Bbwa4XLS93wHuYpElCTpfrw4XLhxHFGnYrOFl3Ux6KSE+b3vlAO2jdW1LnlOJS8HjIY2HJpGHJpMwHezRT0K6jxmow5f9ZVBZwhZoFxhXf4xYNxP8hIrosB02eS2TWIPEktKJSlXV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-553b5165cf5so35973e87.0;
-        Thu, 03 Jul 2025 08:02:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751554933; x=1752159733;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=W9fsm/GMzU4nqbcKsxS9glFMOJCYfvJ+oEJCI8KRLbc=;
-        b=PJU4cT0uOY/0ECVl0v4KXglriusYfc51ZAOcNn04ZQPMg43cP+RmuaYRnHp6J18My3
-         cWOQHAey+OpbW+H+FyeUj1XpIqbtbInRAYUhHQox01XI5/ORZaNRLlSiUxx4qYx4D1Al
-         LXQj6cKqwmwbNwUCZfoQTVxrfhSdhImjmljNf6yDVOTik3IvVYquFRyR0bT2WcN/50Lk
-         9hcVTcwS0dYfz5VhqzpIcCAViqwwbgD87wKA0BQ0dMshbd0X+SbPDKCFV+eoIglZlzw9
-         70xK0M05oRsLDX2TscsS6wsnJqhe0xS//SMKQXY+895UG8Jxmm6WMi+kJRL8mXOQF//i
-         OTyw==
-X-Forwarded-Encrypted: i=1; AJvYcCUUlc/LKK2+2dunCgBDwRxCAwEfDriKVV6p1aOPLgt5FvdT9l4pH4wDS5QBx+jgxcsEMU//KUosO3kN0kM=@vger.kernel.org, AJvYcCWNlyy2oRdGR6u9JErKzrVfy2/7b79ilrfsPEi8ipw4KRWWOtyuNh7snWJLXrj+Erushl7QtBwvdRo3hkOF@vger.kernel.org
-X-Gm-Message-State: AOJu0YztydbDhioPqv+26o21PsNDovquQPPy3n05+h9mfjivgiEaYRc6
-	C5wreNJC/vjTUnIYI9pawRIQLjlRMhYpvojj4HlM+RLo73x1r9n/zZzNgBqN6032
-X-Gm-Gg: ASbGncvqUcMw+UN/OZorD07WqzfzarCAg8cHffXPtqf/WKOqn92THn3pph2gATapwX7
-	qO0088E7oEFZwtFLqUAp1rrflwE8pEAA2LnRxW0CipQ4fUpcnwuVBJHWWi1lVLg1D+HMfIbgdnR
-	qssOWJpQpkiFFdIxNS39/yXDA+5eu84zv89ISjWg0pH9CwEcb6YQ46kY6lsGhSFnNcpCJnh7/eN
-	C019XLhb85FGRnnGyA4XgqY6kIB4ghikshO/+dsNThc2V0X/hzasTexlH4QncvzFPPBFxlvYeDC
-	iK0PI23UpwAY6DdoWizydLai+inxweNs+6XUDP8XNXYeXOqL6KchCmb+Yg1tzuLp7vo/ivG5Qu0
-	=
-X-Google-Smtp-Source: AGHT+IEri2yurMSh6ssyzS0tOyLJvejqQ9bKtd90V7OhU858+wxFHpFvVOr1IMzHvMpLeoNexrxbtw==
-X-Received: by 2002:a05:6402:2549:b0:608:a7a0:48 with SMTP id 4fb4d7f45d1cf-60e71e50e18mr3056093a12.28.1751554918954;
-        Thu, 03 Jul 2025 08:01:58 -0700 (PDT)
-Received: from gmail.com ([2620:10d:c092:500::4:6e61])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-60c826f6788sm10500440a12.0.2025.07.03.08.01.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Jul 2025 08:01:58 -0700 (PDT)
-Date: Thu, 3 Jul 2025 16:01:54 +0100
-From: Breno Leitao <leitao@debian.org>
-To: Leo Yan <leo.yan@arm.com>
-Cc: cov@codeaurora.org, rmk+kernel@armlinux.org.uk, mark.rutland@arm.com,
-	catalin.marinas@arm.com, linux-serial@vger.kernel.org,
-	rmikey@meta.com, linux-arm-kernel@lists.infradead.org,
-	usamaarif642@gmail.com, linux-kernel@vger.kernel.org,
-	paulmck@kernel.org
-Subject: Re: arm64: csdlock at early boot due to slow serial (?)
-Message-ID: <aGabYkQixrVeYlLD@gmail.com>
-References: <aGVn/SnOvwWewkOW@gmail.com>
- <20250702172036.GC1039028@e132581.arm.com>
- <aGZVP8A2a3VVQwzt@gmail.com>
- <20250703114557.GD1039028@e132581.arm.com>
+	s=arc-20240116; t=1751555036; c=relaxed/simple;
+	bh=agq/qe8sXsc3dCu6lab7Vni2cwMdaK7LfiV13CgmH/0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YfilRFQfP9PbJ5UayoyUJ2Ue5V8bc8CIef1t21MDX7poVsMtq5qebEK80/hYWh4ajbgni6elh0L624mRa0MfZtaiSiJ1zTEO4gdPHMLVEnfoxuzW7iy4ZwirqVAEN1usaXpkwLGBAaT5zSlzvbbgyGZUwVnGSpoIxdNaJlLJVdA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ciw/whlb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45276C4CEED;
+	Thu,  3 Jul 2025 15:03:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751555036;
+	bh=agq/qe8sXsc3dCu6lab7Vni2cwMdaK7LfiV13CgmH/0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Ciw/whlbBkJv7CbcN4DuFihAaw2gPPgWaXmYRESD5tWV7Dxq3JfbGiJaSgv8BC8e5
+	 Y+fZnuyOD2ILcXwRKPPxHpOa+/elaFSnR6imbvthYByfLxQltru16nB3kM94L1plfb
+	 4esjB/XSspLFe7WkoR5BA5ZdRP2rumvE6t+HxCyDlRIzYBm06MeJVTjFQOrf4AClCR
+	 KPHGWJyZLK4PYT3SukB/LxWPobsxCz5MZKe9CTOvRGOlo43/GCNCky+jm2wfPvmga9
+	 /cAuJ1R1s1BzatidqjQbdIFLIrRuG5uamwu53ZDynYlB8b20BSFCHiA/VMv3Nu5+LH
+	 xZsmMIG2IUXOw==
+Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-2eacb421554so19956fac.1;
+        Thu, 03 Jul 2025 08:03:56 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVekMUOrkoR642cVJFigebJPqfK6yc/rHSg01ezeA9yRIxH8rzx8mFgQQsYqZl0FkX8ryPrkpQtv83lFmo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQJczjxkjbyaqcf38c6J/3ToiuuXPcO1+aOSRcGiOO1a35he/Y
+	LwXKc2AkozoNiwUMrlEdIZWbtZenwcAbKPEpJVfPPkI2zzxRAPi3QiF8N529Z0yFiiGZ8gqAo7V
+	75+P+v6ZA69VzfNSRfvNVcpOBObW2hoY=
+X-Google-Smtp-Source: AGHT+IEqy5XefO+GaHlEDA7AIKCnaU/Uvzlfmt0/ui1TVGFVpiq35KhvPC9/VafsQGyHh8koBGWrsQ4D7WyTcMOWgeI=
+X-Received: by 2002:a05:6870:2420:b0:2eb:adf2:eb2 with SMTP id
+ 586e51a60fabf-2f76ca89a81mr2583505fac.36.1751555035383; Thu, 03 Jul 2025
+ 08:03:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250703114557.GD1039028@e132581.arm.com>
+References: <20250626154244.324265-1-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20250626154244.324265-1-andriy.shevchenko@linux.intel.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 3 Jul 2025 17:03:44 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0hQLbKZ-DBWcQ-VKryV24Lc-=nsqJQ_fpkystvq6kVCbw@mail.gmail.com>
+X-Gm-Features: Ac12FXzVKYTQZ3rI1JVwVCd722cmyjy9biQf3ZlkFDmrXr5Lz0hYK0O90PHnecw
+Message-ID: <CAJZ5v0hQLbKZ-DBWcQ-VKryV24Lc-=nsqJQ_fpkystvq6kVCbw@mail.gmail.com>
+Subject: Re: [PATCH v1 1/1] PM: Don't use "proxy" headers
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@kernel.org>, Len Brown <len.brown@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello Leo,
+On Thu, Jun 26, 2025 at 5:42=E2=80=AFPM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> Update header inclusions to follow IWYU (Include What You Use)
+> principle.
+>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+>  include/linux/pm.h | 15 ++++++++-------
+>  1 file changed, 8 insertions(+), 7 deletions(-)
+>
+> diff --git a/include/linux/pm.h b/include/linux/pm.h
+> index f0bd8fbae4f2..938b1b446a5d 100644
+> --- a/include/linux/pm.h
+> +++ b/include/linux/pm.h
+> @@ -8,14 +8,15 @@
+>  #ifndef _LINUX_PM_H
+>  #define _LINUX_PM_H
+>
+> -#include <linux/export.h>
+> -#include <linux/list.h>
+> -#include <linux/workqueue.h>
+> -#include <linux/spinlock.h>
+> -#include <linux/wait.h>
+> -#include <linux/timer.h>
+> -#include <linux/hrtimer.h>
+>  #include <linux/completion.h>
+> +#include <linux/export.h>
+> +#include <linux/hrtimer_types.h>
+> +#include <linux/mutex.h>
+> +#include <linux/spinlock.h>
+> +#include <linux/types.h>
+> +#include <linux/util_macros.h>
+> +#include <linux/wait.h>
+> +#include <linux/workqueue_types.h>
+>
+>  /*
+>   * Callbacks for platform drivers to implement.
+> --
 
-On Thu, Jul 03, 2025 at 12:45:57PM +0100, Leo Yan wrote:
-> On Thu, Jul 03, 2025 at 03:02:39AM -0700, Breno Leitao wrote:
-> > > In some cases, if normal world and secure world share the same UART
-> > > port, it can cause the UART state machine malfunction and long wait.
-> > 
-> > I don't know how to check it for sure, but, looking at the serial
-> > console output, I don't see anything else using the UART. The only
-> > output I see on the console at that time is coming from linux kernel.
-> > 
-> > Would you recommend any additional check?
-> 
-> I have no experience in the driver, I should avoid any noise. But two
-> things in my head for quick trying.
-> 
-> - First, you could try earlycon mode, e.g., add option in kernel
->   command line:
->   
->     earlycon=pl011,mmio32,0xc280000
->     earlycon=pl011,0xc280000
-> 
->   This would be possible to give more printing logs. If earlycon works
->   well, then the issue might be caused by later init code (clock, or
->   UART driver itself).
-
-That is an interesting experiment, thanks for the heads-up.
-
-I got `earlycon=pl011,mmio32,0xc280000` working, the machine boots fine,
-and I see different behaviours.
-
-Booting up the system the following lines (as examples):
-
-	[    0.000000] earlycon: pl11 at MMIO32 0x000000000c280000 (options '115200')
-	[    0.000000] printk: legacy bootconsole [pl11] enabled
-	[    0.493205] smp: Brought up 1 node, 72 CPUs
-	[    4.232864] SMP: Total of 72 processors activated.
-	[    4.242788] CPU: All CPU(s) started at EL2
-	[    6.318137] ARMH0011:00: ttyAMA0 at MMIO 0xc280000 (irq = 66, base_baud = 0) is a SBSA
-	[    6.978245] netpoll: netconsole: local port 6666
-	[    7.234429] Run /init as init process
-
-Also, I have a trace_printk() in pl011_console_write_atomic, and it only
-start later in the code. More precisely at:
-
-       swapper/0-1       [000] dN.1.     6.334581: pl011_console_write_atomic: Printing 49 [    6.334573] printk: console [ttyAMA0] enabled
-
-I understand that the early boot messages got sent by some other
-function? (Or maybe the tracing framework was not initialized?)
-
-Anyway, pl011_console_write_atomic() continues to call ~20K times cpu_relax()
-waiting for the BUSY bit to disappear, as before.
-
-For comparison, these are the same line as above, when earlycon is not
-set:
-
-	[    0.154009] smp: Brought up 1 node, 72 CPUs
-	[    0.154012] SMP: Total of 72 processors activated.
-	[    0.154013] CPU: All CPU(s) started at EL2
-	[    0.466949] ARMH0011:00: ttyAMA0 at MMIO 0xc280000 (irq = 66, base_baud = 0) is a SBSA
-	[    0.466967] printk: console [ttyAMA0] enabled
-	[    0.466949] ARMH0011:00: ttyAMA0 at MMIO 0xc280000 (irq = 66, base_baud = 0) is a SBSA
-	[    5.513307] smp: csd: Detected non-responsive CSD lock (#1) on CPU#0, waiting 5001000000 ns for CPU#05 do_nothing+0x0/0x10(0x0).
-	[   10.719305] netpoll: netconsole: local port 6666
-	[   10.961798] Run /init as init process
-
-
-From what I see, using earlycon boots the kernel faster. Here are some
-ideas I got:
-
-	1) Earlycon enables the message to be printed earlier, thus, it smooth
-	out the serial console
-
-	2) without earlycon, the messages are printed at once, with interrupt
-	disabled
-	 2.a) This causes CSD locks
-	 2.b) CSD locks caused an additional 3 seconds delay
-
-	3) pl011_console_write_atomic is slow on both cases
-
-Thanks for the good suggestion,
---breno
+Applied as 6.17 material, thanks!
 
