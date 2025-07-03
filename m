@@ -1,123 +1,125 @@
-Return-Path: <linux-kernel+bounces-714487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AA7DAF6880
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 05:10:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2E7CAF6883
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 05:10:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7135E1C41F72
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 03:10:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54CBD3BCD33
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 03:10:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C526C227E97;
-	Thu,  3 Jul 2025 03:09:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4189322836C;
+	Thu,  3 Jul 2025 03:10:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YlsK1hfI"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="srFtpxVU"
+Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53F1E221DAE;
-	Thu,  3 Jul 2025 03:09:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A7F7226D1B
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 03:10:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751512193; cv=none; b=Y+qSZ8igD1ePOGNpn64vONw8lu2f+oFQTyOd6dDZkk3Nad/V48VycsKzWUnropXOcRWEKlcPjd8l6drq6AWOZdCYgmP/anLs79Ms/jO0/uQ/PGRNwJrRSOwI6sjGbQpzDSlcnI21ySitzZEqWmqvBeFtqfijle5yvd1Rn0Q1ivM=
+	t=1751512223; cv=none; b=hKnMUMfd7fcNtEh9Ngxu6Rkd0AXuIUwHzkSINPicGY+oMLLfO/knFvf6D85nAUbz3CpWG9zifx8uF4XQaJMgHw8fPZ+OH4kv+MIGfqTD1JBs+414C7BMKIN0aVkMadiS/8hyudpKW77t7tu3IH+3R4dlgGriI8GmuA2Vvsv3rGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751512193; c=relaxed/simple;
-	bh=qm2WXy2hNVsbg5j8TFhnxKErU4QV+ayR9DuA7+uohEM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=D16OhZGFkWJiMhcTHhZGy/ZwRyu0GrMHz0/vsa2PT+cuEB9u+reOCvi2esrI5sZdwb7H+IN8Qa15crZ/7CUWG5663GDItowqxOZruT6VRM8i3OMcZYOR6n1BNnr+o0gPJ+cceAp8CrsAO1vZWntbFRfJMXQPArJ3AEfRURfp4q8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YlsK1hfI; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751512192; x=1783048192;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=qm2WXy2hNVsbg5j8TFhnxKErU4QV+ayR9DuA7+uohEM=;
-  b=YlsK1hfI8zeXMW44+u4IPf7ZZiR4d2v33yttsjxHhtq50yy8k1+f4dMS
-   tFOj2W5yMDPm5fEEFXt7fCCVLBDutpQcId3FTX+aBUyLVJZgR7qZ9bNae
-   csZF3gAh6BVKUF7pAAxKbxkXxVsUW9QYBCOU0qywyKEzV5WNMcjbNdwhi
-   EOC0+65l7hvLBaWJyh4dtjHoZjJSEfhGW2ZjTy41ugjE5Q3TM3qnFAvox
-   q+qlKxEywjFXiMXHcaADEoXwm0SVZ8VCK3GeLjnyShs4H5ZaetuQBtEMn
-   myPgpdgE29GHE+znHq+AcG1B7eP2B+U/elEglhI1clqAwdFRbXLdoDqsx
-   w==;
-X-CSE-ConnectionGUID: l1u/O2zgRbOyvOXmgIA4Ow==
-X-CSE-MsgGUID: oABfhrbFRGqLyz0uU7WJvw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11482"; a="64070530"
-X-IronPort-AV: E=Sophos;i="6.16,283,1744095600"; 
-   d="scan'208";a="64070530"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2025 20:09:51 -0700
-X-CSE-ConnectionGUID: GHXfC61hTGKo4Bt9tVFXvw==
-X-CSE-MsgGUID: Bt78+uxSS2mxxHakKW1JSg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,283,1744095600"; 
-   d="scan'208";a="191414429"
-Received: from unknown (HELO [10.238.224.237]) ([10.238.224.237])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2025 20:09:48 -0700
-Message-ID: <7297f080-313b-46f2-93b7-ea7791b09c66@intel.com>
-Date: Thu, 3 Jul 2025 11:09:45 +0800
+	s=arc-20240116; t=1751512223; c=relaxed/simple;
+	bh=GnDP24M2FuP6ya9HMEQ8qsEoAAD+Uo+ti/fKB1+PdCc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=V7TL5GARhqBQR4vTHbQ0UKviUo1vl6oJPCkB1ObeHW1oeaMM0ACcYJZxILtPnngaTOrsu2z848NWi3jNKIbr0Zk67Y/BsxjHq5olBHxJarCHyqtqTeGZPEQWyQIktYBBv/XCZNqxUg3jXy8UUvR2QqDYFi7vnJTR5sPoYqo2kls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=srFtpxVU; arc=none smtp.client-ip=209.85.166.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-3df2fa612c4so94635ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 20:10:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1751512221; x=1752117021; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=U10Trg2+kMrB/Phnk8oajYlRaXXMBmg0wJp6OkDPPfw=;
+        b=srFtpxVUz54N+T/GfilJB7UFLiQu1UkSX7LUVPkrwu9ZE+tb8i7bsTs4uSbWoNh+jZ
+         DFngbB7rzYoJx3nqi9/wgBWY4cywWCFRrhl9Hi2ovQ0lGrOZD2nitQhwYXrIUytlTbux
+         JXYyVqIBOdHqVWrCANegkFezCeED56BrdOKZTu2LbNbLrA4HcYtXl5buPa51XHe91Y/7
+         G6GgQJpND2LmEEFGwn1zC2kM1paGvM5IskuhRNFEGf5c8S9PdYqhMm7kEUqGmTHCzZYZ
+         70j9qcs8S5wFE+eVjEea4nbqK6hDv56eIJS9HYtiQXt/NfUlysN9Rrjn0s/j+rRPly1q
+         ztfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751512221; x=1752117021;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=U10Trg2+kMrB/Phnk8oajYlRaXXMBmg0wJp6OkDPPfw=;
+        b=hpMEPD/E2u0CYUMgR2GkveYYs5KFvvgQtI24uJ4JplfNHqIbo90K7SjUXHo4B/N5LA
+         R3bq4fygmpoejKxTQYZOPLrIUkvlZNv7H7Hv3zgkwT6g+qZGAWovOZrgZvVh6onldOJr
+         sOKs41/zkGaSyDIBmpg/RetXOkzWE5Gwg0qDoOXMhS/Gmphg/v92ZORNzswEU/WvjzE+
+         2Fw2F7EcjmPRF60F1oycNY7XO/pVwK5Moen7YqmDvMsXeKSITW1vpOk7Xn0QXEmmlUS1
+         J/3Hr/4IN2o7VzYt+zdpCRRbkpHP8IWUxsuQMhFAYK4hVR7kXGMSjSNZCffHRgZsFuvh
+         wwOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWOSRRBfzUTOAxKmhIqZH2l+5oeg3n5r04yhunTVSrx+rJHNNATO2dnA1RV/6OVes5aRNhpAZX6LXYKoV4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzO/kxJp5DAlCxUTIii/PAeA9z8uLF6Q+Be3bW7RQx2YcdpRJgw
+	26F11pxwEU0FSSS7wn9DUw68tH5U2iwtmuPDV8NSqzNDABG+jDXULAXC+Fmnsu4YpvPYhzcCjup
+	bQNKXEpuLuBvfoZak5zaDdZZUcc+J0Jz49ozVayqf
+X-Gm-Gg: ASbGnctvbtI+Pm4d3mBUEdc0N3SpM+EokZlvlzGqLIjKEQJ2x6RfRxkK7JlbIMU9yVu
+	O+7BZNkpvrpx42YPxWhx8FO6sf9JmTuLuxV/NILFm8cU2R9KMXz5qT4TVmAN9U+A6pjAMMf7vlI
+	EXYc11wKudwAzGHGF34Nbwq9pIon3hIN04YHev1H+A90OT
+X-Google-Smtp-Source: AGHT+IHRuHQ1sBc/LAsn38NJ7OaGp/8Lfxz6PE+0mZwxQyQdfVsg72Jo2h9/3XFBRmTQyNdPwKGAceiTdyBqMZeJaXg=
+X-Received: by 2002:a92:c245:0:b0:3dc:5cb1:8f24 with SMTP id
+ e9e14a558f8ab-3e05d272402mr1097295ab.9.1751512221092; Wed, 02 Jul 2025
+ 20:10:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] platform/x86: int3472: add hpd pin support
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- LKML <linux-kernel@vger.kernel.org>, linux-media@vger.kernel.org,
- hverkuil@xs4all.nl, Hans de Goede <hdegoede@redhat.com>,
- u.kleine-koenig@baylibre.com, ricardo.ribalda@gmail.com,
- bingbu.cao@linux.intel.com, stable@vger.kernel.org,
- dongcheng.yan@linux.intel.com, hao.yao@intel.com
-References: <20250425104331.3165876-1-dongcheng.yan@intel.com>
- <5a04f105-3075-3226-6ad6-f2c3f31b29da@linux.intel.com>
- <116ea6fa-e9b8-4c28-bc31-f4d1589eb34b@intel.com>
- <aGUPsDglThYGc/3g@svinhufvud> <aGUcqmCwmIM3sRiB@smile.fi.intel.com>
-Content-Language: en-US
-From: "Yan, Dongcheng" <dongcheng.yan@intel.com>
-In-Reply-To: <aGUcqmCwmIM3sRiB@smile.fi.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20250703014942.1369397-1-namhyung@kernel.org> <20250703014942.1369397-7-namhyung@kernel.org>
+In-Reply-To: <20250703014942.1369397-7-namhyung@kernel.org>
+From: Ian Rogers <irogers@google.com>
+Date: Wed, 2 Jul 2025 20:10:09 -0700
+X-Gm-Features: Ac12FXyY3OAmv0vbuKDrGKJL9ePo0TEvoxhw9G8HyPTny8ecMmqLgfmLP1sa9FY
+Message-ID: <CAP-5=fULGaFXNqmcvQDc-n-7OKGq1bdWFs9mY6by7HupKkYFuQ@mail.gmail.com>
+Subject: Re: [PATCH 6/8] perf sched: Use RC_CHK_EQUAL() to compare pointers
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Kan Liang <kan.liang@linux.intel.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Andy,
+On Wed, Jul 2, 2025 at 6:49=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> w=
+rote:
+>
+> So that it can check two pointers to the same object properly when
+> REFCNT_CHECKING is on.
+>
+> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
 
-On 7/2/2025 7:48 PM, Andy Shevchenko wrote:
-> On Wed, Jul 02, 2025 at 01:53:36PM +0300, Sakari Ailus wrote:
->> On Wed, Jul 02, 2025 at 06:23:19PM +0800, Yan, Dongcheng wrote:
->>> On 7/2/2025 6:19 PM, Ilpo Järvinen wrote:
->>>> On Fri, 25 Apr 2025, Dongcheng Yan wrote:
-> 
-> ...
-> 
->>>> I was informed about existance of this patch through an off-band channel 
->>>> (as I was not among receipients). In future, please include all relevant 
->>>> maintainers and MLs as receipients as indicated by 
->>>> scripts/get_maintainers.pl.
->>
->> Hans used to handle these previously and I think that's why you weren't
->> cc'd.
-> 
-> There are two maintainers of this subsystem and both should be included, no?
-
-I'm sorry that I didn't even know the rules of to/cc before this. I just
-choose some of maintainers randomly indicated by get_maintainers.pl as
-"to" and choose some as "cc". I will read the document carefully to
-avoid such problems from happening again.
-
-> At least I have my own script [1] to send patches and it gives a good heuristics
-> of who to include and not. I believe it might give better result then I don't
-> know how derived Cc list in this series.
-> 
-> [1]: https://github.com/andy-shev/home-bin-tools/blob/master/ge2maintainer.sh
-> 
-good script to me, give a try next time.
+Reviewed-by: Ian Rogers <irogers@google.com>
 
 Thanks,
-Dongcheng
+Ian
+
+> ---
+>  tools/perf/builtin-sched.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/tools/perf/builtin-sched.c b/tools/perf/builtin-sched.c
+> index a6eb0462dd5be20f..087d4eaba5f7160d 100644
+> --- a/tools/perf/builtin-sched.c
+> +++ b/tools/perf/builtin-sched.c
+> @@ -994,7 +994,7 @@ thread_atoms_search(struct rb_root_cached *root, stru=
+ct thread *thread,
+>                 else if (cmp < 0)
+>                         node =3D node->rb_right;
+>                 else {
+> -                       BUG_ON(thread !=3D atoms->thread);
+> +                       BUG_ON(!RC_CHK_EQUAL(thread, atoms->thread));
+>                         return atoms;
+>                 }
+>         }
+> --
+> 2.50.0.727.gbf7dc18ff4-goog
+>
 
