@@ -1,116 +1,177 @@
-Return-Path: <linux-kernel+bounces-714519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7ABFFAF68E8
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 05:57:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 088EAAF68F4
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 05:59:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1CBC97AF99A
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 03:56:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E90217BFA1
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 03:59:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD1282405E8;
-	Thu,  3 Jul 2025 03:57:26 +0000 (UTC)
-Received: from smtpbgsg1.qq.com (smtpbgsg1.qq.com [54.254.200.92])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62A6E23C8A4;
-	Thu,  3 Jul 2025 03:57:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 255E525D214;
+	Thu,  3 Jul 2025 03:59:00 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2860225A658;
+	Thu,  3 Jul 2025 03:58:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751515046; cv=none; b=Q+LO2Q8N+d1jD1ey8fhwEDs21eXJNmISC2Ij+18ijEHCYJP4UQZfm6ACY2nQ+OPJICsmXWWjeDQYaylUnJvBlyX7Zcs778PcsZQCisP2YPdSwynFA5g7F7o0vkbr2gmdEiyi/e0IbTx4IfN/qHCaN1OsUu5kmRutgIRFvMFmetQ=
+	t=1751515139; cv=none; b=H5Y44vp3FkyNjBZ3L8/MSraNH1felPERcBNxcbj5cufmjKqigJkoQyXgTgNhp1mO3KrMNAqiqhsoMEot2OQixmhKKj+fG3BI1RW9JIFw3+1+D6V3uMYAOx6or94OpbKyL5loUCHI3Qj1jdHw3WQfLO3PIFQ1z/DY3Rls4VNIK00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751515046; c=relaxed/simple;
-	bh=rs0Jrxz0vRepAeCwsVCMO/UiEo/apDCQ/z41u/EWCXc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=eSxWJFWZmfhGfdL1IPWJRIp0Mw8ESw++X1ct5XST4JrMDk5l4sGWiCmacivlc8mOfRTM0njYWWhrEKgJp83cumbpQNYW1qrfU58sRl8LiBH6CbuURjWG/bFhshefX8WBTMwMsd9FCD/AsZEX5sfE0pk4qRB+WmrqXyMaYvTqg7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=foursemi.com; spf=none smtp.mailfrom=foursemi.com; arc=none smtp.client-ip=54.254.200.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=foursemi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foursemi.com
-X-QQ-mid: zesmtpsz3t1751515011t63cdaf04
-X-QQ-Originating-IP: McRyShDlbg/mNUeXIK/4cz7fRy/HcXqXTgY3hs7UI00=
-Received: from localhost.localdomain ( [183.17.231.150])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Thu, 03 Jul 2025 11:56:50 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 4261929876903516706
-EX-QQ-RecipientCnt: 14
-From: Nick <nick.li@foursemi.com>
-To: lgirdwood@gmail.com,
-	broonie@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com,
-	nick.li@foursemi.com
-Cc: like.sin@gmail.com,
-	xiaoming.yang@foursemi.com,
-	danyang.zheng@foursemi.com,
-	linux-sound@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 4/4] dt-bindings: vendor-prefixes: Add Shanghai FourSemi Semiconductor Co.,Ltd
-Date: Thu,  3 Jul 2025 11:56:39 +0800
-Message-Id: <20250703035639.7252-5-nick.li@foursemi.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250703035639.7252-1-nick.li@foursemi.com>
-References: <20250703035639.7252-1-nick.li@foursemi.com>
+	s=arc-20240116; t=1751515139; c=relaxed/simple;
+	bh=JNjd8X5+WjdNLfqrHNlQS3B+hnOBqWfWIcU07jicB4U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rJdJPG4dLdpNMa0It0RLCpk7KSaQpAOfl4RZjHLjjG8RgGu1ns/mjRb3vPzUJzhcIoIJKj4LGxyAQFugzW1vVB3KbjhsxEfyKhrecqlaGx9r5AgihSd85x4XP0iXK94H70ARL7M+eH9qcKK7KhS4ZIZbXdGDxhNlJ3gsLKSKzRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A84D71688;
+	Wed,  2 Jul 2025 20:58:42 -0700 (PDT)
+Received: from [10.122.56.71] (unknown [10.122.56.71])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1C6EA3F6A8;
+	Wed,  2 Jul 2025 20:58:57 -0700 (PDT)
+Message-ID: <151a612b-198a-4f7e-94e7-10426831ab94@arm.com>
+Date: Wed, 2 Jul 2025 22:58:56 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpsz:foursemi.com:qybglogicsvrsz:qybglogicsvrsz3a-0
-X-QQ-XMAILINFO: OWK9OR96U1jrvk3TfQwfYYyP/fQKuN1n+STryifzRh1Y2a/rShnIjjB+
-	RBEdB+H7xHTI7C/jLU2aFBYiKmPRBh03ae70lovS2RouWc3+2wM6SUT0vN3W1lFR1LWd1KB
-	JOsfZkAxR31VJV81OIEjGTPDqx0ANg+yrnX8mKP1H7TY70liBB8PmN9R7kLOG+TkABH7Sc0
-	HhTD+0kzV0k9S0kbtUiZiXDURKyhVfYOZGE3DdH4Eqaci7w9sXZGz2hzcVv/EqliZRLsuzE
-	u0CNy2dY5wip5Aa9W+jzzS3tIv58704CzybXA+VeqRNoanEpIB754yhcxV1qL5fPpSru4WL
-	ONqeZnE8O9EkrWQtet6FwhUeIYHvNeAXGdoYIV3Mr/vwC7PQvnIf3+ZZevafoDsl6GtsG3Q
-	cBAYNuNHIhrDv4LRKbqruTgpFfYd5ybIKcJFktejy/MBJI+v2exgop1jadLsgBXpkqAtoJG
-	4ehAco8cXLmwFjeA2F9ID2BUsZRBiOUWWzGUBK3cghi/rj0kRWAhnFf4LcrCuMCfXHdTaRT
-	WUrkqPX1i5cbM22hRvSx3moTMHmIiKusDr0RHVPW69XFnDuKPQfjUkkdKlDDk7Q2jeD/jR5
-	DvfZNsrV2DGt7Q93P/CQ3A3Jr5RHS22MUrGoEEDonylPsE6pb/BBkqjjNd4aTXPuQ2d01S2
-	bN2aBx3IQtGYovhS1+TC53PY1sxRDqOpcSI9O/8WT/ekdN9LVJo6WhM65d/cRB4CRoofuSb
-	o5t34Aiy+Uv6v6aYGrIAZHygr/EClvax4X2gd74ArdD8F3r9pqLjJOXcmLtfHmMPxJFpKLV
-	9G6ahmV5Dwc3Dhyz9wuKNZLijvkUod42lsaLspuhebdtRtc3MwIRMHEkDN3ONQdqVIomI/4
-	UwhwGgJwl9upqXfxo8x7CvYhRcGZ1g9CzrdmxhSwLQArwfJnoZCUB85fHae+Dm8giw26FcD
-	agvAmUMCYFXMZkhmF0bDHFlA5kYgJbiYv5xsOSZpn++y5wDl1pOF+6rER6vt48QnFAznvAI
-	flhntxTWdSutRRJro3Xe2POA1YRvU+UeKop8dvfEczJQMsfqNRonhJ/mh4AfOC2wqzFzrCR
-	4JEbVnA7vjxjI1Qd4S2EspHQ7TQzc8vbQ==
-X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
-X-QQ-RECHKSPAM: 0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 2/3] tpm_crb_ffa:Introduce memzero macro to replace
+ memset
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+ Stuart Yoder <stuart.yoder@arm.com>, linux-integrity@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250626184521.1079507-1-prachotan.bathi@arm.com>
+ <20250626184521.1079507-3-prachotan.bathi@arm.com>
+ <aGWvtzhs5ksKgaYo@kernel.org>
+Content-Language: en-US
+From: Prachotan Bathi <prachotan.bathi@arm.com>
+In-Reply-To: <aGWvtzhs5ksKgaYo@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Nick Li <nick.li@foursemi.com>
+On 7/2/25 5:16 PM, Jarkko Sakkinen wrote:
 
-Add vendor prefix for Shanghai FourSemi Semiconductor Co.,Ltd
-Link: https://en.foursemi.com/
+> On Thu, Jun 26, 2025 at 01:45:20PM -0500, Prachotan Bathi wrote:
+>> Add a memzero macro to simplify and standardize zeroing
+>> FF-A data args, replacing direct uses of memset for
+>> improved readability and maintainability.
+>>
+>> Signed-off-by: Prachotan Bathi <prachotan.bathi@arm.com>
+>> ---
+>>   drivers/char/tpm/tpm_crb_ffa.c | 6 ++++--
+>>   1 file changed, 4 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/char/tpm/tpm_crb_ffa.c b/drivers/char/tpm/tpm_crb_ffa.c
+>> index 089d1e54bb46..397cc3b0a478 100644
+>> --- a/drivers/char/tpm/tpm_crb_ffa.c
+>> +++ b/drivers/char/tpm/tpm_crb_ffa.c
+>> @@ -12,6 +12,8 @@
+>>   #include <linux/arm_ffa.h>
+>>   #include "tpm_crb_ffa.h"
+>>   
+>> +#define memzero(s, n) memset((s), 0, (n))
+>> +
+>>   /* TPM service function status codes */
+>>   #define CRB_FFA_OK			0x05000001
+>>   #define CRB_FFA_OK_RESULTS_RETURNED	0x05000002
+>> @@ -192,7 +194,7 @@ static int __tpm_crb_ffa_send_receive(unsigned long func_id,
+>>   	msg_ops = tpm_crb_ffa->ffa_dev->ops->msg_ops;
+>>   
+>>   	if (ffa_partition_supports_direct_req2_recv(tpm_crb_ffa->ffa_dev)) {
+>> -		memset(&tpm_crb_ffa->direct_msg_data2, 0x00,
+>> +		memzero(&tpm_crb_ffa->direct_msg_data2,
+>>   		       sizeof(struct ffa_send_direct_data2));
+>>   
+>>   		tpm_crb_ffa->direct_msg_data2.data[0] = func_id;
+>> @@ -205,7 +207,7 @@ static int __tpm_crb_ffa_send_receive(unsigned long func_id,
+>>   		if (!ret)
+>>   			ret = tpm_crb_ffa_to_linux_errno(tpm_crb_ffa->direct_msg_data2.data[0]);
+>>   	} else {
+>> -		memset(&tpm_crb_ffa->direct_msg_data, 0x00,
+>> +		memzero(&tpm_crb_ffa->direct_msg_data,
+>>   		       sizeof(struct ffa_send_direct_data));
+>>   
+>>   		tpm_crb_ffa->direct_msg_data.data1 = func_id;
+>> -- 
+>> 2.43.0
+>>
+> It adds a ross-reference to the source code, meaning that you have to
+> jump back and forth in the source code just to see that there is a
+> function that wraps up a single memset() call.
+>
+> How does that map to "readability"?
+>
+> BR, Jarkko
 
-Signed-off-by: Nick Li <nick.li@foursemi.com>
----
- Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+Hi Jarkko
 
-diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-index 99e86271c..f692e3b29 100644
---- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
-+++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-@@ -547,6 +547,8 @@ patternProperties:
-     description: FocalTech Systems Co.,Ltd
-   "^forlinx,.*":
-     description: Baoding Forlinx Embedded Technology Co., Ltd.
-+  "^foursemi,.*":
-+    description: Shanghai FourSemi Semiconductor Co.,Ltd.
-   "^freebox,.*":
-     description: Freebox SAS
-   "^freecom,.*":
--- 
-2.39.5
+I've implemented this change post your feedback on v4 of the initial patch
+series, maybe this should've been a question at that point, but what was the
+reasoning for recommending that I use memzero instead? I'll use the same
+reasoning to rephrase the commit message.
 
+Best
+Prachotan.
+Sorry for the spam, Thunderbird keeps defaulting to html emails.
+
+
+On 7/2/25 5:16 PM, Jarkko Sakkinen wrote:
+> On Thu, Jun 26, 2025 at 01:45:20PM -0500, Prachotan Bathi wrote:
+>> Add a memzero macro to simplify and standardize zeroing
+>> FF-A data args, replacing direct uses of memset for
+>> improved readability and maintainability.
+>>
+>> Signed-off-by: Prachotan Bathi <prachotan.bathi@arm.com>
+>> ---
+>>   drivers/char/tpm/tpm_crb_ffa.c | 6 ++++--
+>>   1 file changed, 4 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/char/tpm/tpm_crb_ffa.c b/drivers/char/tpm/tpm_crb_ffa.c
+>> index 089d1e54bb46..397cc3b0a478 100644
+>> --- a/drivers/char/tpm/tpm_crb_ffa.c
+>> +++ b/drivers/char/tpm/tpm_crb_ffa.c
+>> @@ -12,6 +12,8 @@
+>>   #include <linux/arm_ffa.h>
+>>   #include "tpm_crb_ffa.h"
+>>   
+>> +#define memzero(s, n) memset((s), 0, (n))
+>> +
+>>   /* TPM service function status codes */
+>>   #define CRB_FFA_OK			0x05000001
+>>   #define CRB_FFA_OK_RESULTS_RETURNED	0x05000002
+>> @@ -192,7 +194,7 @@ static int __tpm_crb_ffa_send_receive(unsigned long func_id,
+>>   	msg_ops = tpm_crb_ffa->ffa_dev->ops->msg_ops;
+>>   
+>>   	if (ffa_partition_supports_direct_req2_recv(tpm_crb_ffa->ffa_dev)) {
+>> -		memset(&tpm_crb_ffa->direct_msg_data2, 0x00,
+>> +		memzero(&tpm_crb_ffa->direct_msg_data2,
+>>   		       sizeof(struct ffa_send_direct_data2));
+>>   
+>>   		tpm_crb_ffa->direct_msg_data2.data[0] = func_id;
+>> @@ -205,7 +207,7 @@ static int __tpm_crb_ffa_send_receive(unsigned long func_id,
+>>   		if (!ret)
+>>   			ret = tpm_crb_ffa_to_linux_errno(tpm_crb_ffa->direct_msg_data2.data[0]);
+>>   	} else {
+>> -		memset(&tpm_crb_ffa->direct_msg_data, 0x00,
+>> +		memzero(&tpm_crb_ffa->direct_msg_data,
+>>   		       sizeof(struct ffa_send_direct_data));
+>>   
+>>   		tpm_crb_ffa->direct_msg_data.data1 = func_id;
+>> -- 
+>> 2.43.0
+>>
+> It adds a ross-reference to the source code, meaning that you have to
+> jump back and forth in the source code just to see that there is a
+> function that wraps up a single memset() call.
+>
+> How does that map to "readability"?
+>
+> BR, Jarkko
 
