@@ -1,150 +1,174 @@
-Return-Path: <linux-kernel+bounces-715436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-715438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EAC1AF75F7
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 15:42:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E58FAF75FD
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 15:42:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DE011C85C65
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 13:42:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D04C567FA1
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 13:42:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EF552E11C8;
-	Thu,  3 Jul 2025 13:41:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E68C22E2EF7;
+	Thu,  3 Jul 2025 13:42:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O3EaC7pG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A6lmP4xQ"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EB382222B4;
-	Thu,  3 Jul 2025 13:41:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C0A92222B4;
+	Thu,  3 Jul 2025 13:42:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751550115; cv=none; b=jLx52m/FEOTElbgGCTBzB1Ozy6zYYKyPy9G4EKFyLd0eGB4oypokQXVoFovOzP+mE/XT9kQJ9IcPZGev6le6xZzugLPr92u5SDGm50JhHv5maBrEhm8KEOhCfd8D5Ql8hrEXhIcs1YJQh828/44rmoH6RygLjLbx9Hgpjf8xY6o=
+	t=1751550161; cv=none; b=d0dTJzINGbEl6or8AbmRs3wN3TgjscAad10wW/XWyNlERB83ocPrTogx+yNqBv3TFN0mtmPqS9QFuPz1f1/YIOAiWacx+mHey06TaaY2xGnoq0IdjtR/CwAfqd912lDMDTiWyr9EukTBBDk8XZ16G0XVlMMdEAivGfgKNRkUWiM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751550115; c=relaxed/simple;
-	bh=AzCyOeLYvvkd8ESz+bYjZcDSyDUTK6UgemqQUMKPmC8=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=qQBaU2bnCGLTjLEdsbgb98xZUs53nypw3fn1VVJ+QmND+epKxsjdZUu/PgvtVtK7y1ptVOwCcnSOFQjQkDx8BV4uSUi7O3lm+1w0TOOzyPiWK/SpvZ/ooZvrjy6GozGG81IVH0/kHWhmhWo4y0aLtKftkaSIB3dMJEEzC1vPGNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O3EaC7pG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8872C4CEE3;
-	Thu,  3 Jul 2025 13:41:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751550115;
-	bh=AzCyOeLYvvkd8ESz+bYjZcDSyDUTK6UgemqQUMKPmC8=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=O3EaC7pG9AYMtZ1GnmxlMDAujjKd2jjjy8oV9NgoYzH33twFw/sto/xm7oA/kF4wm
-	 QKXDolNstpowlpxlrxtFoYSELRJCAvHsmAyB9bIO4x0OOcS3jLkwCJPhzS/Xh5rqgz
-	 hk1vVueopNKfKZwerZQwRC1wTfPrEKXOhzdgvICHl5lxnT3QGCcSpRVfZwU2Yvpf2P
-	 gwlN76MM4FZmH3RjfneQUsu52PA9EtUPDjDJyOSwwjbtj7GzYI4Hl0r3FlkazbeZzQ
-	 YrlMpFfSPcWldPwJK0mnkJCRlSXQFfqiCuJbJ6NKbsa+4YwMgk3ttTtcbZ6Kkg8s4G
-	 1KS1rB+xP+p8w==
-Date: Thu, 03 Jul 2025 08:41:53 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1751550161; c=relaxed/simple;
+	bh=tavQcEGaObxidlIkQzXjJ++BUyUCiEeX6N3ES4TeMI4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OFchWEMClkTVod/TmGQbYfAg3UDQlpRxLndw5G00XY1vaJDMCxY/bHrfUBUktAj/4sVW2ty/xgtTZqhtRm0BX4FX1Jj7lmTAOXb6rgF+UF7TBNroQvTLzoYyVI50afGoyO/0TAe6vpwtNLyAFxkZ07CrmRNoCu6M5LP2okSueyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A6lmP4xQ; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-32b553e33e6so48826361fa.2;
+        Thu, 03 Jul 2025 06:42:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751550158; x=1752154958; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jFNqw5vvbvpKQuxgS3RLj0oHSG6zw8ZBvyqT3A0POSI=;
+        b=A6lmP4xQ/aTs5EFT/hOOPjMgwYh2GZmdDeL/3YfgTyTY+Vvw1CV/jgoWF8aWdZAgvW
+         BroDq21ROcZw6uHxrjyTnmIff/u1sURMI4QzS1u71CcdSgKsyYyykpvPBEh2AYVKonWX
+         vxVBYNLWi028IEefl/OcoM1W3viF9Xo19um8eUS5W38W9Rt9RLPwRJz8WFNgNVMGftmx
+         rxSbBO7HWMWrKhE2tWKvm4h4S74ZHNCSgeoKwx6EAuBxA7B3Oo54yyXodmZaCANxfHV1
+         FBuR67O4bcdDopXAYn67yz7UeVhHUi2DXl9PX24Vi2fT3J6tjjQ64DOUEBb/thlbbkIU
+         /GBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751550158; x=1752154958;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jFNqw5vvbvpKQuxgS3RLj0oHSG6zw8ZBvyqT3A0POSI=;
+        b=RQ1OuBgDMas5dOXHBkINo9ndUqZKOI1nSdFzquYFZ6XFGfd6JpZhJqY/XmIJ7Vgxpe
+         X32x6b5A5KaOfBE3ogSh4DCvqvwORZAAAA6DmM/a1H4bEKKXeDMYg+LfLFLIfh01LMoP
+         7VAzOrCnRjLeNtge6IwmThYw9kgi0Cnvy9SXyn+CroPYfHLBYvG+ywSKG+yI2M7LEV6q
+         FiNhwa3oxjM5cRCNpteIIcySDKuWpaCqhByYcnckAtNz8Rw79W/zFX5Fk7QM0nMH4Hpn
+         2wsSOYlywUnx36Xzv2DUc4YlugnDlMUANMeYgDhVyz/sRu8LNizJeMrJtmSBnHm5q5nt
+         xZvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVP57BGMN5QJ9jNn0RIvSjZkZf1H16Q1CWCRQHHQpMNcy12DA574dh15F746tpu2tDqCaD5ll13RDtYQWNMjNI=@vger.kernel.org, AJvYcCWRuiEjvI73Jog1/dia8Ah+z+ayuElq1antPI75LG9SRUnlkQMymzycrjeooPSLbHky9ZtsmB08@vger.kernel.org, AJvYcCWf658de3A2si8z75716UjCpV+0X+M9Qq78wxjjbH+7cT62uebf4kFt8FuEhfGVCOtQemYq41pKQZDTZy0q@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOaZJD04efkxK0/7oDUD3eegFaTHmAz7vxKsLkMC2clNfevLQp
+	v2Zdj8zj/CrWd5WTNgrdzM1Jiq8u44KEmipuFK7faFDnT43/tstyjd82UBA7tbJ5blnOQJL+SkG
+	ruHeJvcVvuM4ITfDGHd/bLanEZ3eUK+A=
+X-Gm-Gg: ASbGncvGdzHmXpqJHkaGHlrhtL+R3XhceSq0zEVdEtt/a7lNc3/IXHyGwrgYxy/FO57
+	ibWWCzLMQiFQK9uMnmwjupQ+Hg1frk0RRBZzVFP39o3mgOpGeTWzf7hnPwL2DDckFbRjQQA5yZx
+	KQYh0JohGGvU3m4KG4lxqVyDDPewTBySZqNt1brzVDHQ==
+X-Google-Smtp-Source: AGHT+IEJwE1g4YnSLqje9oO3w/5JCMMzalfAYURIzR+idPnMXcOc8GmRto0P9wd9n73uBaY7LwalrXFGw49te1yx/Y4=
+X-Received: by 2002:a05:651c:4001:b0:32a:651c:9aea with SMTP id
+ 38308e7fff4ca-32e0009ad64mr19007641fa.34.1751550157391; Thu, 03 Jul 2025
+ 06:42:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-kernel@vger.kernel.org, nuno.sa@analog.com, conor+dt@kernel.org, 
- zhiyong.tao@mediatek.com, matthias.bgg@gmail.com, linux-iio@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
- krzk+dt@kernel.org, andy@kernel.org, 
- angelogioacchino.delregno@collabora.com, linux-mediatek@lists.infradead.org, 
- dlechner@baylibre.com, jic23@kernel.org
-To: Aleksander Jan Bajkowski <olek2@wp.pl>
-In-Reply-To: <20250702214830.255898-1-olek2@wp.pl>
-References: <20250702214830.255898-1-olek2@wp.pl>
-Message-Id: <175155007600.1164337.2694125057173487421.robh@kernel.org>
-Subject: Re: [PATCH v2 0/2] Add thermal sensors support for MT7981
+References: <20250703125941.1659700-1-neeraj.sanjaykale@nxp.com>
+In-Reply-To: <20250703125941.1659700-1-neeraj.sanjaykale@nxp.com>
+From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Date: Thu, 3 Jul 2025 09:42:24 -0400
+X-Gm-Features: Ac12FXxaJZkUcMMuvEfhaCIQVNH4xMzK0iXdJhhq4GoOYF0l2cqU-Les31hBC0w
+Message-ID: <CABBYNZKN+mHcvJkMB=1vvOyExF8_Tg2BnD-CemX3b14PoA1vkg@mail.gmail.com>
+Subject: Re: [PATCH v1 1/2] Bluetooth: coredump: Add hci_devcd_unregister()
+ for cleanup
+To: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
+Cc: marcel@holtmann.org, johan.hedberg@gmail.com, davem@davemloft.net, 
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, 
+	linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, amitkumar.karwar@nxp.com, sherry.sun@nxp.com, 
+	manjeet.gupta@nxp.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Neeraj,
 
-On Wed, 02 Jul 2025 23:48:28 +0200, Aleksander Jan Bajkowski wrote:
-> This patch adds support for the temperature sensor in the MT7981 SoC.
-> This sensor is exactly the same as the one in the MT7986.
-> 
-> Changes in v2:
->  - added fallback to an existing compatible string
->  - removed second patch as obsolete
-> 
-> Aleksander Jan Bajkowski (2):
->   dt-bindings: iio: adc: Add support for MT7981
->   arm64: dts: mediatek: add thermal sensor support on mt7981
-> 
->  .../iio/adc/mediatek,mt2701-auxadc.yaml       |  1 +
->  arch/arm64/boot/dts/mediatek/mt7981b.dtsi     | 32 ++++++++++++++++++-
->  2 files changed, 32 insertions(+), 1 deletion(-)
-> 
+On Thu, Jul 3, 2025 at 9:17=E2=80=AFAM Neeraj Sanjay Kale
+<neeraj.sanjaykale@nxp.com> wrote:
+>
+> This adds hci_devcd_unregister() which can be called when driver is
+> removed, which will cleanup the devcoredump data and cancel delayed
+> dump_timeout work.
+>
+> With BTNXPUART driver, it is observed that after FW dump, if driver is
+> removed and re-loaded, it creates hci1 interface instead of hci0
+> interface.
+>
+> But after DEVCD_TIMEOUT (5 minutes) if driver is re-loaded, hci0 is
+> created. This is because after FW dump, hci0 is not unregistered
+> properly for DEVCD_TIMEOUT.
+>
+> With this patch, BTNXPUART is able to create hci0 after every FW dump
+> and driver reload.
+>
+> Signed-off-by: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
+> ---
+>  include/net/bluetooth/coredump.h | 3 +++
+>  net/bluetooth/coredump.c         | 8 ++++++++
+>  2 files changed, 11 insertions(+)
+>
+> diff --git a/include/net/bluetooth/coredump.h b/include/net/bluetooth/cor=
+edump.h
+> index 72f51b587a04..bc8856e4bfe7 100644
+> --- a/include/net/bluetooth/coredump.h
+> +++ b/include/net/bluetooth/coredump.h
+> @@ -66,6 +66,7 @@ void hci_devcd_timeout(struct work_struct *work);
+>
+>  int hci_devcd_register(struct hci_dev *hdev, coredump_t coredump,
+>                        dmp_hdr_t dmp_hdr, notify_change_t notify_change);
+> +void hci_devcd_unregister(struct hci_dev *hdev);
+>  int hci_devcd_init(struct hci_dev *hdev, u32 dump_size);
+>  int hci_devcd_append(struct hci_dev *hdev, struct sk_buff *skb);
+>  int hci_devcd_append_pattern(struct hci_dev *hdev, u8 pattern, u32 len);
+> @@ -85,6 +86,8 @@ static inline int hci_devcd_register(struct hci_dev *hd=
+ev, coredump_t coredump,
+>         return -EOPNOTSUPP;
+>  }
+>
+> +static inline void hci_devcd_unregister(struct hci_dev *hdev) {}
+> +
+>  static inline int hci_devcd_init(struct hci_dev *hdev, u32 dump_size)
+>  {
+>         return -EOPNOTSUPP;
+> diff --git a/net/bluetooth/coredump.c b/net/bluetooth/coredump.c
+> index 819eacb38762..dd7bd40e3eba 100644
+> --- a/net/bluetooth/coredump.c
+> +++ b/net/bluetooth/coredump.c
+> @@ -442,6 +442,14 @@ int hci_devcd_register(struct hci_dev *hdev, coredum=
+p_t coredump,
+>  }
+>  EXPORT_SYMBOL(hci_devcd_register);
+>
+> +void hci_devcd_unregister(struct hci_dev *hdev)
+> +{
+> +       cancel_delayed_work(&hdev->dump.dump_timeout);
+> +       skb_queue_purge(&hdev->dump.dump_q);
+> +       dev_coredump_put(&hdev->dev);
+> +}
+> +EXPORT_SYMBOL_GPL(hci_devcd_unregister);
+
+The fact that the dump lives inside hdev is sort of the source of
+these problems, specially if the dumps are not HCI traffic it might be
+better off having the driver control its lifetime and not use
+hdev->workqueue to schedule it.
+
+>  static inline bool hci_devcd_enabled(struct hci_dev *hdev)
+>  {
+>         return hdev->dump.supported;
 > --
-> 2.39.5
-> 
-> 
-> 
+> 2.34.1
+>
 
 
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
-
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
-
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-This patch series was applied (using b4) to base:
- Base: attempting to guess base-commit...
- Base: tags/next-20250702 (exact match)
-
-If this is not the correct base, please add 'base-commit' tag
-(or use b4 which does this automatically)
-
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/mediatek/' for 20250702214830.255898-1-olek2@wp.pl:
-
-arch/arm64/boot/dts/mediatek/mt7981b-openwrt-one.dtb: thermal@1100c800 (mediatek,mt7981-thermal): compatible: ['mediatek,mt7981-thermal', 'mediatek,mt7986-thermal'] is too long
-	from schema $id: http://devicetree.org/schemas/thermal/mediatek,thermal.yaml#
-arch/arm64/boot/dts/mediatek/mt7981b-openwrt-one.dtb: thermal@1100c800 (mediatek,mt7981-thermal): Unevaluated properties are not allowed ('compatible' was unexpected)
-	from schema $id: http://devicetree.org/schemas/thermal/mediatek,thermal.yaml#
-arch/arm64/boot/dts/mediatek/mt7981b-openwrt-one.dtb: adc@1100d000 (mediatek,mt7981-auxadc): compatible: 'oneOf' conditional failed, one must be fixed:
-	['mediatek,mt7981-auxadc', 'mediatek,mt7986-auxadc', 'mediatek,mt7622-auxadc'] is too long
-	'mediatek,mt7981-auxadc' is not one of ['mediatek,mt7623-auxadc']
-	'mediatek,mt7981-auxadc' is not one of ['mediatek,mt6893-auxadc', 'mediatek,mt8183-auxadc', 'mediatek,mt8186-auxadc', 'mediatek,mt8188-auxadc', 'mediatek,mt8195-auxadc', 'mediatek,mt8516-auxadc']
-	'mediatek,mt2701-auxadc' was expected
-	'mediatek,mt8173-auxadc' was expected
-	from schema $id: http://devicetree.org/schemas/iio/adc/mediatek,mt2701-auxadc.yaml#
-arch/arm64/boot/dts/mediatek/mt7981b-cudy-wr3000-v1.dtb: thermal@1100c800 (mediatek,mt7981-thermal): compatible: ['mediatek,mt7981-thermal', 'mediatek,mt7986-thermal'] is too long
-	from schema $id: http://devicetree.org/schemas/thermal/mediatek,thermal.yaml#
-arch/arm64/boot/dts/mediatek/mt7981b-cudy-wr3000-v1.dtb: thermal@1100c800 (mediatek,mt7981-thermal): Unevaluated properties are not allowed ('compatible' was unexpected)
-	from schema $id: http://devicetree.org/schemas/thermal/mediatek,thermal.yaml#
-arch/arm64/boot/dts/mediatek/mt7981b-cudy-wr3000-v1.dtb: adc@1100d000 (mediatek,mt7981-auxadc): compatible: 'oneOf' conditional failed, one must be fixed:
-	['mediatek,mt7981-auxadc', 'mediatek,mt7986-auxadc', 'mediatek,mt7622-auxadc'] is too long
-	'mediatek,mt7981-auxadc' is not one of ['mediatek,mt7623-auxadc']
-	'mediatek,mt7981-auxadc' is not one of ['mediatek,mt6893-auxadc', 'mediatek,mt8183-auxadc', 'mediatek,mt8186-auxadc', 'mediatek,mt8188-auxadc', 'mediatek,mt8195-auxadc', 'mediatek,mt8516-auxadc']
-	'mediatek,mt2701-auxadc' was expected
-	'mediatek,mt8173-auxadc' was expected
-	from schema $id: http://devicetree.org/schemas/iio/adc/mediatek,mt2701-auxadc.yaml#
-arch/arm64/boot/dts/mediatek/mt7981b-xiaomi-ax3000t.dtb: thermal@1100c800 (mediatek,mt7981-thermal): compatible: ['mediatek,mt7981-thermal', 'mediatek,mt7986-thermal'] is too long
-	from schema $id: http://devicetree.org/schemas/thermal/mediatek,thermal.yaml#
-arch/arm64/boot/dts/mediatek/mt7981b-xiaomi-ax3000t.dtb: thermal@1100c800 (mediatek,mt7981-thermal): Unevaluated properties are not allowed ('compatible' was unexpected)
-	from schema $id: http://devicetree.org/schemas/thermal/mediatek,thermal.yaml#
-arch/arm64/boot/dts/mediatek/mt7981b-xiaomi-ax3000t.dtb: adc@1100d000 (mediatek,mt7981-auxadc): compatible: 'oneOf' conditional failed, one must be fixed:
-	['mediatek,mt7981-auxadc', 'mediatek,mt7986-auxadc', 'mediatek,mt7622-auxadc'] is too long
-	'mediatek,mt7981-auxadc' is not one of ['mediatek,mt7623-auxadc']
-	'mediatek,mt7981-auxadc' is not one of ['mediatek,mt6893-auxadc', 'mediatek,mt8183-auxadc', 'mediatek,mt8186-auxadc', 'mediatek,mt8188-auxadc', 'mediatek,mt8195-auxadc', 'mediatek,mt8516-auxadc']
-	'mediatek,mt2701-auxadc' was expected
-	'mediatek,mt8173-auxadc' was expected
-	from schema $id: http://devicetree.org/schemas/iio/adc/mediatek,mt2701-auxadc.yaml#
-
-
-
-
-
+--=20
+Luiz Augusto von Dentz
 
