@@ -1,105 +1,102 @@
-Return-Path: <linux-kernel+bounces-714317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D338AF6678
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 02:02:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 490A1AF6685
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 02:12:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A339D3B14C3
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 00:01:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 232CC7B499B
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 00:11:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 977EF2DE706;
-	Thu,  3 Jul 2025 00:01:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAE752114;
+	Thu,  3 Jul 2025 00:12:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aQUTAErY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ACBwzBDs"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 016CC2C9D
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 00:01:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B4B3136E;
+	Thu,  3 Jul 2025 00:12:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751500918; cv=none; b=GdL67NlYkbpaGQd9RaexavHo5uTaoKOy8Xnvy0ksZNVidDMXPxe0ZDRxJ9+xEAzzCLpLyejIN+oubN6OCpn/rE5C0H+ldU3z/CxxjY1ZYZ79DWyAHKm/gZAQEw9WTVYFYQWJyy64u7WbyjiF7NPtDebII9ELGt75RuL/sMAmiQY=
+	t=1751501549; cv=none; b=eMTuwoYhfT2izJR3Ig1nHhL+8xnLsXsR3Je7TZwPLONRp5LuUJfoD90HZLIDbdaIyFPQ1EMHhOydHR16hg6wXRoA08DnKTwZRT9H8Kc7cIo7fXKYHdUaY3OylZ2Rvyrd/HOgRK8k++Ff3yCYRwynP1Rp9Zkya8/GAg2j3IJulUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751500918; c=relaxed/simple;
-	bh=2gFhDpWkVfMr3D/JXrWFs9vuiy+VIOgn7cNm5cwE534=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VLwyFYUHLki7EVw/eYodBN3KaYvDPkNae1Tl87PJXk+wMF1OOwRHvpoU6FKe0TO2CJ4FeoV56sRF6JBw0x3y/By+onGUM3nXMSQkkfGVYV0gkphkd5/NAnnZJa5vUjvPqXLewRaZQ0akJRoZYbnAmL/8MAV8fO8MBCFixONFzB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aQUTAErY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F28D2C4CEE7;
-	Thu,  3 Jul 2025 00:01:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751500917;
-	bh=2gFhDpWkVfMr3D/JXrWFs9vuiy+VIOgn7cNm5cwE534=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=aQUTAErYmf2mdhGNxat/1G/cWZ8O9Rro4KLtNqA91Ps40Yn7x3yUzYZNyvXApAyTe
-	 6mMfqNkSKXpi7uBd5QF72q3yfL02Qo5JHjXlTM1LR5usLxrOXbhYldW3zZKv9PnCAP
-	 OTBmICoCai5Ve6Y7a6UKZOYGJQtvG+ml9WuYyhrn1bKKFIVvsONDLOmGSJVqfZF3tu
-	 zuS3iPzuk0pt1kEjZyywYJgQWgysIVG4VnjLltMq4ChaTfOJHLZv+rCYHj2v4qUKAK
-	 VmGOYTG8NbuafhA8jrpOmOBDiJoYkRoSM67f+lWXszZ4bBbcFVHFEcTkaNWFP1B5/3
-	 tfSVhW+26e+Bw==
-Message-ID: <63310a08-e01f-464d-9f46-54bb817f2121@kernel.org>
-Date: Thu, 3 Jul 2025 08:59:47 +0900
+	s=arc-20240116; t=1751501549; c=relaxed/simple;
+	bh=xcaAV4fgHILHGbeXPuCYVyWzm4CjE9OTYgdu4iXec/w=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kikfwI6En0nAv4EnwDkpB9cOlGSDtE3mUq7JmZmtsiAE0kJezsPAhJk9cKMdBPPVtOyD38eajXH960QEHyVsC7DZwRVnLvQuM92j+fZvIqaS/Ji9GltavXGlGDqSU+TA9Jjgy0YFrbjBF4biQ8i58d9ErC9lDgv3uK8PjocJvsI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ACBwzBDs; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 56306flX4061309;
+	Wed, 2 Jul 2025 19:06:41 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1751501201;
+	bh=zTShQvNmYJsUbdqrutBggdEFTR1g+rS+ikJtmUsfF60=;
+	h=From:To:CC:Subject:Date;
+	b=ACBwzBDsLK/nxNfHEcv2fQdi6OiJJjVzof6WNTafSjEVQbZZT+NrcM4HEgrE9dVoh
+	 +9qg0wgtKESB4XyZkGOM63Whp++YJtDaBKx6NYLHglvEENV8mqXtG70Yf4BOQRHqfu
+	 2w7ta5irKRaR0FCNQ5UiqM/NnFUdN6vEWmAln1FU=
+Received: from DFLE110.ent.ti.com (dfle110.ent.ti.com [10.64.6.31])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 56306fCv1313797
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Wed, 2 Jul 2025 19:06:41 -0500
+Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 2
+ Jul 2025 19:06:41 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Wed, 2 Jul 2025 19:06:41 -0500
+Received: from lelvem-mr06.itg.ti.com ([10.250.165.138])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 56306ZSx4057921;
+	Wed, 2 Jul 2025 19:06:36 -0500
+From: Baojun Xu <baojun.xu@ti.com>
+To: <tiwai@suse.de>
+CC: <broonie@kernel.org>, <andriy.shevchenko@linux.intel.com>,
+        <alsa-devel@alsa-project.org>, <shenghao-ding@ti.com>, <navada@ti.com>,
+        <13916275206@139.com>, <v-hampiholi@ti.com>, <v-po@ti.com>,
+        <linux-sound@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <baojun.xu@ti.com>
+Subject: [PATCH v1] ALSA: hda/tas2781: Add bus name in device name check
+Date: Thu, 3 Jul 2025 08:06:08 +0800
+Message-ID: <20250703000608.20815-1-baojun.xu@ti.com>
+X-Mailer: git-send-email 2.43.0.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] nvme: prevent ioq creation for discovery
- controllers
-To: Kamaljit Singh <Kamaljit.Singh1@wdc.com>,
- "kbusch@kernel.org" <kbusch@kernel.org>, "axboe@kernel.dk"
- <axboe@kernel.dk>, hch <hch@lst.de>, "sagi@grimberg.me" <sagi@grimberg.me>,
- "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc: "cassel@kernel.org" <cassel@kernel.org>
-References: <20250702005830.889217-1-kamaljit.singh1@wdc.com>
- <20250702005830.889217-4-kamaljit.singh1@wdc.com>
- <c168acff-66ff-4692-b21e-093c0aa592a1@kernel.org>
- <MN2PR04MB68626BDAC087B4CC8CC1A1A9BC40A@MN2PR04MB6862.namprd04.prod.outlook.com>
-From: Damien Le Moal <dlemoal@kernel.org>
-Content-Language: en-US
-Organization: Western Digital Research
-In-Reply-To: <MN2PR04MB68626BDAC087B4CC8CC1A1A9BC40A@MN2PR04MB6862.namprd04.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On 7/3/25 3:09 AM, Kamaljit Singh wrote:
-> Hi Damien,
->  
-> On 7/1/25 19:18, Damien Le Moal wrote:
->>>   /*
->>> - * An admin controller has one admin queue, but no I/O queues.
->>> + * An admin or discovery controller has one admin queue, but no I/O queues.
->>>    * Override queue_count so it only creates an admin queue.
->>>    */
->>>   void nvme_override_prohibited_io_queues(struct nvme_ctrl *ctrl)
->>>   {
->>> -     if (nvme_admin_ctrl(ctrl))
->>> +     if (nvme_admin_ctrl(ctrl) || nvme_discovery_ctrl(ctrl))
->>>                ctrl->queue_count = 1;
->>>   }
->>>   EXPORT_SYMBOL_GPL(nvme_override_prohibited_io_queues);
->>
->> Repeating comment on patch 1. Can't we do this in nvme_init_subsystem() or may
->> be better, in nvme_set_queue_count() or nvme_init_ctrl_finish() ?
-> nvme_set_queue_count() won’t even be called in this case, as its only used to
-> configure IO queues, which are not being configured for an admin controller.
->  
-> If we move nvme_override_prohibited_io_queues() up the stack into either of your
-> suggested core.c functions, it will affect apple & fc drivers, which I don’t have any
-> means of testing. Any suggestions?
+Device name start from bus name, as we use strstarts()
+to do compare, need add it for TXNW2781 device.
 
-Why would the controller vendor or its fabric matter ?
-If the controller type is admin or discovery, you want queue_count set to 1. So
-I do not think there is any problem.
+Signed-off-by: Baojun Xu <baojun.xu@ti.com>
+---
+ sound/pci/hda/tas2781_hda_i2c.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
+diff --git a/sound/pci/hda/tas2781_hda_i2c.c b/sound/pci/hda/tas2781_hda_i2c.c
+index b9cdbca95..530c2266a 100644
+--- a/sound/pci/hda/tas2781_hda_i2c.c
++++ b/sound/pci/hda/tas2781_hda_i2c.c
+@@ -588,7 +588,7 @@ static int tas2781_hda_i2c_probe(struct i2c_client *clt)
+ 		hda_priv->save_calibration = tas2781_save_calibration;
+ 		tas_hda->priv->global_addr = TAS2781_GLOBAL_ADDR;
+ 	} else if (strstarts(dev_name(&clt->dev),
+-			     "TXNW2781:00-tas2781-hda.0")) {
++			     "i2c-TXNW2781:00-tas2781-hda.0")) {
+ 		device_name = "TXNW2781";
+ 		hda_priv->save_calibration = tas2781_save_calibration;
+ 		tas_hda->priv->global_addr = TAS2781_GLOBAL_ADDR;
 -- 
-Damien Le Moal
-Western Digital Research
+2.43.0
+
 
