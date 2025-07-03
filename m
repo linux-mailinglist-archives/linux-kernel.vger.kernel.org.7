@@ -1,174 +1,106 @@
-Return-Path: <linux-kernel+bounces-715562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-715567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 941A2AF77AE
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 16:36:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4BCEAF77BA
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 16:37:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0DD687B78E4
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 14:34:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 443444E1C94
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 14:37:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A31D2ED166;
-	Thu,  3 Jul 2025 14:35:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="pclih5rz"
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C3E12EE5E3;
+	Thu,  3 Jul 2025 14:37:22 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D78DF2ED148
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 14:35:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5576B2ED86C;
+	Thu,  3 Jul 2025 14:37:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751553329; cv=none; b=ZpUKEvjIAA45jrvyx8skWNOOFJra9q5I9AyBygqatAPVzOTt7oJOgEx/WLB+SOrqfuFbECjvAB6wep0Q91iSqmow7uOGV59MMaWAdkr7HxIOuN3C3iifYlezJJZc+FY4FxBKbe3YIOUmZ0D4FxTUvgC1L45pLj7tnhJGclcVtqg=
+	t=1751553441; cv=none; b=Y2wyHkw6oEkyz9y4duf3ilA8FbUlfdJ5byb4W7iROCUg3y1wlXwlAuHkpM9eYYggKI+K07NTFheztw33Y/Ic2j1UNfCMOHNM4UWxB2V4gQ4dNpJAq3qoKmkxanIS67Ku16DzwlWBpk8uWacgA6Q8Wpbc7ThJMQR2OFCRUm9xXP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751553329; c=relaxed/simple;
-	bh=Y+evtO57jDRO4cx5S0JrB8XOjRXeEqoQzMPAkDgXmEc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HX9UVvDD5bH0TmqP2x933qjvYHSt1rAvYGo8ADJLDJJQdwrCwseu+n+gD19d/U9wFOGcqlY/Vj7LJWXqOmG0S7cVFWFUzGvxhLAeN3PL8wau0lT4ipOeOv3fFkNTm65STezmCSow9tkryCpcPIJI0v4aX7/Z4fI0qKHF9IZC4o0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=pclih5rz; arc=none smtp.client-ip=209.85.160.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4a52d82adcaso75089031cf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Jul 2025 07:35:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1751553327; x=1752158127; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=kgzlPHtDsUP2XFZstpiCKw99h73zAxNOOZoeiHHd4NQ=;
-        b=pclih5rzHDdfqMD/KrXoFwPkIBGUj9xUYM5F8R7j4cC3phkLt2ukipGvuyAHeUpsG8
-         c+uaWfNpsCrtWPF2gSuo9waMbS0NVPAjWp6Z1Mv+FtJi/lgfR0kZsWer3nPwgTGxNvUR
-         RUl2jc/E6W4lrtQ0JnT6FQyDI7frX2fcvtSJA9Z9AxeBnyeXx7M9LPszNL913yNURMVw
-         ZM69rZn4zOxX6cDDtSFlMMAq+1U89HB7UrSs0nQ7qSIQfxsa2au/vcZJva7Gb+7lEugM
-         Eg8Uug3rPhe87BQ2BUH8O0lYMn6dsQ/C9Bgh5/r+dQfDg4aww+wxgOgGrwzJMVqD1Kan
-         Lhsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751553327; x=1752158127;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kgzlPHtDsUP2XFZstpiCKw99h73zAxNOOZoeiHHd4NQ=;
-        b=fQFu/w5EaSPdlOcJ77x3Kgw0z36sfQHF+BlQSAqBMGMtE6NPQTqEDADat8NBOOIiXO
-         VhmVY0rRJRgJk2COlhJNF5lLpoN8RCM+NgIAjXASNvXLm1GnuB3gD1Z7jzl7BXV/jJ4w
-         0y0ohB4p+wcV28KYIgVd5SGbSWfRuZ1NlRezBxNzzifpplRnJ6PkvOlV/Namff4VoeJS
-         b4J8QvgmlEIooG6Fy1JujDibx8fcf1qL+svPif74VyObUaqrFKZf5nU/houe8fGDrWnH
-         160Cw1uHFGTCQz7GxDehExlImiTe88ydLvcEu5VFWfQYtL75vT/9JhSAjPp5zZSQ9rqm
-         lLlA==
-X-Forwarded-Encrypted: i=1; AJvYcCVI8wuSHrw+XWM1rUaY5L0SPzFB7IuJkcMb0lpJNy1mQ0/Iirsv6xy2lQORoALVJd7ooc/2TrEPgb7lnPM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwztsmM68F1qH4NkuyTy26IN/uwTdXRUMdK4tM5BmWTE/p1y0bT
-	UOTH/MldzagE2hBeE85vTwuRKyQ7ArngIst5yYLgMOoMHndOdWPR3VMXMy+/P9BUhw==
-X-Gm-Gg: ASbGncsHo/Y07j7DuQOGV3cDqbYOHtTAnBWHJ0f141dXAHPCdfY0q9gnO9UDm0ya1vF
-	DnncuYLuEWcBb7jVE8EUmf6jF7012FPEQoS5U1V1WDThUbbmpISJM+UMp6YyUs3yYr+zkvqkArB
-	wCjGiATHZ8gYkC/uK7JtJbOEjyfP3l6Gds+CN6F50l0OZ3CwVFniidO8kI6hHgvM37I+fdFXRDP
-	J8gfiHzMiiUConUIlh5zLqAxkbn8lssRhkHqMH/pAp4p31ZJ0T2TX7AN8EZ8xhV1m4v8XlrToot
-	XVDrkgymmPW8+ff5ixA3Ln1cdQG7NQcrrQaMjMTcemi5cRZCoIjb250BpSZ85xql8cXBRlEXVIO
-	vvisQ
-X-Google-Smtp-Source: AGHT+IGK8KAo4mpA+JVTB3ZTXwVBkpsgEauagc0TG5bpf3JShjIVuuf8H4Nd2foOv6ZumStKh0znCw==
-X-Received: by 2002:a05:622a:5143:b0:4a4:2f42:a668 with SMTP id d75a77b69052e-4a9769765b0mr144026911cf.31.1751553326431;
-        Thu, 03 Jul 2025 07:35:26 -0700 (PDT)
-Received: from rowland.harvard.edu ([140.247.181.15])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4a7fc55d92esm109947251cf.49.2025.07.03.07.35.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Jul 2025 07:35:25 -0700 (PDT)
-Date: Thu, 3 Jul 2025 10:35:23 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: Xu Yang <xu.yang_2@nxp.com>
-Cc: ezequiel@vanguardiasur.com.ar, mchehab@kernel.org,
-	laurent.pinchart@ideasonboard.com, hdegoede@redhat.com,
-	gregkh@linuxfoundation.org, mingo@kernel.org, tglx@linutronix.de,
-	andriy.shevchenko@linux.intel.com, viro@zeniv.linux.org.uk,
-	thomas.weissschuh@linutronix.de, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-	imx@lists.linux.dev, jun.li@nxp.com
-Subject: Re: [PATCH v4 1/3] usb: core: add dma-noncoherent buffer alloc and
- free API
-Message-ID: <30f04c8e-5074-4262-bf5a-da022b89c276@rowland.harvard.edu>
-References: <20250703103811.4048542-1-xu.yang_2@nxp.com>
- <20250703103811.4048542-2-xu.yang_2@nxp.com>
+	s=arc-20240116; t=1751553441; c=relaxed/simple;
+	bh=iphZ0xLbalXMFojOT6bd7BRieX/Qbn1y8a8/nwka6Ws=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
+	 In-Reply-To:Content-Type; b=ET+fEFyfY7kHjXvpc3OcXPvZiaQ1qywEMl+IOCRRvLBS/v8KXd7Bi4bexweCkv4TF7JhOyacz4Sh5s9DimxgtTacA0HgdgX/7FBtTG8RzaKlPB6F1WJLP5P1p06LIYfHB/zUmMCZVF7qiq88z2JpkGMuh4GfHhgzrLbc2FWJzjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [141.14.220.36] (g36.guest.molgen.mpg.de [141.14.220.36])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 9F6E3601D7115;
+	Thu, 03 Jul 2025 16:35:33 +0200 (CEST)
+Message-ID: <6be1c1c6-8d8a-49e3-bb14-dc8fcbfc2c50@molgen.mpg.de>
+Date: Thu, 3 Jul 2025 16:35:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250703103811.4048542-2-xu.yang_2@nxp.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/7] Bluetooth: btrtl: Fix typo
+To: Bastien Nocera <hadess@hadess.net>
+References: <20250703142542.985248-1-hadess@hadess.net>
+ <20250703142542.985248-4-hadess@hadess.net>
+Content-Language: en-US
+Cc: trivial@kernel.org, Marcel Holtmann <marcel@holtmann.org>,
+ Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+ Sean Wang <sean.wang@mediatek.com>, Matthias Brugger
+ <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>,
+ Alyssa Rosenzweig <alyssa@rosenzweig.io>, Neal Gompa <neal@gompa.dev>,
+ Johan Hedberg <johan.hedberg@gmail.com>, Ingo Molnar <mingo@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Al Viro <viro@zeniv.linux.org.uk>,
+ Kees Cook <kees@kernel.org>, Erick Archer <erick.archer@outlook.com>,
+ Chris Lu <chris.lu@mediatek.com>, linux-bluetooth@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, asahi@lists.linux.dev
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <20250703142542.985248-4-hadess@hadess.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jul 03, 2025 at 06:38:09PM +0800, Xu Yang wrote:
-> This will add usb_alloc_noncoherent() and usb_free_noncoherent()
-> functions to support alloc and free buffer in a dma-noncoherent way.
+Dear Bastien,
+
+
+Am 03.07.25 um 16:24 schrieb Bastien Nocera:
+> Found by codespell.
 > 
-> To explicit manage the memory ownership for the kernel and device,
-> this will also add usb_dma_noncoherent_sync_for_cpu/device() functions
-> and call it at proper time.  The management requires the user save
-> sg_table returned by usb_alloc_noncoherent() to urb->sgt.
-> 
-> Signed-off-by: Xu Yang <xu.yang_2@nxp.com>
-> 
+> Signed-off-by: Bastien Nocera <hadess@hadess.net>
 > ---
-> Changes in v4:
->  - improve if-else logic
+>   drivers/bluetooth/btrtl.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Changes in v3:
->  - put Return section at the end of description
->  - correct some abbreviations
->  - remove usb_dma_noncoherent_sync_for_cpu() and
->    usb_dma_noncoherent_sync_for_device()
->  - do DMA sync in usb_hcd_map_urb_for_dma() and
->    usb_hcd_unmap_urb_for_dma()
->  - call flush_kernel_vmap_range() for OUT transfers
->    and invalidate_kernel_vmap_range() for IN transfers
-> ---
->  drivers/usb/core/hcd.c | 33 ++++++++++++-----
->  drivers/usb/core/usb.c | 80 ++++++++++++++++++++++++++++++++++++++++++
->  include/linux/usb.h    | 11 ++++++
->  3 files changed, 116 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/usb/core/hcd.c b/drivers/usb/core/hcd.c
-> index c22de97432a0..42d9d8db0968 100644
-> --- a/drivers/usb/core/hcd.c
-> +++ b/drivers/usb/core/hcd.c
+> diff --git a/drivers/bluetooth/btrtl.c b/drivers/bluetooth/btrtl.c
+> index 7838c89e529e..3d137944c458 100644
+> --- a/drivers/bluetooth/btrtl.c
+> +++ b/drivers/bluetooth/btrtl.c
+> @@ -693,7 +693,7 @@ static int rtlbt_parse_firmware(struct hci_dev *hdev,
+>   
+>   	/* Loop from the end of the firmware parsing instructions, until
+>   	 * we find an instruction that identifies the "project ID" for the
+> -	 * hardware supported by this firwmare file.
+> +	 * hardware supported by this firmwmare file.
 
-> @@ -1425,8 +1431,10 @@ int usb_hcd_map_urb_for_dma(struct usb_hcd *hcd, struct urb *urb,
->  	}
->  
->  	dir = usb_urb_dir_in(urb) ? DMA_FROM_DEVICE : DMA_TO_DEVICE;
-> -	if (urb->transfer_buffer_length != 0
-> -	    && !(urb->transfer_flags & URB_NO_TRANSFER_DMA_MAP)) {
-> +	if (!(urb->transfer_flags & URB_NO_TRANSFER_DMA_MAP)) {
-> +		if (!urb->transfer_buffer_length)
-> +			return ret;
-> +
->  		if (hcd->localmem_pool) {
->  			ret = hcd_alloc_coherent(
->  					urb->dev->bus, mem_flags,
-> @@ -1491,7 +1499,16 @@ int usb_hcd_map_urb_for_dma(struct usb_hcd *hcd, struct urb *urb,
->  		if (ret && (urb->transfer_flags & (URB_SETUP_MAP_SINGLE |
->  				URB_SETUP_MAP_LOCAL)))
->  			usb_hcd_unmap_urb_for_dma(hcd, urb);
-> +	} else {
-> +		if (!urb->sgt)
-> +			return ret;
-> +
-> +		if (dir == DMA_TO_DEVICE)
-> +			flush_kernel_vmap_range(urb->transfer_buffer,
-> +						urb->transfer_buffer_length);
-> +		dma_sync_sgtable_for_device(hcd->self.sysdev, urb->sgt, dir);
->  	}
+Without the second m.
 
-This could be done a little more cleanly.  It's always awkward to read
-an "else" clause for a negated test.
+>   	 * Once we have that, we double-check that project_id is suitable
+>   	 * for the hardware we are working with.
+>   	 */
 
-Instead, change the "else" to:
 
-	if (urb->transfer_flags & URB_NO_TRANFER_DMA_MAP) {
+Kind regards,
 
-and move this whole section to the top of the big "if".  Then you can 
-change the test that's already there to:
+Paul
 
-	} else if (urb->transfer_buffer_length != 0) {
 
-Alan Stern
+PS: Should you resend, it’d be great if you wrote in the summary/title 
+if it’s in a comment or in a log string.
 
