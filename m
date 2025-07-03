@@ -1,43 +1,43 @@
-Return-Path: <linux-kernel+bounces-714423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4930AF67C5
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 04:10:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 30704AF67C6
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 04:11:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DBD537AB129
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 02:09:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 22C307AC6E5
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 02:09:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BBCF1F4CB3;
-	Thu,  3 Jul 2025 02:10:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBFD72222B2;
+	Thu,  3 Jul 2025 02:10:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="tCDtNckC"
-Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="QEZcP9KC"
+Received: from out30-113.freemail.mail.aliyun.com (out30-113.freemail.mail.aliyun.com [115.124.30.113])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63C261ADC65
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 02:10:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F00571AF0C1
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 02:10:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.113
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751508619; cv=none; b=NUcBURV5vPrz1ESqhOB9MH38kBW7Z0cZ7g3SbUDc03yFvqTKbnv13eO12hlW4/+EgTIYaVdd6GDzI21Hsq/C0DIDowi1GZxcYC6zTzP6rq1qFZN9TlOY7s0XruPZNBB+SCbJjXO6fyfwcpYq5lJSvXhvt5chwyCAhElUq2OFdiA=
+	t=1751508620; cv=none; b=MpMJ+eLJnflP+tR9r1kHaIIuX/sS5XTMXNvLxw+A6FsFlGu1gigqvo+Zty7i5p2MN/aUSmB9A8rZ31fIRWeKN7gIuI2XARUt1y52TpFI5TEb1oxaSeDWB7r3gFk2lmo6kaCePpFhgM2A73mlS8IiZIOsDdNtHP8CA4iKPiwD5hA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751508619; c=relaxed/simple;
-	bh=tPii+pXoG0cERdcXuiTmHVS/vIx3hqlR1qO4qZI8Cgg=;
+	s=arc-20240116; t=1751508620; c=relaxed/simple;
+	bh=PrbpDPIGwbVnLN+XYaYPxiEMUbBiLtTOwlu9YoQVYDc=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=SRiqHTK1XmsfGIqSBW6Z7EDA3afbK+GMALs1DIid1gwF3X7rB5elkha+ekLtBONcWvSFbrvladUFK7T1g2y9sL9fdR6+LA5ynEVRzmymICPcFYNdWxpb/7CxmLmj+X6eQqeJFJL+Yc1oSB+e8Ur1PCen21xC8pDzGoCnAqj0+68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=tCDtNckC; arc=none smtp.client-ip=115.124.30.99
+	 MIME-Version; b=Ig3ReYNo3d0DCXPRsiU8bTBxXqx8yoaWyYm+FMlSd4wlRSQE3HN5V5AM6oRqswEDZj+JEmrt6taqfSl8DJBW+/xRQHTQosXtRLxY0t9iMOOeZN20eIpLUFQIDw9yhfqJmAwMvTHw0ku6zFFOmVYm+FAwQqzG6sV7i6QH6cy8l+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=QEZcP9KC; arc=none smtp.client-ip=115.124.30.113
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
 DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
 	d=linux.alibaba.com; s=default;
-	t=1751508609; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=3wjCxcOLhf2OFMej0SFymeFA2froSrrQkmUHMvBDaRQ=;
-	b=tCDtNckCQEk4IMUh/dIHev/GxWmslYQRoSbASRNBtddQ2ID+tM7vwQ4mpMEg6I2vbCZTT++rXnw2EE8kkznEAlJ3oPueEdTwk0KalXfqMfK+IKJwN00ROVvf6UDZMNVssakEXG2bDYjzQp7v0KRNzzYjBS8TlP5a/oW2UA3Lhww=
-Received: from localhost(mailfrom:feng.tang@linux.alibaba.com fp:SMTPD_---0WgqZ3e._1751508608 cluster:ay36)
+	t=1751508610; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=sCxjicG5r3fkQxnVPRBp7xHrgO61Yw1xC3KdXRbaghg=;
+	b=QEZcP9KCuneqETxHwWmpXTUd2so8WPsozc6pp/BuVdoW6VKIDlsrUrPuptwQWPGvh1xSWGYWHTXLzLh7kL5F0N4FhfXjsx+kLUg8zkryFAbN63GeY4mGndjCkWBr/UsTxggFz4pFZ3i7bDE/59CrjEfTHu0vtn1Y951si8ZPEPc=
+Received: from localhost(mailfrom:feng.tang@linux.alibaba.com fp:SMTPD_---0WgqQisY_1751508608 cluster:ay36)
           by smtp.aliyun-inc.com;
-          Thu, 03 Jul 2025 10:10:08 +0800
+          Thu, 03 Jul 2025 10:10:09 +0800
 From: Feng Tang <feng.tang@linux.alibaba.com>
 To: Andrew Morton <akpm@linux-foundation.org>,
 	Petr Mladek <pmladek@suse.com>,
@@ -48,9 +48,9 @@ To: Andrew Morton <akpm@linux-foundation.org>,
 Cc: paulmck@kernel.org,
 	john.ogness@linutronix.de,
 	Feng Tang <feng.tang@linux.alibaba.com>
-Subject: [PATCH v3 4/5] panic: add 'panic_sys_info=' setup option for kernel cmdline
-Date: Thu,  3 Jul 2025 10:10:03 +0800
-Message-Id: <20250703021004.42328-5-feng.tang@linux.alibaba.com>
+Subject: [PATCH v3 5/5] panic: add note that panic_print sysctl interface is deprecated
+Date: Thu,  3 Jul 2025 10:10:04 +0800
+Message-Id: <20250703021004.42328-6-feng.tang@linux.alibaba.com>
 X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 In-Reply-To: <20250703021004.42328-1-feng.tang@linux.alibaba.com>
 References: <20250703021004.42328-1-feng.tang@linux.alibaba.com>
@@ -62,62 +62,100 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-'panic_sys_info=' sysctl interface is already added for runtime setting.
-Add counterpart kernel cmdline option for boottime setting.
+Add a dedicated core parameter 'panic_console_replay' for controlling
+console replay, and add note that 'panic_print' sysctl interface  will
+be obsoleted by 'panic_sys_info' and 'panic_console_replay'.  When it
+happens, the SYS_INFO_PANIC_CONSOLE_REPLAY can be removed as well.
 
 Suggested-by: Petr Mladek <pmladek@suse.com>
 Signed-off-by: Feng Tang <feng.tang@linux.alibaba.com>
 ---
- Documentation/admin-guide/kernel-parameters.txt | 15 +++++++++++++++
- kernel/panic.c                                  |  9 +++++++++
- 2 files changed, 24 insertions(+)
+ .../admin-guide/kernel-parameters.txt         |  4 ++++
+ kernel/panic.c                                | 21 ++++++++++++-------
+ 2 files changed, 17 insertions(+), 8 deletions(-)
 
 diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index abb2ade021ee..39ddef7c5857 100644
+index 39ddef7c5857..f34de9978a91 100644
 --- a/Documentation/admin-guide/kernel-parameters.txt
 +++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -4541,6 +4541,21 @@
- 			Use this option carefully, maybe worth to setup a
- 			bigger log buffer with "log_buf_len" along with this.
+@@ -4556,6 +4556,10 @@
  
-+	panic_sys_info= A comma separated list of extra information to be dumped
-+                        on panic.
-+                        Format: val[,val...]
-+                        Where @val can be any of the following:
-+
-+                        tasks:          print all tasks info
-+                        mem:            print system memory info
-+			timers:         print timers info
-+                        locks:          print locks info if CONFIG_LOCKDEP is on
-+                        ftrace:         print ftrace buffer
-+                        all_bt:         print all CPUs backtrace (if available in the arch)
-+                        blocked_tasks:  print only tasks in uninterruptible (blocked) state
-+
-+                        This is a human readable alternative to the 'panic_print' option.
+                         This is a human readable alternative to the 'panic_print' option.
+ 
++	panic_console_replay
++			When panic happens, replay all kernel messages on
++			consoles at the end of panic.
 +
  	parkbd.port=	[HW] Parallel port number the keyboard adapter is
  			connected to, default is 0.
  			Format: <parport#>
 diff --git a/kernel/panic.c b/kernel/panic.c
-index d7aa427dc23c..d9d4fcd5e318 100644
+index d9d4fcd5e318..bb16f254cd02 100644
 --- a/kernel/panic.c
 +++ b/kernel/panic.c
-@@ -143,6 +143,15 @@ static __init int kernel_panic_sysctls_init(void)
- late_initcall(kernel_panic_sysctls_init);
- #endif
+@@ -64,6 +64,7 @@ int panic_on_warn __read_mostly;
+ unsigned long panic_on_taint;
+ bool panic_on_taint_nousertaint = false;
+ static unsigned int warn_limit __read_mostly;
++static bool panic_console_replay;
  
-+/* The format is "panic_sys_info=tasks,mem,locks,ftrace,..." */
-+static int __init setup_panic_sys_info(char *buf)
+ bool panic_triggering_all_cpu_backtrace;
+ 
+@@ -77,6 +78,13 @@ ATOMIC_NOTIFIER_HEAD(panic_notifier_list);
+ EXPORT_SYMBOL(panic_notifier_list);
+ 
+ #ifdef CONFIG_SYSCTL
++static int sysctl_panic_print_handler(const struct ctl_table *table, int write,
++			   void *buffer, size_t *lenp, loff_t *ppos)
 +{
-+	/* There is no risk of race in kernel boot phase */
-+	panic_print = sys_info_parse_param(buf);
-+	return 1;
++	pr_info_once("Kernel: 'panic_print' sysctl interface will be obsoleted by both 'panic_sys_info' and 'panic_console_replay'\n");
++	return proc_doulongvec_minmax(table, write, buffer, lenp, ppos);
 +}
-+__setup("panic_sys_info=", setup_panic_sys_info);
 +
- static atomic_t warn_count = ATOMIC_INIT(0);
+ static const struct ctl_table kern_panic_table[] = {
+ #ifdef CONFIG_SMP
+ 	{
+@@ -108,7 +116,7 @@ static const struct ctl_table kern_panic_table[] = {
+ 		.data		= &panic_print,
+ 		.maxlen		= sizeof(unsigned long),
+ 		.mode		= 0644,
+-		.proc_handler	= proc_doulongvec_minmax,
++		.proc_handler	= sysctl_panic_print_handler,
+ 	},
+ 	{
+ 		.procname	= "panic_on_warn",
+@@ -247,12 +255,6 @@ void nmi_panic(struct pt_regs *regs, const char *msg)
+ }
+ EXPORT_SYMBOL(nmi_panic);
  
- #ifdef CONFIG_SYSFS
+-static void panic_console_replay(void)
+-{
+-	if (panic_print & SYS_INFO_PANIC_CONSOLE_REPLAY)
+-		console_flush_on_panic(CONSOLE_REPLAY_ALL);
+-}
+-
+ void check_panic_on_warn(const char *origin)
+ {
+ 	unsigned int limit;
+@@ -427,7 +429,9 @@ void panic(const char *fmt, ...)
+ 	debug_locks_off();
+ 	console_flush_on_panic(CONSOLE_FLUSH_PENDING);
+ 
+-	panic_console_replay();
++	if ((panic_print & SYS_INFO_PANIC_CONSOLE_REPLAY) ||
++		panic_console_replay)
++		console_flush_on_panic(CONSOLE_REPLAY_ALL);
+ 
+ 	if (!panic_blink)
+ 		panic_blink = no_blink;
+@@ -869,6 +873,7 @@ core_param(panic_print, panic_print, ulong, 0644);
+ core_param(pause_on_oops, pause_on_oops, int, 0644);
+ core_param(panic_on_warn, panic_on_warn, int, 0644);
+ core_param(crash_kexec_post_notifiers, crash_kexec_post_notifiers, bool, 0644);
++core_param(panic_console_replay, panic_console_replay, bool, 0644);
+ 
+ static int __init oops_setup(char *s)
+ {
 -- 
 2.43.5
 
