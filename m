@@ -1,275 +1,186 @@
-Return-Path: <linux-kernel+bounces-714453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50AF4AF6812
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 04:31:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18079AF6814
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 04:32:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 064333A0705
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 02:31:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6181C189C248
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 02:32:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4028B2472AD;
-	Thu,  3 Jul 2025 02:28:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD9F92063F0;
+	Thu,  3 Jul 2025 02:29:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YZZyGE95"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="GmaLsEb9"
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8959B23BCFF;
-	Thu,  3 Jul 2025 02:28:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 174CB1DF248
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 02:29:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751509732; cv=none; b=BNPrcm9tUbrUubJev53IDeX1g3nL3HVmvvGfyr/S7ZotkjHPfWiEnhay6zzQKobXG0nDka+xkwJFwU5rqteU2tIvQABZWR2+JuL23F55lCANqlVKFNAoLBB+Gv6jKxxy1gh7jNrbHIPu2BqeWbPg07849bCXAdlKU2+Df5sS3F4=
+	t=1751509795; cv=none; b=GfvSY29obBfSz8600W6L3iGRw3NAK4A3oNuMtNUDEHJcinBsKuc+KXbUiROsO/pXU+NY67HmNWD2ooJjr2iM8y32D2siDVAx05OHHF9cRKeY8u4eUhuL3+ZI56OjaxsH3d7wBs6ICmgyddcJ3NX4UR9L5J2yHD551ZaMjXsJpaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751509732; c=relaxed/simple;
-	bh=qXfO4zQwI9JcJJY85cF/j9Rcqa1auRSKAXUx40KgUIY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Lq8ukJQ1lGc00Py/KHTjPmbogdJ9gpz3bcqbfbA7m1rqV4WgGBpqgrI9ZybuSGOiclADwfZYIKSFAQ9/vLyhvP+ij8ywAu+TxcZNjWlmtWoQbzn32rfuyY1ncnCrwhdk1ak4tSaV2JbwXDSReHCgOD92AzwMG4TFmADajLjvPgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YZZyGE95; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751509731; x=1783045731;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=qXfO4zQwI9JcJJY85cF/j9Rcqa1auRSKAXUx40KgUIY=;
-  b=YZZyGE95XxtlfrWvc7nZOQPWSYhNZYzCfNCYw/BDePInZpHBurHNktad
-   Zfi5wmoADq7Q9a8urAH54ZSaW2lBLockOl+I0bz6QmO57TdElYO6ArYvf
-   EJV5PvdS8yfYkg3dCO7dqT2ugomg6XXEhOYwpY3WkCLN/E55fxa4if0/J
-   lr6pSn5c0SJz+jAUNFwFXObL0Uhe10zFfhbhZjD50AxJYm6I0B4DFcIhK
-   Fhe87NSf5URPriGj+t/VNlYaZ0NQ1O61XoaaHiPzNQa2UgMWnOphY0DVt
-   0WPLxvatFojKgCo6iPrSB2OxCznzwUThuvh0TJgF6EcY8zHICYC0QSr/P
-   g==;
-X-CSE-ConnectionGUID: 0ifwPOJ8SHS/7ch1KY+wDg==
-X-CSE-MsgGUID: itakAgqfQSaNEM7LHKUsdA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11482"; a="41450261"
-X-IronPort-AV: E=Sophos;i="6.16,283,1744095600"; 
-   d="scan'208";a="41450261"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2025 19:28:46 -0700
-X-CSE-ConnectionGUID: tPOIcC3dTLycc7ThvjyFvg==
-X-CSE-MsgGUID: XqzUI2CbRNGIFzGhggvjTA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,283,1744095600"; 
-   d="scan'208";a="154594088"
-Received: from mgerlach-mobl1.amr.corp.intel.com (HELO debox1-desk4.lan) ([10.124.223.28])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2025 19:28:45 -0700
-From: "David E. Box" <david.e.box@linux.intel.com>
-To: linux-kernel@vger.kernel.org,
-	platform-driver-x86@vger.kernel.org,
-	david.e.box@linux.intel.com,
-	srinivas.pandruvada@linux.intel.com,
-	andriy.shevchenko@linux.intel.com,
-	ilpo.jarvinen@linux.intel.com,
-	tony.luck@intel.com,
-	xi.pardee@linux.intel.com
-Cc: hdegoede@redhat.com
-Subject: [PATCH V3 15/15] platform/x86/intel/pmt: KUNIT test for PMT Enhanced Discovery API
-Date: Wed,  2 Jul 2025 19:28:30 -0700
-Message-ID: <20250703022832.1302928-16-david.e.box@linux.intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250703022832.1302928-1-david.e.box@linux.intel.com>
-References: <20250703022832.1302928-1-david.e.box@linux.intel.com>
+	s=arc-20240116; t=1751509795; c=relaxed/simple;
+	bh=tZfPKhgGB2j9eNbdHLBmjtYb/P4kAmGPCTMVYa6VqU0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H/8EYw7ZGfnf0TjXgm97etDcfTS8rXnBeoxFdCPyeAcamPOUjeownYbEVVwt27gCGJ2d0+nQwMx5YqJpit0AfJJekWfsPjbSpMVu52FcipbmvzX6a/zkGMf7OJjMAaJ+CjjNP+8oTYAGEMgUA0t8Zh09aK+pwAtvivwDBEfi6AQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=GmaLsEb9; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4a7a8c2b7b9so76308471cf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 19:29:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rowland.harvard.edu; s=google; t=1751509793; x=1752114593; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=8rh1JDHYagyiIPyBOK33Dd4va5HKceQEpdzxYICKvUs=;
+        b=GmaLsEb935m8MXCrDqm+XSPlbzR9SZmpLmtvsvvIOhfXdoquH06h68czB9KvrMKWoz
+         ZmXcxZY1q85AbQNyHdaXcK2DblCiyl5J+uAjOXWxDaLE0hM/iO+CIW8yfNtE91CHTK94
+         b89Xsig9RyUWrSE8ZlZLn2ZLqYvJ6nMMWrKcFGQRkhFu/b905Ia98fOyFCks8fLGt5QS
+         yFGXAXtEq80sYmU0NQiOtf5o2zvgSCKTbkGmPDWa+V8l4hUUxyN44RlbkbX5XCFbGZtT
+         qbNZi0jQ6KHNneoVjUDERL7dXGt09vJI+/yorVySyDMmCMM7VYXH64HeLUComShom9y9
+         +LJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751509793; x=1752114593;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8rh1JDHYagyiIPyBOK33Dd4va5HKceQEpdzxYICKvUs=;
+        b=qni17fFZThQ9d3jWr5eBHKuE76oLPu/4DPAFHVWKT3B9Dsw4IsAFb10lDmw/yRz+3M
+         obeOnKqprMGc5rkJ6xfWKl4gHFaPzffJs+bqGGtwqhLnnGcxUcNqjqIZDdjy5Hn4DLlE
+         T/RzuD+Ate4e1jGx09QW+sicf9E7FdoIHX9Xcu9RsyUZQBgojFtZtZeSsMU1TM9tytZ4
+         3rh+0Zna7AVkvlosmUz0BSWtNpGQf7CA+Ylif0chozDF3MnfPac3OGUA/N0/q6FtHaSR
+         hqS6CV/YTBbxDpgNAjq81iZoQRcPzJj4B7/Z62g6F4E0FFdNdrRKqGbHwCPQjcZHo5Ku
+         Ndmw==
+X-Forwarded-Encrypted: i=1; AJvYcCWsqZ9jJJdfs3s28RUlxze/1fM7okNNDvko8fh8Mzl1iBeEfYc8TF/ZHNVQdB6JSBBcH7d20qU6i5K1E+8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzYrg79sBhCI+A7FkuoOKrkpQAKIHc/FrwR7HGeKuKhbqz2Bc5
+	7/zT4b7uQfDwCFSy5qMt8b/Dvze8EqLoa/VknO+94SsSGlAiH7OIpRtmeduV59k7Kw==
+X-Gm-Gg: ASbGncvVSF0YVCMl46G2geuq3yESqFGmT8aicauyMBKSJW8sWRzXOLs07cXYpl7NNyE
+	yEmyQ3RjlQXqtdfGWFPQeS+zxrq8q6Cf00/vjxj0wyc0Urn5b/3lVU/H2EeJDFq0rdyT6gx4cWk
+	f7U7Y1ZHa1s0XtKfT6S3iM327db0bPhH9Damji+NWlFBLsLKK3yDHKrD29+immMXlTti6WmLj9m
+	mP20faYftgUsbU8WQJEgoCDW8nMSgt92IrYMIF3uN6fFH9Sr9j5gcR+23D+Ta0HXVXeD5wIT+BS
+	UHKdOXRxYhWfoIcwwBAMwRi9H2XySVhUmeoVvugRq82+G0E/XdrWOAR1l4LJvB8=
+X-Google-Smtp-Source: AGHT+IFgUtIfacM1/yKau1yKcyG4dbEm+p1dcMbN7bUAVPQ51hz2fKYw5S+OeAykLbIKxmJzZvxwUA==
+X-Received: by 2002:a05:622a:138f:b0:4a6:f6e7:7214 with SMTP id d75a77b69052e-4a9769b9da8mr73400481cf.40.1751509792827;
+        Wed, 02 Jul 2025 19:29:52 -0700 (PDT)
+Received: from rowland.harvard.edu ([2601:19b:681:fd10::4179])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4a7fc10620dsm100820671cf.7.2025.07.02.19.29.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Jul 2025 19:29:52 -0700 (PDT)
+Date: Wed, 2 Jul 2025 22:29:49 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: contact@arnaud-lcm.com
+Cc: manas18244@iiitd.ac.in, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Pete Zaitcev <zaitcev@redhat.com>,
+	Paolo Abeni <paolo.abeni@email.it>, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Greg Kroah-Hartman <gregkh@suse.de>,
+	syzbot+86b6d7c8bcc66747c505@syzkaller.appspotmail.com
+Subject: Re: [PATCH] usbmon: Fix out-of-bounds read in mon_copy_to_buff
+Message-ID: <22cdd2ea-9240-45ed-8667-cc315eccf0e0@rowland.harvard.edu>
+References: <20250703-fix-oob-mon_copy_to_buff-v1-1-1aa7f5723d91@iiitd.ac.in>
+ <32d213c565df4c2a4bdb15b8c5b7c1ba@arnaud-lcm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <32d213c565df4c2a4bdb15b8c5b7c1ba@arnaud-lcm.com>
 
-Adds a KUNIT test for the intel_pmt_get_regions_by_feature() API.
+On Wed, Jul 02, 2025 at 10:42:42PM +0100, contact@arnaud-lcm.com wrote:
+> Hi Manas, I just noticed your patch while I was working on it and we had the
+> same idea. I think you are not covering every cases of the issue.
+> I've done it this way:
 
-Signed-off-by: David E. Box <david.e.box@linux.intel.com>
----
+Why do both of you guys think that mon_copy_to_buff() is trying to 
+transfer data from an empty source buffer?  Maybe the destination buffer 
+is the cause of the problem instead.
 
-Changes in v3:
-  - No changes
+> From 49f4d231a1c4407d52fee83e956b1d40b3221e37 Mon Sep 17 00:00:00 2001
+> From: Arnaud Lecomte <contact@arnaud-lcm.com>
+> Date: Wed, 2 Jul 2025 22:39:08 +0100
+> Subject: [PATCH] usb: mon: Add read length checking in mon_copy_to_buff
+> 
+> Signed-off-by: Arnaud Lecomte <contact@arnaud-lcm.com>
+> ---
+>  drivers/usb/mon/mon_bin.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/usb/mon/mon_bin.c b/drivers/usb/mon/mon_bin.c
+> index c93b43f5bc46..e7b390439743 100644
+> --- a/drivers/usb/mon/mon_bin.c
+> +++ b/drivers/usb/mon/mon_bin.c
+> @@ -249,6 +249,8 @@ static unsigned int mon_copy_to_buff(const struct
+> mon_reader_bin *this,
+>  		 * Copy data and advance pointers.
+>  		 */
+>  		buf = this->b_vec[off / CHUNK_SIZE].ptr + off % CHUNK_SIZE;
+> +		if(strlen(from) < step_len)
 
-Changes in v2:
-  - No changes
+strlen() is absolutely the wrong thing to use here for both of your 
+patches.  "from" is not a NUL-terminated string but rather a general 
+memory buffer.  The caller is supposed to guarantee that "from" contains 
+at least "length" bytes of data.  If something is going wrong here, it 
+is the caller's fault.
 
- drivers/platform/x86/intel/pmt/Kconfig        |  14 +++
- drivers/platform/x86/intel/pmt/Makefile       |   2 +
- .../platform/x86/intel/pmt/discovery-kunit.c  | 116 ++++++++++++++++++
- 3 files changed, 132 insertions(+)
- create mode 100644 drivers/platform/x86/intel/pmt/discovery-kunit.c
+Alan Stern
 
-diff --git a/drivers/platform/x86/intel/pmt/Kconfig b/drivers/platform/x86/=
-intel/pmt/Kconfig
-index 83ae17eab462..83e20afc5655 100644
---- a/drivers/platform/x86/intel/pmt/Kconfig
-+++ b/drivers/platform/x86/intel/pmt/Kconfig
-@@ -51,3 +51,17 @@ config INTEL_PMT_DISCOVERY
-=20
- 	  To compile this driver as a module, choose M here: the module
- 	  will be called pmt_discovery.
-+
-+config INTEL_PMT_KUNIT_TEST
-+	tristate "KUnit tests for Intel PMT driver"
-+	depends on INTEL_PMT_DISCOVERY
-+	depends on KUNIT
-+	help
-+	  Enable this option to compile and run a suite of KUnit tests for the In=
-tel
-+	  Platform Monitoring Technology (PMT) driver. These tests are designed to
-+	  validate the driver's functionality, error handling, and overall stabil=
-ity,
-+	  helping developers catch regressions and ensure code quality during cha=
-nges.
-+
-+	  This option is intended for development and testing environments. It is
-+	  recommended to disable it in production builds. To compile this driver =
-as a
-+	  module, choose M here: the module will be called pmt-discovery-kunit.
-diff --git a/drivers/platform/x86/intel/pmt/Makefile b/drivers/platform/x86=
-/intel/pmt/Makefile
-index 8aed7e1592e4..47f692c091c9 100644
---- a/drivers/platform/x86/intel/pmt/Makefile
-+++ b/drivers/platform/x86/intel/pmt/Makefile
-@@ -12,3 +12,5 @@ obj-$(CONFIG_INTEL_PMT_CRASHLOG)	+=3D pmt_crashlog.o
- pmt_crashlog-y				:=3D crashlog.o
- obj-$(CONFIG_INTEL_PMT_DISCOVERY)	+=3D pmt_discovery.o
- pmt_discovery-y				:=3D discovery.o features.o
-+obj-$(CONFIG_INTEL_PMT_KUNIT_TEST)	+=3D pmt-discovery-kunit.o
-+pmt-discovery-kunit-y			:=3D discovery-kunit.o
-diff --git a/drivers/platform/x86/intel/pmt/discovery-kunit.c b/drivers/pla=
-tform/x86/intel/pmt/discovery-kunit.c
-new file mode 100644
-index 000000000000..b4493fb96738
---- /dev/null
-+++ b/drivers/platform/x86/intel/pmt/discovery-kunit.c
-@@ -0,0 +1,116 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Intel Platform Monitory Technology Discovery KUNIT tests
-+ *
-+ * Copyright (c) 2025, Intel Corporation.
-+ * All Rights Reserved.
-+ */
-+
-+#include <kunit/test.h>
-+#include <linux/err.h>
-+#include <linux/intel_pmt_features.h>
-+#include <linux/intel_vsec.h>
-+#include <linux/module.h>
-+#include <linux/slab.h>
-+
-+#define PMT_FEATURE_COUNT (FEATURE_MAX + 1)
-+
-+static void
-+validate_pmt_regions(struct kunit *test, struct pmt_feature_group *feature=
-_group, int feature_id)
-+{
-+	int i;
-+
-+	kunit_info(test, "Feature ID %d [%s] has %d regions.\n", feature_id,
-+		   pmt_feature_names[feature_id], feature_group->count);
-+
-+	for (i =3D 0; i < feature_group->count; i++) {
-+		struct telemetry_region *region =3D &feature_group->regions[i];
-+
-+		kunit_info(test, "  - Region %d: cdie_mask=3D%u, package_id=3D%u, partit=
-ion=3D%u, segment=3D%u,",
-+			   i, region->plat_info.cdie_mask, region->plat_info.package_id,
-+			   region->plat_info.partition, region->plat_info.segment);
-+		kunit_info(test, "\t\tbus=3D%u, device=3D%u, function=3D%u, guid=3D0x%x,=
-",
-+			   region->plat_info.bus_number, region->plat_info.device_number,
-+			   region->plat_info.function_number, region->guid);
-+		kunit_info(test, "\t\taddr=3D%p, size=3D%lu, num_rmids=3D%u", region->ad=
-dr, region->size,
-+			   region->num_rmids);
-+
-+
-+		KUNIT_ASSERT_GE(test, region->plat_info.cdie_mask, 0);
-+		KUNIT_ASSERT_GE(test, region->plat_info.package_id, 0);
-+		KUNIT_ASSERT_GE(test, region->plat_info.partition, 0);
-+		KUNIT_ASSERT_GE(test, region->plat_info.segment, 0);
-+		KUNIT_ASSERT_GE(test, region->plat_info.bus_number, 0);
-+		KUNIT_ASSERT_GE(test, region->plat_info.device_number, 0);
-+		KUNIT_ASSERT_GE(test, region->plat_info.function_number, 0);
-+
-+		KUNIT_ASSERT_NE(test, region->guid, 0);
-+
-+		KUNIT_ASSERT_NOT_ERR_OR_NULL(test, (__force const void *)region->addr);
-+	}
-+}
-+
-+static void linebreak(struct kunit *test)
-+{
-+	kunit_info(test, "*******************************************************=
-**********************\n");
-+}
-+
-+static void test_intel_pmt_get_regions_by_feature(struct kunit *test)
-+{
-+	struct pmt_feature_group *feature_group;
-+	int num_available =3D 0;
-+	int feature_id;
-+
-+	/* Iterate through all possible feature IDs */
-+	for (feature_id =3D 1; feature_id < PMT_FEATURE_COUNT; feature_id++, line=
-break(test)) {
-+		const char *name;
-+
-+		if (!pmt_feature_id_is_valid(feature_id))
-+			continue;
-+
-+		name =3D pmt_feature_names[feature_id];
-+
-+		feature_group =3D intel_pmt_get_regions_by_feature(feature_id);
-+		if (IS_ERR(feature_group)) {
-+			if (PTR_ERR(feature_group) =3D=3D -ENOENT)
-+				kunit_warn(test, "intel_pmt_get_regions_by_feature() reporting feature=
- %d [%s] is not present.\n",
-+					   feature_id, name);
-+			else
-+				kunit_warn(test, "intel_pmt_get_regions_by_feature() returned error %l=
-d while attempt to lookup %d [%s].\n",
-+					   PTR_ERR(feature_group), feature_id, name);
-+
-+			continue;
-+		}
-+
-+		if (!feature_group) {
-+			kunit_warn(test, "Feature ID %d: %s is not available.\n", feature_id, n=
-ame);
-+			continue;
-+		}
-+
-+		num_available++;
-+
-+		validate_pmt_regions(test, feature_group, feature_id);
-+
-+		intel_pmt_put_feature_group(feature_group);
-+	}
-+
-+	if (num_available =3D=3D 0)
-+		kunit_warn(test, "No PMT region groups were available for any feature ID=
- (0-10).\n");
-+}
-+
-+static struct kunit_case intel_pmt_discovery_test_cases[] =3D {
-+	KUNIT_CASE(test_intel_pmt_get_regions_by_feature),
-+	{}
-+};
-+
-+static struct kunit_suite intel_pmt_discovery_test_suite =3D {
-+	.name =3D "pmt_discovery_test",
-+	.test_cases =3D intel_pmt_discovery_test_cases,
-+};
-+
-+kunit_test_suite(intel_pmt_discovery_test_suite);
-+
-+MODULE_IMPORT_NS("INTEL_PMT_DISCOVERY");
-+MODULE_AUTHOR("David E. Box <david.e.box@linux.intel.com>");
-+MODULE_DESCRIPTION("Intel PMT Discovery KUNIT test driver");
-+MODULE_LICENSE("GPL");
---=20
-2.43.0
-
+> +			return -ENOMEM;
+>  		memcpy(buf, from, step_len);
+>  		if ((off += step_len) >= this->b_size) off = 0;
+>  		from += step_len;
+> -- 
+> 2.43.0
+> 
+> 
+> On 2025-07-02 22:27, Manas Gupta via B4 Relay wrote:
+> > From: Manas Gupta <manas18244@iiitd.ac.in>
+> > 
+> > memcpy tries to copy buffer 'from' when it is empty. This leads to
+> > out-of-bounds crash.
+> > 
+> > This checks if the buffer is already empty and throws an appropriate
+> > error message before bailing out.
+> > 
+> > Fixes: 6f23ee1fefdc1 ("USB: add binary API to usbmon")
+> > Reported-by: syzbot+86b6d7c8bcc66747c505@syzkaller.appspotmail.com
+> > Closes: https://syzkaller.appspot.com/bug?extid=86b6d7c8bcc66747c505
+> > Signed-off-by: Manas Gupta <manas18244@iiitd.ac.in>
+> > ---
+> > I have used printk(KERN_ERR ... to keep things consistent in usbmon.
+> > dev_err and pr_err are not used anywhere else in usbmon.
+> > ---
+> >  drivers/usb/mon/mon_bin.c | 5 +++++
+> >  1 file changed, 5 insertions(+)
+> > 
+> > diff --git a/drivers/usb/mon/mon_bin.c b/drivers/usb/mon/mon_bin.c
+> > index c93b43f5bc4614ad75568b601c47a1ae51f01fa5..bd945052f6fb821ba814fab96eba5a82e5d161e2
+> > 100644
+> > --- a/drivers/usb/mon/mon_bin.c
+> > +++ b/drivers/usb/mon/mon_bin.c
+> > @@ -249,6 +249,11 @@ static unsigned int mon_copy_to_buff(const struct
+> > mon_reader_bin *this,
+> >  		 * Copy data and advance pointers.
+> >  		 */
+> >  		buf = this->b_vec[off / CHUNK_SIZE].ptr + off % CHUNK_SIZE;
+> > +		if (!strlen(from)) {
+> > +			printk(KERN_ERR TAG
+> > +			       ": src buffer is empty, cannot copy from it\n");
+> > +			return -ENOMEM;
+> > +		}
+> >  		memcpy(buf, from, step_len);
+> >  		if ((off += step_len) >= this->b_size) off = 0;
+> >  		from += step_len;
+> > 
+> > ---
+> > base-commit: d0b3b7b22dfa1f4b515fd3a295b3fd958f9e81af
+> > change-id: 20250703-fix-oob-mon_copy_to_buff-7cfe26e819b9
+> > 
+> > Best regards,
+> 
 
