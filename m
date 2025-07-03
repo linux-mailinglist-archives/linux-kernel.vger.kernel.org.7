@@ -1,44 +1,45 @@
-Return-Path: <linux-kernel+bounces-714503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B84DEAF68B8
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 05:36:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F96BAF68BE
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 05:36:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8823A7B0F23
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 03:34:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DF094A79E5
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 03:36:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 170B323ABB9;
-	Thu,  3 Jul 2025 03:35:52 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FBFA238C34;
+	Thu,  3 Jul 2025 03:36:46 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B41982356CB;
-	Thu,  3 Jul 2025 03:35:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AB022376E1;
+	Thu,  3 Jul 2025 03:36:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751513751; cv=none; b=M2qq9J+n25bWLP31FcMT74Xgk1wkSDTCoPPMBnRzcT4NzgE3fF/sVzZqUFiKr43DrkONV2PLyTnO7ahyX3JSIbbMvmDo2r37r27mLYdkPhGydq4aHuE7s8s+NQtDjq3rC/FNiNgMgEMmpxO8bGx2cBwuhVSKX3n17ERWb+QlkTw=
+	t=1751513805; cv=none; b=tYk2T79/yH4xj/XauMzq2bp0e7sp4LwWe/IZULAbn/vkFTH+Dhl5gN6jUuIw1N6KR3502V9VxAasoAFKBVYQ6FM1X06ihvurLQLdW3r1E1gNXubPliiWLQw+XVVyQ7JgLMi6lHBprVqR30ZWigUkpTfCc/DmeTskgDVpmHZe7SE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751513751; c=relaxed/simple;
-	bh=aAiZg72MzhU/nwICqHjkhrX5X7yDG6hB2keLduoAXfU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rP3x7ENl+MzP7CcMHIkTRJ05oHHO+/d2u0mKLGU/jI/rPcRDAuDGTd+NDD83wYMB4uA2xi8gDQMwo8UxHYDrgvZ3/WX5pwh8Z6h3lo34dzyNhgSrDA0xMf3wECCgey5hRr+zirRdxo4uXTzaQ4ctji5ystQmuFaiy5/f9M4r9cE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4bXj8g3pglzKHMbj;
-	Thu,  3 Jul 2025 11:35:47 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.252])
-	by mail.maildlp.com (Postfix) with ESMTP id E416B1A1101;
-	Thu,  3 Jul 2025 11:35:45 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP3 (Coremail) with SMTP id _Ch0CgBHpySN+mVo3w_yAQ--.57305S3;
-	Thu, 03 Jul 2025 11:35:43 +0800 (CST)
-Message-ID: <99010bfd-c968-49c7-b62b-c72b38722c1b@huaweicloud.com>
-Date: Thu, 3 Jul 2025 11:35:41 +0800
+	s=arc-20240116; t=1751513805; c=relaxed/simple;
+	bh=qufCM+a9ttb0lswuL1Vr+9sSMDwIKtcoIE0s5xR/GiE=;
+	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=XDi9MCqy+Rw45aHQSqu2dk6/Pn97+jdgqEzT0Q44sHVOO4GoooZNTVNA3ml72Cjn8EbV/QX7wY2Dq3Ljc+Q41lIIirrjsgPtKEh6v//yxszQArHPFeyTWIoYSprKl3/qz82inoc7S6OCD/8meZTJBnsABkU07AmFNoDlnV+ajA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4bXj7c4WKJz2BdV7;
+	Thu,  3 Jul 2025 11:34:52 +0800 (CST)
+Received: from kwepemk100013.china.huawei.com (unknown [7.202.194.61])
+	by mail.maildlp.com (Postfix) with ESMTPS id 6AFF21A016C;
+	Thu,  3 Jul 2025 11:36:39 +0800 (CST)
+Received: from [10.67.120.192] (10.67.120.192) by
+ kwepemk100013.china.huawei.com (7.202.194.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 3 Jul 2025 11:36:38 +0800
+Message-ID: <cb9826e0-8366-4b34-abce-fedd5882ba00@huawei.com>
+Date: Thu, 3 Jul 2025 11:36:37 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -46,144 +47,36 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/9] fallocate: introduce FALLOC_FL_WRITE_ZEROES flag
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org, hch@lst.de,
- tytso@mit.edu, djwong@kernel.org, john.g.garry@oracle.com,
- bmarzins@redhat.com, chaitanyak@nvidia.com, shinichiro.kawasaki@wdc.com,
- martin.petersen@oracle.com, yi.zhang@huawei.com, chengzhihao1@huawei.com,
- yukuai3@huawei.com, yangerkun@huawei.com, linux-fsdevel@vger.kernel.org,
- linux-ext4@vger.kernel.org, linux-block@vger.kernel.org,
- dm-devel@lists.linux.dev, linux-nvme@lists.infradead.org,
- linux-scsi@vger.kernel.org
-References: <20250619111806.3546162-1-yi.zhang@huaweicloud.com>
- <20250623-woanders-allabendlich-f87ae2d9c704@brauner>
-Content-Language: en-US
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-In-Reply-To: <20250623-woanders-allabendlich-f87ae2d9c704@brauner>
-Content-Type: text/plain; charset=UTF-8
+CC: <shaojijie@huawei.com>, <davem@davemloft.net>, <edumazet@google.com>,
+	<pabeni@redhat.com>, <andrew+netdev@lunn.ch>, <horms@kernel.org>,
+	<shenjian15@huawei.com>, <liuyonglong@huawei.com>, <chenhao418@huawei.com>,
+	<jonathan.cameron@huawei.com>, <shameerali.kolothum.thodi@huawei.com>,
+	<salil.mehta@huawei.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next 0/4] There are some bugfix for the HNS3 ethernet
+ driver
+To: Jakub Kicinski <kuba@kernel.org>
+References: <20250702125731.2875331-1-shaojijie@huawei.com>
+ <f3994ddd-9b9b-4bbb-bba4-89f7b4ae07f7@huawei.com>
+ <20250702072301.51deaf72@kernel.org>
+From: Jijie Shao <shaojijie@huawei.com>
+In-Reply-To: <20250702072301.51deaf72@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:_Ch0CgBHpySN+mVo3w_yAQ--.57305S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxZF45tr1Duw4ftrWrZw1kZrb_yoWrtw15pa
-	yUJFZ8KF4DJr17J397uF109F15Zws3Ar15Ka1rKw1kZrWYqrnagFWIga4UXasrCr93Ww1x
-	ZFsFya4q9ay7AFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
-	14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
-	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWr
-	XwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
-	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
-	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0
-	s2-5UUUUU==
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ kwepemk100013.china.huawei.com (7.202.194.61)
 
-On 2025/6/23 18:46, Christian Brauner wrote:
-> On Thu, 19 Jun 2025 19:17:57 +0800, Zhang Yi wrote:
->> From: Zhang Yi <yi.zhang@huawei.com>
->>
->> Changes since v1:
->>  - Rebase codes on 6.16-rc2.
->>  - Use max_{hw|user}_wzeroes_unmap_sectors queue limits instead of
->>    BLK_FEAT_WRITE_ZEROES_UNMAP feature to represent the status of the
->>    unmap write zeroes operation as Christoph and Darrick suggested. This
->>    redoes the first 5 patches, so remove all the reviewed-by tags,
->>    please review them again.
->>  - Simplify the description of FALLOC_FL_WRITE_ZEROES in patch 06 as
->>    Darrick suggested.
->>  - Revise the check order of FALLOC_FL_WRITE_ZEROES in patch 08 as
->>    Christoph suggested.
->> Changes since RFC v4:
->>  - Rebase codes on 6.16-rc1.
->>  - Add a new queue_limit flag, and change the write_zeroes_unmap sysfs
->>    interface to RW mode. User can disable the unmap write zeroes
->>    operation by writing '0' to it when the operation is slow.
->>  - Modify the documentation of write_zeroes_unmap sysfs interface as
->>    Martin suggested.
->>  - Remove the statx interface.
->>  - Make the bdev and ext4 don't allow to submit FALLOC_FL_WRITE_ZEROES
->>    if the block device does not enable the unmap write zeroes operation,
->>    it should return -EOPNOTSUPP.
->> Changes sicne RFC v3:
->>  - Rebase codes on 6.15-rc2.
->>  - Add a note in patch 1 to indicate that the unmap write zeros command
->>    is not always guaranteed as Christoph suggested.
->>  - Rename bdev_unmap_write_zeroes() helper and move it to patch 1 as
->>    Christoph suggested.
->>  - Introduce a new statx attribute flag STATX_ATTR_WRITE_ZEROES_UNMAP as
->>    Christoph and Christian suggested.
->>  - Exchange the order of the two patches that modified
->>    blkdev_fallocate() as Christoph suggested.
->> Changes since RFC v2:
->>  - Rebase codes on next-20250314.
->>  - Add support for nvme multipath.
->>  - Add support for NVMeT with block device backing.
->>  - Clear FALLOC_FL_WRITE_ZEROES if dm clear
->>    limits->max_write_zeroes_sectors.
->>  - Complement the counterpart userspace tools(util-linux and xfs_io)
->>    and tests(blktests and xfstests), please see below for details.
->> Changes since RFC v1:
->>  - Switch to add a new write zeroes operation, FALLOC_FL_WRITE_ZEROES,
->>    in fallocate, instead of just adding a supported flag to
->>    FALLOC_FL_ZERO_RANGE.
->>  - Introduce a new flag BLK_FEAT_WRITE_ZEROES_UNMAP to the block
->>    device's queue limit features, and implement it on SCSI sd driver,
->>    NVMe SSD driver and dm driver.
->>  - Implement FALLOC_FL_WRITE_ZEROES on both the ext4 filesystem and
->>    block device (bdev).
->>
->> [...]
-> 
-> If needed, the branch can be declared stable and thus be used as base
-> for other work.
-> 
-> ---
-> 
-> Applied to the vfs-6.17.fallocate branch of the vfs/vfs.git tree.
-> Patches in the vfs-6.17.fallocate branch should appear in linux-next soon.
-> 
-> Please report any outstanding bugs that were missed during review in a
-> new review to the original patch series allowing us to drop it.
-> 
-> It's encouraged to provide Acked-bys and Reviewed-bys even though the
-> patch has now been applied. If possible patch trailers will be updated.
-> 
-> Note that commit hashes shown below are subject to change due to rebase,
-> trailer updates or similar. If in doubt, please check the listed branch.
-> 
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-> branch: vfs-6.17.fallocate
 
-Hi Christian,
+on 2025/7/2 22:23, Jakub Kicinski wrote:
+> On Wed, 2 Jul 2025 21:07:19 +0800 Jijie Shao wrote:
+>> on 2025/7/2 20:57, Jijie Shao wrote:
+>>> There are some bugfix for the HNS3 ethernet driver
+>> Sorry, ignore this patch set, they should be sent to net not net-next ...
+> You still should have waited 24h per:
+> https://www.kernel.org/doc/html/next/process/maintainer-netdev.html
 
-I noticed that this patch series doesn't appear to be merged into this
-branch. Just wondering if it might have been missed?
 
-Best regards,
-Yi.
+Okay, I'll take note of that. Thank you.
 
-> 
-> [1/9] block: introduce max_{hw|user}_wzeroes_unmap_sectors to queue limits
->       https://git.kernel.org/vfs/vfs/c/2695a9b086fd
-> [2/9] nvme: set max_hw_wzeroes_unmap_sectors if device supports DEAC bit
->       https://git.kernel.org/vfs/vfs/c/bf07c1180194
-> [3/9] nvmet: set WZDS and DRB if device enables unmap write zeroes operation
->       https://git.kernel.org/vfs/vfs/c/a6c7ab5adcba
-> [4/9] scsi: sd: set max_hw_wzeroes_unmap_sectors if device supports SD_ZERO_*_UNMAP
->       https://git.kernel.org/vfs/vfs/c/92372ed1cc88
-> [5/9] dm: clear unmap write zeroes limits when disabling write zeroes
->       https://git.kernel.org/vfs/vfs/c/e383d550e716
-> [6/9] fs: introduce FALLOC_FL_WRITE_ZEROES to fallocate
->       https://git.kernel.org/vfs/vfs/c/1ed1b5df86ec
-> [7/9] block: factor out common part in blkdev_fallocate()
->       https://git.kernel.org/vfs/vfs/c/96433508c8c0
-> [8/9] block: add FALLOC_FL_WRITE_ZEROES support
->       https://git.kernel.org/vfs/vfs/c/2b4e5f9b3eb9
-> [9/9] ext4: add FALLOC_FL_WRITE_ZEROES support
->       https://git.kernel.org/vfs/vfs/c/51954e469396
 
 
