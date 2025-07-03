@@ -1,89 +1,147 @@
-Return-Path: <linux-kernel+bounces-715691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-715694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 317D3AF7CA4
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 17:42:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03AE0AF7CC4
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 17:47:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 697ED161C75
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 15:40:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB7A81893F6D
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 15:42:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8F042222B2;
-	Thu,  3 Jul 2025 15:40:25 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0012.hostedemail.com [216.40.44.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14C802D6605;
+	Thu,  3 Jul 2025 15:42:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="lp4Wh9IS"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FCD0EEBA
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 15:40:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86CAC19D8AC;
+	Thu,  3 Jul 2025 15:42:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751557225; cv=none; b=SO0sbYpU/vBuVwuycYCmdTerEyqKoMfybeNfarLTM4LmRCHlaZ3Ot5mDYCglYXBgm2qizzhhwfHuJOSZlnYxSOOsOA+7XrhD3Qxvy90AV6og/qhEesxu/p1Np/5syQxWFKvbyoFfpYl/nDN69xRksuiinKrwkSK/Ixo0/kTa0lA=
+	t=1751557342; cv=none; b=hlqMfuRzijFszyqYeDwh54UG8Giz2Xqg/BOcwX29duglrWzZ2TQ86noXMzg2SGTreH+Am6C9HDQw47oFpxnJh9kqtypuvRFbMHXgHsWDuNam8eC/ycHHqHXizSEsv5V/X9iOE6nbQkdEyv/wY8tmFoJhfi6shdeyYVGoBUL0SYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751557225; c=relaxed/simple;
-	bh=yOM+krPgVElrXVhBV3ACPlHHM5rdYmWM3Pp0c4HFd9A=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bGY0jiODcrVsUmnZXDzyzGdBhsgXB3slTtBm8Gz/poHf7jcYcaUbK6rPj16O6B63Ga3KF+nhH1Un8TaP4lhqRQMzOuvnWrgg2Bg0FA9etV9nQCy8wfsAef/9vFTIbRYd45c0oBSRxsrNqbvd5h2Zc0P+KPF4IOCN/RP1GyXhT+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf02.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay05.hostedemail.com (Postfix) with ESMTP id 9E45D57D51;
-	Thu,  3 Jul 2025 15:40:21 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf02.hostedemail.com (Postfix) with ESMTPA id 8F64F80018;
-	Thu,  3 Jul 2025 15:40:19 +0000 (UTC)
-Date: Thu, 3 Jul 2025 11:40:18 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Alexandre Ghiti <alex@ghiti.fr>
-Cc: ChenMiao <chenmiao.ku@gmail.com>, Linux RISCV
- <linux-riscv@vger.kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] riscv: ftrace: Fix the logic issue in DYNAMIC_FTRACE
- selection
-Message-ID: <20250703114018.6fab0b8a@batman.local.home>
-In-Reply-To: <f7e12c6d-892e-4ca3-9ef0-fbb524d04a48@ghiti.fr>
-References: <20250703084502.394406-1-chenmiao.ku@gmail.com>
-	<f7e12c6d-892e-4ca3-9ef0-fbb524d04a48@ghiti.fr>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1751557342; c=relaxed/simple;
+	bh=yC6hDoqxABim+0U/P7Lq08hxLKtYT+7rRFFFMob3zbM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=HvcpqiVU1VafJNn7KImUQQMFzS+yfwyYypvHEzLo346BgJKB+KRH0qFj3N9+Q3h3qbMCz+k9Aj1TaLlb7x/qDNSbDh+jWOeWsiMhuVypTAZixnMZOCPo2MPoYLeQZyqiBYwNp65XRtE8LndGY2GOQJNSuGxdwZA6V+D6KrA9dic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=lp4Wh9IS; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1751557338;
+	bh=yC6hDoqxABim+0U/P7Lq08hxLKtYT+7rRFFFMob3zbM=;
+	h=From:Subject:Date:To:Cc:From;
+	b=lp4Wh9ISyxh8GAlBiZixOaSuvDEVGvLxbiUisrTfOXUh0suvB4qdQ05QDBNEzg88I
+	 qYDAaRVA90p9v+vhQnkIawveaOCv6KcDeYuNrcXHTZn+jRQVtZ/EXenoKrLDlGNcA4
+	 yhYe1iu5ESObGYApX0WzqCbkyTPBewZ3xOONcV5kJsTxmU7yittHc619VzpcUarLKM
+	 hQrZsxLfxiCdipUvLsoI/BycRcYOt2dw0arI9q7ejzmF73zYRupeRD8JOf7DUJHqXF
+	 4BW8/MGsYCJPBxIvLR4AF3RDgkwMxuhEQf7HQ6DZV68RBOnNAGy46T3mvfLI+lNOHR
+	 gPxygPUU4gWMQ==
+Received: from yukiji.home (amontpellier-657-1-116-247.w83-113.abo.wanadoo.fr [83.113.51.247])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: laeyraud)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 0692217E09C6;
+	Thu,  3 Jul 2025 17:42:17 +0200 (CEST)
+From: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
+Subject: [PATCH 0/3] Mediatek Genio EVKs: add MT6359 PMIC keys support
+Date: Thu, 03 Jul 2025 17:41:02 +0200
+Message-Id: <20250703-add-mt6359-pmic-keys-support-v1-0-21a4d2774e34@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 8F64F80018
-X-Stat-Signature: 337nu41neghadpzgkp4py9ztx3ptutkm
-X-Rspamd-Server: rspamout06
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX19TlT3ADYdjeXFGToxE/uqypYY2UNZ/4xU=
-X-HE-Tag: 1751557219-393174
-X-HE-Meta: U2FsdGVkX19LOQBeYMzHh19K/rBYoZ8kOEYb9FvJMLi9jVWvGqrEMxTIAYppmJ3t3iBm2jaWZ6V6T68FZqpWQzsNucu4+o66ObjslxXg6BvhJ3R7U2HiYByJZ1rT4SEFdCBHTJt858HWv3oGzlnSNDa6g0aLScjCGxIb6xiehBMMtbn0BnH0QfkrWcsf6L434WR4nqrio7JJeCR69UM9B+Laz1wS563qWdQvkmHjQDtwPLoaJmDEglAi3BZ4EXvlODwX2y94jzOqpS8EZ4u1a19PjoFowBvvbLsLsuG2fvSYQhiDc+kqbabxL2gV3V/A0rGRrJ/BVvJ70HlM5R1mtmAKpVbyKA7n
+X-B4-Tracking: v=1; b=H4sIAI6kZmgC/zWNyw6CMBAAf4Xs2U1aGhT4FcOhtqtuTB+2hWAI/
+ 24j8ThzmNkgU2LKMDYbJFo4c/AV5KkB89T+Qci2MrSi7cRFKNTWoitn1Q0YHRt80SdjnmMMqaA
+ VvZCD7a0yEmoiJrrz+stfp4MTved6KYeEm86EJjjHZWw8rQX/J5j2/QuIuI+ynwAAAA==
+X-Change-ID: 20250703-add-mt6359-pmic-keys-support-d08019d8d3c1
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: kernel@collabora.com, linux-input@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org, 
+ Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1751557337; l=2597;
+ i=louisalexis.eyraud@collabora.com; s=20250113; h=from:subject:message-id;
+ bh=yC6hDoqxABim+0U/P7Lq08hxLKtYT+7rRFFFMob3zbM=;
+ b=MY4zHQus25afqpRiSKmt8PqHFRihEiUuXBb1JBgogdxKIQbKxFtjdKk8JlWDR5Uh1h+K6CQrI
+ Yb4r/W4tJVyD4QI4xtgLf9YLRrBX+nu2R4zhBL+3zS0jRF0gwZu6hJc
+X-Developer-Key: i=louisalexis.eyraud@collabora.com; a=ed25519;
+ pk=CHFBDB2Kqh4EHc6JIqFn69GhxJJAzc0Zr4e8QxtumuM=
 
-On Thu, 3 Jul 2025 15:00:02 +0200
-Alexandre Ghiti <alex@ghiti.fr> wrote:
+This patchset adds the support of the MT6359 PMIC keys (Power and Home)
+that can be found on the Mediatek Genio 510, 700 and 1200 EVK boards
+by:
+- adding the MT6359 SoC support in the mtk-pmic-keys driver
+- completing the existing definitions (only the Power key
+  support was present) in Genio 510/700 EVK board common
+  devicetree include file (mt8390-genio-common.dtsi)
+- add the needed definitions in Genio 1200 EVK board devicetree
+  (mt8395-genio-1200-evk.dts)
 
+I've tested this patchset on Mediatek Genio 1200-EVK board with a
+kernel based on linux-next (tag: next-20250703) plus [1] patch.
 
-> 
-> We could support static ftrace, but I don't think we should, so I agree 
-> with this patch. In fact I had just prepared a patch for this here 
-> https://github.com/linux-riscv/linux/pull/556/commits/0481092a5bec3818658981c11f629e06e66382b3 
-> which is a bit more complete since I have removed some dead code.
-> 
-> Let's see what other people think about supporting static ftrace, I have 
-> added Steven in cc if he has an opinion.
+Output of evtest tool:
+```
+No device specified, trying to scan all of /dev/input/event*
+Available devices:
+/dev/input/event0:	mtk-pmic-keys
+/dev/input/event1:	gpio-keys
+/dev/input/event2:	Logitech USB Receiver
+/dev/input/event3:	Logitech USB Receiver Mouse
+/dev/input/event4:	Logitech USB Receiver Consumer Control
+/dev/input/event5:	Logitech USB Receiver System Control
+/dev/input/event6:	Goodix Capacitive TouchScreen
+Select the device event number [0-6]: 0
+Input driver version is 1.0.1
+Input device ID: bus 0x19 vendor 0x1 product 0x1 version 0x1
+Input device name: "mtk-pmic-keys"
+Supported events:
+  Event type 0 (EV_SYN)
+  Event type 1 (EV_KEY)
+    Event code 102 (KEY_HOME)
+    Event code 116 (KEY_POWER)
+Properties:
+Testing ... (interrupt to exit)
+Event: time 1751548607.957644, type 1 (EV_KEY), code 102 (KEY_HOME),
+  value 1
+Event: time 1751548607.957644, -------------- SYN_REPORT ------------
+Event: time 1751548620.030611, type 1 (EV_KEY), code 116 (KEY_POWER),
+  value 1
+Event: time 1751548620.030611, -------------- SYN_REPORT ---
+```
 
-Yes, please only support the dynamic ftrace. The static is there only
-to help archs to get ftrace up and running. Once dynamic is supported,
-static should not be used.
+[1] https://lore.kernel.org/linux-mediatek/r4k3pgd3ew3ypne7ernxuzwgniiyvzosbce4cfajbcu7equblt@yato35tjb3lw/
 
-Hmm, maybe I should just remove the prompt for DYNAMIC_FTRACE.
+Signed-off-by: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
+---
+Louis-Alexis Eyraud (3):
+      Input: mtk-pmic-keys - add support for MT6359 PMIC keys
+      arm64: dts: mediatek: mt8390-genio-common: Add Home MT6359 PMIC key support
+      arm64: dts: mediatek: mt8395-genio-1200-evk: Add MT6359 PMIC key support
 
-That is, once it is supported by an architecture, it should be the only
-thing used.
+ arch/arm64/boot/dts/mediatek/mt8390-genio-common.dtsi  |  4 ++++
+ arch/arm64/boot/dts/mediatek/mt8395-genio-1200-evk.dts | 15 +++++++++++++++
+ drivers/input/keyboard/mtk-pmic-keys.c                 | 17 +++++++++++++++++
+ 3 files changed, 36 insertions(+)
+---
+base-commit: b803ad80123e6efccfeeffa7cd37f98f642e37f4
+change-id: 20250703-add-mt6359-pmic-keys-support-d08019d8d3c1
 
--- Steve
+Best regards,
+-- 
+Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
+
 
