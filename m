@@ -1,73 +1,116 @@
-Return-Path: <linux-kernel+bounces-714725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FEB5AF6BC2
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 09:39:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 08677AF6BCC
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 09:42:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 27CB5169969
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 07:39:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9C14176C4A
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 07:42:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EAED2989B2;
-	Thu,  3 Jul 2025 07:39:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA401299955;
+	Thu,  3 Jul 2025 07:41:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J4aiQzDo"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GnITBC+z"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF33F239581;
-	Thu,  3 Jul 2025 07:39:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 274C2224AF3;
+	Thu,  3 Jul 2025 07:41:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751528367; cv=none; b=Nz53WZOC2rQWOyz5uwwCdwCwp1x+Qtpo1LbQ4+SLF4s10O79jN+HiQrjEoMCF4PmNF4P31IJwJpMyNeNK5nKmxeqwqgJTJ6c7gnpMHTnBx6GbDt7q6jtVyppm3yKUfhw6hn4aCGhwceT5V5zNHqXDcUMqEee2FeH1RQg4K6r9BU=
+	t=1751528512; cv=none; b=u8uyo9P095AgHgjkyRn//zlSSHTSks178LLCKHqW2JJ1pYfUnhOvGMLOyj1kwpNfJWZFZV0B/PEBFg6lW33bFNvJ90dJQSrHT0wMOmsB636NacefOMjGvm71a/7a2fC1Ea59/BGtT5NAJm2IZCiZwrxOJvpTeRUtMFiqoe6u58w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751528367; c=relaxed/simple;
-	bh=uW1u/UcsWK3iW/vQ5YbnY4HBDYJ6kRRBPaGGddcAT3c=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=GbdnF0y3tYoy5qmAj9csaICr5Vpe7vx9IUPravch4VyJMJ/uspBZOp9qBpD+hkjxNJVLDO61JpWyQgbQrnwjHySfnHVEyETHEe1ix4Fg4O5oy5Aifd5SJQocXMF2T9tz5TKUo3DPzMibdA1cLjp0GoOkdrxUi56k0tqVzOGBgt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J4aiQzDo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AAE3C4CEE3;
-	Thu,  3 Jul 2025 07:39:26 +0000 (UTC)
+	s=arc-20240116; t=1751528512; c=relaxed/simple;
+	bh=62GHx5qjp4SjOImNUi/iLutYVSnoegTnLhSY38r/7Gs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=it9v6lv5T2en+chLj9hhVHG7+VGWCgAeM9S3wngqKhbGmWlc8Do1jSHLJ3se1h60dX7uMB06Pq0y8eOlNQU0EH8q38aI+IN66SQTXED8bO3BJF4XwN9fphi+XMcfzaKz2Gik44LIB801zy3gjcKyevDjQqrkiNUlyrYAhPRgo+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GnITBC+z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E62DC4CEE3;
+	Thu,  3 Jul 2025 07:41:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751528367;
-	bh=uW1u/UcsWK3iW/vQ5YbnY4HBDYJ6kRRBPaGGddcAT3c=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=J4aiQzDoX5+XWYXHomRmAIRYthZYEeVip57Nk+oHPoOhPys7XCKXGdiW5mwGs4aIp
-	 uOwMwqafnB8ysUL7lPuH1VrvB780ehsR3haf2P11b8LIOKRZ3JmVH/xnmrU0id4Sw9
-	 AvvHujTcnmQ3ap+hu0hQJPEiFLZg2GfhOnRkIrUoZTSG0rlp7uMQ6LGnU2sknQu2P/
-	 RuVfU2z0k2KaJfwMqRoXl1bHGyNzfW2iz2pmLr3GgL3L/dLrfNqYtIYJnv8YBKNRQK
-	 WtAZOnXgN3qW7YZjIOhBwlNGYoCvSaHP4h6nUO+7JR0XcnIaHZYpYoOgVpSJTdypSo
-	 i3XsEbBqhqOIw==
-Date: Thu, 3 Jul 2025 09:39:24 +0200 (CEST)
-From: Jiri Kosina <jikos@kernel.org>
-To: Leonard Dizon <leonard@snekbyte.com>
-cc: bentiss@kernel.org, linux-input@vger.kernel.org, 
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] HID: elecom: add support for ELECOM HUGE 019B variant
-In-Reply-To: <20250629214830.30220-1-leonard@snekbyte.com>
-Message-ID: <7nn7607o-7n8q-pq68-256s-2690n0p86r7q@xreary.bet>
-References: <20250629214830.30220-1-leonard@snekbyte.com>
+	s=k20201202; t=1751528511;
+	bh=62GHx5qjp4SjOImNUi/iLutYVSnoegTnLhSY38r/7Gs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GnITBC+z2PQjXhBRfw47VJ67SEXPXKP2mbynv0Do6IOM4hqar5O112dzqoG47scS5
+	 iVoVXayQ71XP/Ibpd0NmctrgQ4S99DtI4cS9aUGEU180rCAOXIde229YJJIKeSuoVZ
+	 HOoiG1Bla+PJL4cm/c+0lbLbst3l5vCTeUCoYQ0+D3+4CrjcFeSAQLh+FXifgz7CDs
+	 oXaWqKC4E4lHhELnTQOx9W5aYLfr5oLM6lPLG1ZQxQlwErsQp9ntYkWXQODdn/6fWB
+	 Xfa+BdtVTPw5XdncKj1UVInmwpcrGvq7gPHpPGszDeCd73cwrMUeYyOZNpPV4unGkk
+	 aZEp2XyTdxSvw==
+Date: Thu, 3 Jul 2025 09:41:48 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Luca Weiss <luca.weiss@fairphone.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] dt-bindings: pinctrl: document the Milos Top
+ Level Mode Multiplexer
+Message-ID: <20250703-daring-burgundy-limpet-a1c97e@krzk-bin>
+References: <20250702-sm7635-pinctrl-v2-0-c138624b9924@fairphone.com>
+ <20250702-sm7635-pinctrl-v2-1-c138624b9924@fairphone.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250702-sm7635-pinctrl-v2-1-c138624b9924@fairphone.com>
 
-On Mon, 30 Jun 2025, Leonard Dizon wrote:
+On Wed, Jul 02, 2025 at 05:56:16PM +0200, Luca Weiss wrote:
+> Document the Top Level Mode Multiplexer on the Milos Platform.
 
-> The ELECOM M-HT1DRBK trackball has an additional device ID (056E:019B)
-> not yet recognized by the driver, despite using the same report
-> descriptor as earlier variants. This patch adds the new ID and applies
-> the same fixups, enabling all 8 buttons to function properly.
+What is Milos platform? Does it have some sort of model number how we
+usually expect? Wasn't this SM7325 or similar?
 
-Applied, thanks.
+The problem with such new naming that it awfully sounds like family
+names, so just expand the name and explain it.
 
--- 
-Jiri Kosina
-SUSE Labs
+> 
+> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+> ---
+>  .../bindings/pinctrl/qcom,milos-tlmm.yaml          | 133 +++++++++++++++++++++
+>  1 file changed, 133 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,milos-tlmm.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,milos-tlmm.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..0091204df20a0eca7d0d0e766afcb8d08042b015
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pinctrl/qcom,milos-tlmm.yaml
+> @@ -0,0 +1,133 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/pinctrl/qcom,milos-tlmm.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm Technologies, Inc. Milos TLMM block
+> +
+> +maintainers:
+> +  - Luca Weiss <luca.weiss@fairphone.com>
+> +
+> +description:
+> +  Top Level Mode Multiplexer pin controller in Qualcomm Milos SoC.
+> +
+> +allOf:
+> +  - $ref: /schemas/pinctrl/qcom,tlmm-common.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    const: qcom,milos-tlmm
+
+Before you start adding such 'milos' all over the code, you need to
+update the rule for compatible naming. I don't know how thus I would not
+recomment the switch from obvious model number to non-obvious cryptic
+alias.
+
+Best regards,
+Krzysztof
 
 
