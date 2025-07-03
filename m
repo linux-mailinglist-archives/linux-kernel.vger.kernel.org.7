@@ -1,55 +1,58 @@
-Return-Path: <linux-kernel+bounces-715936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-715937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2044EAF7FE5
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 20:24:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2E1DAF7FEA
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 20:25:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F92D4E75A3
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 18:23:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1984A5805F2
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 18:24:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 951292F6F88;
-	Thu,  3 Jul 2025 18:21:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E09EE2F6FB7;
+	Thu,  3 Jul 2025 18:21:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nabijaczleweli.xyz header.i=@nabijaczleweli.xyz header.b="KwjzmyrN"
+	dkim=pass (2048-bit key) header.d=nabijaczleweli.xyz header.i=@nabijaczleweli.xyz header.b="CyhmBNlk"
 Received: from tarta.nabijaczleweli.xyz (tarta.nabijaczleweli.xyz [139.28.40.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A77732F5473;
-	Thu,  3 Jul 2025 18:21:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AF4B2F5C38;
+	Thu,  3 Jul 2025 18:21:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=139.28.40.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751566883; cv=none; b=QvTD3IcpOgFXFNbvqCVZSMfg7EM8nwwiWErMZXKopuHm2/g0Cnw6fNGA1+6N91eHkfHT6Y0NQhL2fHWZ0GdzYRtwmBfLhor4IAuPlAVsHZOhdqnzUQxhYMkJ8XLqTPl6sk3W6lSqPcR/4Im2zfV4I0PiVThRNfwT1P27IKNpF4w=
+	t=1751566884; cv=none; b=U1xVoBJpUArW+5HWuyMxmwx9hKEO9nLuvN3DDOQEzyr+FgcmlX/HKk+AM9SE7PcrbyR4AiWhfDmIO+ktwIzDZORoFU4PklBxlUMuz0PjQhwh+I24l3bc0w0EMFjTcj0jsoM8D3e49CAh4d+3kYhEP06D6gQMWJCXuKwgS0t879E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751566883; c=relaxed/simple;
-	bh=3iACZNAuN9nKVxr6mJF18JcL732AdKXi3lsmFG3/zmo=;
+	s=arc-20240116; t=1751566884; c=relaxed/simple;
+	bh=3k4foJwiSwCxZ5Vjm6odRPJ35c0stk5RDqto91j+ZoA=;
 	h=Date:From:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=EGN7agZx0ElMi/yQ3ioUBcFG6plFUhqyF3XDEKomoH3dgphrbTcD8Ys3Kwgw5QGTCB2p7GGtN30GQpti5WAJe77NHJ8pe9HdyJoXZ5TGMMZ2J+qCColK8b0AChqPP0J8P+Lz8xdNmh0kPW0mFBAZ4HLT9OjfxZxRqPp1eYeSjfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nabijaczleweli.xyz; spf=pass smtp.mailfrom=nabijaczleweli.xyz; dkim=pass (2048-bit key) header.d=nabijaczleweli.xyz header.i=@nabijaczleweli.xyz header.b=KwjzmyrN; arc=none smtp.client-ip=139.28.40.42
+	 Content-Disposition; b=J1+sW6lXI3YHr3D4zZNIroqEHq1gDLwqm998FinpQpRoB4OJXYb5gG2BEsjDqJuwRIGd2UQpYo8wu0ElnUssKbNXbX6IiCbeXMbA2qbjcnxUSJQfaj59CYBgByuIBZ5rbQmJvfAMsvbeUVUWZz1BXr2P4r6Ch2nMnUTeLGAsloM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nabijaczleweli.xyz; spf=pass smtp.mailfrom=nabijaczleweli.xyz; dkim=pass (2048-bit key) header.d=nabijaczleweli.xyz header.i=@nabijaczleweli.xyz header.b=CyhmBNlk; arc=none smtp.client-ip=139.28.40.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nabijaczleweli.xyz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nabijaczleweli.xyz
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nabijaczleweli.xyz;
-	s=202505; t=1751566878;
-	bh=3iACZNAuN9nKVxr6mJF18JcL732AdKXi3lsmFG3/zmo=;
+	s=202505; t=1751566880;
+	bh=3k4foJwiSwCxZ5Vjm6odRPJ35c0stk5RDqto91j+ZoA=;
 	h=Date:From:Cc:Subject:From;
-	b=KwjzmyrNdvojjc0FcGCE4iEx2w6ieVuZpIDxq20ZnVErb15tistzsPmUQSFb6yzwD
-	 SxSzrBdMgDP3qVCHxyNglGpZb4uM6fNg6XdFm3OMaXVtyW4XKldDhE+L/Mvq41GnJm
-	 AGDoOm9Y/seeIENghfba7IEm5OhawmuL/CJUC6ZCWjylw7sGfcRNSKhGwxSjEWcql3
-	 u2uSJvQ9j/SObFBbxcGFWPRUqGL4qGB2FbMrcK4WIwnBsJK8voDIjQPxFJsiM14DjX
-	 oemdUoREirEX9UQqjtFmoXD0yqiDPkKHvHpsG4Jvxnu64VN2TqmAmsjzbgmgNYuiC+
-	 7ms5vSygZ3n6A==
+	b=CyhmBNlk6BYwYmpW+amx/cud/qS87ltU4KWbQUomjWyLqkFv4gR7jEieOPV9eWagP
+	 VTKP8aWF+ML8WLfxaLrrTBVd9f1gL/3HABIkzOqGQgNdAvojmhkdCF8FOhmlXclOHY
+	 5nNbbzOPpb7EZYV2XOtvh3aFj0ECrWkiJjtFV9QeQPXTr9dJM2p0YGdgvcYgUHRqSw
+	 N7+PaZBfzxgEYKHr86O/J66aJhgyEDH+/8hy89arLRIlXc6XPJuB9EnTSJIjDf1fba
+	 vrM6AZ3aRYW/BGrWcNE0MC9rIYkBakZwFthyfHa2cCj102GjSNRnxPQtoWPNJDFv7V
+	 5R6spGXoMeZUA==
 Received: from tarta.nabijaczleweli.xyz (unknown [192.168.1.250])
-	by tarta.nabijaczleweli.xyz (Postfix) with ESMTPSA id DA6826B6;
-	Thu,  3 Jul 2025 20:21:18 +0200 (CEST)
-Date: Thu, 3 Jul 2025 20:21:18 +0200
+	by tarta.nabijaczleweli.xyz (Postfix) with ESMTPSA id A58AF6B8;
+	Thu,  3 Jul 2025 20:21:20 +0200 (CEST)
+Date: Thu, 3 Jul 2025 20:21:20 +0200
 From: 
 	Ahelenia =?utf-8?Q?Ziemia=C5=84ska?= <nabijaczleweli@nabijaczleweli.xyz>
-Cc: Coly Li <colyli@kernel.org>, 
-	Kent Overstreet <kent.overstreet@linux.dev>, linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] bcache: fix "for/take a while" typos
-Message-ID: <vabrss3eucpl4xhvyrqflqj4rgtpzhv76wjtlqldlafdonkgjr@tarta.nabijaczleweli.xyz>
+Cc: Jeroen de Borst <jeroendb@google.com>, 
+	Harshitha Ramamurthy <hramamurthy@google.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] gve: global: fix "for a while" typo
+Message-ID: <5zsbhtyox3cvbntuvhigsn42uooescbvdhrat6s3d6rczznzg5@tarta.nabijaczleweli.xyz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,12 +60,12 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="4ylhdbo5nsuet76i"
+	protocol="application/pgp-signature"; boundary="brwvz2pc7ut54udy"
 Content-Disposition: inline
 User-Agent: NeoMutt/20231221-2-4202cf-dirty
 
 
---4ylhdbo5nsuet76i
+--brwvz2pc7ut54udy
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -72,62 +75,46 @@ Signed-off-by: Ahelenia Ziemia=C5=84ska <nabijaczleweli@nabijaczleweli.xyz>
 v1: https://lore.kernel.org/lkml/h2ieddqja5jfrnuh3mvlxt6njrvp352t5rfzp2cvnr=
 ufop6tch@tarta.nabijaczleweli.xyz/t/#u
 
- drivers/md/bcache/bcache.h  | 2 +-
- drivers/md/bcache/request.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/google/gve/gve_rx_dqo.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
-index 1d33e40d26ea..7318d9800370 100644
---- a/drivers/md/bcache/bcache.h
-+++ b/drivers/md/bcache/bcache.h
-@@ -499,7 +499,7 @@ struct gc_stat {
-  * won't automatically reattach).
-  *
-  * CACHE_SET_STOPPING always gets set first when we're closing down a cach=
-e set;
-- * we'll continue to run normally for awhile with CACHE_SET_STOPPING set (=
-i.e.
-+ * we'll continue to run normally for a while with CACHE_SET_STOPPING set =
-(i.e.
-  * flushing dirty data).
-  *
-  * CACHE_SET_RUNNING means all cache devices have been registered and jour=
-nal
-diff --git a/drivers/md/bcache/request.c b/drivers/md/bcache/request.c
-index af345dc6fde1..87b4341cb42c 100644
---- a/drivers/md/bcache/request.c
-+++ b/drivers/md/bcache/request.c
-@@ -257,7 +257,7 @@ static CLOSURE_CALLBACK(bch_data_insert_start)
+diff --git a/drivers/net/ethernet/google/gve/gve_rx_dqo.c b/drivers/net/eth=
+ernet/google/gve/gve_rx_dqo.c
+index dcb0545baa50..6a0be54f1c81 100644
+--- a/drivers/net/ethernet/google/gve/gve_rx_dqo.c
++++ b/drivers/net/ethernet/google/gve/gve_rx_dqo.c
+@@ -608,7 +608,7 @@ static int gve_rx_dqo(struct napi_struct *napi, struct =
+gve_rx_ring *rx,
+ 	buf_len =3D compl_desc->packet_len;
+ 	hdr_len =3D compl_desc->header_len;
 =20
- 	/*
- 	 * But if it's not a writeback write we'd rather just bail out if
--	 * there aren't any buckets ready to write to - it might take awhile and
-+	 * there aren't any buckets ready to write to - it might take a while and
- 	 * we might be starving btree writes for gc or something.
+-	/* Page might have not been used for awhile and was likely last written
++	/* Page might have not been used for a while and was likely last written
+ 	 * by a different thread.
  	 */
-=20
+ 	if (rx->dqo.page_pool) {
 --=20
 2.39.5
 
---4ylhdbo5nsuet76i
+--brwvz2pc7ut54udy
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEfWlHToQCjFzAxEFjvP0LAY0mWPEFAmhmyh4ACgkQvP0LAY0m
-WPFb/RAAhUaZGYwDjdqRoAqZ4TvfB2hAZg6+r8naz2z9DlDKdiucWHCfxZ8j/CR8
-OuVvLwMIQkh2KCkNMCcBJ51T9J1AaZ6UM3B56Hf3v9u9wElZPXMv27o9lzc9fZJq
-ypB61rP0y5vtdCVzQmbIlYtrxrPsRzq9U8GdrmrK8uGqTQPb0O9F/G5HTjet2pcc
-jGcADzjMrAcFiro3Ziqt3rCOwK61Cr7CYwhOPbG+6EkhpqUBIb+OhrpCJdSsoAaN
-yJemqHbaZruMcPJc4ffMMynsYski334LEDmSlu+VurnUCW9lnFgULDqHUCFbYKzn
-Vfe1sGzc/LQk9l12ewpWc+koL8RtCBq10vdY3zR5xoZsam3Lp8O+x/VPH3rhQXJ+
-aR39gT5gaRNfhPPRUtDIxWJfRF27oQ0Vq13Gv9qMzKkUvMJXwOtkrwW2bEMMFXZq
-HYERpHtdTsbcsrmFVSd1MNQRZrO6kjcqk08VNWEGCryrNyAjcWBd3krCFH1a75/a
-xnWti6sLbSDVOoJgZgFZQT/Z3JEVAZW/2x7UInS/6Kd0nixcc9nXOTMKW6+D70WQ
-hwBgxqD/sq7+NTxT7imQwL1gtLz4KOkFYF6T/5P9dpArI9HCndRrefqFskZcIzX6
-AP/pieZyhqKsQBJVEv1g5Z61MYwBL7UIXGFVUGexM8ohsuOELuY=
-=X+wZ
+iQIzBAABCgAdFiEEfWlHToQCjFzAxEFjvP0LAY0mWPEFAmhmyiAACgkQvP0LAY0m
+WPH6pQ//RLNMtsmQwFFeA/nb3vlKUFkUf+m8JHRjZwElO9B+Vzwn7yx4URWCTjME
+wKnrnbZXNrNhqAPledUCvAXvyNKT6Q46YA5xcaLZEKBZbAv1jYYcQmfRMgpu5wj7
+xncfvW5e/2Dq7ik4HQf1u3gXaMhfE4XspnViRyje+EAcR6XWpBUlaH7LytqE+OFG
+kZDeRmTuhAx97J19P5bCDOeqKXrW7tejTO2Rz/PNDnT7ZQP0MrsD8zPKXuiIFGE8
+sX3kVcri0jNw/wZ2EtLHMAXf3jK/YtXZ61leydBfec0mhKt5Qi5qDwrUMLsazRWX
++VnLdbQpbExAN3WCiBqYQ8lh/piJQfTF55bJCg/MyVEoAziCBjr/7Xvs1fENq3OZ
+tH4vegKG+uxxGCknbKM+9IeUdVkGOhhB2nG5lBOKH+IPotuipM252l9ptJynvqK0
+sDhbTNiT5FKKYqf/IuTQ7Gc+76myJ1IK67oo4m1qSFoEmmsvyFaqoFmujP1syegc
+tA72TlmCUKWHFcvV8Vzqy3Cws2zXpLGH3eZ2aRKIGXMwFiDMY77ZIyks3+eh4YUX
+E3LxsuxOku92a9BqG77FgUuO4VYSxKG7XLtNWa2Ws1HF78hXS7ITasLznb/gReLr
+L33O8NQ3c2D1v20Oswjp/3hULrWiRGwHPl+0pcPROmmygHLblVo=
+=+FX2
 -----END PGP SIGNATURE-----
 
---4ylhdbo5nsuet76i--
+--brwvz2pc7ut54udy--
 
