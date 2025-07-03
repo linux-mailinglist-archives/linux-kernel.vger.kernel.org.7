@@ -1,123 +1,95 @@
-Return-Path: <linux-kernel+bounces-715325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-715327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96BEFAF7443
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 14:35:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EF3EAF7446
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 14:36:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECF9F4E21D5
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 12:34:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A841D1C41390
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 12:37:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C944C2E62CE;
-	Thu,  3 Jul 2025 12:34:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 056B72D9EF4;
+	Thu,  3 Jul 2025 12:36:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oWZZoVNl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="VhIAhpDt"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 329EA239086;
-	Thu,  3 Jul 2025 12:34:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EAB121D3F8
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 12:36:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751546058; cv=none; b=e53XcQbdLxwOnSLnjE5NzMfGLKIPt1SnnQ7qzrCyFdhRcLHW1jYs5GXjv5UayuGBWJKMH2RKmXIh/LMHtMdC3YhfYSYncAHEt529Ijafp7n6AdJCj9n2JM9yr/gdluXWJ2iAtQMzPF1Q5CPkr54AbBx28VcJvfeZFZbpqJ7u+6I=
+	t=1751546208; cv=none; b=C0fAyNRJxXn3UZ6Iq7c557PAY4eQpMeenpKRJOaajUqiDNJkMcOtjAMvTL5nIfDMFFSB75PIzRlesRv/O5Fvn7UnyHhhk++X9lCb8HAKBHM+47PintdJc19F6TErKDy/yV042+Etco5SguykLfUDSWjT/HpWC/yQ+vxhxYL5RWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751546058; c=relaxed/simple;
-	bh=h2sUJzSTaZC2MeE5OfPRzElg2P710CdqCzhkJWAhzgE=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=ElW1FhLO05hdfvkV/PNJb4N18ZVttb4lXRzv9/Fq53valCEMDrBW7oDmAOu9nncHqbU5t0hQj+UAvLK62eUZt6yxfsGB9e7CAaLJIgOZ1pGb+p0lPX1igpXu1oTeJB+EMNYnDFB3bGHfZYJuYUmVpDh+SM1ylIbb3uMiXu466VI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oWZZoVNl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AE0AC4CEE3;
-	Thu,  3 Jul 2025 12:34:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751546057;
-	bh=h2sUJzSTaZC2MeE5OfPRzElg2P710CdqCzhkJWAhzgE=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=oWZZoVNlsTIk9SSvkHJgsqbacuisvsg6avU+Iu0E9UqVsOSVMmyZj7dhoMsGV2YZV
-	 CyTY22BAOYiGgJBG1R8EYtRUPILcENVwX/09OMgeXdOVQYhE/VPGS0qkZj9l6aqM4D
-	 02DmkfblFIDPotgdOHjWkSjPGSrP0d/DPfdASWwbFwfodJWl9Fafu0exuLLwB5oLj7
-	 pRdbYICxZ2rtATygeXd1RQDKU7kah5sPN+KruJrx3m2qdMmHdR6h/fkEze63zgnyhG
-	 QTVeAGXG2ZCNAsl6HnP6Q+A8V9jfzsfTBp2egB9Knw6yblnJ9E9sBeFSqOjgWT3wSH
-	 /4Lz69wEdUEUQ==
+	s=arc-20240116; t=1751546208; c=relaxed/simple;
+	bh=HecbAPa3rncj39eTzk18tRqZ32VIPiiq0hhgnrl1Ywo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XF0TDX57WeLHPlQrZXshfHvP6U5fPy+BE06UxX4Vhj+CffxC9G8mL93F/dA4/kG5/7sDeZfvYtBQKn4zMwOALuJ0Yqya+DB18A/CWN34Jz+PRWkNL5vZK7vYxFR95gw+sLv7fQDV774JLhnRFUVBAmpEbKr8zzOXETRy5Z9wduw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=VhIAhpDt; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=nYpNb66VmDnizjMo0fFecW51iy25oLQuiGDoq0i3Ea4=; b=VhIAhpDtnzEKp9Jb2MXfi6YdGf
+	bL4nk9c/1EEaffJ8Ru3GPMKoLPaV3d7jLB6dR4+sCt0VMVBd6aIDxbB666PAmTjAJ86uwUOeE1hG2
+	7KgSmyXdq899QCFt1luzjMgwjG5Q+ESHc6v+xQNNBqFuTBFJINU43UZUcyk5rN6BHi8Fmh/roOkO4
+	xKDBIcscjn7WPzHxBOaR0t2AtZYnW3ZPtSc9BIOgyqdSguAeBPJ7c4rIx1CjDwMipQIPVpRptricg
+	lmMyJKh4NF6gIcQfoyFmTSsP/fAyYtGUfvWjsiTELK+ktGu+BzeXSd7+apu+1UQmmh7/wJ1YaAb2R
+	i6H+MD0A==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uXJAx-00000007gqS-1oTa;
+	Thu, 03 Jul 2025 12:36:27 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 4EA0A30017D; Thu, 03 Jul 2025 14:36:26 +0200 (CEST)
+Date: Thu, 3 Jul 2025 14:36:26 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Libo Chen <libo.chen@oracle.com>
+Cc: "Chen, Yu C" <yu.c.chen@intel.com>, Michal Hocko <mhocko@suse.com>,
+	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Tim Chen <tim.c.chen@intel.com>, linux-kernel@vger.kernel.org,
+	Jirka Hladky <jhladky@redhat.com>,
+	Srikanth Aithal <Srikanth.Aithal@amd.com>,
+	Suneeth D <Suneeth.D@amd.com>
+Subject: Re: [PATCH] sched/numa: Fix NULL pointer access to mm_struct durng
+ task swap
+Message-ID: <20250703123626.GW1613200@noisy.programming.kicks-ass.net>
+References: <20250702163247.324439-1-yu.c.chen@intel.com>
+ <20250703072608.GS1613200@noisy.programming.kicks-ass.net>
+ <aGZNTtJuCyHJE_25@tiehlicka>
+ <20250703115006.GT1613200@noisy.programming.kicks-ass.net>
+ <aGZxFRVxHouLaMPg@tiehlicka>
+ <b4891cca-4da3-4411-bc9c-669118bf825a@intel.com>
+ <e944b504-a852-4f07-a514-7dd99e63b888@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 03 Jul 2025 14:34:13 +0200
-Message-Id: <DB2F98GJQMTL.3UMZTA6FR7BA@kernel.org>
-Cc: "Danilo Krummrich" <dakr@kernel.org>, "Matthew Maurer"
- <mmaurer@google.com>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
- "Trevor Gross" <tmgross@umich.edu>, "Rafael J. Wysocki"
- <rafael@kernel.org>, "Sami Tolvanen" <samitolvanen@google.com>, "Timur
- Tabi" <ttabi@nvidia.com>, <linux-kernel@vger.kernel.org>,
- <rust-for-linux@vger.kernel.org>, "Dirk Behme" <dirk.behme@de.bosch.com>
-Subject: Re: [PATCH v8 4/6] rust: debugfs: Support arbitrary owned backing
- for File
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, "Alice Ryhl"
- <aliceryhl@google.com>
-X-Mailer: aerc 0.20.1
-References: <ce8f428b-fcb0-48dc-b13e-6717c9a851b4@kernel.org>
- <CAGSQo02hyJncD1oTpUMgiSZeX5UYYY2p-WZTyroQJJ6fMnOrCQ@mail.gmail.com>
- <aGLUl7ZtuQBPoCuv@pollux> <2025070131-icon-quarters-0c16@gregkh>
- <aGPtCBB6nWTNJuwK@pollux> <2025070137-tartar-juncture-fcd2@gregkh>
- <aGP6d2-jJy5rtjMK@pollux> <aGZVUqangIR-c4aW@google.com>
- <DB2COGYW20C5.2YN1TFXR87UTS@kernel.org>
- <CAH5fLgjaNzOHNxa+XY1c2V5A1H2RhWP9gHAAmHx=9LN9CbHq=Q@mail.gmail.com>
- <2025070349-tricky-arguable-5362@gregkh>
-In-Reply-To: <2025070349-tricky-arguable-5362@gregkh>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e944b504-a852-4f07-a514-7dd99e63b888@oracle.com>
 
-On Thu Jul 3, 2025 at 1:41 PM CEST, Greg Kroah-Hartman wrote:
-> On Thu, Jul 03, 2025 at 12:54:18PM +0200, Alice Ryhl wrote:
->> On Thu, Jul 3, 2025 at 12:33=E2=80=AFPM Benno Lossin <lossin@kernel.org>=
- wrote:
->> > How would your example look like with the current approach? IIUC, it
->> > also wouldn't work, because the debugfs data can't be mutated?
->>=20
->> I would store a bunch of `File<Arc<Process>>` instances somewhere.
->> Each one has a closure that takes the spinlock and prints the
->> appropriate value.
+On Thu, Jul 03, 2025 at 05:20:47AM -0700, Libo Chen wrote:
 
-But you could also do that with the pin-init design?
+> I agree. The other parts, schedstat and vmstat, are still quite helpful.
+> Also tracepoints are more expensive than counters once enabled, I think
+> that's too much for just counting numbers.
 
-> Ok, I think we need to see some "real" examples here of the api in use
-> before figuring it out further as I'm totally confused :)
+I'm not generally a fan of eBPF, but supposedly it is really good for
+stuff like this. 
 
-Agreed :)
-
-> Yes, we need to be able to have a debugfs file callback handle a mutable
-> structure in order to lock things correctly.
-
-To me this seems orthogonal to storing the value in-place or in a
-`ForeignOwnable`.
-
-> We also need to have it be mutable so that it can MODIFY the value
-> (everyone seems to forget that debugfs allows that...)
-
-Well that changes things a lot IMO... How does the C side usually handle
-synchronization here? Does the driver decide that the structure exposed
-to debugfs is locked with eg a spinlock and then in the debugfs callback
-they just lock the same one?
-
----
-Cheers,
-Benno
-
-> So how about a platform driver that exposes values read from a platform
-> device (i.e. a soc info driver), that also includes a
-> local-to-the-device data structure that can be locked and modified?
-> That should cover all the use cases that I can think of at the moment.
->
-> thanks,
->
-> greg k-h
-
+Attaching to a tracepoint and distributing into cgroup buckets seems
+like it should be a trivial script.
 
