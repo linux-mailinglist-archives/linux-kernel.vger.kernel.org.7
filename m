@@ -1,132 +1,175 @@
-Return-Path: <linux-kernel+bounces-715352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-715357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F8BBAF749D
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 14:51:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE053AF74BF
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 14:54:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4EC716E7C5
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 12:51:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 633F23A8A6B
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 12:54:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 113CF233127;
-	Thu,  3 Jul 2025 12:51:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 851FC2E6D32;
+	Thu,  3 Jul 2025 12:54:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Vesh5JP+"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jlyV5YG6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECEEB23741
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 12:51:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7FA2241679;
+	Thu,  3 Jul 2025 12:54:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751547066; cv=none; b=V+b4VkpDIL6gJlptP0x1loe5DUi4ZxOtcuYtCtsttj01YeEL12IdY3QKCD8HgVo6ym5FacckHbbCpVsqHDpGNcaZGwouz+huKc2uCNaWjLsjJufKzQC/vj8qRGxryxoXCOPkyDXqIR3+lFAztElwHpV40/NqfvtDJ+08kyqPseY=
+	t=1751547255; cv=none; b=NtQ/CCLogwCZ+cyha9XdgbWM/LK2cPWY3w29GpA9XOGrRDR//6xcgHay1Uw+gqPrfzdT6/mCXmuNZYPryyRLS6IQFhRzm10ZEbcz/lVmK3luarijp/hrrBszb7DsQWkOYORAFrI2n3cNB6UrZ909LcQtrJuOONn56fB5XWVoLy8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751547066; c=relaxed/simple;
-	bh=vLXRb4psUfw5gtZYyp0xrhHd0P/XV1aMbdOo02eldyA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uO2gJRn4/xDZALKAeuzbY/zTWKBbzB0FSQSH89q7iX1AEm26XD+f1Y+21+VBgisroFZmALUYL6tAOsYjq2hBU2UYISiPwGQWZDtguAN9733aC14FmJr9L4u3SK9uhJoLjDU2/u7SWwqK+9HLmZ4D9t7YWWC1RjfQSZSm7X9rujg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Vesh5JP+; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751547066; x=1783083066;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=vLXRb4psUfw5gtZYyp0xrhHd0P/XV1aMbdOo02eldyA=;
-  b=Vesh5JP+2Lby4PuACdVTPcsDd1mcKu2s2E2IlpvbWo7MN8utowJNTJWW
-   Gu0uVkk6YrlMfGoKBbzYXFlIWQ1CefGjBrOGTQaRXcAxQ8b74q0/PNSvj
-   Zz2fX1JhVF+fuTZZdBPLFD4haZn97FIgpKmJU2hn81nGI0s3z3eh4sgU2
-   gXIHr3LnZ5FDVOIRO+NL6gx/hk0hpyephN83B0Zbg5ihovH27v+60X9Q+
-   JSejhIIVA7DYsuEDDft6wvY6zngZNDiyuX/jqSD4rX2ptrQ2jDUxS0i/Z
-   px1N1Q6yiTB5eCLYECVDQCaRNHodUcycZIsrQeXk0BzbQJZmpUe4R1/Dh
-   Q==;
-X-CSE-ConnectionGUID: mEc15nvGSsyctzcz/KpJvA==
-X-CSE-MsgGUID: ysk6QT1fTfS+h0917k05zA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11483"; a="53738273"
-X-IronPort-AV: E=Sophos;i="6.16,284,1744095600"; 
-   d="scan'208";a="53738273"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2025 05:51:05 -0700
-X-CSE-ConnectionGUID: X9XXZWoQS4qdZpV1dqHBLw==
-X-CSE-MsgGUID: ulNTQwE/QR+bdsLbcdyh9Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,284,1744095600"; 
-   d="scan'208";a="160058623"
-Received: from klitkey1-mobl1.ger.corp.intel.com (HELO stinkbox) ([10.245.244.205])
-  by orviesa005.jf.intel.com with SMTP; 03 Jul 2025 05:51:00 -0700
-Received: by stinkbox (sSMTP sendmail emulation); Thu, 03 Jul 2025 15:50:59 +0300
-Date: Thu, 3 Jul 2025 15:50:59 +0300
-From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-To: Jani Nikula <jani.nikula@intel.com>
-Cc: linux-kernel@vger.kernel.org,
-	Lucas De Marchi <lucas.demarchi@intel.com>,
-	Dibin Moolakadan Subrahmanian <dibin.moolakadan.subrahmanian@intel.com>,
-	Imre Deak <imre.deak@intel.com>,
-	David Laight <david.laight.linux@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Matt Wagantall <mattw@codeaurora.org>,
-	Dejin Zheng <zhengdejin5@gmail.com>,
-	intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org
-Subject: Re: [PATCH 4/4] DO-NOT-MERGE: drm/i915: Use poll_timeout_us()
-Message-ID: <aGZ8s2mQCmvYK7w1@intel.com>
-References: <20250702223439.19752-1-ville.syrjala@linux.intel.com>
- <20250702223439.19752-4-ville.syrjala@linux.intel.com>
- <9bca3e31879af4ba4abd9cb3c5bd89e80ec013f1@intel.com>
+	s=arc-20240116; t=1751547255; c=relaxed/simple;
+	bh=uZT1PH/NL7ne1+Hmi9O24Cr0Ut7ldtw4n3uR0nV8btM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ISYsCdfyfwzesdoCXelUv3hJiMt+qhFDSHWiCdYO4+FhDdBLYn04bG7N2e/AxZ7TF32WiEdUVNn1bTAivh4G+XRkWF8iR4n0AvP5oCViY4Csc30pAz2RnlHNZaKld1gWHnqriiHzIxTk6CInSFH6UNVOq0aB08YIJiiLvNWULco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jlyV5YG6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C29AC4CEF0;
+	Thu,  3 Jul 2025 12:54:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751547255;
+	bh=uZT1PH/NL7ne1+Hmi9O24Cr0Ut7ldtw4n3uR0nV8btM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=jlyV5YG6NPXmQ/jQ4hq1gdzEjeWfmO+WQmYrZ0hP26tNU0UWXj5n9qNYXdfqPwTWc
+	 hlotAxxFQFOjH2zjz544Dxm2c7qOTl5UsrdGTHNBQaI7bIpALob/Id0h/hICEl2bGi
+	 yu5yLAH9/HbeE3QULHtqgCR99d6IkiVQ1V0emcNrEASJVnYtoEzieTl45CnuDPnmc4
+	 NYW/uxjsCzdmnuEhi6bFqEyVgCq9BjZxioPJfBKJcvOCY/MDT75j5iewlXcKZ0XXmJ
+	 dJN3U4Iyn5PWwfvelHaCfZ5pkvZnz2G2HVvNnsz0V2GF6kf0J70RUkdA3WF7X4UTZ8
+	 PcBcgZIz4dzww==
+Message-ID: <7da769b4-88e9-401f-bb21-0ff123818b9c@kernel.org>
+Date: Thu, 3 Jul 2025 14:54:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <9bca3e31879af4ba4abd9cb3c5bd89e80ec013f1@intel.com>
-X-Patchwork-Hint: comment
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/5] Introduce "non-pixel" sub node within iris video
+ node
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Cc: Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Dikshita Agarwal <quic_dikshita@quicinc.com>,
+ Abhinav Kumar <abhinav.kumar@linux.dev>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-media@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250627-video_cb-v3-0-51e18c0ffbce@quicinc.com>
+ <5f90547d-945a-4e26-b36c-75f2d8a1af97@kernel.org>
+ <eab8d79f-7188-9537-9176-3e4d22f0978a@quicinc.com>
+ <5ad418d9-8199-43c9-a477-1e3b939c054c@kernel.org>
+ <7b6db4fa-2f73-376d-4eb3-64c1c7e6cda3@quicinc.com>
+ <f5ebf0d6-2f0b-45cc-b99a-b786e5df9edc@linaro.org>
+ <5qsgbqml367yq6g5vb4lotrzulojqhi5zlwwribze373a63qrn@rxi4kwyt66m2>
+ <4f38058d-a2f1-4ac5-b234-228cfb2e85ff@kernel.org>
+ <1ad2ca1e-1d57-4ad8-a057-ab0d804f1d49@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <1ad2ca1e-1d57-4ad8-a057-ab0d804f1d49@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jul 03, 2025 at 03:12:39PM +0300, Jani Nikula wrote:
-> On Thu, 03 Jul 2025, Ville Syrjala <ville.syrjala@linux.intel.com> wrote:
-> > From: Ville Syrjälä <ville.syrjala@linux.intel.com>
-> >
-> > Make sure poll_timeout_us() works by using it in i915
-> > instead of the custom __wait_for().
-> >
-> > Remaining difference between two:
-> >                | poll_timeout_us() | __wait_for()
-> > ---------------------------------------------------
-> > backoff        | fixed interval    | exponential
-> > usleep_range() | N/4+1 to N        | N to N*2
-> > clock          | MONOTONIC         | MONOTONIC_RAW
-> >
-> > Just a test hack for now, proper conversion probably
-> > needs actual thought.
+On 03/07/2025 14:38, Konrad Dybcio wrote:
 > 
-> Agreed.
 > 
-> I feel pretty strongly about converting everything to use
-> poll_timeout_us() and poll_timeout_us_atomic() directly. I think the
-> plethora of wait_for variants in i915_utils.h is more confusing than
-> helpful (even if some of them are supposed to be "simpler"
-> alternatives). I also think the separate atomic variant is better than
-> magically deciding that based on delay length.
+> On 03-Jul-25 09:27, Krzysztof Kozlowski wrote:
+>> On 03/07/2025 00:26, Dmitry Baryshkov wrote:
+>>> On Wed, Jul 02, 2025 at 01:06:17PM +0100, Bryan O'Donoghue wrote:
+>>>> On 02/07/2025 13:01, Vikash Garodia wrote:
+>>>>>> Anyway, in other messages I explained what is missing. You are changing
+>>>>>> existing hardware and you clearly must explain how existing hardware is
+>>>>>> affected, how can we reproduce it, how users are affected.
+>>>>> Exactly all of these i have explained in the commit message. The limitation with
+>>>>> existing hardware binding usage and how my new approach mitigates that limition.
+>>>>>
+>>>>> Coming to usecase, i made a generic comment saying usecases which needs higher
+>>>>> IOVA, i can add the explicit detail about usecase like 8k or higher
+>>>>> concurrencies like 32 or higher concurrent sessions.
+>>>>
+>>>> Why not make this change for a new SoC, instead of an existing ?
+>>>
+>>> Because we definitely want to improve support for older SoCs too.
+>>
+>> Older SoCs came with completely new drivers and bindings, instead of
+>> evolving existing Venus, so they for sure came with correct code and
+>> correct binding.
 > 
-> I'm also not all that convinced about the exponential wait. Not all of
-> the wait_for versions use it, and then it needs to have a max wait
-> anyway (we have an issue with xe not having that [1]). I believe callers
-> can decide on a sleep length that is appropriate for the timeout, case
-> by case, and gut feeling says it's probably fine. ;)
+> No, this is a terrible assumption to make, and we've been
+> through this time and time again - a huge portion of the code
+> submitted in the early days of linux-arm-msm did the bare minimum
 
-Yeah, we've not really done any work to justify the polling interval/backoff
-strategy. At some point it would be nice to collect some statistics to see
-what the typical wait durations are, and then perhaps tune the polling
-interval on a case by case basis to be at least somewhat optimal (short
-enough to not cause significant delays, but long enough to avoid excessive
-polling).
+We do not talk about early days of linux-arm-msm, but latest where they
+rejected existing venus drivers and instead insisted on completely new
+driver iris. This is a new code, so how early days are applicable?
 
--- 
-Ville Syrjälä
-Intel
+> to present a feature, without giving much thought to the sanity of
+> hw description, be it on a block or platform level.
+
+You are saying that iris driver was again shoved without any sanity? It
+should have never been merged then. Better to grow existing insanity
+than allow to have two insanities - old venus and new iris.
+
+
+> 
+> That's why we're still adding clocks to mdss, regulators to camera
+> etc. etc. to this day. And it's only going to get worse when there
+> will be a need or will to add S2disk support with register
+
+We speak about iris here only.
+
+
+
+Best regards,
+Krzysztof
 
