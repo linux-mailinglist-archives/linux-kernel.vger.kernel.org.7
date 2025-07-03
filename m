@@ -1,275 +1,98 @@
-Return-Path: <linux-kernel+bounces-715289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-715275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47321AF73BD
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 14:21:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 088F9AF7386
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 14:16:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE428188F1DD
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 12:20:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 44D577B2C7C
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 12:15:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0A0C2EAB95;
-	Thu,  3 Jul 2025 12:17:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WljxVFVO"
-Received: from mail-pf1-f193.google.com (mail-pf1-f193.google.com [209.85.210.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B35ED1E519;
+	Thu,  3 Jul 2025 12:15:25 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95D962EA758;
-	Thu,  3 Jul 2025 12:17:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD30B21D3F8
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 12:15:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751545064; cv=none; b=l8ILzXuVb9fkos+xTlv+u4ZDGL88RjWVjkjunf2OSJEe0tJd2T6UNmO/Ww0KmiD3XfsdVQzCIqQ8ZSuJnoogTi2GCO9aEdoUyiyIyPloGXis39AKC04pcI6v0HFGsPdZ1pGaajDZtmRiL0e4ZkQPgArzIwrgF9mQQNZl2cZMg9w=
+	t=1751544925; cv=none; b=NwvNM3aMNbQ+lNUPH2k8vtjlBq6AXi0qtVd/0yo8xyDB8P6IMbaHUyFkkNg4izsMdmfFQdsV6mXsUwazWjCpkPm3yRmAiT0hngpVGwY7bKEt3QvcbONiZHYMuAYaXh5tgW8GZhAv5YX+Wx0VCBNBzGm48tKSpkHrVMvQqUpaIV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751545064; c=relaxed/simple;
-	bh=jxmQMYMo/g8j9c3m8/zYT3iwQ1cFh+0i13oC0PDn6tI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=KZnDm4ZvOlYXliyIftIcQEOtmj0ZSGsnJH/tkH3aqRFMeHqeQw6rCAFLWuA0jPNjbSDoX7GjyoislNwp015HovUkV9ootaaOK5Apxr/wh7hIqRTznP8XObl5irSuYmvnQhZFXLsvhM7bYjn6N7vsA/x/Wmm5sdznPaisHO+zah0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WljxVFVO; arc=none smtp.client-ip=209.85.210.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f193.google.com with SMTP id d2e1a72fcca58-748e63d4b05so3582147b3a.2;
-        Thu, 03 Jul 2025 05:17:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751545062; x=1752149862; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mheM0L5EqXLP+X642z1gm3rwVe94tlJM79DUk5IyCfo=;
-        b=WljxVFVObSftaIvIF/QrkgovMJXpQBALKQx2N2jyHzU8iGeNikTv/WIz1fVr5HIPT0
-         9H9kxJcfMIQLpQUu1vylgUq1I1RqvZwURyJb3PSpEbBkBs3dYYrfY7OWgv/04nz9EItF
-         nUF2FGxSY42LPiA44PXh1iy3Cq8dzHjpzEZdBgZiLhDqaYiNknR4NdIANCkwbvcUJZJ1
-         ehXa5286W6CifNEYPXcbQsmCJiTRohoEYaL7BWyj/3STQ7mBWlPA72eL5VITghz3Xrns
-         vt5bR23OjsYxrtLjTfrBL4pmZC73WAbdVnYs2EM6xj7HhMSelKmF56HuJbcMESHgN1gH
-         bTKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751545062; x=1752149862;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mheM0L5EqXLP+X642z1gm3rwVe94tlJM79DUk5IyCfo=;
-        b=efZWSHvhWE5FBcfM4z51BMaFkNBWxJTnOJvC7Vtu+qu2feFXV+RHlkaHg2CLuU1iin
-         lb+mVXqBOVIaRZ5OWSl4m+WLJYHEEQOc3iA8p2q5TQUZ9ItBp46SRo4yahw8/jbXbzAw
-         u+5Pb35YeuHvlLXNn0VbQVXmWdicWR2oRiSioeiyOevfNL2jcqWvsCc0dpzQSD5WmKIL
-         g264B/IKoEYBO8Iu7Tn36wcDJbrWM6Xf2nAu/cjnJD8cMu/gmpGKkY77XvzthoYxfioZ
-         HrMpJvwoM5JPEtbdfn9wcKj3oBQG3jTN9vMLEKjl0QrYTXFLV4uuYFJgcxfZqWqG3Aum
-         9Rog==
-X-Forwarded-Encrypted: i=1; AJvYcCWAmApNfr7otSFsJmQ5W9FMGR3gv5HzWONXLV9UDqcAFqK+k9pBC2qbrmFIWkYNfI2RtObjH8D6iJEv0kM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQHJyHLwg2QqgPBR0LSbDGaq+av3dV55vqIKCF/VE4dJwHH3zf
-	rKTRALm0GwbQprlaeWCPTqa+dZnu0jRF0GCuIzvftEzt9Oo4fmeE0S8Q
-X-Gm-Gg: ASbGncss/Hcq1BBjkFMPvL0WQVe2bb55LB3iIgLk64/hVyo2W3yPLddUH1TsoNuJRf8
-	MKqDodAPEI40EWigm+dO0/eBG2nTD0RO9N8N5MgfTFVg0EmHCqVe15ldSLqpICb+QhB5cV85uxA
-	ccjMorfcBomc68cQ810O4Zf/G0qS1iLL9aj304qO4seC5lcNrkZDl5fnwvZVunJ6J2NDQoZoyKs
-	jbx78AfVWzU+eBz/MUHaIqR6xTFlRqPl24r03vs7aW/9dfH4PUVnN+bsOCO9AofBL9gvQyBJnGR
-	BoJHLcDhAUGOsUgOgrc89dOs1SWjLDKUnN4hbHTAW6ifaWgsgcaM58RILp9fh/P+k0MM1aNdexH
-	aDcg=
-X-Google-Smtp-Source: AGHT+IF4++fkMfJVjcYVYeaFsdsWRBD+ukE3CyKZEWkV3PMmDeeYoFVTBSyfMptMHZapLNGsCKDb5A==
-X-Received: by 2002:a05:6a00:1a8e:b0:740:afda:a742 with SMTP id d2e1a72fcca58-74b50da219amr9455538b3a.0.1751545061663;
-        Thu, 03 Jul 2025 05:17:41 -0700 (PDT)
-Received: from localhost.localdomain ([43.129.244.20])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74af5575895sm18591081b3a.94.2025.07.03.05.17.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Jul 2025 05:17:41 -0700 (PDT)
-From: Menglong Dong <menglong8.dong@gmail.com>
-X-Google-Original-From: Menglong Dong <dongml2@chinatelecom.cn>
-To: alexei.starovoitov@gmail.com,
-	rostedt@goodmis.org,
-	jolsa@kernel.org
-Cc: bpf@vger.kernel.org,
-	Menglong Dong <dongml2@chinatelecom.cn>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	KP Singh <kpsingh@kernel.org>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH bpf-next v2 09/18] bpf: verifier: move btf_id_deny to bpf_check_attach_target
-Date: Thu,  3 Jul 2025 20:15:12 +0800
-Message-Id: <20250703121521.1874196-10-dongml2@chinatelecom.cn>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250703121521.1874196-1-dongml2@chinatelecom.cn>
-References: <20250703121521.1874196-1-dongml2@chinatelecom.cn>
+	s=arc-20240116; t=1751544925; c=relaxed/simple;
+	bh=gF6edynPvVItDI0fQb8qSM4Bom7xt5aE7JPOku1spHQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DjYJ9tE24iOPFD9qXexFvV07F+Cl8Qxeea1hs2oBqxR9Sc5Tt6c+xQ7LotqWMiKJsWhgsVKfXOHhAroQq6ZJfm7fJe01nL1EcwlGe1hQBcsLvB3kanSNlYvfRgSqpWw/la8Yd2cI68HC8hc/bGR80kcHhcdqOZNAU21iNP67Imw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[127.0.0.1])
+	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
+	(envelope-from <a.fatoum@pengutronix.de>)
+	id 1uXIqP-0005GN-OV; Thu, 03 Jul 2025 14:15:13 +0200
+Message-ID: <9c0051ef-e05c-433e-92a0-94869c27671e@pengutronix.de>
+Date: Thu, 3 Jul 2025 14:15:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2 1/2] arm64: dts: imx8mm: Configure DMA on UART2
+To: Adam Ford <aford173@gmail.com>, linux-arm-kernel@lists.infradead.org
+Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ devicetree@vger.kernel.org, Sascha Hauer <s.hauer@pengutronix.de>,
+ aford@beaconembedded.com, linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Shawn Guo <shawnguo@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Fabio Estevam <festevam@gmail.com>
+References: <20250703113810.73023-1-aford173@gmail.com>
+From: Ahmad Fatoum <a.fatoum@pengutronix.de>
+Content-Language: en-US, de-DE, de-BE
+In-Reply-To: <20250703113810.73023-1-aford173@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
+X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Move the checking of btf_id_deny and noreturn_deny from
-check_attach_btf_id() to bpf_check_attach_target(). Therefore, we can do
-such checking during attaching for tracing multi-link in the later
-patches.
+On 7/3/25 13:38, Adam Ford wrote:
+> UART2 is often used as the console, so the DMA was likely left
+> off on purpose, since it's recommended to not use the DMA on the
+> console. Because, the driver checks to see if the UART is used for
+> the console when determining if it should initialize DMA, it
+> should be safe to enable DMA on UART2 for all users.
+> 
+> Signed-off-by: Adam Ford <aford173@gmail.com>
+> Reviewed-by: Fabio Estevam <festevam@gmail.com>
 
-Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
----
- kernel/bpf/verifier.c | 125 ++++++++++++++++++++++--------------------
- 1 file changed, 65 insertions(+), 60 deletions(-)
+Reviewed-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
 
-diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-index 8e5c4280745f..d6311be5a63a 100644
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -23448,6 +23448,52 @@ static int check_non_sleepable_error_inject(u32 btf_id)
- 	return btf_id_set_contains(&btf_non_sleepable_error_inject, btf_id);
- }
- 
-+BTF_SET_START(btf_id_deny)
-+BTF_ID_UNUSED
-+#ifdef CONFIG_SMP
-+BTF_ID(func, migrate_disable)
-+BTF_ID(func, migrate_enable)
-+#endif
-+#if !defined CONFIG_PREEMPT_RCU && !defined CONFIG_TINY_RCU
-+BTF_ID(func, rcu_read_unlock_strict)
-+#endif
-+#if defined(CONFIG_DEBUG_PREEMPT) || defined(CONFIG_TRACE_PREEMPT_TOGGLE)
-+BTF_ID(func, preempt_count_add)
-+BTF_ID(func, preempt_count_sub)
-+#endif
-+#ifdef CONFIG_PREEMPT_RCU
-+BTF_ID(func, __rcu_read_lock)
-+BTF_ID(func, __rcu_read_unlock)
-+#endif
-+BTF_SET_END(btf_id_deny)
-+
-+/* fexit and fmod_ret can't be used to attach to __noreturn functions.
-+ * Currently, we must manually list all __noreturn functions here. Once a more
-+ * robust solution is implemented, this workaround can be removed.
-+ */
-+BTF_SET_START(noreturn_deny)
-+#ifdef CONFIG_IA32_EMULATION
-+BTF_ID(func, __ia32_sys_exit)
-+BTF_ID(func, __ia32_sys_exit_group)
-+#endif
-+#ifdef CONFIG_KUNIT
-+BTF_ID(func, __kunit_abort)
-+BTF_ID(func, kunit_try_catch_throw)
-+#endif
-+#ifdef CONFIG_MODULES
-+BTF_ID(func, __module_put_and_kthread_exit)
-+#endif
-+#ifdef CONFIG_X86_64
-+BTF_ID(func, __x64_sys_exit)
-+BTF_ID(func, __x64_sys_exit_group)
-+#endif
-+BTF_ID(func, do_exit)
-+BTF_ID(func, do_group_exit)
-+BTF_ID(func, kthread_complete_and_exit)
-+BTF_ID(func, kthread_exit)
-+BTF_ID(func, make_task_dead)
-+BTF_SET_END(noreturn_deny)
-+
- int bpf_check_attach_target(struct bpf_verifier_log *log,
- 			    const struct bpf_prog *prog,
- 			    const struct bpf_prog *tgt_prog,
-@@ -23771,6 +23817,25 @@ int bpf_check_attach_target(struct bpf_verifier_log *log,
- 
- 		break;
- 	}
-+
-+	if (prog->type == BPF_PROG_TYPE_LSM) {
-+		ret = bpf_lsm_verify_prog(log, prog);
-+		if (ret < 0) {
-+			module_put(mod);
-+			return ret;
-+		}
-+	} else if (prog->type == BPF_PROG_TYPE_TRACING &&
-+		   btf_id_set_contains(&btf_id_deny, btf_id)) {
-+		module_put(mod);
-+		return -EINVAL;
-+	} else if ((prog->expected_attach_type == BPF_TRACE_FEXIT ||
-+		   prog->expected_attach_type == BPF_MODIFY_RETURN) &&
-+		   btf_id_set_contains(&noreturn_deny, btf_id)) {
-+		module_put(mod);
-+		bpf_log(log, "Attaching fexit/fmod_ret to __noreturn functions is rejected.\n");
-+		return -EINVAL;
-+	}
-+
- 	tgt_info->tgt_addr = addr;
- 	tgt_info->tgt_name = tname;
- 	tgt_info->tgt_type = t;
-@@ -23778,52 +23843,6 @@ int bpf_check_attach_target(struct bpf_verifier_log *log,
- 	return 0;
- }
- 
--BTF_SET_START(btf_id_deny)
--BTF_ID_UNUSED
--#ifdef CONFIG_SMP
--BTF_ID(func, migrate_disable)
--BTF_ID(func, migrate_enable)
--#endif
--#if !defined CONFIG_PREEMPT_RCU && !defined CONFIG_TINY_RCU
--BTF_ID(func, rcu_read_unlock_strict)
--#endif
--#if defined(CONFIG_DEBUG_PREEMPT) || defined(CONFIG_TRACE_PREEMPT_TOGGLE)
--BTF_ID(func, preempt_count_add)
--BTF_ID(func, preempt_count_sub)
--#endif
--#ifdef CONFIG_PREEMPT_RCU
--BTF_ID(func, __rcu_read_lock)
--BTF_ID(func, __rcu_read_unlock)
--#endif
--BTF_SET_END(btf_id_deny)
--
--/* fexit and fmod_ret can't be used to attach to __noreturn functions.
-- * Currently, we must manually list all __noreturn functions here. Once a more
-- * robust solution is implemented, this workaround can be removed.
-- */
--BTF_SET_START(noreturn_deny)
--#ifdef CONFIG_IA32_EMULATION
--BTF_ID(func, __ia32_sys_exit)
--BTF_ID(func, __ia32_sys_exit_group)
--#endif
--#ifdef CONFIG_KUNIT
--BTF_ID(func, __kunit_abort)
--BTF_ID(func, kunit_try_catch_throw)
--#endif
--#ifdef CONFIG_MODULES
--BTF_ID(func, __module_put_and_kthread_exit)
--#endif
--#ifdef CONFIG_X86_64
--BTF_ID(func, __x64_sys_exit)
--BTF_ID(func, __x64_sys_exit_group)
--#endif
--BTF_ID(func, do_exit)
--BTF_ID(func, do_group_exit)
--BTF_ID(func, kthread_complete_and_exit)
--BTF_ID(func, kthread_exit)
--BTF_ID(func, make_task_dead)
--BTF_SET_END(noreturn_deny)
--
- static bool can_be_sleepable(struct bpf_prog *prog)
- {
- 	if (prog->type == BPF_PROG_TYPE_TRACING) {
-@@ -23906,20 +23925,6 @@ static int check_attach_btf_id(struct bpf_verifier_env *env)
- 		return bpf_iter_prog_supported(prog);
- 	}
- 
--	if (prog->type == BPF_PROG_TYPE_LSM) {
--		ret = bpf_lsm_verify_prog(&env->log, prog);
--		if (ret < 0)
--			return ret;
--	} else if (prog->type == BPF_PROG_TYPE_TRACING &&
--		   btf_id_set_contains(&btf_id_deny, btf_id)) {
--		return -EINVAL;
--	} else if ((prog->expected_attach_type == BPF_TRACE_FEXIT ||
--		   prog->expected_attach_type == BPF_MODIFY_RETURN) &&
--		   btf_id_set_contains(&noreturn_deny, btf_id)) {
--		verbose(env, "Attaching fexit/fmod_ret to __noreturn functions is rejected.\n");
--		return -EINVAL;
--	}
--
- 	key = bpf_trampoline_compute_key(tgt_prog, prog->aux->attach_btf, btf_id);
- 	tr = bpf_trampoline_get(key, &tgt_info);
- 	if (!tr)
+> ---
+> V2:  Fix spelling errors in commit message
+> 
+> diff --git a/arch/arm64/boot/dts/freescale/imx8mm.dtsi b/arch/arm64/boot/dts/freescale/imx8mm.dtsi
+> index cfebaa01217e..ded89b046970 100644
+> --- a/arch/arm64/boot/dts/freescale/imx8mm.dtsi
+> +++ b/arch/arm64/boot/dts/freescale/imx8mm.dtsi
+> @@ -915,6 +915,8 @@ uart2: serial@30890000 {
+>  					clocks = <&clk IMX8MM_CLK_UART2_ROOT>,
+>  						 <&clk IMX8MM_CLK_UART2_ROOT>;
+>  					clock-names = "ipg", "per";
+> +					dmas = <&sdma1 24 4 0>, <&sdma1 25 4 0>;
+> +					dma-names = "rx", "tx";
+>  					status = "disabled";
+>  				};
+>  			};
+
 -- 
-2.39.5
+Pengutronix e.K.                  |                             |
+Steuerwalder Str. 21              | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany         | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686  | Fax:   +49-5121-206917-5555 |
 
 
