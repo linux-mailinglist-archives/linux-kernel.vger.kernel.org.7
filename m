@@ -1,110 +1,142 @@
-Return-Path: <linux-kernel+bounces-714416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3E93AF67B6
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 04:07:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 033E8AF67BC
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 04:08:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58C83171029
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 02:07:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D2854E076B
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 02:07:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7F161ACEDA;
-	Thu,  3 Jul 2025 02:07:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="BuSJAtPF"
-Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E4151C07F6;
+	Thu,  3 Jul 2025 02:07:53 +0000 (UTC)
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24D981F94A
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 02:07:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0714A1AA1DA;
+	Thu,  3 Jul 2025 02:07:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751508461; cv=none; b=aRSGb7aR6/ioia3dAklBAhAoiZsxzRywYDsb27zwmk9Ry/wUS0MJvXi84UlUE6jmGFe/T2H0UcLU5s5X+0xDxWTnCY9U7b6N0yA2dMzpCUS6BN21ySZynl451hktrdB5REZHH04UfVIRxIrTfJ6fuOvlzr18mPAly5LMDbfbVzs=
+	t=1751508473; cv=none; b=fis5RJPj9olWDkyLdt69y29/y8p1XnjV2b3ln+u0xUQK00Fq+ZgduafIhUj9TsecgzgchztzXFIN813neTNekzhAd5r/z9Cy4DgUp8qUS3kFP8Em3WJ6mOGzO9t7Z3kqgbSWNNMUBxUQjnoYnF4Yw36Vjwmy9jF6py02/bssvkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751508461; c=relaxed/simple;
-	bh=c2CmoXDvE21WTyGgTl5E1T4oamryaJdlgHA/gaSA2m8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=G+vJ1cFzE2TurjjWlfZxT1O29v81NgGkRC4CDtZozfF2Qu4xfBzfpCdhTyoqj9wQy2u+ok2b8rU3VTjuNKeKlINsRZ/IFq+Vl8YL/9PDwCXM2OKYvyucB+TbNwsByySoWtD9rkCbQfJDonN2SgIc5mWAJDjW3Mt1/S5eMmeU93Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=BuSJAtPF; arc=none smtp.client-ip=95.215.58.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <5fe7c587-bd82-4f87-aa2c-0bf7a4cdf9e8@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1751508455;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GJsm75n2qt6vXStmPb4i4o2aGA8okooHB2sY2UXHM04=;
-	b=BuSJAtPFJUJCix8FoXv6Yzufz8svEf1omaHYwM+twmBjmtp+/iT47bQYfviuLF4wULC2sK
-	UGOo0dTo7h77gBD/xXJN8+xzkWdXnr/rO9ZT1uwHns1gdY/fE7oRiacZuguBjkr+WiQXGb
-	3V7qUTjgHIHnBpxj++AatItFlVlMz4o=
-Date: Thu, 3 Jul 2025 10:07:29 +0800
+	s=arc-20240116; t=1751508473; c=relaxed/simple;
+	bh=IquZDjz7BuIdvLTYfPk+p86LfsQpBrAykfTP8M7LjY8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=mBYTb0qjpucKJtsshpx12pyGaZtw0W9kCF+gPsS4zmxJUFsJ+4CpcajKLhjjUIFEyTETNXa7D0ypPn+R/22adxDBQW/5ZTf6XWdsPPDUaMjDfXnCfhMe//M08rWL4ULygh+rsRo2ZIaol1CyrshzmllvvxfcqEK/B2VVDi8uqbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4bXgDB3grfz16TK1;
+	Thu,  3 Jul 2025 10:08:42 +0800 (CST)
+Received: from kwepemg100016.china.huawei.com (unknown [7.202.181.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id E8D49140109;
+	Thu,  3 Jul 2025 10:07:45 +0800 (CST)
+Received: from [10.67.110.48] (10.67.110.48) by kwepemg100016.china.huawei.com
+ (7.202.181.57) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 3 Jul
+ 2025 10:07:44 +0800
+Message-ID: <4c59f417-86cc-4dec-ae45-8fcf8c7eb16a@huawei.com>
+Date: Thu, 3 Jul 2025 10:07:39 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 00/12] [PATCH 00/11] Thrash up the parser/output interface
-To: Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
- Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
- Akira Yokosawa <akiyks@gmail.com>
-References: <20250702223524.231794-1-corbet@lwn.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] integrity: Extract secure boot enquiry function out of
+ IMA
+To: Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu
+	<roberto.sassu@huawei.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>, Madhavan Srinivasan
+	<maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, Heiko Carstens
+	<hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
+	<agordeev@linux.ibm.com>
+CC: Eric Snowberg <eric.snowberg@oracle.com>, Christophe Leroy
+	<christophe.leroy@csgroup.eu>, Nicholas Piggin <npiggin@gmail.com>, Christian
+ Borntraeger <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>,
+	"Lee, Chun-Yi" <jlee@suse.com>, <linuxppc-dev@lists.ozlabs.org>,
+	<linux-kernel@vger.kernel.org>, <linux-s390@vger.kernel.org>,
+	<linux-integrity@vger.kernel.org>, <keyrings@vger.kernel.org>, Lu Jialin
+	<lujialin4@huawei.com>, Nayna Jain <nayna@linux.ibm.com>
+References: <20250628063251.321370-1-gongruiqi1@huawei.com>
+ <eb91dcf034db28e457a4482faa397dd7632f00fd.camel@linux.ibm.com>
 Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yanteng Si <si.yanteng@linux.dev>
-In-Reply-To: <20250702223524.231794-1-corbet@lwn.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+From: GONG Ruiqi <gongruiqi1@huawei.com>
+In-Reply-To: <eb91dcf034db28e457a4482faa397dd7632f00fd.camel@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ kwepemg100016.china.huawei.com (7.202.181.57)
 
+Hi Mimi,
 
-在 7/3/25 6:35 AM, Jonathan Corbet 写道:
-> [I'll slow down soon, honest - real work is piling up...]
->
-> The kerneldoc parsing phase gathers all of the information about the
-> declarations of interest, then passes it through to the output phase as a
-> dict that is an unstructured blob of information; this organization has its
-> origins in the Perl version of the program.  It results in an interface
-> that is difficult to reason about, dozen-parameter function calls, and
-> other ills.
->
-> Introduce a new class (KdocItem) to carry this information between the
-> parser and the output modules, and, step by step, modify the system to use
-> this class in a more structured way.  This could be taken further by
-> creating a subclass of KdocItem for each declaration type (function,
-> struct, ...), but that is probably more structure than we need.
->
-> As a final step, add some structure for the accumulation of the output
-> text.
->
-> The result is (I hope) clearer code, the removal of a bunch of boilerplate,
-> and no changes to the generated output.
->
-> Jonathan Corbet (12):
->    docs: kdoc; Add a rudimentary class to represent output items
->    docs: kdoc: simplify the output-item passing
->    docs: kdoc: drop "sectionlist"
->    docs: kdoc: Centralize handling of the item section list
->    docs: kdoc: remove the "struct_actual" machinery
->    docs: kdoc: use self.entry.parameterlist directly in check_sections()
->    docs: kdoc: Coalesce parameter-list handling
->    docs: kdoc: Regularize the use of the declaration name
->    docs: kdoc: straighten up dump_declaration()
->    docs: kdoc: directly access the always-there KdocItem fields
->    docs: kdoc: clean up check_sections()
->    docs: kdoc: Improve the output text accumulation
+On 7/3/2025 9:38 AM, Mimi Zohar wrote:
+> [CC: Nayna Jain]
+> 
+> On Sat, 2025-06-28 at 14:32 +0800, GONG Ruiqi wrote:
+>> ...
+> 
+> The original reason for querying the secure boot status of the system was in
+> order to differentiate IMA policies.  Subsequently, the secure boot check was
+> also added to safely allow loading of the certificates stored in MOK. So loading
+> IMA policies and the MOK certificates ARE dependent on the secure boot mode.
+>                                                                                 
+> What is your real motivation for moving the secure boot checking out of IMA?    
+>                                                                                 
 
-Reviewed-by: Yanteng Si <siyanteng@cqsoftware.com.cn>
+Sorry for not stating that clearly in this patch. I think the cover
+letter of V3 I just sent few minutes ago can answer your question, and I
+quote:
 
+"We encountered a boot failure issue in an in-house testing, where the
+kernel refused to load its modules since it couldn't verify their
+signature. The root cause turned out to be the early return of
+load_uefi_certs(), where arch_ima_get_secureboot() returned false
+unconditionally due to CONFIG_IMA_SECURE_AND_OR_TRUSTED_BOOT=n, even
+though the secure boot was enabled.
 
-Thanks,
+This patch set attempts to remove this implicit dependency by shifting
+the functionality of efi secure boot enquiry from IMA to the integrity
+subsystem, so that both certificate loading and IMA can make use of it
+independently."
 
-Yanteng
+Here's the link of V3, and please take a look:
+https://lore.kernel.org/all/20250703014353.3366268-1-gongruiqi1@huawei.com/T/#mef6d5ea47a4ee19745c5292ab8948eba9e16628d
 
+> FYI, there are a number of problems with the patch itself.  From a very high
+> level:  
+>                                                                                 
+> - The EFI secure boot check is co-located with loading the architecture specific
+> policies.  By co-locating the secure boot check with loading the architecture
+> specific IMA policies, there aren't any ifdef's in C code.  Please refer to the
+> "conditional compilation" section in the kernel coding-style documentation on
+> avoiding ifdef's in C code.
+>                                                                                 
+> - Each architecture has it's own method of detecting secure boot. Originally the
+> x86 code was in arch/x86, but to prevent code duplication it was moved to IMA. 
+> The new file should at least be named efi_secureboot.c.  
+
+You're right. I didn't realize it's arch-specific in the first place,
+and moving and renaming arch_ima_get_secureboot() turned out to be a
+real mess ...
+
+So the V3 keeps the prototype of arch_ima_get_secureboot(), and only
+moves out its body, which I think can also better represent the
+intention of the patch.
+
+As of the name of the new file, as V3 has been sent earlier and still
+uses secureboot.c, I can't change it there. I can do it in V4.
+
+-Ruiqi
+
+>                                                                                 
+> - The patch title should be about moving and renaming the secure boot check. 
+> The patch description should include a valid reason for the change.
+> 
+> Mimi & Nayna
 
 
