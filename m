@@ -1,183 +1,197 @@
-Return-Path: <linux-kernel+bounces-715167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-715169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 906FCAF71F9
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 13:21:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA5F6AF7201
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 13:24:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E196189D689
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 11:21:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52C684A70DB
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 11:23:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9128B2E2674;
-	Thu,  3 Jul 2025 11:21:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB5332D4B53;
+	Thu,  3 Jul 2025 11:23:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="B9EFIVYl"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2045.outbound.protection.outlook.com [40.107.236.45])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="FLua1SpB"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D17A29B789
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 11:21:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.45
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751541669; cv=fail; b=XA5czvFag6PCvlZ1GFAspIZIsYIJXE1rZQdtQgD/K0UeRmTNKe16EeYpDYKkqBViU4bTEG93vpUydcaCYQmcUVSgCrK85CBrgtjNHMLhaGn+rXVHt82NabaHpQWrcdVjVGTKYsDdbAeA6qs4qmZ+VdlYe7MrdZc3W+kEnDHV3Jg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751541669; c=relaxed/simple;
-	bh=0tslnwaDDClGpQIDLO7dW3gdj8iCshPN2/biHkunpwQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=WlneUffAbfePFWSiWbtKcVZVBLta6cGkcKNIMm1TUJuHXmttAHC/Xq9FXv2wTKs+OcyPkU4gaQ+8/6IGRNf7Xu8fhPTVenjTk4ZWyx+ZLxgfm73GsXHM7JagqIAHoLlO1mLRD4iAgk3vrASHa3XKLaAbWDh8QEwj+Ux0ggAklWI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=B9EFIVYl; arc=fail smtp.client-ip=40.107.236.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=GXim5ZfA4PhsOF1KZhuO3xh8uaVVWZERsbNYHN+CzNTt7xmwrtLwxvgQsUa79805v6+hyYLRHk+2BkiU4Hka+az/TH2YRbwZY/X32wKK7VeoMnit3UNMl0n3HRJbOOocBPWnhc6waO0BPA0aWUPukJYmMl5+dydnUwx4T3K9Xgcw8ZOu7TgVUGXD8OWZYtqEtxqBPKFCRyY5ZRTncDljHQG2Ruo7hPONh3Q7vBDhh9kS3cPr+ZkBRSuqefWUJSFJw5YdXhvtn7qQJ+s2946kwMdsuGJDBkeVA+XLqH2tfms5qoTRox7H0d0PoZu7EDlmgjkNmRhAm8nFIUeK1RutcA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=IMuACQxla4hEBztPp2206iFuSuOocs95pfwgKsPDRBY=;
- b=uEaqzH8fVoV9m9mAvtYigTtL44J3W4ExsdlXbVyd1U9R8l1Iqnbs7NlMiA4mnmdEcuQj8hUH+pun9zpNO7jLUe2zubFkuuG0f05yVaDFZoEEsUkO8Pt7OiKBcvX/OJaghLM4ZR0SOZNwGT42wf5mSTR3zlQrqh42FeFvbssv0yaA2ZtMuC2Wx7L0EwNAxY7YeV5s/PzXXX1TC7aOCO/Js4e/DtIwTIY4RQHma7V3AYueWe7a/KR48zsLOXgrEjyMe0pg5t4c9nCnjp2YS1ckbDs9SQb4VdNtsL4KPl/nzmgGMDeOLfCdHTzHOlKL53CmkJVTagewFULunXWmGAvp6g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=IMuACQxla4hEBztPp2206iFuSuOocs95pfwgKsPDRBY=;
- b=B9EFIVYlLRumG3uZ24f/JuxrT2qGzXYx6X7Op7P1ZQcKkE33VSxesYHim1aXGe7bldonyUbOzl8yQ2ZJqejoCKRuSSJalt4RXMBOiK5MHPLtG35yhfZlVMw30iltAurzs5sN4bIJwyKqIUpWaL0almb/0nnsvOsbagrg0Mn6Pu0DkxKULOc2OKJnecU1hUWfnpOPPnkzFnNJEfkXNPbGKvF3PE2VNTZMnDY2mLEWGJgtjBaLM0VhsFGmamII+2sSPFrO8ux6fxgdp10feGciUzoQGuWRH1oDc895s+qZYX8ZtlI8bBN8CnsxwF6yqCAIzrkZYKUO1HVQFlCl0hZcVQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
- by SJ0PR12MB8115.namprd12.prod.outlook.com (2603:10b6:a03:4e3::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.20; Thu, 3 Jul
- 2025 11:21:04 +0000
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732%7]) with mapi id 15.20.8880.030; Thu, 3 Jul 2025
- 11:21:04 +0000
-Date: Thu, 3 Jul 2025 08:21:02 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: "Tian, Kevin" <kevin.tian@intel.com>
-Cc: Xu Yilun <yilun.xu@linux.intel.com>,
-	"will@kernel.org" <will@kernel.org>,
-	"aneesh.kumar@kernel.org" <aneesh.kumar@kernel.org>,
-	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"joro@8bytes.org" <joro@8bytes.org>,
-	"robin.murphy@arm.com" <robin.murphy@arm.com>,
-	"shuah@kernel.org" <shuah@kernel.org>,
-	"nicolinc@nvidia.com" <nicolinc@nvidia.com>,
-	"aik@amd.com" <aik@amd.com>,
-	"Williams, Dan J" <dan.j.williams@intel.com>,
-	"baolu.lu@linux.intel.com" <baolu.lu@linux.intel.com>,
-	"Xu, Yilun" <yilun.xu@intel.com>
-Subject: Re: [PATCH v3 2/5] iommufd: Destroy vdevice on idevice destroy
-Message-ID: <20250703112102.GA1209783@nvidia.com>
-References: <20250627033809.1730752-3-yilun.xu@linux.intel.com>
- <BL1PR11MB52712CE938B57E41C34580908C46A@BL1PR11MB5271.namprd11.prod.outlook.com>
- <aGJkitx6wjfQ888t@yilunxu-OptiPlex-7050>
- <20250630145051.GY167785@nvidia.com>
- <aGOoCa3BkV7KrwVz@yilunxu-OptiPlex-7050>
- <20250701121315.GD167785@nvidia.com>
- <aGSYLVmV17g832Ta@yilunxu-OptiPlex-7050>
- <BN9PR11MB52769790C63FFCDC711E80DB8C40A@BN9PR11MB5276.namprd11.prod.outlook.com>
- <20250702124042.GD1051729@nvidia.com>
- <BN9PR11MB52765B056B71AA14943BE88F8C43A@BN9PR11MB5276.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <BN9PR11MB52765B056B71AA14943BE88F8C43A@BN9PR11MB5276.namprd11.prod.outlook.com>
-X-ClientProxiedBy: MN2PR15CA0020.namprd15.prod.outlook.com
- (2603:10b6:208:1b4::33) To CH3PR12MB8659.namprd12.prod.outlook.com
- (2603:10b6:610:17c::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56B082E3AFF;
+	Thu,  3 Jul 2025 11:23:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751541826; cv=none; b=NzjX2yy/VJrWdgzL9/ZApDFFkUl/IAVcrue9sQRKL0arxOGnva85my+fCJakiOYyn42Taz0xNHtnZZacLaWWmD/KfWYkok/qrFDgPR5Yimfw+e0eTAKL9vB+DbhH7jejKRdYbTVcFO9C8/mTUSP9GY1GymZwZuEXqqn93JsEVPU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751541826; c=relaxed/simple;
+	bh=oLOZlkz4/kMnU9rgSW96ifr6RqN12imGk9bUzWGFcuU=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 Date:MIME-Version; b=NpcKrbmo5Er+pgAUsRmkihASYAJxy5YfQYBQCMmbhRx4u/IvOjp3QiQ8bZI94kzVIY+xuiaEOo5IzXcA2ZzvqvCGEgYRqXJwNPerMijvcKOZwVOvrTCKtic1ndIS2seMpA9h2cilJprtgzKDtoFWoAStk4D0pdUQ+H+c/JLCvsc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=FLua1SpB; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56307CLS009905;
+	Thu, 3 Jul 2025 11:23:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=4emJw4
+	ErehVOKAjtCy8M8j74Pv47NHFVJ+00dCO9c8g=; b=FLua1SpBxBfqAYVTSreT6f
+	SVKfMdpkHUd1jIeU0LcbAKHhzNRLOcVsJQBsmb5LRdrAMu++uvjdI2HXrbbJs1Ix
+	0C5TjBsV7FMJmdDfRvYbSfhtXA0RfkpXPNIe+mtk4TglE0gZC567BGj5b8ahrqEv
+	pzmn4iggUrr79ycaSBCXCOTo2cVggXGCvuhYBA3GKPJj5JjKjovIf9DuOJQ5nwuN
+	oF3ZSRlpl/QV3YzdOBb5jmsl0qT6hpICkUyaejrij0spaBSpezkgZiAx7rYVJ/k8
+	3/nh8FNcF3zr7saIjPiK+rAniGmYYvozsznSZgTkWhvXvt/k5OOjNnv+W/vD3Y2g
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47j5ttk553-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 03 Jul 2025 11:23:26 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 563BHdQd025413;
+	Thu, 3 Jul 2025 11:23:26 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47j5ttk551-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 03 Jul 2025 11:23:26 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 563AmEmC011873;
+	Thu, 3 Jul 2025 11:23:25 GMT
+Received: from smtprelay02.dal12v.mail.ibm.com ([172.16.1.4])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 47jv7n4ex4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 03 Jul 2025 11:23:25 +0000
+Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
+	by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 563BNOQS28115516
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 3 Jul 2025 11:23:24 GMT
+Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6FB2558043;
+	Thu,  3 Jul 2025 11:23:24 +0000 (GMT)
+Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 18DA858061;
+	Thu,  3 Jul 2025 11:23:23 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.102.16])
+	by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Thu,  3 Jul 2025 11:23:22 +0000 (GMT)
+Message-ID: <8401c23009db3b8447b0b06710b37b1585a081ab.camel@linux.ibm.com>
+Subject: Re: [PATCH] Revert "integrity: Do not load MOK and MOKx when
+ secure boot be disabled"
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Lennart Poettering <mzxreary@0pointer.de>
+Cc: Jarkko Sakkinen <jarkko@kernel.org>,
+        Roberto Sassu	
+ <roberto.sassu@huawei.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Eric Snowberg <eric.snowberg@oracle.com>,
+        Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn"	 <serge@hallyn.com>, linux-integrity@vger.kernel.org,
+        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Lee,
+ Chun-Yi" <joeyli.kernel@gmail.com>
+In-Reply-To: <aGYurikYK1ManAp3@gardel-login>
+References: <Z9wDxeRQPhTi1EIS@gardel-login>
+	 <1a6cf2097487816e4b93890ad760f18fe750bd70.camel@linux.ibm.com>
+	 <aGYurikYK1ManAp3@gardel-login>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Date: Thu, 03 Jul 2025 07:23:22 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|SJ0PR12MB8115:EE_
-X-MS-Office365-Filtering-Correlation-Id: 627e74b0-8a49-42a5-5072-08ddba23b2b7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?5wGPjZLgXLoqp4pj+Y4de6Te+xRDPcL3eBkjKxZptjawIunQtjYplVzCwvNU?=
- =?us-ascii?Q?++k0Iwjq3J6cdJIDx9wTZ5IJ630fQjpAKt4FlFGnirlIB/DrZKlV+iV8l6TB?=
- =?us-ascii?Q?f5Pj7f8tmTr4gYehgywnVgVzHroTGLRGddZjtyZ9LpAlegUVKZY49i9WQMBi?=
- =?us-ascii?Q?nt1I8fX4G8EV0PgNmMluL+ed/o4wRsef4NM+L57U+7OubMfHrkBM7FCoqL31?=
- =?us-ascii?Q?rka20NTOThOIIJS5xGUHcYTmh/jtJRyHxke00g5W+cMgDSh4ICxukmv1KbpZ?=
- =?us-ascii?Q?2JLJbrj5qm9HcL23rUejatSLGEYHqyP75oC/TdC9HDuWpVb2hrI4WAEGEA74?=
- =?us-ascii?Q?LaI7Nq1xEidVaUlXWlJB1XB2MWaOumN9Bavz4qg3hzef4zTfc9nw7su47Z4y?=
- =?us-ascii?Q?0YwbI8DOKQnlRBWuzJy769GllJXVJYQ2Pp6UjlZfSnwI4mU9sSNcrZ7Q/kTo?=
- =?us-ascii?Q?hbKhzTHQvW9lznV+pzNLnLcqiHsGIPI0qtzKKgqVtfeSVsFs++aqoiJnbSql?=
- =?us-ascii?Q?rQ615hGrI+9+8zAVqMeyUiwvIJamjdeU3MbNWyGNEuzLUPJI6YTSjQRnIDG0?=
- =?us-ascii?Q?5YZsuWhEESaZNigWXU+2o1Yag+/IOaq+oAcZePvjyK5KrsN/48GfrGGyytgV?=
- =?us-ascii?Q?ZbqjxfyZoLE2JSiF6/+x+cJn2/0ybaA9XqCHTks1pEvgdE+NTZFI44dK12Jj?=
- =?us-ascii?Q?phGyVa/fVbd2VOmj8YwLVLcHPtWHGBlIQyI1um8XiNjJlXCvo4KQlSBQpZft?=
- =?us-ascii?Q?EC94TlQtfq/8CiKpVlpISr7BuOLBC4KXLvItHEgQi4dPzwc/I2Xd2MbcIhP1?=
- =?us-ascii?Q?YpbRwtgBCx8wF3/WXevwfytHOIbzP6o0gS5WjEaZB4mN0zhU/D732fghQ1U5?=
- =?us-ascii?Q?Pecx25E5oByt80vPucx09UDODUUG9rezUNN9qNyZyV61fyzzcqzykPLUObiv?=
- =?us-ascii?Q?+Uq/H9ORynULOH063DdTy7wrpBhcxBZ60gwUvbFl98GrIAAGZJZ8BjFWyiUj?=
- =?us-ascii?Q?+IKu6VCxddZPYQRs6kt9TYT+toQ9lw874j+fN9Fok8o0j1jyKAUmvsT6qK4r?=
- =?us-ascii?Q?11fxOPoszxZXHkcZsWuHUKyURu1VHK8bNSJK6I8xdAt8k3s9hDM3/T71J6Kp?=
- =?us-ascii?Q?kJDdjgF919yBzWnaLTRo31oksksEu7DvJHq4F1/lhMddbMP4lgB2Fhvq4Hso?=
- =?us-ascii?Q?ooMk/UOV0eBSmdvcUnfAVIZ8SZb8GSfeFiuyep7hpUcZ4Mr/atS9gpsPG2U4?=
- =?us-ascii?Q?1yK3ktqP8/K5UVnKXCVL3sANt82nSTu/3IYSRVLfEoZQgwMGP7rC0bVRo/rp?=
- =?us-ascii?Q?OIku5QORLuX9gbvCZov9JcUpOGs7S5qPd6SOtRDa69tWnGjGNcANhaMa4GFe?=
- =?us-ascii?Q?sUnZe2qg3N546hAK18bgdKG8o6hISGPcUP1aBHJ6JkYtwDgYJwJdcoAzq0qN?=
- =?us-ascii?Q?5Q3LdEJEmeY=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?CLmS7MSb/NfXLmCyrXd9Q3awEJZ+Dx//09HQ3Zz1sfleHtjqJ5rvBQ+R82DB?=
- =?us-ascii?Q?WrPM+Ym+VvbYPKv7g8DHHNS/dTTwoRIsIY38seQ9TXELQjX5ZmiFdrUDnBTc?=
- =?us-ascii?Q?mTghWImDKupjHAgiMHBvTQsUkt94PYm6IxOOLi2iIQNsphS3/Ghqbj9z8koD?=
- =?us-ascii?Q?ZOQg3e07BCVxhqDaznpSXqh7W8nX4DbNzriBvQ3w/rK5NaY8gxXQORVgCDeb?=
- =?us-ascii?Q?Zh+3GKrCNC1AEtvdzEQ3aiaa3gifdo4FQi7ZslHY/mzSnfKFq8ZjCnVwlePh?=
- =?us-ascii?Q?QSTdi6/nrQ08Jn3Hjr0cXeu4rnq0HmvBOEV8rZrJY2PQX1Io7BiMEiq00HSU?=
- =?us-ascii?Q?dGmxOkv0KbxYeT+AzSHJ99rQV9gzrubzmFH7itlMbu4cxRSlVWdnSeB4EWbP?=
- =?us-ascii?Q?H2eMKCZA2pPjnSR1wRXW3vfsvlXjyjuhb1wE63WMKKh388UwZvmhLYD9dqx+?=
- =?us-ascii?Q?gKQZgY7/LNGUotSmqaX2RwQq0yAf6facNnH0CMK8DSV/zU2kY98ZvgCn3lza?=
- =?us-ascii?Q?gHu61JD5jJP/CqCFUEW7IFSKVZVgA6Fs3XpEhPgbaQgFXLxgUjGlAtOZ9QWd?=
- =?us-ascii?Q?TAlMe6O3UQL2QG4kUkwiMq4j6EJwsZPZ8YgCwCHS5i4+tqFPkWbFBgMT2gR0?=
- =?us-ascii?Q?6i358hT84eW6L3YX2FyxQuZSs0mVyxDsw0PwdU1KsoLGng7LMUZu31IgX2lw?=
- =?us-ascii?Q?4UjcIGYji6u9olm/gJrcQL45heBKFncse+r7jwat4w/CGtz2S211KufzuuWQ?=
- =?us-ascii?Q?YsFCimMzVUoCIDwCeMPm3oBaE0Nu+v1vDBXts/MOjH0jAMrkG07z5MdClVvW?=
- =?us-ascii?Q?LXjfg1PPPg/TqcO/mFL2nD69XvdJDkm3v2ZaeY21wjn98a4c78anR4dCGpLr?=
- =?us-ascii?Q?Gd5BQqhPgM78J7ugu0mCdmDYiKalcyGhc4IqTtEGV3Pi6qewcT6H3i/Im6/T?=
- =?us-ascii?Q?RL2FkmGwXdg+07R75DV89EIq2XYPJwfLHdcOqzdJg4NeJ7at3i5q73EI/LBj?=
- =?us-ascii?Q?ekz4lNSQMdOmYJC7uT0PezNHStg84gkT734/7pYjAzYxLOE9PxCy6HP7ssS9?=
- =?us-ascii?Q?j+0mz4OFRTP/H+F4gJrH0QhXojPfqk2tCOTCxTx2YiHPUfy88S31FPlWZ5ds?=
- =?us-ascii?Q?M0tzgMAeFZBy6MCqKMEdT8J+RO2MGJW6Qsnw0SDa8POE3CQOtHB8dw5oNw/L?=
- =?us-ascii?Q?ieiy2Zbg5S/HjHZi9Ri9BHwoQUeUEddKLd1CLdnDxRgEUU7+tPeb82WtSlNO?=
- =?us-ascii?Q?pzGwJ4LDyc94x+Sp0qVUiX+3paF27/ozN53+11C/bZi1LKL3hADPwYV1jUba?=
- =?us-ascii?Q?jKUxNYMFZNBBh0soTyv38qDs9jhUHtVAIs4yFC2gQkFc5v3p316MbeKikP/W?=
- =?us-ascii?Q?I4CXnIw2S2ePoSbAc/XLmeLkDKL2pPqxMGESMn+QKumb3fjdBETH8heY5uPi?=
- =?us-ascii?Q?LIM08s9DlMvTfUWeOGbG0ygpv7MDL3FONcOQ8ezYjiBH1fJ3QOpi+3C+QMjH?=
- =?us-ascii?Q?TJmbwM3qjmgA6VZ+9gHxnLDw3zMFnM6rCY3I51/rlpqX0WGE8AJzVhfd2A4/?=
- =?us-ascii?Q?A6z+wZBfcxQM+oHrIVOk8Qlqy456/03kA3uVfhf1?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 627e74b0-8a49-42a5-5072-08ddba23b2b7
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jul 2025 11:21:04.6495
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: KSJA0SW2lcmMTgMlCvUl7S9tcv8Nb76ExEaOYfar8m7RYkMEqNsTMhNa2MOiuAh7
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB8115
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: HZ8B1dRlKfYZ0lNGt2l8fRKVvedpbDAT
+X-Authority-Analysis: v=2.4 cv=UtNjN/wB c=1 sm=1 tr=0 ts=6866682e cx=c_pps a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VnNF1IyMAAAA:8 a=JnBA2F1U-474F7nXX6wA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: d21f4K65zcBRJYncthFVJkaJrlCK98v8
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzAzMDA5MyBTYWx0ZWRfXz9kgAsO/VuU/ QlEYHcaC7527+wF/Gjc7B7bcEuYcXOswmwfVT/uppKPb3b9CFXOyBic0T9k07+xPC3VMZ+mc6sz YDiJVF/V4nrlQRssFQZprr1L5WGCaDgMedCc7MyR1l7owP+TGZkaw38zqzL/aLReMzF/NWXDKtT
+ BZCiS1RVZj5Lsg+/Azk+y0LJXI/tc8rih+GlkV2K3wyzJgXwNa5lkyFH9BgTFlQXSfIeUgWOOGz jdRK36T9AYAtec1FdZKbw/3QBfGeyunzx8FYz1ko7UOl/DTxXMEJNmGnwDszNxAYibooEZiQn6Y 2FVyjGsN8PFDC9sSKkO/5ihyZeGPE8+sAvVP3SWkNz/SgBs6Ph8sCujQmXUOtsE4ts5o4v4b7DJ
+ lMcqHSSOGnqaxDHPTdU9O9Sc93eC9dAq/jPnS+tmAgsUHny+EqwT/K3K6EtP8jRCggNRvxTA
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-03_03,2025-07-02_04,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ priorityscore=1501 phishscore=0 mlxscore=0 spamscore=0 mlxlogscore=999
+ adultscore=0 clxscore=1015 lowpriorityscore=0 bulkscore=0 impostorscore=0
+ malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507030093
 
-On Thu, Jul 03, 2025 at 04:32:26AM +0000, Tian, Kevin wrote:
+On Thu, 2025-07-03 at 09:18 +0200, Lennart Poettering wrote:
+> On Mi, 02.07.25 21:40, Mimi Zohar (zohar@linux.ibm.com) wrote:
+>=20
+> > On Thu, 2025-03-20 at 13:02 +0100, Lennart Poettering wrote:
+> > > This reverts commit 92ad19559ea9a8ec6f158480934ae26ebfe2c14f.
+> > >=20
+> > > This original commit this reverts creates a strange situation: it
+> > > ensures more restrictive behaviour if SecureBoot is off then when it
+> > > is on, which is the opposite of what one would expect.
+> > >=20
+> > > Typically, one would expect that if SB is off the validation of
+> > > resources during the pre-kernel and kernel initialization is less
+> > > restrictive, not more restrictive. But this check turned the world on
+> > > its head.
+> >=20
+> > Hi Lennart,
+> >=20
+> > I'm really sorry for the long delay ...
+> >=20
+> > > From an IMA perspective, the default is to only trust keys built into=
+ the kernel
+> > or certificates signed by the builtin keys and loaded onto the
+> > .secondary_trusted_keys keyring.
+> >=20
+> > The ability of loading MOK keys onto the .machine keyring and linked to=
+ the
+> > .secondary_trusted_keys keyring is an exception based on the assumption=
+ that
+> > that there is a secure boot chain of trust.  Allowing untrusted keys on=
+to or
+> > linked to the .secondary_trusted_keys keyring, would potentially allow =
+loading
+> > code signing keys onto the IMA keyring signed by untrusted MOK keys.
+> >=20
+> > I was really hesitant to allow this exception of loading MOK keys onto =
+the
+> > .machine keyring in the first place.  I'm now even more concerned.
+> >=20
+> > This is not just an issue of being more or less restrictive, but of add=
+ing a new
+> > integrity gap when one didn't exist previously.
+>=20
+> But we are talking of the case here where SecureBoot is *off*,
 
-> but this sounds like a misuse of shortterm_users which is not intended
-> to be held long beyond ioctl...
+Exactly, so there is no trust in any keys other than those built into the
+kernel. True that is of course dependent on trusting the kernel.  In the ca=
+se of
+MOK, trusting additional keys requires at minimum a "safe" secure boot
+environment and other things to prevent its abuse.
 
-With the addition of the pre_destroy it purpose gets changed to
-'beyond the ioctl or past pre_destroy'
+> i.e. there is a concious decision in place that there is no trust
+> chain, and that the firmware *happily* *already* accepts unsigned boot
+> loaders/kernels and just runs with them. If SecureBoot is already off,
+> then an attacker can patch around in the kernel invoked at boot
+> completely freely anyway, there is *no* authentication done. Hence
+> it's really weird to then insist that the path into the kernel keyring
+> via mok keys is off in *only* this case, because an attacker can get
+> into that anyway in this case, it's just a lot more cumbersome.
+>=20
+> It's really strange that currently when people ask for tight security
+> (i.e. SB on) the linux kernel is super relaxed and allows any keys to
+> be inserted, but if people ask for security checks to be off (i.e. SB
+> off) the kernel starts being super strict and doesn't allow any keys
+> to propagate into mok. That's really confusing and contradictory, no?
 
-Jason 
+That all may be true, but you're ignoring what I said about only "trusting"=
+ MOK
+in certain situations.  If you have another safer, better mechanism for
+establishing a new root of trust for keys (e.g. TPM), then by all means sha=
+re it
+and we can make additional exceptions.
+
+Mimi
 
