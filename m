@@ -1,179 +1,615 @@
-Return-Path: <linux-kernel+bounces-715270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-715280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82C1BAF7375
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 14:14:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3AA7AF739C
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 14:17:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8AA61560716
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 12:14:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE475564727
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 12:17:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55FAB1A00F8;
-	Thu,  3 Jul 2025 12:14:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 799A32E62BF;
+	Thu,  3 Jul 2025 12:17:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="g4UhgkLL"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LUAgMN9n"
+Received: from mail-pf1-f194.google.com (mail-pf1-f194.google.com [209.85.210.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 455592E3AFF
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 12:14:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A083E2E424E;
+	Thu,  3 Jul 2025 12:17:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751544880; cv=none; b=LrcwZGCClIpgwFQUHJdjLyLhDSsMA1OYGw889lmBzna5okY7y7IYQS6nPlRH66OH+f68Yia+4oZLShFVsVtXs2kc1LK4RyOhKn/LaqWX+yXksTIhs0EzpMuOS5OXc2P921e83aowG7lMPHji0dvA0O2PPT1HQ3GJgCVJGr0wo3Q=
+	t=1751545037; cv=none; b=i3kPF4BykSpoxABCd+Hm6H1cBqGNAKYumNXSAEvyDB9SD7WQDcknU0rhKcm6qkcg4X01kjUf+nu8VhPLh1hP7rIk6zMIN08khDNDqvUV7Vi5Vauo34HgQiRnxESHC8w/vDbO0NEP/jSPvJ07DVoCCwQAVpMUBlKprPVkpLsNzIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751544880; c=relaxed/simple;
-	bh=NxTRFXEOSM97xS6sYUrK3OZV1E+9Shcf60A8QqXUvPs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HJ586iDFjOSpVP4lnr86bRBzsPMuWmhwPoI6AZ1KNGs1/kKd/9qj/XhPFOmuDzIikP6zGzvBf5bt2f/CQ1WRev4KEMn5R9sFtCLAwQoLDcLFXxetKQzjMHhRK8XwWZmkxo05jfxJUbIj1Y++lka15DeNeYhbjbTDqEy4RVmSO60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=g4UhgkLL; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 563AJUdN026279
-	for <linux-kernel@vger.kernel.org>; Thu, 3 Jul 2025 12:14:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	h2x3WpVgowQyzY4em9pyKWoaGXSc06FpOT7YW7pB1lw=; b=g4UhgkLLr1VlwHfN
-	wVL7Bj3Q5Nn7x1YdMiQ8oMgKdzy6ldIZ6NRpj2gkV+iNalwLwG7i9fdK4T7vngAn
-	wACxt2VbL9ruvTNdep6qvs+C0Y2RwbjWgzrQ6AiDC2aWbgIZgsybjlq5ghkSwJ5D
-	ncPDMQpGvB4pn4WB59CTmF7PVflGFuFnyRI7ZvwLMOAb40j3D7WkFBl1+G29gKFD
-	F+zBuhoCfuiIioBvCay5n1p9XXk0tRBjKx5We1kWHZLsS5E3pZfoGhqackEMXGYB
-	qfTtkbeSZ9DUUKJcdqlTzPmpX9a/b4hg+ZFQjUcGMg6cqePIirVa9NYOa0qqHBJh
-	KJ4iMQ==
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47kd64wg91-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 03 Jul 2025 12:14:37 +0000 (GMT)
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7d094e04aa4so234018885a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Jul 2025 05:14:37 -0700 (PDT)
+	s=arc-20240116; t=1751545037; c=relaxed/simple;
+	bh=vnnqUf5qv6Tzr2Px9Bg0tFIjBBXXU7CSOQUU3YHbmWQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Tn32EVE1u5rqxdRQK1O8Oxr6El3H5srueopINFJx+GWrd7JV2zLQ4XB5h6z2AzUW7VUEa0eQEl7Ks6Fz5djeknJCRikcDmjxfgExyLUXTfsDoNkMZc64HiMMamjgPw9O/Xd1ZqoTGefTpTNuLGm5/Hy/qiTuhSfcGhQoUuVHC2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LUAgMN9n; arc=none smtp.client-ip=209.85.210.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f194.google.com with SMTP id d2e1a72fcca58-748e81d37a7so5532281b3a.1;
+        Thu, 03 Jul 2025 05:17:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751545035; x=1752149835; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BWuHfC4u73RCpQlHsFKd/gTTGs8e+ph3vwAME8lxRN0=;
+        b=LUAgMN9nVA4lBkiBh03KUsw+ounSFm8DUB+WEV73cpQSv0shQiiLUhoyRGP4KyCMsa
+         QZhaJZanSjV1m5TRb/jbixMBu8s6HOF5xg6KxtmV4JcdInt7katdHbhcXRYXHZY3JnmJ
+         Q1hSs9SRKMfgIjI26MdTAzKTyzTUbKm3rXPdo2LywKqf78PFXqNJienDzSH9uqivXMkp
+         yVqOyll8aFxvyHOw/NuEOiBascT1i7AktpP1FKNxiUaJLB8eaK6j7bEOqd7zFlDi5+YT
+         6eKqsQ6S3Yj8MOplR8RA4Baa8O836xoD6shRxBne8P34xlSUEbhNrdRa0cZJxAcSn0uP
+         2s6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751544877; x=1752149677;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=h2x3WpVgowQyzY4em9pyKWoaGXSc06FpOT7YW7pB1lw=;
-        b=f1K+z9wYw3goa/BqOeHMl3Xhfe6uKh36g/8gVrOthE7wzPtX6XZgG4Cfq4khTcqFNv
-         rxTVXqOP2cTibs+LcV3z/zE76P6m4h79m99q4hiRbXoprtyeJKB+3m2W0XDWcchvcaAT
-         ENnCWKtd/WPaLPRnYfsJhGqEm11ySjm+9Ail/NbbT5m9/6CIJ/8Wzjz4bNYY1VWf0Yda
-         D4PsNwRnk+heQxoolW0Xa/XDKhVUkRiHpyNP3+Jtrs9AUP1DriuWs1eTCPYguE20QOsW
-         HqbMXreA7sIItidN1hE+RbKdp/DRrxeO8bw6pdheOR8rniAIbbGaRdrdB5R9QOPQ/O8N
-         QXrA==
-X-Forwarded-Encrypted: i=1; AJvYcCWMbZggvS/LeZqU4o2Kb5czMpqwrP01dMdK9l8Oa9z7lDkAQ3dzUF3NvpyoIqIByYJZA4VTTYjkwcOeLTs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxgNZnUmF7l3G0WbyOraheH+wUQQalGNRV5eYY+JIwJgoeYsiKU
-	/r+LkcLtLnu8dyp/BOYs7P0r9SuOMkjT581QQSjeEhDvtqiXV3ORIBdUdVP0AazjWpmZexpOecV
-	kJs2YcrUlOH4WT586yalJqTkCsWVQbMBSq8YXWsJKGcVOHVfAgS0+5f1oOlv8znz35tc=
-X-Gm-Gg: ASbGncvG8J7O6KOvr7mL+tYN5qn48qOUqWYJZ+8E6MJXQ5Ye0RUjEJTl0CFyM1ZS3kZ
-	4Jv+uWljkMxWERl9P1e/b8MvZwaS9a4U2Qej6Ww6XBXHtO0zF+460IdEBihrIxHVyXU+0kQvDu+
-	b75yajAVhUrLl1ptk+9oOJ1743j2y3JIIFceJ3fXQSYCdMyxbzmpXCPNLXckwpfMNl6ovBk+F3E
-	ulO1Ju/B6xwXmcNWnuuWPp5QY+KVFRibs/yfghVBh4Ixxrs7SatYpUIG03ipV9qBTG53F4eeQk1
-	+fXQWah8bEcSnQrfGgltS3a0B1KXLqX8thPJtexoihtogCZOZA7yvGbJOn6LciDlRvuGI3O0q96
-	EZB7XTp/R
-X-Received: by 2002:a05:620a:4620:b0:7c5:8f36:fbeb with SMTP id af79cd13be357-7d5d3f957abmr99411285a.12.1751544876871;
-        Thu, 03 Jul 2025 05:14:36 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGMv5CgId/QhgXJ5gc0O6c/YrTGP1GxnRv/PEaNbJnkJ4hBNjdFtHUDliUBepNzEy+MEM5IEw==
-X-Received: by 2002:a05:620a:4620:b0:7c5:8f36:fbeb with SMTP id af79cd13be357-7d5d3f957abmr99409185a.12.1751544876461;
-        Thu, 03 Jul 2025 05:14:36 -0700 (PDT)
-Received: from [192.168.1.114] (83.9.29.190.neoplus.adsl.tpnet.pl. [83.9.29.190])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae353c013b7sm1244061366b.80.2025.07.03.05.14.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Jul 2025 05:14:35 -0700 (PDT)
-Message-ID: <9217c52e-f0c0-4e7e-a2c2-bfb580c7cb17@oss.qualcomm.com>
-Date: Thu, 3 Jul 2025 14:14:31 +0200
+        d=1e100.net; s=20230601; t=1751545035; x=1752149835;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BWuHfC4u73RCpQlHsFKd/gTTGs8e+ph3vwAME8lxRN0=;
+        b=UIAK4a/LZEdQoWiCgqzn8HWe8liZorE5xNF/2ggsIh/eXuVIqOKpUuq9oWFH11MpGG
+         3W2NIfT3bkq0UqBIOov/+KDCLUhMnI3AKE43TpYHtB9KL25qeu31if3J7cIfDnYNL24u
+         cx9sp4T4mhQOhy00FCUGg86W6Mquyzj1mPp8xICOTjpnvxrnsIFchRvJ2rl8WKZeDY4U
+         9mVsZqtwF+K9p6cDvo15ieLSL5IE3xZil7ZU8fV2oDmyPFLzQKqNMDlD0Q4gnWrx6mRV
+         MzGATyH1ppU9d3aluCOYtVrxSN/ZWWz+wCTSa3MFmCSRZFKXUABslxFKQsCsZ02YCDBg
+         PzgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVNhrNFzO5I7jJUuWksMteev6QfpUMuMylfOfPOj3I59ylSuIMdxA1VbcBppwIrJZglN5Np6aTdsidqG3A=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyy3h0SVDdl7t+pnKcGwDmaeG6trtuYCBcOyHtIXHaYM0J5afjQ
+	qsk029ZyntQkq/R8YOjapAWBHnnw10yvkdkXPm1n/iVMCIgUfXL6hMYk
+X-Gm-Gg: ASbGncveJaqN9d4738a+zqw2hM0j5iRizJrfGr+JAgw7rtBXx5xiCYvksMykCNHN9Ji
+	d+KTOPQRojIlyKc/+Y/HxJ6qIcnP9J+4TT7IMxWWw2n2KUNbtB+cs9iGKFMuVAwmXlXgNnA0qRO
+	v1WD7qFnDLVlTq+OZtQdiPvMOXwIRxiF+O9opYEn0mvaqCnTJPynV4bqXnqUeWKTYC2NuxDka5g
+	Rx7SRH0Ij6U+LSckfPFxNR7VyMZ63ANtBYHBYjdFiAk+cci2vNfQTmW26ojpHjRhrKZEp1DYx5A
+	C6ICKMHPqVN2GJrlOtZyEOvm7VK0+qauepJM8qHwWDmkStNrsUjpPv7OdrDbzzK+we4oT2nHBWw
+	HfPkIWTkKJ07RFg==
+X-Google-Smtp-Source: AGHT+IEKoCZ7oVsEmEszHUFJm490W+S5p0y5tPhOJuYfPbMMBy5D0dqOAxNuy2+bGklv70UWmUC2QA==
+X-Received: by 2002:a05:6a00:84d:b0:749:4fd7:3513 with SMTP id d2e1a72fcca58-74ca8494c91mr3782235b3a.16.1751545034628;
+        Thu, 03 Jul 2025 05:17:14 -0700 (PDT)
+Received: from localhost.localdomain ([43.129.244.20])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74af5575895sm18591081b3a.94.2025.07.03.05.17.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Jul 2025 05:17:14 -0700 (PDT)
+From: Menglong Dong <menglong8.dong@gmail.com>
+X-Google-Original-From: Menglong Dong <dongml2@chinatelecom.cn>
+To: alexei.starovoitov@gmail.com,
+	rostedt@goodmis.org,
+	jolsa@kernel.org
+Cc: bpf@vger.kernel.org,
+	Menglong Dong <dongml2@chinatelecom.cn>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH bpf-next v2 01/18] bpf: add function hash table for tracing-multi
+Date: Thu,  3 Jul 2025 20:15:04 +0800
+Message-Id: <20250703121521.1874196-2-dongml2@chinatelecom.cn>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250703121521.1874196-1-dongml2@chinatelecom.cn>
+References: <20250703121521.1874196-1-dongml2@chinatelecom.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 6/9] arm64: dts: qcom: qcs6490-rb3gen2: Add WSA8830
- speakers amplifier
-To: Prasad Kumpatla <quic_pkumpatl@quicinc.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Srinivas Kandagatla <srini@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-Cc: cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org,
-        kernel@oss.qualcomm.com, Mohammad Rafi Shaik <quic_mohs@quicinc.com>
-References: <20250625082927.31038-1-quic_pkumpatl@quicinc.com>
- <20250625082927.31038-7-quic_pkumpatl@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250625082927.31038-7-quic_pkumpatl@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=Z+PsHGRA c=1 sm=1 tr=0 ts=6866742d cx=c_pps
- a=qKBjSQ1v91RyAK45QCPf5w==:117 a=fKQzr7EGRj+VoE0XNsDNvQ==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=COk6AnOGAAAA:8 a=ZTnHXLMoH8r4M2ZBRPgA:9
- a=QEXdDO2ut3YA:10 a=NFOGd7dJGGMPyQGDc5-O:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzAzMDEwMSBTYWx0ZWRfX2SjdWXWO7DI1
- OE8quI/AV9q0Zc9D0G2WKWyCmFJQWDrINyPJ41ZkebMWFue2tRmlP1r/KnUE7jG6H/K5OvEY8cR
- 4hd2YUXozVgNHtOX9XuKxSze5Jn61rf5pZxh4TYCGsadRdPagQbE4YO6mxuarJqhKp4cVpbTtK0
- NprIQq5saapUpy5GC+rpw4jKXLkHij08iHk5VMpnPwpFASJ3ATPMHiDRiR4boc6KNXzxa/BwAaY
- FLqlHFkFhQU6wkT1x5JiUopSep66hFydyc5Tinb9UWNxffI/XoCAdl6cWeEzAgPwz0+cvlBL0lr
- znQSj+5M7Xm/dw/e6LFBMDKKx5/IfCspYGfxdK7l8VSKJCz/4/0B0Mkb7XpFVU8ioNFtowFzgEe
- GQRpM9kLRcu/nx2p/Ymq6/kFxteIprqdheylvjYo2pxGFXSIlU5k0lZu6qAZhDSMd8X6KGzE
-X-Proofpoint-GUID: sKmKbF27N-WPQQ8wNDYuDipUQML2WXMq
-X-Proofpoint-ORIG-GUID: sKmKbF27N-WPQQ8wNDYuDipUQML2WXMq
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-03_03,2025-07-02_04,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 lowpriorityscore=0 clxscore=1015 malwarescore=0 mlxlogscore=999
- spamscore=0 adultscore=0 mlxscore=0 priorityscore=1501 bulkscore=0
- impostorscore=0 suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507030101
+Content-Transfer-Encoding: 8bit
 
+Implement a hash table to store the BPF progs and the function metadata.
+The key of this hash table is the kernel function address, and following
+data is stored in the hash value:
 
+- The BPF progs, whose type is FENTRY, FEXIT or MODIFY_RETURN. The struct
+  kfunc_md_tramp_prog is introduced to store the BPF prog and the cookie,
+  and makes the BPF progs of the same type a list with the "next" field.
+- The kernel function address
+- The kernel function arguments count
+- If origin call needed
 
-On 25-Jun-25 10:29, Prasad Kumpatla wrote:
-> From: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
-> 
-> Add nodes for WSA8830 speakers amplifier on qcs6490-rb3gen2 board.
-> 
-> Enable lpass_wsa and lpass_va macros along with pinctrl settings
-> for audio.
-> 
-> Signed-off-by: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
-> Co-developed-by: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
-> Signed-off-by: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
-> ---
->  .../boot/dts/qcom/qcs6490-audioreach.dtsi     |  6 ++++
->  arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts  | 35 +++++++++++++++++++
->  arch/arm64/boot/dts/qcom/sc7280.dtsi          |  6 ++++
->  3 files changed, 47 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/qcs6490-audioreach.dtsi b/arch/arm64/boot/dts/qcom/qcs6490-audioreach.dtsi
-> index 6d3a9e171066..078936237e20 100644
-> --- a/arch/arm64/boot/dts/qcom/qcs6490-audioreach.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/qcs6490-audioreach.dtsi
-> @@ -58,6 +58,12 @@ &lpass_va_macro {
->  	clock-names = "mclk",
->  		      "macro",
->  		      "dcodec";
-> +
-> +	pinctrl-0 = <&lpass_dmic01_clk>, <&lpass_dmic01_data>,
-> +		    <&lpass_dmic23_clk>, <&lpass_dmic23_data>;
-> +	pinctrl-names = "default";
+The hlist is used, and we will grow the budgets when the entries count
+greater than 90% of the budget count by making it double. Meanwhile, we
+will shrink the budget when the entries count less than 30% of the budget
+length.
 
-This can be moved to sc7280.dtsi (and removed from IDP
-and chromebook DTs as it's always assigned when VA macro is
-enabled - they also make the same changes to the pinmux
-properties that you make here) - perhaps in a separate
-commit to keep things clear
+We don't use rhashtable here, as the compiler is not clever enough and it
+refused to inline the hash lookup for me, which bring in addition overhead
+in the following BPF global trampoline.
 
-otherwise, I this looks good as far as I'm concerned
+The release of the metadata is controlled by the percpu ref and RCU
+together, and have similar logic to the release of bpf trampoline image in
+bpf_tramp_image_put().
 
-Konrad
+The whole function will be used in the next patch.
+
+Link: https://lore.kernel.org/bpf/CADxym3anLzM6cAkn_z71GDd_VeKiqqk1ts=xuiP7pr4PO6USPA@mail.gmail.com/
+Link: https://lore.kernel.org/bpf/CAADnVQ+G+mQPJ+O1Oc9+UW=J17CGNC5B=usCmUDxBA-ze+gZGw@mail.gmail.com/
+Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
+---
+v2:
+- implement the function metadata with hash table, as Alexei advised
+---
+ include/linux/kfunc_md.h |  91 ++++++++++
+ kernel/bpf/Makefile      |   1 +
+ kernel/bpf/kfunc_md.c    | 352 +++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 444 insertions(+)
+ create mode 100644 include/linux/kfunc_md.h
+ create mode 100644 kernel/bpf/kfunc_md.c
+
+diff --git a/include/linux/kfunc_md.h b/include/linux/kfunc_md.h
+new file mode 100644
+index 000000000000..1a766aa160f5
+--- /dev/null
++++ b/include/linux/kfunc_md.h
+@@ -0,0 +1,91 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _LINUX_KFUNC_MD_H
++#define _LINUX_KFUNC_MD_H
++
++#include <linux/kernel.h>
++#include <linux/bpf.h>
++#include <linux/rhashtable.h>
++
++struct kfunc_md_tramp_prog {
++	struct kfunc_md_tramp_prog *next;
++	struct bpf_prog *prog;
++	u64 cookie;
++	struct rcu_head rcu;
++};
++
++struct kfunc_md {
++	struct hlist_node hash;
++	struct rcu_head rcu;
++	unsigned long func;
++	struct kfunc_md_tramp_prog *bpf_progs[BPF_TRAMP_MAX];
++	struct percpu_ref pcref;
++	u16 users;
++	bool bpf_origin_call;
++	u8 bpf_prog_cnt;
++	u8 nr_args;
++};
++
++struct kfunc_md_array {
++	atomic_t used;
++	struct rcu_head rcu;
++	int hash_bits;
++	struct hlist_head mds[];
++};
++
++extern struct kfunc_md_array __rcu *kfunc_mds;
++
++struct kfunc_md *kfunc_md_create(unsigned long ip, int nr_args);
++struct kfunc_md *kfunc_md_get(unsigned long ip);
++void kfunc_md_put(struct kfunc_md *meta);
++bool kfunc_md_arch_support(int *insn, int *data);
++
++int kfunc_md_bpf_ips(void ***ips, int nr_args);
++int kfunc_md_bpf_unlink(struct kfunc_md *md, struct bpf_prog *prog, int type);
++int kfunc_md_bpf_link(struct kfunc_md *md, struct bpf_prog *prog, int type,
++		      u64 cookie);
++
++static __always_inline notrace struct hlist_head *
++kfunc_md_hash_head(struct kfunc_md_array *mds, unsigned long ip)
++{
++	return &mds->mds[hash_ptr((void *)ip, mds->hash_bits)];
++}
++
++static __always_inline notrace struct kfunc_md *
++__kfunc_md_get(struct kfunc_md_array *mds, unsigned long ip)
++{
++	struct hlist_head *head;
++	struct kfunc_md *md;
++
++	head = kfunc_md_hash_head(mds, ip);
++	hlist_for_each_entry_rcu_notrace(md, head, hash) {
++		if (md->func == ip)
++			return md;
++	}
++
++	return NULL;
++}
++
++/* This function will be called in the bpf global trampoline, so it can't
++ * be traced, and the "notrace" is necessary.
++ */
++static __always_inline notrace struct kfunc_md *kfunc_md_get_rcu(unsigned long ip)
++{
++	return __kfunc_md_get(rcu_dereference_raw(kfunc_mds), ip);
++}
++
++static __always_inline notrace void kfunc_md_enter(struct kfunc_md *md)
++{
++	percpu_ref_get(&md->pcref);
++}
++
++static __always_inline notrace void kfunc_md_exit(struct kfunc_md *md)
++{
++	percpu_ref_put(&md->pcref);
++}
++
++static inline void kfunc_md_put_ip(unsigned long ip)
++{
++	kfunc_md_put(kfunc_md_get(ip));
++}
++
++#endif
+diff --git a/kernel/bpf/Makefile b/kernel/bpf/Makefile
+index 3a335c50e6e3..a8a404e82e3d 100644
+--- a/kernel/bpf/Makefile
++++ b/kernel/bpf/Makefile
+@@ -14,6 +14,7 @@ obj-$(CONFIG_BPF_SYSCALL) += bpf_local_storage.o bpf_task_storage.o
+ obj-${CONFIG_BPF_LSM}	  += bpf_inode_storage.o
+ obj-$(CONFIG_BPF_SYSCALL) += disasm.o mprog.o
+ obj-$(CONFIG_BPF_JIT) += trampoline.o
++obj-$(CONFIG_BPF_JIT) += kfunc_md.o
+ obj-$(CONFIG_BPF_SYSCALL) += btf.o memalloc.o rqspinlock.o
+ ifeq ($(CONFIG_MMU)$(CONFIG_64BIT),yy)
+ obj-$(CONFIG_BPF_SYSCALL) += arena.o range_tree.o
+diff --git a/kernel/bpf/kfunc_md.c b/kernel/bpf/kfunc_md.c
+new file mode 100644
+index 000000000000..152d6741d06d
+--- /dev/null
++++ b/kernel/bpf/kfunc_md.c
+@@ -0,0 +1,352 @@
++// SPDX-License-Identifier: GPL-2.0
++/* Copyright (c) 2025 ChinaTelecom */
++
++#include <linux/slab.h>
++#include <linux/memory.h>
++#include <linux/rcupdate.h>
++#include <linux/ftrace.h>
++#include <linux/rhashtable.h>
++#include <linux/kfunc_md.h>
++
++#include <uapi/linux/bpf.h>
++
++#define MIN_KFUNC_MD_ARRAY_BITS 4
++struct kfunc_md_array default_mds = {
++	.used = ATOMIC_INIT(0),
++	.hash_bits = MIN_KFUNC_MD_ARRAY_BITS,
++	.mds = {
++		[0 ... ((1 << MIN_KFUNC_MD_ARRAY_BITS) - 1)] = HLIST_HEAD_INIT,
++	},
++};
++struct kfunc_md_array __rcu *kfunc_mds = &default_mds;
++EXPORT_SYMBOL_GPL(kfunc_mds);
++
++static DEFINE_MUTEX(kfunc_md_mutex);
++
++static int kfunc_md_array_inc(void);
++
++static void kfunc_md_release_rcu(struct rcu_head *rcu)
++{
++	struct kfunc_md *md;
++
++	md = container_of(rcu, struct kfunc_md, rcu);
++	/* Step 4, free the md */
++	kfree(md);
++}
++
++static void kfunc_md_release_rcu_tasks(struct rcu_head *rcu)
++{
++	struct kfunc_md *md;
++
++	md = container_of(rcu, struct kfunc_md, rcu);
++	/* Step 3, wait for the nornal progs and bfp_global_caller to finish */
++	call_rcu_tasks(&md->rcu, kfunc_md_release_rcu);
++}
++
++static void kfunc_md_release(struct percpu_ref *pcref)
++{
++	struct kfunc_md *md;
++
++	md = container_of(pcref, struct kfunc_md, pcref);
++	percpu_ref_exit(&md->pcref);
++
++	/* Step 2, wait for sleepable progs to finish. */
++	call_rcu_tasks_trace(&md->rcu, kfunc_md_release_rcu_tasks);
++}
++
++struct kfunc_md *kfunc_md_get(unsigned long ip)
++{
++	struct kfunc_md_array *mds;
++	struct kfunc_md *md;
++
++	rcu_read_lock();
++	mds = rcu_dereference(kfunc_mds);
++	md = __kfunc_md_get(mds, ip);
++	rcu_read_unlock();
++
++	return md;
++}
++EXPORT_SYMBOL_GPL(kfunc_md_get);
++
++static struct kfunc_md *__kfunc_md_create(struct kfunc_md_array *mds, unsigned long ip,
++					  int nr_args)
++{
++	struct kfunc_md *md = __kfunc_md_get(mds, ip);
++	int err;
++
++	if (md) {
++		md->users++;
++		return md;
++	}
++
++	md = kzalloc(sizeof(*md), GFP_KERNEL);
++	if (!md)
++		return NULL;
++
++	md->users = 1;
++	md->func = ip;
++	md->nr_args = nr_args;
++
++	err = percpu_ref_init(&md->pcref, kfunc_md_release, 0, GFP_KERNEL);
++	if (err) {
++		kfree(md);
++		return NULL;
++	}
++
++	hlist_add_head_rcu(&md->hash, kfunc_md_hash_head(mds, ip));
++	atomic_inc(&mds->used);
++
++	return md;
++}
++
++struct kfunc_md *kfunc_md_create(unsigned long ip, int nr_args)
++{
++	struct kfunc_md *md = NULL;
++
++	mutex_lock(&kfunc_md_mutex);
++
++	if (kfunc_md_array_inc())
++		goto out;
++
++	md = __kfunc_md_create(kfunc_mds, ip, nr_args);
++out:
++	mutex_unlock(&kfunc_md_mutex);
++
++	return md;
++}
++EXPORT_SYMBOL_GPL(kfunc_md_create);
++
++static int kfunc_md_array_adjust(bool inc)
++{
++	struct kfunc_md_array *new_mds, *old_mds;
++	struct kfunc_md *md, *new_md;
++	struct hlist_node *n;
++	int size, hash_bits, i;
++
++	hash_bits = kfunc_mds->hash_bits;
++	hash_bits += inc ? 1 : -1;
++
++	size = sizeof(*new_mds) + sizeof(struct hlist_head) * (1 << hash_bits);
++	new_mds = kmalloc(size, GFP_KERNEL | __GFP_ZERO);
++	if (!new_mds)
++		return -ENOMEM;
++
++	new_mds->hash_bits = hash_bits;
++	for (i = 0; i < (1 << new_mds->hash_bits); i++)
++		INIT_HLIST_HEAD(&new_mds->mds[i]);
++
++	/* copy all the mds from kfunc_mds to new_mds */
++	for (i = 0; i < (1 << kfunc_mds->hash_bits); i++) {
++		hlist_for_each_entry(md, &kfunc_mds->mds[i], hash) {
++			new_md = __kfunc_md_create(new_mds, md->func, md->nr_args);
++			if (!new_md)
++				goto err_out;
++
++			new_md->bpf_prog_cnt = md->bpf_prog_cnt;
++			new_md->bpf_origin_call = md->bpf_origin_call;
++			new_md->users = md->users;
++
++			memcpy(new_md->bpf_progs, md->bpf_progs, sizeof(md->bpf_progs));
++		}
++	}
++
++	old_mds = kfunc_mds;
++	rcu_assign_pointer(kfunc_mds, new_mds);
++	synchronize_rcu();
++
++	/* free all the mds in the old_mds. See kfunc_md_put() for the
++	 * complete release process.
++	 */
++	for (i = 0; i < (1 << old_mds->hash_bits); i++) {
++		hlist_for_each_entry_safe(md, n, &old_mds->mds[i], hash) {
++			percpu_ref_kill(&md->pcref);
++			hlist_del(&md->hash);
++		}
++	}
++
++	if (old_mds != &default_mds)
++		kfree_rcu(old_mds, rcu);
++
++	return 0;
++
++err_out:
++	for (i = 0; i < (1 << new_mds->hash_bits); i++) {
++		hlist_for_each_entry_safe(md, n, &new_mds->mds[i], hash) {
++			percpu_ref_exit(&md->pcref);
++			hlist_del(&md->hash);
++			kfree(md);
++		}
++	}
++	return -ENOMEM;
++}
++
++static int kfunc_md_array_inc(void)
++{
++	/* increase the hash table if greater than 90% */
++	if (atomic_read(&kfunc_mds->used) * 10 < (1 << (kfunc_mds->hash_bits)) * 9)
++		return 0;
++	return kfunc_md_array_adjust(true);
++}
++
++static int kfunc_md_array_dec(void)
++{
++	/* decrease the hash table if less than 30%. */
++	if (atomic_read(&kfunc_mds->used) * 10 > (1 << (kfunc_mds->hash_bits)) * 3)
++		return 0;
++
++	if (kfunc_mds->hash_bits <= MIN_KFUNC_MD_ARRAY_BITS)
++		return 0;
++
++	return kfunc_md_array_adjust(false);
++}
++
++void kfunc_md_put(struct kfunc_md *md)
++{
++	if (!md || WARN_ON_ONCE(md->users <= 0))
++		return;
++
++	mutex_lock(&kfunc_md_mutex);
++	md->users--;
++	if (md->users > 0)
++		goto out_unlock;
++
++	hlist_del_rcu(&md->hash);
++	atomic_dec(&kfunc_mds->used);
++	/* Step 1, use percpu_ref_kill to wait for the origin function to
++	 * finish. See kfunc_md_release for step 2.
++	 */
++	percpu_ref_kill(&md->pcref);
++	kfunc_md_array_dec();
++
++out_unlock:
++	mutex_unlock(&kfunc_md_mutex);
++}
++EXPORT_SYMBOL_GPL(kfunc_md_put);
++
++static bool kfunc_md_bpf_check(struct kfunc_md *md, int nr_args)
++{
++	return md->bpf_prog_cnt && md->nr_args == nr_args;
++}
++
++int kfunc_md_bpf_ips(void ***ips_ptr, int nr_args)
++{
++	struct kfunc_md *md;
++	int count, res = 0;
++	void **ips;
++
++	mutex_lock(&kfunc_md_mutex);
++	count = atomic_read(&kfunc_mds->used);
++	if (count <= 0)
++		goto out_unlock;
++
++	ips = kmalloc_array(count, sizeof(*ips), GFP_KERNEL);
++	if (!ips) {
++		res = -ENOMEM;
++		goto out_unlock;
++	}
++
++	for (int j = 0; j < (1 << kfunc_mds->hash_bits); j++) {
++		hlist_for_each_entry(md, &kfunc_mds->mds[j], hash) {
++			if (kfunc_md_bpf_check(md, nr_args))
++				ips[res++] = (void *)md->func;
++		}
++	}
++	*ips_ptr = ips;
++
++out_unlock:
++	mutex_unlock(&kfunc_md_mutex);
++
++	return res;
++}
++
++int kfunc_md_bpf_link(struct kfunc_md *md, struct bpf_prog *prog, int type,
++		      u64 cookie)
++{
++	struct kfunc_md_tramp_prog *tramp_prog, **last;
++	int err = 0;
++
++	mutex_lock(&kfunc_md_mutex);
++	tramp_prog = md->bpf_progs[type];
++	/* check if the prog is already linked */
++	while (tramp_prog) {
++		if (tramp_prog->prog == prog) {
++			err = -EEXIST;
++			goto out_unlock;
++		}
++		tramp_prog = tramp_prog->next;
++	}
++
++	tramp_prog = kmalloc(sizeof(*tramp_prog), GFP_KERNEL);
++	if (!tramp_prog) {
++		err = -ENOMEM;
++		goto out_unlock;
++	}
++
++	WRITE_ONCE(tramp_prog->prog, prog);
++	WRITE_ONCE(tramp_prog->cookie, cookie);
++	WRITE_ONCE(tramp_prog->next, NULL);
++
++	/* add the new prog to the list tail */
++	last = &md->bpf_progs[type];
++	while (*last)
++		last = &(*last)->next;
++
++	WRITE_ONCE(*last, tramp_prog);
++
++	md->bpf_prog_cnt++;
++	if (type == BPF_TRAMP_FEXIT || type == BPF_TRAMP_MODIFY_RETURN)
++		md->bpf_origin_call = true;
++
++out_unlock:
++	mutex_unlock(&kfunc_md_mutex);
++	return err;
++}
++
++static void link_free_rcu(struct rcu_head *rcu)
++{
++	struct kfunc_md_tramp_prog *tramp_prog;
++
++	tramp_prog = container_of(rcu, struct kfunc_md_tramp_prog, rcu);
++	/* Step 3, free the tramp_prog */
++	kfree(tramp_prog);
++}
++
++static void link_free_rcu_tasks(struct rcu_head *rcu)
++{
++	struct kfunc_md_tramp_prog *tramp_prog;
++
++	tramp_prog = container_of(rcu, struct kfunc_md_tramp_prog, rcu);
++	/* Step 2, wait for normal progs finish, which means all the progs
++	 * in the list finished.
++	 */
++	call_rcu_tasks(&tramp_prog->rcu, link_free_rcu);
++}
++
++int kfunc_md_bpf_unlink(struct kfunc_md *md, struct bpf_prog *prog, int type)
++{
++	struct kfunc_md_tramp_prog *cur, **prev, **progs;
++
++	mutex_lock(&kfunc_md_mutex);
++	progs = md->bpf_progs;
++	prev = progs + type;
++	while (*prev && (*prev)->prog != prog)
++		prev = &(*prev)->next;
++
++	cur = *prev;
++	if (!cur) {
++		mutex_unlock(&kfunc_md_mutex);
++		return -EINVAL;
++	}
++
++	WRITE_ONCE(*prev, cur->next);
++	WRITE_ONCE(md->bpf_origin_call, progs[BPF_TRAMP_MODIFY_RETURN] ||
++					progs[BPF_TRAMP_FEXIT]);
++
++	md->bpf_prog_cnt--;
++
++	/* Step 1, wait for sleepable progs to finish. */
++	call_rcu_tasks_trace(&cur->rcu, link_free_rcu_tasks);
++	mutex_unlock(&kfunc_md_mutex);
++
++	return 0;
++}
+-- 
+2.39.5
+
 
