@@ -1,146 +1,137 @@
-Return-Path: <linux-kernel+bounces-714578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39DD6AF69D6
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 07:39:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA884AF69D9
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 07:40:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C3A31692A6
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 05:39:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 468AA1C27F67
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 05:40:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97C312900AA;
-	Thu,  3 Jul 2025 05:39:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40E4D290BB4;
+	Thu,  3 Jul 2025 05:40:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XZfhQrLJ"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	dkim=pass (1024-bit key) header.d=iiitd.ac.in header.i=@iiitd.ac.in header.b="WT2Gsbez"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B3D82DE716;
-	Thu,  3 Jul 2025 05:39:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C19128E61E
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 05:40:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751521154; cv=none; b=DnnSWnA6vk0BR3T8uDLnbsl3hLehzSWThFKi9N4D5u0Mo0aFyups+TEiK2L7yKuWIHGdFQd3RAnU4AyxcWWsC3CTMfkzzTGBU0xaUMIvmfgt73VZiCcKa8jsP9xUpWivOv93ZA5fO60ND7x2lfQG+/EuLo7ybG4gCM6cPKsDZ/g=
+	t=1751521225; cv=none; b=eQetTvkghHVkSmP5tFq3ROuDN9mvbjrwfcgVp0Hf6U5o295wwRiy2xk6qnhoL/aVoF2q7sPdONrFTEyXzOo+9VNTwwfdRE86jkS4pOP9pvrX4CkuqAZUbvEmpaQY+FO7/9mvNVWHOa2Hu9YwUDKJ0W1vzwaViYI9aEqCvp0+dFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751521154; c=relaxed/simple;
-	bh=voxJZHqltY56Ox9RRMfA577Eifwyg8mdiTW3GT0aRTI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=K0QqRRGH6Q868d9SwPU8qF1lBlxrEBKtmm5uY2bVo+2/0U+XKsu19EaZOWUGCL2arbpr8fCbdMwFaeRwEJoru3GiFaJ+O87v8Sy5o4eZzzyH8vZorf6cklaJxsGt7Qmxepp1npjCeGCNdwuzLOoYzl9Swzuo9JcgKM9l0jVLGsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XZfhQrLJ; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-234b440afa7so77583165ad.0;
-        Wed, 02 Jul 2025 22:39:12 -0700 (PDT)
+	s=arc-20240116; t=1751521225; c=relaxed/simple;
+	bh=M2vyeWH0DutHMkqV6DcIyt6SCatd8hktuKbQTf/JtJo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i7R3JQRIV1asg2UV6N2D7vYOrCZxb8/N0ePAEg6Rtcqn6Hm+fva37xB1RHQXqbGgcfCgZ5CrRfRVWM+9PHYi/NlFBp89t0NmGu1KhZpvLCWaZ1e4LP79dbuqDCVNhFhdeF33B3nHPSd7mQZMXUpgN+Uom1Lsc0yqpxBmAntaCuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iiitd.ac.in; spf=pass smtp.mailfrom=iiitd.ac.in; dkim=pass (1024-bit key) header.d=iiitd.ac.in header.i=@iiitd.ac.in header.b=WT2Gsbez; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iiitd.ac.in
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iiitd.ac.in
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-748e81d37a7so5344454b3a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 22:40:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751521152; x=1752125952; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=0IrjhUcneeUdhM9TWLddICq65bCdlGpr1v8MgRUFY40=;
-        b=XZfhQrLJuPX/Pgac0BXAzm6ep8wgdZfVSqm9H0XGBijE6WzWUZHiSaRRRPnQ5rNa+Q
-         NVVpHvs8EjBQdLggA72fqXGfsMOW6VYI2aAvHoZD23RZ0uGKL1NaSEw3j7Jyr4EKx7Vn
-         IYH9xzrVEpjdDGUkmmTmcMwBHcNDmWXvJbEjC9K4maQKEq/uVa8JZckZoKjjnAHRjnjL
-         wXX7OZWaTwv+0GhzIXt+OtVjIVsv16aWAuNkfUMDrXlhWDev8iLlbSs7ihwGbyv9mXps
-         TzzdpQdksia/yKllf/zqGfaqV3d/9I5OrwoauSArhlWyG18WSOkvitvmuwAjuiJkcPoT
-         YTPg==
+        d=iiitd.ac.in; s=google; t=1751521222; x=1752126022; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=eZJ3D9BdUXcaieDRgLM5GSqlyr9PlwsCgm1po43FpSQ=;
+        b=WT2GsbezdQf77UVJV+TskuYfnEfbdpB4SxncHPvGB06PzpVNgVADpP/2oo3hJvgD+k
+         d6QzF8HAUHW0IW4vVCwFrM59KPKyfvLE0y/t+tGxKQIRGMQfUzjc5DV2KHI4SbKakVds
+         /U+/hTKjJslVFAvLA300KMQZsv1aRAcBhx5uI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751521152; x=1752125952;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0IrjhUcneeUdhM9TWLddICq65bCdlGpr1v8MgRUFY40=;
-        b=NX1ayX+RaB/YgrrubqUzcTYWNeCPod5XUiILsDHuYHShgHB75akX602+X/He8pGFTE
-         JdVo7EmW6Py2LNpB0/dr5I5fmydTa/MsSiWK00DipG/a+NLCchlek86csj/I75sUCLIC
-         obxd2FIfeLKUb4OU3q8tp7l3cHL5iYGCPy4UJyipYP4LsGIxMF3XB8z2IXkZ0lPkWmMA
-         nW9oUn2R3lL7r/j1xBgM8EaiEQDOn/9gkkr3yILJ3RunTBZK/Vv2P+LULGIPyLdw+5r/
-         bhyDGNmTPW99NT9zy7oA1buCjwzIa/DsYXx1o/GYcpQRT3rx3wt/ex3R1DnPmMc3h8zA
-         A1kQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV1vaOsnHZ2rTp9oin7iWIQ+0mE8pB+nuq0JNW8s5GVPT2aPq3gqvKxmE78wqZ1tQaipMkEDEyI8FqqDCOP@vger.kernel.org, AJvYcCXmcPUm87gFu9h9t5ZVzA9hc5S+pyqx0RidQMMp0t+sqf3ibeRaOvC1AjZXFwaXBeAk/WJZw9tPDOo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7AZOC1ZrIhnJ8rPh6B0Od5PSNeKgc+QAtcPzYV3MCs58bo6Jh
-	EeuD0wJAtxDbmlc6EHOOVlM3mL6I21MH2hWO6obzWtzzOjQcsuX4V/Lc50TKkA==
-X-Gm-Gg: ASbGncvw4pMEEduLU7f7RcSQoOs5yiin3HRN/yGpZb924z4lqgk9tzWUGnAcHAmgXok
-	p9T5QpJFIez/B+Al7occc/4Wa9hi+3YlwvySrC8bc0PRzI2cxzT/Q+phvk2rEIOn7wNHu+RkmSZ
-	2sjzR9sBoObxseevGlepVaem9XOOx1YmzX2qj2INesXbpJEmLsKxNEFX59nuf1b8N9/EaYwoXhL
-	IHqfRPALaaOIfPe7T9+kvuQafLOo/AZ7NMHHuIzIZHqYrrA2QMQoVTaGf843b5YM928mdmUyoUv
-	QC7yZqKGrxjcdWmhhV1wmYWF7dcSPGkqM1ED7pe/eqjDd6Kq3ZNmSmx6ExiszZvg9NSpoyk=
-X-Google-Smtp-Source: AGHT+IHoh6t/sQ++4eoZ53OHZp5DSnQdMVsEROn6XefgxlvjoM2122L64NtRIINhq6KoVx3i32clcQ==
-X-Received: by 2002:a17:902:db10:b0:236:15b7:62e8 with SMTP id d9443c01a7336-23c6e591e5bmr83382435ad.25.1751521151702;
-        Wed, 02 Jul 2025 22:39:11 -0700 (PDT)
-Received: from localhost.localdomain ([36.50.162.229])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23acb2f1d72sm153629405ad.66.2025.07.02.22.39.06
+        d=1e100.net; s=20230601; t=1751521222; x=1752126022;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eZJ3D9BdUXcaieDRgLM5GSqlyr9PlwsCgm1po43FpSQ=;
+        b=pgakbp2IzlguJ8BMMeRRA6Y/UBAtwfkUrDPKF+ja5mJ2GqOlGelNOCeo6zSNKCZP/0
+         4zKqZ2ywb8kNVtX33q7RHPst0gppOotx4spNDBJpBI6bXvCmAXdjJqKlulaTX/F2SLeA
+         RJFWBSvSc+xG1jy9Zem3NLgOwGjhDzfFYBxsQwU6tiz7SEwWODuqahDQ3voD4Tcao6aW
+         5Yf2uFrNyjkbPTcoluA/OylL8FKcsNgHCcEkQg/rfZZItYvTTybQ/lrV3Q5P15dBoYGe
+         Qn6zWARo+ZEomggcFp0FXWCEzd4aT98j5uXCCXHzFxbWe+xZUhhdlCnjcWjDIHUCz5Vh
+         t9hA==
+X-Forwarded-Encrypted: i=1; AJvYcCV/VDODtzhkvJQwe4ZOhXKGNzG7SXIJgbfpV5X1FAgZW7mV/2HAZehsk9Ph10iaQ/VzpC5W/wOwedLNhYs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZT5aFHwWVWQi/erGFUhG+ic3j138a/pqGIi4nXyCc62yukYHs
+	WYIkGhCoYQhfrP9r/rgX0bMYipsesqxvYk0UtUrU5tR67WvJu22U5zRhFKqNXBRsMwo=
+X-Gm-Gg: ASbGncue7/hQLiE6e07BqQicvn1H7N9KmNLGnUxuPnISItYiAgP0iFJxodSwbXP0523
+	RWz/rBjte9NB8jxT32aR1yC4PWVZ+xKjEEqwZQhJHA5NOFGiPY4r6ZZkFxa/4PqM3AWHdEsxKqT
+	c2ZD5yTimONHAgbBNIacAj28+S+yG23vmYGYeDWZi7f2wvEaV7E2fbfBaBU+1aer92d0DDbEHoa
+	fklQ64e9tPd+CHGRqaWpjqCVlcgGOJRGjjaactZeCKe6aMgCYhvNy6YaO5X6RDJEPEu7uhPckOf
+	iEjL6nQyH7b2tX/o9qF775Xgftv+M988P2W38Pw+bCiKMd90ss/bLJWB
+X-Google-Smtp-Source: AGHT+IHBqMwtweqX9zHJzqYFxoWDjzmtyx2Umni0voQWk/BC+z7nOVvDheUtLCx8ITkinSUCSdPYgg==
+X-Received: by 2002:a05:6a00:2354:b0:748:fb2c:6b95 with SMTP id d2e1a72fcca58-74ca8495056mr3197822b3a.18.1751521221899;
+        Wed, 02 Jul 2025 22:40:21 -0700 (PDT)
+Received: from fedora ([103.3.204.95])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74af58068b6sm15774866b3a.175.2025.07.02.22.40.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Jul 2025 22:39:11 -0700 (PDT)
-From: Akshay Bansod <akbansd@gmail.com>
-To: Lorenzo Bianconi <lorenzo@kernel.org>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>
-Cc: linux-kernel-mentees@lists.linuxfoundation.org,
-	skhan@linuxfoundation.org,
-	linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] iio: st_lsm6dsx: Replace scnprintf with sysfs_emit
-Date: Thu,  3 Jul 2025 11:08:59 +0530
-Message-ID: <20250703053900.36530-1-akbansd@gmail.com>
-X-Mailer: git-send-email 2.49.0
+        Wed, 02 Jul 2025 22:40:21 -0700 (PDT)
+Date: Thu, 3 Jul 2025 11:10:14 +0530
+From: Manas <manas18244@iiitd.ac.in>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Alan Stern <stern@rowland.harvard.edu>
+Cc: Pete Zaitcev <zaitcev@redhat.com>, Paolo Abeni <paolo.abeni@email.it>, 
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Greg Kroah-Hartman <gregkh@suse.de>, syzbot+86b6d7c8bcc66747c505@syzkaller.appspotmail.com
+Subject: Re: [PATCH] usbmon: Fix out-of-bounds read in mon_copy_to_buff
+Message-ID: <uew7bu3uxpppew5bhnpzw2oiqyrzv64co54fjthwnhqtnybv6o@lh5pzvkubzo3>
+References: <20250703-fix-oob-mon_copy_to_buff-v1-1-1aa7f5723d91@iiitd.ac.in>
+ <2025070322-overstay-compacter-3544@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Disposition: inline
+In-Reply-To: <2025070322-overstay-compacter-3544@gregkh>
 
-Update the sysfs interface for sampling frequency and scale attributes.
-Replace `scnprintf()` with `sysfs_emit_at()` which is PAGE_SIZE-aware
-and recommended for use in sysfs.
+On 03.07.2025 07:12, Greg Kroah-Hartman wrote:
+>On Thu, Jul 03, 2025 at 02:57:40AM +0530, Manas Gupta via B4 Relay wrote:
+>> From: Manas Gupta <manas18244@iiitd.ac.in>
+>>
+>> memcpy tries to copy buffer 'from' when it is empty. This leads to
+>> out-of-bounds crash.
+>
+>What exactly is the "crash" that you are seeing?  What is reporting it,
+>and how?
+>
+Hi Greg and Alan,
 
-Signed-off-by: Akshay Bansod <akbansd@gmail.com>
----
-changes in v2:
-- Fixed indentation for line wrap
-- Link to v1: https://lore.kernel.org/linux-iio/20250702135855.59955-1-akbansd@gmail.com/
+I ran the reproducer[1] on my machine and got the following stacktrace.
 
-Testing:
-- Built the driver (`st_lsm6dsx_i2c`) as a module.
-- Tested using `i2c-stub` to mock the device.
-- Verified that reading sysfs attributes like `sampling_frequency_available`
-  works correctly and shows no change in functionality.
+```
+[   41.601410][  T769] ==================================================================
+[   41.601908][  T769] BUG: KASAN: slab-out-of-bounds in mon_copy_to_buff+0xc6/0x180
+[   41.602405][  T769] Read of size 832 at addr ffff888043ee6081 by task kworker/0:2/769
+[   41.602898][  T769]
+```
+
+which led me on a different path. I assumed that out-of-bounds was occuring in
+`mon_copy_to_buff` without realizing it may be the caller at fault, as Alan
+pointed out in his feedback.
+
+I now notice that my stacktrace is also slightly different (or rather
+incomplete) as compared to the syzkaller report which says
+
+```
+BUG: KASAN: slab-out-of-bounds in mon_copy_to_buff drivers/usb/mon/mon_bin.c:252 [inline]
+BUG: KASAN: slab-out-of-bounds in mon_bin_get_data drivers/usb/mon/mon_bin.c:420 [inline]
+BUG: KASAN: slab-out-of-bounds in mon_bin_event+0x1211/0x2250 drivers/usb/mon/mon_bin.c:606
+Read of size 832 at addr ffff88802888f1e1 by task kworker/0:2/979
+```
+
+where it does mention that the issue is in the caller. The caller must ensure
+the correctness of write buffer.
+
+Also, Hillf has produced a patch [2] which looks better than mine.
 
 
----
- drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+[1] https://syzkaller.appspot.com/text?tag=ReproC&x=1770d770580000
+[2] https://lore.kernel.org/all/20250703043448.2287-1-hdanton@sina.com/
 
-diff --git a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c
-index c65ad4982..7689ca39a 100644
---- a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c
-+++ b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c
-@@ -2035,9 +2035,9 @@ st_lsm6dsx_sysfs_sampling_frequency_avail(struct device *dev,
- 
- 	odr_table = &sensor->hw->settings->odr_table[sensor->id];
- 	for (i = 0; i < odr_table->odr_len; i++)
--		len += scnprintf(buf + len, PAGE_SIZE - len, "%d.%03d ",
--				 odr_table->odr_avl[i].milli_hz / 1000,
--				 odr_table->odr_avl[i].milli_hz % 1000);
-+		len += sysfs_emit_at(buf, len, "%d.%03d ",
-+				     odr_table->odr_avl[i].milli_hz / 1000,
-+				     odr_table->odr_avl[i].milli_hz % 1000);
- 	buf[len - 1] = '\n';
- 
- 	return len;
-@@ -2054,8 +2054,8 @@ static ssize_t st_lsm6dsx_sysfs_scale_avail(struct device *dev,
- 
- 	fs_table = &hw->settings->fs_table[sensor->id];
- 	for (i = 0; i < fs_table->fs_len; i++)
--		len += scnprintf(buf + len, PAGE_SIZE - len, "0.%09u ",
--				 fs_table->fs_avl[i].gain);
-+		len += sysfs_emit_at(buf, len, "0.%09u ",
-+				     fs_table->fs_avl[i].gain);
- 	buf[len - 1] = '\n';
- 
- 	return len;
 -- 
-2.49.0
-
+Manas
 
