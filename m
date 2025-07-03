@@ -1,111 +1,208 @@
-Return-Path: <linux-kernel+bounces-715955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-715953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74168AF8014
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 20:34:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97E1AAF8010
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 20:33:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D52D1CA2838
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 18:34:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A2D857ACA5C
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 18:32:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 412052F49EB;
-	Thu,  3 Jul 2025 18:33:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1E132F3624;
+	Thu,  3 Jul 2025 18:33:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e0GOz2Dg"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R9uvwg7H"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AEC91D5CE5;
-	Thu,  3 Jul 2025 18:33:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 335F428A1EE;
+	Thu,  3 Jul 2025 18:33:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751567603; cv=none; b=k0Dv9SVc8qbrwo2JwNI/x5sDRT+PoJfVlI3NDe0fymPj15b81Pdks+ccSmRCuC/KcyStlXrcmJ/7Osst0kDC2xaY8NnR2DvnoX3IL5aKrc5vq/CXr0b+7ctfj9yHbwb2b70xSwRHeSK8RWecrSBQ9d8GdWmmaR/OdMa9oh+/Vs0=
+	t=1751567593; cv=none; b=XTvC75xS2g/ZJdV2khTMT6rSVzMlrnLucZi0aYcEksqI09gvGcyJi4l0b0Us0u/O2jifXWtS4RGDqTx0T+Up33HGX5BAK5m6ySCktjiVxaPf34rVDStoUNBFhwYddFXYPnFDhWpy8xgdofxyU/I3Q/kyiVpuyfHWtun2lG8Md/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751567603; c=relaxed/simple;
-	bh=iY85BkZVGgoxJEu88tGytmKfxLrT4qHZK8r+PttF4yU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=q8Pf8wJ8pLNmOEoBOsHEozJm8h4VtianqnzvB6z1HLssNYwQEZPiREJVjAY/kqtPLBx6SuLBGOrMkgmiv+zwdfn54IfCxju3d24N8aLUCJ3j9QgVW+GR/JGS/5dZvZZOX1z1BjvHGxzBkDdFYaCahDC24lMA/Esz3oyIOIYNvEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e0GOz2Dg; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-32b50f357ecso2048771fa.2;
-        Thu, 03 Jul 2025 11:33:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751567600; x=1752172400; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Y8mXa+t6YUXZo7Fg3Xqd/oUrkEQP+PUVzRz3Oo94FoU=;
-        b=e0GOz2DgP5pF+RMhwiQYdixVuuBiNMs+KoTEbRTrWRmzIt+Zcxl+tYAD9+dQXvUSvm
-         P3uWgybfW6eLZnHljcWs4bNWBt9XKri7T8sEcRPZWWnR323K8MeGYor9oaMf8dVxFVlh
-         6qgxMiO/KeNbSTIiGY+MO/yCRPWviSxI3xHMJ7tyDqRC22OvX9/czYbAwD3J4pOhnp86
-         Tg1NS7mkWC59Q8jBrOQJgepka6Q6iGZB9+//vuF/KWmBms1QXcYP68lallhHc6gOF5Jp
-         in/pr0gpj7IET9vCMiDDIfJ3I4ae01RQ/MBPdeiyzV1rxVCyKUuqeGz0uWZs3ggtgPD5
-         od3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751567600; x=1752172400;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Y8mXa+t6YUXZo7Fg3Xqd/oUrkEQP+PUVzRz3Oo94FoU=;
-        b=nQSc45sJ8AfaVfp7WzLCvNz9yhaaM4Z4ICVn1aTwvo4jnV9c5sIuCAWVba7HeizdrU
-         mzhYKQe4OUnHLO7vEXBK9B1qfIhvcVVUBZJA6DVRcLY5TUiD6GrQPtsnmMchG49a6cL6
-         jgMIX9yOCiu3dfHklziP4CBL8kMgYj4lKeGJ+KazKJrF0IA2OxxdKVDK+71AT1Ovj6J4
-         1vA/abSkSQivaXPmW2DQpByF1c62HirBoqVBcNzlgaeP0Yhli+X8uNzyyOk44m6QSJof
-         ckNf4lmzVeQm9B0bmKinitTxbBfRahuekGXqhFsYUwEDul4obswfuU2msZ+dPZ3+3s7v
-         eJrA==
-X-Forwarded-Encrypted: i=1; AJvYcCV/U/jJQEdWRNF3FysZZ9t9sVGVJnTgIDQEhbscDrqxtWt1LIuo4FBFjettQy0pSTQQYUHd7gRdh34=@vger.kernel.org, AJvYcCVwzVGoU2qZanipLMfhkmsrDikgetTLl/tqSJPjrKFoiXgWEg4UdFGNp842fYklAM5zhcTDqKaKfcupQR0=@vger.kernel.org, AJvYcCXQiCo/ZSF/zP6IUj20hkFvidgodjyb5h9IyNQLBL2g+GpohyZC6mL62RM5fPyOlcq/3T82fFzZ2kQOPSg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTrD81w0fIvRIPKPVDHaqicbOCMQkMx7lRytzsxZn0yiUsGuoy
-	kXZ6vR51ksbvbQ6rhEXQk7gZzoZzjfdxP0xqbJCEt2lOOjqKW9Jc7JFsuoC00BF7BV2LKdm/dAi
-	V1beIDISRVNXR/lG5dZhFJqpRhQP4Q4Dy3y4wUuY=
-X-Gm-Gg: ASbGncsDfnZVviGZdhIwP+b/9e+RjNtdZV4E+4LtR4FW7xl/SLCavp+ZCCWc+gnMuD0
-	ms/zIzwQ4WRHfi3LAxtYcabQ8ozpgWH5uAM4/VD8Vb8cFGtGeJijD+MHxG0Hl8YcZ3DN34jI1Q5
-	8j8DbapVl7Y2eDPxPN3qysjhkJLKMKoWuGP588BseJYFk=
-X-Google-Smtp-Source: AGHT+IF4aaN60H2XWg6v+/Qj8Z244EqH2cUzPIpYmYhJXoZrcvEZvdNgze4bbKHNl+FZmlYaAo5AYWk3DruHq8QO/tQ=
-X-Received: by 2002:a05:6512:1381:b0:553:37e7:867c with SMTP id
- 2adb3069b0e04-55628347062mr3215354e87.50.1751567599796; Thu, 03 Jul 2025
- 11:33:19 -0700 (PDT)
+	s=arc-20240116; t=1751567593; c=relaxed/simple;
+	bh=twKLCDvgvJ4N3es1zViUdUytVpc1yuuskuyBdmZ+9lY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=GR049/tMCV8+9qE0wbT/+SX+1PmTfjBCLYtV0JBGjapNXYCecgXm1FQldyDdQOWk8k7k0yAzTkXC8KqDaDfx5eCfABgZ5/EHIx+gQHyVeTZsKI26mCqjR6Hkr/wb9HWH5X1eTYFowt67f2e6mB+er/Xn1+n4tLfeLt7f9HaifcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R9uvwg7H; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id C5E7FC4AF0B;
+	Thu,  3 Jul 2025 18:33:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751567592;
+	bh=twKLCDvgvJ4N3es1zViUdUytVpc1yuuskuyBdmZ+9lY=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=R9uvwg7H/tZrWUiU2XNSphV19N7RZhq3VTIpr7RkePXVvXiuqfSjEbdEzy1u3/L8b
+	 BFLr0DNU/yhCT7/1IUGjYrZD/H05T7tEsS0jatIK1XXfmfDWAUPuGGBDy8c23cOExj
+	 99fYWcPpD/ie3wppt3cOBlDSeYIDsq3Hr+XpZ2pZ6oILdUhX5+oqPnhX2yZNxn9iKM
+	 cDxSZ9sAdczy71F/0yRRIpGi10PELYcwYHEwGh61oXrPqdUz1J0KtPNjV7NBnE43JE
+	 TwJk1hGaFpCJt7EdrJ0AVHb6dA0HIynhRAO3yFkVg9dZmdIUzqjuQ8/ajijWxBMs1n
+	 aLjKhv9aeVDcg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD1BBC83F05;
+	Thu,  3 Jul 2025 18:33:12 +0000 (UTC)
+From: Frank Li via B4 Relay <devnull+Frank.Li.nxp.com@kernel.org>
+Date: Thu, 03 Jul 2025 14:33:09 -0400
+Subject: [PATCH v2 4/4] arm64: dts: imx8qxp-mek: add parallel ov5640 camera
+ support
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250702-tegra124-cpufreq-v5-0-66ab3640a570@gmail.com>
- <20250702-tegra124-cpufreq-v5-3-66ab3640a570@gmail.com> <20250702081207.bzru3mtl56ns372v@vireshk-i7>
-In-Reply-To: <20250702081207.bzru3mtl56ns372v@vireshk-i7>
-From: Aaron Kling <webgeek1234@gmail.com>
-Date: Thu, 3 Jul 2025 13:33:08 -0500
-X-Gm-Features: Ac12FXzz5Yv8oiI05qYO9V66A8XCIkXZSe5g1pk_3izL2EhDAowW1MUYRp6QlbM
-Message-ID: <CALHNRZ_jzSGF2xTNMt_giEa4T6r6+qfhp-EubTViqYL7jYf=sw@mail.gmail.com>
-Subject: Re: [PATCH v5 3/3] cpufreq: tegra124: Allow building as a module
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250703-imx8qxp_pcam-v2-4-188be85f06f1@nxp.com>
+References: <20250703-imx8qxp_pcam-v2-0-188be85f06f1@nxp.com>
+In-Reply-To: <20250703-imx8qxp_pcam-v2-0-188be85f06f1@nxp.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, Rui Miguel Silva <rmfrfs@gmail.com>, 
+ Martin Kepplinger <martink@posteo.de>, Purism Kernel Team <kernel@puri.sm>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-media@vger.kernel.org, imx@lists.linux.dev, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, Frank Li <Frank.Li@nxp.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1751567591; l=3715;
+ i=Frank.Li@nxp.com; s=20240130; h=from:subject:message-id;
+ bh=xrlatQtLaiuinBwAmL4cEzL3pNe437Uvr/YWmYMVyX4=;
+ b=OrYhgbxp0mxYiuvD4zwpejFQ9E/eldojxDR2ZfCT44z4t7F/rAzD6h8/JvNn4OeWKbkLfnHiQ
+ jMyCzGG8e6aCOEQMci3BgiDtLjGFLAEhTs1FhhzET3OdH5wncSPru8A
+X-Developer-Key: i=Frank.Li@nxp.com; a=ed25519;
+ pk=I0L1sDUfPxpAkRvPKy7MdauTuSENRq+DnA+G4qcS94Q=
+X-Endpoint-Received: by B4 Relay for Frank.Li@nxp.com/20240130 with
+ auth_id=121
+X-Original-From: Frank Li <Frank.Li@nxp.com>
+Reply-To: Frank.Li@nxp.com
 
-On Wed, Jul 2, 2025 at 3:12=E2=80=AFAM Viresh Kumar <viresh.kumar@linaro.or=
-g> wrote:
->
-> On 02-07-25, 02:46, Aaron Kling via B4 Relay wrote:
-> > +static struct platform_device *platform_device;
->
-> Maybe initialize this to an error value...
->
-> > +static void __exit tegra_cpufreq_module_exit(void)
-> > +{
-> > +     if (platform_device && !IS_ERR(platform_device))
->
-> ... and then this could be simplified ?
->
-> Or use !IS_ERR_OR_NULL .
+From: Frank Li <Frank.Li@nxp.com>
 
-Latter sounds better to me. I'll queue that up and send a new patchset
-in a couple days, pending any further comments.
+Add parallel ov5640 nodes in imx8qxp-mek and create overlay file to enable
+it because it can work at two mode: MIPI and parallel mode.
 
-Aaron
+Signed-off-by: Frank Li <Frank.Li@nxp.com>
+---
+change in v2
+- move ov5640 part to overlay file
+- rename to imx8qxp-mek-ov5640-parallel.dtso
+- remove data-lanes
+---
+ arch/arm64/boot/dts/freescale/Makefile             |  3 +
+ .../dts/freescale/imx8qxp-mek-ov5640-parallel.dtso | 82 ++++++++++++++++++++++
+ 2 files changed, 85 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
+index 02ef35578dbc7e05b35b781dbfca0f0bc124ead1..25787fc7143f36301f8b334d4b0d84d543e1f320 100644
+--- a/arch/arm64/boot/dts/freescale/Makefile
++++ b/arch/arm64/boot/dts/freescale/Makefile
+@@ -330,6 +330,9 @@ dtb-$(CONFIG_ARCH_MXC) += imx8qxp-mek-pcie-ep.dtb
+ imx8qxp-mek-ov5640-csi-dtbs := imx8qxp-mek.dtb imx8qxp-mek-ov5640-csi.dtbo
+ dtb-${CONFIG_ARCH_MXC} += imx8qxp-mek-ov5640-csi.dtb
+ 
++imx8qxp-mek-ov5640-parallel-dtbs := imx8qxp-mek.dtb imx8qxp-mek-ov5640-parallel.dtbo
++dtb-${CONFIG_ARCH_MXC} += imx8qxp-mek-ov5640-parallel.dtb
++
+ dtb-$(CONFIG_ARCH_MXC) += imx8qxp-tqma8xqp-mba8xx.dtb
+ dtb-$(CONFIG_ARCH_MXC) += imx8qxp-tqma8xqps-mb-smarc-2.dtb
+ dtb-$(CONFIG_ARCH_MXC) += imx8ulp-evk.dtb
+diff --git a/arch/arm64/boot/dts/freescale/imx8qxp-mek-ov5640-parallel.dtso b/arch/arm64/boot/dts/freescale/imx8qxp-mek-ov5640-parallel.dtso
+new file mode 100644
+index 0000000000000000000000000000000000000000..e184a5beb5c835e6801495ae2adc3b14cfcde2e5
+--- /dev/null
++++ b/arch/arm64/boot/dts/freescale/imx8qxp-mek-ov5640-parallel.dtso
+@@ -0,0 +1,82 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++/*
++ * Copyright 2025 NXP
++ */
++
++/dts-v1/;
++/plugin/;
++
++#include <dt-bindings/clock/imx8-lpcg.h>
++#include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/media/video-interfaces.h>
++#include <dt-bindings/pinctrl/pads-imx8qxp.h>
++
++&cm40_i2c {
++	#address-cells = <1>;
++	#size-cells = <0>;
++
++	ov5640_pi: camera@3c {
++		compatible = "ovti,ov5640";
++		reg = <0x3c>;
++		clocks = <&pi0_misc_lpcg IMX_LPCG_CLK_0>;
++		clock-names = "xclk";
++		assigned-clocks = <&pi0_misc_lpcg IMX_LPCG_CLK_0>;
++		assigned-clock-rates = <24000000>;
++		AVDD-supply = <&reg_2v8>;
++		DOVDD-supply = <&reg_1v8>;
++		DVDD-supply = <&reg_1v5>;
++		pinctrl-0 = <&pinctrl_parallel_csi>;
++		pinctrl-names = "default";
++		powerdown-gpios = <&lsio_gpio3 2 GPIO_ACTIVE_HIGH>;
++		reset-gpios = <&lsio_gpio3 3 GPIO_ACTIVE_LOW>;
++
++		port {
++			ov5640_pi_ep: endpoint {
++				bus-type = <MEDIA_BUS_TYPE_PARALLEL>;
++				bus-width = <8>;
++				hsync-active = <1>;
++				pclk-sample = <1>;
++				remote-endpoint = <&parallel_csi_in>;
++				vsync-active = <0>;
++			};
++		};
++	};
++};
++
++&iomuxc {
++	pinctrl_parallel_csi: parallelcsigrp {
++		fsl,pins = <
++			IMX8QXP_CSI_D00_CI_PI_D02		0xc0000041
++			IMX8QXP_CSI_D01_CI_PI_D03		0xc0000041
++			IMX8QXP_CSI_D02_CI_PI_D04		0xc0000041
++			IMX8QXP_CSI_D03_CI_PI_D05		0xc0000041
++			IMX8QXP_CSI_D04_CI_PI_D06		0xc0000041
++			IMX8QXP_CSI_D05_CI_PI_D07		0xc0000041
++			IMX8QXP_CSI_D06_CI_PI_D08		0xc0000041
++			IMX8QXP_CSI_D07_CI_PI_D09		0xc0000041
++
++			IMX8QXP_CSI_MCLK_CI_PI_MCLK		0xc0000041
++			IMX8QXP_CSI_PCLK_CI_PI_PCLK		0xc0000041
++			IMX8QXP_CSI_HSYNC_CI_PI_HSYNC		0xc0000041
++			IMX8QXP_CSI_VSYNC_CI_PI_VSYNC		0xc0000041
++			IMX8QXP_CSI_EN_LSIO_GPIO3_IO02		0xc0000041
++			IMX8QXP_CSI_RESET_LSIO_GPIO3_IO03	0xc0000041
++		>;
++	};
++};
++
++&isi {
++	status = "okay";
++};
++
++&parallel_csi {
++	status = "okay";
++
++	ports {
++		port@0 {
++			parallel_csi_in: endpoint {
++				remote-endpoint = <&ov5640_pi_ep>;
++			};
++		};
++	};
++};
+
+-- 
+2.34.1
+
+
 
