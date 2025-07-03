@@ -1,135 +1,174 @@
-Return-Path: <linux-kernel+bounces-714513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBD1EAF68D6
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 05:45:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A75EAF68DE
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 05:53:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C1F247ABA05
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 03:44:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 224234E29B3
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 03:52:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02834232379;
-	Thu,  3 Jul 2025 03:45:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3922623D29C;
+	Thu,  3 Jul 2025 03:53:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zsnkZomT"
-Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=leica-geosystems.com.cn header.i=@leica-geosystems.com.cn header.b="XOEMkw6N"
+Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010035.outbound.protection.outlook.com [52.101.69.35])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1015D190679
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 03:45:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751514333; cv=none; b=iPjvqh1zTrMARHbnnRwGsGQ+INlEar2XHl+iBGHJojYsiwKdnQFxmpl5y0F1aSSxDJwMQiRvpb6mvn43vOcphoq7ZNZunFr7WdbfkCe1ZX9mB/lC/H2OmKWXg0qaPkclZb0wWk+kUhU095imI6cgZydW6h/OpKtjJdEEOW2z5aQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751514333; c=relaxed/simple;
-	bh=4GdcrjfvQWdgelhDLWcQPzqnyTyKDTaFyKAS0EHNcDs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=L+pzrag8wFg3KyxWOUGM+OwiUBSZPkexmlfpBvM9SX6eQwjrHOr9+3VbmJ57p5C24Pf7j9Dw0TUJUUciihHHagu13Aafox49vPmMS4w8C2zLf65i1o/ir8FI0dd06xhOQUrbgYgO66ZDq/FphkdunAvI4vY80ahoPTsD7mhZ8AQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zsnkZomT; arc=none smtp.client-ip=209.85.166.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-3ddc99e0b77so127375ab.0
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 20:45:30 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C946023185F;
+	Thu,  3 Jul 2025 03:53:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.35
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751514790; cv=fail; b=laZ5SVYoZ6uoogZ9TsQFgqBIFUUuUf6PmScLTdmqIYVjT4ZAZSOEPxdorjySBgidrirjisobjG4orj98arFNWKpq7SXolORUtaJRP2/4OoYsawWCzS7qOTkTfWc6pYbS59NKrB1qJI3WOpzUgVpin4R+vPJWjQ573hIVFg2Y7bM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751514790; c=relaxed/simple;
+	bh=mRKibXqpkkmOgBBVYn2Oc1w9k687GQTmABU6vgUX5DU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TRIZTmyOGk1H5f0Sp1I3DpAIN4Ox4j+1qgLEsVB6KiWp6LSTvZq1JnNv337a3C2J2+Jd9NTmy96naHUPjIc0S9Om7yRpM49MmZG5ItUluBBuibbtS+V4bW4PZfQr69J05m1RuE5TwUb0XOcl/SiUhfeC7n7FdSl5B/V22qPJuxw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=leica-geosystems.com.cn; spf=fail smtp.mailfrom=leica-geosystems.com.cn; dkim=pass (1024-bit key) header.d=leica-geosystems.com.cn header.i=@leica-geosystems.com.cn header.b=XOEMkw6N; arc=fail smtp.client-ip=52.101.69.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=leica-geosystems.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=leica-geosystems.com.cn
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=k8AidIASc6d71TroHkS3qcgtZx1HdcHuyZeOq8617lXiw3Q55/lbDoAl2MQrcMsITbVGWL8I03qnuBOQs87/nuXz6kXiEBCHDwHSg4cLkU7PDqkE0gcSFyq9nopur4PwkDPI8D0RshPvV36+pJq9RQw6AwmjBtt6Zr2DmvY3YLKH1RKKZQPxtrdANAppJbZRqARk9G9ivY+ZACm7oUH4q9t28vVLkWtICBVo3WvuDdAPo0BhDULuihR7GqOgo4dxvmLGSGzv4Y5qKPtDmu8rJ295LnTYoc4qtOHhOZVb9uwLvP0738DXXA2IxHVxGuX0b50tvFJzLPtwwX3tKAiftA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vNx6sohQB/zRLnrJ5R1ue5ZUoo80dlKQhijyuZToC4Q=;
+ b=boQXnliHvYey94afCtCSNFEzxD7pV5RADdigXj3kEiG5INESpjoP4k1vsFfLuYjB5azhKGjE4My+BChfTQ1PVs1LjCcDgMaYEvXiumYhXN0qMmeFIZ1GXl5g6MQfE13BvsNQSMnmpXvEAmNiB6Khtge5SYzx7VP0IYHIZs1se3fzD1g59lYuJQlJ3lUJiwNh2MhVXsbF4s25iwT+PmIr1W059Kg66YAj7foIjtI78q9o6VMYd+3fbjHRl0rzWZcC9MdeZNIqfb0+TU60NBSkmPgXRA8E3mN3Tsao+FCpHxaDHkywBgAPqNkOKDWTn8sdC6ulcDknZ2kt0Z0vTcwATA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 193.8.40.94) smtp.rcpttodomain=vger.kernel.org
+ smtp.mailfrom=leica-geosystems.com.cn; dmarc=pass (p=reject sp=reject
+ pct=100) action=none header.from=leica-geosystems.com.cn; dkim=none (message
+ not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1751514330; x=1752119130; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iDWofyikxgAby3E+Q/6GP+cuqkz+oCYSVWUcRwa5HlY=;
-        b=zsnkZomTrGzSNSmdyGepFKtx76OCRwHB3T6lKWDVJRmhFFQLz4Te8L+uhkjwA0QOTw
-         eQIRtMU7YDsHOUflpKihGSWhqj1UXKAcNvp9wvPqDtgzK5PiU/HoHLYjahi9gk+NxW/4
-         lqeLicXRARhcn88vitD7d1F5C8OuztqtLNgBsr4/pwh+ErIYp51fCxO0uwmVVOETw7K5
-         RoEhZ7i8WGhR9AiSGl0xGYd9r2+d/XGnx3kp8Cq+BCwJrD4zD9mNygc2OSkcdGoYzna/
-         MijYT3KT2nC+4Z4r0ujwwNB0z5oOJzRCAVJUu32D7OZ8VMoJyPgmvSsrKRqpzBi4uo7F
-         cZDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751514330; x=1752119130;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iDWofyikxgAby3E+Q/6GP+cuqkz+oCYSVWUcRwa5HlY=;
-        b=rwLhNf/z9YTTAD4HJLmKwpjMxF/P1YsXLjekz9XDSLqcPOARitNx4Iwj67hXZeZWts
-         U6tv0WaaaejBD+ija3ZTxi3a9gKMzMq4C0SJqBRUY6/lCbU81fW6GQk4hQ5hC4h3/yGg
-         Am9iV1O5XWm24k9YQM+3ZyVsCbLP+M7DcspkkWvkF9B4mqDIME4eU9Vhdodz5Di0j399
-         xEC7KeAVXjo20pZYu1XG6ih9/ZZxzIgvIkHpRUz6vw0O+9UXOpsdrcsmB9tymBkuZdO6
-         tDF69KWpXxTr05rZOhGyVkWMaHpykSDzd3HT5XtvoTkEu4kgqIY9Jwh4Jks3DT82eI+e
-         Va6w==
-X-Forwarded-Encrypted: i=1; AJvYcCXneW/wFp0V2FGdpR+iZk5LhGIv2r9/Hhlb1KIfpAcn26AawA0M7DBDKy5Ui1yuUHGeG8XZYh0Yom53nNM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yymeukd+on7EazY7e6AkgJbX2O/7pHxJDgI4WBBtjHgjOLWPu+D
-	Oxyn6wyZbqJoOpQ3NVQJPGy/qeEkzny7uNMSUirYlIWz6j+dzz0ZGBkBAIXsICF8vYYLAJAXH2d
-	aCkmbecNMDUDiBRcHmFdXu9lOlcjQIvuvTBSguInj
-X-Gm-Gg: ASbGncvVfd8pqQvcZkwxjIeFAY1FB1nALS64MTPgEhby9CC7wEq4YOXCkeq9GP/9V8m
-	zZulxAE4hXmwQc8pg/3g5iwMj2Qn/YpGaFFen51+ZqMUe7jbITcjjYcQpZLznsxfXJDOBml5lIN
-	aXvuLANWvZ2gZDNX3O7YyEGfr/tuSYFCCgFPqS3f+Kq3p8
-X-Google-Smtp-Source: AGHT+IGigOGHKR1OKei6llPQJNr2padfok25eTJWSFN+CoLzKy97HkPYRmaIV6tVfjlKhqIFtjbGuk5nRPbIu5WQrEg=
-X-Received: by 2002:a05:6e02:3007:b0:3e0:5511:9796 with SMTP id
- e9e14a558f8ab-3e05d239337mr1635885ab.1.1751514330009; Wed, 02 Jul 2025
- 20:45:30 -0700 (PDT)
+ d=leica-geosystems.com.cn; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vNx6sohQB/zRLnrJ5R1ue5ZUoo80dlKQhijyuZToC4Q=;
+ b=XOEMkw6NpH8Ai/uAdYoAI3r78rkMRMuM2kspSvRbySbTZn0QafpjwftETDeheUSNCx9b4tO78WX3H9EEFon/vn2P2LOmOQd2Ksng4VH1afiJ1e/Cdsc6u/D7glKVLXpvTzjYXFsTJo4Lo6MfjyclimiZaqa9kG8dAkE3kquwIgE=
+Received: from PAYP264CA0003.FRAP264.PROD.OUTLOOK.COM (2603:10a6:102:11e::8)
+ by VI0PR06MB9106.eurprd06.prod.outlook.com (2603:10a6:800:247::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8880.32; Thu, 3 Jul
+ 2025 03:53:02 +0000
+Received: from AMS0EPF00000199.eurprd05.prod.outlook.com
+ (2603:10a6:102:11e:cafe::16) by PAYP264CA0003.outlook.office365.com
+ (2603:10a6:102:11e::8) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8901.20 via Frontend Transport; Thu,
+ 3 Jul 2025 03:53:02 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 193.8.40.94)
+ smtp.mailfrom=leica-geosystems.com.cn; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=leica-geosystems.com.cn;
+Received-SPF: Pass (protection.outlook.com: domain of leica-geosystems.com.cn
+ designates 193.8.40.94 as permitted sender) receiver=protection.outlook.com;
+ client-ip=193.8.40.94; helo=hexagon.com; pr=C
+Received: from hexagon.com (193.8.40.94) by
+ AMS0EPF00000199.mail.protection.outlook.com (10.167.16.245) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8901.15 via Frontend Transport; Thu, 3 Jul 2025 03:53:02 +0000
+Received: from GEO-W5CG2253GWB.lgs-net.com ([10.132.33.182]) by hexagon.com with Microsoft SMTPSVC(10.0.17763.1697);
+	 Thu, 3 Jul 2025 05:53:01 +0200
+From: LI Qingwu <Qing-wu.Li@leica-geosystems.com.cn>
+To: lee@kernel.org,
+	pavel@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	linux-leds@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Qing-wu.Li@leica-geosystems.com.cn
+Cc: bsp-development.geo@leica-geosystems.com
+Subject: [PATCH V3 1/2] dt-bindings: leds: pwm: Add enable-gpios property
+Date: Thu,  3 Jul 2025 11:52:55 +0800
+Message-ID: <20250703035256.225289-1-Qing-wu.Li@leica-geosystems.com.cn>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250703014942.1369397-1-namhyung@kernel.org>
-In-Reply-To: <20250703014942.1369397-1-namhyung@kernel.org>
-From: Ian Rogers <irogers@google.com>
-Date: Wed, 2 Jul 2025 20:45:18 -0700
-X-Gm-Features: Ac12FXxa_W9a-oE_jO77-zvKjtu2PHdq5PT0jO1zmeclhFiNuV2WlouuvaN4Mbw
-Message-ID: <CAP-5=fWyb54utMyi0uKj6ek4qBmHmX2Xr9RR=s4o-ek5HdHHnA@mail.gmail.com>
-Subject: Re: [PATCHSET 0/8] perf sched: Fix various memory leaks
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Kan Liang <kan.liang@linux.intel.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-OriginalArrivalTime: 03 Jul 2025 03:53:01.0863 (UTC) FILETIME=[F9297B70:01DBEBCD]
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AMS0EPF00000199:EE_|VI0PR06MB9106:EE_
+Content-Type: text/plain
+X-MS-Office365-Filtering-Correlation-Id: 3a328f0c-600d-43b0-107e-08ddb9e51bcc
+X-SET-LOWER-SCL-SCANNER: YES
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Ljfl0uTUd+k9+c8Y1bs4O7khmPx0g3TKeBKdtJPwEXbrEL4bUjfH+0st7cHb?=
+ =?us-ascii?Q?JgrOLTUvau1+9sQDM5x+MRxyjeWVf+lMUkAslzqCdAOo4DvjL3VQlrXcHujs?=
+ =?us-ascii?Q?g6jlZdgpICExp71sB5T1LfmPu4BStpf2QOM5ZGkCNQbD4mpCdM1DwdGqsV3b?=
+ =?us-ascii?Q?pB4B4YB1YO7BTxrU3i8mF2PVznsIu1XSj8aW78pEfZs3P2B6lTxmql1esvas?=
+ =?us-ascii?Q?kYgT12HVyWcfWwJ8Y7nMe2lwlpvsE2t38BaD1zCIh2dl5RwGeefix1x/ywvz?=
+ =?us-ascii?Q?SA34Vj2SzOVDHpUZtRV4crKjjEPDqu2hSxbTCgDLT8VcPvdttypIgDpxanFt?=
+ =?us-ascii?Q?bzg5Dr9PwSa9LlUzbo5AI2SBOUe9QuIIQPg6CZMkm7yOBZPBi0afpK7KCyZv?=
+ =?us-ascii?Q?iigECFjJTD6hWUviukyUlm1nH/Wg8DR4aUvFIoDsmwSUn3si34GQFvjt078w?=
+ =?us-ascii?Q?ZzDrDGjOYAlTNgR0yUAaSgQmD6zPdjl3dWNsWn/BP6Cvyz9BxTyurUFcO1e3?=
+ =?us-ascii?Q?aq6S/HUIVxopsWoBO/5i8D2MjpCsCl1ebrgX1BrLxaDvDz4TGYijugH1lNot?=
+ =?us-ascii?Q?i+fJPWMcswQf7VpLwAFCA2+tgfgzIxFaRAYVW3zBg4wwKVhwdXjP4GEszU4E?=
+ =?us-ascii?Q?KZ4J56C8/ZZY3h44R6X413eVB5gljDNFBS/LUi1RMmMGqG3NmGxx+Creo6sE?=
+ =?us-ascii?Q?3KWvJ0LSRB/cNktCSFXqEusdBon28HnMiaOcWsMUJ1fckKyHSU0p/CIfFNtE?=
+ =?us-ascii?Q?MyYpQ3TKaLEbkfpB+XljEc27BdUDAfZKYKKnWkqmzR/tWnMFqhklvxx/47/j?=
+ =?us-ascii?Q?kIsWOP5LVhgAMMdLv2hH45kNtLJmJq9UE8mIxCD7O2AEiviyRiYuTBsvVEz8?=
+ =?us-ascii?Q?uZlwZnG9/+3VNTSPfuMcE0i68nuN6+Ml0CiGQkv8p1HZRaqTgrqSnsnui5Cb?=
+ =?us-ascii?Q?IGBC8bF33zMVG1UbmCsH97nEhH5mytesm4JEUKZqTcODYpJBg4nF6QjimJjq?=
+ =?us-ascii?Q?EwmtXGS5Rgri09LyDemOzbmyVXz8tV9vRiz/xGCgp9MwFodFJtopKU9TZs97?=
+ =?us-ascii?Q?W2FxezH8MugInCHu9coup5wREBMCB9OUzN+cIyaLgYb8g4R+igQURbOVDG02?=
+ =?us-ascii?Q?SlXTlOwKOfzyGPsOqlsEwRSHr7aBDItzqH/4rmZkkRFlu0aQ3U1+ZMILdBbe?=
+ =?us-ascii?Q?oQd3hlJ4LOz7o+d8Do9cUlPLodhktQ7Tl9rent9PV4dAJRuU1ZYqxFg/63rT?=
+ =?us-ascii?Q?yoUHTkFtwBhWoIlP4x+3xqwd0AovygkM3E7+CDS70CTn2jCQxXPDcOcfGzGW?=
+ =?us-ascii?Q?fd+sy26TLybboEHCtjGhy1LhZ191wscLv61LLlo1wTTbxsi39c4lES0ALaT/?=
+ =?us-ascii?Q?zoQyUBM4vH++OT4qNzKg3xdVi+tEnQY6MkNgCHtI77pzhK1v76l6T16PP0m/?=
+ =?us-ascii?Q?6MOAmKoArSHwe+UOHF3g6LG0TKM9W8AVj35IhiZlXrLVPGMFOhZgGxaK35xS?=
+ =?us-ascii?Q?kda3uk2IdRAEXEnqqfPy+VI8G3V52A0y/Gmu?=
+X-Forefront-Antispam-Report:
+	CIP:193.8.40.94;CTRY:CH;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:hexagon.com;PTR:ahersrvdom50.leica-geosystems.com;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: leica-geosystems.com.cn
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jul 2025 03:53:02.0518
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3a328f0c-600d-43b0-107e-08ddb9e51bcc
+X-MS-Exchange-CrossTenant-Id: 1b16ab3e-b8f6-4fe3-9f3e-2db7fe549f6a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=1b16ab3e-b8f6-4fe3-9f3e-2db7fe549f6a;Ip=[193.8.40.94];Helo=[hexagon.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	AMS0EPF00000199.eurprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR06MB9106
 
-On Wed, Jul 2, 2025 at 6:49=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> w=
-rote:
->
-> Hello,
->
-> While running the new perf sched test with ASAN, it fails due to
-> memory leaks.  They comes mostly from missing thread__put() but
-> sometimes it needs to release other data structures.
->
-> Fix those leaks and add more subcommands to the test.
+Some PWM LED chips have a dedicated enable GPIO.
+This commit adds the support to specify such GPIO.
 
-Thanks Namhyung, it may be worth adding Fixes tags for the benefit of backp=
-orts.
+Signed-off-by: LI Qingwu <Qing-wu.Li@leica-geosystems.com.cn>
+---
+ Documentation/devicetree/bindings/leds/leds-pwm.yaml | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-Tested-by: Ian Rogers <irogers@google.com>
+diff --git a/Documentation/devicetree/bindings/leds/leds-pwm.yaml b/Documentation/devicetree/bindings/leds/leds-pwm.yaml
+index 61b97e8bc36d0..6c4fcefbe25f9 100644
+--- a/Documentation/devicetree/bindings/leds/leds-pwm.yaml
++++ b/Documentation/devicetree/bindings/leds/leds-pwm.yaml
+@@ -40,6 +40,13 @@ patternProperties:
+           initialization. If the option is not set then max brightness is used.
+         $ref: /schemas/types.yaml#/definitions/uint32
+ 
++      enable-gpios:
++        description:
++          GPIO for LED hardware enable control. Set active when brightness is
++          non-zero and inactive when brightness is zero.
++          The GPIO default state follows the "default-state" property.
++        maxItems: 1
++
+     required:
+       - pwms
+       - max-brightness
+-- 
+2.43.0
 
-Ian
-
-
-
-
-> Thanks,
-> Namhyung
->
->
-> Namhyung Kim (8):
->   perf sched: Make sure it frees the usage string
->   perf sched: Free thread->priv using priv_destructor
->   perf sched: Fix memory leaks in 'perf sched map'
->   perf sched: Fix thread leaks in 'perf sched timehist'
->   perf sched: Fix memory leaks for evsel->priv in timehist
->   perf sched: Use RC_CHK_EQUAL() to compare pointers
->   perf sched: Fix memory leaks in 'perf sched latency'
->   perf test: Add more test cases to sched test
->
->  tools/perf/builtin-sched.c      | 147 +++++++++++++++++++++++---------
->  tools/perf/tests/shell/sched.sh |  39 +++++++--
->  tools/perf/util/evsel.c         |  11 +++
->  tools/perf/util/evsel.h         |   2 +
->  4 files changed, 153 insertions(+), 46 deletions(-)
->
-> --
-> 2.50.0.727.gbf7dc18ff4-goog
->
 
