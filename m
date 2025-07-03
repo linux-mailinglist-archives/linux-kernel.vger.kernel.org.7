@@ -1,118 +1,113 @@
-Return-Path: <linux-kernel+bounces-715823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-715826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AB64AF7E39
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 18:54:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A95FAF7E40
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 18:57:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ED0FF7A7955
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 16:53:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD5F3189EC94
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 16:57:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 535D02594B7;
-	Thu,  3 Jul 2025 16:54:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CD3A25A658;
+	Thu,  3 Jul 2025 16:57:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="UN0ZqC/2"
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DeQraZQB"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E8C71804A;
-	Thu,  3 Jul 2025 16:54:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CE66254B03;
+	Thu,  3 Jul 2025 16:57:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751561654; cv=none; b=k3tvqMzpxNacKs6JRu/kufGI4f5nBPWIWsEbg2Xd32PnxQQ5ipZ16R2AuAsgkaxHCRYl5uNNsLNDPDszKaXl53uTTVqYd5eadxQk5rya+uFfpgw3bY1P8Fit0DCkcLcoaw0yGTKsJ/wEIQ6/ufnid3N074c1S+kxAoNW72lN0Ws=
+	t=1751561822; cv=none; b=lqr4/atf7z7IKBXDh4GX3SyVeVWyWAbz7MnA9ZwKYztE4YPL0hInCOVXYY3jYBa5ko9Yx+7CiHUDFd80WrSGaEktxKNlCImGBhUxpKXofWzs9m/gkMngcVaI4XLn7DVAZNoXn61bX//PmOeTlmDEy/b/iUZwf1e+MDDAnjJSl1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751561654; c=relaxed/simple;
-	bh=RW0IfchVo7MJxIYM7d362pMnzo5nycFf1HXLEBxbIVo=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=uB5XRv8IjZ1WcKqusA1KKI+W3PrhcT+DPKXtAHWbpK5XC0FYqJprb1bmdN+yibF641SJJkNp1JhJptRpaavZ8QUKQpl4Z6RnWBFop7tAV7j5iDMSDuOdDlCJVd9cREWT2pR5w4CEcX0qDeLECQTVLJuXi0PZotVTtrYPhP4wUus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=UN0ZqC/2; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=8tSAj2yt9qfQ16qmhmFGf5l7dehPpx10XvpWLTkHXyA=;
-	t=1751561653; x=1752771253; b=UN0ZqC/2LuEacHnj9T+ouD8U33H5umNogJZAZcLgfIXbK0Z
-	DDfl6rEG+nsFMO0zbPuJeKyGsjGMI232HmRuC8eORBsPhdkCUKU6+f5kvwMmCS5SdMYe6yzQdqPD7
-	XOKPhHdyWPpPJSMXq4eQxL+eYHX+3nigDejigPNPHMnDrJ+F8XJ37sHn+7YCQKWik3tuSSlViF44Q
-	NDK0b0z3EKUNQxuDbmg1/+nLB4rmVmJ4DgHJGNs6uJhrfl+yfoIXlik875ov1xKFSVFvdQ0cJEiYC
-	bm+bDh5tCxT1x4McpfwUukfwOg7TEPKRpwv76jZIdKttU5bt0CFWDTgquWMY/rhQ==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.98.2)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1uXNCM-00000005XNf-0Kcc;
-	Thu, 03 Jul 2025 18:54:10 +0200
-Message-ID: <5fda29626ca04e7c2ad46ca4a3d0eb1d992789d9.camel@sipsolutions.net>
-Subject: Re: [PATCH wireless-next] wifi: mac80211: reject VHT opmode for
- unsupported channel widths
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Moonhee Lee <moonhee.lee.ca@gmail.com>
-Cc: Nicolas Escande <nico.escande@gmail.com>,
- linux-wireless@vger.kernel.org, 	linux-kernel@vger.kernel.org,
- linux-kernel-mentees@lists.linux.dev, 
-	syzbot+ededba317ddeca8b3f08@syzkaller.appspotmail.com
-Date: Thu, 03 Jul 2025 18:54:09 +0200
-In-Reply-To: <CAF3JpA7ZeG5uxLJr1NQBBzF=UZRi4sj4TSfBw=Pvx7xb1NCqTw@mail.gmail.com> (sfid-20250703_183535_569381_928B48E3)
-References: <20250702065908.430229-2-moonhee.lee.ca@gmail.com>
-	 <DB29OMQH4W9Z.1GPKEZBBIRSTS@gmail.com>
-	 <CAF3JpA7wM4JBdd6OvGS+hmv0UahcW=h4HrPNDwRNhduk8iKsWw@mail.gmail.com>
-	 <1f13328a55c54fb49d8ca1dd72bc5de23f161ac8.camel@sipsolutions.net>
-	 <6ecced8b962cf3a6f5056a87aa3442c49941e74c.camel@sipsolutions.net>
-	 <CAF3JpA7ZeG5uxLJr1NQBBzF=UZRi4sj4TSfBw=Pvx7xb1NCqTw@mail.gmail.com>
-	 (sfid-20250703_183535_569381_928B48E3)
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	s=arc-20240116; t=1751561822; c=relaxed/simple;
+	bh=np0zC8Vm9ZZE6PiG5q9piemOLX0Vr/7XAX1UKa/vkdA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OLVuRdBqhGNnSOdzqLwxEoR2PsWE9PbzJjFTXzldgg6dZ3c45K+gFXyCpQFcH/mIT8Bt7uzz9Srl2i3uoscSXpulpelQkFOZ4evWNElYd85/dsv2wZgwcRltkD6JoicUeJ+/N2ZsZ6+JEYkMdOGZutoXOLfm//oN/MUiIyycHa8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DeQraZQB; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751561820; x=1783097820;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=np0zC8Vm9ZZE6PiG5q9piemOLX0Vr/7XAX1UKa/vkdA=;
+  b=DeQraZQBJIW8TgtQE9hii7cgyLQAjEKC5xEwGACkO2u/ScLJDz0VXgyE
+   whUWOYmL9rxUHtw/9QPBosOWU7mLSfXBobxf4IIcXFL5LOs1R78IYA0oA
+   qnFxQkMiYf3MiDQnLpxSPUHqwAEwhMajeQjSa6yw596Wzy6ngFKtCxlxB
+   86ELhsj7XQ0pYTgenIXF5dIn9H8mviif4VspZwz4V09o9aLkFye2Dq+5a
+   n3Ft3YZMDNyuQj/jmB0BVxKI+EToJG8p/LLYnuHYbLG6Q8HhDHbLD7ZuA
+   N17Ezp/H3kAR72OlcMuCQG6bNBFqDVngWDugcGf7gG9K7OnkMlV2amovu
+   A==;
+X-CSE-ConnectionGUID: ON5XiaxyQHmH16p5BQoMxg==
+X-CSE-MsgGUID: YV4b4JSFR/C80Tur/SghsQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11483"; a="53992502"
+X-IronPort-AV: E=Sophos;i="6.16,284,1744095600"; 
+   d="scan'208";a="53992502"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2025 09:56:53 -0700
+X-CSE-ConnectionGUID: kwmJatV9RdChQ5mtPIq87A==
+X-CSE-MsgGUID: kQTOeY9DRsq3SMp0wuhjrw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,284,1744095600"; 
+   d="scan'208";a="154554260"
+Received: from kanliang-dev.jf.intel.com ([10.165.154.102])
+  by orviesa007.jf.intel.com with ESMTP; 03 Jul 2025 09:56:53 -0700
+From: kan.liang@linux.intel.com
+To: peterz@infradead.org,
+	mingo@redhat.com,
+	acme@kernel.org,
+	namhyung@kernel.org,
+	irogers@google.com,
+	linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Cc: dapeng1.mi@linux.intel.com,
+	Kan Liang <kan.liang@linux.intel.com>
+Subject: [PATCH V3 0/4] perf: Support Panther Lake uncore
+Date: Thu,  3 Jul 2025 09:56:10 -0700
+Message-Id: <20250703165614.606446-1-kan.liang@linux.intel.com>
+X-Mailer: git-send-email 2.38.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+Content-Transfer-Encoding: 8bit
 
-On Thu, 2025-07-03 at 09:35 -0700, Moonhee Lee wrote:
->=20
-> To address this, I plan to reject the set of channel widths that are not =
-valid
-> with VHT opmode. This includes all channel widths below 20 MHz, as well a=
-s
-> 20 MHz without HT (20_NOHT), which is also incompatible.
->=20
-> Would the following logic for v2 be acceptable?
->=20
->     /* reject channel widths not valid with VHT opmode */
->     switch (width) {
->     case NL80211_CHAN_WIDTH_5:
->     case NL80211_CHAN_WIDTH_10:
->     case NL80211_CHAN_WIDTH_1:
->     case NL80211_CHAN_WIDTH_2:
->     case NL80211_CHAN_WIDTH_4:
->     case NL80211_CHAN_WIDTH_8:
->     case NL80211_CHAN_WIDTH_16:
->     case NL80211_CHAN_WIDTH_20_NOHT:
->         return -EINVAL;
->     default:
->         break;
->     }
->=20
-> This allows valid HT/VHT channel widths, including 20, 40, 80, 80+80, 160=
-, and
-> 320, to pass through while filtering out values that would otherwise trig=
-ger a
-> WARN_ON.
+From: Kan Liang <kan.liang@linux.intel.com>
 
-I think it'd make more sense to go the other way around and list the
-bandwidths that are _valid_ here, even if I don't see it getting
-extended any time soon (anyone working on TVHT? ;-) )
+Changes since V2:
+- Rebase on the later tip.git
+  rdmsrl_safe_on_cpu -> rdmsrq_safe_on_cpu
 
-But in some way I also have a feeling we _should_ be able to reject this
-in cfg80211 already - although it seems that right now we cannot. Hmm. I
-guess better to have this validation here now than fail/WARN, but then
-I'd like a positive list of allowed values, rather than forbidden ones.
+Starting from the Panther Lake, the uncore discovery table mechanism is
+also introduced into the client platforms. The difference is that the
+portal of the global discovery table is retrieved from an MSR, rather
+than MMIO space.
 
-johannes
+The first two patches provide a generic support for the extension of the
+uncore discovery table mechanism.
+The rest patches enable the uncore PMU on Panther Lake.
+
+Kan Liang (4):
+  perf/x86/intel/uncore: Support MSR portal for discovery tables
+  perf/x86/intel/uncore: Support customized MMIO map size
+  perf/x86/intel/uncore: Add Panther Lake support
+  perf/x86/intel/uncore: Add iMC freerunning for Panther Lake
+
+ arch/x86/events/intel/uncore.c           |  7 ++
+ arch/x86/events/intel/uncore.h           |  2 +
+ arch/x86/events/intel/uncore_discovery.c | 89 ++++++++++++++++++------
+ arch/x86/events/intel/uncore_discovery.h |  7 ++
+ arch/x86/events/intel/uncore_snb.c       | 79 +++++++++++++++++++++
+ arch/x86/events/intel/uncore_snbep.c     |  4 +-
+ 6 files changed, 166 insertions(+), 22 deletions(-)
+
+-- 
+2.38.1
+
 
