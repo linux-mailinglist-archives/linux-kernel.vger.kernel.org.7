@@ -1,168 +1,146 @@
-Return-Path: <linux-kernel+bounces-715405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-715388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2175DAF758E
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 15:27:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01EAAAF7553
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 15:20:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EB0B3B39DD
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 13:27:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 228D27B64D9
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 13:19:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FCD313B2A4;
-	Thu,  3 Jul 2025 13:27:25 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61CA314658D;
+	Thu,  3 Jul 2025 13:20:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hBplZHlT"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C2F2C148;
-	Thu,  3 Jul 2025 13:27:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E0951DDD1;
+	Thu,  3 Jul 2025 13:20:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751549244; cv=none; b=Bj9nenL5cq0iSi11LCNuKF12PeOpmtnRX+BU5AdPpbm9mRZW1rIy/1q7ALdtSQn+4KChFNCaoYC7qBHtnk7q5MM3C37CJuu3zBGczkJwHJGKFbVOeA0riGjkj6oQrWjqiiu0ibnYKxhGFAQr16St067HejlLbqAiZWaakzYhURw=
+	t=1751548841; cv=none; b=B6mRx+Qg9Lj0OD2tlEbBZqxU2H97xhW3E8wShxEHYkt3cLn3W1HxC5FT3R19XpriSW1O8QSvwd3EL/UsmOp41XBGuXFTwd165inSe4boy2UzJnBfftjAYZzN9hf1RIzc1H+cqE9rrnC9oRxA5ZsQwt3AaXp/fX8V7xSyeC1n6L8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751549244; c=relaxed/simple;
-	bh=h9Lj1Kr+0dRjXxXHU3VKmCLHLTiQTtjJXR5BpFXLhq8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gQdH8Fz2Afl47ykpPf++vnBmLkGOSNU1c1T67yk/8/+KrxDn5hjtEYTpxUA2MegrwYgamzR3QjbkVH41u+7OWbAUo5UUjPgNyZGHr0HCyNstw9Ag2TLX7x6hhl3s7a7F+f/YjPFwjqqW+/OmJFmeVLw0tYJ4l24T+NJ5w+jmQeA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4bXyHD1PSYzKHLxK;
-	Thu,  3 Jul 2025 21:27:20 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.252])
-	by mail.maildlp.com (Postfix) with ESMTP id 980F81A14CD;
-	Thu,  3 Jul 2025 21:27:18 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP3 (Coremail) with SMTP id _Ch0CgA3mSYzhWZoVG4eAg--.12632S4;
-	Thu, 03 Jul 2025 21:27:17 +0800 (CST)
-From: Wang Zhaolong <wangzhaolong@huaweicloud.com>
-To: sfrench@samba.org,
-	pshilov@microsoft.com,
-	aaptel@suse.com
-Cc: linux-cifs@vger.kernel.org,
-	samba-technical@lists.samba.org,
-	linux-kernel@vger.kernel.org,
-	chengzhihao1@huawei.com,
-	wangzhaolong1@huawei.com,
-	yi.zhang@huawei.com,
-	yangerkun@huawei.com
-Subject: [PATCH] smb: client: fix use-after-free in cifs_oplock_break
-Date: Thu,  3 Jul 2025 21:20:02 +0800
-Message-Id: <20250703132002.627709-1-wangzhaolong@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1751548841; c=relaxed/simple;
+	bh=dU8LWmDWZTXWT/eBobaJweK43xARH/rNd+sTP8jr5S0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dP9Quu3vWNhiGYEnPrC8cHNxAo78TMEdF13EzFwiZeKqlqsehjf6v/xD4jHTtiUc6HI4/aw91uxYTN0GGgNIs9QLEX7BorhyHxGylLzD0hmOTQm+Lj4YzJgPIVYBI5oBHX7i5wcOhxygn2G1bmTbB+9QBR23+z4ZistIWHyExoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hBplZHlT; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4537deebb01so29817265e9.0;
+        Thu, 03 Jul 2025 06:20:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751548838; x=1752153638; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=MqGlLiGt9QoJKvCwgT5f7sBNld7aejdtjuAgeDdmuJ4=;
+        b=hBplZHlTXlarfZTec12BTr3COSvRN/JmpBpCzCccfSWDD7VCsURoqehq1Qi7AyGhUI
+         DSzHnsedJlaogPUgZzimqExeMx7cCQuY32A00XT+mN1kdK7lfdL0IZLz54YqRWzkT7e1
+         vTzv5+InuJR/aCwrngRdI667+hHbzORQtKGEvP+jh0tuNpympElEvgrohswlr7KFZyLC
+         Ad36VmviuNa9X0xJwuh9QxzF5Lm+vb6oOxpKjNxPu86/n1RhtT/ogXi3OoF1kdRlRSZy
+         02uaz2kugENbnHqq+CMjgXQQI/fKn0GbEi5U2pttooGnwrQrHW5SJr14IS5s6kY/YNul
+         UXGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751548838; x=1752153638;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MqGlLiGt9QoJKvCwgT5f7sBNld7aejdtjuAgeDdmuJ4=;
+        b=BX88wbHDcXQo0yG6R6D6EfIwd7MZbRS+NAPzp2RB3KCwuqSarBHt/iSe6bu3Hfjyl+
+         3YoDg/tsL55Dr6QB0Jnzw4LVVFY6bzoY8S0AoYkCtYNDImVuOrwq9GPCAJKC70WWpZ3u
+         CnzGVT17xf5PTA1tKKVMjWM6lgZjBRdM9wcEzbGQcaRSPLsAaIMtem9aM7VywZ1URpN7
+         h303W6OhGzof3uRZk9bijbW57wqOmo/l7Ehhdan22zW0f4+utzJ5EJcYBKF6LD1YlH2I
+         0i1pMU8cK0yKPoS+jAB+3JudnqKDm7ejKi05JGs9CH4qfuVoXNrew2zpr6hvOryEW+kc
+         O7lw==
+X-Forwarded-Encrypted: i=1; AJvYcCUKbdd3rHD9pMqTidt8MHp4AYr0cpfL42hQ2Y6+yJ79GvRHnJbGZYikSxrNpwgvt1sSHsehwvyhD3RyGwU=@vger.kernel.org, AJvYcCUm04Pn67WE8CzODoG5nHS9rqihJ1FJkTM4hrogvXgq8TkGFlYvV4/qsZVAbZocfrnu+GQOCw40WsUz@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyb0DxJvLcV1cjxdn+8PsqHbbDu8V36Duzzadqu31U+UY3iwNI0
+	eHQhJUTB95gMFtsDGd7yMDcEBA8qqaGQeDYfnemZ9rIgWWAF2eXNeoyxxSYkbXz0Qz8=
+X-Gm-Gg: ASbGncshT2d/w/Zgkow7bU3a+gQ6VbvylZWCqsCiE9r5XAclP5Yu8Zx89R5KQa4pUeF
+	FWgNdOdsDVjIH8r/I22E7CO8q6bBI5Boc9VEbbN0Z3rlOj4JR+JVsCnrXoNgXLHbvDU3zZf1m/z
+	p6qcbVXYEiyHaoGWMBt1GdgVtIuL3tEsv6G8qTq2sn14aH+FxlhTKT0gWrLjUf29JB20b3+OX2W
+	H6J8+wGbS6A3ltTUvLbdxrfURkxMj6Q1ul5CJVRJhaafMZ0Y5C+wMJeB0BHlX5Ho3p12CrOywY/
+	Q1p09rq8um9s/oj5JUaRk7sRpfUoAuHHxLzQYxjyYv8rAYOQMTKkfW3WTH/wtCaatFsSMhWjbFO
+	9NztqQGbhrA==
+X-Google-Smtp-Source: AGHT+IGdbVBsdjaXGKnWJL6/Me2LFoH8Pz92HGIJbguP4AOhBwLes9ljeQqgXg8uDTeaavxwfW2MVA==
+X-Received: by 2002:a05:600c:3f0e:b0:43d:160:cd97 with SMTP id 5b1f17b1804b1-454a3728d1dmr63080385e9.25.1751548838184;
+        Thu, 03 Jul 2025 06:20:38 -0700 (PDT)
+Received: from ernest.hoecke-nb ([89.207.175.50])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454a9bcebf7sm27340905e9.21.2025.07.03.06.20.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Jul 2025 06:20:37 -0700 (PDT)
+Date: Thu, 3 Jul 2025 15:20:33 +0200
+From: Ernest Van Hoecke <ernestvanhoecke@gmail.com>
+To: Alan Stern <stern@rowland.harvard.edu>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thinh Nguyen <Thinh.Nguyen@synopsys.com>, 
+	Roger Quadros <rogerq@kernel.org>, Nishanth Menon <nm@ti.com>, 
+	Vignesh Raghavendra <vigneshr@ti.com>
+Cc: Sebastian Reichel <sebastian.reichel@collabora.com>, 
+	Chance Yang <chance.yang@kneron.us>, Prashanth K <prashanth.k@oss.qualcomm.com>, 
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: dwc3-am62/usb-conn-gpio: USB gadget not added when booting in
+ host mode
+Message-ID: <jhlqcoxnvpw5tndmty322y64n4d2me7mkp45nikos6fzamcs3u@kwahmdbv2zgx>
+References: <taw2mvbj6a2lqwy5h3tuqeifqy2w4gt4pzh4uahxuw27yw64q2@koxg54wgp2a2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_Ch0CgA3mSYzhWZoVG4eAg--.12632S4
-X-Coremail-Antispam: 1UD129KBjvJXoWxAF4kGF4kuFy5uFW5JFyxXwb_yoW5CFWUpF
-	13Kr15Wr45GryUuwsaqF4ru3W3t3WkWa1F9ry8Ww1Sy343J3ySgF4rKr129F4SqFWkAr1q
-	gF4jg3yqvF1UArJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUv2b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6r1F6r1fM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0E
-	n4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I
-	0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWU
-	tVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcV
-	CY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAF
-	wI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa
-	7IU17KsUUUUUU==
-X-CM-SenderInfo: pzdqw6xkdrz0tqj6x35dzhxuhorxvhhfrp/
+In-Reply-To: <taw2mvbj6a2lqwy5h3tuqeifqy2w4gt4pzh4uahxuw27yw64q2@koxg54wgp2a2>
 
-A race condition can occur in cifs_oplock_break() leading to a
-use-after-free of the cinode structure when unmounting:
+On Tue, Jun 24, 2025 at 05:08:32PM +0200, Ernest Van Hoecke wrote:
+> On the TI AM62 when using a USB OTG port, I found some unexpected
+> behaviour when booting with this port in host mode.
+>
+> This happens, for example, when booting with a USB pen drive inserted
+> When the pen drive is later removed, the OTG port correctly switches
+> to "device" mode instead of "host" mode, but the related USB gadget
+> does not come up (in my case, a CDC NCM configuration).
+>
+> This issue only occurs when CONFIG_USB_CONN_GPIO and
+> CONFIG_USB_DWC3_AM62 are set to m and not when these modules are
+> built-in.
+>
 
-  cifs_oplock_break()
-    spin_lock(&cinode->open_file_lock)  <- OK
-    _cifsFileInfo_put(cfile)
-      cifsFileInfo_put_final()
-        cifs_sb_deactive()
-          [last ref, start releasing sb]
-            kill_sb()
-              kill_anon_super()
-                generic_shutdown_super()
-                  evict_inodes()
-                    dispose_list()
-                      evict()
-                        destroy_inode()
-                          call_rcu(&inode->i_rcu, i_callback)
-                            [later] i_callback()
-                              cifs_free_inode()
-                                kmem_cache_free(cinode)
-    spin_unlock(&cinode->open_file_lock)  <- UAF
-    cifs_done_oplock_break(cinode)       <- UAF
+Hi all,
 
-The issue occurs when umount has already released its reference to the
-superblock. When _cifsFileInfo_put() calls cifs_sb_deactive(), this
-releases the last reference, triggering the immediate cleanup of all
-inodes under RCU. However, cifs_oplock_break() continues to access the
-cinode after this point, resulting in use-after-free.
+This turned out not to be a kernel issue. For future reference and
+anyone else running into this I'll document what our problem was
+below.
 
-Fix this by holding an extra reference to the superblock during the
-entire oplock break operation. This ensures that the superblock and
-its inodes remain valid until the oplock break completes.
+The systemd target `usb-gadget.target` is triggered by udev when a UDC
+first comes up. It can happen that by the time gadget-start runs, this
+UDC has been removed from the system again.
 
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=220309
-Fixes: b98749cac4a6 ("CIFS: keep FileInfo handle live during oplock break")
-Signed-off-by: Wang Zhaolong <wangzhaolong@huaweicloud.com>
----
- fs/smb/client/file.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+For example, we saw such a situation using the DWC3 USB controller and
+usb-conn-gpio kernel modules as loadables. By the time of the DWC3 init,
+udev was active, and during init DWC3 started the USB OTG port in device
+mode. If a pen drive was plugged in at boot, it would quickly switch to
+host mode right after initialisation, emitting another udev event for
+the removal of the UDC. The systemd target was thus reached, but by the
+time gadget-start ran, the UDC was gone.
 
-diff --git a/fs/smb/client/file.c b/fs/smb/client/file.c
-index e9212da32f01..1421bde045c2 100644
---- a/fs/smb/client/file.c
-+++ b/fs/smb/client/file.c
-@@ -3086,20 +3086,27 @@ bool is_size_safe_to_change(struct cifsInodeInfo *cifsInode, __u64 end_of_file,
- void cifs_oplock_break(struct work_struct *work)
- {
- 	struct cifsFileInfo *cfile = container_of(work, struct cifsFileInfo,
- 						  oplock_break);
- 	struct inode *inode = d_inode(cfile->dentry);
--	struct cifs_sb_info *cifs_sb = CIFS_SB(inode->i_sb);
-+	struct super_block *sb = inode->i_sb;
-+	struct cifs_sb_info *cifs_sb = CIFS_SB(sb);
- 	struct cifsInodeInfo *cinode = CIFS_I(inode);
- 	struct cifs_tcon *tcon;
- 	struct TCP_Server_Info *server;
- 	struct tcon_link *tlink;
- 	int rc = 0;
- 	bool purge_cache = false, oplock_break_cancelled;
- 	__u64 persistent_fid, volatile_fid;
- 	__u16 net_fid;
- 
-+	/*
-+	 * Hold a reference to the superblock to prevent it and its inodes from
-+	 * being freed while we are accessing cinode. Otherwise, _cifsFileInfo_put()
-+	 * may release the last reference to the sb and trigger inode eviction.
-+	 */
-+	cifs_sb_active(sb);
- 	wait_on_bit(&cinode->flags, CIFS_INODE_PENDING_WRITERS,
- 			TASK_UNINTERRUPTIBLE);
- 
- 	tlink = cifs_sb_tlink(cifs_sb);
- 	if (IS_ERR(tlink))
-@@ -3168,10 +3175,11 @@ void cifs_oplock_break(struct work_struct *work)
- 		spin_unlock(&cinode->open_file_lock);
- 
- 	cifs_put_tlink(tlink);
- out:
- 	cifs_done_oplock_break(cinode);
-+	cifs_sb_deactive(sb);
- }
- 
- static int cifs_swap_activate(struct swap_info_struct *sis,
- 			      struct file *swap_file, sector_t *span)
- {
--- 
-2.39.2
+  dwc3 init       usb-conn-gpio role switch
+      │                       │
+      ▼                       ▼
+udev: add UDC─┐         udev: del UDC─────►/sys/class/udc empty
+              │                                         │
+              │                                         x
+              │                                         │
+              │                                         ▼
+              └────────────►usb-gadget.target─────►gadget-start
 
+For us the solution was to add a udev rule to bind the gadget every
+time the UDC comes up, so the situation can resolve itself.
+
+Kind regards,
+Ernest
 
