@@ -1,103 +1,168 @@
-Return-Path: <linux-kernel+bounces-715387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-715405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39EA0AF754F
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 15:19:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2175DAF758E
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 15:27:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7938541AF4
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 13:19:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EB0B3B39DD
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 13:27:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30738155326;
-	Thu,  3 Jul 2025 13:19:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="OUCym8ps";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="CmdzbFLs"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FCD313B2A4;
+	Thu,  3 Jul 2025 13:27:25 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B33C1DDD1;
-	Thu,  3 Jul 2025 13:19:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C2F2C148;
+	Thu,  3 Jul 2025 13:27:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751548779; cv=none; b=QARvJg4Sc+MFOspYeb+gfdGu8IJd4dRxc3CannYstUilpdqrPITbY7k/12QzqLLNM+NChMZDEI5Morl70jNbhWehDTdQdxECEkNtw0humXZNp28laJyYIyooyXDkWZcyu+rBkrmYR1dKm7Qa6GpQ9ynuMQaVyxzhj+gawTXPey0=
+	t=1751549244; cv=none; b=Bj9nenL5cq0iSi11LCNuKF12PeOpmtnRX+BU5AdPpbm9mRZW1rIy/1q7ALdtSQn+4KChFNCaoYC7qBHtnk7q5MM3C37CJuu3zBGczkJwHJGKFbVOeA0riGjkj6oQrWjqiiu0ibnYKxhGFAQr16St067HejlLbqAiZWaakzYhURw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751548779; c=relaxed/simple;
-	bh=4kcJobrOnoamaBnANOlfQkU1M63AHPCa2YelSe1E0P8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=iXBC385RjWZiF1xSAEOeU99t3uLfhQjYFMvIY8OalqYcVJiZ4eTn8dRWyY3edHS/W1ZM5HWeHIRZ06WQE1KRyOQPS9DjMOddhnfMFoUGmBZYfhodhpK21QZS6/r9xoU9HARwpXHMHwnarmUdH3raUPqzwGj3A2Wcoi687ukJ9zU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=OUCym8ps; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=CmdzbFLs; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1751548776;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4kcJobrOnoamaBnANOlfQkU1M63AHPCa2YelSe1E0P8=;
-	b=OUCym8psmnaL3rl7otrsXt5ULO8qXzrLiQ2XunZuiGEJq9q2a4WUYJSjC6A4s33xS2xAVN
-	FgAoF0zHaD+LNFcblvIQ1agcGyghfjtYU+CFy68EU28fBzWxytM32qAyBZJ5EeUya6OzqA
-	e51c7FR9heFylKmcRWsPQ9Xzp8eIVrA3emNX793lhLDdEqqm1TmjeiV5nNLnjE0D/f7zqg
-	k+AP+lmNNiEmVsAfPKzEcTY7WWpww4Jvc9KUWdTW4xuDVJQXVCtZP4wMBMzO1yvQnXDVFD
-	hV8UNztJ957RNiqaG7wzbYmreAFoYSQ2ah+/xKFywzjtxBJ7vZz8/uVTGPJVOw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1751548776;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4kcJobrOnoamaBnANOlfQkU1M63AHPCa2YelSe1E0P8=;
-	b=CmdzbFLseNS5InsZhBs47LmqjKB+MqkBz9WBhsq8OOSzG0EHoDlJHN0OSyJU/fl/RhFFSj
-	zFhtLTQc7mvGzEBQ==
-To: Nam Cao <namcao@linutronix.de>, Marc Zyngier <maz@kernel.org>, Lorenzo
- Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?=
- <kwilczynski@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>, Rob
- Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, Karthikeyan
- Mitran <m.karthikeyan@mobiveil.co.in>, Hou Zhiqiang
- <Zhiqiang.Hou@nxp.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- Pali =?utf-8?Q?Roh=C3=A1r?= <pali@kernel.org>, "K . Y . Srinivasan"
- <kys@microsoft.com>,
- Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
- Dexuan Cui <decui@microsoft.com>, Joyce Ooi <joyce.ooi@intel.com>, Jim
- Quinlan <jim2101024@gmail.com>, Nicolas Saenz Julienne
- <nsaenz@kernel.org>, Florian Fainelli <florian.fainelli@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Ray Jui <rjui@broadcom.com>,
- Scott Branden <sbranden@broadcom.com>, Ryder Lee <ryder.lee@mediatek.com>,
- Jianjun Wang <jianjun.wang@mediatek.com>, Marek Vasut
- <marek.vasut+renesas@gmail.com>, Yoshihiro Shimoda
- <yoshihiro.shimoda.uh@renesas.com>, Michal Simek <michal.simek@amd.com>,
- Daire McNamara <daire.mcnamara@microchip.com>, Nirmal Patel
- <nirmal.patel@linux.intel.com>, Jonathan Derrick
- <jonathan.derrick@linux.dev>, Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
- linux-rpi-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- linux-renesas-soc@vger.kernel.org
-Cc: Nam Cao <namcao@linutronix.de>, Jingoo Han <jingoohan1@gmail.com>
-Subject: Re: [PATCH 01/16] PCI: dwc: Switch to msi_create_parent_irq_domain()
-In-Reply-To: <04d4a96046490e50139826c16423954e033cdf89.1750858083.git.namcao@linutronix.de>
-References: <cover.1750858083.git.namcao@linutronix.de>
- <04d4a96046490e50139826c16423954e033cdf89.1750858083.git.namcao@linutronix.de>
-Date: Thu, 03 Jul 2025 15:19:35 +0200
-Message-ID: <87bjq1wgwo.ffs@tglx>
+	s=arc-20240116; t=1751549244; c=relaxed/simple;
+	bh=h9Lj1Kr+0dRjXxXHU3VKmCLHLTiQTtjJXR5BpFXLhq8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gQdH8Fz2Afl47ykpPf++vnBmLkGOSNU1c1T67yk/8/+KrxDn5hjtEYTpxUA2MegrwYgamzR3QjbkVH41u+7OWbAUo5UUjPgNyZGHr0HCyNstw9Ag2TLX7x6hhl3s7a7F+f/YjPFwjqqW+/OmJFmeVLw0tYJ4l24T+NJ5w+jmQeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4bXyHD1PSYzKHLxK;
+	Thu,  3 Jul 2025 21:27:20 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.252])
+	by mail.maildlp.com (Postfix) with ESMTP id 980F81A14CD;
+	Thu,  3 Jul 2025 21:27:18 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP3 (Coremail) with SMTP id _Ch0CgA3mSYzhWZoVG4eAg--.12632S4;
+	Thu, 03 Jul 2025 21:27:17 +0800 (CST)
+From: Wang Zhaolong <wangzhaolong@huaweicloud.com>
+To: sfrench@samba.org,
+	pshilov@microsoft.com,
+	aaptel@suse.com
+Cc: linux-cifs@vger.kernel.org,
+	samba-technical@lists.samba.org,
+	linux-kernel@vger.kernel.org,
+	chengzhihao1@huawei.com,
+	wangzhaolong1@huawei.com,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com
+Subject: [PATCH] smb: client: fix use-after-free in cifs_oplock_break
+Date: Thu,  3 Jul 2025 21:20:02 +0800
+Message-Id: <20250703132002.627709-1-wangzhaolong@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_Ch0CgA3mSYzhWZoVG4eAg--.12632S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxAF4kGF4kuFy5uFW5JFyxXwb_yoW5CFWUpF
+	13Kr15Wr45GryUuwsaqF4ru3W3t3WkWa1F9ry8Ww1Sy343J3ySgF4rKr129F4SqFWkAr1q
+	gF4jg3yqvF1UArJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv2b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6r1F6r1fM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0E
+	n4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I
+	0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWU
+	tVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcV
+	CY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAF
+	wI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa
+	7IU17KsUUUUUU==
+X-CM-SenderInfo: pzdqw6xkdrz0tqj6x35dzhxuhorxvhhfrp/
 
-On Thu, Jun 26 2025 at 16:47, Nam Cao wrote:
+A race condition can occur in cifs_oplock_break() leading to a
+use-after-free of the cinode structure when unmounting:
 
-> Move away from the legacy MSI domain setup, switch to use
-> msi_create_parent_irq_domain().
->
-> Signed-off-by: Nam Cao <namcao@linutronix.de>
+  cifs_oplock_break()
+    spin_lock(&cinode->open_file_lock)  <- OK
+    _cifsFileInfo_put(cfile)
+      cifsFileInfo_put_final()
+        cifs_sb_deactive()
+          [last ref, start releasing sb]
+            kill_sb()
+              kill_anon_super()
+                generic_shutdown_super()
+                  evict_inodes()
+                    dispose_list()
+                      evict()
+                        destroy_inode()
+                          call_rcu(&inode->i_rcu, i_callback)
+                            [later] i_callback()
+                              cifs_free_inode()
+                                kmem_cache_free(cinode)
+    spin_unlock(&cinode->open_file_lock)  <- UAF
+    cifs_done_oplock_break(cinode)       <- UAF
 
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+The issue occurs when umount has already released its reference to the
+superblock. When _cifsFileInfo_put() calls cifs_sb_deactive(), this
+releases the last reference, triggering the immediate cleanup of all
+inodes under RCU. However, cifs_oplock_break() continues to access the
+cinode after this point, resulting in use-after-free.
+
+Fix this by holding an extra reference to the superblock during the
+entire oplock break operation. This ensures that the superblock and
+its inodes remain valid until the oplock break completes.
+
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=220309
+Fixes: b98749cac4a6 ("CIFS: keep FileInfo handle live during oplock break")
+Signed-off-by: Wang Zhaolong <wangzhaolong@huaweicloud.com>
+---
+ fs/smb/client/file.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
+
+diff --git a/fs/smb/client/file.c b/fs/smb/client/file.c
+index e9212da32f01..1421bde045c2 100644
+--- a/fs/smb/client/file.c
++++ b/fs/smb/client/file.c
+@@ -3086,20 +3086,27 @@ bool is_size_safe_to_change(struct cifsInodeInfo *cifsInode, __u64 end_of_file,
+ void cifs_oplock_break(struct work_struct *work)
+ {
+ 	struct cifsFileInfo *cfile = container_of(work, struct cifsFileInfo,
+ 						  oplock_break);
+ 	struct inode *inode = d_inode(cfile->dentry);
+-	struct cifs_sb_info *cifs_sb = CIFS_SB(inode->i_sb);
++	struct super_block *sb = inode->i_sb;
++	struct cifs_sb_info *cifs_sb = CIFS_SB(sb);
+ 	struct cifsInodeInfo *cinode = CIFS_I(inode);
+ 	struct cifs_tcon *tcon;
+ 	struct TCP_Server_Info *server;
+ 	struct tcon_link *tlink;
+ 	int rc = 0;
+ 	bool purge_cache = false, oplock_break_cancelled;
+ 	__u64 persistent_fid, volatile_fid;
+ 	__u16 net_fid;
+ 
++	/*
++	 * Hold a reference to the superblock to prevent it and its inodes from
++	 * being freed while we are accessing cinode. Otherwise, _cifsFileInfo_put()
++	 * may release the last reference to the sb and trigger inode eviction.
++	 */
++	cifs_sb_active(sb);
+ 	wait_on_bit(&cinode->flags, CIFS_INODE_PENDING_WRITERS,
+ 			TASK_UNINTERRUPTIBLE);
+ 
+ 	tlink = cifs_sb_tlink(cifs_sb);
+ 	if (IS_ERR(tlink))
+@@ -3168,10 +3175,11 @@ void cifs_oplock_break(struct work_struct *work)
+ 		spin_unlock(&cinode->open_file_lock);
+ 
+ 	cifs_put_tlink(tlink);
+ out:
+ 	cifs_done_oplock_break(cinode);
++	cifs_sb_deactive(sb);
+ }
+ 
+ static int cifs_swap_activate(struct swap_info_struct *sis,
+ 			      struct file *swap_file, sector_t *span)
+ {
+-- 
+2.39.2
+
 
