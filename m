@@ -1,185 +1,103 @@
-Return-Path: <linux-kernel+bounces-715193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-715195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 905A0AF7271
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 13:34:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22AC1AF727A
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 13:36:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 155491BC4EF6
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 11:34:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EEABA560481
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 11:35:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE1292E7BAA;
-	Thu,  3 Jul 2025 11:32:27 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 765732E498B;
+	Thu,  3 Jul 2025 11:33:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=aladdin.ru header.i=@aladdin.ru header.b="vRMO+IMi"
+Received: from mail-out.aladdin-rd.ru (mail-out.aladdin-rd.ru [91.199.251.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 739292E7BD0
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 11:32:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC0152E426A;
+	Thu,  3 Jul 2025 11:33:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.199.251.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751542347; cv=none; b=uYplLImP/3ku+R46m+kYQ7TaWY7zO1E7hM+DoUNDUdJfM0djspZi4ZKaUq01KzzStBZlEGkwe7nZSSZLXz8jX4KXVE6Tpb9MzBlcnpQUnpca2juKjWum2G0clGPmiutvAoEqpw2XoXThDHezDKB6uD4SO+TeouJsNu+0eBRNnaI=
+	t=1751542390; cv=none; b=t3d01PSMqkDHr+gU4fWqGi6k5qLEMeD/xhy+6duKvpFcmEpwsZb4icROyAaE8zXo2y6eNnLxQozn1LcHb45EN5NIZ4tlMolhhDkkDMkQ9VBRiQUPw6qPrzxI33aHa79V3E7gJ82IYloCTJt7ytidJW8HeRs4C9f1bh5+xCFGXaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751542347; c=relaxed/simple;
-	bh=15sgvDrCMngNi2KRD1pTbi8iQeaa7H+WRKVs/zLyUuk=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=mLBCLkJYyrUQLL01S61zwaskUzmjWuBtqkg/XGi85AKIyiIo/zADNvSOqyBskFaX09A5tiAj05iB5T2HIC0k0Y8IIwJNtuad7KT1ugP2tqX0eAycR8g7GxuZBMmv3CO0salgwv2SwjRB/y+DOewIO2RW05S9BflxJFozlKf4pFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3df4d2a8b5eso59478075ab.3
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Jul 2025 04:32:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751542344; x=1752147144;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=T90dKRdxOLTTjBQjmngo+1QGU8lPyFFkQr4AZvGHzek=;
-        b=lo9mgsL3wWaRqwW63z+EWFuHQWPhuFhTOUaA6smC5RUlpEQSaoyYIeQuFcMOE55Yv9
-         kjUkvAkJ/ReV666Nu3kbo0tDpbH0w4daMJbTqfXvA7QWdHXSXO4cO33z9S+aUJ93iVFP
-         DSfsMElfXmQssPq23oRZYb7plpj6Z/7M/PG2hIbmZ2JOfiaTnFoEr/UA6/Akg92elktS
-         rFOJh3brXAv+VAkYPOz34/mwVyYZWL5rm+wnNOKpRaH2Ca79C9ZZUVZTN7dcuOZVCjj2
-         d2/a8cUmzl514q/YqRlQYvON0SsmZZyWQtBh+uZiCWYrCw8MuOIpk2Nj4yECsm0Rz53z
-         3yhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXb4FaIkPnLFV7Yw5dJj/EtE3ZcM9Xe4Jl/o4dzeR1DqTnXz8bpH2kJqGuPdhzccsSae04EB8HtpwFbdI8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6y2q1BL//UJmvLfNLwagzNuVtcuHw+/y4QQM/XIlGHoreNYXj
-	y7T/k3XqP13uckYPZugPKgoipjF9QIc5IAvuXtTeWjZrXK8Y/S4/hoodmLo0c7wg/4NH+0EHzyF
-	ajoJoLqRihXLRUebmT0BSbZ73AasXfUbRBmfkysNzC+lqJSNfoK+MoR7FUHQ=
-X-Google-Smtp-Source: AGHT+IExYvMiTZITzHpsANSMR31vFVL+NSWXXVpk2PsE0K+TrVzTQvqxDNjNdvqnt57qbsCdBauIP9AWak1A2GjLmJHXXxv6bW+B
+	s=arc-20240116; t=1751542390; c=relaxed/simple;
+	bh=CyQhUnN9yDUDBFRVhw4ghu3ibqesztbBUa/txXVxbe4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gKcZxuSL8FILhGNERsm8pZ5l/200iBcekF8HW6RhJMXoWHfseIN4vjWjdtMQorDMf2mi1bDSXYL61+mQXxoN7tLjpVoOMdQ6EOnnlAHl4keQuW4ruGiGwTjDhVe6rJnVeUm2QHuJf+kWo0G/wZ6oRF7bpN89d6xXSD5tw9x/D7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aladdin.ru; spf=pass smtp.mailfrom=aladdin.ru; dkim=pass (2048-bit key) header.d=aladdin.ru header.i=@aladdin.ru header.b=vRMO+IMi; arc=none smtp.client-ip=91.199.251.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aladdin.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aladdin.ru
+DKIM-Signature: v=1; a=rsa-sha256; d=aladdin.ru; s=mail; c=simple/simple;
+	t=1751542376; h=from:subject:to:date:message-id;
+	bh=CyQhUnN9yDUDBFRVhw4ghu3ibqesztbBUa/txXVxbe4=;
+	b=vRMO+IMi3XxKo7NY4fxaOR+3ZJOosaJy8ibaMkoyuHLol/Rk3cByQ014tIZ8nBqpgbbOToQKqDs
+	rKrUV4tVMfmBG46XmuM15ABi/F5IHuREwdI1od0yDpM1C5qaCWA39tXh2cvIrudnRMolo5uuQMU/X
+	pbXTHtO0nvSvqL8dnxIb1ocveOTJuwN0Y/aKFyAcRjGrvSbJQL0//qw2DSchc0uICWfgzQ/DQWz4f
+	BSuTGiKWisAPZkeSINEOLG9yWPK+EbDLBDkWiH+dY751Hd4q2FeuRTp//+TPy/4fGhiB2A61v5EQ2
+	Baz8zdnooeWM36KOxfEWctAh8gk/cFFpVK3g==
+From: Daniil Dulov <d.dulov@aladdin.ru>
+To: <stable@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Daniil Dulov <d.dulov@aladdin.ru>, Song Liu <song@kernel.org>, "Vishal
+ Verma" <vverma@digitalocean.com>, Jens Axboe <axboe@kernel.dk>,
+	<linux-raid@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<lvc-project@linuxtesting.org>, Xiao Ni <xni@redhat.com>, Coly Li
+	<colyli@kernel.org>, Yu Kuai <yukuai3@huawei.com>
+Subject: [PATCH 5.15/6.1/6.6/6.12] md/raid10: wait barrier before returning discard request with REQ_NOWAIT
+Date: Thu, 3 Jul 2025 14:32:33 +0300
+Message-ID: <20250703113233.51484-1-d.dulov@aladdin.ru>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:180e:b0:3dd:ceb0:f603 with SMTP id
- e9e14a558f8ab-3e05493524dmr78384945ab.2.1751542344640; Thu, 03 Jul 2025
- 04:32:24 -0700 (PDT)
-Date: Thu, 03 Jul 2025 04:32:24 -0700
-In-Reply-To: <68663c93.a70a0220.5d25f.0857.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68666a48.a00a0220.c7b3.0003.GAE@google.com>
-Subject: Re: [syzbot] [net?] general protection fault in htb_qlen_notify
-From: syzbot <syzbot+d8b58d7b0ad89a678a16@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
-	jhs@mojatatu.com, jiri@resnulli.us, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
-	syzkaller-bugs@googlegroups.com, xiyou.wangcong@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EXCH-2016-02.aladdin.ru (192.168.1.102) To
+ EXCH-2016-01.aladdin.ru (192.168.1.101)
 
-syzbot has found a reproducer for the following issue on:
+From: Xiao Ni <xni@redhat.com>
 
-HEAD commit:    bd475eeaaf3c Merge branch '200GbE' of git://git.kernel.org..
-git tree:       net
-console output: https://syzkaller.appspot.com/x/log.txt?x=15cc0582580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=36b0e72cad5298f8
-dashboard link: https://syzkaller.appspot.com/bug?extid=d8b58d7b0ad89a678a16
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1113748c580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10909ebc580000
+commit 3db4404435397a345431b45f57876a3df133f3b4 upstream.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/d59bc82a55e0/disk-bd475eea.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/2a83759fceb6/vmlinux-bd475eea.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/07576fd8e432/bzImage-bd475eea.xz
+raid10_handle_discard should wait barrier before returning a discard bio
+which has REQ_NOWAIT. And there is no need to print warning calltrace
+if a discard bio has REQ_NOWAIT flag. Quality engineer usually checks
+dmesg and reports error if dmesg has warning/error calltrace.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+d8b58d7b0ad89a678a16@syzkaller.appspotmail.com
-
-Oops: general protection fault, probably for non-canonical address 0xdffffc0000000035: 0000 [#1] SMP KASAN PTI
-KASAN: null-ptr-deref in range [0x00000000000001a8-0x00000000000001af]
-CPU: 1 UID: 0 PID: 6017 Comm: syz.0.16 Not tainted 6.16.0-rc3-syzkaller-00144-gbd475eeaaf3c #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-RIP: 0010:htb_deactivate net/sched/sch_htb.c:613 [inline]
-RIP: 0010:htb_qlen_notify+0x31/0xc0 net/sched/sch_htb.c:1489
-Code: 41 56 41 55 41 54 53 49 89 f6 49 89 ff 49 bc 00 00 00 00 00 fc ff df e8 3d c6 46 f8 49 8d 9e a8 01 00 00 49 89 dd 49 c1 ed 03 <43> 0f b6 44 25 00 84 c0 75 4d 8b 2b 31 ff 89 ee e8 5a ca 46 f8 85
-RSP: 0018:ffffc900034f6fb0 EFLAGS: 00010206
-RAX: ffffffff89798833 RBX: 00000000000001a8 RCX: ffff88802714bc00
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff88807a6ac000
-RBP: dffffc0000000000 R08: ffff88802714bc00 R09: 0000000000000002
-R10: 00000000ffffffff R11: ffffffff89798810 R12: dffffc0000000000
-R13: 0000000000000035 R14: 0000000000000000 R15: ffff88807a6ac000
-FS:  00007fa0c3df16c0(0000) GS:ffff888125d50000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fa0c3dd0d58 CR3: 00000000743e8000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- qdisc_tree_reduce_backlog+0x29c/0x480 net/sched/sch_api.c:811
- fq_change+0x1519/0x1f50 net/sched/sch_fq.c:1147
- fq_init+0x699/0x960 net/sched/sch_fq.c:1201
- qdisc_create+0x7ac/0xea0 net/sched/sch_api.c:1324
- __tc_modify_qdisc net/sched/sch_api.c:1749 [inline]
- tc_modify_qdisc+0x1426/0x2010 net/sched/sch_api.c:1813
- rtnetlink_rcv_msg+0x779/0xb70 net/core/rtnetlink.c:6953
- netlink_rcv_skb+0x208/0x470 net/netlink/af_netlink.c:2534
- netlink_unicast_kernel net/netlink/af_netlink.c:1313 [inline]
- netlink_unicast+0x75b/0x8d0 net/netlink/af_netlink.c:1339
- netlink_sendmsg+0x805/0xb30 net/netlink/af_netlink.c:1883
- sock_sendmsg_nosec net/socket.c:712 [inline]
- __sock_sendmsg+0x21c/0x270 net/socket.c:727
- ____sys_sendmsg+0x505/0x830 net/socket.c:2566
- ___sys_sendmsg+0x21f/0x2a0 net/socket.c:2620
- __sys_sendmsg net/socket.c:2652 [inline]
- __do_sys_sendmsg net/socket.c:2657 [inline]
- __se_sys_sendmsg net/socket.c:2655 [inline]
- __x64_sys_sendmsg+0x19b/0x260 net/socket.c:2655
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fa0c2f8e929
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fa0c3df1038 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00007fa0c31b5fa0 RCX: 00007fa0c2f8e929
-RDX: 0000000000044080 RSI: 0000200000000040 RDI: 0000000000000006
-RBP: 00007fa0c3010b39 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007fa0c31b5fa0 R15: 00007ffd14aa8178
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:htb_deactivate net/sched/sch_htb.c:613 [inline]
-RIP: 0010:htb_qlen_notify+0x31/0xc0 net/sched/sch_htb.c:1489
-Code: 41 56 41 55 41 54 53 49 89 f6 49 89 ff 49 bc 00 00 00 00 00 fc ff df e8 3d c6 46 f8 49 8d 9e a8 01 00 00 49 89 dd 49 c1 ed 03 <43> 0f b6 44 25 00 84 c0 75 4d 8b 2b 31 ff 89 ee e8 5a ca 46 f8 85
-RSP: 0018:ffffc900034f6fb0 EFLAGS: 00010206
-RAX: ffffffff89798833 RBX: 00000000000001a8 RCX: ffff88802714bc00
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff88807a6ac000
-RBP: dffffc0000000000 R08: ffff88802714bc00 R09: 0000000000000002
-R10: 00000000ffffffff R11: ffffffff89798810 R12: dffffc0000000000
-R13: 0000000000000035 R14: 0000000000000000 R15: ffff88807a6ac000
-FS:  00007fa0c3df16c0(0000) GS:ffff888125d50000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fa0c3dd0d58 CR3: 00000000743e8000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	41 56                	push   %r14
-   2:	41 55                	push   %r13
-   4:	41 54                	push   %r12
-   6:	53                   	push   %rbx
-   7:	49 89 f6             	mov    %rsi,%r14
-   a:	49 89 ff             	mov    %rdi,%r15
-   d:	49 bc 00 00 00 00 00 	movabs $0xdffffc0000000000,%r12
-  14:	fc ff df
-  17:	e8 3d c6 46 f8       	call   0xf846c659
-  1c:	49 8d 9e a8 01 00 00 	lea    0x1a8(%r14),%rbx
-  23:	49 89 dd             	mov    %rbx,%r13
-  26:	49 c1 ed 03          	shr    $0x3,%r13
-* 2a:	43 0f b6 44 25 00    	movzbl 0x0(%r13,%r12,1),%eax <-- trapping instruction
-  30:	84 c0                	test   %al,%al
-  32:	75 4d                	jne    0x81
-  34:	8b 2b                	mov    (%rbx),%ebp
-  36:	31 ff                	xor    %edi,%edi
-  38:	89 ee                	mov    %ebp,%esi
-  3a:	e8 5a ca 46 f8       	call   0xf846ca99
-  3f:	85                   	.byte 0x85
-
-
+Fixes: c9aa889b035f ("md: raid10 add nowait support")
+Signed-off-by: Xiao Ni <xni@redhat.com>
+Acked-by: Coly Li <colyli@kernel.org>
+Link: https://lore.kernel.org/linux-raid/20250306094938.48952-1-xni@redhat.com
+Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+Signed-off-by: Daniil Dulov <d.dulov@aladdin.ru>
 ---
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+Backport fix for CVE-2025-40325.
+
+ drivers/md/raid10.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
+index cc194f6ec18d..a02c02684237 100644
+--- a/drivers/md/raid10.c
++++ b/drivers/md/raid10.c
+@@ -1585,11 +1585,10 @@ static int raid10_handle_discard(struct mddev *mddev, struct bio *bio)
+ 	if (test_bit(MD_RECOVERY_RESHAPE, &mddev->recovery))
+ 		return -EAGAIN;
+ 
+-	if (WARN_ON_ONCE(bio->bi_opf & REQ_NOWAIT)) {
++	if (!wait_barrier(conf, bio->bi_opf & REQ_NOWAIT)) {
+ 		bio_wouldblock_error(bio);
+ 		return 0;
+ 	}
+-	wait_barrier(conf, false);
+ 
+ 	/*
+ 	 * Check reshape again to avoid reshape happens after checking
+-- 
+2.34.1
+
 
