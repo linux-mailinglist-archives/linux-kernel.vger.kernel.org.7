@@ -1,114 +1,195 @@
-Return-Path: <linux-kernel+bounces-714641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9704FAF6A8E
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 08:42:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E565FAF6A9A
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 08:43:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BFE44818C7
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 06:41:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3786D17A9CA
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 06:43:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3315D291C20;
-	Thu,  3 Jul 2025 06:42:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CFB6295524;
+	Thu,  3 Jul 2025 06:43:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jQ4uNE78"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="QH7h1fV1"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86259291C29;
-	Thu,  3 Jul 2025 06:42:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D3BD2951CD;
+	Thu,  3 Jul 2025 06:43:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751524931; cv=none; b=ZohtSSDwIiMwS0GHLYSa/xaFeIC+J2qyVSia/Ln+8fvzMvoNHQaRGlVMPR7YeQJyd+6XphB/OQ5sL1/UnYrCJECT7WOSIq5pNeC9Ypmfgz0jRVUV71wsQUr4v8E9LXw4oWgDKNlxP2DQiWruQGeEst0Q4YXPa3GgHAD9LupMFvQ=
+	t=1751524992; cv=none; b=sHNhlCnXV1IYBdDJnbg5S63NuMdxjCG3wVSKlvzT2vTk7FLVXqMXQ0zaoCRMhod4MiCHn3zzGc4cyubBtz8gl9sxDpp1v9xggU+EzyGBqOgyqmQYXqawZuUxNCg3jkYD3TAII0uc+7G/YQnu7zk589Rl9gVdz4HMME+ISGFOhDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751524931; c=relaxed/simple;
-	bh=cj9NFtN0xsWiVmMtfQkfpbIOndV8+ifluU4LHQQxzFU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dKuXXn01Q4ZCCGw1KpEZJhopoXNR3DOcU2LCcbfe04HD39MwcbITaWshmOsW5IrQDyprnet5oqn9FWWLhWi8bs/+XhZUeP2ozA0wTXhi+9zBZdEyWBUmVUqb3q5vlSPPg9xa2BVktQdHhVkV6bjrz9bR2QleicsQMoPed1PvR2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jQ4uNE78; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84DD1C4CEEB;
-	Thu,  3 Jul 2025 06:42:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751524931;
-	bh=cj9NFtN0xsWiVmMtfQkfpbIOndV8+ifluU4LHQQxzFU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jQ4uNE78oOdm1TrK/C+9W1ZcQRpJEDoLeMh2Q891i2oZUfNuQC9x9ASxlBjBehDjV
-	 hf5grWtAx5wGkGNO12BwAsksZDxw/m/CTKBSin7i8XggvWBsnFY8jLcO/rXEKLCW/p
-	 yACAPwI7zcMvXfIw1gZ+FB3PaRJqMh/l1kiPpTTwt9fscVTyZJYgvsxAf5yTInlI8I
-	 1KkDJzQNB4DFmY5tBaASWf9VPdc902hMnxlMjcsv8RN5/gXFaleqLy1zHcLidZexXf
-	 8jm9mXqE+dAHArWZUmoi7+IUXAGPGg7iOVU+9rLgXpXecJbQTAUMS378Dhp/hmPqqf
-	 pCBxq/moUoNbQ==
-Date: Thu, 3 Jul 2025 08:42:08 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Michal Wilczynski <m.wilczynski@samsung.com>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Guo Ren <guoren@kernel.org>, 
-	Fu Wei <wefu@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, 
-	Marek Szyprowski <m.szyprowski@samsung.com>, Benno Lossin <lossin@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Drew Fustini <fustini@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-pwm@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v7 3/8] rust: pwm: Add core 'Device' and 'Chip' object
- wrappers
-Message-ID: <hdc4gweo5orxjzfggelvddpmhesmzkav2w3il7asewg5lswrxh@rslvwmzofedu>
-References: <20250702-rust-next-pwm-working-fan-for-sending-v7-0-67ef39ff1d29@samsung.com>
- <CGME20250702134957eucas1p1d84f2ed3014cf98ea3a077c7fae6dea6@eucas1p1.samsung.com>
- <20250702-rust-next-pwm-working-fan-for-sending-v7-3-67ef39ff1d29@samsung.com>
- <aGVMnmoepIVSS0yK@pollux>
+	s=arc-20240116; t=1751524992; c=relaxed/simple;
+	bh=IInDjQia2ME46qt6AmZ2In32ciFiqBmORUs3cZemT2I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=V1RoIgBdARQflVlOew4Azg6dvo7yCt9Y6a0bgcYIHIt6vwbtmZTDybZsSq71lTT6I73AjH4kqNebqM6x8p/FoVI9XcAMZdZCS46IVSltXdJUJqEB9yVWB5B+ZcSY8vvSSPtNnsJpztYiLGj4XqUHPd6urzWF8HkEWK+5lnmgzNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=QH7h1fV1; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 5636h0874128774;
+	Thu, 3 Jul 2025 01:43:00 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1751524980;
+	bh=8ZjWnkrA791iDf/xncUsMifSlZwO2guVSrO1y+XKT/c=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=QH7h1fV10LGwkxXoEkyi3ANMinQMY+RosZkvIcydv7HKoXcVEOK2luHRm6qYGoSXC
+	 MAHV6hE0IWwcyBEqzNxGNlDZrKDBLN4PYKG6K1D3iKg0VrHB0O/LYtlgySM9GyiwGK
+	 3Tv7SOa6hYiqypbI7US4qJ5IfP2asLMp9weIOHn0=
+Received: from DFLE110.ent.ti.com (dfle110.ent.ti.com [10.64.6.31])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 5636h05t1590257
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Thu, 3 Jul 2025 01:43:00 -0500
+Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 3
+ Jul 2025 01:42:59 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Thu, 3 Jul 2025 01:43:00 -0500
+Received: from [172.24.227.38] (ula0502350.dhcp.ti.com [172.24.227.38])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5636gsgk369926;
+	Thu, 3 Jul 2025 01:42:55 -0500
+Message-ID: <f7b0c7f0-9af1-4105-a143-103c49fe2320@ti.com>
+Date: Thu, 3 Jul 2025 12:12:54 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="uhbdmr5uuwnvygor"
-Content-Disposition: inline
-In-Reply-To: <aGVMnmoepIVSS0yK@pollux>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 4/4] arm64: dts: ti: Add support for AM62D2-EVM
+To: Bryan Brattlof <bb@ti.com>
+CC: <nm@ti.com>, <vigneshr@ti.com>, <praneeth@ti.com>, <kristo@kernel.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <khasim@ti.com>, <v-singh1@ti.com>,
+        <afd@ti.com>, <devarsht@ti.com>, <s-vadapalli@ti.com>,
+        <andrew@lunn.ch>
+References: <20250627115753.2246881-1-p-bhagat@ti.com>
+ <20250627115753.2246881-5-p-bhagat@ti.com>
+ <20250701162504.dck3763ik6kpo7ec@bryanbrattlof.com>
+Content-Language: en-US
+From: Paresh Bhagat <p-bhagat@ti.com>
+In-Reply-To: <20250701162504.dck3763ik6kpo7ec@bryanbrattlof.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+
+Hi Bryan,
 
 
---uhbdmr5uuwnvygor
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Subject: Re: [PATCH v7 3/8] rust: pwm: Add core 'Device' and 'Chip' object
- wrappers
-MIME-Version: 1.0
+On 01/07/25 21:55, Bryan Brattlof wrote:
+> On June 27, 2025 thus sayeth Paresh Bhagat:
+>> AM62D-EVM evaluation module (EVM) is a low-cost expandable platform board
+>> designed for AM62D2 SoC from TI. It supports the following interfaces:
+>>
+>> * 4 GB LPDDR4 RAM
+>> * x2 Gigabit Ethernet expansion connectors
+>> * x4 3.5mm TRS Audio Jack Line In
+>> * x4 3.5mm TRS Audio Jack Line Out
+>> * x2 Audio expansion connectors
+>> * x1 Type-A USB 2.0, x1 Type-C dual-role device (DRD) USB 2.0
+>> * x1 UHS-1 capable micro SD card slot
+>> * 32 GB eMMC Flash
+>> * 512 Mb OSPI NOR flash
+>> * x4 UARTs via USB 2.0-B
+>> * XDS110 for onboard JTAG debug using USB
+>> * Temperature sensors, user push buttons and LEDs
+>>
+>> Although AM62D2 and AM62A7 differ in peripheral capabilities example
+>> multimedia, VPAC, and display subsystems, the core architecture remains
+>> same. To reduce duplication, AM62D support reuses the AM62A dtsi and the
+>> necessary overrides will be handled in SOC specific dtsi file and a
+>> board specific dts.
+>>
+>> Add basic support for AM62D2-EVM.
+>>
+>> Schematics Link - https://www.ti.com/lit/zip/sprcal5
+>>
+>> Signed-off-by: Paresh Bhagat <p-bhagat@ti.com>
+>> Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
+>> ---
+>>   arch/arm64/boot/dts/ti/Makefile          |   3 +
+>>   arch/arm64/boot/dts/ti/k3-am62d2-evm.dts | 599 +++++++++++++++++++++++
+>>   arch/arm64/boot/dts/ti/k3-am62d2.dtsi    |  25 +
+>>   3 files changed, 627 insertions(+)
+>>   create mode 100644 arch/arm64/boot/dts/ti/k3-am62d2-evm.dts
+>>   create mode 100644 arch/arm64/boot/dts/ti/k3-am62d2.dtsi
+>>
+> ...
+>
+>> diff --git a/arch/arm64/boot/dts/ti/k3-am62d2.dtsi
+>> b/arch/arm64/boot/dts/ti/k3-am62d2.dtsi
+>> new file mode 100644
+>> index 000000000000..70aeb40872a9
+>> --- /dev/null
+>> +++ b/arch/arm64/boot/dts/ti/k3-am62d2.dtsi
+>> @@ -0,0 +1,25 @@
+>> +// SPDX-License-Identifier: GPL-2.0-only OR MIT
+>> +/*
+>> + * Device Tree Source for AM62D2 SoC family in Quad core configuration
+>> + *
+>> + * TRM: https://www.ti.com/lit/pdf/sprujd4
+>> + *
+>> + * Copyright (C) 2025 Texas Instruments Incorporated - https://www.ti.com/
+>> + */
+>> +
+>> +/dts-v1/;
+>> +
+>> +#include "k3-am62a7.dtsi"
+> If we want to reuse the AM62A chassis I think we should probably reused
+> the AM62AX_IOPAD() macro instead of creating a new one.
 
-Hello Danilo,
 
-On Wed, Jul 02, 2025 at 05:13:34PM +0200, Danilo Krummrich wrote:
-> I assume the C API does guarantee that a struct pwm_device *always* holds a
-> valid pointer to a struct pwm_chip?
-
-Yes, a pwm_device holds a reference to the chip's dev. So until pwm_put
-is called the chip won't go away.
-
-Best regards
-Uwe
+AM62D does not necessarily have the same pin configuration compared to 
+AM62A. While it is a macro which could be shareable across many boards, 
+i think its preferable we maintain separate definitions to highlight the 
+new SoCs. AM62D is a separate package, with some components reused from 
+AM62a.
 
 
---uhbdmr5uuwnvygor
-Content-Type: application/pgp-signature; name="signature.asc"
+>
+>> +
+>> +/ {
+>> +	model = "Texas Instruments K3 AM62D SoC";
+>> +	compatible = "ti,am62d2";
+>> +};
+>> +
+>> +&vpu {
+>> +	status = "disabled";
+>> +};
+>> +
+>> +&e5010 {
+>> +	status = "disabled";
+>> +};
+> So I could be a little out of date on the style guidelines here, but my
+> intuition is device trees, much like real trees, can only grow, so we
+> can't inherit the am62a.dtsi and remove things.
+>
+> My understanding is we have to create a full am62d.dtsi with its
+> features that the am62a.dtsi can extend with the vpu{} and e5010{} nodes
+>
+> ~Bryan
 
------BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmhmJj0ACgkQj4D7WH0S
-/k4x3ggAkwamiLd6r0eMJ9/ItKu0S1EKf3GNLQ7p7k9gEWSCQwPbKAiFtWCLYWkp
-1BcEI20bHheXAOH5K2vryRS4WOaoy2lP5F8CgYseqkSnfIeWbeUIyR5RuS+Gmfj8
-UT937rxoH1bvHiu9X0PYtoN5/DwH423JsT7EhLjyL62ycXzDU6zhB/De7MoIGo05
-NSMdLALW12xCzKbAstogGf2v/WwGUvk9bynefxzU0GYpdgX+tl1U6cy7BQR+T6PD
-WH6EXgXFcZymtIZ1N1nk7Jt7REFP3vh63x7+bNFRwGJSmyj7pMDU2wR4YYKCcCdi
-HRunXxiTYVmJ5jnxMTs2zoE2fIDVNA==
-=6vvA
------END PGP SIGNATURE-----
+Agree we should ideally keep the device trees extending. But in this 
+case it will involve changes not only in am62a.dtsi but ideally it will 
+change k3-am62a-main.dtsi and k3-am62a-mcu.dtsi as well. This moves us 
+back to version 3 of this series 
+https://lore.kernel.org/all/20250508091422.288876-1-p-bhagat@ti.com/ 
+where i created *common*.dtsi files which looks a bit complex.
 
---uhbdmr5uuwnvygor--
+
+The current method also ensures that customers can start their 
+development of a new board with k3-am62d2.dtsi, while maintaining less 
+complexity and is a easier to follow approach.
+
+
 
