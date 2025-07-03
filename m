@@ -1,143 +1,135 @@
-Return-Path: <linux-kernel+bounces-715168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-715170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 903D9AF71FC
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 13:23:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A333AF7204
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 13:24:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D54B11894AE4
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 11:24:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CF72F7A6560
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 11:23:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A23DC2E267D;
-	Thu,  3 Jul 2025 11:23:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C80F22E2EED;
+	Thu,  3 Jul 2025 11:24:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FfNKxKN0"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EBbMtqu4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75F77253938
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 11:23:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC63A2E2EFE;
+	Thu,  3 Jul 2025 11:24:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751541822; cv=none; b=ZEB8VbqG7dL063ngsEM9GxYAiMf5k+8ARcWD+WsMODSg9DwIL6qwUM8IcmS7OvGUbRK3hDB7RK5Gr3wcXcVWVlwKZQKo1goL8wqoqBeolHwCDP9StQHitlXjhGhRAD+4yHNDS8hLMHng0a/4+WlBoFHvoWbqOU8IinpeIHaRA9U=
+	t=1751541841; cv=none; b=WHFFWQQRisHaxiJRd1+eUwIyncUsSLg7Rw4ktaSytVShcnjNN/366RQnKzlOgEXYc8kh0Piz9mISGVMo/xG45VusBIf9HBO8qoIOMZgZ+c1/Nr8GWIBo8L0oY/EVz4aJl7dmMuDYhU6ChkFJGOYU3FHL6NdLxit8I6g2t8WSM8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751541822; c=relaxed/simple;
-	bh=qCJ/Od0uSXuN2KvuQPi0q2CGVCbCbEn3umxbnY7hirA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=c+p1euRxrgjljkY8cSF8+g6vdfFMUXP9pIyPMtgLNAE0TIsDvWI4VmZiakx2pBghR8Q53g/DTYgvQLXx0KhLulkUnS8Vt7uXPCkyPmmg4FY0tuaqjF9w84Hq1hCkr81QDJOcG+7vfo+YBtwdLhQtwmyBzP+qvucn4VMopkzGC5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FfNKxKN0; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1751541819;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=PIJzNJK0FfXDsC5luatCe5NaXC4y6NbBybHk8bPHUtM=;
-	b=FfNKxKN0ef0t7CIT/obMjXUsQOOSgPHTG08+ziCn38mE6i4QBvvUlFsbqqmvnaRW/GSlft
-	K7f8KBVYQzbmag6JsZXgegzZCdSMReDnyaWCdT/K6WFF5sCcTFpyMKYgylRsem8ehIZMPL
-	HwEJDy8991CWb5tAXW5Z75CaGWTtgvU=
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
- [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-91-VnS2Pm3SOA-jEG5FJS0KVA-1; Thu, 03 Jul 2025 07:23:38 -0400
-X-MC-Unique: VnS2Pm3SOA-jEG5FJS0KVA-1
-X-Mimecast-MFC-AGG-ID: VnS2Pm3SOA-jEG5FJS0KVA_1751541818
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7c7c30d8986so2301780885a.2
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Jul 2025 04:23:38 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751541818; x=1752146618;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PIJzNJK0FfXDsC5luatCe5NaXC4y6NbBybHk8bPHUtM=;
-        b=r3QenrzPtQKAsHkKZG9T4Eqs1VWllNnsvOTRWtwJuaG8BQkIXMG+XIswOTq64EXT9m
-         0lDOclOkp7HxQDSoJFJEa1BMnWlAsL3o8vcbpxCe3gRtf2p0CC22xUZ2uWCCpSCVb4OH
-         oz6zkDxJEpucmWI3Hi5FXfk/SQF+N36+2wNjc28cSYjiIupLVTf01bqht16h+cUkAC+T
-         5WW5JTnYwDECUdBGzRci1sqIU7ldMDj+hWvNtUj0L4drvZ2HJSYFDXwz+zxFopdIOe3P
-         t2/9QkZuycLAzCwb+bF/CegGHMfhF8lDS8V5cA62giXD4dXssC88yGQIFYaJ6GnShT1a
-         653w==
-X-Gm-Message-State: AOJu0YygmuECbCSmij55C7FCne8PvygM8hNgbpJ7JhJrKD5NOU/2YaHv
-	Gwdh8lHJHMF+w09oiwLMrN/skpN2pjW2kfbcJfOHVX3xpzA9kiOAyyaKI49X3JXltnZXX5bwbYW
-	XMjE/lfOGIRyynLwLo6agVgFb5O6JeB1NLD4lzxpUyyKI40YPUZlQHarLhEwI1BzVqoNHATNx2Q
-	==
-X-Gm-Gg: ASbGncvQb/Bc3GpKch8CZFkOdUQhycoRje6OhtZwDaeCiSKJby3l4jDkiZeS3Rfg6R8
-	wQthBHD9ELjDQlhorNUROkp5ADiIDvRhFN15pKiMm0sg7jOmUb0kXs39UQeb4zSFMzqdE09JJgf
-	iY/E1MCjTeUZBsGHuDHkAptlVmN0PzsXuLk0Vczv5sB5WeMDOQLQDQaLvYvauldAHeu992KOZsp
-	SIX3YSlll8Xx9ok6bpZk5UT8F3ovVWOLFkvymifAWKRqRDTM1/BC7phSxkh5MbZWdnIasxlIGpW
-	iztPegegQoXn2j/Pn78HKfDoO04/pw==
-X-Received: by 2002:a05:620a:8389:b0:7d4:3ac2:4c4 with SMTP id af79cd13be357-7d5d14909e9mr501464485a.50.1751541817650;
-        Thu, 03 Jul 2025 04:23:37 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFIhjpqSJkjkr7yySi+zSYYPuX82fx+PYQJJ7PyIEcTrA1s0zbfEWG0IS+SDm5LkMQyKv6eIg==
-X-Received: by 2002:a05:620a:8389:b0:7d4:3ac2:4c4 with SMTP id af79cd13be357-7d5d14909e9mr501460785a.50.1751541817217;
-        Thu, 03 Jul 2025 04:23:37 -0700 (PDT)
-Received: from stex1.redhat.com ([193.207.161.238])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7d44313925dsm1088725885a.24.2025.07.03.04.23.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Jul 2025 04:23:36 -0700 (PDT)
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Bobby Eshleman <bobby.eshleman@bytedance.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Simon Horman <horms@kernel.org>,
-	Stefano Garzarella <sgarzare@redhat.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	virtualization@lists.linux.dev,
-	bpf@vger.kernel.org,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>
-Subject: [PATCH net] vsock: fix `vsock_proto` declaration
-Date: Thu,  3 Jul 2025 13:23:29 +0200
-Message-ID: <20250703112329.28365-1-sgarzare@redhat.com>
-X-Mailer: git-send-email 2.50.0
+	s=arc-20240116; t=1751541841; c=relaxed/simple;
+	bh=qdMPMaWhAdjs0zICvQE3fxorvk/Gs4a0C1/nlgKrdDc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WOiE+qnUq4LFm+CAiyvEfMqfqDjxD+hp15IQRfIlQSX8gux3SQCaNmhNppGvRofhJrdMz1/Oc8cNlE4Ds6JLZe5ETBmFJZVxggoiW6H/Bf2wSouLxHglnV1SLBtQafufISBpA6tXTCAk0Q3M0B83Ph3OKRlene0MLhjmTjuckEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EBbMtqu4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D7ECC4CEE3;
+	Thu,  3 Jul 2025 11:23:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751541840;
+	bh=qdMPMaWhAdjs0zICvQE3fxorvk/Gs4a0C1/nlgKrdDc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=EBbMtqu4GeUGpMSibpJn/E4iY5cmMx5SCnl5CxGwmkirVAo3iA2EWCJmcwTZUuMop
+	 vkxBJLxP0Vbzn0sYN/l5bjHKNwADqP/ZOa3ok6x7o2oFrUtk2yU+PhbCaVKch2z9nu
+	 ThHD3X/NlpbmUH03npYj/BtA8Ik/lBCgXdr+z0lSkq90UxiXCnwS0hrwE7jyW73C01
+	 eAqgjw2m8hQamZJTfJyW+VOXsnXzzOlvvYDOZtdwOLEP0CKfUSbZ+u9gs9aRb1k69S
+	 Pv6J5Re87kS0H+LydT/KkIlaNqRIi09gBvLzIRGD4Mq0IrwkNEiGNQpptwSK5Rw3I7
+	 N1Ik1wK2I82rg==
+Message-ID: <3116cbdc-f18f-43d4-a26d-79e66561183f@kernel.org>
+Date: Thu, 3 Jul 2025 13:23:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] dt-bindings: pinctrl: document the Milos Top Level
+ Mode Multiplexer
+To: Luca Weiss <luca.weiss@fairphone.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, ~postmarketos/upstreaming@lists.sr.ht,
+ phone-devel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250702-sm7635-pinctrl-v2-0-c138624b9924@fairphone.com>
+ <20250702-sm7635-pinctrl-v2-1-c138624b9924@fairphone.com>
+ <20250703-daring-burgundy-limpet-a1c97e@krzk-bin>
+ <DB293G0PC5P8.13IW22M6DDESM@fairphone.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
+ QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
+ +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
+ ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
+ 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
+ hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
+ tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
+ 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
+ naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
+ hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
+ whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
+ qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
+ RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
+ Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
+ H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
+ dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
+ AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
+ jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
+ zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
+ XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
+In-Reply-To: <DB293G0PC5P8.13IW22M6DDESM@fairphone.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Stefano Garzarella <sgarzare@redhat.com>
+On 03/07/2025 09:44, Luca Weiss wrote:
+> On Thu Jul 3, 2025 at 9:41 AM CEST, Krzysztof Kozlowski wrote:
+>> On Wed, Jul 02, 2025 at 05:56:16PM +0200, Luca Weiss wrote:
+>>> Document the Top Level Mode Multiplexer on the Milos Platform.
+>>
+>> What is Milos platform? Does it have some sort of model number how we
+>> usually expect? Wasn't this SM7325 or similar?
+>>
+>> The problem with such new naming that it awfully sounds like family
+>> names, so just expand the name and explain it.
+> 
+> Please go argue with Bjorn/Konrad about this, wasn't my idea.
+> 
+> https://lore.kernel.org/linux-arm-msm/aGMI1Zv6D+K+vWZL@hu-bjorande-lv.qualcomm.com/
+> https://lore.kernel.org/linux-arm-msm/b98d305b-247f-415b-8675-50d073452feb@oss.qualcomm.com/
 
-From commit 634f1a7110b4 ("vsock: support sockmap"), `struct proto
-vsock_proto`, defined in af_vsock.c, is not static anymore, since it's
-used by vsock_bpf.c.
+I don't think you got my point. I want it to be explicit in commit msg.
 
-If CONFIG_BPF_SYSCALL is not defined, `make C=2` will print a warning:
-    $ make O=build C=2 W=1 net/vmw_vsock/
-      ...
-      CC [M]  net/vmw_vsock/af_vsock.o
-      CHECK   ../net/vmw_vsock/af_vsock.c
-    ../net/vmw_vsock/af_vsock.c:123:14: warning: symbol 'vsock_proto' was not declared. Should it be static?
-
-Declare `vsock_proto` regardless of CONFIG_BPF_SYSCALL, since it's defined
-in af_vsock.c, which is built regardless of CONFIG_BPF_SYSCALL.
-
-Fixes: 634f1a7110b4 ("vsock: support sockmap")
-Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
----
- include/net/af_vsock.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/include/net/af_vsock.h b/include/net/af_vsock.h
-index d56e6e135158..d40e978126e3 100644
---- a/include/net/af_vsock.h
-+++ b/include/net/af_vsock.h
-@@ -243,8 +243,8 @@ int __vsock_dgram_recvmsg(struct socket *sock, struct msghdr *msg,
- int vsock_dgram_recvmsg(struct socket *sock, struct msghdr *msg,
- 			size_t len, int flags);
- 
--#ifdef CONFIG_BPF_SYSCALL
- extern struct proto vsock_proto;
-+#ifdef CONFIG_BPF_SYSCALL
- int vsock_bpf_update_proto(struct sock *sk, struct sk_psock *psock, bool restore);
- void __init vsock_bpf_build_proto(void);
- #else
--- 
-2.50.0
-
+Best regards,
+Krzysztof
 
