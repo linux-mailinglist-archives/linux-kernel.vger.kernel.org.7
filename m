@@ -1,240 +1,186 @@
-Return-Path: <linux-kernel+bounces-714378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52C9DAF674B
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 03:48:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 622CEAF677C
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 03:55:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5CD9D167669
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 01:48:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E2C74E2CC0
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 01:54:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3577A17332C;
-	Thu,  3 Jul 2025 01:47:58 +0000 (UTC)
-Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11023114.outbound.protection.outlook.com [40.107.44.114])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F5B223C50F;
+	Thu,  3 Jul 2025 01:51:33 +0000 (UTC)
+Received: from bg1.exmail.qq.com (bg1.exmail.qq.com [114.132.77.159])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E7B54A00;
-	Thu,  3 Jul 2025 01:47:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.114
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751507277; cv=fail; b=XnGsALMqBVPDFoS/DkCN/H8KCjbTsoFeAKA4h66eAOtW4i3rGbbWVtsMhpv4FvTqIQpIF4GF1C7XO4/nnTXXmPXyfeNt3YHz0VcAWvgsI6LagR9coDR4dFdqqvbttng5uSr1BAKC6n/i/R9+8aZgzquZT4QQV8HlzzvEQiQ64fY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751507277; c=relaxed/simple;
-	bh=G5I6G7WB3LosTMxc0w8cH83uvgxZiqXlnmFXEYfGFd4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mbi+pr5TLNABfzOXbrlnTi5oMLHYTcuabhT/StFEq+QJgzAmpdTno0/mNngEVenlW0XJDlJDfiGBzokWl4j/nt+pLS1js7bUi80/Q1vX045sTAUnSfANeISqAoywP0n69IuaYk7n16hDPmfhZRI57YKzxp3J6wyRUDhb+ip5dWQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com; spf=pass smtp.mailfrom=cixtech.com; arc=fail smtp.client-ip=40.107.44.114
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cixtech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=weKYYiFYH7jQkw08SU3Up45+ZOqRAeQV0k8ZgI1XnUDe9vTNbVFMmw3PhDYlml9bloAK0s5y9c2IsBor1VOt6djmQBsOzn9Sksz1dmg0a+/7GrNt8/OSKOQb6AcniBenI0RR/dKmN2eZyd2/3JvDqODMpEUPTB0EMbh+t13Ml8sDgHEbyq31B27Fxy77mA5fsTbGiKtjg8zdGNwfyw+khPkpOihL7APidnL4eli7jns90zoOzFTErtiHhuNwxpa3H65YC4UtYqcl8ES609iASoeuuKTBv98QFaUkUUrGjIV28WGHZQSSYRC14jPgII6k+m2KX0lX78QIcpdl2XdeQw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=EtAxDENErq4rut6mf3iHFwy7zP0d9gUwd7mbl7gQiMA=;
- b=TFAnmUyh2dKDe7/UdDtn9dYIMfwgKusaWPAGlhfAsZWwfe/CJuaB8ME06fDdzy8WfTEtdNoHrMS5uKOfA4xR6t3rFgKlZTukX2m6L4XOYan6e4BS/9C9ciy1Xu4JpA8iFPFmJ5Pz7aYtthDsXX1mIB5nnohqtnhm0hFMnq+5q3zpRtD1BGS6NKSf8NoMBnjHFquDM60+WFuRq+cuZBCSVC9LINfnYiCpct5ZMr3UJLOAMQBWwOJub2EWW7eNiwXNOr752kpC0leM+50J5OAacfnYOXCmv3FNLsCF6fsONPIQr9R3FDXNwRmZO/kWxU/tgEaon0Uwj7X3V9rJIs3h4Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 222.71.101.198) smtp.rcpttodomain=cadence.com smtp.mailfrom=cixtech.com;
- dmarc=bestguesspass action=none header.from=cixtech.com; dkim=none (message
- not signed); arc=none (0)
-Received: from SG2P153CA0015.APCP153.PROD.OUTLOOK.COM (2603:1096::25) by
- TYPPR06MB8036.apcprd06.prod.outlook.com (2603:1096:405:313::7) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8901.20; Thu, 3 Jul 2025 01:47:50 +0000
-Received: from SG1PEPF000082E3.apcprd02.prod.outlook.com
- (2603:1096::cafe:0:0:29) by SG2P153CA0015.outlook.office365.com
- (2603:1096::25) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8922.12 via Frontend Transport; Thu,
- 3 Jul 2025 01:47:50 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 222.71.101.198)
- smtp.mailfrom=cixtech.com; dkim=none (message not signed)
- header.d=none;dmarc=bestguesspass action=none header.from=cixtech.com;
-Received-SPF: Pass (protection.outlook.com: domain of cixtech.com designates
- 222.71.101.198 as permitted sender) receiver=protection.outlook.com;
- client-ip=222.71.101.198; helo=smtprelay.cixcomputing.com; pr=C
-Received: from smtprelay.cixcomputing.com (222.71.101.198) by
- SG1PEPF000082E3.mail.protection.outlook.com (10.167.240.6) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8901.20 via Frontend Transport; Thu, 3 Jul 2025 01:47:49 +0000
-Received: from [172.16.64.208] (unknown [172.16.64.208])
-	by smtprelay.cixcomputing.com (Postfix) with ESMTPSA id 8B84844C3CB6;
-	Thu,  3 Jul 2025 09:47:48 +0800 (CST)
-Message-ID: <50592fad-850c-4dab-92d8-a71cb89daf58@cixtech.com>
-Date: Thu, 3 Jul 2025 09:47:47 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5BDD23B607;
+	Thu,  3 Jul 2025 01:51:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.132.77.159
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751507492; cv=none; b=aCumFWXeC+l0nJmE1yNXGTAvTQxpcHnva3QdLoghn6VMAxPzOHTgcaWUhiovPVxm23cj/6yCH9FAx/eKfqc4MsFB3KMlGtRXXalLznuSKRFoL8aqmxzprKiHQDn/9I5RoWMGO0x5g44vGof2miFBU7pJxkxk79qQhnns8sxQ+bA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751507492; c=relaxed/simple;
+	bh=CdvTNBCQ63H/jPCJ14qmfvoh+2uaJeXsPoVKo1okPMY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Rv2e8jkkkAVUmZJQAR4gPcMZTOwVS33Q2svvxx+u/yn2gDM6lbQJ3Xp2zrhcN9oFlnd444vQfn/k2KsgFoy7nEw7idlWpmYjYo4O9rJMdu1DEqkg9j9ZltBnkm9tV1dnr+CXdRJ/XiIID3ruojsNyIhSqj2fBaKQHNkCgK3Y+Nk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=114.132.77.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
+X-QQ-mid: zesmtpsz8t1751507359ta7508a68
+X-QQ-Originating-IP: qmxm4UfTpTPQm/7rBvisem6Kg9njnEV3saY2lFpPBSA=
+Received: from localhost.localdomain ( [203.174.112.180])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Thu, 03 Jul 2025 09:49:16 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 9594193159864769327
+EX-QQ-RecipientCnt: 22
+From: Dong Yibo <dong100@mucse.com>
+To: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org,
+	corbet@lwn.net,
+	andrew+netdev@lunn.ch,
+	gur.stavi@huawei.com,
+	maddy@linux.ibm.com,
+	mpe@ellerman.id.au,
+	danishanwar@ti.com,
+	lee@trager.us,
+	gongfan1@huawei.com,
+	lorenzo@kernel.org,
+	geert+renesas@glider.be,
+	Parthiban.Veerasooran@microchip.com,
+	lukas.bulwahn@redhat.com,
+	alexanderduyck@fb.com
+Cc: netdev@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	dong100@mucse.com
+Subject: [PATCH 00/15] Add driver for 1Gbe network chips from MUCSE
+Date: Thu,  3 Jul 2025 09:48:44 +0800
+Message-Id: <20250703014859.210110-1-dong100@mucse.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 10/14] dt-bindings: PCI: Add CIX Sky1 PCIe Root Complex
- bindings
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com,
- mani@kernel.org, robh@kernel.org, kwilczynski@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, mpillai@cadence.com,
- fugang.duan@cixtech.com, guoyin.chen@cixtech.com, peter.chen@cixtech.com,
- cix-kernel-upstream@cixtech.com, linux-pci@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250630041601.399921-1-hans.zhang@cixtech.com>
- <20250630041601.399921-11-hans.zhang@cixtech.com>
- <20250630-graceful-horse-of-science-eecc53@krzk-bin>
- <bb4889ca-ec99-4677-9ddc-28905b6fcc14@cixtech.com>
- <5b182268-d64c-424c-9ada-0c3f120d2817@kernel.org>
- <2b608302-c4a6-404d-9cc5-d1ab9a6712bd@cixtech.com>
- <a7aac65e-848b-4bb3-bd52-963766410698@kernel.org>
-Content-Language: en-US
-From: Hans Zhang <hans.zhang@cixtech.com>
-In-Reply-To: <a7aac65e-848b-4bb3-bd52-963766410698@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SG1PEPF000082E3:EE_|TYPPR06MB8036:EE_
-X-MS-Office365-Filtering-Correlation-Id: 87c819b7-9233-4a72-1f9d-08ddb9d39dc1
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ZktENzB2RHB6cHVsZFdrMjJOT05xNU8yeC9UU1RPQzVLMUxlN2NwckhWc1pw?=
- =?utf-8?B?QXBMb0FFTzE3NlpKaHhxMURlTjQ5NUs4cWdlclRpVGN3NW5nNFdzekFNVExH?=
- =?utf-8?B?ckVRRkRTN0Zva1BHUTNUbTJwSS9FN2lpQnRrMXhOOFZmS2R0Sk04VkVoaGxq?=
- =?utf-8?B?S0hhUXZEcmJFVEZDUC94SG1aTzdBN3MyMDQ5NFU4QzU5cmlwQ0JReVEvUnpj?=
- =?utf-8?B?NjYvZGxTdncrWnEyWjNGRnFacVZYTnRpY0JGWEJDSnpDQ3RTbnlvc25FMFp6?=
- =?utf-8?B?NGc3T3UzZzUrRERyNUhDdFE3STJpT2dSTnFWeGZQaHlEeFpSa2dKQk16Yzk1?=
- =?utf-8?B?WUowcGVZc09uTGlHU1BIL0pGZk95bEpWSkNZSFV2KzF3T2dUQllDQWdzWGpM?=
- =?utf-8?B?anh3SDVHRmZpRnkySUxqeHdzK3F3VllVRjVmV2tPMnJGa3dhUzJwZnNjWjlx?=
- =?utf-8?B?SXdUMXVDUjhBWHl5eHRqTVJkN1RicURaQXcvTDdlN25wRHdpdDhURGRlaWJ4?=
- =?utf-8?B?dUZSUThmUFhKd3pkSWk5VTQwYmpPSVRRSXJZNVBybGxDYVlCc2tEWFU4T0dL?=
- =?utf-8?B?TGVPc3VjRDhZNE9EcW4wcXRPeGtVYTBTMTZtYlJpc0FVSkdNdWpSSENuZlE2?=
- =?utf-8?B?emRRSnVPbFN1QXNOMCsveS90M1lFWTFlSlBQcmdyMTBreGxMUjVQWmxTTlZV?=
- =?utf-8?B?eXU0UmhYTzlSQmowODhuUC9DdzJUNGtCZjhHVWlkZGp4bUVPbWd0QW1pVUsw?=
- =?utf-8?B?bmorcHZIWVhYWTVJeVNzYldnaWZwYnYzbzg0V3dta3g0SS9yeVlLVHlWMFRH?=
- =?utf-8?B?Z0VoQkQxTkV1TmhOcHFHTEZicmdUWmRJTmFXb2gxeEx0ZlFOVGVwMjc4RkhB?=
- =?utf-8?B?UThzSHdXMlI1MDVLR2ZUSzEra3RIVnhEaFBaSnZDTnVsNlVtNkJZNXpyLytZ?=
- =?utf-8?B?Mm1XRG9NZndhTmF3cERDWGNiZGVka2lIcm9jTVR3MHpxMjV6K0pxYVlQa2ta?=
- =?utf-8?B?dWl5ZllpZ0RWeXpMS25lNjUzK2swTEYra2ZkN3IzMEd1d2paV0hCL3ZhVzVG?=
- =?utf-8?B?MFdJZW1iSE45MlRSYmFiZnVQSWhnaHpTWmZISjY2dFEvSTR3cHpUdTBLVkZG?=
- =?utf-8?B?SHBZL0kwT3RYbXFCaEhiNG81VzZ1TU05c2E5SEEvM2grUFpYNXUzQzJlTmhp?=
- =?utf-8?B?bVlXZU4ycWYyZjBzNzhnL05aams3S0hqbzRaLzMzLy9NeENpeC9FNmlOckpT?=
- =?utf-8?B?QnJZMXdzSnpoLzFpUmoyLzEvNFdFcGxseG9CLy9NS2t3aUFkQkxCbkgxNm9P?=
- =?utf-8?B?bHJWd2ZGSnFRb0t2NzNnbnZqM2U5U3hwYmVaUzlFQ1BPMjVpQ0ttcURsaXo3?=
- =?utf-8?B?QWhKSmU3RVFOdnp0dGtOQTNranNpZHNaUFdvRzBhZG9JT25WZEdOWGZGYkpQ?=
- =?utf-8?B?MnBZM1J2ZGlqbWdFaVNqekQ0OGdVV3JGSjBCWm5wYmZDN1oyd29mZE83dXlQ?=
- =?utf-8?B?MjNkN05JdjFlamV1b01JeDZzZlRWV1hMVDI2a0M1OEcwWWFzWGtJa1VVZlBt?=
- =?utf-8?B?TWF4QjU5QXJYd2ZIMzRNaUpWdUNtdnlFV0NpbUtWSStCVmFqQjRmZFJuTkl6?=
- =?utf-8?B?V3cxcDdOUWRQYkNIaldBcW9Jd2U0M3FxdmgvaWY2SlFuUS8xYUNqN1NodGVC?=
- =?utf-8?B?bW9YN3l5a1ZYZXVXNUNDRUNYbjV6THlhV211TE13cVlVbUVES2lOUWwzaUZt?=
- =?utf-8?B?VDZNMjZ2Mzc2ZUtueEpMYURiNXRtazJuMXRWTXhmTElZUmhQVytSVnpDc2pY?=
- =?utf-8?B?bVNLdGFicEY0ZVQ2eE9WazZVcTJzc256ak9HTGg4ZEdETEJ5MUZSMHJnWWJL?=
- =?utf-8?B?Q2FPMWFhREZZclkvZEFOTXdqWks0RjEvL2tPVm5ZTFQ5NVNYSFpOUllYNlJ6?=
- =?utf-8?B?ODZNelBnSVBCQ3ZuNkpseVRoN3lxNTZ0bWlVVkNmRHpYdStscTBvVFBDdU4v?=
- =?utf-8?B?N25ocWV0b3FSTXhzdXY5YTdIS2pQYXNIY24yYTVNRnJEMFZXd2JINmo3Qm5q?=
- =?utf-8?Q?0ZVIk3?=
-X-Forefront-Antispam-Report:
-	CIP:222.71.101.198;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:smtprelay.cixcomputing.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014)(7416014);DIR:OUT;SFP:1102;
-X-OriginatorOrg: cixtech.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jul 2025 01:47:49.0763
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 87c819b7-9233-4a72-1f9d-08ddb9d39dc1
-X-MS-Exchange-CrossTenant-Id: 0409f77a-e53d-4d23-943e-ccade7cb4811
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0409f77a-e53d-4d23-943e-ccade7cb4811;Ip=[222.71.101.198];Helo=[smtprelay.cixcomputing.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SG1PEPF000082E3.apcprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYPPR06MB8036
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpsz:mucse.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: MuS8gGDVifkD4PKNwlHhWcMaHPGNrVquZsLjTZdT2JYzUf9zwfqLd0hI
+	dnUWObDllghcBI+hUWTBf7nYp/Sx5gUsvNjx1a8RN4GOPb0RFdQccSyyvABKFHSLShJRU4W
+	89xc/+QIEmQkawkdEVpkm8kGsyqrSaxNsFCD0sDF1ks2oISYPKKjO/807UJmWknQXSqlQ7A
+	7wM90cfgHqYakewJsNnpwxkHa15ZVh4andAbst0cpzY4NZBQCmearY640QdvpYzM9ATJSYc
+	84rbEb+KyNocRSVkWovlUQUpymW8GnHXQoO705j9FA5ciXoIhAWjCSIJuFis31xnUTWrKwf
+	WaLiVICsz4gniym3wC7RWpeeGnWWL6cuYGTkZRU39Fpf0PTzrLmqJaF7DqeL6NgK0g89DlQ
+	bP/g16jtXM4DeqK8A5D4rUTA3WOyzWBAcGss6c/ODw0o6mDu+iO1mr7WxV1xkNFsNv9Cki2
+	dpzuNnuH6+kCXKcL73NZWqHZMH/5alMO1sTgOKoupWX1V9XiPAwBG6XMZIQPd6oxs2ODi28
+	8I6/dUCSZ6fiqiLYb1dHkbgNcS2qzSD6gYctaWOo8NxatU0GwGNIy58eKWDoRnd/Rto4Uiy
+	iKZ2rtuVCkP6jEllYhIT7WYhbHh0uLQpzUf26N9L3PNxX1FtttBvNRUdHhz9w5b1Z1Ft6SA
+	RLKNiS17KszMV3qp3hPIa8zD/xMs5Xh6ifXE1cHZEPL0Y3h2rPxTOisBou9oNBbNTJwwGRy
+	b2OArIrFXwvOFQPY2BOIQQvGK1NbwKqBKCUROuyD9ws00X4tHs2SI4b9w9po9ui55qncyK9
+	QKuEe31DmbKyVOB0zOgeJdQWIF+wxNyBqcqQX/wk1VLO/XAL3lTAzGkxPnzeqB8s5zI7EzR
+	aba+PFUmKQOb9KmcsGEpAiQLNT6yvfTiT6G9kfl54wIGZpDQKpfebCYwMwsPy+IZ5uRVR4N
+	uC8dr4Q8GTfcQ5Wq3wBVxPD7aAG4loyINJLJjexII4HS4Aeu6vhxp6YYXb5uYGpPic+QTWZ
+	pcIZs0BCOo2kMToTqN0+hLuH8OdU+V4jy4gXjzwQ==
+X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
+X-QQ-RECHKSPAM: 0
 
+Hi maintainers,
 
+This patch series introduces support for MUCSE N500/N210 1Gbps Ethernet
+controllers. Only basic tx/rx is included, more features can be added in
+the future.
 
-On 2025/7/3 04:23, Krzysztof Kozlowski wrote:
-> EXTERNAL EMAIL
-> 
-> On 30/06/2025 17:30, Hans Zhang wrote:
->>
->>
->> On 2025/6/30 19:14, Krzysztof Kozlowski wrote:
->>> EXTERNAL EMAIL
->>>
->>> On 30/06/2025 10:29, Hans Zhang wrote:
->>>>>> +
->>>>>> +  num-lanes:
->>>>>> +    maximum: 8
->>>>>> +
->>>>>> +  ranges:
->>>>>> +    maxItems: 3
->>>>>> +
->>>>>> +  msi-map:
->>>>>> +    maxItems: 1
->>>>>> +
->>>>>> +  vendor-id:
->>>>>> +    const: 0x1f6c
->>>>>
->>>>> Why? This is implied by compatible.
->>>>
->>>> Because when we designed the SOC RTL, it was not set to the vendor id
->>>> and device id of our company. We are members of PCI-SIG. So we need to
->>>> set the vendor id and device id in the Root Port driver. Otherwise, the
->>>> output of lspci will be displayed incorrectly.
->>>
->>> Please read carefully. Previous discussions were also pointlessly
->>> ping-ponging on irrelevant arguments. Did I suggest you do not have to
->>> set it in root port driver? No. If this is const here, this is implied
->>> by compatible and completely redundant, because your driver knows this
->>> value already. It already has all the information to deduce this value
->>> from the compatible.
->>>
->>>
->> Dear Krzysztof,
->>
->> Thank you very much for your reply.
->>
->> These two attributes are also in the following document. Is this place
->> out of date?
->> Documentation/devicetree/bindings/pci/ti,j721e-pci-host.yaml
-> 
-> I would need to spend time to investigate that and I choose to do other
-> things instead. I am recently very grumpy on arguments "I found this
-> somewhere else". I found bugs somewhere else, so am I okay to introduce
-> them?
-> 
+The driver has been tested on the following platform:
+   - Kernel version: 6.16.0-rc3
+   - Intel Xeon Processor
 
-Dear Krzysztof,
+Changelog:
+v1: Initial submission
 
-Thank you very much for your reply.
-
-No, no, no.  You misunderstood me.  I didn't mean to say this because we 
-don't study dt-binding doc every day.  So we can only refer to the 
-practices of other SOC manufacturers.  If it's incorrect, we will 
-definitely listen to your opinion.  Here, I'm just explaining the origin 
-of what I did.
-
-Anyway, I have solved this problem by following your method and using 
-compatible.
-
->>
->>
->> We initially used the logic of Cadence common driver as follows:
->> drivers/pci/controller/cadence/pcie-cadence-host.c
->> of_property_read_u32(np, "vendor-id", &rc->vendor_id);
->>
->> of_property_read_u32(np, "device-id", &rc->device_id);
->>
->> So, can the code in Cadence be deleted?
-> 
-> Don't know. If this is ABI, then not.
-> 
-
-According to my understanding, this is not ABI.
+Patch list:
+  0001: net: rnpgbe: Add build support for rnpgbe
+  0002: net: rnpgbe: Add n500/n210 chip support
+  0003: net: rnpgbe: Add basic mbx ops support
+  0004: net: rnpgbe: Add get_capability mbx_fw ops support
+  0005: net: rnpgbe: Add download firmware for n210 chip
+  0006: net: rnpgbe: Add some functions for hw->ops
+  0007: net: rnpgbe: Add get mac from hw
+  0008: net: rnpgbe: Add irq support
+  0009: net: rnpgbe: Add netdev register and init tx/rx memory
+  0010: net: rnpgbe: Add netdev irq in open
+  0011: net: rnpgbe: Add setup hw ring-vector, true up/down hw
+  0012: net: rnpgbe: Add link up handler
+  0013: net: rnpgbe: Add base tx functions
+  0014: net: rnpgbe: Add base rx function
+  0015: net: rnpgbe: Add ITR for rx
 
 Best regards,
-Hans
+Dong Yibo
 
-> 
-> Best regards,
-> Krzysztof
+
+Dong Yibo (15):
+  net: rnpgbe: Add build support for rnpgbe
+  net: rnpgbe: Add n500/n210 chip support
+  net: rnpgbe: Add basic mbx ops support
+  net: rnpgbe: Add get_capability mbx_fw ops support
+  net: rnpgbe: Add download firmware for n210 chip
+  net: rnpgbe: Add some functions for hw->ops
+  net: rnpgbe: Add get mac from hw
+  net: rnpgbe: Add irq support
+  net: rnpgbe: Add netdev register and init tx/rx memory
+  net: rnpgbe: Add netdev irq in open
+  net: rnpgbe: Add setup hw ring-vector, true up/down hw
+  net: rnpgbe: Add link up handler
+  net: rnpgbe: Add base tx functions
+  net: rnpgbe: Add base rx function
+  net: rnpgbe: Add ITR for rx
+
+ .../device_drivers/ethernet/index.rst         |    1 +
+ .../device_drivers/ethernet/mucse/rnpgbe.rst  |   21 +
+ MAINTAINERS                                   |   14 +-
+ drivers/net/ethernet/Kconfig                  |    1 +
+ drivers/net/ethernet/Makefile                 |    1 +
+ drivers/net/ethernet/mucse/Kconfig            |   35 +
+ drivers/net/ethernet/mucse/Makefile           |    7 +
+ drivers/net/ethernet/mucse/rnpgbe/Makefile    |   13 +
+ drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h    |  738 ++++++
+ .../net/ethernet/mucse/rnpgbe/rnpgbe_chip.c   |  515 ++++
+ drivers/net/ethernet/mucse/rnpgbe/rnpgbe_hw.h |   66 +
+ .../net/ethernet/mucse/rnpgbe/rnpgbe_lib.c    | 2245 +++++++++++++++++
+ .../net/ethernet/mucse/rnpgbe/rnpgbe_lib.h    |  143 ++
+ .../net/ethernet/mucse/rnpgbe/rnpgbe_main.c   |  936 +++++++
+ .../net/ethernet/mucse/rnpgbe/rnpgbe_mbx.c    |  622 +++++
+ .../net/ethernet/mucse/rnpgbe/rnpgbe_mbx.h    |   49 +
+ .../net/ethernet/mucse/rnpgbe/rnpgbe_mbx_fw.c |  650 +++++
+ .../net/ethernet/mucse/rnpgbe/rnpgbe_mbx_fw.h |  651 +++++
+ .../net/ethernet/mucse/rnpgbe/rnpgbe_sfc.c    |  236 ++
+ .../net/ethernet/mucse/rnpgbe/rnpgbe_sfc.h    |   30 +
+ 20 files changed, 6969 insertions(+), 5 deletions(-)
+ create mode 100644 Documentation/networking/device_drivers/ethernet/mucse/rnpgbe.rst
+ create mode 100644 drivers/net/ethernet/mucse/Kconfig
+ create mode 100644 drivers/net/ethernet/mucse/Makefile
+ create mode 100644 drivers/net/ethernet/mucse/rnpgbe/Makefile
+ create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
+ create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c
+ create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_hw.h
+ create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_lib.c
+ create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_lib.h
+ create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_main.c
+ create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_mbx.c
+ create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_mbx.h
+ create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_mbx_fw.c
+ create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_mbx_fw.h
+ create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_sfc.c
+ create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_sfc.h
+
+-- 
+2.25.1
+
 
