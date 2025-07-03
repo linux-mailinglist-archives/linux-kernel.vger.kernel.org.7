@@ -1,87 +1,162 @@
-Return-Path: <linux-kernel+bounces-715564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-715566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB8B2AF77B1
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 16:36:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE3DCAF77B7
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 16:37:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58188486BC4
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 14:36:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FA4E1C41635
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 14:37:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9B832ED169;
-	Thu,  3 Jul 2025 14:36:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47FF92ED846;
+	Thu,  3 Jul 2025 14:37:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZX1gEZ2M"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BtSPmFr7"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11C0553365;
-	Thu,  3 Jul 2025 14:36:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27A3617FAC2;
+	Thu,  3 Jul 2025 14:37:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751553393; cv=none; b=MbChFXeFGfw74DBQ+VQ3xZncb0dfHtWgLLVjkwEo2jZq1UYbsXd9/WIRhlfnmKJVtTW/ZvxaUmNz4bQDhlyPeDxEwZL6T0bkifCPJXFVzRShrkBw7KvfAp9feijK1bxyKfkR6UiDFo8IKEy2p2ZIsReHupEFU8LD79cXg87dixo=
+	t=1751553437; cv=none; b=EavLE0y6LBkbC4XRx6+fzEYWM3HHyWxMiOByNGszY6s7rKXFqVircIdmEZ/+dWKp5oTjSmka/0+PVDSCl7XSMLFjuwFYTjogVpgpaDjcT9gHo/DF6Y00eNaz25z0nJamddvKI4mSpVsmFUVzfnRfiGTOs6KQuy1LeS/ja6iua70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751553393; c=relaxed/simple;
-	bh=nVETv5P+aZJXZMi/j9tZ4lMlgii5uB8/cLl650IqYz4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=b9eo2+no1bXGPD/aL6/S83fwhMpqGJGQW7YAe2KrUwk/7s1uHKfwxd2LhRzPsajCvMGQGaKyzRfYLFr3t0sbvoORBE5y6aTmXuxw8hp1SEwSFrRKF+HIYoPLF17qzd7oWXbdjXfABJahLVnCrSLM48YGT/wFnXGgvVeApnU9oy8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZX1gEZ2M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4288FC4CEE3;
-	Thu,  3 Jul 2025 14:36:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751553392;
-	bh=nVETv5P+aZJXZMi/j9tZ4lMlgii5uB8/cLl650IqYz4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=ZX1gEZ2MfK1BlIWOgyLEvlzdfuO2erIRE46NeqJirWqY6OZzikE6lonT111+8HmaT
-	 TCOwfMTmTOVW7Cjphh81nYEWjNn+hTkEYq93XWVE415vOdmboI1FpXLMoq6m3gfTU1
-	 IXsqCPmx6xPRGRd1TeV0CsP03HXcmjxmmkHMxCOVSXoAfYBnY3GzDHthoKnub60/Kd
-	 B6C+INru0iZXzK8g2SsLOsclpZeRr12Uw00vIgpT2UVIOIc8fPv2KFmxKYeN5D8p/T
-	 rSGCcy3dmsa9Pd9Q3tP0P2gwCW2fRz4AFJU6swTckApFni+/Dk6TyBBuyTnnKEe+M9
-	 5Yp+Kxet5QD/w==
-From: Pratyush Yadav <pratyush@kernel.org>
-To: Michael Walle <mwalle@kernel.org>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>,  Pratyush Yadav
- <pratyush@kernel.org>,  Miquel Raynal <miquel.raynal@bootlin.com>,
-  Richard Weinberger <richard@nod.at>,  Vignesh Raghavendra
- <vigneshr@ti.com>,  linux-mtd@lists.infradead.org,
-  linux-kernel@vger.kernel.org,  stable@vger.kernel.org,  Jean-Marc Ranger
- <jmranger@hotmail.com>
-Subject: Re: [PATCH] mtd: spi-nor: Fix spi_nor_try_unlock_all()
-In-Reply-To: <20250701140426.2355182-1-mwalle@kernel.org>
-References: <20250701140426.2355182-1-mwalle@kernel.org>
-Date: Thu, 03 Jul 2025 16:36:30 +0200
-Message-ID: <mafs0sejd1gup.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1751553437; c=relaxed/simple;
+	bh=nRuyDSyDX+FSZrEJj9Qa210f98XkC/rbLMyf1jrpcus=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h6QLG7Pdbbb6sdywNckP0QUbNawWZbNd8ug5U8RhI5EW+kkOzle15Xf9NsWdtCyVGK63AglX3P+a21wDKlsOfzFv+e8QVj2vSaP1T0DJNKIjoP2wmxCMC76o4Jzuzx3KZvIXALrM+UQbYtv3buYdx9hq73uEFxMf1UetXqHUdos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BtSPmFr7; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751553437; x=1783089437;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=nRuyDSyDX+FSZrEJj9Qa210f98XkC/rbLMyf1jrpcus=;
+  b=BtSPmFr7yJb9O/J8V4/e1PYLpMKB5Dnw+UVA1VYLc1mfDgeCT1nIsgZn
+   AO9zGHAQpgOTZOkCvIvshrgUQMBgwu/TQD9JFtKI5xUCOVVHb12AJC0LF
+   NbsCvRlo2BPlkVvrRjwGoL0ESbuvu6S8CNd20gH8BuaCIGXRQ0AcYWLWZ
+   EK3hE9uqgELkctH1s1iLBjyFBSxMwnQ6V66zS97nVEyAafVdkUtVMUhlZ
+   hD6SOQF50/8KOULg+ceQvlOvZGoW1RZXNyuzOTNRM4WQt9163q28sKt3D
+   ob0/r3ASVbYIIe2w434MJP6pNakUgZyJsKJc9Cfs00tcDyfF/nS3rEFmt
+   A==;
+X-CSE-ConnectionGUID: ZN6i8hUlQ1mg+ln4diXsMg==
+X-CSE-MsgGUID: ig2QLlWcRmC60jY0Kav78w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11483"; a="53600579"
+X-IronPort-AV: E=Sophos;i="6.16,284,1744095600"; 
+   d="scan'208";a="53600579"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2025 07:37:16 -0700
+X-CSE-ConnectionGUID: INz2QwAvS/CGnV9kNb1w8A==
+X-CSE-MsgGUID: 71iwFgJZShKjYbMxILbquQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,284,1744095600"; 
+   d="scan'208";a="154880140"
+Received: from lkp-server01.sh.intel.com (HELO 0b2900756c14) ([10.239.97.150])
+  by orviesa008.jf.intel.com with ESMTP; 03 Jul 2025 07:37:12 -0700
+Received: from kbuild by 0b2900756c14 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uXL3m-0001uJ-1M;
+	Thu, 03 Jul 2025 14:37:10 +0000
+Date: Thu, 3 Jul 2025 22:36:38 +0800
+From: kernel test robot <lkp@intel.com>
+To: Petr Mladek <pmladek@suse.com>,
+	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>,
+	John Ogness <john.ogness@linutronix.de>,
+	Dan Carpenter <error27@gmail.com>
+Cc: oe-kbuild-all@lists.linux.dev, Steven Rostedt <rostedt@goodmis.org>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Kees Cook <kees@kernel.org>,
+	"Gustavo A . R . Silva" <gustavoars@kernel.org>,
+	David Gow <davidgow@google.com>, Arnd Bergmann <arnd@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
+	Petr Mladek <pmladek@suse.com>
+Subject: Re: [PATCH 2/3] printk: kunit: support offstack cpumask
+Message-ID: <202507032226.1sEv2EJM-lkp@intel.com>
+References: <20250702095157.110916-3-pmladek@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250702095157.110916-3-pmladek@suse.com>
 
-On Tue, Jul 01 2025, Michael Walle wrote:
+Hi Petr,
 
-> Commit ff67592cbdfc ("mtd: spi-nor: Introduce spi_nor_set_mtd_info()")
-> moved all initialization of the mtd fields at the end of spi_nor_scan().
-> Normally, the mtd info is only needed for the mtd ops on the device,
-> with one exception: spi_nor_try_unlock_all(), which will also make use
-> of the mtd->size parameter. With that commit, the size will always be
-> zero because it is not initialized. Fix that by not using the size of
-> the mtd_info struct, but use the size from struct spi_nor_flash_parameter.
+kernel test robot noticed the following build errors:
 
-I suppose some of this code would be cleaner if we declared a size
-variable instead of typing out nor->params->size every time, but I don't
-think it matters too much so this patch is fine too. Thanks for fixing
-this!
+[auto build test ERROR on linux-next/master]
+[cannot apply to linus/master v6.16-rc4]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Reviewed-by: Pratyush Yadav <pratyush@kernel.org>
+url:    https://github.com/intel-lab-lkp/linux/commits/Petr-Mladek/printk-ringbuffer-Explain-why-the-KUnit-test-ignores-failed-writes/20250702-175422
+base:   linux-next/master
+patch link:    https://lore.kernel.org/r/20250702095157.110916-3-pmladek%40suse.com
+patch subject: [PATCH 2/3] printk: kunit: support offstack cpumask
+config: riscv-randconfig-001-20250703 (https://download.01.org/0day-ci/archive/20250703/202507032226.1sEv2EJM-lkp@intel.com/config)
+compiler: riscv64-linux-gcc (GCC) 13.3.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250703/202507032226.1sEv2EJM-lkp@intel.com/reproduce)
 
-[...]
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507032226.1sEv2EJM-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from kernel/printk/printk_ringbuffer_kunit_test.c:14:
+   kernel/printk/printk_ringbuffer_kunit_test.c: In function 'prbtest_cpumask_cleanup':
+>> include/kunit/resource.h:409:32: error: cast specifies array type
+     409 |                 arg_type arg = (arg_type)in;                    \
+         |                                ^
+   kernel/printk/printk_ringbuffer_kunit_test.c:219:1: note: in expansion of macro 'KUNIT_DEFINE_ACTION_WRAPPER'
+     219 | KUNIT_DEFINE_ACTION_WRAPPER(prbtest_cpumask_cleanup, free_cpumask_var, cpumask_var_t);
+         | ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+--
+   In file included from printk_ringbuffer_kunit_test.c:14:
+   printk_ringbuffer_kunit_test.c: In function 'prbtest_cpumask_cleanup':
+>> include/kunit/resource.h:409:32: error: cast specifies array type
+     409 |                 arg_type arg = (arg_type)in;                    \
+         |                                ^
+   printk_ringbuffer_kunit_test.c:219:1: note: in expansion of macro 'KUNIT_DEFINE_ACTION_WRAPPER'
+     219 | KUNIT_DEFINE_ACTION_WRAPPER(prbtest_cpumask_cleanup, free_cpumask_var, cpumask_var_t);
+         | ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+vim +409 include/kunit/resource.h
+
+b9dce8a1ed3efe David Gow 2023-05-25  392  
+56778b49c9a2cb David Gow 2023-11-28  393  /**
+56778b49c9a2cb David Gow 2023-11-28  394   * KUNIT_DEFINE_ACTION_WRAPPER() - Wrap a function for use as a deferred action.
+56778b49c9a2cb David Gow 2023-11-28  395   *
+56778b49c9a2cb David Gow 2023-11-28  396   * @wrapper: The name of the new wrapper function define.
+56778b49c9a2cb David Gow 2023-11-28  397   * @orig: The original function to wrap.
+56778b49c9a2cb David Gow 2023-11-28  398   * @arg_type: The type of the argument accepted by @orig.
+56778b49c9a2cb David Gow 2023-11-28  399   *
+56778b49c9a2cb David Gow 2023-11-28  400   * Defines a wrapper for a function which accepts a single, pointer-sized
+56778b49c9a2cb David Gow 2023-11-28  401   * argument. This wrapper can then be passed to kunit_add_action() and
+56778b49c9a2cb David Gow 2023-11-28  402   * similar. This should be used in preference to casting a function
+56778b49c9a2cb David Gow 2023-11-28  403   * directly to kunit_action_t, as casting function pointers will break
+56778b49c9a2cb David Gow 2023-11-28  404   * control flow integrity (CFI), leading to crashes.
+56778b49c9a2cb David Gow 2023-11-28  405   */
+56778b49c9a2cb David Gow 2023-11-28  406  #define KUNIT_DEFINE_ACTION_WRAPPER(wrapper, orig, arg_type)	\
+56778b49c9a2cb David Gow 2023-11-28  407  	static void wrapper(void *in)				\
+56778b49c9a2cb David Gow 2023-11-28  408  	{							\
+56778b49c9a2cb David Gow 2023-11-28 @409  		arg_type arg = (arg_type)in;			\
+56778b49c9a2cb David Gow 2023-11-28  410  		orig(arg);					\
+56778b49c9a2cb David Gow 2023-11-28  411  	}
+56778b49c9a2cb David Gow 2023-11-28  412  
+56778b49c9a2cb David Gow 2023-11-28  413  
 
 -- 
-Regards,
-Pratyush Yadav
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
