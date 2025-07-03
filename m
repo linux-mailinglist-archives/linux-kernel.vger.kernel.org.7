@@ -1,149 +1,106 @@
-Return-Path: <linux-kernel+bounces-714868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35670AF6DBA
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 10:54:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 66A5FAF6DBE
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 10:54:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A60A3B936B
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 08:53:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF4643B7CE7
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 08:54:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64D7F2D3740;
-	Thu,  3 Jul 2025 08:54:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="C8XaRpAt"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC49B2D3233
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 08:54:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 505BD2D3A6F;
+	Thu,  3 Jul 2025 08:54:37 +0000 (UTC)
+Received: from hrbeu.edu.cn (mx1.hrbeu.edu.cn [202.118.176.6])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B9FA2D322C
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 08:54:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.118.176.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751532852; cv=none; b=Y4FWxG8mRs28F72wDWb0xTTCOEsIPKNnwIlMYVhX9b9aqH8T3Krw1uuOrwVT3ueJE2Wek3jY305Yn1hVq2DdCk8xvjA5GH5H6LShjsrwmwfsx/xRNuGWrsEi/9hgEdr0GoQmctHivKyK+1scibSrFPchIpMTfC2oEOasw1yvVME=
+	t=1751532876; cv=none; b=m2XFLtz+dXEttm0mkQ6VhuYFI0bgUMbo/T1loxHRfiQr98mgP/ApX1HLUztyfNisUbZp2tAVfczr5fCAzuPEl0xI2myoH/nRc1U6ExdvTs3pJGzcTXE3VNwozWfTaaVHkHyndMdQMFRMIl0BgG3biUbAKoJ3Kupu4V5GwQkkWjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751532852; c=relaxed/simple;
-	bh=JFKkpB5qKvKhZeE50RzRpYx/axTWHSjZ2/LQoUGc5R4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZbIqmmFruhV600xjQLbWMnOxRc/iP2E2JbOKY8em5XRop7/NffJUeUpDQEXPn1A4aUCfoOFL/ouGGJfMHn6eQT8sNkKOy6E1nB/kY7I2bL4aF/hTGCKt8ty+Ee/I2NvKa9kg1QR77YW7T4uln95mqpNEpcsywtSI2J9CThIobWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=C8XaRpAt; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3a4fb9c2436so4499411f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Jul 2025 01:54:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1751532849; x=1752137649; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0VYKYHeFNtZ2oFC545XbMVrPs46y5zmYyM5DegTCqAs=;
-        b=C8XaRpAt5qHklIZcuos4uCqQrlsJQXQwWQkMCUHAoOJStTAC2XDZQDf3wQfNByC5Ar
-         3B+GAb2AyuU8N3znZkD37FgTLi5cReKgTO6/+0ZUFV4Wmmx4+AxNjhAHhWVpfgryfVbM
-         jmcmX9QGZTdfPRq/oWQQ2yzKzV4BgPeTYIJ1KwUokB0YN7JlD+ifNZqFFCn/93R3/NJa
-         JQZGAekZb4nWYVZ4QHYCVh+8vKj2oM7hqdYCe6vUX3O5pGDFhy3ii4guayALt7eil2KJ
-         DrqwoYePsZ4OYFrvJQHDW5Tfhm58g5bs2qvFENoCkhWlxf1UJccir4ezz4azm8U2Pvlb
-         hy7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751532849; x=1752137649;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0VYKYHeFNtZ2oFC545XbMVrPs46y5zmYyM5DegTCqAs=;
-        b=tv+gXZSBZuV+uoDfvUFy9tgRw9E3lZ0a6p0u6VOLVORy8r63oAfPOH5sItOgWKwB0L
-         QnviHACuMaawNqNYj50UyReI4Z8zypubt3r1RYgbmam1MAUpxndN7WNf5FwtGjEsmmnA
-         21G+Aq6pt0atxc3lFroNgjJaKYGPbIFEV1KPFug3H5VMCCctD+aX0OeP5ljbwz1VG60t
-         H+8hs7CfoB0RZSSd7G5Z1EdQTVJsvJg4mfcWt+QXhVu+ySJabVGWnvjDROp9CaqbRofq
-         cRVKaB6w5ShGA73oFDvdVAn2QY9Vo5RCzZN2o70ZJrWEdNG7HrpqxQHzy2JuQnWO1OMP
-         WQjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU1HCmSrOmVjRF8281iKmHQ8A0tdThJJV/SWVst8K8Vo5UoNdN2y1uIA1vPZTCSyEnTpi+5u/KltUPksWo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzoS9qW3spr/lV44qo8/ddWUiIgT18esfdafINFUNFTwZd/U5p9
-	JB6T7U4ezVSlLwr2kHptJs04JY0XXj/dF/yTnSITgWeWdINcxx0T5bknoGBMRAsdlQ0=
-X-Gm-Gg: ASbGncvbHekjFJsfStlRPY+ZKu1OFUvnmkVo7FmH6VV0Py4CibBUiS58H/iFAXvtAXO
-	+Bee5PjY817W48jC5ycFqP6UGJ+Hp+4ZlaNmoUJ/b8gFOHv1pM0Z0bRX1TaCUtSdaybSdENnm13
-	ENC0cfu6tOjNCUPoJKMoaghmskbnWYZcBTkteK2i4nLOAqdYrL7xZgjSYItA+aWKO+UtHGrICiy
-	b+JxQYyBCSfY1sKjgWKaE/W3U/3yHbxRldPMBcZ71ujpfO2P13yoNXGzobwUS5UvhOAiTtUOPJf
-	kRAN6EC+zVlvfqu7BCllMV3P05P9Zc6V1on9fyk9znmdSjQplK9dgf3dTDdNQzmV
-X-Google-Smtp-Source: AGHT+IG6FCyNYgIa+hq5mjmcCPQf8t5hT+32twe1uG80evH2q41a1bXyNguqxgrUUjWMuX1FwBw3BQ==
-X-Received: by 2002:a05:6000:2802:b0:3a4:dfc2:b9e1 with SMTP id ffacd0b85a97d-3b32b4277acmr1378083f8f.2.1751532849101;
-        Thu, 03 Jul 2025 01:54:09 -0700 (PDT)
-Received: from blackdock.suse.cz ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a88c7fadf3sm18380658f8f.34.2025.07.03.01.54.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Jul 2025 01:54:08 -0700 (PDT)
-Date: Thu, 3 Jul 2025 10:54:06 +0200
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: Shashank Balaji <shashank.mahadasyam@sony.com>
-Cc: Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Shuah Khan <shuah@kernel.org>, cgroups@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Shinya Takumi <shinya.takumi@sony.com>
-Subject: Re: [PATCH 0/2] selftests/cgroup: better bound for cpu.max tests
-Message-ID: <bhp3gwezbmseeqonh44qjauydis6wdqb7p6digf45hsssicufy@3az65qay67r5>
-References: <20250701-kselftest-cgroup-fix-cpu-max-v1-0-049507ad6832@sony.com>
- <4bqk62cqsv3b4sid76zf3jwvyswdym7bl5wf7r6ouwqvmmvsfv@qztfmjdd7nvc>
- <aGXfvfKOjWlH3d0q@JPC00244420>
+	s=arc-20240116; t=1751532876; c=relaxed/simple;
+	bh=OLZZrnGwIXMel88WGve2VF6slVpsq5u0Rxf8ssSzbD0=;
+	h=Date:From:To:Cc:Subject:Content-Type:MIME-Version:Message-ID; b=t+3OJcHUqIAI7msgjQ6FBfYd3DsRpE+PlAsC3TBUp1MJx+eO5xG/QHCX4QyD2rKVYOnGRXLoc6dG25JH2a7DSFUJYin0X4lRL7VXfj0ZVIANlGLsFOTdbNaoXE5mHWKoS/JFhylx4NxVbnhUoXSAgNQ6OQpClAnOY0TCpNkMAKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hrbeu.edu.cn; spf=pass smtp.mailfrom=hrbeu.edu.cn; arc=none smtp.client-ip=202.118.176.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hrbeu.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hrbeu.edu.cn
+Received: from baishuoran$hrbeu.edu.cn ( [118.74.253.71] ) by
+ ajax-webmail-Front (Coremail) ; Thu, 3 Jul 2025 16:54:21 +0800 (GMT+08:00)
+Date: Thu, 3 Jul 2025 16:54:21 +0800 (GMT+08:00)
+X-CM-HeaderCharset: UTF-8
+From: =?UTF-8?B?55m954OB5YaJ?= <baishuoran@hrbeu.edu.cn>
+To: "Anna-Maria Behnsen" <anna-maria@linutronix.de>,
+	"Frederic Weisbecker" <frederic@kernel.org>,
+	"Thomas Gleixner" <tglx@linutronix.de>
+Cc: "Kun Hu" <huk23@m.fudan.edu.cn>, "Jiaji Qin" <jjtan24@m.fudan.edu.cn>,
+	linux-kernel@vger.kernel.org, syzkaller@googlegroups.com
+Subject: BUG: spinlock bad magic in lock_timer_base
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version 2024.2-cmXT5 build
+ 20241202(ebbd5d74) Copyright (c) 2002-2025 www.mailtech.cn hrbeu.edu.cn
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="3xhm54cgfxwbj5xg"
-Content-Disposition: inline
-In-Reply-To: <aGXfvfKOjWlH3d0q@JPC00244420>
+Message-ID: <8d6bd3e.1228f.197cf7e7892.Coremail.baishuoran@hrbeu.edu.cn>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:CbB2ygD3omk9RWZoJlUEAA--.834W
+X-CM-SenderInfo: pedl2xpxrut0w6kuuvvxohv3gofq/1tbiAQIMCmhlA2QJJwABsA
+X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
+	CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
+	daVFxhVjvjDU=
 
-
---3xhm54cgfxwbj5xg
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 0/2] selftests/cgroup: better bound for cpu.max tests
-MIME-Version: 1.0
-
-On Thu, Jul 03, 2025 at 10:41:17AM +0900, Shashank Balaji <shashank.mahadas=
-yam@sony.com> wrote:
-> Going with the more natural way of sticking to CPU_HOG_CLOCK_WALL, the
-> second patch does calculate expected_usage_usec based on the configured
-> quota, as the code comment explains. So I'm guessesing we're on the same =
-page
-> about this?
-
-Yes, the expected_usage_usec in the 2nd patch is correct. (It'd be nicer
-if the value calculated from the configured cpu.max and not typed out as
-a literal that may diverge should be the cpu.max changed in the test.)
-
-> Do you mean something like,
->=20
-> 	if (values_close(usage_usec, expected_usage_usec, 10))
-> 			goto cleanup;
->=20
-> using the positive values_close() predicate. If so, I'm not sure I
-> understand because if usage_usec and expected_usage_usec _are_ close,
-> then we want the test to pass! We should be using the negative
-> predicate.
-
-I meant to use it the same way like test_memcontrol.c does, i.e.
-values_close() <=3D> pass.
-
-So codewise it boils down to (a negation, I see why the confusion):
- 	if (!values_close(usage_usec, expected_usage_usec, 10))
- 		goto cleanup;
-	ret =3D KSFT_PASS;
-
-
-Michal
-
-
---3xhm54cgfxwbj5xg
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRCE24Fn/AcRjnLivR+PQLnlNv4CAUCaGZFJAAKCRB+PQLnlNv4
-CAsXAP91rphar4H3mE6t/Y5+65v7hmlgTBLpdWtP/5RsUzy47QD+OUCtV48Uv0Ap
-Bhys8HlODz9OB4yXGDV/QCY+ZNmZdQg=
-=o8eK
------END PGP SIGNATURE-----
-
---3xhm54cgfxwbj5xg--
+RGVhciBNYWludGFpbmVycywKCldoZW4gdXNpbmcgb3VyIGN1c3RvbWl6ZWQgU3l6a2FsbGVyIHRv
+IGZ1enogdGhlIGxhdGVzdCBMaW51eCBrZXJuZWwsIHRoZSBmb2xsb3dpbmcgY3Jhc2ggKDExMHRo
+KXdhcyB0cmlnZ2VyZWQuCgoKSEVBRCBjb21taXQ6IDY1MzdjZmIzOTVmMzUyNzgyOTE4ZDhlZTdi
+N2YxMGJhMmNjM2NiZjIKZ2l0IHRyZWU6IHVwc3RyZWFtCk91dHB1dDpodHRwczovL2dpdGh1Yi5j
+b20vcGdoazEzL0tlcm5lbC1CdWcvYmxvYi9tYWluLzA3MDJfNi4xNC9CVUclM0ElMjBzcGlubG9j
+ayUyMGJhZCUyMG1hZ2ljJTIwaW4lMjBsb2NrX3RpbWVyX2Jhc2UvcmVwb3J0MTEwLnR4dCAKS2Vy
+bmVsIGNvbmZpZzpodHRwczovL2dpdGh1Yi5jb20vcGdoazEzL0tlcm5lbC1CdWcvYmxvYi9tYWlu
+LzA3MDJfNi4xNC9jb25maWcudHh0CkMgcmVwcm9kdWNlcjpodHRwczovL2dpdGh1Yi5jb20vcGdo
+azEzL0tlcm5lbC1CdWcvYmxvYi9tYWluLzA3MDJfNi4xNC9CVUclM0ElMjBzcGlubG9jayUyMGJh
+ZCUyMG1hZ2ljJTIwaW4lMjBsb2NrX3RpbWVyX2Jhc2UvMTEwcmVwcm8uYyBTeXpsYW5nIApyZXBy
+b2R1Y2VyOmh0dHBzOi8vZ2l0aHViLmNvbS9wZ2hrMTMvS2VybmVsLUJ1Zy9ibG9iL21haW4vMDcw
+Ml82LjE0L0JVRyUzQSUyMHNwaW5sb2NrJTIwYmFkJTIwbWFnaWMlMjBpbiUyMGxvY2tfdGltZXJf
+YmFzZS8xMTByZXByby50eHQgT3VyIHJlcHJvZHVjZXIgdXNlcyBtb3VudHMgYSBjb25zdHJ1Y3Rl
+ZCBmaWxlc3lzdGVtIGltYWdlLgogCiAKVGhlIGVycm9yIG9jY3VycyBpbiB0aGUgbG9ja190aW1l
+cl9iYXNlICh0aW1lci5jIGxpbmVzIDE3NzAtMTc5MCBvciBzbykuIEl0IGhhcHBlbnMgY2xlYW51
+cF9zcmN1X3N0cnVjdCBkdXJpbmcgdGhlIEtWTSBWTSBzaHV0ZG93biBwcm9jZXNzLCBhbmQgaXQg
+aXMgbGlrZWx5IHRoYXQgdGhlIG1lbW9yeSBwb2ludGVkIHRvIGJ5IHRoZSB0aW1lciBvYmplY3Qg
+aGFzIGJlZW4gZnJlZWQuIFRoZSB0aW1lcl9iYXNlIHBvaW50ZXIgcmV0dXJuZWQgYnkgdGhlIGdl
+dF90aW1lcl9iYXNlICh0ZikgcG9pbnRzIHRvIGFuIGludmFsaWQgbWVtb3J5IGFyZWEgKF9faW5p
+dF9iZWdpbisweDJhNTAwKQpXZSBoYXZlIHJlcHJvZHVjZWQgdGhpcyBpc3N1ZSBzZXZlcmFsIHRp
+bWVzIG9uIDYuMTQgYWdhaW4uCgoKCklmIHlvdSBmaXggdGhpcyBpc3N1ZSwgcGxlYXNlIGFkZCB0
+aGUgZm9sbG93aW5nIHRhZyB0byB0aGUgY29tbWl0OgpSZXBvcnRlZC1ieTogS3VuIEh1IDxodWsy
+M0BtLmZ1ZGFuLmVkdS5jbj4sIEppYWppIFFpbiA8amp0YW4yNEBtLmZ1ZGFuLmVkdS5jbj4sIFNo
+dW9yYW4gQmFpIDxiYWlzaHVvcmFuQGhyYmV1LmVkdS5jbj4KCgoKCkJVRzogc3BpbmxvY2sgYmFk
+IG1hZ2ljIG9uIENQVSMyLCBzeXouNi4zOTkvMTgxMjkKIGxvY2s6IF9faW5pdF9iZWdpbisweDJh
+NTAwLzB4NDEwMDAsIC5tYWdpYzogMDAwMDAwMDAsIC5vd25lcjogPG5vbmU+Ly0xLCAub3duZXJf
+Y3B1OiAwCkNQVTogMiBVSUQ6IDAgUElEOiAxODEyOSBDb21tOiBzeXouNi4zOTkgTm90IHRhaW50
+ZWQgNi4xNC4wICMxCkhhcmR3YXJlIG5hbWU6IFFFTVUgU3RhbmRhcmQgUEMgKGk0NDBGWCArIFBJ
+SVgsIDE5OTYpLCBCSU9TIDEuMTMuMC0xdWJ1bnR1MS4xIDA0LzAxLzIwMTQKQ2FsbCBUcmFjZToK
+IDxUQVNLPgogZHVtcF9zdGFja19sdmwrMHgxMTYvMHgxYjAKIGRvX3Jhd19zcGluX2xvY2srMHgy
+MmMvMHgyZTAKIF9yYXdfc3Bpbl9sb2NrX2lycXNhdmUrMHg0NS8weDYwCiBsb2NrX3RpbWVyX2Jh
+c2UrMHgxMjUvMHgxYzAKIF9fdHJ5X3RvX2RlbF90aW1lcl9zeW5jKzB4N2YvMHgxNjAKIF9fdGlt
+ZXJfZGVsZXRlX3N5bmMrMHgxMjAvMHgxYzAKIGNsZWFudXBfc3JjdV9zdHJ1Y3QrMHgxMjIvMHg1
+YTAKIGt2bV9wdXRfa3ZtKzB4N2M5LzB4YTEwCiBrdm1fdmNwdV9yZWxlYXNlKzB4NGIvMHg3MAog
+X19mcHV0KzB4NDE3LzB4YjYwCiBfX2ZwdXRfc3luYysweGE2LzB4YzAKIF9feDY0X3N5c19jbG9z
+ZSsweDhiLzB4MTIwCiBkb19zeXNjYWxsXzY0KzB4Y2YvMHgyNTAKIGVudHJ5X1NZU0NBTExfNjRf
+YWZ0ZXJfaHdmcmFtZSsweDc3LzB4N2YKUklQOiAwMDMzOjB4N2ZhZmRhZDFlYmRiCkNvZGU6IDAz
+IDAwIDAwIDAwIDBmIDA1IDQ4IDNkIDAwIGYwIGZmIGZmIDc3IDQxIGMzIDQ4IDgzIGVjIDE4IDg5
+IDdjIDI0IDBjIGU4IDYzIGZjIGZmIGZmIDhiIDdjIDI0IDBjIDQxIDg5IGMwIGI4IDAzIDAwIDAw
+IDAwIDBmIDA1IDw0OD4gM2QgMDAgZjAgZmYgZmYgNzcgMmYgNDQgODkgYzcgODkgNDQgMjQgMGMg
+ZTggYTEgZmMgZmYgZmYgOGIgNDQKUlNQOiAwMDJiOjAwMDA3ZmZkZThjOTViMjAgRUZMQUdTOiAw
+MDAwMDI5MyBPUklHX1JBWDogMDAwMDAwMDAwMDAwMDAwMwpSQVg6IGZmZmZmZmZmZmZmZmZmZGEg
+UkJYOiAwMDAwMDAwMDAwMDAwMDA2IFJDWDogMDAwMDdmYWZkYWQxZWJkYgpSRFg6IGZmZmZmZmZm
+ZmZmZmZmZmYgUlNJOiAwMDAwMDAwMDAwMDAwMDAwIFJESTogMDAwMDAwMDAwMDAwMDAwNQpSQlA6
+IDAwMDA3ZmZkZThjOTViZjggUjA4OiAwMDAwMDAwMDAwMDAwMDAwIFIwOTogMDAwMDdmYWZkYTgw
+MTVhNgpSMTA6IDAwMDAwMDAwMDAwMDAwMDEgUjExOiAwMDAwMDAwMDAwMDAwMjkzIFIxMjogMDAw
+MDdmYWZkYWZhNWZhMApSMTM6IDAwMDAwMDAwMDAwMmYzZWEgUjE0OiBmZmZmZmZmZmZmZmZmZmZm
+IFIxNTogMDAwMDdmYWZkYWZhNWZhMAogPC9UQVNLPgoKCgoKCgp0aGFua3MsCkt1biBIdQo=
 
