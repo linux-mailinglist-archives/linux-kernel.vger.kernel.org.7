@@ -1,174 +1,191 @@
-Return-Path: <linux-kernel+bounces-714951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CFF0AF6ECF
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 11:34:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85FDBAF6ED7
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 11:34:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 41CD97B8C49
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 09:33:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14EF94E7A58
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 09:34:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59D9A2D0C95;
-	Thu,  3 Jul 2025 09:34:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E015B2D876C;
+	Thu,  3 Jul 2025 09:34:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="PxCvQMV8";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="rX0rMgui";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="PxCvQMV8";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="rX0rMgui"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=leica-geosystems.com.cn header.i=@leica-geosystems.com.cn header.b="KhAWfuQT"
+Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013059.outbound.protection.outlook.com [40.107.162.59])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 318F2242D80
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 09:34:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751535257; cv=none; b=YJrV7w4bPfQCuUDGw4zqFM2+Qp/au5xvo/K8KAewjFGdcuBRuroCc/3q7E5j5Hi+AWsH7SgjG9E58krJ0HQWXpyJj2NWlZ5gjNNO3NiDf4BH38O1NhJlIgZhO8G85bDxl3GU9ay1D+b5gjJUI13dImm4VcQHxuFnonh/jCZTMEE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751535257; c=relaxed/simple;
-	bh=nANIl+8OdUCAyHhwV0u0GP5dkQNzdlPOUBby2T5uph0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZUxZ4oNXIvA1Xka+Iby79zbLZq+BjHJUmYJ3hQjuGnkWcBQg8E438VfKniu+yUqdKv6jo+LHisHcd4lZs5QavDv4SHIL0yDy1p+z0Z9x1b7Z9GudlkfmoRSAlqv+agEjiqEscr9qI/GWDKIOGPsEMA68V0JpheL2boy8VAZRNAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=PxCvQMV8; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=rX0rMgui; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=PxCvQMV8; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=rX0rMgui; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 53E471F457;
-	Thu,  3 Jul 2025 09:34:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1751535252; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AEzOsqJCpTsA6+tGxdT7oSoEwUMy3kIEd2qkVoXTzqE=;
-	b=PxCvQMV8zndbQyE6ly524YmDf3Y8RUCs9p3YqF/9H+vWukJGv8+MZDRm+mwjgmXRB3ZofF
-	EzdTEJLNO+zIoMTaghdJQH+WQj913S4rhFuBY1dqNVnedyXSgjDa/9Jbb62eK6LZmBzeYn
-	3YcjzwuGxlicevjqJhhsKkSjGP5vxR0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1751535252;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AEzOsqJCpTsA6+tGxdT7oSoEwUMy3kIEd2qkVoXTzqE=;
-	b=rX0rMguinqvqFDR6ZeF31Y+VH3j5DsAHDP4uVp4f24US7KyZ1egnEXh0BlFYfSL2Da7lJ5
-	ba/h2+EfXBoYEUAQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=PxCvQMV8;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=rX0rMgui
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1751535252; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AEzOsqJCpTsA6+tGxdT7oSoEwUMy3kIEd2qkVoXTzqE=;
-	b=PxCvQMV8zndbQyE6ly524YmDf3Y8RUCs9p3YqF/9H+vWukJGv8+MZDRm+mwjgmXRB3ZofF
-	EzdTEJLNO+zIoMTaghdJQH+WQj913S4rhFuBY1dqNVnedyXSgjDa/9Jbb62eK6LZmBzeYn
-	3YcjzwuGxlicevjqJhhsKkSjGP5vxR0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1751535252;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AEzOsqJCpTsA6+tGxdT7oSoEwUMy3kIEd2qkVoXTzqE=;
-	b=rX0rMguinqvqFDR6ZeF31Y+VH3j5DsAHDP4uVp4f24US7KyZ1egnEXh0BlFYfSL2Da7lJ5
-	ba/h2+EfXBoYEUAQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id DD47213721;
-	Thu,  3 Jul 2025 09:34:11 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id ScaFL5NOZmgvAwAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Thu, 03 Jul 2025 09:34:11 +0000
-Date: Thu, 3 Jul 2025 11:34:10 +0200
-From: Oscar Salvador <osalvador@suse.de>
-To: Mike Rapoport <rppt@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Alexandre Ghiti <alexghiti@rivosinc.com>,
-	David Hildenbrand <david@redhat.com>,
-	Pratyush Yadav <ptyadav@amazon.de>, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH 2/3] cma: split resrvation of fixed area into a helper
- function
-Message-ID: <aGZOkpE8DRv9uawi@localhost.localdomain>
-References: <20250702173605.2198924-1-rppt@kernel.org>
- <20250702173605.2198924-3-rppt@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64EF82D23B0;
+	Thu,  3 Jul 2025 09:34:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.59
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751535286; cv=fail; b=Fhl9xaJ0VIWgm5Iu4GOu89NI2cq3PeVP5vXWX086SPLgzammg0LtL9Sb0toFO9pt1FVs4GhzJxOqLMky1AKNlx/UgVBzKm+Io8pQzu9pYcpz4aF0tm/WcKC4ZvtRdzdsT/eRBk0qCgfaiOu7kst2lXJeS5X3gWFsFGLwcGhrDzw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751535286; c=relaxed/simple;
+	bh=g22LyTxh/ed54YX4M05+ONegfh95sMqe5bnfWmRWPjM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=QQhTnc1Xl982IOHPjRLKc6pde7zwHK0eezqvHbesI5O+vPqpl3ZvBRtdDjJ8Xz26txVRKW4n3BgrO0NdJIQx0Adf+xL53eqM2pKy58U23vzIShqNy0f0diUeGw2fF3hWnAmFXC8F9ExLkENN4Xhh4r/LvfXnhtpGQBtp6ULr6ko=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=leica-geosystems.com.cn; spf=fail smtp.mailfrom=leica-geosystems.com.cn; dkim=pass (1024-bit key) header.d=leica-geosystems.com.cn header.i=@leica-geosystems.com.cn header.b=KhAWfuQT; arc=fail smtp.client-ip=40.107.162.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=leica-geosystems.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=leica-geosystems.com.cn
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=cXJxSwplD+VUSTnfL+bFjII0Rfw44wJV81wNqckLQSW55bZo2PFvLaNNNlNtrlcTrvIIrKc2/nZXnt5HbPUc+uhfcyEvmCeYnKimTkWsWZq3kmEDVWHM5L/rcBRaO5JMMAutTqjcU8+vMwnbQ65OgAAepoWw8tlTKk2T2SXYbobhXbx1f7IsIbLznynRKxGLRRM9GXPegNmbwlraR4ynIByVhZeGRkY2b1grO7+y9ENxKTx4LiMn1vHZorEiuuES+N7cVYXfCUh3llkIc3RjnH7Wk8ByoNl6aRFQkpjjUukSbB4onIkjo2FbteTIrwD2djiE3nVO1NIh7GZc1Q4Sjw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=87y330Bmtst1DnTMvjV2i4rTmWQdLEc06KMnxLkfxg8=;
+ b=wa29BOTaxItzKkQpM5bpQ4hVu+4YeSO4e8Zi0AwNkjCWCv9KI8AXyiByLggHJkoOyfWNYmloqeLkJ8DLtJ57jTDzPzI5OSQK35QXF2PNrcaKBMXr6ljQGKCz/dYCIlQ6xZP/GsdY2o5K3qFevNQSma8qcvAj++zSl5b4G3q7tiuGc2JNyiiFXcBIC4FmFq5qtXg3uK2r12WRBAMaix2dNyTX2xFhVF7PHVq+ChK2G63Bublyk4ty2h+Klg4kPp9RCn2G8zg1AFLgIFidMU3WNb8FC7l+kkZ/PHGT875zJqSaW5BdI6ZxN8ugHF2HY9zEmWD0MYsc/YSOUlzQtZ0/bQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 193.8.40.94) smtp.rcpttodomain=vger.kernel.org
+ smtp.mailfrom=leica-geosystems.com.cn; dmarc=pass (p=reject sp=reject
+ pct=100) action=none header.from=leica-geosystems.com.cn; dkim=none (message
+ not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=leica-geosystems.com.cn; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=87y330Bmtst1DnTMvjV2i4rTmWQdLEc06KMnxLkfxg8=;
+ b=KhAWfuQT6lnfSPwh6QbEEcjvQ7f6/v+jQaDZdjKvUIcWDa60MWD+kunRg1B7Z/Ecs6Ik7KJVJdSVuLVqRiT9/J5ShPPn6HWOwbc/Pcq4y4j0Dbh1xSTeh2Id17A1E0ZXo8PIzlPxzYWQ8GQOL5noZhaRaXPajxgoqw1eYxqAp2I=
+Received: from AS4P251CA0021.EURP251.PROD.OUTLOOK.COM (2603:10a6:20b:5d3::11)
+ by VI0PR06MB9422.eurprd06.prod.outlook.com (2603:10a6:800:23c::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.19; Thu, 3 Jul
+ 2025 09:34:38 +0000
+Received: from AMS0EPF00000195.eurprd05.prod.outlook.com
+ (2603:10a6:20b:5d3:cafe::c8) by AS4P251CA0021.outlook.office365.com
+ (2603:10a6:20b:5d3::11) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8901.22 via Frontend Transport; Thu,
+ 3 Jul 2025 09:34:37 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 193.8.40.94)
+ smtp.mailfrom=leica-geosystems.com.cn; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=leica-geosystems.com.cn;
+Received-SPF: Pass (protection.outlook.com: domain of leica-geosystems.com.cn
+ designates 193.8.40.94 as permitted sender) receiver=protection.outlook.com;
+ client-ip=193.8.40.94; helo=hexagon.com; pr=C
+Received: from hexagon.com (193.8.40.94) by
+ AMS0EPF00000195.mail.protection.outlook.com (10.167.16.215) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8901.15 via Frontend Transport; Thu, 3 Jul 2025 09:34:36 +0000
+Received: from GEO-W5CG2253GWB.lgs-net.com ([10.132.33.66]) by hexagon.com with Microsoft SMTPSVC(10.0.17763.1697);
+	 Thu, 3 Jul 2025 11:34:35 +0200
+From: LI Qingwu <Qing-wu.Li@leica-geosystems.com.cn>
+To: lee@kernel.org,
+	pavel@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	linux-leds@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Qing-wu.Li@leica-geosystems.com.cn
+Cc: bsp-development.geo@leica-geosystems.com
+Subject: [PATCH V4 0/2] leds: pwm: Add optional GPIO enable pin support
+Date: Thu,  3 Jul 2025 17:34:28 +0800
+Message-ID: <20250703093430.229959-1-Qing-wu.Li@leica-geosystems.com.cn>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250702173605.2198924-3-rppt@kernel.org>
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Queue-Id: 53E471F457
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	RCVD_TLS_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[localhost.localdomain:mid,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:dkim,suse.de:email];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Spam-Score: -4.51
-X-Spam-Level: 
+Content-Transfer-Encoding: 8bit
+X-OriginalArrivalTime: 03 Jul 2025 09:34:36.0211 (UTC) FILETIME=[B0BED030:01DBEBFD]
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AMS0EPF00000195:EE_|VI0PR06MB9422:EE_
+Content-Type: text/plain
+X-MS-Office365-Filtering-Correlation-Id: db9640ec-4059-42f7-cd2a-08ddba14d390
+X-SET-LOWER-SCL-SCANNER: YES
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|82310400026|1800799024|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?rB6Ehq6fSLl4uz6GKNVew5a+C1SgJb84zeNklm/ZDtuQ3edfrVb6JgKEoYfm?=
+ =?us-ascii?Q?z2R5bhUJuq8Yuz9VVybwWdXdnRqSjWOAblk4wPUITl3kVUp6LwNOCEq3GR1A?=
+ =?us-ascii?Q?WJwi/1fGqtuqQsbVaNo9ulzGCsq2UFC00ItgDR/nFM48UzhBE6RQnErwZrMW?=
+ =?us-ascii?Q?a9mAFQY7pqWj3Ii1zqSW/qEg8gR1MlLS3H6WzwAHcT3Uj5OKr6/H6+8A3nQ4?=
+ =?us-ascii?Q?/owII2B0enVPvrV5HpmG7uoNhbwKcj3S++I4EaVOwYqeDwtCPrE8yk0Sgrqu?=
+ =?us-ascii?Q?eKLn2o5aEGZ5xSIq9Tyglu0yOGi1VHJ74rIHWpcAV7qM2C4FxHP/UErDlykt?=
+ =?us-ascii?Q?L/s98ZfbSagvEj39TiDYyTZGM1hyKhZfwzXna2O+ffci38l80706QBpnEPlF?=
+ =?us-ascii?Q?/b6Sh+P22rU1pdWpYrCcGQ3+SJBI5M4Mr5uxpvju8Or70UTx87QU2QI0/t+7?=
+ =?us-ascii?Q?sHP8O8uqOj/Vhcm49/PHSzma1YTORfd7Eks3DydmEfaxolLvzmWbe/dTUEZE?=
+ =?us-ascii?Q?eClWH8sMQLgPrmGlADXuLtOQ/XKzZRbIaZvrP6eDeyxVzZ//qihNDX1RFajl?=
+ =?us-ascii?Q?zQOpVWHQ54/0SxHaxNBrGg7Y8s/+7K2BtiEUrLECG4UotCAIQKbaz5oaFoCu?=
+ =?us-ascii?Q?w9mfcxukB+4VD92FXv34GG9W4uGT0NYOSizPOOnipYgJ5GNJE0iUSa9DzMfg?=
+ =?us-ascii?Q?WYgxXzTV/r6zJoWL8uuUkuvhB7yARHI8xjlIXpIZg6o7LgyBVl4q2n17+KaJ?=
+ =?us-ascii?Q?+2amScLJ3E6/N+BD5oQ6tsDyNPsQxs351Dl6Mgw4seK2nrid5FMon6gccr3M?=
+ =?us-ascii?Q?ZeVYTGu5x0wWvkf+BtXRjV0DTH1V0I3sFQiX8IZadEUxmZkXoHiG7IlFjki9?=
+ =?us-ascii?Q?fHVPn7PraMq1dESusQLCqdDn9dlsQSqMjYAlErMoHdxZEVH2bk6GjWFM15CB?=
+ =?us-ascii?Q?idSsKPV+YMOxBi2o9o8NcKqay7WLTVSGL8oSPTehhIgYmEqb9K5nzXy+ua39?=
+ =?us-ascii?Q?8/CamuJo835X5QA4UtT7x2AH4qvMIGUSdv/zVtgkIF+uaoLsg7XlujLRl1E1?=
+ =?us-ascii?Q?zFvbOahtA1l0l4A0I2mvRCFN4gkW14j/eOLy87yAJzIE8T4cLXu7HTB0iW1s?=
+ =?us-ascii?Q?1lMwBculeoA6z6pp3Rcp3pNzE0P2vtt9euIPhwv69q5hhodcuvN0tqPgqvGf?=
+ =?us-ascii?Q?UrV87cS6vsrLl8RfTPDPXGPfgxaFE3GnPqmh3or26ahjrM8vRrjNpH6qGWY6?=
+ =?us-ascii?Q?fBhw80fYOSY5MAP2lvJFBKdAMKmdu0L+ERAbvhsrl/UyVYpwLS4weMpmwQaJ?=
+ =?us-ascii?Q?4UUiwGUC10Wnlqd5E2iSSi+4NIPMeqP/Q2Sh345PTUroz/kPUWgL+/9ddIUY?=
+ =?us-ascii?Q?/+jdf8U6C/WeuxSENKnfXjFWhME7RYXhpDyOdP/k+/sdiR5Iijf+vJyZ+QBd?=
+ =?us-ascii?Q?c+qQGn+pA4AtUC3WUFmYSqeB8Nv3pc5mJVOtAUMW5hvOFIwEMr/fd1DiSExv?=
+ =?us-ascii?Q?ePLAiuvlT+ACHXuhSZlWP4zcYmkhWXFj22I5?=
+X-Forefront-Antispam-Report:
+	CIP:193.8.40.94;CTRY:CH;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:hexagon.com;PTR:ahersrvdom50.leica-geosystems.com;CAT:NONE;SFS:(13230040)(376014)(82310400026)(1800799024)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: leica-geosystems.com.cn
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jul 2025 09:34:36.7057
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: db9640ec-4059-42f7-cd2a-08ddba14d390
+X-MS-Exchange-CrossTenant-Id: 1b16ab3e-b8f6-4fe3-9f3e-2db7fe549f6a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=1b16ab3e-b8f6-4fe3-9f3e-2db7fe549f6a;Ip=[193.8.40.94];Helo=[hexagon.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	AMS0EPF00000195.eurprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR06MB9422
 
-On Wed, Jul 02, 2025 at 08:36:04PM +0300, Mike Rapoport wrote:
-> From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
-> 
-> Move the check that verifies that reservation of fixed area does not
-> cross HIGHMEM boundary and the actual memblock_resrve() call into a
-> helper function.
-> 
-> This makes code more readable and decouples logic related to
-> CONFIG_HIGHMEM from the core functionality of
-> __cma_declare_contiguous_nid().
-> 
-> Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+Add support for an optional GPIO enable pin to the PWM LED driver.
+Some LED controllers require an additional enable GPIO to be enabled
+on the device before PWM control can take effect.
 
-Looks good to me, nit below:
-
-Acked-by: Oscar Salvador <osalvador@suse.de>
+Testing:
+- Tested on i.MX8MP EVK board with TPS92380 LED backlight driver
+- Verified GPIO enable/disable functionality works correctly
+- Confirmed both GPIO_ACTIVE_HIGH and GPIO_ACTIVE_LOW polarities
+  work properly
 
 
-> @@ -433,10 +448,10 @@ static int __init __cma_declare_contiguous_nid(phys_addr_t *basep,
->  
->  	/* Reserve memory */
->  	if (fixed) {
-> -		if (memblock_is_region_reserved(base, size) ||
-> -		    memblock_reserve(base, size) < 0) {
-> -			return -EBUSY;
-> -		}
-> +		int err = cma_fixed_reserve(base, size);
+Device tree configuration used for testing:
 
-There's no need for 'err', you can use the already declared 'ret'.
+	backlight_keypad: backlight-keypad {
+		compatible = "pwm-leds";
 
- 
+		led {
+			color = <LED_COLOR_ID_WHITE>;
+			enable-gpios = <&pca6416 11 GPIO_ACTIVE_HIGH>;
+			function = LED_FUNCTION_KBD_BACKLIGHT;
+			max-brightness = <100>;
+			pwms = <&pwm3 0 2500 0>;
+		};
+	};
+
+Changes in V4:
+- Reword commit message to specify the LED driver chip TPS92380
+- Add tested device tree configuration to cover letter
+
+Changes in V3:
+- fix make dt_binding_check failed on check leds-pwm.yaml
+
+
+
+
+LI Qingwu (2):
+  dt-bindings: leds: pwm: add enable-gpios property
+  leds: pwm: Add optional GPIO enable pin support
+
+ .../devicetree/bindings/leds/leds-pwm.yaml    |  7 ++++++
+ drivers/leds/leds-pwm.c                       | 22 +++++++++++++++++++
+ 2 files changed, 29 insertions(+)
 
 -- 
-Oscar Salvador
-SUSE Labs
+2.43.0
+
 
