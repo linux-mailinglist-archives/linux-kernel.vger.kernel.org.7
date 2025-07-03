@@ -1,87 +1,129 @@
-Return-Path: <linux-kernel+bounces-714852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC436AF6D4E
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 10:45:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D3B5AF6D51
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 10:45:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50EAE3A8AC8
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 08:44:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5AA554E57A1
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 08:45:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0F522D3A66;
-	Thu,  3 Jul 2025 08:45:05 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30C6F2D3230;
+	Thu,  3 Jul 2025 08:45:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="YHO0dAD9";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="/VWYGn7X"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD76E2D3230
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 08:45:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06EB32D3A86;
+	Thu,  3 Jul 2025 08:45:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751532305; cv=none; b=YBxIeTJM9MxW1LjgicPgs5a0ZPcTEVkLmHOj4hPaYa+BslsWH4KmFckFuVeaMClpn6PQ7FY4FRrpmmmPajNYzhWoLXzuWxbp7iqLKO8+32Cb5lxQZlb1tG/Xqqwaz9aDGWhqLIY4OAaG3DLSGtzvwhX7/5aF25hGIjk+1mZgpAo=
+	t=1751532317; cv=none; b=ghcc6ma8Cd3B8uMwvsX6puc1EcPGNhCouHiQhhVglQIdNmZSUet4sQ4G/TBlN/9BiWC2ES3R5hLZvF+G7vAoAoVDzR0WYivejWr8U9mCLgz/YeoqNjXUK8YTaTbTH0aCwwctXXHplPOiup2TasIEkvues5JQv8vL+fbpwSx3eqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751532305; c=relaxed/simple;
-	bh=4PvOEaUDwvYdGrVFxFpPPGDi6dkeWygSwisN9Hkvqkc=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=K07/fdh6xLlPIzg+kevzUjaM4l3HmzH8DWoTD+McJfG17/zRXUqbW3LvERvFsCJpHfn8YuJORfZpZO1m8OUveGf/gTY1JKwPcpMIvxmZ6Yn08vpuT4/yB3ykO+/lx6hLhFpUnGyqvwQFUh/KOoGBofUI17LsmPU3jtzv95vbVrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-86f4e2434b6so543503839f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Jul 2025 01:45:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751532303; x=1752137103;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=U5LxmBhyI+wUuhge9i0Ba6Uwpj0RSi8NQ6MTlP3efYY=;
-        b=D+tmEcRhA6I2xokRYE3ISPMvGrhmrpmUxcwq3y3r2OWRaLL/yB3Dur12oyERPq3+NU
-         Z0q9RbezzNrOs+kJmYUTA6oVuw8BRA2hPX97aaaJGtz+MlcKcWdRCIms/9H/D/m8f1qY
-         Dx5siBEOU7MohL5Tuj3l+cCWhN6ApzUza0I1zwE8yZBv8fKRfmIRWZMt8DnkuKfvl4Bi
-         wZdpr6ais6kQ+5FlCcdn948Bv7lu6eyFDCkqEkT+CayZQ48Id7LQAISYnNSWVMsS9W35
-         9jHM7shxx2wNZCo7hQV5br6GvHUyuGeNothwWncla/XkMxcccds3KtupvbMS47pFKog6
-         U+Ow==
-X-Forwarded-Encrypted: i=1; AJvYcCX9uUjc974y9aljFiR+AVHGwONBiMYVOhFxT9AWmZtYJ/nHxQNccQWE2pzZgJvpeM5EgDqhG+Y8LckmBVU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzqvNGX8hvjFzzzF/ildCbzH07IK1iXmBsEHhl0xDnMhsE2hwJ
-	XKBeEI0/U4Njh26ptyM47JNjjlrS5WYL7tkt7/w8T2uKHg9XcWHi/OMDJtvd3AqF5xKMRU59Kcm
-	RVGdmY7mw8dsMwYhEQIbfka6N7LbHNxLWJoNVhUb3vdxwJAniiMWEgWwoIcc=
-X-Google-Smtp-Source: AGHT+IEyYK0/q6EBottRiZ2Upogl2AcP3r1xBRIsuNz5gsdUD1lMsR9VR6bsu+8T6eotfxhA0Twh1R/A+Xpj3Q+EpJGw8CvjaHp7
+	s=arc-20240116; t=1751532317; c=relaxed/simple;
+	bh=fACPwdKa9I+gICnB9XJcGx1Obt64T2jRw8e7fPeXt0k=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=FCyrO9yP/gYNdHtYkhTGGldXpzu+jIGIubYRllCJz3EWuVoWiQx/by2wvm1lSnvDQpFOfST/mLueef0wE5v3+OUGoxerdVZpVYr7dUWZcGr3OXYaSW/6Sz/Yy30E0ALZIUSEEgK8+9tTpw8Azvn0DZoMJP3YaKVafP7cX6erw84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=YHO0dAD9; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=/VWYGn7X; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 03 Jul 2025 08:45:13 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1751532314;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=c+L67L7e2SGYbC7kdFozrW8IzHhFOq27DJdOXABdcBQ=;
+	b=YHO0dAD94f5CeGeGW9D2sKY2SCjRx3HVxTeMJCfOZIEbxgqt6aWs3vDAPhc8Ntu8Ly27qp
+	PgV4Nu/pqzDt6JzChzxDxBiqIyMIaQr0boqhkLc8sqRP0uWOd870UteB0wP4u0mKwgu0hc
+	Dth9PBYE74/XCoe/XRgbGseRyLa2MZGrnpgXxQvFqGP11WK6q+A/ov5cZKpEXxGfPlgH2h
+	yI3a52D9zY8y9jAUig4pMg80WSr5k+BTeH2rxpdrEpxKxa4XVsWww1+WxfAvJQg+dFdj3q
+	QcZijM/2DM94cT39suaUPLsXPiyPRTPzxq+WAE3u4BgprTiqDmtUkEQB701fQg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1751532314;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=c+L67L7e2SGYbC7kdFozrW8IzHhFOq27DJdOXABdcBQ=;
+	b=/VWYGn7Xq/ESJ6xHGWbbWWB3+NnldQTuL8TLAfw48WYp7L34EPmDqgCeYAAjuxfOH0KrtZ
+	WdItPjO+vkh2gYAA==
+From: "tip-bot2 for Peter Zijlstra" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: perf/urgent] perf: Revert to requiring CAP_SYS_ADMIN for uprobes
+Cc: Jann Horn <jannh@google.com>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To:
+ <CAG48ez1n4520sq0XrWYDHKiKxE_+WCfAK+qt9qkY4ZiBGmL-5g@mail.gmail.com>
+References:
+ <CAG48ez1n4520sq0XrWYDHKiKxE_+WCfAK+qt9qkY4ZiBGmL-5g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:14cd:b0:876:8cb1:a010 with SMTP id
- ca18e2360f4ac-876d1e58868mr387970039f.7.1751532302887; Thu, 03 Jul 2025
- 01:45:02 -0700 (PDT)
-Date: Thu, 03 Jul 2025 01:45:02 -0700
-In-Reply-To: <20250703010227.2223-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6866430e.a70a0220.5d25f.0860.GAE@google.com>
-Subject: Re: [syzbot] [kernel?] general protection fault in __cpa_flush_tlb
-From: syzbot <syzbot+169412e85b1803dfda81@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <175153231306.406.639427734132565496.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-Hello,
+The following commit has been merged into the perf/urgent branch of tip:
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Commit-ID:     ba677dbe77af5ffe6204e0f3f547f3ba059c6302
+Gitweb:        https://git.kernel.org/tip/ba677dbe77af5ffe6204e0f3f547f3ba059c6302
+Author:        Peter Zijlstra <peterz@infradead.org>
+AuthorDate:    Wed, 02 Jul 2025 18:21:44 +02:00
+Committer:     Peter Zijlstra <peterz@infradead.org>
+CommitterDate: Thu, 03 Jul 2025 10:33:55 +02:00
 
-Reported-by: syzbot+169412e85b1803dfda81@syzkaller.appspotmail.com
-Tested-by: syzbot+169412e85b1803dfda81@syzkaller.appspotmail.com
+perf: Revert to requiring CAP_SYS_ADMIN for uprobes
 
-Tested on:
+Jann reports that uprobes can be used destructively when used in the
+middle of an instruction. The kernel only verifies there is a valid
+instruction at the requested offset, but due to variable instruction
+length cannot determine if this is an instruction as seen by the
+intended execution stream.
 
-commit:         50c8770a Add linux-next specific files for 20250702
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=130ff982580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d70792332338192a
-dashboard link: https://syzkaller.appspot.com/bug?extid=169412e85b1803dfda81
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=15d73770580000
+Additionally, Mark Rutland notes that on architectures that mix data
+in the text segment (like arm64), a similar things can be done if the
+data word is 'mistaken' for an instruction.
 
-Note: testing is done by a robot and is best-effort only.
+As such, require CAP_SYS_ADMIN for uprobes.
+
+Fixes: c9e0924e5c2b ("perf/core: open access to probes for CAP_PERFMON privileged process")
+Reported-by: Jann Horn <jannh@google.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Link: https://lkml.kernel.org/r/CAG48ez1n4520sq0XrWYDHKiKxE_+WCfAK+qt9qkY4ZiBGmL-5g@mail.gmail.com
+---
+ kernel/events/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index bf2118c..0db36b2 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -11116,7 +11116,7 @@ static int perf_uprobe_event_init(struct perf_event *event)
+ 	if (event->attr.type != perf_uprobe.type)
+ 		return -ENOENT;
+ 
+-	if (!perfmon_capable())
++	if (!capable(CAP_SYS_ADMIN))
+ 		return -EACCES;
+ 
+ 	/*
 
