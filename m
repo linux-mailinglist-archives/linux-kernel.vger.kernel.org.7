@@ -1,144 +1,140 @@
-Return-Path: <linux-kernel+bounces-714459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDDB8AF6827
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 04:44:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B473DAF6868
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 04:58:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BE2A521CC1
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 02:44:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A5BB52270D
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 02:58:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C78AD1E51EB;
-	Thu,  3 Jul 2025 02:44:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mvSVBkGy"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8B8B21B9D6;
+	Thu,  3 Jul 2025 02:58:49 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E311411CA9
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 02:44:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1205218584;
+	Thu,  3 Jul 2025 02:58:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751510664; cv=none; b=Y4Qo6SKylsrWYfKKvcu4cfiS/RzHP4q3zc8uxkiMfXN2uZWvOF2cj6jgJ6HlsV1N/DSkujRFSHZmXGxgvhVzCaYHNZpYgufjrkucZ/g1dOGumSFnm/qjoie6uwpcqtJVjMM8SDZzWN18WfMCdVpbu+O0EYTxmSBmff9ZxQ0xUa0=
+	t=1751511529; cv=none; b=kI6vtx7qofdzEdduY3ZlhNqfuMSj0nMyxjcmsEFFb8rIn12t2z8tmq9oK6wkLvz+daf2UU27GhhglrqsUwLPlfnzY8qOIxi8eCmnIXqQI2+S2cvJRc/sWgdhWhvAWIGsnwtfhR0YLIvT8xQRYxHJqLdNI4fkO7axr9VlueAzQnA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751510664; c=relaxed/simple;
-	bh=H/SNnKM3e+12bkhHgrmgliRIJAPxdl46tPDAG++ymKQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZR9fhYnazdvOuW0lv9gPOSq8G9nkZ/y9ZiyAa7FN01u5bEt0oPIJkXDjDi6/gp+FPhCJcOBhc9zUFian6MvYb1JAbPkGCgbUiCkTC2I+bTUtB+SPphNJqTWbDWKQlhzzx/on/8JQw6Pqj6hfRonMSOA+khYm2Agos7x/ECLtpXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mvSVBkGy; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-7490702fc7cso5328691b3a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 19:44:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751510662; x=1752115462; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MvJyRoQEN6Ftk0YCKQRhf1ab+R7+Q09BKNu92aBVMR8=;
-        b=mvSVBkGyB00rIXQQvsh72ulvTKc3LObWZMF+VdGd7orT5X1ocpW2VLDQ1cOMPS8bJX
-         zSlQdngdqjZ1B/wQ/sWjPzQFKuqWRM+D0kbpY4ZI3ZCks1eLOhdRu0miZ3wZh5HNzdK1
-         88SeL1CjpyiqYjOt+4rW8ipqIiyU8JbNjC4cAcTHgZB4zb1TiXHFHmHC40pBVkWYUciH
-         ffqOE6xMVqV8mB+BWjV3DAHZu6bkRxkve0UXu9QHJuKraCqwuf2ohZuiTQAyXUx6+/fK
-         1r6AoOg23Xp4Wu1Fs6HmHEx0XBKNQbvYnHuMNcPgn5RofPk5GrIyarnUefJxvXqaCGs2
-         R8ww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751510662; x=1752115462;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=MvJyRoQEN6Ftk0YCKQRhf1ab+R7+Q09BKNu92aBVMR8=;
-        b=nPeWCRJDDuFp3162k0KqvU1fgecYMKNkAxZoXYN1ydp5DmaULJN93PIzd7bB9c9M02
-         vcUJa54KzRam/0ZpJfhgSMTJrsa3ALFpsReX/ttU1EkWTVFMfdpmCNplu+cBgOArl07Q
-         4EL6NjufKNsibYtON9DIU3tiATau9Uu90vYWZr+Y35Da/A+shMAiPYRnjjpfGbg24S/t
-         EVu6X71kcpRfR+qCMTkuktWqDgRbfRi1skMDOpvecolPz7N+hZmoRuBfyDuR+2J03ZDE
-         jlCpoW9Icd2UjwM1hi2nV3x1mACZPNMsGdhTLDqPeC5vmLnpo/bgcV1//4eFmZ14cfjT
-         Crog==
-X-Forwarded-Encrypted: i=1; AJvYcCWD7b9VqIAxKZqSDFWoJpbrzWp0+JuT+tW1Gs3OtcFrcuSh4CuAHJOlvT8tBxw659Ihf7d74ipO/2SRDD8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFvMJtWuUs5a59xxm4Px+87iMeV5EA1Gkm3kArNGjgHvidWeYv
-	7aRg8jE/yqIB0szj0HrEFRoY+7vaM9zWKpBvDgSRh0p3RB0KR5M+Ga7O
-X-Gm-Gg: ASbGncsG8xwAxEGFpjxC0bsaJZwaHYoKWzNCvuqoHuQ1Uxi4XJIppPLnxEkpMMfM7m+
-	IHLqTFnrYgEvDFrIgZ/3cSyrxtknqEx/KxHoZpN9x89o/J73vbWO7dyGe1iY4jyKsnLu7FwmrBV
-	IikOhvSvsnJ3ubtvPjc90mao9CK1tEt3fSCUmDtrLabbBXjBlbcNJs/9uO9tDr3HjQzWOTW1kYk
-	bu76+/CxLYEifdQExP9z2ndLCOS4wMW/2u9wzgiHJJkPZuJ5ct2Z6dVfr5rGTk0NA7w1VRNgivh
-	C0w/zR0R+61/DWnE31S6so7+YlSWL/Du/vmr9tdtMyJoxHr7LyqEzD6W2NoYHu+LnuVPhsTIBeb
-	RSLacXuU=
-X-Google-Smtp-Source: AGHT+IFAcHjCAzuSHfjfMenx11NpIMUngIbtzf7Gscr7OriDsIk8QJUe1x5yNHBF++2MKAybKM5K9Q==
-X-Received: by 2002:a05:6a21:490:b0:215:de5f:febc with SMTP id adf61e73a8af0-2243e5b2ef2mr1862892637.27.1751510662077;
-        Wed, 02 Jul 2025 19:44:22 -0700 (PDT)
-Received: from [10.125.192.71] ([210.184.73.204])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74af56cd84csm16154263b3a.132.2025.07.02.19.44.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Jul 2025 19:44:21 -0700 (PDT)
-Message-ID: <7f747869-dc37-64f3-127a-0b61a9d069dc@gmail.com>
-Date: Thu, 3 Jul 2025 10:44:13 +0800
+	s=arc-20240116; t=1751511529; c=relaxed/simple;
+	bh=jwUjFEWxHBZ9rdXV6wi51a49hj7ascJE8+tOw68DL+w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gPnbAg0RY2FBoR/OEmjcd2mSodA+31kDcE6nmlHDnWb+W7Xn8Rlu2iXI+95N0r9rfB3ZyEpAmIn0dCLOtfULIaE7YEaRmecJ28XcyJ6OvxNQlq17ozvwF8uENVQxNXE9+sGTkkomVseJom4B1IRo1e5YxBROMbTZYDfpdTGgFOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bXhKw0QW2zYQvBZ;
+	Thu,  3 Jul 2025 10:58:44 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.252])
+	by mail.maildlp.com (Postfix) with ESMTP id E46161A13AD;
+	Thu,  3 Jul 2025 10:58:42 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.112.188])
+	by APP3 (Coremail) with SMTP id _Ch0CgDnSCbb8WVoZkTvAQ--.1132S4;
+	Thu, 03 Jul 2025 10:58:42 +0800 (CST)
+From: Zizhi Wo <wozizhi@huaweicloud.com>
+To: netfs@lists.linux.dev,
+	dhowells@redhat.com,
+	jlayton@kernel.org,
+	brauner@kernel.org
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	wozizhi@huawei.com,
+	libaokun1@huawei.com,
+	yangerkun@huawei.com,
+	houtao1@huawei.com,
+	yukuai3@huawei.com
+Subject: [PATCH] cachefiles: Fix the incorrect return value in __cachefiles_write()
+Date: Thu,  3 Jul 2025 10:44:18 +0800
+Message-ID: <20250703024418.2809353-1-wozizhi@huaweicloud.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.15.0
-Subject: Re: [PATCH] mm/mglru: Stop try_to_inc_min_seq() if the oldest
- generation LRU lists are not empty
-To: Yuanchu Xie <yuanchu@google.com>
-Cc: akpm@linux-foundation.org, hannes@cmpxchg.org, yuzhao@google.com,
- kinseyho@google.com, david@redhat.com, mhocko@kernel.org,
- zhengqi.arch@bytedance.com, shakeel.butt@linux.dev,
- lorenzo.stoakes@oracle.com, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Hao Jia <jiahao1@lixiang.com>
-References: <20250630080603.36171-1-jiahao.kernel@gmail.com>
- <CAJj2-QGHLRqY4mPyAPg2eT+y+4yNfNb__nON5ndkY8WG0UmKVQ@mail.gmail.com>
- <f50f8ddd-2ce8-47dc-657e-7b0edf80a508@gmail.com>
- <CAJj2-QGgHSdzq5DqSi5M+XGeKWRD8aeH_C-OptyCDeV9CEHkBA@mail.gmail.com>
-From: Hao Jia <jiahao.kernel@gmail.com>
-In-Reply-To: <CAJj2-QGgHSdzq5DqSi5M+XGeKWRD8aeH_C-OptyCDeV9CEHkBA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_Ch0CgDnSCbb8WVoZkTvAQ--.1132S4
+X-Coremail-Antispam: 1UD129KBjvJXoW7ZrWxtF17tw4rXF4rXF1UWrg_yoW8ury5pF
+	WayFyUKryxuF48Cr1kAFn5W34fJ3ykJFnFg34UWwn8Zwn8Xr4YgFWjqr1YqF1UArW7Jr43
+	tw4jka43Jw1q9rJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv2b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0E
+	n4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I
+	0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWU
+	tVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcV
+	CY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAF
+	wI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa
+	7IUbmii3UUUUU==
+X-CM-SenderInfo: pzr2x6tkl6x35dzhxuhorxvhhfrp/
 
+From: Zizhi Wo <wozizhi@huawei.com>
 
+In __cachefiles_write(), if the return value of the write operation > 0, it
+is set to 0. This makes it impossible to distinguish scenarios where a
+partial write has occurred, and will affect the outer calling functions:
 
-On 2025/7/3 03:22, Yuanchu Xie wrote:
-> On Tue, Jul 1, 2025 at 10:45 PM Hao Jia <jiahao.kernel@gmail.com> wrote:
->>
->> Perhaps another way to explain it is clearer.
->>
->> It is known that min_seq[type] has not increased, that is, min_seq[type]
->> is equal to lrugen->min_seq[type], then the following:
->>
->> case 1: min_seq[type] has not been reassigned and changed before
->> judgment min_seq[type] <= lrugen->min_seq[type].
->>
->> Then the subsequent min_seq[type] <= lrugen->min_seq[type] judgment will
->> always be true.
->>
->>
->> case 2: min_seq[type] is reassigned to seq, before judgment
->> min_seq[type] <= lrugen->min_seq[type].
->>
->> Then at least the condition of min_seq[type] > seq must be met before
->> min_seq[type] will be reassigned to seq.
->> That is to say, before the reassignment, lrugen->min_seq[type] > seq is
->> met, and then min_seq[type] = seq.
->>
->> Then the following min_seq[type]（seq） <= lrugen->min_seq[type] judgment
->> is always true.
-> 
-> This sounds good to me. Can you change the code to use one bool to
-> detect any increments in `min_seq[type]`? You don't need `int
-> seq_inc_flags[ANON_AND_FILE] = {0};`
-> 
-> Also update the commit message with what you have here. IMO much more clear.
-> 
+ 1) cachefiles_write_complete() will call "term_func" such as
+netfs_write_subrequest_terminated(). When "ret" in __cachefiles_write()
+is used as the "transferred_or_error" of this function, it can not
+distinguish the amount of data written, makes the WARN meaningless.
 
-Thanks for your review, I have done it in patch v2.
+ 2) cachefiles_ondemand_fd_write_iter() can only assume all writes were
+successful by default when "ret" is 0, and unconditionally return the full
+length specified by user space.
 
-Link to v2:
-https://lore.kernel.org/all/20250703023946.65315-1-jiahao.kernel@gmail.com/
+Fix it by modifying "ret" to reflect the actual number of bytes written.
+Furthermore, returning a value greater than 0 from __cachefiles_write()
+does not affect other call paths, such as cachefiles_issue_write() and
+fscache_write().
 
-Thanks,
-Hao
+Fixes: 047487c947e8 ("cachefiles: Implement the I/O routines")
+Signed-off-by: Zizhi Wo <wozizhi@huawei.com>
+---
+ fs/cachefiles/io.c       | 2 --
+ fs/cachefiles/ondemand.c | 4 +---
+ 2 files changed, 1 insertion(+), 5 deletions(-)
+
+diff --git a/fs/cachefiles/io.c b/fs/cachefiles/io.c
+index c08e4a66ac07..3e0576d9db1d 100644
+--- a/fs/cachefiles/io.c
++++ b/fs/cachefiles/io.c
+@@ -347,8 +347,6 @@ int __cachefiles_write(struct cachefiles_object *object,
+ 	default:
+ 		ki->was_async = false;
+ 		cachefiles_write_complete(&ki->iocb, ret);
+-		if (ret > 0)
+-			ret = 0;
+ 		break;
+ 	}
+ 
+diff --git a/fs/cachefiles/ondemand.c b/fs/cachefiles/ondemand.c
+index d9bc67176128..a7ed86fa98bb 100644
+--- a/fs/cachefiles/ondemand.c
++++ b/fs/cachefiles/ondemand.c
+@@ -83,10 +83,8 @@ static ssize_t cachefiles_ondemand_fd_write_iter(struct kiocb *kiocb,
+ 
+ 	trace_cachefiles_ondemand_fd_write(object, file_inode(file), pos, len);
+ 	ret = __cachefiles_write(object, file, pos, iter, NULL, NULL);
+-	if (!ret) {
+-		ret = len;
++	if (ret > 0)
+ 		kiocb->ki_pos += ret;
+-	}
+ 
+ out:
+ 	fput(file);
+-- 
+2.46.1
+
 
