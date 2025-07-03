@@ -1,55 +1,56 @@
-Return-Path: <linux-kernel+bounces-715686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-715690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B6B4AF7CA7
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 17:43:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE2BBAF7CB0
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 17:44:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8EF60189903C
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 15:39:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38AF66E0357
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 15:39:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AC4422257B;
-	Thu,  3 Jul 2025 15:38:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A04622A4DA;
+	Thu,  3 Jul 2025 15:39:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OjzYgWKr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UzCTrgXJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CD7D19F120;
-	Thu,  3 Jul 2025 15:38:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C35003596B;
+	Thu,  3 Jul 2025 15:39:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751557135; cv=none; b=ktSttZNQjUOdiGNzux2q1qmTimtA8cI+SLewomay4U3MXJwohLd1HrJH3snfLtrsiEgVzge/IAAeiAI8Wi/Ge2LvGawwtPLPq7hc82kbzHKPq9aWJaQSupKaT1SOt/r+GUsT1+C7Mf5Z+i5AB4Z+56vYOFv0+rOvcRA3adiWmZU=
+	t=1751557197; cv=none; b=T4KD/MbwTFJM3jFcZ6St/QACgWGjDVAbFF3cvGdX/8AmDUNIyuERyAPWGCPW+yK01COdhkTR+oFyDPzhn5RjkeWzJZAt3/nLHulZvNzt6XKtu+tyz4G3nbkAe90fA6vNKs2IrODphfydXyVdV1H8k8hqB9YE9DtWCehJAWMhHVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751557135; c=relaxed/simple;
-	bh=fSeyvKTMTas7kB2o1dc3l/M43xAcrKiHlXfr0vFcBKw=;
+	s=arc-20240116; t=1751557197; c=relaxed/simple;
+	bh=HgKr0YZKmRVGauoQQTFdL3SNUskeQSvGGYQlafcuNcw=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QAKoxt66T+lPE4+CZAyk1B91Sbf3e29V1/HwoYVq48rY8woU1kttQnMkBx7YSIHLpnyMq0CBMeqGvS4JwemkonIaQ2zgUN+aBY42TkSvxwu0S+qIMkhvmx3aIrgOqspGCT8qx6qfedVcxeBk9zfOJQP5RVl2qD4sOcub1gfi45I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OjzYgWKr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD7A2C4CEED;
-	Thu,  3 Jul 2025 15:38:52 +0000 (UTC)
+	 MIME-Version:Content-Type; b=LDR60au9fw2NvG78WGIwF0OQ5ObtscVqI93CaT5RnI41E0CXKAgLQOi9qk1YZtnd8fvUPVOt1BDUsTjCsimr6+hJGiklbj7WIHdiI00swDslLekwY7uNXDo57NzNa4zAwN7QZhAj3cRpw86LMhbrDxglsdqp5DAx1EoiHtQPLC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UzCTrgXJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F62BC4CEE3;
+	Thu,  3 Jul 2025 15:39:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751557134;
-	bh=fSeyvKTMTas7kB2o1dc3l/M43xAcrKiHlXfr0vFcBKw=;
+	s=k20201202; t=1751557197;
+	bh=HgKr0YZKmRVGauoQQTFdL3SNUskeQSvGGYQlafcuNcw=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=OjzYgWKrMeaMkYakMl/4QPu7ZEhs+Xka+8WiO6tkVKIAQpZqpVhPxf8b8buEQwBku
-	 pX6pn9AXW5OlgU2Li1wqWTIN7fahiw6V6Bjk+vm45CYzSwn7Csiyw/eMP6/rMmcmnn
-	 BEmK1usHFnw33/4MU4U4D23GnYgLGm34INO7SJfSZfoQGY6qalAjy2Vl7iS6DmMdWD
-	 wdogAjt5OumJrcWPucWuVCVxRLQxPyFNipBWOmw0exqIuFCBBpuHTBsN1t7Pg7MD1n
-	 wRL2FCS9/DMYW4wRXP3fS4Ik5xVDzvMdY5DZrCm2f4lVn+LsJ0gSJOBXR66rY6Mdg5
-	 bqFa1khjHKm/g==
-Date: Thu, 3 Jul 2025 17:38:48 +0200
+	b=UzCTrgXJTfyKhIn5C047tQmT63HVE8KG9QuiG0Ryy5OUSEYRR2SGcs6E5TNCnMJWO
+	 G0rp4HmxKRvry2de7RwlaoJszIXkFtkjZ/oDE6ue+lk98N9ZPtmvvDU3uOrExRlLsC
+	 ldspcHyu9ybVDqa6gjmZHxV32YQEWgFpqH4YGWvujjp0Lursm9BDERup9HGDExXfMs
+	 2WqmhjU0vrUvz/R2FXkcmeP6dIsSXJqHFQBXqv0Rm1hOc4+AS2IKPTbN3TRkA0lT3I
+	 2GQUAPiBR0kA9ADu3QOowAjQB/dvajrVWZxYvvoCGUVNuH50jFk8IVlmQ6QrTthAGz
+	 RxuVJkRG1xpmQ==
+Date: Thu, 3 Jul 2025 17:39:51 +0200
 From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To: Jonathan Corbet <corbet@lwn.net>
 Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Akira Yokosawa
  <akiyks@gmail.com>
-Subject: Re: [PATCH 2/7] docs: kdoc: micro-optimize KernRe
-Message-ID: <20250703173848.721de72c@sal.lan>
-In-Reply-To: <20250701205730.146687-3-corbet@lwn.net>
+Subject: Re: [PATCH 3/7] docs: kdoc: remove the brcount floor in
+ process_proto_type()
+Message-ID: <20250703173951.0b368df0@sal.lan>
+In-Reply-To: <20250701205730.146687-4-corbet@lwn.net>
 References: <20250701205730.146687-1-corbet@lwn.net>
-	<20250701205730.146687-3-corbet@lwn.net>
+	<20250701205730.146687-4-corbet@lwn.net>
 X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -60,72 +61,36 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-Em Tue,  1 Jul 2025 14:57:25 -0600
+Em Tue,  1 Jul 2025 14:57:26 -0600
 Jonathan Corbet <corbet@lwn.net> escreveu:
 
-> Switch KernRe::add_regex() to a try..except block to avoid looking up each
-> regex twice.
+> Putting the floor under brcount does not change the output in any way, just
+> remove it.
+> 
+> Change the termination test from ==0 to <=0 to prevent infinite loops in
+> case somebody does something truly wacko in the code.
 > 
 > Signed-off-by: Jonathan Corbet <corbet@lwn.net>
+
+Reviewed-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+
 > ---
->  scripts/lib/kdoc/kdoc_re.py | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
+>  scripts/lib/kdoc/kdoc_parser.py | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
 > 
-> diff --git a/scripts/lib/kdoc/kdoc_re.py b/scripts/lib/kdoc/kdoc_re.py
-> index e81695b273bf..a467cd2f160b 100644
-> --- a/scripts/lib/kdoc/kdoc_re.py
-> +++ b/scripts/lib/kdoc/kdoc_re.py
-> @@ -29,12 +29,10 @@ class KernRe:
->          """
->          Adds a new regex or re-use it from the cache.
->          """
+> diff --git a/scripts/lib/kdoc/kdoc_parser.py b/scripts/lib/kdoc/kdoc_parser.py
+> index d9ff2d066160..935f2a3c4b47 100644
+> --- a/scripts/lib/kdoc/kdoc_parser.py
+> +++ b/scripts/lib/kdoc/kdoc_parser.py
+> @@ -1609,9 +1609,7 @@ class KernelDoc:
+>                  self.entry.brcount += r.group(2).count('{')
+>                  self.entry.brcount -= r.group(2).count('}')
+>  
+> -                self.entry.brcount = max(self.entry.brcount, 0)
 > -
-> -        if string in re_cache:
-> +        try:
->              self.regex = re_cache[string]
-> -        else:
-> +        except KeyError:
->              self.regex = re.compile(string, flags=flags)
-> -
-
-Hmm... I opted for this particular way of checking is that I
-expect that check inside a hash at dict would be faster than
-letting it crash then raise an exception. 
-
-Btw, one easy way to check how much it affects performance
-(if any) would be to run it in "rogue" mode with:
-
-	$ time ./scripts/kernel-doc.py -N .
-
-This will run kernel-doc.py for all files at the entire Kernel
-tree, only reporting problems. If you want to do changes like
-this that might introduce performance regressions, I suggest
-running it once, just to fill disk caches, and then run it
-again before/after such changes.
-
-Anyway, I did such measurements before/after your patch.
-the difference was not relevant: just one second of difference:
-
-original code:
-
-real	1m20,839s
-user	1m19,594s
-sys	0m0,998s
-
-after your change:
-
-real	1m21,805s
-user	1m20,612s
-sys	0m0,929s
-
-I don't mind myself to be one second slower, but this is hardly
-a micro-optimization ;-)
-
--
-
-Disclaimer notice: one second of difference here can be due to
-some other background process on this laptop.
-
-Regards,
-Mauro
+> -                if r.group(2) == ';' and self.entry.brcount == 0:
+> +                if r.group(2) == ';' and self.entry.brcount <= 0:
+>                      self.dump_declaration(ln, self.entry.prototype)
+>                      self.reset_state(ln)
+>                      break
 
