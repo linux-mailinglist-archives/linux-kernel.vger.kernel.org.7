@@ -1,253 +1,108 @@
-Return-Path: <linux-kernel+bounces-715665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-715667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FDF9AF7C61
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 17:35:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BE06AF7C7D
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 17:38:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D31817B8A5
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 15:30:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D77556E311F
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 15:30:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 796C12E7BBD;
-	Thu,  3 Jul 2025 15:30:15 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0012.hostedemail.com [216.40.44.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBBC12236E3;
+	Thu,  3 Jul 2025 15:30:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nG0c3PQK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6510224882;
-	Thu,  3 Jul 2025 15:30:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4750672617;
+	Thu,  3 Jul 2025 15:30:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751556615; cv=none; b=XEZTyaqj2Tx96dUCm6sua2v7lOuU++z6DZGHQ+D5g7GDmcHWu1WJP1fyvnsfAfViUO7dj3uyRz/zeD6pB8xyTA+RZuMuLyjzyrTUiCwyNnA7ycV+G0sXdxcqnRiOe2U5BUfWw2Y05WfhhIRVxX0gmVxihzOQMiJUZReIsQeMLHA=
+	t=1751556646; cv=none; b=PF/cyvvzAIE0CS9I80YZtyuOGekYm+lRmWl7PJAGpIIM5xobq/ICjpxrCSTJhDa7hexLWXNasN5kisaBfJCUKMPXyauhyxadVKDt4F11y2OsdElTPYV6VUuc6OJ9e3E6S+EdIg+7UNKE2HXCw3X7CEwbAEAxcYu2/51aR7cynEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751556615; c=relaxed/simple;
-	bh=Midkn1Xwtp4OL+Lym1QanU5upXg6cal2GSP4RDHTegU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lXkddZWieSJhn5calxt7JPgTyI3KODD5+bjKwA8U94pUm230jzQJA889IXGwqsZqFvcWyKIlhFLqLtWTtCc7D7wxGBtb9TmC5TvX2hst+2Rxr3erpnI19cOayHvhFfgA763NO4N+TC+uWS+FEwHCnGCX1w41D7ZEF2OCd6EPSGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf14.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay07.hostedemail.com (Postfix) with ESMTP id 6557416027E;
-	Thu,  3 Jul 2025 15:30:05 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf14.hostedemail.com (Postfix) with ESMTPA id CD5243B;
-	Thu,  3 Jul 2025 15:30:02 +0000 (UTC)
-Date: Thu, 3 Jul 2025 11:30:01 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Menglong Dong <menglong8.dong@gmail.com>
-Cc: alexei.starovoitov@gmail.com, jolsa@kernel.org, bpf@vger.kernel.org,
- Menglong Dong <dongml2@chinatelecom.cn>, Mark Rutland
- <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH bpf-next v2 04/18] ftrace: add reset_ftrace_direct_ips
-Message-ID: <20250703113001.099dc88f@batman.local.home>
-In-Reply-To: <20250703121521.1874196-5-dongml2@chinatelecom.cn>
-References: <20250703121521.1874196-1-dongml2@chinatelecom.cn>
-	<20250703121521.1874196-5-dongml2@chinatelecom.cn>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1751556646; c=relaxed/simple;
+	bh=kf3R69g/8+n9ejwwkL6h4el8NdPueW74hEy4yuQ+Fcs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pRAt9LLnFfZg+M79nfJ5NP5Em3BV8LjKtlBKqIm1U2MMfrdBrLJFI39wy1m7NRtleapxaR7ML+BRC/JEl5KK5lclf8PXH6ktmUSSk11KhH6yGTmF/xMhj5n4tzSNU5Y+ks+AUMUV4cniWgFZymH8ehAl7Aics1gDWXNGmhRHQzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nG0c3PQK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB859C4CEED;
+	Thu,  3 Jul 2025 15:30:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751556645;
+	bh=kf3R69g/8+n9ejwwkL6h4el8NdPueW74hEy4yuQ+Fcs=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=nG0c3PQKGVGoTtfCDduTcEI7W1NSi6vabGp+6w7YXIKmlYKIrjxaDRvDafBw0K0Qr
+	 oGHuVf6XBn3o1jILbhnAFdiQFJAdbFG38T/avxI6ruCAYXZEdVWCGO+I2FetJqbA3d
+	 vpLTDmrQksbPAlmfTn3E+RzN+ASyuwjyreA220nPQK5WV+iLFhfactLuqf5ACtHbyP
+	 O6gmYgwTkqq5P3KCMd0lCz5w+DjoZg7FOygXUggOVQwA89jEtX8Q6ZdT72lTiQxoGr
+	 3XhRfmbBLBier1wTDGeV6f5IRMyEsmjeQKZYxC6JtFxhF9fZG6A75HUqI0edagzTat
+	 ose0hmAvxc0yQ==
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ade5b8aab41so2917266b.0;
+        Thu, 03 Jul 2025 08:30:45 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUSPbFVi+ZqqRBs2UnEZUoQhIyO8LyXdY8K+fcPNsxa6dZM+N1KQ/knDSsM7N99wU49gUQK4lZUhN/rLeNA@vger.kernel.org, AJvYcCWI/f4V8tSEAJOAgtwqigNvlBW+PGPxgx0mBoUZKghnyGNFDmhnUZWizjfkeqP6m+dtFQfRr0fd@vger.kernel.org, AJvYcCWmn6ksIxJEbF/bGmuq8DMP26pGhSflPdheG1YLrO+6jdwD0rR0McebSJGci89YEK7CEbTN+0GxgtTm@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyr/m+51b/mIQaksCF9v/AxI5krZWmLPvhvM5HjQt1LPNAQF25q
+	oz+i0TQrSO/0Ey1A8SZGkB7KWOqxYwbWJ3k4dtZAu3BFMx5Y3FhmekoYkSqYX6znt4QinvLYT3q
+	h8tEkIthR0KVMtVAYjxd4lgim6KuWOQ==
+X-Google-Smtp-Source: AGHT+IFGK3wNYEmDTQE7cJvW5bwhu5w4lNajdS9akjc5i1/E/t6dIX21GgObTKsLF38FMy+/VygKrLB7PYcfFn+IPck=
+X-Received: by 2002:a17:907:94cb:b0:ade:44f8:569 with SMTP id
+ a640c23a62f3a-ae3c2c9d41bmr815278466b.42.1751556644360; Thu, 03 Jul 2025
+ 08:30:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: yu9k4juoddbxh539wfecre1dnfmdgbzk
-X-Rspamd-Server: rspamout01
-X-Rspamd-Queue-Id: CD5243B
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1/x9+2Gkl0bLv99oqhAlyDopYKg4Dbgx6k=
-X-HE-Tag: 1751556602-956081
-X-HE-Meta: U2FsdGVkX19dPdUqBcQIwd55zOtqPhMAfP9K1ZUY4b6lHAd3pwk0Iy1sV1K/m/r1wORmWx3jBgV8J/4Ct+MnvvnN5XhCNEJIYkyPwAzgUtq5IXE7gU5cwxmgBo5b4k2TPmeAX/M750OVZjcKnnfqygvXP3iHuhYyxljycr/0ef/KceelGDbznfr+ng1MWmUpEAOCr0egjhf139Qw6+lx3mDRdZ2qlgd3H1NxPsWTlaqdoKLQXdOWx+RufD85szWqhnoIC5BbBzCUofZT2UGLnKKPBd/v96I67YhV22oJdkG0vH2ukV3muvmex2RJ5Az8iyGMu4IXv/oddVOk/BDxv1AFqbzAZTlh
+References: <20250630213748.71919-1-matthew.gerlach@altera.com>
+In-Reply-To: <20250630213748.71919-1-matthew.gerlach@altera.com>
+From: Rob Herring <robh@kernel.org>
+Date: Thu, 3 Jul 2025 10:30:32 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqLrLJ6wiqBk31NhronsUqX4_5FN-Lb26r-3SceDD7kkAA@mail.gmail.com>
+X-Gm-Features: Ac12FXxuKTihI_ySZjceamap3hZ9PwUnYru49iIiSxON-urQArDwhuRwHAUu1ZI
+Message-ID: <CAL_JsqLrLJ6wiqBk31NhronsUqX4_5FN-Lb26r-3SceDD7kkAA@mail.gmail.com>
+Subject: Re: [PATCH v7] dt-bindings: net: Convert socfpga-dwmac bindings to yaml
+To: Matthew Gerlach <matthew.gerlach@altera.com>
+Cc: dinguyen@kernel.org, andrew+netdev@lunn.ch, davem@davemloft.net, 
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, maxime.chevallier@bootlin.com, mcoquelin.stm32@gmail.com, 
+	alexandre.torgue@foss.st.com, richardcochran@gmail.com, 
+	netdev@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org, Mun Yew Tham <mun.yew.tham@altera.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu,  3 Jul 2025 20:15:07 +0800
-Menglong Dong <menglong8.dong@gmail.com> wrote:
+On Mon, Jun 30, 2025 at 4:38=E2=80=AFPM Matthew Gerlach
+<matthew.gerlach@altera.com> wrote:
+>
+> Convert the bindings for socfpga-dwmac to yaml. Since the original
+> text contained descriptions for two separate nodes, two separate
+> yaml files were created.
 
-Note, the tracing subsystem uses capitalization in the subject:
+Did you test this against your dts files?:
 
-  ftrace: Add reset_ftrace_direct_ips
+ethernet@ff804000 (altr,socfpga-stmmac-a10-s10): iommus: [[11, 3]] is too s=
+hort
+ethernet@ff802000 (altr,socfpga-stmmac-a10-s10): iommus: [[11, 2]] is too s=
+hort
+ethernet@ff800000 (altr,socfpga-stmmac-a10-s10): iommus: [[11, 1]] is too s=
+hort
+
+There's also one for 'phy-addr', but that needs to be dropped from the
+.dts files as it doesn't appear to be used.
+
+[...]
+
+> +  iommus:
+> +    maxItems: 2
+
+You need to add:
+
+minItems: 1
 
 
-> For now, we can change the address of a direct ftrace_ops with
-> modify_ftrace_direct(). However, we can't change the functions to filter
-> for a direct ftrace_ops. Therefore, we introduce the function
-> reset_ftrace_direct_ips() to do such things, and this function will reset
-> the functions to filter for a direct ftrace_ops.
-> 
-> This function do such thing in following steps:
-> 
-> 1. filter out the new functions from ips that don't exist in the
->    ops->func_hash->filter_hash and add them to the new hash.
-> 2. add all the functions in the new ftrace_hash to direct_functions by
->    ftrace_direct_update().
-> 3. reset the functions to filter of the ftrace_ops to the ips with
->    ftrace_set_filter_ips().
-> 4. remove the functions that in the old ftrace_hash, but not in the new
->    ftrace_hash from direct_functions.
-
-Please also include a module that can be loaded for testing.
-See samples/ftrace/ftrace-direct*
-
-But make it a separate patch. And you'll need to add a test in selftests.
-See tools/testing/selftests/ftrace/test.d/direct
-
-> 
-> Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
-> ---
->  include/linux/ftrace.h |  7 ++++
->  kernel/trace/ftrace.c  | 75 ++++++++++++++++++++++++++++++++++++++++++
->  2 files changed, 82 insertions(+)
-> 
-> diff --git a/include/linux/ftrace.h b/include/linux/ftrace.h
-> index b672ca15f265..b7c60f5a4120 100644
-> --- a/include/linux/ftrace.h
-> +++ b/include/linux/ftrace.h
-> @@ -528,6 +528,8 @@ int modify_ftrace_direct_nolock(struct ftrace_ops *ops, unsigned long addr);
->  
->  void ftrace_stub_direct_tramp(void);
->  
-> +int reset_ftrace_direct_ips(struct ftrace_ops *ops, unsigned long *ips,
-> +			    unsigned int cnt);
->  #else
->  struct ftrace_ops;
->  static inline unsigned long ftrace_find_rec_direct(unsigned long ip)
-> @@ -551,6 +553,11 @@ static inline int modify_ftrace_direct_nolock(struct ftrace_ops *ops, unsigned l
->  {
->  	return -ENODEV;
->  }
-> +static inline int reset_ftrace_direct_ips(struct ftrace_ops *ops, unsigned long *ips,
-> +					  unsigned int cnt)
-> +{
-> +	return -ENODEV;
-> +}
->  
->  /*
->   * This must be implemented by the architecture.
-> diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-> index f5f6d7bc26f0..db3aa61889d3 100644
-> --- a/kernel/trace/ftrace.c
-> +++ b/kernel/trace/ftrace.c
-> @@ -6224,6 +6224,81 @@ int modify_ftrace_direct(struct ftrace_ops *ops, unsigned long addr)
->  	return err;
->  }
->  EXPORT_SYMBOL_GPL(modify_ftrace_direct);
-> +
-> +/* reset the ips for a direct ftrace (add or remove) */
-
-As this function is being used externally, it requires proper KernelDoc
-headers.
-
-What exactly do you mean by "reset"?
-
-> +int reset_ftrace_direct_ips(struct ftrace_ops *ops, unsigned long *ips,
-> +			    unsigned int cnt)
-> +{
-> +	struct ftrace_hash *hash, *free_hash;
-> +	struct ftrace_func_entry *entry, *del;
-> +	unsigned long ip;
-> +	int err, size;
-> +
-> +	if (check_direct_multi(ops))
-> +		return -EINVAL;
-> +	if (!(ops->flags & FTRACE_OPS_FL_ENABLED))
-> +		return -EINVAL;
-> +
-> +	mutex_lock(&direct_mutex);
-> +	hash = alloc_ftrace_hash(FTRACE_HASH_DEFAULT_BITS);
-> +	if (!hash) {
-> +		err = -ENOMEM;
-> +		goto out_unlock;
-> +	}
-> +
-> +	/* find out the new functions from ips and add to hash */
-
-Capitalize comment: /* Find out ...
-
-> +	for (int i = 0; i < cnt; i++) {
-> +		ip = ftrace_location(ips[i]);
-> +		if (!ip) {
-> +			err = -ENOENT;
-> +			goto out_unlock;
-> +		}
-> +		if (__ftrace_lookup_ip(ops->func_hash->filter_hash, ip))
-> +			continue;
-> +		err = __ftrace_match_addr(hash, ip, 0);
-> +		if (err)
-> +			goto out_unlock;
-> +	}
-> +
-> +	free_hash = direct_functions;
-
-Add newline.
-
-> +	/* add the new ips to direct hash. */
-
-Again capitalize.
-
-> +	err = ftrace_direct_update(hash, ops->direct_call);
-> +	if (err)
-> +		goto out_unlock;
-> +
-> +	if (free_hash && free_hash != EMPTY_HASH)
-> +		call_rcu_tasks(&free_hash->rcu, register_ftrace_direct_cb);
-
-Since the above is now used more than once, let's make it into a helper
-function so that if things change, there's only one place to change it:
-
-	free_ftrace_direct(free_hash);
-
-static inline void free_ftrace_direct(struct ftrace_hash *hash)
-{
-	if (hash && hash != EMPTY_HASH)
-		call_rcu_tasks(&free_hash->rcu, register_ftrace_direct_cb);
-}
-
-> +
-> +	free_ftrace_hash(hash);
-> +	hash = alloc_and_copy_ftrace_hash(FTRACE_HASH_DEFAULT_BITS,
-> +					  ops->func_hash->filter_hash);
-> +	if (!hash) {
-> +		err = -ENOMEM;
-> +		goto out_unlock;
-> +	}
-> +	err = ftrace_set_filter_ips(ops, ips, cnt, 0, 1);
-> +
-> +	/* remove the entries that don't exist in our filter_hash anymore
-> +	 * from the direct_functions.
-> +	 */
-
-This isn't the network subsystem, we use the default comment style for multiple lines:
-
-/*
- * line 1
- * line 2
- * ...
- */
-
--- Steve
-
-> +	size = 1 << hash->size_bits;
-> +	for (int i = 0; i < size; i++) {
-> +		hlist_for_each_entry(entry, &hash->buckets[i], hlist) {
-> +			if (__ftrace_lookup_ip(ops->func_hash->filter_hash, entry->ip))
-> +				continue;
-> +			del = __ftrace_lookup_ip(direct_functions, entry->ip);
-> +			if (del && del->direct == ops->direct_call) {
-> +				remove_hash_entry(direct_functions, del);
-> +				kfree(del);
-> +			}
-> +		}
-> +	}
-> +out_unlock:
-> +	mutex_unlock(&direct_mutex);
-> +	if (hash)
-> +		free_ftrace_hash(hash);
-> +	return err;
-> +}
->  #endif /* CONFIG_DYNAMIC_FTRACE_WITH_DIRECT_CALLS */
->  
->  /**
-
+Rob
 
