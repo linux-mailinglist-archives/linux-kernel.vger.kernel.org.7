@@ -1,470 +1,318 @@
-Return-Path: <linux-kernel+bounces-714322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 099F8AF668D
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 02:20:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB8A3AF669F
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 02:23:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4006F4A71FA
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 00:20:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A3424A57DA
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 00:22:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C432225D6;
-	Thu,  3 Jul 2025 00:20:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84A38136658;
+	Thu,  3 Jul 2025 00:22:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pcxtryek"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=axiado.com header.i=@axiado.com header.b="X8SqIEqS"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2102.outbound.protection.outlook.com [40.107.223.102])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BC802DE706;
-	Thu,  3 Jul 2025 00:20:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751502011; cv=none; b=WvefaoS2/ljZiIEm7euiKn5JgkNTcNGDDOjp5U4a6Ano49C8nGZJ/XbgEqvTAT/VLZtcYiCxolM8/WgyEvvaL1gYlhDri01EgP6nzy6lM7YxaBlgC8zrdxMyEtYLOq+8HP0ur+Gews3dLeE8Pmvw8zokzOylQ0BZhxPjqtZU5Mc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751502011; c=relaxed/simple;
-	bh=HGP+d5DiZXY7edL7mXuCyKpn5kmU1+BAkFeysOyabnI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DmQ3Ffp4QrnutfKgwv1mJnkych/VlYokQ1b2tzfbjlmanOmdrBwPjcr6BmzEki8miS9JI50v4pR1/Muxhxr+1hDyvsNHZIr1bQHBmJWEGPebAU7JqgwgTK/OAP+t5DvGaOt8f/Z6IdVZgsMNPPaaZXmw3emXyVvrmkSje56iARQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Pcxtryek; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-237e6963f63so32882615ad.2;
-        Wed, 02 Jul 2025 17:20:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751502008; x=1752106808; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=74rKt+STDv8gvziFnmBUH7WzclmqAx6VBVFDifAftQU=;
-        b=Pcxtryekk7eYxYmnb29je/MxQWfDmFkSQzii/14vWpuI3YdetoNBo0gn8o5/bn5xD6
-         DKo5XA0o/NlpBiOYFoY8cKuegx1+4NnnwOMtNqyTxckJkGIvtMk3c6ge8dg0Jo3nzMPH
-         1oGOJz6WMTUyAqnULrSpwWz8dT2mTP5wxF9pANQbkwYmDY7UnFMs/i/OP7AO166xpIED
-         iLQfHx9hDa+uP8JYZhe6V/BEaP7y35lzu+FazGjWOeFMR/NszNj1r4yK1t0H1nP6+NZF
-         0vXPpDpu2DjrELX+PYT1k2maYiItT2YZN87OeD7uwv9TQNWi+zoWw4Kb/rhmaMA+jpAT
-         nhww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751502008; x=1752106808;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=74rKt+STDv8gvziFnmBUH7WzclmqAx6VBVFDifAftQU=;
-        b=PZ80rYfO0+BTLjaOeRd451zTLSGyGj/3gNNJDyBuyKVyU8pMlhoCB4RPZkXaJnWmQM
-         AA98UH1imTW3MpRXCee7VNf+v/JI1wH6dGgmJn+QNb+Kf0O+C6veMmvqODAmh+gXfSP4
-         nk5MKdSCdtp/3nClWYQ4uM9CCjD+VlMCMFDh5SFoqsxk8ls9s7P/oUo7tecgimd5bB/0
-         xX0tbvuaz5NioHXGKXzGsZatRYop4dhJABBh59gIWlZHuj4+JIxS73egrjx+M8gsho6v
-         43P/+AIhCSrXA3VXSxtYLiajhD5mon5SSCTOsuRltiUknS9xyYi2l3+4/y0AaAnQz85L
-         xNPA==
-X-Forwarded-Encrypted: i=1; AJvYcCV09GHW2W8dW/ejulqYnvYtnUr+9S6IENyhfLjxeprSLYmIfawoIpsE+mONgL+G/ZnyrwnBa+g4R40=@vger.kernel.org, AJvYcCVtxSyk+ER/1KLk3eIR+zNMN8jcN1X2+ydA5RuWRLkx3ZYxikeWvSMR4GRwE01IXvuHYyiM+jEJxMBAgBeKWVo=@vger.kernel.org, AJvYcCWFRT7eC5a124wQ/uOrtdbtTMRLLzhljBTLeUJ6+k/6w+fxfdMFB0cgODXBmRPWZvZ8sTJAtVGh3hQALC+M@vger.kernel.org
-X-Gm-Message-State: AOJu0YxfEfQaUAarm2kiIgLxFBsxHhZhz72dlZ0B+5P9vI+SPCNagEqE
-	kSo0HWv2hEFd0THeSS3Pz4h+EM1QUMRJFE5VSEgYu1nZ/x4to6NfMc8d
-X-Gm-Gg: ASbGncs+Fhjc4I2FMrgoXoI1jWav2B6YQcMqIQ4JWGb1XF9LFsBEEw5pLj+EFuURWZ5
-	dJV7S6FKbUgte/kUI5T4kn4AOMd5zqlLkdCH8Hvdle7PFM7EGFvDBYwj5XiwKBeK/btbFpjaOpQ
-	k4KzXE3k0RW7+hLEClw/v+JwGBlIARxuGXHbPtEh2aa97yF+m2h71UFk9MQyOa12O1IPmuGRuxv
-	NrcYggNMDyyQz1MQ3hORsKrSBS0kW7l9Rldfegy05GmQRE0PqWPcOskxyX9oUoPTk5zK7u9eg+m
-	5iK9FbKCjR3yiCBe623Ecvb37RR4stymgwGcEkhyj+8R0bpTcvAY+vJCrl8UpQ==
-X-Google-Smtp-Source: AGHT+IFreKQK98FHtTd4csmo0TGyK/ccLa13EmASTbcqZiR2H8hgMzgT145WTD5dZuLeULY9C5CM+w==
-X-Received: by 2002:a17:903:1b63:b0:235:e71e:a37b with SMTP id d9443c01a7336-23c6e550151mr82210355ad.34.1751502008326;
-        Wed, 02 Jul 2025 17:20:08 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23acb2f1814sm135737205ad.57.2025.07.02.17.20.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Jul 2025 17:20:07 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id 82C5E4206887; Thu, 03 Jul 2025 07:20:04 +0700 (WIB)
-Date: Thu, 3 Jul 2025 07:20:04 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Alexandre Courbot <acourbot@nvidia.com>,
-	Danilo Krummrich <dakr@kernel.org>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Jonathan Corbet <corbet@lwn.net>
-Cc: nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	rust-for-linux@vger.kernel.org,
-	Joel Fernandes <joelagnelf@nvidia.com>
-Subject: Re: [PATCH v3 4/7] Documentation: gpu: nova-core: Document vbios
- layout
-Message-ID: <aGXMtB7sN1FJOXAL@archie.me>
-References: <20250702-nova-docs-v3-0-f362260813e2@nvidia.com>
- <20250702-nova-docs-v3-4-f362260813e2@nvidia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72A1C35961;
+	Thu,  3 Jul 2025 00:22:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.102
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751502170; cv=fail; b=t2+EsZIBqKjHKJvUj2ocu8n5rHDlSRoIxr96V41S2joJLCdA0Ze9UnKSdYPEA+wukoMJpZ7zC/yqiq0L1maFz2EcUKR+UwFWUt5nYF0jjmcEcEOkNeRU0ee4wZkmbs5DxUe3lOoZ/zBaB0dD85vYTWNk6cXMerk5ZOlWe+6ZmLY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751502170; c=relaxed/simple;
+	bh=nfxso6gUbjItWSLGLWsN1oTD9mzaO1MU/buVS50MO1w=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Ehx81rZ7BILPXDCxJAqrRAOESHOklxdqz7zlortRkSKHfxprAEntV37zNoRCmqaETRupZvx+LcD/Rg2ilhQFA9B5LZAgkPFeyjaiQ4jx0l4psyqcy1s7syOfTELpp8nKb7mhcnSnIr+PCuAB9w2Jv+UpyoqGx37EMaHGklcYZ3Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=axiado.com; spf=pass smtp.mailfrom=axiado.com; dkim=pass (2048-bit key) header.d=axiado.com header.i=@axiado.com header.b=X8SqIEqS; arc=fail smtp.client-ip=40.107.223.102
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=axiado.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=axiado.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=o0oOMZx48qwdZ9ku+59cdo+Q9W3Ld4RM9+sL222ZSFjdzXleJDRPJucw/IJFyPYstXI0ovx3npxosfLLicpxARAeYMAXTxDin/ddYplCbsrU0TpHrSjFA/+vDRmkG7lbn1M2Sy269vzRG+7EEwrRcZU+HAmTmlKEA9YdNl0Ef615IAFX5FRMTM+nVgOmwHTDTOgjkaCrFLVnlh+V3zqQ6XluEm0LXHqXX/D8zz3hmn8juFvyU8sm5AnUhpLm8lB8oBVYPnFMMxbwmdOqdZe4HahldZZrLOmK5arLGhjYxnaIvyFAkaYlGKFK3iAaiGdk2AAgh20+5MyAC9ACnEcOOA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=kJSCvQLTkCq5YX+/NIhp+wzySh5DRPeRqV4orNXxIP8=;
+ b=fDxHhVNTwK8F3wC/4lvnWG6yw/+kfu3klgopkQkFelecllFCpuZYbMpFqnKsomfMEhRct8KQu7Ww1iydfdNcHSpE6zY7yM5EUi7wQYUo2iZsoqt3EgTsm/E0Fag9bhNXrPi1ShldqA9YC40mcUDgcPZRl/r019ET2oKpbTlK/e98qWQOncG8TkX0c/DG2C3DGa0vRmFHjs13kJLop1/duwO94bzXajx8MrqWwIsZrKVmTtsUoILmRtqi1QmwN4OOLLWWWu2FgnehiqCRhzHyWSAJyL8JmGRDGgBwxqQgKFx4uqZj8wmBOVGRrntR4/d9RJp46P9xgeRUW5gfw2sxBQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
+ 50.233.182.194) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=axiado.com;
+ dmarc=none action=none header.from=axiado.com; dkim=none (message not
+ signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axiado.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=kJSCvQLTkCq5YX+/NIhp+wzySh5DRPeRqV4orNXxIP8=;
+ b=X8SqIEqSNRLPLc1DHuxTHWjAGxRdCRQYmkfQQqz8ihEDjjU4aZ/u9w8ORDvngswb2+ArvyhrMB2dlPC+jVfkT5UWgjutcu9pDNb2je7FnvyX3/e6RdAt4E95AzJOvqBv0hYvYkZFcw/6ckaALMmVZG8rNgLoMz28/1b6jfLQZBd17mupKz1O+092ncnn1yFwbyUaMGaJPCrik9sklNaw4MghMrMRbjNHheENLqRXbLCg8kNnyWW2QpNSzcZ3IQ51w7ld9PxVlZyrQAAeEJ6mUoEibNefRtdgg/Xdyf46wmt7MBnZX2b+Jy0W4wLiFXUBNe23qfepTEhNAZKze2Pjog==
+Received: from MW4PR03CA0110.namprd03.prod.outlook.com (2603:10b6:303:b7::25)
+ by BY3PR18MB4721.namprd18.prod.outlook.com (2603:10b6:a03:3c8::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.20; Thu, 3 Jul
+ 2025 00:22:44 +0000
+Received: from SJ1PEPF000026CA.namprd04.prod.outlook.com
+ (2603:10b6:303:b7:cafe::34) by MW4PR03CA0110.outlook.office365.com
+ (2603:10b6:303:b7::25) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8901.20 via Frontend Transport; Thu,
+ 3 Jul 2025 00:22:44 +0000
+X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 50.233.182.194)
+ smtp.mailfrom=axiado.com; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=axiado.com;
+Received-SPF: Fail (protection.outlook.com: domain of axiado.com does not
+ designate 50.233.182.194 as permitted sender)
+ receiver=protection.outlook.com; client-ip=50.233.182.194; helo=[127.0.1.1];
+Received: from [127.0.1.1] (50.233.182.194) by
+ SJ1PEPF000026CA.mail.protection.outlook.com (10.167.244.107) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.8901.15
+ via Frontend Transport; Thu, 3 Jul 2025 00:22:44 +0000
+From: Harshit Shah <hshah@axiado.com>
+Subject: [PATCH v5 00/10] Axiado AX3000 SoC and Evaluation Board Support
+Date: Wed, 02 Jul 2025 17:22:29 -0700
+Message-Id: <20250702-axiado-ax3000-soc-and-evaluation-board-support-v5-0-6ade160ea23b@axiado.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="dcvzE3w8GZbsAc7N"
-Content-Disposition: inline
-In-Reply-To: <20250702-nova-docs-v3-4-f362260813e2@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEXNZWgC/53Ny2rDMBCF4VcJWneKRjc7WfU9ShajixtBaxnJE
+ QnB7145XTQlK3cljmC+/8ZKyDEUdtjdWA41lpjGNvTLjrkTjR8Bom+bCS40N6iALpF8ao/knEN
+ JDmj0ECp9nmlux2ATZQ/lPE0pz4C2N1bR3hM51tAphyFe7sH3Y9unWOaUr/d+xfX336mKwEGKj
+ qxUyqHxbz/Aq0tfbG1V8ejrzb5YfYWaCy97g/2TLx98ITf7svlWBmOoU3sc9JOvfv2O42ZfNR/
+ RkhmMsENv/vjLsnwDT+JYvg0CAAA=
+X-Change-ID: 20250614-axiado-ax3000-soc-and-evaluation-board-support-1b86b4a9daac
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, Arnd Bergmann <arnd@arndb.de>, 
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+ Jan Kotas <jank@cadence.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Jiri Slaby <jirislaby@kernel.org>, Michal Simek <michal.simek@amd.com>, 
+ =?utf-8?q?Przemys=C5=82aw_Gaj?= <pgaj@cadence.com>, 
+ Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+ Frank Li <Frank.Li@nxp.com>, Boris Brezillon <bbrezillon@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, 
+ soc@lists.linux.dev, Jan Kotas <jank@cadence.com>, 
+ linux-serial@vger.kernel.org, linux-i3c@lists.infradead.org, 
+ Harshit Shah <hshah@axiado.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5681; i=hshah@axiado.com;
+ h=from:subject:message-id; bh=nfxso6gUbjItWSLGLWsN1oTD9mzaO1MU/buVS50MO1w=;
+ b=owEB7QES/pANAwAKAfFYcxGhMtX7AcsmYgBoZc1N0Dqt/tPASw0DuYQGESjx4iTtvfZOS5x+N
+ XBdUbqJMOaJAbMEAAEKAB0WIQRO3pC/7SkLS2viWOvxWHMRoTLV+wUCaGXNTQAKCRDxWHMRoTLV
+ +6KrC/sGy50WY1r9YaRu4CTiiwTstALjor9L2sDRU6oX3UNMVjFRlrmXdHO72bQKCU2jVvW8hju
+ ok194QCtRtCvsRJOqyE1LwaFMZpdLB6/EddB8XSllFBsFc10SRTVRrmvakETMTvoL2m64zIzKcM
+ YauiFf7+9xrZ4Nv2/L9hepkZCqOijSCYHpOtida4qSItId1IdRPvWxvsDVv5K6hs4TaqdPFQ/9e
+ VGvDmWDYi44lTqSeESjgZiQt7R/KljmRlJnv4r5oRJOI1HYJnzOA+sOe0V/BfDmiyPZmOWx3tLv
+ 1M400/+AA7med3w3wLr+QosUVpTQNKOEHlGfHGr0HXWGrq/peXnLANwGfID5XVA2/Js9umBtIS5
+ rtWxLZAQ/EOfeg17SVFXruJ2DHBo4m/QNXSfxBtnjxvuDAshnMB0ADPhRkvQvfEQDgZSxzj5eiw
+ ApBehUAbeNU9SE2pxE3vB7narAzBP5dzjcNaymsdVngSyZxySTGVJvij60Ff8IyC9AlEk=
+X-Developer-Key: i=hshah@axiado.com; a=openpgp;
+ fpr=4EDE90BFED290B4B6BE258EBF1587311A132D5FB
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF000026CA:EE_|BY3PR18MB4721:EE_
+X-MS-Office365-Filtering-Correlation-Id: 59f92d7d-1d4a-43ae-57af-08ddb9c7baec
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|7416014|376014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?UUpKakpHK0ZVdTBQb0RuNXgrUW40TFpJcllacml5SWlHUUM5TnZhZWlWeU9M?=
+ =?utf-8?B?SkV0TTh1dlhidFNHVkRTN0F5QjJnM2FOK2QrbFhvd3V1b0dzMGxtZjd3bjRM?=
+ =?utf-8?B?SnpjdlpKSC9NMEF2TUF1NlRialp4UE5mQzBSbFFBelRPaTJjT1BscUN1N2Q4?=
+ =?utf-8?B?SFJUbmVFU1ZRY2VrQ0E1dUN1a3JxeEJtbHlpRGhLV0xZTlR0SlpINWpjWVFj?=
+ =?utf-8?B?Z0wrdjR2Ti9INVBkcEEyeDBDalErbUVxMWtINUxkR0kvN1lsc3c0VEFxQjlw?=
+ =?utf-8?B?VUlyeXpkM2JKbVFCc1M1cDJCQkpneTZDSVUva2tlTXVMMXY0N2RIWG4yMDlU?=
+ =?utf-8?B?MTAvb2tVRlVwTWozaUdtK1NoNlVQa29GNVJvTkZ6WjNwWXNqWTRLRC9yNGJp?=
+ =?utf-8?B?eHpDMG1qMkoya0IxcHN1K0dUWjlMZEgwSHh4SVg2Z2JDU3Z0d21JM2x1YVhK?=
+ =?utf-8?B?dEdBRWd0TkdodngwOHVJRVNJcU1BN0lKU0NNcmxja3NYTko2QUptc05QVnFB?=
+ =?utf-8?B?VjJrNXZMbnRyME1VUVVMMURhSk4xZXVpOXB3ZW9hRHRaS3dXMGtmTVlDaEZY?=
+ =?utf-8?B?UC9wNmo0MTJ5cFNpMHAxd2pmdWtKek9jY0I3bzJIeWNNOFBxczNSMGVYakl2?=
+ =?utf-8?B?Zmt4MzM0V0YzQzdTQThqNmdrV1hHRVNPZWtNYlcvTXNqN2FybVloYnN0blZT?=
+ =?utf-8?B?aThlSVkwWlgrTkN3ektKelJTSVJHZHRCdnpQTTFpU094RHg0ZGNoZVVEWlBo?=
+ =?utf-8?B?a0VlR0txMlZLRUJGNEJHeFV2em5ibFNzY3pNNkR4QngveGhRWEZwSElYaU5Z?=
+ =?utf-8?B?QVFEb3JzUTlsYUM2WnVNeTVxbTdvNTkvb2xVSzFJZEI0VHlrNURoRGhGUzNy?=
+ =?utf-8?B?MGcrZTBuQ1J5Slp5M3kyaUp2M1R5T1hKOUV3RS8ybTJ1RDhtSUVRYU9hU3pX?=
+ =?utf-8?B?NWRHdlIzdkJKZFZHQUM3TFhKTk5pc3hLZ2ZUVjRUS0hKWUFRVS9GUFh4dUNy?=
+ =?utf-8?B?VkhETVE1QnV4QzhyNmN5UjV4UndOdVh3V1hSL3B0MW81NUVjYVRoVFY4cnVD?=
+ =?utf-8?B?OG4vSEtFMHIyay82REF5aEw4U2pMTmdaS3BWTlI5d1pLVTNCMVdhVGVuK3Ay?=
+ =?utf-8?B?elU3ZlZwME9uWGpkNWVXT1hwSUMrVUdUMEhDdXVrd2V5KzlTYmNUV3RSZUli?=
+ =?utf-8?B?cHRLV0FVSjl5K1R0VEUzQXRESzIxOE4rSzhydUtNOUhNbmVjTHdCQ29PNDlR?=
+ =?utf-8?B?NE9QOUR2Ylh4d1RPeHpvU05YUi9USXBYNmh6cWswK1hhNzJlUlQ5VDdFYU9R?=
+ =?utf-8?B?NWRmcHROMDZpV1crcm9IeGxLWGE0NTV4bkMxOWt3QmtFL3h4Ni9iYnRPUkg0?=
+ =?utf-8?B?RXZudVBTM0tNUFlaYWRTRlkyUDhVQnAwVm1CSXcrVjdUM0JRNzdWdmh3Mk1Q?=
+ =?utf-8?B?bDNVWEM5am5scjR1bGlqNDFCbnYxeGJLRk5rUzZuN29QNm81VkZKN0dSNVJG?=
+ =?utf-8?B?bklFRGlycUxDRzlvTVExZ2lya2J0Y0VyV0U3bXZyVzM3KzE5b0pEb3IyZjZs?=
+ =?utf-8?B?L1paMjhodExMelg3OUxUSUZqaWZZYUVCUEJOZGFQOUFnbUM4SFQ2SG92cTVx?=
+ =?utf-8?B?dHVVcExsVXl3VWc3bUI5V2YyTmYwUXp0a1V5c3kvcml0OThzL2gxeHp3OEFu?=
+ =?utf-8?B?K0Nkc3Uwa1BTUXRoNmE4ZlpJeEZENFhlMUJSM1dQaW5WazN0VkF3a2p4ZCtI?=
+ =?utf-8?B?Q09nbjZLcEg1VDNEdW5mZjBpMVBSVitwbTJQRGxjUVRDNEdhK1JGTjBvWFpK?=
+ =?utf-8?B?NCtMc1IwWTNqS1NZQTZLK24yendOTlNnSGlTMnZ1WnAxSWIydlRIK1BneHEz?=
+ =?utf-8?B?Z3Vnbkh2UVdZWmdqV3J0aE93Q3gxY1AreFBtYlhWT0NJVEc2eE1US0tleDVL?=
+ =?utf-8?B?R0l0WlVUNFpSY0k5Nkk5cCtyZVpHRmF1Smlpc2duUGVsTmU5TXBPTkJQZFhO?=
+ =?utf-8?B?Tk81NXNSRmVxcXRjeFlLT3lqQnUwVXQwZjRlZkJwTjBuOVlxMEFBSUdJWmF3?=
+ =?utf-8?B?OE9HRGp1NW9zb09PekhhLzVxVVB5WVE0MlpCUT09?=
+X-Forefront-Antispam-Report:
+	CIP:50.233.182.194;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:[127.0.1.1];PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(7416014)(376014)(921020);DIR:OUT;SFP:1102;
+X-OriginatorOrg: axiado.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jul 2025 00:22:44.1323
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 59f92d7d-1d4a-43ae-57af-08ddb9c7baec
+X-MS-Exchange-CrossTenant-Id: ff2db17c-4338-408e-9036-2dee8e3e17d7
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=ff2db17c-4338-408e-9036-2dee8e3e17d7;Ip=[50.233.182.194];Helo=[[127.0.1.1]]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF000026CA.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY3PR18MB4721
 
+This patch series adds initial support for the Axiado AX3000 SoC and its
+evaluation board.
 
---dcvzE3w8GZbsAc7N
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The AX3000 is a multi-core system-on-chip featuring four ARM Cortex-A53
+cores, secure vault, hardware firewall, and AI acceleration engines. This
+initial support enables basic bring-up of the SoC and evaluation platform
+with CPU, timer, UART, and I3C functionality.
 
-On Wed, Jul 02, 2025 at 08:00:41PM +0900, Alexandre Courbot wrote:
-> diff --git a/Documentation/gpu/nova/core/vbios.rst b/Documentation/gpu/no=
-va/core/vbios.rst
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..55d7dd4a6658c2a20cc5617f9=
-6b278bc4ec2ba17
-> --- /dev/null
-> +++ b/Documentation/gpu/nova/core/vbios.rst
-> @@ -0,0 +1,180 @@
-> +.. SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> +
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +VBIOS
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +This document describes the layout of the VBIOS image which is a series =
-of concatenated
-> +images in the ROM of the GPU. The VBIOS is mirrored onto the BAR 0 space=
- and is read
-> +by both Boot ROM firmware (also known as IFR or init-from-rom firmware) =
-on the GPU to
-> +boot strap various microcontrollers (PMU, SEC, GSP) with critical initia=
-lization before
-   bootstrap
-> +the driver loads, as well as by the nova-core driver in the kernel to bo=
-ot the GSP.
-> +
-> +The format of the images in the ROM follow the "BIOS Specification" part=
- of the
-> +PCI specification, with Nvidia-specific extensions. The ROM images of ty=
-pe FwSec
-> +are the ones that contain Falcon ucode and what we are mainly looking fo=
-r.
-> +
-> +As an example, the following are the different image types that can be f=
-ound in the
-> +VBIOS of an Ampere GA102 GPU which is supported by the nova-core driver.
-> +
-> +- PciAt Image (Type 0x00) - This is the standard PCI BIOS image, whose n=
-ame
-> +  likely comes from the "IBM PC/AT" architecture.
-> +
-> +- EFI Image (Type 0x03) - This is the EFI BIOS image. It contains the UE=
-FI GOP
-> +  driver that is used to display UEFI graphics output.
-> +
-> +- First FwSec Image (Type 0xE0) - The first FwSec image (Secure Firmware)
-> +
-> +- Second FwSec Image (Type 0xE0) - The second FwSec image (Secure Firmwa=
-re)
-> +  contains various different microcodes (also known as an applications) =
-that do
-              various microcodes?
-> +  a range of different functions. The FWSEC ucode is run in heavy-secure=
- mode and
-> +  typically runs directly on the GSP (it could be running on a different=
- designated
-> +  processor in future generations but as of Ampere, it is the GSP). This=
- firmware
-> +  then loads other firmware ucodes onto the PMU and SEC2 microcontroller=
-s for gfw
-> +  initialization after GPU reset and before the driver loads (see devini=
-t.rst).
-> +  The DEVINIT ucode is itself another ucode that is stored in this ROM p=
-artition.
-> +
-> +Once located, the Falcon ucodes have "Application Interfaces" in their d=
-ata
-> +memory (DMEM). For FWSEC, the application interface we use for FWSEC is =
-the
-> +"DMEM mapper" interface which is configured to run the "FRTS" command. T=
-his
-> +command carves out the WPR2 (Write-Protected Region) in VRAM. It then pl=
-aces
-> +important power-management data, called 'FRTS', into this region. The WP=
-R2
-> +region is only accessible to heavy-secure ucode.
-> +
-> +.. note::
-> +   It is not clear why FwSec has 2 different partitions in the ROM, but =
-they both
-> +   are of type 0xE0 and can be identified as such. This could be subject=
- to change
-> +   in future generations.
-> +
-> +VBIOS ROM Layout
-> +----------------
-> +The VBIOS layout is roughly a series of concatenated images as follows:
-> +(For more explanations of acronyms, see the detailed descriptions in vbi=
-os.rs).
+The series begins by adding the "axiado" vendor prefix and compatible
+strings for the SoC and board. It then introduces the device tree files
+and minimal ARCH_AXIADO platform support in arm64.
 
-Looks OK, but...
+Patch breakdown:
+  - Patch 1 add the vendor prefix entry
+  - Patch 2 document the SoC and board bindings
+  - Patch 3 convert cdns,gpio.txt to gpio-cdns.yaml
+  - Patch 4 add binding for ax3000 gpio controller
+  - Patch 5 add binding for ax3000 uart controller
+  - Patch 6 add binding for ax3000 i3c controller
+  - Patch 7 add Axiado SoC family
+  - Patch 8 add device tree for the ax3000 & ax3000-evk
+  - Patch 9 add ARCH_AXIADO in defconfig
+  - Patch 10 update MAINTAINERS file
 
-> +
-> +.. note::
-> +   This diagram is created based on an GA-102 Ampere GPU as an example a=
-nd could
-> +   vary for future or other GPUs.
-> +
-> +Here is a block diagram of the VBIOS layout::
+Note: A few checkpatch.pl warnings appear due to DT binding conversions and
+MAINTAINERS update. The binding conversion and includes were kept together in 
+patch 3/10 due to their close relationship, but we are happy to split them if 
+preferred.
 
-Above sentence (but not the note directive) is redundant, though.
+Feedback and suggestions are welcome.
 
-> +
-> +    +-------------------------------------------------------------------=
----------+
-> +    | VBIOS (Starting at ROM_OFFSET: 0x300000)                          =
-         |
-> +    +-------------------------------------------------------------------=
----------+
-> +    | +-----------------------------------------------+                 =
-         |
-> +    | | PciAt Image (Type 0x00)                       |                 =
-         |
-> +    | +-----------------------------------------------+                 =
-         |
-> +    | | +-------------------+                         |                 =
-         |
-> +    | | | ROM Header        |                         |                 =
-         |
-> +    | | | (Signature 0xAA55)|                         |                 =
-         |
-> +    | | +-------------------+                         |                 =
-         |
-> +    | |         | rom header's pci_data_struct_offset |                 =
-         |
-> +    | |         | points to the PCIR structure        |                 =
-         |
-> +    | |         V                                     |                 =
-         |
-> +    | | +-------------------+                         |                 =
-         |
-> +    | | | PCIR Structure    |                         |                 =
-         |
-> +    | | | (Signature "PCIR")|                         |                 =
-         |
-> +    | | | last_image: 0x80  |                         |                 =
-         |
-> +    | | | image_len: size   |                         |                 =
-         |
-> +    | | | in 512-byte units |                         |                 =
-         |
-> +    | | +-------------------+                         |                 =
-         |
-> +    | |         |                                     |                 =
-         |
-> +    | |         | NPDE immediately follows PCIR       |                 =
-         |
-> +    | |         V                                     |                 =
-         |
-> +    | | +-------------------+                         |                 =
-         |
-> +    | | | NPDE Structure    |                         |                 =
-         |
-> +    | | | (Signature "NPDE")|                         |                 =
-         |
-> +    | | | last_image: 0x00  |                         |                 =
-         |
-> +    | | +-------------------+                         |                 =
-         |
-> +    | |                                               |                 =
-         |
-> +    | | +-------------------+                         |                 =
-         |
-> +    | | | BIT Header        | (Signature scanning     |                 =
-         |
-> +    | | | (Signature "BIT") |  provides the location  |                 =
-         |
-> +    | | +-------------------+  of the BIT table)      |                 =
-         |
-> +    | |         | header is                           |                 =
-         |
-> +    | |         | followed by a table of tokens       |                 =
-         |
-> +    | |         V one of which is for falcon data.    |                 =
-         |
-> +    | | +-------------------+                         |                 =
-         |
-> +    | | | BIT Tokens        |                         |                 =
-         |
-> +    | | |  ______________   |                         |                 =
-         |
-> +    | | | | Falcon Data |   |                         |                 =
-         |
-> +    | | | | Token (0x70)|---+------------>------------+--+              =
-         |
-> +    | | | +-------------+   |  falcon_data_ptr()      |  |              =
-         |
-> +    | | +-------------------+                         |  V              =
-         |
-> +    | +-----------------------------------------------+  |              =
-         |
-> +    |              (no gap between images)               |              =
-         |
-> +    | +-----------------------------------------------+  |              =
-         |
-> +    | | EFI Image (Type 0x03)                         |  |              =
-         |
-> +    | +-----------------------------------------------+  |              =
-         |
-> +    | | Contains the UEFI GOP driver (Graphics Output)|  |              =
-         |
-> +    | | +-------------------+                         |  |              =
-         |
-> +    | | | ROM Header        |                         |  |              =
-         |
-> +    | | +-------------------+                         |  |              =
-         |
-> +    | | | PCIR Structure    |                         |  |              =
-         |
-> +    | | +-------------------+                         |  |              =
-         |
-> +    | | | NPDE Structure    |                         |  |              =
-         |
-> +    | | +-------------------+                         |  |              =
-         |
-> +    | | | Image data        |                         |  |              =
-         |
-> +    | | +-------------------+                         |  |              =
-         |
-> +    | +-----------------------------------------------+  |              =
-         |
-> +    |              (no gap between images)               |              =
-         |
-> +    | +-----------------------------------------------+  |              =
-         |
-> +    | | First FwSec Image (Type 0xE0)                 |  |              =
-         |
-> +    | +-----------------------------------------------+  |              =
-         |
-> +    | | +-------------------+                         |  |              =
-         |
-> +    | | | ROM Header        |                         |  |              =
-         |
-> +    | | +-------------------+                         |  |              =
-         |
-> +    | | | PCIR Structure    |                         |  |              =
-         |
-> +    | | +-------------------+                         |  |              =
-         |
-> +    | | | NPDE Structure    |                         |  |              =
-         |
-> +    | | +-------------------+                         |  |              =
-         |
-> +    | | | Image data        |                         |  |              =
-         |
-> +    | | +-------------------+                         |  |              =
-         |
-> +    | +-----------------------------------------------+  |              =
-         |
-> +    |              (no gap between images)               |              =
-         |
-> +    | +-----------------------------------------------+  |              =
-         |
-> +    | | Second FwSec Image (Type 0xE0)                |  |              =
-         |
-> +    | +-----------------------------------------------+  |              =
-         |
-> +    | | +-------------------+                         |  |              =
-         |
-> +    | | | ROM Header        |                         |  |              =
-         |
-> +    | | +-------------------+                         |  |              =
-         |
-> +    | | | PCIR Structure    |                         |  |              =
-         |
-> +    | | +-------------------+                         |  |              =
-         |
-> +    | | | NPDE Structure    |                         |  |              =
-         |
-> +    | | +-------------------+                         |  |              =
-         |
-> +    | |                                               |  |              =
-         |
-> +    | | +-------------------+                         |  |              =
-         |
-> +    | | | PMU Lookup Table  | <- falcon_data_offset <----+              =
-         |
-> +    | | | +-------------+   |    pmu_lookup_table     |                 =
-         |
-> +    | | | | Entry 0x85  |   |                         |                 =
-         |
-> +    | | | | FWSEC_PROD  |   |                         |                 =
-         |
-> +    | | | +-------------+   |                         |                 =
-         |
-> +    | | +-------------------+                         |                 =
-         |
-> +    | |         |                                     |                 =
-         |
-> +    | |         | points to                           |                 =
-         |
-> +    | |         V                                     |                 =
-         |
-> +    | | +-------------------+                         |                 =
-         |
-> +    | | | FalconUCodeDescV3 | <- falcon_ucode_offset  |                 =
-         |
-> +    | | | (FWSEC Firmware)  |    fwsec_header()       |                 =
-         |
-> +    | | +-------------------+                         |                 =
-         |
-> +    | |         |   immediately followed  by...       |                 =
-         |
-> +    | |         V                                     |                 =
-         |
-> +    | | +----------------------------+                |                 =
-         |
-> +    | | | Signatures + FWSEC Ucode   |                |                 =
-         |
-> +    | | | fwsec_sigs(), fwsec_ucode()|                |                 =
-         |
-> +    | | +----------------------------+                |                 =
-         |
-> +    | +-----------------------------------------------+                 =
-         |
-> +    |                                                                   =
-         |
-> +    +-------------------------------------------------------------------=
----------+
-> +
-> +Falcon data Lookup
-> +------------------
-> +A key part of the VBIOS extraction code (vbios.rs) is to find the locati=
-on of the
-> +Falcon data in the VBIOS which contains the PMU lookup table. This looku=
-p table is
-> +used to find the required Falcon ucode based on an application ID.
-> +
-> +The location of the PMU lookup table is found by scanning the BIT (`BIOS=
- Information Table`_)
-> +tokens for a token with the id `BIT_TOKEN_ID_FALCON_DATA` (0x70) which i=
-ndicates the
-> +offset of the same from the start of the VBIOS image. Unfortunately, the=
- offset
-> +does not account for the EFI image located between the PciAt and FwSec i=
-mages.
-> +The `vbios.rs` code compensates for this with appropriate arithmetic.
-> +
-> +.. _`BIOS Information Table`: https://download.nvidia.com/open-gpu-doc/B=
-IOS-Information-Table/1/BIOS-Information-Table.html
+Signed-off-by: Harshit Shah <hshah@axiado.com>
 
-The rest looks good.
+To: Rob Herring <robh@kernel.org>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>
+To: Conor Dooley <conor+dt@kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Arnd Bergmann <arnd@arndb.de>
+To: Catalin Marinas <catalin.marinas@arm.com>
+To: Will Deacon <will@kernel.org>
+Cc: devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-gpio@vger.kernel.org
+Cc: soc@lists.linux.dev
+Cc: Jan Kotas <jank@cadence.com>
 
-Thanks.
+Signed-off-by: Harshit Shah <hshah@axiado.com>
+---
+Changes in v5:
+* patch#4
+ - remove description, add enum (Krzysztof)
+* patch#5
+ - removed description, add enum (Krzysztof)
+ - moved to the first entry (Krzysztof)
+* patch#6
+ - removed description, add enum (Krzysztof)
+* patch#8
+ - add reviewed-by Krzysztof
 
---=20
-An old man doll... just what I always wanted! - Clara
+- Link to v4: https://lore.kernel.org/r/20250701-axiado-ax3000-soc-and-evaluation-board-support-v4-0-11ba6f62bf86@axiado.com
 
---dcvzE3w8GZbsAc7N
-Content-Type: application/pgp-signature; name=signature.asc
+Changes in v4:
+* patch#1
+ - add acked-by Rob
+* patch#2
+ - add reviewed-by Krzysztof
+* patch#3 
+ - remove description in "ngpio" (Krzysztof)
+ - add reviewed-by Krzysztof
+* patch#4 (new)
+ - add binding for ax3000 gpio controller
+ - backward compatible with original binding
+* patch#5 (new)
+ - add binding for ax3000 uart controller
+ - backward compatible with original binding
+* patch#6 (new)
+ - add binding for ax3000 i3c controller
+ - backward compatible with original binding
+* patch#7
+ - add reviewed-by Krzysztof
+* patch#8
+ - update compatibles uart -> axiado,ax3000-uart, i3c -> axiado,ax3000-i3c, gpio -> axiado,ax3000-gpio (Krzysztof)
+ - add space between nodes (Krzysztof)
+* patch#9-10
+ - add reviewed-by Krzysztof
+ 
+- Link to v3: https://lore.kernel.org/r/20250623-axiado-ax3000-soc-and-evaluation-board-support-v3-0-b3e66a7491f5@axiado.com
 
------BEGIN PGP SIGNATURE-----
+Changes in v3:
+- patch#3 
+ - Update with the original filename (Krzysztof)
+ - maitainer and property name updates (Krzysztof)
+- patch#4
+  - removed defconfig (Krzysztof)
+- patch#5 
+  - update nodes to alphabetical order, remove redudant nodes (Krzysztof)
+  - add fix clock nodes (Krzysztof)
+- patch#6 
+  - enable ARCH_AXIADO in defconfig (Krzysztof)
+- Link to v2: https://lore.kernel.org/r/20250615-axiado-ax3000-soc-and-evaluation-board-support-v2-0-341502d38618@axiado.com
 
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaGXMrwAKCRD2uYlJVVFO
-o/gJAP9jlcd/JgjSS+ZtfVD1Ol3IKve2PGOU8NWjOZb3riPbKAD/fKtPOiNkS/Xk
-V8jmP5oeb2MVjpif7ckRWNLTom80Fw0=
-=9m7c
------END PGP SIGNATURE-----
+Changes in v2:
+- update patch#2 to fix the yamlint,dt_binding_check error
+- update patch#6 to update path mentioned by kernel test robot
+- Link to v1: https://lore.kernel.org/r/20250614-axiado-ax3000-soc-and-evaluation-board-support-v1-0-327ab344c16d@axiado.com
 
---dcvzE3w8GZbsAc7N--
+---
+Harshit Shah (10):
+      dt-bindings: vendor-prefixes: Add Axiado Corporation
+      dt-bindings: arm: axiado: add AX3000 EVK compatible strings
+      dt-bindings: gpio: cdns: convert to YAML
+      dt-bindings: gpio: cdns: add Axiado AX3000 GPIO variant
+      dt-bindings: serial: cdns: add Axiado AX3000 UART controller
+      dt-bindings: i3c: cdns: add Axiado AX3000 I3C controller
+      arm64: add Axiado SoC family
+      arm64: dts: axiado: Add initial support for AX3000 SoC and eval board
+      arm64: defconfig: enable the Axiado family
+      MAINTAINERS: Add entry for Axiado
+
+ Documentation/devicetree/bindings/arm/axiado.yaml  |  23 +
+ .../devicetree/bindings/gpio/cdns,gpio.txt         |  43 --
+ .../devicetree/bindings/gpio/cdns,gpio.yaml        |  83 ++++
+ .../devicetree/bindings/i3c/cdns,i3c-master.yaml   |   7 +-
+ .../devicetree/bindings/serial/cdns,uart.yaml      |   4 +
+ .../devicetree/bindings/vendor-prefixes.yaml       |   2 +
+ MAINTAINERS                                        |   8 +
+ arch/arm64/Kconfig.platforms                       |   6 +
+ arch/arm64/boot/dts/Makefile                       |   1 +
+ arch/arm64/boot/dts/axiado/Makefile                |   2 +
+ arch/arm64/boot/dts/axiado/ax3000-evk.dts          |  79 ++++
+ arch/arm64/boot/dts/axiado/ax3000.dtsi             | 520 +++++++++++++++++++++
+ arch/arm64/configs/defconfig                       |   1 +
+ 13 files changed, 735 insertions(+), 44 deletions(-)
+---
+base-commit: 8c6bc74c7f8910ed4c969ccec52e98716f98700a
+change-id: 20250614-axiado-ax3000-soc-and-evaluation-board-support-1b86b4a9daac
+
+Best regards,
+-- 
+Harshit Shah <hshah@axiado.com>
+
 
