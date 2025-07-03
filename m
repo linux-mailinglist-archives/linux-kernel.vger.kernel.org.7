@@ -1,171 +1,145 @@
-Return-Path: <linux-kernel+bounces-714942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3667AF6EAC
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 11:30:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFF12AF6EB4
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 11:31:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A9614E15D1
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 09:30:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD83A560194
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 09:31:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5025298CA7;
-	Thu,  3 Jul 2025 09:30:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67C082DA772;
+	Thu,  3 Jul 2025 09:30:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sigma-star.at header.i=@sigma-star.at header.b="uz0FWDvU"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="D4BXHVOK"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99D052D77E8
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 09:30:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49708288C15
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 09:30:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751535004; cv=none; b=ifjwE07u1iXRows+eIkSI4mgeVijSfy+St8+o/XMZct/PBmT/FNQSUaHGfYpOQff3xWKu52wdbyo9WfLEvACsKjvjsVmnmLIni6VcA4dXpxHXdSLlcM3M9Yk/d6XICnpwd+JYgGIBmGOGhM137d5G5G0w0BRuFzrc7JVBVM+0f0=
+	t=1751535042; cv=none; b=mv6+6bAP0ZF4qxmNb1lnKJtbs0RxnK+uj+XV0hfO61Pwal+5ROS8ZtkCup4d7XTxbaiqBdsCaQiobxv2z1urLUuAuM6iAxg48hR6mGXhZ77OxXYu3qSVv+nZLeQQapv4pWZb5amulyyDTuzLJy/mfatN1/qFAZZzJn/Gr9u+t7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751535004; c=relaxed/simple;
-	bh=NUbOO1LkhU4fqWdYniY0ngtGCX4mheJRlQgsq40wJm4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=k8PaCDuDilPV51h2MdJzy5ztSkriLlIx00MLvbHzzD0/WNUakKKeiyuNfqlscoKsPo4OFR0U9dhfFU38qtcBn82Cs7Mm9j+P54GCY66b9w6g02Tc6aGGd0oNKFaN3zd/4SxU6or513rlW4BB6E/xxDKQhlDxMTxkwxrOPo0YcSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigma-star.at; spf=pass smtp.mailfrom=sigma-star.at; dkim=pass (2048-bit key) header.d=sigma-star.at header.i=@sigma-star.at header.b=uz0FWDvU; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigma-star.at
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sigma-star.at
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-ae0dd7ac1f5so1368301666b.2
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Jul 2025 02:30:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sigma-star.at; s=google; t=1751535000; x=1752139800; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QIWiG9dqFQFHdKj4M2wbUUNwQxdB0m9vMthTEJMZrmc=;
-        b=uz0FWDvUXoXq5v64nPtdUhYogPICqd2o7D9WDNZPKgfUW+e/B40CVr7LwwVxS9KRkZ
-         ksNUshvsWw55k6IwKYJ8oplhAnCkHhcfg1qfzCE8yli2+lOdCXMUUmvbrS9Fi5eCKZ8Y
-         iXK8okeq1qf7CYnlSjAjoGS1E8IirziiMj307ItxLzdFxEBtVsf3bMTxStURIWzK7aaG
-         jfhMnkpR7CLxETs4GfYAgqt1o1EKoSpBLIP+n3gT8S5I2uJ5tyM6IfAuC6DXSuPJg4f+
-         2ufSmJjGxTR0nV8gShuh8j8Z+RniexXRD8jv78k+ULiJHagIB+0Q2bnXEIBJCcavd05/
-         /Cjg==
+	s=arc-20240116; t=1751535042; c=relaxed/simple;
+	bh=+9LY65EJRBu4Z+OtHRUlcwV0eyAifNrUhOiPBXIMhGM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NMCWR6J1gIcJGYSgt4VXGMduxKlzB3ENpfhA27Pj3K/+AmxWGYjWf8w6vZD9audH/GiUGLrydmFFeJYwW1mpZX1R9xD5Mg89dcmx0VmKmSGhUtJeWsuMVuX1gj3qguUJzdPfLFVE1YRp2dmYLM0gOy3tH/YZ0WRRKtiTrZE7zOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=D4BXHVOK; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1751535040;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qRFdLYJ4q7/MAXUEMWlpPtrPV11dB3OuQtvNTnayJQo=;
+	b=D4BXHVOKop+JmmO5kOf30mgX08WDZ5D+QWx7xoL49YfF94JFjZZ/36VQ/QoEXV2MoKx0KJ
+	YM+SqW1Il/vAZhp1ZjDIUgKTJ3aVlVbpg4NtZ+RMCrbC/FA6feqYBRnag7XqsGON+UMMXi
+	uLoAdMbeoT4M0U6sxDAxGZ2jXjkPnXw=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-606-f1nMf-owNy6yc2zwciP8fw-1; Thu, 03 Jul 2025 05:30:38 -0400
+X-MC-Unique: f1nMf-owNy6yc2zwciP8fw-1
+X-Mimecast-MFC-AGG-ID: f1nMf-owNy6yc2zwciP8fw_1751535038
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4532514dee8so51071125e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Jul 2025 02:30:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751535000; x=1752139800;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QIWiG9dqFQFHdKj4M2wbUUNwQxdB0m9vMthTEJMZrmc=;
-        b=PFc+rNBOivQJlY1Md79FF464UiC+P/U0+83r3cnvskdHNKxm1B/++TI0JP8zh7EOSQ
-         fE9dkL5gCaV5w6D8K3cf2Uj8YUP2i4dmN54KbPTupp/+dsqzI2DZsz4Ay3u4FABd1FJU
-         dQCbqjVGkp9eUgDW063DDc4I3AYxF2XU3NhhjcQyw4IP39LnvWe8z3VerMoz3K8bBrz+
-         U4OogQE5XLhduEFAhyHrzepbrtXdBO40MFhadvvGGvv96jDdrhkNFPaZNtDgPUSQXkaG
-         z8Ld3JmUMUgqlQs16mCOVsQ3FwdDENF/i4UQPaHrlNVC2Lb+kqPhYMV6vyti0GZyJ+49
-         SSsg==
-X-Forwarded-Encrypted: i=1; AJvYcCVF1Lm+AG0bMFN5uzS9yy/nsgTk5z0QiuigpoVJolX46L0vj7ux0zj7QrRhisUy2TmttJ3hOVGNcuywYEk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGo7biAtax0jr/bfALXChrmM0rnxU+xFoYw3PLh4ksE5nN8777
-	FFtnypJuRL0Aq0ro4zq8TdG5czGmJJO6FgnYq6vaBTwYWQ4QypE8B4q4xVcA5Syd5N7AYmtye7B
-	cV2FW
-X-Gm-Gg: ASbGncvMQrlAGTvWzTPDwE6AVQho4gr6WbkmHJZCN9LsTf9VQnMY7Zg3f2RzZuFCDOi
-	2mnoSX5TF8vCCNLGiHLGuRVEDPcDTxgxQyxMMcnxiZ6ebnvljlW2ScjvVN6NX4Y8PLBN8MYeF5t
-	ekLwRyuhM6LjKsisJ+6r43+Gizy74H3PxrjyDcdXSPUWxgMGoUblIP/ev3HZQxQoEHp0vUil019
-	xcZPtx3x1HlkkYHC5ab4sJpk+jg6kflJEDwh8wuCsEJtErTQE/0esN39snhPMJxYjd1QsS0QU1L
-	xOu4LBpldrmeY0r9aGm1BW4w2jUQ3UtK3J+r9zlcMf8JUwEwO2t+cYw3ZN75wR80lNPX5pwIHiu
-	AdZZdJGhTPOiNoBkLdaWJl3HP7+E=
-X-Google-Smtp-Source: AGHT+IF6ggB54PB58WsdUlPptBXf+B1DdD84f3tx0QpZNb0Gubfb/YJFRtUnI7TT/jSbgpB2+0kCpA==
-X-Received: by 2002:a17:907:a088:b0:adb:4143:4c8 with SMTP id a640c23a62f3a-ae3d83c0c05mr192246666b.8.1751534999498;
-        Thu, 03 Jul 2025 02:29:59 -0700 (PDT)
-Received: from somecomputer (85-127-104-84.dsl.dynamic.surfer.at. [85.127.104.84])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae35365a021sm1256411366b.54.2025.07.03.02.29.58
+        d=1e100.net; s=20230601; t=1751535037; x=1752139837;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qRFdLYJ4q7/MAXUEMWlpPtrPV11dB3OuQtvNTnayJQo=;
+        b=AmsSNt+aki5G3erznx7fK6L6psRRYTnr1C1Y0KZTsx5M61Z0vSsGKz0trgvGNEk86h
+         OuKojP6SfX65FSRT5ZlZQK6dTzMTOE8RLxw8FOvQbf56QTqmKF3MDuBsDJ6z2DfYOocp
+         PeLAkYudwtuseMdXb6ptJShUwfvw9Q9bs8yZHwsEQaPjFyXTDX7LRIJD7RMJPN/inzYl
+         M6n9YcSzCNQGmMZGgiGNk93TH6m5I3SYNf3lgDaxFu0RgcYUs0sIxeYEqW1u0V72Zr/k
+         VugW6rd0KJr4q037j4Ab/KIuiyM5Plj6skq9ev8i2xsnLUSL5MC0NpJaTdlJVdBbR5Up
+         pMhg==
+X-Forwarded-Encrypted: i=1; AJvYcCU2RyliqW/i09AKkunk88YiQDsS/VT2NSb0atOJmiUGj1qhyluwdCqZcF8umbBwcmww+zS5269l8d8wXOc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKRKVNnmuFGVH3pPPGu7wkoBDBHpIXdXj5hrNGGmjvhlpR2Eyr
+	JNl1vq3yVdDAnWiEPV/p90JY0pD+yQyS84fjzIURgu5T25wa17Z3npnd4og9Ynrx+o3gJi5LKhk
+	BxnFLISYOUD0U0lhDKGl0s1Rtejkt/B43f/tfG66NRjALmoVjs/Jn4PbE68KyflMNLQ==
+X-Gm-Gg: ASbGncsabns2Hbm7XFHlSnwhma8Fi0c+ecBY/5/Y+6VvdeHtzq698rSMeDJTaQFVbf8
+	GyWrJ2UzeUDLgmfe0ZCZmSGArD3vipPF3D89mbaU9BE9cl2ZrwyU/es9a23LH5FkRJvh8humpBO
+	XuOUrDEufIRra8l3huKUP8TlOirShxDwBNdviirUQrHQpowju2nloLTkSTRzuItEGADn1nFoqAz
+	LHLp8xMHm6hkdTNdoU+3211cdpO09WFXGJoRGah5o8dp6c94sQzi2dQq99pAw5J+6TcmHe9C3Ny
+	oIVGdjnQK/RZNO1V
+X-Received: by 2002:a05:6000:1a8f:b0:3b3:a6b2:9cd3 with SMTP id ffacd0b85a97d-3b3a6b29e99mr848223f8f.48.1751535037383;
+        Thu, 03 Jul 2025 02:30:37 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IELWFqj9I+aIUDU/5RiZ+sKsYw2mzWKRfT/gfXBnwZnWoC9nFVXzrA0v3mthR9QtuA2m2qUlQ==
+X-Received: by 2002:a05:6000:1a8f:b0:3b3:a6b2:9cd3 with SMTP id ffacd0b85a97d-3b3a6b29e99mr848203f8f.48.1751535036898;
+        Thu, 03 Jul 2025 02:30:36 -0700 (PDT)
+Received: from redhat.com ([2a0d:6fc0:152e:1400:856d:9957:3ec3:1ddc])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454a997e24bsm21380565e9.16.2025.07.03.02.30.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Jul 2025 02:29:59 -0700 (PDT)
-From: Richard Weinberger <richard@sigma-star.at>
-To: Damien Le Moal <dlemoal@kernel.org>, upstream@sigma-star.at
-Cc: Richard Weinberger <richard@nod.at>, linux-nvme@lists.infradead.org,
- linux-kernel@vger.kernel.org, kch@nvidia.com, sagi@grimberg.me, hch@lst.de,
- upstream+nvme@sigma-star.at, Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v2] nvmet: Make blksize_shift configurable
-Date: Thu, 03 Jul 2025 11:29:58 +0200
-Message-ID: <2880421.FSEd18e0ET@nailgun>
-In-Reply-To: <20250703085451.GA4459@lst.de>
-References:
- <20250630191341.1263000-1-richard@nod.at>
- <132c1bdf-e100-4e3a-883f-27f9e9b78020@kernel.org>
- <20250703085451.GA4459@lst.de>
+        Thu, 03 Jul 2025 02:30:35 -0700 (PDT)
+Date: Thu, 3 Jul 2025 05:30:33 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Laurent Vivier <lvivier@redhat.com>
+Cc: Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
+	Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/3] virtio: Fixes for TX ring sizing and resize error
+ reporting
+Message-ID: <20250703052907-mutt-send-email-mst@kernel.org>
+References: <20250521092236.661410-1-lvivier@redhat.com>
+ <7974cae6-d4d9-41cc-bc71-ffbc9ce6e593@redhat.com>
+ <20250528031540-mutt-send-email-mst@kernel.org>
+ <770fc206-70e4-4c63-b438-153b57144f23@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <770fc206-70e4-4c63-b438-153b57144f23@redhat.com>
 
-On Donnerstag, 3. Juli 2025 10:54 Christoph Hellwig wrote:
-> On Tue, Jul 01, 2025 at 09:34:00AM +0900, Damien Le Moal wrote:
-> > Even if internally you use the block size bit shift, I think it would b=
-e better
-> > if the user facing interface is the block size as that is much easier to
-> > manipulate without having to remember the exponent for powers of 2 valu=
-es :)
->=20
-> Yeah, block sizes are probably a nice user interface indeed.
+On Thu, Jul 03, 2025 at 09:43:46AM +0200, Laurent Vivier wrote:
+> On 28/05/2025 09:20, Michael S. Tsirkin wrote:
+> > On Wed, May 28, 2025 at 08:24:32AM +0200, Paolo Abeni wrote:
+> > > On 5/21/25 11:22 AM, Laurent Vivier wrote:
+> > > > This patch series contains two fixes and a cleanup for the virtio subsystem.
+> > > > 
+> > > > The first patch fixes an error reporting bug in virtio_ring's
+> > > > virtqueue_resize() function. Previously, errors from internal resize
+> > > > helpers could be masked if the subsequent re-enabling of the virtqueue
+> > > > succeeded. This patch restores the correct error propagation, ensuring that
+> > > > callers of virtqueue_resize() are properly informed of underlying resize
+> > > > failures.
+> > > > 
+> > > > The second patch does a cleanup of the use of '2+MAX_SKB_FRAGS'
+> > > > 
+> > > > The third patch addresses a reliability issue in virtio_net where the TX
+> > > > ring size could be configured too small, potentially leading to
+> > > > persistently stopped queues and degraded performance. It enforces a
+> > > > minimum TX ring size to ensure there's always enough space for at least one
+> > > > maximally-fragmented packet plus an additional slot.
+> > > 
+> > > @Michael: it's not clear to me if you prefer take this series via your
+> > > tree or if it should go via net. Please LMK, thanks!
+> > > 
+> > > Paolo
+> > 
+> > Given 1/3 is in virtio I was going to take it. Just after rc1,
+> > though.
+> > 
+> 
+> Michael, if you don't have time to merge this series, perhaps Paolo can?
+> 
+> Thanks,
+> Laurent
 
-Ok!
 
->=20
-> > 		pr_err("Configured blksize needs to be at least %u for device %s\n",
-> > 			bdev_logical_block_size(ns->bdev),
-> > 			ns->device_path);
-> > 		return -EINVAL;
-> > 	}
-> >=20
-> > Also, if the backend is an HDD, do we want to allow the user to configu=
-re a
-> > block size that is less than the *physical* block size ? Performance wi=
-ll
-> > suffer on regular HDDs and writes may fail with SMR HDDs.
->=20
-> I don't think we should babysit the user like that, just like we allow
-> creating file systems with block size smaller than the physical block
-> size.
+Sorry I forgot I asked that netdev guys don't handle it.
 
-I'm fine with either way.
-
->=20
-> > > +			if (!vfs_getattr(&ns->file->f_path, &st, STATX_DIOALIGN, 0) &&
-> > > +			    (st.result_mask & STATX_DIOALIGN) &&
-> > > +			    (1 << ns->blksize_shift) < st.dio_offset_align)
-> > > +				return -EINVAL;
-> > > +
-> > > +			if (sb_bdev && (1 << ns->blksize_shift < bdev_logical_block_size(=
-sb_bdev)))
-> > > +				return -EINVAL;
-> >=20
-> > I am confused... This is going to check both... But if you got STATX_DI=
-OALIGN
-> > and it is OK, you do not need (and probably should not) do the second i=
-f, no ?
-> >=20
-> > Also, the second condition of the second if is essentially the same che=
-ck as
-> > for the block dev case. So maybe reuse that by creating a small helper =
-function ?
->=20
-> This code is copy and pasted from loop, so it's originally my fault.
-> It just missed the comment that explains why it is there:
->=20
-> 	/*
->          * In a perfect world this wouldn't be needed, but as of Linux 6.=
-13 only
->          * a handful of file systems support the STATX_DIOALIGN flag.
->          */
-
-Well, my code is the other way around. I checks the logical block size of a=
- device
-even if STATX_DIOALIGN succeeded, which is a bit too paranoid I guess.
-
-Thanks,
-//richard
-
-=2D-=20
-=E2=80=8B=E2=80=8B=E2=80=8B=E2=80=8B=E2=80=8Bsigma star gmbh | Eduard-Bodem=
-=2DGasse 6, 6020 Innsbruck, AUT UID/VAT Nr:
-ATU 66964118 | FN: 374287y
-
+-- 
+MST
 
 
