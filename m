@@ -1,226 +1,191 @@
-Return-Path: <linux-kernel+bounces-715435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-715437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57A16AF75F2
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 15:40:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D939AF75F9
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 15:42:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8A413A6236
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 13:40:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74808567F94
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 13:42:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BDC922F384;
-	Thu,  3 Jul 2025 13:40:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 715242E7192;
+	Thu,  3 Jul 2025 13:42:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CMb81XFk"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="DYwxko1P";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="NptWg52a"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E695E176ADE;
-	Thu,  3 Jul 2025 13:40:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0965B176ADE;
+	Thu,  3 Jul 2025 13:41:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751550048; cv=none; b=lVrmtsV1QXamdRXbkM772y1i3qo5v5O4qCvo+mU4K7EBXyr4W7YA9SwwmMFL1vwwqwX5sePTN8oZrVz+YcQD8xWj0y1JDhK2ot9qPpF5Zl3UE4nQ06RMbwGVo73CwMBMMsX/g2k77uepr1jB8bLSWMEE6r4d9pg6+Yi+l4Lc4+c=
+	t=1751550119; cv=none; b=n4qzu/MlGXg6kfxcK8UvUAnrWG8SmZYDssiCdn4i3pPRmJQ2YaTJ1fjNtNLh0zsBOHzoTFf0CNEBM6ZhOMa/wfERlq9fYka4/FiRE5tZDPpp279sRgQR74Ov+Aq5mFg2nRFuazOyMKNEvaVf4km2ZLZZ83P2KDdn+fAvGW4jryw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751550048; c=relaxed/simple;
-	bh=G/bpx6ghCB0xfb+ziC4/kFnvpIy+GDlevlFcTs2GOHE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KQ19BPq0r+DMYtY9cwAIKX0wG8yRQ7EX2z+63QDGOpWbLGSXk5f7ie1YTjjqYYt1M1xBrjv6Rp8OpE6YOjTaZBOssnn7lumg42TceyRvFyUE8v8iWPEpaPhUi+9JLcxInhqjVHtKB0p45IiuEMN52qYfKJc5CrmwH8EUbxfAI3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CMb81XFk; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-451d6ade159so41005675e9.1;
-        Thu, 03 Jul 2025 06:40:46 -0700 (PDT)
+	s=arc-20240116; t=1751550119; c=relaxed/simple;
+	bh=WnKxo7Pr2dAqCibzDh87R5uqN2naOh2unTSRmdwdDOw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DTgrgj7sr2rY2EjnmvFbeRxNlAesXUFkHOxc0isUJZKFrVUEY0a3mrMIEhBJKmg6sR1fot3sY6z09XhguZOzwdNSQb2uZLM0E8QVhiYZGpCR8tq9yqzGuv5q/gOUXL7kw9Vv3EQSlwtCj3ZNVbhdcEedViPDlxjCw9VUfj+YClc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=DYwxko1P; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=NptWg52a reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751550045; x=1752154845; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=QytPx17TqZGUg5ObL4HSlhVLXpHq2ikYFOcpglMRt8s=;
-        b=CMb81XFkI2I4zsmcE4SmTk42H5qrkHo7m7hG2XxTdSMom55irv/biSuI1q+1w7W9CZ
-         HmIKcv7ZQfXTPuekNslEblYiaSG4qKqcAi5VLMM6AprjMoIMBKlqKI3IuX9bucR+TR0t
-         xouq7MvgjqRmzdsuqbkTf7WaM98ODGzzpIq2Hbj3bGTKe3RGQK0Z/On9tEclHm/fuJD9
-         3l612N+91kASWbW36FFR4GVoYSpBXgA33z9XmH99kigXJiJHeTT7DMdy12DQQCyWG8kC
-         RoNXoi/Hp92UPKL1MaCLVAJdYVLxbFZfZUH0qgvcqJ4d7e0bVpCoL7i8FzKK+TmIlMv8
-         UgsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751550045; x=1752154845;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QytPx17TqZGUg5ObL4HSlhVLXpHq2ikYFOcpglMRt8s=;
-        b=s7hWJtqSRBaEAdKBg5w37iZFEu6Eq8c29qPmFWWuH/13vVJaAyCnsDlG4EyowO4Nje
-         3OdEidjbCmuPNwKPqHrRT5idfsNTyKpJyzQyrx6h+nVICdm4bN5Hmvh8C8+dB6kMd/iz
-         atXLKrCG5iKGg90p5jfB80iCoVTp5aSd8x4B+nAltoEl6Rt2v+i8TDbsl5zrLrgDfqsG
-         x9+ea/UkNet7fXuukhZ2JhcPbjjbDGoTLxT2K6q8aBl3DrPXEfWCWJQgdwpAk/9N/F9p
-         X5DMDSLdYvZHl84rSEw2g8IOVWlrwV7us/WULKFVibS2F5XZbTiU7ktG4oEsIrh2Ms/Y
-         0MJA==
-X-Forwarded-Encrypted: i=1; AJvYcCV7Hsi4xqs0JqGMBzbb7OqBJ3o+tcEoKRpzi82xJl6PI5sSHzfJ4eolQKtf5bD525afPtvdo1VbvZVXhkM=@vger.kernel.org, AJvYcCWkTK7sSZnGIzV9iP+RY0VbcrDgwn2glPkKKgR0pQpNvCZv6FgT8YCSP8POyPYSWUNI9qY0fyCwHmErKUg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyvd2Ohxaf55m5AUJP6AZNoSE53/9FMcqhGhaaJ5JJj8z9/FuXS
-	qbDFbOneo7AgBKu7yhu2Ulb4HencRb3c5vGT72yFFA2ThRgVwoSRMZN+
-X-Gm-Gg: ASbGncsf4/9IBfP516SGaquKZo1C3UwI4EYlcrU+86T4TOXTHym8WNClcx5uBC1udrP
-	JD5i7xHmxBeQCw6dZcpZw7qGjDF1gPquInPnMr2W/hFVqRM0meuzPZs7+Q6dRx4gXkY0n9JSIZe
-	sa4iQuJawnWBDQZkKLJk970EBU9VR0X2sPcBl+go516DXklcpSM5fMLLup3ZBCdciVXwLl3Ms59
-	vpi5Sae6Xb560SaC2J3WyWEAZcYH4bHKkXn2U0VJSMEXk5Ap2TlHRuQGAckZmFw2iy22sb5zr0L
-	chvVkI+TXM10xrtT9FyjqxznrRnJ9GBA+AWYy336nVBxht/pqCaLq7hPYACN9hH3YDTTbRRV20s
-	OR023AilOEmhD4wV0qztz5MovryNQVX2PQ55qq7e6R7jziubSkPd1YXwTD60=
-X-Google-Smtp-Source: AGHT+IGPTyAqkvgZKJuNY6nurODbDPxQlQQ6GLGpBKm++Xze8nowXhDRfQZarBPqhtGyrxxkxWN9tg==
-X-Received: by 2002:a05:600c:6309:b0:445:1984:247d with SMTP id 5b1f17b1804b1-454aa185780mr30235655e9.7.1751550044723;
-        Thu, 03 Jul 2025 06:40:44 -0700 (PDT)
-Received: from orome (p200300e41f4e9b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4e:9b00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a88c7e6f74sm18658416f8f.3.2025.07.03.06.40.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Jul 2025 06:40:43 -0700 (PDT)
-Date: Thu, 3 Jul 2025 15:40:41 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Kartik Rajput <kkartik@nvidia.com>, daniel.lezcano@linaro.org, 
-	tglx@linutronix.de, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH] clocksource: timer-tegra186: Enable WDT at probe
-Message-ID: <bd2oz44lcrtdixmzqhcmespqjye5s5gvgzh4j6pqqj3bycktmv@r5gp66jjraxr>
-References: <20250630110135.201930-1-kkartik@nvidia.com>
- <458d9b45-2879-4dd5-b164-82d87fdb5ad8@nvidia.com>
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1751550115; x=1783086115;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=04qYGKXctFAZ3e5+Qm8FZ6hK/vJxUFD2rK/A5VS3svY=;
+  b=DYwxko1PAz3Acj5M3xuWRSo1YrUKTliiTSFa8WbxpQasfwXdj5N/6H74
+   iI/fL1i2NbOru7jOnOeFIkb2CnwFgrRJfjCDTQvkxj2O1kTCeGkFJn94n
+   pRelywAV4fh0ZGHqzncSwIs/C39dL/DQNqO/yk+wifyRXVaRIJAbzJ6Jy
+   ZDKwsFB85z51nGdqfJUES+6aNyl1YVZcoFhL+I7xpBOJvFrNgINGcioe7
+   Bk/VR4PkIrLL90KNZz1QmvY38uh6B66Q5mvjLItfsr6fm4Flwg+M0cRGl
+   kSgdi6PC6QxM7oI05n1Q+Fb2E0ssKWWV1aCZ4vTBGdioLIOfXeEvzAehm
+   A==;
+X-CSE-ConnectionGUID: QoxKM4g1RseAF++DkGCgAA==
+X-CSE-MsgGUID: 8fICYet0SzWZ3FWt/bzHeA==
+X-IronPort-AV: E=Sophos;i="6.16,284,1744063200"; 
+   d="scan'208";a="45010991"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 03 Jul 2025 15:41:46 +0200
+X-CheckPoint: {6866889A-12-4FC15ADB-CD71293B}
+X-MAIL-CPID: 7E9CD1FEF2A5839123F58A657BCB8A76_0
+X-Control-Analysis: str=0001.0A006399.686688BF.0033,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 03A1A161869;
+	Thu,  3 Jul 2025 15:41:40 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1751550102;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=04qYGKXctFAZ3e5+Qm8FZ6hK/vJxUFD2rK/A5VS3svY=;
+	b=NptWg52abfzeSToTSQmYoKJAZLV7kwBaXq3ncy0XzG1W8xulY2lg+0zDoqDA8i+oLRGleu
+	pRYCZXRM5vHbg7v8eY6wvQtbspgfaGErcrMRFh+Z/ip2Hk6iQUjPocf9EDIaYyY0xIbpEO
+	IphiGndW4kAJARGsCNLzkh5hQiAvi80Pnm77KXkZmGLy484EKfy1oTrE7/KuC3ovBfq1HY
+	PNnDimssMw3skITQynyc7QIqtjt5B+TkSl1K2ceeifjgAfrGTYcyFimopMV4YCIlSUX86z
+	LJNC7d4RILfaegRXAnida3ad7CASpi9e+YQU8tdATIqHgNgXr0UgyLLrde6L6g==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Steffen =?ISO-8859-1?Q?B=E4tz?= <steffen@innosonix.de>,
+ stable@vger.kernel.org, Srinivas Kandagatla <srini@kernel.org>,
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Dmitry Baryshkov <lumag@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Steffen =?ISO-8859-1?Q?B=E4tz?= <steffen@innosonix.de>
+Subject: Re: [PATCH v3] nvmem: imx-ocotp: fix MAC address byte length
+Date: Thu, 03 Jul 2025 15:41:40 +0200
+Message-ID: <2665065.Lt9SDvczpP@steina-w>
+Organization: TQ-Systems GmbH
+In-Reply-To: <20250623171003.1875027-1-steffen@innosonix.de>
+References: <20250623171003.1875027-1-steffen@innosonix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="mzmp7ovd4a3esszh"
-Content-Disposition: inline
-In-Reply-To: <458d9b45-2879-4dd5-b164-82d87fdb5ad8@nvidia.com>
-
-
---mzmp7ovd4a3esszh
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] clocksource: timer-tegra186: Enable WDT at probe
-MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Thu, Jul 03, 2025 at 11:36:16AM +0100, Jon Hunter wrote:
+Am Montag, 23. Juni 2025, 19:09:55 CEST schrieb Steffen B=E4tz:
+> The commit "13bcd440f2ff nvmem: core: verify cell's raw_len" caused an
+> extension of the "mac-address" cell from 6 to 8 bytes due to word_size
+> of 4 bytes.
 >=20
+> Thus, the required byte swap for the mac-address of the full buffer lengt=
+h,
+> caused an trucation of the read mac-address.
+> From the original address 70:B3:D5:14:E9:0E to 00:00:70:B3:D5:14
 >=20
-> On 30/06/2025 12:01, Kartik Rajput wrote:
-> > Currently, if the system crashes or hangs during kernel boot before
-> > userspace initializes and configures the watchdog timer, then the
-> > watchdog won=E2=80=99t be able to recover the system as it=E2=80=99s no=
-t running. This
-> > becomes crucial during an over-the-air update, where if the newly
-> > updated kernel crashes on boot, the watchdog is needed to reset the
-> > device and boot into an alternative system partition. If the watchdog
-> > is disabled in such scenarios, it can lead to the system getting
-> > bricked.
-> >=20
-> > Enable the WDT during driver probe to allow recovery from any crash/hang
-> > seen during early kernel boot. Also, disable interrupts once userspace
-> > starts pinging the watchdog.
-> >=20
-> > Signed-off-by: Kartik Rajput <kkartik@nvidia.com>
-> > ---
-> >   drivers/clocksource/timer-tegra186.c | 42 ++++++++++++++++++++++++++++
-> >   1 file changed, 42 insertions(+)
-> >=20
-> > diff --git a/drivers/clocksource/timer-tegra186.c b/drivers/clocksource=
-/timer-tegra186.c
-> > index e5394f98a02e..59abb5dab8f1 100644
-> > --- a/drivers/clocksource/timer-tegra186.c
-> > +++ b/drivers/clocksource/timer-tegra186.c
-> > @@ -57,6 +57,8 @@
-> >   #define WDTUR 0x00c
-> >   #define  WDTUR_UNLOCK_PATTERN 0x0000c45a
-> > +#define WDT_DEFAULT_TIMEOUT 120
-> > +
-> >   struct tegra186_timer_soc {
-> >   	unsigned int num_timers;
-> >   	unsigned int num_wdts;
-> > @@ -74,6 +76,7 @@ struct tegra186_wdt {
-> >   	void __iomem *regs;
-> >   	unsigned int index;
-> > +	bool enable_irq;
-> >   	bool locked;
-> >   	struct tegra186_tmr *tmr;
-> > @@ -174,6 +177,12 @@ static void tegra186_wdt_enable(struct tegra186_wd=
-t *wdt)
-> >   		value &=3D ~WDTCR_PERIOD_MASK;
-> >   		value |=3D WDTCR_PERIOD(1);
-> > +		/* configure local interrupt for WDT petting */
+> After swapping only the first 6 bytes, the mac-address is correctly passed
+> to the upper layers.
 >=20
-> It might be a bit clearer if this comment states ...
->=20
-> 'If enable_irq is set then enable the watchdog IRQ for kernel petting,
-> otherwise userspace is responsible for petting the watchdog.'
->=20
-> > +		if (wdt->enable_irq)
-> > +			value |=3D WDTCR_LOCAL_INT_ENABLE;
-> > +		else
-> > +			value &=3D ~WDTCR_LOCAL_INT_ENABLE;
-> > +
-> >   		/* enable system POR reset */
-> >   		value |=3D WDTCR_SYSTEM_POR_RESET_ENABLE;
-> > @@ -205,6 +214,10 @@ static int tegra186_wdt_ping(struct watchdog_devic=
-e *wdd)
-> >   {
-> >   	struct tegra186_wdt *wdt =3D to_tegra186_wdt(wdd);
-> > +	/* Disable WDT interrupt once userspace takes over. */
->=20
-> Technically userspace is taking over at this point and so we should be mo=
-re
-> assertive here ...
->=20
-> 'Disable the watchdog IRQ now userspace is taking over'
->=20
-> > +	if (wdt->enable_irq)
-> > +		wdt->enable_irq =3D false;
-> > +
-> >   	tegra186_wdt_disable(wdt);
-> >   	tegra186_wdt_enable(wdt);
-> > @@ -315,6 +328,8 @@ static struct tegra186_wdt *tegra186_wdt_create(str=
-uct tegra186_timer *tegra,
-> >   	if (value & WDTCR_LOCAL_INT_ENABLE)
-> >   		wdt->locked =3D true;
-> > +	wdt->enable_irq =3D true;
-> > +
-> >   	source =3D value & WDTCR_TIMER_SOURCE_MASK;
-> >   	wdt->tmr =3D tegra186_tmr_create(tegra, source);
-> > @@ -339,6 +354,13 @@ static struct tegra186_wdt *tegra186_wdt_create(st=
-ruct tegra186_timer *tegra,
-> >   		return ERR_PTR(err);
-> >   	}
-> > +	/*
-> > +	 * Start the watchdog to recover the system if it crashes before
-> > +	 * userspace initialize the WDT.
-> > +	 */
-> > +	tegra186_wdt_set_timeout(&wdt->base, WDT_DEFAULT_TIMEOUT);
-> > +	tegra186_wdt_start(&wdt->base);
+> Fixes: 13bcd440f2ff ("nvmem: core: verify cell's raw_len")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Steffen B=E4tz <steffen@innosonix.de>
 
-If we need to stick to the single watchdog, then it's probably better to
-explicitly enable the local interrupt here and explicitly disable it
-when userspace takes over. That would allow us to avoid tracking this in
-the enable_irq state variable.
+Tested-by: Alexander Stein <alexander.stein@ew.tq-group.com>
 
-Thierry
+Thanks
 
---mzmp7ovd4a3esszh
-Content-Type: application/pgp-signature; name="signature.asc"
+> ---
+> v3:
+> - replace magic number 6 with ETH_ALEN
+> - Fix misleading indentation and properly group 'mac-address' statements
+> v2:
+> - Add Cc: stable@vger.kernel.org as requested by Greg KH's patch bot
+>  drivers/nvmem/imx-ocotp-ele.c | 6 +++++-
+>  drivers/nvmem/imx-ocotp.c     | 6 +++++-
+>  2 files changed, 10 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/nvmem/imx-ocotp-ele.c b/drivers/nvmem/imx-ocotp-ele.c
+> index ca6dd71d8a2e..9ef01c91dfa6 100644
+> --- a/drivers/nvmem/imx-ocotp-ele.c
+> +++ b/drivers/nvmem/imx-ocotp-ele.c
+> @@ -12,6 +12,7 @@
+>  #include <linux/of.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/slab.h>
+> +#include <linux/if_ether.h>	/* ETH_ALEN */
+> =20
+>  enum fuse_type {
+>  	FUSE_FSB =3D BIT(0),
+> @@ -118,9 +119,12 @@ static int imx_ocotp_cell_pp(void *context, const ch=
+ar *id, int index,
+>  	int i;
+> =20
+>  	/* Deal with some post processing of nvmem cell data */
+> -	if (id && !strcmp(id, "mac-address"))
+> +	if (id && !strcmp(id, "mac-address")) {
+> +		if (bytes > ETH_ALEN)
+> +			bytes =3D ETH_ALEN;
+>  		for (i =3D 0; i < bytes / 2; i++)
+>  			swap(buf[i], buf[bytes - i - 1]);
+> +	}
+> =20
+>  	return 0;
+>  }
+> diff --git a/drivers/nvmem/imx-ocotp.c b/drivers/nvmem/imx-ocotp.c
+> index 79dd4fda0329..1343cafc37cc 100644
+> --- a/drivers/nvmem/imx-ocotp.c
+> +++ b/drivers/nvmem/imx-ocotp.c
+> @@ -23,6 +23,7 @@
+>  #include <linux/platform_device.h>
+>  #include <linux/slab.h>
+>  #include <linux/delay.h>
+> +#include <linux/if_ether.h>	/* ETH_ALEN */
+> =20
+>  #define IMX_OCOTP_OFFSET_B0W0		0x400 /* Offset from base address of the
+>  					       * OTP Bank0 Word0
+> @@ -227,9 +228,12 @@ static int imx_ocotp_cell_pp(void *context, const ch=
+ar *id, int index,
+>  	int i;
+> =20
+>  	/* Deal with some post processing of nvmem cell data */
+> -	if (id && !strcmp(id, "mac-address"))
+> +	if (id && !strcmp(id, "mac-address")) {
+> +		if (bytes > ETH_ALEN)
+> +			bytes =3D ETH_ALEN;
+>  		for (i =3D 0; i < bytes / 2; i++)
+>  			swap(buf[i], buf[bytes - i - 1]);
+> +	}
+> =20
+>  	return 0;
+>  }
+>=20
 
------BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmhmiFkACgkQ3SOs138+
-s6HsQxAAtd7E8mw/jaar7vourdk4E3fnt/rd9m3diOX5N5tVoKEf4gpzsvk6Nh+l
-Do8wcUWgNIuF52KrgFRKGl/SZhAIhTr7Kf3PCrYASDfUZz4S7fcfuaiCYg/t3V/b
-DPVUFn5Gsjr+yPzhMuW0QocLvJw1MJZuMEqQg+jwyXWkasSBLa9aAkoV2fpb02Y1
-mz5d2LeTbY6AYLh+smjNwcYXPbfzTlVK4cte4IkIZN4FqPJEKCHJAB5+vCnQ9KGs
-f40wsNrBXGMQHhH4HFw+b5zSDoLd+FPlmIHhcAysg/Af4s22FSW6i+7uIN1WooN8
-YhzsYtuGZ5i/UzMZ6s0EmelhUg4oMlhIz+Q4gFR492l+ri8wSMbMEFnqHkMAHnPd
-3k81i2TKdG4+AD+98p2j16udVN09uceSsIh4xKtSJiCL+xB6kfvtwM4vpT+Rw+AF
-R07rMrC5oogpZlXqZSR9AYDEfW+LDGfPXqHUVjCpSutKdAlyFZkGk+Pisct1Qroi
-RRytY7vVH0Fbqs5TdkGpAroIbQkAtbTHGyc2mnrMzBC+2vKxJW4o4ouybcFo+0S8
-cFt+rCKPPMZP8vc7I22YZVrN2fXbIOGxcVp2Js3vw3n2gQGpwYYYf+zoDj/XTgqt
-BK9kFpTQhXijEpcUDQDw21ioTULOwHfwYCr1C+3/WbZ+g29Ml1w=
-=t64L
------END PGP SIGNATURE-----
+=2D-=20
+TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
+Amtsgericht M=FCnchen, HRB 105018
+Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
+http://www.tq-group.com/
 
---mzmp7ovd4a3esszh--
+
 
