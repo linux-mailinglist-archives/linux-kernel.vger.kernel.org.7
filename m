@@ -1,138 +1,441 @@
-Return-Path: <linux-kernel+bounces-715634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-715639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E351EAF7B39
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 17:23:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BD1FBAF7B62
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 17:24:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C0586E3A48
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 15:16:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A77BB3BFD9A
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 15:17:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 972402EBB8D;
-	Thu,  3 Jul 2025 15:13:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mfgFCklq"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F20912EFD8B
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 15:13:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFFC32F0C72;
+	Thu,  3 Jul 2025 15:14:59 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A5D84414
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 15:14:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751555628; cv=none; b=C5U5dWBuCt1lbET7KNKWMMZhll/9OwW7ffQ4D0CdB45F7lZxJ8IQ2pMzLMW/ZrTLiu8AbJ/h9smTYbla5euxs7jedU5+nx4o8lteeH50mdcZOVHcB5KOzjCgnHfnO80k0KEfW1gOXtbB/hQxDQVbVguTvOsy67j/s/kt7Y/RKo8=
+	t=1751555699; cv=none; b=h+FOGp2TpZf6EaEiRI06i8TWk/v/yfKlhE0265s8In7UZRAERxXiW2ewTs2EawqFzxBKN1PaUETwkB4dkEFx5yYtP6iHma/CMSTYmBs9mIBF6vKQTY/K5Fr7dP+Rom3sZdxBveZrt5/vdP9aA3ik7sZw+ydxvdCMya9J5fEawXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751555628; c=relaxed/simple;
-	bh=qJgf1RF5GwyM1t3Atw/Q+kAszB7c4DDzNJhbDeMNAts=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kdE50H4w+eJKOGXGLZEHAN/ncIAAqYQI7wlBNYwjBaWLoJPhWnQlM5DYNd6J4A5uZ86mguKIVOaKshrmWzOkkkrLDamhPs71sfqk1KErz/xCKrMZnNVbPZD8FHJU0i9f3ofDGveBdBftROwUznO7zi4v48F9Gh//88EMAdphCEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mfgFCklq; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-60bf5a08729so11396565a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Jul 2025 08:13:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1751555623; x=1752160423; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+rhVhsVllegKUMnK5NOGl/rqgDtbDtwFSHzwLKRqIUk=;
-        b=mfgFCklqtoxCLPZy3t+4gjqsCrB5P567O9yGv2ICMwYWYF9p6akr2ozIQo9ulLf4tO
-         0PoL5YPOBvnRopNc286PS8bk/YmoBUOcxnbNraLGwo1JAdRZDUXSI5xySfRNPrkwBxBd
-         rAYoBG9IxVGiTLwP47thngj005FHJJmrWr3XQi5EnUgPSx64I//tDiSHwqhFceig2neX
-         vidUlXD9pV0cQ8Fyu/q6EvRw7p99gis1jmxGWvF2MrUMIZ/Mw1rNSWeK7p2I9HTd5d0I
-         pwOGrKytSCpojm6KyL8hDW0Sn3bXjYCePzrzkTq/CXBEkE8SxrXk9DpcrmqfFfM/MFU1
-         vF9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751555623; x=1752160423;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+rhVhsVllegKUMnK5NOGl/rqgDtbDtwFSHzwLKRqIUk=;
-        b=ggBIEDkVEXv/ErBcSj1sr70f7CswgyboJuIH8GzA+mVq/AukSciq+dct4w5EJhALU0
-         LpvqA3pdW3QVjR6RvXJ0M9XIKay5HfF49g+yNUOV2JqySaLamxZbhRAZpriyG/Y4Bl2U
-         lVEb3yNoJ8/3nws5R8mr/h6ojvQQSsSXbgGlBgKwkTK3ALyeno2U6vVKfl2N1aOppowe
-         Dc2OzrJoCt+GBMP7iasNRHBPdYxhjln9s7dDUBXKqSp0+IC7Cvv8YrAZRlvkYJLkA7Ge
-         gNquePli4cPh1M4qvJsE3ZPZF9i8V8AxM8R3BWRdmGmjC3G4fd9wNErDeqZ973ELosOm
-         qy1g==
-X-Forwarded-Encrypted: i=1; AJvYcCVN306EC1ebxLkZWakGwzskdsGa+L4bWZBg92BXAkwSs5H7a3BDo/QdEL8RjM5JelnZPamy16UFarV5+Ng=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzhKLovj5kALpIvbLe086wv+pC2ohX1G7gKoXYK7bYl5VrAzCep
-	HzUZki8uBjve/hodJ+ST1YLF7M05Aj48FefPyt/nsVjLTzV5qYiciC7iMS632GBA4as=
-X-Gm-Gg: ASbGncvbrVdF2AMuYd0yphz/DXN10clb0tpvalx8g1MqOxI6DMDzbMDSv21Nz+b9A2X
-	s6xc+xxqCpHSDNrE/sRGDLwXikUBFlX2D34gs4yJoo+zSNJEIBrRdUbRfocJSn8y1llwNj0QfJE
-	VM/NMwO2M4UfbueWfAOcdQFijyI9WFH3yGciliVKG+XUxaOY4XZwBWELlGWJCr+YOTpV6q7RvxM
-	3pRdQMkpn9t/xr7SSAhIS50fJPyKQninvcygcsffwkVng70g5351j4N1uu4TUwQmsu0/6ILX05a
-	JHMw/wLSIO9HoTi5Xd1o85e9Y6ML9iXfVsgTGlXKkYiXd+uMZZP5/ytTSJCyXYNJQ2sgpw==
-X-Google-Smtp-Source: AGHT+IHLbeEWvDtZyLpkZYq9v/9MjHWg44ua068Wk7HOmNac3d6CS9uj1wvGNiv38jkJSQ0CP6C9+w==
-X-Received: by 2002:a05:6402:22ca:b0:60c:39e4:93e6 with SMTP id 4fb4d7f45d1cf-60e52d1939cmr4886568a12.24.1751555623170;
-        Thu, 03 Jul 2025 08:13:43 -0700 (PDT)
-Received: from linaro.org ([82.79.186.23])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-60c828e1845sm10903471a12.23.2025.07.03.08.13.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Jul 2025 08:13:42 -0700 (PDT)
-Date: Thu, 3 Jul 2025 18:13:40 +0300
-From: Abel Vesa <abel.vesa@linaro.org>
-To: Peng Fan <peng.fan@nxp.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Abel Vesa <abelvesa@kernel.org>,
-	Frank Li <frank.li@nxp.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/5] dt-bindings: clock: Add support for i.MX94
- LVDS/DISPLAY CSR
-Message-ID: <aGaeJIjFMLcV8ly1@linaro.org>
-References: <20250703-imx95-blk-ctl-7-1-v2-0-b378ad796330@nxp.com>
- <20250703-imx95-blk-ctl-7-1-v2-1-b378ad796330@nxp.com>
+	s=arc-20240116; t=1751555699; c=relaxed/simple;
+	bh=NDm2AvN+r0F7fNo4DFe18pO/1fnLPQM34yLbGLvff8A=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OK8Mjtx0ND1PvkKL3NoD9VI7DriYfYHdEz6E5QJRiGMFCDcmqky8SGRr9mIRoEIyKiFVW9EC+Ged65ztOEhI4n9Hl+WrfsZ91WkXLJx+kI4tG+aiRISsPsEqMDHiHQwITM4EEMu+w0B7dKUE1mr/0nRDvC+FmbtevmkEtGJCugs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 041D3152B;
+	Thu,  3 Jul 2025 08:14:40 -0700 (PDT)
+Received: from localhost.localdomain (unknown [10.163.88.191])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 528BE3F66E;
+	Thu,  3 Jul 2025 08:14:48 -0700 (PDT)
+From: Dev Jain <dev.jain@arm.com>
+To: akpm@linux-foundation.org,
+	david@redhat.com,
+	catalin.marinas@arm.com,
+	will@kernel.org
+Cc: lorenzo.stoakes@oracle.com,
+	Liam.Howlett@oracle.com,
+	vbabka@suse.cz,
+	rppt@kernel.org,
+	surenb@google.com,
+	mhocko@suse.com,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	suzuki.poulose@arm.com,
+	steven.price@arm.com,
+	gshan@redhat.com,
+	linux-arm-kernel@lists.infradead.org,
+	yang@os.amperecomputing.com,
+	ryan.roberts@arm.com,
+	anshuman.khandual@arm.com,
+	Dev Jain <dev.jain@arm.com>
+Subject: [PATCH v4] arm64: Enable permission change on arm64 kernel block mappings
+Date: Thu,  3 Jul 2025 20:44:41 +0530
+Message-Id: <20250703151441.60325-1-dev.jain@arm.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250703-imx95-blk-ctl-7-1-v2-1-b378ad796330@nxp.com>
+Content-Transfer-Encoding: 8bit
 
-On 25-07-03 11:40:20, Peng Fan wrote:
-> Add i.MX94 LVDS/DISPLAY CSR compatible string.
-> 
-> Add clock index for the two CSRs.
-> 
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
->  .../devicetree/bindings/clock/nxp,imx95-blk-ctl.yaml        |  2 ++
->  include/dt-bindings/clock/nxp,imx94-clock.h                 | 13 +++++++++++++
->  2 files changed, 15 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/nxp,imx95-blk-ctl.yaml b/Documentation/devicetree/bindings/clock/nxp,imx95-blk-ctl.yaml
-> index d0291bfff23a27cb55683880fe3a1f8b3e2ada5a..27403b4c52d6219d31649d75539af93edae0f17d 100644
-> --- a/Documentation/devicetree/bindings/clock/nxp,imx95-blk-ctl.yaml
-> +++ b/Documentation/devicetree/bindings/clock/nxp,imx95-blk-ctl.yaml
-> @@ -13,6 +13,8 @@ properties:
->    compatible:
->      items:
->        - enum:
-> +          - nxp,imx94-display-csr
-> +          - nxp,imx94-lvds-csr
->            - nxp,imx95-camera-csr
->            - nxp,imx95-display-csr
->            - nxp,imx95-hsio-blk-ctl
-> diff --git a/include/dt-bindings/clock/nxp,imx94-clock.h b/include/dt-bindings/clock/nxp,imx94-clock.h
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..b47f74f00f119ff1c1e6dad885b5b1e3b1f248a1
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/nxp,imx94-clock.h
-> @@ -0,0 +1,13 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only OR MIT */
+This patch paves the path to enable huge mappings in vmalloc space and
+linear map space by default on arm64. For this we must ensure that we can
+handle any permission games on the kernel (init_mm) pagetable. Currently,
+__change_memory_common() uses apply_to_page_range() which does not support
+changing permissions for block mappings. We attempt to move away from this
+by using the pagewalk API, similar to what riscv does right now; however,
+it is the responsibility of the caller to ensure that we do not pass a
+range overlapping a partial block mapping or cont mapping; in such a case,
+the system must be able to support range splitting.
 
-/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+This patch is tied with Yang Shi's attempt [1] at using huge mappings
+in the linear mapping in case the system supports BBML2, in which case
+we will be able to split the linear mapping if needed without
+break-before-make. Thus, Yang's series, IIUC, will be one such user of my
+patch; suppose we are changing permissions on a range of the linear map
+backed by PMD-hugepages, then the sequence of operations should look
+like the following:
 
-With that fixed:
+split_range(start)
+split_range(end);
+__change_memory_common(start, end);
 
-Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
+However, this patch can be used independently of Yang's; since currently
+permission games are being played only on pte mappings (due to
+apply_to_page_range not supporting otherwise), this patch provides the
+mechanism for enabling huge mappings for various kernel mappings
+like linear map and vmalloc.
+
+---------------------
+Implementation
+---------------------
+
+arm64 currently changes permissions on vmalloc objects locklessly, via
+apply_to_page_range, whose limitation is to deny changing permissions for
+block mappings. Therefore, we move away to use the generic pagewalk API,
+thus paving the path for enabling huge mappings by default on kernel space
+mappings, thus leading to more efficient TLB usage. However, the API
+currently enforces the init_mm.mmap_lock to be held. To avoid the
+unnecessary bottleneck of the mmap_lock for our usecase, this patch
+extends this generic API to be used locklessly, so as to retain the
+existing behaviour for changing permissions. Apart from this reason, it is
+noted at [2] that KFENCE can manipulate kernel pgtable entries during
+softirqs. It does this by calling set_memory_valid() -> __change_memory_common().
+This being a non-sleepable context, we cannot take the init_mm mmap lock.
+
+Add comments to highlight the conditions under which we can use the
+lockless variant - no underlying VMA, and the user having exclusive control
+over the range, thus guaranteeing no concurrent access.
+
+We require that the start and end of a given range do not partially overlap
+block mappings, or cont mappings. Return -EINVAL in case a partial block
+mapping is detected in any of the PGD/P4D/PUD/PMD levels; add a
+corresponding comment in update_range_prot() to warn that eliminating
+such a condition is the responsibility of the caller.
+
+Note that, the pte level callback may change permissions for a whole
+contpte block, and that will be done one pte at a time, as opposed to
+an atomic operation for the block mappings. This is fine as any access
+will decode either the old or the new permission until the TLBI.
+
+apply_to_page_range() currently performs all pte level callbacks while in
+lazy mmu mode. Since arm64 can optimize performance by batching barriers
+when modifying kernel pgtables in lazy mmu mode, we would like to continue
+to benefit from this optimisation. Unfortunately walk_kernel_page_table_range()
+does not use lazy mmu mode. However, since the pagewalk framework is not
+allocating any memory, we can safely bracket the whole operation inside
+lazy mmu mode ourselves. Therefore, wrap the call to
+walk_kernel_page_table_range() with the lazy MMU helpers.
+
+[1] https://lore.kernel.org/all/20250304222018.615808-1-yang@os.amperecomputing.com/
+[2] https://lore.kernel.org/linux-arm-kernel/89d0ad18-4772-4d8f-ae8a-7c48d26a927e@arm.com/
+
+Signed-off-by: Dev Jain <dev.jain@arm.com>
+---
+
+v3->v4:
+ - Drop patch 2, will add it back when we actually enable vmalloc block
+   mappings by default (Ryan)
+ - Rename ___change_memory_common -> update_range_prot (Mike Rapoport)
+ - Explain why changing live kernel mappings mapped with PTE_CONT
+   pte-by-pte is safe
+
+v2->v3:
+ - Drop adding PGWALK_NOLOCK, instead have a new lockless helper
+ - Merge patch 1 and 2 from v2
+ - Add a patch *actually* enabling vmalloc-huge permission change
+
+v1->v2:
+ - Squash patch 2 and 3
+ - Add comment describing the responsibility of the caller to ensure no
+   partial overlap with block mapping
+ - Add comments and return -EINVAL at relevant places to document the usage
+   of PGWALK_NOLOCK (Lorenzo)
+ - Nest walk_kernel_page_table_range() with lazy_mmu calls, instead of
+   doing so only per PTE level, fix bug in the PTE callback, introduce
+   callbacks for all pagetable levels, use ptdesc_t instead of unsigned
+   long, introduce ___change_memory_common and use them for direct map
+   permission change functions (Ryan)
+
+v1:
+https://lore.kernel.org/all/20250530090407.19237-1-dev.jain@arm.com/
+
+ arch/arm64/mm/pageattr.c | 155 +++++++++++++++++++++++++++++++--------
+ include/linux/pagewalk.h |   3 +
+ mm/pagewalk.c            |  24 ++++++
+ 3 files changed, 150 insertions(+), 32 deletions(-)
+
+diff --git a/arch/arm64/mm/pageattr.c b/arch/arm64/mm/pageattr.c
+index 04d4a8f676db..c6a85000fa0e 100644
+--- a/arch/arm64/mm/pageattr.c
++++ b/arch/arm64/mm/pageattr.c
+@@ -8,6 +8,7 @@
+ #include <linux/mem_encrypt.h>
+ #include <linux/sched.h>
+ #include <linux/vmalloc.h>
++#include <linux/pagewalk.h>
+ 
+ #include <asm/cacheflush.h>
+ #include <asm/pgtable-prot.h>
+@@ -20,6 +21,99 @@ struct page_change_data {
+ 	pgprot_t clear_mask;
+ };
+ 
++static ptdesc_t set_pageattr_masks(ptdesc_t val, struct mm_walk *walk)
++{
++	struct page_change_data *masks = walk->private;
++
++	val &= ~(pgprot_val(masks->clear_mask));
++	val |= (pgprot_val(masks->set_mask));
++
++	return val;
++}
++
++static int pageattr_pgd_entry(pgd_t *pgd, unsigned long addr,
++			      unsigned long next, struct mm_walk *walk)
++{
++	pgd_t val = pgdp_get(pgd);
++
++	if (pgd_leaf(val)) {
++		if (WARN_ON_ONCE((next - addr) != PGDIR_SIZE))
++			return -EINVAL;
++		val = __pgd(set_pageattr_masks(pgd_val(val), walk));
++		set_pgd(pgd, val);
++		walk->action = ACTION_CONTINUE;
++	}
++
++	return 0;
++}
++
++static int pageattr_p4d_entry(p4d_t *p4d, unsigned long addr,
++			      unsigned long next, struct mm_walk *walk)
++{
++	p4d_t val = p4dp_get(p4d);
++
++	if (p4d_leaf(val)) {
++		if (WARN_ON_ONCE((next - addr) != P4D_SIZE))
++			return -EINVAL;
++		val = __p4d(set_pageattr_masks(p4d_val(val), walk));
++		set_p4d(p4d, val);
++		walk->action = ACTION_CONTINUE;
++	}
++
++	return 0;
++}
++
++static int pageattr_pud_entry(pud_t *pud, unsigned long addr,
++			      unsigned long next, struct mm_walk *walk)
++{
++	pud_t val = pudp_get(pud);
++
++	if (pud_leaf(val)) {
++		if (WARN_ON_ONCE((next - addr) != PUD_SIZE))
++			return -EINVAL;
++		val = __pud(set_pageattr_masks(pud_val(val), walk));
++		set_pud(pud, val);
++		walk->action = ACTION_CONTINUE;
++	}
++
++	return 0;
++}
++
++static int pageattr_pmd_entry(pmd_t *pmd, unsigned long addr,
++			      unsigned long next, struct mm_walk *walk)
++{
++	pmd_t val = pmdp_get(pmd);
++
++	if (pmd_leaf(val)) {
++		if (WARN_ON_ONCE((next - addr) != PMD_SIZE))
++			return -EINVAL;
++		val = __pmd(set_pageattr_masks(pmd_val(val), walk));
++		set_pmd(pmd, val);
++		walk->action = ACTION_CONTINUE;
++	}
++
++	return 0;
++}
++
++static int pageattr_pte_entry(pte_t *pte, unsigned long addr,
++			      unsigned long next, struct mm_walk *walk)
++{
++	pte_t val = __ptep_get(pte);
++
++	val = __pte(set_pageattr_masks(pte_val(val), walk));
++	__set_pte(pte, val);
++
++	return 0;
++}
++
++static const struct mm_walk_ops pageattr_ops = {
++	.pgd_entry	= pageattr_pgd_entry,
++	.p4d_entry	= pageattr_p4d_entry,
++	.pud_entry	= pageattr_pud_entry,
++	.pmd_entry	= pageattr_pmd_entry,
++	.pte_entry	= pageattr_pte_entry,
++};
++
+ bool rodata_full __ro_after_init = IS_ENABLED(CONFIG_RODATA_FULL_DEFAULT_ENABLED);
+ 
+ bool can_set_direct_map(void)
+@@ -37,33 +131,35 @@ bool can_set_direct_map(void)
+ 		arm64_kfence_can_set_direct_map() || is_realm_world();
+ }
+ 
+-static int change_page_range(pte_t *ptep, unsigned long addr, void *data)
++static int update_range_prot(unsigned long start, unsigned long size,
++			     pgprot_t set_mask, pgprot_t clear_mask)
+ {
+-	struct page_change_data *cdata = data;
+-	pte_t pte = __ptep_get(ptep);
++	struct page_change_data data;
++	int ret;
+ 
+-	pte = clear_pte_bit(pte, cdata->clear_mask);
+-	pte = set_pte_bit(pte, cdata->set_mask);
++	data.set_mask = set_mask;
++	data.clear_mask = clear_mask;
+ 
+-	__set_pte(ptep, pte);
+-	return 0;
++	arch_enter_lazy_mmu_mode();
++
++	/*
++	 * The caller must ensure that the range we are operating on does not
++	 * partially overlap a block mapping, or a cont mapping. Any such case
++	 * must be eliminated by splitting the mapping.
++	 */
++	ret = walk_kernel_page_table_range_lockless(start, start + size,
++						    &pageattr_ops, &data);
++	arch_leave_lazy_mmu_mode();
++
++	return ret;
+ }
+ 
+-/*
+- * This function assumes that the range is mapped with PAGE_SIZE pages.
+- */
+ static int __change_memory_common(unsigned long start, unsigned long size,
+-				pgprot_t set_mask, pgprot_t clear_mask)
++				  pgprot_t set_mask, pgprot_t clear_mask)
+ {
+-	struct page_change_data data;
+ 	int ret;
+ 
+-	data.set_mask = set_mask;
+-	data.clear_mask = clear_mask;
+-
+-	ret = apply_to_page_range(&init_mm, start, size, change_page_range,
+-					&data);
+-
++	ret = update_range_prot(start, size, set_mask, clear_mask);
+ 	/*
+ 	 * If the memory is being made valid without changing any other bits
+ 	 * then a TLBI isn't required as a non-valid entry cannot be cached in
+@@ -71,6 +167,7 @@ static int __change_memory_common(unsigned long start, unsigned long size,
+ 	 */
+ 	if (pgprot_val(set_mask) != PTE_VALID || pgprot_val(clear_mask))
+ 		flush_tlb_kernel_range(start, start + size);
++
+ 	return ret;
+ }
+ 
+@@ -174,32 +271,26 @@ int set_memory_valid(unsigned long addr, int numpages, int enable)
+ 
+ int set_direct_map_invalid_noflush(struct page *page)
+ {
+-	struct page_change_data data = {
+-		.set_mask = __pgprot(0),
+-		.clear_mask = __pgprot(PTE_VALID),
+-	};
++	pgprot_t clear_mask = __pgprot(PTE_VALID);
++	pgprot_t set_mask = __pgprot(0);
+ 
+ 	if (!can_set_direct_map())
+ 		return 0;
+ 
+-	return apply_to_page_range(&init_mm,
+-				   (unsigned long)page_address(page),
+-				   PAGE_SIZE, change_page_range, &data);
++	return update_range_prot((unsigned long)page_address(page),
++				 PAGE_SIZE, set_mask, clear_mask);
+ }
+ 
+ int set_direct_map_default_noflush(struct page *page)
+ {
+-	struct page_change_data data = {
+-		.set_mask = __pgprot(PTE_VALID | PTE_WRITE),
+-		.clear_mask = __pgprot(PTE_RDONLY),
+-	};
++	pgprot_t set_mask = __pgprot(PTE_VALID | PTE_WRITE);
++	pgprot_t clear_mask = __pgprot(PTE_RDONLY);
+ 
+ 	if (!can_set_direct_map())
+ 		return 0;
+ 
+-	return apply_to_page_range(&init_mm,
+-				   (unsigned long)page_address(page),
+-				   PAGE_SIZE, change_page_range, &data);
++	return update_range_prot((unsigned long)page_address(page),
++				 PAGE_SIZE, set_mask, clear_mask);
+ }
+ 
+ static int __set_memory_enc_dec(unsigned long addr,
+diff --git a/include/linux/pagewalk.h b/include/linux/pagewalk.h
+index 682472c15495..8212e8f2d2d5 100644
+--- a/include/linux/pagewalk.h
++++ b/include/linux/pagewalk.h
+@@ -134,6 +134,9 @@ int walk_page_range(struct mm_struct *mm, unsigned long start,
+ int walk_kernel_page_table_range(unsigned long start,
+ 		unsigned long end, const struct mm_walk_ops *ops,
+ 		pgd_t *pgd, void *private);
++int walk_kernel_page_table_range_lockless(unsigned long start,
++		unsigned long end, const struct mm_walk_ops *ops,
++		void *private);
+ int walk_page_range_vma(struct vm_area_struct *vma, unsigned long start,
+ 			unsigned long end, const struct mm_walk_ops *ops,
+ 			void *private);
+diff --git a/mm/pagewalk.c b/mm/pagewalk.c
+index 648038247a8d..18a675ab87cf 100644
+--- a/mm/pagewalk.c
++++ b/mm/pagewalk.c
+@@ -633,6 +633,30 @@ int walk_kernel_page_table_range(unsigned long start, unsigned long end,
+ 	return walk_pgd_range(start, end, &walk);
+ }
+ 
++/*
++ * Use this function to walk the kernel page tables locklessly. It should be
++ * guaranteed that the caller has exclusive access over the range they are
++ * operating on - that there should be no concurrent access, for example,
++ * changing permissions for vmalloc objects.
++ */
++int walk_kernel_page_table_range_lockless(unsigned long start, unsigned long end,
++		const struct mm_walk_ops *ops, void *private)
++{
++	struct mm_walk walk = {
++		.ops		= ops,
++		.mm		= &init_mm,
++		.private	= private,
++		.no_vma		= true
++	};
++
++	if (start >= end)
++		return -EINVAL;
++	if (!check_ops_valid(ops))
++		return -EINVAL;
++
++	return walk_pgd_range(start, end, &walk);
++}
++
+ /**
+  * walk_page_range_debug - walk a range of pagetables not backed by a vma
+  * @mm:		mm_struct representing the target process of page table walk
+-- 
+2.30.2
+
 
