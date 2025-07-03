@@ -1,168 +1,116 @@
-Return-Path: <linux-kernel+bounces-714387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2EF2AF675F
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 03:51:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C655AF6761
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 03:52:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 696141C4346F
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 01:51:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF8B8523509
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 01:51:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF7FC2206BE;
-	Thu,  3 Jul 2025 01:49:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 604E5158545;
+	Thu,  3 Jul 2025 01:50:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FPtIEDsC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="CJHJ+GJm"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 314B01FFC45;
-	Thu,  3 Jul 2025 01:49:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D66F017C208
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 01:50:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751507387; cv=none; b=RjT/8hDV6xPbksmxstfcprWG9OKWRB2bv0RlA97M3ENH2RxCXtUnGxi08b8Gv874puE3iKk9GyEimyud6u0YzHfTchvnpSpJV6sg8+rC6n3UHwo+kg2D8270Rd8HWh7FL/MsVrY52cg//emu5nDpCsotM+DxsrCf9O256IMjgZM=
+	t=1751507440; cv=none; b=devZrXpN/B5R8VxdEwA/RrCpYE0OpLIQMiGTP44cNWmb/wKG+LGGq009JCuSI0IgFAQ6jOeH4Uno+0S6eYgmgB7D+ANrRz5HnQorqrRHfpsT6nQbPR4G4wHmVYpPDVgLNisVGxh0zuq4DWfq/MndP9GcQJBjhvSC6WYmcL4Wnng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751507387; c=relaxed/simple;
-	bh=QKC9dVoT8uAMP6ybmq2ZbGaAcXGjdbm+RC6KFdw5CG0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Ny2MNE9aWovWImZCn2r1Abp6OZ7TyTTtk4DAqsEiWodkN4G2/5zpYJwFI+3k0Y+rxyWOTWNBbqES7x7Gc3XiyfSbhVGY20TJHOarw+r90BX1uc/BDMnIfhkkFy+e62fUDZ3gBor2I2IGZuPV1E11vTnvH31IWHQ7ib4P0P2UvFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FPtIEDsC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B65EAC4CEF2;
-	Thu,  3 Jul 2025 01:49:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751507387;
-	bh=QKC9dVoT8uAMP6ybmq2ZbGaAcXGjdbm+RC6KFdw5CG0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=FPtIEDsCST3nRSV5dMnSmkrcEJpctsGxDwiiK3odAchbvjzJUbWJvaOTSw6iosOn2
-	 j25ZwKCX9XYW2VG61Sn7ciPGCk8+Qhfgzoxz/fAem2IVRX3LGMh21psFFjpelVPIGr
-	 ItN584ldrRyKo5mw66PxtFDScUkYLMnVtvNtFwgTH3+tB9xnhMRArEF3Vb3IDInEkj
-	 AyHT0Dgp/bh+BQnsSXlnZLY8BJwahVMLXjgQ7I2y1sAt463OidsdSWbrzNkr9qQbsr
-	 l/4YU8HojLqCE0cAUlMDWJxkbxQ6m82f1GHa8gOR4TyD9PTUwFkpPtBXneHI1HLcKs
-	 xFYs3JpM2JhjA==
-From: Namhyung Kim <namhyung@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Kan Liang <kan.liang@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org
-Subject: [PATCH 8/8] perf test: Add more test cases to sched test
-Date: Wed,  2 Jul 2025 18:49:42 -0700
-Message-ID: <20250703014942.1369397-9-namhyung@kernel.org>
-X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
-In-Reply-To: <20250703014942.1369397-1-namhyung@kernel.org>
-References: <20250703014942.1369397-1-namhyung@kernel.org>
+	s=arc-20240116; t=1751507440; c=relaxed/simple;
+	bh=uU5CNAmJ7OpvToYcOnn9d4jA3wBsGzcqaarRtjLrDTI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Out08Z1JxZH6mQXF7WZdtd1vDXaV9ZPTpVuImkw1TkezgW+RIUHUPYg5UXTp/EKkJqJWgdFcjkfZczp1taxzSSeE4QY0VzCKfpTbM4rQKWZRTXOFV1BS3wUoav//D1BWgTc/runSbsFEeHHOCOqsiJ2h7PADFOunQvLZp8CAG5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=CJHJ+GJm; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=qF1BJOkB08ifdMBhZHOeavutsh91VXITQ7EETILhaDc=; b=CJHJ+GJmnO5kkJ9a3BKgnPbOPH
+	42I7Z99Jk9Y7ZXsBoxzRhrPKi3Gm2Y6fmMmJkVto9iGUc5QENd5V0+P4jVEfw6oYsPLpec+cqpx5Q
+	T5Zl1SPjfz/VPWL1DOxZ5D2RqSXk067MoAlTPDBSxpyzr+RSUBIu9vPcMKpwaS34xzDnOLQrqNONw
+	JovLJkyU6G+PVqcrFiR5g7W70y6dILhwwlemPP8Zyzw//sthEpsHvw80gTi1ctr3eh4iwwoOssZbI
+	ktUU7h/6BrNyKy1z3+K7U75DYcYmSbK8obX75mH56EK7SG7umMohkza4xppCPZxOsYxzyeQqpxFEv
+	BvhywnvQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uX95t-0000000GExH-19bq;
+	Thu, 03 Jul 2025 01:50:33 +0000
+Date: Thu, 3 Jul 2025 02:50:33 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: syzbot <syzbot+169de184e9defe7fe709@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org, lizhi.xu@windriver.com
+Subject: Re: [syzbot] Re: [syzbot] [nfs?] [net?] possible deadlock in
+ rpc_close_pipes
+Message-ID: <20250703015033.GH1880847@ZenIV>
+References: <68656f4c.a70a0220.2b31f5.0000.GAE@google.com>
+ <6865da26.a70a0220.2b31f5.0009.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6865da26.a70a0220.2b31f5.0009.GAE@google.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-  $ sudo ./perf test -vv 92
-   92: perf sched tests:
-  --- start ---
-  test child forked, pid 1360101
-  Sched record
-  pid 1360105's current affinity list: 0-3
-  pid 1360105's new affinity list: 0
-  pid 1360107's current affinity list: 0-3
-  pid 1360107's new affinity list: 0
-  [ perf record: Woken up 1 times to write data ]
-  [ perf record: Captured and wrote 4.330 MB /tmp/__perf_test_sched.perf.data.b3319 (12246 samples) ]
-  Sched latency
-  Sched script
-  Sched map
-  Sched timehist
-  Samples of sched_switch event do not have callchains.
-  ---- end(0) ----
-   92: perf sched tests                                                : Ok
+On Wed, Jul 02, 2025 at 06:17:26PM -0700, syzbot wrote:
+> For archival purposes, forwarding an incoming command email to
+> linux-kernel@vger.kernel.org.
+> 
+> ***
+> 
+> Subject: Re: [syzbot] [nfs?] [net?] possible deadlock in rpc_close_pipes
+> Author: lizhi.xu@windriver.com
+> 
+> #syz test
+> 
+> diff --git a/net/sunrpc/rpc_pipe.c b/net/sunrpc/rpc_pipe.c
+> index 0bd1df2ebb47..ae5643e0bc43 100644
+> --- a/net/sunrpc/rpc_pipe.c
+> +++ b/net/sunrpc/rpc_pipe.c
+> @@ -693,7 +693,7 @@ void
+>  rpc_unlink(struct rpc_pipe *pipe)
+>  {
+>  	if (pipe->dentry) {
+> -		simple_recursive_removal(pipe->dentry, rpc_close_pipes);
+> +		locked_recursive_removal(pipe->dentry, rpc_close_pipes);
+>  		pipe->dentry = NULL;
+>  	}
+>  }
 
-Signed-off-by: Namhyung Kim <namhyung@kernel.org>
----
- tools/perf/tests/shell/sched.sh | 39 ++++++++++++++++++++++++++-------
- 1 file changed, 31 insertions(+), 8 deletions(-)
+Excuse me, but... which caller of rpc_unlink() is holding any directories locked?
+IOW, this patch is an LLM-grade nonsense.  If it really *is* chatbot-generated,
+that's a lovely demonstration of the reasons why generative AI have no business
+sending patches of any kind.
 
-diff --git a/tools/perf/tests/shell/sched.sh b/tools/perf/tests/shell/sched.sh
-index c030126d1a0c918d..b9b81eaf856e6555 100755
---- a/tools/perf/tests/shell/sched.sh
-+++ b/tools/perf/tests/shell/sched.sh
-@@ -56,38 +56,61 @@ cleanup_noploops() {
-   kill "$PID1" "$PID2"
- }
- 
--test_sched_latency() {
--  echo "Sched latency"
-+test_sched_record() {
-+  echo "Sched record"
- 
-   start_noploops
- 
-   perf sched record --no-inherit -o "${perfdata}" sleep 1
-+
-+  cleanup_noploops
-+}
-+
-+test_sched_latency() {
-+  echo "Sched latency"
-+
-   if ! perf sched latency -i "${perfdata}" | grep -q perf-noploop
-   then
-     echo "Sched latency [Failed missing output]"
-     err=1
-   fi
--
--  cleanup_noploops
- }
- 
- test_sched_script() {
-   echo "Sched script"
- 
--  start_noploops
--
--  perf sched record --no-inherit -o "${perfdata}" sleep 1
-   if ! perf sched script -i "${perfdata}" | grep -q perf-noploop
-   then
-     echo "Sched script [Failed missing output]"
-     err=1
-   fi
-+}
- 
--  cleanup_noploops
-+test_sched_map() {
-+  echo "Sched map"
-+
-+  if ! perf sched map -i "${perfdata}" | grep -q perf-noploop
-+  then
-+    echo "Sched map [Failed missing output]"
-+    err=1
-+  fi
-+}
-+
-+test_sched_timehist() {
-+  echo "Sched timehist"
-+
-+  if ! perf sched timehist -i "${perfdata}" | grep -q perf-noploop
-+  then
-+    echo "Sched timehist [Failed missing output]"
-+    err=1
-+  fi
- }
- 
-+test_sched_record
- test_sched_latency
- test_sched_script
-+test_sched_map
-+test_sched_timehist
- 
- cleanup
- exit $err
--- 
-2.50.0.727.gbf7dc18ff4-goog
+Note that report clearly refers to rpc_close_pipes() as one of the locations
+involved in a possible deadlock.  The difference between simple_recursive_removal()
+and locked_recursive_removal() is that the latter is to be called when the caller
+is already holding ->i_rwsem on the victim's parent.  *IF* that was the case,
+the deadlock report would point to that caller vs. simple_recursive_removal().
 
+rpc_close_pipes() is a *callback* passed to simple_recursive_removal(); if it
+turned around and called rpc_unlink() we would have a serious problem indeed,
+and it's very easy to see that nothing of that sort is happening.
+
+The worst part is, that patch is likely to make lockdep STFU - by failing to
+lock the parent.  You really need to reason; "throw random shit at the bot
+until the warning goes away" is an actively harmful strategy.
+
+As for the warning, it is a false positive caused by lockdep annotations, as
+the original report suggested.  Replace inode_lock(inode) in rpc_close_pipes()
+with inode_lock_nested(inode, I_MUTEX_CHILD) and try to reproduce that.
+
+For syzbot maintainers - git blame is useful.  I would really appreciate the
+original report...
 
