@@ -1,223 +1,98 @@
-Return-Path: <linux-kernel+bounces-714889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 358FBAF6E10
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 11:03:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF171AF6E1E
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 11:04:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FE43480BA7
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 09:02:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A878525E58
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 09:03:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F4EE2D46CD;
-	Thu,  3 Jul 2025 09:02:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="xwrsGYbr"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4A682D541B;
+	Thu,  3 Jul 2025 09:03:32 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81834298CB7
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 09:02:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BD5C2D4B55
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 09:03:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751533351; cv=none; b=ZU7fOrYuU2siRYaB9LhzRQVWG7l+YjiowEVh1YXAlCjdVKXl5ZFAM+MurQG+GU7+BxKbJENoCGL55JcD9vCu9rahzqs6PA6L8GSPPe/UJz+y/rClHuBtlBPdgZBXCjmfleril0Z5BYSeWKLw/q1hMNTuibKZqoNMlyXJp1Be5gQ=
+	t=1751533412; cv=none; b=ftLu3F3i37xHm5pdZfJOYtr5ZUlYBEWXVvcWxlZqFW1m2dGfhqIKPz4bOecXKVhHlGwAssZpQCdwwBul7G5xvuIeC79BTGv5w5lz5E/IcHtCpsFyYLxOlG8ARVOfNdFvPN/VzmeyIMoD01D4USLzBnWh+d9yy20GM5yws/neAJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751533351; c=relaxed/simple;
-	bh=wSBzuFutXlxhtQUuNemypiuvl59GnjyGrzdoy8POasE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=fyZElS4EYQOTs01dCfb0PJLxNaNE59EfqlYA/G4YYSMwy2WlXEv5GHBrSz0IZP+sc0gtb0aiBWQUPIMh8tdHDFUZ7MqKVxS6TLSxvQ0ZdS+ECaG5/V++rdlnAtsz19dl4RN/X+8i0SXs5zf9EOKe4Tzz54gB8vmHNyKH8yfUZQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=xwrsGYbr; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-453643020bdso67392305e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Jul 2025 02:02:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1751533347; x=1752138147; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:user-agent
-         :references:in-reply-to:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fLpRhZ8oYlqdUPrBtWQJGdWQR4/qJlb3vPx62hFSxUg=;
-        b=xwrsGYbrozg0+2KzHDsm/PMkYJdUio9n9EtabwAZdEPKRNBprYQmrmBThrExTr0yxG
-         4QJDL7myzv/ZvWXHp3IINF/51+ZOn8un0ezfg5SYgmSbvgh2JZbefB+CIsiHwfwfgtSI
-         Pqa3/GLwVwjHt+kj8xa3u/ejHTxA0UHzBOKMl1nD/dubgDxPhatT2OaYga4/YUu+OWe1
-         lztn8Yi2mSwy93iO+fHci9t4CDq5SHlHeg/vmWaWGkle3g/3xFmbL1wUuN27o7O7HdLt
-         kwVIUR/VHP66mAcL2ilySFJYWs5o+ydmN6BWd51ZzycG0qos2miPuEUBsrvLnYsWrq2u
-         IFxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751533347; x=1752138147;
-        h=content-transfer-encoding:mime-version:message-id:date:user-agent
-         :references:in-reply-to:subject:cc:to:from:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=fLpRhZ8oYlqdUPrBtWQJGdWQR4/qJlb3vPx62hFSxUg=;
-        b=OmVhVdf6yXY0PbAAraV3rYmjdXQdTKSs0aNsEY6/O/WBfpNiScH/aWxMBLOmKdhglh
-         GKit5/Lw/+2LVktJebeQink230YYgpBae4XOKXla29uQ1v8Tn01mFdnBCgbjdGSHxBmK
-         mACa4X3FAMLyZEA53Y2WdAoY0o7OrILsNv0I7KJ6ZfAeK/4zjmj+wr9uEC2O2ISmMfYy
-         at2OH7qm4JvQ43jtkeVFLqV3serRDjmvBqR4fxRRDZ5ohipcQGipLdxp9be9ivTtcd14
-         7C7MsuWJWYetzXKhFQMwGJwSEfONfUCJJW/EA79FEXOdiy7pRlzKusF1Uxtlp9TuQfpI
-         u4zw==
-X-Forwarded-Encrypted: i=1; AJvYcCWhbrrvZxpAyXnuOuo6Wz/xUezeMB1Sj7ZzbXXvW7flXVnN4bGfNiPn0IVm3nxYcPYCQ9L/1CI9/mptxjc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmOg7vRGhnUmpzk7oNah2Ri+Vd0/ZE+NNTR/orKS8GSggNGDDv
-	vVxYAIR5S78bF5DC6q6YDrW6xaxy3f9OWest+a+TJ4oOEZFMFxFFWak2Rbj0S4dQZ8w=
-X-Gm-Gg: ASbGncvEvfcU9lJgbx9c3Yfu4x2rsbTnFA9FtajpGKXYR/vhydCHC2Ff6hu7kbGS16z
-	Za6hdybZH/6LcN4EZ168y58ZymwQozobj//29fkhrEkCA43ogILR3F71X5oSpY0NZ76BMkvwz1/
-	5uwEM24NoplGBummRWJGTDVWmGErS1u+VqkWb1WwfMo1VirI8YlnlJmA3MoKqujffcgJ7PKVXdR
-	61wky/6T5lP/WHKIMZT3tjyOctNfsAMZTnUsrTODj9wyG2V/pW4kegpRRb5c38iNnrQlHGuootb
-	WppetpnSLgg7tA+H6lSG/B4lIRE9oQpO0b2cdayHLMkeAcTijW07GjBBKz5FKK5HYLsUvLQU
-X-Google-Smtp-Source: AGHT+IEpB6jnvVhDM96CIt4ZF+uBHmqcylICsBSVvBhL7X6XFgQme1VhuXRkTOD5F0uhXQjbeKMrBQ==
-X-Received: by 2002:a05:6000:4914:b0:3a4:eef5:dece with SMTP id ffacd0b85a97d-3b1ff9f5966mr5613528f8f.35.1751533346613;
-        Thu, 03 Jul 2025 02:02:26 -0700 (PDT)
-Received: from localhost ([2a01:e0a:3c5:5fb1:1b4c:1be9:25d0:5634])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3a892e52a35sm18381340f8f.57.2025.07.03.02.02.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Jul 2025 02:02:26 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Chuan Liu <chuan.liu@amlogic.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,  Michael Turquette
- <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>,  Kevin Hilman
- <khilman@baylibre.com>,  Martin Blumenstingl
- <martin.blumenstingl@googlemail.com>,  linux-amlogic@lists.infradead.org,
-  linux-clk@vger.kernel.org,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 05/26] clk: amlogic: c3-peripherals: naming consistency
- alignment
-In-Reply-To: <99ba0e33-cec2-4577-b949-010537a8c4df@amlogic.com> (Chuan Liu's
-	message of "Thu, 3 Jul 2025 16:31:12 +0800")
-References: <20250702-meson-clk-cleanup-24-v1-0-e163c9a1fc21@baylibre.com>
-	<20250702-meson-clk-cleanup-24-v1-5-e163c9a1fc21@baylibre.com>
-	<eb233f20-1927-4944-9b57-f90c998db19a@amlogic.com>
-	<1jy0t5d8a2.fsf@starbuckisacylon.baylibre.com>
-	<99ba0e33-cec2-4577-b949-010537a8c4df@amlogic.com>
-User-Agent: mu4e 1.12.9; emacs 30.1
-Date: Thu, 03 Jul 2025 11:02:25 +0200
-Message-ID: <1jtt3tbqam.fsf@starbuckisacylon.baylibre.com>
+	s=arc-20240116; t=1751533412; c=relaxed/simple;
+	bh=wkMSTJsx/+IC5Ok00gyscpxoB5n9NvvIPubwcrMo0ew=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DYym5t2qrU4tIk4DLnEi28oWHS70j7NHVF07m6IglTOEaAvZfgfcQUsM6m8lhiH4yvzIF6nT/PZrzqEg45DlkghY8XTwhEcHDwtirCYPZr0W15a6JOaby2IG7qWUqO+AB8th8anPrb9mjZ1zKba3qf20esNOFeV3kUKAVgWckaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 9080bd5a57ec11f0b29709d653e92f7d-20250703
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:da777e99-f0c6-4187-b65b-15b9de72c4ab,IP:0,U
+	RL:0,TC:0,Content:-5,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:-5
+X-CID-META: VersionHash:6493067,CLOUDID:56952bd973e847d1b733ae4473017cdb,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:81|82|83|102,TC:nil,Content:0|52,EDM:-3,
+	IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:
+	0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 9080bd5a57ec11f0b29709d653e92f7d-20250703
+Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
+	(envelope-from <zhangzihuan@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 389063183; Thu, 03 Jul 2025 17:03:19 +0800
+Received: from mail.kylinos.cn (localhost [127.0.0.1])
+	by mail.kylinos.cn (NSMail) with SMTP id 6457DE008FA2;
+	Thu,  3 Jul 2025 17:03:19 +0800 (CST)
+X-ns-mid: postfix-68664757-256782844
+Received: from [172.25.120.24] (unknown [172.25.120.24])
+	by mail.kylinos.cn (NSMail) with ESMTPA id 25775E008FA1;
+	Thu,  3 Jul 2025 17:03:14 +0800 (CST)
+Message-ID: <11840c1e-afff-4004-bc4c-6c88b3df02fa@kylinos.cn>
+Date: Thu, 3 Jul 2025 17:03:13 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] sched/uclamp: Skip uclamp_rq_dec() for non-final
+ dequeue of delayed tasks
+To: K Prateek Nayak <kprateek.nayak@amd.com>, xuewen.yan@unisoc.com,
+ vincent.guittot@linaro.org, mingo@redhat.com, peterz@infradead.org,
+ juri.lelli@redhat.com
+Cc: rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+ vschneid@redhat.com, hongyan.xia2@arm.com, linux-kernel@vger.kernel.org,
+ ke.wang@unisoc.com, di.shen@unisoc.com, xuewen.yan94@gmail.com,
+ kuyo.chang@mediatek.com, juju.sung@mediatek.com, qyousef@layalina.io
+References: <20250701093407.211500-1-zhangzihuan@kylinos.cn>
+ <3882929e-d4a1-48b3-b518-1582e6e1c872@amd.com>
+ <0396755a-58be-4f7d-99f9-6b63d35e6e65@kylinos.cn>
+ <1b0a41ce-5fcc-4ea8-83ca-a2bd5ef765c9@amd.com>
+From: Zihuan Zhang <zhangzihuan@kylinos.cn>
+In-Reply-To: <1b0a41ce-5fcc-4ea8-83ca-a2bd5ef765c9@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
 
->>>>
->>>> -#define C3_CLK_GATE(_name, _reg, _bit, _fw_name, _ops, _flags)       =
-  \
->>>> -struct clk_regmap _name =3D {                                        =
-    \
->>>> +#define C3_PCLK(_name, _reg, _bit, _fw_name, _ops, _flags)           =
-  \
->>>> +struct clk_regmap c3_##_name =3D {                                   =
-    \
->>>>           .data =3D &(struct clk_regmap_gate_data){                   =
-      \
->>>>                   .offset =3D (_reg),                                 =
-      \
->>>>                   .bit_idx =3D (_bit),                                =
-      \
->>>>           },                                                          =
-    \
->>>>           .hw.init =3D &(struct clk_init_data) {                      =
-      \
->>>> -               .name =3D #_name,                                     =
-    \
->>>> +               .name =3D "c3_" #_name,                               =
-    \
->>>
->>> Prefixing variable names with 'SoC' is understandable (to avoid duplica=
-te
->>> definitions and facilitate variable searching), but is it necessary to =
-add
->>> 'SoC' prefixes to clock names?
->> This is part of the description but I'll ellaborate.
->>
->> Some controllers do so, some do not. This is a typical pointless
->> difference that make code sharing difficult and lead to the duplication
->> I'm addressing now.
->
->
-> Yes, in fact most clock configurations are consistent across our SoCs. Ov=
-er
-> the years, we've been continuously working to make our driver code more
-> 'common'
-> and efficient.
->
+Hi Prateek,
 
-No they are not consistent at all when it come to this
+=E5=9C=A8 2025/7/2 11:12, K Prateek Nayak =E5=86=99=E9=81=93:=E3=80=80 =E3=
+=80=80 =E3=80=80 =E3=80=80=E3=80=80 =E3=80=80 =E3=80=80 =E3=80=80 =E3=80=80=
+ =E3=80=80 =E3=80=80 =E3=80=80=20
+=E3=80=80 =E3=80=80 =E3=80=80=E3=80=80
+> On a closer look at uclamp_rq_dec_id(), I think "uc_se->active"
+> will guard against a double accounting. But that is not a good
+> reason to sprinkle redundant calls.=E3=80=80=E3=80=80 =E3=80=80
+Thanks a lot for the clarification!
 
-Controller prefixing the pclks:
-* axg-ao
-* axg
-* g12-ao
-* g12
-* gxbb
-* s4-periphs
+Best regards,
+Zihuan
 
-Controllers not prefixing the pclks
-* gxbb-ao
-* a1-periphs
-* c3-periphs
-* meson8b
-
-I do not want to invent new names to avoid the names clashes if the
-prefixes are dropped. I tried that way and it was a mess.
-
-As noted in the description, clock names will not be prefixed with SoC
-name, *except* for the pclks for the historic reason explained above.
-
->
->>
->> Both with and without are fine but picking one a sticking to it helps a
->> lot. I would have preferred to drop the prefix from the pclk clock
->> names, same as the other clock, but:
->
->
-> I still prefer adding SoC prefixes to variable names but not to clock nam=
-es.
-> clocks with the same name generally have similar functions across differe=
-nt
-> chips.
-
-It is not a matter of preference.
-
->
->
->> * It would have changed more clock names and I prefer to minimize those
->> changes
->
->
-> Your recent patch series has already made significant changes, and this is
-> relatively a minor adjustment=F0=9F=98=89
->
->
->> * It would have caused several name clashes with other clocks.
->>
->> so prefix it is for the peripheral clock.
->>
->> In the end, what matters is consistency.
->>
->>>
->>>>                   .ops =3D _ops,                                      =
-      \
->>>>                   .parent_data =3D &(const struct clk_parent_data) {  =
-      \
->>>> -                       .fw_name =3D #_fw_name,                       =
-    \
->>>> +                       .fw_name =3D (_fw_name),                      =
-    \
->>>>                   },                                                  =
-    \
->>>>                   .num_parents =3D 1,                                 =
-      \
->>>>                   .flags =3D (_flags),                                =
-      \
->>>>           },                                                          =
-    \
->>>>    }
->>>
->>> [...]
->> --
->> Jerome
-
---=20
-Jerome
+>   =E3=80=80 =E3=80=80=E3=80=80 =E3=80=80 =E3=80=80 =E3=80=80 =E3=80=80 =
+=E3=80=80 =E3=80=80 =E3=80=80 =E3=80=80 =E3=80=80 =E3=80=80=E3=80=80
 
