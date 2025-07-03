@@ -1,313 +1,325 @@
-Return-Path: <linux-kernel+bounces-714906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA2A0AF6E50
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 11:15:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BAA6AF6E51
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 11:15:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1C3B18967AB
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 09:15:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 006BC7AF7F0
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 09:13:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16D962D4B5A;
-	Thu,  3 Jul 2025 09:14:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YUramh1g"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6173A2D4B69;
+	Thu,  3 Jul 2025 09:14:56 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B24E3296153
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 09:14:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D87F2D4B51
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 09:14:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751534080; cv=none; b=F6xIxhZOnRvwYChQO0iy1Ra9AKPkivJOzYcQh0x+CzXlWGcCqRiKfI8JMbNvJwIUSWXacIG3zQDUTtnpiL96WhILCqA7rL06TtiUQ9C3o4ugZknUr0nfAM60r1ooZejaVZQGwu14o3FgflpVuLSaU8kwQBaktRkPjCIWClXYBi8=
+	t=1751534095; cv=none; b=ogMq5BXMv7BbOXSBioDp4e6v/nXZLd88L/0QcM6iWUG2z6VtzZk+vk8ZkDsaKI6Rdh5ZP8FN0hxDxJoYM3pvYpsljAkJtlPFwQzxhWqzJ6YvIu8ayQRZJKsQyMjrLgMXQI28dGxuL829XGKuD6DKIzK5ZJEXuhCtMgYAnSjayHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751534080; c=relaxed/simple;
-	bh=jd8PZiCrYkC0YVPPZncWVQb9IVU48UrHUjj/QKfS9oc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ExEjAcUhbfnbIol0y3CME2NbU/sJn2Q5YDERahy7wvvbCthUMkGlgG8fnTzXIrkq1OThnUiibrWdAj9fqeXM9/nHoVTpP1nCBI/8FEChgP/gO6jYgPC3ue8qGxsU4gv+PQ8sJDPXm6F3SNlDKAgBsPulBV9IvbF89IgtRxQTiCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YUramh1g; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1751534077;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=/ss5Fk/zIHi1NMo28tkoRuxLdqKHsGk9x5F/u4LxilY=;
-	b=YUramh1geYr/OIL4vSuzyDjIm6fPgbxL+n0Jugo1RcDLawNfRjwUd0vYCyL1566JrwKW4w
-	13K9unXjdw6sKmt0PJjOSOhSfNe4C7yXBY5bffhGaVVsiDvv59aWpVe9RVnSU5LwI3a1El
-	+ZbRdMiUyrj54PsQ2VlZWAza4nEoFtc=
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
- [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-171-hQFZ5wpiPZifSMjnLa8jmg-1; Thu, 03 Jul 2025 05:14:35 -0400
-X-MC-Unique: hQFZ5wpiPZifSMjnLa8jmg-1
-X-Mimecast-MFC-AGG-ID: hQFZ5wpiPZifSMjnLa8jmg_1751534075
-Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-ade57fec429so410929566b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Jul 2025 02:14:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751534074; x=1752138874;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=/ss5Fk/zIHi1NMo28tkoRuxLdqKHsGk9x5F/u4LxilY=;
-        b=oWjiJZr0w58wyffj9pnFntKN21MzjCpdgYMDZ3gQN/aiLq13zg9Amt/wwvUUjXBTQq
-         K4aZuFtcAm8Xlp+tH2mHdby0wUwN9r56EPBPqiV4W1G2v1xc2+tNVN7QawRJNzC5Pk5r
-         dpp/YcQwPkz9OmigoIH+HXZJisg6LzKZX4N9UpOWkADLVsQoUbAcDEPAiUXphrB1wkXD
-         1MB5JD6sP7Ns9pkyCR80NR5RvTdtWYX0tDqJZapB7eYHqJM3ui/DxRJlHlKXZKRjtTBn
-         0r62i6Y5H/YZrNDmU0irYbCkWYWdyIf/ezOdztjdsljruvU9L55DOcmfg/1v7R/TrWI0
-         ZLrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUtsKfFPT9E4DofvtnSo8nP4RveaGaIc84/r10Ip9OSTdtyilH26gE5OWqnRRIpdyLhkdRm7zraloXqh4M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxw+MelxcYRdedJOk2NxUTCiMUjcZM1UFKKj2UL5e86WhvGiKOr
-	9MWfIzr90w9EsPb2X/gpiwsWvM8I85tcqkoff/fcQzM43Zu7suszHlFHy/J9CEqtkJ2hBIvPzux
-	ghrmaFMtBZ1R1vp1XKHeWl75emm66KzoYdqSKKWjeQVl1NwjpV6BPfEPkh0s97trjWw==
-X-Gm-Gg: ASbGnctiN8S2a6x8wtdrRC8DueGp/KZzjiJGqcNEE4Bm2BbGFoH5X889J6FRwI+3Cvj
-	EG9OturTVNvGLzukfqGavUIT2P8Cr9PKk3wiVuDeyGP0iTeIOwb3F1mXj6HBXK6ttphn262ij5y
-	1lpWrS9+JMWClSZf7EXVEkanRiKFltS6wjMZFHK5Ap6V6NPAWJiw8/X9BGeXHtnaF3ACEAgzlAv
-	zyXVNOYdDhman9c1BH/J0ZUu1O/d7giW2NXqFaA9a5sce1Yh4jK3qAcj23QZrXDLaKbt0p37mXK
-	/acWudz30FRBBA6o2d9BmGcclPncCdlEAK5AD10SsQSg
-X-Received: by 2002:a17:907:3e0b:b0:adb:23e0:9297 with SMTP id a640c23a62f3a-ae3c2ba7d8cmr561174766b.17.1751534074265;
-        Thu, 03 Jul 2025 02:14:34 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEpv9LLbFCl3ldcEsWln7WTKCU1DiUBATTPI77bVMl/fb93gfbskiteVDBruFDaEeHqi8rF/A==
-X-Received: by 2002:a17:907:3e0b:b0:adb:23e0:9297 with SMTP id a640c23a62f3a-ae3c2ba7d8cmr561170766b.17.1751534073622;
-        Thu, 03 Jul 2025 02:14:33 -0700 (PDT)
-Received: from [10.32.64.156] (nat-pool-muc-t.redhat.com. [149.14.88.26])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-60c8292076csm10063057a12.32.2025.07.03.02.14.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Jul 2025 02:14:33 -0700 (PDT)
-Message-ID: <42c0135a-dbd9-47e1-9b9e-c36c147a2315@redhat.com>
-Date: Thu, 3 Jul 2025 11:14:32 +0200
+	s=arc-20240116; t=1751534095; c=relaxed/simple;
+	bh=s3VUtHmPjct842E1v4IeUqWB0HGSRJlrlYaAQOOIcjs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VPiewrTo5YwPC33yoqVGZzQvez8/k2K58yNcufl4iDU2SKH9ahADiF8xhldg1sVyUVe+vjAvN/jh9JlKCkwxNTG/3zUsS+hK298igsnnF6j3nMQihd9ox7O3/3vkN07+GlkR28iA2K6YcYWZ6SLYYmT1+dWp6Q4OQ6CZsVYUM8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 291bb16857ee11f0b29709d653e92f7d-20250703
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:6be4beca-0aa8-4e8f-8a4c-134434d22d73,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6493067,CLOUDID:619065f3335f1fe002877f5bfface112,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:-3,IP:nil,UR
+	L:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,S
+	PR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 291bb16857ee11f0b29709d653e92f7d-20250703
+Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
+	(envelope-from <zhangzihuan@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 265518452; Thu, 03 Jul 2025 17:14:45 +0800
+Received: from mail.kylinos.cn (localhost [127.0.0.1])
+	by mail.kylinos.cn (NSMail) with SMTP id E8964E008FA2;
+	Thu,  3 Jul 2025 17:14:44 +0800 (CST)
+X-ns-mid: postfix-68664A04-801599893
+Received: from localhost.localdomain (unknown [172.25.120.24])
+	by mail.kylinos.cn (NSMail) with ESMTPA id 8F5BCE008FA1;
+	Thu,  3 Jul 2025 17:14:40 +0800 (CST)
+From: Zihuan Zhang <zhangzihuan@kylinos.cn>
+To: xuewen.yan@unisoc.com,
+	vincent.guittot@linaro.org,
+	mingo@redhat.com,
+	peterz@infradead.org,
+	juri.lelli@redhat.com
+Cc: rostedt@goodmis.org,
+	bsegall@google.com,
+	mgorman@suse.de,
+	vschneid@redhat.com,
+	hongyan.xia2@arm.com,
+	linux-kernel@vger.kernel.org,
+	ke.wang@unisoc.com,
+	di.shen@unisoc.com,
+	xuewen.yan94@gmail.com,
+	kprateek.nayak@amd.com,
+	kuyo.chang@mediatek.com,
+	juju.sung@mediatek.com,
+	qyousef@layalina.io,
+	Zihuan Zhang <zhangzihuan@kylinos.cn>
+Subject: [PATCH v1] sched/uclamp: Exclude kernel threads from uclamp logic
+Date: Thu,  3 Jul 2025 17:14:37 +0800
+Message-Id: <20250703091437.79861-1-zhangzihuan@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/7] selftests/mm: Fix child process exit codes in
- ksm_functional_tests
-To: Donet Tom <donettom@linux.ibm.com>,
- Aboorva Devarajan <aboorvad@linux.ibm.com>, akpm@linux-foundation.org,
- Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, shuah@kernel.org,
- pfalcato@suse.de, ziy@nvidia.com, baolin.wang@linux.alibaba.com,
- npache@redhat.com, ryan.roberts@arm.com, dev.jain@arm.com, baohua@kernel.org
-Cc: linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org, ritesh.list@gmail.com
-References: <20250703060656.54345-1-aboorvad@linux.ibm.com>
- <20250703060656.54345-6-aboorvad@linux.ibm.com>
- <9586f8ff-3b34-4613-853b-0c808fcbb9d2@redhat.com>
- <7b78974b-6841-4280-89c1-01bd835d4f27@linux.ibm.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <7b78974b-6841-4280-89c1-01bd835d4f27@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
 
-On 03.07.25 10:51, Donet Tom wrote:
-> Hi David
-> 
-> On 7/3/25 2:03 PM, David Hildenbrand wrote:
->> On 03.07.25 08:06, Aboorva Devarajan wrote:
->>> In ksm_functional_tests, test_child_ksm() returned negative values
->>> to indicate errors. However, when passed to exit(), these were
->>> interpreted as large unsigned values (e.g, -2 became 254), leading to
->>> incorrect handling in the parent process. As a result, some tests
->>> appeared to be skipped or silently failed.
->>>
->>> This patch changes test_child_ksm() to return positive error codes
->>> (1, 2, 3) and updates test_child_ksm_err() to interpret them correctly.
->>> This ensures the parent accurately detects and reports child process
->>> failures.
->>>
->>> --------------
->>> Before patch:
->>> --------------
->>> - [RUN] test_unmerge
->>> ok 1 Pages were unmerged
->>> ...
->>> - [RUN] test_prctl_fork
->>> - No pages got merged
->>> - [RUN] test_prctl_fork_exec
->>> ok 7 PR_SET_MEMORY_MERGE value is inherited
->>> ...
->>> Bail out! 1 out of 8 tests failed
->>> - Planned tests != run tests (9 != 8)
->>> - Totals: pass:7 fail:1 xfail:0 xpass:0 skip:0 error:0
->>>
->>> --------------
->>> After patch:
->>> --------------
->>> - [RUN] test_unmerge
->>> ok 1 Pages were unmerged
->>> ...
->>> - [RUN] test_prctl_fork
->>> - No pages got merged
->>> not ok 7 Merge in child failed
->>> - [RUN] test_prctl_fork_exec
->>> ok 8 PR_SET_MEMORY_MERGE value is inherited
->>> ...
->>> Bail out! 2 out of 9 tests failed
->>> - Totals: pass:7 fail:2 xfail:0 xpass:0 skip:0 error:0
->>>
->>> Fixes: 6c47de3be3a0 ("selftest/mm: ksm_functional_tests: extend test
->>> case for ksm fork/exec")
->>> Signed-off-by: Aboorva Devarajan <aboorvad@linux.ibm.com>
->>
->> BTW, when I run the test, I get this weird output
->>
->> TAP version 13
->> 1..9
->> # [RUN] test_unmerge
->> ok 1 Pages were unmerged
->> # [RUN] test_unmerge_zero_pages
->> ok 2 KSM zero pages were unmerged
->> # [RUN] test_unmerge_discarded
->> ok 3 Pages were unmerged
->> # [RUN] test_unmerge_uffd_wp
->> ok 4 Pages were unmerged
->> # [RUN] test_prot_none
->> ok 5 Pages were unmerged
->> # [RUN] test_prctl
->> ok 6 Setting/clearing PR_SET_MEMORY_MERGE works
->> # [RUN] test_prctl_fork
->> ok 7 PR_SET_MEMORY_MERGE value is inherited
->> # [RUN] test_prctl_fork_exec
->>
->> ^ where is the test?
->>
->> # [RUN] test_prctl_unmerge
->> ok 8 Pages were unmerged
->> # Planned tests != run tests (9 != 8)
->> # Totals: pass:8 fail:0 xfail:0 xpass:0 skip:0 error:0
->>
->> ^ what?
->>
->> ok 8 PR_SET_MEMORY_MERGE value is inherited
->> # [RUN] test_prctl_unmerge
->> ok 9 Pages were unmerged
->> # Totals: pass:9 fail:0 xfail:0 xpass:0 skip:0 error:0
->>
->> ^ huh, what now?
->>
-> 
-> The problem with the exec test is that it uses its own binary to exec.
-> 
->           } else if (child_pid == 0) {
->                   char *prg_name = "./ksm_functional_tests";
->                   char *argv_for_program[] = { prg_name,
-> FORK_EXEC_CHILD_PRG_NAME, NULL };
-> 
->                   execv(prg_name, argv_for_program);
->                   return;
->           }
- > > So we should run it on the same directory where the binary present.
+Kernel threads (PF_KTHREAD) are not subject to user-defined utilization
+clamping. They do not represent user workloads and should not participate
+in any uclamp logic, including:
 
-So, I assume the execv fails. We should handle that, and figure out why 
-it fails.
+ - clamp initialization during fork/post-fork
+ - effective clamp value computation
+ - runtime aggregation (uclamp_rq_inc/dec)
 
-diff --git a/tools/testing/selftests/mm/ksm_functional_tests.c 
-b/tools/testing/selftests/mm/ksm_functional_tests.c
-index d8bd1911dfc0a..0ddbb390df33b 100644
---- a/tools/testing/selftests/mm/ksm_functional_tests.c
-+++ b/tools/testing/selftests/mm/ksm_functional_tests.c
-@@ -527,6 +527,8 @@ static void test_child_ksm_err(int status)
-                 ksft_test_result_fail("Merge in child failed\n");
-         else if (status == -3)
-                 ksft_test_result_skip("Merge in child skipped\n");
-+       else if (status == 4)
-+               ksft_test_result_fail("Binary not found\n");
-  }
+Allowing kernel threads into these paths may pollute the rq->uclamp[]
+statistics, mislead schedutil governor's frequency selection, and
+complicate debugging or trace interpretation.
 
-  /* Verify that prctl ksm flag is inherited. */
-@@ -598,7 +600,7 @@ static void test_prctl_fork_exec(void)
-                 char *argv_for_program[] = { prg_name, 
-FORK_EXEC_CHILD_PRG_NAME };
+This patch ensures that:
+ - uclamp_fork() and uclamp_post_fork() skip kernel threads
+ - uclamp_eff_value() return default values
+ - uclamp_rq_inc() and uclamp_rq_dec() skip kernel threads
 
-                 execv(prg_name, argv_for_program);
--               return;
-+               exit(4);
-         }
+This aligns the semantics of uclamp with its original intent:
+user-space task-specific clamping.
 
-         if (waitpid(child_pid, &status, 0) > 0) {
+dmesg in uclamp_rq_inc_id:
+[   76.373903] uclamp_rq_inc_id: task:rcu_preempt pid:16 clamp_id:0 value=
+:0 kthread:1
+[   76.375905] uclamp_rq_inc_id: task:kworker/2:1H pid:188 clamp_id:1 val=
+ue:1024 kthread:1
+[   76.379837] uclamp_rq_inc_id: task:kworker/2:1H pid:188 clamp_id:0 val=
+ue:0 kthread:1
+[   76.379839] uclamp_rq_inc_id: task:kworker/2:1H pid:188 clamp_id:1 val=
+ue:1024 kthread:1
+[   76.379839] uclamp_rq_inc_id: task:rcu_preempt pid:16 clamp_id:0 value=
+:0 kthread:1
+[   76.379841] uclamp_rq_inc_id: task:rcu_preempt pid:16 clamp_id:1 value=
+:1024 kthread:1
+[   76.383897] uclamp_rq_inc_id: task:rcu_preempt pid:16 clamp_id:0 value=
+:0 kthread:1
+[   76.383897] uclamp_rq_inc_id: task:kworker/2:1H pid:188 clamp_id:0 val=
+ue:0 kthread:1
+[   76.383900] uclamp_rq_inc_id: task:rcu_preempt pid:16 clamp_id:1 value=
+:1024 kthread:1
+[   76.383901] uclamp_rq_inc_id: task:kworker/2:1H pid:188 clamp_id:1 val=
+ue:1024 kthread:1
+[   76.387885] uclamp_rq_inc_id: task:rcu_preempt pid:16 clamp_id:0 value=
+:0 kthread:1
+[   76.387885] uclamp_rq_inc_id: task:kworker/2:1H pid:188 clamp_id:0 val=
+ue:0 kthread:1
+[   76.387888] uclamp_rq_inc_id: task:kworker/2:1H pid:188 clamp_id:1 val=
+ue:1024 kthread:1
+[   76.387889] uclamp_rq_inc_id: task:rcu_preempt pid:16 clamp_id:1 value=
+:1024 kthread:1
+[   76.388139] uclamp_rq_inc_id: task:jbd2/sda3-8 pid:316 clamp_id:0 valu=
+e:0 kthread:1
+[   76.388140] uclamp_rq_inc_id: task:kworker/1:1H pid:153 clamp_id:0 val=
+ue:0 kthread:1
+[   76.388142] uclamp_rq_inc_id: task:kworker/1:1H pid:153 clamp_id:1 val=
+ue:1024 kthread:1
+[   76.388143] uclamp_rq_inc_id: task:jbd2/sda3-8 pid:316 clamp_id:1 valu=
+e:1024 kthread:1
+[   76.388169] uclamp_rq_inc_id: task:kworker/u48:6 pid:93 clamp_id:0 val=
+ue:0 kthread:1
+[   76.388171] uclamp_rq_inc_id: task:kworker/u48:6 pid:93 clamp_id:1 val=
+ue:1024 kthread:1
+[   76.388891] uclamp_rq_inc_id: task:rcu_preempt pid:16 clamp_id:0 value=
+:0 kthread:1
+[   76.388893] uclamp_rq_inc_id: task:rcu_preempt pid:16 clamp_id:1 value=
+:1024 kthread:1
+[   76.392900] uclamp_rq_inc_id: task:rcu_preempt pid:16 clamp_id:0 value=
+:0 kthread:1
+[   76.392902] uclamp_rq_inc_id: task:rcu_preempt pid:16 clamp_id:1 value=
+:1024 kthread:1
+[   76.398850] uclamp_rq_inc_id: task:kworker/2:1H pid:188 clamp_id:0 val=
+ue:0 kthread:1
+[   76.398852] uclamp_rq_inc_id: task:kworker/2:1H pid:188 clamp_id:1 val=
+ue:1024 kthread:1
+[   76.401880] uclamp_rq_inc_id: task:ksoftirqd/8 pid:67 clamp_id:0 value=
+:0 kthread:1
+[   76.401883] uclamp_rq_inc_id: task:ksoftirqd/8 pid:67 clamp_id:1 value=
+:1024 kthread:1
+[   76.409053] uclamp_rq_inc_id: task:kworker/2:1H pid:188 clamp_id:0 val=
+ue:0 kthread:1
+[   76.409054] uclamp_rq_inc_id: task:kworker/2:1H pid:188 clamp_id:1 val=
+ue:1024 kthread:1
+[   76.410881] uclamp_rq_inc_id: task:kworker/u48:10 pid:97 clamp_id:0 va=
+lue:0 kthread:1
+[   76.410884] uclamp_rq_inc_id: task:kworker/u48:10 pid:97 clamp_id:1 va=
+lue:1024 kthread:1
+[   76.419947] uclamp_rq_inc_id: task:kworker/1:1H pid:153 clamp_id:0 val=
+ue:0 kthread:1
+[   76.419949] uclamp_rq_inc_id: task:kworker/1:1H pid:153 clamp_id:1 val=
+ue:1024 kthread:1
+[   76.419976] uclamp_rq_inc_id: task:kworker/u48:6 pid:93 clamp_id:0 val=
+ue:0 kthread:1
+[   76.419979] uclamp_rq_inc_id: task:kworker/u48:6 pid:93 clamp_id:1 val=
+ue:1024 kthread:1
+[   76.420119] uclamp_rq_inc_id: task:kworker/2:1H pid:188 clamp_id:0 val=
+ue:0 kthread:1
+[   76.420121] uclamp_rq_inc_id: task:kworker/2:1H pid:188 clamp_id:1 val=
+ue:1024 kthread:1
+[   76.420642] uclamp_rq_inc_id: task:kworker/1:1H pid:153 clamp_id:0 val=
+ue:0 kthread:1
+[   76.420644] uclamp_rq_inc_id: task:kworker/1:1H pid:153 clamp_id:1 val=
+ue:1024 kthread:1
+[   76.434914] uclamp_rq_inc_id: task:kcompactd0 pid:108 clamp_id:0 value=
+:0 kthread:1
+[   76.434916] uclamp_rq_inc_id: task:kcompactd0 pid:108 clamp_id:1 value=
+:1024 kthread:1
+[   76.447689] uclamp_rq_inc_id: task:kworker/3:2 pid:244 clamp_id:0 valu=
+e:0 kthread:1
+[   76.447691] uclamp_rq_inc_id: task:kworker/3:2 pid:244 clamp_id:1 valu=
+e:1024 kthread:1
+[   76.447705] uclamp_rq_inc_id: task:ksoftirqd/3 pid:37 clamp_id:0 value=
+:0 kthread:1
+[   76.447707] uclamp_rq_inc_id: task:ksoftirqd/3 pid:37 clamp_id:1 value=
+:1024 kthread:1
+[   76.448809] uclamp_rq_inc_id: task:rcu_preempt pid:16 clamp_id:0 value=
+:0 kthread:1
+[   76.448811] uclamp_rq_inc_id: task:rcu_preempt pid:16 clamp_id:1 value=
+:1024 kthread:1
+[   76.451260] uclamp_rq_inc_id: task:kworker/1:1H pid:153 clamp_id:0 val=
+ue:0 kthread:1
+[   76.451263] uclamp_rq_inc_id: task:kworker/1:1H pid:153 clamp_id:1 val=
+ue:1024 kthread:1
+[   76.452806] uclamp_rq_inc_id: task:rcu_preempt pid:16 clamp_id:0 value=
+:0 kthread:1
+[   76.452808] uclamp_rq_inc_id: task:rcu_preempt pid:16 clamp_id:1 value=
+:1024 kthread:1
+[   76.488052] uclamp_rq_inc_id: task:kworker/1:1H pid:153 clamp_id:0 val=
+ue:0 kthread:1
+[   76.488054] uclamp_rq_inc_id: task:kworker/1:1H pid:153 clamp_id:1 val=
+ue:1024 kthread:1
+[   76.488767] uclamp_rq_inc_id: task:kworker/1:1H pid:153 clamp_id:0 val=
+ue:0 kthread:1
+[   76.488770] uclamp_rq_inc_id: task:kworker/1:1H pid:153 clamp_id:1 val=
+ue:1024 kthread:1
+[   76.490847] uclamp_rq_inc_id: task:kworker/3:2 pid:244 clamp_id:0 valu=
+e:0 kthread:1
+[   76.490848] uclamp_rq_inc_id: task:kworker/2:1 pid:143 clamp_id:0 valu=
+e:0 kthread:1
+[   76.490849] uclamp_rq_inc_id: task:kworker/1:3 pid:462 clamp_id:0 valu=
+e:0 kthread:1
+[   76.490848] uclamp_rq_inc_id: task:kworker/7:2 pid:687 clamp_id:0 valu=
+e:0 kthread:1
+[   76.490849] uclamp_rq_inc_id: task:kworker/11:1 pid:146 clamp_id:0 val=
+ue:0 kthread:1
+[   76.490850] uclamp_rq_inc_id: task:kworker/2:1 pid:143 clamp_id:1 valu=
+e:1024 kthread:1
+[   76.490851] uclamp_rq_inc_id: task:kworker/3:2 pid:244 clamp_id:1 valu=
+e:1024 kthread:1
+[   76.490851] uclamp_rq_inc_id: task:kworker/11:1 pid:146 clamp_id:1 val=
+ue:1024 kthread:1
+[   76.490851] uclamp_rq_inc_id: task:kworker/7:2 pid:687 clamp_id:1 valu=
+e:1024 kthread:1
+[   76.490853] uclamp_rq_inc_id: task:kworker/1:3 pid:462 clamp_id:1 valu=
+e:1024 kthread:1
+[   76.490857] uclamp_rq_inc_id: task:kworker/5:1 pid:141 clamp_id:0 valu=
+e:0 kthread:1
+[   76.490859] uclamp_rq_inc_id: task:kworker/5:1 pid:141 clamp_id:1 valu=
+e:1024 kthread:1
+[   76.491850] uclamp_rq_inc_id: task:kworker/4:2 pid:534 clamp_id:0 valu=
+e:0 kthread:1
+[   76.491852] uclamp_rq_inc_id: task:kworker/4:2 pid:534 clamp_id:1 valu=
+e:1024 kthread:1
+[   76.504848] uclamp_rq_inc_id: task:kworker/10:2 pid:228 clamp_id:0 val=
+ue:0 kthread:1
+[   76.504852] uclamp_rq_inc_id: task:kworker/10:2 pid:228 clamp_id:1 val=
+ue:1024 kthread:1
+[   76.508785] uclamp_rq_inc_id: task:kworker/9:1 pid:142 clamp_id:0 valu=
+e:0 kthread:1
+[   76.508787] uclamp_rq_inc_id: task:kworker/9:1 pid:142 clamp_id:1 valu=
+e:1024 kthread:1
+[   76.514856] uclamp_rq_inc_id: task:kworker/u48:10 pid:97 clamp_id:0 va=
+lue:0 kthread:1
+[   76.514859] uclamp_rq_inc_id: task:kworker/u48:10 pid:97 clamp_id:1 va=
+lue:1024 kthread:1
+[   76.522742] uclamp_rq_inc_id: task:kworker/1:1H pid:153 clamp_id:0 val=
+ue:0 kthread:1
 
-results in
+Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
+---
+ kernel/sched/core.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-TAP version 13
-1..9
-# [RUN] test_unmerge
-ok 1 Pages were unmerged
-# [RUN] test_unmerge_zero_pages
-ok 2 KSM zero pages were unmerged
-# [RUN] test_unmerge_discarded
-ok 3 Pages were unmerged
-# [RUN] test_unmerge_uffd_wp
-ok 4 Pages were unmerged
-# [RUN] test_prot_none
-ok 5 Pages were unmerged
-# [RUN] test_prctl
-ok 6 Setting/clearing PR_SET_MEMORY_MERGE works
-# [RUN] test_prctl_fork
-ok 7 PR_SET_MEMORY_MERGE value is inherited
-# [RUN] test_prctl_fork_exec
-not ok 8 Binary not found
-# [RUN] test_prctl_unmerge
-ok 9 Pages were unmerged
-Bail out! 1 out of 9 tests failed
-# Totals: pass:8 fail:1 xfail:0 xpass:0 skip:0 error:0
-
-
--- 
-Cheers,
-
-David / dhildenb
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 8988d38d46a3..a1e6b4157682 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -1630,6 +1630,9 @@ unsigned long uclamp_eff_value(struct task_struct *=
+p, enum uclamp_id clamp_id)
+ {
+ 	struct uclamp_se uc_eff;
+=20
++	if (p->flags & PF_KTHREAD)
++		return uclamp_none(clamp_id);
++
+ 	/* Task currently refcounted: use back-annotated (effective) value */
+ 	if (p->uclamp[clamp_id].active)
+ 		return (unsigned long)p->uclamp[clamp_id].value;
+@@ -1769,6 +1772,9 @@ static inline void uclamp_rq_inc(struct rq *rq, str=
+uct task_struct *p, int flags
+ 	if (unlikely(!p->sched_class->uclamp_enabled))
+ 		return;
+=20
++	if (p->flags & PF_KTHREAD)
++		return;
++
+ 	/* Only inc the delayed task which being woken up. */
+ 	if (p->se.sched_delayed && !(flags & ENQUEUE_DELAYED))
+ 		return;
+@@ -1797,6 +1803,9 @@ static inline void uclamp_rq_dec(struct rq *rq, str=
+uct task_struct *p)
+ 	if (unlikely(!p->sched_class->uclamp_enabled))
+ 		return;
+=20
++	if (p->flags & PF_KTHREAD)
++		return;
++
+ 	if (p->se.sched_delayed)
+ 		return;
+=20
+@@ -1977,6 +1986,8 @@ static void uclamp_fork(struct task_struct *p)
+ {
+ 	enum uclamp_id clamp_id;
+=20
++	if (p->flags & PF_KTHREAD)
++		return;
+ 	/*
+ 	 * We don't need to hold task_rq_lock() when updating p->uclamp_* here
+ 	 * as the task is still at its early fork stages.
+@@ -1995,6 +2006,8 @@ static void uclamp_fork(struct task_struct *p)
+=20
+ static void uclamp_post_fork(struct task_struct *p)
+ {
++	if (p->flags & PF_KTHREAD)
++		return;
+ 	uclamp_update_util_min_rt_default(p);
+ }
+=20
+--=20
+2.25.1
 
 
