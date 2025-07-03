@@ -1,316 +1,222 @@
-Return-Path: <linux-kernel+bounces-715675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-715664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97090AF7C40
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 17:33:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 921E9AF7C70
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 17:36:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 129FB7BB13B
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 15:31:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79E8F6E0658
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 15:30:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 459502F0034;
-	Thu,  3 Jul 2025 15:31:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30B1E2E54BF;
+	Thu,  3 Jul 2025 15:30:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="cUEgw4o+"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="c7KIdsqE";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FP9UlKGI"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CA942EFDB8
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 15:31:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80BD529827E;
+	Thu,  3 Jul 2025 15:30:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751556704; cv=none; b=GQKmFVIMNX52IL/3VxShauPqpEG687VrqYueVwp7fmxhl7rvX9FPGV0yq9BICJKLRQkxAGuYvL1Mnh8Xu5GHwiXCK26v2I5yVdGEiDo2ZskgavYu7bbw65aAHLLszqItBJMJ/WxEjB2MyDZoIoaE/9VW7OIuI2gqR7znM3qtr+U=
+	t=1751556606; cv=none; b=qIjqClWEevTFlDPiiMLwP8l2lpX7zj/L9lyUlvT7SuIf8h4eIU1nMzUVTOAl1K8QHEjEExqL/l8qwOYwXp4EG6SOkBK/h544YGoouCXJaF4n/HoGLF/85uRF2w8b9pk3Q0hD1pcByeYlu28dKxoKO4NzaZDFLtg1x1egAXYOrPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751556704; c=relaxed/simple;
-	bh=6J+m7sJfFYde+NRfy6nf+kjWVxfONpUpn9vTU0wAjGw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Of18J86DlC6rSEypOHhAWehItUIxDn+wpttwpdOhEmHPdYlOHe8U5gq0/vFe2wWJDcbdPxdg7n/kzqQM62TQhWq5lCoxy2vt6tgdOzUfLsVt61j/EJVVYxK62SyfZx33JZb+9Ujd3gcNWpujkz2WHb70YiAZyczaG6U2+KRWs5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=cUEgw4o+; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1751556699;
-	bh=6J+m7sJfFYde+NRfy6nf+kjWVxfONpUpn9vTU0wAjGw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=cUEgw4o+x7+TQMzUT+EEBJOHHUlpwpAGIoTOYkpgAJj1CL6CvUGHold3QYlhigRMG
-	 KGY3tzVey6WXKynmgGt0c8zeQVdGZuYMNP0npcRU3Beyr7ZANGkLh8KmD1FLRSWLqr
-	 A0WoGUE9Jl4/ZZyBPQb/D5ZuntD7iJ3NvJsqUpN/b9cug5awmQiPHvS4BDWWUvGv8U
-	 ueqeMz8wO9/juT4EbxYul6e8gLbA+11yIqP0NCnRzsg7jW6mt90EBY9AXHiHAnQNCa
-	 db3ilOjkUZFPkGJiHzseDKsvy7Z8EH0DagQlmzpIKf6fuu8cW9i32UwNgYv9dFNGWX
-	 NwFcYY4CPx28A==
-Received: from debian-rockchip-rock5b-rk3588.. (unknown [90.168.160.154])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nanokatze)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id CCB2617E09C6;
-	Thu,  3 Jul 2025 17:31:38 +0200 (CEST)
-From: Caterina Shablia <caterina.shablia@collabora.com>
-To: Boris Brezillon <boris.brezillon@collabora.com>,
-	Steven Price <steven.price@arm.com>,
-	Liviu Dudau <liviu.dudau@arm.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>
-Cc: kernel@collabora.com,
-	Caterina Shablia <caterina.shablia@collabora.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 7/7] drm/panthor: Add support for repeated mappings
-Date: Thu,  3 Jul 2025 15:29:00 +0000
-Message-ID: <20250703152908.16702-9-caterina.shablia@collabora.com>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250703152908.16702-2-caterina.shablia@collabora.com>
-References: <20250703152908.16702-2-caterina.shablia@collabora.com>
+	s=arc-20240116; t=1751556606; c=relaxed/simple;
+	bh=8wqrij/Q6ZjbLCjBATPTbvk2Hc6VwWSecx213vuUWpg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kIlKqXqbb9zQh7Ol6ZISz0L1TeOkcIDMFkC03Z9Urw5xd20eCkxG5kamCNmyDYHwrq38OQDI4PS6RrUNqmYJ08/YfNb/7JpXI4DhC4DmFKp48WbGWs1bW81R7U0BRgCy2z7XfYbZu/XA+IRSvNZWvwD8WznCfLudOWmTkRdkB/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=c7KIdsqE; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FP9UlKGI; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 3 Jul 2025 17:29:56 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1751556602;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Q98/x4tL/TymfrpONP3RgYZjTEFmRIOSSIZVzyH5YIY=;
+	b=c7KIdsqE0nYXCz4g2rzOTNAcFL+SVPgtE03WyPjGcHcvO9eCTJwiStu7DlMv89jfXsNemK
+	mSPoDbGgBvFnQnxx9JC+1MpnssxYdZxmPa0+6/ZaMw4SNp4H7yILyLbv0IVoztpOD1wAVi
+	kjTKOzXwUB6YZsSdj3EZbGp9XMNjOaGhI8aja2GXGb8ETCW31T+UKzg3yVr3odn3Pj+aR6
+	ckxUuI8H+QHvjWcbuH8zvrF/vtxErQt8Tpf+/urxgG+XQaffvlF3fwFh8xU40d2C05N78I
+	d7KRBT32CWQ9CciQtG/Ej80kTUSCoz/UEsDU7rmADaYQnjMHWUaZ+GwqKvrMdg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1751556602;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Q98/x4tL/TymfrpONP3RgYZjTEFmRIOSSIZVzyH5YIY=;
+	b=FP9UlKGItlYBuwqSVIAWGNDwWLSH15HNMLN5tkla3tHgyvULPdQx2zCBrABIcwGXpzOj28
+	8g8xArfV5LgYLxDA==
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+To: Rae Moar <rmoar@google.com>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Willy Tarreau <w@1wt.eu>, Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
+	Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, Shuah Khan <shuah@kernel.org>, 
+	Jonathan Corbet <corbet@lwn.net>, Nicolas Schier <nicolas.schier@linux.dev>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, linux-doc@vger.kernel.org, 
+	workflows@vger.kernel.org
+Subject: Re: [PATCH v4 08/15] kunit: tool: Don't overwrite test status based
+ on subtest counts
+Message-ID: <20250703170653-0747ad3a-ee33-4ce9-9f69-1118b0d8260a@linutronix.de>
+References: <20250626-kunit-kselftests-v4-0-48760534fef5@linutronix.de>
+ <20250626-kunit-kselftests-v4-8-48760534fef5@linutronix.de>
+ <CA+GJov45CF67nKJ7AC=g0fPL68pLdJbvJBwG8ecn9OUZ7hCewA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CA+GJov45CF67nKJ7AC=g0fPL68pLdJbvJBwG8ecn9OUZ7hCewA@mail.gmail.com>
 
-From: Boris Brezillon <boris.brezillon@collabora.com>
+On Tue, Jul 01, 2025 at 05:11:59PM -0400, Rae Moar wrote:
+> On Thu, Jun 26, 2025 at 2:10 AM Thomas Weißschuh
+> <thomas.weissschuh@linutronix.de> wrote:
+> >
+> > If a subtest itself reports success, but the outer testcase fails,
+> > the whole testcase should be reported as a failure.
+> > However the status is recalculated based on the test counts,
+> > overwriting the outer test result.
+> > Synthesize a failed test in this case to make sure the failure is not
+> > swallowed.
+> 
+> This is a very exciting patch series! However, I have a few concerns
+> with this patch.
 
-This allows us to optimize mapping of a relatively small
-portion of a BO over and over in a large VA range, which
-is useful to support Vulkan sparse bindings in an efficient
-way.
+Thanks for the review!
 
-Signed-off-by: Boris Brezillon <boris.brezillon@collabora.com>
-Co-developed-by: Caterina Shablia <caterina.shablia@collabora.com>
-Signed-off-by: Caterina Shablia <caterina.shablia@collabora.com>
----
- drivers/gpu/drm/panthor/panthor_drv.c |  3 +-
- drivers/gpu/drm/panthor/panthor_mmu.c | 78 ++++++++++++++++++++++++---
- include/uapi/drm/panthor_drm.h        | 23 ++++++++
- 3 files changed, 95 insertions(+), 9 deletions(-)
+> When I parse the following KTAP with this change:
+> 
+> KTAP version 1
+> 1..2
+>     KTAP version 1
+>     1..2
+>         ok 1 test 1
+>         not ok 2 test 2
+> not ok 1 subtest 1
+>     KTAP version 1
+>     1..1
+>         not ok 1 subsubtest 1
+> not ok 2 subtest 2
+> 
+> The output is:
+> 
+> [20:54:12] ============================================================
+> [20:54:12] ======================= (2 subtests) =======================
+> [20:54:12] [PASSED] test 1
+> [20:54:12] [FAILED] test 2
+> [20:54:12] ==================== [FAILED] subtest 1 ====================
+> [20:54:12] ======================= (1 subtest) ========================
+> [20:54:12] [FAILED] subsubtest 1
+> [20:54:12] ==================== [FAILED] subtest 2 ====================
+> [20:54:12] ============================================================
+> [20:54:12] Testing complete. Ran 6 tests: passed: 1, failed: 5
+> 
+> This reports a total of 6 tests, which is not equivalent to the three
+> subtests plus the two suites. I believe this is because the change to
+> bubble_up_test_results below double counts the failed test case.
+> 
+> Historically, the KUnit parser only counts the results of test cases,
+> not the suites. I would like to stay as close to this as possible so
+> as to not inflate existing testing numbers. However, I believe the
+> main concern here is the case where if there is a suite reporting
+> failure but all subtests pass, it will not appear in the summary line.
+> For example,
+> 
+> KTAP version 1
+> 1..1
+>     KTAP version 1
+>     1..1
+>         ok 1 test 1
+> not ok 1 subtest 1
+> 
+> Reporting: All passing: Tests run: 1, passed: 1
+> 
+> This is absolutely an important edge case to cover. Therefore, we
+> should add 1 failure count to the suite count if the bubbled up
+> results indicate it should instead pass.
 
-diff --git a/drivers/gpu/drm/panthor/panthor_drv.c b/drivers/gpu/drm/panthor/panthor_drv.c
-index 1116f2d2826e..585c07b07c42 100644
---- a/drivers/gpu/drm/panthor/panthor_drv.c
-+++ b/drivers/gpu/drm/panthor/panthor_drv.c
-@@ -1608,6 +1608,7 @@ static void panthor_debugfs_init(struct drm_minor *minor)
-  * - 1.3 - adds DRM_PANTHOR_GROUP_STATE_INNOCENT flag
-  * - 1.4 - adds DRM_IOCTL_PANTHOR_BO_SET_LABEL ioctl
-  * - 1.5 - adds DRM_PANTHOR_SET_USER_MMIO_OFFSET ioctl
-+ * - 1.6 - adds DRM_PANTHOR_VM_BIND_OP_MAP_REPEAT flag
-  */
- static const struct drm_driver panthor_drm_driver = {
- 	.driver_features = DRIVER_RENDER | DRIVER_GEM | DRIVER_SYNCOBJ |
-@@ -1621,7 +1622,7 @@ static const struct drm_driver panthor_drm_driver = {
- 	.name = "panthor",
- 	.desc = "Panthor DRM driver",
- 	.major = 1,
--	.minor = 5,
-+	.minor = 6,
- 
- 	.gem_create_object = panthor_gem_create_object,
- 	.gem_prime_import_sg_table = drm_gem_shmem_prime_import_sg_table,
-diff --git a/drivers/gpu/drm/panthor/panthor_mmu.c b/drivers/gpu/drm/panthor/panthor_mmu.c
-index a7852485e638..adea26985c31 100644
---- a/drivers/gpu/drm/panthor/panthor_mmu.c
-+++ b/drivers/gpu/drm/panthor/panthor_mmu.c
-@@ -202,6 +202,9 @@ struct panthor_vm_op_ctx {
- 		/** @map.bo_offset: Offset in the buffer object. */
- 		u64 bo_offset;
- 
-+		/** @bo_repeat_range: Repeated BO range. */
-+		u32 bo_repeat_range;
-+
- 		/**
- 		 * @map.sgt: sg-table pointing to pages backing the GEM object.
- 		 *
-@@ -1007,6 +1010,26 @@ panthor_vm_map_pages(struct panthor_vm *vm, u64 iova, int prot,
- 	return 0;
- }
- 
-+static int
-+panthor_vm_repeated_map_pages(struct panthor_vm *vm, u64 iova, int prot,
-+			      struct sg_table *sgt, u64 offset, u64 size,
-+			      u64 count)
-+{
-+	/* FIXME: we really need to optimize this at the io_pgtable level. */
-+	for (u64 i = 0; i < count; i++) {
-+		int ret;
-+
-+		ret = panthor_vm_map_pages(vm, iova + (size * i), prot,
-+					   sgt, offset, size);
-+		if (ret) {
-+			panthor_vm_unmap_pages(vm, iova, size * (i - 1));
-+			return ret;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
- static int flags_to_prot(u32 flags)
- {
- 	int prot = 0;
-@@ -1203,12 +1226,14 @@ panthor_vm_op_ctx_prealloc_vmas(struct panthor_vm_op_ctx *op_ctx)
- 	(DRM_PANTHOR_VM_BIND_OP_MAP_READONLY | \
- 	 DRM_PANTHOR_VM_BIND_OP_MAP_NOEXEC | \
- 	 DRM_PANTHOR_VM_BIND_OP_MAP_UNCACHED | \
-+	 DRM_PANTHOR_VM_BIND_OP_MAP_REPEAT | \
- 	 DRM_PANTHOR_VM_BIND_OP_TYPE_MASK)
- 
- static int panthor_vm_prepare_map_op_ctx(struct panthor_vm_op_ctx *op_ctx,
- 					 struct panthor_vm *vm,
- 					 struct panthor_gem_object *bo,
- 					 u64 offset,
-+					 u32 repeat_range,
- 					 u64 size, u64 va,
- 					 u32 flags)
- {
-@@ -1224,9 +1249,22 @@ static int panthor_vm_prepare_map_op_ctx(struct panthor_vm_op_ctx *op_ctx,
- 	    (flags & DRM_PANTHOR_VM_BIND_OP_TYPE_MASK) != DRM_PANTHOR_VM_BIND_OP_TYPE_MAP)
- 		return -EINVAL;
- 
--	/* Make sure the VA and size are aligned and in-bounds. */
--	if (size > bo->base.base.size || offset > bo->base.base.size - size)
--		return -EINVAL;
-+	if (!(flags & DRM_PANTHOR_VM_BIND_OP_MAP_REPEAT)) {
-+		/* Make sure the VA and size are aligned and in-bounds. */
-+		if (size > bo->base.base.size || offset > bo->base.base.size - size)
-+			return -EINVAL;
-+	} else {
-+		/* Make sure the repeat_range is in-bounds. */
-+		if (repeat_range > bo->base.base.size || offset > bo->base.base.size - repeat_range)
-+			return -EINVAL;
-+
-+		/* Make sure size is a multiple of repeat_range */
-+
-+		u64 repeat_count = size;
-+
-+		if (do_div(repeat_count, repeat_range))
-+			return -EINVAL;
-+	}
- 
- 	/* If the BO has an exclusive VM attached, it can't be mapped to other VMs. */
- 	if (bo->exclusive_vm_root_gem &&
-@@ -1295,6 +1333,7 @@ static int panthor_vm_prepare_map_op_ctx(struct panthor_vm_op_ctx *op_ctx,
- 		drm_gem_shmem_unpin(&bo->base);
- 
- 	op_ctx->map.bo_offset = offset;
-+	op_ctx->map.bo_repeat_range = repeat_range;
- 
- 	/* L1, L2 and L3 page tables.
- 	 * We could optimize L3 allocation by iterating over the sgt and merging
-@@ -2112,9 +2151,22 @@ static int panthor_gpuva_sm_step_map(struct drm_gpuva_op *op, void *priv)
- 
- 	panthor_vma_init(vma, op_ctx->flags & PANTHOR_VM_MAP_FLAGS);
- 
--	ret = panthor_vm_map_pages(vm, op->map.va.addr, flags_to_prot(vma->flags),
--				   op_ctx->map.sgt, op->map.gem.offset,
--				   op->map.va.range);
-+	if (op_ctx->flags & DRM_PANTHOR_VM_BIND_OP_MAP_REPEAT) {
-+		u64 repeat_count = op->map.va.range;
-+
-+		do_div(repeat_count, op->map.gem.range);
-+		ret = panthor_vm_repeated_map_pages(vm, op->map.va.addr,
-+						    flags_to_prot(vma->flags),
-+						    op_ctx->map.sgt,
-+						    op->map.gem.offset,
-+						    op->map.gem.range,
-+						    repeat_count);
-+	} else {
-+		ret = panthor_vm_map_pages(vm, op->map.va.addr,
-+					   flags_to_prot(vma->flags),
-+					   op_ctx->map.sgt, op->map.gem.offset,
-+					   op->map.va.range);
-+	}
- 	if (ret)
- 		return ret;
- 
-@@ -2237,7 +2289,7 @@ panthor_vm_exec_op(struct panthor_vm *vm, struct panthor_vm_op_ctx *op,
- 
- 	switch (op_type) {
- 	case DRM_PANTHOR_VM_BIND_OP_TYPE_MAP: {
--		const struct drm_gpuvm_map_req map_req = {
-+		struct drm_gpuvm_map_req map_req = {
- 			.va.addr = op->va.addr,
- 			.va.range = op->va.range,
- 			.gem.obj = op->map.vm_bo->obj,
-@@ -2249,6 +2301,11 @@ panthor_vm_exec_op(struct panthor_vm *vm, struct panthor_vm_op_ctx *op,
- 			break;
- 		}
- 
-+		if (op->flags & DRM_PANTHOR_VM_BIND_OP_MAP_REPEAT) {
-+			map_req.flags |= DRM_GPUVA_REPEAT;
-+			map_req.gem.range = op->map.bo_repeat_range;
-+		}
-+
- 		ret = drm_gpuvm_sm_map(&vm->base, vm, &map_req);
- 		break;
- 	}
-@@ -2497,6 +2554,7 @@ panthor_vm_bind_prepare_op_ctx(struct drm_file *file,
- 		ret = panthor_vm_prepare_map_op_ctx(op_ctx, vm,
- 						    gem ? to_panthor_bo(gem) : NULL,
- 						    op->bo_offset,
-+						    op->bo_repeat_range,
- 						    op->size,
- 						    op->va,
- 						    op->flags);
-@@ -2698,7 +2756,11 @@ int panthor_vm_map_bo_range(struct panthor_vm *vm, struct panthor_gem_object *bo
- 	struct panthor_vm_op_ctx op_ctx;
- 	int ret;
- 
--	ret = panthor_vm_prepare_map_op_ctx(&op_ctx, vm, bo, offset, size, va, flags);
-+	/* TODO: would be nice to replace with assert instead */
-+	if (flags & DRM_PANTHOR_VM_BIND_OP_MAP_REPEAT)
-+		return -EINVAL;
-+
-+	ret = panthor_vm_prepare_map_op_ctx(&op_ctx, vm, bo, offset, 0, size, va, flags);
- 	if (ret)
- 		return ret;
- 
-diff --git a/include/uapi/drm/panthor_drm.h b/include/uapi/drm/panthor_drm.h
-index e1f43deb7eca..ad278bc234b0 100644
---- a/include/uapi/drm/panthor_drm.h
-+++ b/include/uapi/drm/panthor_drm.h
-@@ -496,6 +496,17 @@ enum drm_panthor_vm_bind_op_flags {
- 	 */
- 	DRM_PANTHOR_VM_BIND_OP_MAP_UNCACHED = 1 << 2,
- 
-+	/**
-+	 * @DRM_PANTHOR_VM_BIND_OP_MAP_REPEAT: Repeat a BO range
-+	 *
-+	 * Only valid with DRM_PANTHOR_VM_BIND_OP_TYPE_MAP.
-+	 *
-+	 * When this is set, a BO range is repeated over the VA range.
-+	 * drm_panthor_vm_bind_op::bo_repeat_range defines the size of the
-+	 * BO range to repeat.
-+	 */
-+	DRM_PANTHOR_VM_BIND_OP_MAP_REPEAT = 1 << 3,
-+
- 	/**
- 	 * @DRM_PANTHOR_VM_BIND_OP_TYPE_MASK: Mask used to determine the type of operation.
- 	 */
-@@ -560,6 +571,18 @@ struct drm_panthor_vm_bind_op {
- 	 */
- 	struct drm_panthor_obj_array syncs;
- 
-+	/**
-+	 * @bo_repeat_range: The size of the range to be repeated.
-+	 *
-+	 * Must be zero if DRM_PANTHOR_VM_BIND_OP_MAP_REPEAT is not set in
-+	 * flags.
-+	 *
-+	 * Size must be a multiple of bo_repeat_range.
-+	 */
-+	__u32 bo_repeat_range;
-+
-+	/** @pad: Padding field. MBZ. */
-+	__u32 pad;
- };
- 
- /**
--- 
-2.47.2
+Makes sense.
 
+> >
+> > Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+> > Reviewed-by: David Gow <davidgow@google.com>
+> > ---
+> >  tools/testing/kunit/kunit_parser.py                                  | 5 +++++
+> >  tools/testing/kunit/kunit_tool_test.py                               | 3 ++-
+> >  tools/testing/kunit/test_data/test_is_test_passed-failure-nested.log | 3 +++
+> >  3 files changed, 10 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/tools/testing/kunit/kunit_parser.py b/tools/testing/kunit/kunit_parser.py
+> > index c176487356e6c94882046b19ea696d750905b8d5..2478beb28fc3db825855ad46200340e884da7df1 100644
+> > --- a/tools/testing/kunit/kunit_parser.py
+> > +++ b/tools/testing/kunit/kunit_parser.py
+> > @@ -686,6 +686,11 @@ def bubble_up_test_results(test: Test) -> None:
+> >                 counts.add_status(status)
+> >         elif test.counts.get_status() == TestStatus.TEST_CRASHED:
+> >                 test.status = TestStatus.TEST_CRASHED
+> > +       if not test.ok_status():
+> > +               for t in subtests:
+> > +                       if not t.ok_status():
+> > +                               counts.add_status(t.status)
+> > +                               break
+> 
+> Here instead I recommend checking if not test.ok_status() and
+> test.counts.get_status() == TestStatus.SUCCESS and if so
+> counts.add_status(status)
+
+Thanks for the recommendation. I tried this and it works well for this specific
+testcase, but unfortunately all kinds of othes tests are now broken.
+I'll look into it some more, but any hints are highly appreciated.
+It has been a while since I looked at the code.
+
+> >  def parse_test(lines: LineStream, expected_num: int, log: List[str], is_subtest: bool, printer: Printer) -> Test:
+> >         """
+> > diff --git a/tools/testing/kunit/kunit_tool_test.py b/tools/testing/kunit/kunit_tool_test.py
+> > index b74dc05fc2fe5b3ff629172fc7aafeb5c3d29fb3..48a0dd0f9c87caf9f018aade161db90a613fc407 100755
+> > --- a/tools/testing/kunit/kunit_tool_test.py
+> > +++ b/tools/testing/kunit/kunit_tool_test.py
+> > @@ -170,8 +170,9 @@ class KUnitParserTest(unittest.TestCase):
+> >                 with open(nested_log) as file:
+> >                         result = kunit_parser.parse_run_tests(file.readlines(), stdout)
+> >                 self.assertEqual(kunit_parser.TestStatus.FAILURE, result.status)
+> > -               self.assertEqual(result.counts.failed, 2)
+> > +               self.assertEqual(result.counts.failed, 3)
+> >                 self.assertEqual(kunit_parser.TestStatus.FAILURE, result.subtests[0].status)
+> > +               self.assertEqual(kunit_parser.TestStatus.SUCCESS, result.subtests[0].subtests[0].status)
+> >                 self.assertEqual(kunit_parser.TestStatus.FAILURE, result.subtests[1].status)
+> >                 self.assertEqual(kunit_parser.TestStatus.FAILURE, result.subtests[1].subtests[0].status)
+> >
+> > diff --git a/tools/testing/kunit/test_data/test_is_test_passed-failure-nested.log b/tools/testing/kunit/test_data/test_is_test_passed-failure-nested.log
+> > index 2e528da39ab5b2be0fca6cf9160c10929fba3c9e..5498dfd0b0db24663e1a1e9bf78c587de6746522 100644
+> > --- a/tools/testing/kunit/test_data/test_is_test_passed-failure-nested.log
+> > +++ b/tools/testing/kunit/test_data/test_is_test_passed-failure-nested.log
+> > @@ -1,5 +1,8 @@
+> >  KTAP version 1
+> >  1..2
+> > +    KTAP version 1
+> > +    1..1
+> > +        ok 1 test 1
+> >  not ok 1 subtest 1
+> >      KTAP version 1
+> >      1..1
+> >
+> > --
+> > 2.50.0
+> >
+> > --
+> > You received this message because you are subscribed to the Google Groups "KUnit Development" group.
+> > To unsubscribe from this group and stop receiving emails from it, send an email to kunit-dev+unsubscribe@googlegroups.com.
+> > To view this discussion visit https://groups.google.com/d/msgid/kunit-dev/20250626-kunit-kselftests-v4-8-48760534fef5%40linutronix.de.
 
