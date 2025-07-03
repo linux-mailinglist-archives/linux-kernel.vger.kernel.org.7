@@ -1,55 +1,95 @@
-Return-Path: <linux-kernel+bounces-714706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBE11AF6B7B
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 09:26:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A07AAF6B47
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 09:18:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ED4717ACBA4
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 07:24:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94D134A1285
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 07:18:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A55FE298CAF;
-	Thu,  3 Jul 2025 07:26:03 +0000 (UTC)
-Received: from gardel.0pointer.net (gardel.0pointer.net [85.214.157.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D6152980A3;
+	Thu,  3 Jul 2025 07:18:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="d2AUedlz"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4843A298992;
-	Thu,  3 Jul 2025 07:25:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.157.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7788A1CD1F
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 07:18:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751527563; cv=none; b=jJ7hKwbxv02rk1ofssC18L77GhYj5wNmr1VaZDIy/ex0g7k/5uhHWFFdUXDBsAEZICn63uIey6fcEmpcSQknBcQhhhEFXSPdBj2kiNQYFxuE2NKPToZTNoizfGfDZ6BDBSvRhbACkqdl46sYuZ+uzhUyeK8U4qvWOvBf+xI1Vag=
+	t=1751527100; cv=none; b=QuV13xrAmW/VZwfpW1p0hDndFh+sxhcc4NdfoDCYmq+f/L6Ez5n5/ZN6lwx8tUI/8puO6FwJYkAkfKCLqKv7svnYusOowLqFj0Zqj+gGGSfYI+IpOQxgsbG1s9lkzMbgwVrnsqO+F8PfUNrxCaQ7wL9QkrtcWpfUpOEocO0LuOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751527563; c=relaxed/simple;
-	bh=qZiG4zQGXTT5x6dO83hm7UVqBecQ6/V8PRACW6DLJIg=;
+	s=arc-20240116; t=1751527100; c=relaxed/simple;
+	bh=vWoAdHNT9dd3kmOET57D1RdtIdG/KJyt3MCXEz886Ao=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J7CrGCSJvHmTFUETaGYKn5UA12mAge7+FtXcapIEMmmavYlysV+WRMKBMwzWoGVxgs0CiEGuJx14Kzs4Q9GQLNj3p7JCzomly/zaXBsDsm+pRICgvKJYEOQASPLQEdH1QOJe1rGqaTLdky/i+Gx8xGdFx+zOPdTKvbL/pi/WUf0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0pointer.de; spf=pass smtp.mailfrom=0pointer.de; arc=none smtp.client-ip=85.214.157.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0pointer.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=0pointer.de
-Received: from gardel-login.0pointer.net (gardel-mail [IPv6:2a01:238:43ed:c300:10c3:bcf3:3266:da74])
-	by gardel.0pointer.net (Postfix) with ESMTP id 5374FE81788;
-	Thu,  3 Jul 2025 09:18:08 +0200 (CEST)
-Received: by gardel-login.0pointer.net (Postfix, from userid 1000)
-	id 287DD16005E; Thu,  3 Jul 2025 09:18:06 +0200 (CEST)
-Date: Thu, 3 Jul 2025 09:18:06 +0200
-From: Lennart Poettering <mzxreary@0pointer.de>
-To: Mimi Zohar <zohar@linux.ibm.com>
-Cc: Jarkko Sakkinen <jarkko@kernel.org>,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-	Eric Snowberg <eric.snowberg@oracle.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	"Lee, Chun-Yi" <joeyli.kernel@gmail.com>
-Subject: Re: [PATCH] Revert "integrity: Do not load MOK and MOKx when secure
- boot be disabled"
-Message-ID: <aGYurikYK1ManAp3@gardel-login>
-References: <Z9wDxeRQPhTi1EIS@gardel-login>
- <1a6cf2097487816e4b93890ad760f18fe750bd70.camel@linux.ibm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=cdFoMKDtiKCjpz8bSnrLpD1CQaTUMea/GPn6R0ApVB4sB3GMQ/YAimAWYKLIRoIwbBk6juUkLRRxRm0gUBjUIMOnkZjT5KDA56JXUSIa4ZUQxfV/L6digNlpMNUUOXhAh11E4wON0yjW3semxEcls624i4BAEwOqbpF4s5We3Ao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=d2AUedlz; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3a4fd1ba177so442470f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Jul 2025 00:18:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1751527097; x=1752131897; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=mG01uxxuqJ9iemH3cjez1DYwYu6rrP5iiZFvrszPV3E=;
+        b=d2AUedlzUqTzTrQACS0TDFKY00F+Dff93orqg9xgTV2+SQCcEwkMHeFzP41/jB4R2H
+         yoeeBdMxfo+6FNmlnRh3tJ2zFfrd5dUKNwZ7gEXyIlAIT8oB8E6k3J+88tOTDsA8eGO6
+         j2z57Gf/2wOckxXq5ZLRp634ZWe6bBAkRXdYgfa6WJiU4rmU1PWmrAPnqSnCA3U2YgLB
+         4GJuEzTDqML+KYlqZQIICZwNsb8m96ugtr869d5sdM9EHoizj0EDVoYpDqI8JjSgrHs2
+         Hs9BLOYFAy8um1RQAjdrYCMPfXVO/qRe88yYmqb/Xztb3RciPlaLlsNiw31kNpQGpx61
+         09iA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751527097; x=1752131897;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mG01uxxuqJ9iemH3cjez1DYwYu6rrP5iiZFvrszPV3E=;
+        b=VJ2QVLQG165MmiewSKs5PzCsV6hDVgBqdngpNbq1mzPQpSOZtGuYMzWQf2Vd+cl3Hx
+         tD5kNUuVPxm2BrwRVzJjHkPsG4mgeIUpsE2FBKp34O1rG4XafOCRgbGZKGFZaBS1Zopp
+         HtqOzxcrYT8BnhAFlfYK5QH39I6M8ntBy9z7X1MdXrXNJF1ixCEFq5jXAZA2V9vxd/Pa
+         t4lSzC8m+VRMy/3rUp5OaU0A64Bev6IfonSYuMU5tHo2daiZo9kehDRC8TSkRkkZfNHU
+         4oXD68LBjysUXVJdVbH0LPiNtWaosIRt0QXt7HnTzmW6p5IxbzcjR/ZGBZ5ne5O5y0xB
+         mDrw==
+X-Forwarded-Encrypted: i=1; AJvYcCXZOLnKmdviTkqAd/+5TIIjnmrWVUMw7ECgNOYWaXdgN5Kt6Lc4AF2KKfC4sAgF5UfyAreBqZxIpFAUjqk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxH0wLmJY8iP4eDi7hU12j2JmNukvsS7zHSEiF52B/3vS07GqZm
+	6McFMKLlGuCqvD3q/XUmCZPFC5YMWuQq18a2mff9lrUtj9bErLdXyKMye+jlj1W0N2Y=
+X-Gm-Gg: ASbGncu3Yye+UkZxMpOOFghjvTphmVpBQi5Xu8WIwxHeD0ScPxi6/pIxjvs8qK4d6Ah
+	3kpY+AA8cJiSNORO8RX7tC2UmTEoVkv1maMYZC15xVZ6CKmMHa76gTxJPnXQAvnFPZF6sRor7QZ
+	Mzuw1OYmFZdcOKw2p6koU3Q7wpVXu4tJTjLpl43wRr/zwlf/9p083/U/52V0LgEP5tt54jYhGmA
+	imUL1h3l19BoAijAOftjbmdbmCijQR/rZTWcuunrdpPSe4rJ1ojrm4olS4rKt21UNSxlW8yDs2O
+	bNNRM3DOllQ+lMnZfWEYCy8ShkaOnBZJGLD5aAIW56SOf/Gp6QmQ7EfnmHw9Vd0fvN4K0kXsRiM
+	=
+X-Google-Smtp-Source: AGHT+IF/aaX85m5/XkOQ/w1sY1YbY+h1xy/KpDB8YvmiSzzc2mwhLtPsKwNCaRg+GtDZj0kNEUlihg==
+X-Received: by 2002:a05:6000:178c:b0:3a6:daff:9e5 with SMTP id ffacd0b85a97d-3b342a0d266mr1290247f8f.7.1751527096741;
+        Thu, 03 Jul 2025 00:18:16 -0700 (PDT)
+Received: from localhost (109-81-23-161.rct.o2.cz. [109.81.23.161])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-454a99bc81esm17949425e9.33.2025.07.03.00.18.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Jul 2025 00:18:16 -0700 (PDT)
+Date: Thu, 3 Jul 2025 09:18:15 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Chen Yu <yu.c.chen@intel.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Tim Chen <tim.c.chen@intel.com>, linux-kernel@vger.kernel.org,
+	Jirka Hladky <jhladky@redhat.com>,
+	Srikanth Aithal <Srikanth.Aithal@amd.com>,
+	Suneeth D <Suneeth.D@amd.com>, Libo Chen <libo.chen@oracle.com>
+Subject: Re: [PATCH] sched/numa: Fix NULL pointer access to mm_struct durng
+ task swap
+Message-ID: <aGYutwftSAPgPzf-@tiehlicka>
+References: <20250702163247.324439-1-yu.c.chen@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,60 +98,89 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1a6cf2097487816e4b93890ad760f18fe750bd70.camel@linux.ibm.com>
+In-Reply-To: <20250702163247.324439-1-yu.c.chen@intel.com>
 
-On Mi, 02.07.25 21:40, Mimi Zohar (zohar@linux.ibm.com) wrote:
+On Thu 03-07-25 00:32:47, Chen Yu wrote:
+> It was reported that after Commit ad6b26b6a0a7
+> ("sched/numa: add statistics of numa balance task"),
+> a NULL pointer exception[1] occurs when accessing
+> p->mm. The following race condition was found to
+> trigger this bug: After a swap task candidate is
+> chosen during NUMA balancing, its mm_struct is
+> released due to task exit. Later, when the task
+> swapping is performed, p->mm is NULL, which causes
+> the problem:
+> 
+> CPU0                                   CPU1
+> :
+> ...
+> task_numa_migrate
+>    task_numa_find_cpu
+>     task_numa_compare
+>       # a normal task p is chosen
+>       env->best_task = p
+> 
+>                                         # p exit:
+>                                         exit_signals(p);
+>                                            p->flags |= PF_EXITING
+>                                         exit_mm
+>                                            p->mm = NULL;
+> 
+>     migrate_swap_stop
+>       __migrate_swap_task((arg->src_task, arg->dst_cpu)
+>        count_memcg_event_mm(p->mm, NUMA_TASK_SWAP)# p->mm is NULL
+> 
+> Fix this issue by checking if the task has the PF_EXITING
+> flag set in migrate_swap_stop(). If it does, skip updating
+> the memcg events. Additionally, log a warning if p->mm is
+> NULL to facilitate future debugging.
+> 
+> Fixes: ad6b26b6a0a7 ("sched/numa: add statistics of numa balance task")
+> Reported-by: Jirka Hladky <jhladky@redhat.com>
+> Closes: https://lore.kernel.org/all/CAE4VaGBLJxpd=NeRJXpSCuw=REhC5LWJpC29kDy-Zh2ZDyzQZA@mail.gmail.com/
+> Reported-by: Srikanth Aithal <Srikanth.Aithal@amd.com>
+> Reported-by: Suneeth D <Suneeth.D@amd.com>
+> Suggested-by: Libo Chen <libo.chen@oracle.com>
+> Signed-off-by: Chen Yu <yu.c.chen@intel.com>
+> ---
+>  kernel/sched/core.c | 9 ++++++++-
+>  1 file changed, 8 insertions(+), 1 deletion(-)
+> 
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index 8988d38d46a3..4e06bb955dad 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -3364,7 +3364,14 @@ static void __migrate_swap_task(struct task_struct *p, int cpu)
+>  {
+>  	__schedstat_inc(p->stats.numa_task_swapped);
+>  	count_vm_numa_event(NUMA_TASK_SWAP);
+> -	count_memcg_event_mm(p->mm, NUMA_TASK_SWAP);
+> +	/* exiting task has NULL mm */
+> +	if (!(p->flags & PF_EXITING)) {
+> +		WARN_ONCE(!p->mm, "swap task %d %s %x has no mm\n",
+> +			  p->pid, p->comm, p->flags);
 
-> On Thu, 2025-03-20 at 13:02 +0100, Lennart Poettering wrote:
-> > This reverts commit 92ad19559ea9a8ec6f158480934ae26ebfe2c14f.
-> >
-> > This original commit this reverts creates a strange situation: it
-> > ensures more restrictive behaviour if SecureBoot is off then when it
-> > is on, which is the opposite of what one would expect.
-> >
-> > Typically, one would expect that if SB is off the validation of
-> > resources during the pre-kernel and kernel initialization is less
-> > restrictive, not more restrictive. But this check turned the world on
-> > its head.
->
-> Hi Lennart,
->
-> I'm really sorry for the long delay ...
->
-> >From an IMA perspective, the default is to only trust keys built into the kernel
-> or certificates signed by the builtin keys and loaded onto the
-> .secondary_trusted_keys keyring.
->
-> The ability of loading MOK keys onto the .machine keyring and linked to the
-> .secondary_trusted_keys keyring is an exception based on the assumption that
-> that there is a secure boot chain of trust.  Allowing untrusted keys onto or
-> linked to the .secondary_trusted_keys keyring, would potentially allow loading
-> code signing keys onto the IMA keyring signed by untrusted MOK keys.
->
-> I was really hesitant to allow this exception of loading MOK keys onto the
-> .machine keyring in the first place.  I'm now even more concerned.
->
-> This is not just an issue of being more or less restrictive, but of adding a new
-> integrity gap when one didn't exist previously.
+As Andrew already said this is not really acceptable because this is
+very likely too easy to trigger and a) you do not want logs flooded with
+warnings and also there are setups with panic_on_warn configured and for
+those this would be a fatal situation without any good reason.
 
-But we are talking of the case here where SecureBoot is *off*,
-i.e. there is a concious decision in place that there is no trust
-chain, and that the firmware *happily* *already* accepts unsigned boot
-loaders/kernels and just runs with them. If SecureBoot is already off,
-then an attacker can patch around in the kernel invoked at boot
-completely freely anyway, there is *no* authentication done. Hence
-it's really weird to then insist that the path into the kernel keyring
-via mok keys is off in *only* this case, because an attacker can get
-into that anyway in this case, it's just a lot more cumbersome.
+> +
+> +		if (p->mm)
+> +			count_memcg_event_mm(p->mm, NUMA_TASK_SWAP);
+> +	}
 
-It's really strange that currently when people ask for tight security
-(i.e. SB on) the linux kernel is super relaxed and allows any keys to
-be inserted, but if people ask for security checks to be off (i.e. SB
-off) the kernel starts being super strict and doesn't allow any keys
-to propagate into mok. That's really confusing and contradictory, no?
+Why are you testing for p->mm here? Isn't PF_EXITING test sufficient?
+A robust way to guarantee non-NULL mm against races when a task is
+exiting is find_lock_task_mm. Probably too heavy weight for this path.
+>  
+>  	if (task_on_rq_queued(p)) {
+>  		struct rq *src_rq, *dst_rq;
+> -- 
+> 2.25.1
+> 
 
-Lennart
-
---
-Lennart Poettering, Berlin
+-- 
+Michal Hocko
+SUSE Labs
 
