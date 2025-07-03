@@ -1,273 +1,262 @@
-Return-Path: <linux-kernel+bounces-715250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-715256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B516AF732C
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 14:03:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4C92AF733B
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 14:06:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3EA04E4AE5
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 12:03:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AE124A4E00
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 12:05:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F27AF2E2F12;
-	Thu,  3 Jul 2025 12:03:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB3302E3AF0;
+	Thu,  3 Jul 2025 12:06:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="ayEG+PtL"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b="Le55KwYb"
+Received: from jpms-ob02-os7.noc.sony.co.jp (jpms-ob02-os7.noc.sony.co.jp [211.125.139.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17DA8EEA9;
-	Thu,  3 Jul 2025 12:03:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D95F253939;
+	Thu,  3 Jul 2025 12:06:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.125.139.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751544206; cv=none; b=bjteR2WjY6oSR7NcqeR209RPpOOUJwPLzu0n6x2roJFLiqtJmOJhWYmRK0AZvonvpgafHjWcfhg8usr0FbSdtTmN4SgwT1PPB3Eo8JddCKlFKxldDYXNZTNRGpr9l8HIG0T68i98mZOPd8JdW9pt3GcjLDDmM+TqdQIJFV9qhRw=
+	t=1751544365; cv=none; b=RqqV2AJ2PWBsbc28THLdIC1ID0ZJRCNMQj/UF3vNUiUGSdozwZ6qf8shQUTN43l31BPuGsqzBSc5LHFue1VYbag6s2ihbLQXl3x+OU60J8gr03QiQpFdAQUVql6QW0TxxMp0tFLlDILNRGwl0LXZO0U8e9iLkwbJA6t0SkkwcFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751544206; c=relaxed/simple;
-	bh=13Mtr8tfOpo/bjU47Z0Ixv/RqoqZx+pkZNbvLw+MH6E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r+K554ORNE55rd86EsHyHfgxEPY5qvlt8lOVgh3swoi8byA345KlyMVSOpkAOTEItzWyOLaFk0xrIuAwKsi9M0eqKyANYl91ST3ePa0nppS4MYSM+oQEJQszyNCJFaN+QnM3NZQrDJqV2ADj0UqR7ny6Nyk82k9ia+8zngI/0ik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=ayEG+PtL; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=0bLFCgSGsGWYqU1VUzp/98s4ncOYCMUP6PUrfSKkQ9I=; b=ayEG+PtL2NdfYFXcLmfnMMc+/o
-	REzK/c2hbPC5peR8ZFgtSTCGIwfArWZLcKgJZYlfV4CQSgckIAtgEpCBuc0U9ApE8zxEcdu84+/Vp
-	/8m8ibuEVYYA0mOJUFD3FeLs4FzBiiugflhOFF//Qlplz/DBrvsIu8Li98qAgzaldWJ08LShkNJMw
-	k678K+PC1fbvUgCwdIlPjRJGFyYe7M8RBdMckjrhpz9jEDTLsc53yiMyEQNgrFIdUmsxPZON/xTch
-	KRAGlD50wX7grhb9R40HOToRDopp9oo4HXTCggU+zZHztGDRVUjubbE2dbpddRVH+1FXWgZvCetN0
-	M2/p8Rbw==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:43908)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1uXIeh-0000gv-0k;
-	Thu, 03 Jul 2025 13:03:07 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1uXIeZ-00054e-1E;
-	Thu, 03 Jul 2025 13:02:59 +0100
-Date: Thu, 3 Jul 2025 13:02:59 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: weishangjuan@eswincomputing.com
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
-	yong.liang.choong@linux.intel.com, vladimir.oltean@nxp.com,
-	jszhang@kernel.org, jan.petrous@oss.nxp.com,
-	prabhakar.mahadev-lad.rj@bp.renesas.com, inochiama@gmail.com,
-	boon.khai.ng@altera.com, dfustini@tenstorrent.com, 0x1207@gmail.com,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, ningyu@eswincomputing.com,
-	linmin@eswincomputing.com, lizhi2@eswincomputing.com
-Subject: Re: [PATCH v3 2/2] ethernet: eswin: Add eic7700 ethernet driver
-Message-ID: <aGZxc-9C0rPVMsGH@shell.armlinux.org.uk>
-References: <20250703091808.1092-1-weishangjuan@eswincomputing.com>
- <20250703092015.1200-1-weishangjuan@eswincomputing.com>
+	s=arc-20240116; t=1751544365; c=relaxed/simple;
+	bh=raWexe22dvi7aq1OOnkH/6y7PUeW0mewCeOEWWp1QAQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=YEvxlOUqPDOJLrgSRq7zaboAvGPdHliqkLCAALkcFLniLNMVjrHVcOSD/zkXloY5BSqndpXQ25nM5nPexd+69KhyQOH4lWyOHQFjHpGdr0rcKExKm+BsjKcxtH7dasfAmYXohtVIkVg36BExFAwtduaMXpWmlg5wuDifk6hBCfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com; spf=fail smtp.mailfrom=sony.com; dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b=Le55KwYb; arc=none smtp.client-ip=211.125.139.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=sony.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=sony.com; s=s1jp; t=1751544362; x=1783080362;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=FA1lUYQuzgJrq3jDPYzI6xXt+JabSa+YCb1SBMISYiA=;
+  b=Le55KwYbuM42u4rRTQM7tE+oz0LH42yGpGNTiPvWy7UzNgPERu0Yfk5p
+   RufMtkPH1XYCFMXH3fhNdASr5aZylJ4yGUBC9f1/f5V0HNhDG0tiz3Hxw
+   gGJskjafDwFJzHi3k4RcnqP/sJsJm+KPGwwYTt0hBcBir8AWdI49PJ6m0
+   dbB5f2VHSn9MSLap+j5i9suX6LpXkTkFXdzr1Q5RJCI4K9dQJRtF7FdLv
+   IwjHQ+m6JQKc5l+pbNU8swiYtRlh2kON2vek9PcBjom1JlCYyAAQqpDxU
+   w1ETVzjhynekKGBxjQhHId5iRX6BWqS7iUWjhJAybzjuz75MX0fklyu/b
+   A==;
+Received: from unknown (HELO jpmta-ob02-os7.noc.sony.co.jp) ([IPv6:2001:cf8:acf:1104::7])
+  by jpms-ob02-os7.noc.sony.co.jp with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2025 21:05:59 +0900
+X-IronPort-AV: E=Sophos;i="6.16,284,1744038000"; 
+   d="scan'208";a="4257026"
+Received: from unknown (HELO JPC00244420..) ([IPv6:2001:cf8:1:573:0:dddd:eb3e:119e])
+  by jpmta-ob02-os7.noc.sony.co.jp with ESMTP; 03 Jul 2025 21:05:59 +0900
+From: Shashank Balaji <shashank.mahadasyam@sony.com>
+To: Tejun Heo <tj@kernel.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	=?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
+	Shuah Khan <shuah@kernel.org>
+Cc: Shashank Balaji <shashank.mahadasyam@sony.com>,
+	cgroups@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Shinya Takumi <shinya.takumi@sony.com>
+Subject: [PATCH v2] selftests/cgroup: improve the accuracy of cpu.max tests
+Date: Thu,  3 Jul 2025 21:03:20 +0900
+Message-ID: <20250703120325.2905314-1-shashank.mahadasyam@sony.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250701-kselftest-cgroup-fix-cpu-max-v1-0-049507ad6832@sony.com>
+References: <20250701-kselftest-cgroup-fix-cpu-max-v1-0-049507ad6832@sony.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250703092015.1200-1-weishangjuan@eswincomputing.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jul 03, 2025 at 05:20:15PM +0800, weishangjuan@eswincomputing.com wrote:
-> +static void eic7700_qos_fix_speed(void *priv, int speed, u32 mode)
-> +{
-> +	struct eic7700_qos_priv *dwc_priv = priv;
-> +	int i;
-> +
-> +	switch (speed) {
-> +	case SPEED_1000:
-> +		for (i = 0; i < 3; i++)
-> +			regmap_write(dwc_priv->hsp_regmap,
-> +				     dwc_priv->dly_hsp_reg[i],
-> +				     dwc_priv->dly_param_1000m[i]);
-> +		break;
-> +	case SPEED_100:
-> +		for (i = 0; i < 3; i++) {
-> +			regmap_write(dwc_priv->hsp_regmap,
-> +				     dwc_priv->dly_hsp_reg[i],
-> +				     dwc_priv->dly_param_100m[i]);
-> +		}
+Current cpu.max tests (both the normal one and the nested one) are inaccurate.
 
-The other two instances don't have the curley braces, why does this need
-it?
+They setup cpu.max with 1000 us quota and the default period (100,000 us).
+A cpu hog is run for a duration of 1s as per wall clock time. This corresponds
+to 10 periods, hence an expected usage of 10,000 us. We want the measured
+usage (as per cpu.stat) to be close to 10,000 us.
 
-> +		break;
-> +	case SPEED_10:
-> +		for (i = 0; i < 3; i++) {
-> +			regmap_write(dwc_priv->hsp_regmap,
-> +				     dwc_priv->dly_hsp_reg[i],
-> +				     dwc_priv->dly_param_10m[i]);
-> +		}
-> +		break;
-> +	default:
-> +		dev_err(dwc_priv->dev, "invalid speed %u\n", speed);
-> +		break;
-> +	}
+Previously, this approximate equality test was done by
+`!values_close(usage_usec, duration_usec, 95)`: if the absolute
+difference between usage_usec and duration_usec is greater than 95% of
+their sum, then we pass. This is problematic for two reasons:
 
-Overall, wouldn't:
+1. Semantics: When one sees `values_close` they expect the error
+   percentage to be some small number, not 95. The intent behind using
+`values_close` is lost by using a high error percent such as 95. The
+intent it's actually going for is "values far".
 
-	const u32 *dly_param;
+2. Bound too wide: The condition translates to the following expression:
 
-	switch (speed) {
-	case SPEED_1000:
-		dly_param = dwc_priv->dly_param_1000m;
-		break;
-	... etc ...
-	default:
-		dly_param = NULL;
-		dev_err(dwc_priv->dev, "invalid speed %u\n", speed);
-		break;
-	}
+	|usage_usec - duration_usec| > (usage_usec + duration_usec)*0.95
 
-	if (dly_param)
-		for (i = 0; i < 3; i++)
-			regmap_write(dwc_priv->hsp_regmap,
-				     dwc_priv->dly_hsp_reg[i],
-				     dly_param[i]);
+  	0.05*duration_usec > 1.95*usage_usec (usage < duration)
 
-be more concise and easier to read?
+	usage_usec < 0.0257*duration_usec = 25,641 us
 
-> +}
-> +
-> +static int eic7700_dwmac_probe(struct platform_device *pdev)
-> +{
-> +	struct plat_stmmacenet_data *plat_dat;
-> +	struct stmmac_resources stmmac_res;
-> +	struct eic7700_qos_priv *dwc_priv;
-> +	u32 hsp_aclk_ctrl_offset;
-> +	u32 hsp_aclk_ctrl_regset;
-> +	u32 hsp_cfg_ctrl_offset;
-> +	u32 eth_axi_lp_ctrl_offset;
-> +	u32 eth_phy_ctrl_offset;
-> +	u32 eth_phy_ctrl_regset;
-> +	bool has_rx_dly = false;
-> +	bool has_tx_dly = false;
-> +	int ret;
-> +
-> +	ret = stmmac_get_platform_resources(pdev, &stmmac_res);
-> +	if (ret)
-> +		return dev_err_probe(&pdev->dev, ret,
-> +				"failed to get resources\n");
-> +
-> +	plat_dat = devm_stmmac_probe_config_dt(pdev, stmmac_res.mac);
-> +	if (IS_ERR(plat_dat))
-> +		return dev_err_probe(&pdev->dev, PTR_ERR(plat_dat),
-> +				"dt configuration failed\n");
-> +
-> +	dwc_priv = devm_kzalloc(&pdev->dev, sizeof(*dwc_priv), GFP_KERNEL);
-> +	if (!dwc_priv)
-> +		return -ENOMEM;
-> +
-> +	dwc_priv->dev = &pdev->dev;
-> +	dwc_priv->dly_param_1000m[0] = EIC7700_DELAY_VALUE0;
-> +	dwc_priv->dly_param_1000m[1] = EIC7700_DELAY_VALUE1;
-> +	dwc_priv->dly_param_1000m[2] = EIC7700_DELAY_VALUE0;
-> +	dwc_priv->dly_param_100m[0] = EIC7700_DELAY_VALUE0;
-> +	dwc_priv->dly_param_100m[1] = EIC7700_DELAY_VALUE1;
-> +	dwc_priv->dly_param_100m[2] = EIC7700_DELAY_VALUE0;
-> +	dwc_priv->dly_param_10m[0] = 0x0;
-> +	dwc_priv->dly_param_10m[1] = 0x0;
-> +	dwc_priv->dly_param_10m[2] = 0x0;
-> +
-> +	ret = of_property_read_u32(pdev->dev.of_node, "rx-internal-delay-ps",
-> +				   &dwc_priv->rx_delay_ps);
-> +	if (ret)
-> +		dev_dbg(&pdev->dev, "can't get rx-internal-delay-ps, ret(%d).", ret);
+   So, this condition passes as long as usage_usec is lower than 25,641
+us, while all we want is for it to be close to 10,000 us.
 
-Consider using %pe and ERR_PTR(ret) so that error codes can be
-translated to human readable strings. Ditto elsewhere.
+Fix this by explicitly calcuating the expected usage duration based on the
+configured quota, default period, and the duration, and compare usage_usec
+and expected_usage_usec using values_close() with a 10% error margin.
 
-> +	else
-> +		has_rx_dly = true;
-> +
-> +	ret = of_property_read_u32(pdev->dev.of_node, "tx-internal-delay-ps",
-> +				   &dwc_priv->tx_delay_ps);
-> +	if (ret)
-> +		dev_dbg(&pdev->dev, "can't get tx-internal-delay-ps, ret(%d).", ret);
-> +	else
-> +		has_tx_dly = true;
-> +	if (has_rx_dly && has_tx_dly) {
-> +		eic7700_set_delay(dwc_priv->rx_delay_ps, dwc_priv->tx_delay_ps,
-> +				  &dwc_priv->dly_param_1000m[1]);
-> +		eic7700_set_delay(dwc_priv->rx_delay_ps, dwc_priv->tx_delay_ps,
-> +				  &dwc_priv->dly_param_100m[1]);
-> +		eic7700_set_delay(dwc_priv->rx_delay_ps, dwc_priv->tx_delay_ps,
-> +				  &dwc_priv->dly_param_10m[1]);
-> +	} else {
-> +		dev_dbg(&pdev->dev, " use default dly\n");
-> +	}
-> +
-> +	ret = of_property_read_variable_u32_array(pdev->dev.of_node, "eswin,dly_hsp_reg",
-> +						  &dwc_priv->dly_hsp_reg[0], 3, 0);
-> +	if (ret != 3) {
-> +		dev_err(&pdev->dev, "can't get delay hsp reg.ret(%d)\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	dwc_priv->crg_regmap = syscon_regmap_lookup_by_phandle(pdev->dev.of_node,
-> +							       "eswin,syscrg_csr");
-> +	if (IS_ERR(dwc_priv->crg_regmap))
-> +		return dev_err_probe(&pdev->dev, PTR_ERR(dwc_priv->crg_regmap),
-> +				"Failed to get syscrg_csr regmap\n");
-> +
-> +	ret = of_property_read_u32_index(pdev->dev.of_node, "eswin,syscrg_csr", 1,
-> +					 &hsp_aclk_ctrl_offset);
-> +	if (ret)
-> +		return dev_err_probe(&pdev->dev, ret, "can't get hsp_aclk_ctrl_offset\n");
-> +
-> +	regmap_read(dwc_priv->crg_regmap, hsp_aclk_ctrl_offset, &hsp_aclk_ctrl_regset);
-> +	hsp_aclk_ctrl_regset |= (EIC7700_HSP_ACLK_CLKEN | EIC7700_HSP_ACLK_DIVSOR);
-> +	regmap_write(dwc_priv->crg_regmap, hsp_aclk_ctrl_offset, hsp_aclk_ctrl_regset);
-> +
-> +	ret = of_property_read_u32_index(pdev->dev.of_node, "eswin,syscrg_csr", 2,
-> +					 &hsp_cfg_ctrl_offset);
-> +	if (ret)
-> +		return dev_err_probe(&pdev->dev, ret, "can't get hsp_cfg_ctrl_offset\n");
-> +
-> +	regmap_write(dwc_priv->crg_regmap, hsp_cfg_ctrl_offset, EIC7700_HSP_CFG_CTRL_REGSET);
-> +
-> +	dwc_priv->hsp_regmap = syscon_regmap_lookup_by_phandle(pdev->dev.of_node,
-> +							       "eswin,hsp_sp_csr");
-> +	if (IS_ERR(dwc_priv->hsp_regmap))
-> +		return dev_err_probe(&pdev->dev, PTR_ERR(dwc_priv->hsp_regmap),
-> +				"Failed to get hsp_sp_csr regmap\n");
-> +
-> +	ret = of_property_read_u32_index(pdev->dev.of_node, "eswin,hsp_sp_csr", 2,
-> +					 &eth_phy_ctrl_offset);
-> +	if (ret)
-> +		return dev_err_probe(&pdev->dev, ret, "can't get eth_phy_ctrl_offset\n");
-> +
-> +	regmap_read(dwc_priv->hsp_regmap, eth_phy_ctrl_offset, &eth_phy_ctrl_regset);
-> +	eth_phy_ctrl_regset |= (EIC7700_ETH_TX_CLK_SEL | EIC7700_ETH_PHY_INTF_SELI);
-> +	regmap_write(dwc_priv->hsp_regmap, eth_phy_ctrl_offset, eth_phy_ctrl_regset);
-> +
-> +	ret = of_property_read_u32_index(pdev->dev.of_node, "eswin,hsp_sp_csr", 3,
-> +					 &eth_axi_lp_ctrl_offset);
-> +	if (ret)
-> +		return dev_err_probe(&pdev->dev, ret, "can't get eth_axi_lp_ctrl_offset\n");
-> +
-> +	regmap_write(dwc_priv->hsp_regmap, eth_axi_lp_ctrl_offset, EIC7700_ETH_CSYSREQ_VAL);
-> +
+Also, use snprintf to get the quota string to write to cpu.max instead of
+hardcoding the quota, ensuring a single source of truth.
 
-Consider more sensible wrapping of this (netdev frowns at >80
-characters per line, except for message strings that should remain
-greppable.)
+Signed-off-by: Shashank Balaji <shashank.mahadasyam@sony.com>
 
+---
+
+Changes in v2:
+- Incorporate Michal's suggestions:
+	- Merge two patches into one
+	- Generate the quota string from the variable instead of hardcoding it
+	- Use values_close() instead of labs()
+	- Explicitly calculate expected_usage_usec
+- v1: https://lore.kernel.org/all/20250701-kselftest-cgroup-fix-cpu-max-v1-0-049507ad6832@sony.com/
+---
+ tools/testing/selftests/cgroup/test_cpu.c | 63 ++++++++++++++++-------
+ 1 file changed, 43 insertions(+), 20 deletions(-)
+
+diff --git a/tools/testing/selftests/cgroup/test_cpu.c b/tools/testing/selftests/cgroup/test_cpu.c
+index a2b50af8e9ee..2a60e6c41940 100644
+--- a/tools/testing/selftests/cgroup/test_cpu.c
++++ b/tools/testing/selftests/cgroup/test_cpu.c
+@@ -2,6 +2,7 @@
+ 
+ #define _GNU_SOURCE
+ #include <linux/limits.h>
++#include <sys/param.h>
+ #include <sys/sysinfo.h>
+ #include <sys/wait.h>
+ #include <errno.h>
+@@ -645,10 +646,16 @@ test_cpucg_nested_weight_underprovisioned(const char *root)
+ static int test_cpucg_max(const char *root)
+ {
+ 	int ret = KSFT_FAIL;
+-	long usage_usec, user_usec;
+-	long usage_seconds = 1;
+-	long expected_usage_usec = usage_seconds * USEC_PER_SEC;
++	long quota_usec = 1000;
++	long default_period_usec = 100000; /* cpu.max's default period */
++	long duration_seconds = 1;
++
++	long duration_usec = duration_seconds * USEC_PER_SEC;
++	long usage_usec, n_periods, remainder_usec, expected_usage_usec;
+ 	char *cpucg;
++	char quota_buf[32];
++
++	snprintf(quota_buf, sizeof(quota_buf), "%ld", quota_usec);
+ 
+ 	cpucg = cg_name(root, "cpucg_test");
+ 	if (!cpucg)
+@@ -657,13 +664,13 @@ static int test_cpucg_max(const char *root)
+ 	if (cg_create(cpucg))
+ 		goto cleanup;
+ 
+-	if (cg_write(cpucg, "cpu.max", "1000"))
++	if (cg_write(cpucg, "cpu.max", quota_buf))
+ 		goto cleanup;
+ 
+ 	struct cpu_hog_func_param param = {
+ 		.nprocs = 1,
+ 		.ts = {
+-			.tv_sec = usage_seconds,
++			.tv_sec = duration_seconds,
+ 			.tv_nsec = 0,
+ 		},
+ 		.clock_type = CPU_HOG_CLOCK_WALL,
+@@ -672,14 +679,19 @@ static int test_cpucg_max(const char *root)
+ 		goto cleanup;
+ 
+ 	usage_usec = cg_read_key_long(cpucg, "cpu.stat", "usage_usec");
+-	user_usec = cg_read_key_long(cpucg, "cpu.stat", "user_usec");
+-	if (user_usec <= 0)
++	if (usage_usec <= 0)
+ 		goto cleanup;
+ 
+-	if (user_usec >= expected_usage_usec)
+-		goto cleanup;
++	/*
++	 * The following calculation applies only since
++	 * the cpu hog is set to run as per wall-clock time
++	 */
++	n_periods = duration_usec / default_period_usec;
++	remainder_usec = duration_usec - n_periods * default_period_usec;
++	expected_usage_usec
++		= n_periods * quota_usec + MIN(remainder_usec, quota_usec);
+ 
+-	if (values_close(usage_usec, expected_usage_usec, 95))
++	if (!values_close(usage_usec, expected_usage_usec, 10))
+ 		goto cleanup;
+ 
+ 	ret = KSFT_PASS;
+@@ -698,10 +710,16 @@ static int test_cpucg_max(const char *root)
+ static int test_cpucg_max_nested(const char *root)
+ {
+ 	int ret = KSFT_FAIL;
+-	long usage_usec, user_usec;
+-	long usage_seconds = 1;
+-	long expected_usage_usec = usage_seconds * USEC_PER_SEC;
++	long quota_usec = 1000;
++	long default_period_usec = 100000; /* cpu.max's default period */
++	long duration_seconds = 1;
++
++	long duration_usec = duration_seconds * USEC_PER_SEC;
++	long usage_usec, n_periods, remainder_usec, expected_usage_usec;
+ 	char *parent, *child;
++	char quota_buf[32];
++
++	snprintf(quota_buf, sizeof(quota_buf), "%ld", quota_usec);
+ 
+ 	parent = cg_name(root, "cpucg_parent");
+ 	child = cg_name(parent, "cpucg_child");
+@@ -717,13 +735,13 @@ static int test_cpucg_max_nested(const char *root)
+ 	if (cg_create(child))
+ 		goto cleanup;
+ 
+-	if (cg_write(parent, "cpu.max", "1000"))
++	if (cg_write(parent, "cpu.max", quota_buf))
+ 		goto cleanup;
+ 
+ 	struct cpu_hog_func_param param = {
+ 		.nprocs = 1,
+ 		.ts = {
+-			.tv_sec = usage_seconds,
++			.tv_sec = duration_seconds,
+ 			.tv_nsec = 0,
+ 		},
+ 		.clock_type = CPU_HOG_CLOCK_WALL,
+@@ -732,14 +750,19 @@ static int test_cpucg_max_nested(const char *root)
+ 		goto cleanup;
+ 
+ 	usage_usec = cg_read_key_long(child, "cpu.stat", "usage_usec");
+-	user_usec = cg_read_key_long(child, "cpu.stat", "user_usec");
+-	if (user_usec <= 0)
++	if (usage_usec <= 0)
+ 		goto cleanup;
+ 
+-	if (user_usec >= expected_usage_usec)
+-		goto cleanup;
++	/*
++	 * The following calculation applies only since
++	 * the cpu hog is set to run as per wall-clock time
++	 */
++	n_periods = duration_usec / default_period_usec;
++	remainder_usec = duration_usec - n_periods * default_period_usec;
++	expected_usage_usec
++		= n_periods * quota_usec + MIN(remainder_usec, quota_usec);
+ 
+-	if (values_close(usage_usec, expected_usage_usec, 95))
++	if (!values_close(usage_usec, expected_usage_usec, 10))
+ 		goto cleanup;
+ 
+ 	ret = KSFT_PASS;
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+2.43.0
+
 
