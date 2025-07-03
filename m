@@ -1,230 +1,124 @@
-Return-Path: <linux-kernel+bounces-714620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AE78AF6A51
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 08:29:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3936AF6A59
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 08:30:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 937857A8BF5
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 06:28:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AC694E3448
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 06:30:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E080291C27;
-	Thu,  3 Jul 2025 06:29:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="jj+PhLlB";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="bJyjhwV0";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="jj+PhLlB";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="bJyjhwV0"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94FBF291C25
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 06:29:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29C6D298262;
+	Thu,  3 Jul 2025 06:30:04 +0000 (UTC)
+Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [13.76.142.27])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03187296147
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 06:29:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.76.142.27
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751524153; cv=none; b=NMwhuqcInuUbS530MPAyJuRp8LRukubigvGFIbZMLFrcseIuvp4fTt4PPuc6C0K/PIfq4xJmb/6ZbXTZuqblIGvL70F73mChLWxiYRMHrv2XAwQ7Bqyj8HK4/QxrL48JCahzERJPt2Jrmx2wb8rYlypW+5v7OvLU/Bh6h+PbkN0=
+	t=1751524203; cv=none; b=Ru3x3y9rVC4S5wKpVDJr2JoRHg36vk5gS4CoJaPPnggXJXm5RoGjAQbwSijbOH0aT9/LinW53aIoZsa995A7ZbYlH5XYxXSEVvUvCbalgUYRNl4uUhgJ+qPqbksPlmklqK0nsH2+yFqLrRKgqduqb/wvejSQ11LdlgCA0G1Pbp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751524153; c=relaxed/simple;
-	bh=uEpA5sAVAtkTsmd1jq37ugQMrB4trK381/2tv3mNq3w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=G2Nr5s4gxbgxEXKFCBMHDUOo20+i3f4ABpv1nmC9KprN+dViCLPhaxishwQSk+QDMWWo0EaGql6Z38PB9xfHGcwjYG2PiGOCMyl6gZk0PjsVVy9wVfeyu2nmZsDX/EVp+ckodk9GCKDSQC7vctTzrwUF64/VSqd6zRs9FCJk+eQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=jj+PhLlB; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=bJyjhwV0; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=jj+PhLlB; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=bJyjhwV0; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 9F78C2118E;
-	Thu,  3 Jul 2025 06:29:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1751524149; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BcDHMkFTXoj37LpVYdwr2vQBaGqjqXSrgjGcPFlY/1I=;
-	b=jj+PhLlBlVvDqRRTPaeN5k8r08UZmVAy1fXewAadlcag4CAoMlfW1kafV/qiL5ZriHjPF4
-	wO2Oe+5Z2uSps2wW5/12JVh2BUbYsVfvaSFIVFAGisdA8r86hnIjR0aQ5AUpE8EVZ5F8Kn
-	KxL+eak+IwrujtWBDfBCCJxivZ6cljU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1751524149;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BcDHMkFTXoj37LpVYdwr2vQBaGqjqXSrgjGcPFlY/1I=;
-	b=bJyjhwV0u/KWb9wAglXK+TyaN4hPjvADakXvL/sB8WEORmmEm8ySxdlu4GvR4TWaKWGIE8
-	M03RBrBQSTXzH0DA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1751524149; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BcDHMkFTXoj37LpVYdwr2vQBaGqjqXSrgjGcPFlY/1I=;
-	b=jj+PhLlBlVvDqRRTPaeN5k8r08UZmVAy1fXewAadlcag4CAoMlfW1kafV/qiL5ZriHjPF4
-	wO2Oe+5Z2uSps2wW5/12JVh2BUbYsVfvaSFIVFAGisdA8r86hnIjR0aQ5AUpE8EVZ5F8Kn
-	KxL+eak+IwrujtWBDfBCCJxivZ6cljU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1751524149;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BcDHMkFTXoj37LpVYdwr2vQBaGqjqXSrgjGcPFlY/1I=;
-	b=bJyjhwV0u/KWb9wAglXK+TyaN4hPjvADakXvL/sB8WEORmmEm8ySxdlu4GvR4TWaKWGIE8
-	M03RBrBQSTXzH0DA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C46861368E;
-	Thu,  3 Jul 2025 06:29:08 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id kt4nLTQjZmj6SAAAD6G6ig
-	(envelope-from <hare@suse.de>); Thu, 03 Jul 2025 06:29:08 +0000
-Message-ID: <9c7f50c9-dd43-4b75-83ee-eac6a6ee2093@suse.de>
-Date: Thu, 3 Jul 2025 08:29:08 +0200
+	s=arc-20240116; t=1751524203; c=relaxed/simple;
+	bh=igRhDsuiSuXQRzp+0eQ1JsrZSJ5AY9mIOhpTpRULOVE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=Z4dejoZMGRFqkT2GCRCREfVvs6hrEkdCpKm7030ck4dZeRTE4SDz2LlVuCPWbk815IENTSdxklvVDnhWhbYIEazF2bh09w+pOG9dikiPDBPIZQrLKejTmozBIVnoeNkxt+fqFixmUsCuU6LB3DJ9mKc/apaBvrn1yaT8iudoE4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn; spf=pass smtp.mailfrom=zju.edu.cn; arc=none smtp.client-ip=13.76.142.27
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zju.edu.cn
+Received: from zju.edu.cn (unknown [115.197.243.13])
+	by mtasvr (Coremail) with SMTP id _____wAXEExVI2ZoJKfaAw--.10212S3;
+	Thu, 03 Jul 2025 14:29:42 +0800 (CST)
+Received: from linma$zju.edu.cn ( [115.197.243.13] ) by
+ ajax-webmail-mail-app2 (Coremail) ; Thu, 3 Jul 2025 14:29:40 +0800
+ (GMT+08:00)
+Date: Thu, 3 Jul 2025 14:29:40 +0800 (GMT+08:00)
+X-CM-HeaderCharset: UTF-8
+From: "Lin Ma" <linma@zju.edu.cn>
+To: "Greg KH" <gregkh@linuxfoundation.org>
+Cc: wkang77@gmail.com, linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org, stable@kernel.org
+Subject: Re: [PATCH v1 1/2] staging: gdm724x: fix type confusion in
+ gdm_lte_event_rcv()
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version 2024.3-cmXT6 build
+ 20250620(94335109) Copyright (c) 2002-2025 www.mailtech.cn zju.edu.cn
+In-Reply-To: <2025070343-halves-prison-c40f@gregkh>
+References: <20250703052723.14616-1-linma@zju.edu.cn>
+ <2025070343-halves-prison-c40f@gregkh>
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 03/10] blk-mq: add
- blk_mq_{online|possible}_queue_affinity
-To: Daniel Wagner <wagi@kernel.org>, Jens Axboe <axboe@kernel.dk>,
- Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>,
- Sagi Grimberg <sagi@grimberg.me>, "Michael S. Tsirkin" <mst@redhat.com>
-Cc: Aaron Tomlin <atomlin@atomlin.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- Thomas Gleixner <tglx@linutronix.de>, Costa Shulyupin
- <costa.shul@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
- Valentin Schneider <vschneid@redhat.com>, Waiman Long <llong@redhat.com>,
- Ming Lei <ming.lei@redhat.com>, Frederic Weisbecker <frederic@kernel.org>,
- Mel Gorman <mgorman@suse.de>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
- linux-nvme@lists.infradead.org, megaraidlinux.pdl@broadcom.com,
- linux-scsi@vger.kernel.org, storagedev@microchip.com,
- virtualization@lists.linux.dev, GR-QLogic-Storage-Upstream@marvell.com
-References: <20250702-isolcpus-io-queues-v7-0-557aa7eacce4@kernel.org>
- <20250702-isolcpus-io-queues-v7-3-557aa7eacce4@kernel.org>
-Content-Language: en-US
-From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <20250702-isolcpus-io-queues-v7-3-557aa7eacce4@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[25];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:email,suse.de:mid]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spam-Score: -4.30
+Message-ID: <97e5af3.9183.197cefa02cc.Coremail.linma@zju.edu.cn>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:zC_KCgAnToVUI2ZowvxZAA--.11651W
+X-CM-SenderInfo: qtrwiiyqvtljo62m3hxhgxhubq/1tbiAwEQEmhlCw4LqQAAsq
+X-CM-DELIVERINFO: =?B?9E9y5AXKKxbFmtjJiESix3B1w3tPqcowV1L23Bze5QtIr9Db75bEBiiEybVhThS0pI
+	APHlVyJpD759Nt3m89ewvKkHS2l85V1JX4pgBxrPTgKXn82pmPe1xoh9OFE5HRk2gjSVLO
+	fm3FMTiIbenwKZIMugowJ7SMZAUJS1HMGBlyRbnUeJ8zLClqYtuHwjweEWzeCw==
+X-Coremail-Antispam: 1Uk129KBj93XoW7uF4Dury8GF4fJryxWFWrXrc_yoW8uw4rpa
+	y5uayrtrW8XF97Wan5GFW2gF42gr1xK348C3s3ta45Wr1DXay8JFyrKrW5A3s8AF95AryS
+	v3WUZ3y3Kw17uagCm3ZEXasCq-sJn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUPCb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AK
+	xVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYIkI8VC2zVCFFI0UMc
+	02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAF
+	wI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0Y48IcxkI7V
+	AKI48G6xCjnVAKz4kxM4xvF2IEb7IF0Fy264kE64k0F24lFcxC0VAYjxAxZF0Ex2IqxwCF
+	04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r
+	18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vI
+	r41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr
+	1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvE
+	x4A2jsIEc7CjxVAFwI0_Gr0_Gr1UMVCEFcxC0VAYjxAxZFUvcSsGvfC2KfnxnUUI43ZEXa
+	7IU8CJm5UUUUU==
 
-On 7/2/25 18:33, Daniel Wagner wrote:
-> Introduce blk_mq_{online|possible}_queue_affinity, which returns the
-> queue-to-CPU mapping constraints defined by the block layer. This allows
-> other subsystems (e.g., IRQ affinity setup) to respect block layer
-> requirements.
-> 
-> It is necessary to provide versions for both the online and possible CPU
-> masks because some drivers want to spread their I/O queues only across
-> online CPUs, while others prefer to use all possible CPUs. And the mask
-> used needs to match with the number of queues requested
-> (see blk_num_{online|possible}_queues).
-> 
-Technically you are correct.
-However, I do have the sneaking suspicion that most drivers just use
-num_online_cpus() for convenience and to reduce the size of the
-structures.
-But I guess I'll comment on that in the patch modifying the drivers.
+SGVsbG8gR3JlZywKCj4gPiBAQCAtNTIyLDYgKzUyMiw5IEBAIHN0YXRpYyB2b2lkIGdkbV9sdGVf
+ZXZlbnRfcmN2KHN0cnVjdCBuZXRfZGV2aWNlICpkZXYsIHUxNiB0eXBlLAo+ID4gIHsKPiA+ICAJ
+c3RydWN0IG5pYyAqbmljID0gbmV0ZGV2X3ByaXYoZGV2KTsKPiA+ICAKPiA+ICsJaWYgKGRldi0+
+bmV0ZGV2X29wcy0+bmRvX29wZW4gIT0gZ2RtX2x0ZV9vcGVuKQo+ID4gKwkJcmV0dXJuOwo+IAo+
+IFdoeSBzaG91bGQgYSBkcml2ZXIgYmUgcG9raW5nIGFyb3VuZCBpbiBuZXRkZXZfb3BzPyAgVGhh
+dCBmZWVscyB3cm9uZywKPiB3aGF0IHdvdWxkIGV2ZXIgY2hhbmdlIHRoaXM/ICBXaHkgbm90IGZp
+eCB0aGF0IGluc3RlYWQ/Cj4gCj4gdGhhbmtzLAo+IAo+IGdyZWcgay1oCgpZZXMsIGl0IHNlZW1z
+IHRoYXQgY29tcGFyaW5nIG9wcyBpcyBxdWl0ZSBhbWJpZ3VvdXMgYW5kIHdlaXJkLiBIb3dldmVy
+LCBpbnZlc3RpZ2F0aW9uIG9uCmNvZGUgc2hvd3MgdmFyaW91cyBjaGVja3MgYWdhaW5zdCBuZXRf
+ZGV2aWNlLgoKLSBieSBgZGV2LT5wcml2X2ZsYWdzYC4gU2VlIGlzX3ZsYW5fZGV2KCkKYGBgCnN0
+YXRpYyBpbmxpbmUgYm9vbCBpc192bGFuX2Rldihjb25zdCBzdHJ1Y3QgbmV0X2RldmljZSAqZGV2
+KQp7CiAgICAgICAgcmV0dXJuIGRldi0+cHJpdl9mbGFncyAmIElGRl84MDJfMVFfVkxBTjsKfQpg
+YGAKCi0gYnkgYGRldi0+cnRubF9saW5rX29wcy0+a2luZGAuIFNlZSBsb29rdXBfaW50ZXJmYWNl
+KCkKYGBgCnN0YXRpYyBzdHJ1Y3Qgd2dfZGV2aWNlICpsb29rdXBfaW50ZXJmYWNlKHN0cnVjdCBu
+bGF0dHIgKiphdHRycywKICAgICAgICAgICAgICAgICAgICAgIHN0cnVjdCBza19idWZmICpza2Ip
+CnsKICAgIGRldiA9IGRldl9nZXRfYnlfaW5kZXgoc29ja19uZXQoc2tiLT5zayksCiAgICAgICAg
+ICAgICAgICAgICAgICAgbmxhX2dldF91MzIoYXR0cnNbV0dERVZJQ0VfQV9JRklOREVYXSkpOwog
+ICAgLi4uCiAgICBpZiAoIWRldi0+cnRubF9saW5rX29wcyB8fCAhZGV2LT5ydG5sX2xpbmtfb3Bz
+LT5raW5kIHx8CiAgICAgICAgc3RyY21wKGRldi0+cnRubF9saW5rX29wcy0+a2luZCwgS0JVSUxE
+X01PRE5BTUUpKSB7CiAgICAuLi4KfQpgYGAKCi0gYnkgYGRldi0+dHlwZWAuIFNlZSBheDI1X2Rl
+dmljZV9ldmVudCgpCmBgYApzdGF0aWMgaW50IGF4MjVfZGV2aWNlX2V2ZW50KHN0cnVjdCBub3Rp
+Zmllcl9ibG9jayAqdGhpcywgdW5zaWduZWQgbG9uZyBldmVudCwKICAgICAgICAgICAgICAgICB2
+b2lkICpwdHIpCnsKICAgIHN0cnVjdCBuZXRfZGV2aWNlICpkZXYgPSBuZXRkZXZfbm90aWZpZXJf
+aW5mb190b19kZXYocHRyKTsKCiAgICAuLi4uLi4KCiAgICAvKiBSZWplY3Qgbm9uIEFYLjI1IGRl
+dmljZXMgKi8KICAgIGlmIChkZXYtPnR5cGUgIT0gQVJQSFJEX0FYMjUpCiAgICAgICAgcmV0dXJu
+IE5PVElGWV9ET05FOwpgYGAKCkFzIGZvciBwb2tpbmcgYXJvdW5kIGluIG5ldGRldl9vcHMsIHdl
+IGRpZG4ndCBrbm93IGlmIGl0IGlzIHRoZSBiZXN0IHNvbHV0aW9uLApqdXN0IGJlY2F1c2Ugc29t
+ZSBjb2RlIGRpZCBzaW1pbGFyIGNoZWNrcywgZS5nLgoKYGBgCnN0YXRpYyBzdHJ1Y3QgdGVhbSAq
+dGVhbV9ubF90ZWFtX2dldChzdHJ1Y3QgZ2VubF9pbmZvICppbmZvKQp7CiAgICBkZXYgPSBkZXZf
+Z2V0X2J5X2luZGV4KG5ldCwgaWZpbmRleCk7CiAgICBpZiAoIWRldiB8fCBkZXYtPm5ldGRldl9v
+cHMgIT0gJnRlYW1fbmV0ZGV2X29wcykgewogICAgICAgIC4uLiAKICAgIH0KfQpgYGAKCmFuZAoK
+YGBgCnN0YXRpYyBpbnQgbWx4NWVfc2V0X3ZmX3R1bm5lbCguLi4pCnsKICAgIHJvdXRlX2RldiA9
+IGRldl9nZXRfYnlfaW5kZXgoZGV2X25ldChvdXRfZGV2KSwgcm91dGVfZGV2X2lmaW5kZXgpOwoK
+ICAgIGlmICghcm91dGVfZGV2IHx8IHJvdXRlX2Rldi0+bmV0ZGV2X29wcyAhPSAmbWx4NWVfbmV0
+ZGV2X29wcyB8fCAuLi4gKSB7CiAgICAgICAgLi4uCiAgICB9Cn0KYGBgCgpGcm9tIG15IHBvaW50
+IG9mIHZpZXcsIHVzaW5nIGBkZXYtPnR5cGUvZmxhZ3MvcHJpdl9mbGFnc2AgY291bGQgYmUgYSBi
+ZXR0ZXIKY2hvaWNlIGlmIGl0J3Mgb2theSB0byBpbnRyb2R1Y2UgbW9yZSBkZWZpbml0aW9ucy4K
+ClVzaW5nIG5ldGRldl9vcHMgaXMgbW9yZSBzdHJhaWdodGZvcndhcmQuIE9yIG1heWJlIEkgc2hv
+dWxkIGp1c3QgY29tcGFyZSB0aGUKYC0+bmV0ZGV2X29wc2AgaW5zdGVhZCBvZiB0aGUgYC0+bmV0
+ZGV2X29wcy0+bmRvX29wZW5gPwoKCgpUaGFuc2sKTGlu
 
-> Signed-off-by: Daniel Wagner <wagi@kernel.org>
-> ---
->   block/blk-mq-cpumap.c  | 24 ++++++++++++++++++++++++
->   include/linux/blk-mq.h |  2 ++
->   2 files changed, 26 insertions(+)
-> 
-> diff --git a/block/blk-mq-cpumap.c b/block/blk-mq-cpumap.c
-> index 705da074ad6c7e88042296f21b739c6d686a72b6..8244ecf878358c0b8de84458dcd5100c2f360213 100644
-> --- a/block/blk-mq-cpumap.c
-> +++ b/block/blk-mq-cpumap.c
-> @@ -26,6 +26,30 @@ static unsigned int blk_mq_num_queues(const struct cpumask *mask,
->   	return min_not_zero(num, max_queues);
->   }
->   
-> +/**
-> + * blk_mq_possible_queue_affinity - Return block layer queue affinity
-> + *
-> + * Returns an affinity mask that represents the queue-to-CPU mapping
-> + * requested by the block layer based on possible CPUs.
-> + */
-> +const struct cpumask *blk_mq_possible_queue_affinity(void)
-> +{
-> +	return cpu_possible_mask;
-> +}
-> +EXPORT_SYMBOL_GPL(blk_mq_possible_queue_affinity);
-> +
-> +/**
-> + * blk_mq_online_queue_affinity - Return block layer queue affinity
-> + *
-> + * Returns an affinity mask that represents the queue-to-CPU mapping
-> + * requested by the block layer based on online CPUs.
-> + */
-> +const struct cpumask *blk_mq_online_queue_affinity(void)
-> +{
-> +	return cpu_online_mask;
-> +}
-> +EXPORT_SYMBOL_GPL(blk_mq_online_queue_affinity);
-> +
->   /**
->    * blk_mq_num_possible_queues - Calc nr of queues for multiqueue devices
->    * @max_queues:	The maximum number of queues the hardware/driver
-> diff --git a/include/linux/blk-mq.h b/include/linux/blk-mq.h
-> index 2a5a828f19a0ba6ff0812daf40eed67f0e12ada1..1144017dce47af82f9d010e42bfbf26fa4ddf33f 100644
-> --- a/include/linux/blk-mq.h
-> +++ b/include/linux/blk-mq.h
-> @@ -947,6 +947,8 @@ int blk_mq_freeze_queue_wait_timeout(struct request_queue *q,
->   void blk_mq_unfreeze_queue_non_owner(struct request_queue *q);
->   void blk_freeze_queue_start_non_owner(struct request_queue *q);
->   
-> +const struct cpumask *blk_mq_possible_queue_affinity(void);
-> +const struct cpumask *blk_mq_online_queue_affinity(void);
->   unsigned int blk_mq_num_possible_queues(unsigned int max_queues);
->   unsigned int blk_mq_num_online_queues(unsigned int max_queues);
->   void blk_mq_map_queues(struct blk_mq_queue_map *qmap);
-> 
-
-Reviewed-by: Hannes Reinecke <hare@suse.de>
-
-Cheers,
-
-Hannes
--- 
-Dr. Hannes Reinecke                  Kernel Storage Architect
-hare@suse.de                                +49 911 74053 688
-SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
-HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
