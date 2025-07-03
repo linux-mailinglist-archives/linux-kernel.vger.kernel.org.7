@@ -1,191 +1,165 @@
-Return-Path: <linux-kernel+bounces-715103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-715101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77F1BAF70B3
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 12:41:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A36EAF70AD
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 12:40:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A01F61C48072
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 10:41:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A8D63BEBD5
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 10:39:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1EDA2E54BE;
-	Thu,  3 Jul 2025 10:39:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=louisalexis.eyraud@collabora.com header.b="Ua4joRz7"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18D782E4982;
+	Thu,  3 Jul 2025 10:39:19 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEF652E5424
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 10:39:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751539163; cv=pass; b=VTUvlgWKlJtPIoAUt8FS8P3IzeNvDD8lQx9612mzIsDy8rf/SbgLsjMgIURW9u4a9E+yfQVjawtJZHKbJdEq3VyY/ighthhAUi6pc3cu+lHD5gdlOJp2IYna9mvqajlrRAZjSsFM+MyNvBmpaET5QOQVLoQrMLIMHDUabBtUGZo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751539163; c=relaxed/simple;
-	bh=J/vbYDbPU3juWbr/LwjVCLU1cq1NokQV/yI+R7rcD0I=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=bcUeZ7YqNaD4f7Y+Lj3+SdNURs9hEupETcibVShLqW3f4If0MsLEQLZMtpjpONSozVkM+LesbckXx7vGjZQhMoJmzp2blOZ5xSQkuSxcsQDa5NzSKutSlMw5uS2IM9BCaKUdZIu1DYRQWh02+o17JR/zEqVxPx7bqM4C7b7v0OI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=louisalexis.eyraud@collabora.com header.b=Ua4joRz7; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1751539145; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=OGmTYjb87a/HQQfJ80nuoMM3J5giu9DFlFLheBZM1lWvnWDiOMp9wWhc6sM77tEy1ydXz087rntZgP0XRPFayh7/+6AIYl4/GsM1wkQ3n8qa6H0FCKLoRUVY6HRRJ61CZ9b1OB/QBYNTWJ3UA09pcCeMVrIaAE3yG/LAQMsMunA=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1751539145; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=PUMUxTQyz4Rw+I/k6r4nKllDMvLQcH1q/9NQSkvh/Tc=; 
-	b=gYW8iVfmd0xLbwpe/lltOymsMhP2xnfMuf9kG5gDgz4TIM77kd5B/HOrZYUOxLvR/HxU5dRuW5kbHKrZAECfrY4FR6TvgZRFrBMwIyVjXu0l4aNreUspfiSwGUYHgp026ULp0m84Y1wDGwJtZOeb9kzDr9ML2p9IyKB0j+jh7IE=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=louisalexis.eyraud@collabora.com;
-	dmarc=pass header.from=<louisalexis.eyraud@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1751539145;
-	s=zohomail; d=collabora.com; i=louisalexis.eyraud@collabora.com;
-	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
-	bh=PUMUxTQyz4Rw+I/k6r4nKllDMvLQcH1q/9NQSkvh/Tc=;
-	b=Ua4joRz7J0WXVyQAc9oiuwImuog9VPquGVoKz8hsGX4MlyXyvGKyYEWhXUMYSB1b
-	bxWzSzqxKFQXqxPM/+iZ+zse3v9BlcQY/CYJ239YdacuajaqPPZhXqldqhvDkvEt+pJ
-	elYxIhb16kp8exk5hBD/X4HuM6rC5REb8wCqfDBU=
-Received: by mx.zohomail.com with SMTPS id 1751539143453232.01329008697712;
-	Thu, 3 Jul 2025 03:39:03 -0700 (PDT)
-Message-ID: <8958966b96140aaaae97b480b7a6c1698a6d2ae2.camel@collabora.com>
-Subject: Re: [PATCH] MFD: mt6397: do not use generic name for keypad
- sub-devices
-From: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Lee Jones <lee@kernel.org>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	 <angelogioacchino.delregno@collabora.com>, Yassine Oudjana
-	 <y.oudjana@protonmail.com>, =?ISO-8859-1?Q?N=EDcolas?= "F. R. A. Prado"
-	 <nfraprado@collabora.com>, Fabien Parent <fparent@baylibre.com>, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org
-Date: Thu, 03 Jul 2025 12:38:59 +0200
-In-Reply-To: <r4k3pgd3ew3ypne7ernxuzwgniiyvzosbce4cfajbcu7equblt@yato35tjb3lw>
-References: 
-	<r4k3pgd3ew3ypne7ernxuzwgniiyvzosbce4cfajbcu7equblt@yato35tjb3lw>
-Organization: Collabora Ltd
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A46BF2E425D;
+	Thu,  3 Jul 2025 10:39:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751539158; cv=none; b=AAF4aL0ehOzc9k49G12YzhHrmNWHR3/PkmyYdkuIzKGxh2bko5A5atokcJVwmzPRICUsN+KHMIqs5lbC1vNYO9I6FUTun6zsVnvkDzxT1u+UgwYNSh2DIESUtAK0K7nT3+9MYZpX+fJXQP1LH+KLKGT5xT3CqKkcjnWB+2RCfAM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751539158; c=relaxed/simple;
+	bh=1jefsmd4zg8EBH2ldyWTkAdUFdgVGaXykUlpYA+/LiI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m7wQ8HEKUK1WEnPzj6rNUpR435uvvf0a+VYVQaTMAMNZf1ZZ6Hp60lZAw5PmNJbP3JOk5USmaRmKkHTP049m/oMEIj0g+acbs9INmY0USN8LdcNI59dxrKpdDI9Znl57uoGcjj60V0qb2EfWk8HYQAVlzCjMBYIVvpI8FRYXgp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7234BC4CEF1;
+	Thu,  3 Jul 2025 10:39:16 +0000 (UTC)
+Date: Thu, 3 Jul 2025 11:39:14 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Willy Tarreau <w@1wt.eu>,
+	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
+	Christian Brauner <brauner@kernel.org>,
+	Will Deacon <will@kernel.org>, Shuah Khan <shuah@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v2 3/4] kselftest/arm64: Add a test for vfork() with GCS
+Message-ID: <aGZd0vdu8PpLKfX1@arm.com>
+References: <20250610-arm64-gcs-vfork-exit-v2-0-929443dfcf82@kernel.org>
+ <20250610-arm64-gcs-vfork-exit-v2-3-929443dfcf82@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250610-arm64-gcs-vfork-exit-v2-3-929443dfcf82@kernel.org>
 
-Hi Dmitry,
+On Tue, Jun 10, 2025 at 01:29:46PM +0100, Mark Brown wrote:
+> diff --git a/tools/testing/selftests/arm64/gcs/basic-gcs.c b/tools/testing/selftests/arm64/gcs/basic-gcs.c
+> index 3fb9742342a3..96ea51cf7163 100644
+> --- a/tools/testing/selftests/arm64/gcs/basic-gcs.c
+> +++ b/tools/testing/selftests/arm64/gcs/basic-gcs.c
+> @@ -298,6 +298,68 @@ static bool test_fork(void)
+>  	return pass;
+>  }
+>  
+> +/* A vfork()ed process can run and exit */
+> +static bool test_vfork(void)
+> +{
+> +	unsigned long child_mode;
+> +	int ret, status;
+> +	pid_t pid;
+> +	bool pass = true;
+> +
+> +	pid = vfork();
+> +	if (pid == -1) {
+> +		ksft_print_msg("vfork() failed: %d\n", errno);
+> +		pass = false;
+> +		goto out;
+> +	}
+> +	if (pid == 0) {
+> +		/* In child, make sure we can call a function, read
+> +		 * the GCS pointer and status and then exit */
 
-On Mon, 2025-06-30 at 16:01 -0700, Dmitry Torokhov wrote:
-> Do not use "mtk-pmic-keys" when creating sub-device for the keypad to
-> make sure the keypad driver will only bind to the sub-device if it
-> has
-> support for the variant/has matching compatible.
->=20
-> Reported-by: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
-> Fixes: 6e31bb8d3a63 ("mfd: mt6397: Add initial support for MT6328")
-> Fixes: de58cee8c6b8 ("mfd: mt6397-core: Add MT6357 PMIC support")
-> Fixes: 4a901e305011 ("mfd: mt6397-core: Add resources for PMIC keys
-> for MT6359")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> ---
->=20
-> This is not tested so if someone with hardware could try it out that
-> would be great. I *think* it should work...
->=20
-> =C2=A0drivers/mfd/mt6397-core.c | 12 ++++++------
-> =C2=A01 file changed, 6 insertions(+), 6 deletions(-)
->=20
-> diff --git a/drivers/mfd/mt6397-core.c b/drivers/mfd/mt6397-core.c
-> index 5f8ed8988907..3e58d0764c7e 100644
-> --- a/drivers/mfd/mt6397-core.c
-> +++ b/drivers/mfd/mt6397-core.c
-> @@ -136,7 +136,7 @@ static const struct mfd_cell mt6323_devs[] =3D {
-> =C2=A0		.name =3D "mt6323-led",
-> =C2=A0		.of_compatible =3D "mediatek,mt6323-led"
-> =C2=A0	}, {
-> -		.name =3D "mtk-pmic-keys",
-> +		.name =3D "mt6323-keys",
-> =C2=A0		.num_resources =3D ARRAY_SIZE(mt6323_keys_resources),
-> =C2=A0		.resources =3D mt6323_keys_resources,
-> =C2=A0		.of_compatible =3D "mediatek,mt6323-keys"
-> @@ -153,7 +153,7 @@ static const struct mfd_cell mt6328_devs[] =3D {
-> =C2=A0		.name =3D "mt6328-regulator",
-> =C2=A0		.of_compatible =3D "mediatek,mt6328-regulator"
-> =C2=A0	}, {
-> -		.name =3D "mtk-pmic-keys",
-> +		.name =3D "mt6328-keys",
-> =C2=A0		.num_resources =3D ARRAY_SIZE(mt6328_keys_resources),
-> =C2=A0		.resources =3D mt6328_keys_resources,
-> =C2=A0		.of_compatible =3D "mediatek,mt6328-keys"
-> @@ -175,7 +175,7 @@ static const struct mfd_cell mt6357_devs[] =3D {
-> =C2=A0		.name =3D "mt6357-sound",
-> =C2=A0		.of_compatible =3D "mediatek,mt6357-sound"
-> =C2=A0	}, {
-> -		.name =3D "mtk-pmic-keys",
-> +		.name =3D "mt6357-keys",
-> =C2=A0		.num_resources =3D ARRAY_SIZE(mt6357_keys_resources),
-> =C2=A0		.resources =3D mt6357_keys_resources,
-> =C2=A0		.of_compatible =3D "mediatek,mt6357-keys"
-> @@ -196,7 +196,7 @@ static const struct mfd_cell mt6331_mt6332_devs[]
-> =3D {
-> =C2=A0		.name =3D "mt6332-regulator",
-> =C2=A0		.of_compatible =3D "mediatek,mt6332-regulator"
-> =C2=A0	}, {
-> -		.name =3D "mtk-pmic-keys",
-> +		.name =3D "mt6331-keys",
-> =C2=A0		.num_resources =3D ARRAY_SIZE(mt6331_keys_resources),
-> =C2=A0		.resources =3D mt6331_keys_resources,
-> =C2=A0		.of_compatible =3D "mediatek,mt6331-keys"
-> @@ -240,7 +240,7 @@ static const struct mfd_cell mt6359_devs[] =3D {
-> =C2=A0	},
-> =C2=A0	{ .name =3D "mt6359-sound", },
-> =C2=A0	{
-> -		.name =3D "mtk-pmic-keys",
-> +		.name =3D "mt6359-keys",
-> =C2=A0		.num_resources =3D ARRAY_SIZE(mt6359_keys_resources),
-> =C2=A0		.resources =3D mt6359_keys_resources,
-> =C2=A0		.of_compatible =3D "mediatek,mt6359-keys"
-> @@ -272,7 +272,7 @@ static const struct mfd_cell mt6397_devs[] =3D {
-> =C2=A0		.name =3D "mt6397-pinctrl",
-> =C2=A0		.of_compatible =3D "mediatek,mt6397-pinctrl",
-> =C2=A0	}, {
-> -		.name =3D "mtk-pmic-keys",
-> +		.name =3D "mt6397-keys",
-> =C2=A0		.num_resources =3D ARRAY_SIZE(mt6397_keys_resources),
-> =C2=A0		.resources =3D mt6397_keys_resources,
-> =C2=A0		.of_compatible =3D "mediatek,mt6397-keys"
-> --=20
-> 2.50.0.727.gbf7dc18ff4-goog
->=20
-Thanks for the patch.
+Nit: coding style for multi-line comment. I guess we follow the kernel
+style.
 
-I've tested it with a kernel based on next-20250702 on both Mediatek
-Genio 350-EVK and Genio 1200-EVK boards with mtk-pmic-keys driver
-enabled either as builtin or module.
+> +		valid_gcs_function();
+> +		get_gcspr();
+> +
+> +		ret = my_syscall5(__NR_prctl, PR_GET_SHADOW_STACK_STATUS,
+> +				  &child_mode, 0, 0, 0);
+> +		if (ret == 0 && !(child_mode & PR_SHADOW_STACK_ENABLE)) {
+> +			ksft_print_msg("GCS not enabled in child\n");
+> +			ret = -EINVAL;
 
-With the Genio 350-EVK, the mtk-pmic-keys driver probes OK:=20
-```
-[    0.601874] input: mtk-pmic-keys as
-/devices/platform/soc/1000d000.pwrap/1000d000.pwrap:pmic/mt6357-
-keys/input/input0
-```
-The keys work too.
+Does it make sense in user-space to pass negative values to exit()? I
+thought it should be between 0 and 255.
 
-For the Genio 1200-EVK, it fails to probe as expected (because
-'mediatek,mt6359-keys' compatible is missing) and there is indeed no
-kernel panic in the builtin case (the issue I reported with my patch)
-```
-[    0.459178] mt6359-keys: Failed to locate of_node [id: -1]
-```
+> +		}
+> +
+> +		exit(ret);
 
-Tested-by: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com> # on
-Mediatek Genio 350-EVK and Genio 1200-EVK
+Should this be _exit() instead? IIRC exit() does some clean-ups which
+are not safe in the vfork'ed child.
 
-Regards,
-Louis-Alexis
+> +	}
+> +
+> +	/*
+> +	 * In parent, check we can still do function calls then block
+> +	 * for the child.
+> +	 */
+
+The comment "block for the child" doesn't make sense in this context.
+vfork() already blocks the parent until exec() or _exit(). But I can see
+why you wanted waitpid() to retrieve the return status.
+
+> +	valid_gcs_function();
+> +
+> +	ksft_print_msg("Waiting for child %d\n", pid);
+> +
+> +	ret = waitpid(pid, &status, 0);
+> +	if (ret == -1) {
+> +		ksft_print_msg("Failed to wait for child: %d\n",
+> +			       errno);
+> +		return false;
+> +	}
+> +
+> +	if (!WIFEXITED(status)) {
+> +		ksft_print_msg("Child exited due to signal %d\n",
+> +			       WTERMSIG(status));
+> +		pass = false;
+> +	} else {
+> +		if (WEXITSTATUS(status)) {
+
+Nit: } else if {
+
+> +			ksft_print_msg("Child exited with status %d\n",
+> +				       WEXITSTATUS(status));
+> +			pass = false;
+> +		}
+> +	}
+> +
+> +out:
+> +
+> +	return pass;
+> +}
+> +
+>  typedef bool (*gcs_test)(void);
+>  
+>  static struct {
+> @@ -314,6 +376,7 @@ static struct {
+>  	{ "enable_invalid", enable_invalid, true },
+>  	{ "map_guarded_stack", map_guarded_stack },
+>  	{ "fork", test_fork },
+> +	{ "vfork", test_vfork },
+>  };
+>  
+>  int main(void)
+
+Other than the above, feel free add
+
+Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
+
+Thomas, do you want to merge this via your tree? Thanks.
+
+-- 
+Catalin
 
