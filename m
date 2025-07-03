@@ -1,137 +1,100 @@
-Return-Path: <linux-kernel+bounces-714467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32479AF6854
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 04:52:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53BDFAF6857
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 04:52:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAFE84A398C
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 02:52:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18EBC52261F
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 02:52:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C4E9217F3D;
-	Thu,  3 Jul 2025 02:52:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58ADA1FCCF8;
+	Thu,  3 Jul 2025 02:52:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NL6WS4PQ"
-Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com [209.85.217.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="HJ5e5xJC"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76BF91AA1D5;
-	Thu,  3 Jul 2025 02:52:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 442FD1DDA0C;
+	Thu,  3 Jul 2025 02:52:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751511137; cv=none; b=tDiS53KxEu76/CUHI7TR2KhcIX92Y3FJRbOSrKXpa46C1nhw1GIuISYmwBQUtJCdnrECidb/bQORuodbRBanTdMGGbSdDAnd7L/CeSsWac35fIaw5XCFCG9AkLEXLNrkjMA+gwN27VW5vf9PVNVjPA89vss+rzisSvs+vJ6Niz4=
+	t=1751511144; cv=none; b=miz76xo7u1TcrGrVweAFkH9ADUM/eN1a67BDegf7XAVAGciBZz6uJ5inWUClZ3Xr5+Rw5Bvhl0FwHUz4tNw5zi58NQLZK7Yyl4LhM4jKHUJYA+n62+yun3u4dPcYkNCZJdxCW5tF8F520CwgKeh/r+JZvMA8jqXd/ZCJqG2EsVw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751511137; c=relaxed/simple;
-	bh=zPpCHqeNq9ubsyD+eSPF34L63IwETpH3TV/cdq7hzvM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mFngVDDVP4ZNCELXjKDm72Kai/3ryO9QgHG3A0TFCQGRIzghZLsQxg/0Fo8aW7+8zNUsTPz61PgUjSvxhW2I8qOQlR1w0y08us1afHnJQc3BymCz9yCeBLPQs1NlVQCxEKtGcIMNoHPWJ1HcjOq/CiZHHPfcbb6dRMeUzVcCD9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NL6WS4PQ; arc=none smtp.client-ip=209.85.217.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-4e9a7b4a412so3316352137.0;
-        Wed, 02 Jul 2025 19:52:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751511133; x=1752115933; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9hqOgLvM5cpEDE69yGTdJg3JqR+5f/IljRV3pU1cFz8=;
-        b=NL6WS4PQGsuo40hJUZyzgEkER5vY/Iw2p58fbskBxWJp0sCaiRhL2grETV8++JV545
-         ZUhdhygP0fjqP1Rm3Xxn9F3bA9I6BwY2W8haDsYQQJLVdrK1QFnRhKl7TXMDQs2UTP6f
-         eBokFAv9f+X0UTH5vN3b50ZCn/qtp+xUKLB9t4jTB/B94JLZ9qfiSaQsjRaj9xmkiPEI
-         qBjnCdLvNA810wVzLpEegJNM/0mdh4ROVeNxlVaVwu+iKpgeFYuHskvt4V9NFEMdIjPU
-         6c9q+gv4pSlY+OkwCNoCzQjoL+bb4h3D6QljdgBvEx4alCXwJGIAHXHgj0qxO0AeHfB6
-         j9Kg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751511133; x=1752115933;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9hqOgLvM5cpEDE69yGTdJg3JqR+5f/IljRV3pU1cFz8=;
-        b=nStAZkizKVM0jfu34EUyYFz6mR61lIEDa1tRcqQhj7X9iw6retb4zbNMmBTL2LC0OE
-         8TFuct68uVY9n2EnBLx+vi9qZPM5NJn4jAS0OL7EAdP/axMJnHbC9wgjFMcAbMw8OHbZ
-         UbNCb/X98L/dQxrNFvjkG2STFgg/Qs+kP7uxMIDWS5ewfLNp5SoLVlthFq/L+prlmP5r
-         6ivXbcznwToPiDPNX0s1Lf68VL24a8qPJlay+IzrmZ1CYIQeK5a/tqkX5IlFc2b960+i
-         nWUhtUU8E0VNW9cxb1EeEAiUSkInSB9CwPmI7SuGmbc+FD2MQZ2n0G7Az0V6BvQzQ+5i
-         TkXA==
-X-Forwarded-Encrypted: i=1; AJvYcCUcTI+hr0bnO6Qy4jbyAHsfeKOxPl3P8vFdiOwjT/37YI/V1OjH5Fm0h4Ix2gUAOrB+RD7IUPurw/I=@vger.kernel.org, AJvYcCXrmaDN1zEJsxvx6Mtqs1S8/I/n6i+gIBdk6HU+8kkLJX9My0VdJmNUlyQY7INYM+eKnBRppiuK2ubw+GDa@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+g8+mJXNJWEML+8tBDa5HjgM96vyxeOrNHQ1mhT33VQJHu+Mh
-	udkTl4Sv8FjDFuM4eJJgPGmEBY1x0ZYnABWUIPnqDKmYvuwm25vF+0japz3CMwc6xU225fbONJo
-	xP9JXEUcdmbvTDzcVqM5UGBwYfW0wUY2G0qTq
-X-Gm-Gg: ASbGnctFpqUyuU+De3H1dnpmY5+Av1w845mRqdhPG/w+II+LMJqdyJPXmBwZQs/fLII
-	AWGMJFPLfV3fYfYau0V26ZRjPsNAfh6CHLBNG1FZw8HMjH/tULt4tF5UvT+xxAQZ/Qhemvj/g7s
-	TWTEj0ZHlTdYAYvrUb2UnPpSaJ566zYz0enXCvDLKfIhc=
-X-Google-Smtp-Source: AGHT+IEvTsjj7sQvdIbP0qIKAQgKS6fd3xFJQp8JC0qxGchbr8oAX86ZgI6lLm3yfWdMsHZPB5VOT4/PSnFTOkWy4tI=
-X-Received: by 2002:a05:6102:f98:b0:4e6:d7af:a7b1 with SMTP id
- ada2fe7eead31-4f16110d4b3mr3774274137.10.1751511133247; Wed, 02 Jul 2025
- 19:52:13 -0700 (PDT)
+	s=arc-20240116; t=1751511144; c=relaxed/simple;
+	bh=gIlQKOltehJA0GXqqvkfztLCqX6xE9KSNSiZvJWLXvU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=hQMu18Va9pGxqHmCJWMLD7o+fqJ5jTSjUP7HPl7O5KO8IiBnBWiE3OvIeS+CwL6PO2R1WTBDVXxiVTLzcUWQQ7J7VrDnUhKScbv/xsPI3cds7VGkoFrQWGwbPt0RnSiigb9mDSJXEAqf/nFUj1uDrwLEn5QrzOapX9ONQwcGrpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=HJ5e5xJC; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 4496740AAB
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1751511142; bh=7Z8hbP3ydaGHaESwOxjWIsYHBU/zxWCa6Efnvt1GFu8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=HJ5e5xJCo0TUpCQSg6J/rl3b5YAp2tm+HJMM0EoymPyNypb2VRoZKS51+n/KKyrVs
+	 eEozvricqtt9p9EwRDTZUvm/40Hfvo8o7tjwlNxulxgiGvf9QY/m+EVEzyOdRhURJ+
+	 vNNBCLUXxD76QqE63p4VZtnJ0p9z6cSAQBeGFwS59YXxhyIf66rDln6VUZJbgEw/2n
+	 NZqIfhPLjEPNXAH8UrHv4I/OuE7F46EO/Ylc2aWc7e1pYFsQnaHObptn9yulm/xHcD
+	 Nq8+InIepNrG/EhIBaB0Z0Pb+wquQ1L02XBY1tGGdgwLEn112h3cnE5GGM6wSUR1qt
+	 98C/HgE8RF6dA==
+Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 4496740AAB;
+	Thu,  3 Jul 2025 02:52:22 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Bagas Sanjaya <bagasdotme@gmail.com>, Nicolas Frattaroli
+ <nicolas.frattaroli@collabora.com>
+Cc: Randy Dunlap <rdunlap@infradead.org>, kernel@collabora.com,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] docs: document linked lists
+In-Reply-To: <aGXeyqygzKi2P-kP@archie.me>
+References: <20250702-linked-list-docs-v2-1-e36532f4b638@collabora.com>
+ <aGXeyqygzKi2P-kP@archie.me>
+Date: Wed, 02 Jul 2025 20:52:21 -0600
+Message-ID: <87h5zum1ei.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1c1e39cb-5fe0-46b3-898e-c65bbb3beb30@gmail.com>
- <aGUh7uXenHc7NYB2@smile.fi.intel.com> <20250702164022.000027e8@huawei.com>
-In-Reply-To: <20250702164022.000027e8@huawei.com>
-From: Andrew Ijano <andrew.ijano@gmail.com>
-Date: Wed, 2 Jul 2025 23:52:02 -0300
-X-Gm-Features: Ac12FXzNWmTAl2CMlR5pzag85NttUzDlX_AoFhXd7yX8Qi_WW5G-3OHix-4EVCo
-Message-ID: <CANZih_Rc3aht-ZTuuEytad8A1d5eC8Z_Dq2GQD8K2QiyFjcBZQ@mail.gmail.com>
-Subject: Re: iio: accel: sca3000: dead code issue
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc: Andy Shevchenko <andriy.shevchenko@intel.com>, 
-	"Colin King (gmail)" <colin.i.king@gmail.com>, Jonathan Cameron <jic23@kernel.org>, 
-	David Lechner <dlechner@baylibre.com>, nuno.sa@analog.com, 
-	Andy Shevchenko <andy@kernel.org>, Gustavo Bastos <gustavobastos@usp.br>, 
-	Julien Stephan <jstephan@baylibre.com>, linux-iio@vger.kernel.org, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Wed, Jul 2, 2025 at 12:40=E2=80=AFPM Jonathan Cameron
-<Jonathan.Cameron@huawei.com> wrote:
->
-> On Wed, 2 Jul 2025 15:11:26 +0300
-> Andy Shevchenko <andriy.shevchenko@intel.com> wrote:
->
-> > On Wed, Jul 02, 2025 at 10:00:55AM +0100, Colin King (gmail) wrote:
-> >
-> > >                 ret =3D spi_w8r8(st->us,
-> > > SCA3000_READ_REG(SCA3000_REG_BUF_COUNT_ADDR));
-> > >
-> > > >>>  the call to spi_w8r8 returns 0 on success or -ve on an error
-> >
-> > Where did you get this from, please?  Any link to elixir or Git repo?
-> >
->
-> Hmm.  Just for reference the docs of spi_w8r8 are:
->
-> * Return: the (unsigned) eight bit number returned by the
-> * device, or else a negative error code.
->
-> Not 0 on success (well not unless it is zero.
->
-> So the check indeed looks wrong as should be if (ret < 0)
->
->
-> https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git/commit/?h=
-=3Dtesting&id=3Dca66d8208762492df8442a503db568d9aab65f2f
-> It's in my tree.
->
-> I'll drop the patch when I'm on the right machine.  Andrew, could
-> you do a new version fixing this up?  If not can make the changes
-> but will be at least the weekend before I get a chance.
->
+Bagas Sanjaya <bagasdotme@gmail.com> writes:
 
-Hey, guys! Thanks for pointing this out, I totally missed this problem
-before. I'll try to fix this tomorrow.
+> On Wed, Jul 02, 2025 at 10:24:47PM +0200, Nicolas Frattaroli wrote:
+>> +In State 2, we've added Grock after the list head::
+>> +
+>> +         .--------------------.
+>> +         v                    |
+>> +    .--------.     .-------.  |
+>> +    | clowns |---->| Grock |--'
+>> +    '--------'     '-------'
+>
+> Looks like the corners are a bit imbalanced (single quotes are taller than
+> dots). What about using plus instead? Like:
+>
+> ---- >8 ----
+> diff --git a/Documentation/core-api/list.rst b/Documentation/core-api/list.rst
+> index b0586056abb04d..bf92f44d7b2d06 100644
+> --- a/Documentation/core-api/list.rst
+> +++ b/Documentation/core-api/list.rst
+> @@ -148,11 +148,11 @@ clarity.
+>  
+>  In State 2, we've added Grock after the list head::
+>  
+> -         .--------------------.
+> +         +--------------------+
+>           v                    |
 
-In this case, should I send a new version of the patchset fixing the
-problem or a single patch following this commit with the fix?
+One might argue that it looks like a nice curve and should stay as-is.
 
-Thanks,
-Andrew
+This work is welcome and deserves a serious review, this wasn't it.
+
+jon
 
