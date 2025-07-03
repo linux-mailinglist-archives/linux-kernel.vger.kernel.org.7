@@ -1,208 +1,83 @@
-Return-Path: <linux-kernel+bounces-715953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-715957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97E1AAF8010
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 20:33:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 16FD0AF801E
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 20:35:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A2D857ACA5C
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 18:32:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BFA617B6FAA
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 18:33:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1E132F3624;
-	Thu,  3 Jul 2025 18:33:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R9uvwg7H"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 335F428A1EE;
-	Thu,  3 Jul 2025 18:33:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E99B22F2C78;
+	Thu,  3 Jul 2025 18:34:22 +0000 (UTC)
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D9B32F2C6B;
+	Thu,  3 Jul 2025 18:34:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751567593; cv=none; b=XTvC75xS2g/ZJdV2khTMT6rSVzMlrnLucZi0aYcEksqI09gvGcyJi4l0b0Us0u/O2jifXWtS4RGDqTx0T+Up33HGX5BAK5m6ySCktjiVxaPf34rVDStoUNBFhwYddFXYPnFDhWpy8xgdofxyU/I3Q/kyiVpuyfHWtun2lG8Md/8=
+	t=1751567662; cv=none; b=ik3MssmLoo7g4iq/bAl0NTiBPg/kkxhifS/+HGzHFuhfLUe/gjXEFqXlNiegkyaLlZOqq0f/8CdYOGq5J4qfYwFzAYtCKduIEPI+Iall6qDHL7UcmPB6qnCoMP/vpjF0bmL1wvnAy9fgD9OGaDkrm2zTMuS1v8YO1Oa9IjQg8zs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751567593; c=relaxed/simple;
-	bh=twKLCDvgvJ4N3es1zViUdUytVpc1yuuskuyBdmZ+9lY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=GR049/tMCV8+9qE0wbT/+SX+1PmTfjBCLYtV0JBGjapNXYCecgXm1FQldyDdQOWk8k7k0yAzTkXC8KqDaDfx5eCfABgZ5/EHIx+gQHyVeTZsKI26mCqjR6Hkr/wb9HWH5X1eTYFowt67f2e6mB+er/Xn1+n4tLfeLt7f9HaifcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R9uvwg7H; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id C5E7FC4AF0B;
-	Thu,  3 Jul 2025 18:33:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751567592;
-	bh=twKLCDvgvJ4N3es1zViUdUytVpc1yuuskuyBdmZ+9lY=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=R9uvwg7H/tZrWUiU2XNSphV19N7RZhq3VTIpr7RkePXVvXiuqfSjEbdEzy1u3/L8b
-	 BFLr0DNU/yhCT7/1IUGjYrZD/H05T7tEsS0jatIK1XXfmfDWAUPuGGBDy8c23cOExj
-	 99fYWcPpD/ie3wppt3cOBlDSeYIDsq3Hr+XpZ2pZ6oILdUhX5+oqPnhX2yZNxn9iKM
-	 cDxSZ9sAdczy71F/0yRRIpGi10PELYcwYHEwGh61oXrPqdUz1J0KtPNjV7NBnE43JE
-	 TwJk1hGaFpCJt7EdrJ0AVHb6dA0HIynhRAO3yFkVg9dZmdIUzqjuQ8/ajijWxBMs1n
-	 aLjKhv9aeVDcg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD1BBC83F05;
-	Thu,  3 Jul 2025 18:33:12 +0000 (UTC)
-From: Frank Li via B4 Relay <devnull+Frank.Li.nxp.com@kernel.org>
-Date: Thu, 03 Jul 2025 14:33:09 -0400
-Subject: [PATCH v2 4/4] arm64: dts: imx8qxp-mek: add parallel ov5640 camera
- support
+	s=arc-20240116; t=1751567662; c=relaxed/simple;
+	bh=JIYPEoh6dphXPyN/j/1HYem+qD2zUpQid13Os3rleAo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AoZk3W1B+oNxJkjUCziWMTVfqH8WUuDY+Vfcv6YTG7DHgYe1tLZhdKCcA0jRqe+3zwr5H5SzHi1YDF7flSf4BF1vvcxQPJG7GmAg9z792wFvkg/D9kafT7pFqJ9VepH/Xx7xglnXTQJthd9/4lbxZvx+AuLSqrTYEOb1U7CupY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+X-CSE-ConnectionGUID: TisQh2Z3TBi8gtPN3S7e4g==
+X-CSE-MsgGUID: jZWZiK+pRWKox50tV2YDgg==
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 04 Jul 2025 03:34:17 +0900
+Received: from localhost.localdomain (unknown [10.226.92.64])
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 13E91401D15C;
+	Fri,  4 Jul 2025 03:34:13 +0900 (JST)
+From: Biju Das <biju.das.jz@bp.renesas.com>
+To: Marc Kleine-Budde <mkl@pengutronix.de>,
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	linux-can@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Biju Das <biju.das.au@gmail.com>
+Subject: [PATCH 0/4] R-Car CANFD Improvements
+Date: Thu,  3 Jul 2025 19:33:58 +0100
+Message-ID: <20250703183411.332828-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250703-imx8qxp_pcam-v2-4-188be85f06f1@nxp.com>
-References: <20250703-imx8qxp_pcam-v2-0-188be85f06f1@nxp.com>
-In-Reply-To: <20250703-imx8qxp_pcam-v2-0-188be85f06f1@nxp.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, Rui Miguel Silva <rmfrfs@gmail.com>, 
- Martin Kepplinger <martink@posteo.de>, Purism Kernel Team <kernel@puri.sm>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-media@vger.kernel.org, imx@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, Frank Li <Frank.Li@nxp.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1751567591; l=3715;
- i=Frank.Li@nxp.com; s=20240130; h=from:subject:message-id;
- bh=xrlatQtLaiuinBwAmL4cEzL3pNe437Uvr/YWmYMVyX4=;
- b=OrYhgbxp0mxYiuvD4zwpejFQ9E/eldojxDR2ZfCT44z4t7F/rAzD6h8/JvNn4OeWKbkLfnHiQ
- jMyCzGG8e6aCOEQMci3BgiDtLjGFLAEhTs1FhhzET3OdH5wncSPru8A
-X-Developer-Key: i=Frank.Li@nxp.com; a=ed25519;
- pk=I0L1sDUfPxpAkRvPKy7MdauTuSENRq+DnA+G4qcS94Q=
-X-Endpoint-Received: by B4 Relay for Frank.Li@nxp.com/20240130 with
- auth_id=121
-X-Original-From: Frank Li <Frank.Li@nxp.com>
-Reply-To: Frank.Li@nxp.com
+Content-Transfer-Encoding: 8bit
 
-From: Frank Li <Frank.Li@nxp.com>
+The calculation formula for nominal bit rate of classical CAN is same as
+that of nominal bit rate of CANFD on the RZ/G3E SoC compared to other SoCs.
+Add shared_bittiming variable to struct rcar_canfd_hw_info to handle this
+difference.
 
-Add parallel ov5640 nodes in imx8qxp-mek and create overlay file to enable
-it because it can work at two mode: MIPI and parallel mode.
+Added the patch "Drop unused macros" to this serires.
 
-Signed-off-by: Frank Li <Frank.Li@nxp.com>
----
-change in v2
-- move ov5640 part to overlay file
-- rename to imx8qxp-mek-ov5640-parallel.dtso
-- remove data-lanes
----
- arch/arm64/boot/dts/freescale/Makefile             |  3 +
- .../dts/freescale/imx8qxp-mek-ov5640-parallel.dtso | 82 ++++++++++++++++++++++
- 2 files changed, 85 insertions(+)
+Apart from this, replaced the RCANFD_NCFG_* and RCANFD_DCFG_* macros
+with simple functions and replaced RCANFD_CFG_* macros with FIELD_PREP
+macro.
 
-diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
-index 02ef35578dbc7e05b35b781dbfca0f0bc124ead1..25787fc7143f36301f8b334d4b0d84d543e1f320 100644
---- a/arch/arm64/boot/dts/freescale/Makefile
-+++ b/arch/arm64/boot/dts/freescale/Makefile
-@@ -330,6 +330,9 @@ dtb-$(CONFIG_ARCH_MXC) += imx8qxp-mek-pcie-ep.dtb
- imx8qxp-mek-ov5640-csi-dtbs := imx8qxp-mek.dtb imx8qxp-mek-ov5640-csi.dtbo
- dtb-${CONFIG_ARCH_MXC} += imx8qxp-mek-ov5640-csi.dtb
- 
-+imx8qxp-mek-ov5640-parallel-dtbs := imx8qxp-mek.dtb imx8qxp-mek-ov5640-parallel.dtbo
-+dtb-${CONFIG_ARCH_MXC} += imx8qxp-mek-ov5640-parallel.dtb
-+
- dtb-$(CONFIG_ARCH_MXC) += imx8qxp-tqma8xqp-mba8xx.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8qxp-tqma8xqps-mb-smarc-2.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8ulp-evk.dtb
-diff --git a/arch/arm64/boot/dts/freescale/imx8qxp-mek-ov5640-parallel.dtso b/arch/arm64/boot/dts/freescale/imx8qxp-mek-ov5640-parallel.dtso
-new file mode 100644
-index 0000000000000000000000000000000000000000..e184a5beb5c835e6801495ae2adc3b14cfcde2e5
---- /dev/null
-+++ b/arch/arm64/boot/dts/freescale/imx8qxp-mek-ov5640-parallel.dtso
-@@ -0,0 +1,82 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright 2025 NXP
-+ */
-+
-+/dts-v1/;
-+/plugin/;
-+
-+#include <dt-bindings/clock/imx8-lpcg.h>
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/media/video-interfaces.h>
-+#include <dt-bindings/pinctrl/pads-imx8qxp.h>
-+
-+&cm40_i2c {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+
-+	ov5640_pi: camera@3c {
-+		compatible = "ovti,ov5640";
-+		reg = <0x3c>;
-+		clocks = <&pi0_misc_lpcg IMX_LPCG_CLK_0>;
-+		clock-names = "xclk";
-+		assigned-clocks = <&pi0_misc_lpcg IMX_LPCG_CLK_0>;
-+		assigned-clock-rates = <24000000>;
-+		AVDD-supply = <&reg_2v8>;
-+		DOVDD-supply = <&reg_1v8>;
-+		DVDD-supply = <&reg_1v5>;
-+		pinctrl-0 = <&pinctrl_parallel_csi>;
-+		pinctrl-names = "default";
-+		powerdown-gpios = <&lsio_gpio3 2 GPIO_ACTIVE_HIGH>;
-+		reset-gpios = <&lsio_gpio3 3 GPIO_ACTIVE_LOW>;
-+
-+		port {
-+			ov5640_pi_ep: endpoint {
-+				bus-type = <MEDIA_BUS_TYPE_PARALLEL>;
-+				bus-width = <8>;
-+				hsync-active = <1>;
-+				pclk-sample = <1>;
-+				remote-endpoint = <&parallel_csi_in>;
-+				vsync-active = <0>;
-+			};
-+		};
-+	};
-+};
-+
-+&iomuxc {
-+	pinctrl_parallel_csi: parallelcsigrp {
-+		fsl,pins = <
-+			IMX8QXP_CSI_D00_CI_PI_D02		0xc0000041
-+			IMX8QXP_CSI_D01_CI_PI_D03		0xc0000041
-+			IMX8QXP_CSI_D02_CI_PI_D04		0xc0000041
-+			IMX8QXP_CSI_D03_CI_PI_D05		0xc0000041
-+			IMX8QXP_CSI_D04_CI_PI_D06		0xc0000041
-+			IMX8QXP_CSI_D05_CI_PI_D07		0xc0000041
-+			IMX8QXP_CSI_D06_CI_PI_D08		0xc0000041
-+			IMX8QXP_CSI_D07_CI_PI_D09		0xc0000041
-+
-+			IMX8QXP_CSI_MCLK_CI_PI_MCLK		0xc0000041
-+			IMX8QXP_CSI_PCLK_CI_PI_PCLK		0xc0000041
-+			IMX8QXP_CSI_HSYNC_CI_PI_HSYNC		0xc0000041
-+			IMX8QXP_CSI_VSYNC_CI_PI_VSYNC		0xc0000041
-+			IMX8QXP_CSI_EN_LSIO_GPIO3_IO02		0xc0000041
-+			IMX8QXP_CSI_RESET_LSIO_GPIO3_IO03	0xc0000041
-+		>;
-+	};
-+};
-+
-+&isi {
-+	status = "okay";
-+};
-+
-+&parallel_csi {
-+	status = "okay";
-+
-+	ports {
-+		port@0 {
-+			parallel_csi_in: endpoint {
-+				remote-endpoint = <&ov5640_pi_ep>;
-+			};
-+		};
-+	};
-+};
+Biju Das (4):
+  can: rcar_canfd: Add shared_bittiming variable to struct
+    rcar_canfd_hw_info
+  can: rcar_canfd: Drop unused macros
+  can: rcar_canfd: Replace RCANFD_NCFG_* and RCANFD_DCFG_* macros
+  can: rcar_canfd: Replace RCANFD_CFG_* macros with FIELD_PREP
+
+ drivers/net/can/rcar/rcar_canfd.c | 170 +++++++-----------------------
+ 1 file changed, 39 insertions(+), 131 deletions(-)
 
 -- 
-2.34.1
-
+2.43.0
 
 
