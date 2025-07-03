@@ -1,135 +1,123 @@
-Return-Path: <linux-kernel+bounces-715249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-715251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C134FAF7328
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 14:02:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1DA1AF732F
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 14:03:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 578DF18916B0
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 12:01:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F7C27B7D33
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 12:02:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58A722C327A;
-	Thu,  3 Jul 2025 12:01:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B25A2D2386;
+	Thu,  3 Jul 2025 12:03:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="S0ctuNej"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UhVa+qDt"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7C2B253939
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 12:01:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44D41EEA9
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 12:03:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751544092; cv=none; b=C8GE3WjYf3D2DufwWI/Me7LnEqPXqqpMM+AkOqcXflhOKRsgJGghJ1iYa4b1aaeW+ODcs0XM7tp9ILExrYxZ5koRd99DH0owT4Nl4XhInQ83eBUxEKa610O9eVrAvG8X3/LlXS84OvoCP6DKA9FILm1If9PXGC4WPmfuJef/2DY=
+	t=1751544213; cv=none; b=XzE36zCJWGUwjA77IJQ0VR+m8JjyfXFP9o91dXjBa++xlawfhS5o3wI8MpJy89yFkqgeyOKvXZs2wnipzBRHBJoNjdWvMBzrFiROvyUmNPLY6uD1DVbu2e/zQYoAr2YOcDgEcvLlv+dqY2rsJhvQ3dbX7JUs8GR4m2Ko2GKKnQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751544092; c=relaxed/simple;
-	bh=z2VMVssNf2T1qI0QODTU/q2QBzCWr3raQvOE+FydPRU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S9QfVlM/1JvLhwxjsUe0z3vN5lMcxBeuW+22jVMvxW70m6LqkByHyw2QM0DahoZVq8a2kMzVBczENOjdLCH65TM1UVdfCR5mz+AYDU+uDXwuY06+lmtOC+kjUNDvu6e28GdmLWK0mpiON7nYDG5MGwS5odbzAaZAyFWR21rY6vI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=S0ctuNej; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-453634d8609so56833735e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Jul 2025 05:01:30 -0700 (PDT)
+	s=arc-20240116; t=1751544213; c=relaxed/simple;
+	bh=gWmMucoOuA1az6fC3asUkLhxguswTObwGrLfdc8ob0Q=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ROBQme/3tapwMo0b5od7dzTX6LnRn5VAbWQhumi7tJtnNRklcYfuLmiu+1wbAEScZ/fuQXtoL5UT96AxlCI9mwVnTZCs5qZWr+m+k6o6kKyrrW1NptXd0hRu/gWubW5+JRMq5I4YzjT1VF6akNWOES37jkd1y7j+nC1l3jHwQlE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UhVa+qDt; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-604bff84741so14555941a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Jul 2025 05:03:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1751544089; x=1752148889; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Aopz9JcRK0iEgUc501SKKnowXTL3SIijDXQz+zmIWgU=;
-        b=S0ctuNejtpvrRh9jAsx0+Bj9uqA4Hd7hr7Q0tVsTUKcMCte7othb7lPezaKYI04aIw
-         Rvp3oH1F36N0hwS2gzAwCDvsl6cEH6SyxrtqljFALogmPICYZ1gqVm56QqF2M9R0FQVH
-         rucrz1eHJfvk1dletLgEdE+aSAqwQlattjJLUFL6nyiwBAmC2Mh2AT9Ma1HYJ0EwYGTk
-         G1D9tL/dJdKvRByDB5WXFMkChAqbC9DqvRklLSQc7fJDUgiCyDDDJyx4huFZzrGCpOo9
-         DYRY1UCOTmcXcN6+dC9ZCsQCVl5ZBjU2jXjRdOTezFULdp4vbVK6fkocFSERTWkUrKF6
-         o4pQ==
+        d=gmail.com; s=20230601; t=1751544210; x=1752149010; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/6Az8/htOon/tG5o1K/fhfx5nMaY5HuhIoQAgZM+Fi0=;
+        b=UhVa+qDtcvCN0zmyJNYsiozxNGsAD0b1UuT0UwdlQ/ua7mW0B6yDk/O0JpOg65nov8
+         Eak5rfRwsE7265fyCQokwzHgOi09hru+qf0U6o+o+FXiIpguqYk8Y3a61pQqAMOAgqd7
+         6/1fYGuNtrAyRnMcN25YWZIwN4dmjHyphEZ14Ezod+b0A6ITxuPfhD48RtXGb0kDML68
+         gb6ckQZlOacG/l0tEhlY0XirFGR4DmmYXkoxZ1GaW5VKbLuRyLSMoWec2fXlZlMvWS5v
+         hoJCRYuwxgARevtTLCyMuu2kMDa5tzUwc05daZR+WLSxess1NOto6QY5sJMrwTuCn0oJ
+         oOkQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751544089; x=1752148889;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Aopz9JcRK0iEgUc501SKKnowXTL3SIijDXQz+zmIWgU=;
-        b=sZm3EeCpX8GxmjlZs364rxhYnzu2F6aFHf+1rS+Je6VFHFsADX+8W5HO+d0q6zxRCC
-         qORdUxauIlvvQ9bJTnZ1RZ19ZX0Dl3PTsRuvq40srYOM6KL4cG+VdIBIDYTGfIIuhSE7
-         68zAtAKvML8jM7j4ZRIcwLh4Is2kuafDgGqT9Vqi57D8QComNUcw7oPuXQu4XZU06KrF
-         bcfGjo7YQGP0IpFBR0Zo8/ENzaaJ+p2QxuTybewv8Q2LuSfgfm9RKcp0jkwKOKyTikFB
-         DQboKBy+9pXQNNEImd7DyzrkMLDYiN8b/JLhCWtK7cxt75uWNs/8u8/cmZMDqcwkyoG3
-         cQKA==
-X-Forwarded-Encrypted: i=1; AJvYcCUVWYJ7h7d4FQugltp7T/0t4Ykr2HE2ORto5BDaQ6L1j7dRHc0qn87ffZeF1b68GzKUP3PtA/077btnbao=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtmEb/Q7Ij+FBzV8bPCctSCIjFSwpyqSk4Q6gNllfTPuhMfpkT
-	xHnSli1ByhO/QCj7HPcX3M+zzXWPm0myYI8h+bpeH5lr7PCgkoaZAigjLeixB+8Wag8=
-X-Gm-Gg: ASbGncsXw/D45IcH14GAn2eINOfmkdgjGVlxcEWFtUOvofRFsR0Ir0KbBPy3eFcd9IS
-	imj34IDZdNlSk1cEMlPpbhScvqmm/El55douTdqavnKzrphajIOtAVABc6T1miaA/lcrgRgTIRV
-	+XOFi0w/9Uk1chOzV/icFT+vId3HdcotbqhJX4hye+w+Zb/HGceN1ad3du78v4Z3sTRcV4e+zrE
-	w5BNDU4GwJsOlP8rcN4PpDTnmKuKWZqR0oJSG3W9hApAsGfOqq7hDKYf3IlP4/8iIGDPtcQTben
-	fBiF4Eyn3UY5jya3PN7nnBUJ26GRD2L0lwhUiBb1r/e0rmqvMlbg6hCdkN/jV9gaUsRO6bg/d68
-	=
-X-Google-Smtp-Source: AGHT+IEKdej4rZRfQsA8lt2P2H7zqGUWgsuHW8FgSQ8FsnWOkSKG1hJ20TPEje3vH/3yFkiIG7JoUw==
-X-Received: by 2002:a05:600c:608c:b0:43c:fa24:8721 with SMTP id 5b1f17b1804b1-454ab3a9274mr31654735e9.17.1751544088630;
-        Thu, 03 Jul 2025 05:01:28 -0700 (PDT)
-Received: from localhost (109-81-23-161.rct.o2.cz. [109.81.23.161])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-454a99729basm25002165e9.10.2025.07.03.05.01.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Jul 2025 05:01:28 -0700 (PDT)
-Date: Thu, 3 Jul 2025 14:01:25 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Chen Yu <yu.c.chen@intel.com>, Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Tim Chen <tim.c.chen@intel.com>, linux-kernel@vger.kernel.org,
-	Jirka Hladky <jhladky@redhat.com>,
-	Srikanth Aithal <Srikanth.Aithal@amd.com>,
-	Suneeth D <Suneeth.D@amd.com>, Libo Chen <libo.chen@oracle.com>
-Subject: Re: [PATCH] sched/numa: Fix NULL pointer access to mm_struct durng
- task swap
-Message-ID: <aGZxFRVxHouLaMPg@tiehlicka>
-References: <20250702163247.324439-1-yu.c.chen@intel.com>
- <20250703072608.GS1613200@noisy.programming.kicks-ass.net>
- <aGZNTtJuCyHJE_25@tiehlicka>
- <20250703115006.GT1613200@noisy.programming.kicks-ass.net>
+        d=1e100.net; s=20230601; t=1751544210; x=1752149010;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/6Az8/htOon/tG5o1K/fhfx5nMaY5HuhIoQAgZM+Fi0=;
+        b=GPSrhbCaOKoFqMsFqoUus+/zc4SqvarQH/CTLvvj/8Wz80l1KXBJ6vNxAHfFDnxr4y
+         USyzkLx2a40ObmMIp2Nda2/xbb4ej0JM6rAo8fzGpcf6sBtf9hAO263xtjeRRTV2yldt
+         zJStvMprgo0PcG+Wc8ULPMPIedyzvRdTR4YBBO9FwH/FRz3w+vkGKNhcQF2rsd0x6DMX
+         KfDhsJOQ8CCqqoUzLgWmq5Uli+CPyNgNv0qtsMOcFniAayEQTC17onlI/tCL8FT+l+J1
+         OuTtkFFmFixBdeWQl4jhjItbtkwQVdmtP24qncHNotek+xZVzGVXK8ZRamJlJkqgiI04
+         hM+A==
+X-Gm-Message-State: AOJu0YyLU+b0HTbdVqdpeGtuWuR3puM9tzr01xrvIB+xO8Juq64Jqc6Q
+	3rM9vGhdGYg6lfkUc7nt/aAmx6UKSb8ys+cHcUxDS6eANxURYKV3grajiGcn9iH5
+X-Gm-Gg: ASbGncs6Y7UNxMu7MsdqoL9oDxw0xI6VIHX8KElUxd75SKFGdKhwjVGB7bcJrslLndH
+	PtS7R0qhUMcvAanR9X4CoRQfVtG1BDWqp+Y0Uw8VgILO93FCZXSEnq7aX9RsCCm631E32mKJyp0
+	n46vQYOsMNif3dMB3F0PqGSdC7AliA6lUMG9vBW3XuYI7FPfZRZF+HeZoEDlQ1cpW00gCokSHcJ
+	JJciweQVZMpfZZLTos8BisQZ2cvRYgWERNBILq25uEDpdN38RDYU2P/zjBjMb2XCxH6kU5iT6Kk
+	GDFO2trRxhGF6+Gsg9b/wzYfJEOqpUoeg7WMVCg34iYVlbmBHDbmJYTwLtw+gKOWTNCMcZOBm1c
+	QsOFugAeGYwFdhHVXm2jvAajRdFGp
+X-Google-Smtp-Source: AGHT+IGrone20PK/ICj88SFDR6rGiCEtSCIee4w6s6pvA2Jp+3DW3EPJVfXOqrskPBFuxSDlu6YXFw==
+X-Received: by 2002:a05:6402:2690:b0:608:6711:a06f with SMTP id 4fb4d7f45d1cf-60e6cc91a60mr2948677a12.4.1751544209617;
+        Thu, 03 Jul 2025 05:03:29 -0700 (PDT)
+Received: from Mac.lan (p5088513f.dip0.t-ipconnect.de. [80.136.81.63])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-60c83205eb0sm10563837a12.72.2025.07.03.05.03.28
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Thu, 03 Jul 2025 05:03:28 -0700 (PDT)
+From: Laura Brehm <laurajfbrehm@gmail.com>
+X-Google-Original-From: Laura Brehm <laurabrehm@hey.com>
+To: linux-kernel@vger.kernel.org
+Cc: Laura Brehm <laurabrehm@hey.com>
+Subject: [PATCH 0/2] coredump: socket PIDFD+PIDFD_INFO_COREDUMP issues
+Date: Thu,  3 Jul 2025 14:02:42 +0200
+Message-Id: <20250703120244.96908-1-laurabrehm@hey.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250703115006.GT1613200@noisy.programming.kicks-ass.net>
+Content-Transfer-Encoding: 8bit
 
-On Thu 03-07-25 13:50:06, Peter Zijlstra wrote:
-> On Thu, Jul 03, 2025 at 11:28:46AM +0200, Michal Hocko wrote:
-> 
-> > But thinking about this some more, this would be racy same as the
-> > PF_EXITING check. This is not my area but is this performance sensitive
-> > path that couldn't live with the proper find_lock_task_mm?
-> 
-> find_lock_task_mm() seems eminently unsuitable for accounting --
-> iterating the task group is insane.
-> 
-> Looking at this, the mm_struct lifetimes suck.. task_struct reference
-> doesn't help, rcu doesn't help :-(
-> 
-> Also, whatever the solution it needs to be inside this count_memcg_*()
-> nonsense, because nobody wants this overhead, esp. not for something
-> daft like accounting.
-> 
-> My primary desire at this point is to just revert the patch that caused
-> this. Accounting just isn't worth it. Esp. not since there is already a
-> tracepoint in this path -- people that want to count crap can very well
-> get their numbers from that.
+Preamble: This is my first foray into the kernel mailing list, so
+	apologies for any blunders - I've tried my best to make sure
+	this is addressed to the right place, and to follow the
+    appropriate conventions, but I'm likely to miss many.
 
-I would tend to agree with this. Doing the accounting race free on a
-remote task is nasty and if this is a rare event that could be avoided
-then it should be just dropped than racy and oops prone.
+This set of patches addresses some issues I *think* I've identified with
+some of the new coredump socket/PIDFD_INFO_COREDUMP ioctl functionality.
 
+There's a reasonable chance that these aren't actual issues - I've 
+tried my best to make sure the error wasn't on my end using these
+features, and checked the kernel tests for them to make sure I'm not
+doing anything wrong, but it's definitely still possible since I don't
+have a lot of experience with the kernel.
+
+I sent these as a PATCH because it seemed the most straightforward way
+to illustrate the issues I'm mentioning.
+They're signed off, so if these do turn out to be actual issues which
+the included patches address/can address with some changes, I'd like
+to see them merged.
+However,in the likely case the issues I brought up are not real/I'm
+just doing something wrong, please accept my apologies for the spam.
+
+Laura Brehm (2):
+  coredump: fix race condition between connect and putting pidfs dentry
+  coredump: fix PIDFD_INFO_COREDUMP ioctl check
+
+ fs/coredump.c | 8 ++------
+ fs/pidfs.c    | 2 +-
+ 2 files changed, 3 insertions(+), 7 deletions(-)
+
+
+base-commit: 66701750d5565c574af42bef0b789ce0203e3071
 -- 
-Michal Hocko
-SUSE Labs
+2.39.5 (Apple Git-154)
+
 
