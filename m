@@ -1,244 +1,134 @@
-Return-Path: <linux-kernel+bounces-715179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-715181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98907AF7244
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 13:30:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B51AEAF7249
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 13:31:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD9A95280AC
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 11:30:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E53DB528296
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 11:31:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB8A5295524;
-	Thu,  3 Jul 2025 11:30:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B3962609E6;
+	Thu,  3 Jul 2025 11:31:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="e3303z5P"
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MBKS4Rke"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ACC6264606
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 11:30:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8871F2DE713
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 11:31:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751542205; cv=none; b=WQuvkyDQF2dyVjBL4D065wU18YYlf3v1inXo110eXEVPeT+BnAbOV2xWeJwrqoq7wfcIwDUc00CPIb6vrKTqm1OFNw9dtaPNs+/aEo29C49SMs5XDiKL7g3ZZFJvv5g1iNY4xfxGrkfYV1vhQ6WUBjkKYj0rFPTwkznHlCM5hwc=
+	t=1751542275; cv=none; b=JMm31ZV3NO36pksJcXtLyQQNYe/k2rUu7xOXfZ41RTHD8Zgk5VD6zSRJA2N+odAxLkJpNoV46qF54Uj6iFDqxAvjpdeDDh+HfFEg7zyYtk2Joon+0Yxz8suorRfZSTusLj7xQt/Vw0XWdKKBDyFqC/eMcwnGwmMJdLUamda9BlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751542205; c=relaxed/simple;
-	bh=4rezQ5xvhatNmBndtj5h/WkqxFzjVMWMPkWaOIY9VU8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UlIwpRvqY8TGmQiItw/Qvb20JAc6I0Ia3R+m/l7pucseXtPDIYO0uBw53FIKtgQdkDJIHrE0RPTMeD0H/SJkGEmD9DwO7fKqeN3fMdrmBgH06a6b75YK8Wtv2hofB+nfHNC9OK4NvLZNzYgFOt6EcIgPaXKJ0+t1glt4bMDdloY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=e3303z5P; arc=none smtp.client-ip=209.85.128.172
+	s=arc-20240116; t=1751542275; c=relaxed/simple;
+	bh=51fwn9UR6sLo33WSntk5b8fVMnu6/RCpawuylEc4EYg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Fh1xONWnZ6mRw8jxorNN2CS69ghCepm7R8xzZXCwa0XUNrBgPZuD1/bEv9ixn/3iEIWNx8ylEI4ImQFUiXeTw1b40QSjAULiyveTZ15blbUuPco5QzaItCvHGAQKx3jECWxZAgoeZliOjFfg9c7F7W4GyxyoofRFyS0CmkXWOFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MBKS4Rke; arc=none smtp.client-ip=209.85.216.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-711d4689084so85828217b3.0
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Jul 2025 04:30:03 -0700 (PDT)
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-3122368d7c4so6506118a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Jul 2025 04:31:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1751542202; x=1752147002; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wZmXyGV2GnPjrvT+9+iiIPALoR0f06UEdAlM9BOBaW4=;
-        b=e3303z5PTKUVlfdvOvCLVR4wZEX24DtBVDZjvqTmrB+i/CwENOvePw2AbMNhtTvLpd
-         RidbYIP13sxOWnh2yhZfqTS0rcPDwH7D0nNSQq42zUeA7vDwnhzV7OGUZ+eO3Uvl/H/m
-         TlGdMA6PyBggTUtaGODZVCEVxezNagdBUOtHjI4mbMmRdbB3m8jvmlxm0oKGwL9uCRAQ
-         dtKnQEUPeYKN1s/cfDVY3B3+3ZPu+tvpMrf/Br6wmStSO2+nap2IlSiKf89UTpfA5foj
-         KNjohHsfThzdOV+yXynMeQnwKWr+4+lh3r1szvMYHU3b1EumYIcwAchfTnlB/Q28XZqJ
-         ib0A==
+        d=linaro.org; s=google; t=1751542272; x=1752147072; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=WcCs7vej7EmjlOgqSL2DpUmA/zZePV2jjeUjmDVA2Io=;
+        b=MBKS4Rke/iaMAIf1WMrycjRYmqOpZrRV8X3eZBS8L4Vs330zK4ns8qECwZtXsY1jjV
+         k4SgRGOGg+cjcx8p6gyi9arVaXyU87xZKCBerQzNNehHGfyolmunAYu4ne0PKcO0Ku1j
+         jeCNdLRvjpW+4Ul+TRAQlO7pLnTs/vJtpFnIjm/aJtQAdvnxXNYoFdhykVEkrD2d5Ya5
+         k8NjFdYDlhSaTA+JdEcdzGGvKJMfATEmPEaQuF6Du9SEsHgrRb56lrUdYFI9ZlGIo3mJ
+         t3/JM8lI6ZWU88MngP11Zlm70/NrvLQZbg9Ul6FGYMZUgf//nKxxTOvkTCAaBb1dpZxJ
+         KoKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751542202; x=1752147002;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wZmXyGV2GnPjrvT+9+iiIPALoR0f06UEdAlM9BOBaW4=;
-        b=IOCKVZoS9WI66ZAj9DEn4eiqFSu2DwYL3xxtnuseZT1eua6LFGGKFmLkBvW8CNr53/
-         knm+euWBqkHMtEe3qsD5moneJvQ4oGkmYfGA57pN2fu0kUbgKqQ37/t6+p9PezZmAnB2
-         1BduaF4QSDsWO6XoTZFDx4c2uo6zbp9Zw9uxPz551F8iqxSBLHFgSoFuHR10Rsj+hY45
-         ugZDLOsXFRYooqGxertwXxW952C6uUlHIq0nqZMA4I1mPf3A1BdzyuGOuZw5OWvIfMw4
-         tabEe6hWBsekUU4qDmyO12KwFgr8MOoyejehzTFyi+37IkabbZwuQ7wCPkJxOrjA0t+v
-         x7+g==
-X-Forwarded-Encrypted: i=1; AJvYcCW0VDjsSBl8+w68AKVVzky1fxYUFTrTcKwhQYP8hy3QYmH0rnoboZEOgqsesNGqWbzE2muKVluGRePnqgc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRDlJYCrtCFJvwT5LtiNZUBXAcGJER7aVRhEOH5O3AUFeUN9Fk
-	MJkLHd+z/gxl/Xw8fyAIKSIjVmIdx8K/dFeFsjTpJ10T9bIVqYBt+0b+r/Aywdv+bwkfNYTpLBa
-	NAVhjPWYmzXeCjn7ODtiXQ+PFctbwTc0XEohyoc8vFQ==
-X-Gm-Gg: ASbGnctU5Uc0nHuk9mX2zDRpX3AnoQ7SRK1yYcblQgM/lUOa9XylcgZ5QJdH7tTVCMg
-	AekQ03+LXZgwHbsjVN1RPN8cy0JpgkgDuMNzOAhmMjEM7K6MFTvhBC9kQmJo+sjgJdiA/2R9/+i
-	nadYV+HB5LbVC70zfQ6bPIZANdJ+MXQOOmiDpF6p8cg3+u
-X-Google-Smtp-Source: AGHT+IG6OfLZXa8uznpOhK3VFg2Dni19BCh2d0WU1ZI2OOuaAG3B7tP6RIZi0qM5DF0QSon7SQc8focX3HYudW0t/AM=
-X-Received: by 2002:a05:690c:386:b0:710:e4c4:a92f with SMTP id
- 00721157ae682-7164d305daemr79996497b3.5.1751542202281; Thu, 03 Jul 2025
- 04:30:02 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1751542272; x=1752147072;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WcCs7vej7EmjlOgqSL2DpUmA/zZePV2jjeUjmDVA2Io=;
+        b=F0PifxmAHSHA/n8z1UE2dQ15QLQoVm5LpGc3GawHjkdPp4fmd7zNLBi7XHjS+Gq7c+
+         49H/3sUClEp09jCKL+uf/U66RGrgRZfmstQmv7MhF2TofGZoZ59wZOFP1uGBxBIvu34U
+         n2X841b/jDk1N4WOgBXmnirPe0doakevpfZZghnoMM1sQFCPdURsZVv4sv15iRMiTHMU
+         9arUA0IQNaXXZXcGGksRCqAeWPMhn6Mr7E0XAcivQTSA/YWH46XPqMJfXRWRpqoMHfQS
+         Zb6ZdpusZ0wKrKyEB+8sSYUSY7IQM05wl3ciLNfDwd+XNDyJ/u0I/OSKnR1pgtKCCKbk
+         qUlw==
+X-Forwarded-Encrypted: i=1; AJvYcCWVtAvt0+y4FfQA4mdasEvMelILtzavwv0e8XosSWaXbvODsyi9i6oJFer5mFBeYDisC43UaadIwf621Eo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfJv5HmsEH+wcv965dl6hV8FEhVlAv+ON1KYZz2FbnxVWR6FMz
+	WXBlRQtm/DbEBxTnpqShbbk3r5/V439+7zf6NKuFCvpcWFmeArBz0n1t4nfPaiwgu1s=
+X-Gm-Gg: ASbGnctL4pTUnET1P3AVXDTjLcXYzIXFMMwtcj4ehvOA1KKPPilv53PNvAAXv1tngde
+	1Ynn1cMQBcUd9oNU9D/AIxCx5PYGgGAU4KSdCFLTSY3mgiCISJ1LLC5LjcpnBqOwVQpm8T1l3la
+	dxPDscOKu9hfzA9Lt24XJNhz7oX6pIifngm62fgioWDs1v1aTjfk0tRzB4g5DDediVuyR/82Ryk
+	g5avleDk2OcEKH6CRf8Z+XOfjddwXZ1IF55IWdt7zU6Fc/rtnZmdgMlddNdw8FlcBrmSYh0oUA+
+	92YNemmvb0gQtK1RCYC1vEGp1mw1ObINiBMMxvAqK7lbFQlx3YvNGIdoX/0CaAM=
+X-Google-Smtp-Source: AGHT+IFhAcA3OhH5rYHEhAy0zGIw//i/uHwlpC2u5oxSV4TXYQftB+zfMaEw/b96QQcNkfPz/Z4ybw==
+X-Received: by 2002:a17:90b:524d:b0:311:baa0:89ca with SMTP id 98e67ed59e1d1-31a9dfaaff5mr2743821a91.34.1751542271841;
+        Thu, 03 Jul 2025 04:31:11 -0700 (PDT)
+Received: from localhost ([122.172.81.72])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31a9cc65bc3sm2166551a91.14.2025.07.03.04.31.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Jul 2025 04:31:11 -0700 (PDT)
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Viresh Kumar <viresh.kumar@linaro.org>,
+	"Chen, Jian Jun" <jian.jun.chen@intel.com>,
+	Andi Shyti <andi.shyti@kernel.org>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>,
+	linux-i2c@vger.kernel.org,
+	virtualization@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] i2c: virtio: Avoid hang by using interruptible completion wait
+Date: Thu,  3 Jul 2025 17:01:02 +0530
+Message-Id: <b8944e9cab8eb959d888ae80add6f2a686159ba2.1751541962.git.viresh.kumar@linaro.org>
+X-Mailer: git-send-email 2.31.1.272.g89b43f80a514
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1750943549.git.benoit.monin@bootlin.com> <2a43386ffef4012530ca2421ad81ad21c36c8a25.1750943549.git.benoit.monin@bootlin.com>
-In-Reply-To: <2a43386ffef4012530ca2421ad81ad21c36c8a25.1750943549.git.benoit.monin@bootlin.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Thu, 3 Jul 2025 13:29:26 +0200
-X-Gm-Features: Ac12FXyN0y_TiN8FVImkIhaYASrLJPPgJpXiPzCWiGCMjeDhQ7YGCgW8xXzMr1U
-Message-ID: <CAPDyKFpxfn+kh8r39Fwoseh=k7rtwWYJr-A9FqMLK4OSiGBGZw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] mmc: sdhci-cadence: tune multi-block read gap
-To: =?UTF-8?Q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>, linux-mmc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
-	Tawfik Bayouk <tawfik.bayouk@mobileye.com>, Gregory CLEMENT <gregory.clement@bootlin.com>, 
-	=?UTF-8?B?VGjDqW8gTGVicnVu?= <theo.lebrun@bootlin.com>, 
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
-	Vladimir Kondratiev <vladimir.kondratiev@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, 26 Jun 2025 at 16:44, Beno=C3=AEt Monin <benoit.monin@bootlin.com> =
-wrote:
->
-> From: Vladimir Kondratiev <vladimir.kondratiev@intel.com>
->
-> Additional tuning required for multi-block read command.
-> Implement it accordingly to Cadence recommendation.
->
-> 2 registers used: HRS37 and HRS38. To HRS37, SD interface mode programmed=
-,
-> this selects HRS38 slot - there is separate slot for every SD interface
-> mode. HRS38 contains gap parameter,
-> it is selected by starting with gap=3D0 and sending multi-block read comm=
-and.
-> gap incremented until multi-block read succeeds.
->
-> As of now, this tuning executed for HS200 only
->
-> Signed-off-by: Vladimir Kondratiev <vladimir.kondratiev@intel.com>
-> Signed-off-by: Beno=C3=AEt Monin <benoit.monin@bootlin.com>
-> ---
->  drivers/mmc/host/sdhci-cadence.c | 142 ++++++++++++++++++++++++++++++-
->  1 file changed, 141 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/mmc/host/sdhci-cadence.c b/drivers/mmc/host/sdhci-ca=
-dence.c
-> index 27bd2eb29948..6dcf7ae0c99d 100644
-> --- a/drivers/mmc/host/sdhci-cadence.c
-> +++ b/drivers/mmc/host/sdhci-cadence.c
-> @@ -36,6 +36,23 @@
->  #define   SDHCI_CDNS_HRS06_MODE_MMC_HS400      0x5
->  #define   SDHCI_CDNS_HRS06_MODE_MMC_HS400ES    0x6
->
-> +/* Read block gap */
-> +#define SDHCI_CDNS_HRS37               0x94    /* interface mode select =
-*/
-> +#define   SDHCI_CDNS_HRS37_MODE_DS             0x0
-> +#define   SDHCI_CDNS_HRS37_MODE_HS             0x1
-> +#define   SDHCI_CDNS_HRS37_MODE_UDS_SDR12      0x8
-> +#define   SDHCI_CDNS_HRS37_MODE_UDS_SDR25      0x9
-> +#define   SDHCI_CDNS_HRS37_MODE_UDS_SDR50      0xa
-> +#define   SDHCI_CDNS_HRS37_MODE_UDS_SDR104     0xb
-> +#define   SDHCI_CDNS_HRS37_MODE_UDS_DDR50      0xc
-> +#define   SDHCI_CDNS_HRS37_MODE_MMC_LEGACY     0x20
-> +#define   SDHCI_CDNS_HRS37_MODE_MMC_SDR                0x21
-> +#define   SDHCI_CDNS_HRS37_MODE_MMC_DDR                0x22
-> +#define   SDHCI_CDNS_HRS37_MODE_MMC_HS200      0x23
-> +#define   SDHCI_CDNS_HRS37_MODE_MMC_HS400      0x24
-> +#define   SDHCI_CDNS_HRS37_MODE_MMC_HS400ES    0x25
-> +#define SDHCI_CDNS_HRS38               0x98    /* Read block gap coeffic=
-ient */
-> +#define   SDHCI_CDNS_HRS38_BLKGAP_MAX          0xf
->  /* SRS - Slot Register Set (SDHCI-compatible) */
->  #define SDHCI_CDNS_SRS_BASE            0x200
->
-> @@ -251,6 +268,123 @@ static int sdhci_cdns_set_tune_val(struct sdhci_hos=
-t *host, unsigned int val)
->         return 0;
->  }
->
-> +/**
-> + * mmc_send_mb_read() - send multi-block read command
-> + * @host: MMC host
-> + *
-> + * Sends multi-block read command, CMD23/CMD18/CMD12, ignore read data
-> + *
-> + * Return: error code
-> + */
-> +static int mmc_send_mb_read(struct mmc_host *host)
-> +{
-> +       const int blksz =3D 512;
-> +       const int blocks =3D 32;
-> +       struct scatterlist sg;
-> +       struct mmc_command sbc =3D {
-> +               .opcode =3D MMC_SET_BLOCK_COUNT,
-> +               .arg =3D blocks,
-> +               .flags =3D MMC_RSP_R1 | MMC_CMD_AC,
-> +       };
-> +       struct mmc_command cmd =3D {
-> +               .opcode =3D MMC_READ_MULTIPLE_BLOCK,
-> +               .arg =3D 0,
-> +               .flags =3D MMC_RSP_SPI_R1 | MMC_RSP_R1 | MMC_CMD_ADTC,
-> +       };
-> +       struct mmc_command stop =3D {
-> +               .opcode =3D MMC_STOP_TRANSMISSION,
-> +               .arg =3D 0,
-> +               .flags =3D MMC_RSP_SPI_R1 | MMC_RSP_R1 | MMC_CMD_AC,
-> +       };
-> +       struct mmc_data data =3D {
-> +               .flags =3D MMC_DATA_READ,
-> +               .blksz =3D blksz,
-> +               .blocks =3D blocks,
-> +               .blk_addr =3D 0,
-> +               .timeout_ns =3D  800000000,       /* 800ms */
-> +               .timeout_clks =3D 1000,
-> +               .sg =3D &sg,
-> +               .sg_len =3D 1,
-> +       };
-> +       struct mmc_request mrq =3D {
-> +               .sbc =3D &sbc,
-> +               .cmd =3D &cmd,
-> +               .data =3D &data,
-> +               .stop =3D &stop,
-> +       };
-> +       int size =3D blksz * blocks, err =3D 0;
-> +       u8 *data_buf;
-> +
-> +       data_buf =3D kzalloc(size, GFP_KERNEL);
-> +       if (!data_buf)
-> +               return -ENOMEM;
-> +
-> +       sg_init_one(&sg, data_buf, size);
-> +
-> +       mmc_wait_for_req(host, &mrq);
-> +
-> +       if (sbc.error) {
-> +               err =3D sbc.error;
-> +               goto out;
-> +       }
-> +
-> +       if (cmd.error) {
-> +               err =3D cmd.error;
-> +               goto out;
-> +       }
-> +
-> +       if (data.error) {
-> +               err =3D data.error;
-> +               goto out;
-> +       }
-> +
-> +out:
-> +       kfree(data_buf);
-> +       return err;
-> +}
+The current implementation uses wait_for_completion(), which can cause
+the caller to hang indefinitely if the transfer never completes.
 
-The above function does not belong in a host driver. It's the core's
-responsibility to create and manage requests/commands.
+Switch to wait_for_completion_interruptible() so that the operation can
+be interrupted by signals.
 
-That said, I wonder if we really need a multiple-block-read - or if we
-can just read the ext-CSD from the eMMC, as it also allows us to
-exercise the DATA lines?
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+---
+ drivers/i2c/busses/i2c-virtio.c | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
-If reading ext CSD is okay, we already have mmc_get_ext_csd() being
-exported and available for host drivers to use. In fact mtk-sd is
-already using it for the similar reason.
+diff --git a/drivers/i2c/busses/i2c-virtio.c b/drivers/i2c/busses/i2c-virtio.c
+index 2a351f961b89..c8c40ff9765d 100644
+--- a/drivers/i2c/busses/i2c-virtio.c
++++ b/drivers/i2c/busses/i2c-virtio.c
+@@ -116,15 +116,16 @@ static int virtio_i2c_complete_reqs(struct virtqueue *vq,
+ 	for (i = 0; i < num; i++) {
+ 		struct virtio_i2c_req *req = &reqs[i];
+ 
+-		wait_for_completion(&req->completion);
+-
+-		if (!failed && req->in_hdr.status != VIRTIO_I2C_MSG_OK)
+-			failed = true;
++		if (!failed) {
++			if (wait_for_completion_interruptible(&req->completion))
++				failed = true;
++			else if (req->in_hdr.status != VIRTIO_I2C_MSG_OK)
++				failed = true;
++			else
++				j++;
++		}
+ 
+ 		i2c_put_dma_safe_msg_buf(reqs[i].buf, &msgs[i], !failed);
+-
+-		if (!failed)
+-			j++;
+ 	}
+ 
+ 	return j;
+-- 
+2.31.1.272.g89b43f80a514
 
-[...]
-
-Kind regards
-Uffe
 
