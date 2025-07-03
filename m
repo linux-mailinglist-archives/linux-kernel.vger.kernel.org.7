@@ -1,136 +1,216 @@
-Return-Path: <linux-kernel+bounces-714865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7925CAF6DAB
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 10:51:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E36EAF6DB4
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 10:53:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC0A616AD3F
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2CC107AC4E5
 	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 08:51:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 399A729B795;
-	Thu,  3 Jul 2025 08:51:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E0122D322C;
+	Thu,  3 Jul 2025 08:52:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y1TlZeQW"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=leica-geosystems.com.cn header.i=@leica-geosystems.com.cn header.b="Uy+XZsfD"
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011016.outbound.protection.outlook.com [52.101.70.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 099A22D0C8C;
-	Thu,  3 Jul 2025 08:51:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751532697; cv=none; b=gY9bmnboK0C4tOmsFynmBpUCXogua5lLhv1UZBDSjnNG2t0thE6ODEInYdncuf87K2xKm5oupObvgYs3aA1YtdYRAO1CRNzDWFwx9mWQVgTVaYkVg6/pXMPgeIzgB7WLsnTR5pnu2efun/ZU5f40eumBi6RsloHqfzyKq7NZGBA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751532697; c=relaxed/simple;
-	bh=hsCXwqcLxI8cRSOYueVTYtswWbZ6ub7fGgL17jIiNL4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cxGMUcEwXx+GqEhWz0j/F02zSXTn7q9/bDOFML3uGSD9jE5ag3RKyP5E8xXqKzEDxSYpPFtnOgEbIO8bvdaHhFJJwmhmq3+iebV4rzO4onDFGc2gS23snvcMFZ6P8Hjxc3qVHHGJwCLTHVgtqRATbEJjSe1LPx7jcSbZcfSlbkc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y1TlZeQW; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-60c4f796446so13028832a12.1;
-        Thu, 03 Jul 2025 01:51:35 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11FE02D29B1;
+	Thu,  3 Jul 2025 08:52:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.16
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751532778; cv=fail; b=W8kU7CETDsPmQmoGfR25veuyrM1t0OY3xT7mawSJSrcMLTKgG709v84yPc0Zp/a5sWfS0fz5i3Ey3wcbnN5TCMvAgtZxQc+7QgRQK8cq6HE/TUlzOoDp1/qzSOlBR7syHb01jlbP9VGp3s2BmvYucE9O5HQX0qt7pamSqdKJGhs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751532778; c=relaxed/simple;
+	bh=fQWkJ1axOeN4jlMDtG5tGA/zgCERvn9cWvUumpkc8cs=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=lPyLc27KzpwEE05WeRmrVKhcVO6rjQui+2ipd8g67JnkT1RFVeTmbrpq8qzzQ0w7isZBLBHi8n/Uo/Q7McL9RGDGzdXCL00gn+9v3XKvxh/MYKptUS/Qhub4TRAL0llEE0wfZxDyX9WxDLQlswYHjsccC5F9lFdxO+bH1yAkpf0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=leica-geosystems.com.cn; spf=fail smtp.mailfrom=leica-geosystems.com.cn; dkim=pass (1024-bit key) header.d=leica-geosystems.com.cn header.i=@leica-geosystems.com.cn header.b=Uy+XZsfD; arc=fail smtp.client-ip=52.101.70.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=leica-geosystems.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=leica-geosystems.com.cn
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=bXB/IGfFI91nXBBszYx1abPjvJoPQrPKrwjCebTMUmtb9DSrRQ4K76BETB2i2DUyiuwiDMGcCwIDi2sbkbg2n8jEEo7IkH8hZAw6qHsHmGlIzuth869StsPkdUyp5iGJWr0Fnm4jfr9hAtbcya/Bhx09DzbazvuNyCUdHv+rgetsGH9CaKfp1lUw0+EYC4A26UptykTbq5M4RBpZ544aM/EXl3zP6XkBWirGB2Bg8AM7Wa1AqZHk6WUbp9DSo/ZVPpER49myeRglK+CK/fluj6zc3XXTkgyNGImhIEGloJllsbm0EpeOlp9MKjDnC9pWXfxRI96mrxmkZ6hg47fUaA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=fQWkJ1axOeN4jlMDtG5tGA/zgCERvn9cWvUumpkc8cs=;
+ b=CjANjH4xcza1B6Z6qTGRmHu0Zx1c1fm5mydEMGh/HvVzWocq6a4rq11vvdxI+N79Arnb+2L1sIWSzVU5bfCEORtB8DIZAiEsMoqhclAvHNt1w9IH85WuXqWU9MWCpoFGqD10VlczCF2t+v7vmfC9P3dEJoq3OT8BmpSswubprWW2klYD8+9MXsQIpypZ2yNh6yXW87nQOm/pjIuYymM6by372CgGaE5R/eTM4WDnc/GfMTxFJdPIruV5JNHJjo21WJ1IbhdNmI2wMFVi8Kz8sv7CjCeHfa465hhe0P9aV4OmoPfzgo8/mKti2RmrssXSRcapkZML9pPuH5c6GA8p7w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=leica-geosystems.com.cn; dmarc=pass action=none
+ header.from=leica-geosystems.com.cn; dkim=pass
+ header.d=leica-geosystems.com.cn; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751532694; x=1752137494; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hsCXwqcLxI8cRSOYueVTYtswWbZ6ub7fGgL17jIiNL4=;
-        b=Y1TlZeQWAOT0fS4xrZ56DJi+WF5+MbZxDMo3s+crw4IjC6wAUAYazzdZbWo+Qh8aZW
-         +myxUeQDYuT31DIee9k7d//tiDL1RJBS5r+SWAzBaabhaQ1OQt8cPEkmAqhm8hTpLFNQ
-         GhiEHcQ2FrE9dyfmb2TxZpMo5eGWWK7XxvH6w84GYYp7ae/hjngSppuTxB+s6XGJZD3F
-         cuktG/oM6NrN7ziFSLfj7yzfcGSxhA8UXA59bJIrfBFiVhZMTBbbZygHarza7+lOYHAd
-         11La6Fi9BhMBu2Lz2CjVc2/UfjHc5+XUdWQoZEPr9ynSz3yCrjk9uu6x6K6c8dFKCPVt
-         rx9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751532694; x=1752137494;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hsCXwqcLxI8cRSOYueVTYtswWbZ6ub7fGgL17jIiNL4=;
-        b=nPSgClLZUunGbjr3iiAWQpXC0E6uSnsOtRwGYCMswBmJTHvMNyjTp2+u0v6PRcJerT
-         9DNiNDxHMwMsIMtPgZhjOkQqZqyn6Ufr8Tv0o5ZLCP4grUoOzM0qESnNiDoACYwaOCwQ
-         oI+icSWU/6eVV/0pDRirM0Oic8jbAq0VRM4V4uRAv3qjfuUXdbQKMxf+7kpCFYJ4Tb2K
-         5Eu7hr7qoB5uh9eraqarDMfImhhTATym4svnqywgDNjgn1t5/Ox8bmk1rOHwNRfSBjsr
-         NBlvjwFNaho8+tohDQ7gcA9Q3r6cfmJhfU4rYzHFBfEn8Uccugk2ygLmcW3n6vsI3WnY
-         TcqA==
-X-Forwarded-Encrypted: i=1; AJvYcCXFNDhqmXqAJ0BtuDaC9mm5IBScPXDaNPriHSIbPGDJhxKl981PyEGTUtULf++pl5Zyuvd49fhUH1OY6Sk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxpllS/ZsYDpaQPakwbwo/n1nF3WBrJWk/9dCestgTTk8HBas2
-	JUnWv8bJhofTH1W6X+mbjYLcmVpwsjX+81/gSY3x+P3vS6kexR64b9wS
-X-Gm-Gg: ASbGncuid4R+CSMh2jKAvu8SVjcA8Y/O7kEc4TrbEMoVWp5fm2qiGRiX7Z0PCJisnbV
-	csa7TDi3kVCfbWfeQ8mc0FBMIqzor/iDb/SgCaXQf7eENhFRfjOGF9yo241qIPMhA9eBfxdAMem
-	Dd1qe+8b22+kuF5bxr1xo9Zm97Pimw7Z5USc7gwPNY7g2+Uyd7AKZ80SP2+lb26pzIbz0WBXW+2
-	gmCElHupBt7BkuC/MOFwPlq5OWnnTKeipRX3TVB4EYuo0SmUehGgPG7TJm9sUvRNFR8oE9I4FRK
-	oPGwWRpLZp+sZRpY1+j9jJkSQcZ5JSgQNF0MqR5E4rHg366OobuEplIJScGeOae6oWWrG4/1ksB
-	V+1vUdAOoLYs=
-X-Google-Smtp-Source: AGHT+IF/15k0UhDJHrTcrKwLdwkzfbrEugE0iaN0gMVkMiQ4Upn4VgFsHeYzGWOfl44lDF56ZG+LGw==
-X-Received: by 2002:a17:907:8b85:b0:ae0:cae0:cb35 with SMTP id a640c23a62f3a-ae3c2ce87b1mr512443266b.37.1751532693871;
-        Thu, 03 Jul 2025 01:51:33 -0700 (PDT)
-Received: from [192.168.7.84] ([92.120.5.11])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae3b94b3b2esm388690066b.62.2025.07.03.01.51.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Jul 2025 01:51:33 -0700 (PDT)
-Message-ID: <10ef8a9a-6d23-4fb9-933f-71ab493d21c7@gmail.com>
-Date: Thu, 3 Jul 2025 11:51:31 +0300
+ d=leica-geosystems.com.cn; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fQWkJ1axOeN4jlMDtG5tGA/zgCERvn9cWvUumpkc8cs=;
+ b=Uy+XZsfDpxfv//S112QEa0GnV69+v+V+sbB9XwaG2/f9AJz3k1g2KEx2JNaeYDbR29qEADGBP4Kf+KlwPaz1IQL/g3BdKAS7dE5yrc2eEF5uhO0yTEx9MRSJSVQ6TPoMbOh9L62h04vZb9l/JuLT1QJCeEgQSVEi4/VAtma2mYg=
+Received: from AM9PR06MB7955.eurprd06.prod.outlook.com (2603:10a6:20b:3a6::16)
+ by PAXPR06MB7661.eurprd06.prod.outlook.com (2603:10a6:102:dd::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.20; Thu, 3 Jul
+ 2025 08:52:51 +0000
+Received: from AM9PR06MB7955.eurprd06.prod.outlook.com
+ ([fe80::383f:82b9:8533:b78d]) by AM9PR06MB7955.eurprd06.prod.outlook.com
+ ([fe80::383f:82b9:8533:b78d%5]) with mapi id 15.20.8880.024; Thu, 3 Jul 2025
+ 08:52:51 +0000
+From: LI Qingwu <Qing-wu.Li@leica-geosystems.com.cn>
+To: Krzysztof Kozlowski <krzk@kernel.org>, "Rob Herring (Arm)"
+	<robh@kernel.org>
+CC: "krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org"
+	<conor+dt@kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, GEO-CHHER-bsp-development
+	<bsp-development.geo@leica-geosystems.com>, "lee@kernel.org"
+	<lee@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"pavel@kernel.org" <pavel@kernel.org>, "linux-leds@vger.kernel.org"
+	<linux-leds@vger.kernel.org>
+Subject: RE: [PATCH V2 1/2] dt-bindings: leds: pwm: Add enable-gpios property
+Thread-Topic: [PATCH V2 1/2] dt-bindings: leds: pwm: Add enable-gpios property
+Thread-Index: AQHb60cttvgZtWYm/0as3a8q/wD+07Qe09mAgADxulCAADdRgIAAG4kQ
+Date: Thu, 3 Jul 2025 08:52:51 +0000
+Message-ID:
+ <AM9PR06MB7955DCFFBADEF3A56A923D92D743A@AM9PR06MB7955.eurprd06.prod.outlook.com>
+References: <20250702114759.223925-1-Qing-wu.Li@leica-geosystems.com.cn>
+ <175146290821.1131432.4001907939183416459.robh@kernel.org>
+ <AM9PR06MB79557F8FFA113011C4D824D6D743A@AM9PR06MB7955.eurprd06.prod.outlook.com>
+ <e98aa9ed-2d32-4db2-b7f2-a5e5ce1d1d84@kernel.org>
+In-Reply-To: <e98aa9ed-2d32-4db2-b7f2-a5e5ce1d1d84@kernel.org>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=leica-geosystems.com.cn;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: AM9PR06MB7955:EE_|PAXPR06MB7661:EE_
+x-ms-office365-filtering-correlation-id: d50d1438-20e8-421e-81bc-08ddba0efe74
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?QnUrRkhkMEtaV3QrL1JPejB3TGs3V25ZSWJWQzdpTHppOWd5QllTdWtNWGZQ?=
+ =?utf-8?B?ank2UXFBRkxBVWJaT2NEa3lSOUF0TUJ3azJiMTJ2dlZLUmRCMkRmTlFNS1V5?=
+ =?utf-8?B?dDJZWi91NlZCWmRnc095T2RIQ1NidXIvOTNvRWhMbjYvbVFqMnFpczVEelN1?=
+ =?utf-8?B?eVRRcnl2dURTZ2lUdlJCZnlpeE1BT1Q2Vm1rclM5bHlVelZ6R0RaOC9GaERu?=
+ =?utf-8?B?ckhMVWlhTVVIZHhEK0V3MnBURGM3amJ2d1g2YWRmUjVhRDdtQkd6UmJmZ091?=
+ =?utf-8?B?NENoOFd4cU5uNlFHYkdjZ0hLNlVRdkpncXUzclA2eWJ1K0RrMzVQVEdrdGNu?=
+ =?utf-8?B?QmM3Y2l5UE1RM1RrV1dqVHphRUhRZ2QyOW4xRFY2cFpLSjVGUE4yOUN3b1Ji?=
+ =?utf-8?B?OWpNTnp1djRONll4WXpLUk5tcG9lYkZNKzNLa0NnU3ppSmhiRFlrU01UYTJP?=
+ =?utf-8?B?NUo0bmhxaXQ0aWFpL0hESE5ZN0FmelVWZlNkUmpTRk05aVJjR0hZNVhrOWtW?=
+ =?utf-8?B?Q2VUVW9POW44YzlBd0tUR2M1NmNwUkJEaEprL0JzRzh5UVRtZ3JmOEs2d3BP?=
+ =?utf-8?B?NFhjQ0FFQ2hrKy85bXZ6TzJodmcvdTRZekJNTTU4UFVDbC96cnY1bnRTYnpq?=
+ =?utf-8?B?R0ozL0NsL0V3a0pTUGdoZitXbDNNNE96NTNWa0RSQkpZcFZzT1BGY0wwUWFa?=
+ =?utf-8?B?N1NQRms0aDlhUlVBVnBjekxKVFE1Z3g2anpLTyswU3U4SGtrNUZvbURNL3lu?=
+ =?utf-8?B?cHJRMEt3bkV6S09QRkNjR2F0cXFNQjcvR2pJZnhYZmt6a3kxd1Era0VFTDFJ?=
+ =?utf-8?B?VlAzTVZzRHFFK0JJR2cremFlNG1ycmgwdEtCelF4V3pOTVlPYnJxT0hBeDNz?=
+ =?utf-8?B?dk5LZTAyMjgycHE3cFVLRllZUWI2TlRIL05oMnpYR1Rib1hjS2pSQVFIemtl?=
+ =?utf-8?B?SWx0YlZpNlRxTkxoK0hzeUl6QXBtejZZTlpVcDhrelFOT0xvZ1VUVEw4bmJP?=
+ =?utf-8?B?Nk9DTlNaRkZBS0JMUmx3VWZTSktTV1REWmZWL1NpNVlzenJGaWJKUEVwNlVl?=
+ =?utf-8?B?a2phOUxjOGtTTUpSOWNCdk4wcmtwa3F4Z1pma1k4VzZPdWxqV1JNczdMQ3NZ?=
+ =?utf-8?B?QXRydGpxanNvK0hGbTBCZjEwVTFBNlFPaUQ1M1RTek8rM2MrdFhrRzRrRm1J?=
+ =?utf-8?B?NzA3SFY4VElHVUIwRmg0VForVTh2djFTc1kveExFRnZ1K3c1TDBIdGJtb2Ri?=
+ =?utf-8?B?Y3pPL3o5SUpVNytQbVk5Wlh2Zm0vN3B4aFdiWkgxcjJnc1dPcUZMZHhjMDVv?=
+ =?utf-8?B?dHhkbVlvZjlLNXBhQTJsVVIwQ2hiN1QzYk1uSGltemNiOVdWTFdYekk5eEZT?=
+ =?utf-8?B?WHBaeU9mVXFhVGJWbnJBUUllWWFTVDlpa1pPSDIyRWQ4djlYaklPK01zeXhK?=
+ =?utf-8?B?Zi9KRjlwOFpSSGpZam1xZTR0YlFISThMY29TSEFkb0ZyV1gzT0EvMzlYcVNv?=
+ =?utf-8?B?Q2pvdFA3UVZuUzRxSC94WGl6UWRPR0g4azhQZm15Ymt3Y1p3YloxUk43UXJs?=
+ =?utf-8?B?amU3OXNZUnJuY0J0aC92T0F3YmFqcjlwV29pQTQ4UWRJOVBheUdXNkR1eFB6?=
+ =?utf-8?B?M0xMTnZaNHJtSW5ZSFhHMkYwUUoxdVdZcnVzalgvZ3V3bXlISU83R1NRZ0E5?=
+ =?utf-8?B?bEMvYVd0QjlaZDBqVER3bFFESmd4TkdsZElDMXM0cnlOKzZITHZyU0owV0lw?=
+ =?utf-8?B?WC9qY3VIK3grbTlqNUowTXZiYWNkaEVEZFljMWVBeXc3TEJXZ2JzZmFZLzdi?=
+ =?utf-8?B?UFYxZHNsb2J3S1ErKy9PMXQ3RTlRT2JUaVZ4QTRjbkFhakJoWTZzNW1kQlJv?=
+ =?utf-8?B?bXFpc3FGdTZ2WW9mQVYwb3BVREhSeTdrNU5LOStxaEhQZ0pNa1U4Y0J1Y3Zr?=
+ =?utf-8?B?S0ZIS0NuZlMyNUdjUmF6dkJXTG1NRUR5dHViZ3p6Y0puTFBKbEd5VHBTRDRJ?=
+ =?utf-8?Q?F1LOiIUTKYgTLT2isr+Dp8Jt+KpPOM=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:zh-cn;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR06MB7955.eurprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?aFJBeHQyZEFVTUxIZzNOQUU2OFNtY2lXaFN2OWtsSWVEeEdLQjJNVDI0aitv?=
+ =?utf-8?B?SkMrb1Z2SjhlYWNtUW5lbGozWHRGK1QybnZUajNwa21Rb2NJYklTcTJSelkx?=
+ =?utf-8?B?aDk0dndEcWkxWXY2cmhNbzE4Yy9iMEV0ZW5jK1ZQWnJUTGZsU0lGV0JDMld5?=
+ =?utf-8?B?dEFaWVZkdkVmclJZSDZBVzcyQW5GRlA3OHRGR1FqRmRNeHZYdEQ4ZlphME9N?=
+ =?utf-8?B?akVFZ2FEaWUzdE5mVUZ6MWR2SlZlbysva2ZoOGk0elFaSDUydmpkRmxveEFJ?=
+ =?utf-8?B?RVBNb2QvYXhXR280YS9oWVVmdnJNa2ZKM3VRTGlwcVptTFpIV3RyQVNzbmRG?=
+ =?utf-8?B?UWdaU1ZNUDJxTHAzQlYzTTRXemdKODJOcjRVTUxSWm43cUgyTlB3V2phVUFu?=
+ =?utf-8?B?bHdLc2VOalludHlaOFpEK1l2SWlnOGVlbjBKN2k0R0ZRd2RQSEJrNmZ2NXhB?=
+ =?utf-8?B?YmdUd2wwS3k5WGNDQmNUUitYcnpEQU5Pb2o2RkJwOWs5N0lNYWxUUUxudk9D?=
+ =?utf-8?B?cEFDeXhaMEZWUG91Tlh0dUNObUdnV0cwUGxEYXVPMTgyODFzRHdzbWRrVlB0?=
+ =?utf-8?B?RzZwL2hrTHZPTzJDaUg4K1htbkMvQnVsTDFqUDRRdW9DeFJuUWt4QTBQQnlX?=
+ =?utf-8?B?WDlWdUQ2VDRvWWJQT2Y5WDg0SGFVSDNBcGJTNnZ2eVFtaU5ON0NqVGdHR0xs?=
+ =?utf-8?B?R21MMytCTWk5dkJjdjdOZkoyZmVvTG11WFZJS2kvV3g4WVIrdThseVpTTXFV?=
+ =?utf-8?B?cDludjJCR0UzNzZLN25VaWFYaGpXQlJvNW1sWVdxdnF3b0hEV1NKdzZxYVhi?=
+ =?utf-8?B?Y1VGUzFYdFVlMjZSdmt4dzZOakhRK0RpUjBXZ2RyYVovdWQ4aEJaTFBLREVS?=
+ =?utf-8?B?Vml5U2t4MjlreEdYb0FNMHV1NlBiZTg5QlJQOGVVTUpQTFpyY1BVK0JlT3Vu?=
+ =?utf-8?B?dng0MTdCYUtJdzBvbllxZHA0MVc3OEZmZVZPeUsxS3dhWDd0NzJ0Y3UrbWUr?=
+ =?utf-8?B?c2x0NWhob213eHd5OTNSTzdrYUZNczhvU0E5VzJtajkxajhSZmVyOTJtMGll?=
+ =?utf-8?B?K1lkN3JvL1VJaHZGSDdKV3BpRGszb0ZmdjZWYzV3U3JYay9DdUhJTU5VN3dl?=
+ =?utf-8?B?dFkwUGRXeS9DOGFRaDNzRlBvcjI2UnRxMXlwUmUzQnhrR3pGYnJhMGJqdnQ1?=
+ =?utf-8?B?bHRwVURoWk5TditvRGcvdG5ZTjFKRllJbU1qTCsrQWNjZCtteXhZWDhEZlB1?=
+ =?utf-8?B?QlFDMVRxSzUwZk0wS0JVRFdyRCtkT3lwSGRFbXdmL2pQZlZZYzJ3aU4zZDJr?=
+ =?utf-8?B?a09oYnc4MkJoQW1oTk9ZN3REa1E1czVKa0NpVGpCQ3Y4eUR4SDJBeGo3VUdy?=
+ =?utf-8?B?aHhnbjVqTzNCY1lpWGNNc3ptckI2dHhxRDJENFlaQk96bURWaWpHVFZrOUFx?=
+ =?utf-8?B?aStHQmdHbUVCa3hITDZZbXBFenpTTy9NVmxUU2N6MnBxc2xxNGtKampLRFVt?=
+ =?utf-8?B?enZ0cWxrdm1teTJNQ0RKUmZCZjRhQXdRM1NKMUlNQ0wyYWRjMVN6T0lZVFNR?=
+ =?utf-8?B?a0VSZFNKU1RMdUplbFZXMXdZelNnTzZ1aEw0Wkd2eTFVSy9HZGxKclpOS2J5?=
+ =?utf-8?B?WDRqcWIvaFAzV0pmSzdqMk84RHdhbXpMRHhGdFBoTENTb25MNFpvay9Bak50?=
+ =?utf-8?B?Rys0S29LVkxrWGFqRE8wUHd5QzJBd2JjQklHZlFYaDRZSXVFd1JzUjVNQk81?=
+ =?utf-8?B?ZnJrQkxtL3hva0p0b2VndDlhQnNOYllSMVk1UERsM0xuckhwbEh2ZHlsK05H?=
+ =?utf-8?B?OGNIZEdTWGplYUZwd2pic1hZay9CYUg2THFqSXk1MnVQbzIwQjgyeXh5UFFu?=
+ =?utf-8?B?UVhPaG1WeHpsNXUwU0xjY0crdjV2Yk5WdHZ4YWV4THoxcTdHK0pEZExJN2hp?=
+ =?utf-8?B?d1ZFbmlCTlk1d1M3cU5TNnJTU0l2VzJyeWh3RGVnempaMWJ4KzFOWExKUE5U?=
+ =?utf-8?B?U1VkUFFQT25wTDFKWEZGaDlIRzNSTEE2Tldqc2N1Y0h1aGJ3eFhZVGpLc0xk?=
+ =?utf-8?B?ZzAxb0hXSVllQUtHWUpra1dURlErYjBHL1Jma1RLekMrWlNhWmJjYTFzd0tJ?=
+ =?utf-8?B?N2hxYm5qMEgyd09FN1hKbDUwbkR1Y0tXdkYzMDFCTVdnZlVrOTVVWXp0K3dC?=
+ =?utf-8?Q?1jH7IG5jwUD6VoRZ7ThOOTQ=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 0/6] imx8mp: add support for the IMX AIPSTZ bridge
-To: Ahmad Fatoum <a.fatoum@pengutronix.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
- Daniel Baluta <daniel.baluta@nxp.com>, Shengjiu Wang
- <shengjiu.wang@nxp.com>, Frank Li <Frank.Li@nxp.com>,
- Marco Felsch <m.felsch@pengutronix.de>,
- Marc Kleine-Budde <mkl@pengutronix.de>,
- Alexander Stein <alexander.stein@ew.tq-group.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,
- Pengutronix Kernel Team <kernel@pengutronix.de>, imx@lists.linux.dev
-References: <20250610160152.1113930-1-laurentiumihalcea111@gmail.com>
- <3615415b-7ebd-45e5-8d7b-8a1b26ac7130@pengutronix.de>
-Content-Language: en-US
-From: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
-In-Reply-To: <3615415b-7ebd-45e5-8d7b-8a1b26ac7130@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-OriginatorOrg: leica-geosystems.com.cn
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: AM9PR06MB7955.eurprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d50d1438-20e8-421e-81bc-08ddba0efe74
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Jul 2025 08:52:51.7669
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 1b16ab3e-b8f6-4fe3-9f3e-2db7fe549f6a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: xwgDSsTGLGvpfDyyNooli0Z4opzw+cJeHJ3yASZSt6EAGaTSrrz18679X0ooKGuRvJfpG26zwLnop18PzVHfMv1uWsglWenPh18bMJuXM3g1hX7askkwrWmBLHa+OvHe
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR06MB7661
 
-
-
-On 7/3/2025 11:11 AM, Ahmad Fatoum wrote:
-> Hello Laurentiu,
->
-> On 10.06.25 18:01, Laurentiu Mihalcea wrote:
->> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
->>
->> The AIPSTZ bridge offers some security-related configurations which can
->> be used to restrict master access to certain peripherals on the bridge.
->>
->> Normally, this could be done from a secure environment such as ATF before
->> Linux boots but the configuration of AIPSTZ5 is lost each time the power
->> domain is powered off and then powered on. Because of this, it has to be
->> configured each time the power domain is turned on and before any master
->> tries to access the peripherals (e.g: AP, CM7, DSP, on i.MX8MP).
-> Sorry if this has been asked before, but I hoped the cover letter or patch
-> 3/6 would explain if it were.
->
-> What is the default configuration for the AIPSTZ before this series?
-
-the default configuration is the reset configuration since AIPSTZ registers go
-back to their reset values during domain power cycling.
-
-> I assume the SAIs under AIPS5 can be accessed by SDMA already, so why was
-> changing the AIPSTZ settings needed for the DSP to work?
-
-AFAIK SDMA transactions to peripherals don't go through AIPS5. They use SPBA, which
-is why SDMA works even w/o this series. As for the DSP: transactions to peripherals go
-through AIPS5. With the reset configuration, the DSP is not allowed to access said peripherals,
-which is why this series was needed.
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogS3J6eXN6dG9mIEtvemxv
+d3NraSA8a3J6a0BrZXJuZWwub3JnPg0KPiBTZW50OiBUaHVyc2RheSwgSnVseSAzLCAyMDI1IDM6
+MTIgUE0NCj4gVG86IExJIFFpbmd3dSA8UWluZy13dS5MaUBsZWljYS1nZW9zeXN0ZW1zLmNvbS5j
+bj47IFJvYiBIZXJyaW5nIChBcm0pDQo+IDxyb2JoQGtlcm5lbC5vcmc+DQo+IENjOiBrcnprK2R0
+QGtlcm5lbC5vcmc7IGNvbm9yK2R0QGtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5l
+bC5vcmc7DQo+IEdFTy1DSEhFUi1ic3AtZGV2ZWxvcG1lbnQgPGJzcC1kZXZlbG9wbWVudC5nZW9A
+bGVpY2EtZ2Vvc3lzdGVtcy5jb20+Ow0KPiBsZWVAa2VybmVsLm9yZzsgZGV2aWNldHJlZUB2Z2Vy
+Lmtlcm5lbC5vcmc7IHBhdmVsQGtlcm5lbC5vcmc7DQo+IGxpbnV4LWxlZHNAdmdlci5rZXJuZWwu
+b3JnDQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggVjIgMS8yXSBkdC1iaW5kaW5nczogbGVkczogcHdt
+OiBBZGQgZW5hYmxlLWdwaW9zIHByb3BlcnR5DQo+IA0KPiBUaGlzIGVtYWlsIGlzIG5vdCBmcm9t
+IEhleGFnb27igJlzIE9mZmljZSAzNjUgaW5zdGFuY2UuIFBsZWFzZSBiZSBjYXJlZnVsIHdoaWxl
+DQo+IGNsaWNraW5nIGxpbmtzLCBvcGVuaW5nIGF0dGFjaG1lbnRzLCBvciByZXBseWluZyB0byB0
+aGlzIGVtYWlsLg0KPiANCj4gDQo+IE9uIDAzLzA3LzIwMjUgMDU6NTQsIExJIFFpbmd3dSB3cm90
+ZToNCj4gPj4NCj4gPj4gT24gV2VkLCAwMiBKdWwgMjAyNSAxOTo0Nzo1OCArMDgwMCwgTEkgUWlu
+Z3d1IHdyb3RlOg0KPiA+Pj4gU29tZSBQV00gTEVEIGNoaXBzIGhhdmUgYSBkZWRpY2F0ZWQgZW5h
+YmxlIEdQSU8uDQo+ID4+PiBUaGlzIGNvbW1pdCBhZGRzIHRoZSBzdXBwb3J0IHRvIHNwZWNpZnkg
+c3VjaCBHUElPLg0KPiA+Pj4NCj4gPj4+IFNpZ25lZC1vZmYtYnk6IExJIFFpbmd3dSA8UWluZy13
+dS5MaUBsZWljYS1nZW9zeXN0ZW1zLmNvbS5jbj4NCj4gPj4+IC0tLQ0KPiA+Pj4gIERvY3VtZW50
+YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9sZWRzL2xlZHMtcHdtLnlhbWwgfCA4ICsrKysrKysr
+DQo+ID4+PiAgMSBmaWxlIGNoYW5nZWQsIDggaW5zZXJ0aW9ucygrKQ0KPiA+Pj4NCj4gPj4NCj4g
+Pj4gTXkgYm90IGZvdW5kIGVycm9ycyBydW5uaW5nICdtYWtlIGR0X2JpbmRpbmdfY2hlY2snIG9u
+IHlvdXIgcGF0Y2g6DQo+ID4+DQo+ID4+IHlhbWxsaW50IHdhcm5pbmdzL2Vycm9yczoNCj4gPj4g
+Li9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbGVkcy9sZWRzLXB3bS55YW1sOjQ0
+OjIxOiBbZXJyb3JdDQo+ID4+IGVtcHR5IHZhbHVlIGluIGJsb2NrIG1hcHBpbmcgKGVtcHR5LXZh
+bHVlcykNCj4gPg0KPiA+IEZpeGVkIGluIFYzDQo+IA0KPiBTbyB5b3VyIGFuc3dlciB0byBteSAi
+bmV2ZXIgdGVzdGVkIiB3YXMgdG8gc2VuZCBhZ2FpbiB0aGUgc2FtZSBhcyB2MiBhbmQgc3RpbGwN
+Cj4gbm90IHRlc3RlZD8NCg0KTm9wLCAgIkZpeGVkIGluIFYzIiBhbnN3ZXIgImJvdCBmb3VuZCBl
+cnJvcnMgcnVubmluZyAnbWFrZSBkdF9iaW5kaW5nX2NoZWNrJyINClRlc3RpbmcgaW5mbyBjb21l
+cyBsYXRlciBpbiB2NA0KDQo+IA0KPiBCZXN0IHJlZ2FyZHMsDQo+IEtyenlzenRvZg0K
 
