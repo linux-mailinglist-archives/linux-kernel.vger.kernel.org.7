@@ -1,119 +1,104 @@
-Return-Path: <linux-kernel+bounces-715008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-715010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39751AF6F86
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 11:59:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3282DAF6F95
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 12:02:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A53C16ABF3
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 09:59:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F6307B0E93
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 10:00:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B1152E0402;
-	Thu,  3 Jul 2025 09:59:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D0CC2E265A;
+	Thu,  3 Jul 2025 10:01:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WAwb1Em4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8588E298CD0;
-	Thu,  3 Jul 2025 09:59:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="U/RVzsMt"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80AA613C82E;
+	Thu,  3 Jul 2025 10:01:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751536770; cv=none; b=MzI80BZmApja0Pfh0weVXLmjeFh/Zhl6DYHzODE2H2v0HNrvLTBADOqJoVhLEtu6OMIjjt7WMfptly8GZHU+lE3ACNdxxv7jsMfLCULlZjH56B/yfPO9+GSC76o+LfHCh/GjcZ33qBgv0RNHv5ufP2SP8tMMXvdV7ShBIJopmRk=
+	t=1751536912; cv=none; b=Vok3TnUMXnAc/SN6oYLychq9JxeNm5cWorh9v7ecQQS07v1OH3vEEMXn1sKk80Lkyx6B2zVdL56g+vMWSa0TIWgFEpbi+sALIug2s+xesNjMCoBUmYVGYWw9jxUjRvbkm+zCTLVhlVDGZrNqh6PRf4/a9bwW8Zw7PqzQoC1+8CU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751536770; c=relaxed/simple;
-	bh=hmwC8Mt81KOHlfysNu2B10HuUZTMpw5cNTgRwSymcdo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AZz10Y9RzJq2r2zCR5b8EZlqjBRG0dxPSWOy3iMolrE97qUzr8yNbewNn6Jp3+nSPmR2Mxj279BnDWMi9ov+SZ0nkwXsRPbZpEWYUUwpzbMYKnIEfc16khNWUTN4VS1pJwKjwxfHSN52ZEPqeyzYD65IGh2RlUmZBOMjXDmhBsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WAwb1Em4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88F50C4CEE3;
-	Thu,  3 Jul 2025 09:59:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751536770;
-	bh=hmwC8Mt81KOHlfysNu2B10HuUZTMpw5cNTgRwSymcdo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=WAwb1Em4E6QC5RUTSyZwVe7mgOT1Il4N5ExdOwvIAWj5/ZA40RRgL+uC2XdmT8Ome
-	 s1cPUPme7ChlwiKQRK9NuipqjC2mR1hW9+8qT9Wh3R0wU5cQjN1Cbl6NV1D5jRwyj6
-	 zk3Mxq8DOY/+ZPGgSbq51k0hG0ad6hTDnqMN19CosIDKJUAL/ty11dUAqmxFj83daD
-	 hpo8FvoBDrdI++x9RKn4sFOb3NqOiwu0HhrBqXPPCODhV+0PfuuKYgKlSYPE4Eo4mW
-	 YNuwDaIlaqMwKWDmdkVr+AgRnxgQmejFyESh0TBP+/R6tTpK6BReg4jVS9ilwnw9AR
-	 SrDeN47eA4IEA==
-Message-ID: <85e411bf-58cf-46fe-9afa-7b76999f1a42@kernel.org>
-Date: Thu, 3 Jul 2025 11:59:26 +0200
+	s=arc-20240116; t=1751536912; c=relaxed/simple;
+	bh=SIP1cv/nfFPPcYAt8bSxvGN9cHpfhJDhYuQ9yDbsm5o=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dnlrhkIDrouZpJPa3uDh18iVio4tE/RjTRSS154v39XIELCOZZ894wvgY4gtb7HayK0zS8mfU1VVuxRHww3ZtvGk+GY3WPiwx9gP6EG6wGQs0c40HwvlY3oTLNYYp5DMmvzR8t0TCoojpSuwN1y+3MA4PP+pfwHHQmcGkAE6TzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=U/RVzsMt; arc=none smtp.client-ip=220.197.31.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=KO
+	0SdRrfWM51e/MZYsiLBwiZIMApjZVXhDZgKnfi9JQ=; b=U/RVzsMtX6PHAUMIvs
+	fBiCvOt6AK1MlEhfJg7O8rJU3k0zTCVLbXKe7ShzY5O0pAogwR/kAaX5BYeIKsfJ
+	1JRlyncww+b+A2NtSMmTkvb634w0Eq4DXr5NCa+uCIjpA7LsstlKtE/ppm6/E0B9
+	kj5MDrlizF9Z6AnzOAUNaNbnI=
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [])
+	by gzga-smtp-mtada-g0-1 (Coremail) with SMTP id _____wD374rnVGZoZdkDCQ--.58228S4;
+	Thu, 03 Jul 2025 18:01:12 +0800 (CST)
+From: Haoxiang Li <haoxiang_li2024@163.com>
+To: niklas.soderlund@ragnatech.se,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	richardcochran@gmail.com
+Cc: netdev@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Haoxiang Li <haoxiang_li2024@163.com>,
+	stable@vger.kernel.org
+Subject: [PATCH v2] net: ethernet: rtsn: Fix a null pointer dereference in rtsn_probe()
+Date: Thu,  3 Jul 2025 18:01:09 +0800
+Message-Id: <20250703100109.2541018-1-haoxiang_li2024@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V4 1/2] dt-bindings: leds: pwm: add enable-gpios property
-To: LI Qingwu <Qing-wu.Li@leica-geosystems.com.cn>, lee@kernel.org,
- pavel@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: bsp-development.geo@leica-geosystems.com
-References: <20250703093430.229959-1-Qing-wu.Li@leica-geosystems.com.cn>
- <20250703093430.229959-2-Qing-wu.Li@leica-geosystems.com.cn>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250703093430.229959-2-Qing-wu.Li@leica-geosystems.com.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD374rnVGZoZdkDCQ--.58228S4
+X-Coremail-Antispam: 1Uf129KBjvdXoW7JryxZF18GF4fuF4xCw43trb_yoWDKrX_Kw
+	12vFs5Xw4DAr1jkw1UKw43u34ayr4kXr9YvFsrtrZxtay7Zr15XFZ5ZF93Gr1Uuwn5CF9r
+	ZrnxJa1xA342qjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sRG0PfUUUUUU==
+X-CM-SenderInfo: xkdr5xpdqjszblsqjki6rwjhhfrp/xtbBkBh-bmhmTADskwABsl
 
-On 03/07/2025 11:34, LI Qingwu wrote:
-> some pwm led driver chips like tps92380 require a separate enable signal
+Add check for the return value of rcar_gen4_ptp_alloc()
+to prevent potential null pointer dereference.
 
-Sentence starts with capital letter.
+Fixes: b0d3969d2b4d ("net: ethernet: rtsn: Add support for Renesas Ethernet-TSN")
+Cc: stable@vger.kernel.org
+Signed-off-by: Haoxiang Li <haoxiang_li2024@163.com>
+---
+Changes in v2:
+- Add a blank line to make the grouping similar to the
+style of other error checks in probe. Thanks, Niklas!
+---
+ drivers/net/ethernet/renesas/rtsn.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-tps92380 does not have dedicated enable pin. It has VDDIO, which serves
-also enable purpose, but it is a supply.
+diff --git a/drivers/net/ethernet/renesas/rtsn.c b/drivers/net/ethernet/renesas/rtsn.c
+index 6b3f7fca8d15..05c4b6c8c9c3 100644
+--- a/drivers/net/ethernet/renesas/rtsn.c
++++ b/drivers/net/ethernet/renesas/rtsn.c
+@@ -1259,7 +1259,12 @@ static int rtsn_probe(struct platform_device *pdev)
+ 	priv = netdev_priv(ndev);
+ 	priv->pdev = pdev;
+ 	priv->ndev = ndev;
++
+ 	priv->ptp_priv = rcar_gen4_ptp_alloc(pdev);
++	if (!priv->ptp_priv) {
++		ret = -ENOMEM;
++		goto error_free;
++	}
+ 
+ 	spin_lock_init(&priv->lock);
+ 	platform_set_drvdata(pdev, priv);
+-- 
+2.25.1
 
-Best regards,
-Krzysztof
 
