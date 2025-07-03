@@ -1,210 +1,126 @@
-Return-Path: <linux-kernel+bounces-714484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DBD8AF687C
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 05:07:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3528AAF6876
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 05:06:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 584523BA6D8
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 03:06:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 83B95171097
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 03:06:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC43322A1E6;
-	Thu,  3 Jul 2025 03:06:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13A54221F34;
+	Thu,  3 Jul 2025 03:06:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="futhr3sV"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1Jc94u+g"
+Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8472D1F9F70;
-	Thu,  3 Jul 2025 03:06:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DCF01F9F70
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 03:06:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751512005; cv=none; b=BZdLhM6S5MKz2miPC+51+Q9GgiuGFunFz/rSrt4K4Tf+cqghFWvpAWk/lY0nHTwe6YrUUuH0zV4yTZzPNkxWanaSOG4UJpZnXH7xt2p96Fmw8c2z16SxvassjqOxExCxMqgTtJ53zjZcjjcZjfSTdhM0LuRqg5yOy5fZ7hEP3QQ=
+	t=1751511969; cv=none; b=jO2mUbvYmnCJQXRMhDdqtefzQTL4bMEVRuj+gWeX3Th8tCDQ3SZgKHZj20dguqlnHI9FFoD6DcGvEH5DwfYLRXJIgTWbIw5UDj7iRWYRWZT0GX5v9Bbs4GDLicXcrdcojHoVUiSIpKtdfn/TcD4iMC4oX/5/Xy8P4b5ewpgCMeo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751512005; c=relaxed/simple;
-	bh=g0goUqpz0H5nqzeA/3fuXMeQmy/4V6hWpW6/CbP1VvE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=l5TFl84bpBDACE9sqF1cQ1Wl2i28AEFzKb+Gunskc/SxFXtvSGyIPJQapND/CSyzVifl0Fl1kg8H+2VNYzafeAAXybcHOuXuv2dBMCtpwVH08o5dJmXJUkuPGDyJw3CBDCypn7+2zf3UkssiPCoDPR7lK/zllqCrwHli4DEjjEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=futhr3sV; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-74801bc6dc5so435571b3a.1;
-        Wed, 02 Jul 2025 20:06:43 -0700 (PDT)
+	s=arc-20240116; t=1751511969; c=relaxed/simple;
+	bh=Gz7QyMMOiN9IEeaAXi9wBI+uc/+zDRfW2GVvk1QUS98=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hZHo3qJ7qFL9gArZ+jT3n6zdKNrL1aL/9Gbra8fSHVDG7TG/CoYUFJKYioJl1pTqX/cqrRJ2WQTZG/Q/WE0hCs/eQIZt4d4RUxO8AaY14hsVn17LeTaANadekvqbnkuAwzTYeMdi5iytB3osZt86FNTQEif68xxUOYfPBP0B8dg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1Jc94u+g; arc=none smtp.client-ip=209.85.166.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-3ddc99e0b77so118935ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 20:06:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751512003; x=1752116803; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1751511967; x=1752116767; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=NUDKiPyVRQeazWkY4m2jYwgTMEJufvXw/+pCwXThNj0=;
-        b=futhr3sVqvVbv5PeFK1/8Ra+MBVeYj2V8zlzgc04nQ8endPFnj7RW4svet9lZJAbKT
-         cEV31cLqDBFLmLsQm8Jf2skGo0hnsMqRKGabEQ0+URkjaSgtorhH/wAkLPhJtkaLxbHu
-         xRawBoNzzdEBBjOvcBAFqdIhYdzewB/jVEe+/9/bhTVpMcSfm0UCFAzY//iLgxD8b4qJ
-         kLEmggdEfn7meLgubbgeUxiA/2KSQf+ja531OjxqS93vfSikUQVAoeSS/fKcwyeU0rbd
-         XJ6Q05pJiPJGMYXwoUxonU9Y3JT/E/6ofoy1Dvff6NyQYk+NCkO4IWcq/M74ortV5BOJ
-         kbYQ==
+        bh=QxdfTlo0silPVEDxOFE/e+T3VT60Hv2C4y6UmPeu/b8=;
+        b=1Jc94u+gxNfXjBo1pyFrITNUbYa7XnlOn9CkwOYgfe1I2vjv/4WompUm/P89I2663T
+         WlTAywAsICKtSYg2YQWkzPPrs6BarwgdFEGarOrASWqTXpNC21v6GQvWNgFidIUNp9u0
+         noX4U5fi7iM3g26motAukpUfTfVLT77IIqvLhVePj+UPhnpwlw6/XKfrFv/pQ7WW4Ypw
+         EQH0AOZfdBQmH/xsi2GHvdShSox27QTDUZt4SMldZ0VK1LFY4FBFd3XUIxTbwKEhiFSN
+         ALgQOo1pQ9JCYWYJ+8ooDjs0NO3p+YbLwDBeQszyX+T7UMHE6MKikVkDt0NBnMAcm4h2
+         O7Iw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751512003; x=1752116803;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1751511967; x=1752116767;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=NUDKiPyVRQeazWkY4m2jYwgTMEJufvXw/+pCwXThNj0=;
-        b=s//J6L/Vqfb67EakcIr8mJTjchfNGz8YC0O6EZqIFanGX/JFQEYyyyTbwne7xqEjmR
-         FkpREPXIZcVOxyS0D1SDlhFx3YJXe0AxQ1G28EDDjblLynQg9s9pPi0n/7L/50ROkYno
-         yCTMwHS8rHEi03qUWb9Gb52SZerZyPvhCGb/P/DsxOM1jVwcq7Wolw9lXdLc9NbOswVZ
-         vWokrceVcdBHfCOjy6VghkZUsbfGN4COqjMT4p+FBTMgn2qFwfjLRWMQEXdzAB8+A1/J
-         Any/GvpWIG3/ghpx1XCI46Lykhi4yIfUgAgCp2uAScRT5FKINYhEMQ3cZ53vAKbdtjrk
-         McWg==
-X-Forwarded-Encrypted: i=1; AJvYcCVeWs739Os2K1UWjy0HwGDr+LHiy6FI/NfWysizNPhri8m3QRzlyZ+nhHSmq1Uz3Sdxxo0=@vger.kernel.org, AJvYcCWRiudUrqgxVZ+gickPFuFMQVD2ieUJox5uPsfQdS2z4mIdhAgQ4KXWwQwYnf8XFDq684SUUNn5d1VcxROS@vger.kernel.org, AJvYcCWoTqS8OahUvQLE/zhC2jTqr1P5A1DpF/lwfTbuKzZiJaOt3hGR+tV9mPlMKQkl58470PpgqVrf@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzt32Kx+S4dc+vKhofa7FdVj+vQ15w0Adx+yqCIwt3NRbuDs1O+
-	iZTSzficQ/svkybPbjP45vACNXlU22RyrR4iQ+G72E+dKndgOIJlvJPg
-X-Gm-Gg: ASbGnctMiu5CgI+KFQjPoCxvbPcJZS04RdoISpqM/XuHiOwPgaVe6XZOxVYTWo1+UTZ
-	nPC8VqIi8J7mrghw8L1S6hWvAI92zBHblXuKicf4GdO7irjbfp8OhV4tPtvZ/2dqK+ERjPbSG15
-	mX7ssyAPilzZui/zK45j1S0IAmZ8cBn55RwBwszT5FEVAuyTl/rKxaN8epkQ7Fv5JHUV420JuO/
-	5IpmT4y2SGurcNGS2+llaJKJGyatMAnbCapxG6Rwo+PIRIVZX1UQaX9/Oilh/ofu7ZqLiOJEGti
-	FfoUO3ry+X451X05mrmfb/PiqOwyueXfQkfKx+NdMpEj8zOmRaS5o8deYj7CJ9l3qWCKU5xblUI
-	qQ64F3rdd
-X-Google-Smtp-Source: AGHT+IFz7kt0Nb7vZz+tzUh5I+gOTwteT4lcjZk9zNPo6PfyuL6H+Px1Zb73lqI3Wo071I67AWpnGQ==
-X-Received: by 2002:a05:6a00:2d94:b0:736:9f2e:1357 with SMTP id d2e1a72fcca58-74cd5b575bdmr707117b3a.12.1751512002612;
-        Wed, 02 Jul 2025 20:06:42 -0700 (PDT)
-Received: from devant.antgroup-inc.local ([47.89.83.0])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74af541d9a5sm16108617b3a.62.2025.07.02.20.06.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Jul 2025 20:06:42 -0700 (PDT)
-From: Xuewei Niu <niuxuewei97@gmail.com>
-X-Google-Original-From: Xuewei Niu <niuxuewei.nxw@antgroup.com>
-To: sgarzare@redhat.com
-Cc: davem@davemloft.net,
-	decui@microsoft.com,
-	fupan.lfp@antgroup.com,
-	jasowang@redhat.com,
-	kvm@vger.kernel.org,
-	leonardi@redhat.com,
-	linux-kernel@vger.kernel.org,
-	mst@redhat.com,
-	netdev@vger.kernel.org,
-	niuxuewei.nxw@antgroup.com,
-	niuxuewei97@gmail.com,
-	pabeni@redhat.com,
-	stefanha@redhat.com,
-	virtualization@lists.linux.dev,
-	xuanzhuo@linux.alibaba.com
-Subject: Re: [RESEND PATCH net-next v4 3/4] test/vsock: Add retry mechanism to ioctl wrapper
-Date: Thu,  3 Jul 2025 11:05:14 +0800
-Message-Id: <20250703030514.845623-1-niuxuewei.nxw@antgroup.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <2cpqw23kr4qiatpzcty6wve4qdyut5su7g7fr4kg52dx33ikdu@ljicf6mktu5z>
-References: <2cpqw23kr4qiatpzcty6wve4qdyut5su7g7fr4kg52dx33ikdu@ljicf6mktu5z>
+        bh=QxdfTlo0silPVEDxOFE/e+T3VT60Hv2C4y6UmPeu/b8=;
+        b=CC3E9ZRWroZsnxogoQ2/y2NBRLd5BpIuG6ZFwkhbz3zndR+vkencwsCIWeJTttCSyT
+         my+3HPsFiSwh1RAMYoaKhLpFTS6okF3x4cKG+S/gqA058kDCeYB0vjJbWj5YlOvsyBpy
+         w8Vi8eDzSLSUPky4IBM9gku6Gc6h57ksCTDEZasj6F48kS2BktstGjQYNMpb9CdL4wAC
+         kU0wtl92tDuP0ZKwTzDk4Oy0YIbLXkfoCch1Kjg+sGzXIZG167LE+NdiiZ2FfS2JG2xo
+         YVL2DWEM+v0nEVeAHLUcwycZgTCgvpDcpv3VqcZnuscRpWN87JCuz154DEZofEy1zKVb
+         3n9g==
+X-Forwarded-Encrypted: i=1; AJvYcCU77T9Cpk+Qtrh5R7cOoPoEzxFG7ObFAxI1UCuPv9qWBaRnaOitw6wrxH89e1ePmIpWzNTyKwO8qnVvjA4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQQazT1nII3c5MFpgXTq2eDwVQ6vFkq8vEOCl/SdhA14CYz1Re
+	AYCQs7xDTZkK8J6rmvT0Yi6LJyIKbgdTOJ1udcTlOr1G8k8dPE6U+E1REV9py8xjsWfx6sS+yd5
+	A3X2VEASv+uGaw+H/kBzMNLkz1QxV/bItGls4SczA
+X-Gm-Gg: ASbGnctl0QAHs+8da/9EOYFILj3g1eTToyV2pBPf15phUlxjuwd1L3froINSDIkue8s
+	mpviuL9UcEc6grRi/eCBrJdsRAyz5mrW5ioV+oHTyoSipyJt3yRhSKVqIHjK96QZ88vZFHuCCE7
+	ZDClgLBnboui47vaZ5ilWrYjFQ+96wlQM40urQXOCNa+ZR
+X-Google-Smtp-Source: AGHT+IFltPa9ZfitakgGrPfxMm177FOio7h844aIIw+t6+x6VinRXhlR4cWwxS8sSOM3F5zAxRXT83GItPpdQs/dtXU=
+X-Received: by 2002:a05:6e02:258e:b0:3e0:5a78:1dc with SMTP id
+ e9e14a558f8ab-3e05c7ce7dfmr1823205ab.14.1751511966931; Wed, 02 Jul 2025
+ 20:06:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250703014942.1369397-1-namhyung@kernel.org> <20250703014942.1369397-3-namhyung@kernel.org>
+In-Reply-To: <20250703014942.1369397-3-namhyung@kernel.org>
+From: Ian Rogers <irogers@google.com>
+Date: Wed, 2 Jul 2025 20:05:55 -0700
+X-Gm-Features: Ac12FXxWkHdkSMWNZ7YLK35QXYkZuhgk5-pc7dUVwAS2Kojpr9yIcqhAi08p6A0
+Message-ID: <CAP-5=fVysPz0QMhVY=HniYxL3cqPnXakDR_c9a_WN_77Pu8HgA@mail.gmail.com>
+Subject: Re: [PATCH 2/8] perf sched: Free thread->priv using priv_destructor
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Kan Liang <kan.liang@linux.intel.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Resend: the previous message was rejected due to HTML
-Resend: forgot to reply all...
+On Wed, Jul 2, 2025 at 6:49=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> w=
+rote:
+>
+> In many perf sched subcommand saves priv data structure in the thread
+> but it forgot to free them.  As it's an opaque type with 'void *', it
+> needs to register that knows how to free the data.  In this case, just
+> regular 'free()' is fine.
+>
+> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
 
-> On Mon, Jun 30, 2025 at 03:57:26PM +0800, Xuewei Niu wrote:
-> >Wrap the ioctl in `ioctl_int()`, which takes a pointer to the actual
-> >int value and an expected int value. The function will not return until
-> >either the ioctl returns the expected value or a timeout occurs, thus
-> >avoiding immediate failure.
-> >
-> >Signed-off-by: Xuewei Niu <niuxuewei.nxw@antgroup.com>
-> >---
-> > tools/testing/vsock/util.c | 32 +++++++++++++++++++++++---------
-> > tools/testing/vsock/util.h |  1 +
-> > 2 files changed, 24 insertions(+), 9 deletions(-)
-> >
-> >diff --git a/tools/testing/vsock/util.c b/tools/testing/vsock/util.c
-> >index 0c7e9cbcbc85..481c395227e4 100644
-> >--- a/tools/testing/vsock/util.c
-> >+++ b/tools/testing/vsock/util.c
-> >@@ -16,6 +16,7 @@
-> > #include <unistd.h>
-> > #include <assert.h>
-> > #include <sys/epoll.h>
-> >+#include <sys/ioctl.h>
-> > #include <sys/mman.h>
-> > #include <linux/sockios.h>
-> >
-> >@@ -97,28 +98,41 @@ void vsock_wait_remote_close(int fd)
-> > 	close(epollfd);
-> > }
-> >
-> >-/* Wait until transport reports no data left to be sent.
-> >- * Return false if transport does not implement the unsent_bytes() 
-> >callback.
-> >+/* Wait until ioctl gives an expected int value.
-> >+ * Return false if the op is not supported.
-> >  */
-> >-bool vsock_wait_sent(int fd)
-> >+bool vsock_ioctl_int(int fd, unsigned long op, int *actual, int expected)
-> 
-> Why we need the `actual` parameter?
-
-We can exit early `if (*actual == expected)`, and the `expected` can be any integer.
-I also make it to be a pointer, because the caller might need to have the actual value.
+Reviewed-by: Ian Rogers <irogers@google.com>
 
 Thanks,
-Xuewei
- 
-> > {
-> >-	int ret, sock_bytes_unsent;
-> >+	int ret;
-> >+	char name[32];
-> >+
-> >+	snprintf(name, sizeof(name), "ioctl(%lu)", op);
-> >
-> > 	timeout_begin(TIMEOUT);
-> > 	do {
-> >-		ret = ioctl(fd, SIOCOUTQ, &sock_bytes_unsent);
-> >+		ret = ioctl(fd, op, actual);
-> > 		if (ret < 0) {
-> > 			if (errno == EOPNOTSUPP)
-> > 				break;
-> >
-> >-			perror("ioctl(SIOCOUTQ)");
-> >+			perror(name);
-> > 			exit(EXIT_FAILURE);
-> > 		}
-> >-		timeout_check("SIOCOUTQ");
-> >-	} while (sock_bytes_unsent != 0);
-> >+		timeout_check(name);
-> >+	} while (*actual != expected);
-> > 	timeout_end();
-> >
-> >-	return !ret;
-> >+	return ret >= 0;
-> >+}
-> >+
-> >+/* Wait until transport reports no data left to be sent.
-> >+ * Return false if transport does not implement the unsent_bytes() callback.
-> >+ */
-> >+bool vsock_wait_sent(int fd)
-> >+{
-> >+	int sock_bytes_unsent;
-> >+
-> >+	return vsock_ioctl_int(fd, SIOCOUTQ, &sock_bytes_unsent, 0);
-> > }
-> >
-> > /* Create socket <type>, bind to <cid, port> and return the file descriptor. */
-> >diff --git a/tools/testing/vsock/util.h b/tools/testing/vsock/util.h
-> >index 5e2db67072d5..d59581f68d61 100644
-> >--- a/tools/testing/vsock/util.h
-> >+++ b/tools/testing/vsock/util.h
-> >@@ -54,6 +54,7 @@ int vsock_stream_listen(unsigned int cid, unsigned int port);
-> > int vsock_seqpacket_accept(unsigned int cid, unsigned int port,
-> > 			   struct sockaddr_vm *clientaddrp);
-> > void vsock_wait_remote_close(int fd);
-> >+bool vsock_ioctl_int(int fd, unsigned long op, int *actual, int expected);
-> > bool vsock_wait_sent(int fd);
-> > void send_buf(int fd, const void *buf, size_t len, int flags,
-> > 	      ssize_t expected_ret);
-> >-- 
-> >2.34.1
-> >
+Ian
+
+> ---
+>  tools/perf/builtin-sched.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/tools/perf/builtin-sched.c b/tools/perf/builtin-sched.c
+> index b7bbfad0ed600eee..fa4052e040201105 100644
+> --- a/tools/perf/builtin-sched.c
+> +++ b/tools/perf/builtin-sched.c
+> @@ -3898,6 +3898,8 @@ int cmd_sched(int argc, const char **argv)
+>         if (!argc)
+>                 usage_with_options(sched_usage, sched_options);
+>
+> +       thread__set_priv_destructor(free);
+> +
+>         /*
+>          * Aliased to 'perf script' for now:
+>          */
+> --
+> 2.50.0.727.gbf7dc18ff4-goog
+>
 
