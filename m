@@ -1,96 +1,191 @@
-Return-Path: <linux-kernel+bounces-716284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 158F5AF847E
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 01:50:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DC2EAF8484
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 01:51:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D049583DF4
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 23:50:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7A445840ED
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 23:51:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01C6A2D94BF;
-	Thu,  3 Jul 2025 23:50:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A5762DA77B;
+	Thu,  3 Jul 2025 23:51:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="rbMoDk4l"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P4Ns7qZy"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33A2529C351;
-	Thu,  3 Jul 2025 23:50:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 905D529C351;
+	Thu,  3 Jul 2025 23:51:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751586618; cv=none; b=Wddn/VlL/WOg4gVXJY2Wmcs+tMWmLoeaQXBKWlDU5QLWIfxfDQvb1fXCLiODx5DH0fmz6LHozvK4+fw72KXwbHG6gfkpyqmiC31xWT+jrbhVlgg9mCYfU69+GgXqqmx8kKTOMQiBp0rLyGJO9kTQ/n7h3/B1K3lKd5WG4SwUP5c=
+	t=1751586712; cv=none; b=opR+1w3sCEjH/ZlHFlK1OLfGPyIzjxK396hgJNdJSXdFBeBAq78ndqKo4+ybybxNWVTnE9sK/ql7Ya6fRttdHawWf0XDSaOUo1zgDYv9oyFj6oGXB930w1BNV5qZbCFEpBzLQTVYBdWE1JMDnFXlUBHGdZXO/kcaQnISfPLh8j0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751586618; c=relaxed/simple;
-	bh=Oe3QQgJWZ56o+ycCPLVB9VISYiwHmlWi1PPZPZiKgDU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=pyR342JzoVcU9LWs6LLmkLHP8TOckjO5Mh8WwCTYHnooVyT0fS/1qe48wPlM+V9FTmVtG965nwTMeZaHMSlOZHZNZ7dl8/IR6oh7OdaKeGKw5Pew5Zxn3C1JLekXqwjyf5h5l1TdANzV8NV/HJx47knCq3MkeFiUxfgHTuuaD0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=rbMoDk4l; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 3F132406FC
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1751586615; bh=+Ni/Yq+mC3Wm6z94sO7qxNlDh19w0DmweAP27z8OY04=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=rbMoDk4ltkPAM5BEdVehqCcjN6UZOIpoYY2qbarlNVf6CjlIyA2Vk0eaWTRW58JP1
-	 JntEayhrA+rX2W9vHKzt4eNO7kOSXE0KRafluWfMSJDdZ6Gfc1Km6kQ/Ml4uZDWuk0
-	 mh0wQynn+iGx7d0Qy/Mpr/QPFYidmtE8a2wqcznQZrMEzVqiXAulg6juvKFSEdATR8
-	 G5mPeOGWNuuTzsBkZMO0xzQpIVAzxpWreHZORm9D0+oIWiQ/dh11sSAFGdsnruxbJL
-	 sfA2RazHRHrU1pZlOxJH+4q6LjQ6vN5+oQktvSUfGolb5AxdLRPv4m+hB/W5IWOKsq
-	 rkvgUv09qS6KA==
-Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 3F132406FC;
-	Thu,  3 Jul 2025 23:50:15 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>, Bagas Sanjaya
- <bagasdotme@gmail.com>
-Cc: Vegard Nossum <vegard.nossum@oracle.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Documentation
- <linux-doc@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>,
- Federico Vaga <federico.vaga@vaga.pv.it>, Akira Yokosawa
- <akiyks@gmail.com>, Carlos Bilbao <carlos.bilbao@kernel.org>, Avadhut Naik
- <avadhut.naik@amd.com>, Alex Shi <alexs@kernel.org>, Yanteng Si
- <si.yanteng@linux.dev>, Dongliang Mu <dzm91@hust.edu.cn>, Thomas Gleixner
- <tglx@linutronix.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Stanislav Fomichev <sdf@google.com>, David Vernet <void@manifault.com>,
- Miguel Ojeda <ojeda@kernel.org>, James Seo <james@equiv.tech>, Daniel
- Vetter <daniel.vetter@ffwll.ch>
-Subject: Re: [PATCH RFC] Documentation: typography refresh
-In-Reply-To: <CAOc0haLSQVO9RexsMDRJ9zx=TPOi5yC6ADX4VLSbFvi1bhP_iw@mail.gmail.com>
-References: <20250619042318.17325-2-bagasdotme@gmail.com>
- <75f99fce-affa-4acc-afeb-2a9f70a6d907@oracle.com>
- <aFjNA1TkBiHXNKPD@archie.me>
- <250eb150-ef18-4e62-9791-f2ec4801cd39@gmail.com>
- <fb2d7547-dd6e-4f6a-978f-b92ae2eb20cb@gmail.com>
- <CAOc0haLSQVO9RexsMDRJ9zx=TPOi5yC6ADX4VLSbFvi1bhP_iw@mail.gmail.com>
-Date: Thu, 03 Jul 2025 17:50:14 -0600
-Message-ID: <87ikk8kf61.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1751586712; c=relaxed/simple;
+	bh=KvHHtrfgF4CSuZYuOUxRpt/NuCwgFqb7dgBuXPKoC3Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TqZogW9syGix4w9XAgTWgutUDeGPvRyDL5b4LKOVI0MTe1fDFP9DrLg8mdZk5+FC39B5S/yUk/xNp24lJSlkqsD0bxVvlIPKJP2rPe+wx9uiweD6zk2NLSUpF3UVr4QvbwzCqJUFCIxpPtpfwcdARsRTh8Nkwmrmsxr5I0A6oac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P4Ns7qZy; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-451d54214adso2322065e9.3;
+        Thu, 03 Jul 2025 16:51:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751586709; x=1752191509; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4WBXSaAnuO9ltZCL/yHL+tFT04JX17HctJnK7SOXFyM=;
+        b=P4Ns7qZyjMBkMzeUcJD7EcUIYZhSk1FujZMV72prLqjedYJQLI1iKMc5dW45ixqjm0
+         M6VBewILmMW6pY0mAr7ipaq9IcELs3Wdcc9/XolFH0Iu66chqlaXkI+i0RF+hottYupW
+         JXMJQgq2jtgfGRyYX9upF+9jvzjB9lZ4BWcRoy0VSAlYnxkOQMjMjvbCGzqlcIxjVyQ4
+         37dJRmaxpPXH/CxdU2rSTuPoGnj327HFuZ9kYHoVOimyboeHl/2u+o63c2vNgK3Q5ksZ
+         gf7zcnhvn9D7OkYFD8yMNyt092qHkko/zI2X0udM2fkI8D9zPs5nSzbtsPLBKUTLdufh
+         Ei5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751586709; x=1752191509;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4WBXSaAnuO9ltZCL/yHL+tFT04JX17HctJnK7SOXFyM=;
+        b=eQWk9CnTfhTp/zxrmoZ8XbUoBRHCzI2z9cOIgieMDIyKk+tBIG7iFWw6Th29jC36Fn
+         j6I3z/hu8jbJkYPozxiWKNuvnJtEH/saSudoBd47hsgHQOoqKWzD5od+y+LUNh1JvF1u
+         VjDSeAQ3Qlf03egSxGFFU9VjZgHiQkaQZc+THIbN2QB4mTfkmnX5taoboW29wXTtQSb8
+         EWeufb6v+D0gG37K2dmE/Djlk6GE5WgRhrY3mAwhHXCAt9YqQDhRILBcU7P6xqNGBd6P
+         k7mwWpWVFwmjxvPBTzjJi0znF5c3uQXpX7FFpdzCWw+FORUaY+kexxevrYfy8JyvDKRv
+         hA3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUForolE8ieW0aKIDVQD5AAIzLxEx2DxprPxREk6OLg46uqVXU6ewi8pCOFdLu88o+vapJ2CDjTmHx2@vger.kernel.org, AJvYcCUXyMkEQWbwvk0bhSyEH6TFpaZEL8npIuk6w5E3pTUZHLH1kbJB9E4y/wVasVIzNv+jBnWPxKqE22cmLE+J1O17DVY=@vger.kernel.org, AJvYcCXFko/6C0jFhSwE3nfhiPhWrolZ7YYWPchIQhfBHHsYogLmRLJNo3bwsFI+UN4s6A8HWPqGDaY0Z/SK7liJ@vger.kernel.org
+X-Gm-Message-State: AOJu0YysXwjkL5nPj7UrwiJ/XTD67kaJW0IOEM982IOsvQrd5Zr23jXc
+	9WVDBIeYYr/iXE2WqsVZtGCpSsfTP/FHH4Ee6sZ78OScxNtZZB1BYReCRx4p6z3OyU1lIJS9bca
+	D3neYF/uFahWlM+aSwWfbBXUbImWB8GA=
+X-Gm-Gg: ASbGncvvhIvpktNam0C2E/ZEVZRX742Pq6HBT1VyRjnJl4Sv/J2bIWBoN+xd2rDU9rL
+	aDXadB9pGEMfBw4mZwXjfSMORrn8x3rvj3Z/px3I/dZ5mfSSwMqM5SK4wEqvIHwFpgxEthphd98
+	o+t0S29ygjoNiPm84XEli3bcyrExr/RHw1JNkMN/XXK3lzm9Tjp/U7DPDIcaH7NpcCUAOyyGNKY
+	L7w
+X-Google-Smtp-Source: AGHT+IFHZBEgtNRhzlyll8kxqSCaE/4L4kUukhLdJtN5vwxJF5M9Rm6ZeQmVlc4JtyQdOO4fjUfiIA81BxTySuTc92w=
+X-Received: by 2002:a05:6000:4a1c:b0:3a5:5298:ce28 with SMTP id
+ ffacd0b85a97d-3b4964c8e2cmr244940f8f.4.1751586708537; Thu, 03 Jul 2025
+ 16:51:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <20250625153042.159690-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250625153042.159690-2-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdVDjdgKDPA3ARPby=Os=WnrXRZQSTc_54oPJpbJ9GV8-g@mail.gmail.com>
+In-Reply-To: <CAMuHMdVDjdgKDPA3ARPby=Os=WnrXRZQSTc_54oPJpbJ9GV8-g@mail.gmail.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Fri, 4 Jul 2025 00:51:22 +0100
+X-Gm-Features: Ac12FXwPlO_fb82LNYFScqazbDiJWVp6g5g1RcwBismSbvDSwOD74ocX9p8ULNY
+Message-ID: <CA+V-a8uTbEfD+egzRHjw6og=mh-+WzhwLVT6gZPi6OHjAdLEQQ@mail.gmail.com>
+Subject: Re: [PATCH 1/6] arm64: dts: renesas: r9a09g077: Add I2C controller nodes
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Carlos Bilbao <carlos.bilbao.osdev@gmail.com> writes:
+Hi Geert,
 
-> Some, we can talk about it, I=E2=80=99d personally like to see a small fl=
-ag
-> displayed to the left of the language options at the top button.
+Thank you for the review.
 
-If I understand you correctly, that's dangerous territory...flags and
-languages are fraught with all kinds of disagreement and discord.  The
-conventional wisdom is to avoid the use of flags to represent
-languages.
+On Thu, Jul 3, 2025 at 10:45=E2=80=AFAM Geert Uytterhoeven <geert@linux-m68=
+k.org> wrote:
+>
+> Hi Prabhakar,
+>
+> On Wed, 25 Jun 2025 at 17:30, Prabhakar <prabhakar.csengg@gmail.com> wrot=
+e:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > The Renesas RZ/T2H ("R9A09G077") SoC includes three I2C (RIIC) channels=
+.
+> > Adds the device tree nodes for all three I2C controllers to RZ/T2H
+> > SoC DTSI.
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Thanks for your patch!
+>
+> > --- a/arch/arm64/boot/dts/renesas/r9a09g077.dtsi
+> > +++ b/arch/arm64/boot/dts/renesas/r9a09g077.dtsi
+> > @@ -90,6 +90,51 @@ sci0: serial@80005000 {
+> >                         status =3D "disabled";
+> >                 };
+> >
+> > +               i2c0: i2c@80088000 {
+> > +                       compatible =3D "renesas,riic-r9a09g077";
+> > +                       reg =3D <0 0x80088000 0 0x400>;
+> > +                       interrupts =3D <GIC_SPI 614 IRQ_TYPE_LEVEL_HIGH=
+>,
+> > +                                    <GIC_SPI 615 IRQ_TYPE_EDGE_RISING>=
+,
+> > +                                    <GIC_SPI 616 IRQ_TYPE_EDGE_RISING>=
+,
+> > +                                    <GIC_SPI 617 IRQ_TYPE_LEVEL_HIGH>;
+> > +                       interrupt-names =3D "eei", "rxi", "txi", "tei";
+> > +                       clocks =3D <&cpg CPG_MOD 100>;
+> > +                       power-domains =3D <&cpg>;
+> > +                       #address-cells =3D <1>;
+> > +                       #size-cells =3D <0>;
+> > +                       status =3D "disabled";
+> > +               };
+> > +
+> > +               i2c1: i2c@80088004 {
+>
+> 80088400
+>
+Agreed.
 
-Thanks,
+> Aha, the related warning was demoted to W=3D1:
+>
+Thanks for the hint, I always ran it with W=3D2.
 
-jon
+>     Warning (simple_bus_reg): /soc/i2c@80088004: simple-bus unit
+> address format error, expected "80088400"
+>
+
+> > +                       compatible =3D "renesas,riic-r9a09g077";
+> > +                       reg =3D <0 0x80088400 0 0x400>;
+> > +                       interrupts =3D <GIC_SPI 618 IRQ_TYPE_LEVEL_HIGH=
+>,
+> > +                                    <GIC_SPI 619 IRQ_TYPE_EDGE_RISING>=
+,
+> > +                                    <GIC_SPI 620 IRQ_TYPE_EDGE_RISING>=
+,
+> > +                                    <GIC_SPI 621 IRQ_TYPE_LEVEL_HIGH>;
+> > +                       interrupt-names =3D "eei", "rxi", "txi", "tei";
+> > +                       clocks =3D <&cpg CPG_MOD 101>;
+> > +                       power-domains =3D <&cpg>;
+> > +                       #address-cells =3D <1>;
+> > +                       #size-cells =3D <0>;
+> > +                       status =3D "disabled";
+> > +               };
+> > +
+> > +               i2c2: i2c@81008000 {
+> > +                       compatible =3D "renesas,riic-r9a09g077";
+> > +                       reg =3D <0 0x81008000 0 0x400>;
+> > +                       interrupts =3D <GIC_SPI 622 IRQ_TYPE_LEVEL_HIGH=
+>,
+> > +                                    <GIC_SPI 623 IRQ_TYPE_EDGE_RISING>=
+,
+> > +                                    <GIC_SPI 624 IRQ_TYPE_EDGE_RISING>=
+,
+> > +                                    <GIC_SPI 625 IRQ_TYPE_LEVEL_HIGH>;
+> > +                       interrupt-names =3D "eei", "rxi", "txi", "tei";
+> > +                       clocks =3D <&cpg CPG_MOD 501>;
+>
+> 601
+>
+Agreed.
+
+Cheers,
+Prabhakar
 
