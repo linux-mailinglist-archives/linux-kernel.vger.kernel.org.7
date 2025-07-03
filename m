@@ -1,192 +1,179 @@
-Return-Path: <linux-kernel+bounces-715670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-715676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CF32AF7C74
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 17:37:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5C13AF7C88
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 17:39:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDEC91CA4F34
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 15:32:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDCC36E37A5
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 15:32:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAD582D23A8;
-	Thu,  3 Jul 2025 15:31:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FDD2223DEC;
+	Thu,  3 Jul 2025 15:32:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="GMv4YoXf"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="TeUJR3Hi";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="S8hPrxeF"
+Received: from fout-a7-smtp.messagingengine.com (fout-a7-smtp.messagingengine.com [103.168.172.150])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFF2114B092
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Jul 2025 15:31:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C91F33DF;
+	Thu,  3 Jul 2025 15:32:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751556691; cv=none; b=q5p4P7ug9lk/EcULEkywxxH1SEhAXAxqxfDyt3coT46xBOs8OntEmwxh7xRt6nTT4D7x5DphBQQXXOD8nNXDrmXYWNgkRxKxWUYa5ndkBgbz88AEqCwS125i8GIPPiJfbJZ1/pMLdJSWweX3Hv4jTbKy08wmmHy01Qv5Xn/SzUE=
+	t=1751556755; cv=none; b=SpkYa7daE/Gi7KnXaqXf2Qg857XD7m2VFZRcxY7KBSa7OhXlyPgmr2YyhntkY7JAtcLAXFF7I2inazw/XJORrWxh0w8hRmwCjgHb2z6WYu87KagHCe1SVaZAhfPnyydbwWOeXmSXUxZOPjjbmnC6NpFDL7+KE3t33kpKiyWCQ0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751556691; c=relaxed/simple;
-	bh=pc9OEeAJ9+xYaNUV4fdpysQKPNlGMC0ARIBerxFTA6w=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=nVaOEH3aJqfA1KrgqMV78+Za6HrUwvvefDLpIcvWMCXmLn49WOstAmT8RN145Gkd7B6a4W/bhjIu614XcMYiv/oY9rLYxM25UCNX0Ot4QUvgQL+Q1GDvm86mNqxnEWWKVbbhLVxBht3Zh6jJ354GqM+yGr+F4wfM4K3ZHz74wVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=GMv4YoXf; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-748d982e97cso99067b3a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Jul 2025 08:31:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1751556689; x=1752161489; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=QErbVzt9aJhbR9gTNXrZUX3xujrRTj9RW/I/kl5NW0o=;
-        b=GMv4YoXfYtDBy4KpUoqV/z1OcdkZgSK3ZAQzpRE3AD8159WAes4JNBCiDHx6AImxHi
-         5cLEFHOyVAu+vKbEuHtZCAXLuFlWCt16RJ3YjDhlHc8PO0w7BiaZpCJIzbhhlWf1/F4t
-         zAB5R1Q8DyRUJD1HAIx/6cT2w021KjvD2yQw3jEHXLVAXCyTORYJEVAmbpAJ0QNHmP7W
-         Nj/4zOOZbp8YzVjTm/G58sQjMpdey+EBb6TlTaZvWTPkH6ntB7J4iRPeTZW3LmtzDE4/
-         G6CWJi48QalVQpWdhdbq+f+pYD9B00nGIb/s87doYsbj/obbccbrVFm9aD++Z9Gqz3R2
-         jY2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751556689; x=1752161489;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QErbVzt9aJhbR9gTNXrZUX3xujrRTj9RW/I/kl5NW0o=;
-        b=ELrJ1ZV6s9QpZT6EaNK+jtzrgWJOgMJ+0bLIj75oQ2EX3geSpVOwd7PwyzTNEC0BsM
-         xW+ydFz6gIC0CDdS11A0Pr+ii/j6Qs5H6Vs3ykPQBwtx8LpQKEH8VkXL6HbhBpisWa3D
-         rXnf3p4HNi5W4Ty1TBeUrLqyFEo88idyHjoz+NCS+0LmaIiBmW9/ZXzrFnIMfJsertEQ
-         cVp68Fk4ugajxcF+cpZZZqm6oFbPrN6I6QWv64iHRHAUQsT8cMkc5XbgfVh1C9NSxUET
-         c6S9EVNf3gptgclgJcuMc+wbAdeYFYMAl6d4uKTtAFN46jtYJR4ha1jqRFHjrZkAa2yB
-         EfGw==
-X-Gm-Message-State: AOJu0Yxz4rGZjz0VCCJwXqSgPxvywU8ZH6OWH8mO/XD1LwEFYSz5u8CM
-	UE5dA3x2aWjYgpVHXeyVngJskLfX9vSoVsMfzIX88S4opOe0kolDBGJSOqoEYtxrwbg=
-X-Gm-Gg: ASbGncvUqe2kLHlmGPuavIAsMEq2H0/HhFqClthV0/UTYm1k/kr8PDu7GvdyeVnCVcY
-	TsZpZ/jvfDIwi3Z0IfMLRXL5D/on5vno+igD5RGfESM2dRbZD960HiZ/cZW+Qpf7Gd5Vbyh/Scc
-	oYlnsPnO8dN2lDltNjAEn01Aup3O4x1f6KxJmTi8u7vBdFmbeE+Z9vtJKkq8Y2RqZUt0yeyk/p3
-	NN+Y9bpGdwkY6BYvZa+gJOdga01rFJ5uiOVsBx9VgsvsmLqOGAAJ3Qet6XVJHN3qhZee4CrgtkR
-	VhtVDzICBZi17gVzAFqMLYtozsBgbE8Iu0oKvvctCTgJ98Wx5eyOLvcSIEd6g0s82K9icUiLKm7
-	bHyigfA==
-X-Google-Smtp-Source: AGHT+IE95ek35Wr9lyJqPKav33JmLnLhLXVgMybhtizTLpGwZswShofGBH4D1YtgVNocuzP8SLiG+w==
-X-Received: by 2002:a05:6a00:c8f:b0:736:2a73:6756 with SMTP id d2e1a72fcca58-74ca8490964mr4771557b3a.21.1751556688955;
-        Thu, 03 Jul 2025 08:31:28 -0700 (PDT)
-Received: from [10.4.60.76] ([139.177.225.255])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74af57e1699sm16516937b3a.149.2025.07.03.08.31.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Jul 2025 08:31:28 -0700 (PDT)
-From: Liangyan <liangyan.peng@bytedance.com>
-X-Google-Original-From: Liangyan <liangyan.peng@google.com>
-Message-ID: <f3608ef2-1d9f-406c-92f3-fa69486e1644@google.com>
-Date: Thu, 3 Jul 2025 23:31:23 +0800
+	s=arc-20240116; t=1751556755; c=relaxed/simple;
+	bh=DVnQ3R4GAGqrM49yYZnMSfxouS6uvaIV4BLTB6didP0=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=AIFuBtld6e66OifLI115LQggS7wuDQk/a5v2o0ygAq/BBeVIGCgbsuRaCZshqDfLJQpNwUCENG7R9L9UCTQ5PEaev143TSRD+cK3gJi+od2CuUhxWKFPOPi/9twzSCkrab1jNXrruRP1vqRZISKwxRNHnuQqZGhsV0EwVf5Us80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=TeUJR3Hi; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=S8hPrxeF; arc=none smtp.client-ip=103.168.172.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfout.phl.internal (Postfix) with ESMTP id 2536BEC019E;
+	Thu,  3 Jul 2025 11:32:32 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Thu, 03 Jul 2025 11:32:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1751556752;
+	 x=1751643152; bh=ew8V1Wt0zqQcHxxoIg5sNu57Yffvi4a5WQBGLVx8qhI=; b=
+	TeUJR3HiGddMqqjV77VC9HGBhhaZ3k03dSlU7vhZd3VsPz2D/ehXYK9ligEVLJx5
+	O3kD/7/KQbd4t0dOsPy0V56aHQcmg2TZ5nb3iKvI9WY368eyLnzQTDDqp9mh1hxE
+	dHCCqWHiASU4A9hab6pDG9cR/CaOWm5aNT+IJPYjeEwpg1KaxoeoFXmtIPvbxYGN
+	xw7fQfs008OMbtJF6izzV1omuM8Whk/Z+cetp7XFw7Pi/6sZRIxkfq9Ts7KgYLkn
+	BuPO8Ae2Fes28kW8Dihcp1uBA3B0Sy+AxjLKxfF5q3HNeyV6OIWeDYjq/RHj92+0
+	5/GU+zBGjDAzxzdLEIfrYA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1751556752; x=
+	1751643152; bh=ew8V1Wt0zqQcHxxoIg5sNu57Yffvi4a5WQBGLVx8qhI=; b=S
+	8hPrxeFaptSKvtsK3AQk0Jx9iOmD4i7WVRJ5Bbvv0Zyn8S83p1SiUUl82b/O6TK8
+	r1yH6B66q17XGuj2vJX1xq6+IWC1C3vdLKhk3tj9EXUsNSrpDt9azhQgqCqaO13M
+	VqOLv2ROgmvY5Ecr/HdYypsnR54Z2y3SSUneCNsmPbWJ6E92hOdAhxcHGbQk1wie
+	vQ/Jjt+PVKKXZNkcy/mUe1ronZSCmK9F6EEAsi1iomkVT0rMOEIB2oy4k6DrZt+v
+	fBYlST1sWsxbs249cTywKUlXbHktYDpdh/NjjEPfJz25CsscKQnbZ7bJ5JQw/E9G
+	PCi67Fa05R1s0UDh/88dQ==
+X-ME-Sender: <xms:jqJmaEMPSu9mK9t3v8ceuIc0c1sweaZh3Ca0np3Uc8ofDp2_Vn2MlQ>
+    <xme:jqJmaK_N-N8C0rvvppZRNNmwERMxfQaiUW7NX1Ftf2Addwu-zN5B6PjlhVCUtnTG5
+    DWhMSb_3HFkbgvlBTk>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddvtdeigecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
+    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
+    hnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffgvedugeduveelvdekhfdvieen
+    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
+    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopeduiedpmhhouggvpehsmhhtphhouhht
+    pdhrtghpthhtohepsggvnhejudejsegrnhguvghsthgvtghhrdgtohhmpdhrtghpthhtoh
+    epthhimheitdelsegrnhguvghsthgvtghhrdgtohhmpdhrtghpthhtohepphhrrggshhgr
+    khgrrhdrmhgrhhgruggvvhdqlhgrugdrrhhjsegsphdrrhgvnhgvshgrshdrtghomhdprh
+    gtphhtthhopehprghlmhgvrhesuggrsggsvghlthdrtghomhdprhgtphhtthhopegrohhu
+    segvvggtshdrsggvrhhkvghlvgihrdgvughupdhrtghpthhtoheprghlvgigsehghhhith
+    hirdhfrhdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtghp
+    thhtoheptghonhhorheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhhriihkodguth
+    eskhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:jqJmaLQlbzw23tZap9l8GhAs0JzBTyEQZLGWYEzulH_bmtuHYuU6RQ>
+    <xmx:jqJmaMsxBrbRxBt_iARNlMFV-BSW1qoKljFXXwWAyCmAsgvZODfH_Q>
+    <xmx:jqJmaMdZxz60y-ioFEKplQ3W7pnTqOBiDVd_N3JQr4M0DWzse6agJw>
+    <xmx:jqJmaA2g5KvNstND4KvC6COqqAnDVYaOhL7XUz7lBpHmu5Um0qzveA>
+    <xmx:kKJmaCZHI53tiVjYm_Lc0S5bbd-RiP-rukW6qgy1aeTCRVT-UkD8pZ_U>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 2ECB2700065; Thu,  3 Jul 2025 11:32:30 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [External] Re: [RFC] genirq: Fix lockup in handle_edge_irq
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org, Yicong Shen
- <shenyicong.1023@bytedance.com>, ziqianlu@bytedance.com,
- songmuchun@bytedance.com, yuanzhu@bytedance.com
-References: <20250701163558.2588435-1-liangyan.peng@bytedance.com>
- <87a55mlok9.ffs@tglx>
-Content-Language: en-US
-In-Reply-To: <87a55mlok9.ffs@tglx>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+X-ThreadId: Te44b159e2532e323
+Date: Thu, 03 Jul 2025 17:32:08 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Conor Dooley" <conor@kernel.org>,
+ "Ben Zong-You Xie" <ben717@andestech.com>
+Cc: "Paul Walmsley" <paul.walmsley@sifive.com>,
+ "Palmer Dabbelt" <palmer@dabbelt.com>, "Albert Ou" <aou@eecs.berkeley.edu>,
+ "Alexandre Ghiti" <alex@ghiti.fr>, "Rob Herring" <robh@kernel.org>,
+ krzk+dt@kernel.org, "Conor Dooley" <conor+dt@kernel.org>,
+ "Thomas Gleixner" <tglx@linutronix.de>,
+ "Daniel Lezcano" <daniel.lezcano@linaro.org>,
+ "Lad, Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+ devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org, tim609@andestech.com
+Message-Id: <352681c3-88ca-4122-9ad3-0a0ef33caf7b@app.fastmail.com>
+In-Reply-To: <20250611-tapeless-arson-a6ace3c42c00@spud>
+References: <20250602060747.689824-1-ben717@andestech.com>
+ <20250606-booth-icky-b416c1827a43@spud>
+ <aEbOLztcBsKs84pn@atctrx.andestech.com>
+ <20250609-donut-oozy-4dcc8b8a292d@spud>
+ <20250609-twiddling-clamp-eaa0dd2b1cad@spud>
+ <aEmrHPd7RxUSOLAY@atctrx.andestech.com>
+ <20250611-tapeless-arson-a6ace3c42c00@spud>
+Subject: Re: [PATCH v5 0/8] add Voyager board support
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-Hello Thomas,
+On Wed, Jun 11, 2025, at 18:21, Conor Dooley wrote:
+> On Thu, Jun 12, 2025 at 12:13:16AM +0800, Ben Zong-You Xie wrote:
+>> On Mon, Jun 09, 2025 at 05:17:50PM +0100, Conor Dooley wrote:
+>> > > > > 
+>> > > > > Ball is in your court now, after rc1 make a tree and get it in
+>> > > > > linux-next, and then send a pr to soc@kernel.org with this new content.
+>> > > > > Perhaps the defconfig should go separately, I can take that one if you
+>> > > > > want.
+>
+>> > > > Thanks for your guidance on these patches. I will send a PR to
+>> > > > soc@kernel.org as you suggested.
+>> > > > 
+>> > > > For the defconfig patch, I'm happy for you to handle it. Just let me
+>> > > > know if there's anything specific you'd like me to include.
+>> > > 
+>> > > Okay, I picked it up on the basis that you'll send this all to Arnd for
+>> > > 6.17
+>> > 
+>> > Sorry, I think that was really poorly worded. I picked it up on the
+>> > basis that you're going to send the other patches in the series to Arnd
+>> > for 6.17.
+>> 
+>> According to the SoC maintainer documentation [1], I should send a
+>> patchset (not a PR) to soc@kernel.org. Since I'm not a submaintainer yet.
+>> I think I should not sent a PR to the main SoC maintainer. Is that right?
+>
+> I think you can send a PR and not worry about it.
+>
+>> Further, I have two questions about sending a patchset:   
+>> 1. Should I send v5 or start a new patchset?
+>> 2. Should I continue excluding the defconfig patch, as we discussed
+>>    previously? I think it should be included now.
+>
+> Arnd, you okay with a defconfig in the same branch as the dts/core
+> bindings for a new platform? I'll happily drop it from by branch if it
+> can all go as one.
 
-We have this softlockup issue in guest vm, so the related IRQ is from 
-virtio-net tx queue, the interrupt controller is virt pci msix 
-controller, related components have pci_msi_controller, virtio_pci, 
-virtio_net and qemu.
+Sorry I missed your question earlier, I finally got to it now as
+I am going through the pull requests in patchwork.
 
-And according to qemu msix.c source code, when irq is unmasked, it will 
-fire new one if the msix pending bit is set.
-Seems that for msi-x controller, it will not lose interrupt during 
-unmask period.
+Having the defconfig, MAINTAINERS and Kconfig updates in the branch
+for a new platform is fine, in this case it makes sense to keep
+everything together.
 
-For this virt MSIX controller, do you have some suggestion? Thanks.
+I'm also planning to have multiple new SoC targets in 6.17 and
+would put them into a separate branch that does not contain the
+dts changes for the existing SoCs.
 
-Regards,
-Liangyan
+For the pull request that Ben sent, there were a couple of
+mistakes, I'll reply on that separately. It probably would made
+more sense to send the patches to soc@lists.linux.dev (note
+that the soc@kernel.org address got renamed but they still
+both work) than to send a pull request this time.
 
-
-On 2025/7/2 21:17, Thomas Gleixner wrote:
-> On Wed, Jul 02 2025 at 00:35, Liangyan wrote:
->>   void handle_edge_irq(struct irq_desc *desc)
->>   {
->> +	bool need_unmask = false;
->> +
->>   	guard(raw_spinlock)(&desc->lock);
->>   
->>   	if (!irq_can_handle(desc)) {
->> @@ -791,12 +793,16 @@ void handle_edge_irq(struct irq_desc *desc)
->>   		if (unlikely(desc->istate & IRQS_PENDING)) {
->>   			if (!irqd_irq_disabled(&desc->irq_data) &&
->>   			    irqd_irq_masked(&desc->irq_data))
->> -				unmask_irq(desc);
->> +				need_unmask = true;
->>   		}
->>   
->>   		handle_irq_event(desc);
->>   
->>   	} while ((desc->istate & IRQS_PENDING) && !irqd_irq_disabled(&desc->irq_data));
->> +
->> +	if (need_unmask && !irqd_irq_disabled(&desc->irq_data) &&
->> +	    irqd_irq_masked(&desc->irq_data))
->> +		unmask_irq(desc);
-> 
-> This might work in your setup by some definition of "works", but it
-> breaks the semantics of this handler because of this:
-> 
-> device interrupt        CPU0                            CPU1
->                          handle_edge_irq()
->                          set(INPROGRESS);
-> 
->                          do {
->                                 handle_event();
-> 
-> device interrupt
->                                                          handle_edge_irq()
->                                                             if (INPROGRESS) {
->                                                               set(PENDING);
->                                                               mask();
->                                                               return;
->                                                             }
-> 
->                                 ...
->                                 if (PENDING) {
->                                    need_unmask = true;
->                                 }
->                                 handle_event();
-> 
-> device interrupt   << possible FAIL
-> 
-> because there are enough edge type interrupt controllers out there which
-> lose an edge when the line is masked at the interrupt controller
-> level. As edge type interrupts are fire and forget from the device
-> perspective, the interrupt is not retriggered when unmasking later.
-> 
-> That's the reason why this handler is written the way it is and this
-> cannot be changed for obvious reasons.
-> 
-> So no, this is not going to happen.
-> 
-> The only possible solution for this is to analyze all interrupt
-> controllers, which are involved in the delivery chain, and establish
-> whether they are affected by the above problem. If not, then that
-> particular delivery chain combination of interrupt controllers can be
-> changed to use a different flow handler along with a profound
-> explanation why this is correct under all circumstances.
-> 
-> As you failed to provide any information about the involved controllers,
-> I cannot even give any hint about a possible solution.
-> 
-> Thanks,
-> 
->          tglx
-> 
-> 
-
+     Arnd
 
