@@ -1,237 +1,136 @@
-Return-Path: <linux-kernel+bounces-717326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-717327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1563AF92E3
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 14:40:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCA4BAF92E6
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 14:40:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43EF41CA4E6A
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 12:40:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C748547E12
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 12:39:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 458952D8DB0;
-	Fri,  4 Jul 2025 12:39:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63FBD2ED17F;
+	Fri,  4 Jul 2025 12:39:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M2QRAnWa"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZW231LNU"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB4CE2D94B3;
-	Fri,  4 Jul 2025 12:39:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 108572D948E;
+	Fri,  4 Jul 2025 12:39:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751632780; cv=none; b=YdMN7ScFwmeDxmkraNyXyf6LhTBrGUGtgah+Fqn7E07Ql2GUOO2G96sKaQGJooyiwj6sA/uhYpVMYWHy8zigMZ/E7bfqSdkb4PyBbP4XfDslnLh2rLNRHaYrj+RPCSAJzUqw/uYwGJtfcc4+5Y4G8mVTNHmpzz5tokPVtAK4fzA=
+	t=1751632789; cv=none; b=K065XCJexI8NST8n58jgKxA+gzN2PhpNTZBu0B5mNEO6d44mkg55KY/wn9Y6jMSyvZCEr7peI8LkAw09TR1IwYjhSNUSz1UW/8lwOMbS/O3qFIJdvzu4B5UOV8ch9BcISbK76t2QQRWl2ei2vS9DuWCL6LwSSG+TFbBODlzhcEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751632780; c=relaxed/simple;
-	bh=haAArsBIaCLMYn+fzqMTOQZT2x7ckR6s52vp8NB0sJ0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QhzuggtgWgtN4aGttKu8C6cY9A1KiJ0unwSv3k3UPZbAYVTWh21b5M6OAYTWZ++NQzrQ1WMbXZTnCT14U4YCS9/oGZSlVhCTM5mHBbAwOskLLuwe8kTioqyas1kQSw/z7zo6cudG5kPY4jdFdCWsnmkyEFptunyxrBQs8OBbbYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M2QRAnWa; arc=none smtp.client-ip=209.85.208.53
+	s=arc-20240116; t=1751632789; c=relaxed/simple;
+	bh=kM65gUyDV8Nq6O0X5HePJHOOeCngpBNSIlUrnpmpZME=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=XpkmZc0XcYDYDz2YdIu9PJDexfQuMBVb+8X+LA59XJapk7S9NrqGF8hY5t2z5n/6fAGu68gbVdka4WXbE9kl1BsRi6JiMxW7+8Asgbh1dfOb1MN9xNizMH9iYEGcVLr7/XQri8fel2L5M5Iujc+xMH0upLx/z8M79S5pbR5VijE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZW231LNU; arc=none smtp.client-ip=209.85.221.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-60c4521ae2cso1564560a12.0;
-        Fri, 04 Jul 2025 05:39:38 -0700 (PDT)
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3a4f72cba73so1328238f8f.1;
+        Fri, 04 Jul 2025 05:39:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751632777; x=1752237577; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=M0BePG++JTGMS0NHh0YtfxYeLObtiOJoLmtOtSBDm70=;
-        b=M2QRAnWa3s/1eYDuBK/P1sVb5TGJimVHF5ikkRId7jkj6v6Iy2kXhf72BQmJecQk34
-         NHqj+4ewRL3Df6f8PfxbrDKJ/qEQoDdffykfa/OUJ7CIoXDWh0DCCXbk+uhyI8oHKZgE
-         u64jxIuYmn2tlB4UbEoDZmGxqzVL/heUc1NqexU3TioJH2OCM2vgvHpIde8Ic0EIb+Ma
-         K3GDpoCBcVDBnN49hcccoaMQWE3kBsEWEof8NkRMvfkSbclVTJDIUd2kou3GdJOQm/34
-         AqXtafsgHJfa2L0cBvwFRwcDDi3cJaNcRjL6ianLBjSjf8PyxCzaNSMcQUf+DcijeBhG
-         gCZQ==
+        d=gmail.com; s=20230601; t=1751632786; x=1752237586; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=kM65gUyDV8Nq6O0X5HePJHOOeCngpBNSIlUrnpmpZME=;
+        b=ZW231LNUQSMqUpOkf0PO1o1HIEPt17lH9kRNXzVMEOApgXSXqZ08qa++OMRa9tSmS/
+         xPBwKMc2Wrinmy5BYpcgaxCkSMGK1lPiLuqiEG9Ezk7qsHif0UoAqWRLf7V6Y67H+EOa
+         oRTjOZdUajcIUQvF2b/tjTbm70e6qsXi0CQR4sQ67+pL/GG5e1mnkLjIw/J4guGajm25
+         LT6Ph/Ox47GJ5rwqatXFiwnwhBqoL1dKbdoZPSNQgQkQlM81l2RpXQN8BwI+UoeD+06Z
+         h9ojYol2s6QNTIVJTg4Q+kKl6unY8xEB23XXYpmbXi15VpRqh0Ydx/Jnuuk246X6FSkr
+         PeeA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751632777; x=1752237577;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=M0BePG++JTGMS0NHh0YtfxYeLObtiOJoLmtOtSBDm70=;
-        b=dueWYfKcKo9snd5jwdUXAjENVeMJiIR0WT9F7bcwM4nAddTcpbaIOQDTTpBcgF7xfa
-         Mz68AAYa3ciB9HAFAuXVz+BbpGTGUURsY2uEqqLROn4sMwLU0vpRzSN5xqkD/TTVkDo5
-         c7fIjXrEm5CsmCQEVAalKh8IOfgbBJKSVrXlvpPHlI6OhfUm+MAIc+an1KT9EgG3Q25X
-         135uuCzqM2zJADfUxke3FQFk7FTSNEWho/AC3ZsiXQ5ICyr26z3ldbF4h47QEVrRdx8k
-         TBngj0OJVNREYJiY56PDqAabLryMbyS5PoIfEsKLuNYNlo+P4wxNUabZqDq+Sl9WP7iH
-         pTxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVk4hzws2aIc9hE7e95AKaOJ/SHZzSziPNKfHkLkJLYe7U3pia+MO0xXi7Qo3VX2FxeJ4hT4WoYxKpn@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRyOt/KzNTIxZ5ladOCb7Qyme9vnZlqAZJSttysFGp01ayJOfI
-	K1q2J9PuBlDpovVBcxNvqu7bDnBAHpqr+SyPFQ8TeW0GrZR4XaIw+ejvksh64g==
-X-Gm-Gg: ASbGncsIZnyo73YEVduLAS1CKv2j/2Xnuome7Lt1OHrE+cs+ZQKmsl/XxVrrcJUlpyA
-	PaUllujez4leo78x6n8ISeoxM1eWH1hUtJNqVU06Lll9ZV6CNfI7EGSr2i/dENAzCLx9PwsqW5f
-	KUAcLL26TlCMmpeFu++5ePcSnOKg5uz3U1dPnrRsvXKwFooSJCvhrVaZ1MSen1koSRD3ji3Mipc
-	VnDbJ+KWgY0IxrJapGOUujwtY/TUpGU5gWEBg3NpdYyAbzUAe4dWaQwPP66oPD9Uxj8MKZbetbP
-	QCyGG3+NOX9tIJNXQLDBL/Ze/pW0e5IUvxrAsE9R2Debl8bnv3O5LlMI7U82ecslzODvfFKU1Yn
-	kbV+lbqjuo7uuJrni276jHcehHEoZhBUxX/lg6g==
-X-Google-Smtp-Source: AGHT+IHLWB6pjah+7yOb8Dyb8eT2w6mn5+S7aG39JoIMayz1missewywuSFXRntDt2LAVnpGFQRNkQ==
-X-Received: by 2002:a17:907:84c:b0:ae3:b2b7:7f2f with SMTP id a640c23a62f3a-ae3fbd4423dmr200274166b.40.1751632776526;
-        Fri, 04 Jul 2025 05:39:36 -0700 (PDT)
-Received: from masalkhi.. (ip-078-042-182-222.um17.pools.vodafone-ip.de. [78.42.182.222])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae3f6b43264sm166648066b.141.2025.07.04.05.39.35
+        d=1e100.net; s=20230601; t=1751632786; x=1752237586;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=kM65gUyDV8Nq6O0X5HePJHOOeCngpBNSIlUrnpmpZME=;
+        b=T9tSai3zYBHKxQmbHn3794wk2U7TFHJmJ4oecMkPA1A4Gtf14bnR2OgAEZQ39XmZxc
+         rn4sSlq/uK6/RoqeIuyFjeeE2j5DHrD7GnT7KDPR6vv8RJkhfTZn0WMCaOuTVoI9v2sp
+         WKGixoa7j5Zxa5DNOsCIDJIrl/XJlHAXQykf9/gA4U/XqLroW9ZEXyvXAg1KCFXeSrdt
+         aF2pqsQ3BM7MUWNyWaO+NNIYX3jy9NYBlo+l5c1owp0IN/MZ2tnCb4MTRhRshc77gjR7
+         BkEVBmltNKyqC44O8f2cfm3/AtvPBUs+zrfZDz7m7ouxQ4qQs/axcyQ/ZH60MCuMeVa7
+         oygg==
+X-Forwarded-Encrypted: i=1; AJvYcCUNOm6xvvRUJr9X8HM1z2SVeL9S1RH2A9tSUE6ZB6YGTAlc3cUTMTiUqItLRbX9Y9zqz17MZVVxjrg+@vger.kernel.org, AJvYcCWOMOXZkgbosfLZDXS+BH6G94XQd/uIkMsGkqfaVazeUg3Y28XuZCM7+nZ9Zl2JX0z4P+en3kBpBKodZiLI@vger.kernel.org, AJvYcCX5PdsFgsTJJJ6guad69FGTNUQgCxQw4lxZyofZeM/WiRYTQQnJIKZsemCF8MnXGqWGqaxMi9Ad8CAl@vger.kernel.org
+X-Gm-Message-State: AOJu0YxE287CRNkxg3WflIi3V+RfAlBSNskJy6V8OLIkpbFv/2aBMhnu
+	vEwzFY8zi28E5vq/PQVwDlcWemSfnFKsd+OqE5aUZSTY/OTaXfdVF6fx
+X-Gm-Gg: ASbGncvgas6uxAkSfn1Y5nVipneWTvMss9TJrRgHp6GInJjfkl9buUYKPPL/XlD/4G8
+	0/9qQzlMcQoJj9Y5vWaSKAJjJYuXm4AlI8Gxka8IWKUQp45oBjqhDWiTc/CtF9zLOud3pgGbrwx
+	6/xO+ZPBQZoaDk+u27j9Vvm6eDrp9zuqfPM/WoOXH3bcqIQdlltpX0LRXEepRpHF1+ldORbyAF1
+	mG/H7fSEVX/ITHQwm7ykR8MH7WfUgxjlqXY26/8RvIHpn8RtLqkf6kh26SWHi2WTsfoMsOEYcvx
+	6wyam+sKbWAFvPFtaNWHweh3zpEyEFDcGkE6DEIRyaKrhAv9TXkWuZREgSXgCsNERXSOVg==
+X-Google-Smtp-Source: AGHT+IGEZQqooZXYhGVoWPdBr2vTu84V+4w3rPWYqllSwEygO+t6NPXOBmMzmHVAtMjkZ8S2Ox0sXg==
+X-Received: by 2002:a05:6000:4911:b0:3a5:2915:ed68 with SMTP id ffacd0b85a97d-3b495ccbb9emr2195447f8f.28.1751632786152;
+        Fri, 04 Jul 2025 05:39:46 -0700 (PDT)
+Received: from [192.168.1.187] ([161.230.67.253])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b47030b4f6sm2467772f8f.10.2025.07.04.05.39.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Jul 2025 05:39:36 -0700 (PDT)
-From: Abd-Alrhman Masalkhi <abd.masalkhi@gmail.com>
-To: linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Cc: arnd@arndb.de,
-	gregkh@linuxfoundation.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	luoyifan@cmss.chinamobile.com,
-	abd.masalkhi@gmail.com
-Subject: [PATCH v5 3/3] ABI: sysfs: add documentation for ST M24LR EEPROM and control interface
-Date: Fri,  4 Jul 2025 12:39:14 +0000
-Message-ID: <20250704123914.11216-4-abd.masalkhi@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250704123914.11216-1-abd.masalkhi@gmail.com>
-References: <20250704123914.11216-1-abd.masalkhi@gmail.com>
+        Fri, 04 Jul 2025 05:39:45 -0700 (PDT)
+Message-ID: <ab0a407412c705e409d9d26591543713a092c13f.camel@gmail.com>
+Subject: Re: [PATCH v2 0/6] iio: Add support for MT6363/6373 Auxiliary ADC
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	jic23@kernel.org
+Cc: dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org,
+ robh@kernel.org, 	krzk+dt@kernel.org, conor+dt@kernel.org,
+ matthias.bgg@gmail.com, 	linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, 	linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, 	linux-mediatek@lists.infradead.org,
+ kernel@collabora.com
+Date: Fri, 04 Jul 2025 13:39:56 +0100
+In-Reply-To: <20250703141146.171431-1-angelogioacchino.delregno@collabora.com>
+References: 
+	<20250703141146.171431-1-angelogioacchino.delregno@collabora.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Add sysfs ABI documentation for the STMicroelectronics M24LR device,
-covering both the control interface (e.g., unlock, password update, UID,
-total sectors, and SSS entries) and EEPROM access via the nvmem subsystem.
+On Thu, 2025-07-03 at 16:11 +0200, AngeloGioacchino Del Regno wrote:
+> Changes in v2:
+> =C2=A0- Added error checks to all regmap r/w operations
+> =C2=A0- Moved adc_vref addition to different commit
+> =C2=A0- Various other fixes
+>=20
+> This series adds support for the Auxiliary ADC IP found on the new
+> MediaTek MT6363 and MT6373 PMICs, found on board designs featuring
+> the MT8196 Chromebook SoC or the MT6991 Dimensity 9400 Smartphone SoC.
+>=20
+> AngeloGioacchino Del Regno (6):
+> =C2=A0 dt-bindings: iio: adc: mt6359: Add MT6363 PMIC AuxADC
+> =C2=A0 dt-bindings: iio: adc: mt6359: Add MT6373 PMIC AuxADC
+> =C2=A0 iio: adc: mt6359: Add ready register index and mask to channel dat=
+a
+> =C2=A0 iio: adc: mt6359: Move reference voltage to platform data
+> =C2=A0 iio: adc: mt6359: Add support for MediaTek MT6363 PMIC AUXADC
+> =C2=A0 iio: adc: mt6359: Add support for MediaTek MT6373 PMIC AUXADC
+>=20
+> =C2=A0.../iio/adc/mediatek,mt6359-auxadc.yaml=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 |=C2=A0=C2=A0 2 +
+> =C2=A0drivers/iio/adc/mt6359-auxadc.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 440 +++++++++++++++---
+> =C2=A0.../iio/adc/mediatek,mt6363-auxadc.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 24 +
+> =C2=A0.../iio/adc/mediatek,mt6373-auxadc.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 19 +
+> =C2=A04 files changed, 416 insertions(+), 69 deletions(-)
+> =C2=A0create mode 100644 include/dt-bindings/iio/adc/mediatek,mt6363-auxa=
+dc.h
+> =C2=A0create mode 100644 include/dt-bindings/iio/adc/mediatek,mt6373-auxa=
+dc.h
 
-Signed-off-by: Abd-Alrhman Masalkhi <abd.masalkhi@gmail.com>
----
-Changes in v5:
- - Fix dates and update targeted kernel version.
- - Link to v4: https://lore.kernel.org/lkml/20250608182714.3359441-4-abd.masalkhi@gmail.com/
 
-Changes in v4:
- - Replaced 'sss<N>' entries with a single binary 'sss' attribute
- - Added 'total_sectors' attribute to report the number of valid SSS bytes
- - removed 'mem_size' attribute
- - Fix dates and update targeted kernel version.
- - Link to v3: https://lore.kernel.org/lkml/20250606120631.3140054-4-abd.masalkhi@gmail.com/
+LGTM,
 
-Changes in v3:
- - Updated sysfs entry paths to use <busnum>-<primary-addr> to reflect the
-   control address.
- - Link to v2: https://lore.kernel.org/lkml/20250601153022.2027919-4-abd.masalkhi@gmail.com/
-
-Changes in v2:
- - Added initial sysfs ABI documentation.
----
- .../ABI/testing/sysfs-bus-i2c-devices-m24lr   | 100 ++++++++++++++++++
- 1 file changed, 100 insertions(+)
- create mode 100644 Documentation/ABI/testing/sysfs-bus-i2c-devices-m24lr
-
-diff --git a/Documentation/ABI/testing/sysfs-bus-i2c-devices-m24lr b/Documentation/ABI/testing/sysfs-bus-i2c-devices-m24lr
-new file mode 100644
-index 000000000000..7c51ce8d38ba
---- /dev/null
-+++ b/Documentation/ABI/testing/sysfs-bus-i2c-devices-m24lr
-@@ -0,0 +1,100 @@
-+What:           /sys/bus/i2c/devices/<busnum>-<primary-addr>/unlock
-+Date:           2025-07-04
-+KernelVersion:  6.17
-+Contact:        Abd-Alrhman Masalkhi <abd.masalkhi@gmail.com>
-+Description:
-+                Write-only attribute used to present a password and unlock
-+                access to protected areas of the M24LR chip, including
-+                configuration registers such as the Sector Security Status
-+                (SSS) bytes. A valid password must be written to enable write
-+                access to these regions via the I2C interface.
-+
-+                Format:
-+                  - Hexadecimal string representing a 32-bit (4-byte) password
-+                  - Accepts 1 to 8 hex digits (e.g., "c", "1F", "a1b2c3d4")
-+                  - No "0x" prefix, whitespace, or trailing newline
-+                  - Case-insensitive
-+
-+                Behavior:
-+                  - If the password matches the internal stored value,
-+                    access to protected memory/configuration is granted
-+                  - If the password does not match the internally stored value,
-+                    it will fail silently
-+
-+What:           /sys/bus/i2c/devices/<busnum>-<primary-addr>/new_pass
-+Date:           2025-07-04
-+KernelVersion:  6.17
-+Contact:        Abd-Alrhman Masalkhi <abd.masalkhi@gmail.com>
-+Description:
-+                Write-only attribute used to update the password required to
-+                unlock the M24LR chip.
-+
-+                Format:
-+                  - Hexadecimal string representing a new 32-bit password
-+                  - Accepts 1 to 8 hex digits (e.g., "1A", "ffff", "c0ffee00")
-+                  - No "0x" prefix, whitespace, or trailing newline
-+                  - Case-insensitive
-+
-+                Behavior:
-+                  - Overwrites the current password stored in the I2C password
-+                    register
-+                  - Requires the device to be unlocked before changing the
-+                    password
-+                  - If the device is locked, the write silently fails
-+
-+What:           /sys/bus/i2c/devices/<busnum>-<primary-addr>/uid
-+Date:           2025-07-04
-+KernelVersion:  6.17
-+Contact:        Abd-Alrhman Masalkhi <abd.masalkhi@gmail.com>
-+Description:
-+                Read-only attribute that exposes the 8-byte unique identifier
-+                programmed into the M24LR chip at the factory.
-+
-+                Format:
-+                  - Lowercase hexadecimal string representing a 64-bit value
-+                  - 1 to 16 hex digits (e.g., "e00204f12345678")
-+                  - No "0x" prefix
-+                  - Includes a trailing newline
-+
-+What:           /sys/bus/i2c/devices/<busnum>-<primary-addr>/total_sectors
-+Date:           2025-07-04
-+KernelVersion:  6.17
-+Contact:        Abd-Alrhman Masalkhi <abd.masalkhi@gmail.com>
-+Description:
-+                Read-only attribute that exposes the total number of EEPROM
-+                sectors available in the M24LR chip.
-+
-+                Format:
-+                  - 1 to 2 hex digits (e.g. "F")
-+                  - No "0x" prefix
-+                  - Includes a trailing newline
-+
-+                Notes:
-+                  - Value is encoded by the chip and corresponds to the EEPROM
-+                    size (e.g., 3 = 4 kbit for M24LR04E-R)
-+
-+What:           /sys/bus/i2c/devices/<busnum>-<primary-addr>/sss
-+Date:           2025-07-04
-+KernelVersion:  6.17
-+Contact:        Abd-Alrhman Masalkhi <abd.masalkhi@gmail.com>
-+Description:
-+                Read/write binary attribute representing the Sector Security
-+                Status (SSS) bytes for all EEPROM sectors in STMicroelectronics
-+                M24LR chips.
-+
-+                Each EEPROM sector has one SSS byte, which controls I2C and
-+                RF access through protection bits and optional password
-+                authentication.
-+
-+                Format:
-+                  - The file contains one byte per EEPROM sector
-+                  - Byte at offset N corresponds to sector N
-+                  - Binary access only; use tools like dd, Python, or C that
-+                    support byte-level I/O and offset control.
-+
-+                Notes:
-+                  - The number of valid bytes in this file is equal to the
-+                    value exposed by 'total_sectors' file
-+                  - Write access requires prior password authentication in
-+                    I2C mode
-+                  - Refer to the M24LR datasheet for full SSS bit layout
--- 
-2.43.0
-
+Reviewed-by: Nuno S=C3=A1 <nuno.sa@analog.com>
 
