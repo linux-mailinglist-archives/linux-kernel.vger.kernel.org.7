@@ -1,560 +1,176 @@
-Return-Path: <linux-kernel+bounces-717914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-717901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 692F3AF9AB2
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 20:27:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0F2FAF9A80
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 20:23:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAC4D5C1652
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 18:27:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A7CDC16DE0F
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 18:23:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 627402EF664;
-	Fri,  4 Jul 2025 18:23:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCF7B2DEA6D;
+	Fri,  4 Jul 2025 18:22:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hy6upZyn"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JPZ9YQdJ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78A8B21D3EF
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 18:23:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F35520FAA4
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 18:22:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751653435; cv=none; b=pYDePGyrclS+vBaIS2gaZLiJ6QxQ0cslSNj1emMvFpW8H6jwPAV9vhXvSYFIFY6ujcsMsWpPuZdGvD2+ZgOYXOeVpQpTPZEvpoC6A47WCadp8tyFSE28PRPgfknoMrhs7jfJTBqqPrAL3+YT36LTWMDzmEgvTqGcYGitlXzYylY=
+	t=1751653352; cv=none; b=big8H0br97GZn5qkapS70z19D9sp9MYLqR1he4oLM8E/lzGiKHRErIxH7GsdMEjDHPG/CKQRuy/nDF6YjebtA+A1FiYLqzAv13l8s8mP2/zK2DkGVEP2PV3phfiC4eiwFW2fIPuHJEvJ+hMfh3xhkK3azx0twZQDMzZAYWxFqo0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751653435; c=relaxed/simple;
-	bh=XRgVpgnM7pxZFXiTe5lCUdorkhdYB+MJ6POhXCwyO08=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ndbW0x5BI18XfcC2mXpufzoDnANLU5sf2Q3r9PpkLgx1K4MgO72diQwBesVeCut4TaL+Yw6i+m3gYV6fbdT3yneNRnI11xST56utsIoI1hpRBisVwyGfPDPhvXJfL49nffOVoBSxT3egdcsXNvfm8TUee4C4mtC6YfcIuaf+wYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hy6upZyn; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1751653352; c=relaxed/simple;
+	bh=y7Hbl1pAqGjQzF/82eshc8yF2u6xa68k61bwAB5tTzY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UhZzI6EEVgI2dbbXu/uCKptaZ4o3KRrnwRYPF9q+e5YrN88wnhW9g/P9M//39Ezzg8iVKP+48U60lH32rTBCxZ1M2kRY96iSDgvdwTVnXUYcG/j4+Wx/Z1HQQMCI1r1hyXYc9DTPmSvkR2yAKwf/nI2MelB3rn8204xJAyVv0Iw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JPZ9YQdJ; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1751653432;
+	s=mimecast20190719; t=1751653349;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=J9jckliHnHTfALUaXs+FmqJIvCwgAR0BWWD929o+6eM=;
-	b=hy6upZynW+yv4zeFSsvoYr2fnTpQSt4nt7KGIagqdJqVUPOFAlPrzZSlkWV+Bb6Y///WRr
-	oob3DsnmMxU2ZRJ0PGrDrelCPCIEXqfI5qBjc3RA/bF8fwHcGs9q+ZSXmZyDp6tEjVnVz8
-	0oD2LkUEvGuM49VWCFDm0nov572n3sU=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-94-2sJmhORPMfaBJFhIqlECRg-1; Fri,
- 04 Jul 2025 14:23:47 -0400
-X-MC-Unique: 2sJmhORPMfaBJFhIqlECRg-1
-X-Mimecast-MFC-AGG-ID: 2sJmhORPMfaBJFhIqlECRg_1751653424
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C46F91955EC6;
-	Fri,  4 Jul 2025 18:23:44 +0000 (UTC)
-Received: from p16v.redhat.com (unknown [10.45.226.37])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 5356619560A7;
-	Fri,  4 Jul 2025 18:23:38 +0000 (UTC)
-From: Ivan Vecera <ivecera@redhat.com>
-To: Jiri Pirko <jiri@resnulli.us>,
-	netdev@vger.kernel.org
-Cc: Prathosh Satish <Prathosh.Satish@microchip.com>,
-	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
-	Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Shannon Nelson <shannon.nelson@amd.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	Michal Schmidt <mschmidt@redhat.com>,
-	Petr Oros <poros@redhat.com>
-Subject: [PATCH net-next v13 12/12] dpll: zl3073x: Add support to get/set frequency on pins
-Date: Fri,  4 Jul 2025 20:22:02 +0200
-Message-ID: <20250704182202.1641943-13-ivecera@redhat.com>
-In-Reply-To: <20250704182202.1641943-1-ivecera@redhat.com>
-References: <20250704182202.1641943-1-ivecera@redhat.com>
+	bh=Ao5yV0OWlWrLaBBV5SLduZ6Vw0gfsxB0sugrEeYXGWQ=;
+	b=JPZ9YQdJqLIRS7c7QW497UVPE5oGN8Ly4yq8GsSbCNajIOJQXhFoj0SHUqN4tauaP1rM29
+	Nv8+tKbFtTmbWPQdoI0lq7YOC8OTjpUfwBLEbAmoYje7Ggw3oix4fiZLYu/g4xnak2isca
+	xbJ9pGIoGXyvs05IBuhG2PNomtFRB5E=
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
+ [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-657-zZ8puU_gNxiCIKJ5Qols3g-1; Fri, 04 Jul 2025 14:22:29 -0400
+X-MC-Unique: zZ8puU_gNxiCIKJ5Qols3g-1
+X-Mimecast-MFC-AGG-ID: zZ8puU_gNxiCIKJ5Qols3g_1751653348
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6fd75e60875so22059506d6.0
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Jul 2025 11:22:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751653348; x=1752258148;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ao5yV0OWlWrLaBBV5SLduZ6Vw0gfsxB0sugrEeYXGWQ=;
+        b=nuD4SiqmkSN90kgMMtThxHOZ5NrFR5ovfUaRUXffCxY1HPNTrmJBbFDFNCBZFWeG2+
+         kjdPmwxnuR+epVTagPu0+ZQmKs4yHWzd27EGbepKyrkvqMrldUQr4fAtz2fyr4ty+DHo
+         DofRBJthHv7sgldEqzwZZG8OODBUM9chZ7GcSMbNwqx56MD8MOeM/nW5F/9rktYdbJjz
+         ZB471QLM3McmpWI/o+RTskZW9M7H1ZmW+VZb2S6Kzf3O+uTVa7rLpH8Prl2ci+jONf7l
+         g2o3e8jrQWTdiQtzbEmbPNISD/Qp5wTrv+Lz/OV2kwn7I/hJD6AgGMQvYeCVNI17OIuW
+         AnWA==
+X-Forwarded-Encrypted: i=1; AJvYcCWBdBX8rDlN1LBsa4WHOmwsKxDySixj9zwSwvWLnqD8qUcqrqubFGjea659XdaWibPRfolTMNWkF64MfK0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8+ubt8JdvpDE9jOwjGGu1STBGYdsVzQKwYuhMGaxYpScOA7sM
+	6d6nptZQcftby4rEJHvCWFJEW37JqVN06IETFhB2S3hYM+xPLZQ82dklYXE3ueXkpfFlRS5fLg1
+	91mXZ5F727TwGaJyh1sFyImTLYQEPcAaltjUgOq+6arVP4noJtjteBoqdSBpDoe8pAarxtFCOsD
+	Zs
+X-Gm-Gg: ASbGncuOuaBoWM8n/AzrYbj2Yjol3ec4Iab/LnS9zpWZqhL64GdQqiV/hr61xrEAJR8
+	yGT3MoqfxCkOkTU1+tZtBppbkLOJDQh/JNoQnedMlWNhnaitkHuFL1Xq3r4qZ1Sj3vNoPOpv9iz
+	1QTL7xsEF+Df6ryftVRG+lGJcsUVXG0ErfStppoqv4CrCMzMF4b7Y3hpxdAVUUVlIgE9QZhCgL0
+	a2+YM2Rcob/2IFwAIBWE/76zzTv3XYWclJeEZ1Wr4JVHmGcjKGxQNHlNcFlsqIgi+b6oFNTNgBO
+	MIH4CHwB3wUGBjmXZp4ydPka
+X-Received: by 2002:a05:6214:e4b:b0:702:c15f:3291 with SMTP id 6a1803df08f44-702c6d7a145mr47718036d6.22.1751653343417;
+        Fri, 04 Jul 2025 11:22:23 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEOOAnVJ2nhxq4q+rgZ9MWxRastPRZ+F+UsTkduj/PWXspmSODVR5v/cT1qpEPk5qddOrytUA==
+X-Received: by 2002:a05:6214:e4b:b0:702:c15f:3291 with SMTP id 6a1803df08f44-702c6d7a145mr47717576d6.22.1751653342959;
+        Fri, 04 Jul 2025 11:22:22 -0700 (PDT)
+Received: from [192.168.2.110] ([69.156.206.24])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-702c4cd2c1esm16472856d6.50.2025.07.04.11.22.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 04 Jul 2025 11:22:22 -0700 (PDT)
+Message-ID: <34be0c05-a805-4173-b8bd-8245b5eb0df8@redhat.com>
+Date: Fri, 4 Jul 2025 14:22:11 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] mm: fix the inaccurate memory statistics issue for
+ users
+To: Andrew Morton <akpm@linux-foundation.org>,
+ Vlastimil Babka <vbabka@suse.cz>, Baolin Wang <baolin.wang@linux.alibaba.com>
+Cc: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
+ Michal Hocko <mhocko@suse.com>, david@redhat.com, shakeel.butt@linux.dev,
+ lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, rppt@kernel.org,
+ surenb@google.com, donettom@linux.ibm.com, aboorvad@linux.ibm.com,
+ sj@kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <f4586b17f66f97c174f7fd1f8647374fdb53de1c.1749119050.git.baolin.wang@linux.alibaba.com>
+ <87bjqx4h82.fsf@gmail.com> <aEaOzpQElnG2I3Tz@tiehlicka>
+ <890b825e-b3b1-4d32-83ec-662495e35023@linux.alibaba.com>
+ <87a56h48ow.fsf@gmail.com> <4c113d58-c858-4ef8-a7f1-bae05c293edf@suse.cz>
+ <06d9981e-4a4a-4b99-9418-9dec0a3420e8@suse.cz>
+ <20250609171758.afc946b81451e1ad5a8ce027@linux-foundation.org>
+Content-Language: en-US, en-CA
+From: Luiz Capitulino <luizcap@redhat.com>
+In-Reply-To: <20250609171758.afc946b81451e1ad5a8ce027@linux-foundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Add support to get/set frequency on pins. The frequency for input
-pins (references) is computed in the device according this formula:
+On 2025-06-09 20:17, Andrew Morton wrote:
+> On Mon, 9 Jun 2025 10:56:46 +0200 Vlastimil Babka <vbabka@suse.cz> wrote:
+> 
+>> On 6/9/25 10:52 AM, Vlastimil Babka wrote:
+>>> On 6/9/25 10:31 AM, Ritesh Harjani (IBM) wrote:
+>>>> Baolin Wang <baolin.wang@linux.alibaba.com> writes:
+>>>>
+>>>>> On 2025/6/9 15:35, Michal Hocko wrote:
+>>>>>> On Mon 09-06-25 10:57:41, Ritesh Harjani wrote:
+>>>>>>>
+>>>>>>> Any reason why we dropped the Fixes tag? I see there were a series of
+>>>>>>> discussion on v1 and it got concluded that the fix was correct, then why
+>>>>>>> drop the fixes tag?
+>>>>>>
+>>>>>> This seems more like an improvement than a bug fix.
+>>>>>
+>>>>> Yes. I don't have a strong opinion on this, but we (Alibaba) will
+>>>>> backport it manually,
+>>>>>
+>>>>> because some of user-space monitoring tools depend
+>>>>> on these statistics.
+>>>>
+>>>> That sounds like a regression then, isn't it?
+>>>
+>>> Hm if counters were accurate before f1a7941243c1 and not afterwards, and
+>>> this is making them accurate again, and some userspace depends on it,
+>>> then Fixes: and stable is probably warranted then. If this was just a
+>>> perf improvement, then not. But AFAIU f1a7941243c1 was the perf
+>>> improvement...
+>>
+>> Dang, should have re-read the commit log of f1a7941243c1 first. It seems
+>> like the error margin due to batching existed also before f1a7941243c1.
+>>
+>> " This patch converts the rss_stats into percpu_counter to convert the
+>> error  margin from (nr_threads * 64) to approximately (nr_cpus ^ 2)."
+>>
+>> so if on some systems this means worse margin than before, the above
+>> "if" chain of thought might still hold.
+> 
+> f1a7941243c1 seems like a good enough place to tell -stable
+> maintainers where to insert the patch (why does this sound rude).
+> 
+> The patch is simple enough.  I'll add fixes:f1a7941243c1 and cc:stable
+> and, as the problem has been there for years, I'll leave the patch in
+> mm-unstable so it will eventually get into LTS, in a well tested state.
 
- freq = base_freq * multiplier * (nominator / denominator)
+Andrew, are you considering submitting this patch for 6.16? I think
+we should, it does look like a regression for larger systems built
+with 64k base page size.
 
-where the base_freq comes from the list of supported base frequencies
-and other parameters are arbitrary numbers. All these parameters are
-16-bit unsigned integers.
+On comparing a very simple app which just allocates & touches some
+memory against v6.1 (which doesn't have f1a7941243c1) and latest
+Linus tree (4c06e63b9203) I can see that on latest Linus tree the
+values for VmRSS, RssAnon and RssFile from /proc/self/status are
+all zeroes while they do report values on v6.1 and a Linus tree
+with this patch.
 
-The frequency for output pin is determined by the frequency of
-synthesizer the output pin is connected to and divisor of the output
-to which is the given pin belongs. The resulting frequency of the
-P-pin and the N-pin from this output pair depends on the signal
-format of this output pair.
-
-The device supports so-called N-divided signal formats where for the
-N-pin there is an additional divisor. The frequencies for both pins
-from such output pair are computed:
-
- P-pin-freq = synth_freq / output_div
- N-pin-freq = synth_freq / output_div / n_div
-
-For other signal-format types both P and N pin have the same frequency
-based only synth frequency and output divisor.
-
-Implement output pin callbacks to get and set frequency. The frequency
-setting for the output non-N-divided signal format is simple as we have
-to compute just new output divisor. For N-divided formats it is more
-complex because by changing of output divisor we change frequency for
-both P and N pins. In this case if we are changing frequency for P-pin
-we have to compute also new N-divisor for N-pin to keep its current
-frequency. From this and the above it follows that the frequency of
-the N-pin cannot be higher than the frequency of the P-pin and the
-callback must take this limitation into account.
-
-Co-developed-by: Prathosh Satish <Prathosh.Satish@microchip.com>
-Signed-off-by: Prathosh Satish <Prathosh.Satish@microchip.com>
-Signed-off-by: Ivan Vecera <ivecera@redhat.com>
----
-v13:
-* squashed patch 14
----
- drivers/dpll/zl3073x/dpll.c | 349 ++++++++++++++++++++++++++++++++++++
- drivers/dpll/zl3073x/regs.h |  10 ++
- 2 files changed, 359 insertions(+)
-
-diff --git a/drivers/dpll/zl3073x/dpll.c b/drivers/dpll/zl3073x/dpll.c
-index d39094b7cbc88..cb0f1a43c5fbd 100644
---- a/drivers/dpll/zl3073x/dpll.c
-+++ b/drivers/dpll/zl3073x/dpll.c
-@@ -8,6 +8,7 @@
- #include <linux/dpll.h>
- #include <linux/err.h>
- #include <linux/kthread.h>
-+#include <linux/math64.h>
- #include <linux/mod_devicetable.h>
- #include <linux/module.h>
- #include <linux/netlink.h>
-@@ -84,6 +85,127 @@ zl3073x_dpll_pin_direction_get(const struct dpll_pin *dpll_pin, void *pin_priv,
- 	return 0;
- }
- 
-+/**
-+ * zl3073x_dpll_input_ref_frequency_get - get input reference frequency
-+ * @zldpll: pointer to zl3073x_dpll
-+ * @ref_id: reference id
-+ * @frequency: pointer to variable to store frequency
-+ *
-+ * Reads frequency of given input reference.
-+ *
-+ * Return: 0 on success, <0 on error
-+ */
-+static int
-+zl3073x_dpll_input_ref_frequency_get(struct zl3073x_dpll *zldpll, u8 ref_id,
-+				     u32 *frequency)
-+{
-+	struct zl3073x_dev *zldev = zldpll->dev;
-+	u16 base, mult, num, denom;
-+	int rc;
-+
-+	guard(mutex)(&zldev->multiop_lock);
-+
-+	/* Read reference configuration */
-+	rc = zl3073x_mb_op(zldev, ZL_REG_REF_MB_SEM, ZL_REF_MB_SEM_RD,
-+			   ZL_REG_REF_MB_MASK, BIT(ref_id));
-+	if (rc)
-+		return rc;
-+
-+	/* Read registers to compute resulting frequency */
-+	rc = zl3073x_read_u16(zldev, ZL_REG_REF_FREQ_BASE, &base);
-+	if (rc)
-+		return rc;
-+	rc = zl3073x_read_u16(zldev, ZL_REG_REF_FREQ_MULT, &mult);
-+	if (rc)
-+		return rc;
-+	rc = zl3073x_read_u16(zldev, ZL_REG_REF_RATIO_M, &num);
-+	if (rc)
-+		return rc;
-+	rc = zl3073x_read_u16(zldev, ZL_REG_REF_RATIO_N, &denom);
-+	if (rc)
-+		return rc;
-+
-+	/* Sanity check that HW has not returned zero denominator */
-+	if (!denom) {
-+		dev_err(zldev->dev,
-+			"Zero divisor for ref %u frequency got from device\n",
-+			ref_id);
-+		return -EINVAL;
-+	}
-+
-+	/* Compute the frequency */
-+	*frequency = mul_u64_u32_div(base * mult, num, denom);
-+
-+	return rc;
-+}
-+
-+static int
-+zl3073x_dpll_input_pin_frequency_get(const struct dpll_pin *dpll_pin,
-+				     void *pin_priv,
-+				     const struct dpll_device *dpll,
-+				     void *dpll_priv, u64 *frequency,
-+				     struct netlink_ext_ack *extack)
-+{
-+	struct zl3073x_dpll *zldpll = dpll_priv;
-+	struct zl3073x_dpll_pin *pin = pin_priv;
-+	u32 ref_freq;
-+	u8 ref;
-+	int rc;
-+
-+	/* Read and return ref frequency */
-+	ref = zl3073x_input_pin_ref_get(pin->id);
-+	rc = zl3073x_dpll_input_ref_frequency_get(zldpll, ref, &ref_freq);
-+	if (!rc)
-+		*frequency = ref_freq;
-+
-+	return rc;
-+}
-+
-+static int
-+zl3073x_dpll_input_pin_frequency_set(const struct dpll_pin *dpll_pin,
-+				     void *pin_priv,
-+				     const struct dpll_device *dpll,
-+				     void *dpll_priv, u64 frequency,
-+				     struct netlink_ext_ack *extack)
-+{
-+	struct zl3073x_dpll *zldpll = dpll_priv;
-+	struct zl3073x_dev *zldev = zldpll->dev;
-+	struct zl3073x_dpll_pin *pin = pin_priv;
-+	u16 base, mult;
-+	u8 ref;
-+	int rc;
-+
-+	/* Get base frequency and multiplier for the requested frequency */
-+	rc = zl3073x_ref_freq_factorize(frequency, &base, &mult);
-+	if (rc)
-+		return rc;
-+
-+	guard(mutex)(&zldev->multiop_lock);
-+
-+	/* Load reference configuration */
-+	ref = zl3073x_input_pin_ref_get(pin->id);
-+	rc = zl3073x_mb_op(zldev, ZL_REG_REF_MB_SEM, ZL_REF_MB_SEM_RD,
-+			   ZL_REG_REF_MB_MASK, BIT(ref));
-+
-+	/* Update base frequency, multiplier, numerator & denominator */
-+	rc = zl3073x_write_u16(zldev, ZL_REG_REF_FREQ_BASE, base);
-+	if (rc)
-+		return rc;
-+	rc = zl3073x_write_u16(zldev, ZL_REG_REF_FREQ_MULT, mult);
-+	if (rc)
-+		return rc;
-+	rc = zl3073x_write_u16(zldev, ZL_REG_REF_RATIO_M, 1);
-+	if (rc)
-+		return rc;
-+	rc = zl3073x_write_u16(zldev, ZL_REG_REF_RATIO_N, 1);
-+	if (rc)
-+		return rc;
-+
-+	/* Commit reference configuration */
-+	return zl3073x_mb_op(zldev, ZL_REG_REF_MB_SEM, ZL_REF_MB_SEM_WR,
-+			     ZL_REG_REF_MB_MASK, BIT(ref));
-+}
-+
- /**
-  * zl3073x_dpll_selected_ref_get - get currently selected reference
-  * @zldpll: pointer to zl3073x_dpll
-@@ -518,6 +640,229 @@ zl3073x_dpll_input_pin_prio_set(const struct dpll_pin *dpll_pin, void *pin_priv,
- 	return 0;
- }
- 
-+static int
-+zl3073x_dpll_output_pin_frequency_get(const struct dpll_pin *dpll_pin,
-+				      void *pin_priv,
-+				      const struct dpll_device *dpll,
-+				      void *dpll_priv, u64 *frequency,
-+				      struct netlink_ext_ack *extack)
-+{
-+	struct zl3073x_dpll *zldpll = dpll_priv;
-+	struct zl3073x_dev *zldev = zldpll->dev;
-+	struct zl3073x_dpll_pin *pin = pin_priv;
-+	struct device *dev = zldev->dev;
-+	u8 out, signal_format, synth;
-+	u32 output_div, synth_freq;
-+	int rc;
-+
-+	out = zl3073x_output_pin_out_get(pin->id);
-+	synth = zl3073x_out_synth_get(zldev, out);
-+	synth_freq = zl3073x_synth_freq_get(zldev, synth);
-+
-+	guard(mutex)(&zldev->multiop_lock);
-+
-+	/* Read output configuration into mailbox */
-+	rc = zl3073x_mb_op(zldev, ZL_REG_OUTPUT_MB_SEM, ZL_OUTPUT_MB_SEM_RD,
-+			   ZL_REG_OUTPUT_MB_MASK, BIT(out));
-+	if (rc)
-+		return rc;
-+
-+	rc = zl3073x_read_u32(zldev, ZL_REG_OUTPUT_DIV, &output_div);
-+	if (rc)
-+		return rc;
-+
-+	/* Check output divisor for zero */
-+	if (!output_div) {
-+		dev_err(dev, "Zero divisor for output %u got from device\n",
-+			out);
-+		return -EINVAL;
-+	}
-+
-+	/* Read used signal format for the given output */
-+	signal_format = zl3073x_out_signal_format_get(zldev, out);
-+
-+	switch (signal_format) {
-+	case ZL_OUTPUT_MODE_SIGNAL_FORMAT_2_NDIV:
-+	case ZL_OUTPUT_MODE_SIGNAL_FORMAT_2_NDIV_INV:
-+		/* In case of divided format we have to distiguish between
-+		 * given output pin type.
-+		 */
-+		if (zl3073x_dpll_is_p_pin(pin)) {
-+			/* For P-pin the resulting frequency is computed as
-+			 * simple division of synth frequency and output
-+			 * divisor.
-+			 */
-+			*frequency = synth_freq / output_div;
-+		} else {
-+			/* For N-pin we have to divide additionally by
-+			 * divisor stored in esync_period output mailbox
-+			 * register that is used as N-pin divisor for these
-+			 * modes.
-+			 */
-+			u32 ndiv;
-+
-+			rc = zl3073x_read_u32(zldev, ZL_REG_OUTPUT_ESYNC_PERIOD,
-+					      &ndiv);
-+			if (rc)
-+				return rc;
-+
-+			/* Check N-pin divisor for zero */
-+			if (!ndiv) {
-+				dev_err(dev,
-+					"Zero N-pin divisor for output %u got from device\n",
-+					out);
-+				return -EINVAL;
-+			}
-+
-+			/* Compute final divisor for N-pin */
-+			*frequency = synth_freq / output_div / ndiv;
-+		}
-+		break;
-+	default:
-+		/* In other modes the resulting frequency is computed as
-+		 * division of synth frequency and output divisor.
-+		 */
-+		*frequency = synth_freq / output_div;
-+		break;
-+	}
-+
-+	return rc;
-+}
-+
-+static int
-+zl3073x_dpll_output_pin_frequency_set(const struct dpll_pin *dpll_pin,
-+				      void *pin_priv,
-+				      const struct dpll_device *dpll,
-+				      void *dpll_priv, u64 frequency,
-+				      struct netlink_ext_ack *extack)
-+{
-+	struct zl3073x_dpll *zldpll = dpll_priv;
-+	struct zl3073x_dev *zldev = zldpll->dev;
-+	struct zl3073x_dpll_pin *pin = pin_priv;
-+	struct device *dev = zldev->dev;
-+	u32 output_n_freq, output_p_freq;
-+	u8 out, signal_format, synth;
-+	u32 cur_div, new_div, ndiv;
-+	u32 synth_freq;
-+	int rc;
-+
-+	out = zl3073x_output_pin_out_get(pin->id);
-+	synth = zl3073x_out_synth_get(zldev, out);
-+	synth_freq = zl3073x_synth_freq_get(zldev, synth);
-+	new_div = synth_freq / (u32)frequency;
-+
-+	/* Get used signal format for the given output */
-+	signal_format = zl3073x_out_signal_format_get(zldev, out);
-+
-+	guard(mutex)(&zldev->multiop_lock);
-+
-+	/* Load output configuration */
-+	rc = zl3073x_mb_op(zldev, ZL_REG_OUTPUT_MB_SEM, ZL_OUTPUT_MB_SEM_RD,
-+			   ZL_REG_OUTPUT_MB_MASK, BIT(out));
-+	if (rc)
-+		return rc;
-+
-+	/* Check signal format */
-+	if (signal_format != ZL_OUTPUT_MODE_SIGNAL_FORMAT_2_NDIV &&
-+	    signal_format != ZL_OUTPUT_MODE_SIGNAL_FORMAT_2_NDIV_INV) {
-+		/* For non N-divided signal formats the frequency is computed
-+		 * as division of synth frequency and output divisor.
-+		 */
-+		rc = zl3073x_write_u32(zldev, ZL_REG_OUTPUT_DIV, new_div);
-+		if (rc)
-+			return rc;
-+
-+		/* For 50/50 duty cycle the divisor is equal to width */
-+		rc = zl3073x_write_u32(zldev, ZL_REG_OUTPUT_WIDTH, new_div);
-+		if (rc)
-+			return rc;
-+
-+		/* Commit output configuration */
-+		return zl3073x_mb_op(zldev,
-+				     ZL_REG_OUTPUT_MB_SEM, ZL_OUTPUT_MB_SEM_WR,
-+				     ZL_REG_OUTPUT_MB_MASK, BIT(out));
-+	}
-+
-+	/* For N-divided signal format get current divisor */
-+	rc = zl3073x_read_u32(zldev, ZL_REG_OUTPUT_DIV, &cur_div);
-+	if (rc)
-+		return rc;
-+
-+	/* Check output divisor for zero */
-+	if (!cur_div) {
-+		dev_err(dev, "Zero divisor for output %u got from device\n",
-+			out);
-+		return -EINVAL;
-+	}
-+
-+	/* Get N-pin divisor (shares the same register with esync */
-+	rc = zl3073x_read_u32(zldev, ZL_REG_OUTPUT_ESYNC_PERIOD, &ndiv);
-+	if (rc)
-+		return rc;
-+
-+	/* Check N-pin divisor for zero */
-+	if (!ndiv) {
-+		dev_err(dev,
-+			"Zero N-pin divisor for output %u got from device\n",
-+			out);
-+		return -EINVAL;
-+	}
-+
-+	/* Compute current output frequency for P-pin */
-+	output_p_freq = synth_freq / cur_div;
-+
-+	/* Compute current N-pin frequency */
-+	output_n_freq = output_p_freq / ndiv;
-+
-+	if (zl3073x_dpll_is_p_pin(pin)) {
-+		/* We are going to change output frequency for P-pin but
-+		 * if the requested frequency is less than current N-pin
-+		 * frequency then indicate a failure as we are not able
-+		 * to compute N-pin divisor to keep its frequency unchanged.
-+		 */
-+		if (frequency <= output_n_freq)
-+			return -EINVAL;
-+
-+		/* Update the output divisor */
-+		rc = zl3073x_write_u32(zldev, ZL_REG_OUTPUT_DIV, new_div);
-+		if (rc)
-+			return rc;
-+
-+		/* For 50/50 duty cycle the divisor is equal to width */
-+		rc = zl3073x_write_u32(zldev, ZL_REG_OUTPUT_WIDTH, new_div);
-+		if (rc)
-+			return rc;
-+
-+		/* Compute new divisor for N-pin */
-+		ndiv = (u32)frequency / output_n_freq;
-+	} else {
-+		/* We are going to change frequency of N-pin but if
-+		 * the requested freq is greater or equal than freq of P-pin
-+		 * in the output pair we cannot compute divisor for the N-pin.
-+		 * In this case indicate a failure.
-+		 */
-+		if (output_p_freq <= frequency)
-+			return -EINVAL;
-+
-+		/* Compute new divisor for N-pin */
-+		ndiv = output_p_freq / (u32)frequency;
-+	}
-+
-+	/* Update divisor for the N-pin */
-+	rc = zl3073x_write_u32(zldev, ZL_REG_OUTPUT_ESYNC_PERIOD, ndiv);
-+	if (rc)
-+		return rc;
-+
-+	/* For 50/50 duty cycle the divisor is equal to width */
-+	rc = zl3073x_write_u32(zldev, ZL_REG_OUTPUT_ESYNC_WIDTH, ndiv);
-+	if (rc)
-+		return rc;
-+
-+	/* Commit output configuration */
-+	return zl3073x_mb_op(zldev, ZL_REG_OUTPUT_MB_SEM, ZL_OUTPUT_MB_SEM_WR,
-+			     ZL_REG_OUTPUT_MB_MASK, BIT(out));
-+}
-+
- static int
- zl3073x_dpll_output_pin_state_on_dpll_get(const struct dpll_pin *dpll_pin,
- 					  void *pin_priv,
-@@ -611,6 +956,8 @@ zl3073x_dpll_mode_get(const struct dpll_device *dpll, void *dpll_priv,
- 
- static const struct dpll_pin_ops zl3073x_dpll_input_pin_ops = {
- 	.direction_get = zl3073x_dpll_pin_direction_get,
-+	.frequency_get = zl3073x_dpll_input_pin_frequency_get,
-+	.frequency_set = zl3073x_dpll_input_pin_frequency_set,
- 	.prio_get = zl3073x_dpll_input_pin_prio_get,
- 	.prio_set = zl3073x_dpll_input_pin_prio_set,
- 	.state_on_dpll_get = zl3073x_dpll_input_pin_state_on_dpll_get,
-@@ -619,6 +966,8 @@ static const struct dpll_pin_ops zl3073x_dpll_input_pin_ops = {
- 
- static const struct dpll_pin_ops zl3073x_dpll_output_pin_ops = {
- 	.direction_get = zl3073x_dpll_pin_direction_get,
-+	.frequency_get = zl3073x_dpll_output_pin_frequency_get,
-+	.frequency_set = zl3073x_dpll_output_pin_frequency_set,
- 	.state_on_dpll_get = zl3073x_dpll_output_pin_state_on_dpll_get,
- };
- 
-diff --git a/drivers/dpll/zl3073x/regs.h b/drivers/dpll/zl3073x/regs.h
-index dafe62da81d06..493c63e729208 100644
---- a/drivers/dpll/zl3073x/regs.h
-+++ b/drivers/dpll/zl3073x/regs.h
-@@ -137,6 +137,11 @@
- #define ZL_REF_MB_SEM_WR			BIT(0)
- #define ZL_REF_MB_SEM_RD			BIT(1)
- 
-+#define ZL_REG_REF_FREQ_BASE			ZL_REG(10, 0x05, 2)
-+#define ZL_REG_REF_FREQ_MULT			ZL_REG(10, 0x07, 2)
-+#define ZL_REG_REF_RATIO_M			ZL_REG(10, 0x09, 2)
-+#define ZL_REG_REF_RATIO_N			ZL_REG(10, 0x0b, 2)
-+
- #define ZL_REG_REF_CONFIG			ZL_REG(10, 0x0d, 1)
- #define ZL_REF_CONFIG_ENABLE			BIT(0)
- #define ZL_REF_CONFIG_DIFF_EN			BIT(2)
-@@ -195,4 +200,9 @@
- #define ZL_OUTPUT_MODE_SIGNAL_FORMAT_2_NDIV	12
- #define ZL_OUTPUT_MODE_SIGNAL_FORMAT_2_NDIV_INV	15
- 
-+#define ZL_REG_OUTPUT_DIV			ZL_REG(14, 0x0c, 4)
-+#define ZL_REG_OUTPUT_WIDTH			ZL_REG(14, 0x10, 4)
-+#define ZL_REG_OUTPUT_ESYNC_PERIOD		ZL_REG(14, 0x14, 4)
-+#define ZL_REG_OUTPUT_ESYNC_WIDTH		ZL_REG(14, 0x18, 4)
-+
- #endif /* _ZL3073X_REGS_H */
--- 
-2.49.0
+My test setup is a arm64 VM with 80 CPUs running a kernel with 64k
+pagesize. The kernel only reports the RSS values starting at 10MB
+(which makes sense since the Per-CPU counters will cache up to two
+times the number of CPUs and the kernel accounts pages). The situation
+will be worse on larger systems, of course.
 
 
