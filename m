@@ -1,111 +1,272 @@
-Return-Path: <linux-kernel+bounces-716917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 170F9AF8C97
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 10:49:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5259EAF8C89
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 10:48:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 456613B151E
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 08:47:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F07617977A
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 08:48:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 947E82ECD29;
-	Fri,  4 Jul 2025 08:42:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1F0B2EE98D;
+	Fri,  4 Jul 2025 08:43:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WT1PQbZr"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="TCcWXlqc"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6218428A41C
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 08:42:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E2702EE60E;
+	Fri,  4 Jul 2025 08:43:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751618551; cv=none; b=iDb0n+OLLbiPMgeG+p7/IwWwLOZPM1iXoVqt/bFTK9qdAJ3nTSSPgEgjvjm5QBiagc+5EuzqCPCKFnJadiSCUJAM1gfKXidRGGoKHMfLwS5o6clXRdcg+MVtt0FwNSEjuf8qEcS2tIzEuzVqCeQahGobcUe2PoAmOwLCSvbQovg=
+	t=1751618584; cv=none; b=VCH2TJNWh0xXFfn7smzxgZ4ABQNSLhSS0d2yEsLNGwIHfa/HBExdbfUcP8W7xwX19o/VrJ71z2ijTZmJwMmNglaTGYEJxhol84d89WnWV1dpZ+gIF9dc7emnxYHjEtqmj83c0t5MSMB10cI5zn9S0HDAEg1qty23O9JOGt96gyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751618551; c=relaxed/simple;
-	bh=XWPuLH+r945MMXMKIDI54FYqxlY/reitRUTj8Ejgnuo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JEUubeQd0aEk64y6lnDQ/C691llNspLI6M/fj9PZbWVsOXG1g2IawSH5DRcVOxvQrDE452xc7uPOXRbk1wvYGSR+Out/iNsv4ip0iNrbMyjZEa0DMls7kEqI3LsMMYR5UZpccgnpZ3OUoRpdlcydbwDlGcz79uZCqOZrrraJfkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WT1PQbZr; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-32b595891d2so5761031fa.2
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Jul 2025 01:42:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1751618547; x=1752223347; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XWPuLH+r945MMXMKIDI54FYqxlY/reitRUTj8Ejgnuo=;
-        b=WT1PQbZrsuPgO1qF1LG+wIXjOUzXj3bN4EZ0ZC+GnWATLCuKCtE1zhg7Q4sH75kXjP
-         sDooLeu8wP18sjQCsEPxaQrUttPKVo078xPiNKzwGf5jlPy/EaEVqEk+OGPIeSO4kiXg
-         IcYEESwCA7vLRTMk2VidIH5xdOOTU7zJwyexTAGJQi80H7WFpzjYyLfjE8cvteGaMXO/
-         j39T3k+8TtyyntwlF5qOM4LUeh2WRRpnjbB24Yfw51Y7OcYvNvj9Zxqd6pejoKsJJrrO
-         Bg247XBlCQKwFmJQQlXRL7TBRmWf5rvN+Oam+dfSvokR4dfjYUcNNSK/t254V4zpSVa2
-         ENqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751618547; x=1752223347;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XWPuLH+r945MMXMKIDI54FYqxlY/reitRUTj8Ejgnuo=;
-        b=YaPx8tp5eHLfSL95Dt8BtwVC2ap28s/+sy7HehtDRnVu5iLWMCqY33ictGrk0hzXoN
-         sD6bnyErprEAgMPzYx9fereNhmWUnmPp2d0QB1UG2ac/FM6gD6R0MwZVukgerxjC3Rlg
-         Uf7Nu0K/LOE2zsGOGnk3J8YRDIuSrgYgCWMus3vGXpDlO/UXj+2a4uqbUauurI5/IKFU
-         FPDJ/6Llzthz6QlGhz489R+i0Ctiu6LrVX8RkrYupfB/Obvx3CiviaB9PnPaYzuj+lz9
-         idFvGmV/lRb3hf2JXLsghcc2sm/FxK8dTRtbhKBFXOZZQJmBnDamm6eAwf5RWpdb1/yo
-         Nr7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUwD70VXU46/EmpZWUrDm8rmL9CbV6NdMTWJ4Qj/+rofkUHLpXO//FhNmF3YFeRq8UBrZ0vJ6ACQR0GIns=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxnKzbbarLLBB6zgTjAJu++aC5n1z5rQllXhi+7MQ6V5C686h4b
-	Bsa7W9G12hCyLwIg2jrTP0YWyJmZzBGvh/65ITzQALG+G+Vp0AkouWcYmUFQqEUHIFlP6EQ5AWP
-	gAvopU+m6ViCmfsVrlgFw7PQsxyBBM4RjBoBBdlL2aA==
-X-Gm-Gg: ASbGncv+vvcmbgZ8MQaNKAj5H0OLe/IrRLquCbzYaRzBfZ56xzAXsYeUyNSBcwH4i2r
-	xqJe/bw8hY6ihvyGNKQTQmg0fpmYbx2Z1hugncTWjOOHJQEdkzr8Up3xz1DpuTs1qXTgSI4Ju2u
-	4dnnxvNL7k9bRj52AhGE/zRSNfpKfTSvIzsXNuXWojBcM=
-X-Google-Smtp-Source: AGHT+IEAaBTLo3EbOBke4r+Qqb8oEiI0VY9CZIrYvxq+ehJ6Nqi1uPjI7Afw/XyEmGYHQQIcPc/bUSJo+rniRRe4A7s=
-X-Received: by 2002:a2e:be29:0:b0:32b:3cf5:7358 with SMTP id
- 38308e7fff4ca-32e5f61875bmr6171271fa.28.1751618547556; Fri, 04 Jul 2025
- 01:42:27 -0700 (PDT)
+	s=arc-20240116; t=1751618584; c=relaxed/simple;
+	bh=FEXr7+A8Sh3z5TppCZoEqeu3TrnS62oJtNLrMLmX9Ko=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jlBL+1fnIQqeL4yzYZnlpaRPRukE2BQuctTaR8Pdp8940VgypROfR88J2Pyi8m8wR4AX+cDMOOI5YsKeMlSFZWnzbTHpjY37ooDppqpErWgjPYu9yh2OGiRIzuIEWGvX2m3gn6paUbWG6sWoa4P/OTyEB5DYNt80KN+/RicoGpY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=TCcWXlqc; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5643QCx3020597;
+	Fri, 4 Jul 2025 08:42:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=3UdQ8D
+	xjk4XDYNnQQ3bQvUxc58xt/mNU1w0LcNH4EvA=; b=TCcWXlqc8GcxQktbr9NM6q
+	ttXDjiepo6npGnqo4dXoc20L0cM1yZLbYtit3jH9llDNLP97qOCs3o6QvPL2H3tg
+	B0PMI2tJFEAix9Z6FJ/JwnW0GERHUzpEXSNKIP7L5H5VB8eCKungDdk5TilZTi+Q
+	+sy24DTHcJz/7b3sBoJb+LDjlAw7vSoYRf7Y+i1npdFY/eJjkvl5MDd1eXwbfZU3
+	t/ZfBudt2FRWAi6aE4I86gm8tRX6GtvB+wxc6cuFs0iLi6siq43J25htoU5BzSML
+	nDQU7sHcct2YuVgI/TcYzX7SkL/LkOQ4GuItpZxQ4WHSnOrgJHmx21Utz0fiWPyw
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47j6u287n2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 04 Jul 2025 08:42:44 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 5648bLAL021704;
+	Fri, 4 Jul 2025 08:42:44 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47j6u287mx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 04 Jul 2025 08:42:44 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 56461FKL032151;
+	Fri, 4 Jul 2025 08:42:43 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 47ju4116vq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 04 Jul 2025 08:42:43 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5648gdCh58327392
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 4 Jul 2025 08:42:39 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 230E82004B;
+	Fri,  4 Jul 2025 08:42:39 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1093B20040;
+	Fri,  4 Jul 2025 08:42:34 +0000 (GMT)
+Received: from [9.61.253.3] (unknown [9.61.253.3])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Fri,  4 Jul 2025 08:42:33 +0000 (GMT)
+Message-ID: <ea69919d-87dd-4d5c-b096-620a4050af6f@linux.ibm.com>
+Date: Fri, 4 Jul 2025 14:12:30 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250704075225.3212486-1-sakari.ailus@linux.intel.com> <20250704075424.3219556-1-sakari.ailus@linux.intel.com>
-In-Reply-To: <20250704075424.3219556-1-sakari.ailus@linux.intel.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 4 Jul 2025 10:42:16 +0200
-X-Gm-Features: Ac12FXyNCQpVK4fo6g60VvOdFC9JZ82H-ON3QvDAbIzzJ0Cs1R5sjNEchTY81F8
-Message-ID: <CACRpkdbdPqHVHhTjBiLPmZ1nGiaJqm5kSa1--uMkp6OXmAprhQ@mail.gmail.com>
-Subject: Re: [PATCH 34/80] iio: light: Remove redundant pm_runtime_mark_last_busy()
- calls
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Subhajit Ghosh <subhajit.ghosh@tweaklogic.com>, Jonathan Cameron <jic23@kernel.org>, 
-	David Lechner <dlechner@baylibre.com>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Andy Shevchenko <andy@kernel.org>, Julien Stephan <jstephan@baylibre.com>, 
-	Waqar Hameed <waqar.hameed@axis.com>, Abhash Jha <abhashkumarjha123@gmail.com>, 
-	chuguangqing <chuguangqing@inspur.com>, Shreeya Patel <shreeya.patel@collabora.com>, 
-	Marek Vasut <marex@denx.de>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Vasileios Amoiridis <vassilisamir@gmail.com>, Per-Daniel Olsson <perdaniel.olsson@axis.com>, 
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>, linux-iio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/3] powerpc/pseries: Correct secvar format
+ representation for static key management
+To: Srish Srinivasan <ssrish@linux.ibm.com>, linux-integrity@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+Cc: maddy@linux.ibm.com, mpe@ellerman.id.au, npiggin@gmail.com,
+        christophe.leroy@csgroup.eu, naveen@kernel.org, ajd@linux.ibm.com,
+        zohar@linux.ibm.com, nayna@linux.ibm.com, msuchanek@suse.de,
+        linux-kernel@vger.kernel.org
+References: <20250610211907.101384-1-ssrish@linux.ibm.com>
+ <20250610211907.101384-2-ssrish@linux.ibm.com>
+Content-Language: en-US
+From: R Nageswara Sastry <rnsastry@linux.ibm.com>
+In-Reply-To: <20250610211907.101384-2-ssrish@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: gVgEwNCUjoQDvVkuldKTtmrvcZX4v83C
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA0MDA2NCBTYWx0ZWRfX5VMG+ECazCKX L3bYeVBvWCDf/09q5KykN1lagxUyLzrHF2qFzzMaPa8XneKmDIX0S8jA+zzZFJfrV+23OwE3Fcz TOkwcrt3QTEqFPasMrdHn/q4idiWc1+CHqzcVSrb8ls1vA75RtTagu0Z9d9Th4YB3tPDSfQj8B1
+ +R+GgR8jVLUACxnpC7Anon9ClblIuRBVTvorNH3SVZodWLIMRN7zQ6px7kt8lKfmG4uYei5YIQu OaFBJ4ZRRo3ePD+gSLE+Ui7xenx5LsBQHGRRpN4vjkwauyGXeNQUryRhGENxFTfqSJZhGFe8U7L es3NI6UUsyByHCX1t441C2w6Yb1LNRWNlgCyphVerkqIiIUy0AfnqJ/OZgu+6ugmDLpXj41TNR0
+ MRpWRqDf+BkUQVti8uEsPOmTTsqlPbNSBdrJH8G8Ev1DhKG9ZkE3aNtoHFphkaD0UZ9dBfLI
+X-Proofpoint-GUID: EHLgPpDBDYIi4ey7y9-9AwS7zr8TuSZc
+X-Authority-Analysis: v=2.4 cv=GrRC+l1C c=1 sm=1 tr=0 ts=68679404 cx=c_pps a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VnNF1IyMAAAA:8 a=JeGirNJSJm6n8U7jAzIA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-04_03,2025-07-02_04,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011
+ priorityscore=1501 adultscore=0 mlxlogscore=999 mlxscore=0 impostorscore=0
+ phishscore=0 spamscore=0 suspectscore=0 bulkscore=0 malwarescore=0
+ lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507040064
 
-On Fri, Jul 4, 2025 at 9:54=E2=80=AFAM Sakari Ailus
-<sakari.ailus@linux.intel.com> wrote:
 
-> pm_runtime_put_autosuspend(), pm_runtime_put_sync_autosuspend(),
-> pm_runtime_autosuspend() and pm_request_autosuspend() now include a call
-> to pm_runtime_mark_last_busy(). Remove the now-reduntant explicit call to
-> pm_runtime_mark_last_busy().
+On 11/06/25 2:49 AM, Srish Srinivasan wrote:
+> On a PLPKS enabled PowerVM LPAR, the secvar format property for static
+> key management is misrepresented as "ibm,plpks-sb-unknown", creating
+> reason for confusion.
 >
-> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> Static key management mode uses fixed, built-in keys. Dynamic key
+> management mode allows keys to be updated in production to handle
+> security updates without firmware rebuilds.
+>
+> Define a function named plpks_get_sb_keymgmt_mode() to retrieve the
+> key management mode based on the existence of the SB_VERSION property
+> in the firmware.
+>
+> Set the secvar format property to either "ibm,plpks-sb-v<version>" or
+> "ibm,plpks-sb-v0" based on the key management mode, and return the
+> length of the secvar format property.
+>
+> Co-developed-by: Souradeep <soura@imap.linux.ibm.com>
+> Signed-off-by: Souradeep <soura@imap.linux.ibm.com>
+> Signed-off-by: Srish Srinivasan <ssrish@linux.ibm.com>
+> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
+> Reviewed-by: Nayna Jain <nayna@linux.ibm.com>
+> Reviewed-by: Andrew Donnellan <ajd@linux.ibm.com>
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Tested-by: R Nageswara Sastry <rnsastry@linux.ibm.com>
+With the following scenarios:
+1. With and with out secure boot by enabling keystore_signed_updates and 
+keystore_kbytes
+2. With Dynamic Key Guest Secure Boot
+3. With Static Key Guest Secure Boot
 
-Yours,
-Linus Walleij
+> ---
+>   Documentation/ABI/testing/sysfs-secvar        | 10 ++-
+>   arch/powerpc/platforms/pseries/plpks-secvar.c | 76 +++++++++++--------
+>   2 files changed, 53 insertions(+), 33 deletions(-)
+>
+> diff --git a/Documentation/ABI/testing/sysfs-secvar b/Documentation/ABI/testing/sysfs-secvar
+> index 857cf12b0904..f001a4f4bd2e 100644
+> --- a/Documentation/ABI/testing/sysfs-secvar
+> +++ b/Documentation/ABI/testing/sysfs-secvar
+> @@ -22,9 +22,13 @@ Description:	A string indicating which backend is in use by the firmware.
+>   		and is expected to be "ibm,edk2-compat-v1".
+>   
+>   		On pseries/PLPKS, this is generated by the kernel based on the
+> -		version number in the SB_VERSION variable in the keystore, and
+> -		has the form "ibm,plpks-sb-v<version>", or
+> -		"ibm,plpks-sb-unknown" if there is no SB_VERSION variable.
+> +		version number in the SB_VERSION variable in the keystore. The
+> +		version numbering in the SB_VERSION variable starts from 1. The
+> +		format string takes the form "ibm,plpks-sb-v<version>" in the
+> +		case of dynamic key management mode. If the SB_VERSION variable
+> +		does not exist (or there is an error while reading it), it takes
+> +		the form "ibm,plpks-sb-v0", indicating that the key management
+> +		mode is static.
+>   
+>   What:		/sys/firmware/secvar/vars/<variable name>
+>   Date:		August 2019
+> diff --git a/arch/powerpc/platforms/pseries/plpks-secvar.c b/arch/powerpc/platforms/pseries/plpks-secvar.c
+> index 257fd1f8bc19..767e5e8c6990 100644
+> --- a/arch/powerpc/platforms/pseries/plpks-secvar.c
+> +++ b/arch/powerpc/platforms/pseries/plpks-secvar.c
+> @@ -152,39 +152,55 @@ static int plpks_set_variable(const char *key, u64 key_len, u8 *data,
+>   	return rc;
+>   }
+>   
+> -// PLPKS dynamic secure boot doesn't give us a format string in the same way OPAL does.
+> -// Instead, report the format using the SB_VERSION variable in the keystore.
+> -// The string is made up by us, and takes the form "ibm,plpks-sb-v<n>" (or "ibm,plpks-sb-unknown"
+> -// if the SB_VERSION variable doesn't exist). Hypervisor defines the SB_VERSION variable as a
+> -// "1 byte unsigned integer value".
+> -static ssize_t plpks_secvar_format(char *buf, size_t bufsize)
+> +/*
+> + * Return the key management mode.
+> + *
+> + * SB_VERSION is defined as a "1 byte unsigned integer value", taking values
+> + * starting from 1. It is owned by the Partition Firmware and its presence
+> + * indicates that the key management mode is dynamic. Any failure in
+> + * reading SB_VERSION defaults the key management mode to static. The error
+> + * codes -ENOENT or -EPERM are expected in static key management mode. An
+> + * unexpected error code will have to be investigated. Only signed variables
+> + * have null bytes in their names, SB_VERSION does not.
+> + *
+> + * Return 0 to indicate that the key management mode is static. Otherwise
+> + * return the SB_VERSION value to indicate that the key management mode is
+> + * dynamic.
+> + */
+> +static u8 plpks_get_sb_keymgmt_mode(void)
+>   {
+> -	struct plpks_var var = {0};
+> -	ssize_t ret;
+> -	u8 version;
+> -
+> -	var.component = NULL;
+> -	// Only the signed variables have null bytes in their names, this one doesn't
+> -	var.name = "SB_VERSION";
+> -	var.namelen = strlen(var.name);
+> -	var.datalen = 1;
+> -	var.data = &version;
+> -
+> -	// Unlike the other vars, SB_VERSION is owned by firmware instead of the OS
+> -	ret = plpks_read_fw_var(&var);
+> -	if (ret) {
+> -		if (ret == -ENOENT) {
+> -			ret = snprintf(buf, bufsize, "ibm,plpks-sb-unknown");
+> -		} else {
+> -			pr_err("Error %ld reading SB_VERSION from firmware\n", ret);
+> -			ret = -EIO;
+> -		}
+> -		goto err;
+> +	u8 mode;
+> +	ssize_t rc;
+> +	struct plpks_var var = {
+> +		.component = NULL,
+> +		.name = "SB_VERSION",
+> +		.namelen = 10,
+> +		.datalen = 1,
+> +		.data = &mode,
+> +	};
+> +
+> +	rc = plpks_read_fw_var(&var);
+> +	if (rc) {
+> +		if (rc != -ENOENT && rc != -EPERM)
+> +			pr_info("Error %ld reading SB_VERSION from firmware\n", rc);
+> +		mode = 0;
+>   	}
+> +	return mode;
+> +}
+>   
+> -	ret = snprintf(buf, bufsize, "ibm,plpks-sb-v%hhu", version);
+> -err:
+> -	return ret;
+> +/*
+> + * PLPKS dynamic secure boot doesn't give us a format string in the same way
+> + * OPAL does. Instead, report the format using the SB_VERSION variable in the
+> + * keystore. The string, made up by us, takes the form of either
+> + * "ibm,plpks-sb-v<n>" or "ibm,plpks-sb-v0", based on the key management mode,
+> + * and return the length of the secvar format property.
+> + */
+> +static ssize_t plpks_secvar_format(char *buf, size_t bufsize)
+> +{
+> +	u8 mode;
+> +
+> +	mode = plpks_get_sb_keymgmt_mode();
+> +	return snprintf(buf, bufsize, "ibm,plpks-sb-v%hhu", mode);
+>   }
+>   
+>   static int plpks_max_size(u64 *max_size)
+
+-- 
+Thanks and Regards
+R.Nageswara Sastry
+
 
