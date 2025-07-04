@@ -1,91 +1,114 @@
-Return-Path: <linux-kernel+bounces-716862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC7DEAF8BBC
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 10:32:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0990AF8BB4
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 10:32:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 085937608F5
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 08:28:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21B6D1882E75
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 08:30:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE45F309DC6;
-	Fri,  4 Jul 2025 08:16:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43CC830E84F;
+	Fri,  4 Jul 2025 08:16:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="V8jzDXZy"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fDxrdXgx"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E959309DB7;
-	Fri,  4 Jul 2025 08:16:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1FF930E856
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 08:16:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751616985; cv=none; b=gnFGUGCtsXFhgfNCKiYaOl01IQB9DSTD2wMngDLPrVq6udCoLjFUhThx8tJWYbp9V6kzHs0fSKVsqCTMAWs34iHI4/7TNjIZ6l6Gz8fCD2ME7TgaXJjk96amAaRHvOUoJH4ua9PJDs7ASDBgYhdT8mZwVmFoA4YhSHHP1TTuiMo=
+	t=1751617002; cv=none; b=lfC1kVCdnRzvGzdY0yYFaSX9hulUhKCIByQJRhLpkbrOyWI9PVdIn3SGscPFPqqqI/KjKUlDK4Ea4oK9CbTy0/XPoH3xT9/bg/T8zveqSVwfw8uGen9HJhVJwIjTeTJOxt8sD5vSuJVKqzgJpcQQKP/Vy+7OyevK6M053iE51JA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751616985; c=relaxed/simple;
-	bh=FmEScJJtDiR5EC91e3JJpMlUWgBrFNK/IOQMLkXY8A4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EsdIU2qk5+VOezAWKPJulz7zgosBbwizpGV7WiAMDo/2V/3YpvrS9IHgBlfa8HA2mn2wueORvy/wM3T+AulTz0mI4l0FIPd/dDjknHy+L/fuudIL2QT3gn4nYbwP0OIzzqtE4K80GBmC5TgFmampmWS/6/7vvw0FMuCogK6vRto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=V8jzDXZy; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=5hgLMUjtMWdFSYSDwSph8mH2JAMp8Kj0KGfpI3vdp/I=; b=V8jzDXZyHTLiYs0km7TJJ+IFul
-	soxASJuHloewfWsAUQzCH/NPFMARfCTgPy0BHDM8P8Pu+p5/nDdjYFAbArZZBnHUqwufIl4L0Kl6K
-	dIDBiEV200RGWTZjDBe3Jf25rEELiUpTR0p1gHzB8VSz30V+eJBPnN04txwbKubGQctc=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1uXbaV-000BNF-0f; Fri, 04 Jul 2025 10:16:03 +0200
-Date: Fri, 4 Jul 2025 10:16:03 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Andre Edich <andre.edich@microchip.com>, kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
-	netdev@vger.kernel.org, Lukas Wunner <lukas@wunner.de>
-Subject: Re: [PATCH net v2 2/3] net: phy: smsc: Force predictable MDI-X state
- on LAN87xx
-Message-ID: <49b49005-e857-445e-8b63-e84cbfdae17b@lunn.ch>
-References: <20250703114941.3243890-1-o.rempel@pengutronix.de>
- <20250703114941.3243890-3-o.rempel@pengutronix.de>
- <20250704100031.19f95d3e@fedora.home>
+	s=arc-20240116; t=1751617002; c=relaxed/simple;
+	bh=dGsMdWNNo7Kr4TZt6J0SFs0hAUGLXiGKCsH0gVxSZ0s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nkB6IzY8lpB4gkaFnUukgl9W+2xCAjWj8gIxvbzlu+PPGuajYyWawUs3cLUNQYBZzs2v8sDdTq4AcR+MJy8l58IS2D1Q7rVA9GQliWShF1TmDnIghJLdc0sqAr2KWCBTta7yjMg2t+/4O9M9TCo1yB3J2CmNEE/Oii2WI24GknI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fDxrdXgx; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-55516abe02cso750546e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Jul 2025 01:16:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1751616999; x=1752221799; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dGsMdWNNo7Kr4TZt6J0SFs0hAUGLXiGKCsH0gVxSZ0s=;
+        b=fDxrdXgxOfdi7SSlHV4Eiy5iK/bF4aqPxcx8rCWDKZMQgW7aev2sPzpBbJsSq8k9jw
+         6AwupaY6Wh8yoDzUJyZeQ6m5dC5r73pA/HYy9CDTys/JyXHlfSRi+qvnG/a1bthkicJy
+         /9fcfkMh2fdOzZmbllNzhQih2VX/I7Ej1CbhV/Yjmd/HQi6KwUcmOLZvd3JD8gRjR6WS
+         PUuuD9dGuO0/eGCgugUC19e8589IHkCKx9sn6GPn53VnXOmjz0TVZStSEQotT8FjQHUv
+         8HdMi30Qdc3Ydg+aFP9YYw8/oBSXUDHriR+M66MVOmfCYd/724mjzm6njFq9gvpnPWqZ
+         it3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751616999; x=1752221799;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dGsMdWNNo7Kr4TZt6J0SFs0hAUGLXiGKCsH0gVxSZ0s=;
+        b=QVUbiUJySM+TE+CO6s/d6eC3lRGYZog1o+wSNF+s6KngbJOtUmt4dNfCkna4QgPCi5
+         xR530pqgdDwAxog7ul4uhXou+OcJMjhyD5MH5n1O6GITVRVcICTz/sDL3uyTkW5uQ+VY
+         5Nqjb6c6DTVby0C099bC88sXBcmMeXI+7vfREKe/LqqdOKy2b5A5jRNILchvPDdJcytm
+         27LQD+yKnsN7skP3ptjxU9aZU59wErdxBIQuRK1qPY7T0WEVT5cSGF8ZvhxG7N3fqRAm
+         UdJ5+uqOExijFQrun5YttYtXt666MG9H57DgvmPFMMp90rIuNV6Hfb/dzXUeTEZjk6Ag
+         pbOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUQgab27tDirovL9+/FmOwHcjST15pYEedB/N9ibDGsWE1jcGtenXJahAI5bDJx7iYqBIqP+tMY5Y06010=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwetsSRMIUDnPSsbnFI1MnTFH36XF0ZlF11smXagAk/2h9zn3i8
+	VAnB7lBo8x74MbtglGuQsDkhTvBZ4ODmVZLdE72wa7oXJbH7FEoVvwNXinSICwsqUorIC0LwaA5
+	ONc9iyS0WC/NyMpcF3OWNHqu4vpNsRvEuxW9+H1sQn46uIKsqDs4CuTt2+A==
+X-Gm-Gg: ASbGncuT/X0iw1nPVpf6qRIdlpV81NlFZADFkZo5vxd61FEoZ3J7gJeH+ONh0qugcEo
+	N/T5Gv+QLJ9MDNRqoabEhzYG0uT1Qe4WSrDa+WOpM6eTm8/xi5lW35M+lQrKlEk7oYbyEhmNt3z
+	Yzye5RQdyJ26Xz5UzuIY1tCxVQVhDnRzEnl77VreDQRvM=
+X-Google-Smtp-Source: AGHT+IEUHpxlHJAaJyUnD91z1Awdc7+mfmlcOB7ydvJEbIgyvKJk/YjEvZBui91QkwXNtGOS6lwTRVoL9chNvbUBeNA=
+X-Received: by 2002:a05:6512:32d6:b0:553:cf72:45d3 with SMTP id
+ 2adb3069b0e04-5565840173fmr528205e87.3.1751616998945; Fri, 04 Jul 2025
+ 01:16:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250704100031.19f95d3e@fedora.home>
+References: <20250702051345.1460497-1-apatel@ventanamicro.com> <20250702051345.1460497-7-apatel@ventanamicro.com>
+In-Reply-To: <20250702051345.1460497-7-apatel@ventanamicro.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 4 Jul 2025 10:16:27 +0200
+X-Gm-Features: Ac12FXzg4WuZhSIauiG8DCqEO1Wj-Rdq7FM-OMSweMcuUZLpJE_RoU4DDONVAww
+Message-ID: <CACRpkdZc9EpUkd-Q3T__4U0XeqTQnxnmW2K=O0BBobgXiQna9Q@mail.gmail.com>
+Subject: Re: [PATCH v7 06/24] byteorder: Add memcpy_to_le32() and memcpy_from_le32()
+To: Anup Patel <apatel@ventanamicro.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jassi Brar <jassisinghbrar@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	"Rafael J . Wysocki" <rafael@kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Alexandre Ghiti <alex@ghiti.fr>, Len Brown <lenb@kernel.org>, Sunil V L <sunilvl@ventanamicro.com>, 
+	Rahul Pathak <rpathak@ventanamicro.com>, Leyfoon Tan <leyfoon.tan@starfivetech.com>, 
+	Atish Patra <atish.patra@linux.dev>, Andrew Jones <ajones@ventanamicro.com>, 
+	Samuel Holland <samuel.holland@sifive.com>, Anup Patel <anup@brainfault.org>, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-acpi@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> The patch looks good to me, but I have a few questions.  As this
-> overrides some configuration on existing HW, and I'm not utra familiar
-> with auto-mdix, is there any chance this could cause regressions ?
-> 
-> Especially regarding your patch 3, is there any chance that the PHY is
-> strapped in a fixed MDIX mode to address the broken autoneg off mode ? 
-> 
-> I'm not saying that strapping is a good solution for that ofc :) it's a
-> shame we can't read the strap config :/
+On Wed, Jul 2, 2025 at 7:14=E2=80=AFAM Anup Patel <apatel@ventanamicro.com>=
+ wrote:
 
-This might technically be considered a behaviour change. However there
-are few systems which don't support it. It is also independent of
-auto-neg, so autoneg off should not be an issue.
+> Add common memcpy APIs for copying u32 array to/from __le32 array.
+>
+> Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Signed-off-by: Anup Patel <apatel@ventanamicro.com>
 
-I think this is reasonably safe, and if somebody does report a
-regression, we can revert the patch.
+That looks useful.
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-
-    Andrew
+Yours,
+Linus Walleij
 
