@@ -1,133 +1,68 @@
-Return-Path: <linux-kernel+bounces-717330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-717272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08A7CAF92F1
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 14:41:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D4959AF9225
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 14:05:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0F861CA4DDF
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 12:42:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FE491896BF7
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 12:05:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A8132D877B;
-	Fri,  4 Jul 2025 12:41:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E0642D6619;
+	Fri,  4 Jul 2025 12:04:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b="QES4IK8o"
-Received: from smtp119.ord1d.emailsrvr.com (smtp119.ord1d.emailsrvr.com [184.106.54.119])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="bLBte2bl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C06E72D46D5
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 12:41:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=184.106.54.119
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9706B2D46B4;
+	Fri,  4 Jul 2025 12:04:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751632907; cv=none; b=Jv9g6JYQTq/ozIZZhaOs0xA8eKGs1nEhWCqILWj2k7/mp4WVm98hK1j7bgoub5v2GDqcNy3Tdk6HHDIQi3uheqw9xZCCcYpMzyFCLIGGrtqGYrYU3fQfeyx2qsctzkpk4+TobH1FD12sRaJ+v0VGaDbPK2UE2b3E73y51BXC6L0=
+	t=1751630681; cv=none; b=GmuPeQSxP0RUuG3845od7eGNqPi72MTHwWlsBnz4qTBIGZAU4y4SRtJFVwxBY8FX841GiD6h41GwV0iEPAomsD6QhlIBEl0mW5xA3BcbRounDEkIfdBbmTTGVzWSAYJKhHxx0pfLvIDWGqtwEWdO3brTf/nnHopt1k3V1msFt/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751632907; c=relaxed/simple;
-	bh=mbNJ73AwNFbOOurBy9lmYSY4ZrqhqELSTtqfAnVdZoM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=L9Cu4+EJ05brjkomcclZNFmnujPch/icNJrTjbvqpgvEW8LBL97BYzxHPNBaj2zbhBTasvv98W0WEbaMeqdXwhO4LgVMh3qvxDKIi5ldmvU5sbirUTtVx365vLCaueMerwmQHeoYsw0zqeO0ruOPgSbqVrwHe9KJMS7WIFlmqkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk; spf=pass smtp.mailfrom=mev.co.uk; dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b=QES4IK8o; arc=none smtp.client-ip=184.106.54.119
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mev.co.uk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mev.co.uk;
-	s=20221208-6x11dpa4; t=1751630659;
-	bh=mbNJ73AwNFbOOurBy9lmYSY4ZrqhqELSTtqfAnVdZoM=;
-	h=From:To:Subject:Date:From;
-	b=QES4IK8oDv2qCodRvE5DVhBgS+0kFo0lFO/I4eiOHfAOXrq1z3tatwM5dSCBNEXu5
-	 Yq2EPiVv2CP5vtzC+rJDOhMOvv/6Q0pCBWaD4szsjtUTAeDQfTlMpfd4f8HJr1JwyO
-	 /I4dTugGkhvnwNgcIURIhoUT0M0cMfENBlvtPrCA=
-X-Auth-ID: abbotti@mev.co.uk
-Received: by smtp7.relay.ord1d.emailsrvr.com (Authenticated sender: abbotti-AT-mev.co.uk) with ESMTPSA id E3E9820159;
-	Fri,  4 Jul 2025 08:04:18 -0400 (EDT)
-From: Ian Abbott <abbotti@mev.co.uk>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Ian Abbott <abbotti@mev.co.uk>,
-	H Hartley Sweeten <hsweeten@visionengravers.com>,
-	syzbot+d6995b62e5ac7d79557a@syzkaller.appspotmail.com,
-	stable@vger.kernel.org
-Subject: [PATCH] comedi: Fail COMEDI_INSNLIST ioctl if n_insns is too large
-Date: Fri,  4 Jul 2025 13:04:05 +0100
-Message-ID: <20250704120405.83028-1-abbotti@mev.co.uk>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1751630681; c=relaxed/simple;
+	bh=h1s5jBBiV6pG756G9M04lUnoOS0jQ0qJgj49ePhNsRs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Jah2SNsKY3Ou7HRNW+pcSycNsRsfrM8BQa+NUql6pf2A43rF7W/PDrK+dSTVlaBUT70MUuhnLImb1+DU0MQINtazmbGUqiVy19esm0CXUUpSJVx9ItL+8sxle28Bbr/+3vv9FbUn3sVFa5zB893iXe3SZEeFO//tMlR53whFfUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=bLBte2bl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6C22C4CEE3;
+	Fri,  4 Jul 2025 12:04:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1751630681;
+	bh=h1s5jBBiV6pG756G9M04lUnoOS0jQ0qJgj49ePhNsRs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bLBte2blwKt7JAx0PxRkqvqI/2HZzHuqHOa5Pue5LIgZOV78DUsjVs7wbgkN/HqAd
+	 rbyRlrvlCGf6KOBYiGm/HTopY0gsvQiBSu95yewxkLktZkIHENLNOn3PGatHDH4zxx
+	 ut48YPft9lwi1lp6AlswTQan/YlH+5t4bYLq5k1U=
+Date: Fri, 4 Jul 2025 14:04:38 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Srikanth Chary Chennoju <srikanth.chary-chennoju@amd.com>
+Cc: Thinh.Nguyen@synopsys.com, m.grzeschik@pengutronix.de,
+	Chris.Wulff@biamp.com, tiwai@suse.de, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, punnaiah.choudary.kalluri@amd.com
+Subject: Re: [PATCH 1/3] usb:gadget:zero: support for super speed plus
+Message-ID: <2025070407-walmart-mobile-c0f7@gregkh>
+References: <20250704114013.3396795-1-srikanth.chary-chennoju@amd.com>
+ <20250704114013.3396795-2-srikanth.chary-chennoju@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Classification-ID: b11d4159-b39c-4b63-b0e7-eb76e318031a-1-1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250704114013.3396795-2-srikanth.chary-chennoju@amd.com>
 
-The handling of the `COMEDI_INSNLIST` ioctl allocates a kernel buffer to
-hold the array of `struct comedi_insn`, getting the length from the
-`n_insns` member of the `struct comedi_insnlist` supplied by the user.
-The allocation will fail with a WARNING and a stack dump if it is too
-large.
+On Fri, Jul 04, 2025 at 05:10:11PM +0530, Srikanth Chary Chennoju wrote:
+> This patch adds supports for devices which are capable of super speed plus.
 
-Avoid that by failing with an `-EINVAL` error if the supplied `n_insns`
-value is unreasonable.
+Nit, you need so ' ' in your subject line :)
 
-Define the limit on the `n_insns` value in the `MAX_INSNS` macro.  Set
-this to the same value as `MAX_SAMPLES` (65536), which is the maximum
-allowed sum of the values of the member `n` in the array of `struct
-comedi_insn`, and sensible comedi instructions will have an `n` of at
-least 1.
+thanks,
 
-Reported-by: syzbot+d6995b62e5ac7d79557a@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=d6995b62e5ac7d79557a
-Fixes: ed9eccbe8970 ("Staging: add comedi core")
-Tested-by: Ian Abbott <abbotti@mev.co.uk>
-Cc: <stable@vger.kernel.org> # 5.13+
-Signed-off-by: Ian Abbott <abbotti@mev.co.uk>
----
-Patch does not apply cleanly to longterm kernels 5.4.x and 5.10.x.
----
- drivers/comedi/comedi_fops.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
-
-diff --git a/drivers/comedi/comedi_fops.c b/drivers/comedi/comedi_fops.c
-index 3383a7ce27ff..962fb9b18a52 100644
---- a/drivers/comedi/comedi_fops.c
-+++ b/drivers/comedi/comedi_fops.c
-@@ -1589,6 +1589,16 @@ static int do_insnlist_ioctl(struct comedi_device *dev,
- 	return i;
- }
- 
-+#define MAX_INSNS   MAX_SAMPLES
-+static int check_insnlist_len(struct comedi_device *dev, unsigned int n_insns)
-+{
-+	if (n_insns > MAX_INSNS) {
-+		dev_dbg(dev->class_dev, "insnlist length too large\n");
-+		return -EINVAL;
-+	}
-+	return 0;
-+}
-+
- /*
-  * COMEDI_INSN ioctl
-  * synchronous instruction
-@@ -2239,6 +2249,9 @@ static long comedi_unlocked_ioctl(struct file *file, unsigned int cmd,
- 			rc = -EFAULT;
- 			break;
- 		}
-+		rc = check_insnlist_len(dev, insnlist.n_insns);
-+		if (rc)
-+			break;
- 		insns = kcalloc(insnlist.n_insns, sizeof(*insns), GFP_KERNEL);
- 		if (!insns) {
- 			rc = -ENOMEM;
-@@ -3142,6 +3155,9 @@ static int compat_insnlist(struct file *file, unsigned long arg)
- 	if (copy_from_user(&insnlist32, compat_ptr(arg), sizeof(insnlist32)))
- 		return -EFAULT;
- 
-+	rc = check_insnlist_len(dev, insnlist32.n_insns);
-+	if (rc)
-+		return rc;
- 	insns = kcalloc(insnlist32.n_insns, sizeof(*insns), GFP_KERNEL);
- 	if (!insns)
- 		return -ENOMEM;
--- 
-2.47.2
-
+greg k-h
 
