@@ -1,113 +1,112 @@
-Return-Path: <linux-kernel+bounces-717979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-717981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68F83AF9BB3
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 22:31:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 515DBAF9BB6
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 22:35:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D19514A6F9A
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 20:31:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 859A54A701F
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 20:35:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DD5B231855;
-	Fri,  4 Jul 2025 20:31:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7234246793;
+	Fri,  4 Jul 2025 20:35:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FCQsWmtW"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="L8APpfIe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 351CA2E36F3;
-	Fri,  4 Jul 2025 20:31:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F28A24500A
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 20:35:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751661076; cv=none; b=BRxGsX68ISsyqHjn+MIWoPoEe7Pk7tFHGM7FtStD2uokLyXthF+EcSbtBdK3Gz/ow958WZiOISYOJvWI9pZiciF7F1bIThk0FR0HX/eUvs8806ptMYzOI9isv/61CNRCP3wNIs++tHzhPfUYnRqBJe1R9je+Qgh6AzUrmVzFQ4U=
+	t=1751661302; cv=none; b=ra2FHJEdAyVViPPmc6w0Ne5/z1afz3QJK9HYu7tY9maZxfELz+oJkoUkEExYBbSlbuBB2GIiNAe5rwwmyverEobv3E+M5cNaM4wEkO0NOZ5h4VD8f0owG8mM5434ldPTnTg87EKsraqEEy6MyyD3JNZe4b+J5kJww3ZKi4pGuMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751661076; c=relaxed/simple;
-	bh=r6JGhvkS5JtcXutvF5CS2RsKaMnLiutGCf+jWDK9Q/k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IYhe89O6kBfMQx4CzhhiZrIXP/T9V+3mqyUSukwaPoBDoJtwJQSVYlz/PuZiE/fxQUld0h8ItZ/eJkPLHjLMCkKU9G1tit2hk4KdxfwtwO0Z6dysDqC8FPqnbX18XKvBL0hUdd08sWcDNyLPzPQdbE1gW/sYdR3xFhthROh4+x4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FCQsWmtW; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-32b3c292bb4so11440571fa.1;
-        Fri, 04 Jul 2025 13:31:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751661073; x=1752265873; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=r6JGhvkS5JtcXutvF5CS2RsKaMnLiutGCf+jWDK9Q/k=;
-        b=FCQsWmtWC08heH0vy41s7aoUjVAOhtrwzvuu0zh487gqbNRKa/JnOEC/fImeSG9ibJ
-         xIwvWucRnzlpwCMknT5LraQfucpLASBer6+SK3oBHy9ZaDdXkec3TY+M3Xl4a3AYPMsR
-         17ZpXO0dAg1ToBnrVXNQAF3hh1EsGxhXSEwBlEX9E/dfYCCUO4dd5/R20u0QwSAgQiHx
-         hRrJ23AJJlpRD7g3lLaUw1yfxGDG6qAMa8j/ofaIpJacZav2RKPV05QV73HR2Za72lI1
-         9oH4aSU1IyqjYiD7A0SIL749wfMEjopyvNK62/4D/8XJUICPgYjAWWFwp4wIDNUiwVk7
-         NPFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751661073; x=1752265873;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=r6JGhvkS5JtcXutvF5CS2RsKaMnLiutGCf+jWDK9Q/k=;
-        b=oh46pvYMAGyF4/65aID3kRNkpGs2FIkKZGAFaYuwpoMC/4M5T8sM6ASjt3OjwqpPaE
-         ayIU2gRyNh3pkd0R5YrafbJIy0eExZTXpsM5Et6enCoy0b1QQT1WtFdryNAMSYCk9XCR
-         8FVyDwwqerl5vJmEhLbepQ2EACGHswXPQ2AKrl+3zDTENe7Y7lhuQ5aMrsl0H0Iz/ttF
-         4V/x/lkjWCo1wkeLZ4nqdE/tRQrpWTCDdMXCHIR4xB66MpcKP1VYzW2FBX6zWJeZJe7v
-         dMF1i3LDp1XM/kLYdSweXTFSj+abEqCT3s5HzKLuwVDhPZ01kFTcRHS5t1SzR9bIiBVl
-         cWqw==
-X-Forwarded-Encrypted: i=1; AJvYcCVPZiMkDxFHh4Lj+967o9mmJk2hyELZML2ap/tqHsqCP1drT2l2Fey+E85gVgs7xH8gbLrw4bKuFysalSs=@vger.kernel.org, AJvYcCWCAub7t7z+XGNCZnT3OquLM0u9MNNe/wyldHQu3lBCaFquw3DAJxjmsNO+9/cJW0IUei4s/sm8/TABK6DLbg8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLQxtT4z44/3CkkBbVxeGhGCJh9qVQCV9cQMFjC/oXNQT3yepK
-	fAfGTesaeovcccSO3KuYcB6lRJ8GXmV8djN1LvxZ0MRZE5fepHtA+kHvJXt9aAVk00GmthtaYA/
-	SR9g86HibQqRu937LeARko9Urz/o9Elk=
-X-Gm-Gg: ASbGncvqTdxpr3vYqp+Zf+n24nVBOXQsASvlXs5LbjPFlJ4xGsWJg8UvwOw+9hHulrN
-	XGRxv/aq0H3TBVG9gYX+hfLcabaSW6m2b234VV3MqtR1WX528KAkThCeosK2V+KrTinRR0aVWU9
-	I9BFkOn77ekwHFcFQ2a45gUJU1YikZrLHizMPTaC9OCbliAmpuId7mIHnJ8iMHkBlYMgtACuKRs
-	7MjPg==
-X-Google-Smtp-Source: AGHT+IHLiQo9zf+W69kDB3cDWqbqqaUTEQB3QA0bwZ3VgeLdHER2o8yZ7zRQtRAdTGfqK0fMqO4rMiTZMdKuA90pQb0=
-X-Received: by 2002:a05:651c:54a:b0:32e:aaa0:b06a with SMTP id
- 38308e7fff4ca-32f19987962mr836381fa.8.1751661073008; Fri, 04 Jul 2025
- 13:31:13 -0700 (PDT)
+	s=arc-20240116; t=1751661302; c=relaxed/simple;
+	bh=869jhvQSQnJ44+RGbn7YMRH5r88WjqQVfPOwMT0bKj0=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=H4jwOEzsqpCcXOdv1b+3UIcTk/QOvKsdsCPf6xqrnepO1ohzlU/Vs69PIQKvbpVWFYYDOAKTbvPb53dcVfrpf5qgq46Nvu7k5Pr8dXuPyUWEXl/nkI8xDW/tpCECyid6GzIWPqJSEb3xNEiu3Du0iMu1LOrXFrYAqTsFW8saLj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=L8APpfIe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CEB5C4CEE3;
+	Fri,  4 Jul 2025 20:35:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1751661301;
+	bh=869jhvQSQnJ44+RGbn7YMRH5r88WjqQVfPOwMT0bKj0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=L8APpfIeyH3GmuJdJz0SQ2etJy/imeezDG5IC46k4Xu5Um3xMrAi8OdUE/+66C0ya
+	 cc/GaY/B+kPlqWPFnDQK/49mBUt5zNyjZUAUocEjdHv0DSHPwVbyhLWLG9qZuo52CX
+	 6OgmDje5/ohhyp1RGmfDBzJIW0dka37B8ElrNbO8=
+Date: Fri, 4 Jul 2025 13:35:00 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Matt Fleming <matt@readmodwrite.com>
+Cc: linux-kernel@vger.kernel.org, kernel-team@cloudflare.com, Marco Elver
+ <elver@google.com>, Alexander Potapenko <glider@google.com>, Andrey
+ Konovalov <andreyknvl@gmail.com>, Dmitry Vyukov <dvyukov@google.com>, Oscar
+ Salvador <osalvador@suse.de>, Vlastimil Babka <vbabka@suse.cz>, Matt
+ Fleming <mfleming@cloudflare.com>
+Subject: Re: [PATCH v2] stackdepot: Make max number of pools build-time
+ configurable
+Message-Id: <20250704133500.c21fc228600f70c51a16e04c@linux-foundation.org>
+In-Reply-To: <20250704120604.2688934-1-matt@readmodwrite.com>
+References: <20250704120604.2688934-1-matt@readmodwrite.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250704-cstr-include-devres-v1-1-4ee9e56fca09@gmail.com> <483d26c9-413f-49d7-89f7-7cc0e7f4cccd@kernel.org>
-In-Reply-To: <483d26c9-413f-49d7-89f7-7cc0e7f4cccd@kernel.org>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Fri, 4 Jul 2025 16:30:35 -0400
-X-Gm-Features: Ac12FXwXOE57ThArDbVg7drgQErciDXx17aDmobPn4-zcxA1ROvu0X0TWKxx4Vk
-Message-ID: <CAJ-ks9m-xkea1AvsPr264rgBvumCDZqr--fYro1e65O-6XOhgw@mail.gmail.com>
-Subject: Re: [PATCH] rust: devres: remove unused import
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jul 4, 2025 at 4:23=E2=80=AFPM Danilo Krummrich <dakr@kernel.org> w=
-rote:
+On Fri,  4 Jul 2025 13:06:04 +0100 Matt Fleming <matt@readmodwrite.com> wrote:
+
+> From: Matt Fleming <mfleming@cloudflare.com>
+> 
+> We're hitting the WARN in depot_init_pool() about reaching the stack
+> depot limit because we have long stacks that don't dedup very well.
+> 
+> Introduce a new config to allow users to set the number of maximum stack
+> depot pools at build time. Also, turn the silent capping into a
+> build-time assert to provide more obvious feedback when users set this
+> value too high.
+> 
+> ...
 >
-> On 7/4/25 10:11 PM, Tamir Duberstein wrote:
-> > As far as I can tell, this was never used.
-> >
-> > Signed-off-by: Tamir Duberstein <tamird@gmail.com>
->
-> Do you want me to take this and the other include fixups through the driv=
-er-core
-> tree or do you need them in rust-next as prerequisite for your CStr serie=
-s?
+> --- a/lib/Kconfig
+> +++ b/lib/Kconfig
+> @@ -720,6 +720,12 @@ config STACKDEPOT_MAX_FRAMES
+>  	default 64
+>  	depends on STACKDEPOT
+>  
+> +config STACKDEPOT_MAX_POOLS
+> +	int "Maximum number of stack depot pools to store stack traces" if EXPERT
+> +	range 1024 131071
+> +	default 8192
+> +	depends on STACKDEPOT
 
-If you can take them through the driver-core tree, that would be
-great. They're needed for the CStr workstream but not for the first
-(out of 5) cycle.
+Do we need a range?  If someone wants values outside the range they'll
+just edit the Kconfig, shrug.
 
-Thanks!
+>  config REF_TRACKER
+>  	bool
+>  	depends on STACKTRACE_SUPPORT
+> diff --git a/lib/stackdepot.c b/lib/stackdepot.c
+> index 245d5b416699..1c25c40f31f9 100644
+> --- a/lib/stackdepot.c
+> +++ b/lib/stackdepot.c
+> @@ -36,11 +36,11 @@
+>  #include <linux/memblock.h>
+>  #include <linux/kasan-enabled.h>
+>  
+> -#define DEPOT_POOLS_CAP 8192
+> +#define DEPOT_MAX_POOLS CONFIG_STACKDEPOT_MAX_POOLS
+
+A boot-time option would be much friendlier.  Can we dynamically
+allocate stack_pools[]?
+
+Or possibly even runtime, although perhaps not a good effort-to-utility
+ratio.
+
 
