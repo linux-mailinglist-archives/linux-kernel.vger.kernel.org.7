@@ -1,218 +1,130 @@
-Return-Path: <linux-kernel+bounces-718463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-717216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FAF3AFA1A9
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 22:01:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B808AF915D
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 13:20:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 936AB4A3C2E
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 20:01:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC09C3A80E4
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 11:20:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFD9423A578;
-	Sat,  5 Jul 2025 20:01:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D3422C15AE;
+	Fri,  4 Jul 2025 11:20:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="TYF/Ne+g";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="J3G1lxAG";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="mMrF3HJZ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="nyW5d7U2"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Pg+ub1sc"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AEEA1922FB
-	for <linux-kernel@vger.kernel.org>; Sat,  5 Jul 2025 20:01:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30FA3258CC0;
+	Fri,  4 Jul 2025 11:20:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751745664; cv=none; b=GAE6tBYk0r2paowvlv6UnYyYn4Fh58614PjCRH2E5/jDHBd2zJjwX8+pTRg+OOt6dZDnjxTH1AceWT1XjvCZB8nb6aq98/soqMAK0UQFpRyMHS0nH8O7TESoR8PiQP13i9Ud5qHFywK+LqGFyfOrtEP3oVkON0X+L1//tUX4Jgs=
+	t=1751628024; cv=none; b=LoyKSliXiR8vrHk3SH+RQAu9Zz9PXva4NbAUgN+kwfndz+vTJlmb4wZfs2NvjrvskxoQ3kneS/DvPJTcHJN4MbeEDzLyzEjBBXY2l23ySlRsPuOKquDk6OmrsK+90Qo8cwp2bML5NKTEnB1rcwvXOm4mlaGaZj5IOny701FSmN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751745664; c=relaxed/simple;
-	bh=KQVDv7vaSa56RILpk9GXU4EE/SRZNSQ/rx09IYPXoVI=;
+	s=arc-20240116; t=1751628024; c=relaxed/simple;
+	bh=an+9EeNhe+f7NnClXdzy3GT6wr5ZBU9/N4Xn0aJS5Mg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rKKg+hHWxpAMzTHAszaGBKk6BXIZ/F8C0H6Pkm/XmmrajzBhOMfhgLFy85K+K+DB7I8lPp332XnAMBUaYJiovB0EiTtZ9RK+6lMjJoAiEO2PJvNEQ8ziDU/ehdO5545KdlBKl/aOPbjcpqEd5zXLmcaMMGPuKYBzjemoc3ccDHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=TYF/Ne+g; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=J3G1lxAG; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=mMrF3HJZ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=nyW5d7U2; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	 Content-Type:Content-Disposition:In-Reply-To; b=HugWJH2wU4qW+imBpLuMhLAsnLoQWVbp4Y9NLpQRG/CB336dfQJ5V1ZTkQ/rL3IFG7/m7ceNfP+3DWxMnu2u1jSxFchoHbcipopMcYpkoThiwn2bULmKndlZbmj0QpnlEaMx3bd+7CVFonmR7Li6ppe1TN3n4vOlFo7rCzmHHa8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Pg+ub1sc; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id E6CA940E021F;
+	Fri,  4 Jul 2025 11:20:19 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id ImRrZ82OTgD8; Fri,  4 Jul 2025 11:20:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1751628016; bh=PbxPRHfo8N4/KU51gmHKmbPHvzNy62/CXTuO33u0tnA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Pg+ub1scvKldoKC9Ddw71bhRdkqL0oPyDEOyxXt/tLUSxq0lLyLLq4kuuENHD2X44
+	 tmxZW9IeFIRwHFUHvv1IVUePmve4vx9evHRDQkSOr0N0LC0l5VSwgKQtUfhZbbDnN9
+	 WioZ5lVAouTwMkBi8u1LkoxmtGVGGYwlTTeamzsT1LUux57EaKd9ln7HM3P90gYMWa
+	 WhxVOYHVSDFp5FBsbWClz7LjPSQy2B/xQ0iA0jQbTtDmduCnSr4MDuuK6rrYO61KiH
+	 99b0nZpXqWmsCMpfkBBU/4PuLz3KrjpxP6uUp34w0Lw6N1b4pCtSZ1tK9LeG9qdoUl
+	 RdVmNfVfp/jWXAlfILdT24bluuiFejdLSFDBE6Vh2eQhkVIadmmtoukGGTgNZpaElX
+	 2vUYNb79OXqmVFcPtFrbV7lf5je6N/abM4wf3Ka/NQwExEi0B2fKv8tyhQHe8TK+jW
+	 iKfLfjh1rtc8TOADC+64EGNYMgrY63fWzQ8Uhea8Ds92V2OcoX5lO5dBdgMaLZ/aH1
+	 j0evWwTP+yr/fuQv5h523cVSL612AyNBQ/NaA6jBE62avucrRo+4/wJMlmcXvNNtzG
+	 dfKyyun2NRGQACwd7lp8x30EG6ho2IiUrK9aGkc8cStkxmG3yvQqiOCfvmZqexU/kO
+	 ufm/8IhY1dxTkUA8dezDqfww=
+Received: from zn.tnic (p57969c58.dip0.t-ipconnect.de [87.150.156.88])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id E901D21162;
-	Sat,  5 Jul 2025 20:00:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1751745653; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6Ej3hCCfrQWrt1GFOzYcVms9XxZbLYdzP8GSAojwfQs=;
-	b=TYF/Ne+gm84Jjzu+l1y7Ng3WdT1Zbg2a/G2+meZE/naYB6PpZTtP1lTX7VcI4+YBOSetSg
-	hSbijUk41V5baToNXQUshPu0ii4yHrxxW8Orm4ZqzbRF673AkyVUhgJPFqik2l9EiM0M2c
-	dYOuyw0GudKqq/w87vQg8JelcKV8JDc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1751745653;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6Ej3hCCfrQWrt1GFOzYcVms9XxZbLYdzP8GSAojwfQs=;
-	b=J3G1lxAGXomf/SBDfTgumU9R0JnWekvLClbpJ5Ggu/aWU9UFKT6P+0TEuWvOSjS8YVaADg
-	/X+dv0uaU+v7dLCw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=mMrF3HJZ;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=nyW5d7U2
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1751745651; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6Ej3hCCfrQWrt1GFOzYcVms9XxZbLYdzP8GSAojwfQs=;
-	b=mMrF3HJZ2uVVpv/4ZDdDcLlzTEKfvndTgpnQTk0mjxoshaKYrj1I7dfCGp7Fd5rlKycztA
-	BpOlwo8U8PO8TOG/r2Ns/KJV4vR3hjLj2gjo24X9K85BuwibfRuMVZMzyhiswwGbBSAIXU
-	HoMlNozXcH3C93LEyoLl4EhVZ7MdL10=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1751745651;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6Ej3hCCfrQWrt1GFOzYcVms9XxZbLYdzP8GSAojwfQs=;
-	b=nyW5d7U2IaF6rMG78ShWPMAsBIDGGXHKQ+wPcwKkhyqCNZXPb2wQx1ZpzaQRTu20lIZY69
-	6qnlGcO9gjW4IuBw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D7A7213757;
-	Sat,  5 Jul 2025 20:00:51 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 0hikNHOEaWiaMgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Sat, 05 Jul 2025 20:00:51 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id AD57CA0A31; Fri,  4 Jul 2025 13:17:02 +0200 (CEST)
-Date: Fri, 4 Jul 2025 13:17:02 +0200
-From: Jan Kara <jack@suse.cz>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: Naresh Kamboju <naresh.kamboju@linaro.org>, 
-	Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.cz>, linux-ext4 <linux-ext4@vger.kernel.org>, 
-	linux-fsdevel@vger.kernel.org, open list <linux-kernel@vger.kernel.org>, 
-	lkft-triage@lists.linaro.org, Linux Regressions <regressions@lists.linux.dev>, 
-	LTP List <ltp@lists.linux.it>, Anders Roxell <anders.roxell@linaro.org>, 
-	Dan Carpenter <dan.carpenter@linaro.org>, Arnd Bergmann <arnd@arndb.de>
-Subject: Re: next-20250626: WARNING fs jbd2 transaction.c start_this_handle
- with ARM64_64K_PAGES
-Message-ID: <c2dvcablaximwjnwg67spegwkntxjgezu6prvyyto4vjnx6rvh@w3xgx4jjq4bb>
-References: <CA+G9fYsyYQ3ZL4xaSg1-Tt5Evto7Zd+hgNWZEa9cQLbahA1+xg@mail.gmail.com>
- <2dbc199b-ef22-4c22-9dbd-5e5876e9f9b4@huaweicloud.com>
- <CA+G9fYv5zpLxeVLqYbDLLUOxmAzuXDbaZobvpCBBBuZJKLMpPQ@mail.gmail.com>
- <1c7ae5cb-61ad-404c-950a-ba1b5895e6c3@huaweicloud.com>
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 7914C40E021E;
+	Fri,  4 Jul 2025 11:20:00 +0000 (UTC)
+Date: Fri, 4 Jul 2025 13:19:54 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Breno Leitao <leitao@debian.org>
+Cc: Len Brown <lenb@kernel.org>, James Morse <james.morse@arm.com>,
+	Jonathan Corbet <corbet@lwn.net>, tony.luck@intel.com,
+	rafael@kernel.org, Alexei Starovoitov <ast@kernel.org>,
+	kbusch@kernel.org, rmikey@meta.com, kuba@kernel.org,
+	linux-edac@vger.kernel.org, mchehab@kernel.org,
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, kernel-team@meta.com
+Subject: Re: [PATCH 0/2] panic: taint flag for recoverable hardware errors
+Message-ID: <20250704111954.GBaGe42gY5_xADb17Z@fat_crate.local>
+References: <20250704-taint_recovered-v1-0-7a817f2d228e@debian.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1c7ae5cb-61ad-404c-950a-ba1b5895e6c3@huaweicloud.com>
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	DATE_IN_PAST(1.00)[32];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_TWELVE(0.00)[13];
-	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	DWL_DNSWL_BLOCKED(0.00)[suse.cz:dkim];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,huaweicloud.com:email,linaro.org:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Queue-Id: E901D21162
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -3.01
+In-Reply-To: <20250704-taint_recovered-v1-0-7a817f2d228e@debian.org>
 
-On Thu 03-07-25 19:33:32, Zhang Yi wrote:
-> On 2025/7/3 15:26, Naresh Kamboju wrote:
-> > On Thu, 26 Jun 2025 at 19:23, Zhang Yi <yi.zhang@huaweicloud.com> wrote:
-> >> On 2025/6/26 20:31, Naresh Kamboju wrote:
-> >>> Regressions noticed on arm64 devices while running LTP syscalls mmap16
-> >>> test case on the Linux next-20250616..next-20250626 with the extra build
-> >>> config fragment CONFIG_ARM64_64K_PAGES=y the kernel warning noticed.
-> >>>
-> >>> Not reproducible with 4K page size.
-> >>>
-> >>> Test environments:
-> >>> - Dragonboard-410c
-> >>> - Juno-r2
-> >>> - rk3399-rock-pi-4b
-> >>> - qemu-arm64
-> >>>
-> >>> Regression Analysis:
-> >>> - New regression? Yes
-> >>> - Reproducibility? Yes
-> >>>
-> >>> Test regression: next-20250626 LTP mmap16 WARNING fs jbd2
-> >>> transaction.c start_this_handle
-> >>>
-> >>> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> >>
-> >> Thank you for the report. The block size for this test is 1 KB, so I
-> >> suspect this is the issue with insufficient journal credits that we
-> >> are going to resolve.
-> > 
-> > I have applied your patch set [1] and tested and the reported
-> > regressions did not fix.
-> > Am I missing anything ?
-> > 
-> > [1] https://lore.kernel.org/linux-ext4/20250611111625.1668035-1-yi.zhang@huaweicloud.com/
-> > 
+On Fri, Jul 04, 2025 at 03:55:18AM -0700, Breno Leitao wrote:
+> Add a new taint flag to the kernel (HW_ERROR_RECOVERED - for the lack of
+> a better name) that gets set whenever the kernel detects and recovers
+> from hardware errors.
 > 
-> Hmm. It seems that my fix for the insufficient journal credit series
-> cannot handle cases with a page size of 64k. The problem is the folio
-> size can up to 128M, and the 'rsv_blocks' in ext4_do_writepages() can
-> up to 1577 on 1K block size filesystems, this is too large.
+> The taint provides additional context during crash investigation *without*
+> implying that crashes are necessarily caused by hardware failures
+> (similar to how PROPRIETARY_MODULE taint works). It is just an extra
+> information that will provide more context about that machine.
 
-Firstly, I think that 128M folios are too big for our current approaches
-(in ext4 at least) to sensibly work. Maybe we could limit max folio order
-in ext4 mappings to max 1024 blocks per folio or something like that? For
-realistic setups with 4k blocksize this means 4M folios which is not really
-limiting for x86. Arm64 or ppc64 could do bigger but the gain for even
-larger folios is diminishingly small anyway.
+Dunno, looks like a hack to me to serve your purpose only.
 
-Secondly, I'm wondering that even with 1577 reserved blocks we shouldn't
-really overflow the journal unless you make it really small. But maybe
-that's what the test does...
+Because when this goes up, then people will start wanting to taint the kernel
+for *every* *single* correctable error.
 
-> Therefore, at this time, I think we should disable the large folio
-> support for 64K page size. Then, we may need to reserve rsv_blocks
-> for one extent and implement the same journal extension logic for
-> reserved credits.
-> 
-> Ted and Jan, what do you think?
+So even if an error got corrected, the kernel will be tainted.
 
-I wouldn't really disable it for 64K page size. I'd rather limit max folio
-order to 1024 blocks. That actually makes sense as a general limitation of
-our current implementation (linked lists of bhs in each folio don't really
-scale). We can use mapping_set_folio_order_range() for that instead of
-mapping_set_large_folios().
+Then users will say, oh oh, my kernel is tainted, I need to replace my hw
+because broken. Even if it isn't broken in the very least.
 
-								Honza
+Basically what we're doing with drivers/ras/cec.c will be undone.
+
+All because you want to put a bit of information somewhere that the machine
+had a recoverable error.
+
+Well, that bit of information is in your own RAS logs, no? I presume you log
+hw errors in a big fleet and then you analyze those logs when the machine
+bombs. So a mere look at those logs will tell you that you had hw errors.
+
+And mind you, that proposed solution does not help people who want to know
+what the errors were: "Oh look, my kernel got tainted because of hw errors. Now
+where are those errors?"
+
+So I think this is just adding redundant information which we already have
+somewhere else and also actively can mislead users.
+
+IOW, no need to taint - you want to simply put a bit of info in the kdump blob
+which gets dumped by the second kernel that the first kernel experienced hw
+errors. That is, if you don't log hw errors. But you should...!
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
