@@ -1,41 +1,41 @@
-Return-Path: <linux-kernel+bounces-716858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84455AF8BB0
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 10:32:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6D55AF8B97
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 10:29:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E47A765EFB
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 08:27:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 735A11896348
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 08:27:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B280C2FEE2B;
-	Fri,  4 Jul 2025 08:16:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FFC42FD89F;
+	Fri,  4 Jul 2025 08:16:10 +0000 (UTC)
 Received: from Atcsqr.andestech.com (60-248-80-70.hinet-ip.hinet.net [60.248.80.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1DFD2DBB25
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 08:16:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 319A92FD886
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 08:16:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.248.80.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751616971; cv=none; b=JeAcYU9rGaeu0N3J2DTtiVOeyCXJD6ots7NkZHIEDsyZLz1bU6fW+vPIP0W+X7jk4XgADZMljJzlo2u/w1RtkP0Z4sKm5w16bWr81//fd1iqc3RCuaCw9plc/vIJ9diJXZvpQJO9uSO0ABGJ4iR1b8TqNG5gqbUF6lm9K7L5zvE=
+	t=1751616969; cv=none; b=YdZcjXL9zkzg9AGZcHTVOStAH/myvdd657T0M3uzoQQq3QZ/uW6iSlHJycGVDil/Pjb0TWbOYHZWEjAkUGuOdqw5krGJvSOwrkh40yiiw44aOUVyEnEBw98eMxUJq8HqNoBnrtxSQjk8nKklbo1XwqFIgEkb7DeAY4hmJMWFyds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751616971; c=relaxed/simple;
-	bh=zylAOvDJUdBHWCYEsmH/F3qbW1VoaC4/zwHAJ5vXbps=;
+	s=arc-20240116; t=1751616969; c=relaxed/simple;
+	bh=ouFEm89hCdrWb+Z8dVPbIyYMQBmtMRvDvolDrEMlw8g=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LapZifXQyJfqHdZsri7rN/6hcooc3mxSjJdb7je5x2GidGSdYqZFo5mkHheMzQ5QqcFQs+G13pJAHoEjoQc4ZhPeVd23r8emjy3wCk51Jbjk9f3f/3ZE70lBcMRUKRJDrt1fDKbqFKC0I0vH9G0hawxp0EK3iE28+f2Hde5PXaw=
+	 MIME-Version:Content-Type; b=fWXUO1dvA75D8tHpSP+GaGa2bC3YEpbxMaTeAGUNdGgSxVUxJxf9GF9uKijxiIfrPVsrf8qMgpbzjVibA/cubU5zcAlc2kVTMpKztOyb1PcSchsdKrqofJFWuUQKYOVCAmm3yB1S5+V864RiKy8FFG/Wh1UU6jgaA4Awy8Sjvnw=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=andestech.com; spf=pass smtp.mailfrom=andestech.com; arc=none smtp.client-ip=60.248.80.70
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=andestech.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=andestech.com
 Received: from mail.andestech.com (ATCPCS31.andestech.com [10.0.1.89])
-	by Atcsqr.andestech.com with ESMTPS id 5648EwqC091878
+	by Atcsqr.andestech.com with ESMTPS id 5648ExEM091879
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 4 Jul 2025 16:14:58 +0800 (+08)
+	Fri, 4 Jul 2025 16:14:59 +0800 (+08)
 	(envelope-from ben717@andestech.com)
 Received: from swlinux02.andestech.com (10.0.15.183) by ATCPCS31.andestech.com
  (10.0.1.89) with Microsoft SMTP Server id 14.3.498.0; Fri, 4 Jul 2025
- 16:14:57 +0800
+ 16:14:59 +0800
 From: Ben Zong-You Xie <ben717@andestech.com>
 To:
 CC: <arnd@arndb.de>, <paul.walmsley@sifive.com>, <palmer@dabbelt.com>,
@@ -45,9 +45,9 @@ CC: <arnd@arndb.de>, <paul.walmsley@sifive.com>, <palmer@dabbelt.com>,
         <devicetree@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>, <soc@lists.linux.dev>,
         <tim609@andestech.com>, Ben Zong-You Xie <ben717@andestech.com>
-Subject: [PATCH 2/8] dt-bindings: riscv: add Andes QiLai SoC and the Voyager board bindings
-Date: Fri, 4 Jul 2025 16:14:45 +0800
-Message-ID: <20250704081451.2011407-3-ben717@andestech.com>
+Subject: [PATCH 3/8] dt-bindings: interrupt-controller: add Andes QiLai PLIC
+Date: Fri, 4 Jul 2025 16:14:46 +0800
+Message-ID: <20250704081451.2011407-4-ben717@andestech.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250704081451.2011407-1-ben717@andestech.com>
 References: <20250704081451.2011407-1-ben717@andestech.com>
@@ -62,66 +62,28 @@ Content-Type: text/plain
 X-DKIM-Results: atcpcs31.andestech.com; dkim=none;
 X-DNSRBL: 
 X-SPAM-SOURCE-CHECK: pass
-X-MAIL:Atcsqr.andestech.com 5648EwqC091878
+X-MAIL:Atcsqr.andestech.com 5648ExEM091879
 
-Add DT binding documentation for the Andes QiLai SoC and the
-Voyager development board.
+Add a new compatible string for Andes QiLai PLIC.
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 Signed-off-by: Ben Zong-You Xie <ben717@andestech.com>
 ---
- .../devicetree/bindings/riscv/andes.yaml      | 25 +++++++++++++++++++
- MAINTAINERS                                   |  5 ++++
- 2 files changed, 30 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/riscv/andes.yaml
+ .../bindings/interrupt-controller/sifive,plic-1.0.0.yaml         | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/riscv/andes.yaml b/Documentation/devicetree/bindings/riscv/andes.yaml
-new file mode 100644
-index 000000000000..aa1edf1fdec7
---- /dev/null
-+++ b/Documentation/devicetree/bindings/riscv/andes.yaml
-@@ -0,0 +1,25 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/riscv/andes.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Andes SoC-based boards
-+
-+maintainers:
-+  - Ben Zong-You Xie <ben717@andestech.com>
-+
-+description:
-+  Andes SoC-based boards
-+
-+properties:
-+  $nodename:
-+    const: '/'
-+  compatible:
-+    oneOf:
-+      - items:
-+          - enum:
-+              - andestech,voyager
-+          - const: andestech,qilai
-+
-+additionalProperties: true
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 6135a36a54a8..f4b4261d3c44 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -21285,6 +21285,11 @@ F:	drivers/irqchip/irq-riscv-intc.c
- F:	include/linux/irqchip/riscv-aplic.h
- F:	include/linux/irqchip/riscv-imsic.h
- 
-+RISC-V ANDES SoC Support
-+M:	Ben Zong-You Xie <ben717@andestech.com>
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/riscv/andes.yaml
-+
- RISC-V ARCHITECTURE
- M:	Paul Walmsley <paul.walmsley@sifive.com>
- M:	Palmer Dabbelt <palmer@dabbelt.com>
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml b/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml
+index ffc4768bad06..5b827bc24301 100644
+--- a/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml
++++ b/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml
+@@ -53,6 +53,7 @@ properties:
+     oneOf:
+       - items:
+           - enum:
++              - andestech,qilai-plic
+               - renesas,r9a07g043-plic
+           - const: andestech,nceplic100
+       - items:
 -- 
 2.34.1
 
