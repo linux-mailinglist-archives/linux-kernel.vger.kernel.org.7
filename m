@@ -1,165 +1,203 @@
-Return-Path: <linux-kernel+bounces-717124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-717127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76E25AF8F9D
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 12:12:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66069AF8FAA
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 12:14:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF0161BC6A39
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 10:12:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE92016C698
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 10:14:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D11C2F2C4B;
-	Fri,  4 Jul 2025 10:11:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B0602EF9A4;
+	Fri,  4 Jul 2025 10:14:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="NlfZj2fr"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="axdZwFF3"
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2073.outbound.protection.outlook.com [40.107.96.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC3C42F272C
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 10:11:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751623887; cv=none; b=YulRMGbkQsRudMzahPpTk3QNBP4xIAhCxLVe3wiymKN2N8y7/5OkmUpL3GXUi7POep+IXVMHdPMIDHZH2IbMqheXxzg8fqZ4eKr3OVR7IkWj1WNieqC8/y5DSIxi9F/dKxpTO2+jt2w/hb6lt8mDe0jceGi218IV3NxdYj2jaf8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751623887; c=relaxed/simple;
-	bh=ZJfiMH6yrhrW4z13OYY/q+7njP7HRfoaeaZaIxvoLsg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AHkt76M+tUXlX4gtOEXmNIuJnKC71AlcF4C8wn6+sKFEgiP1KIR1sRvrmEICWXEwRRdOrzElZx0Url/gcTkZBrGAFD9ltzvo6BgdEMrS0S/RIU1tvvcP3CbBjcCQEzoIjDIOvRx6u7LUN2iIdw3Q/K4bpzpNX8es6BhBMt6hTJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=NlfZj2fr; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-553dceb345eso973133e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Jul 2025 03:11:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1751623884; x=1752228684; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ThnYue16skpDKY73i8RkpzoMae/+gmhFicLx/ccew8c=;
-        b=NlfZj2frJ0MoI/3h7QveKv3Y0EgzXgLQw8j2Ge+Wo0BaXCzdjZufQmSA/ijuVDP9gi
-         gJz4g/4zLumrGQqytWbXxeWHMEK0gbxZzTnKz0n7dciwIIWnDBRKLTHvXypSBwF4d9i1
-         nzIqaSMslKbZh3agm9XKrIDh4JTKzk2qwzddiGAXIXGtyp7+cqPObMq3H+2oSMRCLEJG
-         JeqMmMdhVRY0YOqnhqCkiV5Ho1k8WTQduCIqx5tuK/tX66Mi0GDGRrjdo0KTeBKK6VPa
-         6dJSqsdmSoDN5QvRnopc0iXMyN3DGNdd08Za0D5A0OiMXr1MFTIDRjxVmRZAXd/GPNJZ
-         N2FA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751623884; x=1752228684;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ThnYue16skpDKY73i8RkpzoMae/+gmhFicLx/ccew8c=;
-        b=X6EakB29IrW5kpLiGgBKDcK32Fwh55+dUiy4lAuG5dcGZ4NMiuNFBvPXh1MdzYJNOE
-         KwcMDjSzaGNrchNdSbYdAkUiNl0p3yEGsGqspCZgM93FuZO2mWBwIQdqIGHyX+pz3iU2
-         3MrzjAT6avoJHTySfUQ2YujAiejEZHczm4a6CJxAW324hW+BpydxpEzdpyQ5zrRRGi/b
-         6Hy8CS7+2H1iLnRb2ljSwCYBdrxzqEADb8ds8UKVly56hZFj6zygQWSVOiseP/w2piSV
-         MHgv+o1POSfi2h3ufFlTzZdEjD0IMruE+IGMe4WNsUZ8E3viAa3M5eRq0qE1PfJOgNPC
-         kSEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVW8ofMXRNR21DXoBg07nvcG5v8SZfq88+Ju50BPC2i34OQNMhrVWqppnLhOY/8Ao8qy0K78Sz0NkACNt0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz98/4Xp7nUyAgjb744YgeNAg/TtGp3ZCQ0VeyQD3KgTVrBWkLR
-	vsJ+0juMvhRKycSnbXQU4GSIRvpIBdlRz/bp1iz+KKPN8JwxMRiszJAOLBsq5zeXURp617eOeyr
-	SWIARIPQSa1Qlb7tOdXQSwd28AFfN9gJY1xp9paKLUQ==
-X-Gm-Gg: ASbGncsHfXwpE7ON69SKXJqyGGpHQB+Zx21d2o/lBXViUB+RR02PedBFt150IUWJMDg
-	yWEBJ1FQub8tm2Pnz6ItrCiOI9mdS9omhqIUEcayT5WoU6qkYs9qNBznTyoB9Ouncni/hgsma4F
-	kIKpeeG50EKVgGceOGLk9dSgcTxHlghdzkL9FBsIDrYlw/Py8n1WpiWsY=
-X-Google-Smtp-Source: AGHT+IFYm/wR4jTRlbIDDwF6FIxEmPbVXFWiC29PN2h5l87b4kSraGLAGzH7R/iggEXemYKU5MQvLCtTcORv1zFuOus=
-X-Received: by 2002:a05:6512:3c94:b0:553:291f:92d with SMTP id
- 2adb3069b0e04-556e617c939mr532276e87.57.1751623883637; Fri, 04 Jul 2025
- 03:11:23 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C066E25F99F;
+	Fri,  4 Jul 2025 10:14:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.73
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751624055; cv=fail; b=aY3LPMpN3GGB7zs0hSU+C8cULlw71eXNZxWUJOENmfd445J8N9VTNrrjrPVakgKAb+f669vJWEuNaZ+neOrkvuOa1i0lC0iovcGGZwtEtR/5KvkCX5yzh0dG19e9eoL/xqNvY0rEROYKKAfhnUGB2+gLbw9NEoFWj5ItB6FuQQ8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751624055; c=relaxed/simple;
+	bh=u23Ehz+3XEBApkw9EbqWCUgu0yWzmP1a/VCpZNMrQFc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gXnBungBEWm+I9dIMl12RaP1cYmqJZqBPxuDAXr4zqVioLOMhKlsGzrF4oCViiNA9iqigrgjoNUhR1u59YlnNb0BqoCsQd93RJzt8B+Aqrc0Ux25KcudkVGHul7PFpM2hma+LyWzxgEGtp2c9MHlkUgjBfRSF+jcVEOW3W1BX6A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=axdZwFF3; arc=fail smtp.client-ip=40.107.96.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=POFHL5QTcAbqQym7Gj/hekT7+Y8wH+Vw46LRUUtRl3UkmUD7jFEW3RW+1ebaoRyvdn653P/HIGHHZ4Fbwm5XFFeWlzyILoLdpkmHO+sIBOAxnxPKgA+6TI+vuCl74lzgERlWJTsCJJWgSJJ0qIIFLROUe49IgMerSMEvaYQn4v1F7MPQPvs6JzjLfbTeclVLI1FjHifZI6Y560KC98zG+HCzGBRGqstYv2A9Yni1zLujKv/a+aLo2vbJzsmGB8KfszCARb3fXyAgO3GKIqWAenzrIZAWd/JlxGldtWq4w81BG7fBTuBxoRr0N86ZKsMeCTPYf/H0z/d/MzO7lqxazw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=M1pTyXJW6BDzoDr/o13Tw8RjJQBkB0IbpDGg5eipI6Y=;
+ b=MRqPe9Q5g4cYPUumO2nN4t0iw3/x99xn2jeW7kxcYOJKCvqn8yl37694teMltPsgUIku3zp5TuoDOJp7aw+k1AfOeSPuraLyJXY/6Lsqi5dwsBi69dvKwC/8k4SSEmt5b9FQIwnnGSGtheNfquMSrI0ntXaOLgivBohkUinS+evi3B/VI3LxLUtNV/XLcRA3arqsahbRdRAuQmIbcioU7Zi8nxW5Zm1PYpdDw0CJRtPTUaa6Gij/wvKt9gbMH/9yT8beuJv/8VkepQInDCnls19RD2C8bRrdp/AyUkd6Vxrx6b6eNnPDZPBOmO/aIVgi62AgklXqEuL8Cp/2RcbpFw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=M1pTyXJW6BDzoDr/o13Tw8RjJQBkB0IbpDGg5eipI6Y=;
+ b=axdZwFF3y9cj2pFEXKym3T69xfIrEDxFy6Jt1aGlPM/zWYk0JHs4wZBj6U+iwSY2QPZlWv1/Xb+w0CyPBwWZqSAooS7MaXnHDfGKKcTcXZDRl1SJ8rJnU1p+CjzLZkD9+djOs+PVBSfUb0EO/TO53rAkx7LYZUY5s/HvSjZcUq4=
+Received: from BYAPR05CA0085.namprd05.prod.outlook.com (2603:10b6:a03:e0::26)
+ by SA3PR12MB8763.namprd12.prod.outlook.com (2603:10b6:806:312::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.22; Fri, 4 Jul
+ 2025 10:14:11 +0000
+Received: from MWH0EPF000989E7.namprd02.prod.outlook.com
+ (2603:10b6:a03:e0:cafe::a4) by BYAPR05CA0085.outlook.office365.com
+ (2603:10b6:a03:e0::26) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8922.14 via Frontend Transport; Fri,
+ 4 Jul 2025 10:14:11 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ MWH0EPF000989E7.mail.protection.outlook.com (10.167.241.134) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8901.15 via Frontend Transport; Fri, 4 Jul 2025 10:14:10 +0000
+Received: from SATLEXMB06.amd.com (10.181.40.147) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 4 Jul
+ 2025 05:14:05 -0500
+Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB06.amd.com
+ (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 4 Jul
+ 2025 05:14:04 -0500
+Received: from hjbog-srdc-41.amd.com (10.180.168.240) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Fri, 4 Jul 2025 05:13:59 -0500
+From: Samuel Zhang <guoqing.zhang@amd.com>
+To: <alexander.deucher@amd.com>, <christian.koenig@amd.com>,
+	<rafael@kernel.org>, <len.brown@intel.com>, <pavel@kernel.org>,
+	<gregkh@linuxfoundation.org>, <dakr@kernel.org>, <airlied@gmail.com>,
+	<simona@ffwll.ch>, <ray.huang@amd.com>, <matthew.auld@intel.com>,
+	<matthew.brost@intel.com>, <maarten.lankhorst@linux.intel.com>,
+	<mripard@kernel.org>, <tzimmermann@suse.de>
+CC: <mario.limonciello@amd.com>, <lijo.lazar@amd.com>, <victor.zhao@amd.com>,
+	<haijun.chang@amd.com>, <Qing.Ma@amd.com>, <linux-pm@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <amd-gfx@lists.freedesktop.org>,
+	<dri-devel@lists.freedesktop.org>, Samuel Zhang <guoqing.zhang@amd.com>
+Subject: [PATCH v2 0/5] reduce system memory requirement for hibernation
+Date: Fri, 4 Jul 2025 18:12:28 +0800
+Message-ID: <20250704101233.347506-1-guoqing.zhang@amd.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250704070356.1683992-1-apatel@ventanamicro.com> <20250704-attractive-sawfly-of-artistry-1c86a3@krzk-bin>
-In-Reply-To: <20250704-attractive-sawfly-of-artistry-1c86a3@krzk-bin>
-From: Anup Patel <apatel@ventanamicro.com>
-Date: Fri, 4 Jul 2025 15:41:11 +0530
-X-Gm-Features: Ac12FXzuBcUQShERIhU7sx8yxPVr9NpYbWLk5Qb0GVfeL-KIfhtDK6Kn6d-Jp8I
-Message-ID: <CAK9=C2Xt5r0Vjw916U7hV7jR1iRwfaLpvhLYTLmWec_p_1pziw@mail.gmail.com>
-Subject: Re: [PATCH v8 00/24] Linux SBI MPXY and RPMI drivers
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jassi Brar <jassisinghbrar@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	"Rafael J . Wysocki" <rafael@kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Alexandre Ghiti <alex@ghiti.fr>, Len Brown <lenb@kernel.org>, Sunil V L <sunilvl@ventanamicro.com>, 
-	Rahul Pathak <rpathak@ventanamicro.com>, Leyfoon Tan <leyfoon.tan@starfivetech.com>, 
-	Atish Patra <atish.patra@linux.dev>, Andrew Jones <ajones@ventanamicro.com>, 
-	Samuel Holland <samuel.holland@sifive.com>, Anup Patel <anup@brainfault.org>, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-acpi@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MWH0EPF000989E7:EE_|SA3PR12MB8763:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0ca03fe0-c266-4455-f646-08ddbae38510
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|7416014|376014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?gtu9nSAW5o9k0rgtfbFIYCyqTw3y2SCr0LviOm9895dhqVpkaTTuhErNSaKx?=
+ =?us-ascii?Q?KRfKgRWKtdQmAs4twrYvHRzJZol6huCoMNGJ6QPy3sa9q3OabJZKqGyKdf+h?=
+ =?us-ascii?Q?UCn0UvH9jBepoh7t347Uc2+3bc7cusf1+DS6Kuvsa/LU6cezUrPaSyZTBHNa?=
+ =?us-ascii?Q?68ay3KECTiyv7X8QbEWdxHawhmxeRr+kk9WpiNdY9VwDW68KpgB+++QRV09E?=
+ =?us-ascii?Q?t9OLwYp7ZO9qRxx6FZhXNqiR6Ynnhe+m3ztLv1v6LiAOgv4mbygzFwsYB4vN?=
+ =?us-ascii?Q?51f2je4M5CiTrOdwyloY6gg+aqF+4g2SZ5EmoJXkJHNOWzlGYkUSwbqE8uqT?=
+ =?us-ascii?Q?LViQkj8NsUzaRokfJSvpZXMulyxdWXwzdZ+Yhtx00snByjYfLDIT1o4ByZXX?=
+ =?us-ascii?Q?CGsNl8/MNjOoaPdSo2Sv7zktCG+gnJ58fK2EDKH30fEJw+ZrItBUpQr5Fh3i?=
+ =?us-ascii?Q?WkAHZ0i95aZhdeId/r6kNNiZJMrww1s0eoA8/Zf9eFZE1G9IARc7h4cQMsIk?=
+ =?us-ascii?Q?KBfpuJ9PNEjEfZAPddeFK8VsYe4L4Hq9ZewpUbqK5IteAXPAX85kZI0/Wue3?=
+ =?us-ascii?Q?0z2VtxB3L+ja1xxylAmm/uIIaWZWeSilFo3v2JoMHKDn7c0GWtB9D7ecIqLV?=
+ =?us-ascii?Q?FvS3inV2nFkLOM26yXuRRyX0iVH75ooYkzRYYWIscKJ/epAW5GNgMsdgJyLn?=
+ =?us-ascii?Q?PKJZR6VXyyEBg5rek1Fk4eu/XpVVAo6a273jQqz7A4MrWQX/0w64a23PpaO1?=
+ =?us-ascii?Q?S/FyYQAQ6GbbpdT+3n7PaoFr/Xs2xwo7yCjVXApqPt2klkG0O83C8gaNA5BU?=
+ =?us-ascii?Q?ar1UBc48Rw9naHWqI8nNKnMW3cL8BNz+YquPHf6/AroQHSTZyZD6y+BzdFLQ?=
+ =?us-ascii?Q?24Ch1BvRuTevlOgVSdyThGrG+EBWgz3OMFkAbg3XW9IkRqtPw9reoP1GiY79?=
+ =?us-ascii?Q?2M6KqfCKsPsHNQkvXkkcYmWyKQNhFs6aXNb19z8M1Q1muAF0oCDmDIF+xIz0?=
+ =?us-ascii?Q?WA8W0PU7/Xx1RALahw0/ezg+z9+avxJioOElFl58mrhaNvdE4tqzZQNjYTAT?=
+ =?us-ascii?Q?ztrlrSvarEnBUtx7g/kUFAvv5Zwv23EnelWLhO/CS0IM0cYhdCGdjLvUOE/W?=
+ =?us-ascii?Q?B5hNNPgQAZl+ss+ntmHoIX0IA6NSBEo40Kz/F1TrlXiPxNg1LFdGaGeycNyA?=
+ =?us-ascii?Q?8bS2fFFwERIamnisuPYUOyhE2pq3lM6znV/WwGmw9prYBU/shqX+9qoW4JDR?=
+ =?us-ascii?Q?rRpuZq5xhj7C2SYMX38L/RrMvxXGn11V5wK7a9y209YeCDqB6yrdArQOZ+my?=
+ =?us-ascii?Q?dwOSzsLzjzWwT5VttB/yvs1gdaJHDzCsev2HSIApKRjz7pmV+LOci/k0pFOz?=
+ =?us-ascii?Q?LNOvs/p5T3ccG8DufMr/XxOGBA0b+3NggpZy9QPYO0SzLQlesUE95QPspt4F?=
+ =?us-ascii?Q?MwXlJ14zARGFK7dssz2EsASQ5vDnZyLOq2JUx5JIeEgUcJggUV6wFkRTuHIq?=
+ =?us-ascii?Q?uEdVWG1ij3y1qgreidjXQajwDQTXrP00068ZSp4kjUfhJXNpajZcqZqaog?=
+ =?us-ascii?Q?=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(7416014)(376014)(921020);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Jul 2025 10:14:10.7967
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0ca03fe0-c266-4455-f646-08ddbae38510
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	MWH0EPF000989E7.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB8763
 
-On Fri, Jul 4, 2025 at 1:15=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.org=
-> wrote:
->
-> On Fri, Jul 04, 2025 at 12:33:32PM +0530, Anup Patel wrote:
-> > The SBI v3.0 (MPXY extension) [1] and RPMI v1.0 [2] specifications
-> > are frozen and finished public review at the RISC-V International.
-> >
-> > Currently, most of the RPMI and MPXY drivers are in OpenSBI whereas
-> > Linux only has SBI MPXY mailbox controller driver, RPMI clock driver
-> > and RPMI system MSI driver This series also includes ACPI support
-> > for SBI MPXY mailbox controller and RPMI system MSI drivers.
-> >
-> > These patches can be found in the riscv_sbi_mpxy_mailbox_v8 branch
-> > at: https://github.com/avpatel/linux.git
-> >
-> > To test these patches, boot Linux on "virt,rpmi=3Don,aia=3Daplic-imsic"
-> > machine with OpenSBI and QEMU from the dev-upstream branch at:
-> > https://github.com/ventanamicro/opensbi.git
-> > https://github.com/ventanamicro/qemu.git
-> >
-> > [1] https://github.com/riscv-non-isa/riscv-sbi-doc/releases
-> > [2] https://github.com/riscv-non-isa/riscv-rpmi/releases
-> >
-> > Changes since v7:
-> >  - Addressed comments on PATCH3, PATCH7, PATCH10, PATCH14, and PATCH21
->
-> Which comments? What exactly did you change? Provide in-patch changelogs
-> explaining this, because what you wrote is way too vague.
->
+Modern data center dGPUs are usually equipped with very large VRAM. On
+server with such dGPUs(192GB VRAM * 8) and 2TB system memory, hibernate
+will fail due to no enough free memory.
 
-Apologies for being a bit lazy here. Most changes are pretty straight forwa=
-rd
-except the improvements in PATCH14. More detailed change log is below ...
+The root cause is that during hibernation all VRAM memory get evicted to
+GTT or shmem. In both case, it is in system memory and kernel will try to 
+copy the pages to hibernation image. In the worst case, this causes 2 
+copies of VRAM memory in system memory, 2TB is not enough for the 
+hibernation image. 192GB * 8 * 2 = 3TB > 2TB.
 
-Changes since v7:
- - Addressed enum related nits in PATCH3
-   (Refer, https://lore.kernel.org/all/CAK9=3DC2VxhC6soxHtmacedbeCU=3DrFi84=
-Br1RvN2uPcBKoLhRaJw@mail.gmail.com/)
- - Addressed comments in PATCH7 as follows:
-   - Added minmax.h to includes
-   - Removed "rc" variable from mpxy_mbox_send_rpmi_data()
-   - Removed alignment and other checks from mpxy_mbox_peek_rpmi_data()
-   - Created separate function to restrict scope of channel_ids used
-in mpxy_mbox_probe()
-   (Refer, https://lore.kernel.org/all/CAK9=3DC2Ume2CmBYHYob7HSJHu=3DZdfdWM=
-+4JYPgFJ9Hir5Oi8cOg@mail.gmail.com/)
- - Improved comments for struct rpmi_clk_rates in PATCH10
-   (Refer, https://lore.kernel.org/all/CAK9=3DC2VfvsbFTjecQm0OSsssXbff7wC4f=
-qWf3CTmnpWSiaLcBw@mail.gmail.com/)
- - Improved refactoring of acpi_fwnode_get_reference_args() in PATCH14
-   (Refer, https://lore.kernel.org/all/20250702051345.1460497-15-apatel@ven=
-tanamicro.com/)
- - Improve nargs_count parsing in acpi_fwnode_get_reference_args() for PATC=
-H15
-   (Refer, https://lore.kernel.org/all/20250702051345.1460497-16-apatel@ven=
-tanamicro.com/)
- - Added more comments describing why need to explicitly set device
-MSI domain in PATCH21
-   (Refer, https://lore.kernel.org/all/aGaUmpw1pVWNAmpb@smile.fi.intel.com/=
-)
+The fix includes following changes. With these changes, there's much less
+pages needed to be copied to hibernate image and hibernation can succeed.
+* patch 1 and 2: move GTT to shmem after evicting VRAM. so that the GTT 
+  pages can be freed.
+* patch 3: force write shmem pages to swap disk and free shmem pages.
 
-Regards,
-Anup
+After swapout GTT to shmem in hibernation prepare stage, the GPU will be
+resumed again in thaw stage. The swapin and restore BOs of resume takes
+lots of time (50 mintues observed for 8 dGPUs). And it's unnecessary since
+writing hibernation image do not need GPU for hibernate successful case.
+* patch 4 and 5: skip resume of device in thaw stage for successful
+  hibernation case to reduce the hibernation time.
+
+v2:
+* split first patch to 2 patches, 1 for ttm, 1 for amdgpu
+* refined the new ttm api
+* add more comments for shrink_shmem_memory() and its callsite
+* export variable pm_transition in kernel
+* skip resume in thaw() for successful hibernation case
+
+Samuel Zhang (5):
+1. drm/ttm: add ttm_device_prepare_hibernation() api
+2. drm/amdgpu: move GTT to shmem after eviction for hibernation
+3. PM: hibernate: shrink shmem pages after dev_pm_ops.prepare()
+4. PM: hibernate: export variable pm_transition
+5. drm/amdgpu: do not resume device in thaw for normal hibernation
+
+ drivers/base/power/main.c                    |  3 +-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c      | 10 +++++++
+ drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c      | 13 ++++++++-
+ drivers/gpu/drm/amd/dkms/config/config.h     |  3 ++
+ drivers/gpu/drm/amd/dkms/m4/pm_transition.m4 | 15 ++++++++++
+ drivers/gpu/drm/ttm/ttm_device.c             | 29 ++++++++++++++++++++
+ include/drm/ttm/ttm_device.h                 |  1 +
+ include/linux/pm.h                           |  2 ++
+ kernel/power/hibernate.c                     | 26 ++++++++++++++++++
+ 9 files changed, 100 insertions(+), 2 deletions(-)
+ create mode 100644 drivers/gpu/drm/amd/dkms/m4/pm_transition.m4
+
+-- 
+2.43.5
+
 
