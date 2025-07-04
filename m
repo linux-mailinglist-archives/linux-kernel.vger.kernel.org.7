@@ -1,73 +1,83 @@
-Return-Path: <linux-kernel+bounces-716729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C9A9AF8A57
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 09:57:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E90DAF8A52
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 09:57:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 811885A16E6
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 07:56:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 912E81CA1688
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 07:57:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30ED528EA65;
-	Fri,  4 Jul 2025 07:54:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB56129AB0F;
+	Fri,  4 Jul 2025 07:54:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="P8iXIV1e"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AKKJw4gu"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4DEA28B511;
-	Fri,  4 Jul 2025 07:54:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFC8C28B41D;
+	Fri,  4 Jul 2025 07:54:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751615651; cv=none; b=fHw3tA4mqluW2C8NwBgP5rZkzJPQXeiFZta/FUjNnjG7usNFHau4IL0Rc7JGzWIpcr5Px3kG4L4W34Dv7T33e3ObdlorXOFbT5pi2JlyT//kO2Yy47CbqmIr/t1jsPX++vkGgVbqiyvXRcBk0sEfEz3jpqQz9QKYzo4rH3tJqUk=
+	t=1751615653; cv=none; b=JlorShNQSgzVZg11iNelUamRDrPwkPeTObZhaYgSeVA3rvVVg/32SF+jlpjKyzoDe12MOnVEMxAiSENU91iPo/AwuyVQnHMPRmuiZjd0vxFQ27XsBPjijALOxVc8nny4lbG2MImcqr2qwunyyiRtb3jSCQQ9ytxKnkq2SUFMrog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751615651; c=relaxed/simple;
-	bh=7fNlyfehAX6Hv6KxB0TQNkNnrIRoj0DQRCnHapvWfsw=;
+	s=arc-20240116; t=1751615653; c=relaxed/simple;
+	bh=TKaWU9wHcesffH7yU2Bgh0fMlpDg7JRl+pUzHVYytWk=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=d26/erSmkSQ+cDuzJD3VUbQkQu0HoKd9SMBavVc1G7fEe34qaK30hyzCO2J1Pdd3KCVoCPcUYvQrgrREnpMAouGVUkJzriUAwqqkZsC4s367CPNUzWuj1BGyuTqeBe1ekLRSstPv2Xbo3Bvz7ZmRwCD155uIOPKR1vqNxmVGd6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=P8iXIV1e; arc=none smtp.client-ip=198.175.65.9
+	 MIME-Version; b=kuSrhZPWzl6vv+s2o1oeT9VdME7prSexUQ5GvAoJvE3FzSKSjvjHPcZQjvVdVw9B5t8O6OcrHT2G69hHXwrKNtpQupWz+LAPnLPz3V8DKJz0KcyHHBko5jlEcyU3IodLVZpwAG5d9tnj+tSMaAYYQ1x2Ol8aVK+3nprTcPO97qU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AKKJw4gu; arc=none smtp.client-ip=198.175.65.9
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751615649; x=1783151649;
+  t=1751615652; x=1783151652;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=7fNlyfehAX6Hv6KxB0TQNkNnrIRoj0DQRCnHapvWfsw=;
-  b=P8iXIV1eiV+bns4QrQPwNGlhiKQPNW2N7Sx5mUHONl56nbOcgQOvtj0d
-   5Erw8uhL07WQeXzBh7I+alBQtxwTjM10k7tDgY3OivaS0imXKipIrYgAw
-   f0wu+pmd+758zSB9YYpLfkOiVyqHZXFZeAm+BS1e2K3sShUy78223ctLN
-   QAFx9iCoMoyCU6YrlFokAAqzFjc+mE8rsb/CdZ62M21UC2geOD+INWQzi
-   pJPz2ms/1BUPDiD1QQnQ7VjxufEG8f9Qg/opEBGtcuUGz9YDm7YwZ/z5f
-   bKGxgAhcjEzW/9tOkwO2hZi0QuuyIc6Khkp2ARbxWIK3RUFR9IiyVRCD8
-   Q==;
-X-CSE-ConnectionGUID: GqfELuzBRIiH3WFqRYXZgA==
-X-CSE-MsgGUID: xY1nNIIkTbORRo6Gd1Vk9Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11483"; a="76494484"
+  bh=TKaWU9wHcesffH7yU2Bgh0fMlpDg7JRl+pUzHVYytWk=;
+  b=AKKJw4guLMhD0Gyqs/dl4t+6TieXPSynU9HLCf8tYqHSdw4FL9km5vM9
+   kzWeOd879FFMXkLvxTcXyKdfToCaDY+vyRMam5+LQNyjq9vMP64AL/mVE
+   9af37ccDlPvs6hAx3qPi3vTTEHmEkJ1MpLnE+4GsPka6g2MQr5Udorlrd
+   sXCLUigVIRHORRYj3s+cXtDDA6NcRtyzNCZG0JaxWwXlE6LmitGkbHA7r
+   PVTaMgeRGBIEkpV7hhxEbcnUIf6S0kTUaeCNGfLDrwXRubEqkMD/hc6nS
+   ZedEszF6ulBgx2BwB5sArapD2D+VmqpEl//UP6RwYwpqKyIEupR9LTHoK
+   g==;
+X-CSE-ConnectionGUID: 1eoNV4g8TCWP+7gFzrB45w==
+X-CSE-MsgGUID: 2HSTM3uITY6wpLhpHRb6KQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11483"; a="76494505"
 X-IronPort-AV: E=Sophos;i="6.16,286,1744095600"; 
-   d="scan'208";a="76494484"
+   d="scan'208";a="76494505"
 Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 00:54:08 -0700
-X-CSE-ConnectionGUID: LdIu/9HuTTC2yJaNcMZl2A==
-X-CSE-MsgGUID: pv0MS9vXT3+PYMyqXvg98Q==
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 00:54:11 -0700
+X-CSE-ConnectionGUID: sTvQMPl5RuODWcA7j2/V8w==
+X-CSE-MsgGUID: yf8ICMQNQIyWACxGNAWhRw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.16,286,1744095600"; 
-   d="scan'208";a="158924186"
+   d="scan'208";a="158924202"
 Received: from jkrzyszt-mobl2.ger.corp.intel.com (HELO svinhufvud.fi.intel.com) ([10.245.244.244])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 00:54:06 -0700
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 00:54:07 -0700
 Received: from svinhufvud.lan (localhost [IPv6:::1])
-	by svinhufvud.fi.intel.com (Postfix) with ESMTP id 8B02344843;
-	Fri,  4 Jul 2025 10:54:04 +0300 (EEST)
+	by svinhufvud.fi.intel.com (Postfix) with ESMTP id 5D66B44433;
+	Fri,  4 Jul 2025 10:54:05 +0300 (EEST)
 Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
 From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Vinod Koul <vkoul@kernel.org>
-Cc: dmaengine@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 10/80] dmaengine: pl330: Remove redundant pm_runtime_mark_last_busy() calls
-Date: Fri,  4 Jul 2025 10:54:04 +0300
-Message-Id: <20250704075404.3217372-1-sakari.ailus@linux.intel.com>
+To: Vinod Koul <vkoul@kernel.org>,
+	Sinan Kaya <okaya@kernel.org>,
+	Md Sadre Alam <quic_mdalam@quicinc.com>,
+	Kees Cook <kees@kernel.org>,
+	Dave Jiang <dave.jiang@intel.com>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Amit Vadhavana <av2082000@gmail.com>,
+	Casey Connolly <casey.connolly@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org,
+	dmaengine@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 11/80] dmaengine: qcom: Remove redundant pm_runtime_mark_last_busy() calls
+Date: Fri,  4 Jul 2025 10:54:05 +0300
+Message-Id: <20250704075405.3217439-1-sakari.ailus@linux.intel.com>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250704075225.3212486-1-sakari.ailus@linux.intel.com>
 References: <20250704075225.3212486-1-sakari.ailus@linux.intel.com>
@@ -96,53 +106,160 @@ rc2:
         git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
                 pm-runtime-6.17-rc1
 
- drivers/dma/pl330.c | 5 -----
- 1 file changed, 5 deletions(-)
+ drivers/dma/qcom/bam_dma.c    | 5 -----
+ drivers/dma/qcom/hidma.c      | 9 ---------
+ drivers/dma/qcom/hidma_dbg.c  | 1 -
+ drivers/dma/qcom/hidma_mgmt.c | 2 --
+ 4 files changed, 17 deletions(-)
 
-diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
-index 82a9fe88ad54..472cb6fe126d 100644
---- a/drivers/dma/pl330.c
-+++ b/drivers/dma/pl330.c
-@@ -2134,7 +2134,6 @@ static void pl330_tasklet(struct tasklet_struct *t)
+diff --git a/drivers/dma/qcom/bam_dma.c b/drivers/dma/qcom/bam_dma.c
+index bbc3276992bb..e6f642e8c731 100644
+--- a/drivers/dma/qcom/bam_dma.c
++++ b/drivers/dma/qcom/bam_dma.c
+@@ -608,7 +608,6 @@ static void bam_free_chan(struct dma_chan *chan)
+ 	}
  
- 	/* If work list empty, power down */
- 	if (power_down) {
--		pm_runtime_mark_last_busy(pch->dmac->ddma.dev);
- 		pm_runtime_put_autosuspend(pch->dmac->ddma.dev);
- 	}
+ err:
+-	pm_runtime_mark_last_busy(bdev->dev);
+ 	pm_runtime_put_autosuspend(bdev->dev);
  }
-@@ -2313,7 +2312,6 @@ static int pl330_terminate_all(struct dma_chan *chan)
- 	list_splice_tail_init(&pch->work_list, &pl330->desc_pool);
- 	list_splice_tail_init(&pch->completed_list, &pl330->desc_pool);
- 	spin_unlock_irqrestore(&pch->lock, flags);
--	pm_runtime_mark_last_busy(pl330->ddma.dev);
- 	if (power_down)
- 		pm_runtime_put_autosuspend(pl330->ddma.dev);
- 	pm_runtime_put_autosuspend(pl330->ddma.dev);
-@@ -2347,7 +2345,6 @@ static int pl330_pause(struct dma_chan *chan)
- 			desc->status = PAUSED;
- 	}
- 	spin_unlock_irqrestore(&pch->lock, flags);
--	pm_runtime_mark_last_busy(pl330->ddma.dev);
- 	pm_runtime_put_autosuspend(pl330->ddma.dev);
+ 
+@@ -784,7 +783,6 @@ static int bam_pause(struct dma_chan *chan)
+ 	writel_relaxed(1, bam_addr(bdev, bchan->id, BAM_P_HALT));
+ 	bchan->paused = 1;
+ 	spin_unlock_irqrestore(&bchan->vc.lock, flag);
+-	pm_runtime_mark_last_busy(bdev->dev);
+ 	pm_runtime_put_autosuspend(bdev->dev);
  
  	return 0;
-@@ -2371,7 +2368,6 @@ static void pl330_free_chan_resources(struct dma_chan *chan)
- 		list_splice_tail_init(&pch->work_list, &pch->dmac->desc_pool);
- 
- 	spin_unlock_irqrestore(&pl330->lock, flags);
--	pm_runtime_mark_last_busy(pch->dmac->ddma.dev);
- 	pm_runtime_put_autosuspend(pch->dmac->ddma.dev);
- 	pl330_unprep_slave_fifo(pch);
- }
-@@ -3176,7 +3172,6 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
- 	pm_runtime_irq_safe(&adev->dev);
- 	pm_runtime_use_autosuspend(&adev->dev);
- 	pm_runtime_set_autosuspend_delay(&adev->dev, PL330_AUTOSUSPEND_DELAY);
--	pm_runtime_mark_last_busy(&adev->dev);
- 	pm_runtime_put_autosuspend(&adev->dev);
+@@ -810,7 +808,6 @@ static int bam_resume(struct dma_chan *chan)
+ 	writel_relaxed(0, bam_addr(bdev, bchan->id, BAM_P_HALT));
+ 	bchan->paused = 0;
+ 	spin_unlock_irqrestore(&bchan->vc.lock, flag);
+-	pm_runtime_mark_last_busy(bdev->dev);
+ 	pm_runtime_put_autosuspend(bdev->dev);
  
  	return 0;
+@@ -927,7 +924,6 @@ static irqreturn_t bam_dma_irq(int irq, void *data)
+ 		writel_relaxed(clr_mask, bam_addr(bdev, 0, BAM_IRQ_CLR));
+ 	}
+ 
+-	pm_runtime_mark_last_busy(bdev->dev);
+ 	pm_runtime_put_autosuspend(bdev->dev);
+ 
+ 	return IRQ_HANDLED;
+@@ -1102,7 +1098,6 @@ static void bam_start_dma(struct bam_chan *bchan)
+ 	writel_relaxed(bchan->tail * sizeof(struct bam_desc_hw),
+ 			bam_addr(bdev, bchan->id, BAM_P_EVNT_REG));
+ 
+-	pm_runtime_mark_last_busy(bdev->dev);
+ 	pm_runtime_put_autosuspend(bdev->dev);
+ }
+ 
+diff --git a/drivers/dma/qcom/hidma.c b/drivers/dma/qcom/hidma.c
+index c2b3e4452e71..ded27a674e5f 100644
+--- a/drivers/dma/qcom/hidma.c
++++ b/drivers/dma/qcom/hidma.c
+@@ -185,7 +185,6 @@ static void hidma_callback(void *data)
+ 	hidma_process_completed(mchan);
+ 
+ 	if (queued) {
+-		pm_runtime_mark_last_busy(dmadev->ddev.dev);
+ 		pm_runtime_put_autosuspend(dmadev->ddev.dev);
+ 	}
+ }
+@@ -316,11 +315,9 @@ static dma_cookie_t hidma_tx_submit(struct dma_async_tx_descriptor *txd)
+ 
+ 	pm_runtime_get_sync(dmadev->ddev.dev);
+ 	if (!hidma_ll_isenabled(dmadev->lldev)) {
+-		pm_runtime_mark_last_busy(dmadev->ddev.dev);
+ 		pm_runtime_put_autosuspend(dmadev->ddev.dev);
+ 		return -ENODEV;
+ 	}
+-	pm_runtime_mark_last_busy(dmadev->ddev.dev);
+ 	pm_runtime_put_autosuspend(dmadev->ddev.dev);
+ 
+ 	mdesc = container_of(txd, struct hidma_desc, desc);
+@@ -507,7 +504,6 @@ static int hidma_terminate_channel(struct dma_chan *chan)
+ 
+ 	rc = hidma_ll_enable(dmadev->lldev);
+ out:
+-	pm_runtime_mark_last_busy(dmadev->ddev.dev);
+ 	pm_runtime_put_autosuspend(dmadev->ddev.dev);
+ 	return rc;
+ }
+@@ -525,7 +521,6 @@ static int hidma_terminate_all(struct dma_chan *chan)
+ 	/* reinitialize the hardware */
+ 	pm_runtime_get_sync(dmadev->ddev.dev);
+ 	rc = hidma_ll_setup(dmadev->lldev);
+-	pm_runtime_mark_last_busy(dmadev->ddev.dev);
+ 	pm_runtime_put_autosuspend(dmadev->ddev.dev);
+ 	return rc;
+ }
+@@ -569,7 +564,6 @@ static int hidma_pause(struct dma_chan *chan)
+ 		if (hidma_ll_disable(dmadev->lldev))
+ 			dev_warn(dmadev->ddev.dev, "channel did not stop\n");
+ 		mchan->paused = true;
+-		pm_runtime_mark_last_busy(dmadev->ddev.dev);
+ 		pm_runtime_put_autosuspend(dmadev->ddev.dev);
+ 	}
+ 	return 0;
+@@ -591,7 +585,6 @@ static int hidma_resume(struct dma_chan *chan)
+ 		else
+ 			dev_err(dmadev->ddev.dev,
+ 				"failed to resume the channel");
+-		pm_runtime_mark_last_busy(dmadev->ddev.dev);
+ 		pm_runtime_put_autosuspend(dmadev->ddev.dev);
+ 	}
+ 	return rc;
+@@ -882,7 +875,6 @@ static int hidma_probe(struct platform_device *pdev)
+ 	hidma_debug_init(dmadev);
+ 	hidma_sysfs_init(dmadev);
+ 	dev_info(&pdev->dev, "HI-DMA engine driver registration complete\n");
+-	pm_runtime_mark_last_busy(dmadev->ddev.dev);
+ 	pm_runtime_put_autosuspend(dmadev->ddev.dev);
+ 	return 0;
+ 
+@@ -909,7 +901,6 @@ static void hidma_shutdown(struct platform_device *pdev)
+ 	pm_runtime_get_sync(dmadev->ddev.dev);
+ 	if (hidma_ll_disable(dmadev->lldev))
+ 		dev_warn(dmadev->ddev.dev, "channel did not stop\n");
+-	pm_runtime_mark_last_busy(dmadev->ddev.dev);
+ 	pm_runtime_put_autosuspend(dmadev->ddev.dev);
+ 
+ }
+diff --git a/drivers/dma/qcom/hidma_dbg.c b/drivers/dma/qcom/hidma_dbg.c
+index ce87c7937a0e..7d7594da084c 100644
+--- a/drivers/dma/qcom/hidma_dbg.c
++++ b/drivers/dma/qcom/hidma_dbg.c
+@@ -103,7 +103,6 @@ static int hidma_chan_show(struct seq_file *s, void *unused)
+ 		hidma_ll_chstats(s, mchan->dmadev->lldev, mdesc->tre_ch);
+ 
+ 	hidma_ll_devstats(s, mchan->dmadev->lldev);
+-	pm_runtime_mark_last_busy(dmadev->ddev.dev);
+ 	pm_runtime_put_autosuspend(dmadev->ddev.dev);
+ 	return 0;
+ }
+diff --git a/drivers/dma/qcom/hidma_mgmt.c b/drivers/dma/qcom/hidma_mgmt.c
+index 4805ce390ffa..8442082bde23 100644
+--- a/drivers/dma/qcom/hidma_mgmt.c
++++ b/drivers/dma/qcom/hidma_mgmt.c
+@@ -150,7 +150,6 @@ int hidma_mgmt_setup(struct hidma_mgmt_dev *mgmtdev)
+ 	val |= mgmtdev->chreset_timeout_cycles & HIDMA_CHRESET_TIMEOUT_MASK;
+ 	writel(val, mgmtdev->virtaddr + HIDMA_CHRESET_TIMEOUT_OFFSET);
+ 
+-	pm_runtime_mark_last_busy(&mgmtdev->pdev->dev);
+ 	pm_runtime_put_autosuspend(&mgmtdev->pdev->dev);
+ 	return 0;
+ }
+@@ -305,7 +304,6 @@ static int hidma_mgmt_probe(struct platform_device *pdev)
+ 		 &res->start, mgmtdev->dma_channels);
+ 
+ 	platform_set_drvdata(pdev, mgmtdev);
+-	pm_runtime_mark_last_busy(&pdev->dev);
+ 	pm_runtime_put_autosuspend(&pdev->dev);
+ 	return 0;
+ out:
 -- 
 2.39.5
 
