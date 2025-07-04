@@ -1,240 +1,248 @@
-Return-Path: <linux-kernel+bounces-717441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-717443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27B9DAF9435
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 15:32:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D041CAF9445
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 15:33:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EF171CC1799
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 13:31:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A0C5580331
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 13:33:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 457C22BF3CA;
-	Fri,  4 Jul 2025 13:30:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD7C62FCE2B;
+	Fri,  4 Jul 2025 13:33:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="blKLZUgj"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hKb2A09a"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D64D62FE300
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 13:30:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5938C2BF3CA;
+	Fri,  4 Jul 2025 13:33:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751635836; cv=none; b=n2ZoJdtqKeBorNqtXEfC6ctuJBZhwD5dMjjXQ7KpeBN7zMGMsItHmbFOgxkC5R9IT4P1wXhzRkQFnOIR6sb+rI1IFPMC4dVyoGvV65vMxu2KNiqfk56QoGDVbKCXR6DX3DbPV941hZ2tebvEOHuhfk+sZ76DunaL2tYZOvYJYmo=
+	t=1751636007; cv=none; b=Nurqy/pW1eqRNf+GQY3Z+xLz/+lw9jHLZL0huAN+mJKwu9iIg871+7z3wd8XsRh7dTFEFfZov/Ko8GQWXOQv+m9/fzPxjXWellJxgLTLke/eKXv1KfuzambFJLJztDv+1ucMrZ3+xeAEdO4KvASDBwfh9OXSYc6E/JDtzQ4WqAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751635836; c=relaxed/simple;
-	bh=6KJTPyg9FavyyZPcffQhZl5PmrN3fsq62PnGfmpzhmw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YTxU+AUjZInS/9wxlYvClNkBTCRacGomqMKnN7lWq6bZMsqePg+D1SUGh5CsOHy7Ks8Ufhqv3QGsrLowbhmhGwvQSwv5qS3740S87X6ngfgITbvEZWtV2CxBSFZUtZ1Yhvrgx7nM6HiohpB/+NU+1t13EcB1FSaEO9sKUyPHTlc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=blKLZUgj; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-3138e64fc73so181500a91.2
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Jul 2025 06:30:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1751635834; x=1752240634; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9OuIoHNns7sXRaM1bPO1h61cNT5JAFzjWi4tPy7COWQ=;
-        b=blKLZUgjHZxmUipf3zKlYBB8cOIX8XtOLC5RPnFO7+Wul3lXsfKZUyM+ErcR6uS/fb
-         p9s+XzYehnInQPLXty4abwwsu7sxGsqQtpXsIWBfiSQccWA6JsuVZY2hwr8eNK0FrItw
-         +OVqskVu3KtnD/+58eTgBP4JOcVyuqJ3+sgSy4sS2Jyp/vUXN9DYBBUx9LGfcqb82KXU
-         l07GNqlQifoqF8Nt6cy60l1fChUnxaq/DA2LBL+0xnxqFbR1GhBOx7+D70Wu8Wb6r2Eb
-         RACIzzbkrdG/SHm9cYsJeILz1abHPwVe+rha/mn9Om44XCc3/0CDfNGUMYGI+FRC6+sZ
-         sriQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751635834; x=1752240634;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9OuIoHNns7sXRaM1bPO1h61cNT5JAFzjWi4tPy7COWQ=;
-        b=gJyEio3BBTjKVgp6hgU9DYaHwBQZft/rFu8pcruoBVZ3ZNhPCxbM9N8DCxGJO3VDO4
-         RN84QG8jK4FcgoMbogHhjPH775TM/trY31hLSCUR1DrtgGj5WNxsg+Rv7znnStavjA7e
-         HB8at4x2qKYLy2vq32/+M/x926y0yjDPG1NgkefBJpGOOUizpZlu/hEjl5Iy+5GCfZKO
-         j0qq3VjQTdLuXWv6KIGY6ZI7Pd/h7yLO/qeh8KgO964ABk4ylbYm4FFRUHixkr/5oNJd
-         rHC82LHNQeI5qLZ4cBjsWalos3/2kNINExkpyR0HB4Rnm3BxxK0DbkNWWrJMenf8NlGb
-         sJBA==
-X-Forwarded-Encrypted: i=1; AJvYcCWakm74IK5c2QNzA75D55wIhAQQOrpQF1fQnJDtyU4D+riKQZJ8cy/oXZvKyRy9lfybnE2hd3twlZUj8Cg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyypbn2L+aA7J3eZ5yBgbY9re1wwBsFTjbme//6XtNbUcXaKwJ4
-	25va4RIDl1LVN65wQ3YRPysWL5Zbz9dleY+I4Nk9OucMnXxN8WN5GxvGItzunsUEsm5DgI/Z/k4
-	cuzfV3nW7/lPH78ZdqwtbtIaOkkM/mvB7fUe1q+e6hw==
-X-Gm-Gg: ASbGncsppRltt6KWMek1auEIZFh86cQ4UItpx4p5U0PLHVOlOP2RvM06vDxd5fDOJ1S
-	YYy3v/wlWAtvVfgeENJgi2udeWwPFroms6doljX8RTly4v3uCyU0jZ2zRgVky5y6bTERUdNwJXp
-	pO0o4JOJt1jDL19kv9k0abXR0FbfKHLG5yBwizQcLGuQ==
-X-Google-Smtp-Source: AGHT+IHwuYt2meGxCPjsTKyKJX5r/H6iPran+P4kV/Mw56crza3jEFOkV8KGZv4EHHMsjSjVx23ud+wlMZvgN+zTSLE=
-X-Received: by 2002:a17:90b:3a48:b0:311:e9a6:332e with SMTP id
- 98e67ed59e1d1-31aacaeafb0mr1647930a91.0.1751635834029; Fri, 04 Jul 2025
- 06:30:34 -0700 (PDT)
+	s=arc-20240116; t=1751636007; c=relaxed/simple;
+	bh=z42LDkuolS9YgXumBsS3MC4BEk9xN8qz+yiSbmoxW6o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=G5qu1VZ0lhSLwA5WMOqikWLGQnT1uqo4X00usHmFZfnrII8qgh9TT4EeWzJYcmsKYr+idzMY84/diYUalI1a6XH3o80LswYq/XSS+dk+Xxl7x+4WrqoBpjPuW1mDFe9A8I82dt+nqiC6cVkbXf3Dg3S0XN5EDipXmT2UFLrIaCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hKb2A09a; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751636004; x=1783172004;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=z42LDkuolS9YgXumBsS3MC4BEk9xN8qz+yiSbmoxW6o=;
+  b=hKb2A09a2WuV/VKTinHiada7s4Dn7VIsjROhpOSk92Cq/rk1DJGEzgzM
+   X/lu6Sh6INqnLalN8QWK4ajte+MRTEn9L5fzJGulM+j2OGyGq3PIcwwTX
+   g9sRA+FOsuJQ+D4GNYXhEIkV83Wh0Ll3lOwAhG74aCyew+js+X4jIYdXR
+   DHqNqj3ZTT8gehNpUGjfY207Pajtn4+upDaipX44B1c2m/1wqUCOTAdAv
+   FNGnKWgTEzXLC+zQID0/LQI3Vvb2PM9byTWwY8GuvN/QSe6D/q957WWzz
+   lYVuTHsdIv1Ha3WWErvidIvF3CjYlyi1mtOomHKnk71TETQLrBOAOAgX3
+   A==;
+X-CSE-ConnectionGUID: sEqPZKkrQI2JsKB3agHqGQ==
+X-CSE-MsgGUID: 8BA8hnquTL2HEI78Wa01HQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11484"; a="57745467"
+X-IronPort-AV: E=Sophos;i="6.16,287,1744095600"; 
+   d="scan'208";a="57745467"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 06:33:23 -0700
+X-CSE-ConnectionGUID: rvD1co8HREGar8mrGv+E+A==
+X-CSE-MsgGUID: flIxni0MRcifNrAf8V4YHQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,287,1744095600"; 
+   d="scan'208";a="155407459"
+Received: from allen-box.sh.intel.com ([10.239.159.52])
+  by fmviesa010.fm.intel.com with ESMTP; 04 Jul 2025 06:33:19 -0700
+From: Lu Baolu <baolu.lu@linux.intel.com>
+To: Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Jason Gunthorpe <jgg@nvidia.com>,
+	Jann Horn <jannh@google.com>,
+	Vasant Hegde <vasant.hegde@amd.com>,
+	Dave Hansen <dave.hansen@intel.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Jean-Philippe Brucker <jean-philippe@linaro.org>,
+	Andy Lutomirski <luto@kernel.org>
+Cc: iommu@lists.linux.dev,
+	security@kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lu Baolu <baolu.lu@linux.intel.com>,
+	stable@vger.kernel.org
+Subject: [PATCH 1/1] iommu/sva: Invalidate KVA range on kernel TLB flush
+Date: Fri,  4 Jul 2025 21:30:56 +0800
+Message-ID: <20250704133056.4023816-1-baolu.lu@linux.intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250703-ublk_too_many_quiesce-v2-0-3527b5339eeb@purestorage.com> <20250703-ublk_too_many_quiesce-v2-2-3527b5339eeb@purestorage.com>
-In-Reply-To: <20250703-ublk_too_many_quiesce-v2-2-3527b5339eeb@purestorage.com>
-From: Caleb Sander Mateos <csander@purestorage.com>
-Date: Fri, 4 Jul 2025 09:30:22 -0400
-X-Gm-Features: Ac12FXwQzlE78Loda4q0DlP6iU3xmDaLeUCLiFUPl69-LZuHD0wllGiqI1RyMr4
-Message-ID: <CADUfDZoQHneCUQyB_kS7Jdm_sN9+d+FrUFa83a0yqiw66=ui+Q@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] ublk: introduce and use ublk_set_canceling helper
-To: Uday Shankar <ushankar@purestorage.com>
-Cc: Ming Lei <ming.lei@redhat.com>, Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jul 4, 2025 at 1:41=E2=80=AFAM Uday Shankar <ushankar@purestorage.c=
-om> wrote:
->
-> For performance reasons (minimizing the number of cache lines accessed
-> in the hot path), we store the "canceling" state redundantly - there is
-> one flag in the device, which can be considered the source of truth, and
-> per-queue copies of that flag. This redundancy can cause confusion, and
-> opens the door to bugs where the state is set inconsistently. Try to
-> guard against these bugs by introducing a ublk_set_canceling helper
-> which is the sole mutator of both the per-device and per-queue canceling
-> state. This helper always sets the state consistently. Use the helper in
-> all places where we need to modify the canceling state.
->
-> No functional changes are expected.
->
-> Signed-off-by: Uday Shankar <ushankar@purestorage.com>
-> ---
->  drivers/block/ublk_drv.c | 54 ++++++++++++++++++++++++++++++------------=
-------
->  1 file changed, 34 insertions(+), 20 deletions(-)
->
-> diff --git a/drivers/block/ublk_drv.c b/drivers/block/ublk_drv.c
-> index 870d57a853a481c2443337717c50d39355804f66..a1a700c7e67a72597e740aaa6=
-0f5c3c73f0085e5 100644
-> --- a/drivers/block/ublk_drv.c
-> +++ b/drivers/block/ublk_drv.c
-> @@ -1563,6 +1563,27 @@ static void ublk_put_disk(struct gendisk *disk)
->                 put_device(disk_to_dev(disk));
->  }
->
-> +/*
-> + * Use this function to ensure that ->canceling is consistently set for
-> + * the device and all queues. Do not set these flags directly.
-> + *
-> + * Caller must ensure that:
-> + * - cancel_mutex is held. This ensures that there is no concurrent
-> + *   access to ub->canceling and no concurrent writes to ubq->canceling.
-> + * - there are no concurrent reads of ubq->canceling from the queue_rq
-> + *   path. This can be done by quiescing the queue, or through other
-> + *   means.
-> + */
-> +static void ublk_set_canceling(struct ublk_device *ub, bool canceling)
-> +       __must_hold(&ub->cancel_mutex)
-> +{
-> +       int i;
-> +
-> +       ub->canceling =3D canceling;
-> +       for (i =3D 0; i < ub->dev_info.nr_hw_queues; i++)
-> +               ublk_get_queue(ub, i)->canceling =3D canceling;
-> +}
-> +
->  static int ublk_ch_release(struct inode *inode, struct file *filp)
->  {
->         struct ublk_device *ub =3D filp->private_data;
-> @@ -1591,13 +1612,11 @@ static int ublk_ch_release(struct inode *inode, s=
-truct file *filp)
->          * All requests may be inflight, so ->canceling may not be set, s=
-et
->          * it now.
->          */
-> -       ub->canceling =3D true;
-> -       for (i =3D 0; i < ub->dev_info.nr_hw_queues; i++) {
-> -               struct ublk_queue *ubq =3D ublk_get_queue(ub, i);
-> -
-> -               ubq->canceling =3D true;
-> -               ublk_abort_queue(ub, ubq);
-> -       }
-> +       mutex_lock(&ub->cancel_mutex);
-> +       ublk_set_canceling(ub, true);
-> +       for (i =3D 0; i < ub->dev_info.nr_hw_queues; i++)
-> +               ublk_abort_queue(ub, ublk_get_queue(ub, i));
-> +       mutex_unlock(&ub->cancel_mutex);
+The vmalloc() and vfree() functions manage virtually contiguous, but not
+necessarily physically contiguous, kernel memory regions. When vfree()
+unmaps such a region, it tears down the associated kernel page table
+entries and frees the physical pages.
 
-Pre-existing, but it doesn't look like the queue is quiesced yet here
-(that happens later in this function).
+In the IOMMU Shared Virtual Addressing (SVA) context, the IOMMU hardware
+shares and walks the CPU's page tables. Architectures like x86 share
+static kernel address mappings across all user page tables, allowing the
+IOMMU to access the kernel portion of these tables.
 
-Best,
-Caleb
+Modern IOMMUs often cache page table entries to optimize walk performance,
+even for intermediate page table levels. If kernel page table mappings are
+changed (e.g., by vfree()), but the IOMMU's internal caches retain stale
+entries, Use-After-Free (UAF) vulnerability condition arises. If these
+freed page table pages are reallocated for a different purpose, potentially
+by an attacker, the IOMMU could misinterpret the new data as valid page
+table entries. This allows the IOMMU to walk into attacker-controlled
+memory, leading to arbitrary physical memory DMA access or privilege
+escalation.
 
->         blk_mq_kick_requeue_list(disk->queue);
->
->         /*
-> @@ -1723,7 +1742,6 @@ static void ublk_abort_queue(struct ublk_device *ub=
-, struct ublk_queue *ubq)
->  static void ublk_start_cancel(struct ublk_device *ub)
->  {
->         struct gendisk *disk =3D ublk_get_disk(ub);
-> -       int i;
->
->         /* Our disk has been dead */
->         if (!disk)
-> @@ -1740,9 +1758,7 @@ static void ublk_start_cancel(struct ublk_device *u=
-b)
->          * touch completed uring_cmd
->          */
->         blk_mq_quiesce_queue(disk->queue);
-> -       ub->canceling =3D true;
-> -       for (i =3D 0; i < ub->dev_info.nr_hw_queues; i++)
-> -               ublk_get_queue(ub, i)->canceling =3D true;
-> +       ublk_set_canceling(ub, true);
->         blk_mq_unquiesce_queue(disk->queue);
->  out:
->         mutex_unlock(&ub->cancel_mutex);
-> @@ -1942,10 +1958,11 @@ static void ublk_reset_io_flags(struct ublk_devic=
-e *ub)
->                 for (j =3D 0; j < ubq->q_depth; j++)
->                         ubq->ios[j].flags &=3D ~UBLK_IO_FLAG_CANCELED;
->                 spin_unlock(&ubq->cancel_lock);
-> -               ubq->canceling =3D false;
->                 ubq->fail_io =3D false;
->         }
-> -       ub->canceling =3D false;
-> +       mutex_lock(&ub->cancel_mutex);
-> +       ublk_set_canceling(ub, false);
-> +       mutex_unlock(&ub->cancel_mutex);
->  }
->
->  /* device can only be started after all IOs are ready */
-> @@ -3417,7 +3434,7 @@ static int ublk_ctrl_quiesce_dev(struct ublk_device=
- *ub,
->         /* zero means wait forever */
->         u64 timeout_ms =3D header->data[0];
->         struct gendisk *disk;
-> -       int i, ret =3D -ENODEV;
-> +       int ret =3D -ENODEV;
->
->         if (!(ub->dev_info.flags & UBLK_F_QUIESCE))
->                 return -EOPNOTSUPP;
-> @@ -3435,14 +3452,11 @@ static int ublk_ctrl_quiesce_dev(struct ublk_devi=
-ce *ub,
->                 goto put_disk;
->
->         /* Mark the device as canceling */
-> +       mutex_lock(&ub->cancel_mutex);
->         blk_mq_quiesce_queue(disk->queue);
-> -       ub->canceling =3D true;
-> -       for (i =3D 0; i < ub->dev_info.nr_hw_queues; i++) {
-> -               struct ublk_queue *ubq =3D ublk_get_queue(ub, i);
-> -
-> -               ubq->canceling =3D true;
-> -       }
-> +       ublk_set_canceling(ub, true);
->         blk_mq_unquiesce_queue(disk->queue);
-> +       mutex_unlock(&ub->cancel_mutex);
->
->         if (!timeout_ms)
->                 timeout_ms =3D UINT_MAX;
->
-> --
-> 2.34.1
->
+To mitigate this, introduce a new iommu interface to flush IOMMU caches
+and fence pending page table walks when kernel page mappings are updated.
+This interface should be invoked from architecture-specific code that
+manages combined user and kernel page tables.
+
+Fixes: 26b25a2b98e4 ("iommu: Bind process address spaces to devices")
+Cc: stable@vger.kernel.org
+Co-developed-by: Jason Gunthorpe <jgg@nvidia.com>
+Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
+Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+---
+ arch/x86/mm/tlb.c         |  2 ++
+ drivers/iommu/iommu-sva.c | 32 +++++++++++++++++++++++++++++++-
+ include/linux/iommu.h     |  4 ++++
+ 3 files changed, 37 insertions(+), 1 deletion(-)
+
+diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
+index 39f80111e6f1..a41499dfdc3f 100644
+--- a/arch/x86/mm/tlb.c
++++ b/arch/x86/mm/tlb.c
+@@ -12,6 +12,7 @@
+ #include <linux/task_work.h>
+ #include <linux/mmu_notifier.h>
+ #include <linux/mmu_context.h>
++#include <linux/iommu.h>
+ 
+ #include <asm/tlbflush.h>
+ #include <asm/mmu_context.h>
+@@ -1540,6 +1541,7 @@ void flush_tlb_kernel_range(unsigned long start, unsigned long end)
+ 		kernel_tlb_flush_range(info);
+ 
+ 	put_flush_tlb_info();
++	iommu_sva_invalidate_kva_range(start, end);
+ }
+ 
+ /*
+diff --git a/drivers/iommu/iommu-sva.c b/drivers/iommu/iommu-sva.c
+index 1a51cfd82808..154384eab8a3 100644
+--- a/drivers/iommu/iommu-sva.c
++++ b/drivers/iommu/iommu-sva.c
+@@ -10,6 +10,8 @@
+ #include "iommu-priv.h"
+ 
+ static DEFINE_MUTEX(iommu_sva_lock);
++static DEFINE_STATIC_KEY_FALSE(iommu_sva_present);
++static LIST_HEAD(iommu_sva_mms);
+ static struct iommu_domain *iommu_sva_domain_alloc(struct device *dev,
+ 						   struct mm_struct *mm);
+ 
+@@ -42,6 +44,7 @@ static struct iommu_mm_data *iommu_alloc_mm_data(struct mm_struct *mm, struct de
+ 		return ERR_PTR(-ENOSPC);
+ 	}
+ 	iommu_mm->pasid = pasid;
++	iommu_mm->mm = mm;
+ 	INIT_LIST_HEAD(&iommu_mm->sva_domains);
+ 	/*
+ 	 * Make sure the write to mm->iommu_mm is not reordered in front of
+@@ -132,8 +135,13 @@ struct iommu_sva *iommu_sva_bind_device(struct device *dev, struct mm_struct *mm
+ 	if (ret)
+ 		goto out_free_domain;
+ 	domain->users = 1;
+-	list_add(&domain->next, &mm->iommu_mm->sva_domains);
+ 
++	if (list_empty(&iommu_mm->sva_domains)) {
++		if (list_empty(&iommu_sva_mms))
++			static_branch_enable(&iommu_sva_present);
++		list_add(&iommu_mm->mm_list_elm, &iommu_sva_mms);
++	}
++	list_add(&domain->next, &iommu_mm->sva_domains);
+ out:
+ 	refcount_set(&handle->users, 1);
+ 	mutex_unlock(&iommu_sva_lock);
+@@ -175,6 +183,13 @@ void iommu_sva_unbind_device(struct iommu_sva *handle)
+ 		list_del(&domain->next);
+ 		iommu_domain_free(domain);
+ 	}
++
++	if (list_empty(&iommu_mm->sva_domains)) {
++		list_del(&iommu_mm->mm_list_elm);
++		if (list_empty(&iommu_sva_mms))
++			static_branch_disable(&iommu_sva_present);
++	}
++
+ 	mutex_unlock(&iommu_sva_lock);
+ 	kfree(handle);
+ }
+@@ -312,3 +327,18 @@ static struct iommu_domain *iommu_sva_domain_alloc(struct device *dev,
+ 
+ 	return domain;
+ }
++
++void iommu_sva_invalidate_kva_range(unsigned long start, unsigned long end)
++{
++	struct iommu_mm_data *iommu_mm;
++
++	might_sleep();
++
++	if (!static_branch_unlikely(&iommu_sva_present))
++		return;
++
++	guard(mutex)(&iommu_sva_lock);
++	list_for_each_entry(iommu_mm, &iommu_sva_mms, mm_list_elm)
++		mmu_notifier_arch_invalidate_secondary_tlbs(iommu_mm->mm, start, end);
++}
++EXPORT_SYMBOL_GPL(iommu_sva_invalidate_kva_range);
+diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+index 156732807994..31330c12b8ee 100644
+--- a/include/linux/iommu.h
++++ b/include/linux/iommu.h
+@@ -1090,7 +1090,9 @@ struct iommu_sva {
+ 
+ struct iommu_mm_data {
+ 	u32			pasid;
++	struct mm_struct	*mm;
+ 	struct list_head	sva_domains;
++	struct list_head	mm_list_elm;
+ };
+ 
+ int iommu_fwspec_init(struct device *dev, struct fwnode_handle *iommu_fwnode);
+@@ -1571,6 +1573,7 @@ struct iommu_sva *iommu_sva_bind_device(struct device *dev,
+ 					struct mm_struct *mm);
+ void iommu_sva_unbind_device(struct iommu_sva *handle);
+ u32 iommu_sva_get_pasid(struct iommu_sva *handle);
++void iommu_sva_invalidate_kva_range(unsigned long start, unsigned long end);
+ #else
+ static inline struct iommu_sva *
+ iommu_sva_bind_device(struct device *dev, struct mm_struct *mm)
+@@ -1595,6 +1598,7 @@ static inline u32 mm_get_enqcmd_pasid(struct mm_struct *mm)
+ }
+ 
+ static inline void mm_pasid_drop(struct mm_struct *mm) {}
++static inline void iommu_sva_invalidate_kva_range(unsigned long start, unsigned long end) {}
+ #endif /* CONFIG_IOMMU_SVA */
+ 
+ #ifdef CONFIG_IOMMU_IOPF
+-- 
+2.43.0
+
 
