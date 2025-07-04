@@ -1,227 +1,219 @@
-Return-Path: <linux-kernel+bounces-717113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAA27AF8F73
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 12:07:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46234AF8D76
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 11:05:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CCED3AD56A
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 10:07:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A185E5665DB
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 09:03:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDB6F2EACEE;
-	Fri,  4 Jul 2025 10:07:38 +0000 (UTC)
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 599192F4310;
+	Fri,  4 Jul 2025 08:57:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="KaxvL040"
+Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010055.outbound.protection.outlook.com [52.101.69.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A25DE288519
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 10:07:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751623658; cv=none; b=ZzqoA4crws9nlVKvmxl42Zjug08jxY6Cqc33dt8fnsW8hlPeaZUqmGx1jVtvwbZyd/Yv1L9AhM6JIkuZFxJi8lPhdQcaGxDj4LhqLwcMIEFUe+5R3md2O0LI9klkb2IkgV4vzpXqif/bkXEzuXT3BexK0WgYRrK6IktLX3SIL7M=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751623658; c=relaxed/simple;
-	bh=hBohiR+yixTenx1PPMFtKDPPcL6n0ib88j1vojhPXNc=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=D0jjh/Sb/39pgt0hpFy9J4Z/Bz8ZxImN4ZbBj6tncpwsIs2z70EqgNvPSNz1SgnWUH36STgxprAvkXlftoZzIDyrz+XNutXAYMgJ5KyDxtP2hevY8NicI/Ti5oCOyM3W+lCCHmzqrNZVVgW6mfmtKEsCufaIIEs6BJJ1AsqOHwQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3df6030ea2fso18588485ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Jul 2025 03:07:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751623655; x=1752228455;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=KMv5m+04peWmGOlb9xw+Y5TeBq2l+62yKhu0Uua0kXU=;
-        b=Vw95eT3tEIpvmNX30+izXL9/zgoaasIujPpzm7fjVbqKIPYs6nSRlZUgEXvqP5bjy5
-         XcDguni11qiwgZM4KZwMfmBf1e6mMEB5vnvoBVy7ruGZbtYvyUzQj39pHWZcG+9OTBsg
-         KolYJ64ZbDqcP/1BpVQoXVgYokojyGHbdINpyruaWa6ESto8d9b/QjnlkiIirZttWPWm
-         o3uS2kgu15jZGwobWOCKXKU5YGiA8AkcOya3tGOISf8Z9/hvKVv+gGtXXXXHXftzJISd
-         MYiZa0W3QoaQ3H2PPhz17jeCLbIcH5pyRpKyugMWLtxnrSFbXKl4YGbBfDBM5LajksZ9
-         gntw==
-X-Forwarded-Encrypted: i=1; AJvYcCXSgjN+9LvmFo7yKWhMiHMKCdKKMv38zFFUdKkUONV9H/ILJGvYsQUa7p1bE+WY0RjGPL0pFSy0G5yycYM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5cfMsNjOq80H0vSTHi773J3Yfz6fvyl9l+4jRnN/xPOUOgIpO
-	rLnPqTnBaSoCiRfJt1HNHl1rfkuuxefqorxpVB0FsBL/aY6EEbdVnRtoDki5VJu+3VxlJ/xUdkA
-	VI8nrVRbIzqdVecs5glNnRQIkkUbkWdIJb7JdACpoAgCJLVOOLi3In4vOP2Y=
-X-Google-Smtp-Source: AGHT+IF11xHT/pqB9Y/nYKAHM6LlPwupuvXq9906vGmwFTfyHSeZlVRM9uzFA1dndUyqvbL92NL6NOE0o0ZmLkD8uZGn9nEmNF3+
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CF792F430D;
+	Fri,  4 Jul 2025 08:57:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.55
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751619423; cv=fail; b=Q80IeFg5XjYVcKoLD7Dc1RWhX2HTj0DAgYyNIbwYNPLsIGvmLoHsYc6ThF6iN8GfmwslH3vhesDEs6X9yNyTIVU3U1QupNiEvIZ+0eEpjL7DvogEcFVR7ADqn+zAIF8A7FH1F2fgWVJjJEmuR/An495t9zgf+ittZczTYDYj0P4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751619423; c=relaxed/simple;
+	bh=Zqd4dfvz60qllScxDG8A4EsvZG2ckATL6rtSPb2f7Oc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=H2ZaNmO4AI6ZU7cRyHo0fo9UIFJhX3pttrxCI9vgT6SJONRr6xgTTyG8TTJY/ICxjcH/LtMVyL19Ox3d+6btsFRL+nes9FSuWXesTF2wvwnKKVKkWJ2lh85t+6kS/iAyqvMVL21nfBs0RfJkv7ussYxHZyoEFvIttjv+UewQ8V4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=KaxvL040; arc=fail smtp.client-ip=52.101.69.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=NVkeXa3J1VtGeQHUTLD2pOCOEXUV4YXYaR1pUnX8A9B1GIsxrY4z4QvUb1iSuIV6Gy0otCx9zCoYBnc8ns+nR0L+LzF33ReimDvEoKpda/0bVX31F7CyKyrCKwPqHOXKOjTsjVFO93C3Xg/KsuosFQbMXKLZErT9uc35ez3FpLIHflqgAHp0jJh8tmdOv6IUwjrimP9TluyrC3OnDhDYw4qQgcpFJLnTNJgP2EX7H/th02IsHCQIRBj2SdXr7HlfNMTVyH1S0RltEvssnptblNsIHw8i3Svs8SyIsuA2x2i2DamiBVDlx7GxGJjOLhbVkb/jL3toSuwqFND6WHQP7g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=sZuDeiiMFNiHh5DOlLE5Ty1OaFaCma6W7R3cnBne5rk=;
+ b=j+KIqy+l869dmSmILFZ75CBMluTIm7UKt2bwFHyCuKu+Ju6IcNIs/jgjssXD56VxfVtPbbzCAzPpuyBObRFcnkXgsQlJKAFiJkU55UUHh0T42hc4bkmZBZFA9GtGziU+/cPjXLGFsaxHpi4FfU8puRm+MjOC7MObW5g6gANxKAiVoFnbtywncXDsrTO7SdxbFX8eLy3/YP+Dnum5kdj9dj+XbeSThfBPIx5oM3otk5Uo7tFnzlKySt0ex+KpOukGDYDP0oJKg8199xnKEmlcrz7bjpX4vYrvQoUH6Agq/KaD8On4bjgWpHu1bRfuGhKzIno8CXTd2Bgj5cFppfBG6Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=sZuDeiiMFNiHh5DOlLE5Ty1OaFaCma6W7R3cnBne5rk=;
+ b=KaxvL040irGdqkJI1YW5WtPLoo6e+XPe13+vkOZ+i3pjbQU5gbw9xj1wYkZuq5aLP3WMCzWoqUIz5PnzyRBTNaJpUIgQkH3333oYrVvz8JJSS6yVcaGNSQ+y7wEB9OA0xEbC7YPqrr9wLj5ypuXgK2LORAOR+HB2aR8mDJH9DC8veWscwTvL6yZRjg1/p7JAtJi2dT7Myp+pkTXFdB4rDMqDfDP34tlltX6LNpPSM9EjO0vzBkZft9r3HGtKDeYdAqJyZGQstFO1XziYoCHKqKENjoEKo5XAM6sfdil13CSH3xv+3zpXRka56hkjrlZljIHUXVx8aMf5rKKUJsg67A==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from DB9PR04MB8461.eurprd04.prod.outlook.com (2603:10a6:10:2cf::20)
+ by GV2PR04MB11302.eurprd04.prod.outlook.com (2603:10a6:150:2ae::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.23; Fri, 4 Jul
+ 2025 08:56:57 +0000
+Received: from DB9PR04MB8461.eurprd04.prod.outlook.com
+ ([fe80::b1b9:faa9:901b:c197]) by DB9PR04MB8461.eurprd04.prod.outlook.com
+ ([fe80::b1b9:faa9:901b:c197%3]) with mapi id 15.20.8901.021; Fri, 4 Jul 2025
+ 08:56:57 +0000
+Date: Fri, 4 Jul 2025 18:07:41 +0800
+From: Peng Fan <peng.fan@oss.nxp.com>
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: Peng Fan <peng.fan@nxp.com>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, arm-scmi@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/7] firmware: arm_scmi: imx: Support getting cfg info of
+ MISC protocol
+Message-ID: <20250704100741.GC4525@nxa18884-linux>
+References: <20250627-sm-misc-api-v1-v1-0-2b99481fe825@nxp.com>
+ <20250627-sm-misc-api-v1-v1-3-2b99481fe825@nxp.com>
+ <20250702-arrogant-jackdaw-of-skill-bb9fd3@sudeepholla>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250702-arrogant-jackdaw-of-skill-bb9fd3@sudeepholla>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-ClientProxiedBy: MA0PR01CA0043.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a01:81::14) To DB9PR04MB8461.eurprd04.prod.outlook.com
+ (2603:10a6:10:2cf::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:12c3:b0:3e0:4f66:3106 with SMTP id
- e9e14a558f8ab-3e13547ddf5mr17855765ab.2.1751623654592; Fri, 04 Jul 2025
- 03:07:34 -0700 (PDT)
-Date: Fri, 04 Jul 2025 03:07:34 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6867a7e6.a00a0220.c7b3.001a.GAE@google.com>
-Subject: [syzbot] [f2fs?] INFO: task hung in f2fs_issue_checkpoint (2)
-From: syzbot <syzbot+8a7eea50810efde15b0a@syzkaller.appspotmail.com>
-To: chao@kernel.org, jaegeuk@kernel.org, 
-	linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DB9PR04MB8461:EE_|GV2PR04MB11302:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4f5a3fd2-3b9c-4e5d-d4f1-08ddbad8bb27
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|7416014|376014|52116014|19092799006|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?RpFaUjTmIXXUXtlRL2MJ6dpy3Wfkby7ypEbCQzrRLPlfQYxmLvnYFY0Nhtcy?=
+ =?us-ascii?Q?KiNJexPjKKQHqojB1R+i2fl9mYY1dxANniMLw3os71Ck2NEd2rZM2x1rqheB?=
+ =?us-ascii?Q?WEltI+hMl96HRbwxT4XWP8NXH8jOLWiDjabGFq3pU3QaQfXaR3hBXiV8HmoK?=
+ =?us-ascii?Q?kMtl3IxR/Hq1scK0QTANZEGTy74EKQm5kwfDkK0t1+wVvtBOtd/9AsAXOUS2?=
+ =?us-ascii?Q?XwbhpcCEjNfiCwlZChdYMg21BIJrES918No9thCVIe6jV8QB4QcuJqO2A0LR?=
+ =?us-ascii?Q?0gLzqmwevDhseSFlaNVwe5nHKPKApF5Qb5K+O/pTUK0uRoRLuWZb5EFR56uL?=
+ =?us-ascii?Q?6Dxlz0zWbZf7QjbpJp/GNGdNkm7S3LlUBkZ/Mh0mXrsU8gei1HBM6owI538d?=
+ =?us-ascii?Q?lavI2dkBuyPosaUck+KE2ctFjxvnHEVLqIM3ahsNyDnp9oDoWwdq0iX7p3E8?=
+ =?us-ascii?Q?uAOtUwd+RpoR4ynTKj5SFENfwYw2/Bxkv4SybBRz+4UDyof/NjAOffTbWYS4?=
+ =?us-ascii?Q?B5zngvF3Ia+FixAf78lBdhlpZYWACZbJ3ESU22Cf0PRmhs2epxmF4aKbvlu1?=
+ =?us-ascii?Q?ED+kVlAOCE7IdkL6QzjX2crLRXXnxKRDBAEx0n1fHFsFJ/6zg9Cumj/I5mi8?=
+ =?us-ascii?Q?FxuTv7GIss3UqlNgFu5DSpUpYXFRKCirEFfzt2b9tzIa/WwJ0WyotDxhSGqj?=
+ =?us-ascii?Q?h6ZdCheysDpMmVNzGRgiW5Nsoq6sfV5JGgLJ8d2+hDis75t0okKdtlGFk8p2?=
+ =?us-ascii?Q?Jh6x3Gc3+j196Dbvr+YmxvVpfZFpY6X/mWunzgjtQbb31VGLWTKU64SuZJJ8?=
+ =?us-ascii?Q?QlNvt45Jl9R5/oCGig8WRJHUvoaA4Nslws1wne3yVy0cDqGsT1A7fGCUEIu5?=
+ =?us-ascii?Q?WE2y2iFVkGIBw2AZi6AB+7rQ0+xAFtshx9103nAHdJGbKud1i6XOcwPDVbg8?=
+ =?us-ascii?Q?3BJRqu7r6hNYLRt3M/UXTyo8YhYk1wNxPv3fAd8ksgUv8FCOZoMMf5Mhj2it?=
+ =?us-ascii?Q?I71x5PBUn6X2jrTdIefQYt018LD6w4gIvQwAhKlRRo9fbYK+754Ng1HfRu3R?=
+ =?us-ascii?Q?hhXuqOZy4xKzKTi7fDGHUsulMCys7QBS4vdgIbrxNrCbpEn5R/dlwAg/Ssve?=
+ =?us-ascii?Q?vD6iTDXoOTETLLJxc2OvfVWFU/OGwz2KPIMtcr9tAX8rJ67Ej5b3Cm4R4wQM?=
+ =?us-ascii?Q?DPODSDPYaxt7p2BndGV6fPL4Y8L5214ilFnKhO1HlD8gElS3glI46ZbkRRS4?=
+ =?us-ascii?Q?FP+37OUSyZXFQ8UwNRAFpINkCWVg9LdEynWNHI6Wjcx33xcAsQuJoHlfq4zy?=
+ =?us-ascii?Q?AHlKCqaVd7Jd6/8j2IDjDYnqaVnKkO1ZukzC8FEC5pkqHLJx2CAHxnYdpMRR?=
+ =?us-ascii?Q?ntohxArq6d8svGajhTuB7bNTRpC9qB2HApQPjdTcuiEKJcTum/q4BTRDF4N5?=
+ =?us-ascii?Q?XdhpbOvyXMwZX1i2hwkDNZYnAWqsuXUO3bmo3AmGDJBNN325SJyUAw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB8461.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(52116014)(19092799006)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?yAP/KyAxDi4bfz8vRAh4NDlIH3aAQZS3braadLCe9re2mDyjDtnyzwxtX8pj?=
+ =?us-ascii?Q?yMiYRgXXvZuhBe/BQ0LABHFfmWl6YV6KwqGnJ04FpkAfagZaJXnmvZ9HvecH?=
+ =?us-ascii?Q?h/jJuFXAqcF0AuZdlO0whSMV60ugFgWcxMvx2yQohvZeV0UmCgLUCiob43k3?=
+ =?us-ascii?Q?QtjoxevlVnsTyOVqoqrKEu61KGILoJCOezeWNytwyTK5npiTTe7fvkXFExe2?=
+ =?us-ascii?Q?B5S4DECzbwASRr9i5HsXRrxmJT+j5gt/MnqXTkfd8pxYikwuWe4eOmloKlhE?=
+ =?us-ascii?Q?rFyq8GOEVYEKMyUBV/yL7Lt9xri+5Khi7PjsD1GIDdpdwDKTl3XQTvAdJZdt?=
+ =?us-ascii?Q?BfkQgrhWLB0lfgRbeAS3Ne8YTkqNp0fB+C09FggyFyLa+1+hGKoWpTHjpn5E?=
+ =?us-ascii?Q?MBCllqFYL6SbHJUSiO3J2tJH/Is7X9oHIe7imYBNzY8Q1S6FE3epsE9m+eKl?=
+ =?us-ascii?Q?jeiYsWNgJfAc2I+EmpzqLh6xwmoVHOW6kabIZm8ey9si2AmuI4dTVoSkl8iu?=
+ =?us-ascii?Q?OPIV8dqqj/67psg8m8bncNBSzXqadVLq/Ij9jlSraZ+fTA1ANsoZnP3NLerg?=
+ =?us-ascii?Q?P6pifET3Dju5aQH5RuqVJyD7LitPn9ILLLik1MR9pQM045EBnYNm5mDOTmaU?=
+ =?us-ascii?Q?1TJDbAJHEznMQGoP7tY/UNZlNmayIcpXUNBP3w0rI5DMX+86EMDpRGs0Ha/m?=
+ =?us-ascii?Q?MG9y0QajcyLolzd8vBilg0mFbD2TerR+SGDVG8x4rJ/LjfN6tYVi9hQx69oo?=
+ =?us-ascii?Q?uDpFtWUTHKLrSrDfDB614aDHM8uU90dhnwGQWMJXSoe2+X26uyznmV2AJ1Hk?=
+ =?us-ascii?Q?Z2LH/SCDPIu6vC/gwrs9no9stCDyQpfqf6pz5wMnNDanph2oHbhK9ZeVX/Ut?=
+ =?us-ascii?Q?W4gyxRXZjBPyrNMPzhXX+Ew0zml+CZ++Arcs+h+zcl6tZsgHqyNDVqogrYro?=
+ =?us-ascii?Q?MRS7Rzq4aZ7GjpaqErqCvMd0XLcoOIAbOwbak+R4R5WkAY9iy9A8XKjkO1To?=
+ =?us-ascii?Q?mbe8G7WSxSQYd9hN9bEBU6bHQwNw3qRFK4Cs68dueplNw8SzNDbUQbMuDytB?=
+ =?us-ascii?Q?aLaLW0Rm6LI1mCP3Jvu7gOn7WEhgKvXHY3nA9olLcW4aGpOOPJiIZCjfn8WK?=
+ =?us-ascii?Q?tD+TWOOIHipUxYOsCa35Pld++RL7v2hF+yuj6X/LXoXBwpsVzVZlqKuEt5Wi?=
+ =?us-ascii?Q?QRV9fsI3JapyjavIBIH5oFtYr8jDd3YpLKYyymakSKiHmWmkgMepjeYEiXBM?=
+ =?us-ascii?Q?whewJZJtmBh+r169gQHNnOP8EIMOtskYxBmb1nS8tv0BtUk/EEDA3CBRPojh?=
+ =?us-ascii?Q?1ZrWbM+dr0RylN3WNcwWejLnaLO/J1GPmETrRhMxqx5RAd/mAk0WbTbijBpl?=
+ =?us-ascii?Q?+dP2cvMXQW5uAdwHRayc/xgPWci0IH+b/Bb94Z/2H4w/uPA7S4q9qWvHl0z4?=
+ =?us-ascii?Q?U3VfJ46q68d2dAPnJKtYDrJ4J8hWmooV9dfR1RwgWTWpfOMyClpL6u0XP+23?=
+ =?us-ascii?Q?rdGFpvbBk1yxkv4smAWtoGg3GzUvup92YGtIBu9FFdzXOXyl20T/LksZ4xvZ?=
+ =?us-ascii?Q?fVDoA+eHfTUlHKv6F88i+fkZEPLL+ryvmrpus0rv?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4f5a3fd2-3b9c-4e5d-d4f1-08ddbad8bb27
+X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB8461.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Jul 2025 08:56:57.4689
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: S++IUh8zNZcLKzdC8qvuyHx6GkzC8G/+oClyvKdYX42JnhzE+8cVGKlpMj/DgGYfAKBdQos7T9KbGRN1iu0Jmw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV2PR04MB11302
 
-Hello,
+On Wed, Jul 02, 2025 at 04:21:58PM +0100, Sudeep Holla wrote:
+>On Fri, Jun 27, 2025 at 02:03:46PM +0800, Peng Fan wrote:
+>> MISC protocol supports getting the System Manager(SM) mode selection
+>> and configuration name. Add the API for user to retrieve the information
+>> from SM.
+>> 
+>> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+>> ---
+>>  .../firmware/arm_scmi/vendors/imx/imx-sm-misc.c    | 30 ++++++++++++++++++++++
+>>  include/linux/scmi_imx_protocol.h                  |  5 ++++
+>>  2 files changed, 35 insertions(+)
+>> 
+>> diff --git a/drivers/firmware/arm_scmi/vendors/imx/imx-sm-misc.c b/drivers/firmware/arm_scmi/vendors/imx/imx-sm-misc.c
+>> index 1b24d070c6f4856b92f515fcdba5836fd6498ce6..8ce4bf92e6535af2f30d72a34717678613b35049 100644
+>> --- a/drivers/firmware/arm_scmi/vendors/imx/imx-sm-misc.c
+>> +++ b/drivers/firmware/arm_scmi/vendors/imx/imx-sm-misc.c
+>> @@ -26,6 +26,7 @@ enum scmi_imx_misc_protocol_cmd {
+>>  	SCMI_IMX_MISC_CTRL_SET	= 0x3,
+>>  	SCMI_IMX_MISC_CTRL_GET	= 0x4,
+>>  	SCMI_IMX_MISC_DISCOVER_BUILDINFO = 0x6,
+>> +	SCMI_IMX_MISC_CFG_INFO = 0xC,
+>>  	SCMI_IMX_MISC_CTRL_NOTIFY = 0x8,
+>>  };
+>>  
+>> @@ -73,6 +74,11 @@ struct scmi_imx_misc_buildinfo_out {
+>>  	u8 buildtime[MISC_MAX_BUILDTIME];
+>>  };
+>>  
+>> +struct scmi_imx_misc_cfg_info_out {
+>> +	__le32 msel;
+>
+>Now, I realise, this mode select is not properly defined in the document.
+>Just 32-bit word. What are those values ? Any fixed list of values with
+>well defined modes or configurations ? If so, please add to the document.
 
-syzbot found the following issue on:
+The current used value are 0,1,2. It is used to decide the logic machine
+boot order, such as 0 means booting LM0, LM1, LM2, LM3...
+Regarding 0,1,2 using which LM order, it could be defined by user in
+i.MX9 System Manger cfg file. That means 1 could mean LM0, LM2, LM3, LM1
+or LM0, LM3, LM1, LM2.
 
-HEAD commit:    66701750d556 Merge tag 'io_uring-6.16-20250630' of git://g..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=15e4388c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e29b8115bf337f53
-dashboard link: https://syzkaller.appspot.com/bug?extid=8a7eea50810efde15b0a
-compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
+I will update doc with below:
+msel is used to decide Logical Machine boot order, it could vary per board,
+because the order is defined in System Manager board configuration file.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+Regards,
+Peng
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/523bba6cff2e/disk-66701750.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/0fcf3d9d70ad/vmlinux-66701750.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/8b9c399a35d9/bzImage-66701750.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+8a7eea50810efde15b0a@syzkaller.appspotmail.com
-
-INFO: task kworker/u8:8:5978 blocked for more than 143 seconds.
-      Not tainted 6.16.0-rc4-syzkaller-00013-g66701750d556 #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:kworker/u8:8    state:D stack:21160 pid:5978  tgid:5978  ppid:2      task_flags:0x4208060 flags:0x00004000
-Workqueue: writeback wb_workfn (flush-7:5)
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5396 [inline]
- __schedule+0x16a2/0x4cb0 kernel/sched/core.c:6785
- __schedule_loop kernel/sched/core.c:6863 [inline]
- schedule+0x165/0x360 kernel/sched/core.c:6878
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6935
- rwsem_down_write_slowpath+0xbec/0x1030 kernel/locking/rwsem.c:1176
- __down_write_common kernel/locking/rwsem.c:1304 [inline]
- __down_write kernel/locking/rwsem.c:1313 [inline]
- down_write+0x1ab/0x1f0 kernel/locking/rwsem.c:1578
- f2fs_down_write fs/f2fs/f2fs.h:2229 [inline]
- f2fs_issue_checkpoint+0x39c/0x570 fs/f2fs/checkpoint.c:1846
- f2fs_balance_fs_bg+0x54d/0x980 fs/f2fs/segment.c:543
- f2fs_write_node_pages+0x146/0x6e0 fs/f2fs/node.c:2161
- do_writepages+0x32e/0x550 mm/page-writeback.c:2636
- __writeback_single_inode+0x145/0xff0 fs/fs-writeback.c:1680
- writeback_sb_inodes+0x6b5/0x1000 fs/fs-writeback.c:1976
- __writeback_inodes_wb+0x111/0x240 fs/fs-writeback.c:2047
- wb_writeback+0x44f/0xaf0 fs/fs-writeback.c:2158
- wb_check_old_data_flush fs/fs-writeback.c:2262 [inline]
- wb_do_writeback fs/fs-writeback.c:2315 [inline]
- wb_workfn+0xaef/0xef0 fs/fs-writeback.c:2343
- process_one_work kernel/workqueue.c:3238 [inline]
- process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3321
- worker_thread+0x8a0/0xda0 kernel/workqueue.c:3402
- kthread+0x711/0x8a0 kernel/kthread.c:464
- ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-
-Showing all locks held in the system:
-1 lock held by khungtaskd/31:
- #0: ffffffff8e13ee20 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
- #0: ffffffff8e13ee20 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:841 [inline]
- #0: ffffffff8e13ee20 (rcu_read_lock){....}-{1:3}, at: debug_show_all_locks+0x2e/0x180 kernel/locking/lockdep.c:6770
-2 locks held by getty/5577:
- #0: ffff8880343b20a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
- #1: ffffc9000332b2f0 (&ldata->atomic_read_lock){+.+.}-{4:4}, at: n_tty_read+0x43e/0x1400 drivers/tty/n_tty.c:2222
-4 locks held by kworker/u8:8/5978:
- #0: ffff888140a89948 ((wq_completion)writeback){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3213 [inline]
- #0: ffff888140a89948 ((wq_completion)writeback){+.+.}-{0:0}, at: process_scheduled_works+0x9b4/0x17b0 kernel/workqueue.c:3321
- #1: ffffc900053efbc0 ((work_completion)(&(&wb->dwork)->work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3214 [inline]
- #1: ffffc900053efbc0 ((work_completion)(&(&wb->dwork)->work)){+.+.}-{0:0}, at: process_scheduled_works+0x9ef/0x17b0 kernel/workqueue.c:3321
- #2: ffff88804c9700e0 (&type->s_umount_key#99){++++}-{4:4}, at: super_trylock_shared+0x20/0xf0 fs/super.c:563
- #3: ffff888077745410 (&sbi->gc_lock){+.+.}-{4:4}, at: f2fs_down_write fs/f2fs/f2fs.h:2229 [inline]
- #3: ffff888077745410 (&sbi->gc_lock){+.+.}-{4:4}, at: f2fs_issue_checkpoint+0x39c/0x570 fs/f2fs/checkpoint.c:1846
-6 locks held by syz.5.260/8622:
-
-=============================================
-
-NMI backtrace for cpu 0
-CPU: 0 UID: 0 PID: 31 Comm: khungtaskd Not tainted 6.16.0-rc4-syzkaller-00013-g66701750d556 #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- nmi_cpu_backtrace+0x39e/0x3d0 lib/nmi_backtrace.c:113
- nmi_trigger_cpumask_backtrace+0x17a/0x300 lib/nmi_backtrace.c:62
- trigger_all_cpu_backtrace include/linux/nmi.h:158 [inline]
- check_hung_uninterruptible_tasks kernel/hung_task.c:307 [inline]
- watchdog+0xfee/0x1030 kernel/hung_task.c:470
- kthread+0x711/0x8a0 kernel/kthread.c:464
- ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-Sending NMI from CPU 0 to CPUs 1:
-NMI backtrace for cpu 1
-CPU: 1 UID: 0 PID: 78 Comm: kworker/u8:4 Not tainted 6.16.0-rc4-syzkaller-00013-g66701750d556 #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-Workqueue: events_unbound nsim_dev_trap_report_work
-RIP: 0010:lockdep_enabled kernel/locking/lockdep.c:118 [inline]
-RIP: 0010:lock_acquire+0x8d/0x360 kernel/locking/lockdep.c:5847
-Code: f6 05 be ad eb 0d 01 0f 84 d7 01 00 00 83 3d 19 eb 01 0e 00 0f 84 f0 00 00 00 48 8b b4 24 90 00 00 00 4c 89 ef e8 43 5a 83 00 <83> 3d fc ea 01 0e 00 0f 84 fa 00 00 00 65 8b 05 ff de fb 10 85 c0
-RSP: 0018:ffffc9000210f3d8 EFLAGS: 00000202
-RAX: 0000000000000001 RBX: 0000000000000000 RCX: 5bd6d986281a0c00
-RDX: 0000000000000000 RSI: ffffffff81728b12 RDI: 1ffffffff1c27dc4
-RBP: ffffffff81728af5 R08: 0000000000000000 R09: 0000000000000000
-R10: ffffc9000210f5f8 R11: fffff52000421ec1 R12: 0000000000000002
-R13: ffffffff8e13ee20 R14: 0000000000000000 R15: 0000000000000000
-FS:  0000000000000000(0000) GS:ffff888125d84000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000563853e3a168 CR3: 0000000030b5e000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
- rcu_read_lock include/linux/rcupdate.h:841 [inline]
- class_rcu_constructor include/linux/rcupdate.h:1155 [inline]
- unwind_next_frame+0xc2/0x2390 arch/x86/kernel/unwind_orc.c:479
- __unwind_start+0x5b9/0x760 arch/x86/kernel/unwind_orc.c:758
- unwind_start arch/x86/include/asm/unwind.h:64 [inline]
- arch_stack_walk+0xe4/0x150 arch/x86/kernel/stacktrace.c:24
- stack_trace_save+0x9c/0xe0 kernel/stacktrace.c:122
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
- kasan_save_free_info+0x46/0x50 mm/kasan/generic.c:576
- poison_slab_object mm/kasan/common.c:247 [inline]
- __kasan_slab_free+0x62/0x70 mm/kasan/common.c:264
- kasan_slab_free include/linux/kasan.h:233 [inline]
- slab_free_hook mm/slub.c:2381 [inline]
- slab_free mm/slub.c:4643 [inline]
- kmem_cache_free+0x18f/0x400 mm/slub.c:4745
- nsim_dev_trap_report drivers/net/netdevsim/dev.c:821 [inline]
- nsim_dev_trap_report_work+0x7cf/0xb80 drivers/net/netdevsim/dev.c:851
- process_one_work kernel/workqueue.c:3238 [inline]
- process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3321
- worker_thread+0x8a0/0xda0 kernel/workqueue.c:3402
- kthread+0x711/0x8a0 kernel/kthread.c:464
- ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+>
+>-- 
+>Regards,
+>Sudeep
 
