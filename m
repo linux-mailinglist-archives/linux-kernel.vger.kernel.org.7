@@ -1,95 +1,123 @@
-Return-Path: <linux-kernel+bounces-717912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-717915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC376AF9AAB
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 20:26:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAEB0AF9AB3
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 20:27:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F0891C820B5
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 18:26:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 366625C169E
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 18:27:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73D07326247;
-	Fri,  4 Jul 2025 18:23:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FC152F271A;
+	Fri,  4 Jul 2025 18:24:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dbp9Jy8g"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Irx2uYzK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C93A12E5B2F;
-	Fri,  4 Jul 2025 18:23:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8343261399;
+	Fri,  4 Jul 2025 18:24:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751653422; cv=none; b=cZdxLR8QnhA3FrxDByMHqxOxN7D9QYSbTdKa0/I6cb22VmTUfIAiRWjYlz/3wyEqVSMxT3k9o2bOV+6lBVWbLZKFH11pUcs1vbT4P1Lp4aisgbSJe4QJDjnEpZ9CCHOBMe8vDhNIhY+YpiUQmnMATnJnCx6ebaXHKfN53hUWmDs=
+	t=1751653448; cv=none; b=GWjXTCX8Sh84vec6d8maWKuXNnWukLY+VUCpeDoSP5/SF33V5iX9EzQoxB7PXEjKByhWS4WgF06E3JykxGxWIsFRK2ttUPtqo4K6OPfoGXzvwCcchGlb10cP5VIGJska8H9FaLdNiupUt/SmMGU9NAdSH0EGEBxYNL4m1a5RQvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751653422; c=relaxed/simple;
-	bh=3pH+Y4O8bckOvutEYgAYJmeTwbmIePCo5O7dkXcpQgY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qOn8ovmGhIYL3AN2z9qKBRk1ez4WYbiQsXuQA65tsya5je+hq6zWxzROfjHHemvtBaFK0oQV08as7SM6wGLPvP4rBhOMuvh84qar0AHq9mFh+vEXowzc96M4c7vjYaQrgWuC/RRzeUmqP167n/Zj570zh4jDoMQKU7HPa4Hf75A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dbp9Jy8g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9786AC4CEED;
-	Fri,  4 Jul 2025 18:23:38 +0000 (UTC)
+	s=arc-20240116; t=1751653448; c=relaxed/simple;
+	bh=x/a97G6tGt7l3YWx8tm//SOtg12sNF3g8piy675aVjc=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Hy5wrzGlqKeL1cpkG8tXxzfqa2NQvrsIt1hAc5NE2tYXgn83x1yVu75TNulkkQdGYzSICmmuM8sDrPy5QMPOmxVIqh1/Abi4Y2w2p/KkYM1PaZjjpYzqzCx7A2lUQA+4RGKH7xkcZAqeQ7uFx+PtV9zhuzNcS2O3Zz8W4/0keVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Irx2uYzK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E84BC4CEE3;
+	Fri,  4 Jul 2025 18:24:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751653422;
-	bh=3pH+Y4O8bckOvutEYgAYJmeTwbmIePCo5O7dkXcpQgY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dbp9Jy8g2stuA4FSJSZ99tWTyJk8s0xFMznY7pB194Y95hzin1KJ/Wi9a3R1Q6J/8
-	 hX/fYkVdgQIPBnxu6ZXurRG1Gigp58+20L468kP55Tde7aEkZIKvdx4+VTQLvn80YY
-	 hY4zKK5ixSpv79lGw8ZIzVAQJIgKuL7ngWWNqC1n5MfNmyptOLBtN7oqs2Kqqlt2YR
-	 1QTiynfZBbdPR8VeGWOAJL1rcD6dJXeKd8ZsdVVmQ125OmozfxLiPAOXy/sSmTTKID
-	 4LFasroPipk5H0/K/hCiXvex14LFnzL3b6ygno83PkNUXa2hyN6T38quvq9SDGzJNV
-	 SL/023MiNLWDA==
-Date: Fri, 4 Jul 2025 20:23:35 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Daniel Almeida <daniel.almeida@collabora.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Benno Lossin <lossin@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	linux-pci@vger.kernel.org
-Subject: Re: [PATCH v6 5/6] rust: platform: add irq accessors
-Message-ID: <aGgcJxM_nKkFGtGn@cassiopeiae>
-References: <20250703-topics-tyr-request_irq-v6-0-74103bdc7c52@collabora.com>
- <20250703-topics-tyr-request_irq-v6-5-74103bdc7c52@collabora.com>
+	s=k20201202; t=1751653448;
+	bh=x/a97G6tGt7l3YWx8tm//SOtg12sNF3g8piy675aVjc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Irx2uYzKkDetJQaPWejxHZb3Kx6pybEHKZpto6Bp6Wtk2rZxqF6ZwYJgcs6XPicVF
+	 UEHo6vbLVAuOZ3UlvKlupEn3DAPIwGnjqRzZIsIxKYIyagS/LP61nUUk5/1xRJtQzf
+	 atlFouHudW1TdueywtaePPfpp2TmtNUNnDd/eidQBzn6zPdK8MfiyqhdGtpvtfZqSI
+	 BevBXYn9Oi40Lh78rnkP8IZbyNnXduKDK6ycbUp208EKi1bBoYSV5FSJNbXlajkvoa
+	 6NgTiHrQJFBTXtqMqVlP7gmF4vV3eHB6uimyaBWoQrlN3ZoF5VUSc3NR3wD+E5O0l2
+	 qhgsKIqRG2eSA==
+From: SeongJae Park <sj@kernel.org>
+To: Yunjeong Mun <yunjeong.mun@sk.com>
+Cc: SeongJae Park <sj@kernel.org>,
+	akpm@linux-foundation.org,
+	damon@lists.linux.dev,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	kernel_team@skhynix.com,
+	honggyu.kim@sk.com
+Subject: Re: [RFC PATCH v2] samples/damon: support automatic node address detection
+Date: Fri,  4 Jul 2025 11:24:05 -0700
+Message-Id: <20250704182405.51346-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250704070600.1786-1-yunjeong.mun@sk.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250703-topics-tyr-request_irq-v6-5-74103bdc7c52@collabora.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jul 03, 2025 at 04:30:03PM -0300, Daniel Almeida wrote:
-> +impl Device<Bound> {
-> +    /// Returns an [`IrqRequest`] for the IRQ at the given index, if any.
-> +    pub fn request_irq_by_index(&self, index: u32) -> Result<IrqRequest<'_>> {
-> +        // SAFETY: `self.as_raw` returns a valid pointer to a `struct platform_device`.
-> +        let irq = unsafe { bindings::platform_get_irq(self.as_raw(), index) };
-> +
-> +        if irq < 0 {
-> +            return Err(Error::from_errno(irq));
-> +        }
-> +
-> +        // SAFETY: `irq` is guaranteed to be a valid IRQ number for `&self`.
-> +        Ok(unsafe { IrqRequest::new(self.as_ref(), irq as u32) })
-> +    }
+On Fri,  4 Jul 2025 16:05:59 +0900 Yunjeong Mun <yunjeong.mun@sk.com> wrote:
 
-Sorry that I didn't notice that before: Please just name the functions returning
-an IrqRequest e.g. irq_by_index(), without the 'request' prefix. And instead put
-the 'request' prefix in front of the methods that return a actual
-irq::Registration.
+> Hello Seongjae,
+> 
+> On Thu,  3 Jul 2025 09:52:37 -0700 SeongJae Park <sj@kernel.org> wrote:
+> > Hello Yunjeong,
+> > 
+> > On Thu,  3 Jul 2025 16:44:22 +0900 Yunjeong Mun <yunjeong.mun@sk.com> wrote:
+> > 
+> > > This patch adds a new knob `detect_node_addresses`, which determines
+> > > whether the physical address range is set manually using the existing
+> > > knobs or automatically by the mtier module. When `detect_node_addresses`
+> > > set to 'Y', mtier automatically converts node0 and node1 to their
+> > > physical addresses. If set to 'N', it uses the existing
+> > > 'node#_start_addr' and 'node#_end_addr' to define regions as before.
+> > 
+> > Thank you for this patch!
+> > 
+> > > 
+> > > Suggested-by: Honggyu Kim <honggyu.kim@sk.com>
+> > > Signed-off-by: Yunjeong Mun <yunjeong.mun@sk.com>
+> > 
+> > Reviewed-by: SeongJae Park <sj@kernel.org>
+> > 
+> > > ---
+> > 
+> > From next time, please consider adding a summary of what changes have made from
+> > the previous version here, like suggested[1] on the documentation.
+> 
+> Ok, I'll add it next time, thanks:)
+> One concern I have about this patch is the requirement to set
+> 'detect_node_addresses=Y' before setting 'enable=Y'. Not following
+> this order causes an error, which makes it difficult for users to use
+> the module.
 
-This is more in line with the C functions being named request_irq() and
-request_threaded_irq().
+That's same to existing address parameters, and similar to existing DAMON user
+interfaces.  Parameters are applied when starting DAMON.  Parameters can be
+updated while DAMON is running, but it requires explicit "commit" action for
+updating those at once.
+
+DAMON sample modules don't support the runtime commit feature, though.  I think
+it is not a bad tradeoff for simplicity of the code, given the purpose of
+sample modules.
+
+> So, how about removing 'detect_node_address'? Instead, we
+> could convert node0,1 to physical address automatically by default, and use
+> existing 'node#_*_addr' values only when those files are explicitly set.
+
+This would make old usage broken.  Since this is a sample module, I think that
+could be justified if there is a very good reason.  But I don't think we have a
+very good reason here.  So I suggest not to do that.
+
+
+Thanks,
+SJ
+
+[...]
 
