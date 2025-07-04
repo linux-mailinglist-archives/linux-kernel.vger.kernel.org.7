@@ -1,122 +1,131 @@
-Return-Path: <linux-kernel+bounces-717644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-717646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7192AF96E1
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 17:35:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61774AF96EA
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 17:36:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DEBD545610
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 15:35:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C112717C83F
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 15:36:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E6F81DF265;
-	Fri,  4 Jul 2025 15:35:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4631519D8AC;
+	Fri,  4 Jul 2025 15:36:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=imgtec.com header.i=@imgtec.com header.b="okGCi0zX"
-Received: from mx07-00376f01.pphosted.com (mx07-00376f01.pphosted.com [185.132.180.163])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OJJgN3SO"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AE72148830
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 15:35:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.180.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A46F19E96A
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 15:36:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751643340; cv=none; b=CEuUCZ6PiJCVPjHEzBTemt9QFEI06aBPIwFSetOnvd6X4n0/5fDvVzMwFuN0Mu3O2anVk62XwZFC0gjvaT4u5Ys0l8VkzDCnHf7JAKEuwcC9rpC9ukgfqojGRP37u04+ToggPF2dyHJ1JDhyOOUC97o53Sha5is14kLTbq5xZ/0=
+	t=1751643376; cv=none; b=cYouw0BGWh5FCnPf4LNlcevjDPrIpJhErEIqYRpnI6M5n4kesNFQA5s6Fl8K2ya44oVF2dRRDOO5Y/c4nBbyeLib042kvUzW3ue6nZmksEDga1/QOo7pUfUbx5p3mqVAZUFy973h9IRTOdPryhN1flQ59WhAhLLJmN9qpA8yxwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751643340; c=relaxed/simple;
-	bh=SUYcXSzBWGdNNz9o/+UtQEG7BQ3lY74Lpl9Cdx1xB5s=;
-	h=From:To:CC:In-Reply-To:References:Subject:Message-ID:Date:
-	 MIME-Version:Content-Type; b=mtzTihIjnWJfLXHXbPsGKtQKQ2nyNhCgl3niaY+5049np8YRFJNAdMHkp00X7rssgIRC74uWwvtSYCpIQPSt9/JpIu1nNL3247wDCC0lnAE1c1tAJoR1XDlSxdhuGMUpWy1BdGMNf6L56lDHuGIi/f4PXgXpWj8zwxbVHEHPc8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=imgtec.com; spf=pass smtp.mailfrom=imgtec.com; dkim=pass (2048-bit key) header.d=imgtec.com header.i=@imgtec.com header.b=okGCi0zX; arc=none smtp.client-ip=185.132.180.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=imgtec.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=imgtec.com
-Received: from pps.filterd (m0168889.ppops.net [127.0.0.1])
-	by mx07-00376f01.pphosted.com (8.18.1.8/8.18.1.8) with ESMTP id 5648IYGi172034;
-	Fri, 4 Jul 2025 16:35:10 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=imgtec.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=dk201812; bh=i
-	c4dCORjyUvIUluNdB6Hv8sLxo7aFOVTQQMZZh4ItpY=; b=okGCi0zXLFdWJ15MR
-	LHKKZLE0JRbUuCkUuzKJjHXBS+X/haRD1jjNDZdjFhqg0aCmVA5osQE0Efrk5eds
-	dxgJD+uTbs07RhfE8+F43At4Kw2oAiMl9uFlFAMERG7wy3FhNYXAH3dBzkrx0GbR
-	kRH07RiUcVdL793kyuWnCHPlCn00laVE+lSaGaQVUN9Pjo/q7BpXLF07/Vy3ee+B
-	eNR/AxnP/Itdg0h7wHyjXnQ97/EBQpnpIsao0Djr+OTM85qpTgQnIkXkp6kUSXiL
-	JuarBF6Aa7x2oQD5p/khqCaLHm1ri/ir3YEHZIVyuhJ3bUqwUDAfyxxsqzdQroxN
-	C9Qdw==
-Received: from hhmail05.hh.imgtec.org (83-244-153-141.cust-83.exponential-e.net [83.244.153.141])
-	by mx07-00376f01.pphosted.com (PPS) with ESMTPS id 47j8ftcxep-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Fri, 04 Jul 2025 16:35:10 +0100 (BST)
-Received: from
- 1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.ip6.arpa
- (172.25.7.125) by HHMAIL05.hh.imgtec.org (10.100.10.120) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Fri, 4 Jul 2025 16:35:08 +0100
-From: Matt Coster <matt.coster@imgtec.com>
-To: Frank Binns <frank.binns@imgtec.com>,
-        Alexandru Dadu
-	<alexandru.dadu@imgtec.com>,
-        Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Alessio Belle <alessio.belle@imgtec.com>
-CC: <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-In-Reply-To: <20250624-fix-kernel-crash-gpu-hard-reset-v1-1-6d24810d72a6@imgtec.com>
-References: <20250624-fix-kernel-crash-gpu-hard-reset-v1-1-6d24810d72a6@imgtec.com>
-Subject: Re: [PATCH] drm/imagination: Fix kernel crash when hard resetting
- the GPU
-Message-ID: <175164330873.70322.8845862980956103647.b4-ty@imgtec.com>
-Date: Fri, 4 Jul 2025 16:35:08 +0100
+	s=arc-20240116; t=1751643376; c=relaxed/simple;
+	bh=SWttKQL4FkWzc6MgsldmYN3kVwwpFN2mg/MdqGHZizY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HqYoQhmtUqsGcZQHmEMn0ClpaNZaN62FhsKTVqZzy5CBiRn1aZM9oPTAOwq9IBF11QS2c/VAfXF5nJqu2veux0/SgSv+/gMxfKJ2WcjYFhe1twkRETQ1a3g7W9lvTuRKAgC4ojN+Ht2WhQpCpUXi75OCJ4WSnodISVoOj5CNt9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OJJgN3SO; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751643376; x=1783179376;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=SWttKQL4FkWzc6MgsldmYN3kVwwpFN2mg/MdqGHZizY=;
+  b=OJJgN3SOy4xJxe6bxVx3XCE8BYUx9FAJcUXNfZNV3THjrO7KOSI5bxJM
+   rTLYrkqkh7ehYGV0QXzB9acNGqIIGzbGfZikpIEBe62e501lKxUHV8vDc
+   gQ9Y1a7UqVy8QlSxSny6n3lp08FjOIKAzHlzegPWjzouUqLdA1CYS5jgz
+   yCToTFvEu79Fioyw+Ns8dLB8WxPInMEsPqAxv2dA/G3TI2rCWhkyaJM+y
+   zEVH0e4kT4nWxmVtCEHyzWCoK1e2PzLvWE0xCbJU2rkFy8YbDKyqQZeD6
+   yfZMI8BuHLl8terGSmDnyfIAbrBH3/qi8pK8XCxvFtbGexVsZ+6ZDzbYs
+   Q==;
+X-CSE-ConnectionGUID: gqjfpB6MQzKJ/6aA2uHouA==
+X-CSE-MsgGUID: KkyXoSf3Snq2Nd5l7yuZCA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11484"; a="53951509"
+X-IronPort-AV: E=Sophos;i="6.16,287,1744095600"; 
+   d="scan'208";a="53951509"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 08:36:15 -0700
+X-CSE-ConnectionGUID: 8Wuv05NdRTiiT1w3N26BHA==
+X-CSE-MsgGUID: IL7TXyDfRxq0Y0POh56owg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,287,1744095600"; 
+   d="scan'208";a="158697099"
+Received: from lkp-server01.sh.intel.com (HELO 0b2900756c14) ([10.239.97.150])
+  by fmviesa003.fm.intel.com with ESMTP; 04 Jul 2025 08:36:09 -0700
+Received: from kbuild by 0b2900756c14 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uXiSN-0003q7-1l;
+	Fri, 04 Jul 2025 15:36:07 +0000
+Date: Fri, 4 Jul 2025 23:35:18 +0800
+From: kernel test robot <lkp@intel.com>
+To: Balbir Singh <balbirs@nvidia.com>, linux-mm@kvack.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+	Balbir Singh <balbirs@nvidia.com>,
+	Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	=?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	Barry Song <baohua@kernel.org>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Matthew Wilcox <willy@infradead.org>, Peter Xu <peterx@redhat.com>,
+	Zi Yan <ziy@nvidia.com>, Kefeng Wang <wangkefeng.wang@huawei.com>,
+	Jane Chu <jane.chu@oracle.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	Donet Tom <donettom@linux.ibm.com>
+Subject: Re: [v1 resend 04/12] mm/migrate_device: THP migration of zone
+ device pages
+Message-ID: <202507042336.o2mutGeh-lkp@intel.com>
+References: <20250703233511.2028395-5-balbirs@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
-X-EXCLAIMER-MD-CONFIG: 15a78312-3e47-46eb-9010-2e54d84a9631
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI4MDAyNiBTYWx0ZWRfX5Gs7zLjaetpy
- VqUtRFg6YPs9FkUBve99ajWSgqxlSNPybyzcqzaLmL6kAikZL7tbnovI74FHmXtt59+C6iK9i0m
- AGmKMzmVHUNjJiTv4buna52i35SYEpVPiuyVVZ/94f3C9DSgE2auhm0bvFKgdDXxVFgFI06PNCK
- /iPv3XIxQIOiJ6y0FwFxXqfPFbEFPYNRvK6KCzBndvVwD7Kg8MLM3f9qRdAuEPUra+KJ0ahLAyd
- 5jEWspJpeP6kwAH7aCDeLnqpO3BVVHMFBFJ9SnNxTrR4LCRrZS+4adb2Wmzt8DR30we7OMJwj7Z
- L5UXKfXWNJHTfobG7N6HIFlVzA00tqiG1VoCnxqyj6ota4d1k6Xyz4IglBJbwTCIC5rEGM1UZJm
- mYQMZnDR
-X-Proofpoint-ORIG-GUID: JKLeiVrMa3mQVAY2PDaW3BOGxbFwL4kL
-X-Authority-Analysis: v=2.4 cv=LpiSymdc c=1 sm=1 tr=0 ts=6867f4ae cx=c_pps
- a=AKOq//PuzOIrVTIF9yBwbA==:117 a=AKOq//PuzOIrVTIF9yBwbA==:17
- a=fFtJDOQOLN4A:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=r_1tXGB3AAAA:8
- a=_LgECFMNShmt_M_GEIUA:9 a=QEXdDO2ut3YA:10 a=ZXulRonScM0A:10
- a=zZCYzV9kfG8A:10 a=t8nPyN_e6usw4ciXM-Pk:22
-X-Proofpoint-GUID: JKLeiVrMa3mQVAY2PDaW3BOGxbFwL4kL
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250703233511.2028395-5-balbirs@nvidia.com>
 
+Hi Balbir,
 
-On Tue, 24 Jun 2025 15:22:08 +0100, Alessio Belle wrote:
-> The GPU hard reset sequence calls pm_runtime_force_suspend() and
-> pm_runtime_force_resume(), which according to their documentation should
-> only be used during system-wide PM transitions to sleep states.
-> 
-> The main issue though is that depending on some internal runtime PM
-> state as seen by pm_runtime_force_suspend() (whether the usage count is
-> <= 1), pm_runtime_force_resume() might not resume the device unless
-> needed. If that happens, the runtime PM resume callback
-> pvr_power_device_resume() is not called, the GPU clocks are not
-> re-enabled, and the kernel crashes on the next attempt to access GPU
-> registers as part of the power-on sequence.
-> 
-> [...]
+kernel test robot noticed the following build warnings:
 
-Applied, thanks!
+[auto build test WARNING on akpm-mm/mm-everything]
+[also build test WARNING on next-20250704]
+[cannot apply to akpm-mm/mm-nonmm-unstable shuah-kselftest/next shuah-kselftest/fixes linus/master v6.16-rc4]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-[1/1] drm/imagination: Fix kernel crash when hard resetting the GPU
-      commit: d38376b3ee48d073c64e75e150510d7e6b4b04f7
+url:    https://github.com/intel-lab-lkp/linux/commits/Balbir-Singh/mm-zone_device-support-large-zone-device-private-folios/20250704-073807
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
+patch link:    https://lore.kernel.org/r/20250703233511.2028395-5-balbirs%40nvidia.com
+patch subject: [v1 resend 04/12] mm/migrate_device: THP migration of zone device pages
+config: x86_64-randconfig-075-20250704 (https://download.01.org/0day-ci/archive/20250704/202507042336.o2mutGeh-lkp@intel.com/config)
+compiler: clang version 20.1.7 (https://github.com/llvm/llvm-project 6146a88f60492b520a36f8f8f3231e15f3cc6082)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250704/202507042336.o2mutGeh-lkp@intel.com/reproduce)
 
-Best regards,
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507042336.o2mutGeh-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> Warning: mm/migrate_device.c:89 function parameter 'fault_folio' not described in 'migrate_vma_collect_huge_pmd'
+>> Warning: mm/migrate_device.c:707 function parameter 'page' not described in 'migrate_vma_insert_huge_pmd_page'
+   Warning: mm/migrate_device.c:707 Excess function parameter 'folio' description in 'migrate_vma_insert_huge_pmd_page'
+
 -- 
-Matt Coster <matt.coster@imgtec.com>
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
