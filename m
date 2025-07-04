@@ -1,58 +1,55 @@
-Return-Path: <linux-kernel+bounces-717786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-717794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFEB5AF9938
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 18:47:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B785EAF9948
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 18:49:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B9C0166998
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 16:47:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5251D4A1E7E
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 16:48:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0C322DEA65;
-	Fri,  4 Jul 2025 16:46:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cKi3gt4d"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BF6B2DEA7B;
-	Fri,  4 Jul 2025 16:46:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 686FE30AABB;
+	Fri,  4 Jul 2025 16:46:48 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E76A1309A59
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 16:46:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751647589; cv=none; b=tAJVH7u9n2VnmuW8iYaFhEZ6ygNIWj1eiLyWZfrBKHTmx6LKSvfj9Q/yNfSVxIPSstWpBBP1D2SKw5hCISKUFEnAIva2sFQryvd6DeCE7Ix5sdJb0ENmgwQOekweCOUjtJqP/F3o8WTTm5I8xeGCdrLgFZkhulpTk8LACo/Vnn0=
+	t=1751647608; cv=none; b=PpEEpT1fHNVNCJnOt6lCAtMkvZFxFFK7oi2rWX+RYu8NULk5IRNGI8VfV1a13QxO9UYN/bhR7IyTVQVYw1oTDW6EqL1VNGk7WP4vLVUbDvh/bTSbzaswgGQaDXhPzmNUasXa80a4U8d0SekO0K+G3gjpcH1d1ih0euJIK7qKV94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751647589; c=relaxed/simple;
-	bh=OPohBrKnAITM+aAWgmMkvXlTHyOCvLEu5b187LOl4TM=;
+	s=arc-20240116; t=1751647608; c=relaxed/simple;
+	bh=0kTMew52cRaWNXIHn1pEHe+lf6e/XRLunhVDmPc3FTA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l+d/nUI/1Lj0Lznk2gyIhg5K430c4/++1JIyeQX6+R0zQyQHATY0NlZqa3OXZcmyOOC2c3goXjTYj7ncZcR0asJjZVEbJ1/A4IqLf1jAMdHf//2nqUJijI7YylINlAamh2Kyh+QR47/of/HYScnY0XZXLDFSuSUWjBbhebJHXE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cKi3gt4d; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42005C4CEE3;
-	Fri,  4 Jul 2025 16:46:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751647588;
-	bh=OPohBrKnAITM+aAWgmMkvXlTHyOCvLEu5b187LOl4TM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cKi3gt4d0wzXA1Ri/K5ySvQImLczX2EvCkKGn5b5DaURYQBzhsE2UtsKIISxSsJS9
-	 QvLK0PCamBPKwzyOOmLN49kkZl0S09fa7A1sSa8RizeSXe3QQmdNiPAiW/+Dg9rhqT
-	 i10XZksjYhwiMfwzGukN/1ZfCXLuHlU3k6+WLV/bbDwDU4oWvJlrPgm9YTBpvzBDtz
-	 CzBVTcGM0OuVjbdoSs+KWj2VeYIOc7RvEwUXMcKq/CVyGDRDB4iVwXADaGryIv4kOh
-	 xRLRUWEN4ZQG8+MLpke+IpvN3ST4EgYL8OfkVEAX4hlcyB9/p7frJrDC50tqyBqXBr
-	 pf5hfTsQtGTfw==
-Date: Fri, 4 Jul 2025 17:46:22 +0100
-From: Simon Horman <horms@kernel.org>
-To: Ido Schimmel <idosch@idosch.org>
-Cc: Wang Liang <wangliang74@huawei.com>, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	alex.aring@gmail.com, dsahern@kernel.org, yuehaibing@huawei.com,
-	zhangchangzhong@huawei.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
-	linux-wpan@vger.kernel.org
-Subject: Re: [PATCH net-next v2] net: replace ND_PRINTK with dynamic debug
-Message-ID: <20250704164622.GA354404@horms.kernel.org>
-References: <20250701081114.1378895-1-wangliang74@huawei.com>
- <aGf8_dnXpnzCutA7@shredder>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gS6KiaAklp6Ji4afs83SL/Zogt1IyJqTOmMRWYSWNgKg5TtJmQrHrFWd+w2/i0zv3aGOzYvgPp1F8tH3laA0OP44lphqPtKAmFcAVWuYvjL2GEA9gO9/OZ8JfgpTcRs8sFdlFm88bFZGuA8eIu88MZv3T83h8p6qdoD6INQiAyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 57B9F26AC;
+	Fri,  4 Jul 2025 09:46:31 -0700 (PDT)
+Received: from e133380.arm.com (e133380.arm.com [10.1.197.52])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0A7F53F63F;
+	Fri,  4 Jul 2025 09:46:42 -0700 (PDT)
+Date: Fri, 4 Jul 2025 17:46:32 +0100
+From: Dave Martin <Dave.Martin@arm.com>
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: linux-kernel@vger.kernel.org, Richard Weinberger <richard@nod.at>,
+	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>, Oleg Nesterov <oleg@redhat.com>,
+	Kees Cook <kees@kernel.org>,
+	Akihiko Odaki <akihiko.odaki@daynix.com>,
+	linux-um@lists.infradead.org, x86@kernel.org
+Subject: Re: [PATCH 21/23] um: ptrace: Use USER_REGSET_NOTE_TYPE() to specify
+ regset note names
+Message-ID: <aGgFQxrBfwF5QbP4@e133380.arm.com>
+References: <20250701135616.29630-1-Dave.Martin@arm.com>
+ <20250701135616.29630-22-Dave.Martin@arm.com>
+ <98d145e6dd8e216a3f7e146ad4e401724c3d669b.camel@sipsolutions.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,39 +58,27 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aGf8_dnXpnzCutA7@shredder>
+In-Reply-To: <98d145e6dd8e216a3f7e146ad4e401724c3d669b.camel@sipsolutions.net>
 
-On Fri, Jul 04, 2025 at 07:10:37PM +0300, Ido Schimmel wrote:
-> On Tue, Jul 01, 2025 at 04:11:14PM +0800, Wang Liang wrote:
-> > ND_PRINTK with val > 1 only works when the ND_DEBUG was set in compilation
-> > phase. Replace it with dynamic debug. Convert ND_PRINTK with val <= 1 to
-> > net_{err,warn}_ratelimited, and convert the rest to net_dbg_ratelimited.
-> 
-> One small comment below
-> 
-> [...]
-> 
-> > @@ -751,9 +747,8 @@ static void ndisc_solicit(struct neighbour *neigh, struct sk_buff *skb)
-> >  	probes -= NEIGH_VAR(neigh->parms, UCAST_PROBES);
-> >  	if (probes < 0) {
-> >  		if (!(READ_ONCE(neigh->nud_state) & NUD_VALID)) {
-> > -			ND_PRINTK(1, dbg,
-> > -				  "%s: trying to ucast probe in NUD_INVALID: %pI6\n",
-> > -				  __func__, target);
-> > +			net_warn_ratelimited("%s: trying to ucast probe in NUD_INVALID: %pI6\n",
-> > +					     __func__, target);
-> 
-> Without getting into a philosophical discussion about the appropriate
-> log level for this message, the purpose of this patch is to move
-> ND_PRINTK(val > 1, ...) to net_dbg_ratelimited(), but for some reason
-> this hunk promotes an existing net_dbg_ratelimited() to
-> net_warn_ratelimited(). Why not keep it as net_dbg_ratelimited()?
+Hi,
 
-Indeed. Sorry for not noticing that in my review.
+On Fri, Jul 04, 2025 at 01:58:57PM +0200, Johannes Berg wrote:
+> On Tue, 2025-07-01 at 14:56 +0100, Dave Martin wrote:
+> > Instead of having the core code guess the note name for each regset,
+> > use USER_REGSET_NOTE_TYPE() to pick the correct name from elf.h.
+> > 
+> 
+> Seems to work according to the test in the cover letter. Since it's part
+> of a larger series and this patch doesn't build by itself, I'll assume
+> you want to take them all together through some other tree, so:
+> 
+> Acked-by: Johannes Berg <johannes@sipsolutions.net>
+> Tested-by: Johannes Berg <johannes@sipsolutions.net>
+> 
+> johannes
 
-> 
-> >  		}
-> >  		ndisc_send_ns(dev, target, target, saddr, 0);
-> >  	} else if ((probes -= NEIGH_VAR(neigh->parms, APP_PROBES)) < 0) {
-> 
+Thanks!
+
+Cheers
+---Dave
 
