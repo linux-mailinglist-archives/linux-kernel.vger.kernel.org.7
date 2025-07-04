@@ -1,85 +1,83 @@
-Return-Path: <linux-kernel+bounces-716691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC21AAF89C5
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 09:43:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 942FDAF89CC
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 09:43:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B43916640A
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 07:43:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FE545414B6
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 07:43:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9819028313B;
-	Fri,  4 Jul 2025 07:42:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDD6A281366;
+	Fri,  4 Jul 2025 07:43:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Yh0OHdj2"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QqKkNXTR"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5145A28030C
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 07:42:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CFE628150F
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 07:43:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751614978; cv=none; b=O1ejhbcTwAIq4DfJrUxphKWzT0cNomlob123Xcn/GRtOBGH0k2+WNop+YwORsMpVgEQtGAE1JbzjZodBMXVD63Ia2vqK7NkU0ww/59PLEoObUFXuTVIv7qRGcFxUACXZ3hNWAc554o1tUmKkkchXvKAtRYwLAMxtcFQFvJN0Kpo=
+	t=1751614998; cv=none; b=FR3yj7HlT9VMWDfgW6a2t85DJPFAgJTWlkkR75NKpvQltGq0DrGMmbov+f1vCX/axIO1hK7oaBYO+8ojzQPEC9Z+koLcOyyn4pogBLeovEUBaMhY36AyeW75V9oTaHm2pnwUDimm+rIOqIh6+UrpBMiZRXNw4Cs5EAlyOwtDGn4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751614978; c=relaxed/simple;
-	bh=EyQLopdaeuTERfCjyDX1RB58tHyhweNO8CjnstLUYcY=;
+	s=arc-20240116; t=1751614998; c=relaxed/simple;
+	bh=1BRiW96rUpghvx6qICZQHHMHu/XS/upL65W6e5iOCgs=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=hHZ+228drwu7/80pu44av0gtP1sObNVEydl4a2w6W59wEasm9Crhw8idwM43GozUE2ELkGDskhfqo76DE18jLp4KrjOs+s8Bwe1Vf4uP1XpXIWRcnkpay/PKsO3WpUqB1AVBdZg9cfRiL7hvTaw+DS2ahe2HPqq6RVKGtblSqJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Yh0OHdj2; arc=none smtp.client-ip=209.85.128.74
+	 To:Cc:Content-Type; b=RUcv3ckVuSrFxYxTGaLkvFSGbnV0KLq6X+uD1musiMNQZ1DHXkn6DHQhyOqAVR9P1h9Kuyyh6qyAMPCG7ls6i9KS7VzCKYJOPPzOzQAT/S8Ue1gGtN9uiWVUxEx87vAzKuSs8Gy5yn3/ka6QQIJPAqD8DbOAmiZxpS0JAQnZ7rA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QqKkNXTR; arc=none smtp.client-ip=209.85.128.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-451ecc3be97so3068395e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Jul 2025 00:42:56 -0700 (PDT)
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-451d30992bcso4252585e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Jul 2025 00:43:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1751614975; x=1752219775; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1751614995; x=1752219795; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=camNvxFIEl2ZnilHFyd5vJLomyvuXbAyAAA9+dCBwRk=;
-        b=Yh0OHdj2x/5dobS3e0IYb/wzFPkD/Q/j+gomI/PCukTIfTUxk0NxPqmst+J/zFYtDi
-         rbjo6S/jAgyjH5zmTL53J36J9Nzru1a8TcfZDIR4U4JcdothxycXX28ntOc14wvSxlMT
-         Yj8t7j/4yIvkzqeYV/NAoNrdUJLDjX3TX40cAYE0YRa3mW/QzADjMvcn9Ul+QBtOUUWi
-         fOazyaV2UiCprvYVhUQtIdXPUfP7fz88YRZi+9Lzd+zYz7GO0Kx5fWg8Ukgd197khViV
-         YjrCnfMAStcbQNMk14kq7/KvNGMS7yDLj6Q6KyDfqQQxI/DYlNiFGfSI3ExzWwr83Leo
-         k8IQ==
+        bh=Trbkf5L2/nBS7LLO18/vGBZSMaVa1rVVnPz6wCKHNqA=;
+        b=QqKkNXTRMqATY85UkFun18dUHYYJbcWiFyHsrStPz6Y5pD7VOHxgNj+99hy2ujjks8
+         tx7x54lb6DtGpNNFznkk8EI2WpxiCmELOiRsBj4DraGhI63Tslyo/G9smTuQLlm2kivl
+         WHjKGw5cL+Dm8d2uUjhIgWjZrR0BGm+qP+GbVF+U+V4DmxJjwp6wBPP/OxUvRCrgp5tb
+         eL+S+rTMNWo0kQPs5YDHfKpuv3+HnazHTBSZXaGet0+QYEFBpsHD6cGhMlfO7eJwKzb1
+         +BEtfpmRTH8b82O1g4oVkIqTDcd5iPr3lInrHeZyrsFfTCnzgZfaLhslwpUjiId4X8J5
+         EqhQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751614975; x=1752219775;
+        d=1e100.net; s=20230601; t=1751614995; x=1752219795;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=camNvxFIEl2ZnilHFyd5vJLomyvuXbAyAAA9+dCBwRk=;
-        b=uoSUD6TLVT4GF02fNM2h79Qo3MoEkkysouilDpDjS6WNGOxo53wyE06JGzKBO41Vxq
-         FgacX76qfPlqtmlUmdhAIqHwD0clxufczPp5bFhprI7HIsIcrs+ivkzdS8VHilxadLEO
-         DFnUcQWHAf2l8MOsykRZ4Zxv9YNquGVJ14IsZuc4/ept2PhXmKQbdhBn7pUKJ35jzI3P
-         go0YVLkoYySE6FrmUoDnokMnF7BtH7393gGr0ux0RAM9AkwePEYO1wWEAZt3W8RdYd/B
-         +rPIy5Bhfjg8/JHirxD+bjB2q7KAUiiLZc2l9aD0NiQ+N1j4b3RqvBs3h4+0NMpAGLe1
-         baug==
-X-Forwarded-Encrypted: i=1; AJvYcCVUx/CmIRvMcLCAWEwCjhE1tilUw4QbW/sgVVNf5OBZQlmDWD2dbWpzJT9qwP6+idvJXuSrgIhcsdNY3uQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4wVPrQCL3/kd7Cho8YMnXkR2PhG6qYA6OH4/ruG/zkIEBc9R6
-	ThYojdhE8Gg0eJMm+mDBKgIZoMygnTBc5r+mYOFAJU1ODOSUvrMyync8JFtI+O1juZTNu+8zUxo
-	wcNVM1O9570oo1kKWSQ==
-X-Google-Smtp-Source: AGHT+IEaYSraVJ6sZtkAl+0ugpmkdJfooBiBpMK4mkQLrv/OlSZBW7BofC2dgtjJxBr8tWhlM0xayMRReusEiag=
-X-Received: from wmbfp26.prod.google.com ([2002:a05:600c:699a:b0:450:d398:f3ff])
+        bh=Trbkf5L2/nBS7LLO18/vGBZSMaVa1rVVnPz6wCKHNqA=;
+        b=jogkfLtn00VBdSjMr4bdsmS8F7hWNMUd32mL1yq+FhWtTtJUFMpoXTIVouUfvGNB+p
+         iauANU+Pdpxk7v1PJYyvwmckAZZHv2uejUYyWKWp/6aqZ08UdMAQtA1Zbxkby/fje3Sr
+         LqjHiThcez0vVC/j8rET0PXgzNKDVOQzy4DFCyamuhqfH2LE8/Y3/IO9tCrf3DLBqso5
+         MHdm9VD/WIlZMX6q1VmWpSrLOeN2Qkira2bQQZdhAXRPaY2g93B7l2xju5QkvsptKlP5
+         OgXNIBr8UsYiO1t8tgee+ETHpDIu9fCKtiIYyjZmNYtJmAS34zRECBs86DQmegrNmufm
+         DzXw==
+X-Forwarded-Encrypted: i=1; AJvYcCWnkorJ+erAaCxiY45rSApTLmZ9uYf/ILCDqUQgXRN0s1bXbYlxRUgMIk+twv/a6efR5gYUzJ9Hhwc2d88=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxo41AgjgEusuDbvgDSNgnwZEmWDvvMGRohDq2wA5xobUP1VtWL
+	recRMGYivpQV7be+bsqgxtlDeLYPs4EhOapRDKkBvHxuihMFzBjiVPXrbVRbaDzAR79RZWqbjzS
+	Gic3D2UyBOcudHNPGCQ==
+X-Google-Smtp-Source: AGHT+IGvb0vLGZH3H8NELYBKZnOLf+QcL2G3KHfh+CH2+bafytEWalGS+i6LYIUc1+KQFnyWHN2Tzjq3rWi21Gw=
+X-Received: from wmbeq7.prod.google.com ([2002:a05:600c:8487:b0:450:dcfd:1870])
  (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:8218:b0:450:d3b9:a5fc with SMTP id 5b1f17b1804b1-454b31134d2mr15309935e9.27.1751614974821;
- Fri, 04 Jul 2025 00:42:54 -0700 (PDT)
-Date: Fri, 4 Jul 2025 07:42:53 +0000
-In-Reply-To: <fcdae3ca-104d-4e8b-8588-2452783ed09a@sedlak.dev>
+ 2002:a05:600c:45cf:b0:441:d2d8:bd8b with SMTP id 5b1f17b1804b1-454b4e779camr8985075e9.8.1751614995067;
+ Fri, 04 Jul 2025 00:43:15 -0700 (PDT)
+Date: Fri, 4 Jul 2025 07:43:14 +0000
+In-Reply-To: <20250703-topics-tyr-request_irq-v6-1-74103bdc7c52@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20250703-topics-tyr-request_irq-v6-0-74103bdc7c52@collabora.com>
- <20250703-topics-tyr-request_irq-v6-2-74103bdc7c52@collabora.com> <fcdae3ca-104d-4e8b-8588-2452783ed09a@sedlak.dev>
-Message-ID: <aGeF_W74OfhRbkoR@google.com>
-Subject: Re: [PATCH v6 2/6] rust: irq: add flags module
+References: <20250703-topics-tyr-request_irq-v6-0-74103bdc7c52@collabora.com> <20250703-topics-tyr-request_irq-v6-1-74103bdc7c52@collabora.com>
+Message-ID: <aGeGEth0mmVNLWwg@google.com>
+Subject: Re: [PATCH v6 1/6] rust: irq: add irq module
 From: Alice Ryhl <aliceryhl@google.com>
-To: Daniel Sedlak <daniel@sedlak.dev>
-Cc: Daniel Almeida <daniel.almeida@collabora.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, 
+To: Daniel Almeida <daniel.almeida@collabora.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
 	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, 
 	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
@@ -89,44 +87,11 @@ Cc: Daniel Almeida <daniel.almeida@collabora.com>, Miguel Ojeda <ojeda@kernel.or
 	rust-for-linux@vger.kernel.org, linux-pci@vger.kernel.org
 Content-Type: text/plain; charset="utf-8"
 
-On Fri, Jul 04, 2025 at 08:14:11AM +0200, Daniel Sedlak wrote:
-> Hi Daniel,
+On Thu, Jul 03, 2025 at 04:29:59PM -0300, Daniel Almeida wrote:
+> Add the IRQ module. Future patches will then introduce support for IRQ
+> registrations and handlers.
 > 
-> On 7/3/25 9:30 PM, Daniel Almeida wrote:
-> > +/// Flags to be used when registering IRQ handlers.
-> > +///
-> > +/// They can be combined with the operators `|`, `&`, and `!`.
-> > +#[derive(Clone, Copy, PartialEq, Eq)]
-> > +pub struct Flags(u64);
-> 
-> Why not Flags(u32)? You may get rid of all unnecessary casts later, plus
-> save some extra bytes.
+> Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
 
-It looks like the C methods take an `unsigned long`. In that case, I'd
-probably write the code to match that.
-
-	pub struct Flags(c_ulong);
-
-and git rid of the cast when calling bindings::request_irq.
-
-As for all the constants in this file, maybe it would be nice with a
-private constructor that uses the same type as bindings to avoid the
-casts?
-
-	impl Flags {
-	    const fn new(value: u32) -> Flags {
-	    	...
-	    }
-	}
-	
-	/// Use the interrupt line as already configured.
-	pub const TRIGGER_NONE: Flags = Flags::new(bindings::IRQF_TRIGGER_NONE);
-
-Not a big deal, but avoiding the cast when calling bindings::request_irq
-is a good idea I think.
-
-With that:
 Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-
-Alice
 
