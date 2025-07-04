@@ -1,148 +1,225 @@
-Return-Path: <linux-kernel+bounces-716532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2BD0AF87BC
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 08:12:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B689AF87C1
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 08:12:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F5E34A2AD7
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 06:12:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFD1B1C87881
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 06:12:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87218223DF0;
-	Fri,  4 Jul 2025 06:12:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A437230278;
+	Fri,  4 Jul 2025 06:12:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="altmTaNn"
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="YBQoCcJp"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FA33221F17
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 06:11:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43341221FC7
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 06:12:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751609521; cv=none; b=dU+X/fmcn3mgu7B+Q0sG8Ijn/5JSraU7stpLs7pmKQZOsqBuOkaY6b7253dkIupeA+VXot5YItDscYyVzigEmP/8LmhdODl7HjaS5JprMQXDpvw3nw83/Z96Uy4Lf/dHuC9VQIZBsF6F0uP1HY00qjuWi2zLkOOV426rbGn9U3w=
+	t=1751609533; cv=none; b=brwnrQlyYn7sLj1daRchBCENlMtVo8jV6pxbalPC4EJc3hwvtDBfBIg22MPK9AI22xX7u3Yu9zc8NcLXpRAUvOzw5bd7c0tuN1A/9wraF6iK9B4qPl7Pa9pY8SsCNUgf5/ALp2v8xsn6HAzbu1ik/UJd1NIu9Y7Q3QQzpl6eMNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751609521; c=relaxed/simple;
-	bh=hMc+aIJ7kLoH+UQ/kXDlMN+l4/xBGX0Li+n3wuxBfzo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Vy4Zt+VckcYp1uWrsjj35Chf2chq1lME45FVd5CcvDb+MSIx563DDoVHKEO2H1iA5BA98mARcgkp4U4zdmTK3VUK5yh1tbU2slzC+f31pWz6sIeaQi57/YrrbCq01k+9eqPIF0wjk9PHAZ7hty76UlzO0XFFR8Nnta4T2DrK9rs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=altmTaNn; arc=none smtp.client-ip=209.85.160.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4a5ac8fae12so780411cf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Jul 2025 23:11:59 -0700 (PDT)
+	s=arc-20240116; t=1751609533; c=relaxed/simple;
+	bh=/uogvdvXfYqm/roohIkQvB+ClcSIM1FXcy29Xo6qXa8=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=pxvt46QOG0U5q1UdkpHt12lWmkX4wFT14mFCDPjT2WTTIfMCSWG23WPR0Zn1lCJ7xGBE9hIo3ksY7MMuY4jnC6iXCewTrmwC7iLN0gsP0IcCsHc00bvZWZ7IjMj+lxNKfdti6A0V99pao1oCd+VPxO8wjOzPGcdfyRpzvGUHBiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=YBQoCcJp; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-74ad4533ac5so1438774b3a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Jul 2025 23:12:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1751609518; x=1752214318; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hMc+aIJ7kLoH+UQ/kXDlMN+l4/xBGX0Li+n3wuxBfzo=;
-        b=altmTaNnbkjooZ1sQaftpnXOhxjh6Mxez/rhzOAwQTfYfzEW46eEV5ebvpZ8gJtfSI
-         MloRb/8dmwLzQyjwds02vC5hGjDUkOwBwNBWuvxiO7N86QsYx54BLxhMNG++n94hWGc8
-         SBIooZOXGCXGORr8PLwREEU1mF81ai9GGfbHmEnt+RPUr8ha5+uogTHA/2IBVwBOF40q
-         yqK5eeIrh5U3VM5y4ruBPMubWumfXgbaxhhDe1NujajKWSuiJf2o5hZIkosUJaQ0fulX
-         VL+auRxav6NVMHE/V1zrIEolI5oHTeDuOeXM/a2QjthXGpVDAzf8pNbfDkBZWCrhEP7H
-         xl/w==
+        d=bytedance.com; s=google; t=1751609531; x=1752214331; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=iLc719GJ905zueoaF4JxOKSxawRWbkyYr3NzbMVW2kQ=;
+        b=YBQoCcJp6Lb4MFUObbNG8reAC3F5NKVZW0enR+87wBbdqblH7aEjk12lEgjyeuWnqc
+         3kQHwhHLSwO+Nsmm3jINrQ9DIuMESSAujNBmkPfJJ8MsJ0FFAccag7HZsyhkTDLfmBY5
+         JWjXshkHihbuYS1CnvIsTgOLQfSSudGi3DChGqz5iYmAeU/DVQFDsu/a0IHkZhHFIiyp
+         aRwUtHx2fPJAnKmFlP7jK4Dg5F4H4THuvTtqLBQntc9reucn4EmlcFEK+VQk7KKbIMwP
+         RrcLNezi5UslDizWqBwtFNMmL5ikz0DG10rkqCenalP48MO40n8OqNLeMRVi6nzZbGiO
+         s3nw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751609518; x=1752214318;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hMc+aIJ7kLoH+UQ/kXDlMN+l4/xBGX0Li+n3wuxBfzo=;
-        b=uvUQ8tq2gtZOA6YBv9S+JMwzMUgxequVt99zgAg9p32krEasxXs1E4rMHWPGLRPIp2
-         q5reHZNjQ9EgYZqiOWVeOBYH4mO5b7vhLCXpiYT2vS7IudifQnsqrMnnx97JroSCDeMO
-         22XKBefh/PkWDoArKlDj6ivDFlKjCUFdQcOFkGrTDcrVeBvFsqmSp6jIxrKFLp4v4TXd
-         +rbQrSmS3PDGzx7tAvB32GBRJp+/Aj1ZXZidlhjgD5nudNOrV3516TPe8N7CYwUs3fiD
-         W+Acx6d7e9ESeuBuEiPFgpGvfwyhc3yCpW25mNCV/LDh5ba5l0Ng9iGKLBopgjGjb8N0
-         FT6g==
-X-Forwarded-Encrypted: i=1; AJvYcCXFCOpZytndd7mSnXbX2A/cpcove2rrTuz7rbGJ/isZTv/BISVKJoUEiR55z41p3OxfNpzahsW3Z61lHTU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJlLDDh2XzTWfrClydWCpKqhShyTt5ngLvLNs1BlUMsduzyp6J
-	6co6RsGizETZ66H5/IENJHHshlFwERKdlhgBwgZhMeyEP76XHzwMCoPfBi0y7IbhgB8cjHFAGHW
-	6wqktRmgQrGXyVg/oXoVwzpKvAGbqojLCWL5Nyy8Z
-X-Gm-Gg: ASbGnctZjr6RIgh0bCyallNVktaFSWIBmT7tJtD7IbOk3hpw0Vgm/ZuN8EMaGhheEVX
-	F73pMj8J4+ycEEY1HhH+e0mdcXs41f/nxicqbmSaUmNrvwPDQCXWww6kK94eBqi/c7lb/qdsWJp
-	iFY2xCCIU+JNeJ8hlN76wRCDQjgjrvsb+PnZz7wfzpyY/Msn/P08xrMTW23jIr0GMKM2PP/WAsS
-	A==
-X-Google-Smtp-Source: AGHT+IGGsgK5UrMb+CWNMeCqfh35qQjYAaPkxgrs/2huKaQcGjOWFhk54xqRPjFJ34czRDh4/7okGhbn4if4HaXCIQ4=
-X-Received: by 2002:a05:622a:7291:b0:4a9:95a6:3a69 with SMTP id
- d75a77b69052e-4a995b57f4amr836381cf.8.1751609517865; Thu, 03 Jul 2025
- 23:11:57 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1751609531; x=1752214331;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=iLc719GJ905zueoaF4JxOKSxawRWbkyYr3NzbMVW2kQ=;
+        b=MhXheWDWJ6C/DdTMT41EHmhMAVfJgOrxOqjakN8ZVwNLTed+bJj0BsbZm+2aCYc0zf
+         j6YCERSFs858rFvTw9eCym3RzSpjwAkcB4SYKjuwklhClqrLeIjXB1nqrvLwAC1k+kbU
+         A7YYE33IoHzpi1JBKVNm9+qgNLkVfUZl++4ELywBbpqwMugG5OZaxhoznEgLWyJwpd5a
+         En02nCBK2K8QU7i1tqmrnfpH9fdERXc4LNU7g2CdWhHmm6V3Un7xQWs47G+MIRy31yWA
+         FrMvjy4vSCs8LdDYuRlOICVrXxMKIa8MTsd7FJckwDc5hIEPsx15wUMDLZ9C/3lo92KJ
+         qM3A==
+X-Forwarded-Encrypted: i=1; AJvYcCW4vDdVIRsSF6CJ0zG+v2Crys1beRPGFHyVLg7x02v4wI+H2zmkQHfG9UY4yh18lHwY5yKivj7iR6A0DpA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsGNE2lJi5wsSpb8Evno9yXnO97LtrRdn8AI54UPRdX4aKMtEB
+	2FyFjc9GpzfYqwLevhRNQOFKN90wI7n98hkEzDiTT1uGZ+a6WITW7twDWGn3iSi/I80=
+X-Gm-Gg: ASbGnctYtitbg8OtDVgzGXCvh6JBEwHcGEy5Ce5esyH6L/y72GHj1Rx2MDHLvFRxego
+	UGoboa+Cp3xbFBECOur0mmm9zH26HhG+aTYqdBSt4z8PNc+nI2/rhnMbJ4J+qUIwvUBv2+3mf3a
+	MH8sUMALhW6mGcFGFJQXals9Y5Wh/pWVFXUDBZ3r5+8tPlbusDQtrQNmhaNB3R/Uvfqhwcyrng4
+	7Hv/hl78q2bWlE60Nooghv7ysPjnxgaSzAIhq9uhPGiz46862oFSFsZ+2eDxplJ108+moB4mFeM
+	abQjP9FbmTBwR35rw/RxfaIJJ4mqPcCUe5DvUKEmNVMBcdaOGY2OY32xvouNjQYp/3dmeZc5fnD
+	oERiN20MO2gjHp+aDJd9c5D1XBPVfTnMSHjal
+X-Google-Smtp-Source: AGHT+IExD7KOIwp60ABVvZC51KGJUxkHICCIp6gpdohdZCSEaIoU6l2h4wvSvhZGHVi8H+Fsq8KURw==
+X-Received: by 2002:a05:6a20:430f:b0:220:88f2:51a5 with SMTP id adf61e73a8af0-22597d0563bmr3567125637.18.1751609531468;
+        Thu, 03 Jul 2025 23:12:11 -0700 (PDT)
+Received: from ?IPV6:fdbd:ff1:ce00:1d76:cc0:e1b1:8778:e58c? ([2001:c10:ff04:0:1000::a])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b38f879d040sm91749a12.44.2025.07.03.23.12.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 03 Jul 2025 23:12:11 -0700 (PDT)
+From: Liangyan <liangyan.peng@bytedance.com>
+X-Google-Original-From: Liangyan <liangyan.peng@google.com>
+Message-ID: <dc4d14c5-1f04-47d7-b314-e4db62f57665@google.com>
+Date: Fri, 4 Jul 2025 14:12:04 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250702135332.291866-1-aha310510@gmail.com> <693725d9-a293-414f-a706-f77446e335b1@redhat.com>
- <CAJuCfpHrJGrYcfchz93t53gQjhu4nCrcBYK44LTG1DxWywu5Vw@mail.gmail.com>
-In-Reply-To: <CAJuCfpHrJGrYcfchz93t53gQjhu4nCrcBYK44LTG1DxWywu5Vw@mail.gmail.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Thu, 3 Jul 2025 23:11:47 -0700
-X-Gm-Features: Ac12FXx8vIiJs7EF8OTIFy6KyUzCKGVn2oXdl2K2lmYzi7o71AH39rIWUEsNO5A
-Message-ID: <CAJuCfpHi_Stt4H1DFSgjEJ=pduYbR3keZqAozLcxBReHjjHiNw@mail.gmail.com>
-Subject: Re: [PATCH next] mm/maps: move kmalloc() call location in
- do_procmap_query() out of RCU critical section
-To: David Hildenbrand <david@redhat.com>
-Cc: Jeongjun Park <aha310510@gmail.com>, akpm@linux-foundation.org, andrii@kernel.org, 
-	osalvador@suse.de, Liam.Howlett@oracle.com, christophe.leroy@csgroup.eu, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	syzbot+6246a83e7bd9f8a3e239@syzkaller.appspotmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [External] Re: [PATCH RFC] x86/kvm: Use native qspinlock by
+ default when realtime hinted
+To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc: Bibo Mao <maobibo@loongson.cn>, pbonzini@redhat.com, vkuznets@redhat.com,
+ tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com, hpa@zytor.com, wanpengli@tencent.com,
+ linux-kernel@vger.kernel.org, x86@kernel.org, kvm@vger.kernel.org
+References: <20250702064218.894-1-liangyan.peng@bytedance.com>
+ <806e3449-a7b1-fa57-b220-b791428fb28b@loongson.cn>
+ <8145bb17-8ba4-4d9d-a995-5f8b09db99c4@google.com>
+ <aGVdykqnaUnPBkW-@char.us.oracle.com>
+Content-Language: en-US
+In-Reply-To: <aGVdykqnaUnPBkW-@char.us.oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 2, 2025 at 4:34=E2=80=AFPM Suren Baghdasaryan <surenb@google.co=
-m> wrote:
->
-> On Wed, Jul 2, 2025 at 7:44=E2=80=AFAM David Hildenbrand <david@redhat.co=
-m> wrote:
-> >
-> > On 02.07.25 15:53, Jeongjun Park wrote:
-> > > In do_procmap_query(), we are allocating name_buf as much as name_buf=
-_sz
-> > > with kmalloc().
-> > >
-> > > However, due to the previous commit eff061546ca5
-> > > ("mm/maps: execute PROCMAP_QUERY ioctl under per-vma locks"),
-> > > the location of kmalloc() is located inside the RCU critical section.
-> > >
-> > > This causes might_sleep_if() to be called inside the RCU critical sec=
-tion,
-> > > so we need to move the call location of kmalloc() outside the RCU cri=
-tical
-> > > section to prevent this.
-> > >
-> > > Reported-by: syzbot+6246a83e7bd9f8a3e239@syzkaller.appspotmail.com
-> > > Closes: https://syzkaller.appspot.com/bug?extid=3D6246a83e7bd9f8a3e23=
-9
-> > > Fixes: eff061546ca5 ("mm/maps: execute PROCMAP_QUERY ioctl under per-=
-vma locks")
-> >
-> > That commit is not upstream yet (and the commit id is not stable), so i=
-t
-> > should be squashed into the problematic commit.
-> >
-> > As a side note: the patch subject of this and the original patch should
-> > start with "fs/proc/task_mmu", not "mm/maps".
->
-> Thanks for the fix Jeongjun and thanks for the note David.
-> I'm preparing the next version of my patchset and there is a much
-> simpler fix for this issue which I'll implement there. Planning to
-> post it tomorrow.
 
-v6 of my patchset is posted at
-https://lore.kernel.org/all/20250704060727.724817-1-surenb@google.com/
-I reworked the last patch to address this issue by narrowing down the
-rcu read section to query_vma_find_by_addr() only. That should fix the
-original issue.
+Find one AMD guest(AMD EPYC 9Y24 128-vCPU) to test, it seems about 9% 
+improvement.
 
-> Thanks,
-> Suren.
->
-> >
-> > --
-> > Cheers,
-> >
-> > David / dhildenb
-> >
+Command: ./Run -c 128 spawn
+
+With virt spin lock:
+System Benchmarks Partial Index   BASELINE       RESULT    INDEX
+Process Creation                      126.0     120449.8   9559.5
+                                                           ========
+System Benchmarks Index Score (Partial Only                9559.5
+
+
+With qspinlock:
+System Benchmarks Partial Index   BASELINE       RESULT    INDEX
+Process Creation                      126.0     131566.8  10441.8
+                                                           ========
+System Benchmarks Index Score (Partial Only)              10441.8
+
+
+
+Regards,
+Liangyan
+
+
+On 2025/7/3 00:26, Konrad Rzeszutek Wilk wrote:
+> On Wed, Jul 02, 2025 at 08:23:58PM +0800, Liangyan wrote:
+>> We test that unixbench spawn has big improvement in Intel 8582c 120-CPU
+>> guest vm if switch to qspinlock.
+> 
+> And ARM or AMD?
+> 
+>>
+>> Command: ./Run -c 120 spawn
+>>
+>> Use virt_spin_lock:
+>> System Benchmarks Partial Index   BASELINE       RESULT  INDEX
+>> Process Creation                     126.0      71878.4   5704.6
+>>                                                          ========
+>> System Benchmarks Index Score (Partial Only)              5704.6
+>>
+>>
+>> Use qspinlock:
+>> System Benchmarks Partial Index   BASELINE       RESULT    INDEX
+>> Process Creation                     126.0     173566.6  13775.1
+>>                                                          ========
+>> System Benchmarks Index Score (Partial Only              13775.1
+>>
+>>
+>> Regards,
+>> Liangyan
+>>
+>> On 2025/7/2 16:19, Bibo Mao wrote:
+>>>
+>>>
+>>> On 2025/7/2 下午2:42, Liangyan wrote:
+>>>> When KVM_HINTS_REALTIME is set and KVM_FEATURE_PV_UNHALT is clear,
+>>>> currently guest will use virt_spin_lock.
+>>>> Since KVM_HINTS_REALTIME is set, use native qspinlock should be safe
+>>>> and have better performance than virt_spin_lock.
+>>> Just be curious, do you have actual data where native qspinlock has
+>>> better performance than virt_spin_lock()?
+>>>
+>>> By my understanding, qspinlock is not friendly with VM. When lock is
+>>> released, it is acquired with one by one order in contending queue. If
+>>> the first vCPU in contending queue is preempted, the other vCPUs can not
+>>> get lock. On physical machine it is almost impossible that CPU
+>>> contending lock is preempted.
+>>>
+>>> Regards
+>>> Bibo Mao
+>>>>
+>>>> Signed-off-by: Liangyan <liangyan.peng@bytedance.com>
+>>>> ---
+>>>>    arch/x86/kernel/kvm.c | 18 +++++++++---------
+>>>>    1 file changed, 9 insertions(+), 9 deletions(-)
+>>>>
+>>>> diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
+>>>> index 921c1c783bc1..9080544a4007 100644
+>>>> --- a/arch/x86/kernel/kvm.c
+>>>> +++ b/arch/x86/kernel/kvm.c
+>>>> @@ -1072,6 +1072,15 @@ static void kvm_wait(u8 *ptr, u8 val)
+>>>>     */
+>>>>    void __init kvm_spinlock_init(void)
+>>>>    {
+>>>> +    /*
+>>>> +     * Disable PV spinlocks and use native qspinlock when dedicated
+>>>> pCPUs
+>>>> +     * are available.
+>>>> +     */
+>>>> +    if (kvm_para_has_hint(KVM_HINTS_REALTIME)) {
+>>>> +        pr_info("PV spinlocks disabled with KVM_HINTS_REALTIME
+>>>> hints\n");
+>>>> +        goto out;
+>>>> +    }
+>>>> +
+>>>>        /*
+>>>>         * In case host doesn't support KVM_FEATURE_PV_UNHALT there is
+>>>> still an
+>>>>         * advantage of keeping virt_spin_lock_key enabled:
+>>>> virt_spin_lock() is
+>>>> @@ -1082,15 +1091,6 @@ void __init kvm_spinlock_init(void)
+>>>>            return;
+>>>>        }
+>>>> -    /*
+>>>> -     * Disable PV spinlocks and use native qspinlock when dedicated
+>>>> pCPUs
+>>>> -     * are available.
+>>>> -     */
+>>>> -    if (kvm_para_has_hint(KVM_HINTS_REALTIME)) {
+>>>> -        pr_info("PV spinlocks disabled with KVM_HINTS_REALTIME
+>>>> hints\n");
+>>>> -        goto out;
+>>>> -    }
+>>>> -
+>>>>        if (num_possible_cpus() == 1) {
+>>>>            pr_info("PV spinlocks disabled, single CPU\n");
+>>>>            goto out;
+>>>>
+>>>
+>>
+>>
+
 
