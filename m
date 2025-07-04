@@ -1,60 +1,67 @@
-Return-Path: <linux-kernel+bounces-717856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-717858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D79D0AF9A01
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 19:45:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AACEBAF9A05
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 19:46:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 723D64A8377
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 17:45:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49E881CA5417
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 17:46:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59F7A2FCE24;
-	Fri,  4 Jul 2025 17:44:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F074309DB7;
+	Fri,  4 Jul 2025 17:44:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dciBDgju"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hJ1LHkhl"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5F652F8C4D
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 17:44:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF3FF2F8C4D;
+	Fri,  4 Jul 2025 17:44:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751651080; cv=none; b=nD/5ID55zBykzVHuq+NoTwJXttN/Dq/FZmCZALF4PASa59wUA9rovuoTaQjOO7qHWEudNQ/GjtHlHz5OzRjJtk9VQ+EFhfy9looLcpmo+aRMYC4M9j0kGLUgFHH1dgJcf5TrztqC4svDTGSW4Oh4RrYy8DnuRCXGcS3+/vaYNS8=
+	t=1751651084; cv=none; b=YrYD7Q9JRVAlARitJGR6BU6JRfIO9w2LyPZEGAu1+1zmJvXI0gumBBOi6wHAsoi4l/iFy2H0BxPJ84NkFzFJ3eUs5Vg9izlP0w9f1fiXUejL0yd8+FNqyoQawF104A3VMWZZV0R/MbC73frBEaTqP6GoZor74sXa73thajrihss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751651080; c=relaxed/simple;
-	bh=0Of2DAv59lR6dZHDz2GpwsJOOrpi64d81pjQPe/a6Qw=;
+	s=arc-20240116; t=1751651084; c=relaxed/simple;
+	bh=5LK3c7VkLVR6ZvjLipVvmjr3y3j0efN+nBY9t+tmaME=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WQICVucw7ib6PZ9mLgvSGd1NfwQjw3cD7Jh/SFu9McEedTNvivV4sNk1YmzbtN6d7XHIB/5dQpJzZ/hHsFkgB8i2p7iDO8IbQmbtgCPDYaxTLN694rQjkHIfb8H3LbNF/Hkk1fCCaEX5DZKnkRhmGNne3OuuB5OqzMxM7bKz2h8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dciBDgju; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 023E5C4CEEF;
-	Fri,  4 Jul 2025 17:44:38 +0000 (UTC)
+	 MIME-Version:Content-Type; b=TaVBR/ufMmXuN5rXGV1jwzSX2buZvOAsaqdMeDA/c+etN+pm0gUGqB9k/aoxApPy/FDDpwo/KjYF/guvNrOYypHnxmpNx114azI0FlYf/ghekDE2WMI+cwXoTyqVe9fO7t64I+Rj+FowvHsP8zA2NSdywGE6x/RingzZZMQ/i6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hJ1LHkhl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22BB6C4CEED;
+	Fri,  4 Jul 2025 17:44:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751651080;
-	bh=0Of2DAv59lR6dZHDz2GpwsJOOrpi64d81pjQPe/a6Qw=;
+	s=k20201202; t=1751651083;
+	bh=5LK3c7VkLVR6ZvjLipVvmjr3y3j0efN+nBY9t+tmaME=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=dciBDgjupR1Gqcs3h9dxuBq0PJMSbW6ATGfmhtk+IyTcKojt1lZUzOP1OI8t1nZxD
-	 J+Rxp+Cb5Wq8cMH4/R8KnlGCfkM034c1cgD5ERhOB4y/GBz1Yqnspumz4ppTfLeM1s
-	 B1+kATCtwVP+0R4fzUyGazPDwQRLCz9eh2GrmP7DkQhyxvXQvpmbvFfN/NGrPo2NWE
-	 En4b79nWgCdMw8qChSteMreR17AuE86IrWtDuIVsqQ/EPgUpm9wlwznAqId4q5QLHt
-	 MvodnK8v/COgCARmcBKfIJzahIn6zOTV3Q3YTQHmB5YjzmyBfT7nVAp2jl7INlQnUw
-	 Np8znltyXdA2Q==
+	b=hJ1LHkhldFrwXnH2m1q+LefNuqfgHOHtgAT6fVu7wkltXngPFj1lpf/BCJ2SJmqoe
+	 +O1B/QkpYfqt/7l0Bw2pZmza3M3WiaktXSHcMukV1RTpGvzqv4bDOl+znWZqQ1IVw/
+	 Z+mLROZLe/qJq5FqUaAKBlo6udbGqu86CfokV3HvizOe5/fFTXPI9a9CdFrs+Zqyl+
+	 tGtged31xslSmBAGHv7yotfDiqPviBxd5ZwqDXqefSFRHwjKzUpk7DEvv4RJvJ795Y
+	 5ZAvPz1NJEG9POJumcrTamQWg7yXiM4ZMHbC3PDFFrGtjezvsmdMb32gZMdcZ5OeVs
+	 3eppQradlIRtA==
 From: Will Deacon <will@kernel.org>
-To: linux-arm-kernel@lists.infradead.org,
-	Kevin Brodsky <kevin.brodsky@arm.com>
-Cc: catalin.marinas@arm.com,
-	kernel-team@android.com,
+To: Catalin Marinas <catalin.marinas@arm.com>,
+	Breno Leitao <leitao@debian.org>
+Cc: kernel-team@android.com,
 	Will Deacon <will@kernel.org>,
+	usamaarif642@gmail.com,
+	Ard Biesheuvel <ardb@kernel.org>,
+	rmikey@meta.com,
+	andreyknvl@gmail.com,
+	kasan-dev@googlegroups.com,
+	linux-efi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	"Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-	Joey Gouly <joey.gouly@arm.com>
-Subject: Re: [PATCH 0/2] Improve POE handling for uaccess
-Date: Fri,  4 Jul 2025 18:44:14 +0100
-Message-Id: <175164363953.1189181.15632215061604413984.b4-ty@kernel.org>
+	leo.yan@arm.com,
+	kernel-team@meta.com,
+	mark.rutland@arm.com
+Subject: Re: [PATCH v2] arm64: efi: Fix KASAN false positive for EFI runtime stack
+Date: Fri,  4 Jul 2025 18:44:15 +0100
+Message-Id: <175163682742.1322301.12219137975972256785.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250619160042.2499290-1-kevin.brodsky@arm.com>
-References: <20250619160042.2499290-1-kevin.brodsky@arm.com>
+In-Reply-To: <20250704-arm_kasan-v2-1-32ebb4fd7607@debian.org>
+References: <20250704-arm_kasan-v2-1-32ebb4fd7607@debian.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,21 +71,20 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-On Thu, 19 Jun 2025 17:00:40 +0100, Kevin Brodsky wrote:
-> This short series attempts to approach POE (Overlay) faults consistently
-> w.r.t. uaccess. We currently assume that spurious Overlay faults are
-> handled by retrying the access [1], but this isn't the case.
+On Fri, 04 Jul 2025 05:47:07 -0700, Breno Leitao wrote:
+> KASAN reports invalid accesses during arch_stack_walk() for EFI runtime
+> services due to vmalloc tagging[1]. The EFI runtime stack must be allocated
+> with KASAN tags reset to avoid false positives.
 > 
-> Patch 1 ensures that spurious Overlay faults are indeed ignored. This
-> being done, it typically isn't worth using an ISB when writing to
-> POR_EL0. Patch 2 removes the remaining ISB in the signal handling code.
+> This patch uses arch_alloc_vmap_stack() instead of __vmalloc_node() for
+> EFI stack allocation, which internally calls kasan_reset_tag()
 > 
 > [...]
 
-Applied first patch to arm64 (for-next/fixes), thanks!
+Applied to arm64 (for-next/fixes), thanks!
 
-[1/2] arm64: poe: Handle spurious Overlay faults
-      https://git.kernel.org/arm64/c/22f3a4f60859
+[1/1] arm64: efi: Fix KASAN false positive for EFI runtime stack
+      https://git.kernel.org/arm64/c/ef8923e6c051
 
 Cheers,
 -- 
