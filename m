@@ -1,105 +1,118 @@
-Return-Path: <linux-kernel+bounces-717322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-717328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04972AF92D8
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 14:38:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63390AF92E9
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 14:40:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9281C1C88750
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 12:38:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1278D582883
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 12:40:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1B942D877B;
-	Fri,  4 Jul 2025 12:38:27 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FD832EF2A0;
+	Fri,  4 Jul 2025 12:39:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Kdux1bu9"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFF942D8788
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 12:38:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA4BE2D97B7;
+	Fri,  4 Jul 2025 12:39:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751632707; cv=none; b=pjsxc4JEXto246aForxmTZMp70fxueQNufHMNwqCTIxcYitjMMc1xDYOP8a/a/t9pKkpM5UeidsmPluJ5XkTZRdcNkHFYfaDbogvIBXsTZLPTR/xlX5zy29byPmN4+12HaqLIQfjwyF2xQpDzOTioyRyEiku8YYiP6EPwe58DTE=
+	t=1751632798; cv=none; b=pbG6Gl+fEGy5fs862g9nqwn6Aos7N066zgNuLmcPg4rHEs7mB9kPdzpqSDWqpRQ1qeOMSinMXNtvkXvvleuPrFKfVm412lOIMIMCdvQtvO+WQP7g8g+ceelq/FIBHQLO5QQQ4Kx5sflUw4q6nCycev1kGtqwTot6Q6DlPEgMXzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751632707; c=relaxed/simple;
-	bh=6+6EkI/JGBIZUO61CrURGw6GZ/6fWgN0VwyEURRIf0g=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=DeGR9CUtgbsLQqR4powkIV+m8DRFw+qaYBD/PvB1RMbZTlPKEAbQj5voK3PciAA3UHP4ZNYKhyVPhivRu/MS50Bc1e6XntaKmHjDS8f+WK2xKZbv5jx11FdW/TzQVhEaWICPUzViMbn6P68XyUCViE8pl9Ape8002nV9HA7HCbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-86cc7cdb86fso75743239f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Jul 2025 05:38:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751632705; x=1752237505;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=E/KobVGwWj+yczhWyCQpLBwTo6ncGhSmFGCWV6CIOFs=;
-        b=QkDdcGaXvvat5dAEvR6hTtsO9pwqBOHiLJYm0136SApaD3fvibR9H/GxJ9gvNVkDlo
-         chd20Cl9+XnKlr/5d5BV+tV8p93WGyZ2XqRrU35ikxL85VRwSkfmMVAovdxfJMDtbn7j
-         DXZeVInVCGTq1JIlt9qGU76FtsyHukKuxhL51Awmj1+jfGxGIa1uxnoW/zLeNbhsrkd5
-         vH+N9Uiy5A/YOszfXWdnUV1vtZGM++T7rx3TGqYD5PaHuCeN1eBXRduG8VPkaN4NqPgh
-         NP1KVKkPkEMSYEvkX4I79PGWJATMRxnZ6GTBpYAp4RAfUuixSrwRH6M6ycC2ly7W4Tay
-         QkAg==
-X-Gm-Message-State: AOJu0YxXXfBDxPERlTRqWD4Ag4GeJ1u9/4uIaTh4Wf0wOOb2JH+x/aKD
-	S55NgKUsiW9B2SiO7R9mr02Mki08CerX5Z6Fomtu1w/JkmRuLgXsw9t25P4eoplFyNcMAX6X6Kb
-	nGya6yLmUoLWvBxI34lbgJa2SouT6IuH2gT9ofz0Suc052mXMvs/4nm2yFag=
-X-Google-Smtp-Source: AGHT+IHzxUq7frs9QYdd32isezGYus9fInAceYhr1eZ0hV+0oBhibkmx8qJmCDhr3bZ+mhwBZuuapmxFzLFc+oIhsG5DAuaRutf3
+	s=arc-20240116; t=1751632798; c=relaxed/simple;
+	bh=LikTtaJjGNzZn+9RN96jwnZuX2ntlhHZCY88IkmjooU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hnbH4Pgfiy+r74wG9krcezS4PDTsHoMT5XIedU/vy7p4VlrAGYzzhhStLeij6yt4/AlHLZJ0w9xLOqqfsYYSOcAbgpZNJVJ9+POQ3aAcIkWiSxLZie8m69O/F8sejdhMttBU/I9ncI5QbYqa9f3P+08B92p0iXkE882aJ9DIk7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Kdux1bu9; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751632796; x=1783168796;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=LikTtaJjGNzZn+9RN96jwnZuX2ntlhHZCY88IkmjooU=;
+  b=Kdux1bu9kixMmKuVq5n0r+O8zxJPpKkkACXARDuPakSnHc5sDmqm5dwT
+   1227DbyBtAC7sxKqGO/YaX/OR8zLJLjXArJ36nYAyYeA+fNtCYAuRejc6
+   1Fkgy1ajpZg+ZrbTU+1AyeTJQlfzVEZ102Z7juhyHSMl2bQOusSN869Ao
+   LfLpCxkcR/PDVkVBTkuilgMzcAE6mhPsNkOJCqcOafJn6HohUx5+cviqa
+   BlHOyzurBe89KGlXd1TtakKfKygPvaV61PfhEHuA++Gn5Xi7FXAMGmjCn
+   Zi6vXXDn/+f3IKkBKJCH0bT+BsCnYCjzgBXceuuaxLea6kfCKUIQVs9Ef
+   A==;
+X-CSE-ConnectionGUID: f71jAkGwRpWumWVrQ9lNmg==
+X-CSE-MsgGUID: Luuyu4SMQtC3WiV4Lj+nOA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11483"; a="53834463"
+X-IronPort-AV: E=Sophos;i="6.16,287,1744095600"; 
+   d="scan'208";a="53834463"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 05:39:56 -0700
+X-CSE-ConnectionGUID: 3YimJf/1Sp6YNWjGDek8Lw==
+X-CSE-MsgGUID: NtJOoYdDQfugBLaj+hO45g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,287,1744095600"; 
+   d="scan'208";a="158978302"
+Received: from lkp-server01.sh.intel.com (HELO 0b2900756c14) ([10.239.97.150])
+  by orviesa003.jf.intel.com with ESMTP; 04 Jul 2025 05:39:53 -0700
+Received: from kbuild by 0b2900756c14 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uXfhl-0003i7-36;
+	Fri, 04 Jul 2025 12:39:49 +0000
+Date: Fri, 4 Jul 2025 20:38:54 +0800
+From: kernel test robot <lkp@intel.com>
+To: Zijun Hu <zijun_hu@icloud.com>, Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+	Helge Deller <deller@gmx.de>,
+	"David S. Miller" <davem@davemloft.net>,
+	Andreas Larsson <andreas@gaisler.com>
+Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
+	Thadeu Lima de Souza Cascardo <cascardo@igalia.com>,
+	Zijun Hu <zijun_hu@icloud.com>, linux-kernel@vger.kernel.org,
+	linux-parisc@vger.kernel.org, sparclinux@vger.kernel.org
+Subject: Re: [PATCH v3 4/8] char: misc: Add a reentry test case about dynamic
+ minor request
+Message-ID: <202507042031.3gfceqb3-lkp@intel.com>
+References: <20250702-rfc_miscdev-v3-4-d8925de7893d@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a28:b0:3e0:51b3:6f3f with SMTP id
- e9e14a558f8ab-3e1371fb2f0mr16977865ab.21.1751632704915; Fri, 04 Jul 2025
- 05:38:24 -0700 (PDT)
-Date: Fri, 04 Jul 2025 05:38:24 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6867cb40.a70a0220.29cf51.001b.GAE@google.com>
-Subject: [syzbot] Monthly nfs report (Jul 2025)
-From: syzbot <syzbot+listdc1ca7bb566f225a8ae2@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250702-rfc_miscdev-v3-4-d8925de7893d@oss.qualcomm.com>
 
-Hello nfs maintainers/developers,
+Hi Zijun,
 
-This is a 31-day syzbot report for the nfs subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/nfs
+kernel test robot noticed the following build warnings:
 
-During the period, 0 new issues were detected and 1 were fixed.
-In total, 9 issues are still open and 17 have already been fixed.
+[auto build test WARNING on 626e89412dfb88766d90d842af4d9ec432d8526f]
 
-Some of the still happening issues:
+url:    https://github.com/intel-lab-lkp/linux/commits/Zijun-Hu/char-misc-Move-drivers-misc-misc_minor_kunit-c-to-drivers-char/20250702-202131
+base:   626e89412dfb88766d90d842af4d9ec432d8526f
+patch link:    https://lore.kernel.org/r/20250702-rfc_miscdev-v3-4-d8925de7893d%40oss.qualcomm.com
+patch subject: [PATCH v3 4/8] char: misc: Add a reentry test case about dynamic minor request
+config: powerpc64-randconfig-002-20250704 (https://download.01.org/0day-ci/archive/20250704/202507042031.3gfceqb3-lkp@intel.com/config)
+compiler: powerpc64-linux-gcc (GCC) 10.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250704/202507042031.3gfceqb3-lkp@intel.com/reproduce)
 
-Ref Crashes Repro Title
-<1> 20778   Yes   INFO: task hung in nfsd_nl_listener_set_doit
-                  https://syzkaller.appspot.com/bug?extid=d1e76d963f757db40f91
-<2> 2447    No    INFO: task hung in nfsd_umount
-                  https://syzkaller.appspot.com/bug?extid=b568ba42c85a332a88ee
-<3> 939     No    INFO: task hung in nfsd_nl_version_get_doit
-                  https://syzkaller.appspot.com/bug?extid=41bc60511c2884783c27
-<4> 827     No    INFO: task hung in nfsd_nl_threads_get_doit
-                  https://syzkaller.appspot.com/bug?extid=c0831b61d6ade1e2d098
-<5> 817     No    INFO: task hung in nfsd_nl_rpc_status_get_dumpit
-                  https://syzkaller.appspot.com/bug?extid=68f089d6e18e8b1d41eb
-<6> 804     No    INFO: task hung in nfsd_nl_listener_get_doit
-                  https://syzkaller.appspot.com/bug?extid=4207adf14e7c0981d28d
-<7> 324     Yes   INFO: task hung in nfsd_nl_threads_set_doit
-                  https://syzkaller.appspot.com/bug?extid=e7baeb70aa00c22ed45e
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507042031.3gfceqb3-lkp@intel.com/
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+All warnings (new ones prefixed by >>, old ones prefixed by <<):
 
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
+WARNING: modpost: vmlinux: section mismatch in reference: hash_debug_pagealloc_alloc_slots+0x98 (section: .text) -> memblock_alloc_try_nid (section: .init.text)
+WARNING: modpost: vmlinux: section mismatch in reference: test_cases+0x60 (section: .data) -> miscdev_test_invalid_input (section: .init.text)
+>> WARNING: modpost: vmlinux: section mismatch in reference: test_cases+0x180 (section: .data) -> miscdev_test_dynamic_reentry (section: .init.text)
 
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
-
-You may send multiple commands in a single email message.
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
