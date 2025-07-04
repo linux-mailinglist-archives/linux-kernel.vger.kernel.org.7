@@ -1,185 +1,153 @@
-Return-Path: <linux-kernel+bounces-717734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-717736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EE8EAF981F
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 18:27:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7110FAF9820
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 18:27:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5246E5A6D8B
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 16:27:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E0AF1BC8952
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 16:27:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AFA82E5B38;
-	Fri,  4 Jul 2025 16:26:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE5F72E0935;
+	Fri,  4 Jul 2025 16:26:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="CBT3Y9bB"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kerneltoast.com header.i=@kerneltoast.com header.b="klWJJfXa"
+Received: from mail-pf1-f195.google.com (mail-pf1-f195.google.com [209.85.210.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE3112E5B24;
-	Fri,  4 Jul 2025 16:26:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751646390; cv=pass; b=o1H3MCuemJVBJ+sLVpGvRTHSmIr3Q9U5PbdgCWMZxweDWbuJLBpJccNvzQPrQcCBLeVLjN174Yuwc84kuKFPv8lMgk4Eg+aiaETgJ+qi8Gn7m8H/tjvFng2aLq+oUJWSts8w00hoUaWi9HtdpY2FkrHgyoNYlhIP9EOicuxP+Mc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751646390; c=relaxed/simple;
-	bh=0vFBZkvj1MbMxvY4+6UpfBllOPy91S01WvzRjgCT+5U=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=NSRR06mo2DxwFlm9RuY74Jn6hVgX2M+nYTuB6m1nos1u4eiUKLjUM3bNaFjKGyw5Jbf4Biu1FYoqudYFa9CopOT4uW/K7zKTYNCODNq7OVvfV4K9WxQxO8FYWGnPfWVbeNkGo8h5G1FyR18FA+NJxP2vfXOekQBQXZd7k2EKpA8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=CBT3Y9bB; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1751646369; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=Klppk0SJ48eMbu+BcJpM1X2wxc9b/fvYfVO47WdI7Rb7A6yKy3jVIRSCuHpCb9UJ2lfpJNqZuvcOszwPSHwMJBS+NTWelV9bCRbCD9vCGUWYOdoiAQHSQ+3yVARFqJxu517XEaSpjlNm/Q8Nvj5O/I+dbbMhkjiDomHIlp7lt5A=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1751646369; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=EHiw+TLWTB+E5RH83iWm1KEXV9AoZB+dSLtwqxP7kA4=; 
-	b=Xp3oq1Do154UBlKUFwTxbZ4QNGL2fDsP6S0nqWhNONBF5Uh0kpYSNrR8QNQ+YXJBMQTrG2htUtyOl3vWVjUkFCaXZE9rGXSbRukW8v0yVPA2P97BGMg3xWdkX5ZkQcXLweR6Nb/A/eqv7qRfQSMe7mtROeNGZvnNBGU73xKrSAQ=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1751646369;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:References:In-Reply-To:To:To:Cc:Cc:Reply-To;
-	bh=EHiw+TLWTB+E5RH83iWm1KEXV9AoZB+dSLtwqxP7kA4=;
-	b=CBT3Y9bBw3aDUVb7z9dcuZ0o0GKX1TSIGU1XX8IUkB6jA6qb//YJXdgx8iXnjxgp
-	1COHZ6UaFn1OJUsPmhNxA0j4jO2aKzWmo7u0dk3rBl4BZxDl1w6kBWHeQ4oIyS3Bish
-	vGaBg97Y+jpti6erfUeaJzEnLwyb9Rsm+h/sG3xI=
-Received: by mx.zohomail.com with SMTPS id 1751646367321535.741342334998;
-	Fri, 4 Jul 2025 09:26:07 -0700 (PDT)
-From: Daniel Almeida <daniel.almeida@collabora.com>
-Date: Fri, 04 Jul 2025 13:25:28 -0300
-Subject: [PATCH v12 3/3] rust: platform: add resource accessors
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D5F42E0932
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 16:26:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.195
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751646401; cv=none; b=SePsIt9OuTxuSzbERAPL629tlH4Y7InazCf9Mruk7hhU3xKeEn+sFKkWCCUNyzZRKXY8+6Z8DpmO3ZN7kWBDnMMfoHwWIVARstw2X1yKfTY9ko+ZmI4R2Gj+TlqPaWzxM6rR9o8HSj3rTxDs0vJY4rHMBpWeKuzquFRnCLOW7sY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751646401; c=relaxed/simple;
+	bh=akp4zglTS+OiJwO1xqJMzOJDFv3IM9SctyJK55G8E/I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HrvyhxKdhCgiRc8fQBQ6yFGqfHNRVz/1Bi5afW1O9MQmq8P2VwzySl4XJWMcWCqWKt/MWZe9yOhwNJRzYeRAZYjlCv0QBM1iMeyZKf+s2ndS9XllODxPX63L+ogQJKp2ALHcNXftIBKCb+psaT77MZ3AaAEZxGyMs9P73Enz0Cc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kerneltoast.com; spf=pass smtp.mailfrom=kerneltoast.com; dkim=pass (2048-bit key) header.d=kerneltoast.com header.i=@kerneltoast.com header.b=klWJJfXa; arc=none smtp.client-ip=209.85.210.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kerneltoast.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kerneltoast.com
+Received: by mail-pf1-f195.google.com with SMTP id d2e1a72fcca58-748f5a4a423so693723b3a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Jul 2025 09:26:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kerneltoast.com; s=google; t=1751646398; x=1752251198; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=uZ5dOYbYOkoWtAAYMytNtT+2qf4Eec58FQAQdPSVMHU=;
+        b=klWJJfXaWRyxnnashhxp4ciKLrTw+bAG6YDZ3t1bgMp/WGwl1W6bc1rCD3aC8qiXk3
+         TTF8dENDDs/iwblSQ1/FbNQ3RjIwGyZyiNL49G2yco26MH9SJD2zOyroiYxD6CdM/WPh
+         rINkaxAOSa0oheHriJPJBF9i/w6tgDzB20uUTQLmR474jadb6zc/mSVMFoGiVlJduotw
+         YIuSsmCriYVWhNh+nX6DbMnruUeOsJMOB5PIJc/a6nxB1WEp1VYZf+5JCx57PvBqGGmy
+         aZCJoQcHP7DaRqwc2yocW5FR9Dzg8JwWSpwo3Olm8UmBPdzBshPtJU0dP4bpLEXkcydx
+         G+Jg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751646398; x=1752251198;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uZ5dOYbYOkoWtAAYMytNtT+2qf4Eec58FQAQdPSVMHU=;
+        b=Y0AZpX/iC+5hRblESV8EbbCCR7vK6b73rcprsC5Idr/H2fgYJG3CPBQnALoBXgQE5M
+         eSR7O01OthqqO9hCCZ8Q8P4plCaTuKnFjXqwN7SGvx9Yh8so0gXfipS5YNTEBDMgXoIJ
+         ab3k9qbQLIi/EDzuyxNvYW7e/wiurhoWTx78ynIF0teGQm+o/i3FL2wQvLEoCHv4Nt+l
+         JF5lEpCR2dOuANvhzl+2UCDPFFXZimjC4fyyO/AJZ8s0CShGEtFdPLs7r0SiLSaCEMYi
+         0C9YM6M87vZfM7Ro0fk1n3ru0uBGIWpCtGOdyuNdBZ3DhkWK3YG1LAKUxdCs9UGQJjOa
+         LQFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWzieryQi2ocidy5BXsmFZzJQe6NikghDwWfYyXEEvwtVyMFTBd0TVDEfLABLwHiplWpNFt5LLbuaR2Wls=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxk30fEtclm+GrliAnP5srtOhwkIqWk8+spVyXlJuZKuVlkqwh+
+	h1mjFcGle0ul85C7Ys7w//lkFoO22PFv2PbEJGUSl/wrJM/p73RCmd/fhbk2zdCgyGLUvaamp3Y
+	B0bsP3uEorh2+c6yp
+X-Gm-Gg: ASbGncuUcjnjDEbCkbB+zm3S89Da4p6sfWbY83m7rXVfdwneGxLJrrlBS8z6jl6swzl
+	30VQpESBF8UVDncORu1IDwPKStIyxQ/tdcAUzyMklOrqfYNipka05bdfwsQ3u+WSxif9ajla7GH
+	7/NP5fYqb/7FnyJBRPKdQNGtm+jZaemFmY2GvA19HwU7mhJc2UB+V4Rv8K83kvSiVXz6Ne3XJtn
+	1bFNe+wi4hxLq8g+SKrcBLWw4k0c4UhGEbjwNLLZrnH2y+tvNKmhyUyKvnd2rxrOCekjt4wA+sb
+	DH5iHDkgAPAWh3yHT1mL9QEzD0Bf4u3SERu0bShtbZkI3ibwXZ03x0XSR6LwBhUh
+X-Google-Smtp-Source: AGHT+IFmNX43fv12lDJwBxyke4slBPfKR27QIULjj2bFsUe07GNEU0S4nbmUu0opAKYqkv0SzWjoEQ==
+X-Received: by 2002:a05:6a00:3e21:b0:749:8c3:873e with SMTP id d2e1a72fcca58-74ce8ad900emr3904971b3a.24.1751646397632;
+        Fri, 04 Jul 2025 09:26:37 -0700 (PDT)
+Received: from sultan-box ([142.147.89.203])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74ce42ce64esm2213704b3a.153.2025.07.04.09.26.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Jul 2025 09:26:37 -0700 (PDT)
+Date: Fri, 4 Jul 2025 09:26:34 -0700
+From: Sultan Alsawaf <sultan@kerneltoast.com>
+To: David Jeffery <djeffery@redhat.com>
+Cc: Jeremy Allison <jra@samba.org>, Christoph Hellwig <hch@lst.de>,
+	Stuart Hayes <stuart.w.hayes@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Martin Belanger <Martin.Belanger@dell.com>,
+	Oliver O'Halloran <oohall@gmail.com>,
+	Daniel Wagner <dwagner@suse.de>, Keith Busch <kbusch@kernel.org>,
+	Lukas Wunner <lukas@wunner.de>, Jeremy Allison <jallison@ciq.com>,
+	Jens Axboe <axboe@fb.com>, Sagi Grimberg <sagi@grimberg.me>,
+	linux-nvme@lists.infradead.org,
+	Nathan Chancellor <nathan@kernel.org>,
+	Jan Kiszka <jan.kiszka@seimens.com>,
+	Bert Karwatzki <spasswolf@web.de>
+Subject: Re: [PATCH v10 0/5] shut down devices asynchronously
+Message-ID: <aGgAuje4tpIOveFc@sultan-box>
+References: <20250625201853.84062-1-stuart.w.hayes@gmail.com>
+ <20250703114656.GE17686@lst.de>
+ <aGaklKejxefXTQB4@jeremy-HP-Z840-Workstation>
+ <CA+-xHTFC6KTs6D8EdvmVe=buqw9oN5P7GJ-WWvam6M3SzeZF4g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250704-topics-tyr-platform_iomem-v12-3-1d3d4bd8207d@collabora.com>
-References: <20250704-topics-tyr-platform_iomem-v12-0-1d3d4bd8207d@collabora.com>
-In-Reply-To: <20250704-topics-tyr-platform_iomem-v12-0-1d3d4bd8207d@collabora.com>
-To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
- Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, 
- Andrew Morton <akpm@linux-foundation.org>, 
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
- =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
- Bjorn Helgaas <bhelgaas@google.com>, 
- Mika Westerberg <mika.westerberg@linux.intel.com>, 
- Ying Huang <huang.ying.caritas@gmail.com>, Benno Lossin <lossin@kernel.org>, 
- Benno Lossin <lossin@kernel.org>
-Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
- Daniel Almeida <daniel.almeida@collabora.com>
-X-Mailer: b4 0.14.2
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CA+-xHTFC6KTs6D8EdvmVe=buqw9oN5P7GJ-WWvam6M3SzeZF4g@mail.gmail.com>
 
-The previous patches have added the abstractions for Resources and the
-ability to map them and therefore read and write the underlying memory .
+On Fri, Jul 04, 2025 at 09:45:44AM -0400, David Jeffery wrote:
+> On Thu, Jul 3, 2025 at 12:13 PM Jeremy Allison <jra@samba.org> wrote:
+> >
+> > On Thu, Jul 03, 2025 at 01:46:56PM +0200, Christoph Hellwig wrote:
+> > >On Wed, Jun 25, 2025 at 03:18:48PM -0500, Stuart Hayes wrote:
+> > >> Address resource and timing issues when spawning a unique async thread
+> > >> for every device during shutdown:
+> > >>   * Make the asynchronous threads able to shut down multiple devices,
+> > >>     instead of spawning a unique thread for every device.
+> > >>   * Modify core kernel async code with a custom wake function so it
+> > >>     doesn't wake up threads waiting to synchronize every time the cookie
+> > >>     changes
+> > >
+> > >Given all these thread spawning issues, why can't we just go back
+> > >to the approach that kicks off shutdown asynchronously and then waits
+> > >for it without spawning all these threads?
+> >
+> > It isn't just an nvme issue. Red Hat found the same issue
+> > with SCSI devices.
+> >
+> > My colleague Sultan Alsawaf posted a simpler fix for the
+> > earlier patch here:
+> >
+> > https://lists.infradead.org/pipermail/linux-nvme/2025-January/053666.html
+> >
+> > Maybe this could be explored.
+> >
+> 
+> Unfortunately, this approach looks flawed. If I am reading it right,
+> it assumes async shutdown devices do not have dependencies on sync
+> shutdown devices.
 
-The only thing missing to make this accessible for platform devices is
-to provide accessors that return instances of IoRequest<'a>. These
-ensure that the resource are valid only for the lifetime of the platform
-device, and that the platform device is in the Bound state.
+It does not make any such assumption. Dependency on a sync device is handled
+through a combination of queue_device_async_shutdown() setting an async device's
+shutdown_after and the synchronous shutdown loop dispatching an "async" shutdown
+for a sync device when it encounters a sync device that has a downstream async
+dependency.
 
-Therefore, add these accessors. Also make it possible to retrieve
-resources from platform devices in Rust using either a name or an index.
+> Maintaining all the dependencies is the core problem and source of the
+> complexity of the async shutdown patches.
 
-Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
----
- rust/kernel/platform.rs | 60 ++++++++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 59 insertions(+), 1 deletion(-)
+I am acutely aware. Please take a closer look at my patch.
 
-diff --git a/rust/kernel/platform.rs b/rust/kernel/platform.rs
-index 86f9d73c64b38ffe067be329a77b2fc04564c7fe..b2b4ca4671f019e1080e0579ae42a356eaa5f0bb 100644
---- a/rust/kernel/platform.rs
-+++ b/rust/kernel/platform.rs
-@@ -5,8 +5,11 @@
- //! C header: [`include/linux/platform_device.h`](srctree/include/linux/platform_device.h)
- 
- use crate::{
--    acpi, bindings, container_of, device, driver,
-+    acpi, bindings, container_of,
-+    device::{self, Bound},
-+    driver,
-     error::{to_result, Result},
-+    io::{mem::IoRequest, Resource},
-     of,
-     prelude::*,
-     str::CStr,
-@@ -211,6 +214,61 @@ impl<Ctx: device::DeviceContext> Device<Ctx> {
-     fn as_raw(&self) -> *mut bindings::platform_device {
-         self.0.get()
-     }
-+
-+    /// Returns the resource at `index`, if any.
-+    pub fn resource_by_index(&self, index: u32) -> Option<&Resource> {
-+        // SAFETY: `self.as_raw()` returns a valid pointer to a `struct platform_device`.
-+        let resource = unsafe {
-+            bindings::platform_get_resource(self.as_raw(), bindings::IORESOURCE_MEM, index)
-+        };
-+
-+        if resource.is_null() {
-+            return None;
-+        }
-+
-+        // SAFETY: `resource` is a valid pointer to a `struct resource` as
-+        // returned by `platform_get_resource`.
-+        Some(unsafe { Resource::as_ref(resource) })
-+    }
-+
-+    /// Returns the resource with a given `name`, if any.
-+    pub fn resource_by_name(&self, name: &CStr) -> Option<&Resource> {
-+        // SAFETY: `self.as_raw()` returns a valid pointer to a `struct
-+        // platform_device` and `name` points to a valid C string.
-+        let resource = unsafe {
-+            bindings::platform_get_resource_byname(
-+                self.as_raw(),
-+                bindings::IORESOURCE_MEM,
-+                name.as_char_ptr(),
-+            )
-+        };
-+
-+        if resource.is_null() {
-+            return None;
-+        }
-+
-+        // SAFETY: `resource` is a valid pointer to a `struct resource` as
-+        // returned by `platform_get_resource`.
-+        Some(unsafe { Resource::as_ref(resource) })
-+    }
-+}
-+
-+impl Device<Bound> {
-+    /// Returns an `IoRequest` for the resource at `index`, if any.
-+    pub fn request_io_by_index(&self, index: u32) -> Option<IoRequest<'_>> {
-+        // SAFETY: `resource` is a valid resource for `&self` during the
-+        // lifetime of the `IoRequest`.
-+        self.resource_by_index(index)
-+            .map(|resource| unsafe { IoRequest::new(self.as_ref(), resource) })
-+    }
-+
-+    /// Returns an `IoRequest` for the resource with a given `name`, if any.
-+    pub fn request_io_by_name(&self, name: &CStr) -> Option<IoRequest<'_>> {
-+        // SAFETY: `resource` is a valid resource for `&self` during the
-+        // lifetime of the `IoRequest`.
-+        self.resource_by_name(name)
-+            .map(|resource| unsafe { IoRequest::new(self.as_ref(), resource) })
-+    }
- }
- 
- // SAFETY: `Device` is a transparent wrapper of a type that doesn't depend on `Device`'s generic
-
--- 
-2.50.0
-
+Sultan
 
