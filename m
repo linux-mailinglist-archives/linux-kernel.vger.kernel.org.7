@@ -1,189 +1,195 @@
-Return-Path: <linux-kernel+bounces-717269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-717261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C437AF921A
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 14:04:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33443AF9205
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 14:02:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37EF33B8B3D
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 12:03:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 149AE7BA6BC
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 12:00:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 060B12F236A;
-	Fri,  4 Jul 2025 12:02:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 354BB2BFC7B;
+	Fri,  4 Jul 2025 12:02:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="DtTPSh8l"
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="LxGjtFFI";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ea49YdsV";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="D5G/4eWo";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Ze7jQaz/"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D0B02D97B5
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 12:02:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02FB8285C9F
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 12:02:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751630549; cv=none; b=pUjiHdmdCHbuqQWbUiOGMAsRsgsqcPhbzLbcHbjUekXiRV6Hi/OnFU/lnZzLAFZg5ooHSx7LWIvdN0+A+l9Av649YfCWA4hbOezUqXZr5TH7mkC9wGX54Z3nNFxnhVKYc1fvNxX3Aa7mZgIu6z0J2eEPZ1OhTr5XnC6CCe0Mnl0=
+	t=1751630531; cv=none; b=mcJg6VY301tL0RQ/jJ29+fHGmLTBYaF7RSAx1y6t1NfiX9Zktltgwh4ZbPdGjiFuIvOGLquWmMJWbiNMiwDg8P9nCq02UPwZI6Xz41DYfgvLzeuvR/Q/stckTTZDQDT1wR1R/xo6Ga3nuMnOYealodGzDhCAQWC1Jrnafo1R5o8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751630549; c=relaxed/simple;
-	bh=OWGxcklWWo0vv0ZQ8Q6Q56zQqcy4rZKZZq9hhvEnZuk=;
-	h=From:Date:Subject:MIME-Version:Message-Id:In-Reply-To:To:Cc:
-	 Content-Type:References; b=Fdvryysu5+/ToQVCZLGBVparlwx/tXM987OqBlxwG0tM9UvC4MCjmkaQYX3OIVXQUPIaUyH9O50sfnC8LuEHCSzL2IPlQb8yZLXbminyhLy+lLb5e9VDM2r3wAc7yxf8cvdsevET7KoWuBTWWAeIutRFNW02UNKDUwiogFrQCcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=DtTPSh8l; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250704120220euoutp013effe73d9eca72b11d0d09ca105d4cbd~PCrIsqOQz1995619956euoutp01g
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 12:02:20 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250704120220euoutp013effe73d9eca72b11d0d09ca105d4cbd~PCrIsqOQz1995619956euoutp01g
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1751630540;
-	bh=nmhVn6OSCj5podj8kRrzheU5aifoU9hBWKaGqoQKYps=;
-	h=From:Date:Subject:In-Reply-To:To:Cc:References:From;
-	b=DtTPSh8lsZB3AJsQlxZqlVhiO6R6C2/zYqA+OVfPlRijzoJ3BdlmHjEoIiRR+8I+S
-	 PeVWzQ5fBBIBQd9+OPTZfciIrVuPRATVQ2VfX6IJC9Hm7xjuZA7EajBUgHdNIKBhmZ
-	 lclsRnV8vtWCDeenXNG737BoWZIfDdnQN6BYW7LI=
-Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250704120219eucas1p1d8160ac9692bccdbf1a41e63a875c056~PCrIFwcXZ2805128051eucas1p1f;
-	Fri,  4 Jul 2025 12:02:19 +0000 (GMT)
-Received: from AMDC4942.eu.corp.samsungelectronics.net (unknown
-	[106.210.136.40]) by eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250704120218eusmtip154dcc24571efde3c7d5f443c0a0040fb~PCrG-28OI0505005050eusmtip1w;
-	Fri,  4 Jul 2025 12:02:18 +0000 (GMT)
-From: Michal Wilczynski <m.wilczynski@samsung.com>
-Date: Fri, 04 Jul 2025 14:01:17 +0200
-Subject: [PATCH v8 7/7] riscv: dts: thead: Add PWM fan and thermal control
+	s=arc-20240116; t=1751630531; c=relaxed/simple;
+	bh=VyVXvW0GJCusfg2t/Z3AbgPKYnBY/yqNTPJqxs/sjSo=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FSic7ZRvj19JRmqLT8bfmxl4+j7bqV8lqUokBoeli1MguqqWVcKhZ418BUGO9QaFqi5Eoax4+l/5K7+JweA4X6LlNtGyqy++zq1Un90RRH2mCi3T9d0977bRg+1CuvBOo7CrbjX/PU+MqpHfk1OWXxphbevB8vj84MqvrHvTpp8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=LxGjtFFI; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ea49YdsV; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=D5G/4eWo; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Ze7jQaz/; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 1CBBB1F458;
+	Fri,  4 Jul 2025 12:02:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1751630528; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ksO2cKP2xTep54j9rlHzxwNG5XzdhWH3z3gduU+w4VI=;
+	b=LxGjtFFIWAdlwosTNr293wu7lP1Yt1pWNNUcSsbuGNxMfqhkUSKPsRHGTszi203GNtv1qL
+	p3DJFxpU44aqNkuIr2fh2U1iXa+dxjyWuAnAWiwJVqtf2HFcLVQxEhlMmyIoyKPmA+UXc7
+	PFG4sZXZqpPe45we9+ZwJL9TaxQp/Cg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1751630528;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ksO2cKP2xTep54j9rlHzxwNG5XzdhWH3z3gduU+w4VI=;
+	b=ea49YdsVb06RUVKqRd8LlV9yOZf1Z9MqNXDoQLczOhkspNLgTNCCQjqwdTM0V+0/EZkZwa
+	+LD0Tz2zKUHi0TBg==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b="D5G/4eWo";
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="Ze7jQaz/"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1751630527; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ksO2cKP2xTep54j9rlHzxwNG5XzdhWH3z3gduU+w4VI=;
+	b=D5G/4eWo9uIr0vKJzMwVf04JoMmj1G7zH1Ot9veBWHTTdD6OaSl4ENWGorT550zHhaK16Q
+	wtdli/A8/i78T0ow+ueKvlFSRJXxjmsjgVvut2s/EttbixHGYMBJNXJuIiMR6iuY+oeUN/
+	1J+A4AYqPXr/LrAxWVNcJSplRJXlX6U=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1751630527;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ksO2cKP2xTep54j9rlHzxwNG5XzdhWH3z3gduU+w4VI=;
+	b=Ze7jQaz/CvjvkdV2ev6SxePcut4vrzM5ORLNE2DZhlMTrpNQBAS/hADrw0rPC06L+qC6nk
+	YmzjjhSLP/6JQXCw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C9DC713A71;
+	Fri,  4 Jul 2025 12:02:06 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id xZwaML7CZ2hoTQAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Fri, 04 Jul 2025 12:02:06 +0000
+Date: Fri, 04 Jul 2025 14:02:06 +0200
+Message-ID: <87ms9knozl.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: patches@opensource.cirrus.com
+Cc: GalaxySnail <me@glxys.nl>,
+    simont@opensource.cirrus.com,
+    david.rhodes@cirrus.com,
+    linux-kernel@vger.kernel.org,
+    linux-sound@vger.kernel.org,
+    lkp@intel.com,
+    oe-kbuild-all@lists.linux.dev,
+    perex@perex.cz,
+    rf@opensource.cirrus.com,
+    tiwai@suse.com
+Subject: Re: [PATCH v3] ALSA: hda: add MODULE_FIRMWARE for cs35l41/cs35l56
+In-Reply-To: <20250624101716.2365302-2-me@glxys.nl>
+References: <002901dbe4ef$57d0cce0$077266a0$@opensource.cirrus.com>
+	<20250624101716.2365302-2-me@glxys.nl>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250704-rust-next-pwm-working-fan-for-sending-v8-7-951e5482c9fd@samsung.com>
-In-Reply-To: <20250704-rust-next-pwm-working-fan-for-sending-v8-0-951e5482c9fd@samsung.com>
-To: =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,  Miguel Ojeda
-	<ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,  Boqun Feng
-	<boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,  Andreas
-	Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,  Trevor
-	Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>,  Michal
-	Wilczynski <m.wilczynski@samsung.com>, Guo Ren <guoren@kernel.org>,  Fu Wei
-	<wefu@redhat.com>, Rob Herring <robh@kernel.org>,  Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,  Conor Dooley <conor+dt@kernel.org>,  Paul Walmsley
-	<paul.walmsley@sifive.com>,  Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
-	<aou@eecs.berkeley.edu>,  Alexandre Ghiti <alex@ghiti.fr>,  Marek Szyprowski
-	<m.szyprowski@samsung.com>,  Benno Lossin <lossin@kernel.org>,  Michael
-	Turquette <mturquette@baylibre.com>,  Drew Fustini <fustini@kernel.org>,
-	Benno Lossin <lossin@kernel.org>,  Drew Fustini <fustini@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	devicetree@vger.kernel.org
-X-Mailer: b4 0.15-dev
-X-CMS-MailID: 20250704120219eucas1p1d8160ac9692bccdbf1a41e63a875c056
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250704120219eucas1p1d8160ac9692bccdbf1a41e63a875c056
-X-EPHeader: CA
-X-CMS-RootMailID: 20250704120219eucas1p1d8160ac9692bccdbf1a41e63a875c056
-References: <20250704-rust-next-pwm-working-fan-for-sending-v8-0-951e5482c9fd@samsung.com>
-	<CGME20250704120219eucas1p1d8160ac9692bccdbf1a41e63a875c056@eucas1p1.samsung.com>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spamd-Result: default: False [-3.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[glxys.nl:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:mid,suse.de:dkim];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Rspamd-Queue-Id: 1CBBB1F458
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -3.51
 
-Add Device Tree nodes to enable a PWM controlled fan and it's associated
-thermal management for the Lichee Pi 4A board.
+On Tue, 24 Jun 2025 12:17:17 +0200,
+GalaxySnail wrote:
+> 
+> add firmware information in the .modinfo section, so that userspace
+> tools can find out firmware required by cs35l41/cs35l56 kernel module
+> 
+> Signed-off-by: GalaxySnail <me@glxys.nl>
+> ---
+> Thanks for your review!
+> 
+> v2 -> v3: fixed typo
+> v1 -> v2: fixed missing ';' in the previous patch
 
-This enables temperature-controlled active cooling for the Lichee Pi 4A
-board based on SoC temperature.
+Cirrus people, can you review this before I merge?
 
-Reviewed-by: Drew Fustini <fustini@kernel.org>
-Tested-by: Drew Fustini <fustini@kernel.org>
-Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
----
- arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts | 67 +++++++++++++++++++++++
- 1 file changed, 67 insertions(+)
 
-diff --git a/arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts b/arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts
-index 4020c727f09e8e2286fdc7fecd79dbd8eba69556..c58c2085ca92a3234f1350500cedae4157f0c35f 100644
---- a/arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts
-+++ b/arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts
-@@ -28,9 +28,76 @@ aliases {
- 	chosen {
- 		stdout-path = "serial0:115200n8";
- 	};
-+
-+	thermal-zones {
-+		cpu-thermal {
-+			polling-delay = <1000>;
-+			polling-delay-passive = <1000>;
-+			thermal-sensors = <&pvt 0>;
-+
-+			trips {
-+				fan_config0: fan-trip0 {
-+					temperature = <39000>;
-+					hysteresis = <5000>;
-+					type = "active";
-+				};
-+
-+				fan_config1: fan-trip1 {
-+					temperature = <50000>;
-+					hysteresis = <5000>;
-+					type = "active";
-+				};
-+
-+				fan_config2: fan-trip2 {
-+					temperature = <60000>;
-+					hysteresis = <5000>;
-+					type = "active";
-+				};
-+			};
-+
-+			cooling-maps {
-+				map-active-0 {
-+					cooling-device = <&fan 1 1>;
-+					trip = <&fan_config0>;
-+				};
-+
-+				map-active-1 {
-+					cooling-device = <&fan 2 2>;
-+					trip = <&fan_config1>;
-+				};
-+
-+				map-active-2 {
-+					cooling-device = <&fan 3 3>;
-+					trip = <&fan_config2>;
-+				};
-+			};
-+		};
-+	};
-+
-+	fan: pwm-fan {
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&fan_pins>;
-+		compatible = "pwm-fan";
-+		#cooling-cells = <2>;
-+		pwms = <&pwm 1 10000000 0>;
-+		cooling-levels = <0 66 196 255>;
-+	};
-+
- };
- 
- &padctrl0_apsys {
-+	fan_pins: fan-0 {
-+		pwm1-pins {
-+			pins = "GPIO3_3"; /* PWM1 */
-+			function = "pwm";
-+			bias-disable;
-+			drive-strength = <25>;
-+			input-disable;
-+			input-schmitt-disable;
-+			slew-rate = <0>;
-+		};
-+	};
-+
- 	uart0_pins: uart0-0 {
- 		tx-pins {
- 			pins = "UART0_TXD";
+thanks,
 
--- 
-2.34.1
+Takashi
 
+> 
+>  sound/pci/hda/cs35l41_hda.c | 2 ++
+>  sound/pci/hda/cs35l56_hda.c | 4 ++++
+>  2 files changed, 6 insertions(+)
+> 
+> diff --git a/sound/pci/hda/cs35l41_hda.c b/sound/pci/hda/cs35l41_hda.c
+> index d5bc81099d0d..17cdce91fdbf 100644
+> --- a/sound/pci/hda/cs35l41_hda.c
+> +++ b/sound/pci/hda/cs35l41_hda.c
+> @@ -2085,3 +2085,5 @@ MODULE_IMPORT_NS("SND_SOC_CS_AMP_LIB");
+>  MODULE_AUTHOR("Lucas Tanure, Cirrus Logic Inc, <tanureal@opensource.cirrus.com>");
+>  MODULE_LICENSE("GPL");
+>  MODULE_IMPORT_NS("FW_CS_DSP");
+> +MODULE_FIRMWARE("cirrus/cs35l41-*.wmfw");
+> +MODULE_FIRMWARE("cirrus/cs35l41-*.bin");
+> diff --git a/sound/pci/hda/cs35l56_hda.c b/sound/pci/hda/cs35l56_hda.c
+> index 3f2fd32f4ad9..eedd8fdd3b8b 100644
+> --- a/sound/pci/hda/cs35l56_hda.c
+> +++ b/sound/pci/hda/cs35l56_hda.c
+> @@ -1122,3 +1122,7 @@ MODULE_IMPORT_NS("SND_SOC_CS_AMP_LIB");
+>  MODULE_AUTHOR("Richard Fitzgerald <rf@opensource.cirrus.com>");
+>  MODULE_AUTHOR("Simon Trimmer <simont@opensource.cirrus.com>");
+>  MODULE_LICENSE("GPL");
+> +MODULE_FIRMWARE("cirrus/cs35l54-*.wmfw");
+> +MODULE_FIRMWARE("cirrus/cs35l54-*.bin");
+> +MODULE_FIRMWARE("cirrus/cs35l56-*.wmfw");
+> +MODULE_FIRMWARE("cirrus/cs35l56-*.bin");
+> -- 
+> 2.50.0
+> 
 
