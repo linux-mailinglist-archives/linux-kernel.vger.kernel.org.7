@@ -1,118 +1,128 @@
-Return-Path: <linux-kernel+bounces-717328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-717323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63390AF92E9
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 14:40:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54D10AF92DB
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 14:39:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1278D582883
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 12:40:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA4CD1CA4D14
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 12:39:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FD832EF2A0;
-	Fri,  4 Jul 2025 12:39:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90D862D8DA3;
+	Fri,  4 Jul 2025 12:39:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Kdux1bu9"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Unioj+V4"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA4BE2D97B7;
-	Fri,  4 Jul 2025 12:39:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54CBF28C2DE;
+	Fri,  4 Jul 2025 12:39:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751632798; cv=none; b=pbG6Gl+fEGy5fs862g9nqwn6Aos7N066zgNuLmcPg4rHEs7mB9kPdzpqSDWqpRQ1qeOMSinMXNtvkXvvleuPrFKfVm412lOIMIMCdvQtvO+WQP7g8g+ceelq/FIBHQLO5QQQ4Kx5sflUw4q6nCycev1kGtqwTot6Q6DlPEgMXzg=
+	t=1751632774; cv=none; b=IvrgzTUzhVOoWn9rgDMuMMULwtsZYg6VpUl4n0cNaRu2a4gXcxKccExxYoJ5fQ4aljrlxotiSPOXmbate0kMLB8zNL0WM0rTxZPHWyjjTErYVcLIrbgrvBy9uPpGo20DP6ppyXBlCSnvE5vFeLWGt/ZeyN+fVoawi3d9bzZiSHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751632798; c=relaxed/simple;
-	bh=LikTtaJjGNzZn+9RN96jwnZuX2ntlhHZCY88IkmjooU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hnbH4Pgfiy+r74wG9krcezS4PDTsHoMT5XIedU/vy7p4VlrAGYzzhhStLeij6yt4/AlHLZJ0w9xLOqqfsYYSOcAbgpZNJVJ9+POQ3aAcIkWiSxLZie8m69O/F8sejdhMttBU/I9ncI5QbYqa9f3P+08B92p0iXkE882aJ9DIk7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Kdux1bu9; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751632796; x=1783168796;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=LikTtaJjGNzZn+9RN96jwnZuX2ntlhHZCY88IkmjooU=;
-  b=Kdux1bu9kixMmKuVq5n0r+O8zxJPpKkkACXARDuPakSnHc5sDmqm5dwT
-   1227DbyBtAC7sxKqGO/YaX/OR8zLJLjXArJ36nYAyYeA+fNtCYAuRejc6
-   1Fkgy1ajpZg+ZrbTU+1AyeTJQlfzVEZ102Z7juhyHSMl2bQOusSN869Ao
-   LfLpCxkcR/PDVkVBTkuilgMzcAE6mhPsNkOJCqcOafJn6HohUx5+cviqa
-   BlHOyzurBe89KGlXd1TtakKfKygPvaV61PfhEHuA++Gn5Xi7FXAMGmjCn
-   Zi6vXXDn/+f3IKkBKJCH0bT+BsCnYCjzgBXceuuaxLea6kfCKUIQVs9Ef
-   A==;
-X-CSE-ConnectionGUID: f71jAkGwRpWumWVrQ9lNmg==
-X-CSE-MsgGUID: Luuyu4SMQtC3WiV4Lj+nOA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11483"; a="53834463"
-X-IronPort-AV: E=Sophos;i="6.16,287,1744095600"; 
-   d="scan'208";a="53834463"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 05:39:56 -0700
-X-CSE-ConnectionGUID: 3YimJf/1Sp6YNWjGDek8Lw==
-X-CSE-MsgGUID: NtJOoYdDQfugBLaj+hO45g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,287,1744095600"; 
-   d="scan'208";a="158978302"
-Received: from lkp-server01.sh.intel.com (HELO 0b2900756c14) ([10.239.97.150])
-  by orviesa003.jf.intel.com with ESMTP; 04 Jul 2025 05:39:53 -0700
-Received: from kbuild by 0b2900756c14 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uXfhl-0003i7-36;
-	Fri, 04 Jul 2025 12:39:49 +0000
-Date: Fri, 4 Jul 2025 20:38:54 +0800
-From: kernel test robot <lkp@intel.com>
-To: Zijun Hu <zijun_hu@icloud.com>, Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-	Helge Deller <deller@gmx.de>,
-	"David S. Miller" <davem@davemloft.net>,
-	Andreas Larsson <andreas@gaisler.com>
-Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
-	Thadeu Lima de Souza Cascardo <cascardo@igalia.com>,
-	Zijun Hu <zijun_hu@icloud.com>, linux-kernel@vger.kernel.org,
-	linux-parisc@vger.kernel.org, sparclinux@vger.kernel.org
-Subject: Re: [PATCH v3 4/8] char: misc: Add a reentry test case about dynamic
- minor request
-Message-ID: <202507042031.3gfceqb3-lkp@intel.com>
-References: <20250702-rfc_miscdev-v3-4-d8925de7893d@oss.qualcomm.com>
+	s=arc-20240116; t=1751632774; c=relaxed/simple;
+	bh=Qs6+HE89AUgmyAavkV7HuAS3JlNL54D/qBhAGlU+hDs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Dka6Ruh2wRJXLe2JtBK6lKrIZYME3kC0oxCbqorotlIzRgr8E5yunyLlj4yv9YtY9+YaJnqtLoHo43kscQGvZCTZaeHNpwIFVxv2tN8mv9fwxYemLGE6lFaHLJrjD+q8qPe/l0RdX+Jqv5GJnNzPlBAixtbchRBL1+PbdGWVdbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Unioj+V4; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-ae0bde4d5c9so170406366b.3;
+        Fri, 04 Jul 2025 05:39:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751632770; x=1752237570; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=CDenIljNSTVSHWuGkdw4tF8oL0H0P+4SvxvPT0+Mmn8=;
+        b=Unioj+V4KVbxeR7aXQKKHAYgZEDAIW+lS1wVrN++dF6TTKbsTdhS/dt3pf5va5oGCx
+         kSenZvK00fFV8qAaI+xIC7Lk8z+zsUZ21dyXRRJPalBGe3YxCYbF9uYqam8fdN1ngm1/
+         tsEAbbya7+SrxCNMPWWU1rWzlIf28UvofpdwzAoF/kfUaAEa93Eet8Z+7zna6q00LydM
+         Ico/0rEweSvmMa1LRjN+80+qw/slufRTaWFERLHeHze1yYVgTHaOERIo/FZldo+F7FzF
+         MV6N5xtY18OoNOsbusGSfRkt8lBCED/1nGapL6XMrYhEfbSsusWyMRx0yQzU29iKIDtx
+         fiJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751632770; x=1752237570;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CDenIljNSTVSHWuGkdw4tF8oL0H0P+4SvxvPT0+Mmn8=;
+        b=jRGg5Gz3jvfBTp7yRwAiduXljqtsmaZGMmXS/CfQ59yDkrLo8jX4nEAHhI+ck2QbBq
+         ueTreUwsOhNL/wCAIlr3qf8pHoobYB0tNoj3dfBfGZX+2pscJ3W/EPbJ8aM4svhc/oHq
+         baRL6g+ipRa5wpdQLC/xAEvgHn6bL3Bvi+UVhukJ0rlCHCCP9uNL6sSj7k0XUBL9lTXo
+         drkdWPiNcC/z57cpvtdNJ9t+SkYTCdCCYu7whmIBEPKnDQX6iJY5zXi6FfxQZ4gOzRli
+         AbnfV/oIAKMoNYyFl40hXfbICyAh3ekIE7jWXep+lOGRQkPR3pPH2/OcBzqVE4WEHGNb
+         t+Lw==
+X-Forwarded-Encrypted: i=1; AJvYcCXErg5GaicQp3qDrEMvR7CvhcvQZtv3tLuHcEjP1sLZo1hANUbKOMeNeF+Usu29GI0sLBqNJIw0EPOU@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFULN+jxumVtg2XIyzjkgMyUIzmQp5PTaXD6rIdSueaDj7MvKO
+	7pnCW8YEVbbQ9sLTnf3WxekBQhJOMc/X+FUGpZM/ZjoUVPJiSe6IVn5PdeZH7w==
+X-Gm-Gg: ASbGncvXD+/L5/Ytl+vhHQuwceh9H0NL+YpVcrWyC+i9sgs2TMIbHAiVKX7I613fV9r
+	spRPm19zRhKexHqMsh7p9eJrRT1YtR0unlzevPtRu7qKrVALCbuyCQSv2Obe6qGjv5s60D7aVEr
+	OtmDTNgvKfX7TQj3ghN3qtkFf3RzdSwsrcmvBUfOxw/NZXZrQiyG4MuLfFUU1xG7Bt7vNuS9CYr
+	RBJ9QV/0/JwLKPUuzbBz6mINR2+MO1KLRnYuNVFXlRx+9o2Qvp5UAxJs+qwCwDCQ4KioNOYjGPk
+	w+XaXSBs6Y2fzf0tz1zEzPsRX/M6UKH6plbgywDY8xvERLEE+LWBW2l9W/YxZ4OBK9di17R+gU3
+	Vu+hJ6lFO2YIdHqgn/Xk7nJVnNuXgncgLYvEKXA==
+X-Google-Smtp-Source: AGHT+IHFs68AZZz0zAG5AIayraRDywgGlGWjDo3QxMusR1i+ctcGkK+kv7pAFk360y80o2YcGXtRRw==
+X-Received: by 2002:a17:907:3c85:b0:ae3:6744:3677 with SMTP id a640c23a62f3a-ae3fbd0b99amr239581166b.32.1751632770048;
+        Fri, 04 Jul 2025 05:39:30 -0700 (PDT)
+Received: from masalkhi.. (ip-078-042-182-222.um17.pools.vodafone-ip.de. [78.42.182.222])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae3f6b43264sm166648066b.141.2025.07.04.05.39.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Jul 2025 05:39:29 -0700 (PDT)
+From: Abd-Alrhman Masalkhi <abd.masalkhi@gmail.com>
+To: linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Cc: arnd@arndb.de,
+	gregkh@linuxfoundation.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	luoyifan@cmss.chinamobile.com,
+	abd.masalkhi@gmail.com
+Subject: [PATCH v5 0/3] Add support for STMicroelectronics M24LR EEPROM/NFC chips
+Date: Fri,  4 Jul 2025 12:39:11 +0000
+Message-ID: <20250704123914.11216-1-abd.masalkhi@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250702-rfc_miscdev-v3-4-d8925de7893d@oss.qualcomm.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Zijun,
+This patch series adds support for the STMicroelectronics M24LR series
+RFID/NFC EEPROM devices. These chips expose two I2C addresses: the primary
+one provides access to system control and configuration registers, while
+the secondary address is used for EEPROM access.
 
-kernel test robot noticed the following build warnings:
+The driver implements both functionalities:
+ - A sysfs-based interface for the control and system parameter registers.
+ - EEPROM access via the nvmem subsystem using a secondary I2C dummy
+   client.
 
-[auto build test WARNING on 626e89412dfb88766d90d842af4d9ec432d8526f]
+Tested on: M24LR04E-R using Yocto on Raspberry Pi 4
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Zijun-Hu/char-misc-Move-drivers-misc-misc_minor_kunit-c-to-drivers-char/20250702-202131
-base:   626e89412dfb88766d90d842af4d9ec432d8526f
-patch link:    https://lore.kernel.org/r/20250702-rfc_miscdev-v3-4-d8925de7893d%40oss.qualcomm.com
-patch subject: [PATCH v3 4/8] char: misc: Add a reentry test case about dynamic minor request
-config: powerpc64-randconfig-002-20250704 (https://download.01.org/0day-ci/archive/20250704/202507042031.3gfceqb3-lkp@intel.com/config)
-compiler: powerpc64-linux-gcc (GCC) 10.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250704/202507042031.3gfceqb3-lkp@intel.com/reproduce)
+Signed-off-by: Abd-Alrhman Masalkhi <abd.masalkhi@gmail.com>
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507042031.3gfceqb3-lkp@intel.com/
+Abd-Alrhman Masalkhi (3):
+  dt-bindings: eeprom: Add ST M24LR support
+  eeprom: add driver for ST M24LR series RFID/NFC EEPROM chips
+  ABI: sysfs: add documentation for ST M24LR EEPROM and control
+    interface
 
-All warnings (new ones prefixed by >>, old ones prefixed by <<):
-
-WARNING: modpost: vmlinux: section mismatch in reference: hash_debug_pagealloc_alloc_slots+0x98 (section: .text) -> memblock_alloc_try_nid (section: .init.text)
-WARNING: modpost: vmlinux: section mismatch in reference: test_cases+0x60 (section: .data) -> miscdev_test_invalid_input (section: .init.text)
->> WARNING: modpost: vmlinux: section mismatch in reference: test_cases+0x180 (section: .data) -> miscdev_test_dynamic_reentry (section: .init.text)
+ .../ABI/testing/sysfs-bus-i2c-devices-m24lr   | 100 +++
+ .../devicetree/bindings/eeprom/st,m24lr.yaml  |  52 ++
+ drivers/misc/eeprom/Kconfig                   |  18 +
+ drivers/misc/eeprom/Makefile                  |   1 +
+ drivers/misc/eeprom/m24lr.c                   | 653 ++++++++++++++++++
+ 5 files changed, 824 insertions(+)
+ create mode 100644 Documentation/ABI/testing/sysfs-bus-i2c-devices-m24lr
+ create mode 100644 Documentation/devicetree/bindings/eeprom/st,m24lr.yaml
+ create mode 100644 drivers/misc/eeprom/m24lr.c
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.43.0
+
 
