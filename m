@@ -1,131 +1,186 @@
-Return-Path: <linux-kernel+bounces-717852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-717857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 035C5AF99FB
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 19:44:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B176AF9A02
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 19:46:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93E0F4A83A4
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 17:44:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B736A1CA539D
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 17:46:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26C1A2DEA6E;
-	Fri,  4 Jul 2025 17:44:32 +0000 (UTC)
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D2342D837F;
+	Fri,  4 Jul 2025 17:44:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="SP2f9R3I"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 259CC2D8383
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 17:44:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE8AA2F8C4A
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 17:44:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751651071; cv=none; b=P7WXDrZisk0TPz+DtNyPrut6sllsgjZtChet+n4MZiOYgYGvCdRLtZvjNpfZsgq0RBEI6cQ8u56Vdy0W3bA5DeJoo9vXeaQc1ZlqsMoh1c2q31oclbqovB2kKFI/5FzFuKPdZriMXZgAt/dYOKCUjq8z/gGPbHRGUvOB0tTTJ34=
+	t=1751651082; cv=none; b=p6tDzD0fuqGezcO2XUbxp3moRKP8Ea3XS3Zy8OkIC6s+9us4URWiZTAVbKONJslaAjHnkC5xz/2/S3JHXNJ7oCQ9EKaU1tpZEnmAZjv4/JBmvvjx8HhI63QIbqVSL8j8iiZpVXbOiLLXvHIuyjxUf92rQ1j5WLEXNZqQtoSUMmE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751651071; c=relaxed/simple;
-	bh=+XClgXfK5539UpfpVJ0FXUXY6s0Q6GsORz9dYVHVAt0=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=RpqISjN2Wdq4r2DaIV6gbLRRdF6NdO11MzdMHK/+zqISgOvLDRiDfvXqHZilR1uhcUX6fFaDcNRzUVm2idoJcRnPa/XqZOQbvZnKYxhMD2oLhub9/LUNKqTYG8Y1dzNGQS8kubMS7mbR4XmLwQWKJ19Qx8XdffLRlOaYkF6ZRUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3df2d0b7c50so12844745ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Jul 2025 10:44:29 -0700 (PDT)
+	s=arc-20240116; t=1751651082; c=relaxed/simple;
+	bh=DBt0DNfX83od0+B5jUw14M1HaALXNhk15W6Z6/5Vg8Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oL5HwadE1OtbrvLqJQBEE2qNbeMnpAih8pO4Ctc+6ANnJK+4bd4lLhk7zNu2qW9ZGmDupT58gqotPkgzfOjIRo8jA2W/zxT1LcM6EQdxNutKpTQPh9bFDQgJXt9C3nM18vEHZhh75cZPSBFDkC+HJt/WP4ltOAnhnuutjEkneUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=SP2f9R3I; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 564Diq6e028664
+	for <linux-kernel@vger.kernel.org>; Fri, 4 Jul 2025 17:44:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=Ln9K1aZ7occVpcksNgIQY1Xb6OInD1HFG8L
+	+w5gb4lw=; b=SP2f9R3IZG/DoJI+RUU3QJ3PvGBOAV/A/nJIWA4cAVoqnofiY+u
+	9nLvPSYvT9mXGDGLbSsmVNLcfRY+dmHhFo/Op33lTZvWiNocrDCtbuXOGyl1WZXu
+	ePiyu1opSy8b9shUreWgzOWL4jfN0LsDnxP3GU+mAD/wp0HyWo7RmMPaY88xeUwz
+	hftUSUYLo5kbNSyqX73Rl7PJkYStocg2dwg7JxsXtm3AjAyS3KMTXYfjKk2X0XfM
+	0UnGE0o9LalVoL1WFqxq44xIP2GvWuqrNuVY16T9NV3qFZrdgPzbDHA0J4qInbAa
+	OU9vXg67MbIFIzzyloLHFOF5uuZQx2BIS0Q==
+Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com [209.85.215.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47j7bw4t7s-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 04 Jul 2025 17:44:39 +0000 (GMT)
+Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-b362d101243so784312a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Jul 2025 10:44:39 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751651069; x=1752255869;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6reEAjZbC0EFOta4hsE/f6/3JFK1KtUWT6rEBCyeXtM=;
-        b=sHzF058uEAqBUSckPyd6tyVoHuOCEZLakvUDGOLS8t8lof529vdB5ehf87muBRzXO1
-         0sgEkTovsD/meXyngU04kcYktuY7+1GuAsPBWjn7wZgQKIa2rTioREoP/4Q6J0yx4a3i
-         6IJjonO52gY0CJIMighC/jngjcBS/YQzQFNiw1AJr1cJSmKaWq4KwW3Smax/+75FxIri
-         5BfoFxTymyFeiRJQw2bjxBn2YLs3a8TeXjaUpha2trv5SgGHTBiEZNDrDtUiNRz9A5zS
-         ACsH7ArrtGRzM1HZqTUaxx7eEpUHQ9WYCxBS78Fnla65ubTWP/VxZ+n95B8+of1nnjDC
-         y/Mg==
-X-Forwarded-Encrypted: i=1; AJvYcCWY4Lv9tiSI0CzZLqgZhCZZOKsW4pFkLi+7MW0ZfMWCzCk2BBiPAvs6uBHtwH04dlztIoApYP5DHZMnYdI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzi1zIyRl/YRm7u7E34IcIJaiInd9yAbZhiVXQETCvRtsCcMPcL
-	IzVSTHfUoWjcdXptAmgimBQLaiApKkMv+rAkuUykNaKDWyirZaM808LP3WlBhZWxfE2AXVCvS8d
-	ASMLvh8RPO8CqRkZ8AO5J2zUVGFLB5HU0jLdU17v3mMq89T4PNeDNEVXj0cU=
-X-Google-Smtp-Source: AGHT+IGxnkF+jK9kcfbeYVAYPmNFQGpp0HxbAR/UMkQSYP3VAXKmHVJI7VOExp4skgFZmmGT0iL2Btc8ZkLaAqmbYCZ6V27EfVd8
+        d=1e100.net; s=20230601; t=1751651079; x=1752255879;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Ln9K1aZ7occVpcksNgIQY1Xb6OInD1HFG8L+w5gb4lw=;
+        b=OHPDKC0lQdVBHndzxmTVdfqW0Z2Mbc48x+IEuq4pcdlbu+04Qq+beZtn5uvuAcQVhA
+         i7Eg2CdIFYtoVlsGV7KKC0QPQ9aw2ebwsIMxizduthdOElSA5ZjGrAcZZz9F53BOyodM
+         tO8rUHlHIYHWGJ7FNJMJ68WCpZwFuuWO6vppcXY1NwNj0LaRsG48OEZtA7uAB9mOlv2M
+         tBwUlx3yWbXZfbvFuPT8wXuh2Y+PWmIQRITDplH/yqqXAAoAgBSYp1pIFLILO/YRDyJp
+         IqFRzkN6U1a20/QLbXioGLRptIraEMohMxBwW1rOOWaUovTqGRB2iJ+PxnYxqRfiRUYS
+         hq7g==
+X-Forwarded-Encrypted: i=1; AJvYcCVDZgWk2SpkdeTixQLv0z682cilCszeKBMbAb+hZk41MVhIUtKgf7YSc01aWqXJ+47T9YqzVaFNn+PhZpk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYOc6DIWl/qy11tsNOq2lRns0CXfn72nClNKYkFusnIDwLTw0K
+	kn3cySsjINlNhQORqFEqseEgP2vaarO9TQF6TGU/bF1fmreUNYEeH+VgEtipOGn33W2F7Tirlgj
+	sJXM/76z+JETEddEC5NruYDIWoBzOP0sLNSRQCgQI3EOq9XUN1JJ4yND2Njlzc7hgvh4=
+X-Gm-Gg: ASbGncufFtWOIXrwpoOFJoZysAeN5TvqhFriRIX26GI4u4J8wKhXr0UwciFVKQZ8Lut
+	I/xhFjU+wHObTPE554VXJ3+oOS3WGrFvcKDAyqeKL2ImQ0MG9iKhBHg6kb2lTyo35jtqti6X4/L
+	0ihww87TrlMJYZYTZLaSWSjJRKEAW+VEyMdG0qlSBkBt4jcETAHFf6jpx4T4NouyzwVrlzoMvcE
+	acOCVJqb2BidQ+Wri4yVFyD1uyXsvxBIuycBusgBfCPZs3e1UcZnPYH5O7RuBUXw833EQHh3xHO
+	r6R3jO7SadU0JUB6wjZFQpIUZcGWLyq4mA==
+X-Received: by 2002:a05:6300:2414:b0:220:82c7:309c with SMTP id adf61e73a8af0-22608fb3070mr3625366637.7.1751651078744;
+        Fri, 04 Jul 2025 10:44:38 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH8Jl4EFpWHf5IwmZK4Vr8g/FAU4AIrSYjd7kWPFYX4w68L3NQh92fr5lAW9BcjJu7BoJ7+og==
+X-Received: by 2002:a05:6300:2414:b0:220:82c7:309c with SMTP id adf61e73a8af0-22608fb3070mr3625338637.7.1751651078312;
+        Fri, 04 Jul 2025 10:44:38 -0700 (PDT)
+Received: from localhost ([2601:1c0:5000:d5c:5b3e:de60:4fda:e7b1])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74ce4180dd8sm2731263b3a.100.2025.07.04.10.44.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Jul 2025 10:44:38 -0700 (PDT)
+From: Rob Clark <robin.clark@oss.qualcomm.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+        Rob Clark <robin.clark@oss.qualcomm.com>,
+        Helen Koike <helen.fornazier@gmail.com>,
+        Vignesh Raman <vignesh.raman@collabora.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] drm/ci: Uprev igt
+Date: Fri,  4 Jul 2025 10:44:32 -0700
+Message-ID: <20250704174433.693630-1-robin.clark@oss.qualcomm.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2591:b0:3df:3222:278e with SMTP id
- e9e14a558f8ab-3e136ea4bf6mr30724205ab.1.1751651069283; Fri, 04 Jul 2025
- 10:44:29 -0700 (PDT)
-Date: Fri, 04 Jul 2025 10:44:29 -0700
-In-Reply-To: <682602fd.a00a0220.a2f23.01d0.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <686812fd.a00a0220.c7b3.0020.GAE@google.com>
-Subject: Re: [syzbot] [wireless?] WARNING in mac80211_hwsim_sta_rc_update
-From: syzbot <syzbot+c0472dd80bb8f668625f@syzkaller.appspotmail.com>
-To: johannes@sipsolutions.net, linux-kernel@vger.kernel.org, 
-	linux-wireless@vger.kernel.org, netdev@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: O3SdHpeh-6NnLAcbzTklabGRNpjHWvRW
+X-Authority-Analysis: v=2.4 cv=RJCzH5i+ c=1 sm=1 tr=0 ts=68681307 cx=c_pps
+ a=oF/VQ+ItUULfLr/lQ2/icg==:117 a=xqWC_Br6kY4A:10 a=Wb1JkmetP80A:10
+ a=e5mUnYsNAAAA:8 a=EUspDBNiAAAA:8 a=8iDXaJqXtVj3SukbGHsA:9
+ a=3WC7DwWrALyhR5TkjVHa:22 a=Vxmtnl_E_bksehYqCbjh:22
+X-Proofpoint-ORIG-GUID: O3SdHpeh-6NnLAcbzTklabGRNpjHWvRW
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA0MDEzNCBTYWx0ZWRfXxAQGv4eQFGN2
+ aj+6dTLOxdgB3frTaWgNGlDM0dVvWw7nZJtinESuFkN0rmvAFyXqfO/ll/rNhigsBenNZXK995S
+ l/VIz1X1ybiyPsi/U9r9wOC2dh4qOivXPPBJSiLpowhJBBI93ct7njKMz3ZjlBzea/xvivS2IpI
+ ozJKZfPodL9PtlihfaPrX478mtkB73WMLO2I9wvzesg0Ld2YDp9SVJ6S8to0x8DFe1mermVJgJX
+ OEVx4wyaqQIdr6LZgZVWWrIbg0S7AmrXYa2ADlY5qOItavEty+Au4CLq3H3k8glfKRRCYLF+C8e
+ rXEDLRJd6GFMxCLfIfA8Fhk1C6gKW/+WOzOKvKWPl5xgCPYeOVvZ5bcUBuJO6ORAQWKcHmKpgsZ
+ HEZEhNCyYSS10vLsi65doUjlu2AyFBjO8Qy4TRPnWPuk5D+XArgB45Cl+3hFgoWfenHJMUHn
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-04_06,2025-07-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 impostorscore=0 priorityscore=1501 mlxlogscore=999 adultscore=0
+ malwarescore=0 clxscore=1015 lowpriorityscore=0 mlxscore=0 phishscore=0
+ bulkscore=0 suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507040134
 
-syzbot has found a reproducer for the following issue on:
+Pull in igt updates that are a dependency for VM_BIND, and will reduce
+msm_mapping flakes.
 
-HEAD commit:    4c06e63b9203 Merge tag 'for-6.16-rc4-tag' of git://git.ker..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=16f94582580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b29b1a0d7330d4a8
-dashboard link: https://syzkaller.appspot.com/bug?extid=c0472dd80bb8f668625f
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13f66c8c580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12497ebc580000
+Skip msm_mapping@memptrs on sc7180 (the test should be checking for
+preemption support, and skipping if it is not supported).
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-4c06e63b.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/ff61efc838cb/vmlinux-4c06e63b.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/dea44d0d14bb/bzImage-4c06e63b.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+c0472dd80bb8f668625f@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-intf 08:02:11:00:00:01 [link=0]: bad STA 00:00:00:ff:ff:ff bandwidth 20 MHz (0) > channel config 10 MHz (7)
-WARNING: CPU: 0 PID: 176 at drivers/net/wireless/virtual/mac80211_hwsim.c:2653 mac80211_hwsim_sta_rc_update+0x6f5/0x860 drivers/net/wireless/virtual/mac80211_hwsim.c:2650
-Modules linked in:
-CPU: 0 UID: 0 PID: 176 Comm: kworker/u4:4 Not tainted 6.16.0-rc4-syzkaller-00123-g4c06e63b9203 #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Workqueue: events_unbound cfg80211_wiphy_work
-RIP: 0010:mac80211_hwsim_sta_rc_update+0x6f5/0x860 drivers/net/wireless/virtual/mac80211_hwsim.c:2650
-Code: 71 17 00 00 48 c7 c7 c0 ae 2d 8c 48 8b 74 24 28 89 ea 48 8b 4c 24 10 41 89 d8 45 89 f9 41 56 50 e8 d0 df 8f fa 48 83 c4 10 90 <0f> 0b 90 90 e9 0c ff ff ff e8 2d 37 cc fa 90 0f 0b 90 e9 fe fe ff
-RSP: 0018:ffffc90001a07768 EFLAGS: 00010282
-RAX: 2b7aa56dabf85f00 RBX: 0000000000000014 RCX: ffff888000b5a440
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000002
-RBP: 0000000000000000 R08: ffff88801fc24293 R09: 1ffff11003f84852
-R10: dffffc0000000000 R11: ffffed1003f84853 R12: 0000000000000000
-R13: dffffc0000000000 R14: 0000000000000007 R15: 0000000000000000
-FS:  0000000000000000(0000) GS:ffff88808d21c000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffec31d80b8 CR3: 000000001216d000 CR4: 0000000000352ef0
-Call Trace:
- <TASK>
- mac80211_hwsim_sta_add+0xa3/0x310 drivers/net/wireless/virtual/mac80211_hwsim.c:2670
- drv_sta_add net/mac80211/driver-ops.h:466 [inline]
- drv_sta_state+0x8be/0x1840 net/mac80211/driver-ops.c:155
- sta_info_insert_drv_state net/mac80211/sta_info.c:775 [inline]
- sta_info_insert_finish net/mac80211/sta_info.c:883 [inline]
- sta_info_insert_rcu+0xd32/0x1940 net/mac80211/sta_info.c:960
- ieee80211_ocb_finish_sta net/mac80211/ocb.c:102 [inline]
- ieee80211_ocb_work+0x31f/0x580 net/mac80211/ocb.c:136
- cfg80211_wiphy_work+0x2df/0x460 net/wireless/core.c:435
- process_one_work kernel/workqueue.c:3238 [inline]
- process_scheduled_works+0xade/0x17b0 kernel/workqueue.c:3321
- worker_thread+0x8a0/0xda0 kernel/workqueue.c:3402
- kthread+0x70e/0x8a0 kernel/kthread.c:464
- ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-
-
+Closes: https://gitlab.freedesktop.org/drm/msm/-/issues/77
+Signed-off-by: Rob Clark <robin.clark@oss.qualcomm.com>
 ---
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+ drivers/gpu/drm/ci/gitlab-ci.yml                             | 2 +-
+ .../drm/ci/xfails/msm-sc7180-trogdor-kingoftown-skips.txt    | 5 +++++
+ .../ci/xfails/msm-sc7180-trogdor-lazor-limozeen-skips.txt    | 5 +++++
+ 3 files changed, 11 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/ci/gitlab-ci.yml b/drivers/gpu/drm/ci/gitlab-ci.yml
+index 6f9b7beddcb3..d502d146b177 100644
+--- a/drivers/gpu/drm/ci/gitlab-ci.yml
++++ b/drivers/gpu/drm/ci/gitlab-ci.yml
+@@ -5,7 +5,7 @@ variables:
+   UPSTREAM_REPO: https://gitlab.freedesktop.org/drm/kernel.git
+   TARGET_BRANCH: drm-next
+ 
+-  IGT_VERSION: 04bedb9238586b81d4d4ca62b02e584f6cfc77af
++  IGT_VERSION: 129d5b10baaadea1d6cd6377341c4cb42e7ee6fd
+ 
+   DEQP_RUNNER_GIT_URL: https://gitlab.freedesktop.org/mesa/deqp-runner.git
+   DEQP_RUNNER_GIT_TAG: v0.20.0
+diff --git a/drivers/gpu/drm/ci/xfails/msm-sc7180-trogdor-kingoftown-skips.txt b/drivers/gpu/drm/ci/xfails/msm-sc7180-trogdor-kingoftown-skips.txt
+index d4b8ba3a54a9..154b047787b2 100644
+--- a/drivers/gpu/drm/ci/xfails/msm-sc7180-trogdor-kingoftown-skips.txt
++++ b/drivers/gpu/drm/ci/xfails/msm-sc7180-trogdor-kingoftown-skips.txt
+@@ -32,3 +32,8 @@ kms_display_modes@mst-extended-mode-negative
+ 
+ # It causes other tests to fail, so skip it.
+ kms_invalid_mode@overflow-vrefresh
++
++# sc7180 does not have APRIV, so memptrs is not protected.
++# (Preemption is not supported on devices that do not have
++# APRIV, so this is ok)
++msm/msm_mapping@memptrs
+diff --git a/drivers/gpu/drm/ci/xfails/msm-sc7180-trogdor-lazor-limozeen-skips.txt b/drivers/gpu/drm/ci/xfails/msm-sc7180-trogdor-lazor-limozeen-skips.txt
+index 022db559cc7d..a9bb3e1ad75c 100644
+--- a/drivers/gpu/drm/ci/xfails/msm-sc7180-trogdor-lazor-limozeen-skips.txt
++++ b/drivers/gpu/drm/ci/xfails/msm-sc7180-trogdor-lazor-limozeen-skips.txt
+@@ -23,3 +23,8 @@ core_hotunplug.*
+ # https://gitlab.freedesktop.org/drm/igt-gpu-tools/-/issues/162
+ kms_display_modes@extended-mode-basic
+ kms_display_modes@mst-extended-mode-negative
++
++# sc7180 does not have APRIV, so memptrs is not protected.
++# (Preemption is not supported on devices that do not have
++# APRIV, so this is ok)
++msm/msm_mapping@memptrs
+-- 
+2.50.0
+
 
