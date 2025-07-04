@@ -1,146 +1,250 @@
-Return-Path: <linux-kernel+bounces-716885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEC7AAF8C12
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 10:40:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C512FAF8BEE
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 10:37:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1FB4EB450BE
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 08:35:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6B0A18920CA
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 08:36:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29BE32BD01E;
-	Fri,  4 Jul 2025 08:26:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA01929E0F8;
+	Fri,  4 Jul 2025 08:26:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OURYlIL9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dkbcZZFG"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 875F82BCF5C;
-	Fri,  4 Jul 2025 08:26:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30A1129E0E7;
+	Fri,  4 Jul 2025 08:26:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751617611; cv=none; b=SmLePWH0pemUktAF12h3ym6HiuqfO73fiYMo1y9RvmGwHquUz8Wg2Afs1kMbS6a8EHqKK/buKo/Wj2kPr6qpcoWFW9xZT1ipIUETslAMn9MNONMYD8S2Wg9Uzr/4Lj06CUUWyfIqaRfcem3+8yl5GHcCfKJk+hY3EKpsyEB/FzI=
+	t=1751617601; cv=none; b=KMEi1npZQOIuMg9ET33zDkeyFK2x8Bw7fc06/yjtILItEHGy/RJHnGe+lBse+IXYHcgCTFgNc2mUdvOwxZ0gRDd+HFUvdSBMbPMDZ1y4Mw2G+DpATsoYifRzsOjm+7jj632LP7W3X9vJGBIWfcqN6sUiJFuVRzUaCPhVCDlrNRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751617611; c=relaxed/simple;
-	bh=9aUMtw1stPGYE0BaxMp9AP1glAqCxc7OYI5tFwmPTWM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ku+4vQeg5YzV3LsyDdIJW8fm2Nflkwnu6SxZMvrB2tzsbwktJvXgFi3Lez/E/4eRVs8oCFEdM8qCYt7kKfBrDNBYYtyXfto8ufgzUiJOUUOPt67OppzPUA3QL+2kFCGBLp2F7DpEHYwYDGZPnubvotD/WInafByDULU6Y9ai7zY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OURYlIL9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10040C4CEE3;
-	Fri,  4 Jul 2025 08:26:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751617611;
-	bh=9aUMtw1stPGYE0BaxMp9AP1glAqCxc7OYI5tFwmPTWM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=OURYlIL9GNPi9qFVjsgDHlwjFmr6LHHVsCiKuy5ZYDQsFJPg2dMynssNMz83nBETj
-	 Tose/50ZAVPROjr1NTxsdJSWzaSQEYtGu8IFIkhYcX+CeuuL2QuDq5G/yiFL6NvBFS
-	 CX14xZ4sUIR6HkxC/faKmbiY66EgtBHBEq+NOkMpNXzhELY5v+qPGlmXGX38zwhy8w
-	 OBDzRuelFrzpou8NOB4K+GNxkJEF2ZWGcc5cHo3ee05mLTTuql6bD7QvOVSUa8+avG
-	 PjsjoeLI3yuN+Pg1Dl224l+8Y43O8JH3gG3sH967QRpEFBr8U0sGIVMZeqEJsvKfs3
-	 EgXa19qTjoNzQ==
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5561ab55c4dso806833e87.2;
-        Fri, 04 Jul 2025 01:26:50 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV8Cu/Q6ms/I1ZfKyJ8OqC2EBh8boVluminm9LH5hX0UhAiTWbeh2xEVTJfk9Z+HBuxWGiyF3P8YXe7FShE@vger.kernel.org, AJvYcCXVZeLrXOquzfhm7Bh0U4J1hA2Hx2nQAAtGAXa0tjKJ6nX4qx0DNjmHqWgtxzal0FjA2SOw2h9ylaw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWTxowI84HYmWnpPCboSbHJ3mCOwrLbRrskCJdFZ1Rfhud8ncV
-	/1nESQH3qwmmpUfWfQwiKIce5asnruQ72ySFfrZpTFFqWk+2FpmcKLLkt/rAh4NLVDi5P6txaeR
-	TeLbsJzcAPzl0PqqlEg2WkPuSsztKy7o=
-X-Google-Smtp-Source: AGHT+IGpFw16pMJCMz67SWNFA6IMUVC0qphVdY6vm9ia3sgNYWHEFtvFRfb+0rVLwo2jlzGrmYMI9I0Ytmf3CMf87z8=
-X-Received: by 2002:a05:6512:3690:b0:553:3770:c91d with SMTP id
- 2adb3069b0e04-556d160f06bmr486751e87.4.1751617609446; Fri, 04 Jul 2025
- 01:26:49 -0700 (PDT)
+	s=arc-20240116; t=1751617601; c=relaxed/simple;
+	bh=tpOePvuS/rtwf9Yos7ZmASayusy4h1VU45IOLhIRZas=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qyeu2WfoXSf0o9PU8DTipdqATjS10d4dPEclyBcGOnCt1pOG5AdAwZaNJUCTTDvksqNkiGzRu+fFSle6XJVM2Qy58MFbClyN4iOw3g7i831KMiNAGREV6SSf6gMy5OlOxvLL9H15JC9WF0Rgho9GZ1isIOz2TUy4jZbTTI6O2Ig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dkbcZZFG; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751617599; x=1783153599;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=tpOePvuS/rtwf9Yos7ZmASayusy4h1VU45IOLhIRZas=;
+  b=dkbcZZFG8XQ7tTTi/b4k62B4pO0q3uZbZ77yjr18hBC5hfv0yek+iRhQ
+   tTvSLS0h28jlLAqgWhlOagW/nwy6dHxIcKcwv+A6lTvXnVwjxBOTJ72Da
+   x6rLHdDQcEnuiYpdNQecnw5mRQ0QOkqd+NQ6IKUORCjmXQA/LSLxCwcPA
+   jFXy9saLrtUOSzqFq5ppaPHnX2Vo00U+RzEfIJ9Vc4LaPV/4C7S7fHf5+
+   y1O3OokQwTZADHxl4DHSkR96acxhrYa3iQqkaELcNoxHodp2wzAfucmB0
+   fNbx0u0W3jCx2XFC1IuqXPRiOeOqrY8trL/5jqrsCueEbnIdolUPJcbLk
+   g==;
+X-CSE-ConnectionGUID: tK9jsCqITneVxK81aurkVQ==
+X-CSE-MsgGUID: YiKVLRY9SsWKNSl4RCOdZg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11483"; a="54093170"
+X-IronPort-AV: E=Sophos;i="6.16,286,1744095600"; 
+   d="scan'208";a="54093170"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 01:26:38 -0700
+X-CSE-ConnectionGUID: g0dS5P9+TvepElwO4Gc/3g==
+X-CSE-MsgGUID: F5Oze5hYRyq3rkPDGSClnw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,286,1744095600"; 
+   d="scan'208";a="191761696"
+Received: from mjarzebo-mobl1.ger.corp.intel.com (HELO [10.245.246.92]) ([10.245.246.92])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 01:26:35 -0700
+Message-ID: <36559b7c-d77e-4cb0-b8da-e4877bb81943@linux.intel.com>
+Date: Fri, 4 Jul 2025 11:26:47 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250624-arm_kasan-v1-1-21e80eab3d70@debian.org> <aGaxZHLnDQc_kSur@arm.com>
-In-Reply-To: <aGaxZHLnDQc_kSur@arm.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Fri, 4 Jul 2025 10:26:37 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXFadibWLnhFv3cOk-7Ah2MmPz8RqDuQjGr-3gmq+hEnMg@mail.gmail.com>
-X-Gm-Features: Ac12FXxELlmJOgclmPetSiXcBqm7bPSktVfuSqSd0ARv_5mIl32jvgAoBlJoUvA
-Message-ID: <CAMj1kXFadibWLnhFv3cOk-7Ah2MmPz8RqDuQjGr-3gmq+hEnMg@mail.gmail.com>
-Subject: Re: [PATCH] arm64: efi: Fix KASAN false positive for EFI runtime stack
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Breno Leitao <leitao@debian.org>, Will Deacon <will@kernel.org>, usamaarif642@gmail.com, 
-	rmikey@meta.com, andreyknvl@gmail.com, kasan-dev@googlegroups.com, 
-	linux-efi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 74/80] ASoC: SOF: Remove redundant
+ pm_runtime_mark_last_busy() calls
+To: Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Liam Girdwood <lgirdwood@gmail.com>,
+ Bard Liao <yung-chuan.liao@linux.intel.com>,
+ Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+ Daniel Baluta <daniel.baluta@nxp.com>,
+ Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+ Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
+ Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>
+Cc: sound-open-firmware@alsa-project.org, linux-sound@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250704075225.3212486-1-sakari.ailus@linux.intel.com>
+ <20250704075459.3222908-1-sakari.ailus@linux.intel.com>
+Content-Language: en-US
+From: =?UTF-8?Q?P=C3=A9ter_Ujfalusi?= <peter.ujfalusi@linux.intel.com>
+In-Reply-To: <20250704075459.3222908-1-sakari.ailus@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, 3 Jul 2025 at 18:35, Catalin Marinas <catalin.marinas@arm.com> wrote:
->
-> On Tue, Jun 24, 2025 at 05:55:53AM -0700, Breno Leitao wrote:
-> > KASAN reports invalid accesses during arch_stack_walk() for EFI runtime
-> > services due to vmalloc tagging[1]. The EFI runtime stack must be allocated
-> > with KASAN tags reset to avoid false positives.
-> >
-> > This patch uses arch_alloc_vmap_stack() instead of __vmalloc_node() for
-> > EFI stack allocation, which internally calls kasan_reset_tag()
-> >
-> > The changes ensure EFI runtime stacks are properly sanitized for KASAN
-> > while maintaining functional consistency.
-> >
-> > Link: https://lore.kernel.org/all/aFVVEgD0236LdrL6@gmail.com/ [1]
-> > Suggested-by: Andrey Konovalov <andreyknvl@gmail.com>
-> > Suggested-by: Catalin Marinas <catalin.marinas@arm.com>
-> > Signed-off-by: Breno Leitao <leitao@debian.org>
-> > ---
-> >  arch/arm64/kernel/efi.c | 9 ++++++---
-> >  1 file changed, 6 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/arch/arm64/kernel/efi.c b/arch/arm64/kernel/efi.c
-> > index 3857fd7ee8d46..d2af881a48290 100644
-> > --- a/arch/arm64/kernel/efi.c
-> > +++ b/arch/arm64/kernel/efi.c
-> > @@ -15,6 +15,7 @@
-> >
-> >  #include <asm/efi.h>
-> >  #include <asm/stacktrace.h>
-> > +#include <asm/vmap_stack.h>
-> >
-> >  static bool region_is_misaligned(const efi_memory_desc_t *md)
-> >  {
-> > @@ -214,9 +215,11 @@ static int __init arm64_efi_rt_init(void)
-> >       if (!efi_enabled(EFI_RUNTIME_SERVICES))
-> >               return 0;
-> >
-> > -     p = __vmalloc_node(THREAD_SIZE, THREAD_ALIGN, GFP_KERNEL,
-> > -                        NUMA_NO_NODE, &&l);
-> > -l:   if (!p) {
-> > +     if (!IS_ENABLED(CONFIG_VMAP_STACK))
-> > +             return -ENOMEM;
->
-> Mark Rutland pointed out in a private chat that this should probably
-> clear the EFI_RUNTIME_SERVICES flag as well.
->
 
-If VMAP_STACK is a hard requirement, should we make CONFIG_EFI depend
-on it for arm64?
 
-> > +
-> > +     p = arch_alloc_vmap_stack(THREAD_SIZE, NUMA_NO_NODE);
-> > +     if (!p) {
-> >               pr_warn("Failed to allocate EFI runtime stack\n");
-> >               clear_bit(EFI_RUNTIME_SERVICES, &efi.flags);
-> >               return -ENOMEM;
-> >
->
-> With that:
->
-> Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
->
-> (but let's see if Ard has a different opinion on the approach)
->
+On 04/07/2025 10:54, Sakari Ailus wrote:
+> pm_runtime_put_autosuspend(), pm_runtime_put_sync_autosuspend(),
+> pm_runtime_autosuspend() and pm_request_autosuspend() now include a call
+> to pm_runtime_mark_last_busy(). Remove the now-reduntant explicit call to
+> pm_runtime_mark_last_busy().
 
-I think this is fine - the stack just needs to be disjoint from the
-ordinary kernel mode task stack so that buggy firmware is less likely
-to corrupt it, and so that we can recover from an unexpected
-synchronous exception more reliably.
+Acked-by: Peter Ujfalusi <peter.ujfalusi@linux.intel.com>
+> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> ---
+> The cover letter of the set can be found here
+> <URL:https://lore.kernel.org/linux-pm/20250704075225.3212486-1-sakari.ailus@linux.intel.com>.
+> 
+> In brief, this patch depends on PM runtime patches adding marking the last
+> busy timestamp in autosuspend related functions. The patches are here, on
+> rc2:
+> 
+>         git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
+>                 pm-runtime-6.17-rc1
+> 
+>  sound/soc/sof/control.c                        | 1 -
+>  sound/soc/sof/debug.c                          | 1 -
+>  sound/soc/sof/ipc3-dtrace.c                    | 1 -
+>  sound/soc/sof/ipc4-loader.c                    | 1 -
+>  sound/soc/sof/pcm.c                            | 1 -
+>  sound/soc/sof/sof-client-ipc-flood-test.c      | 1 -
+>  sound/soc/sof/sof-client-ipc-kernel-injector.c | 1 -
+>  sound/soc/sof/sof-client-ipc-msg-injector.c    | 1 -
+>  sound/soc/sof/sof-client-probes.c              | 3 ---
+>  9 files changed, 11 deletions(-)
+> 
+> diff --git a/sound/soc/sof/control.c b/sound/soc/sof/control.c
+> index 463d418e7200..a3fd1d523c09 100644
+> --- a/sound/soc/sof/control.c
+> +++ b/sound/soc/sof/control.c
+> @@ -196,7 +196,6 @@ int snd_sof_bytes_ext_volatile_get(struct snd_kcontrol *kcontrol, unsigned int _
+>  	if (tplg_ops && tplg_ops->control && tplg_ops->control->bytes_ext_volatile_get)
+>  		ret = tplg_ops->control->bytes_ext_volatile_get(scontrol, binary_data, size);
+>  
+> -	pm_runtime_mark_last_busy(scomp->dev);
+>  	err = pm_runtime_put_autosuspend(scomp->dev);
+>  	if (err < 0)
+>  		dev_err_ratelimited(scomp->dev, "%s: failed to idle %d\n", __func__, err);
+> diff --git a/sound/soc/sof/debug.c b/sound/soc/sof/debug.c
+> index d0ffa1d71145..b24943a65c89 100644
+> --- a/sound/soc/sof/debug.c
+> +++ b/sound/soc/sof/debug.c
+> @@ -217,7 +217,6 @@ static int memory_info_update(struct snd_sof_dev *sdev, char *buf, size_t buff_s
+>  	}
+>  
+>  	ret = sof_ipc_tx_message(sdev->ipc, &msg, msg.size, reply, SOF_IPC_MSG_MAX_SIZE);
+> -	pm_runtime_mark_last_busy(sdev->dev);
+>  	pm_runtime_put_autosuspend(sdev->dev);
+>  	if (ret < 0 || reply->rhdr.error < 0) {
+>  		ret = min(ret, reply->rhdr.error);
+> diff --git a/sound/soc/sof/ipc3-dtrace.c b/sound/soc/sof/ipc3-dtrace.c
+> index 744a91a150bc..e5c8fec173c4 100644
+> --- a/sound/soc/sof/ipc3-dtrace.c
+> +++ b/sound/soc/sof/ipc3-dtrace.c
+> @@ -172,7 +172,6 @@ static int ipc3_trace_update_filter(struct snd_sof_dev *sdev, int num_elems,
+>  		goto error;
+>  	}
+>  	ret = sof_ipc_tx_message_no_reply(sdev->ipc, msg, msg->hdr.size);
+> -	pm_runtime_mark_last_busy(sdev->dev);
+>  	pm_runtime_put_autosuspend(sdev->dev);
+>  
+>  error:
+> diff --git a/sound/soc/sof/ipc4-loader.c b/sound/soc/sof/ipc4-loader.c
+> index ee61394e73d7..b0d293f62d1c 100644
+> --- a/sound/soc/sof/ipc4-loader.c
+> +++ b/sound/soc/sof/ipc4-loader.c
+> @@ -236,7 +236,6 @@ static int sof_ipc4_load_library(struct snd_sof_dev *sdev, unsigned long lib_id,
+>  
+>  	ret = ipc4_data->load_library(sdev, fw_lib, false);
+>  
+> -	pm_runtime_mark_last_busy(sdev->dev);
+>  	err = pm_runtime_put_autosuspend(sdev->dev);
+>  	if (err < 0)
+>  		dev_err_ratelimited(sdev->dev, "%s: pm_runtime idle failed: %d\n",
+> diff --git a/sound/soc/sof/pcm.c b/sound/soc/sof/pcm.c
+> index 090ea3a76892..fe43de1fe96c 100644
+> --- a/sound/soc/sof/pcm.c
+> +++ b/sound/soc/sof/pcm.c
+> @@ -712,7 +712,6 @@ static int sof_pcm_probe(struct snd_soc_component *component)
+>  			ret);
+>  
+>  pm_error:
+> -	pm_runtime_mark_last_busy(component->dev);
+>  	pm_runtime_put_autosuspend(component->dev);
+>  
+>  	return ret;
+> diff --git a/sound/soc/sof/sof-client-ipc-flood-test.c b/sound/soc/sof/sof-client-ipc-flood-test.c
+> index 11b6f7da2882..373f3a125372 100644
+> --- a/sound/soc/sof/sof-client-ipc-flood-test.c
+> +++ b/sound/soc/sof/sof-client-ipc-flood-test.c
+> @@ -223,7 +223,6 @@ static ssize_t sof_ipc_flood_dfs_write(struct file *file, const char __user *buf
+>  	ret = sof_debug_ipc_flood_test(cdev, flood_duration_test,
+>  				       ipc_duration_ms, ipc_count);
+>  
+> -	pm_runtime_mark_last_busy(dev);
+>  	err = pm_runtime_put_autosuspend(dev);
+>  	if (err < 0)
+>  		dev_err_ratelimited(dev, "debugfs write failed to idle %d\n", err);
+> diff --git a/sound/soc/sof/sof-client-ipc-kernel-injector.c b/sound/soc/sof/sof-client-ipc-kernel-injector.c
+> index 8b28c3dc920c..249bd2d6c8d2 100644
+> --- a/sound/soc/sof/sof-client-ipc-kernel-injector.c
+> +++ b/sound/soc/sof/sof-client-ipc-kernel-injector.c
+> @@ -65,7 +65,6 @@ static ssize_t sof_kernel_msg_inject_dfs_write(struct file *file, const char __u
+>  
+>  	sof_client_ipc_rx_message(cdev, hdr, priv->kernel_buffer);
+>  
+> -	pm_runtime_mark_last_busy(dev);
+>  	ret = pm_runtime_put_autosuspend(dev);
+>  	if (ret < 0)
+>  		dev_err_ratelimited(dev, "debugfs write failed to idle %d\n", ret);
+> diff --git a/sound/soc/sof/sof-client-ipc-msg-injector.c b/sound/soc/sof/sof-client-ipc-msg-injector.c
+> index ba7ca1c5027f..9c8a0fbfb8df 100644
+> --- a/sound/soc/sof/sof-client-ipc-msg-injector.c
+> +++ b/sound/soc/sof/sof-client-ipc-msg-injector.c
+> @@ -137,7 +137,6 @@ static int sof_msg_inject_send_message(struct sof_client_dev *cdev)
+>  	if (ret)
+>  		dev_err(dev, "IPC message send failed: %d\n", ret);
+>  
+> -	pm_runtime_mark_last_busy(dev);
+>  	err = pm_runtime_put_autosuspend(dev);
+>  	if (err < 0)
+>  		dev_err_ratelimited(dev, "debugfs write failed to idle %d\n", err);
+> diff --git a/sound/soc/sof/sof-client-probes.c b/sound/soc/sof/sof-client-probes.c
+> index aff9ce980429..663c0d3c314c 100644
+> --- a/sound/soc/sof/sof-client-probes.c
+> +++ b/sound/soc/sof/sof-client-probes.c
+> @@ -238,7 +238,6 @@ static ssize_t sof_probes_dfs_points_read(struct file *file, char __user *to,
+>  	kfree(desc);
+>  
+>  pm_error:
+> -	pm_runtime_mark_last_busy(dev);
+>  	err = pm_runtime_put_autosuspend(dev);
+>  	if (err < 0)
+>  		dev_err_ratelimited(dev, "debugfs read failed to idle %d\n", err);
+> @@ -289,7 +288,6 @@ sof_probes_dfs_points_write(struct file *file, const char __user *from,
+>  	if (!ret)
+>  		ret = count;
+>  
+> -	pm_runtime_mark_last_busy(dev);
+>  	err = pm_runtime_put_autosuspend(dev);
+>  	if (err < 0)
+>  		dev_err_ratelimited(dev, "debugfs write failed to idle %d\n", err);
+> @@ -337,7 +335,6 @@ sof_probes_dfs_points_remove_write(struct file *file, const char __user *from,
+>  	if (!ret)
+>  		ret = count;
+>  
+> -	pm_runtime_mark_last_busy(dev);
+>  	err = pm_runtime_put_autosuspend(dev);
+>  	if (err < 0)
+>  		dev_err_ratelimited(dev, "debugfs write failed to idle %d\n", err);
 
-In that sense, the old and the new code are equivalent, so no
-objections from me.
+-- 
+Péter
+
 
