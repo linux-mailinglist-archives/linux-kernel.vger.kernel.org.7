@@ -1,178 +1,174 @@
-Return-Path: <linux-kernel+bounces-717645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-717643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60D58AF96E2
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 17:36:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 575E1AF96DC
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 17:35:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B807D17B92F
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 15:36:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 04A2B7A2A45
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 15:33:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A805A2D6403;
-	Fri,  4 Jul 2025 15:35:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA7531DF265;
+	Fri,  4 Jul 2025 15:34:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NETME7G1"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="VDFc+xTh";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="QiQPeqke";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="VDFc+xTh";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="QiQPeqke"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53EED1E2614;
-	Fri,  4 Jul 2025 15:35:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA1AE33E1
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 15:34:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751643343; cv=none; b=tOEMs6arljKZPPQ+/TCHVgT637XqO/A9z233ubh3P7rA1sjKG3JkdvCGXVb8Clkz9tn9rrG97l8rulS1Q0KnMngW1Hcfwt3SlaAXjnKz/lFae6JXf59jdeOc7c7D8UwJBFWueoAth89PjEGvSgAmgZv3pxZMrJwb+KLmud9SBAM=
+	t=1751643290; cv=none; b=bKmPp6ZUrT52tthkaDKc44ziDLXox5rVGeooQfEVEhuHUVHqtnj5TgDOaTXOKGRnFmVgtwTQNHtC6/Mr+PzxVKRsPhyiQUAZU/+ibJ721peI+LMICCbMukA3Kq7CNm8MQErFoIkf7ZTt6NY7ehRriqiu3DZDs4X4Oj7veqgQDl8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751643343; c=relaxed/simple;
-	bh=9XNM1qLRpm7fiyDmLGrtrcj/3GIaT6hkKfkqd71D2aA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UoZrQijQiwVvOiwXO13eqADw/t5UckFJ8LkRd1A6qtbw18vdxH82olAwqOlYCiDhP13l1AyhnOp2fK0ZUbzsRPqgdoPG1EV0tc8R2bZFFhqea2DNsiyhaAxA/N2KA+gaINdVkzXfhBecDhmKVMSG4pdppmeCziwA/oIIVVT50OQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NETME7G1; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-453398e90e9so7052685e9.1;
-        Fri, 04 Jul 2025 08:35:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751643339; x=1752248139; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=kN+P++wgn6VZ7R5SIjGo6LxITIRZcUIj55TIgiJeZPQ=;
-        b=NETME7G1S2pSisRgv3NvVmxPSzKpnodkdZVbv9gJ/mN2Bt9lCiQ1O2M6dHs2lIHnn9
-         o7OWiPnlofwkMteDQZFm2KJ5otOh0eXigfMakv13jtQZ286SNOZHGYLOZMSRIBlT6985
-         DlXd3OtW6XK+k97QEfZR+RsoTWAG6heQ+oFzXoMoWYTNpT/sh63LEw8JCB/jruenXE6i
-         i6iqsWjcYb/m11wo/tksPJ3jQMWqv7HOdsOuEp/UEPFd7wYbeYTOl0dtmSuEy3Cww++v
-         2SD0dTn3dW7AO8lMJBGZjh1GpxIVBQ0ocfgkqooUAUgXXGgY25PwI/S0m22mZ8AAaRzp
-         XAOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751643339; x=1752248139;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kN+P++wgn6VZ7R5SIjGo6LxITIRZcUIj55TIgiJeZPQ=;
-        b=AMvLAOo6aFnBRKwFcfPYyCwRjLVKherUBIj7CkX5o+IcuJBFQfAR6BxSwBHi46LNnd
-         wR8XKLR6ZCMYAKwiNHkI6J+xOqm0EmgrwZzbI+Vjh8RQaU4o+IU+xWTC/0A4LxLfZ6sA
-         Ejc12Dh8q2bBwItijLLmJcMjjk/rXXtnkZWLKx1TMwYrtGDzxKTgLKhUX5lZHTqZeOpM
-         EXW5XufJZneQt8fI//8FPp0ohqBsm2AFqMluqXkJ436RNBDgqpU/RQddUnh4I8P1C1vc
-         RLzrQC270prfyh46aCM+icbu3FOUSyHnges8WUUQmmGtf6Snc+1puGfxIuSbSC9XHhiL
-         AtZw==
-X-Forwarded-Encrypted: i=1; AJvYcCU5HzdPX+jX9P+0FVetiwlUZfLFh8PJ+OA2bFpONGeoQd9S1sr5BHsEHOwyuuL3F7laf7n9TDAwwxy0cdlC5pI=@vger.kernel.org, AJvYcCWxpkFSRKfX1N3u+uCGIWVa9NIGajR/7YetUGym3EYYws1I/F/e3IF4Uvd3KpC8tvcL92a7DLtv7VM=@vger.kernel.org, AJvYcCXUG0rCs8B2v08NeX3ALzKgZKoDvmcEKWBxw27WN2CQ72nuZp3Ho11DBUQash1bYfheLUpXntMLHsyXPBdR@vger.kernel.org
-X-Gm-Message-State: AOJu0YxnEkazbWncANCSBbaWRY9wok5v0p1/WNdMfS5VoFw7rZqPxxKs
-	XhDPSC8ihGhev9dYB0OUxj0vwd0woGhhXt73VegXn5GsS4ohxUTL9adlWqJw9Pfbkn4=
-X-Gm-Gg: ASbGnctH8uO1oTB1tfzxXFlSqUnJJiQ9eabfY0sEe8k9rA9bCWxVO0j6/B+9rGrTaYe
-	+1OB+HBaoVyr6sOSDnhZSM+N7XZQfkVNhASXW/9dqAplvoa27MVwYAKZNrDDIrqR1iSM0g8EoVF
-	bSRo110Ag8XaJw5a7GMFcuqUQGtSfkXp1LdV9waKNKDhNeFSalOulXywWkZvplFTDpKfosqA8Sp
-	Uk+Xyj3w6bM7J/MvZWlxLh6t27XZSgRiKnx2iC8PmgeTwXsC5STy2mmgF/XJJs9m7s/f7XpIpea
-	LGSEaE7h+cAT603pA7SV7xoXcLjF9IfsRJ3OjWcIqLcNscp+TyMtVDqD4jAo/m3Tl2B3odYu0eR
-	41TooJ+OLLhRZL1jamGf5/EC0s3fq/e3n/FlL
-X-Google-Smtp-Source: AGHT+IEHIbq3wa0/hRtNzOKHvuH2gq3hNf1lEbKvJ0ODKMYcW/0PWbprq6rFKyYvjTZywbgsSFgcfg==
-X-Received: by 2002:a05:600c:35cc:b0:450:d3b9:4b96 with SMTP id 5b1f17b1804b1-454b76ad107mr19002375e9.13.1751643339074;
-        Fri, 04 Jul 2025 08:35:39 -0700 (PDT)
-Received: from igor-korotin-Precision-Tower-3620.airspan.com ([188.39.32.4])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454b188e84dsm28976375e9.38.2025.07.04.08.35.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Jul 2025 08:35:38 -0700 (PDT)
-Sender: Igor Korotin <igorkor.3vium@gmail.com>
-From: Igor Korotin <igor.korotin.linux@gmail.com>
-To: Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Asahi Lina <lina+kernel@asahilina.net>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Alex Hung <alex.hung@amd.com>,
-	Tamir Duberstein <tamird@gmail.com>,
-	Xiangfei Ding <dingxiangfei2009@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org,
-	linux-i2c@vger.kernel.org
-Subject: [PATCH v2 0/4] rust: i2c: Add basic I2C driver abstractions
-Date: Fri,  4 Jul 2025 16:33:32 +0100
-Message-ID: <20250704153332.1193214-1-igor.korotin.linux@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1751643290; c=relaxed/simple;
+	bh=/LlZgCqthjO7O63Qv4TJtsYHUc96sqZ52sgaD+MNqAI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=K2Gjf8LDRd/ciRXtEIaC8wDihf1AHy8VKLZ9VVCmmO25pqWNjAhHO9gBkJFm4TCPKEKk02TynRwxExxaMp2qWx5CzWwGqVRttMut/1aa8QbphlBTe+yxWmNaZ/JRAupRLX5no4hMrrBhFG8zJH9U17p6zI7RvY6D+nbyHxHZxhI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=VDFc+xTh; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=QiQPeqke; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=VDFc+xTh; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=QiQPeqke; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 9446C1F394;
+	Fri,  4 Jul 2025 15:34:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1751643286; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SIKVu0G3IqL/5nXUeA5vN9eSOQZPoQd570/KkcbAJ4g=;
+	b=VDFc+xThyj/w9oOlp62W1Fc+/oYlUFtEEihGbjvqxX/ZRAZ92fccCVfOUCfd3MnQXoY9l9
+	kDGoPS/Q/BLxy/sKYaswZbEUeK44CjQaAXajp/9He8MSgTDFpgbJZ1rIzHvCx11DreW21M
+	CfTek6niAl4iv4hMUwa3utAQoFDkzV0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1751643286;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SIKVu0G3IqL/5nXUeA5vN9eSOQZPoQd570/KkcbAJ4g=;
+	b=QiQPeqkeovOdAE+fYvTOqNGMKtQ9gJSWR5KsMb8wbbYCohePkgZTBFDzHO7LvqfQpS3zQa
+	JoGvMY1XtMWDRyDw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1751643286; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SIKVu0G3IqL/5nXUeA5vN9eSOQZPoQd570/KkcbAJ4g=;
+	b=VDFc+xThyj/w9oOlp62W1Fc+/oYlUFtEEihGbjvqxX/ZRAZ92fccCVfOUCfd3MnQXoY9l9
+	kDGoPS/Q/BLxy/sKYaswZbEUeK44CjQaAXajp/9He8MSgTDFpgbJZ1rIzHvCx11DreW21M
+	CfTek6niAl4iv4hMUwa3utAQoFDkzV0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1751643286;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SIKVu0G3IqL/5nXUeA5vN9eSOQZPoQd570/KkcbAJ4g=;
+	b=QiQPeqkeovOdAE+fYvTOqNGMKtQ9gJSWR5KsMb8wbbYCohePkgZTBFDzHO7LvqfQpS3zQa
+	JoGvMY1XtMWDRyDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1D56E13757;
+	Fri,  4 Jul 2025 15:34:46 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id SYKTBJb0Z2i6DAAAD6G6ig
+	(envelope-from <jdelvare@suse.de>); Fri, 04 Jul 2025 15:34:46 +0000
+Date: Fri, 4 Jul 2025 17:34:43 +0200
+From: Jean Delvare <jdelvare@suse.de>
+To: Andrew Jeffery <andrew@codeconstruct.com.au>
+Cc: linux-aspeed@lists.ozlabs.org, Joel Stanley <joel@jms.id.au>, Henry
+ Martin <bsdhenrymartin@gmail.com>, Patrick Rudolph
+ <patrick.rudolph@9elements.com>, Andrew Geissler <geissonator@yahoo.com>,
+ Ninad Palsule <ninad@linux.ibm.com>, Patrick Venture <venture@google.com>,
+ Robert Lippert <roblip@gmail.com>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 06/10] soc: aspeed: lpc-snoop: Rearrange channel
+ paths
+Message-ID: <20250704173443.3436f535@endymion>
+In-Reply-To: <20250616-aspeed-lpc-snoop-fixes-v2-6-3cdd59c934d3@codeconstruct.com.au>
+References: <20250616-aspeed-lpc-snoop-fixes-v2-0-3cdd59c934d3@codeconstruct.com.au>
+	<20250616-aspeed-lpc-snoop-fixes-v2-6-3cdd59c934d3@codeconstruct.com.au>
+Organization: SUSE Linux
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.43; x86_64-suse-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_TLS_ALL(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	HAS_ORG_HEADER(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com,yahoo.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[lists.ozlabs.org,jms.id.au,gmail.com,9elements.com,yahoo.com,linux.ibm.com,google.com,lists.infradead.org,vger.kernel.org];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[codeconstruct.com.au:email,imap1.dmz-prg2.suse.org:helo,suse.de:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -3.80
 
-This patch series lays the groundwork for writing Linux I2C drivers in Rust by:
+On Mon, 16 Jun 2025 22:43:43 +0930, Andrew Jeffery wrote:
+> Order assignments such that tests for conditions not involving resource
+> acquisition are ordered before those testing acquired resources, and
+> order managed resource acquisition before unmanaged where possible. This
+> way we minimise the amount of manual cleanup required.
+> 
+> In the process, improve readability of the code by introducing a channel
+> pointer that takes the place of the repeated object lookups.
+> 
+> Acked-by: Jean Delvare <jdelvare@suse.de>
+> Signed-off-by: Andrew Jeffery <andrew@codeconstruct.com.au>
+> ---
+>  drivers/soc/aspeed/aspeed-lpc-snoop.c | 51 ++++++++++++++++++++---------------
+>  1 file changed, 29 insertions(+), 22 deletions(-)
+> (...)
+> @@ -238,6 +240,7 @@ static int aspeed_lpc_enable_snoop(struct aspeed_lpc_snoop *lpc_snoop,
+>  		goto err_misc_deregister;
+>  	}
+>  
+> +	/* Enable LPC snoop channel at requested port */
+>  	regmap_update_bits(lpc_snoop->regmap, HICR5, hicr5_en, hicr5_en);
+>  	regmap_update_bits(lpc_snoop->regmap, SNPWADR, snpwadr_mask,
+>  			   lpc_port << snpwadr_shift);
 
- 1. Core abstractions 
-    Introduce `i2c::Device`, `i2c::Driver` and `i2c::Adapter` built on the
-    existing `struct i2c_client` and `struct i2c_driver`, with safe Rust wrappers
-    around probe, transfer, and teardown logic.
+This duplicates a comment which is already present in the driver a few
+lines before.
 
- 2. Manual device creation  
-    Provide an API to register an I2C device at runtime from Rust using
-    `I2cBoardInfo`, including automatic cleanup when the driver unloads.
+This duplicated comment gets cleaned up later in patch 10/10 (soc:
+aspeed: lpc-snoop: Lift channel config to const structs).
 
- 3. Sample driver (legacy table, OF & ACPI)  
-    Add `rust_driver_i2c`, a sample that binds to an I2C client via:
-      - legacy I2C-ID table,
-      - Open Firmware (device-tree) compatible strings, or
-      - ACPI IDs.
-
- 4. Sample for manual registration  
-    Add `rust_device_i2c`, a sample demonstrating how to create an I²C device
-    on a given `I2cAdapterRef`, and how to unregister it automatically.
-
-Together, these four patches:
-
-- Establish the essential Rust traits and types for I2C drivers.
-- Enable driver binding via legacy ID table, device-tree (OF), or ACPI
-- Enable manual device creation at runtime.
-- Ship two samples showing typical usage: one for firmware- or table-based binding,
-  and one for manual registration.
-
-Igor Korotin (4):
-  rust: i2c: add basic I2C device and driver abstractions
-  rust: i2c: add manual I2C device creation abstractions
-  samples: rust: add Rust I2C sample driver
-  samples: rust: add Rust manual I2C device creation sample
-
-Changelog
----------
-v2:
- - Merged separated ACPI support patches since ACPI-table support is 
-   merged into driver-core-next.
- - Added I2cAdapterRef and I2cBoardInfo abstractions 
- - Added DeviceState generic parameter which is used for `i2c::Device`
-   as a sign if the device is created manually
- - Added `DeviceOwned` abstraction which is a safe reference to a 
-   manually created `i2c::Device<Ctx, state::Owned>`. 
- - Added Rust manual I2C device creation sample
- - Link to v1: https://lore.kernel.org/rust-for-linux/20250626174623.904917-1-igor.korotin.linux@gmail.com/
-
- MAINTAINERS                     |   4 +
- rust/bindings/bindings_helper.h |   1 +
- rust/helpers/helpers.c          |   1 +
- rust/helpers/i2c.c              |  15 +
- rust/kernel/i2c.rs              | 565 ++++++++++++++++++++++++++++++++
- rust/kernel/lib.rs              |   2 +
- samples/rust/Kconfig            |  24 ++
- samples/rust/Makefile           |   2 +
- samples/rust/rust_device_i2c.rs |  50 +++
- samples/rust/rust_driver_i2c.rs |  69 ++++
- 10 files changed, 733 insertions(+)
- create mode 100644 rust/helpers/i2c.c
- create mode 100644 rust/kernel/i2c.rs
- create mode 100644 samples/rust/rust_device_i2c.rs
- create mode 100644 samples/rust/rust_driver_i2c.rs
-
-
-base-commit: b75e1f0619bd707e027812e262af3fbce445e71a
 -- 
-2.43.0
-
+Jean Delvare
+SUSE L3 Support
 
