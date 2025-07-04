@@ -1,103 +1,160 @@
-Return-Path: <linux-kernel+bounces-717270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-717271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98022AF921C
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 14:04:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBF39AF9220
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 14:05:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4017D3BEDA5
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 12:04:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 538F51CA32E8
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 12:05:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B44802F2C69;
-	Fri,  4 Jul 2025 12:02:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 533F32D63F8;
+	Fri,  4 Jul 2025 12:04:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Am+oe5Xu"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="F2Ngxkwh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1333A2F2705;
-	Fri,  4 Jul 2025 12:02:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A023D23A58E;
+	Fri,  4 Jul 2025 12:04:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751630550; cv=none; b=TSVskY+koun++9f1cg4Pg7r98BbvPuyvbtoTn5arxqMJ+I5qVTV5meY2VyXtw/bMBizCYlbHNGND4NbQH/Pj4gzL3Rg7yblZ292jxNyuugQPpAVB4VpvWpUC7aOrYw8/eXYA/lFFjflHgCKIEKdDyWkDr7OYzGJoEZ7blX/8fLI=
+	t=1751630642; cv=none; b=Zt+qRHbM9Z9S66yjQHrd+SR1kybGESvImzYOj7b3G6taUCj3jeH+8h29GP40CUFZzLl1pNOA3908W1dQYM0pM0yMKnnizi3/XXnBIV+IG9lvUSnDX5TRhAwPxX7/jYqzGBS7XqExg/7toZAxrMUP/vKnaKtx9o6xYYiSAEsMEgc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751630550; c=relaxed/simple;
-	bh=U1w4n/gNczm3CXe+WuY5bn1+RGT4rey/pqulyOcbhbU=;
+	s=arc-20240116; t=1751630642; c=relaxed/simple;
+	bh=2fFJW2MdIKke6VHt2ftCWlbjagNoAQsgGW3Hbfd42F4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hgoapSiYDyRsKFYtBLnwV/IpjyJj07A2g+47bANdCqb3Pz7x3zhhIVzesEMLzT9ZZycjkTzejraxXhwC8Mmw8VZUaM6YwoOS21xGq3rOE07v6xhd4F3idz2nEotPdnDei04tV4M4LgqhJY6KR+fZa2Jg23PUwPk6+c05K3fYd3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Am+oe5Xu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3F13C19422;
-	Fri,  4 Jul 2025 12:02:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751630549;
-	bh=U1w4n/gNczm3CXe+WuY5bn1+RGT4rey/pqulyOcbhbU=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=WDFrWXms85X7m6qgnS+kKabZCermUzh1rU96ONjDofAi9jun82HuAH42ltwNxOPwnA4Ggf77UJxVH5eXM86oskNvc+XYYNANCA52jTCw8ZcXCu3jwQjJbMyfwXI6zCke0JSwRq8QFEim2SCcXziy+kfK79s9gyQDn2MN+qm0Kvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=F2Ngxkwh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B324FC4CEE3;
+	Fri,  4 Jul 2025 12:04:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1751630642;
+	bh=2fFJW2MdIKke6VHt2ftCWlbjagNoAQsgGW3Hbfd42F4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Am+oe5XudarJ8J6rflUIS3GkIcr+vL37yVMCwUuWWTvh88tHdR9EzvvcCKJsmLc8J
-	 zAl9yZXWy0XwmWB1NDrguJ21Ub5Yn54JrdnuQFvn58WldVwr9glHwwDjeE+1l9fQMj
-	 d8UISBXtGp204qUY0/xAE5qDS1oz/dSvriUeO61WpDZi4UOHNXuklT5SyveEdMG2fe
-	 d2uB+svcag+bG9NOYWNVL3K5K25OM+FU1cxtvk7muBSZJgSPKVix8jQXCwV5zew1ST
-	 D1O80+PiYAXfj5QBy+9YbBVcjaA2/IoQQuz6j067aaERphVMxzufC4SIK24SlXFBUL
-	 l5PRZ3u1ELbCQ==
-Date: Fri, 4 Jul 2025 13:02:24 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
-Cc: Willy Tarreau <w@1wt.eu>, Christian Brauner <brauner@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Shuah Khan <shuah@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v3 0/4] kselftest/arm64: Add coverage for the interaction
- of vfork() and GCS
-Message-ID: <33d51f33-3597-4a5b-b54e-0292f12aac69@sirena.org.uk>
-References: <20250703-arm64-gcs-vfork-exit-v3-0-1e9a9d2ddbbe@kernel.org>
- <f438fc60-e602-4301-a7dd-bee43c020720@t-8ch.de>
+	b=F2NgxkwhwCoApmyPrHaNolYSP9oBlhxiahnM76MY9EzvL7XKjyH7tDQZHkK32Y485
+	 gVLSf0oX62PTrcjfpNpY5aA8XoPyZkn8USpceZ26AaTEqMlhhXU+WkeBkJVwbsa4Q7
+	 tdEJMJtHQYzePRxSqk4D5JoHZrWsHNLs/HLQoPhs=
+Date: Fri, 4 Jul 2025 14:03:59 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Srikanth Chary Chennoju <srikanth.chary-chennoju@amd.com>
+Cc: Thinh.Nguyen@synopsys.com, m.grzeschik@pengutronix.de,
+	Chris.Wulff@biamp.com, tiwai@suse.de, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, punnaiah.choudary.kalluri@amd.com
+Subject: Re: [PATCH 3/3] usb: gadget: f_sourcesink: Addition of SSP endpoint
+ companion for Isochronous transfers
+Message-ID: <2025070432-mustard-mongoose-1716@gregkh>
+References: <20250704114013.3396795-1-srikanth.chary-chennoju@amd.com>
+ <20250704114013.3396795-4-srikanth.chary-chennoju@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="oP7U7slU7zFgf7pc"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <f438fc60-e602-4301-a7dd-bee43c020720@t-8ch.de>
-X-Cookie: VMS must die!
+In-Reply-To: <20250704114013.3396795-4-srikanth.chary-chennoju@amd.com>
+
+On Fri, Jul 04, 2025 at 05:10:13PM +0530, Srikanth Chary Chennoju wrote:
+> This patch is created to support super speed plus endpoint for
+> Isochronous transfers. Now super speed endpoint companion is
+> accompanied by super speed plus endpoint companion.
+> With this change we could see the Isoc IN and OUT performance
+> reaching to ~749MB/sec which is 96K per uframe.
+> The performance numbers are confirmed through Lecroy trace.
+
+You do have a full 72 characters wide, you can use it :)
+
+> 
+> Signed-off-by: Srikanth Chary Chennoju <srikanth.chary-chennoju@amd.com>
+> ---
+>  drivers/usb/gadget/function/f_sourcesink.c | 23 ++++++++++++++++++++--
+>  1 file changed, 21 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/usb/gadget/function/f_sourcesink.c b/drivers/usb/gadget/function/f_sourcesink.c
+> index 84f3b3bc7669..6499e95e0e9c 100644
+> --- a/drivers/usb/gadget/function/f_sourcesink.c
+> +++ b/drivers/usb/gadget/function/f_sourcesink.c
+> @@ -232,6 +232,12 @@ static struct usb_ss_ep_comp_descriptor ss_iso_source_comp_desc = {
+>  	.wBytesPerInterval =	cpu_to_le16(1024),
+>  };
+>  
+> +static struct usb_ssp_isoc_ep_comp_descriptor ssp_iso_source_comp_desc = {
+> +	.bLength =		USB_DT_SSP_ISOC_EP_COMP_SIZE,
+> +	.bDescriptorType =	USB_DT_SSP_ISOC_ENDPOINT_COMP,
+> +	.dwBytesPerInterval =	cpu_to_le32(1024),
+> +};
+> +
+>  static struct usb_endpoint_descriptor ss_iso_sink_desc = {
+>  	.bLength =		USB_DT_ENDPOINT_SIZE,
+>  	.bDescriptorType =	USB_DT_ENDPOINT,
+> @@ -250,6 +256,12 @@ static struct usb_ss_ep_comp_descriptor ss_iso_sink_comp_desc = {
+>  	.wBytesPerInterval =	cpu_to_le16(1024),
+>  };
+>  
+> +static struct usb_ssp_isoc_ep_comp_descriptor ssp_iso_sink_comp_desc = {
+> +	.bLength =		USB_DT_SSP_ISOC_EP_COMP_SIZE,
+> +	.bDescriptorType =	USB_DT_SSP_ISOC_ENDPOINT_COMP,
+> +	.dwBytesPerInterval =	cpu_to_le32(1024),
+> +};
+> +
+>  static struct usb_descriptor_header *ss_source_sink_descs[] = {
+>  	(struct usb_descriptor_header *) &source_sink_intf_alt0,
+>  	(struct usb_descriptor_header *) &ss_source_desc,
+> @@ -264,8 +276,10 @@ static struct usb_descriptor_header *ss_source_sink_descs[] = {
+>  	(struct usb_descriptor_header *) &ss_sink_comp_desc,
+>  	(struct usb_descriptor_header *) &ss_iso_source_desc,
+>  	(struct usb_descriptor_header *) &ss_iso_source_comp_desc,
+> +	(struct usb_descriptor_header *)&ssp_iso_source_comp_desc,
+>  	(struct usb_descriptor_header *) &ss_iso_sink_desc,
+>  	(struct usb_descriptor_header *) &ss_iso_sink_comp_desc,
+> +	(struct usb_descriptor_header *)&ssp_iso_sink_comp_desc,
+
+Odd spacing :(
+
+Please follow the format that was previously there.
 
 
---oP7U7slU7zFgf7pc
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+>  	NULL,
+>  };
+>  
+> @@ -428,7 +442,7 @@ sourcesink_bind(struct usb_configuration *c, struct usb_function *f)
+>  	 */
+>  	ss_iso_source_desc.wMaxPacketSize = ss->isoc_maxpacket;
+>  	ss_iso_source_desc.bInterval = ss->isoc_interval;
+> -	ss_iso_source_comp_desc.bmAttributes = ss->isoc_mult;
+> +	ss_iso_source_comp_desc.bmAttributes = 0x80 | ss->isoc_mult;
 
-On Fri, Jul 04, 2025 at 01:27:28PM +0200, Thomas Wei=DFschuh wrote:
+What is 0x80 for?  Is that a #define somewhere?
 
-> FYI nolibc now has a proper prctl() implementation you might want to use.
+>  	ss_iso_source_comp_desc.bMaxBurst = ss->isoc_maxburst;
+>  	ss_iso_source_comp_desc.wBytesPerInterval = ss->isoc_maxpacket *
+>  		(ss->isoc_mult + 1) * (ss->isoc_maxburst + 1);
+> @@ -437,12 +451,17 @@ sourcesink_bind(struct usb_configuration *c, struct usb_function *f)
+>  
+>  	ss_iso_sink_desc.wMaxPacketSize = ss->isoc_maxpacket;
+>  	ss_iso_sink_desc.bInterval = ss->isoc_interval;
+> -	ss_iso_sink_comp_desc.bmAttributes = ss->isoc_mult;
+> +	ss_iso_sink_comp_desc.bmAttributes = 0x80 | ss->isoc_mult;
 
-That's open coded because we absolutely cannot tolerate the prctl() to
-enable GCS being anything other than inlined, returning from an actual
-function call would crash.  Probably for nolibc that'd mostly work out
-but it seems better to be very clear about the inlining.
+Same here.
 
-> Also your vfork() selftest uncovered a bug in the brandnew SuperH support.
+>  	ss_iso_sink_comp_desc.bMaxBurst = ss->isoc_maxburst;
+>  	ss_iso_sink_comp_desc.wBytesPerInterval = ss->isoc_maxpacket *
+>  		(ss->isoc_mult + 1) * (ss->isoc_maxburst + 1);
+>  	ss_iso_sink_desc.bEndpointAddress = fs_iso_sink_desc.bEndpointAddress;
+>  
+> +	ssp_iso_source_comp_desc.dwBytesPerInterval = ss->isoc_maxpacket *
+> +		(ss->isoc_mult + 1) * (ss->isoc_maxburst + 1) * 2;
+> +	ssp_iso_sink_comp_desc.dwBytesPerInterval = ss->isoc_maxpacket *
+> +		(ss->isoc_mult + 1) * (ss->isoc_maxburst + 1) * 2;
 
-Ah, doing good work already!
+Why * 2?
 
---oP7U7slU7zFgf7pc
-Content-Type: application/pgp-signature; name="signature.asc"
+thanks,
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmhnwtAACgkQJNaLcl1U
-h9AJ/Qf9Era5xFOINBfLAUYT6xEchOrgAvL27i4SBKII/qTPPYq/fwUg80tdJhHp
-69FDLh6r06bTjM/BBoZJy5vg1+Ay3TY0U3Z6PxPi+aJ1rbvjgnon/Us4ArL93iR/
-lUSCNMWsDl6jUUHEEnCaAojywpRsVJlYedQg1pCty+CJ9vU9kod6CfqCNoN2AVM6
-kYEan/gefBnhVMs/dxXaz39vTTSlLzJnwPUiYq2Gp6SErq5QuoTX2X18yIfTOrhj
-p/vXn5K6VkDP93EeHOkBZ0c8gF6b79p9mVrKoRgPtDO8ZFmpefITt93MCLkq54Pk
-KykUBHtIF6WqlFzbkAk03BJRFevcWQ==
-=mjkI
------END PGP SIGNATURE-----
-
---oP7U7slU7zFgf7pc--
+greg k-h
 
