@@ -1,99 +1,210 @@
-Return-Path: <linux-kernel+bounces-717221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-717223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09A10AF918E
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 13:28:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D1D2AF9193
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 13:29:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1B121CA4CBF
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 11:28:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A9F57B94FE
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 11:28:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 425812C3256;
-	Fri,  4 Jul 2025 11:28:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C70BD2C3256;
+	Fri,  4 Jul 2025 11:29:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="kQh1xmeM";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ixbMam1Z"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GG3Q0ABX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D879E1F94A;
-	Fri,  4 Jul 2025 11:28:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2431F2C15AE
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 11:29:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751628508; cv=none; b=oio1Gd53PUPx1pIgjdNLqnEnnVGzpSFHyq48LD/Ne3MQOqtHwl76aybGpHgdjhv9cnjVxUxOz2vCRrKxFNR8g8LhkD5Nzp3mSogRs+9KAxJGStpH4owWJls7Lw2lQclQ+EW6mPF/fVC0FNiob9olgDgZer9Wls2Ra8t4cw1pjjo=
+	t=1751628573; cv=none; b=m/iUDRiNn8e8xoOTkT+xq1bOHw+cgegQ2JW0uUS2UMrLjZ7sNxLD+XeQ8pmSu7uV92ReTnoBoyJzu/6uPnVI6jgrovkZPnRIcbBw/slLUX2l5yMQzadlb2SZfzQXJkTo5Nm9FaEgsA7wzl6VJor6hERMYJnVuYxS61smaR8Kh5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751628508; c=relaxed/simple;
-	bh=UnmwrU3QJv4GZMxWgvZ9CpARRSyCpjfVPQ0/mJuafNU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=qVTw7L8aa8l7xtwfjLsNKxsW+nRIlv+m3Dyw1FgDylT5ENZ0f27ScAOVsqUCcW9h9Q9HYR2WvTJ/T9CaDYoxKaru0Up0x0v4ntbYSMXAASm7LcwF5k4xUEWC2weYnkggrMjKcWqfiIN0y/GDiBCzL8LgYqzNwoakKzxr0n36J6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=kQh1xmeM; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ixbMam1Z; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: John Ogness <john.ogness@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1751628504;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=I0LURxOcxuqwAQQqO4WfSPEKfoNEYt9GKdhYl2Q/biE=;
-	b=kQh1xmeMp2qdFaP4M6OOXYXTdL0pbpi+auZzOKS5nS2dc4cDyGkizNRhelF0nC8SLgVAd/
-	BfX4yITZhlpSrGQBqF6WysDFPsiId6OZAVeNOLZU1xJhfC32bRaTFtWLio3VH0b1cVFRKy
-	h/xPUbZ6M0oacwr2FNmkdxSNfsGF/am1ZIge0cgA9WhP70wghLJa8lF0SQpxGKtJrNKLTh
-	8ZWD9gUQbgWRj3WmfICHCPI2WrMqPpdI3AYtZEkui9KkASAELExHkmn5Ej7nhIInmCA32K
-	2gY5eNoZuY5WN+b/Ya3BwLlxRMUG69o+2C1SVYHRS1qOFD/qCncaU2eD02i+XQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1751628504;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=I0LURxOcxuqwAQQqO4WfSPEKfoNEYt9GKdhYl2Q/biE=;
-	b=ixbMam1Z8xOq1NWaBjeqiYelhvbQuwPpRiEvZ7MRWR511SFpzNfgbyBS93dJ6e5SIoubFT
-	7xV1LY6/4GmZwABA==
-To: Petr Mladek <pmladek@suse.com>, Thomas =?utf-8?Q?Wei=C3=9Fschuh?=
- <thomas.weissschuh@linutronix.de>, Dan Carpenter
- <dan.carpenter@linaro.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Sergey Senozhatsky
- <senozhatsky@chromium.org>, Kees Cook <kees@kernel.org>, "Gustavo A . R .
- Silva" <gustavoars@kernel.org>, David Gow <davidgow@google.com>, Arnd
- Bergmann <arnd@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, Petr Mladek
- <pmladek@suse.com>
-Subject: Re: [PATCH 1/3] printk: ringbuffer: Explain why the KUnit test
- ignores failed writes
-In-Reply-To: <20250702095157.110916-2-pmladek@suse.com>
-References: <20250702095157.110916-1-pmladek@suse.com>
- <20250702095157.110916-2-pmladek@suse.com>
-Date: Fri, 04 Jul 2025 13:34:23 +0206
-Message-ID: <844ivskxew.fsf@jogness.linutronix.de>
+	s=arc-20240116; t=1751628573; c=relaxed/simple;
+	bh=wkqeMXZEQ5ECj9G9B9l2X5NQZSXsSf67kPT7AmE3Mdg=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=USvWlMvuJNcjDuW/O0qR7Ff7zWFbmS5qwAEwRGWwUE1TCZ16a3qWE8igS1XW3SvQK1oLlKH41cyxJK5m+MhMI2WDn5OXNBzw3X0EuXHkFy2/dBsp99soXGttnOuQIYlvhY+jEFT4mQlPKfqjbmgjPOgl0oO+x5bZxWhJqzZxa5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GG3Q0ABX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D2FBC4CEE3;
+	Fri,  4 Jul 2025 11:29:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751628572;
+	bh=wkqeMXZEQ5ECj9G9B9l2X5NQZSXsSf67kPT7AmE3Mdg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=GG3Q0ABXeBVqa4KyN1SY5TzCv0cljIyZx9Cr6vMgnym8azal9qBO8mpPM4Zeo+vXI
+	 qcnbPLah1DcXS04Axqit7c7GZVpWfWXBgy6b723ysMlgPnabbbPsFZxoT/64rZ002r
+	 +MBCiutIpv027HCkn3SnbEvEyweCIYO2GGRNp37ZBBUdYJCztXbejVIaHYtW+oNird
+	 8/oHxxZHiOXuDigOLm8fHqnDQONeIE5SqVJ2DFNzsFLswL9ohprhocMy6JkAxn+Zdl
+	 7je9ncz9DXlzCNxfszkOjRn3l6tnPkEbQzFeXlZcKfkWgw4vVA0+7WFUel8hSUgSLO
+	 jr5p/zbja9ZSw==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1uXebi-00CfVV-C1;
+	Fri, 04 Jul 2025 12:29:30 +0100
+Date: Fri, 04 Jul 2025 12:29:29 +0100
+Message-ID: <861pqwb3dy.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: adrianhoyin.ng@altera.com
+Cc: tglx@linutronix.de,
+	catalin.marinas@arm.com,
+	will@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/1] irqchip/gic-v3: Add Altera Agilex5 address bus width limitation workaround
+In-Reply-To: <6a44509ca0edaabc17e59d2e27fef1c782183456.1751618484.git.adrianhoyin.ng@altera.com>
+References: <cover.1751618484.git.adrianhoyin.ng@altera.com>
+	<6a44509ca0edaabc17e59d2e27fef1c782183456.1751618484.git.adrianhoyin.ng@altera.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: adrianhoyin.ng@altera.com, tglx@linutronix.de, catalin.marinas@arm.com, will@kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On 2025-07-02, Petr Mladek <pmladek@suse.com> wrote:
-> The KUnit test ignores prb_reserve() failures on purpose. It tries
-> to push the ringbuffer beyond limits.
+On Fri, 04 Jul 2025 09:49:50 +0100,
+adrianhoyin.ng@altera.com wrote:
+> 
+> From: Adrian Ng Ho Yin <adrianhoyin.ng@altera.com>
+> 
+> Agilex5 address bus width for the ACE-lite interface is only 32 bits.
+> Hence the GIC600 SoC integration for Agilex5 can only access the first
+> 32bit of the physical address space.
+> 
+> Add quirk to configure the gfp flag to allocate memory within 32bit
+> addressable range. As the 0x0201743b GIC600 ID is not specific to
+> Altera, of_machine_is_compatible() is added.
 >
-> Note that it is a know problem that writes might fail in this situation.
-> printk() tries to prevent this problem by:
->
->   + allocating big enough data buffer, see log_buf_add_cpu().
->
->   + allocating enough descriptors by using small enough average
->     record, see PRB_AVGBITS.
->
->   + storing the record with disabled interrupts, see vprintk_store().
->
-> Also the amount of printk() messages is always somehow bound in
-> practice. And they are serialized when they are printed from
-> many CPUs on purpose, for example, when printing backtraces.
->
-> Signed-off-by: Petr Mladek <pmladek@suse.com>
+> Signed-off-by: Adrian Ng Ho Yin <adrianhoyin.ng@altera.com>
+> ---
+>  arch/arm64/Kconfig               | 10 ++++++++++
+>  drivers/irqchip/irq-gic-v3-its.c | 18 ++++++++++++++++++
+>  2 files changed, 28 insertions(+)
+> 
+> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+> index 55fc331af337..2286b4d378e2 100644
+> --- a/arch/arm64/Kconfig
+> +++ b/arch/arm64/Kconfig
+> @@ -1348,6 +1348,16 @@ config SOCIONEXT_SYNQUACER_PREITS
+>  
+>  	  If unsure, say Y.
+>  
+> +config ALTERA_AGILEX5_ADDR_BUS_WIDTH_LIMITATION
+> +	bool "Altera Agilex: GIC600 can not access physical addresses higher than 4GB"
+> +	default y
+> +	help
+> +	  Agilex5 address bus width for the ACE-lite interface is only 32 bits. Hence
+> +	  the GIC600 SoC integration for Agilex5 can only access the first 32bit of the
+> +	  physical address space.
 
-Reviewed-by: John Ogness <john.ogness@linutronix.de>
+You're describing it as a feature. But really, it's a bug, and it
+deserves an erratum number.
+
+> +
+> +	  If unsure, say Y.
+> +
+>  endmenu # "ARM errata workarounds via the alternatives framework"
+>  
+>  choice
+> diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
+> index d54fa0638dc4..a2cf401568e7 100644
+> --- a/drivers/irqchip/irq-gic-v3-its.c
+> +++ b/drivers/irqchip/irq-gic-v3-its.c
+> @@ -4901,6 +4901,16 @@ static bool __maybe_unused its_enable_rk3568002(void *data)
+>  	return true;
+>  }
+>  
+> +static bool __maybe_unused its_enable_agilex5(void *data)
+> +{
+> +	if (!of_machine_is_compatible("intel,socfpga-agilex5"))
+> +		return false;
+> +
+> +	gfp_flags_quirk |= GFP_DMA32;
+> +
+> +	return true;
+> +}
+> +
+>  static const struct gic_quirk its_quirks[] = {
+>  #ifdef CONFIG_CAVIUM_ERRATUM_22375
+>  	{
+> @@ -4975,6 +4985,14 @@ static const struct gic_quirk its_quirks[] = {
+>  		.mask   = 0xffffffff,
+>  		.init   = its_enable_rk3568002,
+>  	},
+> +#endif
+> +#ifdef ALTERA_AGILEX5_ADDR_BUS_WIDTH_LIMITATION
+> +	{
+> +		.desc   = "ITS: Altera Agilex5 address bus width limitation",
+> +		.iidr   = 0x0201743b,
+> +		.mask   = 0xffffffff,
+> +		.init   = its_enable_agilex5,
+> +	},
+>  #endif
+>  	{
+>  	}
+
+Again, why do you need to reinvent the wheel? There is already *just
+above* an existing workaround that implements exactly the same thing.
+
+The whole thing could look like the hack below.
+
+	M.
+
+diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
+index d54fa0638dc44..7047408de3e37 100644
+--- a/drivers/irqchip/irq-gic-v3-its.c
++++ b/drivers/irqchip/irq-gic-v3-its.c
+@@ -4890,10 +4890,17 @@ static bool __maybe_unused its_enable_quirk_hip09_162100801(void *data)
+ 	return true;
+ }
+ 
+-static bool __maybe_unused its_enable_rk3568002(void *data)
++static bool its_enable_32bit_disaster(void *data)
+ {
+-	if (!of_machine_is_compatible("rockchip,rk3566") &&
+-	    !of_machine_is_compatible("rockchip,rk3568"))
++	static const char *broken[] = {
++#ifdef CONFIG_ROCKCHIP_ERRATUM_3568002
++		"rockchip,rk3566", "rockchip,rk3568",
++#endif
++		"intel,socfpga-agilex5",
++		NULL,
++	};
++
++	if (!of_machine_compatible_match(broken))
+ 		return false;
+ 
+ 	gfp_flags_quirk |= GFP_DMA32;
+@@ -4968,14 +4975,12 @@ static const struct gic_quirk its_quirks[] = {
+ 		.property = "dma-noncoherent",
+ 		.init   = its_set_non_coherent,
+ 	},
+-#ifdef CONFIG_ROCKCHIP_ERRATUM_3568002
+ 	{
+-		.desc   = "ITS: Rockchip erratum RK3568002",
++		.desc   = "ITS: Broken GIC600 integration limited to 32bit",
+ 		.iidr   = 0x0201743b,
+ 		.mask   = 0xffffffff,
+-		.init   = its_enable_rk3568002,
++		.init   = its_enable_32bit_disaster,
+ 	},
+-#endif
+ 	{
+ 	}
+ };
+
+-- 
+Without deviation from the norm, progress is not possible.
 
