@@ -1,76 +1,80 @@
-Return-Path: <linux-kernel+bounces-716746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA5BCAF8A6C
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 10:00:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 778BAAF8A75
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 10:01:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3740D1C85BD3
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 08:00:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A0AA6E654F
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 08:00:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF15829B8E0;
-	Fri,  4 Jul 2025 07:54:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9DF22D5C77;
+	Fri,  4 Jul 2025 07:54:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="A/hbBGu4"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IkJzONL/"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22CEF2BEC5F
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 07:54:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0AB72C3242
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 07:54:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751615662; cv=none; b=UOBdU/7vc2NDs7eg6FnNX9+8loao2KOmSrVj8U1ALcxVAh5XacdTh1+nm563qOAuJo+tx3qhzTsYgIh888TA9vaSBksXU320pABopkZ7pMpITnu1DxhnJ/h51hN/ISWn8BNjrl+acqbHTi5jsC/f+KD1rrOnPyJaMFANhV12WnE=
+	t=1751615666; cv=none; b=duqawcFKEL7r0ewmM7KfaYvInAHEh+YtCObGYXzZJEf45ukNlEnqwxniNhmI6X6xPLCvAGFVc1EA4qUcCF+IYMUpUJjwiWZMEtJNGbng1XaQjA6S83PvAMkUPf1aK5ddrPuacMPYTjXKemNCyzATXRMEsFAxGBOuCdbqMviAMAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751615662; c=relaxed/simple;
-	bh=h0lMe6Zm9CS9GXMsA2shed5+hSDPE9usNB0Lg7iJ170=;
+	s=arc-20240116; t=1751615666; c=relaxed/simple;
+	bh=q2znRzlNkp1VX01C6C6SWFWs8cikijZSrtuwfc3vXfo=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=bMT+W5vKhWzDlQByzLQxR2O2EjbYomrSQPhAN+wDIqfgx4cE/mLr2xZk1xw+BR+wb62snc9LwWbfE/+qcMj3dsgUnIkia1UfBzL24hMkMCMsVA/p991fZUlxLnSvWhf6F4Y/K3nna1hTQG+tVW+ERlVEnAhK88PuoPrpHHJkg2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=A/hbBGu4; arc=none smtp.client-ip=198.175.65.9
+	 MIME-Version; b=FFk5QV4nz4xSLcaiCbYH5cBaQwaq+Nn6+aNyrfOGlAy7YiFG12BLw+8ZW1BnVWO2ZQxmGaTolmWAqXXwwejCBNA+Gr6RIP/WlGwIb+Uja/pTiekob4YTgpyHGtOHu9cFdHIKvVrUQISpSgZnRREUgjpLqz5EYNbyrrAJzI2uLYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IkJzONL/; arc=none smtp.client-ip=198.175.65.9
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751615661; x=1783151661;
+  t=1751615663; x=1783151663;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=h0lMe6Zm9CS9GXMsA2shed5+hSDPE9usNB0Lg7iJ170=;
-  b=A/hbBGu4V/9ob04NGyD5f8SSIl24peT403mzn8WEqVFGYYaZcdfFBeYm
-   FIsiW4/IrqAQ+NeIJ8l4gWNw5MvWjKTL77mwyQDbomWnSjsXBHFgSJwHA
-   DagGG3H+NGXNkCvPwkD2ZuDiCMbIhck2N8TNdLKsQtleY5OgF0zHR7OQU
-   23OPZhEeTO5G4hCB+RUuZSc1e0icbbWmz68ktgJjfKajZGhaIaRIOgCbf
-   9F4rIR5H+i4hrZhkR8WOvm9XRsSl3QIHqrYq0ZctaiMRNICPvDcMZ+Lm7
-   JL5LG1sl8X/cyoGuUb8WCK+YwESpDuI5mB2TMRwzL9xV2jFDjSOwX9UpE
-   A==;
-X-CSE-ConnectionGUID: xk0+Gw40QNamqyTju2bvdw==
-X-CSE-MsgGUID: qRzVZPIeRGezRnNMLzQTyw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11483"; a="76494577"
+  bh=q2znRzlNkp1VX01C6C6SWFWs8cikijZSrtuwfc3vXfo=;
+  b=IkJzONL/4mLoRXhhGhdOV0rzBoGUVKW+uWfMy3xi4bd8ms0GkzgoSBM1
+   mgsoQncyGIA08UuWASIAzj0Paz6mM2FRR15CjSxmmclSqFGIiSt/oNTCq
+   SzlHtTQhD+U/+RydLcxk1TyghxPviPpuqLhcsHyEQfTgV46dL/jjh9GGs
+   uHrgdjq35QAM4WGGQ/gVjNppbX2nAiRCuiZtFJG7A9ci6mMvOCJ5N6R5w
+   5tv7BVXJi5BCSpaoFLWRjOMEsdqPhfqYW1ej61o/LwkRv1Cr8lfxT5xy9
+   kvwLBqFWVSI4NSHLrwEM+Dn48cRV/Ap8Gmrmt0oFOFaLoidcPPw9Q+KPc
+   w==;
+X-CSE-ConnectionGUID: w+8A0oeCSn6ppElfxODdVw==
+X-CSE-MsgGUID: g99wdkJKRj6ryMM37rqosA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11483"; a="76494584"
 X-IronPort-AV: E=Sophos;i="6.16,286,1744095600"; 
-   d="scan'208";a="76494577"
+   d="scan'208";a="76494584"
 Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 00:54:20 -0700
-X-CSE-ConnectionGUID: VZFjeWY5TcazgNbcPfL/aA==
-X-CSE-MsgGUID: eyiD6zqhRn6LxYXLojBAuQ==
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 00:54:22 -0700
+X-CSE-ConnectionGUID: IUennC47Tk2lCs9hia+Stw==
+X-CSE-MsgGUID: DVXgBXKdTmiKM3rSFP38Iw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.16,286,1744095600"; 
-   d="scan'208";a="158924249"
+   d="scan'208";a="158924252"
 Received: from jkrzyszt-mobl2.ger.corp.intel.com (HELO svinhufvud.fi.intel.com) ([10.245.244.244])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 00:54:18 -0700
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 00:54:19 -0700
 Received: from svinhufvud.lan (localhost [IPv6:::1])
-	by svinhufvud.fi.intel.com (Postfix) with ESMTP id CB436447EB;
-	Fri,  4 Jul 2025 10:54:16 +0300 (EEST)
+	by svinhufvud.fi.intel.com (Postfix) with ESMTP id 90C7344424;
+	Fri,  4 Jul 2025 10:54:17 +0300 (EEST)
 Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
 From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Miquel Raynal <miquel.raynal@bootlin.com>,
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
 	Frank Li <Frank.Li@nxp.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>
+	Aniket <aniketmaurya@google.com>,
+	Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Billy Tsai <billy_tsai@aspeedtech.com>
 Cc: linux-i3c@lists.infradead.org,
-	imx@lists.linux.dev,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 24/80] i3c: master: svc: Remove redundant pm_runtime_mark_last_busy() calls
-Date: Fri,  4 Jul 2025 10:54:16 +0300
-Message-Id: <20250704075416.3218647-1-sakari.ailus@linux.intel.com>
+Subject: [PATCH 25/80] i3c: dw: Remove redundant pm_runtime_mark_last_busy() calls
+Date: Fri,  4 Jul 2025 10:54:17 +0300
+Message-Id: <20250704075417.3218742-1-sakari.ailus@linux.intel.com>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250704075225.3212486-1-sakari.ailus@linux.intel.com>
 References: <20250704075225.3212486-1-sakari.ailus@linux.intel.com>
@@ -99,77 +103,77 @@ rc2:
         git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
                 pm-runtime-6.17-rc1
 
- drivers/i3c/master/svc-i3c-master.c | 8 --------
+ drivers/i3c/master/dw-i3c-master.c | 8 --------
  1 file changed, 8 deletions(-)
 
-diff --git a/drivers/i3c/master/svc-i3c-master.c b/drivers/i3c/master/svc-i3c-master.c
-index 7e1a7cb94b43..4f68005c47d9 100644
---- a/drivers/i3c/master/svc-i3c-master.c
-+++ b/drivers/i3c/master/svc-i3c-master.c
-@@ -664,7 +664,6 @@ static int svc_i3c_master_set_speed(struct i3c_master_controller *m,
+diff --git a/drivers/i3c/master/dw-i3c-master.c b/drivers/i3c/master/dw-i3c-master.c
+index 611c22b72c15..37bee9c21736 100644
+--- a/drivers/i3c/master/dw-i3c-master.c
++++ b/drivers/i3c/master/dw-i3c-master.c
+@@ -699,7 +699,6 @@ static int dw_i3c_master_bus_init(struct i3c_master_controller *m)
+ 	dw_i3c_master_enable(master);
+ 
+ rpm_out:
+-	pm_runtime_mark_last_busy(master->dev);
+ 	pm_runtime_put_autosuspend(master->dev);
+ 	return ret;
+ }
+@@ -829,7 +828,6 @@ static int dw_i3c_master_send_ccc_cmd(struct i3c_master_controller *m,
+ 	else
+ 		ret = dw_i3c_ccc_set(master, ccc);
+ 
+-	pm_runtime_mark_last_busy(master->dev);
+ 	pm_runtime_put_autosuspend(master->dev);
+ 	return ret;
+ }
+@@ -912,7 +910,6 @@ static int dw_i3c_master_daa(struct i3c_master_controller *m)
+ 	dw_i3c_master_free_xfer(xfer);
+ 
+ rpm_out:
+-	pm_runtime_mark_last_busy(master->dev);
+ 	pm_runtime_put_autosuspend(master->dev);
+ 	return ret;
+ }
+@@ -998,7 +995,6 @@ static int dw_i3c_master_priv_xfers(struct i3c_dev_desc *dev,
+ 	ret = xfer->ret;
+ 	dw_i3c_master_free_xfer(xfer);
+ 
+-	pm_runtime_mark_last_busy(master->dev);
+ 	pm_runtime_put_autosuspend(master->dev);
+ 	return ret;
+ }
+@@ -1148,7 +1144,6 @@ static int dw_i3c_master_i2c_xfers(struct i2c_dev_desc *dev,
+ 	ret = xfer->ret;
+ 	dw_i3c_master_free_xfer(xfer);
+ 
+-	pm_runtime_mark_last_busy(master->dev);
+ 	pm_runtime_put_autosuspend(master->dev);
+ 	return ret;
+ }
+@@ -1316,7 +1311,6 @@ static int dw_i3c_master_disable_hotjoin(struct i3c_master_controller *m)
+ 	writel(readl(master->regs + DEVICE_CTRL) | DEV_CTRL_HOT_JOIN_NACK,
+ 	       master->regs + DEVICE_CTRL);
+ 
+-	pm_runtime_mark_last_busy(master->dev);
+ 	pm_runtime_put_autosuspend(master->dev);
+ 	return 0;
+ }
+@@ -1342,7 +1336,6 @@ static int dw_i3c_master_enable_ibi(struct i3c_dev_desc *dev)
+ 
+ 	if (rc) {
+ 		dw_i3c_master_set_sir_enabled(master, dev, data->index, false);
+-		pm_runtime_mark_last_busy(master->dev);
+ 		pm_runtime_put_autosuspend(master->dev);
  	}
  
- rpm_out:
--	pm_runtime_mark_last_busy(master->dev);
- 	pm_runtime_put_autosuspend(master->dev);
+@@ -1362,7 +1355,6 @@ static int dw_i3c_master_disable_ibi(struct i3c_dev_desc *dev)
  
- 	return ret;
-@@ -779,7 +778,6 @@ static int svc_i3c_master_bus_init(struct i3c_master_controller *m)
- 		goto rpm_out;
- 
- rpm_out:
--	pm_runtime_mark_last_busy(master->dev);
- 	pm_runtime_put_autosuspend(master->dev);
- 
- 	return ret;
-@@ -801,7 +799,6 @@ static void svc_i3c_master_bus_cleanup(struct i3c_master_controller *m)
- 	/* Disable master */
- 	writel(0, master->regs + SVC_I3C_MCONFIG);
+ 	dw_i3c_master_set_sir_enabled(master, dev, data->index, false);
  
 -	pm_runtime_mark_last_busy(master->dev);
  	pm_runtime_put_autosuspend(master->dev);
- }
- 
-@@ -1207,7 +1204,6 @@ static int svc_i3c_master_do_daa(struct i3c_master_controller *m)
- 		dev_err(master->dev, "Cannot handle such a list of devices");
- 
- rpm_out:
--	pm_runtime_mark_last_busy(master->dev);
- 	pm_runtime_put_autosuspend(master->dev);
- 
- 	return ret;
-@@ -1511,7 +1507,6 @@ static void svc_i3c_master_enqueue_xfer(struct svc_i3c_master *master,
- 	}
- 	spin_unlock_irqrestore(&master->xferqueue.lock, flags);
- 
--	pm_runtime_mark_last_busy(master->dev);
- 	pm_runtime_put_autosuspend(master->dev);
- }
- 
-@@ -1801,7 +1796,6 @@ static int svc_i3c_master_disable_ibi(struct i3c_dev_desc *dev)
- 
- 	ret = i3c_master_disec_locked(m, dev->info.dyn_addr, I3C_CCC_EVENT_SIR);
- 
--	pm_runtime_mark_last_busy(master->dev);
- 	pm_runtime_put_autosuspend(master->dev);
- 
- 	return ret;
-@@ -1834,7 +1828,6 @@ static int svc_i3c_master_disable_hotjoin(struct i3c_master_controller *m)
- 	if (!master->enabled_events)
- 		svc_i3c_master_disable_interrupts(master);
- 
--	pm_runtime_mark_last_busy(master->dev);
- 	pm_runtime_put_autosuspend(master->dev);
- 
  	return 0;
-@@ -1954,7 +1947,6 @@ static int svc_i3c_master_probe(struct platform_device *pdev)
- 	if (ret)
- 		goto rpm_disable;
- 
--	pm_runtime_mark_last_busy(&pdev->dev);
- 	pm_runtime_put_autosuspend(&pdev->dev);
- 
- 	return 0;
+ }
 -- 
 2.39.5
 
