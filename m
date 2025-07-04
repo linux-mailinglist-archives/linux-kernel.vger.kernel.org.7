@@ -1,181 +1,134 @@
-Return-Path: <linux-kernel+bounces-716380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A132AF85B6
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 04:42:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC1A9AF85A9
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 04:40:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E25371C883BE
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 02:42:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E578548551
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 02:40:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCDFF1E9B1A;
-	Fri,  4 Jul 2025 02:42:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cIx+dLHv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9B2C1E1DF0;
+	Fri,  4 Jul 2025 02:40:25 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D1771E5B69;
-	Fri,  4 Jul 2025 02:42:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 080401DDA34;
+	Fri,  4 Jul 2025 02:40:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751596928; cv=none; b=nS9PqcEpVxwxxzbu+Hj5/lCMO+2C1uFQhcslinhz3nLhmuesW1g1pSEtiD+U4fYXYJIZOIJc6Pz96bQkBXoy4jF1rNFcnMlEZi0kTbHnMGzSBA4eei6VsvlP4t1LAAfY90iwjfHVRfuuV2EkwwZ6go27VfucRzvXqOwBHaYEVRs=
+	t=1751596825; cv=none; b=Hdkx0X5SWMdeOynImh89t8IK3ehQ3atBuHX9HKnbYfzWLgaU4X6O85j77AXJmq1aeUlIs9LIUN01oGwfcJ9hRFYhRfnmX4u/uKzDJ8Uc655ZY9/WDoyVgOOy073FQMa2LopuTy02CqpB+37h290LVhUjLhoQv5d6saIaXWMzCT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751596928; c=relaxed/simple;
-	bh=ZmWFyCvhpkEvRK5ZvfnfogthS9shinEKaV9jCAXnFN4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YlmIc0PLsyQyoMedfEFysOOyvBj9xGj7m42n3Vw+tHZOXReXicnp8TruVy83R/4h3CgFGE9UDpHXHeRHi1MhaxlZIgHcCr6YeZJ2CD1VAH3aNnzW7jvB+6R6K0uhDgkw6sOsd/PTik21+Yh+bYAuRTNs23aok+c0I30Wn332qJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cIx+dLHv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9387DC4CEF1;
-	Fri,  4 Jul 2025 02:42:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751596927;
-	bh=ZmWFyCvhpkEvRK5ZvfnfogthS9shinEKaV9jCAXnFN4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=cIx+dLHvnD7vp3FPJybU2kv4jSWxAyNj5jnP4psbbrCgaVDbbNBW4LzV3aFWwr3H4
-	 5TLrX21MwCQVxP5mDdBzmT/T+S2RhFa7m/0OheQKgQa+l6ymMmWAwNgmvczbvhOwu9
-	 WwGaW3Q3x3osRu3Rj0KTdE9vND2dGwtuaL0/GdJR04gQAnoMzYrVSSNhppXSc8ZTGM
-	 N+bAek2IvuOWUlTfnHLXGxFqzcQT4b4ZXsi7pOQ1RkE2Mf6yYxsb9V+avhEtYP0S5B
-	 yiWIcWxGE95EgKC7xXxGnwmPfRkL/sdM7tqSoM8bxng1D7+Na+bzeFHgFNXR8L2Hw1
-	 PffSvqfkkhmSg==
-From: Eric Biggers <ebiggers@kernel.org>
-To: linux-crypto@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	x86@kernel.org,
-	Ard Biesheuvel <ardb@kernel.org>,
-	"Jason A . Donenfeld" <Jason@zx2c4.com>,
-	Eric Biggers <ebiggers@kernel.org>
-Subject: [PATCH 2/2] lib/crypto: x86/sha256: Remove unnecessary checks for nblocks==0
-Date: Thu,  3 Jul 2025 19:39:58 -0700
-Message-ID: <20250704023958.73274-3-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.50.0
-In-Reply-To: <20250704023958.73274-1-ebiggers@kernel.org>
-References: <20250704023958.73274-1-ebiggers@kernel.org>
+	s=arc-20240116; t=1751596825; c=relaxed/simple;
+	bh=SAYN5VKjUnBLcKJkHCiVym3079UNk84BkRL08HA1A7U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HNQwQiZXtnYsYkWTJGvwUV3h2bkvOLPVIz0MR/LfqSPRbjDjXevusgd35Htx01nSirQ+drVwPWqkDwHNzx0nJg5MGSTwNvYb62cgCwrYbp3K726Es2ONhSj86DdP14mJI12LwfS7LzD0n658ToMpL7PjbzRJuVIfjNGDSoDKzMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 368a0998588011f0b29709d653e92f7d-20250704
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:034570ce-596c-429a-9efd-e80c6a0f942f,IP:0,U
+	RL:0,TC:0,Content:-5,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:-5
+X-CID-META: VersionHash:6493067,CLOUDID:33ba69fe0ab85910e7858a1ae5a8be6d,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:-3,IP:nil,UR
+	L:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,S
+	PR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 368a0998588011f0b29709d653e92f7d-20250704
+Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
+	(envelope-from <jiangyunshui@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 1168541632; Fri, 04 Jul 2025 10:40:14 +0800
+Received: from mail.kylinos.cn (localhost [127.0.0.1])
+	by mail.kylinos.cn (NSMail) with SMTP id 060C7E008FA2;
+	Fri,  4 Jul 2025 10:40:14 +0800 (CST)
+X-ns-mid: postfix-68673F0D-745718436
+Received: from kylin-pc.. (unknown [172.25.130.133])
+	by mail.kylinos.cn (NSMail) with ESMTPA id 69236E008FA1;
+	Fri,  4 Jul 2025 10:40:12 +0800 (CST)
+From: Yunshui Jiang <jiangyunshui@kylinos.cn>
+To: linux-kernel@vger.kernel.org
+Cc: linux-input@vger.kernel.org,
+	dmitry.torokhov@gmail.com,
+	Yunshui Jiang <jiangyunshui@kylinos.cn>
+Subject: [PATCH] Input: cs40l50: Fix potential NULL dereference and memory leak
+Date: Fri,  4 Jul 2025 10:40:10 +0800
+Message-ID: <20250704024010.2353841-1-jiangyunshui@kylinos.cn>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
 
-Since sha256_blocks() is called only with nblocks >= 1, remove
-unnecessary checks for nblocks == 0 from the x86 SHA-256 assembly code.
+The cs40l50_upload_owt() function allocates memory via kmalloc()
+without checking for allocation failure, which could lead to a
+NULL pointer dereference when GFP_KERNEL allocation fails under
+memory pressure.
 
-Signed-off-by: Eric Biggers <ebiggers@kernel.org>
+Additionally, if any subsequent operation fails after successful
+allocation, the allocated memory is not freed, causing a memory
+leak.
+
+Therefore, add a NULL check for kmalloc() and returns -ENOMEM on
+failure. And use a goto cleanup pattern to ensure the allocated
+memory is freed on any error path.
+
+Signed-off-by: Yunshui Jiang <jiangyunshui@kylinos.cn>
 ---
- lib/crypto/x86/sha256-avx-asm.S   | 3 ---
- lib/crypto/x86/sha256-avx2-asm.S  | 1 -
- lib/crypto/x86/sha256-ni-asm.S    | 3 ---
- lib/crypto/x86/sha256-ssse3-asm.S | 3 ---
- 4 files changed, 10 deletions(-)
+ drivers/input/misc/cs40l50-vibra.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-diff --git a/lib/crypto/x86/sha256-avx-asm.S b/lib/crypto/x86/sha256-avx-asm.S
-index 798a7f07fa013..c1aceb3ba3a3a 100644
---- a/lib/crypto/x86/sha256-avx-asm.S
-+++ b/lib/crypto/x86/sha256-avx-asm.S
-@@ -355,11 +355,10 @@ SYM_FUNC_START(sha256_transform_avx)
- 
- 	subq    $STACK_SIZE, %rsp	# allocate stack space
- 	and	$~15, %rsp		# align stack pointer
- 
- 	shl     $6, NUM_BLKS		# convert to bytes
--	jz      .Ldone_hash
- 	add     INP, NUM_BLKS		# pointer to end of data
- 	mov     NUM_BLKS, _INP_END(%rsp)
- 
- 	## load initial digest
- 	mov     4*0(CTX), a
-@@ -444,12 +443,10 @@ SYM_FUNC_START(sha256_transform_avx)
- 	mov     _INP(%rsp), INP
- 	add     $64, INP
- 	cmp     _INP_END(%rsp), INP
- 	jne     .Lloop0
- 
--.Ldone_hash:
--
- 	mov	%rbp, %rsp
- 	popq	%rbp
- 	popq    %r15
- 	popq    %r14
- 	popq    %r13
-diff --git a/lib/crypto/x86/sha256-avx2-asm.S b/lib/crypto/x86/sha256-avx2-asm.S
-index 62a46993359e6..eb8836fb9695c 100644
---- a/lib/crypto/x86/sha256-avx2-asm.S
-+++ b/lib/crypto/x86/sha256-avx2-asm.S
-@@ -533,11 +533,10 @@ SYM_FUNC_START(sha256_transform_rorx)
- 
- 	subq	$STACK_SIZE, %rsp
- 	and	$-32, %rsp	# align rsp to 32 byte boundary
- 
- 	shl	$6, NUM_BLKS	# convert to bytes
--	jz	.Ldone_hash
- 	lea	-64(INP, NUM_BLKS), NUM_BLKS # pointer to last block
- 	mov	NUM_BLKS, _INP_END(%rsp)
- 
- 	cmp	NUM_BLKS, INP
- 	je	.Lonly_one_block
-diff --git a/lib/crypto/x86/sha256-ni-asm.S b/lib/crypto/x86/sha256-ni-asm.S
-index 9ebbacbb9c13b..4bd9490ffc662 100644
---- a/lib/crypto/x86/sha256-ni-asm.S
-+++ b/lib/crypto/x86/sha256-ni-asm.S
-@@ -110,11 +110,10 @@
-  */
- .text
- SYM_FUNC_START(sha256_ni_transform)
- 
- 	shl		$6, NUM_BLKS		/*  convert to bytes */
--	jz		.Ldone_hash
- 	add		DATA_PTR, NUM_BLKS	/* pointer to end of data */
- 
- 	/*
- 	 * load initial hash values
- 	 * Need to reorder these appropriately
-@@ -161,12 +160,10 @@ SYM_FUNC_START(sha256_ni_transform)
- 	pshufd		$0x1B, STATE1, STATE1		/* DCBA */
- 
- 	movdqu		STATE1, 0*16(STATE_PTR)
- 	movdqu		STATE0, 1*16(STATE_PTR)
- 
--.Ldone_hash:
--
- 	RET
- SYM_FUNC_END(sha256_ni_transform)
- 
- .section	.rodata.cst256.K256, "aM", @progbits, 256
- .align 64
-diff --git a/lib/crypto/x86/sha256-ssse3-asm.S b/lib/crypto/x86/sha256-ssse3-asm.S
-index 3b602b7d43fad..0a2719661784c 100644
---- a/lib/crypto/x86/sha256-ssse3-asm.S
-+++ b/lib/crypto/x86/sha256-ssse3-asm.S
-@@ -363,11 +363,10 @@ SYM_FUNC_START(sha256_transform_ssse3)
- 
- 	subq    $STACK_SIZE, %rsp
- 	and	$~15, %rsp
- 
- 	shl     $6, NUM_BLKS		 # convert to bytes
--	jz      .Ldone_hash
- 	add     INP, NUM_BLKS
- 	mov     NUM_BLKS, _INP_END(%rsp) # pointer to end of data
- 
- 	## load initial digest
- 	mov     4*0(CTX), a
-@@ -456,12 +455,10 @@ SYM_FUNC_START(sha256_transform_ssse3)
- 	mov     _INP(%rsp), INP
- 	add     $64, INP
- 	cmp     _INP_END(%rsp), INP
- 	jne     .Lloop0
- 
--.Ldone_hash:
--
- 	mov	%rbp, %rsp
- 	popq	%rbp
- 	popq    %r15
- 	popq    %r14
- 	popq    %r13
--- 
-2.50.0
+diff --git a/drivers/input/misc/cs40l50-vibra.c b/drivers/input/misc/cs40=
+l50-vibra.c
+index dce3b0ec8cf3..c48b6c905112 100644
+--- a/drivers/input/misc/cs40l50-vibra.c
++++ b/drivers/input/misc/cs40l50-vibra.c
+@@ -238,25 +238,31 @@ static int cs40l50_upload_owt(struct cs40l50_work *=
+work_data)
+ 	header.data_words =3D len / sizeof(u32);
+=20
+ 	new_owt_effect_data =3D kmalloc(sizeof(header) + len, GFP_KERNEL);
++	if (!new_owt_effect_data)
++		return -ENOMEM;
+=20
+ 	memcpy(new_owt_effect_data, &header, sizeof(header));
+ 	memcpy(new_owt_effect_data + sizeof(header), work_data->custom_data, le=
+n);
+=20
+ 	error =3D regmap_read(vib->regmap, vib->dsp.owt_offset_reg, &offset);
+ 	if (error)
+-		return error;
++		goto free_owt_data;
+=20
+ 	error =3D regmap_bulk_write(vib->regmap, vib->dsp.owt_base_reg +
+ 				  (offset * sizeof(u32)), new_owt_effect_data,
+ 				  sizeof(header) + len);
+ 	if (error)
+-		return error;
++		goto free_owt_data;
+=20
+ 	error =3D vib->dsp.write(vib->dev, vib->regmap, vib->dsp.push_owt_cmd);
+ 	if (error)
+-		return error;
++		goto free_owt_data;
+=20
+ 	return 0;
++
++free_owt_data:
++	kfree(new_owt_effect_data);
++	return error;
+ }
+=20
+ static void cs40l50_add_worker(struct work_struct *work)
+--=20
+2.47.1
 
 
