@@ -1,75 +1,77 @@
-Return-Path: <linux-kernel+bounces-716765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33953AF8A9B
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 10:06:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 630D3AF8A9C
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 10:06:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8A4D163CCB
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 08:03:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F33336E45E0
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 08:03:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B11632E041D;
-	Fri,  4 Jul 2025 07:54:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D52962E0B7C;
+	Fri,  4 Jul 2025 07:54:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gv+yZlg7"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dkF+MixR"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F0562DECD2;
-	Fri,  4 Jul 2025 07:54:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 452A12DE213;
+	Fri,  4 Jul 2025 07:54:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751615677; cv=none; b=umc0wk6Fu429oBRwPPKE79z37xkxh91qTk9hKIe1/V8rmD2po23BqBTmno044mvM8vmcH7DMxMXP7Qq0Z/yjanOXNGGYQE0G0XY5rIRPpDTr8v0Bcmm9RUnyL1tuKKc8i5F7mzeAzEDjjgVqn44Ce1pTYAeFkUgAkRx6aXx3G3s=
+	t=1751615677; cv=none; b=oPZwT00JNY/myyBKkGIyVH50oB/Bu/G7au/NzTrDZtn6bE+iaIonlHDagY+83UBYn06YSIcGOp1A7CtYrx3eRz0Fe94Bc6SZdE/1N2XjU2Qsl5Mvif3Yg+hG+AgbRoZhN8m2iHk9NhfP9GF/0bqd1QM+/Y2GGMDZlEosF8r/NHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1751615677; c=relaxed/simple;
-	bh=CTv6iPrW9uEDcgFRXY04j1SNCfKTPuyZUDjMaqvzVHQ=;
+	bh=U4cRFiXhV5fuNveZFy2qth9WbtB5GmycvcJ19tMoPUA=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Fn5p8Qcycs972XceSRSN0l7CV5MdvU6SXta1EteUBCxI88WLVw0OUckDvmDD1FShkuDcarK5gU0JVsC2f7r76nthB0XVF2hVWi1yXq30lveKrJnQnMP61TO37y2LSCyaFdScBubEkQBDV58N8+rsXwN/lZVwbmsq2Ks6AN+dgZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gv+yZlg7; arc=none smtp.client-ip=198.175.65.9
+	 MIME-Version; b=RDUYFx/fiLVeiViOC70F9P5lH2NjDnnDBgH/2JQR4VLKtTnQ21+VrjAGLp+HtQQR5UIhVKeuh6EQ/Q16+O93oUMn8XCEvkpFWVLmfH39MBS6x34mCN4H39Z41OybjYFKJb+HODas1Mul6SWgX4n0bbF5rfc7gQntlL/3YvkrjsM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dkF+MixR; arc=none smtp.client-ip=198.175.65.9
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751615675; x=1783151675;
+  t=1751615674; x=1783151674;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=CTv6iPrW9uEDcgFRXY04j1SNCfKTPuyZUDjMaqvzVHQ=;
-  b=gv+yZlg76T+RcJKkphE3yhwgP4mV0iX4SdRx1bcVLmHkTEIdVgALpBEZ
-   ViBTU9ZVJj0EGsIorlngm5HZrubblvYGBwWE6Lphusxht/QmQ/1Icseew
-   Y9/7k4RROjVxs+raJoE1fH30dT5fElp3xJPQAF+8ErDdEn+gmKzWx6sIG
-   RzCBUSKgP19hFUvYdV0HlkekqLLVp2OWj4jI0ZMaesLmQYLx1yvZbJeix
-   mEth+9LdwTTLpPrS2mz6ijVN08u8YL8zeJmbNTkkgkDELhRMf6d+1g0lj
-   XswZ1nzukylWUzk5BF/y+Sw9UWK4PQ35ZyPoQABL9QQiHjH2vKmyzAqII
-   g==;
-X-CSE-ConnectionGUID: jW/4i/JuRVeACO1r7Bh57w==
-X-CSE-MsgGUID: gdiPxzyRTOKybDjo7BZ9Jg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11483"; a="76494737"
+  bh=U4cRFiXhV5fuNveZFy2qth9WbtB5GmycvcJ19tMoPUA=;
+  b=dkF+MixRkAZeCq9C4/xBIomZkwGF6IRv+nOvpLqyomHd+7mlzOV9JwbV
+   6AsQTN/oXNucaT9Tr0Q1U+SeeBes/79Rc3fjN5PgXIDt1Hx7lTkAHAKsx
+   O0h+AVeKvIgRMarRwZ6EyUWfTwYi1rimf6NT9A2sEfbJkvKt7SDdKfoSk
+   BV2V/xOE0wBV+bgbLMCAxWKdKS79v5aCC96SbUz8+aAzEHn9veZeZeSjG
+   0dLdiKi8t5Iu3NZ91XCFUYwsLvqWjlrlBOHVCcka2GX/ONWgsBlXfx2zM
+   i1/eiJ9i3KEw6zJd95yUTvc/nrMSM83CuMlNqfHupJLs3mFnvz4Bt+50W
+   A==;
+X-CSE-ConnectionGUID: qEUpBuGlR4aSh6dFwNV5+Q==
+X-CSE-MsgGUID: jkIF7p0RSaqpVYkNOVw5dw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11483"; a="76494733"
 X-IronPort-AV: E=Sophos;i="6.16,286,1744095600"; 
-   d="scan'208";a="76494737"
+   d="scan'208";a="76494733"
 Received: from orviesa003.jf.intel.com ([10.64.159.143])
   by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 00:54:32 -0700
-X-CSE-ConnectionGUID: MQBkuX0FQCiq4o3yIm1YVg==
-X-CSE-MsgGUID: 7muF5evQTH+hCpqXfufQIQ==
+X-CSE-ConnectionGUID: VStemBfWTXuxdhYmeQqU6A==
+X-CSE-MsgGUID: cM7qXbBkRyyVW1p24x1X0Q==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.16,286,1744095600"; 
-   d="scan'208";a="158924314"
+   d="scan'208";a="158924307"
 Received: from jkrzyszt-mobl2.ger.corp.intel.com (HELO svinhufvud.fi.intel.com) ([10.245.244.244])
   by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 00:54:30 -0700
 Received: from svinhufvud.lan (localhost [IPv6:::1])
-	by svinhufvud.fi.intel.com (Postfix) with ESMTP id E8B9144419;
+	by svinhufvud.fi.intel.com (Postfix) with ESMTP id 4B7A644394;
 	Fri,  4 Jul 2025 10:54:28 +0300 (EEST)
 Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
 From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-Cc: linux-input@vger.kernel.org,
+To: Crt Mori <cmo@melexis.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>
+Cc: linux-iio@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 39/80] Input: omap4-keypad: Remove redundant pm_runtime_mark_last_busy() calls
+Subject: [PATCH 38/80] iio: temperature: Remove redundant pm_runtime_mark_last_busy() calls
 Date: Fri,  4 Jul 2025 10:54:28 +0300
-Message-Id: <20250704075428.3219960-1-sakari.ailus@linux.intel.com>
+Message-Id: <20250704075428.3219924-1-sakari.ailus@linux.intel.com>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250704075225.3212486-1-sakari.ailus@linux.intel.com>
 References: <20250704075225.3212486-1-sakari.ailus@linux.intel.com>
@@ -98,45 +100,47 @@ rc2:
         git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
                 pm-runtime-6.17-rc1
 
- drivers/input/keyboard/omap4-keypad.c | 4 ----
- 1 file changed, 4 deletions(-)
+ drivers/iio/temperature/mlx90614.c | 1 -
+ drivers/iio/temperature/mlx90632.c | 1 -
+ drivers/iio/temperature/mlx90635.c | 1 -
+ 3 files changed, 3 deletions(-)
 
-diff --git a/drivers/input/keyboard/omap4-keypad.c b/drivers/input/keyboard/omap4-keypad.c
-index bffe89c0717a..e783244d0c91 100644
---- a/drivers/input/keyboard/omap4-keypad.c
-+++ b/drivers/input/keyboard/omap4-keypad.c
-@@ -193,7 +193,6 @@ static irqreturn_t omap4_keypad_irq_thread_fn(int irq, void *dev_id)
- 	kbd_write_irqreg(keypad_data, OMAP4_KBD_IRQSTATUS,
- 			 kbd_read_irqreg(keypad_data, OMAP4_KBD_IRQSTATUS));
+diff --git a/drivers/iio/temperature/mlx90614.c b/drivers/iio/temperature/mlx90614.c
+index 740018d4b3df..8a44a00bfd5e 100644
+--- a/drivers/iio/temperature/mlx90614.c
++++ b/drivers/iio/temperature/mlx90614.c
+@@ -225,7 +225,6 @@ static void mlx90614_power_put(struct mlx90614_data *data)
+ 	if (!data->wakeup_gpio)
+ 		return;
  
--	pm_runtime_mark_last_busy(dev);
- 	pm_runtime_put_autosuspend(dev);
- 
- 	return IRQ_HANDLED;
-@@ -231,7 +230,6 @@ static int omap4_keypad_open(struct input_dev *input)
- 	enable_irq(keypad_data->irq);
- 
- out:
--	pm_runtime_mark_last_busy(dev);
- 	pm_runtime_put_autosuspend(dev);
- 
- 	return error;
-@@ -265,7 +263,6 @@ static void omap4_keypad_close(struct input_dev *input)
- 	enable_irq(keypad_data->irq);
- 	clk_disable_unprepare(keypad_data->fck);
- 
--	pm_runtime_mark_last_busy(dev);
- 	pm_runtime_put_autosuspend(dev);
+-	pm_runtime_mark_last_busy(&data->client->dev);
+ 	pm_runtime_put_autosuspend(&data->client->dev);
  }
- 
-@@ -404,7 +401,6 @@ static int omap4_keypad_probe(struct platform_device *pdev)
- 		omap4_keypad_stop(keypad_data);
+ #else
+diff --git a/drivers/iio/temperature/mlx90632.c b/drivers/iio/temperature/mlx90632.c
+index ae4ea587e7f9..bf689f6143f3 100644
+--- a/drivers/iio/temperature/mlx90632.c
++++ b/drivers/iio/temperature/mlx90632.c
+@@ -1043,7 +1043,6 @@ static int mlx90632_read_raw(struct iio_dev *indio_dev,
  	}
  
--	pm_runtime_mark_last_busy(dev);
- 	pm_runtime_put_autosuspend(dev);
- 	if (error)
- 		return error;
+ mlx90632_read_raw_pm:
+-	pm_runtime_mark_last_busy(&data->client->dev);
+ 	pm_runtime_put_autosuspend(&data->client->dev);
+ 	return ret;
+ }
+diff --git a/drivers/iio/temperature/mlx90635.c b/drivers/iio/temperature/mlx90635.c
+index f7f88498ba0e..80d0eb7d2294 100644
+--- a/drivers/iio/temperature/mlx90635.c
++++ b/drivers/iio/temperature/mlx90635.c
+@@ -749,7 +749,6 @@ static int mlx90635_read_raw(struct iio_dev *indio_dev,
+ 	}
+ 
+ mlx90635_read_raw_pm:
+-	pm_runtime_mark_last_busy(&data->client->dev);
+ 	pm_runtime_put_autosuspend(&data->client->dev);
+ 	return ret;
+ }
 -- 
 2.39.5
 
