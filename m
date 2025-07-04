@@ -1,175 +1,110 @@
-Return-Path: <linux-kernel+bounces-716829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84896AF8B01
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 10:18:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4789AF8B0D
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 10:19:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F7CE1CA4730
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 08:17:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E43FD800C17
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 08:15:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C62F3257E1;
-	Fri,  4 Jul 2025 07:57:21 +0000 (UTC)
-Received: from rtg-sunil-navi33.amd.com (unknown [165.204.156.251])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0FA3309A41;
+	Fri,  4 Jul 2025 07:56:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="u6I9kz2Q"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5C63324F22
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 07:57:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=165.204.156.251
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44494307AEB
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 07:56:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751615840; cv=none; b=MJpyFUyvGe6FxDu0Tmt0nQ2iOJHwD9xUqtr6SM7Esu8baMqBvFQN3a7ACUU3epnvgi5Pdq1pj4VJhQHJTgaoJ1+mbw/4P7nCgThijFpQuiekjs3qr4CqioZt/OFk73lshJwalG9K5UobcA+a98PbWp9dUJxG5RIh9I5yQWtYaPY=
+	t=1751615776; cv=none; b=jLvM/LsbvDQaYg2h6LN6v9yQc5Ts31Yp1rjk6rHl/lGPf+r6UUgEWtE/K+9+TFdgQ5Xv0rm8Mgw/0zWi48IrF6Emd2Ow1DE6Cv6V8oiDWpcFFK9uKiofIPG0TLaqHyLxiHzWBJ8MxfjhnGoLsIfaiF9WRN/MLSKweldvKXE9Rks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751615840; c=relaxed/simple;
-	bh=KYrvpls+KdqdYbOFV0t+YKA3ozzs1zB21+nmPpEooL4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=S3nVDIVun2tQvmKmBJpY8OQChLTkvgDK9ZybU44Ryy/muq2UWvWDu2GwE9xfDzhSKO85DK51klOq8OyX4trx2gEkoLtjlZTn/PCrlW2W3XHLnwqGOjyJ6e3MlhdSGeBjB3Pl0uInu+oy31m5HfOwPsHFRQf8IAi02KjkghcDZjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amd.com; spf=none smtp.mailfrom=rtg-sunil-navi33.amd.com; arc=none smtp.client-ip=165.204.156.251
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=rtg-sunil-navi33.amd.com
-Received: from rtg-sunil-navi33.amd.com (localhost [127.0.0.1])
-	by rtg-sunil-navi33.amd.com (8.15.2/8.15.2/Debian-22ubuntu3) with ESMTP id 5647uV471550174;
-	Fri, 4 Jul 2025 13:26:31 +0530
-Received: (from sunil@localhost)
-	by rtg-sunil-navi33.amd.com (8.15.2/8.15.2/Submit) id 5647uVxX1550173;
-	Fri, 4 Jul 2025 13:26:31 +0530
-From: Sunil Khatri <sunil.khatri@amd.com>
-To: =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        dri-devel@lists.freedesktop.org
-Cc: amd-gfx@lists.freedesktop.org, simona@ffwll.ch, tzimmermann@suse.de,
-        tursulin@ursulin.net, phasta@kernel.org, dakr@kernel.org,
-        linux-kernel@vger.kernel.org, Oded Gabbay <ogabbay@kernel.org>,
-        Jeff Hugo <jeff.hugo@oss.qualcomm.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        Luca Ceresoli <luca.ceresoli@bootlin.com>,
-        Sunil Khatri <sunil.khatri@amd.com>
-Subject: [PATCH v10 4/4] drm/amdgpu: add support of debugfs for mqd information
-Date: Fri,  4 Jul 2025 13:25:48 +0530
-Message-Id: <20250704075548.1549849-5-sunil.khatri@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250704075548.1549849-1-sunil.khatri@amd.com>
-References: <20250704075548.1549849-1-sunil.khatri@amd.com>
+	s=arc-20240116; t=1751615776; c=relaxed/simple;
+	bh=USWKQ8TUWEbe2dXOSayzqmwjr97ZZR+cVPMayI+cpVw=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Iup/Sg+CwPDAUl9hqbq86lgrJy2Y1c9mDxXBqf8y4u2Xj75aPN6afT45fJ8VQtT318IDudmKfb1XA7vX+ATMj2V/Ex4WSEL6zyNqYyOnpWUyr1NWecjCuTAB2EF7zfHijRb8f02M3aKhgcUll2jtOXY+lj/QOQr4olTRTWBUcg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=u6I9kz2Q; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-451ecc3be97so3133005e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Jul 2025 00:56:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1751615773; x=1752220573; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=JG8EUcagku8Vh5DXjRtvabyAVm0WLpqUIOVqfkcJwbs=;
+        b=u6I9kz2QWZbhUtAEYkF6kePmvl68WVXic9+8v41VGp1IunYOhGnS5LlkodP0ASh2py
+         a9uxLbFniBvb/vUgEyPR6+sKI+ZDbX6EIr4OcQBMAxhxnlakqlMt9ntMbObUdmMNW2lz
+         u3lT02dL0MT6UcL8RZ7gSC7zw5B3MQD4vv38b6EfmYAqmQoQL88scA5Zk1B/rm1vW2nn
+         7s7Ix7CnDVcwojG/njXqaC+U6BWqeCukKmPCVT7TGcr7/VcmdDBBRuo9CeLvsK/mgPBb
+         FOIj8MlWS5vR9zdXL7KdpUXhrVX891JPeF8sW8TVb80VBwdEXAPDOIbCnaMx2nlVyJXP
+         RWmw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751615773; x=1752220573;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JG8EUcagku8Vh5DXjRtvabyAVm0WLpqUIOVqfkcJwbs=;
+        b=KvFMZ+hsOcFlqf1HA3wvvis1/iQd8LfY7mO48e+cvf/o+2XvwXp63RpnAKULZVItis
+         m0gDSC5TsROrXAD7E1hExOp8CMRfzYJwZC8bxGI3Rhqd+zwDD9WCuypXBD+TDD8aBuZT
+         OcZ6ikcaGUj5dMHbZNLGGHwABwmEAx5Gsn/8ZRGDvBmSF910hAdkxki9jDEYwcpwezkz
+         QlsfbuJuJdd9FXb3cUTijnsRrTJqgs+dFjPU3hcpXcnJEebFvbt1JuKfKZ/V9hG6sPhM
+         wAIJ39zduIQcsQpNVhTn6/t1TiMxoeQyYjHw/O510Xwfo/O1Y6tjp0e5KJjNMe3h29ba
+         AxLg==
+X-Forwarded-Encrypted: i=1; AJvYcCVkZC6KfA4+66CFE317pE8xp/pl2z6TNRU/jXWW0+bUxXdO2+Mx00eYZwNbDj1nmIkTZFzknbbmeV/p14A=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8f7k7U0hfDMJB1LjxDXa+PzbbOVu7q/hufOI8+tV/Kb7ul2fV
+	8pKQdN95+aSe+XUMifsFzPhNnn6wWPedaZDp2kfdxa91if//S2HS1rE02w27H5Gw1WNbiiOKe7r
+	h09TKZ2Ku0xyZ+e8A5A==
+X-Google-Smtp-Source: AGHT+IFt1K+zXpV8ULnh35HNMeqS84OzLpgxd3xT6XQEwgQ8mEJZFXYVD8+XzXTHQyRAOPvDwVii3QMu9tkP3IU=
+X-Received: from wmbdw5.prod.google.com ([2002:a05:600c:6385:b0:442:f9fc:2a02])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:c166:b0:442:f482:c432 with SMTP id 5b1f17b1804b1-454b30fe377mr14697175e9.18.1751615772655;
+ Fri, 04 Jul 2025 00:56:12 -0700 (PDT)
+Date: Fri, 4 Jul 2025 07:56:11 +0000
+In-Reply-To: <20250703-topics-tyr-request_irq-v6-5-74103bdc7c52@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20250703-topics-tyr-request_irq-v6-0-74103bdc7c52@collabora.com> <20250703-topics-tyr-request_irq-v6-5-74103bdc7c52@collabora.com>
+Message-ID: <aGeJGw3UQ0zeFYXm@google.com>
+Subject: Re: [PATCH v6 5/6] rust: platform: add irq accessors
+From: Alice Ryhl <aliceryhl@google.com>
+To: Daniel Almeida <daniel.almeida@collabora.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Benno Lossin <lossin@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, 
+	"Krzysztof =?utf-8?Q?Wilczy=C5=84ski?=" <kwilczynski@kernel.org>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, linux-pci@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 
-Add debugfs support for mqd for each queue of the client.
+On Thu, Jul 03, 2025 at 04:30:03PM -0300, Daniel Almeida wrote:
+> These accessors can be used to retrieve a irq::Registration and
+> irq::ThreadedRegistration from a platform device by
+> index or name. Alternatively, drivers can retrieve an IrqRequest from a
+> bound platform device for later use.
+> 
+> These accessors ensure that only valid IRQ lines can ever be registered.
+> 
+> Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
 
-The address exposed to debugfs could be used to dump
-the mqd.
+One question below. With that answered:
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
-Signed-off-by: Sunil Khatri <sunil.khatri@amd.com>
-Reviewed-by: Christian König <christian.koenig@amd.com>
----
- drivers/gpu/drm/amd/amdgpu/amdgpu_userq.c | 52 +++++++++++++++++++++++
- drivers/gpu/drm/amd/amdgpu/amdgpu_userq.h |  1 +
- 2 files changed, 53 insertions(+)
+> +    /// Returns an [`IrqRequest`] for the IRQ with the given name, if any.
+> +    pub fn request_irq_by_name(&self, name: &'static CStr) -> Result<IrqRequest<'_>> {
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_userq.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_userq.c
-index 295e7186e156..115d53bc9a8d 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_userq.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_userq.c
-@@ -318,6 +318,9 @@ amdgpu_userq_destroy(struct drm_file *filp, int queue_id)
- 		amdgpu_bo_unreserve(queue->db_obj.obj);
- 	}
- 	amdgpu_bo_unref(&queue->db_obj.obj);
-+
-+	debugfs_remove_recursive(queue->debugfs_queue);
-+
- 	r = amdgpu_userq_unmap_helper(uq_mgr, queue);
- 	amdgpu_userq_cleanup(uq_mgr, queue, queue_id);
- 	mutex_unlock(&uq_mgr->userq_mutex);
-@@ -343,6 +346,46 @@ static int amdgpu_userq_priority_permit(struct drm_file *filp,
- 	return -EACCES;
- }
- 
-+#if defined(CONFIG_DEBUG_FS)
-+static int amdgpu_mqd_info_read(struct seq_file *m, void *unused)
-+{
-+	struct amdgpu_usermode_queue *queue = m->private;
-+	struct amdgpu_bo *bo;
-+	int r;
-+
-+	if (!queue || !queue->mqd.obj)
-+		return -EINVAL;
-+
-+	bo = amdgpu_bo_ref(queue->mqd.obj);
-+	r = amdgpu_bo_reserve(bo, true);
-+	if (r) {
-+		amdgpu_bo_unref(&bo);
-+		return -EINVAL;
-+	}
-+
-+	seq_printf(m, "queue_type %d\n", queue->queue_type);
-+	seq_printf(m, "mqd_gpu_address: 0x%llx\n", amdgpu_bo_gpu_offset(queue->mqd.obj));
-+
-+	amdgpu_bo_unreserve(bo);
-+	amdgpu_bo_unref(&bo);
-+
-+	return 0;
-+}
-+
-+static int amdgpu_mqd_info_open(struct inode *inode, struct file *file)
-+{
-+	return single_open(file, amdgpu_mqd_info_read, inode->i_private);
-+}
-+
-+static const struct file_operations amdgpu_mqd_info_fops = {
-+	.owner = THIS_MODULE,
-+	.open = amdgpu_mqd_info_open,
-+	.read = seq_read,
-+	.llseek = seq_lseek,
-+	.release = single_release,
-+};
-+#endif
-+
- static int
- amdgpu_userq_create(struct drm_file *filp, union drm_amdgpu_userq *args)
- {
-@@ -352,6 +395,7 @@ amdgpu_userq_create(struct drm_file *filp, union drm_amdgpu_userq *args)
- 	const struct amdgpu_userq_funcs *uq_funcs;
- 	struct amdgpu_usermode_queue *queue;
- 	struct amdgpu_db_info db_info;
-+	char *queue_name;
- 	bool skip_map_queue;
- 	uint64_t index;
- 	int qid, r = 0;
-@@ -475,6 +519,14 @@ amdgpu_userq_create(struct drm_file *filp, union drm_amdgpu_userq *args)
- 		}
- 	}
- 
-+	queue_name = kasprintf(GFP_KERNEL, "queue-%d", qid);
-+	if (!queue_name)
-+		return -ENOMEM;
-+
-+	/* Queue dentry per client to hold MQD information   */
-+	queue->debugfs_queue = debugfs_create_dir(queue_name, filp->debugfs_client);
-+	debugfs_create_file("mqd_info", 0444, queue->debugfs_queue, queue, &amdgpu_mqd_info_fops);
-+	kfree(queue_name);
- 
- 	args->out.queue_id = qid;
- 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_userq.h b/drivers/gpu/drm/amd/amdgpu/amdgpu_userq.h
-index ec040c2fd6c9..b1ca91b7cda4 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_userq.h
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_userq.h
-@@ -65,6 +65,7 @@ struct amdgpu_usermode_queue {
- 	struct dma_fence	*last_fence;
- 	u32			xcp_id;
- 	int			priority;
-+	struct dentry		*debugfs_queue;
- };
- 
- struct amdgpu_userq_funcs {
--- 
-2.34.1
+Does the name need to be static? That's surprising - isn't it just a
+lookup that needs to be valid during this call?
 
+Alice
 
