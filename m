@@ -1,89 +1,117 @@
-Return-Path: <linux-kernel+bounces-717605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-717607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CE24AF9673
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 17:13:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB510AF967C
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 17:13:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88C07586DD5
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 15:12:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1776F7B4290
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 15:12:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA94D289E16;
-	Fri,  4 Jul 2025 15:12:11 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0014.hostedemail.com [216.40.44.14])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06EB528EA53;
+	Fri,  4 Jul 2025 15:13:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="LMAyR0qw"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A83A328EA53;
-	Fri,  4 Jul 2025 15:12:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36E982877C2;
+	Fri,  4 Jul 2025 15:13:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751641931; cv=none; b=Eo428cLUu1PwfJionA88wfVmLSWo24BofRyMHpQS77gTDtFwEk3gc2G6sIKVkyDN5ANOcJ7ZEh4BSeFtoZdctYy7kq9KlvzBgNyuGDowEFMpS0NtaIu7/G47kiJh2yP9xcrrD9/Yypt5wokZAX8YeyAZi1zHTTF83FaVdhFD+bw=
+	t=1751642007; cv=none; b=Orxvtd1nu1ikHCs0CrihiOHNdS9mUYA5rO43zp1SeLI5ORQNLXUubkn6HUyfvA8PZl7j71o/4DiCJa65RU3+BtQusqYc9B+FUVdxh7VahZr6pKBXyhaTp49KeDS//74SsQXx5vnnl8QwYSmrL/LN8eUpmuIepGkCZ2gPn6RCqxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751641931; c=relaxed/simple;
-	bh=d83IaNS6NoPxQCwpTGjtGRS33HFh5HvOOsfwdC2cPl4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Fhr9fZSQfnKW13kWePR7f61ynNqXyUSC5N4nn6OqAh1IvJFG2wgfLHvstW0p99jBgPN/kHRkQ1W3j7m67ybWr5mZRtzb01dfjRDQ6tzGKMmcG3dqz29xEhVcIOnbHBoY/gg2QKUyj3tET+kAzuan81bJn5zA6i+kuJS0zIIbVls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf17.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay10.hostedemail.com (Postfix) with ESMTP id AC924C0137;
-	Fri,  4 Jul 2025 15:12:06 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf17.hostedemail.com (Postfix) with ESMTPA id 999541C;
-	Fri,  4 Jul 2025 15:12:04 +0000 (UTC)
-Date: Fri, 4 Jul 2025 11:12:48 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linux trace kernel
- <linux-trace-kernel@vger.kernel.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Mark Rutland <mark.rutland@arm.com>, Alexandre Ghiti <alex@ghiti.fr>,
- ChenMiao <chenmiao.ku@gmail.com>, linux-arch@vger.kernel.org
-Subject: Re: [RFC][PATCH] ftrace: Make DYNAMIC_FTRACE always enabled for
- architectures that support it
-Message-ID: <20250704111248.511cc248@gandalf.local.home>
-In-Reply-To: <CAHk-=wgdM_A1iWs6=y__nDcVq9pZRynd1mO8F9XnAeZuHumHtA@mail.gmail.com>
-References: <20250703115222.2d7c8cd5@batman.local.home>
-	<CAHk-=wjXjq7wJM-xnTCcGCxg2viUcN6JfHBETpvD94HX7HTHFQ@mail.gmail.com>
-	<20250703152643.0a4a45fe@gandalf.local.home>
-	<CAHk-=wgdM_A1iWs6=y__nDcVq9pZRynd1mO8F9XnAeZuHumHtA@mail.gmail.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1751642007; c=relaxed/simple;
+	bh=h5NGHUQ31TfqllNIiJyzwzrUtEAcIwB0fpxC0shtqzY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=qfCItpUo2U7N6J6OAJxGCIGq6hT8WUVHXBQXQ/q56+jsEzQkO4T0MA8wpCjF4brLaDe2Y31J4yjQvhHvBTioQhF9lRiO5LgB/6q7wAOym7RYR8yjXo90PniEAjUxnlOhrGJ8k6VlxQaeGU3O0io5k0fuOgq93+YQ621E425+CNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=LMAyR0qw; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id A029843972;
+	Fri,  4 Jul 2025 15:13:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1751642002;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=CuaTJ5c8tMIQ8LQs2CvxI+E8LhCPLMVaI9gn+ckc+Ys=;
+	b=LMAyR0qwBCEMaQRJZ1gyTsNZbqVnKqj8d3SPxYnT0pEzTqQyzlc7nwf84Ma/qAU6QDBycp
+	OpwE093kXMB+jy/byBr5Hz1un3tX+DnNN1aQO47k5v7lFcRGdcg6HduSrK0hwQfVG9JRUJ
+	re2LIFs1anPrr3Vw6/cy7JJYAGjALFT+I278KuFLKAuo0kS1wVjeBMV4uvXaLODLksJa88
+	IdpzAHrsjLfTfPq/+96ezXIvnpXIULnuqK0nFwrhcAW4X2oyeC7lOP1tsdQ3Pt8dxBseWO
+	UaZFnfiju9APsdoSUs/qF3EkubFBQbkZwusyIjzGIg3KbyYQ5HPaJXOCIRpV3A==
+From: Gregory CLEMENT <gregory.clement@bootlin.com>
+Subject: [PATCH v2 0/3] MIPS: CPS: Optimise delay CPU calibration and
+ cluster helper function
+Date: Fri, 04 Jul 2025 17:13:09 +0200
+Message-Id: <20250704-smp_calib-v2-0-bade7e9c0463@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: kdpyha7h8q9zijedorfgx1j95xpy5fby
-X-Rspamd-Server: rspamout08
-X-Rspamd-Queue-Id: 999541C
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX18IykUGAOzqgK7BvVmLX83iO7Znbr1dums=
-X-HE-Tag: 1751641924-873251
-X-HE-Meta: U2FsdGVkX1+Oo+MnSHPV5U5wj6rbj4q78/eL7FDvpQmOnnhjDO7oIFk5bZD4iaOeRZ4zsDUvGxjTzbkiYXQuRPaxXUAkRomnqEgiKbwb5aEEsrOKhnq77xjpBn2ad435krdBkGg6hrTee2hYTCrnm7dnT6EiSgwGUbfyJj2WUx9Q8H4IohtAiHqPMUsHmvt6okfkFKmRZTh6KKCsUwThN34EH0jF5wyb3s/unWKo7sCRj+6BT4y6la2UfeeDxGH1KzRCY6QBGi2OzgpsHdG3kQUwWr14x47aZ8LoI24Y0Qw/CDFT4WSFph+08mycpZnSirzosaBYVQGb4L1PyYmt1QZ5hU+t23l+exY3k1tPjSowuYTPRqd5Bm11FWt35lWF
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAIXvZ2gC/23MQQ6CMBCF4auQWVszrRTBlfcwxEA7lUmAkpY0G
+ sLdraxd/i8v3waRAlOEW7FBoMSR/ZxDnQowQze/SLDNDQqVRq1QxGl5mm7kXlT2gtiQdLpvIP+
+ XQI7fh/Vocw8cVx8+B53kb/2nJCmkMBZLh921rsr63nu/jjyfjZ+g3ff9Cx3z6GykAAAA
+X-Change-ID: 20250520-smp_calib-6d3009e1f5b9
+To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc: Jiaxun Yang <jiaxun.yang@flygoat.com>, 
+ Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
+ =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, 
+ Tawfik Bayouk <tawfik.bayouk@mobileye.com>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, linux-mips@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Gregory CLEMENT <gregory.clement@bootlin.com>
+X-Mailer: b4 0.14.2
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddvfeegkecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffufffkgggtgffvvefosehtkeertdertdejnecuhfhrohhmpefirhgvghhorhihucevnffgoffgpffvuceoghhrvghgohhrhidrtghlvghmvghnthessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhephfekveffkeekvdekteevgeefjeevteeiheeigeetjeevvdfhheeitdegveekgeevnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghdpsghoohhtlhhinhdrtghomhenucfkphepvdgrtddumegtsgdugeemheehieemjegrtddtmegurgdtugemjedtheehmegutdduvgemudegkeehnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgdugeemheehieemjegrtddtmegurgdtugemjedtheehmegutdduvgemudegkeehpdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehgrhgvghhorhihrdgtlhgvmhgvnhhtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeelpdhrtghpthhtohepthhhohhmrghsrdhpvghtrgiiiihonhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtohepvhhlrgguihhmihhrrdhkohhnughrrghtihgvvhesmhhos
+ ghilhgvhigvrdgtohhmpdhrtghpthhtohepthgrfihfihhkrdgsrgihohhukhesmhhosghilhgvhigvrdgtohhmpdhrtghpthhtohepghhrvghgohhrhidrtghlvghmvghnthessghoohhtlhhinhdrtghomhdprhgtphhtthhopehtshgsohhgvghnugesrghlphhhrgdrfhhrrghnkhgvnhdruggvpdhrtghpthhtohepjhhirgiguhhnrdihrghnghesfhhlhihgohgrthdrtghomhdprhgtphhtthhopehthhgvohdrlhgvsghruhhnsegsohhothhlihhnrdgtohhmpdhrtghpthhtoheplhhinhhugidqmhhiphhssehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-GND-Sasl: gregory.clement@bootlin.com
 
-On Thu, 3 Jul 2025 13:58:17 -0700
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
+This series allow booting faster by reusing the delay calibration
+across the CPU belonging of the same cluster. While doing it we now
+reuse the mips_cps_first_online_in_cluster() that we improve also.
 
-> So the reason I dislike the HAVE_xyz pattern is exactly that there
-> _isn't_ a pattern. When there are fifteen different patterns, it's not
-> a pattern at all.
-> 
-> That said, maybe it's better to have one place that has that "if
-> FUNCTION_TRACER, even if I despise the nonsensical "helper
-> indirection" just because of the random naming.
+This series enables faster booting by reusing delay calibration across
+CPUs within the same cluster. During this process, we reuse the
+improved mips_cps_first_online_in_cluster function.
 
-At least with HAVE_FTRACE_* there is a pattern. The HAVE_* may not be
-consistent across other parts of the kernel, but it has been with ftrace.
+With the introduction of this series, a configuration running 32 cores
+spread across two clusters sees a significant reduction in boot time
+by approximately 600 milliseconds.
 
-As I have stated, ftrace is very tightly coupled with the architectures due
-to the assembly written trampolines. And having a simple way for the
-architectures to denote what it supports and what it does not makes the
-generic code much simpler to implement.
+Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+---
+Changes in v2:
+- Add a patch improving mips_cps_first_online_in_cluster()
+- Use mips_cps_first_online_in_cluster() in calibrate_delay_is_known()
+  as suggested by Jiaxun
+- Link to v1: https://lore.kernel.org/r/20250520-smp_calib-v1-1-cd04f0a78648@bootlin.com
 
--- Steve
+---
+Gregory CLEMENT (3):
+      MIPS: CPS: Improve mips_cps_first_online_in_cluster()
+      MIPS: CPS: Change default cluster value for EyeQ SoCs
+      MIPS: CPS: Optimise delay CPU calibration for SMP
+
+ arch/mips/Kconfig                |  7 +++++++
+ arch/mips/include/asm/mips-cps.h | 18 ++++++++++++++++--
+ arch/mips/kernel/mips-cm.c       | 40 +++++++---------------------------------
+ arch/mips/kernel/smp-cps.c       | 13 +++++++++++++
+ 4 files changed, 43 insertions(+), 35 deletions(-)
+---
+base-commit: 86731a2a651e58953fc949573895f2fa6d456841
+change-id: 20250520-smp_calib-6d3009e1f5b9
+
+Best regards,
+-- 
+Grégory CLEMENT, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
 
