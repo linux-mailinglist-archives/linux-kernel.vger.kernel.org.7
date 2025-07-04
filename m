@@ -1,113 +1,137 @@
-Return-Path: <linux-kernel+bounces-717426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-717431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D59EEAF9410
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 15:26:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EB50AF942D
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 15:30:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D1CA5A70FC
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 13:26:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26CF83AABC9
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 13:28:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCECC2FCFC8;
-	Fri,  4 Jul 2025 13:26:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21C2D2FCE2E;
+	Fri,  4 Jul 2025 13:28:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mmRzdqSf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="XRith5QT"
+Received: from outbound.pv.icloud.com (p-west1-cluster4-host9-snip4-2.eps.apple.com [57.103.65.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30BCC2FC3D1;
-	Fri,  4 Jul 2025 13:26:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DCB22FC3D8
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 13:28:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=57.103.65.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751635569; cv=none; b=kcdPOv/9bd7oZbNuBzOIiMsMs+dsef9ZWPfJ04E5bOyTZy3OjYh79+00LVj+J74MOFVVn4X6PKi/s+hT+i9AUEhViXZSvFJNZ511Tp5S+dDbhMCT2owuPoJPpB4OJbcplVyXmHbD+juILMlalTCdBDVlDvfX6fE+T1915n7uKN0=
+	t=1751635713; cv=none; b=F9H02iFbnuPck6F4WHCJ+P8u71Y3F7PCg46Dhb5KxA4AEv8Po1o0DkHq+OxyfAMtQLEU6Rt1yt4MaHdv627EnCpOzgYwY99dcoF/xxg91dnya6YHNcLVA848fsrHQAJUAQgy+kYzbacOLe/XK4uIEtDc9T8g8lQacdEVs/nRAPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751635569; c=relaxed/simple;
-	bh=QfccnA0zgksNdZVm05TGsQ7eVbfl0jI/QjcOiED9+eg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EpkIs4p1QvGoKRhMAZAeXU42dQWwU+UOAE4tQJrLhRQLQSoT6eXXwdiOYAELIbDM0gi7QCHmsiXYQ7GVNQYnl2HMNXsrkRNac20WZYDtOVjjfexBWTI6+PBmKL/r3fg+e3ykkzgK6XqGZgrMdsWLK2Pyx+jQfCC3RFSOoTlLzgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mmRzdqSf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFD37C4AF09;
-	Fri,  4 Jul 2025 13:26:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751635568;
-	bh=QfccnA0zgksNdZVm05TGsQ7eVbfl0jI/QjcOiED9+eg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=mmRzdqSfD8ONxtlGzxNB29pHclwkaak8zScqIQshytzm/cx6ARkj8sp/kG8pRTdJ9
-	 COVGmCqf3SMaFTMRL1UsX8p/pWgLzL/AlQNhTJsLDojq0gdJO0yYlB7cGeYiFeTFUR
-	 BTZsySFOieY3QEO/6yWvG1qVXUlrIq/GNukGVrYDV9hcVEKBcdpy1ZfELW06zoXnxd
-	 F19/yKj/2aNYCZHSAlyLsP+LmzSCeJH8FFnmr9+aA92aAirL9B0lSlkLHbJwrK1Fjd
-	 ziZVgt8C6WW1KXEDQA+u6Nxf1bbhJ52bTRiBSIbpgVd5kB9SSIZJhaHaFFQdYHUgAQ
-	 ha89IDa3Cu5Sg==
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-553b584ac96so930196e87.1;
-        Fri, 04 Jul 2025 06:26:08 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVqLg4G9e59uPXzU5dsvkAD+gbstEMA9yhRfUC65O0VRIv8kLQBVDMjCyZsLT31crBH0PGn7q5T5WuInQ==@vger.kernel.org, AJvYcCWgDyc8M1TRly9vTkpBBa9ct4RRwFVXV0NQU0Wfv7ot3usJdmzlntrAgBjO9TWsycgTYTXXBrlgXVAeNfOC@vger.kernel.org, AJvYcCX9s0dqxBil98VKg2YwtwsfI91u/EJJeJON9Vf7XduIh0i1oqdxCl68n1vmVgQjc8jpNFjbNcqHaDKnAQ==@vger.kernel.org, AJvYcCXkMG851Z9slO4leDH9WrB9zfRptv3qLcOBnDtykmFtx/V5O5pxr2moceO2tyWU3LclOtWbgjmdXKVlgEjY@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLkxr99dIOpzS+H25K0edfk+FBEH0QYFjqM1RWiBmSWLICh83q
-	gUyonXpEQSoB/wP+BU3rd6hlZR1JUR/F8YajqoDgbxuNywRwJf797GWZpbsHk4s4G3XEjRLUnl9
-	FSEayteFUI3leJdf/7gCrPRczWBtvy9o=
-X-Google-Smtp-Source: AGHT+IGvVOO4kge0EEISokAVNGwR5hqz4/i/BGd42crh5oVCF+hAQX4pwsOeZZ2n1F20FE5+Y24MNfsy4OsedRlOW9Q=
-X-Received: by 2002:a05:6512:3a88:b0:553:2e4a:bb58 with SMTP id
- 2adb3069b0e04-556dbe8b3e7mr1012627e87.9.1751635567154; Fri, 04 Jul 2025
- 06:26:07 -0700 (PDT)
+	s=arc-20240116; t=1751635713; c=relaxed/simple;
+	bh=B7J7r+kp0FdeBYkdCMOT9IqDwzIoMXCjzi9wi3C3nSU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=gYdU8CUEwg4mu2LxgAwSFMhcgZQgOiYntb0QPUxUMcnHeMqolqukOqRbnmSsRAlvyFFkrIsE+1ND0XOgzeB/C0e+CkoecKjQuILey29v2Mjd8M9KMq7fUdDb+cA1Z8Y4o2K7pu7tCZzNaEKYB+gGGOAKoxhIQHmRan0zr1kw/pQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=XRith5QT; arc=none smtp.client-ip=57.103.65.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; bh=o98sS6Gv5S9JP0hy8nw2ZgcY2yF3TmukVAMQ8/REpqI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:x-icloud-hme;
+	b=XRith5QTvehKIh6g3r8oQ4gn4bGjWlvuRy0G1fnZUuzjGsVD7/Gd0/KQd18LIS3nL
+	 xQw33cKcM7+58kd/TUK9w3uo8YmmXpzikx4v3sIF963n7zlVQb17aYe6ABWFUVgnvx
+	 47O9na/SZArqmOPmLQgF2Cd8f6h/QzMIEY8O66wYrZiw9njsmYn5fXc2E6rapGmIKO
+	 5jV+zV8hAIWF4F0bRun2a4SBNTrnmAhFzzg5KXgJ5VmqgAWlobFnfzRTUhVO4VQOV0
+	 nma4WvkOwk+fJ9vP6W9a9XAIDBEoYl3ut+g1WLtA57D6pQu2+NWCnYyY6MYqPzAjF5
+	 RUFfsI4q9tRkA==
+Received: from outbound.pv.icloud.com (unknown [127.0.0.2])
+	by outbound.pv.icloud.com (Postfix) with ESMTPS id 976C918001E8;
+	Fri,  4 Jul 2025 13:28:29 +0000 (UTC)
+Received: from [192.168.1.26] (pv-asmtp-me-k8s.p00.prod.me.com [17.56.9.36])
+	by outbound.pv.icloud.com (Postfix) with ESMTPSA id 8379A180349A;
+	Fri,  4 Jul 2025 13:26:17 +0000 (UTC)
+From: Zijun Hu <zijun_hu@icloud.com>
+Subject: [PATCH v4 0/8] char: misc: Various cleanup for miscdevice
+Date: Fri, 04 Jul 2025 21:25:58 +0800
+Message-Id: <20250704-rfc_miscdev-v4-0-b48986112d6a@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250630172224.46909-1-ebiggers@kernel.org>
-In-Reply-To: <20250630172224.46909-1-ebiggers@kernel.org>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Fri, 4 Jul 2025 15:25:54 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXG-eYjzxsZbCZKaje_a3jLAJMPXEu8Bb76O7ueO4tgisQ@mail.gmail.com>
-X-Gm-Features: Ac12FXxiAnERbdwaoRjBCKkpahtdEbFUP_6dhB0XhYuW8ofqI7av77U-BIpSKE4
-Message-ID: <CAMj1kXG-eYjzxsZbCZKaje_a3jLAJMPXEu8Bb76O7ueO4tgisQ@mail.gmail.com>
-Subject: Re: [PATCH 0/2] Convert fs/verity/ to use SHA-2 library API
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: fsverity@lists.linux.dev, linux-crypto@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org, 
-	linux-f2fs-devel@lists.sourceforge.net, linux-btrfs@vger.kernel.org, 
-	"Jason A . Donenfeld" <Jason@zx2c4.com>, "Theodore Ts'o" <tytso@mit.edu>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGbWZ2gC/23OQQrCMBCF4atI1kbSGWNbV95DRNJkYgO20USDI
+ r27qRstdjPwFvPxv1ik4Ciy7eLFAiUXne/zWC8XTLeqPxF3Jm8GAqQoRcGD1cfORW0ocZTGIBZ
+ Cl1qw/HEJZN3jo+0PedvgO35rA6mvsQExMVLBC26NAmmkAIXlzse4ut7VWfuuW+Uzyq2LNx+en
+ 8wEoz9flIALjtQANFYiNvSvjWEJfwmYEpgJU9U5iMqqRjNDDMPwBrlEORg6AQAA
+X-Change-ID: 20250701-rfc_miscdev-35dd3310c7c0
+To: Arnd Bergmann <arnd@arndb.de>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, 
+ Helge Deller <deller@gmx.de>, "David S. Miller" <davem@davemloft.net>, 
+ Andreas Larsson <andreas@gaisler.com>
+Cc: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>, 
+ Zijun Hu <zijun_hu@icloud.com>, linux-kernel@vger.kernel.org, 
+ linux-parisc@vger.kernel.org, sparclinux@vger.kernel.org, 
+ Zijun Hu <zijun.hu@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Proofpoint-GUID: zhBHMFU_UMChf7pdWTnHuDh5mCOF-RJB
+X-Proofpoint-ORIG-GUID: zhBHMFU_UMChf7pdWTnHuDh5mCOF-RJB
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA0MDEwMiBTYWx0ZWRfX838+/1C5I3uV
+ FNWd3n8bkW7Mi37J07uUMlcSksNP9E3YGrcghCEvnAw+kI4RZBmLEItrrXQjcCDDtQx+O4CljYx
+ AaO85bKC4eqmR9H1zhWoYxM79lerdyGMSi2KtLI/gI6TR+CW0SJDgPobesL+Z39ncJN2skZeaoc
+ V+l0LGF/UhqPDToKqm1zpD9SpIFX4+GJ5iFB61xwDwrUQuVqid0HzwpnFOuu9nr6zOiHoa+/ITh
+ DBwUX5DiFoRYlb8dcO3BR29vr+GeHSwkUwnBYQmqkM7Xic1Khrt5OdXa+0XMkPeJfrDaVYYYE=
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-04_05,2025-07-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0
+ suspectscore=0 spamscore=0 mlxscore=0 clxscore=1011 malwarescore=0
+ mlxlogscore=894 phishscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.22.0-2506270000 definitions=main-2507040102
 
-On Mon, 30 Jun 2025 at 19:24, Eric Biggers <ebiggers@kernel.org> wrote:
->
-> This series, including all its prerequisites, is also available at:
->
->     git fetch https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git fsverity-libcrypto-v1
->
-> This series makes fs/verity/ use the SHA-2 library API instead of the
-> old-school crypto API.  This is simpler and more efficient.
->
-> This depends on my SHA-2 library improvements for 6.17 (many patches),
-> so this patchset might need to wait until 6.18.  But I'm also thinking
-> about just basing the fsverity tree on libcrypto-next for 6.17.
->
-> Eric Biggers (2):
->   lib/crypto: hash_info: Move hash_info.c into lib/crypto/
->   fsverity: Switch from crypto_shash to SHA-2 library
->
+This patch series is to do cleanup for:
 
+- Miscdevice APIs
+- Miscdevice kunit test cases
+- Drivers which use miscdevice APIs
 
-Acked-by: Ard Biesheuvel <ardb@kernel.org>
+Signed-off-by: Zijun Hu <zijun.hu@oss.qualcomm.com>
+---
+Previous discussion link:
+https://lore.kernel.org/all/20250620-rfc_miscdev-v1-1-fda25d502a37@oss.qualcomm.com
 
->  Documentation/filesystems/fsverity.rst |   3 +-
->  crypto/Kconfig                         |   3 -
->  crypto/Makefile                        |   1 -
->  fs/verity/Kconfig                      |   6 +-
->  fs/verity/enable.c                     |   8 +-
->  fs/verity/fsverity_private.h           |  24 +--
->  fs/verity/hash_algs.c                  | 194 +++++++++----------------
->  fs/verity/open.c                       |  36 ++---
->  fs/verity/verify.c                     |   7 +-
->  lib/crypto/Kconfig                     |   3 +
->  lib/crypto/Makefile                    |   2 +
->  {crypto => lib/crypto}/hash_info.c     |   0
->  12 files changed, 107 insertions(+), 180 deletions(-)
->  rename {crypto => lib/crypto}/hash_info.c (100%)
->
-> --
-> 2.50.0
->
+---
+Changes in v4:
+- Fix WARNINGs reported by "kernel test robot <lkp@intel.com>"
+- Link to v3: https://lore.kernel.org/r/20250702-rfc_miscdev-v3-0-d8925de7893d@oss.qualcomm.com
+
+Changes in v3:
+- Drop the change which allocates 4 fixed minors for watchdog
+- Correct tile and commit message
+- Link to v2: https://lore.kernel.org/r/20250701-rfc_miscdev-v2-0-3eb22bf533be@oss.qualcomm.com
+
+---
+Zijun Hu (8):
+      char: misc: Move drivers/misc/misc_minor_kunit.c to drivers/char/
+      char: misc: Adapt and add test cases for simple minor space division
+      char: misc: Disallow registering miscdevice whose minor > MISC_DYNAMIC_MINOR
+      char: misc: Add a reentry test case about dynamic minor request
+      char: misc: Make registering miscdevice reentry who wants dynamic minor
+      char: misc: Does not request module for miscdevice with dynamic minor
+      char: misc: Register fixed minor EISA_EEPROM_MINOR in linux/miscdevice.h
+      sparc: kernel: apc: Remove macro APC_MINOR definition
+
+ arch/sparc/kernel/apc.c                   |  3 +-
+ drivers/char/Makefile                     |  1 +
+ drivers/char/misc.c                       | 16 +++++-
+ drivers/{misc => char}/misc_minor_kunit.c | 95 +++++++++++++++++++++----------
+ drivers/misc/Makefile                     |  1 -
+ drivers/parisc/eisa_eeprom.c              |  2 -
+ include/linux/miscdevice.h                |  9 +++
+ 7 files changed, 89 insertions(+), 38 deletions(-)
+---
+base-commit: 626e89412dfb88766d90d842af4d9ec432d8526f
+change-id: 20250701-rfc_miscdev-35dd3310c7c0
+
+Best regards,
+-- 
+Zijun Hu <zijun.hu@oss.qualcomm.com>
+
 
