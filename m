@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-717094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-717090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B54B1AF8F38
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 11:54:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C4B2AF8F11
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 11:49:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C763C7A7B55
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 09:48:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5A58585335
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 09:49:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 813C12900AA;
-	Fri,  4 Jul 2025 09:49:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25DBB2EBBAE;
+	Fri,  4 Jul 2025 09:49:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="leamL8Qe"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="eE7Hu5zg"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E27272EF9D4
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 09:49:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEECD2DCC17
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 09:49:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751622567; cv=none; b=AeGbjoBVw11Wb2xvyFph2Cigf5F9YzSiYUHpCXfsrjuDVdn7+MdUWBiVzIGthP3/J0PGC25qSSR8xXafo4F03Y6AT6CALsrTbD9NeOtDxtDuupsPEOJeGofp+dRi9UkW5/h2ynfsWKj9kaqAUWI31z8tLDRA4QvdXvuXikKEUOs=
+	t=1751622556; cv=none; b=HvePyAxBdTCKdTupSkEVnt6z5W6XQo5cQgEQF7heIJH3lbxZBWCZpMx3HzIrep2n7ADSfRPAQ1YnNOXH3Iz118FpqMu8GlHFy8JRin82AdUMOcrFFuWVedUxjLcNTTIwYKRywzSDo/oY7BAsBXxuleI1e5mw5pMMXmWpVfeuqa0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751622567; c=relaxed/simple;
-	bh=zUwgdQIAQfDMzwxQNeGaYILbEVJvebERnRCIoK8Glq4=;
+	s=arc-20240116; t=1751622556; c=relaxed/simple;
+	bh=AV2ENCN1BX8iLUrZMgsP0+LdjpphFnHhXO9Yk6ZFXqg=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nD0zdwqOyfbg59cpMLqpGiSmjdeEpTKg7m/8pOkcPr4Ft/4K4ica5zhlY5NqViC46HKDJqG1NRYwbtzAMpGItYCXib8HugB5JVcK30zD+G7nyRLQkY5t0Xcd0CTXP5aMzi0pIhUfckaNDHIIz5lQY8GRUQJIJ9HcdMsv2+Mn1uI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=leamL8Qe; arc=none smtp.client-ip=198.47.23.234
+	 MIME-Version:Content-Type; b=HhBtl+yDHm6uwgYycOvkRPgqKmf/Ku4Jn2ULS4b7OC8osl68b7SxlSg60Ae0nxMm+0w7ne7Uqo+IvPsXp0hbozqcs+TNr7jw1K4IPg1VYuXMBIWW/sfFpwHDRDj+bzBmeDkLx1OYBzMxX6cUSPuZ0JbKOGdy4FSN2zEqw/Ddy8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=eE7Hu5zg; arc=none smtp.client-ip=198.47.19.246
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 5649muYO3796351;
-	Fri, 4 Jul 2025 04:48:56 -0500
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 5649mwXr264780;
+	Fri, 4 Jul 2025 04:48:58 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1751622536;
-	bh=HbTVn6tkYbDgC9EZaGjIw5d7xDPKAYM9WUBwjYYGi/Q=;
+	s=ti-com-17Q1; t=1751622538;
+	bh=1xhFBCswGeNy7iF602Ww8g7YukHk4l20I8/G7K/iQn8=;
 	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=leamL8QeePwRT3rhkR7pWw9sE8QdPnQl9VBNqhh86b0kosTxxyZ/iZ65s6N2Dl3j+
-	 DGtpAfQytrAwzc3w8s4apBYiZ+aJNdFNBcmTrrqaId6kknxowGeiAuJO6eJrJ21kjo
-	 yl8HrNA8MgfdYQF224Moy4kE1KJt8GDrGxtUALG8=
-Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
-	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 5649muSv3273935
+	b=eE7Hu5zg+zkRPFm5TT7pCvPVERD3s3RGleybbjbkrTqmBt7V6RZu0N8HdLk8qg2+W
+	 cl5aDGWWoEqdY6sT1smcXwhS+nubv+ZZhuYZV63gXTqu9V48uJJQL8PqI4PMPOzSAL
+	 TCglS75bGVhK5j6dLXStKIyAYzeWn3WwllWwIDMg=
+Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 5649mwna2705195
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Fri, 4 Jul 2025 04:48:56 -0500
-Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+	Fri, 4 Jul 2025 04:48:58 -0500
+Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 4
- Jul 2025 04:48:56 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ Jul 2025 04:48:58 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Fri, 4 Jul 2025 04:48:56 -0500
+ Frontend Transport; Fri, 4 Jul 2025 04:48:58 -0500
 Received: from localhost (jayesh-hp-z2-tower-g5-workstation.dhcp.ti.com [172.24.227.166])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5649mtrX2774067;
-	Fri, 4 Jul 2025 04:48:56 -0500
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5649mvdx2499180;
+	Fri, 4 Jul 2025 04:48:57 -0500
 From: Jayesh Choudhary <j-choudhary@ti.com>
 To: <jyri.sarha@iki.fi>, <maarten.lankhorst@linux.intel.com>,
         <mripard@kernel.org>, <tzimmermann@suse.de>,
@@ -62,9 +62,9 @@ To: <jyri.sarha@iki.fi>, <maarten.lankhorst@linux.intel.com>,
         <tomi.valkeinen@ideasonboard.com>, <mwalle@kernel.org>
 CC: <airlied@gmail.com>, <simona@ffwll.ch>, <linux-kernel@vger.kernel.org>,
         <j-choudhary@ti.com>
-Subject: [PATCH v4 2/3] drm/tidss: Remove max_pclk_khz from tidss display features
-Date: Fri, 4 Jul 2025 15:18:50 +0530
-Message-ID: <20250704094851.182131-3-j-choudhary@ti.com>
+Subject: [PATCH v4 3/3] drm/tidss: oldi: Add atomic_check hook for oldi bridge
+Date: Fri, 4 Jul 2025 15:18:51 +0530
+Message-ID: <20250704094851.182131-4-j-choudhary@ti.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250704094851.182131-1-j-choudhary@ti.com>
 References: <20250704094851.182131-1-j-choudhary@ti.com>
@@ -78,220 +78,60 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-TIDSS hardware by itself does not have variable max_pclk for each VP.
-The maximum pixel clock is determined by the limiting factor between
-the functional clock and the PLL (parent to the VP/pixel clock).
-
-The limitation that has been modeled till now comes from the clock
-(PLL can only be programmed to a particular max value). Instead of
-putting it as a constant field in dispc_features, we can query the
-DM to see if requested clock can be set or not and use it in
-"mode_valid()".
-
-Replace constant "max_pclk_khz" in dispc_features with "curr_max_pclk"
-in tidss_device structure which would be modified in runtime.
-In mode_valid() call, check if a best frequency match for mode clock
-can be found or not using "clk_round_rate()". Based on that, propagate
-"cur_max_pclk" and query DM again only if the requested mode clock
-is greater than cur_max_pclk. (As the preferred display mode is usually
-the max resolution, driver ends up checking the highest clock the first
-time itself which is used in subsequent checks)
-
-Since TIDSS display controller provides clock tolerance of 5%, we use
-this while checking the curr_max_pclk. Also, move up "dispc_pclk_diff()"
-before it is called.
-
-This will make the existing compatibles reusable if DSS features are
-same across two SoCs with the only difference being the pixel clock.
+Since OLDI consumes DSS VP clock directly as serial clock, certain
+checks cannot be performed in tidss driver which should be checked
+in oldi driver. Add check for mode clock and set the curr_max_pclk
+field for tidss in case the VP is OLDI.
 
 Fixes: 7246e0929945 ("drm/tidss: Add OLDI bridge support")
 Reviewed-by: Devarsh Thakkar <devarsht@ti.com>
 Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
 ---
- drivers/gpu/drm/tidss/tidss_dispc.c | 77 +++++++++++------------------
- drivers/gpu/drm/tidss/tidss_dispc.h |  1 -
- drivers/gpu/drm/tidss/tidss_drv.h   |  5 ++
- 3 files changed, 34 insertions(+), 49 deletions(-)
+ drivers/gpu/drm/tidss/tidss_oldi.c | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-diff --git a/drivers/gpu/drm/tidss/tidss_dispc.c b/drivers/gpu/drm/tidss/tidss_dispc.c
-index 3f6cff2ab1b2..fb59a6a0f86a 100644
---- a/drivers/gpu/drm/tidss/tidss_dispc.c
-+++ b/drivers/gpu/drm/tidss/tidss_dispc.c
-@@ -58,10 +58,6 @@ static const u16 tidss_k2g_common_regs[DISPC_COMMON_REG_TABLE_LEN] = {
- const struct dispc_features dispc_k2g_feats = {
- 	.min_pclk_khz = 4375,
- 
--	.max_pclk_khz = {
--		[DISPC_VP_DPI] = 150000,
--	},
--
- 	/*
- 	 * XXX According TRM the RGB input buffer width up to 2560 should
- 	 *     work on 3 taps, but in practice it only works up to 1280.
-@@ -144,11 +140,6 @@ static const u16 tidss_am65x_common_regs[DISPC_COMMON_REG_TABLE_LEN] = {
- };
- 
- const struct dispc_features dispc_am65x_feats = {
--	.max_pclk_khz = {
--		[DISPC_VP_DPI] = 165000,
--		[DISPC_VP_OLDI_AM65X] = 165000,
--	},
--
- 	.scaling = {
- 		.in_width_max_5tap_rgb = 1280,
- 		.in_width_max_3tap_rgb = 2560,
-@@ -244,11 +235,6 @@ static const u16 tidss_j721e_common_regs[DISPC_COMMON_REG_TABLE_LEN] = {
- };
- 
- const struct dispc_features dispc_j721e_feats = {
--	.max_pclk_khz = {
--		[DISPC_VP_DPI] = 170000,
--		[DISPC_VP_INTERNAL] = 600000,
--	},
--
- 	.scaling = {
- 		.in_width_max_5tap_rgb = 2048,
- 		.in_width_max_3tap_rgb = 4096,
-@@ -315,11 +301,6 @@ const struct dispc_features dispc_j721e_feats = {
- };
- 
- const struct dispc_features dispc_am625_feats = {
--	.max_pclk_khz = {
--		[DISPC_VP_DPI] = 165000,
--		[DISPC_VP_INTERNAL] = 170000,
--	},
--
- 	.scaling = {
- 		.in_width_max_5tap_rgb = 1280,
- 		.in_width_max_3tap_rgb = 2560,
-@@ -376,15 +357,6 @@ const struct dispc_features dispc_am625_feats = {
- };
- 
- const struct dispc_features dispc_am62a7_feats = {
--	/*
--	 * if the code reaches dispc_mode_valid with VP1,
--	 * it should return MODE_BAD.
--	 */
--	.max_pclk_khz = {
--		[DISPC_VP_TIED_OFF] = 0,
--		[DISPC_VP_DPI] = 165000,
--	},
--
- 	.scaling = {
- 		.in_width_max_5tap_rgb = 1280,
- 		.in_width_max_3tap_rgb = 2560,
-@@ -441,10 +413,6 @@ const struct dispc_features dispc_am62a7_feats = {
- };
- 
- const struct dispc_features dispc_am62l_feats = {
--	.max_pclk_khz = {
--		[DISPC_VP_DPI] = 165000,
--	},
--
- 	.subrev = DISPC_AM62L,
- 
- 	.common = "common",
-@@ -1347,25 +1315,49 @@ static void dispc_vp_set_default_color(struct dispc_device *dispc,
- 			DISPC_OVR_DEFAULT_COLOR2, (v >> 32) & 0xffff);
+diff --git a/drivers/gpu/drm/tidss/tidss_oldi.c b/drivers/gpu/drm/tidss/tidss_oldi.c
+index 63e07c8edeaa..486e7373531b 100644
+--- a/drivers/gpu/drm/tidss/tidss_oldi.c
++++ b/drivers/gpu/drm/tidss/tidss_oldi.c
+@@ -309,6 +309,29 @@ static u32 *tidss_oldi_atomic_get_input_bus_fmts(struct drm_bridge *bridge,
+ 	return input_fmts;
  }
  
-+/*
-+ * Calculate the percentage difference between the requested pixel clock rate
-+ * and the effective rate resulting from calculating the clock divider value.
-+ */
-+unsigned int dispc_pclk_diff(unsigned long rate, unsigned long real_rate)
++static int tidss_oldi_atomic_check(struct drm_bridge *bridge,
++				   struct drm_bridge_state *bridge_state,
++				   struct drm_crtc_state *crtc_state,
++				   struct drm_connector_state *conn_state)
 +{
-+	int r = rate / 100, rr = real_rate / 100;
++	struct tidss_oldi *oldi = drm_bridge_to_tidss_oldi(bridge);
++	struct drm_display_mode *adjusted_mode;
++	unsigned long round_clock;
 +
-+	return (unsigned int)(abs(((rr - r) * 100) / r));
-+}
++	adjusted_mode = &crtc_state->adjusted_mode;
 +
-+static int check_pixel_clock(struct dispc_device *dispc,
-+			     u32 hw_videoport, unsigned long clock)
-+{
-+	if (clock > dispc->tidss->curr_max_pclk[hw_videoport] &&
-+	    !dispc->tidss->is_oldi_vp[hw_videoport]) {
-+		unsigned long round_clock = clk_round_rate(dispc->vp_clk[hw_videoport], clock);
++	if (adjusted_mode->clock > oldi->tidss->curr_max_pclk[oldi->parent_vp]) {
++		round_clock = clk_round_rate(oldi->serial, adjusted_mode->clock * 7 * 1000);
 +
-+		if (dispc_pclk_diff(clock, round_clock) > 5)
++		if (dispc_pclk_diff(adjusted_mode->clock * 7 * 1000, round_clock) > 5)
 +			return -EINVAL;
 +
-+		dispc->tidss->curr_max_pclk[hw_videoport] = round_clock;
++		oldi->tidss->curr_max_pclk[oldi->parent_vp] = round_clock;
 +	}
 +
 +	return 0;
 +}
 +
- enum drm_mode_status dispc_vp_mode_valid(struct dispc_device *dispc,
- 					 u32 hw_videoport,
- 					 const struct drm_display_mode *mode)
- {
- 	u32 hsw, hfp, hbp, vsw, vfp, vbp;
- 	enum dispc_vp_bus_type bus_type;
--	int max_pclk;
+ static const struct drm_bridge_funcs tidss_oldi_bridge_funcs = {
+ 	.attach	= tidss_oldi_bridge_attach,
+ 	.atomic_pre_enable = tidss_oldi_atomic_pre_enable,
+@@ -317,6 +340,7 @@ static const struct drm_bridge_funcs tidss_oldi_bridge_funcs = {
+ 	.atomic_duplicate_state = drm_atomic_helper_bridge_duplicate_state,
+ 	.atomic_destroy_state = drm_atomic_helper_bridge_destroy_state,
+ 	.atomic_reset = drm_atomic_helper_bridge_reset,
++	.atomic_check = tidss_oldi_atomic_check,
+ };
  
- 	bus_type = dispc->feat->vp_bus_type[hw_videoport];
- 
--	max_pclk = dispc->feat->max_pclk_khz[bus_type];
--
--	if (WARN_ON(max_pclk == 0))
-+	if (WARN_ON(bus_type == DISPC_VP_TIED_OFF))
- 		return MODE_BAD;
- 
- 	if (mode->clock < dispc->feat->min_pclk_khz)
- 		return MODE_CLOCK_LOW;
- 
--	if (mode->clock > max_pclk)
-+	if (check_pixel_clock(dispc, hw_videoport, mode->clock * 1000))
- 		return MODE_CLOCK_HIGH;
- 
- 	if (mode->hdisplay > 4096)
-@@ -1437,17 +1429,6 @@ void dispc_vp_disable_clk(struct dispc_device *dispc, u32 hw_videoport)
- 	clk_disable_unprepare(dispc->vp_clk[hw_videoport]);
- }
- 
--/*
-- * Calculate the percentage difference between the requested pixel clock rate
-- * and the effective rate resulting from calculating the clock divider value.
-- */
--unsigned int dispc_pclk_diff(unsigned long rate, unsigned long real_rate)
--{
--	int r = rate / 100, rr = real_rate / 100;
--
--	return (unsigned int)(abs(((rr - r) * 100) / r));
--}
--
- int dispc_vp_set_clk_rate(struct dispc_device *dispc, u32 hw_videoport,
- 			  unsigned long rate)
- {
-diff --git a/drivers/gpu/drm/tidss/tidss_dispc.h b/drivers/gpu/drm/tidss/tidss_dispc.h
-index 60c1b400eb89..fbfe6e304ac8 100644
---- a/drivers/gpu/drm/tidss/tidss_dispc.h
-+++ b/drivers/gpu/drm/tidss/tidss_dispc.h
-@@ -78,7 +78,6 @@ enum dispc_dss_subrevision {
- 
- struct dispc_features {
- 	int min_pclk_khz;
--	int max_pclk_khz[DISPC_VP_MAX_BUS_TYPE];
- 
- 	struct dispc_features_scaling scaling;
- 
-diff --git a/drivers/gpu/drm/tidss/tidss_drv.h b/drivers/gpu/drm/tidss/tidss_drv.h
-index 82beaaceadb3..5cf21d5f56f2 100644
---- a/drivers/gpu/drm/tidss/tidss_drv.h
-+++ b/drivers/gpu/drm/tidss/tidss_drv.h
-@@ -25,6 +25,11 @@ struct tidss_device {
- 	const struct dispc_features *feat;
- 	struct dispc_device *dispc;
- 	bool is_oldi_vp[TIDSS_MAX_PORTS];
-+	/*
-+	 * stores highest pixel clock value found to be valid while checking
-+	 * supported modes for connected display
-+	 */
-+	unsigned long curr_max_pclk[TIDSS_MAX_PORTS];
- 
- 
- 	unsigned int num_crtcs;
+ static int get_oldi_mode(struct device_node *oldi_tx, int *companion_instance)
 -- 
 2.34.1
 
