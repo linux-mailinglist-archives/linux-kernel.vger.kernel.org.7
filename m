@@ -1,76 +1,123 @@
-Return-Path: <linux-kernel+bounces-716327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B06DAF8532
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 03:24:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6506CAF8535
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 03:27:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 090E2580B1B
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 01:25:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB7F85818BF
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 01:27:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 964AC136347;
-	Fri,  4 Jul 2025 01:24:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 377E913B7AE;
+	Fri,  4 Jul 2025 01:27:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="I6is1ers"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Py0056Bi"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42BF68635C;
-	Fri,  4 Jul 2025 01:24:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3276386340;
+	Fri,  4 Jul 2025 01:27:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751592293; cv=none; b=EGyg/NWlINdH/r5ca4iIA9ITVN7RwpKAc0Ia3SZSt84OrGEyJbWFggQcgLMhNf27e/PNqSe4BOHIrmYIT3b3qG9sdFNlEcLwGUZ+x4XvgAUojcA8+Mx6LOHlyiI+qDq5iiX4PRunyYdOwtc0LwCNgNnDkt48jn6vrMCSC4GVe4k=
+	t=1751592446; cv=none; b=I+V075yaRyqJ2zEX8I2Sy8mI7ERohlTFLGlFmp3VtCsP79UWJvJQnHYy6EgQJvngwfHd99WXqIRiBBz3sjqejQy5aDWsEzX+JKpMnjtmW9p40snH9VlMc/JKNJaU4S1hTp/Wu/NtuDPpIKoZsdsmVPaQc4wrqtRSXQUfPjJJaPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751592293; c=relaxed/simple;
-	bh=dmVwpc0egoHaQe36uq5tr8rwYmpYq7GIAe9eeLMQKLc=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=aaZxfdnEPiT/l8zoPm+++kJc1kFZJmmYyksWcqsuyMN1omlvckvAWTmtCwmETTITxjix3uTJuWnWHAgO5ty2e5+IZrGzrKsCW0olJ+vLtB/nzRV23zJl/hMC0FMPt5k6ZszCcxny9qS4+EAG0pH6PO96fP/iqlN9ONXZUnOP5gc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=I6is1ers; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1751592289;
-	bh=dmVwpc0egoHaQe36uq5tr8rwYmpYq7GIAe9eeLMQKLc=;
-	h=Subject:From:To:Date:In-Reply-To:References;
-	b=I6is1ersaoALURA73JjjX7SMm43rGbIhpvpBNzKZRZuDY4wEbdLiPSBxdCNamI5ZA
-	 7Ft6POqmfNCzi6eF30kD+OdQWsJgKmnQ94fckvpDCQ+ByX5wv/JsoO9wNvvJaphd70
-	 qOpP5m4yDOPF//pl+HAxxyRgeLy6/oGTS9uAiPCN0wf39X6FlQta0CgHNSaUQm10kk
-	 BPVl67+Re4njKhtMqDPieMT8eObg6RdPJ20Mx9fynkLpknkRKjV491IW+om0BXlDY6
-	 Y/QKwLyjVTtC80KCyFcodX3Hls0py3vnpM3Bfc/tfJvD4k5cmbuJ1FKdMPBtNqi2h9
-	 kI/sXIGRrczDQ==
-Received: from [192.168.68.112] (unknown [180.150.112.153])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id B5CD66443C;
-	Fri,  4 Jul 2025 09:24:46 +0800 (AWST)
-Message-ID: <444ea7dd85b7e664043e3fae4a22d515fd121433.camel@codeconstruct.com.au>
-Subject: Re: [PATCH v6 2/2] mailbox: aspeed: add mailbox driver for AST27XX
- series SoC
-From: Andrew Jeffery <andrew@codeconstruct.com.au>
-To: Jammy Huang <jammy_huang@aspeedtech.com>, jassisinghbrar@gmail.com, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, joel@jms.id.au, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org
-Date: Fri, 04 Jul 2025 10:54:45 +0930
-In-Reply-To: <20250702011956.47479-3-jammy_huang@aspeedtech.com>
-References: <20250702011956.47479-1-jammy_huang@aspeedtech.com>
-	 <20250702011956.47479-3-jammy_huang@aspeedtech.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1751592446; c=relaxed/simple;
+	bh=wiEAgWU9/grMvoZLEsMM2n7Py0FumSs1+9V6ieSrx/k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oXxRJhluaiB1H2pZij6ae/+/tukOPRPKGgFliSIsfPB3vJtyC0Zu81xPfyemitNsg/Q6yx0Q/y3OABtniPyAxXEVquwjiPcumkiTBkVLOfLKU0rnVAJUzIrUX+dkjKevp+sBCPavD72om+o6nKULQ2u19lezhutZTf08fIH8iJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Py0056Bi; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751592445; x=1783128445;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=wiEAgWU9/grMvoZLEsMM2n7Py0FumSs1+9V6ieSrx/k=;
+  b=Py0056Bi2x+KZ6WkYUcj6ToNWsj0BADBou5taW1pn0XQb56GxQI7/Yfp
+   KqjU7LgVRJcLk3Wa5op0cYKP7k4gfm305U2W3G1Qtz3V/Gzg2+rcLv630
+   7IzfCArEahOzCeZt9VxVb/BVslzBZK4riaTHPU1JtNKpQpCRy3DSyk0Fh
+   FahwCQyBA0t++ZWW9GB12XxsSmXcNZYgK4LaHM72vYyI5yx/suvkeOAfu
+   L81chfbi5UuQyTf0DMqJPsI8ae4vqIEEkoU0kKbyIcjlHW1FRoM39Ko63
+   qSvmdochst0GBPfzCQlTBterzNyToDGx9RzRrNikgenirixcxBfBrivcH
+   g==;
+X-CSE-ConnectionGUID: m4ydZx6IT0iz0rQW9h1JFA==
+X-CSE-MsgGUID: ja75FxzqSS+KBMGDHvVPEQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11483"; a="71498627"
+X-IronPort-AV: E=Sophos;i="6.16,285,1744095600"; 
+   d="scan'208";a="71498627"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2025 18:27:24 -0700
+X-CSE-ConnectionGUID: SwyYW4yaQP+GjHkzz78g+g==
+X-CSE-MsgGUID: doSsbApTQNO2hzDH2dd9Yg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,285,1744095600"; 
+   d="scan'208";a="154277007"
+Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2025 18:27:22 -0700
+Message-ID: <b95b6a35-e6b5-46df-9a5f-4cc7f4e823bb@linux.intel.com>
+Date: Fri, 4 Jul 2025 09:25:51 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] iommu/vt-d: Optimize iotlb_sync_map for
+ non-caching/non-RWBF modes
+To: "Tian, Kevin" <kevin.tian@intel.com>, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+ Ioanna Alifieraki <ioanna-maria.alifieraki@canonical.com>
+Cc: "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "stable@vger.kernel.org" <stable@vger.kernel.org>
+References: <20250703031545.3378602-1-baolu.lu@linux.intel.com>
+ <BN9PR11MB5276F7B7E0F6091334A7A3128C43A@BN9PR11MB5276.namprd11.prod.outlook.com>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <BN9PR11MB5276F7B7E0F6091334A7A3128C43A@BN9PR11MB5276.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, 2025-07-02 at 09:19 +0800, Jammy Huang wrote:
-> Add mailbox controller driver for AST27XX SoCs, which provides
-> independent tx/rx mailbox between different processors. There are 4
-> channels for each tx/rx mailbox and each channel has an 32-byte FIFO.
->=20
-> Signed-off-by: Jammy Huang <jammy_huang@aspeedtech.com>
+On 7/3/25 15:16, Tian, Kevin wrote:
+>> From: Lu Baolu<baolu.lu@linux.intel.com>
+>> Sent: Thursday, July 3, 2025 11:16 AM
+>>
+>> The iotlb_sync_map iommu ops allows drivers to perform necessary cache
+>> flushes when new mappings are established. For the Intel iommu driver,
+>> this callback specifically serves two purposes:
+>>
+>> - To flush caches when a second-stage page table is attached to a device
+>>    whose iommu is operating in caching mode (CAP_REG.CM==1).
+>> - To explicitly flush internal write buffers to ensure updates to memory-
+>>    resident remapping structures are visible to hardware (CAP_REG.RWBF==1).
+>>
+>> However, in scenarios where neither caching mode nor the RWBF flag is
+>> active, the cache_tag_flush_range_np() helper, which is called in the
+>> iotlb_sync_map path, effectively becomes a no-op.
+>>
+>> Despite being a no-op, cache_tag_flush_range_np() involves iterating
+>> through all cache tags of the iommu's attached to the domain, protected
+>> by a spinlock. This unnecessary execution path introduces overhead,
+>> leading to a measurable I/O performance regression. On systems with
+>> NVMes
+>> under the same bridge, performance was observed to drop from
+>> approximately
+>> ~6150 MiB/s down to ~4985 MiB/s.
+> so for the same bridge case two NVMe disks likely are in the same
+> iommu group sharing a domain. Then there is contention on the
+> spinlock from two parallel threads on two disks. when disks come
+> from different bridges they are attached to different domains hence
+> no contention.
+> 
+> is it a correct description for the difference between same vs.
+> different bridge?
 
-Reviewed-by: Andrew Jeffery <andrew@codeconstruct.com.au>
+Yes. I have the same understanding.
+
+Thanks,
+baolu
 
