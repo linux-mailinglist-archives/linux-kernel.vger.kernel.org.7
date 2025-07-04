@@ -1,129 +1,103 @@
-Return-Path: <linux-kernel+bounces-716341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F139BAF854E
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 03:50:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 425F4AF8551
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 03:52:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 826911BC8710
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 01:51:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6917567BED
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 01:52:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32D5A1D7E5C;
-	Fri,  4 Jul 2025 01:50:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 548971D63F7;
+	Fri,  4 Jul 2025 01:52:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hz2ikRJd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83E1849659;
-	Fri,  4 Jul 2025 01:50:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Gn7F0Ju7"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38D7849659
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 01:52:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751593838; cv=none; b=LKoL19oFG1SBGa/ZWOO0GllR/hchW6LPAjcRkrl/kNt/RGzjYA3ibKLR56L5nCeW6YCEushNt5YRIar6DPYO6SNTtLeB78SSNrzWY18zbFrpZgp+HhtY+xJZA/mVXkaxvicTPMdL7/QAs8FPbjfh4Vxp+lHrV/magbg6Wre1rYw=
+	t=1751593966; cv=none; b=iL9kRPYpGeV93brtE3PPnWIxJN+s/GlcD4lkfqSw7NVt5bLVuizW38rnGfGjLdfzDOdXm+TVrGDDqMMJ7YILpouVPEcbyybzkz5ykEwokA1m4GG6ljJ+6GhqtiKYWZXtOAtdxLTWhjpyWaQJOSJlDsYr1VR/1QD+RNsJe6RP20M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751593838; c=relaxed/simple;
-	bh=b8RXlrAo7hrXuI3LoSYLl4lO2EOF9pGHWqba2I8FG2I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NqtVSP9xkwC2ZEqXWmY+8bUkcQpCmYHytWDba22DSHnA7daHzHRgIhoXXnoVcDgY0nx2/bsqccaAZT8GnlGXnEix45ZvIKZ4ZJFRTLtDPd5pYU/kAXWQKZpA/kT8ML59dPX2KbgJuumBEre/7NwcafvKG4UhqkKHNDhwZAYte9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hz2ikRJd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1726C4CEE3;
-	Fri,  4 Jul 2025 01:50:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751593836;
-	bh=b8RXlrAo7hrXuI3LoSYLl4lO2EOF9pGHWqba2I8FG2I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Hz2ikRJdmfrmw+Hv3aaA49O/CKlM6BruFQaZYRuINIU3f8jUEYQ1pZyk5Ejco+hcx
-	 BvC8m6L9vvXggqg6YJrJ29wuBHBgfW5Zn3mB095lTOKkBHSi9JgMku622OG+p5vOjv
-	 QnfKul/EOxQgi4uoDac/JxgzTAsHwqRz28sTn1t+2F/4NVV61WoHnKBwzS6N7zZC2c
-	 WXWcDT9v1m0bNzJhuRyNGXFEfaHu+7Ac6K4bhCRymYp8n5a4Cy+djsrCwrVUddRODM
-	 d4iXN83jiYtY0E9CBp5QZGt1Q7lkBI2ByQQXArGONUuMvdZQpQpx7H1931A3zxFPuP
-	 PgycHJCCN2SKQ==
-Date: Fri, 4 Jul 2025 04:50:32 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: yangge1116@126.com
-Cc: ardb@kernel.org, sathyanarayanan.kuppuswamy@linux.intel.com,
-	ilias.apalodimas@linaro.org, jgg@ziepe.ca,
-	linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org, liuzixing@hygon.cn
-Subject: Re: [PATCH] efi/tpm: Fix the issue where the CC platforms event log
- header can't be correctly identified
-Message-ID: <aGczaEkhPuOqhRUv@kernel.org>
-References: <1751510317-12152-1-git-send-email-yangge1116@126.com>
+	s=arc-20240116; t=1751593966; c=relaxed/simple;
+	bh=naZ1Wb5M4QpsPJRJ/74tIV4S6gR8fo6DimjgFgewQRs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FEd7+YgwyiT6y0qWkixhCoBXGEJdwgTu8OXZwTo2QBmya0a6C+FOT4x3CmrKH/HZTgqI4x0miQhJ3H2HRe/JQMv/BIEzbKPu8hdIc2DzOfqcN/ovycMwJI7o75/vxOfJ6O1GiPwYeeZrx1l0lB1xtvvclOiDo0yXVAcw/xTbVcQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Gn7F0Ju7; arc=none smtp.client-ip=117.135.210.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=ik
+	EhAVjSVURgSYmY6Bi3dWU9f3AgGAeD0rRfayq1CpA=; b=Gn7F0Ju7DgfZiRmHTd
+	Qywre9m0yK9dgdQKNtmuQDCzavJeZN8rwMtpoqlL8+7BjKatbJUu9a9mjoaho130
+	I2l3dJR1FNhXtYEqGbpz10dITX8hoCP8w3RLNDYoMvgVs/GkrrBCcn5y3epmVAAN
+	rA3Hk6O5pHteKNA1KMxJ1uPFw=
+Received: from ubuntu24-z.. (unknown [])
+	by gzsmtp2 (Coremail) with SMTP id PSgvCgB34lHUM2dopWkHAA--.1033S2;
+	Fri, 04 Jul 2025 09:52:20 +0800 (CST)
+From: ranxiaokai627@163.com
+To: peterz@infradead.org,
+	mingo@redhat.com,
+	will@kernel.org,
+	boqun.feng@gmail.com,
+	longman@redhat.com
+Cc: linux-kernel@vger.kernel.org,
+	ran.xiaokai@zte.com.cn
+Subject: [PATCH] locking/mutex: remove redundant ifdef
+Date: Fri,  4 Jul 2025 01:52:18 +0000
+Message-ID: <20250704015218.359754-1-ranxiaokai627@163.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1751510317-12152-1-git-send-email-yangge1116@126.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:PSgvCgB34lHUM2dopWkHAA--.1033S2
+X-Coremail-Antispam: 1Uf129KBjvdXoW7XFyxWr18urykZw47uw18AFb_yoWkAFb_Gr
+	WIvF129rWjkFs5Wrn7Ca1Fgr1Ut34xuF4IkF1vvF48Ja4kK3Z8AwnFyrySvrZ8XFZ7Wasx
+	JrZ3WFZ8trsYyjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU1J73JUUUUU==
+X-CM-SenderInfo: xudq5x5drntxqwsxqiywtou0bp/xtbBkB6ATGhnLvuPmAAAsP
 
-On Thu, Jul 03, 2025 at 10:38:37AM +0800, yangge1116@126.com wrote:
-> From: Ge Yang <yangge1116@126.com>
-> 
-> Since commit d228814b1913 ("efi/libstub: Add get_event_log() support
-> for CC platforms") reuses TPM2 support code for the CC platforms, when
-> launching a TDX virtual machine with coco measurement enabled, the
-> following error log is generated:
-> 
-> [Firmware Bug]: Failed to parse event in TPM Final Events Log
-> 
-> Call Trace:
-> efi_config_parse_tables()
->   efi_tpm_eventlog_init()
->     tpm2_calc_event_log_size()
->       __calc_tpm2_event_size()
-> 
-> The pcr_idx value in the Intel TDX log header is 1, causing the
-> function __calc_tpm2_event_size() to fail to recognize the log header,
-> ultimately leading to the "Failed to parse event in TPM Final Events
-> Log" error.
-> 
-> According to UEFI Spec 2.10 Section 38.4.1: For Tdx, TPM PCR 0 maps to
-> MRTD, so the log header uses TPM PCR 1. To successfully parse the TDX
-> event log header, the check for a pcr_idx value of 0 has been removed
-> here, and it appears that this will not affect other functionalities.
+From: Ran Xiaokai <ran.xiaokai@zte.com.cn>
 
-I'm not familiar with the original change but with a quick check it did
-not change __calc_tpm2_event_size(). Your change is changing semantics
-to two types of callers:
+hung_task_set/clear_blocker() is already guarded by
+CONFIG_DETECT_HUNG_TASK_BLOCKER in hung_task.h, So remove
+the redudant check of #ifdef.
 
-1. Those that caused the bug.
-2. Those that nothing to do with this bug.
+Signed-off-by: Ran Xiaokai <ran.xiaokai@zte.com.cn>
+---
+ kernel/locking/mutex.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-I'm not seeing anything explaining that your change is guaranteed not to
-have any consequences to "innocent" callers, which have no relation to
-the bug.
+diff --git a/kernel/locking/mutex.c b/kernel/locking/mutex.c
+index a39ecccbd106..d4210dc97b6a 100644
+--- a/kernel/locking/mutex.c
++++ b/kernel/locking/mutex.c
+@@ -191,9 +191,7 @@ static void
+ __mutex_add_waiter(struct mutex *lock, struct mutex_waiter *waiter,
+ 		   struct list_head *list)
+ {
+-#ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
+ 	hung_task_set_blocker(lock, BLOCKER_TYPE_MUTEX);
+-#endif
+ 	debug_mutex_add_waiter(lock, waiter, current);
+ 
+ 	list_add_tail(&waiter->list, list);
+@@ -209,9 +207,7 @@ __mutex_remove_waiter(struct mutex *lock, struct mutex_waiter *waiter)
+ 		__mutex_clear_flag(lock, MUTEX_FLAGS);
+ 
+ 	debug_mutex_remove_waiter(lock, waiter, current);
+-#ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
+ 	hung_task_clear_blocker();
+-#endif
+ }
+ 
+ /*
+-- 
+2.25.1
 
-> 
-> Link: https://uefi.org/specs/UEFI/2.10/38_Confidential_Computing.html#intel-trust-domain-extension
-> Fixes: d228814b1913 ("efi/libstub: Add get_event_log() support for CC platforms")
-> Signed-off-by: Ge Yang <yangge1116@126.com>
-> Cc: stable@vger.kernel.org
-> ---
->  include/linux/tpm_eventlog.h | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/include/linux/tpm_eventlog.h b/include/linux/tpm_eventlog.h
-> index 891368e..05c0ae5 100644
-> --- a/include/linux/tpm_eventlog.h
-> +++ b/include/linux/tpm_eventlog.h
-> @@ -202,8 +202,7 @@ static __always_inline u32 __calc_tpm2_event_size(struct tcg_pcr_event2_head *ev
->  	event_type = event->event_type;
->  
->  	/* Verify that it's the log header */
-> -	if (event_header->pcr_idx != 0 ||
-> -	    event_header->event_type != NO_ACTION ||
-> +	if (event_header->event_type != NO_ACTION ||
->  	    memcmp(event_header->digest, zero_digest, sizeof(zero_digest))) {
->  		size = 0;
->  		goto out;
-> -- 
-> 2.7.4
-> 
-
-BR, Jarkko
 
