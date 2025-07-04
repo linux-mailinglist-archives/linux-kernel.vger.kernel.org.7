@@ -1,81 +1,139 @@
-Return-Path: <linux-kernel+bounces-717673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-717683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 662CAAF973D
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 17:45:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7080CAF975C
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 17:54:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 620A51896474
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 15:45:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 464E95A4FF9
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 15:54:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75FCB2F234E;
-	Fri,  4 Jul 2025 15:45:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="CYm2ND5j"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A59613074BA;
+	Fri,  4 Jul 2025 15:53:59 +0000 (UTC)
+Received: from leonov.paulk.fr (leonov.paulk.fr [185.233.101.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A09D1D63F7;
-	Fri,  4 Jul 2025 15:45:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF7A42F85E5;
+	Fri,  4 Jul 2025 15:53:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.233.101.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751643914; cv=none; b=cJ+kv+VWAfvv2Yb0XMS8SRCSRm1g6owEAVRUAencw42D0oj14f/OhH3tO6wpq/W/T0SKU2VtbhLoePa4J5zYq7mTTYtZ7PyZLGjtIos99G8CBsgw4Z35KInLpV/DjAm/38N6Up79G04J2o5AZBCxGEJozE1d8KOm4+x+hnOuvFg=
+	t=1751644439; cv=none; b=VHAIh1muq0CbX9GKPJtU9NHEzgEm2ggvYjAk1ADSprubN/4zzQ4OfuYgTuhjDmUDWGSjL8TFEtsswavW61sk5YCtLMYt/BaxfiFb80rSVwB9gMut9GenoM9BW7KiqAQNTTZSAaPq9OUAsJf350gItpY+7jKrMRoAfByk7ySID/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751643914; c=relaxed/simple;
-	bh=Yi6FMGhdZmp71DBj0EoNOP5uhCm8MoVkiZdV+ZbPiRI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Idf6af1u7h8bedG7PXDd9DxRdxsjL5ExYTClqV75T95rfcoMA3R1EdUBb4s/oAZ9r6GF/+/IFqgRPxkS+ca5LGyTO9TzVxSvzcNfDNr/Buey/KzhGsPftA/TlA5NJrp0fhrlls6fOJLp5rZxqN0iKMmt1EU/jt0k+eeNUM8DKXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=CYm2ND5j; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=0DuoSA/mWIrLTrligVUY/NBThkero+S2hwPp4ObFsnk=; b=CYm2ND5jT/fDfPEk8Th1TeirHq
-	UGVgWZSPL5rTHJf6WCadczN1ZO4E+FpyRnwpTnben/wdG7GqtS3NqnG8B7t/QGPqnp/BmVDMCHznN
-	AyuOhHrmw4Pja4udlfz9sQla2k8E9qnjXrSg+ZncWoXxUZboNFDuTEIBqBHEgEkaRZWNEB1PQzCtV
-	4Co0ad9HDyZBE8/UVElU7r7Wjcll73g9nc8InVJSBqBD2A3kqkixycFBFAPL6CEsW9O4QRMh3peWE
-	cYiRoTIk5SDyOWF0Vnyl99JgSj2mZ41u+8dHVc3XnfGVcg/QxZqHX0EcGh933dP+93gXzwr3x3uGV
-	qUlizKvw==;
-Received: from [179.100.5.63] (helo=[192.168.15.100])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1uXiaw-00CUK5-Ru; Fri, 04 Jul 2025 17:44:59 +0200
-Message-ID: <d73d784f-f6a1-40dc-b4bf-f2dbbb4bf7bc@igalia.com>
-Date: Fri, 4 Jul 2025 12:44:54 -0300
+	s=arc-20240116; t=1751644439; c=relaxed/simple;
+	bh=E8Qrxe2tkVcRjYKO7kQLn2qa3sPHJLcrn2gLaWrinnE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uFTT3TbYsJZxHxfZcbosxCnLUqCOXrKGKrGj3xwXg8vGKZe5umVZ+IvkOovB6cK6e8WZLyu29vbXWHTC8kXphwm/CUBlIbSSjnj7E+ax1tygmxJpVdF5RqmpoqeV2nORFxrdxbsCq5wvWy79+bgS7zIOehL4gxTrEptK1XYH5Vw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sys-base.io; spf=pass smtp.mailfrom=sys-base.io; arc=none smtp.client-ip=185.233.101.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sys-base.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sys-base.io
+Received: from laika.paulk.fr (12.234.24.109.rev.sfr.net [109.24.234.12])
+	by leonov.paulk.fr (Postfix) with ESMTPS id 62C8C1F0004D;
+	Fri,  4 Jul 2025 15:53:53 +0000 (UTC)
+Received: by laika.paulk.fr (Postfix, from userid 65534)
+	id 77123ACA64C; Fri,  4 Jul 2025 15:47:18 +0000 (UTC)
+X-Spam-Level: *
+Received: from localhost.localdomain (unknown [192.168.1.64])
+	by laika.paulk.fr (Postfix) with ESMTP id 630A6ACA64C;
+	Fri,  4 Jul 2025 15:46:33 +0000 (UTC)
+From: Paul Kocialkowski <paulk@sys-base.io>
+To: linux-media@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Yong Deng <yong.deng@magewell.com>,
+	Paul Kocialkowski <paulk@sys-base.io>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Maxime Ripard <mripard@kernel.org>
+Subject: [PATCH v8 0/9] Allwinner A31/A83T MIPI CSI-2 and A31 ISP / Platform Support
+Date: Fri,  4 Jul 2025 17:46:17 +0200
+Message-ID: <20250704154628.3468793-1-paulk@sys-base.io>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] selftests/futex: Add futex_numa to .gitignore
-To: Terry Tritton <terry.tritton@linaro.org>,
- Thomas Gleixner <tglx@linutronix.de>, Shuah Khan <shuah@kernel.org>,
- Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Darren Hart <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>
-Cc: ttritton@google.com, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250704103749.10341-1-terry.tritton@linaro.org>
-Content-Language: en-US
-From: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-In-Reply-To: <20250704103749.10341-1-terry.tritton@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Em 04/07/2025 07:37, Terry Tritton escreveu:
-> futex_numa was never added to the .gitignore file.
-> Add it.
-> 
-> Fixes: 9140f57c1c13 ("futex,selftests: Add another FUTEX2_NUMA selftest")
-> Signed-off-by: Terry Tritton <terry.tritton@linaro.org>
+This series adds platform support for the V3s/V3/S3 MIPI CSI-2 and ISP units
+as well the as A83T MIPI CSI-2 unit in the respective device-trees.
+Overlays for the BananaPi M3 cameras are also provided as actual users of the
+camera pipeline on A83T.
 
-Reviewed-by: André Almeida <andrealmeid@igalia.com>
+The corresponding drivers and dt bindings were merged a long time ago but this
+series was never actually picked up. It seems more than ready to be merged!
+
+Changes since v7:
+- Added collected review tags;
+- Added interconnect properties to bindings;
+- Added compatible for device-tree overlays;
+- Moved mclk pin to sensor node in bpi-m3 overlays;
+- Removed duplicated assigned-clocks in bpi-m3 overlays.
+
+Changes since v6:
+- Rebased on top of the latest media tree, renamed dts to dtso for overlays.
+
+Changes since v5:
+- Added BananaPi M3 camera sensor support as device-tree overlays;
+- Cleaned-up OV8865 regulator definitions;
+- Always declared the internal links between CSI and MIPI CSI-2 on A83T
+  in device-tree.
+
+Changes since v4:
+- Removed mbus bindings patch: an equivalent change was merged;
+- Added collected tags;
+- Rebased on latest media tree.
+
+Changes since v3:
+- Reordered v3s mbus compatible in binding;
+- Added collected tag;
+- Removed rejected interconnects fix.
+
+Changes since all-in-one v2:
+- Corrected mbus index used for the interconnects;
+- Used extended mbus binding and exported the DRAM clock for that;
+- Reworked the description of the core openfirmware change to give
+  more insight about the situation.
+
+Paul Kocialkowski (9):
+  dt-bindings: media: sun6i-a31-csi: Add optional interconnect
+    properties
+  dt-bindings: media: sun6i-a31-isp: Add optional interconnect
+    properties
+  clk: sunxi-ng: v3s: Export MBUS and DRAM clocks to the public header
+  ARM: dts: sun8i: v3s: Add mbus node to represent the interconnect
+  ARM: dts: sun8i: v3s: Add nodes for MIPI CSI-2 support
+  ARM: dts: sun8i: v3s: Add support for the ISP
+  ARM: dts: sun8i: a83t: Add MIPI CSI-2 controller node
+  ARM: dts: sun8i-a83t: Add BananaPi M3 OV5640 camera overlay
+  ARM: dts: sun8i-a83t: Add BananaPi M3 OV8865 camera overlay
+
+ .../media/allwinner,sun6i-a31-csi.yaml        |   6 +
+ .../media/allwinner,sun6i-a31-isp.yaml        |   6 +
+ arch/arm/boot/dts/allwinner/Makefile          |   2 +
+ .../sun8i-a83t-bananapi-m3-camera-ov5640.dtso | 117 +++++++++++++++++
+ .../sun8i-a83t-bananapi-m3-camera-ov8865.dtso | 103 +++++++++++++++
+ arch/arm/boot/dts/allwinner/sun8i-a83t.dtsi   |  43 +++++++
+ arch/arm/boot/dts/allwinner/sun8i-v3s.dtsi    | 121 ++++++++++++++++++
+ drivers/clk/sunxi-ng/ccu-sun8i-v3s.h          |   4 -
+ include/dt-bindings/clock/sun8i-v3s-ccu.h     |   4 +-
+ 9 files changed, 400 insertions(+), 6 deletions(-)
+ create mode 100644 arch/arm/boot/dts/allwinner/sun8i-a83t-bananapi-m3-camera-ov5640.dtso
+ create mode 100644 arch/arm/boot/dts/allwinner/sun8i-a83t-bananapi-m3-camera-ov8865.dtso
+
+-- 
+2.49.0
 
 
