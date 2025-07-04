@@ -1,192 +1,165 @@
-Return-Path: <linux-kernel+bounces-717983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-717985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB658AF9BC5
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 22:46:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC464AF9BCC
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 22:53:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B7001C871CB
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 20:46:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34CE84A4046
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 20:53:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C03BC1E0DD8;
-	Fri,  4 Jul 2025 20:45:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 019C81EB9FA;
+	Fri,  4 Jul 2025 20:53:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PLciuCj0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="t5q+s07T"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 162912E36EE;
-	Fri,  4 Jul 2025 20:45:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0CBD2E3716;
+	Fri,  4 Jul 2025 20:53:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751661956; cv=none; b=C5cSQmct218P2DbwsDjOU6Gu6yTYnFnhGHjhgqITJjd0ZSOksJcDy+EW78E84rZd4oGWmV2eomZTREEybTnU1hKEZNe9jPuwdMEFJRSL4gb5ZD5GTgupDtRxEtIaMiMfd5AgMtlfkhrlOMW3sVAWdZesvBCd9xJTaDe6etHg4kc=
+	t=1751662421; cv=none; b=V1YvbTyTgA1CiHLesXFNLBebzn96a9vTc/1bVieIvzsrCqy8Et1pzh5FaADrYQ2Rr/hLSnSVJDq0UW8qaFT3Rt/1EXTIMrYOhI8+ZQua2xRtS7qGX0GcJUdfhPraDnj5pnUh3FUXuztT30/GYduZ6dLU3LV6yqAFgmRzk8vFAe4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751661956; c=relaxed/simple;
-	bh=4xYB//ni5ywKO3/5qJ9H8xJDtm5Tpvw8yytmicWjmdQ=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=HZ7G4KnZZQ0RV1GMo/aPkQ7ubZEQ4j+F5cnXFixX2vuT8HjIYwZXY756RDXEunz7JIQTLyxiXI9dp+Q6HOQberXG1M1BqWJ/i/obZTg4IEG4Xnnm+0l697zxR2ETAC2jdKK14F1JTKc2AhHSdXXvimdskvaojbUzZaUqYASlew4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PLciuCj0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2362C4CEE3;
-	Fri,  4 Jul 2025 20:45:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751661955;
-	bh=4xYB//ni5ywKO3/5qJ9H8xJDtm5Tpvw8yytmicWjmdQ=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=PLciuCj0+j1fEScnAAeIbYC6x4uSeVBW8PIQ3zGFyZaSDSDGIJrq0rC9yG0GoeRMF
-	 pLS8PZC1sP+ts9IBEU5OQRHSSGzR6JWp676TI/FBrOutWpaEMsQ5ub2M7+pn4F0h20
-	 i7ZpaM5HuixNdXQKpOntl4OOxSzYooBRgv7yQwW8ZLsrCZBpAb8ppwevYZ/GHzKRRm
-	 PBaQX/IyJbeKOliZlVLPmhSC6gjEosCZksEB/rp0Ufk2lEyK+VZmJu/qFC2gQS4t76
-	 C8Ul39Zh++0koO7Ey5heEZIwjsYNIG2ic0wJ8q0A1t82aXKmT4epKFsfocAfqCeQWR
-	 1Pd541SGDJ67Q==
+	s=arc-20240116; t=1751662421; c=relaxed/simple;
+	bh=BTNkjQ5GbfyHC7QPGVC3V8tMQFcMhMmddt0oFWDYRKs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=J056kTRcFh5SC6/K4AqjaiCIZxrSbcaL2/RVZVN3yrRKS3EK2TIWk3Gy+W9htUv+ba29DkKhn4C/gdOUVGPbsnp0Mm6WEbP0+R5JJdGm25kD5nq9EU2xdD5b104bGb00clatXXXDRcekaPLUdwQRiahrcqx9S81cTmNwno759YI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=t5q+s07T; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description;
+	bh=A7X24UXs2YPGFdhXYlpKpMX/c1mmkiA+2yfvylAh7Ug=; b=t5q+s07TttMKG4/+zCs78kw6W6
+	95jiK1P9G126YD/XBJI/V2sQsiJJKz4Gog3URjjf3Ink0zkv5BNsvdH0IdWVr+sIWHoZW6yQn7Olo
+	BPDHptBKidGui7njgNcrhZ9sS1eDz6AmtEBR8LBLKnbTjGV+VGS6NB1VmyLAh5NsOaSl92klfrxiE
+	APKdDfLyQNNF5zw4rbTV5GK5yFev1qdcIXxaXS3UeQ6kFp7l/9lfkql/hWslxSrfVQMK7QC0HGaP3
+	Yw8JLf7xA9B+oTdjPmcZfHFH8C4FaIikKV08TZMEOKH1QK6CYZWiUvlJc7ybk7nRXr2wyifEGsAD7
+	57YDPA4Q==;
+Received: from [50.53.25.54] (helo=[192.168.254.17])
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uXnPa-00000000iWy-0uIj;
+	Fri, 04 Jul 2025 20:53:34 +0000
+Message-ID: <ef6e81fd-e609-41fd-b8b1-df629aa61b0f@infradead.org>
+Date: Fri, 4 Jul 2025 13:53:30 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] docs: document linked lists
+To: Jonathan Corbet <corbet@lwn.net>,
+ Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Cc: kernel@collabora.com, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250702-linked-list-docs-v2-1-e36532f4b638@collabora.com>
+ <874ivtmkk2.fsf@trenco.lwn.net>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <874ivtmkk2.fsf@trenco.lwn.net>
 Content-Type: text/plain; charset=UTF-8
-Date: Fri, 04 Jul 2025 22:45:48 +0200
-Message-Id: <DB3KC64NSYK7.31KZXSNO1XOGM@kernel.org>
-Cc: <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
- <lkmm@lists.linux.dev>, <linux-arch@vger.kernel.org>, "Miguel Ojeda"
- <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, "Danilo Krummrich" <dakr@kernel.org>,
- "Will Deacon" <will@kernel.org>, "Peter Zijlstra" <peterz@infradead.org>,
- "Mark Rutland" <mark.rutland@arm.com>, "Wedson Almeida Filho"
- <wedsonaf@gmail.com>, "Viresh Kumar" <viresh.kumar@linaro.org>, "Lyude
- Paul" <lyude@redhat.com>, "Ingo Molnar" <mingo@kernel.org>, "Mitchell Levy"
- <levymitchell0@gmail.com>, "Paul E. McKenney" <paulmck@kernel.org>, "Greg
- Kroah-Hartman" <gregkh@linuxfoundation.org>, "Linus Torvalds"
- <torvalds@linux-foundation.org>, "Thomas Gleixner" <tglx@linutronix.de>
-Subject: Re: [PATCH v5 04/10] rust: sync: atomic: Add generic atomics
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>
-X-Mailer: aerc 0.20.1
-References: <20250618164934.19817-1-boqun.feng@gmail.com>
- <20250618164934.19817-5-boqun.feng@gmail.com>
- <20250621123212.66fb016b.gary@garyguo.net> <aFjj8AV668pl9jLN@Mac.home>
- <20250623193019.6c425467.gary@garyguo.net> <aFmmYSAyvxotYfo7@tardis.local>
- <aGg4sIORQiG02IoD@Mac.home>
-In-Reply-To: <aGg4sIORQiG02IoD@Mac.home>
+Content-Transfer-Encoding: 8bit
 
-On Fri Jul 4, 2025 at 10:25 PM CEST, Boqun Feng wrote:
-> There are a few off-list discussions, and I've been trying some
-> experiment myself, here are a few points/concepts that will help future
-> discussion or documentation, so I put it down here:
->
-> * Round-trip transmutability (thank Benno for the name!).
->
->   We realize this should be a safety requirement of `AllowAtomic` type
->   (i.e. the type that can be put in a Atomic<T>). What it means is:
->
->   - If `T: AllowAtomic`, transmute() from `T` to `T::Repr` is always
->     safe and
+Hi,
 
-s/safe/sound/
+Just a few comments while I am still reviewing:
 
->   - if a value of `T::Repr` is a result of transmute() from `T` to
->     `T::Repr`, then `transmute()` for that value to `T` is also safe.
 
-s/safe/sound/
+On 7/3/25 7:10 AM, Jonathan Corbet wrote:
+> Thanks for doing this!
+> 
+> I have a few comments, most of which are just nits.  I think we should
+> be able to get this in for 6.17.
+> 
+> Nicolas Frattaroli <nicolas.frattaroli@collabora.com> writes:
+> 
 
-:)
 
->
->   This essentially means a valid bit pattern of `T: AllowAtomic` has to
->   be a valid bit pattern of `T::Repr`.
->
->   This is needed because the atomic framework operates on `T::Repr` to
->   implement atomic operations on `T`.
->
->   Note that this is more relaxed than bi-direct transmutability (i.e.
->   transmute() between `T` and `T::Repr`) because we want to support
->   atomic type over unit-only enums:
->
->     #[repr(i32)]
->     pub enum State {
->         Init =3D 0,
-> 	Working =3D 1,
-> 	Done =3D 2,
->     }
->
->   This should be really helpful to support atomics as states, for
->   example:
->
->     https://lore.kernel.org/rust-for-linux/20250702-module-params-v3-v14-=
-1-5b1cc32311af@kernel.org/
->
-> * transmute()-equivalent from_repr() and into_repr().
+>> diff --git a/Documentation/core-api/list.rst b/Documentation/core-api/list.rst
+>> new file mode 100644
+>> index 0000000000000000000000000000000000000000..b0586056abb04d2bcc4518f7238ff9a94d3dd774
+>> --- /dev/null
+>> +++ b/Documentation/core-api/list.rst
+>> @@ -0,0 +1,847 @@
+>> +.. SPDX-License-Identifier: GPL-2.0+
+>> +
+>> +=====================
+>> +Linked Lists in Linux
+>> +=====================
+>> +
+>> +:Author: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 
-Hmm I don't think this name fits the description below, how about
-"bit-equivalency of from_repr() and into_repr()"? We don't need to
-transmute, we only want to ensure that `{from,into}_repr` are just
-transmutes.
+> 
+> I do wonder if you should start by showing the list_head structure
+> itself?  It is simple enough and not a secret that needs to be kept.
 
->   (This is not a safety requirement)
->
->   from_repr() and into_repr(), if exist, should behave like transmute()
->   on the bit pattern of the results, in other words, bit patterns of `T`
->   or `T::Repr` should stay the same before and after these operations.
->
->   Of course if we remove them and replace with transmute(), same result.
->
->   This reflects the fact that customized atomic types should store
->   unmodified bit patterns into atomic variables, and this make atomic
->   operations don't have weird behavior [1] when combined with new(),
->   from_ptr() and get_mut().
++1
 
-I remember that this was required to support types like `(u8, u16)`? If
-yes, then it would be good to include a paragraph like the one above for
-enums :)
+>> +Declaring and initializing a list
+>> +---------------------------------
+>> +
+>> +A doubly-linked list can then be declared as just another ``struct list_head``,
+>> +and initialised with the LIST_HEAD_INIT() macro during initial assignment, or
+>> +with the INIT_LIST_HEAD() function later:
+>> +
+>> +.. code-block:: c
+>> +
+>> +  struct clown_car {
+>> +          int tyre_pressure[4];
+>> +          struct list_head clowns;        /* Looks like a node! */
+>> +  };
+>> +
+>> +  /* ... Somewhere later in our driver ... */
+>> +
+>> +  static int circus_init(struct circus_priv *circus)
+>> +  {
+>> +          struct clown_car other_car = {
+>> +                .tyre_pressure = {10, 12, 11, 9},
+>> +                .clowns = LIST_HEAD_INIT(other_car.clowns)
+>> +          };
+>> +
+>> +          circus->car.clowns = INIT_LIST_HEAD(&circus->car.clowns);
 
-> * Provenance preservation.
->
->   (This is not a safety requirement for Atomic itself)
->
->   For a `Atomic<*mut T>`, it should preserve the provenance of the
->   pointer that has been stored into it, i.e. the load result from a
->   `Atomic<*mut T>` should have the same provenance.
->
->   Technically, without this, `Atomic<*mut T>` still work without any
->   safety issue itself, but the user of it must maintain the provenance
->   themselves before store or after load.
->
->   And it turns out it's not very hard to prove the current
->   implementation achieve this:
->
->   - For a non-atomic operation done on the atomic variable, they are
->     already using pointer operation, so the provenance has been
->     preserved.
->   - For an atomic operation, since they are done via inline asm code, in
->     Rust's abstract machine, they can be treated as pointer read and
->     write:
->
->     a) A load of the atomic can be treated as a pointer read and then
->        exposing the provenance.
->     b) A store of the atomic can be treated as a pointer write with a
->        value created with the exposed provenance.
->
->     And our implementation, thanks to no arbitrary type coercion,
->     already guarantee that for each a) there is a from_repr() after and
->     for each b) there is a into_repr() before. And from_repr() acts as
->     a with_exposed_provenance() and into_repr() acts as a
->     expose_provenance(). Hence the provenance is preserved.
+linked_lists.c: In function ‘circus_init’:
+linked_lists.c:35:30: error: invalid use of void expression
+   35 |           circus->car.clowns = INIT_LIST_HEAD(&circus->car.clowns);
 
-I'm not sure this point is correct, but I'm an atomics noob, so maybe
-Gary should take a look at this :)
+due to
+static inline void INIT_LIST_HEAD(struct list_head *list);
 
->   Note this is a global property and it has to proven at `Atomic<T>`
->   level.
+Should it just be:
+		INIT_LIST_HEAD(&circus->car.clowns);
+?
 
-Thanks for he awesome writeup, do you want to put this in some comment
-or at least the commit log?
+>> +
+>> +          return 0;
+>> +  }
+>> +
+>> +A further point of confusion to some may be that the list itself doesn't really
+>> +have its own type. The concept of the entire linked list and a
+>> +``struct list_head`` member that points to other entries in the list are one and
+>> +the same.
 
----
-Cheers,
-Benno
+> [...]
+> 
+> 
+>> +Further reading
+>> +---------------
+>> +
+>> +* `How does the kernel implements Linked Lists? - KernelNewbies <https://kernelnewbies.org/FAQ/LinkedLists>`_
+> 
+> I do still think you should move the kerneldoc for lists over from
+> kernel-api.rst; just tack it onto the end here.
+
+Ack.
+
+-- 
+~Randy
+
 
