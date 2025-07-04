@@ -1,133 +1,78 @@
-Return-Path: <linux-kernel+bounces-717841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-717825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01E13AF99DD
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 19:39:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDDE8AF99BA
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 19:36:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94A2454293A
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 17:39:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 566791CC065C
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 17:36:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFB82327180;
-	Fri,  4 Jul 2025 17:36:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC0AD258CC0;
+	Fri,  4 Jul 2025 17:36:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PF4hQLWU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sNHA0cKn"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09D6B326A68;
-	Fri,  4 Jul 2025 17:36:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27C0E2E36ED;
+	Fri,  4 Jul 2025 17:36:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751650594; cv=none; b=RC3PM0sYF8PKcK7k//bCZynflLZ7tTU2b+YQAmUim8KerjxV3yHMFvA/8vP7iKFokrfaX/sUrggAvKgLxt6d8u36ZI1o1jdLLjQXMpgUN9wvNWfPrOWW6FeCkUe9NpL8CmGIZs2FgB320KTYmGnvxbybxs039lddNa3XpkjCq28=
+	t=1751650568; cv=none; b=jeZ1wb8P1JvUQ1WUwh1jQ1TKor5xNAkyI4eRvUEbGSCnGLfvgTSL87s9xHWm+l86o1dxSW6RcKgl26R8PIefPupWxZvZJoZ+dWUFx86ysitTJbwCogj/4J/XfGE+oooD2oKBmcfTSMa6VU7UFmcb9DysHUlOKW1aE/bCsCA5uDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751650594; c=relaxed/simple;
-	bh=iUgw6SdLRmSY+TxjZGHq9wfHyZUGByUgELpbSlwhZh4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=APnPBUCrpZoLHDa54LL9Enn0gxCfPqqjOxHkkflZFC6UcgsDv2yQyfxWSLq9F/am+Ht4ekkRTWDdBXJrLh/NmbOKiPsgywzSSm/Pb3WrM9G0XWvFrL3La0M4tUFWICteNeJaIprrpcl+6BC5wgREey4VAJB/DNrCHF5arnXw0yQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PF4hQLWU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0594BC4CEED;
-	Fri,  4 Jul 2025 17:36:30 +0000 (UTC)
+	s=arc-20240116; t=1751650568; c=relaxed/simple;
+	bh=vuytvSfcCyGFAFENL5yEHpjFxBx/BXS4PYNVz1zTiYo=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=tUnaefoaXbFcWSgbfCKlnHqs9nXIpN1ve4ajMAy7ZP38Dot2w6kUcIPd/Mbxco3kyqGi6JDuMNhL+D8uGlzAaeY1Gv6WWkkqEVM3wQzhgulkwBFNA9Dn0ZIAnw3J2FI92qRfuOK+nDl3MITEhpKpVyWLekUxt17Vomd4os+lPt8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sNHA0cKn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F19CBC4CEE3;
+	Fri,  4 Jul 2025 17:36:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751650593;
-	bh=iUgw6SdLRmSY+TxjZGHq9wfHyZUGByUgELpbSlwhZh4=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=PF4hQLWUZUFny28qzzSp6+DyN5jEtKu6ueVS13Y5+eQ3AuWNACbGc0vZOomr2SFLm
-	 tEPYUl+UY8W9Bpv+5HfQch/P5UPlk7qmJO//qeSKY2NfMFW5q2O7z1fPGBcmr85CXa
-	 0uvpd3IUXjPOcjNXsmHyMhz/tjE5qKcGogP/k0pxQtsuFzb09ADoWh6gJprdYYaXnT
-	 9JkUwCvWk/iu+xWLMVrQx91Fnv+Lw3Mn7UEbaSlMoX7lKazN5JzbyHeFTCapzD+6Q4
-	 DqaeNqopLp7buSIrFkNeSGM3jXJdCtul7v2ZQWO1Acut/H0htyjnmspRuoyK/lVV1u
-	 6YuU1vDFPWKBw==
-From: Konrad Dybcio <konradybcio@kernel.org>
-Date: Fri, 04 Jul 2025 19:36:13 +0200
-Subject: [PATCH RFC/RFT 5/5] ufs: ufs-qcom: Kill ufshcd_res_info
+	s=k20201202; t=1751650568;
+	bh=vuytvSfcCyGFAFENL5yEHpjFxBx/BXS4PYNVz1zTiYo=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=sNHA0cKnRSG2370T8+bOOISCDylQdF9AXgzCwip1V03UG0ZGaXRmGreSpm29hJS0q
+	 vPsHVmERf1UJ6HCW8cNcRhDyAXsH8+FO5tMWigHEOIJvNagdjaG6f6tkLRrqAYB36a
+	 eRLs1PFtF+2lxBcCCmhPV6WLPlik0KzOzmw7QAfGLUWqVbPjvRuujb29vyvqFk26C8
+	 5mMDYV2dNjXjqq9R/Xk/JStCt9lkiJvb42nHjBnUYM+JfHIOlP6yufSMw8EqMi4X+T
+	 RT9gPsVY1I1shwOEvGupaTN9n+MKlw9MR79eB+vPc0+oICpzsT0urRfXCZatT6MfVX
+	 l6b3jvqYWABlg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 2CC2E383BA01;
+	Fri,  4 Jul 2025 17:36:33 +0000 (UTC)
+Subject: Re: [git pull] IOMMU Fixes for Linux v6.16-rc3
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <aGfji8aafXu3hTQl@8bytes.org>
+References: <aGfji8aafXu3hTQl@8bytes.org>
+X-PR-Tracked-List-Id: <iommu.lists.linux.dev>
+X-PR-Tracked-Message-Id: <aGfji8aafXu3hTQl@8bytes.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/iommu/linux.git tags/iommu-fixes-v6.16-rc4
+X-PR-Tracked-Commit-Id: 25b1b75bbaf96331750fb01302825069657b2ff8
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 923d401238c590f39833a2015f6f9493f146d98f
+Message-Id: <175165059177.2287194.9983918768670209599.pr-tracker-bot@kernel.org>
+Date: Fri, 04 Jul 2025 17:36:31 +0000
+To: Joerg Roedel <joro@8bytes.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org, iommu@lists.linux.dev
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250704-topic-qcom_ufs_mcq_cleanup-v1-5-c70d01b3d334@oss.qualcomm.com>
-References: <20250704-topic-qcom_ufs_mcq_cleanup-v1-0-c70d01b3d334@oss.qualcomm.com>
-In-Reply-To: <20250704-topic-qcom_ufs_mcq_cleanup-v1-0-c70d01b3d334@oss.qualcomm.com>
-To: Manivannan Sadhasivam <mani@kernel.org>, 
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, 
- "Martin K. Petersen" <martin.petersen@oracle.com>, 
- Asutosh Das <quic_asutoshd@quicinc.com>, 
- Bart Van Assche <bvanassche@acm.org>, 
- Stanley Chu <stanley.chu@mediatek.com>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
- Can Guo <quic_cang@quicinc.com>, Nitin Rawat <quic_nitirawa@quicinc.com>, 
- linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1751650573; l=1282;
- i=konrad.dybcio@oss.qualcomm.com; s=20230215; h=from:subject:message-id;
- bh=5nEGDwR2LBYGdzzGzrzI3+xVf3CXHgIU3+o0zBEgJ/A=;
- b=LIvygMW9Oogay8z6+5Uv/Y2zljxt4EikyUxi8v3B+2ZKdMVIMMbqwjsPmLWuU+J6QD1idYsls
- YDMu7CikclmCxGi1LzVXV3buDpSq1fNjjYXP+5toSQdolgqdP46IvLh
-X-Developer-Key: i=konrad.dybcio@oss.qualcomm.com; a=ed25519;
- pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+The pull request you sent on Fri, 4 Jul 2025 16:22:03 +0200:
 
-This is not used by any driver and doesn't seem like it's going to be.
-Remove it.
+> git://git.kernel.org/pub/scm/linux/kernel/git/iommu/linux.git tags/iommu-fixes-v6.16-rc4
 
-Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
----
- include/ufs/ufshcd.h | 24 ------------------------
- 1 file changed, 24 deletions(-)
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/923d401238c590f39833a2015f6f9493f146d98f
 
-diff --git a/include/ufs/ufshcd.h b/include/ufs/ufshcd.h
-index 28132ff759afbd3bf8977bc481da225d95fd461c..e99df617ac31e983d452f8983ea0a5498ed64962 100644
---- a/include/ufs/ufshcd.h
-+++ b/include/ufs/ufshcd.h
-@@ -794,29 +794,6 @@ struct ufs_hba_monitor {
- 	bool enabled;
- };
- 
--/**
-- * struct ufshcd_res_info_t - MCQ related resource regions
-- *
-- * @name: resource name
-- * @resource: pointer to resource region
-- * @base: register base address
-- */
--struct ufshcd_res_info {
--	const char *name;
--	struct resource *resource;
--	void __iomem *base;
--};
--
--enum ufshcd_res {
--	RES_MCQ,
--	RES_MCQ_SQD,
--	RES_MCQ_SQIS,
--	RES_MCQ_CQD,
--	RES_MCQ_CQIS,
--	RES_MCQ_VS,
--	RES_MAX,
--};
--
- /**
-  * struct ufshcd_mcq_opr_info_t - Operation and Runtime registers
-  *
-@@ -1127,7 +1104,6 @@ struct ufs_hba {
- 	bool lsdb_sup;
- 	bool mcq_enabled;
- 	bool mcq_esi_enabled;
--	struct ufshcd_res_info res[RES_MAX];
- 	void __iomem *mcq_base;
- 	struct ufs_hw_queue *uhq;
- 	struct ufs_hw_queue *dev_cmd_queue;
+Thank you!
 
 -- 
-2.50.0
-
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
