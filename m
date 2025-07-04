@@ -1,144 +1,329 @@
-Return-Path: <linux-kernel+bounces-717148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-717137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDD06AF903B
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 12:28:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E8A2AF8FF3
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 12:25:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 163AC1CA5A6D
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 10:28:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C4E75A1DF2
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 10:25:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3232E2F549F;
-	Fri,  4 Jul 2025 10:26:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 803B22EA72F;
+	Fri,  4 Jul 2025 10:25:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="D5eSV8tD"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eLwT/EmT"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D9FC2F533A;
-	Fri,  4 Jul 2025 10:26:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80F902EAB93
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 10:25:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751624763; cv=none; b=jtg1fy/qFRYlPbY28B3DgET+MRgb5u6fIxuiTJv3MRik4C7ekX3Dp9wYedQttPsj6OccYy71hBrEKj+kw5BXHHk4NMpPPStGHzuMjWMybJ3CKIk5VMSK/XmI2IXUhXdpA+6FY1EBj7Fa4fjqzjE727nJ2fDUJzo4rZK13b/bcow=
+	t=1751624734; cv=none; b=iryjgadkbzPz2qI63UimKDXO80fqSe8Jfi5exhseglLRYbpIDXDeVC4Gx/SFHIrf2tvV7PbAAqyppMq5xv8Ej0/CPpn63zOJssZhfeHhT99TM+flQtw6++nRUiiPMD5zSfWVbPtSwIyCR/KKYqRjQRZnEzhl0d9FdAgC28M8ba4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751624763; c=relaxed/simple;
-	bh=s1yOooabGEhfLrwLG8Gkq0tF2jy2NbMTKO3iM7iaLlk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VzxFVtUO7RN5koZsEeDfTT4wQmyQgmJw9y3j3PmwW/p9rolTmNnz/Ns1BbNsmHVKKu+qbDNUJRFzVzJrvinR1DCEMu58Vh9OkA0Kve78UUE2ciIpY+wkGp2P0No4eENBcxAVawdwEPdcLMN14QO+LERJhvfq6DnEIiwfdePPxec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=D5eSV8tD; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=eDkIk/2D8dgafpo6mhXDy8h1DOSaJXXyI6mZYy1xav0=; b=D5eSV8tD66CAy1FlAKXzsOthF3
-	ySHf+dVSbKnEPwoznpwq/Bv9ZWzDp1jgP/hTDaI3bXxzNC5hN2zW8M4+wvHLn9Z2kw4r30723LdMe
-	F3sjvG86+xaMKncJ2m0gB2DdQwhlBoB4X/AIKi1e5utpP/6iFrdLLbF0a+5KT3/nw/r2YiOH5PGHi
-	/OuCGlBh1RIuiHRrOoHAXn1tWdlTq40GOg4B724Eqr+gokQozt7SdUZZtYtMYGJrsksRitMD0y7rH
-	30D0Yk2itjP24Pl19KU7IwgknhukKoYB5HrbQZTqbK1iZKWMmvH+WTEcH5hh2Jc7yRhkWSYEceoiQ
-	v1TELLxw==;
-Received: from [189.7.87.79] (helo=[192.168.0.7])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1uXdbN-00CNw6-Gr; Fri, 04 Jul 2025 12:25:05 +0200
-Message-ID: <68b4d53f-a185-4e11-af1e-532fc45cb8b2@igalia.com>
-Date: Fri, 4 Jul 2025 07:24:46 -0300
+	s=arc-20240116; t=1751624734; c=relaxed/simple;
+	bh=pEUtySM2KTJFulIMAqjkelFZDkcz60ibvb+CB6Fbeyo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fgRgKazgXgGg9LhOfGc1ZYlSLO4Lp/7Shqit254F4XJYWs2wbyHqFbSjiy3MwsuvLngC7cyLtzWAqnmPoI5+L1DmsoTRu3H6yVdQpHIePCLAqYiBcEY3Y5WDrCJp3iXJGu5DMW5Oj58GhiHWlDiWJG09KExqd0EobexskcgmGq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eLwT/EmT; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1751624731;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Sro688HYIitAmPcvBgChCRtb9/I9qH1hXgFepSE52NI=;
+	b=eLwT/EmT7HWj0rRQfIwe+GHkBKXwyBzFk73+LECboajAXih4jvUvIAHT66sLrsMlKhQJ3U
+	+MQQhaPr+iGGqcnM2ukBisGI8Ob9YdmFJFLREX/y4hIV9RVf1FvRX82yGreLroSdwjoDAf
+	MHsJhjQZRmp2xmGq42yKdJpeOcC+eXw=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-618-CZ46b_IqPlKGQmYkIOXYVQ-1; Fri, 04 Jul 2025 06:25:30 -0400
+X-MC-Unique: CZ46b_IqPlKGQmYkIOXYVQ-1
+X-Mimecast-MFC-AGG-ID: CZ46b_IqPlKGQmYkIOXYVQ_1751624729
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3a4f6ba526eso519063f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Jul 2025 03:25:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751624729; x=1752229529;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Sro688HYIitAmPcvBgChCRtb9/I9qH1hXgFepSE52NI=;
+        b=UMxx2i2hC0WXu8YF946Vq/Gngye01Zhs/c+X/spCiLatj7qp4EZsT9Q4N1MQIbsd6n
+         Z5dNQFqSBnB3TCNM+JZPYghCgBJNIiEajIhc9g5VkOh6V+Ptg+LrVzjRa2LNc8ORFNco
+         KaXn/N9ISHsRhrcjSYnVmNy7piuy0YPN9D5cU/xK/i27Xq5mavVulLfOY3hkqRZpWSSu
+         CxSJEEx1eP4IaP5xV8UpvrKgJ++Vn3pR6PNnYpgIDvkkeX9Kv5TpuX5xI5U9tzbOSXRt
+         F/5/I1CRGiwJ5GFqJOv6AobCo4R81Are0yCdJqnjzysuIyQJC9e7FD2/l6GyA0afsGvI
+         mDYQ==
+X-Gm-Message-State: AOJu0YxFbjh6h72m2crkSfyVL45iKB9yin+jvVyBv0GN2MCkuJE29Lyy
+	YCDmW7eGLtqffwZENKqLRVD+BX8nsF5UMLfaF0sPYQ4VL3KN7wjzRgOdwmtB/mYuUhTYhb9d/K9
+	kw5WqZc8xH/Ffa12RErom2MlcpGq0I2p6O7WHziQIOBJU+K7u1LT5B4hxJcsKdXgltY4Wd2TVAr
+	9sZxWuY1W4SetFvkfJRUC55d/heqrarqh+HCWG4kDzSLUC2A==
+X-Gm-Gg: ASbGncvHkR5x/JhhMuOlJY4nuqoCforlmKRKyoYDI2ULofEivwPIPYQeVDaNNVyPAYA
+	sXcue7sgYkXINYCp8fwa2pIcWyCCtnwNf6DqR3/0/gCobLC6xxKD5+UJtgLl1x5wcLVBud507T8
+	Pc3U4eENYrh5Xp6bFSXgT8bOCavVW/xzBtzPIZ/JdBqSd6tAjyi6Q7xLRmQ/szRB7Qef/+58cqQ
+	vNr8j+ubV0F+wYOyNNosou7It5XuOm/1OWphn3F5RuPNfQKaTrLbiS/CQxgdeWz1dGuU/6Xa3DJ
+	t0Q3ZMhlPr51Pv2gsmVRj48wHCh5Olr6S1eeUFvEi3MqsCI48Necw6K5TNEXx4MpXGC+1DvNwKO
+	zUd5rUA==
+X-Received: by 2002:a05:6000:2dc7:b0:3a5:75a6:73b9 with SMTP id ffacd0b85a97d-3b4964f4d95mr1608851f8f.11.1751624728498;
+        Fri, 04 Jul 2025 03:25:28 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHCjrfOCujVRy/tLPuq2vX5bnaQezkrR11WICwCcdt0ejgdnjfY6QZ4FsoDRZ4Yte6IkVy/1Q==
+X-Received: by 2002:a05:6000:2dc7:b0:3a5:75a6:73b9 with SMTP id ffacd0b85a97d-3b4964f4d95mr1608748f8f.11.1751624727474;
+        Fri, 04 Jul 2025 03:25:27 -0700 (PDT)
+Received: from localhost (p200300d82f2c5500098823f9faa07232.dip0.t-ipconnect.de. [2003:d8:2f2c:5500:988:23f9:faa0:7232])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b4708d094csm2102185f8f.28.2025.07.04.03.25.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 04 Jul 2025 03:25:26 -0700 (PDT)
+From: David Hildenbrand <david@redhat.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org,
+	linux-doc@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	virtualization@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org,
+	David Hildenbrand <david@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Jerrin Shaji George <jerrin.shaji-george@broadcom.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	=?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Zi Yan <ziy@nvidia.com>,
+	Matthew Brost <matthew.brost@intel.com>,
+	Joshua Hahn <joshua.hahnjy@gmail.com>,
+	Rakie Kim <rakie.kim@sk.com>,
+	Byungchul Park <byungchul@sk.com>,
+	Gregory Price <gourry@gourry.net>,
+	Ying Huang <ying.huang@linux.alibaba.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Minchan Kim <minchan@kernel.org>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Brendan Jackman <jackmanb@google.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	John Hubbard <jhubbard@nvidia.com>,
+	Peter Xu <peterx@redhat.com>,
+	Xu Xin <xu.xin16@zte.com.cn>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	Miaohe Lin <linmiaohe@huawei.com>,
+	Naoya Horiguchi <nao.horiguchi@gmail.com>,
+	Oscar Salvador <osalvador@suse.de>,
+	Rik van Riel <riel@surriel.com>,
+	Harry Yoo <harry.yoo@oracle.com>,
+	Qi Zheng <zhengqi.arch@bytedance.com>,
+	Shakeel Butt <shakeel.butt@linux.dev>
+Subject: [PATCH v2 00/29] mm/migration: rework movable_ops page migration (part 1)
+Date: Fri,  4 Jul 2025 12:24:54 +0200
+Message-ID: <20250704102524.326966-1-david@redhat.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 20/80] drivers: drm: Remove redundant
- pm_runtime_mark_last_busy() calls
-To: Sakari Ailus <sakari.ailus@linux.intel.com>,
- Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Douglas Anderson <dianders@chromium.org>,
- Lucas Stach <l.stach@pengutronix.de>,
- Russell King <linux+etnaviv@armlinux.org.uk>,
- Christian Gmeiner <christian.gmeiner@gmail.com>,
- Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>,
- Kyungmin Park <kyungmin.park@samsung.com>,
- Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar
- <alim.akhtar@samsung.com>, Jani Nikula <jani.nikula@linux.intel.com>,
- Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin
- <tursulin@ursulin.net>, Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Qiang Yu <yuq825@gmail.com>,
- Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
- Boris Brezillon <boris.brezillon@collabora.com>,
- Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- Mikko Perttunen <mperttunen@nvidia.com>,
- Jonathan Hunter <jonathanh@nvidia.com>, Jyri Sarha <jyri.sarha@iki.fi>,
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
- Dave Stevenson <dave.stevenson@raspberrypi.com>,
- Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- Damon Ding <damon.ding@rock-chips.com>,
- Ayushi Makhija <quic_amakhija@quicinc.com>,
- Luca Ceresoli <luca.ceresoli@bootlin.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
- Chen-Yu Tsai <wenst@chromium.org>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- etnaviv@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
- imx@lists.linux.dev, lima@lists.freedesktop.org, linux-tegra@vger.kernel.org
-References: <20250704075225.3212486-1-sakari.ailus@linux.intel.com>
- <20250704075413.3218307-1-sakari.ailus@linux.intel.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>
-In-Reply-To: <20250704075413.3218307-1-sakari.ailus@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Hi Sakari,
+Based on mm/mm-new.
 
-On 04/07/25 04:54, Sakari Ailus wrote:
-> pm_runtime_put_autosuspend(), pm_runtime_put_sync_autosuspend(),
-> pm_runtime_autosuspend() and pm_request_autosuspend() now include a call
-> to pm_runtime_mark_last_busy(). Remove the now-reduntant explicit call to
-> pm_runtime_mark_last_busy().
-> 
-> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> ---
+In the future, as we decouple "struct page" from "struct folio", pages
+that support "non-lru page migration" -- movable_ops page migration
+such as memory balloons and zsmalloc -- will no longer be folios. They
+will not have ->mapping, ->lru, and likely no refcount and no
+page lock. But they will have a type and flags 🙂
 
-[...]
+This is the first part (other parts not written yet) of decoupling
+movable_ops page migration from folio migration.
 
-> diff --git a/drivers/gpu/drm/vc4/vc4_v3d.c b/drivers/gpu/drm/vc4/vc4_v3d.c
-> index bb09df5000bd..11ec7e913974 100644
-> --- a/drivers/gpu/drm/vc4/vc4_v3d.c
-> +++ b/drivers/gpu/drm/vc4/vc4_v3d.c
-> @@ -153,7 +153,6 @@ vc4_v3d_pm_put(struct vc4_dev *vc4)
->   
->   	mutex_lock(&vc4->power_lock);
->   	if (--vc4->power_refcount == 0) {
-> -		pm_runtime_mark_last_busy(&vc4->v3d->pdev->dev);
->   		pm_runtime_put_autosuspend(&vc4->v3d->pdev->dev);
->   	}
+In this series, we get rid of the ->mapping usage, and start cleaning up
+the code + separating it from folio migration.
 
-Nit: please, drop the curly braces.
+Migration core will have to be further reworked to not treat movable_ops
+pages like folios. This is the first step into that direction.
 
->   	mutex_unlock(&vc4->power_lock);
+Heavily tested with virtio-balloon and lightly tested with zsmalloc
+on x86-64. Cross-compile-tested.
 
-For vc4,
+v1 -> v2:
+* "mm/balloon_compaction: convert balloon_page_delete() to
+   balloon_page_finalize()"
+ -> Extended patch description
+* "mm/page_alloc: let page freeing clear any set page type"
+ -> Add comment
+* "mm/zsmalloc: make PageZsmalloc() sticky until the page is freed"
+ -> Add comment
+* "mm/migrate: factor out movable_ops page handling into
+   migrate_movable_ops_page()"
+ -> Extended patch description
+* "mm/migrate: remove folio_test_movable() and folio_movable_ops()"
+ -> Extended patch description
+* "mm/zsmalloc: stop using __ClearPageMovable()"
+ -> Clarify+extend comment
+* "mm/migration: remove PageMovable()"
+ -> Adjust patch description
+* "mm: rename __PageMovable() to page_has_movable_ops()"
+ -> Update comment in scan_movable_pages()
+* "mm: convert "movable" flag in page->mapping to a page flag"
+ -> Updated+extended patch description
+ -> Use TESTPAGEFLAG+SETPAGEFLAG only
+ -> Adjust comments for #else + #endif
+* "mm/page-alloc: remove PageMappingFlags()"
+ -> Extend patch description
+* "docs/mm: convert from "Non-LRU page migration" to "movable_ops page
+   migration""
+ -> Fixup usage of page_movable_ops()
+* Smaller patch description changes
+* Collect RBs+Acks (thanks everybody!)
 
-Reviewed-by: Maíra Canal <mcanal@igalia.com>
+RFC -> v1:
+* Some smaller fixups + comment changes + subject/description updates
+* Added ACKs/RBs (hope I didn't miss any)
+* "mm/migrate: move movable_ops page handling out of move_to_new_folio()"
+ -> Fix goto out; vs goto out_unlock_both;
+* "mm: remove __folio_test_movable()"
+ -> Fix page_has_movable_ops() checking wrong page
 
-Best Regards,
-- Maíra
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: Madhavan Srinivasan <maddy@linux.ibm.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Nicholas Piggin <npiggin@gmail.com>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Jerrin Shaji George <jerrin.shaji-george@broadcom.com>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: David Hildenbrand <david@redhat.com>
+Cc: Jason Wang <jasowang@redhat.com>
+Cc: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+Cc: "Eugenio Pérez" <eperezma@redhat.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>
+Cc: Zi Yan <ziy@nvidia.com>
+Cc: Matthew Brost <matthew.brost@intel.com>
+Cc: Joshua Hahn <joshua.hahnjy@gmail.com>
+Cc: Rakie Kim <rakie.kim@sk.com>
+Cc: Byungchul Park <byungchul@sk.com>
+Cc: Gregory Price <gourry@gourry.net>
+Cc: Ying Huang <ying.huang@linux.alibaba.com>
+Cc: Alistair Popple <apopple@nvidia.com>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Cc: Mike Rapoport <rppt@kernel.org>
+Cc: Suren Baghdasaryan <surenb@google.com>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc: Minchan Kim <minchan@kernel.org>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>
+Cc: Brendan Jackman <jackmanb@google.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: John Hubbard <jhubbard@nvidia.com>
+Cc: Peter Xu <peterx@redhat.com>
+Cc: Xu Xin <xu.xin16@zte.com.cn>
+Cc: Chengming Zhou <chengming.zhou@linux.dev>
+Cc: Miaohe Lin <linmiaohe@huawei.com>
+Cc: Naoya Horiguchi <nao.horiguchi@gmail.com>
+Cc: Oscar Salvador <osalvador@suse.de>
+Cc: Rik van Riel <riel@surriel.com>
+Cc: Harry Yoo <harry.yoo@oracle.com>
+Cc: Qi Zheng <zhengqi.arch@bytedance.com>
+Cc: Shakeel Butt <shakeel.butt@linux.dev>
+
+David Hildenbrand (29):
+  mm/balloon_compaction: we cannot have isolated pages in the balloon
+    list
+  mm/balloon_compaction: convert balloon_page_delete() to
+    balloon_page_finalize()
+  mm/zsmalloc: drop PageIsolated() related VM_BUG_ONs
+  mm/page_alloc: let page freeing clear any set page type
+  mm/balloon_compaction: make PageOffline sticky until the page is freed
+  mm/zsmalloc: make PageZsmalloc() sticky until the page is freed
+  mm/migrate: rename isolate_movable_page() to
+    isolate_movable_ops_page()
+  mm/migrate: rename putback_movable_folio() to
+    putback_movable_ops_page()
+  mm/migrate: factor out movable_ops page handling into
+    migrate_movable_ops_page()
+  mm/migrate: remove folio_test_movable() and folio_movable_ops()
+  mm/migrate: move movable_ops page handling out of move_to_new_folio()
+  mm/zsmalloc: stop using __ClearPageMovable()
+  mm/balloon_compaction: stop using __ClearPageMovable()
+  mm/migrate: remove __ClearPageMovable()
+  mm/migration: remove PageMovable()
+  mm: rename __PageMovable() to page_has_movable_ops()
+  mm/page_isolation: drop __folio_test_movable() check for large folios
+  mm: remove __folio_test_movable()
+  mm: stop storing migration_ops in page->mapping
+  mm: convert "movable" flag in page->mapping to a page flag
+  mm: rename PG_isolated to PG_movable_ops_isolated
+  mm/page-flags: rename PAGE_MAPPING_MOVABLE to PAGE_MAPPING_ANON_KSM
+  mm/page-alloc: remove PageMappingFlags()
+  mm/page-flags: remove folio_mapping_flags()
+  mm: simplify folio_expected_ref_count()
+  mm: rename PAGE_MAPPING_* to FOLIO_MAPPING_*
+  docs/mm: convert from "Non-LRU page migration" to "movable_ops page
+    migration"
+  mm/balloon_compaction: "movable_ops" doc updates
+  mm/balloon_compaction: provide single balloon_page_insert() and
+    balloon_mapping_gfp_mask()
+
+ Documentation/mm/page_migration.rst  |  39 ++--
+ arch/powerpc/platforms/pseries/cmm.c |   2 +-
+ drivers/misc/vmw_balloon.c           |   3 +-
+ drivers/virtio/virtio_balloon.c      |   4 +-
+ fs/proc/page.c                       |   4 +-
+ include/linux/balloon_compaction.h   |  90 ++++-----
+ include/linux/fs.h                   |   2 +-
+ include/linux/migrate.h              |  46 +----
+ include/linux/mm.h                   |   4 +-
+ include/linux/mm_types.h             |   1 -
+ include/linux/page-flags.h           | 106 +++++++----
+ include/linux/pagemap.h              |   2 +-
+ include/linux/zsmalloc.h             |   2 +
+ mm/balloon_compaction.c              |  21 ++-
+ mm/compaction.c                      |  44 +----
+ mm/gup.c                             |   4 +-
+ mm/internal.h                        |   2 +-
+ mm/ksm.c                             |   4 +-
+ mm/memory-failure.c                  |   4 +-
+ mm/memory_hotplug.c                  |  10 +-
+ mm/migrate.c                         | 271 ++++++++++++++++-----------
+ mm/page_alloc.c                      |  13 +-
+ mm/page_isolation.c                  |  12 +-
+ mm/rmap.c                            |  16 +-
+ mm/util.c                            |   6 +-
+ mm/vmscan.c                          |   6 +-
+ mm/zpdesc.h                          |  15 +-
+ mm/zsmalloc.c                        |  33 ++--
+ 28 files changed, 373 insertions(+), 393 deletions(-)
+
+
+base-commit: 31a2460cb90e6ac3604c72fb54e936b8129fec05
+-- 
+2.49.0
+
 
