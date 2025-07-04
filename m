@@ -1,277 +1,225 @@
-Return-Path: <linux-kernel+bounces-717523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-717518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4112FAF9530
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 16:14:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8ACDAF9524
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 16:13:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F4D716DF51
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 14:14:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F29041897D02
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 14:13:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB24D1C6FE5;
-	Fri,  4 Jul 2025 14:14:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9BE018A6DF;
+	Fri,  4 Jul 2025 14:13:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="rJFO0n8Z";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="PlJ2ETR5"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IWmmmWFd"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE0AF1552E0
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 14:14:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751638457; cv=fail; b=Tmp+5LsxHDX/zUuru2Tom95RftYA5VcG2sxeae8FvdiAVDPp4GLMSFmta7t1mBWYzsVgKX9IFd13N3h89fzUnNnbM+cJ/Zd9Jc5UqS2E/A0BC8yC2ZJwJrjbxlKkvdBXGS0pK08HLJIsTwQno8UIL8U4xB83fmcE6e8KB918Opg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751638457; c=relaxed/simple;
-	bh=8o15/3A5pkbp0BCt4LrGMA4/ltTbnHKGhYGxycwV258=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=MkRN2+Z84p6/j4SBZ8e04l30p1SQmHC7aLEZEhh088RpViKiWgsQRjBxD6ZOisX2wt4fX6Y4xvypi64T10+ah8jvebexYLWIfkIlzLTw6BUcdeuDV8LR5GYSQAtkeUnGbqFJEed9HMaoOQdPoA+eb3pUhPLLSucPEX2bRvmS8Xg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=rJFO0n8Z; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=PlJ2ETR5; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5649Ysck000354;
-	Fri, 4 Jul 2025 14:13:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=61BD5LSAL3ePTcp2nT
-	nOYpbzqeA7fXDqaycmyY99YSY=; b=rJFO0n8Zn1mkhf6yXqI3ua+3hTMetWIawi
-	dkC9occVCzlgfhXQWXio3IMvo9ZD2WzXpA95sYXVggBMJA/TNLxnzWiKHCVGmqH1
-	64oPlMnoMELf1sZuO7igQy2lDpmukJu76CpqaYhB0+1WtUeM3Y958ahQThFSXlki
-	xw6At6sArIa2O8B+w/afhrVTFY6RHuAoI2+js4/stoXghRqhfPSkfTe0AlRA137y
-	K3AhJnQzk7NfVaDDaiedoytFxJgT5Tu5cnHvXIzj5vHjDUhXBezN6L+ylWzdMxsr
-	r6k105LYTSqZxGFHJcAFYsr8vTB1FVwGUJsz7DD/oW0bRNK943eA==
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 47j80watq3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 04 Jul 2025 14:13:57 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 564C5CSt032461;
-	Fri, 4 Jul 2025 14:13:57 GMT
-Received: from nam04-bn8-obe.outbound.protection.outlook.com (mail-bn8nam04on2062.outbound.protection.outlook.com [40.107.100.62])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 47j6un5c3w-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 04 Jul 2025 14:13:57 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=drRhdlrGG2s60zyhJh6Ke8stkIlNYSNEl2hDn4OWzwkBYItqkIQeKYpfCxmMQIxgHxpLNQ7L1ii1u4GhmSXI+KlS3kfQ4/GEMo/eSddBn9705/TaLLUPPQMoMRgRv3aDTcd/KNJoeM4tdVT/gwFpBmKyH5nobOg7R3ACpA4++zguUWcOnBi5Sp+9Ax+RiZckxPZOC0HtaJ+I5saP/Aoz66NZgMMNv8I8dW/urbZsHy4NDqjGbADohPc2KA9t9OHu7/5taeCIhcx9beGwn6XQcmkB8Y0pRBTXxXIwikCWWVlWGTEmddw7X7BJi2D2C2m67Ifyw/J2HXxo40pVzN6cOg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=61BD5LSAL3ePTcp2nTnOYpbzqeA7fXDqaycmyY99YSY=;
- b=K+U7as0IYNrUD1Lz/yzqTJ1Y2hUDNyjrRbj4hJ/8bzxPbNUuq9e0wdozNj72dIoQADLYI3R6ezTMn2+JlvC9rbg3VPy1+xXGRGjEQ2NJfrW2KT9pXm2xtYWkzBYnre8U79uK17O0Rz6C5gNInhBGzjgelG4Td2MSiQd8uyQ8vVR5EoD/KJaDW79RwOVivMmzDLBhrVcjOn5cd1gR5yedYGP5Wv1MNjeV8CuJxnIlBvabfw4LanQ9cWoMJEif+aDqvxqTNILxn1Wjmn7Y1KdDdTSbnaseqwnatAmdoZYy0jzy5iifDcPDbrh6bMsGYn0PpJd/7QZuoNl1SJcNjyI59A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=61BD5LSAL3ePTcp2nTnOYpbzqeA7fXDqaycmyY99YSY=;
- b=PlJ2ETR51Ar2I2VmbYr0+sYbGu+/yaYhbSwQIZHaiOl80RCD1G/8cFeCrvgU13b0x+hbjrr89yTjLY5mPRED4f2hC9KQGXzkibBTfreihTePIxbuBt7LqLPRCwdgoevku9gjeDYC7o5H96KMoT21Spa0q7JPeIW9DdWtzKXc4Gk=
-Received: from PH0PR10MB5777.namprd10.prod.outlook.com (2603:10b6:510:128::16)
- by IA3PR10MB8163.namprd10.prod.outlook.com (2603:10b6:208:515::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.23; Fri, 4 Jul
- 2025 14:13:41 +0000
-Received: from PH0PR10MB5777.namprd10.prod.outlook.com
- ([fe80::75a8:21cc:f343:f68c]) by PH0PR10MB5777.namprd10.prod.outlook.com
- ([fe80::75a8:21cc:f343:f68c%6]) with mapi id 15.20.8880.015; Fri, 4 Jul 2025
- 14:13:41 +0000
-Date: Fri, 4 Jul 2025 10:13:10 -0400
-From: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-To: Dev Jain <dev.jain@arm.com>
-Cc: akpm@linux-foundation.org, richard.weiyang@gmail.com,
-        maple-tree@lists.infradead.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] maple tree: Add some comments
-Message-ID: <d2vb7vy3y2dcarwe5ugf54axq6joslxjfhiu5vlasslhfehkaz@erzfum3spu7l>
-Mail-Followup-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Dev Jain <dev.jain@arm.com>, akpm@linux-foundation.org, richard.weiyang@gmail.com, 
-	maple-tree@lists.infradead.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20250703063338.51509-1-dev.jain@arm.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250703063338.51509-1-dev.jain@arm.com>
-User-Agent: NeoMutt/20250510
-X-ClientProxiedBy: YT3PR01CA0059.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:82::6) To PH0PR10MB5777.namprd10.prod.outlook.com
- (2603:10b6:510:128::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FCBC156677
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 14:13:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751638411; cv=none; b=boLkRforYy736qjL7pDuorgEkn8UineHzurfphOa3M1j2eGyriYxEwDDoM9PUPeAgo0q8+CTqINqXvnT9NgxPJjD1L77UlfwcSymTxeoQLN96++IGWydDv+eoM8nFYpDWGjN1vXrfEN6r/Ru1kmkYm3dk52svyPVyZgs5ysU+zg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751638411; c=relaxed/simple;
+	bh=k7p6T8UsDHqfedr8fzoAhZxpsqIZxWMrnLsbvt7yJ6s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bdNcySb2f1+y0ksImlOBxNMPcAibrN+GG76Uyna3ZeY36sQKhQ9Z4hdrbP6A4YyJPKw+YI5V28xurFlRDO5d4dR40fsDQja7nESHhCF3Xx1DeHnYInevwjwVyW6obpMp1xO2Sea9SrE9ZA2KRTbmBpumRPjOIwS7+truQ3fS9Q4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IWmmmWFd; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1751638408;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=66jwWf5WSWH6aoArMkkqiDugR24CPiwQ2W8r/VhkBtI=;
+	b=IWmmmWFdBuzvocF3n4flFVzZdfla8HxSpnPqUYPO16LDLGpA1hOdoDdOF62e2lafxRivzz
+	5uKlbuCzpcSCtvf26m+0e6bD4uqwGbXRIzfnpUdk6iDjG4pzLsrSkEEAYaSYrYVzJXzejN
+	6yns3o7/E/VKfQAvvrJfV2XBrt+5OX8=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-82-IlTrpnqUMEeWLVHrmP9e9g-1; Fri, 04 Jul 2025 10:13:27 -0400
+X-MC-Unique: IlTrpnqUMEeWLVHrmP9e9g-1
+X-Mimecast-MFC-AGG-ID: IlTrpnqUMEeWLVHrmP9e9g_1751638406
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4532514dee8so6643415e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Jul 2025 07:13:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751638406; x=1752243206;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=66jwWf5WSWH6aoArMkkqiDugR24CPiwQ2W8r/VhkBtI=;
+        b=tfNz46RtcN89k544W9DqPlqweeDhGa8/QzJjpTgSOEH/JBNq4rVzhg8u2iJdX6Nq/K
+         TzVcN9MxtQRHwlHYeg3msF+uETA+YjFdZZQnTHT/QlDjwtPfWIWQT1EM4/hRsy1amxPR
+         3r2lIbHr+MJUDVPCNn+Wp41rcem9H00TCeT/kTE2UbTXqQT9OQLKxT2mz3iB7N/X/A35
+         eB5YfehgnDCRc4rKrqF4CUsZv5ZYYrlHVDdf6V7fkTo+LnV6ESwDLRv64x9OMbdW0zdD
+         5kHxPvydQl84YunqQbfHqJyFXA7TYZbK8bsdmko7g3V6gWT9BfhHPpwrhoAGHrVlXhlk
+         1ogg==
+X-Forwarded-Encrypted: i=1; AJvYcCWCAPUTqq9mHVAql96nuvpLgYw97fBnAkqimiTmKBHlagcNIiMszh3/E9HyZIEUz6a2uCls4uzWY3EAp9w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHzTvbq62XBQxWw1RBB7au8B/u0Et1GJNRs2qxvkKLB0Zy2f0I
+	SSekU7IUYGFcvQk5tHrX3LNz5n8U8NMCorTqnjn68eMP0A7btHKwZZwuTqSsaTmFyOSyxC7pYuM
+	8vKl/rxjNiPozMzaIw3y/tRYSC0OsLHsCDm36cfgzJlQMBzewGWsJqlqKXM9mNLGtuQ==
+X-Gm-Gg: ASbGncv5Hq3B1L+98ynPpnDbcVZ56B4OrGZg3H79omSTvS3TXQVXUZCr4j1V6SqlY4g
+	rLFZMXqfXmFBR9x7HILRad1RL3hFVzZKYslk/mkkjoGOt31XXw+ynEaFp4fximpI3GgSdatCgaG
+	uH0wks08oBmvtLv6rE7UDJuPDbzV+/+kQGm+6/vSS0IsgNzwWNJ9aNg/b+x60aTrBk4YF3/uwVQ
+	PhEl4rAZCio/cbcNLlA746+mhlxbIZBk8naR9YI5YLFNuXmFN6922lk57JPpArxdSM8Of2GSkJL
+	eU/lVMcaoncsB5FbNqRCWVQh7vmOWvjlW69lv3eEwi6XwBafnIZZt2D/FNb0hzrV24tonAT53Z+
+	dbZK4X0cQAOmBhucGifAvdQ8jCkEbhi+43LYFGkyBXf0SO74=
+X-Received: by 2002:a05:600c:c16c:b0:454:aec9:1db5 with SMTP id 5b1f17b1804b1-454b30df141mr31187185e9.16.1751638405715;
+        Fri, 04 Jul 2025 07:13:25 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE3/ZP6YJd4U4iMxyo/3QGq6Le91Xz4xHpipCk15FkeiV8LSbzIkEeChr/ZjP5+m4GsKle6eQ==
+X-Received: by 2002:a05:600c:c16c:b0:454:aec9:1db5 with SMTP id 5b1f17b1804b1-454b30df141mr31186425e9.16.1751638405241;
+        Fri, 04 Jul 2025 07:13:25 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f2c:5500:988:23f9:faa0:7232? (p200300d82f2c5500098823f9faa07232.dip0.t-ipconnect.de. [2003:d8:2f2c:5500:988:23f9:faa0:7232])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454a1705ed5sm47240875e9.2.2025.07.04.07.13.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 04 Jul 2025 07:13:24 -0700 (PDT)
+Message-ID: <07e0fddd-76ba-4905-95f4-b98063215866@redhat.com>
+Date: Fri, 4 Jul 2025 16:13:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH0PR10MB5777:EE_|IA3PR10MB8163:EE_
-X-MS-Office365-Filtering-Correlation-Id: 31a57006-8c7d-429a-938b-08ddbb04fa2c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?LrpAV676jFDpDr4ZLO3h3vNJqTCEAddnk+tSTbpVet4RMWDv/8F3O4XNm1Fd?=
- =?us-ascii?Q?2kGInadj4dcA7JYqg2twCHc3YxRtA8x49iQwiT6S5zupekysH4tYjfWG0MOl?=
- =?us-ascii?Q?yT/ImheaxSuRRRImTxpdNa7G2gsQC2pZPmeyPjYHQlnlnQlPTauETpni5evW?=
- =?us-ascii?Q?OF8/LmNG70qwbvu+SVfaSktgePRpvAYEd5AxXnrU6kPEErEHPE6i87ZFLXFC?=
- =?us-ascii?Q?nsegXjNpiCWshOqWv4MIBkrPvtW1Ua/LzPlItJDJ036Dv/TYxul2ozpfohXq?=
- =?us-ascii?Q?A5kR+xf792TvukY74MRE2In+9VF167uwnykxGXhIrCzyEmO0bVQWR1gFmGSY?=
- =?us-ascii?Q?F/NLiv50hAIVwuP1qhcXqn53ssZ8YWey1CaXldvrm8YimajgFlYmzL0+Uso5?=
- =?us-ascii?Q?Fq+Oc7bUS5HJar6BH4zIjmrCtHQJt5dykvwoJ2WHpqHmvz9iQnlkPBB+Nnz7?=
- =?us-ascii?Q?zPzlsjwFLTRSAkZuJSAvduRsRex5++f8+3WZIzkvsFnEmyYOs8kPVx3nhNJW?=
- =?us-ascii?Q?h344LEJF7Nlng30a2jSonKiWVchIZk5kMlaebQKx+ZJx+uddORuqxTA2An7+?=
- =?us-ascii?Q?uG9IImvExqDg5G151kNWB9nK5eUFbjbjtxqDEt4KR/l9ztKJFpGt7q2hAp82?=
- =?us-ascii?Q?8xGym6w90FUbtFS5wLcl8VvDxxKmQXOphIxGZDXr+Y7EICr1kRhKGAz4FkfU?=
- =?us-ascii?Q?joeQEz64JcftFgSgvTOUfBpzAcIIRi8er6SkYx8Qp3KANBCfKA6izNmPF0Bf?=
- =?us-ascii?Q?bVWOL4Dr3UsNBqH2Y5wiX/ahGilRK9AoVoDXy1FFTFGKsidIhlpDAYPJqzgv?=
- =?us-ascii?Q?YpfBfU49AcioSlRmuFb/NCe89lup0MnhpWfK5xDaaxWWILc9P3Jq/FDt4tln?=
- =?us-ascii?Q?VSUy4FbcmZWTr+fmxfHgv4RH5tqPeKLqQZ2PTLHoMbkk5Hj2c+/e1pzNCC15?=
- =?us-ascii?Q?DFeD9CHq/zt7ZhEZIXSi/BQDEggMMNlPjle0w7F12nvFDKgZgdBeeLgydp0t?=
- =?us-ascii?Q?pf+FBMOX+ue3k10vw1SN9ua2xXQuc9p1pfDf/y+vCVxyibLCKBCRHpClDs2c?=
- =?us-ascii?Q?GzBNmMSEM+xnsg7IFxizAj11sszoFvXL69Xm5N4vHkxGkExa7jZsHWdP9DLs?=
- =?us-ascii?Q?/O98HktEHPbUDArOq82EDGpHuo/kLl/cJ9HCAWoEeYcOYE4ZUeU6ISBtPsxB?=
- =?us-ascii?Q?fDhUF8vGOqW+Sieohfx/IgWM4eBk3+szuFBAYsoQzPOMxZdggXvlo67x+7lb?=
- =?us-ascii?Q?rv6PA86sNpP1o6eF24aTDjNSpPpPxXPKTcAOl7aoH8/t59XIVzdvgI+6lvrm?=
- =?us-ascii?Q?DHeBlJVGf9+0oNNOo9DwWUGptM9wkj3oCfeGBspPI5lLIyZCa2gz4VvbOMOV?=
- =?us-ascii?Q?m7qvG2GHTKyKeiEpstk2h5G0Krxa7D9wgmNA7ARhXGb76xboQrUMYQQTdSxz?=
- =?us-ascii?Q?VGh1PBN2rlM=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR10MB5777.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?5Eh/uWYrqpNiqpxoO8/breP+RNTWcO6J4bb79gNSKdjTX5vladpdf4gMDPYq?=
- =?us-ascii?Q?dJ63gcHIxvDJk53KtH3nyxaXPneCQRIZyuyGtHV1lHzAsZkvdZ16XJWgoKEF?=
- =?us-ascii?Q?Rk0EBNY7T1Lb05L4smgC12wf1nTKCV/e/onvBquHCeyXHbwUi1ZE26mm7BY8?=
- =?us-ascii?Q?b1TkBzFBT1V5SSoLVOAb1I560V/xJa5jM4VZnj8N0NlQyTfxXV9FRgWBjiGv?=
- =?us-ascii?Q?xymtTGbOY5MI69zR2SwuIhRHcHKsUFXs7gFaRgk+ZwWgsf2ZWFblVUNU1Avt?=
- =?us-ascii?Q?Ze+jy6wImsM5dJXEWShMesEN/R0RF4BVi10qfDoXILHOnFsA1rSNQNbb/CaV?=
- =?us-ascii?Q?HN6v2u1XHbR0+cEwCqpCsjyu9elcq5bplMJQAa1wFy6mo5UGlnYNihGH6ZOz?=
- =?us-ascii?Q?soCIxu9LVlb9sUe6g7yL8S0ZqOI5D2QJfspVWm7mi3oj44mwhk/W3fjikufx?=
- =?us-ascii?Q?POUixXq1PJZa36BkmjLi0gA2WK+tkP6M9u7FxJfoQ84bDYou6cfZWnUonK7r?=
- =?us-ascii?Q?K3YlWgW/Hv4NKZwI061uZ9RQVtQbj9o7IgEdMsaUTfwExTtPE8U6UDzEx7Q8?=
- =?us-ascii?Q?5UjCKWeCuttZbkG6v7vC1TbgphQ2tRRcKs3KykSyScsJWbdiAtWYEDc/fA3K?=
- =?us-ascii?Q?YEsCtLP3tCHDexNNUR/4vX3H6MGIVwUwrFZxX5Htj3XDHyeJByQBXY9wPyke?=
- =?us-ascii?Q?UF54aTlbkev+HpKUwLHdwXpROqnFgkH3HOMgIBu2i1nGNDFZTCh/UgOwskaJ?=
- =?us-ascii?Q?+DAJGJr25AVlk1orSC61/zeXzuK9zE2SaRU8RRTD/nRiIHTRI8wMt9NPnlXr?=
- =?us-ascii?Q?a7N4h2ArSsUYUqcFme6NfvqoNpDNxLMfrnCINcpKgP+nZCd0wwcCnffhxDrg?=
- =?us-ascii?Q?hnhzQvmM5x0HZDTOCKjjEvWVU9ysiBr+0Ho2CNn4gol7gKafHFyZx6aaAliw?=
- =?us-ascii?Q?ZDXS1SLQRugGUFwrsMXKlnO4yPpl38yjq8pQKNVuN97hkMXJTDwosLd4T6wa?=
- =?us-ascii?Q?oFiGPiO3WMccMCRcCRIaf+mLzVrRACiBUmUo9+NmZIwiEkUfTwvA1FW8hm0h?=
- =?us-ascii?Q?DN6g0hFxXlGolDjZUaggplLkKQLFJ5md8SKin1RGjWrvVbDCW1FVp8XX0jKs?=
- =?us-ascii?Q?IYzrAEcgSBnhw8r1cC0HbXYY1lQe2cf489vRhhA5BI5T9pJ0vsBvDXj76G9T?=
- =?us-ascii?Q?zyF3t75SH13gMEssyWs20B9nQdp4ALyeElcHdTZiprB6+QDWYChWveQO9Bjh?=
- =?us-ascii?Q?/pIeS4ntd6dy5ogdrI9gij/X0/2r82+Vw6z9KGGvb/KwsVN3xeU5fHiCofAM?=
- =?us-ascii?Q?Z06eGtXEcZhpsXEac81UxWz5nTr/GENnhdGsGTksD3OWHB5sryFNec07eMF7?=
- =?us-ascii?Q?ugUrGxIZFMHPBi1hPymKAg0EskjeuSi5VoUdo0iDFruHar38gdvuSGVU0zcD?=
- =?us-ascii?Q?ReBaWpdTQKZ8SDoXwmuOJKlpmmHVtQKHRo/dDmGzC74jFFpD1+J1w+9xADGL?=
- =?us-ascii?Q?38mGOd7Ij/CVzSUSS/abtwXv1tMyEgxxhVYA1V2ZoS242bKjXgskuKyU/7lO?=
- =?us-ascii?Q?wyZ2VGy+IIfKzpT0RgRrhhkV88xqzPQD4pBvSTNb?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	eC964XxDX5FK/KBPNrlEK8/hK+iaNMzUUbOyMSq2BvqWUoN6SHYNJ4Z3/0ID7xdjzuXgifHid7bN23TZnyvs/CGWTU/cmIvPGbG9ID9yVulxfoxeLPKRBfs50Gd50JKgz4xOm9r8Zrf9i4dj5qM9wDBJ/KGHoP1x7n8MZt5RVGeTRiEuAR74yURZXBpN2c9u4pUrfHMFYldTQ6YnafXfcOXBfckDbLCVmxTVaQtKXdR7k2VHN6jAmYl80yGCyd8bM5FJnBhgPoCLANPqCLszhwtnEhFVtBNeBT/v3v28e/9WyF4DOe+64DnANujaRX/RciHGx8xWuPrnJQ8gky2Ojs917BOt3PgMLuZA953k6bdYwi1eumU7iVuf5ipbDDow3lidJ/4FIL49c0u4NGnKny2DeG7BAQXOWmN61vpmIDeHhI5wh8ShbYDZ+zj8EJZzrJRUa2V0fPIxdbyZCX5SUqK34kqJWB6zO1/fKFMLs0pbFS1v9U1Mm8/aEUAoxGD0hQLRUuGNlM55j8dTs4iWTINry4ewhgtcGn+7/Eo85f+6B2en6Kv+4jDv2k4vaArDUBuEZ15LjKi3a475gnAGU487iGqAGjtfnvUFqUoasHs=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 31a57006-8c7d-429a-938b-08ddbb04fa2c
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR10MB5777.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Jul 2025 14:13:41.0066
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 2J3ZJoNeHaoDb01M+i2CKn4T5n0wVfxv2rUZHIs0VG/Ceeu4He6JjBMEpcsC16PFDQNyBAF101X0kori5gwG5Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA3PR10MB8163
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-04_05,2025-07-04_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 adultscore=0
- bulkscore=0 malwarescore=0 spamscore=0 phishscore=0 suspectscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2505160000 definitions=main-2507040108
-X-Proofpoint-GUID: Clq17cZESG54kVw-d-w1v5MOpVcgxFVS
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA0MDEwOCBTYWx0ZWRfX7OHSynwfmpk+ vArflFDANFoWumsfM//Rk1oblHuD8pqjxGaoa6eVphJFQ7RZujk6Q7RhhmdsG6l01IXow8hwrWK T2s05W/kxTpZAWu2qET3Cmwp4njYsk9S9DFlXDX7j+pHwJ2fpaP+J29nDadzN1+Hx59v9T0vyj/
- zxxt1hBJIO6JYJEgWXiw6fGeKXiNdjjOYob8wxWW5ZWmZUeuM0bfbOPs6rc5UcSW4rbcjXN5NjV 3czAOyEgwz0cMBrVnLLzOSngoatFVRyl1bQCvaBaJDXZ8E+G2Fxx6QjrC7P45X5E3wVoL32+1+s zsmLgzzzgAueh5xrpfwnsngyTajUySw2EfOp/7hbU48Q8i30OkBcktZMGxHjBMp1C5DiNarpaMG
- 2Xy186NXoeLgk/OPHz+lblB1DbE1IPeZUxYQKL3p5u6ok7lujkqX9r43lusfV49YEJN4kcKi
-X-Authority-Analysis: v=2.4 cv=D6hHKuRj c=1 sm=1 tr=0 ts=6867e1a5 b=1 cx=c_pps a=zPCbziy225d3KhSqZt3L1A==:117 a=zPCbziy225d3KhSqZt3L1A==:17 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=Wb1JkmetP80A:10 a=GoEa3M9JfhUA:10 a=VwQbUJbxAAAA:8 a=7CQSdrXTAAAA:8 a=JfrnYn6hAAAA:8 a=yPCof4ZbAAAA:8 a=7IPkZRsMv_DBGOYTekIA:9 a=CjuIK1q_8ugA:10 a=a-qgeE7W1pNrGK8U0ZQC:22
- a=1CNFftbPRP8L7MoqJWF3:22 cc=ntf awl=host:12057
-X-Proofpoint-ORIG-GUID: Clq17cZESG54kVw-d-w1v5MOpVcgxFVS
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 5/6] KVM: arm64: Allow cacheable stage 2 mapping using
+ VMA flags
+To: Jason Gunthorpe <jgg@nvidia.com>, ankita@nvidia.com
+Cc: maz@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com,
+ suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com,
+ will@kernel.org, ryan.roberts@arm.com, shahuang@redhat.com,
+ lpieralisi@kernel.org, ddutile@redhat.com, seanjc@google.com,
+ aniketa@nvidia.com, cjia@nvidia.com, kwankhede@nvidia.com, kjaju@nvidia.com,
+ targupta@nvidia.com, vsethi@nvidia.com, acurrid@nvidia.com,
+ apopple@nvidia.com, jhubbard@nvidia.com, danw@nvidia.com, zhiw@nvidia.com,
+ mochs@nvidia.com, udhoke@nvidia.com, dnigam@nvidia.com,
+ alex.williamson@redhat.com, sebastianene@google.com, coltonlewis@google.com,
+ kevin.tian@intel.com, yi.l.liu@intel.com, ardb@kernel.org,
+ akpm@linux-foundation.org, gshan@redhat.com, linux-mm@kvack.org,
+ tabba@google.com, qperret@google.com, kvmarm@lists.linux.dev,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ maobibo@loongson.cn
+References: <20250621042111.3992-1-ankita@nvidia.com>
+ <20250621042111.3992-6-ankita@nvidia.com>
+ <20250704140431.GH1410929@nvidia.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20250704140431.GH1410929@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-* Dev Jain <dev.jain@arm.com> [250703 02:33]:
-> Add comments explaining the fields for maple_metadata, since "end" is
-> ambiguous and "gap" can be confused as the largest gap, whereas it
-> is actually the offset of the largest gap.
+On 04.07.25 16:04, Jason Gunthorpe wrote:
+> On Sat, Jun 21, 2025 at 04:21:10AM +0000, ankita@nvidia.com wrote:
+>> --- a/arch/arm64/kvm/mmu.c
+>> +++ b/arch/arm64/kvm/mmu.c
+>> @@ -1681,18 +1681,53 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+>>   	if (is_error_noslot_pfn(pfn))
+>>   		return -EFAULT;
+>>   
+>> +	/*
+>> +	 * Check if this is non-struct page memory PFN, and cannot support
+>> +	 * CMOs. It could potentially be unsafe to access as cachable.
+>> +	 */
+>>   	if (vm_flags & (VM_PFNMAP | VM_MIXEDMAP) && !pfn_is_map_memory(pfn)) {
+>>   		/*
+>> -		 * If the page was identified as device early by looking at
+>> -		 * the VMA flags, vma_pagesize is already representing the
+>> -		 * largest quantity we can map.  If instead it was mapped
+>> -		 * via __kvm_faultin_pfn(), vma_pagesize is set to PAGE_SIZE
+>> -		 * and must not be upgraded.
+>> -		 *
+>> -		 * In both cases, we don't let transparent_hugepage_adjust()
+>> -		 * change things at the last minute.
+>> +		 * COW VM_PFNMAP is possible when doing a MAP_PRIVATE
+>> +		 * /dev/mem mapping on systems that allow such mapping.
+>> +		 * Reject such case.
+>>   		 */
+>> -		s2_force_noncacheable = true;
+>> +		if (is_cow_mapping(vm_flags))
+>> +			return -EINVAL;
 > 
-> Add comment for mas_ascend() to explain, whose min and max we are
-> trying to find. Explain that, for example, if we are already on offset
-> zero, then the parent min is mas->min, otherwise we need to walk up
-> to find the implied pivot min.
+> I still would like an explanation why we need to block this.
 > 
-> Signed-off-by: Dev Jain <dev.jain@arm.com>
+> COW PFNMAP is like MIXEDMAP, you end up with a VMA where there is a
+> mixture of MMIO and normal pages. Arguably you are supposed to use
+> vm_normal_page() not pfn_is_map_memory(), but that seems difficult for
+> KVM.
+> 
+> Given we exclude the cachable case with the pfn_is_map_memory() we
+> know this is the non-struct page memory already, so why do we need to
+> block the COW?
+> 
+> I think the basic rule we are going for is that within the VMA the
+> non-normal/special PTE have to follow the vma->vm_pgprot while the
+> normal pages have to be cachable.
+> 
+> So if we find a normal page (ie pfn_is_map_memory()) then we know it
+> is cachable and s2_force_noncacheable = false. Otherwise we use the
+> vm_pgprot to decide if the special PTE is cachable.
+> 
+> David can you think of any reason to have this is_cow_mapping() test?
 
-Thanks!
+I think with that reasoning, it should be fine to drop it.
 
-Reviewed-by: Liam R. Howlett <Liam.Howlett@oracle.com>
+I think, the COW test made sense when we were talking about limiting it 
+to VM_PFNMAP only and simplifying by dropping other checks. Then, it 
+would have identified that something is certainly not "normal" memory.
 
+-- 
+Cheers,
 
-> ---
-> 
-> v1->v2:
->  - Drop MAPLE_ROOT_NODE comment modification
-> 
-> v1:
->  - https://lore.kernel.org/all/20250626171918.17261-2-dev.jain@arm.com/
-> 
->  include/linux/maple_tree.h | 4 ++--
->  lib/maple_tree.c           | 8 +++++++-
->  2 files changed, 9 insertions(+), 3 deletions(-)
-> 
-> diff --git a/include/linux/maple_tree.h b/include/linux/maple_tree.h
-> index 9ef129038224..bafe143b1f78 100644
-> --- a/include/linux/maple_tree.h
-> +++ b/include/linux/maple_tree.h
-> @@ -75,8 +75,8 @@
->   * searching for gaps or any other code that needs to find the end of the data.
->   */
->  struct maple_metadata {
-> -	unsigned char end;
-> -	unsigned char gap;
-> +	unsigned char end;	/* end of data */
-> +	unsigned char gap;	/* offset of largest gap */
->  };
->  
->  /*
-> diff --git a/lib/maple_tree.c b/lib/maple_tree.c
-> index 0e85e92c5375..b4ee2d29d7a9 100644
-> --- a/lib/maple_tree.c
-> +++ b/lib/maple_tree.c
-> @@ -1053,7 +1053,7 @@ static inline void mte_set_gap(const struct maple_enode *mn,
->   * mas_ascend() - Walk up a level of the tree.
->   * @mas: The maple state
->   *
-> - * Sets the @mas->max and @mas->min to the correct values when walking up.  This
-> + * Sets the @mas->max and @mas->min for the parent node of mas->node.  This
->   * may cause several levels of walking up to find the correct min and max.
->   * May find a dead node which will cause a premature return.
->   * Return: 1 on dead node, 0 otherwise
-> @@ -1098,6 +1098,12 @@ static int mas_ascend(struct ma_state *mas)
->  
->  	min = 0;
->  	max = ULONG_MAX;
-> +
-> +	/*
-> +	 * !mas->offset implies that parent node min == mas->min.
-> +	 * mas->offset > 0 implies that we need to walk up to find the
-> +	 * implied pivot min.
-> +	 */
->  	if (!mas->offset) {
->  		min = mas->min;
->  		set_min = true;
-> -- 
-> 2.30.2
-> 
-> 
-> -- 
-> maple-tree mailing list
-> maple-tree@lists.infradead.org
-> https://lists.infradead.org/mailman/listinfo/maple-tree
+David / dhildenb
+
 
