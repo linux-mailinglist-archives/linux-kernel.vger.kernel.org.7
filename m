@@ -1,225 +1,226 @@
-Return-Path: <linux-kernel+bounces-716377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CF97AF85B0
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 04:42:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 096C5AF85C2
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 04:50:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7FF967B9CD3
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 02:40:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68CD23BA0DB
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 02:50:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DD1A1DE889;
-	Fri,  4 Jul 2025 02:42:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F0321DF725;
+	Fri,  4 Jul 2025 02:50:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="S9CZwYt3"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="jOenLqG1"
+Received: from out162-62-57-87.mail.qq.com (out162-62-57-87.mail.qq.com [162.62.57.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E02A61DDA34
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 02:41:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E78D1FC3;
+	Fri,  4 Jul 2025 02:50:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751596921; cv=none; b=dBpTEik8BvdRFF2+XHVRgAV5amD1sjkZDz2vDPGHtxWTnkq5zvw28DVX+wGjPK2eNXnTfHjk1ezy/LmvYoJxCQrd2vopwmRHnWV7E6/MfA0evl5UWln470HefhoAxpgo9nqhvzWtI/8NjjPL4LCPeEPNSsK2p9cmFtF+5i3xm4M=
+	t=1751597428; cv=none; b=AwsjgQPk/QkKqALxTvdYdqgdXZeLRopF2s0uS8QNmumtEi9e0BTpL2SqFf0Xou25DghX6ZkmdJdx8L5l+BtfhYuwgtvhiN70xDZwkHuoeCiWjbAFWjOwzulql5DSBNg+Xe4trua8MkKpkIFVzEMRaYw0mdw93Su4plgERw+iCqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751596921; c=relaxed/simple;
-	bh=QGAeURqyeOSdbvxNBjiKmHOeWgFff0xmmT1r5SF5A74=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pS+E34JosNUuJVR4O5VfKOGzR2AedRvMX/75stx8mYYpgxomjjA1EX7u4dDNobpPBEXPa4cdvuYvcRKXc2waZRkyKAO2ABuiMY26aFuoymj7DM+9PYQh7PSbyG5IqeNESLdj3fA3rGlazLDQKMQDNmdeHEDgKHkc5AMvTxPYr6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=S9CZwYt3; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 563FsoZv027121
-	for <linux-kernel@vger.kernel.org>; Fri, 4 Jul 2025 02:41:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	1lPrfch2KOwf/c7/tLGBYrDbqU9wSEHHIhICPrrp1I4=; b=S9CZwYt3snTN5xZK
-	j0OkC87Dit0j3HNkRLGdoqtO8qJ5cTAP768R4UmRpASbmOtIrB1NQ4Ypw0Wr/lNK
-	V3rhtK0KN3B+YeYV09gmzfEinf1vEYzowJfIdhfuZghbqhbT+y7muQX7hC8tItHw
-	ogSR5UJv/FKCvB5KWs1FuGLIOVHAr6OzsP9aI6EXkbP+tLR8L2tm0tKfbvasY8gA
-	mqtYUv9R6vNV8QPOZZ5yWwdzN/ldMUmmPt7RZWa+1g401NuruHv0usrA99SJ/3/B
-	BgUVZ41XiZVhUXKLcmadhNdGwXovWATIA231YPm9xDPoFDC8HCSLHmycOQSZKBRg
-	JE+CEA==
-Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com [209.85.215.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47mhxn8xtu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 04 Jul 2025 02:41:58 +0000 (GMT)
-Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-b3635eca369so600601a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Jul 2025 19:41:58 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751596917; x=1752201717;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1lPrfch2KOwf/c7/tLGBYrDbqU9wSEHHIhICPrrp1I4=;
-        b=Q7m5qeAiVoVgFZkmXmSbA7/BWYiI/sWdUUYwACAuLdoq0nMjUaBJrzUYZIAgZrQ5xR
-         gvxEOjDQWb/zQdl7JYtR914X7Lr+hT3zqQg4tbO3S8ir0r5C4CzRoixOKc+y5EqZmJT6
-         xFdwUMf2yS1n1QPMDx77WCW9SE0XedaNZGKWdUSGWfY6NrYirTvU7Sl+6h05CwXr7lGw
-         /+dLaTS9UXua8uGgDKIGoebHW2QE6L20WBdCs7cR4/zwSVpZaJJIsy61aWS90yp+juw6
-         TFDIY+uF7noRn+rRE/LWsdFdb8taBdqDgwoRg9mpPOPxXfPdGS0EY9lUNYyDaGa4lNdP
-         usCg==
-X-Forwarded-Encrypted: i=1; AJvYcCV7Z1FmJpxKuqXUhVlibr/hgkFM4/CipeGdFIXaeObIzpifm8P6tXVEd1gSv8H5m1c/4P4fTDriKOsZ30E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZR9i9V7Z57gu7I+eiZ5ZLla4ctcJCyZWfAdnie6LJ+0mbZU7w
-	ZT6IIhrgxLznkyrJ2otEwZZpDZZbHoSi6mmftF5eXdQB8XRZFRKt4hrDvHgGCmJ5pkbyXjV5H4U
-	3vcYjHgHBjxeHmMurtK8vnHcQzUzM4S2B7/IwlicboNz/pcAwzI5rf8SDapwr7hHHzIk=
-X-Gm-Gg: ASbGncsS8AUR76xT3QtwCBzGpHpAd/O/PMu/BQQmcJFYRI26BlfHlQwDmOszjr/Xd/l
-	Vj+Gluqe/fLvgJZnwzp8d0WAPYhvI+FZ4uS/s3xkaqLvD5GmpXGiOjBuJmCacCE1lobF5Cwo5d7
-	llR99cNf9FJnp1WnQgJdCoZch1/etk7hfZlzfrKvv49ahuKVUFn0WTwYkTfVWIMrjIR10asZr+F
-	euXGt5X2VhmimHnl/qHVBMMUuz47kFgWxzlFASYuwfxoU31wvy3cvXeARUn3l0/+1a1hnznLfhv
-	6E8LVeG6PBCLLQ8BlLvWRVMLqQ1lCrqB/kd4PShVQTVvyctC+zFPG/tXCxtZeNKl7KQwz8JETP6
-	CYMGx5Jo=
-X-Received: by 2002:a17:903:1b04:b0:234:d7b2:2aab with SMTP id d9443c01a7336-23c86066e22mr17465015ad.14.1751596917306;
-        Thu, 03 Jul 2025 19:41:57 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHeWqGIPElykE9v+hg85L5a5KZ3QAOpihd97fl9vgoQOOfdPXTblhDGoYOMNi4iH4oHDkr31g==
-X-Received: by 2002:a17:903:1b04:b0:234:d7b2:2aab with SMTP id d9443c01a7336-23c86066e22mr17464635ad.14.1751596916850;
-        Thu, 03 Jul 2025 19:41:56 -0700 (PDT)
-Received: from [10.133.33.146] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23c8455db09sm7648685ad.121.2025.07.03.19.41.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Jul 2025 19:41:56 -0700 (PDT)
-Message-ID: <d628c3da-4e2e-4d9b-81c5-8cf88628e400@oss.qualcomm.com>
-Date: Fri, 4 Jul 2025 10:41:50 +0800
+	s=arc-20240116; t=1751597428; c=relaxed/simple;
+	bh=3kIx5aF6ck51vQf+NJ/6Hu6bYd6KkAM5ELLUCRQeRNg=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=NWpA1gbd4DnTz4IvGlfw794zEMIl+s0F75TxFK9bJBBF0DaAcNG5XZHVJmhp1v6IkuUiYWczytuBFqZwga5TTElLaBI+UuYYJ3C2yMwE5FQmh7JmOjoUGuIsIvTFXUA1Y5czvQ5aHwv+K4JRa3BRybnBrm5SsHrqn0X/zts+LkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=jOenLqG1; arc=none smtp.client-ip=162.62.57.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1751597408;
+	bh=60C9crPrlso6i63AWM7qFupPHsU4T1ZcqF61uHig4r0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=jOenLqG1s0RqR18R147QauwaBSLNkcBibe6tDE/gJUwfoGRNZUseOuXP1k/jkU5zB
+	 72E5fxYWDoHKaFkCvhyccwxqflQb5Nc3PXg15EPtX5TTPYlWs/BQJMqTRvyqVkPEyU
+	 9LGPsdlj5xCw2UYVTiJPdL18uWjncUA7dr2Nfroo=
+Received: from meizu-Precision-3660.meizu.com ([112.91.84.73])
+	by newxmesmtplogicsvrsza29-0.qq.com (NewEsmtp) with SMTP
+	id AFA99AEB; Fri, 04 Jul 2025 10:43:58 +0800
+X-QQ-mid: xmsmtpt1751597038tlheim36w
+Message-ID: <tencent_82716EB4F15F579C738C3CC3AFE62E822207@qq.com>
+X-QQ-XMAILINFO: MeRnHSrEJzCrXBD8vlUlbdOjZ64QGNMuOTs64HRplnflQ2Xw47I1asd051G1Fa
+	 HkAZe+pG5Sbjn05hu2LVcp+KFz4uvh3/PquiaTE+gcX4JARoZoOB0OoJWMJTOolc6FOfBkx6n7XI
+	 omAbVYjDagqD1/Gy1Ln/NNP+1N4UNXOc7/RsczR0Ii36+GXeRzMFw9qVFbxrIdh6h/6H4uI6wQsx
+	 uoQmrzd/UY1LgUVPtHzLNd4V61Zb+11WUYcyfHsa1xFHTeTFvJ/uOjBSZ+4rub0Egmn4ZEpkXw0b
+	 kzd67z5cntmZLn8wDvd3PtusABNFGV7Ba5vl1JcONR5N0HiqXBakTP8E17XujVxLxMn5QbqlHA7h
+	 gFxrgWvnadL8Qz3UEv9J7oMglBfHDGEr2MgdUbdv+wPEO28zZPhszwtvpi4H5bsCzViJuzWYC4XQ
+	 VHiW+RxZkEanaotTY2vkMHp6EuqjTl6ygz7QD58vizIvcIgEhobCM5FuRaz/YrfiuLgMYiXx+jlR
+	 6rK6TfCET9UKwxXsRPKe29bT0qD9FjmVi+3lSXoTR4i4rG7SNJdut6xPrY/6wfYNt1lrZ6kckqn7
+	 Dqps4jlBb7Rtw4OeRRM4AfX28hUeCCRDcRQIrW/dFxoNmqLGc6DyDyq7Av/4wcBUKhx4U96NlGXt
+	 CD4jcM2phCSMvg2sG79ynyCuT5zaHo1RBxHEHfzoO9UoJhbqnzbBpPf5jzLsrd7OZ7K2ge0hMQF/
+	 DadpAYf7N1DyILLPIOxnxfdDRsv1vwjMo3GsjnBaaueRkVbPMsN1UgmspkATWLRFPOGg7E0dR2eN
+	 HLBL690GC+96ltRvV0eJijs+uKtoFtMXsg3i+p6nwxhOUajs1LX9Ij6ffL3aDTWKI7iW3ik/v7AV
+	 WfNdSxbou1CzZ4Dj9b5N2hNyTSpexQ1s+juAg4Lf/JwpxyFNcCtDheDAFlY0hcQlvZxEbcYNoV2f
+	 +IwGVD0K1UrkN0HrkvYzsspuJb6R6euNA01rbt3nxe8aq6uGJf/7ZEC97TBzTopAkXQ1j8GvCA9H
+	 Jon7WENY+5wnQJkfGHVv7K9bjLh3f6LSWRl86vJfWDgod5j3EfaYU7QRvWL6H7iY8bSIu/A0wm0Q
+	 LyzxQylUT5qRMypuU=
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+From: Yuwen Chen <ywen.chen@foxmail.com>
+To: hch@infradead.org
+Cc: adilger.kernel@dilger.ca,
+	brauner@kernel.org,
+	chao@kernel.org,
+	jaegeuk@kernel.org,
+	linux-ext4@vger.kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	tytso@mit.edu,
+	viro@zeniv.linux.org.uk,
+	ywen.chen@foxmail.com
+Subject: [PATCH v3 1/2] libfs: reduce the number of memory allocations in generic_ci_match
+Date: Fri,  4 Jul 2025 10:43:57 +0800
+X-OQ-MSGID: <20250704024357.4078753-1-ywen.chen@foxmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <aGZFtmIxHDLKL6mc@infradead.org>
+References: <aGZFtmIxHDLKL6mc@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 00/10] coresight: ctcu: Enable byte-cntr function for
- TMC ETR
-To: Jie Gan <jie.gan@oss.qualcomm.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Mike Leach
- <mike.leach@linaro.org>,
-        James Clark <james.clark@linaro.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Tingwei Zhang <quic_tingweiz@quicinc.com>, coresight@lists.linaro.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
-References: <20250624060438.7469-1-jie.gan@oss.qualcomm.com>
-Content-Language: en-US
-From: Jie Gan <jie.gan@oss.qualcomm.com>
-In-Reply-To: <20250624060438.7469-1-jie.gan@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA0MDAyMCBTYWx0ZWRfXxg+urAQlPTvy
- 3pMDk/5rc2R6CoMGqzf/o1etuKgB86qLfQnQaPKLNE7Ek2qJhGc1Xm5NE8lB8uB3oHePpCGEiAG
- aeykZcBmeZI+DbRSZf929yB8dyQl/7jM/VbpF1UX6g0Mf/Ci/CRAF/8vyoajZ52ehz1J0ltRpTc
- eCIFKvfaOXpEBdeghzOG4XkndxCOobAWSdVcdQH7HDCs7MDwXl3/t0uLhOPZP0d1Jhp4d6CCEfl
- Pt6udpnhUMbbKPld99gS91Utn0bW5zOrO/OE2tSnJW67MnCKyVnJktCF6hwS+jj4goDDNfc51ub
- 1zC2ThxjYSyxZBLFQzIAiwSMtIbVSL4xtKTmEmhgIssnjVo4PSyJS0KN37cRi4yb8NBR/E2EabZ
- IL3V606G4Sr7SdSmNRKWwiJYFXeaUatH1fm7RkEBxuO/f3Sk9OyHoCPDrizhLYCxbsSxscGu
-X-Authority-Analysis: v=2.4 cv=EbvIQOmC c=1 sm=1 tr=0 ts=68673f76 cx=c_pps
- a=rz3CxIlbcmazkYymdCej/Q==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
- a=COk6AnOGAAAA:8 a=UyySFntBJEnY6qwGPMMA:9 a=QEXdDO2ut3YA:10
- a=bFCP_H2QrGi7Okbo017w:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: 3j8AZgk9cyMYqzzr2adfA1-XwZqA_YjF
-X-Proofpoint-GUID: 3j8AZgk9cyMYqzzr2adfA1-XwZqA_YjF
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-04_01,2025-07-02_04,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 mlxscore=0 priorityscore=1501 mlxlogscore=999 lowpriorityscore=0
- malwarescore=0 adultscore=0 clxscore=1015 bulkscore=0 impostorscore=0
- spamscore=0 suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507040020
+Content-Transfer-Encoding: 8bit
 
+During path traversal, the generic_ci_match function may be called
+multiple times. The number of memory allocations and releases
+in it accounts for a relatively high proportion in the flamegraph.
+This patch significantly reduces the number of memory allocations
+in generic_ci_match through pre - allocation.
 
+Signed-off-by: Yuwen Chen <ywen.chen@foxmail.com>
+---
+ fs/ext4/namei.c    |  2 +-
+ fs/f2fs/dir.c      |  2 +-
+ fs/libfs.c         | 33 ++++++++++++++++++++++++++++++---
+ include/linux/fs.h |  8 +++++++-
+ 4 files changed, 39 insertions(+), 6 deletions(-)
 
-On 6/24/2025 2:04 PM, Jie Gan wrote:
-> The byte-cntr function provided by the CTCU device is used to count the
-> trace data entering the ETR. An interrupt is tiggered if the data size
-> exceeds the threshold set in the BYTECNTRVAL register. The interrupt
-> handler counts the number of triggered interruptions.
-> 
-
-Gentle ping.
-
-Thanks,
-Jie
-
-> Based on this concept, the irq_cnt can be used to determine whether
-> the etr_buf is full. The ETR device will be disabled when the active
-> etr_buf is nearly full or a timeout occurs. The nearly full buffer will
-> be switched to background after synced. A new buffer will be picked from
-> the etr_buf_list, then restart the ETR device.
-> 
-> The byte-cntr reading functions can access data from the synced and
-> deactivated buffer, transferring trace data from the etr_buf to userspace
-> without stopping the ETR device.
-> 
-> The byte-cntr read operation has integrated with the file node tmc_etr, e.g.
-> /dev/tmc_etr0
-> /dev/tmc_etr1
-> 
-> There are two scenarios for the tmc_etr file node with byte-cntr function:
-> 1. BYTECNTRVAL register is configured and byte-cntr is enabled -> byte-cntr read
-> 2. BYTECNTRVAL register is reset or byte-cntr is disabled -> original behavior
-> 
-> Shell commands to enable byte-cntr reading for etr0:
-> echo 0x10000 > /sys/bus/coresight/devices/ctcu0/irq_val
-> echo 1 > /sys/bus/coresight/devices/tmc_etr0/enable_sink
-> echo 1 > /sys/bus/coresight/devices/etm0/enable_source
-> cat /dev/tmc_etr0
-> 
-> Reset the BYTECNTR register for etr0:
-> echo 0 > /sys/bus/coresight/devices/ctcu0/irq_val
-> 
-> Changes in V3:
-> 1. The previous solution has been deprecated.
-> 2. Add a etr_buf_list to manage allcated etr buffers.
-> 3. Add a logic to switch buffer for ETR.
-> 4. Add read functions to read trace data from synced etr buffer.
-> Link to V2 - https://lore.kernel.org/all/20250410013330.3609482-1-jie.gan@oss.qualcomm.com/
-> 
-> Changes in V2:
-> 1. Removed the independent file node /dev/byte_cntr.
-> 2. Integrated the byte-cntr's file operations with current ETR file
->     node.
-> 3. Optimized the driver code of the CTCU that associated with byte-cntr.
-> 4. Add kernel document for the export API tmc_etr_get_rwp_offset.
-> 5. Optimized the way to read the rwp_offset according to Mike's
->     suggestion.
-> 6. Removed the dependency of the dts patch.
-> Link to V1 - https://lore.kernel.org/all/20250310090407.2069489-1-quic_jiegan@quicinc.com/
-> 
-> Jie Gan (10):
->    coresight: core: Refactoring ctcu_get_active_port and make it generic
->    coresight: core: add a new API to retrieve the helper device
->    dt-bindings: arm: add an interrupt property for Coresight CTCU
->    coresight: ctcu: enable byte-cntr for TMC ETR devices
->    coresight: tmc: add etr_buf_list to store allocated etr_buf
->    coresight: tmc: add create/delete functions for etr_buf_node
->    coresight: tmc: add prepare/unprepare functions for byte-cntr
->    coresight: tmc: add a switch buffer function for byte-cntr
->    coresight: tmc: add read function for byte-cntr
->    arm64: dts: qcom: sa8775p: Add interrupts to CTCU device
-> 
->   .../testing/sysfs-bus-coresight-devices-ctcu  |   5 +
->   .../bindings/arm/qcom,coresight-ctcu.yaml     |  17 ++
->   arch/arm64/boot/dts/qcom/sa8775p.dtsi         |   5 +
->   drivers/hwtracing/coresight/Makefile          |   2 +-
->   drivers/hwtracing/coresight/coresight-core.c  |  54 ++++
->   .../coresight/coresight-ctcu-byte-cntr.c      | 102 +++++++
->   .../hwtracing/coresight/coresight-ctcu-core.c | 113 ++++++--
->   drivers/hwtracing/coresight/coresight-ctcu.h  |  52 +++-
->   drivers/hwtracing/coresight/coresight-priv.h  |   4 +
->   .../hwtracing/coresight/coresight-tmc-core.c  |  70 ++++-
->   .../hwtracing/coresight/coresight-tmc-etr.c   | 270 ++++++++++++++++++
->   drivers/hwtracing/coresight/coresight-tmc.h   |  29 ++
->   12 files changed, 691 insertions(+), 32 deletions(-)
->   create mode 100644 Documentation/ABI/testing/sysfs-bus-coresight-devices-ctcu
->   create mode 100644 drivers/hwtracing/coresight/coresight-ctcu-byte-cntr.c
-> 
+diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
+index a178ac2294895..f235693bd71aa 100644
+--- a/fs/ext4/namei.c
++++ b/fs/ext4/namei.c
+@@ -1443,7 +1443,7 @@ static bool ext4_match(struct inode *parent,
+ 
+ 		return generic_ci_match(parent, fname->usr_fname,
+ 					&fname->cf_name, de->name,
+-					de->name_len) > 0;
++					de->name_len, NULL) > 0;
+ 	}
+ #endif
+ 
+diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+index c36b3b22bfffd..4c6611fbd9574 100644
+--- a/fs/f2fs/dir.c
++++ b/fs/f2fs/dir.c
+@@ -197,7 +197,7 @@ static inline int f2fs_match_name(const struct inode *dir,
+ 	if (fname->cf_name.name)
+ 		return generic_ci_match(dir, fname->usr_fname,
+ 					&fname->cf_name,
+-					de_name, de_name_len);
++					de_name, de_name_len, NULL);
+ 
+ #endif
+ 	f.usr_fname = fname->usr_fname;
+diff --git a/fs/libfs.c b/fs/libfs.c
+index 9ea0ecc325a81..d2a6b2a4fe11c 100644
+--- a/fs/libfs.c
++++ b/fs/libfs.c
+@@ -1863,6 +1863,26 @@ static const struct dentry_operations generic_ci_dentry_ops = {
+ #endif
+ };
+ 
++#define DECRYPTED_NAME_PREALLOC_MIN_LEN 64
++static inline char *decrypted_name_prealloc_resize(
++		struct decrypted_name_prealloc *prealloc,
++		size_t wantlen)
++{
++	char *retbuf = NULL;
++
++	if (prealloc->name && wantlen >= prealloc->namelen)
++		return prealloc->name;
++
++	retbuf = kmalloc(wantlen + DECRYPTED_NAME_PREALLOC_MIN_LEN, GFP_KERNEL);
++	if (!retbuf)
++		return NULL;
++
++	kfree(prealloc->name);
++	prealloc->name = retbuf;
++	prealloc->namelen = wantlen + DECRYPTED_NAME_PREALLOC_MIN_LEN;
++	return retbuf;
++}
++
+ /**
+  * generic_ci_match() - Match a name (case-insensitively) with a dirent.
+  * This is a filesystem helper for comparison with directory entries.
+@@ -1873,6 +1893,7 @@ static const struct dentry_operations generic_ci_dentry_ops = {
+  * @folded_name: Optional pre-folded name under lookup
+  * @de_name: Dirent name.
+  * @de_name_len: dirent name length.
++ * @prealloc: decrypted name memory buffer
+  *
+  * Test whether a case-insensitive directory entry matches the filename
+  * being searched.  If @folded_name is provided, it is used instead of
+@@ -1884,7 +1905,8 @@ static const struct dentry_operations generic_ci_dentry_ops = {
+ int generic_ci_match(const struct inode *parent,
+ 		     const struct qstr *name,
+ 		     const struct qstr *folded_name,
+-		     const u8 *de_name, u32 de_name_len)
++		     const u8 *de_name, u32 de_name_len,
++		     struct decrypted_name_prealloc *prealloc)
+ {
+ 	const struct super_block *sb = parent->i_sb;
+ 	const struct unicode_map *um = sb->s_encoding;
+@@ -1899,7 +1921,11 @@ int generic_ci_match(const struct inode *parent,
+ 		if (WARN_ON_ONCE(!fscrypt_has_encryption_key(parent)))
+ 			return -EINVAL;
+ 
+-		decrypted_name.name = kmalloc(de_name_len, GFP_KERNEL);
++		if (!prealloc)
++			decrypted_name.name = kmalloc(de_name_len, GFP_KERNEL);
++		else
++			decrypted_name.name = decrypted_name_prealloc_resize(
++					prealloc, de_name_len);
+ 		if (!decrypted_name.name)
+ 			return -ENOMEM;
+ 		res = fscrypt_fname_disk_to_usr(parent, 0, 0, &encrypted_name,
+@@ -1928,7 +1954,8 @@ int generic_ci_match(const struct inode *parent,
+ 		res = utf8_strncasecmp(um, name, &dirent);
+ 
+ out:
+-	kfree(decrypted_name.name);
++	if (!prealloc)
++		kfree(decrypted_name.name);
+ 	if (res < 0 && sb_has_strict_encoding(sb)) {
+ 		pr_err_ratelimited("Directory contains filename that is invalid UTF-8");
+ 		return 0;
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 4ec77da65f144..65307c8c11485 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3651,10 +3651,16 @@ extern int generic_file_fsync(struct file *, loff_t, loff_t, int);
+ extern int generic_check_addressable(unsigned, u64);
+ 
+ extern void generic_set_sb_d_ops(struct super_block *sb);
++
++struct decrypted_name_prealloc {
++	char *name;
++	size_t namelen;
++};
+ extern int generic_ci_match(const struct inode *parent,
+ 			    const struct qstr *name,
+ 			    const struct qstr *folded_name,
+-			    const u8 *de_name, u32 de_name_len);
++			    const u8 *de_name, u32 de_name_len,
++			    struct decrypted_name_prealloc *prealloc);
+ 
+ #if IS_ENABLED(CONFIG_UNICODE)
+ int generic_ci_d_hash(const struct dentry *dentry, struct qstr *str);
+-- 
+2.34.1
 
 
