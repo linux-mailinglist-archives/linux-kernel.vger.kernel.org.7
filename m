@@ -1,147 +1,282 @@
-Return-Path: <linux-kernel+bounces-716360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05C56AF8582
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 04:20:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7654AF8587
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 04:22:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B90FF6E0F1A
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 02:20:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 277F67B624C
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 02:20:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27A761D86DC;
-	Fri,  4 Jul 2025 02:20:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C68801DE4E1;
+	Fri,  4 Jul 2025 02:22:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="j1J9cO7a"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b="wLrNC7E0"
+Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11023132.outbound.protection.outlook.com [52.101.127.132])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E78A262A6
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 02:20:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751595633; cv=none; b=fdhLYx83PhcDBn8VyhaQ5xG/yUUw5IMb5QLOdltLnyg3K2eJcF3yeb+/JQJ2MReBbonIxfghKToG3gGBiKKGgE6p2+eV/8QJB+M8D/OD9sHWy1WrRub+IFwYDFOyEXK/UoKxuRbqEdA5Qo33In6aqvoqMvjsz/vJ5fGsjhqUU2I=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751595633; c=relaxed/simple;
-	bh=ycIHSnGYILJIPVpfKHa7ftGdGsIB8TwD8cX2/vQx/UY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=S+wrpZWhfMNuV26gqGTbzlK6wkxzJkQ5Mb50wM15Phyq4cBV17SvXWXN6eRT+KgtVfeWgpmZTQJ1n6HZkjMr0iAAY71qyu+C8Qs8ctjGCz0N+KIvmt++dR0omJrjJvpKPbibOuMF1aEt63XWRkExsjy3pkIOj4BAU9Cesvzv6CQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=j1J9cO7a; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-7425bd5a83aso624340b3a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Jul 2025 19:20:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1751595631; x=1752200431; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nB2mhHfPsdN/BAHed7HqkYTpkP4d7ANXryStYAUTRgU=;
-        b=j1J9cO7aMDyQmkhusxG8aMeLib4pH2ViQfhYNhQjK2l7KpX3P3V6sZs0WOGgf81Tdk
-         6mw5r72IRloqSqxM9cZC1jux+4WOnA98YcT5pNpn9wu5SZoKZJ0RWq1s6I0KKQkOlUi5
-         yyA9izam0GT9ilPkO6FbOVCjkuOFKofjwhZMzm0GRbxiIsGiKc1HIvJVO72qudLjEP9/
-         fSIr8FFGgBzwkpVB2uDvvkabXc1hOTWuXrvBadyhzEsgTOZeaBWH1Xq47UGhjnNSloNh
-         Wkpyx16gp/c7sD4TtKAkBoEyTi0Zlah+ywfq0KKgPT3Rp24NqwQYA5PfeNKp14mNSrvz
-         Zv8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751595631; x=1752200431;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nB2mhHfPsdN/BAHed7HqkYTpkP4d7ANXryStYAUTRgU=;
-        b=RTFoanRTDzYBnLHlSG2WKiRiJgiFTqAM1nouhRFxJ5GFEXDMFn2GjJvyX5S9Z2QKd/
-         cuinZyTbIsGrULU37Udkd8KgZIPBrjKrDOMhLANQ6GynHZ6tA5wSBFLUlR7J+ac2Krm8
-         l7xz/Tq0BwqQcloqGM+rRm3FQBzSbma7zgqSuR/vF5BLn1flhNDUMKuKYGrsxiVyT8ha
-         aBZEgbrLgzDXRTqt0OYExPLO7DBgzxztD8sQtuifpIb/WtXYauP/MPWUsS714YsxgPR5
-         8lhx4UJJADGCNBpMYtgM+17Q78h+3xzHnBE6GEkDsVTOBYFU3pA+k7Ih7wmzjK/U6/Jf
-         OUfg==
-X-Forwarded-Encrypted: i=1; AJvYcCViU2ApD5q6lzXAQ6dWURmtlDJBMlCcZJ+Wson79tuoQxXH1aCN8vDV4weugd0I+NcjfRBlAan4inrmNgE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxaY78+NYMxyDgpz5C+d9DSlut8QIbAHhHfgyYdgk7j16Xl+wl
-	3Qj13jpOmVHJJOxTFAova63lHbeooMR/z19Szg3aUjRsgf+G/Ed5e26b2TDz23Fkk14=
-X-Gm-Gg: ASbGncs13J9VR8b6zZfJec5hbLA+eyZg7jZ5RKmkJTD2u0kof5yAsbGw5d6++4F83B3
-	ocoRTQrZBVgCiLYNKK5NW6O4OGslAqmmPvw872imJYCJ+9rgha8p4dv1nbjd5AMOsAy+6F3u8C9
-	S2sBsKEUlH36tBoURJisqX9ZMBDhcrT4joWOWnq9Ro7MxhCcf+wcipt7O/QhoQTy+eZg4UkjSa7
-	d9SicyLFe3vpmHlRCjUpi+DLhKdr35UsCa1foVsQyDPW/VFWGKshQWpQTN1YioRIqPxUXY0C6Qk
-	JCyUzatL/c1xiJ+ZRKYsM5uWjEgTCPHWLQBE13MMcvis2OXcvTqM7xdnjI0NLIsEFhKT0/8xtE7
-	Embk2ivOVpjFFzm5iq3IqYb5h
-X-Google-Smtp-Source: AGHT+IF5FgaG48Lz7SQabgqQ96oyxCzyELFi6hJD/bR45TR94ijLKiZUWTQ6L0DOK/RO4NSLyKHLaQ==
-X-Received: by 2002:a05:6a00:3e21:b0:749:8c3:873e with SMTP id d2e1a72fcca58-74ce8ad900emr652873b3a.24.1751595630812;
-        Thu, 03 Jul 2025 19:20:30 -0700 (PDT)
-Received: from localhost.localdomain ([203.208.189.14])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74ce35cc722sm799335b3a.49.2025.07.03.19.20.27
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Thu, 03 Jul 2025 19:20:30 -0700 (PDT)
-From: lizhe.67@bytedance.com
-To: jgg@nvidia.com
-Cc: alex.williamson@redhat.com,
-	david@redhat.com,
-	kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	lizhe.67@bytedance.com,
-	peterx@redhat.com
-Subject: Re: [PATCH 2/4] vfio/type1: batch vfio_find_vpfn() in function vfio_unpin_pages_remote()
-Date: Fri,  4 Jul 2025 10:20:24 +0800
-Message-ID: <20250704022024.14481-1-lizhe.67@bytedance.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250703122756.GB1209783@nvidia.com>
-References: <20250703122756.GB1209783@nvidia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1F0A262A6;
+	Fri,  4 Jul 2025 02:22:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.132
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751595723; cv=fail; b=HyPMUlbuvKW0UHE2N0039RMky8QYVB3RcfzNaAqxfE8pMzff17wlyRc1dSpk3fZKRC1uT2igtcD1vjPhXuCyqBxqeiABxtOJ8Psf5Gek+T6A54zTpcKgWkAEsedzg7u8KlMZ9Ftd0RtXd8h3rv0+6Cj5UeVHth205lSYWV4JzMk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751595723; c=relaxed/simple;
+	bh=SyAkXxESBQSIOm+nl7WFM0eWEl5sf1YWo3dUjwzho7E=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=FcoMUfTR0UyfOXxByZxuLQcFTpPybrp7qBTsZ9KCaEpvY71LEJozgMyHHF+DUYaP2/OS4lyVVZTJOhicHb+4fQMicPepX0h/8hBhtTmuSjSwflp5jKkSuHq1j+/neh17Ww3GB+AKq+RkgJ87Z6wnXdId/XGyL13NGwinMWvA5As=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b=wLrNC7E0; arc=fail smtp.client-ip=52.101.127.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=FWp50WnaFwPyzh8TBcZV4rtjtAQJZ/kTJaLHynJaFoCZc5VW/pMac9DeDNlmt1EKIj4lpHRWd5pQ5Da9CGB+sORUWuCE4RUcvn5Ci4wgv5S7w7Qz5fweu35YhYJphDr8pOzfjvJAtcCKsS+Z83WbP9lFXfsRXFQGhLli41pm6Mthoy2oqUHm3ktdzudJMAvZXa+Ziy8gzgKj5KIRnpmyPLA9aN3qqiXQwhERqxSVR8Qdw8/RM73bx3B2lgkrzcZaRpMaqKUCezqHOVxvIbgg7Bslu3UvMlyz4N5e9icqXLc4ky10lmmD77fI6Q82E1bFhnRLutnzy7OmAZi5S8ioUg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=fX8jjxD6avoA49egdrVqNqb+/8Qfd1+BqthRPo68m+k=;
+ b=AweEVc5uugc+CCNL+hKpPa+BK3StaLZxJovb9YzaJ0gx5d4dfW8tMt0qElTFGUNu8q6ShwR0HvYLb8fzHPlliQw/ZYqiNPfO5GHG7uIFrwWyh8wQJh9fZl0seJ1hIK81kOtBGvMeLJI+wJUt3D4I3rfCV5gJwldQUPjvKSHffYqTk6R3M0Xf/+0WAXHpZLAqnKPopl6Bl7r9Yofdtd+vEmgwT/ESUQBkOmS9II/G5oriSfJPgQTzQsF7QJdf15e5Zbty4z4C012R0eihtltq4k/Q8CEZmEeRiu5tPPB+gZiAJmiUilAuRnTwqWzTM6JcN2NxsAmEcjzBEurEkVLcoQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
+ dkim=pass header.d=amlogic.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fX8jjxD6avoA49egdrVqNqb+/8Qfd1+BqthRPo68m+k=;
+ b=wLrNC7E0V4XamGSGtiGDJEhi4/Uqy+tSDaIHQWQSbGN5x8SBmn3elqm51+DG3tZZd0bBIqjW4YSrTpVoBEHgNJuBpuDguDK6OllY6/jxwljrgDj28pmy8oLjITR3QqzaNALm4QsHKkpR0pyLAffVkMzSaCY4FP393pO5rX2aB1TKp/RdYNF+4gVZPtdxkxTHLjAxAWiewR1GFgXYyg+jKC6ty43VE/FKGSf8/iYKRkJTecQvwXjMVwcUONA28xg7YxWy0FoLj8LnrS+uTVOuDwVEhEf+Z6CTYxlmzO8eypqsBvGH2pNixxWvWi1t+zpP3Kr5KRLRVsajHJYFYT0B7w==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amlogic.com;
+Received: from JH0PR03MB7468.apcprd03.prod.outlook.com (2603:1096:990:16::12)
+ by SEYPR03MB8378.apcprd03.prod.outlook.com (2603:1096:101:1fd::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.20; Fri, 4 Jul
+ 2025 02:21:57 +0000
+Received: from JH0PR03MB7468.apcprd03.prod.outlook.com
+ ([fe80::4128:9446:1a0f:11fd]) by JH0PR03MB7468.apcprd03.prod.outlook.com
+ ([fe80::4128:9446:1a0f:11fd%7]) with mapi id 15.20.8880.021; Fri, 4 Jul 2025
+ 02:21:57 +0000
+Message-ID: <ddb21387-a164-4e38-a4f3-41c66bc02acf@amlogic.com>
+Date: Fri, 4 Jul 2025 10:21:32 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Bluetooth: hci_core: lookup pa sync need check BIG sync
+ state
+To: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Cc: Marcel Holtmann <marcel@holtmann.org>,
+ Johan Hedberg <johan.hedberg@gmail.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>, linux-bluetooth@vger.kernel.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250702-pa_sync-v1-1-7a96f5c2d012@amlogic.com>
+ <CABBYNZJCsiKVD4F0WkRmES4RXANNSPK1jvfRs-r9J-15fhN7Gg@mail.gmail.com>
+ <6bed0cff-c2be-4111-a1d3-14ce0e3309db@amlogic.com>
+ <CABBYNZ+mB+rb+6hG9s7fmvqwti8oSoQ27+_Cz56_ZD7C5t3cQA@mail.gmail.com>
+Content-Language: en-US
+From: Yang Li <yang.li@amlogic.com>
+In-Reply-To: <CABBYNZ+mB+rb+6hG9s7fmvqwti8oSoQ27+_Cz56_ZD7C5t3cQA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SI2PR01CA0023.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:192::17) To JH0PR03MB7468.apcprd03.prod.outlook.com
+ (2603:1096:990:16::12)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: JH0PR03MB7468:EE_|SEYPR03MB8378:EE_
+X-MS-Office365-Filtering-Correlation-Id: e23a270e-e42b-4679-3ae5-08ddbaa18cc3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?dzdYaHJLM25GU2t0VG82Qk9uYm9ESjRDRGMyc0c4SERaS0Zydko2VHZGYUVF?=
+ =?utf-8?B?ZkpDcityQ09YSGV4QVlIYm1NMDR1aWw5amFrV1owWktWMnIxSzNteGg1cDdB?=
+ =?utf-8?B?MFJnY0wxbU4xcnBnWGwvTmptNGoxNUlZOXdaUzJLN0N2NnRKVkNTU3U0WW9O?=
+ =?utf-8?B?cDVzNWFudEJndk8yQzFpNXRETDRCT1g3SElyWjF3dVU2YTNDblE4MkU4N2g3?=
+ =?utf-8?B?SjE4RUgyZGhiemRJZGRnRUJFbzk1dG91bmptQUVaaWtmaTdXVlMyM2pDMlc3?=
+ =?utf-8?B?U0c4OG5OTGQ0MXoxTVlmNE5aZGFGMGtOK01GUURqWjJTaERSY016cmJzVVNU?=
+ =?utf-8?B?OVlkWklXR2pOOE5Cakt0akMvRCtQaGdLVFE5NzZLdWNUWlBoQno1NnJpcHNL?=
+ =?utf-8?B?TGcrVVc2QWhlYjhYbTA2Y0E4YnFUVjdQamRWQnVWQjdBODl2ZDdiSW9ScWZQ?=
+ =?utf-8?B?elNibnpUYUk0ZXIySEI2QVJOR1dVK0I4MEM1U0JEdVZpQkV0SkFENHI0RUlx?=
+ =?utf-8?B?S3FET0pGbkp6Rk1JVncwVHBBdlZEbmxoMDFvSUdqZUtLN21GMmFrc0JNeC9Q?=
+ =?utf-8?B?Y2QyWUc2SVVkUmFHTWFzUEdFbklxaVZhYS9VSTRmY0tUTVQwYS92YVJ2N29O?=
+ =?utf-8?B?bTIrcEVBWWdTU1k1MVZkUWVWUmg0QVZIWU1qcit1ekljdzhLd1BhMmp2TU90?=
+ =?utf-8?B?bnZVTWNWSVUyU3FKWEV5N0hvOElQd0o3ZjN1dE9OTG90VkwwOXA0dnRwZWZn?=
+ =?utf-8?B?UGw3UzlKQVYxWmJibmtiTTl3aXQ0dTkraTY2TkthYU1aNVgrcGhMVTBhbzV5?=
+ =?utf-8?B?bHRIMDArUnpZeTNmclBzQnhaNGFndHJzckxyM3U1bW1kcS9Gd1hIZVhVNGxY?=
+ =?utf-8?B?OVNXWVRoRWlqMG5xdkN2Rm1VMlduNlpzMGtacG9sZ1c3Z0NEdmlISkNjL0FX?=
+ =?utf-8?B?dHZoWGJYdU1kZVpXVmp3bjVkdE1HcktHaHdqaEJsRi9yS1p4M0c1a01jUFdP?=
+ =?utf-8?B?bDBmOFNIZmxzSWFDOEQrN2VSOXhvYkIvRHBwM2FPTGFId2QyaFlPVDFQaFhr?=
+ =?utf-8?B?WW1Nbzd3Nk54VkVYeERJMUZoU0U0WS9HaHhoQVlQNm1WVUIxQ01SQ3pic2xG?=
+ =?utf-8?B?ZGk3Z3ZQTjVmelczdDVWN1UvcjdaYjZGRkJiaDJDQXh0NzBPRXE2RHp0YWpH?=
+ =?utf-8?B?TUpJei91d1FhekhPSVZBNGFpMXdNUkJGUzFVajM1bVZIdHFqb0s3MnZoTHJV?=
+ =?utf-8?B?VURHRHF5RmJSUDFITzUvOEErWlBiUFhEZHJMYXp4MlJ2OEpSaW5uWk01Zmwy?=
+ =?utf-8?B?OTQraU02LzQ4OUo2bjZoNHRvK2lxcDNnQ1B0aHp6djF1M0Q5dERrWFlnSUpI?=
+ =?utf-8?B?V2lMZnh4dS9UTnMyZHV0VHdFcWVBdjNJMlR6dUNRU3h5WnhDMkcvUmpmTjVC?=
+ =?utf-8?B?SEtQS2dSNGthMnkwQVdrTU1MMXh0WmJOZEo2ZWUwaFNPeU5oN3NzSkkwRmhN?=
+ =?utf-8?B?anJIU0huTWI1aXhsMldLZ2RjbUlrOG0yQnVaNVlOTTRQK2dPcnFhdlZ6Zm9I?=
+ =?utf-8?B?V0cvTmxxaDhtdmFHM0RrdGtpSFBVZXMwRm1GTzlOSkRTeVZpWmpPUVozODRp?=
+ =?utf-8?B?OEx1V04vUytKbjZEeHlGV29QczNDQXZ2SXBCSGZNUzNwWFluN2NmK3FVdUNX?=
+ =?utf-8?B?R21hbEpxd1NhUWJibSs3UTFCUHlPb0JGOU1KZDlLYzJyckkwNE5adDVDSnZh?=
+ =?utf-8?B?L1lTamdsSXpwRU5uQTQ1M2dGMzN1Z1gxRG5KWWxza3Iwb1Z5N3FDODhXT202?=
+ =?utf-8?B?N0k1T0FmK1ZJaFFLZXdzSG0ra0FnQ1RqV1cwR01ZcTZHRGZ1K2d0VURrcjR6?=
+ =?utf-8?B?K09CV0w5THZORTRvOERRUnVPTnNwUlRXWlplMm5wVG5OdFBIMGJyc0hFeWtZ?=
+ =?utf-8?Q?MbGT4dUVdg4=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:JH0PR03MB7468.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?UnVVUlh3OThLU1BZcStlK3lsVGlXUTdDY0lCODJ1VEpUeEU3QlV2MEJBckFT?=
+ =?utf-8?B?dGp0aEVVRU1SU1ZwdDNvSE5mNXl6RzhDVWs0dHlnamJxT0Vyem5BNnMrN201?=
+ =?utf-8?B?STBTejNlYm4xZnptZkhCNTkrUGtPTC9JcUNYRFMrTFlhOHNGUHNBQk4vRlhE?=
+ =?utf-8?B?dUsvbEZ3NGV1Zkw1amhOaXJnTmZMQUcvSVo3QkRtOEY2MGlYb2FWT3JXdkJh?=
+ =?utf-8?B?T0JYUVRuR2oramhiRlloZ2p0ZTEvcnRraHlZaVFzYmJVcTJ4VG5Ha3F1Qi83?=
+ =?utf-8?B?RHBKdnZJKzhiUjhEYU0yaUEyNkZ3dVNNSkFYREt0Q0FvQzlqUkNVcDhyTmE4?=
+ =?utf-8?B?WnYycDJWaDR5SjZYOU9PaXN2UFcvOE90Wm5FS1dlTDhWZDZOVjUvb0ZLT0I4?=
+ =?utf-8?B?Ym5BTHk3ZDZOdGRscytoVGhUVEhBbEdmYWtKNWYzQjhLckNMWDBORytDVlFH?=
+ =?utf-8?B?bU42K20wRm9tVFF5WkZ6NitxNFkxM2lWOGxvK2YyRGthcytzVHA2WW8xcUVK?=
+ =?utf-8?B?aW9ZQjl2VmlEcWVHYlAyU1NBaDFLZnFHZEMxdm9salcyQWk3K3JRMlg4Y2Ji?=
+ =?utf-8?B?V0JqbExVVExaN3lTT3N1SlZFY2w0Z09taHVDdUR0TjFCQmxxUm1QbUpObUw0?=
+ =?utf-8?B?bTlyT1ZhSHlkUVphUE5aS2VBVEhtbm9jcmdzT09oUk9aVk9LVHhzeDRldUlr?=
+ =?utf-8?B?QjlMK2tPTmg5OHFmUDJVWEhRN3ZpdmlQVU8zbEhweTQzcWdwaDBMRURUakl4?=
+ =?utf-8?B?TFVtWThFK2VURkFabDdRazJ2QTlqOXRhV05BNHlia0FBelVabjFXN0xjdjRq?=
+ =?utf-8?B?cVlrYmRUQm5NVituYXNoK05rS1JWaDg3SUpHbWFqVkNia1hOMnFyYlprN0R3?=
+ =?utf-8?B?SStRNzVQYktFN1pLeTZuTkMxSk9HbjBSQm9NK0Q5aENvQ05xby9ubVh1dkJS?=
+ =?utf-8?B?VmJzdjFRSkNydTJIaHlod05TNU9qelhNZk11clJFUnlvQjhWRFE1eGd6YktG?=
+ =?utf-8?B?VlVTOVZvQUIzMTBVYk5UMEduVVRlQWJRTHRXMWFrdXI1eW8zVlIwRjNxckln?=
+ =?utf-8?B?WUdON1pla1hHS0tYSTd6Q3oxQkZUUzRPUHNpK0NXVkVUallGUnYyaE9qYlFQ?=
+ =?utf-8?B?SGtnOC9iam55ZldMOXVNb0habXltOGlZQStpQjhGSWRCb002Wk83Rkh1eWFL?=
+ =?utf-8?B?Tzh3NXd4dDVLbFhJcktEa2l3aDFoa2o0em4wM1pnOUhnWlY5c1FkVGptWEc2?=
+ =?utf-8?B?RzEzK3B2UnlzbFBxTmtGTFRlOC9DeEhKMS9lMkFpY0dLUUkwV0xzTjc2V3lE?=
+ =?utf-8?B?cGVHU21GVXdRWkpWS3Q0NlVoL0xHUVR6amorcitpb3dvL2cwL3hMUmVLVnY5?=
+ =?utf-8?B?SEZyZFpMbHRLdWpoMEJLR3IzdDlpeld4UmJWdjFkeUdHSkpJbC9rdkc5N0dP?=
+ =?utf-8?B?T1lUZkw2bTdobHFhMWp3UUZGTytVUXZHMGdpMUczNEQrUkZkL09lbjZGT2wx?=
+ =?utf-8?B?d0lOZFA5Z3E2dVF1dGdSQlJWcDlzOW1WK3hGc2RhdVZCUnVHMUl0YkcyemZX?=
+ =?utf-8?B?c0cxTHJQNnZ4UDYzTzRRSlhiUnk5bzZxWVh3eVNyQVRvMDRFbzUyQ2huMEVC?=
+ =?utf-8?B?alNtQmYvWktHVUE0VW1wZzV4S2U1cTlaV3NKV2ZCaWJyTEVtZU01dkZUWmF5?=
+ =?utf-8?B?SzRNa3NKdWZ1OHU1MDhpM2hURlFYbkxiYXMrSkJYTG5wTkFzWlFsaldZSCtJ?=
+ =?utf-8?B?cHhQckpnN1lUYWFzMDVEWG1ZV0dzOXpQdWJHZTY5TjRwUnVZNTlKSUpQaHhi?=
+ =?utf-8?B?L09jMUswWStBaGJtSUxmcnVHWXliZVIrM2V4VFc3SkdPWDRTYjIrU2Z5WDZF?=
+ =?utf-8?B?ekFocmZzWHFQa05qelBiMm12K1hwSFlKb3I1cGxMbG1veFl6OHI4WTk1eWNI?=
+ =?utf-8?B?ckViOGxxVWZvUElRZWVYQU1xcVY3VVFXSHExWDUwbXRIVUVoZDZqaGhQWXJ4?=
+ =?utf-8?B?K05WVnB4aDlZSVJFMUtvczF0ejJhUngzSVJRbThORmNXVkl4OC94QnAxa2pt?=
+ =?utf-8?B?djlLT0xMa2tHVUZRelNjQW1Oa21OU1M2SjA0S3FjNThLcTE4Z1F5Q05GdXhC?=
+ =?utf-8?Q?Wq6fmmkz0AwvS+vR5/YBJuieC?=
+X-OriginatorOrg: amlogic.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e23a270e-e42b-4679-3ae5-08ddbaa18cc3
+X-MS-Exchange-CrossTenant-AuthSource: JH0PR03MB7468.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Jul 2025 02:21:57.2354
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 5OBL2B7JE5JpqS7InI6LkeHU/oLFZgN1PgJBjaoEBJmrKhRTti29SK7o0G3rEAAh5teaDQHogrZZYgMp/V95gw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR03MB8378
 
-On Thu, 3 Jul 2025 09:27:56 -0300, jgg@nvidia.com wrote:
+Hi Luiz,
+> [ EXTERNAL EMAIL ]
+>
+> Hi,
+>
+> On Thu, Jul 3, 2025 at 5:19 AM Yang Li <yang.li@amlogic.com> wrote:
+>> Hi luiz,
+>>
+>>> [ EXTERNAL EMAIL ]
+>>>
+>>> Hi,
+>>>
+>>> On Tue, Jul 1, 2025 at 9:18 PM Yang Li via B4 Relay
+>>> <devnull+yang.li.amlogic.com@kernel.org> wrote:
+>>>> From: Yang Li <yang.li@amlogic.com>
+>>>>
+>>>> Ignore the big sync connections, we are looking for the PA
+>>>> sync connection that was created as a result of the PA sync
+>>>> established event.
+>>> Were you seeing an issue with this, if you do please describe it and
+>>> add the traces, debug logs, etc.
+>> connect list:
+>>
+>> [   61.826679][2 T1974  d.] list conn: conn 00000000a6e8ac83 handle
+>> 0x0f01 state 1, flags 0x40000220
+>>
+>> pa_sync_conn.flags = HCI_CONN_PA_SYNC
+>>
+>> [   61.827155][2 T1974  d.] list conn: conn 0000000073b03cb6 handle
+>> 0x0100 state 1, flags 0x48000220
+>> [   61.828254][2 T1974  d.] list conn: conn 00000000a7e091c9 handle
+>> 0x0101 state 1, flags 0x48000220
+>>
+>> big_sync_conn.flags = HCI_CONN_PA_SYNC | HCI_CONN_BIG_SYNC
+> This is a bug then, it should have both PA_SYNC and BIG_SYNC together,
+> also I think we should probably disambiguate this by not using
+> BIS_LINK for PA_SYNC, byt introducing PA_LINK as conn->type.
 
-> On Thu, Jul 03, 2025 at 12:18:22PM +0800, lizhe.67@bytedance.com wrote:
-> > On Wed, 2 Jul 2025 15:27:59 -0300, jgg@ziepe.ca wrote:
-> > 
-> > > On Mon, Jun 30, 2025 at 03:25:16PM +0800, lizhe.67@bytedance.com wrote:
-> > > > From: Li Zhe <lizhe.67@bytedance.com>
-> > > > 
-> > > > The function vpfn_pages() can help us determine the number of vpfn
-> > > > nodes on the vpfn rb tree within a specified range. This allows us
-> > > > to avoid searching for each vpfn individually in the function
-> > > > vfio_unpin_pages_remote(). This patch batches the vfio_find_vpfn()
-> > > > calls in function vfio_unpin_pages_remote().
-> > > > 
-> > > > Signed-off-by: Li Zhe <lizhe.67@bytedance.com>
-> > > > ---
-> > > >  drivers/vfio/vfio_iommu_type1.c | 10 +++-------
-> > > >  1 file changed, 3 insertions(+), 7 deletions(-)
-> > > > 
-> > > > diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
-> > > > index a2d7abd4f2c2..330fff4fe96d 100644
-> > > > --- a/drivers/vfio/vfio_iommu_type1.c
-> > > > +++ b/drivers/vfio/vfio_iommu_type1.c
-> > > > @@ -804,16 +804,12 @@ static long vfio_unpin_pages_remote(struct vfio_dma *dma, dma_addr_t iova,
-> > > >  				    unsigned long pfn, unsigned long npage,
-> > > >  				    bool do_accounting)
-> > > >  {
-> > > > -	long unlocked = 0, locked = 0;
-> > > > +	long unlocked = 0, locked = vpfn_pages(dma, iova, npage);
-> > > >  	long i;
-> > > 
-> > > The logic in vpfn_pages?() doesn't seem quite right? Don't we want  to
-> > > count the number of pages within the range that fall within the rb
-> > > tree?
-> > > 
-> > > vpfn_pages() looks like it is only counting the number of RB tree
-> > > nodes within the range?
-> > 
-> > As I understand it, a vfio_pfn corresponds to a single page, am I right?
-> 
-> It does look that way, it is not what I was expecting iommufd holds
-> ranges for this job..
-> 
-> So this is OK then
 
-Thank you. It seems that we have reached a consensus on all the comments.
-I will send out a v2 patchset soon.
+Yes, I agree with your point.
 
-Thanks,
-Zhe
+Adding PA_LINK can make it clearer to distinguish between PA sync and 
+BIG sync links.
+
+Let me try to update it accordingly.
+
+>
+>> If the PA sync connection is deleted, then when hci_le_big_sync_lost_evt
+>> is executed, hci_conn_hash_lookup_pa_sync_handle should return NULL,
+>> However, it currently returns the BIS1 connection instead, because bis
+>> conn also has HCI_CONN_PA_SYNC set.
+>>
+>> Therefore, I added an HCI_CONN_BIG_SYNC check in
+>> hci_conn_hash_lookup_pa_sync_handle to filter out BIS connections.
+>>
+>>>> Signed-off-by: Yang Li <yang.li@amlogic.com>
+>>>> ---
+>>>>    include/net/bluetooth/hci_core.h | 7 +++++++
+>>>>    1 file changed, 7 insertions(+)
+>>>>
+>>>> diff --git a/include/net/bluetooth/hci_core.h b/include/net/bluetooth/hci_core.h
+>>>> index 3ce1fb6f5822..646b0c5fd7a5 100644
+>>>> --- a/include/net/bluetooth/hci_core.h
+>>>> +++ b/include/net/bluetooth/hci_core.h
+>>>> @@ -1400,6 +1400,13 @@ hci_conn_hash_lookup_pa_sync_handle(struct hci_dev *hdev, __u16 sync_handle)
+>>>>                   if (c->type != BIS_LINK)
+>>>>                           continue;
+>>>>
+>>>> +               /* Ignore the big sync connections, we are looking
+>>>> +                * for the PA sync connection that was created as
+>>>> +                * a result of the PA sync established event.
+>>>> +                */
+>>>> +               if (test_bit(HCI_CONN_BIG_SYNC, &c->flags))
+>>>> +                       continue;
+>>>> +
+>>> hci_conn_hash_lookup_pa_sync_big_handle does:
+>>>
+>>>           if (c->type != BIS_LINK ||
+>>>               !test_bit(HCI_CONN_PA_SYNC, &c->flags))
+>>
+>> Please forgive my misunderstanding.
+>>
+>>>>                   /* Ignore the listen hcon, we are looking
+>>>>                    * for the child hcon that was created as
+>>>>                    * a result of the PA sync established event.
+>>>>
+>>>> ---
+>>>> base-commit: 3bc46213b81278f3a9df0324768e152de71eb9fe
+>>>> change-id: 20250701-pa_sync-2fc7fc9f592c
+>>>>
+>>>> Best regards,
+>>>> --
+>>>> Yang Li <yang.li@amlogic.com>
+>>>>
+>>>>
+>>> --
+>>> Luiz Augusto von Dentz
+>
+>
+> --
+> Luiz Augusto von Dentz
 
