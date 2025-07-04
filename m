@@ -1,87 +1,106 @@
-Return-Path: <linux-kernel+bounces-716394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A19FCAF85DF
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 05:00:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 15891AF85E2
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 05:03:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6E6F6E3B5F
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 02:59:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F2944A3E8E
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 03:02:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 651E61E5201;
-	Fri,  4 Jul 2025 03:00:06 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AC4714A0B7;
+	Fri,  4 Jul 2025 03:03:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dqrPzTNd"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DF6D1E47AD
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 03:00:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA3601F94A
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 03:03:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751598006; cv=none; b=Px413mmjD7lKQ6ahVlXUM9EYb8brjrOaup00Cmmgx/CBKMYFWsK/px+e79QtBnyGnerFzgJEcT4yezwIC9wEtHZ8SSdPnViiP13AYXEzrpSx1drXbI3XGHTM7iLYj2QqAZWXOLymrSYpOQnSoM6TyVGuxgIpYzM4WuVdxR6MxoE=
+	t=1751598195; cv=none; b=Cljt/u66DgnVPcbbl1OXjbDVxsXE0HnYRFGiC6pOje0Y7j6b6p4g0ipQoGHJMfvhsvHK2ASPRGY1rd2tEkRH/XHNDOp5/pppX1dYcNntlrJz5ZdzptwZb9sCZeSU7/ew3l3BCrc4bVaLEkQN3UO/rDGZ+4GMar3lmbH3QeFrdD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751598006; c=relaxed/simple;
-	bh=P7iuf6Vuzs0HqVct7rJvJNd10fBlI2CBO3FneganoLI=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=shtls8+hAzc4YfoVZpxNmIooYWLLHKmzgSN7xFUGeltrXjsuuMBQ60bMeTKapMt8UY/ZVpaLtO9A7oZUa9+1+lIwN5OP5iJ9GiYaaE/QMFQgs6PUm2TkZTxTq57Yr1Vy+ZUS81AgblxqBOzmJ3wG0YnYEiIN7RAnkJA5E3u8LZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3de0dc57859so6902735ab.2
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Jul 2025 20:00:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751598003; x=1752202803;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yyLvbnbjvJWW3fNc+1CjVEn67gFNLn2pGzW7dRoqy7s=;
-        b=w1ibI1TqwbtI6liT09T3K6VRZJFSAXx88zwNWL72ChUOpSAnUZVQio7w5IxnjkjcxG
-         3Rzxz89ax+VSHkQo1Knl9mnL9Kj0cTgTGSgi7XgM8YL587Vim3HMoAeJ5jTpZFZmFNNa
-         dbJE7IIJJJYeV4NrUmQeqmHTDCBVa4Z4wcWG9wFbouUuAmTvZzF2jjpI5qVGPxn4sqWT
-         +bRzfQVEC2lvLMB9b2e1qzwGn2o6h9aDiUo1eUjGzsvHMEWMeBSR5BX3MYu6Ncyictw4
-         lKPTIIJXzt0S4g3g1ldHgr++1e3DTu2l1BDqF4in6tx4idvhxJevLeO1vIR+hhH+kF3/
-         oahQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVbDseLxc4B6wpTPVCiesbJeFAlHcoQPYOG55nCTeqreqfHtAIQ27/xMnHdhXhrGSV7VB8nVkrjJ2ve9/U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YymSmgdMJCfir8N4W5smf6k1MqMNwnMsiOfIQCdDwkH8zYV82Ao
-	PlBFzjSzc6I0gzRw6QX0dqSNYkIO8FWAm//EWivX/qlU1hBI240cV+sPk5kijdKJ0/c1Ajbo4J3
-	76YUknNhJBAAe29A/RQ312B3pwSqp1oFRb+CueFMXYlp4kII2O4HR6WMY9GI=
-X-Google-Smtp-Source: AGHT+IEv6EdNRkjU9TwfOY2EM4PWCKqWakIue/0+Ods3XdaEfCecpi5QU10Wg9C+io/RnY00FFtQXMl17UkawHx+9LyuoFVzJdvF
+	s=arc-20240116; t=1751598195; c=relaxed/simple;
+	bh=Cht98qCDEr34tjWOyoeQT5oQk/0EC6hZi6vOCH6lbCg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=RqCnGr3We71TFw3Pgf1av5rLGEyywhDi3pGia8Ebw7RWY2gaibpDhnh4i7xSf+n/1/VKl4RPa8KrhkCu1olRrnB1wFWRiVxJRYoUijsap2nm34gmXY7Wmh4pL4FLKWqURxksfbBosnjqQxJdl9HTm/6ZTvJE1F/YG8alYlyPeA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dqrPzTNd; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1751598192;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IgUqdYxBQTZlOw6DSwEk1Ly2z/RL4ZtAN9t9nZ4wSSE=;
+	b=dqrPzTNdkXJ9dosehkdpYWv6N5ByZp2RNNJr1qa36/4L+g7ZwTgqKtBJx5Un6aOWAo898a
+	4pQriIzfC5HoaEpfHVmhY4lDNcFMsCgetymXiZ4gIqLRHB0novFZ3ybKRD9n1EXh+VgTSp
+	UJnZlB7ytiF6zBhGNX8owbn5uGRiPQw=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-37-u_wzOsKtMQy1s7tetkDQJA-1; Thu,
+ 03 Jul 2025 23:03:09 -0400
+X-MC-Unique: u_wzOsKtMQy1s7tetkDQJA-1
+X-Mimecast-MFC-AGG-ID: u_wzOsKtMQy1s7tetkDQJA_1751598188
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BA608180047F;
+	Fri,  4 Jul 2025 03:03:07 +0000 (UTC)
+Received: from fedora.redhat.com (unknown [10.22.64.120])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 3A4FE180045B;
+	Fri,  4 Jul 2025 03:03:04 +0000 (UTC)
+From: Seiji Nishikawa <snishika@redhat.com>
+To: perex@perex.cz,
+	tiwai@suse.com
+Cc: linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	snishika@redhat.com
+Subject: [PATCH v2] ALSA: hda/realtek: Add quirk for ASUS NUC14LNK with CS35L41
+Date: Fri,  4 Jul 2025 12:02:32 +0900
+Message-ID: <20250704030301.1495639-1-snishika@redhat.com>
+In-Reply-To: <20250704023930.1492232-1-snishika@redhat.com>
+References: <20250704023930.1492232-1-snishika@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1f12:b0:3df:3ab2:cc7c with SMTP id
- e9e14a558f8ab-3e1355658bemr7546895ab.13.1751598003541; Thu, 03 Jul 2025
- 20:00:03 -0700 (PDT)
-Date: Thu, 03 Jul 2025 20:00:03 -0700
-In-Reply-To: <20250704022016.2331-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <686743b3.a70a0220.29cf51.000e.GAE@google.com>
-Subject: Re: [syzbot] [net?] kernel BUG in filemap_fault (2)
-From: syzbot <syzbot+263f159eb37a1c4c67a4@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-Hello,
+Add support for ASUS NUC14LNK system which uses Realtek ALC245 codec
+and CS35L41 amplifier over SPI. Without this quirk, the amp probe fails
+with -EINVAL and no sound is initialized.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Signed-off-by: Seiji Nishikawa <snishika@redhat.com>
 
-Reported-by: syzbot+263f159eb37a1c4c67a4@syzkaller.appspotmail.com
-Tested-by: syzbot+263f159eb37a1c4c67a4@syzkaller.appspotmail.com
+v2: fixed unintentional formatting issue in subject line and commit message
 
-Tested on:
+---
+ sound/pci/hda/patch_realtek.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-commit:         4c06e63b Merge tag 'for-6.16-rc4-tag' of git://git.ker..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=13768582580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3f6ddf055b5c86f8
-dashboard link: https://syzkaller.appspot.com/bug?extid=263f159eb37a1c4c67a4
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=169df770580000
+diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
+index 5d6d01ecfee2..7ce54db56354 100644
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -11084,6 +11084,7 @@ static const struct hda_quirk alc269_fixup_tbl[] = {
+ 	SND_PCI_QUIRK(0x1043, 0x8398, "ASUS P1005", ALC269_FIXUP_STEREO_DMIC),
+ 	SND_PCI_QUIRK(0x1043, 0x83ce, "ASUS P1005", ALC269_FIXUP_STEREO_DMIC),
+ 	SND_PCI_QUIRK(0x1043, 0x8516, "ASUS X101CH", ALC269_FIXUP_ASUS_X101),
++	SND_PCI_QUIRK(0x1043, 0x88f4, "ASUS NUC14LNK", ALC245_FIXUP_CS35L41_SPI_2),
+ 	SND_PCI_QUIRK(0x104d, 0x9073, "Sony VAIO", ALC275_FIXUP_SONY_VAIO_GPIO2),
+ 	SND_PCI_QUIRK(0x104d, 0x907b, "Sony VAIO", ALC275_FIXUP_SONY_HWEQ),
+ 	SND_PCI_QUIRK(0x104d, 0x9084, "Sony VAIO", ALC275_FIXUP_SONY_HWEQ),
+-- 
+2.50.0
 
-Note: testing is done by a robot and is best-effort only.
 
