@@ -1,114 +1,176 @@
-Return-Path: <linux-kernel+bounces-717007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-717009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94150AF8EDF
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 11:40:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA7DEAF8DFD
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 11:16:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3BF39B45F80
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 09:10:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E97E5A0CA9
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 09:12:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73A0F2F50BC;
-	Fri,  4 Jul 2025 09:04:38 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69B052F5330;
+	Fri,  4 Jul 2025 09:05:15 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFBE52F49E2;
-	Fri,  4 Jul 2025 09:04:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0B1B328B0E;
+	Fri,  4 Jul 2025 09:05:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751619878; cv=none; b=CJ8imtzO08Z4cqdUAM+2/CDOaPiQe+joidR8CoYWxkklWzgOGAtKP+yRAhFSz/wIyqDgM2seLWJRxXOCPg92siJuepiwuiKtj8RpyR4NHpbWBS4uJkdnazxAYo8NlfAM0fA1wX2J5vAPdfG5c5BNg2elP5RSg9AiXwuwBpC0ZGQ=
+	t=1751619915; cv=none; b=KRb+SYW0WkSGGOola5MtCEf2LTLDrVpphf5gHLKW5WnE6p7PTLvwfiucM4zusL+4Xj7npBs4+QoTRC7sNuFRVqAsNGfXF5O+JNQGg5fTVN/HhZvJDdu+cXk4maoJBH6vGbClQq9cGdYKUp6WJnyB3rc9F5qz5bsAZfc0yN8p+84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751619878; c=relaxed/simple;
-	bh=74zR0IQGlRsiYI2E0BMXAKeqrtVItaULN4XiH6/6OvY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=I4Wfd9ua8hLNUJKj5rgMAChwEV5BFiypT/MpCZJGByR6rjT64c0Q9vQHztDuzAzKFZVkNZNqWC44jfQyIgRc1Ib3BxK1YrNkjwr2/4R2YvKjrUtXo6o7JguF5n66oC8QwcOY8PVhWrtkDcO1cLFuJglFeUgN0gMedyZfJumbR98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
+	s=arc-20240116; t=1751619915; c=relaxed/simple;
+	bh=R5qVhKkjPUiTBo/+tB/8r3Ngdh043u2yCazSz7hAlH0=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=G3UxyH+OqqB5lQxTQIgCvN/Sx05nDqQXM1Gxt4dNhDtpNtkFIrQUHYNyrLoNxtvtBTy12wEIujypHDOiuJMORyAhVv3UZg1x+jDBqXDRkqIKPM0uDoTu/Ez/X1ll+a17H57JfjMvA4nhao7t9IA5Px/Jm0mtrxUlCW4Mdms9KR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4bYSQc5HMnz2qFCK;
-	Fri,  4 Jul 2025 17:05:28 +0800 (CST)
-Received: from kwepemh100008.china.huawei.com (unknown [7.202.181.93])
-	by mail.maildlp.com (Postfix) with ESMTPS id E78E01A0188;
-	Fri,  4 Jul 2025 17:04:31 +0800 (CST)
-Received: from [10.67.121.90] (10.67.121.90) by kwepemh100008.china.huawei.com
- (7.202.181.93) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 4 Jul
- 2025 17:04:31 +0800
-Message-ID: <a6a20085-e1c7-4015-b0cc-d4ba4a21be30@huawei.com>
-Date: Fri, 4 Jul 2025 17:04:30 +0800
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bYSPf6gdMz6L5pZ;
+	Fri,  4 Jul 2025 17:04:38 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id AC2391402A5;
+	Fri,  4 Jul 2025 17:05:10 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 4 Jul
+ 2025 11:05:09 +0200
+Date: Fri, 4 Jul 2025 10:05:08 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+CC: Jonathan Cameron <jic23@kernel.org>, David Lechner
+	<dlechner@baylibre.com>, Nuno =?ISO-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, Waqar Hameed <waqar.hameed@axis.com>,
+	Julien Stephan <jstephan@baylibre.com>, Peter Zijlstra
+	<peterz@infradead.org>, Bo Liu <liubo03@inspur.com>, Greg KH
+	<gregkh@linuxfoundation.org>, Al Viro <viro@zeniv.linux.org.uk>, "Sean
+ Nyekjaer" <sean@geanix.com>, Marcelo Schmitt <marcelo.schmitt1@gmail.com>,
+	Rayyan Ansari <rayyan@ansari.sh>, Francisco Henriques
+	<franciscolealhenriques@usp.br>, Matti Vaittinen <mazziesaccount@gmail.com>,
+	<linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 27/80] iio: accel: Remove redundant
+ pm_runtime_mark_last_busy() calls
+Message-ID: <20250704100508.00003d3a@huawei.com>
+In-Reply-To: <20250704075418.3218938-1-sakari.ailus@linux.intel.com>
+References: <20250704075225.3212486-1-sakari.ailus@linux.intel.com>
+	<20250704075418.3218938-1-sakari.ailus@linux.intel.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/7] cpufreq: Init policy->rwsem before it may be possibly
- used
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-CC: <viresh.kumar@linaro.org>, <ionela.voinescu@arm.com>,
-	<linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-	<linuxarm@huawei.com>, <jonathan.cameron@huawei.com>,
-	<zhanjie9@hisilicon.com>, <lihuisong@huawei.com>, <yubowen8@huawei.com>
-References: <20250623133402.3120230-1-zhenglifeng1@huawei.com>
- <20250623133402.3120230-3-zhenglifeng1@huawei.com>
- <CAJZ5v0jHjyPMwB5dt9qv01nXAN5z+Kbztb_Mho0Py0cUqZO+sg@mail.gmail.com>
-From: "zhenglifeng (A)" <zhenglifeng1@huawei.com>
-In-Reply-To: <CAJZ5v0jHjyPMwB5dt9qv01nXAN5z+Kbztb_Mho0Py0cUqZO+sg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- kwepemh100008.china.huawei.com (7.202.181.93)
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100001.china.huawei.com (7.191.160.183) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On 2025/6/23 23:29, Rafael J. Wysocki wrote:
+On Fri,  4 Jul 2025 10:54:18 +0300
+Sakari Ailus <sakari.ailus@linux.intel.com> wrote:
 
-> On Mon, Jun 23, 2025 at 3:34 PM Lifeng Zheng <zhenglifeng1@huawei.com> wrote:
->>
->> In cpufreq_policy_put_kobj(), policy->rwsem is used. But in
->> cpufreq_policy_alloc(), if freq_qos_add_notifier() returns an error, error
->> path via err_kobj_remove or err_min_qos_notifier will be reached and
->> cpufreq_policy_put_kobj() will be called before policy->rwsem is
->> initialized. Thus, the calling of init_rwsem() should be moved to where
->> before these two error paths can be reached.
+> pm_runtime_put_autosuspend(), pm_runtime_put_sync_autosuspend(),
+> pm_runtime_autosuspend() and pm_request_autosuspend() now include a call
+> to pm_runtime_mark_last_busy(). Remove the now-reduntant explicit call to
+> pm_runtime_mark_last_busy().
 > 
-> Since this is a fix, any chance to add a Fixes: tag here?
-
-You are right. Will add it. Thanks.
-
+> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> ---
+> The cover letter of the set can be found here
+> <URL:https://lore.kernel.org/linux-pm/20250704075225.3212486-1-sakari.ailus@linux.intel.com>.
 > 
->> Signed-off-by: Lifeng Zheng <zhenglifeng1@huawei.com>
->> ---
->>  drivers/cpufreq/cpufreq.c | 3 ++-
->>  1 file changed, 2 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
->> index 1bc665b5bba8..efc1f4ac85cb 100644
->> --- a/drivers/cpufreq/cpufreq.c
->> +++ b/drivers/cpufreq/cpufreq.c
->> @@ -1284,6 +1284,8 @@ static struct cpufreq_policy *cpufreq_policy_alloc(unsigned int cpu)
->>                 goto err_free_real_cpus;
->>         }
->>
->> +       init_rwsem(&policy->rwsem);
->> +
->>         freq_constraints_init(&policy->constraints);
->>
->>         policy->nb_min.notifier_call = cpufreq_notifier_min;
->> @@ -1306,7 +1308,6 @@ static struct cpufreq_policy *cpufreq_policy_alloc(unsigned int cpu)
->>         }
->>
->>         INIT_LIST_HEAD(&policy->policy_list);
->> -       init_rwsem(&policy->rwsem);
->>         spin_lock_init(&policy->transition_lock);
->>         init_waitqueue_head(&policy->transition_wait);
->>         INIT_WORK(&policy->update, handle_update);
->> --
->> 2.33.0
->>
+> In brief, this patch depends on PM runtime patches adding marking the last
+> busy timestamp in autosuspend related functions. The patches are here, on
+> rc2:
 > 
+>         git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
+>                 pm-runtime-6.17-rc1
+> 
+>  drivers/iio/accel/bmc150-accel-core.c | 1 -
+>  drivers/iio/accel/bmi088-accel-core.c | 3 ---
+>  drivers/iio/accel/fxls8962af-core.c   | 1 -
+>  drivers/iio/accel/kxcjk-1013.c        | 1 -
+>  drivers/iio/accel/kxsd9.c             | 3 ---
+>  drivers/iio/accel/mma8452.c           | 1 -
+>  drivers/iio/accel/mma9551_core.c      | 1 -
+>  drivers/iio/accel/msa311.c            | 6 ------
+>  8 files changed, 17 deletions(-)
+> 
+> diff --git a/drivers/iio/accel/bmc150-accel-core.c b/drivers/iio/accel/bmc150-accel-core.c
+> index be5fbb0c5d29..f45beae83f8b 100644
+> --- a/drivers/iio/accel/bmc150-accel-core.c
+> +++ b/drivers/iio/accel/bmc150-accel-core.c
+> @@ -335,7 +335,6 @@ static int bmc150_accel_set_power_state(struct bmc150_accel_data *data, bool on)
+>  	if (on) {
+>  		ret = pm_runtime_resume_and_get(dev);
+>  	} else {
+> -		pm_runtime_mark_last_busy(dev);
+>  		ret = pm_runtime_put_autosuspend(dev);
+>  	}
+
+See kernel coding style.  The drop to one line in each leg means we should drop the {}
+
+
+> diff --git a/drivers/iio/accel/fxls8962af-core.c b/drivers/iio/accel/fxls8962af-core.c
+> index 12598feaa693..8afd151c03ad 100644
+> --- a/drivers/iio/accel/fxls8962af-core.c
+> +++ b/drivers/iio/accel/fxls8962af-core.c
+> @@ -222,7 +222,6 @@ static int fxls8962af_power_off(struct fxls8962af_data *data)
+>  	struct device *dev = regmap_get_device(data->regmap);
+>  	int ret;
+>  
+> -	pm_runtime_mark_last_busy(dev);
+>  	ret = pm_runtime_put_autosuspend(dev);
+>  	if (ret)
+>  		dev_err(dev, "failed to power off\n");
+> diff --git a/drivers/iio/accel/kxcjk-1013.c b/drivers/iio/accel/kxcjk-1013.c
+> index 6aefe8221296..44d770729186 100644
+> --- a/drivers/iio/accel/kxcjk-1013.c
+> +++ b/drivers/iio/accel/kxcjk-1013.c
+> @@ -637,7 +637,6 @@ static int kxcjk1013_set_power_state(struct kxcjk1013_data *data, bool on)
+>  	if (on)
+>  		ret = pm_runtime_resume_and_get(&data->client->dev);
+>  	else {
+> -		pm_runtime_mark_last_busy(&data->client->dev);
+
+Likewise here.
+
+>  		ret = pm_runtime_put_autosuspend(&data->client->dev);
+>  	}
+>  	if (ret < 0) {
+
+
+> diff --git a/drivers/iio/accel/mma8452.c b/drivers/iio/accel/mma8452.c
+> index aba444a980d9..5863478bab62 100644
+> --- a/drivers/iio/accel/mma8452.c
+> +++ b/drivers/iio/accel/mma8452.c
+> @@ -227,7 +227,6 @@ static int mma8452_set_runtime_pm_state(struct i2c_client *client, bool on)
+>  	if (on) {
+>  		ret = pm_runtime_resume_and_get(&client->dev);
+>  	} else {
+> -		pm_runtime_mark_last_busy(&client->dev);
+
+And here.
+
+>  		ret = pm_runtime_put_autosuspend(&client->dev);
+>  	}
+>  
+> diff --git a/drivers/iio/accel/mma9551_core.c b/drivers/iio/accel/mma9551_core.c
+> index 3e7d9b79ed0e..22768f43fd24 100644
+> --- a/drivers/iio/accel/mma9551_core.c
+> +++ b/drivers/iio/accel/mma9551_core.c
+> @@ -672,7 +672,6 @@ int mma9551_set_power_state(struct i2c_client *client, bool on)
+>  	if (on)
+>  		ret = pm_runtime_resume_and_get(&client->dev);
+>  	else {
+> -		pm_runtime_mark_last_busy(&client->dev);
+And here...
+
+>  		ret = pm_runtime_put_autosuspend(&client->dev);
+>  	}
+
 
 
