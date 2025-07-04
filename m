@@ -1,160 +1,140 @@
-Return-Path: <linux-kernel+bounces-717022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-717028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 098D6AF8EF0
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 11:41:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCB83AF8E44
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 11:21:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D12CBB63D4D
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 09:14:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF71D5A71DD
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 09:17:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F60D2F4314;
-	Fri,  4 Jul 2025 09:10:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E03892E4271;
+	Fri,  4 Jul 2025 09:12:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="TTLPozt3"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="aqQqbzM7"
+Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F4152BEFF0;
-	Fri,  4 Jul 2025 09:10:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BF032DA769;
+	Fri,  4 Jul 2025 09:12:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751620228; cv=none; b=YcPxbPdSUYLlza+8ZvR8fqD9qpcTOb0LGb1nNGdGEvKNs310G3amxx4qX4+ecY/lO1SuSFXVF5cGjHblIu8wL/PIZbXUQhc05I6yc4uH/kEkPBLGQYX9YIw4CVLS+Q6p1+FigNRkdyCR1FsDSIwh/GLwHJRGPzR5oSR61bmJbt0=
+	t=1751620379; cv=none; b=QkF5hEG6UxJ3RhMRw9yh8wJurLmwPfmwIfTiImi/wo39x9h8AoaR0WR54DMXNPakzkzl8y+ZnhJ3i/p9ja50+pYdz5xSXJXV/iKgE4QU0c0NNTJ/sAXSf4FOIePGbjuq4NGqM7agNpSolNPi9nVm6OsRkeY7h5tH0fQo6iv9eUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751620228; c=relaxed/simple;
-	bh=LS55SnAvYsxVzeFBB6DMdq8qX0Bw9GOxFpUEDYhEl28=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=H7+GvgOcWGQ5kDdc39q/Z+VL6tc7Vkng2oCLcV5pJDx6vVSp8Uu3Jibkz8eNie3oB+z5WLn7coIwnmS6oesgRX9neiWyw+iNcnmA+0zZStve/4+AzXZUH2NRNwFxsmTtBk2C9xOWIGAXaY7BWHl/u4NZeEgTWARz5JLlYO/V1Kw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=TTLPozt3; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 0013341C06;
-	Fri,  4 Jul 2025 09:10:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1751620224;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HSEJYUsoa+vkXDvdMIMqEjCNC9HqOGRY+ObCm1SntTI=;
-	b=TTLPozt3aTpWICefNME9ZYHQZEDiVeUpqHFdPo2ttK384ZJH2SPDL5JLidVYBaZ88zsEhW
-	YE+aZ0vkNVHBVKhlUri2cRuTq+GeCLZ1fuo4QVP7trqhN6bsjX6AmYvIZH0bbLtsRe4XMK
-	zfqyuR9XdCunB1KXX8lqTi+o5AraWy9H4sTWoWfi1+imqH1a4lkt9+Zz+GKiiOBnPlDRRw
-	oYD7ZGVhPPshZocGAUXaqUcWAy9fWAwROqUYMexlY7JXtCQWErjNLL//6jazAsif/6+4Sp
-	OprWoiMhB3+oLQGs01KKR9V/txErWX6w6+JGP3JI0eA3M4+O4n20f+bGsRBslQ==
-Date: Fri, 4 Jul 2025 11:10:20 +0200
-From: Herve Codina <herve.codina@bootlin.com>
-To: Ayush Singh <ayush@beagleboard.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, David Gibson
- <david@gibson.dropbear.id.au>, Rob Herring <robh@kernel.org>, Andrew Davis
- <afd@ti.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Arnd
- Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Saravana Kannan <saravanak@google.com>, devicetree@vger.kernel.org,
- devicetree-compiler@vger.kernel.org, linux-kernel@vger.kernel.org, Luca
- Ceresoli <luca.ceresoli@bootlin.com>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v2 1/7] dt-bindings: Add support for export-symbols node
-Message-ID: <20250704111020.7cde176b@bootlin.com>
-In-Reply-To: <ed6beb97-12f1-4d71-b4dc-b34d4d611b81@beagleboard.org>
-References: <20250430125154.195498-1-herve.codina@bootlin.com>
-	<20250430125154.195498-2-herve.codina@bootlin.com>
-	<0770a47e-fd2f-4b6f-9a9a-b0d539ace30c@kernel.org>
-	<20250528185740.4bf91bef@bootlin.com>
-	<49e1e1fc-412d-4334-8337-16e352a34788@kernel.org>
-	<20250618113232.6d237208@bootlin.com>
-	<ed6beb97-12f1-4d71-b4dc-b34d4d611b81@beagleboard.org>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1751620379; c=relaxed/simple;
+	bh=N7QKC+pm+qrvZDqnMTZSHH6sdhRJNNtWgFXKK8pjTd4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=mRu+51Cj8+TgqlzkJSymvNzpQRN20YCe4aMrW+9wisrMKqhrk2jVoKlVtq4nPVDvHpm5WYpAv443JBVdknPIYA4pupx2cEkLO296Lsk9U4f+7lY/beAMjbZ7Wj+5TphQhSqItjMdHGjFhEaVJY1IG2/kCL5PekbL5S/2apXojr8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=aqQqbzM7; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5647Zsmm012108;
+	Fri, 4 Jul 2025 11:12:46 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	o9vFHnH+10VgpguGO7CSDoz8TQTajPJNBGdmVoWn0WM=; b=aqQqbzM7yRmB9AiA
+	xExSCXj2ZJY+0YRGwxXqL63PYmeEjiuE34qNGrmr0Ap9IQEZ+G47upZdb9+EiqNg
+	eAhrP6gvxoretMVSCukaQqM8KXoGSTMbyI6NEEoWNjGqxmHxq7rIsMliK6TrOoD3
+	P4CQhgxMaRmb15mh60ZSlAd/itqy9R/gWKIG4+KKM2IHMT8JR95FoLbTE1cRc/gs
+	LCAh9ZDFUIgW0nI7Y+QLnZba/vR3dQL8ptwozFYIVqfnpmJopoWxwuH5cBCIiXAb
+	EqoOwORtYh6Yx1+q0beeKVfLjMQ9+jlEuMhRd0j3cW/ierm+CuAaabIM20Ol2C01
+	5QrfEA==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 47jubp9329-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 04 Jul 2025 11:12:46 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 87A7A4004F;
+	Fri,  4 Jul 2025 11:11:51 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 6C28BA4D113;
+	Fri,  4 Jul 2025 11:10:50 +0200 (CEST)
+Received: from [10.48.86.79] (10.48.86.79) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 4 Jul
+ 2025 11:10:49 +0200
+Message-ID: <7a56c778-0c46-49a4-8a83-ed7ec8355ef7@foss.st.com>
+Date: Fri, 4 Jul 2025 11:10:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddvvdejiecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthekredtredtjeenucfhrhhomhepjfgvrhhvvgcuvehoughinhgruceohhgvrhhvvgdrtghoughinhgrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeviefffeegiedtleelieeghfejleeuueevkeevteegffehledtkeegudeigffgvdenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehhvghrvhgvrdgtohguihhnrgessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudeipdhrtghpthhtoheprgihuhhshhessggvrghglhgvsghorghrugdrohhrghdprhgtphhtthhopehkrhiikheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrvhhiugesghhisghsohhnrdgurhhophgsvggrrhdrihgurdgruhdprhgtphhtthhopehrohgshheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghfugesthhirdgtohhmpdhrtghpthhtohepghgvvghrtheslhhinhhugidqmheikehkr
- dhorhhgpdhrtghpthhtohepkhhriihkodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheptghonhhorhdoughtsehkvghrnhgvlhdrohhrgh
-X-GND-Sasl: herve.codina@bootlin.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/8] Add STM32MP25 timers support: MFD, PWM, IIO and
+ counter drivers
+To: Fabrice Gasnier <fabrice.gasnier@foss.st.com>, <lee@kernel.org>,
+        <ukleinek@kernel.org>
+CC: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <wbg@kernel.org>, <jic23@kernel.org>, <catalin.marinas@arm.com>,
+        <will@kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-iio@vger.kernel.org>, <linux-pwm@vger.kernel.org>,
+        <olivier.moysan@foss.st.com>
+References: <20250110091922.980627-1-fabrice.gasnier@foss.st.com>
+Content-Language: en-US
+From: Alexandre TORGUE <alexandre.torgue@foss.st.com>
+In-Reply-To: <20250110091922.980627-1-fabrice.gasnier@foss.st.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-04_03,2025-07-02_04,2025-03-28_01
 
-Hi Krzysztof, David, Rob,
+Hi Fabrie
 
-Any opinion?
-
-Best regards,
-Hervé
-
-On Wed, 18 Jun 2025 15:24:07 +0530
-Ayush Singh <ayush@beagleboard.org> wrote:
-
-> On 6/18/25 15:02, Herve Codina wrote:
-...
-
-> >  
-> >>>>> +patternProperties:
-> >>>>> +  "^[a-zA-Z_]?[a-zA-Z0-9_]*$":  
-> >>>> This messes up with coding style which I would prefer keep intact.
-> >>>> Basically these properties will be using label style.  
-> >>> Yes, those properties remap phandles.
-> >>>
-> >>> Their names are the name of the label used from the overlay and their
-> >>> values are the phandle mapped.
-> >>>
-> >>> You already have this kind properties using label style in __symbols__,
-> >>> __fixups__, __local_fixups__ nodes.  
-> >> I have them in DTB, but I don't have these in DTS. The exported-symbols
-> >> would be in the DTS and that is what coding style is about.
-> >>  
-> > I think export-symbols has to be in DTS.
-> > Maybe it could be described in an other way in order to avoid the coding style
-> > issue you reported.
-> >
-> > Hardware:
-> >    i2c0 from SoC --------- connector 1, I2C A signals
-> >    i2c1 from SoC --------- connector 1, I2C B signals
-> >
-> >    connector1 {
-> >        export-symbols {
-> > 	  i2c_a = <&i2c0>;
-> > 	  i2c_b = <&i2c1>;
-> >        };
-> >    };
-> >
-> > In order to avoid the coding style issue, this could be replace
-> > with:
-> >   connector1 {
-> >        export-symbols {
-> > 	  symbol-names = "i2c_a", "i2c_b";
-> > 	  symbols = <&i2c0>, <&i2c1>;
-> >        };
-> >    };
-> >
-> > Krzysztof, Rob, do you think this could be accepted ?
-> >
-> > Ayush, David, do you thing this could be easily implemented in fdtoverlay ?
-> >
-> > Best regards,
-> > Hervé
-> >  
+On 1/10/25 10:19, Fabrice Gasnier wrote:
+> This series adds STM32MP25 support on MFD PWM, IIO, counter timer drivers.
+> This new timer variant is managed by using a new DT compatible string.
+> It comes with a slightly updated register set, some new features and new
+> interconnect signals inside the SoC. There is also a new instance (TIM20).
+> Same feature list as on STM32MP1x is supported currently, except for PWM
+> capture (not enabled, by DT).
+> The device tree files add all instances in stm32mp251 dtsi. PWM, counter
+> and trigger examples are provided for stm32mp257f-ev1 board.
 > 
-> Well, it is possible.
+> Changes in V3
+> ---
+> - MFD updated since Lee's coments
+> - IIO patch dropped since applied by Jonathan
 > 
-> However, on connectors like pb2 header, there will be 50-100 export 
-> symbols. So it will start becoming difficult to maintain.
+> Changes in V2
+> ---
+> - PMW driver updated to address Uwe's review comments
+> - Collected Acked-by
 > 
-> Additionally, the further away we move from __symbols__ style, the more 
-> difficult the implementation will become since we can currently very 
-> easily piggy-back on __symbols__ resolution implementation.
+> Fabrice Gasnier (8):
+>    dt-bindings: mfd: stm32-timers: add support for stm32mp25
+>    mfd: stm32-timers: add support for stm32mp25
+>    counter: stm32-timer-cnt: add support for stm32mp25
+>    pwm: stm32: add support for stm32mp25
+>    arm64: defconfig: enable STM32 timers drivers
+>    arm64: dts: st: add timer nodes on stm32mp251
+>    arm64: dts: st: add timer pins for stm32mp257f-ev1
+>    arm64: dts: st: add timer nodes on stm32mp257f-ev1
 > 
-> 
-> Best Regards,
-> 
-> Ayush Singh
+>   .../bindings/mfd/st,stm32-timers.yaml         |  18 +-
+>   arch/arm64/boot/dts/st/stm32mp25-pinctrl.dtsi |  61 ++
+>   arch/arm64/boot/dts/st/stm32mp251.dtsi        | 524 ++++++++++++++++++
+>   arch/arm64/boot/dts/st/stm32mp257f-ev1.dts    |  58 ++
+>   arch/arm64/configs/defconfig                  |   4 +
+>   drivers/counter/stm32-timer-cnt.c             |   7 +-
+>   drivers/mfd/stm32-timers.c                    |  31 +-
+>   drivers/pwm/pwm-stm32.c                       |  42 +-
+>   include/linux/mfd/stm32-timers.h              |   9 +
+>   9 files changed, 740 insertions(+), 14 deletions(-)
 > 
 
+Patches 5 to 8 applied on stm32-next.
+
+Thanks
+Alex
 
