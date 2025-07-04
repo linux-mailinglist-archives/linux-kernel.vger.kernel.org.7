@@ -1,155 +1,114 @@
-Return-Path: <linux-kernel+bounces-716669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C4BDAF8983
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 09:31:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E43F5AF898A
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 09:32:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E24A7B6386
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 07:30:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83D171CA1104
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 07:32:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F23D328003A;
-	Fri,  4 Jul 2025 07:28:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09FA9281372;
+	Fri,  4 Jul 2025 07:29:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uLtQdvhB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MbY34r+O"
+Received: from mail-ej1-f74.google.com (mail-ej1-f74.google.com [209.85.218.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5495A27FD51;
-	Fri,  4 Jul 2025 07:28:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC33C27EFEA
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 07:29:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751614108; cv=none; b=KWD8kKrfF7KkHaPjDlcFa87Pp0gVbu3NTmubb/w5+5h123hWp4zmsBupI5b+H6hNvE2VgE2f03KBrAhSu60poUT3I8IK4Ih8vQetOxpdoQ5u4uwYM6HU5APcfdq7eyvCoMJkAOrbfDP5g2xsIv79nw/LWXPrYv22EImGDzUb+Ds=
+	t=1751614155; cv=none; b=Lt2SnOw3o3TnQQqEVJN66wsKAegjw01jEUP7SEHiDVPPDsAJ+DTS6l57mGgUCL0YqrOTFQlF+muDhbKsbo18gEq1HwqD35dz355o+BoQxmMXczcrmJBDWoOryeOsKpUZhXvcc4hbPSk7MB5l4TGC1N1bjssY5sGVOwVcH0Duxt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751614108; c=relaxed/simple;
-	bh=6n2PP2ZTzA/18ZM9VFBi3CenEPC3w/cFzHPouHpkZ6I=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ZsJ0dQ69lDNbsIKg+ijqsfiKXfB67dyjORiSBKJYg5XV0vDmR2U+K7BBNAXQpuEHwy6JF2Y6rRGCUmhIHUJlhFFtsdsPwKu+L+vx0JDspJLa5TzaioWfWm4jhCPO5JAm5rNOPh0NEEACf2waxudtXs/+hDCJZ5TwD2dYIAN4cH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uLtQdvhB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D41EC4CEE3;
-	Fri,  4 Jul 2025 07:28:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751614107;
-	bh=6n2PP2ZTzA/18ZM9VFBi3CenEPC3w/cFzHPouHpkZ6I=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=uLtQdvhBa4dSklEu4ZemUybDjklMSlAq7Ga67ZmlGnmLzg7K8zYKPKlme2aF8QcH7
-	 wvsY2aAUKAto7dtaO4EpDLR7L+iFK6s81BDf2C8kROL4iu3ryvQ/94ynLBxc4xBeiK
-	 oWZg1ukaYUOczbbOlLBZcG+bwGd05N5Q5g8c1BlpBw/44JpIXNfDcsvAEwf457trds
-	 qJphFmhRN2LZMZwDBbO6nT03/4A2g1RxFsXsYa7/p9FfslC1yQWi1uh/lapOxRZ+TZ
-	 tToflbqikoSS/HWwkUkvBljBsxuIHc4DPqzKjQZTy0JTc3gCyOCm5E1R56qIV2gCZe
-	 5CvLkVDPhIT7w==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "FUJITA Tomonori" <fujita.tomonori@gmail.com>
-Cc: <miguel.ojeda.sandonis@gmail.com>,  <alex.gaynor@gmail.com>,
-  <ojeda@kernel.org>,  <aliceryhl@google.com>,  <anna-maria@linutronix.de>,
-  <bjorn3_gh@protonmail.com>,  <boqun.feng@gmail.com>,  <dakr@kernel.org>,
-  <frederic@kernel.org>,  <gary@garyguo.net>,  <jstultz@google.com>,
-  <linux-kernel@vger.kernel.org>,  <lossin@kernel.org>,
-  <lyude@redhat.com>,  <rust-for-linux@vger.kernel.org>,
-  <sboyd@kernel.org>,  <tglx@linutronix.de>,  <tmgross@umich.edu>
-Subject: Re: [PATCH v1] rust: time: Add examples with doctest for Delta
-In-Reply-To: <20250704.093618.1554080777023438310.fujita.tomonori@gmail.com>
-	(FUJITA Tomonori's message of "Fri, 04 Jul 2025 09:36:18 +0900")
-References: <20250701001809.496389-1-fujita.tomonori@gmail.com>
-	<874ivvvvjw.fsf@kernel.org>
-	<CANiq72ntFkvN983N3x=AKMd6fW2yXb8d0LB1LT3c20oYmPCiGg@mail.gmail.com>
-	<RnAWsCMnf4ZwlMnwtZY9XC95vcJ6S0QUiRGwx_H7juiXpbSze8NUfbrPDSkLdd_CZxXuxs2jykc_ZDes95SV5A==@protonmail.internalid>
-	<20250704.093618.1554080777023438310.fujita.tomonori@gmail.com>
-User-Agent: mu4e 1.12.9; emacs 30.1
-Date: Fri, 04 Jul 2025 09:28:16 +0200
-Message-ID: <87bjq0tnxr.fsf@kernel.org>
+	s=arc-20240116; t=1751614155; c=relaxed/simple;
+	bh=aE9AaBY5AmaIc/TSlJk8xYSEDgun6T2UHI+HfGjj9Ps=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=XhIYOjhm3OgdRS52sniBaQyzw21z0scpYKi0Hjn2psIYGnQd4QirtGiA9nWOXgdTdX/uJQDdUzyn/ce4M2jZOJycodmwpwCBh9AmLbUuMGxCJV5vCR4EPNxysaOybYcdIsFKjKH1Nq3jtxFZp8OBrBpQpd5GUW1qsHyX5SKtdYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MbY34r+O; arc=none smtp.client-ip=209.85.218.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-ej1-f74.google.com with SMTP id a640c23a62f3a-ade5b98537dso65865466b.2
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Jul 2025 00:29:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1751614152; x=1752218952; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Gf6uaybgVMOXPAt0XHGcRybgeX6DJY7grDqhABQTmPs=;
+        b=MbY34r+OZ4sSh2m2SdOrH33bUI6tfxNnlQubN9dK0Z8TO1bCEu9V9P8Gbcg4U7TrLF
+         fpebk7icnlqoKqu0FsV8YPQkif98qheH+IidJZ1syjSa63QOv0RQj17oxRMCwWrZc7UY
+         4VLapkR1iVJmFnvKyE7EFrrRf+2nggk9SLDBRUI2CKPlIYiaRWncKK+gEaI9cdXBlCMo
+         CI0Q2WQX1HWGlW9gmSdzyeTpvgvbZMUw0z1ROMfPEPcsNpEzb5fDU/W8qu/gnX3KIWwH
+         9c4qVStkumlKZMos0xXikmU8XoxUKCuBUjNAHASbHn0DWNS6Rry5Q1+d9ojSFfLSSAet
+         x6Iw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751614152; x=1752218952;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Gf6uaybgVMOXPAt0XHGcRybgeX6DJY7grDqhABQTmPs=;
+        b=PqID6JKDO1vbLo3o9bSBGcpzCTSi9+bt+H7nFtDGjKk6bd7PrTHwbC8G3Bn2OAoZg/
+         V75v1luuq2pyKUT3PAHHHGi8EYvcd2bc/KNIggAkUB6ZWoIT+nHvh5RUeS/m8vtzQDsV
+         yCQpq9X4TYrkaGelrQiImixtKouxDMchG10bio171Y1zTnqBPrMZo/bLZ+seULFeZYW3
+         el3GLq2Te0+W/EB/DmVlP/WbVdkmBvyhQuma3iDyqupr4Kpg9tnErVnmA12KFh47uM2s
+         MZV4CVZjVdCNJqRfqsbWubZ7EttXq820NFIKAspbH2Uq7uJYuXCByo/TNfmig9cMehI8
+         dKxA==
+X-Forwarded-Encrypted: i=1; AJvYcCW3oVan9wgHFSnszMoTSH7zKTwDNohC0Ea/RhjNsvxBcyd2dWOv0ThwHLoENf8Mv9qFoVQhcJKq/3LDhT0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyc90pSMfWPcYmAqqoNWMuvglD15r51KjpfSSLZDOFJFwmlYk6G
+	l6Kre9zO1Y6ODfd1GVzUm3h3TW444Bl09tZlbgHA5NDmsSw63+wMXcQ4zPkTpZOGk2i4kPzP7Hd
+	om2pzt5fhTQ0wJDtAdQ==
+X-Google-Smtp-Source: AGHT+IGp9FJse3ErpiN0ssWTw95ljLS5jOUthXxjTSM3lcoarrJg2X6yKdGrmZzth00G3ncOAWatSsk1f4c1EMU=
+X-Received: from edbcy3.prod.google.com ([2002:a05:6402:1c83:b0:60c:7d86:df07])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:907:9805:b0:ade:35fc:1a73 with SMTP id a640c23a62f3a-ae3fbe45f37mr140704966b.55.1751614152193;
+ Fri, 04 Jul 2025 00:29:12 -0700 (PDT)
+Date: Fri, 4 Jul 2025 07:29:11 +0000
+In-Reply-To: <92c347d7-4b59-436e-b4ce-5941bdc42cd8@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Mime-Version: 1.0
+References: <20250627-topics-tyr-request_irq-v5-0-0545ee4dadf6@collabora.com>
+ <20250627-topics-tyr-request_irq-v5-3-0545ee4dadf6@collabora.com>
+ <022A0919-37A5-4FF0-B834-333E512EC0C6@collabora.com> <92c347d7-4b59-436e-b4ce-5941bdc42cd8@kernel.org>
+Message-ID: <aGeCx5zHUPKtaryg@google.com>
+Subject: Re: [PATCH v5 3/6] rust: irq: add support for non-threaded IRQs and handlers
+From: Alice Ryhl <aliceryhl@google.com>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Daniel Almeida <daniel.almeida@collabora.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Benno Lossin <lossin@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, 
+	"Krzysztof =?utf-8?Q?Wilczy=C5=84ski?=" <kwilczynski@kernel.org>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, linux-pci@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 
-"FUJITA Tomonori" <fujita.tomonori@gmail.com> writes:
+On Thu, Jul 03, 2025 at 08:49:07PM +0200, Danilo Krummrich wrote:
+> On 7/3/25 7:12 PM, Daniel Almeida wrote:
+> > > +/// Callbacks for an IRQ handler.
+> > > +pub trait Handler: Sync {
+> >=20
+> > I wonder if we should require =E2=80=99static here too?
+> >=20
+> > Same for the Threaded trait.
+>=20
+> You already have
+>=20
+> 	impl<T: Handler + 'static> Registration<T>
+>=20
+> which I think this is good enough.
 
-> On Wed, 2 Jul 2025 14:22:48 +0200
-> Miguel Ojeda <miguel.ojeda.sandonis@gmail.com> wrote:
->
->> On Wed, Jul 2, 2025 at 10:36=E2=80=AFAM Andreas Hindborg <a.hindborg@ker=
-nel.org> wrote:
->>>
->>> I think this kind of test would be better suited for the new `#[test]`
->>> macro. Would you agree?
->>
->> I don't mind seeing the edge cases, since the behavior is mentioned in
->> the docs, just like sometimes we show e.g. the `Err`/`None` cases in
->> other functions etc., and it may help to further highlight that this
->> can actually return possibly unexpected values.
->>
->> It is also what the standard library does, at least in some similar case=
-s, e.g.
->>
->>     https://doc.rust-lang.org/std/primitive.i64.html#method.saturating_a=
-dd
->>
->> Maybe instead we can help making it a bit more readable, e.g. avoiding
->> the intermediate variable to have a single line plus using a `# use
->> Delta` to further reduce the line length?
->>
->> Also adding a newline between the "normal" case and the saturation
->> cases would probably help too.
->
-> I've updated from_micros() based on the above suggestion - looks
-> better to me. What do you think?
->
-> /// # Examples
-> ///
-> /// ```
-> /// use kernel::time::Delta;
-> ///
-> /// assert_eq!(Delta::from_micros(5).as_nanos(), 5_000);
-> /// assert_eq!(Delta::from_micros(9_223_372_036_854_775).as_nanos(), 9_22=
-3_372_036_854_775_000);
-> /// assert_eq!(Delta::from_micros(-9_223_372_036_854_775).as_nanos(), -9_=
-223_372_036_854_775_000);
-> ///
-> /// assert_eq!(Delta::from_micros(9_223_372_036_854_776).as_nanos(), i64:=
-:MAX);
-> /// assert_eq!(Delta::from_micros(-9_223_372_036_854_776).as_nanos(), i64=
-::MIN);
-> /// ```
-> #[inline]
-> pub const fn from_micros(micros: i64) -> Self {
->     Self {
->         nanos: micros.saturating_mul(NSEC_PER_USEC),
->     }
-> }
+If we're not going to support non-static handlers, then I think it's
+simpler to place the 'static bound on the trait.
 
-From my point of view, I would like to see
-
-  assert_eq!(Delta::from_micros(9_223_372_036_854_775).as_nanos(), 9_223_37=
-2_036_854_775_000);
-  assert_eq!(Delta::from_micros(-9_223_372_036_854_775).as_nanos(), -9_223_=
-372_036_854_775_000);
-
-  assert_eq!(Delta::from_micros(9_223_372_036_854_776).as_nanos(), i64::MAX=
-);
-  assert_eq!(Delta::from_micros(-9_223_372_036_854_776).as_nanos(), i64::MI=
-N);
-
-moved to a `#[test]` block. They do not provide value for me when
-reading the docs. I don't know what the very large constants are and
-what I am supposed to learn from those asserts. Maybe if the constants
-had a name, or were expressed relative to another constant?
-
-I think this one:
-
-  /// assert_eq!(Delta::from_micros(5).as_nanos(), 5_000);
-
-is fine in the documentation block.
-
-
-Best regards,
-Andreas Hindborg
-
-
+Alice
 
