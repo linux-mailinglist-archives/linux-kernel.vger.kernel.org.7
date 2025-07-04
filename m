@@ -1,117 +1,128 @@
-Return-Path: <linux-kernel+bounces-717932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-717925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7252AF9AE9
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 20:50:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FD36AF9AD9
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 20:41:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2226C1C411D8
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 18:50:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E37A94A70DB
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 18:40:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74FE21DE889;
-	Fri,  4 Jul 2025 18:50:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A075288C03;
+	Fri,  4 Jul 2025 18:41:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="YrN2OT2W"
-Received: from smtp.smtpout.orange.fr (smtp-23.smtpout.orange.fr [80.12.242.23])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ytl8s+Qu"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7B3D433B3;
-	Fri,  4 Jul 2025 18:50:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2728227B8E;
+	Fri,  4 Jul 2025 18:41:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751655029; cv=none; b=RfS5xdMfKDp6moEPFe+am1lP9H8tTY9rnE/xrg2vO6CjKdR6nA6Cp8OB89ecEpJQIeLedFjl5LYLKQbIaECxUBPCixGC4mDMTZY2q/zFSryXlEw22N0A5vuDfyOP+vt80HwsfuTaaPhJ4FfWtQAjiADbXgPkaSBv2yy/XyYjWss=
+	t=1751654471; cv=none; b=kZK8s8+phYFoBcuvqRJRdSH+fzCXDQwEaQcZBvLJ2qO9+jJsjvZ5UDPqw6ZFd1JXwOPyFZcPbG0o9THqnXF1EwoMiuATmL8MFwDgX0me1MMFzlD0gXi931i5sfd5LNqLD/mK59z+Xma/HXRUuIopTs0291Iei2rUzgh+IAwBiRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751655029; c=relaxed/simple;
-	bh=nEYwc1VTGcfVPDviy0pXUbVVeHPyAmgcNUEtRwV9eIo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=izXi3vsKfYkOuwCVZGE7u+Zt6AiLCUukVvj7JsCuMXMVyQvwHKPHU1wAcKwThJnFnh/j2grLu2dwX1JXtlRgoI6wlZhmfmPQ8BUmDQ3rAmpvVK5quAD/7nWMZBHR28vXTD/oAwDeJeNoIdvr8QwvWx5obaCIY3x2FIcs6c5Ti+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=YrN2OT2W; arc=none smtp.client-ip=80.12.242.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
- ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
-	by smtp.orange.fr with ESMTPA
-	id XlLBuBXyQZ4iTXlLBuO0t3; Fri, 04 Jul 2025 20:40:55 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1751654455;
-	bh=OnSSrMdktbh2fXNZWaY2HHusP/khfiopcZcQ51lmSZE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=YrN2OT2WlfXaYtgIjJMCjWU35w1ts2kTYrOOSWUpJB6Gf7kHrxJWkIy5uf0hNzEUJ
-	 FpoagX2Twl4Cf/WEOIAta/ZUboYpN/CWVQMPNHU6PgPt1chV7wTKaVNBe4bkk/KhTF
-	 nkCflaBD8LYQwa+NNzs8ON2CK5UeIqS6YyHdimrRBwDenNtUUF3qvsqK7fviM98PVi
-	 fmqIJXn4mx1oYOtc0LbUBSlbAD3aTOEGW/DhXTyYs4DOtSaSYjNUKA9L26UMtYd4n6
-	 X6Q/bWwGbTEedhUPs8Vr+vS7WYCM6OhP1pF6IeiLERVxInTaR3bF+K8LFiTtSgj7JO
-	 JEhME0BaFBviQ==
-X-ME-Helo: [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Fri, 04 Jul 2025 20:40:55 +0200
-X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
-Message-ID: <95dad033-4338-46de-b62a-be1db459b0ec@wanadoo.fr>
-Date: Fri, 4 Jul 2025 20:40:51 +0200
+	s=arc-20240116; t=1751654471; c=relaxed/simple;
+	bh=4PtD/ILRXBEoCudtPmkF3ybvtqaqQYmADOya+tz7Ku4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bATRT4MZ7DToBwwyR4PWszy/AMIdriOYjTl14wz8rIW2pJ3gq77OWTT/MRAkr1UqkU03rsllGTFBGZv1sMxRcecJ0UAH8X2GIehAtqUaAz+bNwLLYDOy4DtQ0HjBenbhB78Yxdeoyv50j86t21j64mEC6jla09mjAnQ7nqA/vqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ytl8s+Qu; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751654469; x=1783190469;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=4PtD/ILRXBEoCudtPmkF3ybvtqaqQYmADOya+tz7Ku4=;
+  b=Ytl8s+Qut0RrorSBt1nE0OzTgUKiKBwfiqo3gkQmxZqCe94Sm99iMHM8
+   ZOhrBJCqvQ4DMwJPIK56pVfsotCBsqHOWTyWmb9KaxgY6qPbFrvX2VoYg
+   xQaKYot83mHIupSaAkc8DjmctE1ERh3VB0B5V9s1vqytH545DNcjjOx0s
+   erL/9AQi/Z6EhivAPKVbluK7LYyFBkbkcpIJ36YVksTm40+qaA9KwaXsp
+   K7QFU8pAYUwTvT/w/tu+13vEMjQ0Q6eCuHLcompBQpUKUyxlCiVfRHIZk
+   aZDo54HmxTJ+lR55DVq0Y4Q/GKQ5GBrE4SiIIDqoMpQCwYr997xkSoW/E
+   w==;
+X-CSE-ConnectionGUID: r5UZ1XSLRhG7x/+bLCS8xg==
+X-CSE-MsgGUID: 44Q2BhBPQq6vfhsY+Hrg3A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11484"; a="57795001"
+X-IronPort-AV: E=Sophos;i="6.16,288,1744095600"; 
+   d="scan'208";a="57795001"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 11:41:08 -0700
+X-CSE-ConnectionGUID: hBpJeHbcTj6a1GMhCal+Fg==
+X-CSE-MsgGUID: E1sBxAdPR7mZ3/yVwRFkOw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,288,1744095600"; 
+   d="scan'208";a="160221048"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 11:41:05 -0700
+Date: Fri, 4 Jul 2025 21:41:02 +0300
+From: Raag Jadav <raag.jadav@intel.com>
+To: =?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	airlied@gmail.com, simona@ffwll.ch,
+	Krzysztof Karas <krzysztof.karas@intel.com>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	kernel-dev@igalia.com
+Subject: Re: [PATCH v3 1/3] drm/doc: Fix title underline for "Task
+ information"
+Message-ID: <aGggPuSCEK_opydS@black.fi.intel.com>
+References: <20250627171715.438304-1-andrealmeid@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/3] eeprom: add driver for ST M24LR series RFID/NFC
- EEPROM chips
-To: Abd-Alrhman Masalkhi <abd.masalkhi@gmail.com>
-Cc: arnd@arndb.de, conor+dt@kernel.org, devicetree@vger.kernel.org,
- gregkh@linuxfoundation.org, krzk+dt@kernel.org,
- linux-kernel@vger.kernel.org, luoyifan@cmss.chinamobile.com, robh@kernel.org
-References: <f14dfb9a-caf7-4889-a892-6fd61a9a5ecd@wanadoo.fr>
- <20250704151146.12118-1-abd.masalkhi@gmail.com>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20250704151146.12118-1-abd.masalkhi@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250627171715.438304-1-andrealmeid@igalia.com>
 
-Le 04/07/2025 Ã  17:11, Abd-Alrhman Masalkhi a Ã©critÂ :
-> Hi Christophe,
+On Fri, Jun 27, 2025 at 02:17:13PM -0300, André Almeida wrote:
+> Fix the following warning:
 > 
-> Thank you for the review!
+> Documentation/gpu/drm-uapi.rst:450: WARNING: Title underline too short.
 > 
-> On Fri, 4 Jul 2025 16:12:56 +0200, Christophe JAILLET wrote:
->>> +/**
->>> + * m24lr_regmap_read - read data using regmap with retry on failure
->>> + * @regmap:  regmap instance for the device
->>> + * @buf:     buffer to store the read data
->>> + * @size:    number of bytes to read
->>> + * @offset:  starting register address
->>> + *
->>> + * Attempts to read a block of data from the device with retries and timeout.
->>> + * Some M24LR chips may transiently NACK reads (e.g., during internal write
->>> + * cycles), so this function retries with a short sleep until the timeout
->>> + * expires.
->>> + *
->>> + * Returns:
->>> + *	 Number of bytes read on success,
->>> + *	 -ETIMEDOUT if the read fails within the timeout window.
->>> + */
->>> +static ssize_t m24lr_regmap_read(struct regmap *regmap, u8 *buf,
->>> +				 size_t size, unsigned int offset)
->>
->> Why returning a ssize_t?
->> regmap_bulk_read() returns an int.
+> Task information
+> --------------- [docutils]
 > 
-> Since I return @size (of type size_t) on success, should I keep the
-> return type as ssize_t, or would it be better to change it to int
-> to match regmap_bulk_read()?
+> Fixes: cd37124b4093 ("drm/doc: Add a section about "Task information" for the wedge API")
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Signed-off-by: André Almeida <andrealmeid@igalia.com>
+> ---
+> v2: Add Reported-by tag
+> ---
+>  Documentation/gpu/drm-uapi.rst | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/gpu/drm-uapi.rst b/Documentation/gpu/drm-uapi.rst
+> index 263e5a97c080..10dea6a1f097 100644
+> --- a/Documentation/gpu/drm-uapi.rst
+> +++ b/Documentation/gpu/drm-uapi.rst
+> @@ -447,7 +447,7 @@ hang is usually the most critical one which can result in consequential hangs or
+>  complete wedging.
+>  
+>  Task information
+> ----------------
+> +----------------
+>  
+>  The information about which application (if any) was involved in the device
+>  wedging is useful for userspace if they want to notify the user about what
+> @@ -728,4 +728,4 @@ Stable uAPI events
+>  From ``drivers/gpu/drm/scheduler/gpu_scheduler_trace.h``
+>  
+>  .. kernel-doc::  drivers/gpu/drm/scheduler/gpu_scheduler_trace.h
+> -   :doc: uAPI trace events
+> \ No newline at end of file
+> +   :doc: uAPI trace events
 
-Hmm, this ends being used with BIN_ATTR() in 
-m24lr_ctl_sss_[read|write]() so it needs to keep with ssize_t.
+Unrelated change. Someone with a different editor added this and now
+your editor disagrees with it.
 
-CJ
+Switching to binary mode usually fixes the issue.
 
-> 
-> Best regards,
-> Abd-Alrhman Masalkhi
-> 
-> 
-
+Raag
 
