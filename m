@@ -1,108 +1,139 @@
-Return-Path: <linux-kernel+bounces-716719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D65AAF8B24
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 10:21:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50E13AF8B2C
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 10:22:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8FB8DB410BD
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 08:19:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B2021891451
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 08:20:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36149289372;
-	Fri,  4 Jul 2025 07:54:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3410288C3A;
+	Fri,  4 Jul 2025 07:54:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Pt13Wn75"
-Received: from relay16.mail.gandi.net (relay16.mail.gandi.net [217.70.178.236])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="leyJnn35"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF711288C19;
-	Fri,  4 Jul 2025 07:54:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.236
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94F09286415
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 07:54:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751615644; cv=none; b=jm2gh2UE1i/mbQI1+Ek+ViKMqzjp9sm9cgckFv6UewBjQmNwa1P0JzNiOjWgMyaJ5MYa34VzL4WVhf6v7c2MeyjcLAEeRo7RHaJQ9aP5W/StCihzK/mMgYegWDbH8GUk7a9JE2udDUUWbHmIDY0YfbW5Tqzd4r5cfX+g0vPfyjk=
+	t=1751615643; cv=none; b=r2KQ4Qyn/MpUD09c8YSM53+ohhwd0J/b44/2QW2vGRV6sD8jPJpV461tTiiVf3xREXVaVmS1oNdUSSF0LXWhAqK86Gaqti1Fa8vTBO0914MlMw51wIvBZbA28n8tut1xAsuXT+S0rv2Tq73jo/Uym9UrnuY5E/XNO4k5ZFFBWG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751615644; c=relaxed/simple;
-	bh=Ja1PvWH1xvcWWWPWhJqOm3iUtLfvIbMEc340tKKqjbo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tzIWVYTuUi0A+nEcgDL74OU/eK8oKSN9Tt1HVeGR2rmWdl7q8Jw75PIyFHpkBZwbZE+YsS3tSRLtKUkEwcO5dP1R22hHhubk0OI9wZPQsmws8dLfWiNeoASBr6eJX2gnI9ApfuVNmUPcktqASoT+ypqzU4SQxpwn88c2bbC6Czk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Pt13Wn75; arc=none smtp.client-ip=217.70.178.236
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 144F6449EC;
-	Fri,  4 Jul 2025 07:53:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1751615639;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fGokUQU9D12trbOtyhmYZxUvKU7aVutPppQ14CcUIWA=;
-	b=Pt13Wn75RkhLV5K/mIBzGx1yeA+VpBMJm3BU4XhkWzkKw2E9ol0xa6glQFbWKhx+elBXGs
-	Dc4BttBnHVwL8SXxZXTREKDWncqJ7q+modSv7/clL2AOVFQq0dB6YASOsPnXwI/rf3eQc0
-	NUt6n+nifKwfOkLZMdmd2Zq7d1Q5xX8KBTRRzKXEBCDyBH+Lf+r0HTOo84F8vMq7KTT+u9
-	LZBLFX4VopTDErPvZod2fgZFwqXyKZiyw/Sia4i0J/jr/JxtZkM58XNc9J1XNSPe3XVqiT
-	JB4kdwQGsecuWUyY2Tf1WL3fsD2sFBu/RYiYOo6oEnWPDdiH9P2Ou/FgZWpa0A==
-Date: Fri, 4 Jul 2025 09:53:56 +0200
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
- <pabeni@redhat.com>, Andre Edich <andre.edich@microchip.com>,
- kernel@pengutronix.de, linux-kernel@vger.kernel.org, Russell King
- <linux@armlinux.org.uk>, netdev@vger.kernel.org, Lukas Wunner
- <lukas@wunner.de>
-Subject: Re: [PATCH net v2 1/3] net: phy: smsc: Fix Auto-MDIX configuration
- when disabled by strap
-Message-ID: <20250704095356.680bd24b@fedora.home>
-In-Reply-To: <20250703114941.3243890-2-o.rempel@pengutronix.de>
-References: <20250703114941.3243890-1-o.rempel@pengutronix.de>
-	<20250703114941.3243890-2-o.rempel@pengutronix.de>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1751615643; c=relaxed/simple;
+	bh=2ytS98LP09yxUibnFIJ15FCH120g81M7gToAN6HatlE=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=GYuwmTTOSdzNE3msnMfgvnK5uepmNJaoyhP4mgatiZjJ9hefVmTLvHm3xQ6BRO+Jg9zFo7dMAQ8tIaXG6J+EqdCA/45XAjCUdO+Olx/mroEV/LxDlgMEZpSDT0xaeffcNTrQTmVIXQPlgoco3+7fWUO/J2XCt9huB3O05ZZjwnI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=leyJnn35; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751615641; x=1783151641;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=2ytS98LP09yxUibnFIJ15FCH120g81M7gToAN6HatlE=;
+  b=leyJnn35wA1fclrEMPDqejnN+NT+wnDJyH2jfAWilYUkAvsCXPkoGkNw
+   wl8+epK3MWsWM0VQpidVfsuht2KDPWUvEx8lwAXx54zPJPOrNf/5NVJ+p
+   jNmzFNCFChr2XLbLFs3AwR0MN4BLJoJR5ZLKQEg0ZiY1S/KJlC4x5xtw1
+   i2AqT7snd1OlElVGEKC6sCkuxp2GgbUrWSWTGw0py8JB8wLjE0Ri33qNT
+   ryvVCtHkiTyU5LRmTc1emTlo5DqVQKs0HL6YQNxSP6M3w4F37Qk/WwlTT
+   oTU+PCjDpa2bo5v2VcbSooT/QEeaizVLaatpmXdGCVCalylzLiJPxU5Kk
+   A==;
+X-CSE-ConnectionGUID: Ev9syrP0QDiawrKv+2OxZw==
+X-CSE-MsgGUID: 2YOVGBitTQmQLmo4VnOsFg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11483"; a="76494446"
+X-IronPort-AV: E=Sophos;i="6.16,286,1744095600"; 
+   d="scan'208";a="76494446"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 00:54:01 -0700
+X-CSE-ConnectionGUID: MHb23xx3RHCVWynOmTIl3A==
+X-CSE-MsgGUID: +zKqp9/NRbmdahhWuJas7w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,286,1744095600"; 
+   d="scan'208";a="158924153"
+Received: from jkrzyszt-mobl2.ger.corp.intel.com (HELO svinhufvud.fi.intel.com) ([10.245.244.244])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 00:53:59 -0700
+Received: from svinhufvud.lan (localhost [IPv6:::1])
+	by svinhufvud.fi.intel.com (Postfix) with ESMTP id 1470F44394;
+	Fri,  4 Jul 2025 10:53:57 +0300 (EEST)
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Jacek Lawrynowicz <jacek.lawrynowicz@linux.intel.com>,
+	Maciej Falkowski <maciej.falkowski@linux.intel.com>,
+	Oded Gabbay <ogabbay@kernel.org>
+Cc: dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 01/80] accel/ivpu: Remove redundant pm_runtime_mark_last_busy() calls
+Date: Fri,  4 Jul 2025 10:53:56 +0300
+Message-Id: <20250704075356.3216699-1-sakari.ailus@linux.intel.com>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250704075225.3212486-1-sakari.ailus@linux.intel.com>
+References: <20250704075225.3212486-1-sakari.ailus@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddvvdeiudcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthejredtredtvdenucfhrhhomhepofgrgihimhgvucevhhgvvhgrlhhlihgvrhcuoehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeegveeltddvveeuhefhvefhlefhkeevfedtgfeiudefffeiledttdfgfeeuhfeukeenucfkphepvdgrtddumegtsgduleemkegugeehmeegledttdemieehieekmedvlegsudemlegvfhehmegvkegtjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudelmeekugegheemgeeltddtmeeiheeikeemvdelsgdumeelvghfheemvgektgejpdhhvghlohepfhgvughorhgrrdhhohhmvgdpmhgrihhlfhhrohhmpehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedufedprhgtphhtthhopehordhrvghmphgvlhesphgvnhhguhhtrhhonhhigidruggvpdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohephhhkrghllhifvghithdusehgmhgrihhlrdgtohhmpdhrt
- ghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrdgtohhmpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehprggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtoheprghnughrvgdrvgguihgthhesmhhitghrohgthhhiphdrtghomh
+Content-Transfer-Encoding: 8bit
 
-Hi Oleksij,
+pm_runtime_put_autosuspend(), pm_runtime_put_sync_autosuspend(),
+pm_runtime_autosuspend() and pm_request_autosuspend() now include a call
+to pm_runtime_mark_last_busy(). Remove the now-reduntant explicit call to
+pm_runtime_mark_last_busy().
 
-On Thu,  3 Jul 2025 13:49:39 +0200
-Oleksij Rempel <o.rempel@pengutronix.de> wrote:
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+---
+The cover letter of the set can be found here
+<URL:https://lore.kernel.org/linux-pm/20250704075225.3212486-1-sakari.ailus@linux.intel.com>.
 
-> Correct the Auto-MDIX configuration to ensure userspace settings are
-> respected when the feature is disabled by the AUTOMDIX_EN hardware strap.
-> 
-> The LAN9500 PHY allows its default MDI-X mode to be configured via a
-> hardware strap. If this strap sets the default to "MDI-X off", the
-> driver was previously unable to enable Auto-MDIX from userspace.
-> 
-> When handling the ETH_TP_MDI_AUTO case, the driver would set the
-> SPECIAL_CTRL_STS_AMDIX_ENABLE_ bit but neglected to set the required
-> SPECIAL_CTRL_STS_OVRRD_AMDIX_ bit. Without the override flag, the PHY
-> falls back to its hardware strap default, ignoring the software request.
-> 
-> This patch corrects the behavior by also setting the override bit when
-> enabling Auto-MDIX. This ensures that the userspace configuration takes
-> precedence over the hardware strap, allowing Auto-MDIX to be enabled
-> correctly in all scenarios.
-> 
-> Fixes: 05b35e7eb9a1 ("smsc95xx: add phylib support")
-> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-> Cc: Andre Edich <andre.edich@microchip.com>
+In brief, this patch depends on PM runtime patches adding marking the last
+busy timestamp in autosuspend related functions. The patches are here, on
+rc2:
 
-Reviewed-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+        git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
+                pm-runtime-6.17-rc1
 
-Maxime
+ drivers/accel/ivpu/ivpu_job.c | 1 -
+ drivers/accel/ivpu/ivpu_pm.c  | 2 --
+ 2 files changed, 3 deletions(-)
+
+diff --git a/drivers/accel/ivpu/ivpu_job.c b/drivers/accel/ivpu/ivpu_job.c
+index 060f1fc031d3..05a1a768e1c9 100644
+--- a/drivers/accel/ivpu/ivpu_job.c
++++ b/drivers/accel/ivpu/ivpu_job.c
+@@ -1049,6 +1049,5 @@ void ivpu_context_abort_work_fn(struct work_struct *work)
+ 	mutex_unlock(&vdev->submitted_jobs_lock);
+ 
+ runtime_put:
+-	pm_runtime_mark_last_busy(vdev->drm.dev);
+ 	pm_runtime_put_autosuspend(vdev->drm.dev);
+ }
+diff --git a/drivers/accel/ivpu/ivpu_pm.c b/drivers/accel/ivpu/ivpu_pm.c
+index eacda1dbe840..761b4d7e1a5a 100644
+--- a/drivers/accel/ivpu/ivpu_pm.c
++++ b/drivers/accel/ivpu/ivpu_pm.c
+@@ -359,7 +359,6 @@ int ivpu_rpm_get(struct ivpu_device *vdev)
+ 
+ void ivpu_rpm_put(struct ivpu_device *vdev)
+ {
+-	pm_runtime_mark_last_busy(vdev->drm.dev);
+ 	pm_runtime_put_autosuspend(vdev->drm.dev);
+ }
+ 
+@@ -428,7 +427,6 @@ void ivpu_pm_enable(struct ivpu_device *vdev)
+ 	struct device *dev = vdev->drm.dev;
+ 
+ 	pm_runtime_allow(dev);
+-	pm_runtime_mark_last_busy(dev);
+ 	pm_runtime_put_autosuspend(dev);
+ }
+ 
+-- 
+2.39.5
 
 
