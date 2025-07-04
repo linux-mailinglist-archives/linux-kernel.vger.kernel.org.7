@@ -1,117 +1,81 @@
-Return-Path: <linux-kernel+bounces-717672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-717673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20140AF973A
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 17:44:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 662CAAF973D
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 17:45:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2072317220D
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 15:44:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 620A51896474
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 15:45:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 559502D781C;
-	Fri,  4 Jul 2025 15:43:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75FCB2F234E;
+	Fri,  4 Jul 2025 15:45:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b="WrALbTEC"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="CYm2ND5j"
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6E94230BF8
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 15:43:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A09D1D63F7;
+	Fri,  4 Jul 2025 15:45:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751643833; cv=none; b=fGd6oeMHWGJVglDsIELT5IA+swJHIQcdqjV+KPhicOxkcN6CEJJMJJwGI6IYkqcSrQveqJLNKb+z9Wq5uFcfKMDpF5zmXT7bC7W24E/5jH7SW6xmuM6O+Q6R8Nf7n9QIz466/O7SzHY8QF3xLwJE32to3bFL9YNArNXLDYWcB24=
+	t=1751643914; cv=none; b=cJ+kv+VWAfvv2Yb0XMS8SRCSRm1g6owEAVRUAencw42D0oj14f/OhH3tO6wpq/W/T0SKU2VtbhLoePa4J5zYq7mTTYtZ7PyZLGjtIos99G8CBsgw4Z35KInLpV/DjAm/38N6Up79G04J2o5AZBCxGEJozE1d8KOm4+x+hnOuvFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751643833; c=relaxed/simple;
-	bh=E+SPCuPi3jpi+MlAluR+PuW02HQ8QNUf1lFxo1VmG2A=;
-	h=Date:Subject:CC:From:To:Message-ID; b=aqGZnxBiaUNRooiDwi4RBJHZvi7xbVzux0nRvglCyDAUb8ViEkdmq7ayvu6qwhdkLtrpbqCLB5MLEIHRIjTq6n7+C5LIFuiQo2o0dazMbJz/VWm4HrJuvgVsROF4a2RNwiAaSMNJvQRdHNcyitJ+5mzqd9zRdH6GRJZyTC3zv0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com; spf=pass smtp.mailfrom=dabbelt.com; dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b=WrALbTEC; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dabbelt.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-7490702fc7cso704049b3a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Jul 2025 08:43:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dabbelt-com.20230601.gappssmtp.com; s=20230601; t=1751643831; x=1752248631; darn=vger.kernel.org;
-        h=message-id:to:from:cc:subject:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0Fi7MgAC308LIP//ZnE1u51RXI1xNNSWwC3rsR+KjlY=;
-        b=WrALbTECwBkdIal/rocz5DaS1AfFLtDs3/wTkiTGdh42G3wMa/McLpTGU5+cwiOAWE
-         yR2NMDeaXTmSQq4YBMio9Uu4W1Z/nrsb3V/ny6TQL4LAcgn+tT8KSVEJ+x8Ce6C5Pykf
-         4cRP6MMtkBl/SXjBljdtp7CzY8oNI0CdHF/M9LS/tArgOXnztD2S09JhvFCV1+MdkYzk
-         OajrSILngpQugS0vuBuXY2rFMgiHqudTBGLe8XMok9WeSYq+aHEmq7gcDDHpA3pf1/Dp
-         8Fxrxs1SW1gdQtB1PpbsFo01qZWwaoEs07G6k44Msx/SCRVipFzrBbYEnoNx4tP76RlD
-         /nVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751643831; x=1752248631;
-        h=message-id:to:from:cc:subject:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0Fi7MgAC308LIP//ZnE1u51RXI1xNNSWwC3rsR+KjlY=;
-        b=JGpA1uqCAmTHWp1vl1ULlTPLVoaXIjoYs/g03WSHnYr3dLE2f1dbEL+JfKLKqbNyZ+
-         ++xXPGQ+dfjyarVcoHvmJ9OVkN9Z+S5irwiS/a1ICJ7mnbbAihmuA1wfKtc2AancZMPW
-         vLUmoe46YxO1QCIn/tiodkqCgs0gdEq193IokD1d7HGphvET/omyMrHOmy56FxmpoVno
-         Jd5RFpVBOxwF94ItF173bLHqD5L1HdfVoGtS9jh2TcVYHDxdG9rBcv1TbZ387KHe/pJ+
-         09trT2Vad6ZLFXqhRqNdaNdXsoYgrx3aShFrpVVSf9A0cfbEQeb9DYxGGKJX5ERM2KJT
-         Iyzw==
-X-Forwarded-Encrypted: i=1; AJvYcCUVXMb1Y7pKSUO9iB1RfsuB+odFizYDsamGgMfqQBqBXef1GQgB1V3XYPMGbryVl38MN1EToXH1Wy+I77I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwURcJ3CGqRbgl05B5/kTcV3xnj6Jw12+3NkIwlYOHl/XkU0aDt
-	6T2D6PNzi8Cnl2pnGTu59KwqVxH6NQJ/UlKF17/xZ0ENeJ8zGT7Pi78mZg4XasnLAjk=
-X-Gm-Gg: ASbGncvr8Z4yOOa0DyZpmmnpjpYevKD1bdwVZqgjFg8+lL3xgFNVCanP7FCKDaQ9WVp
-	AoVvu2dBZaTkObmfybLLCiJroNZWOrMITTLvQtKCSW4El1rHitiP1gNKSidcHvY1yFOH50WCmd3
-	1Hy22HvV02UT6dEiFyrROSl+7IY53PVRB/sw9ceONqS6/5YFpI9nYmk/mtbUtJzsiUZ1EyngAFg
-	R3LPCYXDkIhImT0n7w8yNBz/iPsJ1u+I5ggHg9+ArxGmAjFB5jenddqBIiIRc/ScWeiwkFKmMKV
-	YXwhS74JY5FsgKKv0reXW2bzx+5cPstOjCB7aLx+UVw6UaweJUZiGzxRXTKauw5h7faAuw==
-X-Google-Smtp-Source: AGHT+IEUDVoKYlkifMHSaDj7f/Nd2VF8qbFrSx0lugUxuKLLIiCCksgTeCHMnVKh28vqb/Op2sjC4Q==
-X-Received: by 2002:a05:6a20:430b:b0:21f:74b5:e8cf with SMTP id adf61e73a8af0-225c07df36fmr5589536637.25.1751643830844;
-        Fri, 04 Jul 2025 08:43:50 -0700 (PDT)
-Received: from localhost ([192.184.165.199])
-        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-74ce43d69f8sm2458166b3a.179.2025.07.04.08.43.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Jul 2025 08:43:50 -0700 (PDT)
-Date: Fri, 04 Jul 2025 08:43:50 -0700 (PDT)
-X-Google-Original-Date: Fri, 04 Jul 2025 08:43:29 PDT (-0700)
-Subject: [GIT PULL] RISC-V Fixes for 6.15-rc6
-CC:         linux-riscv@lists.infradead.org,        linux-kernel@vger.kernel.org
-From: Palmer Dabbelt <palmer@dabbelt.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Message-ID: <mhng-FBF637AD-7989-4E79-A669-3212608A491E@palmerdabbelt-mac>
+	s=arc-20240116; t=1751643914; c=relaxed/simple;
+	bh=Yi6FMGhdZmp71DBj0EoNOP5uhCm8MoVkiZdV+ZbPiRI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Idf6af1u7h8bedG7PXDd9DxRdxsjL5ExYTClqV75T95rfcoMA3R1EdUBb4s/oAZ9r6GF/+/IFqgRPxkS+ca5LGyTO9TzVxSvzcNfDNr/Buey/KzhGsPftA/TlA5NJrp0fhrlls6fOJLp5rZxqN0iKMmt1EU/jt0k+eeNUM8DKXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=CYm2ND5j; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=0DuoSA/mWIrLTrligVUY/NBThkero+S2hwPp4ObFsnk=; b=CYm2ND5jT/fDfPEk8Th1TeirHq
+	UGVgWZSPL5rTHJf6WCadczN1ZO4E+FpyRnwpTnben/wdG7GqtS3NqnG8B7t/QGPqnp/BmVDMCHznN
+	AyuOhHrmw4Pja4udlfz9sQla2k8E9qnjXrSg+ZncWoXxUZboNFDuTEIBqBHEgEkaRZWNEB1PQzCtV
+	4Co0ad9HDyZBE8/UVElU7r7Wjcll73g9nc8InVJSBqBD2A3kqkixycFBFAPL6CEsW9O4QRMh3peWE
+	cYiRoTIk5SDyOWF0Vnyl99JgSj2mZ41u+8dHVc3XnfGVcg/QxZqHX0EcGh933dP+93gXzwr3x3uGV
+	qUlizKvw==;
+Received: from [179.100.5.63] (helo=[192.168.15.100])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1uXiaw-00CUK5-Ru; Fri, 04 Jul 2025 17:44:59 +0200
+Message-ID: <d73d784f-f6a1-40dc-b4bf-f2dbbb4bf7bc@igalia.com>
+Date: Fri, 4 Jul 2025 12:44:54 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] selftests/futex: Add futex_numa to .gitignore
+To: Terry Tritton <terry.tritton@linaro.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Shuah Khan <shuah@kernel.org>,
+ Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ Darren Hart <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>
+Cc: ttritton@google.com, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250704103749.10341-1-terry.tritton@linaro.org>
+Content-Language: en-US
+From: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+In-Reply-To: <20250704103749.10341-1-terry.tritton@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-The following changes since commit d0b3b7b22dfa1f4b515fd3a295b3fd958f9e81af:
+Em 04/07/2025 07:37, Terry Tritton escreveu:
+> futex_numa was never added to the .gitignore file.
+> Add it.
+> 
+> Fixes: 9140f57c1c13 ("futex,selftests: Add another FUTEX2_NUMA selftest")
+> Signed-off-by: Terry Tritton <terry.tritton@linaro.org>
 
-  Linux 6.16-rc4 (2025-06-29 13:09:04 -0700)
+Reviewed-by: André Almeida <andrealmeid@igalia.com>
 
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git tags/riscv-for-linus-6.16-rc5
-
-for you to fetch changes up to 5903a7452e642f1475f274373633522db168b60b:
-
-  Merge tag 'riscv-fixes-6.16-rc4' of git://git.kernel.org/pub/scm/linux/kernel/git/alexghiti/linux into fixes (2025-07-02 10:51:00 -0700)
-
-----------------------------------------------------------------
-RISC-V Fixes for 6.15-rc6
-
-* kCFI is restricted to clang-17 or newer, as earlier versions have
-  known bugs.
-* sbi_hsm_hart_start is now staticly allocated, to avoid tripping up the
-  SBI HSM page mapping on sparse systems.
-
-----------------------------------------------------------------
-Nathan Chancellor (1):
-      riscv: Require clang-17 or newer for kCFI
-
-Palmer Dabbelt (1):
-      Merge tag 'riscv-fixes-6.16-rc4' of git://git.kernel.org/pub/scm/linux/kernel/git/alexghiti/linux into fixes
-
-Vivian Wang (1):
-      riscv: cpu_ops_sbi: Use static array for boot_data
-
- arch/riscv/Kconfig              | 3 ++-
- arch/riscv/kernel/cpu_ops_sbi.c | 6 +++---
- 2 files changed, 5 insertions(+), 4 deletions(-)
 
