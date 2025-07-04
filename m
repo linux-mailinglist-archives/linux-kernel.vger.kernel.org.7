@@ -1,77 +1,74 @@
-Return-Path: <linux-kernel+bounces-716797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBDDBAF8ADC
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 10:12:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0271CAF8AC9
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 10:11:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86A3F581633
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 08:09:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB0FA7BE750
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 08:08:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 005862F3C06;
-	Fri,  4 Jul 2025 07:55:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6CC82F3C26;
+	Fri,  4 Jul 2025 07:55:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Mdhw9O+Q"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FlN70D5h"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 646502F0E5F
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 07:54:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE75A2F0C6A;
+	Fri,  4 Jul 2025 07:54:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751615700; cv=none; b=PHY2S0ieAg+8EvPu3Gc1DcjNH959d/UbYTuSclfqBaKIMaKheKaFc/Z6G1JcM307ksCgjc9NQ9u9cQaGmOv1h66PIkH9Z3PWKIXdnVj+ckbDs4wCgul7fbX4LIsheK0vp+aKkjDbrBvT9mfzjAadWS7bSwoX4vtbzd5A0h4DiKE=
+	t=1751615700; cv=none; b=WnfqhJlflh++e21QPQl4N5iFzrId69CEHZiecEbYf6+GfkzSEip6yD7IOXK04FZnbgyty0yXWpx2nul0ukoud15eGMAOEn5OC7b1Cup9OH+xGUr9ohLyUCsFHHtOZRiHF849IuWEoN8MKAxYaPel8xr+T5PJvqUpoJngXipKArI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1751615700; c=relaxed/simple;
-	bh=gjeDw4vIXjSrxqdxHy0Im4aZwqFHN+s2mpooAal1uHY=;
+	bh=sfK9WpzhPRbPFgvJ0XGyiFlzwl0+Go4GT4lb4zAknlI=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=M58w8QbMIOJfR0sifoFW0ly3DU4e42Kdad1U8Ke4lkiGGEHycHRCUbOd3S1/ARWvM+IKjvH9vNMt2kRc6kgZteDC1SKkcwRd82OMTMSVzGs6d9pzZGeZD7bUd6VrTlndV8V8rRk3S1Ic2WK4JnIg7rOcQZ22ImEK3AOj6TKomNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Mdhw9O+Q; arc=none smtp.client-ip=198.175.65.11
+	 MIME-Version; b=CN4yKoSMxrZO1sRvFGyiLwqtsKV8cCxB1EEjfPzNmgG6qahxhuKYf0o3zDI1RyxLplPH/SkhlT6Ve5cpf4JNE8OXdklxJYyMXhE2xaOoGqNWovftIKf7BiaNjuk1gy9SJhpWgkocXY7DdxEdvgU62IQIFnm4GvtwvaRk6KlmNN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FlN70D5h; arc=none smtp.client-ip=198.175.65.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751615698; x=1783151698;
+  t=1751615697; x=1783151697;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=gjeDw4vIXjSrxqdxHy0Im4aZwqFHN+s2mpooAal1uHY=;
-  b=Mdhw9O+QTvOT6kI/1KVlLmwcmaDn6MMxY7OfSQNFcxRqSL4IeF8SzMEH
-   bMXldmwNRTIfVAlalWOfT5eYigQA3N+NJqKDBDXDDVBxRD2BFp98tljEm
-   fPht/5hP556khtWyg/iyAuhzmigSG0siFhCkq2nf+m0YiBZyRyoVXYxLZ
-   0hxYjMI2CsJBkVDFUZGQX+OKMe2D0F7hXQ3XsUV78CZK8Mwl9SRqDbOBe
-   RewkwdD19X0wJ2tqZbInCDcBQbauSnk9h4+t70NYNWDDcWOOl2qWjznq4
-   +g3yfhzIEe2S8lpEGzb5FwN1+lruBonbpofBORXKAEOrUzQ1QWENusyvt
-   g==;
-X-CSE-ConnectionGUID: 1VNquejeTvS5SzKREPMTPw==
-X-CSE-MsgGUID: mQFuLUpGQmm0u6pGb6cvgQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11483"; a="64194240"
+  bh=sfK9WpzhPRbPFgvJ0XGyiFlzwl0+Go4GT4lb4zAknlI=;
+  b=FlN70D5hE68HTNl2sD+7JrwIEjPgm1grZ3bTu3XEItRg30pDyvbuWrdD
+   pNfdDncjuOBi7fQOPmAk6ltW0ujAHuS0589d4MBYwG+PQGo7HgHfGbvu8
+   bonnNsE7XCoYd3j1q5BFmVwxDIiaFpYdfkZwE1q0EIkq9FNVBxq21Mgwm
+   nLm2S6V6yt+FlGaEtim8nbBzbdU9PrJ00xGGSQnF0G7PRqoYA4HT5k5mE
+   zwHOZ84XDlHuBOXOUHhZKukRnlFADvqXtU3naFLU2ACzAfWAfamHID2d/
+   LLpkXZsVhvRNWP/qslU9eRtcnDumRsADTMgRjCVkfvGX7vX8seVjc4RsJ
+   w==;
+X-CSE-ConnectionGUID: x9uO1LShSimJf9Ra3wOUJw==
+X-CSE-MsgGUID: wy+3eaNST6CScU6Iqix1Sg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11483"; a="64194235"
 X-IronPort-AV: E=Sophos;i="6.16,286,1744095600"; 
-   d="scan'208";a="64194240"
+   d="scan'208";a="64194235"
 Received: from fmviesa003.fm.intel.com ([10.60.135.143])
   by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 00:54:49 -0700
-X-CSE-ConnectionGUID: /bzuSEQFSLmXBgTqlRBzJg==
-X-CSE-MsgGUID: fs1mzZWtTNG62igOJzDl4Q==
+X-CSE-ConnectionGUID: e3O9hWJCT9i44Ftg8XOlgg==
+X-CSE-MsgGUID: GHWntWe8QAyofpx7RTUv9g==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.16,286,1744095600"; 
-   d="scan'208";a="158616625"
+   d="scan'208";a="158616627"
 Received: from jkrzyszt-mobl2.ger.corp.intel.com (HELO svinhufvud.fi.intel.com) ([10.245.244.244])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 00:54:46 -0700
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 00:54:47 -0700
 Received: from svinhufvud.lan (localhost [IPv6:::1])
-	by svinhufvud.fi.intel.com (Postfix) with ESMTP id DD9DD44419;
-	Fri,  4 Jul 2025 10:54:44 +0300 (EEST)
+	by svinhufvud.fi.intel.com (Postfix) with ESMTP id 77FD044433;
+	Fri,  4 Jul 2025 10:54:45 +0300 (EEST)
 Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
 From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>
-Cc: linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 57/80] regulator: stm32-vrefbuf: Remove redundant pm_runtime_mark_last_busy() calls
-Date: Fri,  4 Jul 2025 10:54:44 +0300
-Message-Id: <20250704075444.3221445-1-sakari.ailus@linux.intel.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 58/80] remoteproc: omap: Remove redundant pm_runtime_mark_last_busy() calls
+Date: Fri,  4 Jul 2025 10:54:45 +0300
+Message-Id: <20250704075445.3221481-1-sakari.ailus@linux.intel.com>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250704075225.3212486-1-sakari.ailus@linux.intel.com>
 References: <20250704075225.3212486-1-sakari.ailus@linux.intel.com>
@@ -100,61 +97,37 @@ rc2:
         git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
                 pm-runtime-6.17-rc1
 
- drivers/regulator/stm32-vrefbuf.c | 6 ------
- 1 file changed, 6 deletions(-)
+ drivers/remoteproc/omap_remoteproc.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/regulator/stm32-vrefbuf.c b/drivers/regulator/stm32-vrefbuf.c
-index a85ea94f0673..9e391206f09d 100644
---- a/drivers/regulator/stm32-vrefbuf.c
-+++ b/drivers/regulator/stm32-vrefbuf.c
-@@ -67,7 +67,6 @@ static int stm32_vrefbuf_enable(struct regulator_dev *rdev)
- 		writel_relaxed(val, priv->base + STM32_VREFBUF_CSR);
- 	}
+diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
+index 9c9e9c3cf378..cb01354248af 100644
+--- a/drivers/remoteproc/omap_remoteproc.c
++++ b/drivers/remoteproc/omap_remoteproc.c
+@@ -555,7 +555,6 @@ static void omap_rproc_kick(struct rproc *rproc, int vqid)
+ 		dev_err(dev, "failed to send mailbox message, status = %d\n",
+ 			ret);
  
--	pm_runtime_mark_last_busy(priv->dev);
- 	pm_runtime_put_autosuspend(priv->dev);
+-	pm_runtime_mark_last_busy(dev);
+ 	pm_runtime_put_autosuspend(dev);
+ }
  
- 	return ret;
-@@ -87,7 +86,6 @@ static int stm32_vrefbuf_disable(struct regulator_dev *rdev)
- 	val &= ~STM32_ENVR;
- 	writel_relaxed(val, priv->base + STM32_VREFBUF_CSR);
- 
--	pm_runtime_mark_last_busy(priv->dev);
- 	pm_runtime_put_autosuspend(priv->dev);
- 
- 	return 0;
-@@ -104,7 +102,6 @@ static int stm32_vrefbuf_is_enabled(struct regulator_dev *rdev)
- 
- 	ret = readl_relaxed(priv->base + STM32_VREFBUF_CSR) & STM32_ENVR;
- 
--	pm_runtime_mark_last_busy(priv->dev);
- 	pm_runtime_put_autosuspend(priv->dev);
- 
- 	return ret;
-@@ -125,7 +122,6 @@ static int stm32_vrefbuf_set_voltage_sel(struct regulator_dev *rdev,
- 	val = (val & ~STM32_VRS) | FIELD_PREP(STM32_VRS, sel);
- 	writel_relaxed(val, priv->base + STM32_VREFBUF_CSR);
- 
--	pm_runtime_mark_last_busy(priv->dev);
- 	pm_runtime_put_autosuspend(priv->dev);
+@@ -656,7 +655,6 @@ static int omap_rproc_start(struct rproc *rproc)
+ 	pm_runtime_use_autosuspend(dev);
+ 	pm_runtime_get_noresume(dev);
+ 	pm_runtime_enable(dev);
+-	pm_runtime_mark_last_busy(dev);
+ 	pm_runtime_put_autosuspend(dev);
  
  	return 0;
-@@ -144,7 +140,6 @@ static int stm32_vrefbuf_get_voltage_sel(struct regulator_dev *rdev)
- 	val = readl_relaxed(priv->base + STM32_VREFBUF_CSR);
- 	ret = FIELD_GET(STM32_VRS, val);
- 
--	pm_runtime_mark_last_busy(priv->dev);
- 	pm_runtime_put_autosuspend(priv->dev);
- 
+@@ -714,7 +712,6 @@ static int omap_rproc_stop(struct rproc *rproc)
+ 	reset_control_deassert(oproc->reset);
+ out:
+ 	/* schedule the next auto-suspend */
+-	pm_runtime_mark_last_busy(dev);
+ 	pm_runtime_put_autosuspend(dev);
  	return ret;
-@@ -218,7 +213,6 @@ static int stm32_vrefbuf_probe(struct platform_device *pdev)
- 	}
- 	platform_set_drvdata(pdev, rdev);
- 
--	pm_runtime_mark_last_busy(&pdev->dev);
- 	pm_runtime_put_autosuspend(&pdev->dev);
- 
- 	return 0;
+ }
 -- 
 2.39.5
 
