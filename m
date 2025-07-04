@@ -1,194 +1,86 @@
-Return-Path: <linux-kernel+bounces-716604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2203AF889C
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 09:08:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22111AF88D1
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 09:11:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D05F4A271D
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 07:07:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64A05188D7D5
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 07:11:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B641427A123;
-	Fri,  4 Jul 2025 07:06:16 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1778272E63
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 07:06:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5C92276036;
+	Fri,  4 Jul 2025 07:08:06 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11AA7270ECD
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 07:08:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751612776; cv=none; b=qK47BWLwc++LygrElqT7BJvWbFsgZprNz6zvNYi6BOctrGk5Odpy1U2saKmg9ipa2WXtTZyG8rSKM3GmVVF7abMSKMHBh1FXVvu6F1iGqXq6QSzuskYZggzzzGjbXvJYJZmhGvmA/h21cni0/rpsxRCYi5/bsmGFMpQnWKEVG5s=
+	t=1751612886; cv=none; b=XA77iHwUwR3XGObMKLzLha+aprAld9lZj7ZsLEFk+jdViN0M2XzE+vEq9/y2BZ7UgYsKZF/I8en1PRrBk3lLPuYfPA+0o41sv+t26ndGtrR3c69D/NuxfwLO+FkQkapo3aUkIdPPF42Ay87yx4lj9LY7BFMjIx43YLCqSqxy0QQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751612776; c=relaxed/simple;
-	bh=z8BuCXeoPjju7vEFWwtgdEFi07D5GI8t4nJ81VSua2Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pIVMgQI0ATBj8AfxB3aONncBOA69bON+HBC5nNL3neQSsxkqA7Qn8eTAtxAmUl7yIwO6Kkl8ofAxnb8lFWYdIF0IizwjYd9bjFd7yJZ5e5ITNO7zfgY4I6ewaBzM+59iXuLIaPq4ktaDIq0jMTsD38N8/tqJ8WEqA/EN6k/ujXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-669ff7000002311f-8f-68677d5b45aa
-From: Yunjeong Mun <yunjeong.mun@sk.com>
-To: sj@kernel.org
-Cc: akpm@linux-foundation.org,
-	damon@lists.linux.dev,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	kernel_team@skhynix.com,
-	honggyu.kim@sk.com
-Subject: Re: [RFC PATCH v2] samples/damon: support automatic node address detection
-Date: Fri,  4 Jul 2025 16:05:59 +0900
-Message-ID: <20250704070600.1786-1-yunjeong.mun@sk.com>
-X-Mailer: git-send-email 2.48.1.windows.1
-In-Reply-To: <20250703165237.43771-1-sj@kernel.org>
-References: 
+	s=arc-20240116; t=1751612886; c=relaxed/simple;
+	bh=uDGlimWCtCa80oGCygtVo6BsaDVU0Q5tZ8O7LKg6p2k=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=DLkp4Hm8rDzb+Xvf/6kLtXCF6nrQBFPsuPVXfEWSHcikdVbbbqIssaRDlnk4QwFQxvhiSTYyMUPvWQNJvs4iP0Y3IeEfFY8emQLPS4I3Il4GZZsQSFcuqjONu7kkAW8hnuNqyXv7gRYooAN8qu9E027MXu0nbLSn62WTxzTnLaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3e055be2288so6109245ab.3
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Jul 2025 00:08:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751612884; x=1752217684;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HzWOafE5MF9vsfPuTO/NDlxmvaSpk/1NDrSQLOZNCD4=;
+        b=CxEzYAyH0MCFxc1dYadGpB1HB2iwzq8Gur5ZbPgBB49u4CpLoiEmwEDcciDXbVUN0+
+         QVw8dsJ2OP+cU4Ko+CzOkoJZibPEcpnlnF+Wkjiv2rydS7t2ca2emCaZMGg7HVof5Ae7
+         /pN1RT2o/ohRw61GIBoiH3sNzrkyJ+Uf6gEHzCfldLw8dfqR5+ZWgEgv87keCyZkM0Kn
+         7gxt5ZNq1ZBOXf+dwEvTmdzzmH4GUd8cGayvKhRxpx9h9FKhUya6M1XfP74+1a3MaSiL
+         1fd+/uvhrJBXGaHACbwY/4xaX4z9LKpQaPlGkH+3HEhKHcBApSpBt3KGP1HGWdJ36Ym3
+         PImg==
+X-Gm-Message-State: AOJu0YykPjslbcMPxO82l3CdraceV0LVIHVorApNhbEutv15oiMdKare
+	+8on9Uhr00kh/li9B9lyujjdVfKZcLy15u4RNE5UsaCtz+KDuNMsdhWHlnwqjM9bzJhrewitxB2
+	N6C899cZJmdmAO7kTaHFCTPD+XFlC5NQptYCEuTgQLgOMoESE0o7QSpm7g14=
+X-Google-Smtp-Source: AGHT+IGkOBMdlQDPDpAIml6qexLih4/K5RfamCoXZB2n1Ep4n0AWsMOIasWsuUtg/ih13SxgK7B631EVfJYMBHWd5uHO8HiXi6Zo
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrOLMWRmVeSWpSXmKPExsXC9ZZnoW50bXqGQcs3Vos569ewWTz5/5vV
-	4vKuOWwW99b8Z7U4/PUNkwOrx6ZVnWwemz5NYvc4MeM3i8eLzTMZPT5vkgtgjeKySUnNySxL
-	LdK3S+DKWDb9GUvBfcWK96vmsDcwHpHqYuTkkBAwkTi44BcbjL36038WEJtNQEPi4KGTzCC2
-	iICgRP/jGaxdjFwczAJzGSWOnHnPCJIQFgiWONo0G6yBRUBV4vjS3UwgNq+AuUTj5x/sEEM1
-	JRou3QOLcwoYSzw4Ox+sV0iAR+LVhv2MEPWCEidnPgGbwywgL9G8dTYzyDIJgTlsEl9nbmWE
-	GCQpcXDFDZYJjPyzkPTMQtKzgJFpFaNQZl5ZbmJmjoleRmVeZoVecn7uJkZgcC6r/RO9g/HT
-	heBDjAIcjEo8vBuS0jKEWBPLiitzDzFKcDArifCeFEzPEOJNSaysSi3Kjy8qzUktPsQozcGi
-	JM5r9K08RUggPbEkNTs1tSC1CCbLxMEp1cBo0l0y8Y3zs6bf3J63DM+bXWtYI6TZnHrVc6Op
-	9sctfxRW5v/9YGY9za2iuXvCpfjy9nBBVuvTy+Y+bRVi8dpyaIXeQuFvkp0GeRdfLL5y+s3c
-	IwYu86/9mOkdl+YV8bz83GQlm0Ml3fV+6pUvP+/xr2jy2Kd0za30896PmY7LJ9/Su7p97uq3
-	SizFGYmGWsxFxYkA3PmVj0oCAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrOLMWRmVeSWpSXmKPExsXCNUNWRzeqNj3DYMZxC4s569ewWTz5/5vV
-	4vOz18wWh+eeZLW4vGsOm8W9Nf9ZLQ5/fcPkwO6xaVUnm8emT5PYPU7M+M3i8WLzTEaPb7c9
-	PBa/+MDk8XmTXAB7FJdNSmpOZllqkb5dAlfGsunPWAruK1a8XzWHvYHxiFQXIyeHhICJxOpP
-	/1lAbDYBDYmDh04yg9giAoIS/Y9nsHYxcnEwC8xllDhy5j0jSEJYIFjiaNNssAYWAVWJ40t3
-	M4HYvALmEo2ff7BDDNWUaLh0DyzOKWAs8eDsfLBeIQEeiVcb9jNC1AtKnJz5BGwOs4C8RPPW
-	2cwTGHlmIUnNQpJawMi0ilEkM68sNzEzx1SvODujMi+zQi85P3cTIzD4ltX+mbiD8ctl90OM
-	AhyMSjy8G5LSMoRYE8uKK3MPMUpwMCuJ8J4UTM8Q4k1JrKxKLcqPLyrNSS0+xCjNwaIkzusV
-	npogJJCeWJKanZpakFoEk2Xi4JRqYBQ2Z/2Tbvnl9L1Pf8r+1nE5vBSO87iqtkEw+ED9df/V
-	Kve/ztKdvNmualr91BmL+uqU/ou6Z+mxT7gkwzHNbZ2hfO7n3H079C5Mb/e4cdPvzeMlM6dp
-	SRl0vdhYafH+4V3BLx95i58mfX2q4n74/7SqQqHYCr3/WcvEvL4rqt2oND0ipK23gUuJpTgj
-	0VCLuag4EQAFrRV1OgIAAA==
-X-CFilter-Loop: Reflected
+X-Received: by 2002:a05:6e02:248a:b0:3e0:6066:4db3 with SMTP id
+ e9e14a558f8ab-3e136ea4a99mr8266085ab.4.1751612884099; Fri, 04 Jul 2025
+ 00:08:04 -0700 (PDT)
+Date: Fri, 04 Jul 2025 00:08:04 -0700
+In-Reply-To: <20250704063242.3943487-1-lizhi.xu@windriver.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68677dd4.a00a0220.c7b3.0017.GAE@google.com>
+Subject: Re: [syzbot] [net?] general protection fault in drr_qlen_notify
+From: syzbot <syzbot+15b96fc3aac35468fe77@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, lizhi.xu@windriver.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hello Seongjae,
+Hello,
 
-On Thu,  3 Jul 2025 09:52:37 -0700 SeongJae Park <sj@kernel.org> wrote:
-> Hello Yunjeong,
-> 
-> On Thu,  3 Jul 2025 16:44:22 +0900 Yunjeong Mun <yunjeong.mun@sk.com> wrote:
-> 
-> > This patch adds a new knob `detect_node_addresses`, which determines
-> > whether the physical address range is set manually using the existing
-> > knobs or automatically by the mtier module. When `detect_node_addresses`
-> > set to 'Y', mtier automatically converts node0 and node1 to their
-> > physical addresses. If set to 'N', it uses the existing
-> > 'node#_start_addr' and 'node#_end_addr' to define regions as before.
-> 
-> Thank you for this patch!
-> 
-> > 
-> > Suggested-by: Honggyu Kim <honggyu.kim@sk.com>
-> > Signed-off-by: Yunjeong Mun <yunjeong.mun@sk.com>
-> 
-> Reviewed-by: SeongJae Park <sj@kernel.org>
-> 
-> > ---
-> 
-> From next time, please consider adding a summary of what changes have made from
-> the previous version here, like suggested[1] on the documentation.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Ok, I'll add it next time, thanks:)
-One concern I have about this patch is the requirement to set
-'detect_node_addresses=Y' before setting 'enable=Y'. Not following
-this order causes an error, which makes it difficult for users to use
-the module. So, how about removing 'detect_node_address'? Instead, we
-could convert node0,1 to physical address automatically by default, and use
-existing 'node#_*_addr' values only when those files are explicitly set.
-The diff is as follows:
+Reported-by: syzbot+15b96fc3aac35468fe77@syzkaller.appspotmail.com
+Tested-by: syzbot+15b96fc3aac35468fe77@syzkaller.appspotmail.com
 
-```diff
-diff --git a/samples/damon/mtier.c b/samples/damon/mtier.c
-index 3a6ae78efafe..03e0540611e0 100644
---- a/samples/damon/mtier.c
-+++ b/samples/damon/mtier.c
-@@ -42,9 +42,6 @@ static bool enable __read_mostly;
- module_param_cb(enable, &enable_param_ops, &enable, 0600);
- MODULE_PARM_DESC(enable, "Enable of disable DAMON_SAMPLE_MTIER");
+Tested on:
 
--static bool detect_node_addresses __read_mostly;
--module_param(detect_node_addresses, bool, 0600);
--
- static struct damon_ctx *ctxs[2];
+commit:         4c06e63b Merge tag 'for-6.16-rc4-tag' of git://git.ker..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=114eac8c580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8b0724e6945b4773
+dashboard link: https://syzkaller.appspot.com/bug?extid=15b96fc3aac35468fe77
+compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=12dd8582580000
 
- struct region_range {
-@@ -110,10 +107,12 @@ static struct damon_ctx *damon_sample_mtier_build_ctx(bool promote)
-                goto free_out;
-        damon_add_target(ctx, target);
-
--       if (detect_node_addresses) {
-+       if (!node0_start_addr && !node0_end_addr
-+                               && !node1_start_addr && !node1_end_addr) {
-                ret = promote ? nid_to_phys(1, &addr) : nid_to_phys(0, &addr);
-                if (ret)
-                        goto free_out;
-+
-        } else {
-                addr.start = promote ? node1_start_addr : node0_start_addr;
-                addr.end = promote ? node1_end_addr : node0_end_addr;
-```
-
-> 
-> >  samples/damon/mtier.c | 42 +++++++++++++++++++++++++++++++++++++++---
-> >  1 file changed, 39 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/samples/damon/mtier.c b/samples/damon/mtier.c
-> > index f3220d6e6739..3570ebe10fab 100644
-> > --- a/samples/damon/mtier.c
-> > +++ b/samples/damon/mtier.c
-> > @@ -42,8 +42,34 @@ static bool enable __read_mostly;
-> >  module_param_cb(enable, &enable_param_ops, &enable, 0600);
-> >  MODULE_PARM_DESC(enable, "Enable of disable DAMON_SAMPLE_MTIER");
-> >  
-> > +static bool detect_node_addresses __read_mostly;
-> > +module_param(detect_node_addresses, bool, 0600);
-> > +
-> >  static struct damon_ctx *ctxs[2];
-> >  
-> > +struct region_range {
-> > +	phys_addr_t start;
-> > +	phys_addr_t end;
-> > +};
-> > +
-> > +static int nid_to_phys(int target_node, struct region_range *range)
-> > +{
-> > +
-> > +	if (!node_online(target_node)) {
-> > +		pr_err("NUMA node %d is not online\n", target_node);
-> > +		return -EINVAL;
-> > +	}
-> > +
-> > +	/* TODO: Do we need to support more accurate region range?  */
-> 
-> I understand you are saying we might need to remove address ranges in the node
-> that DAMON will anyway unable to check accesses, e.g., reserved memory.  Since
-> those are uusally only a small portion and this is a sample code, I think we
-> don't really need to do that, so I think you can drop this TODO comment from
-> your next version, if you are gonna make it.
-> 
-
-Ok, I will drop that comment from next version.
-
-Best Regards,
-Yunjeong Mun
-
-...snip...
-
-> 
-> [1] https://docs.kernel.org/process/submitting-patches.html#commentary
-> 
-> 
-> Thanks,
-> SJ
+Note: testing is done by a robot and is best-effort only.
 
