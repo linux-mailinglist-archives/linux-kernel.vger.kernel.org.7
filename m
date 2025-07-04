@@ -1,257 +1,508 @@
-Return-Path: <linux-kernel+bounces-716687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E53CCAF89BA
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 09:40:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABA3CAF89FE
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 09:52:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F4D11C87CD6
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 07:41:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F30F1C4838B
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 07:52:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31DFD28467B;
-	Fri,  4 Jul 2025 07:40:36 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 298B8285079;
+	Fri,  4 Jul 2025 07:51:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SQCMCuOl"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3854A27A10A;
-	Fri,  4 Jul 2025 07:40:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3050E28507C
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 07:51:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751614835; cv=none; b=F/JyV8NaFJdzvErCDfhnTZ9iY1V2dsOfqKRVk649Cw+zJhZqmmYF4YansE6kPlaO3q8cxEShvP0TepoD6zsK+zJmyGCyrfmZJFsU4FnCrLekhsS3TbRmD86td4GjToARqOaGC9rpCLoiuAnEH5fGG3wq+PYoV6yXLTQXySGXYy4=
+	t=1751615516; cv=none; b=eyV3CrySHdiArmNVjHJhwVj4V63gfwG1Xsu0S2gFP4pZ81dvRDtD/a/8RT/+h+6HjwYqQXAOedzLFiKNLTuNWe+bmtPMwlJCe8O3IqC+jF5EcjPDs39ajNwHVwBrMULTotcEaTAqLkIHoD2SOSvW5GzoaTlkgKcnM83vNFa3zJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751614835; c=relaxed/simple;
-	bh=3Gq7q6sk1e4OCAoXoS9edGKymQuwCCfAdN07peh6VIg=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZAIZI6cORfT9m9nXShL9OmmpBAcfUzkrVoMmpYoy2SjTGyo8u+RBvQYPot+mZIpzLjTEsyHAj78tiPJAzmI9OLhADa2O599G4ojkMJBuWB362Rw/aeNRy/AReV98MIqoWuhWBXaHCs7hLgElMNlArLUafRE2XhrSLHHVMwS9QZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4bYQTf1r75z1d1t7;
-	Fri,  4 Jul 2025 15:37:58 +0800 (CST)
-Received: from kwepemg100016.china.huawei.com (unknown [7.202.181.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id 538D6140156;
-	Fri,  4 Jul 2025 15:40:30 +0800 (CST)
-Received: from huawei.com (10.67.174.33) by kwepemg100016.china.huawei.com
- (7.202.181.57) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 4 Jul
- 2025 15:40:29 +0800
-From: GONG Ruiqi <gongruiqi1@huawei.com>
-To: Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu
-	<roberto.sassu@huawei.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>, Ard Biesheuvel <ardb@kernel.org>
-CC: Eric Snowberg <eric.snowberg@oracle.com>, Paul Moore
-	<paul@paul-moore.com>, James Morris <jmorris@namei.org>, "Serge E . Hallyn"
-	<serge@hallyn.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
-	<mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
-	<dave.hansen@linux.intel.com>, <x86@kernel.org>, "H . Peter Anvin"
-	<hpa@zytor.com>, <linux-kernel@vger.kernel.org>,
-	<linux-integrity@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
-	<linux-efi@vger.kernel.org>, <keyrings@vger.kernel.org>, Lu Jialin
-	<lujialin4@huawei.com>, <gongruiqi1@huawei.com>
-Subject: [PATCH v4 2/2] integrity: Extract secure boot enquiry function out of IMA
-Date: Fri, 4 Jul 2025 15:51:14 +0800
-Message-ID: <20250704075114.3709609-3-gongruiqi1@huawei.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250704075114.3709609-1-gongruiqi1@huawei.com>
-References: <20250704075114.3709609-1-gongruiqi1@huawei.com>
+	s=arc-20240116; t=1751615516; c=relaxed/simple;
+	bh=8+mt/NRCGieFtgq24xNxPLs2g7P52FR6xUWjy4SKTTo=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=kVEZjk4rOZUsSxodNhWRaUdJKE0v3TqTtHfIfXfFnzal18x+QR7nmMEe+8SpVSDe8yRj3BlqCgW5r44UEmzpnZNKklWbi5Gf1NxqmnLbr47JITonAOFAQ+NKLkzGzj/ANp70pB7m0J/lIYnmDeC6fcT//ddtX8iIpu8Zy0S3fn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SQCMCuOl; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-4538f375e86so4779615e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Jul 2025 00:51:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1751615512; x=1752220312; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RKd8eptZkL7OKudvPnYzWX9vn9Ebsbo7yAT0QhSXSz8=;
+        b=SQCMCuOlkfHpw970b1ipkaE7OMoTqKp2pq2MrInXE28nAKykOJK3Rz8ouJoOImjvd6
+         w7gSJd68IRXkV3mJDKNDBwGz/PPJ5BOFNLTUX6K3prgHbd9Tv0Lw9Tp2PW0CaGtGap/f
+         aoXEGIbwxfy10990NKQVjyU97sFg8FsvUS/S7WjkirVoToVwxWf3JmyPtwEHoQOniNP2
+         ylcfWTBy+stDy23uOFJ691jlYSTZbER+UNEhfxDU04phDTKhoMIkupF1+fZcwEapmu+F
+         Avq0RLLT3KnBKxj49oD0sCBezTo2CZPKJQ2cHSX7ZyzCDPwJewTT/jlcK22TXS6VBHy7
+         0BRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751615512; x=1752220312;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=RKd8eptZkL7OKudvPnYzWX9vn9Ebsbo7yAT0QhSXSz8=;
+        b=Mq8wZ3Gb5tZ06nv2PagoS4m/Noy1ghoTdPnKhCG8RfAXoUPcUKS8TN/097qYf5ryps
+         6qPL1HJVJzEwAmOINVtoDH5zD/aRgU80y+BYJPNLLMBfiAYPD+Bc8is+3piB6B0eSPuz
+         eoW58DehjduGdd1nQz+wjBDshh1ddI14S0uISQZecv7A8Dccu7/Fns3EDWDEQU36NPJ9
+         obSB3h/lBZIHhtildU9dVq/IGuI+5FW94KBJ/KH/06TougWOodHHJcFp1HY6zKRyoCZq
+         ZfdCihjkg0kFTFldqMG2TOtJLYmnIcLb5Zb+NrRt7XS7aaAuXfREUZ62UBOGsBBq9oEm
+         TDRw==
+X-Forwarded-Encrypted: i=1; AJvYcCU5q4fvAlZv76dqYaOgcY5kyusYAdo7td2inWRT1GHcrkqxNORsrB31/8ETQS2umJIWcQhsT0eEZjw7pbM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEi6rrOY1wQZmyZnwWKkPAN3uEfXgnrsHmdIyf85R0fjipGgZ0
+	mVOGe9ONtte4mJvmADWHvzANInSaxJY+i0mY4Dq71IwFwRJoCtTbF6AXspoLKKpV37Km4AtIMi4
+	X7eOcaFSjI0FzbbUxcw==
+X-Google-Smtp-Source: AGHT+IGXIQtapukJNLVd7QRtePhoB+p5QaPHUkrQNoQrbP3dt3oSHYBdXQZPDochTkCC+Wey+/9E7O2aR+gUfhI=
+X-Received: from wmbek10.prod.google.com ([2002:a05:600c:3eca:b0:44a:b793:9e40])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:8b26:b0:43d:fa59:af97 with SMTP id 5b1f17b1804b1-454b311551cmr13000885e9.32.1751615512505;
+ Fri, 04 Jul 2025 00:51:52 -0700 (PDT)
+Date: Fri, 4 Jul 2025 07:51:51 +0000
+In-Reply-To: <20250703-topics-tyr-request_irq-v6-3-74103bdc7c52@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- kwepemg100016.china.huawei.com (7.202.181.57)
+Mime-Version: 1.0
+References: <20250703-topics-tyr-request_irq-v6-0-74103bdc7c52@collabora.com> <20250703-topics-tyr-request_irq-v6-3-74103bdc7c52@collabora.com>
+Message-ID: <aGeIF_LcesUM9DHk@google.com>
+Subject: Re: [PATCH v6 3/6] rust: irq: add support for non-threaded IRQs and handlers
+From: Alice Ryhl <aliceryhl@google.com>
+To: Daniel Almeida <daniel.almeida@collabora.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Benno Lossin <lossin@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, 
+	"Krzysztof =?utf-8?Q?Wilczy=C5=84ski?=" <kwilczynski@kernel.org>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, linux-pci@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Commit 92ad19559ea9 ("integrity: Do not load MOK and MOKx when secure
-boot be disabled") utilizes arch_ima_get_secureboot() to perform a
-secure boot status check before loading the Machine Owner Key (MOK).
+On Thu, Jul 03, 2025 at 04:30:01PM -0300, Daniel Almeida wrote:
+> This patch adds support for non-threaded IRQs and handlers through
+> irq::Registration and the irq::Handler trait.
+>=20
+> Registering an irq is dependent upon having a IrqRequest that was
+> previously allocated by a given device. This will be introduced in
+> subsequent patches.
+>=20
+> Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
+> ---
+>  rust/bindings/bindings_helper.h |   1 +
+>  rust/helpers/helpers.c          |   1 +
+>  rust/helpers/irq.c              |   9 ++
+>  rust/kernel/irq.rs              |   5 +
+>  rust/kernel/irq/request.rs      | 273 ++++++++++++++++++++++++++++++++++=
+++++++
+>  5 files changed, 289 insertions(+)
+>=20
+> diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_hel=
+per.h
+> index 8cbb660e2ec218021d16e6e0144acf6f4d7cca13..da0bd23fad59a2373bd873d12=
+ad69c55208aaa38 100644
+> --- a/rust/bindings/bindings_helper.h
+> +++ b/rust/bindings/bindings_helper.h
+> @@ -51,6 +51,7 @@
+>  #include <linux/ethtool.h>
+>  #include <linux/file.h>
+>  #include <linux/firmware.h>
+> +#include <linux/interrupt.h>
+>  #include <linux/fs.h>
+>  #include <linux/jiffies.h>
+>  #include <linux/jump_label.h>
+> diff --git a/rust/helpers/helpers.c b/rust/helpers/helpers.c
+> index 393ad201befb80a9ae39866a725744ab88620fbb..e3579fc7e1cfc30c913207a4a=
+78b790259d7ae7a 100644
+> --- a/rust/helpers/helpers.c
+> +++ b/rust/helpers/helpers.c
+> @@ -22,6 +22,7 @@
+>  #include "dma.c"
+>  #include "drm.c"
+>  #include "err.c"
+> +#include "irq.c"
+>  #include "fs.c"
+>  #include "io.c"
+>  #include "jump_label.c"
+> diff --git a/rust/helpers/irq.c b/rust/helpers/irq.c
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..1faca428e2c047a656dec3171=
+855c1508d67e60b
+> --- /dev/null
+> +++ b/rust/helpers/irq.c
+> @@ -0,0 +1,9 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +#include <linux/interrupt.h>
+> +
+> +int rust_helper_request_irq(unsigned int irq, irq_handler_t handler,
+> +			    unsigned long flags, const char *name, void *dev)
+> +{
+> +	return request_irq(irq, handler, flags, name, dev);
+> +}
+> diff --git a/rust/kernel/irq.rs b/rust/kernel/irq.rs
+> index 9abd9a6dc36f3e3ecc1f92ad7b0040176b56a079..01bd08884b72c2a3a9460897b=
+ce751c732a19794 100644
+> --- a/rust/kernel/irq.rs
+> +++ b/rust/kernel/irq.rs
+> @@ -12,3 +12,8 @@
+> =20
+>  /// Flags to be used when registering IRQ handlers.
+>  pub mod flags;
+> +
+> +/// IRQ allocation and handling.
+> +pub mod request;
+> +
+> +pub use request::{Handler, IrqRequest, IrqReturn, Registration};
+> diff --git a/rust/kernel/irq/request.rs b/rust/kernel/irq/request.rs
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..4f4beaa3c7887660440b9ddc5=
+2414020a0d165ac
+> --- /dev/null
+> +++ b/rust/kernel/irq/request.rs
+> @@ -0,0 +1,273 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// SPDX-FileCopyrightText: Copyright 2025 Collabora ltd.
+> +
+> +//! This module provides types like [`Registration`] which allow users t=
+o
+> +//! register handlers for a given IRQ line.
+> +
+> +use core::marker::PhantomPinned;
+> +
+> +use crate::alloc::Allocator;
+> +use crate::device::Bound;
+> +use crate::device::Device;
+> +use crate::devres::Devres;
+> +use crate::error::to_result;
+> +use crate::irq::flags::Flags;
+> +use crate::prelude::*;
+> +use crate::str::CStr;
+> +use crate::sync::Arc;
+> +
+> +/// The value that can be returned from an IrqHandler or a ThreadedIrqHa=
+ndler.
+> +pub enum IrqReturn {
+> +    /// The interrupt was not from this device or was not handled.
+> +    None,
+> +
+> +    /// The interrupt was handled by this device.
+> +    Handled,
+> +}
+> +
+> +impl IrqReturn {
+> +    fn into_inner(self) -> u32 {
+> +        match self {
+> +            IrqReturn::None =3D> bindings::irqreturn_IRQ_NONE,
+> +            IrqReturn::Handled =3D> bindings::irqreturn_IRQ_HANDLED,
 
-However, only when CONFIG_IMA_SECURE_AND_OR_TRUSTED_BOOT=y can this
-function be functional, while this config could be turned on/off
-parallelly with CONFIG_LOAD_UEFI_KEYS. So the kernel could behave
-unintuitively in case that CONFIG_IMA_SECURE_AND_OR_TRUSTED_BOOT=n and
-CONFIG_LOAD_UEFI_KEYS=y, as it would refuse to load MOK even if secure
-boot is enabled.
+One option is to specify these in the enum:
 
-Given that what arch_ima_get_secureboot() does is just to retrieve
-secure boot status via EFI interfaces and can be decoupled with IMA,
-refactor this functionality into integrity_get_efi_secureboot(), a
-general helper in the integrity subsystem that both MOK loading and IMA
-can make use of. By using the new helper, the implicit dependence of
-CONFIG_LOAD_UEFI_KEYS on CONFIG_IMA_SECURE_AND_OR_TRUSTED_BOOT is
-removed.
+/// The value that can be returned from an IrqHandler or a ThreadedIrqHandl=
+er.
+pub enum IrqReturn {
+    /// The interrupt was not from this device or was not handled.
+    None =3D bindings::irqreturn_IRQ_NONE,
 
-Signed-off-by: GONG Ruiqi <gongruiqi1@huawei.com>
----
- include/linux/integrity.h                     |  1 +
- security/integrity/Makefile                   |  1 +
- security/integrity/efi_secureboot.c           | 46 +++++++++++++++++++
- security/integrity/ima/ima_efi.c              | 42 +----------------
- security/integrity/platform_certs/load_uefi.c |  3 +-
- 5 files changed, 51 insertions(+), 42 deletions(-)
- create mode 100644 security/integrity/efi_secureboot.c
+    /// The interrupt was handled by this device.
+    Handled =3D bindings::irqreturn_IRQ_HANDLED,
+}
 
-diff --git a/include/linux/integrity.h b/include/linux/integrity.h
-index f5842372359b..157d29cab5cd 100644
---- a/include/linux/integrity.h
-+++ b/include/linux/integrity.h
-@@ -61,5 +61,6 @@ integrity_inode_attrs_changed(const struct integrity_inode_attributes *attrs,
- 		!inode_eq_iversion(inode, attrs->version));
- }
- 
-+extern bool integrity_get_efi_secureboot(void);
- 
- #endif /* _LINUX_INTEGRITY_H */
-diff --git a/security/integrity/Makefile b/security/integrity/Makefile
-index 92b63039c654..45dfdedbdad4 100644
---- a/security/integrity/Makefile
-+++ b/security/integrity/Makefile
-@@ -18,6 +18,7 @@ integrity-$(CONFIG_LOAD_IPL_KEYS) += platform_certs/load_ipl_s390.o
- integrity-$(CONFIG_LOAD_PPC_KEYS) += platform_certs/efi_parser.o \
-                                      platform_certs/load_powerpc.o \
-                                      platform_certs/keyring_handler.o
-+integrity-$(CONFIG_EFI) += efi_secureboot.o
- # The relative order of the 'ima' and 'evm' LSMs depends on the order below.
- obj-$(CONFIG_IMA)			+= ima/
- obj-$(CONFIG_EVM)			+= evm/
-diff --git a/security/integrity/efi_secureboot.c b/security/integrity/efi_secureboot.c
-new file mode 100644
-index 000000000000..64207ae37e6b
---- /dev/null
-+++ b/security/integrity/efi_secureboot.c
-@@ -0,0 +1,46 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Copyright (C) 2025 Huawei Technologies Co., Ltd
-+ */
-+#include <linux/efi.h>
-+#include <linux/integrity.h>
-+#include <asm/efi.h>
-+
-+#ifndef arch_integrity_efi_boot_mode
-+#define arch_integrity_efi_boot_mode efi_secureboot_mode_unset
-+#endif
-+
-+static enum efi_secureboot_mode get_sb_mode(void)
-+{
-+	enum efi_secureboot_mode mode;
-+
-+	if (!efi_rt_services_supported(EFI_RT_SUPPORTED_GET_VARIABLE)) {
-+		pr_info("integrity: secureboot mode unknown, no efi\n");
-+		return efi_secureboot_mode_unknown;
-+	}
-+
-+	mode = efi_get_secureboot_mode(efi.get_variable);
-+	if (mode == efi_secureboot_mode_disabled)
-+		pr_info("integrity: secureboot mode disabled\n");
-+	else if (mode == efi_secureboot_mode_unknown)
-+		pr_info("integrity: secureboot mode unknown\n");
-+	else
-+		pr_info("integrity: secureboot mode enabled\n");
-+	return mode;
-+}
-+
-+bool integrity_get_efi_secureboot(void)
-+{
-+	static enum efi_secureboot_mode sb_mode;
-+	static bool initialized;
-+
-+	if (!initialized && efi_enabled(EFI_BOOT)) {
-+		sb_mode = arch_integrity_efi_boot_mode;
-+
-+		if (sb_mode == efi_secureboot_mode_unset)
-+			sb_mode = get_sb_mode();
-+		initialized = true;
-+	}
-+
-+	return sb_mode == efi_secureboot_mode_enabled;
-+}
-diff --git a/security/integrity/ima/ima_efi.c b/security/integrity/ima/ima_efi.c
-index 9f9c30dcde17..3cf08f8ca3b7 100644
---- a/security/integrity/ima/ima_efi.c
-+++ b/security/integrity/ima/ima_efi.c
-@@ -2,51 +2,13 @@
- /*
-  * Copyright (C) 2018 IBM Corporation
-  */
--#include <linux/efi.h>
- #include <linux/module.h>
- #include <linux/ima.h>
--#include <asm/efi.h>
--
--#ifndef arch_integrity_efi_boot_mode
--#define arch_integrity_efi_boot_mode efi_secureboot_mode_unset
--#endif
--
--static enum efi_secureboot_mode get_sb_mode(void)
--{
--	enum efi_secureboot_mode mode;
--
--	if (!efi_rt_services_supported(EFI_RT_SUPPORTED_GET_VARIABLE)) {
--		pr_info("ima: secureboot mode unknown, no efi\n");
--		return efi_secureboot_mode_unknown;
--	}
--
--	mode = efi_get_secureboot_mode(efi.get_variable);
--	if (mode == efi_secureboot_mode_disabled)
--		pr_info("ima: secureboot mode disabled\n");
--	else if (mode == efi_secureboot_mode_unknown)
--		pr_info("ima: secureboot mode unknown\n");
--	else
--		pr_info("ima: secureboot mode enabled\n");
--	return mode;
--}
-+#include <linux/integrity.h>
- 
- bool arch_ima_get_secureboot(void)
- {
--	static enum efi_secureboot_mode sb_mode;
--	static bool initialized;
--
--	if (!initialized && efi_enabled(EFI_BOOT)) {
--		sb_mode = arch_integrity_efi_boot_mode;
--
--		if (sb_mode == efi_secureboot_mode_unset)
--			sb_mode = get_sb_mode();
--		initialized = true;
--	}
--
--	if (sb_mode == efi_secureboot_mode_enabled)
--		return true;
--	else
--		return false;
-+	return integrity_get_efi_secureboot();
- }
- 
- /* secureboot arch rules */
-diff --git a/security/integrity/platform_certs/load_uefi.c b/security/integrity/platform_certs/load_uefi.c
-index d1fdd113450a..deebdbf4393e 100644
---- a/security/integrity/platform_certs/load_uefi.c
-+++ b/security/integrity/platform_certs/load_uefi.c
-@@ -7,7 +7,6 @@
- #include <linux/err.h>
- #include <linux/efi.h>
- #include <linux/slab.h>
--#include <linux/ima.h>
- #include <keys/asymmetric-type.h>
- #include <keys/system_keyring.h>
- #include "../integrity.h"
-@@ -212,7 +211,7 @@ static int __init load_uefi_certs(void)
- 	}
- 
- 	/* the MOK/MOKx can not be trusted when secure boot is disabled */
--	if (!arch_ima_get_secureboot())
-+	if (!integrity_get_efi_secureboot())
- 		return 0;
- 
- 	mokx = get_cert_list(L"MokListXRT", &mok_var, &mokxsize, &status);
--- 
-2.25.1
+impl IrqReturn {
+    fn into_inner(self) -> c_uint {
+        self as c_uint
+    }
+}
 
+> +
+> +/// Callbacks for an IRQ handler.
+> +pub trait Handler: Sync {
+> +    /// The hard IRQ handler.
+> +    ///
+> +    /// This is executed in interrupt context, hence all corresponding
+> +    /// limitations do apply.
+> +    ///
+> +    /// All work that does not necessarily need to be executed from
+> +    /// interrupt context, should be deferred to a threaded handler.
+> +    /// See also [`ThreadedRegistration`].
+> +    fn handle(&self) -> IrqReturn;
+> +}
+> +
+> +impl<T: ?Sized + Handler + Send> Handler for Arc<T> {
+> +    fn handle(&self) -> IrqReturn {
+> +        T::handle(self)
+> +    }
+> +}
+> +
+> +impl<T: ?Sized + Handler, A: Allocator> Handler for Box<T, A> {
+> +    fn handle(&self) -> IrqReturn {
+> +        T::handle(self)
+> +    }
+> +}
+> +
+> +/// # Invariants
+> +///
+> +/// - `self.irq` is the same as the one passed to `request_{threaded}_ir=
+q`.
+> +/// - `cookie` was passed to `request_{threaded}_irq` as the cookie. It
+> +/// is guaranteed to be unique by the type system, since each call to
+> +/// `new` will return a different instance of `Registration`.
+
+I recall there being a clippy lint about the indentation here. Did it
+not trigger?
+
+/// - `cookie` was passed to `request_{threaded}_irq` as the cookie. It
+///   is guaranteed to be unique by the type system, since each call to
+///   `new` will return a different instance of `Registration`.
+
+> +#[pin_data(PinnedDrop)]
+> +struct RegistrationInner {
+> +    irq: u32,
+> +    cookie: *mut kernel::ffi::c_void,
+
+The c_void type is in the prelude.
+
+> +}
+> +
+> +impl RegistrationInner {
+> +    fn synchronize(&self) {
+> +        // SAFETY: safe as per the invariants of `RegistrationInner`
+> +        unsafe { bindings::synchronize_irq(self.irq) };
+> +    }
+> +}
+> +
+> +#[pinned_drop]
+> +impl PinnedDrop for RegistrationInner {
+> +    fn drop(self: Pin<&mut Self>) {
+> +        // SAFETY:
+> +        //
+> +        // Safe as per the invariants of `RegistrationInner` and:
+> +        //
+> +        // - The containing struct is `!Unpin` and was initialized using
+> +        // pin-init, so it occupied the same memory location for the ent=
+irety of
+> +        // its lifetime.
+> +        //
+> +        // Notice that this will block until all handlers finish executi=
+ng,
+> +        // i.e.: at no point will &self be invalid while the handler is =
+running.
+> +        unsafe { bindings::free_irq(self.irq, self.cookie) };
+> +    }
+> +}
+> +
+> +// SAFETY: We only use `inner` on drop, which called at most once with n=
+o
+> +// concurrent access.
+> +unsafe impl Sync for RegistrationInner {}
+> +
+> +// SAFETY: It is safe to send `RegistrationInner` across threads.
+> +unsafe impl Send for RegistrationInner {}
+> +
+> +/// A request for an IRQ line for a given device.
+> +///
+> +/// # Invariants
+> +///
+> +/// - `=C3=ACrq` is the number of an interrupt source of `dev`.
+> +/// - `irq` has not been registered yet.
+> +pub struct IrqRequest<'a> {
+> +    dev: &'a Device<Bound>,
+> +    irq: u32,
+> +}
+> +
+> +impl<'a> IrqRequest<'a> {
+> +    /// Creates a new IRQ request for the given device and IRQ number.
+> +    ///
+> +    /// # Safety
+> +    ///
+> +    /// - `irq` should be a valid IRQ number for `dev`.
+> +    pub(crate) unsafe fn new(dev: &'a Device<Bound>, irq: u32) -> Self {
+> +        IrqRequest { dev, irq }
+> +    }
+> +}
+> +
+> +/// A registration of an IRQ handler for a given IRQ line.
+> +///
+> +/// # Examples
+> +///
+> +/// The following is an example of using `Registration`. It uses a
+> +/// [`AtomicU32`](core::sync::AtomicU32) to provide the interior mutabil=
+ity.
+> +///
+> +/// ```
+> +/// use core::sync::atomic::AtomicU32;
+> +/// use core::sync::atomic::Ordering;
+> +///
+> +/// use kernel::prelude::*;
+> +/// use kernel::device::Bound;
+> +/// use kernel::irq::flags;
+> +/// use kernel::irq::Registration;
+> +/// use kernel::irq::IrqRequest;
+> +/// use kernel::irq::IrqReturn;
+> +/// use kernel::sync::Arc;
+> +/// use kernel::c_str;
+> +/// use kernel::alloc::flags::GFP_KERNEL;
+> +///
+> +/// // Declare a struct that will be passed in when the interrupt fires.=
+ The u32
+> +/// // merely serves as an example of some internal data.
+> +/// struct Data(AtomicU32);
+> +///
+> +/// // [`kernel::irq::request::Handler::handle`] takes `&self`. This exa=
+mple
+> +/// // illustrates how interior mutability can be used when sharing the =
+data
+> +/// // between process context and IRQ context.
+> +///
+> +/// type Handler =3D Data;
+> +///
+> +/// impl kernel::irq::request::Handler for Handler {
+> +///     // This is executing in IRQ context in some CPU. Other CPUs can =
+still
+> +///     // try to access to data.
+> +///     fn handle(&self) -> IrqReturn {
+> +///         self.0.fetch_add(1, Ordering::Relaxed);
+> +///
+> +///         IrqReturn::Handled
+> +///     }
+> +/// }
+> +///
+> +/// // Registers an IRQ handler for the given IrqRequest.
+> +/// //
+> +/// // This is executing in process context and assumes that `request` w=
+as
+> +/// // previously acquired from a device.
+> +/// fn register_irq(handler: Handler, request: IrqRequest<'_>) -> Result=
+<Arc<Registration<Handler>>> {
+> +///     let registration =3D Registration::new(request, flags::SHARED, c=
+_str!("my_device"), handler);
+> +///
+> +///     let registration =3D Arc::pin_init(registration, GFP_KERNEL)?;
+> +///
+> +///     // The data can be accessed from process context too.
+> +///     registration.handler().0.fetch_add(1, Ordering::Relaxed);
+> +///
+> +///     Ok(registration)
+> +/// }
+> +/// # Ok::<(), Error>(())
+> +/// ```
+> +///
+> +/// # Invariants
+> +///
+> +/// * We own an irq handler using `&self.handler` as its private data.
+> +///
+> +#[pin_data]
+> +pub struct Registration<T: Handler + 'static> {
+> +    #[pin]
+> +    inner: Devres<RegistrationInner>,
+> +
+> +    #[pin]
+> +    handler: T,
+> +
+> +    /// Pinned because we need address stability so that we can pass a p=
+ointer
+> +    /// to the callback.
+> +    #[pin]
+> +    _pin: PhantomPinned,
+> +}
+> +
+> +impl<T: Handler + 'static> Registration<T> {
+> +    /// Registers the IRQ handler with the system for the given IRQ numb=
+er.
+> +    pub fn new<'a>(
+> +        request: IrqRequest<'a>,
+> +        flags: Flags,
+> +        name: &'static CStr,
+> +        handler: T,
+> +    ) -> impl PinInit<Self, Error> + 'a {
+> +        try_pin_init!(&this in Self {
+> +            handler,
+> +            inner <- Devres::new(
+> +                request.dev,
+> +                try_pin_init!(RegistrationInner {
+> +                    // SAFETY: `this` is a valid pointer to the `Registr=
+ation` instance
+> +                    cookie: unsafe { &raw mut (*this.as_ptr()).handler }=
+.cast(),
+> +                    irq: {
+> +                        // SAFETY:
+> +                        // - The callbacks are valid for use with reques=
+t_irq.
+> +                        // - If this succeeds, the slot is guaranteed to=
+ be valid until the
+> +                        // destructor of Self runs, which will deregiste=
+r the callbacks
+> +                        // before the memory location becomes invalid.
+> +                        to_result(unsafe {
+> +                            bindings::request_irq(
+> +                                request.irq,
+> +                                Some(handle_irq_callback::<T>),
+> +                                flags.into_inner() as usize,
+> +                                name.as_char_ptr(),
+> +                                (&raw mut (*this.as_ptr()).handler).cast=
+(),
+> +                            )
+> +                        })?;
+> +                        request.irq
+> +                    }
+> +                })
+> +            ),
+> +            _pin: PhantomPinned,
+> +        })
+> +    }
+> +
+> +    /// Returns a reference to the handler that was registered with the =
+system.
+> +    pub fn handler(&self) -> &T {
+> +        &self.handler
+> +    }
+> +
+> +    /// Wait for pending IRQ handlers on other CPUs.
+> +    ///
+> +    /// This will attempt to access the inner [`Devres`] container.
+> +    pub fn try_synchronize(&self) -> Result {
+> +        let inner =3D self.inner.try_access().ok_or(ENODEV)?;
+> +        inner.synchronize();
+> +        Ok(())
+> +    }
+> +
+> +    /// Wait for pending IRQ handlers on other CPUs.
+> +    pub fn synchronize(&self, dev: &Device<Bound>) -> Result {
+> +        let inner =3D self.inner.access(dev)?;
+> +        inner.synchronize();
+> +        Ok(())
+> +    }
+> +}
+> +
+> +/// # Safety
+> +///
+> +/// This function should be only used as the callback in `request_irq`.
+> +unsafe extern "C" fn handle_irq_callback<T: Handler>(
+> +    _irq: i32,
+> +    ptr: *mut core::ffi::c_void,
+> +) -> core::ffi::c_uint {
+
+You should just use `c_uint` without the prefix. This way you get it
+from `kernel::prelude::*` which has the correct typedefs rather than
+`core::ffi`.
+
+> +    // SAFETY: `ptr` is a pointer to T set in `Registration::new`
+> +    let handler =3D unsafe { &*(ptr as *const T) };
+> +    T::handle(handler).into_inner()
+> +}
+>=20
+> --=20
+> 2.50.0
+>=20
 
