@@ -1,186 +1,202 @@
-Return-Path: <linux-kernel+bounces-717392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-717388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57B65AF93C1
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 15:11:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 637EAAF93BB
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 15:10:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5CACA166AF0
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 13:11:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2AC9F7B5FFA
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 13:08:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF0C52F7CFE;
-	Fri,  4 Jul 2025 13:11:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E85502F85D1;
+	Fri,  4 Jul 2025 13:09:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="nmCzChiB"
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010021.outbound.protection.outlook.com [52.101.84.21])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="tGy7O1TW"
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D587738DDB;
-	Fri,  4 Jul 2025 13:11:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.21
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751634682; cv=fail; b=P0NbHLHd7F4vr9yS9QRcqcDcxmPds3G05DeVW3vNfJSykQLrWBomn+7Kiuz7STW+6GUkdj9ZSvT3J8v3HfW3rRusQ2+YDteZHEyhlnCkqldeHSi10tjElbf3czEa+1lvKrVi7IwFnn8q0SZZfm0aCB1O5PuxDGNI5rf3MvHwFWA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751634682; c=relaxed/simple;
-	bh=8E/YSHl9Vo3M4kye32DBLl1SVeKtqVauZksZoP9w9/E=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=KsiRW0zxhhvuvhTDW2IETm9wLJ0W6si5QXFLNNrylwDfLKTXE2ohET2aQWYPwIz8slxj6rePg5Un3X9pOtI3g11OFgP5qYQS4j+gqa9csNEx4msBwpkDs94zRoYlXXTSu7AplipG/zE0BZtGgEWlicQkKnaki4QHJDmS1KuriYE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=nmCzChiB; arc=fail smtp.client-ip=52.101.84.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=OLRx36dTwU010gWFtB8mOOCUf3GFd5ndqnBW7R0a2//Oz7/QQnWqP3rY7UvgHknYweFzTBkPzjWHwAN3T0Rpxg9YXXyvMrhQI/bhSKwnQDmxqlbuGiaXbmcK0zDt7ieXXmNpY/ZbOqmBb3WDEkH1ZY67MrsQMsDLQwQUJfmGIFDHPH8qf6C9CI0YoNZkD+9WQCsXasOEjn2DId7EDPCsxm9fU78D/PKAs/hDGQ4dqWErBAC+AzjuRGNy3jX5+lJQlKc5BXfuoIr5uBEAVO8A3HnUbHVrugwYZyxHjZf4wZGgxfokgJwi4rNau4qIN5HtDNmvVaXFifRuAuSTQ8fMTA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=J2XY1GGeVjic60yRWPsyfi+u9+wCm4/unrLGFx/UiaA=;
- b=PZcPupjFsELu1ftS7oowm9vEV+trrIMUOqiw7X/axDRuc94WfgwTE3r2TxjM9Mk3s1ht/2qgyhSs7hRaKFMgjwCu6AC81ee3Dw+VcqBYbJCE9rC0BglI2mbBKdxw0vkKePrgVqXUbwXM7QbE8xW74GE7OWMQ2F8Or4qtNzoA9ZUeSiMCh8dPPBxbArkB+aTJzll2nEKECgjVnkeepEn/+chz+MMJ2qBscbWNRRvM+idCQWetY9GVTq+2KKGYF33o2+FQ9EB+RicvInG4r8YUhjEpUrxdr1IiAXpVmt1A1Ph3cG/qWdOcz5ACAHQMPo+8f+T0EMSYKBokkET4sSCmWA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=J2XY1GGeVjic60yRWPsyfi+u9+wCm4/unrLGFx/UiaA=;
- b=nmCzChiBOa+6TulJb/VLfr+OhgEbGCazo52TGy7jgUUDJGmrjbo7YYQ3xHiv8uVFmlurSYAhOYAGGQGhM5BNw+Pc5VnaAbxBVStLvUqVU9R/OwhU2TB2D3Bq2OjPoCMmW9V4GBybLPG4wiVohXirbL9oMcUZ/Ds9bjlCmsfOPCWcV1asXzxhYeafmIOkFtJ/bASBAlXs4XRJjOFjZsJRdP+Y/AUeYGGGP/ZNvmJsXyCgRLIzBVAVJBLIGYomrTX0mR0ii5d1OPs3ZLyFNmihqV0iLEzXsTYpzCLaBBrHiT/7Y3UI0XzZm+5XrfebuNMrnOMicHiv+jjQWTvchh2FbQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from DB9PR04MB8461.eurprd04.prod.outlook.com (2603:10a6:10:2cf::20)
- by AM8PR04MB7971.eurprd04.prod.outlook.com (2603:10a6:20b:234::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.21; Fri, 4 Jul
- 2025 13:11:15 +0000
-Received: from DB9PR04MB8461.eurprd04.prod.outlook.com
- ([fe80::b1b9:faa9:901b:c197]) by DB9PR04MB8461.eurprd04.prod.outlook.com
- ([fe80::b1b9:faa9:901b:c197%3]) with mapi id 15.20.8901.021; Fri, 4 Jul 2025
- 13:11:15 +0000
-From: Peng Fan <peng.fan@nxp.com>
-To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	linux-rockchip@lists.infradead.org (open list:ROCKCHIP SAI DRIVER),
-	linux-sound@vger.kernel.org (open list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM...),
-	linux-arm-kernel@lists.infradead.org (moderated list:ARM/Rockchip SoC support),
-	linux-kernel@vger.kernel.org (open list)
-Cc: linus.walleij@linaro.org,
-	brgl@bgdev.pl,
-	Peng Fan <peng.fan@nxp.com>
-Subject: [PATCH] ASoC: codec: rockchip_sai: Remove including of_gpio.h
-Date: Fri,  4 Jul 2025 21:09:06 +0800
-Message-Id: <20250704130906.1207134-1-peng.fan@nxp.com>
-X-Mailer: git-send-email 2.37.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: MA0PR01CA0098.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a01:af::8) To DB9PR04MB8461.eurprd04.prod.outlook.com
- (2603:10a6:10:2cf::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F00CE2F85DA
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 13:09:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751634565; cv=none; b=fuRs2xws0HJAs1bq4m0quNy5r/C1H7zO1a+ZiFHPgsobFvHFaMYdxJN2V7iiu1KlvqOkwnlGRuKLTvikJky5nUdXe9Z2MGdFTOnh/cymhC9bzU2ZjgSAG/QIbhARXXLYrMcjWxzMT5Lu7dQBPvtNMmJYtZ12GDfySfy5SfKnXVg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751634565; c=relaxed/simple;
+	bh=7ZXkeb6eFkBOPADQFZ6Ugr+b8t74NHRMQP7v0mRURjs=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=k7tKSuDi1efvQxX9tpdgtyGk9TrUgDbKCA7YXKEUGGspwIzebtn7wy76OIpOB92AXTBMANdbirnXmzJsLhaGTRkrZjE/AAA5ntoPyt9xEf2edYbdU84hJfhCFYjtGt9lns2b6w1AhjInxYztWg1+vflalJ78JhesFBCcd4Tijhg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=tGy7O1TW; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250704130920epoutp024e0548c486709a9e708d61a1969d8e51~PDlo6YyRH2936829368epoutp029
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 13:09:20 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250704130920epoutp024e0548c486709a9e708d61a1969d8e51~PDlo6YyRH2936829368epoutp029
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1751634560;
+	bh=7ZXkeb6eFkBOPADQFZ6Ugr+b8t74NHRMQP7v0mRURjs=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=tGy7O1TWZRAGFzE9c5zCBfJ0EWJB9ZW168DlwGplfHmJMdkgUweVwdg8Ma0qOU969
+	 owlFoU46WtVhNOXjrual6QCRz/QaeuITxMMQwP4EEnKVB6rxrE9Z3bslWmSbEaCWxw
+	 FgEOg93qp+uo6zw0nVsaku9VYF6FtZbxTtgieNXE=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
+	20250704130919epcas5p19ebf1ad617b18e718d49ca531405bd15~PDlna0mq20316103161epcas5p13;
+	Fri,  4 Jul 2025 13:09:19 +0000 (GMT)
+Received: from epcas5p3.samsung.com (unknown [182.195.38.182]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4bYYqx3J2Dz2SSKX; Fri,  4 Jul
+	2025 13:09:17 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250704130916epcas5p2ccff0f947268712a35e5e80977bf5806~PDllQx00_1901719017epcas5p21;
+	Fri,  4 Jul 2025 13:09:16 +0000 (GMT)
+Received: from INBRO001561 (unknown [107.122.12.6]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250704130913epsmtip1efc9beeb49ba18d5c56da5d5c629e5c4~PDligOFVO0201502015epsmtip1b;
+	Fri,  4 Jul 2025 13:09:13 +0000 (GMT)
+From: "Pankaj Dubey" <pankaj.dubey@samsung.com>
+To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, "'Shradha Todi'"
+	<shradha.t@samsung.com>, "'Rob Herring'" <robh@kernel.org>
+Cc: <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-phy@lists.infradead.org>,
+	<linux-fsd@tesla.com>, <mani@kernel.org>, <lpieralisi@kernel.org>,
+	<kw@linux.com>, <bhelgaas@google.com>, <jingoohan1@gmail.com>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <alim.akhtar@samsung.com>,
+	<vkoul@kernel.org>, <kishon@kernel.org>, <arnd@arndb.de>,
+	<m.szyprowski@samsung.com>, <jh80.chung@samsung.com>
+In-Reply-To: <5ea33054-8a08-4bb3-81e7-d832c53979dc@kernel.org>
+Subject: RE: [PATCH v2 07/10] dt-bindings: phy: Add PHY bindings support for
+ FSD SoC
+Date: Fri, 4 Jul 2025 18:39:12 +0530
+Message-ID: <000101dbece4$d8694d80$893be880$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB9PR04MB8461:EE_|AM8PR04MB7971:EE_
-X-MS-Office365-Filtering-Correlation-Id: a8da1d6f-4a86-418f-eb54-08ddbafc4172
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|19092799006|366016|376014|7416014|1800799024|38350700014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?E9kfEp93dnt/U0l065Z8g6T+cgI9oGcPPaH8/x7Op/fByQP5tB4LG6AdxSUo?=
- =?us-ascii?Q?5ziA79amQH5hAUhrt2Gd/sYt5W0jgoFO5s6dLDLvG7empJOkhjSvuibGAkJc?=
- =?us-ascii?Q?jFZujubFFfyLVJFv5jCiABa4CcZ/qeylvFx4rczeQjtBh5wgHNuK7PQ+pHue?=
- =?us-ascii?Q?NzMOqel8RFAxBSK5fbWtjsgI2zem+vFQ7XNqFzl5rqlRCgGCzHT/Zi3dZv3r?=
- =?us-ascii?Q?lXZcMWvOVxwqZG0vqRFP7KokmPAuCfIrLsFGQiZAfeia20aiqULQCfX0AgJj?=
- =?us-ascii?Q?VLYJ0+8tDXn3JxAsZtuwT35ngTjSQlmNakkv32jiprCA3SG/6dXAFCd1587f?=
- =?us-ascii?Q?BOewjpz3dZs+5uio8KgJwtS8o484NVYIaqqPz1/1/zaDqjVyNtNabs/t1CXy?=
- =?us-ascii?Q?WzJHo7HCkIAftEp/5ZBd/nwFYrMOMVscatyOcJYrfIsn9SAaaYmnD7E7+gLZ?=
- =?us-ascii?Q?HhRKyI9nkN/0znaOqgPTDvcbLdsXErINZTnioYUOj7GFqGtw6zK7L5ECYP/I?=
- =?us-ascii?Q?psY/xAXU2clYCCjdj5j50i3s0cYEX9PmTDzrSZuL6aC1kSuYnYT+PstvOqhx?=
- =?us-ascii?Q?wEabnr8ui/v76IL7WI7QW6139zsxvjRQbaLhU0jW4mb6C9U5/VnzxBurYFiv?=
- =?us-ascii?Q?8/7Kl8FEaTeVU6ghvpdaxXdZhhcwiB52ejYgTtuPsUSsZjO5wxnH8amVHHGi?=
- =?us-ascii?Q?KOsG20IMWmOKmG5OUr8A9BqI/1LblXHiLdaRqzAN1YgJggV5NNwwL9agWxwH?=
- =?us-ascii?Q?+LRubYo9LgUsOWSZ1S87Pz4IG8k8eehgAkShN/EH+x09LX+XI98d7ajY+g0J?=
- =?us-ascii?Q?zkpu6dTWUW9msYlHjzPDWTZY1unn6ZPoKrt060GR+yJko5poMGzbdCNO6xdB?=
- =?us-ascii?Q?wOQEnguxy/BO0xzhEJryYSp+yQxDvAQsPAogE4ioynd7lsLTkQxVFq22Ulo7?=
- =?us-ascii?Q?Bp9mZuqhq3ak/wu559skKSfznhffpvXfkhl4+QmcDh3mtfv6K2H8jco9DqPh?=
- =?us-ascii?Q?//ArK5Y+/zdenMsha1Krz3piKaiz5H1X4+VLVM0mPBTW6K3/EYLY6HmLBQlw?=
- =?us-ascii?Q?o0mrUwOpfwQw4PW5xl5LD+hIBe9+kdQQ7MEKNKlkJzDhKTbcYl0lsAgVqBG3?=
- =?us-ascii?Q?V8TBRS1Vt/cN1GlGTmqFKS4pKg2iYoNxhGTHFqCp/BRB5iXuj3CZITKvmmqH?=
- =?us-ascii?Q?DdwjTeTz3atA8yJp+U0HohLGn0mEaA6nmLGqDQLqDmOKnYYsSs+MjW3Uus8/?=
- =?us-ascii?Q?8ii5i8GpNbCekNfNlsSIgrCuFiA47qY89ECHRUKNv/41DUMcwV1yj7FQCRPa?=
- =?us-ascii?Q?wZKflqdtZytkS7Vu/owPm09Ms0wVIjPGO6YUKM/qi3jIjR2QUO0vz87BBX7i?=
- =?us-ascii?Q?ZSgWgWe7wjQJv3nHibexJn5cTcY7d0uqPvgZDwKlUgnAHGpG8gthF8gio6J8?=
- =?us-ascii?Q?lkAqUhg/HWlMgJYgzwUCh3NnIocq1MiCV7gokdpZk4UklOBmWWLxCXZxb0Mz?=
- =?us-ascii?Q?RDnPs7UqWS5Cm10=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB8461.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(19092799006)(366016)(376014)(7416014)(1800799024)(38350700014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?LLfUhFCpyJX3DibD7jj4KlTqiE1V7Ax0sjn2jhQaDH2mUKYxNrZuCfL482bt?=
- =?us-ascii?Q?EzaTetl+lMZdpnPKtxYL9pciigKgMHyB97HdVMzWNnHLA+YCkK7RfbitrUmp?=
- =?us-ascii?Q?aC6Zad01bAzLsoPH1NaiVEcKiNptJ8QNOUUHj29R7K+oQcEm6UoSg337OH9t?=
- =?us-ascii?Q?o0t0yK20gibZm6AwLfKqs85cpjQE4yDu4A3A4Psv4BSlY2CeUJON1FljHzUq?=
- =?us-ascii?Q?aU08Gk8XYtoyIsIHeOk6mRAROSH1Nl8QHolrQ0d/h1mzXRheiroX81hffcsa?=
- =?us-ascii?Q?tgGodBCvMiC4KkEgSTBDTAGvwUWQYNpMh5y1OBpvIaBvKHAPsXq7l2ePvWY6?=
- =?us-ascii?Q?7y4f0MUCxXsdvEpuwheRAvUPuVorp+gRm/u77Q7iDuQscXFlivnhEYjlrhqJ?=
- =?us-ascii?Q?4wQosHy7DE52sYiWY+T/RLEhWCs0399V2UKlVsHrrpA8Cp/n5qdn5ZHMaKN+?=
- =?us-ascii?Q?Ve8EO1nqPaMHYX3JU0OEVCSa/hdAuNLtM4F1uWqvu/qUtsxeUKl/DqYGik0e?=
- =?us-ascii?Q?qk95n6dNRPytbngwWYOm939zaB4oQrIVcCwcq8k4NLepzVK33aJqIgE//Szg?=
- =?us-ascii?Q?xeBuAC/d0icy8k+MFitM1Kay9PedDOwFPE8a0w8y4Bht73qmaqNOnjURKPfx?=
- =?us-ascii?Q?iIHPR01m8QeUamXfs0gb6X6v2iuavgDrXUJ5XasIUeLF/ZIykxZzKGtsHqqQ?=
- =?us-ascii?Q?qv4Sgc9Revq4vuGaM7UFLhga7647ed98WaIWfwMmG0aobzF5rL4lK5BDuVni?=
- =?us-ascii?Q?/NiV0wbLuX7nTQTM7nYFtlxtPoJd7pcWeeSomXC+uj1OC0XhJFHHxDVo+2UB?=
- =?us-ascii?Q?myBxYc5gHXgYezTtI1EwClFOcW6bCnw0Ce3PoKZruISfdzCjt3XBW2b4MGF9?=
- =?us-ascii?Q?A2rDpxLjM2WDOv67JT8kIvd1uGrSttbMdXdCaTLYj39vNz/zW67NXJqgG3bR?=
- =?us-ascii?Q?CZ+Cyp0MiWtgyOPfIB8MHae2/AcvFx06r8FK7rfAcZSHecghrrNAt478mSJl?=
- =?us-ascii?Q?UB5w3xuJcHEZWt9hzZ061yS6d+cesF0xUoyVR7kn4I5ErjXHOJTctUBeyKgh?=
- =?us-ascii?Q?QrUgjCx3eKqwB3IyAdgDy/gfzxAvSizm4JWVXwbJ8KORdczWMT7y9Zz7fhm9?=
- =?us-ascii?Q?N0AoC2Q7KBsQPTeUVudFs+oaRwzyQhnyGVOzZgccKwkpsyF6SirzPxQ4MSLB?=
- =?us-ascii?Q?paGZAWGlRyqOv6HR3+zNdkBoQNTM3FbdCTxYy8256Gqi5XQxm1lx7bHLjCIH?=
- =?us-ascii?Q?xmEtRsFEsgcAofo92K7i41vHKeqv/mQzC26TYC6K31VDayb1ZRp1JwdRzZWe?=
- =?us-ascii?Q?O8M3YcMaYgtUYg1/V8muL5hpJzKx6jA/sxfj9W04c5Tmjn09T7p5Jja68M8L?=
- =?us-ascii?Q?8DAkR4Wg+2DKfMRKUlOoNizbapdLfNurI+u0Kue8Rvbblc2W1GffzcnzPMAR?=
- =?us-ascii?Q?I4JW1qlQ7wFUwq9NPHYNt6DdVp4lTU8qST1tzvEH4UBFaEiyIDIrMtfyB5v3?=
- =?us-ascii?Q?g8cNCE486zax8rEC+UXPMCLEeno4nJr9JBOLw8k748fL3UtEAoWJJPkDWaPk?=
- =?us-ascii?Q?O4Txnv0UYjZ1bCK+HtVHn/ZgHms3Xp5xSIgvm0oK?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a8da1d6f-4a86-418f-eb54-08ddbafc4172
-X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB8461.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Jul 2025 13:11:15.2505
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 2FnUqHyZH1y0Spp9krjoHGfax8JZL8ql61Im2L4EpuFrTr60b7AAFkb2gz/Li3ZmvErF48sr12NeWr6aPWytBQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM8PR04MB7971
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQFUClgbainc6hQuKSBO0V8ttZVgkwGg1JXJAfs/ltABn1f9rAD4JQ8bAeFf3fQB1zUu0wGsyVLstNTsxXA=
+Content-Language: en-us
+X-CMS-MailID: 20250704130916epcas5p2ccff0f947268712a35e5e80977bf5806
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-541,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250625165319epcas5p3721c19f6e6b482438c62dd1ef784de03
+References: <20250625165229.3458-1-shradha.t@samsung.com>
+	<CGME20250625165319epcas5p3721c19f6e6b482438c62dd1ef784de03@epcas5p3.samsung.com>
+	<20250625165229.3458-8-shradha.t@samsung.com>
+	<20250627211721.GA153863-robh@kernel.org>
+	<02af01dbea78$24f01310$6ed03930$@samsung.com>
+	<f877b3d7-d770-4424-9813-da748775f456@kernel.org>
+	<02bf01dbea8c$fc835cb0$f58a1610$@samsung.com>
+	<5ea33054-8a08-4bb3-81e7-d832c53979dc@kernel.org>
 
-of_gpio.h is deprecated. And there is no user in this driver
-using API in of_gpio.h, so remove it.
 
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
----
- sound/soc/rockchip/rockchip_sai.c | 1 -
- 1 file changed, 1 deletion(-)
 
-diff --git a/sound/soc/rockchip/rockchip_sai.c b/sound/soc/rockchip/rockchip_sai.c
-index 0b9f54102d69..6695349ee561 100644
---- a/sound/soc/rockchip/rockchip_sai.c
-+++ b/sound/soc/rockchip/rockchip_sai.c
-@@ -9,7 +9,6 @@
- #include <linux/module.h>
- #include <linux/mfd/syscon.h>
- #include <linux/delay.h>
--#include <linux/of_gpio.h>
- #include <linux/of_device.h>
- #include <linux/clk.h>
- #include <linux/pm_runtime.h>
--- 
-2.37.1
+> -----Original Message-----
+> From: Krzysztof Kozlowski <krzk=40kernel.org>
+> Sent: Thursday, July 3, 2025 1:48 AM
+> To: Shradha Todi <shradha.t=40samsung.com>; 'Rob Herring'
+> <robh=40kernel.org>
+> Cc: linux-pci=40vger.kernel.org; devicetree=40vger.kernel.org; linux-arm-
+> kernel=40lists.infradead.org; linux-samsung-soc=40vger.kernel.org; linux-
+> kernel=40vger.kernel.org; linux-phy=40lists.infradead.org; linux-fsd=40te=
+sla.com;
+> mani=40kernel.org; lpieralisi=40kernel.org; kw=40linux.com;
+> bhelgaas=40google.com; jingoohan1=40gmail.com; krzk+dt=40kernel.org;
+> conor+dt=40kernel.org; alim.akhtar=40samsung.com; vkoul=40kernel.org;
+> kishon=40kernel.org; arnd=40arndb.de; m.szyprowski=40samsung.com;
+> jh80.chung=40samsung.com; pankaj.dubey=40samsung.com
+> Subject: Re: =5BPATCH v2 07/10=5D dt-bindings: phy: Add PHY bindings supp=
+ort for
+> FSD SoC
+>=20
+> On 01/07/2025 15:35, Shradha Todi wrote:
+> >>> does not support auto adaptation so we need to tune the PHYs
+> >>> according to the use case (considering channel loss, etc). This is
+> >>> why we
+> >>
+> >> So not same? Decide. Either it is same or not, cannot be both.
+> >>
+> >> If you mean that some wiring is different on the board, then how does
+> >> it differ in soc thus how it is per-soc property? If these are
+> >> use-cases, then how is even suitable for DT?
+> >>
+> >> I use your Tesla FSD differently and then I exchange DTSI and compatib=
+les?
+> >>
+> >> You are no describing real problem and both binding and your
+> >> explanations are vague and imprecise. Binding tells nothing about it,
+> >> so it is example of skipping important decisions.
+> >>
+> >>> have 2 different SW PHY initialization sequence depending on the
+> >>> instance number. Do you think having different compatible (something
+> >>> like
+> >>> tesla,fsd-pcie-phy0 and tesla,fsd-pcie-phy1) and having phy ID as
+> >>> platform data is okay in this case? I actually took reference from fi=
+les like:
+> >>
+> >> And in different use case on same soc you are going to reverse
+> >> compatibles or instance IDs?
+> >>
+> >
+> > Even though both the PHYs are exactly identical in terms of hardware,
+> > they need to be programmed/initialized/configured differently.
+> >
+> > Sorry for my misuse of the word =22use-case=22. To clarify, these
+> > configurations will always remain the same for FSD SoC even if you use =
+it
+> differently.
+> >
+> > I will use different compatibles for them as I understand that it is
+> > the best option.
+>=20
+> I still do not see the difference in hardware explained.
+>=20
+
+Hi Krzysztof=20
+
+Let me add more details and see if that makes sense to understand the inten=
+tion
+behind the current design of the PHY driver.
+
+In FSD SoC, the two PHY instances, although having identical hardware desig=
+n and
+register maps, are placed in different locations (Placement and routing) in=
+side the
+SoC and have distinct PHY-to-Controller topologies.=20
+
+One instance is connected to two PCIe controllers, while the other is conne=
+cted to
+only one. As a result, they experience different analog environments, inclu=
+ding
+varying channel losses and noise profiles.
+
+Since these PHYs lack internal adaptation mechanisms and f/w based tuning,
+manual register programming is required for analog tuning, such as equaliza=
+tion,
+de-emphasis, and gain. To ensure optimal signal integrity, it is essential =
+to use different
+register values for each PHY instance, despite their identical hardware des=
+ign.
+This is because the same register values may not be suitable for both insta=
+nces due to
+their differing environments and topologies.
+
+Do let us know if this explains the intention behind separate programming s=
+equence
+for both instance of the PHY?
+
+Thanks,
+Pankaj Dubey
+> Best regards,
+> Krzysztof
 
 
