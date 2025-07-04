@@ -1,114 +1,117 @@
-Return-Path: <linux-kernel+bounces-716684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9AB9AF89AE
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 09:39:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F401EAF89C2
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 09:42:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3B9B164693
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 07:39:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B0E41C88204
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 07:42:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE3D228313B;
-	Fri,  4 Jul 2025 07:39:33 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 163692820A0;
+	Fri,  4 Jul 2025 07:42:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="PTeay4dG"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97A3A27A10A;
-	Fri,  4 Jul 2025 07:39:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF8DA221299
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 07:41:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751614773; cv=none; b=nKAdEa2PHx4vNe1Ki3laTq92SLiKuvXy8jj1JfB65DG672LWgRYJRg9Eke00CXtJJCNkMV2jT45gWInYhQXMCjIcyMghOqv10ZrAh44JmRIvsYBfwbVD3D4pd7+HHSipdv5wL360FQMoeHFIePA6aSZpmE9QjGj66Pi2mDsPDUM=
+	t=1751614921; cv=none; b=ozvp8scLiU9Aary65maPgrnRyNgVHDODUDmwNtnj4ExFvdIAhYjfm8sgoBXg8waO07kxM9rvjB4LQBvb43R5IX5B554QO305cOgieUtpt30AVQhjbVhefRIdaxNezGLlTx63dfqnK5W20XhmJxwkuBp/VKHI7n7GjoswpF0GeUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751614773; c=relaxed/simple;
-	bh=zUyh97JqCK3KdJWYl2/MyQW39mdsTV459TPaykhk8Ac=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e1KT/Xd+98vTcTxCi5pgVqFBJsSpQ6C2QJ8yOXBi8NrcKFG9Q9bqeIkdlnBc3VTi0Rf7TB84jT2HaFdoUS6XxWw6DLiTcGH1t8fqWW04JoCR2ldgcoY5b7hh9emiAniTuv47Wivtw5X6HkKTdUTeGFZn1o2be7jHGMkm5XHX3sM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 0002f30658aa11f0b29709d653e92f7d-20250704
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:0563ff65-4080-4fdd-94b1-5dab8a616b77,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6493067,CLOUDID:2e1a03c2da9073700864a3e28dd55ca8,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0|52,EDM:
-	-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
-	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 1,FCT|NGT
-X-CID-BAS: 1,FCT|NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 0002f30658aa11f0b29709d653e92f7d-20250704
-Received: from node4.com.cn [(10.44.16.170)] by mailgw.kylinos.cn
-	(envelope-from <dengjie03@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 1483698095; Fri, 04 Jul 2025 15:39:21 +0800
-Received: from node4.com.cn (localhost [127.0.0.1])
-	by node4.com.cn (NSMail) with SMTP id 701D716001A04;
-	Fri,  4 Jul 2025 15:39:21 +0800 (CST)
-X-ns-mid: postfix-68678529-2855072498
-Received: from [10.42.12.86] (unknown [10.42.12.86])
-	by node4.com.cn (NSMail) with ESMTPA id 6E97216001A01;
-	Fri,  4 Jul 2025 07:39:20 +0000 (UTC)
-Message-ID: <86b6de1e-9e72-448b-89c6-5b69e6c18c90@kylinos.cn>
-Date: Fri, 4 Jul 2025 15:39:19 +0800
+	s=arc-20240116; t=1751614921; c=relaxed/simple;
+	bh=ZU/GI74q8CYc+4uxPZ3famiEgwCI2Cd/zxvHpn0VDXA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EgeXMrrtBIeF/Yk4YYE0tncs2WIxwnZA7cOykDiHTPkNfY950jJnx9s+TdqGNQ3krhhEV9mAX/J/ZXtI2O9fHAUjmus2FNkpVnNPY4TBzLVSkdV12zVgU/y8LedCEYshm1UuHhUz9LiaV5ul0aM5A9lEldAaNDZvto6NBaLlDNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=PTeay4dG; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-32b4a0915b1so1108271fa.0
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Jul 2025 00:41:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1751614918; x=1752219718; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZU/GI74q8CYc+4uxPZ3famiEgwCI2Cd/zxvHpn0VDXA=;
+        b=PTeay4dGQd0jMrkNDiea68A0zMriShzP3dR5rRDIFwfR0oUtJOrhZgzKhBni17Ffc2
+         Fli0mdU9dZQJcPyjoCT1Amo9doUGd2Z9v2h/R76wRoEOkvG3w8ey/4fVfHCHO7plsyUq
+         swwgO4L63wrksTLbwQZR6Y4Ti/tf2xEWCEeFdAf1EMCte39nkKzAwG74SrCeYHYWYpZd
+         UR5sJxZMRvfGK5WPDWHinJjz4QuGFfgLRJFPKxXzZ+pbCpVwcjFnA4wvEDk3dRgXIbrE
+         4z+cTorJhAX9mqDCgo2E0k7IiWBXAkaTcdMTo58YqcNDRPffex6BdJHoyvf9XSgcKhxr
+         m9nw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751614918; x=1752219718;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZU/GI74q8CYc+4uxPZ3famiEgwCI2Cd/zxvHpn0VDXA=;
+        b=lbsfNqqmuGq0FVYzu8se3wik7BfyPgBxmJDYrPQLYwIA48z6tbmT81HC/EAnVsh5Sb
+         L8G54QG1crDOxk0dcWnJOsALFy10X5OVbqn3C/Z6HpwJ/wYwgLeokxza6fQzi5vdv6fy
+         A0nFZFnFnRmUT0SSpMU8p+ZQyxmJYANt0FyJJDb0+yDoDp5t7aiPjkCUVihWJr6a7RrU
+         Xolw2xIj7+wBjioLorgp10HYmD4Gkwa5gJ6h/UtlkUSAf07Ow+3r+/+swdp5+oB0TRuj
+         3Sis/uba51sDnpBadWSnDB0NvhmFPxmUPEbU94lD2ILgG4LQTeGGoQZH2LMFy8XxbWjc
+         Ckzw==
+X-Forwarded-Encrypted: i=1; AJvYcCVafWCrRzNWWEXYgQN/45OFWWgeVAWQX1RLWpBXjyDidLQgUu9uvTlwY5jVjjwJCvdEj3N0vuaCcYUIQw4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7z+GVy+tbfzzpaW8+MyDwZMDK13uoUOXLBjBoWLh9+rW7FtVf
+	AAHMBC7Vs3MEmfFhqNtD8mIHigrByOs8pElc/77bRIQgvi5IsxTHUwPtnQ/wWD3oqrTQoxZAHJo
+	EcvLikU+xaJYpENXUnsqxGPl55mQzDSV/v2uuF38o0Q==
+X-Gm-Gg: ASbGncsTF5qnr8VmxdPL3/WLms+3KCXxpYFgsAqYUb7a/6JKQXWAqOSLDtoi5e1IIuX
+	kPg8oMYUL/I4lImttrCH7Q5EoP39psXyPlFXNnkTyQkv+NSivM6s3uUjy/XB0ReF2QtAJ+5PWAN
+	H01DyNuCk7jTsiS92tP3IaLJRKNZUyJruKDx7/NNABS+GHD3VpPdCkNw0pHvef
+X-Google-Smtp-Source: AGHT+IE3uywphxdB/hgrGdClLGMEDafSpYMGMbgzUpKHzptOOdooBFzvpx420YP2PAZqld8Hm+pbqS2RYe1dK7NZ3eg=
+X-Received: by 2002:a2e:a99f:0:b0:30b:d156:9ea2 with SMTP id
+ 38308e7fff4ca-32e962d5136mr1478751fa.0.1751614917893; Fri, 04 Jul 2025
+ 00:41:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] usb: storage: Ignore UAS driver for SanDisk Extreme Pro
- 55AF storage device
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: stern@rowland.harvard.edu, linux-usb@vger.kernel.org,
- usb-storage@lists.one-eyed-alien.net, linux-kernel@vger.kernel.org
-References: <20250703092946.939936-1-dengjie03@kylinos.cn>
- <2025070329-rinse-engaged-e7af@gregkh>
-From: Jie Deng <dengjie03@kylinos.cn>
-In-Reply-To: <2025070329-rinse-engaged-e7af@gregkh>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+References: <20250702155112.40124-1-heshuan@bytedance.com> <aGYkx4a4eJUJorYp@sunil-laptop>
+ <CAKmKDKksSTrT=wMBpnqGupe4WRnHosYZLunw0FdVbhW_dyym+A@mail.gmail.com> <r7fgb5xrn6ocstq6ctq4q7r4o2esgh4rqr44c3u234kcep6thk@bge2vzl33ptb>
+In-Reply-To: <r7fgb5xrn6ocstq6ctq4q7r4o2esgh4rqr44c3u234kcep6thk@bge2vzl33ptb>
+From: He Shuan <heshuan@bytedance.com>
+Date: Fri, 4 Jul 2025 15:41:46 +0800
+X-Gm-Features: Ac12FXyDQukuHY5FB-0tXjb3qsjlMtbnAerUDAyQxsD0jYsZK2sVM1WeS67ZI-U
+Message-ID: <CAKmKDKm_5TXKafWVVMoRdj8Zp=up7YXQ=-CMO=VDHg6KLw-dTQ@mail.gmail.com>
+Subject: Re: [External] Re: [RFC 0/1] PCI: Fix pci devices double register
+ WARNING in the kernel starting process
+To: Manivannan Sadhasivam <mani@kernel.org>
+Cc: Sunil V L <sunilvl@ventanamicro.com>, bhelgaas@google.com, cuiyunhui@bytedance.com, 
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+Hi Mani,
 
-=E5=9C=A8 2025/7/3 18:01, Greg KH =E5=86=99=E9=81=93:
-> On Thu, Jul 03, 2025 at 05:29:46PM +0800, Jie Deng wrote:
->> diff --git a/drivers/usb/storage/unusual_uas.h b/drivers/usb/storage/u=
-nusual_uas.h
->> index 1477e31d7763..9f093a6af7f9 100644
->> --- a/drivers/usb/storage/unusual_uas.h
->> +++ b/drivers/usb/storage/unusual_uas.h
->> @@ -199,3 +199,10 @@ UNUSUAL_DEV(0x4971, 0x8024, 0x0000, 0x9999,
->>   		"External HDD",
->>   		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
->>   		US_FL_ALWAYS_SYNC),
->> +
->> +/* Reported-by: Jie Deng <dengjie03@kylinos.cn> */
->> +UNUSUAL_DEV(0x0781, 0x55af, 0x0000, 0x9999,
->> +		"SanDisk",
->> +		"Extreme Pro 55AF",
->> +		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
->> +		US_FL_IGNORE_UAS),
->> --=20
->> 2.25.1
->>
->>
-> Please read the comment at the top of this file for where to put the
-> entry.
->
-> thanks,
->
-> greg k-h
+Thanks for your comments.
 
-I'm very sorry for not reading the file to be modified carefully.
+>But in your case, looks like the PCI device is available somehow before
+>pci_proc_init() gets executed. Now, it is not very clear to me how the device
+>becomes available at this point. It might be due to some other issue. But in
+>anycase, I think we need to get rid of calling pci_proc_attach_device() from
+>pci_proc_init() as I don't see a reason to call this function from two
+>different places. pci_bus_add_device() should be the one calling this function
+>as it is the one adding the PCI device.
+Got it. I need to figure out why the PCI device is available already before
+pci_proc_init() is executed. (Actually I didn't change too much source code yet,
+basically running my test based on the upstream code).
 
-The second version of the patch has been modified as required.
+>Ironically, I do see a similar pattern for sysfs also. Maybe there is (or was) a
+>reason to create these files from two different places?
+Yes, I see the sysfs register confusion (pci_create_sysfs_dev_files) from
+pci_sysfs_init() and pci_bus_add_device() as well. There do have concurrence
+protection through pci_bus_add_device() paths, so I agree that function
+pci_proc_attach_device and pci_create_sysfs_dev_files should be called
+from pci_bus_add_devices().
 
-Thanks
+Anyway, it appears there is a great deal of work/effort needed before
+making this part clear. :(
 
-jie deng
-
+Bests,
+Shuan
 
