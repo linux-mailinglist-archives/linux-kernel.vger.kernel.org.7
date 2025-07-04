@@ -1,209 +1,218 @@
-Return-Path: <linux-kernel+bounces-716977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C029AF8D75
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 11:05:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3D9BAF8D7B
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 11:06:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74FF51CA455E
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 09:05:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 330541C24EDC
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 09:05:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CA9F2F5C44;
-	Fri,  4 Jul 2025 08:58:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 582802DA760;
+	Fri,  4 Jul 2025 08:59:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="tD5RKFLM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Ho4Lje9f"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A0A22F5C2C;
-	Fri,  4 Jul 2025 08:58:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51A172BEC20;
+	Fri,  4 Jul 2025 08:59:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751619521; cv=none; b=BRf30rD8gP4eQPZTChBWV2BXFM/+LzmZqVBrc0iwUlgqGVknGOL4a2j/LbDyUTZ8pJfldIMTczoIPbLMMJUxKlKtE+nFxVhg1JLWetiJZRs3hfWcnssQ1Z8isUkn0bE7RYATxLxZV0tsajE+QzHs9u2kIdsl8FRepg6BAXc+kp8=
+	t=1751619561; cv=none; b=ndI7dpi6WzSRCvJCEF1uFwygEXfL5SG9pLgc4xpUtBnNgzzkA8CjN6jDVfOSF2lZTkcJJdwpJRWvr+GRxANpWKxui5SntdoKfkQtTiZ5G1uNLWArtYvO1jd0GpAxrVAHZjRP6B2zEf0/ICx7fdPcziH3Ckq2wBB6uqW39CVV+8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751619521; c=relaxed/simple;
-	bh=d+Wl1jZE/I9B8bdRNnQe1es6PtluF9HhWnQefqznmbA=;
+	s=arc-20240116; t=1751619561; c=relaxed/simple;
+	bh=4aDa8NBXppN/LdbIV9IgaMcu2JbMN6S8x0zZJF6okAU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LS0f8radpzHIYSxMopx684edewlET7QuF4BDceWnYbL7YfiwQZnkFe1toaG+OgvIc7ZnWVxRzaN3TDE7kRjQfDpZMyGlUqp4OfRTxuRzWvy6H1PtcIVTH7GA3mv4KsgO+43MXzGmz0Xjv+0wd7TC5llZIRPL+0v2DAFP2MKDmlY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=tD5RKFLM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B009BC4CEE3;
-	Fri,  4 Jul 2025 08:58:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1751619521;
-	bh=d+Wl1jZE/I9B8bdRNnQe1es6PtluF9HhWnQefqznmbA=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=XKUU4HLPXC9TqEj5vNhaxh48/4JODx/SNssFnDqnuq/CtVnGD/3tIRNZe4HULwhUlE4+NSVW4FHcMdgDYw6wSTtaFXVc109X6oVbsRZ4hTjNURwISD/pBZosi44/tp7ZvHtDGfUSeHFpxLf3OCbmafOKvM8Yo91xFsppA1Ihnv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Ho4Lje9f; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id E0700667;
+	Fri,  4 Jul 2025 10:58:51 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1751619532;
+	bh=4aDa8NBXppN/LdbIV9IgaMcu2JbMN6S8x0zZJF6okAU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tD5RKFLMS/H+cinxfjavqH73neq7XUI9RRZyaKOIUC3430nh5tqWQXIAsy9K5qrYj
-	 pwV41HGE4Lbwwrxf0MT2/kwLbqGqAmQSRzf1BnB/so0L8kUAYd2TpE7+pvdNKpxCW1
-	 hIvabZr4gtOqQnK1jVQRCAzan/pfN6qjWfFGZrLY=
-Date: Fri, 4 Jul 2025 10:58:38 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Ekansh Gupta <ekansh.gupta@oss.qualcomm.com>
-Cc: srini@kernel.org, linux-arm-msm@vger.kernel.org,
-	quic_bkumar@quicinc.com, linux-kernel@vger.kernel.org,
-	quic_chennak@quicinc.com, dri-devel@lists.freedesktop.org,
-	arnd@arndb.de, dmitry.baryshkov@oss.qualcomm.com
-Subject: Re: [PATCH v1] misc: fastrpc: Add support for userspace allocated
- buffers
-Message-ID: <2025070443-impatient-essay-23ab@gregkh>
-References: <20250704083726.1901705-1-ekansh.gupta@oss.qualcomm.com>
+	b=Ho4Lje9figf6lqHEqUrP+Wzcqz/AtqP6p/LJwaPqqTeoN2ePPulVy3OmzK0beeIhg
+	 4uUFiHc5jnyK3yoA8xO0aCfUQfFxF5kYDM/KER0PDql4drd2aL20hfugV0iKaUkcX2
+	 kPXmM8N2lL7cYvD+/KAZ6a8xflgKV5++IspyhulA=
+Date: Fri, 4 Jul 2025 11:58:48 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Douglas Anderson <dianders@chromium.org>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Russell King <linux+etnaviv@armlinux.org.uk>,
+	Christian Gmeiner <christian.gmeiner@gmail.com>,
+	Inki Dae <inki.dae@samsung.com>,
+	Seung-Woo Kim <sw0312.kim@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Qiang Yu <yuq825@gmail.com>,
+	Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+	Boris Brezillon <boris.brezillon@collabora.com>,
+	Steven Price <steven.price@arm.com>,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Jyri Sarha <jyri.sarha@iki.fi>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	=?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>,
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	Damon Ding <damon.ding@rock-chips.com>,
+	Ayushi Makhija <quic_amakhija@quicinc.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+	Chen-Yu Tsai <wenst@chromium.org>, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, etnaviv@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+	imx@lists.linux.dev, lima@lists.freedesktop.org,
+	linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 20/80] drivers: drm: Remove redundant
+ pm_runtime_mark_last_busy() calls
+Message-ID: <20250704085848.GD14736@pendragon.ideasonboard.com>
+References: <20250704075225.3212486-1-sakari.ailus@linux.intel.com>
+ <20250704075413.3218307-1-sakari.ailus@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250704083726.1901705-1-ekansh.gupta@oss.qualcomm.com>
+In-Reply-To: <20250704075413.3218307-1-sakari.ailus@linux.intel.com>
 
-On Fri, Jul 04, 2025 at 02:07:26PM +0530, Ekansh Gupta wrote:
-> Support mapping userspace allocated buffers. If userspace allocates a
-> buffer using rpcmem or DMABUF and sends it via a map request, fastrpc
-> will map it to SMMU and DSP. Add support for both map and unmap
-> requests.
+Hi Sakari,
+
+Thank you for the patch.
+
+On Fri, Jul 04, 2025 at 10:54:13AM +0300, Sakari Ailus wrote:
+> pm_runtime_put_autosuspend(), pm_runtime_put_sync_autosuspend(),
+> pm_runtime_autosuspend() and pm_request_autosuspend() now include a call
+> to pm_runtime_mark_last_busy(). Remove the now-reduntant explicit call to
+> pm_runtime_mark_last_busy().
 > 
-> Signed-off-by: Ekansh Gupta <ekansh.gupta@oss.qualcomm.com>
+> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 > ---
->  drivers/misc/fastrpc.c | 188 ++++++++++++++++++++++++++++++++---------
->  1 file changed, 150 insertions(+), 38 deletions(-)
+> The cover letter of the set can be found here
+> <URL:https://lore.kernel.org/linux-pm/20250704075225.3212486-1-sakari.ailus@linux.intel.com>.
 > 
-> diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
-> index 378923594f02..3c88c8e9ba51 100644
-> --- a/drivers/misc/fastrpc.c
-> +++ b/drivers/misc/fastrpc.c
-> @@ -1797,17 +1797,16 @@ static int fastrpc_get_dsp_info(struct fastrpc_user *fl, char __user *argp)
+> In brief, this patch depends on PM runtime patches adding marking the last
+> busy timestamp in autosuspend related functions. The patches are here, on
+> rc2:
+> 
+>         git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
+>                 pm-runtime-6.17-rc1
+> 
+>  drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 2 --
+>  drivers/gpu/drm/bridge/analogix/anx7625.c          | 2 --
+>  drivers/gpu/drm/bridge/parade-ps8640.c             | 2 --
+>  drivers/gpu/drm/bridge/ti-sn65dsi86.c              | 1 -
+>  drivers/gpu/drm/etnaviv/etnaviv_gpu.c              | 4 ----
+>  drivers/gpu/drm/exynos/exynos_drm_fimc.c           | 2 --
+>  drivers/gpu/drm/exynos/exynos_drm_g2d.c            | 2 --
+>  drivers/gpu/drm/exynos/exynos_drm_gsc.c            | 2 --
+>  drivers/gpu/drm/exynos/exynos_drm_rotator.c        | 1 -
+>  drivers/gpu/drm/exynos/exynos_drm_scaler.c         | 1 -
+>  drivers/gpu/drm/i915/intel_runtime_pm.c            | 2 --
+>  drivers/gpu/drm/imx/dcss/dcss-crtc.c               | 1 -
+>  drivers/gpu/drm/lima/lima_sched.c                  | 1 -
+>  drivers/gpu/drm/panel/panel-edp.c                  | 3 ---
+>  drivers/gpu/drm/panel/panel-samsung-atna33xc20.c   | 2 --
+>  drivers/gpu/drm/panel/panel-simple.c               | 2 --
+>  drivers/gpu/drm/panthor/panthor_sched.c            | 2 --
+>  drivers/gpu/drm/tegra/submit.c                     | 1 -
+>  drivers/gpu/drm/tidss/tidss_drv.c                  | 2 --
+>  drivers/gpu/drm/vc4/vc4_v3d.c                      | 1 -
+>  20 files changed, 36 deletions(-)
+
+[snip]
+
+> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gpu.c b/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
+> index cf0d9049bcf1..bc5a94dba2d4 100644
+> --- a/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
+> +++ b/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
+> @@ -916,13 +916,11 @@ int etnaviv_gpu_init(struct etnaviv_gpu *gpu)
+>  	etnaviv_gpu_hw_init(gpu);
+>  	mutex_unlock(&gpu->lock);
+>  
+> -	pm_runtime_mark_last_busy(gpu->dev);
+>  	pm_runtime_put_autosuspend(gpu->dev);
+>  
 >  	return 0;
+>  
+>  fail:
+
+You can drop the fail error later and replace it with pm_put.
+
+> -	pm_runtime_mark_last_busy(gpu->dev);
+>  pm_put:
+>  	pm_runtime_put_autosuspend(gpu->dev);
+>  
+> @@ -1109,7 +1107,6 @@ int etnaviv_gpu_debugfs(struct etnaviv_gpu *gpu, struct seq_file *m)
+>  
+>  	ret = 0;
+>  
+> -	pm_runtime_mark_last_busy(gpu->dev);
+>  pm_put:
+>  	pm_runtime_put_autosuspend(gpu->dev);
+>  
+> @@ -1509,7 +1506,6 @@ void etnaviv_gpu_recover_hang(struct etnaviv_gem_submit *submit)
+>  	etnaviv_gpu_hw_init(gpu);
+>  
+>  	mutex_unlock(&gpu->lock);
+> -	pm_runtime_mark_last_busy(gpu->dev);
+>  pm_put:
+>  	pm_runtime_put_autosuspend(gpu->dev);
 >  }
->  
-> -static int fastrpc_req_munmap_impl(struct fastrpc_user *fl, struct fastrpc_buf *buf)
-> +static int fastrpc_req_munmap_dsp(struct fastrpc_user *fl, uintptr_t raddr, u64 size)
 
-uintptr_t is not a valid kernel type, please use our real ones :)
+[snip]
 
-"*u64"?
-
->  {
->  	struct fastrpc_invoke_args args[1] = { [0] = { 0 } };
->  	struct fastrpc_munmap_req_msg req_msg;
-> -	struct device *dev = fl->sctx->dev;
->  	int err;
->  	u32 sc;
+> diff --git a/drivers/gpu/drm/vc4/vc4_v3d.c b/drivers/gpu/drm/vc4/vc4_v3d.c
+> index bb09df5000bd..11ec7e913974 100644
+> --- a/drivers/gpu/drm/vc4/vc4_v3d.c
+> +++ b/drivers/gpu/drm/vc4/vc4_v3d.c
+> @@ -153,7 +153,6 @@ vc4_v3d_pm_put(struct vc4_dev *vc4)
 >  
->  	req_msg.client_id = fl->client_id;
-> -	req_msg.size = buf->size;
-> -	req_msg.vaddr = buf->raddr;
-> +	req_msg.size = size;
-> +	req_msg.vaddr = raddr;
->  
->  	args[0].ptr = (u64) (uintptr_t) &req_msg;
->  	args[0].length = sizeof(req_msg);
-> @@ -1815,6 +1814,16 @@ static int fastrpc_req_munmap_impl(struct fastrpc_user *fl, struct fastrpc_buf *
->  	sc = FASTRPC_SCALARS(FASTRPC_RMID_INIT_MUNMAP, 1, 0);
->  	err = fastrpc_internal_invoke(fl, true, FASTRPC_INIT_HANDLE, sc,
->  				      &args[0]);
-> +
-> +	return err;
-> +}
-> +
-> +static int fastrpc_req_munmap_impl(struct fastrpc_user *fl, struct fastrpc_buf *buf)
-> +{
-> +	struct device *dev = fl->sctx->dev;
-> +	int err;
-> +
-> +	err = fastrpc_req_munmap_dsp(fl, buf->raddr, buf->size);
->  	if (!err) {
->  		dev_dbg(dev, "unmmap\tpt 0x%09lx OK\n", buf->raddr);
->  		spin_lock(&fl->lock);
-> @@ -1831,8 +1840,10 @@ static int fastrpc_req_munmap_impl(struct fastrpc_user *fl, struct fastrpc_buf *
->  static int fastrpc_req_munmap(struct fastrpc_user *fl, char __user *argp)
->  {
->  	struct fastrpc_buf *buf = NULL, *iter, *b;
-> +	struct fastrpc_map *map = NULL, *iterm, *m;
->  	struct fastrpc_req_munmap req;
->  	struct device *dev = fl->sctx->dev;
-> +	int err;
->  
->  	if (copy_from_user(&req, argp, sizeof(req)))
->  		return -EFAULT;
-> @@ -1846,35 +1857,91 @@ static int fastrpc_req_munmap(struct fastrpc_user *fl, char __user *argp)
+>  	mutex_lock(&vc4->power_lock);
+>  	if (--vc4->power_refcount == 0) {
+> -		pm_runtime_mark_last_busy(&vc4->v3d->pdev->dev);
+>  		pm_runtime_put_autosuspend(&vc4->v3d->pdev->dev);
 >  	}
->  	spin_unlock(&fl->lock);
->  
-> -	if (!buf) {
-> -		dev_err(dev, "mmap\t\tpt 0x%09llx [len 0x%08llx] not in list\n",
-> +	if (buf) {
-> +		err = fastrpc_req_munmap_impl(fl, buf);
-> +		if (err) {
-> +			spin_lock(&fl->lock);
-> +			list_add_tail(&buf->node, &fl->mmaps);
-> +			spin_unlock(&fl->lock);
-> +		}
-> +		return err;
-> +	}
-> +
-> +	spin_lock(&fl->lock);
-> +	list_for_each_entry_safe(iterm, m, &fl->maps, node) {
-> +		if (iterm->raddr == req.vaddrout) {
-> +			map = iterm;
-> +			list_del(&iterm->node);
-> +			break;
-> +		}
-> +	}
-> +	spin_unlock(&fl->lock);
-> +	if (!map) {
-> +		dev_dbg(dev, "buffer/map not found addr 0x%09llx, len 0x%08llx\n",
->  			req.vaddrout, req.size);
->  		return -EINVAL;
->  	}
->  
-> -	return fastrpc_req_munmap_impl(fl, buf);
-> +	err = fastrpc_req_munmap_dsp(fl, map->raddr, map->size);
-> +	if (err) {
-> +		dev_dbg(dev, "unmmap\tpt fd = %d, 0x%09llx error\n",  map->fd, map->raddr);
-> +		spin_lock(&fl->lock);
-> +		list_add_tail(&map->node, &fl->maps);
-> +		spin_unlock(&fl->lock);
-> +	} else {
-> +		fastrpc_map_put(map);
-> +	}
-> +	return err;
->  }
->  
-> -static int fastrpc_req_mmap(struct fastrpc_user *fl, char __user *argp)
-> +static int fastrpc_req_map_dsp(struct fastrpc_user *fl, u64 phys,
-> +			       u64 size, u32 flag, uintptr_t vaddrin,
-> +			       u64 *raddr)
->  {
->  	struct fastrpc_invoke_args args[3] = { [0 ... 2] = { 0 } };
-> -	struct fastrpc_buf *buf = NULL;
->  	struct fastrpc_mmap_req_msg req_msg;
->  	struct fastrpc_mmap_rsp_msg rsp_msg;
->  	struct fastrpc_phy_page pages;
-> -	struct fastrpc_req_mmap req;
-> -	struct device *dev = fl->sctx->dev;
->  	int err;
->  	u32 sc;
->  
-> -	if (copy_from_user(&req, argp, sizeof(req)))
-> -		return -EFAULT;
-> +	req_msg.client_id = fl->client_id;
-> +	req_msg.flags = flag;
-> +	req_msg.vaddr = vaddrin;
-> +	req_msg.num = sizeof(pages);
 
-No validation of these user-provided values?  Or did I miss where that
-happens?
+And here you can drop the curly braces. With that,
 
->  
-> -	if (req.flags != ADSP_MMAP_ADD_PAGES && req.flags != ADSP_MMAP_REMOTE_HEAP_ADDR) {
-> -		dev_err(dev, "flag not supported 0x%x\n", req.flags);
-> +	args[0].ptr = (u64)(uintptr_t)&req_msg;
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-Again, "uintptr_t" isn't for the kernel please.
+>  	mutex_unlock(&vc4->power_lock);
 
-thanks,
+-- 
+Regards,
 
-greg k-h
+Laurent Pinchart
 
