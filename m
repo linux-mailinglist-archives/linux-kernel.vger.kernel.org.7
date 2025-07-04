@@ -1,79 +1,64 @@
-Return-Path: <linux-kernel+bounces-717387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-717391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57341AF93B5
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 15:09:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 954CDAF93BE
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 15:10:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 037EC3B9F54
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 13:09:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C8F517BD918
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 13:09:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D3CD2F7D0E;
-	Fri,  4 Jul 2025 13:09:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 433BC2F7D00;
+	Fri,  4 Jul 2025 13:09:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fQB5RYU/"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="NHe2yd9m"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 344CE38DDB
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 13:09:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A33ED2F85D1;
+	Fri,  4 Jul 2025 13:09:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751634561; cv=none; b=EKeEzpC+G4JJ8Kb6oTKccOgrR302vA75dm8wnDqpXWm2jF1gLtPghNPqfC1aphlk5aOM55CqvXHTpbV7cb+c7BA/vY26T0FY38Tn8bHCU/hPsGJsC0ZJv1/sjZhPPh4/J5zJH4Bkx/90i64I0XYdaeBqUmDIndhpr55li6WJMmc=
+	t=1751634589; cv=none; b=ZFoCEQz1MSOY7P+erlRz0xReTR0kNwZIvSRiJqtN2JyPePPvnBc9Rf6k9CoIpP3sxz5/7ui3mo4eAp9oznj4A/F7uOhxBvO/6XrJ5zUVh33Rqm7lQsNnAFrErVnh5NM9urBiDK5PLxjH2FC/w9f93tdeLI4tmQGMCBhtB3CTTC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751634561; c=relaxed/simple;
-	bh=Ta9oBCAhubod8prwYsmUDErfCxhu2NU7MOvICvUcjz0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oQMSCSc5Pkf19/0TlAggBoLKOcab8l30byNIsi9tRYpaiADOkJW7MmULK/5fUbLd0fTOHqKJmPbMuCrJXB4UcYlxMRwU7j6Y/jgFqxPfr1Y9rxpZGLy2/28Xlzri0rjshtlRDXPRwwRl6Ncx0aXnkFbPS2ds7y4hNTQRDTjqYBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fQB5RYU/; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-553e5df4511so34803e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Jul 2025 06:09:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751634555; x=1752239355; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=bPT/Yn9IyO9lNhZMkeKSyj5/KPjAxsknNyMSqLYzrPY=;
-        b=fQB5RYU/pPFT5i4+j6XDDUwhh9SYhvGtzEsY9K9aK1YNx0v1bkK7LcTEBpMldSpcHY
-         Va0QxT6NTVf7oDEjDDF56hMvz9eNvhbetwgwUp58ynV35Urek8KuFzn7oadto3bj2gDx
-         EfaR/CtQe5htWzOsIs1Q2X3DTmD+JHjC4zoAES5JyJjR6S8fM7uzOpUxdQ/9Sl1MKYv7
-         JsweEUIEhFlB+hKoZ42CjccWRM6bgzm/JOvLXR0tIqNQVKR3y5UFiqi8YC5FSFz5CUKn
-         MtfXE/KJkjzi87NZJ5LPT/bBOAGceSlvJSTUP+sYXFPNdsWc8z88oNrHXUlzxwG74RNf
-         LWpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751634555; x=1752239355;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bPT/Yn9IyO9lNhZMkeKSyj5/KPjAxsknNyMSqLYzrPY=;
-        b=QC6/GVNE5/tvL8aGhtRnozy49uElV2PoGjsmRysC6ZRULq4WKBIsY/1B26kHjowbGF
-         pW0Zw5TZgicDxEEMnc/cEiTV7eb5mBZxFh0zgHB7pnMXBENAO1Wy5KUwMF/Ss48ezmj4
-         jSs7A619GUY4EyTMLM3TvkIfmjhQpLYUoMcn9OHL/E7Or7hjCc/cI3s3nNXGW5XfnXsw
-         Ac+n/XIzk+IKzIUqM/kS2FySmjUvy92CyeyT/eD0puU/EulqICzVhaC+du+oABViH0Wx
-         cCbm32zawyEz0xgkohJqsVrsYCWyYe06pLE/EFcVyppDyy+CP0OLR9Ksh7qMND9SyaUz
-         BPaA==
-X-Forwarded-Encrypted: i=1; AJvYcCVkmtpkGaYkaX6wrbq3swHSj2+LQCEOZooqmkbZDjaBL+qXsqOpL/Uu/1udxdzsJqJnlhThTTR+/kEmj28=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzCdOSusINhe9lZ0BdxkOlQlONrTH60bJtmYS7rkhJ/4VOfhlX
-	ncArc4kI7IhLlTJb2sKueZ/LufL57vcEtyIPq91Oo2HHphtT1bxe9+YT
-X-Gm-Gg: ASbGncvGP40RcqrfgGbJJRuG+27UGl7Vq5mLNWC/b8sK6LWGWYUPMdzKbtf9ylxawQW
-	OFaahhZbBQ6MHtyEZavKAUZqbosQSmWGSYDFPifyFFiXVh7aW+NOp+rZTxtiBeFt0zWpX5DqPFn
-	6OBNzecx6afsmueONoayBZiwXSp9FrvSJgzaCWgKzn7TfSZJXUexNOF+o14PKwvHNwTNwVGoEQ3
-	GUEQ2SazJ+yjxtz4GKscAo0g8A/RRbDGElVbxoG81gjU77aGVMs1iLKpzVqnbxuBA8lc7CUoakT
-	s2f9Zk/dRc8gllCHRGeWF5qXfQ2Idljhi5PSNTQA9Xu77BTBmbdQFtyAxkZ8Z2+C7bQ4mELBsL7
-	bRXQ=
-X-Google-Smtp-Source: AGHT+IHGkSf7b6gCzmikSMHbOGCPLDngVVQXuVASyhJ3m7+Ta9yHqoizqWxSIsu1KXw9T4avAiQtfA==
-X-Received: by 2002:a05:6512:2247:b0:549:8c32:78ea with SMTP id 2adb3069b0e04-556f3db2bb9mr271494e87.7.1751634554993;
-        Fri, 04 Jul 2025 06:09:14 -0700 (PDT)
-Received: from [10.214.35.248] ([80.93.240.68])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-556383bb14bsm246405e87.16.2025.07.04.06.09.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 04 Jul 2025 06:09:13 -0700 (PDT)
-Message-ID: <b32229f0-0702-4047-9e71-e3d6ed85f0bf@gmail.com>
-Date: Fri, 4 Jul 2025 15:07:54 +0200
+	s=arc-20240116; t=1751634589; c=relaxed/simple;
+	bh=vQnRujYKxlmzaQhMBbm5+UCxMR5wuiujeHB+FFYJW5Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=EcL3YsvdvXNycN0BWDzsgxD1v5P9vAfF5wcX6lEe5Goh9MiObBVTUTF3jd7k7cg0IYGeES9g9KN5OvLF0b0iS5lSg5mcpGJHKKgCF1BkQUlIFGaPOl+QYuR6kvjVt9Yrt+1JLqV/Dtx/9vsFmyF2BPdDKci8eJaBb4DN91nAN8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=NHe2yd9m; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 564CYv65012818;
+	Fri, 4 Jul 2025 15:09:37 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	V4CgzvQiInbe8bc3VV3PcAVGmZbXimShPwMNviMcn6Q=; b=NHe2yd9m470sdg9H
+	NHs26SleVaFuy/p54nAVaL9c8Ape8CbpgMEnrfV87HUKUirsnpaqxq5v8pkNVSka
+	ZCvqnuh2rtJjKdlehg5NSsGb4Tcf0nauSz9MLoI2DapPVM/CBUVuZKulJ96ZOQp+
+	yWgEAme1KP4HWewoxOUOlhYu4QdYybF0GidBYmU/IIGR5yc0PfV3O8RGxSQu+ioq
+	OmiCZn1ihYllNwZrgB5Cq5hFM/FWIGXfrvrsWaiMAVIzePMTDrl7Pgs3DrcIkG4o
+	zX63VhphJb8bU+fOUNXfiezDBgP1uIACdiD3fY1bdItdds44z5Zf1vQgCFsIwISq
+	K/GG5w==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 47j5tmnkws-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 04 Jul 2025 15:09:37 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 0CD6840046;
+	Fri,  4 Jul 2025 15:08:47 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id E9343B51B49;
+	Fri,  4 Jul 2025 15:08:23 +0200 (CEST)
+Received: from [10.48.87.62] (10.48.87.62) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 4 Jul
+ 2025 15:08:23 +0200
+Message-ID: <304da1be-c0de-475e-92be-ef7a9727e281@foss.st.com>
+Date: Fri, 4 Jul 2025 15:08:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,68 +66,75 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] kasan: remove kasan_find_vm_area() to prevent possible
- deadlock
-To: Andrey Konovalov <andreyknvl@gmail.com>, Yeoreum Yun <yeoreum.yun@arm.com>
-Cc: glider@google.com, dvyukov@google.com, vincenzo.frascino@arm.com,
- akpm@linux-foundation.org, bigeasy@linutronix.de, clrkwllms@kernel.org,
- rostedt@goodmis.org, byungchul@sk.com, max.byungchul.park@gmail.com,
- ysk@kzalloc.com, kasan-dev@googlegroups.com, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev
-References: <20250703181018.580833-1-yeoreum.yun@arm.com>
- <CA+fCnZeL4KQJYg=yozG7Tr9JA=d+pMFHag_dkPUT=06khjz4xA@mail.gmail.com>
- <aGbSCG2B6464Lfz7@e129823.arm.com>
- <CA+fCnZfq570HfXpS1LLUVm0sHXW+rpkSOMLVzafZ2q_ogha47g@mail.gmail.com>
+Subject: Re: [PATCH] i2c: busses: Use min() to improve code
+To: Qianfeng Rong <rongqianfeng@vivo.com>, Andi Shyti <andi.shyti@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-i2c@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC: <opensource.kernel@vivo.com>
+References: <20250619142609.323082-1-rongqianfeng@vivo.com>
 Content-Language: en-US
-From: Andrey Ryabinin <ryabinin.a.a@gmail.com>
-In-Reply-To: <CA+fCnZfq570HfXpS1LLUVm0sHXW+rpkSOMLVzafZ2q_ogha47g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: Patrice CHOTARD <patrice.chotard@foss.st.com>
+In-Reply-To: <20250619142609.323082-1-rongqianfeng@vivo.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-04_05,2025-07-04_01,2025-03-28_01
 
 
 
-On 7/3/25 9:05 PM, Andrey Konovalov wrote:
-> On Thu, Jul 3, 2025 at 8:55 PM Yeoreum Yun <yeoreum.yun@arm.com> wrote:
->>
->> Hi Andrey,
->>
->>>>
->>>> find_vm_area() couldn't be called in atomic_context.
->>>> If find_vm_area() is called to reports vm area information,
->>>> kasan can trigger deadlock like:
->>>>
->>>> CPU0                                CPU1
->>>> vmalloc();
->>>>  alloc_vmap_area();
->>>>   spin_lock(&vn->busy.lock)
->>>>                                     spin_lock_bh(&some_lock);
->>>>    <interrupt occurs>
->>>>    <in softirq>
->>>>    spin_lock(&some_lock);
->>>>                                     <access invalid address>
->>>>                                     kasan_report();
->>>>                                      print_report();
->>>>                                       print_address_description();
->>>>                                        kasan_find_vm_area();
->>>>                                         find_vm_area();
->>>>                                          spin_lock(&vn->busy.lock) // deadlock!
->>>>
->>>> To prevent possible deadlock while kasan reports, remove kasan_find_vm_area().
->>>
->>> Can we keep it for when we are in_task()?
->>
->> We couldn't do. since when kasan_find_vm_area() is called,
->> the report_lock is grabbed with irq disabled.
->>
->> Please check discuss with Andrey Ryabinin:
->>   https://lore.kernel.org/all/4599f645-f79c-4cce-b686-494428bb9e2a@gmail.com/
+On 6/19/25 16:26, Qianfeng Rong wrote:
+> Use min() to reduce the code and improve its readability.
 > 
-> That was about checking for !in_interrupt(), but I believe checking
-> for in_task() is different? But I'm not an expert on these checks.
+> Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
+> ---
+>  drivers/i2c/busses/i2c-st.c | 11 +++--------
+>  1 file changed, 3 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/i2c/busses/i2c-st.c b/drivers/i2c/busses/i2c-st.c
+> index 750fff3d2389..3373a828b5a0 100644
+> --- a/drivers/i2c/busses/i2c-st.c
+> +++ b/drivers/i2c/busses/i2c-st.c
+> @@ -19,6 +19,7 @@
+>  #include <linux/of.h>
+>  #include <linux/pinctrl/consumer.h>
+>  #include <linux/platform_device.h>
+> +#include <linux/minmax.h>
+>  
+>  /* SSC registers */
+>  #define SSC_BRG				0x000
+> @@ -422,10 +423,7 @@ static void st_i2c_wr_fill_tx_fifo(struct st_i2c_dev *i2c_dev)
+>  	tx_fstat = readl_relaxed(i2c_dev->base + SSC_TX_FSTAT);
+>  	tx_fstat &= SSC_TX_FSTAT_STATUS;
+>  
+> -	if (c->count < (SSC_TXFIFO_SIZE - tx_fstat))
+> -		i = c->count;
+> -	else
+> -		i = SSC_TXFIFO_SIZE - tx_fstat;
+> +	i = min(c->count, SSC_TXFIFO_SIZE - tx_fstat);
+>  
+>  	for (; i > 0; i--, c->count--, c->buf++)
+>  		st_i2c_write_tx_fifo(i2c_dev, *c->buf);
+> @@ -452,10 +450,7 @@ static void st_i2c_rd_fill_tx_fifo(struct st_i2c_dev *i2c_dev, int max)
+>  	tx_fstat = readl_relaxed(i2c_dev->base + SSC_TX_FSTAT);
+>  	tx_fstat &= SSC_TX_FSTAT_STATUS;
+>  
+> -	if (max < (SSC_TXFIFO_SIZE - tx_fstat))
+> -		i = max;
+> -	else
+> -		i = SSC_TXFIFO_SIZE - tx_fstat;
+> +	i = min(max, SSC_TXFIFO_SIZE - tx_fstat);
+>  
+>  	for (; i > 0; i--, c->xfered++)
+>  		st_i2c_write_tx_fifo(i2c_dev, 0xff);
 
-The problem is that CPU1 grabs '&vn->busy.lock' after the '&some_lock'. This could
-happen both in task and in irq contexts, so the in_task() guard just won't change anything.
 
+Hi Qianfeng
 
+Reviewed-by: Patrice Chotard <patrice.chotard@foss.st.com>
 
+Thanks
+Patrice
 
