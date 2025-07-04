@@ -1,112 +1,99 @@
-Return-Path: <linux-kernel+bounces-717783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-717786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1FEAAF9934
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 18:46:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EFEB5AF9938
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 18:47:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84F1A165D7C
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 16:46:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B9C0166998
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 16:47:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B5292D8394;
-	Fri,  4 Jul 2025 16:46:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0C322DEA65;
+	Fri,  4 Jul 2025 16:46:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="bQz2odiz"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cKi3gt4d"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8172F2E370E;
-	Fri,  4 Jul 2025 16:46:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BF6B2DEA7B;
+	Fri,  4 Jul 2025 16:46:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751647583; cv=none; b=f/HFlecQIwWCLN434XR5LnliioT+VHSZ32JCVNJY0QLF1iixzP9o9988Ox4xRcLXCfl8r8eUhsL//CI9DbXMKKJFu+ccZxzMqVaN3oNj3JK8Qq4qjpuNgTh8Bqp1nw0Y5yMoC2gQlRKR9zn8kbt/lofSzLrWMMD7SQ4sI+KfATU=
+	t=1751647589; cv=none; b=tAJVH7u9n2VnmuW8iYaFhEZ6ygNIWj1eiLyWZfrBKHTmx6LKSvfj9Q/yNfSVxIPSstWpBBP1D2SKw5hCISKUFEnAIva2sFQryvd6DeCE7Ix5sdJb0ENmgwQOekweCOUjtJqP/F3o8WTTm5I8xeGCdrLgFZkhulpTk8LACo/Vnn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751647583; c=relaxed/simple;
-	bh=K0H715q09w9Hc/4OmPalri+Mu4yXEtGmsTcusxPqNOA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YM9kBm/Q/ZZSSmDscY6hqQ16LuNPDLTW+rE5RIUF3DLvyqzCjekhGmiX4D316m/S0XVoQzSP7bkfZx1AmPxz9VTSq17HEoLY7ZMKlTN73jC4D2t2488vZpGAllkjL2PbSKi2ZcZuF9dkMtGEKHFrwi0fb+atRv68tYEO/k1en1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=bQz2odiz; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=DfTt13KaBgjZBz5elPAVafFy1ImSQAAQr44AcA6+pGE=; b=bQz2odizhpvQfOzSKFLFj2ENEq
-	D12u144AvHHnRFwIx8nQTribkpiQ8FB3lrZUE5Xq5Tx2g5ZnRdeyUicw2Cng12Tgt+Qfy6N2ads+T
-	Iw2yYsyN9sOO2c0KqsiuQe9WLbLodu8fKfyoEEpJip1X2BS1+mdcbPjQt8gcPCJfy5lcwb4nxP1eL
-	fZLdAhw7tycHAQBg0OxFmC4aST70U1UiUBRajOwV6Dd1c7fXvR2SMNBIZX6pC+3yRzS8BZ4a8Uaqd
-	nrPEGNE635mZhzQ2Bu96hsiLBWhywYNg0Y2PAjiUg+7uGfwr58DMBTn0/y7GydFIl3H0L0Bun1fOP
-	QirPS3dA==;
-Received: from [179.100.5.63] (helo=[192.168.15.100])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1uXjYC-00CVSU-HD; Fri, 04 Jul 2025 18:46:12 +0200
-Message-ID: <52c32d1b-e5c4-4f6d-82a3-cf02c0cf4681@igalia.com>
-Date: Fri, 4 Jul 2025 13:46:07 -0300
+	s=arc-20240116; t=1751647589; c=relaxed/simple;
+	bh=OPohBrKnAITM+aAWgmMkvXlTHyOCvLEu5b187LOl4TM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l+d/nUI/1Lj0Lznk2gyIhg5K430c4/++1JIyeQX6+R0zQyQHATY0NlZqa3OXZcmyOOC2c3goXjTYj7ncZcR0asJjZVEbJ1/A4IqLf1jAMdHf//2nqUJijI7YylINlAamh2Kyh+QR47/of/HYScnY0XZXLDFSuSUWjBbhebJHXE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cKi3gt4d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42005C4CEE3;
+	Fri,  4 Jul 2025 16:46:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751647588;
+	bh=OPohBrKnAITM+aAWgmMkvXlTHyOCvLEu5b187LOl4TM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cKi3gt4d0wzXA1Ri/K5ySvQImLczX2EvCkKGn5b5DaURYQBzhsE2UtsKIISxSsJS9
+	 QvLK0PCamBPKwzyOOmLN49kkZl0S09fa7A1sSa8RizeSXe3QQmdNiPAiW/+Dg9rhqT
+	 i10XZksjYhwiMfwzGukN/1ZfCXLuHlU3k6+WLV/bbDwDU4oWvJlrPgm9YTBpvzBDtz
+	 CzBVTcGM0OuVjbdoSs+KWj2VeYIOc7RvEwUXMcKq/CVyGDRDB4iVwXADaGryIv4kOh
+	 xRLRUWEN4ZQG8+MLpke+IpvN3ST4EgYL8OfkVEAX4hlcyB9/p7frJrDC50tqyBqXBr
+	 pf5hfTsQtGTfw==
+Date: Fri, 4 Jul 2025 17:46:22 +0100
+From: Simon Horman <horms@kernel.org>
+To: Ido Schimmel <idosch@idosch.org>
+Cc: Wang Liang <wangliang74@huawei.com>, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	alex.aring@gmail.com, dsahern@kernel.org, yuehaibing@huawei.com,
+	zhangchangzhong@huawei.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+	linux-wpan@vger.kernel.org
+Subject: Re: [PATCH net-next v2] net: replace ND_PRINTK with dynamic debug
+Message-ID: <20250704164622.GA354404@horms.kernel.org>
+References: <20250701081114.1378895-1-wangliang74@huawei.com>
+ <aGf8_dnXpnzCutA7@shredder>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/3] drm/doc: Fix title underline for "Task
- information"
-To: Raag Jadav <raag.jadav@intel.com>
-Cc: simona@ffwll.ch, Krzysztof Karas <krzysztof.karas@intel.com>,
- airlied@gmail.com, Linux Next Mailing List <linux-next@vger.kernel.org>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- Stephen Rothwell <sfr@canb.auug.org.au>, kernel-dev@igalia.com
-References: <20250627171715.438304-1-andrealmeid@igalia.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-In-Reply-To: <20250627171715.438304-1-andrealmeid@igalia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aGf8_dnXpnzCutA7@shredder>
 
-Raag, gently ping for reviewing this series.
+On Fri, Jul 04, 2025 at 07:10:37PM +0300, Ido Schimmel wrote:
+> On Tue, Jul 01, 2025 at 04:11:14PM +0800, Wang Liang wrote:
+> > ND_PRINTK with val > 1 only works when the ND_DEBUG was set in compilation
+> > phase. Replace it with dynamic debug. Convert ND_PRINTK with val <= 1 to
+> > net_{err,warn}_ratelimited, and convert the rest to net_dbg_ratelimited.
+> 
+> One small comment below
+> 
+> [...]
+> 
+> > @@ -751,9 +747,8 @@ static void ndisc_solicit(struct neighbour *neigh, struct sk_buff *skb)
+> >  	probes -= NEIGH_VAR(neigh->parms, UCAST_PROBES);
+> >  	if (probes < 0) {
+> >  		if (!(READ_ONCE(neigh->nud_state) & NUD_VALID)) {
+> > -			ND_PRINTK(1, dbg,
+> > -				  "%s: trying to ucast probe in NUD_INVALID: %pI6\n",
+> > -				  __func__, target);
+> > +			net_warn_ratelimited("%s: trying to ucast probe in NUD_INVALID: %pI6\n",
+> > +					     __func__, target);
+> 
+> Without getting into a philosophical discussion about the appropriate
+> log level for this message, the purpose of this patch is to move
+> ND_PRINTK(val > 1, ...) to net_dbg_ratelimited(), but for some reason
+> this hunk promotes an existing net_dbg_ratelimited() to
+> net_warn_ratelimited(). Why not keep it as net_dbg_ratelimited()?
 
-Em 27/06/2025 14:17, André Almeida escreveu:
-> Fix the following warning:
-> 
-> Documentation/gpu/drm-uapi.rst:450: WARNING: Title underline too short.
-> 
-> Task information
-> --------------- [docutils]
-> 
-> Fixes: cd37124b4093 ("drm/doc: Add a section about "Task information" for the wedge API")
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Signed-off-by: André Almeida <andrealmeid@igalia.com>
-> ---
-> v2: Add Reported-by tag
-> ---
->   Documentation/gpu/drm-uapi.rst | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/gpu/drm-uapi.rst b/Documentation/gpu/drm-uapi.rst
-> index 263e5a97c080..10dea6a1f097 100644
-> --- a/Documentation/gpu/drm-uapi.rst
-> +++ b/Documentation/gpu/drm-uapi.rst
-> @@ -447,7 +447,7 @@ hang is usually the most critical one which can result in consequential hangs or
->   complete wedging.
->   
->   Task information
-> ----------------
-> +----------------
->   
->   The information about which application (if any) was involved in the device
->   wedging is useful for userspace if they want to notify the user about what
-> @@ -728,4 +728,4 @@ Stable uAPI events
->   From ``drivers/gpu/drm/scheduler/gpu_scheduler_trace.h``
->   
->   .. kernel-doc::  drivers/gpu/drm/scheduler/gpu_scheduler_trace.h
-> -   :doc: uAPI trace events
-> \ No newline at end of file
-> +   :doc: uAPI trace events
+Indeed. Sorry for not noticing that in my review.
 
+> 
+> >  		}
+> >  		ndisc_send_ns(dev, target, target, saddr, 0);
+> >  	} else if ((probes -= NEIGH_VAR(neigh->parms, APP_PROBES)) < 0) {
+> 
 
