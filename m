@@ -1,92 +1,65 @@
-Return-Path: <linux-kernel+bounces-717938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-717944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45462AF9AFA
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 21:03:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB404AF9B1A
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 21:20:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD31A6E054A
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 19:02:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4EAB35680C0
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 19:20:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 730D81474CC;
-	Fri,  4 Jul 2025 19:03:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44ACD217707;
+	Fri,  4 Jul 2025 19:20:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="g3gQnIvW"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="F4ulFDGP"
+Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17E80F9D9
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 19:03:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 819F41DDC23
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 19:20:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751655782; cv=none; b=RMO1Sxgu9eOzx1uCStPAEn8Avfo/pGXyk8q3Vn5amtQCwbvU6paQiVJkDc1cUxbKUJ57HfF+yDAGKtoIq9ndljrzOQ++s5HKjOpEZmc2X8kcbrCsyISHvfIZWkORgmFIdawjOgnuV4zTmavQh40W593TvzHbMQeQV3pcQYAN7pM=
+	t=1751656835; cv=none; b=loGavd3R9XYnjPQtMI5kWZq0Uxc6JZmeI29wDcBdmEXVZyjifm1Q4cngEeK1X6SrUZwxaVXHgC5f+rgtIDjG0tdfSRoj4Xvpxsz7XTIAmiN/WvEISgpN5s6PT4u7Ohwj34Wypj6S50PnzEwK8/za2l1izaOl0vqqvi72ZeyyMBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751655782; c=relaxed/simple;
-	bh=/v6QItEjY2M41/Qa9fmYKxE5bdEX6yoFE70JLIG+fSc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mMphTO7bH/ikR0nMQqyuHlYsZE+tnIvwdALDUxThAW+jarLZ6uzvVeOtIjgvRnHl9GSeU+uoCawswuH28xno1N5et3fsOUBtSfQizGvSj0Z5iUMjZ5PPPQ1oLRLARImFDmLczhiifnImJZLXP/LCKOnTdS6+mKft58bi0nNsKcY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=g3gQnIvW; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-450ce3a2dd5so10566085e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Jul 2025 12:03:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1751655779; x=1752260579; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=uBZoBb5JCYLVeVGhzIarMky5rZCEpXBsa3Bvtdfk3uM=;
-        b=g3gQnIvWMBf1EnLBvdcHi0cRwpfqI1vAsbuiLQ8ns/4DDZTEZTqzmIZkqUauCE3oJU
-         pFprCieK5523SpJ2uWUPlRCkcT7Z0S/B75Dhf1wXxrgP4x2TW0ky9jtFfWaB9z5xo4A5
-         7TYxg3MlNLKJCj3pJifZgCizUvEr59MiJmFf0NBffycl6osK8MFwBCnPiBgAqrapc4ej
-         uLFTWddEi+m3G+UNBj7LjWlQQwGnJ43Xeenv1CwmrfpBclbLP/v9CLurBa+o6Az9+gbG
-         mBSgV9s0nEqyK+MvOMv4Kki2fnJBCuM9Vkc1hiVquc5Ws1lidkytBYN//ndXrB/XCRpX
-         8vqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751655779; x=1752260579;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uBZoBb5JCYLVeVGhzIarMky5rZCEpXBsa3Bvtdfk3uM=;
-        b=ayA77n6j0MXhWPmv6V5DsWbsqbbD9byxqbCzdOlI+mXGbMXztbHi8ieqlQR2vVag3A
-         0fE2g+8b0MjnbnvmU8wMS46OzBn7010g5LKAgLL3pJh21GChzFuPWUM6H/+2MhilBfyx
-         vXcPDko3sIGJddNuXYS5ME8s/LGH4Jg3rmxYNbLR35+RuxJF3UaYX3NQDCYBReSWDGSn
-         Nufq4W9iMRVDJEX0mj58+4dWM2TIijijNbiuoLmloaYi4vL3BMaeaJ/41SYLEwIL/vGf
-         O0n2ECs7rVvDvJnQ1yFjtThahfSBucJYLJpfIYaQFmx3BXcrTdLiUQJZBig0Lp6LsM60
-         ANQg==
-X-Forwarded-Encrypted: i=1; AJvYcCWV4OAk0fEAxK48UIzW2PUzd3qSbRnRm98k1jizVn5O+QS+zHuQCa2NW8d0KDBmB6hEJwDdx+9wxgZ49Bo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxazBYDKn1x7SLTpPl8WAIgNIXQzilRTp97Vj1qyzcapd0ecVYf
-	vy0oXYjIO7RCPEuM454stE8RQoCn7h7cgWub6CglIeQ4SFB8kvML6dlzmtHXqDbq3cM=
-X-Gm-Gg: ASbGnct1266cMem76bEIBlHC1lrjswvccIWDJPF9I7NGgKBY2hVJHSE/mphvFDN0w7g
-	r6XfOwOjiEakY+xzih5l5i9EHmZ9YLzSqQ4rW3M7AE4in2jFnHWlMfbf8FFUCivLuIne9yOwKMy
-	kmOQNCg6/BfpUsnjuYPSaFEZTyis4tlt4GTcPeuc0E2FcXd4La59Uc88ggKa46dfur+npr1DDSm
-	OEJmOL5L4oBTTvu+GhwoqsgNE2slp50+iRG8tZhj7WiskryCCoNHh20UDBQ+jl1+WeelQHbD2H5
-	UZqO6okGrmXWwUQMgHHjXHxv26T+5VfrEqbJVV9dYrkrzAz+r0io+S8ruSzkDZ/qwfTQprOyJTd
-	EQMa6DteTH1gQMEUvD3pLHJOryMvogu5e+UMB10BQMaZM7yrf2Tohr/s+HXtQwLOL3iwRISE=
-X-Google-Smtp-Source: AGHT+IHsW1Nk92FeuphcCxSTyljJ7SWSU/rzOCynLFyorepBd+U4hYT9fjCdNkZIa26bYhCJTJh2CA==
-X-Received: by 2002:a05:600c:1c21:b0:453:7b2b:ed2e with SMTP id 5b1f17b1804b1-454b4eb7e77mr32347315e9.24.1751655779121;
-        Fri, 04 Jul 2025 12:02:59 -0700 (PDT)
-Received: from green.cable.virginm.net (nail-04-b2-v4wan-166353-cust693.vm26.cable.virginm.net. [82.35.130.182])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454a9bde35dsm62220505e9.30.2025.07.04.12.02.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Jul 2025 12:02:57 -0700 (PDT)
-From: Terry Tritton <terry.tritton@linaro.org>
-To: Thomas Gleixner <tglx@linutronix.de>,
-	Shuah Khan <shuah@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Darren Hart <dvhart@infradead.org>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
-Cc: ttritton@google.com,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Terry Tritton <terry.tritton@linaro.org>,
-	Wei Gao <wegao@suse.com>
-Subject: [PATCH v5] selftests/futex: Convert 32bit timespec struct to 64bit version for 32bit compatibility mode
-Date: Fri,  4 Jul 2025 20:02:34 +0100
-Message-Id: <20250704190234.14230-1-terry.tritton@linaro.org>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1751656835; c=relaxed/simple;
+	bh=/piTliE2W/Kuaq6jpjwYvKYrD3Rh+ImN+qJS2zvt8Gw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=C0js/0wPft4Il2LbpEE0frcvjvKlgrTslcTxa3YXG6T1fQpn63BQXAKRfhjRb12BTRcpaJ6M8vPTfKzj6mEjjHdG42+mddfrUBSJAwwmDEa8LMC3U2S2K5zJOkii0Pm9MMK/vaZQPeE4Lhn4TZ/imsRj84kBMD+WWzRkSizeLIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=F4ulFDGP; arc=none smtp.client-ip=157.90.84.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
+Received: from wse-pc.fritz.box (pd9e59880.dip0.t-ipconnect.de [217.229.152.128])
+	(Authenticated sender: wse@tuxedocomputers.com)
+	by mail.tuxedocomputers.com (Postfix) with ESMTPA id CECFC2FC00A2;
+	Fri,  4 Jul 2025 21:20:22 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
+	s=default; t=1751656823;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=hfOhpq8fyOjaZ56cdFC/wn/8XOnBTOc0qDrbyCqpV9k=;
+	b=F4ulFDGP6WyMJHaMAse7nkNMyECngO4ZXyITARDd188ZhSZYDkUaic7mBEfNfE+5w3UK3f
+	O4nqweDNvunSUChrr9HOLaD7ySmR4jX05FFg4NwEJwn5MZCak+lzNdV1RabvS0/t60YlLJ
+	XsBK6FnA9G9xEzTP1ZtiFnum+E80sX4=
+Authentication-Results: mail.tuxedocomputers.com;
+	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
+From: Werner Sembach <wse@tuxedocomputers.com>
+To: Jani Nikula <jani.nikula@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>
+Cc: Werner Sembach <wse@tuxedocomputers.com>,
+	intel-gfx@lists.freedesktop.org,
+	intel-xe@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [RFC PATCH 0/1] drm/i915/display: Avoid unsupported 300Hz output mode on a TUXEDO device
+Date: Fri,  4 Jul 2025 21:03:45 +0200
+Message-ID: <20250704192007.526044-1-wse@tuxedocomputers.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,58 +68,29 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-sys_futex_wait() can not accept old_timespec32 struct, so userspace should
-convert it from 32bit to 64bit before syscall to support 32bit compatible
-mode.
+RFC because I'm not sure if this is the right approach.
 
-This fix is based off [1]
+The flicker manifests ever few seconds 1-3 black frames in quick
+succession.
 
-Link: https://lore.kernel.org/all/20231203235117.29677-1-wegao@suse.com/ [1]
+On windows 300Hz can not be selected for the iGPU, but the panel advertises
+it.
 
-Originally-by: Wei Gao <wegao@suse.com>
-Signed-off-by: Terry Tritton <terry.tritton@linaro.org>
----
-Changes in v5:
-- Fixed checkpatch errors
+A cleaner solution would probably to go over the pixel clock, but for this
+device there is only one 300Hz mode in the panels edid and that is at the
+nativ resolution. Chroma subsampling was not tested as linux afaik offers
+no way to easily enforce it for intel gpus.
 
-Changes in v4:
-- Change to use __kernel_timespec as suggested by tglx
+Tim Guttzeit (1):
+  drm/i915/display: Avoid unsupported output mode with 300Hz on TUXEDO
+    device
 
-Changes in v3:
-- Fix signed-off-by chain but for real this time
+ drivers/gpu/drm/i915/display/intel_dp.c     |  5 ++++
+ drivers/gpu/drm/i915/display/intel_quirks.c | 30 +++++++++++++++++++++
+ drivers/gpu/drm/i915/display/intel_quirks.h |  1 +
+ 3 files changed, 36 insertions(+)
 
-Changes in v2:
-- Fix signed-off-by chain
- tools/testing/selftests/futex/include/futex2test.h | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
-
-diff --git a/tools/testing/selftests/futex/include/futex2test.h b/tools/testing/selftests/futex/include/futex2test.h
-index ea79662405bc..ff9eebcc270c 100644
---- a/tools/testing/selftests/futex/include/futex2test.h
-+++ b/tools/testing/selftests/futex/include/futex2test.h
-@@ -5,6 +5,7 @@
-  * Copyright 2021 Collabora Ltd.
-  */
- #include <stdint.h>
-+#include <linux/time_types.h>
- 
- #define u64_to_ptr(x) ((void *)(uintptr_t)(x))
- 
-@@ -65,7 +66,12 @@ struct futex32_numa {
- static inline int futex_waitv(volatile struct futex_waitv *waiters, unsigned long nr_waiters,
- 			      unsigned long flags, struct timespec *timo, clockid_t clockid)
- {
--	return syscall(__NR_futex_waitv, waiters, nr_waiters, flags, timo, clockid);
-+		struct __kernel_timespec ts = {
-+				.tv_sec = timo->tv_sec,
-+				.tv_nsec = timo->tv_nsec,
-+		};
-+
-+		return syscall(__NR_futex_waitv, waiters, nr_waiters, flags, &ts, clockid);
- }
- 
- /*
 -- 
-2.39.5
+2.43.0
 
 
