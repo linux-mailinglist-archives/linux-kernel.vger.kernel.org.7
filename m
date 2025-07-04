@@ -1,174 +1,260 @@
-Return-Path: <linux-kernel+bounces-716814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA2BAAF8AF7
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 10:16:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CB83AF8AF4
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 10:16:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E617C4A52A6
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 08:13:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4DFEC7BF45D
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 08:13:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 008B52FC018;
-	Fri,  4 Jul 2025 07:55:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 008F62FD5AA;
+	Fri,  4 Jul 2025 07:55:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TGHVUoCf"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hJ7U/vhq"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDE792F7CE5;
-	Fri,  4 Jul 2025 07:55:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AA392FCE23;
+	Fri,  4 Jul 2025 07:55:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751615715; cv=none; b=OCGHx4cQq3TTGczo+kS5dGShYFaePbW/9MB7q4uJdJ1iop9WUYkbuUgqbYo0oB7iCFATtR74TYngFzV1vvVzd3RlHvvJI2RxyEZSHzXmk653rJ7C5AjvGWlg3MZPQqbNpaRUzxUK64nfjQ2MZ4MjFCex4IL1WMNiEZ8YeJtf2Hc=
+	t=1751615721; cv=none; b=lzRdrcKe1AaN3sqs79S5x2hc0Urh/Rq5/6jNwiURz79vcf9ylSQVVFMe30G3FkVXbJdHUNKNP6npVqLZVe19Y9tFYWSovnr+qCFNI+r7+QvXJjheLwnLHrCOTzKRhRgNxYO9k1tq0PQKUKxmMYIoZLVJKM8UjsgiojrrpCqaq00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751615715; c=relaxed/simple;
-	bh=g5Qwv3E6Y5AzhAoHAIoso2lcbLsyKVgZSLviisDZlBk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nI6iqEhg30pTQKEnge/tko+haZHvQHVhfuWe0d1JVvwprZNnPKeINLrOQrfwQAs3I57Gdg95D2XQiGSx8kUVJomiL1sJ93P1PYyCKTKPp3QrEizcJ52J3vFXtsHOt2TW5oLxjwjTTy9yw2e9CxnV1ozHJTroJOJ/Na/qB8I7zg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TGHVUoCf; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-acb5ec407b1so110868866b.1;
-        Fri, 04 Jul 2025 00:55:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751615709; x=1752220509; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KqTjHtFUDnwHiahJgAdrD1pVSqjrxzaMh3NEMJveZz8=;
-        b=TGHVUoCfczslT4Cszm3O2JE88Xe+7CM0ElkGVuXMV4t1ZrdpVVHyfGJJie4cTZQmdq
-         pQthGf/GK1Ow8YqzMaB7Nb+V9xNGb39p7pwj9Rq6kjc3SC6Rn8Iexf9JhMrODMtIhC3E
-         ffqO9PlVBobxEdY2bl/D7sedpenn9sSM+zEPEW9A9UgFo/W58//osc1Ysiq6/C2nvgTq
-         v3kJajqirPtVqae7yq1Gy5XvcvM4ol8VEb1V7Tx1Dfc/XVpa9qrxFwwtP9HUUwW4K7p4
-         Jto/Q70qVuhiwbvN1dZiZaa8pcuhMXP1Dx2dOCBH7HmeI4gce+IjcRcV6K8DX1jxY2k8
-         YMZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751615709; x=1752220509;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KqTjHtFUDnwHiahJgAdrD1pVSqjrxzaMh3NEMJveZz8=;
-        b=Brl26zIt4RmMIx4IIAF1x3C+mTMH1p/DBwbjrorj0ECl51Of+dwraPoIjcBT9EarZZ
-         Rig0yKUlXNERi2+jzxz3PC8sFrQnHB323ElhqMJHPRQm5BwyRBAimyjTQ25Chqkghwro
-         bij2XR265UShP4lL44MsFr78+fJiNvKlN4G+eCNVgRGzzOg8CQWO7jHGywpVL0FeGKuF
-         MtM6GV10dkxeRQkAAWkFgkya1rjwGFXfr2awT1SbwKjgCvF9XOwCl9Ew92S1HecOzpy9
-         JKVB9kRYgu9NowzFNkCxhKoaUOSCiL5c6+Y60/5pWjR5hZ0KQxuNlK3EzSwUfo8eYfZ/
-         m3Bg==
-X-Forwarded-Encrypted: i=1; AJvYcCU08/cWFgwvCVrBn2VKz4ttsTxi3hOHO9uWgWY2qpNKYKDq0wuZE8MtNk9UB61oEbyACyiU61246yvntMOuAQ==@vger.kernel.org, AJvYcCVywHV8WyT03APVzlovESO5z8INVufiMtZ3Xfa3g/NWA0SZ8Dfhbp/qugk9CCO+aZueAHn+Af4C4l2WyLB+@vger.kernel.org, AJvYcCW7CRVzua9sZwP8qBQUb3otz0aNDPWNT+KilDPbbXH6C/ecvHr8SQDbGrsOFdladQZLugSNNynD44NW@vger.kernel.org, AJvYcCWhV6euYQD1pgCxQk+9NVkSFALTqAf925QoEdt0fETnG3ydtFv/n3dreaG33eI3y73HDnnGI7OgQBw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtCZUSn6KtOHnaeocUFP8I9aCR9cvC93f8gNZzodU2qLMcIHRY
-	DyL4NQglzVO7RpSPJO9Hb5dv9+1gLvxiPh4sxlW4OXDj4ZLcEmnfdNvYmQzPzUbLxAhlMtUDOsV
-	tl60bf+gjZMhLfko5ETO51G01YZ2jO3Q=
-X-Gm-Gg: ASbGncsvXM1WSs1lnBcNxsO+k/H61mp0klpYXOSLX6XyfdMzRYdR125RweFD6e5l/Yz
-	y0yEwbvJgjKrBwoboI73Yx24TRG3xs5735QlcQ8E2CYCvlwEgFZjEKYinT2+GEP6LVGSCH9WUeP
-	HhFdmHV4dqUaoLlKjpI0vP/v46mvo6t1Nx67+PiL8ebwV03/xRyjJaPA==
-X-Google-Smtp-Source: AGHT+IHbu/7trC65/DeYLqxtEkSBbngCiJCl8lGS3daoUK+l03S1ER+X1QI0bHRXSoe9V0uZOz3GBHDUIYUYwFgLXPA=
-X-Received: by 2002:a17:906:681a:b0:ad2:417b:2ab5 with SMTP id
- a640c23a62f3a-ae3fbde92a2mr99463566b.60.1751615708510; Fri, 04 Jul 2025
- 00:55:08 -0700 (PDT)
+	s=arc-20240116; t=1751615721; c=relaxed/simple;
+	bh=lpsHDsgCN1/Ne3kQyUJDyzv5amh4CMh7kdrVAedLdF4=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=hG1PGqRlw5C/G2R4w2ZDiXoI8HcYL0K/LAi0V5R+PaH1O11F3Xip3CXGCfYmnP5sgJHOJ1nK4/ybXQPLKqJtg4sH+eqC5FKcfNIMsGIjtQekUgHsBDx6jWHHxNepq7WoVB13P/Mqrs9CVGZ8rf0hWBsXua3twiPntnxtmIUSoxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hJ7U/vhq; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751615720; x=1783151720;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=lpsHDsgCN1/Ne3kQyUJDyzv5amh4CMh7kdrVAedLdF4=;
+  b=hJ7U/vhquwpWgPSQ1Ms7idmsVHcqBPhTJ6nXJUi0xh6FQfz9LmmACG4t
+   fva+XM6n/sRFs6ZJSVajef5Vw5ky3Z/ePq3GW/uH8LR62H2NZoc4s+0za
+   8j4yXxjg0Xy0T4Yr54C3B8IiVkWHHgi3kcbbKpPQyV250e2txXsubaUGP
+   cnT5sZAZpRt4aZUGMzhMr8fS4mPZxrZoLM5GHsJZ8xRC2tXL/3GjyV7i7
+   GUhi1KmAXD7AFBTWs+1XNSZqfvk9t/Qhdmb77S0dLkUJt6wsgE0c+7Q19
+   8m95ajJYdCk7Jq8mwY1Lg7D+6sw19lMAnHwDx4ndfnASpRKMPbD+h2Wn+
+   A==;
+X-CSE-ConnectionGUID: fBIu+HXWRbO4Ub8VHqAoYw==
+X-CSE-MsgGUID: 1hirFAE7RbGER5hdyejPsw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11483"; a="64194397"
+X-IronPort-AV: E=Sophos;i="6.16,286,1744095600"; 
+   d="scan'208";a="64194397"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 00:55:06 -0700
+X-CSE-ConnectionGUID: VylmM25lR82HHD1Zdi0W7g==
+X-CSE-MsgGUID: 6SdYExSXQCy1pSMZ9X5Z6Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,286,1744095600"; 
+   d="scan'208";a="158616730"
+Received: from jkrzyszt-mobl2.ger.corp.intel.com (HELO svinhufvud.fi.intel.com) ([10.245.244.244])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 00:54:59 -0700
+Received: from svinhufvud.lan (localhost [IPv6:::1])
+	by svinhufvud.fi.intel.com (Postfix) with ESMTP id B49CF44A4B;
+	Fri,  4 Jul 2025 10:54:57 +0300 (EEST)
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Cezary Rojewski <cezary.rojewski@intel.com>,
+	Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
+	Bard Liao <yung-chuan.liao@linux.intel.com>,
+	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	"Dr. David Alan Gilbert" <linux@treblig.org>,
+	=?UTF-8?q?Amadeusz=20S=C5=82awi=C5=84ski?= <amadeuszx.slawinski@linux.intel.com>,
+	Philipp Stanner <phasta@kernel.org>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Ethan Carter Edwards <ethan@ethancedwards.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Henry Martin <bsdhenrymartin@gmail.com>
+Cc: linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 72/80] ASoC: Intel: Remove redundant pm_runtime_mark_last_busy() calls
+Date: Fri,  4 Jul 2025 10:54:57 +0300
+Message-Id: <20250704075457.3222746-1-sakari.ailus@linux.intel.com>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250704075225.3212486-1-sakari.ailus@linux.intel.com>
+References: <20250704075225.3212486-1-sakari.ailus@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250703185032.46568-1-john@groves.net> <20250703185032.46568-11-john@groves.net>
-In-Reply-To: <20250703185032.46568-11-john@groves.net>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 4 Jul 2025 09:54:57 +0200
-X-Gm-Features: Ac12FXx2fL6cg_25gbv1TfaaBei9pa2nMH_xl-QIp40xf5dKMB13gicr8ctumWk
-Message-ID: <CAOQ4uxi7fvMgYqe1M3_vD3+YXm7x1c4YjA=eKSGLuCz2Dsk0TQ@mail.gmail.com>
-Subject: Re: [RFC V2 10/18] famfs_fuse: Basic fuse kernel ABI enablement for famfs
-To: John Groves <John@groves.net>, "Darrick J . Wong" <djwong@kernel.org>
-Cc: Dan Williams <dan.j.williams@intel.com>, Miklos Szeredi <miklos@szeredb.hu>, 
-	Bernd Schubert <bschubert@ddn.com>, John Groves <jgroves@micron.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>, 
-	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	Randy Dunlap <rdunlap@infradead.org>, Jeff Layton <jlayton@kernel.org>, 
-	Kent Overstreet <kent.overstreet@linux.dev>, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev, 
-	linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>, Stefan Hajnoczi <shajnocz@redhat.com>, 
-	Joanne Koong <joannelkoong@gmail.com>, Josef Bacik <josef@toxicpanda.com>, 
-	Aravind Ramesh <arramesh@micron.com>, Ajay Joshi <ajayjoshi@micron.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jul 3, 2025 at 8:51=E2=80=AFPM John Groves <John@groves.net> wrote:
->
-> * FUSE_DAX_FMAP flag in INIT request/reply
->
-> * fuse_conn->famfs_iomap (enable famfs-mapped files) to denote a
->   famfs-enabled connection
->
-> Signed-off-by: John Groves <john@groves.net>
-> ---
->  fs/fuse/fuse_i.h          |  3 +++
->  fs/fuse/inode.c           | 14 ++++++++++++++
->  include/uapi/linux/fuse.h |  4 ++++
->  3 files changed, 21 insertions(+)
->
-> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-> index 9d87ac48d724..a592c1002861 100644
-> --- a/fs/fuse/fuse_i.h
-> +++ b/fs/fuse/fuse_i.h
-> @@ -873,6 +873,9 @@ struct fuse_conn {
->         /* Use io_uring for communication */
->         unsigned int io_uring;
->
-> +       /* dev_dax_iomap support for famfs */
-> +       unsigned int famfs_iomap:1;
-> +
+pm_runtime_put_autosuspend(), pm_runtime_put_sync_autosuspend(),
+pm_runtime_autosuspend() and pm_request_autosuspend() now include a call
+to pm_runtime_mark_last_busy(). Remove the now-reduntant explicit call to
+pm_runtime_mark_last_busy().
 
-pls move up to the bit fields members.
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+---
+The cover letter of the set can be found here
+<URL:https://lore.kernel.org/linux-pm/20250704075225.3212486-1-sakari.ailus@linux.intel.com>.
 
->         /** Maximum stack depth for passthrough backing files */
->         int max_stack_depth;
->
-> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-> index 29147657a99f..e48e11c3f9f3 100644
-> --- a/fs/fuse/inode.c
-> +++ b/fs/fuse/inode.c
-> @@ -1392,6 +1392,18 @@ static void process_init_reply(struct fuse_mount *=
-fm, struct fuse_args *args,
->                         }
->                         if (flags & FUSE_OVER_IO_URING && fuse_uring_enab=
-led())
->                                 fc->io_uring =3D 1;
-> +                       if (IS_ENABLED(CONFIG_FUSE_FAMFS_DAX) &&
-> +                           flags & FUSE_DAX_FMAP) {
-> +                               /* XXX: Should also check that fuse serve=
-r
-> +                                * has CAP_SYS_RAWIO and/or CAP_SYS_ADMIN=
-,
-> +                                * since it is directing the kernel to ac=
-cess
-> +                                * dax memory directly - but this functio=
-n
-> +                                * appears not to be called in fuse serve=
-r
-> +                                * process context (b/c even if it drops
-> +                                * those capabilities, they are held here=
-).
-> +                                */
-> +                               fc->famfs_iomap =3D 1;
-> +                       }
+In brief, this patch depends on PM runtime patches adding marking the last
+busy timestamp in autosuspend related functions. The patches are here, on
+rc2:
 
-1. As long as the mapping requests are checking capabilities we should be o=
-k
-    Right?
-2. What's the deal with capable(CAP_SYS_ADMIN) in process_init_limits then?
-3. Darrick mentioned the need for a synchronic INIT variant for his work on
-    blockdev iomap support [1]
+        git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
+                pm-runtime-6.17-rc1
 
-I also wonder how much of your patches and Darrick's patches end up
-being an overlap?
+ sound/soc/intel/atom/sst/sst_pvt.c | 1 -
+ sound/soc/intel/avs/core.c         | 1 -
+ sound/soc/intel/avs/debugfs.c      | 2 --
+ sound/soc/intel/avs/ipc.c          | 1 -
+ sound/soc/intel/avs/pcm.c          | 1 -
+ sound/soc/intel/catpt/pcm.c        | 6 ------
+ sound/soc/intel/catpt/sysfs.c      | 1 -
+ 7 files changed, 13 deletions(-)
 
-Thanks,
-Amir.
+diff --git a/sound/soc/intel/atom/sst/sst_pvt.c b/sound/soc/intel/atom/sst/sst_pvt.c
+index 5d08f7d803f9..c01b29616ebc 100644
+--- a/sound/soc/intel/atom/sst/sst_pvt.c
++++ b/sound/soc/intel/atom/sst/sst_pvt.c
+@@ -259,7 +259,6 @@ int sst_pm_runtime_put(struct intel_sst_drv *sst_drv)
+ {
+ 	int ret;
+ 
+-	pm_runtime_mark_last_busy(sst_drv->dev);
+ 	ret = pm_runtime_put_autosuspend(sst_drv->dev);
+ 	if (ret < 0)
+ 		return ret;
+diff --git a/sound/soc/intel/avs/core.c b/sound/soc/intel/avs/core.c
+index ec1b3f55cb5c..7af324753673 100644
+--- a/sound/soc/intel/avs/core.c
++++ b/sound/soc/intel/avs/core.c
+@@ -231,7 +231,6 @@ static void avs_hda_probe_work(struct work_struct *work)
+ 	/* configure PM */
+ 	pm_runtime_set_autosuspend_delay(bus->dev, 2000);
+ 	pm_runtime_use_autosuspend(bus->dev);
+-	pm_runtime_mark_last_busy(bus->dev);
+ 	pm_runtime_put_autosuspend(bus->dev);
+ 	pm_runtime_allow(bus->dev);
+ }
+diff --git a/sound/soc/intel/avs/debugfs.c b/sound/soc/intel/avs/debugfs.c
+index c625cf879f17..f508f215ecd2 100644
+--- a/sound/soc/intel/avs/debugfs.c
++++ b/sound/soc/intel/avs/debugfs.c
+@@ -315,7 +315,6 @@ static int enable_logs(struct avs_dev *adev, u32 resource_mask, u32 *priorities)
+ 	if (!adev->logged_resources) {
+ 		avs_dsp_enable_d0ix(adev);
+ err_d0ix:
+-		pm_runtime_mark_last_busy(adev->dev);
+ 		pm_runtime_put_autosuspend(adev->dev);
+ 	}
+ 
+@@ -342,7 +341,6 @@ static int disable_logs(struct avs_dev *adev, u32 resource_mask)
+ 	/* If that's the last resource, allow for D3. */
+ 	if (!adev->logged_resources) {
+ 		avs_dsp_enable_d0ix(adev);
+-		pm_runtime_mark_last_busy(adev->dev);
+ 		pm_runtime_put_autosuspend(adev->dev);
+ 	}
+ 
+diff --git a/sound/soc/intel/avs/ipc.c b/sound/soc/intel/avs/ipc.c
+index 0314f9d4ea5f..6bfb9d1a1ca8 100644
+--- a/sound/soc/intel/avs/ipc.c
++++ b/sound/soc/intel/avs/ipc.c
+@@ -141,7 +141,6 @@ static void avs_dsp_recovery(struct avs_dev *adev)
+ 	if (ret < 0)
+ 		dev_err(adev->dev, "dsp reboot failed: %d\n", ret);
+ 
+-	pm_runtime_mark_last_busy(adev->dev);
+ 	pm_runtime_enable(adev->dev);
+ 	pm_request_autosuspend(adev->dev);
+ 
+diff --git a/sound/soc/intel/avs/pcm.c b/sound/soc/intel/avs/pcm.c
+index ccf90428126d..3a22a8cb5185 100644
+--- a/sound/soc/intel/avs/pcm.c
++++ b/sound/soc/intel/avs/pcm.c
+@@ -979,7 +979,6 @@ static int avs_component_load_libraries(struct avs_soc_component *acomp)
+ 	if (!ret)
+ 		ret = avs_module_info_init(adev, false);
+ 
+-	pm_runtime_mark_last_busy(adev->dev);
+ 	pm_runtime_put_autosuspend(adev->dev);
+ 
+ 	return ret;
+diff --git a/sound/soc/intel/catpt/pcm.c b/sound/soc/intel/catpt/pcm.c
+index 81a2f0339e05..46acb7fdc547 100644
+--- a/sound/soc/intel/catpt/pcm.c
++++ b/sound/soc/intel/catpt/pcm.c
+@@ -673,7 +673,6 @@ static int catpt_dai_pcm_new(struct snd_soc_pcm_runtime *rtm,
+ 
+ 	ret = catpt_ipc_set_device_format(cdev, &devfmt);
+ 
+-	pm_runtime_mark_last_busy(cdev->dev);
+ 	pm_runtime_put_autosuspend(cdev->dev);
+ 
+ 	if (ret)
+@@ -871,7 +870,6 @@ static int catpt_mixer_volume_get(struct snd_kcontrol *kcontrol,
+ 		ucontrol->value.integer.value[i] = dspvol_to_ctlvol(dspvol);
+ 	}
+ 
+-	pm_runtime_mark_last_busy(cdev->dev);
+ 	pm_runtime_put_autosuspend(cdev->dev);
+ 
+ 	return 0;
+@@ -892,7 +890,6 @@ static int catpt_mixer_volume_put(struct snd_kcontrol *kcontrol,
+ 	ret = catpt_set_dspvol(cdev, cdev->mixer.mixer_hw_id,
+ 			       ucontrol->value.integer.value);
+ 
+-	pm_runtime_mark_last_busy(cdev->dev);
+ 	pm_runtime_put_autosuspend(cdev->dev);
+ 
+ 	return ret;
+@@ -927,7 +924,6 @@ static int catpt_stream_volume_get(struct snd_kcontrol *kcontrol,
+ 		ucontrol->value.integer.value[i] = dspvol_to_ctlvol(dspvol);
+ 	}
+ 
+-	pm_runtime_mark_last_busy(cdev->dev);
+ 	pm_runtime_put_autosuspend(cdev->dev);
+ 
+ 	return 0;
+@@ -958,7 +954,6 @@ static int catpt_stream_volume_put(struct snd_kcontrol *kcontrol,
+ 	ret = catpt_set_dspvol(cdev, stream->info.stream_hw_id,
+ 			       ucontrol->value.integer.value);
+ 
+-	pm_runtime_mark_last_busy(cdev->dev);
+ 	pm_runtime_put_autosuspend(cdev->dev);
+ 
+ 	if (ret)
+@@ -1035,7 +1030,6 @@ static int catpt_loopback_switch_put(struct snd_kcontrol *kcontrol,
+ 
+ 	ret = catpt_ipc_mute_loopback(cdev, stream->info.stream_hw_id, mute);
+ 
+-	pm_runtime_mark_last_busy(cdev->dev);
+ 	pm_runtime_put_autosuspend(cdev->dev);
+ 
+ 	if (ret)
+diff --git a/sound/soc/intel/catpt/sysfs.c b/sound/soc/intel/catpt/sysfs.c
+index 936ac9d503ff..048253002ec8 100644
+--- a/sound/soc/intel/catpt/sysfs.c
++++ b/sound/soc/intel/catpt/sysfs.c
+@@ -21,7 +21,6 @@ static ssize_t fw_version_show(struct device *dev,
+ 
+ 	ret = catpt_ipc_get_fw_version(cdev, &version);
+ 
+-	pm_runtime_mark_last_busy(cdev->dev);
+ 	pm_runtime_put_autosuspend(cdev->dev);
+ 
+ 	if (ret)
+-- 
+2.39.5
 
-[1] https://lore.kernel.org/linux-fsdevel/20250613174413.GM6138@frogsfrogsf=
-rogs/
 
