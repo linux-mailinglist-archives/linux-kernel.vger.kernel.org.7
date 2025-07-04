@@ -1,105 +1,112 @@
-Return-Path: <linux-kernel+bounces-717793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-717799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC14FAF9945
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 18:49:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF2D3AF9954
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 18:51:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3ED6117A8C9
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 16:48:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AB233A500B
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 16:50:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFAB4309A72;
-	Fri,  4 Jul 2025 16:46:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2362C2D8364;
+	Fri,  4 Jul 2025 16:50:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BA4S3YQ5"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gRwFBx/f"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F029309A58
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 16:46:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7926219BBA;
+	Fri,  4 Jul 2025 16:50:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751647606; cv=none; b=ZMk0qJBY4HDea5QWc0v++Pgi3kODOeSNVwGC2lPOz3T7LoHebWQIRroGAjGvSXMSDazXCR/69ZAtB49h8eWgcuyLNiS0J5Y8w4x4l7VaxP8p+ovTHmYXRM4eO+E6v60fP8oRMxKqI4M8/V2i3C7lejTnEbIIwBrPsiZA6c7vbRQ=
+	t=1751647852; cv=none; b=IHq5eCqMYZFx9kopCEho0QqjTfBPCIDmwVSG1/73aRpHeqQx5x2Q5IP2NllX1FFiHocEtmY02Dhegdjlx59cmB3aTv71zhpLnzIwiqDuietzYq5N/hes+zBFHQgCmXC9b7k1Qkb94pj+c8sJKCPeL3htiO9J+G9Jz463d07N/xU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751647606; c=relaxed/simple;
-	bh=/UhG+PrAWuDRKhnrnXNOPvjeJ896dmbS6DO0ehBJdK0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=MjYBbpb6JnHKvOCtm7e1O8CVzjw0nGKqCH/dZRMgZmJ+GSgHSeN7QZ+JDO0L4NZEuA563j0lXJFvVG8ifX659XZEmjcI03qsrM9upTAKnvibcC36kWpO/gFVoUc+e15W8VbikNQQIcak0dAjSe9azOvwS1KhrvoyZKZcOhlUPMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BA4S3YQ5; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751647605; x=1783183605;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=/UhG+PrAWuDRKhnrnXNOPvjeJ896dmbS6DO0ehBJdK0=;
-  b=BA4S3YQ5jj6vYkeGTrjpcSP5OnzqxCipTXWErutVanSi11c8Mm0t5p3O
-   oveEuT9Bcrna1JgarVrEc53hNPBoKNTnEo3IRFMhSQwmHHgNwJNuny6sJ
-   MuKJO5bmMqX78X2/RPtHOyMNjf0u7otIqZHZOp6dQN4pZPDdqNi5xocNe
-   1HBazqICWVLdXzVxXuFCwudgyQT1S84hopSbfVqIyyomHKHX8PaIH1y91
-   ab9U5wNxNW+QXIS8vO9n1CDxJgMknYHJaYUmm6mFlLnjUDNSFDTZlsBKW
-   CmUQO1v4FSPowb4EOJ5hxqU9S/uHCzfEUXZAYdb7OSsBX6II4cub+l8u3
-   g==;
-X-CSE-ConnectionGUID: MBHNHJN+TKWqS+LXTfH5Zg==
-X-CSE-MsgGUID: iI9R296cQeubW2YmDE4ztg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11484"; a="57755829"
-X-IronPort-AV: E=Sophos;i="6.16,287,1744095600"; 
-   d="scan'208";a="57755829"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 09:46:45 -0700
-X-CSE-ConnectionGUID: NseANNQ9TjCwt2C3UgXdKw==
-X-CSE-MsgGUID: a4w/rHn/TEGGKxh6xCVT2Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,287,1744095600"; 
-   d="scan'208";a="154424747"
-Received: from unknown (HELO bnilawar-desk2.iind.intel.com) ([10.190.239.41])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 09:46:43 -0700
-From: Badal Nilawar <badal.nilawar@intel.com>
-To: intel-xe@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Cc: anshuman.gupta@intel.com,
-	rodrigo.vivi@intel.com,
-	alexander.usyskin@intel.com,
-	gregkh@linuxfoundation.org,
-	daniele.ceraolospurio@intel.com
-Subject: [PATCH v7 10/10] drm/xe/xe_late_bind_fw: Select INTEL_MEI_LATE_BIND for CI
-Date: Fri,  4 Jul 2025 22:20:38 +0530
-Message-Id: <20250704165038.1464460-11-badal.nilawar@intel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250704165038.1464460-1-badal.nilawar@intel.com>
-References: <20250704165038.1464460-1-badal.nilawar@intel.com>
+	s=arc-20240116; t=1751647852; c=relaxed/simple;
+	bh=z4xIqrxnxJb/VU6+2ATYNGE+j9z5mnmSIDSJ+6cCgqk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F4imdZmg52FFhX0sj/F0/Y7SvOSBoEtQs0hZokt5eIhZ5g9Y/HVtoJ+UjZFdBWFRMqan2qwddYKsMiN3vJgnCuXpoYCCRPfiCRoPHTywptBcZhQinhjz7dnxfkncQe8Rb4Y7AeZDwVeRUYFCB8i5tcK9cjCTshVZlmDqAzJHAzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gRwFBx/f; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D703C4CEEE;
+	Fri,  4 Jul 2025 16:50:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751647852;
+	bh=z4xIqrxnxJb/VU6+2ATYNGE+j9z5mnmSIDSJ+6cCgqk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gRwFBx/fCbHOJNhDgzF1CP7cSmMOD7AvI/ezevCzbNVkhRRjSPw8g7a7PRiip3Ws5
+	 xKmheH2WV6Gj+hWPcYucHPVvW5qL0i4ezRA+VvCvNWthfrhrK40QBq3YUkLF5lntFN
+	 Lg61CB0wkVLdJ769VegGGteZSVpU1Ab4VN1FYDu+OO4CmJRTVKPqT1L25L4ROYlFiJ
+	 DN5d5hWNZboc8wc22pc/3Zg5SAdg+NfXzBA17p6Sf8gKTHJwubaqY9IdfPlkfgKwzZ
+	 X9+YxcVXNLzIJ3K2wOFLTgL6ezZz/WvhJgz7UI3AjKqB9D94i4sfWFnVN700Fdl04Y
+	 CgDDxvg66qIPg==
+Date: Fri, 4 Jul 2025 17:50:45 +0100
+From: Simon Horman <horms@kernel.org>
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: davem@davemloft.net, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
+	Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	=?utf-8?B?S8O2cnk=?= Maincent <kory.maincent@bootlin.com>,
+	Oleksij Rempel <o.rempel@pengutronix.de>,
+	Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH net-next 3/3] selftests: ethtool: Introduce ethernet PHY
+ selftests on netdevsim
+Message-ID: <20250704165045.GL41770@horms.kernel.org>
+References: <20250702082806.706973-1-maxime.chevallier@bootlin.com>
+ <20250702082806.706973-4-maxime.chevallier@bootlin.com>
+ <20250704132019.GM41770@horms.kernel.org>
+ <20250704153250.6ec18427@fedora.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250704153250.6ec18427@fedora.home>
 
-Do not review
+On Fri, Jul 04, 2025 at 03:32:50PM +0200, Maxime Chevallier wrote:
+> On Fri, 4 Jul 2025 14:20:19 +0100
+> Simon Horman <horms@kernel.org> wrote:
+> 
+> > On Wed, Jul 02, 2025 at 10:28:05AM +0200, Maxime Chevallier wrote:
+> > > Now that netdevsim supports PHY device simulation, we can start writing
+> > > some tests to cover a little bit all PHY-related ethtool commands.
+> > > 
+> > > So far we only test the basic use of "ethtool --show-phys", with :
+> > >  - A simple command to get a PHY we just added
+> > >  - A DUMP command listing PHYs on multiple netdevsim instances
+> > >  - A Filtered DUMP command listing all PHYs on a netdevsim
+> > > 
+> > > Introduce some helpers to create netdevsim PHYs, and a new test file.
+> > > 
+> > > Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>  
+> > 
+> > Hi Maxime,
+> > 
+> > We have recently started running shellcheck as part of our CI (NIPA).
+> > Could you do so for the scripts added and modified by this patch?
+> 
+> Sure thing, I'll do that :)
 
-Signed-off-by: Badal Nilawar <badal.nilawar@intel.com>
----
- drivers/gpu/drm/xe/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+Thanks.
 
-diff --git a/drivers/gpu/drm/xe/Kconfig b/drivers/gpu/drm/xe/Kconfig
-index f66e6d39e319..ef3f4807b0b3 100644
---- a/drivers/gpu/drm/xe/Kconfig
-+++ b/drivers/gpu/drm/xe/Kconfig
-@@ -45,6 +45,7 @@ config DRM_XE
- 	select WANT_DEV_COREDUMP
- 	select AUXILIARY_BUS
- 	select HMM_MIRROR
-+	select INTEL_MEI_LATE_BIND
- 	help
- 	  Driver for Intel Xe2 series GPUs and later. Experimental support
- 	  for Xe series is also available.
--- 
-2.34.1
+> > > ---
+> > >  .../selftests/drivers/net/netdevsim/config    |  1 +
+> > >  .../drivers/net/netdevsim/ethtool-common.sh   | 15 +++++
+> > >  .../drivers/net/netdevsim/ethtool-phy.sh      | 64 +++++++++++++++++++  
+> > 
+> > Should ethtool-phy.sh be added to TEST_PROGS the Makefile in
+> > the same directory?
+> 
+> Ah yes I forgot that. So any file in that TEST_PROGS list will end-up
+> being run in NAPI tests ?
 
+I assume so.
 
