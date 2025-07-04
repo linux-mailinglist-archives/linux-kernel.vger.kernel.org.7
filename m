@@ -1,137 +1,126 @@
-Return-Path: <linux-kernel+bounces-716585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15291AF8855
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 08:54:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3ADEAF885C
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 09:01:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A60A47AA37E
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 06:53:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59BFB1C282B7
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 07:01:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40FA6264A8E;
-	Fri,  4 Jul 2025 06:54:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F5682638B5;
+	Fri,  4 Jul 2025 07:01:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hn1gtQce"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cEbLZ+qf"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DAB0264615;
-	Fri,  4 Jul 2025 06:54:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD5B325DAFC;
+	Fri,  4 Jul 2025 07:01:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751612067; cv=none; b=INwqgWHiIrAgwojvyA0n3qgu+UBCigIMmbXjepWq5CO02YNbUAnap/Pcn0ZhIO5PmEyvf33V/loqDlfayl4s43awgXKlsu9TUDu5DamjtXh93Xtd4grEiHLyydwTK1NvqEgnl+OO+3u17Fb8V7gFvbEd7gRu6Z2KyehnVK6C2d8=
+	t=1751612484; cv=none; b=G+rhsx5l9R2gaHAa79rEDYcnFFe0KFNcRC4j8fwRe+cslcd5DCmbrM1ewk9qLCq6Dfj2Q5/Sp0OHl5iWUVYrHJ64uYWgibJI97vclt9nFe1QhUB5ViPUvZn81YKz/ElkkcCgehn3+9bitPZipb2o3y2uXhmByoNUAXAGaPJja0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751612067; c=relaxed/simple;
-	bh=z6tGLWoV40fbJyXLNAI+FtkufrSO5BqpPKdSK3iZ0Mc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=CRXjQKEg+RTftKqx4ddsp1baQa3uEUQuyxLNVYR6M725M9YjtpGOac0mV0AQvoBgPacTaSdELp+W5qebhjKoyQ8EAkwcJJ9mCKLYZeDiR1FLGKnb1fiP7N+wYtkNvZPo9ssvFAmsHcakeVNMUVIXwIfYSuqn/9d1mQPewVqLiOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hn1gtQce; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 563GCl1F007067;
-	Fri, 4 Jul 2025 06:54:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	wZEI3ggObilLEiLudoV157ZQ5GVhwPZ91BoxAzz6WAY=; b=hn1gtQceJN9YIoOA
-	fO/OmfNrN/vdwIWIrmkHgF/410Xy2uZ69CLDrgSK+MjFEL3CkrVVoJWMPm1dvCUI
-	YjW5cTCzC640Ry8AgOMaIXvfgAIKV8GIb/Isg0WwWekzjbo3f6dDt68hynlx2XSQ
-	5W+XWSoQ7pggT6M/LIMxtDU5KrM+qM5reDVKWt+T29zVLl97FWc4//UzYwvSIbJM
-	bLN2t6zOc4tFkoHV9nLSZsQCvN633ti2JlW0wmKI217r6l20L9SYbX4ag5jxgkac
-	q68HMsGk99v33QsAvoJfFfarJeI9Q1S8i31kWBdgb8NRXFwD+zd9c9jz7tQZCT1L
-	O1H4Jw==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47kn5jqb2t-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 04 Jul 2025 06:54:14 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5646sDV1015451
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 4 Jul 2025 06:54:13 GMT
-Received: from [10.239.105.140] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Thu, 3 Jul
- 2025 23:54:11 -0700
-Message-ID: <80b54138-b5ae-49db-8e94-42de6de05bf8@quicinc.com>
-Date: Fri, 4 Jul 2025 14:54:08 +0800
+	s=arc-20240116; t=1751612484; c=relaxed/simple;
+	bh=4khF2ydaRh9P9gvEopkfzH9p52OvKGZ1cKP/qrbnxms=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bn/lEWScY9t40wwiSV1XxvjOkgGDJFDVZqxHgnb+xFzJeuLaUOFUoonwWKVex8QKwGXlTXfyrQxolb/v4vw9NXEJkiGGhsSJAl8ZQqXeH74U1dp5O/pnvRFtQG4y7vOYx3k8xPkdLb7rZLlKffImJF7uZ7nTZDnvVpYWocrQVQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cEbLZ+qf; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751612483; x=1783148483;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=4khF2ydaRh9P9gvEopkfzH9p52OvKGZ1cKP/qrbnxms=;
+  b=cEbLZ+qfxsIwciv4EOrczgRrlJGQGjlx2bfG4g7CiAuSPwNsJq+ohRL8
+   NJmkyB9uqEkrsmUjCGnljSfOChVNDgxEOhS0ugkfN+k+ZDM4/SM7m8JC7
+   uDUGfg09dKBHzhszPtPmS4x5fRI7QuGUXqcVBIeByCjaz1ZUqvlmHtAzm
+   K+7EuPaKosJbIpfpmys2sO/00OTWrSIxA92KC4MzUx3g8t3JGOiIqtqkE
+   NELLu1icLhXhJSscDd2rIOmWRh2fnq2NPrY5se0dWorNYWNxQXpogREYy
+   n9nAoaig+Ps6IE4CpC0eKj/spk+cBbE9S6+r1zLpSc9dmnND0GWdGXe7v
+   Q==;
+X-CSE-ConnectionGUID: Sz7GDxEIQnaZdvn3+b0SBA==
+X-CSE-MsgGUID: r8qMeue6QiavlAB3ocEySQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11483"; a="57752431"
+X-IronPort-AV: E=Sophos;i="6.16,286,1744095600"; 
+   d="scan'208";a="57752431"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 00:01:22 -0700
+X-CSE-ConnectionGUID: QQtpBEeXRGmTeBW803Rtow==
+X-CSE-MsgGUID: 5ZVZO86jTKeCuxY1TkW0Qw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,286,1744095600"; 
+   d="scan'208";a="154655596"
+Received: from lkp-server01.sh.intel.com (HELO 0b2900756c14) ([10.239.97.150])
+  by fmviesa006.fm.intel.com with ESMTP; 04 Jul 2025 00:01:18 -0700
+Received: from kbuild by 0b2900756c14 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uXaQ8-0003QZ-26;
+	Fri, 04 Jul 2025 07:01:16 +0000
+Date: Fri, 4 Jul 2025 15:00:27 +0800
+From: kernel test robot <lkp@intel.com>
+To: Menglong Dong <menglong8.dong@gmail.com>, alexei.starovoitov@gmail.com,
+	rostedt@goodmis.org, jolsa@kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, bpf@vger.kernel.org,
+	Menglong Dong <dongml2@chinatelecom.cn>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH bpf-next v2 05/18] bpf: introduce bpf_gtramp_link
+Message-ID: <202507041433.Taj70BHu-lkp@intel.com>
+References: <20250703121521.1874196-6-dongml2@chinatelecom.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v5 2/3] virtio-spi: Add virtio-spi.h
-To: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>, <broonie@kernel.org>,
-        <virtio-dev@lists.linux.dev>, <viresh.kumar@linaro.org>,
-        <linux-spi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <hdanton@sina.com>, <qiang4.zhang@linux.intel.com>,
-        <alex.bennee@linaro.org>
-CC: <quic_ztu@quicinc.com>
-References: <20250620041230.731504-1-quic_haixcui@quicinc.com>
- <20250620041230.731504-3-quic_haixcui@quicinc.com>
- <1382320e-e5ae-47c4-be82-ab438032eac4@quicinc.com>
-Content-Language: en-US
-From: Haixu Cui <quic_haixcui@quicinc.com>
-In-Reply-To: <1382320e-e5ae-47c4-be82-ab438032eac4@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=KtJN2XWN c=1 sm=1 tr=0 ts=68677a96 cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8
- a=COk6AnOGAAAA:8 a=QJtq3Um7bvPkYqldaawA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: LRGiIWRl6RSwnRe6sGI1M5mStYhnzrHw
-X-Proofpoint-GUID: LRGiIWRl6RSwnRe6sGI1M5mStYhnzrHw
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA0MDA1MiBTYWx0ZWRfX+27AnD4Hs7qw
- oxzDNY/YdRd8mMZoMUgTdFYZ+6bey6MAhN28Wk5l9q9BQCIRm5ghlHPDIxP9xAtzsaYyF0uz5MZ
- VlFUZztGOqZ2zhojDb/pX6tKLEHA48EPm17501PxKJ1H0dNk9KNEhiQCmJtTfLcMUi01J6ZsC+T
- y9wYercuJy4GYQ+LvgVrxcmwvzqukDl27ZHf+R3akd+/E+R5Ypy1hdPBPem8BONQZImBefbhtmg
- sUyhS5u7VsIyTSWNcWGk+j86qXdGl+M+wZ93DwiiEXAbhCU6/6c8znxVk7uj/5aG/b9foJXqIVQ
- a2z8OWsudenJXx7qAohrCFjRYSfZCZlKnrNG5t98TH0aHMrhH7NmcVk5FR+vindaQkq/YtqzxlH
- zVK2cstkutfbn5IGBHh49ofaUBp0OK4BYEOEgMLAnq9qxifu4dD801UNyEbEuMSAnhvq8zcC
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-04_02,2025-07-02_04,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 bulkscore=0 priorityscore=1501 malwarescore=0 suspectscore=0
- mlxscore=0 spamscore=0 adultscore=0 lowpriorityscore=0 phishscore=0
- clxscore=1015 mlxlogscore=818 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507040052
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250703121521.1874196-6-dongml2@chinatelecom.cn>
+
+Hi Menglong,
+
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on bpf-next/master]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Menglong-Dong/bpf-add-function-hash-table-for-tracing-multi/20250703-203035
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git master
+patch link:    https://lore.kernel.org/r/20250703121521.1874196-6-dongml2%40chinatelecom.cn
+patch subject: [PATCH bpf-next v2 05/18] bpf: introduce bpf_gtramp_link
+config: x86_64-buildonly-randconfig-002-20250704 (https://download.01.org/0day-ci/archive/20250704/202507041433.Taj70BHu-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14+deb12u1) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250704/202507041433.Taj70BHu-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507041433.Taj70BHu-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> kernel/bpf/trampoline.c:36:34: warning: 'bpf_shim_tramp_link_lops' defined but not used [-Wunused-const-variable=]
+      36 | static const struct bpf_link_ops bpf_shim_tramp_link_lops;
+         |                                  ^~~~~~~~~~~~~~~~~~~~~~~~
 
 
+vim +/bpf_shim_tramp_link_lops +36 kernel/bpf/trampoline.c
 
-On 6/30/2025 2:59 PM, Mukesh Kumar Savaliya wrote:
-> 
-> 
-> On 6/20/2025 9:42 AM, Haixu Cui wrote:
->> Add virtio-spi.h header for virtio SPI.
->>
->> Signed-off-by: Haixu Cui <quic_haixcui@quicinc.com>
->> ---
->>   include/uapi/linux/virtio_spi.h | 185 ++++++++++++++++++++++++++++++++
->>   1 file changed, 185 insertions(+)
->>   create mode 100644 include/uapi/linux/virtio_spi.h
+    33	
+    34	static struct bpf_global_trampoline global_tr_array[MAX_BPF_FUNC_ARGS + 1];
+    35	static DEFINE_MUTEX(global_tr_lock);
+  > 36	static const struct bpf_link_ops bpf_shim_tramp_link_lops;
+    37	
 
->> + * @max_cs_setup_ns: the maximum delay supported after chipselect is 
->> asserted,
-> And before clock start. may also sound good, if we can write "delay 
-> between CS assert to clock start"
-
-I follow the existing comment in 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/include/linux/spi/spi.h?h=v6.16-rc4#n166, 
-where the cs_setup is described only in terms of the delay after CS is 
-asserted, without explicitly referencing the clock signal.
-To maintain consistency, I kept the comment focused on the relationship 
-between the delay and the CS signal alone.
-
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
