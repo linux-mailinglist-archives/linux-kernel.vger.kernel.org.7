@@ -1,94 +1,87 @@
-Return-Path: <linux-kernel+bounces-716890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 653D8AF8C07
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 10:39:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E17EAF8C36
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 10:42:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78946580E28
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 08:39:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72DB454558D
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 08:39:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 012F62E612C;
-	Fri,  4 Jul 2025 08:34:06 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 165922E3B1E
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 08:34:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE2C02ECEAA;
+	Fri,  4 Jul 2025 08:34:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="PAixT2Em"
+Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AB452EB5DB
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 08:34:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.250.239
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751618045; cv=none; b=lXv9tiQn1WarRGqqYwhc+i2Wh4QoqPGFD+sQKryIz3U6iQUSbZPYH43jsYuPiMCr9kgMyEeTA+YGr2SG2Oj0odavQravMFNiTmGFPMahrjvrl718+9v3tbz88dXLBOJpySdXRMd1MpLH3Otgl4iiqKvJsITcvaBobhmZ+G2PF0Q=
+	t=1751618062; cv=none; b=PhtQ0xshd0L1JhY+Njqs+37Gv0EvyCBt/lrPv7RphvEa29x1SMIc4UdPQrHtlqN6G8PyFwWGwKSyYdw67lyAxQIVcFm0gF8omb1q3/l7aIdJQuYkxO1g0ZH/Y+s9e3d1GyEDIl+eKiauv9LR7/Sy7+UGgdei+DIbimamZSq/6IY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751618045; c=relaxed/simple;
-	bh=zpjaHVU9o3w1AU1ZPc7ZQ1mQ782dEOQ2yNVsFLOdCUU=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=aQUiSjt5WusyLjEIwJOrIkKE+Pj9c7JGEbJQsLlwhipIlLgJa4oCmChvrX6/3cRm/SsQ6dCPQeBtDcYf2802wLGD5jR76hn54RZHGim021KRHtIxmCBfe3LrX+6d5pyCcHiXV9w4KZ3xRgjr4I3eWYcJ1bxlFDV0F4ahxhLo9Tc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3e134cebaf0so9384785ab.0
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Jul 2025 01:34:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751618043; x=1752222843;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iGyzmkda1O439XWhlwqgi+PPwho0P8q0N0XZCBhneyc=;
-        b=SLBkAeHOCk379v1f+7zH4viFOzFAGkt+s+6V7Wzr1iUn1s9bd2MxEdNWBfJtk8HDCa
-         tki8BSAfDvCY8E5kDLlxth4dH4CaMRoSB6G+hNczUmL2OcoVcom+MIRvs25svxwnABta
-         IWa47PUBRzckm81bPGqsj37qWnSfT+CuKCJfmJy9QiYUrL4UXUsI6ULUQC8S/a4TKk9N
-         9eHBHswHtDTbZNOb8jdpF7C9odNrS5QNSTPMmEAm8+FWGy27an/fQBocaiaE7jtKA3zS
-         NhbhBo1F2hWPvB8RLMT0giKoWRkPqzzCTza4LG3VOXx4spUlKgmvGX3izT9yNx2a29YI
-         brQA==
-X-Forwarded-Encrypted: i=1; AJvYcCXOBLir+HODNBX5vGoZxgYbf4y/7sS1LDjvGqGRT+oPkwC3HZqpAm96Dlu8RuMq/CT67WgVWPfAUfIPseg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHnuE73k4w4RCrfciGdZuu5yWkeSxQRgRjgpRyE1+LxMfr82mv
-	58XOOBvTUTNQSQGdkjOrquD3e2XUKnDp+grfA31ewNSv45yCSUqqbSUMv0fn4N+uWO1xJ+h8BUJ
-	VrhkTC6w2QYYvLJdC0Ds/g3Ivrb3rfpokMw2MAc9bHpV9Jbm3Ql0EjKzZqoo=
-X-Google-Smtp-Source: AGHT+IGq3iGVa8EGg2H3nidF1Y5oAB/PEaq8fbEsYWECa2At0F9aiZr+qUsebKd63Uwb4ZWqNZ3pAzqOoxWnNHU/LK8aNsnj8ZqN
+	s=arc-20240116; t=1751618062; c=relaxed/simple;
+	bh=EJn/cSZXH7BBYxWEIF85KO4s0OrkM0th50JGrpPlczQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EGAY97hR3GdJYW1sZnKsy+nnjtTjmhiRGW29KtjU0BldkAXD2EF21I0CXNIMobiznc4O9yTuj0BYLZ/bJ66eaCueoQQ8jzXwWSdCtw/3QXnJ8qavc7Vzsh1PMysKU6wCJ1I/WOwq5/MtXlNLdcBpnDnxu9vqxgJtQiQhJuns/To=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b=PAixT2Em; arc=none smtp.client-ip=85.214.250.239
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8bytes.org
+Received: from 8bytes.org (p4ffe03ae.dip0.t-ipconnect.de [79.254.3.174])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.8bytes.org (Postfix) with ESMTPSA id 7E2434D68A;
+	Fri,  4 Jul 2025 10:34:19 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
+	s=default; t=1751618059;
+	bh=EJn/cSZXH7BBYxWEIF85KO4s0OrkM0th50JGrpPlczQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PAixT2EmfXRxmojutrLqbaeynKVHpFL+FqcT9uPjAV5kLPNQXCtsvVJ3kXJLc4cDC
+	 pHAOs/FGu3F89M4v4mkaef2g7jWLV8gzWlX5VGp9aY7wQ92bMm3QkikvcfOUTuREYo
+	 ENEfdU/T8+4W5MEp1UEYc9l0JYo2eXnrAinNAFDYgPUBs3gHjqZG83NxSLYWYKSWI0
+	 P9ErZ1/A69/H1FvxBLyj/TSl78rREkIj5oNgOuUdUBoVgwTpGSuwWwF6eTTj9RYDUz
+	 5hb+41JwUBygA8kLFrbnRn56JMHzmoyd+iSZQwTp4ZGxJxuy6IBfr/4Cp+Hu369lmA
+	 ZPgn4Xi5W5nEQ==
+Date: Fri, 4 Jul 2025 10:34:18 +0200
+From: Joerg Roedel <joro@8bytes.org>
+To: Lu Baolu <baolu.lu@linux.intel.com>
+Cc: iommu@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/1] [PULL REQUEST] iommu/vt-d: Fixes for v6.16-rc
+Message-ID: <aGeSCv7ewZl5o3SS@8bytes.org>
+References: <20250628100351.3198955-1-baolu.lu@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1887:b0:3dd:f813:64c5 with SMTP id
- e9e14a558f8ab-3e13561cf90mr16307775ab.22.1751618043239; Fri, 04 Jul 2025
- 01:34:03 -0700 (PDT)
-Date: Fri, 04 Jul 2025 01:34:03 -0700
-In-Reply-To: <686764a5.a00a0220.c7b3.0013.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <686791fb.a70a0220.29cf51.0014.GAE@google.com>
-Subject: Re: [syzbot] [net?] general protection fault in qdisc_tree_reduce_backlog
-From: syzbot <syzbot+1261670bbdefc5485a06@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, hdanton@sina.com, 
-	horms@kernel.org, jhs@mojatatu.com, jiri@resnulli.us, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, lizhi.xu@windriver.com, netdev@vger.kernel.org, 
-	nnamrec@gmail.com, pabeni@redhat.com, syzkaller-bugs@googlegroups.com, 
-	xiyou.wangcong@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250628100351.3198955-1-baolu.lu@linux.intel.com>
 
-syzbot has bisected this issue to:
+On Sat, Jun 28, 2025 at 06:03:50PM +0800, Lu Baolu wrote:
+> Hi Joerg,
+> 
+> The following fix has been queued for v6.16-rc4:
+> 
+> - Assign devtlb cache tag on ATS enablement
+> 
+> It fixes a critical cache invalidation issue for ATS-capable devices. It
+> has been reviewed and is ready for merge. Can you please consider it?
+> 
+> Best regards,
+> baolu
+> 
+> 
+> Lu Baolu (1):
+>   iommu/vt-d: Assign devtlb cache tag on ATS enablement
+> 
+>  drivers/iommu/intel/cache.c |  5 ++---
+>  drivers/iommu/intel/iommu.c | 11 ++++++++++-
+>  drivers/iommu/intel/iommu.h |  2 ++
+>  3 files changed, 14 insertions(+), 4 deletions(-)
 
-commit 103406b38c600fec1fe375a77b27d87e314aea09
-Author: Lion Ackermann <nnamrec@gmail.com>
-Date:   Mon Jun 30 13:27:30 2025 +0000
-
-    net/sched: Always pass notifications when child class becomes empty
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13678582580000
-start commit:   bd475eeaaf3c Merge branch '200GbE' of git://git.kernel.org..
-git tree:       net
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=10e78582580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=17678582580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=36b0e72cad5298f8
-dashboard link: https://syzkaller.appspot.com/bug?extid=1261670bbdefc5485a06
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=164d8c8c580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14839ebc580000
-
-Reported-by: syzbot+1261670bbdefc5485a06@syzkaller.appspotmail.com
-Fixes: 103406b38c60 ("net/sched: Always pass notifications when child class becomes empty")
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+Applied, thanks Baolu.
 
