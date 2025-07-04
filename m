@@ -1,65 +1,90 @@
-Return-Path: <linux-kernel+bounces-716546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8C9EAF87EC
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 08:25:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76110AF87F8
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 08:26:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8AADF5877A2
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 06:25:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B63293B0B03
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 06:26:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6988A1DE4D2;
-	Fri,  4 Jul 2025 06:23:09 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F18A1DE2DE;
+	Fri,  4 Jul 2025 06:26:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="a3uHT91A"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 815C7256C8A;
-	Fri,  4 Jul 2025 06:23:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9656B246BA8
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 06:26:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751610188; cv=none; b=nyif7tVtYoJvpM3qmWB0NDcFEAf71D7kN/ir+j1wuKFeKJ42W8IXKXSl0RMCUJ7MTP7C3g2B65YYv8ybUqahTC3av+52vkumSwgFJeltmtZUy/wLhgdY88BPYkIWXjYhzPD9LYGtxrN827EnlfbqoSHS9NyafcrnJFiNGfgk/Ks=
+	t=1751610393; cv=none; b=PDVzmCI3oYFpmpBq455s+cQ/2MUcT2FbyG9y5+EbQUle0KhGOyLxuJnwLwFNXCQzU0VnHsKUSJD+I/oJgPn6XPK1jXckjQW9XnnybrEcLz0wQ4smNDUL077kVDLTeCrPMThkH6XqIQR7r6u6dBDGN8zy+6dQmx6n7/R2JSfMY2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751610188; c=relaxed/simple;
-	bh=C6JZeS0Qw/YhDk9DwKnqZUrONlcD6XaumwjAX3SKUUU=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uOcZrNOKS4QSwNXo/9rihvXyCrxYvQNjglbrEQsn6OuVUAHZGCCJ/mDy0GZNOjmS1UUd9kcPzyiifvS1I5yb1sU7NCbppeC32ko9VVAkqHIgDmi6SG09vy0Zwv8EI9n3TkkYxWAjACUVfEz0cje6Z570/y0ue2GBbns1M95L/Nc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4bYNrJ6Rcsz2qFBt;
-	Fri,  4 Jul 2025 14:24:00 +0800 (CST)
-Received: from kwepemf100013.china.huawei.com (unknown [7.202.181.12])
-	by mail.maildlp.com (Postfix) with ESMTPS id 23613140145;
-	Fri,  4 Jul 2025 14:23:04 +0800 (CST)
-Received: from DESKTOP-F6Q6J7K.china.huawei.com (10.174.175.220) by
- kwepemf100013.china.huawei.com (7.202.181.12) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 4 Jul 2025 14:23:02 +0800
-From: Fan Gong <gongfan1@huawei.com>
-To: Fan Gong <gongfan1@huawei.com>, Zhu Yikai <zhuyikai1@h-partners.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "David S.
- Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
- Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman
-	<horms@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
-	<linux-doc@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, Bjorn Helgaas
-	<helgaas@kernel.org>, luosifu <luosifu@huawei.com>, Xin Guo
-	<guoxin09@huawei.com>, Shen Chenyang <shenchenyang1@hisilicon.com>, Zhou
- Shuai <zhoushuai28@huawei.com>, Wu Like <wulike1@huawei.com>, Shi Jing
-	<shijing34@huawei.com>, Meny Yossefi <meny.yossefi@huawei.com>, Gur Stavi
-	<gur.stavi@huawei.com>, Lee Trager <lee@trager.us>, Michael Ellerman
-	<mpe@ellerman.id.au>, Vadim Fedorenko <vadim.fedorenko@linux.dev>, Suman
- Ghosh <sumang@marvell.com>, Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Joe Damato <jdamato@fastly.com>, Christophe JAILLET
-	<christophe.jaillet@wanadoo.fr>
-Subject: [PATCH net-next v07 8/8] hinic3: Interrupt request configuration
-Date: Fri, 4 Jul 2025 14:22:41 +0800
-Message-ID: <f445b6c505f52df87186787598da51caf9d8ad6e.1751597094.git.zhuyikai1@h-partners.com>
-X-Mailer: git-send-email 2.21.0.windows.1
-In-Reply-To: <cover.1751597094.git.zhuyikai1@h-partners.com>
-References: <cover.1751597094.git.zhuyikai1@h-partners.com>
+	s=arc-20240116; t=1751610393; c=relaxed/simple;
+	bh=TqO39hOdZuFrt3Vk4NPBD+GxpccbOwHCd5B4qz3NG2Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=izj+synbm4wUVIuWVVFrlh6GwpgglUff7UNocuRHtS4IR7IZkCpkDvKfVF/sovuZDHJySfDZJ6zsltXVAaZJTPSMpcMQD2PLskXsao3MoroZhaAD5msCx5kW0YwEDOpOG3bjU94TEJpPe1T8yDA346t//+7gc2veTAf8dL5Bz5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=a3uHT91A; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-748d982e97cso691581b3a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Jul 2025 23:26:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1751610390; x=1752215190; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vtAMrec9bYb31s5/Huy8ScC44Y0MeGNii8Ny4beAYaA=;
+        b=a3uHT91ASzcIngTp4XE7hZOzPz5w7PXJb57+8D9Nc6pPCp85N4OGLdUYCIlJtlcCGI
+         /h+/NmHlFlvhQvX/ekcs2zQ0/BYcVblssHKfWEpZCmGdbranK6nxQtxEGi3e7dn1rqYR
+         c9IdEYeKnDIc95d9Oo+stAoCIMAye/jWGzO/oDSsjVEQAmKt5liIuMOIAFVqPQkQX4jN
+         tAsn79LzPxEUNFolYK6FoyAqvV9t/7tE7Jm66538pCX0eb65j/P7NINgBaPjBjgdRym2
+         TBu6p3cosUOJeL3X5LyAYhEVTDfIuXJp9YJLMAz4mZC76n2O786vzEAYPkiCThSUvi4Y
+         5eLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751610390; x=1752215190;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vtAMrec9bYb31s5/Huy8ScC44Y0MeGNii8Ny4beAYaA=;
+        b=GkMS/3kTfDn9W4DAnNmemDF1jptLFlz8X02g/hdHTV0Q0ZdzH5wh9G63Q6DaFtDKso
+         1m+fO0XdSBBj+EVX28ipeXUIAhYyyrSMnHDHosBnM3CLpNAewF01z3YBrtymAAdPyMpW
+         pzQj9aaTdlUuO9bDi0DEf3rwGzKPb7dWPP10Gx3XINs9UxGb181E+voBi67QtqedYi3g
+         OwY0qWsl/H96dbnQPoG9efsGVP2uC6zRhqa3vGSKG0qOldSRn+ni3PLwkFFPyDmsrAnm
+         5Ox2h2h96LuXCtY45fijGXGp4/g+LG/8C57GXVh/z7x1QWmn8cPA9RTAVVNUSxDEYJfA
+         R2Vg==
+X-Forwarded-Encrypted: i=1; AJvYcCWQMtX/haWRMkx4FOPk3kEkynBrYUNCEap3SBCtlYFiz0v1KuZ/GTJv5947eJSqW6GvHMgROkH4RiEPKYQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/1SehqDosyE9BlmJm4k/+2m0bEJvIikE+rjqoSAkeGzx4Zde6
+	KflU8VY2duhA2RFEftUyhhmGcywYrIvR1vgWrdrdBhSs1bMvBwTg8EdehDms5q5sr/PtYih+BeI
+	KmKAn
+X-Gm-Gg: ASbGncvVatO+x/7z9dPXMROO/s9dQnbD92rRuORK+dUBiBZxKnyJvje1ic6TgoKOgOE
+	DJI5dPeKOodxCu69OE155iWKRUbt37rR1cQopMEDp7wHwru4Q5YG5dHUIqH3omU58gYKKNvgR2x
+	lNUXAP/zyznFimlaFnnLhOIGFkpo3OylkrGjBOeS5uVRHO6n+8UV8p9epxvm/GR9JIxiIiwkBm8
+	c/1Uv8ru65Jv4S1b7aDawySH7EQxFT0B5imThI2UfEBqFU8OEyKtc0tZUuccTvy2Qz1ppFpka4c
+	bFUtSlT9/8SF1x7kMUbonyEAzwBSqYirnqu/p2t4gsxLMlrSN8dKWByITVIFasrn3vziBiJsmks
+	AHET72tAa91sZ
+X-Google-Smtp-Source: AGHT+IFTOzGu3zFWSHTrf4KF59AoRGl/bkuEswL36beEW28ePztb4UqI8rnrlZ/0ccy+thk4y06H6Q==
+X-Received: by 2002:a05:6a21:694:b0:201:b65:81ab with SMTP id adf61e73a8af0-225b9f64162mr2679259637.23.1751610389786;
+        Thu, 03 Jul 2025 23:26:29 -0700 (PDT)
+Received: from localhost.localdomain ([203.208.189.8])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b38ee5f643dsm1183240a12.37.2025.07.03.23.26.26
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Thu, 03 Jul 2025 23:26:29 -0700 (PDT)
+From: lizhe.67@bytedance.com
+To: alex.williamson@redhat.com,
+	akpm@linux-foundation.org,
+	david@redhat.com,
+	peterx@redhat.com,
+	jgg@ziepe.ca
+Cc: kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	lizhe.67@bytedance.com
+Subject: [PATCH v2 0/5] vfio/type1: optimize vfio_pin_pages_remote() and vfio_unpin_pages_remote()
+Date: Fri,  4 Jul 2025 14:25:57 +0800
+Message-ID: <20250704062602.33500-1-lizhe.67@bytedance.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,265 +92,87 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
- kwepemf100013.china.huawei.com (7.202.181.12)
 
-Configure interrupt request initialization.
-It allows driver to receive packets and management information
-from HW.
+From: Li Zhe <lizhe.67@bytedance.com>
 
-Co-developed-by: Xin Guo <guoxin09@huawei.com>
-Signed-off-by: Xin Guo <guoxin09@huawei.com>
-Co-developed-by: Zhu Yikai <zhuyikai1@h-partners.com>
-Signed-off-by: Zhu Yikai <zhuyikai1@h-partners.com>
-Signed-off-by: Fan Gong <gongfan1@huawei.com>
+This patchset is an integration of the two previous patchsets[1][2].
+
+When vfio_pin_pages_remote() is called with a range of addresses that
+includes large folios, the function currently performs individual
+statistics counting operations for each page. This can lead to significant
+performance overheads, especially when dealing with large ranges of pages.
+
+The function vfio_unpin_pages_remote() has a similar issue, where executing
+put_pfn() for each pfn brings considerable consumption.
+
+This patchset primarily optimizes the performance of the relevant functions
+by batching the less efficient operations mentioned before.
+
+The first two patch optimizes the performance of the function
+vfio_pin_pages_remote(), while the remaining patches optimize the
+performance of the function vfio_unpin_pages_remote().
+
+The performance test results, based on v6.16-rc4, for completing the 16G
+VFIO MAP/UNMAP DMA, obtained through unit test[3] with slight
+modifications[4], are as follows.
+
+Base(6.16-rc4):
+./vfio-pci-mem-dma-map 0000:03:00.0 16
+------- AVERAGE (MADV_HUGEPAGE) --------
+VFIO MAP DMA in 0.047 s (340.2 GB/s)
+VFIO UNMAP DMA in 0.135 s (118.6 GB/s)
+------- AVERAGE (MAP_POPULATE) --------
+VFIO MAP DMA in 0.280 s (57.2 GB/s)
+VFIO UNMAP DMA in 0.312 s (51.3 GB/s)
+------- AVERAGE (HUGETLBFS) --------
+VFIO MAP DMA in 0.052 s (310.5 GB/s)
+VFIO UNMAP DMA in 0.136 s (117.3 GB/s)
+
+With this patchset:
+------- AVERAGE (MADV_HUGEPAGE) --------
+VFIO MAP DMA in 0.027 s (600.7 GB/s)
+VFIO UNMAP DMA in 0.045 s (357.0 GB/s)
+------- AVERAGE (MAP_POPULATE) --------
+VFIO MAP DMA in 0.261 s (61.4 GB/s)
+VFIO UNMAP DMA in 0.288 s (55.6 GB/s)
+------- AVERAGE (HUGETLBFS) --------
+VFIO MAP DMA in 0.031 s (516.4 GB/s)
+VFIO UNMAP DMA in 0.045 s (353.9 GB/s)
+
+For large folio, we achieve an over 40% performance improvement for VFIO
+MAP DMA and an over 66% performance improvement for VFIO DMA UNMAP. For
+small folios, the performance test results show a slight improvement with
+the performance before optimization.
+
+[1]: https://lore.kernel.org/all/20250529064947.38433-1-lizhe.67@bytedance.com/
+[2]: https://lore.kernel.org/all/20250620032344.13382-1-lizhe.67@bytedance.com/#t
+[3]: https://github.com/awilliam/tests/blob/vfio-pci-mem-dma-map/vfio-pci-mem-dma-map.c
+[4]: https://lore.kernel.org/all/20250610031013.98556-1-lizhe.67@bytedance.com/
+
+Li Zhe (5):
+  mm: introduce num_pages_contiguous()
+  vfio/type1: optimize vfio_pin_pages_remote()
+  vfio/type1: batch vfio_find_vpfn() in function
+    vfio_unpin_pages_remote()
+  vfio/type1: introduce a new member has_rsvd for struct vfio_dma
+  vfio/type1: optimize vfio_unpin_pages_remote()
+
+ drivers/vfio/vfio_iommu_type1.c | 111 ++++++++++++++++++++++++++------
+ include/linux/mm.h              |  20 ++++++
+ 2 files changed, 110 insertions(+), 21 deletions(-)
+
 ---
- .../ethernet/huawei/hinic3/hinic3_hw_comm.c   |  31 ++++
- .../ethernet/huawei/hinic3/hinic3_hw_comm.h   |  13 ++
- .../net/ethernet/huawei/hinic3/hinic3_irq.c   | 137 +++++++++++++++++-
- .../ethernet/huawei/hinic3/hinic3_nic_dev.h   |   4 -
- 4 files changed, 179 insertions(+), 6 deletions(-)
+Changelogs:
 
-diff --git a/drivers/net/ethernet/huawei/hinic3/hinic3_hw_comm.c b/drivers/net/ethernet/huawei/hinic3/hinic3_hw_comm.c
-index 434696ce7dc2..7adcdd569c7b 100644
---- a/drivers/net/ethernet/huawei/hinic3/hinic3_hw_comm.c
-+++ b/drivers/net/ethernet/huawei/hinic3/hinic3_hw_comm.c
-@@ -8,6 +8,37 @@
- #include "hinic3_hwif.h"
- #include "hinic3_mbox.h"
- 
-+int hinic3_set_interrupt_cfg_direct(struct hinic3_hwdev *hwdev,
-+				    const struct hinic3_interrupt_info *info)
-+{
-+	struct comm_cmd_cfg_msix_ctrl_reg msix_cfg = {};
-+	struct mgmt_msg_params msg_params = {};
-+	int err;
-+
-+	msix_cfg.func_id = hinic3_global_func_id(hwdev);
-+	msix_cfg.msix_index = info->msix_index;
-+	msix_cfg.opcode = MGMT_MSG_CMD_OP_SET;
-+
-+	msix_cfg.lli_credit_cnt = info->lli_credit_limit;
-+	msix_cfg.lli_timer_cnt = info->lli_timer_cfg;
-+	msix_cfg.pending_cnt = info->pending_limit;
-+	msix_cfg.coalesce_timer_cnt = info->coalesc_timer_cfg;
-+	msix_cfg.resend_timer_cnt = info->resend_timer_cfg;
-+
-+	mgmt_msg_params_init_default(&msg_params, &msix_cfg, sizeof(msix_cfg));
-+
-+	err = hinic3_send_mbox_to_mgmt(hwdev, MGMT_MOD_COMM,
-+				       COMM_CMD_CFG_MSIX_CTRL_REG, &msg_params);
-+	if (err || msix_cfg.head.status) {
-+		dev_err(hwdev->dev,
-+			"Failed to set interrupt config, err: %d, status: 0x%x\n",
-+			err, msix_cfg.head.status);
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
- int hinic3_func_reset(struct hinic3_hwdev *hwdev, u16 func_id, u64 reset_flag)
- {
- 	struct comm_cmd_func_reset func_reset = {};
-diff --git a/drivers/net/ethernet/huawei/hinic3/hinic3_hw_comm.h b/drivers/net/ethernet/huawei/hinic3/hinic3_hw_comm.h
-index c33a1c77da9c..2270987b126f 100644
---- a/drivers/net/ethernet/huawei/hinic3/hinic3_hw_comm.h
-+++ b/drivers/net/ethernet/huawei/hinic3/hinic3_hw_comm.h
-@@ -8,6 +8,19 @@
- 
- struct hinic3_hwdev;
- 
-+struct hinic3_interrupt_info {
-+	u32 lli_set;
-+	u32 interrupt_coalesc_set;
-+	u16 msix_index;
-+	u8  lli_credit_limit;
-+	u8  lli_timer_cfg;
-+	u8  pending_limit;
-+	u8  coalesc_timer_cfg;
-+	u8  resend_timer_cfg;
-+};
-+
-+int hinic3_set_interrupt_cfg_direct(struct hinic3_hwdev *hwdev,
-+				    const struct hinic3_interrupt_info *info);
- int hinic3_func_reset(struct hinic3_hwdev *hwdev, u16 func_id, u64 reset_flag);
- 
- #endif
-diff --git a/drivers/net/ethernet/huawei/hinic3/hinic3_irq.c b/drivers/net/ethernet/huawei/hinic3/hinic3_irq.c
-index 8b92eed25edf..cee28e67f252 100644
---- a/drivers/net/ethernet/huawei/hinic3/hinic3_irq.c
-+++ b/drivers/net/ethernet/huawei/hinic3/hinic3_irq.c
-@@ -38,7 +38,7 @@ static int hinic3_poll(struct napi_struct *napi, int budget)
- 	return work_done;
- }
- 
--void qp_add_napi(struct hinic3_irq_cfg *irq_cfg)
-+static void qp_add_napi(struct hinic3_irq_cfg *irq_cfg)
- {
- 	struct hinic3_nic_dev *nic_dev = netdev_priv(irq_cfg->netdev);
- 
-@@ -50,7 +50,7 @@ void qp_add_napi(struct hinic3_irq_cfg *irq_cfg)
- 	napi_enable(&irq_cfg->napi);
- }
- 
--void qp_del_napi(struct hinic3_irq_cfg *irq_cfg)
-+static void qp_del_napi(struct hinic3_irq_cfg *irq_cfg)
- {
- 	napi_disable(&irq_cfg->napi);
- 	netif_queue_set_napi(irq_cfg->netdev, irq_cfg->irq_id,
-@@ -60,3 +60,136 @@ void qp_del_napi(struct hinic3_irq_cfg *irq_cfg)
- 	netif_stop_subqueue(irq_cfg->netdev, irq_cfg->irq_id);
- 	netif_napi_del(&irq_cfg->napi);
- }
-+
-+static irqreturn_t qp_irq(int irq, void *data)
-+{
-+	struct hinic3_irq_cfg *irq_cfg = data;
-+	struct hinic3_nic_dev *nic_dev;
-+
-+	nic_dev = netdev_priv(irq_cfg->netdev);
-+	hinic3_msix_intr_clear_resend_bit(nic_dev->hwdev,
-+					  irq_cfg->msix_entry_idx, 1);
-+
-+	napi_schedule(&irq_cfg->napi);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static int hinic3_request_irq(struct hinic3_irq_cfg *irq_cfg, u16 q_id)
-+{
-+	struct hinic3_interrupt_info info = {};
-+	struct hinic3_nic_dev *nic_dev;
-+	struct net_device *netdev;
-+	int err;
-+
-+	netdev = irq_cfg->netdev;
-+	nic_dev = netdev_priv(netdev);
-+	qp_add_napi(irq_cfg);
-+
-+	info.msix_index = irq_cfg->msix_entry_idx;
-+	info.interrupt_coalesc_set = 1;
-+	info.pending_limit = nic_dev->intr_coalesce[q_id].pending_limit;
-+	info.coalesc_timer_cfg =
-+		nic_dev->intr_coalesce[q_id].coalesce_timer_cfg;
-+	info.resend_timer_cfg = nic_dev->intr_coalesce[q_id].resend_timer_cfg;
-+	err = hinic3_set_interrupt_cfg_direct(nic_dev->hwdev, &info);
-+	if (err) {
-+		netdev_err(netdev, "Failed to set RX interrupt coalescing attribute.\n");
-+		qp_del_napi(irq_cfg);
-+		return err;
-+	}
-+
-+	err = request_irq(irq_cfg->irq_id, qp_irq, 0, irq_cfg->irq_name,
-+			  irq_cfg);
-+	if (err) {
-+		qp_del_napi(irq_cfg);
-+		return err;
-+	}
-+
-+	irq_set_affinity_hint(irq_cfg->irq_id, &irq_cfg->affinity_mask);
-+
-+	return 0;
-+}
-+
-+static void hinic3_release_irq(struct hinic3_irq_cfg *irq_cfg)
-+{
-+	irq_set_affinity_hint(irq_cfg->irq_id, NULL);
-+	synchronize_irq(irq_cfg->irq_id);
-+	free_irq(irq_cfg->irq_id, irq_cfg);
-+}
-+
-+int hinic3_qps_irq_init(struct net_device *netdev)
-+{
-+	struct hinic3_nic_dev *nic_dev = netdev_priv(netdev);
-+	struct pci_dev *pdev = nic_dev->pdev;
-+	struct hinic3_irq_cfg *irq_cfg;
-+	struct msix_entry *msix_entry;
-+	u32 local_cpu;
-+	u16 q_id;
-+	int err;
-+
-+	for (q_id = 0; q_id < nic_dev->q_params.num_qps; q_id++) {
-+		msix_entry = &nic_dev->qps_msix_entries[q_id];
-+		irq_cfg = &nic_dev->q_params.irq_cfg[q_id];
-+
-+		irq_cfg->irq_id = msix_entry->vector;
-+		irq_cfg->msix_entry_idx = msix_entry->entry;
-+		irq_cfg->netdev = netdev;
-+		irq_cfg->txq = &nic_dev->txqs[q_id];
-+		irq_cfg->rxq = &nic_dev->rxqs[q_id];
-+		nic_dev->rxqs[q_id].irq_cfg = irq_cfg;
-+
-+		local_cpu = cpumask_local_spread(q_id, dev_to_node(&pdev->dev));
-+		cpumask_set_cpu(local_cpu, &irq_cfg->affinity_mask);
-+
-+		snprintf(irq_cfg->irq_name, sizeof(irq_cfg->irq_name),
-+			 "%s_qp%u", netdev->name, q_id);
-+
-+		err = hinic3_request_irq(irq_cfg, q_id);
-+		if (err) {
-+			netdev_err(netdev, "Failed to request Rx irq\n");
-+			goto err_release_irqs;
-+		}
-+
-+		hinic3_set_msix_auto_mask_state(nic_dev->hwdev,
-+						irq_cfg->msix_entry_idx,
-+						HINIC3_SET_MSIX_AUTO_MASK);
-+		hinic3_set_msix_state(nic_dev->hwdev, irq_cfg->msix_entry_idx,
-+				      HINIC3_MSIX_ENABLE);
-+	}
-+
-+	return 0;
-+
-+err_release_irqs:
-+	while (q_id > 0) {
-+		q_id--;
-+		irq_cfg = &nic_dev->q_params.irq_cfg[q_id];
-+		qp_del_napi(irq_cfg);
-+		hinic3_set_msix_state(nic_dev->hwdev, irq_cfg->msix_entry_idx,
-+				      HINIC3_MSIX_DISABLE);
-+		hinic3_set_msix_auto_mask_state(nic_dev->hwdev,
-+						irq_cfg->msix_entry_idx,
-+						HINIC3_CLR_MSIX_AUTO_MASK);
-+		hinic3_release_irq(irq_cfg);
-+	}
-+
-+	return err;
-+}
-+
-+void hinic3_qps_irq_uninit(struct net_device *netdev)
-+{
-+	struct hinic3_nic_dev *nic_dev = netdev_priv(netdev);
-+	struct hinic3_irq_cfg *irq_cfg;
-+	u16 q_id;
-+
-+	for (q_id = 0; q_id < nic_dev->q_params.num_qps; q_id++) {
-+		irq_cfg = &nic_dev->q_params.irq_cfg[q_id];
-+		qp_del_napi(irq_cfg);
-+		hinic3_set_msix_state(nic_dev->hwdev, irq_cfg->msix_entry_idx,
-+				      HINIC3_MSIX_DISABLE);
-+		hinic3_set_msix_auto_mask_state(nic_dev->hwdev,
-+						irq_cfg->msix_entry_idx,
-+						HINIC3_CLR_MSIX_AUTO_MASK);
-+		hinic3_release_irq(irq_cfg);
-+	}
-+}
-diff --git a/drivers/net/ethernet/huawei/hinic3/hinic3_nic_dev.h b/drivers/net/ethernet/huawei/hinic3/hinic3_nic_dev.h
-index 9577cc673257..9fad834f9e92 100644
---- a/drivers/net/ethernet/huawei/hinic3/hinic3_nic_dev.h
-+++ b/drivers/net/ethernet/huawei/hinic3/hinic3_nic_dev.h
-@@ -85,8 +85,4 @@ void hinic3_set_netdev_ops(struct net_device *netdev);
- int hinic3_qps_irq_init(struct net_device *netdev);
- void hinic3_qps_irq_uninit(struct net_device *netdev);
- 
--/* Temporary prototypes. Functions become static in later submission. */
--void qp_add_napi(struct hinic3_irq_cfg *irq_cfg);
--void qp_del_napi(struct hinic3_irq_cfg *irq_cfg);
--
- #endif
+v1->v2:
+- Update the performance test results.
+- The function num_pages_contiguous() is extracted and placed in a
+  separate commit.
+- The phrase 'for large folio' has been removed from the patchset title.
+
+v1: https://lore.kernel.org/all/20250630072518.31846-1-lizhe.67@bytedance.com/
+
 -- 
-2.43.0
+2.20.1
 
 
