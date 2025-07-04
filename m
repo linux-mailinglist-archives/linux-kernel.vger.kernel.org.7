@@ -1,115 +1,101 @@
-Return-Path: <linux-kernel+bounces-716969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E72BAF8D6F
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 11:05:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 969ABAF8D7C
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 11:06:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C733C16FCC1
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 09:03:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4947D5679D6
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 09:04:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C72112F3C2F;
-	Fri,  4 Jul 2025 08:56:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D58932F49F0;
+	Fri,  4 Jul 2025 08:57:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="dbIjUmga"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sPW7EHW4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C13E2F3C16;
-	Fri,  4 Jul 2025 08:56:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 286B52F4338;
+	Fri,  4 Jul 2025 08:57:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751619406; cv=none; b=DctfNGVUQftYPZp+dRHxCYtqBT/zHb7k4uVNoYE5yZb3LqyhxB4yt8rpxZyNyZycqLro7gT+GEbghEi5Bs15BlKNYOlOTd67+Kh5YdEO7NTJPfcjX4R4Uo2Dek43wUjvRcwMdvz3R2Pbrk9fD1VAQk7mZq8pycYr5sTATdM96V8=
+	t=1751619445; cv=none; b=IH44Jqdwa7AdDWmMqoQ4duSqxnvjUssLcqyCMhIb87kkxg2uBStnEronc0YFHkkxUFiLAEZVsxd8ZoO16prI5oZjjsUU07O/BWVVaXFfm3Mv3D1z/glVFJL/6hvsi5kH4fDVwRgOPcpDyw+WPyvodDnkLtcKJBrge3jt/ZbZzxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751619406; c=relaxed/simple;
-	bh=ZdG6BMssVm1Gl+X/MYpmSW4PyXrruIwcWTbwljClWks=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=rsodRS7mki2JabIr9px79yhMxxNX+oRj664dwUbCFE4QHrNSucl7I8JCrk+lk10Kr31wS7PnHlOI3zNvz/OjYPuF9SX5UzHFz+hDPsrvFvu0Spj7ilmtpxp/+YaoG1GDyBaiDE0Gy9e/bpzySAstg3Za6FlkKgmgQEH2zzxSy0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=dbIjUmga; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1751619372;
-	bh=bDp9u1jQtp2Eg/tk05ShcrGxHK9wKH9UWebGG4Xew98=;
-	h=Date:From:To:Cc:Subject:From;
-	b=dbIjUmgaG0f/tHodIoYEOusRnkDTz1UFCZcU6GmEjzm6tok3LPJxsuEm9Mq5UtZxP
-	 zVY1zlfAsEffZqQ2gn+BE+sAcsyVYytLBJ+jawyixTDE41JGi2hW5xMvS60Z5pZ25b
-	 KTo4HTFESa5qL8ThGpFy6zZxX9DakwjWzM+bPOlTuSV3n1AyEQi7j5uw90fWzE3RUC
-	 X7WDJGZ3FCHgh3dqK2vOnKEJ4RFroTo8nLPTl+0XyH8EZkhqbFTQ4rrSnfKr/xTyjn
-	 wNibvSgT5GzZwSqdBFVGs76yvT8LXMA11ASO9edEGHUTtYdCY4jLqpCzQRAiVr0niW
-	 WyI/U5xD6fsJA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bYSCw3yWJz4wcy;
-	Fri,  4 Jul 2025 18:56:12 +1000 (AEST)
-Date: Fri, 4 Jul 2025 18:56:41 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Bartosz Golaszewski <brgl@bgdev.pl>, Dmitry Torokhov
- <dmitry.torokhov@gmail.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Lee Jones
- <lee@kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>, Nuno =?UTF-8?B?U8Oh?=
- <nuno.sa@analog.com>
-Subject: linux-next: manual merge of the gpio-brgl tree with the input tree
-Message-ID: <20250704185641.430ae617@canb.auug.org.au>
+	s=arc-20240116; t=1751619445; c=relaxed/simple;
+	bh=bbjLcmIBW1o+XXxg6tn/23VBSChySRZ8Li0TSIQlJCk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=u+eehrtjn8kd38dXXqCU96i7bUzP0mb7QMEHoE22It3FdveWIJVF3SvpQwwboM32lv2Qd5nyGWw6NcKQSBV+PvzmhSc19+Ayh8h4wY5N9SeQiips4xa4Ulz4DojKY7mAv0ssxISvUn38Ye47Q+NwKxfqNW32T4qd/8ntHVkF2HU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sPW7EHW4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38916C4CEE3;
+	Fri,  4 Jul 2025 08:57:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751619444;
+	bh=bbjLcmIBW1o+XXxg6tn/23VBSChySRZ8Li0TSIQlJCk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=sPW7EHW4Mq9zjeLZ6o/FsFlUib8/d7wjibToOI36GWccfn4XDsvB+USa5IgOLSUib
+	 7Qpa1IBRfl87cbMcAmnPsYqotx4grw/Vi+Ibc7NSIY4KrtLAV0c2lv1fsej7Zvy+o3
+	 hajie0Y1znsPD2KPFODM2Lzcl3lLT5J1Wp4qhSzQ5HccVgDCiTwOaGoY71mAzH1WiN
+	 QW9EcM3gnz3Xa44SX99Qy4kTcZmJ/B0AcWa+UClGPQA04yXaaIPIfaDj6zjynR77Hg
+	 dGn5tHdbtDX3hUMmo0wYmBapveO6ySEf16f3TjXwa7HksgX68Q/f6fWBaN8+JlI5ef
+	 Y3rGVHdwPZfyQ==
+From: Christian Brauner <brauner@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	Laura Brehm <laurajfbrehm@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Laura Brehm <laurabrehm@hey.com>,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: (subset) [PATCH 2/2] coredump: fix PIDFD_INFO_COREDUMP ioctl check
+Date: Fri,  4 Jul 2025 10:57:18 +0200
+Message-ID: <20250704-erbmaterial-hilflos-962418895b8e@brauner>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250703120244.96908-3-laurabrehm@hey.com>
+References: <20250703120244.96908-3-laurabrehm@hey.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/+16X6+AHOS79oIA34pEGn76";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1373; i=brauner@kernel.org; h=from:subject:message-id; bh=bbjLcmIBW1o+XXxg6tn/23VBSChySRZ8Li0TSIQlJCk=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSkTy9QfFR6gmXN4UmhWaK6Is7FjVxKV7aELJ/iJnrTa fH3Cb8EO0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACbCEMzwTzlhryBH7oFdxWem MW+zfPV3/+u67kcmmsF7vk3ePj170SuG3+wL7Dj/WYiF96duOPRUYb70HdZi3acmmgnaM99NKn6 1jxkA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
---Sig_/+16X6+AHOS79oIA34pEGn76
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, 03 Jul 2025 14:02:44 +0200, Laura Brehm wrote:
+> In Commit 1d8db6fd698de1f73b1a7d72aea578fdd18d9a87 ("pidfs,
+> coredump: add PIDFD_INFO_COREDUMP"), the following code was added:
+> 
+>     if (mask & PIDFD_INFO_COREDUMP) {
+>         kinfo.mask |= PIDFD_INFO_COREDUMP;
+>         kinfo.coredump_mask = READ_ONCE(pidfs_i(inode)->__pei.coredump_mask);
+>     }
+>     [...]
+>     if (!(kinfo.mask & PIDFD_INFO_COREDUMP)) {
+>         task_lock(task);
+>         if (task->mm)
+>             kinfo.coredump_mask = pidfs_coredump_mask(task->mm->flags);
+>         task_unlock(task);
+>     }
+> 
+> [...]
 
-Hi all,
+Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+Patches in the vfs.fixes branch should appear in linux-next soon.
 
-Today's linux-next merge of the gpio-brgl tree got a conflict in:
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-  drivers/input/keyboard/adp5589-keys.c
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-between commit:
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
-  43a8440f3969 ("Input: adp5589 - use new GPIO line value setter callbacks")
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.fixes
 
-from the input tree and commit:
-
-  3bdbd0858df6 ("Input: adp5589: remove the driver")
-
-from the gpio-brgl tree.
-
-I fixed it up (I removed the file) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/+16X6+AHOS79oIA34pEGn76
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmhnl0kACgkQAVBC80lX
-0GzM9Qf/UZuzQs2bmWAGvFyv7pjm/zWdqcTckrrfXqyaoNwXM3DI1ZvlkEXUF7O9
-wBuUjwOQwhZgnWp59H7Y7Y4IOdr2l0Z03CLZHKgZXX1xN4/3fQBPetZrJfpx265h
-B+g+sgQfoxNocHsNevF4DB53K2T5/uk8WMb9J2Sf4JHXGeWBcu2uek0srxXfNLkq
-sHJBXPhx1jeA6CpqRoId5VoTja6E0Z99SwNIYp7BFqe3Yo5XAT4+wkfIblSoEAz/
-obo9SUG2hWNUnik50v06n9B3mEcC043hWE6tOs35GNdLMvnb3Lw2oTA5bTihoN5R
-RhgUT/xBQjrUZ0lQ1KzvTawbVy6l7w==
-=hYfc
------END PGP SIGNATURE-----
-
---Sig_/+16X6+AHOS79oIA34pEGn76--
+[2/2] coredump: fix PIDFD_INFO_COREDUMP ioctl check
+      https://git.kernel.org/vfs/vfs/c/8c0bcafc722c
 
