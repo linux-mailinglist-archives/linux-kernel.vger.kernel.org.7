@@ -1,167 +1,122 @@
-Return-Path: <linux-kernel+bounces-716873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E249AF8BE9
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 10:36:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 610F1AF8BC4
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 10:33:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2239C762201
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 08:32:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2251F560D51
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 08:33:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F97828851E;
-	Fri,  4 Jul 2025 08:21:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34702288C8A;
+	Fri,  4 Jul 2025 08:22:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="brNKqTev"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GZUJqo3K"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD90128640B
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 08:21:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF100288C22
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 08:21:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751617311; cv=none; b=tBSJxJpObNop6xGBv5J6N/JAkFYalmYOo8PmKvn2wyX5AxwwnaAzZVGhBM0g28FGhskUVQqR44LT2iV18oyy61uytiJhWe2FuLrHdrF3SmXM8NvxNgxPE76SmbFC4EhwoqeZbcNz/tNwUKsJ7v9gengoSWy8ey4aGLyuf4vGYj0=
+	t=1751617320; cv=none; b=BC1b9X875T7I3hru1GDk0/CvRDX6ItZ1BU7B8O5z8WXid3ixGZ30ZNeRehFXeXr//2P622RPomFThv7fZhtPvAKPwhqWMQj36MrZI+u8AGcq10EF8s13GtahRTzNaNxf23YonjkRePT5jztV2goKSgulutFxoDOYP3W/Fvu+nCo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751617311; c=relaxed/simple;
-	bh=FfFgM3w89Awms9ouorvrgypiEYg34rdveJXyfHtSI7E=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fCwgGlsOKiql76dOhlbMZqHSUp3WMIcVkn5CtWHfDsk7hPz+PXOWDabV6ksp4Q4Bk3Fh0UlssHUKhweEhHT0CWs/EvwRWfpbX9b4S3A0x8eALyzi6L3MxOoidZOfPAEaGsFSd7dLp/gO4v4Nj769jB7gsUY1aBIi/vOeHeD5Zrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=brNKqTev; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-7490702fc7cso505187b3a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Jul 2025 01:21:48 -0700 (PDT)
+	s=arc-20240116; t=1751617320; c=relaxed/simple;
+	bh=BqF93+TAjohew7xEc+xhLbJwBdMg2ZtKZkD6/ZYDjFY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=X0g/znrUS2K8by2IcdqP+VqA/R1oOvDRS1ykQm2PJSEDGoAL28aKQnMI2aWl1MfhupuSztBuqh1c8zEyg/pcFWp4lI9cpQQqor0a2yV5AQQqXObMzHGWGx3Y/PrqWv809jk6vABD3QXbdvv/i6Ftxr80GF3CMQ/wvmlslES9U8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GZUJqo3K; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-553bcf41440so829556e87.3
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Jul 2025 01:21:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1751617308; x=1752222108; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=linaro.org; s=google; t=1751617317; x=1752222117; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=NrmplSRpTLjvU/Va5okWFiaAeK95G6eUg5bBPQchAfY=;
-        b=brNKqTevBOgKwPtTsO9WRWeDphqfkFHq34hJ9aosqdWkOegn1wSQyTmGdBSkdEpV1a
-         vzuE/h+f7quD/4KCqFFA4nzEsV/KXRfSRAgFGfFV6EPRhYCH1p52jzYssGDpeFbLyhS0
-         sg6N0XWXiptwq4mRuoysGskUMpuffCCIx2VxppoBHbrVfBFCnSd0XyLoNN20N3qKELQu
-         L1Ra+as1f12DGZyt3jMIvsSO1osNKobk24KEpv03s/WAz21B15ouGhw1m5XD4x+rjJ8J
-         AxCV4bLcsMBr8JOtOQAEeGlND/nGLB7zT1AydQzl5f7u8QrzrghYtR8qr9T1sgRev4Dy
-         Q9pQ==
+        bh=BqF93+TAjohew7xEc+xhLbJwBdMg2ZtKZkD6/ZYDjFY=;
+        b=GZUJqo3KLL8gYQ3Rb6umJI92QObJm/vnWe2jXRA7jwBFz5IeUq0EpdAtGvYNU28gBP
+         6HoQvx38Rllu9bZRErlOzyx+5c7PiMng4T1OjdhoGZuhUR7ZuUqVVNPjk88OD4cuGgZb
+         9uxGXyV7Ui3H35ReYfqENPx798Fygmo698V0AUGd7TKFPnKWyit6BKheOklo7hvFHJdO
+         sZYshB7gnl6/y1PRtCNT5D6UQL520Rsbalz4lCDia58eC7cyxSvDVI6UEgHjj+ugrIX9
+         21D5mTdsLnOU6RWa+u12Vs92UFAU0b6XzToJ1tKvMspuOiQ0vVPSL5nAARUX5/8kaExw
+         1tzg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751617308; x=1752222108;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1751617317; x=1752222117;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=NrmplSRpTLjvU/Va5okWFiaAeK95G6eUg5bBPQchAfY=;
-        b=RgfY9mGYrAVneCacbq2Xwddo9j7/fGESbZpq4gBKpI4pvXnh6qs0gaR934LhvwyywG
-         W7HjeUlRUJkMDAjw/yGDjLHF8dnhZuhKjNPpmhzOMABaQaAlkeDLUFuAWk4NOTMFJAa1
-         TrMg4TtEuTwqVXRr5JKl8OoIg2dTTl5H9SbV3LhjKSskEzivGxsN/3WWbn93UsNTCWMD
-         fcOpXreB8GdDbs9Znmq8BOqNgfXMimfpgnMR5bzsWgXBOcScBCGCuzU7rABTlv9srIch
-         GVjv0kqZCMfVbOXMPfZLqrfYTkfTJvPPaMPdLL63GdxEcpOyd24SNqthRq/IxYKH38W1
-         yQkA==
-X-Forwarded-Encrypted: i=1; AJvYcCVaGjDdU+YfCPOJ5FptR9pJHGWrhwItqRg/1oGw8HbZDIvriZT/R+AiAZjyrZmsMtIfukQ7znXWOdR8qRw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUfFLAfcPmIfVotpvNIqw4AF5XLYUrcm0/F6HxT29R8t9A9fJ3
-	ZuOENjUNirCf00cDIFu2QNGt4sqPvLJkuIsjLU5H2yTx7BU3T17ehsrf9nZig4awUkMyIiztezT
-	UFEJw
-X-Gm-Gg: ASbGnctFjBx5AJigYLlsRSkxGv9rqw5bNoS+pRh6RO22q/ScrP/b2k7hhJ6ctFL8u3z
-	lSRePLJV9o3GMnqP8C5w/rXIb47ixUYXcfi1ZeunLIYRymGGPxxacpHyIsrFEcqTampUQGqc++T
-	ZBaut2evD+nVc48YWTrCp8BAOeWQYTr14gI7G88io8QURlQpZ6G7etkVV8WQCNy51lfTipWJBsL
-	Y6bdxdToMpaGUxLAA86+wsy04wLBklT0cElK8fMJHdgHxNjdobpJFWPAFUV51OpYEJbCho5vd1h
-	aekCPIqXBT+O+VrfFwl0I7xc444oPtILvR1tkf7drlGo6aDk+icGv/IUcurwblDLWV7go09MST/
-	kxl41YIDHo4uqKw==
-X-Google-Smtp-Source: AGHT+IEQSnitJcJwwymY7BAhQB7Bq74NDZ5Q89nksgDSVvuG7bIuc9yS6M7KIOggYg5ZF+gQ+5gttw==
-X-Received: by 2002:a05:6a00:2e15:b0:749:112:c172 with SMTP id d2e1a72fcca58-74ce69c53f3mr2224202b3a.16.1751617307987;
-        Fri, 04 Jul 2025 01:21:47 -0700 (PDT)
-Received: from localhost.localdomain ([203.208.189.11])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74ce35cdaaasm1483166b3a.61.2025.07.04.01.21.44
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Fri, 04 Jul 2025 01:21:47 -0700 (PDT)
-From: lizhe.67@bytedance.com
-To: david@redhat.com
-Cc: akpm@linux-foundation.org,
-	alex.williamson@redhat.com,
-	jgg@ziepe.ca,
-	kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	lizhe.67@bytedance.com,
-	peterx@redhat.com
-Subject: Re: [PATCH v2 1/5] mm: introduce num_pages_contiguous()
-Date: Fri,  4 Jul 2025 16:21:30 +0800
-Message-ID: <20250704082130.11804-1-lizhe.67@bytedance.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <97d3993c-12aa-4917-9bbd-d9c94fbda788@redhat.com>
-References: <97d3993c-12aa-4917-9bbd-d9c94fbda788@redhat.com>
+        bh=BqF93+TAjohew7xEc+xhLbJwBdMg2ZtKZkD6/ZYDjFY=;
+        b=qXMlddZZPn1Rbf5bAISFEaD3OU+po8DQdV6UJ6xookIBbnWjQbUKtih37XTwNCzsGl
+         109Mz6PGf/t1fa5heGRl1qYICoBnfSCSPISEf7G1U90LOzkd9pgVty8lUk/37Lr0J/CT
+         5B6f4jYETXEaDGHOfnOpSK3+cAI/rutZZOy5ZrEsn5IAaa9E3HZLzuCJvRay78XLWn01
+         ULfZvyCh7ehAF8CaQVI5ok2Kwh2L2oiSnN0oTKz69sTdJAmPu3vvzKbatOP4TkUTlEZm
+         fkf5nfcYpz2L3XsqMBYc0gbh+nqF0/lZ+/mihf3bLo2rS28aZV1EI1L78XIsLzCOPMvX
+         u3ww==
+X-Forwarded-Encrypted: i=1; AJvYcCVaenSdfK4pmMPvCiK5PJMLTDnXUU9gP/KJXsW2TDfLzgdv7wn7e/F30bA2Ps+0K8MomSTJZifA4tW5c30=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCXEDheOFh3TPovJdR6M6HRUsxZotF62y/2cyqTqMOvEVKMUWX
+	egRTl0fPM3l5j1HztRbxVzqhG8bGybIFfC3iM9f2iqLVbsCqjDs0CpuDqNpyk/DcPb82U6IPH2/
+	W4+8R3AkG4YYY01BbTduwYziDImVM9ViNDZe+eH9tVw==
+X-Gm-Gg: ASbGncuTNEQwPszwooK9YJTISZ00yz2Hiy2vroGyVk0VG7VyZMf3jOnlGYanvTb7OxU
+	IGMegN0K+kEq8lEW5OOTecdn8lu4Hh70TgTAF2lWen6055tXmDALe9JybNG4NX/emjtbgrl/Uro
+	1E7SOKN2YktulcymsM/8Qz5mGR0hX4ti0XJKkxnaFiCfg=
+X-Google-Smtp-Source: AGHT+IGFwOhG8+m1BfQFADC0UUWHtQFbQV44vnBFvtrzNfXOTMJLGYBZ3rW0/F4C4PngHF/NaTUtYXRmX+TsiW/pxqQ=
+X-Received: by 2002:a05:6512:110d:b0:554:fa07:c56 with SMTP id
+ 2adb3069b0e04-556f1f62fbamr490777e87.26.1751617316841; Fri, 04 Jul 2025
+ 01:21:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250630-gpio-sysfs-chip-export-v3-0-b997be9b7137@linaro.org>
+ <aGPrFnDxG4W7S9Ym@smile.fi.intel.com> <20250702035439.GA20273@rigel>
+ <CAMRc=MftawBB4rtj4EKS_OwMCU9h53sA8QxcFq_ZY0MRg2OLag@mail.gmail.com>
+ <aGUeRczCNJLg-KON@smile.fi.intel.com> <CAMRc=MexjmozQ+vkLz1L4_Vfb+aqqwNSxKtNVA7zb-=r5eCMQw@mail.gmail.com>
+In-Reply-To: <CAMRc=MexjmozQ+vkLz1L4_Vfb+aqqwNSxKtNVA7zb-=r5eCMQw@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 4 Jul 2025 10:21:45 +0200
+X-Gm-Features: Ac12FXyekbDQxpchxSNlzOVJJqHOd-HyTMawzBiFpK1wdDITbhXtGu3_5sBoCBw
+Message-ID: <CACRpkdYD5nT=f-uCARniUvBScu2gA+oY7ALgjYrdX-T_XRxEVg@mail.gmail.com>
+Subject: Re: [PATCH v3 00/10] gpio: sysfs: add a per-chip export/unexport
+ attribute pair
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Andy Shevchenko <andriy.shevchenko@intel.com>, Kent Gibson <warthog618@gmail.com>, 
+	Ahmad Fatoum <a.fatoum@pengutronix.de>, =?UTF-8?Q?Jan_L=C3=BCbbe?= <jlu@pengutronix.de>, 
+	Marek Vasut <marex@denx.de>, Geert Uytterhoeven <geert+renesas@glider.be>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 4 Jul 2025 09:56:23 +0200, david@redhat.com wrote:
+On Wed, Jul 2, 2025 at 3:19=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl> =
+wrote:
 
-> On 04.07.25 08:25, lizhe.67@bytedance.com wrote:
-> > From: Li Zhe <lizhe.67@bytedance.com>
-> > 
-> > Function num_pages_contiguous() determine the number of contiguous
-> > pages starting from the first page in the given array of page pointers.
-> > VFIO will utilize this interface to accelerate the VFIO DMA map process.
-> > 
-> > Suggested-by: David Hildenbrand <david@redhat.com>
-> 
-> I think Jason suggested having this as a helper as well.
+> Whatever your opinion on this is - if user-space wants to keep the
+> interface, then we need to support it. We can only propose
+> alternatives and hope the users will switch. Please read the
+> discussion, it explains why people want to keep using the simple sysfs
+> ABI and why those specific users will most likely never switch to the
+> character device. At this point a bigger concern to me is the global
+> GPIO numberspace, not the existence of the sysfs class as such.
 
-Yes, thank you for the reminder. Jason needs to be added here.
+I agree with Bart here, the global GPIO numberspace is the big
+problem we need to get rid of, if we move users over to the new
+sysfs ABI and disable and finally delete the old one, we can get
+rid of the global GPIO numberspace.
 
-Suggested-by: Jason Gunthorpe <jgg@ziepe.ca>
+This will be needed to conclude the work inside the kernel do
+move everyone and their dog over to using GPIO descriptors
+instead of numbers.
 
-> > Signed-off-by: Li Zhe <lizhe.67@bytedance.com>
-> > ---
-> >   include/linux/mm.h | 20 ++++++++++++++++++++
-> >   1 file changed, 20 insertions(+)
-> > 
-> > diff --git a/include/linux/mm.h b/include/linux/mm.h
-> > index 0ef2ba0c667a..1d26203d1ced 100644
-> > --- a/include/linux/mm.h
-> > +++ b/include/linux/mm.h
-> > @@ -205,6 +205,26 @@ extern unsigned long sysctl_admin_reserve_kbytes;
-> >   #define folio_page_idx(folio, p)	((p) - &(folio)->page)
-> >   #endif
-> >   
-> > +/*
-> > + * num_pages_contiguous() - determine the number of contiguous pages
-> > + * starting from the first page.
-> 
-> Maybe clarify here here:
-> 
-> "Pages are contiguous if they represent contiguous PFNs. Depending on 
-> the memory model, this can mean that the addresses of the "struct page"s 
-> are not contiguous."
+We would maybe be able to delete <linux/gpio.h> but without
+also getting rid of the global numberspace it will feel very
+incomplete.
 
-Thank you. I will include this clarification in the comment.
-
-> > + *
-> > + * @pages: an array of page pointers
-> > + * @nr_pages: length of the array
-> > + */
-> > +static inline unsigned long num_pages_contiguous(struct page **pages,
-> > +						 unsigned long nr_pages)
-> > +{
-> > +	struct page *first_page = pages[0];
-> > +	unsigned long i;
-> > +
-> > +	for (i = 1; i < nr_pages; i++)
-> > +		if (pages[i] != nth_page(first_page, i))
-> 
-> if (pages[i] != nth_page(pages[0], i))
-> 
-> Should be clear as well, so no need for the temporary "first_page" variable.
-
-Thank you. Doing so makes the function appear much clearer.
-
-> Apart from that LGTM.
-
-Thank you for your review!
-
-Thanks,
-Zhe
+Yours,
+Linus Walleij
 
