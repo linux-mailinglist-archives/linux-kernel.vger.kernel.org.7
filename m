@@ -1,134 +1,140 @@
-Return-Path: <linux-kernel+bounces-717637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-717619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04AB3AF96C7
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 17:28:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DC91AF969F
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 17:17:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF9305A130B
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 15:27:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A0F97B911F
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 15:16:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2A352FCE05;
-	Fri,  4 Jul 2025 15:26:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A265D1991D2;
+	Fri,  4 Jul 2025 15:17:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mess.org header.i=@mess.org header.b="OZN6bha/"
-Received: from gofer.mess.org (gofer.mess.org [88.97.38.141])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="OjYSZsw8"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 567F52F94A4;
-	Fri,  4 Jul 2025 15:26:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=88.97.38.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D63A214B08A;
+	Fri,  4 Jul 2025 15:17:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751642795; cv=none; b=kho35o4mXPgPkJOg1q1Z9EXX1ASz6LhhquX6Kx54V9Zm3XAtHcEOp7yz2euQipq3mrMBltbNaN8ct1NuRrn5Wyq/gmCrD+v2nJdR0O9vRol+v3kgz6EACn795FuRSqha4TFcRlkH6SvGYK+sMn11Mddbyb4EABj+fvqeurJqMfE=
+	t=1751642246; cv=none; b=Saq8iAaRF9nTxERlSZTYYL8g+Ij36iMdpCL7WovxmFQKhHky/mj24Ot/8ZIqcPTt7PFPKbKHD9fQx+05KVCeU0YX+dpziPQRgGM6rynlC+3tq3UKHJ4h0VEvP9pVIEprxq6G+fNbYPvnYFATemjSrF8T8gPYJGg3G96Om6tDhGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751642795; c=relaxed/simple;
-	bh=fw+3kHpH71x1Y/Yo4BaIBNzC5KdPfbmT9z0yHAtrnEg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F2yDJU4XJYmo5VtvdVovBN8S8qzAWtqQajQ6QD57Kp4pwxFcMv28fHd6YNBUQco1LOGzRORDJSn8zWSAsVmHqbDAx5KX5PkstvBwaKuwysRCLP1tb9B0iaJWHKUYV4i2LpwkXzNuJOaxvLFXl6UKHmOGCEhFE6elf2ua8F5K0ww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mess.org; spf=pass smtp.mailfrom=mess.org; dkim=pass (2048-bit key) header.d=mess.org header.i=@mess.org header.b=OZN6bha/; arc=none smtp.client-ip=88.97.38.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mess.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mess.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mess.org; s=2020;
-	t=1751642202; bh=fw+3kHpH71x1Y/Yo4BaIBNzC5KdPfbmT9z0yHAtrnEg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OZN6bha/FAxDe4H3fOtXJMB05O6PSsOIO8iLAT0AKWh6sAQ6HB3DJiCrUOfFJq89K
-	 JlEVcbJXJWChT72to/oZT3GU/laMbw/fzI0RLjd8Hy4W+YhrBNIcS7FBMyf1Br408n
-	 D+vIYlKlKvQaBNxdLEYY206FNUOmF3WpRVHBHZ1vmtW+7G5wC/1YrvfLV23GVAUdqp
-	 B/az+zmd5IfyH8fsuSPeJ7Tso4Nt+VLxtIvSJqcA5OjODsIW08BHHuUVTWKUjj/mSP
-	 J09uIe2u1xXvKRqvzYMMRCl9G9OAJjjyA8Iaelz6sx05RL8u10fivwd9m8ceR6d7VY
-	 +wjycNZVop6Vg==
-Received: by gofer.mess.org (Postfix, from userid 1000)
-	id 34B531003B9; Fri,  4 Jul 2025 16:16:42 +0100 (BST)
-Date: Fri, 4 Jul 2025 16:16:42 +0100
-From: Sean Young <sean@mess.org>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Tommaso Merciai <tomm.merciai@gmail.com>,
-	Martin Hecht <mhecht73@gmail.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Sebastian Reichel <sre@kernel.org>,
-	Alain Volmat <alain.volmat@foss.st.com>,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	Kieran Bingham <kieran.bingham@ideasonboard.com>,
-	Umang Jain <umang.jain@ideasonboard.com>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Michael Riesch <michael.riesch@collabora.com>,
-	Mikhail Rudenko <mike.rudenko@gmail.com>,
-	Steve Longerbeam <slongerbeam@gmail.com>,
-	Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
-	Nicholas Roth <nicholas@rothemail.net>,
-	Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
-	Sylvain Petinot <sylvain.petinot@foss.st.com>,
-	Paul Elder <paul.elder@ideasonboard.com>,
-	Matt Ranostay <matt@ranostay.sg>,
-	Nas Chung <nas.chung@chipsnmedia.com>,
-	Jackson Lee <jackson.lee@chipsnmedia.com>,
-	Dmitry Osipenko <digetx@gmail.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Vikash Garodia <quic_vgarodia@quicinc.com>,
-	Dikshita Agarwal <quic_dikshita@quicinc.com>,
-	Abhinav Kumar <abhinav.kumar@linux.dev>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Nicolas Dufresne <nicolas.dufresne@collabora.com>,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	Matthias Fend <matthias.fend@emfend.at>,
-	Marco Felsch <m.felsch@pengutronix.de>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Ricardo Ribalda <ribalda@chromium.org>, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH 41/80] media: Remove redundant
- pm_runtime_mark_last_busy() calls
-Message-ID: <aGfwWkZg48T1tooH@gofer.mess.org>
-References: <20250704075225.3212486-1-sakari.ailus@linux.intel.com>
- <20250704075431.3220262-1-sakari.ailus@linux.intel.com>
+	s=arc-20240116; t=1751642246; c=relaxed/simple;
+	bh=n7LOfSsjXE2FVStfZuw4MIKye9uX/BCPm/v95WafbBg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=IS1JNecey6xJDRPZM3NsnEzkFL3wwPROwZnSbli3O3R0liYcIo3lqcWcKYiZHnxask5xrPvmQS+g5mIoPlI1QJDyk8D0MJlxMEf6EWpSBaVzuo5/s2u3iNAmho4DJ3W4EKH0kU2i8zoHHsuDeg8sqJJaU9hwyFPR096WasRXttQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=OjYSZsw8; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 7BC48444D5;
+	Fri,  4 Jul 2025 15:17:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1751642235;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/vPDsl7h2Bce2nbFPpZwQgcXwb0DMKbxlxKdGJMWDlk=;
+	b=OjYSZsw8Bn/lPEEuZ/zT/ZWBMzACf1NkagEE6r3RmYhuXncRqUKcozz8UbibxN8M+UM53w
+	5KCH3FY+8+bYmUYW8qJTughgWJ+1qgywUibS0SjsnHWskADrYiNSCOnjiLt7hzAtHvuLb9
+	P+buEXUFLCp+TU4+Wtd2PWVTE+8gCZdWzSaI8WTQAjlbHr83pVLyYctwf7z/LVEK7pMhIX
+	Pz2sArh5UPnXVepkpVIJtW0zCYkqV++Ds+VTdCkP0Lo54B2E8UfDpSJu0Ces4HB22tZQvH
+	RBenF7bqjxNeDa3klct1EFjGEI+SHFRnEtgsVaJHgCMFKDJKR6oofzU3VD+khQ==
+From: Gregory CLEMENT <gregory.clement@bootlin.com>
+To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Jiaxun Yang
+ <jiaxun.yang@flygoat.com>
+Cc: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, =?utf-8?Q?Th?=
+ =?utf-8?Q?=C3=A9o?= Lebrun
+ <theo.lebrun@bootlin.com>, Tawfik Bayouk <tawfik.bayouk@mobileye.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] MIPS: disable MMID if GINVT is not usable
+In-Reply-To: <aGUhUM1y-ZLGWZg-@alpha.franken.de>
+References: <20250625-mmid_disable_no_ginv_on_noc-v1-1-38a3902607a7@bootlin.com>
+ <808e21d2-1212-4358-9ba6-29f9d097be8a@app.fastmail.com>
+ <aGUhUM1y-ZLGWZg-@alpha.franken.de>
+Date: Fri, 04 Jul 2025 17:17:14 +0200
+Message-ID: <87h5zsgf45.fsf@BLaptop.bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250704075431.3220262-1-sakari.ailus@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddvfeehtdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefujghffffkgggtgfesthhqredttddtjeenucfhrhhomhepifhrvghgohhrhicuvefngffogffpvfcuoehgrhgvghhorhihrdgtlhgvmhgvnhhtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpefghfegvdehgfdtjedvtefhvdeikefgteeuhfeukeettefgvdeuueettddtkeegveenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepvdgrtddumegtsgdugeemheehieemjegrtddtmegurgdtugemjedtheehmegutdduvgemudegkeehnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgdugeemheehieemjegrtddtmegurgdtugemjedtheehmegutdduvgemudegkeehpdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehgrhgvghhorhihrdgtlhgvmhgvnhhtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeekpdhrtghpthhtohepthhssghoghgvnhgusegrlhhphhgrrdhfrhgrnhhkvghnrdguvgdprhgtphhtthhopehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtohhmpdhrtghpthhtohepvhhlrggui
+ hhmihhrrdhkohhnughrrghtihgvvhesmhhosghilhgvhigvrdgtohhmpdhrtghpthhtohepthhhvghordhlvggsrhhunhessghoohhtlhhinhdrtghomhdprhgtphhtthhopehtrgiffhhikhdrsggrhihouhhksehmohgsihhlvgihvgdrtghomhdprhgtphhtthhopehthhhomhgrshdrphgvthgriiiiohhnihessghoohhtlhhinhdrtghomhdprhgtphhtthhopehlihhnuhigqdhmihhpshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-GND-Sasl: gregory.clement@bootlin.com
 
-On Fri, Jul 04, 2025 at 10:54:31AM +0300, Sakari Ailus wrote:
-> pm_runtime_put_autosuspend(), pm_runtime_put_sync_autosuspend(),
-> pm_runtime_autosuspend() and pm_request_autosuspend() now include a call
-> to pm_runtime_mark_last_busy(). Remove the now-reduntant explicit call to
-> pm_runtime_mark_last_busy().
-> 
-> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> ---
- 
-...
+Thomas Bogendoerfer <tsbogend@alpha.franken.de> writes:
 
->  diff --git a/drivers/media/rc/gpio-ir-recv.c b/drivers/media/rc/gpio-ir-recv.c
-> index bf6d8fa983bf..161f8919022c 100644
-> --- a/drivers/media/rc/gpio-ir-recv.c
-> +++ b/drivers/media/rc/gpio-ir-recv.c
-> @@ -49,7 +49,6 @@ static irqreturn_t gpio_ir_recv_irq(int irq, void *dev_id)
->  		ir_raw_event_store_edge(gpio_dev->rcdev, val == 1);
->  
->  	if (pmdev) {
-> -		pm_runtime_mark_last_busy(pmdev);
->  		pm_runtime_put_autosuspend(pmdev);
->  	}
+> On Wed, Jun 25, 2025 at 03:44:00PM +0100, Jiaxun Yang wrote:
+>> =E5=9C=A82025=E5=B9=B46=E6=9C=8825=E6=97=A5=E5=91=A8=E4=B8=89 =E4=B8=8B=
+=E5=8D=882:27=EF=BC=8CGregory CLEMENT=E5=86=99=E9=81=93=EF=BC=9A
+>>=20
+>> Hi Gregory,
+>>=20
+>> > If System-level Interconnect (aka Network on Chip) does not support
+>> > the global invalidation, then MMID feature is not usable. Indeed the
+>> > current implementation of MMID relies on the GINV* instruction.
+>>=20
+>> Yes, it is the case if the NoC IP can't handle AMBA ACE DVM requests.
+>>=20
+>> >
+>> > Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+>> > ---
+>> >  arch/mips/Kconfig                    | 6 ++++++
+>> >  arch/mips/include/asm/cpu-features.h | 5 ++++-
+>> >  arch/mips/mobileye/Kconfig           | 2 ++
+>> >  3 files changed, 12 insertions(+), 1 deletion(-)
+>> >
+>> > diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
+>> > index=20
+>> > 1e48184ecf1ec8e29c0a25de6452ece5da835e30..05ce008459b89f03fa71d9442960=
+7feb9d06526f=20
+>> > 100644
+>> > --- a/arch/mips/Kconfig
+>> > +++ b/arch/mips/Kconfig
+>> > @@ -2575,6 +2575,12 @@ config WAR_R10000_LLSC
+>> >  config WAR_MIPS34K_MISSED_ITLB
+>> >  	bool
+>> >=20
+>> > +# Some I6500 based SoC do not support the global invalidation on their
+>> > +# System-level Interconnect (aka Network on Chip), this have an
+>> > +# influence on the MMID support.
+>> > +config GINVT_UNSUPPORTED_NOC
+>> > +	bool
+>> > +
+>>=20
+>> I believe this should be a DeviceTree property of CM node instead of Kco=
+nfig
+>> hack.
+>
+> Either that or by a runtime check, if possible.
 
-No need for braces any more - as Laurent already pointed out.
+Unfortunately we can't detect at runtime this (lack of) feature on the
+NoC, so it has to be a device tree property.
 
-Reviewed-by: Sean Young <sean@mess.org>
+Gregory
 
+>
+> Thomas.
+>
+> --=20
+> Crap can work. Given enough thrust pigs will fly, but it's not necessaril=
+y a
+> good idea.                                                [ RFC1925, 2.3 ]
 
-Sean
+--=20
+Gr=C3=A9gory CLEMENT, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
