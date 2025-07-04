@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-716789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C1ECAF8AAB
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 10:08:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED77EAF8AB5
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 10:09:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E6091899639
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 08:07:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C5AC17C05E
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 08:06:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DCC52F0C5B;
-	Fri,  4 Jul 2025 07:54:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E312A2ED149;
+	Fri,  4 Jul 2025 07:54:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XFPyJhM/"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mwDLR+nt"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 978802EF2AC
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 07:54:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEF5C2E9EC3;
+	Fri,  4 Jul 2025 07:54:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751615694; cv=none; b=ITp4/pEUJdaXpA6bq4YZeHWvqXchNyH11QZvoObFwb0kbzhWMZz84RbNLLZZiXnhV1R+YhuQ2bkkR5Ieax4JYa4OYBzZu0b2hPDNaeY6JOjk2K/Vzu4yh9Msv30/HxjdmIIRkNaFIl2C9GA7CBmMnBmhkiLb4WSZcnphQJtReKc=
+	t=1751615688; cv=none; b=PPfRiFvFdHNsjQqOdhPSB587uwRParRf1iH29IIiUS9bYg14k8oCWXPbmHpLTJ9xPRPJPpmTjxJaRKDlCLmiUTKi71RXW9affewfFt8NAe96MELkuwlSHwF5CsXGN8gu6oHx5xebykSArcqwB6jL7IX/wOGM2BtE8Wf4CMER2Ho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751615694; c=relaxed/simple;
-	bh=NO75yl0C/QCwRChAfVosDGNmtR5VgVEkJtdizny75eQ=;
+	s=arc-20240116; t=1751615688; c=relaxed/simple;
+	bh=+8ypEnrOSHNWmYk7TUoUtoXx75kXADyAx4bTfxfHe9g=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=HrwWoS6l//o9bB66E5CL+vuz3+f5qpZc+fFSNsj7+BxYbNxK5UQBZgI6wqVXyYXAIgbIgpsv+iX19hVLdtxIWBB2VzYHPHMIufdOg9r4avsmp6zK6CLWYf1cyPq8vxef05ClWbq0ZZbetXfRxAgjlKUGxxo9CeVZQIqWGhU4wv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XFPyJhM/; arc=none smtp.client-ip=198.175.65.11
+	 MIME-Version; b=nxLLYqs4+rZcqP6rkLoLhvgjSrkQRCIV3JOA3Mr7Jc29Bj0RaXR18plU8Ip6Sf5lUCza6AlHeqzFYibdq0IZjRDozMFFW2HIKpw28cn81sOCbD+aDsJUkI4qk2q/vhAgF/TQAWRWQv80gv1iRUVNzkgd3c5zMf5oSf80SwGI5YY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mwDLR+nt; arc=none smtp.client-ip=198.175.65.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751615693; x=1783151693;
+  t=1751615686; x=1783151686;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=NO75yl0C/QCwRChAfVosDGNmtR5VgVEkJtdizny75eQ=;
-  b=XFPyJhM/0Gidlo4lwigeJVw8jzfMAeiag83nE6MVPTKNHSGdONv0a1VM
-   9HovT2WeKESPwrAfL4vK0rIr1LUFA4Xe3F4ufeR/c/kA3RhglZzqDSzHz
-   en90n+Mp7jsEjrGKP4sgllqM6BFaHZ4vTg0w6u4/KyncwPyFak3Ufg2w4
-   ujkkMsRKk7urmyCOTvVith6OItUL5IUIuHLHxsNv1mfqiH09Y3Q2kQepD
-   khpcsH8VkurFCddrwMf4NBj1wEKbqknOUEWx8xEa4av7pZFPmI5lNKjQy
-   fde6X0eXM3VuWdiQYDp2SCGhzE38OBw07n5q/kqayV62153PvQMiMDQ7g
-   Q==;
-X-CSE-ConnectionGUID: jv8gXHKIQfeC9rj0BeVDNA==
-X-CSE-MsgGUID: SMCd7f+wQDKY3rKRbryQHw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11483"; a="64194220"
+  bh=+8ypEnrOSHNWmYk7TUoUtoXx75kXADyAx4bTfxfHe9g=;
+  b=mwDLR+ntnXfu7V3x+imtA6qUz78PKD8tokWTbbIVvK07cFl3oO2c9rb+
+   TZWX2L30wNTLprOnnwMzZSAuen9/liVAXxhWuNfs9bLZPbaIDBoA2xT9Z
+   dYUggLlEPrvwsiCAahuhdX6zwslKOesxTovre539VLXOgFR/m/Jvi3Hnc
+   1hsmYZ1DKx0HuG4sumsGLuzq98sWbfeSyXqnx3hl3wqoVxBcpcoZu3eDU
+   oQfrOuobLOoHTxMEXcEudUPR3ly1Fi7gg7Nvlo1dAiDB6nP5Gt+6WbDDL
+   UhMJc96yZVOSLISnuuye5vVqQjOk2MjaANdbgNbiwfdQF9rQp0+1lcpMY
+   A==;
+X-CSE-ConnectionGUID: uyRUBKDSSe2h6GPv0fDHaQ==
+X-CSE-MsgGUID: uLF+zP8BSxaJ4I3XkTQ37Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11483"; a="64194164"
 X-IronPort-AV: E=Sophos;i="6.16,286,1744095600"; 
-   d="scan'208";a="64194220"
+   d="scan'208";a="64194164"
 Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 00:54:47 -0700
-X-CSE-ConnectionGUID: QEo8glDxTqWRbZPCkwigrA==
-X-CSE-MsgGUID: Vww84vogRU6mgpGMnplGHw==
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 00:54:45 -0700
+X-CSE-ConnectionGUID: yhWhzgQXS7SKYpJCWSSs3Q==
+X-CSE-MsgGUID: jgyy/fS6TJmi2BN+pnLdVw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.16,286,1744095600"; 
-   d="scan'208";a="158616602"
+   d="scan'208";a="158616596"
 Received: from jkrzyszt-mobl2.ger.corp.intel.com (HELO svinhufvud.fi.intel.com) ([10.245.244.244])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 00:54:43 -0700
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 00:54:42 -0700
 Received: from svinhufvud.lan (localhost [IPv6:::1])
-	by svinhufvud.fi.intel.com (Postfix) with ESMTP id 30B1844910;
-	Fri,  4 Jul 2025 10:54:41 +0300 (EEST)
+	by svinhufvud.fi.intel.com (Postfix) with ESMTP id 4D1E64488D;
+	Fri,  4 Jul 2025 10:54:40 +0300 (EEST)
 Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
 From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
+To: Bjorn Helgaas <bhelgaas@google.com>,
+	Jonathan Cameron <Jonthan.Cameron@huawei.com>,
+	Lukas Wunner <lukas@wunner.de>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
+	Feng Tang <feng.tang@linux.alibaba.com>,
 	Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: linux-phy@lists.infradead.org,
+Cc: linux-pci@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 52/80] phy: motorola: phy-mapphone-mdm6600: Remove redundant pm_runtime_mark_last_busy() calls
+Subject: [PATCH 51/80] PCI/portdrv: Remove redundant pm_runtime_mark_last_busy() calls
 Date: Fri,  4 Jul 2025 10:54:40 +0300
-Message-Id: <20250704075440.3221183-1-sakari.ailus@linux.intel.com>
+Message-Id: <20250704075440.3221105-1-sakari.ailus@linux.intel.com>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250704075225.3212486-1-sakari.ailus@linux.intel.com>
 References: <20250704075225.3212486-1-sakari.ailus@linux.intel.com>
@@ -102,29 +102,21 @@ rc2:
         git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
                 pm-runtime-6.17-rc1
 
- drivers/phy/motorola/phy-mapphone-mdm6600.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/pci/pcie/portdrv.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/phy/motorola/phy-mapphone-mdm6600.c b/drivers/phy/motorola/phy-mapphone-mdm6600.c
-index fd0e0cd1c1cf..c82826bd2832 100644
---- a/drivers/phy/motorola/phy-mapphone-mdm6600.c
-+++ b/drivers/phy/motorola/phy-mapphone-mdm6600.c
-@@ -248,7 +248,6 @@ static irqreturn_t phy_mdm6600_wakeirq_thread(int irq, void *data)
+diff --git a/drivers/pci/pcie/portdrv.c b/drivers/pci/pcie/portdrv.c
+index e8318fd5f6ed..437e27f63c82 100644
+--- a/drivers/pci/pcie/portdrv.c
++++ b/drivers/pci/pcie/portdrv.c
+@@ -714,7 +714,6 @@ static int pcie_portdrv_probe(struct pci_dev *dev,
+ 		 */
+ 		pm_runtime_set_autosuspend_delay(&dev->dev, 100);
+ 		pm_runtime_use_autosuspend(&dev->dev);
+-		pm_runtime_mark_last_busy(&dev->dev);
+ 		pm_runtime_put_autosuspend(&dev->dev);
+ 		pm_runtime_allow(&dev->dev);
  	}
- 
- 	/* Just wake-up and kick the autosuspend timer */
--	pm_runtime_mark_last_busy(ddata->dev);
- 	pm_runtime_put_autosuspend(ddata->dev);
- 
- 	return IRQ_HANDLED;
-@@ -616,7 +615,6 @@ static int phy_mdm6600_probe(struct platform_device *pdev)
- 		error = PTR_ERR(ddata->phy_provider);
- 
- idle:
--	pm_runtime_mark_last_busy(ddata->dev);
- 	pm_runtime_put_autosuspend(ddata->dev);
- 
- cleanup:
 -- 
 2.39.5
 
