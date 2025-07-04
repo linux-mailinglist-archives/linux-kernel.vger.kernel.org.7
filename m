@@ -1,129 +1,237 @@
-Return-Path: <linux-kernel+bounces-716428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5692AAF8648
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 06:12:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B3D6AF86C3
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 06:29:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0282C1C82C34
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 04:12:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDC421CA033D
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 04:29:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 586942066CF;
-	Fri,  4 Jul 2025 04:11:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E4561F1501;
+	Fri,  4 Jul 2025 04:24:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="PfU85ndY"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="in8sYwCZ"
+Received: from xmbghk7.mail.qq.com (xmbghk7.mail.qq.com [43.163.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A878B20298E;
-	Fri,  4 Jul 2025 04:10:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 210D51F03D5;
+	Fri,  4 Jul 2025 04:24:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.163.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751602259; cv=none; b=OXD5yNdEnUX70GAlKOY4MPG9lbnRfufjxMKvELQqkWBAf4nXRhNVQfLJojRo2Fkq5QZtZfUlTRLVBv1PMsI65DPn6eUejFVp2Qp6b9fVgHnPuw8YvjsXMd5z8Z3xelTjA4/vRpatwxnW7fpafjSWUbF+ZPlJtLSTDKDEYKFWqkQ=
+	t=1751603093; cv=none; b=TgyASH/kVHj9JSNQ28ue43mQE6C0t0KlLc4r7oX7kuMm7ynnFy2+K7UjPBVJW2dl+a6A8ypZpjwVNZCSJU9EMtuMPnWJvQM5Zcb8aVwk054Ps2JvJA3R19thck8+luAhmE412dLMeIRcXuVqn68sBVQ44yB00Buanvtp7/8NDj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751602259; c=relaxed/simple;
-	bh=2ifQg3oyu3Xg8ovGPMRP9ryzstnmdXufFFPNL9IWCEk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=pNIOzSPMe5BhMLA5biLk3l9JjBVLvOVL5x0UZkF7Lp7IyzFAnaytmOD+848aANwNhJQEn1iSqKMVAprVbgRcOxMc92xbIwnkbLE2xJXvj6oDj5PAoumKFRBFkakQFPDjPH5PnMHg2BzewkFGI5fuLSUmvsHLxUN6kw4roe16+qY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=PfU85ndY; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 5644AlXR3718250;
-	Thu, 3 Jul 2025 23:10:47 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1751602247;
-	bh=zJkXfrPAxpJPDeMDmwVXBCvheZa++B3SkX7TfmxEWUI=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=PfU85ndYBC4X+eoY306KEwfcUjMe2cXNwldNP83irprGxwk8ILAxdwgDsj/x2z17A
-	 0P+o85f8wBkDjXdBhSNFS+escb7U2UrMYuw+GsJYSiOdoJpdNUvaaOl2BJbKTaDByD
-	 MIYYDi6xxAF1aFhAeIzd1+w6lrAZgRQQhPqzotEA=
-Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
-	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 5644AlJ42464333
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Thu, 3 Jul 2025 23:10:47 -0500
-Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 3
- Jul 2025 23:10:46 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Thu, 3 Jul 2025 23:10:46 -0500
-Received: from [172.24.227.245] (uda0132425.dhcp.ti.com [172.24.227.245])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5644Af6l2296864;
-	Thu, 3 Jul 2025 23:10:42 -0500
-Message-ID: <485dc90b-dc9b-4b1a-ad18-9a9ef117637c@ti.com>
-Date: Fri, 4 Jul 2025 09:40:29 +0530
+	s=arc-20240116; t=1751603093; c=relaxed/simple;
+	bh=i9caz6yz/k0aha4xAwtlSBZ8FnbLb9IR1W5kvZkLDnk=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=OUGNs7ugL1ua/GmBn2Nw+pdnVQRB+OAZcA/SbapweTPOYiwIafGcQwepvRVwa8VJUgsxgfP1dbRB+UrafJl2YRPBv3Z7WNPhtpY67WrmwPic51s0MQeJgNr+/RqNml2zLtC9pdhD3bTFR7qfDebdhlhBil1bYH1mThWTkETUEqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=in8sYwCZ; arc=none smtp.client-ip=43.163.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1751602780;
+	bh=d8G3ursgmpgGAC/Br6jukg9RoUoOyYy7C+7W30RrUm4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=in8sYwCZQFU6bE5QtvFi4Kv2MPiwrdSq8EXM1wS+mofFSdapCMZwb0FQKL97RGak2
+	 IZ9YIJ1ghqphWXD71mWDEIOjzMFOGUBWq0ItTnVYjCCmVQxHWSmCxf/WS31gr08FpG
+	 Ou6V7UIUQrGiyhTZepBQAs+bo0fgdsrm8awteNCM=
+Received: from meizu-Precision-3660.meizu.com ([14.21.33.153])
+	by newxmesmtplogicsvrsza36-0.qq.com (NewEsmtp) with SMTP
+	id 35B3D4E2; Fri, 04 Jul 2025 12:13:27 +0800
+X-QQ-mid: xmsmtpt1751602407twnhm2552
+Message-ID: <tencent_583C288FFF6BA70BAF0880FB7A5CCAB5EA05@qq.com>
+X-QQ-XMAILINFO: OQhZ3T0tjf0aLXs2QmI1IVU7O0NPyLtLJqRRO7hxSTqGWk14G6UCzNOm3dcD+S
+	 e//JSJMcGsMlb2UZN74vBykxLMchwL8oq9Xng1a0avozdF166wybEdjQ87lYOPFMOn1a0ySVwGbZ
+	 aQhY6UjeGlLPpJpZINaTQiHAOyRcK7ORKvO0h+NHbcq0wRHVQB+BRvO1UUSVTk3fi1vXOzhhbbpk
+	 UhMDYvnLPc0Kyotk85k7N/PJERtJzFi+UQjyrLIUx1LZGkddeLJdnLLUzuO1yAQ8elfbjHXN4kii
+	 gV58Qd1e5s0xG5yXjLlbOV6Z1fjQ+XQBiP/zMxpEqnbyHspTUnKIc8o+w8YyvptskVzrM+9wlu9r
+	 4Jat8Mev+ZZcuYvroK+5ZKJZLG7N677kJ5vnk7w5IDb2f8ZOzVC0Xih+VYph8/VXIoBXWqfEpEpm
+	 3wSrKQ+XauHS5VNriBjPUY8sSHaUP7P9ftPtYkhXQhcGmcirF+ivKQnG/BST7JaMAi5ZnqKwGIId
+	 NyqToambFjfLWaUNUfoyHRraEnPhHCpPbqkofnlOqJLEK2togm0PU9oxsFDs4EZ7PzJyZ8/IsN1t
+	 UmwXPTpj2Yx+tBSEH3XREDolMoHUDZBWVmEh7+pXhMwYM+LkyY4OZV6jIxiYEpcNPkxarVzeku6f
+	 NMYya+dpijxZRhBfYQKQq1JfSqGqdAzAI4ejuAZdqfyaDKSwpzhUfkZ70L+oCsfL+itDmsdQHvJw
+	 YzUZdZcG0Uqfo19pr83bmULuDUxIu80NUIQ4pZNfqkTg70zbO7XvBF4GSyS8+eEA/pgXc0LeNpfK
+	 +3nJX6I859noUYcukuGENvxeM3oNSaQ/G/IeHf49XVDNtaKgS5knp1f6VHxKLRjMxTyjOqGqnLTg
+	 H6WHrmF9fwmsgM9HyFwvr4n8E5XI63igGFGDfEaGqe1gy1DoG+Wv2k9PxcVxMayZuXkh/a+MY087
+	 vxluIXJbQxie5LEioJW2/bU52fQEMY9lfxunQo0j9uy79aXT0QWd40EfG9qYAZRDtyfRZwMWoLow
+	 tXPuVs/4ynH8khU9L+GKKBmRmbdpo=
+X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
+From: Yuwen Chen <ywen.chen@foxmail.com>
+To: ywen.chen@foxmail.com
+Cc: davem@davemloft.net,
+	ebiggers@kernel.org,
+	herbert@gondor.apana.org.au,
+	jaegeuk@kernel.org,
+	linux-crypto@vger.kernel.org,
+	linux-fscrypt@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	tytso@mit.edu
+Subject: [PATCH v2] fscrypt: improve filename encryption and decryption performance
+Date: Fri,  4 Jul 2025 12:13:22 +0800
+X-OQ-MSGID: <20250704041322.339758-1-ywen.chen@foxmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <tencent_D06DEE8D71295798F385BCC52FACAE96A207@qq.com>
+References: <tencent_D06DEE8D71295798F385BCC52FACAE96A207@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 4/4] arm64: dts: ti: Add support for AM62D2-EVM
-To: Paresh Bhagat <p-bhagat@ti.com>, <nm@ti.com>, <praneeth@ti.com>
-CC: <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <khasim@ti.com>, <v-singh1@ti.com>, <afd@ti.com>, <bb@ti.com>,
-        <devarsht@ti.com>, <s-vadapalli@ti.com>, <andrew@lunn.ch>
-References: <20250627115753.2246881-1-p-bhagat@ti.com>
- <20250627115753.2246881-5-p-bhagat@ti.com>
-From: Vignesh Raghavendra <vigneshr@ti.com>
-Content-Language: en-US
-In-Reply-To: <20250627115753.2246881-5-p-bhagat@ti.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Transfer-Encoding: 8bit
 
-Hi
+With the CONFIG_UNICODE configuration enabled, the fname_decrypt
+and fscrypt_fname_encrypt functions may be called very frequently.
+Since filenames are generally short, the frequent invocation of
+memory allocation and release operations by these two functions
+will lead to very poor performance.
 
-[...]
+Use the following program to conduct a file-creation test in
+the private program directory(/data/media/0/Android/data/*)
+of Android.
 
-On 27/06/25 17:27, Paresh Bhagat wrote:
-> diff --git a/arch/arm64/boot/dts/ti/k3-am62d2.dtsi b/arch/arm64/boot/dts/ti/k3-am62d2.dtsi
-> new file mode 100644
-> index 000000000000..70aeb40872a9
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/ti/k3-am62d2.dtsi
-> @@ -0,0 +1,25 @@
-> +// SPDX-License-Identifier: GPL-2.0-only OR MIT
-> +/*
-> + * Device Tree Source for AM62D2 SoC family in Quad core configuration
-> + *
-> + * TRM: https://www.ti.com/lit/pdf/sprujd4
-> + *
-> + * Copyright (C) 2025 Texas Instruments Incorporated - https://www.ti.com/
-> + */
-> +
-> +/dts-v1/;
-> +
-> +#include "k3-am62a7.dtsi"
-> +
-> +/ {
-> +	model = "Texas Instruments K3 AM62D SoC";
-> +	compatible = "ti,am62d2";
-> +};
-> +
-> +&vpu {
-> +	status = "disabled";
-> +};
-> +
-> +&e5010 {
-> +	status = "disabled";
-> +};
+int main(int argc, char **argv)
+{
+    size_t fcnt = 0;
+    char path[PATH_MAX];
+    char buf[4096] = {0};
+    int i, fd;
 
+    if (argc < 2)
+        return - EINVAL;
 
-Norm seems to be to use /delete-node/ here instead. Please respin
-accordingly.
+    fcnt = atoi(argv[1]);
+    for (i = 0; i < fcnt; i++) {
+        snprintf(path, sizeof(path), "./%d", i);
+        fd = open(path, O_RDWR | O_CREAT, 0600);
+        if (fd < 0)
+            return - 1;
+        write(fd, buf, sizeof(buf));
+        close(fd);
+    }
+    return 0;
+}
 
+The test platform is Snapdragon 8s Gen4, with a kernel version
+of v6.6 and a userdebug version.
+
+Before this submission was merged, when creating 2000 files,
+the performance test results are as follows:
+$ time /data/file_creater 2000
+0m14.83s real     0m00.00s user     0m14.30s system
+0m15.61s real     0m00.00s user     0m15.04s system
+0m14.72s real     0m00.01s user     0m14.18s system
+
+After this submission was merged, the performance is as follows:
+$ time /data/file_creater 2000
+0m07.64s real     0m00.00s user     0m07.37s system
+0m07.66s real     0m00.00s user     0m07.40s system
+0m08.67s real     0m00.01s user     0m08.35s system
+
+Signed-off-by: Yuwen Chen <ywen.chen@foxmail.com>
+---
+ fs/crypto/fname.c         | 22 ++++++++++++++--------
+ include/crypto/skcipher.h |  9 +++++++++
+ 2 files changed, 23 insertions(+), 8 deletions(-)
+
+diff --git a/fs/crypto/fname.c b/fs/crypto/fname.c
+index 010f9c0a4c2f1..168b2a88fa23b 100644
+--- a/fs/crypto/fname.c
++++ b/fs/crypto/fname.c
+@@ -92,14 +92,20 @@ static inline bool fscrypt_is_dot_dotdot(const struct qstr *str)
+ int fscrypt_fname_encrypt(const struct inode *inode, const struct qstr *iname,
+ 			  u8 *out, unsigned int olen)
+ {
+-	struct skcipher_request *req = NULL;
+ 	DECLARE_CRYPTO_WAIT(wait);
+ 	const struct fscrypt_inode_info *ci = inode->i_crypt_info;
+ 	struct crypto_skcipher *tfm = ci->ci_enc_key.tfm;
++	SKCIPHER_REQUEST_ON_STACK(req, tfm, MAX_SKCIPHER_REQSIZE);
+ 	union fscrypt_iv iv;
+ 	struct scatterlist sg;
+ 	int res;
+ 
++	/*
++	 * When the size of the statically - allocated skcipher_request
++	 * structure is insufficient, remind us to make modifications.
++	 */
++	BUG_ON(MAX_SKCIPHER_REQSIZE < crypto_skcipher_reqsize(tfm));
++
+ 	/*
+ 	 * Copy the filename to the output buffer for encrypting in-place and
+ 	 * pad it with the needed number of NUL bytes.
+@@ -124,7 +130,6 @@ int fscrypt_fname_encrypt(const struct inode *inode, const struct qstr *iname,
+ 
+ 	/* Do the encryption */
+ 	res = crypto_wait_req(crypto_skcipher_encrypt(req), &wait);
+-	skcipher_request_free(req);
+ 	if (res < 0) {
+ 		fscrypt_err(inode, "Filename encryption failed: %d", res);
+ 		return res;
+@@ -148,18 +153,20 @@ static int fname_decrypt(const struct inode *inode,
+ 			 const struct fscrypt_str *iname,
+ 			 struct fscrypt_str *oname)
+ {
+-	struct skcipher_request *req = NULL;
+ 	DECLARE_CRYPTO_WAIT(wait);
+ 	struct scatterlist src_sg, dst_sg;
+ 	const struct fscrypt_inode_info *ci = inode->i_crypt_info;
+ 	struct crypto_skcipher *tfm = ci->ci_enc_key.tfm;
++	SKCIPHER_REQUEST_ON_STACK(req, tfm, MAX_SKCIPHER_REQSIZE);
+ 	union fscrypt_iv iv;
+ 	int res;
+ 
+-	/* Allocate request */
+-	req = skcipher_request_alloc(tfm, GFP_NOFS);
+-	if (!req)
+-		return -ENOMEM;
++	/*
++	 * When the size of the statically - allocated skcipher_request
++	 * structure is insufficient, remind us to make modifications.
++	 */
++	BUG_ON(MAX_SKCIPHER_REQSIZE < crypto_skcipher_reqsize(tfm));
++
+ 	skcipher_request_set_callback(req,
+ 		CRYPTO_TFM_REQ_MAY_BACKLOG | CRYPTO_TFM_REQ_MAY_SLEEP,
+ 		crypto_req_done, &wait);
+@@ -172,7 +179,6 @@ static int fname_decrypt(const struct inode *inode,
+ 	sg_init_one(&dst_sg, oname->name, oname->len);
+ 	skcipher_request_set_crypt(req, &src_sg, &dst_sg, iname->len, &iv);
+ 	res = crypto_wait_req(crypto_skcipher_decrypt(req), &wait);
+-	skcipher_request_free(req);
+ 	if (res < 0) {
+ 		fscrypt_err(inode, "Filename decryption failed: %d", res);
+ 		return res;
+diff --git a/include/crypto/skcipher.h b/include/crypto/skcipher.h
+index 9e5853464345b..77e74a038c36e 100644
+--- a/include/crypto/skcipher.h
++++ b/include/crypto/skcipher.h
+@@ -213,6 +213,7 @@ struct lskcipher_alg {
+ };
+ 
+ #define MAX_SYNC_SKCIPHER_REQSIZE      384
++#define MAX_SKCIPHER_REQSIZE	       384
+ /*
+  * This performs a type-check against the "_tfm" argument to make sure
+  * all users have the correct skcipher tfm for doing on-stack requests.
+@@ -226,6 +227,14 @@ struct lskcipher_alg {
+ 			crypto_sync_skcipher_tfm((_tfm)), \
+ 		 (void *)__##name##_desc)
+ 
++#define SKCIPHER_REQUEST_ON_STACK(name, _tfm, reqsize) \
++	char __##name##_desc[sizeof(struct skcipher_request) + reqsize \
++		] CRYPTO_MINALIGN_ATTR; \
++	struct skcipher_request *name = \
++		(((struct skcipher_request *)__##name##_desc)->base.tfm = \
++			crypto_skcipher_tfm((_tfm)), \
++		 (void *)__##name##_desc)
++
+ /**
+  * DOC: Symmetric Key Cipher API
+  *
 -- 
-Regards
-Vignesh
-https://ti.com/opensource
+2.34.1
 
 
