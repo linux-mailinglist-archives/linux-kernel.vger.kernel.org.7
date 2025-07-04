@@ -1,145 +1,100 @@
-Return-Path: <linux-kernel+bounces-718004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-718002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB7E2AF9C09
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 23:42:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72826AF9C01
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 23:42:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 429E916AB12
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 21:42:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7C583BDB0C
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 21:42:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C8422512DE;
-	Fri,  4 Jul 2025 21:42:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3D3E23D282;
+	Fri,  4 Jul 2025 21:42:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MMvXuqTj"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XM0YJq5c"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E3FD248869;
-	Fri,  4 Jul 2025 21:42:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4999A2E36F1;
+	Fri,  4 Jul 2025 21:42:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751665348; cv=none; b=l4BVE6cBBgLoidLcWvTe86wqURRBxUFuqdGNr/8gyf7TvfjJSeuvcK9yaqUwCB5HIRkI1GAdbdEhWTujX/0XYNCZ2/hZxT0p8P3ed1fuuD63olJVUqSJ6TNDdsJOpTYSFXr1Y19DYSGXpibW/ZanJWAZF2wgRawmEuwqv9nP6U8=
+	t=1751665343; cv=none; b=IosySC5d1M/ho0ev+DEdjb84C7aUpc84mffirdAaaHb7GI9zy2r4Gy+eLiYculQ5lpafFUI+W9eDbMS29G3y1YWHI8bU8BsJLMuaX3n7FaoKcoubguPuGFTPRFpLH0dbw9JXSADiGgyPoaX3l8xLAfBBihmeLCxfyyBSjHKXvI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751665348; c=relaxed/simple;
-	bh=wgi16s9ONbkKzg07d3eEsZc04Giyv4lr/RVzTFChpqI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kGAPbzdxhJBcq4IvtcPjDrMMVWN4Z4Qf24Ax/3frwq4cst+zVHZb5jFRS4gkxti8AadojVn5dSEwtndeYWkZ2seaQW/GtkYhVn27BOpgVbBGj4dZDBlbKI8BCvR1XGk6V7f9zdTFNykj9ySYFK26/iAINbH6NxGgPjwGziltiUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MMvXuqTj; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-23c8a5053c2so6422385ad.1;
-        Fri, 04 Jul 2025 14:42:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751665346; x=1752270146; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=II4Cu1QeU8K5BatbGIsTX5njwU/JOM7LV3cYYXHvMxg=;
-        b=MMvXuqTjMIhGeU5R4zaI4XvES0ANtgYl1wh4QhzsrffXNWe0zHimH93s1ze2AUGrf8
-         KQpz/Hph31psfUfxOOBXnbnUoK7Yals7GhZrgrNDBPXCd8LpbG3Nt1vFaZt0MOXr01Jv
-         HqEOPT94QcpxlL4hbR3Y7sudSwk1nYzg1Jc2j2C6GBmFPMDKLlBbEMtJWRMUpwEoOnIk
-         ymngmrNt31GkEepm5gTMg24fR9HWTpdU4Nt1ERhib7pFUn38Q/CTL5h94m/56Z3HK1wr
-         mp6S4sMt6wPt0QkcSj67tuFNpBNIn2+1B/LVjd7HpSGtjg8vSrrKlnjUBKep8deBROXX
-         NI5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751665346; x=1752270146;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=II4Cu1QeU8K5BatbGIsTX5njwU/JOM7LV3cYYXHvMxg=;
-        b=cJ4oQ+OJXEbw0OsdWqEa/NHijbKw275X9ubtzBWMXBNvifOhcRHBgN78QxfhNQqr73
-         gG1B86Vo7YLq4VCtGYxG0d8Vt9aPrwjD8X3BgcFOipvh95aU0FGhIPNoztuDQ+k4eUe7
-         2lpANsX9DCWEWhoKdA9nXSMwHbTstbVlysRRye+EoG+xlKvtwwNClf6R0UTqJJkRJwEz
-         8Fd5z3BPTm66ZK+ou65Tmw/un+tyfcZYl4o+VPn5sYWPKm4cFZBE8gEWHJXIaOv+wtYI
-         CeyrgRFkXGWphbWgPe1ZNHD8g2NzETfmwiXYkADQ4+WM4xgQF0lFgcjRrdOdjeDXjp8y
-         60Xw==
-X-Forwarded-Encrypted: i=1; AJvYcCVAT72wF2YWTMiARnQXwsuBaObRQUJb3SFEUNjRa4DCTMopfWOHHrNGZS/Xf3dbqjia/oDiFKxpZ/VfHg==@vger.kernel.org, AJvYcCVRXanypzCPenbEjBLbalfgNE/ipbIUBlTMjRiGnn+qOk8KZG06Ff4lwq+OVIwo585Dnq/LYS/T/zEjx9S3@vger.kernel.org, AJvYcCVSJTtj6r1x4QsQIrYeO9vb9L/Ak8SBvLpTZvN9LHkah2nfuMinWM8A/7WpsRLypK3pkAiOXRf7kzwp@vger.kernel.org
-X-Gm-Message-State: AOJu0YxY/6bpY+X8MxISKLe4X28X1uBYl+gzzCDn4hgDMMwWbG0BL3Pp
-	2AnpANVf3Ugb9I/OAU7Dt2vcLZvl/1zST/hboxhzgyTxSwKKEzWHbVMfyO2F3g==
-X-Gm-Gg: ASbGncvt86fuzJ8xZfHdM2sT92lh2LIo20QdBvrshjXWmhxEYpV9+SPapSv5LRdLMlC
-	9a1BDhBx9AHFo1n/xuJ7SThUEmIzhs+Kw6hUbKOJT9DoaLF5oVE8ZuL4Tbd6no+J4FvLMx0IkJb
-	rvIq4nhTqg8hLZFYScPZaZDO9WtfsGL4jqa4Na6Vjovx2wnIso6mkIOLP9V3ofJcLX/g/I9B7H/
-	rNlXCvoI8hU807cjaNcaZ5lrH0gpOWs5Oio30B0086m4JvjsX/T+ZT2RSUuF2Gy8AxrhdgRFHUg
-	7oj5V1RULzSVFpkoW64EIj1PRTCk2WCdiZ5ENQ==
-X-Google-Smtp-Source: AGHT+IFuLOdyjx4vrHeFaSve6Mt6sEcspWYz7meq2ew7UJwcQgMsfVWOc9xX85QAnP38haLZ5qiTxQ==
-X-Received: by 2002:a17:902:f54e:b0:234:1163:ff99 with SMTP id d9443c01a7336-23c9108e5a7mr2108965ad.43.1751665346593;
-        Fri, 04 Jul 2025 14:42:26 -0700 (PDT)
-Received: from ryzen.lan ([2601:644:8200:dab8::a86])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23c84597371sm27950315ad.207.2025.07.04.14.42.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Jul 2025 14:42:26 -0700 (PDT)
-From: Rosen Penev <rosenp@gmail.com>
-To: linux-wireless@vger.kernel.org
-Cc: =?UTF-8?q?Toke=20H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>,
-	nbd@nbd.name,
-	jeff.johnson@oss.qualcomm.com,
-	Johannes Berg <johannes@sipsolutions.net>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
-	linux-kernel@vger.kernel.org (open list),
-	linux-mips@vger.kernel.org (open list:MIPS)
-Subject: [PATCH 1/3] dt-bindings: net: wireless: ath9k: add led bindings
-Date: Fri,  4 Jul 2025 14:42:17 -0700
-Message-ID: <20250704214219.18796-2-rosenp@gmail.com>
-X-Mailer: git-send-email 2.50.0
-In-Reply-To: <20250704214219.18796-1-rosenp@gmail.com>
-References: <20250704214219.18796-1-rosenp@gmail.com>
+	s=arc-20240116; t=1751665343; c=relaxed/simple;
+	bh=6yn4rMYivw3/KIBDGpK476SEiUbXY5TLmhWSBFNrfuE=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=MoHS741vRbRW+NA4eKmhv0sI1G+O6DEOJ5PyL/meAGX7/S7FZ6820ZPK5z3hzUsk1qUaartfhTjoiAUX5FgVJJUtuClJC37WIIeGYpQq9HqY9mSrymsvQU27Q7SMnTVAr1WMnzkGqsUHj5deBkHkk2tMNnXdCiTHy7Q4fnFfNr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XM0YJq5c; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9E48C4CEE3;
+	Fri,  4 Jul 2025 21:42:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751665342;
+	bh=6yn4rMYivw3/KIBDGpK476SEiUbXY5TLmhWSBFNrfuE=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=XM0YJq5cnTC5wgCVzcz7ybjl9cDO99a5Y/IaR/r+mzhuujwQ+auUqC9+YjdZxU52r
+	 sQwj+fWy449ni/DgMFpqesdt7Ts8ksrcg8PaCXQ6X8T96UbZ/SHMWqxSTgvSYWPdTl
+	 NO/LVxPA6PhBgoJuPVoIGnIoACVF+e9LvT5gvo1dzYqv9VWNZS8C7zN8bpRuyHJag6
+	 RKVfNBYORdblAAiUq2iyhyaMZDcib2cUv1mpSpB/CwRaPuPlVaCKNX8Il86/k2l30b
+	 fF8KtrkFQPiauAN+By2oECOr8BEfHwAy47CMfP+r1jnwWpNa9JTFxTqe/1HoS48m93
+	 aCcJQRgDu8ZDw==
+From: Mark Brown <broonie@kernel.org>
+To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, Heiko Stuebner <heiko@sntech.de>, 
+ linux-rockchip@lists.infradead.org, linux-sound@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Peng Fan <peng.fan@nxp.com>
+Cc: linus.walleij@linaro.org, brgl@bgdev.pl
+In-Reply-To: <20250704130906.1207134-1-peng.fan@nxp.com>
+References: <20250704130906.1207134-1-peng.fan@nxp.com>
+Subject: Re: [PATCH] ASoC: codec: rockchip_sai: Remove including of_gpio.h
+Message-Id: <175166533831.206730.2590873270491527384.b4-ty@kernel.org>
+Date: Fri, 04 Jul 2025 22:42:18 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-cff91
 
-This is used to override the various defaults the ath9k driver has for
-LED pin values.
+On Fri, 04 Jul 2025 21:09:06 +0800, Peng Fan wrote:
+> of_gpio.h is deprecated. And there is no user in this driver
+> using API in of_gpio.h, so remove it.
+> 
+> 
 
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
----
- .../bindings/net/wireless/qca,ath9k.yaml         | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+Applied to
 
-diff --git a/Documentation/devicetree/bindings/net/wireless/qca,ath9k.yaml b/Documentation/devicetree/bindings/net/wireless/qca,ath9k.yaml
-index d16ca8e0a25d..58c7b873cecb 100644
---- a/Documentation/devicetree/bindings/net/wireless/qca,ath9k.yaml
-+++ b/Documentation/devicetree/bindings/net/wireless/qca,ath9k.yaml
-@@ -50,6 +50,19 @@ properties:
- 
-   ieee80211-freq-limit: true
- 
-+  led:
-+    type: object
-+    $ref: /schemas/leds/common.yaml#
-+    additionalProperties: false
-+    properties:
-+      led-active-low:
-+        description:
-+          LED is enabled with ground signal.
-+        type: boolean
-+
-+      led-sources:
-+        maxItems: 1
-+
-   qca,no-eeprom:
-     $ref: /schemas/types.yaml#/definitions/flag
-     description:
-@@ -102,5 +115,8 @@ examples:
-         compatible = "qca,ar9130-wifi";
-         reg = <0x180c0000 0x230000>;
-         interrupts = <2>;
-+        led {
-+          led-sources = <0>;
-+        };
-       };
-     };
--- 
-2.50.0
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+
+Thanks!
+
+[1/1] ASoC: codec: rockchip_sai: Remove including of_gpio.h
+      commit: 571defe0dff3f1e4180bd0db79283d3d5bf74a71
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
 
