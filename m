@@ -1,284 +1,106 @@
-Return-Path: <linux-kernel+bounces-717808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-717805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D73DAF997B
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 19:09:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92297AF9978
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 19:08:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D44C4A45CB
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 17:08:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6D664A3441
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 17:07:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CE1B2D8374;
-	Fri,  4 Jul 2025 17:09:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BF502D8366;
+	Fri,  4 Jul 2025 17:08:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WE05GyT2"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oUJFqm+v"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D743D2D836C
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 17:08:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B3832E3715;
+	Fri,  4 Jul 2025 17:08:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751648939; cv=none; b=kroYI7Glf7Ym/SYEjG0SYrJJJlJ2gbakBm8l6mtC0vBbEjwg9YUeTD/cwqTFsPJbW77P+sPCiALJdQBD3+xnd0cyjrJyVfMbLCSt7xyERu6MnIONyEz85T2dpy/z6qBTpy7pMNK6uRqspvuYnDbgP6NmLnJsJpjprBChzlRrqT4=
+	t=1751648892; cv=none; b=I1uBn7cfuioUthqsyf1JXy68B0l2D7SbVbVlRRnGFhGZC8KCZK4IbcEZnBvdetDikaN9Grn2ct5AFq4kkN+i0+qMsEOvidTX3ALf4rjMfl0UsNQrJEKj8AmflNAsbwsfN05mRvuZN2VhR/S2X+Wtqing/X6EdEZtpGi7Tcj3A4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751648939; c=relaxed/simple;
-	bh=pb209bXaugEvQjg2MuIrZK2EF+7xdDuFhOeXfAta4ww=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Hoxwc55iozT0Dh/yw0Mzjo3sFA0bte0rISVr0W2EWFtvNxnLYOZaUmLWhxvhuPcXNnjwr/Bf8vpgX9Sxl/WlrRc1Y2JNZXXbUmon/gnejMLVp7HD0q+ycVb8Em2qPivmw+8T7jHMpC1EfMfiI5A9WddhZKmA/ivHklW1wZst1uA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WE05GyT2; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1751648935;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4Fb7vbgp9yWJFAfr2LZ2H/YK07/bv8dqvyUraYZjnSI=;
-	b=WE05GyT2V4men3KTjrEJTOIZfLPu4oqmtwV94fR1pKHVWm9uRKL5gErqvc+ugW4m5BbRRi
-	j8Ve1f33d1zzHhs4hLwHLMG+TXq3oWXp31gwF4EZ1crTAIrJN7+26Pam+EtOIfFxs2NPCG
-	1NyPf7mQpKkN87D1R8a3mxfF2MIpDtQ=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-56-QULDOL_hNQ6DpGpVzBdRvw-1; Fri,
- 04 Jul 2025 13:08:52 -0400
-X-MC-Unique: QULDOL_hNQ6DpGpVzBdRvw-1
-X-Mimecast-MFC-AGG-ID: QULDOL_hNQ6DpGpVzBdRvw_1751648930
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 73186195608C;
-	Fri,  4 Jul 2025 17:08:50 +0000 (UTC)
-Received: from wcosta-thinkpadt14gen4.rmtbr.csb (unknown [10.22.80.79])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 50E36194128F;
-	Fri,  4 Jul 2025 17:08:43 +0000 (UTC)
-From: Wander Lairson Costa <wander@redhat.com>
-To: Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>,
-	Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	David Woodhouse <dwmw@amazon.co.uk>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Wander Lairson Costa <wander@redhat.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	linux-kernel@vger.kernel.org (open list),
-	linux-trace-kernel@vger.kernel.org (open list:TRACING)
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Clark Williams <williams@redhat.com>,
-	Gabriele Monaco <gmonaco@redhat.com>
-Subject: [PATCH v3 2/2] tracing/preemptirq: Optimize preempt_disable/enable() tracepoint overhead
-Date: Fri,  4 Jul 2025 14:07:43 -0300
-Message-ID: <20250704170748.97632-3-wander@redhat.com>
-In-Reply-To: <20250704170748.97632-1-wander@redhat.com>
-References: <20250704170748.97632-1-wander@redhat.com>
+	s=arc-20240116; t=1751648892; c=relaxed/simple;
+	bh=0ITybG1gGZl6YRP0Mrv2Tjbb16ysrUlCnsvanObbjyA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=obGYnFJeZb8BmNwrkDi5XgO+FC7+ovJmezOLHhxQULYFuAOsiTErqzqy4Z51pN93h4VFaOQn1uWRhZ8Fi/Lke47lyBJrYZfF/1joDEieFcKeMNMozlKTZ4TLtj/qc+kkCDYCkwJFlR1albSohVT53697gJYCaBifNz92GzNzWKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oUJFqm+v; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F009C4CEE3;
+	Fri,  4 Jul 2025 17:08:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751648891;
+	bh=0ITybG1gGZl6YRP0Mrv2Tjbb16ysrUlCnsvanObbjyA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oUJFqm+vZebVfuVTFodwOJdFbLcDHvjUiHb6U8VPBJNXuVSI0SAzi7WPBVBJ/QUxD
+	 wdW1EdtPE4lrE41uwEZYe35M4Hfs8t2E0vAukVMR9+nRp2KWYsqmW97it0sbFMffhL
+	 tTHxZ2sOkmWUcfANOs14bH5GUsC+c1BuXgvx6QW/7KfWzV2Swetf9qkLpCcuGyZZjF
+	 1BSy1RyuXklQV/vmmij7Z8bOUfCS5s21QNdqWcHVouVd4rZHysgcgAAV7TaBnzk8MX
+	 AoaPKknZindFH4YpIfyc4cKIYA2yZIgwiWHimSm34MmK3GKplCSrYwwpNmVp0msITf
+	 Lhw+r94qHv1Gw==
+Date: Fri, 4 Jul 2025 20:08:07 +0300
+From: Leon Romanovsky <leon@kernel.org>
+To: Abhijit Gangurde <abhijit.gangurde@amd.com>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>, shannon.nelson@amd.com,
+	brett.creeley@amd.com, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, corbet@lwn.net,
+	andrew+netdev@lunn.ch, allen.hubbe@amd.com, nikhil.agarwal@amd.com,
+	linux-rdma@vger.kernel.org, netdev@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Andrew Boyer <andrew.boyer@amd.com>
+Subject: Re: [PATCH v3 10/14] RDMA/ionic: Register device ops for control path
+Message-ID: <20250704170807.GO6278@unreal>
+References: <20250624121315.739049-1-abhijit.gangurde@amd.com>
+ <20250624121315.739049-11-abhijit.gangurde@amd.com>
+ <20250701103844.GB118736@unreal>
+ <20250702131803.GB904431@ziepe.ca>
+ <20250702180007.GK6278@unreal>
+ <bb0ac425-2f01-b8c7-2fd7-4ecf9e9ef8b1@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bb0ac425-2f01-b8c7-2fd7-4ecf9e9ef8b1@amd.com>
 
-Similar to the IRQ tracepoint, the preempt tracepoints are typically
-disabled in production systems due to the significant overhead they
-introduce even when not in use.
+On Thu, Jul 03, 2025 at 12:49:30PM +0530, Abhijit Gangurde wrote:
+> 
+> On 7/2/25 23:30, Leon Romanovsky wrote:
+> > On Wed, Jul 02, 2025 at 10:18:03AM -0300, Jason Gunthorpe wrote:
+> > > On Tue, Jul 01, 2025 at 01:38:44PM +0300, Leon Romanovsky wrote:
+> > > > > +static void ionic_flush_qs(struct ionic_ibdev *dev)
+> > > > > +{
+> > > > > +	struct ionic_qp *qp, *qp_tmp;
+> > > > > +	struct ionic_cq *cq, *cq_tmp;
+> > > > > +	LIST_HEAD(flush_list);
+> > > > > +	unsigned long index;
+> > > > > +
+> > > > > +	/* Flush qp send and recv */
+> > > > > +	rcu_read_lock();
+> > > > > +	xa_for_each(&dev->qp_tbl, index, qp) {
+> > > > > +		kref_get(&qp->qp_kref);
+> > > > > +		list_add_tail(&qp->ibkill_flush_ent, &flush_list);
+> > > > > +	}
+> > > > > +	rcu_read_unlock();
+> > > > Same question as for CQ. What does RCU lock protect here?
+> > > It should protect the kref_get against free of qp. The qp memory must
+> > > be RCU freed.
+> > I'm not sure that this was intension here. Let's wait for an answer from the author.
+> 
+> As Jason mentioned, It was intended to protect the kref_get against free of
+> cq and qp
+> in the destroy path.
 
-The overhead primarily comes from two sources: First, when tracepoints
-are compiled into the kernel, preempt_count_add() and preempt_count_sub()
-become external function calls rather than inlined operations. Second,
-these functions perform unnecessary preempt_count() checks even when the
-tracepoint itself is disabled.
+How is it possible? IB/core is supposed to protect from accessing verbs
+resources post their release/destroy.
 
-This optimization introduces an early check of the tracepoint static key,
-which allows us to skip both the function call overhead and the redundant
-preempt_count() checks when tracing is disabled. The change maintains all
-existing functionality when tracing is active while significantly
-reducing overhead for the common case where tracing is inactive.
+After you answered what RCU is protecting, I don't see why you would
+have custom kref over QP/CQ/e.t.c objects.
 
-Signed-off-by: Wander Lairson Costa <wander@redhat.com>
-Suggested-by: Steven Rostedt <rostedt@goodmis.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Clark Williams <williams@redhat.com>
-Cc: Gabriele Monaco <gmonaco@redhat.com>
-Cc: Juri Lelli <juri.lelli@redhat.com>
----
- include/linux/preempt.h         | 35 ++++++++++++++++++++++++++++++---
- kernel/sched/core.c             | 12 +----------
- kernel/trace/trace_preemptirq.c | 19 ++++++++++++++++++
- 3 files changed, 52 insertions(+), 14 deletions(-)
-
-diff --git a/include/linux/preempt.h b/include/linux/preempt.h
-index b0af8d4ef6e6..d13c755cd934 100644
---- a/include/linux/preempt.h
-+++ b/include/linux/preempt.h
-@@ -10,6 +10,7 @@
- #include <linux/linkage.h>
- #include <linux/cleanup.h>
- #include <linux/types.h>
-+#include <linux/tracepoint-defs.h>
- 
- /*
-  * We put the hardirq and softirq counter into the preemption
-@@ -191,17 +192,45 @@ static __always_inline unsigned char interrupt_context_level(void)
-  */
- #define in_atomic_preempt_off() (preempt_count() != PREEMPT_DISABLE_OFFSET)
- 
--#if defined(CONFIG_DEBUG_PREEMPT) || defined(CONFIG_TRACE_PREEMPT_TOGGLE)
-+#if defined(CONFIG_DEBUG_PREEMPT)
- extern void preempt_count_add(int val);
- extern void preempt_count_sub(int val);
--#define preempt_count_dec_and_test() \
--	({ preempt_count_sub(1); should_resched(0); })
-+#elif defined(CONFIG_TRACE_PREEMPT_TOGGLE)
-+extern void __trace_preempt_on(void);
-+extern void __trace_preempt_off(void);
-+
-+DECLARE_TRACEPOINT(preempt_enable);
-+DECLARE_TRACEPOINT(preempt_disable);
-+
-+#define __preempt_trace_enabled(type) \
-+	(tracepoint_enabled(preempt_##type) && preempt_count() == val)
-+
-+static inline void preempt_count_add(int val)
-+{
-+	__preempt_count_add(val);
-+
-+	if (__preempt_trace_enabled(disable))
-+		__trace_preempt_off();
-+}
-+
-+static inline void preempt_count_sub(int val)
-+{
-+	if (__preempt_trace_enabled(enable))
-+		__trace_preempt_on();
-+
-+	__preempt_count_sub(val);
-+}
- #else
- #define preempt_count_add(val)	__preempt_count_add(val)
- #define preempt_count_sub(val)	__preempt_count_sub(val)
- #define preempt_count_dec_and_test() __preempt_count_dec_and_test()
- #endif
- 
-+#if defined(CONFIG_DEBUG_PREEMPT) || defined(CONFIG_TRACE_PREEMPT_TOGGLE)
-+#define preempt_count_dec_and_test() \
-+	({ preempt_count_sub(1); should_resched(0); })
-+#endif
-+
- #define __preempt_count_inc() __preempt_count_add(1)
- #define __preempt_count_dec() __preempt_count_sub(1)
- 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 8988d38d46a3..4feba4738d79 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -5840,8 +5840,7 @@ static inline void sched_tick_start(int cpu) { }
- static inline void sched_tick_stop(int cpu) { }
- #endif
- 
--#if defined(CONFIG_PREEMPTION) && (defined(CONFIG_DEBUG_PREEMPT) || \
--				defined(CONFIG_TRACE_PREEMPT_TOGGLE))
-+#if defined(CONFIG_PREEMPTION) && defined(CONFIG_DEBUG_PREEMPT)
- /*
-  * If the value passed in is equal to the current preempt count
-  * then we just disabled preemption. Start timing the latency.
-@@ -5850,30 +5849,24 @@ static inline void preempt_latency_start(int val)
- {
- 	if (preempt_count() == val) {
- 		unsigned long ip = get_lock_parent_ip();
--#ifdef CONFIG_DEBUG_PREEMPT
- 		current->preempt_disable_ip = ip;
--#endif
- 		trace_preempt_off(CALLER_ADDR0, ip);
- 	}
- }
- 
- void preempt_count_add(int val)
- {
--#ifdef CONFIG_DEBUG_PREEMPT
- 	/*
- 	 * Underflow?
- 	 */
- 	if (DEBUG_LOCKS_WARN_ON((preempt_count() < 0)))
- 		return;
--#endif
- 	__preempt_count_add(val);
--#ifdef CONFIG_DEBUG_PREEMPT
- 	/*
- 	 * Spinlock count overflowing soon?
- 	 */
- 	DEBUG_LOCKS_WARN_ON((preempt_count() & PREEMPT_MASK) >=
- 				PREEMPT_MASK - 10);
--#endif
- 	preempt_latency_start(val);
- }
- EXPORT_SYMBOL(preempt_count_add);
-@@ -5891,7 +5884,6 @@ static inline void preempt_latency_stop(int val)
- 
- void preempt_count_sub(int val)
- {
--#ifdef CONFIG_DEBUG_PREEMPT
- 	/*
- 	 * Underflow?
- 	 */
-@@ -5903,14 +5895,12 @@ void preempt_count_sub(int val)
- 	if (DEBUG_LOCKS_WARN_ON((val < PREEMPT_MASK) &&
- 			!(preempt_count() & PREEMPT_MASK)))
- 		return;
--#endif
- 
- 	preempt_latency_stop(val);
- 	__preempt_count_sub(val);
- }
- EXPORT_SYMBOL(preempt_count_sub);
- NOKPROBE_SYMBOL(preempt_count_sub);
--
- #else
- static inline void preempt_latency_start(int val) { }
- static inline void preempt_latency_stop(int val) { }
-diff --git a/kernel/trace/trace_preemptirq.c b/kernel/trace/trace_preemptirq.c
-index 90ee65db4516..deb2428b34a2 100644
---- a/kernel/trace/trace_preemptirq.c
-+++ b/kernel/trace/trace_preemptirq.c
-@@ -118,6 +118,25 @@ EXPORT_TRACEPOINT_SYMBOL(irq_enable);
- 
- #ifdef CONFIG_TRACE_PREEMPT_TOGGLE
- 
-+#if !defined(CONFIG_DEBUG_PREEMPT)
-+EXPORT_SYMBOL(__tracepoint_preempt_disable);
-+EXPORT_SYMBOL(__tracepoint_preempt_enable);
-+
-+void __trace_preempt_on(void)
-+{
-+	trace_preempt_on(CALLER_ADDR0, get_lock_parent_ip());
-+}
-+EXPORT_SYMBOL(__trace_preempt_on);
-+NOKPROBE_SYMBOL(__trace_preempt_on);
-+
-+void __trace_preempt_off(void)
-+{
-+	trace_preempt_off(CALLER_ADDR0, get_lock_parent_ip());
-+}
-+EXPORT_SYMBOL(__trace_preempt_off);
-+NOKPROBE_SYMBOL(__trace_preempt_off);
-+#endif /* !CONFIG_DEBUG_PREEMPT */
-+
- void trace_preempt_on(unsigned long a0, unsigned long a1)
- {
- 	trace(preempt_enable, TP_ARGS(a0, a1));
--- 
-2.50.0
-
+Thanks
 
