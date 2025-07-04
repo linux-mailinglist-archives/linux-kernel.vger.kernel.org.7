@@ -1,126 +1,289 @@
-Return-Path: <linux-kernel+bounces-716835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C5C0AF8B29
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 10:21:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5074AF8B16
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 10:20:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8137E7625E9
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 08:17:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8DBF7B41256
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 08:17:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 878DC327A22;
-	Fri,  4 Jul 2025 07:59:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1510F32800D;
+	Fri,  4 Jul 2025 08:01:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j5nu57eZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="h3dV36Wk"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD4073271B7;
-	Fri,  4 Jul 2025 07:59:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A93EC327FF7
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 08:01:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751615997; cv=none; b=HlGE3PFGIISnCQ6PkE2kKlmJMGXPMuejjbylPPgHXIrp+b+p55myQMRrKUlNPY8gjsd9GDROFWf/836VTlRrdBW32uYAKeyKpnvzeMeZvnLSzXiaF9/gN8SQJjHmGAc95P+FnYnzfZFO2hmUIUW+2TX3YJNPNx6tkHKvdEjp4J8=
+	t=1751616065; cv=none; b=fjNzdOXk4RUqWm8fFVJx7C1LryCqH9dnGdRmjmJMOaIDC6o0ZTpcCdfxzK1jsi7BcLGVMHxIZusRmdhT4DnQItSyz/uj4CpAtitQM/zSFbwxQ5W/zbyEk6bm5TFba7tqMa4YyYtVIoVQI7eKVGJDK2X1dLTrUvSPcHKVjpqcwow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751615997; c=relaxed/simple;
-	bh=A+M8QlgWxHjdYMXQHd0o3QdJ1Ddlbq92Z7OrRAURhMo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MfFXd/V49x4dE8yCAqHIUwTIwYDYN2klMa0pCNUrZsyBF4lkdyP8FHa0zYkN4Sg54xw84aoa6WxvpkV5gLz/iofR5vqBH4r8o0F4KWwvQg8V++7hT4CS0ltzft90aBRDCuQXQ64G+i3mCC4aZxQzZ2zMA86dMYY0JcE+Hp+6Oxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j5nu57eZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44D99C4CEE3;
-	Fri,  4 Jul 2025 07:59:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751615997;
-	bh=A+M8QlgWxHjdYMXQHd0o3QdJ1Ddlbq92Z7OrRAURhMo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=j5nu57eZESI1vbMiNM5SzhZVj0nerjBjTxIsROToMYOLWqYT9zcJpzIDrG7ZtAf4I
-	 8oK/1n34G9oK+MQ4FD9X2BvSaszrGZ0lMQZOGE4/D+nCARk/dlgUJEuAfVjCbc0M4s
-	 epIe+ZleOCEesfj9GCHchbtCuYhouRcD/Uduh4HkAJTBVIgSq5iWq1nzcOn1ideoap
-	 tf4/LwP62GfPkX/QO/j40xoc52WGPh6W39zgCDKMH3kDQkFuSQcX43HDVsEkCAJ8bz
-	 LXUaP6R/E3ImmzHGzqOT+xM/YbhRbhSxsb3u6AyZt8+RdQjRkTG6nlLkFXmhZtDsu7
-	 LUXxnFBeFOe+w==
-Message-ID: <367e2429-bfd5-4c09-9d7a-194a0539091a@kernel.org>
-Date: Fri, 4 Jul 2025 09:59:53 +0200
+	s=arc-20240116; t=1751616065; c=relaxed/simple;
+	bh=MavaVcHmHUBcxDXmoAet1o0TO4NeLL674Tn4+KgFr+0=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=eVAN37PhKsij7hiTmJKywaHKCYcckGLtDswD4R19hF5ANYWqyzj31xzUqbwc3+P043A4UvXZZfGMJjHuuleqVz8wW74R88mzErwcnZJSFQgq2CqxUGZoQYRLhtlJArSzSGHWuXZJik6f1OM6oBfjH51ilG8niweHdwfuY4yibVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--kuniyu.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=h3dV36Wk; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--kuniyu.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-312df02acf5so1469829a91.1
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Jul 2025 01:01:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1751616063; x=1752220863; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=871LHtfICsP4HWPXTfpyFCO/uBx5NLX+MNBP0IGi11Y=;
+        b=h3dV36WkhJfg7IVGJ5cfIPLI+/dPu6GI998mcsmiWCv6YfuAraP5F3otm1dyYoFYST
+         S4+eQOc5as/fzHVL4FoXp95BBu/8nTeEeo2xQwuXJa57PippiJxpKeYfp9kx3x205lto
+         FmsmrQpip2vrUAe6sbcK3s6yJU4r9W1947KKaHKavt2TiBIQwh1W6g67SBR9NEsA/brM
+         42Gp/p8UhpVQX2dEO7bL9ubp5nCrgnZ7jZ0wIReztGeTEuH+XL63NK4Wg1gEAC0BaDBi
+         sNdmp5GH3OoERCDHx/f4DQvox29fdQ9xTNtcoxveymbo3pUVPrgFvFwspa4r2ub8QkVg
+         2x4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751616063; x=1752220863;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=871LHtfICsP4HWPXTfpyFCO/uBx5NLX+MNBP0IGi11Y=;
+        b=fIfX5H0+/A2nGh8xzczeNSnIAtCkk+0WvNrvjuZzOTAwTrHMx7ZsPacMuNoPjiDVO0
+         R0649HjL8r8hWmlsBE8IIo3EtleDZjPUgb3FTHds75N6cplZABRItsy70AOJ7X5OrQbb
+         RWHn0LjLQgV56uvCUBDlvUXFYcnP7zom8UdPp1K5vqWW/Ua4tjSrhEcqzv1CU5mSbu3b
+         tJJPbZ4YFksBxJ7WVqhlIpoys9WuZmFsDeuSctDPsD2fNgh1LaHxEEdzJOI2tRyaT/eH
+         PD+HC4CzJR5dOAp/GJeMT/u+yZPiZq9Wxu3B9MGBQtaoFg9nKJi9Sh/szG/mt60p+BjB
+         utYA==
+X-Forwarded-Encrypted: i=1; AJvYcCVLDRfOPcdEHoAGue7luqkgAmEu05/WNNFqjeDjN1btwsGf7fZLKF9JHSgjy4krNmSCNs1RdxXBRdbqlS4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3UpTjLyrUPVBHLXwfNNcS8Pyymqid/tJJXlPPV08vHtim1k/S
+	vfi1snsipLP/fEGbryC5yb1SZw5iDrVtueYQ18ONDwJP2fbw7zigmQ5j/bQ9sR776SmWaDxFsNc
+	Qa0V5fQ==
+X-Google-Smtp-Source: AGHT+IGhHuyYYc0DPphHjWVDjLD2G9Tn2pqlyBgLZRGhRjNxi9Z5rH9gHqa6RoAdRw1mJnzsBrDScqF3UVg=
+X-Received: from pjqq14.prod.google.com ([2002:a17:90b:584e:b0:311:ea2a:3919])
+ (user=kuniyu job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3e44:b0:314:2cd2:595d
+ with SMTP id 98e67ed59e1d1-31aab856b9bmr3131512a91.8.1751616063071; Fri, 04
+ Jul 2025 01:01:03 -0700 (PDT)
+Date: Fri,  4 Jul 2025 08:00:02 +0000
+In-Reply-To: <20250703160154.560239-1-g.goller@proxmox.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: trivial-devices: Add Garmin lidar-lite-v3
-To: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: ~lkcamp/patches@lists.sr.ht, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250701223341.36835-1-rodrigo.gobbi.7@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
- QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
- +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
- ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
- 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
- hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
- tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
- 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
- naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
- hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
- whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
- qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
- RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
- Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
- H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
- dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
- AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
- jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
- zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
- XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250701223341.36835-1-rodrigo.gobbi.7@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20250703160154.560239-1-g.goller@proxmox.com>
+X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
+Message-ID: <20250704080101.1659504-1-kuniyu@google.com>
+Subject: Re: [PATCH net-next v4] ipv6: add `force_forwarding` sysctl to enable
+ per-interface forwarding
+From: Kuniyuki Iwashima <kuniyu@google.com>
+To: g.goller@proxmox.com
+Cc: corbet@lwn.net, davem@davemloft.net, dsahern@kernel.org, 
+	edumazet@google.com, horms@kernel.org, kuba@kernel.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, netdev@vger.kernel.org, 
+	nicolas.dichtel@6wind.com, pabeni@redhat.com, shuah@kernel.org, 
+	kuniyu@google.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 02/07/2025 00:30, Rodrigo Gobbi wrote:
-> The compatible grmn,lidar-lite-v3 is managed by the same
-> driver of pulsedlight,lidar-lite-v2, which is a trivial device.
+From: Gabriel Goller <g.goller@proxmox.com>
+Date: Thu,  3 Jul 2025 18:01:53 +0200
+> diff --git a/Documentation/networking/ip-sysctl.rst b/Documentation/networking/ip-sysctl.rst
+> index 0f1251cce314..ec7fa1e890f1 100644
+> --- a/Documentation/networking/ip-sysctl.rst
+> +++ b/Documentation/networking/ip-sysctl.rst
+> @@ -2292,6 +2292,11 @@ conf/all/forwarding - BOOLEAN
+>  proxy_ndp - BOOLEAN
+>  	Do proxy ndp.
+>  
+> +force_forwarding - BOOLEAN
+> +	Enable forwarding on this interface only -- regardless of the setting on
+> +	``conf/all/forwarding``. When setting ``conf.all.forwarding`` to 0,
+> +	the ``force_forwarding`` flag will be reset on all interfaces.
 
-Nothing here explain the bug you are fixing. You need to be specific,
-what is missing, what are you doing. Apparently you are documenting
-existing ABI, but nothing in commit msg told me that.
-
-As David pointed out, this is not a trivial device.
-
-> 
-> Signed-off-by: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
-> Fixes: b257c1a45e99 ("iio: pulsedlight-lidar-lite-v2: add lidar-lite-v3 property")
-
-SoB goes the last.
+Please update conf/all/forwarding too as it will be stale after
+this patch.
 
 
-Best regards,
-Krzysztof
+> +
+>  fwmark_reflect - BOOLEAN
+>  	Controls the fwmark of kernel-generated IPv6 reply packets that are not
+>  	associated with a socket for example, TCP RSTs or ICMPv6 echo replies).
+> diff --git a/include/linux/ipv6.h b/include/linux/ipv6.h
+> index 5aeeed22f35b..5380107e466c 100644
+> --- a/include/linux/ipv6.h
+> +++ b/include/linux/ipv6.h
+> @@ -19,6 +19,7 @@ struct ipv6_devconf {
+>  	__s32		forwarding;
+>  	__s32		disable_policy;
+>  	__s32		proxy_ndp;
+> +	__s32		force_forwarding;
+
+nit: place force_forwarding just after forwarding.
+
+
+>  	__cacheline_group_end(ipv6_devconf_read_txrx);
+>  
+>  	__s32		accept_ra;
+> @@ -857,6 +859,15 @@ static void addrconf_forward_change(struct net *net, __s32 newf)
+>  		idev = __in6_dev_get_rtnl_net(dev);
+>  		if (idev) {
+>  			int changed = (!idev->cnf.forwarding) ^ (!newf);
+> +			/*
+> +			 * With the introduction of force_forwarding, we need to be backwards
+> +			 * compatible, so that means we need to set the force_forwarding flag
+
+Strictly backward compatibility is not related I think because
+the per iface conf is disabled by default, and this is a new
+behaviour.  Maybe simply say
+
+/* Disabling all.forwarding sets 0 to force_forwarding for all interfaces */
+
+> +			 * on every interface to 0 if net.ipv6.conf.all.forwarding is set to 0.
+> +			 * This allows the global forwarding flag to disable forwarding for
+> +			 * all interfaces.
+> +			 */
+> +			if (newf == 0)
+> +				WRITE_ONCE(idev->cnf.force_forwarding, newf);
+>  
+>  			WRITE_ONCE(idev->cnf.forwarding, newf);
+>  			if (changed)
+> @@ -5719,6 +5730,7 @@ static void ipv6_store_devconf(const struct ipv6_devconf *cnf,
+>  	array[DEVCONF_ACCEPT_UNTRACKED_NA] =
+>  		READ_ONCE(cnf->accept_untracked_na);
+>  	array[DEVCONF_ACCEPT_RA_MIN_LFT] = READ_ONCE(cnf->accept_ra_min_lft);
+> +	array[DEVCONF_FORCE_FORWARDING] = READ_ONCE(cnf->force_forwarding);
+>  }
+>  
+[...]
+>  static inline size_t inet6_ifla6_size(void)
+> @@ -6747,6 +6759,78 @@ static int addrconf_sysctl_disable_policy(const struct ctl_table *ctl, int write
+>  	return ret;
+>  }
+>  
+> +static void addrconf_force_forward_change(struct net *net, __s32 newf)
+> +{
+> +	ASSERT_RTNL();
+
+__in6_dev_get_rtnl_net() has the same check so this is not needed.
+
+
+> +	struct net_device *dev;
+> +	struct inet6_dev *idev;
+> +
+> +	for_each_netdev(net, dev) {
+> +		idev = __in6_dev_get_rtnl_net(dev);
+> +		if (idev) {
+> +			int changed = (!idev->cnf.force_forwarding) ^ (!newf);
+> +
+> +			WRITE_ONCE(idev->cnf.force_forwarding, newf);
+> +			if (changed) {
+> +				inet6_netconf_notify_devconf(dev_net(dev), RTM_NEWNETCONF,
+> +							     NETCONFA_FORCE_FORWARDING,
+> +							     dev->ifindex, &idev->cnf);
+> +			}
+> +		}
+> +	}
+> +}
+> +
+> +static int addrconf_sysctl_force_forwarding(const struct ctl_table *ctl, int write,
+> +					    void *buffer, size_t *lenp, loff_t *ppos)
+> +{
+> +	struct inet6_dev *idev = ctl->extra1;
+> +	struct net *net = ctl->extra2;
+> +	int *valp = ctl->data;
+> +	loff_t pos = *ppos;
+
+nit: Please keep the reverse xmas tree order.
+https://www.kernel.org/doc/html/latest/process/maintainer-netdev.html#local-variable-ordering-reverse-xmas-tree-rcs
+
+> +	int new_val = *valp;
+> +	int old_val = *valp;
+> +	int ret;
+> +
+> +	struct ctl_table tmp_ctl = *ctl;
+
+same here.
+
+> +
+> +	tmp_ctl.extra1 = SYSCTL_ZERO;
+> +	tmp_ctl.extra2 = SYSCTL_ONE;
+
+As you are copying *ctl, please specify this in addrconf_sysctl[].
+
+
+> +	tmp_ctl.data = &new_val;
+> +
+> +	ret = proc_douintvec_minmax(&tmp_ctl, write, buffer, lenp, ppos);
+> +
+> +	if (write && old_val != new_val) {
+> +		if (!rtnl_net_trylock(net))
+> +			return restart_syscall();
+> +
+> +		if (valp == &net->ipv6.devconf_dflt->force_forwarding) {
+> +			inet6_netconf_notify_devconf(net, RTM_NEWNETCONF,
+> +						     NETCONFA_FORCE_FORWARDING,
+> +						     NETCONFA_IFINDEX_DEFAULT,
+> +						     net->ipv6.devconf_dflt);
+> +		} else if (valp == &net->ipv6.devconf_all->force_forwarding) {
+> +			inet6_netconf_notify_devconf(net, RTM_NEWNETCONF,
+> +						     NETCONFA_FORCE_FORWARDING,
+> +						     NETCONFA_IFINDEX_ALL,
+> +						     net->ipv6.devconf_all);
+> +
+> +			addrconf_force_forward_change(net, new_val);
+> +		} else {
+> +			inet6_netconf_notify_devconf(net, RTM_NEWNETCONF,
+> +						     NETCONFA_FORCE_FORWARDING,
+> +						     idev->dev->ifindex,
+> +						     &idev->cnf);
+> +		}
+> +		rtnl_net_unlock(net);
+> +	}
+> +
+> +	if (write)
+> +		WRITE_ONCE(*valp, new_val);
+> +	if (ret)
+> +		*ppos = pos;
+> +	return ret;
+> +}
+> +
+>  static int minus_one = -1;
+>  static const int two_five_five = 255;
+>  static u32 ioam6_if_id_max = U16_MAX;
+> @@ -7217,6 +7301,13 @@ static const struct ctl_table addrconf_sysctl[] = {
+>  		.extra1		= SYSCTL_ZERO,
+>  		.extra2		= SYSCTL_TWO,
+>  	},
+> +	{
+> +		.procname	= "force_forwarding",
+> +		.data		= &ipv6_devconf.force_forwarding,
+> +		.maxlen		= sizeof(int),
+> +		.mode		= 0644,
+> +		.proc_handler	= addrconf_sysctl_force_forwarding,
+
+Here for extra{1,2}.
+
+
+> +	},
+>  };
+>  
+>  static int __addrconf_sysctl_register(struct net *net, char *dev_name,
+> diff --git a/net/ipv6/ip6_output.c b/net/ipv6/ip6_output.c
+> index 7bd29a9ff0db..440b9efced72 100644
+> --- a/net/ipv6/ip6_output.c
+> +++ b/net/ipv6/ip6_output.c
+> @@ -509,7 +509,8 @@ int ip6_forward(struct sk_buff *skb)
+>  	u32 mtu;
+>  
+>  	idev = __in6_dev_get_safely(dev_get_by_index_rcu(net, IP6CB(skb)->iif));
+> -	if (READ_ONCE(net->ipv6.devconf_all->forwarding) == 0)
+> +	if (idev && !READ_ONCE(idev->cnf.force_forwarding) &&
+> +	    !READ_ONCE(net->ipv6.devconf_all->forwarding))
+
+Now this ignores devconf_all when !idev whose dev was not
+found or has not had a valid mtu.
+
+if (!READ_ONCE(net->ipv6.devconf_all->forwarding) &&
+    (!idev || !READ_ONCE(idev->cnf.force_forwarding)))
 
