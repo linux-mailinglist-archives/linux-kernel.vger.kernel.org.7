@@ -1,120 +1,162 @@
-Return-Path: <linux-kernel+bounces-716400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59D0BAF85F0
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 05:12:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F8DFAF85F3
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 05:12:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4EDB1C4867C
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 03:12:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81C4C6E2FA6
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 03:12:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFD4D1E8854;
-	Fri,  4 Jul 2025 03:11:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Hc+GHlpy"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEDD51E3762;
+	Fri,  4 Jul 2025 03:12:00 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FE9617CA1B;
-	Fri,  4 Jul 2025 03:11:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 461EA1DF246;
+	Fri,  4 Jul 2025 03:11:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751598704; cv=none; b=BYDt8ypdwycK8ODjv+VVIxBbGzBE7mDDEH1yVmkyUai+Ja51IlZJJQNBsxIFMWBYUc86m5ZsGB9l0MZfkxSZiPAewUiXQqs6LtK14L/9y7FM5RbZmqQo77tB1j0/v34WatDeeGKrJMRjmTfHMwO97S51l2iHqqttbk80VpSIzKs=
+	t=1751598720; cv=none; b=bi0YPkYKCCWazbcYo+QMdSDYia3Z2kN8eQRLLl2x6qZQ37IUxgLCNrWVKUzRF6B4Ld5KP+uvgeL0SjT1gRFjTq6O918H3lU4zX/7uAgTCBDlHzZfiPHFpQZjQ6LFg15bZHVofbzQFogI5X+73XYYd0wrD/xGr63SYbxRppFfEPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751598704; c=relaxed/simple;
-	bh=43Q7A3VRL4TnRonDlu6Q4IeSp7pTTqPtvV2liehgIyE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=BqEL17JSTyZ1lo8Qx5yPMKvp3n7iBYd8HAch7/yv1O+DT4tVzu85R8ljNcf9rE3gtdCzMazgwt+lMAwlxhsNh/2rqYO6HMJE9qHIdtGubwXWNAkNYgBDB3eTZ5yjM9zaU1tvlQjTkNGbmaZkRHMo/rL73rXZMZYAaJgQbnPVB4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Hc+GHlpy; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1751598669;
-	bh=gDdy+536mUIxf1DeR863dGAOtY2TVORyc2BvNtT+JdY=;
-	h=Date:From:To:Cc:Subject:From;
-	b=Hc+GHlpye3EBxeVotIESMrfoXnJe0JGugBLNpJNvjjlvQarh9VwfwXY6Rr0McIvfu
-	 ZQfiZ9saOqE6Vw3x84I5vvsN5a/G4A9uSScaBhj21fNSXy7HmSw00Eu8eHAPLcJO+H
-	 +6TpTe+3C2m6WtnDL+ZZ4eNGk4E0NgE879nWGyYYE0g2TptsWr8vjKLOzQdZMBIArB
-	 cxN56uxPTCEQ0z4UKw4+TZnxoLIsvzhG1brrUWtIrqbCj/qN5+KvnlOENC/rHNBTD6
-	 eu/WAtJFq4dcXwVwIzNCVJTpeOmkyW+Dbh6GK3/VdFukvOUBBw3OeNRjQ/aGYrh14q
-	 IcNZTfYh2o9Yg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bYJYn0Wbvz4x11;
-	Fri,  4 Jul 2025 13:11:08 +1000 (AEST)
-Date: Fri, 4 Jul 2025 13:11:35 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Daniel Borkmann <daniel@iogearbox.net>, Alexei Starovoitov
- <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, Heiko Carstens
- <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, Christian
- Borntraeger <borntraeger@de.ibm.com>
-Cc: bpf <bpf@vger.kernel.org>, Networking <netdev@vger.kernel.org>,
- Alexander Gordeev <agordeev@linux.ibm.com>, Ilya Leoshkevich
- <iii@linux.ibm.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Thomas Huth <thuth@redhat.com>
-Subject: linux-next: manual merge of the bpf-next tree with the s390 tree
-Message-ID: <20250704131135.1da6c34d@canb.auug.org.au>
+	s=arc-20240116; t=1751598720; c=relaxed/simple;
+	bh=xpFzJK7EbTj8oT8gx1B/pIapBvfvKwiCvyDHV1ZcyUo=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=A5BQy8SltePE+L+VTIE1A+cua405WkH2PfgQ0evuObbT0kZ3ZY9OynFo+5t75II0Mhnpthiza5uzYttooA3QB15RFzeBJzdpnrD24X6GMdv9unkvXTVZExO5HPD66/TeDtRKM+zzgcma+LXq1Z0WdTm49F7pmYwpdPuub36GldI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bYJZf4gjMzYQtdc;
+	Fri,  4 Jul 2025 11:11:54 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 7F8801A0EA9;
+	Fri,  4 Jul 2025 11:11:53 +0800 (CST)
+Received: from [10.67.109.79] (unknown [10.67.109.79])
+	by APP4 (Coremail) with SMTP id gCh0CgA37Lx5RmdoRWNgAg--.12441S2;
+	Fri, 04 Jul 2025 11:11:53 +0800 (CST)
+Message-ID: <8dae8006-e63d-467f-bb7c-e8470878e534@huaweicloud.com>
+Date: Fri, 4 Jul 2025 11:11:52 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/uJZDkAfq+ILtcqSLTUC/+ev";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH next] sched,freezer: prevent tasks from escaping being
+ frozen
+From: Chen Ridong <chenridong@huaweicloud.com>
+To: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>
+Cc: peterz@infradead.org, rafael@kernel.org, pavel@kernel.org,
+ timvp@google.com, tj@kernel.org, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, lujialin4@huawei.com, chenridong@huawei.com
+References: <20250703133427.3301899-1-chenridong@huaweicloud.com>
+ <n23vsu6y6cjf2vwdbfcjl2mj7venvpzpblncoa7adn3q5r4lph@qsfa3deqtamc>
+ <f4c4f465-72b9-4682-99e6-c249ecab8572@huaweicloud.com>
+Content-Language: en-US
+In-Reply-To: <f4c4f465-72b9-4682-99e6-c249ecab8572@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgA37Lx5RmdoRWNgAg--.12441S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Aw1rKw4DJw4xWF17Kw1xZrb_yoW8Kr1fpr
+	WrWa1UG3Z7trs2yrn2qw4vqws8K392yF4UGr95CrWxJa1YqasIgr4Ik3yYkF1jvryxArnF
+	qF4jq3s7AayUZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
+	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
+	ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IUb
+	mii3UUUUU==
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
---Sig_/uJZDkAfq+ILtcqSLTUC/+ev
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
 
-Today's linux-next merge of the bpf-next tree got a conflict in:
+On 2025/7/4 11:02, Chen Ridong wrote:
+> 
+> 
+> On 2025/7/4 1:01, Michal Koutný wrote:
+>> Hello Ridong.
+>>
+>> On Thu, Jul 03, 2025 at 01:34:27PM +0000, Chen Ridong <chenridong@huaweicloud.com> wrote:
+>>> 2. The cgroup freezer state changes to FROZEN (Can be triggered by reading
+>>>    freezer.state).
+>> /o\
+>>
+>>> 3. freezing() is called and returns false.
+>>
+>> I can see how this can happen because freezer_lock != freezer_mutex.
+>>
+>>> As a result, the task may escape being frozen when it should be.
+>>>
+>>> To fix this, move the setting of the FROZEN flag to occur just before
+>>> schedule(). This ensures the flag is only set when we're certain the
+>>> task must be switched out.
+>>
+>> Is it sufficient? (If the task is spuriously woken up, the next
+>> iteration in that refrigerator loop would be subject to same race, no?)
+>>
+>> Thanks,
+>> Michal
+> 
+> Hi, Michal:
+> 
+> Regarding your question: Did you mean that the task was frozen, received
+> another signal to wake up, but should have remained frozen instead of
+> entering the running state?
+> 
+> For this scenario, the solution I've found is that the task can only
+> break out of the frozen state when its cgroup is thawed. The code
+> modification would look like the following, and we'll need to add the
+> cgroup_thawed(p) function:
+> 
 
-  arch/s390/net/bpf_jit.h
+Sorry, the code should look like:
 
-between commit:
+--- a/kernel/freezer.c
++++ b/kernel/freezer.c
+@@ -71,19 +71,20 @@ bool __refrigerator(bool check_kthr_stop)
+        for (;;) {
+                bool freeze;
 
-  42398caf16c9 ("s390: Replace __ASSEMBLY__ with __ASSEMBLER__ in non-uapi =
-headers")
+-               raw_spin_lock_irq(&current->pi_lock);
+-               WRITE_ONCE(current->__state, TASK_FROZEN);
+-               /* unstale saved_state so that __thaw_task() will wake
+us up */
+-               current->saved_state = TASK_RUNNING;
+-               raw_spin_unlock_irq(&current->pi_lock);
+-
+                spin_lock_irq(&freezer_lock);
+-               freeze = freezing(current) && !(check_kthr_stop &&
+kthread_should_stop());
++               freeze = (freezing(current) || !cgroup_thawed(current))
++                        && !(check_kthr_stop && kthread_should_stop());
+                spin_unlock_irq(&freezer_lock);
 
-from the s390 tree and commit:
+                if (!freeze)
+                        break;
 
-  e26d523edf2a ("s390/bpf: Describe the frame using a struct instead of con=
-stants")
++               raw_spin_lock_irq(&current->pi_lock);
++               WRITE_ONCE(current->__state, TASK_FROZEN);
++               /* unstale saved_state so that __thaw_task() will wake
+us up */
++               current->saved_state = TASK_RUNNING;
++               raw_spin_unlock_irq(&current->pi_lock);
++
+                was_frozen = true;
+                schedule();
+        }
 
-from the bpf-next tree.
+Best regards,
+Ridong
 
-I fixed it up (the latter deleted the file, so I did that) and can
-carry the fix as necessary. This is now fixed as far as linux-next is
-concerned, but any non trivial conflicts should be mentioned to your
-upstream maintainer when your tree is submitted for merging.  You may
-also want to consider cooperating with the maintainer of the conflicting
-tree to minimise any particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/uJZDkAfq+ILtcqSLTUC/+ev
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmhnRmcACgkQAVBC80lX
-0Gx+1Af/cwbu4s3JWbpJGDK5eExNhF2ULcsDI3C6WJk/dVck6AnCaHLUiKlnoUcm
-WgVVzJ3f73OwyRwnrjk1INabmdmUtm1/6RaUZHeETqbz2pfTGrVlKPfCKuHMpc5i
-MkiuybVXMHuI0Pyk/79QoGDx8ckG5oubCefiDZPvwwa9JPstVkxnlu9WJOW97/4N
-LYO98igB6MecgAO2f6EEGqNjE2qkF8lJmCDpl3+YA6ExILoRoeS3iPGYGSW09U1a
-H3uVsrhuF96K04/o2CNJZ7ZQyOHbLeTja3lXf8ffC60V6AlApZLJCr/0sQEzmhT2
-CWY/yw7Dp6vrBOT31MXdOeUZFdKWdQ==
-=j7L0
------END PGP SIGNATURE-----
-
---Sig_/uJZDkAfq+ILtcqSLTUC/+ev--
 
