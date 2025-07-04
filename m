@@ -1,167 +1,122 @@
-Return-Path: <linux-kernel+bounces-717097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-717105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BF33AF8F2F
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 11:53:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5999AF8F58
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 12:01:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 126AC1CA579C
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 09:53:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA2C41C44202
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 10:01:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1A832ECD27;
-	Fri,  4 Jul 2025 09:52:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD4642EE97F;
+	Fri,  4 Jul 2025 10:01:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="enSYY8Pi"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=ssi.bg header.i=@ssi.bg header.b="hD5BeEK/"
+Received: from mx.ssi.bg (mx.ssi.bg [193.238.174.39])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F7502D541F;
-	Fri,  4 Jul 2025 09:52:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 014EC262A6;
+	Fri,  4 Jul 2025 10:00:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.238.174.39
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751622768; cv=none; b=d5nMnUXmN+wOeDOGepSuXeg8m2+gmGKQetxeWG17/Q6HUSytWQVhS0V0+VrX2B2sknvOxykb9P199r5q5ykW9qxv1gYO8nj3lgmUdoWdnF3w8BZOsoVAf9nG5UJNH0X8F37izB3LMOJ5at+W9QbLjKWCd/W4phuNDeUga79CHaM=
+	t=1751623262; cv=none; b=TBVPwyVozIJrpMsAWF0yXv8uCSxIs3vFGu6z+oKMtbJ5XNuX2BZjzknyrT0Bn5x2HrwuNgoWG6ga/n8mcsj/re4T0DzBN7o3ucUw+cwZ8PFbQUgb5zlEEYU7+saaemV9kTkKW4KyqTQbJ/uP+wT/Sc1lWGy/JEYt74E5LSZ0sKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751622768; c=relaxed/simple;
-	bh=fJk3jJe2GsDsuplJHVKGRlGVC8VaPj6RPnuA5RW6v/s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tjBpYQ568gp/QwWY2g1HS19eOeTZAvhcRjgFiYLeVJ8Yr8Cwynaqnffiivtu+kgzSEOo/pzzUDIyBKWegVz3T+dE8QTxMzfWgVd7GUxYcXbs+kBpgDdGmwv2hO4K3+5plgFvLz9UILzcsqzXH1551FCBv9rW1na5o8k4IR1VRM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=enSYY8Pi; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-32b7113ed6bso7534971fa.1;
-        Fri, 04 Jul 2025 02:52:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751622765; x=1752227565; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rtcggWI0EUkrnHdnx97WWYML+IOpgM/8IBDpI/ZQAlw=;
-        b=enSYY8PiBdteHONmNOzKrDVootZGHsDdy7B7r7YANXvnILTxvpeZ7wPPrvkiWwJLEO
-         eIeIKxFvI5NBwP9GYmFud8EbfSR28eCiT0s0+UegpiqWf8GArezX0SYDQfcDCiBLlxcu
-         7fNY0T9z0+rZk9xsHO9vicc6bonRNwFB7CWywfAOTc6S8raFMacTN8hr5l6kAfmwhukY
-         2Bw5fiCAi+XSZOv1vOvNySAsnAlnzbM28ZJvTx6zIdZUA0lpev74dzFWj20MxqdRBnRh
-         1f7Qfa69YFpdV7j+iRcSWAttsEd69rvhb3gWeR17sslgMtuXz4p7hE1F/dJh4IeWaMAc
-         ZnBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751622765; x=1752227565;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rtcggWI0EUkrnHdnx97WWYML+IOpgM/8IBDpI/ZQAlw=;
-        b=AfiT6i5rT+NDjpAqp7Vv5VzdkkeipnNeoHTVz6lnqlNmG400sy99DfMY+szPwUY4zC
-         gWLY80YmGSvWvO3CsA7bjzh5uKStEmVTxjx0BuLGkU9UFbzf+rIMXRYLlwDxbGkvQaq9
-         zaWEwvS21XpGSiCoVKXv4mhp8y6wvltOhIMuMTSOSqscc3bQJewSpl15xIv9iUrDGdjA
-         iIb6QTXCbjKso3knWFnKxLxbdbvk5NdXFjE+CkXiQsH7oMjesaIwBLympkQAve5xTE80
-         s5bbdzFU5SGQawv5HtbIwsNv+R++8/1MmePG2EXCPErRJeY9aqMgbgXT7JWooPUGM3sV
-         nzuA==
-X-Forwarded-Encrypted: i=1; AJvYcCXnidhtBrQK5SOzJHgTpgEj+xVjVPo7DGLyGn0m86TFW8BgZa0bQQY8UmyYn5sg7yoxkIYG9u937ET1N6k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzJki07fowubO6E5tYjR16Lqk/3KeWxEQCqCSA9z8ubDio1mUG
-	fp6po/gJ/Fipyv2pMu9yVU8hD8NhwmrsN5nTZSGCDkYEzIiPyR44cwYgLpjfLUvAIRvW1N26Sr7
-	Ondh9XNAm4SF60PCe4CP2FdGWZtQ0d6rOHjqkwzsdBA==
-X-Gm-Gg: ASbGncsbnxB2QaPC6UAqkX+VCnxK9vNqHM3KPd95v01s8zHvfYznFHAc71pwpyfNH6/
-	V0/BlTrQgcYMHb4/cJ0v45X3aaMdgM1WkuzxdlXIIvu5z7uf9Ojnmlou3FsPYhYoggY8x/hAKdk
-	98Y8WPpS23LD6lodpQlrcPUQOwZOIKDnScNPsGLzjrVxFyFimCqzHUIevdpdXIUT72Grga+Rs6F
-	lAN
-X-Google-Smtp-Source: AGHT+IEQJtvURip5Eo1r+T3XuSDUEc12iPmo7gyNNW171IOi7PFDjp+RgiXo0ZnKbXQHoCybXScYJr7aE+3jHaGkQBc=
-X-Received: by 2002:a05:651c:2220:b0:32a:7332:bf7a with SMTP id
- 38308e7fff4ca-32f00c93008mr4007081fa.13.1751622764562; Fri, 04 Jul 2025
- 02:52:44 -0700 (PDT)
+	s=arc-20240116; t=1751623262; c=relaxed/simple;
+	bh=UDwLdN9+Ws+1t2BdqtB8v0310FnUQKl1SthOpC5EQhs=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=BWT5I5vDQjJGFHzrHn+6U6PsZiQvAEtzs3Gh8HDWk+OEu0N0iroJ5DY53Fs4XyioA8AwKbTQf6S/qkPOwRr4IJ2VZro6Yhhj+gPKtA62NzERtuByxJFfcP2G/QSpO7/uj8+VeGR2IUVWhSJie2bB2tqxjIljb+VHDdqVLZS9Zuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ssi.bg; spf=pass smtp.mailfrom=ssi.bg; dkim=pass (4096-bit key) header.d=ssi.bg header.i=@ssi.bg header.b=hD5BeEK/; arc=none smtp.client-ip=193.238.174.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ssi.bg
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ssi.bg
+Received: from mx.ssi.bg (localhost [127.0.0.1])
+	by mx.ssi.bg (Potsfix) with ESMTP id D59B323554;
+	Fri,  4 Jul 2025 12:53:06 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ssi.bg; h=cc:cc
+	:content-type:content-type:date:from:from:in-reply-to:message-id
+	:mime-version:references:reply-to:subject:subject:to:to; s=ssi;
+	 bh=CI21Vkd6rz8iL5QUwk0CI7L4tOktsE0+upPgppWiPgc=; b=hD5BeEK/Rn3H
+	iWAQ38MngKYxsD96rpyvcK6MHUgbtbw1cp+80nwsjBGLhTZiKT5KVKbtXBdZg76Z
+	yAFmrsden6bCwbnNcMVRXZk9Vd8dXtuum73fdpq+/ayXuNuYW/eKKqiNPFpL2Fdc
+	2hLVXB+7nSGSnuXsIvDIRUa7Q1Sb65rgj/KvTv9YrGtjzw3MRJybKcZtvsYoSEM4
+	myc6ou7HFHI791DIjV0uPFHOBU2ekW6v8A3W2OCi4BUd+UMxT2XqNMV1zh9w5YeB
+	CYlZpUZ9KiCD+7XZtpie2PJCnrDHJNAEcEuKgYQ6KqXnkD5yY9BGMC69utZtycOq
+	Ph47x3qI2cIIUXcX7+hQK3zxJJGj3DcG8ZsKyErG7lvoybNF/hB6Z4N9dLh9kAQ2
+	PLuvBwC7p59bXeH+0SmvgeWtmbHpdoIPX0e9AX+fWGg6jvJ9mQ4xpkie0wPrrU5G
+	w7/vZwnxf/xVnKlZNTaP4O+enRcvzVftRYLT87BtzvU+KSy9zcEfaOoKuZ4D6Eb5
+	cRFUXLnfQLDzRpf8lVCEaNaOQSSHjwtnP+41fUxZaqrk5zplVK3uiG1XFEieVV7l
+	/WZxqyVeGsJ4EITuJ6/kjfUXBRosqtjymV6BeL0tsE40TZ3QYlaTYWs+aMb/G2oS
+	o2mQEwKpRrhm/jkw5p2MpBsutjM5JVI=
+Received: from box.ssi.bg (box.ssi.bg [193.238.174.46])
+	by mx.ssi.bg (Potsfix) with ESMTPS;
+	Fri,  4 Jul 2025 12:53:06 +0300 (EEST)
+Received: from ja.ssi.bg (unknown [213.16.62.126])
+	by box.ssi.bg (Potsfix) with ESMTPSA id 1F7A264A13;
+	Fri,  4 Jul 2025 12:53:05 +0300 (EEST)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by ja.ssi.bg (8.18.1/8.18.1) with ESMTP id 5649qvsn007449;
+	Fri, 4 Jul 2025 12:52:57 +0300
+Date: Fri, 4 Jul 2025 12:52:57 +0300 (EEST)
+From: Julian Anastasov <ja@ssi.bg>
+To: WangYuli <wangyuli@uniontech.com>
+cc: Simon Horman <horms@verge.net.au>, pablo@netfilter.org,
+        kadlec@netfilter.org, netdev@vger.kernel.org,
+        lvs-devel@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        coreteam@netfilter.org, linux-kernel <linux-kernel@vger.kernel.org>,
+        zhanjun@uniontech.com, niecheng1@uniontech.com,
+        guanwentao@uniontech.com, wangyuli@cloudflare.getdeepin.org
+Subject: Re: [PATCH RESEND] ipvs: ip_vs_conn_expire_now: Rename del_timer in
+ comment
+In-Reply-To: <E5403EE80920424D+20250704083553.313144-1-wangyuli@uniontech.com>
+Message-ID: <3dbee3f4-8670-b72c-e5b0-3a108b5ded04@ssi.bg>
+References: <E5403EE80920424D+20250704083553.313144-1-wangyuli@uniontech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <nrq9MPwFBIHZRQzC6iAdiUz7uvBdbqKNxdfM8Jus8lTDZCwtPkFMjtJ1V5mkcpX0YX34TYNOddSEOgsXngLtHQ==@protonmail.internalid>
- <20250704072604.13605-1-pranav.tyagi03@gmail.com> <y5d46toqsrrbqfxfioo5yqo532tzqh3f2arsidbe4gq4w3jdqp@rktbxszwtsbh>
-In-Reply-To: <y5d46toqsrrbqfxfioo5yqo532tzqh3f2arsidbe4gq4w3jdqp@rktbxszwtsbh>
-From: Pranav Tyagi <pranav.tyagi03@gmail.com>
-Date: Fri, 4 Jul 2025 15:22:33 +0530
-X-Gm-Features: Ac12FXyB3Xh9rJNctZ8qbUMoAf9rw6VaTvRVqfUEGOT7ePXJYmEJ14PIuqSHVSM
-Message-ID: <CAH4c4j+Hz8HNzxZhe0DzDAN8vUS3vGN+SL1iMJuXL29AnmQ0cg@mail.gmail.com>
-Subject: Re: [PATCH] fs/xfs: replace strncpy with memtostr_pad()
-To: Carlos Maiolino <cem@kernel.org>
-Cc: linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org, djwong@kernel.org, 
-	skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev, 
-	kernel test robot <oliver.sang@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
 
-On Fri, Jul 4, 2025 at 2:22=E2=80=AFPM Carlos Maiolino <cem@kernel.org> wro=
-te:
->
-> On Fri, Jul 04, 2025 at 12:56:04PM +0530, Pranav Tyagi wrote:
-> > Replace the deprecated strncpy() with memtostr_pad(). This also avoids
-> > the need for separate zeroing using memset(). Mark sb_fname buffer with
-> > __nonstring as its size is XFSLABEL_MAX and so no terminating NULL for
-> > sb_fname.
-> >
-> > Signed-off-by: Pranav Tyagi <pranav.tyagi03@gmail.com>
-> > Reported-by: kernel test robot <oliver.sang@intel.com>
-> > Closes: https://lore.kernel.org/oe-lkp/202506300953.8b18c4e0-lkp@intel.=
-com
->
-> Hi Pranav.
->
-> Please Read the kernel-test-robot email:
->
-> "
-> If you fix the issue in a separate patch/commit (i.e. not just a new
-> version of the same patch/commit), kindly add following tags...
-> "
->
-> Those tags shouldn't be added here as you are not fixing anything, your
-> previous patch have not been committed.
->
-> Cheers,
-> Carlos
->
-Hi Carlos,
 
-Thanks for the clarification. I was confused and thought that "separate
-patch" referred to correcting the original one and resending it separately.
-I=E2=80=99ll remove the tags and send a v2 shortly.
+	Hello,
+
+On Fri, 4 Jul 2025, WangYuli wrote:
+
+> Commit 8fa7292fee5c ("treewide: Switch/rename to timer_delete[_sync]()")
+> switched del_timer to timer_delete, but did not modify the comment for
+> ip_vs_conn_expire_now(). Now fix it.
+> 
+> Signed-off-by: WangYuli <wangyuli@uniontech.com>
+
+	Looks good to me for nf-next, thanks!
+
+Acked-by: Julian Anastasov <ja@ssi.bg>
+
+> ---
+>  net/netfilter/ipvs/ip_vs_conn.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/net/netfilter/ipvs/ip_vs_conn.c b/net/netfilter/ipvs/ip_vs_conn.c
+> index 44b2ad695c15..965f3c8e5089 100644
+> --- a/net/netfilter/ipvs/ip_vs_conn.c
+> +++ b/net/netfilter/ipvs/ip_vs_conn.c
+> @@ -926,7 +926,7 @@ static void ip_vs_conn_expire(struct timer_list *t)
+>  void ip_vs_conn_expire_now(struct ip_vs_conn *cp)
+>  {
+>  	/* Using mod_timer_pending will ensure the timer is not
+> -	 * modified after the final del_timer in ip_vs_conn_expire.
+> +	 * modified after the final timer_delete in ip_vs_conn_expire.
+>  	 */
+>  	if (timer_pending(&cp->timer) &&
+>  	    time_after(cp->timer.expires, jiffies))
+> -- 
+> 2.50.0
 
 Regards
-Pranav Tyagi
 
-> > ---
-> >  fs/xfs/libxfs/xfs_format.h | 2 +-
-> >  fs/xfs/xfs_ioctl.c         | 3 +--
-> >  2 files changed, 2 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/fs/xfs/libxfs/xfs_format.h b/fs/xfs/libxfs/xfs_format.h
-> > index 9566a7623365..779dac59b1f3 100644
-> > --- a/fs/xfs/libxfs/xfs_format.h
-> > +++ b/fs/xfs/libxfs/xfs_format.h
-> > @@ -112,7 +112,7 @@ typedef struct xfs_sb {
-> >       uint16_t        sb_sectsize;    /* volume sector size, bytes */
-> >       uint16_t        sb_inodesize;   /* inode size, bytes */
-> >       uint16_t        sb_inopblock;   /* inodes per block */
-> > -     char            sb_fname[XFSLABEL_MAX]; /* file system name */
-> > +     char            sb_fname[XFSLABEL_MAX] __nonstring; /* file syste=
-m name */
-> >       uint8_t         sb_blocklog;    /* log2 of sb_blocksize */
-> >       uint8_t         sb_sectlog;     /* log2 of sb_sectsize */
-> >       uint8_t         sb_inodelog;    /* log2 of sb_inodesize */
-> > diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
-> > index d250f7f74e3b..c3e8c5c1084f 100644
-> > --- a/fs/xfs/xfs_ioctl.c
-> > +++ b/fs/xfs/xfs_ioctl.c
-> > @@ -990,9 +990,8 @@ xfs_ioc_getlabel(
-> >       BUILD_BUG_ON(sizeof(sbp->sb_fname) > FSLABEL_MAX);
-> >
-> >       /* 1 larger than sb_fname, so this ensures a trailing NUL char */
-> > -     memset(label, 0, sizeof(label));
-> >       spin_lock(&mp->m_sb_lock);
-> > -     strncpy(label, sbp->sb_fname, XFSLABEL_MAX);
-> > +     memtostr_pad(label, sbp->sb_fname);
-> >       spin_unlock(&mp->m_sb_lock);
-> >
-> >       if (copy_to_user(user_label, label, sizeof(label)))
-> > --
-> > 2.49.0
-> >
+--
+Julian Anastasov <ja@ssi.bg>
+
 
