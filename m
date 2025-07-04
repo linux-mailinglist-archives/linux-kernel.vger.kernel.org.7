@@ -1,78 +1,135 @@
-Return-Path: <linux-kernel+bounces-717870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-717872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F1ABAF9A30
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 19:55:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DCF2AF9A34
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 19:57:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D373C1C4295A
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 17:56:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 272B37BE94B
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 17:55:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3C272DEA75;
-	Fri,  4 Jul 2025 17:55:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D97632DEA6D;
+	Fri,  4 Jul 2025 17:56:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YgJkrkYz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20230601.gappssmtp.com header.i=@cogentembedded-com.20230601.gappssmtp.com header.b="YsIQHX6P"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4691A2DAFB2;
-	Fri,  4 Jul 2025 17:55:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 911E81A76BC
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 17:56:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751651739; cv=none; b=XdWdUE/1/Yh9ycwRCb844goD31M9MtjZ85HhIo+wrdzqQPqesEb8EpmH7bXaMn3MsyEy0313phTmZBCs+WrVZl/zlK7epEt79KU8xf2V0wPQgpf3fePvslb1/frGTQwjBmA3jUiPymktdZeffH/LJidj3lZFrwTXo+4wUNHYVu8=
+	t=1751651810; cv=none; b=CJg/Rbmq9wkeMwqfzZjbx1VL2TC0tye8FV51+PsK4P2XBc9SjuqX/QN0DtozRPD8jqaoordqT+jGKjlC+kdJ/nWTCr647+P6MaO+dC/WTrakyDtI5N3Nx5+wmd5JOYKxE/k0Yyz9ZNK7X4BIFpQEKupm+vqPTIaFjekMlYAQuNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751651739; c=relaxed/simple;
-	bh=DAGPet970dtVSdzNzgb0cUUULeqVOXz5UXvENSfYNVc=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=d76wtkenmlAZzi736H/gKVt/l/QYWl/2tbk4u04m+R/eBWoYBcHg7V0HktABnJITu6txsoECuceSxBAbDrR/T5fXHnQ+OoCnzh/6QFMu/Aeibv5ScwcsGYeMf/Zt1h/p3FonGSqtxCaJ63qGahWvwkQUKCXBV41tIGazDFfAC64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YgJkrkYz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FAFBC4AF09;
-	Fri,  4 Jul 2025 17:55:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751651738;
-	bh=DAGPet970dtVSdzNzgb0cUUULeqVOXz5UXvENSfYNVc=;
-	h=From:To:In-Reply-To:References:Subject:Date:From;
-	b=YgJkrkYzdIkkgVrp5PRb6AkAEHzBqw9bL3jfE8nwWEqgxyeVm+u396kDnScMZULsk
-	 6+7rTAXhxAXulX1FEg38ou6gayAOX/TsGAu/YwwY58GUqqXJkbAbiiKalvBtSXLd1O
-	 2C2/mpiaUoofLnwooptYdSa+x9cb3d1duY52jvtM1hi+yfwiL1Me7+oxciotX6OcxB
-	 qIyhWSGvsXtZvIR56dSoHxScKeOfsWHAq1/XkF3jn5ce9zLrtUxeaEX3LLUuHzO9S+
-	 hNQzAVU9TMpYOFJF5ccRmEPUy+ZIa2+keGoF+O3zw8F+/+rprv5d4UOqlxDUZhbVll
-	 isRicJsQrnHdQ==
-From: Namhyung Kim <namhyung@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
- Arnaldo Carvalho de Melo <acme@kernel.org>, 
- Mark Rutland <mark.rutland@arm.com>, 
- Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
- Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
- Kan Liang <kan.liang@linux.intel.com>, linux-perf-users@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Ian Rogers <irogers@google.com>
-In-Reply-To: <20250703053622.3141424-1-irogers@google.com>
-References: <20250703053622.3141424-1-irogers@google.com>
-Subject: Re: [PATCH v1] perf tests make: Add NO_LIBDW=1 to minimal and add
- standalone test
-Message-Id: <175165173848.3149172.372461795325655603.b4-ty@kernel.org>
-Date: Fri, 04 Jul 2025 10:55:38 -0700
+	s=arc-20240116; t=1751651810; c=relaxed/simple;
+	bh=RKPVMYwlIXXGLv5KkIATm3Cf3vqnlU/H4tKoDr3YVqo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EP1w9LqTEEvHzK5XWNYScPH4aBPH57/lQm/E2ZEca++tLY20fmO40m2t4XMALW7ZQhu/MPP8tcsdMHrstvsgafX+9/O5oZkrLBv6a48F/nwHzXcOfpY3gyAkNQ7cuknoxPw2noi1aFS0899uI4Hm6OskqSfW7ezXTpw+PFAZbJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com; spf=pass smtp.mailfrom=cogentembedded.com; dkim=pass (2048-bit key) header.d=cogentembedded-com.20230601.gappssmtp.com header.i=@cogentembedded-com.20230601.gappssmtp.com header.b=YsIQHX6P; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cogentembedded.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-60c9d8a16e5so2083543a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Jul 2025 10:56:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cogentembedded-com.20230601.gappssmtp.com; s=20230601; t=1751651807; x=1752256607; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=U6n6hbn9caysKhPeEP/I9KvzM0cAThA7k26sM9u1aLk=;
+        b=YsIQHX6PVONxqknKgVzzeHXo7oId/leAKFmgWGgk9dmiz+ckS2b2Fj+aodXZbT0R5S
+         CNcqlcTw4bFBbelcJWTZLc/7EQ6tRBc9kO+1dlLz2B3gs30pFrzCmifN0DHpppyQuGpB
+         91wwZ2Y2gnlvsk+EaF/I18Z7bM13K+5GfD8gCK96vPvEVm8WST60RsXCd1ErYIGdyVLA
+         Qqeexa4HnURjwfYWxAENs2sVbK1WYmO/2KVNbY4RmBbIDnBjhAi0O/EVF2wGk4bZnp0j
+         mdrjPLkoD5EmjmEUmAdOjPz1YqtU1p4ENJ9rAX9m7hTIrfB7B1EGejcPtoabehQqH3+U
+         Msbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751651807; x=1752256607;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=U6n6hbn9caysKhPeEP/I9KvzM0cAThA7k26sM9u1aLk=;
+        b=A7co4gsMR3HbLoGw7XkN2sR92Ia5qcnCLauhFRcl8b4fEfjwZrrbiUQh9uWhDBTPMx
+         QpCI8HqxQxSiqLmeMdbvhfsIK3tkqASjjArY1RQiJqI/Gko1LkGi/P3lJmKg0M4TVc+3
+         aqDGgATGUKF2nTz9N8mBQ4BeBZ0iowsKXVuBfxw/oi6pM0L/OxcsdUu+mXO0sVnIKCpG
+         og3kB3HwErJ6MIjNE0yadj8sc+KhPR6eS7Y/sDnBDKBnqJZQFE/DQrGCzSAKesU6mQxd
+         lnPlWixVNSWknK5YjDdTY8cquaM8LDKLvX9Y06AAqmGrn9tQzjnTq3wUVnXItNlrW0Q2
+         NVxw==
+X-Forwarded-Encrypted: i=1; AJvYcCX8qflYqzGxt8qdxbwhgzpkvwN87cyzd1Ac0T+mh0EzQd10N2Ljvb6TDNK6xtsgI0om2QKhVzohjVpFkzw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx90tFY+XWAZB5kysJnOBDGdKgK+sXtene0e0bz880J87Gde/ah
+	JBREDSS5XLatFpDnHRx3r2MbM1JlSEAWSqKTfw04eYQKy4iaLWu1WgtkrSZQ+BGCo24=
+X-Gm-Gg: ASbGncvJomTAr4HokbmKO1SuEQPQgVtbMBUSVQatSWVy5j64mXnnmZxsfu14RoRvNdY
+	jDAeeP4X56t4CsaG7KvSpamiKZPtfUAxDqQkh5MBIFFaR7AWRH+I8Vpl5NHVIZmj0Sz2xyDufOm
+	DG2EQ9uLJteE9sODhx7GfoF9+GUI1A9TvW+HWmhrfBUiYYpb3k3QcPPbzLYhUF6V+u0nAaQAFRC
+	SpvceUjmvNUkl2K61kt2rdTCujwFiuUnmMQhu5dhnVCSssssFx1jYwVdOxYBdpB8/w77ZZg9GIK
+	M/qpYuk/mD8nSlesW6SSCD6KlHzcx46E4yY6xFDRSgmcYMoZxFpew5CUAOSvKMESbPWYmE9OagV
+	w9N+n6GQGTz+netuuydKH6Do=
+X-Google-Smtp-Source: AGHT+IGoshS6MZusfjRaRJaVsMhxqzjeYCxj2P6UK+ArpuRluCl7/5NTB3tt7deN/8EfRsinNgpEIg==
+X-Received: by 2002:a05:6402:3591:b0:607:5987:5ba1 with SMTP id 4fb4d7f45d1cf-60fd3370b41mr3071724a12.20.1751651806823;
+        Fri, 04 Jul 2025 10:56:46 -0700 (PDT)
+Received: from ?IPV6:2a02:810a:b98:a000::f225? ([2a02:810a:b98:a000::f225])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-60fca696ec5sm1648446a12.25.2025.07.04.10.56.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 04 Jul 2025 10:56:46 -0700 (PDT)
+Message-ID: <79dca2df-1126-4d94-bab9-761a982090b6@cogentembedded.com>
+Date: Fri, 4 Jul 2025 19:56:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/3] net: renesas: rswitch: R-Car S4 add HW offloading for
+ layer 2 switching
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Michael Dege <michael.dege@renesas.com>,
+ Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+ =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+ Paul Barker <paul@pbarker.dev>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250704-add_l2_switching-v1-0-ff882aacb258@renesas.com>
+ <4310ae08-983a-49bb-b9fe-4292ca1c6ace@lunn.ch>
+ <79a57427-fd4a-4b9a-a081-cf09b649a20e@cogentembedded.com>
+ <27047e61-8307-472d-96dd-1e5b89dc427f@lunn.ch>
+Content-Language: en-US, ru-RU
+From: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+In-Reply-To: <27047e61-8307-472d-96dd-1e5b89dc427f@lunn.ch>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-c04d2
 
-On Wed, 02 Jul 2025 22:36:22 -0700, Ian Rogers wrote:
-> Missing testing coverage of NO_LIBDW=1 and add NO_LIBDW=1 to the
-> minimal test configuration.
+
+
+04.07.2025 19:53, Andrew Lunn wrote:
+> On Fri, Jul 04, 2025 at 11:05:14AM +0200, Nikita Yushchenko wrote:
+>>> Looking at the code, it is not clear to me what would happen with:
+>>>
+>>> ip link add name br0 type bridge
+>>> ip link set dev tsn0 master br0
+>>> ip link set dev br0 up
+>>> ip link set dev tsn0 up
+>>> ip link add name br1 type bridge
+>>> ip link set dev tsn1 master br1
+>>> ip link set dev br1 up
+>>> ip link set dev tsn1 up
+>>
+>> Per design, it shall enable hardware forwarding when two ports are in the same brdev.
 > 
+> So in this case, the hardware offload has been reserved by br0, but is
+> in fact never used, since there is only one port in the bridge. If i
+> was to then do
 > 
-Applied to perf-tools-next, thanks!
+> ip link set dev tsn2 master br1
+> ip link set dev tsn2 up
+> 
+> br1 would not be offloaded, but done in software.
 
-Best regards,
-Namhyung
+rswitch_update_offload_brdev() calculates which brdev to offload, and it only considers brdev having at 
+least two rswitch ports. So in this case br1 shall get offloaded.
 
-
+Nikita
 
