@@ -1,201 +1,140 @@
-Return-Path: <linux-kernel+bounces-716482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 164C2AF872D
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 07:20:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0AA4AF8730
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 07:23:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 288331C80AC6
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 05:21:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9D35566B19
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 05:23:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 675D31F4703;
-	Fri,  4 Jul 2025 05:20:40 +0000 (UTC)
-Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C0EE1FBEB0;
+	Fri,  4 Jul 2025 05:22:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Q87PzcII"
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 459927263A
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 05:20:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6564A1F561D
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 05:22:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751606439; cv=none; b=oRto+t9MJ0DeSFEV4ybTzryb0Th47UiK+EoYwNWH55pHCwl828KZjQrh/Ti6UQXxgP3VQ4N2E3pZZSeEiVIU2eYETTLvFvCKwFK2aZBo4SyyB9+n1N+mcObkThGWGM/UvPnpHpd93qiVO1fV5tUrzBsKEnUPzsteOd0s8wdwuqg=
+	t=1751606573; cv=none; b=cDrjACKnSDeoC0wXNAc3ywEdKIAjPGY/40p9xjbVhoU5yRnESl5ywa/94lDy49ZNLhNflmql/0oKlLDdPKpKe0foMz6XgCwBGy4LO0lLkGm1yu+sDiJ68clUaW+M9bx7tSmIdmkLP6PebYCYM9MYptsDn5MfiUdAaCfP9692AwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751606439; c=relaxed/simple;
-	bh=0pOsgtsTo4ckHDpTYcuNPhkYno5xKl2ahM4BAGNhQcY=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=IUFcsVnzGVLf0ioc93UQ5Em7TnwXtOOScdcqsw9dbW1h/4yZIhg0BW9llc3p/9tLbzcx9S8Zfb/5RD1iDCJwoEkwejQTK8otVSy4VIY0bZMexHuwJzNZzHLFz+JKtaSN0Ck6DT/R7RGjR4AGrgfUQpWqlNtWPASTh0ghcbZqu0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-86a5def8869so137385839f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Jul 2025 22:20:38 -0700 (PDT)
+	s=arc-20240116; t=1751606573; c=relaxed/simple;
+	bh=+boJThdlKqfmBwvZYrrLLbALloBXGFMiCi1pxJTUDuI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=igpuzOXXhmdctF7siNyabkdWjKRPmD19ujVlMK2Ce0IMFfofwYD6NQ6N5YP/63ZQ5cr/QiV5Bzg+KBiPtouSiSsmRocLOSJalFTF2VGfJXwED9z4A7rBE9mBzvTJ/g3SFTeIna1DBalGn2F6xIMJjsbG7NtgjP9QW1yyjjGIoDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Q87PzcII; arc=none smtp.client-ip=209.85.160.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4a752944794so6396071cf.3
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Jul 2025 22:22:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1751606571; x=1752211371; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Dtn7MCRvr7mqmOBEdvHKnoAnHvjzH2ABPSrAJ9kWfz4=;
+        b=Q87PzcIIJq/gke9eGm36RjknSc4VI7gMIPLveXDP4ifuoQyhaN1S/YXa/DOE5b1Hwi
+         fRkGGHEm885dSoOaLRd3qLwT6wMrtDnbggprFTfQrwKeVDKM9nS8Exnq7bFmxsHRkc6l
+         pcHmik8i9BlrIe98/ez8r80xtgk4vN5y6wofiwUvPKHEw/rFmE/7mwQji3KcgjWeAeXg
+         N/HbjiwDNtbifbqIxD7Tze+J83TxCKUwAMiTikJNxRSq05qwgeYbZ5SqvTn5NzOHljjn
+         4WmHdQRKanr9CfI8VDxGsAdE9R8NakGwkCupu27jxQchBH1ZoPpsaaC4aKvGQ9pnwnE5
+         MO4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751606437; x=1752211237;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=18/sKOicE2f7Ggx1undsXQNvrnSH762Hho/UUhpZCcA=;
-        b=twK5FZWS9AKvGczEyfvchSiItMCv4wGIAjgpBlD+7B3KgG5YiWP9fG4P38DmCDgjBJ
-         +Ssi/UAh6QeDfbKqMSP1ZzMJ1Wgx6RYqr2yDlTAnVHgk4QR8fuSaQzOnwmo9T+oCp3Xt
-         1w4jdeSOTbNkfr7oWSWyF6fhWgL6zlRGhrV3SJnjSaO48S+aG7fXDAtCBGnEVUK29aCC
-         c8EzLKpMIlvHOjJUDFFyBDyAlE2eIgFFriziqdmm7fmJpwohaBuBTz7SrxZIRQ2V9d2z
-         kJkIbiimc1kTdFMXAgsoFfSXrtmQbPR/F1O3O+VfZtyIFuGfFnHNYCHZAUZ9qRUjEVoH
-         flTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVzTQtJZMaf+pWtUE6qUsCU4SAtxHnKssDF7OH5lclHkPq/MfxXD6EqVLQHpAqL3EAEUu71D81MfoBv0so=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxlk5bxx4g8rWxDV0ERM9xbW9kqtvVupU4VqdXp3SlBPtIdq0CN
-	qxUU8X4hDXc2DTUPRVg8gyzgbTlQMfHlq36Lj+aZ09GunNvUDUe/c1r1xonNwKcbcOPt/HEjcVW
-	BthNew3j2HisOvYxyw8h1zSIcDCx4jkqHChY1JLruMhZOo5Qi3uPsdJGmeAU=
-X-Google-Smtp-Source: AGHT+IG2RVhiGN+n9hq1Ug6fUL9AKll7f+7HBi2SyveCtTq/KLhYBck4RbdtT+kHBtLzABmCAuLoCBjX5sMRh8vyQZ2yColPwLD/
+        d=1e100.net; s=20230601; t=1751606571; x=1752211371;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Dtn7MCRvr7mqmOBEdvHKnoAnHvjzH2ABPSrAJ9kWfz4=;
+        b=waFaiKFbzvKiHzDzGu3tPkrbz2Ire7RL56jwg3cMqWddf80zCwjICEbvincBV94mSd
+         MvKLQ7kDxSJUmyoHoyCcAIxP36yh5bRmWjZiDzkpHrUUg25yNbQd4KZdHDVtxzAho6hf
+         AY4UlpQfGkfgYZtooxsuwdfULLv+/XdO+yAmFbGsSrlPMyOgv5bMFS35tPEYUfDmJhNn
+         Jx3pLvBDB+9uvxEMA7D4jzbdiDhRSqoghq/Jrd/iSLWo3XjMkS2yafmgrW4F9qlxgJmO
+         Pv1MVRls/p0O7HA2eabXRM4H5PWkEdQ9jNL4tNbuhAImkbhBmc4IrZhl1f35Q9CG1sMU
+         1x2A==
+X-Forwarded-Encrypted: i=1; AJvYcCWvZaO3Fx5eSB1UFXxkxkbYjGyzqwV0vcEDOaEbgfZU/CZIXGjKz2I9hckdLPeIZ/onLx+TZ10kCbwzHwc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxoDdJai2xmzEi9uCBpnU34zej/X75nhXXa3r+VVHmuFG9N/th
+	P6B/k3VxPamYKEBxHknryCVbtAwqcBSzQ8nkGEQj2aTW7MftxqCOdyMtev7V7vjX6J0FzBny/2B
+	qOFnJacjoHxfydWMK8VgafNX+efWDSpmWOFz67nXS
+X-Gm-Gg: ASbGncspfzs5QYmtCzcPkAJr4bxPMWrLD9nCiMItzljis3SLnN3MKXvRtu3jZPUeRWG
+	kCQKWkZgCyunFCoc93FjiRFDVqFyyXuteM2tG8jk8laI/HIq4rzNh+zenNNweQXq7Eo4l2F5p8l
+	F2aRp2S+7ueN6ytSN2NxJNoYUP7X44U1N9PJS8kM86GK2g6nTzDVC04l6xxAKidh6VDPbbO2N36
+	I8/Bw==
+X-Google-Smtp-Source: AGHT+IGHtApTLA1ZaaThYHX7g2bKOX+Vh9u6B7P2Xq7//vcIZtv+7HVCyoZ99whqFjsqvU74dbndyqaBWJPNbaUz6yw=
+X-Received: by 2002:ac8:5e07:0:b0:4a7:ba7:1a2d with SMTP id
+ d75a77b69052e-4a996404a7fmr23356041cf.4.1751606570989; Thu, 03 Jul 2025
+ 22:22:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:12c3:b0:3d6:cbad:235c with SMTP id
- e9e14a558f8ab-3e13548bc4dmr10693475ab.6.1751606437444; Thu, 03 Jul 2025
- 22:20:37 -0700 (PDT)
-Date: Thu, 03 Jul 2025 22:20:37 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <686764a5.a00a0220.c7b3.0013.GAE@google.com>
-Subject: [syzbot] [net?] general protection fault in qdisc_tree_reduce_backlog
-From: syzbot <syzbot+1261670bbdefc5485a06@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
-	jhs@mojatatu.com, jiri@resnulli.us, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
-	syzkaller-bugs@googlegroups.com, xiyou.wangcong@gmail.com
+References: <tencent_5CB8EAEE13F1E94F2203F0C7@qq.com>
+In-Reply-To: <tencent_5CB8EAEE13F1E94F2203F0C7@qq.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Thu, 3 Jul 2025 22:22:39 -0700
+X-Gm-Features: Ac12FXz8pyNISWhkmxKk8VHE4NRewQ2YjBUGeo2x92wPPJSmOxZos9HtErFZIRk
+Message-ID: <CANn89iL2jGPyPhha3J8y_FV_31tGHJ4mQSSvyewcPh4dzbOVKg@mail.gmail.com>
+Subject: Re: [BUG] Possible Null-Pointer-Dereference Vulnerability in
+ udp_gro_receive_segment Function
+To: =?UTF-8?B?6YK55oe/?= <21302010073@m.fudan.edu.cn>
+Cc: davem <davem@davemloft.net>, dsahern <dsahern@kernel.org>, kuba <kuba@kernel.org>, 
+	pabeni <pabeni@redhat.com>, netdev <netdev@vger.kernel.org>, 
+	linux-kernel <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    bd475eeaaf3c Merge branch '200GbE' of git://git.kernel.org..
-git tree:       net
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=12f0b3d4580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=36b0e72cad5298f8
-dashboard link: https://syzkaller.appspot.com/bug?extid=1261670bbdefc5485a06
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=164d8c8c580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14839ebc580000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/d59bc82a55e0/disk-bd475eea.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/2a83759fceb6/vmlinux-bd475eea.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/07576fd8e432/bzImage-bd475eea.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+1261670bbdefc5485a06@syzkaller.appspotmail.com
-
-Oops: general protection fault, probably for non-canonical address 0xdffffc0000000004: 0000 [#1] SMP KASAN PTI
-KASAN: null-ptr-deref in range [0x0000000000000020-0x0000000000000027]
-CPU: 0 UID: 0 PID: 5835 Comm: syz-executor374 Not tainted 6.16.0-rc3-syzkaller-00144-gbd475eeaaf3c #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-RIP: 0010:qdisc_tree_reduce_backlog+0x223/0x480 net/sched/sch_api.c:806
-Code: 89 ef e8 40 80 b3 f8 4d 89 ef 85 db 74 0d e8 74 fc 4f f8 4c 89 f5 e9 88 00 00 00 48 8b 6d 00 48 8d 45 20 48 89 c3 48 c1 eb 03 <42> 80 3c 33 00 48 89 04 24 74 0d 48 8b 3c 24 e8 09 80 b3 f8 48 8b
-RSP: 0018:ffffc900040bf0a8 EFLAGS: 00010202
-RAX: 0000000000000020 RBX: 0000000000000004 RCX: 0000000000000000
-RDX: ffff888031da3c00 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 0000000000000000 R08: ffff888031da3c00 R09: 0000000000000002
-R10: 00000000ffffffff R11: 0000000000000000 R12: 00000000000afff2
-R13: ffff88802875a000 R14: dffffc0000000000 R15: ffff88802875a000
-FS:  000055555b6b1380(0000) GS:ffff888125c50000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000200000000240 CR3: 00000000726c2000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- fq_codel_change+0xa96/0xef0 net/sched/sch_fq_codel.c:450
- fq_codel_init+0x355/0x960 net/sched/sch_fq_codel.c:487
- qdisc_create+0x7ac/0xea0 net/sched/sch_api.c:1324
- __tc_modify_qdisc net/sched/sch_api.c:1749 [inline]
- tc_modify_qdisc+0x1426/0x2010 net/sched/sch_api.c:1813
- rtnetlink_rcv_msg+0x779/0xb70 net/core/rtnetlink.c:6953
- netlink_rcv_skb+0x208/0x470 net/netlink/af_netlink.c:2534
- netlink_unicast_kernel net/netlink/af_netlink.c:1313 [inline]
- netlink_unicast+0x75b/0x8d0 net/netlink/af_netlink.c:1339
- netlink_sendmsg+0x805/0xb30 net/netlink/af_netlink.c:1883
- sock_sendmsg_nosec net/socket.c:712 [inline]
- __sock_sendmsg+0x21c/0x270 net/socket.c:727
- ____sys_sendmsg+0x505/0x830 net/socket.c:2566
- ___sys_sendmsg+0x21f/0x2a0 net/socket.c:2620
- __sys_sendmsg net/socket.c:2652 [inline]
- __do_sys_sendmsg net/socket.c:2657 [inline]
- __se_sys_sendmsg net/socket.c:2655 [inline]
- __x64_sys_sendmsg+0x19b/0x260 net/socket.c:2655
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f79d710a6a9
-Code: 48 83 c4 28 c3 e8 37 17 00 00 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fff2ee70668 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00007fff2ee70838 RCX: 00007f79d710a6a9
-RDX: 0000000000000800 RSI: 0000200000000100 RDI: 0000000000000003
-RBP: 00007f79d717d610 R08: 0000000000000004 R09: 00007fff2ee70838
-R10: 0000000000000001 R11: 0000000000000246 R12: 0000000000000001
-R13: 00007fff2ee70828 R14: 0000000000000001 R15: 0000000000000001
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:qdisc_tree_reduce_backlog+0x223/0x480 net/sched/sch_api.c:806
-Code: 89 ef e8 40 80 b3 f8 4d 89 ef 85 db 74 0d e8 74 fc 4f f8 4c 89 f5 e9 88 00 00 00 48 8b 6d 00 48 8d 45 20 48 89 c3 48 c1 eb 03 <42> 80 3c 33 00 48 89 04 24 74 0d 48 8b 3c 24 e8 09 80 b3 f8 48 8b
-RSP: 0018:ffffc900040bf0a8 EFLAGS: 00010202
-RAX: 0000000000000020 RBX: 0000000000000004 RCX: 0000000000000000
-RDX: ffff888031da3c00 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 0000000000000000 R08: ffff888031da3c00 R09: 0000000000000002
-R10: 00000000ffffffff R11: 0000000000000000 R12: 00000000000afff2
-R13: ffff88802875a000 R14: dffffc0000000000 R15: ffff88802875a000
-FS:  000055555b6b1380(0000) GS:ffff888125c50000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000200000000240 CR3: 00000000726c2000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	89 ef                	mov    %ebp,%edi
-   2:	e8 40 80 b3 f8       	call   0xf8b38047
-   7:	4d 89 ef             	mov    %r13,%r15
-   a:	85 db                	test   %ebx,%ebx
-   c:	74 0d                	je     0x1b
-   e:	e8 74 fc 4f f8       	call   0xf84ffc87
-  13:	4c 89 f5             	mov    %r14,%rbp
-  16:	e9 88 00 00 00       	jmp    0xa3
-  1b:	48 8b 6d 00          	mov    0x0(%rbp),%rbp
-  1f:	48 8d 45 20          	lea    0x20(%rbp),%rax
-  23:	48 89 c3             	mov    %rax,%rbx
-  26:	48 c1 eb 03          	shr    $0x3,%rbx
-* 2a:	42 80 3c 33 00       	cmpb   $0x0,(%rbx,%r14,1) <-- trapping instruction
-  2f:	48 89 04 24          	mov    %rax,(%rsp)
-  33:	74 0d                	je     0x42
-  35:	48 8b 3c 24          	mov    (%rsp),%rdi
-  39:	e8 09 80 b3 f8       	call   0xf8b38047
-  3e:	48                   	rex.W
-  3f:	8b                   	.byte 0x8b
+On Thu, Jul 3, 2025 at 8:20=E2=80=AFPM =E9=82=B9=E6=87=BF <21302010073@m.fu=
+dan.edu.cn> wrote:
+>
+> Our team recently developed a null-pointer-dereference vulnerability dete=
+ction tool, and we have employed it to scan the Linux Kernel (version 6.9.6=
+). After manual review, we found some potentially vulnerable code snippets =
+which may have null-pointer-dereference bugs. Therefore, we would appreciat=
+e your expert insight to confirm whether these vulnerabilities could indeed=
+ pose a risk to the system.
+>
+> Vulnerability Description:
+>
+> File: /net/ipv4/udp_offload.c
+>
+> In the function udp_gro_receive_segment, the variable uh is assigned via:=
+ struct udphdr *uh =3D udp_gro_udphdr(skb); However, udp_gro_udphdr() inter=
+nally calls skb_gro_header(), which may fall back to skb_gro_header_slow() =
+and potentially return NULL. If that happens, uh will be NULL, and the subs=
+equent dereference: if (!uh->check) { may lead to a null pointer dereferenc=
+e (NPD).
+>
+> Proposed Fix:
+>
+> To prevent the potential null-pointer dereference, we suggest adding a NU=
+LL check before attempting to dereference.
+>
+> Request for Review:
+>
+> We would appreciate your expert insight to confirm whether this vulnerabi=
+lity indeed poses a risk to the system, and if the proposed fix is appropri=
+ate.
+>
+> Thank you for your time and consideration.
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Callers of  udp_gro_receive_segment() (via udp_gro_receive()) are
+udp4_gro_receive() and udp6_gro_receive()
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+They both bail out if udp_gro_udphdr() return NULL.
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+If the first call to udp_gro_udphdr() does not return NULL, another
+call to udp_gro_udphdr() will return the same value.
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+I might miss something, but I think your tool has a false positive.
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+Can you double check ?
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Thank you.
 
