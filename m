@@ -1,75 +1,79 @@
-Return-Path: <linux-kernel+bounces-716777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D48BAF8AAC
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 10:08:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C1ECAF8AAB
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 10:08:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49BA576062D
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 08:04:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E6091899639
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 08:07:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DC302877D4;
-	Fri,  4 Jul 2025 07:54:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DCC52F0C5B;
+	Fri,  4 Jul 2025 07:54:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="et60A+wg"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XFPyJhM/"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96C0F2D542C;
-	Fri,  4 Jul 2025 07:54:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 978802EF2AC
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 07:54:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751615685; cv=none; b=Q3VDSepiYJUJSIsvC6wGafHkeJTfSaZgezaw+8PA4jJLmlZeHl94yBarbrIF3F/8Y7t8Lozmt/u8QmQrM4UsxJXYJH6q7YWURkWXycqJ0ovamHDXn63diNIEJJdQSrui2ONzkIjFzRd1JXHsfqed2w8nR8pmvaZvdH3aiUxO6kI=
+	t=1751615694; cv=none; b=ITp4/pEUJdaXpA6bq4YZeHWvqXchNyH11QZvoObFwb0kbzhWMZz84RbNLLZZiXnhV1R+YhuQ2bkkR5Ieax4JYa4OYBzZu0b2hPDNaeY6JOjk2K/Vzu4yh9Msv30/HxjdmIIRkNaFIl2C9GA7CBmMnBmhkiLb4WSZcnphQJtReKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751615685; c=relaxed/simple;
-	bh=logG108dBu9v+vZYmJaE48QCvdOD6icuV7EBnGifvsg=;
+	s=arc-20240116; t=1751615694; c=relaxed/simple;
+	bh=NO75yl0C/QCwRChAfVosDGNmtR5VgVEkJtdizny75eQ=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=NiJsKcoAUaY4XtX/XqmO6Og9fuogxCUnE//068g6qbFClog7eoaBiFQNxoPMbeMkMxOs3FGA8wl0M3RHkRZ7Q9qowFwkyEw4g/mncnc2RKfLfTs2XtX8ysTKCniS/4y4Y/l4Bo+4K2T6vtP8798XDvy7xFdk6FEmzP4hs51Ul0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=et60A+wg; arc=none smtp.client-ip=198.175.65.11
+	 MIME-Version; b=HrwWoS6l//o9bB66E5CL+vuz3+f5qpZc+fFSNsj7+BxYbNxK5UQBZgI6wqVXyYXAIgbIgpsv+iX19hVLdtxIWBB2VzYHPHMIufdOg9r4avsmp6zK6CLWYf1cyPq8vxef05ClWbq0ZZbetXfRxAgjlKUGxxo9CeVZQIqWGhU4wv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XFPyJhM/; arc=none smtp.client-ip=198.175.65.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751615684; x=1783151684;
+  t=1751615693; x=1783151693;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=logG108dBu9v+vZYmJaE48QCvdOD6icuV7EBnGifvsg=;
-  b=et60A+wgq6ISM4GjspNUpyRrKOfpEW3a00WN/zWYCu679/xm7leuYdCz
-   ZaSNNbHzCcnBjoJJjl9VZhXdu6aI/nvcGzbqAqESqTejeYk+8E3YyLnK8
-   I6nPvLYt0QK1JHfJVjKCBeoXj5Crodrx/Kov0WZTRxrM0eFYW4ghQ5At0
-   g/YYBlvRs4mFgxIPnCETdAqK6urMIrbegiA8aweyQvkhx70zeFWP8fzKM
-   tXcZVbn7V6WVS4x195LNk97PpD5VRK0nuD0fuhnqWsqIv3C5+7lXcy+/3
-   jDxG/41DP2yWNka2ftv20XeHOHTK/H7JxmD4C5E//xkDGOW84P2xl6he5
-   A==;
-X-CSE-ConnectionGUID: xgPG8+RvQem4YvrodoyOqQ==
-X-CSE-MsgGUID: ijRRG5kjQ3aeulZVRGgqLA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11483"; a="64194126"
+  bh=NO75yl0C/QCwRChAfVosDGNmtR5VgVEkJtdizny75eQ=;
+  b=XFPyJhM/0Gidlo4lwigeJVw8jzfMAeiag83nE6MVPTKNHSGdONv0a1VM
+   9HovT2WeKESPwrAfL4vK0rIr1LUFA4Xe3F4ufeR/c/kA3RhglZzqDSzHz
+   en90n+Mp7jsEjrGKP4sgllqM6BFaHZ4vTg0w6u4/KyncwPyFak3Ufg2w4
+   ujkkMsRKk7urmyCOTvVith6OItUL5IUIuHLHxsNv1mfqiH09Y3Q2kQepD
+   khpcsH8VkurFCddrwMf4NBj1wEKbqknOUEWx8xEa4av7pZFPmI5lNKjQy
+   fde6X0eXM3VuWdiQYDp2SCGhzE38OBw07n5q/kqayV62153PvQMiMDQ7g
+   Q==;
+X-CSE-ConnectionGUID: jv8gXHKIQfeC9rj0BeVDNA==
+X-CSE-MsgGUID: SMCd7f+wQDKY3rKRbryQHw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11483"; a="64194220"
 X-IronPort-AV: E=Sophos;i="6.16,286,1744095600"; 
-   d="scan'208";a="64194126"
+   d="scan'208";a="64194220"
 Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 00:54:44 -0700
-X-CSE-ConnectionGUID: rbi9tavUSMOh371v/XWsQA==
-X-CSE-MsgGUID: 6ST/TLHmQKiMFn0fLWSHsg==
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 00:54:47 -0700
+X-CSE-ConnectionGUID: QEo8glDxTqWRbZPCkwigrA==
+X-CSE-MsgGUID: Vww84vogRU6mgpGMnplGHw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.16,286,1744095600"; 
-   d="scan'208";a="158616594"
+   d="scan'208";a="158616602"
 Received: from jkrzyszt-mobl2.ger.corp.intel.com (HELO svinhufvud.fi.intel.com) ([10.245.244.244])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 00:54:41 -0700
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 00:54:43 -0700
 Received: from svinhufvud.lan (localhost [IPv6:::1])
-	by svinhufvud.fi.intel.com (Postfix) with ESMTP id A488744424;
-	Fri,  4 Jul 2025 10:54:39 +0300 (EEST)
+	by svinhufvud.fi.intel.com (Postfix) with ESMTP id 30B1844910;
+	Fri,  4 Jul 2025 10:54:41 +0300 (EEST)
 Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
 From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Mark Greer <mgreer@animalcreek.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-wireless@vger.kernel.org,
-	netdev@vger.kernel.org,
+To: Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: linux-phy@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 50/80] nfc: trf7970a: Remove redundant pm_runtime_mark_last_busy() calls
-Date: Fri,  4 Jul 2025 10:54:39 +0300
-Message-Id: <20250704075439.3221036-1-sakari.ailus@linux.intel.com>
+Subject: [PATCH 52/80] phy: motorola: phy-mapphone-mdm6600: Remove redundant pm_runtime_mark_last_busy() calls
+Date: Fri,  4 Jul 2025 10:54:40 +0300
+Message-Id: <20250704075440.3221183-1-sakari.ailus@linux.intel.com>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250704075225.3212486-1-sakari.ailus@linux.intel.com>
 References: <20250704075225.3212486-1-sakari.ailus@linux.intel.com>
@@ -98,21 +102,29 @@ rc2:
         git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
                 pm-runtime-6.17-rc1
 
- drivers/nfc/trf7970a.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/phy/motorola/phy-mapphone-mdm6600.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/nfc/trf7970a.c b/drivers/nfc/trf7970a.c
-index d17c701c7888..2d0d348aa278 100644
---- a/drivers/nfc/trf7970a.c
-+++ b/drivers/nfc/trf7970a.c
-@@ -1139,7 +1139,6 @@ static void trf7970a_switch_rf_off(struct trf7970a *trf)
- 	trf->aborting = false;
- 	trf->state = TRF7970A_ST_RF_OFF;
+diff --git a/drivers/phy/motorola/phy-mapphone-mdm6600.c b/drivers/phy/motorola/phy-mapphone-mdm6600.c
+index fd0e0cd1c1cf..c82826bd2832 100644
+--- a/drivers/phy/motorola/phy-mapphone-mdm6600.c
++++ b/drivers/phy/motorola/phy-mapphone-mdm6600.c
+@@ -248,7 +248,6 @@ static irqreturn_t phy_mdm6600_wakeirq_thread(int irq, void *data)
+ 	}
  
--	pm_runtime_mark_last_busy(trf->dev);
- 	pm_runtime_put_autosuspend(trf->dev);
- }
+ 	/* Just wake-up and kick the autosuspend timer */
+-	pm_runtime_mark_last_busy(ddata->dev);
+ 	pm_runtime_put_autosuspend(ddata->dev);
  
+ 	return IRQ_HANDLED;
+@@ -616,7 +615,6 @@ static int phy_mdm6600_probe(struct platform_device *pdev)
+ 		error = PTR_ERR(ddata->phy_provider);
+ 
+ idle:
+-	pm_runtime_mark_last_busy(ddata->dev);
+ 	pm_runtime_put_autosuspend(ddata->dev);
+ 
+ cleanup:
 -- 
 2.39.5
 
