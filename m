@@ -1,121 +1,168 @@
-Return-Path: <linux-kernel+bounces-716788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-717617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF98CAF8AC8
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 10:10:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D79BCAF9694
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 17:16:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C77603BACB0
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 08:07:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EA843AC351
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 15:15:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FD042F0C5E;
-	Fri,  4 Jul 2025 07:54:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A7EF189F3B;
+	Fri,  4 Jul 2025 15:16:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="g4OxOzT2"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N2OUUvjM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 091D42EF299;
-	Fri,  4 Jul 2025 07:54:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F311010942;
+	Fri,  4 Jul 2025 15:16:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751615694; cv=none; b=PZ+fmj3xzUu6pQBgjJwJwtMFHG0febDftSq1w/rpDsC2NiIjnoXEW87EOUc3OkFUcM9PtnPDpyM2Dddf5RcLnvqkAjVLep1bOGxLhl3gYtzo0GpYXdcVxlaU5eTaKrE20pywJn5GP4U3Z7Ps7vx06rPCH0uX4+C1Yydl1Jf4A3U=
+	t=1751642177; cv=none; b=RBiQCWmiYAa7r/RjsaBGiYEAETwT4AMsUgfMz68nJYEaIX/cNyxq5ExOEgDpPEfjWj0ga0iBLnBt00kA5qvKGrvemQDMcWl/Uf7i2r8MaWGi6p8rJaOAzn9l6awt0n/XaiIOs27iQyrJqPyNNoLqavZK1OvPC1SSlw1kPamBkyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751615694; c=relaxed/simple;
-	bh=XL16kP0PZnjoqoViYhoYPPV5qOcdw3Kn409Pww6lGhs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gAKpkYwC1AqanTpwvEu2KqoQLsnAqZRdhPmY9qZxyQTRsYQG93Uvzh80c1A5N4I7wTfnvEdgkRGCJSljZ0ufgqKceHuz1edjzd+fUX7xNFAdcd8yd49vhxUoLp6zL/gFlNPdGyQmLk2FNwdGzPYv6DG/RY9aLiLKipSMID3Rvlo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=g4OxOzT2; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751615692; x=1783151692;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=XL16kP0PZnjoqoViYhoYPPV5qOcdw3Kn409Pww6lGhs=;
-  b=g4OxOzT29ly0hWFFVhbQ+jNuwkhuraVfFY5W1jK+F8UmuUyZ29GpK6ez
-   yyZJojOFXqW2Z9nf5Yeos1TQ90kS+DN/3Pcb1YgrRz9KesR7g6N2F/4zb
-   JAkG8k9jqUCDkt67LdRkQNdH7kBIhpwXcZ1L+03AiFSyJxPvjgpfMBpw2
-   R2hlZboyZG5ugmMgl7DZArc9B9XDKOXHQ/g9N2F1f8y0jxlSPjB7SGagf
-   OzjOLx/OIcAK7cKKGbFHjJIlGlfXiAFNUMDr3Xmrsg2eWQ2JhaiwUdcXy
-   7+khwTZCc253QgdbYi8/BAJbcePAaLP7j3P/Y7ta/N+0viuVYRNrEtSJH
-   A==;
-X-CSE-ConnectionGUID: h+N2/KbMR7eGjFOYxNcMQA==
-X-CSE-MsgGUID: L2xUQhOIToiWm4lZPGLo2w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11483"; a="57621180"
-X-IronPort-AV: E=Sophos;i="6.16,286,1744095600"; 
-   d="scan'208";a="57621180"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 00:54:51 -0700
-X-CSE-ConnectionGUID: dDHsq61tTAaPg6EQF7QhNA==
-X-CSE-MsgGUID: wmU7MIggTn6PNHty1Z6djA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,286,1744095600"; 
-   d="scan'208";a="154664104"
-Received: from qiuxu-clx.sh.intel.com ([10.239.53.109])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 00:54:48 -0700
-From: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
-To: Tony Luck <tony.luck@intel.com>,
-	Borislav Petkov <bp@alien8.de>
-Cc: Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
-	Laurens SEGHERS <laurens@rale.com>,
-	James Morse <james.morse@arm.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Robert Richter <rric@kernel.org>,
-	Lili Li <lili.li@intel.com>,
-	VikasX Chougule <vikasx.chougule@intel.com>,
-	linux-edac@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] EDAC/ie31200: Add Intel Raptor Lake-HX SoCs support
-Date: Fri,  4 Jul 2025 23:16:09 +0800
-Message-ID: <20250704151609.7833-4-qiuxu.zhuo@intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250704151609.7833-1-qiuxu.zhuo@intel.com>
-References: <20250704151609.7833-1-qiuxu.zhuo@intel.com>
+	s=arc-20240116; t=1751642177; c=relaxed/simple;
+	bh=fdncFe+kRLkLN8JKby0Zgs6+T99Ms/eQIw5jZsqT9Ys=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XNUetQEqIqYmpN8uMOOjsXs8RV22fr0jiFIfxtPnEUG5nvPkuD1Wdsn8u94VpAMf/lMq/Qw/gGCfyfJuk6SfG5zTNNBk8q9xhGEUxiZMj299y5P6RsLEtC1WRhBYZfCt4H6eA26BA1RTcSE3iy+lV28KlHTFzUT2jNJPYmbzZfQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N2OUUvjM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73289C4CEE3;
+	Fri,  4 Jul 2025 15:16:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751642176;
+	bh=fdncFe+kRLkLN8JKby0Zgs6+T99Ms/eQIw5jZsqT9Ys=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=N2OUUvjMt2UqsDufh8VcCyObOPhay8lZQM3h1uFbdqHCFtkKcWgi6Gnl8J0DI8qPC
+	 G5c6/M+LtmppkfVtj2PrpCzSI9ysYowncS7Cg5/ZyFxrRxkm9qfEOwaegiYBdEvjJN
+	 /g8n/39NKKy2HEvbXjUOo6uIyT4gi73ds2GUTHAhR1K0NlzXdz3pLD9mLTCKwpFYzT
+	 ZgarzHmuS1vFs8ZkOxXw2oP6zSyRKf9viUMhEv/A5y28r5WQcealVVksLSqpJhEGWr
+	 Ay3MoeBIMY4NF/p94veWNytGWNdZKaAlc7vVnRRTrl5WQ4iIlDOd6jvycPSOfgzJ5E
+	 zHJATaoA5UIuQ==
+Date: Fri, 4 Jul 2025 18:16:13 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Jonathan McDowell <noodles@earth.li>
+Cc: "Orlov, Ivan" <iorlov@amazon.co.uk>,
+	"peterhuewe@gmx.de" <peterhuewe@gmx.de>,
+	"jgg@ziepe.ca" <jgg@ziepe.ca>,
+	"linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"Woodhouse, David" <dwmw@amazon.co.uk>
+Subject: Re: [PATCH v2] tpm: Fix the timeout & use ktime
+Message-ID: <aGfwPbMZf-SHshXH@kernel.org>
+References: <20250620180828.98413-1-iorlov@amazon.com>
+ <aFhtKrWTDzZbpTSh@earth.li>
+ <aFwnG--lzZO0mQgc@kernel.org>
+ <aGeYqQG15lb2_NaU@earth.li>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aGeYqQG15lb2_NaU@earth.li>
 
-Intel Raptor Lake-HX SoC shares the same memory controller registers
-as Raptor Lake-S SoC. Add a compute die ID for Raptor Lake-HX SoCs with
-Out-of-Band ECC capability for EDAC support.
+On Fri, Jul 04, 2025 at 10:02:33AM +0100, Jonathan McDowell wrote:
+> On Wed, Jun 25, 2025 at 07:43:07PM +0300, Jarkko Sakkinen wrote:
+> > On Sun, Jun 22, 2025 at 09:52:58PM +0100, Jonathan McDowell wrote:
+> > > On Fri, Jun 20, 2025 at 06:08:31PM +0000, Orlov, Ivan wrote:
+> > > > The current implementation of timeout detection works in the following
+> > > > way:
+> > > >
+> > > > 1. Read completion status. If completed, return the data
+> > > > 2. Sleep for some time (usleep_range)
+> > > > 3. Check for timeout using current jiffies value. Return an error if
+> > > >   timed out
+> > > > 4. Goto 1
+> > > >
+> > > > usleep_range doesn't guarantee it's always going to wake up strictly in
+> > > > (min, max) range, so such a situation is possible:
+> > > >
+> > > > 1. Driver reads completion status. No completion yet
+> > > > 2. Process sleeps indefinitely. In the meantime, TPM responds
+> > > > 3. We check for timeout without checking for the completion again.
+> > > >   Result is lost.
+> > > >
+> > > > Such a situation also happens for the guest VMs: if vCPU goes to sleep
+> > > > and doesn't get scheduled for some time, the guest TPM driver will
+> > > > timeout instantly after waking up without checking for the completion
+> > > > (which may already be in place).
+> > > >
+> > > > Perform the completion check once again after exiting the busy loop in
+> > > > order to give the device the last chance to send us some data.
+> > > >
+> > > > Since now we check for completion in two places, extract this check into
+> > > > a separate function.
+> > > >
+> > > > Signed-off-by: Ivan Orlov <iorlov@amazon.com>
+> > > > ---
+> > > > V1 -> V2:
+> > > > - Exclude the jiffies -> ktime change from the patch
+> > > > - Instead of recording the time before checking for completion, check
+> > > >  for completion once again after leaving the loop
+> > > >
+> > > > drivers/char/tpm/tpm-interface.c | 17 +++++++++++++++--
+> > > > 1 file changed, 15 insertions(+), 2 deletions(-)
+> > > >
+> > > > diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+> > > > index 8d7e4da6ed53..6960ee2798e1 100644
+> > > > --- a/drivers/char/tpm/tpm-interface.c
+> > > > +++ b/drivers/char/tpm/tpm-interface.c
+> > > > @@ -82,6 +82,13 @@ static bool tpm_chip_req_canceled(struct tpm_chip *chip, u8 status)
+> > > > 	return chip->ops->req_canceled(chip, status);
+> > > > }
+> > > >
+> > > > +static bool tpm_transmit_completed(struct tpm_chip *chip)
+> > > > +{
+> > > > +	u8 status_masked = tpm_chip_status(chip) & chip->ops->req_complete_mask;
+> > > > +
+> > > > +	return status_masked == chip->ops->req_complete_val;
+> > > > +}
+> > > > +
+> > > > static ssize_t tpm_try_transmit(struct tpm_chip *chip, void *buf, size_t bufsiz)
+> > > > {
+> > > > 	struct tpm_header *header = buf;
+> > > > @@ -129,8 +136,7 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip, void *buf, size_t bufsiz)
+> > > > 	stop = jiffies + tpm_calc_ordinal_duration(chip, ordinal);
+> > > > 	do {
+> > > > 		u8 status = tpm_chip_status(chip);
+> > > > -		if ((status & chip->ops->req_complete_mask) ==
+> > > > -		    chip->ops->req_complete_val)
+> > > > +		if (tpm_transmit_completed(chip))
+> > > > 			goto out_recv;
+> > > 
+> > > The only thing I'd point out here is we end up doing a double status read
+> > > one after the other (once here, once in tpm_transmit_completed), and I'm
+> > > pretty sure I've seen instances where that caused a problem.
+> > 
+> > It would be easy to to prevent at least double reads after completion
+> > e.g., in tpm_chip_status():
+> 
+> Or just take the simple approach and make the check after the while loop:
+> 
+> 	if ((tpm_chip_status(chip) & chip->ops->req_complete_mask) ==
+> 	    chip->ops->req_complete_val)
+> 		goto out_recv;
+> 
+> There might be potential for a longer term cleanup using chip->status to
+> cache things, but I'm little concerned that's going to open paths where we
+> might not correctly update it, so I think it should be a separate piece.
+> 
+> (I'm motivated by the fact we've started to see the "Operation Canceled"
+> error and I'd like us to close on the best way to fix it. :) )
 
-Signed-off-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
-Tested-by: Laurens SEGHERS <laurens@rale.com>
----
- drivers/edac/ie31200_edac.c | 4 ++++
- 1 file changed, 4 insertions(+)
+This would work for me too!
 
-diff --git a/drivers/edac/ie31200_edac.c b/drivers/edac/ie31200_edac.c
-index d9533ca25635..5c1fa1c0d12e 100644
---- a/drivers/edac/ie31200_edac.c
-+++ b/drivers/edac/ie31200_edac.c
-@@ -94,6 +94,9 @@
- #define PCI_DEVICE_ID_INTEL_IE31200_RPL_S_5	0xa740 /* 8P+12E, e.g. i7-14700 */
- #define PCI_DEVICE_ID_INTEL_IE31200_RPL_S_6	0xa704 /* 6P+8E,  e.g. i5-14600 */
- 
-+/* Raptor Lake-HX */
-+#define PCI_DEVICE_ID_INTEL_IE31200_RPL_HX_1	0xa702 /* 8P+16E, e.g. i9-13950HX */
-+
- /* Alder Lake-S */
- #define PCI_DEVICE_ID_INTEL_IE31200_ADL_S_1	0x4660
- 
-@@ -756,6 +759,7 @@ static const struct pci_device_id ie31200_pci_tbl[] = {
- 	{ PCI_VDEVICE(INTEL, PCI_DEVICE_ID_INTEL_IE31200_RPL_S_4), (kernel_ulong_t)&rpl_s_cfg},
- 	{ PCI_VDEVICE(INTEL, PCI_DEVICE_ID_INTEL_IE31200_RPL_S_5), (kernel_ulong_t)&rpl_s_cfg},
- 	{ PCI_VDEVICE(INTEL, PCI_DEVICE_ID_INTEL_IE31200_RPL_S_6), (kernel_ulong_t)&rpl_s_cfg},
-+	{ PCI_VDEVICE(INTEL, PCI_DEVICE_ID_INTEL_IE31200_RPL_HX_1), (kernel_ulong_t)&rpl_s_cfg},
- 	{ PCI_VDEVICE(INTEL, PCI_DEVICE_ID_INTEL_IE31200_ADL_S_1), (kernel_ulong_t)&rpl_s_cfg},
- 	{ PCI_VDEVICE(INTEL, PCI_DEVICE_ID_INTEL_IE31200_BTL_S_1), (kernel_ulong_t)&rpl_s_cfg},
- 	{ PCI_VDEVICE(INTEL, PCI_DEVICE_ID_INTEL_IE31200_BTL_S_2), (kernel_ulong_t)&rpl_s_cfg},
--- 
-2.43.0
+Please send a new version if you feel like it but next week I won't be
+reviewing that as I'm on holiday.
 
+> 
+> J.
+> -- 
+> I am afraid of the dark.
+
+BR, Jarkko
 
