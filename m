@@ -1,355 +1,117 @@
-Return-Path: <linux-kernel+bounces-717924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-717932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A68A0AF9AD6
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 20:39:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7252AF9AE9
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 20:50:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 406934A7082
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 18:39:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2226C1C411D8
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 18:50:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60F9A28B516;
-	Fri,  4 Jul 2025 18:39:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74FE21DE889;
+	Fri,  4 Jul 2025 18:50:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eFlvWqi7"
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="YrN2OT2W"
+Received: from smtp.smtpout.orange.fr (smtp-23.smtpout.orange.fr [80.12.242.23])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E69132116EE;
-	Fri,  4 Jul 2025 18:39:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7B3D433B3;
+	Fri,  4 Jul 2025 18:50:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751654382; cv=none; b=k7bfq/Im6o9c8u2tWS2snDiNGPECLu2LVVwkMhMG+otlNJybH2nmFHNQoae9zmeF+eigKOS+WPZEiRXIV03aruECvJ+EAwW4OHS0Ulj/HdqJa8pCIWcIi755yw7wFj7MdhvCs7LnPbodcUJDEhgRPzufqOfM3UL4skH+ilVIhOE=
+	t=1751655029; cv=none; b=RfS5xdMfKDp6moEPFe+am1lP9H8tTY9rnE/xrg2vO6CjKdR6nA6Cp8OB89ecEpJQIeLedFjl5LYLKQbIaECxUBPCixGC4mDMTZY2q/zFSryXlEw22N0A5vuDfyOP+vt80HwsfuTaaPhJ4FfWtQAjiADbXgPkaSBv2yy/XyYjWss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751654382; c=relaxed/simple;
-	bh=oIiPtbnQd8XpJxbubKts0sTbQUNsG/DmXU9eAiM+z60=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UI6gb8hLF37UQABHOSPBC0s4ttucWec65XyvwSeh+cIToYItVRohZgWHYijeUwZC8svQHwj+yXBwI9JxzZPvirImROErFdXst/eC6XfvFOyImXAPsNVItHeX5HUg6xs0fSKZBwZACFSo/QX4Kt7w5jcsvwHIS6KW0EGBcvgmsgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eFlvWqi7; arc=none smtp.client-ip=209.85.219.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6fd0a91ae98so9279376d6.1;
-        Fri, 04 Jul 2025 11:39:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751654380; x=1752259180; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZLSI4jmhCdQ92xJmwXMCUX4eg1LhZKqmG9IrE2rHlKE=;
-        b=eFlvWqi78S72kkPhLL2jrlXIaT913xyticAZ2Xg7XpQIIgTwWsBodfAnPXqbCvGTQc
-         DdByqLimRIO47M6yOGBSSzewPyUwH7gKn5HDl9ANKMdv1uBwYAzBvz0NU2qiYb2iGgTE
-         NoRFFwBS5HfZrF2iGWmkV34F+cigXfy1YRlb9rF56vNSaPym22BV7SeHxeh99ECWybdR
-         4TYXhIXWZ61jlfdihUtG47Lb+o2prk8ylJuvYTOEQj83yEOoymuDFIOcfjaWb11/BhOD
-         DWxK5QHNMb8SR5p2jyvbiOYyiwipugEkqLIRFNr1M2HJ+b8EEJMdCaFyZRQ++XCeKxgB
-         vwLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751654380; x=1752259180;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZLSI4jmhCdQ92xJmwXMCUX4eg1LhZKqmG9IrE2rHlKE=;
-        b=XZchkIgqPqgc600onei3SOvC4f78kxZ1nct+q8WWGGpELW0z0j76dmKs7bc7MDjtxm
-         MJ8gNMFtZKjlupd8ZOtZGSf4M5mESWgi1OutfUQqjLcNDFvkAs8M0NXFFwZrsgSHZh9c
-         X74iR185vcU1LIh0bViZnd7GzuK5JTe4QbytPLYkLrI4+5Ki3pJBypzR3czuVkI1j95M
-         vWM9lIfu2RHKn5CGJYw3LI+g9Xyq/52hQmIEI+8zeR/ZntYRRwIdivNoH459smeFi7FU
-         YBaox46/VYTHLmUl8eEa6Wab82Rl47NVlwmYh3jhF6yc+7gKGdT3Yvi3u5CA6BYPyt5Y
-         +gbw==
-X-Forwarded-Encrypted: i=1; AJvYcCURkDrFmaLWRr86HwZl767r5QzZ/xAJEvNr7+8m0SiwF3I30Gh31AiFs6mGRyUiT3Bz348CSgGxrCOzeSI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIN6LC5mX4es7nQlBgHRxi+6E9biUPQnsQ48Cv0bE/kbBe3G0C
-	QFFngHW8XjOH4HUnybJxITUOTyNLGfUoQSU88AAc4AcT7lM7kA38AygFAsahiNgnKBpY9pBKrlu
-	HnbqakoLJrZEY/4N6/9sT9YOxoUEAfEY=
-X-Gm-Gg: ASbGncsFuyDksNaPNrqapfM/EfED08xcg6rnXJCadHs4o7iwcz0+hnVtkSuHmovZm+5
-	4WiA/opzilZ46mCuxRKM110Q6k7Sv5m1H0uR3zAmZ9sK2/aM6GY5ZrxjIonHf7MZ87HSxDjBjJ7
-	8vxzKygDCtSDfz0ysiAwoHImgkWXQxAuBfTjXs2OnfBo8=
-X-Google-Smtp-Source: AGHT+IH+JWc+g38J/FXavoBpRFG4t26kf9xdnO56cRpAbEuqXLbNRw6f7/YaTbEFWCoX0zCKHZqZhrMJuqELKkmF+OE=
-X-Received: by 2002:ad4:5dcb:0:b0:6fa:fbde:7e23 with SMTP id
- 6a1803df08f44-702c8b71f2fmr45565996d6.8.1751654379557; Fri, 04 Jul 2025
- 11:39:39 -0700 (PDT)
+	s=arc-20240116; t=1751655029; c=relaxed/simple;
+	bh=nEYwc1VTGcfVPDviy0pXUbVVeHPyAmgcNUEtRwV9eIo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=izXi3vsKfYkOuwCVZGE7u+Zt6AiLCUukVvj7JsCuMXMVyQvwHKPHU1wAcKwThJnFnh/j2grLu2dwX1JXtlRgoI6wlZhmfmPQ8BUmDQ3rAmpvVK5quAD/7nWMZBHR28vXTD/oAwDeJeNoIdvr8QwvWx5obaCIY3x2FIcs6c5Ti+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=YrN2OT2W; arc=none smtp.client-ip=80.12.242.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
+ ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
+	by smtp.orange.fr with ESMTPA
+	id XlLBuBXyQZ4iTXlLBuO0t3; Fri, 04 Jul 2025 20:40:55 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1751654455;
+	bh=OnSSrMdktbh2fXNZWaY2HHusP/khfiopcZcQ51lmSZE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=YrN2OT2WlfXaYtgIjJMCjWU35w1ts2kTYrOOSWUpJB6Gf7kHrxJWkIy5uf0hNzEUJ
+	 FpoagX2Twl4Cf/WEOIAta/ZUboYpN/CWVQMPNHU6PgPt1chV7wTKaVNBe4bkk/KhTF
+	 nkCflaBD8LYQwa+NNzs8ON2CK5UeIqS6YyHdimrRBwDenNtUUF3qvsqK7fviM98PVi
+	 fmqIJXn4mx1oYOtc0LbUBSlbAD3aTOEGW/DhXTyYs4DOtSaSYjNUKA9L26UMtYd4n6
+	 X6Q/bWwGbTEedhUPs8Vr+vS7WYCM6OhP1pF6IeiLERVxInTaR3bF+K8LFiTtSgj7JO
+	 JEhME0BaFBviQ==
+X-ME-Helo: [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Fri, 04 Jul 2025 20:40:55 +0200
+X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
+Message-ID: <95dad033-4338-46de-b62a-be1db459b0ec@wanadoo.fr>
+Date: Fri, 4 Jul 2025 20:40:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250704042323.10318-1-kanchana.p.sridhar@intel.com> <20250704042323.10318-21-kanchana.p.sridhar@intel.com>
-In-Reply-To: <20250704042323.10318-21-kanchana.p.sridhar@intel.com>
-From: Nhat Pham <nphamcs@gmail.com>
-Date: Fri, 4 Jul 2025 11:39:28 -0700
-X-Gm-Features: Ac12FXwCQLsXq5LlRFraBt2YLteHvlw4htbXYU6u9qy7Z6Cs1ldYzuebXMyBqvg
-Message-ID: <CAKEwX=PFJzc0pErjMcfeeheGL8u4GWMu2yr-iqWmFvYMKfT3fg@mail.gmail.com>
-Subject: Re: [PATCH v10 20/25] mm: zswap: Move the CPU hotplug procedures
- under "pool functions".
-To: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, hannes@cmpxchg.org, 
-	yosry.ahmed@linux.dev, chengming.zhou@linux.dev, usamaarif642@gmail.com, 
-	ryan.roberts@arm.com, 21cnbao@gmail.com, ying.huang@linux.alibaba.com, 
-	akpm@linux-foundation.org, senozhatsky@chromium.org, 
-	linux-crypto@vger.kernel.org, herbert@gondor.apana.org.au, 
-	davem@davemloft.net, clabbe@baylibre.com, ardb@kernel.org, 
-	ebiggers@google.com, surenb@google.com, kristen.c.accardi@intel.com, 
-	vinicius.gomes@intel.com, wajdi.k.feghali@intel.com, vinodh.gopal@intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 2/3] eeprom: add driver for ST M24LR series RFID/NFC
+ EEPROM chips
+To: Abd-Alrhman Masalkhi <abd.masalkhi@gmail.com>
+Cc: arnd@arndb.de, conor+dt@kernel.org, devicetree@vger.kernel.org,
+ gregkh@linuxfoundation.org, krzk+dt@kernel.org,
+ linux-kernel@vger.kernel.org, luoyifan@cmss.chinamobile.com, robh@kernel.org
+References: <f14dfb9a-caf7-4889-a892-6fd61a9a5ecd@wanadoo.fr>
+ <20250704151146.12118-1-abd.masalkhi@gmail.com>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20250704151146.12118-1-abd.masalkhi@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jul 3, 2025 at 9:23=E2=80=AFPM Kanchana P Sridhar
-<kanchana.p.sridhar@intel.com> wrote:
->
-> This patch merely moves zswap_cpu_comp_prepare() and
-> zswap_cpu_comp_dead() to be in the "pool functions" section because
-> these functions are invoked upon pool creation/deletion.
+Le 04/07/2025 à 17:11, Abd-Alrhman Masalkhi a écrit :
+> Hi Christophe,
+> 
+> Thank you for the review!
+> 
+> On Fri, 4 Jul 2025 16:12:56 +0200, Christophe JAILLET wrote:
+>>> +/**
+>>> + * m24lr_regmap_read - read data using regmap with retry on failure
+>>> + * @regmap:  regmap instance for the device
+>>> + * @buf:     buffer to store the read data
+>>> + * @size:    number of bytes to read
+>>> + * @offset:  starting register address
+>>> + *
+>>> + * Attempts to read a block of data from the device with retries and timeout.
+>>> + * Some M24LR chips may transiently NACK reads (e.g., during internal write
+>>> + * cycles), so this function retries with a short sleep until the timeout
+>>> + * expires.
+>>> + *
+>>> + * Returns:
+>>> + *	 Number of bytes read on success,
+>>> + *	 -ETIMEDOUT if the read fails within the timeout window.
+>>> + */
+>>> +static ssize_t m24lr_regmap_read(struct regmap *regmap, u8 *buf,
+>>> +				 size_t size, unsigned int offset)
+>>
+>> Why returning a ssize_t?
+>> regmap_bulk_read() returns an int.
+> 
+> Since I return @size (of type size_t) on success, should I keep the
+> return type as ssize_t, or would it be better to change it to int
+> to match regmap_bulk_read()?
 
-Hmm idk, "compressed storage" section seems fitting for
-zswap_cpu_comp_prepare() and zswap_cpu_comp_dead().
+Hmm, this ends being used with BIN_ATTR() in 
+m24lr_ctl_sss_[read|write]() so it needs to keep with ssize_t.
 
-Is this patch necessary?
+CJ
 
->
-> Signed-off-by: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
-> ---
->  mm/zswap.c | 188 ++++++++++++++++++++++++++---------------------------
->  1 file changed, 94 insertions(+), 94 deletions(-)
->
-> diff --git a/mm/zswap.c b/mm/zswap.c
-> index 3c0fd8a137182..3538ecaed5e16 100644
-> --- a/mm/zswap.c
-> +++ b/mm/zswap.c
-> @@ -248,6 +248,100 @@ static inline struct xarray *swap_zswap_tree(swp_en=
-try_t swp)
->  **********************************/
->  static void __zswap_pool_empty(struct percpu_ref *ref);
->
-> +static int zswap_cpu_comp_prepare(unsigned int cpu, struct hlist_node *n=
-ode)
-> +{
-> +       struct zswap_pool *pool =3D hlist_entry(node, struct zswap_pool, =
-node);
-> +       struct crypto_acomp_ctx *acomp_ctx =3D per_cpu_ptr(pool->acomp_ct=
-x, cpu);
-> +       struct crypto_acomp *acomp =3D NULL;
-> +       struct acomp_req *req =3D NULL;
-> +       u8 *buffer =3D NULL;
-> +       int ret;
-> +
-> +       buffer =3D kmalloc_node(PAGE_SIZE * 2, GFP_KERNEL, cpu_to_node(cp=
-u));
-> +       if (!buffer) {
-> +               ret =3D -ENOMEM;
-> +               goto fail;
-> +       }
-> +
-> +       acomp =3D crypto_alloc_acomp_node(pool->tfm_name, 0, 0, cpu_to_no=
-de(cpu));
-> +       if (IS_ERR(acomp)) {
-> +               pr_err("could not alloc crypto acomp %s : %ld\n",
-> +                               pool->tfm_name, PTR_ERR(acomp));
-> +               ret =3D PTR_ERR(acomp);
-> +               goto fail;
-> +       }
-> +
-> +       req =3D acomp_request_alloc(acomp);
-> +       if (!req) {
-> +               pr_err("could not alloc crypto acomp_request %s\n",
-> +                      pool->tfm_name);
-> +               ret =3D -ENOMEM;
-> +               goto fail;
-> +       }
-> +
-> +       /*
-> +        * Only hold the mutex after completing allocations, otherwise we=
- may
-> +        * recurse into zswap through reclaim and attempt to hold the mut=
-ex
-> +        * again resulting in a deadlock.
-> +        */
-> +       mutex_lock(&acomp_ctx->mutex);
-> +       crypto_init_wait(&acomp_ctx->wait);
-> +
-> +       /*
-> +        * if the backend of acomp is async zip, crypto_req_done() will w=
-akeup
-> +        * crypto_wait_req(); if the backend of acomp is scomp, the callb=
-ack
-> +        * won't be called, crypto_wait_req() will return without blockin=
-g.
-> +        */
-> +       acomp_request_set_callback(req, CRYPTO_TFM_REQ_MAY_BACKLOG,
-> +                                  crypto_req_done, &acomp_ctx->wait);
-> +
-> +       acomp_ctx->buffer =3D buffer;
-> +       acomp_ctx->acomp =3D acomp;
-> +       acomp_ctx->is_sleepable =3D acomp_is_async(acomp);
-> +       acomp_ctx->req =3D req;
-> +       mutex_unlock(&acomp_ctx->mutex);
-> +       return 0;
-> +
-> +fail:
-> +       if (acomp)
-> +               crypto_free_acomp(acomp);
-> +       kfree(buffer);
-> +       return ret;
-> +}
-> +
-> +static int zswap_cpu_comp_dead(unsigned int cpu, struct hlist_node *node=
-)
-> +{
-> +       struct zswap_pool *pool =3D hlist_entry(node, struct zswap_pool, =
-node);
-> +       struct crypto_acomp_ctx *acomp_ctx =3D per_cpu_ptr(pool->acomp_ct=
-x, cpu);
-> +       struct acomp_req *req;
-> +       struct crypto_acomp *acomp;
-> +       u8 *buffer;
-> +
-> +       if (IS_ERR_OR_NULL(acomp_ctx))
-> +               return 0;
-> +
-> +       mutex_lock(&acomp_ctx->mutex);
-> +       req =3D acomp_ctx->req;
-> +       acomp =3D acomp_ctx->acomp;
-> +       buffer =3D acomp_ctx->buffer;
-> +       acomp_ctx->req =3D NULL;
-> +       acomp_ctx->acomp =3D NULL;
-> +       acomp_ctx->buffer =3D NULL;
-> +       mutex_unlock(&acomp_ctx->mutex);
-> +
-> +       /*
-> +        * Do the actual freeing after releasing the mutex to avoid subtl=
-e
-> +        * locking dependencies causing deadlocks.
-> +        */
-> +       if (!IS_ERR_OR_NULL(req))
-> +               acomp_request_free(req);
-> +       if (!IS_ERR_OR_NULL(acomp))
-> +               crypto_free_acomp(acomp);
-> +       kfree(buffer);
-> +
-> +       return 0;
-> +}
-> +
->  static struct zswap_pool *zswap_pool_create(char *type, char *compressor=
-)
->  {
->         struct zswap_pool *pool;
-> @@ -818,100 +912,6 @@ static void zswap_entry_free(struct zswap_entry *en=
-try)
->  /*********************************
->  * compressed storage functions
->  **********************************/
-> -static int zswap_cpu_comp_prepare(unsigned int cpu, struct hlist_node *n=
-ode)
-> -{
-> -       struct zswap_pool *pool =3D hlist_entry(node, struct zswap_pool, =
-node);
-> -       struct crypto_acomp_ctx *acomp_ctx =3D per_cpu_ptr(pool->acomp_ct=
-x, cpu);
-> -       struct crypto_acomp *acomp =3D NULL;
-> -       struct acomp_req *req =3D NULL;
-> -       u8 *buffer =3D NULL;
-> -       int ret;
-> -
-> -       buffer =3D kmalloc_node(PAGE_SIZE * 2, GFP_KERNEL, cpu_to_node(cp=
-u));
-> -       if (!buffer) {
-> -               ret =3D -ENOMEM;
-> -               goto fail;
-> -       }
-> -
-> -       acomp =3D crypto_alloc_acomp_node(pool->tfm_name, 0, 0, cpu_to_no=
-de(cpu));
-> -       if (IS_ERR(acomp)) {
-> -               pr_err("could not alloc crypto acomp %s : %ld\n",
-> -                               pool->tfm_name, PTR_ERR(acomp));
-> -               ret =3D PTR_ERR(acomp);
-> -               goto fail;
-> -       }
-> -
-> -       req =3D acomp_request_alloc(acomp);
-> -       if (!req) {
-> -               pr_err("could not alloc crypto acomp_request %s\n",
-> -                      pool->tfm_name);
-> -               ret =3D -ENOMEM;
-> -               goto fail;
-> -       }
-> -
-> -       /*
-> -        * Only hold the mutex after completing allocations, otherwise we=
- may
-> -        * recurse into zswap through reclaim and attempt to hold the mut=
-ex
-> -        * again resulting in a deadlock.
-> -        */
-> -       mutex_lock(&acomp_ctx->mutex);
-> -       crypto_init_wait(&acomp_ctx->wait);
-> -
-> -       /*
-> -        * if the backend of acomp is async zip, crypto_req_done() will w=
-akeup
-> -        * crypto_wait_req(); if the backend of acomp is scomp, the callb=
-ack
-> -        * won't be called, crypto_wait_req() will return without blockin=
-g.
-> -        */
-> -       acomp_request_set_callback(req, CRYPTO_TFM_REQ_MAY_BACKLOG,
-> -                                  crypto_req_done, &acomp_ctx->wait);
-> -
-> -       acomp_ctx->buffer =3D buffer;
-> -       acomp_ctx->acomp =3D acomp;
-> -       acomp_ctx->is_sleepable =3D acomp_is_async(acomp);
-> -       acomp_ctx->req =3D req;
-> -       mutex_unlock(&acomp_ctx->mutex);
-> -       return 0;
-> -
-> -fail:
-> -       if (acomp)
-> -               crypto_free_acomp(acomp);
-> -       kfree(buffer);
-> -       return ret;
-> -}
-> -
-> -static int zswap_cpu_comp_dead(unsigned int cpu, struct hlist_node *node=
-)
-> -{
-> -       struct zswap_pool *pool =3D hlist_entry(node, struct zswap_pool, =
-node);
-> -       struct crypto_acomp_ctx *acomp_ctx =3D per_cpu_ptr(pool->acomp_ct=
-x, cpu);
-> -       struct acomp_req *req;
-> -       struct crypto_acomp *acomp;
-> -       u8 *buffer;
-> -
-> -       if (IS_ERR_OR_NULL(acomp_ctx))
-> -               return 0;
-> -
-> -       mutex_lock(&acomp_ctx->mutex);
-> -       req =3D acomp_ctx->req;
-> -       acomp =3D acomp_ctx->acomp;
-> -       buffer =3D acomp_ctx->buffer;
-> -       acomp_ctx->req =3D NULL;
-> -       acomp_ctx->acomp =3D NULL;
-> -       acomp_ctx->buffer =3D NULL;
-> -       mutex_unlock(&acomp_ctx->mutex);
-> -
-> -       /*
-> -        * Do the actual freeing after releasing the mutex to avoid subtl=
-e
-> -        * locking dependencies causing deadlocks.
-> -        */
-> -       if (!IS_ERR_OR_NULL(req))
-> -               acomp_request_free(req);
-> -       if (!IS_ERR_OR_NULL(acomp))
-> -               crypto_free_acomp(acomp);
-> -       kfree(buffer);
-> -
-> -       return 0;
-> -}
-> -
->  static struct crypto_acomp_ctx *acomp_ctx_get_cpu_lock(struct zswap_pool=
- *pool)
->  {
->         struct crypto_acomp_ctx *acomp_ctx;
-> --
-> 2.27.0
->
+> 
+> Best regards,
+> Abd-Alrhman Masalkhi
+> 
+> 
+
 
