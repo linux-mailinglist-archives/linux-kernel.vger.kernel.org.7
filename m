@@ -1,87 +1,124 @@
-Return-Path: <linux-kernel+bounces-717331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-717334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86828AF92F2
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 14:42:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BB2C8AF92FE
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 14:43:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BC531CA4F53
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 12:42:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51B1C1CA6EF7
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 12:44:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAA8F2D94A5;
-	Fri,  4 Jul 2025 12:41:52 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0010.hostedemail.com [216.40.44.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 810BE2D9483;
+	Fri,  4 Jul 2025 12:43:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WXsQpX3y"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D12782D948A
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 12:41:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7C3B42A83;
+	Fri,  4 Jul 2025 12:43:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751632912; cv=none; b=ZFI0WLZ2LrfxxZxRBZXthoLdjoeZar3IykumQDvEAKNLYSa1OSt8buDM7i3rwKFoq3iPkx+emQRAEwJBUz0AhgEm/3vQD6Q82OdzOr+D3+ukfLNwUmJYoOlwcC5sElY5mreI+ycrcWm9mYM+XNrI7M9T7VCnmSgZzM7Vf/8yZtA=
+	t=1751633024; cv=none; b=FD8I39rfzju/Sv1zEPfPQLqnJpP7cqveBBeOw2dR9ewCNFnEP+c5Z9PwNu1Q7l+FOOLlx2DLwQyHMi6EJVWIQ08XxftdzeBZCIO0VPRiakfjHqvos8QogUN8E2RaGUDFsYyWJouiucXJ0oDuaLn/8JcYJTAKhM0w4Rm39eANkHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751632912; c=relaxed/simple;
-	bh=umaIK1M8/yYpjA+tQ4iI4mIN5efEWzCk7U4+ydrdDCM=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=ZPUpu+dT/Y7enNvz4q6IQ8YuzbdPQLXZIKDwxqyiZYzkuzP0PdWhrTNZTGL4BYEy6yiADZ5BdtLDQo7P5IP1tFDJd9TgYE8KzRnS4VKnDi3GV+Z5lHwzy3sPVTluAp9RR3PB1roAsYWp+U9YLkRM+DG7n5CIMg4IYnCYSxMg5dE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf01.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay08.hostedemail.com (Postfix) with ESMTP id 5B07D140BFE;
-	Fri,  4 Jul 2025 12:41:48 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf01.hostedemail.com (Postfix) with ESMTPA id 8031960016;
-	Fri,  4 Jul 2025 12:41:46 +0000 (UTC)
-Date: Fri, 04 Jul 2025 08:41:46 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Alexandre Ghiti <alex@ghiti.fr>, Miao Chen <chenmiao.ku@gmail.com>
-CC: Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
- Albert Ou <aou@eecs.berkeley.edu>, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH=5D_riscv=3A_ftrace=3A_Fix_the_lo?=
- =?US-ASCII?Q?gic_issue_in_DYNAMIC=5FFTRACE_selection?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <8160f56d-967d-4fa0-b996-0e0a2aa8be20@ghiti.fr>
-References: <20250703084502.394406-1-chenmiao.ku@gmail.com> <f7e12c6d-892e-4ca3-9ef0-fbb524d04a48@ghiti.fr> <20250703114018.6fab0b8a@batman.local.home> <5ac2c90c-5907-40ce-a31e-05cb6d88fa52@ghiti.fr> <CAKxVwgeDcqo83ZV+xBcHwNuMk6yeU+yp7RYo22OARAVOBgrsJQ@mail.gmail.com> <8160f56d-967d-4fa0-b996-0e0a2aa8be20@ghiti.fr>
-Message-ID: <8800ABB4-8A14-46E4-90D1-7F121205AF78@goodmis.org>
+	s=arc-20240116; t=1751633024; c=relaxed/simple;
+	bh=eMQ+vuj8cnqgAD61qQL9Xv3L1YC9JxKRmpAihsA5tM0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qt0KhQS2ddIvzC7cFZk4ITDi7NItXz44RQMgwqFhz2IbGFmYGU4HkDCRrnTSeD51WA2wcf4kX8WaK+HSPtbDGluvdqksMu09jEhiY3qcvyOFPtN8rw/gKVATYF/BnQJldNWoJI4C/CRJCrW8cE7yQ62ljz6C8oLe/W2jEDXEaI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WXsQpX3y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D454C4CEE3;
+	Fri,  4 Jul 2025 12:43:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751633023;
+	bh=eMQ+vuj8cnqgAD61qQL9Xv3L1YC9JxKRmpAihsA5tM0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WXsQpX3ymJ3l69NZrjrXRwHu+ZP1PzuMuZI0x6mMcgbf+2sVu3mjLkqHGy+ZDKm8X
+	 34ZRPy+4AaZEsRVq9aBgguqrHBhiSPfUNvbERoMQ2mEUo2fgJIiFY5DJse8plRTC+2
+	 wAq9LKakOfQugQwJfpz302Xob1aQOxcHJhrSJEZbOr0QaEw5QsGv86FhIOOs4VIPm7
+	 /+2HMGTppzg0AYdsWSiiEUw+mxbESmU6ZB+SEdk8GMdePvy96qeEeVLlc01mLjQc+O
+	 iq+wnIs9N62yXvgDehxqEH+ptScu2g2hxzxNl4vxxSd8wUMbgYcyJG86vy1udoAawA
+	 xTN3YEN8InEMA==
+Date: Fri, 4 Jul 2025 13:43:36 +0100
+From: Simon Horman <horms@kernel.org>
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: davem@davemloft.net, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
+	Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	=?utf-8?B?S8O2cnk=?= Maincent <kory.maincent@bootlin.com>,
+	Oleksij Rempel <o.rempel@pengutronix.de>,
+	Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH net-next 1/3] net: netdevsim: Add PHY support in netdevsim
+Message-ID: <20250704124336.GL41770@horms.kernel.org>
+References: <20250702082806.706973-1-maxime.chevallier@bootlin.com>
+ <20250702082806.706973-2-maxime.chevallier@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Stat-Signature: ixmdqxxrgnhoouzhxnkw99mtnxooxira
-X-Rspamd-Server: rspamout01
-X-Rspamd-Queue-Id: 8031960016
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1/MhaBri32Bw54W6u2p0Zn8VPzRsDfcHLs=
-X-HE-Tag: 1751632906-632877
-X-HE-Meta: U2FsdGVkX1/TAFbx0NIrciBh27+SNmLwVSW2k0Rv0aRarae54Ng83H3ZBUcRpjEoZ7OFy1qgKOt2bQmjv1xjwu6TlD8CQa3uCMFD/S01geJ44lasN5R1ycfd+THZNSdzUkZ923ZSvfautxhVvCn6Ihy2TAtlsZHeKWoTcwwZEfbueKSSQsVVaLuFmFvL1JiSPgLINaxZco5JMtqmmbJYqF/i0ms/FZkfSysl6WKYH+HKktV/LHSSWwD9meM2oSMiC68qBDYNLxGJLebUC6QRXFtd87mSM5SGqIk4gKPqPOJ8Y+vPxAXkSGt6opfxgR2iOfg5IUWPvqX0NEyPFHEfFgruOYegBuZ0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250702082806.706973-2-maxime.chevallier@bootlin.com>
 
+On Wed, Jul 02, 2025 at 10:28:03AM +0200, Maxime Chevallier wrote:
+> With the introduction of phy_link_topology, we have the ability to keep
+> track of PHY devices that sit behind a net_device. While we still can
+> only attach one single PHY to a netdev, we can look at all these PHYs
+> through netlink, with the ETHTOOL_MSG_PHY_GET command.
+> 
+> Moreover, netlink commands that are targeting PHY devices also now
+> allow specifying which PHY we want to address in a given netlink
+> command.
+> 
+> That whole process comes with its own complexity, and a few bugs were
+> dicovered over the months following the introduction of
 
+Hi Maxime,
 
-On July 4, 2025 8:28:31 AM EDT, Alexandre Ghiti <alex@ghiti=2Efr> wrote:
->Hi Chen Miao,
->
->On 7/4/25 04:06, Miao Chen wrote:
->> Hello Alex,
->>=20
->> Should I wait for Steven to finish his work before starting mine? He se=
-ems to be refactoring a lot of CONFIG logic, which might cause conflicts=2E
->
->
->I would say no, don't wait for Steven since his work won't land in 6=2E16=
-, we need a fix to prevent build failures for this release=2E
->
+As it seems like there will be a v2 anyway: discovered
 
-Agreed,
+> phy_link_topology.
 
--- Steve
+...
 
->
->>=20
+> +static struct phy_driver nsim_virtual_phy_drv[] = {
+> +	{
+> +		.name			= "Netdevsim virtual PHY driver",
+> +		.get_features		= nsim_get_features,
+> +		.match_phy_device	= nsim_match_phy_device,
+> +		.config_aneg		= nsim_config_aneg,
+> +		.read_status		= nsim_read_status,
+> +	},
+> +};
+> +
+> +module_phy_driver(nsim_virtual_phy_drv);
+
+I see that this has been flagged by Kernel Test Robot,
+but as I had already written most of this it seems worth sending anyway.
+
+I am somewhat guessing at the why here, but
+I see build failures with this patch applied:
+
+ld: drivers/net/netdevsim/phy.o: in function `phy_module_init':
+phy.c:(.init.text+0x0): multiple definition of `init_module'; drivers/net/netdevsim/netdev.o:netdev.c:(.init.text+0x0): first defined here
+ld: drivers/net/netdevsim/phy.o: in function `phy_module_exit':
+phy.c:(.exit.text+0x0): multiple definition of `cleanup_module'; drivers/net/netdevsim/netdev.o:netdev.c:(.exit.text+0x0): first defined here
+
+I am guessing that this is because above module_phy_driver() will define
+init_module and phy_module_exit functions.  But the following lines near
+the end of drivers/net/netdevsim/netdev.c also define functions with those
+names.
+
+module_init(nsim_module_init);
+module_exit(nsim_module_exit);
+
+...
 
