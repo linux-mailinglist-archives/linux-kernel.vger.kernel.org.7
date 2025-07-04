@@ -1,77 +1,73 @@
-Return-Path: <linux-kernel+bounces-716790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 263EDAF8AB7
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 10:09:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8789AF8AD2
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 10:11:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 92C597B8A5A
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 08:06:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 135EB6E7320
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 08:08:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3978D2F0E2E;
-	Fri,  4 Jul 2025 07:54:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC32F2F2722;
+	Fri,  4 Jul 2025 07:54:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AdCGzw+c"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mqwWl0I9"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19FFE2EF664
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 07:54:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F0362EFD89;
+	Fri,  4 Jul 2025 07:54:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751615695; cv=none; b=CTMwgfhjLzo8k21vaaIE+DxX0MbvWXSnjXnFabgjxxGrUURi7GGDCF2Sx5AQcMUHozT7biOdHHZ+w45RGoXPt5VvbyQmcMedkEPKPywUx8r/3r2PitJjO6KvqR544FbuvscwGqoFeBBFje1G49g+IVrGHhXJZ6+RhlbImXHz2b4=
+	t=1751615697; cv=none; b=S8x+dbsu5FRAXajPCFHebmU/jCDO7ycBYXEjrEHcNlMDBevpsDxh+KHypwi6HcS0XeEWYDi0tE8tG25BLPEBXkc/B/MBjAA3LnI8s5puW2Mg4KGSvqpJ0eWrvLJ0ruH8rBExtX2IgYPRgs02wvLS7OIOgkKaKQlSTLjIkXmpOnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751615695; c=relaxed/simple;
-	bh=FD8NSdsEQqeGz8ildUOGKLMTm/GKTBxIB/60rQo+QMY=;
+	s=arc-20240116; t=1751615697; c=relaxed/simple;
+	bh=RIcCzYI0omisWFmazd0VVo2FRQVujzPyYzOVgfw8bqU=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=SytGepeUKbNrbTaOyzuI7IAquYOR2lqwtPjHGBPS9zKcwq5cQ1P2HLh7+Lgl8MeHDhxOirLLQ95CxkZNcqLnWFNC+n1+Pd+cEwa1frkWjMsMntbZcHuQRjT4fDTDpm+SoHx3NE9RPpyaXrtQXb5Z/D+jnpA0ezJBBJUGN57xk5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AdCGzw+c; arc=none smtp.client-ip=198.175.65.11
+	 MIME-Version; b=MinmPCeaslNPxAf4PGS8cgSx0itxN9tRYlpV/lcAXzdPlvZuULJgW9mFWnxWsm29N/22A4dMN3IiYQ/6ssWlegWGtY1LKAV8JFrL3LEzLDVR9IMLvenLaT8mkGBv56WXUw/pykrRd+EnPmwQehr3/I2+8xTPVrjjPTJbvpuC6UI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mqwWl0I9; arc=none smtp.client-ip=198.175.65.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751615693; x=1783151693;
+  t=1751615695; x=1783151695;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=FD8NSdsEQqeGz8ildUOGKLMTm/GKTBxIB/60rQo+QMY=;
-  b=AdCGzw+cQiMB/Tx6FCDUzfohbDX9wQRl52G1If0eqd3lauWEV9tTSatk
-   JVevR5s1zbIREA6LU13cdTHUrCsVI56MapICPzcUoJFSi4Gh0+HVlPOzy
-   DBGrOJrV0V36+ZewgWxv5j2zKPI+kPL7fmURZigeFpZVmwCfcDqCrQXuU
-   QvBGUx3209fHyRvd5j/VSiF4P6PldQddmzdUcgxg4vgXA/5Ud/OyR4e/0
-   iZaRbCHFQ8XYXxms+hvVzIS1ZWzBa9S2MnN/GKn8fFx2s9QMFWNl6g0X0
-   t+P2Dm7JC4KYRoeFGmtlXRPTCGMlU7XeE+FSWUFDnHxHn5Ax25rl1hrTL
-   g==;
-X-CSE-ConnectionGUID: YROJz4ajSbS72EKrtFxIiA==
-X-CSE-MsgGUID: /Lgnsw6CQFuTV1ZHqUYY5w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11483"; a="64194226"
+  bh=RIcCzYI0omisWFmazd0VVo2FRQVujzPyYzOVgfw8bqU=;
+  b=mqwWl0I9ibhLYvlBirTdSdWx6FTAlLYkytS8w83HjBq1ae+seaFiARkc
+   uDPI1Rhp4L3ek6Y3Oh9ZeXjNu9N+tCkSyQCAXQ9M1kMBxCVr/drU88kLr
+   KorVUUFrkVINxizGp9AEztanG9WuIPWPpGng1XwjqtFRcPKlY1qDOSsBm
+   8sxqYT9qGIaP/CTv9Q4i5+pB1tIsHgGW+dBCeQiH4F6PKT59/UHyTrFWj
+   GFeXph3e1cCe5g455HCWLBFjmrpia+tjOwTX2b++pGG+roUenvEwQm1fT
+   WjLCgkP7JzLpxYwK31vR2eoV6bRh6WA/p22nkiKLW7vrTmmDjJ/IQPwyI
+   Q==;
+X-CSE-ConnectionGUID: ZbCvDpDYSKqhYYJ1Kz6ktg==
+X-CSE-MsgGUID: 7v9BHGmeSUOHvqrA9GDaXA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11483"; a="64194227"
 X-IronPort-AV: E=Sophos;i="6.16,286,1744095600"; 
-   d="scan'208";a="64194226"
+   d="scan'208";a="64194227"
 Received: from fmviesa003.fm.intel.com ([10.60.135.143])
   by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 00:54:47 -0700
-X-CSE-ConnectionGUID: Bgwjjc6LR7GBqHNaIjSxEQ==
-X-CSE-MsgGUID: gXyyhgBTQJmOvqWtYsKw4A==
+X-CSE-ConnectionGUID: kNh7sPjLQEKh+YsQsQJClw==
+X-CSE-MsgGUID: 4T0DHlcURkeMStImsUv7Sw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.16,286,1744095600"; 
-   d="scan'208";a="158616606"
+   d="scan'208";a="158616612"
 Received: from jkrzyszt-mobl2.ger.corp.intel.com (HELO svinhufvud.fi.intel.com) ([10.245.244.244])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 00:54:44 -0700
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 00:54:45 -0700
 Received: from svinhufvud.lan (localhost [IPv6:::1])
-	by svinhufvud.fi.intel.com (Postfix) with ESMTP id D896A44394;
-	Fri,  4 Jul 2025 10:54:41 +0300 (EEST)
+	by svinhufvud.fi.intel.com (Postfix) with ESMTP id 1751144BAC;
+	Fri,  4 Jul 2025 10:54:43 +0300 (EEST)
 Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
 From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Johan Hovold <johan+linaro@kernel.org>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-Cc: linux-phy@lists.infradead.org,
+To: Sebastian Reichel <sre@kernel.org>
+Cc: linux-pm@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 53/80] phy: ti: phy-twl4030-usb: Remove redundant pm_runtime_mark_last_busy() calls
-Date: Fri,  4 Jul 2025 10:54:41 +0300
-Message-Id: <20250704075441.3221235-1-sakari.ailus@linux.intel.com>
+Subject: [PATCH 55/80] power: supply: twl4030_charger: Remove redundant pm_runtime_mark_last_busy() calls
+Date: Fri,  4 Jul 2025 10:54:42 +0300
+Message-Id: <20250704075442.3221330-1-sakari.ailus@linux.intel.com>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250704075225.3212486-1-sakari.ailus@linux.intel.com>
 References: <20250704075225.3212486-1-sakari.ailus@linux.intel.com>
@@ -100,37 +96,21 @@ rc2:
         git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
                 pm-runtime-6.17-rc1
 
- drivers/phy/ti/phy-twl4030-usb.c | 3 ---
- 1 file changed, 3 deletions(-)
+ drivers/power/supply/twl4030_charger.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/phy/ti/phy-twl4030-usb.c b/drivers/phy/ti/phy-twl4030-usb.c
-index a26aec3ab29e..1d26189ace4f 100644
---- a/drivers/phy/ti/phy-twl4030-usb.c
-+++ b/drivers/phy/ti/phy-twl4030-usb.c
-@@ -505,7 +505,6 @@ static int twl4030_phy_power_on(struct phy *phy)
- 	dev_dbg(twl->dev, "%s\n", __func__);
- 	pm_runtime_get_sync(twl->dev);
- 	schedule_delayed_work(&twl->id_workaround_work, HZ);
--	pm_runtime_mark_last_busy(twl->dev);
- 	pm_runtime_put_autosuspend(twl->dev);
- 
- 	return 0;
-@@ -598,7 +597,6 @@ static irqreturn_t twl4030_usb_irq(int irq, void *_twl)
- 		if (atomic_add_unless(&twl->connected, -1, 0)) {
- 			dev_dbg(twl->dev, "%s: cable disconnected %i\n",
- 				__func__, status);
--			pm_runtime_mark_last_busy(twl->dev);
- 			pm_runtime_put_autosuspend(twl->dev);
- 			twl->musb_mailbox_pending = true;
+diff --git a/drivers/power/supply/twl4030_charger.c b/drivers/power/supply/twl4030_charger.c
+index 9dcb5457bef4..04216b2bfb6c 100644
+--- a/drivers/power/supply/twl4030_charger.c
++++ b/drivers/power/supply/twl4030_charger.c
+@@ -512,7 +512,6 @@ static int twl4030_charger_enable_usb(struct twl4030_bci *bci, bool enable)
+ 		ret |= twl_i2c_write_u8(TWL_MODULE_MAIN_CHARGE, 0x2a,
+ 					TWL4030_BCIMDKEY);
+ 		if (bci->usb_enabled) {
+-			pm_runtime_mark_last_busy(bci->transceiver->dev);
+ 			pm_runtime_put_autosuspend(bci->transceiver->dev);
+ 			bci->usb_enabled = 0;
  		}
-@@ -636,7 +634,6 @@ static int twl4030_phy_init(struct phy *phy)
- 	pm_runtime_get_sync(twl->dev);
- 	twl->linkstat = MUSB_UNKNOWN;
- 	schedule_delayed_work(&twl->id_workaround_work, HZ);
--	pm_runtime_mark_last_busy(twl->dev);
- 	pm_runtime_put_autosuspend(twl->dev);
- 
- 	return 0;
 -- 
 2.39.5
 
