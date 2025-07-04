@@ -1,155 +1,173 @@
-Return-Path: <linux-kernel+bounces-717205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-717222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D81BFAF910F
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 13:11:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B55ECAF9191
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 13:29:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5AC8A1C87E30
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 11:11:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE92E1C4490A
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 11:29:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF1512C08D2;
-	Fri,  4 Jul 2025 11:10:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YxwURsWn"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B084E2C326F;
+	Fri,  4 Jul 2025 11:29:09 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55737236A9F
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 11:10:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B9E82C15B1;
+	Fri,  4 Jul 2025 11:29:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751627459; cv=none; b=ankOAFujQqMs/n5HMSlQM5QuQaMXGW2RNItv0ry9WYsxevJEOZE76yn+uBCQrPJSB4MDUsKBc5IN+GqkiBOt/4N23NZFeRHTUNgx9KWqLpUeoepG9eW3WL5O7ZkvUiC3IS+kSykEnPiVbzqiOE+jRpAsfXT3jCFQmHC/4HAOx8A=
+	t=1751628549; cv=none; b=BQ+AhLsO/M7iFnK4nBFq7I45W6URXyfxF8EDQLTnAauOK3b3ConFa8rJ2LBIC2sZK2wsLza8G7FRrKel/FsCaeoGYiLwOTF7YuBVAFdpJJ+q3hoJNAbcsny9Tv1gVHbGv9sI0JqBsb+mNhdnpJXEXYmjdCWR3C9Hkw6y4uJy+hs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751627459; c=relaxed/simple;
-	bh=SF8CYPTrOdy+j7O2eI2p8/yS2Z2CtPaSi47s5TwJido=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=G1RyGhc6oibMorZK6jMTdUIr09O+RpG/lLi8umpyJbIrliKJq7fShC2I7J4ldgQkwajJzgLjz/WvaOiKI0afvpC0PyzEJZDhR8bNyMXyeYuAYFXx3/JYbAbwwdcfPmW9Zl1YmbUk8+9xIuOvHhMgIoBHwIYOyl/9iZ6RJnOzl3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YxwURsWn; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3a522224582so307980f8f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Jul 2025 04:10:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1751627456; x=1752232256; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dCPtwnOfQ6keZPy4LpTxW8EywDH7gbIh/lGbQNpkD4Y=;
-        b=YxwURsWnXvzS80Tvw6J8p4Uq6DszfCS6+xdZA89QQ1/TyYml1nIsJREUoC+6SUOfGg
-         xqZ6DRB3xWd2NlLfqE8QkVgySf2IAA5Z2h8RTaD2FKmM2TYmgjimTv8H8R9lvGt3uInP
-         CbQIZNY3PMZsepzJtTU4HAIKnLcNSyqu8WwgYqE3yfNmc053ZUOT7+EbG/Pcf9wuMr4R
-         75hqNGEHlv2VK6QvPSt+KfCacSWYSHYiyTqKF+UO319gdZL6ZRhuwZFoiigCa7VE1y78
-         TnCJCL5Ys6DWICz3cPMaVWQ0TcgpvBYSv04rkGGXV5bYmE9CcWVkplEIPea8JNJyzUNm
-         kjEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751627456; x=1752232256;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dCPtwnOfQ6keZPy4LpTxW8EywDH7gbIh/lGbQNpkD4Y=;
-        b=jjggjqZ+Is/cQph94S+i2e+47+yWHDRT4mnRApsrcPya7891arrRT80oQctZfR1sY2
-         GeqPZqtFx+xA5OfqYgwJindsurYvXoOYkRq+H1dpodLWoH/6PdxGTqw8cMBJxPDJsYyS
-         pSUAUfYYK1W7ZXpSHSdtvgD6oAjkHd7P20ZJI1hCWU0LuzwpUnF0vgOU3ZoX+SQkYTxE
-         DvbdpKZzrzz4v3gJYqNLhIqALSRPXtAsAwCRCRmFscISdezF13RgSe2q9u5fgNKjEiV0
-         ScSQ+ZPMmRBmNKwXfLbRtQ38OkA9KBheFNB6cQTu7VXq0iTI7rEM7H5RTbiPYCytYekH
-         LNtg==
-X-Forwarded-Encrypted: i=1; AJvYcCX1cQPRs3m0ltVjrotuOn0Mhf7vENI1bQeEGWzsuqaTYUuxAaCE8kbPi+ZEIJ+dH3MAeB/h5+WVSIfjmk0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzseskplzWeStUryf7P1ClwxdVDIs48LZI7IKtAIOdXFeDrsxjh
-	THBvZi+OEgj1zsOuMpNBNbpUxr/JOKKb5ai+C0lRtjHbQRPGAESwCx4kMVlcbN9ZW0g=
-X-Gm-Gg: ASbGncu6qhkNZB/zzMjUWmTjF5/PLA52wZQzsEKtGs1XGFqPiXC3wE08rn5+/hQdXPb
-	kl7D6eeAM7HrH46i26d3zcIgkyussn9u+ptRwXH6nrm+/wYfIr6+4ugKm7pj40YZZ/XiiEa83A4
-	eO0uMlbMxhRUopQUc0xRRbwBtQgGvwsU1IgT29tZ1eqTrpthyLOyY6TLupc5dJzePQR+5F0jkQS
-	sGt8VptALDGXcuc8usPV6rZMVkqCc1oIee/v3jcU5oNvBGUOYkBejP+9p+NOYWsXpVqQYoWI4ov
-	upgIhPM1yLk5fALS0k7sSAoqNPj348dBMfTl5liWFFV+FmchYw5IbU7EbfWW+fVQ7Uo=
-X-Google-Smtp-Source: AGHT+IFUrRT4OwH5hTE+/EwaS0JQstvht/Nvd/yC+ncXVq5jOgWUtrHO2HEpZmkTrSJj963GBPh1Hw==
-X-Received: by 2002:a05:6000:26ca:b0:3a5:1410:71c0 with SMTP id ffacd0b85a97d-3b4965fa43dmr1629767f8f.38.1751627455547;
-        Fri, 04 Jul 2025 04:10:55 -0700 (PDT)
-Received: from [192.168.1.3] ([37.18.136.128])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b471b97732sm2265248f8f.59.2025.07.04.04.10.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 04 Jul 2025 04:10:55 -0700 (PDT)
-Message-ID: <9c59d1b1-a483-49d9-b57a-c86e3e020234@linaro.org>
-Date: Fri, 4 Jul 2025 12:10:53 +0100
+	s=arc-20240116; t=1751628549; c=relaxed/simple;
+	bh=d6izWEeJk2kJa5GSgadR6b2xMlIhvrbazcDk3EqyLmc=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Abcb+cBt5GAxFk6sIMslBOczHr2g/O/odPgm/EMYXh5xxEwHV34UHRShrj0/1tIVjLji8C+4+DV74vTmtQvSEUKiK1pX+O0OinIuIXd3a7pMXM1pKzpTckGh9a5GjJBCyNEbNW8TZ7huDdugm946YunIW5WBU5Zn586WnrZTe60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bYW8R3VnVz6L5dh;
+	Fri,  4 Jul 2025 19:08:23 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 36B8E1404C5;
+	Fri,  4 Jul 2025 19:11:22 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 4 Jul
+ 2025 13:11:20 +0200
+Date: Fri, 4 Jul 2025 12:11:19 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: John Groves <John@Groves.net>
+CC: Dan Williams <dan.j.williams@intel.com>, Miklos Szeredi
+	<miklos@szeredb.hu>, Bernd Schubert <bschubert@ddn.com>, John Groves
+	<jgroves@micron.com>, Jonathan Corbet <corbet@lwn.net>, Vishal Verma
+	<vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>, "Matthew
+ Wilcox" <willy@infradead.org>, Jan Kara <jack@suse.cz>, Alexander Viro
+	<viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, "Darrick J
+ . Wong" <djwong@kernel.org>, Randy Dunlap <rdunlap@infradead.org>, "Jeff
+ Layton" <jlayton@kernel.org>, Kent Overstreet <kent.overstreet@linux.dev>,
+	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<nvdimm@lists.linux.dev>, <linux-cxl@vger.kernel.org>,
+	<linux-fsdevel@vger.kernel.org>, Amir Goldstein <amir73il@gmail.com>, "Stefan
+ Hajnoczi" <shajnocz@redhat.com>, Joanne Koong <joannelkoong@gmail.com>, Josef
+ Bacik <josef@toxicpanda.com>, Aravind Ramesh <arramesh@micron.com>, Ajay
+ Joshi <ajayjoshi@micron.com>
+Subject: Re: [RFC V2 03/18] dev_dax_iomap: Save the kva from memremap
+Message-ID: <20250704121119.00002846@huawei.com>
+In-Reply-To: <20250703185032.46568-4-john@groves.net>
+References: <20250703185032.46568-1-john@groves.net>
+	<20250703185032.46568-4-john@groves.net>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] perf/x86: Replace strncpy() with memcpy() for vendor
- string
-To: David Laight <david.laight.linux@gmail.com>,
- Usman Akinyemi <usmanakinyemi202@gmail.com>
-Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
- namhyung@kernel.org, mark.rutland@arm.com,
- alexander.shishkin@linux.intel.com, jolsa@kernel.org, irogers@google.com,
- adrian.hunter@intel.com, kan.liang@linux.intel.com,
- linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
- skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev
-References: <20250618215843.109941-1-usmanakinyemi202@gmail.com>
- <20250704102007.6354ce9f@pumpkin>
-Content-Language: en-US
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <20250704102007.6354ce9f@pumpkin>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500006.china.huawei.com (7.191.161.198) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
+On Thu,  3 Jul 2025 13:50:17 -0500
+John Groves <John@Groves.net> wrote:
 
-
-On 04/07/2025 10:20 am, David Laight wrote:
-> On Thu, 19 Jun 2025 03:28:43 +0530
-> Usman Akinyemi <usmanakinyemi202@gmail.com> wrote:
+> Save the kva from memremap because we need it for iomap rw support.
 > 
->> strncpy() is unsafe for fixed-size binary data as
->> it may not NUL-terminate and is deprecated for such
-
-But memcpy doesn't null terminate after the 4 chars either so I don't 
-think that's a good justification. Surely you don't want null 
-termination, because char *vendor is supposed to be a single string 
-without extra nulls in the middle. It specifically adds a null at the 
-end of the function.
-
->> usage. Since we're copying raw CPUID register values,
->> memcpy() is the correct and safe choice.
->>
-
-There should be a fixes: tag here if it actually fixes something. But in 
-this use case strncpy seems to behave identically to memcpy so I don't 
-think we should change it. Except maybe if b,c,d have NULLs in them then 
-strncpy will give you uninitialized parts where memcpy won't. But that's 
-not mentioned in the commit message and presumably it doesn't happen?
-
->> Signed-off-by: Usman Akinyemi <usmanakinyemi202@gmail.com>
->> ---
->>   tools/perf/arch/x86/util/header.c | 6 +++---
->>   1 file changed, 3 insertions(+), 3 deletions(-)
->>
->> diff --git a/tools/perf/arch/x86/util/header.c b/tools/perf/arch/x86/util/header.c
->> index 412977f8aa83..43ba55627817 100644
->> --- a/tools/perf/arch/x86/util/header.c
->> +++ b/tools/perf/arch/x86/util/header.c
->> @@ -16,9 +16,9 @@ void get_cpuid_0(char *vendor, unsigned int *lvl)
->>   	unsigned int b, c, d;
->>   
->>   	cpuid(0, 0, lvl, &b, &c, &d);
->> -	strncpy(&vendor[0], (char *)(&b), 4);
->> -	strncpy(&vendor[4], (char *)(&d), 4);
->> -	strncpy(&vendor[8], (char *)(&c), 4);
->> +	memcpy(&vendor[0], (char *)(&b), 4);
->> +	memcpy(&vendor[4], (char *)(&d), 4);
->> +	memcpy(&vendor[8], (char *)(&c), 4);
+> Prior to famfs, there were no iomap users of /dev/dax - so the virtual
+> address from memremap was not needed.
 > 
-> Why not:
-> 	cpuid(0, 0, lvl, (void *)vendor, (void *)(vendor + 8), (void *)(vendor + 4));
+> Also: in some cases dev_dax_probe() is called with the first
+> dev_dax->range offset past the start of pgmap[0].range. In those cases
+> we need to add the difference to virt_addr in order to have the physaddr's
+> in dev_dax->ranges match dev_dax->virt_addr.
 > 
+> This happens with devdax devices that started as pmem and got converted
+> to devdax. I'm not sure whether the offset is due to label storage, or
+> page tables, but this works in all known cases.
+
+Clearly a question we need to resolve to understand if this is correct
+handling.
+
 > 
->>   	vendor[12] = '\0';
->>   }
->>   
+> Signed-off-by: John Groves <john@groves.net>
+> ---
+>  drivers/dax/dax-private.h |  1 +
+>  drivers/dax/device.c      | 15 +++++++++++++++
+>  2 files changed, 16 insertions(+)
 > 
+> diff --git a/drivers/dax/dax-private.h b/drivers/dax/dax-private.h
+> index 0867115aeef2..2a6b07813f9f 100644
+> --- a/drivers/dax/dax-private.h
+> +++ b/drivers/dax/dax-private.h
+> @@ -81,6 +81,7 @@ struct dev_dax_range {
+>  struct dev_dax {
+>  	struct dax_region *region;
+>  	struct dax_device *dax_dev;
+> +	void *virt_addr;
+>  	unsigned int align;
+>  	int target_node;
+>  	bool dyn_id;
+> diff --git a/drivers/dax/device.c b/drivers/dax/device.c
+> index 29f61771fef0..583150478dcc 100644
+> --- a/drivers/dax/device.c
+> +++ b/drivers/dax/device.c
+> @@ -372,6 +372,7 @@ static int dev_dax_probe(struct dev_dax *dev_dax)
+>  	struct dax_device *dax_dev = dev_dax->dax_dev;
+>  	struct device *dev = &dev_dax->dev;
+>  	struct dev_pagemap *pgmap;
+> +	u64 data_offset = 0;
+>  	struct inode *inode;
+>  	struct cdev *cdev;
+>  	void *addr;
+> @@ -426,6 +427,20 @@ static int dev_dax_probe(struct dev_dax *dev_dax)
+>  	if (IS_ERR(addr))
+>  		return PTR_ERR(addr);
+>  
+> +	/* Detect whether the data is at a non-zero offset into the memory */
+> +	if (pgmap->range.start != dev_dax->ranges[0].range.start) {
+
+Using pgmap->range.start here but then getting to the same (I think)
+with  dev_dax->pgmap[0].range.start is rather inconsistent.
+
+Also, perhaps drag the assignment of phys and pgmap_phys out of this
+scope so that you can use them for the condition check above and
+then reuse the same in here.
+
+
+> +		u64 phys = dev_dax->ranges[0].range.start;
+> +		u64 pgmap_phys = dev_dax->pgmap[0].range.start;
+> +		u64 vmemmap_shift = dev_dax->pgmap[0].vmemmap_shift;
+> +
+> +		if (!WARN_ON(pgmap_phys > phys))
+> +			data_offset = phys - pgmap_phys;
+
+In the event of the condition above being false.
+phys == pgmap_phys and data_offset == 0.
+
+So why not do this unconditionally replacing this block with something like
+
+	/* Apply necessary offset */
+
+	dev_dax->virt_addr = addr +
+		(dev_dax->ranges[0].range.start - pgmap->range.start);
+> +
+> +		pr_debug("%s: offset detected phys=%llx pgmap_phys=%llx offset=%llx shift=%llx\n",
+> +		       __func__, phys, pgmap_phys, data_offset, vmemmap_shift);
+
+If it's only used in the print, I'd just put the path to vmemmap_shift directly in here
+and probably get to it via pgmap->vmemmap_shift
+
+
+
+> +	}
+> +	dev_dax->virt_addr = addr + data_offset;
+> +
+>  	inode = dax_inode(dax_dev);
+>  	cdev = inode->i_cdev;
+>  	cdev_init(cdev, &dax_fops);
 
 
