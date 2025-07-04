@@ -1,213 +1,126 @@
-Return-Path: <linux-kernel+bounces-717681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-717675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF156AF9754
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 17:53:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF505AF9742
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 17:47:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C5085A4D83
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 15:53:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A10B5A348E
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 15:47:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED4642D7812;
-	Fri,  4 Jul 2025 15:53:24 +0000 (UTC)
-Received: from leonov.paulk.fr (leonov.paulk.fr [185.233.101.22])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43A181DDA3E;
+	Fri,  4 Jul 2025 15:47:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FSJ7Fu3r"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1BB0221729;
-	Fri,  4 Jul 2025 15:53:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.233.101.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8D17140E34
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 15:47:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751644404; cv=none; b=tqdOrJLZiqvQFZDhXUPVfVbuV1L1mVTsZWhjLQrle6M8Mz60Irg+zjAg9rYdGi+WY2Fths7UALXS3jBK15P4oNwkZQ1ZKmv7Hr1UVP9XQhfeLoSNzzndQIuHjKloBe/9ez3Exft1hE6snF7JiO+B46eUXWrf3z4W/DmEPYPNIdw=
+	t=1751644027; cv=none; b=qx87BR3kkiT5YwftFxNg9d2WwlreLo8093y4PlT/bQqeIHAAQYFULN5WUHtjEN88eM7EcjMXkHdznHa74vHmnQzX8ZH7Lyl8Eml1zLgVpmBIa/i5zzAbCfQBrrh+iEkPFsYa7vq3viGe83O8ItGQzeKmmoaQTnH3af2ooDdUYVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751644404; c=relaxed/simple;
-	bh=Ac2dVxUn5PnUUyJh9iw8W5B9z4asDbD9T/zEkCzrtp8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tRYJFgObsD5VaV6V+QpKIaBBSlUK4cy/DgxhHyEOsjpeqK0/ON5owYyWQ5y5acZyXF/9OQW9bKtCAuUYD4u/dyugrOsdgwit+cUV6j42o++jE0rlTrIijs5dsA+9E2gVPniycB3evFDVKPJyk58xvo0jdLx10p8Ui8G7n5DREJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sys-base.io; spf=pass smtp.mailfrom=sys-base.io; arc=none smtp.client-ip=185.233.101.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sys-base.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sys-base.io
-Received: from laika.paulk.fr (12.234.24.109.rev.sfr.net [109.24.234.12])
-	by leonov.paulk.fr (Postfix) with ESMTPS id B066D1F00036;
-	Fri,  4 Jul 2025 15:53:20 +0000 (UTC)
-Received: by laika.paulk.fr (Postfix, from userid 65534)
-	id 3925BACA6CB; Fri,  4 Jul 2025 15:53:20 +0000 (UTC)
-X-Spam-Level: *
-Received: from localhost.localdomain (unknown [192.168.1.64])
-	by laika.paulk.fr (Postfix) with ESMTP id 15CC7ACA65E;
-	Fri,  4 Jul 2025 15:46:50 +0000 (UTC)
-From: Paul Kocialkowski <paulk@sys-base.io>
-To: linux-media@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Yong Deng <yong.deng@magewell.com>,
-	Paul Kocialkowski <paulk@sys-base.io>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Maxime Ripard <mripard@kernel.org>,
-	Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Subject: [PATCH v8 9/9] ARM: dts: sun8i-a83t: Add BananaPi M3 OV8865 camera overlay
-Date: Fri,  4 Jul 2025 17:46:26 +0200
-Message-ID: <20250704154628.3468793-10-paulk@sys-base.io>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250704154628.3468793-1-paulk@sys-base.io>
-References: <20250704154628.3468793-1-paulk@sys-base.io>
+	s=arc-20240116; t=1751644027; c=relaxed/simple;
+	bh=7BVeWyNBRAl/DJV9x9E0MtfFi6R5ZI428sGw3mc1DRY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Hfo5HV4i4vALhcW2k6ATkp/RB0ngc0BH6Cv3EUKKzedSIdbEq5mAv2rzi6iWYmTU1DXMPXBT83SLEXPJ3t8fFtZuQYZhq/OgSVuoyDVxtdAkDj/pzaQNx17fwLzkVzZXYiOIKxjFkB5h+BXgx77sWZoa4v+SGbciZRu/dDho43E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FSJ7Fu3r; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-ae3b336e936so207308466b.3
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Jul 2025 08:47:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1751644024; x=1752248824; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=pT/YjID9m49oZG4c5N9r/EyaXbdjU1Li6UaI8Ky8LA8=;
+        b=FSJ7Fu3rudRpNJvdWVlIAeRQ1wuSQ1i7uBdigNL1njhOgZUJDbJlqsY9xY0W7RKOCz
+         4wlVKVYCxG9L5AZYbCo6QaJcvIQ63BHoBqMZpvwB77RxSyYfvaPJJtZOxdbFWanKRYWF
+         R2GvyqkLwI5A8Q6sGr8GkMQVI55KPDsAIqMV70mXVuFaq3FN91znusCLRykqdcO3iLTf
+         10Tq74NzNC1fzSd0P7DJDDyNT6FVTNekzr+N3z+vfvOif/MJ71fqlxzS5CrHGd28Jg7Q
+         Yz9UsyMn2c4WwvK1yL3GqOYeiyDIwHhX37qf/SGtZKPB3UoUgRxw2ygn0v0RlAWS4XjD
+         WcYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751644024; x=1752248824;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pT/YjID9m49oZG4c5N9r/EyaXbdjU1Li6UaI8Ky8LA8=;
+        b=nASxpX0tO+TM9gwhTY0GM/I/jKqLkgc1URyb60FrQQuHt0tBCaHutQdQ3waGnGUVb6
+         trodd5lRGCKXx3ga+ca5+cKSPwh6qnN1l5SzAl9lVJusw7uCyD/UGKPY39sdGvNojZFZ
+         dxxKBzlUCZAinNbnHvlLU19dqPZTrFtAVi3eI0tpvbqDaoMqUjh4jf06nj8t/0sIeFIr
+         vSqQraR0f15wdn1Tud+KFmXCTDeyJiD3CBKLK8n5jSfBmrl364Ar/QvCV9SgqU+axEew
+         65iNdiUGyvVaq5fCXvDHFdlKTn2MIxfLZVIG7arccqm0tPiXLRd0dSJgv0BGqpWEBFGZ
+         Ie4g==
+X-Forwarded-Encrypted: i=1; AJvYcCWKbIKTDqSHpXTaL4vwCKkWc5sFiOjzpunQzkOrhBnE9TtVOm8XNlNiIxJma4JFpCfkMmDuw94wSKzIcs8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWLaUp63jfJ+LbDD2VUqK9C1fjJQKGUYoa0cERBUzlwVJ5PZG3
+	QLkzsYm6JdDQ/XhxXpeBSNUk+h4KJTWpc9sL+VFUOKueGvn9hCbPoOn3S1uVqW4ew6aTX45YGv/
+	QBmYbnGkumoXphutihlj2Fp2F1FEIyu5fbnrVfWOygmG+Nb2p6ymEMRo=
+X-Gm-Gg: ASbGncvrsK6GXrrCd6j36LAuAEiwMIdWL4UQNaXXh7/lj0ueVTcHrBbdYYmlkhUKvBz
+	8yqXNCgTlK5/sCF2Mow0uwok1IIDV2dWR6wxYGVXJubgH1G2m4Gc8uI+wSOZJg8FWdIPfUgexVu
+	gMBaH8FilhgNu6+nk+lxXkb5FlnpLAVXdwkbl/8CFz260Mm4I78RvR//zC4Yl31NcckEE9tL+X
+X-Google-Smtp-Source: AGHT+IHGNqzOPPI6cxWWwmaeUpyNSlnEMnHCVV8WPCqeZ2Xf0gJIrDR3+ojS+aKY9n/28UHHsEJ9sSlQwoz1oaa8th8=
+X-Received: by 2002:a17:907:86ab:b0:ae0:aed9:eba0 with SMTP id
+ a640c23a62f3a-ae3fe790f7dmr275480366b.55.1751644024124; Fri, 04 Jul 2025
+ 08:47:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20250624204942.715206-1-clm@fb.com> <20250626070057.GE1613200@noisy.programming.kicks-ass.net>
+ <872c057e-5e2f-4cbf-943a-072b6015fee9@meta.com> <CAKfTPtBE0_77+J-A7vWRKsHCCmuX1jWTbPYWGVPg1MYq_rv8Og@mail.gmail.com>
+ <dbbff170-db0a-4955-a024-978bb8dc3016@meta.com> <CAKfTPtBinqRvLk4bvP4bbEZU1OcGV=DBnyxQ2SO9SumdwfV-aA@mail.gmail.com>
+In-Reply-To: <CAKfTPtBinqRvLk4bvP4bbEZU1OcGV=DBnyxQ2SO9SumdwfV-aA@mail.gmail.com>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Fri, 4 Jul 2025 17:46:52 +0200
+X-Gm-Features: Ac12FXxvXhs8wpQTEJavz33i4rIQxDCxdK6w8Rk530fCg5G8SmGDnyw5Pqj5oVU
+Message-ID: <CAKfTPtBU44JP0FjhT+X1D+j=iAs0n2AObd5sMYJu+si0SYMftA@mail.gmail.com>
+Subject: Re: [PATCH RFC] sched/fair: bump sd->max_newidle_lb_cost when newidle
+ balance fails
+To: Chris Mason <clm@meta.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Chris Mason <clm@fb.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-From: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+ value to
 
-Add an overlay supporting the OV8865 from the BananaPi Camera v3
-peripheral board. The board has two sensors (OV5640 and OV8865)
-which cannot be supported in parallel as they share the same reset
-pin and the kernel currently has no support for this case.
+On Fri, 27 Jun 2025 at 15:32, Vincent Guittot
+<vincent.guittot@linaro.org> wrote:
+>
+> On Thu, 26 Jun 2025 at 16:55, Chris Mason <clm@meta.com> wrote:
+> >
+> > On 6/26/25 10:26 AM, Vincent Guittot wrote:
+> > > On Thu, 26 Jun 2025 at 12:58, Chris Mason <clm@meta.com> wrote:
+> >
+> > >> Got it, I'll play with that.  Vincent, was there a benchmark I can use
+> > >> to see if I've regressed the case you were focused on?
+> > >
+> > > It's not a public benchmark but I had some unitary tests with tasks
+> > > waiting on a busy CPU while other CPUs become idle for a "long" time
+> > > (but still less than 500us in average). This is even more true with
+> > > frequency scaling which will minimize the idle duration by decreasing
+> > > the frequency
+> >
+> > Ok, I don't think I'll be able to reliably recreate that on my own, can
+> > I ask you to rerun against the v2 I sent out?
+>
+> Yes, I will run some tests
 
-Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
----
- arch/arm/boot/dts/allwinner/Makefile          |   1 +
- .../sun8i-a83t-bananapi-m3-camera-ov8865.dtso | 103 ++++++++++++++++++
- 2 files changed, 104 insertions(+)
- create mode 100644 arch/arm/boot/dts/allwinner/sun8i-a83t-bananapi-m3-camera-ov8865.dtso
+I ran some tests and I haven't seen any differences with or without
+this patch so it looks good for me.
+I thought that you were bumping the max_newidle_lb_cost to
+sysctl_sched_migration_cost when newly idle failed to pull task but in
+fact you increase the actual cost which is ok
 
-diff --git a/arch/arm/boot/dts/allwinner/Makefile b/arch/arm/boot/dts/allwinner/Makefile
-index de13da013732..6bfa51266445 100644
---- a/arch/arm/boot/dts/allwinner/Makefile
-+++ b/arch/arm/boot/dts/allwinner/Makefile
-@@ -220,6 +220,7 @@ dtb-$(CONFIG_MACH_SUN8I) += \
- 	sun8i-a83t-allwinner-h8homlet-v2.dtb \
- 	sun8i-a83t-bananapi-m3.dtb \
- 	sun8i-a83t-bananapi-m3-camera-ov5640.dtbo \
-+	sun8i-a83t-bananapi-m3-camera-ov8865.dtbo \
- 	sun8i-a83t-cubietruck-plus.dtb \
- 	sun8i-a83t-tbs-a711.dtb \
- 	sun8i-h2-plus-bananapi-m2-zero.dtb \
-diff --git a/arch/arm/boot/dts/allwinner/sun8i-a83t-bananapi-m3-camera-ov8865.dtso b/arch/arm/boot/dts/allwinner/sun8i-a83t-bananapi-m3-camera-ov8865.dtso
-new file mode 100644
-index 000000000000..50f965741f4a
---- /dev/null
-+++ b/arch/arm/boot/dts/allwinner/sun8i-a83t-bananapi-m3-camera-ov8865.dtso
-@@ -0,0 +1,103 @@
-+// SPDX-License-Identifier: GPL-2.0 OR X11
-+/*
-+ * Copyright 2022 Bootlin
-+ * Author: Kévin L'hôpital <kevin.lhopital@bootlin.com>
-+ * Author: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-+ */
-+
-+/dts-v1/;
-+/plugin/;
-+
-+#include <dt-bindings/clock/sun8i-a83t-ccu.h>
-+#include <dt-bindings/gpio/gpio.h>
-+
-+&{/} {
-+	compatible = "sinovoip,bpi-m3";
-+
-+	/*
-+	 * These regulators actually have DLDO4 tied to their EN pin, which is
-+	 * described as input supply here for lack of a better representation.
-+	 * Their actual supply is PS, which is always-on.
-+	 */
-+
-+	ov8865_avdd: ov8865-avdd {
-+		compatible = "regulator-fixed";
-+		regulator-name = "ov8865-avdd";
-+		regulator-min-microvolt = <2800000>;
-+		regulator-max-microvolt = <2800000>;
-+		vin-supply = <&reg_dldo4>;
-+	};
-+
-+	ov8865_dovdd: ov8865-dovdd {
-+		compatible = "regulator-fixed";
-+		regulator-name = "ov8865-dovdd";
-+		regulator-min-microvolt = <2800000>;
-+		regulator-max-microvolt = <2800000>;
-+		vin-supply = <&reg_dldo4>;
-+	};
-+
-+	ov8865_dvdd: ov8865-dvdd {
-+		compatible = "regulator-fixed";
-+		regulator-name = "ov8865-dvdd";
-+		regulator-min-microvolt = <1200000>;
-+		regulator-max-microvolt = <1200000>;
-+		vin-supply = <&reg_dldo4>;
-+	};
-+};
-+
-+&csi {
-+	status = "okay";
-+};
-+
-+&i2c2 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c2_pe_pins>;
-+	status = "okay";
-+
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+
-+	ov8865: camera@36 {
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&csi_mclk_pin>;
-+
-+		compatible = "ovti,ov8865";
-+		reg = <0x36>;
-+
-+		clocks = <&ccu CLK_CSI_MCLK>;
-+		assigned-clocks = <&ccu CLK_CSI_MCLK>;
-+		assigned-clock-parents = <&osc24M>;
-+		assigned-clock-rates = <24000000>;
-+
-+		avdd-supply = <&ov8865_avdd>;
-+		dovdd-supply = <&ov8865_dovdd>;
-+		dvdd-supply = <&ov8865_dvdd>;
-+
-+		powerdown-gpios = <&pio 4 17 GPIO_ACTIVE_LOW>; /* PE17 */
-+		reset-gpios = <&pio 4 16 GPIO_ACTIVE_LOW>; /* PE16 */
-+
-+		port {
-+			ov8865_out_mipi_csi2: endpoint {
-+				remote-endpoint = <&mipi_csi2_in_ov8865>;
-+				link-frequencies = /bits/ 64 <360000000>;
-+				data-lanes = <1 2 3 4>;
-+			};
-+		};
-+	};
-+};
-+
-+&mipi_csi2 {
-+	status = "okay";
-+};
-+
-+&mipi_csi2_in {
-+	mipi_csi2_in_ov8865: endpoint {
-+		remote-endpoint = <&ov8865_out_mipi_csi2>;
-+		data-lanes = <1 2 3 4>;
-+	};
-+};
-+
-+&reg_dldo4 {
-+	regulator-min-microvolt = <2800000>;
-+	regulator-max-microvolt = <2800000>;
-+};
--- 
-2.49.0
+Acked-by: Vincent Guittot <vincent.guittot@linaro.org>
 
+>
+> Vincent
+>
+> >
+> > -chris
 
