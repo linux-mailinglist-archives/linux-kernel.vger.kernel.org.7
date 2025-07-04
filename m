@@ -1,247 +1,157 @@
-Return-Path: <linux-kernel+bounces-716874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CA63AF8BBF
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 10:33:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C181AF8BD4
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 10:34:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1278316C8C0
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 08:33:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76590762FEF
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 08:29:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE320288C16;
-	Fri,  4 Jul 2025 08:21:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="afo2KE3Q"
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010058.outbound.protection.outlook.com [52.101.84.58])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97DDF31551B;
+	Fri,  4 Jul 2025 08:17:35 +0000 (UTC)
+Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2C6B288535;
-	Fri,  4 Jul 2025 08:21:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.58
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751617316; cv=fail; b=e7UhNWR2ko1PczbKpzYtHyCqtHZC2I3AJ9hSHqNzAekmB4NBdpq7mNiU8CaDcCUGVTaDwKUcbHIEfqE8ULaSEYcytUL8khtTZnY8YvqaxEQmyW+VeNFxJadxfCJwS5+QYFVeG+dHq8IVxvzLSB3Ah1piBg0gYmafdpbVUj+7SX0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751617316; c=relaxed/simple;
-	bh=ZiyjxB+96MunoEp5H2b18hu3LYDWFE1/CIuUXTYVvoY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=V1K/Rc3lPeL7ftX2qtL1nZYnT8+GNsA4pZvHbM8RMsjcv2oUNlM5ikVLXLbD0ltWfVNhXmP/CWIKDbpI4KwgNsxo6EHchUsm7IwQZZvdbDXV/kY+Cm9hyTGStRWJIHKQWJbZCX8xUO7p4V2MxbEtl/3v8oW8WpSyplpMrpgxQxw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=afo2KE3Q; arc=fail smtp.client-ip=52.101.84.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=l9ifdcezuxSsv0dG/Zb6P7J9XaDwUBGGlfL8u0rnKdHDOHF089rPrWhQ4YMG0i2zLJo1qv+Yy5DdPq0np91Ms6xMAbWtMEXu+K7BvCtSk6OwV7MQASRKN+O75M6RuWGY0lV45kMgPCxFLhUdksENx44D1ci0BkjMMl2Fhoe8r+42qIA+bVl2iQzXEFY/kYF1hCkRexudwCN9DzRQECppAsvKNRYWwCqJK6RmQ36tKRpq93ppIy7eMhBf/jsfp3iJqwrGidWy52nFgodLeZ22dnJgaL4uHTl48F72Ql5eWbmTkVhSVEvmwicy4LNF+cgdULSZChIj6YOcuE4De34iSA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KNXaqcjj0ZWo77NeEuM27xXwmw6LKB/cMY4cMB/4HS0=;
- b=YHXG8PfROtaP/t+PZYmbgIQkLCruC6HpPY/jv0Xp2Iik3zVCt8bUwn1dazSvS4X3nixl/Vl8PL+QehcgM3J3X0qV5f/8GXQISwTkx3Dl9uVMxl0yiBkGXhNjA3OtKhH0oCd0g0UEP1foYZstL6rS+x93eEcaeu80SWPsyDuuGn8s5NLtQXHlldJI3dx86bnwcEqVF1cksbBOZoIJL9S/LCeZJV9vB5fBE6Q1k4mQVGW2I+5AITscc4ipHDfiUCcVJvlHvgRGJxgNTwjps7CD7SUW5/c4qL4pc5onT7pz0q8zBHkKGbPgwTLozN0zDJu2BCbfCSn82zxoa9upYuT6/w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KNXaqcjj0ZWo77NeEuM27xXwmw6LKB/cMY4cMB/4HS0=;
- b=afo2KE3QkoT2eBlZcuLC/32fWsoxh2tHbwOrjDF2r9I5cD5OGN0iiWK5Db5P8m2bQf5CKWO+JWQTYt8npxrdq7RRdDrtxZ4efAulbtYrvhEa6QET4VSQUIq0QxMkVP9jFEksuZR3skNSQQQK+SEVCYIFTFthppmvR/RVqlIEtqW0kLxelaHlRHRpOC8qAXE1h6RRlTeugpiadvsYHU2x5PtWns5Cbzlbp5B4qMnnhT819BhTJe3NAD2q67ot5U+52JKn7OB18U0WSGWiSAXMnFjXH9rAwRVKQQhSLEaMFup63fRFyJ8Met3fyrxkSWnPXnZVfeXq0DMP4XPO3efxEw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from DU2PR04MB8822.eurprd04.prod.outlook.com (2603:10a6:10:2e1::11)
- by VI0PR04MB10231.eurprd04.prod.outlook.com (2603:10a6:800:23f::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.22; Fri, 4 Jul
- 2025 08:21:51 +0000
-Received: from DU2PR04MB8822.eurprd04.prod.outlook.com
- ([fe80::4e24:c2c7:bd58:c5c7]) by DU2PR04MB8822.eurprd04.prod.outlook.com
- ([fe80::4e24:c2c7:bd58:c5c7%6]) with mapi id 15.20.8901.021; Fri, 4 Jul 2025
- 08:21:51 +0000
-Date: Fri, 4 Jul 2025 16:16:56 +0800
-From: Xu Yang <xu.yang_2@nxp.com>
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: ezequiel@vanguardiasur.com.ar, mchehab@kernel.org, 
-	laurent.pinchart@ideasonboard.com, hdegoede@redhat.com, gregkh@linuxfoundation.org, 
-	mingo@kernel.org, tglx@linutronix.de, andriy.shevchenko@linux.intel.com, 
-	viro@zeniv.linux.org.uk, thomas.weissschuh@linutronix.de, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, imx@lists.linux.dev, jun.li@nxp.com
-Subject: Re: [PATCH v4 1/3] usb: core: add dma-noncoherent buffer alloc and
- free API
-Message-ID: <aou5e5mzcnt7iy5vlungtrodbvhp3fpx7ytrrgplmdxb25h5e5@fhyiiqnrd5cf>
-References: <20250703103811.4048542-1-xu.yang_2@nxp.com>
- <20250703103811.4048542-2-xu.yang_2@nxp.com>
- <30f04c8e-5074-4262-bf5a-da022b89c276@rowland.harvard.edu>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <30f04c8e-5074-4262-bf5a-da022b89c276@rowland.harvard.edu>
-X-ClientProxiedBy: MA0PR01CA0109.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a01:11d::8) To DU2PR04MB8822.eurprd04.prod.outlook.com
- (2603:10a6:10:2e1::11)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D7251DDA0E
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 08:17:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751617055; cv=none; b=gjN/LM13w4nINjAF0XYEkGa6DLGbykX6yLS+GC9hdSGA91UfVmxiWzvPPW5AWTeeAUDDLv2HRKoqhlkCorwDJkuZOqIngSYGSZB9mQAWskRUYheD4iJ39Z6BNhStsC5yAz16A3h+JCt6aTBv5xU71CyA+PS/9EIiidSdIuYUimI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751617055; c=relaxed/simple;
+	bh=O6Unz8QWJCfV+X8HFPCp5q5xdg5cfOfo9i0q6l0CWJs=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=OY/dG15to5/wKCNVdFf1BEvNBIlLDitz8nvuP23hc3hTPX5jYMEHI6rbsWCftGdePI++2TG+rYs9WSWPLZeLYEt56OzWZUCyxGB6QHhMBcNq/KWxMHghjUWAnAVTBIdv9sLTFNlvgCuTMKsPqKiZm+9GP52wJhDD2c/gIRzZues=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-87326a81ceaso152081739f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Jul 2025 01:17:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751617052; x=1752221852;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Hd+G1xdvqBo9O5Kp33hFCBvYbzyTkHavIRPiVMaYOk4=;
+        b=KE8o186XXo68u7vuSsqgkqxtltrWKRXmH2Cxrrhf/ZOGPVXNn5GTVGMdA7tnh/jmEv
+         sg4R59OceSY+Y9EPvZ4weAyiUgvcyEJQs41t+Wk1bEwVTPIqZjDamRdflvIWBcEq1Cdl
+         abwiMnccupDJdxTi1R5LI+ijkCo6aIkjENx4JhCTjQDfNl6QTvj+ntkwnjVFWF4kI4Wo
+         WA6PoFHdUVAVQiN/vAwzm5IyZY1Irf7MQ4n8huEMXLeEMDlpOQ8fjYg+OCPTc2cgsvZU
+         rXBfhM33b+d8BvFwJgBRB4gmDlUiOd27OT5NvIe69xo7I14cQtmivMLobbs5tb9Wz/vj
+         RpbA==
+X-Forwarded-Encrypted: i=1; AJvYcCV9bm0aL97JZpQ/pideNrJYBFRdv4NCF5qobLh1JzhyKrV4q+sp+kNlhmF+A978IBaFjju7m9AG82Pv1o4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yygjt/ubGGOvf2YY5dce/YUzoJfUyx4l7goq9a2BB3Ni4REoGKI
+	BowvASG78dMkiencvcdoCFk8r1sq2ahN+NlLbovVFNCX+PH7+ge3JGX1HqogViOnmpT3juvJ8ce
+	Zo/1LQIokJ+MGtTbT5ag6EHYCCu299ockpxhOdJxvfpGZBFJp/qhRTT8jy1I=
+X-Google-Smtp-Source: AGHT+IHoiaFLbGLOM/7aq8fZqlaHSUft1SeAmfH1B06Mee0OXT4e3E8Ex0IaKMXu1t3fWAFpcz+DgQwgXW6kXVmR7X3MsS1+LUE5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU2PR04MB8822:EE_|VI0PR04MB10231:EE_
-X-MS-Office365-Filtering-Correlation-Id: b3b83125-b557-4af6-d04e-08ddbad3d402
-X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
- BCL:0;ARA:13230040|1800799024|52116014|19092799006|376014|7416014|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
- =?us-ascii?Q?V+kKY1SRDbCBaO4xHLZk2gqWfO4mJiZsWbMC9ubRrAX4nu9S5KZz40piqR0s?=
- =?us-ascii?Q?vRerW90alzkT2Dff9zBHlVy2Z/PXlAPbyZryA4+aHlR9GEdDwM/8J9Fl+9Jy?=
- =?us-ascii?Q?s3UBFWKMu1Fkefr6fH4fJqx2WP0RBmk/+kumMnVXcfNsmuO7raWn2Tjb4EXi?=
- =?us-ascii?Q?QW9j8QSdBSdcP8EbMh/9yeyePCcfYqvYJQuMGvuu2RWoaroNGURxdZe23Hmn?=
- =?us-ascii?Q?+SiqOCheD/sp+aSHjxsD1Odfxzxdi3YfRv/ucYctNGDTCMIGPVYW/jVn1Mqt?=
- =?us-ascii?Q?cju1427N/+faXZGIZG3C1phO+Y7DYSy1RLfQZNwtmmZ9mdy/hnlczwaIWukI?=
- =?us-ascii?Q?gKFd4QeCO2bMbIfpr/FI6RLdHmrHUGr8Ca24DOL4/3ErnWnA3mVlw+fKEj0U?=
- =?us-ascii?Q?L3MbYqX5rVquFyVJbFxbifuXDz25qEk3dTb4sUAy6xhucIiop9LcNDdNEBIa?=
- =?us-ascii?Q?wp/QTM2WbY8daVWPsJXPZBtz5Du1i1pqbxuCQs6z/8iw5WFNrEgjsDN5ZxKV?=
- =?us-ascii?Q?3NX21jLnqimR3Bf4GDgE2PYTinkrdODskPyscFle4lPdpBlJqAMF89xGkXVN?=
- =?us-ascii?Q?xwwn8BHq8O/KrxjlKtaXxdcKLnFgOje8CIe/XrtLadOsd8JERxrwM8kNNozT?=
- =?us-ascii?Q?fi+yN7CKwT4zzdgzVZm17ty0AavfAmGvXqhKq5ET85TQOtQ89DlvvJujJOS9?=
- =?us-ascii?Q?yGRy8pYp6LOIVEzK0umW09GE17szoEYL86SPXPSqciCeNv7vi4zjWzUR9g/7?=
- =?us-ascii?Q?UFG7pLDyFDlZ1ebFojipeg3ZfSUwb6kuJuyASR85fJbz42MiGqR3AIUofpqm?=
- =?us-ascii?Q?Lrt2OLBJFoZoCed2tFcVOcp6CoWrmhiRXV1YMn+d74eYrnFlTk9/Y3/egDXm?=
- =?us-ascii?Q?e07vtC2sunQglL8UFXuXs28/ix899hnHtY4+QWWCjMD1tJWxOmTiltJBCJwW?=
- =?us-ascii?Q?i+wOq1VQByt6NjCQ+ty+82wCXpuXuVsGNwGLI7il1C5f1CzzaZpnSB4i6Mgo?=
- =?us-ascii?Q?6UOoj8q5gnvAD3a5kgFnjeH6Crfj7HNxxeBzKlLji15vNiI/hInkFxCmqBJh?=
- =?us-ascii?Q?o8KkFeIhtJ8EErzZrttKeApZHk7fqztovULnbwOemeVivsOuLzLhPyvEhD/0?=
- =?us-ascii?Q?bPQ1kOPb3zCpOsqRDh1R2jOLucrR4lMvifYeFyMIH9/Ht4jdYmDmWAooL0yk?=
- =?us-ascii?Q?DA3WLBioPCMz8hrhELW7X6EVgjAjiN1nk7PVFvVrywej/fCFXCaxqSU84PIq?=
- =?us-ascii?Q?SR6dL6ksdfgoMo3ALmspAU+2q/XuOfEmO8HBxszS5vl117H7jshaRCvcQ3+z?=
- =?us-ascii?Q?yIOT+yWCVZRHOmPkgCrFL8XjTDYAgPt6J/QPf6wFzq9iX0oJe840tDAbBszg?=
- =?us-ascii?Q?5iuU/LPISdR3mQDx1c3C+aqqRH7kV1K+hs3CPis2nYF5HfZsAvJZOlaiObIr?=
- =?us-ascii?Q?ptCWcp4dfg9n3uUI9mNMBwZsRllEZy6Hn77ceT0glcyPZTXLxQjTpB3V+Gse?=
- =?us-ascii?Q?UScZApWX8Doy/IE=3D?=
-X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU2PR04MB8822.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(52116014)(19092799006)(376014)(7416014)(366016)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?us-ascii?Q?9BjkpNf6apdj1a/9dkbvEbzS/7OXR2jqvaqRfvQr8FpsbPxKPmcI7vVo6su3?=
- =?us-ascii?Q?VEzb3798uzG1R8RCZ7pQIh2C6yC9SWQT0cASOT5M0qe1FSKVBf5MOKHFlrOn?=
- =?us-ascii?Q?x6mGeckCgbEGZlXIDLT7bchIVTBvQ3O5SDVb2y0X2XZDCw00Dt5/R/cVn4fY?=
- =?us-ascii?Q?dGQvT48rs0X/K4RDlWDUznUuDJtpaz2Vt8L2BdeQjyqlt5f71BD37ZVr0MEi?=
- =?us-ascii?Q?B1cU1ouvnTobcQRryThP5P4mqw0pFUW9z7dQUAeVfRXbaw8TyAub8j0SZtRb?=
- =?us-ascii?Q?yQBm6vpFrOsyzji0FD7OJtGHuwmPdfQ6H5AAOhLcLWK4YDMjLX/aMTeKJUmV?=
- =?us-ascii?Q?CmYGeSaROPkWieTMKXjThzkP6bdJvnXjzrFzJcbcSLlx+RvyRYY3oNpEZvIG?=
- =?us-ascii?Q?v+tEbzfdDZr3qbCXii6aOl6JpmAUd0M7SxnoPbV5O636GDsIiL63YKqf9fND?=
- =?us-ascii?Q?M/ad1mqqk5uXI4kTAQndm3FTr3srByxSWA1d3wkSyV6N732tTQu5ZACEn9gv?=
- =?us-ascii?Q?hjHiCNn1QdAOLwuWrguDUcdSqfN3SY1tQN5zrQd2o3/gmoAgnO6KZcmcX1xw?=
- =?us-ascii?Q?X1JpT8Br09QaygzwX+zcO/Ds9DBnlWrU/wTj46Kd/KHvMgDJwtL0X0weApiy?=
- =?us-ascii?Q?/nxfv2zv/l2utJjsvKrY7uZKr37mFnHEkOolPvfywXaVQ/m/oQRpcyQ9lIQ/?=
- =?us-ascii?Q?cdUPbQkBKUhFSR0nu5B3XiuPUjXCA59NJPGvjYNvXSm7fi9m9avPMpCZm8Ny?=
- =?us-ascii?Q?XUaDxjMQFMRt+Fevnde9MyQqJUAUKYefBBkuuCyZrzTrJjm01yeoEBG6Wo65?=
- =?us-ascii?Q?M4D3QYidhDmFlBLY2SDsNCBewc4r89TyRTGfqacS+h0Ujg905QSEkv/fxrN1?=
- =?us-ascii?Q?hYSPZsXyEHF7Ws8gHsZ0c3GN29j/PypY+eqIh4CucfAn2YSDCioLlZNB5bJu?=
- =?us-ascii?Q?P/0BHehbEz7Lt36xslZOmDOsiYEFFBlh1pQPHe2m1w2VnlYx4lccs5CY+0JJ?=
- =?us-ascii?Q?lGbqchF3l//yzZygr/Rp/BDbvjwntH98CxIdLraoT6RVzSgbTizt9ZvFW89i?=
- =?us-ascii?Q?fma0g/eKa2mgI3Ujtzz1frBWHnw+eZoCYTleOJgoLyVlnkShwFTdNwSnAXwo?=
- =?us-ascii?Q?xfG+bToAHe3fy+Dc1gScTfidRoxkaki4muVn502ezchzXpJVQraMDdYj4JYK?=
- =?us-ascii?Q?a3dPi99td2vtNtra8mKMq6rbztUSOPzMYQdlLLwzhHQWIs7PV2xMt8yGeVuN?=
- =?us-ascii?Q?RR67xL+ZZ0yZWHEevbQg+5Ir37OebN23/vuhW30aJoouPSVKkD1/3dY/rKGK?=
- =?us-ascii?Q?okPSoIDastbpVSlynvq0YPoS1mLmiub6BmNCl79huTi8bdNELm0am/tfxH+Z?=
- =?us-ascii?Q?7zSdCicadRJdYkYGe775SGgnKSKuy0N9Kr2TB48f4xJbzJ7IdZbLs0r1z8Oj?=
- =?us-ascii?Q?Sm3cqjj2yiisZVAJ3rPKSRTaoKoKWaDOAaZll3VZRxafLxhKxrzxlPATkyA1?=
- =?us-ascii?Q?wpNdvqfgpL3V8Iriz6m5Hh/clCzLzTKsp+UHy6qgptfeUfrUCBd5UU7HF7oS?=
- =?us-ascii?Q?WFK8qeOWOG+M9Tc+cJ4Mqw3I/jLwIwH3r3AgkTdv?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b3b83125-b557-4af6-d04e-08ddbad3d402
-X-MS-Exchange-CrossTenant-AuthSource: DU2PR04MB8822.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Jul 2025 08:21:51.7135
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 6jQLuCuCO14XExGOnFAOyf7cXcvR31mqIjmIwTlzfjb9b/IE5YGv3jJlW0+gYAExJC1bAQo70T/GsssqyqYqcQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB10231
+X-Received: by 2002:a05:6e02:2787:b0:3dd:b602:88 with SMTP id
+ e9e14a558f8ab-3e134859e42mr15955975ab.9.1751617052645; Fri, 04 Jul 2025
+ 01:17:32 -0700 (PDT)
+Date: Fri, 04 Jul 2025 01:17:32 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68678e1c.a70a0220.29cf51.0013.GAE@google.com>
+Subject: [syzbot] [kernel?] WARNING in comedi_unlocked_ioctl
+From: syzbot <syzbot+d6995b62e5ac7d79557a@syzkaller.appspotmail.com>
+To: abbotti@mev.co.uk, hsweeten@visionengravers.com, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Jul 03, 2025 at 10:35:23AM -0400, Alan Stern wrote:
-> On Thu, Jul 03, 2025 at 06:38:09PM +0800, Xu Yang wrote:
-> > This will add usb_alloc_noncoherent() and usb_free_noncoherent()
-> > functions to support alloc and free buffer in a dma-noncoherent way.
-> > 
-> > To explicit manage the memory ownership for the kernel and device,
-> > this will also add usb_dma_noncoherent_sync_for_cpu/device() functions
-> > and call it at proper time.  The management requires the user save
-> > sg_table returned by usb_alloc_noncoherent() to urb->sgt.
-> > 
-> > Signed-off-by: Xu Yang <xu.yang_2@nxp.com>
-> > 
-> > ---
-> > Changes in v4:
-> >  - improve if-else logic
-> > 
-> > Changes in v3:
-> >  - put Return section at the end of description
-> >  - correct some abbreviations
-> >  - remove usb_dma_noncoherent_sync_for_cpu() and
-> >    usb_dma_noncoherent_sync_for_device()
-> >  - do DMA sync in usb_hcd_map_urb_for_dma() and
-> >    usb_hcd_unmap_urb_for_dma()
-> >  - call flush_kernel_vmap_range() for OUT transfers
-> >    and invalidate_kernel_vmap_range() for IN transfers
-> > ---
-> >  drivers/usb/core/hcd.c | 33 ++++++++++++-----
-> >  drivers/usb/core/usb.c | 80 ++++++++++++++++++++++++++++++++++++++++++
-> >  include/linux/usb.h    | 11 ++++++
-> >  3 files changed, 116 insertions(+), 8 deletions(-)
-> > 
-> > diff --git a/drivers/usb/core/hcd.c b/drivers/usb/core/hcd.c
-> > index c22de97432a0..42d9d8db0968 100644
-> > --- a/drivers/usb/core/hcd.c
-> > +++ b/drivers/usb/core/hcd.c
-> 
-> > @@ -1425,8 +1431,10 @@ int usb_hcd_map_urb_for_dma(struct usb_hcd *hcd, struct urb *urb,
-> >  	}
-> >  
-> >  	dir = usb_urb_dir_in(urb) ? DMA_FROM_DEVICE : DMA_TO_DEVICE;
-> > -	if (urb->transfer_buffer_length != 0
-> > -	    && !(urb->transfer_flags & URB_NO_TRANSFER_DMA_MAP)) {
-> > +	if (!(urb->transfer_flags & URB_NO_TRANSFER_DMA_MAP)) {
-> > +		if (!urb->transfer_buffer_length)
-> > +			return ret;
-> > +
-> >  		if (hcd->localmem_pool) {
-> >  			ret = hcd_alloc_coherent(
-> >  					urb->dev->bus, mem_flags,
-> > @@ -1491,7 +1499,16 @@ int usb_hcd_map_urb_for_dma(struct usb_hcd *hcd, struct urb *urb,
-> >  		if (ret && (urb->transfer_flags & (URB_SETUP_MAP_SINGLE |
-> >  				URB_SETUP_MAP_LOCAL)))
-> >  			usb_hcd_unmap_urb_for_dma(hcd, urb);
-> > +	} else {
-> > +		if (!urb->sgt)
-> > +			return ret;
-> > +
-> > +		if (dir == DMA_TO_DEVICE)
-> > +			flush_kernel_vmap_range(urb->transfer_buffer,
-> > +						urb->transfer_buffer_length);
-> > +		dma_sync_sgtable_for_device(hcd->self.sysdev, urb->sgt, dir);
-> >  	}
-> 
-> This could be done a little more cleanly.  It's always awkward to read
-> an "else" clause for a negated test.
+Hello,
 
-Agree.
+syzbot found the following issue on:
 
-> 
-> Instead, change the "else" to:
-> 
-> 	if (urb->transfer_flags & URB_NO_TRANFER_DMA_MAP) {
-> 
-> and move this whole section to the top of the big "if".  Then you can 
-> change the test that's already there to:
-> 
-> 	} else if (urb->transfer_buffer_length != 0) {
+HEAD commit:    4c06e63b9203 Merge tag 'for-6.16-rc4-tag' of git://git.ker..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1550548c580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b29b1a0d7330d4a8
+dashboard link: https://syzkaller.appspot.com/bug?extid=d6995b62e5ac7d79557a
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=163cac8c580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13c58582580000
 
-Okay. It's a better choice.
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-4c06e63b.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/ff61efc838cb/vmlinux-4c06e63b.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/dea44d0d14bb/bzImage-4c06e63b.xz
 
-Thanks,
-Xu Yang
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+d6995b62e5ac7d79557a@syzkaller.appspotmail.com
 
-> 
-> Alan Stern
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 5545 at mm/page_alloc.c:4935 __alloc_frozen_pages_noprof+0x2c8/0x370 mm/page_alloc.c:4935
+Modules linked in:
+CPU: 0 UID: 0 PID: 5545 Comm: syz.0.16 Not tainted 6.16.0-rc4-syzkaller-00123-g4c06e63b9203 #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:__alloc_frozen_pages_noprof+0x2c8/0x370 mm/page_alloc.c:4935
+Code: 74 10 4c 89 e7 89 54 24 0c e8 24 14 0d 00 8b 54 24 0c 49 83 3c 24 00 0f 85 a5 fe ff ff e9 a6 fe ff ff c6 05 72 f5 74 0d 01 90 <0f> 0b 90 e9 18 ff ff ff a9 00 00 08 00 48 8b 4c 24 10 4c 8d 44 24
+RSP: 0018:ffffc90002c0f960 EFLAGS: 00010246
+RAX: ffffc90002c0f900 RBX: 0000000000000019 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffffc90002c0f9c8
+RBP: ffffc90002c0fa50 R08: ffffc90002c0f9c7 R09: 0000000000000000
+R10: ffffc90002c0f9a0 R11: fffff52000581f39 R12: 0000000000000000
+R13: 1ffff92000581f30 R14: 0000000000040dc0 R15: dffffc0000000000
+FS:  00005555918fc500(0000) GS:ffff88808d21c000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000200000000008 CR3: 0000000012196000 CR4: 0000000000352ef0
+Call Trace:
+ <TASK>
+ __alloc_pages_noprof+0xa/0x30 mm/page_alloc.c:4993
+ __alloc_pages_node_noprof include/linux/gfp.h:284 [inline]
+ alloc_pages_node_noprof include/linux/gfp.h:311 [inline]
+ ___kmalloc_large_node+0x85/0x210 mm/slub.c:4272
+ __kmalloc_large_node_noprof+0x18/0x90 mm/slub.c:4300
+ __do_kmalloc_node mm/slub.c:4316 [inline]
+ __kmalloc_noprof+0x36f/0x4f0 mm/slub.c:4340
+ kmalloc_noprof include/linux/slab.h:909 [inline]
+ kmalloc_array_noprof include/linux/slab.h:948 [inline]
+ comedi_unlocked_ioctl+0x9ee/0xf40 drivers/comedi/comedi_fops.c:2242
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:907 [inline]
+ __se_sys_ioctl+0xf9/0x170 fs/ioctl.c:893
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f6cd0d8e929
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffd9e4829b8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007f6cd0fb5fa0 RCX: 00007f6cd0d8e929
+RDX: 0000200000000000 RSI: 000000008010640b RDI: 0000000000000003
+RBP: 00007f6cd0e10b39 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f6cd0fb5fa0 R14: 00007f6cd0fb5fa0 R15: 0000000000000003
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
