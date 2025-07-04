@@ -1,129 +1,149 @@
-Return-Path: <linux-kernel+bounces-717260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-717252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9059CAF9202
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 14:01:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D4C8AF91E5
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 13:53:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B2631C8721D
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 12:01:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA0297A90A8
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 11:52:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D10C92D63E1;
-	Fri,  4 Jul 2025 12:00:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 597752D5C67;
+	Fri,  4 Jul 2025 11:53:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="GYQZWvnM"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="TefrVS3q"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 171F023A58E
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 12:00:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 378D42D46B7
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 11:53:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751630453; cv=none; b=jvbhnE91H0A/K4e42Tc6+WKkcAfbTAKnb09i0KzVjW/viJo2izVNmUsLuJ1xb6khLiNa0ILDLu0rcqk84L6S0EshofPaNJIlRCYjhNwu2S//V0JinTU5EQeFS13XZa2PJYV41jDThBKSgua0jG3b0gyR8fG77mjZzn0BldB6jP4=
+	t=1751630001; cv=none; b=TcwNAoPUu5w+pfDOhEoxXbnVdpn8mE2+CwBHVYexFotl5W9DOrymBq5aF2MWVd3zpGkhUVdnB4q1HCKjpYWP83VWT4qmPrU+Fttm1No9jjjqIxDLAKKC/TSVl+tQzSVEK4opSjMVwnQ+ht444pwcCfV7mBZ5mju2RVQ4oGtJkzc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751630453; c=relaxed/simple;
-	bh=su1yYo+d3aL4MP7MFtVZnoayOFX9zNGZfH0IWJywWbk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=svTf9o9DjCAUazAUJFWwO3Pxk6QTWCl6xyoJZTsJvzYIHRTiwGtyj8B0iyVTdQGCHSSvxBgkyQD9tY5iilGngZB6ywzVbmE14UV/4Iwl9uJLtOlqSsRA31N7h1wtO+A5YWEiBJpw8Iiq3nBsC8KFvB1wLMzWz9kMmrD1hCUI3eo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=GYQZWvnM; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1751629981;
-	bh=su1yYo+d3aL4MP7MFtVZnoayOFX9zNGZfH0IWJywWbk=;
-	h=From:Date:Subject:To:Cc:From;
-	b=GYQZWvnM5P23pCFUP4/3R64qkKvJtymb7wnz4xILvO77a2ASb3JjdYLVjtYz0MC1s
-	 2DdpxNG1143I+fNixeItbGyVe+0zizAcjuimPaCB9kCJT91FveIaetanV4oTRdmYw+
-	 ekqaoMNUObuYR8VBK5EQLsk/Bbp6n6P3g4XHdrcW2CM/uAM455e0Kq0hfG0VPRXs9P
-	 lkfwAYYf+vB+6zVklDlVKveo4fBZwCpRO8nFE44g5iHtYXdppFdAPWZo0ZlARl713o
-	 Kg9ucBKeUBhGfkIQapgGUyoozamhvMRGdLFOHLbYw9+g1lx5u8xm6CVjXMQAddFXvu
-	 ChXJfoTU4Jvgg==
-Received: from localhost (unknown [212.93.144.165])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with UTF8SMTPSA id 7B8B117E090E;
-	Fri,  4 Jul 2025 13:53:01 +0200 (CEST)
-From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Date: Fri, 04 Jul 2025 14:52:54 +0300
-Subject: [PATCH] drm/bridge: adv7511: Fix
- DRM_BRIDGE_OP_HDMI_{AUDIO|CEC_ADAPTER} setup
+	s=arc-20240116; t=1751630001; c=relaxed/simple;
+	bh=MKwHGKOn7w0r1Lf5ecuBq9Tsh0Nc6l+P14YUHUHUuUg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=G1WQje4E1OaWsK4yUen7LyaX6snBpS1tWpenTRAfR+huxvQFmrGcmJaZMFYjtRi6YdTfmBSgAON6o8p7JVvzvw6V2E3CGu7BfJwKoYJFLdyjQsk/lg4I8fWELXqp5009BEtrvLmkrDeadEG6a2IS806qbnC1y2yKGfEgKrhOxOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=TefrVS3q; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5646US5g022178
+	for <linux-kernel@vger.kernel.org>; Fri, 4 Jul 2025 11:53:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	HwHQZhuMFY2xGJQ2mbeCbIoXx+TFpyI6+fnNo2wASLk=; b=TefrVS3qNMZjmGf1
+	+igIX0RHUwi8Dg9Ttc83GCuTMBQ4WlzeRsB+Dy5v5eLUIO0EKeamAg6QQsB0vmfN
+	IU1qBSN5bYIkGnOgHzBooRvGyK0js5LINnBGeJ9gqk8bEWphG0LiC2KP/Z3VEeU7
+	kkKevQffExNE63V8u4WkStfgazMzhh/9N0LeY+vXPuwzaIgGqn18JKhoamsrl3Zw
+	SfDwmz8J5frsX+4dMio2rl/viBV4AdtRAbx8c+odapzivuqu03Ogm+NwNvBJwvE6
+	4x5XuQ+j9sJgGArbsTrGemE6fkMarsxzQacB9gjrMI2rZJ3VBLSMk2W9PBnTrfZ1
+	URTlkw==
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47j7qmknpt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 04 Jul 2025 11:53:18 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7d3eeb07a05so13620285a.2
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Jul 2025 04:53:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751629998; x=1752234798;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HwHQZhuMFY2xGJQ2mbeCbIoXx+TFpyI6+fnNo2wASLk=;
+        b=qrLxiEWbJyOMm0ap31K6Fc5kYLKEiHeZjjrbGQ182KIAuIbXbmTzkYJxA8WCbb2wxn
+         pJwfUOLdWov9n0kUZnaKtzTPgiXa0eCPhabMICboBViIWgRodnqsxDwLrP5OPf/lSRIi
+         b1eU0M122fYh/kJCxm/QSLlror2Qtfk2fg2eUeJKXxQolctFs1If1wJy20NXnS4wDwXT
+         c5BG51zXDNiR31csd2mxzqPVcvf702HvSHQhIb3zZltfOZ3pTi89eZlHqPzBgXZnxkUR
+         FEsyTu6I0jhYf+FpwsG1/qhB3JikY49nvFKhaGtfp0z6XBbBG7gRzUvHlp7bECaFIJM2
+         CePw==
+X-Forwarded-Encrypted: i=1; AJvYcCURtijs4/jSIvS0o/9sYtRnBiaBRpoa/GeyYJ01kJb66/xoa2GELd44dGLSXTgV80wETMjEHx5HewPV/k4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCdfhqO4UJCnr2VykKiW72KnsaQ7pIueyKWuMmO0EoB1TaEBae
+	Gq7L4CcANZnLf+j4eb8DAVPJUTIeiImVzNmUwyOt4rLYjSvtFAJUgTufqrc540WRPkafvBaw5mI
+	MYZOFoTV1bzzs+pyYM4bGLvwPv7QXpAHJFPyaBOM/ZYhIKC5ZLJq67BTgnQUUFL+IQWc=
+X-Gm-Gg: ASbGnct56XQk6q/+OXOredKbnaSPsKk93uoQmXgGu/pejhWKMpsH0uNUIPB6nvLaIMG
+	p63xXqmVZ091kZVr/khhplKHip0eq5QJk91cPX+2FNwmFEdjYptkwEM/H17Ie0R2o9NKR/AB+nR
+	CzS90Vp4NTt8qEGUSGlS/iqAmpatZ4PYHPHGCSqm4NASa2Fy74RQEZZVcYcuH+TOC1XyV2CyOtI
+	wIGaVWSqjpKDK/mv9cEC/rRQKnONQc9S80n7F1ky+yZVaAtRMaHGmeCqw1VBWTIyfWl6Ry9pVDt
+	4R9iLTeiW8FbSQxTT3KmtRqKw5dQt2Q91JgQH3E4WY/0ske3z50MySHca6+PEpP42LLVnzrdpNs
+	kiRD6Hg==
+X-Received: by 2002:a05:620a:170a:b0:7d3:e9b7:7121 with SMTP id af79cd13be357-7d5dcd42af1mr119898685a.12.1751629997927;
+        Fri, 04 Jul 2025 04:53:17 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHPlgLXzQaVRDV5W/CN6Yajx9iz9BViPuW1BhPcQXauAwU9MM5dRRtATbVw3ZexdZDIvcZlHA==
+X-Received: by 2002:a05:620a:170a:b0:7d3:e9b7:7121 with SMTP id af79cd13be357-7d5dcd42af1mr119897885a.12.1751629997529;
+        Fri, 04 Jul 2025 04:53:17 -0700 (PDT)
+Received: from [192.168.1.106] (83.9.29.45.neoplus.adsl.tpnet.pl. [83.9.29.45])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae3f66d931csm164525466b.10.2025.07.04.04.53.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 04 Jul 2025 04:53:17 -0700 (PDT)
+Message-ID: <c0908ffc-f973-4fe6-9264-cd038b0e5fb5@oss.qualcomm.com>
+Date: Fri, 4 Jul 2025 13:53:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 07/11] clk: qcom: Add Display Clock controller (DISPCC)
+ driver for Milos
+To: Luca Weiss <luca.weiss@fairphone.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250704-sm7635-clocks-v2-0-9e47a7c0d47f@fairphone.com>
+ <20250704-sm7635-clocks-v2-7-9e47a7c0d47f@fairphone.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250704-sm7635-clocks-v2-7-9e47a7c0d47f@fairphone.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250704-adv7511-bridge-ops-fix-v1-1-c1385922066e@collabora.com>
-X-B4-Tracking: v=1; b=H4sIAJXAZ2gC/x2MQQqAIBBFryKzbkBNsbpKtCidajYlChFEd29o+
- f7jvwcqFaYKg3qg0MWVz0PANAriPh8bISdhsNp6HbTDOV3BG4NL4ST2zBVXvrGLbW+is45sB3L
- OhWT+w+P0vh81L1MnaAAAAA==
-X-Change-ID: 20250704-adv7511-bridge-ops-fix-8c391c424e28
-To: Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org, 
- linux-kernel@vger.kernel.org
-X-Mailer: b4 0.14.2
+X-Authority-Analysis: v=2.4 cv=C4TpyRP+ c=1 sm=1 tr=0 ts=6867c0ae cx=c_pps
+ a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=qmfFy4ndMtQ753Zl/n/b/A==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=6H0WHjuAAAAA:8 a=EUspDBNiAAAA:8
+ a=ygkTYHpWjZnbTFMe8PQA:9 a=QEXdDO2ut3YA:10 a=AYr37p2UDEkA:10
+ a=PEH46H7Ffwr30OY-TuGO:22 a=Soq9LBFxuPC4vsCAQt-j:22
+X-Proofpoint-ORIG-GUID: IMHWxiM61MTXGGyWA63x7OyN7o86f4xE
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA0MDA5MCBTYWx0ZWRfX941WoTKptWkK
+ 6btmk1Gbc2dZubDhLwmpL3b9JndKkJ5Fj+m9hjrBi6Z+3XW3utenJf1PKEL/Dnf4Lb5rs855tv1
+ Rc9vJ2SjkKuwLXcStSrThrXuzt1j5gGWdmJL7lagIuWBTn1R9RTI5C7xXNWGlKDCHiwaiyPjnKr
+ WGeCiO6ifN5W34yQcPMQTLLYNOrOtypW8osFqC4M6VaoEeqraKvKIbPEbwHGOFacpBvwrpQhsrK
+ dFgOogPnevq1R4gIrQ1mDay3YyqbQbLWeNDiUEDr1QOoiLS9qV+joocO9qXawtftqAHHam98tff
+ XDf2Y3AggmnyyWGx8VT7pb+V8vThzYT6swe13vMyTopMOZuHHC6JqVzW9LD0lO9Y25BfFdJZU5T
+ FQjvddI9wjyalyJlZnPNiwoBbjxvFGKMIBEpHAzeoaUhSIoNlYq4Qh0c8DoHauEeo/yPoJnk
+X-Proofpoint-GUID: IMHWxiM61MTXGGyWA63x7OyN7o86f4xE
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-04_04,2025-07-02_04,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 phishscore=0 suspectscore=0 bulkscore=0 lowpriorityscore=0
+ clxscore=1015 priorityscore=1501 spamscore=0 mlxscore=0 mlxlogscore=961
+ adultscore=0 malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507040090
 
-When driver is built with either CONFIG_DRM_I2C_ADV7511_AUDIO or
-CONFIG_DRM_I2C_ADV7511_CEC disabled, drm_bridge_connector_init() is
-expected to fail with -EINVAL.  That is because all required audio (or
-CEC) related callbacks in adv7511_bridge_funcs ended up being NULL.
 
-Set DRM_BRIDGE_OP_HDMI_AUDIO and DRM_BRIDGE_OP_HDMI_CEC_ADAPTER bridge
-ops only when the aforementioned kernel config options have been
-enabled.
 
-Fixes: ae01d3183d27 ("drm/bridge: adv7511: switch to the HDMI connector helpers")
-Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
----
- drivers/gpu/drm/bridge/adv7511/adv7511_drv.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+On 04-Jul-25 09:16, Luca Weiss wrote:
+> Add support for the display clock controller found on Milos (e.g.
+> SM7635) based devices.
+> 
+> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+> ---
 
-diff --git a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
-index 9df18a8f2e37ee53e5793700955404c34a1e01aa..f59d19b4b81a81de9604da13cd00ba9280972205 100644
---- a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
-+++ b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
-@@ -1262,9 +1262,7 @@ static int adv7511_probe(struct i2c_client *i2c)
- 
- 	adv7511->bridge.ops = DRM_BRIDGE_OP_DETECT |
- 		DRM_BRIDGE_OP_EDID |
--		DRM_BRIDGE_OP_HDMI |
--		DRM_BRIDGE_OP_HDMI_AUDIO |
--		DRM_BRIDGE_OP_HDMI_CEC_ADAPTER;
-+		DRM_BRIDGE_OP_HDMI;
- 	if (adv7511->i2c_main->irq)
- 		adv7511->bridge.ops |= DRM_BRIDGE_OP_HPD;
- 
-@@ -1272,6 +1270,7 @@ static int adv7511_probe(struct i2c_client *i2c)
- 	adv7511->bridge.product = adv7511->info->name;
- 
- #ifdef CONFIG_DRM_I2C_ADV7511_AUDIO
-+	adv7511->bridge.ops |= DRM_BRIDGE_OP_HDMI_AUDIO;
- 	adv7511->bridge.hdmi_audio_dev = dev;
- 	adv7511->bridge.hdmi_audio_max_i2s_playback_channels = 2;
- 	adv7511->bridge.hdmi_audio_i2s_formats = (SNDRV_PCM_FMTBIT_S16_LE |
-@@ -1284,6 +1283,7 @@ static int adv7511_probe(struct i2c_client *i2c)
- #endif
- 
- #ifdef CONFIG_DRM_I2C_ADV7511_CEC
-+	adv7511->bridge.ops |= DRM_BRIDGE_OP_HDMI_CEC_ADAPTER;
- 	adv7511->bridge.hdmi_cec_dev = dev;
- 	adv7511->bridge.hdmi_cec_adapter_name = dev_name(dev);
- 	adv7511->bridge.hdmi_cec_available_las = ADV7511_MAX_ADDRS;
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
----
-base-commit: 86c947b363f003153768d879ee15f8358cbf29c5
-change-id: 20250704-adv7511-bridge-ops-fix-8c391c424e28
-
+Konrad
 
