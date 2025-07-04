@@ -1,214 +1,113 @@
-Return-Path: <linux-kernel+bounces-717834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-717830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB5FEAF99CF
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 19:38:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C3F6AF99C6
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 19:37:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14F651CC09F1
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 17:38:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D78CC544200
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 17:36:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96849309A5D;
-	Fri,  4 Jul 2025 17:36:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 542362E092E;
+	Fri,  4 Jul 2025 17:36:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sartura.hr header.i=@sartura.hr header.b="JG/aj/Wp"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ft2VgfiE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D9542EA16F
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 17:36:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EF602DEA8A;
+	Fri,  4 Jul 2025 17:36:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751650581; cv=none; b=AzWmUMEXWavN3kNKhJB5yswgUYfljgXlxdBUIwPY5FRTajO3LfJDwiRv0XzPFZx9H2WrU4LG+PrkZV7rmgqrkJt7nROC/ecNHBQJj5LDSGAaC/sf4un0HGBCU3WzZ3l1PXuD2hMA5AsqT5oNmb3Q3SsNfEg8XPcwHuKFP+G312A=
+	t=1751650577; cv=none; b=eGmd1Qhqr+Yh4VX+ZLEKZww8R8XtLdyx/9wG3XZxH5Kp69CTJd2plyE3nuZfTYsedTMBu/iSfUDDMVvmeYJ9QiimFp8lXVALJePMO+BDrje4hlUZYKOhKfRg/fcN4fqml4R5tc24N324OEB8h95yLeNg4Eh5inusnhNgpR+Fz9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751650581; c=relaxed/simple;
-	bh=GmYJZP6Xc+LYEezxq1PksUUUJoTuFJ2anrOieQhfEiU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FTCGE8nF3v/umC4p4LFJRKO8APh7SZBn0nD46/MSWUeJGay5oqPa4LkoNB0JDEwJRXMGpBCuT0b0DyGQF03/WIMufz4Sjymgkg36Fra+AoGDsx0qHjuG3TYvzSXcciyestWn6eu1tIIF3yDzUrq7tYgqJVjJ++llT86wHykBtUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sartura.hr; spf=pass smtp.mailfrom=sartura.hr; dkim=pass (2048-bit key) header.d=sartura.hr header.i=@sartura.hr header.b=JG/aj/Wp; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sartura.hr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sartura.hr
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ae0df6f5758so183611966b.0
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Jul 2025 10:36:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sartura.hr; s=sartura; t=1751650578; x=1752255378; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/gMVsSx3VDJCjM0/V6JS1Ju4gdqnvsZW/tG6WKrnPP0=;
-        b=JG/aj/Wp8joH3ZjJdiHbBsx1j8PFAMMtHCadbJigMjkx7zR8Gk6iBuEJjyoDpD/qwy
-         GdMb+BI7R9vUZXFs6BaMVceR0cAfe6h2GL6N/iZMivqTlIOLe6yzyRJXrqynFJT4m+z4
-         ETmICqjLPUqVpxx++E2nSKvTvWmBQRbZTJSA50yHeLjU2DQEp8f1CHn9Bp00r+bewLYA
-         UHyW6tYJ5d/6R4hexxDqpuSBPf1b5jENlbdTrWDimoChpYoAlx0SLiW1Qse+GqeEdazM
-         Hh6VK25RWbcHYbor7cJmJ+hk1HNxjrps8qn3wwvAKAoFB0jFb3ZxfLPGu2uiChBhvlKh
-         ee4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751650578; x=1752255378;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/gMVsSx3VDJCjM0/V6JS1Ju4gdqnvsZW/tG6WKrnPP0=;
-        b=UEljgfOqXX5k99XCFUEL6l5tNpc4lh8/3vfJtWFmFf8pbvTiU7sII5x+7hdaH4hCT5
-         Ax0c9wdiRtIonggFS83YpqV+NhhriksuOORIQ17NHVVJPAuDMnpIsNDD/HQVYQpSS0Pp
-         5waIlQ0oIY8JsF7Ia3G2tiSerVTgWi1duU6UQUwV/4dI4LGLG7+h4nkgtzL4zNBBJi4+
-         V2xd5YCDuvd7PPPeTMYH5aky0vSzWRH4N/24nqet2dAFk4/hOBofOSqXMknlPZmxYyjn
-         vt8a4dYZu0QKG3jqTagd6QvIK82BbK4reZWFVlHOJR8uUJttxqDBm7VKqE+ca7TFn5t0
-         T1Tw==
-X-Forwarded-Encrypted: i=1; AJvYcCXHr/JZ+mJ5MT4GIIQ8KFA2ZS7FVoR+gPlRq2yN4YzGTuPBX4kuKohR0jcMNsd5rLipDApKX/laozG2uXM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YygqG6MnczbhdWRZStyBx2Ye6UTiQ2NchTOWn9zk2Uvvv11DI9r
-	CT8GUsXJa72rq0MRRionnxKCFGJRganXVDDZAlXa/uhm7aJo38TP8IWZGODumwdObH+7llltuP7
-	T1ZBilNiXp3HQcuoXKSs+Uv41WWYEeyjMk7aRedQxUw==
-X-Gm-Gg: ASbGncs+rflbRd7WJ6Rq4LZLt6qMmIhpIypoIYmo9atY5CjrB+fyXSWFxcFE/GWTzNF
-	dRZ3ixRAAxsf4lGXBrmcrXqyXfXeDNqgqERoqYuTbtLCG8mUZ1dOhmGLgmdIHQsbmyN/FWJs+OW
-	z7KUotz50XobINhAvPdHaf8WgbhrKpiNeFeAVw1xdD2QpK
-X-Google-Smtp-Source: AGHT+IHeJ1Z6kLI9F18nPlTXJDs+kXmK3fscjH5F6AOkcbqCoHLdbo6tfPeiaHhkgOp4rTxkpu1/up/L9rb3ERUcPTE=
-X-Received: by 2002:a17:907:9629:b0:ae0:628a:5093 with SMTP id
- a640c23a62f3a-ae3fe4581b0mr339627066b.3.1751650577806; Fri, 04 Jul 2025
- 10:36:17 -0700 (PDT)
+	s=arc-20240116; t=1751650577; c=relaxed/simple;
+	bh=YEBPecvN+/+CzyYo7nYN0cP1XFT4QG7XKpKI4CPaGq0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=TgMAtgfI8Lb66HHdYE4dF6TFChgWh8IfEQeu8k9J4VZfNfkc04bL1XjTACy8rvSxkXUHkfXj84Ljwa7/UXYfS34rClPob/Mgmzx5zKJXh5FiBW6xB1DSPjVdKNEShPgh/HuMe+XzeB63sF3TaDE1tR6kfIiDnw9HEiRlkPWIO8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ft2VgfiE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE4D6C4CEEE;
+	Fri,  4 Jul 2025 17:36:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751650577;
+	bh=YEBPecvN+/+CzyYo7nYN0cP1XFT4QG7XKpKI4CPaGq0=;
+	h=From:Subject:Date:To:Cc:From;
+	b=ft2VgfiEegPPZ9c2w2mnNeJIDEKZSYBczaC2FpJ5NNvFxCoMEXfA0P9bKWRHAlGHH
+	 zCDqqAErJfoMG8hizrKuSRNbn3VqHIK0sxp+IxRcvH1AAglDujUTXsqo+I/eaZ5DUV
+	 msMRiyPaFwt8rkzB/0dMCXcOJq8avdhvBAMuefuB5vzMrlLgVSTpn2YNGDy2b9jS5w
+	 T/hRlgzidro77h7h74aCxkwujDh8cgOwI/5fcUHf1P9dbnjQpVZ2ZJRQesySsnqq5E
+	 DFvWsTVwtDuZ/RE7sGoquCcCWc1bH0C4KNq7Y6DuCw4UNdFGH/1Qe9wYsmIJQ9sxvk
+	 472DBKnQbUCkw==
+From: Konrad Dybcio <konradybcio@kernel.org>
+Subject: [RFC/RFT PATCH 0/5] Clean up UFS(-qcom) MCQ situation
+Date: Fri, 04 Jul 2025 19:36:08 +0200
+Message-Id: <20250704-topic-qcom_ufs_mcq_cleanup-v1-0-c70d01b3d334@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250702183856.1727275-1-robert.marko@sartura.hr>
- <20250702183856.1727275-2-robert.marko@sartura.hr> <ea353170-6e03-4231-afc2-3dc45253931d@app.fastmail.com>
- <CA+HBbNHxiU5+xVJTyPQFuCJLyEs5_MpybSBEgxi25bzaGfiVHA@mail.gmail.com> <421d61db-27eb-4ad2-bd98-eb187fd14b1e@microchip.com>
-In-Reply-To: <421d61db-27eb-4ad2-bd98-eb187fd14b1e@microchip.com>
-From: Robert Marko <robert.marko@sartura.hr>
-Date: Fri, 4 Jul 2025 19:36:06 +0200
-X-Gm-Features: Ac12FXwPCk_M7U49drkBOHMtvL2YaDYQKpMa88sHXtdMqEAGjR9SQcLiyG85r7Q
-Message-ID: <CA+HBbNEiKWS71jtF_jqV9bdX9HVroaZSGMaeD-xFM8sm0kLtCw@mail.gmail.com>
-Subject: Re: [PATCH v8 01/10] arm64: Add config for Microchip SoC platforms
-To: Nicolas Ferre <nicolas.ferre@microchip.com>
-Cc: Arnd Bergmann <arnd@kernel.org>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
-	Russell King <linux@armlinux.org.uk>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Olivia Mackall <olivia@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
-	"David S . Miller" <davem@davemloft.net>, Vinod Koul <vkoul@kernel.org>, 
-	Andi Shyti <andi.shyti@kernel.org>, Lee Jones <lee@kernel.org>, Mark Brown <broonie@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-crypto@vger.kernel.org, dmaengine@vger.kernel.org, 
-	linux-i2c@vger.kernel.org, linux-spi@vger.kernel.org, 
-	linux-serial@vger.kernel.org, Oleksij Rempel <o.rempel@pengutronix.de>, 
-	Daniel Machon <daniel.machon@microchip.com>, luka.perkov@sartura.hr, 
-	Conor Dooley <Conor.Dooley@microchip.com>, 
-	Lars Povlsen - M31675 <Lars.Povlsen@microchip.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAgRaGgC/x3MSwqAIBAA0KvErBPsH10lQmSaaqDUtCKI7p60f
+ Jv3QCDPFKBLHvB0cWBrIrI0AVy0mUnwGA25zCvZyFIc1jGKHe2mzimoDXeFK2lzOlFQU2elJln
+ rFmLgPE18/3k/vO8H/aXYsGwAAAA=
+X-Change-ID: 20250704-topic-qcom_ufs_mcq_cleanup-3e7614ae06a8
+To: Manivannan Sadhasivam <mani@kernel.org>, 
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, 
+ "Martin K. Petersen" <martin.petersen@oracle.com>, 
+ Asutosh Das <quic_asutoshd@quicinc.com>, 
+ Bart Van Assche <bvanassche@acm.org>, 
+ Stanley Chu <stanley.chu@mediatek.com>
+Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
+ Can Guo <quic_cang@quicinc.com>, Nitin Rawat <quic_nitirawa@quicinc.com>, 
+ linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1751650573; l=1343;
+ i=konrad.dybcio@oss.qualcomm.com; s=20230215; h=from:subject:message-id;
+ bh=YEBPecvN+/+CzyYo7nYN0cP1XFT4QG7XKpKI4CPaGq0=;
+ b=w1Y00gKqqNBo7rsQJ2hO5Loxvywl8yMjuhjpuKoW3IikHg+X9MywHMMhUlfcy5WgqhvWg7z/I
+ oPZ5nW6urgxBSENoC7uKNEpcnnSKzRn0ovIzd4G3PkteEhshKdhldSm
+X-Developer-Key: i=konrad.dybcio@oss.qualcomm.com; a=ed25519;
+ pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 
-On Thu, Jul 3, 2025 at 3:56=E2=80=AFPM Nicolas Ferre
-<nicolas.ferre@microchip.com> wrote:
->
-> Robert, Arnd,
->
-> On 03/07/2025 at 14:25, Robert Marko wrote:
-> > On Wed, Jul 2, 2025 at 9:57=E2=80=AFPM Arnd Bergmann <arnd@kernel.org> =
-wrote:
-> >>
-> >> On Wed, Jul 2, 2025, at 20:35, Robert Marko wrote:
-> >>> Currently, Microchip SparX-5 SoC is supported and it has its own symb=
-ol.
-> >>>
-> >>> However, this means that new Microchip platforms that share drivers n=
-eed
-> >>> to constantly keep updating depends on various drivers.
-> >>>
-> >>> So, to try and reduce this lets add ARCH_MICROCHIP symbol that driver=
-s
-> >>> could instead depend on.
-> >>
-> >> Thanks for updating the series to my suggestion!
-> >>
-> >>> @@ -174,6 +160,27 @@ config ARCH_MESON
-> >>>          This enables support for the arm64 based Amlogic SoCs
-> >>>          such as the s905, S905X/D, S912, A113X/D or S905X/D2
-> >>>
-> >>> +menuconfig ARCH_MICROCHIP
-> >>> +     bool "Microchip SoC support"
-> >>> +
-> >>> +if ARCH_MICROCHIP
-> >>> +
-> >>> +config ARCH_SPARX5
-> >>> +     bool "Microchip Sparx5 SoC family"
-> >>
-> >> This part is the one bit I'm not sure about: The user-visible
-> >> arm64 CONFIG_ARCH_* symbols are usually a little higher-level,
-> >> so I don't think we want both ARCH_MICROCHIP /and/ ARCH_SPARX5
-> >> here, or more generally speaking any of the nested ARCH_*
-> >> symbols.
->
-> Well, having a look at arch/arm64/Kconfig.platforms, I like how NXP is
-> organized.
->
-> SPARX5, LAN969x or other MPU platforms, even if they share some common
-> IPs, are fairly different in terms of internal architecture or feature se=
-t.
-> So, to me, different ARCH_SPARX5, ARCH_LAN969X (as Robert proposed) or
-> future ones make a lot sense.
-> It will help in selecting not only different device drivers but
-> different PM architectures, cores or TrustZone implementation...
->
-> >> This version of your patch is going to be slightly annoying
-> >> to existing sparx5 users because updating an old .config
-> >> breaks when ARCH_MICROCHIP is not enabled.
->
-> Oh, yeah, indeed. Even if I find Robert's proposal ideal.
->
-> Alexandre, Lars, can you evaluate this level of annoyance?
->
-> >> The two options that I would prefer here are
-> >>
-> >> a) make ARCH_SPARX5 a hidden symbol in order to keep the
-> >>     series bisectable, remove it entirely once all references
-> >>     are moved over to ARCH_MICROCHIP
-> >>
-> >> b) Make ARCH_MICROCHIP a hidden symbol that is selected by
-> >>     ARCH_SPARX5 but keep the menu unchanged.
-> >
-> > Hi Arnd,
-> > Ok, I see the issue, and I would prefer to go with option b and do
-> > what I did for
-> > AT91 with the hidden ARCH_MICROCHIP symbol to avoid breaking current co=
-nfigs.
->
-> Yep, but at the cost of multiple entries for Microchip arm64 SoCs at the
-> "Platform selection" menu level. Nuvoton or Cavium have this already, so
-> it's probably fine.
+The initial implementation was quite messy, including requesting
+regions that do not really exist in hardware (or at least not in the
+way they were described).
 
-Yes, this is why I went with a menu instead, to me it is much cleaner.
+As we have no users (and the corresponding dt-bindings were never even
+accepted), remove a whole lot of boilerplate code and clean up the
+software's expectations.
 
-So, how would you guys want me to proceed?
+Note that this revision does not fix the bindings defficiency yet.
 
-a) Keep the menu-based config symbol
-or
-b) Like for AT91, add a hidden symbol and keep the individual SoC-s in
-the top level
-platform menu?
+Compile-tested only & not the best code I've written, but I'm looking
+for feedback whether this approach is acceptable.
 
-Regards,
-Robert
+Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+---
+Konrad Dybcio (5):
+      ufs: ufs-qcom: Fix UFS base region name in MCQ case
+      ufs: ufs-qcom: Remove inferred MCQ mappings
+      ufs: ufs-qcom: Don't try to map inexistent regions
+      ufs: ufs-qcom: Rename "mcq_sqd" to "mcq_opr"
+      ufs: ufs-qcom: Kill ufshcd_res_info
 
->
-> >> Let's see what the sparx5 and at91 maintainers think about
-> >> these options.
-> >
-> > Sounds good, let's give them some time before I respin this series.
->
-> Thanks to both of you. Best regards,
->    Nicolas
+ drivers/ufs/host/ufs-qcom.c      | 151 ++++++++++-----------------------------
+ drivers/ufs/host/ufs-qcom.h      |   4 ++
+ drivers/ufs/host/ufshcd-pltfrm.c |   4 +-
+ include/ufs/ufshcd.h             |  26 +------
+ 4 files changed, 45 insertions(+), 140 deletions(-)
+---
+base-commit: 26ffb3d6f02cd0935fb9fa3db897767beee1cb2a
+change-id: 20250704-topic-qcom_ufs_mcq_cleanup-3e7614ae06a8
 
+Best regards,
+-- 
+Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-
---=20
-Robert Marko
-Staff Embedded Linux Engineer
-Sartura d.d.
-Lendavska ulica 16a
-10000 Zagreb, Croatia
-Email: robert.marko@sartura.hr
-Web: www.sartura.hr
 
