@@ -1,84 +1,80 @@
-Return-Path: <linux-kernel+bounces-716739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C61BAF8A64
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 09:59:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 364C6AF8A6B
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 10:00:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 245176E4CE3
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 07:58:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7626F6E578F
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 07:58:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83D9629B233;
-	Fri,  4 Jul 2025 07:54:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF12F2BF00E;
+	Fri,  4 Jul 2025 07:54:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="c3szSnOx"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ey7uKWX4"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3DC429E0E7
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 07:54:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EC3B2868B3
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 07:54:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751615658; cv=none; b=okfBj9v3ZIqOCuEPZB6l7lZUwhin7a4Om5xJRvVUirK+qisuWrQu/6YZDsHQPX1iYqPoYqfMQn+fyj0/jRtTgnEWQosCOnC7jrkkaKP1pnJk+SB14MD+Piu5ZisgDpaWgoZfoDcsloNQly0JhiVzcRH0AHlRtCCWl6zu+61vt0Q=
+	t=1751615661; cv=none; b=t/O/BSXByWTDsNhPln0PlT6g4anRMNzWAaA0E6PZ0wUkNgfW1bmEyp9Av/yvADGX/zqrxVZi4Oz1Q5vGLzZunM1odUDniQ8a0jHtNOS4K44h9oWDy3e2KZC1tmeohQ+l3WGztQ6cFCI+XLW+E7CVeJrDqqhavXrNCcxF546ErCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751615658; c=relaxed/simple;
-	bh=O8egqTt7UsUxxJR5g7PvhZjDC48I3N4QwWH4q93qWUQ=;
+	s=arc-20240116; t=1751615661; c=relaxed/simple;
+	bh=3RwMRyp8fXMT0ekrMhYvr10mmIyqSJ+HSm2qdURO4ps=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=qQCwn/BQmFsIxlvNqc5K+/dJMM+OcW2BjGUIWlYvbWwAaeIp2WqhTaqipGIDmW63JybyGJ/SlP+29lEN3KgTHs0qJlUXB8Uv5iUmf6o1st1lIlBPvm7eEScqzZ0QisAk8koa+C3BZccP46qhyRTsbMzyNfp+ontsRItfqS4D6Vo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=c3szSnOx; arc=none smtp.client-ip=198.175.65.9
+	 MIME-Version; b=F1O8ZQ9KAT2Gmnt6xbGywsibcHUwwbjKwLuGx+I4bV/2Q4fN4R1zkDF+Tu5g94snqGHFgxrUS2FBENd5Iz4pTBO5qMcnfznxcsQfEfu6D8QqhPpM7E+4adz0U+Hq/Sd4/Em7s1Ry5FJeWcjBXWl2UVnMvBqvyKCBDeqTMxkmUAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ey7uKWX4; arc=none smtp.client-ip=198.175.65.9
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751615656; x=1783151656;
+  t=1751615659; x=1783151659;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=O8egqTt7UsUxxJR5g7PvhZjDC48I3N4QwWH4q93qWUQ=;
-  b=c3szSnOxJ8aYQig54RvkXSKLERTLjnlmFrF83cVmpKJCRIPAz4q7gfui
-   oHiGNkOzQW18Cfkq/5ighCOgpCAEprvVgfVm5PLeDIaguLS3LyZlJyVlt
-   Z5/OsUQaPmjmLRTsSp4n/fF40pylM8KWsCtVpSPO6J0HeNGYRYd0e+wpW
-   U63irEiruoQ2ntlRpn+Igp60Tu/6EEL99MV5VOMdKAHzYTlc55XbSJ2Qp
-   ++7Vfv4yDBbneraJJo/BOgRXX4zIb/7BJxaH0PsCi2ZjrAdrJ66hOK8pf
-   LromoOZnHD1aiJ7kE3OMcYOyhx5wd+Z43IoTDoWH6bOgaza3BNQgBdisA
-   w==;
-X-CSE-ConnectionGUID: RcXoc7DhTPyb5g55IJWOeg==
-X-CSE-MsgGUID: oZWI6y+vQPWHe0XDM1EFSw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11483"; a="76494550"
+  bh=3RwMRyp8fXMT0ekrMhYvr10mmIyqSJ+HSm2qdURO4ps=;
+  b=Ey7uKWX4IA5WlkgQBK+hFjZGE/IkXj4tBR+CaDVNW9v2nLaf6yhwySc5
+   loR6DnTiihAzvf10ReGZYxiXjS3AWeNNERGH+klfGHEOGVtJo96U68c2/
+   ITalm4nkz4Nn4J+8SUYhW0AytVlUzuxxoJVU+Lcu56Km8hehe4y2KXjR3
+   hkzbCtJ6gpTMKLNHLFRqvRA9uX0aQr9dj/R838Dp3ZahQj15v8LcjQzUZ
+   caUqLVHUYTyzfo7PFBzBgLoiwgvW5gEo8ji/KRrFMVN+5EbI1Xm1+oP9/
+   8FqLmeHcGz0aUb3Gj3XswskuNscV99xlQdUbxY3/83YCnh5hZdivX4FM8
+   A==;
+X-CSE-ConnectionGUID: oI0M2TTqSlOolcfJyo6YSQ==
+X-CSE-MsgGUID: EW6mMNeOTKqtfBoCddAHGA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11483"; a="76494558"
 X-IronPort-AV: E=Sophos;i="6.16,286,1744095600"; 
-   d="scan'208";a="76494550"
+   d="scan'208";a="76494558"
 Received: from orviesa003.jf.intel.com ([10.64.159.143])
   by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 00:54:16 -0700
-X-CSE-ConnectionGUID: WfIGKu++T/KZR4Pj6Hj17g==
-X-CSE-MsgGUID: UeLDkmiTSKSncwjAXB02OA==
+X-CSE-ConnectionGUID: r9sUPqNERrOEdYYEoEP/WQ==
+X-CSE-MsgGUID: EDcc4uMETdWK9rdj/PE7rw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.16,286,1744095600"; 
-   d="scan'208";a="158924240"
+   d="scan'208";a="158924217"
 Received: from jkrzyszt-mobl2.ger.corp.intel.com (HELO svinhufvud.fi.intel.com) ([10.245.244.244])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 00:54:12 -0700
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 00:54:14 -0700
 Received: from svinhufvud.lan (localhost [IPv6:::1])
-	by svinhufvud.fi.intel.com (Postfix) with ESMTP id 6D57D447EB;
-	Fri,  4 Jul 2025 10:54:10 +0300 (EEST)
+	by svinhufvud.fi.intel.com (Postfix) with ESMTP id 1857244433;
+	Fri,  4 Jul 2025 10:54:12 +0300 (EEST)
 Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
 From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Lyude Paul <lyude@redhat.com>,
-	Danilo Krummrich <dakr@kernel.org>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Ben Skeggs <bskeggs@nvidia.com>,
-	Dave Airlie <airlied@redhat.com>,
+To: Boris Brezillon <boris.brezillon@collabora.com>,
+	Rob Herring <robh@kernel.org>,
+	Steven Price <steven.price@arm.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
 	Thomas Zimmermann <tzimmermann@suse.de>,
-	Jani Nikula <jani.nikula@intel.com>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	Suraj Kandpal <suraj.kandpal@intel.com>
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>
 Cc: dri-devel@lists.freedesktop.org,
-	nouveau@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 17/80] drm/nouveau: Remove redundant pm_runtime_mark_last_busy() calls
-Date: Fri,  4 Jul 2025 10:54:10 +0300
-Message-Id: <20250704075410.3217943-1-sakari.ailus@linux.intel.com>
+Subject: [PATCH 19/80] drm/panfrost: Remove redundant pm_runtime_mark_last_busy() calls
+Date: Fri,  4 Jul 2025 10:54:11 +0300
+Message-Id: <20250704075411.3218059-1-sakari.ailus@linux.intel.com>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250704075225.3212486-1-sakari.ailus@linux.intel.com>
 References: <20250704075225.3212486-1-sakari.ailus@linux.intel.com>
@@ -107,134 +103,29 @@ rc2:
         git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
                 pm-runtime-6.17-rc1
 
- drivers/gpu/drm/nouveau/dispnv50/disp.c     | 2 --
- drivers/gpu/drm/nouveau/nouveau_connector.c | 1 -
- drivers/gpu/drm/nouveau/nouveau_debugfs.c   | 1 -
- drivers/gpu/drm/nouveau/nouveau_display.c   | 1 -
- drivers/gpu/drm/nouveau/nouveau_drm.c       | 4 ----
- drivers/gpu/drm/nouveau/nouveau_gem.c       | 3 ---
- 6 files changed, 12 deletions(-)
+ drivers/gpu/drm/panfrost/panfrost_perfcnt.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/nouveau/dispnv50/disp.c b/drivers/gpu/drm/nouveau/dispnv50/disp.c
-index e97e39abf3a2..682d21a8a82d 100644
---- a/drivers/gpu/drm/nouveau/dispnv50/disp.c
-+++ b/drivers/gpu/drm/nouveau/dispnv50/disp.c
-@@ -1222,7 +1222,6 @@ nv50_mstc_detect(struct drm_connector *connector,
- 		goto out;
- 
- out:
--	pm_runtime_mark_last_busy(connector->dev->dev);
- 	pm_runtime_put_autosuspend(connector->dev->dev);
- 	return ret;
- }
-@@ -2411,7 +2410,6 @@ nv50_disp_atomic_commit_tail(struct drm_atomic_state *state)
- 	drm_atomic_state_put(state);
- 
- 	/* Drop the RPM ref we got from nv50_disp_atomic_commit() */
--	pm_runtime_mark_last_busy(dev->dev);
- 	pm_runtime_put_autosuspend(dev->dev);
- }
- 
-diff --git a/drivers/gpu/drm/nouveau/nouveau_connector.c b/drivers/gpu/drm/nouveau/nouveau_connector.c
-index 63621b1510f6..7d0c5e42d1dd 100644
---- a/drivers/gpu/drm/nouveau/nouveau_connector.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_connector.c
-@@ -673,7 +673,6 @@ nouveau_connector_detect(struct drm_connector *connector, bool force)
- 	if (!nv_connector->edid)
- 		drm_dp_cec_unset_edid(&nv_connector->aux);
- 
--	pm_runtime_mark_last_busy(dev->dev);
- 	pm_runtime_put_autosuspend(dev->dev);
- 
- 	return conn_status;
-diff --git a/drivers/gpu/drm/nouveau/nouveau_debugfs.c b/drivers/gpu/drm/nouveau/nouveau_debugfs.c
-index 200e65a7cefc..40eedb349c6c 100644
---- a/drivers/gpu/drm/nouveau/nouveau_debugfs.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_debugfs.c
-@@ -62,7 +62,6 @@ nouveau_debugfs_strap_peek(struct seq_file *m, void *data)
- 	seq_printf(m, "0x%08x\n",
- 		   nvif_rd32(&drm->client.device.object, 0x101000));
- 
--	pm_runtime_mark_last_busy(drm->dev->dev);
- 	pm_runtime_put_autosuspend(drm->dev->dev);
+diff --git a/drivers/gpu/drm/panfrost/panfrost_perfcnt.c b/drivers/gpu/drm/panfrost/panfrost_perfcnt.c
+index 563f16bae543..0dd62e8b2fa7 100644
+--- a/drivers/gpu/drm/panfrost/panfrost_perfcnt.c
++++ b/drivers/gpu/drm/panfrost/panfrost_perfcnt.c
+@@ -203,7 +203,6 @@ static int panfrost_perfcnt_disable_locked(struct panfrost_device *pfdev,
+ 	panfrost_mmu_as_put(pfdev, perfcnt->mapping->mmu);
+ 	panfrost_gem_mapping_put(perfcnt->mapping);
+ 	perfcnt->mapping = NULL;
+-	pm_runtime_mark_last_busy(pfdev->dev);
+ 	pm_runtime_put_autosuspend(pfdev->dev);
  
  	return 0;
-diff --git a/drivers/gpu/drm/nouveau/nouveau_display.c b/drivers/gpu/drm/nouveau/nouveau_display.c
-index c50ec347b30a..c74f5ef315a7 100644
---- a/drivers/gpu/drm/nouveau/nouveau_display.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_display.c
-@@ -495,7 +495,6 @@ nouveau_display_hpd_work(struct work_struct *work)
- 	if (first_changed_connector)
- 		drm_connector_put(first_changed_connector);
- 
--	pm_runtime_mark_last_busy(dev->dev);
- noop:
- 	pm_runtime_put_autosuspend(dev->dev);
- }
-diff --git a/drivers/gpu/drm/nouveau/nouveau_drm.c b/drivers/gpu/drm/nouveau/nouveau_drm.c
-index 0c82a63cd49d..1dccd4af1bea 100644
---- a/drivers/gpu/drm/nouveau/nouveau_drm.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_drm.c
-@@ -1177,7 +1177,6 @@ nouveau_pmops_runtime_idle(struct device *dev)
- 		return -EBUSY;
- 	}
- 
--	pm_runtime_mark_last_busy(dev);
- 	pm_runtime_autosuspend(dev);
- 	/* we don't want the main rpm_idle to call suspend - we want to autosuspend */
- 	return 1;
-@@ -1224,7 +1223,6 @@ nouveau_drm_open(struct drm_device *dev, struct drm_file *fpriv)
- 		kfree(cli);
- 	}
- 
--	pm_runtime_mark_last_busy(dev->dev);
- 	pm_runtime_put_autosuspend(dev->dev);
- 	return ret;
- }
-@@ -1258,7 +1256,6 @@ nouveau_drm_postclose(struct drm_device *dev, struct drm_file *fpriv)
- 
- 	nouveau_cli_fini(cli);
- 	kfree(cli);
--	pm_runtime_mark_last_busy(dev->dev);
- 	pm_runtime_put_autosuspend(dev->dev);
- 	drm_dev_exit(dev_index);
- }
-@@ -1306,7 +1303,6 @@ nouveau_drm_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 		break;
- 	}
- 
--	pm_runtime_mark_last_busy(dev->dev);
- 	pm_runtime_put_autosuspend(dev->dev);
- 	return ret;
- }
-diff --git a/drivers/gpu/drm/nouveau/nouveau_gem.c b/drivers/gpu/drm/nouveau/nouveau_gem.c
-index 690e10fbf0bd..d0f034b4a67c 100644
---- a/drivers/gpu/drm/nouveau/nouveau_gem.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_gem.c
-@@ -89,7 +89,6 @@ nouveau_gem_object_del(struct drm_gem_object *gem)
- 
- 	ttm_bo_put(&nvbo->bo);
- 
--	pm_runtime_mark_last_busy(dev);
- 	pm_runtime_put_autosuspend(dev);
+@@ -279,7 +278,6 @@ void panfrost_perfcnt_close(struct drm_file *file_priv)
+ 	if (perfcnt->user == pfile)
+ 		panfrost_perfcnt_disable_locked(pfdev, file_priv);
+ 	mutex_unlock(&perfcnt->lock);
+-	pm_runtime_mark_last_busy(pfdev->dev);
+ 	pm_runtime_put_autosuspend(pfdev->dev);
  }
  
-@@ -127,7 +126,6 @@ nouveau_gem_object_open(struct drm_gem_object *gem, struct drm_file *file_priv)
- 		ret = nouveau_vma_new(nvbo, vmm, &vma);
- 	else
- 		ret = 0;
--	pm_runtime_mark_last_busy(dev);
- 	pm_runtime_put_autosuspend(dev);
- out:
- 	ttm_bo_unreserve(&nvbo->bo);
-@@ -206,7 +204,6 @@ nouveau_gem_object_close(struct drm_gem_object *gem, struct drm_file *file_priv)
- 			ret = pm_runtime_get_sync(dev);
- 			if (!WARN_ON(ret < 0 && ret != -EACCES)) {
- 				nouveau_gem_object_unmap(nvbo, vma);
--				pm_runtime_mark_last_busy(dev);
- 			}
- 			pm_runtime_put_autosuspend(dev);
- 		}
 -- 
 2.39.5
 
