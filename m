@@ -1,78 +1,81 @@
-Return-Path: <linux-kernel+bounces-716720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12482AF8A33
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 09:55:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC0E5AF8A39
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 09:56:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C19287A44DF
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 07:54:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFC4A6E2A2B
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 07:55:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 615C328980E;
-	Fri,  4 Jul 2025 07:54:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99555286890;
+	Fri,  4 Jul 2025 07:54:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UoJSx5gn"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XjgSbj4S"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D0AF288C32;
-	Fri,  4 Jul 2025 07:54:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6440428A41C
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 07:54:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751615644; cv=none; b=O87kaozHsZE6mTLVPozUaGtqi156lVtvMgkJFw5myDh+vCaGvcFds6XhwVKaXwrb0xqyV8rVpiwmFpXMD1IqI3SDsUf6njhxUCE2FJalplwCmChokkJeP90F/BLdAlUdojW34yMwEFuofLnMtVM5OqDemoZddOTW36Ubwubs7s4=
+	t=1751615648; cv=none; b=UzZ4GW/+L0TY0GrdSC0U7SnRad2IhmCW8+kArJneoao3EACz+ad+qAUWmQncGJmiXRZuwq9hFGm8qcrdVBxdTmJiKQ7II6CphM14/5hk2cuVQGmmPAANmFL31v4zi+W5vdDB7r8BZmpLBzobRI6p5f2G/VYobnHtPK55X8VFhyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751615644; c=relaxed/simple;
-	bh=CWpHJt0mAGlZmpQFo1TAIOu+B6eRgVjwmndVF9RzlEU=;
+	s=arc-20240116; t=1751615648; c=relaxed/simple;
+	bh=nHMM1O4IslvrfeqGodyglti8CaB1ROJeZIDQqlgaxII=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ZdzRK6JtT6rW2kAxzK179hWb3zA2ugfTe7u2Thoz5U0CY3T3CiR0l8pAFB4mMebFlj5pqgQEQdhx/ukKzu6WXbqR7NXdwQ75wJYHm7zVMgkWpLxVhtU0XwcfvxKYaKM1rsQwAbWm/tyBgdayHqGHc4TFucrMbx9hCiUFFoAlv0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UoJSx5gn; arc=none smtp.client-ip=198.175.65.9
+	 MIME-Version; b=kcgYRr7eqeF5MO7NtHBkwf8z1wjLmnbYmpVIXyycR4c4HWDXxIEwsm9VtWQFXnyu7DNw7QBgwSI5HykjrOXvEdaRsOVNXvCPzkqnQXz8NxD8alFRgglvnHFJWkYa58tHSIIHhEu/tb2QDlWlqglkCpePDKTzW9kl52sG3jLL0C8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XjgSbj4S; arc=none smtp.client-ip=198.175.65.9
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751615643; x=1783151643;
+  t=1751615646; x=1783151646;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=CWpHJt0mAGlZmpQFo1TAIOu+B6eRgVjwmndVF9RzlEU=;
-  b=UoJSx5gn4DLSS6OE0AcrJwjNMmRSFf9BnqCDbi6SxXl4KpWFAh2iEsgG
-   o0VdAAvqQK6CmA37K/7z4wl2pkA8KZrb9KW0C4uj4prFb6q4H4oWItx2V
-   kFhs1O1Ixf6cTAJQguCBg5KhP93yZKXmmDNHEuIV1/VBlMZNlEDeUFDq2
-   +7o25/6hetRz//K5CkSTqy0BfFPNVfINtmAZcHBlMzoNXRkw2u/QwogAB
-   lFoVjTTnMgK372geXbULU5dGzpBWemUguj1gNj9o0W3LGsv96mgXKvfYp
-   QlOjolNq9NC8PfzcSsEuAk9KzT2dJTMvJxYvyz+wzxEoCShc/Vx++qPLq
-   g==;
-X-CSE-ConnectionGUID: GyoexHqiRd+ShRk4gGZUjw==
-X-CSE-MsgGUID: yUgqgsLfTWmLaO+YHR3HNA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11483"; a="76494452"
+  bh=nHMM1O4IslvrfeqGodyglti8CaB1ROJeZIDQqlgaxII=;
+  b=XjgSbj4SAIXbvAlmLFjnToeJPx1T9qdrQDUDNPEz+o2qmf2LbcuPcyzR
+   J26XdO7ntK+AZzRwpAyO4yzD8Y/PXgSXh/R15bAVNDfcmyMfKBlifwy+G
+   A0Twqexx3VaSRFQ/Ske4/9ueirHWV7D6/NaBRIkdhiWJr5u5m6j5L2lFC
+   RQTBuJ6i1KluDIkV7NL9W4rpn4KFKdvkjTPUGQthprJ9YAtT46C/0hbmY
+   Jpam6BDavHZsrF93DqEYAMSIBKS1JoO0GWKqFT7KrfDvAGHawQqMnO/Zw
+   Kp0UAXY7pqDX7AREzE/wiEd9CUjDZ9c90GO3L5tJxpWzCGyAlQWBqk81O
+   A==;
+X-CSE-ConnectionGUID: 8o4mhb0XSNOmnB5BUDFLxg==
+X-CSE-MsgGUID: l+yFIRPwTSuqgM0M9jtKzQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11483"; a="76494459"
 X-IronPort-AV: E=Sophos;i="6.16,286,1744095600"; 
-   d="scan'208";a="76494452"
+   d="scan'208";a="76494459"
 Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 00:54:02 -0700
-X-CSE-ConnectionGUID: uzep9yVhRC2bPONuEIo4wQ==
-X-CSE-MsgGUID: XbAEsj6mSMenUt/c5Hz3CQ==
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 00:54:05 -0700
+X-CSE-ConnectionGUID: 7LTrMyx/QlqWGtX+avivNw==
+X-CSE-MsgGUID: xH/cd10lR62+1jlZ97J90Q==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.16,286,1744095600"; 
-   d="scan'208";a="158924157"
+   d="scan'208";a="158924163"
 Received: from jkrzyszt-mobl2.ger.corp.intel.com (HELO svinhufvud.fi.intel.com) ([10.245.244.244])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 00:54:00 -0700
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 00:54:01 -0700
 Received: from svinhufvud.lan (localhost [IPv6:::1])
-	by svinhufvud.fi.intel.com (Postfix) with ESMTP id 648B844424;
-	Fri,  4 Jul 2025 10:53:58 +0300 (EEST)
+	by svinhufvud.fi.intel.com (Postfix) with ESMTP id 14D6944433;
+	Fri,  4 Jul 2025 10:53:59 +0300 (EEST)
 Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
 From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Marcel Holtmann <marcel@holtmann.org>,
-	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: linux-bluetooth@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: [PATCH 03/80] Bluetooth: Remove redundant pm_runtime_mark_last_busy() calls
+To: Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Zhang Zekun <zhangzekun11@huawei.com>,
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 04/80] bus: sunxi-rsb: Remove redundant pm_runtime_mark_last_busy() calls
 Date: Fri,  4 Jul 2025 10:53:58 +0300
-Message-Id: <20250704075358.3216833-1-sakari.ailus@linux.intel.com>
+Message-Id: <20250704075358.3216894-1-sakari.ailus@linux.intel.com>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250704075225.3212486-1-sakari.ailus@linux.intel.com>
 References: <20250704075225.3212486-1-sakari.ailus@linux.intel.com>
@@ -101,100 +104,29 @@ rc2:
         git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
                 pm-runtime-6.17-rc1
 
- drivers/bluetooth/btmtksdio.c | 1 -
- drivers/bluetooth/hci_bcm.c   | 3 ---
- drivers/bluetooth/hci_h5.c    | 2 --
- drivers/bluetooth/hci_intel.c | 3 ---
- 4 files changed, 9 deletions(-)
+ drivers/bus/sunxi-rsb.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/bluetooth/btmtksdio.c b/drivers/bluetooth/btmtksdio.c
-index c16a3518b8ff..83aee551a848 100644
---- a/drivers/bluetooth/btmtksdio.c
-+++ b/drivers/bluetooth/btmtksdio.c
-@@ -615,7 +615,6 @@ static void btmtksdio_txrx_work(struct work_struct *work)
+diff --git a/drivers/bus/sunxi-rsb.c b/drivers/bus/sunxi-rsb.c
+index 7a33c3b31d1e..82735c58be11 100644
+--- a/drivers/bus/sunxi-rsb.c
++++ b/drivers/bus/sunxi-rsb.c
+@@ -373,7 +373,6 @@ static int sunxi_rsb_read(struct sunxi_rsb *rsb, u8 rtaddr, u8 addr,
+ unlock:
+ 	mutex_unlock(&rsb->lock);
  
- 	sdio_release_host(bdev->func);
+-	pm_runtime_mark_last_busy(rsb->dev);
+ 	pm_runtime_put_autosuspend(rsb->dev);
  
--	pm_runtime_mark_last_busy(bdev->dev);
- 	pm_runtime_put_autosuspend(bdev->dev);
- }
+ 	return ret;
+@@ -417,7 +416,6 @@ static int sunxi_rsb_write(struct sunxi_rsb *rsb, u8 rtaddr, u8 addr,
  
-diff --git a/drivers/bluetooth/hci_bcm.c b/drivers/bluetooth/hci_bcm.c
-index 9684eb16059b..08f9a232e375 100644
---- a/drivers/bluetooth/hci_bcm.c
-+++ b/drivers/bluetooth/hci_bcm.c
-@@ -326,7 +326,6 @@ static irqreturn_t bcm_host_wake(int irq, void *data)
- 	bt_dev_dbg(bdev, "Host wake IRQ");
+ 	mutex_unlock(&rsb->lock);
  
- 	pm_runtime_get(bdev->dev);
--	pm_runtime_mark_last_busy(bdev->dev);
- 	pm_runtime_put_autosuspend(bdev->dev);
+-	pm_runtime_mark_last_busy(rsb->dev);
+ 	pm_runtime_put_autosuspend(rsb->dev);
  
- 	return IRQ_HANDLED;
-@@ -710,7 +709,6 @@ static int bcm_recv(struct hci_uart *hu, const void *data, int count)
- 		mutex_lock(&bcm_device_lock);
- 		if (bcm->dev && bcm_device_exists(bcm->dev)) {
- 			pm_runtime_get(bcm->dev->dev);
--			pm_runtime_mark_last_busy(bcm->dev->dev);
- 			pm_runtime_put_autosuspend(bcm->dev->dev);
- 		}
- 		mutex_unlock(&bcm_device_lock);
-@@ -749,7 +747,6 @@ static struct sk_buff *bcm_dequeue(struct hci_uart *hu)
- 	skb = skb_dequeue(&bcm->txq);
- 
- 	if (bdev) {
--		pm_runtime_mark_last_busy(bdev->dev);
- 		pm_runtime_put_autosuspend(bdev->dev);
- 	}
- 
-diff --git a/drivers/bluetooth/hci_h5.c b/drivers/bluetooth/hci_h5.c
-index d0d4420c1a0f..e932d66a1cc0 100644
---- a/drivers/bluetooth/hci_h5.c
-+++ b/drivers/bluetooth/hci_h5.c
-@@ -592,7 +592,6 @@ static int h5_recv(struct hci_uart *hu, const void *data, int count)
- 
- 	if (hu->serdev) {
- 		pm_runtime_get(&hu->serdev->dev);
--		pm_runtime_mark_last_busy(&hu->serdev->dev);
- 		pm_runtime_put_autosuspend(&hu->serdev->dev);
- 	}
- 
-@@ -634,7 +633,6 @@ static int h5_enqueue(struct hci_uart *hu, struct sk_buff *skb)
- 
- 	if (hu->serdev) {
- 		pm_runtime_get_sync(&hu->serdev->dev);
--		pm_runtime_mark_last_busy(&hu->serdev->dev);
- 		pm_runtime_put_autosuspend(&hu->serdev->dev);
- 	}
- 
-diff --git a/drivers/bluetooth/hci_intel.c b/drivers/bluetooth/hci_intel.c
-index 811f33701f84..6240ee23e030 100644
---- a/drivers/bluetooth/hci_intel.c
-+++ b/drivers/bluetooth/hci_intel.c
-@@ -280,7 +280,6 @@ static irqreturn_t intel_irq(int irq, void *dev_id)
- 
- 	/* Host/Controller are now LPM resumed, trigger a new delayed suspend */
- 	pm_runtime_get(&idev->pdev->dev);
--	pm_runtime_mark_last_busy(&idev->pdev->dev);
- 	pm_runtime_put_autosuspend(&idev->pdev->dev);
- 
- 	return IRQ_HANDLED;
-@@ -371,7 +370,6 @@ static void intel_busy_work(struct work_struct *work)
- 	list_for_each_entry(idev, &intel_device_list, list) {
- 		if (intel->hu->tty->dev->parent == idev->pdev->dev.parent) {
- 			pm_runtime_get(&idev->pdev->dev);
--			pm_runtime_mark_last_busy(&idev->pdev->dev);
- 			pm_runtime_put_autosuspend(&idev->pdev->dev);
- 			break;
- 		}
-@@ -1003,7 +1001,6 @@ static int intel_enqueue(struct hci_uart *hu, struct sk_buff *skb)
- 	list_for_each_entry(idev, &intel_device_list, list) {
- 		if (hu->tty->dev->parent == idev->pdev->dev.parent) {
- 			pm_runtime_get_sync(&idev->pdev->dev);
--			pm_runtime_mark_last_busy(&idev->pdev->dev);
- 			pm_runtime_put_autosuspend(&idev->pdev->dev);
- 			break;
- 		}
+ 	return ret;
 -- 
 2.39.5
 
