@@ -1,73 +1,81 @@
-Return-Path: <linux-kernel+bounces-716805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB6E4AF8ACE
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 10:11:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C990AF8AEE
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 10:15:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 609A218883EC
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 08:11:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 892824A38B3
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 08:11:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41AC32F5C30;
-	Fri,  4 Jul 2025 07:55:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DF772F7D1C;
+	Fri,  4 Jul 2025 07:55:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BKVWU6GM"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="l9QF1w+f"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA1062877FB
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 07:55:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EB552F5C35;
+	Fri,  4 Jul 2025 07:55:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751615707; cv=none; b=VkxfzJLQyRngDtKq+kCd35SkV+A2eYR16kq9g5ZcQBcHLGhQCCbM5XAQefHn7i9Nl+8VWIDPn7CfdnT66cajusmakNX8Bu7X2hNynV9hSdwumPF5wfodjnGV0tAu+OsU9sfkznqgHB5DDL6iBD2az9kiC2ZIHWCPJQ1LR92u00A=
+	t=1751615711; cv=none; b=mWD/2H9r1i5xygmdj/i5F1Dw6nkWXEdKQ1R99/HGBISTznCvX4590zM/P5zZAGr+/vLJkwvM1ik9KWoDY8Zau3IwDigRpJeNJs3LuiNiiDfiHtxhHzmGVnWbDfcZXTrZ6GTCAtxd6KmTM0F2YyIuNwO3IafRSpc2g0vmCv961Lk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751615707; c=relaxed/simple;
-	bh=BKWpek0YSB33XpRHAKPZmEHtn7tj983LU7A2QeoRjjo=;
+	s=arc-20240116; t=1751615711; c=relaxed/simple;
+	bh=eVLkIeLgEFxD0O6073m8DnwCRdtHe+L5RdLUWpA3UoM=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=pyT2p3MvIzLAOCS6YwCvQZ3b6inZNQEYYLMTokc8INdFSQyQZ4VgFaqH3OvHolD+L557Hl//YUJQf3DrldhjNYa4TJHwt4d4t3ZwhL5C16Gv3bYcjwrXpM2GxoADu3UXEz5OiTFmQvj51oTKYSKWmM+1C30grclDpc3Nor+4krk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BKVWU6GM; arc=none smtp.client-ip=198.175.65.11
+	 MIME-Version; b=PTLhI1ruNjKQvG2RXQ6cOwUUZ/mrKbLkLoeTcGCHI+mG8dxzemKvJVSGoIWEOLYHu6VRXhEV7Ldjm2Yp2VqFRbo7yVGlW65lVFvOiHZ+uFsS66P/loC0vVWjNF2K/kQ5AunyjmIrOcLng2rmnTGvp84z8OYcJDyFtzfH16Q2yDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=l9QF1w+f; arc=none smtp.client-ip=198.175.65.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751615706; x=1783151706;
+  t=1751615710; x=1783151710;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=BKWpek0YSB33XpRHAKPZmEHtn7tj983LU7A2QeoRjjo=;
-  b=BKVWU6GME0M13Kz22EuzSVQ9/qoNRtKqmRlT8dRGhTRi5V2jeKXL2uG8
-   S+KYu5ALETxgRrPcq58juvAEBfL5SnO+HhXHvpP87T7etCMsUaZaUIamE
-   3r6xe8xhihWPGB1GuAuGraNtlEhLLGXw06FlFBiRdsnS6IRrP0f4fa1b+
-   mQRjK99zG1QcxT8TQeexmYu8GCpwtR4Q/PSCxzwqg6xktmlh2HxfkYHYv
-   uukr1OFAAKos9yznjZtbm4FJ5WcjlkgDog64QUbAQkmxTMQ0biGyZA1kW
-   ffpRuiPMaCC9Zt2Zii4jBJRkSTh50ww6oEIyGqWfB4lCNFA/mlp4yOpM6
-   A==;
-X-CSE-ConnectionGUID: MAg8QAhnQSmIwZev5L64SQ==
-X-CSE-MsgGUID: na1P3YQfTI+YNp3S6KF2lQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11483"; a="64194269"
+  bh=eVLkIeLgEFxD0O6073m8DnwCRdtHe+L5RdLUWpA3UoM=;
+  b=l9QF1w+fhZJtMNpbrYOKLUNb1VEn1avrZoil81qCp0J4Qt7iNDqTPSPH
+   +6gkNRuw4rOfeH3hcwHa6QdKPGJD+L7JzO7d35ecFF+QftQprzhKUW6Vg
+   crLPHPJna0Hyk4Ba6efEb8a9NPUr/4e5+CI5g8kd4sRmhStLxLIG58GGX
+   lHPMo6x82nuJJplUnIORhZmOZP/PzVmL9UCJk8VTrXkEzZG8qCQ3DWX4R
+   SiuMLoiPHdMSIIqgBelGWRIrdREVV2lGCLF6cEZu9Qz5JKXHeEnPcg4Om
+   NryVEO3LCAhia83aHULFKS5uw+LjvYpYCddsXcKf7Vun2+5qJA2Ro86vD
+   w==;
+X-CSE-ConnectionGUID: 8zTTKtBMTPmRViHcw0euXg==
+X-CSE-MsgGUID: VmW1I5beTL+DeQEE45WcBQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11483"; a="64194274"
 X-IronPort-AV: E=Sophos;i="6.16,286,1744095600"; 
-   d="scan'208";a="64194269"
+   d="scan'208";a="64194274"
 Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 00:54:59 -0700
-X-CSE-ConnectionGUID: BvArktvMTVuf69f8sKenGg==
-X-CSE-MsgGUID: 669lKT7oSiWf/T/A4+vwag==
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 00:55:03 -0700
+X-CSE-ConnectionGUID: e4q5kn2ZSyCHwss7ykn6BA==
+X-CSE-MsgGUID: XMYFixcGQDireEw7dxOfaQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.16,286,1744095600"; 
-   d="scan'208";a="158616678"
+   d="scan'208";a="158616682"
 Received: from jkrzyszt-mobl2.ger.corp.intel.com (HELO svinhufvud.fi.intel.com) ([10.245.244.244])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 00:54:56 -0700
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 00:54:57 -0700
 Received: from svinhufvud.lan (localhost [IPv6:::1])
-	by svinhufvud.fi.intel.com (Postfix) with ESMTP id 6F2664488D;
-	Fri,  4 Jul 2025 10:54:54 +0300 (EEST)
+	by svinhufvud.fi.intel.com (Postfix) with ESMTP id D98F744419;
+	Fri,  4 Jul 2025 10:54:55 +0300 (EEST)
 Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
 From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH 68/80] w1: omap-hdq: Remove redundant pm_runtime_mark_last_busy() calls
-Date: Fri,  4 Jul 2025 10:54:54 +0300
-Message-Id: <20250704075454.3222362-1-sakari.ailus@linux.intel.com>
+To: Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Andrei Simion <andrei.simion@microchip.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: linux-sound@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 70/80] ASoC: atmel: Remove redundant pm_runtime_mark_last_busy() calls
+Date: Fri,  4 Jul 2025 10:54:55 +0300
+Message-Id: <20250704075455.3222541-1-sakari.ailus@linux.intel.com>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250704075225.3212486-1-sakari.ailus@linux.intel.com>
 References: <20250704075225.3212486-1-sakari.ailus@linux.intel.com>
@@ -96,53 +104,61 @@ rc2:
         git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
                 pm-runtime-6.17-rc1
 
- drivers/w1/masters/omap_hdq.c | 5 -----
- 1 file changed, 5 deletions(-)
+ sound/soc/atmel/mchp-spdifrx.c | 6 ------
+ 1 file changed, 6 deletions(-)
 
-diff --git a/drivers/w1/masters/omap_hdq.c b/drivers/w1/masters/omap_hdq.c
-index 69b1d145657a..d13db3396570 100644
---- a/drivers/w1/masters/omap_hdq.c
-+++ b/drivers/w1/masters/omap_hdq.c
-@@ -445,7 +445,6 @@ static u8 omap_w1_triplet(void *_hdq, u8 bdir)
- out:
- 	mutex_unlock(&hdq_data->hdq_mutex);
- rtn:
--	pm_runtime_mark_last_busy(hdq_data->dev);
- 	pm_runtime_put_autosuspend(hdq_data->dev);
+diff --git a/sound/soc/atmel/mchp-spdifrx.c b/sound/soc/atmel/mchp-spdifrx.c
+index fb820609c043..521bee4998f8 100644
+--- a/sound/soc/atmel/mchp-spdifrx.c
++++ b/sound/soc/atmel/mchp-spdifrx.c
+@@ -577,7 +577,6 @@ static int mchp_spdifrx_cs_get(struct mchp_spdifrx_dev *dev,
+ 	       sizeof(ch_stat->data));
  
- 	return ret;
-@@ -466,7 +465,6 @@ static u8 omap_w1_reset_bus(void *_hdq)
+ pm_runtime_put:
+-	pm_runtime_mark_last_busy(dev->dev);
+ 	pm_runtime_put_autosuspend(dev->dev);
+ unlock:
+ 	mutex_unlock(&dev->mlock);
+@@ -660,7 +659,6 @@ static int mchp_spdifrx_subcode_ch_get(struct mchp_spdifrx_dev *dev,
+ 	       sizeof(user_data->data));
  
- 	omap_hdq_break(hdq_data);
+ pm_runtime_put:
+-	pm_runtime_mark_last_busy(dev->dev);
+ 	pm_runtime_put_autosuspend(dev->dev);
+ unlock:
+ 	mutex_unlock(&dev->mlock);
+@@ -726,7 +724,6 @@ static int mchp_spdifrx_ulock_get(struct snd_kcontrol *kcontrol,
  
--	pm_runtime_mark_last_busy(hdq_data->dev);
- 	pm_runtime_put_autosuspend(hdq_data->dev);
+ 	uvalue->value.integer.value[0] = ctrl->ulock;
  
- 	return 0;
-@@ -490,7 +488,6 @@ static u8 omap_w1_read_byte(void *_hdq)
- 	if (ret)
- 		val = -1;
- 
--	pm_runtime_mark_last_busy(hdq_data->dev);
- 	pm_runtime_put_autosuspend(hdq_data->dev);
- 
- 	return val;
-@@ -525,7 +522,6 @@ static void omap_w1_write_byte(void *_hdq, u8 byte)
+-	pm_runtime_mark_last_busy(dev->dev);
+ 	pm_runtime_put_autosuspend(dev->dev);
+ unlock:
+ 	mutex_unlock(&dev->mlock);
+@@ -762,7 +759,6 @@ static int mchp_spdifrx_badf_get(struct snd_kcontrol *kcontrol,
+ 		ctrl->badf = 0;
  	}
  
- out_err:
--	pm_runtime_mark_last_busy(hdq_data->dev);
- 	pm_runtime_put_autosuspend(hdq_data->dev);
- }
+-	pm_runtime_mark_last_busy(dev->dev);
+ 	pm_runtime_put_autosuspend(dev->dev);
+ unlock:
+ 	mutex_unlock(&dev->mlock);
+@@ -811,7 +807,6 @@ static int mchp_spdifrx_signal_get(struct snd_kcontrol *kcontrol,
+ 		regmap_read(dev->regmap, SPDIFRX_RSR, &val);
+ 	}
  
-@@ -625,7 +621,6 @@ static int omap_hdq_probe(struct platform_device *pdev)
+-	pm_runtime_mark_last_busy(dev->dev);
+ 	pm_runtime_put_autosuspend(dev->dev);
  
- 	omap_hdq_break(hdq_data);
+ unlock:
+@@ -875,7 +870,6 @@ static int mchp_spdifrx_rate_get(struct snd_kcontrol *kcontrol,
+ 	ucontrol->value.integer.value[0] = rate / (32 * SPDIFRX_RSR_IFS(val));
  
--	pm_runtime_mark_last_busy(&pdev->dev);
- 	pm_runtime_put_autosuspend(&pdev->dev);
- 
- 	omap_w1_master.data = hdq_data;
+ pm_runtime_put:
+-	pm_runtime_mark_last_busy(dev->dev);
+ 	pm_runtime_put_autosuspend(dev->dev);
+ unlock:
+ 	mutex_unlock(&dev->mlock);
 -- 
 2.39.5
 
