@@ -1,128 +1,151 @@
-Return-Path: <linux-kernel+bounces-716366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4A08AF8592
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 04:27:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B385AF85A1
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 04:39:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F33523B895E
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 02:26:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4096F5482A8
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 02:39:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ED5D1DE3B5;
-	Fri,  4 Jul 2025 02:26:54 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 511E642056;
+	Fri,  4 Jul 2025 02:39:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Ymt0ynKS"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCCC8262A6;
-	Fri,  4 Jul 2025 02:26:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 750DC2594
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 02:39:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751596014; cv=none; b=VleraLPxHsE0BTAjzP1U/nuZ7LRorJvp5IVKLsB7HIPwJ9qC3cinFEq9y5FNFfdQ77ogAsRqosxKEZ9JwMQJrVLqQr1WOaXcEnkmZdzzXJtlfT7d9aC4aAu3kYDkh25ecKld5VbyeewKv8uMm5O3NcNkVERbm/fvcboWp+j0edw=
+	t=1751596768; cv=none; b=DydSTutN6u3mqRikAZkfzYf6dn8rN8+WHBM838WLGdQcDsM4DlMvGTqXOWm01kFH/2v5SoioPGiVBmRh26dISMpPk5xoIwsj8biM5v+CQL1+BcuLdyASCIhb5fSPGiGMSUkoFwSNO1lDKBr4/fssxdVguBsbWt8lEqLMQCLPZhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751596014; c=relaxed/simple;
-	bh=2Jvgtj5t3hZ5VQ36euT0z9PS2vO0mdNlfh7YaTvGcyc=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Ys5hxJeFTk4hdBQJneEAhKSMWvPJh8l4PWMRP3PqiMQjMA5TchLy1Rhc0noJSoZtrBJVFVhvodcxeIyYpwy+r9BESh/ju2Arx1UqN6a+yRO9ULAao4hHLLfxyj1kPA6AFp1iNFzN1iGKBOq8H5+DegcmT0Ta2XmkbsoauUH/+vk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4bYHYJ40KDzVmcW;
-	Fri,  4 Jul 2025 10:25:40 +0800 (CST)
-Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id 17713180B2C;
-	Fri,  4 Jul 2025 10:26:48 +0800 (CST)
-Received: from huawei.com (10.175.124.27) by dggpemf500002.china.huawei.com
- (7.185.36.57) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 4 Jul
- 2025 10:26:47 +0800
-From: Yue Haibing <yuehaibing@huawei.com>
-To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <horms@kernel.org>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<yuehaibing@huawei.com>
-Subject: [PATCH] atm: clip: Fix NULL pointer dereference in vcc_sendmsg()
-Date: Fri, 4 Jul 2025 10:39:14 +0800
-Message-ID: <20250704023914.3876975-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1751596768; c=relaxed/simple;
+	bh=gwrjCpTJbxI7EwuCkv0Rlq5eohFaL6Rb2eJhehoRSxk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Sl9zecaE8/SL1Ublo+exe70Iswa0WOD1keRGMNK7nlmqs5j4mR0lBAgkeYnODhWdQwfcB9+pSYKdXNl9SO+V/iVfH/QENOmCEvMW9DUYcbtbeKdGJBYlRUyGmWBepEyodEY89jZ01jsr0ymvxkqeRJxFhARgO/ZJ76d/ENWNyr8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=Ymt0ynKS; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-236377f00a1so5424235ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Jul 2025 19:39:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1751596767; x=1752201567; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=WjsYeltoq6ttH3cwmNsrMyTVKdEhqYm4Z5XYz4FQdLU=;
+        b=Ymt0ynKSNaD42CzGL4XG+a8Ez8qXI+eWsn4/BfbAwS8DObQY+bIVEowz5XussjghMx
+         Gp+8H7zbLmsYpTm/4FiMRvBOvZaY9ecn32zMhFeghDfY5su3SDpDR1rOGSbQV6R3ZmQr
+         vK94JKn1W/N6Wjx/sKVQoQGo27wYJVLd23BRM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751596767; x=1752201567;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WjsYeltoq6ttH3cwmNsrMyTVKdEhqYm4Z5XYz4FQdLU=;
+        b=UpA2LtGqdV7Y8XW0Wm3KSFXUz2N8IesZNJhq5yZUvUqwljfMTe5iHRazB8XQvr0uSX
+         I2+C//LmGZeOb8bycrnTuHDsDCQTEAINxyP6A9wAwjQy9N1UPL+5LSitqaeO6eBBSu0X
+         7wvOfRiIRM4gy8z5kTpoHHrq03ifUCQXMk6oEk1ISrTUot5RAjcgWaLIC+tiGTa1Adb4
+         YMLV1Duiaur2sM9/BzPxadrKx1ZUfqLmj7mAi2PyPNPSF6bf4e8vmvI8Z8U87bhTdqGs
+         GCkQFZ9AJBPIUoCKykjQPGEtic6rpOvDRYseELW3Dq36TeoMniVCEjh2nd6mQoyFjAk5
+         jLZg==
+X-Forwarded-Encrypted: i=1; AJvYcCU2FV3+5uv1MhH4zD1pZUiT1BrpLEHr7/x6j3bAG4Cf0ArCBTuUXbts0PSUuXXayNmeqpDcalDaxoHw4JM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjYll0IfVNKqhkS4I3iKBVwnJXWYENzC5eDSsCUQpTKqaG0lol
+	yAjlpBGta+maPd5B6R5yzIIUfad+f1BSgBWgBQkb+tf1vVqLBWJxEYebm/OzxvoRHw==
+X-Gm-Gg: ASbGncv9bN4CQlz35/DeVfgW35Sj5ZPqiJRVpdnP8TXJUTBIb/pmkZsYWGlEndQuPpE
+	72/nOup3O2tTYwzDa4oiSbABCAf8EebnEWvq1tXmDJy7x9kKxBL+5NpnexqvcIA1rgvbtgCvOkW
+	GuXpF0/rPWMfBpyjOhs2rKdXFiX5bdvCRAVTwWDysxOkxM6YNT8Ysud6ECsgZrun8QnuFG96AKF
+	MsXZjVrfyns1d8gvHf3RXKs23eXpQMJ8MR9MokJZRZisuB7ckdUbYPLHpIDQE2Co3swmGDykeMD
+	qnkcFvQGpIcp+6hSZPRgnzMLtnW4sAHjWxzieBDhnm33yc4AwpBN7vXvxN/a67/EQ1DVeRrqvcV
+	QdDThAyRtFbqzg9mPbvnQ3yzDREYAkFGJsGAIq6Hy
+X-Google-Smtp-Source: AGHT+IGZi1m1NI9Byy1yHxIFLZRuzt75eXMvVLKpGTFbwlrlqzm3bvj+yjH+ivXGZkxE5IzAgnm9Zg==
+X-Received: by 2002:a17:902:cccf:b0:235:e1d6:4e22 with SMTP id d9443c01a7336-23c8607681bmr13001825ad.18.1751596766775;
+        Thu, 03 Jul 2025 19:39:26 -0700 (PDT)
+Received: from [192.168.1.3] (ip68-4-215-93.oc.oc.cox.net. [68.4.215.93])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23c8455d09esm7617715ad.90.2025.07.03.19.39.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 03 Jul 2025 19:39:25 -0700 (PDT)
+Message-ID: <cf125ff4-e124-4f1f-a761-ce82ab5bd7d9@broadcom.com>
+Date: Thu, 3 Jul 2025 19:39:25 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- dggpemf500002.china.huawei.com (7.185.36.57)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] PCI: brcmstb: Acommodate newer SOCs with next-gen
+ PCIe inbound mapping
+To: Jim Quinlan <james.quinlan@broadcom.com>, linux-pci@vger.kernel.org,
+ Nicolas Saenz Julienne <nsaenz@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+ Cyril Brulebois <kibi@debian.org>, bcm-kernel-feedback-list@broadcom.com,
+ jim2101024@gmail.com
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+ Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
+ "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
+ <linux-rpi-kernel@lists.infradead.org>,
+ "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
+ <linux-arm-kernel@lists.infradead.org>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20250703215314.3971473-1-james.quinlan@broadcom.com>
+ <20250703215314.3971473-3-james.quinlan@broadcom.com>
+Content-Language: en-US
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
+ M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
+ JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
+ PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
+ KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
+ AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
+ IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
+ ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
+ bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
+ Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
+ tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
+ TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
+ zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
+ WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
+ IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
+ U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
+ 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
+ pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
+ MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
+ IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
+ gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
+ obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
+ N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
+ CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
+ C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
+ wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
+ EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
+ fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
+ MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
+ 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
+ 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
+In-Reply-To: <20250703215314.3971473-3-james.quinlan@broadcom.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-BUG: kernel NULL pointer dereference, address: 0000000000000000
-PGD 0 P4D 0
-Oops: Oops: 0010 [#1] SMP KASAN NOPTI
-CPU: 0 UID: 0 PID: 5324 Comm: syz.0.0 Not tainted 6.15.0-rc6-syzkaller-00346-g5723cc3450bc #0 PREEMPT(full)
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:0x0
-Code: Unable to access opcode bytes at 0xffffffffffffffd6.
-RSP: 0018:ffffc9000d3cf778 EFLAGS: 00010246
-RAX: 1ffffffff1910dd1 RBX: 00000000000000c0 RCX: dffffc0000000000
-RDX: ffffc9000dc82000 RSI: ffff88803e4c4640 RDI: ffff888052cd0000
-RBP: ffffc9000d3cf8d0 R08: ffff888052c9143f R09: 1ffff1100a592287
-R10: dffffc0000000000 R11: 0000000000000000 R12: 1ffff92001a79f00
-R13: ffff888052cd0000 R14: ffff88803e4c4640 R15: ffffffff8c886e88
-FS:  00007fbc762566c0(0000) GS:ffff88808d6c2000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffffffffffffd6 CR3: 0000000041f1b000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- vcc_sendmsg+0xa10/0xc50 net/atm/common.c:644
- sock_sendmsg_nosec net/socket.c:712 [inline]
- __sock_sendmsg+0x219/0x270 net/socket.c:727
- ____sys_sendmsg+0x52d/0x830 net/socket.c:2566
- ___sys_sendmsg+0x21f/0x2a0 net/socket.c:2620
- __sys_sendmmsg+0x227/0x430 net/socket.c:2709
- __do_sys_sendmmsg net/socket.c:2736 [inline]
- __se_sys_sendmmsg net/socket.c:2733 [inline]
- __x64_sys_sendmmsg+0xa0/0xc0 net/socket.c:2733
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xf6/0x210 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-atmarpd_dev_ops does not implement the send method, which may cause crash
-as above.
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Reported-by: syzbot+e34e5e6b5eddb0014def@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/all/682f82d5.a70a0220.1765ec.0143.GAE@google.com/T
-Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
----
- net/atm/clip.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+On 7/3/2025 2:53 PM, Jim Quinlan wrote:
+> New SoCs are coming that are not encumbered with a baroque internal memory
+> mapping scheme or power-of-two restrictions on the sizes of inbound
+> regsions.  Enable the driver to use these SoCs.
+> 
+> Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
 
-diff --git a/net/atm/clip.c b/net/atm/clip.c
-index b234dc3bcb0d..c02ba9d64bc3 100644
---- a/net/atm/clip.c
-+++ b/net/atm/clip.c
-@@ -616,8 +616,15 @@ static void atmarpd_close(struct atm_vcc *vcc)
- 	module_put(THIS_MODULE);
- }
- 
-+static int atmarpd_send(struct atm_vcc *vcc, struct sk_buff *skb)
-+{
-+	dev_kfree_skb_any(skb);
-+	return 0;
-+}
-+
- static const struct atmdev_ops atmarpd_dev_ops = {
--	.close = atmarpd_close
-+	.close = atmarpd_close,
-+	.send = atmarpd_send
- };
- 
- 
+Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
 -- 
-2.34.1
+Florian
 
 
