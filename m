@@ -1,190 +1,215 @@
-Return-Path: <linux-kernel+bounces-716959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B44F4AF8E0E
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 11:17:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9628BAF8CEF
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 10:57:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2EF90B66E41
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 08:57:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1620E5A4F6C
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 08:57:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23E932F85DD;
-	Fri,  4 Jul 2025 08:51:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C61882F531D;
+	Fri,  4 Jul 2025 08:50:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b="QtzrUBZM"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2067.outbound.protection.outlook.com [40.107.94.67])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NfrmX6Gx"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9023E2F7CE0
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 08:50:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.67
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751619059; cv=fail; b=FIgvKzCQWChB1nR+LuVmTq6nnnBfemIh7Pg9y5Hv3Xb0kujS+vlC4YnkxmKKsayqSJ+KNM1NDxQyouVMrtEfAT3nRMenU/GeXx4CETr4kbwaulFA3R+dwOvPieeh0cj5wy+7VgOxRuiOonGvwriuUR8/ED+EDRCnjn1MvrVKDSs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751619059; c=relaxed/simple;
-	bh=VOcrj9i1D0T518hHqIOT0lnFT6sMILn+FUt5Owcje4Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=SsTfPXgwFDXhbpFa4dVEHbK46wESoQGwUVPqWTuctpJbP9GTKX/n+xYX22watU0Qy5baZASBtDIOh2U2KR3ZS0UcC0z6kjNbg9lbmVYxPrNDPhHEQZ9NjYk7Kgorog2MGQfTkReWWKoaxB+Mkc8CNrAQpmbPeNil8AeDhogCvJc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com; spf=pass smtp.mailfrom=altera.com; dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b=QtzrUBZM; arc=fail smtp.client-ip=40.107.94.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altera.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=OEcFMGPkiKPUPF701hLGyG/mQL5ekrtApmpDGEBlFBKcYRullBrI2fcvXfMunUG8E/ZhKQvxPKEaBXebP6GwGNzhC1XiwwPokegFfbVLtH8Z2hHYvSlNWgpfvRnGDdwUS/6G5Zw7G4UIkV/RBqDddgg9Gx+77X3fz8Oqh93KvCepxX87c7EkzC2L/8+ZTmBBdUUllMDll4jZLVBqwrtCms+hkZgn8jIXoMOWEKHK5tzwn2VpIOYHIhNWCnikUmXSQ6bdf2bihNy94mjjWgPpjRGx3YeDxy2O1+sNszX3/+j2mEKYD5ffyDIGMYHJKNfPstU1IRjTLUSXgKf9mBrC1w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VuaVkRO/T3Q38j9wMeOYS9lJTL088DFPC6C+SbvqzzA=;
- b=BWAQMOTcx9W0NKe0wiPCdy3qL3aZkVp+x5sSAv2UZOcp/A9TdcQiU6x0dNowdysmK3+qOuBAmyQJfxH2hJHAVXNzDex4NzcoWlHDg/l/Fge0c3i9FlYeJMPOUo8j4wiIreeunNKEJRKCnTYew9emEetAzC/9v3umfStuo1z4wM5tu5Q0RMZoYmOSjYOWr7TfDgZ0+n5tL0LBoUG9HzJbTLiqxYdVAKzz8w6hLWaFUy+NA0XOd07O47XrqX9kkrA+YSstlbQYjVxn0UvgLH5WX3ts6eaCr73MhqDDEiOrt2ri7L3rlVAdIdQk99ozlda6O8D2dz/jieBdStSlASk/KA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=altera.com; dmarc=pass action=none header.from=altera.com;
- dkim=pass header.d=altera.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=altera.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VuaVkRO/T3Q38j9wMeOYS9lJTL088DFPC6C+SbvqzzA=;
- b=QtzrUBZMLCjOS54oD2YIQiqWPdW1Vruxz/9uAg/AmJU/GidQncLGdLGJYrLl3+MHAwf2WMlp+KVFwRw1AI/pBf7SV5p23+A5jNiRmt5bXl/yskBmlnkuCHPc+0IBWfEwIBX4xcTcO13X/2HRCb9x0lSy3GQfbMXFSqzdTgHpjKxi81u1/0qpWwTbl+cnxrUQ+4Ht7lnymTXvBI2g40aS8E2o2j3Yn92L1orvrxdaWznN4Uo+j8cclOOQaoOYXyZcJaQnmQqrb+YXlBmHMKSdTeSBTZ6LYim0mC7RcDs1R4mLIXilrFhGXpykpY36fQB45vg5EUjVl1mze0YvAGaoaQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=altera.com;
-Received: from DM8PR03MB6230.namprd03.prod.outlook.com (2603:10b6:8:3c::13) by
- SA1PR03MB7099.namprd03.prod.outlook.com (2603:10b6:806:330::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.23; Fri, 4 Jul
- 2025 08:50:55 +0000
-Received: from DM8PR03MB6230.namprd03.prod.outlook.com
- ([fe80::c297:4c45:23cb:7f71]) by DM8PR03MB6230.namprd03.prod.outlook.com
- ([fe80::c297:4c45:23cb:7f71%4]) with mapi id 15.20.8901.018; Fri, 4 Jul 2025
- 08:50:55 +0000
-From: adrianhoyin.ng@altera.com
-To: maz@kernel.org,
-	tglx@linutronix.de,
-	catalin.marinas@arm.com,
-	will@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: adrianhoyin.ng@altera.com
-Subject: [PATCH v2 0/1] irqchip/gic-v3: Add Altera Agilex5 address bus
-Date: Fri,  4 Jul 2025 16:49:49 +0800
-Message-ID: <cover.1751618484.git.adrianhoyin.ng@altera.com>
-X-Mailer: git-send-email 2.49.GIT
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SG2P153CA0044.APCP153.PROD.OUTLOOK.COM (2603:1096:4:c6::13)
- To DM8PR03MB6230.namprd03.prod.outlook.com (2603:10b6:8:3c::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 272532F3C39;
+	Fri,  4 Jul 2025 08:50:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751619053; cv=none; b=idJaWGmF8V2z7kFrrOm+fyZR+q/kav5faF8yrA9DWOwGkVw9jEUDzpTDFZ2JtkBKeR788v259HV+Hx7Ek+iPIJ9x6MirQ7hxMQppMdUSk300Wx00Xs65Ls0rQt6MdXBUaxqcmst9HiiYaZbjDzlvTtJbhS6PUZKh1GQqLlO2A9w=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751619053; c=relaxed/simple;
+	bh=q3+O8GiGLocWEpflC2Wd3vskAmfbMtiBRRP6KstRaFw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=tj4CmDiWSJmvJZFQCFxJta/zR/Ygk4VpQdrXA6RAPPptdbe0RlZdqTVTNMS6y96hMqrAgsnLNizztBTckEMxpIR5r4GLf//XaVYB885kvu1rXB7DAQnW9mHy17LB7kBNXy63TYvmzRFEsb0ZxrwmSIWgDuT2Q8RsjH1NeMRtd7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NfrmX6Gx; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751619051; x=1783155051;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=q3+O8GiGLocWEpflC2Wd3vskAmfbMtiBRRP6KstRaFw=;
+  b=NfrmX6GxYrhHjK5tUVIZwIloEAnK5mKvH/z+kK/HONzyfkKIIblCBEu1
+   F4p+lRHmBdi2QqjWhs2F7jZdnfzHaAt0TYJ2HkCJ8ZfEqWxgQ7ZR1DXfL
+   EwyyPo/M8AgwkDU/utFxRbVBx3npiUaA0yKesyNXYA8HOxtIVHurqc9Mh
+   Jcp228HT8HxrFBDAt0SZxwJYdy0QOltpQhJZ9RLajTvdpSlAfSvR1YWab
+   v/FjVllRyYDplsMFDZJ9O2rl8tcZ7q3a6VG/LuLs8BR6Gnr8r6VjsyuGo
+   z9jDD30jwCDO/ZVKUgJx5tKdaswV2rbNThc5D7hrM/xJMwAL4fFyjb1T4
+   w==;
+X-CSE-ConnectionGUID: 91IQ5tEzRnyIXTU8zd4YGg==
+X-CSE-MsgGUID: T1w2dT59Q8WGFXowovjUqA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11483"; a="79391744"
+X-IronPort-AV: E=Sophos;i="6.16,286,1744095600"; 
+   d="scan'208";a="79391744"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 01:50:43 -0700
+X-CSE-ConnectionGUID: 2bWhjjDLTFWOR8oDRwa+cQ==
+X-CSE-MsgGUID: bgP70kNOQuKD8nFtl4Bw2w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,286,1744095600"; 
+   d="scan'208";a="154722008"
+Received: from 984fee019967.jf.intel.com ([10.165.54.94])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 01:50:43 -0700
+From: Chao Gao <chao.gao@intel.com>
+To: kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	x86@kernel.org,
+	seanjc@google.com,
+	pbonzini@redhat.com,
+	dave.hansen@intel.com
+Cc: rick.p.edgecombe@intel.com,
+	mlevitsk@redhat.com,
+	john.allen@amd.com,
+	weijiang.yang@intel.com,
+	minipli@grsecurity.net,
+	xin@zytor.com,
+	Chao Gao <chao.gao@intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>
+Subject: [PATCH v11 18/23] KVM: x86: Don't emulate instructions guarded by CET
+Date: Fri,  4 Jul 2025 01:49:49 -0700
+Message-ID: <20250704085027.182163-19-chao.gao@intel.com>
+X-Mailer: git-send-email 2.47.1
+In-Reply-To: <20250704085027.182163-1-chao.gao@intel.com>
+References: <20250704085027.182163-1-chao.gao@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM8PR03MB6230:EE_|SA1PR03MB7099:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4d98d866-0b0b-44b6-31da-08ddbad7e30c
-X-MS-Exchange-AtpMessageProperties: SA
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?BKUP2tAFTSXZF70fomkNxBb2D2T5UCFwUZhAPpwgXkrBaKDkpgLn3frVWIxD?=
- =?us-ascii?Q?JCC2ToirsFV834SLHLr2DS2Xo4So2eBJ0B+TBfsVVH+BfN8paUu91piuzpgb?=
- =?us-ascii?Q?oc4m2SVdpctEXA6chSU7AwzTt1q1gj1Av8BtfYZJZylHadTMu385hRG/ZYdG?=
- =?us-ascii?Q?E2Mo9H1g+Xo+y+DQCM0en+/6UZ8HUgfOb017RqveLmmCf8JrzrY0mvcM72J7?=
- =?us-ascii?Q?Y/PSrMhjbTMDQfxggiRJsctAPEqoGt/zyU/aOf0FacjAvPSHgHuA+o+zgaaS?=
- =?us-ascii?Q?alol8zng9qJaMJuLHIrbto1YhAZXxU3vuKfNhfefLiNU+LVMoCpjjDetLl2b?=
- =?us-ascii?Q?VCRqFK7CRyUQToHAoCyP0wlWy+IPU6E3uRAXxdJ9cKxXep9BB3Rf3kt/YX02?=
- =?us-ascii?Q?AlcUQ1pN9FjS04piNmxG2oIzsU7GLM6UhlqmgfPeQnEt/bqGvs2KtceECqcW?=
- =?us-ascii?Q?ZZAqLvLiI16L9Ddksrvhphlds7i9DwLrikaSXfEjMduBZwLC25rveY2lt7YG?=
- =?us-ascii?Q?6T9OUPaL9+xWkI2TpXYvGAYjCiTMtGBC04aFpjzWs8JJABJhvBqOZUxiI2UJ?=
- =?us-ascii?Q?3RHlhJU7XrFqdxp7Fg81rGIzTj705VdxYBsv9k+PKN/ITgwRmbyGLPmstHw9?=
- =?us-ascii?Q?Mucr/uyvvTHObHKIYpwiNH4UIT7hTz4YiiuszkEVR2fyG7Jw7q2dYuR4ZyiB?=
- =?us-ascii?Q?Fpi5iiltB5/FxtRzhdltc/5UduZt9EJwcAqMVQVI86W9i0Ejq2Mun6EL+fpM?=
- =?us-ascii?Q?zAdnIar4rdTAyhPnMD2YVHq0MM/ydIinrA8OGvh1yS9P9N+L8D9w3FETdmhW?=
- =?us-ascii?Q?wwG8X2rQqrSQhPYb7+X1WfDdpwIjyoNzsWVEPJWtdsu5ZsiCn6xn9HNf/Fep?=
- =?us-ascii?Q?p17I9bOhs0TK8OVSWqbnKEP6p/27vbgaiUXBb7KFbTvpDixPGPLhCGvXlKXY?=
- =?us-ascii?Q?4XNHfDgbREP9T3EMzTWU+LCU8vS84mMzghfaJvip4S57cgiYwT6paTM+J7WR?=
- =?us-ascii?Q?kGbr+K8duzSXvcZOyqz17hST0RElueWnwHvr3+ljOYx7CxyL/iMYcIxUtyx1?=
- =?us-ascii?Q?bIUmqpms+rtSsqjRaP4SVfWs9pcZ/SY6DdIjPxXF9PxIdERXkGQsRvjzTI3y?=
- =?us-ascii?Q?GAjk5Y3Wyq2cIGV36QdFf47DBctc2gQ686Vd7x4RgVs6TS10FMwvU003/WUz?=
- =?us-ascii?Q?rLrx3kINdlMvTB3YH1eZ/ZusDTOMibx7X3NLhzoDgBmpUsJjiqFbeCbQ0Vmu?=
- =?us-ascii?Q?YssYBshfROohn+pJsATRe9daByDSq2N15i0RVLDSJ3PEKU1M8I8AR2Al5/B2?=
- =?us-ascii?Q?iexCwzFQZQPckWBm2A6R7t00+IvxRUtwttzyfl3x9jZZ4ZDMqk5hQqLJkw1V?=
- =?us-ascii?Q?WsG+ZCcmGbdtH3uf7uUNKKj3kXbRYWdDWz3uCZaW01kHK06N0tP1nyHMcey7?=
- =?us-ascii?Q?SsYlvqs55lA=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM8PR03MB6230.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Cg/0t0oTzZ0KIwYNA2Nn1WOoTwv8fURbpuOiv23X2/749BlWWjKgXzOpmPBZ?=
- =?us-ascii?Q?V7yvOt7wePtpgnYl0OpTcl/lcFAcUjo2uW9I7OY5fVzAKoM2YUPdCpcPZYkv?=
- =?us-ascii?Q?5Ih28o4uJ1IlcMaa5ErrHSyoAkSfA+zMW/26C6D2tcouJ+loP99E8KXATC+B?=
- =?us-ascii?Q?foUJcARV5GUcTbtCmJ3RpzXCAJX+jc8Vm/TTKJFAye8CqYpHxomep+NsLHdR?=
- =?us-ascii?Q?8Zkh9mV3QGpxfCCpKrb78m/8kPNudJSE6cu0deKz7TnW0+c4nvIPXz52U0Dl?=
- =?us-ascii?Q?kt7kB9TT4lcqxmOQq2baJdMc4H6mzRe7GIG3LSIaKpWMJLYj0qws9FFbrZum?=
- =?us-ascii?Q?7UFRdDxGxPxOrXE0W710KqXMjpLujLEkhBZXUkFheycFYMglLWHtZM+yCZUd?=
- =?us-ascii?Q?R4HWXu+Ti+3j3i0PGeauCSrl3abOm7y/om8e+6SUrLY/z0eyHnS1NpeY7zi4?=
- =?us-ascii?Q?ojN/ehVyOUKNcy6ueMoKstT/n3/jXtu4n67AKjgS9leNI6RkYwfPhwVNDumI?=
- =?us-ascii?Q?vbnU/VROercF8FX9IkBB1R6BGvVzLQbIj3mkqzh/pkC/aexKaoflqe6GAphl?=
- =?us-ascii?Q?H96wOnxi3l/tDpqK/DMJQQ07TG22QjinvZfJZjk0HE0vDotMbIMGff/zFfLV?=
- =?us-ascii?Q?4soWHo9fSGwPcc1KNM2dneDpFnmZQkje5qbrqr3N6A5eKVLTCLZaqp982d+F?=
- =?us-ascii?Q?zov2KIvK8CeThfUrQHhLNfcNYPDOjubIfPhkK9AtA/TM6j6zmV9OqG97CsiD?=
- =?us-ascii?Q?Kq0ATVoxciBUj92nCHHcyBYqk0qhGL2G/RTQTlKSgdZ3SwPL5iNgQKEU4Z26?=
- =?us-ascii?Q?W7gv9jd/CmbcZFQD3FpGdlN6O1P0CwxzQQTWhrA0Gq1X5JaNHLLbY3V0rcRp?=
- =?us-ascii?Q?aqPdsviF+fjn6UhOzifPADAfA+dSCXcGKcMM2jhrSVt1sCjzzh77HDAILhtU?=
- =?us-ascii?Q?MOA+hwcXlfEEC+P/V8s/WFvL+WYT9HkgxbMOiRtG77V56ZfIWGZOlucSNl7D?=
- =?us-ascii?Q?ugUPw+GmrkCnnRrysEVvCkZM+W8t3ti3HDRGeiL8ZfueItaI/G99S7UbVCAa?=
- =?us-ascii?Q?1M5m6GseNqVrB4CwHffy1ZUkevN4Os/J6NRQ+sUXwU45OCDY+MxayGG48irV?=
- =?us-ascii?Q?v4xejwkEltXHiS0ilvFff9JXfrk/dfQ6d3/rARkG3iQMdAbgwxH2wJ7B1vaI?=
- =?us-ascii?Q?cDSi2/+s20OYJ+3ud/0d9EtzhxHvGaiY6EUmNTtb11rrHatQw9G5X3xAExyL?=
- =?us-ascii?Q?IC4CUKpujAOG8T4kIELU4ohSrkkX4MJ/bhab5T4llYcKxfttNiVR81LHLN0u?=
- =?us-ascii?Q?eiE0IV8ADA8bYOfVfrjnSPitYnP9pcsDVGu019jaBoiqQsYlll4fIiw6nr+v?=
- =?us-ascii?Q?Bz4HBixoYKCsHG5zdbN5IO+ye2RspdiY0SMnfnegDTRWPkd/DMj3wt06mAbt?=
- =?us-ascii?Q?jTSU/wzhrRlEOdFYxacjpwScfUvA21qfBE0bf5bBAmf17W7QxeYhBUMTFLRC?=
- =?us-ascii?Q?R6YhzcLz4Qf/GYO8+ANjN4clZmvqBGj6CExjMLc7OvJFAqY403q1OtVaIFb4?=
- =?us-ascii?Q?tJ0Jillloy9gRugCmkSZ+DVOmwbzMQkwr9PLGkWz+61yg8Gqdpm3wVNTgj3A?=
- =?us-ascii?Q?+Q=3D=3D?=
-X-OriginatorOrg: altera.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4d98d866-0b0b-44b6-31da-08ddbad7e30c
-X-MS-Exchange-CrossTenant-AuthSource: DM8PR03MB6230.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Jul 2025 08:50:54.9813
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: fbd72e03-d4a5-4110-adce-614d51f2077a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: vCD6ooOZB+ARsdfamrpL3p6QWaLXyNoN2/BPe1fF+tgPyRk4TLydXeXS+fLAZ40A0kEShw3iYdcEaPjaqe/F75tqVicqCnD7j5s+F078B0o=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR03MB7099
+Content-Transfer-Encoding: 8bit
 
-From: Adrian Ng Ho Yin <adrianhoyin.ng@altera.com>
+From: Yang Weijiang <weijiang.yang@intel.com>
 
-Agilex5 address bus width for the ACE-lite interface is only 32 bits.
-Hence the GIC600 SoC integration for Agilex5 can only access the first
-32bit of the physical address space.
+Don't emulate the branch instructions, e.g., CALL/RET/JMP etc., when CET
+is active in guest, return KVM_INTERNAL_ERROR_EMULATION to userspace to
+handle it.
 
-Add quirk to configure the gfp flag to allocate memory within 32bit
-addressable range. As the 0x0201743b GIC600 ID is not specific to
-Altera, of_machine_is_compatible() is added.
+KVM doesn't emulate CPU behaviors to check CET protected stuffs while
+emulating guest instructions, instead it stops emulation on detecting
+the instructions in process are CET protected. By doing so, it can avoid
+generating bogus #CP in guest and preventing CET protected execution flow
+subversion from guest side.
 
-Add config in arm64 Kconfig to enable quirk.
-
-change log:
-v2: - Reworked implementation to reuse existing infrastructure as
-      requested by Marc Zyngier.
-
-    - Add new config in arm64 Kconfig to enable quirk.
-
-    - Dropped dt and binding changes.
+Suggested-by: Chao Gao <chao.gao@intel.com>
+Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
+Signed-off-by: Chao Gao <chao.gao@intel.com>
 ---
-v1: - https://lore.kernel.org/all/cover.1747368554.git.adrianhoyin.ng@altera.com/
+ arch/x86/kvm/emulate.c | 46 ++++++++++++++++++++++++++++++++----------
+ 1 file changed, 35 insertions(+), 11 deletions(-)
 
-Adrian Ng Ho Yin (1):
-  irqchip/gic-v3: Add Altera Agilex5 address bus width limitation
-    workaround
-
- arch/arm64/Kconfig               | 10 ++++++++++
- drivers/irqchip/irq-gic-v3-its.c | 18 ++++++++++++++++++
- 2 files changed, 28 insertions(+)
-
+diff --git a/arch/x86/kvm/emulate.c b/arch/x86/kvm/emulate.c
+index 1349e278cd2a..80b9d1e4a50a 100644
+--- a/arch/x86/kvm/emulate.c
++++ b/arch/x86/kvm/emulate.c
+@@ -178,6 +178,8 @@
+ #define IncSP       ((u64)1 << 54)  /* SP is incremented before ModRM calc */
+ #define TwoMemOp    ((u64)1 << 55)  /* Instruction has two memory operand */
+ #define IsBranch    ((u64)1 << 56)  /* Instruction is considered a branch. */
++#define ShadowStack ((u64)1 << 57)  /* Instruction protected by Shadow Stack. */
++#define IndirBrnTrk ((u64)1 << 58)  /* Instruction protected by IBT. */
+ 
+ #define DstXacc     (DstAccLo | SrcAccHi | SrcWrite)
+ 
+@@ -4068,9 +4070,11 @@ static const struct opcode group4[] = {
+ static const struct opcode group5[] = {
+ 	F(DstMem | SrcNone | Lock,		em_inc),
+ 	F(DstMem | SrcNone | Lock,		em_dec),
+-	I(SrcMem | NearBranch | IsBranch,       em_call_near_abs),
+-	I(SrcMemFAddr | ImplicitOps | IsBranch, em_call_far),
+-	I(SrcMem | NearBranch | IsBranch,       em_jmp_abs),
++	I(SrcMem | NearBranch | IsBranch | ShadowStack | IndirBrnTrk,
++	em_call_near_abs),
++	I(SrcMemFAddr | ImplicitOps | IsBranch | ShadowStack | IndirBrnTrk,
++	em_call_far),
++	I(SrcMem | NearBranch | IsBranch | IndirBrnTrk, em_jmp_abs),
+ 	I(SrcMemFAddr | ImplicitOps | IsBranch, em_jmp_far),
+ 	I(SrcMem | Stack | TwoMemOp,		em_push), D(Undefined),
+ };
+@@ -4332,11 +4336,11 @@ static const struct opcode opcode_table[256] = {
+ 	/* 0xC8 - 0xCF */
+ 	I(Stack | SrcImmU16 | Src2ImmByte | IsBranch, em_enter),
+ 	I(Stack | IsBranch, em_leave),
+-	I(ImplicitOps | SrcImmU16 | IsBranch, em_ret_far_imm),
+-	I(ImplicitOps | IsBranch, em_ret_far),
+-	D(ImplicitOps | IsBranch), DI(SrcImmByte | IsBranch, intn),
++	I(ImplicitOps | SrcImmU16 | IsBranch | ShadowStack, em_ret_far_imm),
++	I(ImplicitOps | IsBranch | ShadowStack, em_ret_far),
++	D(ImplicitOps | IsBranch), DI(SrcImmByte | IsBranch | ShadowStack, intn),
+ 	D(ImplicitOps | No64 | IsBranch),
+-	II(ImplicitOps | IsBranch, em_iret, iret),
++	II(ImplicitOps | IsBranch | ShadowStack, em_iret, iret),
+ 	/* 0xD0 - 0xD7 */
+ 	G(Src2One | ByteOp, group2), G(Src2One, group2),
+ 	G(Src2CL | ByteOp, group2), G(Src2CL, group2),
+@@ -4352,7 +4356,7 @@ static const struct opcode opcode_table[256] = {
+ 	I2bvIP(SrcImmUByte | DstAcc, em_in,  in,  check_perm_in),
+ 	I2bvIP(SrcAcc | DstImmUByte, em_out, out, check_perm_out),
+ 	/* 0xE8 - 0xEF */
+-	I(SrcImm | NearBranch | IsBranch, em_call),
++	I(SrcImm | NearBranch | IsBranch | ShadowStack, em_call),
+ 	D(SrcImm | ImplicitOps | NearBranch | IsBranch),
+ 	I(SrcImmFAddr | No64 | IsBranch, em_jmp_far),
+ 	D(SrcImmByte | ImplicitOps | NearBranch | IsBranch),
+@@ -4371,7 +4375,8 @@ static const struct opcode opcode_table[256] = {
+ static const struct opcode twobyte_table[256] = {
+ 	/* 0x00 - 0x0F */
+ 	G(0, group6), GD(0, &group7), N, N,
+-	N, I(ImplicitOps | EmulateOnUD | IsBranch, em_syscall),
++	N, I(ImplicitOps | EmulateOnUD | IsBranch | ShadowStack | IndirBrnTrk,
++	em_syscall),
+ 	II(ImplicitOps | Priv, em_clts, clts), N,
+ 	DI(ImplicitOps | Priv, invd), DI(ImplicitOps | Priv, wbinvd), N, N,
+ 	N, D(ImplicitOps | ModRM | SrcMem | NoAccess), N, N,
+@@ -4402,8 +4407,9 @@ static const struct opcode twobyte_table[256] = {
+ 	IIP(ImplicitOps, em_rdtsc, rdtsc, check_rdtsc),
+ 	II(ImplicitOps | Priv, em_rdmsr, rdmsr),
+ 	IIP(ImplicitOps, em_rdpmc, rdpmc, check_rdpmc),
+-	I(ImplicitOps | EmulateOnUD | IsBranch, em_sysenter),
+-	I(ImplicitOps | Priv | EmulateOnUD | IsBranch, em_sysexit),
++	I(ImplicitOps | EmulateOnUD | IsBranch | ShadowStack | IndirBrnTrk,
++	em_sysenter),
++	I(ImplicitOps | Priv | EmulateOnUD | IsBranch | ShadowStack, em_sysexit),
+ 	N, N,
+ 	N, N, N, N, N, N, N, N,
+ 	/* 0x40 - 0x4F */
+@@ -4941,6 +4947,24 @@ int x86_decode_insn(struct x86_emulate_ctxt *ctxt, void *insn, int insn_len, int
+ 	if (ctxt->d == 0)
+ 		return EMULATION_FAILED;
+ 
++	if (ctxt->ops->get_cr(ctxt, 4) & X86_CR4_CET) {
++		u64 u_cet, s_cet;
++		bool stop_em;
++
++		if (ctxt->ops->get_msr(ctxt, MSR_IA32_U_CET, &u_cet) ||
++		    ctxt->ops->get_msr(ctxt, MSR_IA32_S_CET, &s_cet))
++			return EMULATION_FAILED;
++
++		stop_em = ((u_cet & CET_SHSTK_EN) || (s_cet & CET_SHSTK_EN)) &&
++			  (opcode.flags & ShadowStack);
++
++		stop_em |= ((u_cet & CET_ENDBR_EN) || (s_cet & CET_ENDBR_EN)) &&
++			   (opcode.flags & IndirBrnTrk);
++
++		if (stop_em)
++			return EMULATION_FAILED;
++	}
++
+ 	ctxt->execute = opcode.u.execute;
+ 
+ 	if (unlikely(emulation_type & EMULTYPE_TRAP_UD) &&
 -- 
-2.49.GIT
+2.47.1
 
 
