@@ -1,120 +1,129 @@
-Return-Path: <linux-kernel+bounces-716514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7704BAF878C
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 08:03:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72300AF8790
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 08:04:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED794560174
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 06:03:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F2D33BC1F6
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 06:04:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39747221729;
-	Fri,  4 Jul 2025 06:03:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57833219319;
+	Fri,  4 Jul 2025 06:04:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l/nBVVGI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="LstC8Jdi"
+Received: from omta034.useast.a.cloudfilter.net (omta034.useast.a.cloudfilter.net [44.202.169.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 909C9143C69;
-	Fri,  4 Jul 2025 06:03:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7451C20F063
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 06:04:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751609023; cv=none; b=B927geu8X64r1lZsej8MmcVGCPlTW8txlf3qrBN9ih4tWaG6EmF2bG6yTLQLaDdxKLmMSr1rZRebF1TKSCS1B/bXjWqUjakWAuFai9FD/W4zuz4Ha9yAGx/+gXUaAx/H1ypDjzpvJUEO7BzxKKQAsRCxQAyf5FaHgHR/2wEWVdQ=
+	t=1751609075; cv=none; b=I3IsRePHCkTL82SFPJs0rM4iVerZP1PipxSSl3j+G2oAwY2oELwRXganoWwKQb3R3S6/Kn7WGxuFoUyTk68c8SL6vxrnfuaKevPsVrRKRL2nb1t/Wq0Uhu0ogezcUY6zK7qB+1wFY9OvJQf07wiwE7XQrkkVMJImwCztAbTNGDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751609023; c=relaxed/simple;
-	bh=TOAqevWd5ctBWJ93LJwpcNQVBzN27/vAb8SLM1CQQF4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CpRSCfHcTypl8UmqZ67Lo0eQSd330ovuQNdtqkDOrt2SBkW6Uyv15JR78CNx/SV3s1SMQxrP8EJbmNR6/S/3bJT9wvubEQKTXcSzFOICgHEJHYyFiHm/kwFKIQZEmJJF8UrgVPZrMq2hYhp8PSRibH8xGbWYyuIC/ZvWJc+9Jzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l/nBVVGI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC1EEC4CEE3;
-	Fri,  4 Jul 2025 06:03:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751609023;
-	bh=TOAqevWd5ctBWJ93LJwpcNQVBzN27/vAb8SLM1CQQF4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=l/nBVVGIZV6R2rKe/b6EN6IwJcS5QZtZii8YIAru6zwzSiCc5t34PTnJ43d1gfTg5
-	 YMriRqpfzpYsgKj6fhb7GFDQx7Kmy2y3zHaF3EYHiyRsZDdEJTuwwiWbI4z4/LThG1
-	 STJ1IccRKGfpVCIOpRZziDMEBhogSYHzjjLkbUiajktff+Lq08EheL9jk+2lecELO5
-	 iTH4BWawxZjzZjU1QeBz3OqKjeEkTEY08NhKyDFaqwDE2qt7HnI57TLK7p+kx8qI9R
-	 S76OZLOK4S48W4dg3QHYpHp8h54m1Jb3kCaUy+5TUKQC6vTd62OrWLZsNjRRVA8uK7
-	 FGKwJ8KU6wG2w==
-Date: Thu, 3 Jul 2025 23:02:59 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: Yuwen Chen <ywen.chen@foxmail.com>
-Cc: hch@infradead.org, brauner@kernel.org, tytso@mit.edu,
-	linux-kernel@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net, adilger.kernel@dilger.ca,
-	viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-	jaegeuk@kernel.org, linux-ext4@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] libfs: reduce the number of memory allocations in
- generic_ci_match
-Message-ID: <20250704060259.GB4199@sol>
-References: <aGZFtmIxHDLKL6mc@infradead.org>
- <tencent_82716EB4F15F579C738C3CC3AFE62E822207@qq.com>
+	s=arc-20240116; t=1751609075; c=relaxed/simple;
+	bh=3OCzd5BTGn/s4JT1674h6fkTKDdG/cjR5zkZ2g3ccBE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Op0gPTGQO5frZPzODVgkKrmJMekT8cJ0CnO4olG25TxObeM7LEeBVegTWnYs46ON5MvDAu64Xeups4n64+78dgB9yznBddCrLHNxCXyZQO16nSw4vStgtlyttBbUTD3ndGYMvu47OiVYUxfs0dXE4+fVLk6Juj/ibM7VBPx0kJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=LstC8Jdi; arc=none smtp.client-ip=44.202.169.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
+Received: from eig-obgw-5005a.ext.cloudfilter.net ([10.0.29.234])
+	by cmsmtp with ESMTPS
+	id XTlvuiTVlXshwXZXDurlx5; Fri, 04 Jul 2025 06:04:31 +0000
+Received: from box5620.bluehost.com ([162.241.219.59])
+	by cmsmtp with ESMTPS
+	id XZXCu74axTd1CXZXDuxTEF; Fri, 04 Jul 2025 06:04:31 +0000
+X-Authority-Analysis: v=2.4 cv=B/Jy0/tM c=1 sm=1 tr=0 ts=68676eef
+ a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
+ a=HaFmDPmJAAAA:8 a=ZJCAKeS_rTr8ZDEThcMA:9 a=QEXdDO2ut3YA:10
+ a=nmWuMzfKamIsx3l42hEX:22 a=Wh1V8bzkS9CpCxOpQUxp:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
+	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=TlZBlsExbtZHpp9JpBdKHNq+76CAEy3oCuHbciuofzQ=; b=LstC8JdismZmfKNgt/A8MPlYqZ
+	iXbu3GxaivOw7ZurjMvvTpgNUcIdyV7wKegzrEw5RUbbdJihIa+V2EKIxHmiZnwoHst5YDeb9MYNJ
+	f+EhTrsPWzh1uOBbKwZngUkKHVUuheZyZvheCWgCM2krc/EDZqbQjFbaq3R8CkKNQR9SnZnecJrVq
+	tfH8gBabS5F+2xzj7y30yVMtCGtQveKwjpnjpBiLA2FUAyeWSzROuqQqPhx08Mh2APrCRFqfDdnRq
+	2SFpjRdm9UWh+u6QGWi/80KsCLd6WYv+MKUVJ18n5IpArl5D3IaqF4g88UVCRdGjpjHhaZVzcXpyY
+	ZYoxuRzQ==;
+Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:50322 helo=[10.0.1.116])
+	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.98.1)
+	(envelope-from <re@w6rz.net>)
+	id 1uXZXA-00000000sfL-1Jzn;
+	Fri, 04 Jul 2025 00:04:28 -0600
+Message-ID: <c64dfabd-cfc5-47f3-aed8-7f9e6fa9bc7a@w6rz.net>
+Date: Thu, 3 Jul 2025 23:04:20 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <tencent_82716EB4F15F579C738C3CC3AFE62E822207@qq.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.6 000/139] 6.6.96-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+References: <20250703143941.182414597@linuxfoundation.org>
+Content-Language: en-US
+From: Ron Economos <re@w6rz.net>
+In-Reply-To: <20250703143941.182414597@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - box5620.bluehost.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - w6rz.net
+X-BWhitelist: no
+X-Source-IP: 73.223.253.157
+X-Source-L: No
+X-Exim-ID: 1uXZXA-00000000sfL-1Jzn
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.116]) [73.223.253.157]:50322
+X-Source-Auth: re@w6rz.net
+X-Email-Count: 16
+X-Org: HG=bhshared;ORG=bluehost;
+X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfGz+5BRbBnjwScy1s6aJHp/D0m20NSwd4q47H+vKqfzAhaZA4qxiqDFcqOXvzfy267wUt1ZYNhWqcjTTH+G3A/sSV9T7cVn/SuCocOsYWkZgnUD0zrJm
+ uj+LyIQO66v/y/+fNrWZbu4UnoNRnH6hIji5+iAIH+0p0RxvmEYtkWx29PIOsGbiuYtFTnLOlRfbwsAfzTGGEsHSa42UovO97BY=
 
-On Fri, Jul 04, 2025 at 10:43:57AM +0800, Yuwen Chen wrote:
-> During path traversal, the generic_ci_match function may be called
-> multiple times. The number of memory allocations and releases
-> in it accounts for a relatively high proportion in the flamegraph.
-> This patch significantly reduces the number of memory allocations
-> in generic_ci_match through pre - allocation.
-> 
-> Signed-off-by: Yuwen Chen <ywen.chen@foxmail.com>
-> ---
->  fs/ext4/namei.c    |  2 +-
->  fs/f2fs/dir.c      |  2 +-
->  fs/libfs.c         | 33 ++++++++++++++++++++++++++++++---
->  include/linux/fs.h |  8 +++++++-
->  4 files changed, 39 insertions(+), 6 deletions(-)
-> 
+On 7/3/25 07:41, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.6.96 release.
+> There are 139 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Sat, 05 Jul 2025 14:39:10 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.96-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-The reason the allocation is needed at all is because generic_ci_match() has to
-decrypt the encrypted on-disk filename from the dentry that it's matching
-against.  It can't decrypt in-place, since the source buffer is in the pagecache
-which must not be modified.  Hence, a separate destination buffer is needed.
+Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
 
-Filenames have a maximum length of NAME_MAX, i.e. 255, bytes.
+Tested-by: Ron Economos <re@w6rz.net>
 
-It would be *much* simpler to just allocate that on the stack.
-
-And we almost can.  255 bytes is on the high end of what can be acceptable to
-allocate on the stack in the kernel.  However, here it would give a lot of
-benefit and would always occur close to the leaves in the call graph.  So the
-size is not a barrier here, IMO.
-
-The real problem is, once again, the legacy crypto_skcipher API, which requires
-that the source/destination buffers be provided as scatterlists.  In Linux, the
-kernel stack can be in the vmalloc area.  Thus, the buffers passed to
-crypto_skcipher cannot be stack buffers unless the caller actually is aware of
-how to turn a vmalloc'ed buffer into a scatterlist, which is hard to do.  (See
-verity_ahash_update() in drivers/md/dm-verity-target.c for an example.)
-
-Fortunately, I'm currently in the process of introducing library APIs that will
-supersede these legacy crypto APIs.  They'll be simpler and faster and won't
-have these silly limitations like not working on virtual addresses...  I plan to
-make fscrypt use the library APIs instead of the legacy crypto API.
-
-It will take some time to land everything, though.  We can consider this
-patchset as a workaround in the mean time.  But it's sad to see the legacy
-crypto API continue to cause problems and more time be wasted on these problems.
-
-I do wonder if the "turn a vmalloc'ed buffer into a scatterlist" trick that some
-code in the kernel uses is something that would be worth adopting for now in
-fname_decrypt().  As I mentioned above, it's hard to do (you have to go page by
-page), but it's possible.  That would allow immediately moving
-generic_ci_match() to use a stack allocation, which would avoid adding all the
-complexity of the preallocation that you have in this patchset.
-
-- Eric
 
