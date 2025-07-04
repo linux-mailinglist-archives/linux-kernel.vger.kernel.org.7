@@ -1,140 +1,119 @@
-Return-Path: <linux-kernel+bounces-717636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-717638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF7C8AF96C5
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 17:27:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EC05AF96CA
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 17:28:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACD8D5A0E6E
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 15:27:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1AC6541625
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 15:27:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C7E62EB5BA;
-	Fri,  4 Jul 2025 15:26:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 720382C325A;
+	Fri,  4 Jul 2025 15:27:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="IQpuTJ46"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kz46GqaP"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AD742D63E8
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 15:26:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EE5B29B790;
+	Fri,  4 Jul 2025 15:27:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751642781; cv=none; b=l/qRUBWvdnDUrpXmXg5Y9V2uLAhNxkbpNMucfWrCGLBljPz+AVwYessSfvHxF1BfcAz+gX3PFAuplAjgPpA5xyoLfHM8tf5G4ieizVS6odeJR/YzcNbFqBDfyvlZusKb/p7+8Kyozd5+vUi9cqIv6SB01/UgIhNBwOMHMdQL+ag=
+	t=1751642871; cv=none; b=fRW5MW3fSr1iN80bO5dJUg+yUPAnedoqKKd/+yE7sA4aZILQ6wDglKGuQGOHKZ6PVK3wUEZeJk6hPGh/iNM5N7uuME0EZERQ+DDfFAg3qS6p1a/egvBH51xyt9CJkbzNxqWvoOgVa1Cv9Y8IDLF9Sq7I6+blm04ccPDp9pJV2is=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751642781; c=relaxed/simple;
-	bh=ohRy4gcoGuEcRKZpJdSU1G0sKmqubXx68E7KSC1A01I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZaV7GQQiEkeNQseZFFb4HBi4Zt81RedhGa8p65Xzkw+FSzaZrMuZJCQGbCUa8JKgYpEhALJiYScgqQ/v2e7y9pcNFFO1VWYMCmbDD2asa5TqD7+zbcAPHVrNFC2bvo/3QY+UybNK5QhAOJHmf2w4N4BXUDvBB3PVQoW65NW330s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=IQpuTJ46; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1751642770;
-	bh=ohRy4gcoGuEcRKZpJdSU1G0sKmqubXx68E7KSC1A01I=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=IQpuTJ46xB7t9TZsLEqdQUqcaUBAf7UcGR9KeXm5AbW+VdHtVw9PDpxe3+Zx8pk1A
-	 2tofxiaQsxOsBqI1Xoko5rRmH1K5bu7qQfSPpuDh9FHDevntD6KW1HNq8gawLU7HWj
-	 QN/lN+G1R0r+Nw79biJPjRdmz1WYurJMekV6zpmEDl6scwasEp6xsbqmNTSljPz6J6
-	 pDCt8GB71tdiXMdZ++n5SpjvzRnxX7/0eOzOnA9yMMhfpHs04vvBc2wV18ZLD0P/6T
-	 hvRxPGgcRDfX0NNfaE6a/UgspTX3s/2td2/OaNlIvJoPeuPYsoHL9B+Vb1799nm2kj
-	 uNYYV5pFL+w3w==
-Received: from [192.168.1.90] (unknown [212.93.144.165])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id EDC8517E07C9;
-	Fri,  4 Jul 2025 17:26:09 +0200 (CEST)
-Message-ID: <c08e55bb-fb93-44d6-bcb2-f1a1b78a5fb7@collabora.com>
-Date: Fri, 4 Jul 2025 18:26:09 +0300
+	s=arc-20240116; t=1751642871; c=relaxed/simple;
+	bh=4v3TRQ4gYwnhEwc5GUKsBPODNNDA4dpVHy1PtRhstxw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oeeGjSUHIFcL1K4MC/ylWFXs2toBCx8fA1MPaU4lLE6HQT7g1xLcqDTCJct8TBDfCcZet44R8BbqUuH5lG63Id9CiRE86tS7BB1EOe0hC5S09rxE3O/mxjC+Hb3WkbwpSxcxpWer1Qfa17hw/+brqz3iBrZhNrJKvFHHeMhav8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Kz46GqaP; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-adb2bd27d8bso15216866b.1;
+        Fri, 04 Jul 2025 08:27:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751642868; x=1752247668; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=K+ebNQOqTu5W6nuPcdddqE5wsc9kXNQZiBU7TM8ffBE=;
+        b=Kz46GqaPAwhQ7LwnJV2Lcz9/JH06R9JUh75DRrZ80upv+YeeSuC1tI+rQ6n25mqJfo
+         1RIOIKVoKonVrEJwGNxcJ0typhEXJQSrjY9s2+gBK/1+u8pYN4EOBA9Wb7bm0gKLnbZO
+         65FolFJqnQiLXLUNbq1k1/NYnrgjtrL8UfBCqYVaQpGUiuRXgHG9V8ty26cRPvKwbPYI
+         P5iagId+mJBbY8cyK2D+AhxuDoCBQxZECwT9rhkFgJnHLdL7RHV+BCOWv5ZLF4Mwb/Mo
+         DuVsn2S1lO8T4J8J1FNaRIK14OOsSjzC7w/ypK1CtxJ3C3gVYuPcKlrZvdh0ruiLRI10
+         MINw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751642868; x=1752247668;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=K+ebNQOqTu5W6nuPcdddqE5wsc9kXNQZiBU7TM8ffBE=;
+        b=TCYMeiSlpFfji+Hfxjm9AMBJ2vtelG0E6+R7vFi9yFZt4GdhlfprF1mpToO58SE5H4
+         BMquK2fb4/rwrmdsx/so152j1wDn54PRF751m60aVukW58lhsNqCy+QPKWBUpslWHNk+
+         hQq3Ptemr8ioCh0F3D1vsvxaVK1mSyctLYKvf2UtwPRbpfUyDvtjuEOO4ecDKPCg5lxo
+         q8xDiFzq2X7ggJz1S6ZnQ3AjpQwfE1bEv7ir4QW8zRzzCxEFzmXogwoaVKvANTbz3BGf
+         DgP1VvvFVQvhdbEw6155zlnQyiLe4RwS09voUjaUrPeD/ADN65dOy5DVnLlTmnBHN4su
+         RPVA==
+X-Forwarded-Encrypted: i=1; AJvYcCXPtZdDrFxhGehwsS9tDvX7FoZ8koCo4RhjEpUrkThCtU2FhmKTmSKBFi0SrEevGseaG44lBV648dRfMCk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzleggxqF1yfxiqYya63Jol9kXQkMifaUrYVFf4w8fhX2tku9SF
+	/dW5fo39sI6AmHCW0yodY7VcxV8e19/HdMdv9XgAzNMYgQDNMM+8Y65Z
+X-Gm-Gg: ASbGncuxuIOiSVPN8F8Va5XxXlt0/c5fw8+t07d9Wv83dBqukQ9isX6cgc5PXys+rv2
+	BsDEKgMWsDA2v/nJn5M3Fr5Qe7LynWw7Ax4Ru96Ns4OvNkA0F8Mxsm4SIvnXa+A8IxSRF/xEpmH
+	WsB7shF2y3Lc7D8dLmtyWgOdycqcA3R0TW5jSid2uJkINi5XvnPIoIj/e0XMCDQPQ0Q7KD24rA0
+	iXYO+zXaENr8nvN4LnxpsH2yiVn/TWe7js0QUYXIDaDIGjjPJjoelYNodBZUNwWzFcW++Bbu19o
+	FqdB23p/61ivLm2qD1YH/DCl2lgp/eEyn/QpfQZsoNEpV/JENw==
+X-Google-Smtp-Source: AGHT+IF6oLHogNvjH3Oz67SB2byAsyBihuBG/+HbpIQjbMscOU/bzY+tofufIUk1WNXeICSLqYmeug==
+X-Received: by 2002:a17:907:3daa:b0:ae3:cd73:efb9 with SMTP id a640c23a62f3a-ae3fc212ea3mr109904766b.12.1751642868054;
+        Fri, 04 Jul 2025 08:27:48 -0700 (PDT)
+Received: from fridge ([46.2.120.40])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae3f6ac5feasm190894866b.107.2025.07.04.08.27.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Jul 2025 08:27:47 -0700 (PDT)
+From: Emre Cecanpunar <emreleno@gmail.com>
+To: gregkh@linuxfoundation.org,
+	linux-staging@lists.linux.dev
+Cc: linux-tegra@vger.kernel.org,
+	marvin24@gmx.de,
+	linux-kernel@vger.kernel.org,
+	Emre Cecanpunar <emreleno@gmail.com>
+Subject: [PATCH] staging: nvec: silence macro argument warnings in NVEC_PHD()
+Date: Fri,  4 Jul 2025 18:27:37 +0300
+Message-ID: <20250704152737.14315-1-emreleno@gmail.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/5] drm/rockchip: dw_hdmi_qp: Provide ref clock rate in
- dw_hdmi_qp_plat_data
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Sandy Huang <hjc@rock-chips.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?=
- <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- kernel@collabora.com, dri-devel@lists.freedesktop.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250704-rk3588-hdmi-cec-v1-0-2bd8de8700cd@collabora.com>
- <20250704-rk3588-hdmi-cec-v1-3-2bd8de8700cd@collabora.com>
- <20250704-granite-piculet-of-elevation-f01e08@houat>
-Content-Language: en-US
-From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-In-Reply-To: <20250704-granite-piculet-of-elevation-f01e08@houat>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi Maxime,
+checkpatch.pl warns that the NVEC_PHD macro defines unused arguments.
+Use (void) casts to prevent unused argument warnings when the macro is disabled.
 
-On 7/4/25 6:07 PM, Maxime Ripard wrote:
-> On Fri, Jul 04, 2025 at 05:23:24PM +0300, Cristian Ciocaltea wrote:
->> In order to support correct initialization of the timer base in the HDMI
->> QP IP block, extend the platform data to provide the necessary reference
->> clock rate.
->>
->> While at it, ensure plat_data is zero-initialized in
->> dw_hdmi_qp_rockchip_bind().
->>
->> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
->> ---
->>  drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c | 13 ++++++++++++-
->>  include/drm/bridge/dw_hdmi_qp.h                |  1 +
->>  2 files changed, 13 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c b/drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c
->> index 126e556025961e8645f3567b4d7a1c73cc2f2e7f..8c1185490009c5f1bc658998a868f8b18dc479a3 100644
->> --- a/drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c
->> +++ b/drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c
->> @@ -431,8 +431,8 @@ static int dw_hdmi_qp_rockchip_bind(struct device *dev, struct device *master,
->>  				    void *data)
->>  {
->>  	struct platform_device *pdev = to_platform_device(dev);
->> +	struct dw_hdmi_qp_plat_data plat_data = {};
->>  	const struct rockchip_hdmi_qp_cfg *cfg;
->> -	struct dw_hdmi_qp_plat_data plat_data;
->>  	struct drm_device *drm = data;
->>  	struct drm_connector *connector;
->>  	struct drm_encoder *encoder;
->> @@ -515,6 +515,17 @@ static int dw_hdmi_qp_rockchip_bind(struct device *dev, struct device *master,
->>  		return ret;
->>  	}
->>  
->> +	for (i = 0; i < ret; i++) {
->> +		if (!strcmp(clks[i].id, "ref")) {
->> +			plat_data.ref_clk_rate = clk_get_rate(clks[i].clk);
->> +			break;
->> +		}
->> +	}
->> +	if (!plat_data.ref_clk_rate) {
->> +		dev_err(hdmi->dev, "Missing ref clock\n");
->> +		return -EINVAL;
->> +	}
->> +
-> 
-> You'd be better off not using clk_bulk, or calling an additional clk_get
-> for the ref clock only.
+Signed-off-by: Emre Cecanpunar <emreleno@gmail.com>
+---
+ drivers/staging/nvec/nvec_ps2.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-I'd keep clk_bulk as there are 5 more clocks in the list.  But replacing the
-loop with just an extra clk_get would be a simpler approach, indeed, so
-thanks for the hint!
+diff --git a/drivers/staging/nvec/nvec_ps2.c b/drivers/staging/nvec/nvec_ps2.c
+index 575233fa1677..38e736b3761e 100644
+--- a/drivers/staging/nvec/nvec_ps2.c
++++ b/drivers/staging/nvec/nvec_ps2.c
+@@ -28,7 +28,11 @@
+ 	print_hex_dump(KERN_DEBUG, str, DUMP_PREFIX_NONE, \
+ 			16, 1, buf, len, false)
+ #else
+-#define NVEC_PHD(str, buf, len) do { } while (0)
++#define NVEC_PHD(str, buf, len) do { \
++	(void)(str); \
++	(void)(buf); \
++	(void)(len); \
++} while (0)
+ #endif
+ 
+ enum ps2_subcmds {
+-- 
+2.50.0
 
-Regards,
-Cristian
 
