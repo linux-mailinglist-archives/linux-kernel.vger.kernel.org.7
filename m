@@ -1,187 +1,155 @@
-Return-Path: <linux-kernel+bounces-716487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6B49AF8739
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 07:28:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 470BCAF8743
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 07:32:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73081541FBF
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 05:27:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6F7D3BFB2A
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 05:31:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DDFA207A26;
-	Fri,  4 Jul 2025 05:27:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B6A320C473;
+	Fri,  4 Jul 2025 05:31:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Xcjo5tln"
-Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013064.outbound.protection.outlook.com [40.107.159.64])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="KHxSOdhI"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA707202963;
-	Fri,  4 Jul 2025 05:27:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.64
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751606878; cv=fail; b=SkCRZ121Ji7q9g5bS5FJwOgJoZD1aAsVfcYjrNzBzfQFNkBzQuJVgO5QDbIc1eUdc5U81tWebLztnFCuRdotmgAxTJKhOT9T2Hrhxs/IbcDe8sEO2Zq7OMnxwP/V1KfGQfzn/2H1CSVgztXFWLqhXGyNKjZELOaLWQ7E1rNmWpw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751606878; c=relaxed/simple;
-	bh=fXiXVsnvq/CU70B1wAZ5kdT7XWnKRI9LjrxrLKxPeuk=;
-	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=GiKwYxtbiO2uurp5S4DivHUKh3w/sUnMK/k63G1VfQurUhlPjFBdhOSb+JoMhHvlcpw0PstVzMnn6eageOWVWZ5DqhL5kqojfLAfbXlVg3Z4t4t5Gxls+AdCeWwc1GZSOz08QsT4P7Mt5K/s3HuJBf1a5WYEQpiVRb3PT1dnpHY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Xcjo5tln; arc=fail smtp.client-ip=40.107.159.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=LOZshyAv3q4SqojQer97ZBH0jPvJUaNUG9ckzgXgXEHhzSiswlJI0xvavgWYiR/0MnDlogG7hqxGTfw+lD2mRN1iqirmH+doaIy2AZNMnIKT3ArI+NRryBT7WAvIlrlMKpIYVgFriBuMKM3ipHPXL4jlf69GdQ+ClAbFp/lY24SwXnPjptuifWZxRbFP42s9QpVzDku+qcGHxJ4y7rW/czWr/eQqH57JVeiLEEngj/oDiPID7hde5DBAIIRO472X5ZDVCga3hJz6pLeuzJ6FRWAKqSLC96jOwEAZ86XBuFDy1eJa2jwks3KWgdteSe2HEhjWYdGnYrvOmzSDWApJ3g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Ptf8nBobc68PqQ8Inod7r4sdx7jVFCUMci4k4ILV1vo=;
- b=yMhEGgX0s+6+6gloApfnXwSBZjEY5jtalb8H5ZIqLNzTjI7z50kmUIpqH29JHLHhQzuXzl8JDXI1rI1ARDucq+BywKP6AItRYpR6D7e0PuKGYyMeQFGcvm4TAiPG3Fr3pAbmhi2Z+W0UE5R73YmgnlQIaHNPObevsgiuPkH3W9U2X/YIj2M4SG9u1oFOeotV2Mlbu7LUkKV1rP8dAv3JLDlPIOd1/8cJGeSv6wg3OmvGyOINmBBUh/4zZg6iphXs2WPKEmVHW21lmlLQ2p0yal8dYJ3z6CUbXSmQZIp4ZBYwUQa7r5ZrrR2fj/bnqH10Jnf3Q1hGALyIpWGGfF3C3w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Ptf8nBobc68PqQ8Inod7r4sdx7jVFCUMci4k4ILV1vo=;
- b=Xcjo5tlnGzNOx2XhDTo3aOPfozvWw+GGPpgVDSVHL8+VFVYEPHK4ZyujVLkuJEmHDSKSQE2GLitYXtPC8hHYquSYnWt1KaSUPgE9Klw9lB4ZKzf6lNYctARazdCXwNAOMTsG9l4pKxiwZepjs+KREpCvuV+kdusG/OozpTye4AAV38rjuE+GJKb2Xs/u0ljxjT2byX/s7D5+9ocuta4RHyqJ3Ufx4nyA3G9wvaiMSJFLcOlGISlFOy5IED5ha/uhRd57U/VPgdCapg1typ82qve7cfonNP1ramXcGJeywBO7vIkXqB7+guVytw3ngqrLClRMKfE1njT4mtBsA4Bohg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM0PR04MB7044.eurprd04.prod.outlook.com (2603:10a6:208:191::20)
- by FRWPR04MB11197.eurprd04.prod.outlook.com (2603:10a6:d10:170::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.21; Fri, 4 Jul
- 2025 05:27:54 +0000
-Received: from AM0PR04MB7044.eurprd04.prod.outlook.com
- ([fe80::7be0:296:768c:e891]) by AM0PR04MB7044.eurprd04.prod.outlook.com
- ([fe80::7be0:296:768c:e891%5]) with mapi id 15.20.8901.021; Fri, 4 Jul 2025
- 05:27:54 +0000
-From: Shengjiu Wang <shengjiu.wang@nxp.com>
-To: andersson@kernel.org,
-	mathieu.poirier@linaro.org,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	kernel@pengutronix.de,
-	festevam@gmail.com,
-	linux-remoteproc@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] remoteproc: imx_dsp_rproc: Add support of coredump
-Date: Fri,  4 Jul 2025 13:25:29 +0800
-Message-Id: <20250704052529.1040602-3-shengjiu.wang@nxp.com>
-X-Mailer: git-send-email 2.37.1
-In-Reply-To: <20250704052529.1040602-1-shengjiu.wang@nxp.com>
-References: <20250704052529.1040602-1-shengjiu.wang@nxp.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: MA0PR01CA0049.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a01:ac::10) To AM0PR04MB7044.eurprd04.prod.outlook.com
- (2603:10a6:208:191::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1428E20A5F5;
+	Fri,  4 Jul 2025 05:31:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751607106; cv=none; b=p3b8E3eTmhapG5ACEzxoICvxTdJtj2YlS0i8VtA0lS/3iNJaMnYDGx3A5wdozkHrt9Jf/kPDHUUmRK5kZF0r+7q36wJ0DtFZuEtjUli9oECB3fGzUEho952CqDQZaAzQ43mviaK84o58CxtCRBdr2vuhCgtwjSwwf7Dfcg04YnE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751607106; c=relaxed/simple;
+	bh=lbr/w3Atu8u0QgKs9GzUVac/xCX7/2DRddCVhydzMw8=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=sg/PlP5YztrU581SBqW2GJZ9qvXasyDMoLejlStGMPj/jsaxR9FZf4mfNYPIOAItRShkpjddtzWN8n/5c/RalwUzuh+XLsxyWxdr6ds88NlABQJAlB5kr2a8iCVzSI6THlnUZ+YzuVWSIgE3dOtsNwKfjE6fSNViTP2dCqG3ww4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=KHxSOdhI; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5640GOhH014069;
+	Fri, 4 Jul 2025 05:31:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=Bes+W9qoQRtMECU3uZpM7J
+	zR5WqARX2AyGZAPPR1ydk=; b=KHxSOdhIJuqVLjYfRehspUzIJMG/E/2NbKm7c5
+	++Uh+Sh5/L4uugkkqkl5wJoBwdT7tCHTIVX9zLjUbh2CHZ0bcl+aZAotwbzM29cD
+	sNFD262AJq6XOZLYJiOA9ODydcFyNJOOB5P3WWgJR05LNnSJ9whUqQfkWHXLxRzJ
+	H8V7QUdlKDHkngcbh8KTmdrfuddLLrV/yz6xiWioT17Fr7HR0zsSk6azIu4nnC3g
+	XWnRYZ+cAxUf6uv85cY8/lbaOeIpkI/bxBioawHZqayjPNvmYD0tELq4L9TABlgS
+	GT4ecaRc0oJDqc5uTF2SjT30NOJK4YZQXZJemKRcNk5tLl6g==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47j7bw2rj8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 04 Jul 2025 05:31:23 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5645VMgh016875
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 4 Jul 2025 05:31:22 GMT
+Received: from nsssdc-sh01-lnx.ap.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Thu, 3 Jul 2025 22:31:18 -0700
+From: Luo Jie <quic_luoj@quicinc.com>
+Subject: [PATCH RESEND net 0/3] Fix QCA808X WoL Issue and Enable WoL
+ Support for QCA807X
+Date: Fri, 4 Jul 2025 13:31:12 +0800
+Message-ID: <20250704-qcom_phy_wol_support-v1-0-053342b1538d@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM0PR04MB7044:EE_|FRWPR04MB11197:EE_
-X-MS-Office365-Filtering-Correlation-Id: 43b62f7d-bd37-4786-9bac-08ddbabb8727
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|1800799024|19092799006|7416014|376014|366016|38350700014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?0Dc0WIRwUZvv1+J1cvmD0L4Hns8plyegJ39YPSI9ybAAEgr6Bha17DncYvP1?=
- =?us-ascii?Q?aVpb8LGs3Hvyo5+dhh7VSdutPPZr4D4bFOC7ECmdAXqMzLF9SNOlPK2211vp?=
- =?us-ascii?Q?7UCBxNDJ/6GoiKAsRJDhDQzPn5UWOanIBmyBbCI7BHIEu/Hlv4UGBmEXB5uY?=
- =?us-ascii?Q?UU4+dy+PFlFdrZTrQmHk3SGO+yW3cMjd6o/vpTCnUIWGVd7lduvk4EhEzjsy?=
- =?us-ascii?Q?s+In8dlD0FIK581YLKc7DKdSCk8yjhOMwGXarm3A3subObvp83MT7SY3Bt9g?=
- =?us-ascii?Q?+gt22BfuIGphAR5ukCASbtGVlUwG4BuEnvgarfONVGhwX/lSmXSwK0/tNP/F?=
- =?us-ascii?Q?LibK509EdShAM5hNoM6Y77c8RXxhPBKymJyDBUQsk/jjWQ3C852oAWvpxMp3?=
- =?us-ascii?Q?osoIcUJLAnh3QRf2MjEdbmYhkkBi07kJ+Ou7vuniZ6taCbCTy1PHT7weOILb?=
- =?us-ascii?Q?oFKlBfR/TakJBINrIta/ouY3fXMkXDwkA3ksItV9JvRSE1LtioNaWfXGqEmK?=
- =?us-ascii?Q?12bbn2rlA8XMx/NE7qy+3aOHOqVbm6i6Lo4zieduHLoxr26MNihLdL/TMiUV?=
- =?us-ascii?Q?jUwyPuRj80k4ufClUIFDhBcqR8cFL/nsI+rUMgOffzODGNGz9EEHWhGz1/lZ?=
- =?us-ascii?Q?4FlTczfmc2YAKrbQ4Z67aZUh6h4d/q+G7vkdVUXgEh5kYoeIAWTl7Y+7M20z?=
- =?us-ascii?Q?acIp15Y9wruYNFqPeeAqxwNKsisWsTUSMuv+GSK7XZouawRCzCxEEzu0Be2d?=
- =?us-ascii?Q?LEt8PmVbSdTAZEgEbUVZ/VMIlD0fHMn1rWc8PCDsz8Nymkgq3fcZNeI97yZB?=
- =?us-ascii?Q?1vUDaC/qjOne9eOzzK3vJu9T13KTBEZ6uCM+T+nY88jijL8ymFtStA71qr76?=
- =?us-ascii?Q?KNaTXsndkReJXtE+4QaYwOHXzvRLCuFgEuSM79mk57Igb1o63JNt4+NGWc7t?=
- =?us-ascii?Q?8Aq4twV+Veh+HvJ2yt1TzDBHl928dCncR9N/6ISrvk3+HrHZdRjC4Xrt9OnQ?=
- =?us-ascii?Q?omlaQbRGaZLdlwynOcdV3YPkfC1hHAkQXkMXJJ5c5ac5hdwSGvRJykuMA3Fe?=
- =?us-ascii?Q?Oqg5/vwUO3WzjeFY8X+dPSNZnbpe0MSFl0/aVxBjnR2PGtx3+HVYs+rSf5xO?=
- =?us-ascii?Q?IvzmEaVizyVheUg8o4IcTkYpy7S4Qll0h/nET7unaNfpNALMPQt/LzaDReaW?=
- =?us-ascii?Q?0OtgDeo4SMh/u1DZR2QvTpHsPQ0s5N58Y7c45k5lHm23Z+iZ/6Isn4nGUP7U?=
- =?us-ascii?Q?WPW1P9B3Zk31dPHOanhYRNld2ftR5dvTurxtgxOy7PaeesMZd1X6pChYGSXr?=
- =?us-ascii?Q?tc1LioNclsoGqV3dT0SlEasilUuOzwku7LIbOCehgsrjrgvnc+ooKjLWXGKc?=
- =?us-ascii?Q?9tudyj/AQ78Uf68BGZ6RdzDFoExbeMqu+yLyvTvLT1fkP+IAreAQy5OX3xjQ?=
- =?us-ascii?Q?htKQKwEhK+gT1G8aldrxmawcdCnzF4KDgAW8kOR5KC/6I4yug1OTMDBZXAd+?=
- =?us-ascii?Q?j4atKVy7CPXY3M8=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0PR04MB7044.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(1800799024)(19092799006)(7416014)(376014)(366016)(38350700014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?t/OQQO92OmMI/T3i5yMQsN8KyzthEkqPNacZmndRIeioPJIImvZzhYe5HroS?=
- =?us-ascii?Q?bd9oCqWnBdQSHiQI9mjxSSGjrtUcwckVJgeuJKmwbvKOobQEv4LALJG6qhB3?=
- =?us-ascii?Q?kh5H45AnN7Sfd3I/eHNmz0glWSov48LlMk/ZOgjTmQle8spgMiuYp6Tv4DC5?=
- =?us-ascii?Q?h+aryiV4iPxhCuIYj7nYeOX7TpsfIBPn6wuOdMNtx6AFeRP69bxZHYfvc6fD?=
- =?us-ascii?Q?NpTm8GPuIfFj9Hv4VvPWTVAQUbUV8GWsRYOFYQBbvNBoWKKlF7uGoZnJBWT2?=
- =?us-ascii?Q?4UDy7gGM35fLRF4waq9fotfKlp+sPyGBkOKj90rBZ1pwD6zpCFID5yGIj46Y?=
- =?us-ascii?Q?ezFeZBYYPNpooNfw69hmItnjG+RCUMqmY5okbPg06tjdtWyy4nE/fXc4DXKp?=
- =?us-ascii?Q?++5wh0lJapnGdTZKGLDL/qxLbn4cJBTTcl0Ptwbn+4qj+55w7GH4IJ8GhdRT?=
- =?us-ascii?Q?jG9s1YF5Npjlm1zhgfUFsB6nalegigkVNqHvdACpjFQIQFnpwKy1Xt7Cyo7P?=
- =?us-ascii?Q?g7OBVTYWGAVwZoIjBc2obT7N8gz1O/dDZe+WXzBB6LTzEBCkCE2DY8rhgH8F?=
- =?us-ascii?Q?ubQ0YNro8I1HqMawc7u7s3UtrxIJkNn6eksNFn8B0R+EgiltOu3Ip4oyF41S?=
- =?us-ascii?Q?+oaMIB4GaqtbCTnB3cI3VjfI1Ff9fInnEjvabTdUiejjPr7LHWAW+sqGDE1H?=
- =?us-ascii?Q?fw/h0GNglbl96wVpvtvR7Zeq+iaQcA4ew/ClF32mP7YhjDkgl+z7owr6Yu5c?=
- =?us-ascii?Q?829QKcjNnw9FuDgE6xK9p37HrmWHJ3fk8qGG6VSsWzlHNv5qS10vQD1WcdvF?=
- =?us-ascii?Q?nMSll6dd8VM5S9Izx3X5VwGs7V0Sms2h/WIt3HjU1CEHKZpRPNW69cfm1qjP?=
- =?us-ascii?Q?0SN76stUeaFqNK1rQNlrrBUiw++BJia7kD0dFVAatW4T/RT6ZmtMti5SAH2r?=
- =?us-ascii?Q?wM6zPttfm8VfRttwO1aZ7q7iDFX5pBxOGSDzP2BA+RHC1j61WlkpeXS80ENh?=
- =?us-ascii?Q?gwgODevIY6gJx1AWqUAj87xBQO/tUEp2UTMQeXp5i10zmwG0oKJATizYMw4v?=
- =?us-ascii?Q?xKBichaL38JyVbMDGUR47oJn75b4VrwXiWKThGf2v5w8sWqzHamz4LSnHW8b?=
- =?us-ascii?Q?AZE8mx46gcLtXNnlh8oumBttCVQ8/761H+lGi+ItIuoI4Q0/bXRR9w95apE6?=
- =?us-ascii?Q?WeuTfnQlukW8akjGkaZyCKmlLz3Ea2V8EySL5xoNS8IZ8O3xmWI8xtHEkEXl?=
- =?us-ascii?Q?qJuFgqjyQD2q2itK+ojVbQcPET//LwcM0xUS4ZzYs2s8d34QpaybBTaYAYGc?=
- =?us-ascii?Q?G/r3ccz3prLzcJir6ni7qxxPosIwxj2fOg+AwznTCNKrwDmhZkh4KGD+maT4?=
- =?us-ascii?Q?XNdB+cBQhpPs2H69vXbXx7zWJ8SI2V7Xu0MehdEEtLFFsFEyUrWnoU0n2xD9?=
- =?us-ascii?Q?ght1vv6h0SOCmazKgKbtymh8QoHXAxrj79tG6LrSLeArZ3eOBIXu+h8HYgzH?=
- =?us-ascii?Q?eGzf/5fuwXIm+rylHLBSVoZ7UPpxSOd4eVSETe0OXxHDeQLKeC+NSzihdLK3?=
- =?us-ascii?Q?jjL3QgQw0rpNH8irx/S80UGlMvkr0W07eKDHZZU0?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 43b62f7d-bd37-4786-9bac-08ddbabb8727
-X-MS-Exchange-CrossTenant-AuthSource: AM0PR04MB7044.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Jul 2025 05:27:54.8490
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: uYCmKNyMwj6tjoELwwEACKWPuMeZLFrjP71MPxyyZgSWU8aM5EXkxpTiNxGGVn4KHrU0L0yUiCXJ452mNd8pNg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: FRWPR04MB11197
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIACBnZ2gC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDcwMT3cLk/Nz4gozK+PL8nPji0oKC/KIS3VSTNENTk+RkozSjRCWg1oK
+ i1LTMCrCx0UpBrsGufi4g4bzUEqXY2loAku2xBnUAAAA=
+To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        "David S. Miller"
+	<davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Viorel Suman
+	<viorel.suman@nxp.com>,
+        Li Yang <leoyang.li@nxp.com>,
+        "Russell King (Oracle)"
+	<rmk+kernel@armlinux.org.uk>,
+        Wei Fang <wei.fang@nxp.com>
+CC: <linux-arm-msm@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <maxime.chevallier@bootlin.com>,
+        Luo Jie
+	<quic_luoj@quicinc.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1751607078; l=1288;
+ i=quic_luoj@quicinc.com; s=20250209; h=from:subject:message-id;
+ bh=lbr/w3Atu8u0QgKs9GzUVac/xCX7/2DRddCVhydzMw8=;
+ b=J2KWzNG9u3Qp9GpL49mnLPoTz82x6I+/blPQTx3331ZzZG3e+3UGfBdMhK6QcOt0TcYTe1dv9
+ eu279EMWerSDciZRlVmfjwhzl6oe1WahmK8XCe3c6sBaaEFuvMzdxYU
+X-Developer-Key: i=quic_luoj@quicinc.com; a=ed25519;
+ pk=pzwy8bU5tJZ5UKGTv28n+QOuktaWuriznGmriA9Qkfc=
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 5DwSsTRLWhQF87L-A5mwRlEgB96AZHlB
+X-Authority-Analysis: v=2.4 cv=RJCzH5i+ c=1 sm=1 tr=0 ts=6867672b cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=COk6AnOGAAAA:8
+ a=QfVGnWNc7DW3J7Ta4DgA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: 5DwSsTRLWhQF87L-A5mwRlEgB96AZHlB
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA0MDA0MCBTYWx0ZWRfX1PmzvuJ9fVCY
+ fYJe35YCTvVAn7qFYW/AeygjgYTzF65pA/uYOsQxLIQovzUfBuEDfz+woM9TX9rSEVomj/63LGI
+ oGIGtU9T/+gsoZ/RFM5Iqxm/oeOCC5sRAHOQSTa2Kb9TKR3cCK8yyC/+yvxT8eRh095p0UmV0Xn
+ gGsAQTQsemKxD5s5Z47dFQij0R0ANiCSoiI+4U1qeqQa3mMfWmgllWwu/15ufBXookR/NxzhYuI
+ 1OY0k/hWJ/Clmf7Vbositu71oQvB1bYz1BbcRyhYuTfXozOwsWRH8EvBf7PAFSXlij+nDIxp2B1
+ 0QuTrnE730ahNn8yd1pDfegk9mi4Da8slPborsoPSHP4IVtLI3JrA944y3W9GmSRjBsaea+tReZ
+ CHDJAvWD87rjaQ+fMuz93C43qPgkGjg2+GiH7iJ115onRHCGTD/l3fl4TWTPnht1amC+6C6u
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-04_02,2025-07-02_04,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 impostorscore=0 priorityscore=1501 mlxlogscore=697 adultscore=0
+ malwarescore=0 clxscore=1015 lowpriorityscore=0 mlxscore=0 phishscore=0
+ bulkscore=0 suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507040040
 
-Add call rproc_coredump_set_elf_info() to initialize the elf info for
-coredump, otherwise coredump will report error "ELF class is not set".
+Restore WoL (Wake-on-LAN) enablement via MMD3 register 0x8012 BIT5 for
+the QCA808X PHY. This change resolves the issue where WoL functionality
+was not working due to its unintended removal in a previous commit.
 
-Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+Refactor at8031_set_wol() into a shared library to enable reuse of the
+Wake-on-LAN (WoL) functionality by the AT8031, QCA807X and QCA808X PHY
+drivers.
+
+Additionally, enable the WoL function for the QCA807X PHY by utilizing
+the at8031_set_wol() function from the shared library.
+
+Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
 ---
- drivers/remoteproc/imx_dsp_rproc.c | 2 ++
- 1 file changed, 2 insertions(+)
+Luo Jie (3):
+      net: phy: qcom: move the WoL function to shared library
+      net: phy: qcom: qca808x: Fix WoL issue by utilizing at8031_set_wol()
+      net: phy: qcom: qca807x: Enable WoL support using shared library
 
-diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/imx_dsp_rproc.c
-index ba764fc55686..6e78a01755c7 100644
---- a/drivers/remoteproc/imx_dsp_rproc.c
-+++ b/drivers/remoteproc/imx_dsp_rproc.c
-@@ -1205,6 +1205,8 @@ static int imx_dsp_rproc_probe(struct platform_device *pdev)
- 		goto err_detach_domains;
- 	}
- 
-+	rproc_coredump_set_elf_info(rproc, ELFCLASS32, EM_XTENSA);
-+
- 	pm_runtime_enable(dev);
- 
- 	return 0;
+ drivers/net/phy/qcom/at803x.c       | 27 ---------------------------
+ drivers/net/phy/qcom/qca807x.c      |  4 ++++
+ drivers/net/phy/qcom/qca808x.c      |  2 +-
+ drivers/net/phy/qcom/qcom-phy-lib.c | 25 +++++++++++++++++++++++++
+ drivers/net/phy/qcom/qcom.h         |  5 +++++
+ 5 files changed, 35 insertions(+), 28 deletions(-)
+---
+base-commit: 223e2288f4b8c262a864e2c03964ffac91744cd5
+change-id: 20250704-qcom_phy_wol_support-e4f154cc2f2a
+
+Best regards,
 -- 
-2.34.1
+Luo Jie <quic_luoj@quicinc.com>
 
 
