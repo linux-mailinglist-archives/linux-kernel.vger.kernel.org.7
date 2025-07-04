@@ -1,147 +1,221 @@
-Return-Path: <linux-kernel+bounces-717390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-717393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D8B7AF93BA
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 15:10:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 40971AF93C4
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 15:11:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3045B543F30
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 13:09:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D26F3ABA21
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 13:11:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 114622F85F5;
-	Fri,  4 Jul 2025 13:09:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81B002F7D13;
+	Fri,  4 Jul 2025 13:11:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EZb9Hk+/"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="dIp/yeYB"
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2085.outbound.protection.outlook.com [40.107.96.85])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C25F92D9488;
-	Fri,  4 Jul 2025 13:09:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751634587; cv=none; b=oaHxnWQRywor5dnoshDr8viqnJjvQyaEkTNNT7zdQDmZliDtKwNh4uPq5U2T45P3CM2MwdcayIn/2h0Rp/4LdoHnOjuN7R2s/mCVirqovggc6pdtLznUPP2GsUs+Nlj8+AxTSyGvkffbCM/CoJYQ6kjohs6gXUuGqshWgvrV5Gc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751634587; c=relaxed/simple;
-	bh=KiuuQsGgXKamQlcfuLFslgTizWPYc0a+MtlO4Cjk/hM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Of4lAwwBLFGorcLmfHiBbZwe8qUusaKt0cfMhVOgTyJCLlTqZ5eZLAMs0N/9LCzY+q9Q/S2TqqMv/cWt/toHuxa+Pfj1JSl4MhnjGMy9lCNCmD8CJB4Kh6WPNDgoe7uRxQMmDkT2yY+wOunyZzXd7u6PcMNthO2cEYgQTJZ6GLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EZb9Hk+/; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-23636167b30so9641375ad.1;
-        Fri, 04 Jul 2025 06:09:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751634584; x=1752239384; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RvCIAO2HkPmsR+rjBTB8UTnehZixGY8goOegXYs0T+8=;
-        b=EZb9Hk+/9lKRm2kr5XE0LU4S8Z8fyLJZfQfqbIQ8n78vg7XgsWCxlTyDuytGOmTcBS
-         VA0GWH8tZtIkLCfBay8FQjLi6p7bqrmf3K9jVW09njHMZYf4n5MFDJnBF7gjoe4gyfBz
-         dZDq9aGNTbAVY1u+Q2b03gQsHz2uo1Ao6rEaZ+bMDO4stWsK4Jb4xlplHi1nLZ2gzNN2
-         kzdm1mdD8k/xR1DrUNXN0w6V4s+qG3/AwpfJPh28hXS9jduavgk5Xmzq6Aj+BZzu9Cqr
-         ql7cisQpTJgzaWklCKRrKTjTkzpIF/DJufDwjWWNCY6V0o3G241lcrca0iT/vRjgyZFO
-         Hj/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751634584; x=1752239384;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RvCIAO2HkPmsR+rjBTB8UTnehZixGY8goOegXYs0T+8=;
-        b=AxQt3cPzjihtY7PGGZ4cF1soySBYhfUwZ228E1WLRgdQ1/s+HIgMg8kaerlvPz9H8C
-         clC8+dEqRZm3TXtX8MYqsD7rcHYPBVU9mRtnv8Tz+o6qqVVR2+e3hSX65dLhy7FjplPC
-         CfqAsv23aZhYcGC2nytSnjGYcQ60OszLw9HjHEAyTWfBgl14VP7aXCNXVwQV/BCYwgUL
-         3MUSaG46x1smfAKOyHsoDjz5Twj/fbBvIYBB7F82LZzsGI48r+x/WdFu1qYZItlnWVBq
-         q8b2nVylRg5na78aTqX8LTVVzA3WhPDr1LBI9VwoAmWlIMFXv+usnwT7hRQuSM/nNhlY
-         R3xw==
-X-Forwarded-Encrypted: i=1; AJvYcCUUe/QY75v35TcSkwoiBr3+wVIRbHcS3DN8hX0wwcCPWCfeg1RhwpbVOlCF2+6qgxEHzMu+8peRQaLwnvI=@vger.kernel.org, AJvYcCWKWIjzpfJSBdjuywEhYmKSeqxL++aLYhhzFEqXQVypYYk7AG6i3pZJPzTqNRz0eu6F8LirYi+bDx3V9IN1PvA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx93ify5OCRHZ0G8Nu4b+PI1DCgSoM0M27vSV/TincH29L45qe+
-	t+HHg3nnjEzeQYq6btjQJtOZcohkctUhsEQnRsOAdrYg2TgdtF3p4YvNsf+82Q==
-X-Gm-Gg: ASbGnctQ0Ea+zSyt37zO1H2zt7lzmctxnITw8Nuuv2sVeiquo2EM86PHNO/9ijpdiWS
-	CourdLqiaF8NZNruW9pO9XBCL4aoW9236kUt4Nyw1QvQ4D25P3dN8Y1jqGQmtvFmXs1OSOqmu3X
-	hJaOjr6Gwz1Mm1hmLqYdzJAW+gTdrNLU4jpnO4a+c8ZmtfMfxjNugwhDKDYYP/sT4JRwI50Z9Re
-	7GLpG3vhymWExgTcMDIq0WpQAebvliMNWMRA5hx7bzNHojjkivt7dwvgGf0V24sy7IShlmg6Abp
-	dHa88FLEB56WXDW9wYVKa7fI/mZz6VI9dMsnoHWLLTHoztkXzT8JmMfB5Lmqi2Qahg55FsEYlPI
-	=
-X-Google-Smtp-Source: AGHT+IERAETKwDh0tgWJI7w22h3ozsp99e+iUWJZC/yIN7BLousuH0j+z3XeSZZYdoEoNo4B6Nt5RQ==
-X-Received: by 2002:a17:902:f682:b0:234:9670:cc73 with SMTP id d9443c01a7336-23c85d8f503mr42105205ad.5.1751634583902;
-        Fri, 04 Jul 2025 06:09:43 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23c8455b904sm19800305ad.111.2025.07.04.06.09.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Jul 2025 06:09:43 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Fri, 4 Jul 2025 06:09:42 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Ziyan Fu <13281011316@163.com>
-Cc: wim@linux-watchdog.org, linux-watchdog@vger.kernel.org,
-	linux-kernel@vger.kernel.org, fuzy5@lenovo.com
-Subject: Re: [PATCH] watchdog: iTCO_wdt: Report error if timeout
- configuration fails
-Message-ID: <2066161e-95e6-4316-b08a-0a0f0dcc9150@roeck-us.net>
-References: <20250704073518.7838-1-13281011316@163.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 379D32D63E8;
+	Fri,  4 Jul 2025 13:11:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.85
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751634691; cv=fail; b=mwgJRIg3kA9BsrXULhr2QhkgPfvdsD5gbwPSj6fgQg7hUfmsKfirTeOwo0guSX2xq0mrr7402qplSI/mbUDim63g6p6E4tOGd2n8l+dg6xUJ0Y0uSX85U8m+7aiFfuL7aOD0uJG9US6XNTpirZ9Sm0MeeCaRmLtnTht2Z96KY8k=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751634691; c=relaxed/simple;
+	bh=TdVpw5t+sLPDuDK+dLsZXiheTHBR1y5Xv3ORcv4v1B0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=QFETkmeX5jgn4uSy2+Seqj4TdBSvUsU63Cvz2NIaMyDFXgn/gF2dXj4pJ1dbWoWtOUdYm3LvCEASb7Y7X8ivT/ia7CPkM1Z7IAafgZtjGSXMbOR/RvDUfc6E4+M1NzwRjUs9JUE9bUHVoY9V4wkMcvxfnciWt8IwKmwd8qAagkE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=dIp/yeYB; arc=fail smtp.client-ip=40.107.96.85
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=vFWJyF1o8EdJ8uIWUmb8Aa0vPAK46zYa5Os/sBxFxxpJjIqlZHUJqTnTQMpsg09OoeNtRMe6e6jTtcBj81mktwDEcZHim3muWvBNEgTIVs4rN5b95IqRSlk3zODBKSIAiA7DvlNg+nBiNkvXem9GWx050Nbc4Zggff34R0tghmeNQrqK5+d/5+m/UHottQMw/cCaHofMiF7TpNp45RdG4v9m9GF9uXoQNnmZmDfNQbQH9u4l0pdkgI6wujb0NsoKq3cnsaSenoasjvmkpVe0I/Fb0V0x0ZepQLNonoxLXUeDQCy8uhHKRDgFR3Zj9sJvYwUj+H9Xab+mF6sO04yUTg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Vi8vjZBv6sSVhMg1N+OmnvXfR+6UjPms9QMI7EZOApQ=;
+ b=o/0RiKFK0xpRx9LTFvYCrgww6oo8dAUlAqAq+L+BuJhKHui2lLFgfsHsOIgj74Awj3+wpImnecLpC/pr/UfVXrQYlvJl8jmBu4+RjBcGHv8JCAySsqOk6j0IJOul53Yb8I/pmh/8sbWC0ivQB5TuJ2V5MyTB45VhvJOEKuzaKuw3f0myfa4Y4D76SCS9YW7+TCKhUd21d5DFuOUpqndEOHSVefom87lOorrPXTjmUM14Omqdyf7O6uLFCU90iNqZmRQhs3kRcv4EPDVLjH7rXZao/FRpyvMI7ixRmmNXtLLr+zTi99TEzOHqaqr5Rk+6mpx3gHLHkLPczxXF0TLvwg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Vi8vjZBv6sSVhMg1N+OmnvXfR+6UjPms9QMI7EZOApQ=;
+ b=dIp/yeYBoveB4Kv7HrNg5XcjX7LUbd5l+KIFzTpCCUbVX55RkH5mW9dOMIZJk9zqndhMT4dOalhNFUPDMzOKEvo4/zL/3jgEqjGWoHtgSUvgeVVdUAOLgODt40Oc5f2VjQ/iELDqdS28wLa+Tx2ZeEpfjytbKqHp3Te2i7QLUzsWziADU9k2py+xYY4dMYFUJql1heeLnxzLHvEuspsejVqrjcS2rckFLLfIDJBa+CDg1EqcX8ExJIHiWrtkk2cGqdEr3dgpI16TVoGC5n4w+U7aICGCSzMHD7hLuUr37KyQq7BhOdqA/im3T/wMk6MEHaO40vjTbJlRzSjHAnor6A==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from IA1PR12MB9031.namprd12.prod.outlook.com (2603:10b6:208:3f9::19)
+ by SJ0PR12MB5676.namprd12.prod.outlook.com (2603:10b6:a03:42e::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.22; Fri, 4 Jul
+ 2025 13:11:24 +0000
+Received: from IA1PR12MB9031.namprd12.prod.outlook.com
+ ([fe80::1fb7:5076:77b5:559c]) by IA1PR12MB9031.namprd12.prod.outlook.com
+ ([fe80::1fb7:5076:77b5:559c%5]) with mapi id 15.20.8901.021; Fri, 4 Jul 2025
+ 13:11:24 +0000
+Date: Fri, 4 Jul 2025 13:11:01 +0000
+From: Dragos Tatulea <dtatulea@nvidia.com>
+To: Parav Pandit <parav@nvidia.com>, Jakub Kicinski <kuba@kernel.org>
+Cc: "almasrymina@google.com" <almasrymina@google.com>, 
+	"asml.silence@gmail.com" <asml.silence@gmail.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	Saeed Mahameed <saeedm@nvidia.com>, Tariq Toukan <tariqt@nvidia.com>, 
+	Cosmin Ratiu <cratiu@nvidia.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC net-next 1/4] net: Allow non parent devices to be used for
+ ZC DMA
+Message-ID: <22kf5wtxym5x3zllar7ek3onkav6nfzclf7w2lzifhebjme4jb@h4qycdqmwern>
+References: <20250702172433.1738947-1-dtatulea@nvidia.com>
+ <20250702172433.1738947-2-dtatulea@nvidia.com>
+ <20250702113208.5adafe79@kernel.org>
+ <c5pxc7ppuizhvgasy57llo2domksote5uvo54q65shch3sqmkm@bgcnojnxt4hh>
+ <20250702135329.76dbd878@kernel.org>
+ <CY8PR12MB7195361C14592016B8D2217DDC43A@CY8PR12MB7195.namprd12.prod.outlook.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CY8PR12MB7195361C14592016B8D2217DDC43A@CY8PR12MB7195.namprd12.prod.outlook.com>
+X-ClientProxiedBy: TLZP290CA0009.ISRP290.PROD.OUTLOOK.COM
+ (2603:1096:950:9::18) To IA1PR12MB9031.namprd12.prod.outlook.com
+ (2603:10b6:208:3f9::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250704073518.7838-1-13281011316@163.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: IA1PR12MB9031:EE_|SJ0PR12MB5676:EE_
+X-MS-Office365-Filtering-Correlation-Id: 839598ee-338f-4bd9-4594-08ddbafc472b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|376014|7416014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?dceMWbGzp6ILw5TA6nIkR/694g0A8RCaMWv8LtBHLIh/Gtw91QkOw5in/1qi?=
+ =?us-ascii?Q?zzyGRM6JDmI9visl1rAMJM/DjOTSaIliP4Wx+gJotshRMQMIkUIaDyowK1gG?=
+ =?us-ascii?Q?nt+JPB9Z62EsRWUTp+nBnxJj9WWLL2vo9uRJEaLLuW0jbhr3DANNLF3CBV6a?=
+ =?us-ascii?Q?WU2xYOzYWTudqjq4rXdVI6cJx8viRp5JgWIcAnulKk1oA0uYjYoKEjBiKAVE?=
+ =?us-ascii?Q?lmStlqLkWl6+InQ1Bko5WG1EtkHJxnpKc/znxqt6EUiY/We/F10X0T521XQW?=
+ =?us-ascii?Q?K7TLQfj4ALy5BEGn6Zifgp93d4ZHTYUgksyDpxwGofICuCnfeutyQ+3ThBew?=
+ =?us-ascii?Q?A9V2QLpYeMbCdILI8uuwQksrrY5/U0id7wenwE+vydMIW+r0TsPtonf+ORa9?=
+ =?us-ascii?Q?ZTHobhP76hG5ZLU9knAx9AjBQREbpphRAPjwtpZ4g76N4rtSaBcnSOKf8RBr?=
+ =?us-ascii?Q?Fw0N9vv79zzGn38xE936IrctVRna1LWsA2Cw3B2VsOMFy+IIZJiDrwJdSFHH?=
+ =?us-ascii?Q?AKtExjWGq/wRsor2qeQRt+HyCZ41hYifKyIznHbbZ7yuTowltoKgBDt2nSPO?=
+ =?us-ascii?Q?BjEWBotfYSKRUqSwpYt78GTShtLFa7hI13VZhv+FZ9EO6vwq9ubepynlMjt7?=
+ =?us-ascii?Q?pzEE/Yp40wMy+9G48O5tC5IBMcrAwY0+RD6NCPJD8nYnwXsyubz5tSOdKhxL?=
+ =?us-ascii?Q?dAsnhLq6kf42Xc8S9/ISAcoNZF2JmJF46dJ5bI3XLBhgd9f6O7qiOBBx3jVN?=
+ =?us-ascii?Q?ceAKtVzV29Y3yyBFukCnRHjtdRTk0kIRIyEk2ot2MZ36DaTyffi5FJPmhbyb?=
+ =?us-ascii?Q?og+aSiRXmCu4BpaZQaHbEsD5XmYQtGkbjsR/DbQtye/HnkYRGi6U4VC18fxR?=
+ =?us-ascii?Q?Sh+47l7mrNCBWCtaBe9Cr43KCgFxpI/EhBqQ+hj63G913cYfQ21mk8h7KlPT?=
+ =?us-ascii?Q?1JL/RMFpI3pS/wsLcwJxHcJlSZKWH+r4d1cLcpN1iQsxyvQiL+LzzmUqyeU9?=
+ =?us-ascii?Q?xlbaDA4/MWqD38CRkxJxBC6EOMCXOVk+GbDWLdYSbRVeF/X9DTMZkFhRy3oM?=
+ =?us-ascii?Q?3NIeEuMFauZ4nyn6/jE6+g5ycXR4zAbv2MfYVfkwRv0Un+BdtBP7z1dYFo66?=
+ =?us-ascii?Q?p4rluOMSnvbiCoukRwfHKf1KDXgsvDQ6lBF7hU0Hw0Flv3jiAMqIiwbrkEeT?=
+ =?us-ascii?Q?i4idK5F52vH7ynOfOxoQ/1bqQKRVyktSf64W/Stt0Pwuqaorm3AnuQ99/Ixl?=
+ =?us-ascii?Q?/td3TQTw3rvSF/U0RD9b3+6epIvKqxjjIRDKXpv0vPPd3htA7jlTs4YISFVj?=
+ =?us-ascii?Q?o5+gYIuDfR3f/T2/mycp4MNjPthwjMMVnI6aVjsjFCTZgFXywnUt3wI+tpdk?=
+ =?us-ascii?Q?AL/jTgRCAy71oaKLuYliIQ/6YQ4eMzHW1A8qspW5XC4nr6ivOzK2t0QNIngx?=
+ =?us-ascii?Q?16uNJq8iYQ0=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA1PR12MB9031.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?ynBiZzSrTuNbF3qFmXQiIrk2CJshipYedA6gJrqYLBNajOFmJ/nRL98CL4pT?=
+ =?us-ascii?Q?GXtqaqJaGWjJosv/K8NOADgKPQt4t/nWsBmFFIQXbdR2QP9MHOVcrAqLIj09?=
+ =?us-ascii?Q?yjGpd72f5CjeIwDJVmwdIGJhAcryvd9dQzLaHE/ljmMsR4A3uh0l8pSoh5WG?=
+ =?us-ascii?Q?6eBhVRgQK1DktB4kl4J/PVmlwLkhrbL2lhhEyU3QyPqdGOxwS1QRLKU+eYZR?=
+ =?us-ascii?Q?M+JLMwQVT0t8nYsypAYtKJUAo+dLcWH56d/QMxr/MEU3enc8Od1JeX8hLMU4?=
+ =?us-ascii?Q?VRC+3n8brJ+lxT7vQ44VYY/inyYeE1qyRmHF/hD5tAQXpGptO0w42Eq2vv6C?=
+ =?us-ascii?Q?UL5TFYsi8HMYgkzLzDjUHrpIp3QwLKxmf9d3ovXPsNsHMf9E5m/wbmUe7TI9?=
+ =?us-ascii?Q?fqpAKnCWtYaYSz2bCr0PZ7NjKdMm3wlK1U00ZJGIBQgKvibo972H1SfPllQa?=
+ =?us-ascii?Q?3aVUfrPIxIgQBYH2zDuvXaEerJkvMsRLWdjTRYH2QkD+IumD3xozJbwVjxJA?=
+ =?us-ascii?Q?EmlqtnUwxucCaV4F19iZoHyvh09T3wVMHEYFd3NjGWZ2jFL2ZJQDiOWJtY97?=
+ =?us-ascii?Q?NKHkWG2lnlGx7q0POEzzJi0FC32PF/qWcn7A+Y+DYd/AyJ2FQQ+FdDQOE6wY?=
+ =?us-ascii?Q?vlQOBtf3ZkZ/nuCiUjFZ/ocfP0Nh8tQu92M5tYlXNIarXy5apa6LMSfogw7y?=
+ =?us-ascii?Q?wQgH0vHXMd+9nM+rg2q05yFC7mxs9H3fLGbYDJaQgCpI5tV/WZteM+s3yZjR?=
+ =?us-ascii?Q?6El6AM0uGRdIjRZadDL0R1pk2OdtqUXPjxWL7hU/7sWivZtf3Y23DW5dw6Pw?=
+ =?us-ascii?Q?40XwWL23Lz6cffpEqc2TogfICkfhLwx5uqLfS3+oPo4GY/eyXXig1RyBPiQ6?=
+ =?us-ascii?Q?McoO/8MdzKdB/J+WbYbaOYOt/IHIMN6z6dh1Uzx7xXUeyaBP8nOA5TA5Nplm?=
+ =?us-ascii?Q?pfeuMq1V6ydwOVkIAtFzBjmUc3ITydhgM7u+ZFuzwmgE1KUHWzLZ81qKnF/N?=
+ =?us-ascii?Q?ZgOjRo44mIcRAn8MhF7LNwVjHrlFcRHQpi08zbFncCi3DjGCCKSbAsA7xauo?=
+ =?us-ascii?Q?VvoH8TjxKKpNXGkbHfPnVS8qkeBogqqksVCWEmGu826wAeauCeEiQe3Noqq6?=
+ =?us-ascii?Q?gUexYIkQhhUXXvqLgA37DX4CK3kuO8/g1LMPpw0ZWS/PSm67htZCUZPdPNOc?=
+ =?us-ascii?Q?Csql0jX6MesVc/NTN3LhHr8NnA2oqEKHOCFNPRWXh053fgozlY/+1WS3bI1Q?=
+ =?us-ascii?Q?uHk61tEfFmsIto570K/8/++Y6upE7HBhgAglKaGnrLSBF6xU44AfPIpGlFna?=
+ =?us-ascii?Q?w6zCpLIg76Um6SUJrxhk9DlGDoVBrvrLe0O2g3xsuzaSizUzgjbU7esAKPmW?=
+ =?us-ascii?Q?QgB9sG484V4lqMdk9o6Nj39Rn7mQWAGEIxw0keqTxZX+yfTTv6hgjr1qZ8cS?=
+ =?us-ascii?Q?zvAGNKb1+Wl3rJRZm2fJZN6S1vfUBQfIOZoQOg/ue7PQDyDpar7SSW8VtYQn?=
+ =?us-ascii?Q?71Lo8XO8lVGEvASlrBNp8evR1uqDD0c6L4I8AInNqUowWzVxUX95texPZKeT?=
+ =?us-ascii?Q?dOAYWKQGEpA8vlgMm0g4rQZUkr/S4rYRWESW/2Gu?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 839598ee-338f-4bd9-4594-08ddbafc472b
+X-MS-Exchange-CrossTenant-AuthSource: IA1PR12MB9031.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Jul 2025 13:11:24.6217
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: uQfs9AjvY1Y8qtqlpyeyMJdvv7vnj9deioBwt0tlGS9wOxb3mDEuEzCCTDS+kasRkQlmn5/IIBz8DhmZgxb4zA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB5676
 
-On Fri, Jul 04, 2025 at 03:35:18PM +0800, Ziyan Fu wrote:
-> From: Ziyan Fu <fuzy5@lenovo.com>
+On Thu, Jul 03, 2025 at 01:58:50PM +0200, Parav Pandit wrote:
 > 
-> The driver probes with the invalid timeout value when
-> 'iTCO_wdt_set_timeout()' fails, as its return value is not checked. In
-> this case, when executing "wdctl", we may get:
+> > From: Jakub Kicinski <kuba@kernel.org>
+> > Sent: 03 July 2025 02:23 AM
+> > 
+[...]
+> > Maybe someone with closer understanding can chime in. If the kind of
+> > subfunctions you describe are expected, and there's a generic way of
+> > recognizing them -- automatically going to parent of parent would indeed be
+> > cleaner and less error prone, as you suggest.
 > 
-> Device:        /dev/watchdog0
-> Timeout:       30 seconds
-> Timeleft:      613 seconds
+> I am not sure when the parent of parent assumption would fail, but can be
+> a good start.
 > 
-> The timeout value is the value of "heartbeat" or "WATCHDOG_TIMEOUT", and
-> the timeleft value is calculated from the register value we actually read
-> (0xffff) by masking with 0x3ff and converting ticks to seconds (* 6 / 10).
+> If netdev 8 bytes extension to store dma_dev is concern,
+> probably a netdev IFF_DMA_DEV_PARENT can be elegant to refer parent->parent?
+> So that there is no guess work in devmem layer.
 > 
-> Add error handling to return the failure code if 'iTCO_wdt_set_timeout()'
-> fails, ensuring the driver probe fails and prevents invalid operation.
+> That said, my understanding of devmem is limited, so I could be mistaken here.
 > 
-> Signed-off-by: Ziyan Fu <fuzy5@lenovo.com>
+> In the long term, the devmem infrastructure likely needs to be
+> modernized to support queue-level DMA mapping.
+> This is useful because drivers like mlx5 already support
+> socket-direct netdev that span across two PCI devices.
+> 
+> Currently, devmem is limited to a single PCI device per netdev.
+> While the buffer pool could be per device, the actual DMA
+> mapping might need to be deferred until buffer posting
+> time to support such multi-device scenarios.
+> 
+> In an offline discussion, Dragos mentioned that io_uring already
+> operates at the queue level, may be some ideas can be picked up
+> from io_uring?
+The problem for devmem is that the device based API is already set in
+stone so not sure how we can change this. Maybe Mina can chime in.
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+To sum the conversation up, there are 2 imperfect and overlapping
+solutions:
 
-You might want to figure out why this fails in the first place, and address
-the root cause in addition to its consequences. A timeout of 30 seconds
-should never be invalid.
+1) For the common case of having a single PCI device per netdev, going one
+   parent up if the parent device is not DMA capable would be a good
+   starting point.
 
-Guenter
+2) For multi-PF netdev [0], a per-queue get_dma_dev() op would be ideal
+   as it provides the right PF device for the given queue. io_uring
+   could use this but devmem can't. Devmem could use 1. but the
+   driver has to detect and block the multi PF case.
 
-> ---
->  drivers/watchdog/iTCO_wdt.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/watchdog/iTCO_wdt.c b/drivers/watchdog/iTCO_wdt.c
-> index 9ab769aa0244..4ab3405ef8e6 100644
-> --- a/drivers/watchdog/iTCO_wdt.c
-> +++ b/drivers/watchdog/iTCO_wdt.c
-> @@ -577,7 +577,11 @@ static int iTCO_wdt_probe(struct platform_device *pdev)
->  	/* Check that the heartbeat value is within it's range;
->  	   if not reset to the default */
->  	if (iTCO_wdt_set_timeout(&p->wddev, heartbeat)) {
-> -		iTCO_wdt_set_timeout(&p->wddev, WATCHDOG_TIMEOUT);
-> +		ret = iTCO_wdt_set_timeout(&p->wddev, WATCHDOG_TIMEOUT);
-> +		if (ret != 0) {
-> +			dev_err(dev, "Failed to set watchdog timeout (%d)\n", WATCHDOG_TIMEOUT);
-> +			return ret;
-> +		}
->  		dev_info(dev, "timeout value out of range, using %d\n",
->  			WATCHDOG_TIMEOUT);
->  		heartbeat = WATCHDOG_TIMEOUT;
-> -- 
-> 2.27.0
-> 
+I think we need both. Either that or a netdev op with an optional queue
+parameter. Any thoughts?
+
+[0] https://docs.kernel.org/networking/multi-pf-netdev.html
+
+Thanks,
+Dragos
 
