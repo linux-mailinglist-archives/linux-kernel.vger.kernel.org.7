@@ -1,144 +1,167 @@
-Return-Path: <linux-kernel+bounces-717095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-717097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B950AF8F1B
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 11:51:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BF33AF8F2F
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 11:53:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F05E1C4210A
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 09:51:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 126AC1CA579C
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 09:53:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F74A2ECD0C;
-	Fri,  4 Jul 2025 09:50:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1A832ECD27;
+	Fri,  4 Jul 2025 09:52:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="MAvWNssD"
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="enSYY8Pi"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7C76267B01;
-	Fri,  4 Jul 2025 09:50:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F7502D541F;
+	Fri,  4 Jul 2025 09:52:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751622656; cv=none; b=dfAg0W+61ygEvUcWj6WcYcpukyFTaW2ED/GsxLc+Ki+MecRydLeFQBZCUYKGm33Xc3zF9srzVmVIU5n/HkpUBTbAsNj7XZOrQ9iFvay09P2JXzfeKnVfRn61nbllpTxWKhbFVCUENTEpcZHt7DqsYf//xWYxqyA51cSpE8B+8s4=
+	t=1751622768; cv=none; b=d5nMnUXmN+wOeDOGepSuXeg8m2+gmGKQetxeWG17/Q6HUSytWQVhS0V0+VrX2B2sknvOxykb9P199r5q5ykW9qxv1gYO8nj3lgmUdoWdnF3w8BZOsoVAf9nG5UJNH0X8F37izB3LMOJ5at+W9QbLjKWCd/W4phuNDeUga79CHaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751622656; c=relaxed/simple;
-	bh=+R7T4cgd5ESZu7NKPcsY3aOZwYC1VTcKIPPnSChpUFI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qlQAU0CM15/YdqwaH9iKjOHTnnMWxysIMEnNGj56cVsetEmf9tOY3ECqqledIocEbfCIYXfn6l6iV2EyamBlW2GPhQs4BUGQ807T8bt5InoBDs7QkZ1t7uDuiBoxtE/EkrWF/A0ZP4jIdw/VF/vHKoYAnZcw9NVIWZG+YJRgwSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=MAvWNssD; arc=none smtp.client-ip=80.241.56.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4bYTQs1r9kz9sv3;
-	Fri,  4 Jul 2025 11:50:45 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1751622645;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=PxPJXmh6qUL371s8DUk4uxbv4gGBXgx13cBP4VPLwWY=;
-	b=MAvWNssDHsI7RGGmLiHdwp7Ib3oeefB7b7dgxWE9XMC/Ut1lKY2CVOY026d6OSR0x49Qio
-	Xr7RnCG9cesPYXJ2Of5Ijsvr1jYGSSN+zjc/KJNItkDs4F/Lu7EGIWYOE27Ax5Er1wvvyl
-	KmpEGvSxQdMtWfraTifhdgN6S5kX6gUDt8Si+rW0sw77z79wZzoE5GCCd5JYHyzA0cUSbC
-	GDhU3taM2Z2Vi1NggbY2Yhc9gjbEmXKsMBoTGY7PtH3LaTpHGAK2Y5WpD78RN0xhJG8MKx
-	T8ajv2ZfDs4p8cVTV/hBHCeXo/4Z0hzTetYd1NEPwK+73+ybIJadtE4bkVnw+w==
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: Matthew Wilcox <willy@infradead.org>,
-	Hannes Reinecke <hare@suse.de>,
-	mcgrof@kernel.org,
-	Jens Axboe <axboe@kernel.dk>
-Cc: linux-kernel@vger.kernel.org,
-	kernel@pankajraghav.com,
-	hch@lst.de,
-	linux-block@vger.kernel.org,
-	Christian Brauner <brauner@kernel.org>,
-	gost.dev@samsung.com,
-	Pankaj Raghav <p.raghav@samsung.com>
-Subject: [PATCH v2] block: reject bs > ps block devices when THP is disabled
-Date: Fri,  4 Jul 2025 11:50:36 +0200
-Message-ID: <20250704095036.293568-1-kernel@pankajraghav.com>
+	s=arc-20240116; t=1751622768; c=relaxed/simple;
+	bh=fJk3jJe2GsDsuplJHVKGRlGVC8VaPj6RPnuA5RW6v/s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tjBpYQ568gp/QwWY2g1HS19eOeTZAvhcRjgFiYLeVJ8Yr8Cwynaqnffiivtu+kgzSEOo/pzzUDIyBKWegVz3T+dE8QTxMzfWgVd7GUxYcXbs+kBpgDdGmwv2hO4K3+5plgFvLz9UILzcsqzXH1551FCBv9rW1na5o8k4IR1VRM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=enSYY8Pi; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-32b7113ed6bso7534971fa.1;
+        Fri, 04 Jul 2025 02:52:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751622765; x=1752227565; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rtcggWI0EUkrnHdnx97WWYML+IOpgM/8IBDpI/ZQAlw=;
+        b=enSYY8PiBdteHONmNOzKrDVootZGHsDdy7B7r7YANXvnILTxvpeZ7wPPrvkiWwJLEO
+         eIeIKxFvI5NBwP9GYmFud8EbfSR28eCiT0s0+UegpiqWf8GArezX0SYDQfcDCiBLlxcu
+         7fNY0T9z0+rZk9xsHO9vicc6bonRNwFB7CWywfAOTc6S8raFMacTN8hr5l6kAfmwhukY
+         2Bw5fiCAi+XSZOv1vOvNySAsnAlnzbM28ZJvTx6zIdZUA0lpev74dzFWj20MxqdRBnRh
+         1f7Qfa69YFpdV7j+iRcSWAttsEd69rvhb3gWeR17sslgMtuXz4p7hE1F/dJh4IeWaMAc
+         ZnBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751622765; x=1752227565;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rtcggWI0EUkrnHdnx97WWYML+IOpgM/8IBDpI/ZQAlw=;
+        b=AfiT6i5rT+NDjpAqp7Vv5VzdkkeipnNeoHTVz6lnqlNmG400sy99DfMY+szPwUY4zC
+         gWLY80YmGSvWvO3CsA7bjzh5uKStEmVTxjx0BuLGkU9UFbzf+rIMXRYLlwDxbGkvQaq9
+         zaWEwvS21XpGSiCoVKXv4mhp8y6wvltOhIMuMTSOSqscc3bQJewSpl15xIv9iUrDGdjA
+         iIb6QTXCbjKso3knWFnKxLxbdbvk5NdXFjE+CkXiQsH7oMjesaIwBLympkQAve5xTE80
+         s5bbdzFU5SGQawv5HtbIwsNv+R++8/1MmePG2EXCPErRJeY9aqMgbgXT7JWooPUGM3sV
+         nzuA==
+X-Forwarded-Encrypted: i=1; AJvYcCXnidhtBrQK5SOzJHgTpgEj+xVjVPo7DGLyGn0m86TFW8BgZa0bQQY8UmyYn5sg7yoxkIYG9u937ET1N6k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzzJki07fowubO6E5tYjR16Lqk/3KeWxEQCqCSA9z8ubDio1mUG
+	fp6po/gJ/Fipyv2pMu9yVU8hD8NhwmrsN5nTZSGCDkYEzIiPyR44cwYgLpjfLUvAIRvW1N26Sr7
+	Ondh9XNAm4SF60PCe4CP2FdGWZtQ0d6rOHjqkwzsdBA==
+X-Gm-Gg: ASbGncsbnxB2QaPC6UAqkX+VCnxK9vNqHM3KPd95v01s8zHvfYznFHAc71pwpyfNH6/
+	V0/BlTrQgcYMHb4/cJ0v45X3aaMdgM1WkuzxdlXIIvu5z7uf9Ojnmlou3FsPYhYoggY8x/hAKdk
+	98Y8WPpS23LD6lodpQlrcPUQOwZOIKDnScNPsGLzjrVxFyFimCqzHUIevdpdXIUT72Grga+Rs6F
+	lAN
+X-Google-Smtp-Source: AGHT+IEQJtvURip5Eo1r+T3XuSDUEc12iPmo7gyNNW171IOi7PFDjp+RgiXo0ZnKbXQHoCybXScYJr7aE+3jHaGkQBc=
+X-Received: by 2002:a05:651c:2220:b0:32a:7332:bf7a with SMTP id
+ 38308e7fff4ca-32f00c93008mr4007081fa.13.1751622764562; Fri, 04 Jul 2025
+ 02:52:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <nrq9MPwFBIHZRQzC6iAdiUz7uvBdbqKNxdfM8Jus8lTDZCwtPkFMjtJ1V5mkcpX0YX34TYNOddSEOgsXngLtHQ==@protonmail.internalid>
+ <20250704072604.13605-1-pranav.tyagi03@gmail.com> <y5d46toqsrrbqfxfioo5yqo532tzqh3f2arsidbe4gq4w3jdqp@rktbxszwtsbh>
+In-Reply-To: <y5d46toqsrrbqfxfioo5yqo532tzqh3f2arsidbe4gq4w3jdqp@rktbxszwtsbh>
+From: Pranav Tyagi <pranav.tyagi03@gmail.com>
+Date: Fri, 4 Jul 2025 15:22:33 +0530
+X-Gm-Features: Ac12FXyB3Xh9rJNctZ8qbUMoAf9rw6VaTvRVqfUEGOT7ePXJYmEJ14PIuqSHVSM
+Message-ID: <CAH4c4j+Hz8HNzxZhe0DzDAN8vUS3vGN+SL1iMJuXL29AnmQ0cg@mail.gmail.com>
+Subject: Re: [PATCH] fs/xfs: replace strncpy with memtostr_pad()
+To: Carlos Maiolino <cem@kernel.org>
+Cc: linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org, djwong@kernel.org, 
+	skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev, 
+	kernel test robot <oliver.sang@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Pankaj Raghav <p.raghav@samsung.com>
+On Fri, Jul 4, 2025 at 2:22=E2=80=AFPM Carlos Maiolino <cem@kernel.org> wro=
+te:
+>
+> On Fri, Jul 04, 2025 at 12:56:04PM +0530, Pranav Tyagi wrote:
+> > Replace the deprecated strncpy() with memtostr_pad(). This also avoids
+> > the need for separate zeroing using memset(). Mark sb_fname buffer with
+> > __nonstring as its size is XFSLABEL_MAX and so no terminating NULL for
+> > sb_fname.
+> >
+> > Signed-off-by: Pranav Tyagi <pranav.tyagi03@gmail.com>
+> > Reported-by: kernel test robot <oliver.sang@intel.com>
+> > Closes: https://lore.kernel.org/oe-lkp/202506300953.8b18c4e0-lkp@intel.=
+com
+>
+> Hi Pranav.
+>
+> Please Read the kernel-test-robot email:
+>
+> "
+> If you fix the issue in a separate patch/commit (i.e. not just a new
+> version of the same patch/commit), kindly add following tags...
+> "
+>
+> Those tags shouldn't be added here as you are not fixing anything, your
+> previous patch have not been committed.
+>
+> Cheers,
+> Carlos
+>
+Hi Carlos,
 
-If THP is disabled and when a block device with logical block size >
-page size is present, the following null ptr deref panic happens during
-boot:
+Thanks for the clarification. I was confused and thought that "separate
+patch" referred to correcting the original one and resending it separately.
+I=E2=80=99ll remove the tags and send a v2 shortly.
 
-[   [13.2 mK  AOSAN: null-ptr-deref in range [0x0000000000000000-0x0000000000K0 0 0[07]
-[   13.017749] RIP: 0010:create_empty_buffers+0x3b/0x380
-<snip>
-[   13.025448] Call Trace:
-[   13.025692]  <TASK>
-[   13.025895]  block_read_full_folio+0x610/0x780
-[   13.026379]  ? __pfx_blkdev_get_block+0x10/0x10
-[   13.027008]  ? __folio_batch_add_and_move+0x1fa/0x2b0
-[   13.027548]  ? __pfx_blkdev_read_folio+0x10/0x10
-[   13.028080]  filemap_read_folio+0x9b/0x200
-[   13.028526]  ? __pfx_filemap_read_folio+0x10/0x10
-[   13.029030]  ? __filemap_get_folio+0x43/0x620
-[   13.029497]  do_read_cache_folio+0x155/0x3b0
-[   13.029962]  ? __pfx_blkdev_read_folio+0x10/0x10
-[   13.030381]  read_part_sector+0xb7/0x2a0
-[   13.030805]  read_lba+0x174/0x2c0
-<snip>
-[   13.045348]  nvme_scan_ns+0x684/0x850 [nvme_core]
-[   13.045858]  ? __pfx_nvme_scan_ns+0x10/0x10 [nvme_core]
-[   13.046414]  ? _raw_spin_unlock+0x15/0x40
-[   13.046843]  ? __switch_to+0x523/0x10a0
-[   13.047253]  ? kvm_clock_get_cycles+0x14/0x30
-[   13.047742]  ? __pfx_nvme_scan_ns_async+0x10/0x10 [nvme_core]
-[   13.048353]  async_run_entry_fn+0x96/0x4f0
-[   13.048787]  process_one_work+0x667/0x10a0
-[   13.049219]  worker_thread+0x63c/0xf60
+Regards
+Pranav Tyagi
 
-As large folio support depends on THP, only allow bs > ps block devices
-if THP is enabled.
-
-Fixes: 47dd67532303 ("block/bdev: lift block size restrictions to 64k")
-Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
----
-Changes since v1:
-- Use mapping_max_folio_size_supported() instead of doing a ifdef with
-  CONFIG_THP
-
- include/linux/blkdev.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index 82348fcc2455..0c22ad8120da 100644
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@ -26,6 +26,7 @@
- #include <linux/xarray.h>
- #include <linux/file.h>
- #include <linux/lockdep.h>
-+#include <linux/pagemap.h>
- 
- struct module;
- struct request_queue;
-@@ -274,7 +275,7 @@ static inline dev_t disk_devt(struct gendisk *disk)
-  * We should strive for 1 << (PAGE_SHIFT + MAX_PAGECACHE_ORDER)
-  * however we constrain this to what we can validate and test.
-  */
--#define BLK_MAX_BLOCK_SIZE      SZ_64K
-+#define BLK_MAX_BLOCK_SIZE (min(mapping_max_folio_size_supported(), SZ_64K))
- 
- /* blk_validate_limits() validates bsize, so drivers don't usually need to */
- static inline int blk_validate_block_size(unsigned long bsize)
-
-base-commit: 8d6c58332c7a8ba025fcfa76888b6c37dbce9633
--- 
-2.49.0
-
+> > ---
+> >  fs/xfs/libxfs/xfs_format.h | 2 +-
+> >  fs/xfs/xfs_ioctl.c         | 3 +--
+> >  2 files changed, 2 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/fs/xfs/libxfs/xfs_format.h b/fs/xfs/libxfs/xfs_format.h
+> > index 9566a7623365..779dac59b1f3 100644
+> > --- a/fs/xfs/libxfs/xfs_format.h
+> > +++ b/fs/xfs/libxfs/xfs_format.h
+> > @@ -112,7 +112,7 @@ typedef struct xfs_sb {
+> >       uint16_t        sb_sectsize;    /* volume sector size, bytes */
+> >       uint16_t        sb_inodesize;   /* inode size, bytes */
+> >       uint16_t        sb_inopblock;   /* inodes per block */
+> > -     char            sb_fname[XFSLABEL_MAX]; /* file system name */
+> > +     char            sb_fname[XFSLABEL_MAX] __nonstring; /* file syste=
+m name */
+> >       uint8_t         sb_blocklog;    /* log2 of sb_blocksize */
+> >       uint8_t         sb_sectlog;     /* log2 of sb_sectsize */
+> >       uint8_t         sb_inodelog;    /* log2 of sb_inodesize */
+> > diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
+> > index d250f7f74e3b..c3e8c5c1084f 100644
+> > --- a/fs/xfs/xfs_ioctl.c
+> > +++ b/fs/xfs/xfs_ioctl.c
+> > @@ -990,9 +990,8 @@ xfs_ioc_getlabel(
+> >       BUILD_BUG_ON(sizeof(sbp->sb_fname) > FSLABEL_MAX);
+> >
+> >       /* 1 larger than sb_fname, so this ensures a trailing NUL char */
+> > -     memset(label, 0, sizeof(label));
+> >       spin_lock(&mp->m_sb_lock);
+> > -     strncpy(label, sbp->sb_fname, XFSLABEL_MAX);
+> > +     memtostr_pad(label, sbp->sb_fname);
+> >       spin_unlock(&mp->m_sb_lock);
+> >
+> >       if (copy_to_user(user_label, label, sizeof(label)))
+> > --
+> > 2.49.0
+> >
 
