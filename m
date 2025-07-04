@@ -1,126 +1,159 @@
-Return-Path: <linux-kernel+bounces-717063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-717065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B53B3AF8E90
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 11:28:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 442DFAF8EAD
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 11:32:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C6DD1C832A5
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 09:28:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48B853B06CC
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 09:31:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A12242BEFE1;
-	Fri,  4 Jul 2025 09:28:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99A8E2DA77B;
+	Fri,  4 Jul 2025 09:31:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="oF7O1PlM"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="gWUdzPm1"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAA08289826;
-	Fri,  4 Jul 2025 09:28:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A153328AE4;
+	Fri,  4 Jul 2025 09:31:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751621315; cv=none; b=G2WzpChEIHtlo51qovAjHduaNW0r+3/L6hTlDKmago3T0iWUPlwHRhHMNbPtnmAyIcJGj6pwOdG0F9d2Gn7bv/26PS2/QUZ4TC+0tlYzCUyraCy6qE8KQ0nT3elOPWO8Fjpm2Ml9wzaoYATarjTR32zn0y7aur+QKLEOSZvm7R8=
+	t=1751621499; cv=none; b=HzRGgFMlslCsxAUXKHDz9MoWfvHftG4Cf2Q1RKjbHI2Aunlmyr/9RTEHfWy4u+TqGJeYPzck0v70jElDOtNujxyP7Uz2uY5rOUjjGnXMd9HnzhWa9I7NXyoLYDPATUyD1gZ6Yxw/z+3CpVELNtrH9Nf46z7AnGTv3+lz/5Ku3lk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751621315; c=relaxed/simple;
-	bh=AAEwlVRpG55UkIPZdG8kFZgt/NwdaZPjlhlHpqhnu2Y=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=cShk+X8YhlmrAb8JLcNnjYBEnGfOpGStDzJtg9xJUqqJz00Jn4FWfC4uNPWG/dMnODnYgPRD819fyKfpt4b+eAtirzpVbTgPgSWBySntiuzycjQyYA0fNvAvTV8tNhHi1fxKbVOMaZiR30cPIisTCsbqRYQCTfRP0djdzxY4XeU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=oF7O1PlM; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1751621305;
-	bh=AAEwlVRpG55UkIPZdG8kFZgt/NwdaZPjlhlHpqhnu2Y=;
-	h=From:Date:Subject:To:Cc:From;
-	b=oF7O1PlMiM+ZoGkG+os205LerUhn7NCE21+gJdQRCF+ipw2hgs/wAKkbkxgA6dP9D
-	 vGH70rfCDHUakW217J9z4IfQTQbLYqk6rk1rCd8evNJP9Noj4e0ERbcQUzRVRE9KI1
-	 MU3DHqb+RYYKqJ/PDEDk7qDugtotNTv3uj2uKt7/SFf9G9i1s9VlHvbJ/nplSy4fsH
-	 5jymeFeLWCtDS2PitVknyVbJG9ShBRAw2KXOGRA+TszmfVyvTCn5Rid+60L0Thkumx
-	 0GYcXdnT8WGIXsQzPIX9vdcecmnsK4rXoRZAlgfKAXPePujoqAGJwery3h14/AAFwJ
-	 3fsZFc85dJ6xw==
-Received: from 2a01cb0892f2d600c8f85cf092d4af51.ipv6.abo.wanadoo.fr (2a01cb0892f2D600C8F85cf092d4af51.ipv6.abo.wanadoo.fr [IPv6:2a01:cb08:92f2:d600:c8f8:5cf0:92d4:af51])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: jmassot)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id E4FC517E07C9;
-	Fri,  4 Jul 2025 11:28:24 +0200 (CEST)
-From: Julien Massot <julien.massot@collabora.com>
-Date: Fri, 04 Jul 2025 11:28:24 +0200
-Subject: [PATCH] media: i2c: vgxy61: Report stream using frame descriptors
+	s=arc-20240116; t=1751621499; c=relaxed/simple;
+	bh=5juURlGCTioQfBlxBx8nAvDevdh0WwbUqDVMTwh8WG8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ktqSrGEwKZP+aXQIxOI6OfEDU/VrUmjTvvs5KsmFaMZcF4ZChZrvjuRvp+do7E3eOO89eKSHp6rlvRAu6X5OGqEjXIdZDMxUDKAeJ1XwJAthG7/fHsdU05kv1q4peneb4f1V1aTzDztVIbi7l+QAC6ZG5feaIjRBvlJLvmaHjyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=gWUdzPm1; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5647Zun2015076;
+	Fri, 4 Jul 2025 11:31:05 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	M9BwNdO0n+eHL0EUvWD6TuFBUIy3YHt8PoUYOzrUspw=; b=gWUdzPm1DMpm70oQ
+	fRrkubsgs3v5Gb9JpVToX2KBdsuIS/RenqmRaDuYoqMHFleZZVulGExY/A8H5Ide
+	PxUNFj5eIwlsNJmcwj94812gBYnsVL3IYkYRs3YGtMhbI75ipQApdhvimHpJsaik
+	6HxZAVTRLtZMdAjD3kJEuYwdYt+zJ/apxGTd4fgLzv+K9eH0TEBz2cyt0craIir2
+	OCTb2Tn1X+8Ip8SnHQshqTVevaC3on+povzaJ2GCIrOhxub1VKo69fykFy/OGe86
+	6VJrE0Y2h03C862lJ3t6agAHH7NlBiBQfwLDzjmV10plO9myKiPv4+TL+6/OSvi3
+	8UW/Tg==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 47j7r6m7fy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 04 Jul 2025 11:31:05 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 73C1A4004A;
+	Fri,  4 Jul 2025 11:29:52 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 2A28CAA07D2;
+	Fri,  4 Jul 2025 11:29:02 +0200 (CEST)
+Received: from [10.48.86.79] (10.48.86.79) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 4 Jul
+ 2025 11:29:01 +0200
+Message-ID: <dfbc604f-e43f-44a4-ac2c-d5fcdcbb1297@foss.st.com>
+Date: Fri, 4 Jul 2025 11:29:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250704-vgxy61-frame-desc-v1-1-0e62b9c4e260@collabora.com>
-X-B4-Tracking: v=1; b=H4sIALeeZ2gC/x3MTQqAIBBA4avErBswK4OuEi0mnWoW/aAgRnj3p
- OW3eO+FwF44wFi94DlKkOssaOoK7E7nxiiuGLTSvRpUh3FLj2lw9XQwOg4WNRnXWmNp6Voo3e1
- 5lfQ/pznnD7+bnFNjAAAA
-X-Change-ID: 20250704-vgxy61-frame-desc-2a6d3c6cab43
-To: kernel@collabora.com, Sakari Ailus <sakari.ailus@linux.intel.com>, 
- Benjamin Mugnier <benjamin.mugnier@foss.st.com>, 
- Sylvain Petinot <sylvain.petinot@foss.st.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Julien Massot <julien.massot@collabora.com>
-X-Mailer: b4 0.14.2
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/7] Introduce STM32MP157F-DK2 board
+To: Amelie Delaunay <amelie.delaunay@foss.st.com>,
+        Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Liam
+ Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
+CC: <devicetree@vger.kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Himanshu Bhavani <himanshu.bhavani@siliconsignals.io>,
+        Etienne Carriere
+	<etienne.carriere@foss.st.com>,
+        Pascal Paillet <p.paillet@foss.st.com>,
+        Conor
+ Dooley <conor.dooley@microchip.com>
+References: <20250603-stm32mp157f-dk2-v2-0-5be0854a9299@foss.st.com>
+Content-Language: en-US
+From: Alexandre TORGUE <alexandre.torgue@foss.st.com>
+In-Reply-To: <20250603-stm32mp157f-dk2-v2-0-5be0854a9299@foss.st.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-04_03,2025-07-02_04,2025-03-28_01
 
-Add support for .get_frame_desc() to report CSI-2 virtual channel
-and data type information. This allows CSI-2 receivers to properly
-interpret the stream without inferring the data type from the pixel
-format.
+Hi Amélie
 
-Signed-off-by: Julien Massot <julien.massot@collabora.com>
----
- drivers/media/i2c/vgxy61.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+On 6/3/25 11:02, Amelie Delaunay wrote:
+> The main hardware difference with STM32MP157C-DK2 board is the SoC: 'F'
+> variant embeds a STM32MP157F SoC, which has the same level of features
+> than a STM32MP157C SoC but A7 clock frequency can reach 800Mhz (instead
+> of fixed 650Mhz for 'C' variant).
+> stm32mp157f-dk2 device tree reuses the existing sketeton for STM32MP15
+> DKx boards, but it is SCMI-based with I2C4 & PMIC managed by OP-TEE,
+> like other STM32 MPU boards (STM32MP135F-DK, STM32MP257F-DK/EV1, ...).
+> Himanshu's bindings patch [1] has been rerolled to introduce
+> st,stm32mp157f-dk2 compatible.
+> 
+> Link: https://lore.kernel.org/linux-arm-kernel/20250524100319.22521-3-himanshu.bhavani@siliconsignals.io/ [1]
+> Signed-off-by: Amelie Delaunay <amelie.delaunay@foss.st.com>
+> Cc: Himanshu Bhavani <himanshu.bhavani@siliconsignals.io>
+> 
+> Changes in v2:
+> - Drop empty stm32mp15xa.dtsi and stm32mp15xd.dtsi files.
+> - Fulfill SCMI regulator defines and add Pascal's SoB
+> - Add patch [4/7] to use SCMI regulator defines
+> - Add patch [5/7] for OP-TEE async notif
+> - Link to v1: https://lore.kernel.org/r/20250527-stm32mp157f-dk2-v1-0-8aef885a4928@foss.st.com
+> 
+> ---
+> Alexandre Torgue (1):
+>        ARM: dts: stm32: fullfill diversity with OPP for STM32M15xF SOCs
+> 
+> Amelie Delaunay (3):
+>        ARM: dts: stm32: use 'typec' generic name for stusb1600 on stm32mp15xx-dkx
+>        ARM: dts: stm32: use internal regulators bindings for MP15 scmi variants
+>        ARM: dts: stm32: add stm32mp157f-dk2 board support
+> 
+> Etienne Carriere (2):
+>        dt-bindings: regulator: Add STM32MP15 SCMI regulator identifiers
+>        ARM: dts: stm32: optee async notif interrupt for MP15 scmi variants
+> 
+> Himanshu Bhavani (1):
+>        dt-bindings: arm: stm32: add STM32MP157F-DK2 board compatible
+> 
+>   .../devicetree/bindings/arm/stm32/stm32.yaml       |   1 +
+>   arch/arm/boot/dts/st/Makefile                      |   3 +-
+>   arch/arm/boot/dts/st/stm32mp15-scmi.dtsi           |  10 +-
+>   arch/arm/boot/dts/st/stm32mp157f-dk2-scmi.dtsi     | 196 +++++++++++++++++++++
+>   arch/arm/boot/dts/st/stm32mp157f-dk2.dts           | 179 +++++++++++++++++++
+>   arch/arm/boot/dts/st/stm32mp15xf.dtsi              |  17 ++
+>   arch/arm/boot/dts/st/stm32mp15xx-dkx.dtsi          |   2 +-
+>   .../dt-bindings/regulator/st,stm32mp15-regulator.h |  40 +++++
+>   8 files changed, 443 insertions(+), 5 deletions(-)
+> ---
+> base-commit: dc392342b7bb14b12f2de96201937cb02be7802f
+> change-id: 20250527-stm32mp157f-dk2-2a484a01973a
+> 
+> Best regards,
 
-diff --git a/drivers/media/i2c/vgxy61.c b/drivers/media/i2c/vgxy61.c
-index 5b0479f3a3c0592be430cefe5a1ab9a76812ba84..44d6c8d8fbf8d6182e42d44e129bc45945ee0da5 100644
---- a/drivers/media/i2c/vgxy61.c
-+++ b/drivers/media/i2c/vgxy61.c
-@@ -1181,6 +1181,21 @@ static int vgxy61_s_stream(struct v4l2_subdev *sd, int enable)
- 	return ret;
- }
- 
-+static int vgxy61_get_frame_desc(struct v4l2_subdev *sd, unsigned int pad,
-+				 struct v4l2_mbus_frame_desc *fd)
-+{
-+	struct vgxy61_dev *sensor = to_vgxy61_dev(sd);
-+
-+	fd->type = V4L2_MBUS_FRAME_DESC_TYPE_CSI2;
-+	fd->num_entries = 1;
-+	fd->entry[0].pixelcode = sensor->fmt.code;
-+	fd->entry[0].stream = 0;
-+	fd->entry[0].bus.csi2.vc = 0;
-+	fd->entry[0].bus.csi2.dt = get_data_type_by_code(sensor->fmt.code);
-+
-+	return 0;
-+}
-+
- static int vgxy61_set_fmt(struct v4l2_subdev *sd,
- 			  struct v4l2_subdev_state *sd_state,
- 			  struct v4l2_subdev_format *format)
-@@ -1402,6 +1417,7 @@ static const struct v4l2_subdev_pad_ops vgxy61_pad_ops = {
- 	.set_fmt = vgxy61_set_fmt,
- 	.get_selection = vgxy61_get_selection,
- 	.enum_frame_size = vgxy61_enum_frame_size,
-+	.get_frame_desc = vgxy61_get_frame_desc,
- };
- 
- static const struct v4l2_subdev_ops vgxy61_subdev_ops = {
+Series applied on stm32-next.
 
----
-base-commit: 1343433ed38923a21425c602e92120a1f1db5f7a
-change-id: 20250704-vgxy61-frame-desc-2a6d3c6cab43
+Cheers.
 
-Best regards,
--- 
-Julien Massot <julien.massot@collabora.com>
-
+Alex
 
