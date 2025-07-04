@@ -1,138 +1,136 @@
-Return-Path: <linux-kernel+bounces-717612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-717614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3300AF968F
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 17:15:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CBBFEAF9691
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 17:16:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E6AD188678C
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 15:14:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB5081891C4C
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 15:15:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16FB12C3278;
-	Fri,  4 Jul 2025 15:13:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 110CA2D3229;
+	Fri,  4 Jul 2025 15:14:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NUn3IriD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b="BCzccpvN"
+Received: from forward501b.mail.yandex.net (forward501b.mail.yandex.net [178.154.239.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F85919C54B;
-	Fri,  4 Jul 2025 15:13:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1F3723A58E;
+	Fri,  4 Jul 2025 15:14:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751642035; cv=none; b=TCjFBIExhd9wwyG+gXSH55yJXZE/szaG7aems43uox+PydILuD0QKuo4ND5SfyTjkhNx1iOhOGoLL6K4XhtxlxPd/mDV0+nB49O4Aqgeo3k+jZv+As5J3ffN1yXOxG2G/Ym56fHEB16uaPdKudkyOlemZncdH1uwWXr5JWGqWZ4=
+	t=1751642076; cv=none; b=XRIELG/K1jULJV+iZL3iv8WdCs4XYKVGAEo5sjxeAj9gszd+nyJE3+kA6vMzlg9cbnbyTq9xH5Lgl9novVONgIEBJ3H+3WNWFvUHXLGwjM4g3UucDF0LJ5CJnJjFAccR+wEiI4CBAj8aPD0mzZ/56r4nFQPOPCL49nQhp04Wzk0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751642035; c=relaxed/simple;
-	bh=dcH2LMCzBXT7aa0Qbuio3lOIk3gZyXtMY3q3240QCzg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IfkUXawQLNBpdL/Nq5W7vU2azUowgAXERgIkp6DSyjhUCFMWeFdBgm84/M2Xob0krHzfXpWlvVfno1lASahOVru7/Yt5RCrK0wlW55HMQvOmB+doLkscfcnvkakYHAzDIhGZ3ihBCRRCSiltm7/SNGYaEmw97BtYB1D6kV5V3e0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NUn3IriD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2C9FC4CEE3;
-	Fri,  4 Jul 2025 15:13:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751642035;
-	bh=dcH2LMCzBXT7aa0Qbuio3lOIk3gZyXtMY3q3240QCzg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NUn3IriDxtCzaJN8q0gbLBJN3x+VvQCkcbaPXHQL5v1qfAxadfGhKwpWY9EwrKRvR
-	 Zwo677Fivdw5E19lXfVtHnBnZ5CDQEua68FJ13HQqaHnABGkq2At8HbV9njJxRrxos
-	 X/3KAHvZL5ziKJX0Q0104BaGuCJXAvhSv0WHhhL98X2mL83GCGx5ls1ZvtqvgHof6X
-	 ajruNjJ3JN+NGn5KPa6cmXGVl11J2XHIYIgvLeNbw+BIF2Pn2lj+j78BEcrz9R4gfp
-	 XoPWNVGTeKC1jh4DC3xjRlr11Nw2a+F7EQtsdvNesF3FlE5v8G0Jvuhk8B39zSmCdS
-	 ZRnzx1HzXd5DQ==
-Date: Fri, 4 Jul 2025 18:13:51 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Ge Yang <yangge1116@126.com>
-Cc: ardb@kernel.org, sathyanarayanan.kuppuswamy@linux.intel.com,
-	ilias.apalodimas@linaro.org, jgg@ziepe.ca,
-	linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org, liuzixing@hygon.cn
-Subject: Re: [PATCH] efi/tpm: Fix the issue where the CC platforms event log
- header can't be correctly identified
-Message-ID: <aGfvr2pBau6z9GLC@kernel.org>
-References: <1751510317-12152-1-git-send-email-yangge1116@126.com>
- <aGczaEkhPuOqhRUv@kernel.org>
- <2ab4ebba-1f97-4686-9186-5bcaa3549f54@126.com>
+	s=arc-20240116; t=1751642076; c=relaxed/simple;
+	bh=jF3Inlj3JG/E6BYFBEPp9WN3HpHGhw6OMBNAHh2KZhA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mDexoKL+p9tXHbjY173dMOWZ8puCAZMLncxLTnj6kQnpilRzjIoKJA9qp75QvsJ4LXIzxGWDpJxu3wDplwxb97OCbvrfbPCpiOYbGVFwOzcQcVg8zdZPEliPhNmtMbi72nhSlhEQl8jG6fX5VTRJmOVjUhHOK0M/n0i7dsXVCIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev; spf=pass smtp.mailfrom=onurozkan.dev; dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b=BCzccpvN; arc=none smtp.client-ip=178.154.239.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=onurozkan.dev
+Received: from mail-nwsmtp-smtp-production-main-91.sas.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-91.sas.yp-c.yandex.net [IPv6:2a02:6b8:c24:1820:0:640:7e2f:0])
+	by forward501b.mail.yandex.net (Yandex) with ESMTPS id 37AC7620FE;
+	Fri,  4 Jul 2025 18:14:25 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-91.sas.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id JEfrFgXLrCg0-8kXO3A0w;
+	Fri, 04 Jul 2025 18:14:24 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=onurozkan.dev;
+	s=mail; t=1751642064;
+	bh=r3cC44VV953qYGUiBvgDLhMT0ZcikyuAe9Lipi2US5k=;
+	h=Cc:Message-ID:Subject:Date:References:To:From:In-Reply-To;
+	b=BCzccpvNGN1KSvPgJMpAGwht7xC/2+UW6iaqnQXd3QnDbwOb0Q/iE3imkRoO9syJq
+	 5bNt9woEXngoOaJB+1kxjV87/ebSNStuWCPLNIv5sZVvp2l9GTpSL3nVcbch2i47vi
+	 upyLPF95Wmz3tgoPlXrYECYsFCIpM886jIQKZQq8=
+Authentication-Results: mail-nwsmtp-smtp-production-main-91.sas.yp-c.yandex.net; dkim=pass header.i=@onurozkan.dev
+Date: Fri, 4 Jul 2025 18:14:19 +0300
+From: Onur <work@onurozkan.dev>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+ ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
+ gary@garyguo.net, bjorn3_gh@protonmail.com, lossin@kernel.org,
+ a.hindborg@kernel.org, tmgross@umich.edu, dakr@kernel.org,
+ mattgilbride@google.com, wedsonaf@gmail.com, daniel@sedlak.dev,
+ tamird@gmail.com
+Subject: Re: [PATCH] rust: rbtree: simplify finding `current` in
+ `remove_current`
+Message-ID: <20250704181419.0a6a4d97@nimda.home>
+In-Reply-To: <aGeEcOEYXiLju-Lj@google.com>
+References: <20250704054539.7715-1-work@onurozkan.dev>
+	<aGeEcOEYXiLju-Lj@google.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-unknown-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2ab4ebba-1f97-4686-9186-5bcaa3549f54@126.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 04, 2025 at 10:53:54AM +0800, Ge Yang wrote:
-> 
-> 
-> 在 2025/7/4 9:50, Jarkko Sakkinen 写道:
-> > On Thu, Jul 03, 2025 at 10:38:37AM +0800, yangge1116@126.com wrote:
-> > > From: Ge Yang <yangge1116@126.com>
-> > > 
-> > > Since commit d228814b1913 ("efi/libstub: Add get_event_log() support
-> > > for CC platforms") reuses TPM2 support code for the CC platforms, when
-> > > launching a TDX virtual machine with coco measurement enabled, the
-> > > following error log is generated:
-> > > 
-> > > [Firmware Bug]: Failed to parse event in TPM Final Events Log
-> > > 
-> > > Call Trace:
-> > > efi_config_parse_tables()
-> > >    efi_tpm_eventlog_init()
-> > >      tpm2_calc_event_log_size()
-> > >        __calc_tpm2_event_size()
-> > > 
-> > > The pcr_idx value in the Intel TDX log header is 1, causing the
-> > > function __calc_tpm2_event_size() to fail to recognize the log header,
-> > > ultimately leading to the "Failed to parse event in TPM Final Events
-> > > Log" error.
-> > > 
-> > > According to UEFI Spec 2.10 Section 38.4.1: For Tdx, TPM PCR 0 maps to
-> > > MRTD, so the log header uses TPM PCR 1. To successfully parse the TDX
-> > > event log header, the check for a pcr_idx value of 0 has been removed
-> > > here, and it appears that this will not affect other functionalities.
-> > 
-> > I'm not familiar with the original change but with a quick check it did
-> > not change __calc_tpm2_event_size(). Your change is changing semantics
-> > to two types of callers:
-> > 
-> > 1. Those that caused the bug.
-> > 2. Those that nothing to do with this bug.
-> > 
-> > I'm not seeing anything explaining that your change is guaranteed not to
-> > have any consequences to "innocent" callers, which have no relation to
-> > the bug.
-> > 
-> 
-> Thank you for your response.
-> 
-> According to Section 10.2.1, Table 6 (TCG_PCClientPCREvent Structure) in the
-> TCG PC Client Platform Firmware Profile Specification, determining whether
-> an event is an event log header does not require checking the pcrIndex
-> field. The identification can be made based on other fields alone.
-> Therefore, removing the pcrIndex check here is considered safe
-> for "innocent" callers.
+On Fri, 4 Jul 2025 07:36:16 +0000
+Alice Ryhl <aliceryhl@google.com> wrote:
 
-Thanks for digging that out. Can you add something to the commit
-message? That spec is common knowledge if you are "into the topic"
-in the first palace so something along the lines of this would be
-perfectly fine:
+> On Fri, Jul 04, 2025 at 08:45:39AM +0300, Onur =C3=96zkan wrote:
+> > The previous version used a verbose `match` to get
+> > `current`, which may be slightly confusing at first
+> > glance.
+> >=20
+> > This change makes it shorter and more clearly expresses
+> > the intent: prefer `next` if available, otherwise fall
+> > back to `prev`.
+> >=20
+> > Signed-off-by: Onur =C3=96zkan <work@onurozkan.dev>
+> > ---
+> >  rust/kernel/rbtree.rs | 14 +++-----------
+> >  1 file changed, 3 insertions(+), 11 deletions(-)
+> >=20
+> > diff --git a/rust/kernel/rbtree.rs b/rust/kernel/rbtree.rs
+> > index 8d978c896747..8f1052552132 100644
+> > --- a/rust/kernel/rbtree.rs
+> > +++ b/rust/kernel/rbtree.rs
+> > @@ -769,18 +769,10 @@ pub fn remove_current(self) -> (Option<Self>,
+> > RBTreeNode<K, V>) { // the tree cannot change. By the tree
+> > invariant, all nodes are valid. unsafe { bindings::rb_erase(&mut
+> > (*this).links, addr_of_mut!(self.tree.root)) };
+> >=20
+> > -        let current =3D match (prev, next) {
+> > -            (_, Some(next)) =3D> next,
+> > -            (Some(prev), None) =3D> prev,
+> > -            (None, None) =3D> {
+> > -                return (None, node);
+> > -            }
+> > -        };
+> > -
+> >          (
+> > -            // INVARIANT:
+> > -            // - `current` is a valid node in the [`RBTree`]
+> > pointed to by `self.tree`.
+> > -            Some(Self {
+> > +            next.or(prev).map(|current| Self {
+> > +                // INVARIANT:
+> > +                // - `current` is a valid node in the [`RBTree`]
+> > pointed to by `self.tree`. current,
+> >                  tree: self.tree,
+> >              }),
+>=20
+> I'm okay with this change, but the INVARIANT: comment usually goes
+> before the `StructName {` declaration rather than on the field. For
+> example, what about this?
+>=20
+> 	// INVARIANT:
+> 	// - `current` is a valid node in the [`RBTree`] pointed to
+> by `self.tree`. let cursor =3D next.or(prev).map(|current| Self {
+> 	    current,
+> 	    tree: self.tree,
+> 	});
+> =09
+> 	(cursor, node)
 
-"The check can be safely removed, as ccording to table 6 at section
-10.2.1 of TCG PC client specification the index field does not require
-fixing the PCR index to zero."
+Looks nice. Do you want me to send v2 right away, or wait couple of days
+to give sometime to other reviewers?
 
-But then: we still have that constraint there and we cannot predict the
-side-effects of removing a constraint, even if it is incorrectly defined
-constraint. For comparison, it's much less risky situation when adding
-additional constraints, as possible side-effects in the worst case
-scenarios can be even theoretically much lighter than in the opposite
-situation.
-
-For this reasons it would be perhaps better to limit the fix for the
-CC only, and not change the semantics across the board.
-
-BR, Jarkko
+Regards,
+Onur
 
