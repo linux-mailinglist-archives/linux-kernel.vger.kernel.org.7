@@ -1,181 +1,152 @@
-Return-Path: <linux-kernel+bounces-716912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD8A2AF8C84
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 10:48:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BE60AF8C5B
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 10:45:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F2964A5C90
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 08:46:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79ECF1C25C57
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 08:44:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC8092BEFE6;
-	Fri,  4 Jul 2025 08:42:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E3FF286D42;
+	Fri,  4 Jul 2025 08:40:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="jg8HObSV"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VLpy79R3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52CB92BE7DD;
-	Fri,  4 Jul 2025 08:42:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD4E1328AE4;
+	Fri,  4 Jul 2025 08:40:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751618524; cv=none; b=q6rhmVbvWHDEqC4Qjdt1or2BGQsu9HBEmud5x8RGcm2wGDT9NWct7KqazJLv3p5xnOdIGWUL9bQqnJk3Tvvw1uVrlAMQpxvK6EV8o4jR1av5QLsDNCSZQKvoex+k8sGjQSzL7NFWPSLMNa9/NBzN5cFDanuBvEB30jd+Dg6reLM=
+	t=1751618400; cv=none; b=DO+4XH/igW6zNQMj0MVkKegBUBQ5eHX2kwSpIIBpWYNCR67Na0tpeQqzLdMOyHyp2/Cr3r6v7DDQ+HotVFFZE3hpUxgCrku98eRVEvUZK+O28N7aIXDISxzOUUmPW177vHnnVrY0+lL5+Vwf01+U0pLv9VsHbtzdttH9xpMVTFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751618524; c=relaxed/simple;
-	bh=sXebJdJ4sxo3qeYwAfa51BK/9qElFemf8oNZxJvi118=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=BZ3KcKYnqq7X1/bShwE+3+WDXjLXeDfJ6EfcqWVqOjWFVVWzY8k8cnESdKrqWSCKANSj7+3CFXZIOjQI1mUKDX5Qn7W/3ZapVLfV8YeRIOxgsBsdgfKdRA0t8StLSu3zyvXMncuGM1hs6UhI+dAlPFntSnUcXiywGU15W5Ie+SI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=jg8HObSV; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5647Zri2028234;
-	Fri, 4 Jul 2025 10:41:41 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	cgoDMkiMUHk+EBU8CkARm75mSZLtYpIM4Qjcl0JBQBc=; b=jg8HObSVt9+kCgyh
-	RArNtuTm17TbJNYsK/+0X/DEGGKA3cWUwz/nil05Kj8armM9uqqy/k18JvPEjadn
-	Iut3Yrl7nOJpV0ygQcCpAAhBUeoEqEnGTq09kZ5mQJwYo9ymu6vE38JK6M1z19zT
-	2Med9uWLlLacPa+KD+vPVyyl/fPv2dpfU7jYVYct21SrVW+m3IrP4fdO3k71kIKN
-	Tkm4BlEwdgddfkSYs86VpXT3i9tG+6AWDRcOdDLPjrMcL++X7Li2jV8unHFj5zIn
-	1jWhXZq3W4r49MLhGJl6FXxnlfkqmtX9lUHhTqhUh/T2G/79/iz1tUmVGXyVQat2
-	gX/Dew==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 47j5tmmaph-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 04 Jul 2025 10:41:40 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 98D5A4004C;
-	Fri,  4 Jul 2025 10:40:31 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id B39E7483152;
-	Fri,  4 Jul 2025 10:39:38 +0200 (CEST)
-Received: from localhost (10.48.86.185) by SHFDAG1NODE2.st.com (10.75.129.70)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 4 Jul
- 2025 10:39:38 +0200
-From: =?utf-8?q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>
-Date: Fri, 4 Jul 2025 10:39:16 +0200
-Subject: [PATCH v4 3/3] i2c: stm32f7: support i2c_*_dma_safe_msg_buf APIs
+	s=arc-20240116; t=1751618400; c=relaxed/simple;
+	bh=FHas3OLzhcWmJla/w9SVAWfRsC/N5brO1Le2ihalCNg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TN2UI3xyCfwRG2Zl3GjjqEP0gUD97Lrde26YuFL2ocVGOzIcKvc4MrsbLy7pOFTOE+SYnfxnbQwcJ/byijjLYkVgyMtM4bvdb/ZaPjiHX6cF53fbz1/XHoGaNUhohKRw6JpXr+sywUrNN/+CZ2gCEdKBEZBuydk+4csAmU3hG+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VLpy79R3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11EA7C4CEF0;
+	Fri,  4 Jul 2025 08:39:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751618400;
+	bh=FHas3OLzhcWmJla/w9SVAWfRsC/N5brO1Le2ihalCNg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VLpy79R3WoowQ0dde0FpFT1YyHsXsurqva+SkoBcww5fjPVnQMcwqe87L2wtjyLYi
+	 kRKqWJIQ81p4a1f0xNgpRmdmn+OPlPkQk/4+3lz4NrJRi0wbmnDt4pjvgXFACOvZxO
+	 qU9E5LKN5/hna1bw+wpVR2YB99mwlJCTB2beguJ1mHivp02SKA4At/U4wBW5k3iT/Q
+	 u3HMCjJxxvd2r71zcnuKhwU/Z06IvtD7wFREJ9CXS/1miJCbu6oYZeK5DrvOvTrTgE
+	 IHzvXhhXfrV+PFyTdnHzAjREeo0FCEO0Q5nKDCaILrTwFadudwtNVY/apMjWmKyCd5
+	 QDeadiD91wJeA==
+Date: Fri, 4 Jul 2025 10:39:53 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org, hch@lst.de, 
+	tytso@mit.edu, djwong@kernel.org, john.g.garry@oracle.com, bmarzins@redhat.com, 
+	chaitanyak@nvidia.com, shinichiro.kawasaki@wdc.com, martin.petersen@oracle.com, 
+	yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com, 
+	yangerkun@huawei.com, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, 
+	linux-block@vger.kernel.org, dm-devel@lists.linux.dev, linux-nvme@lists.infradead.org, 
+	linux-scsi@vger.kernel.org
+Subject: Re: [PATCH v2 0/9] fallocate: introduce FALLOC_FL_WRITE_ZEROES flag
+Message-ID: <20250704-gemein-addieren-62ad4d210c70@brauner>
+References: <20250619111806.3546162-1-yi.zhang@huaweicloud.com>
+ <20250623-woanders-allabendlich-f87ae2d9c704@brauner>
+ <99010bfd-c968-49c7-b62b-c72b38722c1b@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-ID: <20250704-i2c-upstream-v4-3-84a095a2c728@foss.st.com>
-References: <20250704-i2c-upstream-v4-0-84a095a2c728@foss.st.com>
-In-Reply-To: <20250704-i2c-upstream-v4-0-84a095a2c728@foss.st.com>
-To: Pierre-Yves MORDRET <pierre-yves.mordret@foss.st.com>,
-        Alain Volmat
-	<alain.volmat@foss.st.com>,
-        Andi Shyti <andi.shyti@kernel.org>,
-        "Maxime
- Coquelin" <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        "M'boumba Cedric
- Madianga" <cedric.madianga@gmail.com>,
-        Wolfram Sang <wsa@kernel.org>
-CC: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>,
-        <linux-i2c@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-media@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <linaro-mm-sig@lists.linaro.org>,
-        =?utf-8?q?Cl=C3=A9ment_Le_Goffic?=
-	<clement.legoffic@foss.st.com>
-X-Mailer: b4 0.15-dev-7616d
-X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE2.st.com
- (10.75.129.70)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-04_03,2025-07-02_04,2025-03-28_01
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <99010bfd-c968-49c7-b62b-c72b38722c1b@huaweicloud.com>
 
-`i2c_*_dma_safe_msg_buf` APIs operate on a `struct i2c_msg`.
-The get operation make sure the I2C buffer is DMA'able according to its
-buffer length, or if the memory use is DMA coherent for example and
-return a valid pointer for safe DMA access to be used.
-The put operation release the pointer.
-Prefer using generic API's than relying on private tests.
+On Thu, Jul 03, 2025 at 11:35:41AM +0800, Zhang Yi wrote:
+> On 2025/6/23 18:46, Christian Brauner wrote:
+> > On Thu, 19 Jun 2025 19:17:57 +0800, Zhang Yi wrote:
+> >> From: Zhang Yi <yi.zhang@huawei.com>
+> >>
+> >> Changes since v1:
+> >>  - Rebase codes on 6.16-rc2.
+> >>  - Use max_{hw|user}_wzeroes_unmap_sectors queue limits instead of
+> >>    BLK_FEAT_WRITE_ZEROES_UNMAP feature to represent the status of the
+> >>    unmap write zeroes operation as Christoph and Darrick suggested. This
+> >>    redoes the first 5 patches, so remove all the reviewed-by tags,
+> >>    please review them again.
+> >>  - Simplify the description of FALLOC_FL_WRITE_ZEROES in patch 06 as
+> >>    Darrick suggested.
+> >>  - Revise the check order of FALLOC_FL_WRITE_ZEROES in patch 08 as
+> >>    Christoph suggested.
+> >> Changes since RFC v4:
+> >>  - Rebase codes on 6.16-rc1.
+> >>  - Add a new queue_limit flag, and change the write_zeroes_unmap sysfs
+> >>    interface to RW mode. User can disable the unmap write zeroes
+> >>    operation by writing '0' to it when the operation is slow.
+> >>  - Modify the documentation of write_zeroes_unmap sysfs interface as
+> >>    Martin suggested.
+> >>  - Remove the statx interface.
+> >>  - Make the bdev and ext4 don't allow to submit FALLOC_FL_WRITE_ZEROES
+> >>    if the block device does not enable the unmap write zeroes operation,
+> >>    it should return -EOPNOTSUPP.
+> >> Changes sicne RFC v3:
+> >>  - Rebase codes on 6.15-rc2.
+> >>  - Add a note in patch 1 to indicate that the unmap write zeros command
+> >>    is not always guaranteed as Christoph suggested.
+> >>  - Rename bdev_unmap_write_zeroes() helper and move it to patch 1 as
+> >>    Christoph suggested.
+> >>  - Introduce a new statx attribute flag STATX_ATTR_WRITE_ZEROES_UNMAP as
+> >>    Christoph and Christian suggested.
+> >>  - Exchange the order of the two patches that modified
+> >>    blkdev_fallocate() as Christoph suggested.
+> >> Changes since RFC v2:
+> >>  - Rebase codes on next-20250314.
+> >>  - Add support for nvme multipath.
+> >>  - Add support for NVMeT with block device backing.
+> >>  - Clear FALLOC_FL_WRITE_ZEROES if dm clear
+> >>    limits->max_write_zeroes_sectors.
+> >>  - Complement the counterpart userspace tools(util-linux and xfs_io)
+> >>    and tests(blktests and xfstests), please see below for details.
+> >> Changes since RFC v1:
+> >>  - Switch to add a new write zeroes operation, FALLOC_FL_WRITE_ZEROES,
+> >>    in fallocate, instead of just adding a supported flag to
+> >>    FALLOC_FL_ZERO_RANGE.
+> >>  - Introduce a new flag BLK_FEAT_WRITE_ZEROES_UNMAP to the block
+> >>    device's queue limit features, and implement it on SCSI sd driver,
+> >>    NVMe SSD driver and dm driver.
+> >>  - Implement FALLOC_FL_WRITE_ZEROES on both the ext4 filesystem and
+> >>    block device (bdev).
+> >>
+> >> [...]
+> > 
+> > If needed, the branch can be declared stable and thus be used as base
+> > for other work.
+> > 
+> > ---
+> > 
+> > Applied to the vfs-6.17.fallocate branch of the vfs/vfs.git tree.
+> > Patches in the vfs-6.17.fallocate branch should appear in linux-next soon.
+> > 
+> > Please report any outstanding bugs that were missed during review in a
+> > new review to the original patch series allowing us to drop it.
+> > 
+> > It's encouraged to provide Acked-bys and Reviewed-bys even though the
+> > patch has now been applied. If possible patch trailers will be updated.
+> > 
+> > Note that commit hashes shown below are subject to change due to rebase,
+> > trailer updates or similar. If in doubt, please check the listed branch.
+> > 
+> > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+> > branch: vfs-6.17.fallocate
+> 
+> Hi Christian,
+> 
+> I noticed that this patch series doesn't appear to be merged into this
+> branch. Just wondering if it might have been missed?
 
-Acked-by: Alain Volmat <alain.volmat@foss.st.com>
-Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
----
- drivers/i2c/busses/i2c-stm32f7.c | 32 +++++++++++++++++++++-----------
- 1 file changed, 21 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/i2c/busses/i2c-stm32f7.c b/drivers/i2c/busses/i2c-stm32f7.c
-index 73a7b8894c0d..994232646789 100644
---- a/drivers/i2c/busses/i2c-stm32f7.c
-+++ b/drivers/i2c/busses/i2c-stm32f7.c
-@@ -741,11 +741,14 @@ static void stm32f7_i2c_dma_callback(void *arg)
- {
- 	struct stm32f7_i2c_dev *i2c_dev = arg;
- 	struct stm32_i2c_dma *dma = i2c_dev->dma;
-+	struct stm32f7_i2c_msg *f7_msg = &i2c_dev->f7_msg;
- 
- 	stm32f7_i2c_disable_dma_req(i2c_dev);
- 	dmaengine_terminate_async(dma->chan_using);
- 	dma_unmap_single(i2c_dev->dev, dma->dma_buf, dma->dma_len,
- 			 dma->dma_data_dir);
-+	if (!f7_msg->smbus)
-+		i2c_put_dma_safe_msg_buf(f7_msg->buf, i2c_dev->msg, true);
- 	complete(&dma->dma_complete);
- }
- 
-@@ -881,6 +884,7 @@ static void stm32f7_i2c_xfer_msg(struct stm32f7_i2c_dev *i2c_dev,
- {
- 	struct stm32f7_i2c_msg *f7_msg = &i2c_dev->f7_msg;
- 	void __iomem *base = i2c_dev->base;
-+	u8 *dma_buf;
- 	u32 cr1, cr2;
- 	int ret;
- 
-@@ -930,17 +934,23 @@ static void stm32f7_i2c_xfer_msg(struct stm32f7_i2c_dev *i2c_dev,
- 
- 	/* Configure DMA or enable RX/TX interrupt */
- 	i2c_dev->use_dma = false;
--	if (i2c_dev->dma && f7_msg->count >= STM32F7_I2C_DMA_LEN_MIN
--	    && !i2c_dev->atomic) {
--		ret = stm32_i2c_prep_dma_xfer(i2c_dev->dev, i2c_dev->dma,
--					      msg->flags & I2C_M_RD,
--					      f7_msg->count, f7_msg->buf,
--					      stm32f7_i2c_dma_callback,
--					      i2c_dev);
--		if (!ret)
--			i2c_dev->use_dma = true;
--		else
--			dev_warn(i2c_dev->dev, "can't use DMA\n");
-+	if (i2c_dev->dma && !i2c_dev->atomic) {
-+		dma_buf = i2c_get_dma_safe_msg_buf(msg, STM32F7_I2C_DMA_LEN_MIN);
-+		if (dma_buf) {
-+			f7_msg->buf = dma_buf;
-+			ret = stm32_i2c_prep_dma_xfer(i2c_dev->dev, i2c_dev->dma,
-+						      msg->flags & I2C_M_RD,
-+						      f7_msg->count, f7_msg->buf,
-+						      stm32f7_i2c_dma_callback,
-+						      i2c_dev);
-+			if (ret) {
-+				dev_warn(i2c_dev->dev, "can't use DMA\n");
-+				i2c_put_dma_safe_msg_buf(f7_msg->buf, msg, false);
-+				f7_msg->buf = msg->buf;
-+			} else {
-+				i2c_dev->use_dma = true;
-+			}
-+		}
- 	}
- 
- 	if (!i2c_dev->use_dma) {
-
--- 
-2.43.0
-
+Dammit, my script missed to push the branch. Fixed now. Thanks for
+checking!
 
