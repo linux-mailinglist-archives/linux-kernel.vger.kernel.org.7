@@ -1,322 +1,263 @@
-Return-Path: <linux-kernel+bounces-716510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56807AF877F
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 07:59:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08F47AF8787
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 08:02:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F32D54A36BA
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 05:58:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D09F3B6FEF
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 06:01:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDE8720F079;
-	Fri,  4 Jul 2025 05:58:56 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AFA01EB9FA
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 05:58:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60996223704;
+	Fri,  4 Jul 2025 06:01:48 +0000 (UTC)
+Received: from smtpbgeu1.qq.com (smtpbgeu1.qq.com [52.59.177.22])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 024CF143C69;
+	Fri,  4 Jul 2025 06:01:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.59.177.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751608736; cv=none; b=f0QIEo7qsQ1mu/Hvyx9NmKYIW/XgZXNMo2AQRP/Pm6q+sJyWybPdjvAhnfL3NtlMVelSvkVc0ABuicOQBEgTYJ+dbgIlbgPV0Ziz2APK59ZpnG7uUYHgcHKupcKPTbAmeleLQvg7KZhxm4CYh+FsVBrOQ2yRD6e2QsPlfZAiOys=
+	t=1751608908; cv=none; b=tTakXujJPkrbL7i+qDp4BcLa5VQZb33q9LV5v+QkjQKte0+M9Y+/Bcr+mMqGfCeZjAP1h0cPflpharCsVKyJ6Lw2xHsOrNCoVuMvq7S2MwAr6YpdCUpWQKfKFoSDi0KNLBWu3K831cFqMEuIyE2IJ7HKZd/4pVtdkZziKecr4Vg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751608736; c=relaxed/simple;
-	bh=2tp2W/AstmnXstsxWssBcLV7gsG+sMkWuDubyIjQx0Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ltElUPiV9LpYBVHLYS+FXKKJsc9W5cIusHZ61yexJLxAr5JrzofuLz0QBSClr4Wx1T5vnt8nKQ91ChkkXCYmd1CVVGJXYB2UvWhrHf4fPJQohUunLyFR5oMQR9R2tlupc2RdPoZ8WpR/4U+vqL9TObe+Flk+JE9jDdjW2FXHVKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EE439152B;
-	Thu,  3 Jul 2025 22:58:37 -0700 (PDT)
-Received: from [10.163.88.118] (unknown [10.163.88.118])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1EF993F63F;
-	Thu,  3 Jul 2025 22:58:47 -0700 (PDT)
-Message-ID: <4e76b35e-8afb-469a-9e61-fa8e0f344859@arm.com>
-Date: Fri, 4 Jul 2025 11:28:44 +0530
+	s=arc-20240116; t=1751608908; c=relaxed/simple;
+	bh=iN+eRlhHdorWDunPr1SoD4iJ2i8XICBGACpYA1baHPY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z5xatF5BL83Pr8ywoY40zeR5dMOjYDTBV/aj+8b9dEvyr3stLmCMdixly33bD/NOCgWGI/URp51Vyc/SAZjyIFhsReYKS6vzGtZhEmVlYgKpFDG8zOznPM2g2u2xti9PL4fnHxVrMhYXKTXTvmco5lJ6qmJwsbB9DUVmWOLJcNY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=foursemi.com; spf=none smtp.mailfrom=foursemi.com; arc=none smtp.client-ip=52.59.177.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=foursemi.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foursemi.com
+X-QQ-mid: esmtpsz11t1751608835t91668ce4
+X-QQ-Originating-IP: zM90GZFMZI7yfyc+xZqfOjC303VrdAtqXt8If3sh2j4=
+Received: from localhost ( [183.17.231.150])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Fri, 04 Jul 2025 14:00:34 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 11170763768269666623
+EX-QQ-RecipientCnt: 13
+Date: Fri, 4 Jul 2025 14:00:33 +0800
+From: Nick Li <nick.li@foursemi.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: lgirdwood@gmail.com, broonie@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, perex@perex.cz,
+	tiwai@suse.com, xiaoming.yang@foursemi.com,
+	danyang.zheng@foursemi.com, linux-sound@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 3/4] ASoC: dt-bindings: Add dt bindings for FS2104/5S
+ audio amplifiers
+Message-ID: <2926FE7607C477C6+aGduAY1NTfY9T4lL@foursemi.com>
+References: <20250703035639.7252-1-nick.li@foursemi.com>
+ <20250703035639.7252-4-nick.li@foursemi.com>
+ <9c75041d-a06a-49ef-92d1-011faeb39496@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] arm64: Enable vmalloc-huge with ptdump
-To: Dev Jain <dev.jain@arm.com>, catalin.marinas@arm.com, will@kernel.org
-Cc: quic_zhenhuah@quicinc.com, ryan.roberts@arm.com, kevin.brodsky@arm.com,
- yangyicong@hisilicon.com, joey.gouly@arm.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- david@redhat.com
-References: <20250626052524.332-1-dev.jain@arm.com>
-Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <20250626052524.332-1-dev.jain@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <9c75041d-a06a-49ef-92d1-011faeb39496@kernel.org>
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpsz:foursemi.com:qybglogicsvrsz:qybglogicsvrsz3a-0
+X-QQ-XMAILINFO: N/TacslKx3at46/ymwbEJDEjCvBmvjISKJs/jUsmYAZ7uTJHZFMWZfhS
+	vsONLfYbxQFcD5RCjZiMqDAqDLspUBRYnKLghYD81LQi5w4xd1YepWGusSUI9Th8ngC8FUd
+	KzjMums0HZ/I5M8kldnq0MAGoJlxkml7XvzNL1YOwLDJOV7laZKDpQ94YdoiUlr6jUJlDsG
+	kimTUFolBW9Zx38i+d+bYX4tbXJXmg7sbG0gOIC5frNHUYUolf1YuVSKjQMotYDswzAxcxn
+	1aWMFbxAXfoFjAXqyqRBQTbvS8Su1qr0RrWqm01bL/oSP/gBxxBzH9kQ/SsyNbNnD4YrLhF
+	ciLRqF/jWTux3qUohMxzRxlPZu1v9FDjAkoWeC4/kz4+7rpxaLhV12S1vJi483UG3LBYF3c
+	NsJcjIwrjH0VCZ1h6zFth9ZBGv4Y7Xp0dviqJoXnlRqI+mEKX3rpFvHfd8lNMfUI6yykWUU
+	X7zd08ZHVDf88fOBBng1n7Q6ghrN0OuSc6NN7pKNE7BnGIGrumYTrsOtqiEcQOWL73mdIO/
+	AN890Jf4P51W81bL7OswB2IK0eSCch6g8RH58dGzi4QWia8x46/5DOe6fDxlGVkyqeuMZ58
+	s7jJEUVhhrXvwhMzeFGy71N9bGDas5mEWloaSBNwBVynL8RvpDorYD+V2XSjieIMO9vi9v4
+	KHc15HYpKGosyEf/mjRC1O6LuKpCTxIpaLadCXi3AfQ1r7KclJo1xyfoqgQOwhk1jjEB3kP
+	a/izbCVvq8/z8tyx0I/D10JCOvpqOooxEqSeh+K3vEVQvTXY9ab1xZxmC8Ox7nlZoTvygdu
+	OSPjeCYtDKiQVStwiN0GlEuozkLIMttcBVCZWaNXI3Y3dGusoHUGOj/6iRmSRT29YnTxpbI
+	7w9mfHSodeS1D71knnDSIuuPLex5u+NUPjRmSJalksGuukcXlPZ/JuLchrwImxYHrFrf4HF
+	xQjNxrmSzksxkargX8Vks9BQDb0t8RXAb/jj61Cb7Uu6Lco6EtNNYlYEMhOysPuR3B3OQrh
+	Gzl3X8GQdvLZqDOy+RpRKUi5TRhwQI3pjwQpvwPs/NHI5kGYzobFh7Qy8lxOBCJsxpuC+z8
+	DkANkhPjUYI5L9Vv0YNfClpxMCxhMSqfKae/evvwArd
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
+X-QQ-RECHKSPAM: 0
 
+On Thu, Jul 03, 2025 at 08:36:42AM +0200, Krzysztof Kozlowski wrote:
+> On 03/07/2025 05:56, Nick wrote:
+> > From: Nick Li <nick.li@foursemi.com>
+> > 
+> > This patch adds bindings for FourSemi FS2104/5S audio amplifiers
+> > which can support both I2S and I2C interface.
+> > 
+> > Signed-off-by: Nick Li <nick.li@foursemi.com>
+> 
+> Your patches are not correctly ordered. Vendor prefix is supposed to be
+> before is being used. Bindings are before their users.
 
-
-On 26/06/25 10:55 AM, Dev Jain wrote:
-> arm64 disables vmalloc-huge when kernel page table dumping is enabled,
-> because an intermediate table may be removed, potentially causing the
-> ptdump code to dereference an invalid address. We want to be able to
-
-Please keep this paragraph separate explaining the current scenario. It
-might be worth adding bit more details such CONFIG_PTDUMP_DEBUGFS config
-dependency in vmalloc()'s arch call backs arch_vmap_pud|pmd_supported().
- > analyze block vs page mappings for kernel mappings with ptdump, so to
-> enable vmalloc-huge with ptdump, synchronize between page table removal in
-> pmd_free_pte_page()/pud_free_pmd_page() and ptdump pagetable walking. We
-
-Please keep this paragraph separate explaining what is the benefit of
-enabling ptdump with huge vmalloc() mappings. This will establish the
-required motivation to change the current scenario.
-
-> use mmap_read_lock and not write lock because we don't need to synchronize
-> between two different vm_structs; two vmalloc objects running this same
-> code path will point to different page tables, hence there is no race.
-
-Different page tables ? OR different areas in same page table i.e init_mm.
+OK, I will update the orders of patches in next version.
 
 > 
-> For pud_free_pmd_page(), we isolate the PMD table to avoid taking the lock
-> 512 times again via pmd_free_pte_page().
+> > ---
+> >  .../bindings/sound/foursemi,fs210x.yaml       | 95 +++++++++++++++++++
+> >  1 file changed, 95 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/sound/foursemi,fs210x.yaml
+> > 
+> > diff --git a/Documentation/devicetree/bindings/sound/foursemi,fs210x.yaml b/Documentation/devicetree/bindings/sound/foursemi,fs210x.yaml
+> > new file mode 100644
+> > index 000000000..3a1aba9b8
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/sound/foursemi,fs210x.yaml
+> 
+> Choose one compatible as filename.
 
-This talks about subsequent optimization without establishing the base
-solution first.
- > 
-> We implement the locking mechanism using static keys, since the chance
-> of a race is very small. Observe that the synchronization is needed
-> to avoid the following race:
-> 
-> CPU1							CPU2
-> 						take reference of PMD table
-> pud_clear()
-> pte_free_kernel()
-> 						walk freed PMD table
-> 
-> and similar race between pmd_free_pte_page and ptdump_walk_pgd.
-> 
-> Therefore, there are two cases: if ptdump sees the cleared PUD, then
-> we are safe. If not, then the patched-in read and write locks help us
-> avoid the race.
-> 
-> To implement the mechanism, we need the static key access from mmu.c and
-> ptdump.c. Note that in case !CONFIG_PTDUMP_DEBUGFS, ptdump.o won't be a
-> target in the Makefile, therefore we cannot initialize the key there, as
-> is being done, for example, in the static key implementation of
-> hugetlb-vmemmap. Therefore, include asm/cpufeature.h, which includes
-> the jump_label mechanism. Declare the key there and define the key to false
-> in mmu.c.
-
-Above write up is convoluted and not very clear. Please rewrite the solution
-description while avoiding too much implementation and code file details that
-can be derived from the patch itself.
+OK, I will update the file name to foursemi,fs2105s.yaml
 
 > 
-> No issues were observed with mm-selftests. No issues were observed while
-> parallelly running test_vmalloc.sh and dumping the kernel pagetable through
-> sysfs in a loop.
-Please provide some more details about test_vmallo.sh which seems to be a
-custom script.
+> > @@ -0,0 +1,95 @@
+> > +# SPDX-License-Identifier: GPL-2.0-only
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/sound/foursemi,fs210x.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: FourSemi FS2104/5S Digital Audio Amplifier
+> > +
+> > +maintainers:
+> > +  - Nick <nick.li@foursemi.com>
+> > +
+> > +description: |
+> > +    The FS2104 is a 15W Inductor-Less, Stereo, Closed-Loop,
+> > +    Digital Input Class-D Power Amplifier with Enhanced Signal Processing.
+> > +    The FS2105S is a 30W Inductor-Less, Stereo, Closed-Loop,
+> > +    Digital Input Class-D Power Amplifier with Enhanced Signal Processing.
+> > +
+> > +properties:
+> > +  compatible:
+> > +    enum:
+> > +      - foursemi,fs2104
+> > +      - foursemi,fs2105s
+> 
+> Your driver suggests these are compatible, so express that with fallback.
+
+OK, I will update these code to:
+  oneOf:
+    - items:
+        ...
+    - enum:
+        ...
 
 > 
-> Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
-> Signed-off-by: Dev Jain <dev.jain@arm.com>
-> ---
-> v3->v4:
->  - Lock-unlock immediately
->  - Simplify includes
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +    description: |
 > 
-> v2->v3:
->  - Use static key mechanism
+> Do not need '|' unless you need to preserve formatting.
+
+OK, I will delete it in next version.
+
 > 
-> v1->v2:
->  - Take lock only when CONFIG_PTDUMP_DEBUGFS is on
->  - In case of pud_free_pmd_page(), isolate the PMD table to avoid taking
->    the lock 512 times again via pmd_free_pte_page()
+> > +      I2C address of the amplifier. Refer to datasheet for possible values:
+> > +      0x68/0x69/0x6A/0x6B
+> > +
+> > +  clocks:
+> > +    items:
+> > +      - description: The clock of I2S BCLK
+> > +
+> > +  clock-names:
+> > +    items:
+> > +      - const: bclk
+> > +
+> > +  '#sound-dai-cells':
+> > +    const: 0
+> > +
+> > +  pvdd-supply:
+> > +    description: |
 > 
->  arch/arm64/include/asm/ptdump.h |  2 ++
->  arch/arm64/mm/mmu.c             | 44 ++++++++++++++++++++++++++++++---
->  arch/arm64/mm/ptdump.c          |  5 +++-
->  3 files changed, 46 insertions(+), 5 deletions(-)
+> Do not need '|' unless you need to preserve formatting.
+
+OK, I will delete it in next version.
+
 > 
-> diff --git a/arch/arm64/include/asm/ptdump.h b/arch/arm64/include/asm/ptdump.h
-> index fded5358641f..5b331f2a7be1 100644
-> --- a/arch/arm64/include/asm/ptdump.h
-> +++ b/arch/arm64/include/asm/ptdump.h
-> @@ -7,6 +7,8 @@
->  
->  #include <linux/ptdump.h>
->  
-> +DECLARE_STATIC_KEY_FALSE(ptdump_lock_key);
-> +
->  #ifdef CONFIG_PTDUMP
->  
->  #include <linux/mm_types.h>
-> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
-> index 00ab1d648db6..9d3be249047c 100644
-> --- a/arch/arm64/mm/mmu.c
-> +++ b/arch/arm64/mm/mmu.c
-> @@ -46,6 +46,8 @@
->  #define NO_CONT_MAPPINGS	BIT(1)
->  #define NO_EXEC_MAPPINGS	BIT(2)	/* assumes FEAT_HPDS is not used */
->  
-> +DEFINE_STATIC_KEY_FALSE(ptdump_lock_key);
-> +ptdump_lock_key sounds too generic even though this locking
-requirement is currently arm64 platform specific. Otherwise
-this might just appear as a locking from the generic ptdump
-Could this be renamed as arm64_ptdump_lock_key instead ?
+> 
+> > +      Regulator for power supply(PVDD in datasheet).
+> > +
+> > +  dvdd-supply:
+> > +    description: |
+> 
+> Do not need '|' unless you need to preserve formatting.
 
->  enum pgtable_type {
->  	TABLE_PTE,
->  	TABLE_PMD,
-> @@ -1267,7 +1269,7 @@ int pmd_clear_huge(pmd_t *pmdp)
->  	return 1;
->  }
->  
-> -int pmd_free_pte_page(pmd_t *pmdp, unsigned long addr)
-> +static int __pmd_free_pte_page(pmd_t *pmdp, unsigned long addr, bool lock)
->  {
+OK, I will delete it.
 
-'lock' argument needs explanation here in a comment.
+> 
+> > +      Regulator for digital supply(DVDD in datasheet).
+> > +
+> > +  sdz-gpios:
+> 
+> Use standard properties - see gpio-consumer-common
 
->  	pte_t *table;
->  	pmd_t pmd;
-> @@ -1279,13 +1281,24 @@ int pmd_free_pte_page(pmd_t *pmdp, unsigned long addr)
->  		return 1;
->  	}
->  
-> +	/* See comment in pud_free_pmd_page for static key logic */
->  	table = pte_offset_kernel(pmdp, addr);
->  	pmd_clear(pmdp);
->  	__flush_tlb_kernel_pgtable(addr);
+OK, I will update this property to reset-gpios, and update the driver.
 
-Or here ?
+> 
+> > +    maxItems: 1
+> > +    description: |
+> > +      SDZ(Shut Down) pin is active low, it will power down the chip,
+> > +      and then reset the chip to shut down state.
+> > +
+> > +  fs,fwm-name:
+> 
+> No, use standard properties (see writing bindings)
 
-> +	if (static_branch_unlikely(&ptdump_lock_key) && lock) {
-> +		mmap_read_lock(&init_mm);
-> +		mmap_read_unlock(&init_mm);
-> +	}
-> +
->  	pte_free_kernel(NULL, table);
->  	return 1;
->  }
->  
-> +int pmd_free_pte_page(pmd_t *pmdp, unsigned long addr)
-> +{
-> +	return __pmd_free_pte_page(pmdp, addr, true);
-> +}
-> +
->  int pud_free_pmd_page(pud_t *pudp, unsigned long addr)
->  {
->  	pmd_t *table;
-> @@ -1301,16 +1314,39 @@ int pud_free_pmd_page(pud_t *pudp, unsigned long addr)
->  	}
->  
->  	table = pmd_offset(pudp, addr);
-> +	/*
-> +	 * Isolate the PMD table; in case of race with ptdump, this helps
-> +	 * us to avoid taking the lock in __pmd_free_pte_page().
-> +	 *
-> +	 * Static key logic:
-> +	 *
-> +	 * Case 1: If ptdump does static_branch_enable(), and after that we
-> +	 * execute the if block, then this patches in the read lock, ptdump has
-> +	 * the write lock patched in, therefore ptdump will never read from
-> +	 * a potentially freed PMD table.
-> +	 *
-> +	 * Case 2: If the if block starts executing before ptdump's
-> +	 * static_branch_enable(), then no locking synchronization
-> +	 * will be done. However, pud_clear() + the dsb() in
-> +	 * __flush_tlb_kernel_pgtable will ensure that ptdump observes an
-> +	 * empty PUD. Thus, it will never walk over a potentially freed
-> +	 * PMD table.
-> +	 */
-> +	pud_clear(pudp);
-> +	__flush_tlb_kernel_pgtable(addr);
-> +	if (static_branch_unlikely(&ptdump_lock_key)) {
+OK, I will update this property to firmware-name, and update the driver.
 
-		/* case 1 - ptdump comes first
-		 *
-		 * mmap_read_lock() here will wait on mmap_write_lock()
-	 	 * taken in generic ptdump until it has been released.
-		 */
+> 
+> > +    description: |
+> > +      The name of firmware that should be loaded for this
+> > +      instance. The firmware is gernerated by FourSemi's tuning tool.
+> > +    $ref: /schemas/types.yaml#/definitions/string
+> > +
+> > +  fs,dai-name:
+> 
+> No, it's already in dai-common
 
-> +		mmap_read_lock(&init_mm);
-> +		mmap_read_unlock(&init_mm);
-> +	}
-	} else {
-		/* case 2 - pud_free_pmd_page() comes first
-		 * 
-		 * pud_clear() and __flush_tlb_kernel_pgtable() are
-		 * sufficient for ptdump to observe an empty PUD.
-		 */	 
-	}> +
->  	pmdp = table;
->  	next = addr;
->  	end = addr + PUD_SIZE;
->  	do {
->  		if (pmd_present(pmdp_get(pmdp)))
-> -			pmd_free_pte_page(pmdp, next);
-> +			__pmd_free_pte_page(pmdp, next, false);
->  	} while (pmdp++, next += PMD_SIZE, next != end);
->  
-> -	pud_clear(pudp);
-> -	__flush_tlb_kernel_pgtable(addr);
->  	pmd_free(NULL, table);
->  	return 1;
->  }
-> diff --git a/arch/arm64/mm/ptdump.c b/arch/arm64/mm/ptdump.c
-> index 421a5de806c6..41c9ea61813b 100644
-> --- a/arch/arm64/mm/ptdump.c
-> +++ b/arch/arm64/mm/ptdump.c
-> @@ -25,7 +25,6 @@
->  #include <asm/pgtable-hwdef.h>
->  #include <asm/ptdump.h>
->  
-> -
+OK, delete it in next version, and update the driver.
 
-Stray change. Please drop it.
+> 
+> > +    description: |
+> > +      The name of FS210x DAI, it can be set different name when
+> > +      there are multiple FS210x devices in the system.
+> > +    $ref: /schemas/types.yaml#/definitions/string
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +  - sdz-gpios
+> > +  - fs,fwm-name
+> > +  - '#sound-dai-cells'
+> > +
+> 
+> Missing ref to dai common
 
->  #define pt_dump_seq_printf(m, fmt, args...)	\
->  ({						\
->  	if (m)					\
-> @@ -311,7 +310,9 @@ void ptdump_walk(struct seq_file *s, struct ptdump_info *info)
->  		}
->  	};
->  
-> +	static_branch_enable(&ptdump_lock_key);
->  	ptdump_walk_pgd(&st.ptdump, info->mm, NULL);
-> +	static_branch_disable(&ptdump_lock_key);
->  }
->  
->  static void __init ptdump_initialize(void)
-> @@ -353,7 +354,9 @@ bool ptdump_check_wx(void)
->  		}
->  	};
->  
-> +	static_branch_enable(&ptdump_lock_key);
->  	ptdump_walk_pgd(&st.ptdump, &init_mm, NULL);
-> +	static_branch_disable(&ptdump_lock_key);
->  
->  	if (st.wx_pages || st.uxn_pages) {
->  		pr_warn("Checked W+X mappings: FAILED, %lu W+X pages found, %lu non-UXN pages found\n",Although tempting but I guess encapsulating above ptdump_walk_pgd()
-locking sequence inside a new helper arm64_ptdump_walk_pgd() while
-also explaining this locking might be worth ?
+OK, reference will be added:
+allOf:
+  - $ref: dai-common.yaml#
 
-PUD/PMD vmalloc mappings need to be enabled via these arch callback
-changes via dropping the current CONFIG_PTDUMP_DEBUGFS dependency.
+> 
+> > +additionalProperties: false
+> 
+> And this should be unevaluatedProperties instead
 
-#define arch_vmap_pud_supported arch_vmap_pud_supported
-static inline bool arch_vmap_pud_supported(pgprot_t prot)
-{
-	return pud_sect_supported()
-}
+OK, I will update it to:
+unevaluatedProperties: false
 
-#define arch_vmap_pmd_supported arch_vmap_pmd_supported
-static inline bool arch_vmap_pmd_supported(pgprot_t prot)
-{
-	return return.
-}
+Thanks for your patient response very mush.
+
+Best regards,
+Nick
+
+> 
+> 
+> Best regards,
+> Krzysztof
+> 
 
