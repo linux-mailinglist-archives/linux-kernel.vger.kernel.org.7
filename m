@@ -1,126 +1,139 @@
-Return-Path: <linux-kernel+bounces-717036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-717038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08737AF8E36
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 11:20:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6467AF8E64
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 11:23:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D21C11C824D9
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 09:19:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 765C05A1D6D
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 09:19:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5646A2F272D;
-	Fri,  4 Jul 2025 09:16:21 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A754C262FD2;
+	Fri,  4 Jul 2025 09:16:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ww80NC6e"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69C8F2EFD89;
-	Fri,  4 Jul 2025 09:16:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59D822F3624;
+	Fri,  4 Jul 2025 09:16:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751620580; cv=none; b=pKQAVsTNwnUaV55EkzcDNJ4Nx/P4I2l+j/I76bJWDZjH3xuyxqzCpnnlGlKT83/zxwx2YNwea7uTMHj8w1yPOzEUO09l4e++3wATfvuuxQK9k0lCOmjU2ANbQ7+4+jY7mZV6bleaNiLcEpkB1YOpnT5rfsx3VVG8nGLQldoB+q4=
+	t=1751620602; cv=none; b=ffpDrUkCQh2A1OjRZhQm/EvRYR2IbtrdryXBv8irQwwTxviUxhw+jB3SeoKmvw4V1duBKj1UZ40I1VLjiww8h28xtMg3kewEEmrTNtlkL2vTSwMZaYHUstKIbGyvFufOwv73vICiQdl9Mlia7msGbM3sTes57+YeHbX6uFiUkDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751620580; c=relaxed/simple;
-	bh=MpUbnIYKlBAUil3Thq/LzCLGjaTmHfYdzlw5yOQJwF8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=FJINuljfwhOgDNkb8HHW2N4U7szV8fH5YGCwZsOV4L05PXwYDebb/wuGFqEuD7a7FOtgQTyQ3+Wd5QMIAjXGXk+x8Mhvh/qvg15g93PipbG6dLTk/In4KSxzePA8raXUQJ4K3q69aKbhN610BD96y7fmxB7J1g17pE/WSnOVFQg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4bYScx3mc5z2SSrH;
-	Fri,  4 Jul 2025 17:14:25 +0800 (CST)
-Received: from kwepemh100008.china.huawei.com (unknown [7.202.181.93])
-	by mail.maildlp.com (Postfix) with ESMTPS id 5C9A7140278;
-	Fri,  4 Jul 2025 17:16:14 +0800 (CST)
-Received: from [10.67.121.90] (10.67.121.90) by kwepemh100008.china.huawei.com
- (7.202.181.93) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 4 Jul
- 2025 17:16:13 +0800
-Message-ID: <3c51a0b3-9027-4397-9912-8c7635989dc6@huawei.com>
-Date: Fri, 4 Jul 2025 17:16:13 +0800
+	s=arc-20240116; t=1751620602; c=relaxed/simple;
+	bh=oJ+/1u1U6P/KFUf3Qku17DfC4EhBFRWU71oy+m0Mi20=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IXwMvVnPPOgKbD/eTAHTZyvTm7Tzvi1Qo2ErdTHDiNohC+8ZshwPgnjbWmL4DLfeXikuoB+AbtFiMiQoZIE/xgnikHzF/8U1YXOXS8KCEhVlkVJuwX0BKUGKGFifJcxMlnwTHNw/zBzZLoWVozNtsHM3DvG27QuZODNMOMdcq0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ww80NC6e; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-450cf214200so5387545e9.1;
+        Fri, 04 Jul 2025 02:16:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751620598; x=1752225398; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=FrASRedBj3qOuU4Lr3oIf/QtQ7Obhd71IuXJYVppfjo=;
+        b=Ww80NC6ezPXVC/ckq2+5b5ncV4nI6QdHr14YobZtpzqHdYvItkCkVGWamKTfQkgHj6
+         RVgNhXkfERuvANMfMJHx8s8MRaWNI5NdwD6CY8DMp0BbhKUs9s/5n7hAs5Tzv0c0pADz
+         a1MKSXvBXxNVIHCFH2ev7jfkVh1fog5OQbwUKD8Y55qSkbR2b+wWBJDQKHUg/ybuLQiN
+         sCY0xJ/0zTZ5S1OPuNzm3Ztz1eIp0ya2+dvuTb6CNkkb7/71mQvDSyDDjoQTiEnN5ne0
+         HIzadfEyU4PpopgIeLAgsKSGJGxCoPUOvzQcBYoyPNQKBT23mFa29iFGzPHfjZ7Et94O
+         6oxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751620598; x=1752225398;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FrASRedBj3qOuU4Lr3oIf/QtQ7Obhd71IuXJYVppfjo=;
+        b=uXo2/1hmARokGtsaCkFAe8q9/I+PTn4/8CS8eA2+YyuvKMAKAGf2Vvu2k0kh9uG8cz
+         Jrz/y/zpdUJiQTGAMbXVKv8cMglB3P7BBiqK1E7zXDjnSNSgfmzghtTEfJWd3p/kAptk
+         tLlnOYszMpxRuYlxMHlYVeNCDnRXVTxK9fvg/eluTdN5/Wdgh5jWPjsqWrvIRB50PfoP
+         YrFS4uZAhwwMty5lpxT+Wyniw7wN1LCd3/3EzN8jT9FUXxuuemMPIISak47lBb9LxJV0
+         QagULfRjDTeQtN7KoO9i3RXaY6Fp9+g/1n90QBkys9BedU4rNEr87dMbE4lQuvFu/PwZ
+         PPJA==
+X-Forwarded-Encrypted: i=1; AJvYcCUKAT7h/ZAceBbiHf1woPE1Z+4wODvyVurjAjLB+NbeaeOqr9Vtxczn69/NkbLGMSWO/G1ewyNUb9uIG0s=@vger.kernel.org, AJvYcCVoODygiHVWNXZGjKvnFg11c9G6xqHv6Z/+b2lqgp/jnZzzQcLvTt2n/gxX2OxG7GtO/cFkyQITTh3l6hE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5GpR6LlMSA4sqbtkYmwQPT2rhz1qaAquMPehSe9LGF1jpk+h0
+	qwcDFkwVxU/07SWVUPhqd8l3PxkDplaS1lSFYEBcxLjmlYRgWeX0pP6c
+X-Gm-Gg: ASbGncvFpJABqvY0dPkSZyLy9r17l95xcSWxEh5ndlkobN323FesqeRzj5hkFgmiKwI
+	u/Xl5juImOUB+mBtTEQAvVQ17lxWxj5EIFGJ1IIU7juU5y/g1QYIkIkrJ6JqE5XMdynBA2QXwSo
+	0zaOZ/KTv2Eh40lkdmndzgn80P9kEOQDjnb/rTUj2EWRl7vxSOMOU8SsF8ran2zvF1FCEb85iOv
+	DGnCiOx4vZu4H/YImcJQSOapiP/IPmIcluBBodTzykQOpwRHpaaKHzHNyGQWLk/uaKfI866wuZV
+	WFoQuf1o4rbYq9ri+uFCS/mbEY7vFOrLaCueD1M0ZwzrJr2fDyxb/CQZn/IOZCUe1OqOfmzY8nN
+	h0aTP5MXTbd7o5pDKqeIgoB6d7yQuv+AAZXsz1KZHw4JFkU1P
+X-Google-Smtp-Source: AGHT+IExoSHUzRhz86JAP7f5Iv8dXYAnNcjUlnz4mnvSpomXoY2GDkuUNMtNR/YNZ30kfGG/xqsY0Q==
+X-Received: by 2002:a05:6000:2dc7:b0:3a5:75a6:73b9 with SMTP id ffacd0b85a97d-3b4964f4d95mr1407226f8f.11.1751620598375;
+        Fri, 04 Jul 2025 02:16:38 -0700 (PDT)
+Received: from orome (p200300e41f4e9b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4e:9b00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b47030bd42sm1945202f8f.5.2025.07.04.02.16.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Jul 2025 02:16:37 -0700 (PDT)
+Date: Fri, 4 Jul 2025 11:16:35 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Mikko Perttunen <cyndis@kapsi.fi>
+Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Mikko Perttunen <mperttunen@nvidia.com>
+Subject: Re: [PATCH] drm/tegra: nvdec: Fix dma_alloc_coherent error check
+Message-ID: <xjtnrvbh3dowjhmgrtduo4dqiah35oekbgqc35bdzexug5lmue@kqh6ikyesurj>
+References: <20250702-nvdec-dma-error-check-v1-1-c388b402c53a@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/7] cpufreq: Move the check of cpufreq_driver->get into
- cpufreq_verify_current_freq()
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-CC: <viresh.kumar@linaro.org>, <ionela.voinescu@arm.com>,
-	<linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-	<linuxarm@huawei.com>, <jonathan.cameron@huawei.com>,
-	<zhanjie9@hisilicon.com>, <lihuisong@huawei.com>, <yubowen8@huawei.com>
-References: <20250623133402.3120230-1-zhenglifeng1@huawei.com>
- <20250623133402.3120230-6-zhenglifeng1@huawei.com>
- <CAJZ5v0jz9Bc82AnpcuGLyiu4zC4J6CzHVj7YRmaqhz71S4NEYg@mail.gmail.com>
-From: "zhenglifeng (A)" <zhenglifeng1@huawei.com>
-In-Reply-To: <CAJZ5v0jz9Bc82AnpcuGLyiu4zC4J6CzHVj7YRmaqhz71S4NEYg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- kwepemh100008.china.huawei.com (7.202.181.93)
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="5jbhrvx5g2niyo7s"
+Content-Disposition: inline
+In-Reply-To: <20250702-nvdec-dma-error-check-v1-1-c388b402c53a@nvidia.com>
 
-On 2025/6/23 23:35, Rafael J. Wysocki wrote:
 
-> On Mon, Jun 23, 2025 at 3:34 PM Lifeng Zheng <zhenglifeng1@huawei.com> wrote:
->>
->> Move the check of cpufreq_driver->get into cpufreq_verify_current_freq() in
->> case of calling it without check.
->>
->> Signed-off-by: Lifeng Zheng <zhenglifeng1@huawei.com>
->> ---
->>  drivers/cpufreq/cpufreq.c | 11 +++++------
->>  1 file changed, 5 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
->> index c4891bf5dc84..9b2578b905a5 100644
->> --- a/drivers/cpufreq/cpufreq.c
->> +++ b/drivers/cpufreq/cpufreq.c
->> @@ -1800,6 +1800,9 @@ static unsigned int cpufreq_verify_current_freq(struct cpufreq_policy *policy, b
->>  {
->>         unsigned int new_freq;
->>
->> +       if (!cpufreq_driver->get)
->> +               return 0;
->> +
-> 
-> This will duplicate the check in cpufreq_policy_refresh(), won't it?
+--5jbhrvx5g2niyo7s
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] drm/tegra: nvdec: Fix dma_alloc_coherent error check
+MIME-Version: 1.0
 
-Yes, the check will duplicate but I think it's OK. If remove the check in
-cpufreq_policy_refresh(), the logic will be changed.
+On Wed, Jul 02, 2025 at 11:08:07AM +0900, Mikko Perttunen wrote:
+> From: Mikko Perttunen <mperttunen@nvidia.com>
+>=20
+> Check for NULL return value with dma_alloc_coherent, in line with
+> Robin's fix for vic.c in 'drm/tegra: vic: Fix DMA API misuse'.
+>=20
+> Fixes: 46f226c93d35 ("drm/tegra: Add NVDEC driver")
+> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+> ---
+>  drivers/gpu/drm/tegra/nvdec.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
 
-> 
->>         new_freq = cpufreq_driver->get(policy->cpu);
->>         if (!new_freq)
->>                 return 0;
->> @@ -1922,10 +1925,7 @@ unsigned int cpufreq_get(unsigned int cpu)
->>
->>         guard(cpufreq_policy_read)(policy);
->>
->> -       if (cpufreq_driver->get)
->> -               return __cpufreq_get(policy);
->> -
->> -       return 0;
->> +       return __cpufreq_get(policy);
->>  }
->>  EXPORT_SYMBOL(cpufreq_get);
->>
->> @@ -2479,8 +2479,7 @@ int cpufreq_start_governor(struct cpufreq_policy *policy)
->>
->>         pr_debug("%s: for CPU %u\n", __func__, policy->cpu);
->>
->> -       if (cpufreq_driver->get)
->> -               cpufreq_verify_current_freq(policy, false);
->> +       cpufreq_verify_current_freq(policy, false);
->>
->>         if (policy->governor->start) {
->>                 ret = policy->governor->start(policy);
->> --
->> 2.33.0
->>
+Applied to drm-misc-fixes.
 
+Thanks,
+Thierry
+
+--5jbhrvx5g2niyo7s
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmhnm/MACgkQ3SOs138+
+s6ETEBAAmR4QvTrOlFKPrmVwr3KPiG9rXswxyZZWFh57ku8z0WkowahCyrAe4sTn
+7Q6yHWTW2uCmnbrXx+BFXIl9Uas2RjUtAGxRSzLtKyyIuNFi74wWcTV9NwWFib2Y
+2ibHxnqBqM6ZxZWqM/0s2Poz3J8Wac8BF+BTCx9xx1pOF3piaweNmxG2HShVajnu
+jSr08e7j22E8/zbTtcPHklkEzG8/nDBiPm32vEqrZz8guJ11MW2FNV+wOYxUN611
+2/VN6iz8R2L/EYY4g1bn38PpuOtBKWLdI/F2ryjXaWCK4gLMo/1DRf8adFxAY1z9
+/rc11VutI8m06p5q75Lwl/0TsJ09Sm1zS/Gj52l9SAcd/QtFSyfL5sbP/HahrjpB
+VntCOz7l0wpTxS1koodPxtgvg5ifaQzmjnaVhJgETaYhY4grWG2jBXqiRlZUh2hC
+ylhC4aoPs3ypiQB+lPlx+ZFM5To0B3B19WRArnQw8QBYJhSnJafg7EK6ziK5NcBd
+RS4sksEEBoIExoZF6WjpwQzDWn7fxcwYsl8EyGWRDarKi3WXslL6u+DvJO/mHYso
+t+0Utjz5lf+LmwWD5iECFPqBFMyg02GyGpM+qZ4FWz1NhtsSZOVquD0waNNzOGmB
+dCILQdmvlzwm0liPxZ+/47TdjOc/Q+xQCcW6qo/RseIxvfqg0U0=
+=a2V8
+-----END PGP SIGNATURE-----
+
+--5jbhrvx5g2niyo7s--
 
