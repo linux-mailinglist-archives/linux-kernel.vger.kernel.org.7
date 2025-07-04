@@ -1,177 +1,237 @@
-Return-Path: <linux-kernel+bounces-717668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-717674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7764AF9733
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 17:43:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D0F18AF9741
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 17:46:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B1623B9288
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 15:42:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E23213A7FD3
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 15:45:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83B722BEC28;
-	Fri,  4 Jul 2025 15:42:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D898229B790;
+	Fri,  4 Jul 2025 15:45:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="khgoaMPK"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hCXv4ilm"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43567230BF8
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 15:42:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72CEE140E34;
+	Fri,  4 Jul 2025 15:45:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751643766; cv=none; b=uS9Ob8d3YViMwjp5+Ru0o55d6f//Hh2JtIWsucaWdmO8qAf11Q4UxqGaHvpmy0G+t74J0DKqcCrZwBgVyTfPwgrvMXgfOuh9BImDv/D19f7gnahinLdRJ6tfALWfGFvUIR5d0z0s5qkF16Xlug5ZrBkuNTs3Rj/rM0ulUWrjRh8=
+	t=1751643956; cv=none; b=cSpAX5rRDavsfR0bedwr9WcqAZNyl8TdRDTrOgSCJAm0i7rSVS5CDTwDy7BrvSNwZQfzclxaGiAg9/Pr9/qwuXXGA2+9N6tQXXZLmL0ys6NUlVlXnWf46kVzHGdoyK6/h0FAqp1+dt9P8g0YMzM/Dn7n3+qlYuS+ISBT2gEe2Cg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751643766; c=relaxed/simple;
-	bh=bQzYc/OvORs2+MDEId9o9V78KPf0mH4KiI9ntrGbOrY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=t6ydsx/uqZ/wILDP1H7JDxVgzwAjVZ73HCtlo6fVjo2a38XHzBh6oa7qOrE+xNANebXJ9K7LyvEgFBAwa1sNCwUHzQrHMTdz7iDVybLHNvS/V7fcfvVn8zJlQb3nAiTF3vmlcv9XCxjnePitE/PhhzFR1ZMAXzAAnWiXDmH+vJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=khgoaMPK; arc=none smtp.client-ip=209.85.218.53
+	s=arc-20240116; t=1751643956; c=relaxed/simple;
+	bh=Qfg1bTdE3fo9bxLBT9hGP1+7jI+26Qt8XFcv2TwSyc0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MLqjfDxKDflsE3FvaIauKDr6igGJbyHtKA1oGb2/9bvtaILnvZOekdfoewOJuLnBgvuVrgy2AZIJRBrI4jhCZSALnMQ9pFV0vquBn5qz509IHL6g8cib0TyVyyPXy0SfLJ3ID4chOaMbkithW5qpsmJwiYdcGLICtirZYvgcNMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hCXv4ilm; arc=none smtp.client-ip=209.85.128.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-ae3703c2a8bso211597466b.0
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Jul 2025 08:42:44 -0700 (PDT)
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-450ccda1a6eso7938425e9.2;
+        Fri, 04 Jul 2025 08:45:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751643763; x=1752248563; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1751643952; x=1752248752; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=j8CmEkvx6j+SIdP/Nex5ihxr+2kLOB0LBXIuUiiK2ew=;
-        b=khgoaMPKXf0npr4KT6vFakTt+YRtyCh3Lgo0QWjIL7sCZaHZ2kaIXPgT+jeNuqlE22
-         i8oez8/yY1dm2VrfHH4QD/5AAvZQhJdTZcCRVEnNMqvqTPv/X7tMX2+kUv0c0pr6VJaN
-         iRzmWHrMNPWdg8cOjHp3gUt0OGzIE033a9YRBliqrK7SQgmQbfha9r6rczjdU8YrTYpm
-         kL3Pijp6SRbRAFn0AKzpcKxhmYNByJUxD2gK7BiMafnQJSvbpahy9AwMYS/myuOiNAMV
-         +TN4+iDAxO018hL2IWfrg39yUyPjTdMSvZdzlU60t5DHJiayv8lva9DvIgu7Sv5gVW4d
-         Qa4Q==
+        bh=V7tRFxTXdKxo++BEADlGZZAUvVfHDhOeQkPo5DocB8o=;
+        b=hCXv4ilmJo4FzBmywVrnhIkt+8o/sLkS5GTAk3l/smr6fJhKoJMCKBZAX6+kGoSKqc
+         m37uqeuekKlXWOJW7ftW8iFqtocyaELioG64tIv+wA3mPy8asdffGiRlRhnqjFAAv/eQ
+         huZKF2jQ07fXOsfLaG6K7sR+KBQXMGuO+ubFF20yImHag0u6ocRJE253ibiTErgKpdpn
+         Cd8SvRQrDY6+DlyrI3HSJSFHgAEHck3JR4Is9lWFrpdQVV/2l/pDYQQTAuN0h3WvZhOA
+         G7o0PEbnKVjsCKC4J4w5HpbouexIbmwVFLy/p0TFBqCNJR3r553fXK48UhVinv7FvbRH
+         zAcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751643763; x=1752248563;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=j8CmEkvx6j+SIdP/Nex5ihxr+2kLOB0LBXIuUiiK2ew=;
-        b=JN6pL4hswgL7rXvLE+1HMSqaPd+N+XMRt+HH6leTedY1ZqXBoNbhcMW9oraL80k8jA
-         KvQnODQ0kygWSrYz2VCNwHVNiFvNLM7p2Ch14YZSFkA6DVB3ZRSFM4Bw/WjqAVt2BYjW
-         UdEIdXls7eqW3uHLAYChRdgYgb2E2TPjrxXNB7sEaM5BMrX3JQxUgD/td75g+W6yfT18
-         cjuS5s0kw8aXffrHpV820JVrTB90DB1Vxyw/jmh0xdYld1wG7Cx6sSz1ZrXNzLk3fNtD
-         rI6Xvwc+kURCx5zZf6PV6Ybz090Doqad84fLvV9EGf79eUbhYD3lXU47+0sy/0GmGWKf
-         aoAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUHh/qE5STlps03xqsoMLlj5ZqQoU3WuSZS4j/MxQRvzNcOS+2Pw2CTa6yJHjVE658toIGDRZqqQp424Kg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6OXrKlW/mZKX8cSzorPAaXLSmMwE1/6KHk47VRpx1xTTKiRGO
-	RcsUOXUoF02Ed4Ji2Z4fNiemccajIV/ekPm9d4o7JTMeu72hyc4tUQjmTNz1POiOESG2mwnQIZW
-	PbCeuzU0pmSb/g80rnVjoRFnF5QAmu0I=
-X-Gm-Gg: ASbGncsvsYs9wp/XeptgENwB4+J6efo/uQ6XaIDjqVAwZdL3BTt5dN1ybxeeTnnChee
-	zfoJqxrh96jYqglH01asU3JK+DaPmwvAqrW3fhtjoMWs46lnC+XgTk0QBW1awTMzf39RXq8b6ne
-	HNfFCXDrKqAaPv3noJD2DByOceCEASAA3bukcTahIjwAs=
-X-Google-Smtp-Source: AGHT+IHK0+UoFkqi8/r+0hmUFbXD7t2ypN1m2X7cWdjIuLAhgsN1aaeHSLen1ejO4/BdMdlQDMNGaKku4Q88hgrL5Es=
-X-Received: by 2002:a17:907:7f8d:b0:ae0:68a8:bd6a with SMTP id
- a640c23a62f3a-ae3fbc4af04mr269371266b.15.1751643763390; Fri, 04 Jul 2025
- 08:42:43 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1751643952; x=1752248752;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:sender:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=V7tRFxTXdKxo++BEADlGZZAUvVfHDhOeQkPo5DocB8o=;
+        b=GCMzDDoqGZ6y7UfINhUhJ0gvx+ltldUW1aWrPRXRY1adJNQ6S0t6P8szJlIoWfRta9
+         kNPrqRAFK1XDFcMa9aw3wHXgz5hoGpISY798kZfDEXNOAYVGHzsxoIa9vxaSzQA6n1g8
+         t1i5ocx1vGhMcFog4mukUhpgVLyqoqK+ntcmzMz9p04wlEMrnV2D6B7aQlo84WaGM4Rb
+         9DNuF1Pals00NvZbrCEfP3cvNCG9xgcbBn+FD3XSCPbcWYQgTdC+7jxrYC9SgFhauK+W
+         7j8lUbSvNSGC64RIhsIcKFTLoAF+k92K9APOFm5YRmTwsEPFQeRm51CBwVIpeOYA8rvB
+         A+8w==
+X-Forwarded-Encrypted: i=1; AJvYcCVN4m7WRye9aYkydQu8ejwP+uVdumOkA/sRgLmKGYPpuRsbU+eirRqYmxWkA7mRF6Q4KdY4m8BKo/n3wSQC@vger.kernel.org, AJvYcCVXJToyIlVwOWsvG2cMfgcQ5nNdzQSGqui8Tk+R8Y6AohDrsmLAe4wwkX/BCZvpmLPCb3O4nEolpeg=@vger.kernel.org, AJvYcCXWGJV8jwyKl7Ac1rvGAcVCRlJtqZd0fEB+AJgajU+dJkJLlUNI9d79u0UWXSVfy9v3uMnZPfS1aRvsTaw9SmQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2lC94HPjVYcA5ZfSnRD3XQ1Zi98zh6wnK057HWNx3Ljobl8nC
+	go3hpf11w0fd24en6THoO5phG4f5Y2b4cgvRzyl+MV/7umrooF6d3oU1ep+Zz5QBkrE=
+X-Gm-Gg: ASbGncvW8J/Iu2i561ITRMYpN3PKBG0NARbA3641abw/n7by3KD5ben5iE654F/+Fvk
+	6UXUHWP+3xDeHT2rxYyQHR5ZrIspLaxAkJad+TpPKx7MX6h3RPv8L2OUHwonxvxS1f5skK9THrC
+	MOiU0WWUtXvEmOtY9zthk89HXSczUonlwjSJlhAeyXhbmV2izb7IXcnHpWJK7UNU/j7kRGdU61D
+	JIlEFCxfMs2ws1qi1j7fij0TMrRkFL09aVO0r2G4kDDg/fju2+f4GiGlQgMNMveTW7P+JjARw9V
+	clypCKrtPGYh9KLHAMb+XhsR204czBOhUO8PU2JDzuQ2/KgfqeOcuQ8fCFwH5qJakWfXk1vSz6u
+	+ouOfdh8i7Zlq1xEYpl2euYvYnue6Q79yHOMM8SUfZ0SMJ3I=
+X-Google-Smtp-Source: AGHT+IGzGtD71lv8K59LG0FwoUFaeTU046UI05a+xTZIHpFbiVsVKRycTLR2W4Ctsi47v5MoDIab6A==
+X-Received: by 2002:a05:600c:6745:b0:43d:3df:42d8 with SMTP id 5b1f17b1804b1-454b3069f2cmr31628505e9.6.1751643951525;
+        Fri, 04 Jul 2025 08:45:51 -0700 (PDT)
+Received: from igor-korotin-Precision-Tower-3620.airspan.com ([188.39.32.4])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454b168664bsm30154705e9.20.2025.07.04.08.45.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Jul 2025 08:45:50 -0700 (PDT)
+Sender: Igor Korotin <igorkor.3vium@gmail.com>
+From: Igor Korotin <igor.korotin.linux@gmail.com>
+To: Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Asahi Lina <lina+kernel@asahilina.net>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Alex Hung <alex.hung@amd.com>,
+	Tamir Duberstein <tamird@gmail.com>,
+	Xiangfei Ding <dingxiangfei2009@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org,
+	linux-i2c@vger.kernel.org
+Subject: [PATCH v2 4/4] samples: rust: add Rust manual I2C device creation sample
+Date: Fri,  4 Jul 2025 16:43:41 +0100
+Message-ID: <20250704154345.1198721-1-igor.korotin.linux@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250704153332.1193214-1-igor.korotin.linux@gmail.com>
+References: <20250704153332.1193214-1-igor.korotin.linux@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250703084502.394406-1-chenmiao.ku@gmail.com>
- <f7e12c6d-892e-4ca3-9ef0-fbb524d04a48@ghiti.fr> <20250703114018.6fab0b8a@batman.local.home>
- <5ac2c90c-5907-40ce-a31e-05cb6d88fa52@ghiti.fr> <CAKxVwgeDcqo83ZV+xBcHwNuMk6yeU+yp7RYo22OARAVOBgrsJQ@mail.gmail.com>
- <8160f56d-967d-4fa0-b996-0e0a2aa8be20@ghiti.fr>
-In-Reply-To: <8160f56d-967d-4fa0-b996-0e0a2aa8be20@ghiti.fr>
-From: Miao Chen <chenmiao.ku@gmail.com>
-Date: Fri, 4 Jul 2025 23:42:06 +0800
-X-Gm-Features: Ac12FXzosVTkYaajpL9wrNvggbtf0aYJ_dE6_pPU6nEw_f7Eo0F87T3G1ado5f0
-Message-ID: <CAKxVwgeZhsf3uXhiTLfDU1aszV4i8pfvFTJQd_D_hWLSaQvrdQ@mail.gmail.com>
-Subject: Re: [PATCH] riscv: ftrace: Fix the logic issue in DYNAMIC_FTRACE selection
-To: Alexandre Ghiti <alex@ghiti.fr>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Alex,
+Add a new `rust_device_i2c` sample, showing how to create I2C device
+on a certain `I2CAdapterRef` using `I2cBoardInfo`. Demonstrates
+automatic unregister of such I2C device when driver is unloaded
 
-Ok, I'll start my work right now.
+Signed-off-by: Igor Korotin <igor.korotin.linux@gmail.com>
+---
+ MAINTAINERS                     |  1 +
+ samples/rust/Kconfig            | 13 +++++++++
+ samples/rust/Makefile           |  1 +
+ samples/rust/rust_device_i2c.rs | 50 +++++++++++++++++++++++++++++++++
+ 4 files changed, 65 insertions(+)
+ create mode 100644 samples/rust/rust_device_i2c.rs
 
-Thanks,
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 82b469b8ecb9..23bab3c8e1ef 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -11365,6 +11365,7 @@ F:	include/uapi/linux/i2c-*.h
+ F:	include/uapi/linux/i2c.h
+ F:	rust/helpers/i2c.c
+ F:	rust/kernel/i2c.rs
++F:	samples/rust/rust_device_i2c.rs
+ F:	samples/rust/rust_driver_i2c.rs
+ 
+ I2C SUBSYSTEM HOST DRIVERS
+diff --git a/samples/rust/Kconfig b/samples/rust/Kconfig
+index 55aeb12cd7f7..394618aaf5ef 100644
+--- a/samples/rust/Kconfig
++++ b/samples/rust/Kconfig
+@@ -62,6 +62,18 @@ config SAMPLE_RUST_DMA
+ 
+ 	  If unsure, say N.
+ 
++config SAMPLE_RUST_DEVICE_I2C
++	tristate "Manual I2C Device"
++	depends on I2C && I2C_CHARDEV
++	help
++	  This option builds the Rust I2C device manual creation
++	  sample.
++
++	  To compile this as a module, choose M here:
++	  the module will be called rust_device_i2c.
++
++	  If unsure, say N.
++
+ config SAMPLE_RUST_DRIVER_I2C
+ 	tristate "I2C Driver"
+ 	depends on I2C
+@@ -124,3 +136,4 @@ config SAMPLE_RUST_HOSTPROGS
+ 	  If unsure, say N.
+ 
+ endif # SAMPLES_RUST
++
+diff --git a/samples/rust/Makefile b/samples/rust/Makefile
+index 141d8f078248..ee830da1a9d2 100644
+--- a/samples/rust/Makefile
++++ b/samples/rust/Makefile
+@@ -5,6 +5,7 @@ obj-$(CONFIG_SAMPLE_RUST_MINIMAL)		+= rust_minimal.o
+ obj-$(CONFIG_SAMPLE_RUST_MISC_DEVICE)		+= rust_misc_device.o
+ obj-$(CONFIG_SAMPLE_RUST_PRINT)			+= rust_print.o
+ obj-$(CONFIG_SAMPLE_RUST_DMA)			+= rust_dma.o
++obj-$(CONFIG_SAMPLE_RUST_DEVICE_I2C)		+= rust_device_i2c.o
+ obj-$(CONFIG_SAMPLE_RUST_DRIVER_I2C)		+= rust_driver_i2c.o
+ obj-$(CONFIG_SAMPLE_RUST_DRIVER_PCI)		+= rust_driver_pci.o
+ obj-$(CONFIG_SAMPLE_RUST_DRIVER_PLATFORM)	+= rust_driver_platform.o
+diff --git a/samples/rust/rust_device_i2c.rs b/samples/rust/rust_device_i2c.rs
+new file mode 100644
+index 000000000000..a056736b1b97
+--- /dev/null
++++ b/samples/rust/rust_device_i2c.rs
+@@ -0,0 +1,50 @@
++// SPDX-License-Identifier: GPL-2.0
++
++//! Rust I2C DeviceOwned usage sample.
++//!
++//! This sample driver manually creates i2c_client using I2C board info
++//! and pointer to I2C Adapter structure.
++//!
++//! For reproduction of the scenario one should compile kernel with i2c-dev and i2c-stub
++//! modules enabled. f
++
++use kernel::{c_str, device::Core, i2c, prelude::*};
++
++struct SampleDriver {
++    _owned: i2c::DeviceOwned<Core>,
++}
++
++// SAFETY: SampleDriver contains only one field `owned: DeviceOwned<Core>`,
++// which is initialized in `init()` and dropped on module unload.
++// There is no interior mutability or concurrent access to its contents
++// (all I²C operations happen in single-threaded init/drop contexts),
++// so it is safe to share &SampleDriver across threads.
++unsafe impl Sync for SampleDriver {}
++
++const BOARD_INFO: i2c::I2cBoardInfo = i2c::I2cBoardInfo::new(c_str!("rust_driver_i2c"), 0x30);
++
++impl kernel::Module for SampleDriver {
++    fn init(_module: &'static ThisModule) -> Result<Self> {
++        pr_debug!("Probe Rust I2C device sample.\n");
++
++        let adapter = i2c::I2cAdapterRef::get(0).ok_or(EINVAL)?;
++
++        let device = i2c::DeviceOwned::<Core>::new(&adapter, &BOARD_INFO).ok_or(EINVAL)?;
++
++        Ok(Self { _owned: device })
++    }
++}
++
++impl Drop for SampleDriver {
++    fn drop(&mut self) {
++        pr_debug!("Drop Rust I2C device sample.\n");
++    }
++}
++
++kernel::prelude::module! {
++    type:SampleDriver,
++    name:"rust_device_i2c",
++    authors:["Igor Korotin"],
++    description:"Rust I2C device manual creation driver ",
++    license:"GPL v2",
++}
+-- 
+2.43.0
 
-Chen Miao
-
-
-Alexandre Ghiti <alex@ghiti.fr> =E4=BA=8E2025=E5=B9=B47=E6=9C=884=E6=97=A5=
-=E5=91=A8=E4=BA=94 20:28=E5=86=99=E9=81=93=EF=BC=9A
->
-> Hi Chen Miao,
->
-> On 7/4/25 04:06, Miao Chen wrote:
-> > Hello Alex,
-> >
-> > Should I wait for Steven to finish his work before starting mine? He
-> > seems to be refactoring a lot of CONFIG logic, which might cause
-> > conflicts.
->
->
-> I would say no, don't wait for Steven since his work won't land in 6.16,
-> we need a fix to prevent build failures for this release.
->
-> Thanks,
->
-> Alex
->
->
-> >
-> > Thanks,
-> >
-> > Chen Miao
-> >
-> > Alexandre Ghiti <alex@ghiti.fr> =E4=BA=8E2025=E5=B9=B47=E6=9C=884=E6=97=
-=A5=E5=91=A8=E4=BA=94 00:06=E5=86=99=E9=81=93=EF=BC=9A
-> >
-> >     Hi Steve,
-> >
-> >     On 7/3/25 17:40, Steven Rostedt wrote:
-> >     > On Thu, 3 Jul 2025 15:00:02 +0200
-> >     > Alexandre Ghiti <alex@ghiti.fr> wrote:
-> >     >
-> >     >
-> >     >> We could support static ftrace, but I don't think we should, so
-> >     I agree
-> >     >> with this patch. In fact I had just prepared a patch for this he=
-re
-> >     >>
-> >     https://github.com/linux-riscv/linux/pull/556/commits/0481092a5bec3=
-818658981c11f629e06e66382b3
-> >     >> which is a bit more complete since I have removed some dead code=
-.
-> >     >>
-> >     >> Let's see what other people think about supporting static
-> >     ftrace, I have
-> >     >> added Steven in cc if he has an opinion.
-> >     > Yes, please only support the dynamic ftrace. The static is there
-> >     only
-> >     > to help archs to get ftrace up and running. Once dynamic is
-> >     supported,
-> >     > static should not be used.
-> >     >
-> >     > Hmm, maybe I should just remove the prompt for DYNAMIC_FTRACE.
-> >     >
-> >     > That is, once it is supported by an architecture, it should be
-> >     the only
-> >     > thing used.
-> >     >
-> >     > -- Steve
-> >
-> >
-> >     Thanks for your input.
-> >
-> >     @ChenMiao: can you come up with a v2 that, in addition, deletes
-> >     the dead
-> >     code and with a commit log that explains what Steven said? If not
-> >     possible for you, let me know and I'll do it.
-> >
-> >     Thanks,
-> >
-> >     Alex
-> >
 
