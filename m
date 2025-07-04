@@ -1,129 +1,122 @@
-Return-Path: <linux-kernel+bounces-716508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED1A1AF8775
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 07:53:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6460EAF8769
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 07:51:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2EA61C47F70
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 05:53:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C517F5869B9
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 05:51:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD83220E31C;
-	Fri,  4 Jul 2025 05:53:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="yA9lgoBL"
-Received: from omta040.useast.a.cloudfilter.net (omta040.useast.a.cloudfilter.net [44.202.169.39])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0BAE20E314
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 05:52:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.39
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B4F020E314;
+	Fri,  4 Jul 2025 05:51:36 +0000 (UTC)
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE29A205E02;
+	Fri,  4 Jul 2025 05:51:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751608382; cv=none; b=B5AOqoB53yUpaxwDB+rJG/jN1fyZQVjyiFtZjIoyIrfj3v/rISwjGls+TPhsSsLtZE4+o3/3vK36/+bBS0V+aHbF0zqCdEQ0x7NLbCrqSSgSb4AomEJnw2/2eGgSIsas8UflQsLRtOv1iz/CBI1R/T0dKyFp8a5RxDgdTtRrIMw=
+	t=1751608296; cv=none; b=rp11rtQfYrwNbrIgDC56rl+6g8pFBdP9O4k/gfzVlD9qhtigyN2q++iVT47ojI8g4cNy8Cgc33o4+WdOcTVerNcUe2Px+eVUkJt8TlHdgRaYqyvd4hGeQToskweuP44ODVnHxPQkhLrlW21EUp5wDl/E4tc1WZOXnmmsJD7S/6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751608382; c=relaxed/simple;
-	bh=rA4LBDewxvPyjFV5f8OYkZ7aP5FZ1aARUOL3n/eDFb0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BO98Vu/sgT0R71aUREhLU8MHC+MvK8Q+ImJ31p/2YZNlfeLzYXXh6KkDtzkbThfxmeJ/bt31BI9wKvooDa1D9L/ekcOlYzccIV1hHEtUcU8K8CbdNzNJh19Au5NOV7dyHI+LIdZLrkZjg5h1nwuMRUSjKQepI15BiQqhv5/l3pg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=yA9lgoBL; arc=none smtp.client-ip=44.202.169.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
-Received: from eig-obgw-5007a.ext.cloudfilter.net ([10.0.29.141])
-	by cmsmtp with ESMTPS
-	id XX7ju8X4SVkcRXZKUuWsKY; Fri, 04 Jul 2025 05:51:22 +0000
-Received: from box5620.bluehost.com ([162.241.219.59])
-	by cmsmtp with ESMTPS
-	id XZKTulnY1DFILXZKUuW6g7; Fri, 04 Jul 2025 05:51:22 +0000
-X-Authority-Analysis: v=2.4 cv=YtIJRZYX c=1 sm=1 tr=0 ts=68676bda
- a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
- a=HaFmDPmJAAAA:8 a=ZJCAKeS_rTr8ZDEThcMA:9 a=QEXdDO2ut3YA:10
- a=nmWuMzfKamIsx3l42hEX:22 a=Wh1V8bzkS9CpCxOpQUxp:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
-	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=O9MMJkEsR1KX+OJ9KCLO9TodMSMz2wW/Kp46ei93ju8=; b=yA9lgoBLNBZ0ejKSWPAEj13tkT
-	xmrj+Yy9lqFly1B/TrFac5lJrA2Km//8QSBEwgldGZW4oraWoHHnV4CCInadGR5iRNdCEmAzr9whs
-	QRZs3Y3iMYina+DaDMbk5qRIwmV/Yb3RoiFnXUCjfmOXOYnm0bXU1ypEv1bdxdOSLP+q4EJBDE70V
-	heDCyD/WqbIPTq3sFTiJeEEzKhjXcFIN9ihsvKXn1IINuEt0zFrr3utrr5CobUnWT/+rIfFjeCmu1
-	8Y9xKhmnCxWvIv+l/viwJA9LWbPDSW1c4qqS7Ov3HXXaqumlGuCsILLO2ZwAdyYP8v0t5fc8sl45X
-	0XjrApJQ==;
-Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:33296 helo=[10.0.1.116])
-	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.98.1)
-	(envelope-from <re@w6rz.net>)
-	id 1uXZKR-00000000mGp-1H4y;
-	Thu, 03 Jul 2025 23:51:19 -0600
-Message-ID: <d984a233-edfe-4748-bc07-0c32f8d27458@w6rz.net>
-Date: Thu, 3 Jul 2025 22:51:11 -0700
+	s=arc-20240116; t=1751608296; c=relaxed/simple;
+	bh=fB+FQaLeKQCqcyQ3cf1/iOclesosPJUHqJkKrxwT/tU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Scjiwt5TN2UZSmOk2wocdRpMWkwICNdNQYt5VVUo6EyvgMrfUiwQHsRixB81DtelTduJjbSr4PlNb+FXyG+6C/3T/3sVTnBgC9rAonLafLPM52uUCjCdOGeB7wqAgS3T8dO5OxKHhzOy35DOHQ9pDvF5yY87AyCD/b2WIWb7xcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
+X-CSE-ConnectionGUID: g1AZybX6R5qI5qLyChaz/A==
+X-CSE-MsgGUID: H4CsqKgeTgOTKPKnnf1UCQ==
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 04 Jul 2025 14:51:32 +0900
+Received: from [127.0.1.1] (unknown [10.226.78.19])
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id D785941566DC;
+	Fri,  4 Jul 2025 14:51:28 +0900 (JST)
+From: Michael Dege <michael.dege@renesas.com>
+Subject: [PATCH 0/3] net: renesas: rswitch: R-Car S4 add HW offloading for
+ layer 2 switching
+Date: Fri, 04 Jul 2025 07:51:14 +0200
+Message-Id: <20250704-add_l2_switching-v1-0-ff882aacb258@renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.15 000/263] 6.15.5-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-References: <20250703144004.276210867@linuxfoundation.org>
-Content-Language: en-US
-From: Ron Economos <re@w6rz.net>
-In-Reply-To: <20250703144004.276210867@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - box5620.bluehost.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - w6rz.net
-X-BWhitelist: no
-X-Source-IP: 73.223.253.157
-X-Source-L: No
-X-Exim-ID: 1uXZKR-00000000mGp-1H4y
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.116]) [73.223.253.157]:33296
-X-Source-Auth: re@w6rz.net
-X-Email-Count: 16
-X-Org: HG=bhshared;ORG=bluehost;
-X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfMmAsy6owuDkKu8eQa7NdsG8xzbH76CPTjfG2uqjvM+C+fdphysf8wTxnPH2AVkEkwJ7ZTxIeq0i+PC85cr3aiRFVr2TTIycbINy2gyaVzSHXtgSHvHs
- 8PDa7aQ/cCTovJwTKTOdeQyjflJ62iMatOS9lyvzJmvce0/M4SRq+9F9QwHYT0/wzLtWtve4/JyIqWXnAEujMBEycI4mFPqSky8=
+X-B4-Tracking: v=1; b=H4sIANJrZ2gC/x3MQQqAIBBA0avErBMcS4OuEhHRTDkQFhoVRHdPW
+ r7F/w8kjsIJ2uKByKck2UIGlgVMfgwLK6FsMNpY7dCpkWhYzZAuOSYvYVFVbREb1JY0Qc72yLP
+ c/7Lr3/cDNTQpFGIAAAA=
+X-Change-ID: 20250616-add_l2_switching-345117105d0d
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, 
+ =?utf-8?q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, 
+ Paul Barker <paul@pbarker.dev>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Michael Dege <michael.dege@renesas.com>, 
+ Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1751608288; l=1696;
+ i=michael.dege@renesas.com; s=20250523; h=from:subject:message-id;
+ bh=fB+FQaLeKQCqcyQ3cf1/iOclesosPJUHqJkKrxwT/tU=;
+ b=9eG/9Tow82L7TUDK6gPh8F9s8z+spio+oYe9J32Vnm7cje21J80TmwW8oV86vTrIT0+pJrGes
+ Bs/pOO/Y/yeDYod713GMj9V6JGgJ7+ExKulhOD1YLkDblD/VT0lF13h
+X-Developer-Key: i=michael.dege@renesas.com; a=ed25519;
+ pk=+gYTlVQ3/MlOju88OuKnXA7MlapP4lYqJn1F81HZGSo=
 
-On 7/3/25 07:38, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.15.5 release.
-> There are 263 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sat, 05 Jul 2025 14:39:10 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.15.5-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.15.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+Hello!
 
-Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
+The current R-Car S4 rswitch driver only supports port based fowarding.
+This patch set adds HW offloading for L2 switching/bridgeing. The driver
+hooks into switchdev.
 
-Tested-by: Ron Economos <re@w6rz.net>
+1. Rename the base driver file to keep the driver name (rswitch.ko)
+
+2. Add the L2 driver extension in a separate file. The HW offloading
+is automatically configured when a port is added to the bridge device.
+
+Ussage example:
+ip link add name br type bridge
+ip link set dev tsn0 master br
+ip link set dev tsn1 master br
+ip link set dev br up
+ip link set dev tsn0 up
+ip link set dev tsn1 up
+
+Layer 2 traffic is now fowarded by HW from port TSN0 to port TSN1.
+
+3. Provides the functionality to set the MAC table ageing time in the
+Rswitch.
+
+Usage example:
+brctl setageing br 300
+
+Thanks,
+
+Michael
+
+Signed-off-by: Michael Dege <michael.dege@renesas.com>
+Signed-off-by: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+---
+Michael Dege (3):
+      net: renesas: rswitch: rename rswitch.c to rswitch_main.c
+      net: renesas: rswitch: add offloading for L2 switching
+      net: renesas: rswitch: add modifiable ageing time
+
+ drivers/net/ethernet/renesas/Makefile              |   1 +
+ drivers/net/ethernet/renesas/rswitch.h             |  43 ++-
+ drivers/net/ethernet/renesas/rswitch_l2.c          | 344 +++++++++++++++++++++
+ drivers/net/ethernet/renesas/rswitch_l2.h          |  15 +
+ .../ethernet/renesas/{rswitch.c => rswitch_main.c} |  88 +++++-
+ 5 files changed, 485 insertions(+), 6 deletions(-)
+---
+base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
+change-id: 20250616-add_l2_switching-345117105d0d
+
+Best regards,
+-- 
+Michael Dege <michael.dege@renesas.com>
 
 
