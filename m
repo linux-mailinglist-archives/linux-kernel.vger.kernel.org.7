@@ -1,231 +1,123 @@
-Return-Path: <linux-kernel+bounces-717422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-717424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20FF2AF9407
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 15:26:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9352BAF9408
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 15:26:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA202543BF6
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 13:24:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5FD4018984BB
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 13:26:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5A9E2FCE35;
-	Fri,  4 Jul 2025 13:22:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFA2D2F94A7;
+	Fri,  4 Jul 2025 13:25:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="P58YDzJa"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="ktxANxFj"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B2AA2D8764
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 13:22:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0519A2FC3DA;
+	Fri,  4 Jul 2025 13:25:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751635356; cv=none; b=Ee3+bDmTGbJjlfMxOUjRjrEXV1ZQitliglwkDcLEHmK9ASnCDLoMbxPldAI2S7NlLWn7jqFISErinHs1DG+usrsBdPClaTpX4KgBJfJs084Dk6T+vsBQzA2wnieL4bwwnrRB1Yemt4NKaK6qiMaY1JeN8npKoCLct45nel79F1U=
+	t=1751635548; cv=none; b=T5/E+FYmxl+4/Kn9rESTu3Ud6eilzFVIanuK9qZH1Iyyndqln50PfhkyGVKNe72vlHasWu+0Wn7XgmvQxHh9c8+uBur7Xef9DfnBOUe0GtPv58o78WfF+2Jumt2o/tktQO6GuR/EfaFrGe/swXSepVk9UK9bREVM5EQctlUBir0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751635356; c=relaxed/simple;
-	bh=NZwEDTKG16s4GLu3/3kVH1yKX1Wi2eX9GJGCc1Q3C0E=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=IsxcZXL6ZzNSMzV/GYeq4s6pg67/kn66JxzcnGBqsXiiKpFlnoPnNdt3lXB8OnwEQRUJrkw1XXrvO1CtQ+4lRrG8/hd1q2RABUajVK4DjX+PuXuhbCLnU4dxo5S7Z4rs7tMaFlxz3mlH8TiVqYkxKjGwEEvjhV7G+12A4hE0iMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=P58YDzJa; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1751635353;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=iS3p25tHU3RM4I/3CZVdnqBFJoVJz2HfsGdXG6RAfbg=;
-	b=P58YDzJaZVz4OqH1kioybPwK7/gpH6p+4itQTs6L4OnbtkhBtMEGK4tqCGqdIs4b4JdmwL
-	H0dxD36eTQNF8R4BZhtteXXpkdva1nyzHOjDehqXb7qoflCWrGbmwkX35SWTX6Okm00mTt
-	DIF9cDj0eUuUli6zF0BxL0/KQeUJKic=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-112-vmlJx3euP1GS92Jak2Zaww-1; Fri, 04 Jul 2025 09:22:32 -0400
-X-MC-Unique: vmlJx3euP1GS92Jak2Zaww-1
-X-Mimecast-MFC-AGG-ID: vmlJx3euP1GS92Jak2Zaww_1751635352
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3a4f3796779so449889f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Jul 2025 06:22:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751635351; x=1752240151;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:from:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=iS3p25tHU3RM4I/3CZVdnqBFJoVJz2HfsGdXG6RAfbg=;
-        b=kIXp82AK5MqdNF0YycrwdyhRktTkvhfKx7YGJCEr5kOTeN0xer32dU/pU652RnfRo1
-         j5NuROcbJ64/B7+ryA0xCdrX08Zm6I8Lt1W0l+PBSj3v/hGApRfiMUqO0rDWsNi4dGVI
-         D7fLDjRB3bDZgp7R6jcqIRv2P68QyLeCfWHHNnqNwz0Zi5hjJmx0r+2OffsPzpWYd6uc
-         NWiEWzB0dIo9KOps27iBrlTBHJz/Jq4oT+gihf6Bu5V+FZYWGSAEH9nRe2RD5qNhE92L
-         /r7vzmZabc7xcV9rkgyUULL9DjGD/j3Ad1bU6t1RmwRnJ1o5NpHOT+Mu+m69osMMoOfF
-         lBig==
-X-Gm-Message-State: AOJu0YwSdjNFwhq8Acdt08APmWoIeUhyBKvudvjE203+pSLR+NWdh7L9
-	ul4S/lyufnM0NTM9V1s+PKXV4CTS81Lza3rF0p+wC+bZ/wBIK79wMqmgDYDQdw+6T5KvgLS6LdA
-	FtbepUXDwolVMcx5ly7vXnR/GTWoW5snBh2M2A7R4OZzhwnxdheYLE7h3B/rh38Lk5A==
-X-Gm-Gg: ASbGncvOV6J7WUP5+i77eeM0Hn18GUWR7VNIyx54mXFXjLqdxLOXSaYNR/goJjYvFz/
-	nQ+OZBAn0cQCIgBRd4FTo6pJp0S9LShAVJu+MijIcyPgZB2IfHE1ip6GpqxSNzRznZ8lK+hPccV
-	fX2XfiQrxZ/ZkoErnRnVpZPdoCGVA2QDVrMjNHgaVENKFEKwUuPz77jXZ9T6S1Wo/vGFpQD2qV+
-	YmZ9yMDoGkvvIwFaCnny7RuObtlUTxGq7k19L0Ks8FbSli2HznKGTVZiSwbntIYTBAWW8ofwh8r
-	gsSFinnmxIeA5YvJP+dVzeboOUW2ndL1hu9Gg5NKHLR6BswpbLPE/JPtxz5rfc6CJJD+q60ZMWV
-	SEl6b6moWl2ABwWbqv7hZk23un9yaAjR2SDutjU1nIoG8MqY=
-X-Received: by 2002:adf:eb4d:0:b0:3a4:f787:9b58 with SMTP id ffacd0b85a97d-3b496619e79mr1937393f8f.58.1751635351408;
-        Fri, 04 Jul 2025 06:22:31 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHRARbbUWKXhwf/Qzsz+yNJbGOJQ/fx81Tbz4PDE6rtFVVnp8zr/goOYhsUspYRzJ16F+5PYA==
-X-Received: by 2002:adf:eb4d:0:b0:3a4:f787:9b58 with SMTP id ffacd0b85a97d-3b496619e79mr1937351f8f.58.1751635350955;
-        Fri, 04 Jul 2025 06:22:30 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f2c:5500:988:23f9:faa0:7232? (p200300d82f2c5500098823f9faa07232.dip0.t-ipconnect.de. [2003:d8:2f2c:5500:988:23f9:faa0:7232])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454a9bde954sm54847765e9.33.2025.07.04.06.22.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 04 Jul 2025 06:22:30 -0700 (PDT)
-Message-ID: <36a8f286-1b09-43bd-9efa-5831ef3f315b@redhat.com>
-Date: Fri, 4 Jul 2025 15:22:28 +0200
+	s=arc-20240116; t=1751635548; c=relaxed/simple;
+	bh=WZ6R18pGSQgVZQ5nM4CDWt/kvcNBd2S5oeSCfDRieWQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CgGjpIVNR6/wfHONWNKoj1O8YCUKlN9r5COkKy9dO+Z4TNEwZ38b0AJK6nuOQ+m0D9Olg4xn6Zzvm20dKZQce7Xs6qEkqtF7RsI9H1vpRakg+YzVigE2yNvlXvDmlJRNp4wwl0e4eDanTaJcHc+5kG2kbgyzMziqcktMuasPAfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=ktxANxFj; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id D837D40E0220;
+	Fri,  4 Jul 2025 13:25:42 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id HAYByO302iK3; Fri,  4 Jul 2025 13:25:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1751635539; bh=di8xIvp3Q2hISLCL6sb8IOiBmxTCpK0x0R93L5h+H68=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ktxANxFjMOrOjbk0N7U9BrItvwDX+HeVeOdeZlVBWlOKHK8+u2wfohPBNKS9u3vkL
+	 Xs4R5kloxysIWvsCiHmo5zUC6YaO84gwEtHb7/d3XVVRtet7eT36HJ7HXtoP14Hl38
+	 m6SJVdShOFceXHh/BNCIE3cpExW3TNu9H75s0s7lc71L7ZFb6eDckJwKOXqiN408Kc
+	 xkDT4ZrUB9+gUr/woRYRvdpDyHBEQIeowPte9NG+So3NpOpdwuIRp1BfNY3u7wDrDH
+	 N/isX5gitwMkvNrCyXWN6QHf574mi7JhX9AJCneMZFvBNURx3cs7NGBMxNq3gL3elU
+	 9OisYTA/cJHjK4nNUaifqxPq3gtQeXrfOVtqxrcueSEGI75GBzIJPzj317IqeIumsT
+	 cT+6u4Xhjl0XhQnMAnQlp1nJbwhQtm5X/bzrlk20B4xIJZbhSY4WPy+Wwyu9YH6krM
+	 UwST0Yqj3vrcYReD9wn5SswFutdYug/mTwC5m+XNQUhjkh0NTN+mRgp9YKzau7JbGP
+	 p5P2LaTgvlAQ3eJl402oE+bp8TyEmbBpGN76nytx7QjiuJxRFqgUwOTwr/9q8CJCJ8
+	 JJLrlxwXAaWi/l0EnPVEtjutGvWJS9CXUZOlzozP2/VylvhCF+q2ghIu5vm9sD2RD2
+	 2qTmYQzFVkDx0LDxGRMzenZY=
+Received: from zn.tnic (p57969c58.dip0.t-ipconnect.de [87.150.156.88])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 7505B40E00DE;
+	Fri,  4 Jul 2025 13:25:23 +0000 (UTC)
+Date: Fri, 4 Jul 2025 15:25:18 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Breno Leitao <leitao@debian.org>
+Cc: Len Brown <lenb@kernel.org>, James Morse <james.morse@arm.com>,
+	Jonathan Corbet <corbet@lwn.net>, tony.luck@intel.com,
+	rafael@kernel.org, Alexei Starovoitov <ast@kernel.org>,
+	kbusch@kernel.org, rmikey@meta.com, kuba@kernel.org,
+	linux-edac@vger.kernel.org, mchehab@kernel.org,
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, kernel-team@meta.com
+Subject: Re: [PATCH 0/2] panic: taint flag for recoverable hardware errors
+Message-ID: <20250704132518.GDaGfWPnAZI2FY8EnM@fat_crate.local>
+References: <20250704-taint_recovered-v1-0-7a817f2d228e@debian.org>
+ <20250704111954.GBaGe42gY5_xADb17Z@fat_crate.local>
+ <aGfFyktcuRV73Bl8@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 07/14] fs/dax: use vmf_insert_folio_pmd() to insert
- the huge zero folio
-From: David Hildenbrand <david@redhat.com>
-To: Alistair Popple <apopple@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, nvdimm@lists.linux.dev,
- Andrew Morton <akpm@linux-foundation.org>, Juergen Gross <jgross@suse.com>,
- Stefano Stabellini <sstabellini@kernel.org>,
- Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
- Dan Williams <dan.j.williams@intel.com>, Matthew Wilcox
- <willy@infradead.org>, Jan Kara <jack@suse.cz>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Zi Yan <ziy@nvidia.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
- Barry Song <baohua@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
- Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
- Michal Hocko <mhocko@suse.com>, Jann Horn <jannh@google.com>,
- Pedro Falcato <pfalcato@suse.de>
-References: <20250617154345.2494405-1-david@redhat.com>
- <20250617154345.2494405-8-david@redhat.com>
- <cneygxe547b73gcfyjqfgdv2scxjeluwj5cpcsws4gyhx7ejgr@nxkrhie7o2th>
- <74acb38f-da34-448d-9b73-37433a5e342c@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <74acb38f-da34-448d-9b73-37433a5e342c@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <aGfFyktcuRV73Bl8@gmail.com>
 
-On 25.06.25 11:03, David Hildenbrand wrote:
-> On 24.06.25 03:16, Alistair Popple wrote:
->> On Tue, Jun 17, 2025 at 05:43:38PM +0200, David Hildenbrand wrote:
->>> Let's convert to vmf_insert_folio_pmd().
->>>
->>> In the unlikely case there is already something mapped, we'll now still
->>> call trace_dax_pmd_load_hole() and return VM_FAULT_NOPAGE.
->>>
->>> That should probably be fine, no need to add special cases for that.
->>
->> I'm not sure about that. Consider dax_iomap_pmd_fault() -> dax_fault_iter() ->
->> dax_pmd_load_hole(). It calls split_huge_pmd() in response to VM_FAULT_FALLBACK
->> which will no longer happen, what makes that ok?
-> 
-> My reasoning was that this is the exact same behavior other
-> vmf_insert_folio_pmd() users here would result in.
-> 
-> But let me dig into the details.
+On Fri, Jul 04, 2025 at 01:15:06PM +0100, Breno Leitao wrote:
+> The information is not there to show correlation of broken hardware,
+> but,
 
-Okay, trying to figure out what to do here.
+I didn't say that.
 
-Assume dax_pmd_load_hole() is called and there is already something. We 
-would have returned VM_FAULT_FALLBACK, now we would return VM_FAULT_NO_PAGE.
+I say that users will misunderstand this taint. Like all the other things we
+have issued wrt RAS - people jump to conclusions without even reading english
+text. Not to even talk about taint flags.
 
-That obviously only happens when we have not a write fault (otherwise, 
-the shared zeropage does not apply).
+You having to explain it here basically proves my point.
 
-In dax_iomap_pmd_fault(), we would indeed split_huge_pmd(). In the DAX 
-case (!anon vma), that would simply zap whatever is already mapped there.
+> For instance, reading from `cat /proc/sys/kernel/tainted` might be
+> *way easier* than parsing *thousands* different RAS tools logs for you
+> to find what is going on. 
 
-I guess we would then return VM_FAULT_FALLBACK from huge_fault-> ... -> 
-dax_iomap_fault() and core MM code would fallback to handle_pte_fault() 
-etc. and ... load a single PTE mapping the shared zeropage.
+Thousands huh? I know of only two but maybe you will enlighten me.
 
-BUT
+And those I know can simply dump you an error log which you can check. It is
+way easy already.
 
-why is this case handled differently than everything else?
+> Anyway, I am happy to add this information somewhere else if you think
+> that taint is not the right place.
 
-E.g.,
+Documentation/admin-guide/kdump/vmcoreinfo.rst could be one place.
 
-(1) when we try inserting the shared zeropage through 
-dax_load_hole()->vmf_insert_page_mkwrite() and there is already 
-something ... we return VM_FAULT_NOPAGE.
+But again, this is redundant info which you can read out from logs which you
+already *have* to collect anyway, in a large fleet.
 
-(2) when we try inserting a PTE mapping an ordinary folio through 
-dax_fault_iter()->vmf_insert_page_mkwrite() and there is already 
-something ... we return VM_FAULT_NOPAGE.
-
-(3) when we try inserting a PMD mapping an ordinary folio through 
-dax_fault_iter()->vmf_insert_folio_pmd() and there is already something 
-... we return VM_FAULT_NOPAGE.
-
-
-So that makes me think ... the VM_FAULT_FALLBACK right now is probably 
-... wrong? And probably cannot be triggered?
-
-If there is already the huge zerofolio mapped, all good.
-
-Anything else is really not expected I would assume?
+IMO, you have everything already and this is not really needed.
 
 -- 
-Cheers,
+Regards/Gruss,
+    Boris.
 
-David / dhildenb
-
+https://people.kernel.org/tglx/notes-about-netiquette
 
