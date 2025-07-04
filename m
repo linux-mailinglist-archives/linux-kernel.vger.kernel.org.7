@@ -1,87 +1,108 @@
-Return-Path: <linux-kernel+bounces-717616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F7AFAF9690
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 17:16:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A7CEAF8A63
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 09:59:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9955B7BD9B0
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 15:14:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 385573B5906
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 07:58:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 508E416A956;
-	Fri,  4 Jul 2025 15:16:07 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E90FE2BD03B;
+	Fri,  4 Jul 2025 07:54:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Nx68XBF6"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B221189F3B
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 15:16:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BB5428B3ED;
+	Fri,  4 Jul 2025 07:54:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751642166; cv=none; b=L65hoWKuRnMPalA6U/zKNZGIaxd7g7VJtQPaHhIaherzJvjz1AUp14orIgdLDk6aL9U4GN25Cn2sqSVk9CZcdXuLEIFn/2XF48sVMf55umPkF5WqBUQ1++q/JrY27acCtuTDpmGgyxhC+3u66VfivbNwwCobmfKl0IU9tsOR6kw=
+	t=1751615658; cv=none; b=akhix1i4p+RKOfOGKz9TGTM0Qa3Rk6FaujA1Ck2zXVge4u37WO247J4qZr/KlwkN1fmQPxtBe9E+PUDxsAQA/YTPOF9A7MsJ7GFyT7g8YoKywulZvhUAKgciKD5KZtu13OSQIG1kTW5d8pPgcURVBEUDzvIdzosix87LMWJL+p8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751642166; c=relaxed/simple;
-	bh=EAsnUN73ruLYHRIaF8c+gbWNnSdE6fXyfBnKlJRLL6U=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=ZYNtPx8PoheweHUQPNuAmg761V3r/xMpXvLuE9wpA0YAbV0cexJUffv4N+cmsdckKOuT3qDJJeIXSSMC2vVoyY6jh1pGMVOXEQSiJT4nE0zvG3SB6IOWndcMZ8ri5n5OnA325DNwoQjLtuS6wu5shX+m/tifN8TWIcGX4Y3pU3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-87632a0275dso94202439f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Jul 2025 08:16:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751642164; x=1752246964;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yu6HMyDKADnRPwMdTNfPbyIzaSkTzS13hufmtK1G5yY=;
-        b=QvSVfqKRsJZMbO/gRs+9rl6NWNbX/E20rb3EP4yo2W79CQnSkkCYZavll5KBZryIZa
-         ZrBw4KVs5AeH1xqAb1Xdgcm4VcCcbg58Moe9YXUSuHhBWU0IjLuuft8gVx/MA2UpaNCO
-         ZJv1GTh6TND2zCjrLTrEGD12/lADGW1FMKhGf/cPy1ya5/hFxBdZUgjgE2VJqB5b9D5o
-         ncv7L0h1ZaHszUl4dkYR53NjbyO37qVWI4ymYEvCQZNj8LicBYVI1WG+gvQZK2FxPlCE
-         0BGorSYF6z+1dhYxXWoT/rhSKI5L3tdvKoPByXhqK+x0vlMsj96sVX/1UVxqKPqBJJQB
-         eBOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWXzeEkzh6LO6AJqpuukajJNnq0DYM1ZxZaApEDrSgMpYngMVdMbAVTGiBhAJK+3GpTa4pvjQ+9GFnMWAc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+kGgt7Sf6513vZnfd68ZvC0NE+n4zSIn2uQikaMgYI2zkV+dT
-	nAL/WbHPr+cNS5tPrSmJuQ3IMH01oLbXlG4cHtQoFqAiKKCyjsVX5fkBQzS4h1Vz9X119vDRTt0
-	hMgimNzcF8Nrph8oCPh1YRmP2VP6zSzZQ8enEgtaqpsoZFu5Mkf3bIxYD954=
-X-Google-Smtp-Source: AGHT+IHPzPgdmzv5nhRYyWrZOIqyFmIpRhrpgi9qVHdqGvg1cDqEnTWL3AymTvClyIrNwtFSjlrAYGX6G5SoQauhCxm3WDPROHGU
+	s=arc-20240116; t=1751615658; c=relaxed/simple;
+	bh=ppfSYqAbvKz06hUuUu+InAtyPJ44rr6/wnF/AFQd36w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JJ5Oae8QCuDImnOPrJ7MHhteK6GTgZOsEJTRyZxIuqCjKUqA/NgT7h2vM+PDf9Dv5bWOKvakLctuTctFQG0wALVgMc7v5acrt/8uIQOYYNtvlgOKe081dzM4tG3AosGV+7pTaD1j6lYNfq0JrJIaRDv86/RkJWINVfdE3zFqZSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Nx68XBF6; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751615656; x=1783151656;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=ppfSYqAbvKz06hUuUu+InAtyPJ44rr6/wnF/AFQd36w=;
+  b=Nx68XBF6P4+pTN8p7DUKXeCq88k7TVmI1u534dnbpDKYjw6A11iLjcWk
+   Vzt/kqO1FHWRiGQTQHODoLqLYbuyxDzw399CcN59oD5RR75drUpi6VQk9
+   frKSFIBY42dJfA35eaqUIpJYAacJCcStUDU8XtJTz8c1nE41BrihWCLN3
+   UDAUNlSNic1PgMJBJP6Xx5oC6ZDAxhpBlXNyZ9F/tjV2aWutJKSK8lw5W
+   Hs9drmU9VC0wdhObwI67RJ8SG7BmRXiDQukP+VSSI9ft90/m5I0P6lN3+
+   7zmbKZlmU577BgALNMmy/YLhCrmpwGFch91wpf21shQDOXrOc6gKX/3Wf
+   A==;
+X-CSE-ConnectionGUID: 1ZG7v0hOSTKlAQw7PPDYLw==
+X-CSE-MsgGUID: YW0gd2+TTTqHKuk4sOWRIw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11483"; a="57621101"
+X-IronPort-AV: E=Sophos;i="6.16,286,1744095600"; 
+   d="scan'208";a="57621101"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 00:54:16 -0700
+X-CSE-ConnectionGUID: yOk/N1OrQ0qJ05Z7dUKvsg==
+X-CSE-MsgGUID: 3sc9ARBbS5GpD3N+4N5bBw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,286,1744095600"; 
+   d="scan'208";a="154663843"
+Received: from qiuxu-clx.sh.intel.com ([10.239.53.109])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 00:54:13 -0700
+From: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+To: Tony Luck <tony.luck@intel.com>,
+	Borislav Petkov <bp@alien8.de>
+Cc: Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
+	James Morse <james.morse@arm.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Robert Richter <rric@kernel.org>,
+	Lili Li <lili.li@intel.com>,
+	Laurens SEGHERS <laurens@rale.com>,
+	VikasX Chougule <vikasx.chougule@intel.com>,
+	linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/3] EDAC: Add three Intel CPUs for EDAC support
+Date: Fri,  4 Jul 2025 23:16:06 +0800
+Message-ID: <20250704151609.7833-1-qiuxu.zhuo@intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2182:b0:3df:29c8:4a0f with SMTP id
- e9e14a558f8ab-3e1355eae1cmr24422395ab.21.1751642164373; Fri, 04 Jul 2025
- 08:16:04 -0700 (PDT)
-Date: Fri, 04 Jul 2025 08:16:04 -0700
-In-Reply-To: <20250704145211.2487-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6867f034.a70a0220.29cf51.0020.GAE@google.com>
-Subject: Re: [syzbot] [bluetooth?] KASAN: slab-use-after-free Read in force_devcd_write
-From: syzbot <syzbot+bc71245e56f06e3127b7@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Add EDAC support for three Intel CPUs: 
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+  - Patch 1: Wildcat Lake SoCs with In-Band ECC.
+  - Patch 2: Granite Rapids-D for micro-server and edge computing applications.
+  - Patch 3: Raptor Lake HX series SoCs with Out-of-Band ECC.
 
-Reported-by: syzbot+bc71245e56f06e3127b7@syzkaller.appspotmail.com
-Tested-by: syzbot+bc71245e56f06e3127b7@syzkaller.appspotmail.com
+This patch series is on top of RAS edac-drivers branch.
 
-Tested on:
+Lili Li (1):
+  EDAC/igen6: Add Intel Wildcat Lake SoCs support
 
-commit:         4c06e63b Merge tag 'for-6.16-rc4-tag' of git://git.ker..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=13cf4c8c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9887aa986c36cc50
-dashboard link: https://syzkaller.appspot.com/bug?extid=bc71245e56f06e3127b7
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=16888f70580000
+Qiuxu Zhuo (2):
+  EDAC/i10nm: Add Intel Granite Rapids-D support
+  EDAC/ie31200: Add Intel Raptor Lake-HX SoCs support
 
-Note: testing is done by a robot and is best-effort only.
+ drivers/edac/i10nm_base.c   | 12 +++++++++++-
+ drivers/edac/ie31200_edac.c |  4 ++++
+ drivers/edac/igen6_edac.c   | 15 +++++++++++++++
+ 3 files changed, 30 insertions(+), 1 deletion(-)
+
+
+base-commit: 815703e2ecdf091a724c16671aadd8c55de24878
+-- 
+2.43.0
+
 
