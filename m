@@ -1,117 +1,147 @@
-Return-Path: <linux-kernel+bounces-717088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-717092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73443AF8F09
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 11:48:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6569AF8F13
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 11:49:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A87DD3BFD7A
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 09:48:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DF3017AF7B
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 09:49:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 824AC2ECD37;
-	Fri,  4 Jul 2025 09:48:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1917C2EE993;
+	Fri,  4 Jul 2025 09:49:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Lv9KvEEg"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="QY7rlK40"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F40D29AAFD;
-	Fri,  4 Jul 2025 09:48:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB164267B01
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 09:49:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751622519; cv=none; b=lD3l2a8i8GC8hkShio7ePYASZnf4Xv+I4My39k2z1+a8xa+Yb0weQothN86T4y4XDAY0qb99w60QRsUaY7yM+z9Dine012TghN5hUiP61IScPNM+mnrp0P5Mz8Bl1INDcYmEBd5qAqtnbp8I+tJCkvKOPgs9FW6xzhJDXRGywTc=
+	t=1751622562; cv=none; b=U14I5c0P0VkVLEjOh/IZp4xK7uDjItpLT70tlNWOlGRAZRvetVtu3GZUdDDwk5oG+2zW7mF+lU8n3QWk4xNvQHicnajF9AegCEs7fPaSHEzz+GVyuuMRG4C3fxmG9whabLwZ5x9W0KKT+K1AtyFuZk48PRlSx6h8TjiNZyci77c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751622519; c=relaxed/simple;
-	bh=am0YjSLq6opId+8jb8XluWaS3QEulOIJcT1B2pYF464=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YsIV7JHSmRkv4oZBVjSKAzUwNzR/25xzfsaj0WczmvhFsyw3l62JybKaL0Nh4xnNg7dOL56mnjmZVbrHJpozTEEuYq5Uyw0Lmet4e45sVbfWNn4pzAoNkNvyDWiNpU+UJYIUZ/+h0p7L7jqXzsZbAmbr9AEnTSfASGXm/8lAdyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Lv9KvEEg; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751622519; x=1783158519;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=am0YjSLq6opId+8jb8XluWaS3QEulOIJcT1B2pYF464=;
-  b=Lv9KvEEgviuLQTffuh2sdu4r7G80QCJWf5ZavNjSg/IBBAGMedAHvfmQ
-   xUjmHryiHpyHQT5AgBCBThdNjW3WP5YrH9os2ctmmDOtjmSzYMHBxtLtr
-   0JLptc6a2YjDsp+/N+ccW5nsPVR4ZxbE0sUBrIQwqt55dsCjNZ+qSWG65
-   xRvenl1HKO3NJuz40n0r56Y1E7GYU7AjNLiX2sLALKpd9dSajs3hp2Vtm
-   9x7YPXOzWQ/z0QMM75L4j5J/IWw/bWIYi0cd+lDv6UHIwcp9JLUTk/exa
-   1DVjDIXOOy5dEmvsGuOjvVhKswd6ob7zihcV1NrIYpRgS8dNhcf+8agNR
-   Q==;
-X-CSE-ConnectionGUID: lrf5lB4FTcCmPRpyM3mMMg==
-X-CSE-MsgGUID: 30SNgoBNR1KOUkHAqeHKgw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11483"; a="65408516"
-X-IronPort-AV: E=Sophos;i="6.16,286,1744095600"; 
-   d="scan'208";a="65408516"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 02:48:38 -0700
-X-CSE-ConnectionGUID: kSKs1kAUT6+aKYAMcPG3Kg==
-X-CSE-MsgGUID: qMilI+FFQwqrwSpxQFY3ug==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,286,1744095600"; 
-   d="scan'208";a="154016435"
-Received: from lkp-server01.sh.intel.com (HELO 0b2900756c14) ([10.239.97.150])
-  by orviesa010.jf.intel.com with ESMTP; 04 Jul 2025 02:48:35 -0700
-Received: from kbuild by 0b2900756c14 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uXd20-0003ZL-1Q;
-	Fri, 04 Jul 2025 09:48:32 +0000
-Date: Fri, 4 Jul 2025 17:48:01 +0800
-From: kernel test robot <lkp@intel.com>
-To: Zijun Hu <zijun_hu@icloud.com>, Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-	Helge Deller <deller@gmx.de>,
-	"David S. Miller" <davem@davemloft.net>,
-	Andreas Larsson <andreas@gaisler.com>
-Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
-	Thadeu Lima de Souza Cascardo <cascardo@igalia.com>,
-	Zijun Hu <zijun_hu@icloud.com>, linux-kernel@vger.kernel.org,
-	linux-parisc@vger.kernel.org, sparclinux@vger.kernel.org
-Subject: Re: [PATCH v3 2/8] char: misc: Adapt and add test cases for simple
- minor space division
-Message-ID: <202507041717.ZONOYCp2-lkp@intel.com>
-References: <20250702-rfc_miscdev-v3-2-d8925de7893d@oss.qualcomm.com>
+	s=arc-20240116; t=1751622562; c=relaxed/simple;
+	bh=Ucbo7v51fQBpSPEcmC2oC1OMdgo3BVP6CkawMLVEiv4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=J1NWVgeAABuf6worlhN4YmaC+gW7Q3AiCMP9EgZu5s5ejN25XTro/GDKSbgmI3fDyR9F1XzDahVXwm1g4W096b8sG42LWcVHHJg4ypgKOP2525nYrv4Ls1e2IMgNz4+80gXWOqYPUN1rscm88CyGdE7NE0l0KoBXFsnmXm5A4NM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=QY7rlK40; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 5649mrFB264764;
+	Fri, 4 Jul 2025 04:48:53 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1751622533;
+	bh=tL1i8/9vpQanxe1RfVzbrNGx7ZulJeN77FBHMNXBaRI=;
+	h=From:To:CC:Subject:Date;
+	b=QY7rlK40TkuwaMJ+cw/Pa2J+QCebavlYVNoTD7aE61nTnSHsUU1fuDQEoNsUFrsv/
+	 7t9afAxGgRYRLrKAfv3uz6wGlHYoHmVOAe/R3l0xAMANJFC52YmmytT6gAdUQ0Rqb6
+	 xnyPs/hX+7MPRPAtPkfSuUrqmxi9tjzO1uvmzIMo=
+Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 5649mr6m1645551
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Fri, 4 Jul 2025 04:48:53 -0500
+Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 4
+ Jul 2025 04:48:52 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Fri, 4 Jul 2025 04:48:52 -0500
+Received: from localhost (jayesh-hp-z2-tower-g5-workstation.dhcp.ti.com [172.24.227.166])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5649mqaA2774006;
+	Fri, 4 Jul 2025 04:48:52 -0500
+From: Jayesh Choudhary <j-choudhary@ti.com>
+To: <jyri.sarha@iki.fi>, <maarten.lankhorst@linux.intel.com>,
+        <mripard@kernel.org>, <tzimmermann@suse.de>,
+        <dri-devel@lists.freedesktop.org>, <devarsht@ti.com>,
+        <tomi.valkeinen@ideasonboard.com>, <mwalle@kernel.org>
+CC: <airlied@gmail.com>, <simona@ffwll.ch>, <linux-kernel@vger.kernel.org>,
+        <j-choudhary@ti.com>
+Subject: [PATCH v4 0/3] Decouple max_pclk check from constant display feats
+Date: Fri, 4 Jul 2025 15:18:48 +0530
+Message-ID: <20250704094851.182131-1-j-choudhary@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250702-rfc_miscdev-v3-2-d8925de7893d@oss.qualcomm.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hi Zijun,
+In an effort to make the existing compatibles more usable, we are
+removing the max_pclk_khz form dispc_features structure and doing the
+correspondig checks using "curr_max_pclk[]".
 
-kernel test robot noticed the following build warnings:
+Changes are fully backwards compatible.
 
-[auto build test WARNING on 626e89412dfb88766d90d842af4d9ec432d8526f]
+After integration of OLDI support[0], we need additional patches in
+oldi to identify the VP that has OLDI. We have to do this since
+OLDI driver owns the VP clock (its serial clock) and we cannot perform
+clock operations on those VP clock from tidss driver. This issue was
+also reported upstream when DSI fixes[1] had some clock related calls
+in tidss driver. When "clk_round_rate()" is called, ideally it should
+have gone to "sci_clk_determine_rate()" to query DM but it doesn't since
+clock is owned by OLDI not tidss.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Zijun-Hu/char-misc-Move-drivers-misc-misc_minor_kunit-c-to-drivers-char/20250702-202131
-base:   626e89412dfb88766d90d842af4d9ec432d8526f
-patch link:    https://lore.kernel.org/r/20250702-rfc_miscdev-v3-2-d8925de7893d%40oss.qualcomm.com
-patch subject: [PATCH v3 2/8] char: misc: Adapt and add test cases for simple minor space division
-config: powerpc64-randconfig-002-20250704 (https://download.01.org/0day-ci/archive/20250704/202507041717.ZONOYCp2-lkp@intel.com/config)
-compiler: powerpc64-linux-gcc (GCC) 10.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250704/202507041717.ZONOYCp2-lkp@intel.com/reproduce)
+So add a member is_oldi_vp[] in tidss_device structure to identify this
+and avoid performing clock operations for VP if it has OLDI panel.
+For the same checks in OLDI driver, atomic_check() hook is added to its
+bridge_funcs.
+In the atomic_check() chain, first the bridge_atomic_check() is called
+and then crtc_atomic_check() is called. So mode clock is first checked
+in oldi driver and then skipped in tidss driver.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507041717.ZONOYCp2-lkp@intel.com/
+Had the tidss_oldi structure been exposed to tidss_dispc.c, we could
+have directly checked VP type in dispc but since the structure is defined
+in tidss_oldi.c , we have to add additional member to tidss_device
+structure.
 
-All warnings (new ones prefixed by >>, old ones prefixed by <<):
+[0]: https://lore.kernel.org/all/20250528122544.817829-1-aradhya.bhatia@linux.dev/
+[1]: https://lore.kernel.org/all/DA6TT575Z82D.3MPK8HG5GRL8U@kernel.org/
 
-WARNING: modpost: vmlinux: section mismatch in reference: hash_debug_pagealloc_alloc_slots+0x98 (section: .text) -> memblock_alloc_try_nid (section: .init.text)
->> WARNING: modpost: vmlinux: section mismatch in reference: test_cases+0x60 (section: .data) -> miscdev_test_invalid_input (section: .init.text)
+Changelog v3->v4:
+- Minor cosmetic fixes in code, comments and commit message
+- Pick up R-by and add Fixes tag
+
+v3 patch link:
+https://lore.kernel.org/all/20250701095541.190422-1-j-choudhary@ti.com/
+
+Changelog v2->v3:
+- Add changes for OLDI
+- Rename max_pclk as it is misleading
+- Change commit message to make it more appropriate
+- Drop unnecessary zero initialization
+
+v2 patch link:
+https://lore.kernel.org/all/20250618100509.20386-1-j-choudhary@ti.com/
+
+Changelog v1->v2:
+- Rebase it on linux-next after OLDI support series as all of its
+  patches are reviewed and tested and it touches one of the functions
+  used.
+  
+v1 patch link:
+https://lore.kernel.org/all/20250618075804.139844-1-j-choudhary@ti.com/
+
+Jayesh Choudhary (3):
+  drm/tidss: oldi: Add property to identify OLDI supported VP
+  drm/tidss: Remove max_pclk_khz from tidss display features
+  drm/tidss: oldi: Add atomic_check hook for oldi bridge
+
+ drivers/gpu/drm/tidss/tidss_dispc.c | 77 +++++++++++------------------
+ drivers/gpu/drm/tidss/tidss_dispc.h |  1 -
+ drivers/gpu/drm/tidss/tidss_drv.h   |  7 +++
+ drivers/gpu/drm/tidss/tidss_oldi.c  | 26 ++++++++++
+ 4 files changed, 62 insertions(+), 49 deletions(-)
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.34.1
+
 
