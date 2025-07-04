@@ -1,128 +1,144 @@
-Return-Path: <linux-kernel+bounces-716415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2113AF861E
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 05:53:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71A79AF8627
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 06:00:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1AFBB6E2140
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 03:53:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3C331C82000
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 04:00:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7563C1EA7DF;
-	Fri,  4 Jul 2025 03:53:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EBFA1F16B;
+	Fri,  4 Jul 2025 04:00:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iOfG5h+b"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="Rdl8Y4KC"
+Received: from smtpbgeu2.qq.com (smtpbgeu2.qq.com [18.194.254.142])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8751A3FD4;
-	Fri,  4 Jul 2025 03:53:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 087121C28E
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 04:00:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.194.254.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751601211; cv=none; b=oREfn3xbk3KVJni4fxBJbJiTkzXMnXArzNJfHyEOr50ZRQ/I8DWuJDViw4GlRNLMYF6MfDEpr+6jNCrXmqo8WBWRPI1p0jJ4HQtFMQCK2ZjRKitlnlcwgfUmWHoLS1X/wGlXrBJT3UQnmRGYKU0cSPV9SRDzi0Q+UpA5RwX/b+Y=
+	t=1751601622; cv=none; b=uJUucNsVWBqEku3bE02zegkTh3KmGu2SvfkntOaxpDaR8bU5OSttjIy21h3j7EGncmlD/sW+42XIYRFPtjsTFGrx0db0OQFX13UeV7FMhFhZgAKb3G1+MjCOc30P5YeaWNUX+Rt3xh97QOP2mYd2emtdwPclo+gEt0yZ9y+5xBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751601211; c=relaxed/simple;
-	bh=zwRLPwT2eQg168Wfug2SYslZnKArpTcPqpw6Tg/LhSY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kmtI8RFKY9eOUVr9zTy5UmpkLImj192Yyby2bIKxlB2/AwY6TPtIEMVq/3M8M8pD03ryqfCYzdAktJVRvSAKmGjDRs/8/8L1JR4jz06WDCxzvhP8W3lTpwpMzgh6yvHBPjBH/5G4YQRJ7vgQCxWoUHiNUXm4HRzbwsePoVik410=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iOfG5h+b; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-311da0bef4aso644615a91.3;
-        Thu, 03 Jul 2025 20:53:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751601210; x=1752206010; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=V98NwQHZpZ1xGgxUD4OMgi+d8tY5VWQjICNCxbkdWoI=;
-        b=iOfG5h+bSX6OrSMJMoTzhV6idn02WCZQFpJtui13jmF+3FH+q45o6Mb+RYprv3Rt4k
-         GhKYd8M6XeDGMSMxteo93Qhv8lDaI0tJ3fkyqwwKFeVI7BdkLcvoFRKm8kul3VbBMTF6
-         Vtzz/vdaipnUdwVNakkSa0QtJE8a3Cc6mZu1ANDy3ymulJrn5b3ASolGcQoXbJFXMsFr
-         zz33+/5oxgr53Sbsuantv9DHBQ8easWAavB7isC/RVGslu4gBC/amXr9F+SGf8U9p0O/
-         wcfAErfvsiKFQmzedG/1SjNAMeoMZyPUptbleiqGUI9eQBVsGYd2Xt2kjzWTl9cSCzo3
-         L2cQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751601210; x=1752206010;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=V98NwQHZpZ1xGgxUD4OMgi+d8tY5VWQjICNCxbkdWoI=;
-        b=sconyij02+O9pHhLicNnp08cHX+ccnt1a63aPzfFa7DUoXFEhwfXaf+o/+LSuGKLYs
-         Pecqm7nCK67GKheOzx3QcyKwADjNiGeDnwIx94Kvqu6/vlVtS6yL9RwXk58uT4qZWlas
-         ZMyUZo+5la2fGZrM3jqQLui5VXsOf5/k5MaDMQAbhaHF0LLvRAe3VCCSwXPxuA/yjZDH
-         +2Rm0tzM2Sb1Pd6XpprcSaWKiq8MmxQ2Q8TUxeip2/QEuvxofhFttK1mviQoiO8QpXCv
-         xfG7PKowkm4BefzvJDJR/osXJrgKH62mXvMbvu78pThXU/tXJ/0ISjdV01uL3dWCbhvY
-         NjhA==
-X-Forwarded-Encrypted: i=1; AJvYcCVvaN8yA1IEQxXKxI9W3FIafd37fdUdzs0I0QPmkLpXTQV5FUnwMgqm1rO+5oAF6nYO6rZIBoEwnEQK@vger.kernel.org, AJvYcCXOgRndqkTYiFzPXbkGW2cULdecDWvFPMKMULL+tEGuO8pJRarobU1nHWJDB+bnOtIot7TPKH99hBXE256U@vger.kernel.org, AJvYcCXlCjFY82//bDCEdbqyyPKWGH4jIMZ1PbhSlL7A/Tsz4lp7xxxZA6YMByDOxepE/KiLobwCvb7sSyc=@vger.kernel.org, AJvYcCXvWwgnxIMvIOJVPTV1BwU48VjG3va/x7M7uch/B2G/MRxRNTS4l4Y0a+ZKy94jw+IMCHmrb86M9Lx3j1QXyg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxwj3wGTCef+e9A2au1RxLHeRX+9MFPox7pQ4P9WGKuNNIFHmv4
-	3YwxlY9xE0h9YcL/i0lsCZsFtmV8fJTA41BsR9GX0aIeQ6nBYXLxVcBB
-X-Gm-Gg: ASbGnct5Z8urcNNsATWO/CYEygMAeOsg/jyvSqjOzviUkKp51mK2E7a2jZ9F5FUR0Bk
-	UuNJF2x05D46t6ex5lZYP21cV1zl8RZdsEc4SomSbU8/TaaD8HldryCftAAdvKpFjS0PxrfCeNE
-	t8CwKspratOx3+Ed58U1lqwulQJhQLTxvGQZ+BrKG/XgDa4A+IhV9jCj46fGipk2ogqzmimW2Mv
-	PXQzRaKA3gRRJ9kC+FhpvWHLSZDRe9wA5SQRhN+uB4SUO2pPveUMnYrf879g97rCQEY0O+iEcwr
-	3MnFVxsvofpwPIfRrgig602xiTwb4SH12OuXWLCBZMWnxsSxcRTG/uHvrm4wjw==
-X-Google-Smtp-Source: AGHT+IHogvr66NhGLX5buUAq1Mw27chMolznrtFETznmKR2+R2UdttsZVVX9IjUimzMH84E5+HrBtA==
-X-Received: by 2002:a17:90b:3e8e:b0:311:eb85:96ea with SMTP id 98e67ed59e1d1-31aadd231c8mr890732a91.9.1751601209705;
-        Thu, 03 Jul 2025 20:53:29 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31aaaf2cd54sm831381a91.23.2025.07.03.20.53.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Jul 2025 20:53:28 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id 1E7564206885; Fri, 04 Jul 2025 10:53:24 +0700 (WIB)
-Date: Fri, 4 Jul 2025 10:53:23 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Jonathan Corbet <corbet@lwn.net>, John Groves <John@groves.net>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Miklos Szeredi <miklos@szeredb.hu>,
-	Bernd Schubert <bschubert@ddn.com>
-Cc: John Groves <jgroves@micron.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	"Darrick J . Wong" <djwong@kernel.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Jeff Layton <jlayton@kernel.org>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Stefan Hajnoczi <shajnocz@redhat.com>,
-	Joanne Koong <joannelkoong@gmail.com>,
-	Josef Bacik <josef@toxicpanda.com>,
-	Aravind Ramesh <arramesh@micron.com>,
-	Ajay Joshi <ajayjoshi@micron.com>
-Subject: Re: [RFC V2 18/18] famfs_fuse: Add documentation
-Message-ID: <aGdQM-lcBo6T5Hog@archie.me>
-References: <20250703185032.46568-1-john@groves.net>
- <20250703185032.46568-19-john@groves.net>
- <aGcf4AhEZTJXbEg3@archie.me>
- <87ecuwk83h.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1751601622; c=relaxed/simple;
+	bh=70HlwFGz4/xkQt96tmzQI9PdhzymJpHWbK/YZVKOeNY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FR+yJ0EEU8ykJah1mYNbihUKEdwlJPCgB9ao95Lv9b5Dqub546xHkbH4mB6s/g19GO0FZJUVh0aP54Y4GoXh17iuw4dZCR/Qu0SARJotKebEYIsM0AJeRQtUc8ArMTr70/49A3j2FhzInjF+EIKNk2bmVwkgUCpcDsegr+l8r5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=Rdl8Y4KC; arc=none smtp.client-ip=18.194.254.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1751601607;
+	bh=5WdAXnpdN01wWizT19/bRBejCrM46FxmZi0oSOJeQfs=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=Rdl8Y4KCUnuNzb9QTE9tbJCIOVGEy6f0sJKS5ViWUDRximtiYEXpbHHmV4Dqt9nzP
+	 FlzP1pgiioQkbko6hbQBljLcz60SY8UzyaosZ/FTpTKa3kA/ZbyQxctuTJ91+wOEx1
+	 DTEIRxBCp3Ksno0KXF+UNTh8Iro68sT7fIj5Ufq0=
+X-QQ-mid: zesmtpip2t1751601591t0f0f8d84
+X-QQ-Originating-IP: VGp0x93czLDnQk1UNsF6UZDHq9AcP6vBf9swN7t2mU8=
+Received: from avenger-e500 ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Fri, 04 Jul 2025 11:59:48 +0800 (CST)
+X-QQ-SSF: 0002000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 16936787269720412939
+EX-QQ-RecipientCnt: 17
+From: WangYuli <wangyuli@uniontech.com>
+To: airlied@gmail.com,
+	simona@ffwll.ch,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	akpm@linux-foundation.org
+Cc: dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	wangyuli@uniontech.com,
+	yujiaoliang@vivo.com,
+	cvam0000@gmail.com,
+	colin.i.king@gmail.com,
+	jesse.brandeburg@intel.com,
+	zhanjun@uniontech.com,
+	niecheng1@uniontech.com,
+	guanwentao@uniontech.com,
+	wangyuli@deepin.org
+Subject: [PATCH RESEND] drm/uapi: Fix typo "restictions"
+Date: Fri,  4 Jul 2025 11:59:26 +0800
+Message-ID: <35295656C43C4A38+20250704035926.259228-1-wangyuli@uniontech.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <87ecuwk83h.fsf@trenco.lwn.net>
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: OHdwp/wHqRH6LxBu5s7Dmz47Eqf4A7eTudRc6PHkXog7K9MNS0EICh2K
+	MYByEkdjOzVvCjK7HKunxU6RWXimxUcueOIpiaXJiWAykBFHJKNOUpygtnTusjCJcCbRi46
+	l5f8sMPEXisFxxGpvIOP/2G/F3lAKNlMzami8zTcbwSeZeXsaBtHalUO6yHACid9HTKyiPT
+	a0Ps+AfKenAI9AD8mCLv9kEuwP3Zxz5ITfDbMv5429RFh5TlAefxPmcPk2WkeAhVK1VVJX1
+	Yk+hojQMwKR5x5xgxA+ou6FHCNkWrx3X6j+aakMMt8WBew8y3GcVFgRHWSZDHxo7clwdEnt
+	IZMgbK886a6UEJiMyE/MrfbXuKTVk/ZOzafUMjGIbUXNi0SyJi9MEVfRQ2HxirjBNnym1E0
+	AkirvlNpsEUNBOeNoCTALk8E6oajTapFf8G6BYDxWTdusNx6WkpkKH3wwbrx0XqLLTPWQvq
+	f4vRfE9Xrvu2LDVHitoR8EHPmseJCYaV5dSTNi8aCcdQwyJZgAPEe5tWGjte80lC+0I6HuY
+	UOga08JJTl+sFDBHxcDXLhdC7U1fh/ZtgefVAjhz1+GLGgTR+qCldAXpsY3y0hwF4EtaU8x
+	lBx2s3HkEwQeohnozSMV9gkAeIXA/QKYNWhELY+ytVBoCaK5hjQkTja7nYAeRg9WXwyS+HM
+	Nv/9hEcBSJpvzKxbfoU2M03Ouuw4uXTF3x5D9ML5GfNN1PumQp+3mdLfAyk39vzLcbOBBrN
+	w3Y80Bn0+I7nyhH7cvjyb7LeDIPfDqLmvR35LyxYnT4k+MlL0chgtrX+NgHzdbYEz5Nmfh3
+	PjePlp6ZuAOAWiN/BhzRawRVH+qNBfRuD8a2/94CaHJKqsVk5rDuGviLhxLJw1HSTjdMa/w
+	MFtwl+KwLiRrlgUN41rCrrSpsvK3//2ahVyxRvCNPBvMonfhgQd62rnKv5htGoDQ3T9xjun
+	1knZ3vSuxJjiTDH8mq5t2ZPZ9JCqXjNvtFAGV0Jh6qrXt1IBFsS7JFvxWS2Okj/NwUoCyJV
+	5Oqzg7dY/EwzcJX9UuqC2sw5mMPhIWOH9KURSnlbIQIzl5wDKCoaMiQYDg91P12NK3t13Jz
+	A==
+X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
+X-QQ-RECHKSPAM: 0
 
-On Thu, Jul 03, 2025 at 08:22:58PM -0600, Jonathan Corbet wrote:
-> Bagas.  Stop.
-> 
-> John has written documentation, that is great.  Do not add needless
-> friction to this process.  Seriously.
-> 
-> Why do I have to keep telling you this?
+There is a spelling mistake of 'restictions' in comments which
+should be 'restrictions'.
 
-Cause I'm more of perfectionist (detail-oriented)...
+This typo was not listed in scripts/spelling.txt, thus it was more
+difficult to detect. Add it for convenience.
 
+This typo is reported by GitHub Copilot code review. [1]
+
+[1]. https://github.com/deepin-community/kernel/pull/796
+
+Signed-off-by: WangYuli <wangyuli@uniontech.com>
+---
+ include/uapi/drm/drm.h | 2 +-
+ scripts/spelling.txt   | 2 ++
+ 2 files changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/include/uapi/drm/drm.h b/include/uapi/drm/drm.h
+index e63a71d3c607..c996d19cb2de 100644
+--- a/include/uapi/drm/drm.h
++++ b/include/uapi/drm/drm.h
+@@ -860,7 +860,7 @@ struct drm_get_cap {
+  * cursor and have correctly set hotspot properties.
+  * If this client cap is not set the DRM core will hide cursor plane on
+  * those virtualized drivers because not setting it implies that the
+- * client is not capable of dealing with those extra restictions.
++ * client is not capable of dealing with those extra restrictions.
+  * Clients which do set cursor hotspot and treat the cursor plane
+  * like a mouse cursor should set this property.
+  * The client must enable &DRM_CLIENT_CAP_ATOMIC first.
+diff --git a/scripts/spelling.txt b/scripts/spelling.txt
+index ac94fa1c2415..c33128db7163 100644
+--- a/scripts/spelling.txt
++++ b/scripts/spelling.txt
+@@ -1406,6 +1406,8 @@ ressizes||resizes
+ ressource||resource
+ ressources||resources
+ restesting||retesting
++restiction||restriction
++restictions||restrictions
+ resumbmitting||resubmitting
+ retransmited||retransmitted
+ retreived||retrieved
 -- 
-An old man doll... just what I always wanted! - Clara
+2.50.0
+
 
