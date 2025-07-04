@@ -1,57 +1,56 @@
-Return-Path: <linux-kernel+bounces-717869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-717871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC7A7AF9A2F
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 19:55:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B79BAF9A31
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 19:56:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C0321C42928
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 17:56:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 913037B569A
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 17:54:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ED352DEA6A;
-	Fri,  4 Jul 2025 17:55:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6434F2DEA8B;
+	Fri,  4 Jul 2025 17:55:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eQDc8gEp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XQoWdP0n"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB6832D839C;
-	Fri,  4 Jul 2025 17:55:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7E432DEA6E;
+	Fri,  4 Jul 2025 17:55:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751651739; cv=none; b=qZvp83bHC8SBkqgoOK8A9NAqqA/AEi0woJkaFpLvNHAsp+rxutVdGwEqIlfRvgHxwpw5FJz1JElU3EYQ+bgwk4dLQMz7w4x+Y68cZxlNVVpJ7Stu+XPaVG+PKZzFyvmStVf36WvSGHWvVsXspeNU77Sn589NGPRhNIsSWbaV+Hc=
+	t=1751651739; cv=none; b=fiYvu6RjHrEH/3jQO3hXA2ZQLePvCrELtpqzpNOgP2bxwR5/JMPE/WUoK/SLutDQRa+8m3FP74Bv7TxX/loTW/KbTtgV5QqEjyAbjLmGox49HB+xNVANxCPSYOhEzbC0aYNLReVv/BwFx7DFj66sk+/mnDl7apkuL1qChhlpo3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1751651739; c=relaxed/simple;
-	bh=UKLnwGOdPpHLJ7sTxY1lA+Ws2ImagWBSPW4hqzfhnAQ=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=gbWrzwmgD8TMUSs1SPKlq+lJYNusxPMsqXkVibTsEg2X/9BTn0H+XOMU9xcGswORV74LQ4ArTYO06Jpgn1KwQudvSzFpjthxiaVf7Lr1chgz/RWsP/e+kCdgbL4VabbQ9Z5NGdu1El05Pu7sK5wOhZwl3FqINtWMt5kQVKs0GD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eQDc8gEp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FADFC4CEE3;
+	bh=TxfXG/TnoB5cS43y+ihelTbSmjlldl171h067YFIq4o=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=rXeMYjF/ua+vCHytkrdS6vdEWG1FoTTSkkoy3tVjSvsiM69lUKicoQe876fIqHjk9HQF2q7bx2zjrxo/bJf665DRHUjEx4rviJoDTJhK0iJPtL5RIbDSPEoKHGZlCygP/bfWA0XVX29Z+M5kczVQCZ6D8f/h7TWtaSMdaRoQkxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XQoWdP0n; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EEE14C4CEEF;
 	Fri,  4 Jul 2025 17:55:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751651738;
-	bh=UKLnwGOdPpHLJ7sTxY1lA+Ws2ImagWBSPW4hqzfhnAQ=;
-	h=From:To:In-Reply-To:References:Subject:Date:From;
-	b=eQDc8gEpUQLzn+1OPT6E9KwduK6yqKfkPKplP70xgW3KtRUJ1oCRHN2244lUqedLC
-	 b7gTuWIDBZpb4r8QcCBTCroKZFHrA0LoPQ/ttsyYHzJqNtbI3MtACPcMUtVl/qc5EJ
-	 buRbUxFMERB8a6wKQihtx6yXlSDosiaR3Y60J77DZNLbHduLGK30Eq4lFfsUKmTRxd
-	 Cfia2/lsxzOxFgfEXmZC9IgquEFfcRz1Js1/ZLXqG6wTj62WJTgDtJtABGfNF/awSb
-	 ImD0qRu5teRx4hOuoDP+h0v9jm4OUFaRAa8CUu7Houe8zlrRdKyRUkwzjY00obsgOi
-	 iqifHNQsTzMdg==
+	s=k20201202; t=1751651739;
+	bh=TxfXG/TnoB5cS43y+ihelTbSmjlldl171h067YFIq4o=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=XQoWdP0n46aO7cE9bAlJ9Xmd41KhSMyFHf/sTDd2Le/upgWg4PjS/bc8URfqscOlj
+	 g5plQ5SplVgm0zkMCJVGynb9IVLpd2862lcP6/kiMYYmcwHpH71aZOuMASiJpkAuut
+	 lElyn31sAUj4R7mY7/3zOlXBk7SkFzzpRe8lQq4oFTovnYtjKNCz2xybpu24c+B2hk
+	 4xmjQrgY0Y0OmA3o01JQ8tMPlaO/PttzapsieTOvhP4DYEAFW79O6eRkdTJANLbDG7
+	 jtbGL/Rb3zDmVaJIqey55MeflwTyNdSiJMQ+1wgzPMorJ6M9+oweKH92W8gZMQKsal
+	 vkp/1+IrjTi3g==
 From: Namhyung Kim <namhyung@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
- Arnaldo Carvalho de Melo <acme@kernel.org>, 
- Mark Rutland <mark.rutland@arm.com>, 
- Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
- Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
- Kan Liang <kan.liang@linux.intel.com>, linux-perf-users@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Ian Rogers <irogers@google.com>
-In-Reply-To: <20250703042000.2740640-1-irogers@google.com>
-References: <20250703042000.2740640-1-irogers@google.com>
-Subject: Re: [PATCH v1] perf header: Fix pipe mode header dumping
-Message-Id: <175165173800.3149172.11734116965485342264.b4-ty@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>, 
+ Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>, 
+ Namhyung Kim <namhyung@kernel.org>
+Cc: Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, 
+ LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org
+In-Reply-To: <20250703014942.1369397-1-namhyung@kernel.org>
+References: <20250703014942.1369397-1-namhyung@kernel.org>
+Subject: Re: [PATCHSET 0/8] perf sched: Fix various memory leaks
+Message-Id: <175165173893.3149172.3930792821230111207.b4-ty@kernel.org>
 Date: Fri, 04 Jul 2025 10:55:38 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -63,13 +62,17 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-c04d2
 
-On Wed, 02 Jul 2025 21:20:00 -0700, Ian Rogers wrote:
-> The pipe mode header dumping was accidentally removed when tracing of
-> header feature events in pipe mode was added.
+On Wed, 02 Jul 2025 18:49:34 -0700, Namhyung Kim wrote:
+> While running the new perf sched test with ASAN, it fails due to
+> memory leaks.  They comes mostly from missing thread__put() but
+> sometimes it needs to release other data structures.
 > 
-> Minor spelling tweak to header test failure message.
+> Fix those leaks and add more subcommands to the test.
 > 
+> Thanks,
+> Namhyung
 > 
+> [...]
 Applied to perf-tools-next, thanks!
 
 Best regards,
