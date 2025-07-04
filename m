@@ -1,208 +1,121 @@
-Return-Path: <linux-kernel+bounces-717430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-717440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 721A9AF9423
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 15:29:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8EC2AF944B
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 15:34:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 771153B2B90
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 13:26:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DEFA53BF3A7
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 13:30:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D1792FBFFB;
-	Fri,  4 Jul 2025 13:27:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B62930748D;
+	Fri,  4 Jul 2025 13:30:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lu0fEi+g"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mlB64oJw"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6AC985626;
-	Fri,  4 Jul 2025 13:27:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7079303DE9;
+	Fri,  4 Jul 2025 13:30:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751635628; cv=none; b=K+ExyJxEIvBcrtRRI00Ad6D4Fc9oZXWaQDGT/5t+16sADLYBwV+nE4DuaDSJo1NYLffx/qDRfX80iK7Vv2U5q5Mm9KcR47dsonT+/nwitwUwyrj0yZHCIPbHOgiLxsbMRNtbZhRcZbM/G2DMwBRAJOgNv3G7f1wOcPXe4aK4xKU=
+	t=1751635811; cv=none; b=Isx999XDm5ie4Q3bhEGbnjuppr+BawFi6A221NYhNDbg8nb4ESCLw8jf1awFNPq+Dw0HAIODesJDC08qkXxqF7I6hLPT5O4DdbDxs9U6v1XcO2M27JONG6Mfsf0dvn87DYX3p4BhEcjmRLpNeOl/8yukgALKEZ8XV8LCZ4G8NbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751635628; c=relaxed/simple;
-	bh=UmMK4vWBWCkUTxLdUKXC8/KSjdp8rccHH64kZT4FmmU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SK/d2wuLKutSEOPU7PHbtQpaC0jPkbLus/TJYw4yig85wIyoZh4zcHcvAVjuSQSKM6Bm3Gi3+Upzhey/0s3Q0KMWsMzB9dDDSYGJE4DK0fAaUJukVLcBp95MPJoRPSqfJlSkJsz6hXCQF52MSOA26IiwY1Lrred4ChNTNRiXBZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lu0fEi+g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 363F7C4CEEF;
-	Fri,  4 Jul 2025 13:27:08 +0000 (UTC)
+	s=arc-20240116; t=1751635811; c=relaxed/simple;
+	bh=3TJShfcgPgVDiAOqSjcv6639c1g5yfDzdsKl4BnWeDc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bAVk3pAJy37zTVTHnOd4PS+AsjrYKxmRtziGBt4iSZ2lhUMyTZms6ZeWu3Ro5YHjgIbbLcnmNHbQ6sA/9dYyaVwae012h1kwdCvixNHkjlthDS4INxJYYzb9kjwH6cJXNe5zm5sQ0FguXv8/f0j6hUEzTE00CR918wFHFDnV1gE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mlB64oJw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73F4AC4CEE3;
+	Fri,  4 Jul 2025 13:30:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751635628;
-	bh=UmMK4vWBWCkUTxLdUKXC8/KSjdp8rccHH64kZT4FmmU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=lu0fEi+gQsq8IUwn6EEfu/eI1rogJbit7P7CqTe0KP86Hy+4bXK37MxUdwohdMj7J
-	 BIljCNK7dh5Q+/SSrlI6W10bclsGAg7d7FkAeKju8IDrpBStrpPkZnkXRG4yB7rO6+
-	 McdqYfs4MnyQ0tuim5erEKaX0MenHVTu+HbQVW6J5lRzj2AxzinKbWZG9k0qsR0/lZ
-	 7bZdRuTweHSHHVfLL/y8T0loZmktCIhTCXGmjmKvBZ1sMpdPKBNCUEcAOVg/OKR0QN
-	 0qE28/95dJUOrDVnsJuKAdTEjv1KZ57WKoL0GJxEIF4hRZDjNS2Np6UYRK2EU3VxUm
-	 sJKGqlCd7WAtA==
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-553dceb345eso1193217e87.1;
-        Fri, 04 Jul 2025 06:27:08 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVENRJU/szC5X8zKDjeNmMKg7nMWVnEkmaIUHA7GElngtPTWB7Y5pTuexW1JI715DTSG80T5pyeBXz3Yg==@vger.kernel.org, AJvYcCVrY+1gld/cxyb5HNFJLN818hiqjTg7MqfP7XcubgpDpSTtgMYxQLer/fNpxwPCEAHWmhMIYbsa/hwwLmw=@vger.kernel.org, AJvYcCWNAikMA2oFmII4viRpagMEqGfwhnII/L0b7ywZ7HFoh3MRdxOqP1dr3HyyOz2+VUP7a8xuw/YV4F9Alw==@vger.kernel.org, AJvYcCXe5cDMvYq7Om5LrXVFkPLK5n9gI0PgJbkcjLpFNbDSeOPyFrwNHcgfWR+LC1JWDoiaM5ImLNHlYmXc7A==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkuLwDQMn7Q26atF48NvOsVYaAwIZ+3E/THQP7+qr/jQW5Mbiw
-	BqrTJS2hd7OEHff9mgY2FPy1cLJLxR55t+M6A3jFqrJmwBsIO7VDrpC6ZbneexREGWNjuoqumSv
-	euETZFT4Iv6hF6yXodwMQH25Z3Oxap4o=
-X-Google-Smtp-Source: AGHT+IHbXsSqxiQQgTganngCHyLYaDZCz1QOmHZXPSAjSWrJrmUK1ng5PlRRa0qT4YG3miebycXJXkcbsNGhKOePUQw=
-X-Received: by 2002:a05:6512:3da6:b0:553:d8ca:4fcb with SMTP id
- 2adb3069b0e04-556dbf81a40mr784811e87.21.1751635626524; Fri, 04 Jul 2025
- 06:27:06 -0700 (PDT)
+	s=k20201202; t=1751635811;
+	bh=3TJShfcgPgVDiAOqSjcv6639c1g5yfDzdsKl4BnWeDc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mlB64oJwHLb+6t102HcThFDTSceZXKq6RAhkl9YnvcTUj1/48ODP+AxTn4AIhi5SS
+	 wgqg+glsT/bLoPm/jhdKp6MIJlDsO+qDp9Ax8SK5jLykl917XmiJv69YGTgVJXxs5o
+	 XgUwyh8qpAQLI4KTBA0FFpCd0YjSoVPEvmX19+UG8ABPqeug99sqDYHQjvyc1mk7oI
+	 7ZLJZ1sN6m9Dr8+PPYo4iRejBuzAa84q8F+5DBhaEltWxDOGmkYrVtI9GiziBT3bRa
+	 2ZRQhuBWP36bOJkYnlvcF8CTaliy5cJUOCpo4RQ9hJmHx5ALw2pUvuZnMD0f676coD
+	 WEz3lMLVJcHtg==
+Date: Fri, 4 Jul 2025 14:30:05 +0100
+From: Simon Horman <horms@kernel.org>
+To: Ryo Takakura <ryotkkr98@gmail.com>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	florian.fainelli@broadcom.com, kuba@kernel.org, opendmb@gmail.com,
+	pabeni@redhat.com, zakkemble@gmail.com,
+	bcm-kernel-feedback-list@broadcom.com, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH net v2] net: bcmgenet: Initialize u64 stats seq counter
+Message-ID: <20250704133005.GN41770@horms.kernel.org>
+References: <20250702092417.46486-1-ryotkkr98@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250630160645.3198-1-ebiggers@kernel.org>
-In-Reply-To: <20250630160645.3198-1-ebiggers@kernel.org>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Fri, 4 Jul 2025 15:26:54 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXGTSfgVoqpmC=5z1kuAHw_JXo=rCEEFy4tRJdwAb2ExZA@mail.gmail.com>
-X-Gm-Features: Ac12FXyPp6fnvKb4WZAS9lUDfLS7Jj9PzhxOzqBaJq_NKIJbrn4XwJZRpCZIh-c
-Message-ID: <CAMj1kXGTSfgVoqpmC=5z1kuAHw_JXo=rCEEFy4tRJdwAb2ExZA@mail.gmail.com>
-Subject: Re: [PATCH v2 00/14] SHA-256 library improvements
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org, 
-	linux-s390@vger.kernel.org, sparclinux@vger.kernel.org, x86@kernel.org, 
-	"Jason A . Donenfeld" <Jason@zx2c4.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250702092417.46486-1-ryotkkr98@gmail.com>
 
-On Mon, 30 Jun 2025 at 18:09, Eric Biggers <ebiggers@kernel.org> wrote:
->
-> This series is also available at:
->
->     git fetch https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git sha256-lib-cleanup-v2
->
-> This series improves the SHA-224 and SHA-256 library code to be
-> consistent with what I did for SHA-384 and SHA-512.  This includes:
->
-> - Use stronger typing in the SHA-224 and SHA-256 functions.
->
-> - Add support for HMAC-SHA224 and HMAC-SHA256.  (I'll send a separate
->   patch with KUnit test cases for this.)
->
-> - Make the old-school crypto API's support for sha224 and sha256 just
->   use the actual library API, instead of unsafe low-level functions.
->
-> - Consolidate the CPU-based SHA-224 and SHA-256 code into a single
->   module, with better inlining and dead code elimination.
->
-> - Properly document the SHA-224 and SHA-256 functions.
->
-> - Other changes to synchronize the code with SHA-384 and SHA-512.
->
-> Changed in v2:
-> - Dropped sha224_kunit.c changes; it will be added later in the history
-> - Dropped some patches that I folded into the SHA-512 series
-> - Removed redundant checks of IS_ENABLED(CONFIG_KERNEL_MODE_NEON)
-> - Removed obsolete setting of -DARCH for sha256.o
-> - Fixed a commit title to mention sha256 instead of sha512
-> - Excluded HMAC-SHA{224,256} code from purgatory, where it isn't needed
->
-> Eric Biggers (14):
->   libceph: Rename hmac_sha256() to ceph_hmac_sha256()
->   cxl/test: Simplify fw_buf_checksum_show()
->   lib/crypto: sha256: Reorder some code
->   lib/crypto: sha256: Remove sha256_blocks_simd()
->   lib/crypto: sha256: Add sha224() and sha224_update()
->   lib/crypto: sha256: Make library API use strongly-typed contexts
->   lib/crypto: sha256: Propagate sha256_block_state type to
->     implementations
->   lib/crypto: sha256: Add HMAC-SHA224 and HMAC-SHA256 support
->   crypto: sha256 - Wrap library and add HMAC support
->   crypto: sha256 - Use same state format as legacy drivers
->   lib/crypto: sha256: Remove sha256_is_arch_optimized()
->   lib/crypto: sha256: Consolidate into single module
->   lib/crypto: sha256: Sync sha256_update() with sha512_update()
->   lib/crypto: sha256: Document the SHA-224 and SHA-256 API
->
+On Wed, Jul 02, 2025 at 06:24:17PM +0900, Ryo Takakura wrote:
+> Initialize u64 stats as it uses seq counter on 32bit machines
+> as suggested by lockdep below.
+> 
+> [    1.830953][    T1] INFO: trying to register non-static key.
+> [    1.830993][    T1] The code is fine but needs lockdep annotation, or maybe
+> [    1.831027][    T1] you didn't initialize this object before use?
+> [    1.831057][    T1] turning off the locking correctness validator.
+> [    1.831090][    T1] CPU: 1 UID: 0 PID: 1 Comm: swapper/0 Tainted: G        W           6.16.0-rc2-v7l+ #1 PREEMPT
+> [    1.831097][    T1] Tainted: [W]=WARN
+> [    1.831099][    T1] Hardware name: BCM2711
+> [    1.831101][    T1] Call trace:
+> [    1.831104][    T1]  unwind_backtrace from show_stack+0x18/0x1c
+> [    1.831120][    T1]  show_stack from dump_stack_lvl+0x8c/0xcc
+> [    1.831129][    T1]  dump_stack_lvl from register_lock_class+0x9e8/0x9fc
+> [    1.831141][    T1]  register_lock_class from __lock_acquire+0x420/0x22c0
+> [    1.831154][    T1]  __lock_acquire from lock_acquire+0x130/0x3f8
+> [    1.831166][    T1]  lock_acquire from bcmgenet_get_stats64+0x4a4/0x4c8
+> [    1.831176][    T1]  bcmgenet_get_stats64 from dev_get_stats+0x4c/0x408
+> [    1.831184][    T1]  dev_get_stats from rtnl_fill_stats+0x38/0x120
+> [    1.831193][    T1]  rtnl_fill_stats from rtnl_fill_ifinfo+0x7f8/0x1890
+> [    1.831203][    T1]  rtnl_fill_ifinfo from rtmsg_ifinfo_build_skb+0xd0/0x138
+> [    1.831214][    T1]  rtmsg_ifinfo_build_skb from rtmsg_ifinfo+0x48/0x8c
+> [    1.831225][    T1]  rtmsg_ifinfo from register_netdevice+0x8c0/0x95c
+> [    1.831237][    T1]  register_netdevice from register_netdev+0x28/0x40
+> [    1.831247][    T1]  register_netdev from bcmgenet_probe+0x690/0x6bc
+> [    1.831255][    T1]  bcmgenet_probe from platform_probe+0x64/0xbc
+> [    1.831263][    T1]  platform_probe from really_probe+0xd0/0x2d4
+> [    1.831269][    T1]  really_probe from __driver_probe_device+0x90/0x1a4
+> [    1.831273][    T1]  __driver_probe_device from driver_probe_device+0x38/0x11c
+> [    1.831278][    T1]  driver_probe_device from __driver_attach+0x9c/0x18c
+> [    1.831282][    T1]  __driver_attach from bus_for_each_dev+0x84/0xd4
+> [    1.831291][    T1]  bus_for_each_dev from bus_add_driver+0xd4/0x1f4
+> [    1.831303][    T1]  bus_add_driver from driver_register+0x88/0x120
+> [    1.831312][    T1]  driver_register from do_one_initcall+0x78/0x360
+> [    1.831320][    T1]  do_one_initcall from kernel_init_freeable+0x2bc/0x314
+> [    1.831331][    T1]  kernel_init_freeable from kernel_init+0x1c/0x144
+> [    1.831339][    T1]  kernel_init from ret_from_fork+0x14/0x20
+> [    1.831344][    T1] Exception stack(0xf082dfb0 to 0xf082dff8)
+> [    1.831349][    T1] dfa0:                                     00000000 00000000 00000000 00000000
+> [    1.831353][    T1] dfc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+> [    1.831356][    T1] dfe0: 00000000 00000000 00000000 00000000 00000013 00000000
+> 
+> Fixes: 59aa6e3072aa ("net: bcmgenet: switch to use 64bit statistics")
+> Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
+> Signed-off-by: Ryo Takakura <ryotkkr98@gmail.com>
+> ---
+> 
+> Changes since v1:
+> [0] https://lore.kernel.org/netdev/20250629114109.214057-1-ryotkkr98@gmail.com/
+> 
+> - Rebased on the net tree.
+> - Add <Reviewed-by> by Florian. Thank you Florian!
 
-Acked-by: Ard Biesheuvel <ardb@kernel.org>
+Thanks for the update, LGTM.
 
-
->  arch/mips/cavium-octeon/Kconfig               |   6 -
->  arch/mips/cavium-octeon/crypto/Makefile       |   1 -
->  arch/riscv/purgatory/purgatory.c              |   8 +-
->  arch/s390/purgatory/purgatory.c               |   2 +-
->  arch/x86/purgatory/purgatory.c                |   2 +-
->  crypto/Kconfig                                |   4 +-
->  crypto/Makefile                               |   1 -
->  crypto/sha256.c                               | 371 +++++++++-------
->  crypto/testmgr.c                              |  12 +
->  drivers/char/tpm/tpm2-sessions.c              |  12 +-
->  drivers/crypto/img-hash.c                     |   4 +-
->  drivers/crypto/starfive/jh7110-hash.c         |   8 +-
->  include/crypto/internal/sha2.h                |  66 ---
->  include/crypto/sha2.h                         | 390 +++++++++++++++--
->  kernel/kexec_file.c                           |  10 +-
->  lib/crypto/Kconfig                            |  34 +-
->  lib/crypto/Makefile                           |  39 +-
->  lib/crypto/arm/Kconfig                        |   7 -
->  lib/crypto/arm/Makefile                       |   8 +-
->  lib/crypto/arm/sha256-armv4.pl                |  20 +-
->  lib/crypto/arm/sha256-ce.S                    |   2 +-
->  lib/crypto/arm/sha256.c                       |  64 ---
->  lib/crypto/arm/sha256.h                       |  46 ++
->  lib/crypto/arm64/Kconfig                      |   6 -
->  lib/crypto/arm64/Makefile                     |   9 +-
->  lib/crypto/arm64/sha2-armv8.pl                |   2 +-
->  lib/crypto/arm64/sha256-ce.S                  |   2 +-
->  lib/crypto/arm64/sha256.c                     |  75 ----
->  lib/crypto/arm64/sha256.h                     |  57 +++
->  lib/crypto/arm64/sha512.h                     |   6 +-
->  .../crypto/mips/sha256.h                      |  20 +-
->  lib/crypto/powerpc/Kconfig                    |   6 -
->  lib/crypto/powerpc/Makefile                   |   3 -
->  lib/crypto/powerpc/{sha256.c => sha256.h}     |  19 +-
->  lib/crypto/riscv/Kconfig                      |   8 -
->  lib/crypto/riscv/Makefile                     |   3 -
->  .../sha256-riscv64-zvknha_or_zvknhb-zvkb.S    |   2 +-
->  lib/crypto/riscv/sha256.c                     |  67 ---
->  lib/crypto/riscv/sha256.h                     |  42 ++
->  lib/crypto/s390/Kconfig                       |   6 -
->  lib/crypto/s390/Makefile                      |   3 -
->  lib/crypto/s390/sha256.c                      |  47 --
->  lib/crypto/s390/sha256.h                      |  28 ++
->  lib/crypto/sha256-generic.c                   | 138 ------
->  lib/crypto/sha256.c                           | 413 ++++++++++++++++--
->  lib/crypto/sparc/Kconfig                      |   8 -
->  lib/crypto/sparc/Makefile                     |   4 -
->  lib/crypto/sparc/{sha256.c => sha256.h}       |  37 +-
->  lib/crypto/x86/Kconfig                        |   8 -
->  lib/crypto/x86/Makefile                       |   3 -
->  lib/crypto/x86/sha256-avx-asm.S               |   2 +-
->  lib/crypto/x86/sha256-avx2-asm.S              |   2 +-
->  lib/crypto/x86/sha256-ni-asm.S                |   2 +-
->  lib/crypto/x86/sha256-ssse3-asm.S             |   2 +-
->  lib/crypto/x86/sha256.c                       |  80 ----
->  lib/crypto/x86/sha256.h                       |  55 +++
->  net/ceph/messenger_v2.c                       |  12 +-
->  tools/testing/cxl/test/mem.c                  |  21 +-
->  58 files changed, 1307 insertions(+), 1008 deletions(-)
->  delete mode 100644 include/crypto/internal/sha2.h
->  delete mode 100644 lib/crypto/arm/sha256.c
->  create mode 100644 lib/crypto/arm/sha256.h
->  delete mode 100644 lib/crypto/arm64/sha256.c
->  create mode 100644 lib/crypto/arm64/sha256.h
->  rename arch/mips/cavium-octeon/crypto/octeon-sha256.c => lib/crypto/mips/sha256.h (76%)
->  rename lib/crypto/powerpc/{sha256.c => sha256.h} (76%)
->  delete mode 100644 lib/crypto/riscv/sha256.c
->  create mode 100644 lib/crypto/riscv/sha256.h
->  delete mode 100644 lib/crypto/s390/sha256.c
->  create mode 100644 lib/crypto/s390/sha256.h
->  delete mode 100644 lib/crypto/sha256-generic.c
->  delete mode 100644 lib/crypto/sparc/Kconfig
->  delete mode 100644 lib/crypto/sparc/Makefile
->  rename lib/crypto/sparc/{sha256.c => sha256.h} (53%)
->  delete mode 100644 lib/crypto/x86/sha256.c
->  create mode 100644 lib/crypto/x86/sha256.h
->
-> --
-> 2.50.0
->
+Reviewed-by: Simon Horman <horms@kernel.org>
 
