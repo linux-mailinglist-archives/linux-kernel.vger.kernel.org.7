@@ -1,125 +1,113 @@
-Return-Path: <linux-kernel+bounces-717064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-717048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB2B3AF8EAC
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 11:32:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17711AF8E79
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 11:25:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E10CE3B1454
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 09:30:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B087560F9F
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 09:22:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0430D2DA769;
-	Fri,  4 Jul 2025 09:31:04 +0000 (UTC)
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E05D72E7BAB;
+	Fri,  4 Jul 2025 09:21:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="B4Ihd6tS"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CDA7136E;
-	Fri,  4 Jul 2025 09:31:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6752A2E8E03;
+	Fri,  4 Jul 2025 09:21:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751621463; cv=none; b=EUnEcKsbssFDeUbpi+/h6SSvGBr4rFVm5xjAqH1iD1LQW1yirs6KK8oa9wA43ZWOsNrfcps1V6IDxJyAHNjrXaEWhlEgGKw/bubHDC2Tzc+pqng8F/gxJhtbjuydZSUWIqfI66znhWWuaeE5J8NKjv7AI19eZM0/L8FNoLqbr9M=
+	t=1751620912; cv=none; b=OxGrpGihiFeBw9qlKkd2s3O2mOBhDjhOujnrSBCwlA+8KZYxiKXed6NkO3DvN87zkgLUVuIXeEGKUL2yhZvXuCcRGlQZd4XwCzkN4jPfftiQkyAbZMIBVSUewqPDtbWDWs4UUhbG0RosQHEv0o4J3jyFgRUjfblE/jNjDEPBFLg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751621463; c=relaxed/simple;
-	bh=DgJEirE2drDPGSXFXC0f/QIbKHo7uI3B5qoI9iYxmoc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gCiT0XbJb/YI3JA79BGM89JJrAcjrGuJBXT1WaeUKYj+E4MAnKTmIxICgL0dfT7cv6y7n6WG1o2k2prifEKL71A9KmaWxxZgjjAYzsyPVVknRcfNhcbI/W29uXJceVDpuK0n8IPu9wh1K3m78D9fdnI+CVKzs69cQXouXz2UED0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=pankajraghav.com; arc=none smtp.client-ip=80.241.56.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4bYSnK2YHbz9t29;
-	Fri,  4 Jul 2025 11:21:41 +0200 (CEST)
-From: Pankaj Raghav <p.raghav@samsung.com>
-To: Matthew Wilcox <willy@infradead.org>,
-	Hannes Reinecke <hare@suse.de>,
-	mcgrof@kernel.org,
-	Jens Axboe <axboe@kernel.dk>
-Cc: linux-kernel@vger.kernel.org,
-	linux-block@vger.kernel.org,
-	gost.dev@samsung.com,
-	kernel@pankajraghav.com,
-	hch@lst.de,
-	Christian Brauner <brauner@kernel.org>,
-	Pankaj Raghav <p.raghav@samsung.com>
-Subject: [PATCH] block: reject bs > ps block devices when THP is disabled
-Date: Fri,  4 Jul 2025 11:21:34 +0200
-Message-ID: <20250704092134.289491-1-p.raghav@samsung.com>
+	s=arc-20240116; t=1751620912; c=relaxed/simple;
+	bh=5fQ2aJ1Vlww6hWXndwKGXGvH3xXglf+mXhPexqO8tT8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sNXe+qkyzV++UE+OP5JQ0haVkn/OQZfxteXlvG3zMxW5TvA0wfnjYwm5G+sjhgpktCaaLnqM4E0dMabDBM4Lko/On2A+VQYQ5XRtDBZXS0MdX4kGkVyzm0gfHWqgakIoz7FRNB8tVS25wo+WPYJZi34niXUJxLL24XuFm9YX/jY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=B4Ihd6tS; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=3SFTAh+HHF7FmDoKMgoLwPkFCo2t6Gk4A/qXJ6c1fak=; b=B4Ihd6tSv/vfplUG9x5JCVXAlC
+	RWWQO3uBKWfScdqwOWwFfptl7+B+Iu8oKw4Ifq7XBKY4oXCZ0pHi+C2dKB+b5S3jZ33q7Rokcq5QV
+	SoyGEC5M98dWxQpta9gQlOCcSJwJge8RbEQlhcitU46IOSoe+hUhludaurJGrOo1Mv0Zw3cKMqmg/
+	IUO/AVD6Zha8HhANF1MmOs48mxkhMq6MDDIX/YBxe84WOfJhbVu58zNFTgR58DcCYqnVRvrwhvl90
+	pwmf91fy1ZvpKc4BY+3n9xDcyQ/l+o7stGkWhe1jM3Jn9L9Vs+ekygaA7kIjlZsBNJzSII1sAICRV
+	yxKimoNQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uXcc5-00000007u6P-2Qhu;
+	Fri, 04 Jul 2025 09:21:45 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 1DC04300212; Fri, 04 Jul 2025 11:21:45 +0200 (CEST)
+Date: Fri, 4 Jul 2025 11:21:44 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Zihuan Zhang <zhangzihuan@kylinos.cn>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, pavel@kernel.org,
+	len.brown@intel.com, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Oleg Nesterov <oleg@redhat.com>
+Subject: Re: [PATCH v3 1/1] PM / Freezer: Skip zombie/dead processes to
+Message-ID: <20250704092144.GH2001818@noisy.programming.kicks-ass.net>
+References: <20250611101247.15522-1-zhangzihuan@kylinos.cn>
+ <20250611101247.15522-2-zhangzihuan@kylinos.cn>
+ <CAJZ5v0jpuUVM73M=Gzq36je=K_7zEkvVd8bxohi6N5OYgxgUug@mail.gmail.com>
+ <20250703164021.GY1613200@noisy.programming.kicks-ass.net>
+ <CAJZ5v0j29Nu2nitmj6tPhOQYuSaHBtXQVR21ikDtrxpejPdW8A@mail.gmail.com>
+ <20250704081941.GC2001818@noisy.programming.kicks-ass.net>
+ <67997bdd-d00a-413a-a565-188c4b06f385@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <67997bdd-d00a-413a-a565-188c4b06f385@kylinos.cn>
 
-If THP is disabled and when a block device with logical block size >
-page size is present, the following null ptr deref panic happens during
-boot:
+On Fri, Jul 04, 2025 at 04:48:20PM +0800, Zihuan Zhang wrote:
+> Hi Peter,
+> 
+> Thanks for the feedback.
+> 
+> ??? 2025/7/4 16:19, Peter Zijlstra ??????:
+> > ????????? ??? ??? ?????? ??? ??? ??? ??? ??? ??? ??? ??? ??? ??????
+> > Depending on where they wait (I can't seem to find in a hurry) it might
+> > make sense to make that wait FREEZABLE anyway.
+> > 
+> > For example, AFAICT it wouldn't hurt, and might even help some, to make
+> > kernel/exit.c:do_wait() TASK_FREEZABLE.
+> > 
+> > So where do ZOMBIEs sleep? Don't they simply pass through do_task_dead()
+> > and never get scheduled again? Notably, do_task_dead() already marks the
+> > tasks as PF_NOFREEZE.
+> > 
+> > Anyway, yes, the condition it adds is relatively simple, but I really
+> > don't see why we should complicate things *at*all*.
+> 
+> You???re absolutely right ??? zombie processes won???t be frozen in
+> practice, since PF_NOFREEZE is already set in do_task_dead(). However, if we
+> don???t explicitly skip them early in try_to_freeze_task(), they still go
+> through the freezer logic path, including calls like freeze_task() ???
+> freezing() before eventually returning without freezing.
+> 
+> This not only introduces unnecessary code path traversal, but also involves
+> locking (e.g., spin_lock_irqsave/restore()), which could be avoided
+> altogether if we bail out earlier.
+> 
+> Additionally, skipping zombies directly helps reduce the list traversal
+> overhead in freeze_processes(), especially on systems with a large number of
+> tasks, where zombies can account for a non-trivial fraction.
+> 
+> So while the practical effect might be small, the gain is low-risk and helps
+> streamline the freezer logic a bit more.
 
-[   [13.2 mK  AOSAN: null-ptr-deref in range [0x0000000000000000-0x0000000000K0 0 0[07]
-[   13.017749] RIP: 0010:create_empty_buffers+0x3b/0x380
-<snip>
-[   13.025448] Call Trace:
-[   13.025692]  <TASK>
-[   13.025895]  block_read_full_folio+0x610/0x780
-[   13.026379]  ? __pfx_blkdev_get_block+0x10/0x10
-[   13.027008]  ? __folio_batch_add_and_move+0x1fa/0x2b0
-[   13.027548]  ? __pfx_blkdev_read_folio+0x10/0x10
-[   13.028080]  filemap_read_folio+0x9b/0x200
-[   13.028526]  ? __pfx_filemap_read_folio+0x10/0x10
-[   13.029030]  ? __filemap_get_folio+0x43/0x620
-[   13.029497]  do_read_cache_folio+0x155/0x3b0
-[   13.029962]  ? __pfx_blkdev_read_folio+0x10/0x10
-[   13.030381]  read_part_sector+0xb7/0x2a0
-[   13.030805]  read_lba+0x174/0x2c0
-<snip>
-[   13.045348]  nvme_scan_ns+0x684/0x850 [nvme_core]
-[   13.045858]  ? __pfx_nvme_scan_ns+0x10/0x10 [nvme_core]
-[   13.046414]  ? _raw_spin_unlock+0x15/0x40
-[   13.046843]  ? __switch_to+0x523/0x10a0
-[   13.047253]  ? kvm_clock_get_cycles+0x14/0x30
-[   13.047742]  ? __pfx_nvme_scan_ns_async+0x10/0x10 [nvme_core]
-[   13.048353]  async_run_entry_fn+0x96/0x4f0
-[   13.048787]  process_one_work+0x667/0x10a0
-[   13.049219]  worker_thread+0x63c/0xf60
-
-As large folio support depends on THP, only allow bs > ps block devices
-if THP is enabled.
-
-Fixes: 47dd67532303 ("block/bdev: lift block size restrictions to 64k")
-Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
----
- include/linux/blkdev.h | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index 82348fcc2455..724ddc40f35c 100644
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@ -270,11 +270,16 @@ static inline dev_t disk_devt(struct gendisk *disk)
- 	return MKDEV(disk->major, disk->first_minor);
- }
- 
-+#ifdef CONFIG_TRANSPARENT_HUGEPAGE
- /*
-  * We should strive for 1 << (PAGE_SHIFT + MAX_PAGECACHE_ORDER)
-  * however we constrain this to what we can validate and test.
-  */
- #define BLK_MAX_BLOCK_SIZE      SZ_64K
-+#else
-+#define BLK_MAX_BLOCK_SIZE      PAGE_SIZE
-+#endif
-+
- 
- /* blk_validate_limits() validates bsize, so drivers don't usually need to */
- static inline int blk_validate_block_size(unsigned long bsize)
-
-base-commit: 8d6c58332c7a8ba025fcfa76888b6c37dbce9633
--- 
-2.49.0
-
+You're missing the obvious. How about we 'fix' the PF_NOFREEZE handling
+and help all cases that set that and not only zombies?
 
