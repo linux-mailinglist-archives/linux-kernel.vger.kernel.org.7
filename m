@@ -1,74 +1,195 @@
-Return-Path: <linux-kernel+bounces-717339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-717341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DBB8AF930D
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 14:47:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 187C0AF9312
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 14:48:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA2E31C8840D
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 12:47:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C797D16AF17
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 12:48:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 182202D94B9;
-	Fri,  4 Jul 2025 12:47:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="KCtfqo3A"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DD5C2D9EE3;
+	Fri,  4 Jul 2025 12:47:52 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ADF12D8DC8;
-	Fri,  4 Jul 2025 12:47:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08DF92D94A5;
+	Fri,  4 Jul 2025 12:47:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751633250; cv=none; b=VcHrsMW761swXMb6m4LqgfT/pRRoMfMm67Uetl305uknWQvIxtg8xRN7Ke4LZLaPA6u4bu9UfPKl+Nvt4u70OKIsBaTE9Gx9JobiI89eicHiKrbVU6aBrzMzxqqSrzofIbKijE24D05Hlfnerm9SmWCkh8kr/9FzbZzUHB70dSI=
+	t=1751633272; cv=none; b=ph5cDje5gAPZvwpNatRaJ6bgWKRlfpdI9rOUuvIIBzbkdk4XqpOeaYcDG7M8slnzcZaYGthknw4/N2/dxcoEsQOJf09kO2oxw2sYOuO98LldpLG+BjrrbuK6gTnT5mPmig9pBYXTCUYpobLbHmZf2jyhA+iMm9meUfyrWPjQmpI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751633250; c=relaxed/simple;
-	bh=T90gNZWoeIwPdQb9kKnDO8z31RKQxyE2y9k3W8A2j4w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ENznDwKOABhlNx8+fMPFXnmQV5fPtYlZjj/T7RYkqPgoC/d98Z4aAIjza9UdwpqSID1TsSSIMzXGpB2rU38RGjqQ/V6q5BgH2cgqlpMshJ1vkaECyNSqLKHDTMObI5ps4j7G0orzLm8j9l4vWJAA00DGikNDpDhRmVqiwOx/zRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=KCtfqo3A; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=dF0QLrRnHi3q/gPd8eAQq74gho4ELrDX/tZACh7jpxM=; b=KCtfqo3A4oBwiDisV4+rPARY+c
-	Uevmp12uGtkEP7tBjRwuC6ikO8G2y1WkNlYOb1519VvqrWUWYOshNs+LXgGaKim7XMr/2ttxIZRU3
-	Fxvr2QCKTU+5h0djOBeHVaWl7xH/f+CFWBwcprqX1PSTvcGljoibqZ6KL6JpobtfDQJc3Z9OiosAD
-	xhSy2S5Zh3XJV6yKQ6FaiMazM/j/SSUdRDW5ZwJlCQOdxzZFuPLXFRGQHGO9twyDkvWHKsZaVtY8V
-	yTTV48gahvduciOuyC/7qwV+8iF2hkLRvBT0uERbKwENmKa3LP41N7THGe+W7N4dlUup6QwXl8okz
-	I1WvluPw==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uXfp7-0000000Gvhr-3gxj;
-	Fri, 04 Jul 2025 12:47:25 +0000
-Date: Fri, 4 Jul 2025 13:47:25 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-Cc: Hannes Reinecke <hare@suse.de>, mcgrof@kernel.org,
-	Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
-	hch@lst.de, linux-block@vger.kernel.org,
-	Christian Brauner <brauner@kernel.org>, gost.dev@samsung.com,
-	Pankaj Raghav <p.raghav@samsung.com>
-Subject: Re: [PATCH v2] block: reject bs > ps block devices when THP is
- disabled
-Message-ID: <aGfNXbQ5ExO95Uf8@casper.infradead.org>
-References: <20250704095036.293568-1-kernel@pankajraghav.com>
+	s=arc-20240116; t=1751633272; c=relaxed/simple;
+	bh=q3W6qKOAkT7lw4zg9GWf0eKhGBj+FEgS0+PDTTbEsHg=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WBbruVr604YLc14DsZ/E7cd6KWKFnNZ+GmmhN8CvgSI+tzeAZJnLpAPuHo8uboB6vfO6E1div/1q7qy1sNfFeHVOzVRGn2VPfHI7z3uTMUySjrnte+tpa5QMRAGwHj/oGvXG2J4qNTniA6H5PASCTcx4AP7RiHzNCkG1fP5BV3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bYYLV23QGz6L5Q0;
+	Fri,  4 Jul 2025 20:47:14 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 83D0B1402E9;
+	Fri,  4 Jul 2025 20:47:46 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 4 Jul
+ 2025 14:47:45 +0200
+Date: Fri, 4 Jul 2025 13:47:44 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: John Groves <John@Groves.net>
+CC: Dan Williams <dan.j.williams@intel.com>, Miklos Szeredi
+	<miklos@szeredb.hu>, Bernd Schubert <bschubert@ddn.com>, John Groves
+	<jgroves@micron.com>, Jonathan Corbet <corbet@lwn.net>, Vishal Verma
+	<vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>, "Matthew
+ Wilcox" <willy@infradead.org>, Jan Kara <jack@suse.cz>, Alexander Viro
+	<viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, "Darrick J
+ . Wong" <djwong@kernel.org>, Randy Dunlap <rdunlap@infradead.org>, "Jeff
+ Layton" <jlayton@kernel.org>, Kent Overstreet <kent.overstreet@linux.dev>,
+	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<nvdimm@lists.linux.dev>, <linux-cxl@vger.kernel.org>,
+	<linux-fsdevel@vger.kernel.org>, Amir Goldstein <amir73il@gmail.com>, "Stefan
+ Hajnoczi" <shajnocz@redhat.com>, Joanne Koong <joannelkoong@gmail.com>, Josef
+ Bacik <josef@toxicpanda.com>, Aravind Ramesh <arramesh@micron.com>, Ajay
+ Joshi <ajayjoshi@micron.com>
+Subject: Re: [RFC V2 04/18] dev_dax_iomap: Add dax_operations for use by
+ fs-dax on devdax
+Message-ID: <20250704134744.00006bcd@huawei.com>
+In-Reply-To: <20250703185032.46568-5-john@groves.net>
+References: <20250703185032.46568-1-john@groves.net>
+	<20250703185032.46568-5-john@groves.net>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250704095036.293568-1-kernel@pankajraghav.com>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100010.china.huawei.com (7.191.174.197) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Fri, Jul 04, 2025 at 11:50:36AM +0200, Pankaj Raghav (Samsung) wrote:
-> Changes since v1:
-> - Use mapping_max_folio_size_supported() instead of doing a ifdef with
->   CONFIG_THP
+On Thu,  3 Jul 2025 13:50:18 -0500
+John Groves <John@Groves.net> wrote:
 
-why?  v1 looked better to me
+> Notes about this commit:
+> 
+> * These methods are based on pmem_dax_ops from drivers/nvdimm/pmem.c
+> 
+> * dev_dax_direct_access() is returns the hpa, pfn and kva. The kva was
+>   newly stored as dev_dax->virt_addr by dev_dax_probe().
+> 
+> * The hpa/pfn are used for mmap (dax_iomap_fault()), and the kva is used
+>   for read/write (dax_iomap_rw())
+> 
+> * dev_dax_recovery_write() and dev_dax_zero_page_range() have not been
+>   tested yet. I'm looking for suggestions as to how to test those.
+> 
+> Signed-off-by: John Groves <john@groves.net>
+A few trivial things noticed whilst reading through.
+
+> ---
+>  drivers/dax/bus.c | 120 ++++++++++++++++++++++++++++++++++++++++++++--
+>  1 file changed, 115 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/dax/bus.c b/drivers/dax/bus.c
+> index 9d9a4ae7bbc0..61a8d1b3c07a 100644
+> --- a/drivers/dax/bus.c
+> +++ b/drivers/dax/bus.c
+> @@ -7,6 +7,10 @@
+>  #include <linux/slab.h>
+>  #include <linux/dax.h>
+>  #include <linux/io.h>
+> +#include <linux/backing-dev.h>
+> +#include <linux/pfn_t.h>
+> +#include <linux/range.h>
+> +#include <linux/uio.h>
+>  #include "dax-private.h"
+>  #include "bus.h"
+>  
+> @@ -1441,6 +1445,105 @@ __weak phys_addr_t dax_pgoff_to_phys(struct dev_dax *dev_dax, pgoff_t pgoff,
+>  }
+>  EXPORT_SYMBOL_GPL(dax_pgoff_to_phys);
+>  
+> +#if IS_ENABLED(CONFIG_DEV_DAX_IOMAP)
+> +
+> +static void write_dax(void *pmem_addr, struct page *page,
+> +		unsigned int off, unsigned int len)
+> +{
+> +	unsigned int chunk;
+> +	void *mem;
+
+I'd move these two into the loop - similar to what you have
+in other cases with more local scope.
+
+> +
+> +	while (len) {
+> +		mem = kmap_local_page(page);
+> +		chunk = min_t(unsigned int, len, PAGE_SIZE - off);
+> +		memcpy_flushcache(pmem_addr, mem + off, chunk);
+> +		kunmap_local(mem);
+> +		len -= chunk;
+> +		off = 0;
+> +		page++;
+> +		pmem_addr += chunk;
+> +	}
+> +}
+> +
+> +static long __dev_dax_direct_access(struct dax_device *dax_dev, pgoff_t pgoff,
+> +			long nr_pages, enum dax_access_mode mode, void **kaddr,
+> +			pfn_t *pfn)
+> +{
+> +	struct dev_dax *dev_dax = dax_get_private(dax_dev);
+> +	size_t size = nr_pages << PAGE_SHIFT;
+> +	size_t offset = pgoff << PAGE_SHIFT;
+> +	void *virt_addr = dev_dax->virt_addr + offset;
+> +	u64 flags = PFN_DEV|PFN_MAP;
+
+spaces around the |
+
+Though given it's in just one place, just put these inline next
+to the question...
+
+
+> +	phys_addr_t phys;
+> +	pfn_t local_pfn;
+> +	size_t dax_size;
+> +
+> +	WARN_ON(!dev_dax->virt_addr);
+> +
+> +	if (down_read_interruptible(&dax_dev_rwsem))
+> +		return 0; /* no valid data since we were killed */
+> +	dax_size = dev_dax_size(dev_dax);
+> +	up_read(&dax_dev_rwsem);
+> +
+> +	phys = dax_pgoff_to_phys(dev_dax, pgoff, nr_pages << PAGE_SHIFT);
+> +
+> +	if (kaddr)
+> +		*kaddr = virt_addr;
+> +
+> +	local_pfn = phys_to_pfn_t(phys, flags); /* are flags correct? */
+> +	if (pfn)
+> +		*pfn = local_pfn;
+> +
+> +	/* This the valid size at the specified address */
+> +	return PHYS_PFN(min_t(size_t, size, dax_size - offset));
+> +}
+
+> +static size_t dev_dax_recovery_write(struct dax_device *dax_dev, pgoff_t pgoff,
+> +		void *addr, size_t bytes, struct iov_iter *i)
+> +{
+> +	size_t off;
+> +
+> +	off = offset_in_page(addr);
+
+Unused.
+> +
+> +	return _copy_from_iter_flushcache(addr, bytes, i);
+> +}
+
+
 
