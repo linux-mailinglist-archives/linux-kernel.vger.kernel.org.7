@@ -1,212 +1,384 @@
-Return-Path: <linux-kernel+bounces-717302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-717304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53989AF9290
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 14:30:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75175AF9299
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 14:31:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A54D2586564
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 12:30:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55A001C82CAE
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 12:31:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBEDC2D6402;
-	Fri,  4 Jul 2025 12:30:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18F1E14A4CC;
+	Fri,  4 Jul 2025 12:30:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qs61oTuP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="ldJBXSYz"
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1906814A4CC;
-	Fri,  4 Jul 2025 12:30:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DAB429A310;
+	Fri,  4 Jul 2025 12:30:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751632208; cv=none; b=FHXJ2Vt+hsAICprR9vWWOPQkvMAWGMUp4LxkfQ+8aTM4dQxXYIYx1EskEzzU65dhKXcqkgRjQczwfviNyqwZQgMIoSEkTh5nPMxZRx9RmP3cPqf18QTY9l9UkFnhjRAEqmtQjlGQ9OC71/Z1OnngWzdwDHPUld8xTBiNFCRIJ+8=
+	t=1751632221; cv=none; b=UyHu0KxrMGZueX4dsUkhWOUhOTdNwl7LVqoHppu/DAzX0mjtRumQ/V4Hq3b5nNRH5sh2dq9ZNHmXhnTRBYW1oLe7iGtUM5/j4NyRmtEZ0SB1TZmK963ya2zOegoGn2n57vvb4fJz6CcpmeXGkcXoqpATZmSc4HLwOv+giq+A/bI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751632208; c=relaxed/simple;
-	bh=zW7noFryrnYZPc0SGx8AEUXZ+kRRxTufCit12o2wRrc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=awAP4Zft5wcvgYltcDwKvPv7OxucbsQnwVtGVlEAcvCU4ICVBtQGiLt7P9ZXRUxBNxRmxaw1zXQxAyY1qts2VFzYQlX+qRDkpqhWmaRuZV1nbs7YQD3/PFX2a8tCsarrolOSUmYwq4fM0tNi94VTio0x9qmRSegdThy/LDa6eQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qs61oTuP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C99B5C4CEE3;
-	Fri,  4 Jul 2025 12:30:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751632207;
-	bh=zW7noFryrnYZPc0SGx8AEUXZ+kRRxTufCit12o2wRrc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=Qs61oTuPjVkJsgP5wobUD0zmdh+m8uHFHLXVwQDQcMrjLgpXDdbIPNPeZp9uEKKm3
-	 keWBVG5nQMPgJfTSsmvvVN0rqvfZt/ZXfTK7qRLAHrMLGwQdKzmOCArjtLwkTOCmSU
-	 Dd1B7oqroTXqPn77EJ3ymyf9zamLo4YZ3L/6kmZioxUtol160LeyqShT97Xf8IpJBP
-	 xlhEiRi4aXsfaQvwb0/NVHOUnXTUN+h3SIrPbnrLSwVna5fFh9bLmBV77oq1fgcQEd
-	 3l7RZSDBtAQKfITPprttuaccFSz7/tvKRJKhQX0iBh26790jGP0uxM6JoViUqetkuX
-	 dUNqs6cFl1DHA==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Benno Lossin" <lossin@kernel.org>
-Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Alex Gaynor"
- <alex.gaynor@gmail.com>,  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo"
- <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,  "Alice
- Ryhl" <aliceryhl@google.com>,  "Masahiro Yamada" <masahiroy@kernel.org>,
-  "Nathan Chancellor" <nathan@kernel.org>,  "Luis Chamberlain"
- <mcgrof@kernel.org>,  "Danilo Krummrich" <dakr@kernel.org>,  "Nicolas
- Schier" <nicolas.schier@linux.dev>,  "Trevor Gross" <tmgross@umich.edu>,
-  "Adam Bratschi-Kaye" <ark.email@gmail.com>,
-  <rust-for-linux@vger.kernel.org>,  <linux-kernel@vger.kernel.org>,
-  <linux-kbuild@vger.kernel.org>,  "Petr Pavlu" <petr.pavlu@suse.com>,
-  "Sami Tolvanen" <samitolvanen@google.com>,  "Daniel Gomez"
- <da.gomez@samsung.com>,  "Simona Vetter" <simona.vetter@ffwll.ch>,  "Greg
- KH" <gregkh@linuxfoundation.org>,  "Fiona Behrens" <me@kloenk.dev>,
-  "Daniel Almeida" <daniel.almeida@collabora.com>,
-  <linux-modules@vger.kernel.org>
-Subject: Re: [PATCH v14 5/7] rust: module: update the module macro with
- module parameter support
-In-Reply-To: <DB1OK2PQZ790.S317HUWYJR3J@kernel.org> (Benno Lossin's message of
-	"Wed, 02 Jul 2025 17:38:52 +0200")
-References: <20250702-module-params-v3-v14-0-5b1cc32311af@kernel.org>
-	<20250702-module-params-v3-v14-5-5b1cc32311af@kernel.org>
-	<5fYjUlNFhuBwWOP46ph07KX4CMe0ORT5pZ_pD-l719E0ChkPTI2pV1tYJcN3oxKKcMI8_HGU1InaWBj52Kbbag==@protonmail.internalid>
-	<DB1OK2PQZ790.S317HUWYJR3J@kernel.org>
-User-Agent: mu4e 1.12.9; emacs 30.1
-Date: Fri, 04 Jul 2025 14:29:57 +0200
-Message-ID: <875xg8rvei.fsf@kernel.org>
+	s=arc-20240116; t=1751632221; c=relaxed/simple;
+	bh=Vp8tuDWzoT6QJTkPDVsTGshvcn9OnKRK3jYRHmSGqi0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BbR3YzYeBRtSZc39EPZAdI+l8oOd+7j7FTojDOKClGlKjKHZAXyCPIVVSxdttayVRhJrV7uVLFOtVv5fe3pZXE6nmdiG/z1Z8x0S4taPZLu3QNGd9vFVPXDZRnD106mC9h+6FaG7PEMt0aETj7Gu3tfmPnIkx+B8/yxgJxWsF1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=ldJBXSYz; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=0xfZqBp17aRS6MxoH8oIJF+tAVuvVXaqV0rJ/wtD2Ng=; b=ldJBXSYz7KzJMMVpkDqKFAtjMp
+	ByXKmWZgWhQyFOwT4xlWUFrEy62aQ/t2fdUBJZ6y+FeiFrC7pPX51zggyg76zOkcYNqANfd9i5QdX
+	iUukzKGJXe1M/4YqiQeyKB5mDyJpfHk6DrvKnXefeImwD71FdVAA+jSPu6aYb/2kfN85laAnV/S7x
+	BbHBUh2a32uVYZQ5gK7WmigO8v8tVAAWEWr3Cp3o5IszvrLO2eTjdildqbtzjBYkoAmKq/qIY+2sR
+	pscHq1GMXZNCN7FR0n8TsbwBnYnehUEpccE76EAemBdmoJ5G1OAEGf73XYKdOkUXZm7R1SZT/M9sm
+	JGY3uSjg==;
+Received: from [81.79.92.254] (helo=[192.168.0.101])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1uXfYH-00CQTY-B5; Fri, 04 Jul 2025 14:30:01 +0200
+Message-ID: <da5fefba-7222-4d77-9528-51eef235c36a@igalia.com>
+Date: Fri, 4 Jul 2025 13:30:00 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/6] drm/sched/tests: Port to cancel_job()
+To: phasta@kernel.org, Lyude Paul <lyude@redhat.com>,
+ Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Matthew Brost <matthew.brost@intel.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Sumit Semwal <sumit.semwal@linaro.org>,
+ Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>
+Cc: dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ linaro-mm-sig@lists.linaro.org
+References: <20250701132142.76899-3-phasta@kernel.org>
+ <20250701132142.76899-5-phasta@kernel.org>
+ <f9b55d5b-0018-4850-a9b7-2f267467e957@igalia.com>
+ <6762d33b4fe8e7b264a7403f228e6ec6723ae623.camel@mailbox.org>
+ <9a070a66-f6fd-45b4-958c-c6e9f3487a0c@igalia.com>
+ <fc61c7c9d5d341d752458d0ee6313ec932803ab3.camel@mailbox.org>
+ <298eeb951676d24981f1d9208b076ec03563a3ae.camel@mailbox.org>
+Content-Language: en-GB
+From: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
+In-Reply-To: <298eeb951676d24981f1d9208b076ec03563a3ae.camel@mailbox.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-"Benno Lossin" <lossin@kernel.org> writes:
 
-> On Wed Jul 2, 2025 at 3:18 PM CEST, Andreas Hindborg wrote:
->> Allow module parameters to be declared in the rust `module!` macro.
+On 04/07/2025 12:27, Philipp Stanner wrote:
+> On Fri, 2025-07-04 at 11:53 +0200, Philipp Stanner wrote:
+>> On Wed, 2025-07-02 at 12:25 +0100, Tvrtko Ursulin wrote:
+>>>
+>>> On 02/07/2025 11:56, Philipp Stanner wrote:
+>>>> On Wed, 2025-07-02 at 11:36 +0100, Tvrtko Ursulin wrote:
+>>>>>
+>>>>> On 01/07/2025 14:21, Philipp Stanner wrote:
+>>>>>> The GPU Scheduler now supports a new callback, cancel_job(),
+>>>>>> which
+>>>>>> lets
+>>>>>> the scheduler cancel all jobs which might not yet be freed
+>>>>>> when
+>>>>>> drm_sched_fini() runs. Using this callback allows for
+>>>>>> significantly
+>>>>>> simplifying the mock scheduler teardown code.
+>>>>>>
+>>>>>> Implement the cancel_job() callback and adjust the code where
+>>>>>> necessary.
+>>>>>
+>>>>> Cross referencing against my version I think you missed this
+>>>>> hunk:
+>>>>>
+>>>>> --- a/drivers/gpu/drm/scheduler/tests/sched_tests.h
+>>>>> +++ b/drivers/gpu/drm/scheduler/tests/sched_tests.h
+>>>>> @@ -49,7 +49,6 @@ struct drm_mock_scheduler {
+>>>>>
+>>>>>     	spinlock_t		lock;
+>>>>>     	struct list_head	job_list;
+>>>>> -	struct list_head	done_list;
+>>>>>
+>>>>>     	struct {
+>>>>>     		u64		context;
+>>>>>
+>>>>
+>>>> Right, overlooked that one.
+>>>>
+>>>>>
+>>>>> I also had this:
+>>>>>
+>>>>> @@ -97,7 +96,8 @@ struct drm_mock_sched_job {
+>>>>>     	struct completion	done;
+>>>>>
+>>>>>     #define DRM_MOCK_SCHED_JOB_DONE		0x1
+>>>>> -#define DRM_MOCK_SCHED_JOB_TIMEDOUT	0x2
+>>>>> +#define DRM_MOCK_SCHED_JOB_CANCELED	0x2
+>>>>> +#define DRM_MOCK_SCHED_JOB_TIMEDOUT	0x4
+>>>>>
+>>>>> And was setting it in the callback. And since we should add a
+>>>>> test to
+>>>>> explicitly cover the new callback, and just the callback, that
+>>>>> could
+>>>>> make it very easy to do it.
+>>>>
+>>>> What do you imagine that to look like? The scheduler only invokes
+>>>> the
+>>>> callback on tear down.
+>>>>
+>>>> We also don't have tests that only test free_job() and the like,
+>>>> do
+>>>> we?
+>>>>
+>>>> You cannot test a callback for the scheduler, because the
+>>>> callback
+>>>> is
+>>>> implemented in the driver.
+>>>>
+>>>> Callbacks are tested by using the scheduler. In this case, it's
+>>>> tested
+>>>> the intended way by the unit tests invoking drm_sched_free().
+>>>
+>>> Something like (untested):
+>>>
+>>> static void drm_sched_test_cleanup(struct kunit *test)
+>>> {
+>>> 	struct drm_mock_sched_entity *entity;
+>>> 	struct drm_mock_scheduler *sched;
+>>> 	struct drm_mock_sched_job job;
+>>> 	bool done;
+>>>
+>>> 	/*
+>>> 	 * Check that the job cancel callback gets invoked by the
+>>> scheduler.
+>>> 	 */
+>>>
+>>> 	sched = drm_mock_sched_new(test, MAX_SCHEDULE_TIMEOUT);
+>>> 	entity = drm_mock_sched_entity_new(test,
+>>> 					
+>>> DRM_SCHED_PRIORITY_NORMAL,
+>>> 					   sched);
+>>>
+>>> 	job = drm_mock_sched_job_new(test, entity);
+>>> 	drm_mock_sched_job_submit(job);
+>>> 	done = drm_mock_sched_job_wait_scheduled(job, HZ);
+>>> 	KUNIT_ASSERT_TRUE(test, done);
+>>>
+>>> 	drm_mock_sched_entity_free(entity);
+>>> 	drm_mock_sched_fini(sched);
+>>>
+>>> 	KUNIT_ASSERT_TRUE(test, job->flags &
+>>> DRM_MOCK_SCHED_JOB_CANCELED);
+>>> }
 >>
->> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
->
-> A few nits below, with those fixed
->
-> Reviewed-by: Benno Lossin <lossin@kernel.org>
->
->> ---
->>  rust/macros/helpers.rs |  25 +++++++
->>  rust/macros/lib.rs     |  31 +++++++++
->>  rust/macros/module.rs  | 177 ++++++++++++++++++++++++++++++++++++++++++=
-++++---
->>  3 files changed, 223 insertions(+), 10 deletions(-)
->
->> +    fn emit_params(&mut self, info: &ModuleInfo) {
->> +        let Some(params) =3D &info.params else {
->> +            return;
->> +        };
->> +
->> +        for param in params {
->> +            let ops =3D param_ops_path(&param.ptype);
->> +
->> +            // Note: The spelling of these fields is dictated by the us=
-er space
->> +            // tool `modinfo`.
->> +            self.emit_param("parmtype", &param.name, &param.ptype);
->> +            self.emit_param("parm", &param.name, &param.description);
->> +
->> +            write!(
->> +                self.param_buffer,
->> +                "
->> +                    pub(crate) static {param_name}:
->> +                        ::kernel::module_param::ModuleParamAccess<{para=
-m_type}> =3D
->> +                            ::kernel::module_param::ModuleParamAccess::=
-new({param_default});
->> +
->> +                    #[link_section =3D \"__param\"]
->> +                    #[used]
->> +                    static __{module_name}_{param_name}_struct:
->
-> Does it make sense to move this static to a `const _: () =3D {};` block?
+>> That could work – but it's racy.
+>>
+>> I wonder if we want to introduce a mechanism into the mock scheduler
+>> through which we can enforce a simulated GPU hang. Then it would
+>> never
+>> race, and that might be useful for more advanced tests for reset
+>> recovery and those things.
+>>
+>> Opinions?
+> 
+> Ah wait, we can do that with job_duration = 0
 
-Yes, that makes sense.
+Yes, the above already wasn't racy.
 
->
->> +                        ::kernel::module_param::RacyKernelParam =3D
->> +                        ::kernel::module_param::RacyKernelParam::new(
->> +                          ::kernel::bindings::kernel_param {{
->> +                            name: if cfg!(MODULE) {{
->
-> s/cfg/::core::cfg/
+If job duration is not explicitly set, and it isn't, the job will not 
+complete until test would call drm_mock_sched_advance(sched, 1). And 
+since it doesn't, the job is guaranteed to be sitting on the list 
+forever. So drm_sched_fini() has a guaranteed chance to clean it up.
 
-OK.
+> Very good, I'll include something like that in v2.
 
->
-> :)
->
-> Also there seems to only be a 2-space indentation here.
+Ack.
 
-Fixed.
+Regards,
 
->
->> +                                ::kernel::c_str!(\"{param_name}\").as_b=
-ytes_with_nul()
->> +                            }} else {{
->> +                                ::kernel::c_str!(\"{module_name}.{param=
-_name}\").as_bytes_with_nul()
->> +                            }}.as_ptr(),
->> +                            // SAFETY: `__this_module` is constructed b=
-y the kernel at load time
->> +                            // and will not be freed until the module i=
-s unloaded.
->> +                            #[cfg(MODULE)]
->> +                            mod_: unsafe {{
->> +                                (&::kernel::bindings::__this_module
->> +                                    as *const ::kernel::bindings::modul=
-e)
->> +                                    .cast_mut()
->> +                            }},
->
-> It doesn't stop with the improvements...
->
->     https://github.com/Rust-for-Linux/linux/issues/1176
->
-> Maybe we should also have one to use it here, but eh we can do that
-> later (and it's not as bad to forget about :)
+Tvrtko
 
-Applying `from_ref`.
-
->
->> +                            #[cfg(not(MODULE))]
->> +                            mod_: ::core::ptr::null_mut(),
->> +                            ops: &{ops} as *const ::kernel::bindings::k=
-ernel_param_ops,
->
->     ::core::ptr::from_ref(&{ops})
-
-=F0=9F=91=8D
-
->
->> +                            perm: 0, // Will not appear in sysfs
->> +                            level: -1,
->> +                            flags: 0,
->> +                            __bindgen_anon_1:
->> +                                ::kernel::bindings::kernel_param__bindg=
-en_ty_1 {{
->> +                                    arg: {param_name}.as_void_ptr()
->> +                                }},
->
-> Formatting?
->
-> +                            __bindgen_anon_1: ::kernel::bindings::kernel=
-_param__bindgen_ty_1 {{
-> +                                arg: {param_name}.as_void_ptr()
-> +                            }},
-
-
-That makes the line more than 100 characters after changing other
-formatting things. Perhaps I should just left shift all this?
-
-
-Best regards,
-Andreas Hindborg
-
-
+>>> Or via the hw fence status.
+>>>
+>>> Regards,
+>>>
+>>> Tvrtko
+>>>
+>>>>>> Signed-off-by: Philipp Stanner <phasta@kernel.org>
+>>>>>> ---
+>>>>>>     .../gpu/drm/scheduler/tests/mock_scheduler.c  | 66
+>>>>>> +++++++--
+>>>>>> -----
+>>>>>> -----
+>>>>>>     1 file changed, 23 insertions(+), 43 deletions(-)
+>>>>>>
+>>>>>> diff --git a/drivers/gpu/drm/scheduler/tests/mock_scheduler.c
+>>>>>> b/drivers/gpu/drm/scheduler/tests/mock_scheduler.c
+>>>>>> index 49d067fecd67..2d3169d95200 100644
+>>>>>> --- a/drivers/gpu/drm/scheduler/tests/mock_scheduler.c
+>>>>>> +++ b/drivers/gpu/drm/scheduler/tests/mock_scheduler.c
+>>>>>> @@ -63,7 +63,7 @@ static void
+>>>>>> drm_mock_sched_job_complete(struct
+>>>>>> drm_mock_sched_job *job)
+>>>>>>     	lockdep_assert_held(&sched->lock);
+>>>>>>     
+>>>>>>     	job->flags |= DRM_MOCK_SCHED_JOB_DONE;
+>>>>>> -	list_move_tail(&job->link, &sched->done_list);
+>>>>>> +	list_del(&job->link);
+>>>>>>     	dma_fence_signal_locked(&job->hw_fence);
+>>>>>>     	complete(&job->done);
+>>>>>>     }
+>>>>>> @@ -236,26 +236,39 @@ mock_sched_timedout_job(struct
+>>>>>> drm_sched_job
+>>>>>> *sched_job)
+>>>>>>     
+>>>>>>     static void mock_sched_free_job(struct drm_sched_job
+>>>>>> *sched_job)
+>>>>>>     {
+>>>>>> -	struct drm_mock_scheduler *sched =
+>>>>>> -			drm_sched_to_mock_sched(sched_job-
+>>>>>>> sched);
+>>>>>>     	struct drm_mock_sched_job *job =
+>>>>>> drm_sched_job_to_mock_job(sched_job);
+>>>>>> -	unsigned long flags;
+>>>>>>     
+>>>>>> -	/* Remove from the scheduler done list. */
+>>>>>> -	spin_lock_irqsave(&sched->lock, flags);
+>>>>>> -	list_del(&job->link);
+>>>>>> -	spin_unlock_irqrestore(&sched->lock, flags);
+>>>>>>     	dma_fence_put(&job->hw_fence);
+>>>>>> -
+>>>>>>     	drm_sched_job_cleanup(sched_job);
+>>>>>>     
+>>>>>>     	/* Mock job itself is freed by the kunit framework.
+>>>>>> */
+>>>>>>     }
+>>>>>>     
+>>>>>> +static void mock_sched_cancel_job(struct drm_sched_job
+>>>>>> *sched_job)
+>>>>>> +{
+>>>>>> +	struct drm_mock_scheduler *sched =
+>>>>>> drm_sched_to_mock_sched(sched_job->sched);
+>>>>>> +	struct drm_mock_sched_job *job =
+>>>>>> drm_sched_job_to_mock_job(sched_job);
+>>>>>> +	unsigned long flags;
+>>>>>> +
+>>>>>> +	hrtimer_cancel(&job->timer);
+>>>>>> +
+>>>>>> +	spin_lock_irqsave(&sched->lock, flags);
+>>>>>> +	if (!dma_fence_is_signaled_locked(&job->hw_fence)) {
+>>>>>> +		list_del(&job->link);
+>>>>>> +		dma_fence_set_error(&job->hw_fence, -
+>>>>>> ECANCELED);
+>>>>>> +		dma_fence_signal_locked(&job->hw_fence);
+>>>>>> +	}
+>>>>>> +	spin_unlock_irqrestore(&sched->lock, flags);
+>>>>>> +
+>>>>>> +	/* The GPU Scheduler will call
+>>>>>> drm_sched_backend_ops.free_job(), still.
+>>>>>> +	 * Mock job itself is freed by the kunit framework.
+>>>>>> */
+>>>>>
+>>>>> /*
+>>>>>     * Multiline comment style to stay consistent, at least in
+>>>>> this
+>>>>> file.
+>>>>>     */
+>>>>>
+>>>>> The rest looks good, but I need to revisit the timeout/free
+>>>>> handling
+>>>>> since it has been a while and you changed it recently.
+>>>>>
+>>>>> Regards,
+>>>>>
+>>>>> Tvrtko
+>>>>>
+>>>>>> +}
+>>>>>> +
+>>>>>>     static const struct drm_sched_backend_ops
+>>>>>> drm_mock_scheduler_ops
+>>>>>> = {
+>>>>>>     	.run_job = mock_sched_run_job,
+>>>>>>     	.timedout_job = mock_sched_timedout_job,
+>>>>>> -	.free_job = mock_sched_free_job
+>>>>>> +	.free_job = mock_sched_free_job,
+>>>>>> +	.cancel_job = mock_sched_cancel_job,
+>>>>>>     };
+>>>>>>     
+>>>>>>     /**
+>>>>>> @@ -289,7 +302,6 @@ struct drm_mock_scheduler
+>>>>>> *drm_mock_sched_new(struct kunit *test, long timeout)
+>>>>>>     	sched->hw_timeline.context =
+>>>>>> dma_fence_context_alloc(1);
+>>>>>>     	atomic_set(&sched->hw_timeline.next_seqno, 0);
+>>>>>>     	INIT_LIST_HEAD(&sched->job_list);
+>>>>>> -	INIT_LIST_HEAD(&sched->done_list);
+>>>>>>     	spin_lock_init(&sched->lock);
+>>>>>>     
+>>>>>>     	return sched;
+>>>>>> @@ -304,38 +316,6 @@ struct drm_mock_scheduler
+>>>>>> *drm_mock_sched_new(struct kunit *test, long timeout)
+>>>>>>      */
+>>>>>>     void drm_mock_sched_fini(struct drm_mock_scheduler *sched)
+>>>>>>     {
+>>>>>> -	struct drm_mock_sched_job *job, *next;
+>>>>>> -	unsigned long flags;
+>>>>>> -	LIST_HEAD(list);
+>>>>>> -
+>>>>>> -	drm_sched_wqueue_stop(&sched->base);
+>>>>>> -
+>>>>>> -	/* Force complete all unfinished jobs. */
+>>>>>> -	spin_lock_irqsave(&sched->lock, flags);
+>>>>>> -	list_for_each_entry_safe(job, next, &sched-
+>>>>>>> job_list,
+>>>>>> link)
+>>>>>> -		list_move_tail(&job->link, &list);
+>>>>>> -	spin_unlock_irqrestore(&sched->lock, flags);
+>>>>>> -
+>>>>>> -	list_for_each_entry(job, &list, link)
+>>>>>> -		hrtimer_cancel(&job->timer);
+>>>>>> -
+>>>>>> -	spin_lock_irqsave(&sched->lock, flags);
+>>>>>> -	list_for_each_entry_safe(job, next, &list, link)
+>>>>>> -		drm_mock_sched_job_complete(job);
+>>>>>> -	spin_unlock_irqrestore(&sched->lock, flags);
+>>>>>> -
+>>>>>> -	/*
+>>>>>> -	 * Free completed jobs and jobs not yet processed by
+>>>>>> the
+>>>>>> DRM scheduler
+>>>>>> -	 * free worker.
+>>>>>> -	 */
+>>>>>> -	spin_lock_irqsave(&sched->lock, flags);
+>>>>>> -	list_for_each_entry_safe(job, next, &sched-
+>>>>>>> done_list,
+>>>>>> link)
+>>>>>> -		list_move_tail(&job->link, &list);
+>>>>>> -	spin_unlock_irqrestore(&sched->lock, flags);
+>>>>>> -
+>>>>>> -	list_for_each_entry_safe(job, next, &list, link)
+>>>>>> -		mock_sched_free_job(&job->base);
+>>>>>> -
+>>>>>>     	drm_sched_fini(&sched->base);
+>>>>>>     }
+>>>>>>     
+>>>>>
+>>>>
+>>>
+>>
+> 
 
 
