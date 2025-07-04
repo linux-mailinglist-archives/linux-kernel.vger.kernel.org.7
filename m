@@ -1,195 +1,187 @@
-Return-Path: <linux-kernel+bounces-717212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-717080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 150F6AF9131
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 13:15:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E07A1AF8EE6
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 11:41:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3CA4D7B3588
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 11:13:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F38C3AC728
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 09:41:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8A382C15B3;
-	Fri,  4 Jul 2025 11:14:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=digi.com header.i=@digi.com header.b="TnRs2xDI"
-Received: from outbound-ip8a.ess.barracuda.com (outbound-ip8a.ess.barracuda.com [209.222.82.175])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A87C2EA72F;
+	Fri,  4 Jul 2025 09:41:22 +0000 (UTC)
+Received: from proxmox-new.maurer-it.com (proxmox-new.maurer-it.com [94.136.29.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B13A2C15A0
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 11:14:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=209.222.82.175
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751627676; cv=fail; b=Gs4eEHO2s9MdWY6FQ7BksY3CGPxo5Zykcwaozey3ovQlqvjmf8lGdHmH0g3ohrpGytKiLfw/dxDKyMVQusXCpQ1IG5aBTgfwjEKvRe6YBnMGzcGUjuoXJiFVenl9YAdc5Pish5SRPa+YNQAalywPKVMKh3BhvvNJFFRtwUxD4Yw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751627676; c=relaxed/simple;
-	bh=NzHayWUQf2Ei0UmAZuxkJces1LzUVTk/1cCVgeUdRo4=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=dWCbKaEFCnW4Bw63l6dL5x17EzJB2b9z8cDi9XzYnxBVg+FOTvFSFH0q/2Zxld3ocKEIcgLDS66Uam7I3NskqL5olf2l/XiXeFsg58tZKgbPw3lzINRt2phJoz6ERBMar7f8eHZnLxbQn70wfqHIG15p4YTIXjbIN1iKlowtFmA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=digi.com; spf=pass smtp.mailfrom=digi.com; dkim=pass (2048-bit key) header.d=digi.com header.i=@digi.com header.b=TnRs2xDI; arc=fail smtp.client-ip=209.222.82.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=digi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digi.com
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2079.outbound.protection.outlook.com [40.107.92.79]) by mx-outbound40-238.us-east-2c.ess.aws.cudaops.com (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO); Fri, 04 Jul 2025 11:14:32 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=AGw+5kvWLBtUpGI2Cc7WsMc4oB04bHzUUHzoQFL8vABO8xxEIfXMl0T5lNm0MwQvNYRbYqKyyar9kAmrUdnsAfO1424sdmqYCwj9PFS6IvlfGZ/w7kkVxBFEF4bzlA9RIgXD1KaDPcVSm3nvq/IJVqAu+S67OV8JOFqcUEnpJomhyoS3pyGu3Ry1kil/S1NpZrdXb3hFCcTLzzgAGyuEJpHOC/tYbt3cDJ52VAOOcA/2FJPmbD+7PBVGiGcgdHkMbOfhvrBsAjxkMDmRaPAXbgzqLlyItek9tWLdQaVxv2nT4aAxa0VkbxGXXIGH4tGChMwGeh7Kg+SM/vYHeh/AQg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=V8ZNk+vSfbqt7ZiljARVGEx2xO+d9U9SQSCX5AfrP0g=;
- b=IhxFoc49wqOPAnqFDQS0K0iizu3REHuiV2+6bUT5dxFZ6y5Hr5A2XLTI/m9UVilYtnvYdHhNHaJ70xK2PCxoHwVCG4GFfaJgnHE9ac3Ac0D1TsfVnOOhpYgoxpNTLpbHnIovQTTapHjy9iemd26ih0rs+dDgapkPBwo9F+qjF/GDcDXtcCucPCLi4aSukCRZzUkzMianj2kjzAk5ekvyJy3OLCT6hjf+OUTIW+ma0W8UsoXALwtXhl0dY1Wtrb0uXc6vb8dWBSbC8Z4bqIfACyvH4/rI9EIJDX2PDjt3hFvOki0F1a9LqBGqdHRGKOa0rQ2EQDYur4Y52qzXk+5tDQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=digi.com; dmarc=pass action=none header.from=digi.com;
- dkim=pass header.d=digi.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digi.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=V8ZNk+vSfbqt7ZiljARVGEx2xO+d9U9SQSCX5AfrP0g=;
- b=TnRs2xDIywfwb+vNKhi7iMZMumsoqYuK4ONp5qPBySL+vWqcL/a991aFiWZX/Gz2pPpaIdrOJBEmOH3w1R0vjtO2o6YZDZCBG7ETw6oiaPfArKzNA4MJFiwQkXjQpWUxqWEeV/5kEXBtn63Pr7jC1i9L/9hKIJxfnZmCJ6M723Yh4cnDzvuLEY0IDXNfO9kPBCx8eEXcRCO+upVVkox//12gRbKJn8vVGPLImRRIWTXpgfVArfY5/wwx2HIRr0dfRze+vtrx8uGLURv1FD4XTY9HYFH0NnocAoQ8eaVTx5GGwJvqCwpKVBvmO8yU0QjDrCUeFJ0lhB9F8WJh7N02PQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=digi.com;
-Received: from DS0PR10MB6702.namprd10.prod.outlook.com (2603:10b6:8:132::6) by
- CH0PR10MB4905.namprd10.prod.outlook.com (2603:10b6:610:ca::20) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8901.22; Fri, 4 Jul 2025 09:42:29 +0000
-Received: from DS0PR10MB6702.namprd10.prod.outlook.com
- ([fe80::2639:a683:c082:a361]) by DS0PR10MB6702.namprd10.prod.outlook.com
- ([fe80::2639:a683:c082:a361%5]) with mapi id 15.20.8901.021; Fri, 4 Jul 2025
- 09:42:29 +0000
-From: Hector Palacios <hector.palacios@digi.com>
-To: bbrezillon@kernel.org
-Cc: korotkov.maxim.s@gmail.com,
-	miquel.raynal@bootlin.com,
-	linux-mtd@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	hector.palacios@digi.com
-Subject: [PATCH] mtd: rawnand: hynix: don't try read-retry on SLC NANDs
-Date: Fri,  4 Jul 2025 11:41:09 +0200
-Message-Id: <20250704094109.3646314-1-hector.palacios@digi.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: CH5PR02CA0022.namprd02.prod.outlook.com
- (2603:10b6:610:1ed::8) To DS0PR10MB6702.namprd10.prod.outlook.com
- (2603:10b6:8:132::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A18902DAFA8;
+	Fri,  4 Jul 2025 09:41:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.136.29.106
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751622082; cv=none; b=h/CQXorHW4c6hVG5KwTLIQ9ZVihAUyosBDA0SagG6sD221QnUvXffJuMwLSTf+iSNrkBPER+fJ09rBHOFRgDVyg9V8z50OEmiykzae1ZExMQ672xmFVomEUWXk9WRPdcoBF9kN2Ybg67NSKSWYxgIsGt4G9ds9u+QMz1k32scUk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751622082; c=relaxed/simple;
+	bh=5kfD3eLWhydpapTP/xx9CKZcEgNscuE+DHWcliVdzt4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bbhNuFFdQuXEnQ4qV1svW8E0cHOTAZWiIe+4aY6zB5DJ8vSbaMqeS3Ks4KXN3KUPRUpoymAp5nBhP3DgAhhEOE/RK4Gj3DGDPDkcXJUqsms+Np+wtLhh0VjXk3dyysUahKhQiOn2cDXhEam+fi2/4n+KaGqmTEnTl7pzKR3EFZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=proxmox.com; spf=pass smtp.mailfrom=proxmox.com; arc=none smtp.client-ip=94.136.29.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=proxmox.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proxmox.com
+Received: from proxmox-new.maurer-it.com (localhost.localdomain [127.0.0.1])
+	by proxmox-new.maurer-it.com (Proxmox) with ESMTP id CE1D546D0D;
+	Fri,  4 Jul 2025 11:41:17 +0200 (CEST)
+Date: Fri, 4 Jul 2025 11:41:16 +0200
+From: Gabriel Goller <g.goller@proxmox.com>
+To: Nicolas Dichtel <nicolas.dichtel@6wind.com>
+Cc: "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	Jonathan Corbet <corbet@lwn.net>, David Ahern <dsahern@kernel.org>, Shuah Khan <shuah@kernel.org>, 
+	netdev@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH net-next v4] ipv6: add `force_forwarding` sysctl to
+ enable per-interface forwarding
+Message-ID: <pwrkjcem57hgbg7ptfbqofr42kqgfyac5eprptn2uw3e5tdfge@4rip2rl2my6b>
+Mail-Followup-To: Nicolas Dichtel <nicolas.dichtel@6wind.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	Jonathan Corbet <corbet@lwn.net>, David Ahern <dsahern@kernel.org>, Shuah Khan <shuah@kernel.org>, 
+	netdev@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org
+References: <20250703160154.560239-1-g.goller@proxmox.com>
+ <d90c29af-d614-43ea-8bcd-f2c8ced779df@6wind.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR10MB6702:EE_|CH0PR10MB4905:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0fd6b694-b1f0-48a1-e746-08ddbadf1776
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|52116014|1800799024|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Bsq3/6GB3H7cunLkzGQJs3IdWbBxAgKrAeMBS/PNI1swe8hNEbLjUcYaOdxd?=
- =?us-ascii?Q?nNMGeuvF9bkE1DiMYt21TMddCggV/696IaGrLUn3/2y6RV3ZgGQE5tJWgm86?=
- =?us-ascii?Q?yiF/sYaT83UvUw6LMDszDoN65wi9Jopzcoc9OHaiRT4y6HgpubAHQlepSC3t?=
- =?us-ascii?Q?ugf/KIryOe9XJ1HMk7cIJUMIe/xtAtkWBdvQGO+owh948WPhBQMCOJWh8eO2?=
- =?us-ascii?Q?ttvzLXNqKjs7bx3wtvR3cKm0M0gnRFQBGWHYCOdpBv3O/OsnYL9YLRnCWNsd?=
- =?us-ascii?Q?WBgF0KxnOcEm0EKZ91UNl6TUVnGwCCa9K5thIWUz9wnCaB4XIf1DVJkFbs8F?=
- =?us-ascii?Q?2dme5rnoCYxFf/wVKikE62WdO+daTnMoBTzt2LrMY3/Nz36e5bSb14VDFRPw?=
- =?us-ascii?Q?CbGw2zBylVPrTyz4OT2VmZf0sNNsdlQ7UQi9VJh9eJMpKvLl7gVqnHJN30yd?=
- =?us-ascii?Q?BsymJMlua3IIrI/IYGf6aun0fYB6+Jg+L6TcBH5/tUrlsOCwcQMuS0S2iAu8?=
- =?us-ascii?Q?MarKcVufwG2LQ3ZSzcFZL7JFKamgakI4IZwAaORa8LPj8/zvQmz94QUKVsPl?=
- =?us-ascii?Q?/W0+KaHb+qov/AtpNv/Zf/ZQVVvZ7jt9WF+CjZSfuZY5UxxgFHGnj0hXAwKX?=
- =?us-ascii?Q?0PcdldzBDEKL6G0/wFTLjmVhEh8plkkxLDkQkOFwdCn9liF8DKgHHGwvDTnY?=
- =?us-ascii?Q?cOupO5LQbdQNiW8CPZv7K4N6T2wLfQ76hhK0P+N9fXQLMb9a4qaz9Iu3+odH?=
- =?us-ascii?Q?xHoN92o/QFPvVYbSB86VzhNsEXUZc6Ba+PB+FcE2QFh6+VqesJ9wLQiUk+KD?=
- =?us-ascii?Q?e7SfIMpv7isrk71RZKoKQqAIPzs3+YWBpwtFO/wTI9bXJqAcQ5KvNSlwBVAG?=
- =?us-ascii?Q?dEUXyTu7mIAQpri7f6kYYHOrf5BQQUlqZbY32p2RVgvUZZBen9uO07Nt7Liy?=
- =?us-ascii?Q?imhvXNVwdoY10cdpiKFamCX9aWB7WxM2Pb+q5s3sFiDbiyZ5DRpW+t8TXa5Z?=
- =?us-ascii?Q?wdpUjetwGGSUMkbRppGc2lYCWH1WwI7+5KnijrNP3mQsc2FpqBl8NSOdkGql?=
- =?us-ascii?Q?V+IOO1Bys0kh6RYl5CJ+Wtp2ZBKEH2tSpTHYfaeq0DcUNMftFbbzubdWYaRM?=
- =?us-ascii?Q?h+zeHUhUbT8pU8fZu6T0V4rEzIgtcL6XN/2Xhr6UOObAkQK2ZDtKJh3DjYqO?=
- =?us-ascii?Q?U2vayoUq443tVerRVDtXXUNP/jUZXLwCSMBMQoUrkjBLhXpZHiKBvUu+HlTd?=
- =?us-ascii?Q?EvCl8Cb6ckkTgAqaEZvJ50BSP1ucl7djibybMOtx0+HY7Ucc8rfC0sih+erb?=
- =?us-ascii?Q?D2xcvTbGu07ZA9MAF6G8LHadnGU+f5foZVMHKgOqIsw/BT9ZmzrDBmVLx+Z4?=
- =?us-ascii?Q?9S8a9WTZTE7C/q52YyD2sFQs6DXwfv6180XW560Vrwih+h8qnocpIeIt44/1?=
- =?us-ascii?Q?87ugNNmnX3KehiLDiFA3W7+LWGuhE0JoifCh0m1MEkcbUvWqg3Uaew=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR10MB6702.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?x6tMq3i7n4japdu9uFKexu+qUWdNaA/p14mmQ6swEAqmYl6nb28Cav8VmT1N?=
- =?us-ascii?Q?y49+/9bIu3JFZII/HHsXktIq0rlkH6qEokNkkVdX4oXMnrWzNj2nZR90sNcX?=
- =?us-ascii?Q?VwkZVsnpiEk856W3HYRQFRVDK3rHyepwHPLhuDbwhJYu34R7idGdZKL0HZjC?=
- =?us-ascii?Q?zfpWgRf3IKFed4VPNfJvg4bEI72frtzLskdjPs9dnEHzfPIb/LPThtSxH+zp?=
- =?us-ascii?Q?zZW8XliLtGDmz4RMaYogDpkhkCnhbJbYKNWtXeq7zeLgQlVRW/Gb0lBuPGyy?=
- =?us-ascii?Q?5L0ltpLtD69RhcyQA3fJ8To068PuU1OitOsuGzY8HkTG6ZKFWsu4FMJlfuS4?=
- =?us-ascii?Q?C15ePpZepmnC6EgZsmVrLMvsgAnXzinKifyV2qKezEQ4tFKXqR1tJFk4YRM9?=
- =?us-ascii?Q?g+UDxc+Shn5ElvL8DiE9Sz/uuXwt13M+0QsmBQTlb7XczMKuWQVAtMSFICBD?=
- =?us-ascii?Q?/Fa1rWAl8RCDsyXP2Zt8iNwXsMDE2usjTHpmhIvk2Rezp8uvaiZ2s9PMaUMZ?=
- =?us-ascii?Q?LLTSNtRak2PUIawcmeYup9MCIiM0v9VURzzjoBId4rRvva1e/CBzzomRXvdy?=
- =?us-ascii?Q?G4RIqEiVzYv1TeUYiiqBIc5LmLeoHn4ZTo9ld/PFbZe3VPZmHiDH6U0mD+Mf?=
- =?us-ascii?Q?QhUqWIekY9vjfbqKz7XN94L35dPpbwruZ8yS9zSdtyGi4rK9Q1TFX7pL3OBV?=
- =?us-ascii?Q?Umigw3iuGMrvO1r/cZv4sraEd4pCdnDKhe1uh5AxweLpbsl+yIZWNAbVzBLp?=
- =?us-ascii?Q?8pSCraqgUTfXdZy3SDAiww4zgbM3wVDMO+DCl8fBYWPswTMM+pRQvUkfxscH?=
- =?us-ascii?Q?rOxZwA2Csp1xrl80YFxObXFq6veOdbj4pcqzrhv1Rte/TyEkEdP6eCmUlnDj?=
- =?us-ascii?Q?Bgo6xnxXLKJRfb8ES4PO7eTA5OpCSuyZXTo61L26nBnDNlKXrtlEgjGlD5mF?=
- =?us-ascii?Q?YdnM69jk7OPBlAsneRZOB8FRd3dKeuCSMHq8+uQIVmT+dfzCAGo3zWmEpaiU?=
- =?us-ascii?Q?srNze5GmxIpnwCghl+end+W9dPDUrHIGi4EkLPSUoNZgU5A/8ehCqDWc79RG?=
- =?us-ascii?Q?W+AYsOwB50ifuQ+6dtVBNQmu2eR+IbmKBsgmZbuOwUde6/TZbQwilNOp60wy?=
- =?us-ascii?Q?vb9kPJhQ9BcBuVhGwqs3gqmjzaTX6/gGqmsWqe7+p4yQszenXQswsJHLRIuS?=
- =?us-ascii?Q?dadZwtzPB7T/VvzC7MkrJrHJGHeFvwlu1L8xTVYgFspa3kgBWLBDaybWkVgY?=
- =?us-ascii?Q?aSGfm9DY4QVr/8+td5UxIUjom++84zGYcWhOvUEvENlTXyoLJN3+0IG7OEgb?=
- =?us-ascii?Q?ZGOR2Qs/6zWZA5QwWr4dml5mngIPw1pCaiPgwWVfk/GiyRzx2zdskVwxlb5i?=
- =?us-ascii?Q?YUGEB1713chWdvnxsveGTXzEVHnAhBTNbsngpqmLqfHzvNn8jcT8pnptk1EY?=
- =?us-ascii?Q?FMt6odexXLUQ+DcbfXRp984gjcF3a0MSvmwuc77+UYhBlsnMbHIHuD2uYx/X?=
- =?us-ascii?Q?SOl7PWmZc+ZRl3hfK1F/YoCCDNsuwVztXBqzDXAhjSDN42cUlfwl5OnL7Edp?=
- =?us-ascii?Q?ycTEbU3lU6bHUM8EW+Tqyl+UTMOzp9KNs8bOWcUM?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0fd6b694-b1f0-48a1-e746-08ddbadf1776
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR10MB6702.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Jul 2025 09:42:29.5038
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: abb4cdb7-1b7e-483e-a143-7ebfd1184b9e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: LYZL4gGrOppMaD/vsVOFCKGxKFCyo8jlYgzcSHD9ovOLOV1+uSmcXjmsMZ4Ev6bFC/P4TBhPp3ipqeuXZaM1VA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR10MB4905
-X-OriginatorOrg: digi.com
-X-BESS-ID: 1751627672-110478-7718-1168-1
-X-BESS-VER: 2019.1_20250703.1506
-X-BESS-Apparent-Source-IP: 40.107.92.79
-X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVpbmZkBGBlAszdgkzdI0zdgsxc
-	Lc2MjSxCQpLdHCONXMItnSJMUg1VypNhYASIEFvkAAAAA=
-X-BESS-Outbound-Spam-Score: 0.00
-X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.265801 [from 
-	cloudscan18-24.us-east-2b.ess.aws.cudaops.com]
-	Rule breakdown below
-	 pts rule name              description
-	---- ---------------------- --------------------------------
-	0.00 BSF_BESS_OUTBOUND      META: BESS Outbound 
-X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS112744 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
-X-BESS-BRTS-Status:1
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <d90c29af-d614-43ea-8bcd-f2c8ced779df@6wind.com>
+User-Agent: NeoMutt/20241002-35-39f9a6
 
-Some SLC NANDs like H27U4G8F2D expose a valid JEDEC ID yet they don't
-support the read-retry mechanism, and fail.
-Since SLC NANDs don't require read-retry, continue only if the bits per
-cell is bigger than 1.
+On 04.07.2025 10:07, Nicolas Dichtel wrote:
+>Le 03/07/2025 à 18:01, Gabriel Goller a écrit :
+>> It is currently impossible to enable ipv6 forwarding on a per-interface
+>> basis like in ipv4. To enable forwarding on an ipv6 interface we need to
+>> enable it on all interfaces and disable it on the other interfaces using
+>> a netfilter rule. This is especially cumbersome if you have lots of
+>> interface and only want to enable forwarding on a few. According to the
+>> sysctl docs [0] the `net.ipv6.conf.all.forwarding` enables forwarding
+>> for all interfaces, while the interface-specific
+>> `net.ipv6.conf.<interface>.forwarding` configures the interface
+>> Host/Router configuration.
+>>
+>> Introduce a new sysctl flag `force_forwarding`, which can be set on every
+>> interface. The ip6_forwarding function will then check if the global
+>> forwarding flag OR the force_forwarding flag is active and forward the
+>> packet.
+>>
+>> To preserver backwards-compatibility reset the flag (on all interfaces)
+>> to 0 if the net.ipv6.conf.all.forwarding flag is set to 0.
+>>
+>> Add a short selftest that checks if a packet gets forwarded with and
+>> without `force_forwarding`.
+>>
+>> [0]: https://www.kernel.org/doc/Documentation/networking/ip-sysctl.txt
+>>
+>> Signed-off-by: Gabriel Goller <g.goller@proxmox.com>
+>> ---
+>>
+>
+>[snip]
+>
+>> @@ -6747,6 +6759,78 @@ static int addrconf_sysctl_disable_policy(const struct ctl_table *ctl, int write
+>>  	return ret;
+>>  }
+>>
+>> +static void addrconf_force_forward_change(struct net *net, __s32 newf)
+>> +{
+>> +	ASSERT_RTNL();
+>> +	struct net_device *dev;
+>> +	struct inet6_dev *idev;
+>> +
+>
+>ASSERT_RTNL() is always put after variables declaration.
 
-Signed-off-by: Hector Palacios <hector.palacios@digi.com>
----
- drivers/mtd/nand/raw/nand_hynix.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+I removed ASSERT_RTNL completely, this is already checked by __in6_dev_get_rtnl_net.
 
-diff --git a/drivers/mtd/nand/raw/nand_hynix.c b/drivers/mtd/nand/raw/nand_hynix.c
-index c02e50608816..b663659b2f49 100644
---- a/drivers/mtd/nand/raw/nand_hynix.c
-+++ b/drivers/mtd/nand/raw/nand_hynix.c
-@@ -377,9 +377,9 @@ static int hynix_nand_rr_init(struct nand_chip *chip)
- 
- 	/*
- 	 * We only support read-retry for 1xnm NANDs, and those NANDs all
--	 * expose a valid JEDEC ID.
-+	 * expose a valid JEDEC ID. SLC NANDs don't require read-retry.
- 	 */
--	if (valid_jedecid) {
-+	if (valid_jedecid && nanddev_bits_per_cell(&chip->base) > 1) {
- 		u8 nand_tech = chip->id.data[5] >> 4;
- 
- 		/* 1xnm technology */
+>> +	for_each_netdev(net, dev) {
+>> +		idev = __in6_dev_get_rtnl_net(dev);
+>> +		if (idev) {
+>> +			int changed = (!idev->cnf.force_forwarding) ^ (!newf);
+>> +
+>> +			WRITE_ONCE(idev->cnf.force_forwarding, newf);
+>> +			if (changed) {
+>> +				inet6_netconf_notify_devconf(dev_net(dev), RTM_NEWNETCONF,
+>> +							     NETCONFA_FORCE_FORWARDING,
+>> +							     dev->ifindex, &idev->cnf);
+>> +			}
+>> +		}
+>> +	}
+>> +}
+>> +
+>> +static int addrconf_sysctl_force_forwarding(const struct ctl_table *ctl, int write,
+>> +					    void *buffer, size_t *lenp, loff_t *ppos)
+>> +{
+>> +	struct inet6_dev *idev = ctl->extra1;
+>> +	struct net *net = ctl->extra2;
+>> +	int *valp = ctl->data;
+>> +	loff_t pos = *ppos;
+>> +	int new_val = *valp;
+>> +	int old_val = *valp;
+>> +	int ret;
+>> +
+>> +	struct ctl_table tmp_ctl = *ctl;
+>This declaration should be put with other declarations.
+
+Agree.
+
+>> +
+>> +	tmp_ctl.extra1 = SYSCTL_ZERO;
+>> +	tmp_ctl.extra2 = SYSCTL_ONE;
+>> +	tmp_ctl.data = &new_val;
+>> +
+>> +	ret = proc_douintvec_minmax(&tmp_ctl, write, buffer, lenp, ppos);
+>> +
+>> +	if (write && old_val != new_val) {
+>> +		if (!rtnl_net_trylock(net))
+>> +			return restart_syscall();
+>> +
+>> +		if (valp == &net->ipv6.devconf_dflt->force_forwarding) {
+>> +			inet6_netconf_notify_devconf(net, RTM_NEWNETCONF,
+>> +						     NETCONFA_FORCE_FORWARDING,
+>> +						     NETCONFA_IFINDEX_DEFAULT,
+>> +						     net->ipv6.devconf_dflt);
+>> +		} else if (valp == &net->ipv6.devconf_all->force_forwarding) {
+>> +			inet6_netconf_notify_devconf(net, RTM_NEWNETCONF,
+>> +						     NETCONFA_FORCE_FORWARDING,
+>> +						     NETCONFA_IFINDEX_ALL,
+>> +						     net->ipv6.devconf_all);
+>> +
+>> +			addrconf_force_forward_change(net, new_val);
+>> +		} else {
+>> +			inet6_netconf_notify_devconf(net, RTM_NEWNETCONF,
+>> +						     NETCONFA_FORCE_FORWARDING,
+>> +						     idev->dev->ifindex,
+>> +						     &idev->cnf);
+>> +		}
+>> +		rtnl_net_unlock(net);
+>> +	}
+>> +
+>> +	if (write)
+>> +		WRITE_ONCE(*valp, new_val);
+>Why not putting this in the above block?
+>And maybe under the rtnl_lock to avoid race if two users change the value at the
+>same time.
+
+Yep, you're right.
+
+>Nicolas
+
+Thanks for the review!
+
 
