@@ -1,117 +1,102 @@
-Return-Path: <linux-kernel+bounces-716871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B65C9AF8BDF
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 10:35:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E3DEAF8BD9
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 10:35:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CE0D765E52
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 08:31:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FCC776308A
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 08:30:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30F5D285CAD;
-	Fri,  4 Jul 2025 08:20:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CBE5328AF8;
+	Fri,  4 Jul 2025 08:19:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="g3kz60z3"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C4D0285CA1
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 08:20:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="cp/Izux0"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 258B0328AE2;
+	Fri,  4 Jul 2025 08:19:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751617241; cv=none; b=pCQkOyIsWQ6bLQufoIU06Z6UIzFyTKy1D6R2X/n2mISkBCEZnfZFoZ0xFgqOrC2M1dacl/Xn/9jjI6xZD5xy0ghIz/I1dZnHuszECSrQE+bzlytEFA2r83RqtTgcSQv2DjWWV49HIiaGM1vRRGLjaCUvk20SZBqmpktCEIfErOE=
+	t=1751617188; cv=none; b=uba/m+SNs7C8/eSeYdolzJq4VOuvqBdNcBlghHA47gyvVt8FkmayO92ArVzFdAuv7wVLzQFUtpYYF/2rJHjizSUH9DMjHSmHOjMQf6vg7B6RG9Z4MMOmaxvzYEiYXSY7dpI6eMdPVNdyEP46kuGvKgpTiXX7acDpvg0iASRHxHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751617241; c=relaxed/simple;
-	bh=mibiWF16hdn0bP5qO7tnSAg+k3n38sdVq+w+Ms8wFHY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=NEKmh1NZ1F+8+WAxYfY3k1Zwbv7hFWBNYIGSLOly0mHE6vpvZ1vJAcdoO0if/R1an6IXMCLgeeh3yKSM1hnBNZb9KVNon1ytrio7SsB3vH/FYlufgmw8oMECL+88xB7mEQ+pvcep5Fg88Q3VswN6+2R9wRErIbwkp0fY2KKQIb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=g3kz60z3; arc=none smtp.client-ip=117.135.210.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=mibiWF16hdn0bP5qO7tnSAg+k3n38sdVq+w+Ms8wFHY=; b=g
-	3kz60z3AYDuGu9PCSO3ovTsSFZsx7LxoJhDEdAEQB7JO4VMWzGp0zDd3E49U+zbe
-	X08CMairuKKEg26hx1rGIyGKoUol6qlAcwd9nsI9a0qz029u1yGd2fyT0RcyuePt
-	zIAphFeNyGFbC4q7Kf3U8svfzq5icHNxXiTn33wuv4=
-Received: from andyshrk$163.com ( [58.22.7.114] ) by
- ajax-webmail-wmsvr-40-143 (Coremail) ; Fri, 4 Jul 2025 16:19:30 +0800 (CST)
-Date: Fri, 4 Jul 2025 16:19:30 +0800 (CST)
-From: "Andy Yan" <andyshrk@163.com>
-To: "Piotr Zalewski" <pZ010001011111@proton.me>
-Cc: hjc@rock-chips.com, heiko@sntech.de, andy.yan@rock-chips.com,
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-	tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	"Diederik de Haas" <didi.debian@cknow.org>
-Subject: Re:[PATCH] rockchip/drm: vop2: make vp registers nonvolatile
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
- Copyright (c) 2002-2025 www.mailtech.cn 163com
-In-Reply-To: <20250628180914.1177177-2-pZ010001011111@proton.me>
-References: <20250628180914.1177177-2-pZ010001011111@proton.me>
-X-NTES-SC: AL_Qu2eA/qauEks5iWbYOkfmkcVgOw9UcO5v/Qk3oZXOJF8jC/rxCoxfntMEmPnyfOOFCWcrheYUhhh58BWV4JgQoINVNPLzzTi97dc2ZFl3s1NsQ==
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1751617188; c=relaxed/simple;
+	bh=VHIyHPlNOQeT6o0Q7/lTbW2qpwThrxju/2z1cp6yEp0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=foKT6Wbc+jVry/bkD6VDgAyuPT2/Q/07C6V4rTTT5eJsxiP7FEG/npAqUy2ZZY48CEyU/NhTJiwZi7sB+mC6cCzZ0zjcLTyvCzzGE8kr9EqsojoPT1c+kLX9ZPHyVFhvS0VJZvk3/FlRWnf1jiOFmoGNt4uF6p/YFusPcQYED/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=cp/Izux0; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=SqogGBv3noXgQBHxR8ZXgnX75dr040YudpVBo7oMuJA=; b=cp/Izux0mgOZm7QOhcJ0Wf/ZoP
+	GBaSdVbzfJVCO1fp90vBFkoXwQltZ3ygZDenVmeERDV1/fWrchohnYvnzr8HgXV7Ouz+OZsuNr/Ww
+	1jekU1qF1WQunz+hgPGwBjViGt7xLCOxtaNiQCvmkiRAJSQLgyXy2Xgt4neHGdiAW5sZ0Uxg/lBRa
+	KyF85BMe2kvnUGNSVNqobSLXWiAgjZEYYst2KlGCygU+v2MtHAztv7G/5EaONxpyrha4RPo3+B1Nr
+	uKUfj4SoonlkLqCMfmu/BOTguzSHQufyna5sA3GswxfBGCOvMWHbvPGGPXzFcSNTlsHeXoYsv9sYD
+	JF/FLVog==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uXbe1-00000007qxR-3QaJ;
+	Fri, 04 Jul 2025 08:19:42 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 5F08A300212; Fri, 04 Jul 2025 10:19:41 +0200 (CEST)
+Date: Fri, 4 Jul 2025 10:19:41 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Zihuan Zhang <zhangzihuan@kylinos.cn>, pavel@kernel.org,
+	len.brown@intel.com, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Oleg Nesterov <oleg@redhat.com>
+Subject: Re: [PATCH v3 1/1] PM / Freezer: Skip zombie/dead processes to
+Message-ID: <20250704081941.GC2001818@noisy.programming.kicks-ass.net>
+References: <20250611101247.15522-1-zhangzihuan@kylinos.cn>
+ <20250611101247.15522-2-zhangzihuan@kylinos.cn>
+ <CAJZ5v0jpuUVM73M=Gzq36je=K_7zEkvVd8bxohi6N5OYgxgUug@mail.gmail.com>
+ <20250703164021.GY1613200@noisy.programming.kicks-ass.net>
+ <CAJZ5v0j29Nu2nitmj6tPhOQYuSaHBtXQVR21ikDtrxpejPdW8A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <9947ce4.7929.197d484ec6b.Coremail.andyshrk@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:jygvCgD3V2KSjmdo0I0CAA--.22062W
-X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/xtbBEhSAXmhnjU0l2AABsr
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJZ5v0j29Nu2nitmj6tPhOQYuSaHBtXQVR21ikDtrxpejPdW8A@mail.gmail.com>
 
-SGVsbG8gUGlvdHIsCgpBdCAyMDI1LTA2LTI5IDAyOjExOjAwLCAiUGlvdHIgWmFsZXdza2kiIDxw
-WjAxMDAwMTAxMTExMUBwcm90b24ubWU+IHdyb3RlOgo+TWFrZSB2aWRlbyBwb3J0IHJlZ2lzdGVy
-cyBub252b2xhdGlsZS4gQXMgRFNQX0NUUkwgcmVnaXN0ZXIgaXMgd3JpdHRlbgo+dG8gdHdpY2Ug
-ZHVlIHRvIGdhbW1hIExVVCBlbmFibGUgYml0IHdoaWNoIGlzIHNldCBvdXRzaWRlIG9mIHRoZSBt
-YWluCj5EU1BfQ1RSTCBpbml0aWFsaXphdGlvbiB3aXRoaW4gYXRvbWljX2VuYWJsZSAoZm9yIHJr
-MzU2eCBjYXNlIGl0IGlzIGFsc28KPm5lY2VzYXJyeSB0byBhbHdheXMgZGlzYWJsZSBnYW1tYSBM
-VVQgYmVmb3JlIHdyaXRpbmcgYSBuZXcgTFVUKSB0aGVyZSBpcwo+YSBjaGFuY2UgdGhhdCBEU1Bf
-Q1RSTCB2YWx1ZSByZWFkLW91dCBpbiBnYW1tYSBMVVQgaW5pdC91cGRhdGUgY29kZSBpcwo+bm90
-IHRoZSBvbmUgd2hpY2ggd2FzIHdyaXR0ZW4gYnkgdGhlIHByZWNlZGluZyBEU1BfQ1RSTCBpbml0
-aWFsaXphdGlvbgo+Y29kZSB3aXRoaW4gYXRvbWljX2VuYWJsZS4gVGhpcyBtaWdodCByZXN1bHQg
-aW4gbWlzY29uZmlndXJlZCBEU1BfQ1RSTAo+d2hpY2ggbGVhZHMgdG8gbm8gdmlzdWFsIG91dHB1
-dFsxXS4gU2luY2UgRFNQX0NUUkwgd3JpdGUgdGFrZXMgZWZmZWN0Cj5hZnRlciBWU1lOQ1sxXSB0
-aGUgaXNzdWUgaXMgbm90IGFsd2F5cyBwcmVzZW50LiBXaGVuIHRlc3RlZCBvbiBQaW5ldGFiMgo+
-d2l0aCBrZXJuZWwgNi4xNCBpdCBoYXBwZW5lcyBvbmx5IHdoZW4gRFJNIGlzIGNvbXBpbGVkIGFz
-IGEgbW9kdWxlWzFdLgo+SW4gb3JkZXIgdG8gY29uZmlybSB0aGF0IGl0IGlzIGJlY2F1c2Ugb2Yg
-dGltaW5nIEkgaW5zZXJ0ZWQgMThtcyB1ZGVsYXkKPmJlZm9yZSB2b3AyX2NydGNfYXRvbWljX3Ry
-eV9zZXRfZ2FtbWEgaW4gYXRvbWljIGVuYWJsZSBhbmQgY29tcGlsZWQgRFJNCj5hcyBtb2R1bGUg
-LSB0aGlzIGhhcyBhbHNvIGZpeGVkIHRoZSBpc3N1ZSBvbiBQaW5ldGFiMi4KPgo+WzFdIGh0dHBz
-Oi8vbG9yZS5rZXJuZWwub3JnL2xpbnV4LXJvY2tjaGlwLzU2MmIzOGU1LmE0OTYuMTk3NWYwOWY5
-ODMuQ29yZW1haWwuYW5keXNocmtAMTYzLmNvbS8KPgo+UmVwb3J0ZWQtYnk6IERpZWRlcmlrIGRl
-IEhhYXMgPGRpZGkuZGViaWFuQGNrbm93Lm9yZz4KPkNsb3NlczogaHR0cHM6Ly9sb3JlLmtlcm5l
-bC5vcmcvbGludXgtcm9ja2NoaXAvREFFVkRTVE1XSTFFLko0NTRWWk4wUjlNQUBja25vdy5vcmcv
-Cj5TdWdnZXN0ZWQtYnk6IEFuZHkgWWFuIDxhbmR5LnlhbkByb2NrLWNoaXBzLmNvbT4KPlNpZ25l
-ZC1vZmYtYnk6IFBpb3RyIFphbGV3c2tpIDxwWjAxMDAwMTAxMTExMUBwcm90b24ubWU+Cj4tLS0K
-PiBkcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvcm9ja2NoaXBfZHJtX3ZvcDIuYyB8IDkgKysrKyst
-LS0tCj4gMSBmaWxlIGNoYW5nZWQsIDUgaW5zZXJ0aW9ucygrKSwgNCBkZWxldGlvbnMoLSkKPgo+
-ZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9yb2NrY2hpcF9kcm1fdm9wMi5j
-IGIvZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL3JvY2tjaGlwX2RybV92b3AyLmMKPmluZGV4IGQw
-ZjVmZWExNWUyMS4uMjQxMDYwY2MyNGNiIDEwMDY0NAo+LS0tIGEvZHJpdmVycy9ncHUvZHJtL3Jv
-Y2tjaGlwL3JvY2tjaGlwX2RybV92b3AyLmMKPisrKyBiL2RyaXZlcnMvZ3B1L2RybS9yb2NrY2hp
-cC9yb2NrY2hpcF9kcm1fdm9wMi5jCj5AQCAtMjU4OSwxMiArMjU4OSwxMyBAQCBzdGF0aWMgaW50
-IHZvcDJfd2luX2luaXQoc3RydWN0IHZvcDIgKnZvcDIpCj4gfQo+IAo+IC8qCj4tICogVGhlIHdp
-bmRvdyByZWdpc3RlcnMgYXJlIG9ubHkgdXBkYXRlZCB3aGVuIGNvbmZpZyBkb25lIGlzIHdyaXR0
-ZW4uCj4tICogVW50aWwgdGhhdCB0aGV5IHJlYWQgYmFjayB0aGUgb2xkIHZhbHVlLiBBcyB3ZSBy
-ZWFkLW1vZGlmeS13cml0ZQo+LSAqIHRoZXNlIHJlZ2lzdGVycyBtYXJrIHRoZW0gYXMgbm9uLXZv
-bGF0aWxlLiBUaGlzIG1ha2VzIHN1cmUgd2UgcmVhZAo+LSAqIHRoZSBuZXcgdmFsdWVzIGZyb20g
-dGhlIHJlZ21hcCByZWdpc3RlciBjYWNoZS4KPisgKiBUaGUgd2luZG93IGFuZCB2aWRlbyBwb3J0
-IHJlZ2lzdGVycyBhcmUgb25seSB1cGRhdGVkIHdoZW4gY29uZmlnCj4rICogZG9uZSBpcyB3cml0
-dGVuLiBVbnRpbCB0aGF0IHRoZXkgcmVhZCBiYWNrIHRoZSBvbGQgdmFsdWUuIEFzIHdlCj4rICog
-cmVhZC1tb2RpZnktd3JpdGUgdGhlc2UgcmVnaXN0ZXJzIG1hcmsgdGhlbSBhcyBub24tdm9sYXRp
-bGUuIFRoaXMKPisgKiBtYWtlcyBzdXJlIHdlIHJlYWQgdGhlIG5ldyB2YWx1ZXMgZnJvbSB0aGUg
-cmVnbWFwIHJlZ2lzdGVyIGNhY2hlLgo+ICAqLwo+IHN0YXRpYyBjb25zdCBzdHJ1Y3QgcmVnbWFw
-X3JhbmdlIHZvcDJfbm9udm9sYXRpbGVfcmFuZ2VbXSA9IHsKPisJcmVnbWFwX3JlZ19yYW5nZShS
-SzM1NjhfVlAwX0NUUkxfQkFTRSwgUkszNTg4X1ZQM19DVFJMX0JBU0UrMjU1KSwKClNtYWxsIG5p
-dDogdGhlcmUgc2hvdWxkIGJlIHNwYWNlcyBiZWZvcmUgYW5kIGFmdGVyIHRoZSAgKyAKCj4gCXJl
-Z21hcF9yZWdfcmFuZ2UoMHgxMDAwLCAweDIzZmYpLAo+IH07Cj4gCj4tLSAKPjIuNTAuMAo+Cj4K
+On Thu, Jul 03, 2025 at 07:15:23PM +0200, Rafael J. Wysocki wrote:
 
+> > How realistic is it to have a significant amount of zombies when
+> > freezing? This seems like an artificial corner case at best.
+> >
+> > Zombie tasks are stuck waiting on their parent to consume their exit
+> > state or something, right? And those parents being frozen, they pretty
+> > much stay there.
+> >
+> > So I suppose the logic holds, but urgh, do we really need this?
+> 
+> Unlikely in practice, but the code change is small and it would be
+> prudent to get this addressed IMV (at least so we don't need to
+> revisit it).
+> 
+> But I would ask for a comment above this check to explain that zombies
+> need not be frozen.
+
+Depending on where they wait (I can't seem to find in a hurry) it might
+make sense to make that wait FREEZABLE anyway.
+
+For example, AFAICT it wouldn't hurt, and might even help some, to make
+kernel/exit.c:do_wait() TASK_FREEZABLE.
+
+So where do ZOMBIEs sleep? Don't they simply pass through do_task_dead()
+and never get scheduled again? Notably, do_task_dead() already marks the
+tasks as PF_NOFREEZE.
+
+Anyway, yes, the condition it adds is relatively simple, but I really
+don't see why we should complicate things *at*all*.
 
