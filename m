@@ -1,138 +1,133 @@
-Return-Path: <linux-kernel+bounces-716660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8B26AF8976
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 09:30:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B97ACAF897B
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 09:30:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5835C3AE132
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 07:28:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B1F31CA0D43
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 07:31:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9923E28725F;
-	Fri,  4 Jul 2025 07:26:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 291E128467D;
+	Fri,  4 Jul 2025 07:26:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DmRRxE1i"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DAFqxvNu"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7907628725B;
-	Fri,  4 Jul 2025 07:26:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E25528030C;
+	Fri,  4 Jul 2025 07:26:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751613981; cv=none; b=IkDYad9A4ArxBnWg89DYEiO6nJEJp887DWHR8ExAbPsWTdbQoBfl37C4Ctq2qhzIrBwFyZg4adYSrYPo7M9MWnv+e6L7NVyvM/UwlVadG+WqanaToUa49LG1Ma5Y5OqPVcjl8tGj4EzTF/tr3/EiOSAD46Vd6OkPKMzHmzEmFlE=
+	t=1751614014; cv=none; b=jIgbN185bLEZoJL2dSiiT37BNMvK9KmRSL7tIxPvrDtZY+fB5D7eBiuiUL3N95PHnqFDsSe4cETEgREsgpE6Q0JunY1lCd6UDr6VITYrsQDOiKbpi8C+MpTc7dnxhGT9dFup3l3l1m5KpU8JdMY3Kx9/z7KRRTS/91IJDCu1fkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751613981; c=relaxed/simple;
-	bh=Upigb2pu4dZf0sT6kkLAt84b8rlfCgQMY6Qq/ZtbZrY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dBqhspb5ucFkOTciPzq2UHI4Yjpwer+hwSGvACW3Y7dRufn0/xpxmiw2EGlzdGZRvtiMkIkCGDkjK/YifPbG+tMWeyy8AHQuZCpuaJ9E3ieYB7cqkTFmI18gOYJoV09J6652NMpsySvBVBpGrLgrUvUfUIxgfiyqbVE6aklX0DE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DmRRxE1i; arc=none smtp.client-ip=209.85.214.181
+	s=arc-20240116; t=1751614014; c=relaxed/simple;
+	bh=t+0bJUNlahtrSxCfD4FMqTrweoAS3ZJ2lbuKDDpRKxI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BZMbaO38raInWmVExhF5Hi9v9D6QlQdvY5os3XQT8pssSeCFd1/oJr7Z/a7U+UoNzljH2mJFcetDBIeB+XT5TRNLENAEXVfzahQiE+8S8NWrV0S79/AC6DDmC88RoDoUyCYLHhUV4/ItPM17AjjtNERaJIuMtkiIFuqloCzL2Y0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DAFqxvNu; arc=none smtp.client-ip=209.85.216.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-236377f00easo9463695ad.1;
-        Fri, 04 Jul 2025 00:26:19 -0700 (PDT)
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-3137c20213cso809801a91.3;
+        Fri, 04 Jul 2025 00:26:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751613978; x=1752218778; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=kDxuxUDgUgDkcVZdx4yl7cOtfH39Xq3bSHZLoPDyb9E=;
-        b=DmRRxE1iiDZmscjNq9QCo0O4f4e12uCcXfUtLOYi4YCyorEkt9nO6+jsGR+PgTq9jg
-         CXIwNt+hnOXB784FGWPSbTTinY/aOoBl3SUvAZ3XQ1L8LfKtfT3zHEN9MhH8eyr9NBNy
-         99Pp+LU5pWNJ0m5u2rUD3uOvojsa9ULGqkK4L2815cR3AeRqj5KUyxCHDivOuUSENg6I
-         5Adq6HOU8KiiX2xGFPENFlAHAZc/H4o+g39gtpxkYYo7e+16U7M5FUO9NQfRndCHaJbM
-         /y0s93I58DjFC7r0QCtOu5TrhhmlsUDqapYdQgvJklCcWg6UszEd8+HefaDleZcrOwIQ
-         /2EA==
+        d=gmail.com; s=20230601; t=1751614012; x=1752218812; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=t+0bJUNlahtrSxCfD4FMqTrweoAS3ZJ2lbuKDDpRKxI=;
+        b=DAFqxvNuMuN+79HeVfCejrivK8GukVhaytU8zJFsG46f/wD32RGtWVvFAE0TlzF3Jo
+         tE8/ra2bOXN4GP7RO1P4u9/pfGziXZj/BYnkldeyvDaGxh9T0wmc+bqXVfmegL0UR8b1
+         9Bqp/9YQhNJT72QJWoAqqANHA7cLEhgO3UvWMtZdEpt5sfoV36lGSKUpUpuS/MQF3Wuv
+         eK/29qvT95+jgguy1qcS1joVdC0LD9bImcKHZOEf6BSRAyHKhfm+wItIMSF3rPj+FLfX
+         KAhl5oloAbDjT+i2AMVjZMjkx3bawmZkpQvHo0WeZ5O+OMmRKZ0o8OFQONCsJt3WMqQt
+         NVdg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751613978; x=1752218778;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kDxuxUDgUgDkcVZdx4yl7cOtfH39Xq3bSHZLoPDyb9E=;
-        b=UBpqUr/x2hBjQ2Z1n55xI6RHUndJpAaN/jo0gM6C9hlvvLCbPdBvzpqgSiIciDxdZR
-         3V0Ng3AlnMRxjtoQFXByXgsS10QRq+ztjBvnKNcMIpljiISjvlu+5HLrck/SfNRoXxh3
-         a5dprBonBR0inwo6AejTn2Td2RqnHTHX/s6AfJw9QjBUF6PtbkSmVH//uq/EaCG22LPP
-         TAXrlLZ6zTZPNPXACQp0y2og9syFrxmT5KRUicMHx3wUZHyiALx80EC7KSql5bmNItdS
-         X51GfMdTykmsdyt38mPHZmF0cTAF+HGH7uXNaZFKedRjFNuuvU3LjjuA7Dy8IK+iPQDI
-         v9yw==
-X-Forwarded-Encrypted: i=1; AJvYcCUaSHxrrhR2EkhKGMGOjjvw7xT4o4KzxtFa7ClyJ+QAGpS+gLBIN8SgSMVeu/akvRF8UwIxxHnJTau9Rfs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfwXAtyX4rg4XCyaLthnU51+bmYuuZk4ES8zRBkEeAzMRAf+4P
-	XmR0s01DCiX93LHHyeftZzAdzDiPRvjqzIMz5+OC+nU1KqfvTOEOfAH9kK3J1eO6SKw=
-X-Gm-Gg: ASbGncuUni6Sbwk88zBR3X9nU2J/08nCankrW/yi1E2feWin1yP3IJCZ9qTo89nWup7
-	7/gWwLZr68CIm0ZQGHnCWnHFVswyd4ObODN4gHLLR7kReT84yZmun0200NZBf/b31+WbdocXm28
-	0Vp9B5OvNANpz6+kHXuFO7hFsmxc9O7vbEuGTD5sKa8pSTeBzxKzXGKfTKfkgMSA9BoukCOlE85
-	SRN4WqURE+US3d9XwwxFTGnxKl4iTcd5V7FXFoBvI+IRjp8bvZvmerh+e1AQp8wL7RhYo3NxSfn
-	YE5+gAmE4Ll4l9xL2SYtPxntiQZOW/Q3NjD2tnCTlRaeTwElA4G12ePZUNRpsiIdDQPyEhP/sVA
-	rZuvR+oiMDyjPnXqm
-X-Google-Smtp-Source: AGHT+IF868eyucOmTptTbQbUozxpL8rfVAZcdj+zsUMVFE1ZmgFNdh9GJcoKkdvBbd8xKBaEX3JDJw==
-X-Received: by 2002:a17:902:fc48:b0:235:27b6:a891 with SMTP id d9443c01a7336-23c85e772c8mr31057695ad.28.1751613978318;
-        Fri, 04 Jul 2025 00:26:18 -0700 (PDT)
-Received: from manjaro.domain.name ([2401:4900:1c30:6f3f:3d1:c4c0:3855:2a18])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23c8455dafcsm13455985ad.96.2025.07.04.00.26.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Jul 2025 00:26:17 -0700 (PDT)
-From: Pranav Tyagi <pranav.tyagi03@gmail.com>
-To: linux-xfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: cem@kernel.org,
-	djwong@kernel.org,
-	skhan@linuxfoundation.org,
-	linux-kernel-mentees@lists.linux.dev,
-	Pranav Tyagi <pranav.tyagi03@gmail.com>,
-	kernel test robot <oliver.sang@intel.com>
-Subject: [PATCH] fs/xfs: replace strncpy with memtostr_pad()
-Date: Fri,  4 Jul 2025 12:56:04 +0530
-Message-ID: <20250704072604.13605-1-pranav.tyagi03@gmail.com>
-X-Mailer: git-send-email 2.49.0
+        d=1e100.net; s=20230601; t=1751614012; x=1752218812;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=t+0bJUNlahtrSxCfD4FMqTrweoAS3ZJ2lbuKDDpRKxI=;
+        b=DVdD325VYQ7VdWEcIrKKZ8q/s+9GqefeqqK9iFu9+rmSbsU8vPEEqTvSF0748kVCH7
+         IvaKg35Kom9I2JQ1zfvJjAdevPO/8u5aHzL0PlrDB0YXtwVVOGtAB+FBdqWVizAJwed9
+         r37CRMdh57Tnca9qckrEoA4f8wcP9MwxlYn6drLob0Pl0KMnQqKVhZcLuXYN659OtQNd
+         GeLKUERvCJeCRqmDSPMRQr905jF1bjCah4bPloTYUWazeLreo1KGJu6SlLV02Ry1aDeb
+         zbG2R/51Gq3Jj5rIkQr/HRvDs2MUzjGKcSzUJwoiWDUkL1VP9wO0lta9nF0LXsU2aME0
+         NHcg==
+X-Forwarded-Encrypted: i=1; AJvYcCUltjyCjWEKhaNjEjZKe0VYQLDqKk2093vhjFjEqqramR2y1dJoJxbmwzbMQ6qEct7wFZjpEk8QzxIO@vger.kernel.org, AJvYcCW0B0iuK0l/BGKS6sOs16XArYcNojPJwGB4WZyAIon1mj9ENS/qVSh++6xQFRrdMvfKH1Vyu/SfTqSN@vger.kernel.org, AJvYcCX4wl4ltWLcd2bxYsA5kK44+BBvgkWZ+Q4SNv/kTy4QbSRrCcsfjSa9m0Zg5DZPyc/aweY/dIV6B8val+wi@vger.kernel.org, AJvYcCXOex70C7/z+NNGl1IuGTygfD8M19EFLV/lhxsttSuf4H8M6HdMko3ExajFRmHxhWCBGhXbM1AWUe15oog=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzB9rvg6SJyACN+z5ZSuqqb4xoBDEyhpvqIfqynDmpD2XT+YLMs
+	3qv+VhCMRa91fFB6N292/H+DwUTi6KrKGsWkYSaKvC/MHKBavXNW3p91q6dNNNfihu3JjYvTgnE
+	Sh31YYWAFka0F5Ddv2qkIVH7a4iRP8Q9Ru8f2
+X-Gm-Gg: ASbGncsr/rcwdatVrpuNDk6OhPE8kw2HyxXHgHsbw7c2MA+d1VovSVpkFU6kOrqtkRz
+	721w5i24bnU5kEfRtrJmPBkHEjS2eSc9HG4auQzYy+3ueNvUbICyorZqt+Gj23hnbqLq+acbbZ0
+	400SYOVCM6ZoYPPgqOMooij1ZDmUpn7Rgl5+5nn5UEGtUIo5eEYcFKi9cuLHBC9YO8sGMAVrL8o
+	ihyjg==
+X-Google-Smtp-Source: AGHT+IFhWPO75So0JsJk5GvG9MEgOBhEkjqe1mwiXh8Je1HsPLlngJc7tGWImUjVOV2FwTcNuKQACDCsf2QsaK9sX5g=
+X-Received: by 2002:a17:90b:57c7:b0:311:ffe8:20e6 with SMTP id
+ 98e67ed59e1d1-31aac432932mr2344759a91.3.1751614012223; Fri, 04 Jul 2025
+ 00:26:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250701181228.1196102-1-noltari@gmail.com> <20250701181228.1196102-4-noltari@gmail.com>
+ <c893384d-4134-4510-be87-11a2c9ba6cc7@kernel.org> <CAKR-sGeSPHu5DiFL2sX=SdET_jzbepo30qguscUjzYkX-Aub0Q@mail.gmail.com>
+ <9df1cc49-34bd-42d4-96dc-ec9b512e0c5f@roeck-us.net>
+In-Reply-To: <9df1cc49-34bd-42d4-96dc-ec9b512e0c5f@roeck-us.net>
+From: =?UTF-8?B?w4FsdmFybyBGZXJuw6FuZGV6IFJvamFz?= <noltari@gmail.com>
+Date: Fri, 4 Jul 2025 09:26:16 +0200
+X-Gm-Features: Ac12FXzX3jVR20bs6VKEPdEkV6NWwrwg2tdBtAlWnbRzNtnDm1U4WYY1z9_R3y0
+Message-ID: <CAKR-sGcLkihNKAQpPR6y3u2aCA6xmTd0mp2Ko15e3QZWrc4Dgg@mail.gmail.com>
+Subject: Re: [PATCH] drivers: hwmon: add EMC2101 driver
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, jdelvare@suse.com, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, corbet@lwn.net, linux-hwmon@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Replace the deprecated strncpy() with memtostr_pad(). This also avoids
-the need for separate zeroing using memset(). Mark sb_fname buffer with
-__nonstring as its size is XFSLABEL_MAX and so no terminating NULL for
-sb_fname.
+Hi Guenter,
 
-Signed-off-by: Pranav Tyagi <pranav.tyagi03@gmail.com>
-Reported-by: kernel test robot <oliver.sang@intel.com>
-Closes: https://lore.kernel.org/oe-lkp/202506300953.8b18c4e0-lkp@intel.com
----
- fs/xfs/libxfs/xfs_format.h | 2 +-
- fs/xfs/xfs_ioctl.c         | 3 +--
- 2 files changed, 2 insertions(+), 3 deletions(-)
+El vie, 4 jul 2025 a las 2:25, Guenter Roeck (<linux@roeck-us.net>) escribi=
+=C3=B3:
+>
+> On Thu, Jul 03, 2025 at 09:23:41AM +0200, =C3=81lvaro Fern=C3=A1ndez Roja=
+s wrote:
+> > >
+> > > Add a comment describing what you are protecting here. It looks so fa=
+r
+> > > like you could just use regmap and drop the mutex, but I didn't check
+> > > thoroughly.
+> >
+> > The EMC2101 datasheet is explicit about the Look Up Table registers
+> > (REG_FAN_LUT_TEMP and REG_FAN_LUT_SPEED) being RO if FAN_LUT_DISABLE
+> > isn't set, so I believe that we need the mutex even if we switch to
+> > regmap.
+> > I will add an explanation with that in the next version.
+> > Should I still switch the implementation to regmap considering that we
+> > need a mutex?
+> >
+> What does r/w vs. r/o register access have to do with locking ?
 
-diff --git a/fs/xfs/libxfs/xfs_format.h b/fs/xfs/libxfs/xfs_format.h
-index 9566a7623365..779dac59b1f3 100644
---- a/fs/xfs/libxfs/xfs_format.h
-+++ b/fs/xfs/libxfs/xfs_format.h
-@@ -112,7 +112,7 @@ typedef struct xfs_sb {
- 	uint16_t	sb_sectsize;	/* volume sector size, bytes */
- 	uint16_t	sb_inodesize;	/* inode size, bytes */
- 	uint16_t	sb_inopblock;	/* inodes per block */
--	char		sb_fname[XFSLABEL_MAX]; /* file system name */
-+	char		sb_fname[XFSLABEL_MAX] __nonstring; /* file system name */
- 	uint8_t		sb_blocklog;	/* log2 of sb_blocksize */
- 	uint8_t		sb_sectlog;	/* log2 of sb_sectsize */
- 	uint8_t		sb_inodelog;	/* log2 of sb_inodesize */
-diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
-index d250f7f74e3b..c3e8c5c1084f 100644
---- a/fs/xfs/xfs_ioctl.c
-+++ b/fs/xfs/xfs_ioctl.c
-@@ -990,9 +990,8 @@ xfs_ioc_getlabel(
- 	BUILD_BUG_ON(sizeof(sbp->sb_fname) > FSLABEL_MAX);
- 
- 	/* 1 larger than sb_fname, so this ensures a trailing NUL char */
--	memset(label, 0, sizeof(label));
- 	spin_lock(&mp->m_sb_lock);
--	strncpy(label, sbp->sb_fname, XFSLABEL_MAX);
-+	memtostr_pad(label, sbp->sb_fname);
- 	spin_unlock(&mp->m_sb_lock);
- 
- 	if (copy_to_user(user_label, label, sizeof(label)))
--- 
-2.49.0
+FAN_LUT_DISABLE bit can be set or cleared when pwm_enable is modified,
+but we need it to be set in order to be able to modify
+REG_FAN_LUT_TEMP and REG_FAN_LUT_SPEED registers.
+If FAN_LUT_DISABLE bit isn't set, any attempt to modify
+REG_FAN_LUT_TEMP and REG_FAN_LUT_SPEED registers won't work because
+they would be RO.
+Therefore, we need a lock to ensure that FAN_LUT_DISABLE is kept while
+modifying those registers.
+Please, take a look at emc2101_pwm_enable_write() and
+__pwm_auto_point_temp_store().
 
+>
+> Guenter
+
+Best regards,
+=C3=81lvaro.
 
