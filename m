@@ -1,227 +1,139 @@
-Return-Path: <linux-kernel+bounces-716982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-717023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2623FAF8DB4
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 11:10:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56AE7AF8E08
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 11:16:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 471BB767D5B
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 09:05:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC0DC1CA78BE
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 09:15:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 420DF2F7D1B;
-	Fri,  4 Jul 2025 09:00:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A81CC2F433B;
+	Fri,  4 Jul 2025 09:10:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Z/6cNXSG"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="Vw4T7YWj"
+Received: from smtp-8fa8.mail.infomaniak.ch (smtp-8fa8.mail.infomaniak.ch [83.166.143.168])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C6682DAFAA;
-	Fri,  4 Jul 2025 09:00:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B13B2F4328
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 09:10:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.168
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751619649; cv=none; b=WeOAQ4vBb8ykJRMKpdqBhti9Z9moLKTzWuRHGHwmtj5IsMPjadCEmo8EYqp108rY3tGlhAGPq7uRVyAQRS18KoM5jkuhaHDG2xEsRYP7yKJ+8DEZJghAsjs1eaww3PvIUeHjT5ysUMaJK8Hl72bSxYxZWBIA8AWQM7Es2qu1RNI=
+	t=1751620243; cv=none; b=s12rpnpMZFHSVgLXKu1J6roFoW8O4/gAVZqY2+tzm/9HPE/rQMbu7p3wv8gtruaIM9p9qjTNk2mv02lvcYuQRBLfH1j6R42bbt33PUVUN5H92aiG5ijyixomTnwDUjd7Tw0d8rzf8oStiQVxL/4YVWq6NPnKzoZLfcWvJTVw1IM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751619649; c=relaxed/simple;
-	bh=yPyhF4ei0C2eeEy4OzReACfjIMmhBwKbDXON5X9md+g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=u43NM7xxRt/hr7dbM+S94TwLF0Rfn1rIrxnjyYW5o4zkkA0mQdVyueJHH5TZOypfr6soJAZwfgxSLEdNHOcUP5xaiM4jBXyI7IW5EtVhfKbIVQejT8hBIPt2qu8mctCaeZ/UkdK+INRi93ZkYq8+yXHniUWEhi5nYg+EDEyfvz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Z/6cNXSG; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 56490dFM4139738;
-	Fri, 4 Jul 2025 04:00:39 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1751619639;
-	bh=Nd5IU7a3XjIk16WFZhPfENBSU02gEYqyGGL1B15JCGE=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=Z/6cNXSG/Xue9jVM5rSFkD/Rs6EyFwX4o5v+eURcqLB0dwlc93VoYvFec5oNgDlIC
-	 9kLfYnWXdBT3qbTAbkEKJdZTggybN8MjVFR0iLUftoGA0vu8TKHoPPbIbGFSvMmqPh
-	 24TJqXxVFk7/3T/8cdK/4OSdBW2jC4WWB9xvIKvk=
-Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
-	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 56490dFs3233464
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Fri, 4 Jul 2025 04:00:39 -0500
-Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 4
- Jul 2025 04:00:39 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Fri, 4 Jul 2025 04:00:39 -0500
-Received: from [172.24.227.38] (ula0502350.dhcp.ti.com [172.24.227.38])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 56490Y8R2708392;
-	Fri, 4 Jul 2025 04:00:34 -0500
-Message-ID: <cb52029a-d1c8-47c8-bf4b-0de44601a9ef@ti.com>
-Date: Fri, 4 Jul 2025 14:30:33 +0530
+	s=arc-20240116; t=1751620243; c=relaxed/simple;
+	bh=cLwWQyrB0mwed4cU0+cVqyYgNBtoPEX59tc7uNEyzC0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rOx+c5TBuse3NF5axi06xyCRrormOfPiRgeLkxAgjCmYi3drwHU3r9WRALU2JfNbbeeQJeamXkouaeFHjwPtsidUKC6ioVXwFe5AvrrSJVlFW48jsdd0d+6dMZdg8HO8A8WXD1shMANT4aXNEi6vT1y83GHw6TVD3iK+HDHjtC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=Vw4T7YWj; arc=none smtp.client-ip=83.166.143.168
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246c])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4bYSK33ksszLpZ;
+	Fri,  4 Jul 2025 11:00:39 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1751619639;
+	bh=d3B0Gl5NVIkFKbxEnnnoas390sBQL3HhXfp2/141yac=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Vw4T7YWjqqarK0hzIK+mYBSKByM3YmZa15/CNzENwM488+YCclY06+Q7b2iMPxEv0
+	 Xyj5R7UTvG9FaWdeQRu/kX4AFt4xvHq2VHqL2zBxyvlCFJQDGE3BwnkgfWY27g+ihH
+	 mpqujgWOXcwyos0XAMuUxRVDESIVsKIwzrUgYKtQ=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4bYSK21vkQzMBN;
+	Fri,  4 Jul 2025 11:00:38 +0200 (CEST)
+Date: Fri, 4 Jul 2025 11:00:37 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Song Liu <songliubraving@meta.com>
+Cc: Song Liu <song@kernel.org>, "brauner@kernel.org" <brauner@kernel.org>, 
+	"bpf@vger.kernel.org" <bpf@vger.kernel.org>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>, Kernel Team <kernel-team@meta.com>, 
+	"andrii@kernel.org" <andrii@kernel.org>, "eddyz87@gmail.com" <eddyz87@gmail.com>, 
+	"ast@kernel.org" <ast@kernel.org>, "daniel@iogearbox.net" <daniel@iogearbox.net>, 
+	"martin.lau@linux.dev" <martin.lau@linux.dev>, "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, 
+	"jack@suse.cz" <jack@suse.cz>, "kpsingh@kernel.org" <kpsingh@kernel.org>, 
+	"mattbobrowski@google.com" <mattbobrowski@google.com>, "m@maowtm.org" <m@maowtm.org>, 
+	"neil@brown.name" <neil@brown.name>, =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	Jann Horn <jannh@google.com>
+Subject: Re: [PATCH v5 bpf-next 2/5] landlock: Use path_walk_parent()
+Message-ID: <20250704.quio1ceil4Xi@digikod.net>
+References: <20250617061116.3681325-1-song@kernel.org>
+ <20250617061116.3681325-3-song@kernel.org>
+ <20250703.ogh0eis8Ahxu@digikod.net>
+ <C62BF1A0-8A3C-4B58-8CC8-5BD1A17B1BDB@meta.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 4/4] arm64: dts: ti: Add support for AM62D2-EVM
-To: Bryan Brattlof <bb@ti.com>
-CC: <nm@ti.com>, <vigneshr@ti.com>, <praneeth@ti.com>, <kristo@kernel.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <khasim@ti.com>, <v-singh1@ti.com>,
-        <afd@ti.com>, <devarsht@ti.com>, <s-vadapalli@ti.com>,
-        <andrew@lunn.ch>
-References: <20250627115753.2246881-1-p-bhagat@ti.com>
- <20250627115753.2246881-5-p-bhagat@ti.com>
- <20250701162504.dck3763ik6kpo7ec@bryanbrattlof.com>
- <f7b0c7f0-9af1-4105-a143-103c49fe2320@ti.com>
- <20250703122008.ygz5udttjdo3l2g4@bryanbrattlof.com>
-Content-Language: en-US
-From: Paresh Bhagat <p-bhagat@ti.com>
-In-Reply-To: <20250703122008.ygz5udttjdo3l2g4@bryanbrattlof.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <C62BF1A0-8A3C-4B58-8CC8-5BD1A17B1BDB@meta.com>
+X-Infomaniak-Routing: alpha
 
-Hi Bryan,
+On Thu, Jul 03, 2025 at 10:27:02PM +0000, Song Liu wrote:
+> Hi Mickaël,
+> 
+> > On Jul 3, 2025, at 11:29 AM, Mickaël Salaün <mic@digikod.net> wrote:
+> > 
+> > On Mon, Jun 16, 2025 at 11:11:13PM -0700, Song Liu wrote:
+> >> Use path_walk_parent() to walk a path up to its parent.
+> >> 
+> >> No functional changes intended.
+> > 
+> > Using this helper actualy fixes the issue highlighted by Al.  Even if it
+> > was reported after the first version of this patch series, the issue
+> > should be explained in the commit message and these tags should be
+> > added:
+> > 
+> > Reported-by: Al Viro <viro@zeniv.linux.org.uk>
+> > Closes: https://lore.kernel.org/r/20250529231018.GP2023217@ZenIV 
+> > Fixes: cb2c7d1a1776 ("landlock: Support filesystem access-control")
+> > 
+> > I like this new helper but we should have a clear plan to be able to
+> > call such helper in a RCU read-side critical section before we merge
+> > this series.  We're still waiting for Christian.
+> > 
+> > I sent a patch to fix the handling of disconnected directories for
+> > Landlock, and it will need to be backported:
+> > https://lore.kernel.org/all/20250701183812.3201231-1-mic@digikod.net/
+> > Unfortunately a rebase would be needed for the path_walk_parent patch,
+> > but I can take it in my tree if everyone is OK.
+> 
+> The fix above also touches VFS code (makes path_connected available 
+> out of namei.c. It probably should also go through VFS tree? 
+> 
+> Maybe you can send 1/5 and 2/5 of this set (with necessary changes) 
+> and your fix together to VFS tree. Then, I will see how to route the
+> BPF side patches. 
 
+That could work, but because it would be much more Landlock-specific
+code than VFS-specific code, and there will probably be a few versions
+of my fixes, I'd prefer to keep this into my tree if VFS folks are OK.
+BTW, my fixes already touch the VFS subsystem a bit.
 
-On 03/07/25 17:50, Bryan Brattlof wrote:
-> On July  3, 2025 thus sayeth Paresh Bhagat:
->> Hi Bryan,
->>
->>
->> On 01/07/25 21:55, Bryan Brattlof wrote:
->>> On June 27, 2025 thus sayeth Paresh Bhagat:
->>>> AM62D-EVM evaluation module (EVM) is a low-cost expandable platform board
->>>> designed for AM62D2 SoC from TI. It supports the following interfaces:
->>>>
->>>> * 4 GB LPDDR4 RAM
->>>> * x2 Gigabit Ethernet expansion connectors
->>>> * x4 3.5mm TRS Audio Jack Line In
->>>> * x4 3.5mm TRS Audio Jack Line Out
->>>> * x2 Audio expansion connectors
->>>> * x1 Type-A USB 2.0, x1 Type-C dual-role device (DRD) USB 2.0
->>>> * x1 UHS-1 capable micro SD card slot
->>>> * 32 GB eMMC Flash
->>>> * 512 Mb OSPI NOR flash
->>>> * x4 UARTs via USB 2.0-B
->>>> * XDS110 for onboard JTAG debug using USB
->>>> * Temperature sensors, user push buttons and LEDs
->>>>
->>>> Although AM62D2 and AM62A7 differ in peripheral capabilities example
->>>> multimedia, VPAC, and display subsystems, the core architecture remains
->>>> same. To reduce duplication, AM62D support reuses the AM62A dtsi and the
->>>> necessary overrides will be handled in SOC specific dtsi file and a
->>>> board specific dts.
->>>>
->>>> Add basic support for AM62D2-EVM.
->>>>
->>>> Schematics Link - https://www.ti.com/lit/zip/sprcal5
->>>>
->>>> Signed-off-by: Paresh Bhagat <p-bhagat@ti.com>
->>>> Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
->>>> ---
->>>>    arch/arm64/boot/dts/ti/Makefile          |   3 +
->>>>    arch/arm64/boot/dts/ti/k3-am62d2-evm.dts | 599 +++++++++++++++++++++++
->>>>    arch/arm64/boot/dts/ti/k3-am62d2.dtsi    |  25 +
->>>>    3 files changed, 627 insertions(+)
->>>>    create mode 100644 arch/arm64/boot/dts/ti/k3-am62d2-evm.dts
->>>>    create mode 100644 arch/arm64/boot/dts/ti/k3-am62d2.dtsi
->>>>
->>> ...
->>>
->>>> diff --git a/arch/arm64/boot/dts/ti/k3-am62d2.dtsi
->>>> b/arch/arm64/boot/dts/ti/k3-am62d2.dtsi
->>>> new file mode 100644
->>>> index 000000000000..70aeb40872a9
->>>> --- /dev/null
->>>> +++ b/arch/arm64/boot/dts/ti/k3-am62d2.dtsi
->>>> @@ -0,0 +1,25 @@
->>>> +// SPDX-License-Identifier: GPL-2.0-only OR MIT
->>>> +/*
->>>> + * Device Tree Source for AM62D2 SoC family in Quad core configuration
->>>> + *
->>>> + * TRM: https://www.ti.com/lit/pdf/sprujd4
->>>> + *
->>>> + * Copyright (C) 2025 Texas Instruments Incorporated - https://www.ti.com/
->>>> + */
->>>> +
->>>> +/dts-v1/;
->>>> +
->>>> +#include "k3-am62a7.dtsi"
->>> If we want to reuse the AM62A chassis I think we should probably reused
->>> the AM62AX_IOPAD() macro instead of creating a new one.
->>
->> AM62D does not necessarily have the same pin configuration compared to
->> AM62A. While it is a macro which could be shareable across many boards, i
->> think its preferable we maintain separate definitions to highlight the new
->> SoCs. AM62D is a separate package, with some components reused from AM62a.
-> I guess I don't understand the need to create a new padconfig macro when
-> we say, in device tree syntax, the AM62D and AM62A uses the same RTL
-> chassis. The pinout will always change with packaging changes but this
-> will not change the padconfig MMR layout.
->
-> All that said. It's just a name and honestly when you look at all these
-> macros we haven't changed the padconfig layout for any K3 chip so it not
-> a big deal to me. If it helps people when grepping around i'll relent ;)
+However, as pointed out in my previous email, the disconnected directory
+case should be carefully considered for the path_walk_parent() users to
+avoid BPF LSM programs having the same issue I'm fixing for Landlock.
+The safe approaches I can think of to avoid this issue for BPF programs
+while making the interface efficient (by not calling path_connected()
+after each path_walk_parent() call) is to either have some kind of
+iterator as Tingmao proposed, or a callback function as Neil proposed.
+The callback approach looks simpler and more future-proof, but I guess
+you'll have to make it compatible with the eBPF runtime.  I think the
+best approach would be to have a VFS API with a callback, and a BPF
+helper (leveraging this VFS API) with an iterator state.
 
+I'm aware that this disconnected directory fix might delay your patch
+series, but the good news is that it's an opportunity for eBPF programs
+to not have the issue I'm fixing for Landlock.
 
-Makes sense. Thanks
->
->>
->>>> +
->>>> +/ {
->>>> +	model = "Texas Instruments K3 AM62D SoC";
->>>> +	compatible = "ti,am62d2";
->>>> +};
->>>> +
->>>> +&vpu {
->>>> +	status = "disabled";
->>>> +};
->>>> +
->>>> +&e5010 {
->>>> +	status = "disabled";
->>>> +};
->>> So I could be a little out of date on the style guidelines here, but my
->>> intuition is device trees, much like real trees, can only grow, so we
->>> can't inherit the am62a.dtsi and remove things.
->>>
->>> My understanding is we have to create a full am62d.dtsi with its
->>> features that the am62a.dtsi can extend with the vpu{} and e5010{} nodes
->>>
->>> ~Bryan
->>
->> Agree we should ideally keep the device trees extending. But in this case it
->> will involve changes not only in am62a.dtsi but ideally it will change
->> k3-am62a-main.dtsi and k3-am62a-mcu.dtsi as well. This moves us back to
->> version 3 of this series
->> https://lore.kernel.org/all/20250508091422.288876-1-p-bhagat@ti.com/ where i
->> created *common*.dtsi files which looks a bit complex.
->>
->>
->> The current method also ensures that customers can start their development
->> of a new board with k3-am62d2.dtsi, while maintaining less complexity and is
->> a easier to follow approach.
-> The issue I take with this approach is what does 'status = "disabled"'
-> mean now. Historically (for TI SoCs at least) it indicated the node was
-> incomplete and would need to be extended in the board.dts to function
-> properly. But now we're trying to say for these two nodes the hardware
-> doesn't exist on this SoC and bad things will happen if you enable them.
->
-> My recommendation is to try to flip this around. The am62a7.dtsi should
-> inherit the am62d2.dtsi and add the vpu{} and e5010{} nodes. I agree we
-> don't need to try to combine the two as we did in v3 just yet but we
-> should try to keep the device trees growing as we inherit things.
->
-> ~Bryan
-
-
-Yep makes sense. I guess deleting the node will be better than having 
-'status = "disabled"' for components which are not supported/absent. 
-Also it will avoid the need to flip around and change the existing am62a 
-structure. I will send a new version with the updates. Thanks.
->
->>
+> 
+> Thanks,
+> Song
+> 
+> 
 
