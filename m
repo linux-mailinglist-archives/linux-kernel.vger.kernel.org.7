@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-716766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 630D3AF8A9C
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 10:06:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AB8AAF8AA1
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 10:06:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F33336E45E0
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 08:03:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2C643AF543
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 08:03:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D52962E0B7C;
-	Fri,  4 Jul 2025 07:54:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA0AA2E427F;
+	Fri,  4 Jul 2025 07:54:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dkF+MixR"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LDz4zJtX"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 452A12DE213;
-	Fri,  4 Jul 2025 07:54:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5F122E0B75;
+	Fri,  4 Jul 2025 07:54:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751615677; cv=none; b=oPZwT00JNY/myyBKkGIyVH50oB/Bu/G7au/NzTrDZtn6bE+iaIonlHDagY+83UBYn06YSIcGOp1A7CtYrx3eRz0Fe94Bc6SZdE/1N2XjU2Qsl5Mvif3Yg+hG+AgbRoZhN8m2iHk9NhfP9GF/0bqd1QM+/Y2GGMDZlEosF8r/NHg=
+	t=1751615680; cv=none; b=cudSwm2VKsMtgc51julEnW4Ry4vaOFx0dvP+xTdSG5LPOgPtMkJSoFbL2zsJoMmGlUnv+9jVcfAMA28pV7qOmVdQFcr0rXdE2negwcyB77p3U9d4PMBCrcKTHxqmbILlgiDKWVVlo2Gm6RwJyp2CcyrIBrDLk/2eXA7KicFSpbY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751615677; c=relaxed/simple;
-	bh=U4cRFiXhV5fuNveZFy2qth9WbtB5GmycvcJ19tMoPUA=;
+	s=arc-20240116; t=1751615680; c=relaxed/simple;
+	bh=wB79eH98fNbh61qiXKAUKjCvjkalYAl1YFc1JZjSyL4=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=RDUYFx/fiLVeiViOC70F9P5lH2NjDnnDBgH/2JQR4VLKtTnQ21+VrjAGLp+HtQQR5UIhVKeuh6EQ/Q16+O93oUMn8XCEvkpFWVLmfH39MBS6x34mCN4H39Z41OybjYFKJb+HODas1Mul6SWgX4n0bbF5rfc7gQntlL/3YvkrjsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dkF+MixR; arc=none smtp.client-ip=198.175.65.9
+	 MIME-Version; b=aEpz1hpw2OOzTSXCLPZDy7jBIuXPXUKclGef3mQ3FOWcFhY7uSJPLpBnRPzgJ2nivCNez5q2OSsAocLn1zhhjSGuIw5Gy8PzGFR44QjjVFEl3WTplkiZLy4j/YmmyNTXfcQ36CgxxuW8bFOK39zaU2h7hfxYCFV+IqTPdOrhz1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LDz4zJtX; arc=none smtp.client-ip=198.175.65.9
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751615674; x=1783151674;
+  t=1751615678; x=1783151678;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=U4cRFiXhV5fuNveZFy2qth9WbtB5GmycvcJ19tMoPUA=;
-  b=dkF+MixRkAZeCq9C4/xBIomZkwGF6IRv+nOvpLqyomHd+7mlzOV9JwbV
-   6AsQTN/oXNucaT9Tr0Q1U+SeeBes/79Rc3fjN5PgXIDt1Hx7lTkAHAKsx
-   O0h+AVeKvIgRMarRwZ6EyUWfTwYi1rimf6NT9A2sEfbJkvKt7SDdKfoSk
-   BV2V/xOE0wBV+bgbLMCAxWKdKS79v5aCC96SbUz8+aAzEHn9veZeZeSjG
-   0dLdiKi8t5Iu3NZ91XCFUYwsLvqWjlrlBOHVCcka2GX/ONWgsBlXfx2zM
-   i1/eiJ9i3KEw6zJd95yUTvc/nrMSM83CuMlNqfHupJLs3mFnvz4Bt+50W
+  bh=wB79eH98fNbh61qiXKAUKjCvjkalYAl1YFc1JZjSyL4=;
+  b=LDz4zJtXxHcohqnrymzVQTz5BGdmH0WySIctNQmxWgHiJTi0JN9NLA6T
+   Jle/AGVnIA0kiqLlkOkoZ82ZJMttvcUdPq8PqTF0NMvv+blNhxO6IIAqe
+   i82Y2+Wi1NMV5udl5ri+8+wQpohfjFOnza8gKpMQmZwYS/cxUH36n+eD2
+   vi9FETiiqqXe6dFfAMqjgHGYcy/1vPGEDQqWOdoaE1j1oKrwbh/CaoRSZ
+   DynBZrJ6AdDha9caMf4PBzt8sCDSzW+gCff6P/hPkw42Xb6MQCzW2Djmo
+   jHxCxPTtszZEK5fevq3EXlWONoGTqcXMM6v9HNy5DxGsWNCwvei4LQMek
    A==;
-X-CSE-ConnectionGUID: qEUpBuGlR4aSh6dFwNV5+Q==
-X-CSE-MsgGUID: jkIF7p0RSaqpVYkNOVw5dw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11483"; a="76494733"
+X-CSE-ConnectionGUID: 5SOIEvK0QHKf9wSAU4565Q==
+X-CSE-MsgGUID: 64RwAvUiSiuaiaDh3JLuKw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11483"; a="76494789"
 X-IronPort-AV: E=Sophos;i="6.16,286,1744095600"; 
-   d="scan'208";a="76494733"
+   d="scan'208";a="76494789"
 Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 00:54:32 -0700
-X-CSE-ConnectionGUID: VStemBfWTXuxdhYmeQqU6A==
-X-CSE-MsgGUID: cM7qXbBkRyyVW1p24x1X0Q==
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 00:54:34 -0700
+X-CSE-ConnectionGUID: 6mn5JHY1Qs6igO/wqvoNgA==
+X-CSE-MsgGUID: iZDOe7kQS/yVZ5I/Q21eDw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.16,286,1744095600"; 
-   d="scan'208";a="158924307"
+   d="scan'208";a="158924322"
 Received: from jkrzyszt-mobl2.ger.corp.intel.com (HELO svinhufvud.fi.intel.com) ([10.245.244.244])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 00:54:30 -0700
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 00:54:31 -0700
 Received: from svinhufvud.lan (localhost [IPv6:::1])
-	by svinhufvud.fi.intel.com (Postfix) with ESMTP id 4B7A644394;
-	Fri,  4 Jul 2025 10:54:28 +0300 (EEST)
+	by svinhufvud.fi.intel.com (Postfix) with ESMTP id 0227944424;
+	Fri,  4 Jul 2025 10:54:30 +0300 (EEST)
 Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
 From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Crt Mori <cmo@melexis.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>
-Cc: linux-iio@vger.kernel.org,
+To: James Ogletree <jogletre@opensource.cirrus.com>,
+	Fred Treven <fred.treven@cirrus.com>,
+	Ben Bright <ben.bright@cirrus.com>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: patches@opensource.cirrus.com,
+	linux-input@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 38/80] iio: temperature: Remove redundant pm_runtime_mark_last_busy() calls
-Date: Fri,  4 Jul 2025 10:54:28 +0300
-Message-Id: <20250704075428.3219924-1-sakari.ailus@linux.intel.com>
+Subject: [PATCH 40/80] Input: cs40l50: Remove redundant pm_runtime_mark_last_busy() calls
+Date: Fri,  4 Jul 2025 10:54:29 +0300
+Message-Id: <20250704075429.3220022-1-sakari.ailus@linux.intel.com>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250704075225.3212486-1-sakari.ailus@linux.intel.com>
 References: <20250704075225.3212486-1-sakari.ailus@linux.intel.com>
@@ -100,47 +100,45 @@ rc2:
         git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
                 pm-runtime-6.17-rc1
 
- drivers/iio/temperature/mlx90614.c | 1 -
- drivers/iio/temperature/mlx90632.c | 1 -
- drivers/iio/temperature/mlx90635.c | 1 -
- 3 files changed, 3 deletions(-)
+ drivers/input/misc/cs40l50-vibra.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/drivers/iio/temperature/mlx90614.c b/drivers/iio/temperature/mlx90614.c
-index 740018d4b3df..8a44a00bfd5e 100644
---- a/drivers/iio/temperature/mlx90614.c
-+++ b/drivers/iio/temperature/mlx90614.c
-@@ -225,7 +225,6 @@ static void mlx90614_power_put(struct mlx90614_data *data)
- 	if (!data->wakeup_gpio)
- 		return;
- 
--	pm_runtime_mark_last_busy(&data->client->dev);
- 	pm_runtime_put_autosuspend(&data->client->dev);
- }
- #else
-diff --git a/drivers/iio/temperature/mlx90632.c b/drivers/iio/temperature/mlx90632.c
-index ae4ea587e7f9..bf689f6143f3 100644
---- a/drivers/iio/temperature/mlx90632.c
-+++ b/drivers/iio/temperature/mlx90632.c
-@@ -1043,7 +1043,6 @@ static int mlx90632_read_raw(struct iio_dev *indio_dev,
+diff --git a/drivers/input/misc/cs40l50-vibra.c b/drivers/input/misc/cs40l50-vibra.c
+index dce3b0ec8cf3..c651a84a6335 100644
+--- a/drivers/input/misc/cs40l50-vibra.c
++++ b/drivers/input/misc/cs40l50-vibra.c
+@@ -306,7 +306,6 @@ static void cs40l50_add_worker(struct work_struct *work)
+ 			list_add(&effect->list, &vib->effect_head);
+ 	}
+ err_pm:
+-	pm_runtime_mark_last_busy(vib->dev);
+ 	pm_runtime_put_autosuspend(vib->dev);
+ err_exit:
+ 	work_data->error = error;
+@@ -366,7 +365,6 @@ static void cs40l50_start_worker(struct work_struct *work)
+ 		dev_err(vib->dev, "Effect to play not found\n");
  	}
  
- mlx90632_read_raw_pm:
--	pm_runtime_mark_last_busy(&data->client->dev);
- 	pm_runtime_put_autosuspend(&data->client->dev);
- 	return ret;
- }
-diff --git a/drivers/iio/temperature/mlx90635.c b/drivers/iio/temperature/mlx90635.c
-index f7f88498ba0e..80d0eb7d2294 100644
---- a/drivers/iio/temperature/mlx90635.c
-+++ b/drivers/iio/temperature/mlx90635.c
-@@ -749,7 +749,6 @@ static int mlx90635_read_raw(struct iio_dev *indio_dev,
- 	}
+-	pm_runtime_mark_last_busy(vib->dev);
+ 	pm_runtime_put_autosuspend(vib->dev);
+ err_free:
+ 	kfree(work_data);
+@@ -382,7 +380,6 @@ static void cs40l50_stop_worker(struct work_struct *work)
  
- mlx90635_read_raw_pm:
--	pm_runtime_mark_last_busy(&data->client->dev);
- 	pm_runtime_put_autosuspend(&data->client->dev);
- 	return ret;
- }
+ 	vib->dsp.write(vib->dev, vib->regmap, vib->dsp.stop_cmd);
+ 
+-	pm_runtime_mark_last_busy(vib->dev);
+ 	pm_runtime_put_autosuspend(vib->dev);
+ 
+ 	kfree(work_data);
+@@ -454,7 +451,6 @@ static void cs40l50_erase_worker(struct work_struct *work)
+ 	list_del(&erase_effect->list);
+ 	kfree(erase_effect);
+ err_pm:
+-	pm_runtime_mark_last_busy(vib->dev);
+ 	pm_runtime_put_autosuspend(vib->dev);
+ err_exit:
+ 	work_data->error = error;
 -- 
 2.39.5
 
