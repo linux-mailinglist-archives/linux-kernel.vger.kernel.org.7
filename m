@@ -1,347 +1,172 @@
-Return-Path: <linux-kernel+bounces-716582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 202C2AF884F
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 08:52:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D513AF8853
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 08:54:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42A381C868B1
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 06:53:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4FB137A48C6
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 06:52:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 085BB262FDB;
-	Fri,  4 Jul 2025 06:52:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47DA7264608;
+	Fri,  4 Jul 2025 06:53:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="0KR5iYku"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2070.outbound.protection.outlook.com [40.107.236.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WiuNgRJV"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36C4E217707
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 06:52:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.70
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751611961; cv=fail; b=dO6kVu4a6uRsWVX+fpf53JyrCaFQtio7v+iV0gjOs1Ge6De1dlo1kpA7yapFDDeevW9A5zSk/KgO2Vrx82MLYc8p1/2aUMaAQCiRMmpCxA8dJr3xycaIVP69EvxXxYHqFYZuqgWhtkEhev26C4XdrS/l7fsTFR7lvyG7eWYZAW8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751611961; c=relaxed/simple;
-	bh=+Q8ppJam5Xh+0oIvPDfw3dvatH+9Z5nTdo4tcwws8OE=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Os8DYMr/42H6kJU2pPoX9sSK056ojzn6TDCJtN1I7xVle6BH6vwVWLj1eWm6Zn2eEToZT5mJib5UI/jKckgr+/37+WBTTU9kS/yo9EzxkbN7ThtIwLNgchTS8qBTaCJ8cAfPYqYgWuKPOynjIHgkKb+a1rJ70FLX3D2Tm0188b0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=0KR5iYku; arc=fail smtp.client-ip=40.107.236.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=naIcErsZstQbMEFkE9V0+FtLgknEmm56SmD/jZgHwSGxQ/OCz5/ymzs9MGpJulS9Kl605GSMi26Fa52vM4slS3zTMmc4fEaKTpBsjL8Jh7sSW2DXWbYp9iTYGFsNk5sKXgZXPMbpeoTZBcTUH5My3lYyL00qof1AtBWpLdn6zdOTElRggTrbZUja+MKJF2FQQqfViBsA65dnoVwgAQwP1rktpAjWt3c/MtthffPbAZqibREz5ewYpNZyWPGVmIEp6yBBhX9qXTq7mlsoOKDjV4pXwerULOmHYT5/JehljqNBQjH6LJICB5i8DEaamPrhzOqxOfkRizsbrxDm7XQ9XQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jXzpmGf//4tq4yH0BMCn1PaS5r2Jg98hT8saVt85JhY=;
- b=FL8qI7+2IIEvyqluNalppogRaqR/EZY/TMkYOUBjsSYaog5SGRVdMFuHrQU3qpd2krFEScysOOr93o9XL8/itHWBMqY5RCBPe9y8wMaFlu/gn/vtDgR5RJcsF2qz5ExhEL85L/MyEswszi7RE+c46jPKRAvg9oE+WiEv/c3kz/81BHNdyZxEe/bvj0eAtVLLZ39+X7+ia4FINJzV6MUhmiAl8iECarMy5Y78gpzfD/I1Ir2x9vEEp+JtbPQWdgrtwWdZEDHvDzr0jzAwYJpfwz85uB1U3zfcIWYaAUEkA0884M4cq4o2CQLcSEIWsfXO7uBIdM6eFlaNDtIWIiDX0A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jXzpmGf//4tq4yH0BMCn1PaS5r2Jg98hT8saVt85JhY=;
- b=0KR5iYku2ucaRMnORBulEgVrQiljjbH711CFh8wGI8xCL/BwktCY0axROPOkNIGHpb5PxjcY/XCb4NAP+bz4foCcSZX/nP3OfmSPMoksTz78qj13ZAbhIPinGU64fjuIiOPEkie0SEwI2quOg1XaDpLNQFiJ/YShBhc/5ZLFg8Q=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from BL1PR12MB5753.namprd12.prod.outlook.com (2603:10b6:208:390::15)
- by SJ0PR12MB7083.namprd12.prod.outlook.com (2603:10b6:a03:4ae::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.22; Fri, 4 Jul
- 2025 06:52:35 +0000
-Received: from BL1PR12MB5753.namprd12.prod.outlook.com
- ([fe80::81e6:908a:a59b:87e2]) by BL1PR12MB5753.namprd12.prod.outlook.com
- ([fe80::81e6:908a:a59b:87e2%6]) with mapi id 15.20.8901.018; Fri, 4 Jul 2025
- 06:52:35 +0000
-Message-ID: <3ffcf77d-abf2-4c2a-8a0f-f1128fff5de5@amd.com>
-Date: Fri, 4 Jul 2025 12:22:28 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 3/4] drm/amdgpu: add debugfs support for VM pagetable
- per client
-To: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Sunil Khatri <sunil.khatri@amd.com>, dri-devel@lists.freedesktop.org
-Cc: amd-gfx@lists.freedesktop.org, simona@ffwll.ch, tzimmermann@suse.de,
- tursulin@ursulin.net, phasta@kernel.org, dakr@kernel.org,
- linux-kernel@vger.kernel.org, Oded Gabbay <ogabbay@kernel.org>,
- Jeff Hugo <jeff.hugo@oss.qualcomm.com>
-References: <20250701164948.8105-1-sunil.khatri@amd.com>
- <20250701164948.8105-4-sunil.khatri@amd.com>
- <586cff2c-bf69-4202-8ca5-67a3f30d80ec@amd.com>
-Content-Language: en-US
-From: "Khatri, Sunil" <sukhatri@amd.com>
-In-Reply-To: <586cff2c-bf69-4202-8ca5-67a3f30d80ec@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: PN2PR01CA0247.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:21a::14) To BL1PR12MB5753.namprd12.prod.outlook.com
- (2603:10b6:208:390::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45273262FF8
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 06:53:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751612038; cv=none; b=WMDr7VlnTBdQAzPaW4RmfjsNmuHtwAFPpAhtGBTTGFX5jH944WctVaWgFTaSJBgeN5vZ711On6e3VGJPgnmUqxvvaIvi/mc7SsmF5rwDuR+CJAMZKlVyWxD5PCbwzugKaif1iC2DNq1nuzS2RLDg6sEJGrAgX/URMKPY2mgInYw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751612038; c=relaxed/simple;
+	bh=ZD5Oi6qfqSghs5blXGjF4/A2SjG+R6HZdKn1z5H40pk=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=cCrqNaxizgomcdFv+RCEcKA0uuqFotZ65eoyqaG+9frrIbVgJxre6rQALbIu7x3mkkNtp5N5DpdI5hvl7I3BmTmohIz0Ns3BXTr1zu9GNbop3Bh0gVxipWv6CxVeAw5heRZXiVzdBqyerSNY9/ieX+nBYLqJ0mECBB0OKpktWmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--kuniyu.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WiuNgRJV; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--kuniyu.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-31327b2f8e4so742819a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Jul 2025 23:53:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1751612036; x=1752216836; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=W8NlYxsq0UhxD+/G2U/ObTmc+kAFGm4jak2J5JnfGBg=;
+        b=WiuNgRJVaeNaC5gxPadvgVlNdtzE6Yrj9dVsdT8v2QtorzeJ/KWTKsJPr/bjN4WjJS
+         apLzmxDjnUTGbCvrjg12wr8j8HBn5VYmIMHfuB5cfHTn2VMmq9U+Mx8MfxHdlTD483/A
+         NLf1VrjB0gxPHscEbXMsNKyv7J/qmosCzNPndK/uEL+UapyrTWVDKBeTmQb65mQn93NE
+         zaFbRZFmEcw6nwARwEDOVywz/2XH79w1BSMQDm6EV1lAbnjzjeRm7NHjrc6EN6CVaRVZ
+         20q4DOH9PHvrVd+/YqEJ7RssETjhYM4ZOgMvwyOeKriZ203lPJXUo7DWyXKdIb069xxT
+         z/zQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751612036; x=1752216836;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=W8NlYxsq0UhxD+/G2U/ObTmc+kAFGm4jak2J5JnfGBg=;
+        b=PaHMtqTmeHQcHVqjo95Kc4CC8k/tNR8Le8UKgikE4Ldhb9nDUTP5m3fnB6OTsWvd8t
+         8aJXehr4TC2GKAuFYxujXI2CEWjg/9oT+YCfcjjC3OCZajgRMYCPsLzP5S6i7/oEB1Fp
+         YC5z20PIqE+m90YTPLdGby0N2TqSI13tC8XhdclZgRu45qzDQHN+nUSV4q/3uIPZnOCi
+         ewBoS2Q1NjTWYTt3RbtH4pnhQyMkEn4bED3ZFX8OkhjJTvhNupi9687rSeiUryBdkN27
+         Z4tDoHZHVvEWCin7dPoSfORwRvXpF9BL8FEJ3lq27hfwhO5e28c9eI8ikY8IMER6X1zm
+         JuVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWCj35NOk2QtAjbYZsPp3Mn6LBBWMmevYWtOTTACoRC2NeV8iLbQOrwj7+WRZoknOzHFQZ3R/0hpnVVpX8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRp5tiemcdH4sc/U+N1dOOtvLCOFTtS+kxW7u+N1Y+ZLJobS74
+	PoH1Nli3P0XTjT4aOoSHdZzdFSlrngbqUD6Cia66Mr1ciRVP7q2570IbXEieAPekMk+zRQ7PKPh
+	QF5fNAg==
+X-Google-Smtp-Source: AGHT+IGuqBbpZrVlluSjRLfeBqi/+KnCRXr3Q0QAtP/brFRAfKpBGbJmlzfPjWo0VyJZBVCaDo6HkSa9e/g=
+X-Received: from pjbsw11.prod.google.com ([2002:a17:90b:2c8b:b0:311:ef56:7694])
+ (user=kuniyu job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3d4c:b0:315:fefe:bebf
+ with SMTP id 98e67ed59e1d1-31aac44bb7amr2511921a91.13.1751612036618; Thu, 03
+ Jul 2025 23:53:56 -0700 (PDT)
+Date: Fri,  4 Jul 2025 06:53:38 +0000
+In-Reply-To: <20250704023914.3876975-1-yuehaibing@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL1PR12MB5753:EE_|SJ0PR12MB7083:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2ccddcbd-8691-4535-5329-08ddbac75b63
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?N1B0dGhWeGdDVmQ5YUdDUHVFMlJ1dW1CZzdjVzlwS0VZNU53azR5SWtZNUxZ?=
- =?utf-8?B?TkFTL1FpNjhtRENQK3QyUFBZc05IaC9EMVBvd0lTbG1zSTlDUDA2Wm1jSGV5?=
- =?utf-8?B?WUwxMmxzcXNxZ0ZkeCtoTWlXWDRkZHAwWXRSMWtwQnh3aWIzbHZ0QldXK3RU?=
- =?utf-8?B?NXoxWnBUMmp6d3hFT3gwRkQ4dXFNUm9pbVQ1eHI0OUZWQ3RzT0NOTEtDaitK?=
- =?utf-8?B?VFUyNnl6T3pMSnhQTHNrRHlpNGE3aXhoei96YjVqNFVGUTI1bFZDWlI2ZE5m?=
- =?utf-8?B?MmtiTFNBU3NsQ2NWVHE4UHM0NEZCT3lZaHVxRmhOY005N0g5encvbDVGWFhq?=
- =?utf-8?B?QTNxbUtSNU5FRSt5Sk9IazNTb1NFRUh4ekVLTkZWbmJvTUQ4Z2pOaEJBL1hz?=
- =?utf-8?B?VWl5UVREV1RNMkx3R1VXUEk0S2xFRVU3bDhFYlVkS1d5eHk0cGhOZkdmcTFq?=
- =?utf-8?B?c0JQelRDVG00ZnIxNUYxRTNxT0VON0NPak13SzVIUWRHSkdvRG5HWXQzaWxK?=
- =?utf-8?B?ajlMQVJTVkdzaVVzQVBjNDZoMTdnQzVVQUtwelFvTGJKOEs2Q1ljRk5Yc3Zj?=
- =?utf-8?B?ck9QeUdDd0NpeU0raWdlREV6TWlSMm9LUjh3dklySGN6VVc4b3VLWVNpZ1lU?=
- =?utf-8?B?RjV1OWY3bGJKUjNKSHpCL3FvVm5PWThXNVFyaVY2UVNoNC9CZWNCZUVSaFV0?=
- =?utf-8?B?bktZcVhNS1BWbnlJaEQ5Qk96NFRzdWJNbUFKSk4zTDArMGk4dGlEb0cyZjJ5?=
- =?utf-8?B?dXhCbDI2TXg1OXBmWGNrdjBBeWg5OXZ0U0JnVGRLS0ZQMktXQVd5ZUJmMHE1?=
- =?utf-8?B?ZW1tUy9ELzVLWmU5UHNoKzIxQTFvakQwQjRFOUlzWXh0WW40dEJRRmpqWXZp?=
- =?utf-8?B?aWoyUmpKRGEzUnQ2NkNoKzJHS0lvUTNKZlVvUWZ0UGtLNjlJb3lDZ3cxdnpu?=
- =?utf-8?B?NlczZlM0NU9mQkUvdEZkdC9iakZlLzI2aU1jL2dzTVhaNFpZNnMxSVJpRUxH?=
- =?utf-8?B?ckFDNzB4ZGgvTlh1b1JNU1RjNStQZXo1Tzc2eFRtVUFuNDRva3VqYUlRU1Vs?=
- =?utf-8?B?S2thTE1iRGkyOUZhdEFhRmE1MTdGK0JRdWEwZkYrOGpYbFkybFpZcDRMRlh6?=
- =?utf-8?B?bHFvdkwxRk5hZmNrTVk2QmlrdksrVWZ3QkZOeDVRb3FDRGZFYnJaSWswMTg3?=
- =?utf-8?B?SGtucGFEcEl1OWhrRUZYNHBWWTRSajVNOEhQQ1hpMG5kU3dCYzAwaDU5WHEr?=
- =?utf-8?B?NkxUdnFPQ01DcFpiODFnRXZyNmVJZU5PVDk3TGVpRE1HMEM2RmRTL1BwMmJJ?=
- =?utf-8?B?aUNsYjJSVHZGUncrZUdNdnNvQkxiaXF0eTdiY0JuUU0yTEdKRlhjUEZQTTRy?=
- =?utf-8?B?OEZGeHBEb1VMY0FSb1YxbXVnOWI1VUt0bjErOHBwL1FGWkV0ZXFMa0NZQnBH?=
- =?utf-8?B?TW1tNGxFV3N5OGx0Qmhpc2ZTWU9CbzlNZ1g3RmFkdklzd2JaQWZqdlBKdkVQ?=
- =?utf-8?B?OGthZHZrN1ZqeG1idGtVNXk1Wkx5OFd6TjVzcHEzbkJQaGkvR2xhOTl3eGtt?=
- =?utf-8?B?ZEFpWjRhOCtvaUlVNlpwMjJxczBZUmluR1JFL0g3L2FhalBQUG1yZ3JTL0J5?=
- =?utf-8?B?eHc5V3Rxbk5XRUo2VWRuL2trd3JWWGt0RjM2anZYY2F0RUkrcEV4eGdqRTIr?=
- =?utf-8?B?Q3dmU3ZtMWw2MjBMYTJOVENJTnRBSG1SV0lmVk5hRFFpTzVNZ3FuWmlUMjda?=
- =?utf-8?B?ZVRscEdrNjNIOUh5bGpQL3dERHJsY3FZUTBwTGw2TVpHbjJid0FYcG5mMmVq?=
- =?utf-8?B?NUdXTitYYzhLbXZJWFE5UDE2VUhxZDczK3pVdEMzdXBzcmxXaU56TlhPQ2pt?=
- =?utf-8?B?R3k5RHA3KzhvKzJTYk9JRmdKUGZPUk5VTzNqUVQ2MjhiZnJNSE5VODRXMlJ2?=
- =?utf-8?Q?YlygXinEyKM=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR12MB5753.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?djlsemdEbFhmSmhxRE9FTktrdWlnYkVmbUdTa1RvWThvZHc4SjA4eXdUWEVx?=
- =?utf-8?B?eG9wZlRNaWl2NlNVNlhpYWZXcWVEUmpwMDVNOFBNQzVuL1Vnc1RxdHpPTU9w?=
- =?utf-8?B?dm02ZUdXVkp0YXdUSWR0K29MVzFrekpSZ055SXU3Zm5JQzlYSnVERjFmL1h6?=
- =?utf-8?B?ckh4Mm84R0FVSGlXRy9FOEl3SUdpQ0xSWFZXM1oyU0o1VFl3aHpNWjhkNTJ2?=
- =?utf-8?B?RUtHdytMdWxVcGZKa0pPdzMrelkxVU5aNnZocG5XUXBQZGNUNWo4SXJNR0hq?=
- =?utf-8?B?L2ZxNGtVL09kMUF3ZXBTTUgrRWl2RlZpSkxOTFRzZHlZNUxENEM4NGR5VTNQ?=
- =?utf-8?B?YTEzMkVkaXZpdGREejM5cmowT0VNckRpRzhDTzhCbVNvdEpjbjJpTUFicmFL?=
- =?utf-8?B?TVhNK3JCQWRFY1hSRVNiMGpUaUlySjAzcjBMeXE5U01BRUlIZTFBVkxhYitQ?=
- =?utf-8?B?WW9nNGhJMHd1RzhhakZzdmpQSmRrNnhjOW1pNjg2VDhPQzROM1hjTWUyVlBS?=
- =?utf-8?B?aWhOdERZc0ZBNll0RjNCTUJwOTJ6MHcwYzhseUdXOUNOMHpFMGQ2aDdmZjdR?=
- =?utf-8?B?ZGVzMmhlWTZwdnZnQTF5QTlCV1h2SkZVTVkyajlidElXbXJIM29yS0N6dFNW?=
- =?utf-8?B?aExQaWcvWmljbWtZMjNQZEo3bmRMY09GSzB6Vlk4ZHdjME4xR1I0Vm5EcHg3?=
- =?utf-8?B?V3gwS1UwenBkQ25qNjhDTVZtcjh2OXhvcjNEVjAzWURUdm9lVmdJaVVxQzZz?=
- =?utf-8?B?VTRJbFo2b0ZFNGRLV29pKzdTcXh6YktNeGZoekJnR1dub1U0dy93b0k5bVkz?=
- =?utf-8?B?ZFFDNnkrek05TkZ2SkNQTDNsUi9MY3dMUis1ejVCWHVUODZiWC9BWXQyRG1z?=
- =?utf-8?B?MTd1Z3F0alIza1FHRVM1MGJ6VGZkWFMvM2RvNzJkYktaZlVoK016emJOYlJm?=
- =?utf-8?B?djNqTlNaaEg3ZWYwODVIK0JJUVlBNUo2REY1eDdHVVdrWXV4M1VuaDJ4SE5V?=
- =?utf-8?B?MVoyck9Eck9EajlRZ2thdGQzNkU2VFMxNGVyN1E0eEZYU1dWQXZLd0dHcUxo?=
- =?utf-8?B?VWJjVkFhbmJEcksxZXBPSElncGgvL0tjYU1ZSUJCaVNKb1JhRTR4UXBNOWlv?=
- =?utf-8?B?eDdlUGI0dGxwaUwxMXFsSXBwSGxiTy9QTGwyL3lNa1NLdWVqKzJvRlU5RUhL?=
- =?utf-8?B?ZEpxb29adUtncmFnaDZKOTg2UXRHZ3ZQNUtHTFVJZGI1c0laMmk4WStrdlY2?=
- =?utf-8?B?S0V2QWg4Zys3dkVEaVFGbjN0RVBOVFRzQkJhTGV0WVZRb3A5WWtmZVJubHB1?=
- =?utf-8?B?SUo3emMrSEh1Q1E2M1lSQ1h4THA5N3F6UzZBTFF3Vnl4NkJic2l1V2NDV2F6?=
- =?utf-8?B?K2ZQYXZQUWJwdnM2cm91V3hRRnkrcy9tOXdvWjJDbm9GSVpwYW1aRHgxak9h?=
- =?utf-8?B?K3VkcHRPVUVFUE1DeWpFL2FVV1ErelJCUDFUQTZDQng2VXFPRnJzN2tTQlJa?=
- =?utf-8?B?amc5M0NMeUFmeFlQZHY3Q0V6LzJuOUo2eVlNVzZSbThhbm9NaGgyUW9IeUVC?=
- =?utf-8?B?UHpoQ0lXQTBKQ3EvdERrck41K3hYc1FXVmEwcGx2RnZWVXZVYithRmc4Rmhs?=
- =?utf-8?B?TjAxblZwVmxjbjJESzYxWkNKNzRDWWl1bmJFOGlkcUtpMnprNWRKUjdwSnpW?=
- =?utf-8?B?QjhmZzV2eG5FdkdEbjU5eTlTTllobWdlek5RaHk4QnFtd1J2eVhCMEVvVVNW?=
- =?utf-8?B?RlJCdG5XRGpYdHowTWE2ajl1ZFA4b2VMbGRzSGdtQzIyU0RvYlNxeGxLQXBa?=
- =?utf-8?B?cHkwYmhWOHZ3WC92VEVGa1BiQ3czcjdHMWdVTWc2Wk85emxLc3Q3Z1JJaHlU?=
- =?utf-8?B?dWtUcmsyVWtrZ2tzQ09lOHZhbnJVTjJsUWhVRW5sd1NmemJqMXhUa3lRazV5?=
- =?utf-8?B?ZmZlcjQ3SDlhdVJsWXdLejJEM3IwQ3daUUFORndxVGxXNUgxN3lSQ2p6Y2dx?=
- =?utf-8?B?OGJDejA3RmVpZTllVHdwQmtnN1dnVklHSlhJNjNpR0VXSll4Nmc0RU1WTldE?=
- =?utf-8?B?V3U4TnpSdHdaQlhrVDB2c1BzNDlRQWNoNVkwV05mTk55WG1odnpqVjlxcnYy?=
- =?utf-8?Q?uMj9xc9acJ3wOorN3TL1aJZch?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2ccddcbd-8691-4535-5329-08ddbac75b63
-X-MS-Exchange-CrossTenant-AuthSource: BL1PR12MB5753.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Jul 2025 06:52:35.4598
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: UgNyid07Le8uG+rAavBkljKi33dq0ajBS6/yDIELZy+NQJbJGE8U0H1JbeWo+FzZSaQWtAjTbc4S8LIApOpTcQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB7083
+Mime-Version: 1.0
+References: <20250704023914.3876975-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
+Message-ID: <20250704065353.1621693-1-kuniyu@google.com>
+Subject: Re: [PATCH] atm: clip: Fix NULL pointer dereference in vcc_sendmsg()
+From: Kuniyuki Iwashima <kuniyu@google.com>
+To: yuehaibing@huawei.com
+Cc: davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	pabeni@redhat.com, kuniyu@google.com
+Content-Type: text/plain; charset="UTF-8"
+
+Please specify 'net' in subject:
+
+  [PATCH net v2] atm: clip: ...
+
+From: Yue Haibing <yuehaibing@huawei.com>
+Date: Fri, 4 Jul 2025 10:39:14 +0800
+> BUG: kernel NULL pointer dereference, address: 0000000000000000
+> PGD 0 P4D 0
+> Oops: Oops: 0010 [#1] SMP KASAN NOPTI
+> CPU: 0 UID: 0 PID: 5324 Comm: syz.0.0 Not tainted 6.15.0-rc6-syzkaller-00346-g5723cc3450bc #0 PREEMPT(full)
+> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+> RIP: 0010:0x0
+> Code: Unable to access opcode bytes at 0xffffffffffffffd6.
+> RSP: 0018:ffffc9000d3cf778 EFLAGS: 00010246
+> RAX: 1ffffffff1910dd1 RBX: 00000000000000c0 RCX: dffffc0000000000
+> RDX: ffffc9000dc82000 RSI: ffff88803e4c4640 RDI: ffff888052cd0000
+> RBP: ffffc9000d3cf8d0 R08: ffff888052c9143f R09: 1ffff1100a592287
+> R10: dffffc0000000000 R11: 0000000000000000 R12: 1ffff92001a79f00
+> R13: ffff888052cd0000 R14: ffff88803e4c4640 R15: ffffffff8c886e88
+> FS:  00007fbc762566c0(0000) GS:ffff88808d6c2000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: ffffffffffffffd6 CR3: 0000000041f1b000 CR4: 0000000000352ef0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  <TASK>
+>  vcc_sendmsg+0xa10/0xc50 net/atm/common.c:644
+>  sock_sendmsg_nosec net/socket.c:712 [inline]
+>  __sock_sendmsg+0x219/0x270 net/socket.c:727
+>  ____sys_sendmsg+0x52d/0x830 net/socket.c:2566
+>  ___sys_sendmsg+0x21f/0x2a0 net/socket.c:2620
+>  __sys_sendmmsg+0x227/0x430 net/socket.c:2709
+>  __do_sys_sendmmsg net/socket.c:2736 [inline]
+>  __se_sys_sendmmsg net/socket.c:2733 [inline]
+>  __x64_sys_sendmmsg+0xa0/0xc0 net/socket.c:2733
+>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>  do_syscall_64+0xf6/0x210 arch/x86/entry/syscall_64.c:94
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> 
+> atmarpd_dev_ops does not implement the send method, which may cause crash
+> as above.
+
+Please move commit message before the splat.
 
 
-On 7/3/2025 1:30 PM, Christian König wrote:
-> On 01.07.25 18:49, Sunil Khatri wrote:
->> Add a debugfs file under the client directory which shares
->> the root page table base address of the VM.
->>
->> This address could be used to dump the pagetable for debug
->> memory issues.
->>
->> Signed-off-by: Sunil Khatri <sunil.khatri@amd.com>
->> ---
->>   drivers/gpu/drm/amd/amdgpu/amdgpu_debugfs.c | 52 +++++++++++++++++++++
->>   drivers/gpu/drm/amd/amdgpu/amdgpu_debugfs.h |  1 +
->>   drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c     |  2 +-
->>   drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c      |  4 +-
->>   drivers/gpu/drm/amd/amdgpu/amdgpu_vm.h      |  4 +-
->>   5 files changed, 60 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_debugfs.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_debugfs.c
->> index f81608330a3d..6762dd11f00c 100644
->> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_debugfs.c
->> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_debugfs.c
->> @@ -2131,6 +2131,55 @@ int amdgpu_debugfs_init(struct amdgpu_device *adev)
->>   	return 0;
->>   }
->>   
->> +static int amdgpu_pt_info_read(struct seq_file *m, void *unused)
->> +{
->> +	struct drm_file *file;
->> +	struct amdgpu_fpriv *fpriv;
->> +	struct amdgpu_bo *root_bo;
->> +	int r;
->> +
->> +	file = m->private;
->> +	if (!file)
->> +		return -EINVAL;
->> +
->> +	fpriv = file->driver_priv;
->> +	if (!fpriv && !fpriv->vm.root.bo)
->> +		return -ENODEV;
->> +
->> +	root_bo = amdgpu_bo_ref(fpriv->vm.root.bo);
->> +	r = amdgpu_bo_reserve(root_bo, true);
->> +	if (r) {
->> +		amdgpu_bo_unref(&root_bo);
->> +		return -EINVAL;
->> +	}
->> +
->> +	seq_printf(m, "gpu_address: 0x%llx\n", amdgpu_bo_gpu_offset(fpriv->vm.root.bo));
->> +
->> +	amdgpu_bo_unreserve(root_bo);
->> +	amdgpu_bo_unref(&root_bo);
->> +
->> +	return 0;
->> +}
->> +
->> +static int amdgpu_pt_info_open(struct inode *inode, struct file *file)
->> +{
->> +	return single_open(file, amdgpu_pt_info_read, inode->i_private);
->> +}
->> +
->> +static const struct file_operations amdgpu_pt_info_fops = {
->> +	.owner = THIS_MODULE,
->> +	.open = amdgpu_pt_info_open,
->> +	.read = seq_read,
->> +	.llseek = seq_lseek,
->> +	.release = single_release,
->> +};
->> +
->> +void amdgpu_debugfs_vm_init(struct drm_file *file)
->> +{
->> +	debugfs_create_file("vm_pagetable_info", 0444, file->debugfs_client, file,
->> +			    &amdgpu_pt_info_fops);
->> +}
->> +
->>   #else
->>   int amdgpu_debugfs_init(struct amdgpu_device *adev)
->>   {
->> @@ -2140,4 +2189,7 @@ int amdgpu_debugfs_regs_init(struct amdgpu_device *adev)
->>   {
->>   	return 0;
->>   }
->> +void amdgpu_debugfs_vm_init(struct drm_file *file)
->> +{
->> +}
->>   #endif
->> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_debugfs.h b/drivers/gpu/drm/amd/amdgpu/amdgpu_debugfs.h
->> index 0425432d8659..e7b3c38e5186 100644
->> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_debugfs.h
->> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_debugfs.h
->> @@ -33,4 +33,5 @@ void amdgpu_debugfs_fence_init(struct amdgpu_device *adev);
->>   void amdgpu_debugfs_firmware_init(struct amdgpu_device *adev);
->>   void amdgpu_debugfs_gem_init(struct amdgpu_device *adev);
->>   void amdgpu_debugfs_mes_event_log_init(struct amdgpu_device *adev);
->> +void amdgpu_debugfs_vm_init(struct drm_file *file);
->>   
->> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c
->> index 4aab5e394ce2..d3f16a966c70 100644
->> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c
->> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c
->> @@ -1415,7 +1415,7 @@ int amdgpu_driver_open_kms(struct drm_device *dev, struct drm_file *file_priv)
->>   	if (r)
->>   		goto error_pasid;
->>   
->> -	r = amdgpu_vm_init(adev, &fpriv->vm, fpriv->xcp_id);
->> +	r = amdgpu_vm_init(adev, &fpriv->vm, fpriv->xcp_id, file_priv);
->>   	if (r)
->>   		goto error_pasid;
->>   
->> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c
->> index f042372d9f2e..7e31fb5f6f33 100644
->> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c
->> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c
->> @@ -2527,6 +2527,7 @@ void amdgpu_vm_set_task_info(struct amdgpu_vm *vm)
->>    * @adev: amdgpu_device pointer
->>    * @vm: requested vm
->>    * @xcp_id: GPU partition selection id
->> + * @file: drm_file
->>    *
->>    * Init @vm fields.
->>    *
->> @@ -2534,7 +2535,7 @@ void amdgpu_vm_set_task_info(struct amdgpu_vm *vm)
->>    * 0 for success, error for failure.
->>    */
->>   int amdgpu_vm_init(struct amdgpu_device *adev, struct amdgpu_vm *vm,
->> -		   int32_t xcp_id)
->> +		   int32_t xcp_id, struct drm_file *file)
->>   {
->>   	struct amdgpu_bo *root_bo;
->>   	struct amdgpu_bo_vm *root;
->> @@ -2610,6 +2611,7 @@ int amdgpu_vm_init(struct amdgpu_device *adev, struct amdgpu_vm *vm,
->>   	if (r)
->>   		dev_dbg(adev->dev, "Failed to create task info for VM\n");
->>   
->> +	amdgpu_debugfs_vm_init(file);
-> Move that into the caller of amdgpu_vm_init(), this way amdgpu_vm_init() also doesn't need to get the drm_file as parameter.
-Ah yes that's better.Sure, Noted.
->
-> With that done Reviewed-by: Christian König <christian.koenig@amd.com>.
->
-> If nobody objects I will push the first two patches to drm-misc-next now, so you only need to edit, rebase and send out again patch #3 and #4.
-Looks like there are new changes and need some more in drm_debugfs.c due 
-to another debugfs file which is not in amd-staging-drm-next. I will 
-make that change and push new patch set.
+> 
+> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+> Reported-by: syzbot+e34e5e6b5eddb0014def@syzkaller.appspotmail.com
+> Closes: https://lore.kernel.org/all/682f82d5.a70a0220.1765ec.0143.GAE@google.com/T
+> Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+> ---
+>  net/atm/clip.c | 9 ++++++++-
+>  1 file changed, 8 insertions(+), 1 deletion(-)
+> 
+> diff --git a/net/atm/clip.c b/net/atm/clip.c
+> index b234dc3bcb0d..c02ba9d64bc3 100644
+> --- a/net/atm/clip.c
+> +++ b/net/atm/clip.c
+> @@ -616,8 +616,15 @@ static void atmarpd_close(struct atm_vcc *vcc)
+>  	module_put(THIS_MODULE);
+>  }
+>  
+> +static int atmarpd_send(struct atm_vcc *vcc, struct sk_buff *skb)
+> +{
+> +	dev_kfree_skb_any(skb);
 
-Regards
-Sunil khatri
->
-> Regards,
-> Christian
->
->>   	amdgpu_bo_unreserve(vm->root.bo);
->>   	amdgpu_bo_unref(&root_bo);
->>   
->> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.h b/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.h
->> index f3ad687125ad..555afaf867c4 100644
->> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.h
->> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.h
->> @@ -487,7 +487,9 @@ int amdgpu_vm_set_pasid(struct amdgpu_device *adev, struct amdgpu_vm *vm,
->>   			u32 pasid);
->>   
->>   long amdgpu_vm_wait_idle(struct amdgpu_vm *vm, long timeout);
->> -int amdgpu_vm_init(struct amdgpu_device *adev, struct amdgpu_vm *vm, int32_t xcp_id);
->> +int amdgpu_vm_init(struct amdgpu_device *adev, struct amdgpu_vm *vm, int32_t xcp_id,
->> +		   struct drm_file *file);
->> +
->>   int amdgpu_vm_make_compute(struct amdgpu_device *adev, struct amdgpu_vm *vm);
->>   void amdgpu_vm_fini(struct amdgpu_device *adev, struct amdgpu_vm *vm);
->>   int amdgpu_vm_lock_pd(struct amdgpu_vm *vm, struct drm_exec *exec,
+This is not enough, see:
+
+commit 7851263998d4269125fd6cb3fdbfc7c6db853859
+Author: Kuniyuki Iwashima <kuniyu@google.com>
+Date:   Mon Jun 16 18:21:15 2025
+
+    atm: Revert atm_account_tx() if copy_from_iter_full() fails.
+
+
+> +	return 0;
+> +}
+> +
+>  static const struct atmdev_ops atmarpd_dev_ops = {
+> -	.close = atmarpd_close
+> +	.close = atmarpd_close,
+> +	.send = atmarpd_send
+>  };
+>  
+>  
+> -- 
+> 2.34.1
 
