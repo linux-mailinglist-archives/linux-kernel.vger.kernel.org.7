@@ -1,177 +1,142 @@
-Return-Path: <linux-kernel+bounces-717859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-717861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3079BAF9A0D
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 19:47:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2ED88AF9A12
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 19:47:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17E127BD1AA
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 17:45:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51632544732
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 17:46:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 454D11F30AD;
-	Fri,  4 Jul 2025 17:45:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13B201FC0EF;
+	Fri,  4 Jul 2025 17:47:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="kVHFVuE8"
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="0WGuHz4/";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="bQURtbnH"
+Received: from fhigh-a3-smtp.messagingengine.com (fhigh-a3-smtp.messagingengine.com [103.168.172.154])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74E8B1E25ED
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 17:45:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DADF4137923;
+	Fri,  4 Jul 2025 17:47:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751651134; cv=none; b=F4zOc4a6ZEFFBZloNfY07D8NhkFOU21pBLEtUwXCf28Wnk16vyV/GJcl5W4vW76rodV6WBtOAXgcpKQ5ZtWv7lkwvYgrmRFCGhAdQkGq6qZQYWr/xIPsMRy/VMUyXOTiiCSzJtFYxTwufGpAERC5uLpG93VIKdMWugiUEtSi1zU=
+	t=1751651239; cv=none; b=Z7Rv/lRgoMJa6IT3/SnvJqQyz0sF7PoMYVj6YM8GnG9GQqA+EaAH1/4czTh5hTW0CoCMavjpYu79txo0+mgvll+tD4Y1pif3kKNNzoyA+Mz2RvAbMliwhfICFGiNooalH/Qx9mIKve/reBwqUk0Yc05YvWMq9hOH8AURHh4NBa4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751651134; c=relaxed/simple;
-	bh=Nqm9M4UJIqwudHAuGH7UYCWuSwRLdeHqz5vOhTfsqY0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=bYmi4Pll6Zj3Pt654t6emueBhI18tJtN97gKgaViw+D/u7bcnIXnFJdB/9fgfSG/TE8TqOZAhNxDFMMp6HX5u3GepooT1D1DUoe771P8kZ7bc0KKCC/23PkZal+e5Vhue2g+wDKCProro2qU0ygukW03FGLORjztwsr1mWWLs74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=kVHFVuE8; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-714078015edso10136277b3.2
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Jul 2025 10:45:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1751651131; x=1752255931; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=sRRTUBR1HhzbPWZOo6ysCxsvxUXtkw1uTBwQrVosYbE=;
-        b=kVHFVuE8jGnyzQdWYrL9udFsL0iMBPRmEyadwhxcLNrX6PDfKdNPNT9naBKapb8K8g
-         GUylmwYGn6ekk2Mb9/UzFsxXqF8gl/w3kkI/IlNCUlOED4nwDtUvjPGlXg18kcg0h/4C
-         ZYrM2SYfJ0u9Oq0Wus3FzUo4WOtaRZoGotJTF6dN5fqhilicNygIRAGZjQHnE0BnS/ZR
-         4ELs8MJ868dMBRyOcWpdM0AL4/+DQsH2sP5Y/uhhSRi8IiYb4xj7eZJcLGGzHEgpvs6b
-         yc6OpyJmc9XBeu6ayBjQc7rKgG5LAq1PVpOw0iM4MMDb2UMJbmApocNSIOk53fF5qSW+
-         0erg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751651131; x=1752255931;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sRRTUBR1HhzbPWZOo6ysCxsvxUXtkw1uTBwQrVosYbE=;
-        b=r/cTM1VHL1ZGz2XnrqMSB8CkZxqTkT1wDIeSXcshQcfYzuXSQ7o7RiilniGmoww+D8
-         pNUCgnDuHa4AZAFofvzkJOsRA5pYmALi4hheb6trHKZC4HYna4CHlrzeBmTh7KW4ZQbt
-         X3ANf7f6xP71lC8va3OrJz3hQOgsxQtkFkAugKeljw/XWKjdGW5Xl3W6xFZDX9SY8tCF
-         IsvTynKquMNd/SwxvQlnR9DVlkqh5cFnMgCjKkPs5Sw3gTTDCZ+0MSziqHOcTudXzJu1
-         /tY1DtRrQU9xWTdM8KxNWH81/0SQu1GoLM6uh+mVv4SkdJUvh1onTbvq3qUwpaGuJy6+
-         6waw==
-X-Forwarded-Encrypted: i=1; AJvYcCVg4v0nMUGs/hIUebgcmYcCZItsKhPN99Sb/S0BLy45x/iEfh6I34wOCnQahu1H78ddWTyl6yGj+JIOxZ4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJRpfoUBWbWkVC7jJ+hWLqrDUv1iK8Rmu5XTiBt26CRaea+HaZ
-	idogjES3rRLVSQKOFZQqM2Z3FsobFe6+TIQAaQESL/go+WGx1H9jB99Do3FnU0HxGIU=
-X-Gm-Gg: ASbGncsuKLJyMeFJzVQXlN039PZYGgB2ogkd27PxmvSvPIey/lA5VmNf+Z/T+7xXXh6
-	1jVYFg1m1gNPut92NdoRDSVq0YYWXzWJZ9JXA7ie/84MpsOVA/bUvFmLzEI8kzTl3i1gBYPAMJu
-	hbUIadg2JIsl181uvRy54LXUdlupFXKanfV8XaruUUc7QtTm0MMAQOaNBLzhyQtvTYY0kOFcDQ5
-	sEgJlhp05GAfG4c7+/Gr1xAPxAcrbDPkuNr5EnoTFecetGyQ922haY10YufdLIljuiuQ/OluOEA
-	H33Qe0JffgKPvvvWLOmC2LzQ7vXmi8xs+6td3JshVPruDsyuJ0s+lRW8AFl/anKXT0KN4sW6fiS
-	VhdboesCjT875LsBNPzz5D9PEJAjDc64=
-X-Google-Smtp-Source: AGHT+IHavxdRXfQcFPtCri7JPle6nXppaWnSECfYS7k4+PrbVcT/6JmmoNF/J8UBNVnhAzeOW0UVtw==
-X-Received: by 2002:a05:690c:3709:b0:70e:29d2:fba1 with SMTP id 00721157ae682-7166b66f4d6mr36192927b3.23.1751651131297;
-        Fri, 04 Jul 2025 10:45:31 -0700 (PDT)
-Received: from ?IPv6:2600:1700:6476:1430:f030:281a:9e2c:722? ([2600:1700:6476:1430:f030:281a:9e2c:722])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e899c48ba54sm754640276.43.2025.07.04.10.45.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Jul 2025 10:45:30 -0700 (PDT)
-Message-ID: <3c4ac1ab5f7afbbd745f88c595ee1465fc2e9ac6.camel@dubeyko.com>
-Subject: Re: [PATCH 3/4] hfsplus: enable uncached buffer io support
-From: Viacheslav Dubeyko <slava@dubeyko.com>
-To: Yangtao Li <frank.li@vivo.com>, axboe@kernel.dk,
- aivazian.tigran@gmail.com, 	viro@zeniv.linux.org.uk, brauner@kernel.org,
- jack@suse.cz, linkinjeon@kernel.org, 	sj1557.seo@samsung.com,
- yuezhang.mo@sony.com, glaubitz@physik.fu-berlin.de, 	shaggy@kernel.org,
- konishi.ryusuke@gmail.com, 	almaz.alexandrovich@paragon-software.com,
- me@bobcopeland.com, 	willy@infradead.org, josef@toxicpanda.com,
- kovalev@altlinux.org, dave@stgolabs.net, 	mhocko@suse.com,
- chentaotao@didiglobal.com
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, 
-	jfs-discussion@lists.sourceforge.net, linux-nilfs@vger.kernel.org, 
-	ntfs3@lists.linux.dev, linux-karma-devel@lists.sourceforge.net, 
-	bpf@vger.kernel.org
-Date: Fri, 04 Jul 2025 10:45:27 -0700
-In-Reply-To: <20250626173023.2702554-4-frank.li@vivo.com>
-References: <20250626173023.2702554-1-frank.li@vivo.com>
-	 <20250626173023.2702554-4-frank.li@vivo.com>
-Autocrypt: addr=slava@dubeyko.com; prefer-encrypt=mutual;
- keydata=mQINBGgaTLYBEADaJc/WqWTeunGetXyyGJ5Za7b23M/ozuDCWCp+yWUa2GqQKH40dxRIR
- zshgOmAue7t9RQJU9lxZ4ZHWbi1Hzz85+0omefEdAKFmxTO6+CYV0g/sapU0wPJws3sC2Pbda9/eJ
- ZcvScAX2n/PlhpTnzJKf3JkHh3nM1ACO3jzSe2/muSQJvqMLG2D71ccekr1RyUh8V+OZdrPtfkDam
- V6GOT6IvyE+d+55fzmo20nJKecvbyvdikWwZvjjCENsG9qOf3TcCJ9DDYwjyYe1To8b+mQM9nHcxp
- jUsUuH074BhISFwt99/htZdSgp4csiGeXr8f9BEotRB6+kjMBHaiJ6B7BIlDmlffyR4f3oR/5hxgy
- dvIxMocqyc03xVyM6tA4ZrshKkwDgZIFEKkx37ec22ZJczNwGywKQW2TGXUTZVbdooiG4tXbRBLxe
- ga/NTZ52ZdEkSxAUGw/l0y0InTtdDIWvfUT+WXtQcEPRBE6HHhoeFehLzWL/o7w5Hog+0hXhNjqte
- fzKpI2fWmYzoIb6ueNmE/8sP9fWXo6Av9m8B5hRvF/hVWfEysr/2LSqN+xjt9NEbg8WNRMLy/Y0MS
- p5fgf9pmGF78waFiBvgZIQNuQnHrM+0BmYOhR0JKoHjt7r5wLyNiKFc8b7xXndyCDYfniO3ljbr0j
- tXWRGxx4to6FwARAQABtCZWaWFjaGVzbGF2IER1YmV5a28gPHNsYXZhQGR1YmV5a28uY29tPokCVw
- QTAQoAQQIbAQUJA8JnAAULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBFXDC2tnzsoLQtrbBDlc2cL
- fhEB1BQJoGl5PAhkBAAoJEDlc2cLfhEB17DsP/jy/Dx19MtxWOniPqpQf2s65enkDZuMIQ94jSg7B
- F2qTKIbNR9SmsczjyjC+/J7m7WZRmcqnwFYMOyNfh12aF2WhjT7p5xEAbvfGVYwUpUrg/lcacdT0D
- Yk61GGc5ZB89OAWHLr0FJjI54bd7kn7E/JRQF4dqNsxU8qcPXQ0wLHxTHUPZu/w5Zu/cO+lQ3H0Pj
- pSEGaTAh+tBYGSvQ4YPYBcV8+qjTxzeNwkw4ARza8EjTwWKP2jWAfA/ay4VobRfqNQ2zLoo84qDtN
- Uxe0zPE2wobIXELWkbuW/6hoQFPpMlJWz+mbvVms57NAA1HO8F5c1SLFaJ6dN0AQbxrHi45/cQXla
- 9hSEOJjxcEnJG/ZmcomYHFneM9K1p1K6HcGajiY2BFWkVet9vuHygkLWXVYZ0lr1paLFR52S7T+cf
- 6dkxOqu1ZiRegvFoyzBUzlLh/elgp3tWUfG2VmJD3lGpB3m5ZhwQ3rFpK8A7cKzgKjwPp61Me0o9z
- HX53THoG+QG+o0nnIKK7M8+coToTSyznYoq9C3eKeM/J97x9+h9tbizaeUQvWzQOgG8myUJ5u5Dr4
- 6tv9KXrOJy0iy/dcyreMYV5lwODaFfOeA4Lbnn5vRn9OjuMg1PFhCi3yMI4lA4umXFw0V2/OI5rgW
- BQELhfvW6mxkihkl6KLZX8m1zcHitCpWaWFjaGVzbGF2IER1YmV5a28gPFNsYXZhLkR1YmV5a29Aa
- WJtLmNvbT6JAlQEEwEKAD4WIQRVwwtrZ87KC0La2wQ5XNnC34RAdQUCaBpd7AIbAQUJA8JnAAULCQ
- gHAgYVCgkICwIEFgIDAQIeAQIXgAAKCRA5XNnC34RAdYjFEACiWBEybMt1xjRbEgaZ3UP5i2bSway
- DwYDvgWW5EbRP7JcqOcZ2vkJwrK3gsqC3FKpjOPh7ecE0I4vrabH1Qobe2N8B2Y396z24mGnkTBbb
- 16Uz3PC93nFN1BA0wuOjlr1/oOTy5gBY563vybhnXPfSEUcXRd28jI7z8tRyzXh2tL8ZLdv1u4vQ8
- E0O7lVJ55p9yGxbwgb5vXU4T2irqRKLxRvU80rZIXoEM7zLf5r7RaRxgwjTKdu6rYMUOfoyEQQZTD
- 4Xg9YE/X8pZzcbYFs4IlscyK6cXU0pjwr2ssjearOLLDJ7ygvfOiOuCZL+6zHRunLwq2JH/RmwuLV
- mWWSbgosZD6c5+wu6DxV15y7zZaR3NFPOR5ErpCFUorKzBO1nA4dwOAbNym9OGkhRgLAyxwpea0V0
- ZlStfp0kfVaSZYo7PXd8Bbtyjali0niBjPpEVZdgtVUpBlPr97jBYZ+L5GF3hd6WJFbEYgj+5Af7C
- UjbX9DHweGQ/tdXWRnJHRzorxzjOS3003ddRnPtQDDN3Z/XzdAZwQAs0RqqXrTeeJrLppFUbAP+HZ
- TyOLVJcAAlVQROoq8PbM3ZKIaOygjj6Yw0emJi1D9OsN2UKjoe4W185vamFWX4Ba41jmCPrYJWAWH
- fAMjjkInIPg7RLGs8FiwxfcpkILP0YbVWHiNAaQ==
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1 (by Flathub.org) 
+	s=arc-20240116; t=1751651239; c=relaxed/simple;
+	bh=4bDRDyMVduyjGC1QQC+nquvNjod0Ndp9PuAXL+SgjjU=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=RAmxsOxTCvb0np5Aewq7aq3mfTKL2n9UatM7s/6v0IbCbprOQy+X4wNscy1GmD863UH1bJ/oea2KuYhh6ZhA3XDIOifNB7lVboa3TmA1UBMMaMBO+FET+QLhb1kPAWBlYsyf3m/k5nXea0+J3PeQ54FJfUMLwL5f3uBvkROgu58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=0WGuHz4/; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=bQURtbnH; arc=none smtp.client-ip=103.168.172.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
+Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id CAEF31400219;
+	Fri,  4 Jul 2025 13:47:15 -0400 (EDT)
+Received: from phl-imap-08 ([10.202.2.84])
+  by phl-compute-06.internal (MEProxy); Fri, 04 Jul 2025 13:47:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1751651235;
+	 x=1751737635; bh=4bDRDyMVduyjGC1QQC+nquvNjod0Ndp9PuAXL+SgjjU=; b=
+	0WGuHz4/qcJupUnsLtWmCBRIoVdHILLaMUv6eUjsGaIhCwPiQAEy0VXb6D1FmicX
+	hYpERKdueINSQFFYuWyIkZ1/mwQyk9vw58RvshmHHp5X++uhkpfePC4hYAB3iov2
+	BARI1KwI6q5gjPX4Xu6xtyx08jWcRYF9P0b7F89vzsTAbuFmUiDI3qikLBEDXmx/
+	4fjx4CPCH4g0wmOQ8IVzeffeeQvD+BZfTmDZYlacS04lHJhZZfbUEBBcIE3E53cM
+	Ss9uF+tmfqpbTEFLY5ZN1CU6HHL55+TFPDnXsUAuGW9bAvcixRBt8CdmqLF83ZEw
+	ekVGlHODJXA7Ly6/3SVAHw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1751651235; x=
+	1751737635; bh=4bDRDyMVduyjGC1QQC+nquvNjod0Ndp9PuAXL+SgjjU=; b=b
+	QURtbnHWgP8Ff2gjGAKJpFFkyk29f4Q5x01F79rmU7KpwplqosofgBEkdHJpjwBt
+	128ZXtXwnMY2OaddmBRACSMq5RcFpHg0B427SAs8Cb6B+//NlrgigPYYM44Obncg
+	kV57HqpivRqVyjpwZFlldoP8Uz2EO6go8nvwfsqJqv9v2i8TNUMqnfJLv2AVq3Yt
+	c2zurxSnoGWMcC7+rCu7kMqvsaM35CintLN1IF3GQNkOzoqVJZcR8HlJc9umJz/A
+	OgReeFqXCEh05MPC0EfrnzQJnLDXPnZMLVFt65Xp3lKHVkk5292dhwN+k3kiWyKw
+	ug0KDNQ6ZAk1mrh6H/odQ==
+X-ME-Sender: <xms:oxNoaA4-DfppxZvDqFYL8v7qzmtW7fjYD_ZFRwWxHcsbpGOt15doDg>
+    <xme:oxNoaB4cQv7Cq_2hQFFi5DBUV3q5OqArVqTTkVDL57Uo673-jU8TWRWCXw9RDZ1J7
+    XWy3HiC_s2k-E3CG64>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddvfeejlecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefoggffhffvvefkjghfufgtgfesthhqredtredtjeenucfhrhhomhepfdflihgrgihu
+    nhcujggrnhhgfdcuoehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtohhmqeenuc
+    ggtffrrghtthgvrhhnpeejheefuddvtdfggfdvffekteehhfelgfdvvedvkeeuffefkeeh
+    heegvefhveetjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfh
+    hrohhmpehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtohhmpdhnsggprhgtphht
+    thhopeekpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehtshgsohhgvghnugesrg
+    hlphhhrgdrfhhrrghnkhgvnhdruggvpdhrtghpthhtohepghhrvghgohhrhidrtghlvghm
+    vghnthessghoohhtlhhinhdrtghomhdprhgtphhtthhopehthhgvohdrlhgvsghruhhnse
+    gsohhothhlihhnrdgtohhmpdhrtghpthhtohepthhhohhmrghsrdhpvghtrgiiiihonhhi
+    segsohhothhlihhnrdgtohhmpdhrtghpthhtohepthgrfihfihhkrdgsrgihohhukhesmh
+    hosghilhgvhigvrdgtohhmpdhrtghpthhtohepvhhlrgguihhmihhrrdhkohhnughrrght
+    ihgvvhesmhhosghilhgvhigvrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvg
+    hlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqmhhiphhs
+    sehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:oxNoaPdEcY7HfZh8GU7T0k8f54kTuG2aH9-D-DC8z1Z_tscz3QMbPg>
+    <xmx:oxNoaFKzx3QsvwpBNNZrFSg2NcbneGGloU81w8WhXyJ3waMWlNVsYQ>
+    <xmx:oxNoaELK_ssVUEi798Gm4hYZi3ulrxUlsvuMuPi0DmnaspzV0y2RPQ>
+    <xmx:oxNoaGwG8vb76jYBGs3qJkPXUit-hN7nZ8emAPNzj4drg7VIRvegJw>
+    <xmx:oxNoaPxy0M11ia_oCNHTWpAZ75az73n9KyWS-eo3VoZw7agaruSNcZSv>
+Feedback-ID: ifd894703:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 196252CE0071; Fri,  4 Jul 2025 13:47:15 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-ThreadId: T39b5c23212bbd78d
+Date: Fri, 04 Jul 2025 18:46:54 +0100
+From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
+To: "Gregory CLEMENT" <gregory.clement@bootlin.com>,
+ "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>
+Cc: "Vladimir Kondratiev" <vladimir.kondratiev@mobileye.com>,
+ =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>,
+ "Tawfik Bayouk" <tawfik.bayouk@mobileye.com>,
+ "Thomas Petazzoni" <thomas.petazzoni@bootlin.com>,
+ "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+ linux-kernel@vger.kernel.org
+Message-Id: <0eaf6e01-a690-40de-b858-4e23752486b5@app.fastmail.com>
+In-Reply-To: <20250704-smp_calib-v2-3-bade7e9c0463@bootlin.com>
+References: <20250704-smp_calib-v2-0-bade7e9c0463@bootlin.com>
+ <20250704-smp_calib-v2-3-bade7e9c0463@bootlin.com>
+Subject: Re: [PATCH v2 3/3] MIPS: CPS: Optimise delay CPU calibration for SMP
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 2025-06-26 at 11:30 -0600, Yangtao Li wrote:
-> Now cont_write_begin() support DONTCACHE mode, let's set
-> FOP_DONTCACHE
-> flag to enable uncached buffer io support for hfsplus.
->=20
-> Signed-off-by: Yangtao Li <frank.li@vivo.com>
-> ---
-> =C2=A0fs/hfsplus/inode.c | 1 +
-> =C2=A01 file changed, 1 insertion(+)
->=20
-> diff --git a/fs/hfsplus/inode.c b/fs/hfsplus/inode.c
-> index 26cc150856b9..b790ffe92019 100644
-> --- a/fs/hfsplus/inode.c
-> +++ b/fs/hfsplus/inode.c
-> @@ -372,6 +372,7 @@ static const struct file_operations
-> hfsplus_file_operations =3D {
-> =C2=A0	.open		=3D hfsplus_file_open,
-> =C2=A0	.release	=3D hfsplus_file_release,
-> =C2=A0	.unlocked_ioctl =3D hfsplus_ioctl,
-> +	.fop_flags	=3D FOP_DONTCACHE,
-> =C2=A0};
-> =C2=A0
-> =C2=A0struct inode *hfsplus_new_inode(struct super_block *sb, struct inod=
-e
-> *dir,
 
-The same question for HFS+. Because, it is again old and pretty
-obsolete file system. :) The main use-case is simply support the
-capability to mount HFS+ volume is created under Mac OS X, for example,
-and to access the data there. What is the point to support this feature
-in HFS+? Currently, around 200 xfstests fails in HFS/HFS+. We even
-cannot test any new functionality properly. And guys reports bugs in
-existing functionality. We need to be focused on this right now. Sorry,
-HFS/HFS+ is not so good ground for implementing new features. :)
-We really need to stabilize the existing functionality right now. And
-we have a lot of work yet. :)=20
 
-Thanks,
-Slava.=20
+=E5=9C=A82025=E5=B9=B47=E6=9C=884=E6=97=A5=E5=91=A8=E4=BA=94 =E4=B8=8B=E5=
+=8D=884:13=EF=BC=8CGregory CLEMENT=E5=86=99=E9=81=93=EF=BC=9A
+> On MIPS architecture with CPS-based SMP support, all CPU cores in the
+> same cluster run at the same frequency since they share the same L2
+> cache, requiring a fixed CPU/L2 cache ratio.
+>
+> This allows to implement calibrate_delay_is_known(), which will return
+> 0 (triggering calibration) only for the primary CPU of each
+> cluster. For other CPUs, we can simply reuse the value from their
+> cluster's primary CPU core.
+>
+> With the introduction of this patch, a configuration running 32 cores
+> spread across two clusters sees a significant reduction in boot time
+> by approximately 600 milliseconds.
+>
+> Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+
+Reviewed-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+
+Thanks!
+
+--=20
+- Jiaxun
 
