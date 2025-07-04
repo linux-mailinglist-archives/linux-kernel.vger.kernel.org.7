@@ -1,149 +1,175 @@
-Return-Path: <linux-kernel+bounces-716460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FF10AF86C1
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 06:29:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAAEFAF85CD
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 04:57:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE3706E384B
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 04:29:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47B91565B6D
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 02:57:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55FED1F4706;
-	Fri,  4 Jul 2025 04:25:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62E761DF265;
+	Fri,  4 Jul 2025 02:56:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="KlM2w2to"
-Received: from m16.mail.126.com (m16.mail.126.com [117.135.210.7])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 171371EA7E1;
-	Fri,  4 Jul 2025 04:25:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.7
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OzbvUBJV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8B5E1DCB09;
+	Fri,  4 Jul 2025 02:56:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751603131; cv=none; b=U02srrvMdCTdFqI/YMhf30kEeByK7rv6jFeKijB8D73AKltFEEdTVN51vo3zJ7fMXugBZXWdKB5mygjs/L0Y1Q5ihc0SoTazy4ckEfiCUR2CuhweBidbYKazFVlk13eBYce8jxFyRfQl9SNF6b3B34gRQk9I2Xx8N9h8GawkL1g=
+	t=1751597814; cv=none; b=S5wTE+hoCBLjjGLHbrfw1l7NsWSHHbCXwymydzJzz6YBJ9ngtO6PAzXZSPi7VJPiBuy59fn5pWXFWj24oo9n5O8ni7+9c3nUpg9P6/pyTRGISucK3rIThbutV7K4gnSpos91CLHOLvc+u69MoP04CG1JZOYrpHst3unfGTxzbxk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751603131; c=relaxed/simple;
-	bh=EYF/FkRzsl2YKOd+AwTZVqEQu4PSvWsyAspo89mRl8Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Jm+qjHZDt33XEgy1TTbY5LsW8kFoDokmKUlmjepxdn4zGZJhgQENiKZohZt+SDL4+5ogYjXCROWmRL0y7zq7kyBXLFy3soCEGaVeMaJqBjXL6JOZpz16oVo+m5Gf8psuWjQptzBi01QzuW4JnNxF9KVkx5rNz9KFzER/3y5i+KE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=KlM2w2to; arc=none smtp.client-ip=117.135.210.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
-	Content-Type; bh=7e61fe3FoGKrVaATjtgyqXSK4fwuYFW0FX0uxu2ZGXE=;
-	b=KlM2w2to7zpxdYaDkjPcPd5oq/6e+mCNJf1xEpPc458uDKuHlfwU8C7pFBSGRH
-	RgCM9OeUgoGv4kvucvBPtd1mjhqkcL0lQTRXnjTkslWuzLc2SvX1U7TXgSXDyZNO
-	fSlbB3+Gx1BBOirUxO+n+TZMzxot+M25GO+34h809D7P8=
-Received: from [172.19.20.199] (unknown [])
-	by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id _____wD3F+RCQmdo4caXAw--.25499S2;
-	Fri, 04 Jul 2025 10:53:55 +0800 (CST)
-Message-ID: <2ab4ebba-1f97-4686-9186-5bcaa3549f54@126.com>
-Date: Fri, 4 Jul 2025 10:53:54 +0800
+	s=arc-20240116; t=1751597814; c=relaxed/simple;
+	bh=dpKVhbg7scykD3su9SjXQjOIqalbcvI5GMk6pb9f330=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZhgLqZ3+lCquK1moEXB3NdQrjOP7Ck3KzOcZhOSnABFIYsIKRl1YOgDJ5J2KNnSfAk8HpAyBKcOG83DWTqcbXz1EFP1FPo4Z5WRVproSD+DhpQxzeIxG/jmT+NZGs9rJPXpsxbmLbLOWlCXtkITD0uUqkGFtnClFJWQZTvJWEgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OzbvUBJV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04B0BC4CEF0;
+	Fri,  4 Jul 2025 02:56:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751597814;
+	bh=dpKVhbg7scykD3su9SjXQjOIqalbcvI5GMk6pb9f330=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OzbvUBJVeecszUyXLvImzILJGBClLv+O5DjY1gGAgL+hzspJC9pfCzoAYJXVjEwVe
+	 rk/yN6nvuaI6jcQrKTDvqJv6QYJZySe+YZm+9H/GOaurArFaOQC0jFoJSri6ejeSF/
+	 sfF9mOQGBbTOx5aQC93NyXABMRjmwv68EXpQqdbSQw9pQi3dtPVvGmTYFx+k8d5qbe
+	 mVWY0Kbib4Z4KaykDVElREWOhuWTYm51s6na7rDax5TX3AVuSSaIY8woqOjtZq9W8h
+	 UmO2eNvpJ7pZrATUd8o0pWqRaeujROLjIZSC9qzaFjPa6NcA3r+3LNqJUR1WX6xdar
+	 z+YgYOIrB4q4Q==
+Date: Fri, 4 Jul 2025 05:56:50 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Prachotan Bathi <prachotan.bathi@arm.com>
+Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+	Stuart Yoder <stuart.yoder@arm.com>,
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 2/3] tpm_crb_ffa:Introduce memzero macro to replace
+ memset
+Message-ID: <aGdC8gyO00AB_aPr@kernel.org>
+References: <20250626184521.1079507-1-prachotan.bathi@arm.com>
+ <20250626184521.1079507-3-prachotan.bathi@arm.com>
+ <aGWvtzhs5ksKgaYo@kernel.org>
+ <151a612b-198a-4f7e-94e7-10426831ab94@arm.com>
+ <aGdAMg43nHPwgeKn@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] efi/tpm: Fix the issue where the CC platforms event log
- header can't be correctly identified
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: ardb@kernel.org, sathyanarayanan.kuppuswamy@linux.intel.com,
- ilias.apalodimas@linaro.org, jgg@ziepe.ca, linux-efi@vger.kernel.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org, liuzixing@hygon.cn
-References: <1751510317-12152-1-git-send-email-yangge1116@126.com>
- <aGczaEkhPuOqhRUv@kernel.org>
-From: Ge Yang <yangge1116@126.com>
-In-Reply-To: <aGczaEkhPuOqhRUv@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3F+RCQmdo4caXAw--.25499S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxArWDtw4rAw13tFWrJr48Xrb_yoW5Zr48pF
-	s7GFnayrn8Jry29rySq3Wvkw1DAw4Fk39rJFykK3W0yr98Wr92qa1I93W5K3WfXrsrJayY
-	qa4Utr1UAa4UuaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jbHUDUUUUU=
-X-CM-SenderInfo: 51dqwwjhrrila6rslhhfrp/1tbiWAOAG2hnPz1UPwAAsm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aGdAMg43nHPwgeKn@kernel.org>
 
-
-
-在 2025/7/4 9:50, Jarkko Sakkinen 写道:
-> On Thu, Jul 03, 2025 at 10:38:37AM +0800, yangge1116@126.com wrote:
->> From: Ge Yang <yangge1116@126.com>
->>
->> Since commit d228814b1913 ("efi/libstub: Add get_event_log() support
->> for CC platforms") reuses TPM2 support code for the CC platforms, when
->> launching a TDX virtual machine with coco measurement enabled, the
->> following error log is generated:
->>
->> [Firmware Bug]: Failed to parse event in TPM Final Events Log
->>
->> Call Trace:
->> efi_config_parse_tables()
->>    efi_tpm_eventlog_init()
->>      tpm2_calc_event_log_size()
->>        __calc_tpm2_event_size()
->>
->> The pcr_idx value in the Intel TDX log header is 1, causing the
->> function __calc_tpm2_event_size() to fail to recognize the log header,
->> ultimately leading to the "Failed to parse event in TPM Final Events
->> Log" error.
->>
->> According to UEFI Spec 2.10 Section 38.4.1: For Tdx, TPM PCR 0 maps to
->> MRTD, so the log header uses TPM PCR 1. To successfully parse the TDX
->> event log header, the check for a pcr_idx value of 0 has been removed
->> here, and it appears that this will not affect other functionalities.
+On Fri, Jul 04, 2025 at 05:45:11AM +0300, Jarkko Sakkinen wrote:
+> On Wed, Jul 02, 2025 at 10:58:56PM -0500, Prachotan Bathi wrote:
+> > On 7/2/25 5:16 PM, Jarkko Sakkinen wrote:
+> > 
+> > > On Thu, Jun 26, 2025 at 01:45:20PM -0500, Prachotan Bathi wrote:
+> > > > Add a memzero macro to simplify and standardize zeroing
+> > > > FF-A data args, replacing direct uses of memset for
+> > > > improved readability and maintainability.
+> > > > 
+> > > > Signed-off-by: Prachotan Bathi <prachotan.bathi@arm.com>
+> > > > ---
+> > > >   drivers/char/tpm/tpm_crb_ffa.c | 6 ++++--
+> > > >   1 file changed, 4 insertions(+), 2 deletions(-)
+> > > > 
+> > > > diff --git a/drivers/char/tpm/tpm_crb_ffa.c b/drivers/char/tpm/tpm_crb_ffa.c
+> > > > index 089d1e54bb46..397cc3b0a478 100644
+> > > > --- a/drivers/char/tpm/tpm_crb_ffa.c
+> > > > +++ b/drivers/char/tpm/tpm_crb_ffa.c
+> > > > @@ -12,6 +12,8 @@
+> > > >   #include <linux/arm_ffa.h>
+> > > >   #include "tpm_crb_ffa.h"
+> > > > +#define memzero(s, n) memset((s), 0, (n))
+> > > > +
+> > > >   /* TPM service function status codes */
+> > > >   #define CRB_FFA_OK			0x05000001
+> > > >   #define CRB_FFA_OK_RESULTS_RETURNED	0x05000002
+> > > > @@ -192,7 +194,7 @@ static int __tpm_crb_ffa_send_receive(unsigned long func_id,
+> > > >   	msg_ops = tpm_crb_ffa->ffa_dev->ops->msg_ops;
+> > > >   	if (ffa_partition_supports_direct_req2_recv(tpm_crb_ffa->ffa_dev)) {
+> > > > -		memset(&tpm_crb_ffa->direct_msg_data2, 0x00,
+> > > > +		memzero(&tpm_crb_ffa->direct_msg_data2,
+> > > >   		       sizeof(struct ffa_send_direct_data2));
+> > > >   		tpm_crb_ffa->direct_msg_data2.data[0] = func_id;
+> > > > @@ -205,7 +207,7 @@ static int __tpm_crb_ffa_send_receive(unsigned long func_id,
+> > > >   		if (!ret)
+> > > >   			ret = tpm_crb_ffa_to_linux_errno(tpm_crb_ffa->direct_msg_data2.data[0]);
+> > > >   	} else {
+> > > > -		memset(&tpm_crb_ffa->direct_msg_data, 0x00,
+> > > > +		memzero(&tpm_crb_ffa->direct_msg_data,
+> > > >   		       sizeof(struct ffa_send_direct_data));
+> > > >   		tpm_crb_ffa->direct_msg_data.data1 = func_id;
+> > > > -- 
+> > > > 2.43.0
+> > > > 
+> > > It adds a ross-reference to the source code, meaning that you have to
+> > > jump back and forth in the source code just to see that there is a
+> > > function that wraps up a single memset() call.
+> > > 
+> > > How does that map to "readability"?
+> > > 
+> > > BR, Jarkko
+> > 
+> > Hi Jarkko
+> > 
+> > I've implemented this change post your feedback on v4 of the initial patch
+> > series, maybe this should've been a question at that point, but what was the
+> > reasoning for recommending that I use memzero instead? I'll use the same
+> > reasoning to rephrase the commit message.
 > 
-> I'm not familiar with the original change but with a quick check it did
-> not change __calc_tpm2_event_size(). Your change is changing semantics
-> to two types of callers:
+> OK I found what you were referring to:
 > 
-> 1. Those that caused the bug.
-> 2. Those that nothing to do with this bug.
+> https://lore.kernel.org/linux-integrity/aFF-WNSolTdV9PZG@kernel.org/
 > 
-> I'm not seeing anything explaining that your change is guaranteed not to
-> have any consequences to "innocent" callers, which have no relation to
-> the bug.
+> Well, that was some truly misguided advice from my side so all the shame
+> here is on me :-) There's no global memzero() and neither explicit
+> version makes much sense here. Sorry about that.
 > 
-
-Thank you for your response.
-
-According to Section 10.2.1, Table 6 (TCG_PCClientPCREvent Structure) in 
-the TCG PC Client Platform Firmware Profile Specification, determining 
-whether an event is an event log header does not require checking the 
-pcrIndex field. The identification can be made based on other fields 
-alone. Therefore, removing the pcrIndex check here is considered safe
-for "innocent" callers.
-
-Reference Link: 
-https://trustedcomputinggroup.org/wp-content/uploads/TCG_PCClient_PFP_r1p05_v23_pub.pdf
->>
->> Link: https://uefi.org/specs/UEFI/2.10/38_Confidential_Computing.html#intel-trust-domain-extension
->> Fixes: d228814b1913 ("efi/libstub: Add get_event_log() support for CC platforms")
->> Signed-off-by: Ge Yang <yangge1116@126.com>
->> Cc: stable@vger.kernel.org
->> ---
->>   include/linux/tpm_eventlog.h | 3 +--
->>   1 file changed, 1 insertion(+), 2 deletions(-)
->>
->> diff --git a/include/linux/tpm_eventlog.h b/include/linux/tpm_eventlog.h
->> index 891368e..05c0ae5 100644
->> --- a/include/linux/tpm_eventlog.h
->> +++ b/include/linux/tpm_eventlog.h
->> @@ -202,8 +202,7 @@ static __always_inline u32 __calc_tpm2_event_size(struct tcg_pcr_event2_head *ev
->>   	event_type = event->event_type;
->>   
->>   	/* Verify that it's the log header */
->> -	if (event_header->pcr_idx != 0 ||
->> -	    event_header->event_type != NO_ACTION ||
->> +	if (event_header->event_type != NO_ACTION ||
->>   	    memcmp(event_header->digest, zero_digest, sizeof(zero_digest))) {
->>   		size = 0;
->>   		goto out;
->> -- 
->> 2.7.4
->>
+> I gave it now (actual) thought, and here's what I'd propose:
 > 
-> BR, Jarkko
+> diff --git a/drivers/char/tpm/tpm_crb_ffa.c b/drivers/char/tpm/tpm_crb_ffa.c
+> index 96746d5b03e3..e769f6143a7c 100644
+> --- a/drivers/char/tpm/tpm_crb_ffa.c
+> +++ b/drivers/char/tpm/tpm_crb_ffa.c
+> @@ -203,26 +203,20 @@ static int __tpm_crb_ffa_try_send_receive(unsigned long func_id,
+>  	msg_ops = tpm_crb_ffa->ffa_dev->ops->msg_ops;
+>  
+>  	if (ffa_partition_supports_direct_req2_recv(tpm_crb_ffa->ffa_dev)) {
+> -		memzero(&tpm_crb_ffa->direct_msg_data2,
+> -		       sizeof(struct ffa_send_direct_data2));
+> -
+> -		tpm_crb_ffa->direct_msg_data2.data[0] = func_id;
+> -		tpm_crb_ffa->direct_msg_data2.data[1] = a0;
+> -		tpm_crb_ffa->direct_msg_data2.data[2] = a1;
+> -		tpm_crb_ffa->direct_msg_data2.data[3] = a2;
+> +		tpm_crb_ffa->direct_msg_data2 = (struct ffa_send_direct_data2){
+> +			.data = { func_id, a0, a1, a2 },
+> +		};
+>  
+>  		ret = msg_ops->sync_send_receive2(tpm_crb_ffa->ffa_dev,
+>  				&tpm_crb_ffa->direct_msg_data2);
+>  		if (!ret)
+>  			ret = tpm_crb_ffa_to_linux_errno(tpm_crb_ffa->direct_msg_data2.data[0]);
+>  	} else {
+> -		memzero(&tpm_crb_ffa->direct_msg_data,
+> -		       sizeof(struct ffa_send_direct_data));
+> -
+> -		tpm_crb_ffa->direct_msg_data.data1 = func_id;
+> -		tpm_crb_ffa->direct_msg_data.data2 = a0;
+> -		tpm_crb_ffa->direct_msg_data.data3 = a1;
+> -		tpm_crb_ffa->direct_msg_data.data4 = a2;
+> +		tpm_crb_ffa->direct_msg_data = (struct ffa_send_direct_data){
+> +			.data1 = func_id,
+> +			.data2 = a0,
+> +			.data3 = a1,
 
+Oops, lacks a2 but you probably get the idea :-)
+
+BR, Jarkko
 
