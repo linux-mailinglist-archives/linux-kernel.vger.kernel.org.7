@@ -1,106 +1,97 @@
-Return-Path: <linux-kernel+bounces-716564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E175AF881C
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 08:38:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 553B0AF8820
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 08:39:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1D9D543138
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 06:38:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65F9E6E0598
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 06:38:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0881B2609C2;
-	Fri,  4 Jul 2025 06:38:26 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6377A260571
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 06:38:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 095AB2609C6;
+	Fri,  4 Jul 2025 06:39:09 +0000 (UTC)
+Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78F841DE2DE;
+	Fri,  4 Jul 2025 06:39:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=183.62.165.209
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751611105; cv=none; b=T2Zym52bUwuGp67n2VKFAWVYPSq4ZXz5KEMa9+CCUsupZ/kKFSizdyGHz6YF3WlutvCVDZYSMRcjgHlcdy4oDIsbknzgkYLtqSGya1beweDHntROv47ap/CsAr4eL7socOPpIfrVJjMBZ79jDJrPcFMOyVVuxg0xkuH8R+4dSVc=
+	t=1751611148; cv=none; b=qGU4QfMua38blhqPclDE26PjyYksylNn3Bhj3oIb9KNn1hFDurxptljAW9ck80+JquJM6NR2aTuYAZxEkw523DISoUUR0spN8sxiDqhQJYAePDuHdnxcWeQ/x8vnYZzej2cUvUxj9C4FIRkCCeHbMH2uO4VfGJLKOYGqIrUs+w8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751611105; c=relaxed/simple;
-	bh=nGyyzfry4zaJDaCvGHdWnzjUP+eEC2W1qHwpYhPgkK8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=oTXLjoxOYFWYuSsrM5xFgoIiJ14+4/HJsNAeAq0iucImAxKEVnnFlWXOvtDzUtBqJ5yRj0q8CfP6uJUiwc3hHe8Mmlzln+xpgo2XJ65mSyM0HzTgPgtcNyIQP4xpCIdo9ENDhQQVxk6JB5flr0Vrd+UhkuOaq8RJlaRGcVsJ9/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C0CFF152B;
-	Thu,  3 Jul 2025 23:38:08 -0700 (PDT)
-Received: from a076716.blr.arm.com (a076716.blr.arm.com [10.164.21.47])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 471EA3F63F;
-	Thu,  3 Jul 2025 23:38:20 -0700 (PDT)
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Marc Zyngier <maz@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH V2] arm64/mm: Drop wrong writes into TCR2_EL1
-Date: Fri,  4 Jul 2025 12:08:12 +0530
-Message-Id: <20250704063812.298914-1-anshuman.khandual@arm.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1751611148; c=relaxed/simple;
+	bh=TLSjzGu3DCxjZDJsTUzJXCYMsVs9Umof+YA6uSnbqtA=;
+	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=sS26tz1f4ws/HKmxdy0T253oxu5eLVYghWR3q4HRLe8hRRRkZN9OqRK7A+NpN3Bv5E1itaU7IbSv0zWSdBf7q2AbqcaMrzm0zm9J7ilNk+Pp65iQxA6k0c4shlJJPgVn/M5PFsTTjk3MYi/qfjoiH23Z33h+GMDeIBFUPfCcgIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=183.62.165.209
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxct.zte.com.cn (FangMail) with ESMTPS id 4bYP9R3zlJz51Srp;
+	Fri,  4 Jul 2025 14:38:51 +0800 (CST)
+Received: from xaxapp04.zte.com.cn ([10.99.98.157])
+	by mse-fl2.zte.com.cn with SMTP id 5646cF7g020695;
+	Fri, 4 Jul 2025 14:38:15 +0800 (+08)
+	(envelope-from jiang.peng9@zte.com.cn)
+Received: from mapi (xaxapp02[null])
+	by mapi (Zmail) with MAPI id mid31;
+	Fri, 4 Jul 2025 14:38:17 +0800 (CST)
+Date: Fri, 4 Jul 2025 14:38:17 +0800 (CST)
+X-Zmail-TransId: 2afa686776d9fffffffff2b-e685a
+X-Mailer: Zmail v1.0
+Message-ID: <20250704143817707TOCcfTRWsO5OAbQ2eYoU9@zte.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+From: <jiang.peng9@zte.com.cn>
+To: <naveen@kernel.org>
+Cc: <anil.s.keshavamurthy@intel.com>, <davem@davemloft.net>,
+        <mhiramat@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-trace-kernel@vger.kernel.org>, <xu.xin16@zte.com.cn>,
+        <yang.yang29@zte.com.cn>
+Subject: =?UTF-8?B?W1BBVENIXSBrcHJvYmVzOiBBZGQgbWlzc2luZyBrZXJuZWxkb2MgZm9yIF9fZ2V0X2luc25fc2xvdA==?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl2.zte.com.cn 5646cF7g020695
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 686776FB.002/4bYP9R3zlJz51Srp
 
-Register X0 contains PIE_E1_ASM and should not be written into REG_TCR2_EL1
-which could have an adverse impact otherwise. This has remained undetected
-till now probably because current value for PIE_E1_ASM (0xcc880e0ac0800000)
-clears TCR2_EL1 which again gets set subsequently with 'tcr2' after testing
-for FEAT_TCR2.
+From: Peng Jiang <jiang.peng9@zte.com.cn>
 
-Drop this unwarranted 'msr' which is a stray change from an earlier commit.
-This line got re-introduced when rebasing on top of the commit 926b66e2ebc8
-("arm64: setup: name 'tcr2' register").
+Add kerneldoc for '__get_insn_slot' function to fix W=1 warnings:
 
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will@kernel.org>
-Cc: Ryan Roberts <ryan.roberts@arm.com>
-Cc: Marc Zyngier <maz@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
-Fixes: 7052e808c446 ("arm64/sysreg: Get rid of the TCR2_EL1x SysregFields")
-Acked-by: Marc Zyngier <maz@kernel.org>
-Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+  kernel/kprobes.c:141 function parameter 'c' not described in '__get_insn_slot'
+
+Signed-off-by: Peng Jiang <jiang.peng9@zte.com.cn>
 ---
-This patch applies on v6.16-rc4 and tested with and without FEAT_S1PIE
-enabled.
+ kernel/kprobes.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-Changes in V2:
+diff --git a/kernel/kprobes.c b/kernel/kprobes.c
+index ffe0c3d52306..ab8f9fc1f0d1 100644
+--- a/kernel/kprobes.c
++++ b/kernel/kprobes.c
+@@ -135,8 +135,12 @@ struct kprobe_insn_cache kprobe_insn_slots = {
+ static int collect_garbage_slots(struct kprobe_insn_cache *c);
 
-- Added information about the rebase error in the commit message per Marc
-- Updated the commit message a bit
-
-Changes in V1:
-
-https://lore.kernel.org/all/20250703050453.136871-1-anshuman.khandual@arm.com/
-
- arch/arm64/mm/proc.S | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/arch/arm64/mm/proc.S b/arch/arm64/mm/proc.S
-index 80d470aa469d..54dccfd6aa11 100644
---- a/arch/arm64/mm/proc.S
-+++ b/arch/arm64/mm/proc.S
-@@ -518,7 +518,6 @@ alternative_else_nop_endif
- 	msr	REG_PIR_EL1, x0
- 
- 	orr	tcr2, tcr2, TCR2_EL1_PIE
--	msr	REG_TCR2_EL1, x0
- 
- .Lskip_indirection:
- 
+ /**
+- * __get_insn_slot() - Find a slot on an executable page for an instruction.
+- * We allocate an executable page if there's no room on existing ones.
++ * __get_insn_slot - Find a slot on an executable page for an instruction.
++ * @c: Pointer to kprobe instruction cache
++ *
++ * Description: Locates available slot on existing executable pages,
++ *              allocates an executable page if there's no room on existing ones.
++ * Return: Pointer to instruction slot on success, NULL on failure.
+  */
+ kprobe_opcode_t *__get_insn_slot(struct kprobe_insn_cache *c)
+ {
 -- 
 2.25.1
-
 
