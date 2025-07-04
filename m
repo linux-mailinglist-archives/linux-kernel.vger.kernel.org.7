@@ -1,214 +1,105 @@
-Return-Path: <linux-kernel+bounces-716375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F1FEAF85AB
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 04:41:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AABF2AF8600
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 05:17:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19C1B1C883AF
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 02:41:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C065F5682CA
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 03:17:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 258731A4E9E;
-	Fri,  4 Jul 2025 02:41:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="VqP0gtuU"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBB981E25EB;
+	Fri,  4 Jul 2025 03:17:03 +0000 (UTC)
+Received: from mail-m155101.qiye.163.com (mail-m155101.qiye.163.com [101.71.155.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 202951A01B9
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 02:41:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00DFE1EEE6;
+	Fri,  4 Jul 2025 03:16:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751596888; cv=none; b=j7mI9Mnjx/W2vHjhSVFuqwVcA+x/14oU4E+c961C79FmqNgpnXl02RpJ+ZCmtGvi5VtLGdyEfpUyLd5lwDmURTVDrU9ZxlCHtL8F0KVMeEKim/+eNGPDvWGzp+I8y01QrZqzFkT/L3RYSDpGXZR3nt9h020w9xOlkruOzpVkVgE=
+	t=1751599023; cv=none; b=Qz72Or8i4Bh1BfMpp/Ru2gkRCR97FeBue0uKVCZLJH2QTJFaw4Z2ls9BFRFJSmuCHe4B1YG1X0cfFeQzHdG7u00U6WxUqsEd2MqMBiQKYk0FsCMp2wOK6G/I4aJmGdm03t/gdl3YOANZtz2VWbYG7XAPOAzgG7bAN4fFU2r75sM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751596888; c=relaxed/simple;
-	bh=tvOVHCmrAga8yT5RJa+gc1ayXIRYhm9A23B9jDd++xQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pXiVbt2Z3E1Ql3lRk3kyQqsrsBvzkIhko9A1WsQNJI6q1DZlkRNVQwJmWdvnPWjOR500gIrYSOgnutcLYwSA1hSx1MKPhyg8cEOp/TTvmYDppPSxMNYFYFvc20LeGax+dilgVJfpLskmrGxwJjYxcNia5aQCdwWiVGikxatuIzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=VqP0gtuU; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-747fba9f962so460666b3a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Jul 2025 19:41:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1751596886; x=1752201686; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=s+Zyx/6f+av6RaItPqWjq5QgqXvSeXSnOyIGM0o0Vks=;
-        b=VqP0gtuUrGnaWLaS6FmPAm9z0UWsR9PumDfZwN6FytUm9iaO/sQ4COyr99SIIzQEQM
-         nGVO7c6DWn9d0wiPolnrZ6oHDTtTnhwZ9ktdrt+ZGKYZGCc89Lru0vuCgmIJTNO31XNL
-         rmx1NTPojra8CY7FjBEoBa+Y92nL5HcSlMFbo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751596886; x=1752201686;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=s+Zyx/6f+av6RaItPqWjq5QgqXvSeXSnOyIGM0o0Vks=;
-        b=huXP/Us73+M4zrcIzPZHfedV3F+nNSrRg8/87RqUnNInlz34jOBi668OnUFYTuwGBM
-         6TYdj+Mrkz7r5k2Xq/q0sHqy7VRGs66xEW6wYMrRCIrTAXB96k2fOEGe+sWOZih51eWJ
-         fD+n+x5c9X3KciJHB/nKTIM3HkrPkxqK1b4HoII7W7dHgP6xpiAqKjSgQ4QykXOkrUmB
-         9H+QY6vtR9nkQXkuoUPEYqvlyc0nfENQN3WGSPhFpC/6eaiVyFtEjsq7wCNQz/kHaBdv
-         /DV+gkqfhcbhulbH3+6LVZrGiTwuxpWySJxVIZuadrNfNfsKkL93a3jf7ujrIku5vYaq
-         1B4A==
-X-Forwarded-Encrypted: i=1; AJvYcCWFfJdUgWK+zszmHf0OXsHcXGfeNGahrg9lkYAbNuNCIzWZUoo2MZ649tmW+5xH4bu8lIdWnGzB2SnfAoQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5qMEAEEtiRZpAy+ONz9IzGzh7YA7KfxT8hN2PBUNmJ+TyXvHv
-	a19d0CJbUEFGXUpVAZS+EHGFjosv0W1LTdCN1//gtaf2fMBSYnLgh3xwu2SnqpDRMg==
-X-Gm-Gg: ASbGncu8vYtk02spyyspO1MkjSecJVfpDSEXhP6LRKVqEJDypBpfXdroFcK7whki6j4
-	TO0zDChfybbge9uFKX6PXPSdD8W7QOvmwwNBwjeVEdCkDmvjB1omEJuIkTLyxEbTlF9s9iGeuOB
-	9w5IPX/D+2d2FjxIOt9L+PCLnTfHZppN5KZIEd/kfnMxE+XDLoBJQkMxUtLa896Xy1rWvvQCLct
-	iPyX7mHYQGjwzR03Uy7vM6oqv7JuLOS589PqKChdem/LvMs5UZAiv5C/aD5MxiQe7yDFnWL2lRd
-	AOzrZA/X5C1MWIgPvsIkoX5XK9S6HAxf2GpGuRKK0QTGNB8rXCXF9Ght8GvXmlSo9EK7Ui8KGDF
-	MB96uPjS/BbUqeO9obg==
-X-Google-Smtp-Source: AGHT+IGJwgT9LS+NWb/RXEybr1oxVH38tHMmZgho/2z5OGzaAVRcM/LGf9l41KlgP5Y8Fve3tnJckA==
-X-Received: by 2002:a05:6a00:10ca:b0:736:4e14:8ec5 with SMTP id d2e1a72fcca58-74ce6027efamr1481354b3a.11.1751596886362;
-        Thu, 03 Jul 2025 19:41:26 -0700 (PDT)
-Received: from [10.230.3.249] ([192.19.161.250])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74ce417dd7esm905211b3a.97.2025.07.03.19.41.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Jul 2025 19:41:25 -0700 (PDT)
-Message-ID: <df093a8f-916c-4afb-ae53-4736f2368ade@broadcom.com>
-Date: Thu, 3 Jul 2025 19:41:24 -0700
+	s=arc-20240116; t=1751599023; c=relaxed/simple;
+	bh=0tFcrfxkKL9ySeRCFB1ujQs+X0xxH4vdkOtO9MuupoI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=INK73hjvT5NDSJQG5CxSbyVhYxHWh2yCetONB0C7i8NLfKL26ZnzlfEME3JG/KW4MePjqd8rKbsp9ObhIdUouHw+FzPPPm/b28VHeRYpu7H31ZVVltrDO2AYFKUS6IvhOyztY95n14eabgIEO32SfALePL1w+S/zUKBlt0lIyeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=whut.edu.cn; spf=pass smtp.mailfrom=whut.edu.cn; arc=none smtp.client-ip=101.71.155.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=whut.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=whut.edu.cn
+Received: from localhost (gy-adaptive-ssl-proxy-4-entmail-virt151.gy.ntes [114.94.8.21])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 1adedd589;
+	Fri, 4 Jul 2025 10:41:31 +0800 (GMT+08:00)
+Date: Fri, 4 Jul 2025 10:41:31 +0800
+From: Ze Huang <huangze@whut.edu.cn>
+To: Frank Li <Frank.li@nxp.com>, Ze Huang <huangze@whut.edu.cn>
+Cc: Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+	"spacemit@lists.linux.dev" <spacemit@lists.linux.dev>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 3/4] usb: dwc3: add generic driver to support
+ flattened DT
+Message-ID: <aGc_W5Gfyiw8deYK@cse-cd03-lnx.ap.qualcomm.com>
+References: <20250526-b4-k1-dwc3-v3-v4-0-63e4e525e5cb@whut.edu.cn>
+ <20250526-b4-k1-dwc3-v3-v4-3-63e4e525e5cb@whut.edu.cn>
+ <20250603012029.4agja77rdoneeyrl@synopsys.com>
+ <aD5jL5DK6S8ii-DT@jean.localdomain>
+ <aGc4EibLNTEj/H11@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] PCI: brcmstb: Add 74110a0 SoC configuration details
-To: Jim Quinlan <james.quinlan@broadcom.com>, linux-pci@vger.kernel.org,
- Nicolas Saenz Julienne <nsaenz@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>,
- Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
- Cyril Brulebois <kibi@debian.org>, bcm-kernel-feedback-list@broadcom.com,
- jim2101024@gmail.com
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
- "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
- <linux-rpi-kernel@lists.infradead.org>,
- "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
- <linux-arm-kernel@lists.infradead.org>,
- open list <linux-kernel@vger.kernel.org>
-References: <20250703215314.3971473-1-james.quinlan@broadcom.com>
- <20250703215314.3971473-4-james.quinlan@broadcom.com>
-Content-Language: en-US
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
- xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
- M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
- JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
- PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
- KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
- AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
- IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
- ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
- bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
- Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
- tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
- TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
- zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
- WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
- IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
- U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
- 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
- pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
- MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
- IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
- gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
- obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
- N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
- CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
- C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
- wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
- EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
- fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
- MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
- 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
- 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <20250703215314.3971473-4-james.quinlan@broadcom.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aGc4EibLNTEj/H11@lizhi-Precision-Tower-5810>
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlCS0hJVkhKH08YHk9JSx4YQlYeHw5VEwETFhoSFy
+	QUDg9ZV1kYEgtZQVlKSk9VQk9VQ1VJSllXWRYaDxIVHRRZQVlPS0hVSktJQk1LSlVKS0tVS1kG
+X-HM-Tid: 0a97d34f7e8b03a1kunm074d1ad6206a3a
+X-HM-MType: 10
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6P0k6DQw5VjEyATkZFEMRMDwM
+	LU0aCjBVSlVKTE5KTkJNQ0JISk1PVTMWGhIXVRMOGhUcAR47DBMOD1UeHw5VGBVFWVdZEgtZQVlK
+	Sk9VQk9VQ1VJSllXWQgBWUFJT01DNwY+
 
-
-
-On 7/3/2025 2:53 PM, Jim Quinlan wrote:
-> Enable PCIe for 74110a0 SoC.  This chip uses a simple mechanism
-> to map inbound memory regions.  Both the "ranges" and "dma-ranges"
-> are identity-mapped to PCIe space.
+On Thu, Jul 03, 2025 at 10:10:26PM -0400, Frank Li wrote:
+> On Tue, Jun 03, 2025 at 10:51:27AM +0800, Ze Huang wrote:
+> > On Tue, Jun 03, 2025 at 01:20:35AM +0000, Thinh Nguyen wrote:
+> > > On Mon, May 26, 2025, Ze Huang wrote:
+> > > > To support flattened dwc3 dt model and drop the glue layer, introduce the
+> > > > `dwc3-generic` driver. This enables direct binding of the DWC3 core driver
+> > > > and offers an alternative to the existing glue driver `dwc3-of-simple`.
+> > > >
+> > > > Signed-off-by: Ze Huang <huangze@whut.edu.cn>
+> > > > ---
 > 
-> Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
+> Any progress on this patch? If you have not time, I can continue work on
+> this one.
 
-Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
+Hi Frank,
 
-> ---
->   drivers/pci/controller/pcie-brcmstb.c | 21 ++++++++++++++++++++-
->   1 file changed, 20 insertions(+), 1 deletion(-)
+I was planning to submit everything together for full functionality, but since
+Alex's PHY work[1] is almost done, I'll send out the USB generic driver part
+separately first.
+
+Link: https://lore.kernel.org/all/5084a99a-9140-4c4f-9873-f5478f48a49d@ieee.org/ [1]
+
 > 
-> diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/controller/pcie-brcmstb.c
-> index 362ac083e112..bfedab15a162 100644
-> --- a/drivers/pci/controller/pcie-brcmstb.c
-> +++ b/drivers/pci/controller/pcie-brcmstb.c
-> @@ -276,6 +276,7 @@ enum pcie_soc_base {
->   	BCM7435,
->   	BCM7712,
->   	BCM33940,
-> +	BCM74110,
->   };
->   
->   /*
-> @@ -291,7 +292,7 @@ enum pcie_soc_base {
->    * power of two.  Such systems may or may not have an IOMMU between the RC
->    * and memory.
->    */
-> -#define IS_NG_PCI_SOC(t) (0)
-> +#define IS_NG_PCI_SOC(t) ((t) == BCM74110)
->   
->   struct inbound_win {
->   	u64 size;
-> @@ -2046,6 +2047,14 @@ static const int pcie_offsets_bcm7712[] = {
->   	[PCIE_INTR2_CPU_BASE]	= 0x4400,
->   };
->   
-> +static const int pcie_offset_bcm74110[] = {
-> +	[RGR1_SW_INIT_1] = 0xc010,
-> +	[EXT_CFG_INDEX]  = 0x9000,
-> +	[EXT_CFG_DATA]   = 0x8000,
-> +	[PCIE_HARD_DEBUG] = 0x4204,
-> +	[PCIE_INTR2_CPU_BASE] = 0x4300,
-> +};
-> +
->   static const int pcie_offset_bcm33940[] = {
->   	[RGR1_SW_INIT_1] = 0x9210,
->   	[EXT_CFG_INDEX] = 0x9000,
-> @@ -2162,6 +2171,15 @@ static const struct pcie_cfg_data bcm33940_cfg = {
->   	.num_inbound_wins = 10,
->   };
->   
-> +static const struct pcie_cfg_data bcm74110_cfg = {
-> +	.offsets	= pcie_offset_bcm74110,
-> +	.soc_base	= BCM74110,
-> +	.perst_set	= brcm_pcie_perst_set_7278,
-> +	.bridge_sw_init_set = brcm_pcie_bridge_sw_init_set_generic,
-> +	.has_phy	= true,
-> +	.has_err_report	= true,
-> +};
-> +
->   static const struct of_device_id brcm_pcie_match[] = {
->   	{ .compatible = "brcm,bcm2711-pcie", .data = &bcm2711_cfg },
->   	{ .compatible = "brcm,bcm2712-pcie", .data = &bcm2712_cfg },
-> @@ -2177,6 +2195,7 @@ static const struct of_device_id brcm_pcie_match[] = {
->   	{ .compatible = "brcm,bcm7445-pcie", .data = &generic_cfg },
->   	{ .compatible = "brcm,bcm7712-pcie", .data = &bcm7712_cfg },
->   	{ .compatible = "brcm,bcm33940-pcie", .data = &bcm33940_cfg },
-> +	{ .compatible = "brcm,bcm74110-pcie", .data = &bcm74110_cfg },
+> Frank Li
+>
 
-Nit: if you need to respin, it might be nice to order numerically here?
--- 
-Florian
-
+Thanks,
+Ze
 
