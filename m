@@ -1,58 +1,110 @@
-Return-Path: <linux-kernel+bounces-716601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02C82AF8897
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 09:07:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79D9EAF886A
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 09:04:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88247189C1BB
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 07:07:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21A303A4EEB
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 07:04:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFFFF279783;
-	Fri,  4 Jul 2025 07:05:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A4AE2727E0;
+	Fri,  4 Jul 2025 07:04:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KI3+J5m0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="aL4BoyPa"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3C4127978D;
-	Fri,  4 Jul 2025 07:05:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 093EF271442
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 07:04:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751612754; cv=none; b=aYymZCRnLyoGJ/Qe3qdG0Zq7j3XDj/abg21iMGpchYwXRchc6mEVptpm/ni5KRFvRSeRwZUdDlIFHXgE0r79wRY2udqEGTcSPn0CR3cHJMxapYNcVFSmG9LgIuTNiczJJ6M435yas55ThB/FhviAidUcs05j00eKLz/CF8LcOow=
+	t=1751612659; cv=none; b=PwZ89ozuX8reKtzo03iKbBRp449VC1nxT5Txk/zWavZFsvWjSw0RbGpihehw9CRphTenOIEBbRWrQeiXthCsw/VoI0W6NGHZFjTEKpFkEvNCWVKHk6kiAFL+dp4QXtJyq3s/x0CBshjA8At57lyLBbnrWPKVN/iz1NogstoR0Zc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751612754; c=relaxed/simple;
-	bh=XuJcxQ8IFxUtWmrw3NQwlcPF2yInpStroQqXr2aE0lQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DwUpz9rbD80lOjMJK6qsLq17mNicGh/GjqcnmjjttWq2Cxc5lSGknkLnJ8s8W27YO4JTpfh3G0TxnJn7GvsgI30ZDUc7w4fDeq+Fg9l3PsgEYdKHjP6uF2u/CnkZ3E+mqV0XbAs3GMCZWdqM3GeHvYVMj7tYO7M57mKrNOOPHQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KI3+J5m0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B4F4C4CEF0;
-	Fri,  4 Jul 2025 07:05:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751612754;
-	bh=XuJcxQ8IFxUtWmrw3NQwlcPF2yInpStroQqXr2aE0lQ=;
-	h=From:To:Cc:Subject:Date:From;
-	b=KI3+J5m0nw0K7XWXl+tY8ZbYTUcD8Itn7wuA/Mw/gt9hIKovsQJ6ljuGaJ814zoub
-	 g12zHJ/udSjsOR3GsSIusAvamRAX7AUwTxJDaNTjKsLseswmKN5B9bSIleKJXpWq8e
-	 pNTXiy1dWps8aNJx0iZX+PBNu9qtet+41c21q/BBGuINAb7t7c105Z385BP7cVqrZJ
-	 N7A5tGpOPRntELy18tNk9MWUJtkoyTkOJQhxcNIlCoSBEkdSQQIsifDXkw259KTFwX
-	 h5XZDJpbTD06IWxbpEcr3lgqhOMh+vkkPAV2Pcf27A8X4qAGTCHE222gn2w1vQHe0e
-	 e8B6pyzhg6Mjw==
-From: Eric Biggers <ebiggers@kernel.org>
-To: linux-fscrypt@vger.kernel.org
-Cc: linux-crypto@vger.kernel.org,
+	s=arc-20240116; t=1751612659; c=relaxed/simple;
+	bh=q2EmQLeYA4OKxgp19CQ265DwJ8OtmojXAvRLvrYct94=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jPtcbwb3GqgMnVU6Z7Djv9bpmIsrKg8BaZ493JivLbnB2K1x5FKiubdWv8kII7a7MemizwNwj03/REwfr3HpNhf8D4Nsv8Lut9SufdAyjufA7eCzOtD+s7rpPBnv+EHPu80H2srm8+BDmwBLYdQndwYzO7HlVkq1Bl92ix1bI6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=aL4BoyPa; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-23602481460so7346705ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Jul 2025 00:04:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1751612657; x=1752217457; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rNV4yYQMrOJDAS1UrXmWT/jHR79hA6tazWjsnWTTuMk=;
+        b=aL4BoyPa4hlbauunorYanQx1fNfpwIxFf5M6t5sQn1ldlfxjBnXakNsUJi+suKn+OU
+         SC4+fpH8GUS0GKcqhIJ0dznmaXipHwM8BiXH4qomDiB03jqbZZrs/ffzk/SaGWz6bPCe
+         UPFYvLH7iNbCc1CzOoidmG9uF8VAFOltTB5wCWm/0UvqaHPW/pKqCpO0N/8x+cRa6ag0
+         kbLVC8iZtjBQwIdkXBdwRdXzDugrP+LBIktJzWU7YKqZifZlpHYzAc5hq1wNV/hlAVSq
+         42HO8/FybZyTzFXEh1lkquuW2xgsFBbyhLDKod7u9lSKrsrTKPsJ6GFskkx1R8URVhT/
+         jVfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751612657; x=1752217457;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rNV4yYQMrOJDAS1UrXmWT/jHR79hA6tazWjsnWTTuMk=;
+        b=tQHaYL3KQEqjhE4kS50e6eP5WA9TDQnu3SU9Op9ADv0DFP2OEqDLNzRi7ihkb1mPLs
+         dBeK4GgffXtGo4gLYp/pSa9vXrV47u12P+LHwxDbIM4pY6afZjPCn0r6N0Szjn8V8CgZ
+         XYONeI4wEofqShokigz1/npshp4ROs8LTd2eEl0y1ZFIoZd1EfjXH4BhO6kVUxNvxRlr
+         GgI2e0dViHD9bLumulNMRbQXzGXNMPYa+e3tlj/eeOlElwtczkLsar2KFMCm4bqtNqh8
+         EFzkqXlzuSovsXuziEtHgYEThRCL55Pxvs12D6cMpzkPl0+IkaWWC0WkOJAN3l5LlUHV
+         nhew==
+X-Forwarded-Encrypted: i=1; AJvYcCXOzrJWZBfqjqqMfhlUsP/ywr3GOZZ7M/AHaqf8bV3Xp+2esrDA1C6cSzQkU8gnKnZqiGwlzxiC42mB8pM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6Z1or5VxqfBB5dujs6ZWquaC2mNYXnlY2Rogd6ZpdW3nQ3Bn4
+	ZauDPU4vZILIOLBUlYWVjrk0+9cQhm48+eKqGa8fCYSYQ6JCbIkSFC0x2JFqQ04NyZs=
+X-Gm-Gg: ASbGncssSB8R9KQjYLJvKBg0yLVOypqwqis2HHjGOU68kgphO9KMrsba2OHqA31rCTL
+	F/EAzBeSOEfJjGbDAB+plBFXw0Bm4GBWGDllwda5q0OA9Qb0bhZ1n4AFGskf65oEYkKv7W/XksT
+	pytcMShwF6YAmZvOSbEQJ931mZPVNFxbmubzHo2SuNnP8f8zqap5s8F2XOKlXsBoh6D8aYnIIWg
+	OH1/bhifmEfrbosFxkBvvHgPOP3+diC5HhMNjFhUEQSu9WL2juyrYC3TnqKBs0rMWc/Lh+Vy9fC
+	WzHA+9nn5nJ3CZ7WiYbJaOi6D98V5XolK6Li80nD8itzWqK7gocWzBF8SLBij1jjC25MlYtkz7u
+	aXMap32qnfgLkS04fCUidmTLZww==
+X-Google-Smtp-Source: AGHT+IE6Selq5x5dbP8GjsTtUsdcC1T2xdo7xnrlnnZL2hnwCQn7lKmnlLU2hnm1nIy+2TTjIKdA+Q==
+X-Received: by 2002:a17:903:32c1:b0:235:e8da:8d6 with SMTP id d9443c01a7336-23c8609bfe2mr29264605ad.2.1751612657098;
+        Fri, 04 Jul 2025 00:04:17 -0700 (PDT)
+Received: from anup-ubuntu-vm.localdomain ([103.97.166.196])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31aaae59a93sm1358697a91.12.2025.07.04.00.04.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Jul 2025 00:04:16 -0700 (PDT)
+From: Anup Patel <apatel@ventanamicro.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+Cc: Palmer Dabbelt <palmer@dabbelt.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	Len Brown <lenb@kernel.org>,
+	Sunil V L <sunilvl@ventanamicro.com>,
+	Rahul Pathak <rpathak@ventanamicro.com>,
+	Leyfoon Tan <leyfoon.tan@starfivetech.com>,
+	Atish Patra <atish.patra@linux.dev>,
+	Andrew Jones <ajones@ventanamicro.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Anup Patel <anup@brainfault.org>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-acpi@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	linux-mtd@lists.infradead.org,
-	linux-ext4@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net,
-	ceph-devel@vger.kernel.org,
-	stable@vger.kernel.org,
-	Eric Biggers <ebiggers@kernel.org>
-Subject: [PATCH v3] fscrypt: Don't use problematic non-inline crypto engines
-Date: Fri,  4 Jul 2025 00:03:22 -0700
-Message-ID: <20250704070322.20692-1-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.50.0
+	Anup Patel <apatel@ventanamicro.com>
+Subject: [PATCH v8 00/24] Linux SBI MPXY and RPMI drivers
+Date: Fri,  4 Jul 2025 12:33:32 +0530
+Message-ID: <20250704070356.1683992-1-apatel@ventanamicro.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,291 +113,159 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Make fscrypt no longer use Crypto API drivers for non-inline crypto
-engines, even when the Crypto API prioritizes them over CPU-based code
-(which unfortunately it often does).  These drivers tend to be really
-problematic, especially for fscrypt's workload.  This commit has no
-effect on inline crypto engines, which are different and do work well.
+The SBI v3.0 (MPXY extension) [1] and RPMI v1.0 [2] specifications
+are frozen and finished public review at the RISC-V International.
 
-Specifically, exclude drivers that have CRYPTO_ALG_KERN_DRIVER_ONLY or
-CRYPTO_ALG_ALLOCATES_MEMORY set.  (Later, CRYPTO_ALG_ASYNC should be
-excluded too.  That's omitted for now to keep this commit backportable,
-since until recently some CPU-based code had CRYPTO_ALG_ASYNC set.)
+Currently, most of the RPMI and MPXY drivers are in OpenSBI whereas
+Linux only has SBI MPXY mailbox controller driver, RPMI clock driver
+and RPMI system MSI driver This series also includes ACPI support
+for SBI MPXY mailbox controller and RPMI system MSI drivers.
 
-There are two major issues with these drivers: bugs and performance.
+These patches can be found in the riscv_sbi_mpxy_mailbox_v8 branch
+at: https://github.com/avpatel/linux.git
 
-First, these drivers tend to be buggy.  They're fundamentally much more
-error-prone and harder to test than the CPU-based code.  They often
-don't get tested before kernel releases, and even if they do, the crypto
-self-tests don't properly test these drivers.  Released drivers have
-en/decrypted or hashed data incorrectly.  These bugs cause issues for
-fscrypt users who often didn't even want to use these drivers, e.g.:
+To test these patches, boot Linux on "virt,rpmi=on,aia=aplic-imsic"
+machine with OpenSBI and QEMU from the dev-upstream branch at:
+https://github.com/ventanamicro/opensbi.git
+https://github.com/ventanamicro/qemu.git
 
-- https://github.com/google/fscryptctl/issues/32
-- https://github.com/google/fscryptctl/issues/9
-- https://lore.kernel.org/r/PH0PR02MB731916ECDB6C613665863B6CFFAA2@PH0PR02MB7319.namprd02.prod.outlook.com
+[1] https://github.com/riscv-non-isa/riscv-sbi-doc/releases
+[2] https://github.com/riscv-non-isa/riscv-rpmi/releases
 
-These drivers have also similarly caused issues for dm-crypt users,
-including data corruption and deadlocks.  Since Linux v5.10, dm-crypt
-has disabled most of them by excluding CRYPTO_ALG_ALLOCATES_MEMORY.
+Changes since v7:
+ - Addressed comments on PATCH3, PATCH7, PATCH10, PATCH14, and PATCH21
 
-Second, these drivers tend to be *much* slower than the CPU-based code.
-This may seem counterintuitive, but benchmarks clearly show it.  There's
-a *lot* of overhead associated with going to a hardware driver, off the
-CPU, and back again.  To prove this, I gathered as many systems with
-this type of crypto engine as I could, and I measured synchronous
-encryption of 4096-byte messages (which matches fscrypt's workload):
+Changes since v6:
+ - Rebased the series on Linux-6.16-rc4
+ - Added Stephen's Reviewed-by in appropriate patches
+ - Addressed Andy's comments on PATCH5, PATCH6, PATCH9, and PATCH14
+ - New PATCH6 in this series which is factored-out from PATCH7
 
-Intel Emerald Rapids server:
-   AES-256-XTS:
-      xts-aes-vaes-avx512   16171 MB/s  [CPU-based, Vector AES]
-      qat_aes_xts             289 MB/s  [Offload, Intel QuickAssist]
+Changes since v5:
+ - Rebased the series on Linux-6.16-rc2
+ - Added Conor's Reviewed-by in all DT binding patches
+ - Addressed Andy's comments on PATCH5
+ - Addressed Tglx's comments on PATCH12 and PATCH21
 
-Qualcomm SM8650 HDK:
-   AES-256-XTS:
-      xts-aes-ce             4301 MB/s  [CPU-based, ARMv8 Crypto Extensions]
-      xts-aes-qce              73 MB/s  [Offload, Qualcomm Crypto Engine]
+Changes since v4:
+ - Rebased the series on Linux-6.16-rc1
+ - Dropped PATCH1 since a similar change is already merged
+   https://lore.kernel.org/linux-riscv/20250523101932.1594077-4-cleger@rivosinc.com/
+ - Addressed Andy's comments on PATCH4, PATCH5, PATCH6, PATCH7,
+   PATCH13, and PATCH17
+ - Addressed Atish's comments on PATCH11 and PATCH12
+ - Addressed Conor's comments on PATCH9
 
-i.MX 8M Nano LPDDR4 EVK:
-   AES-256-XTS:
-      xts-aes-ce              647 MB/s   [CPU-based, ARMv8 Crypto Extensions]
-      xts(ecb-aes-caam)        20 MB/s   [Offload, CAAM]
-   AES-128-CBC-ESSIV:
-      essiv(cbc-aes-caam,sha256-lib) 23 MB/s   [Offload, CAAM]
+Changes since v3:
+ - Rebased the series on Linux-6.15-rc7
+ - Updated PATCH2 DT bindings as-per Rob's suggestion
+ - Improved request_threaded_irq() usage in PATCH7
+ - Updated PATCH10 clk-rpmi driver as-per commments from Andy
+ - Updated PATCH13 irq-riscv-rpmi-sysmsi driver as-per comments
+   from Andy and Tglx
+ - Addressed ACPI related comments in PATCH14, PATCH15, PATCH18,
+   PATCH20 and PATCH21
 
-STM32MP157F-DK2:
-   AES-256-XTS:
-      xts-aes-neonbs         13.2 MB/s   [CPU-based, ARM NEON]
-      xts(stm32-ecb-aes)     3.1 MB/s    [Offload, STM32 crypto engine]
-   AES-128-CBC-ESSIV:
-      essiv(cbc-aes-neonbs,sha256-lib)
-                             14.7 MB/s   [CPU-based, ARM NEON]
-      essiv(stm32-cbc-aes,sha256-lib)
-                             3.2 MB/s    [Offload, STM32 crypto engine]
-   Adiantum:
-      adiantum(xchacha12-arm,aes-arm,nhpoly1305-neon)
-                             52.8 MB/s   [CPU-based, ARM scalar + NEON]
+Changes since v2:
+ - Dropped the "RFC" tag from series since the SBI v3.0 and
+   RPMI v1.0 specifications are now frozen
+ - Rebased the series on Linux-6.15-rc5
+ - Split PATCH8 of v2 into two patches adding separate DT
+   bindings for "riscv,rpmi-mpxy-clock" and "riscv,rpmi-clock"
+ - Split PATCH10 of v2 into two patches adding separate DT
+   bindings for "riscv,rpmi-mpxy-system-msi" and
+   "riscv,rpmi-system-msi"
+ - Addressed comments from TGLX on PATCH11 of v2 adding irqchip
+   driver for RPMI system MSI
+ - Addressed ACPI related comments in PATCH15 and PATCH16 of v2
+ - New PATCH17 and PATCH18 in this series
 
-So, there was no case in which the crypto engine was even *close* to
-being faster.  On the first three, which have AES instructions in the
-CPU, the CPU was 30 to 55 times faster (!).  Even on STM32MP157F-DK2
-which has a Cortex-A7 CPU that doesn't have AES instructions, AES was
-over 4 times faster on the CPU.  And Adiantum encryption, which is what
-actually should be used on CPUs like that, was over 17 times faster.
+Changes since v1:
+ - Addressed DT bindings related comments in PATCH2, PATCH3, and
+   PATCH7 of v1 series
+ - Addressed comments in PATCH6 and PATCH8 of v1 series
+ - New PATCH6 in v2 series to allow fwnode based mailbox channel
+   request
+ - New PATCH10 and PATCH11 to add RPMI system MSI based interrupt
+   controller driver
+ - New PATCH12 to PATCH16 which adds ACPI support in SBI MPXY
+   mailbox driver and RPMI system MSI driver
+ - New PATCH17 to enable required kconfig option to allow graceful
+   shutdown on QEMU virt machine
 
-Other justifications that have been given for these non-inline crypto
-engines (almost always coming from the hardware vendors, not actual
-users) don't seem very plausible either:
+Anup Patel (14):
+  dt-bindings: mailbox: Add bindings for RPMI shared memory transport
+  dt-bindings: mailbox: Add bindings for RISC-V SBI MPXY extension
+  RISC-V: Add defines for the SBI message proxy extension
+  mailbox: Add common header for RPMI messages sent via mailbox
+  mailbox: Allow controller specific mapping using fwnode
+  byteorder: Add memcpy_to_le32() and memcpy_from_le32()
+  mailbox: Add RISC-V SBI message proxy (MPXY) based mailbox driver
+  dt-bindings: clock: Add RPMI clock service message proxy bindings
+  dt-bindings: clock: Add RPMI clock service controller bindings
+  dt-bindings: Add RPMI system MSI message proxy bindings
+  dt-bindings: Add RPMI system MSI interrupt controller bindings
+  irqchip: Add driver for the RPMI system MSI service group
+  RISC-V: Enable GPIO keyboard and event device in RV64 defconfig
+  MAINTAINERS: Add entry for RISC-V RPMI and MPXY drivers
 
-  - The crypto engine throughput could be improved by processing
-    multiple requests concurrently.  Currently irrelevant to fscrypt,
-    since it doesn't do that.  This would also be complex, and unhelpful
-    in many cases.  2 of the 4 engines I tested even had only one queue.
+Rahul Pathak (1):
+  clk: Add clock driver for the RISC-V RPMI clock service group
 
-  - Some of the engines, e.g. STM32, support hardware keys.  Also
-    currently irrelevant to fscrypt, since it doesn't support these.
-    Interestingly, the STM32 driver itself doesn't support this either.
+Sunil V L (9):
+  ACPI: property: Refactor acpi_fwnode_get_reference_args() to support
+    nargs_prop
+  ACPI: Add support for nargs_prop in acpi_fwnode_get_reference_args()
+  ACPI: scan: Update honor list for RPMI System MSI
+  ACPI: RISC-V: Create interrupt controller list in sorted order
+  ACPI: RISC-V: Add support to update gsi range
+  ACPI: RISC-V: Add RPMI System MSI to GSI mapping
+  irqchip/irq-riscv-imsic-early: Export imsic_acpi_get_fwnode()
+  mailbox/riscv-sbi-mpxy: Add ACPI support
+  irqchip/riscv-rpmi-sysmsi: Add ACPI support
 
-  - Free up CPU for other tasks and/or reduce energy usage.  Not very
-    plausible considering the "short" message length, driver overhead,
-    and scheduling overhead.  There's just very little time for the CPU
-    to do something else like run another task or enter low-power state,
-    before the message finishes and it's time to process the next one.
+ .../bindings/clock/riscv,rpmi-clock.yaml      |   64 ++
+ .../bindings/clock/riscv,rpmi-mpxy-clock.yaml |   64 ++
+ .../riscv,rpmi-mpxy-system-msi.yaml           |   67 ++
+ .../riscv,rpmi-system-msi.yaml                |   74 ++
+ .../mailbox/riscv,rpmi-shmem-mbox.yaml        |  124 ++
+ .../bindings/mailbox/riscv,sbi-mpxy-mbox.yaml |   51 +
+ MAINTAINERS                                   |   15 +
+ arch/riscv/configs/defconfig                  |    2 +
+ arch/riscv/include/asm/irq.h                  |    6 +
+ arch/riscv/include/asm/sbi.h                  |   63 +
+ drivers/acpi/property.c                       |  128 ++-
+ drivers/acpi/riscv/irq.c                      |   75 +-
+ drivers/acpi/scan.c                           |    2 +
+ drivers/base/property.c                       |    2 +-
+ drivers/clk/Kconfig                           |    8 +
+ drivers/clk/Makefile                          |    1 +
+ drivers/clk/clk-rpmi.c                        |  616 ++++++++++
+ drivers/irqchip/Kconfig                       |    7 +
+ drivers/irqchip/Makefile                      |    1 +
+ drivers/irqchip/irq-riscv-imsic-early.c       |    2 +
+ drivers/irqchip/irq-riscv-rpmi-sysmsi.c       |  328 ++++++
+ drivers/mailbox/Kconfig                       |   11 +
+ drivers/mailbox/Makefile                      |    2 +
+ drivers/mailbox/mailbox.c                     |   65 +-
+ drivers/mailbox/riscv-sbi-mpxy-mbox.c         | 1017 +++++++++++++++++
+ include/linux/byteorder/generic.h             |   16 +
+ include/linux/mailbox/riscv-rpmi-message.h    |  243 ++++
+ include/linux/mailbox_controller.h            |    3 +
+ include/linux/wordpart.h                      |   16 +
+ 29 files changed, 2990 insertions(+), 83 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/riscv,rpmi-clock.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/riscv,rpmi-mpxy-clock.yaml
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/riscv,rpmi-mpxy-system-msi.yaml
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/riscv,rpmi-system-msi.yaml
+ create mode 100644 Documentation/devicetree/bindings/mailbox/riscv,rpmi-shmem-mbox.yaml
+ create mode 100644 Documentation/devicetree/bindings/mailbox/riscv,sbi-mpxy-mbox.yaml
+ create mode 100644 drivers/clk/clk-rpmi.c
+ create mode 100644 drivers/irqchip/irq-riscv-rpmi-sysmsi.c
+ create mode 100644 drivers/mailbox/riscv-sbi-mpxy-mbox.c
+ create mode 100644 include/linux/mailbox/riscv-rpmi-message.h
 
-  - Some of these engines resist power analysis and electromagnetic
-    attacks, while the CPU-based crypto generally does not.  In theory,
-    this sounds great.  In practice, if this benefit requires the use of
-    an off-CPU offload that massively regresses performance and has a
-    low-quality, buggy driver, the price for this hardening (which is
-    not relevant to most fscrypt users, and tends to be incomplete) is
-    just too high.  Inline crypto engines are much more promising here,
-    as are on-CPU solutions like RISC-V High Assurance Cryptography.
-
-Fixes: b30ab0e03407 ("ext4 crypto: add ext4 encryption facilities")
-Cc: stable@vger.kernel.org
-Signed-off-by: Eric Biggers <ebiggers@kernel.org>
----
-
-Changed in v3:
-- Further improved the commit message and comment.  Added data for
-  STM32MP157F-DK2 and i.MX 8M Nano LPDDR4 EVK.
-- Updated fscrypt.rst
-
-Changed in v2:
-- Improved commit message and comment
-- Dropped CRYPTO_ALG_ASYNC from the mask, to make this patch
-  backport-friendly
-- Added Fixes and Cc stable
-
- Documentation/filesystems/fscrypt.rst | 37 +++++++++++----------------
- fs/crypto/fscrypt_private.h           | 17 ++++++++++++
- fs/crypto/hkdf.c                      |  2 +-
- fs/crypto/keysetup.c                  |  3 ++-
- fs/crypto/keysetup_v1.c               |  3 ++-
- 5 files changed, 37 insertions(+), 25 deletions(-)
-
-diff --git a/Documentation/filesystems/fscrypt.rst b/Documentation/filesystems/fscrypt.rst
-index 29e84d125e02..4a3e844b790c 100644
---- a/Documentation/filesystems/fscrypt.rst
-+++ b/Documentation/filesystems/fscrypt.rst
-@@ -145,13 +145,12 @@ However, these ioctls have some limitations:
-   caches are freed but not wiped.  Therefore, portions thereof may be
-   recoverable from freed memory, even after the corresponding key(s)
-   were wiped.  To partially solve this, you can add init_on_free=1 to
-   your kernel command line.  However, this has a performance cost.
- 
--- Secret keys might still exist in CPU registers, in crypto
--  accelerator hardware (if used by the crypto API to implement any of
--  the algorithms), or in other places not explicitly considered here.
-+- Secret keys might still exist in CPU registers or in other places
-+  not explicitly considered here.
- 
- Full system compromise
- ~~~~~~~~~~~~~~~~~~~~~~
- 
- An attacker who gains "root" access and/or the ability to execute
-@@ -404,13 +403,16 @@ of hardware acceleration for AES.  Adiantum is a wide-block cipher
- that uses XChaCha12 and AES-256 as its underlying components.  Most of
- the work is done by XChaCha12, which is much faster than AES when AES
- acceleration is unavailable.  For more information about Adiantum, see
- `the Adiantum paper <https://eprint.iacr.org/2018/720.pdf>`_.
- 
--The (AES-128-CBC-ESSIV, AES-128-CBC-CTS) pair exists only to support
--systems whose only form of AES acceleration is an off-CPU crypto
--accelerator such as CAAM or CESA that does not support XTS.
-+The (AES-128-CBC-ESSIV, AES-128-CBC-CTS) pair was added to try to
-+provide a more efficient option for systems that lack AES instructions
-+in the CPU but do have a non-inline crypto engine such as CAAM or CESA
-+that supports AES-CBC (and not AES-XTS).  This is deprecated.  It has
-+been shown that just doing AES on the CPU is actually faster.
-+Moreover, Adiantum is faster still and is recommended on such systems.
- 
- The remaining mode pairs are the "national pride ciphers":
- 
- - (SM4-XTS, SM4-CBC-CTS)
- 
-@@ -1324,26 +1326,17 @@ that systems implementing a form of "verified boot" take advantage of
- this by validating all top-level encryption policies prior to access.
- 
- Inline encryption support
- =========================
- 
--By default, fscrypt uses the kernel crypto API for all cryptographic
--operations (other than HKDF, which fscrypt partially implements
--itself).  The kernel crypto API supports hardware crypto accelerators,
--but only ones that work in the traditional way where all inputs and
--outputs (e.g. plaintexts and ciphertexts) are in memory.  fscrypt can
--take advantage of such hardware, but the traditional acceleration
--model isn't particularly efficient and fscrypt hasn't been optimized
--for it.
--
--Instead, many newer systems (especially mobile SoCs) have *inline
--encryption hardware* that can encrypt/decrypt data while it is on its
--way to/from the storage device.  Linux supports inline encryption
--through a set of extensions to the block layer called *blk-crypto*.
--blk-crypto allows filesystems to attach encryption contexts to bios
--(I/O requests) to specify how the data will be encrypted or decrypted
--in-line.  For more information about blk-crypto, see
-+Many newer systems (especially mobile SoCs) have *inline encryption
-+hardware* that can encrypt/decrypt data while it is on its way to/from
-+the storage device.  Linux supports inline encryption through a set of
-+extensions to the block layer called *blk-crypto*.  blk-crypto allows
-+filesystems to attach encryption contexts to bios (I/O requests) to
-+specify how the data will be encrypted or decrypted in-line.  For more
-+information about blk-crypto, see
- :ref:`Documentation/block/inline-encryption.rst <inline_encryption>`.
- 
- On supported filesystems (currently ext4 and f2fs), fscrypt can use
- blk-crypto instead of the kernel crypto API to encrypt/decrypt file
- contents.  To enable this, set CONFIG_FS_ENCRYPTION_INLINE_CRYPT=y in
-diff --git a/fs/crypto/fscrypt_private.h b/fs/crypto/fscrypt_private.h
-index c1d92074b65c..6e7164530a1e 100644
---- a/fs/crypto/fscrypt_private.h
-+++ b/fs/crypto/fscrypt_private.h
-@@ -43,10 +43,27 @@
-  * hardware-wrapped keys has made it misleading as it's only for raw keys.
-  * Don't use it in kernel code; use one of the above constants instead.
-  */
- #undef FSCRYPT_MAX_KEY_SIZE
- 
-+/*
-+ * This mask is passed as the third argument to the crypto_alloc_*() functions
-+ * to prevent fscrypt from using the Crypto API drivers for non-inline crypto
-+ * engines.  Those drivers have been problematic for fscrypt.  fscrypt users
-+ * have reported hangs and even incorrect en/decryption with these drivers.
-+ * Since going to the driver, off CPU, and back again is really slow, such
-+ * drivers can be over 50 times slower than the CPU-based code for fscrypt's
-+ * workload.  Even on platforms that lack AES instructions on the CPU, using the
-+ * offloads has been shown to be slower, even staying with AES.  (Of course,
-+ * Adiantum is faster still, and is the recommended option on such platforms...)
-+ *
-+ * Note that fscrypt also supports inline crypto engines.  Those don't use the
-+ * Crypto API and work much better than the old-style (non-inline) engines.
-+ */
-+#define FSCRYPT_CRYPTOAPI_MASK \
-+	(CRYPTO_ALG_ALLOCATES_MEMORY | CRYPTO_ALG_KERN_DRIVER_ONLY)
-+
- #define FSCRYPT_CONTEXT_V1	1
- #define FSCRYPT_CONTEXT_V2	2
- 
- /* Keep this in sync with include/uapi/linux/fscrypt.h */
- #define FSCRYPT_MODE_MAX	FSCRYPT_MODE_AES_256_HCTR2
-diff --git a/fs/crypto/hkdf.c b/fs/crypto/hkdf.c
-index 0f3028adc9c7..5b9c21cfe2b4 100644
---- a/fs/crypto/hkdf.c
-+++ b/fs/crypto/hkdf.c
-@@ -56,11 +56,11 @@ int fscrypt_init_hkdf(struct fscrypt_hkdf *hkdf, const u8 *master_key,
- 	struct crypto_shash *hmac_tfm;
- 	static const u8 default_salt[HKDF_HASHLEN];
- 	u8 prk[HKDF_HASHLEN];
- 	int err;
- 
--	hmac_tfm = crypto_alloc_shash(HKDF_HMAC_ALG, 0, 0);
-+	hmac_tfm = crypto_alloc_shash(HKDF_HMAC_ALG, 0, FSCRYPT_CRYPTOAPI_MASK);
- 	if (IS_ERR(hmac_tfm)) {
- 		fscrypt_err(NULL, "Error allocating " HKDF_HMAC_ALG ": %ld",
- 			    PTR_ERR(hmac_tfm));
- 		return PTR_ERR(hmac_tfm);
- 	}
-diff --git a/fs/crypto/keysetup.c b/fs/crypto/keysetup.c
-index 0d71843af946..d8113a719697 100644
---- a/fs/crypto/keysetup.c
-+++ b/fs/crypto/keysetup.c
-@@ -101,11 +101,12 @@ fscrypt_allocate_skcipher(struct fscrypt_mode *mode, const u8 *raw_key,
- 			  const struct inode *inode)
- {
- 	struct crypto_skcipher *tfm;
- 	int err;
- 
--	tfm = crypto_alloc_skcipher(mode->cipher_str, 0, 0);
-+	tfm = crypto_alloc_skcipher(mode->cipher_str, 0,
-+				    FSCRYPT_CRYPTOAPI_MASK);
- 	if (IS_ERR(tfm)) {
- 		if (PTR_ERR(tfm) == -ENOENT) {
- 			fscrypt_warn(inode,
- 				     "Missing crypto API support for %s (API name: \"%s\")",
- 				     mode->friendly_name, mode->cipher_str);
-diff --git a/fs/crypto/keysetup_v1.c b/fs/crypto/keysetup_v1.c
-index b70521c55132..158ceae8a5bc 100644
---- a/fs/crypto/keysetup_v1.c
-+++ b/fs/crypto/keysetup_v1.c
-@@ -50,11 +50,12 @@ static int derive_key_aes(const u8 *master_key,
- {
- 	int res = 0;
- 	struct skcipher_request *req = NULL;
- 	DECLARE_CRYPTO_WAIT(wait);
- 	struct scatterlist src_sg, dst_sg;
--	struct crypto_skcipher *tfm = crypto_alloc_skcipher("ecb(aes)", 0, 0);
-+	struct crypto_skcipher *tfm =
-+		crypto_alloc_skcipher("ecb(aes)", 0, FSCRYPT_CRYPTOAPI_MASK);
- 
- 	if (IS_ERR(tfm)) {
- 		res = PTR_ERR(tfm);
- 		tfm = NULL;
- 		goto out;
-
-base-commit: d0b3b7b22dfa1f4b515fd3a295b3fd958f9e81af
 -- 
-2.50.0
+2.43.0
 
 
