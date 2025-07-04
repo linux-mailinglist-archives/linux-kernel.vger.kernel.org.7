@@ -1,108 +1,108 @@
-Return-Path: <linux-kernel+bounces-716707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8670AF8A0D
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 09:53:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D65AAF8B24
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 10:21:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5AF685A0915
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 07:53:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8FB8DB410BD
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 08:19:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 470ED2857F2;
-	Fri,  4 Jul 2025 07:53:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36149289372;
+	Fri,  4 Jul 2025 07:54:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="j2A+4JAL"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Pt13Wn75"
+Received: from relay16.mail.gandi.net (relay16.mail.gandi.net [217.70.178.236])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20A682857F6
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 07:53:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF711288C19;
+	Fri,  4 Jul 2025 07:54:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.236
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751615612; cv=none; b=dWZ3dHqrY9oFQC/GaO51Ma9r7olmaLLUCwBqWmPYw3kPPWOEpxLm2aFQ4HNZtULN/ZIBji8bAQuoYbz/SpQYLrEzCDxMyy1mG8a3SMcjLVfyducbza8PpHxNjhkybZMvi8WWoSiTqOiIPjzWo8UlgnEVuCqTPzHrnLbPPYETfjQ=
+	t=1751615644; cv=none; b=jm2gh2UE1i/mbQI1+Ek+ViKMqzjp9sm9cgckFv6UewBjQmNwa1P0JzNiOjWgMyaJ5MYa34VzL4WVhf6v7c2MeyjcLAEeRo7RHaJQ9aP5W/StCihzK/mMgYegWDbH8GUk7a9JE2udDUUWbHmIDY0YfbW5Tqzd4r5cfX+g0vPfyjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751615612; c=relaxed/simple;
-	bh=KykIkmM9eLteMUVLTsm/o94BJ8e9CpiqfyoLjbdjFXM=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=utcRopCsyKvx+n2k4dDYf8gUpr61CHkEKYLEbGoSs2hH6iM8Y2LbhgaZAipzr2oc40gqfCK5ZYrCX3MNE+bCT1raz0ElMXOwFQGcCviDnbeQV8J+xMKNZhff02X8ONbSSd4IRAZ6SM5Zvgguj8UKJo5se291r1sfz5mfKYaiTW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=j2A+4JAL; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-4537f56ab74so3569095e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Jul 2025 00:53:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1751615609; x=1752220409; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=FWV6N46YCWcyFKoNN7ytQeutwvqMPF1aOuLppT9L42M=;
-        b=j2A+4JAL/m4PA27zELaw7cVrAH5L0fSLqQk6Wmbvez1uHwdzHyVG//deDlkyRYHOGA
-         Ef4dx+5vsTcylzAAHI8hy3YEFO9s099bLru0Et/EXGl7bRxgHzEBF+I6VEr+whiHrYOY
-         0LksqWqitChwetPVQNcUJc9S7ioj8hhVRbji6A9SmRVsaMFmXhTMG+ZNSdn5qJqFRFQJ
-         IsB/NpxrMu9ZLOjW+/NMWZcI12mGkLORs0OLCeLGkqNjscKkGYeAad+RDzpmZU5tP/+i
-         8+ULIwD40FhvuHEp06JAQ6JSuBvgNcBe8ymr/fZ8maZrdFbUDPRBJ2aSpieACsP+hTeG
-         JZng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751615609; x=1752220409;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FWV6N46YCWcyFKoNN7ytQeutwvqMPF1aOuLppT9L42M=;
-        b=HGEEafjaZxDCRUjjqls64oR4myylyP1V/m2sSOWRDb/3Rdhd51AhqAXABl7v9FrNbs
-         tDR8MyshU825+WxYHOBrG057Y6bNsUTa9uHsDWZkdMo83gEnsAy3Xqjhw3CJcC9rv2IR
-         IRrW2AM75QqRDDHMN7k9YnfiWhIKlwQqYvHsItSakm2HO+9eFD+rmDf85m9gFrgTRPKt
-         vbRFhZbqn/uLFZTRxwTRQYxinJ9s0oqFaOeWF9wAB475ftax5+dzTInzvW4bCPAGoRKp
-         1ynEIcqVR+cIVkn9w7DNlUj3xX8cuJOXKWtmzQaSRAmz1M7s50OcMdp0oab/yKFcBycM
-         CzqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXrgy70Y/T46UuWebfqanW+gJDuYIUggCehE+xgo1qLZ9MfZDecWi1cfHHZR2+xSor72o9zxCGLzg0W6Kk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHXRTB6+PLI4ZXRzCDW3hoDg7p4eoKsXpX1QPnryq7NOSKhMvH
-	BhoXO8B+bZPk1tbcQE7WijiFocw+95rL8JQA5oKPc6uQ2AJExnRQo8MUqi1tr7rhL6rwhkbRhWd
-	HuxeDOW2iFSqDHgTiSA==
-X-Google-Smtp-Source: AGHT+IE0bh3U7cJQpUshyJ2zCxCWKYVhS/atQp5WI6Mvd4s8SgWIQ7QsV49DdQFGizF5VkFqrdrBYInDOCz1+0g=
-X-Received: from wmtg7.prod.google.com ([2002:a05:600c:8b57:b0:453:65ee:17c9])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:83c3:b0:453:78f:faa8 with SMTP id 5b1f17b1804b1-454b31085e7mr14720135e9.6.1751615609724;
- Fri, 04 Jul 2025 00:53:29 -0700 (PDT)
-Date: Fri, 4 Jul 2025 07:53:28 +0000
-In-Reply-To: <20250703-topics-tyr-request_irq-v6-4-74103bdc7c52@collabora.com>
+	s=arc-20240116; t=1751615644; c=relaxed/simple;
+	bh=Ja1PvWH1xvcWWWPWhJqOm3iUtLfvIbMEc340tKKqjbo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tzIWVYTuUi0A+nEcgDL74OU/eK8oKSN9Tt1HVeGR2rmWdl7q8Jw75PIyFHpkBZwbZE+YsS3tSRLtKUkEwcO5dP1R22hHhubk0OI9wZPQsmws8dLfWiNeoASBr6eJX2gnI9ApfuVNmUPcktqASoT+ypqzU4SQxpwn88c2bbC6Czk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Pt13Wn75; arc=none smtp.client-ip=217.70.178.236
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 144F6449EC;
+	Fri,  4 Jul 2025 07:53:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1751615639;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fGokUQU9D12trbOtyhmYZxUvKU7aVutPppQ14CcUIWA=;
+	b=Pt13Wn75RkhLV5K/mIBzGx1yeA+VpBMJm3BU4XhkWzkKw2E9ol0xa6glQFbWKhx+elBXGs
+	Dc4BttBnHVwL8SXxZXTREKDWncqJ7q+modSv7/clL2AOVFQq0dB6YASOsPnXwI/rf3eQc0
+	NUt6n+nifKwfOkLZMdmd2Zq7d1Q5xX8KBTRRzKXEBCDyBH+Lf+r0HTOo84F8vMq7KTT+u9
+	LZBLFX4VopTDErPvZod2fgZFwqXyKZiyw/Sia4i0J/jr/JxtZkM58XNc9J1XNSPe3XVqiT
+	JB4kdwQGsecuWUyY2Tf1WL3fsD2sFBu/RYiYOo6oEnWPDdiH9P2Ou/FgZWpa0A==
+Date: Fri, 4 Jul 2025 09:53:56 +0200
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+ <pabeni@redhat.com>, Andre Edich <andre.edich@microchip.com>,
+ kernel@pengutronix.de, linux-kernel@vger.kernel.org, Russell King
+ <linux@armlinux.org.uk>, netdev@vger.kernel.org, Lukas Wunner
+ <lukas@wunner.de>
+Subject: Re: [PATCH net v2 1/3] net: phy: smsc: Fix Auto-MDIX configuration
+ when disabled by strap
+Message-ID: <20250704095356.680bd24b@fedora.home>
+In-Reply-To: <20250703114941.3243890-2-o.rempel@pengutronix.de>
+References: <20250703114941.3243890-1-o.rempel@pengutronix.de>
+	<20250703114941.3243890-2-o.rempel@pengutronix.de>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250703-topics-tyr-request_irq-v6-0-74103bdc7c52@collabora.com> <20250703-topics-tyr-request_irq-v6-4-74103bdc7c52@collabora.com>
-Message-ID: <aGeIeJ8_Wj_QvEf5@google.com>
-Subject: Re: [PATCH v6 4/6] rust: irq: add support for threaded IRQs and handlers
-From: Alice Ryhl <aliceryhl@google.com>
-To: Daniel Almeida <daniel.almeida@collabora.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Benno Lossin <lossin@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, 
-	"Krzysztof =?utf-8?Q?Wilczy=C5=84ski?=" <kwilczynski@kernel.org>, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, linux-pci@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddvvdeiudcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthejredtredtvdenucfhrhhomhepofgrgihimhgvucevhhgvvhgrlhhlihgvrhcuoehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeegveeltddvveeuhefhvefhlefhkeevfedtgfeiudefffeiledttdfgfeeuhfeukeenucfkphepvdgrtddumegtsgduleemkegugeehmeegledttdemieehieekmedvlegsudemlegvfhehmegvkegtjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudelmeekugegheemgeeltddtmeeiheeikeemvdelsgdumeelvghfheemvgektgejpdhhvghlohepfhgvughorhgrrdhhohhmvgdpmhgrihhlfhhrohhmpehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedufedprhgtphhtthhopehordhrvghmphgvlhesphgvnhhguhhtrhhonhhigidruggvpdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohephhhkrghllhifvghithdusehgmhgrihhlrdgtohhmpdhrt
+ ghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrdgtohhmpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehprggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtoheprghnughrvgdrvgguihgthhesmhhitghrohgthhhiphdrtghomh
 
-On Thu, Jul 03, 2025 at 04:30:02PM -0300, Daniel Almeida wrote:
-> This patch adds support for threaded IRQs and handlers through
-> irq::ThreadedRegistration and the irq::ThreadedHandler trait.
-> 
-> Threaded interrupts are more permissive in the sense that further
-> processing is possible in a kthread. This means that said execution takes
-> place outside of interrupt context, which is rather restrictive in many
-> ways.
-> 
-> Registering a threaded irq is dependent upon having an IrqRequest that
-> was previously allocated by a given device. This will be introduced in
-> subsequent patches.
-> 
-> Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
+Hi Oleksij,
 
-Same comments as patch 3, otherwise LGTM.
+On Thu,  3 Jul 2025 13:49:39 +0200
+Oleksij Rempel <o.rempel@pengutronix.de> wrote:
 
-Alice
+> Correct the Auto-MDIX configuration to ensure userspace settings are
+> respected when the feature is disabled by the AUTOMDIX_EN hardware strap.
+> 
+> The LAN9500 PHY allows its default MDI-X mode to be configured via a
+> hardware strap. If this strap sets the default to "MDI-X off", the
+> driver was previously unable to enable Auto-MDIX from userspace.
+> 
+> When handling the ETH_TP_MDI_AUTO case, the driver would set the
+> SPECIAL_CTRL_STS_AMDIX_ENABLE_ bit but neglected to set the required
+> SPECIAL_CTRL_STS_OVRRD_AMDIX_ bit. Without the override flag, the PHY
+> falls back to its hardware strap default, ignoring the software request.
+> 
+> This patch corrects the behavior by also setting the override bit when
+> enabling Auto-MDIX. This ensures that the userspace configuration takes
+> precedence over the hardware strap, allowing Auto-MDIX to be enabled
+> correctly in all scenarios.
+> 
+> Fixes: 05b35e7eb9a1 ("smsc95xx: add phylib support")
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> Cc: Andre Edich <andre.edich@microchip.com>
+
+Reviewed-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+
+Maxime
+
 
