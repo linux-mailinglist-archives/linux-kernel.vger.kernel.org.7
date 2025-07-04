@@ -1,161 +1,187 @@
-Return-Path: <linux-kernel+bounces-717134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-717029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75F7FAF8FE6
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 12:21:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C535AF8E59
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 11:22:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C0377B13A3
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 10:20:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C5DB801770
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 09:16:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC18A2EB5BA;
-	Fri,  4 Jul 2025 10:21:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6AF02DA769;
+	Fri,  4 Jul 2025 09:13:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="h0+Aa50G"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="AWWhkeRS"
+Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012007.outbound.protection.outlook.com [52.101.66.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BB38184;
-	Fri,  4 Jul 2025 10:21:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751624491; cv=none; b=Cbxknolp2GqrFBokliFapRdP668Dak7ZAP0RkV1SLljfhwwxqoLStP62k61dUxBCScyvITA1dqnjokYm80XFZ/aTA0iyKYNAEsTRuik9D4epKdbrW1rvnJsKWipVrL172pA6BjKrPY+o5xhgz8Qkkn5akDflWw7EcOjU8yAqrr8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751624491; c=relaxed/simple;
-	bh=+XTJSMqwvfGK5IaXH2uugAcTTaHPKMluCrXOEA+EqlU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TUowk8Q/uG7LyuhpPgpIWYGDjSl5lqR2nuSVBhZhbZ+UHETwz4z81CygCr8x0gS2t/+T4lHij1zeE+HnLjCrEW24JtB36seyNAFXQwDcI4bN6zkE51pcknM63pebW/GJKAzsm4x2BZuRwdjwg2dbrwDVT7ciqqMUO8P+6bHBpus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=h0+Aa50G; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 7C05D40E021C;
-	Fri,  4 Jul 2025 10:21:23 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id SS55zBZ0gJcF; Fri,  4 Jul 2025 10:21:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1751624477; bh=zuTBinfrd7r5RN2nXX6H17V7ulbklGFTT6rEOZ/+Ofw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=h0+Aa50G1R9eOn6mk524xR/X6hJUJPvY8bFWADAqzL6b7jKxDv6DCcPiKdVYit6dJ
-	 2JiBEzvFcKJlGtrS6p+8qWvx0HXVMysnrkDKkV7QS9J0fPc28AktTnlEZ05502alF6
-	 zL1RurADea1G4ad4+duF6Bho8bMazk0m89ToaQJ8/jptWLqC23HkZbqZYhujDLGJxY
-	 i+OvtKeqcAKAWo4bente4TYPlaOfCVYC9JPOqpVRh8FlPgxPUhbtZU+WDAMCkUHHC1
-	 thqod0Sf1Z62W9poQJw/JNHk1GVMVDXd50PMc0p18Yc1rilssYyevBEuwjsHVbzBzl
-	 zTiQJxxb4Ibhz6JyVeR1j7cIeYVTvWg5M1YNoQ8L2e9PEyxAn12fuo2rqSoxVjOklc
-	 w9i8EH7spypr1Q/6/0t9LT7UHrbuqQ0MTwdfa1Q9/9Ev0RlEG+YGUaHzQK8wkRHOyl
-	 2m76P7f42r8rJGw6D34hHyn42dAHwgBEkT1SKnA9ZFXOZn11PRzRL3Hau5OH3CysfJ
-	 b3k5Q4sOJNz0TJBsJev6xjVg11hWHA69uVztOxlzhzGnIOiH0r+mjWh8r5DmTlZZ2r
-	 xdZoaWZ7h0IPTm8dh/AaUEDB+KQB9O8Q2xj3qqZjw0eQbWflaFXGRRJ/6zrQK6m7j+
-	 0WrRDO+pctdCsSFgpnpmLG1U=
-Received: from zn.tnic (p57969c58.dip0.t-ipconnect.de [87.150.156.88])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 88F7A40E00DD;
-	Fri,  4 Jul 2025 10:21:09 +0000 (UTC)
-Date: Fri, 4 Jul 2025 12:21:03 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: K Prateek Nayak <kprateek.nayak@amd.com>
-Cc: linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org,
-	Leon Romanovsky <leon@kernel.org>,
-	Valentin Schneider <vschneid@redhat.com>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
-	Steve Wahl <steve.wahl@hpe.com>, x86@kernel.org
-Subject: Re: [tip: sched/urgent] sched/fair: Use sched_domain_span() for
- topology_span_sane()
-Message-ID: <20250704102103.GAaGerDxWX7VhePA3j@fat_crate.local>
-References: <20250630061059.1547-1-kprateek.nayak@amd.com>
- <175162039637.406.8610358723761872462.tip-bot2@tip-bot2>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C6432E541B;
+	Fri,  4 Jul 2025 09:13:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.7
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751620394; cv=fail; b=i2h/tZh36satMLHoVzKGmXx6ruQxPj5Y9z4xWEP3Z7Op2jIUBwWMCp3bfvky12uAmeZ3MMqA413id3sBRgTi8N0p7ke/Z8/KHb4sXwcS3dfceOEdi8lYPN3Bp4qtYAM2Qac4Yq9kwqEhxse+tOXa7Gz9HTpoWqGExHi4vPY83zY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751620394; c=relaxed/simple;
+	bh=5fQ8xPVnD3UMmBzye0NaEoEfdkWPOwOuewxFE4x3ons=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=nt2u9ac2jcPmb67H1pTT/cODXe9Th3bNKI5xpwwSI2j+4J0g7Sn6volOswFY2uUzdAJNFGbqbtfxaHIVERfmQnffLXdMTMvpql+t1uovqMDfPmU8Ez1XSzhvEM4fi0PEngUxOu2aI5toOr73L4UlSbKruTgVPSqZnsSw3SPgBcU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=AWWhkeRS; arc=fail smtp.client-ip=52.101.66.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=VJyKWYcROSI1EjyvDvOK7XckQCXa9nxBQRQyzw/DsH762S+k2qUwDKMJgor6iRl2ZXgph/HEkipnuSBR6dRNz16fyOIvlI460P+BMEQW8A/jXczloCGIZW503Ws2F8v5gjfOCJMrlR8XzHV/L4HM1cj4bTr7rPmsPwIFntuIWZSwkuZay2c2HbXW8K/SyrGq6u0DcOC8keaatwy/ipEgbrw7UipRNpN3+L6Qt4M7e9NkGqazeLcirQiVXAU5aHR8RGkKzq9lVYIep72tB/yIXVjJ0SAeMXx9xpAg0UPeY1TO1rv7FWaDDbZDmt4MmXHpopVZd+f8prYkolHcdwqYUQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=VlycHNBjV5o79i3jvpwvefSwwnMhp4SLJqtO8XV8AjM=;
+ b=oymuOFob1sVtvQcHrPkZX3FAdX1dNCb47KpHjzadkWaMhMbIMFvXqkf3Ke+m7ZVoXMe5w4tQ+0xOY5ACDHBdUx9vFREckD/WIzR5caxtkFny7JWRIDKr8//y892dJltTVcGWm8StqnJTHR2WTSuo3WY/4MdVxxMF03yCupizCqlgGFc94PsHPyfcjtFw89flxBkZAg3age4rkvzELGD6NMi3rsrFWnNt+I9KVjxv10NoFPUE4OgMNi/O2eVpOWKngDWUQIHUOf/iXP3n51hXSClsGgpg+KnALma7f7Rzhoo5QEELiugLhpLzvOX7WOSf2kxVeivBbW17WrT6aVv4cQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=VlycHNBjV5o79i3jvpwvefSwwnMhp4SLJqtO8XV8AjM=;
+ b=AWWhkeRSe2j6EUFBut7eddE8OV5bsM163hGdFuDoqpghIT/rf6S5ZQouhHkQ1fnLvb5nLst6GPMa0WthchBMCJrUXAJLm2SInaCR5KEHMwRq63WoueAHMGOV6XAmBVxVN7/k3F9lEHlIWBkV5aE2Xsasa0rBqC68ivrWnP/jZyOmkhtGmHpe5XVi6VuG91i0TiwOepnpgm4CXMuwqJaqKbqnFRqfW3BCnEhkNq2i8y1E6jy4Guwo2f8M5bzWwRBFi9V9JYCd2iZfZS2nYv44Gk3EyMS01zglH7B7BzCOPQ62nwk9Fj//EnmbFa66i/Vut+E+nmCHIUJMRkKLQk2MAg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from DB9PR04MB8461.eurprd04.prod.outlook.com (2603:10a6:10:2cf::20)
+ by DBBPR04MB7658.eurprd04.prod.outlook.com (2603:10a6:10:20d::24) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.20; Fri, 4 Jul
+ 2025 09:13:09 +0000
+Received: from DB9PR04MB8461.eurprd04.prod.outlook.com
+ ([fe80::b1b9:faa9:901b:c197]) by DB9PR04MB8461.eurprd04.prod.outlook.com
+ ([fe80::b1b9:faa9:901b:c197%3]) with mapi id 15.20.8901.021; Fri, 4 Jul 2025
+ 09:13:09 +0000
+Date: Fri, 4 Jul 2025 18:23:53 +0800
+From: Peng Fan <peng.fan@oss.nxp.com>
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: Peng Fan <peng.fan@nxp.com>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, arm-scmi@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 5/7] firmware: arm_scmi: imx: Support getting syslog of
+ MISC protocol
+Message-ID: <20250704102353.GE4525@nxa18884-linux>
+References: <20250627-sm-misc-api-v1-v1-0-2b99481fe825@nxp.com>
+ <20250627-sm-misc-api-v1-v1-5-2b99481fe825@nxp.com>
+ <20250702-classic-sloth-of-snow-34ed1b@sudeepholla>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250702-classic-sloth-of-snow-34ed1b@sudeepholla>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-ClientProxiedBy: MA0PR01CA0101.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a01:af::11) To DB9PR04MB8461.eurprd04.prod.outlook.com
+ (2603:10a6:10:2cf::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <175162039637.406.8610358723761872462.tip-bot2@tip-bot2>
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DB9PR04MB8461:EE_|DBBPR04MB7658:EE_
+X-MS-Office365-Filtering-Correlation-Id: 33f96d16-bb9a-497c-d852-08ddbadafea0
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|7416014|376014|366016|1800799024|19092799006|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?rovvWMmjNEknDGcAU+P2HAJgSRLayvHM8sa9AkxhDEmxYPB1/OvInADruxTR?=
+ =?us-ascii?Q?Ced+O7Ky+ijxrk1xnbLkZFPGnl0pTQYFywEP+Ujd5jQM7nyVeaZim1OaTuCt?=
+ =?us-ascii?Q?jHAke9J76l8TERCetw3HvL/EqIBlI/7Ok6gJz63Ey2geb38n0iADFAIgsWoi?=
+ =?us-ascii?Q?wOY9f3v3+JlN9VoixXyAdzvXlFxBinl6FIzmYkBP04PsAckKr4IB9g+BGXow?=
+ =?us-ascii?Q?vBVaeRcPbMmNGw3HLI1btJulkcL+dXnuo4M2OYRF8u4L9QhyXoXh+H7Ahl8U?=
+ =?us-ascii?Q?JhEPxn+PCCvHmp9vNCI7Pb6CPv9FeubUMs81P44xkgbCO8zBzU1HY2Ac8pwF?=
+ =?us-ascii?Q?8mulJpIeXNNDBNTv8GUkPYv+XKyJFyxWFqS5gWiFefzBxx98/FXpC+CQ9B2a?=
+ =?us-ascii?Q?yKRIMFsJS+gJkRsxzNe/slwcwTMxKKW5btzbAdZj4YPXkNQm60mQTPAaa8+b?=
+ =?us-ascii?Q?k/RLDXU+ViutjbK+ZzEMDA9pzl0PWRfMEX1DcdbS60RU6fmeWTddNKJsE8gV?=
+ =?us-ascii?Q?/Rf/eAYOxxgwiew5fiX4J6Qvq9TsliqF8J1DxTXBU14WZ6UbkEl5gSXM8t2E?=
+ =?us-ascii?Q?0EEmGdc8HA3OTBt1n0TrPSgZjFQdJrDUtseQD/mGsOeAyyUSebT4Md8q9BST?=
+ =?us-ascii?Q?Fc7+jRnTKuUusvndXM1w9HstbWPYfpKOnKfT0XikY8PrkPnjKtIzFq2fFsIv?=
+ =?us-ascii?Q?dt6lk/3CyWoseLmltGsFwfI/tUuyk8a/le5o5Dfyqlo0Hbya+EoQJzCjs1Rz?=
+ =?us-ascii?Q?j6ML7J4LT/x1gQDH2tZc2MA/YgXa/kTRoCN1Aj2dQVXfsWS9vQ3M69dxrULH?=
+ =?us-ascii?Q?HSnM5Nv6TjZa7KV8dYcMMeFRZXDvcuiO9wiPrdoPR/fFqPF+d9BUZBO3EZlM?=
+ =?us-ascii?Q?TQbMxuWqIgwuF5HzeZIUUeDDbRboqVE+coA0D5z4ok2cXhq7S1R+UPWH+6L4?=
+ =?us-ascii?Q?wXnoCRXaDz/HtKWfFkc7zr2f0QN83onV8yUzrFhcXQfcxV182JzJPR4XuK9M?=
+ =?us-ascii?Q?snXKfZ/MCY6616nhQYJEqH6QGuYzA4I8Q2VOhmutQfORRkLQP9Sg19DnQUUu?=
+ =?us-ascii?Q?6/tQfzb8Jm+rcYPlQJlnjkpnATvDSxZ0BVAVtT9P2hTitNRgmsJymWF3M2ub?=
+ =?us-ascii?Q?NfEBDs3i8dZW4YlnfXR1FymIeYjbgFF3DQNlVQygwtbH4mecsQexnL/aioLI?=
+ =?us-ascii?Q?iqcLEFQAz8rHWMtQdE1KYsXZQdti1SNCHtFvNRikTx/kSiSc1+KJ45b4biEl?=
+ =?us-ascii?Q?qDitWOwW+wVY6qAWjogItx0OplgzqHooIBIMVVFmL3Z8S/PfzSm6meSzZaYK?=
+ =?us-ascii?Q?svBUWMem5YH1VPP8UH0+BhvW0g4vKHE2B3dCHjWzsGPUN9IUcU6M8KfR8Rwk?=
+ =?us-ascii?Q?Q71VQIjBCB3AQ9CHj/tVrpkfjdCO4ECqm1feMknFXF7PUyzyQkCxVXvA8wUt?=
+ =?us-ascii?Q?t/2AMYzY72P9U5judVJtdQjRTxy3HkVhGVh3LNHcovi38DkuImfR9A=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB8461.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(7416014)(376014)(366016)(1800799024)(19092799006)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?+oSZmwxquL+chRGw9X2nDVIPpR4h+LlfzfDZif6T/0bV0CyOrRBbXgro7eU5?=
+ =?us-ascii?Q?XTiSB/XQNA0dVSaWo77E4CrDQr3sNXYm1xHVSRyPqr16gXaFnOVLYyYxpGI2?=
+ =?us-ascii?Q?2K1tIycZEMs+DgYEojndqw4z0oIHY6IJH+3iz+8CjxH6/gH9dmcvqVZyvTdM?=
+ =?us-ascii?Q?W25FBOM21VJ3zNOemwvJyXt2eQ64hmJ/l9pR6LSFIU8fCGmHNgFGT/S/Rsx4?=
+ =?us-ascii?Q?OWj67gNvtxFf3gRIPyeK+1w0qR6AWwbBY+tH8Cfp6rnT/egLho6I3cUb9jab?=
+ =?us-ascii?Q?w/ivKtt4PBzMLjbnz6c4zrFHhlZoHXLMpXULbGHteb5iCc9xwznwUBQq95de?=
+ =?us-ascii?Q?rKNPT0NUNVc2MssIQiT238YQiOOwYHWzbEL8nP3fS6hQRyz2GZgk+y2cLiN+?=
+ =?us-ascii?Q?Y3zTbEj3MRkrwkaOcX4ajwdhJNnBJuyT1R1kFwT5IzThdRBp2zpm1Yby4lZS?=
+ =?us-ascii?Q?xZDmneijzR1oku33ctqxonGC4p4gRG1LMr+qT38/lOSsB5+f7F8BjpD8nvRx?=
+ =?us-ascii?Q?MR18DxMgkOhgVbvqDnygYf/+SZl9qYGi5PI3bb0r6Bc7F7sS1vamxrzeB3ur?=
+ =?us-ascii?Q?kWQEhOgmIpxUT5C1NSkiqaH6A01QvlRFSlxkhwHRsCqkpAuO8FxBv/yBITdn?=
+ =?us-ascii?Q?EdoQMaRSqbivug+11Ij+cu6bv1cISIgriT63NvUBIjeiOSHyVkyodXCcSsKV?=
+ =?us-ascii?Q?QSLCYeBc9YUghor+Ys0ZQwrKymtTtcXHjtFsa55gtySQVfxSm/9Cn/hsVWtb?=
+ =?us-ascii?Q?6oMC+T8EGN2B8j9qQgPOHSHHUYThhpSzo7WNGSKFlnhmnnm5/QJ2iDICN7sY?=
+ =?us-ascii?Q?b4wzfm7tppkfGzUmQpYfvVSOitnqCNX9314baJmGEBRtmGAaOVs5gzoORh3f?=
+ =?us-ascii?Q?oPJxV0SiMjaLpCk0aOG0IJ7prNSS9c+m1wVTJBKgcXVrKn+kF9rPF6KN/uoF?=
+ =?us-ascii?Q?gHDks3JHSCqLaCp3cKVsZ7YHgYNZu4BakoQnNmQPpLaUubs+6bfz4bvcOkpM?=
+ =?us-ascii?Q?he2k2DiNV1XUalJZX5m3jpX42F7m48UJHkysusL9HMG3LW0Cq2XPjJ823lSJ?=
+ =?us-ascii?Q?7PLvCixV2z8r08M+FqSxlnsQcANhYOS0I+WvsOgdIheaEwVjJLk6MXjm+vby?=
+ =?us-ascii?Q?yUbQmm7zPZv9/0YFquqZL7NRMk14KezBnZf2sh3Cjc2JnomwSj1d1df3HsIm?=
+ =?us-ascii?Q?DJp4K6l+Z5i7BSz5eFcCBvGqcXXROqPQDKKAyqWE6jHvKDwOv/8+CPq47GPi?=
+ =?us-ascii?Q?o1tsQ3RpZOzOeVaZfsQ2DsfqVqEwZENus7hSjq/DWqWFwg5YkuJsmd5SVAeV?=
+ =?us-ascii?Q?jxkyY5Bb/N9Gqg/lkWfPL5uUtdRTzkTUS/aNUbjoWXMQfOmwCWjBjg8ZuNZA?=
+ =?us-ascii?Q?rEuWB588bGLPLLOK+9gAA3hj8mjcyUfr3eNPdPkpt2zW43O/38ixHOkp+RgO?=
+ =?us-ascii?Q?yFPLzY5EZVGfxMiED0FLsegHfyuw+QTa7mzZdQIZPPK4GlpuauWGl7BqRX8Y?=
+ =?us-ascii?Q?qbrgvd6ux/8GHaRs5kpxPSO/28DxM2br6drIfbUE2zzY989zU2ctAjgpybGu?=
+ =?us-ascii?Q?1gg+mAyLlyAl6Wq33K+UKuo3TcWT4z1ORwDZlKBs?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 33f96d16-bb9a-497c-d852-08ddbadafea0
+X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB8461.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Jul 2025 09:13:09.5764
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ZwgjqE9sDXaiyKSJuGh+iXEQOUqb9bFR+beMiAXMuY7olXcz/kf1CuI2B1KeYdhX8O/8zfb9cQAQy47SPHtN6g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR04MB7658
 
-On Fri, Jul 04, 2025 at 09:13:16AM -0000, tip-bot2 for K Prateek Nayak wrote:
-> The following commit has been merged into the sched/urgent branch of tip:
-> 
-> Commit-ID:     02bb4259ca525efa39a2531cb630329fb87fc968
-> Gitweb:        https://git.kernel.org/tip/02bb4259ca525efa39a2531cb630329fb87fc968
-> Author:        K Prateek Nayak <kprateek.nayak@amd.com>
-> AuthorDate:    Mon, 30 Jun 2025 06:10:59 
-> Committer:     Peter Zijlstra <peterz@infradead.org>
-> CommitterDate: Fri, 04 Jul 2025 10:35:56 +02:00
-> 
-> sched/fair: Use sched_domain_span() for topology_span_sane()
+On Wed, Jul 02, 2025 at 04:22:30PM +0100, Sudeep Holla wrote:
+>On Fri, Jun 27, 2025 at 02:03:48PM +0800, Peng Fan wrote:
+>> MISC protocol supports getting system log regarding system sleep latency
+>> ,wakeup interrupt and etc.
+>
+>We now have SCMI telemetry protocol to provide such information in a
+>standard protocol. You must consider using that or switching to that
+>in near future. I am OK with this but would like to warn use of custom
+>interface for things like this is not scalable for long term.
 
-My guest doesn't like this one and reverting it ontop of the whole tip lineup
-fixes it.
+I have shared latest 4.0 alpha release information to our firmware
+owner. In future, we may use telemetry, but not up to me.
 
-Holler for more data if needed.
+Thanks,
+Peng
 
-[    0.280062] Timer migration: 2 hierarchy levels; 8 children per group; 2 crossnode level
-[    0.282922] NMI watchdog: Enabled. Permanently consumes one hw-PMU counter.
-[    0.287572] smp: Bringing up secondary CPUs ...
-[    0.288623] smpboot: x86: Booting SMP configuration:
-[    0.289085] .... node  #0, CPUs:        #1  #2  #3  #4  #5  #6  #7  #8  #9 #10 #11 #12 #13 #14 #15
-[    0.302358] smp: Brought up 1 node, 16 CPUs
-[    0.304445] smpboot: Total of 16 processors activated (118401.12 BogoMIPS)
-[    0.307884] BUG: unable to handle page fault for address: 0000000089c402fb
-[    0.307884] #PF: supervisor read access in kernel mode
-[    0.307884] #PF: error_code(0x0000) - not-present page
-[    0.307884] PGD 0 P4D 0 
-[    0.307950] Oops: Oops: 0000 [#1] SMP NOPTI
-[    0.308344] CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.16.0-rc4+ #1 PREEMPT(full) 
-[    0.309115] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 2023.11-8 02/21/2024
-[    0.309934] RIP: 0010:build_sched_domains+0x627/0x1550
-[    0.310086] Code: 84 75 06 00 00 f3 48 0f bc c0 48 63 f8 89 c0 48 0f a3 05 c4 cf 95 08 0f 83 6c 06 00 00 48 8b 3c fd c0 db 29 82 49 8b 44 24 18 <48> 8b 04 07 48 8b 80 90 00 00 00 48 33 86 90 00 00 00 66 85 c0 0f
-[    0.310086] RSP: 0018:ffffc9000001fe60 EFLAGS: 00010247
-[    0.310086] RAX: ffffffff89c402f8 RBX: ffff88800cea8e40 RCX: 0000000000000001
-[    0.310086] RDX: ffffffffffffffff RSI: ffff88800ceaacc0 RDI: 0000000100000003
-[    0.310086] RBP: ffff88800cc4e3e0 R08: 0000000000000000 R09: 0000000000000000
-[    0.310086] R10: 00000000fffedb1d R11: 00000000fffedb1d R12: ffff88800ceda4c0
-[    0.310086] R13: ffff88800cea9500 R14: 0000000000000010 R15: 000000000000000f
-[    0.310086] FS:  0000000000000000(0000) GS:ffff8880f39f2000(0000) knlGS:0000000000000000
-[    0.310086] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[    0.310086] CR2: 0000000089c402fb CR3: 0000000002c1a000 CR4: 00000000003506f0
-[    0.310086] Call Trace:
-[    0.310086]  <TASK>
-[    0.310086]  ? sched_init_domains+0x58/0xa0
-[    0.310086]  sched_init_smp+0x29/0x90
-[    0.310086]  kernel_init_freeable+0xa3/0x290
-[    0.310086]  ? __pfx_kernel_init+0x10/0x10
-[    0.310086]  kernel_init+0x1a/0x1c0
-[    0.310086]  ret_from_fork+0x85/0xf0
-[    0.310086]  ? __pfx_kernel_init+0x10/0x10
-[    0.310086]  ret_from_fork_asm+0x1a/0x30
-[    0.310086]  </TASK>
-[    0.310086] Modules linked in:
-[    0.310086] CR2: 0000000089c402fb
-[    0.310086] ---[ end trace 0000000000000000 ]---
-[    0.310086] RIP: 0010:build_sched_domains+0x627/0x1550
-[    0.310086] Code: 84 75 06 00 00 f3 48 0f bc c0 48 63 f8 89 c0 48 0f a3 05 c4 cf 95 08 0f 83 6c 06 00 00 48 8b 3c fd c0 db 29 82 49 8b 44 24 18 <48> 8b 04 07 48 8b 80 90 00 00 00 48 33 86 90 00 00 00 66 85 c0 0f
-[    0.310086] RSP: 0018:ffffc9000001fe60 EFLAGS: 00010247
-[    0.310086] RAX: ffffffff89c402f8 RBX: ffff88800cea8e40 RCX: 0000000000000001
-[    0.310086] RDX: ffffffffffffffff RSI: ffff88800ceaacc0 RDI: 0000000100000003
-[    0.310086] RBP: ffff88800cc4e3e0 R08: 0000000000000000 R09: 0000000000000000
-[    0.310086] R10: 00000000fffedb1d R11: 00000000fffedb1d R12: ffff88800ceda4c0
-[    0.310086] R13: ffff88800cea9500 R14: 0000000000000010 R15: 000000000000000f
-[    0.310086] FS:  0000000000000000(0000) GS:ffff8880f39f2000(0000) knlGS:0000000000000000
-[    0.310086] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[    0.310086] CR2: 0000000089c402fb CR3: 0000000002c1a000 CR4: 00000000003506f0
-[    0.310086] note: swapper/0[1] exited with irqs disabled
-[    0.310091] Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000009
-[    0.311130] ---[ end Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000009 ]---
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+>
+>-- 
+>Regards,
+>Sudeep
 
