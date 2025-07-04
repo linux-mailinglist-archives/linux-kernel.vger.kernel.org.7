@@ -1,95 +1,95 @@
-Return-Path: <linux-kernel+bounces-716813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E549EAF8AF6
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 10:16:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4460AF8AE3
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 10:13:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B234B3BC9A6
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 08:12:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D4B01885F1A
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 08:13:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F1B12FBFF3;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 760492FBFED;
 	Fri,  4 Jul 2025 07:55:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NJ6NX9OS"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ax/mHDki"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEE842F7D0E;
-	Fri,  4 Jul 2025 07:55:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECC042F7CEF;
+	Fri,  4 Jul 2025 07:55:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751615715; cv=none; b=NuVF2B5VTDUeoUO/uVV3hRSFkE7ULxvT4CzPcPfWc0nvjUXYC6zncQFO0kXzdcCc+UpG5s0QTfRiIRvhIZZVyELTu4nQYP+y6qwKePmvAFTsUEj8e3LbncXLpJqpp8+ADg88k6dqbUNHZd7XnRvRfk69Dovxlfn/dB0eehQ9448=
+	t=1751615714; cv=none; b=pcKhcsF6qWJcFPev3Anbk4IvYq7Se0BXjNY4699n/j53R6izEJoIdv30H5OTKYtYkZJtVQ0F+VB54hoEEMbapkt3aazj9XlAg7T809r0ypzaP9Zb6EZTu0IjuBZLlWbHf8abOTdU+xA1Yi5u+QrjTgoJOEeu3uE4I7dM3CLklyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751615715; c=relaxed/simple;
-	bh=lzOBZYTBavsi2Z34vHlXoBrBjY0eNs9he5kt9Nk32kM=;
+	s=arc-20240116; t=1751615714; c=relaxed/simple;
+	bh=VtrMMS/EYac2mYN0thS6RYOHnRUoRDdcw8Uw9hEQxe0=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=DdKJDKacAq09zqbByO9BcmpJ3fz9CApaOu44WxeNsVxxsVQ3pXt4GQhY85YJnElNKSJoqQL+LXG38tOfH2XDZCkIPdlo1yM0EuuDJo5ELuFVYNQKf0HWJdjNNK0L3DVVjHjaifNAuS0WJfPsK9jVOXS/N4IGn/Su87HIbTeA9N4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NJ6NX9OS; arc=none smtp.client-ip=198.175.65.11
+	 MIME-Version; b=niVCmYnLukoJlf9azdjTpL82iE4400y13LvMyI67LqUGHsEQxnwMplA2HKC0ZVd05CVXrbdxGnzjbjuz82x/2Aetclwx7dcCkOvHAVQw4uiX3QvzgPzJo8J8iVvWklF9jrptfGpEKq/Ck5RhFjegfh2ItwbuK3rm3GU0NCG/X/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ax/mHDki; arc=none smtp.client-ip=198.175.65.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751615713; x=1783151713;
+  t=1751615712; x=1783151712;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=lzOBZYTBavsi2Z34vHlXoBrBjY0eNs9he5kt9Nk32kM=;
-  b=NJ6NX9OSqK2yH49TGJ1/yVF+qy9VHM1ambFydZS4yn9Bd3bZbiKYVwRH
-   DtatMdEV2epfEOmnZpNEBBgjG3+4FJJZ4nxHyVb8OX9gxKuL0RXAd2Fdf
-   FdsWICNO2YZaZadK03b+oXEC7LTtqOZyUgLYdFwGY+Mu1oShnagil8qYe
-   5U7dANefCWdvcduNUdv8BftpBtm0ZUhpzvwnUU/BlX+dRz62eoMuhxvlp
-   CnerzDfDIQOfDV1byNO828Hs0iyzMo6TlZrsYqvPYsVQh7123/PDT4djy
-   ZSik0Ijspc8Nad+6Hngl5mBEHNTN2c4pC6Nqv8dICEK5As+7FrnN1lChf
-   A==;
-X-CSE-ConnectionGUID: yASibvyJRiytjWs64v0WHw==
-X-CSE-MsgGUID: oqHXpyHFQ8SRzHEhKU2g8g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11483"; a="64194328"
+  bh=VtrMMS/EYac2mYN0thS6RYOHnRUoRDdcw8Uw9hEQxe0=;
+  b=ax/mHDkiWuxjiU+ulLFieWS9ZNoBHbyZl1ks0M7iktVooeOd25a4twrq
+   2NPkFa8fqSsmcDGzHuo8xNxSczySdQ0lKjoQGblePyOYyfFE1PBx3e6Td
+   9TFKqfJ0FJ+hZDP+iJd3BPqv2crLuwnc9uowGjvQ4REg+lncH1hLOgLBt
+   Inpawwe3Q7MQtPFcbEANF+W/toFiTE21grGsiKYpUa6pyUK11ZnWm8xXj
+   RnqL6LftfIyNszn8DktpVj4zJFXEq6rU9c8/H3l6GubxyadkxBNUWgTr9
+   XqHUdpsJBLwsQcqUYFmnXuBnJ3VyfZMn8QVNdoDZx0YLjjFHxOV9EjQwk
+   w==;
+X-CSE-ConnectionGUID: nFLQBoXEQy2wKdpTy5lAiw==
+X-CSE-MsgGUID: T5sFCed6SzK47znbWn6mKw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11483"; a="64194335"
 X-IronPort-AV: E=Sophos;i="6.16,286,1744095600"; 
-   d="scan'208";a="64194328"
+   d="scan'208";a="64194335"
 Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 00:55:03 -0700
-X-CSE-ConnectionGUID: DyR3FIjPRPqQIAzc1rL3Jw==
-X-CSE-MsgGUID: qJCH8EhASNmI9Sen5dGyBg==
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 00:55:04 -0700
+X-CSE-ConnectionGUID: jIXe8cbqS1yvqeVuXvR2hw==
+X-CSE-MsgGUID: 1doSRlVvQPm86EldGdrOEA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.16,286,1744095600"; 
-   d="scan'208";a="158616672"
+   d="scan'208";a="158616706"
 Received: from jkrzyszt-mobl2.ger.corp.intel.com (HELO svinhufvud.fi.intel.com) ([10.245.244.244])
   by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 00:54:55 -0700
 Received: from svinhufvud.lan (localhost [IPv6:::1])
-	by svinhufvud.fi.intel.com (Postfix) with ESMTP id CFDC8447EB;
-	Fri,  4 Jul 2025 10:54:52 +0300 (EEST)
+	by svinhufvud.fi.intel.com (Postfix) with ESMTP id CB15944843;
+	Fri,  4 Jul 2025 10:54:53 +0300 (EEST)
 Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
 From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Peter Korsgaard <jacmet@sunsite.dk>,
+To: Peter Chen <peter.chen@kernel.org>,
+	Pawel Laszczak <pawell@cadence.com>,
+	Roger Quadros <rogerq@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
 	Michal Simek <michal.simek@amd.com>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Markus Schneider-Pargmann <msp@baylibre.com>,
-	John Ogness <john.ogness@linutronix.de>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Sherry Sun <sherry.sun@nxp.com>,
-	Ingo Molnar <mingo@kernel.org>,
-	Peng Fan <peng.fan@nxp.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Petr Mladek <pmladek@suse.com>,
-	Marcos Paulo de Souza <mpdesouza@suse.com>,
-	Nam Cao <namcao@linutronix.de>,
-	Zack Rusin <zack.rusin@broadcom.com>,
-	Jinjie Ruan <ruanjinjie@huawei.com>,
-	Sean Anderson <sean.anderson@linux.dev>
-Cc: linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 66/80] serial: Remove redundant pm_runtime_mark_last_busy() calls
-Date: Fri,  4 Jul 2025 10:54:52 +0300
-Message-Id: <20250704075452.3222201-1-sakari.ailus@linux.intel.com>
+	Chunfeng Yun <chunfeng.yun@mediatek.com>,
+	Mathias Nyman <mathias.nyman@intel.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Bastien Nocera <hadess@hadess.net>,
+	Bin Liu <b-liu@ti.com>
+Cc: linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	linux-tegra@vger.kernel.org,
+	linux-omap@vger.kernel.org
+Subject: [PATCH 67/80] usb: Remove redundant pm_runtime_mark_last_busy() calls
+Date: Fri,  4 Jul 2025 10:54:53 +0300
+Message-Id: <20250704075453.3222311-1-sakari.ailus@linux.intel.com>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250704075225.3212486-1-sakari.ailus@linux.intel.com>
 References: <20250704075225.3212486-1-sakari.ailus@linux.intel.com>
@@ -118,166 +118,351 @@ rc2:
         git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
                 pm-runtime-6.17-rc1
 
- drivers/tty/serial/8250/8250_omap.c | 9 ---------
- drivers/tty/serial/8250/8250_port.c | 2 --
- drivers/tty/serial/fsl_lpuart.c     | 1 -
- drivers/tty/serial/serial_core.c    | 1 -
- drivers/tty/serial/uartlite.c       | 2 --
- drivers/tty/serial/xilinx_uartps.c  | 1 -
- 6 files changed, 16 deletions(-)
+ drivers/usb/cdns3/cdns3-gadget.c            | 1 -
+ drivers/usb/cdns3/cdnsp-gadget.c            | 1 -
+ drivers/usb/chipidea/core.c                 | 1 -
+ drivers/usb/chipidea/otg_fsm.c              | 1 -
+ drivers/usb/dwc3/core.c                     | 2 --
+ drivers/usb/dwc3/dwc3-am62.c                | 1 -
+ drivers/usb/dwc3/dwc3-imx8mp.c              | 1 -
+ drivers/usb/dwc3/dwc3-pci.c                 | 1 -
+ drivers/usb/dwc3/dwc3-xilinx.c              | 1 -
+ drivers/usb/gadget/udc/cdns2/cdns2-gadget.c | 1 -
+ drivers/usb/host/xhci-mtk.c                 | 1 -
+ drivers/usb/host/xhci-tegra.c               | 1 -
+ drivers/usb/misc/apple-mfi-fastcharge.c     | 1 -
+ drivers/usb/mtu3/mtu3_plat.c                | 1 -
+ drivers/usb/musb/musb_core.c                | 5 -----
+ drivers/usb/musb/musb_debugfs.c             | 5 -----
+ drivers/usb/musb/musb_dsps.c                | 1 -
+ drivers/usb/musb/musb_gadget.c              | 4 ----
+ drivers/usb/musb/omap2430.c                 | 1 -
+ 19 files changed, 31 deletions(-)
 
-diff --git a/drivers/tty/serial/8250/8250_omap.c b/drivers/tty/serial/8250/8250_omap.c
-index 6707f55bdbe7..091afea71b95 100644
---- a/drivers/tty/serial/8250/8250_omap.c
-+++ b/drivers/tty/serial/8250/8250_omap.c
-@@ -207,7 +207,6 @@ static void omap8250_set_mctrl(struct uart_port *port, unsigned int mctrl)
+diff --git a/drivers/usb/cdns3/cdns3-gadget.c b/drivers/usb/cdns3/cdns3-gadget.c
+index d9d8dc05b235..168707213ed9 100644
+--- a/drivers/usb/cdns3/cdns3-gadget.c
++++ b/drivers/usb/cdns3/cdns3-gadget.c
+@@ -3251,7 +3251,6 @@ static void cdns3_gadget_exit(struct cdns *cdns)
+ 	priv_dev = cdns->gadget_dev;
  
- 	__omap8250_set_mctrl(port, mctrl);
  
--	pm_runtime_mark_last_busy(port->dev);
- 	pm_runtime_put_autosuspend(port->dev);
- }
+-	pm_runtime_mark_last_busy(cdns->dev);
+ 	pm_runtime_put_autosuspend(cdns->dev);
  
-@@ -516,7 +515,6 @@ static void omap_8250_set_termios(struct uart_port *port,
- 	omap8250_restore_regs(up);
+ 	usb_del_gadget(&priv_dev->gadget);
+diff --git a/drivers/usb/cdns3/cdnsp-gadget.c b/drivers/usb/cdns3/cdnsp-gadget.c
+index 55f95f41b3b4..2ffe24a6e477 100644
+--- a/drivers/usb/cdns3/cdnsp-gadget.c
++++ b/drivers/usb/cdns3/cdnsp-gadget.c
+@@ -1996,7 +1996,6 @@ static void cdnsp_gadget_exit(struct cdns *cdns)
+ 	struct cdnsp_device *pdev = cdns->gadget_dev;
  
- 	uart_port_unlock_irq(&up->port);
--	pm_runtime_mark_last_busy(port->dev);
- 	pm_runtime_put_autosuspend(port->dev);
- 
- 	/* calculate wakeup latency constraint */
-@@ -554,7 +552,6 @@ static void omap_8250_pm(struct uart_port *port, unsigned int state,
- 
- 	uart_port_unlock_irq(port);
- 
--	pm_runtime_mark_last_busy(port->dev);
- 	pm_runtime_put_autosuspend(port->dev);
- }
- 
-@@ -773,7 +770,6 @@ static int omap_8250_startup(struct uart_port *port)
- 
- 	enable_irq(port->irq);
- 
--	pm_runtime_mark_last_busy(port->dev);
- 	pm_runtime_put_autosuspend(port->dev);
- 	return 0;
- }
-@@ -811,7 +807,6 @@ static void omap_8250_shutdown(struct uart_port *port)
- 		serial_out(up, UART_LCR, up->lcr & ~UART_LCR_SBC);
- 	serial_out(up, UART_FCR, UART_FCR_CLEAR_RCVR | UART_FCR_CLEAR_XMIT);
- 
--	pm_runtime_mark_last_busy(port->dev);
- 	pm_runtime_put_autosuspend(port->dev);
- }
- 
-@@ -827,7 +822,6 @@ static void omap_8250_throttle(struct uart_port *port)
- 	priv->throttled = true;
- 	uart_port_unlock_irqrestore(port, flags);
- 
--	pm_runtime_mark_last_busy(port->dev);
- 	pm_runtime_put_autosuspend(port->dev);
- }
- 
-@@ -848,7 +842,6 @@ static void omap_8250_unthrottle(struct uart_port *port)
- 	serial_out(up, UART_IER, up->ier);
- 	uart_port_unlock_irqrestore(port, flags);
- 
--	pm_runtime_mark_last_busy(port->dev);
- 	pm_runtime_put_autosuspend(port->dev);
- }
- 
-@@ -1594,7 +1587,6 @@ static int omap8250_probe(struct platform_device *pdev)
- 		goto err;
+ 	devm_free_irq(pdev->dev, cdns->dev_irq, pdev);
+-	pm_runtime_mark_last_busy(cdns->dev);
+ 	pm_runtime_put_autosuspend(cdns->dev);
+ 	usb_del_gadget_udc(&pdev->gadget);
+ 	cdnsp_gadget_free_endpoints(pdev);
+diff --git a/drivers/usb/chipidea/core.c b/drivers/usb/chipidea/core.c
+index 694b4a8e4e1d..a6ce73dcc871 100644
+--- a/drivers/usb/chipidea/core.c
++++ b/drivers/usb/chipidea/core.c
+@@ -1372,7 +1372,6 @@ static int ci_controller_resume(struct device *dev)
+ 	ci->in_lpm = false;
+ 	if (ci->wakeup_int) {
+ 		ci->wakeup_int = false;
+-		pm_runtime_mark_last_busy(ci->dev);
+ 		pm_runtime_put_autosuspend(ci->dev);
+ 		enable_irq(ci->irq);
+ 		if (ci_otg_is_fsm_mode(ci))
+diff --git a/drivers/usb/chipidea/otg_fsm.c b/drivers/usb/chipidea/otg_fsm.c
+index a093544482d5..929536dc96ec 100644
+--- a/drivers/usb/chipidea/otg_fsm.c
++++ b/drivers/usb/chipidea/otg_fsm.c
+@@ -629,7 +629,6 @@ int ci_otg_fsm_work(struct ci_hdrc *ci)
+ 				ci_otg_queue_work(ci);
+ 			}
+ 		} else if (ci->fsm.otg->state == OTG_STATE_A_HOST) {
+-			pm_runtime_mark_last_busy(ci->dev);
+ 			pm_runtime_put_autosuspend(ci->dev);
+ 			return 0;
+ 		}
+diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
+index 8002c23a5a02..77b309ebd704 100644
+--- a/drivers/usb/dwc3/core.c
++++ b/drivers/usb/dwc3/core.c
+@@ -279,7 +279,6 @@ static void __dwc3_set_mode(struct work_struct *work)
  	}
- 	priv->line = ret;
--	pm_runtime_mark_last_busy(&pdev->dev);
- 	pm_runtime_put_autosuspend(&pdev->dev);
- 	return 0;
- err:
-@@ -1682,7 +1674,6 @@ static int omap8250_resume(struct device *dev)
  
- 	serial8250_resume_port(priv->line);
- 	/* Paired with pm_runtime_resume_and_get() in omap8250_suspend() */
+ out:
+-	pm_runtime_mark_last_busy(dwc->dev);
+ 	pm_runtime_put_autosuspend(dwc->dev);
+ 	mutex_unlock(&dwc->mutex);
+ }
+@@ -2642,7 +2641,6 @@ int dwc3_runtime_idle(struct dwc3 *dwc)
+ 		break;
+ 	}
+ 
+-	pm_runtime_mark_last_busy(dev);
+ 	pm_runtime_autosuspend(dev);
+ 
+ 	return 0;
+diff --git a/drivers/usb/dwc3/dwc3-am62.c b/drivers/usb/dwc3/dwc3-am62.c
+index 9db8f3ca493d..e11d7643f966 100644
+--- a/drivers/usb/dwc3/dwc3-am62.c
++++ b/drivers/usb/dwc3/dwc3-am62.c
+@@ -292,7 +292,6 @@ static int dwc3_ti_probe(struct platform_device *pdev)
+ 	/* Setting up autosuspend */
+ 	pm_runtime_set_autosuspend_delay(dev, DWC3_AM62_AUTOSUSPEND_DELAY);
+ 	pm_runtime_use_autosuspend(dev);
+-	pm_runtime_mark_last_busy(dev);
+ 	pm_runtime_put_autosuspend(dev);
+ 	return 0;
+ 
+diff --git a/drivers/usb/dwc3/dwc3-imx8mp.c b/drivers/usb/dwc3/dwc3-imx8mp.c
+index 3edc5aca76f9..37700d95bc09 100644
+--- a/drivers/usb/dwc3/dwc3-imx8mp.c
++++ b/drivers/usb/dwc3/dwc3-imx8mp.c
+@@ -307,7 +307,6 @@ static int dwc3_imx8mp_resume(struct dwc3_imx8mp *dwc3_imx, pm_message_t msg)
+ 	if (dwc3_imx->wakeup_pending) {
+ 		dwc3_imx->wakeup_pending = false;
+ 		if (dwc->current_dr_role == DWC3_GCTL_PRTCAP_DEVICE) {
+-			pm_runtime_mark_last_busy(dwc->dev);
+ 			pm_runtime_put_autosuspend(dwc->dev);
+ 		} else {
+ 			/*
+diff --git a/drivers/usb/dwc3/dwc3-pci.c b/drivers/usb/dwc3/dwc3-pci.c
+index 54a4ee2b90b7..07dfa0b5d184 100644
+--- a/drivers/usb/dwc3/dwc3-pci.c
++++ b/drivers/usb/dwc3/dwc3-pci.c
+@@ -321,7 +321,6 @@ static void dwc3_pci_resume_work(struct work_struct *work)
+ 		return;
+ 	}
+ 
+-	pm_runtime_mark_last_busy(&dwc3->dev);
+ 	pm_runtime_put_sync_autosuspend(&dwc3->dev);
+ }
+ #endif
+diff --git a/drivers/usb/dwc3/dwc3-xilinx.c b/drivers/usb/dwc3/dwc3-xilinx.c
+index 1e28d6f50ed0..0a8c47876ff9 100644
+--- a/drivers/usb/dwc3/dwc3-xilinx.c
++++ b/drivers/usb/dwc3/dwc3-xilinx.c
+@@ -383,7 +383,6 @@ static int __maybe_unused dwc3_xlnx_runtime_resume(struct device *dev)
+ 
+ static int __maybe_unused dwc3_xlnx_runtime_idle(struct device *dev)
+ {
+-	pm_runtime_mark_last_busy(dev);
+ 	pm_runtime_autosuspend(dev);
+ 
+ 	return 0;
+diff --git a/drivers/usb/gadget/udc/cdns2/cdns2-gadget.c b/drivers/usb/gadget/udc/cdns2/cdns2-gadget.c
+index 7e69944ef18a..9b53daf76583 100644
+--- a/drivers/usb/gadget/udc/cdns2/cdns2-gadget.c
++++ b/drivers/usb/gadget/udc/cdns2/cdns2-gadget.c
+@@ -2415,7 +2415,6 @@ int cdns2_gadget_resume(struct cdns2_device *pdev, bool hibernated)
+ 
+ void cdns2_gadget_remove(struct cdns2_device *pdev)
+ {
+-	pm_runtime_mark_last_busy(pdev->dev);
+ 	pm_runtime_put_autosuspend(pdev->dev);
+ 
+ 	usb_del_gadget(&pdev->gadget);
+diff --git a/drivers/usb/host/xhci-mtk.c b/drivers/usb/host/xhci-mtk.c
+index 208558cf822d..06043c7c3100 100644
+--- a/drivers/usb/host/xhci-mtk.c
++++ b/drivers/usb/host/xhci-mtk.c
+@@ -670,7 +670,6 @@ static int xhci_mtk_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	device_enable_async_suspend(dev);
+-	pm_runtime_mark_last_busy(dev);
+ 	pm_runtime_put_autosuspend(dev);
+ 	pm_runtime_forbid(dev);
+ 
+diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
+index 0c7af44d4dae..554b03e3ae92 100644
+--- a/drivers/usb/host/xhci-tegra.c
++++ b/drivers/usb/host/xhci-tegra.c
+@@ -1394,7 +1394,6 @@ static void tegra_xhci_id_work(struct work_struct *work)
+ 		}
+ 
+ 		tegra_xhci_set_port_power(tegra, true, true);
+-		pm_runtime_mark_last_busy(tegra->dev);
+ 
+ 	} else {
+ 		if (tegra->otg_usb3_port >= 0)
+diff --git a/drivers/usb/misc/apple-mfi-fastcharge.c b/drivers/usb/misc/apple-mfi-fastcharge.c
+index 8e852f4b8262..47b38dcc2992 100644
+--- a/drivers/usb/misc/apple-mfi-fastcharge.c
++++ b/drivers/usb/misc/apple-mfi-fastcharge.c
+@@ -134,7 +134,6 @@ static int apple_mfi_fc_set_property(struct power_supply *psy,
+ 		ret = -EINVAL;
+ 	}
+ 
+-	pm_runtime_mark_last_busy(&mfi->udev->dev);
+ 	pm_runtime_put_autosuspend(&mfi->udev->dev);
+ 
+ 	return ret;
+diff --git a/drivers/usb/mtu3/mtu3_plat.c b/drivers/usb/mtu3/mtu3_plat.c
+index 7b5a431acb56..cc8a864dbd63 100644
+--- a/drivers/usb/mtu3/mtu3_plat.c
++++ b/drivers/usb/mtu3/mtu3_plat.c
+@@ -431,7 +431,6 @@ static int mtu3_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	device_enable_async_suspend(dev);
+-	pm_runtime_mark_last_busy(dev);
+ 	pm_runtime_put_autosuspend(dev);
+ 	pm_runtime_forbid(dev);
+ 
+diff --git a/drivers/usb/musb/musb_core.c b/drivers/usb/musb/musb_core.c
+index c7234b236971..0acc62569ae5 100644
+--- a/drivers/usb/musb/musb_core.c
++++ b/drivers/usb/musb/musb_core.c
+@@ -2031,7 +2031,6 @@ static void musb_pm_runtime_check_session(struct musb *musb)
+ 		if (!musb->session)
+ 			break;
+ 		trace_musb_state(musb, devctl, "Allow PM on possible host mode disconnect");
+-		pm_runtime_mark_last_busy(musb->controller);
+ 		pm_runtime_put_autosuspend(musb->controller);
+ 		musb->session = false;
+ 		return;
+@@ -2063,7 +2062,6 @@ static void musb_pm_runtime_check_session(struct musb *musb)
+ 					      msecs_to_jiffies(3000));
+ 	} else {
+ 		trace_musb_state(musb, devctl, "Allow PM with no session");
+-		pm_runtime_mark_last_busy(musb->controller);
+ 		pm_runtime_put_autosuspend(musb->controller);
+ 	}
+ 
+@@ -2090,7 +2088,6 @@ static void musb_irq_work(struct work_struct *data)
+ 		sysfs_notify(&musb->controller->kobj, NULL, "mode");
+ 	}
+ 
+-	pm_runtime_mark_last_busy(musb->controller);
+ 	pm_runtime_put_autosuspend(musb->controller);
+ }
+ 
+@@ -2564,7 +2561,6 @@ musb_init_controller(struct device *dev, int nIrq, void __iomem *ctrl)
+ 	musb_init_debugfs(musb);
+ 
+ 	musb->is_initialized = 1;
+-	pm_runtime_mark_last_busy(musb->controller);
+ 	pm_runtime_put_autosuspend(musb->controller);
+ 
+ 	return 0;
+@@ -2887,7 +2883,6 @@ static int musb_resume(struct device *dev)
+ 			error);
+ 	spin_unlock_irqrestore(&musb->lock, flags);
+ 
 -	pm_runtime_mark_last_busy(dev);
  	pm_runtime_put_autosuspend(dev);
  
  	return 0;
-diff --git a/drivers/tty/serial/8250/8250_port.c b/drivers/tty/serial/8250/8250_port.c
-index 7eddcab318b4..22ad70117c44 100644
---- a/drivers/tty/serial/8250/8250_port.c
-+++ b/drivers/tty/serial/8250/8250_port.c
-@@ -519,7 +519,6 @@ static void serial8250_rpm_put(struct uart_8250_port *p)
- {
- 	if (!(p->capabilities & UART_CAP_RPM))
- 		return;
--	pm_runtime_mark_last_busy(p->port.dev);
- 	pm_runtime_put_autosuspend(p->port.dev);
- }
- 
-@@ -659,7 +658,6 @@ static void serial8250_rpm_put_tx(struct uart_8250_port *p)
- 	rpm_active = xchg(&p->rpm_tx_active, 0);
- 	if (!rpm_active)
- 		return;
--	pm_runtime_mark_last_busy(p->port.dev);
- 	pm_runtime_put_autosuspend(p->port.dev);
- }
- 
-diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpuart.c
-index c9519e649e82..79050a42cd1b 100644
---- a/drivers/tty/serial/fsl_lpuart.c
-+++ b/drivers/tty/serial/fsl_lpuart.c
-@@ -825,7 +825,6 @@ lpuart_uart_pm(struct uart_port *port, unsigned int state, unsigned int oldstate
- {
- 	switch (state) {
- 	case UART_PM_STATE_OFF:
--		pm_runtime_mark_last_busy(port->dev);
- 		pm_runtime_put_autosuspend(port->dev);
- 		break;
- 	default:
-diff --git a/drivers/tty/serial/serial_core.c b/drivers/tty/serial/serial_core.c
-index 86d404d649a3..f9fc9afcd845 100644
---- a/drivers/tty/serial/serial_core.c
-+++ b/drivers/tty/serial/serial_core.c
-@@ -159,7 +159,6 @@ static void __uart_start(struct uart_state *state)
- 	 */
- 	if (!pm_runtime_enabled(port->dev) || pm_runtime_active(&port_dev->dev))
- 		port->ops->start_tx(port);
--	pm_runtime_mark_last_busy(&port_dev->dev);
- 	pm_runtime_put_autosuspend(&port_dev->dev);
- }
- 
-diff --git a/drivers/tty/serial/uartlite.c b/drivers/tty/serial/uartlite.c
-index 39c1fd1ff9ce..c21cd5f5be27 100644
---- a/drivers/tty/serial/uartlite.c
-+++ b/drivers/tty/serial/uartlite.c
-@@ -422,7 +422,6 @@ static void ulite_pm(struct uart_port *port, unsigned int state,
- 		if (ret < 0)
- 			dev_err(port->dev, "Failed to enable clocks\n");
- 	} else {
--		pm_runtime_mark_last_busy(port->dev);
- 		pm_runtime_put_autosuspend(port->dev);
+diff --git a/drivers/usb/musb/musb_debugfs.c b/drivers/usb/musb/musb_debugfs.c
+index 2d623284edf6..5092d62c2062 100644
+--- a/drivers/usb/musb/musb_debugfs.c
++++ b/drivers/usb/musb/musb_debugfs.c
+@@ -106,7 +106,6 @@ static int musb_regdump_show(struct seq_file *s, void *unused)
+ 		}
  	}
+ 
+-	pm_runtime_mark_last_busy(musb->controller);
+ 	pm_runtime_put_autosuspend(musb->controller);
+ 	return 0;
  }
-@@ -882,7 +881,6 @@ static int ulite_probe(struct platform_device *pdev)
+@@ -119,7 +118,6 @@ static int musb_test_mode_show(struct seq_file *s, void *unused)
  
- 	ret = ulite_assign(&pdev->dev, id, res->start, irq, pdata);
+ 	pm_runtime_get_sync(musb->controller);
+ 	test = musb_readb(musb->mregs, MUSB_TESTMODE);
+-	pm_runtime_mark_last_busy(musb->controller);
+ 	pm_runtime_put_autosuspend(musb->controller);
  
--	pm_runtime_mark_last_busy(&pdev->dev);
- 	pm_runtime_put_autosuspend(&pdev->dev);
+ 	if (test == (MUSB_TEST_FORCE_HOST | MUSB_TEST_FORCE_FS))
+@@ -216,7 +214,6 @@ static ssize_t musb_test_mode_write(struct file *file,
+ 	musb_writeb(musb->mregs, MUSB_TESTMODE, test);
  
- 	return ret;
-diff --git a/drivers/tty/serial/xilinx_uartps.c b/drivers/tty/serial/xilinx_uartps.c
-index fe457bf1e15b..36afa2a8f158 100644
---- a/drivers/tty/serial/xilinx_uartps.c
-+++ b/drivers/tty/serial/xilinx_uartps.c
-@@ -1240,7 +1240,6 @@ static void cdns_uart_pm(struct uart_port *port, unsigned int state,
- {
- 	switch (state) {
- 	case UART_PM_STATE_OFF:
--		pm_runtime_mark_last_busy(port->dev);
- 		pm_runtime_put_autosuspend(port->dev);
+ ret:
+-	pm_runtime_mark_last_busy(musb->controller);
+ 	pm_runtime_put_autosuspend(musb->controller);
+ 	return count;
+ }
+@@ -243,7 +240,6 @@ static int musb_softconnect_show(struct seq_file *s, void *unused)
+ 		reg = musb_readb(musb->mregs, MUSB_DEVCTL);
+ 		connect = reg & MUSB_DEVCTL_SESSION ? 1 : 0;
+ 
+-		pm_runtime_mark_last_busy(musb->controller);
+ 		pm_runtime_put_autosuspend(musb->controller);
  		break;
  	default:
+@@ -304,7 +300,6 @@ static ssize_t musb_softconnect_write(struct file *file,
+ 		}
+ 	}
+ 
+-	pm_runtime_mark_last_busy(musb->controller);
+ 	pm_runtime_put_autosuspend(musb->controller);
+ 	return count;
+ }
+diff --git a/drivers/usb/musb/musb_dsps.c b/drivers/usb/musb/musb_dsps.c
+index 12f587ab8511..9f93ed59a7e6 100644
+--- a/drivers/usb/musb/musb_dsps.c
++++ b/drivers/usb/musb/musb_dsps.c
+@@ -296,7 +296,6 @@ static void otg_timer(struct timer_list *t)
+ 	if (err < 0)
+ 		dev_err(dev, "%s resume work: %i\n", __func__, err);
+ 	spin_unlock_irqrestore(&musb->lock, flags);
+-	pm_runtime_mark_last_busy(dev);
+ 	pm_runtime_put_autosuspend(dev);
+ }
+ 
+diff --git a/drivers/usb/musb/musb_gadget.c b/drivers/usb/musb/musb_gadget.c
+index 6869c58367f2..f6ea91df80e4 100644
+--- a/drivers/usb/musb/musb_gadget.c
++++ b/drivers/usb/musb/musb_gadget.c
+@@ -1258,7 +1258,6 @@ static int musb_gadget_queue(struct usb_ep *ep, struct usb_request *req,
+ 
+ unlock:
+ 	spin_unlock_irqrestore(&musb->lock, lockflags);
+-	pm_runtime_mark_last_busy(musb->controller);
+ 	pm_runtime_put_autosuspend(musb->controller);
+ 
+ 	return status;
+@@ -1642,7 +1641,6 @@ static void musb_gadget_work(struct work_struct *work)
+ 	spin_lock_irqsave(&musb->lock, flags);
+ 	musb_pullup(musb, musb->softconnect);
+ 	spin_unlock_irqrestore(&musb->lock, flags);
+-	pm_runtime_mark_last_busy(musb->controller);
+ 	pm_runtime_put_autosuspend(musb->controller);
+ }
+ 
+@@ -1862,7 +1860,6 @@ static int musb_gadget_start(struct usb_gadget *g,
+ 	if (musb->xceiv && musb->xceiv->last_event == USB_EVENT_ID)
+ 		musb_platform_set_vbus(musb, 1);
+ 
+-	pm_runtime_mark_last_busy(musb->controller);
+ 	pm_runtime_put_autosuspend(musb->controller);
+ 
+ 	return 0;
+@@ -1915,7 +1912,6 @@ static int musb_gadget_stop(struct usb_gadget *g)
+ 	 */
+ 
+ 	/* Force check of devctl register for PM runtime */
+-	pm_runtime_mark_last_busy(musb->controller);
+ 	pm_runtime_put_autosuspend(musb->controller);
+ 
+ 	return 0;
+diff --git a/drivers/usb/musb/omap2430.c b/drivers/usb/musb/omap2430.c
+index 2970967a4fd2..191901317d7f 100644
+--- a/drivers/usb/musb/omap2430.c
++++ b/drivers/usb/musb/omap2430.c
+@@ -151,7 +151,6 @@ static void omap_musb_set_mailbox(struct omap2430_glue *glue)
+ 	default:
+ 		dev_dbg(musb->controller, "ID float\n");
+ 	}
+-	pm_runtime_mark_last_busy(musb->controller);
+ 	pm_runtime_put_autosuspend(musb->controller);
+ 	atomic_notifier_call_chain(&musb->xceiv->notifier,
+ 			musb->xceiv->last_event, NULL);
 -- 
 2.39.5
 
