@@ -1,164 +1,209 @@
-Return-Path: <linux-kernel+bounces-717943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-717980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5FBCAF9B15
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 21:15:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3399AAF9BB4
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 22:32:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87B553B21BC
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 19:15:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49DA83B28D6
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 20:31:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1562A21B9C5;
-	Fri,  4 Jul 2025 19:15:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8726622A1EF;
+	Fri,  4 Jul 2025 20:32:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="LrmbKJUr"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=landley.net header.i=@landley.net header.b="PJ50S/gu"
+Received: from seahorse.cherry.relay.mailchannels.net (seahorse.cherry.relay.mailchannels.net [23.83.223.161])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9B232E36F8;
-	Fri,  4 Jul 2025 19:15:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751656526; cv=none; b=rNs4fQfwbYXqjvcJCdy9617yefoncdIpJqcioDo/e6NfmfZ9gr6nR3yFsEYdrYRYFBUWxULa3gJ16zoYdLYgDseo57BiNILMqBLc39GsS8n8s30N8Oa1ZVQEHBFD6sOvbT3S5jhilAZEA7cmDMJ8aD/OUATwCrSgijTJzD4Hiq4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751656526; c=relaxed/simple;
-	bh=mNnH1t+vegTyZzbkqwsJDZyZJhr/Yet+MLUe6KAnQjE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=YMZ+QmdQkmKBUCwnK1wubmXqK7YLenNd0Aad2nHFbhq8iDDh0LsX/1aSOtk47Y4gAGLknmsBGe9I/jfUSM70zT+CRKCxMNvlJ4u1NPvHCquapVp5+luoTCHhSWJKfnWzeIr8/Al6LvSwMr0EkoOC0t1oXPdGxUNmaUhFrODZO04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=LrmbKJUr; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 564CmcUg032540;
-	Fri, 4 Jul 2025 19:15:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	eJkrtxquGm4nc96jYiWoWgXyryysi13MMYybC16+QMA=; b=LrmbKJUryRh+YYKK
-	hkAD9QCC3fE/XvUNis+sXPyqb4lIygsHM1g33farSUTR1RsCMiUlDFoeA8u6gyQB
-	x1mgWfnChRzAlpWA+6V3gdUl2md3g9LeavmXm7dGYTx8Zn0uEBExRYZfV761C4j8
-	U2If71X6hBBUCvmvf/pkLS6KPsgTUgFMGIrBvL6mB/A7h5Bw1QH2d+TCIy37musQ
-	UqLErGzdqNtXZWwHrA12Qz3LJ/7wFr0tsPYcI0TS5aKkogkIGs0A1w7mU468Mh+A
-	lHsE/VfL/xmcL9c6mFsKc8ZGFKmDVvoF7fYD26hbshvE0UewTXkkaitiZlTngzqx
-	bI+psg==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47j63kn3ft-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 04 Jul 2025 19:15:18 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 564JFHbA017747
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 4 Jul 2025 19:15:17 GMT
-Received: from [10.50.43.109] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Fri, 4 Jul
- 2025 12:15:13 -0700
-Message-ID: <85f62a4b-cec8-48a1-a232-7f904371e390@quicinc.com>
-Date: Sat, 5 Jul 2025 00:45:10 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C86A62E36F3
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 20:31:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.223.161
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751661121; cv=pass; b=XZt+UFV5kzV02ZYqWf8gEzwJAvCln5bO3wkXVJ7tAZnV1LtAscFXGGUvMC5oVkIkL85BUeLi/zaI009nwM+ERLFVemjM/fOR6OcVGVxL+MTKU+LPTpZNt991p4Hpv8RgYFwX3VwipPL8cmVyNsDf8LOQ7bg3XXN13jxA1xbbdkg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751661121; c=relaxed/simple;
+	bh=6RzD1FiAIOC3CMmTvRYiJ8fUBmWK/sq7a9475l3CxJ8=;
+	h=Content-Type:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To; b=mep/WBMk+w2xFz2yUPwT7TGt3JkUS7IPe1WpBOko+5JCA/BFKqti1lzbUG9cUfvqB+6+44mGpT68YEDsSA7pARaA6AyZadrs11c5yYlTVhK0mEG2orRH7TwNHZ73xCUm+hbSuR4BrkKLcouGzT74VzmCugXilOFGJ/sWDwV3JFM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=landley.net; spf=pass smtp.mailfrom=landley.net; dkim=pass (2048-bit key) header.d=landley.net header.i=@landley.net header.b=PJ50S/gu; arc=pass smtp.client-ip=23.83.223.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=landley.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=landley.net
+X-Sender-Id: dreamhost|x-authsender|rob@landley.net
+Received: from relay.mailchannels.net (localhost [127.0.0.1])
+	by relay.mailchannels.net (Postfix) with ESMTP id EBA7483F5A;
+	Fri,  4 Jul 2025 19:15:22 +0000 (UTC)
+Received: from pdx1-sub0-mail-a231.dreamhost.com (100-100-194-155.trex-nlb.outbound.svc.cluster.local [100.100.194.155])
+	(Authenticated sender: dreamhost)
+	by relay.mailchannels.net (Postfix) with ESMTPA id 3F1A884140;
+	Fri,  4 Jul 2025 19:15:22 +0000 (UTC)
+ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1751656522; a=rsa-sha256;
+	cv=none;
+	b=KnHJJ84yLqgetcQfPwv+FhqinaEWlc0eVoMBLU8S5OVqrv7NkoovEH7fc41w/p55ELuHjt
+	ZNAfE/KsYJ3r2jQU05lqF0KtzaQmPsZYwxYtqlomncT30RxeG7CyhHD3WYdHP68NFR/7XF
+	+kuZhvenVDTA2kbcaILCWaFtuJgQqStvuP9btpJYivcGDuwt1/3pGgQI3wOfqiBK94dBGB
+	v+HLnRTctTRVM8FLFJFDQ7KyEnChifME20zlSUAH8Xdhz2Y9B7pbgq3o3aMusKM5DXMLzK
+	LL1PUkoSL8JrcsNVISOKJMv1dXOjNUP1cyg/1vePF18o8UlgfpQg0i44kU9ZnA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mailchannels.net;
+	s=arc-2022; t=1751656522;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references:dkim-signature;
+	bh=K1S7O6Q+hK/KLc+MMaX+bsI+sSQr4XpWGL8q5qWEfkc=;
+	b=uhzHk7Zi9NiZQ/iIekA5JuPbPCjEqAuj7OD2bbUSsFFJJ9AvdLSDaJct9y7VnD4jJpaItX
+	BvzB9XE+AejG1ASqMkrVmIXTeLqM5E6HYVKnN1cHN8XnP4E6T8iuFSCGmVfQSgGEscCURY
+	YwBpcqpQeO9cd3ONmZITgeIilkomPjSViW8Mft261cTcRqSjmodIDhOKjPnvEV3bvWk2n6
+	htL/AFEwhNz+8PkJ9nkssn7p8f0sZBroWUCkfKd33pL3yLONwm4qoK3RmUW3M2STRr1xL4
+	i0o3FZ1I36IdwoQmafe3IEZH7zxoxGVcw9t+2mLdKMmQV5sT0+wBsm/Ti9S2mg==
+ARC-Authentication-Results: i=1;
+	rspamd-5c976dc8b-5nv4l;
+	auth=pass smtp.auth=dreamhost smtp.mailfrom=rob@landley.net
+X-Sender-Id: dreamhost|x-authsender|rob@landley.net
+X-MC-Relay: Neutral
+X-MailChannels-SenderId: dreamhost|x-authsender|rob@landley.net
+X-MailChannels-Auth-Id: dreamhost
+X-Bubble-Shelf: 1441bd5862adab6f_1751656522745_2012738391
+X-MC-Loop-Signature: 1751656522745:1991500625
+X-MC-Ingress-Time: 1751656522745
+Received: from pdx1-sub0-mail-a231.dreamhost.com (pop.dreamhost.com
+ [64.90.62.162])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
+	by 100.100.194.155 (trex/7.1.3);
+	Fri, 04 Jul 2025 19:15:22 +0000
+Received: from [192.168.43.71] (M111108020212.v4.enabler.ne.jp [111.108.20.212])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: rob@landley.net)
+	by pdx1-sub0-mail-a231.dreamhost.com (Postfix) with ESMTPSA id 4bYjyJ5FXhzL8;
+	Fri,  4 Jul 2025 12:15:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=landley.net;
+	s=dreamhost; t=1751656522;
+	bh=K1S7O6Q+hK/KLc+MMaX+bsI+sSQr4XpWGL8q5qWEfkc=;
+	h=Content-Type:Date:Subject:To:Cc:From;
+	b=PJ50S/gupIPg/kaCgXRW7z5najkFuktlmYR+rPbo7HcymapdaWKz1w6DHDgI4B51t
+	 AP4KRXiqgPK2LOA8s4iMhkpmfhU02+QYlyIaK4ODb3mDKvgWAlNyUSFYP2skjeOMjf
+	 Othojd2b1BQB7pFDfaH2oakIJXn7jsTUKfB1lF9izweUasRNqyzQLrKKBGnjw1gBDl
+	 sD3Nb+WKHayb8WupD7ojyFka0KkGEtPK6R7NzWslaY8FL4ttiq8uSAd1uYIMwIVu4e
+	 zw9wZAegx+4n0ZkhoIHlAQ7e0cd+zu71kogECLSvvDhoqkTDSsQvHx4Qh3RaXFCDcp
+	 0ut+SaTtxNqTg==
+Content-Type: multipart/mixed; boundary="------------cJQB9O29EFyv1KNpzTAkfSu1"
+Message-ID: <6739da7d-e555-407a-b5cb-e5681da71056@landley.net>
+Date: Fri, 4 Jul 2025 14:15:18 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v3 0/5] Introduce "non-pixel" sub node within iris video
- node
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] ARM: Require linker to support KEEP within OVERLAY
+ for DCE
+To: Linus Walleij <linus.walleij@linaro.org>,
+ Nathan Chancellor <nathan@kernel.org>
+Cc: Russell King <linux@armlinux.org.uk>, Christian Eggers <ceggers@arri.de>,
+ Arnd Bergmann <arnd@arndb.de>, Yuntao Liu <liuyuntao12@huawei.com>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Rich Felker <dalias@libc.org>
+References: <20250311-arm-fix-vectors-with-linker-dce-v1-0-ec4c382e3bfd@kernel.org>
+ <20250311-arm-fix-vectors-with-linker-dce-v1-1-ec4c382e3bfd@kernel.org>
+ <CACRpkdY-yxaiG89Co+C2=vyd0i6sh9pP0UGWZh1yUg4jd9jmuQ@mail.gmail.com>
 Content-Language: en-US
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@oss.qualcomm.com>
-CC: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Krzysztof Kozlowski
-	<krzk@kernel.org>,
-        Dikshita Agarwal <quic_dikshita@quicinc.com>,
-        "Abhinav
- Kumar" <abhinav.kumar@linux.dev>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, <linux-media@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <eab8d79f-7188-9537-9176-3e4d22f0978a@quicinc.com>
- <5ad418d9-8199-43c9-a477-1e3b939c054c@kernel.org>
- <7b6db4fa-2f73-376d-4eb3-64c1c7e6cda3@quicinc.com>
- <f5ebf0d6-2f0b-45cc-b99a-b786e5df9edc@linaro.org>
- <5qsgbqml367yq6g5vb4lotrzulojqhi5zlwwribze373a63qrn@rxi4kwyt66m2>
- <4f38058d-a2f1-4ac5-b234-228cfb2e85ff@kernel.org>
- <1ad2ca1e-1d57-4ad8-a057-ab0d804f1d49@oss.qualcomm.com>
- <7da769b4-88e9-401f-bb21-0ff123818b9c@kernel.org>
- <6840d462-8269-4359-a6e5-d154842b62db@oss.qualcomm.com>
- <af0da28c-3ca0-41dc-aaa4-572723ea74bf@linaro.org>
- <klhvgzizub33f46buqsog54wqksqp24a5tijwyv355l2ao2imo@wdkojfebc6s2>
- <e1a6e75a-2a5d-44a2-8bbc-140eb86d1806@linaro.org>
-From: Vikash Garodia <quic_vgarodia@quicinc.com>
-In-Reply-To: <e1a6e75a-2a5d-44a2-8bbc-140eb86d1806@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=ZKfXmW7b c=1 sm=1 tr=0 ts=68682846 cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=P-IC7800AAAA:8
- a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=DVKtXGnjxsSMy4abO9MA:9 a=QEXdDO2ut3YA:10
- a=d3PnA9EDa4IxuAV0gXij:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA0MDE0NSBTYWx0ZWRfXwmZZKf64Rrvb
- HEQ8QN4TuRHzs3LDk7rRRHtcesx1zr9Ev1E7nZ8cW9CWdZWuQwvy4MmCE//+VCsKYtUiAW11kar
- fW0kVDD1j7HoVCsKbm6DHt0XTv8m7GrLAOeoNW05q2pdMkrssH6froKR2UrBaS44Y2TXt+Evopu
- 9LkaYCmJXxYIWP/WAqowesDCWf5btkG4efqXPU16i3mhX0c0PIPLBJm6a+AarRb9vIZjBYeD9n9
- SXludwYOSaMQudTB5epdn3vkUZcu9P91bZnW/H8DWVxr91kJRoMHgYOZWTBgD754MmMLEe6L3Dl
- dMvYWxEvL/iSsWSR843InbQ6W1qwjTeTshurlDB4zegab0aYTPcndhcXRgorNugv8Y9lNI940oH
- FpWQt3O/XPduxONPaI4AUHgrqgHTd/He4clRLPvhC4cnZwCa0E7f7YL9wXpfGNyRCbKHgDr8
-X-Proofpoint-ORIG-GUID: QjYc8W1nElrbh5xRxxnddHjy0raO8AD8
-X-Proofpoint-GUID: QjYc8W1nElrbh5xRxxnddHjy0raO8AD8
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-04_06,2025-07-04_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 mlxscore=0 mlxlogscore=999 spamscore=0 suspectscore=0
- bulkscore=0 priorityscore=1501 lowpriorityscore=0 phishscore=0
- impostorscore=0 malwarescore=0 clxscore=1015 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507040145
+From: Rob Landley <rob@landley.net>
+In-Reply-To: <CACRpkdY-yxaiG89Co+C2=vyd0i6sh9pP0UGWZh1yUg4jd9jmuQ@mail.gmail.com>
 
+This is a multi-part message in MIME format.
+--------------cJQB9O29EFyv1KNpzTAkfSu1
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 7/4/2025 1:53 PM, Bryan O'Donoghue wrote:
-> On 03/07/2025 22:23, Dmitry Baryshkov wrote:
->>> I still give my RB for the series.
->>>
->>> To me the only question is should it be applied to sm8550 or to new SoCs
->>> from now on, sa8775p, x1e and derivatives.
->> I think we need to apply it to_all_ SoCs, maybe starting from MSM8x26
->> and MSM8x16. Likewise, we need to think bout secure buffers usecase. And
->> once we do that, we will realize that it also changes the ABI for all
->> SoCs that support either Venus or Iris.
+On 3/13/25 03:48, Linus Walleij wrote:
+> On Tue, Mar 11, 2025 at 8:43 PM Nathan Chancellor <nathan@kernel.org> wrote:
 > 
-> I think a dts change is a non-starter as its an ABI break.
-> 
-> So if ABI break is out and reworking future dts to allow for a new device is
-> out, then some API change is needed to allow the driver to stop the kernel
-> automatically setting up the IOMMUs, create the new device as a platform device
-> not dependent on DT change and have the probe() of the relevant drivers setup
-> their own IOMMU extents based on - probably indexes we have in the driver
-> configuration parameters.
+>> ld.lld prior to 21.0.0 does not support using the KEEP keyword within an
+>> overlay description, which may be needed to avoid discarding necessary
+>> sections within an overlay with '--gc-sections', which can be enabled
+>> for the kernel via CONFIG_LD_DEAD_CODE_DATA_ELIMINATION.
+>>
+>> Disallow CONFIG_LD_DEAD_CODE_DATA_ELIMINATION without support for KEEP
+>> within OVERLAY and introduce a macro, OVERLAY_KEEP, that can be used to
+>> conditionally add KEEP when it is properly supported to avoid breaking
+>> old versions of ld.lld.
 
-The concept of sub device is nothing new, it has been there for firmware iommus
-on venus bindings [1] and i am just extending it for non-pixel on iris. So
-instead of complicating the driver, pls relook into the existing solution which
-looks much simpler.
+I bisected the 6.15 armv7l build break my mkroot project hit to this 
+commit (e7607f7d6d81):
 
-The proposal to dis-associate from DT would certainly bite us in future when we
-have more and more iommu configurations, lets say "qcom,iommu-vmid" [2], comes
-in for managing secure stream-ids.
+   LD      .tmp_vmlinux1
+Segmentation fault
+make[2]: *** [scripts/Makefile.vmlinux:77: vmlinux] Error 139
+make[1]: *** 
+[/home/landley/toybox/clean/root/build/armv7l-tmp/linux/Makefile:1226: 
+vmlinux] Error 2
+make: *** [Makefile:251: __sub-make] Error 2
 
-[1]
-https://elixir.bootlin.com/linux/v6.16-rc4/source/Documentation/devicetree/bindings/media/qcom,venus-common.yaml#L50
+The toolchain in question was built from gcc 11.4.0 and binutils 2.33.1 
+which were the newest versions supported by 
+https://github.com/richfelker/musl-cross-make when the still-current 
+musl release (1.2.5) came out.
 
-[2] https://lore.kernel.org/all/20231101071144.16309-2-quic_gkohli@quicinc.com/
+You can grab a binary toolchain to smoketest with from 
+https://landley.net/bin/toolchains/latest/armv7l-linux-musleabihf-cross.tar.xz 
+and build using the attached miniconfig ala:
+
+for i in distclean allnoconfig ""
+do
+   CROSS_COMPILE=armv7l-linux-musleabihf- make ARCH=arm \
+     KCONFIG_ALLCONFIG=linux-miniconfig -j4 $i
+done
+
+This _just_ seems to affect armv7l: armv5l and aarch64 still build fine.
+
+Rob
+
+P.S.  Rich has since added newer gcc version support to MCM, but:
+
+A) the binutils in MCM is still stuck at the old version and if you 
+upgrade the gcc without the binutils it hits 
+https://lkml.org/lkml/2023/8/9/890
+
+B) I'm waiting for musl-1.2.6 before updating the toolchain.
+--------------cJQB9O29EFyv1KNpzTAkfSu1
+Content-Type: text/plain; charset=UTF-8; name="linux-miniconfig"
+Content-Disposition: attachment; filename="linux-miniconfig"
+Content-Transfer-Encoding: base64
+
+IyBtYWtlIEFSQ0g9YXJtIGFsbG5vY29uZmlnIEtDT05GSUdfQUxMQ09ORklHPWxpbnV4LW1p
+bmljb25maWcKIyBtYWtlIEFSQ0g9YXJtIC1qICQobnByb2MpCiMgYm9vdCB6SW1hZ2UgY29u
+c29sZT10dHlBTUEwCgojIGFyY2hpdGVjdHVyZSBpbmRlcGVuZGVudApDT05GSUdfUEFOSUNf
+VElNRU9VVD0xCkNPTkZJR19OT19IWl9JRExFPXkKQ09ORklHX0hJR0hfUkVTX1RJTUVSUz15
+CkNPTkZJR19SRF9HWklQPXkKQ09ORklHX0JJTkZNVF9FTEY9eQpDT05GSUdfQklORk1UX1ND
+UklQVD15CkNPTkZJR19CTEtfREVWPXkKQ09ORklHX0JMS19ERVZfSU5JVFJEPXkKQ09ORklH
+X0JMS19ERVZfTE9PUD15CkNPTkZJR19FWFQ0X0ZTPXkKQ09ORklHX0VYVDRfVVNFX0ZPUl9F
+WFQyPXkKQ09ORklHX1ZGQVRfRlM9eQpDT05GSUdfRkFUX0RFRkFVTFRfVVRGOD15CkNPTkZJ
+R19NSVNDX0ZJTEVTWVNURU1TPXkKQ09ORklHX05MU19DT0RFUEFHRV80Mzc9eQpDT05GSUdf
+TkxTX0lTTzg4NTlfMT15CkNPTkZJR19TUVVBU0hGUz15CkNPTkZJR19TUVVBU0hGU19YQVRU
+Uj15CkNPTkZJR19TUVVBU0hGU19aTElCPXkKQ09ORklHX1RNUEZTPXkKQ09ORklHX1RNUEZT
+X1BPU0lYX0FDTD15CkNPTkZJR19ERVZUTVBGUz15CkNPTkZJR19ERVZUTVBGU19NT1VOVD15
+CkNPTkZJR19ORVQ9eQpDT05GSUdfTkVUREVWSUNFUz15CkNPTkZJR19ORVRfQ09SRT15CkNP
+TkZJR19ORVRDT05TT0xFPXkKQ09ORklHX1BBQ0tFVD15CkNPTkZJR19VTklYPXkKQ09ORklH
+X0lORVQ9eQpDT05GSUdfSVBWNj15CkNPTkZJR19FVEhFUk5FVD15CkNPTkZJR19DT01QQVRf
+MzJCSVRfVElNRT15CkNPTkZJR19FQVJMWV9QUklOVEs9eQpDT05GSUdfSUtDT05GSUc9eQpD
+T05GSUdfSUtDT05GSUdfUFJPQz15CgojIGFyY2hpdGVjdHVyZSBzcGVjaWZpYwpDT05GSUdf
+TU1VPXkKQ09ORklHX1NPQ19EUkE3WFg9eQpDT05GSUdfVkRTTz15CkNPTkZJR19DUFVfSURM
+RT15CkNPTkZJR19LRVJORUxfTU9ERV9ORU9OPXkKQ09ORklHX0FSQ0hfTVVMVElfVjc9eQpD
+T05GSUdfQVJDSF9WSVJUPXkKQ09ORklHX0FSQ0hfT01BUDJQTFVTX1RZUElDQUw9eQpDT05G
+SUdfQVJDSF9BTFBJTkU9eQpDT05GSUdfQVJNX1RIVU1CPXkKQ09ORklHX0FSTV9DUFVJRExF
+PXkKQ09ORklHX0FSTV9MUEFFPXkKQ09ORklHX0FUQT15CkNPTkZJR19BVEFfU0ZGPXkKQ09O
+RklHX0FUQV9CTURNQT15CkNPTkZJR19BVEFfUElJWD15CkNPTkZJR19BVEFfR0VORVJJQz15
+CkNPTkZJR19WSVJUSU9fTUVOVT15CkNPTkZJR19WSVJUSU9fTkVUPXkKQ09ORklHX1ZJUlRJ
+T19CTEs9eQpDT05GSUdfVklSVElPX1BDST15CkNPTkZJR19WSVJUSU9fTU1JTz15CkNPTkZJ
+R19TRVJJQUxfQU1CQV9QTDAxMT15CkNPTkZJR19TRVJJQUxfQU1CQV9QTDAxMV9DT05TT0xF
+PXkKQ09ORklHX1JUQ19DTEFTUz15CkNPTkZJR19SVENfSENUT1NZUz15CkNPTkZJR19SVENf
+RFJWX1BMMDMxPXkKQ09ORklHX1BBVEFfUExBVEZPUk09eQpDT05GSUdfUEFUQV9PRl9QTEFU
+Rk9STT15CkNPTkZJR19QQ0k9eQpDT05GSUdfUENJX0hPU1RfR0VORVJJQz15CgojIGFyY2hp
+dGVjdHVyZSBleHRyYQo=
+
+--------------cJQB9O29EFyv1KNpzTAkfSu1--
 
