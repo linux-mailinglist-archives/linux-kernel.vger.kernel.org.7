@@ -1,110 +1,124 @@
-Return-Path: <linux-kernel+bounces-717037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-717035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E9D4AF8E69
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 11:24:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79A94AF8E5C
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 11:23:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6808E3BBD6A
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 09:18:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DEB6E164114
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 09:18:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E5322F2C60;
-	Fri,  4 Jul 2025 09:16:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 361D82F2349;
+	Fri,  4 Jul 2025 09:16:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ydu/QZE0"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b="Z1pG+42B"
+Received: from jpms-ob01-os7.noc.sony.co.jp (jpms-ob01-os7.noc.sony.co.jp [211.125.139.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D506288526;
-	Fri,  4 Jul 2025 09:16:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACB5B2EF66B;
+	Fri,  4 Jul 2025 09:15:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.125.139.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751620595; cv=none; b=ijOgkS1CSQJ1/kcLhR78juBCxSvGOXg8LRi3uEJKAXGCuzU+Iq3Gpdbe2mf9i1jTmkdxiuS72KUW1AP+Ckj/BcmrZ0jfrvIdTzKsDEOQh0IWibWALzEC/nLwb/57CN+igQAfq3v5efz81FnUIWGJfxaBW3uHUKGwHqTD16nLa+0=
+	t=1751620561; cv=none; b=HwyxoEPzQrvJV8qe/dv2iHxY00A3aqQ9dLX8OAZLG6GmCY8FVBIl29rc1ZovbrySA691XgNBlz2Qu5B0kLYeK/OUzA2Y+2HPFtXH68xvmEJK0bk4VUjoqTyFJwPbM6CzyjgKiFcTDi//FkLfJCli0YFAiSsABXlwqCAAO3dnUL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751620595; c=relaxed/simple;
-	bh=AkRYvE+iRYD9m1Wwp6Jy8xhOGndE4ScJG+8190VCBdY=;
+	s=arc-20240116; t=1751620561; c=relaxed/simple;
+	bh=5/rnuy+1f9ZFp0QSN91h1vj2LZOYoPBNuzCVHxWsUKI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bvTYdiD5Fnrx1ooKPmkygqwb0edOoWI+7hc2dwi1F3wkpfNTmaRl+AwLV2P/hp21zWKjx5EWbWVOW8HMuDh9nTby7m+ce6URb2o9HjRv/OFJrIwRvqDBi17xLD3ge1VseZHNSs/R34ZTEC90GSwgOcr7JGarpWyhQK7fSfuXj1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ydu/QZE0; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751620594; x=1783156594;
+	 Content-Type:Content-Disposition:In-Reply-To; b=m+8tm35dop3kjd/MgfaakFF6ElVYKheKC4q9UHVehgkszTLLVSdjsFMa/pfI7AOx8WEVYk5C57ajli/rME8i7JgCABIdae+97tbd4WTX00YyRySo1AHdzDGZHqHUW7D0lyB1HETqhsmNYH+X7t7miBSWrBTTuiNc0ZFRjY2WSpo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com; spf=fail smtp.mailfrom=sony.com; dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b=Z1pG+42B; arc=none smtp.client-ip=211.125.139.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=sony.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=sony.com; s=s1jp; t=1751620559; x=1783156559;
   h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=AkRYvE+iRYD9m1Wwp6Jy8xhOGndE4ScJG+8190VCBdY=;
-  b=Ydu/QZE0DMqV5aKFHLPElTFOl4GtzfmBZjyxKwyM9w5H5zEa65tYoYyd
-   aytr8k084YXjOIxrGCL12tZA+Jk3UNz+IWk5g4T5uyvxLVe/YxQa3gPVy
-   Y96uZ9uYeDeB2347JMnhCTviOPBq/eOvP8x/fbiVahwg1qrxXgjPJ3nNe
-   rxk9C1+rHB73678OBZ+LGXYqhldbBf5Jq5w69QjzuA7cOr+IZNNUO8VEU
-   kSZue3aOtXNbqixaShVYMe6fmS+jmW5xjuUEBSyPYVKxatlD2WR/8+y8D
-   tTnGIZAilmiRcVx4UnScpIsQavzVbArEsqLC/a4zxWxcRdRX0AoCCyv5F
-   g==;
-X-CSE-ConnectionGUID: ui3M3KoiTeaBYIiH8Wpl5w==
-X-CSE-MsgGUID: 1K7aQcqsTFGeuYJhkVlizw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11483"; a="57763093"
-X-IronPort-AV: E=Sophos;i="6.16,286,1744095600"; 
-   d="scan'208";a="57763093"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 02:16:33 -0700
-X-CSE-ConnectionGUID: 7OgdyKb4TLujesp+0RKKLA==
-X-CSE-MsgGUID: YIr1wxvYRqOmp50GpF9Aew==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,286,1744095600"; 
-   d="scan'208";a="154011509"
-Received: from lkp-server01.sh.intel.com (HELO 0b2900756c14) ([10.239.97.150])
-  by orviesa010.jf.intel.com with ESMTP; 04 Jul 2025 02:16:31 -0700
-Received: from kbuild by 0b2900756c14 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uXcWy-0003XX-2I;
-	Fri, 04 Jul 2025 09:16:28 +0000
-Date: Fri, 4 Jul 2025 17:15:49 +0800
-From: kernel test robot <lkp@intel.com>
-To: Vivek.Pernamitta@quicinc.com, Manivannan Sadhasivam <mani@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, mhi@lists.linux.dev,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Vivek Pernamitta <quic_vpernami@quicinc.com>
-Subject: Re: [PATCH 4/5] bus: mhi: host: pci_generic: Remove MHI driver and
- ensure graceful device recovery
-Message-ID: <202507041755.evB3U2Ju-lkp@intel.com>
-References: <20250703-sriov_vdev_next-20250630-v1-4-87071d1047e3@quicinc.com>
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=btYJQmsa0mQHvJvl4VaCgrJUwxKb2AyZxRtp+4lLNe0=;
+  b=Z1pG+42BTKjwvjfh2S9Vkhjxm8Lf4D56v1zFYocbngBaaF8qT+72hJLE
+   KhAQFH6dTcFbc01fIlbtzONMzVteG5iqx44vvWAD69IF9AGrhq4rmx2/H
+   q4j4AGvgZN2+UEDXnbylr+OIFtO4PN+E0CLH7o8EMkLgd04obBJ582RU8
+   G0JVLougheh/KBsb0bWNiuAWrWH0JU0BU2DVcVhQK9/LC3pFlm0agubIr
+   FqkhBGRnw8o/trmGST1jPyO1MQ2d5E+/+CjeL4AvMOALAynU8PRZzAtoP
+   tCaMVtnNb79xGDVO/cwImkzQc04nFfS3XfT7Am0mr9UJBz+8qsQZnw50w
+   w==;
+Received: from unknown (HELO jpmta-ob01-os7.noc.sony.co.jp) ([IPv6:2001:cf8:acf:1104::6])
+  by jpms-ob01-os7.noc.sony.co.jp with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 18:15:56 +0900
+X-IronPort-AV: E=Sophos;i="6.16,286,1744038000"; 
+   d="scan'208";a="3335550"
+Received: from unknown (HELO JPC00244420) ([IPv6:2001:cf8:1:573:0:dddd:eb3e:119e])
+  by jpmta-ob01-os7.noc.sony.co.jp with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 18:15:56 +0900
+Date: Fri, 4 Jul 2025 18:15:54 +0900
+From: Shashank Balaji <shashank.mahadasyam@sony.com>
+To: Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>
+Cc: Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
+	Shuah Khan <shuah@kernel.org>, cgroups@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Shinya Takumi <shinya.takumi@sony.com>
+Subject: Re: [PATCH v2] selftests/cgroup: improve the accuracy of cpu.max
+ tests
+Message-ID: <aGebynaCuASn3t4s@JPC00244420>
+References: <20250701-kselftest-cgroup-fix-cpu-max-v1-0-049507ad6832@sony.com>
+ <20250703120325.2905314-1-shashank.mahadasyam@sony.com>
+ <l3sal6zkvo4lqnfs6fepxytnrmqmqwfvtxudnjm53oigtuatpd@7czfeursgwyh>
+ <aGcf0Prl-hVX2j4Q@JPC00244420>
+ <aGd5lrUvm9Bhh-b8@JPC00244420>
+ <wnoymxwdikh6iawrcvhewq6er4si75oqzjdbibhl6n57swq3ff@glkzfmbaots7>
+ <aGeZwLAuysAmyX-q@JPC00244420>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250703-sriov_vdev_next-20250630-v1-4-87071d1047e3@quicinc.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aGeZwLAuysAmyX-q@JPC00244420>
 
-Hi,
+On Fri, Jul 04, 2025 at 06:07:12PM +0900, Shashank Balaji wrote:
+> Hi Michal,
+> 
+> On Fri, Jul 04, 2025 at 10:59:15AM +0200, Michal Koutný wrote:
+> > On Fri, Jul 04, 2025 at 03:49:58PM +0900, Shashank Balaji <shashank.mahadasyam@sony.com> wrote:
+> > > > 1. We don't need to separately check user_usec because it'll always be
+> > > > less than user_usec^W usage_usec, and usage_usec is what's directly
+> > > > affected by throttling.
+> > 
+> > When kernel is not preemptible, I'd expect the system time may more
+> > easily excess the quota, so I considered the user_usage check less prone
+> > to false results. But...
+> > 
+> > > > 2. I changed the >= to > because, not that it'll ever happen, but we can
+> > > > let usage_usec = expected_usage_usec pass. Afterall, it's called
+> > > > "expected" for a reason.
+> > > 
+> > > Hmm, here is something interesting. The following patch adds printfs to the
+> > > existing code to see what user_usec, usage_usec, the expected_usage_usec used in
+> > > the code, and the theoretical expected_usage_usec are. On running the modified test
+> > > a couple of times, here is the output:
+> > 
+> > ...thanks for checking. I was misled by the previous test implementation
+> > (the expected_usage_usec had no relation to actual throttled usage in
+> > there). What you observe is thus likely explained by the default
+> > sched_cfs_bandwidth_slice (5 times the tested quota) and CONFIG_HZ.
+> > 
+> > So I'd say keep only the two-sided tolerant check. (I want to avoid the
+> > test to randomly fail when there's no gaping issue.)
+> 
+> Yep, patch v2 is doing just that. So, I assume I have your Acked-by?
+> 
+> Thanks
+> 
+> Shashank
 
-kernel test robot noticed the following build warnings:
+I forgot to add the fixes tags:
+Fixes: a79906570f9646ae17 ("cgroup: Add test_cpucg_max_nested() testcase")
+Fixes: 889ab8113ef1386c57 ("cgroup: Add test_cpucg_max() testcase")
 
-[auto build test WARNING on 1343433ed38923a21425c602e92120a1f1db5f7a]
+Should I send a v3 with your ack and the tags?
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Vivek-Pernamitta-quicinc-com/bus-mhi-host-pci_generic-Add-SRIOV-support-for-PCIe-device/20250703-231724
-base:   1343433ed38923a21425c602e92120a1f1db5f7a
-patch link:    https://lore.kernel.org/r/20250703-sriov_vdev_next-20250630-v1-4-87071d1047e3%40quicinc.com
-patch subject: [PATCH 4/5] bus: mhi: host: pci_generic: Remove MHI driver and ensure graceful device recovery
-config: i386-buildonly-randconfig-001-20250704 (https://download.01.org/0day-ci/archive/20250704/202507041755.evB3U2Ju-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14+deb12u1) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250704/202507041755.evB3U2Ju-lkp@intel.com/reproduce)
+Thanks
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507041755.evB3U2Ju-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> Warning: drivers/bus/mhi/host/pci_generic.c:63 struct member 'reset_on_driver_unbind' not described in 'mhi_pci_dev_info'
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Shashank
 
