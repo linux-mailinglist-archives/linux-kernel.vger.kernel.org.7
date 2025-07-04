@@ -1,59 +1,65 @@
-Return-Path: <linux-kernel+bounces-717902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-717912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 643DBAF9A84
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 20:23:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC376AF9AAB
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 20:26:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9A735A0235
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 18:23:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F0891C820B5
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 18:26:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7C792DEA95;
-	Fri,  4 Jul 2025 18:22:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73D07326247;
+	Fri,  4 Jul 2025 18:23:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="ywj9SUYM"
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dbp9Jy8g"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33821215789;
-	Fri,  4 Jul 2025 18:22:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C93A12E5B2F;
+	Fri,  4 Jul 2025 18:23:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751653357; cv=none; b=WwP/blvwc55bAJ9G1Ls8swYZaJGTE46kurMYctqEPFySafBD9+daY4t6N6uJT6sVRaXVBjTPKXcLc0epyUVsrYCbTJIp85yffxgACqlhVS9x9SpcVrw9RbYVl78KyP1GnJz6PsSGmvg/VT3iRquh2BZ7PA8IgBt736lvZU2ILQw=
+	t=1751653422; cv=none; b=cZdxLR8QnhA3FrxDByMHqxOxN7D9QYSbTdKa0/I6cb22VmTUfIAiRWjYlz/3wyEqVSMxT3k9o2bOV+6lBVWbLZKFH11pUcs1vbT4P1Lp4aisgbSJe4QJDjnEpZ9CCHOBMe8vDhNIhY+YpiUQmnMATnJnCx6ebaXHKfN53hUWmDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751653357; c=relaxed/simple;
-	bh=xZiG/pUC5ivyvjny/Jo3gzT6ORDrAk9o48nwb9w3eng=;
+	s=arc-20240116; t=1751653422; c=relaxed/simple;
+	bh=3pH+Y4O8bckOvutEYgAYJmeTwbmIePCo5O7dkXcpQgY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U6ScmHVl4ex1dzt+dZCbQWzTMr3CjpnrHRiSvJTwmDi8YFkZrcfpOWFGwhR142RkadOfoF9fFbucnrLImHXrAABXXkGXkQoUvgrXqNrRi/jQDY1noK9pkOM7zCGzFmcYh+G4gs/fNbYLD4324XheUkNlnxEqeWJU1J00L2LMELY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=ywj9SUYM; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
-Received: from francesco-nb (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
-	by mail11.truemail.it (Postfix) with ESMTPA id EAA761F901;
-	Fri,  4 Jul 2025 20:22:31 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1751653352;
-	bh=n2sJ1cjIIyagn20/uD0dl3omt8NxJ7dGLZUTDggrAdk=; h=From:To:Subject;
-	b=ywj9SUYMGN5khkUMEf4bsRw5A140ywJFyxJHPxQB7L0tiVim9jKUjCy3fDKwjSdMq
-	 weyH/B81I5TRxBj7mmMwHqJaXD6xXoIPsDL5BvcbYlfzeuR+y3rUzVpkY4brchrLjz
-	 iLKjGYklqyqGuIekya3ddLKb3DbrSal7f0F3qk0dtwFyMsYexCZXAg16rRCqdo/O8/
-	 yUheAqD3e21wt9toNV/HhbE2HZvT2fEeP/PXM/n2szL5orw8Zhr4wsfHcSEPiG+/HQ
-	 POmG9UKIT1pwLBKndIF0oBGBjwjYRUiwpK652yoHs0PiXKBbAYoeqCK4LMNVVynWDa
-	 mkFKVku8rF43g==
-Date: Fri, 4 Jul 2025 20:22:27 +0200
-From: Francesco Dolcini <francesco@dolcini.it>
-To: Vitor Soares <ivitro@gmail.com>
-Cc: Brian Norris <briannorris@chromium.org>,
-	Francesco Dolcini <francesco@dolcini.it>,
-	Vitor Soares <vitor.soares@toradex.com>,
-	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-	David Lin <yu-hao.lin@nxp.com>, stable@vger.kernel.org
-Subject: Re: [PATCH wireless v1] wifi: mwifiex: discard erroneous disassoc
- frames on STA interface
-Message-ID: <20250704182227.GA7800@francesco-nb>
-References: <20250701142643.658990-1-ivitro@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qOn8ovmGhIYL3AN2z9qKBRk1ez4WYbiQsXuQA65tsya5je+hq6zWxzROfjHHemvtBaFK0oQV08as7SM6wGLPvP4rBhOMuvh84qar0AHq9mFh+vEXowzc96M4c7vjYaQrgWuC/RRzeUmqP167n/Zj570zh4jDoMQKU7HPa4Hf75A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dbp9Jy8g; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9786AC4CEED;
+	Fri,  4 Jul 2025 18:23:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751653422;
+	bh=3pH+Y4O8bckOvutEYgAYJmeTwbmIePCo5O7dkXcpQgY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dbp9Jy8g2stuA4FSJSZ99tWTyJk8s0xFMznY7pB194Y95hzin1KJ/Wi9a3R1Q6J/8
+	 hX/fYkVdgQIPBnxu6ZXurRG1Gigp58+20L468kP55Tde7aEkZIKvdx4+VTQLvn80YY
+	 hY4zKK5ixSpv79lGw8ZIzVAQJIgKuL7ngWWNqC1n5MfNmyptOLBtN7oqs2Kqqlt2YR
+	 1QTiynfZBbdPR8VeGWOAJL1rcD6dJXeKd8ZsdVVmQ125OmozfxLiPAOXy/sSmTTKID
+	 4LFasroPipk5H0/K/hCiXvex14LFnzL3b6ygno83PkNUXa2hyN6T38quvq9SDGzJNV
+	 SL/023MiNLWDA==
+Date: Fri, 4 Jul 2025 20:23:35 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Daniel Almeida <daniel.almeida@collabora.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Benno Lossin <lossin@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	linux-pci@vger.kernel.org
+Subject: Re: [PATCH v6 5/6] rust: platform: add irq accessors
+Message-ID: <aGgcJxM_nKkFGtGn@cassiopeiae>
+References: <20250703-topics-tyr-request_irq-v6-0-74103bdc7c52@collabora.com>
+ <20250703-topics-tyr-request_irq-v6-5-74103bdc7c52@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,35 +68,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250701142643.658990-1-ivitro@gmail.com>
+In-Reply-To: <20250703-topics-tyr-request_irq-v6-5-74103bdc7c52@collabora.com>
 
-On Tue, Jul 01, 2025 at 03:26:43PM +0100, Vitor Soares wrote:
-> From: Vitor Soares <vitor.soares@toradex.com>
-> 
-> When operating in concurrent STA/AP mode with host MLME enabled,
-> the firmware incorrectly sends disassociation frames to the STA
-> interface when clients disconnect from the AP interface.
+On Thu, Jul 03, 2025 at 04:30:03PM -0300, Daniel Almeida wrote:
+> +impl Device<Bound> {
+> +    /// Returns an [`IrqRequest`] for the IRQ at the given index, if any.
+> +    pub fn request_irq_by_index(&self, index: u32) -> Result<IrqRequest<'_>> {
+> +        // SAFETY: `self.as_raw` returns a valid pointer to a `struct platform_device`.
+> +        let irq = unsafe { bindings::platform_get_irq(self.as_raw(), index) };
+> +
+> +        if irq < 0 {
+> +            return Err(Error::from_errno(irq));
+> +        }
+> +
+> +        // SAFETY: `irq` is guaranteed to be a valid IRQ number for `&self`.
+> +        Ok(unsafe { IrqRequest::new(self.as_ref(), irq as u32) })
+> +    }
 
-...
+Sorry that I didn't notice that before: Please just name the functions returning
+an IrqRequest e.g. irq_by_index(), without the 'request' prefix. And instead put
+the 'request' prefix in front of the methods that return a actual
+irq::Registration.
 
-> Add validation in the STA receive path to verify that disassoc/deauth
-> frames originate from the connected AP. Frames that fail this check
-> are discarded early, preventing them from reaching the MLME layer and
-> triggering WARN_ON().
-> 
-> This filtering logic is similar with that used in the
-> ieee80211_rx_mgmt_disassoc() function in mac80211, which drops
-> disassoc frames that don't match the current BSSID
-> (!ether_addr_equal(mgmt->bssid, sdata->vif.cfg.ap_addr)), ensuring
-> only relevant frames are processed.
-> 
-> Tested on:
-> - 8997 with FW 16.68.1.p197
-> 
-> Fixes: 36995892c271 ("wifi: mwifiex: add host mlme for client mode")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Vitor Soares <vitor.soares@toradex.com>
-
-Reviewed-by: Francesco Dolcini <francesco.dolcini@toradex.com>
-
+This is more in line with the C functions being named request_irq() and
+request_threaded_irq().
 
