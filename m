@@ -1,384 +1,236 @@
-Return-Path: <linux-kernel+bounces-716954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E64DAF8D02
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 10:59:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 358A6AF8E8B
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 11:28:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E688765611
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 08:57:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5B27AB40BEA
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 08:57:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF5BC2F547F;
-	Fri,  4 Jul 2025 08:50:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB3AD2F85CA;
+	Fri,  4 Jul 2025 08:51:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MKC+m4C/"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b="mte2OBnt"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2067.outbound.protection.outlook.com [40.107.94.67])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 688F12F4314;
-	Fri,  4 Jul 2025 08:50:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751619053; cv=none; b=g1gby1cD2b1hjMfMTravruOsB2kZukXMqnnBEhotV/fO/ojvVwUos2kAy7BOGCZu2X13c39zUgDbncXp2jrgLocBLjSdXnxpQgkFlZVo81inRIh8h0F0lG7YC82L/YfWjbx4MuM6bcI36VH8vsKfUUrDNFOL5LtJQboPjSaD4zs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751619053; c=relaxed/simple;
-	bh=Lp4YDdXSxL14NBGqKERHZFp6kfjJwp/kiVqn5SGHwp0=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7431B2F4314
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 08:50:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.67
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751619061; cv=fail; b=Czwvo6g96i0/sMVhRcXHk6L1OKYRPGiY9BluCkaVH4AkE47QxwJhbAa4NhM+yU7jnzX9C8r/JIhatZLN/rZSqAGWwVRYz8NRkd6lUuASOQIY038I/ZdA10GyVx+b05VPS0dnfcodGxdSlewpoMDgtziSaZjwZ46cBMAXRbC+JqY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751619061; c=relaxed/simple;
+	bh=oZGccEatqT4hhmBFfAKwqTRQ9TyG3Wpg2J8/khuiL7I=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ibemcTgRr4GSSkxYUfE8e4lUyHZq1cHeru3AbJdmDip/EBPjYTOCpdMNflXj192oZYy1oYj6+2AQzpwvjGXkzkijo9ImHgyVVfsL75xKPMu1mPHQ3p9UNHil30l+I3MA9FcYKIKM9ceTH/+dT6OIDLQkUKreR/KSsIV86rSp+iQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MKC+m4C/; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751619051; x=1783155051;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=Lp4YDdXSxL14NBGqKERHZFp6kfjJwp/kiVqn5SGHwp0=;
-  b=MKC+m4C//70e+5C0IPlhB7EPmXnT0ZZNIHL2v6/ObJ/RLEu2kvf8Mh83
-   ouBBDnSxXwQ4DoLZeXQrVddeXBhvbCp159sAIrXaWrFTgEtdWA7LjDqv1
-   AALDoe5+IF61kmtOzjOkgoFuko3ERrVQxHkd5/fXx1NgU9FoxP5X6/iUx
-   262RHUBg4VDPdzOFxzT24VP6R69s6/8XgKyp1eo5ejQEmrH/pYowi6Rtl
-   1Byn9CM54fPqSK16sH+ho6ZJuZ31PxWIXdskNLUseMGFhVse6ymVdM+Rd
-   bPorj9EBP0spZY821JRNAnrUCAeFz066WV9oRHVEGuQt8cWcJ0QDl4Us+
-   A==;
-X-CSE-ConnectionGUID: zVTwT3s5RPaialH9SZRqpg==
-X-CSE-MsgGUID: J3VTGgtfQDqCbPlX7BYtdw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11483"; a="79391758"
-X-IronPort-AV: E=Sophos;i="6.16,286,1744095600"; 
-   d="scan'208";a="79391758"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 01:50:44 -0700
-X-CSE-ConnectionGUID: 4MzM1qucTrqLTPho2MG05w==
-X-CSE-MsgGUID: Gq27CsV6QVm3LIxoe5XylA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,286,1744095600"; 
-   d="scan'208";a="154722016"
-Received: from 984fee019967.jf.intel.com ([10.165.54.94])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 01:50:44 -0700
-From: Chao Gao <chao.gao@intel.com>
-To: kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	x86@kernel.org,
-	seanjc@google.com,
-	pbonzini@redhat.com,
-	dave.hansen@intel.com
-Cc: rick.p.edgecombe@intel.com,
-	mlevitsk@redhat.com,
-	john.allen@amd.com,
-	weijiang.yang@intel.com,
-	minipli@grsecurity.net,
-	xin@zytor.com,
-	Chao Gao <chao.gao@intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>
-Subject: [PATCH v11 19/23] KVM: x86: Enable CET virtualization for VMX and advertise to userspace
-Date: Fri,  4 Jul 2025 01:49:50 -0700
-Message-ID: <20250704085027.182163-20-chao.gao@intel.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20250704085027.182163-1-chao.gao@intel.com>
-References: <20250704085027.182163-1-chao.gao@intel.com>
+	 Content-Type:MIME-Version; b=Du1bDIqL5gNLLzCQ1Z6iVyQ7aYl0MALm6E29HzhPlHkl+IO4G81N/IHhJH25aNcrQsz1qHr4jK3pZ7Mu1cO/BZZM3pEITSf618DQ5kKcnxWcTU2PrpzOOuOrWKY4v/JKmXASD2womrfxpnyMisoY8a7pCOdCO34CPz3kNMxoVDA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com; spf=pass smtp.mailfrom=altera.com; dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b=mte2OBnt; arc=fail smtp.client-ip=40.107.94.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altera.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Ct282gzQzt2onJRs6733W/phupH3bspJQQcNpCcAJhvlweqwIDvV3Qzk3pPizSLs+oyzPyOLNIM/uXBguK3a4n8+fieaI4HExSrVmS42RNdzvK3yDCdw3xQU0C8DqOZxSJ1wz7OQTfuOqcfeOu+iz4d59S9Upy5RnQ6zY4wAEK50sGhkSmVhhZ+vK3wg19lvf4N2trVfkF2A7guYx5M9gerNpjM9subPX/uexcJy3eov+bey4qH99EVV4XAxDORbgt97/frrLlybAIa3nGcrZyR2c/eUm6PBvQDTTW2ot6p4aJ/7kaYSW+P36VeRfJY01AuSBmLJkZXoWYMykf1ihA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=crT64RcOFvlHG5ije/LzJxpTVT80F7QWqyR2ChhoFTc=;
+ b=mqBQ5qCoHrGeFFcQUA+Hebo3dpBJsVYzMXDJWJSDg57ZMljIk+98Pory15I207q1rnsC06HkmESe5wVA1oLaHuseZoY0drqQ1tWB1UKSrhv5cgekXDMY+mKKW56lKQhQxEQDHv0VcJSUdE8TZV0sHBHDY7jBjQzWsiFM9fUH1VREW/tr6EAfwN8QWq3g7mKLspfR/lGxg09Bk2bzwoFAcB1B0qENeR6sW33n/BDEsT5d5je1frfblA+txYyOEBmLFziVOeGnMusD3Lk+L/SQtiKO8URgO/+9nWo0bCVnFJdgCmyLBFsFSX5qOXKBK9cuaWD76lWOiLAWGqfhVUWGpg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=altera.com; dmarc=pass action=none header.from=altera.com;
+ dkim=pass header.d=altera.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=altera.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=crT64RcOFvlHG5ije/LzJxpTVT80F7QWqyR2ChhoFTc=;
+ b=mte2OBntrnTW6uod/q98v0MHY1MM325bcbUQdw9T5w9M3piyzIjaU9VpMafm44dEggEhler+DqSpRAg3yWaCcSP2HGZzjDN9NE/+azVlKgHRdq9zoXX/7Owr/UIdWiuXFC/aV1drJ6mR6pSpWl46qYEbBgBrBA8X/9ZBkb4izHet/ytE71G69IWU1dx3mpV0IzYTo29ZMyb2ebBNwV/m1jFc1aRcWpA8K+2aZ6f6d+DpgPQ8wQRxS3WkooSPYm6YnHm0oLdHTpYJzsjvthciliyUb/FMWvTHZI5tKimtQHOKxfiN1z1CKseIPDsv5h4/5pAvxVfYUCN0GpJhLNxK/Q==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=altera.com;
+Received: from DM8PR03MB6230.namprd03.prod.outlook.com (2603:10b6:8:3c::13) by
+ SA1PR03MB7099.namprd03.prod.outlook.com (2603:10b6:806:330::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.23; Fri, 4 Jul
+ 2025 08:50:58 +0000
+Received: from DM8PR03MB6230.namprd03.prod.outlook.com
+ ([fe80::c297:4c45:23cb:7f71]) by DM8PR03MB6230.namprd03.prod.outlook.com
+ ([fe80::c297:4c45:23cb:7f71%4]) with mapi id 15.20.8901.018; Fri, 4 Jul 2025
+ 08:50:58 +0000
+From: adrianhoyin.ng@altera.com
+To: maz@kernel.org,
+	tglx@linutronix.de,
+	catalin.marinas@arm.com,
+	will@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: adrianhoyin.ng@altera.com
+Subject: [PATCH v2 1/1] irqchip/gic-v3: Add Altera Agilex5 address bus width limitation workaround
+Date: Fri,  4 Jul 2025 16:49:50 +0800
+Message-ID: <6a44509ca0edaabc17e59d2e27fef1c782183456.1751618484.git.adrianhoyin.ng@altera.com>
+X-Mailer: git-send-email 2.49.GIT
+In-Reply-To: <cover.1751618484.git.adrianhoyin.ng@altera.com>
+References: <cover.1751618484.git.adrianhoyin.ng@altera.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2P153CA0044.APCP153.PROD.OUTLOOK.COM (2603:1096:4:c6::13)
+ To DM8PR03MB6230.namprd03.prod.outlook.com (2603:10b6:8:3c::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM8PR03MB6230:EE_|SA1PR03MB7099:EE_
+X-MS-Office365-Filtering-Correlation-Id: 529b8021-a5ee-4001-7fb7-08ddbad7e514
+X-MS-Exchange-AtpMessageProperties: SA
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?3pHtRErd/rkZFHjrq/deXTeDgqC0DClWbK7DuUsrQOXzHZ74byLCfAVlhP+J?=
+ =?us-ascii?Q?s91uo9ev/aZ6g+Cr6wCmm9T9u+HJcMx6aKGNJcYDt2JNSFo4GU6LZH7MmFMA?=
+ =?us-ascii?Q?9xpVEUK4oYDHMOzAecnj427xXJRoef7RzQMCCPODFuLGGwXZi8irMqmzqJpW?=
+ =?us-ascii?Q?T2PX6BdcfjOxS5nV7x7iS6P+0mzXdQ8AMCiqFlymk3r5XcraitYF28BrZ4Nx?=
+ =?us-ascii?Q?ST3iDU5UxuO2/1MECEqR7b9S+crs2j57Kx5uNhqqnurQqZIrcyDfcg/kLxLM?=
+ =?us-ascii?Q?bObCBxWdEKRmamNouTNa0UY/IPGhiOoRZcbTilrgTRtbQ2YL6RpOwrLJMgCh?=
+ =?us-ascii?Q?6lELvBpNsvslod98AHrmdRjbetSR2f8NDIR9m2Kq0/QuONVtC4AA18j17dsK?=
+ =?us-ascii?Q?jVYnHKFUpsVut68H0hmYFnrqkUwH3mL7tCFn7Z9nDxfly8Gtx1nkdV3zkNyj?=
+ =?us-ascii?Q?0fjG9JH7L2buWDNC2hgY1+2G5GLSjnmEYjtyZJIipInvtDj4gQW+kppgYFM5?=
+ =?us-ascii?Q?Ui1jcCcXvvzZ1106/LlxECKTrGHmIy0HxOFKOM1MsXfHDT5VYfr70KHCEwQv?=
+ =?us-ascii?Q?xMMujH7x+rrYJ+pwP594eB4pSp2xy2bqBl2geWc+3q/HYbnRPTvR2n2OI67b?=
+ =?us-ascii?Q?0fhiiESUje99veNoBxf0BBJnYIOZptr318GqE0M5oai+VfBS0IczagGST0hx?=
+ =?us-ascii?Q?Ic/zZ2LvmHlgglGDaScH09jwB78TE9GHzNvxuEQm8XrD1MJmLo3DtG52F/B2?=
+ =?us-ascii?Q?yo2TO24CcYfQCPtyaoxgLPqDjw/fhvGUuCF4MPlbnUQeTFqJ/4w7yuHFKQmp?=
+ =?us-ascii?Q?hZ7xOzIxjxCxTw6MinPxJXmu1wxxyyzyBazpYbpjuqVsVN5z3/skysTeogAP?=
+ =?us-ascii?Q?clCmkYlKhEBE95ifDWrcI93W8V0s0zKxcJ8f9sNALbRkQsNdQQBJpWDCAUK9?=
+ =?us-ascii?Q?Tm5L3kplI2oMhwLbWVLkoLmsUY6BS52vqtvqwBVWGAOKgO5BylA2e3Ej54Ex?=
+ =?us-ascii?Q?oKry7MD3aiFii5FYHkAfnfvhV8MGDF/BCG+nKovueZGgIWaOtSZAkoDZjDIY?=
+ =?us-ascii?Q?FqZd5f37aPGvrC6NFteT60RkiHcBYsSgrdtM+qOx//f9/rDEv8TJP9qmuWcF?=
+ =?us-ascii?Q?snqRsdwYxwyFl7CRfeud6FTD3/lJc4LOrGZDFvGiBWiLULTJjnKzdKiBjJL0?=
+ =?us-ascii?Q?mKn8o0DDFRvRNkGl62rHBckzfw2W6N68MtW2n++lZT5EONFpwh7CW2+fOAEt?=
+ =?us-ascii?Q?0s4P4EagfdJTuF+rBFPooHk6X3l1vw7JSGdw41HReLskyPGf1UGJ7PM1xPkc?=
+ =?us-ascii?Q?UcyZNKSdLNdCDZ84baIUOgwpOTgyKN30WYtPF7CW9Q6BowO2ciloPyuOIbGE?=
+ =?us-ascii?Q?FLYiuikm99dsKClfa7mACLaoU3sASBVGHchza2202DCieNNtV++Z5OFmJofp?=
+ =?us-ascii?Q?+KAlXzpU3qw=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM8PR03MB6230.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?8VlHjMR22bpPupI/pFwlKw4tFWqVLCs+yG/8nLENJDgCf7TFgv1BJdktm9ur?=
+ =?us-ascii?Q?45eRhprF1Mf0PDrIxn53nHVm+RsWXpWkJRrzHaNS62nuEMY3dgoTlaMZUq4n?=
+ =?us-ascii?Q?kjKOaT2UFOZYE/cZSN4zx32CK+O3CPS0YQgE/Ih1BOc1WSFjrHjlcQBmFU9g?=
+ =?us-ascii?Q?WXC2VORRG66LzRW79f3q9BmGps0TU/ajxfuKpWudtoxqtTTpzOIGq6buPy8e?=
+ =?us-ascii?Q?FAnHaEcuxmqnUioN1wAG3Fxg4vBzMfqTOK0FrX5jIbDDKYb9JZmRGasoWpKL?=
+ =?us-ascii?Q?HVT+6mGGPp7n6nx1RKOgUqkV9p3gatVZymoll91S1Nx5nXZv6Pm80h8VOoj0?=
+ =?us-ascii?Q?w3fK8m4PZdfWMvzNZetB4M/1A9nuplrcT9c+goglYm4HG4zu/YL7ePw52PL6?=
+ =?us-ascii?Q?+oRqag1zUltgrdpeu7Nf3VM6lYOdWlXvAglBTaUWNBEys7t6Mj05YpduuafS?=
+ =?us-ascii?Q?zR3aS+Q8kpu4xbnlKfSEidEjM8bEHKT2HBP8a+s6KRHJgG3uJtY3nZY530Bo?=
+ =?us-ascii?Q?xA8Kt2m9Rcc5OU2g3j2nUXht/+0VDCiMPno+nBH21VXcsrpaJ9AOn1cJY42b?=
+ =?us-ascii?Q?KDFWQrRnjUqwyZHnTik+X5ez2B8pPCkXAhl8uaZiwg+3mIDnajXZBGQHrdnJ?=
+ =?us-ascii?Q?SEDvVFj0Dbmhu/9xp8w6Hl0HQM5zqkwgxSyabgkqM3nZtxEXgIAHegZHQQsq?=
+ =?us-ascii?Q?HXgK+STQLl5ITt1else/JxRi5+TaZh0K7OGSGyr5e+S5ifwKZqRCbI0ybrB4?=
+ =?us-ascii?Q?b4KalqmUmQqW2D6iyKFrNl3BxV8afcQY0LoKB3D9Q8KMA+A/8FtcuT6qcxya?=
+ =?us-ascii?Q?BsmsxL3UJ6VlJ8l5X3wqgl7ckUGeYkQZmcYPq7b1H+OA/IbpRtbBdDHwlRTM?=
+ =?us-ascii?Q?aiHhzv9Fsgq9Sf/qWDb8UULJvS3XByZgttV6HgO13AcLY6DC8HzqYiGZl4+Q?=
+ =?us-ascii?Q?0YasNekJ7yWAobxZGfHpzvloETsgOnpxf20L+0DFn9AwvIdVkp9Z2LQZOjz7?=
+ =?us-ascii?Q?N7ZRB8ZkegSjf0ZAVF4ZCKcM5clvKEigJCV2/DtPPZptcRoS5BoXX4amMSLS?=
+ =?us-ascii?Q?xMcgzohayTKkOiQrqFrg19u0ZcC1F9Ng7n5TDBbxEWRa8OeVHJML68Hz6ArY?=
+ =?us-ascii?Q?2o5+may5xvvipnkMWgcMK5uVr/UZKPrNufOHAXl83SvFY/moIwWvO6wSocQj?=
+ =?us-ascii?Q?tEkPZRRxmb+OfG/BiViYNhd6OkOyY+YMHZDNBDHaktTjJM1TMAiPKkZg5/52?=
+ =?us-ascii?Q?REVlWvI2k3Uhvh1ihxSi7bH1ImMLVTJW/zrWeFDHnQ+8M5Xts4q1RMf6Z8T2?=
+ =?us-ascii?Q?Gq5TLXZUiqaIv2vWpUqplWtSFeYI0mn5u1J9hmZNOlOJj2Y/lj6Qvvqaw73L?=
+ =?us-ascii?Q?mzpIHd8JMnv++Zd1N3dyD8ag9XprLIk4QE2evJEoP0XrxIPb8pz+8hDQ3YYS?=
+ =?us-ascii?Q?U4tBFFnpbyYh6+94A26GqpIaCNywtCoTWRC7EuIcJmkYWH9G9GUbmzt1lZyX?=
+ =?us-ascii?Q?NKuYj6gvIX8L4EqffTwqh7OyteuhVe7uEM3a0lz86DSDxRxs5HkNnfc8QUuF?=
+ =?us-ascii?Q?AmswdK64drhwalnDFsZ2RW6CokjTACQz1rn27WRJ6LuSKGqLO9gwEsj7GmGW?=
+ =?us-ascii?Q?iQ=3D=3D?=
+X-OriginatorOrg: altera.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 529b8021-a5ee-4001-7fb7-08ddbad7e514
+X-MS-Exchange-CrossTenant-AuthSource: DM8PR03MB6230.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Jul 2025 08:50:58.1364
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: fbd72e03-d4a5-4110-adce-614d51f2077a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: vexXsy3Vl3JJiWaaoZ9rFCWcnPpkWvKyXrLTBZ7487XnrqdVY+r/mRCxnzlm5V2c3rdbTE5gr/Z3wGaRuYYsxl6gSwlXH9TJlMEHbKskrbs=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR03MB7099
 
-From: Yang Weijiang <weijiang.yang@intel.com>
+From: Adrian Ng Ho Yin <adrianhoyin.ng@altera.com>
 
-Expose CET features to guest if KVM/host can support them, clear CPUID
-feature bits if KVM/host cannot support.
+Agilex5 address bus width for the ACE-lite interface is only 32 bits.
+Hence the GIC600 SoC integration for Agilex5 can only access the first
+32bit of the physical address space.
 
-Set CPUID feature bits so that CET features are available in guest CPUID.
-Add CR4.CET bit support in order to allow guest set CET master control
-bit.
+Add quirk to configure the gfp flag to allocate memory within 32bit
+addressable range. As the 0x0201743b GIC600 ID is not specific to
+Altera, of_machine_is_compatible() is added.
 
-Disable KVM CET feature if unrestricted_guest is unsupported/disabled as
-KVM does not support emulating CET.
-
-The CET load-bits in VM_ENTRY/VM_EXIT control fields should be set to make
-guest CET xstates isolated from host's.
-
-On platforms with VMX_BASIC[bit56] == 0, inject #CP at VMX entry with error
-code will fail, and if VMX_BASIC[bit56] == 1, #CP injection with or without
-error code is allowed. Disable CET feature bits if the MSR bit is cleared
-so that nested VMM can inject #CP if and only if VMX_BASIC[bit56] == 1.
-
-Don't expose CET feature if either of {U,S}_CET xstate bits is cleared
-in host XSS or if XSAVES isn't supported.
-
-CET MSRs are reset to 0s after RESET, power-up and INIT, clear guest CET
-xsave-area fields so that guest CET MSRs are reset to 0s after the events.
-
-Meanwhile explicitly disable SHSTK and IBT for SVM because CET KVM enabling
-for SVM is not ready.
-
-Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
-Signed-off-by: Chao Gao <chao.gao@intel.com>
-
+Signed-off-by: Adrian Ng Ho Yin <adrianhoyin.ng@altera.com>
 ---
-v11:
- 1) Remove IBT CPUID reference to raw CPUID info after discussion.
- 2) Disable SHSTK/IBT support in SVM explicitly per Sean's comment.
- 3) Handle GUEST_S_CET field as a common field for SHSTK and IBT.
----
- arch/x86/include/asm/kvm_host.h |  2 +-
- arch/x86/include/asm/vmx.h      |  1 +
- arch/x86/kvm/cpuid.c            |  2 ++
- arch/x86/kvm/svm/svm.c          |  4 ++++
- arch/x86/kvm/vmx/capabilities.h |  5 +++++
- arch/x86/kvm/vmx/vmx.c          | 30 +++++++++++++++++++++++++++++-
- arch/x86/kvm/vmx/vmx.h          |  6 ++++--
- arch/x86/kvm/x86.c              | 22 +++++++++++++++++++---
- arch/x86/kvm/x86.h              |  3 +++
- 9 files changed, 68 insertions(+), 7 deletions(-)
+ arch/arm64/Kconfig               | 10 ++++++++++
+ drivers/irqchip/irq-gic-v3-its.c | 18 ++++++++++++++++++
+ 2 files changed, 28 insertions(+)
 
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index 30d9d434c048..2aca91c7ae1b 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -142,7 +142,7 @@
- 			  | X86_CR4_OSXSAVE | X86_CR4_SMEP | X86_CR4_FSGSBASE \
- 			  | X86_CR4_OSXMMEXCPT | X86_CR4_LA57 | X86_CR4_VMXE \
- 			  | X86_CR4_SMAP | X86_CR4_PKE | X86_CR4_UMIP \
--			  | X86_CR4_LAM_SUP))
-+			  | X86_CR4_LAM_SUP | X86_CR4_CET))
+diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+index 55fc331af337..2286b4d378e2 100644
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -1348,6 +1348,16 @@ config SOCIONEXT_SYNQUACER_PREITS
  
- #define CR8_RESERVED_BITS (~(unsigned long)X86_CR8_TPR)
+ 	  If unsure, say Y.
  
-diff --git a/arch/x86/include/asm/vmx.h b/arch/x86/include/asm/vmx.h
-index ce10a7e2d3d9..c85c50019523 100644
---- a/arch/x86/include/asm/vmx.h
-+++ b/arch/x86/include/asm/vmx.h
-@@ -134,6 +134,7 @@
- #define VMX_BASIC_DUAL_MONITOR_TREATMENT	BIT_ULL(49)
- #define VMX_BASIC_INOUT				BIT_ULL(54)
- #define VMX_BASIC_TRUE_CTLS			BIT_ULL(55)
-+#define VMX_BASIC_NO_HW_ERROR_CODE_CC		BIT_ULL(56)
- 
- static inline u32 vmx_basic_vmcs_revision_id(u64 vmx_basic)
- {
-diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-index 9b45607f9b37..7007ce792706 100644
---- a/arch/x86/kvm/cpuid.c
-+++ b/arch/x86/kvm/cpuid.c
-@@ -944,6 +944,7 @@ void kvm_set_cpu_caps(void)
- 		VENDOR_F(WAITPKG),
- 		F(SGX_LC),
- 		F(BUS_LOCK_DETECT),
-+		F(SHSTK),
- 	);
- 
- 	/*
-@@ -970,6 +971,7 @@ void kvm_set_cpu_caps(void)
- 		F(AMX_INT8),
- 		F(AMX_BF16),
- 		F(FLUSH_L1D),
-+		F(IBT),
- 	);
- 
- 	if (boot_cpu_has(X86_FEATURE_AMD_IBPB_RET) &&
-diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-index 803574920e41..6375695ce285 100644
---- a/arch/x86/kvm/svm/svm.c
-+++ b/arch/x86/kvm/svm/svm.c
-@@ -5223,6 +5223,10 @@ static __init void svm_set_cpu_caps(void)
- 	kvm_caps.supported_perf_cap = 0;
- 	kvm_caps.supported_xss = 0;
- 
-+	/* KVM doesn't yet support CET virtualization for SVM. */
-+	kvm_cpu_cap_clear(X86_FEATURE_SHSTK);
-+	kvm_cpu_cap_clear(X86_FEATURE_IBT);
++config ALTERA_AGILEX5_ADDR_BUS_WIDTH_LIMITATION
++	bool "Altera Agilex: GIC600 can not access physical addresses higher than 4GB"
++	default y
++	help
++	  Agilex5 address bus width for the ACE-lite interface is only 32 bits. Hence
++	  the GIC600 SoC integration for Agilex5 can only access the first 32bit of the
++	  physical address space.
 +
- 	/* CPUID 0x80000001 and 0x8000000A (SVM features) */
- 	if (nested) {
- 		kvm_cpu_cap_set(X86_FEATURE_SVM);
-diff --git a/arch/x86/kvm/vmx/capabilities.h b/arch/x86/kvm/vmx/capabilities.h
-index 0f0e1717dc80..09c130d2e595 100644
---- a/arch/x86/kvm/vmx/capabilities.h
-+++ b/arch/x86/kvm/vmx/capabilities.h
-@@ -77,6 +77,11 @@ static inline bool cpu_has_vmx_basic_inout(void)
- 	return	vmcs_config.basic & VMX_BASIC_INOUT;
++	  If unsure, say Y.
++
+ endmenu # "ARM errata workarounds via the alternatives framework"
+ 
+ choice
+diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
+index d54fa0638dc4..a2cf401568e7 100644
+--- a/drivers/irqchip/irq-gic-v3-its.c
++++ b/drivers/irqchip/irq-gic-v3-its.c
+@@ -4901,6 +4901,16 @@ static bool __maybe_unused its_enable_rk3568002(void *data)
+ 	return true;
  }
  
-+static inline bool cpu_has_vmx_basic_no_hw_errcode(void)
++static bool __maybe_unused its_enable_agilex5(void *data)
 +{
-+	return	vmcs_config.basic & VMX_BASIC_NO_HW_ERROR_CODE_CC;
++	if (!of_machine_is_compatible("intel,socfpga-agilex5"))
++		return false;
++
++	gfp_flags_quirk |= GFP_DMA32;
++
++	return true;
 +}
 +
- static inline bool cpu_has_virtual_nmis(void)
- {
- 	return vmcs_config.pin_based_exec_ctrl & PIN_BASED_VIRTUAL_NMIS &&
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index 3d6da3836e6b..d837876e3726 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -2598,6 +2598,7 @@ static int setup_vmcs_config(struct vmcs_config *vmcs_conf,
- 		{ VM_ENTRY_LOAD_IA32_EFER,		VM_EXIT_LOAD_IA32_EFER },
- 		{ VM_ENTRY_LOAD_BNDCFGS,		VM_EXIT_CLEAR_BNDCFGS },
- 		{ VM_ENTRY_LOAD_IA32_RTIT_CTL,		VM_EXIT_CLEAR_IA32_RTIT_CTL },
-+		{ VM_ENTRY_LOAD_CET_STATE,		VM_EXIT_LOAD_CET_STATE },
- 	};
- 
- 	memset(vmcs_conf, 0, sizeof(*vmcs_conf));
-@@ -4862,6 +4863,14 @@ void vmx_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event)
- 
- 	vmcs_write32(VM_ENTRY_INTR_INFO_FIELD, 0);  /* 22.2.1 */
- 
-+	if (kvm_cpu_cap_has(X86_FEATURE_SHSTK)) {
-+		vmcs_writel(GUEST_SSP, 0);
-+		vmcs_writel(GUEST_INTR_SSP_TABLE, 0);
-+	}
-+	if (kvm_cpu_cap_has(X86_FEATURE_IBT) ||
-+	    kvm_cpu_cap_has(X86_FEATURE_SHSTK))
-+		vmcs_writel(GUEST_S_CET, 0);
-+
- 	kvm_make_request(KVM_REQ_APIC_PAGE_RELOAD, vcpu);
- 
- 	vpid_sync_context(vmx->vpid);
-@@ -6310,6 +6319,10 @@ void dump_vmcs(struct kvm_vcpu *vcpu)
- 	if (vmcs_read32(VM_EXIT_MSR_STORE_COUNT) > 0)
- 		vmx_dump_msrs("guest autostore", &vmx->msr_autostore.guest);
- 
-+	if (vmentry_ctl & VM_ENTRY_LOAD_CET_STATE)
-+		pr_err("S_CET = 0x%016lx, SSP = 0x%016lx, SSP TABLE = 0x%016lx\n",
-+		       vmcs_readl(GUEST_S_CET), vmcs_readl(GUEST_SSP),
-+		       vmcs_readl(GUEST_INTR_SSP_TABLE));
- 	pr_err("*** Host State ***\n");
- 	pr_err("RIP = 0x%016lx  RSP = 0x%016lx\n",
- 	       vmcs_readl(HOST_RIP), vmcs_readl(HOST_RSP));
-@@ -6340,6 +6353,10 @@ void dump_vmcs(struct kvm_vcpu *vcpu)
- 		       vmcs_read64(HOST_IA32_PERF_GLOBAL_CTRL));
- 	if (vmcs_read32(VM_EXIT_MSR_LOAD_COUNT) > 0)
- 		vmx_dump_msrs("host autoload", &vmx->msr_autoload.host);
-+	if (vmexit_ctl & VM_EXIT_LOAD_CET_STATE)
-+		pr_err("S_CET = 0x%016lx, SSP = 0x%016lx, SSP TABLE = 0x%016lx\n",
-+		       vmcs_readl(HOST_S_CET), vmcs_readl(HOST_SSP),
-+		       vmcs_readl(HOST_INTR_SSP_TABLE));
- 
- 	pr_err("*** Control State ***\n");
- 	pr_err("CPUBased=0x%08x SecondaryExec=0x%08x TertiaryExec=0x%016llx\n",
-@@ -7917,7 +7934,6 @@ static __init void vmx_set_cpu_caps(void)
- 		kvm_cpu_cap_set(X86_FEATURE_UMIP);
- 
- 	/* CPUID 0xD.1 */
--	kvm_caps.supported_xss = 0;
- 	if (!cpu_has_vmx_xsaves())
- 		kvm_cpu_cap_clear(X86_FEATURE_XSAVES);
- 
-@@ -7929,6 +7945,18 @@ static __init void vmx_set_cpu_caps(void)
- 
- 	if (cpu_has_vmx_waitpkg())
- 		kvm_cpu_cap_check_and_set(X86_FEATURE_WAITPKG);
-+
-+	/*
-+	 * Disable CET if unrestricted_guest is unsupported as KVM doesn't
-+	 * enforce CET HW behaviors in emulator. On platforms with
-+	 * VMX_BASIC[bit56] == 0, inject #CP at VMX entry with error code
-+	 * fails, so disable CET in this case too.
-+	 */
-+	if (!cpu_has_load_cet_ctrl() || !enable_unrestricted_guest ||
-+	    !cpu_has_vmx_basic_no_hw_errcode()) {
-+		kvm_cpu_cap_clear(X86_FEATURE_SHSTK);
-+		kvm_cpu_cap_clear(X86_FEATURE_IBT);
-+	}
- }
- 
- static bool vmx_is_io_intercepted(struct kvm_vcpu *vcpu,
-diff --git a/arch/x86/kvm/vmx/vmx.h b/arch/x86/kvm/vmx/vmx.h
-index 87174d961c85..f93062965a7a 100644
---- a/arch/x86/kvm/vmx/vmx.h
-+++ b/arch/x86/kvm/vmx/vmx.h
-@@ -482,7 +482,8 @@ static inline u8 vmx_get_rvi(void)
- 	 VM_ENTRY_LOAD_IA32_EFER |					\
- 	 VM_ENTRY_LOAD_BNDCFGS |					\
- 	 VM_ENTRY_PT_CONCEAL_PIP |					\
--	 VM_ENTRY_LOAD_IA32_RTIT_CTL)
-+	 VM_ENTRY_LOAD_IA32_RTIT_CTL |					\
-+	 VM_ENTRY_LOAD_CET_STATE)
- 
- #define __KVM_REQUIRED_VMX_VM_EXIT_CONTROLS				\
- 	(VM_EXIT_SAVE_DEBUG_CONTROLS |					\
-@@ -504,7 +505,8 @@ static inline u8 vmx_get_rvi(void)
- 	       VM_EXIT_LOAD_IA32_EFER |					\
- 	       VM_EXIT_CLEAR_BNDCFGS |					\
- 	       VM_EXIT_PT_CONCEAL_PIP |					\
--	       VM_EXIT_CLEAR_IA32_RTIT_CTL)
-+	       VM_EXIT_CLEAR_IA32_RTIT_CTL |				\
-+	       VM_EXIT_LOAD_CET_STATE)
- 
- #define KVM_REQUIRED_VMX_PIN_BASED_VM_EXEC_CONTROL			\
- 	(PIN_BASED_EXT_INTR_MASK |					\
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index b17a8bf84db3..3b99124f8985 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -223,7 +223,8 @@ static struct kvm_user_return_msrs __percpu *user_return_msrs;
- 				| XFEATURE_MASK_BNDCSR | XFEATURE_MASK_AVX512 \
- 				| XFEATURE_MASK_PKRU | XFEATURE_MASK_XTILE)
- 
--#define KVM_SUPPORTED_XSS     0
-+#define KVM_SUPPORTED_XSS	(XFEATURE_MASK_CET_USER | \
-+				 XFEATURE_MASK_CET_KERNEL)
- 
- bool __read_mostly allow_smaller_maxphyaddr = 0;
- EXPORT_SYMBOL_GPL(allow_smaller_maxphyaddr);
-@@ -10073,6 +10074,20 @@ int kvm_x86_vendor_init(struct kvm_x86_init_ops *ops)
- 	if (!kvm_cpu_cap_has(X86_FEATURE_XSAVES))
- 		kvm_caps.supported_xss = 0;
- 
-+	if (!kvm_cpu_cap_has(X86_FEATURE_SHSTK) &&
-+	    !kvm_cpu_cap_has(X86_FEATURE_IBT))
-+		kvm_caps.supported_xss &= ~(XFEATURE_MASK_CET_USER |
-+					    XFEATURE_MASK_CET_KERNEL);
-+
-+	if ((kvm_caps.supported_xss & (XFEATURE_MASK_CET_USER |
-+	     XFEATURE_MASK_CET_KERNEL)) !=
-+	    (XFEATURE_MASK_CET_USER | XFEATURE_MASK_CET_KERNEL)) {
-+		kvm_cpu_cap_clear(X86_FEATURE_SHSTK);
-+		kvm_cpu_cap_clear(X86_FEATURE_IBT);
-+		kvm_caps.supported_xss &= ~(XFEATURE_MASK_CET_USER |
-+					    XFEATURE_MASK_CET_KERNEL);
-+	}
-+
- 	if (kvm_caps.has_tsc_control) {
- 		/*
- 		 * Make sure the user can only configure tsc_khz values that
-@@ -12729,10 +12744,11 @@ static void kvm_xstate_reset(struct kvm_vcpu *vcpu, bool init_event)
- 	/*
- 	 * On INIT, only select XSTATE components are zeroed, most components
- 	 * are unchanged.  Currently, the only components that are zeroed and
--	 * supported by KVM are MPX related.
-+	 * supported by KVM are MPX and CET related.
- 	 */
- 	xfeatures_mask = (kvm_caps.supported_xcr0 | kvm_caps.supported_xss) &
--			 (XFEATURE_MASK_BNDREGS | XFEATURE_MASK_BNDCSR);
-+			 (XFEATURE_MASK_BNDREGS | XFEATURE_MASK_BNDCSR |
-+			  XFEATURE_MASK_CET_USER | XFEATURE_MASK_CET_KERNEL);
- 	if (!xfeatures_mask)
- 		return;
- 
-diff --git a/arch/x86/kvm/x86.h b/arch/x86/kvm/x86.h
-index 8d2049a1f41b..e54c779e74a3 100644
---- a/arch/x86/kvm/x86.h
-+++ b/arch/x86/kvm/x86.h
-@@ -647,6 +647,9 @@ static inline bool __kvm_is_valid_cr4(struct kvm_vcpu *vcpu, unsigned long cr4)
- 		__reserved_bits |= X86_CR4_PCIDE;       \
- 	if (!__cpu_has(__c, X86_FEATURE_LAM))           \
- 		__reserved_bits |= X86_CR4_LAM_SUP;     \
-+	if (!__cpu_has(__c, X86_FEATURE_SHSTK) &&       \
-+	    !__cpu_has(__c, X86_FEATURE_IBT))           \
-+		__reserved_bits |= X86_CR4_CET;         \
- 	__reserved_bits;                                \
- })
- 
+ static const struct gic_quirk its_quirks[] = {
+ #ifdef CONFIG_CAVIUM_ERRATUM_22375
+ 	{
+@@ -4975,6 +4985,14 @@ static const struct gic_quirk its_quirks[] = {
+ 		.mask   = 0xffffffff,
+ 		.init   = its_enable_rk3568002,
+ 	},
++#endif
++#ifdef ALTERA_AGILEX5_ADDR_BUS_WIDTH_LIMITATION
++	{
++		.desc   = "ITS: Altera Agilex5 address bus width limitation",
++		.iidr   = 0x0201743b,
++		.mask   = 0xffffffff,
++		.init   = its_enable_agilex5,
++	},
+ #endif
+ 	{
+ 	}
 -- 
-2.47.1
+2.49.GIT
 
 
