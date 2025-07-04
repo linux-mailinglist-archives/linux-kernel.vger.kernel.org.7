@@ -1,178 +1,195 @@
-Return-Path: <linux-kernel+bounces-717159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-717136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 672A8AF9071
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 12:31:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9490AF8FF0
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 12:25:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FCC1547C50
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 10:30:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1768C5A1D07
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 10:25:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85C892FC3D5;
-	Fri,  4 Jul 2025 10:26:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QQSf7MCH"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3980E2EE99A;
+	Fri,  4 Jul 2025 10:25:23 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 398EF2FC3BB
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 10:26:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF5A7286898;
+	Fri,  4 Jul 2025 10:25:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751624792; cv=none; b=eO6cXWD4uFCeZHh3ATAdfm90aWI5Rsko6wZATx1k+8qkEIbqaZ3DY8OI08KkxGiMnfAdsNXEl6NxSdKUezncT/p4sHfBStNbHIcb4aktw5po4vD3/Bkd8TuLUSuUYAh/rGhKOAr9otoqXRylYQIj0HxBnE3LfcVn/GUYk05RbyE=
+	t=1751624722; cv=none; b=c58aOh9vv9JeM8Nx2mRHL+ONRa3WyFY3q38kOuLbJzJR9zsRzF7DDIzThhc2blp7hvc8cEzm/q7iqyVS5Q0KvK6+awuKP75CLzWYOJcvHFGPoBsQevAr5I9skOJriAE9JYtPbVXN1Hcjgtij8SEmMrzFqVXXmIau6XLvyuXFLUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751624792; c=relaxed/simple;
-	bh=C6jPkBseruyPYB2V4vPia4YjzGxO7oc6LRdQsocjdPQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=oaFxqoTHuiZffNuyLVh8Jp8Mk2Tt+y0zX4tArHGPVpE6QaI270BGm0JYhm19dPVMhnOFacuxadHbTDLU20fGx3Uf1MZtu7T//0MfdsBGRIf18G5D1hZsfJ7CHEe+hSjIO9uek7rx12X8UQYeZCh6EReBULA8+m4Ju2YlOXdK71w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QQSf7MCH; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1751624790;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cJheLoKLsD44QkJTGnHlicWVVgB1MKf4t1jgEN3k6qA=;
-	b=QQSf7MCHJ0+6djILhVCdnykQZFP+3tHzG84xOreUSIcBgtFvzru7IQWhMnfbjLHEV8TLbk
-	epBxvee05TRoCKuNn3bQgHGuFIQ5w2EogHLTPfeBkdjuQljV7oNGQ824sUD6JOUAD6/j1x
-	XSwQZ0pMHhjtbOMehkvxpGRLCLRT7xE=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-596-fMc5h8GpM8Cwwtr7OKfn2g-1; Fri, 04 Jul 2025 06:26:19 -0400
-X-MC-Unique: fMc5h8GpM8Cwwtr7OKfn2g-1
-X-Mimecast-MFC-AGG-ID: fMc5h8GpM8Cwwtr7OKfn2g_1751624778
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3a6df0c67a6so416095f8f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Jul 2025 03:26:19 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751624778; x=1752229578;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cJheLoKLsD44QkJTGnHlicWVVgB1MKf4t1jgEN3k6qA=;
-        b=oehaySEbcpKIXsFNSNixKoUq7sJn6fX24UCspeabLnEzNt9lLRg+vAkA0tAkvMV8kR
-         gL55iHOIT1TOiCfSojxrRXj0ENZAFVs/qYaOcCbqWeH9qUHwrHqd1157ybnjUVs4dhSu
-         Uy+pTAxWhDVp7C6A13Xd9rCbLfsOCW7k1r/m69AJEAsLKFxRuYYgclzBEXx6bDP6fSBs
-         gvkZYoPuHPBA9dQswZzTu34C0F0z4sID+a0y1zNtviTBM82RXN1ClV16i8xmrzdJSWLX
-         zHcVUYmKoAFU7gvlYkLyBCHFeqnSXqtr66Wcj7fM3dn2pcKOgH9cQPTPHPnTxr96dfUs
-         nEeA==
-X-Gm-Message-State: AOJu0YyJVO6oK3i+pwRmfbTGAwSWyQXFCa7p+HJA7RxRD6suf4SC8VyT
-	dDjHwwJYZchdUFu5B01wFNrwd/qeCerBU32PdyStKbQMpdSSZEzrkm6sdpkqVUcjxy7kR9ClIky
-	ErIsAOLMl8j9jL0OF9nNEDihj+r16VqIbuiOJ4G9mAmGHw00+igDv72s2pcBM7/ocTzacYARfeV
-	we7L/DmX4AUdZPrgnX3mTXD650+PJ89EctJe6Uihl9bZfmCQ==
-X-Gm-Gg: ASbGnctvi7P2PI3/2HoFUTixc1OEqW4LU81Wp4bV9y+LaaBeYDzsWFRtJ02Rhpup/Hn
-	ISENK+2BM4SkOjPEiwdJt5edbv8P+mbIxIpxHWCoPvXVfCJpNaakudMCLAU/ukL9vh/FxNGNOOM
-	+uNCq9bnP219nUz3NWNRge40YkvIzHSmP0BATyJGKwjQx3xO2QIwd4W8RL0YMVR04hHpU6XBpsV
-	CyuuZLEGFRNEjidMAdgXFtfENMiRoHta/QJgAEhfs45s0+jrgosnUdenOpvZmV190MOrWbzCQ/o
-	2aBEfVGXBFxfcqi9uZbYvBe6/tQqQXNnn4PWlEyaoXWXUv2ywWSrKoD8Ez4lksdSjbPT+IUUw57
-	T0kdLfw==
-X-Received: by 2002:a05:6000:2f85:b0:3a5:57b7:cd7b with SMTP id ffacd0b85a97d-3b497019684mr1247119f8f.22.1751624778043;
-        Fri, 04 Jul 2025 03:26:18 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFsIhm+puni7M70O9UOfmv7nAn160MUBp8IUwHGoHgLCi+2FqWLpmioUQXF2wdRtw6a1cigug==
-X-Received: by 2002:a05:6000:2f85:b0:3a5:57b7:cd7b with SMTP id ffacd0b85a97d-3b497019684mr1247037f8f.22.1751624777474;
-        Fri, 04 Jul 2025 03:26:17 -0700 (PDT)
-Received: from localhost (p200300d82f2c5500098823f9faa07232.dip0.t-ipconnect.de. [2003:d8:2f2c:5500:988:23f9:faa0:7232])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-454a9969a8bsm51842365e9.2.2025.07.04.03.26.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 04 Jul 2025 03:26:16 -0700 (PDT)
-From: David Hildenbrand <david@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org,
-	linux-doc@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	virtualization@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org,
-	David Hildenbrand <david@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Jerrin Shaji George <jerrin.shaji-george@broadcom.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	=?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Zi Yan <ziy@nvidia.com>,
-	Matthew Brost <matthew.brost@intel.com>,
-	Joshua Hahn <joshua.hahnjy@gmail.com>,
-	Rakie Kim <rakie.kim@sk.com>,
-	Byungchul Park <byungchul@sk.com>,
-	Gregory Price <gourry@gourry.net>,
-	Ying Huang <ying.huang@linux.alibaba.com>,
-	Alistair Popple <apopple@nvidia.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Minchan Kim <minchan@kernel.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Brendan Jackman <jackmanb@google.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	John Hubbard <jhubbard@nvidia.com>,
-	Peter Xu <peterx@redhat.com>,
-	Xu Xin <xu.xin16@zte.com.cn>,
-	Chengming Zhou <chengming.zhou@linux.dev>,
-	Miaohe Lin <linmiaohe@huawei.com>,
-	Naoya Horiguchi <nao.horiguchi@gmail.com>,
-	Oscar Salvador <osalvador@suse.de>,
-	Rik van Riel <riel@surriel.com>,
-	Harry Yoo <harry.yoo@oracle.com>,
-	Qi Zheng <zhengqi.arch@bytedance.com>,
-	Shakeel Butt <shakeel.butt@linux.dev>
-Subject: [PATCH v2 17/29] mm/page_isolation: drop __folio_test_movable() check for large folios
-Date: Fri,  4 Jul 2025 12:25:11 +0200
-Message-ID: <20250704102524.326966-18-david@redhat.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250704102524.326966-1-david@redhat.com>
-References: <20250704102524.326966-1-david@redhat.com>
+	s=arc-20240116; t=1751624722; c=relaxed/simple;
+	bh=+CXpUx6zZcO256ofhhwhvs6R9JR4HjYFe/ky01gIk5M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sIyOHBDP/Wmk/o7Ct+yxqR2X2kFPzlLCIEcWtgq/P3Gg4cbvbkxqvn6Ifi2+os46ucsuuXzmcwo1mUd398qQfidItheuXHaHxtp4VbyE/1jOKwJ2a8AyL+E/QUBHMc1EqTSWArRKbvXrK3Jrx/q5T4AUr0A++caj9L8GaPDRFsw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bYVBg6lsLzYQtqs;
+	Fri,  4 Jul 2025 18:25:15 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id C7F211A17CC;
+	Fri,  4 Jul 2025 18:25:14 +0800 (CST)
+Received: from [10.67.109.79] (unknown [10.67.109.79])
+	by APP1 (Coremail) with SMTP id cCh0CgCXXjMJrGdo8tp7Ag--.21029S2;
+	Fri, 04 Jul 2025 18:25:14 +0800 (CST)
+Message-ID: <85fc85e8-af92-4d58-8271-9bf4aeb0a63d@huaweicloud.com>
+Date: Fri, 4 Jul 2025 18:25:12 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH next] sched,freezer: prevent tasks from escaping being
+ frozen
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Michal Koutn?? <mkoutny@suse.com>, rafael@kernel.org, pavel@kernel.org,
+ timvp@google.com, tj@kernel.org, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, lujialin4@huawei.com, chenridong@huawei.com
+References: <20250703133427.3301899-1-chenridong@huaweicloud.com>
+ <n23vsu6y6cjf2vwdbfcjl2mj7venvpzpblncoa7adn3q5r4lph@qsfa3deqtamc>
+ <f4c4f465-72b9-4682-99e6-c249ecab8572@huaweicloud.com>
+ <8dae8006-e63d-467f-bb7c-e8470878e534@huaweicloud.com>
+ <20250704075718.GA2001818@noisy.programming.kicks-ass.net>
+Content-Language: en-US
+From: Chen Ridong <chenridong@huaweicloud.com>
+In-Reply-To: <20250704075718.GA2001818@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:cCh0CgCXXjMJrGdo8tp7Ag--.21029S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxWrW7tryfWw4UKrWrWF15urg_yoW5tr43p3
+	95Wa15Jw1Fqr1xZrnxtw4DZ3s8K3yq9r4UGrykCa4xJa1YqasxXr17C3yagF4jvry8KrnF
+	qayjgr95Aw4UAaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
+	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
+	ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1
+	7KsUUUUUU==
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-Currently, we only support migration of individual movable_ops pages, so
-we can not run into that.
 
-Reviewed-by: Zi Yan <ziy@nvidia.com>
-Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Reviewed-by: Harry Yoo <harry.yoo@oracle.com>
-Signed-off-by: David Hildenbrand <david@redhat.com>
----
- mm/page_isolation.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/mm/page_isolation.c b/mm/page_isolation.c
-index b97b965b3ed01..f72b6cd38b958 100644
---- a/mm/page_isolation.c
-+++ b/mm/page_isolation.c
-@@ -92,7 +92,7 @@ static struct page *has_unmovable_pages(unsigned long start_pfn, unsigned long e
- 				h = size_to_hstate(folio_size(folio));
- 				if (h && !hugepage_migration_supported(h))
- 					return page;
--			} else if (!folio_test_lru(folio) && !__folio_test_movable(folio)) {
-+			} else if (!folio_test_lru(folio)) {
- 				return page;
- 			}
- 
--- 
-2.49.0
+On 2025/7/4 15:57, Peter Zijlstra wrote:
+> On Fri, Jul 04, 2025 at 11:11:52AM +0800, Chen Ridong wrote:
+> 
+> Your patches are mangled; please educate your MUA.
+> 
+Hi Peter,
+
+Thank you for your review and feedback
+Apologies for the formatting issues in the patch.
+
+>> --- a/kernel/freezer.c
+>> +++ b/kernel/freezer.c
+>> @@ -71,19 +71,20 @@ bool __refrigerator(bool check_kthr_stop)
+>>         for (;;) {
+>>                 bool freeze;
+>>
+>> -               raw_spin_lock_irq(&current->pi_lock);
+>> -               WRITE_ONCE(current->__state, TASK_FROZEN);
+>> -               /* unstale saved_state so that __thaw_task() will wake
+>> us up */
+>> -               current->saved_state = TASK_RUNNING;
+>> -               raw_spin_unlock_irq(&current->pi_lock);
+>> -
+>>                 spin_lock_irq(&freezer_lock);
+>> -               freeze = freezing(current) && !(check_kthr_stop &&
+>> kthread_should_stop());
+>> +               freeze = (freezing(current) || !cgroup_thawed(current))
+>> +                        && !(check_kthr_stop && kthread_should_stop());
+> 
+> This makes no sense to me; why can't this stay in cgroup_freezing()?
+> 
+> Also, can someone please fix that broken comment style there.
+> 
+The change relates to commit cff5f49d433f ("cgroup_freezer: cgroup_freezing: Check if not frozen"),
+which modified cgroup_freezing() to verify the FROZEN flag isn't set. The freezing(p) will return
+false if the cgroup is frozen.
+
+>>                 spin_unlock_irq(&freezer_lock);
+>>
+>>                 if (!freeze)
+>>                         break;
+>>
+>> +               raw_spin_lock_irq(&current->pi_lock);
+>> +               WRITE_ONCE(current->__state, TASK_FROZEN);
+>> +               /* unstale saved_state so that __thaw_task() will wake
+>> us up */
+>> +               current->saved_state = TASK_RUNNING;
+>> +               raw_spin_unlock_irq(&current->pi_lock);
+>> +
+> 
+> And I'm not quite sure I understand this hunk either. If we bail out,
+> current->__state is reset to TASK_RUNNING, so what's the problem?
+
+The issue occurs in this race scenario:
+
+echo FROZEN > freezer.state
+  freeze_cgroup()
+    freeze_task()
+      fake_signal_wake_up() // wakes task to freeze it
+
+In task context:
+get_signal
+  try_to_freeze
+    __refrigerator
+      WRITE_ONCE(current->__state, TASK_FROZEN); // set TASK_FROZEN
+      // race: cgroup state updates to frozen
+      freezing(current) now return false
+      // We bail out, the task is not frozen but it should be frozen.
+
+I hope this explanation clarifies the issue I encountered.
+
+Here's the corrected format patch:
+
+diff --git a/kernel/freezer.c b/kernel/freezer.c
+index 8d530d0949ff..16e98a6b497a 100644
+--- a/kernel/freezer.c
++++ b/kernel/freezer.c
+@@ -71,19 +71,20 @@ bool __refrigerator(bool check_kthr_stop)
+        for (;;) {
+                bool freeze;
+
+-               raw_spin_lock_irq(&current->pi_lock);
+-               WRITE_ONCE(current->__state, TASK_FROZEN);
+-               /* unstale saved_state so that __thaw_task() will wake us up */
+-               current->saved_state = TASK_RUNNING;
+-               raw_spin_unlock_irq(&current->pi_lock);
+-
+                spin_lock_irq(&freezer_lock);
+-               freeze = freezing(current) && !(check_kthr_stop && kthread_should_stop());
++               freeze = (freezing(current) || !cgroup_thawed(current))
++                        && !(check_kthr_stop && kthread_should_stop());
+                spin_unlock_irq(&freezer_lock);
+
+                if (!freeze)
+                        break;
+
++               raw_spin_lock_irq(&current->pi_lock);
++               WRITE_ONCE(current->__state, TASK_FROZEN);
++               /* unstale saved_state so that __thaw_task() will wake us up */
++               current->saved_state = TASK_RUNNING;
++               raw_spin_unlock_irq(&current->pi_lock);
++
+                was_frozen = true;
+                schedule();
+        }
+
+Best regards,
+Ridong
 
 
