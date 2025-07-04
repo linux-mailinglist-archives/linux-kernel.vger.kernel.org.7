@@ -1,306 +1,162 @@
-Return-Path: <linux-kernel+bounces-717557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-717543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3D09AF95BB
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 16:39:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C71EAF9576
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 16:26:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9388A1BC753F
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 14:39:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9865173844
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 14:26:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9656B1CAA7B;
-	Fri,  4 Jul 2025 14:39:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E04DE1A5BAE;
+	Fri,  4 Jul 2025 14:26:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HkFYfXwo"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="MVPIjO7C"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 079E21C84C7;
-	Fri,  4 Jul 2025 14:39:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49D2243AA9;
+	Fri,  4 Jul 2025 14:26:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751639971; cv=none; b=nP0TopR+r9sdvMnzp0BKF/RF102MVG84taW+LRkdorRnSWDt2U/p3034G3nXG8bMwz78itTMeRB9LNutVZ26RxVMJxG/G2tKcyRx5DYrsAek2pNOfj11mdjUgoEsPkM6UV5inuC67tKSkqvGbG3Eic70FEY/5D8jPgaUg9UEoE4=
+	t=1751639206; cv=none; b=Dur6PmSlz3e+NliKmOHXP/M3Ch7mawh1QgFhnsQdYHZTXLdyObkqN3xcaWRAoTMpTFoW05v//mzHqoQrkf1ch4ZikhthHDPFE0GXcwL/abyJ1tyqm6XaBrN7Md5yzDbwopyESTS7gpPQX6LX9JMn3LO8G2gMXvRzqgLSO97lk+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751639971; c=relaxed/simple;
-	bh=15CM4LWYK7Wpl5txdeYXrBWZ994P2uRFaj8WRUUK88c=;
-	h=From:To:Cc:Date:Subject:Message-ID:MIME-Version:Content-Type; b=A28EDaMc/TyGJ1yyCzOWy8E9Eu0SoJB0XjIHZFJnOUew4mPaRJkgTMZMeTjKpy8h54Q4krqVaQqC0f5nuDSZb2uSlBWqbGmEEJ8rBCMTpuZAXMrVFg93oen5V4+uPIVBm/ztZ7Y1HCR68jwjvMM0b/EuUqzaVfSbwRNFpAE8jj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HkFYfXwo; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751639970; x=1783175970;
-  h=from:to:cc:date:subject:message-id:mime-version:
-   content-transfer-encoding;
-  bh=15CM4LWYK7Wpl5txdeYXrBWZ994P2uRFaj8WRUUK88c=;
-  b=HkFYfXwoFi34CAx1vtfL5Ja2v2I1hObsWan2p5vP3YnYRxPJiPfivXKg
-   ShMijX6TG8eAlKrHzvuKrlxKfyUs0YdQv7oDxhwz89HACEezwrZzbL7WN
-   SnVQMnzdXlZaw9iHZBV8v/qkXKvy8ba4W2DHTKUSqRoBW3ifUSqmaxYvq
-   L1u30rpCNo4hHJIIbk8OJQvojKxue6T+duA2ExwLWqSEA4t/JICH/oMrj
-   VQd+/TPDqVYRD0dXSDdWLFd1RqKe8j2UPQOyUXKtboRUkS/vUyN7nSiay
-   60fI5LOjtVykE+uTfPBykBk5Gxa2n8r41rtsbs54csjF1z48ltqV8M713
-   A==;
-X-CSE-ConnectionGUID: ivJrvhTOT/iOgV2mLy5oNw==
-X-CSE-MsgGUID: YwxnKhjgQnCBxDLHoSh0qg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11484"; a="41601256"
-X-IronPort-AV: E=Sophos;i="6.16,287,1744095600"; 
-   d="scan'208";a="41601256"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 07:39:29 -0700
-X-CSE-ConnectionGUID: mQiG27VQRlCLmhH1k/HDIQ==
-X-CSE-MsgGUID: E2DPk0xJQKCYgOZ9lqVFpA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,287,1744095600"; 
-   d="scan'208";a="155140410"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.74])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 07:39:27 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+	s=arc-20240116; t=1751639206; c=relaxed/simple;
+	bh=6HSmrs2kw6xHOvIaiO9YVgVSQjMtUeaucvZf4I9HJfg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=GD1aQ0FKVlOiPUJ7i7TPOyU3ln1IrPJ/fDIFZXg3gkD3v9+OZqdFFV13UEkHTzyHplmh1WPY1ZIkmqtVm/2CiJv7tqid4vLqlMVOjm2zqFBe0P7vy05UZVcBCVo66ZpfK33E+NIo2G5vchm8rFQqUrrKenkbxhZArg7Sp8APiEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=MVPIjO7C; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DFBDC4CEE3;
+	Fri,  4 Jul 2025 14:26:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1751639204;
+	bh=6HSmrs2kw6xHOvIaiO9YVgVSQjMtUeaucvZf4I9HJfg=;
+	h=Date:From:To:Cc:Subject:From;
+	b=MVPIjO7CiysakyUILrb0oSGRBNRRV+2shMwM4NjqxpnN/V7yIjQMCvbD2dNlch0UN
+	 8birsadiylriBaqAM95FtvVK+nbFTatebw+9BBLPlnIIgNbs3xfqENdbjzenfM1kYR
+	 1VysfBWKAuCUs6YsxWfQFyyH79FYMv+/NtngWnOU=
+Date: Fri, 4 Jul 2025 16:26:41 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, PDx86 <platform-driver-x86@vger.kernel.org>, Hans de Goede <hdegoede@redhat.com>, Andy Shevchenko <andy@kernel.org>
-Date: Fri, 04 Jul 2025 17:26:33 +0300
-Subject: [GIT PULL] platform-drivers-x86 for v6.16-3
-Message-ID: <pdx86-pr-20250704172633-53246370@linux.intel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org
+Subject: [GIT PULL] USB driver fixes for 6.16-rc5
+Message-ID: <aGfkoTIQaoylP-Ul@kroah.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 
-Hi Linus,
+The following changes since commit e04c78d86a9699d136910cfc0bdcf01087e3267e:
 
-Here is a platform-drivers-x86 fixes PR for v6.16.
-
-Mostly a few lines fixed here and there except amd/isp4 which improves
-swnodes relationships but that is a new driver not in any stable kernels
-yet. The think-lmi driver changes also look relatively large but there
-are just many fixes to it.
-
-The i2c/piix4 change is a effectively a revert of the commit 7e173eb82ae9
-("i2c: piix4: Make CONFIG_I2C_PIIX4 dependent on CONFIG_X86") but that
-required moving the header out from arch/x86 under
-include/linux/platform_data/.
-
-
-Fixes and New HW Support
-
-- amd/isp4: Improve swnode graph (new driver exception)
-
-- asus-nb-wmi: Use duo keyboard quirk for Zenbook Duo UX8406CA
-
-- dell-lis3lv02d: Add Latitude 5500 accelerometer address
-
-- dell-wmi-sysman: Fix WMI data block retrieval and class dev unreg
-
-- hp-bioscfg: Fix class device unregistration
-
-- i2c: piix4: Re-enable on non-x86 + move FCH header under platform_data/
-
-- intel/hid: Wildcat Lake support
-
-- mellanox:
-
-  - mlxbf-pmc: Fix duplicate event ID
-
-  - mlxbf-tmfifo: Fix vring_desc.len assignment
-
-  - mlxreg-lc: Fix bit-not-set logic check
-
-  - nvsw-sn2201: Fix bus number in error message & spelling errors
-
-- portwell-ec: Move watchdog device under correct platform hierarchy
-
-- think-lmi: Error handling fixes (sysfs, kset, kobject, class dev unreg)
-
-- thinkpad_acpi: Handle HKEY 0x1402 event (2025 Thinkpads)
-
-- wmi: Fix WMI event enablement
-
-Regards, i.
-
-
-The following changes since commit e2468dc700743683e1d1793bbd855e2536fd3de2:
-
-  Revert "platform/x86: alienware-wmi-wmax: Add G-Mode support to Alienware m16 R1" (2025-06-13 15:09:02 +0300)
+  Linux 6.16-rc2 (2025-06-15 13:49:41 -0700)
 
 are available in the Git repository at:
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git tags/platform-drivers-x86-v6.16-3
+  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git tags/usb-6.16-rc5
 
-for you to fetch changes up to 4f30f946f27b7f044cf8f3f1f353dee1dcd3517a:
+for you to fetch changes up to 9bd9c8026341f75f25c53104eb7e656e357ca1a2:
 
-  platform/x86: think-lmi: Fix sysfs group cleanup (2025-07-02 12:01:25 +0300)
-
-----------------------------------------------------------------
-platform-drivers-x86 for v6.16-3
-
-Fixes and New HW Support
-
-- amd/isp4: Improve swnode graph (new driver exception)
-
-- asus-nb-wmi: Use duo keyboard quirk for Zenbook Duo UX8406CA
-
-- dell-lis3lv02d: Add Latitude 5500 accelerometer address
-
-- dell-wmi-sysman: Fix WMI data block retrieval and class dev unreg
-
-- hp-bioscfg: Fix class device unregistration
-
-- i2c: piix4: Re-enable on non-x86 + move FCH header under platform_data/
-
-- intel/hid: Wildcat Lake support
-
-- mellanox:
-
-  - mlxbf-pmc: Fix duplicate event ID
-
-  - mlxbf-tmfifo: Fix vring_desc.len assignment
-
-  - mlxreg-lc: Fix bit-not-set logic check
-
-  - nvsw-sn2201: Fix bus number in error message & spelling errors
-
-- portwell-ec: Move watchdog device under correct platform hierarchy
-
-- think-lmi: Error handling fixes (sysfs, kset, kobject, class dev unreg)
-
-- thinkpad_acpi: Handle HKEY 0x1402 event (2025 Thinkpads)
-
-- wmi: Fix WMI event enablement
-
-The following is an automated shortlog grouped by driver:
-
-asus-nb-wmi:
- -  add DMI quirk for ASUS Zenbook Duo UX8406CA
-
-dell-lis3lv02d:
- -  Add Latitude 5500
-
-dell-wmi-sysman:
- -  Fix class device unregistration
- -  Fix WMI data block retrieval in sysfs callbacks
-
-hp-bioscfg:
- -  Fix class device unregistration
-
-i2c:
- -  Re-enable piix4 driver on non-x86
-
-intel/hid:
- -  Add Wildcat Lake support
-
-mellanox:
- -  Fix spelling and comment clarity in Mellanox drivers
-
-mlxbf-pmc:
- -  Fix duplicate event ID for CACHE_DATA1
-
-mlxbf-tmfifo:
- -  fix vring_desc.len assignment
-
-mlxreg-lc:
- -  Fix logic error in power state check
-
-Move FCH header to a location accessible by all archs:
- - Move FCH header to a location accessible by all archs
-
-nvsw-sn2201:
- -  Fix bus number in adapter error message
-
-portwell-ec:
- -  Move watchdog device under correct platform hierarchy
-
-think-lmi:
- -  Create ksets consecutively
- -  Fix class device unregistration
- -  Fix kobject cleanup
- -  Fix sysfs group cleanup
-
-thinkpad_acpi:
- -  handle HKEY 0x1402 event
-
-Update swnode graph for amd isp4:
- - Update swnode graph for amd isp4
-
-wmi:
- -  Fix WMI event enablement
- -  Update documentation of WCxx/WExx ACPI methods
+  usb: hub: Fix flushing of delayed work used for post resume purposes (2025-06-30 15:36:00 +0200)
 
 ----------------------------------------------------------------
-Alok Tiwari (4):
-      platform/mellanox: mlxbf-pmc: Fix duplicate event ID for CACHE_DATA1
-      platform/mellanox: Fix spelling and comment clarity in Mellanox drivers
-      platform/mellanox: nvsw-sn2201: Fix bus number in adapter error message
-      platform/mellanox: mlxreg-lc: Fix logic error in power state check
+USB fixes for 6.16-rc5
 
-Armin Wolf (2):
-      platform/x86: wmi: Fix WMI event enablement
-      platform/x86: wmi: Update documentation of WCxx/WExx ACPI methods
+Here are some USB driver fixes for 6.16-rc5.  I originally wanted this
+to get into -rc4, but there were some regressions that had to be handled
+first.  Now all looks good.  Included in here are the following fixes:
+  - cdns3 driver fixes
+  - xhci driver fixes
+  - typec driver fixes
+  - USB hub fixes (this is what took the longest to get right)
+  - new USB driver quirks added
+  - chipidea driver fixes
 
-David Thompson (1):
-      platform/mellanox: mlxbf-tmfifo: fix vring_desc.len assignment
+All of these have been in linux-next for a while and now we have no more
+reported problems with them.
 
-Ivan Hu (1):
-      platform/x86: portwell-ec: Move watchdog device under correct platform hierarchy
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Kurt Borja (7):
-      platform/x86: dell-wmi-sysman: Fix WMI data block retrieval in sysfs callbacks
-      platform/x86: hp-bioscfg: Fix class device unregistration
-      platform/x86: think-lmi: Fix class device unregistration
-      platform/x86: dell-wmi-sysman: Fix class device unregistration
-      platform/x86: think-lmi: Create ksets consecutively
-      platform/x86: think-lmi: Fix kobject cleanup
-      platform/x86: think-lmi: Fix sysfs group cleanup
+----------------------------------------------------------------
+Andrei Kuchynski (1):
+      usb: typec: displayport: Fix potential deadlock
 
-Mario Limonciello (2):
-      Move FCH header to a location accessible by all archs
-      i2c: Re-enable piix4 driver on non-x86
+Heikki Krogerus (1):
+      usb: acpi: fix device link removal
 
-Mark Pearson (1):
-      platform/x86: thinkpad_acpi: handle HKEY 0x1402 event
+Hongyu Xie (1):
+      xhci: Disable stream for xHC controller with XHCI_BROKEN_STREAMS
 
-Paul Menzel (1):
-      platform/x86: dell-lis3lv02d: Add Latitude 5500
+Kuen-Han Tsai (3):
+      usb: dwc3: Abort suspend on soft disconnect failure
+      Revert "usb: gadget: u_serial: Add null pointer check in gs_start_io"
+      usb: gadget: u_serial: Fix race condition in TTY wakeup
 
-Pratap Nirujogi (1):
-      platform/x86: Update swnode graph for amd isp4
+Mathias Nyman (4):
+      usb: hub: fix detection of high tier USB3 devices behind suspended hubs
+      usb: hub: Fix flushing and scheduling of delayed work that tunes runtime pm
+      xhci: dbc: Flush queued requests before stopping dbc
+      usb: hub: Fix flushing of delayed work used for post resume purposes
 
-Rahul Chandra (1):
-      platform/x86: asus-nb-wmi: add DMI quirk for ASUS Zenbook Duo UX8406CA
+Oliver Neukum (1):
+      Logitech C-270 even more broken
 
-Srinivas Pandruvada (1):
-      platform/x86/intel/hid: Add Wildcat Lake support
+Pawel Laszczak (1):
+      usb: cdnsp: Fix issue with CV Bad Descriptor test
 
- Documentation/wmi/acpi-interface.rst               |  14 +-
- arch/x86/kernel/cpu/amd.c                          |   2 +-
- drivers/i2c/busses/Kconfig                         |   2 +-
- drivers/i2c/busses/i2c-piix4.c                     |   2 +-
- drivers/platform/mellanox/mlxbf-pmc.c              |   2 +-
- drivers/platform/mellanox/mlxbf-tmfifo.c           |   5 +-
- drivers/platform/mellanox/mlxreg-dpu.c             |   2 +-
- drivers/platform/mellanox/mlxreg-lc.c              |  12 +-
- drivers/platform/mellanox/nvsw-sn2201.c            |   2 +-
- drivers/platform/x86/amd/amd_isp4.c                | 181 ++++++++++++++++-----
- drivers/platform/x86/amd/pmc/pmc-quirks.c          |   2 +-
- drivers/platform/x86/asus-nb-wmi.c                 |   9 +
- drivers/platform/x86/dell/dell-lis3lv02d.c         |   1 +
- .../x86/dell/dell-wmi-sysman/dell-wmi-sysman.h     |   5 +
- .../x86/dell/dell-wmi-sysman/enum-attributes.c     |   5 +-
- .../x86/dell/dell-wmi-sysman/int-attributes.c      |   5 +-
- .../x86/dell/dell-wmi-sysman/passobj-attributes.c  |   5 +-
- .../x86/dell/dell-wmi-sysman/string-attributes.c   |   5 +-
- drivers/platform/x86/dell/dell-wmi-sysman/sysman.c |  12 +-
- drivers/platform/x86/hp/hp-bioscfg/bioscfg.c       |   4 +-
- drivers/platform/x86/intel/hid.c                   |   1 +
- drivers/platform/x86/portwell-ec.c                 |   1 +
- drivers/platform/x86/think-lmi.c                   |  94 ++++-------
- drivers/platform/x86/thinkpad_acpi.c               |   1 +
- drivers/platform/x86/wmi.c                         |  16 +-
- .../linux/platform_data/x86/amd-fch.h              |   0
- 26 files changed, 250 insertions(+), 140 deletions(-)
- rename arch/x86/include/asm/amd/fch.h => include/linux/platform_data/x86/amd-fch.h (100%)
+Peter Chen (1):
+      usb: cdnsp: do not disable slot for disabled slot
+
+RD Babiera (2):
+      usb: typec: tcpm: apply vbus before data bringup in tcpm_src_attach
+      usb: typec: altmodes/displayport: do not index invalid pin_assignments
+
+Raju Rangoju (1):
+      usb: xhci: quirk for data loss in ISOC transfers
+
+Roy Luo (2):
+      usb: xhci: Skip xhci_reset in xhci_resume if xhci is being removed
+      Revert "usb: xhci: Implement xhci_handshake_check_state() helper"
+
+SCHNEIDER Johannes (1):
+      usb: dwc3: gadget: Fix TRB reclaim logic for short transfers and ZLPs
+
+Xu Yang (1):
+      usb: chipidea: udc: disconnect/reconnect from host when do suspend/resume
+
+Łukasz Bartosik (1):
+      xhci: dbctty: disable ECHO flag by default
+
+ drivers/usb/cdns3/cdnsp-debug.h          |  5 +++--
+ drivers/usb/cdns3/cdnsp-ep0.c            | 18 ++++++++++++++---
+ drivers/usb/cdns3/cdnsp-gadget.h         |  6 ++++++
+ drivers/usb/cdns3/cdnsp-ring.c           |  7 +++++--
+ drivers/usb/chipidea/udc.c               |  7 +++++++
+ drivers/usb/core/hub.c                   | 31 +++++++++++++++++++++++++++++
+ drivers/usb/core/hub.h                   |  1 +
+ drivers/usb/core/quirks.c                |  3 ++-
+ drivers/usb/core/usb-acpi.c              |  4 +++-
+ drivers/usb/dwc3/core.c                  |  9 +++++++--
+ drivers/usb/dwc3/gadget.c                | 24 ++++++++++------------
+ drivers/usb/gadget/function/u_serial.c   | 12 ++++-------
+ drivers/usb/host/xhci-dbgcap.c           |  4 ++++
+ drivers/usb/host/xhci-dbgtty.c           |  1 +
+ drivers/usb/host/xhci-mem.c              |  4 ++++
+ drivers/usb/host/xhci-pci.c              | 25 +++++++++++++++++++++++
+ drivers/usb/host/xhci-plat.c             |  3 ++-
+ drivers/usb/host/xhci-ring.c             |  5 ++---
+ drivers/usb/host/xhci.c                  | 31 +++++------------------------
+ drivers/usb/host/xhci.h                  |  3 +--
+ drivers/usb/typec/altmodes/displayport.c |  5 ++---
+ drivers/usb/typec/tcpm/tcpm.c            | 34 ++++++++++++++++----------------
+ include/linux/usb.h                      |  2 ++
+ include/linux/usb/typec_dp.h             |  1 +
+ 24 files changed, 160 insertions(+), 85 deletions(-)
 
