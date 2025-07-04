@@ -1,113 +1,87 @@
-Return-Path: <linux-kernel+bounces-716393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21617AF85DD
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 05:00:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A19FCAF85DF
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 05:00:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12DC21C83BE1
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 03:00:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6E6F6E3B5F
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 02:59:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A42E1E7C1B;
-	Fri,  4 Jul 2025 02:59:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HDxVUCp4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 651E61E5201;
+	Fri,  4 Jul 2025 03:00:06 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89C3B1E1DEE;
-	Fri,  4 Jul 2025 02:59:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DF6D1E47AD
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 03:00:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751597974; cv=none; b=U1i+oVMDoVdVuZC8jR1dYqxUPqnv3ydXrOgrFzh/jeZCDpCfHiQsIvQj8qxk/nLgnKM/uertYPcH7t8IGijoPzAk9FpWoYlyPVENCwsdXyupAAxY5Gauzyb0GdHxfXgePQq74idAeZbXNFbN1LRZsFpmj4L4Pgre1G5uy9/O1Jg=
+	t=1751598006; cv=none; b=Px413mmjD7lKQ6ahVlXUM9EYb8brjrOaup00Cmmgx/CBKMYFWsK/px+e79QtBnyGnerFzgJEcT4yezwIC9wEtHZ8SSdPnViiP13AYXEzrpSx1drXbI3XGHTM7iLYj2QqAZWXOLymrSYpOQnSoM6TyVGuxgIpYzM4WuVdxR6MxoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751597974; c=relaxed/simple;
-	bh=ZG2hqHecU73ektMlHLBv3zCPSuuwC64rbg9ypuyirdM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=nrHYzAyLlQv536YDIszn+7nbaeFxiA+S75KrEDsEzaQz8jBiCvrq3lUAEW02YI4Fp+GcYuR9b1YcC1dBiSYizABzfhnndPyWaCx5CQMT/dQ4c3++DiBl494o75YDDJW8bW3QFuiECyOyGJFMu70bsrWvSW/iirl5Ur949QyVYgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HDxVUCp4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 2A436C4CEF3;
-	Fri,  4 Jul 2025 02:59:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751597974;
-	bh=ZG2hqHecU73ektMlHLBv3zCPSuuwC64rbg9ypuyirdM=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=HDxVUCp4WUbotADP5rpIAYC5zuz8EpkoIJHkFNj7oN6fLLPmTUEenN7h9IGtGfoBj
-	 TSrl/puosF+sDmhwmGAOEPtdLGw40quiqUw9nmo4YgYW5zSkYYUol4Xz8XTc64ONc9
-	 JbAVlzkA4rSqwmATd49BTUrfxfsD5cGibSxEHMWjJEnL7y3BdtJ+S0AUR8BbPTvO92
-	 d3AtpDu2+/3JiS2psB7pVKnSSBGME6tdnnn/bYb/B8kN8I6UalV2Rm9C5CB0HB8NBb
-	 ILrF5597EUnHYg4EEbG3c8jMLRU94B3e7c9B0aWXG/LcxP28GMdMvTsS0tBD77hlLP
-	 rP/VRDppvzGcA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F6C3C83F0B;
-	Fri,  4 Jul 2025 02:59:34 +0000 (UTC)
-From: Xianwei Zhao via B4 Relay <devnull+xianwei.zhao.amlogic.com@kernel.org>
-Date: Fri, 04 Jul 2025 10:59:34 +0800
-Subject: [PATCH v4 3/3] MAINTAINERS: Add an entry for Amlogic spi driver
+	s=arc-20240116; t=1751598006; c=relaxed/simple;
+	bh=P7iuf6Vuzs0HqVct7rJvJNd10fBlI2CBO3FneganoLI=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=shtls8+hAzc4YfoVZpxNmIooYWLLHKmzgSN7xFUGeltrXjsuuMBQ60bMeTKapMt8UY/ZVpaLtO9A7oZUa9+1+lIwN5OP5iJ9GiYaaE/QMFQgs6PUm2TkZTxTq57Yr1Vy+ZUS81AgblxqBOzmJ3wG0YnYEiIN7RAnkJA5E3u8LZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3de0dc57859so6902735ab.2
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Jul 2025 20:00:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751598003; x=1752202803;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yyLvbnbjvJWW3fNc+1CjVEn67gFNLn2pGzW7dRoqy7s=;
+        b=w1ibI1TqwbtI6liT09T3K6VRZJFSAXx88zwNWL72ChUOpSAnUZVQio7w5IxnjkjcxG
+         3Rzxz89ax+VSHkQo1Knl9mnL9Kj0cTgTGSgi7XgM8YL587Vim3HMoAeJ5jTpZFZmFNNa
+         dbJE7IIJJJYeV4NrUmQeqmHTDCBVa4Z4wcWG9wFbouUuAmTvZzF2jjpI5qVGPxn4sqWT
+         +bRzfQVEC2lvLMB9b2e1qzwGn2o6h9aDiUo1eUjGzsvHMEWMeBSR5BX3MYu6Ncyictw4
+         lKPTIIJXzt0S4g3g1ldHgr++1e3DTu2l1BDqF4in6tx4idvhxJevLeO1vIR+hhH+kF3/
+         oahQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVbDseLxc4B6wpTPVCiesbJeFAlHcoQPYOG55nCTeqreqfHtAIQ27/xMnHdhXhrGSV7VB8nVkrjJ2ve9/U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YymSmgdMJCfir8N4W5smf6k1MqMNwnMsiOfIQCdDwkH8zYV82Ao
+	PlBFzjSzc6I0gzRw6QX0dqSNYkIO8FWAm//EWivX/qlU1hBI240cV+sPk5kijdKJ0/c1Ajbo4J3
+	76YUknNhJBAAe29A/RQ312B3pwSqp1oFRb+CueFMXYlp4kII2O4HR6WMY9GI=
+X-Google-Smtp-Source: AGHT+IEv6EdNRkjU9TwfOY2EM4PWCKqWakIue/0+Ods3XdaEfCecpi5QU10Wg9C+io/RnY00FFtQXMl17UkawHx+9LyuoFVzJdvF
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250704-spisg-v4-3-6b731dfbe610@amlogic.com>
-References: <20250704-spisg-v4-0-6b731dfbe610@amlogic.com>
-In-Reply-To: <20250704-spisg-v4-0-6b731dfbe610@amlogic.com>
-To: Sunny Luo <sunny.luo@amlogic.com>, Mark Brown <broonie@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-amlogic@lists.infradead.org, linux-spi@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Xianwei Zhao <xianwei.zhao@amlogic.com>
-X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1751597972; l=878;
- i=xianwei.zhao@amlogic.com; s=20231208; h=from:subject:message-id;
- bh=d96hwpa3CUOhnffR2RHeVgOJAkVgtVaxxsoYbBLIdso=;
- b=+8h8P8IdiJPKnWksejSX3yPRXBFoA8MScmaDW4dmic5n0o28kTiuaTOuwDCflRzs3OYkVzUIn
- yVTF+KHQyItDT3WjibIfeegX89Ma8wTtsaL+x096XdoK1z9bzjmPcqG
-X-Developer-Key: i=xianwei.zhao@amlogic.com; a=ed25519;
- pk=o4fDH8ZXL6xQg5h17eNzRljf6pwZHWWjqcOSsj3dW24=
-X-Endpoint-Received: by B4 Relay for xianwei.zhao@amlogic.com/20231208 with
- auth_id=107
-X-Original-From: Xianwei Zhao <xianwei.zhao@amlogic.com>
-Reply-To: xianwei.zhao@amlogic.com
+X-Received: by 2002:a05:6e02:1f12:b0:3df:3ab2:cc7c with SMTP id
+ e9e14a558f8ab-3e1355658bemr7546895ab.13.1751598003541; Thu, 03 Jul 2025
+ 20:00:03 -0700 (PDT)
+Date: Thu, 03 Jul 2025 20:00:03 -0700
+In-Reply-To: <20250704022016.2331-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <686743b3.a70a0220.29cf51.000e.GAE@google.com>
+Subject: Re: [syzbot] [net?] kernel BUG in filemap_fault (2)
+From: syzbot <syzbot+263f159eb37a1c4c67a4@syzkaller.appspotmail.com>
+To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-From: Xianwei Zhao <xianwei.zhao@amlogic.com>
+Hello,
 
-Add Amlogic spi entry to MAINTAINERS to clarify the maintainers.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
----
- MAINTAINERS | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Reported-by: syzbot+263f159eb37a1c4c67a4@syzkaller.appspotmail.com
+Tested-by: syzbot+263f159eb37a1c4c67a4@syzkaller.appspotmail.com
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index a92290fffa16..8225df5ede74 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1307,6 +1307,15 @@ S:	Maintained
- F:	Documentation/devicetree/bindings/rtc/amlogic,a4-rtc.yaml
- F:	drivers/rtc/rtc-amlogic-a4.c
- 
-+AMLOGIC SPISG DRIVER
-+M:	Sunny Luo <sunny.luo@amlogic.com>
-+M:	Xianwei Zhao <xianwei.zhao@amlogic.com>
-+L:	linux-amlogic@lists.infradead.org
-+L:	linux-spi@vger.kernel.org
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/spi/amlogic,a4-spisg.yaml
-+F:	drivers/spi/spi-amlogic-spisg.c
-+
- AMPHENOL CHIPCAP 2 DRIVER
- M:	Javier Carrasco <javier.carrasco.cruz@gmail.com>
- L:	linux-hwmon@vger.kernel.org
+Tested on:
 
--- 
-2.37.1
+commit:         4c06e63b Merge tag 'for-6.16-rc4-tag' of git://git.ker..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=13768582580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3f6ddf055b5c86f8
+dashboard link: https://syzkaller.appspot.com/bug?extid=263f159eb37a1c4c67a4
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=169df770580000
 
-
+Note: testing is done by a robot and is best-effort only.
 
