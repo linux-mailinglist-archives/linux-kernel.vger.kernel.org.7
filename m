@@ -1,68 +1,55 @@
-Return-Path: <linux-kernel+bounces-716372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F497AF85A2
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 04:39:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F7D8AF85B2
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 04:42:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DBA55483E7
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 02:39:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1E8C1C877B5
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 02:42:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E27841DE3CA;
-	Fri,  4 Jul 2025 02:39:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5B621DF991;
+	Fri,  4 Jul 2025 02:42:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Q/9sWtTo"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o1IX3xRj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B54917BEBF
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 02:39:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D1171DF725;
+	Fri,  4 Jul 2025 02:42:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751596784; cv=none; b=Po0jorXRqFeWrX8R3f9tJMEyPm+S1teCehiJ3WzB75Ihn7rfRwzEZMkFjCBzbgsaMoRq37irT7Y9Lqy8EihXDRFOtnz32Vl0SvOnFt0+lnafoOdUR8ryBjU4oig21q7h0JnOgoICDKn/R/4EcaTiRZOy5rF5HnejhLziG/qPCyY=
+	t=1751596927; cv=none; b=kbgdTYDrO4tpCh1njFScTwA8wRYWEW6E8H10ootrgIZ9iybvd4v8mzF1TCyGw7Y9aloe2MZytGhFNmVoXUUJXra6rxYdbrZ2BUTgT6oL8RFjdh/1Z3UUJ39NL560wI1cBNrvXcOEp0237yULdN+ohO+Ac6gP7YYdYMNyger3xgg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751596784; c=relaxed/simple;
-	bh=R3QcPQzvhbe6iv6zrk867vT/8DETTHJhtvzdTGThP7k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SwTaFXBRg6CQQ1AomU6olJJHaVvWlTNRhoOlvWsvLVPWu1jorS1XLBoEikIfSQogMAxWTayKGTaHCrEUiqTc8v/oonW57WkAFCpMzxgKrkHVS9Uf9f5tTa2GNCCysFiSG0VNBFquitXlcpVt2Dy/oz9eNk4vxWKtfm/f/VWjg1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Q/9sWtTo; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1751596781;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=3UJMoMK9R/4PS68csbcacMXYsDFPJBCUqlmZgu7NIHw=;
-	b=Q/9sWtTojQUPXyK6d8GZDCCS0jN4HajJWjyO2zZrDxYzwoTM7jn0SFAFzFST0ezyE54xGP
-	twlC15fDiWYXxEDG973rtf4w3wUqa2qkHfwlMAkBm8b/JLFwnnTZHudyggtYu8ARZ4SLOW
-	2GN4iUobaYnri+grjmGC6kqLRau9l04=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-196-3DP3HIs1NSe3yc1Yk-RI6Q-1; Thu,
- 03 Jul 2025 22:39:39 -0400
-X-MC-Unique: 3DP3HIs1NSe3yc1Yk-RI6Q-1
-X-Mimecast-MFC-AGG-ID: 3DP3HIs1NSe3yc1Yk-RI6Q_1751596778
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4842C1944A8D;
-	Fri,  4 Jul 2025 02:39:38 +0000 (UTC)
-Received: from fedora.redhat.com (unknown [10.22.64.120])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 103A119560AB;
-	Fri,  4 Jul 2025 02:39:35 +0000 (UTC)
-From: Seiji Nishikawa <snishika@redhat.com>
-To: perex@perex.cz,
-	tiwai@suse.com
-Cc: linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	snishika@redhat.com
-Subject: [PATCH] ALSA: hda/realtek: Add support for ASUS NUC14LNK system which uses Realtek ALC245 codec and CS35L41 amplifier over SPI. Without this quirk, the amp probe fails with -EINVAL and no sound is initialized.
-Date: Fri,  4 Jul 2025 11:39:30 +0900
-Message-ID: <20250704023930.1492232-1-snishika@redhat.com>
+	s=arc-20240116; t=1751596927; c=relaxed/simple;
+	bh=v1XVnqJQUcn6sALLisJ1BlBErGJpcSeLgRnAITE6LrA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NXdcyUZEuOp83RAX+bX0kx2+X3BmX2eqILTsgXY3XMwI+bMVzYvdimRI7nWeR7K6qMseMhAdkQadzackIImgN7cEHfXmFdWiAqbWBC6Eg0lQciYScP5qYX9vS0sU/Kj9HTTLeUQ2ILa5PzNIS+VCoBRUmAtMkzyQnASoMNRNHsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o1IX3xRj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C62B2C4CEE3;
+	Fri,  4 Jul 2025 02:42:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751596927;
+	bh=v1XVnqJQUcn6sALLisJ1BlBErGJpcSeLgRnAITE6LrA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=o1IX3xRjVj0mJChbUqCsyn+IZWT5YfZCpABgSsIZB7XG+XwSiUVtUHsCmRkkiGIJF
+	 uTAISAw58gpnaIYXVVB0E5QcJ8u4YmFoGV1gNA8ZpT2DiIVDCPtQpGqOlB3Zta8t+G
+	 xiKSDNpjRWpQtSecITUdNrALbNw4Pb+M2YNkJAB+Lpxg3WRhCU+umkj8+4NyFX0fWz
+	 LmUTONgiFmSl5J7JwAujlWrhSoMpirZHQs73mlqjWoX+jxgGLSU0ftnEUoNf7Yhd+7
+	 5VMH6L7UwQTln2p2tK/afpkeVFlr4XgftRhDxT+B5Yhni/BUnyhK2YdlLKbJxEMIkh
+	 ZrZyd7UDM1K7w==
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-crypto@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	x86@kernel.org,
+	Ard Biesheuvel <ardb@kernel.org>,
+	"Jason A . Donenfeld" <Jason@zx2c4.com>,
+	Eric Biggers <ebiggers@kernel.org>
+Subject: [PATCH 0/2] Small cleanups for x86 SHA-256
+Date: Thu,  3 Jul 2025 19:39:56 -0700
+Message-ID: <20250704023958.73274-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,25 +57,22 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-Signed-off-by: Seiji Nishikawa <snishika@redhat.com>
----
- sound/pci/hda/patch_realtek.c | 1 +
- 1 file changed, 1 insertion(+)
+Two small cleanups for the x86 SHA-256 code.  Applies to libcrypto-next.
 
-diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
-index 5d6d01ecfee2..7ce54db56354 100644
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -11084,6 +11084,7 @@ static const struct hda_quirk alc269_fixup_tbl[] = {
- 	SND_PCI_QUIRK(0x1043, 0x8398, "ASUS P1005", ALC269_FIXUP_STEREO_DMIC),
- 	SND_PCI_QUIRK(0x1043, 0x83ce, "ASUS P1005", ALC269_FIXUP_STEREO_DMIC),
- 	SND_PCI_QUIRK(0x1043, 0x8516, "ASUS X101CH", ALC269_FIXUP_ASUS_X101),
-+	SND_PCI_QUIRK(0x1043, 0x88f4, "ASUS NUC14LNK", ALC245_FIXUP_CS35L41_SPI_2),
- 	SND_PCI_QUIRK(0x104d, 0x9073, "Sony VAIO", ALC275_FIXUP_SONY_VAIO_GPIO2),
- 	SND_PCI_QUIRK(0x104d, 0x907b, "Sony VAIO", ALC275_FIXUP_SONY_HWEQ),
- 	SND_PCI_QUIRK(0x104d, 0x9084, "Sony VAIO", ALC275_FIXUP_SONY_HWEQ),
+Eric Biggers (2):
+  lib/crypto: x86/sha256: Move static_call above kernel-mode FPU section
+  lib/crypto: x86/sha256: Remove unnecessary checks for nblocks==0
+
+ lib/crypto/x86/sha256-avx-asm.S   |  6 ----
+ lib/crypto/x86/sha256-avx2-asm.S  |  4 ---
+ lib/crypto/x86/sha256-ni-asm.S    |  5 ----
+ lib/crypto/x86/sha256-ssse3-asm.S |  5 ----
+ lib/crypto/x86/sha256.h           | 48 ++++++++++++++++---------------
+ 5 files changed, 25 insertions(+), 43 deletions(-)
+
+
+base-commit: 5ecd15f4949fd36037725bd719b7d3f866291e6c
 -- 
 2.50.0
 
