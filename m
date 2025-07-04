@@ -1,81 +1,76 @@
-Return-Path: <linux-kernel+bounces-717973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-717984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BF07AF9BA3
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 22:18:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2EB6AF9BC8
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 22:49:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 079B816CE4A
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 20:18:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D81B18955B3
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 20:49:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2457523D2AD;
-	Fri,  4 Jul 2025 20:17:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65DE41917F4;
+	Fri,  4 Jul 2025 20:49:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bNqyguPl"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="IGlq+b2I"
+Received: from sonic309-27.consmr.mail.ne1.yahoo.com (sonic309-27.consmr.mail.ne1.yahoo.com [66.163.184.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D21BC145346;
-	Fri,  4 Jul 2025 20:17:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC57E2E3716
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 20:49:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.184.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751660264; cv=none; b=OtaLG2OqPA8GLXWAghyHhdlB/a0qqN7A4NVXmlPz3YOlCjOiggk+LrlOZQmcu+xxCNqlmOLEGhPotkQE7AeV/4FJNhHKX+mExmwYlj+Jfc/CZO1OQVk3Xl/ek6piukiqi2ZXIf6slUxtrb7HMUTBBugkhUOCA7ZShBMPx/J1giQ=
+	t=1751662150; cv=none; b=Equrda4kFJi6u2adiQYku5nCsfiQ2dJsjL46X0s7e1+lLQGwjPTPkruu3R1hRpllcPToB2/S0cl/eruMGg9X7ij/C6E4pDbYcn8CmStPF7i7XDT8wqs8CC8cxJ8tRc/+kNCMlku4Q3jlvK3txXk4wc2UWHxJ3vy15y4adgcgdc0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751660264; c=relaxed/simple;
-	bh=ToSSYeda+QvMFhFJXYbRjh6o30tOZEKbemwVCqAxu2s=;
+	s=arc-20240116; t=1751662150; c=relaxed/simple;
+	bh=wmTwb/ESj8mt3RdCb/bQcf81LWxmx7wO751Td3wNT7c=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Nt/rH25hWz2TgPZVGrvLoslQ6tD5vLScMwpO1nhMvgyxvXIq3QoDQUCAzJtwqUo8bNUNHHbN1h3KuOwaVBLrI1CwAoPIEY/RHjVJq5TfkQterDZruDS4T+4OgUDrjnwfPx71vbDxNcVOgDIn2knI3NJ2ktEtfm/PwLuDAwcXSlg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bNqyguPl; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-60c93c23b08so2342310a12.3;
-        Fri, 04 Jul 2025 13:17:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751660261; x=1752265061; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=NcNlVgWf+PG2kdLWT+gkGkxQYjH5Ivc/a0PUOrXHeO8=;
-        b=bNqyguPl0xrE1jzVA7rq5YcxgyWlEQf2RtB+mjVSLcuqZB8QVzbfpL/fFoM7moqWaX
-         mw8hDQj9LlJzu9RLWTH3gOnNUxfJyBqWqg+hOPeSK84+zIakS7+ZxUlwa36m/ZkrSItT
-         3tfa0ezzUdR0Ip3zHg/dGhvCBDcdP2YpSJ8yPx3npfRY4C00yMSaDb4rOStnuY0dqdwr
-         3tvOdJO6m1Dt5eqSnB033i+ZnqxK4ZV7v/vrHrb6Ub/wjwko4Nx0DWHzW56q46yGWBlo
-         jzEf1HMRUv9LOUhpOK9bbaMoIgx0AOF9/52DhuiXs59PXo2Su6A+U4NgagQYypKIKQ0E
-         N2/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751660261; x=1752265061;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NcNlVgWf+PG2kdLWT+gkGkxQYjH5Ivc/a0PUOrXHeO8=;
-        b=vXBCx69gNrQJx7wTWtG7Mb09BE5mjz97PTcHkIIcEa9E4I3gziVgr9XQcVrunvDbL2
-         e5bQCxxdMWoI8g90i6L5vNlC2BHemI254WLBg2qguHJs2nj0pF2KitTDcd4YOHHZW6av
-         4CGnq1l/n2X5Nvtzs/yZowFPWoSDq42ZVGo1CAkr3WltbbQyUqOs/onAoXTLkBr2uyLw
-         En7GBdxFdSP7JoQui5cg6fgoOc7s0Fjq/N40Ud3bQQ3QENjyacAPEvfULxsPrAYKVVBT
-         7t+xwYrsatZ7sC5LX3JQgD8KF4DJszIpStKgbQbc+BdDwH3rSOMm7/UYOQIlJBTEO5M0
-         D3tw==
-X-Forwarded-Encrypted: i=1; AJvYcCUKh+zR/XcwYYIb5Ju9tqD9hotTT9lYQEQJwTf7qs+EtEF1x4Q9HIbatF7eE4tessCZYl5E77hx@vger.kernel.org, AJvYcCUV4GME6p7yKyxLp0J9tIQtOotbrEJPKoxXdFQcP+L4eBP5bOJbUNSPpyIRGun4b1SzcoBHP+fQ+19vfxs=@vger.kernel.org, AJvYcCUmZ9d0SzoM8ytScq6zTsALBDmb/sStjB8kdFfcpbyhaTpjh8sIEveGgfp3EZ9ODx0wiogBOAV0@vger.kernel.org
-X-Gm-Message-State: AOJu0YznPwzc46byVTZBg+4Hj/NCpRMDXG7dYrIAgj7frzRe5ZEAuAeg
-	QqeJ7/9YVKPICGN9cpWMv11VY4O2qgT4tOK1cptEFM4CwPtdW4xu5kRo
-X-Gm-Gg: ASbGnctmQJGpDYQ9amilnkQH/DzSE8A5DDmo03bncRqyByvW1SHL3eRVH1Vu41/xo5m
-	hZAM5Ur0IgtOF0PQWcNdw658ReQFQuZHzF8FjYi2WDplaNSGqP7mYyaUc42j8K+9eFFYgQd+d9k
-	kdgrgEn6DVkYZavJEkroTqF9Il3l2nD9W2+fbf9bSOAeMJ68iXJcqoj8QUAguJ014Esa6JrU1b+
-	TvstyAeSvcgEpe/ewA6Z61jXbAHwStTLfTuSnIIMCxdPaV6zTIl98lGmDBqERs4x+/IRS5Vf+rH
-	/gxKx7FA+LGE9GQtHBp21inIUszMOpkpHP12BNVAiQIPge98Qp0OxIcws6hOQm2pmFBvKek3rNL
-	u+m460rpRSujlGrRyBee5CVclrCKFu+Vn7GjpsvC366vmQaZ+S+jlMhyWoMJaNpvjLdeiuYbmfc
-	L50Il8kDKY080fR/TDhrbiLccHsbYxQumWiJxf
-X-Google-Smtp-Source: AGHT+IFSIskvmIhHXw4zIijBIXv/T/NVh58YZFyd5CYdip6AxgaDFxcLpextRGQE/hA/eaElTXlVgQ==
-X-Received: by 2002:a05:6402:2354:b0:609:7e19:f10f with SMTP id 4fb4d7f45d1cf-60fd1f8af77mr3569937a12.0.1751660260953;
-        Fri, 04 Jul 2025 13:17:40 -0700 (PDT)
-Received: from ?IPV6:2003:ea:8f2f:7a00:656d:a8a8:c9d6:8d1d? (p200300ea8f2f7a00656da8a8c9d68d1d.dip0.t-ipconnect.de. [2003:ea:8f2f:7a00:656d:a8a8:c9d6:8d1d])
-        by smtp.googlemail.com with ESMTPSA id 4fb4d7f45d1cf-60fcb0c791bsm1809126a12.42.2025.07.04.13.17.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 04 Jul 2025 13:17:40 -0700 (PDT)
-Message-ID: <0310186d-dfc5-406f-8cd1-c393a7c620e8@gmail.com>
-Date: Fri, 4 Jul 2025 22:18:29 +0200
+	 In-Reply-To:Content-Type; b=EMfVUJ5Lh+GDSqDmHIKd29ev8OanwAoKIKl2SlGioT14th15cjiTJLBOkvKGmwz6HRdEyr8JzEStGwVaW/EU5ztwo92Sg7y3AYriZrftnn/tPxRYvc/HqVLq8MDOrnb780DJLCR/FcDAXtWJqriokCkzXK5pwCFjJVsVUK42O8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=IGlq+b2I; arc=none smtp.client-ip=66.163.184.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1751662148; bh=BFdTymDCauQuYahgXXk7TeWFJYMaJlv8kgHtcNY0uuk=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=IGlq+b2If7KH2xK6Dd1NhnctOlV5EM18GlZRPA1MGm2GpP7ErQKQMhNmzHj+rJpfU6UPtVH7wPvZK+3mJbzgaoZ3X1leGA2s0eGx2CfSqbRCIUa04KersD3aVT/YOuPmQQ0udgJyaVEZzy4qyzqZCWqerdorscrYOtypmVhQ5FZzKa9IoMzz9H7dwH96ADMnkSZdqIiywhZLczmActU1EQ9jVV9YTiplJXVqIx2r1nwHS242z4rBB7NH6CmyVoszHhIB+mvBImqvMWfSNsfsatgVvWVLX4chEueCicl+rkV1ohAka+OZ2G6r6Ot4pm+cYJ/JFWjbTkxhJReoFxHqvQ==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1751662148; bh=zpwZq584ireftttSCEFmQFvKWmnIxCRzXABbgHCRAeB=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=k5Sf0qiss8jJUtlpMfOiXpkwPKAGLwMEHer152HuSoeIOoOSLDorp8cVa1dTjarssckVdkg/NddfVTcIk1bZEHUKbT60m4fvgykWw2pFzKFlw7g+pSmTXXMYifF/GNhhwNFPLey0EISUJBMK5NXBmzi+i9+hUZ3oGVx8ZpW6YgOYIx2VOQj2Pq/UAC1csLFtMuKtB2lgKhLrTnlG2tj7ylooTYbONr7IWiER4nQEQMxvMZh1WHI0mnvZVIHNBUQQJ58cnhQ/gPkTI/GXfgdE3HenakY1QBf17OoISeL6HsfB3EWPf0d/F2aPpZm9U+IY8HiCmrUXi86uDWIO6UZpMQ==
+X-YMail-OSG: GtR.pvgVM1mKXLbwN5Q1McAYDhm8smCGUCBDyHlvhvh2O9RjttbXRQE2cKMlqwq
+ ngrp_Qptm1jBZq3xe7vStpWTEYXFVQWihSoKnm_WUyD3SYs3i3OXgkolmN1Tu2.h4HkUm.YLk4Ty
+ 5bV.Axjkmy1w8qY04zno37J8xEdU6SXCotC8eBQv5RLdkdCptGpl7pQ6IJv4F9KDP4vXAlVLCtID
+ 9UV_A_GjH_JgB.aRuVdJwZzHVr3KhE6Hs7IQqD.cFlROzdRTOAMoI1XSdAqWfY8K2xFUUfdKqn9C
+ afGLyl8Og_TdCFj95QfVeiws0FADcaMIEAGmEeMEy2gqCY1wJWcgtCtOYMEyzroERlGY9aJmh30T
+ 253RdUcBR5YkiJ_9ALO9dbL9prHEoXUuYpBoLF8xsRsKeH_KBe1VmOr.2cJy5CFr2uqQqaByTgFW
+ 54xucmdy_iJ6seNUvehFP89zcAe64Wpigoi_xrey9BM_NtoDNYWuZu1manpbcjUkbErBJwiZ5BwG
+ H708YgWZwOFUHWgtS2c8h_imsXOq.2fjYj.e12wEss2nzEHwLCFlLVuudGekXTWDIp1hNdwQ6FXM
+ VSJNc9N93nbfdoWzn1RN_JmwZs2ph2RD7YnwtwRp8nKcJApXihFZrrni7iqdUec7Cveh2SlMPH.k
+ doCt75Ije3yU_KkZh88QYBxvAO7STtiYHx.l3yBW0ISDSCXAM8OCj0_nJhZzN8602Vklfp9GxfSE
+ 9prfe8.pZw6.jXO70GajeinpUTwbPfxTi4Fh_3MnL02UV1cOtYDT7D8JaEy38gtIem9WX1WWob3J
+ YJOWbc6LS2Fd5aic99RQ.z82joRK2d7W1mlgZGkbnv26EVRHRofuWWjxUPbq1f4.G8r6DVJmDVCZ
+ ZfHYyVjWurOlWY46mSCBOeN6oU0pIfwhlC._pULYsu7XVSEz.aPDvgMt8n.2vZNClagSIpijtPqc
+ m1ZA5eMvjJl6OmBB3nn7Lf1eF0IYOXtGWUBJIkGZXZmmMwxMIosOQa0V12ObjOeUmPuvpHWwaOG_
+ luJLJNtDHmf2tETqdzsAuWQFya.XLMuKC5ySnJqTI7v.o9Ah0MhrojAt8J5Y6iXP9r2ks6XdWQns
+ F90EZAtpvfA1mY65UND18YCp06.tXgRAeAZF_Y_PCBt2XHF5Y.hmyBfGlrPXls.VwKdtFBouXoLY
+ vkzY.iyFq3uutsovzmt83iygQ.RIo5SGKpo7faoqvjN7wbiXvcTwV4Z_qHEKZ8FRwwr2MVQQ63zT
+ 1OWupSSJaSR_nTqnK7cR4BxziRqUm_pH26dZt8IWIymi.prmtag4gXpA9oSh3HehIcQgDBi5tdGL
+ lncjEyEii.N6sVIsIhP5ERt7iKT9_8lOKzdY0_e84O6dCVEUWwtHue2DONocXIqTcr6V51Dw8SAN
+ eIu6NlAqzwBW9YE7yUUgxPHJYNpdWd_fg6V_kdjDlZApls9uNNCI6DALK3fqahi.A.RxRYA7uoLc
+ KpprzdyqSj0wl7x2FqxGRf0q1tiGHhx67DP_duW87sZosyYLjhZlM2RV51lx.AK18Xk7UhzCWCOf
+ .ERYNFeHXrjdAjUv.YcwP_iYkdHO7IwyzsWY3XhpPckoOhTtjfT5Ff3ziNIt9lWvrSMVpUzueqNB
+ xerJHscMhrpMPHLCC5z4dVw930uRyACxSIrXXrky1JsfCUWShB6o6FSarNhqa1VEDPZtD3e2or1E
+ Jlo6VdNxUO2.90hupj6SRHmNLW_IFRNHtdrQqwjkvOUvnU.qh0NMn19dlIRP0aFQUfQuCzywDzWC
+ UEcoH5UfV7VOmIDsv_8EIFvG79D0T4lG9pcXGUw79.1ZBR3xAKBjbBYO3r0JE23MQPUwu_9XsCyQ
+ 42V85hUmynSD8DGFK8hXmhwPcDxEJcUwg8yd7qYCLClHjY5w.OpTDn3JtZreHvBkFG5V2cxPJ8Cq
+ TIsFlGBA7_gSgILmFlg31OKxej.bI3YV30hmLz4OLPnNDQUelE7VQCddKjSB_Q8xMjiwhds6dW_F
+ 7gWdW2lSzljEe7Emqhxi5qQRptpCIgY_1gzLF2yDC84KA3pmJflVqqjBdLWIdatttxykN2gZKeKL
+ UiwzLf8PfBxIYYqaDZN6eRvBc0tslFFiGmaIZ_ta3Bjh1iN0hxgBIXQIiEQhN5KO_OOKzgbbFDji
+ HyjxHLK4g9Q2M0I5spmGRXQwqcjk85kNnmHMYUjpdvjPCLRQjDACM5HkMm5GIebB2eiVBwUG.TUS
+ GUs6Gg9oS0xm33NyZPBUKB590BL76klMYkmfaDQSz6WSSVfZK50umHPy.ETVZLnFvue5.F11OISQ
+ hyZo3yviXRfBn9e7wG1luC9fZGRDw
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: fa6aedc0-9693-446b-ab2c-8b3725ad2efb
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.ne1.yahoo.com with HTTP; Fri, 4 Jul 2025 20:49:08 +0000
+Received: by hermes--production-gq1-74d64bb7d7-cmxx8 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID ce5598f86d5bbd8e79ee8ba7cd309f9a;
+          Fri, 04 Jul 2025 20:18:42 +0000 (UTC)
+Message-ID: <9fcc7e8f-7d5c-4499-9693-787bd7ecc8ed@schaufler-ca.com>
+Date: Fri, 4 Jul 2025 13:18:41 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,110 +78,177 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] net: phy: realtek: Reset after clock enable
-To: Sebastian Reichel <sebastian.reichel@collabora.com>,
- Andrew Lunn <andrew@lunn.ch>, Russell King <linux@armlinux.org.uk>
-Cc: "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Detlev Casanova <detlev.casanova@collabora.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20250704-phy-realtek-clock-fix-v1-1-63b33d204537@kernel.org>
+Subject: Re: [PATCH v4 4/4] Audit: Add record for multiple object contexts
+To: Paul Moore <paul@paul-moore.com>, eparis@redhat.com,
+ linux-security-module@vger.kernel.org, audit@vger.kernel.org
+Cc: jmorris@namei.org, serge@hallyn.com, keescook@chromium.org,
+ john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+ stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
+ selinux@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>
+References: <20250607005134.10488-5-casey@schaufler-ca.com>
+ <88f740c7efa914435e2223e90666c8b2@paul-moore.com>
 Content-Language: en-US
-From: Heiner Kallweit <hkallweit1@gmail.com>
-Autocrypt: addr=hkallweit1@gmail.com; keydata=
- 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
-In-Reply-To: <20250704-phy-realtek-clock-fix-v1-1-63b33d204537@kernel.org>
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <88f740c7efa914435e2223e90666c8b2@paul-moore.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.24099 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On 04.07.2025 19:48, Sebastian Reichel wrote:
-> On Radxa ROCK 4D boards we are seeing some issues with PHY detection and
-> stability (e.g. link loss, or not capable of transceiving packages)
-> after new board revisions switched from a dedicated crystal to providing
-> the 25 MHz PHY input clock from the SoC instead.
-> 
-> This board is using a RTL8211F PHY, which is connected to an always-on
-> regulator. Unfortunately the datasheet does not explicitly mention the
-> power-up sequence regarding the clock, but it seems to assume that the
-> clock is always-on (i.e. dedicated crystal).
-> 
-> By doing an explicit reset after enabling the clock, the issue on the
-> boards could no longer be observed.
-> 
-Is the SoC clock always on after boot? Or may it be disabled e.g.
-during system suspend? Then you would have to do the PHY reset also
-on resume from suspend.
+On 6/16/2025 1:54 PM, Paul Moore wrote:
+> On Jun  6, 2025 Casey Schaufler <casey@schaufler-ca.com> wrote:
+>> Create a new audit record AUDIT_MAC_OBJ_CONTEXTS.
+>> An example of the MAC_OBJ_CONTEXTS record is:
+>>
+>>     type=MAC_OBJ_CONTEXTS
+>>     msg=audit(1601152467.009:1050):
+>>     obj_selinux=unconfined_u:object_r:user_home_t:s0
+>>
+>> When an audit event includes a AUDIT_MAC_OBJ_CONTEXTS record
+>> the "obj=" field in other records in the event will be "obj=?".
+>> An AUDIT_MAC_OBJ_CONTEXTS record is supplied when the system has
+>> multiple security modules that may make access decisions based
+>> on an object security context.
+>>
+>> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+>> ---
+>>  include/linux/audit.h      |  7 +++++
+>>  include/uapi/linux/audit.h |  1 +
+>>  kernel/audit.c             | 58 +++++++++++++++++++++++++++++++++++++-
+>>  kernel/auditsc.c           | 45 ++++++++---------------------
+>>  security/selinux/hooks.c   |  3 +-
+>>  security/smack/smack_lsm.c |  3 +-
+>>  6 files changed, 80 insertions(+), 37 deletions(-)
+> ..
+>
+>> diff --git a/kernel/audit.c b/kernel/audit.c
+>> index 0987b2f391cc..451c36965889 100644
+>> --- a/kernel/audit.c
+>> +++ b/kernel/audit.c
+>> @@ -2337,6 +2344,55 @@ int audit_log_task_context(struct audit_buffer *ab)
+>>  }
+>>  EXPORT_SYMBOL(audit_log_task_context);
+>>  
+>> +int audit_log_obj_ctx(struct audit_buffer *ab, struct lsm_prop *prop)
+>> +{
+>> +	int i;
+>> +	int rc;
+>> +	int error = 0;
+>> +	char *space = "";
+>> +	struct lsm_context ctx;
+>> +
+>> +	if (audit_obj_secctx_cnt < 2) {
+>> +		error = security_lsmprop_to_secctx(prop, &ctx, LSM_ID_UNDEF);
+>> +		if (error < 0) {
+>> +			if (error != -EINVAL)
+>> +				goto error_path;
+>> +			return error;
+>> +		}
+>> +		audit_log_format(ab, " obj=%s", ctx.context);
+>> +		security_release_secctx(&ctx);
+>> +		return 0;
+>> +	}
+>> +	audit_log_format(ab, " obj=?");
+>> +	error = audit_buffer_aux_new(ab, AUDIT_MAC_OBJ_CONTEXTS);
+>> +	if (error)
+>> +		goto error_path;
+>> +
+>> +	for (i = 0; i < audit_obj_secctx_cnt; i++) {
+>> +		rc = security_lsmprop_to_secctx(prop, &ctx,
+>> +						audit_obj_lsms[i]->id);
+>> +		if (rc < 0) {
+>> +			audit_log_format(ab, "%sobj_%s=?", space,
+>> +					 audit_obj_lsms[i]->name);
+>> +			if (rc != -EINVAL)
+>> +				audit_panic("error in audit_log_obj_ctx");
+>> +			error = rc;
+> Do we need the same logic as in audit_log_subj_ctx()?
 
-> Cc: stable@vger.kernel.org
-> Fixes: 7300c9b574cc ("net: phy: realtek: Add optional external PHY clock")
-> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-> ---
->  drivers/net/phy/realtek/realtek_main.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/net/phy/realtek/realtek_main.c b/drivers/net/phy/realtek/realtek_main.c
-> index c3dcb62574303374666b46a454cd4e10de455d24..3a783f0c3b4f2a4f6aa63a16ad309e3471b0932a 100644
-> --- a/drivers/net/phy/realtek/realtek_main.c
-> +++ b/drivers/net/phy/realtek/realtek_main.c
-> @@ -231,6 +231,10 @@ static int rtl821x_probe(struct phy_device *phydev)
->  		return dev_err_probe(dev, PTR_ERR(priv->clk),
->  				     "failed to get phy clock\n");
->  
-> +	/* enabling the clock might produce glitches, so hard-reset the PHY */
-> +	phy_device_reset(phydev, 1);
-> +	phy_device_reset(phydev, 0);
-> +
->  	ret = phy_read_paged(phydev, RTL8211F_PHYCR_PAGE, RTL8211F_PHYCR1);
->  	if (ret < 0)
->  		return ret;
-> 
-> ---
-> base-commit: 4c06e63b92038fadb566b652ec3ec04e228931e8
-> change-id: 20250704-phy-realtek-clock-fix-6cd393e8cb2a
-> 
-> Best regards,
+I seriously debated the issue. Subjects always have data to put in
+the aux record. Objects may or may not, in the AppArmor case. Not having
+a subject context is an error, not having an object context is interesting,
+but not necessarily an error. Hence the different treatment. You can tell
+me I'm wrong, and I'll make them consistent.
 
+>
+>> +		} else {
+>> +			audit_log_format(ab, "%sobj_%s=%s", space,
+>> +					 audit_obj_lsms[i]->name, ctx.context);
+>> +			security_release_secctx(&ctx);
+>> +		}
+>> +		space = " ";
+>> +	}
+>> +
+>> +	audit_buffer_aux_end(ab);
+>> +	return error;
+>> +
+>> +error_path:
+>> +	audit_panic("error in audit_log_obj_ctx");
+>> +	return error;
+>> +}
+>> +
+>>  void audit_log_d_path_exe(struct audit_buffer *ab,
+>>  			  struct mm_struct *mm)
+>>  {
+>> diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+>> index 322d4e27f28e..0c28fa33d099 100644
+>> --- a/kernel/auditsc.c
+>> +++ b/kernel/auditsc.c
+>> @@ -1098,7 +1098,6 @@ static int audit_log_pid_context(struct audit_context *context, pid_t pid,
+>>  				 char *comm)
+>>  {
+>>  	struct audit_buffer *ab;
+>> -	struct lsm_context ctx;
+>>  	int rc = 0;
+>>  
+>>  	ab = audit_log_start(context, GFP_KERNEL, AUDIT_OBJ_PID);
+>> @@ -1108,15 +1107,9 @@ static int audit_log_pid_context(struct audit_context *context, pid_t pid,
+>>  	audit_log_format(ab, "opid=%d oauid=%d ouid=%d oses=%d", pid,
+>>  			 from_kuid(&init_user_ns, auid),
+>>  			 from_kuid(&init_user_ns, uid), sessionid);
+>> -	if (lsmprop_is_set(prop)) {
+>> -		if (security_lsmprop_to_secctx(prop, &ctx, LSM_ID_UNDEF) < 0) {
+>> -			audit_log_format(ab, " obj=(none)");
+>> -			rc = 1;
+>> -		} else {
+>> -			audit_log_format(ab, " obj=%s", ctx.context);
+>> -			security_release_secctx(&ctx);
+>> -		}
+>> -	}
+>> +	if (lsmprop_is_set(prop) && audit_log_obj_ctx(ab, prop))
+>> +		rc = 1;
+> We should probably use the return value from audit_log_obj_ctx().
+
+Sure.
+
+>
+>>  	audit_log_format(ab, " ocomm=");
+>>  	audit_log_untrustedstring(ab, comm);
+>>  	audit_log_end(ab);
+> ..
+>
+>> @@ -1780,15 +1756,16 @@ static void audit_log_exit(void)
+>>  						  axs->target_sessionid[i],
+>>  						  &axs->target_ref[i],
+>>  						  axs->target_comm[i]))
+>> -				call_panic = 1;
+>> +			call_panic = 1;
+>>  	}
+>>  
+>>  	if (context->target_pid &&
+>>  	    audit_log_pid_context(context, context->target_pid,
+>>  				  context->target_auid, context->target_uid,
+>>  				  context->target_sessionid,
+>> -				  &context->target_ref, context->target_comm))
+>> -			call_panic = 1;
+>> +				  &context->target_ref,
+>> +				  context->target_comm))
+>> +		call_panic = 1;
+> I appreciate the indent fixes, would you mind pulling this out and
+> submitting them separately?
+
+Sure.
+
+>
+> --
+> paul-moore.com
 
