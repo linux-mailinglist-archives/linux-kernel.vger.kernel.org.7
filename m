@@ -1,156 +1,115 @@
-Return-Path: <linux-kernel+bounces-716700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E054AF89F8
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 09:50:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51E62AF89B9
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 09:40:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CF5B1C481FA
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 07:51:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E4161C87764
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 07:41:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C14728540B;
-	Fri,  4 Jul 2025 07:50:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sZBeoqWr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8C55283FD7;
+	Fri,  4 Jul 2025 07:40:35 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3DB727A10A;
-	Fri,  4 Jul 2025 07:50:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C83D1281366;
+	Fri,  4 Jul 2025 07:40:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751615448; cv=none; b=Tv3M7p0XvKqWs02AmfFSOllkkhVJEMteV/khsuo+2WsQetX3t20zOaH90pN3XiLYnNjomoBj8Ax0rqo9SY8I0tKpCGZCEyh2yQP/8Fd4H04BeXZ3MhNSCu9CTN/EkL/lAfdv/Wg44WmZf78JP8J81OyoAlAKOLFZD2Qu1tcayII=
+	t=1751614835; cv=none; b=uxUOViY+DM0BMeCatpnJAiNzvLNTogtymUlgfRIV8zWDQWMRMj2G59H0fFZliSIKq1ZY8LscomS6DmX7/JK9Z46x9rRCWtnAoYaJwHkP8WuIFsf3t9jsZUxTlPGO38GfNrk4IKMuX12wR1+3fffdIArt3iIhR6sBYYXjY16lt/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751615448; c=relaxed/simple;
-	bh=SAV3OOw7TJ9qXgDYsbQ0R6rToSQAXqWdWPlOqVTVQFU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Oz4k1bQWyCPXkpvn+eXIS3ahSpRh4fXe3NWhfAar/HeIKJb1Knc0w5bL+rvYpT09JqlmvCFgYvWvCB93pjEyvEbS/NfeXl0ibVEnFXA0/7sEG01YNvPrzamP23zYW35c7kRZn9Y6/2rL4qmXteU2wdgCYVrlzJl0Ksy7PFXjJxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sZBeoqWr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3A80C4CEE3;
-	Fri,  4 Jul 2025 07:50:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751615448;
-	bh=SAV3OOw7TJ9qXgDYsbQ0R6rToSQAXqWdWPlOqVTVQFU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sZBeoqWrs0zzhCsY1tDneN2o3SAwe7xSg0ID1BLE9cePwRqORDfsZ4W+0YrlzDIN2
-	 9rzeauKqM1I7Jqw/EnVEUgh8Pa0Mxbtv9R0cFlihRsQAPwOqpjKq0x8JSWBYcEXi39
-	 Cy6PZG6CLK3Iz9bQgWR8E9MKLmCi4OFeJnrtYwA++LYEcgKszj3Zepv50x3Z2TBxx8
-	 7BqKLWKvNikA0tXCchXT5ZlrjARLePNhLD9pczgdNfy0g0harPkCK+4zxy6/8sBOxs
-	 YJYMpVIrIszMerQ5DR5J7neAiFLSHlAsuo/FmeWGSsGZjWuKifKqzsMeeB6qLu6jO9
-	 d1fRK99PCko5g==
-Date: Fri, 4 Jul 2025 09:50:45 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: LI Qingwu <Qing-wu.Li@leica-geosystems.com.cn>
-Cc: "lee@kernel.org" <lee@kernel.org>, 
-	"pavel@kernel.org" <pavel@kernel.org>, "robh@kernel.org" <robh@kernel.org>, 
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>, 
-	"linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	GEO-CHHER-bsp-development <bsp-development.geo@leica-geosystems.com>
-Subject: Re: [PATCH V4 1/2] dt-bindings: leds: pwm: add enable-gpios property
-Message-ID: <20250704-devious-badger-of-contentment-e0a00a@krzk-bin>
-References: <20250703093430.229959-1-Qing-wu.Li@leica-geosystems.com.cn>
- <20250703093430.229959-2-Qing-wu.Li@leica-geosystems.com.cn>
- <85e411bf-58cf-46fe-9afa-7b76999f1a42@kernel.org>
- <AM9PR06MB795507373B99DFF6820D979ED743A@AM9PR06MB7955.eurprd06.prod.outlook.com>
- <1c95927e-a028-43fe-bdf5-449767b49ec1@kernel.org>
- <AM9PR06MB795513A172A70CB09462FCA8D743A@AM9PR06MB7955.eurprd06.prod.outlook.com>
+	s=arc-20240116; t=1751614835; c=relaxed/simple;
+	bh=EhK+9hAf8j3eh4CjyTaHOFdygunU/xE6sAbakQJe0fY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jHWSw91Rx/ryKX9OLGkxRwswkhDy4wMxDBZBcfx10Qu3SM7o3UriLneZ9kOmE8CwSJlCoTJc91kKQGfy3YB0gmgENsW4AdpKfPDfdc81ufEXus/dv+FPU91RuLRapZ3ixWgmxfDavGVPzjWHtMfK6whG7pBDN6WKYiOS+Sz8lSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4bYQWF3k8PztS35;
+	Fri,  4 Jul 2025 15:39:21 +0800 (CST)
+Received: from kwepemg100016.china.huawei.com (unknown [7.202.181.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id F298D140258;
+	Fri,  4 Jul 2025 15:40:28 +0800 (CST)
+Received: from huawei.com (10.67.174.33) by kwepemg100016.china.huawei.com
+ (7.202.181.57) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 4 Jul
+ 2025 15:40:28 +0800
+From: GONG Ruiqi <gongruiqi1@huawei.com>
+To: Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu
+	<roberto.sassu@huawei.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>, Ard Biesheuvel <ardb@kernel.org>
+CC: Eric Snowberg <eric.snowberg@oracle.com>, Paul Moore
+	<paul@paul-moore.com>, James Morris <jmorris@namei.org>, "Serge E . Hallyn"
+	<serge@hallyn.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
+	<mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
+	<dave.hansen@linux.intel.com>, <x86@kernel.org>, "H . Peter Anvin"
+	<hpa@zytor.com>, <linux-kernel@vger.kernel.org>,
+	<linux-integrity@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
+	<linux-efi@vger.kernel.org>, <keyrings@vger.kernel.org>, Lu Jialin
+	<lujialin4@huawei.com>, <gongruiqi1@huawei.com>
+Subject: [PATCH v4 0/2] integrity: Extract secure boot enquiry function out of IMA
+Date: Fri, 4 Jul 2025 15:51:12 +0800
+Message-ID: <20250704075114.3709609-1-gongruiqi1@huawei.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <AM9PR06MB795513A172A70CB09462FCA8D743A@AM9PR06MB7955.eurprd06.prod.outlook.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
+ kwepemg100016.china.huawei.com (7.202.181.57)
 
-On Thu, Jul 03, 2025 at 11:36:10AM +0000, LI Qingwu wrote:
->=20
->=20
-> > -----Original Message-----
-> > From: Krzysztof Kozlowski <krzk@kernel.org>
-> > Sent: Thursday, July 3, 2025 6:55 PM
-> > To: LI Qingwu <Qing-wu.Li@leica-geosystems.com.cn>; lee@kernel.org;
-> > pavel@kernel.org; robh@kernel.org; krzk+dt@kernel.org;
-> > conor+dt@kernel.org; linux-leds@vger.kernel.org; devicetree@vger.kernel=
-=2Eorg;
-> > linux-kernel@vger.kernel.org
-> > Cc: GEO-CHHER-bsp-development
-> > <bsp-development.geo@leica-geosystems.com>
-> > Subject: Re: [PATCH V4 1/2] dt-bindings: leds: pwm: add enable-gpios pr=
-operty
-> >=20
-> > This email is not from Hexagon=E2=80=99s Office 365 instance. Please be=
- careful while
-> > clicking links, opening attachments, or replying to this email.
-> >=20
-> >=20
-> > On 03/07/2025 12:27, LI Qingwu wrote:
-> > >
-> > >
-> > >> -----Original Message-----
-> > >> From: Krzysztof Kozlowski <krzk@kernel.org>
-> > >> Sent: Thursday, July 3, 2025 5:59 PM
-> > >> To: LI Qingwu <Qing-wu.Li@leica-geosystems.com.cn>; lee@kernel.org;
-> > >> pavel@kernel.org; robh@kernel.org; krzk+dt@kernel.org;
-> > >> conor+dt@kernel.org; linux-leds@vger.kernel.org;
-> > >> conor+devicetree@vger.kernel.org;
-> > >> linux-kernel@vger.kernel.org
-> > >> Cc: GEO-CHHER-bsp-development
-> > >> <bsp-development.geo@leica-geosystems.com>
-> > >> Subject: Re: [PATCH V4 1/2] dt-bindings: leds: pwm: add enable-gpios
-> > >> property
-> > >>
-> > >> This email is not from Hexagon=E2=80=99s Office 365 instance. Please=
- be
-> > >> careful while clicking links, opening attachments, or replying to th=
-is email.
-> >=20
-> > Please drop this, it is not relevant in upstream discussions. Use norma=
-l email
-> > client which will not produce useless header above.
-> >=20
-> >=20
-> > >>
-> > >>
-> > >> On 03/07/2025 11:34, LI Qingwu wrote:
-> > >>> some pwm led driver chips like tps92380 require a separate enable
-> > >>> signal
-> > >>
-> > >> Sentence starts with capital letter.
-> > >>
-> > >> tps92380 does not have dedicated enable pin. It has VDDIO, which
-> > >> serves also enable purpose, but it is a supply.
-> > >
-> > > So this patch is unacceptable anyway?
-> >=20
-> > If you make this patch for tps92380, I think it is not correct. You hav=
-e entire
-> > commit msg to explain the hardware and all unusual things. Having VDDIO=
- and
-> > EN pin is unusual, because you do not supply power directly from GPIOs =
-of a SoC.
-> > All this should be explained.
->=20
-> Thank you for the feedback, what about rename to power-supply with regula=
-tor support ?=20
-> Convert this patch to add regulator support instead of GPIO, using "power=
--supply" property to control=20
-> LED power, or drop this patch and give up upstream, or what's the better =
-=66rom your point of view?
-> appreciate your guidance!
+v4:
+- Rename secureboot.c to efi_secureboot.c, as Mimi suggested.
+v3:
+- Redesign the implementation. Keep the name of arch_ima_get_secureboot
+  to escape from the morass consisted of multiple arch and configs.
+- Rephrase the commit message.
+v2:
+- Fix compile errors for CONFIG_IMA_ARCH_POLICY=n on s390 & powerpc
 
-Does it solve your problem? It is surprising that once you say it is
-GPIO and once as regulator. How is it in your board?
+---
 
-Regulator is looking as correct hardware description, so that patch
-would be fine.
+Hi,
 
-Best regards,
-Krzysztof
+We encountered a boot failure issue in an in-house testing, where the
+kernel refused to load its modules since it couldn't verify their
+signature. The root cause turned out to be the early return of
+load_uefi_certs(), where arch_ima_get_secureboot() returned false
+unconditionally due to CONFIG_IMA_SECURE_AND_OR_TRUSTED_BOOT=n, even
+though the secure boot was enabled.
+
+This patch set attempts to remove this implicit dependency by shifting
+the functionality of efi secure boot enquiry from IMA to the integrity
+subsystem, so that both certificate loading and IMA can make use of it
+independently.
+
+The code has been compile-tested on x86/arm64/powerpc/s390, with as much
+as config combinations I can think of.
+
+-Ruiqi
+
+GONG Ruiqi (2):
+  x86/efi: Rename IMA-related function and macro of boot mode
+  integrity: Extract secure boot enquiry function out of IMA
+
+ arch/x86/include/asm/efi.h                    |  4 +-
+ arch/x86/platform/efi/efi.c                   |  2 +-
+ include/linux/integrity.h                     |  1 +
+ security/integrity/Makefile                   |  1 +
+ security/integrity/efi_secureboot.c           | 46 +++++++++++++++++++
+ security/integrity/ima/ima_efi.c              | 42 +----------------
+ security/integrity/platform_certs/load_uefi.c |  3 +-
+ 7 files changed, 54 insertions(+), 45 deletions(-)
+ create mode 100644 security/integrity/efi_secureboot.c
+
+-- 
+2.25.1
 
 
