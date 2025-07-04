@@ -1,130 +1,105 @@
-Return-Path: <linux-kernel+bounces-716832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-716834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0D45AF8B1D
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 10:21:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBFA4AF8B27
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 10:21:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 245C1761CA5
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 08:17:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F044762357
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Jul 2025 08:17:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6C903257DC;
-	Fri,  4 Jul 2025 07:57:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A2663271A1;
+	Fri,  4 Jul 2025 07:59:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n6EsqyGY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="b1JioV2B"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3408B32624E;
-	Fri,  4 Jul 2025 07:57:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0360327194
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Jul 2025 07:59:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751615850; cv=none; b=b8R0FvItGZJHaw0xQsFmz/R22lRRLkzo/+fMtexXXV9Yi3pswwssaFVml4eL16mtlGIPbKgFCVS6Bg9PIg52RYADLXhSfIur6Uis/ydQvM+cULXbMoKXehhAIyRYrpuZVZAzuGxj2rbzsDsH+4DRamwo1uRq3qiUnmyYYEIDS9g=
+	t=1751615969; cv=none; b=ukHjantsJMo9Y2F3l4/uAZz45V6ahnfpNHjfhTJ9owaxiL1xMfNDcESGl/5jASTI2a9jj6rY6KRSVT83lyT8h0uGJo9E38NDmMTyFmj/yb6xTofR8K9F/67LVCxsBra0i7TIRFOA4v+w7RlAWUiVIMflkNSYaY5x3+MYF/Tz9mo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751615850; c=relaxed/simple;
-	bh=t82jB92Da5ZA8vsIAa/Hi9HSTGrBWZGtztZr+fX47is=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=V/V6F1T1qt8Je3HFNkb2tDQ/hb2xCXcbpl1ieOzEH5FQo5nP9gA9lJenoHe36zzE54LAPtl2k40X4SgRnLAeKeE7qBnzf26zT+EGZLdudKZGf3rpPVGGtMCZrf/iRH8LKXbkAQ1PPZCIvxVGHN+oT7Z6Lj5DOvsf3+OuufNRbEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n6EsqyGY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B85BC4CEE3;
-	Fri,  4 Jul 2025 07:57:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751615849;
-	bh=t82jB92Da5ZA8vsIAa/Hi9HSTGrBWZGtztZr+fX47is=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=n6EsqyGYQIjmXyZeZk9mcKz1zjbqxxOy5zh2buAfUlEICVl7eVAJ3M8XdPMwIiZgO
-	 7V4g4wn37mvK8J2AIchqhVaYJx+kISlInjBKx70VRZeCwLS75oeFpU2IrN5lmMk5gf
-	 /qRRrSGo1E8xdjba0X93cBOuonVrF7Cb/TNtqcCgGM/WGpQwwyw3q0ezXsrTScPEQm
-	 toJpIbN/nfZZKh10MlgURcNJkTGLDf2uzYzpZ1uV88a7ItkJ/ikcp85+az1ZmeOAAq
-	 MFBgWPGCIOxY/ixUirPmTynHkFptfZ1eaEU25FepzmOTK6Io059q9Vh0lVegFjNb2F
-	 uqc0I8kjsWiuA==
-Message-ID: <86e970ae-3d67-40a2-85f8-25b81a7242ca@kernel.org>
-Date: Fri, 4 Jul 2025 09:57:22 +0200
+	s=arc-20240116; t=1751615969; c=relaxed/simple;
+	bh=3YUFGBKz3nnt1I4W9YIC+Q4E0f+f0UuxuGXfbcSs3f4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=krLyq95xAbkynQUZfmimv41gf6Uev6MIscVcfMUU9Ym8fTrpISl34Uy8IyFgkFeO4dbfLiR5FrGNgwsofi7koAab1chadDenIhFpsKMPBd6hvi4Ais0kNYIKUYzggUvgMTtiSq0IAWYQT53yY78xV8wbaC4AY59mpAaxhkXCCcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=b1JioV2B; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=AdzRiQjvYzMSGoHza7Sl9rDFTuZauWmMS94NHkdAXnM=; b=b1JioV2BSWu3eazMvXx1W08EPf
+	2TUzg+cp4QXYe3lb20AY4wu6jP1IcmgFbrpDhp5+bx4xJ0fDSAi0EYeohAS/9V1Jl04CT+YLLXfEq
+	pqp96oLqkGkGpMvqrti78YYWZjseDfP5UfE5Q7oFFXJW8WMziyXtQntLAouPJ3K2xDqskS/aiPDCL
+	U+G1DQddslpErIEdYbIE5uPHGyXtWCDnTlvwIy2dUtWNbZpHUNzIXtbL8yN41Roj7QG6GmxrgmulA
+	XCCnGHOOporWXTrZ36lHcFH6IM7+q4MnEXwqaZzFjE5NGM5hRbI0K89RnCb9CxV8Le9+L3VOmF4r8
+	mZYy1now==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uXbKG-0000000G6tT-4Bki;
+	Fri, 04 Jul 2025 07:59:17 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 139C3300220; Fri, 04 Jul 2025 09:59:16 +0200 (CEST)
+Date: Fri, 4 Jul 2025 09:59:15 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: K Prateek Nayak <kprateek.nayak@amd.com>
+Cc: Phil Auld <pauld@redhat.com>, mingo@redhat.com, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+	vschneid@redhat.com, clm@meta.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 12/12] sched: Add ttwu_queue support for delayed tasks
+Message-ID: <20250704075915.GB2001818@noisy.programming.kicks-ass.net>
+References: <20250702114924.091581796@infradead.org>
+ <20250702121159.652969404@infradead.org>
+ <20250703160027.GC245663@pauld.westford.csb>
+ <20250703164708.GZ1613200@noisy.programming.kicks-ass.net>
+ <0672c7df-543c-4f3e-829a-46969fad6b34@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/4] dt-bindings: usb: Add compatible strings for
- s32g2/s32g3
-To: Dan Carpenter <dan.carpenter@linaro.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Xu Yang <xu.yang_2@nxp.com>,
- Peng Fan <peng.fan@nxp.com>, linux-usb@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, s32@nxp.com,
- linaro-s32@linaro.org, Larisa Grigore <larisa.grigore@nxp.com>,
- Ionut Vicovan <Ionut.Vicovan@nxp.com>,
- Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
-References: <cover.1751591078.git.dan.carpenter@linaro.org>
- <596d188a-9a2d-41e5-af70-c99bc2b7ca7a@sabinyo.mountain>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <596d188a-9a2d-41e5-af70-c99bc2b7ca7a@sabinyo.mountain>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0672c7df-543c-4f3e-829a-46969fad6b34@amd.com>
 
-On 04/07/2025 03:20, Dan Carpenter wrote:
-> From: Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
+On Fri, Jul 04, 2025 at 11:43:43AM +0530, K Prateek Nayak wrote:
+> Hello Peter,
 > 
-> Add the compatible strings for the NXP s32g2 and s32g3.  These chips
-> are mostly compatible.  The one difference is that the s32g2-usbmisc
-> device has an errata ERR050474 which requires a special flag to be set
-> for handling packages that aren't 4 byte aligned.
+> On 7/3/2025 10:17 PM, Peter Zijlstra wrote:
+> > Also, I updated the git tree today, fixing a silly mistake. But I don't
+> > remember build failures here.
 > 
-> Signed-off-by: Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
+> Running HammerDB + MySQL on baremetal results in a splats from
+> assert_clock_updated() ~10min into the run on peterz:sched/core at
+> commit 098ac7dd8a57 ("sched: Add ttwu_queue support for delayed
+> tasks") which I hope is the updated one.
+> 
+> I'm running with the following diff and haven't seen a splat yet
+> (slightly longer than 10min into HammerDB; still testing):
+> 
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index 9855121c2440..71ac0e7effeb 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -3871,7 +3871,7 @@ static int ttwu_delayed(struct rq *rq, struct task_struct *p, int wake_flags,
+>  	if (unlikely(rq != p_rq)) {
+>  		__task_rq_unlock(p_rq, rf);
+>  		rq_lock(rq, rf);
+> -		update_rq_clock(p_rq);
+> +		update_rq_clock(rq);
+>  	}
+>  	p->sched_remote_wakeup = !!(wake_flags & WF_MIGRATED);
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Damn,... I did the edit right on the test box and then messed it up when
+editing the patch :-(
 
-Best regards,
-Krzysztof
+I'll go fix.
 
