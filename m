@@ -1,106 +1,52 @@
-Return-Path: <linux-kernel+bounces-718209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-718212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF7ABAF9EA7
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 09:18:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04AE1AF9EAD
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 09:21:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 624301C284EE
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 07:19:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 582561696C5
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 07:21:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8AA128A713;
-	Sat,  5 Jul 2025 07:17:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="rVeKoCOY"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2056.outbound.protection.outlook.com [40.107.237.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A07D288534
-	for <linux-kernel@vger.kernel.org>; Sat,  5 Jul 2025 07:17:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.56
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751699866; cv=fail; b=B5tPsKJg20Cc5vpIXA2UHMQNwnKFCBhXzfdbNokXguqIDBL4Xo3o1SiIITK8xUdE60GXMW5sc4q6hIotBbX5J5iXoPSQ8j10uAy8+5MScjgMTd/fR5wLViQIfunF/0A9kZHWcZn3YKrcQd3XbMHk8PIYVLXAgGNil+01T4X0gZ8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751699866; c=relaxed/simple;
-	bh=aOkMKc69mAv+aG1DKjrAA8VaFwTqhtXAyarylE+Sg5M=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Z5Hr7/gFwmpPzPbFShcG1xrCDgBBiri4K6XTsKUX15Qk2x5+/4vogBd7zQEuhYz+UYXA7Mba47gLrQ1VdQTSxGT07DKbvmLjsQlmuZCTxL1b0TG9ADB6lm4Wdw2MWMkTheVj+Qls5XGysbXXHBlQ2opUvtHlNDh94gfL/J/sNEE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=rVeKoCOY; arc=fail smtp.client-ip=40.107.237.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=f16ZxVriWcCmlWGR1unensQBkJFHEUa2+UGbzs6R04mbe3QHQiQHB7xZ+2WnQvMH/M3ElAQva7mT9GWR7ZXDNONscSMoz+I8FyfOlxoTLPXXwo0l8zM9qsWMBT4ui78pHY2hJ732Op/oBw1jnA8Zga1Ukf/hoFA122r3uwJuaNx/Ncv+XcoP6YcjxlaUJHB5g4PY3/hUIIV5SyFKaedtuDzl9W+YSamGl6ZImullSAZ5LO/0B1H80y7qwKJySs7/q/aKZ8T192ascfVoKVzpUaTuO629WjO0OM7dbrb2yvfQhIOHdSGR1tTKoFb5GdhA6TVGGlEbTF/ClGoBNHhDog==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9BTGKYCMzZAm7U1kHldoTJky4SHTDmrEgJiQss8H/t0=;
- b=ZB1bOfTkxENe00XsC7ShE4g2lWHPURCwE6kvV+y5V8saC462dQWl/gg+t+aR6VRiWIc5pRm6Kl2Zr7GrBW7QzkJ61o/Q/ecNKMfuCXWSVs2zRjQNLNt9VXVL5eejBdHF2iHLu13bLO/908kekPWR5xhuNZxNmGbEnHnTyi8n2Zqi9ZP8XpPNXWxQuIaK5sEUW0SeICbW/iTv4GI/SWImRGNt4IHMgTdbqsV3JXdS3yzaPMAimvRybWyzPzEPPJJzvt41P4ckMsYB8ylxDBnSRZHIL5h2hST0UsVEuV90gL0mFUm8O/cw8qkHzYJqv/hNO55sXMiq4h1OZPGxghfGYg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=redhat.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9BTGKYCMzZAm7U1kHldoTJky4SHTDmrEgJiQss8H/t0=;
- b=rVeKoCOYG62auxln06uQY6tFTxkExOJRSvgwPXvMtJNV7775vv+GwlnaxiO6MzVv4taKE19GQvZ3dOnA22nWEpl5v5f23wpgDCrQcgrHl1DXbyX87DB8ukohq6a39uT1zujBhp1HJZhYVmJdVuEz3OfLEe4+ygivRtMfvFbea5Xn1Xf4Nyrv9ZguTvxUihfuIwECRIN7rNY3HcBaTQe3FvJv4xkTQdYFDT568gNT729sxFfgi4dXpEOpgftPHrNpCz/whELxkiMHYwdCC+CH8LY4yQVgT7C329ror73n0AWIdO7tTTHwDX69hducU5ABpwrVP88K6xSadLXMoPtRpQ==
-Received: from SN1PR12CA0046.namprd12.prod.outlook.com (2603:10b6:802:20::17)
- by DM4PR12MB8451.namprd12.prod.outlook.com (2603:10b6:8:182::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.22; Sat, 5 Jul
- 2025 07:17:37 +0000
-Received: from SA2PEPF00001505.namprd04.prod.outlook.com
- (2603:10b6:802:20:cafe::5f) by SN1PR12CA0046.outlook.office365.com
- (2603:10b6:802:20::17) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8901.23 via Frontend Transport; Sat,
- 5 Jul 2025 07:17:37 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- SA2PEPF00001505.mail.protection.outlook.com (10.167.242.37) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8901.15 via Frontend Transport; Sat, 5 Jul 2025 07:17:37 +0000
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Sat, 5 Jul 2025
- 00:17:27 -0700
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail203.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Sat, 5 Jul
- 2025 00:17:27 -0700
-Received: from localhost.nvidia.com (10.127.8.12) by mail.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
- Transport; Sat, 5 Jul 2025 00:17:26 -0700
-From: <ankita@nvidia.com>
-To: <ankita@nvidia.com>, <jgg@nvidia.com>, <maz@kernel.org>,
-	<oliver.upton@linux.dev>, <joey.gouly@arm.com>, <suzuki.poulose@arm.com>,
-	<yuzenghui@huawei.com>, <catalin.marinas@arm.com>, <will@kernel.org>,
-	<ryan.roberts@arm.com>, <shahuang@redhat.com>, <lpieralisi@kernel.org>,
-	<david@redhat.com>, <ddutile@redhat.com>, <seanjc@google.com>
-CC: <aniketa@nvidia.com>, <cjia@nvidia.com>, <kwankhede@nvidia.com>,
-	<kjaju@nvidia.com>, <targupta@nvidia.com>, <vsethi@nvidia.com>,
-	<acurrid@nvidia.com>, <apopple@nvidia.com>, <jhubbard@nvidia.com>,
-	<danw@nvidia.com>, <zhiw@nvidia.com>, <mochs@nvidia.com>,
-	<udhoke@nvidia.com>, <dnigam@nvidia.com>, <alex.williamson@redhat.com>,
-	<sebastianene@google.com>, <coltonlewis@google.com>, <kevin.tian@intel.com>,
-	<yi.l.liu@intel.com>, <ardb@kernel.org>, <akpm@linux-foundation.org>,
-	<gshan@redhat.com>, <linux-mm@kvack.org>, <tabba@google.com>,
-	<qperret@google.com>, <kvmarm@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<maobibo@loongson.cn>
-Subject: [PATCH v10 6/6] KVM: arm64: Expose new KVM cap for cacheable PFNMAP
-Date: Sat, 5 Jul 2025 07:17:17 +0000
-Message-ID: <20250705071717.5062-7-ankita@nvidia.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250705071717.5062-1-ankita@nvidia.com>
-References: <20250705071717.5062-1-ankita@nvidia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00D5E270EAA;
+	Sat,  5 Jul 2025 07:21:45 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 433101FECA1;
+	Sat,  5 Jul 2025 07:21:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751700104; cv=none; b=kg7xnD2+E3el7wE/c4Ra2rXidOPciJotFMX6ceILHHPH7R3TasSswa/Yqdn1oE5yz7niyRTf7MirLfzjUG4IpzXOdNyLSp8a36IIxNG5+I5jjQ3jng+GARJrNw/xFZttsdy0Tq3K60734Ms3ZbjdmqMwzs5oaYM2MIedpTpVIaE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751700104; c=relaxed/simple;
+	bh=LF8J+P/koEFy0Ko4H5/UKpmWQHaOlbyQL4Cbdi8KDRQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=L7IdtBtsYFiofO3eDFo8CbXsxKWzi5ISrBoXa3MXcDZln2lEWqZfN+zn4APPXZvnVsZDbE6nku3p/wD2aKKY4ghBk2tK9AytJJH7/IFdStF634bFNGxYBWm0KblRkmhccZpDqCeLThEWoodg6iSEN3/4/Lnkr/A+DLDt58McR/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.40.54.123])
+	by gateway (Coremail) with SMTP id _____8AxlnCB0mhoErsiAQ--.9285S3;
+	Sat, 05 Jul 2025 15:21:37 +0800 (CST)
+Received: from localhost.localdomain (unknown [10.40.54.123])
+	by front1 (Coremail) with SMTP id qMiowJBxZOSA0mhoElgKAA--.60805S2;
+	Sat, 05 Jul 2025 15:21:37 +0800 (CST)
+From: Qunqin Zhao <zhaoqunqin@loongson.cn>
+To: lee@kernel.org,
+	herbert@gondor.apana.org.au,
+	jarkko@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	loongarch@lists.linux.dev,
+	davem@davemloft.net,
+	linux-crypto@vger.kernel.org,
+	peterhuewe@gmx.de,
+	jgg@ziepe.ca,
+	linux-integrity@vger.kernel.org,
+	Qunqin Zhao <zhaoqunqin@loongson.cn>
+Subject: [PATCH v12 0/4] Add Loongson Security Engine chip driver
+Date: Sat,  5 Jul 2025 15:20:41 +0800
+Message-ID: <20250705072045.1067-1-zhaoqunqin@loongson.cn>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -108,150 +54,108 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: AnonymousSubmission
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA2PEPF00001505:EE_|DM4PR12MB8451:EE_
-X-MS-Office365-Filtering-Correlation-Id: 156b0b90-04fc-4b70-ca26-08ddbb940541
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|36860700013|82310400026|376014|7416014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?7mq5rqkDF9/PJhCouC0nO2d8H2IRBRbQBgejhAi0t+Q4XC6wzAp1CTtMuvcM?=
- =?us-ascii?Q?wNzBBTvgzRzQbcopuixvRy670rdCF8izJ2ncCVRIjljZOZjv2Wh+ZkkZ6HIN?=
- =?us-ascii?Q?YMMmhh8DCS7rntcqBNsDYeeGnHVth3LGm6YVtuAOzwHUlg+qCQ3tWLmdEzhf?=
- =?us-ascii?Q?s6kg+kjeK5ea43HmSZZQulS5S1nthlrjLhjedfGaBJh85ym+i54Gla6A81d/?=
- =?us-ascii?Q?55VXqtky9c4Yz3yGKnH77TmBz6jQWi3uynfyEdr1RWrw3DWqPiIPWtCSY/dd?=
- =?us-ascii?Q?1A7zb90QBtINe5lktqIGKnuDz9nTLQ1H4aanJkpDRbw4vo1MmV2nAZXIUblH?=
- =?us-ascii?Q?TCsY/bRKoEtRC520Dwf41lvw8PxgH9TSZ1DOEV0zER1k+fTnoPizFmP0eU6M?=
- =?us-ascii?Q?R/cRq5VoZRxUc6v8ZfGaBDp+nI4RxtURTZ/MM4O9X6syRaqafYSfBDh8Rk4+?=
- =?us-ascii?Q?SgRDJtyR0kueILLhTfQ/3gbQTs6/uxSCkFk9pYvYad+QTdG5zO7O8psvPwvY?=
- =?us-ascii?Q?FXRlyMpRbI/7nTHL39NwtM4inQYmoU4zoh/XTzzFYWz1wE8cYv+7T2TuWfQn?=
- =?us-ascii?Q?98N111GU0aqHEpvOZKZJ4Zzl5v6HiBbDcBsRQX76T+b1/dUQ324uR6iqRDmo?=
- =?us-ascii?Q?Fj3WRJx9/H3uTmZie4fzm4rxndpRiO/77gj1Abk61SxuJEIcD3nnw3eVh0CO?=
- =?us-ascii?Q?iFR54ZchiQ23CW4l0FIIPkl2FbO0bVwTtgFgQx109vdhdDhmu2XFzHhl4dCV?=
- =?us-ascii?Q?6INQAdwhAGROG1lSa+/9EMqCyrMp5VUBv5dOhpGYEnwFmO2gCzpOVFDPqxyS?=
- =?us-ascii?Q?tvl37ctKz6DYztVbDskmSgv4trzOWdIcDexjjpN+3RYLE/lkj9ge7/13erT9?=
- =?us-ascii?Q?VtMXM5qK+0HAhjxSXdW62GNCT8t6ywRuyRWWhMMrrvRAM5Sdh0SlGtBKzjEa?=
- =?us-ascii?Q?zsBgaN47A2Htsua8k1xiospeE58aZ4595KAfanTb5Hp2k7CN/gki+sX/iiP+?=
- =?us-ascii?Q?Dd0/PSID0H5UrUkjIZ8ZhWOn4VbjE92K3FoQJDYbHeyD+bB8tytRHhIwJZxh?=
- =?us-ascii?Q?ApMOEnVb7XuMVugU8jAXqNrgtqYgKuoNOE38O0kZBnbRKIVemJZq6tIG6WFP?=
- =?us-ascii?Q?KzOeA6s2tQQGwmNhnDtA5pGOjR3zd3hqrgg96MbsIn9lK+VYCE2TbLCWecvY?=
- =?us-ascii?Q?WRlwiadKvdkxb4ZGhA+cFurWd0aJVrG+d2UB0J0sJc0sZ6N54sbyE/YZcEaR?=
- =?us-ascii?Q?m9I9weQXGZw/3U0bxtVNJop9ELMh2HMo5i/O21DuI11W8dF68F2WeVuzWlzb?=
- =?us-ascii?Q?F9tu5O6UNFDcUO1pi8w9jxYSM6Y5Km9IZTCA+isquEV6lmsa3Fqgv/rjtP59?=
- =?us-ascii?Q?PfV6Sa2gYxvblJnNnJUGPrJWXjNXV0z40CR+yA7l9GC5DYwu1kEtsowVqSGS?=
- =?us-ascii?Q?ErnYCqra7x1yB0Bs3ata0TfgFQ3eEXcmafmVt67B55wVX0Ctv4CfhF7xqloR?=
- =?us-ascii?Q?Q/8RidHhenqaK46G/2N+AICeF1wttl3tEutda+IFKz5O3Rkszbewx4DB/Q?=
- =?us-ascii?Q?=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(82310400026)(376014)(7416014)(921020);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Jul 2025 07:17:37.3593
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 156b0b90-04fc-4b70-ca26-08ddbb940541
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SA2PEPF00001505.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB8451
+X-CM-TRANSID:qMiowJBxZOSA0mhoElgKAA--.60805S2
+X-CM-SenderInfo: 52kd01pxqtx0o6or00hjvr0hdfq/
+X-Coremail-Antispam: 1Uk129KBj93XoWxCr43XFy5WrW7Cw4xCr4rWFX_yoW5ZrWDpF
+	45C3yakr4UJrsrCr93Jry8CFyfZ3s3Jr9xKa9rXw15ur9rAa48XrW2yFyUAF47AF1rJry2
+	vFWkCF4UCF1UJacCm3ZEXasCq-sJn29KB7ZKAUJUUUU7529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUBYb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v2
+	6F4UJVW0owAaw2AFwI0_Jrv_JF1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0c
+	Ia020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JF0_
+	Jw1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwI
+	xGrwCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWU
+	JVW8JwCFI7km07C267AKxVWUXVWUAwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4
+	vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IY
+	x2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26c
+	xKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAF
+	wI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU8HKZJUUUUU==
 
-From: Ankit Agrawal <ankita@nvidia.com>
+The Loongson Security Engine chip supports RNG, SM2, SM3 and SM4
+accelerator engines. Each engine have its own DMA buffer provided
+by the controller. The kernel cannot directly send commands to the
+engine and must first send them to the controller, which will
+forward them to the corresponding engine. Based on these engines,
+TPM2 have been implemented in the chip, then let's treat TPM2 itself
+as an engine.
 
-Introduce a new KVM capability to expose to the userspace whether
-cacheable mapping of PFNMAP is supported.
+v12: "loongson-tpm" -> "tmp_loongson"
 
-The ability to safely do the cacheable mapping of PFNMAP is contingent
-on S2FWB and ARM64_HAS_CACHE_DIC. S2FWB allows KVM to avoid flushing
-the D cache, ARM64_HAS_CACHE_DIC allows KVM to avoid flushing the icache
-and turns icache_inval_pou() into a NOP. The cap would be false if
-those requirements are missing and is checked by making use of
-kvm_arch_supports_cacheable_pfnmap.
+v11: Put all updates to the MAINTAINERS in one patch
+     crypto: statically initialize rng_devices.lock, use this lock in
+             loongson_rng_probe().
 
-This capability would allow userspace to discover the support.
-It could for instance be used by userspace to prevent live-migration
-across FWB and non-FWB hosts.
+v10: mfd: Cleanned up coding style.
+     crypto: Unlimited tfm
+     tpm: Added error check
 
-CC: Catalin Marinas <catalin.marinas@arm.com>
-CC: Jason Gunthorpe <jgg@nvidia.com>
-CC: Oliver Upton <oliver.upton@linux.dev>
-CC: David Hildenbrand <david@redhat.com>
-Suggested-by: Marc Zyngier <maz@kernel.org>
-Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
-Tested-by: Donald Dutile <ddutile@redhat.com>
-Signed-off-by: Ankit Agrawal <ankita@nvidia.com>
----
- Documentation/virt/kvm/api.rst | 13 ++++++++++++-
- arch/arm64/kvm/arm.c           |  7 +++++++
- include/uapi/linux/kvm.h       |  1 +
- 3 files changed, 20 insertions(+), 1 deletion(-)
+v9: Moved the base driver back to drivers/mfd. Cleanned up coding style.
 
-diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
-index 1bd2d42e6424..615cdbdd505f 100644
---- a/Documentation/virt/kvm/api.rst
-+++ b/Documentation/virt/kvm/api.rst
-@@ -8528,7 +8528,7 @@ ENOSYS for the others.
- When enabled, KVM will exit to userspace with KVM_EXIT_SYSTEM_EVENT of
- type KVM_SYSTEM_EVENT_SUSPEND to process the guest suspend request.
- 
--7.37 KVM_CAP_ARM_WRITABLE_IMP_ID_REGS
-+7.42 KVM_CAP_ARM_WRITABLE_IMP_ID_REGS
- -------------------------------------
- 
- :Architectures: arm64
-@@ -8557,6 +8557,17 @@ given VM.
- When this capability is enabled, KVM resets the VCPU when setting
- MP_STATE_INIT_RECEIVED through IOCTL.  The original MP_STATE is preserved.
- 
-+7.43 KVM_CAP_ARM_CACHEABLE_PFNMAP_SUPPORTED
-+-------------------------------------------
-+
-+:Architectures: arm64
-+:Target: VM
-+:Parameters: None
-+
-+This capability indicate to the userspace whether a PFNMAP memory region
-+can be safely mapped as cacheable. This relies on the presence of
-+force write back (FWB) feature support on the hardware.
-+
- 8. Other capabilities.
- ======================
- 
-diff --git a/arch/arm64/kvm/arm.c b/arch/arm64/kvm/arm.c
-index de2b4e9c9f9f..9fb8901dcd86 100644
---- a/arch/arm64/kvm/arm.c
-+++ b/arch/arm64/kvm/arm.c
-@@ -408,6 +408,13 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
- 	case KVM_CAP_ARM_SUPPORTED_REG_MASK_RANGES:
- 		r = BIT(0);
- 		break;
-+	case KVM_CAP_ARM_CACHEABLE_PFNMAP_SUPPORTED:
-+		if (!kvm)
-+			r = -EINVAL;
-+		else
-+			r = kvm_arch_supports_cacheable_pfnmap();
-+		break;
-+
- 	default:
- 		r = 0;
- 	}
-diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
-index d00b85cb168c..ed9a46875a49 100644
---- a/include/uapi/linux/kvm.h
-+++ b/include/uapi/linux/kvm.h
-@@ -934,6 +934,7 @@ struct kvm_enable_cap {
- #define KVM_CAP_ARM_EL2 240
- #define KVM_CAP_ARM_EL2_E2H0 241
- #define KVM_CAP_RISCV_MP_STATE_RESET 242
-+#define KVM_CAP_ARM_CACHEABLE_PFNMAP_SUPPORTED 243
- 
- struct kvm_irq_routing_irqchip {
- 	__u32 irqchip;
+v8: Like Lee said, the base driver goes beyond MFD scope. Since these
+    are all encryption related drivers and SM2, SM3, and SM4 drivers
+    will be added to the crypto subsystem in the future, the base driver
+    need to be changed when adding these drivers. Therefore, it may be
+    more appropriate to place the base driver within the crypto
+    subsystem.
+
+    Removed complete callback in all driver. Removed the concepts of
+    "channel", "msg" and "request" as they may be confusing. Used the
+    concepts of "egnine" and "command" may be better.
+
+v7: Addressed Huacai's comments.
+
+v6: mfd :MFD_LS6000SE -> MFD_LOONGSON_SE,  ls6000se.c -> loongson-se.c
+
+    crypto :CRYPTO_DEV_LS6000SE_RNG -> CRYPTO_DEV_LOONGSON_RNG,
+    ls6000se-rng.c ->loongson-rng.c
+
+    tpm: TCG_LSSE -> TCG_LOONGSON, tpm_lsse.c ->tpm_loongson.c
+
+v5: mfd: Registered "ls6000se-rng" device in mfd driver
+    tpm: Prefix all with tpm_loongson instead of tpm_lsse.
+         Replace all "ls6000se" with "loongson"
+
+v4: tpm: Removed MODULE_AUTHOR fields.
+         Prefix all with tpm_lsse instead of tpm.
+
+v3: Put the updates to the MAINTAINERS in a separate patch.
+    tpm: Added reminder about Loongson security engine to git log.
+
+v2: Removed misc driver. Added tpm driver.
+
+Qunqin Zhao (4):
+  mfd: Add support for Loongson Security Engine chip controller
+  crypto: loongson - add Loongson RNG driver support
+  tpm: Add a driver for Loongson TPM device
+  MAINTAINERS: Add entry for Loongson Security Engine drivers
+
+ MAINTAINERS                            |   9 +
+ drivers/char/tpm/Kconfig               |   9 +
+ drivers/char/tpm/Makefile              |   1 +
+ drivers/char/tpm/tpm_loongson.c        |  84 ++++++++
+ drivers/crypto/Kconfig                 |   1 +
+ drivers/crypto/Makefile                |   1 +
+ drivers/crypto/loongson/Kconfig        |   5 +
+ drivers/crypto/loongson/Makefile       |   1 +
+ drivers/crypto/loongson/loongson-rng.c | 209 ++++++++++++++++++++
+ drivers/mfd/Kconfig                    |  11 ++
+ drivers/mfd/Makefile                   |   2 +
+ drivers/mfd/loongson-se.c              | 253 +++++++++++++++++++++++++
+ include/linux/mfd/loongson-se.h        |  53 ++++++
+ 13 files changed, 639 insertions(+)
+ create mode 100644 drivers/char/tpm/tpm_loongson.c
+ create mode 100644 drivers/crypto/loongson/Kconfig
+ create mode 100644 drivers/crypto/loongson/Makefile
+ create mode 100644 drivers/crypto/loongson/loongson-rng.c
+ create mode 100644 drivers/mfd/loongson-se.c
+ create mode 100644 include/linux/mfd/loongson-se.h
+
+
+base-commit: a79a588fc1761dc12a3064fc2f648ae66cea3c5a
 -- 
-2.34.1
+2.45.2
 
 
