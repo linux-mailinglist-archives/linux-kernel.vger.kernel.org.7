@@ -1,87 +1,110 @@
-Return-Path: <linux-kernel+bounces-718325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-718327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1DAFAFA02A
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 15:06:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06780AFA02D
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 15:08:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DC2B1C40C3A
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 13:06:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4CC6A564E40
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 13:08:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44D1B253B73;
-	Sat,  5 Jul 2025 13:06:04 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEFDE256C89;
+	Sat,  5 Jul 2025 13:08:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fxsoVPDb"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E074148830
-	for <linux-kernel@vger.kernel.org>; Sat,  5 Jul 2025 13:06:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCE4F220F36;
+	Sat,  5 Jul 2025 13:08:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751720763; cv=none; b=uYG7o0aT9MPtkZ14ZXGnl9FxtuDHSqA2r3zQaJ2703oKA6H6uaXAGHOOfkXAfFFYTssIYz/gp85YSaz5X130gk/QqrRIHBaD8bfnKsYgcGNVaUzFr7h5/zPHFVhKKS7gXHq4zSrtCc2BY/1EEhqFy7yeKJA9k0HEWiEyNZD/Vxw=
+	t=1751720913; cv=none; b=EutfqmVYqKoLMTNB7moDqR8hWaU0vOPuOcleCOmT5bsaNK6WO/jZ+1bi3F8fqP9xIymiO/x6hTtDnY3RL9xo7LN3ue341FVDW2utTIvdiVbUooR8aQIOrw/3LDTXZoTrPaDezltHc4wq5STkutB7/GZW+7fLlo2QplYPn5k1bgE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751720763; c=relaxed/simple;
-	bh=F/zi+qoNp1igtiWRl9dzbK79TTCBnOEjTF+WECB9y60=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=mQG5Kfb1LsM1mZH5YQ49aQ1s6KYYZRB/kzfiwXn2Uolv0BP57jv7FKQZfH6ioldOM20tP+or0oponx+yRdxNX234NJlS/QRsbGCUZ8ZeVsszv3+sntCzNzSrzDzbO77CR3TVlprYVCLAbzXZecCooyQ8LANvZJ2JqmH8tfqQQpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3e055be2288so14767205ab.3
-        for <linux-kernel@vger.kernel.org>; Sat, 05 Jul 2025 06:06:02 -0700 (PDT)
+	s=arc-20240116; t=1751720913; c=relaxed/simple;
+	bh=P1THOPizc4yPRbXdgqx5IlzZo8w8HRGIW4wNgIvmk0k=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=d0SMLk4C0gCi3qaziZxTT2A0/aw5alJdknH2jbU8F7/+eXHZelgtlaz6lYCbHHrBBlS86MU84LQMTBaOph0RjNbc5gkktV7Jr5dRe/3A+lPKg7IytlSWq1e1gcce679t96phz7SAnBdaDP+UxGUnvaGHBQFws5KJM/dOv9p9pKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fxsoVPDb; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-7481600130eso2388734b3a.3;
+        Sat, 05 Jul 2025 06:08:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751720911; x=1752325711; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=0C0QF9E9ThI+tzjv6xggGhgRFFtUbxQgOLH9sLDDPRo=;
+        b=fxsoVPDbfmyC86jP2aPCPbgzqxrx9mP96GUYGet8cq4SvZ++yO8EYw3YjDIxLwKql5
+         NEycfjrYsQZ/+1kqRq4oykquMfXwa+SjGi8BcL4Tt1BW7duWzXe2U2RCKop5w/smiBNc
+         oPe2k5eBmZnnFf+8JIrVFVbRSNIt7dEeHZgL7xIqbMQdoREqd1OtzLNIPntBoZTgA1xm
+         aqG0CZ/7BlR8MWsZIFDGM1gka1lfAGAiR8jFg2WCiv5ctY6jFt3LHU8CFOPbiSnm/fGm
+         GJ/fLrYu1tobCw6yKhxNQWEfBDEO1HqsUBR/CvjzVkIKC1FzJ310K7PcGCDpiUnteTAX
+         gIrw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751720761; x=1752325561;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8kjxOvYKT8DN5sLSem5sYs9qnqzz3mqUfdY4PF7XdyU=;
-        b=Ne95WSLXSfWoFpDGQq9tGQCbn+uLovspk4/BC/8iJwbZBFu/Ssss0koQrmmoT50g/9
-         XZjEozAR1Z8/iSMDIMMD+r8jn77px0xuDVJK3kk1edoCBFxFm5h/XUCvnJ7lgVuyTyWI
-         4GgSBx0b3NT+/tK2QZh+zHIMnjxKB7xCx1bcjmMMU2baT0GydG8REqxK19+2bKWf4kX9
-         Tuj0ag/aIX6tJOodlmvHzaGW3TW6eYqX/MqL/bhXpYGvGpECf3JnFNdhchM8MmQpEeRa
-         vR0/PmdktNeHwtMz1DHuZUUu7gPgM/LB2Et6dqkDjVDCoYDjIlzv7FQNYPiEB/6sIGId
-         Fygw==
-X-Forwarded-Encrypted: i=1; AJvYcCWkSjo8QlG/ne3iRg3FCifqnZC5P0szXn23cXlfxgFoT7TwaBqudISIORc1QIdq0XqD67EdTHymsHo7h0g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzuUypmNvMGhOZSqL3fvh+jOyQgVISTXSTwH+Us6CnA4nLFglnd
-	vK+cG2ckNIXMo6rBmjuA9RluNhz9AUqs2nWybashm3dsZbNfFlYrhcBfFpJ7/Ruc5n1MxfRVbO8
-	T6lzppT+166cuTFOkTstfImCV77Q44K9NSbBcgLMlfPKPHaffrKjV5UjwJs8=
-X-Google-Smtp-Source: AGHT+IH/X5+qJ8O9dbUdWKi4epIO6O5E9jxkZwRqcUxBTE8GTUrIeQ32xDDNx5m9TPkPhrSfJ4W5C1PVpmeWD8/2idG8t4yOpH2b
+        d=1e100.net; s=20230601; t=1751720911; x=1752325711;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0C0QF9E9ThI+tzjv6xggGhgRFFtUbxQgOLH9sLDDPRo=;
+        b=RUZKYdD73aHhfDwpBvS7plwAH7qTw1214MECOT7b/CcMsrDNFRAVX0/E6P+KETRlDE
+         H9P/bs2pBiBJlP9wLP8XWZzyMidbm4HK0L9dG9C3fV8rfL/v1V/tRZJ+wbJSVOYvOxlb
+         iN3DEO7iDcL+oyB5iNJlhQugYw+xqXWLqf77+hTmVG8v4RX8jtBrMuG68XnZkpmiPn6f
+         lraqy/X7PJWxtIs7ymB/CsjEeQWkRlP/cqLc6tLfqEguQ8OinG3pPQ3OSwxxJs7tajHU
+         ahTOSgucCeBU9F8BvwbeYy/Wd1lhGWJGm58PeuSXPSTRdQp2OIgFMwZdOAOiwHvEmGwE
+         GN0w==
+X-Forwarded-Encrypted: i=1; AJvYcCUhD0v9IievNXdZWUWhqFVRCHEw7VXGrc9AJtKfKmAMwbsHR6Pyav81KdJryvvT2mz/gp985OZoofNPYX4=@vger.kernel.org, AJvYcCXM5ZLcSpLsmULfiTA/b6DNWfOJ4QfB462aitGs1GMRa8fux8BRj5aGbb/liadmUdojtyeIYNgVCDPGwtQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3/wPpOaK7VjuwpeQRF8SnDpCzyiiM+3M0JP+O1vvtF1xp5Buc
+	74OeQ9fSDu6wI5SbEZhGylSssNpWk+p7u/d2/NUHVU0uQl+eL5wdrQyv
+X-Gm-Gg: ASbGncuDeYIZ32RIrf9k7SveKj5ln23rE3y/wC41ZYmYG6xcsIoV2mzvrNp/QO/7gik
+	EL/5TdpZngZ+Mc2QebSIgUKKLAxXKEpOQ4VoYucE0xGt8025dVoGVgrhpL4EKCjkcCMoQx/7OPp
+	W4+kStu0zFw5kG7/bZ6ZFnCOM/7HEk99rmyyzH8tjB2sAwgPQ1POV+5cQvTzaw/5oum4gzaVc8+
+	GUYIxmHwEL3YLnFdRmFdJOw3FDI9wsaVj/hWV6Ecfyc8DfRoKN5cku3Go8iT3Y4VjT8dxmaS0Ah
+	4lPj3YuRC6m38VIH0PiGdU44E9u8SHLtSqKi2iQzLN3nrtIf64LaKhZQ7go7meRFVSq598pbcun
+	S/5U6YfM=
+X-Google-Smtp-Source: AGHT+IEhSirVJWlKVQcuRTLCdn7wt37nvrtVitxl7oEj3VzJkhWBx4oIcs8uuEy7tn6Lai2Tx4/LTw==
+X-Received: by 2002:a05:6a00:986:b0:748:3385:a4a with SMTP id d2e1a72fcca58-74ce66d56c3mr7910774b3a.23.1751720911036;
+        Sat, 05 Jul 2025 06:08:31 -0700 (PDT)
+Received: from localhost.localdomain ([112.149.32.52])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74ce42a4146sm4434618b3a.141.2025.07.05.06.08.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 05 Jul 2025 06:08:30 -0700 (PDT)
+From: Jesung Yang <y.j3ms.n@gmail.com>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Jesung Yang <y.j3ms.n@gmail.com>,
+	linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] media: dvb_frontend.h: clean up kernel-doc comment
+Date: Sat,  5 Jul 2025 13:06:55 +0000
+Message-Id: <cover.1751719712.git.y.j3ms.n@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:17cb:b0:3dc:7f3b:acb1 with SMTP id
- e9e14a558f8ab-3e136fbc32amr44158195ab.13.1751720761578; Sat, 05 Jul 2025
- 06:06:01 -0700 (PDT)
-Date: Sat, 05 Jul 2025 06:06:01 -0700
-In-Reply-To: <20250705124712.2637-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68692339.a00a0220.c7b3.0038.GAE@google.com>
-Subject: Re: [syzbot] [kernel?] UBSAN: shift-out-of-bounds in pcl726_attach
-From: syzbot <syzbot+5cd373521edd68bebcb3@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+This series fixes two minor issues in the kernel-doc comment
+for dvb_frontend_sleep_until():
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+  - PATCH 1/2 corrects the type description of ktime_t.
+  - PATCH 2/2 fixes a grammar issue.
 
-Reported-by: syzbot+5cd373521edd68bebcb3@syzkaller.appspotmail.com
-Tested-by: syzbot+5cd373521edd68bebcb3@syzkaller.appspotmail.com
+These are documentation-only changes with no functional impact.
 
-Tested on:
+Jesung Yang (2):
+  media: dvb_frontend.h: fix ktime_t type description in kernel-doc
+  media: dvb_frontend.h: fix typo in kernel-doc
 
-commit:         a79a588f Merge tag 'pm-6.16-rc5' of git://git.kernel.o..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=11ba1c8c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5ba6cef8f153bfeb
-dashboard link: https://syzkaller.appspot.com/bug?extid=5cd373521edd68bebcb3
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=136c2582580000
+ include/media/dvb_frontend.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Note: testing is done by a robot and is best-effort only.
+
+base-commit: 35392e855abf7d02ad3b061cbc75c7c7c37f0577
+-- 
+2.39.5
+
 
