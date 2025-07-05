@@ -1,189 +1,82 @@
-Return-Path: <linux-kernel+bounces-718190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-718192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 732B5AF9E7E
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 08:41:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEF54AF9E84
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 08:51:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE9934A7A7E
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 06:41:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 851571C430F3
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 06:51:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2960D202997;
-	Sat,  5 Jul 2025 06:41:16 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC65218C31;
-	Sat,  5 Jul 2025 06:41:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A45A208961;
+	Sat,  5 Jul 2025 06:51:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="pU1pk8pB"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B046175A5;
+	Sat,  5 Jul 2025 06:51:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751697675; cv=none; b=uaRSyLxSsPFKQe7plOBI8hDw17kKss6nCV1awb5U44hrJ+/CaaOL+tUcXeTZ+jruFKxHXqUIxJQIWoY1f+tdsNikdoGEKylgXPbw/tycT+aPjlQbATiLYUnIYuLKUQMEv+ZxhIjz7rCjHfDHVHbpU5koaSbfzxaPgk1VItnJxdA=
+	t=1751698292; cv=none; b=DsRQJkabzKK8WhdmCE527QFRPtEtyXRUdnJbG2fsZYg9H7jsBUGtyLy9ubbk5EqcDP8qOmP1Gu2DCNwOXwFogS1Ut9eGdZTjtLyuJBka3T23sHYpsHbRzVtGvFU1GOK19ebVTpAEzRWVA4mpW44/Ol8JKJ1dvU+ctVmZZoXWHoA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751697675; c=relaxed/simple;
-	bh=cJzM/yJ5AYZKDWd4yNtmu219r2Y9SniTVvJKVgZ2lSo=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=fNqlynNQ15pQ+8DGxByySfKJuxLkpvtRnJSlUkgY9iFnr1sG/N4Sqq7AlEPtdBmvVl4AUbShSed4eQoxBDu+AyMwwhHmFGJB2QM0JgMniIJUZ3DRAuy89zxkO1CMb2GXT51/0LvskyYThuwxZVDJ5Jwz/V1VVcdCqdkTiNpaIRk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.42.62])
-	by gateway (Coremail) with SMTP id _____8BxLHIFyWho1LgiAQ--.40765S3;
-	Sat, 05 Jul 2025 14:41:09 +0800 (CST)
-Received: from [10.20.42.62] (unknown [10.20.42.62])
-	by front1 (Coremail) with SMTP id qMiowJAxT+YCyWhoJUwKAA--.60616S3;
-	Sat, 05 Jul 2025 14:41:08 +0800 (CST)
-Subject: Re: [External] Re: [RFC] x86/kvm: Use native qspinlock by default
- when realtime hinted
-To: Liangyan <liangyan.peng@bytedance.com>, pbonzini@redhat.com,
- vkuznets@redhat.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, hpa@zytor.com, wanpengli@tencent.com
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org, kvm@vger.kernel.org
-References: <20250702064218.894-1-liangyan.peng@bytedance.com>
- <806e3449-a7b1-fa57-b220-b791428fb28b@loongson.cn>
- <8145bb17-8ba4-4d9d-a995-5f8b09db99c4@google.com>
-From: Bibo Mao <maobibo@loongson.cn>
-Message-ID: <6ea07284-7bc2-ad73-21ab-78eb75a38751@loongson.cn>
-Date: Sat, 5 Jul 2025 14:39:34 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1751698292; c=relaxed/simple;
+	bh=bU6RYwkwmYEew8hzTN8Du0XBRw5MGvl84KmxrqA1T+0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qgkEk10+LDnvXco8Vv/ln5dWM52dSJ6EHecDSiVWT93mVbfNCzemVIH53EqxIKPT6P4qklEq2wNiuFJKXjxU0TWV/4+SBpiEw88aSYKtpbjFXwPczAK1boAZgS8oTrQ4l6dg7Ivy+gpstGr/gmOjcl1fFj17S/s9Py6vH7wVq/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=pU1pk8pB; arc=none smtp.client-ip=1.95.21.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=uqWFS4wWx0xOZ6RvV/aWV7u1huZXU21cmNlTtOrWHP0=;
+	b=pU1pk8pBi41IM8nCvJQpqVrJcFY4UPdUmgU+ORQURGYm6ZYMMjuguI+jFXYBa5
+	U1tEDw/0fZ2Zf61Jprl/+4dJMWDJmAU4r72PUmiYPgc+wuazoUts6kut3y82SC2I
+	krwGtU+8TjVWBR7uoN8siP4FHq7npkwy2vMXEs2fa70+w=
+Received: from dragon (unknown [])
+	by gzsmtp3 (Coremail) with SMTP id M88vCgDHH3vFyGhokBEaAA--.30185S3;
+	Sat, 05 Jul 2025 14:40:07 +0800 (CST)
+Date: Sat, 5 Jul 2025 14:40:05 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	devicetree@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] arm64: dts: imx8qm(qxp)-mek: support the wm8962 codec
+Message-ID: <aGjIxUmnVUpKoNas@dragon>
+References: <20250617145220.1131165-1-laurentiumihalcea111@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <8145bb17-8ba4-4d9d-a995-5f8b09db99c4@google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowJAxT+YCyWhoJUwKAA--.60616S3
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBj93XoWxXFW3Aw17Ar1rtw45WFyrXwc_yoWrAF1xpr
-	ykJF95tFyUXr18Zr1DJryjqryUJw4DGw1UXr1UXFyUJr1UXr1qgr1UXr1j9w1UJr4xJF1U
-	tr15Jr47ZFyUJrcCm3ZEXasCq-sJn29KB7ZKAUJUUUU3529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUPFb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6F4UJVW0owAaw2AFwI0_JF0_Jw1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0c
-	Ia020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JF0_
-	Jw1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrw
-	CYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAKI48J
-	MxC20s026xCaFVCjc4AY6r1j6r4UMxCIbckI1I0E14v26r126r1DMI8I3I0E5I8CrVAFwI
-	0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y
-	0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1I6r4UMIIF0xvE2Ix0cI8IcVCY1x0267AKxV
-	WUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1l
-	IxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUcbAwUUUUU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250617145220.1131165-1-laurentiumihalcea111@gmail.com>
+X-CM-TRANSID:M88vCgDHH3vFyGhokBEaAA--.30185S3
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUOmhFUUUUU
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiCR6BZWhot24mNgAAs6
 
-There is big improvement with the test result. spawn test case is a 
-little tricky, if forked child process is scheduled on the same CPU with 
-the parent, the benefit is very huge. I doubt it is probably caused by 
-scheduler rather than by spinlock itself.
+On Tue, Jun 17, 2025 at 10:52:18AM -0400, Laurentiu Mihalcea wrote:
+> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+> 
+> This series adds DT support for the WM8962 codec found on the i.MX8QM MEK
+> RevD and i.MX8QXP WCPU MEK boards. The WM8962 codec comes as a replacement
+> for the WM8960 codec found on the i.MX8QM MEK and i.MX8QXP MEK boards.
+> 
+> Laurentiu Mihalcea (2):
+>   arm64: dts: imx8qxp-mek: support wcpu board's wm8962 codec
+>   arm64: dts: imx8qm-mek: support revd board's wm8962 codec
 
-1. What is cpu topology and numa information with physical machine and 
-virtual machine?
-
-2. Could you show reschedule IPI interrupt stat information when running 
-  spawn test case?
-
-3. Could you run this case on CPU over-commit scenary, such as both two 
-VMs with 120 vCPUs?
-
-Regards
-Bibo Mao
-
-
-On 2025/7/2 下午8:23, Liangyan wrote:
-> We test that unixbench spawn has big improvement in Intel 8582c 120-CPU 
-> guest vm if switch to qspinlock.
-> 
-> Command: ./Run -c 120 spawn
-> 
-> Use virt_spin_lock:
-> System Benchmarks Partial Index   BASELINE       RESULT  INDEX
-> Process Creation                     126.0      71878.4   5704.6
->                                                          ========
-> System Benchmarks Index Score (Partial Only)              5704.6
-> 
-> 
-> Use qspinlock:
-> System Benchmarks Partial Index   BASELINE       RESULT    INDEX
-> Process Creation                     126.0     173566.6  13775.1
->                                                          ========
-> System Benchmarks Index Score (Partial Only              13775.1
-> 
-> 
-> Regards,
-> Liangyan
-> 
-> On 2025/7/2 16:19, Bibo Mao wrote:
->>
->>
->> On 2025/7/2 下午2:42, Liangyan wrote:
->>> When KVM_HINTS_REALTIME is set and KVM_FEATURE_PV_UNHALT is clear,
->>> currently guest will use virt_spin_lock.
->>> Since KVM_HINTS_REALTIME is set, use native qspinlock should be safe
->>> and have better performance than virt_spin_lock.
->> Just be curious, do you have actual data where native qspinlock has 
->> better performance than virt_spin_lock()?
->>
->> By my understanding, qspinlock is not friendly with VM. When lock is 
->> released, it is acquired with one by one order in contending queue. If 
->> the first vCPU in contending queue is preempted, the other vCPUs can 
->> not get lock. On physical machine it is almost impossible that CPU 
->> contending lock is preempted.
->>
->> Regards
->> Bibo Mao
->>>
->>> Signed-off-by: Liangyan <liangyan.peng@bytedance.com>
->>> ---
->>>   arch/x86/kernel/kvm.c | 18 +++++++++---------
->>>   1 file changed, 9 insertions(+), 9 deletions(-)
->>>
->>> diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
->>> index 921c1c783bc1..9080544a4007 100644
->>> --- a/arch/x86/kernel/kvm.c
->>> +++ b/arch/x86/kernel/kvm.c
->>> @@ -1072,6 +1072,15 @@ static void kvm_wait(u8 *ptr, u8 val)
->>>    */
->>>   void __init kvm_spinlock_init(void)
->>>   {
->>> +    /*
->>> +     * Disable PV spinlocks and use native qspinlock when dedicated 
->>> pCPUs
->>> +     * are available.
->>> +     */
->>> +    if (kvm_para_has_hint(KVM_HINTS_REALTIME)) {
->>> +        pr_info("PV spinlocks disabled with KVM_HINTS_REALTIME 
->>> hints\n");
->>> +        goto out;
->>> +    }
->>> +
->>>       /*
->>>        * In case host doesn't support KVM_FEATURE_PV_UNHALT there is 
->>> still an
->>>        * advantage of keeping virt_spin_lock_key enabled: 
->>> virt_spin_lock() is
->>> @@ -1082,15 +1091,6 @@ void __init kvm_spinlock_init(void)
->>>           return;
->>>       }
->>> -    /*
->>> -     * Disable PV spinlocks and use native qspinlock when dedicated 
->>> pCPUs
->>> -     * are available.
->>> -     */
->>> -    if (kvm_para_has_hint(KVM_HINTS_REALTIME)) {
->>> -        pr_info("PV spinlocks disabled with KVM_HINTS_REALTIME 
->>> hints\n");
->>> -        goto out;
->>> -    }
->>> -
->>>       if (num_possible_cpus() == 1) {
->>>           pr_info("PV spinlocks disabled, single CPU\n");
->>>           goto out;
->>>
->>
+Applied both, thanks!
 
 
