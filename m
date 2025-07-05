@@ -1,68 +1,62 @@
-Return-Path: <linux-kernel+bounces-718244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-718246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70466AF9F15
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 10:13:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9891AF9F1C
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 10:21:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5287565B66
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 08:13:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 470D43A8CCF
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 08:21:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3294285C91;
-	Sat,  5 Jul 2025 08:13:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D1CC22422F;
+	Sat,  5 Jul 2025 08:21:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="nJU+SYzM"
-Received: from smtp.smtpout.orange.fr (smtp-65.smtpout.orange.fr [80.12.242.65])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="hcNB9Y/n"
+Received: from smtp153-168.sina.com.cn (smtp153-168.sina.com.cn [61.135.153.168])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 942BA2E3708;
-	Sat,  5 Jul 2025 08:13:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 444B270813
+	for <linux-kernel@vger.kernel.org>; Sat,  5 Jul 2025 08:21:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=61.135.153.168
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751703222; cv=none; b=I31Tol6fTKowdoj1stAGCdYz2pN+XWnHcNynO8DaQqOTAaa4HvWysW60RRmm4bCIBEZEqKtNnwRAvrUPlXjZDHOyj8DPkcjMmt/GwYR/XL0RHnWzPzRI+i8Bm8Odt1jN2da15KXq7FSeaovzbxsyDXXoP5QbV7D1lVh5yMmHhhM=
+	t=1751703699; cv=none; b=OV8dIAR5Hd1tczY+XhvtyChvDDXuGo6ITEp+9cDAHipk6spwXfgC8HTUAZ8Xatq7iowjHR7PIhpTROS9coh4BT92RdzvQcdwy0EX3U/efJ19fasQhg2bEAGo7UWHR40U/orrplO40NLipZc5O9UwZ3OW73twLy16pjjp6cQYo/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751703222; c=relaxed/simple;
-	bh=Diwz3sxzI9NChf/k2ekgjgSqB6LvFdPzKu2q9jD75Jk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rfvUANrUNFQvRk5ce7/gki196eCq+TYHcbcf407nXkZh9ZCvhncxyN25FiH4RAYs40Z4157Uhuy12fV4xR6pLV6Le8R6Mf5ukoHInNn9wgKvqMaZXdQqtAm/W86lFbXPy64Afl8EmGWfFtzfja1PWmWqSM71GLToLvayz5JqOiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=nJU+SYzM; arc=none smtp.client-ip=80.12.242.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from fedora.home ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
-	by smtp.orange.fr with ESMTPA
-	id Xy0au5r9q2WitXy0buPMeJ; Sat, 05 Jul 2025 10:12:30 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1751703150;
-	bh=IDZp6l5xw/oHRf5S1uAFtP428wpChGCpPW/ucIcbiWs=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=nJU+SYzM4HD/XrQLZ3iaT+Do+WWVzHyaksrtjIcFamUweVgAbklZsIJX29MUp+ZXG
-	 vSMj+/j1dL8JH4u2DbwValvwhKc2foovJqlgGhoMa2BxSY52K525AvoKuLO5L5jERR
-	 Wdvu39PWdIQ8eYL1FkrScaT7BRCcird9eAhogiYw7FkfYa3en7vekPN0ag448k54Pt
-	 mRP6x3xoh06OR7I2bGIhnjScyIR25AQfjsBEEA53ITsZa1cFA29RlaNm+VYe+dJVgl
-	 ndQboLgQ2CS3xzYjcr46ILayBI8fv1Y/KPkAOqmS8mxF/mowuddgUzoAOCzjxxeAIK
-	 1jjoEQfn/JbEw==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 05 Jul 2025 10:12:30 +0200
-X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Srinivas Kandagatla <srini@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Wesley Cheng <quic_wcheng@quicinc.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+	s=arc-20240116; t=1751703699; c=relaxed/simple;
+	bh=L+9pODuqq/ijOJU8ex+JwRkcoHZGpIJHB+hTtkEopAg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ZSrK0IY8maXzuAunywUuNJX4zlIoxRQtvCswDYYft5bsMoodTbebdWSSf0gLL+0GKG+IPpQYhDVdf+PbFvknzQ0VyV6M+udJ+jpL4Jh0wLnyEXMZds+c/5LZ8+v9YROC/SnVWJ/SZ7NnlCrH4SZaR5GJDJTKLOOMQJPOx8K9Df0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=hcNB9Y/n; arc=none smtp.client-ip=61.135.153.168
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1751703689;
+	bh=zthT3jt8GIM/WAdNW204UEF6acnuYAzki0y2EbWl/Js=;
+	h=From:Subject:Date:Message-ID;
+	b=hcNB9Y/npKe+jnglLc8Iv2KqL/IwxYrwLnIla3uqMd0u3YDljVz3bPd0OtM6RYXfh
+	 Zyy3VHue1oWMGdMrp6fFEXYgdMlSQvOLQehZ7NpJX30oIW2pyBSfoXIqL55jgxUk8d
+	 d4CvrtskEx3Offgmye61PUtl3tc/8RMVi6qeE8jY=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.33) with ESMTP
+	id 6868DFF50000677C; Sat, 5 Jul 2025 16:19:02 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 7747596685143
+X-SMAIL-UIID: 0F3F1D7F0C55476C813FEECFBA0105ED-20250705-161902-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+6616bba359cec7a1def1@syzkaller.appspotmail.com>
 Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-sound@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org
-Subject: [PATCH v2] ASoC: qcom: qdsp6: Add an error handling path in q6usb_component_probe()
-Date: Sat,  5 Jul 2025 10:12:25 +0200
-Message-ID: <1a3bf0ee02f880919190944e581bef2b428ca864.1751703113.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.50.0
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [kernel?] WARNING in driver_unregister (2)
+Date: Sat,  5 Jul 2025 16:18:49 +0800
+Message-ID: <20250705081850.2552-1-hdanton@sina.com>
+In-Reply-To: <68689a02.a00a0220.c7b3.002c.GAE@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,54 +65,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-If an error occurs after a successful q6usb_dai_add_aux_device() call,
-some resources should be released as already done in the remove function.
+> Date: Fri, 04 Jul 2025 20:20:34 -0700
+> syzbot found the following issue on:
+> 
+> HEAD commit:    c435a4f487e8 Merge tag 'riscv-for-linus-6.16-rc5' of git:/..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=138f8f70580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=5ba6cef8f153bfeb
+> dashboard link: https://syzkaller.appspot.com/bug?extid=6616bba359cec7a1def1
+> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10b8febc580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=118f6c8c580000
 
-Add an error handling path in the probe and the missing clean-up.
+#syz test
 
-Fixes: 72b0b8b29980 ("ASoC: qcom: qdsp6: Add USB backend ASoC driver for Q6")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Changes in v2:
-  - Propagate the error code returned by snd_soc_usb_allocate_port()
-    instead of an explicit -ENOMEM.   [Dan Carpenter]
-
-v1: https://lore.kernel.org/all/7338875b20cb41693f803c6b9673cf7f3e5f089a.1746781775.git.christophe.jaillet@wanadoo.fr/
----
- sound/soc/qcom/qdsp6/q6usb.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
-
-diff --git a/sound/soc/qcom/qdsp6/q6usb.c b/sound/soc/qcom/qdsp6/q6usb.c
-index ebe0c2425927..0d998e872e82 100644
---- a/sound/soc/qcom/qdsp6/q6usb.c
-+++ b/sound/soc/qcom/qdsp6/q6usb.c
-@@ -327,8 +327,10 @@ static int q6usb_component_probe(struct snd_soc_component *component)
- 		return ret;
- 
- 	usb = snd_soc_usb_allocate_port(component, &data->priv);
--	if (IS_ERR(usb))
--		return -ENOMEM;
-+	if (IS_ERR(usb)) {
-+		ret = PTR_ERR(usb);
-+		goto free_aux_devices;
-+	}
- 
- 	usb->connection_status_cb = q6usb_alsa_connection_cb;
- 	usb->update_offload_route_info = q6usb_update_offload_route;
-@@ -337,6 +339,12 @@ static int q6usb_component_probe(struct snd_soc_component *component)
- 	data->usb = usb;
- 
- 	return 0;
-+
-+free_aux_devices:
-+	auxiliary_device_delete(&data->uauxdev);
-+	auxiliary_device_uninit(&data->uauxdev);
-+
-+	return ret;
- }
- 
- static void q6usb_component_remove(struct snd_soc_component *component)
--- 
-2.50.0
-
+--- x/drivers/comedi/drivers.c
++++ y/drivers/comedi/drivers.c
+@@ -994,10 +994,13 @@ int comedi_device_attach(struct comedi_d
+ 	dev->board_name = dev->board_ptr ? *(const char **)dev->board_ptr
+ 					 : dev->driver->driver_name;
+ 	ret = driv->attach(dev, it);
+-	if (ret >= 0)
++	if (ret >= 0) {
+ 		ret = comedi_device_postconfig(dev);
+-	if (ret < 0) {
+-		comedi_device_detach(dev);
++		if (ret < 0) {
++			comedi_device_detach(dev);
++			module_put(driv->module);
++		}
++	} else {
+ 		module_put(driv->module);
+ 	}
+ 	/* On success, the driver module count has been incremented. */
+--
 
