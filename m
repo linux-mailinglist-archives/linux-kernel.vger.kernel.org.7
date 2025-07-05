@@ -1,90 +1,122 @@
-Return-Path: <linux-kernel+bounces-718266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-718268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2914AF9F5C
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 11:24:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 826D6AF9F5F
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 11:27:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C9027A58A0
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 09:22:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0441565AF7
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 09:27:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D2DC275AE6;
-	Sat,  5 Jul 2025 09:23:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67664274FFE;
+	Sat,  5 Jul 2025 09:27:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZS9aTiEu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=amazon.co.jp header.i=@amazon.co.jp header.b="V8qOu6tU"
+Received: from smtp-fw-80006.amazon.com (smtp-fw-80006.amazon.com [99.78.197.217])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 819ED1E4AE;
-	Sat,  5 Jul 2025 09:23:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3C2B22A1EF
+	for <linux-kernel@vger.kernel.org>; Sat,  5 Jul 2025 09:27:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.217
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751707438; cv=none; b=NPMOOi5QXWZSbibwa6jh2t/hvs87+fGTWx3iqHRZkYe9D6xbaM9JbDHo9dxmo9GcPBkhSqXZ/SlEvaob69NUeHZX+DCcS1pwCULXuPUgYWBjGLb9J+m+efWGI0GAMz99FrjspJl2OiUoqnzsbj+ae0mFMNIupXA0bP8smkk32PY=
+	t=1751707669; cv=none; b=CEEVQ6CnF38ItWaPyJVp59obxPWQF0sZnGQvPc0Yi93mFCQOQ4TIDzZY/DGhoxW2JYCBGrnfhC92jgXkkIUwhiY0DuDHgBcvQSky09A/q6xUMuf0AtXir529UhjZASnkVJVh5ESyjyWVKV1YY0ptA3/P4Ykn1JfywMFg4WZO84c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751707438; c=relaxed/simple;
-	bh=BgGICVAG3ufzyD8EANR6r892lXXUNui3d8R5OQencmU=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=mYAesK5VqBiQqK7ej3Iv0rShQJl28XHEBhG//74/xva/OBVb7wgvcmt9hDjfcyuG7jWej6ZaNfMcCu8lv3MdxeXzFb0wPXl0BVlyhhHrgjU5iEjCCn88WXiuW7J8pvmivzTqG10OeFHymmPCNeWjeRB0tU1i+upRCfS7kMNBQas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZS9aTiEu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DDD1C4CEE7;
-	Sat,  5 Jul 2025 09:23:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751707438;
-	bh=BgGICVAG3ufzyD8EANR6r892lXXUNui3d8R5OQencmU=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=ZS9aTiEucOKW5yPsPtD1gjQDbHT88+6an4F4oCrjx99JSv6bCia0h6Xjm91nZMUFj
-	 nmzNTuLPhAKEqwDKhwyuLsCjB+5/ze8q1gYN+3bF7wjL08B9aFGUuY/zFus3o+X1ku
-	 zVEklmoRntvsvmhunellnN5YuEVati9qGT+eqyx4/FU/Rat0ZXCQl+aJ5ohGJTBDVf
-	 enA5hk2Mtv5SAA8jlBySwuFL9R+hwJqxnrvzwVlUN0j3Kp6OC9Brtfr8SfBkOVx5P8
-	 c+cHJ1HyoF87IKnLFcwNotT+80S85I/03H3gdkqW4naX3QGFXLg2CGGMs1I3M9/Hhz
-	 AUzmaGvlxNdcQ==
+	s=arc-20240116; t=1751707669; c=relaxed/simple;
+	bh=2L9qX0nFZeGEqpdhrKt7MRDEJUMAwfr1chFOdINtafo=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=VVe+8IK4eo6IcC+J73FM+5hVCWZNkdFJD7jwYdI2LX01Z3vgp/XAvo5y1SvDlVFND4LeuPXouuPCN6wX777kVfJb7/2OaXhUzKAenONpR3SVanYA8G3ZB+2NqsvrMOYlfdFVedZmZZO3xwXdZCsRtUCIHZvRuSwkHWtUYOTBG78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.jp; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (2048-bit key) header.d=amazon.co.jp header.i=@amazon.co.jp header.b=V8qOu6tU; arc=none smtp.client-ip=99.78.197.217
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.co.jp; i=@amazon.co.jp; q=dns/txt;
+  s=amazoncorp2; t=1751707668; x=1783243668;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=zTAih9AgCr8HnDuwdusoBQEAfk0aKvxbOaKM8kBB3hs=;
+  b=V8qOu6tU6/yCzwX27Vs/XX0JJu600hAa48uRXhueMGuPmcWsZIfIlLfV
+   l77/0Exijy9IGkSXa1E7rvRB55u8olQHuugssRZgkTNwwa6qSjuJx9iib
+   SOoHaUkOcQ95ORpbVT2KeOj74JfSrRLQjIWxLgdGtIFASzhXsji8cJs9t
+   90Ceyy0Qzz5qCsnNEWPQ6YaGNajrmGXAYP2jrZiKzpym9CVjXl8zDHvlV
+   z8a3HmNJiopcn/A/HQwJvdQwurj/oS1JGhEahFte3steKCNJC9An+wr/k
+   Xi4d/KlY61vV4exDDVKiR0QDjNusmqsbMV95GS/VgoPlp5uIuT/2gFVsq
+   g==;
+X-IronPort-AV: E=Sophos;i="6.16,289,1744070400"; 
+   d="scan'208";a="66676690"
+Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.214])
+  by smtp-border-fw-80006.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jul 2025 09:27:47 +0000
+Received: from EX19MTAUWC001.ant.amazon.com [10.0.7.35:25960]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.26.102:2525] with esmtp (Farcaster)
+ id 102ceed6-4004-4b1b-8b86-4a0fefd58c29; Sat, 5 Jul 2025 09:27:47 +0000 (UTC)
+X-Farcaster-Flow-ID: 102ceed6-4004-4b1b-8b86-4a0fefd58c29
+Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
+ EX19MTAUWC001.ant.amazon.com (10.250.64.174) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Sat, 5 Jul 2025 09:27:47 +0000
+Received: from 80a9974c3af6.amazon.com (10.37.245.7) by
+ EX19D001UWA001.ant.amazon.com (10.13.138.214) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Sat, 5 Jul 2025 09:27:46 +0000
+From: Takamitsu Iwai <takamitz@amazon.co.jp>
+To: <syzbot+398e1ee4ca2cac05fddb@syzkaller.appspotmail.com>
+CC: <takamitz@amazon.com>, <linux-kernel@vger.kernel.org>,
+	<syzkaller-bugs@googlegroups.com>
+Subject: Re: [syzbot] [net?] WARNING in taprio_get_start_time (2)
+Date: Sat, 5 Jul 2025 18:27:39 +0900
+Message-ID: <20250705092739.28018-1-takamitz@amazon.co.jp>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+In-Reply-To: <684c5575.a00a0220.279073.0013.GAE@google.com>
+References: <684c5575.a00a0220.279073.0013.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sat, 05 Jul 2025 11:23:52 +0200
-Message-Id: <DB40GLDJNB8Y.2HP3DHHVU0Z8Q@kernel.org>
-Cc: <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <nouveau@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
- <rust-for-linux@vger.kernel.org>
-Subject: Re: [PATCH 3/6] rust: use `kernel::{fmt,prelude::fmt!}`
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Tamir Duberstein" <tamird@gmail.com>, "Rafael J. Wysocki"
- <rafael@kernel.org>, "Viresh Kumar" <viresh.kumar@linaro.org>, "Danilo
- Krummrich" <dakr@kernel.org>, "David Airlie" <airlied@gmail.com>, "Simona
- Vetter" <simona@ffwll.ch>, "Nishanth Menon" <nm@ti.com>, "Stephen Boyd"
- <sboyd@kernel.org>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
- "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>
-X-Mailer: aerc 0.20.1
-References: <20250704-core-cstr-prepare-v1-0-a91524037783@gmail.com>
- <20250704-core-cstr-prepare-v1-3-a91524037783@gmail.com>
-In-Reply-To: <20250704-core-cstr-prepare-v1-3-a91524037783@gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D035UWB003.ant.amazon.com (10.13.138.85) To
+ EX19D001UWA001.ant.amazon.com (10.13.138.214)
 
-On Fri Jul 4, 2025 at 10:14 PM CEST, Tamir Duberstein wrote:
-> Reduce coupling to implementation details of the formatting machinery by
-> avoiding direct use for `core`'s formatting traits and macros.
->
-> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+I found validation does not work properly when link speed is large.
+picos_per_byte becomes too small when link speed is large, and
+length_to_duration(q, ETH_ZLEN) becomes zero. This results in failing
+validation in fill_sched_entry() and parse_taprio_schedule(), and any
+entry->interval and cycle_time are permitted.
 
-Reviewed-by: Benno Lossin <lossin@kernel.org>
+picos_per_byte should be larger than 16 because ETH_ZLEN (60) *
+&q->picos_per_byte should be larger than PSEC_PER_NSEC=1000.
 
----
-Cheers,
-Benno
+This report seems to be related this, so let me check the following patch
+resolve the issue.
 
-> ---
->  rust/kernel/error.rs            | 6 +++---
->  rust/kernel/print.rs            | 6 +++---
->  rust/kernel/str.rs              | 2 +-
->  samples/rust/rust_print_main.rs | 2 +-
->  4 files changed, 8 insertions(+), 8 deletions(-)
+#syz test
+
+diff --git a/net/sched/sch_taprio.c b/net/sched/sch_taprio.c
+index 2b14c81a87e5..b0a5bd1c9995 100644
+--- a/net/sched/sch_taprio.c
++++ b/net/sched/sch_taprio.c
+@@ -43,6 +43,11 @@ static struct static_key_false taprio_have_working_mqprio;
+ #define TAPRIO_SUPPORTED_FLAGS \
+ 	(TCA_TAPRIO_ATTR_FLAG_TXTIME_ASSIST | TCA_TAPRIO_ATTR_FLAG_FULL_OFFLOAD)
+ #define TAPRIO_FLAGS_INVALID U32_MAX
++/* picos_per_byte should be larger than 16 since duration for minimum ethernet
++ * frame should not be zero.
++ */
++#define TAPRIO_PICOS_PER_BYTE_MIN 17
++
+ 
+ struct sched_entry {
+ 	/* Durations between this GCL entry and the GCL entry where the
+@@ -1299,7 +1304,7 @@ static void taprio_set_picos_per_byte(struct net_device *dev,
+ 		speed = ecmd.base.speed;
+ 
+ skip:
+-	picos_per_byte = (USEC_PER_SEC * 8) / speed;
++	picos_per_byte = max((USEC_PER_SEC * 8) / speed, TAPRIO_PICOS_PER_BYTE_MIN);
+ 
+ 	atomic64_set(&q->picos_per_byte, picos_per_byte);
+ 	netdev_dbg(dev, "taprio: set %s's picos_per_byte to: %lld, linkspeed: %d\n",
 
