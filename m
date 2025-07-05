@@ -1,42 +1,42 @@
-Return-Path: <linux-kernel+bounces-718496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-718493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8C33AFA212
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 23:40:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED23BAFA20C
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 23:40:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B64F1178036
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 21:40:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 313C67AA6A4
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 21:38:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9983274FE7;
-	Sat,  5 Jul 2025 21:40:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC5CE267F53;
+	Sat,  5 Jul 2025 21:39:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=netcube.li header.i=@netcube.li header.b="C0LHqQXl"
+	dkim=pass (1024-bit key) header.d=netcube.li header.i=@netcube.li header.b="1kDYTZCn"
 Received: from mail.netcube.li (mail.netcube.li [173.249.15.149])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 302CC267F53;
-	Sat,  5 Jul 2025 21:40:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 585BE2609F5;
+	Sat,  5 Jul 2025 21:39:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.249.15.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751751617; cv=none; b=i3C1FFUR60E8emT3baowseAjijXJhZq+0sRD8mVjE8JZaCmPHgprHuGQ6l3SExV2WFEY7LRkuM5nSPK5y3IGbt/wlu7+8nXbqXKgpf5k0xpktASKa8qQB7fjw4T7sdgpVLejeK5Q3vVHkiMbw1D5q9M/Yos2j4S/cCOuQ+KCLP4=
+	t=1751751598; cv=none; b=iFLMi+m1jLpqv67AKuU9CeVZqKDlcJzurlhwhG8ALAf+YyKgdAoYyDc8TmdJXF+rYswzVGzdjaPNJPr+9UcNZyAEuFy7Z/txOhcBQXDKt9tkJpE7KBM82+G4f2Dt8Dd4gz37aHXkFyhR+kgRhI/b6VEn7xh0eCPcSJ6V9etlZKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751751617; c=relaxed/simple;
-	bh=Oz8o23fRdQsdbpa1sI/19xyzcSLFV1J62fl0qQ9ql3c=;
+	s=arc-20240116; t=1751751598; c=relaxed/simple;
+	bh=5rMU69zl32GrAuVFDzOQs5fWjUfRXPaabv7nstRxqK8=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Cm6+I/Urw16SQpmGaLtarE/hGi6sI8Xz/FLCjTgL5Mum/UWYIutR1Lu3s9pdoZDejqHR0B0vRvtrE+1fWLPQVLCmC3o30NsSueL7vllsDJNHLwcmFcQgzWdxb4pkfkb7dctUQEypmpfutSVSoRL4FZMGwvaz/hFtoN9Todj3ZdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=netcube.li; spf=pass smtp.mailfrom=netcube.li; dkim=pass (1024-bit key) header.d=netcube.li header.i=@netcube.li header.b=C0LHqQXl; arc=none smtp.client-ip=173.249.15.149
+	 MIME-Version; b=e3xcrkTjokR3RIh63pFtG6Yk1H9lWGkxlWSkrONXxwskcCahlPinWBz8SjQP/q8L1V+ZLT/l807VVjL09QFsVSQdOTWwTC0rcVT+7uB6s2mZ4VXd8xjfUvRWeTn12LHBcURfzi9XFBSNWXl3o+c28ywWfn7QAbaeOW6yRL2GiCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=netcube.li; spf=pass smtp.mailfrom=netcube.li; dkim=pass (1024-bit key) header.d=netcube.li header.i=@netcube.li header.b=1kDYTZCn; arc=none smtp.client-ip=173.249.15.149
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=netcube.li
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netcube.li
 dkim-signature: v=1; a=rsa-sha256; d=netcube.li; s=s1;
 	c=relaxed/relaxed; q=dns/txt; h=From:Subject:Date:Message-ID:To:CC:MIME-Version:Content-Transfer-Encoding:In-Reply-To:References;
-	bh=K4dhUf5EUx1y51YwBgAVDy5aAK6OAX9vCrrn8rQSuDo=;
-	b=C0LHqQXlTzjYulBR0K9YD/2vM26EjlZOj/SX3dvD9/x2XWHfyBmbGaW7fFqFrgN9FfVswoTVPvYFDdy5M0VLy3oAvWYvgPdWBzD47UPTKnIwal041wNGpjWDlsFeYCwVVrfRVDUyJXlsKFgN0O2B1PgA3JahaHAz+Ilx7N/pQgY=
+	bh=df4UGlSJHH3MRIWMNdqjwJSZcGeME7Nid8QsZBlv91Q=;
+	b=1kDYTZCn5TE087KJuPw584m33VL7NvMbJoPB8aGtSWPMuxgXp7wt5EYGFugkQpICt7TN8hkBBl/zoCU9D+jfZ/J1Jq4RjTfVt+k9vGuEy1zwDYqJeRCB35HRuCutScBvBYu/UQPUGcTKm+sqyynkd4cHB5+KWVBljs3Y1K8HtBE=
 Received: from lukas-hpz440workstation.lan.sk100508.local (cm70-231.liwest.at [212.241.70.231])
 	by mail.netcube.li with ESMTPA
-	; Sat, 5 Jul 2025 23:39:45 +0200
+	; Sat, 5 Jul 2025 23:39:48 +0200
 From: Lukas Schmid <lukas.schmid@netcube.li>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -55,9 +55,9 @@ Cc: Lukas Schmid <lukas.schmid@netcube.li>,
 	linux-sunxi@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
 	linux-riscv@lists.infradead.org
-Subject: [PATCH v1 2/7] dt-bindings: arm: sunxi: Add NetCube Systems Nagami Basic Carrier Board
-Date: Sat,  5 Jul 2025 23:38:53 +0200
-Message-Id: <20250705213900.3614963-3-lukas.schmid@netcube.li>
+Subject: [PATCH v1 3/7] dt-bindings: arm: sunxi: Add NetCube Systems Nagami Keypad Carrier Board
+Date: Sat,  5 Jul 2025 23:38:54 +0200
+Message-Id: <20250705213900.3614963-4-lukas.schmid@netcube.li>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250705213900.3614963-1-lukas.schmid@netcube.li>
 References: <20250705213900.3614963-1-lukas.schmid@netcube.li>
@@ -69,9 +69,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The NetCube Systems Nagami Basic Carrier Board is a simple carrier for the
-Nagami SoM. It is intended to serve as a simple reference design for a
-custom implementation or just evaluating the module with other peripherals
+The NetCube Systems Nagami Keypad Carrier is a custom board intended to
+fit a standard Ritto Intercom enclosure and provides a Keypad, NFC-Reader
+and Status-LED all controllable over Ethernet with PoE support.
 
 Signed-off-by: Lukas Schmid <lukas.schmid@netcube.li>
 ---
@@ -79,16 +79,16 @@ Signed-off-by: Lukas Schmid <lukas.schmid@netcube.li>
  1 file changed, 6 insertions(+)
 
 diff --git a/Documentation/devicetree/bindings/arm/sunxi.yaml b/Documentation/devicetree/bindings/arm/sunxi.yaml
-index 3c4353884..7919b5bf5 100644
+index 7919b5bf5..a2f16d064 100644
 --- a/Documentation/devicetree/bindings/arm/sunxi.yaml
 +++ b/Documentation/devicetree/bindings/arm/sunxi.yaml
-@@ -604,6 +604,12 @@ properties:
+@@ -610,6 +610,12 @@ properties:
            - const: netcube,nagami
            - const: allwinner,sun8i-t113s
  
-+      - description: NetCube Systems Nagami Basic Carrier Board
++      - description: NetCube Systems Nagami Keypad Carrier Board
 +        items:
-+          - const: netcube,nagami-basic-carrier
++          - const: netcube,nagami-keypad-carrier
 +          - const: netcube,nagami
 +          - const: allwinner,sun8i-t113s
 +
