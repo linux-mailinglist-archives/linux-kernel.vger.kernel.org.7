@@ -1,89 +1,64 @@
-Return-Path: <linux-kernel+bounces-718542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-718413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE063AFA2DD
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Jul 2025 05:33:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF41CAFA0F0
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 18:19:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DA9D37AD0D3
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Jul 2025 03:31:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 249514A2C62
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 16:19:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E92F17DFE7;
-	Sun,  6 Jul 2025 03:33:03 +0000 (UTC)
-Received: from mail-m83240.xmail.ntesmail.com (mail-m83240.xmail.ntesmail.com [156.224.83.240])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 445BE1DE892;
+	Sat,  5 Jul 2025 16:19:28 +0000 (UTC)
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24023881E
-	for <linux-kernel@vger.kernel.org>; Sun,  6 Jul 2025 03:32:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.224.83.240
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AEC12CA9
+	for <linux-kernel@vger.kernel.org>; Sat,  5 Jul 2025 16:19:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751772783; cv=none; b=s3iLoqj5cy3Kd4n49VTLgJjHdnmF1Ze65bdaihgrKofsn9TNBgSDiSNB+vtmz2u5VdHUAaXFhlWe+GaPJmi00HuA/n18hKsCZdS92oL5B2in7PTQs7nyLyX6ujHDR2+j9FNdFZTNSshEoHLB9s3ZQHN7VxbEM/B/iRqsFR8RU6I=
+	t=1751732367; cv=none; b=n2Qsit8JEG0pEHTpXCUMQX81Zwml/9nVXf91n1Ove7xQi7AV2Bf0hVVKRcfwkdzJCScqeuIAJOsaA6x3m+0pl1/TFBk8v9I5F0VcmpVDtmw8D10EF7e+chpeiTu78Q+uYiv64/G3OrpC2arrhLrM053mR9Ll145JT+tKqd8SxzQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751772783; c=relaxed/simple;
-	bh=w7rA17lwUWoB3hjmWs9ojGXEi+yhbK/jo2/Ny9s9QZg=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=QRiFwi/JT2UUdcdgVmNNayvhVVUads4Z8vuOdCKj1N51qnb9Ptn7+U1k8ymj6RyvJTfgGLvR0GwSaSqnqK64+nBdj2RhPrm4ypDpcmj/7WactFzUCcvH/VGMbJ5TKwkjCOwouzDDZYuttXpQHxPQXmSC15tqYUjNFvqrlHVTznE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sangfor.com.cn; spf=pass smtp.mailfrom=sangfor.com.cn; arc=none smtp.client-ip=156.224.83.240
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sangfor.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sangfor.com.cn
-Received: from localhost.localdomain (unknown [IPV6:240e:3b7:3270:7ec0:65c8:5d28:7d9f:a739])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 1b0484a1c;
-	Sun, 6 Jul 2025 00:16:05 +0800 (GMT+08:00)
-From: Ding Hui <dinghui@sangfor.com.cn>
-To: sfrench@samba.org,
-	pc@manguebit.org,
-	ronniesahlberg@gmail.com,
-	sprasad@microsoft.com,
-	tom@talpey.com,
-	bharathsm@microsoft.com,
-	piastry@etersoft.ru,
-	samba-technical@lists.samba.org,
-	linux-kernel@vger.kernel.org
-Cc: Ding Hui <dinghui@sangfor.com.cn>
-Subject: [PATCH] cifs: fix an OOB issue in cifsConvertToUTF16()
-Date: Sun,  6 Jul 2025 00:15:15 +0800
-Message-Id: <20250705161515.12202-1-dinghui@sangfor.com.cn>
-X-Mailer: git-send-email 2.17.1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlDHkJMVklIGklJSEJJSxpNT1YVFAkWGhdVEwETFh
-	oSFyQUDg9ZV1kYEgtZQVlJT0seQUgZTEFISUxLQUweGEtBTU4YQ0FOH0lDQUwfQh1BGkxIQllXWR
-	YaDxIVHRRZQVlPS0hVSktJT09PSFVKS0tVSkJLS1kG
-X-HM-Tid: 0a97db5f9cf309d9kunmab1a5d7ed8696a
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6ORg6Ngw4AzE8TjwpMys0KCgp
-	NDcKCQ1VSlVKTE5KTEhJSk1NTkJIVTMWGhIXVR8SFRwTDhI7CBoVHB0UCVUYFBZVGBVFWVdZEgtZ
-	QVlJT0seQUgZTEFISUxLQUweGEtBTU4YQ0FOH0lDQUwfQh1BGkxIQllXWQgBWUFKT01CNwY+
+	s=arc-20240116; t=1751732367; c=relaxed/simple;
+	bh=Jo1iOm9+2CKm6xu77w3gefkF1rGoJReCN+BO3WISLHA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=ImbiMSa1Sy7f9SZz35slF3ACesqyh0Cj9easa9+Ukor5hEw7BZcbwkLqNZUNpgVXq2VzEZF8x6o2CRh9td9WOcBeHNs76fyo9+n2mgunRHlBitcGES2GfrQpdHeDnIiH4rGr8ZzrLKuO2SxgR7/2MShumnCcqOWj+go7fvLudx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 565GJMgM085862;
+	Sun, 6 Jul 2025 01:19:22 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 565GJLf7085859
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Sun, 6 Jul 2025 01:19:22 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <21e56549-22ab-46f1-9079-12e4c181b95b@I-love.SAKURA.ne.jp>
+Date: Sun, 6 Jul 2025 01:19:21 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [fs?] KASAN: use-after-free Read in sysv_new_inode (2)
+To: syzbot <syzbot+8d075c0e52baab2345e2@syzkaller.appspotmail.com>,
+        linux-kernel@vger.kernel.org
+References: <00000000000096c7e30618006f15@google.com>
+Content-Language: en-US
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <00000000000096c7e30618006f15@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Anti-Virus-Server: fsav104.rs.sakura.ne.jp
+X-Virus-Status: clean
 
-The OOB can be triggered by making symlink in reparse=native mode.
-
-Limit the srclen can not greater than maxlen.
-
-Fixes: 2503a0dba989 ("CIFS: Add SMB2 support for is_path_accessible")
-Signed-off-by: Ding Hui <dinghui@sangfor.com.cn>
----
- fs/smb/client/cifs_unicode.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/smb/client/cifs_unicode.c b/fs/smb/client/cifs_unicode.c
-index 4cc6e0896fad..cee43e71fa87 100644
---- a/fs/smb/client/cifs_unicode.c
-+++ b/fs/smb/client/cifs_unicode.c
-@@ -636,7 +636,7 @@ cifs_strndup_to_utf16(const char *src, const int maxlen, int *utf16_len,
- 		*utf16_len = 0;
- 		return NULL;
- 	}
--	cifsConvertToUTF16(dst, src, strlen(src), cp, remap);
-+	cifsConvertToUTF16(dst, src, strnlen(src, maxlen), cp, remap);
- 	*utf16_len = len;
- 	return dst;
- }
--- 
-2.17.1
+#syz fix: sysv: Remove the filesystem
 
 
