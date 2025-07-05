@@ -1,73 +1,137 @@
-Return-Path: <linux-kernel+bounces-718260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-718258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1702FAF9F49
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 11:11:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C1326AF9F42
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 10:54:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 219527A96A0
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 09:09:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3392D7A7141
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 08:53:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D67C024468D;
-	Sat,  5 Jul 2025 09:10:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCE8E27CB31;
+	Sat,  5 Jul 2025 08:54:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FneV44Fo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GWvS+x14"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DF7B1922F4;
-	Sat,  5 Jul 2025 09:10:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96F431B87EB;
+	Sat,  5 Jul 2025 08:54:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751706658; cv=none; b=AxPHFzTGwmMygma4L/FJNh/G4fABT8oZAYiEV1avENOo37rlZFIL+ElkoOUlOCzD+7ET4gAV2o9zi48NWRH8xrr9nBS0R3LZSNT9urY2F2JDa0TkNFRNhiC6hcuItr6HqQq91CG1WhyvcMa4Ayp2Jx23M3O4QXtagqrga9B4so4=
+	t=1751705662; cv=none; b=UQ6Fs9zvxXDKJiXXG68iiO3qI0PxpOeiP9qo/oqSMNgy0a+YJXcKgVgJWfOXoWDKnJsNZKxrLyb2em2KLXxTrxBlnxFJonOzk3qI3sQmMt0A7i8o/A+E22q4jPmxwLNy5kCFzHqNeBIR9v3rgZkMA6Ns8ViL9N23oaX3xdmszi0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751706658; c=relaxed/simple;
-	bh=3zIe1MRXKDaRyGHpeNSdCTslEphJAJbk723T2bGc8Ik=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Msvs9UXFweIAjbu6mTPnr7fS/+dxO9oq0J7Ob8wyG3LMIib+rnT8qMUy/6oHznzpBU7F6uHRCJAoCywhhf5THVL5t1WuEw9/ComdngJrwg+0hhJQXlv/ifM3cEMlxRX4vyTovwk6L0zj0RZmF1cxKBtn6lvxWtGWN9XjCYegsb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FneV44Fo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FBD8C4CEE7;
-	Sat,  5 Jul 2025 09:10:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751706657;
-	bh=3zIe1MRXKDaRyGHpeNSdCTslEphJAJbk723T2bGc8Ik=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FneV44FoAw8PEV3D0t8I5vjzD0mhJPiR1qflHWbottxiM96sqx1Z+y6OwgCWb5af6
-	 4R2m9UEgEfMuh2RsA3at4fwQ6Nh59bNxt7TJAkw7bU7RY3HgHlPkxPZXqzSNJDayu+
-	 j/VShd4rZwbRxmtZOsnu1gYf2TsCz2b7TxP5YAydoYbTtlom3veAjixJ9JTNX+udXy
-	 +e6Jtr7soEJ8FGAJ/bpgazDgep27z5zb47/R0IV3di3ERxLPXjfz7Oqvfg8WwffoTh
-	 +ZYLfLTbztG7v9CJ8gt5p+IkMUSiq6NgruXSFx04LM7y6GdyR+xxbk0v9FRD/56vQP
-	 ySDH0+5IX9czg==
-Date: Sat, 5 Jul 2025 16:53:39 +0800
-From: Jisheng Zhang <jszhang@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org
-Subject: Re: [PATCH] regulator: sy8827n: make enable gpio NONEXCLUSIVE
-Message-ID: <aGjoE_t8-ToeZOGU@xhacker>
-References: <20250629095716.841-1-jszhang@kernel.org>
- <440c4bcd-0fd7-4c12-85a6-5eb343fc3f91@sirena.org.uk>
+	s=arc-20240116; t=1751705662; c=relaxed/simple;
+	bh=CUPpDZUa3QuU+NGttTzTaNHOrRBmC+2nM/nqavBLNdE=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O01z0vCmaTUNEkrv8u8ORXBCLdxr60CRhn0xN1ILmM7K6YS8C5Gg5I8VDzgFNjaD0q8M4ybZ7zP+0P4QPh30uNrhO326L3JqrIMefNqaIlR7Or3HVIFHyBiR5SdS/Wdse3G3SkCI7EEORDERnDgpftStL+CZkos9FShsgKV9PRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GWvS+x14; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-451e2f0d9c2so10201265e9.1;
+        Sat, 05 Jul 2025 01:54:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751705659; x=1752310459; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:subject:cc:to:from:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=vvIRbUB61GVB8bR0tMGG9gJqcSl0CknkzZsodQ81bs4=;
+        b=GWvS+x14jYPuk+RUe2US1xdMjiPT6JbQwQaD4J0K81gzuRAXuRFuCXiyM+3xSBf63D
+         uZi4u5aVwLTmmuk+ZAqs4ypgjKzMdWYkSz7N873Qk6N+NgU0yqJ4F4mFCBFr4L8GsyPK
+         oam1hF5gAimNRZYoNNsBSvmZlc0Pqrls0J52BMHSBh7VdMhx22jCo9h2+TgTZZoGqytE
+         vm35wPZK8TTQTDnNQxTXLJcjYLDUZhmqZleAMzY/8fgLn/QSZQ83H92UplJ309IRluML
+         SaNItG6T0VMGixSxMRmumn/c6vUg1V1VyfZqxrYM3yuTzJH02NiHtgBxrxqJZ5LjPJop
+         2Tag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751705659; x=1752310459;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:subject:cc:to:from:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vvIRbUB61GVB8bR0tMGG9gJqcSl0CknkzZsodQ81bs4=;
+        b=mwbIfJv6+oo25asjsIx9u6Y6vWgDVcAL0i+Y2H8WSjWUznQ6PswAUZ+CmlxR9SwGCX
+         uJOzY/kamoI4uRECxE/QkEiHjcl1KHbDYwvLhZ1uZQAu2NNZtlvdWqPMskruy4f01aDR
+         MSaMr84/495UresHJfij3ySihzubQHopR8fftsnWsQFqUsznfGzP0AZL5vX3RtOrWprF
+         JWH3+hBa1Dv+d4s2zgj+vx2H2Z0KyvVp293HvvlODt+JkAulAw15grV7FCVgeNK4ky16
+         rlqcYFgE12NLYkmv57vICLywPgyDjR3iEddlR0Wjn/sTNX4FH/6YBubP7D5yL+dGSNOW
+         gl9g==
+X-Forwarded-Encrypted: i=1; AJvYcCUaTB4e+mbSHt+uWuugkzdTMxXzwyvj/PLqYELXLs7PDFwU6/K7ksSs9UbeWf5A6j4NmpR7JhjTNoU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5GIv6wJlu9eiujNGfbL4GeZ2HyPtAyXPgJSIEkHtPbu330jXy
+	+ihULDlNpC2L3ws0Dfr0T2C8gyFaof6pc9iL5T7N8SSVGH6PqPxoUoKR5nG8tw==
+X-Gm-Gg: ASbGncua04dEMoIbjwnFcBwvisVpIzS7Z7ueTPl6NXfH6RBYIRrknODRp5fL0ZhJHex
+	q9cz7Oom18XAI5wcqyr423eCWeP+9ZQgER1CcSY1kiGt0KPId1OclJl3ILFAJ0YjiKp8U8exKun
+	VGTCd8wrQ3c0TGXA9sewhX0VkMiKYhXcFgMIqKHZRpmyLHvRKX+w0RW6zaesKWt2O/ESKCDVXqA
+	A7q8JNc4wCheBDgVoOWKveBdps6gbYbGTaU81R4SKON0uFezcrRN9okO3TBd7oc04MRHu8kcs2/
+	fXa5P43taMhewMW5ZxyT5kF92JeLcwOHTmzfEaKVG1IXd0uUaTCgZYO1jZfwsdFM/bPAzHfYLYr
+	q4aSU9Fo5X2ep8OFgO3gd5o+JU6sO/El5z6/dB44Peqxu
+X-Google-Smtp-Source: AGHT+IGCTlSQAuwnvNNQjJ8nrzv2WSzfYMVMO6N9w8jD4ohSwwPC7KkRRgHbhVeb4v8FjfWeiQmsHQ==
+X-Received: by 2002:a05:600c:5028:b0:453:92e:a459 with SMTP id 5b1f17b1804b1-454b1f6de87mr57909105e9.16.1751705658618;
+        Sat, 05 Jul 2025 01:54:18 -0700 (PDT)
+Received: from Ansuel-XPS. (host-79-46-252-169.retail.telecomitalia.it. [79.46.252.169])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454a9969aa1sm79906465e9.6.2025.07.05.01.54.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 05 Jul 2025 01:54:18 -0700 (PDT)
+Message-ID: <6868e83a.050a0220.2d26f8.0920@mx.google.com>
+X-Google-Original-Message-ID: <aGjoNqEY-r7CC9aX@Ansuel-XPS.>
+Date: Sat, 5 Jul 2025 10:54:14 +0200
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
+	Benjamin Larsson <benjamin.larsson@genexis.eu>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v21] pwm: airoha: Add support for EN7581 SoC
+References: <20250705072825.26497-1-ansuelsmth@gmail.com>
+ <k3s7wp52oljegusctucabvo2wcmx7defklk7fdtqh32a2vvcux@7tuafqra4nrw>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <440c4bcd-0fd7-4c12-85a6-5eb343fc3f91@sirena.org.uk>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <k3s7wp52oljegusctucabvo2wcmx7defklk7fdtqh32a2vvcux@7tuafqra4nrw>
 
-On Mon, Jun 30, 2025 at 04:02:24PM +0100, Mark Brown wrote:
-> On Sun, Jun 29, 2025 at 05:57:16PM +0800, Jisheng Zhang wrote:
-> > On some platforms, the sy8827n enable gpio may also be used for other
-> > purpose, so make it NONEXCLUSIVE to support this case.
+On Sat, Jul 05, 2025 at 10:47:37AM +0200, Uwe Kleine-König wrote:
+> Hello Christian,
 > 
-> When you say "other purpose" which other purposes do you mean - another
-> regulator, or something else?
+> On Sat, Jul 05, 2025 at 09:28:20AM +0200, Christian Marangi wrote:
+> > Changes v21:
+> > - Revert offset to u64 in airoha_pwm_apply_bucket_config
+> >   (do_div require u64)
+> 
+> I didn't look in detail, but I wonder if you considered using a
+> different division function to keep offset not bigger than needed?
+> 
 
-Yep, other regulators in my usage case.
+Hi Uwe,
+
+I used do_div since it can calculate both division and remainder in one
+go.
+
+The kernel warning were present only on 32 bit and are caused because
+do_div implementation is different on 32 or 64 bit.
+
+On 64 bit it's simply
+
+rem = n % base
+div = n / base
+
+but on 32 bit it's much more complex and adds the check n to be an u64.
+
+Also on 64bit n is expected to be u64 but given the simplicity the type
+is not checked.
+
+I checked if there is some kind of do_div32 but it doesn't exist and
+also using cast doesn't work give the complexity of the macro define (I
+tried with (u64)offset.
+
+What do you think should be the best solution here?
+
+-- 
+	Ansuel
 
