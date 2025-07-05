@@ -1,79 +1,75 @@
-Return-Path: <linux-kernel+bounces-718366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-718368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28130AFA0A5
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 17:12:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAA66AFA0A7
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 17:13:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F2C5A7B471C
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 15:11:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0836E7B5682
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 15:11:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 105CB1EA7CC;
-	Sat,  5 Jul 2025 15:12:49 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C4121BF58;
+	Sat,  5 Jul 2025 15:13:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i0BNoNdK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DAC72AD00
-	for <linux-kernel@vger.kernel.org>; Sat,  5 Jul 2025 15:12:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8893A1E5B88;
+	Sat,  5 Jul 2025 15:13:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751728368; cv=none; b=PqyNP/f2+DBKm2HxEIHEIRDuukTlL+vyF80r8fC1pPg0YvZGwQLZ41jBht9U33339hiC2dsiV+bASymAC13JynxCAab3bemiN3KJ7hvp6lgJHRLfq8mC4UKG3aiIfT6SKhYe6M9IP/6CubcVZEOHIFW2aPSY5LXyodrTypKQNsA=
+	t=1751728394; cv=none; b=QHeart0+4WV83641tsZ9iJc6oWRyD1LvSwFxKocOgUmmX5hK/tKV8aVBWDJDYSnDaNjSK1Rh28F9BjkUH05+UshPm1yNokcWnQ93oH2DO7w4gMp2M772NcbkOZz6pSDE/6wJeyVTlKRuCrP9YqXQnwi1t1cJ+RSzIXEnXN4pQTI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751728368; c=relaxed/simple;
-	bh=NyHmvzYnFYyU4cUR6nR5su9u+rl8YbxFNBwcAzIqszs=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Nouj3vBzYE0pEXAzF/BWin1B+r6IQMUmw87DNAWG7TE/fvihHIgQhAtM8TwfESJUWjuWBjuiiwrsnnMLmx0rb5h6KLxKZSv7Ke7nkdhtyN0YFPQmHtnIJLa8dGQbCmMtIxIno8o1Juq3A7LGgAfHnbjBQW1I/o6dGnmLrkfMCdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3df2cc5104bso37817715ab.2
-        for <linux-kernel@vger.kernel.org>; Sat, 05 Jul 2025 08:12:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751728365; x=1752333165;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VNMfKba/qZsNd0ZiLu02MxcXWLcUrJCx3h47TOcv0p4=;
-        b=efQGbbgFIb3asQoYjjCBfZMXU8B8C6ucXEbrFFoaKgC/y9frCuw9uVNlXx1OTDEg32
-         eJOtVitnfJJ3HD2DZVSbrqiyhorfOT9D0eRGbhwN5Jr1np+OptUxHxl3dvuJ4Epwvm9Z
-         RpfrAMApybGVP4Kxmzho41773jP4K1Zi0odfALOLWywHhEBaG9nAm9psIrnq+Xq/TZxR
-         NAaQwEC0PpHTl97ds1M3USymPepXdB+eGeSRVYsnJfTRdC73bCTdnBh5wMZtus7y66dj
-         uZqCZHgf8JkovRcoVzN0mgqsSyaHRCvgnJr5Mx2a8PBBnhzafiC+KBxPAvPO3ydwnmgw
-         KVXA==
-X-Gm-Message-State: AOJu0YzziORjFWPgqAPj5r4+V3c0QY/xQ08bBNlbh2/wHc7B0uWRWCl0
-	2+ys0805KpfmNXSm3lIao/iqh2vhVG6w/Odft4iu+rQr+ZjWOdAscXYdH/kRQ3SU8pSJYmGPP5I
-	mgB3+jvnjmgAiYkD7XA0P2/1ZG1YqlmKcVC5/SVLAVwjdHaeSiZwqqfkm0eI=
-X-Google-Smtp-Source: AGHT+IGTLQR8+UCBXrGsyvj7dJ3hSmvZWgf+8PsZ6oWBlga43svujd8FEylHQZgmSt8CQqfMK8ilo4nOwxnYV7dqQInmY+YgO18+
+	s=arc-20240116; t=1751728394; c=relaxed/simple;
+	bh=iZ2GtQJZx8wcOuzHRqZc6ez+U/MUhqkaNbTM8nI5K8s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IBUhOpapvfg8VXxVpujScVHtK3hmityk64QWoMlabx8mIb9ix/hh69ou6K3U56dzfP/c25Nul596NyI97uEB0JSGJUBOBjIsZL6h5C07epgYH7hTkWaN4DR8hwKzub7XwH/eMVzbKWDww4RMLbufV0sG8SuUDzUN4XU3gIopcoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i0BNoNdK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12597C4CEE7;
+	Sat,  5 Jul 2025 15:13:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751728394;
+	bh=iZ2GtQJZx8wcOuzHRqZc6ez+U/MUhqkaNbTM8nI5K8s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=i0BNoNdKlrpzY+7eWB4cV+TlCRpYrF2S7csC9hSDpHu4AWhR9AoXhTf7uYiv7C03I
+	 X2NTbqP7rJGfCWzWE5flnWf2O/wfFpBF4l3FV+XptJCVRZr/J+mnIMf6rPGP9TGa4X
+	 vI7bVJnbbcoAsyRX9qSH/ldNqEUpuFSb0t1Q3oyKTNmLnqqd3wAiBeuiT5pPX75Avy
+	 qp/3hJNWaWVRsnlCHiochtWLD0CHy9y31rY9maBx2lYdCOpyypMtqkdEaZRARWfKuX
+	 JnojiUSJiqZeEXRWV4rLpWsofUlS8uUIqRa5QorA7sMbDJMsL5WjqPxDhnUNaM9lRC
+	 x2AHegm77hvow==
+Date: Sat, 5 Jul 2025 17:13:08 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Tamir Duberstein <tamird@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rust: platform: remove unnecessary import
+Message-ID: <aGlBBIbAJ7GguqJX@cassiopeiae>
+References: <20250704-cstr-include-platform-v1-1-ff7803ee7a81@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:12c3:b0:3d6:cbad:235c with SMTP id
- e9e14a558f8ab-3e13548bc4dmr53425845ab.6.1751728365661; Sat, 05 Jul 2025
- 08:12:45 -0700 (PDT)
-Date: Sat, 05 Jul 2025 08:12:45 -0700
-In-Reply-To: <68692d2c.a00a0220.c7b3.0039.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <686940ed.a00a0220.c7b3.003f.GAE@google.com>
-Subject: Re: [syzbot] [block?] WARNING in bioset_exit (2)
-From: syzbot <syzbot+1bfac8c74f4f587bf9c7@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250704-cstr-include-platform-v1-1-ff7803ee7a81@gmail.com>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+On Fri, Jul 04, 2025 at 03:49:54PM -0400, Tamir Duberstein wrote:
+> `kernel::str::CStr` is included in the prelude.
+> 
+> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
 
-***
-
-Subject: Re: [syzbot] [block?] WARNING in bioset_exit (2)
-Author: axboe@kernel.dk
-
-#syz set subsystems: bcachefs
-
--- 
-Jens Axboe
+Applied to driver-core-testing, thanks!
 
