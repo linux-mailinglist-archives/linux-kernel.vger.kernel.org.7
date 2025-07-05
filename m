@@ -1,90 +1,88 @@
-Return-Path: <linux-kernel+bounces-718123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-718124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C5CFAF9DDE
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 04:48:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A558DAF9DE3
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 04:48:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71EF31C2750B
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 02:48:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03970584476
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 02:48:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5198E289376;
-	Sat,  5 Jul 2025 02:47:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 932EB28BAB1;
+	Sat,  5 Jul 2025 02:47:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="XTmFW+gh"
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="NU8lhkVj"
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FEB728688D
-	for <linux-kernel@vger.kernel.org>; Sat,  5 Jul 2025 02:47:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC93C2882AF
+	for <linux-kernel@vger.kernel.org>; Sat,  5 Jul 2025 02:47:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751683664; cv=none; b=SfbMh/aLOOQPGMWGPy0vq6EeOQT6rxH8Vm5pw1LcXOLRlsPGU/ifJasRqTAomZg79kCKSV3n9vPgvxbAwc/9X/KdCS0j8uwRfw+e7C4WpoLoTwR4wkVnQdVKc71oUPW1DvwwRkfZALqEcQOuR2j9VEOESMPFLPk+k+TFMywc0Yo=
+	t=1751683666; cv=none; b=ssK4OVKoZLVcaPrqlcb59LYL62q9F1Y2GsyFdXSRaP4mhIIUn2k4JUmnb1Jl14wSZAz/ZuIey8vKk2gnm7H/xuaP1OaG9vxWR/qFHnw39CPS0OM5kL876kdiVzAqGbohW6HGmIKs1tP59hBlFe8eO0JWGLEL9lw4IMqFW/xiNnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751683664; c=relaxed/simple;
-	bh=Sb1qbqPfpeBQHLvvRmH0mQcObhTRza3WiqOCZtRU5nY=;
+	s=arc-20240116; t=1751683666; c=relaxed/simple;
+	bh=W+WRtGTmctGrtw3/m66JfBKmA9pR1W/PsjD+devdzIU=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=HIEa9A3N/lzX1Yl3+XqcXr30d7uD1mo6e/dPcx1QXS0TFQdKtslq/MqQ9a3Mozd6GJ01u9mbNBOac1e9L3X7nHZifKyLkz9MoholHy+JCe4RjO4Sxy5qSOuzcHfwwSiB4lIRdycFikuKvlZyjXi94LKpLxB266K8N/5szInxf/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=XTmFW+gh; arc=none smtp.client-ip=205.220.180.131
+	 In-Reply-To:To:Cc; b=LNiPiLtu9edMkq2LacPatNeLmQ1S72fmLkv9A3hPHPMkMUJT8q026PBQiPC1Pna5VfIb+vlPFCm/mqCizeeSCrB1oLH6kwStQk+jUtNeREMRah9KpFbIPGYezyLQGT7V47lSO3Z9RXhXD5jGDMcFvBbDquuoQt47PcKzfjrq82k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=NU8lhkVj; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5652C2ZX028454
-	for <linux-kernel@vger.kernel.org>; Sat, 5 Jul 2025 02:47:41 GMT
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 564Nnfc7029918
+	for <linux-kernel@vger.kernel.org>; Sat, 5 Jul 2025 02:47:43 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	i2ctqz8C7Fv58oSozKmoJbscq9Is2yiOi+8iK6eGMbo=; b=XTmFW+ghyDk7TLHR
-	epoaKIjmPjSlcE98Sdc45wgMqA5lYHidLTU2MCMNSRcI3CWmdxj5Ywi7xPOZk0Xz
-	jjSXqopd1aFXrR1Du+A/37IIfEylbUQcuoe3xe1ciwZfPj09X7rn2QVujh/V3ixB
-	ciBLJllh8BwgcyUsj6rSMsB4wqL0N+5CVdPGj12gz3k259m1L2RbQWjMO/fAQY9+
-	pT/fhplQJ6YXJhcWAZ31rHDfjXlzM0yDHRFwyaLjEJjoalOkKYLcGR08SV8+RxTL
-	SYA7CEJxZ3AuAd2dxsuILB81fbRAWB5IvF6vgAszpYCCSPFxGHlRGzo/ve6t6s7/
-	eTT3xw==
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47pu2ag136-1
+	oZtASNSKNmQD1TnWT9EC/LsaR2+X6zAje3f7Jf4pays=; b=NU8lhkVjp4lPN3jh
+	blozh4p8oAwEgrkAs+6KkMBJUUDw41vBRZPEuyImeCpC8TZB3Yrg+v98bPfyrF5G
+	B+heNsixEK4b4eInAw+8sAbW4ueWGpNU6+wyzbF7QYrCnOvm+eehhKmDQnk8v7+1
+	yEKY52+lOLG7udLX2Th1DCHAmiaMOY75gCoxgRIu/gNwBzA3VM8ruBKGTYc0fopK
+	XXFqbF3IPMDcI44q2ViPe192FkuchbuFfXs+gkIRafTfB7Lo6U7j1JwZxJo0dIiV
+	j73tQcBVKM3oJEFqLGc+CCBpYcerAtjRRnZWXj2TG/kDgaSYdQTQbOdpbJatsZr8
+	oeU6Tg==
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47j8s9w7mg-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Sat, 05 Jul 2025 02:47:41 +0000 (GMT)
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7d399065d55so172816585a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Jul 2025 19:47:41 -0700 (PDT)
+	for <linux-kernel@vger.kernel.org>; Sat, 05 Jul 2025 02:47:42 +0000 (GMT)
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7c5cd0f8961so258646485a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Jul 2025 19:47:42 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751683660; x=1752288460;
+        d=1e100.net; s=20230601; t=1751683662; x=1752288462;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=i2ctqz8C7Fv58oSozKmoJbscq9Is2yiOi+8iK6eGMbo=;
-        b=Ik0dKK52uPKaORALZXq9x5RcRTk+FvIoyQFjh5pr3X8A4Eyd3nyzaXLIABC6vwEnGi
-         5++2WHZGZ5DOaZ2q02eZ8mLr4fWooufZxLlCbAcjY2F50CWHFpaqJ5GVaioQWFMrvj+C
-         xw458OyLumWuHXQpzx++9xVrVR9xOfF5rD+IqELL6gDNrsBgwU0PmtviUOsvgSmTxjWs
-         mEYujWIfrVuk1TyOPOqVGUu2W3jToibcHxZyADVDn5SiX4Whv8bserD8C1ZTpkSmd3PN
-         XEVG6eMJ6hfw1K2XxBiMRkB1K06AQbeku1734uUqPcfYjcfZheJbftclasSuBaaJpuAs
-         CUKA==
-X-Forwarded-Encrypted: i=1; AJvYcCUfjNhNPr1SeChl9pv5liEzpcbs2jjWbniQJSExqW2+EZioj0saXihVQU+V3j7FQ4FzJrwqq3MI//y+2DA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7Sjep9clPGXXRFQkn/V0B0zN+Tr88EMnhMlaXcehXbwa+lhb5
-	9hpBcGfCy2CdGKOb+koGX+PhmEbwxjdwTYM7UHyUnPf1KBPrOUSlpGTWM7Co+ExmZThfW8AbMNc
-	eUFRMoTmiItlZBBGSSQA21qq+JBUGkqNKm2A02jfUGul3bavxyMse21rYpFISZfcr+npueCpntm
-	UU2A==
-X-Gm-Gg: ASbGncsqXBy7Dc9efPpjoxIvxjZIYYzF40ve2hYtL17GywcUfpqTdeo7U4HYTn6rsu0
-	joob0KwK/97oea++XJb2IYRb7HEqLZxAJL6Udpe6wJ4tAYCTJASfhGOeSMAZ+c6ZO3o5gFgYdxb
-	klf/aeHQLYjdsPQY4LZq+nmvsC1fDck1VIDajdnOUQbv0fdR0jtYVmnB8AH4P/JPS7mDXhfiQkd
-	AbCx9CvsTmMc5j3rorgKWevjK4om0b2Pc0JDIEBdJ0vBoeL1NpLItEGbZOHKQ4d6XET7EW9hnFu
-	XWwnoDos7+Al2PIfrjumCX6VcNSfDkRslqnibAiK4LfxR5NZAstynVSAk58a6gpyMSzNLr28f9/
-	vPz2qc9w+Nys5VnxcFzShczDLGAApkAgLtfU=
-X-Received: by 2002:a05:620a:5be8:b0:7d5:d2ac:bbf7 with SMTP id af79cd13be357-7d5f14ee3dfmr154599185a.36.1751683660183;
-        Fri, 04 Jul 2025 19:47:40 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFvQf4vFSIOxg2wCCgnwprnE70FE9+wlp5S+oMHsCgXpl0NmhjkZssFI2yJpD1cnIfQXIJRIg==
-X-Received: by 2002:a05:620a:5be8:b0:7d5:d2ac:bbf7 with SMTP id af79cd13be357-7d5f14ee3dfmr154596085a.36.1751683659694;
-        Fri, 04 Jul 2025 19:47:39 -0700 (PDT)
+        bh=oZtASNSKNmQD1TnWT9EC/LsaR2+X6zAje3f7Jf4pays=;
+        b=n7rkWVtX8VO8+7xpU7LstGkCRxuEYn9joRiWNUxu4wT0MAo38wLwf6MW5CopCQXh3V
+         xtmKVNhPOOZ7JNuzWggsYSlGub+b0XGx6bs3X5r2O2Ndk1vYT5yqUyiU+gnxFQgmSzuC
+         SwQhpWDz+huxcNzHrhkb1o0WmG4JGUMP/YWac/iH/9s9iCtS5Y07GKFY8XphXP9hKKsW
+         N5URp4MmoJCqrbBghG5yFaItkT7f/OJa6NJ/nl4TpEGuTYDcXqv2nqH15zXfS7csbjg+
+         MXlimYDyrkgBMEQFeCm0fHRXc+bGU62QtOxjd+DOHWiJQnz1WasktQeNIhQw7OzdPOcp
+         lNOg==
+X-Forwarded-Encrypted: i=1; AJvYcCUuhpU5+MqoIj9vqOfdlgcuAT+o7sjGLmVUbtjw1dESxYpvEJ3py5HxWgve+Zi1FS5Nl7Oqa4zaJs24yog=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzrFUx+LvwpyboUY2BBm4H4NscSD8xhi+fqBfv4Nj+hWxoRtwji
+	kcdr3yYhdtIzXE+ZjqXB5D8mBzUXL++2Srm9jw/ayUhVhFjossJVxOuNiXYQQpJ2ojj6404hM+E
+	hDDG5fBHkfZ9jx2AqPee4NdhDG8IC2DtePQy7yJDlF9BoMbLqU8olDujP3sdExTSMQ4s=
+X-Gm-Gg: ASbGnctThF5cY7Sk6c7G8emxQB0qmwvFehOqffOJStJxbA3bkGAGh/6EJyWRA/4xN42
+	8X1a+7PucKGybdlq6zSHEVeuHftdMKEep2VwOI801up+B0Q0Fy5ATPCqg5FtdVghccpRzBuxMkp
+	DB0VyNY6bnSKXux7f5AcmzQ8Il07MpQAk6sk7wIwURqzSprg+GIdmh/T4gL9MUdUT9uUEBumcSX
+	Rnb3eECzcvwT9odQcPspyji91CxH53hl7xZtQ1FiFPWU86+O/XkMqXvKVfMuVelVAIvRA64Ct6J
+	nKq5XcXwq9LjiwmaXVqWWulL+2TiNLkM4KWlYmIkMH5DranXvtZ13QG7wvPrLd2Z7/fU9+j4NNR
+	1iz+IM1cdt4gexLFT4aVgyxB8hu5cymq3pdw=
+X-Received: by 2002:a05:620a:bcd:b0:7d0:9ebd:821d with SMTP id af79cd13be357-7d5df0f57a1mr642847985a.23.1751683661939;
+        Fri, 04 Jul 2025 19:47:41 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGdbuHlLJELfruSS+SxxynLXNdqJY020a17c77f5wQOJdlZWvZKI1XK3A3BOmEPeNcBY+YCVg==
+X-Received: by 2002:a05:620a:bcd:b0:7d0:9ebd:821d with SMTP id af79cd13be357-7d5df0f57a1mr642844985a.23.1751683661501;
+        Fri, 04 Jul 2025 19:47:41 -0700 (PDT)
 Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-32e1b1418b3sm4092411fa.76.2025.07.04.19.47.38
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-32e1b1418b3sm4092411fa.76.2025.07.04.19.47.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Jul 2025 19:47:38 -0700 (PDT)
+        Fri, 04 Jul 2025 19:47:40 -0700 (PDT)
 From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Date: Sat, 05 Jul 2025 05:47:26 +0300
-Subject: [PATCH 05/12] drm/msm/disp: simplify tiled RGB{,A,X} formats
- definitions
+Date: Sat, 05 Jul 2025 05:47:27 +0300
+Subject: [PATCH 06/12] drm/msm/disp: pull in common YUV format parameters
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,7 +91,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250705-dpu-formats-v1-5-40f0bb31b8c8@oss.qualcomm.com>
+Message-Id: <20250705-dpu-formats-v1-6-40f0bb31b8c8@oss.qualcomm.com>
 References: <20250705-dpu-formats-v1-0-40f0bb31b8c8@oss.qualcomm.com>
 In-Reply-To: <20250705-dpu-formats-v1-0-40f0bb31b8c8@oss.qualcomm.com>
 To: Rob Clark <robin.clark@oss.qualcomm.com>,
@@ -107,220 +105,270 @@ To: Rob Clark <robin.clark@oss.qualcomm.com>,
 Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
         freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=9162;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=10545;
  i=dmitry.baryshkov@oss.qualcomm.com; h=from:subject:message-id;
- bh=Sb1qbqPfpeBQHLvvRmH0mQcObhTRza3WiqOCZtRU5nY=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBoaJI9MF4P/GQytOow2EvJc/dGCvpDmGBAcsCKz
- VgdwTRSziSJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCaGiSPQAKCRCLPIo+Aiko
- 1YG6B/9NAUZAdE6RbK9jU9oBkFgimA+ochP46ux+4OOAmEWItMSqNpDYWKjtf2Z7deovMGT+XnP
- P6uHBhPbAcoEMPKHH99+toNYXPokrDxj7u90XdOYRISCQMi9njwA1fcZWuLU0gXzhfLGVXNeCl0
- r2oFIDpCN6uL0ASgXi45Sexgb3KgULqT+rKlOZ488hxu7nsO+aTt4QLVdr33B20pB3Luj/WM1/5
- MCLhA5THVwT5ZB8ywcaPv+2s2IqG5xQCZFQtox7mtY72xQO0sTxNlwMSmh3R/HZWnH1KRB+z0Ow
- or4GHQUvjsrEkJ6ceq7A4mdQSRxx6wqDa00VlUDk/WKIlTcH
+ bh=W+WRtGTmctGrtw3/m66JfBKmA9pR1W/PsjD+devdzIU=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBoaJI9lSJypmT/pVMDGKaKDEoyU5tP54H8Fnpex
+ IMJ/07rxIWJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCaGiSPQAKCRCLPIo+Aiko
+ 1eukB/4vqUjqu0wnNFoF2VUO1FFVEqefOHJ8Tu3Xc9DodXc73Z4W/nw7FwIF0PzFWKkCZAMKPAG
+ qwtbubcPasPJV3bbffZReb1cAwP74H78S3Ir5PLC97oebpFBVXrKSo/nF+uPOhcK1VW1CgvvjIo
+ 0iPSo88/Z0WEjJ7cc9M2PFGJ0LaBH9O9qTyVvzsi5TY1vogEJJN2MqN8ul/988WCQ37+mlBVmQz
+ Pr/00/P3e8AMK1okAn74MR7DlAzfJLJwTJ4Zhe3Z/cmxJHP4EzywkBl1ddg+y45ljEizXMq+5Dx
+ aq7icbiFI+TG4YNT+u19u709MEAcLtcQCjobzMuaoaMcwc9q
 X-Developer-Key: i=dmitry.baryshkov@oss.qualcomm.com; a=openpgp;
  fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA1MDAxNyBTYWx0ZWRfX6BkyxUNjq+51
- ty4LCl30U5O1PthH94rn6OHE4APttmulGJ+7YBlvbVJo3PChfXBUoSWXOjRevKPeFXWCO41ofKo
- Y5n9qQwYzHzZMCJMM3eUDceOW8jaLsTKAZU9PJRo4w4ztl84OcNuJrVhTbs6I6CPFUuTNubDnln
- jZLX193RUPG+dlPSMceVRV6f0Ub7hvhF2ecDuIii7Popk6bjM8Vd032gcGbSTYGCqOClY41zS4+
- mU+BTduclR4uHWkiUk9/ReH4c5jVNC9KvPqaHHwQ8D+iVqH4wY3H2QOxUDfOQQmExUkiPFVsYxo
- ISr9ygPcoceLT9G54Qz8e+CeFD08cSoZ20HhqZ7NgaYvVEsxRiJnjb9gKcdecNg9eNVoY2VL5ps
- ceRuh7TrViwsrxARmVnpMDVX0Kyid9zrJK3Ed4kTLTRcr+GAeZ/yfCV592EPlJXz3Rm9soe6
-X-Proofpoint-ORIG-GUID: A4P6sPqjsyPb3Lrp0IU6G-A99x-_k7Ob
-X-Proofpoint-GUID: A4P6sPqjsyPb3Lrp0IU6G-A99x-_k7Ob
-X-Authority-Analysis: v=2.4 cv=erTfzppX c=1 sm=1 tr=0 ts=6868924d cx=c_pps
- a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=BVuc22GF84-4pAHDYacA:9 a=QEXdDO2ut3YA:10
- a=PEH46H7Ffwr30OY-TuGO:22
+X-Authority-Analysis: v=2.4 cv=H/Pbw/Yi c=1 sm=1 tr=0 ts=6868924e cx=c_pps
+ a=qKBjSQ1v91RyAK45QCPf5w==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=J-CC3KfA7NYzMh5jGAsA:9 a=QEXdDO2ut3YA:10
+ a=NFOGd7dJGGMPyQGDc5-O:22
+X-Proofpoint-ORIG-GUID: su9qubpd7CDYZflRooOgo4T4VF2NC1CT
+X-Proofpoint-GUID: su9qubpd7CDYZflRooOgo4T4VF2NC1CT
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA1MDAxNyBTYWx0ZWRfX19FPqmtz4M59
+ yJoUVgP88Wzj/P5MqYqMSD1yhpIC4yd/FYxYCY2/4V015kTlBn/leJo57b8ecfFBZrrRGJh1dCM
+ g//vUzO9PBsiqcNJuT/aEgmayNAcxuu84d6ApL76P8RoDsCshJac7uQrwQmXcKQSxtwBaRTPPYY
+ sEGS8btT2DVmVEJZ75rGSUtHWaYoukC4OwXs2ML9IoTnRK63d3jotbRlB3hRxZtgFKzqjovVKfG
+ JeV5HmOx+16iiSoadnVubeQeQJQPmc4jyO3OAlG4bliRuAgKiwANqRBfCuTi4OA2c9NM7f+XiOr
+ BtRwaHjaVUpnHRQTeKAAQVY/epMY0i3MffTyr8+kpgTy5EBVssyOzTGWrVVL4zWQUzclJn0jWL8
+ 63blwnzYCc8t45M/V+dCGQ3XzSoxxlI4qUvBdXteQIr+J0l4d1+ZoL9miMzH2SuwmcXnm/JU
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
  definitions=2025-07-04_07,2025-07-04_01,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- mlxscore=0 clxscore=1015 impostorscore=0 spamscore=0 priorityscore=1501
- mlxlogscore=999 bulkscore=0 adultscore=0 malwarescore=0 phishscore=0
- lowpriorityscore=0 suspectscore=0 classifier=spam authscore=0 authtc=n/a
+ impostorscore=0 malwarescore=0 suspectscore=0 mlxlogscore=999
+ priorityscore=1501 clxscore=1015 mlxscore=0 lowpriorityscore=0 spamscore=0
+ adultscore=0 bulkscore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a
  authcc= route=outbound adjust=0 reason=mlx scancount=1
  engine=8.19.0-2505280000 definitions=main-2507050017
 
-Define several additional macros, capturing tiled RGB format classes, in
-order to simplify defining particular RGB* format.
+Pull common params of YUV formats into corresponding macro definitions,
+simplifying format table.
 
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 ---
- drivers/gpu/drm/msm/disp/mdp_format.c | 118 ++++++++++++++++++++++++----------
- 1 file changed, 85 insertions(+), 33 deletions(-)
+ drivers/gpu/drm/msm/disp/mdp_format.c | 120 ++++++++++++++++------------------
+ 1 file changed, 56 insertions(+), 64 deletions(-)
 
 diff --git a/drivers/gpu/drm/msm/disp/mdp_format.c b/drivers/gpu/drm/msm/disp/mdp_format.c
-index 28cef986f2d662484afd47440a79393c48256ff5..d577b3d53fbebced63792b5c65f50dd45211c8ea 100644
+index d577b3d53fbebced63792b5c65f50dd45211c8ea..900b2de252a6eb2eac3d0670f1aaa77f7520fd77 100644
 --- a/drivers/gpu/drm/msm/disp/mdp_format.c
 +++ b/drivers/gpu/drm/msm/disp/mdp_format.c
-@@ -163,22 +163,83 @@ static struct csc_cfg csc_convert[CSC_MAX] = {
- 	.tile_height = MDP_TILE_HEIGHT_DEFAULT                            \
+@@ -244,27 +244,27 @@ static struct csc_cfg csc_convert[CSC_MAX] = {
+ 	.tile_height = MDP_TILE_HEIGHT_UBWC,                              \
  }
  
--#define INTERLEAVED_RGB_FMT_TILED(fmt, a, r, g, b, e0, e1, e2, e3, uc,    \
--alpha, bp, flg)                                               \
-+#define INTERLEAVED_RGB_FMT_TILED(fmt, bp, r, g, b, e0, e1, e2)           \
+-#define INTERLEAVED_YUV_FMT(fmt, a, r, g, b, e0, e1, e2, e3,              \
+-alpha, chroma, count, bp, flg, fm, np)                                    \
++#define INTERLEAVED_YUV_FMT(fmt, bp, r, g, b, e0, e1, e2, e3, chroma)     \
  {                                                                         \
  	.pixel_format = DRM_FORMAT_ ## fmt,                               \
  	.fetch_type = MDP_PLANE_INTERLEAVED,                              \
 -	.alpha_enable = alpha,                                            \
 +	.alpha_enable = false,                                            \
-+	.element = { (e0), (e1), (e2), 0 },                               \
-+	.bpc_g_y = g,                                                     \
-+	.bpc_b_cb = b,                                                    \
-+	.bpc_r_cr = r,                                                    \
-+	.bpc_a = 0,                                                       \
-+	.chroma_sample = CHROMA_FULL,                                     \
-+	.unpack_count = 3,                                                \
-+	.bpp = bp,                                                        \
-+	.fetch_mode = MDP_FETCH_UBWC,                                     \
-+	.flags = MSM_FORMAT_FLAG_UNPACK_TIGHT |                           \
-+		 MSM_FORMAT_FLAG_COMPRESSED,                              \
-+	.num_planes = 2,                                                  \
-+	.tile_height = MDP_TILE_HEIGHT_UBWC,                              \
-+}
-+
-+#define INTERLEAVED_RGBA_FMT_TILED(fmt, bp, a, r, g, b, e0, e1, e2, e3)   \
-+{                                                                         \
-+	.pixel_format = DRM_FORMAT_ ## fmt,                               \
-+	.fetch_type = MDP_PLANE_INTERLEAVED,                              \
-+	.alpha_enable = true,                                             \
- 	.element = { (e0), (e1), (e2), (e3) },                            \
+ 	.element = { (e0), (e1), (e2), (e3)},                             \
  	.bpc_g_y = g,                                                     \
  	.bpc_b_cb = b,                                                    \
  	.bpc_r_cr = r,                                                    \
- 	.bpc_a = a,                                                       \
- 	.chroma_sample = CHROMA_FULL,                                     \
--	.unpack_count = uc,                                               \
+-	.bpc_a = a,                                                       \
++	.bpc_a = 0,                                                       \
+ 	.chroma_sample = chroma,                                          \
+-	.unpack_count = count,                                            \
 +	.unpack_count = 4,                                                \
  	.bpp = bp,                                                        \
- 	.fetch_mode = MDP_FETCH_UBWC,                                     \
+-	.fetch_mode = fm,                                                 \
 -	.flags = MSM_FORMAT_FLAG_UNPACK_TIGHT | flg,                      \
+-	.num_planes = np,                                                 \
++	.fetch_mode = MDP_FETCH_LINEAR,                                   \
 +	.flags = MSM_FORMAT_FLAG_UNPACK_TIGHT |                           \
-+		 MSM_FORMAT_FLAG_COMPRESSED,                              \
-+	.num_planes = 2,                                                  \
-+	.tile_height = MDP_TILE_HEIGHT_UBWC,                              \
-+}
-+
-+#define INTERLEAVED_RGBX_FMT_TILED(fmt, bp, a, r, g, b, e0, e1, e2, e3)   \
-+{                                                                         \
-+	.pixel_format = DRM_FORMAT_ ## fmt,                               \
-+	.fetch_type = MDP_PLANE_INTERLEAVED,                              \
-+	.alpha_enable = false,                                            \
-+	.element = { (e0), (e1), (e2), (e3) },                            \
-+	.bpc_g_y = g,                                                     \
-+	.bpc_b_cb = b,                                                    \
-+	.bpc_r_cr = r,                                                    \
-+	.bpc_a = a,                                                       \
-+	.chroma_sample = CHROMA_FULL,                                     \
-+	.unpack_count = 4,                                                \
-+	.bpp = bp,                                                        \
-+	.fetch_mode = MDP_FETCH_UBWC,                                     \
-+	.flags = MSM_FORMAT_FLAG_UNPACK_TIGHT |                           \
-+		 MSM_FORMAT_FLAG_COMPRESSED,                              \
-+	.num_planes = 2,                                                  \
-+	.tile_height = MDP_TILE_HEIGHT_UBWC,                              \
-+}
-+
-+#define INTERLEAVED_RGBA_DX_FMT_TILED(fmt, bp, a, r, g, b, e0, e1, e2, e3) \
-+{                                                                         \
-+	.pixel_format = DRM_FORMAT_ ## fmt,                               \
-+	.fetch_type = MDP_PLANE_INTERLEAVED,                              \
-+	.alpha_enable = true,                                             \
-+	.element = { (e0), (e1), (e2), (e3) },                            \
-+	.bpc_g_y = g,                                                     \
-+	.bpc_b_cb = b,                                                    \
-+	.bpc_r_cr = r,                                                    \
-+	.bpc_a = a,                                                       \
-+	.chroma_sample = CHROMA_FULL,                                     \
-+	.unpack_count = 4,                                                \
-+	.bpp = bp,                                                        \
-+	.fetch_mode = MDP_FETCH_UBWC,                                     \
-+	.flags = MSM_FORMAT_FLAG_UNPACK_TIGHT |                           \
-+		 MSM_FORMAT_FLAG_DX |                                     \
-+		 MSM_FORMAT_FLAG_COMPRESSED,                              \
- 	.num_planes = 2,                                                  \
- 	.tile_height = MDP_TILE_HEIGHT_UBWC,                              \
++		 MSM_FORMAT_FLAG_YUV,                                     \
++	.num_planes = 1,                                                  \
+ 	.tile_height = MDP_TILE_HEIGHT_DEFAULT                            \
  }
-@@ -525,58 +586,49 @@ static const struct msm_format mdp_formats[] = {
-  * the data will be passed by user-space.
-  */
- static const struct msm_format mdp_formats_ubwc[] = {
--	INTERLEAVED_RGB_FMT_TILED(BGR565,
--		0, BPC5, BPC6, BPC5,
--		C2_R_Cr, C0_G_Y, C1_B_Cb, 0, 3,
--		false, 2, MSM_FORMAT_FLAG_COMPRESSED),
-+	INTERLEAVED_RGB_FMT_TILED(BGR565, 2,
-+		BPC5, BPC6, BPC5,
-+		C2_R_Cr, C0_G_Y, C1_B_Cb),
  
--	INTERLEAVED_RGB_FMT_TILED(ABGR8888,
-+	INTERLEAVED_RGBA_FMT_TILED(ABGR8888, 4,
- 		BPC8A, BPC8, BPC8, BPC8,
--		C2_R_Cr, C0_G_Y, C1_B_Cb, C3_ALPHA, 4,
--		true, 4, MSM_FORMAT_FLAG_COMPRESSED),
-+		C2_R_Cr, C0_G_Y, C1_B_Cb, C3_ALPHA),
+-#define PSEUDO_YUV_FMT(fmt, a, r, g, b, e0, e1, chroma, flg, fm, np)      \
++#define PSEUDO_YUV_FMT(fmt, r, g, b, e0, e1, chroma)                      \
+ {                                                                         \
+ 	.pixel_format = DRM_FORMAT_ ## fmt,                               \
+ 	.fetch_type = MDP_PLANE_PSEUDO_PLANAR,                            \
+@@ -273,13 +273,14 @@ alpha, chroma, count, bp, flg, fm, np)                                    \
+ 	.bpc_g_y = g,                                                     \
+ 	.bpc_b_cb = b,                                                    \
+ 	.bpc_r_cr = r,                                                    \
+-	.bpc_a = a,                                                       \
++	.bpc_a = 0,                                                       \
+ 	.chroma_sample = chroma,                                          \
+ 	.unpack_count = 2,                                                \
+ 	.bpp = 2,                                                         \
+-	.fetch_mode = fm,                                                 \
+-	.flags = MSM_FORMAT_FLAG_UNPACK_TIGHT | flg,                      \
+-	.num_planes = np,                                                 \
++	.fetch_mode = MDP_FETCH_LINEAR,                                   \
++	.flags = MSM_FORMAT_FLAG_UNPACK_TIGHT |                           \
++		 MSM_FORMAT_FLAG_YUV,                                     \
++	.num_planes = 2,                                                  \
+ 	.tile_height = MDP_TILE_HEIGHT_DEFAULT                            \
+ }
  
- 	/* ARGB8888 and ABGR8888 purposely have the same color
- 	 * ordering.  The hardware only supports ABGR8888 UBWC
- 	 * natively.
- 	 */
--	INTERLEAVED_RGB_FMT_TILED(ARGB8888,
-+	INTERLEAVED_RGBA_FMT_TILED(ARGB8888, 4,
- 		BPC8A, BPC8, BPC8, BPC8,
--		C2_R_Cr, C0_G_Y, C1_B_Cb, C3_ALPHA, 4,
--		true, 4, MSM_FORMAT_FLAG_COMPRESSED),
-+		C2_R_Cr, C0_G_Y, C1_B_Cb, C3_ALPHA),
+@@ -303,7 +304,7 @@ flg, fm, np, th)                                                          \
+ 	.tile_height = th                                                 \
+ }
  
--	INTERLEAVED_RGB_FMT_TILED(XBGR8888,
-+	INTERLEAVED_RGBX_FMT_TILED(XBGR8888, 4,
- 		BPC8A, BPC8, BPC8, BPC8,
--		C2_R_Cr, C0_G_Y, C1_B_Cb, C3_ALPHA, 4,
--		false, 4, MSM_FORMAT_FLAG_COMPRESSED),
-+		C2_R_Cr, C0_G_Y, C1_B_Cb, C3_ALPHA),
+-#define PSEUDO_YUV_FMT_LOOSE(fmt, a, r, g, b, e0, e1, chroma, flg, fm, np)\
++#define PSEUDO_YUV_FMT_LOOSE(fmt, r, g, b, e0, e1, chroma)                \
+ {                                                                         \
+ 	.pixel_format = DRM_FORMAT_ ## fmt,                               \
+ 	.fetch_type = MDP_PLANE_PSEUDO_PLANAR,                            \
+@@ -312,13 +313,15 @@ flg, fm, np, th)                                                          \
+ 	.bpc_g_y = g,                                                     \
+ 	.bpc_b_cb = b,                                                    \
+ 	.bpc_r_cr = r,                                                    \
+-	.bpc_a = a,                                                       \
++	.bpc_a = 0,                                                       \
+ 	.chroma_sample = chroma,                                          \
+ 	.unpack_count = 2,                                                \
+ 	.bpp = 2,                                                         \
+-	.fetch_mode = fm,                                                 \
+-	.flags = MSM_FORMAT_FLAG_UNPACK_ALIGN_MSB | flg,                  \
+-	.num_planes = np,                                                 \
++	.fetch_mode = MDP_FETCH_LINEAR,                                   \
++	.flags = MSM_FORMAT_FLAG_UNPACK_ALIGN_MSB |                       \
++		 MSM_FORMAT_FLAG_DX |                                     \
++		 MSM_FORMAT_FLAG_YUV,                                     \
++	.num_planes = 2,                                                  \
+ 	.tile_height = MDP_TILE_HEIGHT_DEFAULT                            \
+ }
  
--	INTERLEAVED_RGB_FMT_TILED(XRGB8888,
-+	INTERLEAVED_RGBX_FMT_TILED(XRGB8888, 4,
- 		BPC8A, BPC8, BPC8, BPC8,
--		C2_R_Cr, C0_G_Y, C1_B_Cb, C3_ALPHA, 4,
--		false, 4, MSM_FORMAT_FLAG_COMPRESSED),
-+		C2_R_Cr, C0_G_Y, C1_B_Cb, C3_ALPHA),
+@@ -342,23 +345,23 @@ flg, fm, np, th)                                                          \
+ 	.tile_height = th                                                 \
+ }
  
--	INTERLEAVED_RGB_FMT_TILED(ABGR2101010,
-+	INTERLEAVED_RGBA_DX_FMT_TILED(ABGR2101010, 4,
- 		BPC8A, BPC8, BPC8, BPC8,
--		C2_R_Cr, C0_G_Y, C1_B_Cb, C3_ALPHA, 4,
--		true, 4, MSM_FORMAT_FLAG_DX | MSM_FORMAT_FLAG_COMPRESSED),
-+		C2_R_Cr, C0_G_Y, C1_B_Cb, C3_ALPHA),
+-#define PLANAR_YUV_FMT(fmt, a, r, g, b, e0, e1, e2, alpha, chroma, bp,    \
+-flg, fm, np)                                                      \
++#define PLANAR_YUV_FMT(fmt, bp, r, g, b, e0, e1, e2, chroma)              \
+ {                                                                         \
+ 	.pixel_format = DRM_FORMAT_ ## fmt,                               \
+ 	.fetch_type = MDP_PLANE_PLANAR,                                   \
+-	.alpha_enable = alpha,                                            \
++	.alpha_enable = false,                                            \
+ 	.element = { (e0), (e1), (e2), 0 },                               \
+ 	.bpc_g_y = g,                                                     \
+ 	.bpc_b_cb = b,                                                    \
+ 	.bpc_r_cr = r,                                                    \
+-	.bpc_a = a,                                                       \
++	.bpc_a = 0,                                                       \
+ 	.chroma_sample = chroma,                                          \
+ 	.unpack_count = 1,                                                \
+ 	.bpp = bp,                                                        \
+-	.fetch_mode = fm,                                                 \
+-	.flags = MSM_FORMAT_FLAG_UNPACK_TIGHT | flg,                      \
+-	.num_planes = np,                                                 \
++	.fetch_mode = MDP_FETCH_LINEAR,                                   \
++	.flags = MSM_FORMAT_FLAG_UNPACK_TIGHT |                           \
++		 MSM_FORMAT_FLAG_YUV,                                     \
++	.num_planes = 3,                                                  \
+ 	.tile_height = MDP_TILE_HEIGHT_DEFAULT                            \
+ }
  
--	INTERLEAVED_RGB_FMT_TILED(XBGR2101010,
-+	INTERLEAVED_RGBA_DX_FMT_TILED(XBGR2101010, 4,
- 		BPC8A, BPC8, BPC8, BPC8,
--		C2_R_Cr, C0_G_Y, C1_B_Cb, C3_ALPHA, 4,
--		true, 4, MSM_FORMAT_FLAG_DX | MSM_FORMAT_FLAG_COMPRESSED),
-+		C2_R_Cr, C0_G_Y, C1_B_Cb, C3_ALPHA),
+@@ -511,72 +514,61 @@ static const struct msm_format mdp_formats[] = {
  
--	INTERLEAVED_RGB_FMT_TILED(XRGB2101010,
-+	INTERLEAVED_RGBA_DX_FMT_TILED(XRGB2101010, 4,
- 		BPC8A, BPC8, BPC8, BPC8,
--		C2_R_Cr, C0_G_Y, C1_B_Cb, C3_ALPHA, 4,
--		true, 4, MSM_FORMAT_FLAG_DX | MSM_FORMAT_FLAG_COMPRESSED),
-+		C2_R_Cr, C0_G_Y, C1_B_Cb, C3_ALPHA),
+ 	/* 2 plane YUV */
+ 	PSEUDO_YUV_FMT(NV12,
+-		0, BPC8, BPC8, BPC8,
++		BPC8, BPC8, BPC8,
+ 		C1_B_Cb, C2_R_Cr,
+-		CHROMA_420, MSM_FORMAT_FLAG_YUV,
+-		MDP_FETCH_LINEAR, 2),
++		CHROMA_420),
  
- 	/* XRGB2101010 and ARGB2101010 purposely have the same color
- 	* ordering.  The hardware only supports ARGB2101010 UBWC
- 	* natively.
- 	*/
--	INTERLEAVED_RGB_FMT_TILED(ARGB2101010,
-+	INTERLEAVED_RGBA_DX_FMT_TILED(ARGB2101010, 4,
- 		BPC8A, BPC8, BPC8, BPC8,
--		C2_R_Cr, C0_G_Y, C1_B_Cb, C3_ALPHA, 4,
--		true, 4, MSM_FORMAT_FLAG_DX | MSM_FORMAT_FLAG_COMPRESSED),
-+		C2_R_Cr, C0_G_Y, C1_B_Cb, C3_ALPHA),
+ 	PSEUDO_YUV_FMT(NV21,
+-		0, BPC8, BPC8, BPC8,
++		BPC8, BPC8, BPC8,
+ 		C2_R_Cr, C1_B_Cb,
+-		CHROMA_420, MSM_FORMAT_FLAG_YUV,
+-		MDP_FETCH_LINEAR, 2),
++		CHROMA_420),
  
- 	PSEUDO_YUV_FMT_TILED(NV12,
- 		0, BPC8, BPC8, BPC8,
+ 	PSEUDO_YUV_FMT(NV16,
+-		0, BPC8, BPC8, BPC8,
++		BPC8, BPC8, BPC8,
+ 		C1_B_Cb, C2_R_Cr,
+-		CHROMA_H2V1, MSM_FORMAT_FLAG_YUV,
+-		MDP_FETCH_LINEAR, 2),
++		CHROMA_H2V1),
+ 
+ 	PSEUDO_YUV_FMT(NV61,
+-		0, BPC8, BPC8, BPC8,
++		BPC8, BPC8, BPC8,
+ 		C2_R_Cr, C1_B_Cb,
+-		CHROMA_H2V1, MSM_FORMAT_FLAG_YUV,
+-		MDP_FETCH_LINEAR, 2),
++		CHROMA_H2V1),
+ 
+ 	PSEUDO_YUV_FMT_LOOSE(P010,
+-		0, BPC8, BPC8, BPC8,
++		BPC8, BPC8, BPC8,
+ 		C1_B_Cb, C2_R_Cr,
+-		CHROMA_420, MSM_FORMAT_FLAG_DX | MSM_FORMAT_FLAG_YUV,
+-		MDP_FETCH_LINEAR, 2),
++		CHROMA_420),
+ 
+ 	/* 1 plane YUV */
+-	INTERLEAVED_YUV_FMT(VYUY,
+-		0, BPC8, BPC8, BPC8,
++	INTERLEAVED_YUV_FMT(VYUY, 2,
++		BPC8, BPC8, BPC8,
+ 		C2_R_Cr, C0_G_Y, C1_B_Cb, C0_G_Y,
+-		false, CHROMA_H2V1, 4, 2, MSM_FORMAT_FLAG_YUV,
+-		MDP_FETCH_LINEAR, 1),
++		CHROMA_H2V1),
+ 
+-	INTERLEAVED_YUV_FMT(UYVY,
+-		0, BPC8, BPC8, BPC8,
++	INTERLEAVED_YUV_FMT(UYVY, 2,
++		BPC8, BPC8, BPC8,
+ 		C1_B_Cb, C0_G_Y, C2_R_Cr, C0_G_Y,
+-		false, CHROMA_H2V1, 4, 2, MSM_FORMAT_FLAG_YUV,
+-		MDP_FETCH_LINEAR, 1),
++		CHROMA_H2V1),
+ 
+-	INTERLEAVED_YUV_FMT(YUYV,
+-		0, BPC8, BPC8, BPC8,
++	INTERLEAVED_YUV_FMT(YUYV, 2,
++		BPC8, BPC8, BPC8,
+ 		C0_G_Y, C1_B_Cb, C0_G_Y, C2_R_Cr,
+-		false, CHROMA_H2V1, 4, 2, MSM_FORMAT_FLAG_YUV,
+-		MDP_FETCH_LINEAR, 1),
++		CHROMA_H2V1),
+ 
+-	INTERLEAVED_YUV_FMT(YVYU,
+-		0, BPC8, BPC8, BPC8,
++	INTERLEAVED_YUV_FMT(YVYU, 2,
++		BPC8, BPC8, BPC8,
+ 		C0_G_Y, C2_R_Cr, C0_G_Y, C1_B_Cb,
+-		false, CHROMA_H2V1, 4, 2, MSM_FORMAT_FLAG_YUV,
+-		MDP_FETCH_LINEAR, 1),
++		CHROMA_H2V1),
+ 
+ 	/* 3 plane YUV */
+-	PLANAR_YUV_FMT(YUV420,
+-		0, BPC8, BPC8, BPC8,
++	PLANAR_YUV_FMT(YUV420, 1,
++		BPC8, BPC8, BPC8,
+ 		C2_R_Cr, C1_B_Cb, C0_G_Y,
+-		false, CHROMA_420, 1, MSM_FORMAT_FLAG_YUV,
+-		MDP_FETCH_LINEAR, 3),
++		CHROMA_420),
+ 
+-	PLANAR_YUV_FMT(YVU420,
+-		0, BPC8, BPC8, BPC8,
++	PLANAR_YUV_FMT(YVU420, 1,
++		BPC8, BPC8, BPC8,
+ 		C1_B_Cb, C2_R_Cr, C0_G_Y,
+-		false, CHROMA_420, 1, MSM_FORMAT_FLAG_YUV,
+-		MDP_FETCH_LINEAR, 3),
++		CHROMA_420),
+ };
+ 
+ /*
 
 -- 
 2.39.5
