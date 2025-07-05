@@ -1,111 +1,142 @@
-Return-Path: <linux-kernel+bounces-718269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-718275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27853AF9F60
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 11:27:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7D8FAF9F77
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 11:58:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20F06485177
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 09:27:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E1F57B832C
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 09:56:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA4AC242D7F;
-	Sat,  5 Jul 2025 09:27:50 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0156F285C91;
+	Sat,  5 Jul 2025 09:58:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=palvencia.se header.i=@palvencia.se header.b="bXkF61hd"
+Received: from m101-out-mua-6.websupport.se (m101-out-mua-6.websupport.se [109.235.175.106])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED2981A3142
-	for <linux-kernel@vger.kernel.org>; Sat,  5 Jul 2025 09:27:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43DDC239E87;
+	Sat,  5 Jul 2025 09:58:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.235.175.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751707670; cv=none; b=mZQtGDCDOhLD4+YyjvMPCyIaIJw5BGuDV3JhPIj7bNAvfgXALV/jiRYV4fUIZK56r/F4GJjnn4i9cF81NI0IlbdNNcdrv/iGUffqfioNJuBHgZv5BgoaGwnwey8sy+IgEz8SOEDX9YWZ5QUobjL3ynvHlbaE7nAOkYGJ5LkjgSs=
+	t=1751709488; cv=none; b=SY4FvOeAkSvDB8Hahq1LIX9MmFIF1sZ2ifT0uozmErDypPGTWd6hYpl7+Pja0OZp6FhphLSxqzfupbnRJsZU8KZCXhjj83Ka4ygjOVvtIAbWhHY/7AQx/XG6GJotMDwptm9f0uCOpPB7ia+6Xw8VY0rzNxtyAufuxkoLB3mHq8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751707670; c=relaxed/simple;
-	bh=+S677AhOefcSqJs5yrwnv1yg868QHmWn7NVnUUe7H+Q=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=BSq8LJQIZaAXx5c3PZ4KBllxjX/j5nOPxc1DljqY4DRSj/ZBpDDZQ9f4K23PlynLXo9Z2zqBgj2d5lw2g9SqXU7W9+2JWBqaJjE+WKH0jO7p5kAybq7RFpxKeVx8qiXZDemtKmAtbW5bI/qWyQ2N0mKUDabx+PyqTZ+HcyW3iic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-86cf0364dd2so278352639f.0
-        for <linux-kernel@vger.kernel.org>; Sat, 05 Jul 2025 02:27:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751707668; x=1752312468;
-        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+fY3a8I8+COUPqjAARrlRnUdwmTXHzUtWTquSqGNZ9U=;
-        b=cEpufD019+nY58LRdNZ5BPumk2M3uMsMIlFwsulVeDK96SeBednlQDnAYu1qb0XZhb
-         +ZUW3hAN8o673caGosbZlySvBQy6hJg9t3r58paz6NvRiqmHyIWpxL5FzjoqLw1iIR4B
-         WiLR5h22XCte1EI6wb40jwLVoJZCc+I430y1hsxYvbl0JWj6j/SDun6CRWKsUjyfvddK
-         m9AVrtV8kDWaDN4Uioh1lpNqwzrGtiGgU5RDaGG1p0ECwLLGdjA1p7O6jljcPnVaou+1
-         Pdk9cnR6LDXUZFvB4+XNbOoXKodVPKOkCyzQW09OtlPa6hv9I5/geNwn9fjAZAZ7KfnK
-         biAg==
-X-Gm-Message-State: AOJu0YxqVHl1D817sZqrk6V3i/k5sQZdPWS2JPk2AR58JFBbaKBCOaaF
-	5B+rsozt8Ofurm5+XknZhVRSKEz23MIGYQd71+W7Wo/yQVePZwRJprxYOS7qwaJPCIZOygNovOp
-	mms5GClGyvJQvbUD+PyKlCv54YXCQHW+vnbPMuB4SNCf8n1xTuLr+s9aEgmI=
-X-Google-Smtp-Source: AGHT+IHWWa5WzcHB8KtthAt0+HcVoZkbbdMoupQ3aDOeAtPXRH649h9x7ObZMyubVG6MqVxkVmvBBiytYcd+n6949l0BoKFYWNc6
+	s=arc-20240116; t=1751709488; c=relaxed/simple;
+	bh=WJ4HbOQu78BdDONBa51774fnFcMtDdfI8U3P82ZRyVw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QAhE2IjD2ShR4xOoFXdpwjKLZt3UvY+UqcXAZrxX59g9liAM5DqaO/Sz9jAcjkX306na3h88ET5SuhtfS9EoQJjcAcRRGtb4XGkcpyX0YUKCIuh69tNq+p+3DF3LicJ6IMBTFc0kDftBYnT+vV5Gu0b35rIaNBMhCjD2u4o63EE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=palvencia.se; spf=pass smtp.mailfrom=palvencia.se; dkim=pass (2048-bit key) header.d=palvencia.se header.i=@palvencia.se header.b=bXkF61hd; arc=none smtp.client-ip=109.235.175.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=palvencia.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=palvencia.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=palvencia.se;
+	s=mail; t=1751708736;
+	bh=uhXa9esT/5VXql/uG7nuK4DRUevXL199pPe0ERZ9KrM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=bXkF61hdjGYlYWI7fRAibPkbjV8n1SIWfk5H2xp0LjiOTtSSyNipITFlEldslm6XR
+	 NL9lHwpvEoxFWIdhZMsO8dsRo4R9FjCvrnauBbnR2fUof4OA7Qf+md1EqsFnbDIlWP
+	 lA3FCvK9wy8+qCNgs3Z6zWTCA2jEpaed+IdMyl5xMXlLNwgp02mtFYEuMAW73A4yX+
+	 diuvVGI66XejLonv7oR06HTMMEVVgv03mDqGuBVDNeNEjDuWg1YHXkz+tscKC867ei
+	 OVgWPnFf7abysW0LLxDFe1Xf+TjfzHFOu71XfAB4SBnHFHNdgPyzgi5x1v7/3dS+yq
+	 HDTjRn5tptW3Q==
+Received: from m101-u6-ing.websupport.se (unknown [10.30.6.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	by m101-out-mua-6.websupport.se (Postfix) with ESMTPS id 4bZ5GS2fDHz1Ym9;
+	Sat,  5 Jul 2025 11:45:36 +0200 (CEST)
+X-Authenticated-Sender: per@palvencia.se
+Authentication-Results: m101-u6-ing.websupport.se;
+	auth=pass smtp.auth=per@palvencia.se smtp.mailfrom=per@palvencia.se
+Received: from rpi (unknown [213.204.219.8])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: per@palvencia.se)
+	by m101-u6-ing.websupport.se (Postfix) with ESMTPSA id 4bZ5GN71HQz17mm;
+	Sat,  5 Jul 2025 11:45:32 +0200 (CEST)
+Date: Sat, 5 Jul 2025 11:45:27 +0200
+From: Per Larsson <per@palvencia.se>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+ <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jernej Skrabec <jernej@kernel.org>, Samuel Holland
+ <samuel@sholland.org>, netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+ linux-kernel@vger.kernel.org, Andre Przywara <andre.przywara@arm.com>
+Subject: Re: [PATCH RFT net-next 04/10] soc: sunxi: sram: register regmap as
+ syscon
+Message-ID: <20250705114527.73b15356@rpi>
+In-Reply-To: <CAGb2v646HvqipGd_C=WJ4LGsumFfF5P9a7XQ7UGO6t1901DDiw@mail.gmail.com>
+References: <20250701165756.258356-1-wens@kernel.org>
+	<20250701165756.258356-5-wens@kernel.org>
+	<CAGb2v646HvqipGd_C=WJ4LGsumFfF5P9a7XQ7UGO6t1901DDiw@mail.gmail.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d86:b0:3dd:b808:be68 with SMTP id
- e9e14a558f8ab-3e13ef146f7mr14083045ab.16.1751707668129; Sat, 05 Jul 2025
- 02:27:48 -0700 (PDT)
-Date: Sat, 05 Jul 2025 02:27:48 -0700
-In-Reply-To: <20250705092739.28018-1-takamitz@amazon.co.jp>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6868f014.a00a0220.c7b3.0033.GAE@google.com>
-Subject: Re: [syzbot] [net?] WARNING in taprio_get_start_time (2)
-From: syzbot <syzbot+398e1ee4ca2cac05fddb@syzkaller.appspotmail.com>
-To: takamitz@amazon.co.jp
-Cc: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	takamitz@amazon.co.jp, takamitz@amazon.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Out-Spamd-Result: default: False [1.90 / 1000.00];
+	SUSPICIOUS_RECIPS(1.50)[];
+	MID_RHS_NOT_FQDN(0.50)[];
+	MIME_GOOD(-0.10)[text/plain];
+	FROM_HAS_DN(0.00)[];
+	ASN(0.00)[asn:35790, ipnet:213.204.219.0/24, country:SE];
+	TO_DN_SOME(0.00)[];
+	ARC_NA(0.00)[];
+	TAGGED_RCPT(0.00)[netdev,dt];
+	HAS_X_AS(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[17];
+	RCVD_COUNT_ZERO(0.00)[0];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	MIME_TRACE(0.00)[0:+]
+X-Out-Rspamd-Queue-Id: 4bZ5GN71HQz17mm
+X-Rspamd-Action: no action
+X-Out-Rspamd-Server: m101-rspamd-out-4
+X-purgate-type: clean
+X-purgate-Ad: Categorized by eleven eXpurgate (R) http://www.eleven.de
+X-purgate: This mail is considered clean (visit http://www.eleven.de for further information)
+X-purgate: clean
+X-purgate-size: 928
+X-purgate-ID: 155908::1751708736-048FF069-EA712F3F/0/0
 
-> I found validation does not work properly when link speed is large.
-> picos_per_byte becomes too small when link speed is large, and
-> length_to_duration(q, ETH_ZLEN) becomes zero. This results in failing
-> validation in fill_sched_entry() and parse_taprio_schedule(), and any
-> entry->interval and cycle_time are permitted.
->
-> picos_per_byte should be larger than 16 because ETH_ZLEN (60) *
-> &q->picos_per_byte should be larger than PSEC_PER_NSEC=1000.
->
-> This report seems to be related this, so let me check the following patch
-> resolve the issue.
->
-> #syz test
+On Wed, 2 Jul 2025 13:01:04 +0800
+Chen-Yu Tsai <wens@csie.org> wrote:
 
-This crash does not have a reproducer. I cannot test it.
+> On Wed, Jul 2, 2025 at 12:58=E2=80=AFAM Chen-Yu Tsai <wens@kernel.org> wr=
+ote:
+> >
+> > From: Chen-Yu Tsai <wens@csie.org>
+> >
+> > Until now, if the system controller had a ethernet controller glue
+> > layer control register, a limited access regmap would be registered
+> > and tied to the system controller struct device for the ethernet
+> > driver to use.
 
->
-> diff --git a/net/sched/sch_taprio.c b/net/sched/sch_taprio.c
-> index 2b14c81a87e5..b0a5bd1c9995 100644
-> --- a/net/sched/sch_taprio.c
-> +++ b/net/sched/sch_taprio.c
-> @@ -43,6 +43,11 @@ static struct static_key_false taprio_have_working_mqprio;
->  #define TAPRIO_SUPPORTED_FLAGS \
->  	(TCA_TAPRIO_ATTR_FLAG_TXTIME_ASSIST | TCA_TAPRIO_ATTR_FLAG_FULL_OFFLOAD)
->  #define TAPRIO_FLAGS_INVALID U32_MAX
-> +/* picos_per_byte should be larger than 16 since duration for minimum ethernet
-> + * frame should not be zero.
-> + */
-> +#define TAPRIO_PICOS_PER_BYTE_MIN 17
-> +
->  
->  struct sched_entry {
->  	/* Durations between this GCL entry and the GCL entry where the
-> @@ -1299,7 +1304,7 @@ static void taprio_set_picos_per_byte(struct net_device *dev,
->  		speed = ecmd.base.speed;
->  
->  skip:
-> -	picos_per_byte = (USEC_PER_SEC * 8) / speed;
-> +	picos_per_byte = max((USEC_PER_SEC * 8) / speed, TAPRIO_PICOS_PER_BYTE_MIN);
->  
->  	atomic64_set(&q->picos_per_byte, picos_per_byte);
->  	netdev_dbg(dev, "taprio: set %s's picos_per_byte to: %lld, linkspeed: %d\n",
+"Until now"?=20
+Does that description (i.e. something that used to happen, but not
+after the patch) really match the change?
+
+- snip -
+
+> > +               ret =3D of_syscon_register_regmap(dev->of_node,
+> > regmap);
+> > +               if (IS_ERR(ret)) =20
+>=20
+> BroderTuck on IRC pointed out that this gives a compiler warning.
+> Indeed it is incorrect. It should test `ret` directly.
+>=20
+> ChenYu
+>=20
+
+Regards
+Per Larsson, known as BroderTuck on #linux-sunxi
 
