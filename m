@@ -1,229 +1,120 @@
-Return-Path: <linux-kernel+bounces-718307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-718297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6FEAAF9FE7
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 13:50:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 980C6AF9FC4
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 13:00:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B8581C42186
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 11:51:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 505DA1BC5DFB
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 11:00:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75446253925;
-	Sat,  5 Jul 2025 11:50:37 +0000 (UTC)
-Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 149672E36FB;
-	Sat,  5 Jul 2025 11:50:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1B52248869;
+	Sat,  5 Jul 2025 11:00:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mN3Mgdir"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4159202963;
+	Sat,  5 Jul 2025 11:00:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751716237; cv=none; b=jypionyF9OFv4CwrZY6o3NgIn+UOnz3svFXx0G8ZNefgveSq2Npbj97OPRRgG2KbdBfjKZIci5K+zaGtpScgh/WQmPQG9gwEZhxbGsTf1tY8O5fXfaKgb9XETM/Fc2J/sn27YUJFIGad8JgY6ABzp6u1yfu9Mafy2W17ED1UaMc=
+	t=1751713224; cv=none; b=WrAa8KO/XD7siubtn7Shi3++TtTOv1u4YkJdtTIddJH2Tdg2zRNNdetgO1weDvoArVm25aQ4X/8fbrVYNSlJHfm+fKPW46qy8flar8qiELVLL9I+Vq5IgM8fY2f4GEMCGXXsUiH+KrujNPVcB0ssg34Bz4R10O4W2WjDVOFSlHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751716237; c=relaxed/simple;
-	bh=sS9TzLWjySNQ7oXJqxvedN4gXCct98hT6bIjQgiugQc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mbk6eopyARWA9ugJsytt2sTxtFvuwbm9ncV2m0uaeUCDpcalRGkVZVh2vJFdxYP1oezjXNMFNYVTx1HkTPJxzXj6aoBwvn/HkLK70fJdIOyS6TdoSJ5a4oM3ro4ems1pq4TVtTuZpnu1PntfoNooQ6DoI5ZKLKfksvoZb8daVI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
-	by localhost (Postfix) with ESMTP id 4bZ6pk3vqKz9syQ;
-	Sat,  5 Jul 2025 12:55:10 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id JFHckNlESQUx; Sat,  5 Jul 2025 12:55:10 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase1.c-s.fr (Postfix) with ESMTP id 4bZ6pk2fTFz9sy4;
-	Sat,  5 Jul 2025 12:55:10 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 535538B7A9;
-	Sat,  5 Jul 2025 12:55:10 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id wky-Rq-Yptn6; Sat,  5 Jul 2025 12:55:10 +0200 (CEST)
-Received: from [192.168.235.99] (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id E3ACB8B798;
-	Sat,  5 Jul 2025 12:55:08 +0200 (CEST)
-Message-ID: <3e9bff9f-1aaf-4e91-a6c0-328a343d18f1@csgroup.eu>
-Date: Sat, 5 Jul 2025 12:55:06 +0200
+	s=arc-20240116; t=1751713224; c=relaxed/simple;
+	bh=PhJ7xifvGwlfl3vBrMr1d1BsGsIO7YJMzaUUzb1+gD0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ryY10XvlURaWdcMEvEBN9XSfWkezfwvb+GlC8lhqfjGFuaf2Nknq9Oww8dHNy5aFD25YJiJMlNky767XtvoZkRivagmoZaZalplfkPUDIVJ7Au59bajAu2t+cld0RfqqzqH+Hugzqh2XBlWCsqYuUF0807Tf9fksynFsvsOjhpk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mN3Mgdir; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2366e5e4dbaso20181255ad.1;
+        Sat, 05 Jul 2025 04:00:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751713222; x=1752318022; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=SJJOWWdh9uZnHbAYfBEqrlavQEuvplzcNBnHDL/vwCE=;
+        b=mN3MgdirhpDz+VvNylntrpVcaFppvucLB1fonDzJCF5xDvyOYmc230rQPqQjOtKtkz
+         hqpQgs/7lUrLR3W5eNeOng74YsbpGHylvFQsQAs5ZNYKcvb9bP6CrDbxzp+QLg10rW4B
+         oeytTazUXb93IFOUE1deZKLRtfeWdxyWTfVPuzo7N59QpRBvxtRb6Zot2fyr/PHg74jM
+         yMiTAYaAabLaxlbmo5omYJE4HCYnE1ISdgC9dYrLqH6/BR2UeA7cDvmiCBhBT13Gn/+1
+         v5CUUFVLtAA2iM19Ljxzxww6e+YYDKwUu9QWCQiz9hBhgYNd6nd+zNuB4Ec33ZvxgEeA
+         6f0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751713222; x=1752318022;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SJJOWWdh9uZnHbAYfBEqrlavQEuvplzcNBnHDL/vwCE=;
+        b=kI7kaHFvr1eHa8xOf4I3T7ciNQmQwO9GCrsGbDdhaYXgb8w3uthokw+Tbb+kvd1wx9
+         NzvQScOi4McSY9Fc6wZtDjIKfcl3gJmvuB2yZy9jpNplpLlZ+wdwinab7ML63w5Xwxn0
+         Emr7BnXbNds1I63XybYEeyJ9oBuHlf8NIKpOb5Bq5Ic/alUyX2eL9JS9lH3FhctE7gSO
+         5qiIiue/m/mszIjMt9Uhh9wPSEpppt+gZ7MG5peQGnrAHtyN8abLD25HJoW5B1O3+TBm
+         eB0eM2MDI1gnTVpHeRi7+GppmtU+9OJNWLu5/SzxKLRZwBLKLuE4aU4WcBHsAoYEeVpo
+         Oskg==
+X-Forwarded-Encrypted: i=1; AJvYcCU5yxQq3QNMgSISLUAbd/PqB7mOV59gGIr5hmIt/wnG9ITEH53cC8upj01vmeCu5brA0hBg+/q4cEHFkbu8@vger.kernel.org, AJvYcCXM7LfM/p2kotF3d/lURpFMiNlU/QUWwrmyNGIXpDQR+rNtpnS6iFatML6kBEjP9m/Vtgd3onNu8gr8@vger.kernel.org, AJvYcCXZUGq8o46YybnCFaHzE023QG3qJQIugL6k/4Mgxp7HKrJPZCx2lR7S9+jO2uZFYQy7B6oxT0IaTGA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjtUqt98WarghdgysOaIGVDjCFCTcdYuCIEf63ZdqKe8Idddud
+	TA3Y6MwAZ6W5lxkUwqrL5vhTuYjZ2L85qqQU5OJgbr4Xaa+t1x9ptW8y
+X-Gm-Gg: ASbGnctirEa1nMKjUSkSR3WD9SMr79UY1u1b3uBYZ55ep9wSsPAYu7O8QYgz1Obe4eb
+	k8eCa2OCQUsB43NKQlA3II09CUUWZPbJGqctNFLwc/PQNrka4Muu+iWlyJb9e9CnUyWJGtAMhYn
+	Ieh8DRCq7S0S4GF/FkxQyk/boy5jUYQ0KKxAOyvW27MPbrePh/RQdlErC6KbT2D+32sB+YD790/
+	qTovs5/YxuRkdZqMnMSA+ms//L5SKCx710zx8stJFRqBbzSg9MmcbO8LxpfbTZ67h2Dq3Tds5bh
+	yz71FhiOxug62IPbrsMhP1wyzxze8apAhCyG401MCwVufcXBmjplnAqGa6CHvm0vctMXTk3+Wck
+	=
+X-Google-Smtp-Source: AGHT+IFefKyecOlU2VVIFgv+3yo9eBrl3L8U9dVaBYx+PWbl93ednYY5vCqD1gtXONj+GhaDMCvoZw==
+X-Received: by 2002:a17:903:2292:b0:234:595d:a58e with SMTP id d9443c01a7336-23c84cb8097mr94871205ad.25.1751713222026;
+        Sat, 05 Jul 2025 04:00:22 -0700 (PDT)
+Received: from gmail.com ([2402:e280:3e9b:22f:dc74:2454:9fa:b447])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23c8455eea0sm40303985ad.137.2025.07.05.04.00.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 05 Jul 2025 04:00:21 -0700 (PDT)
+From: Sumeet Pawnikar <sumeet4linux@gmail.com>
+To: rafael@kernel.org,
+	linux-acpi@vger.kernel.org
+Cc: lenb@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	sumeet4linux@gmail.com
+Subject: [PATCH v2] ACPI: FAN: Update fps count debug print
+Date: Sat,  5 Jul 2025 16:30:04 +0530
+Message-ID: <20250705110005.4343-1-sumeet4linux@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/5] powerpc: Implement masked user access
-To: Segher Boessenkool <segher@kernel.crashing.org>
-Cc: David Laight <david.laight.linux@gmail.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Naveen N Rao <naveen@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Peter Zijlstra <peterz@infradead.org>, Darren Hart <dvhart@infradead.org>,
- Davidlohr Bueso <dave@stgolabs.net>, Andre Almeida <andrealmeid@igalia.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-References: <cover.1750585239.git.christophe.leroy@csgroup.eu>
- <20250622172043.3fb0e54c@pumpkin>
- <ff2662ca-3b86-425b-97f8-3883f1018e83@csgroup.eu>
- <20250624131714.GG17294@gate.crashing.org> <20250624175001.148a768f@pumpkin>
- <20250624182505.GH17294@gate.crashing.org> <20250624220816.078f960d@pumpkin>
- <83fb5685-a206-477c-bff3-03e0ebf4c40c@csgroup.eu>
- <20250626220148.GR17294@gate.crashing.org>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <20250626220148.GR17294@gate.crashing.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
+Update invalid control value returned debug print with
+appropriate message as no matching fps control value
+for checking fan fps count condition.
 
+Signed-off-by: Sumeet Pawnikar <sumeet4linux@gmail.com>
+---
+v1->v2: Addressed review comment received from Rafael Wysocki
+        to update the debug message appropriately.
+---
+ drivers/acpi/fan_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Le 27/06/2025 à 00:01, Segher Boessenkool a écrit :
-> On Thu, Jun 26, 2025 at 07:56:10AM +0200, Christophe Leroy wrote:
->> Le 24/06/2025 à 23:08, David Laight a écrit :
->>> On Tue, 24 Jun 2025 13:25:05 -0500
->>> Segher Boessenkool <segher@kernel.crashing.org> wrote:
->>>>>> isel (which is base PowerPC, not something "e500" only) is a
->>>>>> computational instruction, it copies one of two registers to a third,
->>>>>> which of the two is decided by any bit in the condition register.
->>>>>
->>>>> Does that mean it could be used for all the ppc cpu variants?
->>>>
->>>> No, only things that implement architecture version of 2.03 or later.
->>>> That is from 2006, so essentially everything that is still made
->>>> implements it :-)
->>>>
->>>> But ancient things do not.  Both 970 (Apple G5) and Cell BE do not yet
->>>> have it (they are ISA 2.01 and 2.02 respectively).  And the older p5's
->>>> do not have it yet either, but the newer ones do.
->>
->> For book3s64, GCC only use isel with -mcpu=power9 or -mcpu=power10
-> 
-> I have no idea what "book3s64" means.
-
-Well that's the name given in Linux kernel to the 64 bits power CPU 
-processors. See commits subject:
-
-f5164797284d book3s64/radix : Optimize vmemmap start alignment
-58450938f771 book3s64/radix : Handle error conditions properly in 
-radix_vmemmap_populate
-9cf7e13fecba book3s64/radix : Align section vmemmap start address to 
-PAGE_SIZE
-29bdc1f1c1df book3s64/radix: Fix compile errors when 
-CONFIG_ARCH_WANT_OPTIMIZE_DAX_VMEMMAP=n
-d629d7a8efc3 powerpc/book3s64/hugetlb: Fix disabling hugetlb when fadump 
-is active
-5959ffabbb67 arch/powerpc: teach book3s64 
-arch_get_unmapped_area{_topdown} to handle hugetlb mappings
-8846d9683884 book3s64/hash: Early detect debug_pagealloc size requirement
-76b7d6463fc5 book3s64/hash: Disable kfence if not early init
-b5fbf7e2c6a4 book3s64/radix: Refactoring common kfence related functions
-8fec58f503b2 book3s64/hash: Add kfence functionality
-47dd2e63d42a book3s64/hash: Disable debug_pagealloc if it requires more 
-memory
-...
-
-> 
-> Some ancient Power architecture versions had something called
-> "Book III-S", which was juxtaposed to "Book III-E", which essentially
-> corresponds to the old aborted BookE stuff.
-> 
-> I guess you mean almost all non-FSL implementations?  Most of those
-> support the isel insns.  Like, Power5+ (GS).  And everything after that.
-> 
-> I have no idea why you think power9 has it while older CPUS do not.  In
-> the GCC source code we have this comment:
-
-I think nothing, I just observed that GCC doesn't use it unless you tell 
-it is power9 or power10. But OK, the comment explains why.
-
->    /* For ISA 2.06, don't add ISEL, since in general it isn't a win, but
->       altivec is a win so enable it.  */
-> and in fact we do not enable it for ISA 2.06 (p8) either, probably for
-> a similar reason.
-> 
->>>> And all classic PowerPC is ISA 1.xx of course.  Medieval CPUs :-)
->>>
->>> That make more sense than the list in patch 5/5.
->>
->> Sorry for the ambiguity. In patch 5/5 I was addressing only powerpc/32,
->> and as far as I know the only powerpc/32 supported by Linux that has
->> isel is the 85xx which has an e500 core.
-> 
-> What is "powerpc/32"?  It does not help if you use different names from
-> what everyone else does.
-
-Again, that's the way it is called in Linux kernel, refer below commits 
-subjects:
-
-$ git log --oneline arch/powerpc/ | grep powerpc/32
-2bf3caa7cc3b powerpc/32: Stop printing Kernel virtual memory layout
-2a17a5bebc9a powerpc/32: Replace mulhdu() by mul_u64_u64_shr()
-dca5b1d69aea powerpc/32: Implement validation of emergency stack
-2f2b9a3adc66 powerpc/32s: Reduce default size of module/execmem area
-5799cd765fea powerpc/32: Convert patch_instruction() to patch_uint()
-6035e7e35482 powerpc/32: Curb objtool unannotated intra-function call 
-warning
-b72c066ba85a powerpc/32: fix ADB_CUDA kconfig warning
-cb615bbe5526 powerpc/32: fix ADB_CUDA kconfig warning
-c8a1634145c2 powerpc/32: Drop unused grackle_set_stg()
-aad26d3b6af1 powerpc/32s: Implement local_flush_tlb_page_psize()
-bac4cffc7c4a powerpc/32s: Introduce _PAGE_READ and remove _PAGE_USER
-46ebef51fd92 powerpc/32s: Add _PAGE_WRITE to supplement _PAGE_RW
-f84b727d132c powerpc/32: Enable POWER_RESET in pmac32_defconfig
-a3ef2fef198c powerpc/32: Add dependencies of POWER_RESET for pmac32
-7cb0094be4a5 powerpc/32s: Cleanup the mess in __set_pte_at()
-6958ad05d578 powerpc/32: Rearrange _switch to prepare for 32/64 merge
-fc8562c9b69a powerpc/32: Remove sync from _switch
-...
-
-It means everything built with CONFIG_PPC32
-
-> 
-> The name "powerpc32" is sometimes used colloquially to mean PowerPC code
-> running in SF=0 mode (MSR[SF]=0), but perhaps more often it is used for
-> 32-bit only implementations (so, those that do not even have that bit:
-> it's bit 0 in the 64-bit MSR, so all implementations that have an only
-> 32-bit MSR, for example).
-> 
->> For powerpc/64 we have less constraint than on powerpc32:
->> - Kernel memory starts at 0xc000000000000000
->> - User memory stops at 0x0010000000000000
-> 
-> That isn't true, not even if you mean some existing name.  Usually
-> userspace code is mapped at 256MB (0x10000000).  On powerpc64-linux
-> anyway, different default on different ABIs of course :-)
-
-0x10000000 is below 0x0010000000000000, isn't it ? So why isn't it true ?
-
-On 64 bits powerpc, everything related to user is between 0 and 
-TASK_SIZE_MAX.
-
-TASK_SIZE_MAX is either TASK_SIZE_4PB or TASK_SIZE_64TB depending on 
-page size (64k or 4k)
-
-TASK_SIZE_4PB is 0x0010000000000000UL
-
-Christophe
-
-> 
->>> And for access_ok() avoiding the conditional is a good enough reason
->>> to use a 'conditional move' instruction.
->>> Avoiding speculation is actually free.
->>
->> And on CPUs that are not affected by Spectre and Meltdown like powerpc
->> 8xx or powerpc 603,
-> 
-> Erm.
-> 
-> 
-> Segher
+diff --git a/drivers/acpi/fan_core.c b/drivers/acpi/fan_core.c
+index 8ad12ad3aaaf..095502086b41 100644
+--- a/drivers/acpi/fan_core.c
++++ b/drivers/acpi/fan_core.c
+@@ -102,7 +102,7 @@ static int fan_get_state_acpi4(struct acpi_device *device, unsigned long *state)
+ 			break;
+ 	}
+ 	if (i == fan->fps_count) {
+-		dev_dbg(&device->dev, "Invalid control value returned\n");
++		dev_dbg(&device->dev, "No matching fps control value\n");
+ 		return -EINVAL;
+ 	}
+ 
+-- 
+2.43.0
 
 
