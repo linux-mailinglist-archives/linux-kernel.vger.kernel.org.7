@@ -1,94 +1,147 @@
-Return-Path: <linux-kernel+bounces-718469-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-718470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40E52AFA1BA
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 22:30:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A1E6DAFA1C3
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 22:32:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E34D51BC1AAB
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 20:30:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C7C01BC1CBE
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 20:32:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91C2E20F08E;
-	Sat,  5 Jul 2025 20:30:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 731F3243369;
+	Sat,  5 Jul 2025 20:32:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aepqf5UZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mwZ4Xgu/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E89C2249EB
-	for <linux-kernel@vger.kernel.org>; Sat,  5 Jul 2025 20:30:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B82C4136349;
+	Sat,  5 Jul 2025 20:32:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751747422; cv=none; b=sIL8rbDswW6Ez4NFWnDKvPWTXOzvevXzOv+sbtmS7L0x2MmgY1rE/n0tp90KlTSYjOKSx7+N6VTk1nCIpzt78KLjDP9V69h9gvZEX4V++cqDSnTJcBt5F4mMdno2rF7ouNu7Z+OKFc0PQ3uZjzqHTXamKSbCKxoZPJBWpIT9+8g=
+	t=1751747536; cv=none; b=bphXENFaqhIyW9tdgfilqEc1kHb93KiIEd5EUEGHikj9feG0EnKQZvYL4bcTujPmms8+SV131aluILeV47632mGMi3GyPss3II9zjdzTreIRL678LtaBcWIoufU8hD55q4XCpJPd6n4Nv3x/XJ64lc5RRYeccA0TPLPuwXuX/dI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751747422; c=relaxed/simple;
-	bh=DFBYQgwxJe+Sr6M8YUsANn4AuzR0hDxBilYEr0AEd5k=;
-	h=Date:From:To:cc:Subject:Message-ID:MIME-Version:Content-Type; b=gmrhOKshu83RMnVi5beAUQtBTk3dlhE+1WwQ+2Msp18Pdw+ZIOe7stxfgecIqWxrnGcWNRxMTLS+YlJyrJ6DUIHggYSpCNuUkQ4jEjUJMl6XKUFYgs1K011IEIWzLKyUfIdOcu/H4jWDt3g1LXpdDHwdtS8L+DT7K6PT/gmQo9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aepqf5UZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1325FC4CEE7;
-	Sat,  5 Jul 2025 20:30:20 +0000 (UTC)
+	s=arc-20240116; t=1751747536; c=relaxed/simple;
+	bh=T315NsZpD0PY64MoVHiLfFXWMu8FJAXT9C23gwraGvk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=FroZU7HjUjaur5UfXOjR/7D4wCBkTxrAnZePX9RTWd+h0YH++Figz3gGg7YsrUu17oktiOPCqUWMSzLCSLYkSsPsDFBy12A5z4Ge+NC/XID5Lkd0HiLORkdxR07oI1Oo0ce8zbxN6d4wCAqovbPTWjIFxqrLfKLZYKeFQiWWpFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mwZ4Xgu/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 416BCC4CEE7;
+	Sat,  5 Jul 2025 20:32:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751747421;
-	bh=DFBYQgwxJe+Sr6M8YUsANn4AuzR0hDxBilYEr0AEd5k=;
-	h=Date:From:To:cc:Subject:From;
-	b=aepqf5UZV967KPTf5cz51UelnsRec+Qru+BPATOdc9mrM/0XAyBOBq92ogSGCZwU+
-	 3RNl5piiechptQXRjerexdeeBQ5Zmqdfm/nY2N0E1z1+vfIJYCE6bkC+N/M2vAvjSy
-	 8rk2vCmSkgOsY2PqFxKJyMCyARzqbWssftrqy+hcz/RdyiAdmodXvfYcWXRVapXorx
-	 jY80MadSk/sGYEu7fB4xrmILUX55rLcv5dBUu4wem2Uf6/W9Tk8oSQ9DK5p9bgqZ8g
-	 sLJC/uZqsc61v0fJvsuQSB+4dUWP5T7OVhfzJmA8cz+wYgkK4x97dfnX3eU8ALHL3i
-	 7NXK8Ktqwt3bQ==
-Date: Sat, 5 Jul 2025 22:30:18 +0200 (CEST)
-From: Jiri Kosina <jikos@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-cc: linux-kernel@vger.kernel.org, Benjamin Tissoires <bentiss@kernel.org>
-Subject: [GIT PULL] HID fixes
-Message-ID: <77r6soqn-3s01-8863-0n17-1699qp728038@xreary.bet>
+	s=k20201202; t=1751747536;
+	bh=T315NsZpD0PY64MoVHiLfFXWMu8FJAXT9C23gwraGvk=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=mwZ4Xgu/mL/RYFpM01SADn611ltNVXqfUnGMThEdbwspumaWOctykji6np5Ug+Yl9
+	 pcEf53DvIeWpdfof5UaABIoJBJhIG5ADi7fjIforfusMkL/aiOQMB9pLgYifLQ9g4j
+	 mRqAeUSPih7Eqx1IXoFrLCzQ0FgFeitpJbpoLDsv65A8CiB1xD/n+6OwIq+Vh1JeEb
+	 DbYoFVSt0jmXfwSGTertYQe9MoxxTqVo+dpxBDxdrwwodbWDfuNjYGeDYo2Zmpc5wv
+	 qM0rAVggp5z4/KYBqFy65/U87qbSYNgkRbNGXBixNj1loYiINl284+bC1Uwlpu6Eg1
+	 oP6pNk0gtzalg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B3C3C83F07;
+	Sat,  5 Jul 2025 20:32:16 +0000 (UTC)
+From: Jens Glathe via B4 Relay <devnull+jens.glathe.oldschoolsolutions.biz@kernel.org>
+Subject: [PATCH v4 0/3] arm64: dts: qcom: x1-hp-x14: Add support for
+ X1P42100 HP Omnibook X14
+Date: Sat, 05 Jul 2025 22:31:53 +0200
+Message-Id: <20250705-hp-x14-x1p-v4-0-1c351dbeaf18@oldschoolsolutions.biz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAL+LaWgC/33OTQ7CIBQE4Ks0rMXw3+LKexgXpYCQNNJAJdWmd
+ 5d2pYl18RbzkvkyM0gmepPAqZpBNNknH+4lsEMFOtfebwZ6XTIgiHBUIwLdACfMyg3QKEosE1J
+ oKUApDNFYP23Y5Vqy82kM8bnZGa/fn0zGEEGCJeXCNJSg+hx6nToXQp9C/xjLonRU/gVWM5N9h
+ xSntVzxptFY1vKvQz8d+uXQzbEGI6pYWbXrLMvyBvL/7DdBAQAA
+X-Change-ID: 20250702-hp-x14-x1p-eb32f4696d96
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1751747534; l=2465;
+ i=jens.glathe@oldschoolsolutions.biz; s=20240919;
+ h=from:subject:message-id;
+ bh=T315NsZpD0PY64MoVHiLfFXWMu8FJAXT9C23gwraGvk=;
+ b=9SQH6RXV6gUVN4z6ZlxStjsbRix6VdOv4nfUVyD9Omp8wABWkK4cpmchArWR542I038mpoAST
+ uOeNQUsZW/YAcc9lsXVti+coNiRYdn1kCABM+ePUe05B4yVrLvyb7f0
+X-Developer-Key: i=jens.glathe@oldschoolsolutions.biz; a=ed25519;
+ pk=JcRJqJc/y8LsxOlPakALD3juGfOKmFBWtO+GfELMJVg=
+X-Endpoint-Received: by B4 Relay for
+ jens.glathe@oldschoolsolutions.biz/20240919 with auth_id=216
+X-Original-From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+Reply-To: jens.glathe@oldschoolsolutions.biz
 
-Linus,
+This patch series adds support for the HP Omnibook X Laptop 14-fe1xxx. [1]
 
-please pull from
+Since this is actually the same model as the 14-fe0xxx, but with an
+X1P-42-100 SoC (Purwa), it needs a slightly different device tree.
+To have as minimal duplicate definition as possible, the hp X14 gets 
+commonalized into a dtsi (and it stays compatible to the derived 
+device trees, like the Ultrabook G1q). 
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git tags/hid-for-linus-2025070502
+The supported features are the same as for the original Omnibook X14:
 
-to receive HID subsystem fixes, namely:
+- Keyboard (no function keys though)
+- Display
+- PWM brightness control
+- Touchpad
+- Touchscreen
+- PCIe ports (pcie4, pcie6a)
+- USB type-c, type-a
+- WCN6855 Wifi-6E
+- WCN6855 Bluetooth
+- ADSP and CDSP
+- X1 GPU
+- GPIO Keys (Lid switch)
+- Audio definition (works via USB and with internal speakers)
 
-=====
-- Memory corruption fixes in hid-appletb-kbd driver (Qasim Ijaz)
-- New device ID in hid-elecom driver (Leonard Dizon)
-- Fixed several HID debugfs contants (Vicki Pfau)
-=====
+[1]: https://www.hp.com/us-en/shop/pdp/hp-omnibook-x-laptop-next-gen-ai-pc-14-fe100-14-a4nd1av-1#techSpecs
 
-Thanks.
+Signed-off-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+---
+Changes in v4:
+- leave the qcom,jp-omnibook-x14 ABI unchanged, reuse it for the -fe0 variant
+- hacked b4 to create an easier reviewable patch: https://lore.kernel.org/all/20250705-format-harder-v1-1-55c5342be55c@oldschoolsolutions.biz
+- Link to v3: https://lore.kernel.org/r/20250703-hp-x14-x1p-v3-0-affe103b4356@oldschoolsolutions.biz
 
-----------------------------------------------------------------
-Leonard Dizon (1):
-      HID: elecom: add support for ELECOM HUGE 019B variant
+Changes in v3:
+- removed copyright strings
+- amended changed commit message  
+- Link to v2: https://lore.kernel.org/r/20250702-hp-x14-x1p-v2-0-af5b588d1979@oldschoolsolutions.biz
 
-Qasim Ijaz (2):
-      HID: appletb-kbd: fix memory corruption of input_handler_list
-      HID: appletb-kbd: fix slab use-after-free bug in appletb_kbd_probe
+Changes in v2:
+- remove pm8010 handling
+- Link to v1: https://lore.kernel.org/r/20250702-hp-x14-x1p-v1-0-219356e83207@oldschoolsolutions.biz
 
-Vicki Pfau (1):
-      HID: Fix debug name for BTN_GEAR_DOWN, BTN_GEAR_UP, BTN_WHEEL
+---
+Jens Glathe (3):
+      dt-bindings: arm: qcom: Split HP Omnibook X14 AI in SoC variants
+      arm64: dts: qcom: x1-hp-x14: Commonalize HP Omnibook X14 device tree
+      arm64: dts: qcom: x1-hp-x14: Add support for X1P42100 HP Omnibook X14
 
- drivers/hid/hid-appletb-kbd.c | 14 +++++++++-----
- drivers/hid/hid-debug.c       |  4 ++--
- drivers/hid/hid-elecom.c      |  6 ++++--
- drivers/hid/hid-ids.h         |  3 ++-
- drivers/hid/hid-quirks.c      |  3 ++-
- 5 files changed, 19 insertions(+), 11 deletions(-)
+ Documentation/devicetree/bindings/arm/qcom.yaml    |    1 +
+ arch/arm64/boot/dts/qcom/Makefile                  |    2 +
+ arch/arm64/boot/dts/qcom/x1-hp-omnibook-x14.dtsi   | 1549 ++++++++++++++++++++
+ .../boot/dts/qcom/x1e80100-hp-omnibook-x14.dts     | 1542 +------------------
+ .../boot/dts/qcom/x1p42100-hp-omnibook-x14.dts     |   40 +
+ 5 files changed, 1594 insertions(+), 1540 deletions(-)
+---
+base-commit: 26ffb3d6f02cd0935fb9fa3db897767beee1cb2a
+change-id: 20250702-hp-x14-x1p-eb32f4696d96
 
+Best regards,
 -- 
-Jiri Kosina
-SUSE Labs
+Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+
 
 
