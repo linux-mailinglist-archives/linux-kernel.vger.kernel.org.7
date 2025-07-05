@@ -1,160 +1,135 @@
-Return-Path: <linux-kernel+bounces-718132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-718134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F1FBAF9DF2
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 04:51:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D63FAF9DF6
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 04:53:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 287943AEC6E
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 02:51:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 459DA3A877C
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 02:53:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0316923BCFF;
-	Sat,  5 Jul 2025 02:51:30 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13DCB27510B;
+	Sat,  5 Jul 2025 02:53:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BhZHEEHr"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 524F42E371A;
-	Sat,  5 Jul 2025 02:51:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66CDA26C381;
+	Sat,  5 Jul 2025 02:53:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751683889; cv=none; b=umINmwnyYx2C6iEUROPhCgjUUxd3OtK4GkF8wbOLRWSOEYZ5G6x9YcP2v4FJJFqbiMpRG6q84Hn5xEuUMLKzlstQDPZSSa2cCNpUxKUyrgIJqUl5NRUm/K5PmkHMPc9caNu8F8UV0Kzkqr5Uqr54updM/a5/XEWhVDGH3ThFVaU=
+	t=1751683998; cv=none; b=a7BvLB2zPq79DTLZ1pZryE52XHTl9pM+aO99Vq99OB5txgxpYjNh98OWoPsEP3QpwVOsRYFHjTBEZ/tJKkoYkosOaVae8v5Y96v6gm3iA+rF6m8Yf9sUbBjJBfgQbiPd4L+iOnHVYRZ7CDX4vWzUjfow85afE1ifLRX3Udi4GRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751683889; c=relaxed/simple;
-	bh=6NyZv8lozIrsP7Itz3qOaPMzVZsGuwwnQvzBvSweyyM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=uhgJfowbOSQ+zeuw3mfSqDwhs0yXr/O/QGI6Dt+AQllWLrRUav2Y3L0JQJvZnsfhIKq4DJlu6FCfUBI43bqksTg81gphk/brxCkppINR315IWVs7WZcADjqveoLTst7gv5wJP8XH4Vqaatpy4YokHAyhqQwwZzxZt9K5lJ2NEWM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bYw4W68X6zYQtM8;
-	Sat,  5 Jul 2025 10:51:23 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.252])
-	by mail.maildlp.com (Postfix) with ESMTP id B071D1A0C6A;
-	Sat,  5 Jul 2025 10:51:22 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.170])
-	by APP3 (Coremail) with SMTP id _Ch0CgBHpyQmk2hoam_DAg--.41567S4;
-	Sat, 05 Jul 2025 10:51:20 +0800 (CST)
-From: Wang Zhaolong <wangzhaolong@huaweicloud.com>
-To: sfrench@samba.org,
-	ematsumiya@suse.de
-Cc: linux-cifs@vger.kernel.org,
-	samba-technical@lists.samba.org,
-	linux-kernel@vger.kernel.org,
-	wangzhaolong1@huawei.com,
-	yi.zhang@huawei.com,
-	yangerkun@huawei.com,
-	chengzhihao1@huawei.com
-Subject: [PATCH] smb: client: fix use-after-free in crypt_message when using async crypto
-Date: Sat,  5 Jul 2025 10:51:18 +0800
-Message-Id: <20250705025118.48080-1-wangzhaolong@huaweicloud.com>
-X-Mailer: git-send-email 2.34.3
+	s=arc-20240116; t=1751683998; c=relaxed/simple;
+	bh=2nZbo35y6gk+in29UzPb+vRtobSykQnOD+dufXdKmLI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cJGo2M+AmgKNfMbZuJeYMVMcA3NgYX+2lh/ZtrNRvqW3rs3DO9KMy4ekFq4JjYOICGtCle/0l4BbLX/QczEiyHvzPUvriZq4ZfmpVgcx/xOFvc3IGliOwJwsu3GH8arNfwJV+229hodJTd4qxfsS5qayWdob/AGnf6mNa06Fisk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BhZHEEHr; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751683997; x=1783219997;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=2nZbo35y6gk+in29UzPb+vRtobSykQnOD+dufXdKmLI=;
+  b=BhZHEEHrLDyr8E02uHc7G1TlfXndsXuv95gSWQW/pTFvqkgW8Qa3SMEi
+   61qe2HIL9GYyuBDhdyCwL/FuHFJj1OYN9IiU2ult0RbP3zrAsrAJpfF+S
+   PKEa7nuj8qLaa9kt/9qBn8PHsapjkXk+dmwl+XhUiKtfb8apz4o5FlaRm
+   D1Ac/RXX4qLkcXsIxf1ILvlRjh72Dhdx2QAezMs4qGSkMwbMq2Xc29qln
+   DcKUoJbpEp6uZ9UDZXkYecLn0MMVACgX7zwUqURATKRrBmGbBSnwUANS8
+   wn2K5bF7oWO21MrLGgU4KEr6PMW1UUcVZ9jnUjuLDm8swkczododdyw6O
+   A==;
+X-CSE-ConnectionGUID: UFr0vv5zS/agSyMVcA+Awg==
+X-CSE-MsgGUID: WTDtG0srTt2acFPdvL+B8w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11484"; a="64692095"
+X-IronPort-AV: E=Sophos;i="6.16,289,1744095600"; 
+   d="scan'208";a="64692095"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 19:53:16 -0700
+X-CSE-ConnectionGUID: BMKELaOYS5KCT3z7M7H3TQ==
+X-CSE-MsgGUID: BE2p0KTaQAiynZsX8RzyzQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,289,1744095600"; 
+   d="scan'208";a="154841049"
+Received: from lkp-server01.sh.intel.com (HELO 0b2900756c14) ([10.239.97.150])
+  by fmviesa006.fm.intel.com with ESMTP; 04 Jul 2025 19:53:09 -0700
+Received: from kbuild by 0b2900756c14 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uXt1X-0004Dn-0g;
+	Sat, 05 Jul 2025 02:53:07 +0000
+Date: Sat, 5 Jul 2025 10:52:17 +0800
+From: kernel test robot <lkp@intel.com>
+To: Nam Cao <namcao@linutronix.de>, Marc Zyngier <maz@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <helgaas@kernel.org>,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Karthikeyan Mitran <m.karthikeyan@mobiveil.co.in>,
+	Hou Zhiqiang <Zhiqiang.Hou@nxp.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Pali =?iso-8859-1?Q?Roh=E1r?= <pali@kernel.org>,
+	"K . Y . Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+	Joyce Ooi <joyce.ooi@intel.com>, Jim Quinlan <jim2101024@gmail.com>,
+	Nicolas Saenz Julienne <nsaenz@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Ryder Lee <ryder.lee@mediatek.com>,
+	Jianjun Wang <jianjun.wang@mediatek.com>,
+	Marek Vasut <marek.vasut+renesas@gmail.com>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Michal Simek <monstr@monstr.eu>,
+	Daire McNamara <daire.mcnamara@microchip.com>
+Cc: oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH 14/16] PCI: hv: Switch to msi_create_parent_irq_domain()
+Message-ID: <202507051005.SB1ajh7M-lkp@intel.com>
+References: <024f0122314198fe0a42fef01af53e8953a687ec.1750858083.git.namcao@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_Ch0CgBHpyQmk2hoam_DAg--.41567S4
-X-Coremail-Antispam: 1UD129KBjvJXoWxWw1fCFW7Xry3Xr13AFW7XFb_yoW5uryfpF
-	WFyFWFyrWrJrn2g395JrWrAa4FvrZ3uw13GFZ7Gw17CFyrZr1vvry2k3WjqFy5AFWkJ34U
-	Wr4vvwn0qF12yFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUyEb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6r1S6rWUM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI
-	7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
-	Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY
-	6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6x
-	AIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY
-	1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU17KsUUUUUU==
-X-CM-SenderInfo: pzdqw6xkdrz0tqj6x35dzhxuhorxvhhfrp/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <024f0122314198fe0a42fef01af53e8953a687ec.1750858083.git.namcao@linutronix.de>
 
-The CVE-2024-50047 fix removed asynchronous crypto handling from
-crypt_message(), assuming all crypto operations are synchronous.
-However, when hardware crypto accelerators are used, this can cause
-use-after-free crashes:
+Hi Nam,
 
-  crypt_message()
-    // Allocate the creq buffer containing the req
-    creq = smb2_get_aead_req(..., &req);
+kernel test robot noticed the following build errors:
 
-    // Async encryption returns -EINPROGRESS immediately
-    rc = enc ? crypto_aead_encrypt(req) : crypto_aead_decrypt(req);
+[auto build test ERROR on pci/next]
+[cannot apply to pci/for-linus linus/master v6.16-rc4 next-20250704]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-    // Free creq while async operation is still in progress
-    kvfree_sensitive(creq, ...);
+url:    https://github.com/intel-lab-lkp/linux/commits/Nam-Cao/PCI-dwc-Switch-to-msi_create_parent_irq_domain/20250626-230029
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git next
+patch link:    https://lore.kernel.org/r/024f0122314198fe0a42fef01af53e8953a687ec.1750858083.git.namcao%40linutronix.de
+patch subject: [PATCH 14/16] PCI: hv: Switch to msi_create_parent_irq_domain()
+config: x86_64-rhel-9.4 (https://download.01.org/0day-ci/archive/20250705/202507051005.SB1ajh7M-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14+deb12u1) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250705/202507051005.SB1ajh7M-lkp@intel.com/reproduce)
 
-Hardware crypto modules often implement async AEAD operations for
-performance. When crypto_aead_encrypt/decrypt() returns -EINPROGRESS,
-the operation completes asynchronously. Without crypto_wait_req(),
-the function immediately frees the request buffer, leading to crashes
-when the driver later accesses the freed memory.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507051005.SB1ajh7M-lkp@intel.com/
 
-This results in a use-after-free condition when the hardware crypto
-driver later accesses the freed request structure, leading to kernel
-crashes with NULL pointer dereferences.
+All errors (new ones prefixed by >>, old ones prefixed by <<):
 
-The issue occurs because crypto_alloc_aead() with mask=0 doesn't
-guarantee synchronous operation. Even without CRYPTO_ALG_ASYNC in
-the mask, async implementations can be selected.
+>> ERROR: modpost: "irq_domain_free_irqs_top" [drivers/pci/controller/pci-hyperv.ko] undefined!
 
-Fix by restoring the async crypto handling:
-- DECLARE_CRYPTO_WAIT(wait) for completion tracking
-- aead_request_set_callback() for async completion notification
-- crypto_wait_req() to wait for operation completion
-
-This ensures the request buffer isn't freed until the crypto operation
-completes, whether synchronous or asynchronous, while preserving the
-CVE-2024-50047 fix.
-
-Fixes: b0abcd65ec54 ("smb: client: fix UAF in async decryption")
-Link: https://lore.kernel.org/all/8b784a13-87b0-4131-9ff9-7a8993538749@huaweicloud.com/
-Cc: stable@vger.kernel.org
-Signed-off-by: Wang Zhaolong <wangzhaolong@huaweicloud.com>
----
- fs/smb/client/smb2ops.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/fs/smb/client/smb2ops.c b/fs/smb/client/smb2ops.c
-index 1468c16ea9b8..cb659256d219 100644
---- a/fs/smb/client/smb2ops.c
-+++ b/fs/smb/client/smb2ops.c
-@@ -4314,10 +4314,11 @@ crypt_message(struct TCP_Server_Info *server, int num_rqst,
- 	struct scatterlist *sg;
- 	u8 sign[SMB2_SIGNATURE_SIZE] = {};
- 	u8 key[SMB3_ENC_DEC_KEY_SIZE];
- 	struct aead_request *req;
- 	u8 *iv;
-+	DECLARE_CRYPTO_WAIT(wait);
- 	unsigned int crypt_len = le32_to_cpu(tr_hdr->OriginalMessageSize);
- 	void *creq;
- 	size_t sensitive_size;
- 
- 	rc = smb2_get_enc_key(server, le64_to_cpu(tr_hdr->SessionId), enc, key);
-@@ -4364,11 +4365,15 @@ crypt_message(struct TCP_Server_Info *server, int num_rqst,
- 
- 	aead_request_set_tfm(req, tfm);
- 	aead_request_set_crypt(req, sg, sg, crypt_len, iv);
- 	aead_request_set_ad(req, assoc_data_len);
- 
--	rc = enc ? crypto_aead_encrypt(req) : crypto_aead_decrypt(req);
-+	aead_request_set_callback(req, CRYPTO_TFM_REQ_MAY_BACKLOG,
-+				  crypto_req_done, &wait);
-+
-+	rc = crypto_wait_req(enc ? crypto_aead_encrypt(req)
-+				: crypto_aead_decrypt(req), &wait);
- 
- 	if (!rc && enc)
- 		memcpy(&tr_hdr->Signature, sign, SMB2_SIGNATURE_SIZE);
- 
- 	kvfree_sensitive(creq, sensitive_size);
 -- 
-2.34.3
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
