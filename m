@@ -1,121 +1,161 @@
-Return-Path: <linux-kernel+bounces-718176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-718178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C468AF9E58
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 07:07:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A2A8AF9E5C
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 07:09:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 001707B0484
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 05:06:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EE0A1C83721
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 05:10:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6103253B47;
-	Sat,  5 Jul 2025 05:07:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B069264611;
+	Sat,  5 Jul 2025 05:09:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K/7MlPnF"
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lqSmnOez"
+Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 083B520330;
-	Sat,  5 Jul 2025 05:07:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E48517AE11;
+	Sat,  5 Jul 2025 05:09:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751692058; cv=none; b=p2TfUDTDqclv/IltBICk5pbtYohfVhY2gyXVVq3/dSIba9n3y9SDsAJdI25aCIi9938RKaAzERHHpdXNqRZUnq+CqK8vDt8aCTxGb5+/ntX/+79MH8qAEYC6Rvu3/paZuldKW5ElvPP6M7PIhxWzE0YWzxyD9bHGoVE7RupXvYw=
+	t=1751692178; cv=none; b=HYuZ5vC0LfjO1g9tGjD6XUll9Vp+FPeknjCdMp0VePdyBumm4luVPHPNKFXzs8Jk+TjfzQyHl32I6L0MWRJDNpZdffzDu+XWPwmhcdC/9GTWKEZgCXNnK2jJHmT5Hk8/YQm3RqgljhB4PtQm+VP/YI1T8nJbBedD7VkUapUwbBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751692058; c=relaxed/simple;
-	bh=ZCh1Z/9IBsRPKRwZSKQnkU4l/vD//9dhXGv2tucMw+8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ha3j080bdgRbbYI4zcOS6G1DK0Zf4kiSw/pnAHjzhDN5TOa1ce4zw/iXaoSr6Qvx9m8pBob8gI0fbT7DzIqnEVBNxvFBduFsSq2aFAcTlxEc+FiInFEz0wvjqtoej7gEKbi4yg1VNjot0garrP+TMr83egpUq+jtFkzmnfSoA7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K/7MlPnF; arc=none smtp.client-ip=209.85.215.176
+	s=arc-20240116; t=1751692178; c=relaxed/simple;
+	bh=3C351zXaKNZkvaAEmTZH4DhXiQkWrXqhX8EEeSNlyjY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=flvoqB7Z3irX41u7TGB6nGzPVkzkBeVchNsPVKPHnw9T8tD0bBPTZF1JpJpXvql0PU4N+6+Bvfa9rG3daaAZi9jYSfhL2KPXpKbamUwHXuNcCg455akeTu1eyFr+XSog8g0h/h1qMj34xlw4F86LojcjDKG6PYvlGjJHaqcCAw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lqSmnOez; arc=none smtp.client-ip=209.85.167.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-b26f7d2c1f1so1911288a12.0;
-        Fri, 04 Jul 2025 22:07:36 -0700 (PDT)
+Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-40abe6f8f08so1452817b6e.0;
+        Fri, 04 Jul 2025 22:09:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751692056; x=1752296856; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=zJof5mhNhWys0vTPjrJo1lwyk2akFY2XmfI5Oa0Y5QM=;
-        b=K/7MlPnFjnOsadG7N75pW783RPUkeRSB5THMzbBNZVAleTkMUG+5HF2jBlkGwH+lW+
-         NQguItQ6mref0XbFzsJQ3kBV4Z0NDbRGjV3e8nyrvflCGAtVUmp3QkI1mZAM0NCnuzxv
-         Nf+U0cKdc+Xk4Fc1IuMUCWl3GyfPNtC5D9aDm2lHRSFo06eXFO+swMGOC+WQWPPxeNtI
-         tSlhyUjpFPB35j/ec7KfJHhbXmUKc6Uu9SZS7S+belIQlBAAQL0CbwelG1dpTxdFpZwN
-         Ds3xOI6VDY+XM8qJWfA43tjCm8Tz4OZ1Weity/3cJuScNhK63Gai3xe6yj1GGb1zGg41
-         WdRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751692056; x=1752296856;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1751692176; x=1752296976; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=zJof5mhNhWys0vTPjrJo1lwyk2akFY2XmfI5Oa0Y5QM=;
-        b=dpRz+2atOBck1FZbNjw6dHVgxECESRKs3zmEXKvQHwCMs0Q5d6BvKWsElE54jru01r
-         X+5OiUGC0azo6pBeFRvGY4OVOBXNWt1Pj72zEjqa3qnFBwVWhmGNLsxVetvtJ+M9+SK9
-         Dap72+7tffiZY+kyoUpcHuiwMKLpGGTHONF2tBtvx0K93whWzKimFIrF+eV8bwJsRb0m
-         uQPuBA+PdQdMnGSudBy0tT5lT+BzrWXpQFGnfYNgMxDboPOjh5/jmGyUeRGnlnFC1FO0
-         Vk00IOx23SLzwSX335a07YfhkZcn6l8pt0bHFFhDzaPYR38bHW62u6ULez/q2a3u4E6S
-         DpEA==
-X-Forwarded-Encrypted: i=1; AJvYcCUI21mflvKGK8pDcE2lKfqLTrSaiNPVx7aZjO4mCLYdoT7ZU/xYQxU4vH/ynVDslQrHyAgNMvIE@vger.kernel.org, AJvYcCWvUBOUCuqas5iFGfJyaaBLkv1Wqk7hG7IaYGZFoIprrYUKeoyLBBDGb4K2PSq05iPMLEhkChtjlN2XOmw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNTkWIc6+nN2tNPegcLpjfQ1njrPdQt4C52USY/NVUZ37d8RrS
-	uQPivkcP1Q2oWfXK4ffTW9y9/+o1ixW61ac8ubSkz0a+6BvUOiNle5Oy
-X-Gm-Gg: ASbGncv0RA0sCVJuHX2PY9ENJaeX1BJ81LpWWnuMifRq2wk/uWPsWXuu8G4r6adwUgs
-	Pz/N3lP0Y0BCgZMt91w20qPxtlsFx8TAIhUR85Nk+c5owN5j9Pa26Y/XZxC2vegloglG5bNv5gk
-	loOklHyQdXSVnRvZjrpTXlLDDqfFPyIk+puAMger56n1myTRQHtv1v++GcyYiSuseFsfky6Wj+N
-	YFeV9MJTtoJRRSP0ad6w4abhbCd7lPEedTCwwGfyzHyOrYapvknUYJONqniTAPApgBPoD+ivEfx
-	NJgas+opCux5cbgK2EezJvz17PuXHQaKbOqPRYmo60TJBp1UH36g3HGMYgvbSavIT3Me
-X-Google-Smtp-Source: AGHT+IHzFj2sNLlVlawNH0SaI7hYGGQLuLt+m1fm+NAe+jaUcrflvlbZrbgolrD42aIK+Km2IwtwyQ==
-X-Received: by 2002:a17:90b:578f:b0:310:cea4:e3b9 with SMTP id 98e67ed59e1d1-31aac5511a1mr5791725a91.34.1751692056136;
-        Fri, 04 Jul 2025 22:07:36 -0700 (PDT)
-Received: from localhost ([2601:647:6881:9060:af97:2acd:2917:c229])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31aaae60f2fsm3558844a91.16.2025.07.04.22.07.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Jul 2025 22:07:35 -0700 (PDT)
-Date: Fri, 4 Jul 2025 22:07:34 -0700
-From: Cong Wang <xiyou.wangcong@gmail.com>
-To: Lizhi Xu <lizhi.xu@windriver.com>
-Cc: davem@davemloft.net, edumazet@google.com, horms@kernel.org,
-	jhs@mojatatu.com, jiri@resnulli.us, kuba@kernel.org,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	pabeni@redhat.com, syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH V2] net/sched: Prevent notify to parent who unsupport
- class ops
-Message-ID: <aGizFhZwnPo98Bj/@pop-os.localdomain>
-References: <aGhr2R3vkwBT/uiv@pop-os.localdomain>
- <20250705011823.1443446-1-lizhi.xu@windriver.com>
+        bh=DMci5qtDxPxCQhNXMosu45LJdV+xYetyKg8i0aR49bg=;
+        b=lqSmnOezxgfVNAe8vy9brOewBZjRC9OR6+alnb5qUOQpwPVJlbR3bx26Lsj7uFCT8x
+         xiXh2QeY/1kpJlIYwXuy+AkV44nERCIRingc9Wmsj6LoCe8hgR4D4U2gwzPgfxm5z+XA
+         JvQe+WteqLAY54TxKfstnX68RMVohf6S5SBQvwpsH5KJVLT/Eyt5IRc8opOq4ILH2u2a
+         psdrgOXb6As2NtX6dGj2UlzVZgtnf7J+cnzAqgy9q5bmrNshAHI1QYDGdBrnxHXHs2z5
+         z2eLN+jQ4AU9fuANjdpQ6NEEXtuWI9PICAMcVviygpaSZXxmXr7gIBIAW/93K711zT0s
+         ABcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751692176; x=1752296976;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DMci5qtDxPxCQhNXMosu45LJdV+xYetyKg8i0aR49bg=;
+        b=SBPMKWObogpJ+lS/0mw4kwERNG0jnxewiZe+84Dfcm8VY8JYkhnYHR+F0UUW5x0ne7
+         30v/4FYZFKptgj28W1rqil0JqI4SfCofB4tJBMsvRr8Ai28h2qmtezoWtzl4s1Mtdcxy
+         TAm2xk/OJdsKLzVSsh55LEcFy63CPjIkfgi0aTjf1x7eMxqQX0u4tQsX+UMHRYuohFXn
+         9njEU+5aAkm6ZkHuqBQ94uYPkccyovCwgTGi9WZwfAuLCDlb35OlngYQvwp4zUrcqisf
+         6zFoO6/PRQn6hUbvqRoG8f9BjHWM3v4BkqQXCedAV++P7V9V3Uc4DBI31DgnxyiR2Y9I
+         /1OA==
+X-Forwarded-Encrypted: i=1; AJvYcCWB0mrSM/Qg/XpU2B4uC9UqJD9IavgM/6S1ExvmIzJsiIxS1Ez1NgdllsDGuqAJbf1CDDZGG7XLSa5sDW8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZT2somtmNzZFVuEIElgFzvN3Ubo69cfLo5h9FCNx5mSm3iGlR
+	zKhcDHbFOM2KbhKAIO0f5I6Du1v2ZE2CXdpqHmv4Ex+to20NLjI5HncZLFypcLZ4RI9NQLvKFAD
+	daBIzsUopntxygkv/GoGMf/k1l+tdFxzQS/2NR4I=
+X-Gm-Gg: ASbGncsMySXWdG2/lgaahyvuJA7bNs54vSowaJvrpSpJ+WHLr/ge6m1MkW75qdJZw2P
+	cgE1pIc9Ym0QOWRYbximTIxJ1lBPcj+pPeyiqtb2afGRr8W3oCkKq2Wbq5B4o5Gd9WJoHWIm9Jj
+	cejnXWyGT3rpgt4+0LeyPUr1CiC+c7bDIdgUVwcJFUqcatZ+1lFh6lqug=
+X-Google-Smtp-Source: AGHT+IEFVAApNVakbH9gnhkeeESDuh0C5GYe1c/ZLqBTdYx916A7d0kUrooJJ4SlCZvqHrb8qJOHZjgmeynsloSVeI4=
+X-Received: by 2002:a05:6808:3027:b0:3fa:f848:8dfa with SMTP id
+ 5614622812f47-40d073e03abmr3463576b6e.30.1751692176282; Fri, 04 Jul 2025
+ 22:09:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250705011823.1443446-1-lizhi.xu@windriver.com>
+References: <20250626165927.66498-1-marcelomoreira1905@gmail.com> <DB29YAYDK6YW.1NF5I2WSI1BPR@kernel.org>
+In-Reply-To: <DB29YAYDK6YW.1NF5I2WSI1BPR@kernel.org>
+From: Marcelo Moreira <marcelomoreira1905@gmail.com>
+Date: Sat, 5 Jul 2025 02:09:25 -0300
+X-Gm-Features: Ac12FXyjwVkGy5wdiL8UlfvZq9uJJjU263ycqnw9WEXcj2hJBVhhlbztfAnAZ0U
+Message-ID: <CAPZ3m_iqCRYh+XhMip3h=ZWKpw4VPfnRQ6ofmoAnrzKDbOO-PA@mail.gmail.com>
+Subject: Re: [PATCH v5 0/2] rust: revocable: documentation and refactorings
+To: Benno Lossin <lossin@kernel.org>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	dakr@kernel.org, ojeda@kernel.org, skhan@linuxfoundation.org, 
+	linux-kernel-mentees@lists.linuxfoundation.org, ~lkcamp/patches@lists.sr.ht
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Lizhi,
+Em qui., 3 de jul. de 2025 =C3=A0s 05:24, Benno Lossin <lossin@kernel.org> =
+escreveu:
+>
+> On Thu Jun 26, 2025 at 6:59 PM CEST, Marcelo Moreira wrote:
+> > This patch series brings documentation and refactorings to the `Revocab=
+le` type.
+> >
+> > Changes include:
+> > - Clarifying the write invariant and updating associated safety comment=
+s for `Revocable<T>`.
+> > - Splitting the internal `revoke_internal` function into two distinct, =
+explicit functions: `revoke()` (safe, synchronizing with RCU) and `revoke_n=
+osync()` (unsafe, without RCU synchronization), now returning `bool` to ind=
+icate revocation status.
+>
+> Could you wrap your text to a more readable column? Thanks!
 
-On Sat, Jul 05, 2025 at 09:18:22AM +0800, Lizhi Xu wrote:
-> If the parent qdisc does not support class operations then exit notify.
-> 
-> In addition, the validity of the cl value is judged before executing the
-> notify. Similarly, the notify is exited when the address represented by
-> its value is invalid.
-> 
-> Reported-by: syzbot+1261670bbdefc5485a06@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=1261670bbdefc5485a06
+Sure! Thanks!
 
-Maybe I didn't make it clear, I think Victor's patch also fixes this
-bug.
+>
+> >
+> > Marcelo Moreira (2):
+> >   rust: revocable: Refactor revocation mechanism to remove generic
+> >     revoke_internal
+> >   rust: revocable: Clarify write invariant and update safety comments
+> >
+> > Changelog
+> > ---------
+> >
+> > Changes since v4:
+> > - Rebased the series onto the latest `rfl/rust-next` to integrate recen=
+t changes, specifically the `bool` return for `revoke()` and `revoke_nosync=
+()`.
+> > - Dropped the "rust: revocable: simplify RevocableGuard for internal sa=
+fety" patch, as the approach of using a direct reference (`&'a T`) for `Rev=
+ocableGuard` was found to be unsound due to Rust's aliasing rules and LLVM'=
+s `dereferencable` attribute guarantees, which require references to remain=
+ valid for the entire function call duration, even if the internal RCU guar=
+d is dropped earlier.
+> > - Refined the `PinnedDrop::drop` `SAFETY` comment based on Benno Lossin=
+'s and Miguel Ojeda's feedback, adopting a more concise and standard Kernel=
+-style bullet point format.
+> > - Corrected a duplicated line in the commit message of the second patch=
+.
+>
+> Now since we had to drop the `RevocableGuard` change, its safety
+> invariant & comment in `deref` is insufficient. It shouldn't have the
+> invariant that the rcu lock is held (since it owns an `rcu::Guard`, that
+> already is guaranteed), but instead it should require that the
+> `data_ref` pointer is valid. That invariant is then used by the safety
+> comment in `deref` to justify dereferencing the pointer.
+>
+> Also, I think it's better to reorder the patches again (since the
+> current first one relies on changes from the second one), the first one
+> should be the change to the invariants section of `Revocable` (so
+> currently the second patch). Then the second and third patches can be
+> the removal of `revoke_internal` and the `RevocableGuard` safety
+> documentation fix.
 
-https://lore.kernel.org/netdev/20250704163422.160424-1-victor@mojatatu.com/
+All right Benno, I'll prepare the comment for `RevocableGuard` and send v6.
 
-Can you check if you still see the crash with his fix?
+The order now is:
+1- Documentation for invariant and updates associated `SAFETY` comments
+2- Remove `revoke_internal` (Refactoring)
+3- `RevocableGuard` safety documentation fix.
 
-The reason why I am asking is because his fix addresses a problem
-earlier on the code path, which possibly makes your fix unnecessary.
-Hence, his fix is closer to the root cause.
+Thanks! :)
 
-Please test and confirm.
-
-Thanks!
+--
+Cheers,
+Marcelo Moreira
 
