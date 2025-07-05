@@ -1,272 +1,215 @@
-Return-Path: <linux-kernel+bounces-718498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-718500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17203AFA216
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 23:41:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61410AFA221
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 23:43:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD3A81BC7B4F
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 21:41:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73CD94A688B
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 21:43:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D10928DB59;
-	Sat,  5 Jul 2025 21:40:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 715C1262FE4;
+	Sat,  5 Jul 2025 21:43:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=netcube.li header.i=@netcube.li header.b="Ug3UZM0E"
-Received: from mail.netcube.li (mail.netcube.li [173.249.15.149])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZCAKay3Z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6062D26A0EE;
-	Sat,  5 Jul 2025 21:40:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.249.15.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD19E217709;
+	Sat,  5 Jul 2025 21:43:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751751619; cv=none; b=omf9Fj5u8Cy1HqGY2Nl7MirfxVDYBa7ZACBitKrUqebv/wYXyaQ6Ssi9TUG7ygiRRbb7oHZSRB4BCWamGs4aHsmud4lOwP8DDcVX2Ugr0JlCMOIeE4eeF8tqb/lPHluM/x3Ry8MVdnvBU/RaTUnPGTXi8CM32EEOpxmXb0VduQ4=
+	t=1751751805; cv=none; b=BBFGL4RGDhq2pm4CrlySY6DJnO2UayEDlo+lm+o4zs3aPFHwAwSPCNprINDeL/oZUeoUvnnrQ8NvBHycBz7trisQ+aEBU58RLXFSMtgX791qpfYNOJVODzoz9vQfdpMc+NZ0Z0YFEcVfJ1ii1rLY2UtfLEZov6v9msnCNEovGvc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751751619; c=relaxed/simple;
-	bh=PibW8PHrq2hbYJuyfn/hYxa3wRLa7XPMj6/Fkq896fE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=tV8qO1aPzrSguWwMmZqFQXibe7Jgn7DPHN2h4OHBZdUk8yRgHHcHTAHPJlxnC5RLeYNv+qiWIswMEt0oGV1LOTsHI+Ay37LMREbAYr5OI7Y9qstrp9rwSP3xQn2vEKV9gdBc015XKxvyxOV4Lp2qAA9tj7egZgaUJoRkkko/do8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=netcube.li; spf=pass smtp.mailfrom=netcube.li; dkim=pass (1024-bit key) header.d=netcube.li header.i=@netcube.li header.b=Ug3UZM0E; arc=none smtp.client-ip=173.249.15.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=netcube.li
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netcube.li
-dkim-signature: v=1; a=rsa-sha256; d=netcube.li; s=s1;
-	c=relaxed/relaxed; q=dns/txt; h=From:Subject:Date:Message-ID:To:CC:MIME-Version:Content-Transfer-Encoding:In-Reply-To:References;
-	bh=Lb0D6uIH1pT+2b6K0Fe8p7uYcbSYVmUMEHxTXCcBaKw=;
-	b=Ug3UZM0EyWOLUvYJT05PkNXoAvVtg6hqIzqEzrth+zuUwyKMyrnWYS2lprWopdBpxTUv80sYwg/cr6JJI03m+G79d/u7k+N7Co85BrC10RdENryIpfw7+iC0jMuS5W1VQpHN/BmVj0kMmladKwkYHAaKMjbXQ4OI9oh8Tt3YYWQ=
-Received: from lukas-hpz440workstation.lan.sk100508.local (cm70-231.liwest.at [212.241.70.231])
-	by mail.netcube.li with ESMTPA
-	; Sat, 5 Jul 2025 23:40:01 +0200
-From: Lukas Schmid <lukas.schmid@netcube.li>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	Maxime Ripard <mripard@kernel.org>
-Cc: Lukas Schmid <lukas.schmid@netcube.li>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: [PATCH v1 7/7] ARM: dts: sunxi: add support for NetCube Systems Nagami Keypad Carrier
-Date: Sat,  5 Jul 2025 23:38:58 +0200
-Message-Id: <20250705213900.3614963-8-lukas.schmid@netcube.li>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250705213900.3614963-1-lukas.schmid@netcube.li>
-References: <20250705213900.3614963-1-lukas.schmid@netcube.li>
+	s=arc-20240116; t=1751751805; c=relaxed/simple;
+	bh=8JEvEGM9sNm9zynsk/02xiiJGM43gFUDp52vEHIyfyo=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
+	 References:In-Reply-To; b=K5s8HG9fHgal+FHxOCDWGwgw/Sa4N4/YJtpnEMaqWAsWkwdJlbFIcumbcdAKm63pU4E5HJyAdF/JN82aSxN4d8T8YA6vDAZ31LNgqxK4qTZbZ4iq5N3dyWDWjSLaM4eRvm3UAPbuEKuDw/z2Hc4G78dWnh2tKT1ScCL9QN5cuQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZCAKay3Z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30AEAC4CEE7;
+	Sat,  5 Jul 2025 21:43:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751751805;
+	bh=8JEvEGM9sNm9zynsk/02xiiJGM43gFUDp52vEHIyfyo=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=ZCAKay3ZSzt2NQCOhXdlOV5I+U5DxCLFKGodf/OXmgCuZAZioawqIau4IXWSAlLji
+	 amgn1Pr7KDHCA4+PTCpF8wmYGD57Be0vsHYViKLAzZ0oAeaOCIj7vt4ZQllomBy84/
+	 46Igzn8mg8VF6dMxxF/HyWYX6NBnzT0Y6dBGxXHjr4Wvx+DUyEgZrjTUxq4DSAh0Ld
+	 VVbKr7/eqfYBpcnt04K5aAgKeAok8u6lwgF6mf0WTuFxrOR2T7hN041mn4mbUWREgh
+	 WsqmhiPXipA+nmaW0LaK93107Ivoj16UafqLv+ApbQhf3OJwRSSN1wBQKO4+UVHAdH
+	 lUp+PNAs9mBxg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Sat, 05 Jul 2025 23:43:18 +0200
+Message-Id: <DB4G6QHBZIQ2.BFT3RFRRHYB0@kernel.org>
+Subject: Re: [PATCH v5 04/10] rust: sync: atomic: Add generic atomics
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Boqun Feng" <boqun.feng@gmail.com>
+Cc: "Gary Guo" <gary@garyguo.net>, <linux-kernel@vger.kernel.org>,
+ <rust-for-linux@vger.kernel.org>, <lkmm@lists.linux.dev>,
+ <linux-arch@vger.kernel.org>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex
+ Gaynor" <alex.gaynor@gmail.com>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
+ "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
+ "Danilo Krummrich" <dakr@kernel.org>, "Will Deacon" <will@kernel.org>,
+ "Peter Zijlstra" <peterz@infradead.org>, "Mark Rutland"
+ <mark.rutland@arm.com>, "Wedson Almeida Filho" <wedsonaf@gmail.com>,
+ "Viresh Kumar" <viresh.kumar@linaro.org>, "Lyude Paul" <lyude@redhat.com>,
+ "Ingo Molnar" <mingo@kernel.org>, "Mitchell Levy"
+ <levymitchell0@gmail.com>, "Paul E. McKenney" <paulmck@kernel.org>, "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>, "Linus Torvalds"
+ <torvalds@linux-foundation.org>, "Thomas Gleixner" <tglx@linutronix.de>
+X-Mailer: aerc 0.20.1
+References: <20250621123212.66fb016b.gary@garyguo.net>
+ <aFjj8AV668pl9jLN@Mac.home> <20250623193019.6c425467.gary@garyguo.net>
+ <aFmmYSAyvxotYfo7@tardis.local> <aGg4sIORQiG02IoD@Mac.home>
+ <DB3KC64NSYK7.31KZXSNO1XOGM@kernel.org> <aGhFAlpOZJaLNekS@Mac.home>
+ <DB3MQ54N1FLA.3RTNYKTJFDNYY@kernel.org> <aGhiEZ4uNzEs4nah@Mac.home>
+ <DB3YRHR9RN8Z.29926G08T7KZ0@kernel.org> <aGlHBqoqTA2PCXbJ@Mac.home>
+In-Reply-To: <aGlHBqoqTA2PCXbJ@Mac.home>
 
-The NetCube Systems Nagami Keypad Carrier uses the Nagami SoM and contains
-a MCP23008 for connecting to a 4x3 matrix keypad and internal status led.
-The I2C2 interface is connected to said MCP23008 and also a header for an
-PN532 NFC-Module. It also provides a pin-header for a bi-color status led.
-Ethernet with PoE support is available on a screwterminal after magnetics.
+On Sat Jul 5, 2025 at 5:38 PM CEST, Boqun Feng wrote:
+> On Sat, Jul 05, 2025 at 10:04:04AM +0200, Benno Lossin wrote:
+> [...]
+>> >> >
+>> >> > Basically, what I'm trying to prove is that we can have a provenanc=
+e-
+>> >> > preserved Atomic<*mut T> implementation based on the C atomics. Eit=
+her
+>> >> > that is true, or we should write our own atomic pointer implementat=
+ion.
+>> >>=20
+>> >> That much I remembered :) But since you were going into the specifics
+>> >> above, I think we should try to be correct. But maybe natural languag=
+e
+>> >> is the wrong medium for that, just write the rust code and we'll see.=
+..
+>> >>=20
+>> >
+>> > I don't thinking writing rust code can help us here other than duplica=
+te
+>> > my reasoning above, so like:
+>> >
+>> >     ipml *mut() {
+>> >         pub fn xchg(ptr: *mut *mut (), new: *mut ()) -> *mut () {
+>> > 	    // SAFTEY: ..
+>
+> Note: provenance preserving is not about the safety of Atomic<*mut T>
+> implementation, even if we don't preserve the provenance, calling
+> `Atomic<*mut T>` function won't cause UB, it's just that any pointer you
+> get from `Atomic<*mut T>` is a pointer without provenance.
+>
+> So what I meant in this example is all the safey comment is above and=20
+> the rest is not a safe comment.
 
-Signed-off-by: Lukas Schmid <lukas.schmid@netcube.li>
+Yeah it's not a safety requirement, but a guarantee.
+
+> Hope it's clear.
+>
+>> > 	    // `atomic_long_xchg()` is implemented as asm(), so it can
+>> > 	    // be treated as a normal pointer swap() hence preserve the
+>> > 	    // provenance.
+>>=20
+>> Oh I think Gary was talking specifically about Rust's `asm!`. I don't
+>> know if C asm is going to play the same way... (inside LLVM they
+>> probably are the same thing, but in the abstract machine?)
+>>=20
+>
+> You need to understand why Rust abstract machine model `asm!()` in
+> that way: Rust abstract machine cannot see through `asm!()`, so it has
+> to assume that `asm!() block can do anything that some equivalent Rust
+> code does. Further more, this "can do anything that some equivalent Rust
+> code does" is only one way to reason, the core part about this is Rust
+> will be very conservative when using the `asm!()` result for
+> optimization.
+
+Yes that makes sense.
+
+> It should apply to C asm!() as well because LLVM cannot know see through
+> the asm block either. And based on the spirit, it might apply to any C
+> code as well, because it's outside Rust abstract machine. But if you
+> don't agree the reasoning, then we just cannot implement Atomic<*mut T>
+> with the existing C API.
+
+We probably should run this by t-opsem on the Rust zulip or ask about
+this in the next Meeting with the Rust folks.
+
+>> > 	    unsafe { atomic_long_xchg(ptr.cast::<atomic_long_t>(), new as ffi=
+:c_long) }
+>> > 	}
+>> >
+>> >         pub fn cmpxchg(ptr: *mut *mut (), old: *mut (), new: *mut ()) =
+-> *mut () {
+>> > 	    // SAFTEY: ..
+>> > 	    // `atomic_long_xchg()` is implemented as asm(), so it can
+>> > 	    // be treated as a normal pointer compare_exchange() hence preser=
+ve the
+>> > 	    // provenance.
+>> > 	    unsafe { atomic_long_cmpxchg(ptr.cast::<atomic_long_t>(), old as =
+ffi::c_long, new as ffi:c_long) }
+>> > 	}
+>> >
+>> > 	<do it for a lot of functions>
+>> >     }
+>> >
+>> > So I don't think that approach is worth doing. Again the provenance
+>> > preserving is a global property, either we have it as whole or we don'=
+t
+>> > have it, and adding precise comment of each function call won't change
+>> > the result. I don't see much difference between reasoning about a set =
+of
+>> > functions vs. reasoning one function by one function with the same
+>> > reasoning.
+>> >
+>> > If we have a reason to believe that C atomic doesn't support this we
+>> > just need to move to our own implementation. I know you (and probably
+>> > Gary) may feel the reasoning about provenance preserving a bit handwav=
+y,
+>>=20
+>> YES :)
+>>=20
+>> > but this is probably the best we can get, and it's technically better
+>>=20
+>> I think we can at improve the safety docs situation.
+>>=20
+>
+> Once again, it's not about the safety of Atomic<*mut T> implementation.
+
+"Safety docs" to me means all of these:
+* `SAFETY` comments & `# Safety` sections,
+* `INVARIANT` comments & `# Invariants` sections,
+* `GUARANTEE` comments & `# Guarantees` sections.
+
+Maybe there is a better name...
+
+>> > than using Rust native atomics, because that's just UB and no one woul=
+d
+>> > help you.
+>>=20
+>> I'm not arguing using those :)
+>>=20
+>> > (I made a copy-pasta on purpose above, just to make another point why
+>> > writing each function out is not worth)
+>>=20
+>> Yeah that's true, but at the moment that safety comment is on the `impl`
+>> block? I don't think that's the right place...
+>>=20
+>
+> Feel free to send any patch that improves this in your opinion ;-)
+
+I'd prefer we do it right away. But we should just have one big comment
+explaining it on the impl and then in the functions refer to it from a
+`GUARANTEE` comment?
+
 ---
- arch/arm/boot/dts/allwinner/Makefile          |   1 +
- ...8i-t113s-netcube-nagami-keypad-carrier.dts | 165 ++++++++++++++++++
- 2 files changed, 166 insertions(+)
- create mode 100644 arch/arm/boot/dts/allwinner/sun8i-t113s-netcube-nagami-keypad-carrier.dts
-
-diff --git a/arch/arm/boot/dts/allwinner/Makefile b/arch/arm/boot/dts/allwinner/Makefile
-index af287bb32..a2137bbe2 100644
---- a/arch/arm/boot/dts/allwinner/Makefile
-+++ b/arch/arm/boot/dts/allwinner/Makefile
-@@ -259,6 +259,7 @@ dtb-$(CONFIG_MACH_SUN8I) += \
- 	sun8i-s3-pinecube.dtb \
- 	sun8i-t113s-mangopi-mq-r-t113.dtb \
- 	sun8i-t113s-netcube-nagami-basic-carrier.dtb \
-+	sun8i-t113s-netcube-nagami-keypad-carrier.dtb \
- 	sun8i-t3-cqa3t-bv3.dtb \
- 	sun8i-v3-sl631-imx179.dtb \
- 	sun8i-v3s-anbernic-rg-nano.dtb \
-diff --git a/arch/arm/boot/dts/allwinner/sun8i-t113s-netcube-nagami-keypad-carrier.dts b/arch/arm/boot/dts/allwinner/sun8i-t113s-netcube-nagami-keypad-carrier.dts
-new file mode 100644
-index 000000000..7abecc355
---- /dev/null
-+++ b/arch/arm/boot/dts/allwinner/sun8i-t113s-netcube-nagami-keypad-carrier.dts
-@@ -0,0 +1,165 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright (C) 2025 Lukas Schmid <lukas.schmid@netcube.li>
-+ */
-+
-+/dts-v1/;
-+#include "sun8i-t113s-netcube-nagami.dtsi"
-+
-+#include <dt-bindings/input/input.h>
-+#include <dt-bindings/leds/common.h>
-+
-+/ {
-+	model = "NetCube Systems Nagami Keypad Carrier Board";
-+	compatible = "netcube,nagami-keypad-carrier", "netcube,nagami",
-+				 "allwinner,sun8i-t113s";
-+
-+	keypad: keypad {
-+		compatible = "gpio-matrix-keypad";
-+		debounce-delay-ms = <5>;
-+		col-scan-delay-us = <2>;
-+
-+		row-gpios = <&mcp23008 0 0
-+					 &mcp23008 1 0
-+					 &mcp23008 2 0
-+					 &mcp23008 3 0>;
-+
-+		col-gpios = <&mcp23008 6 0
-+					 &mcp23008 5 0
-+					 &mcp23008 4 0>;
-+
-+		linux,keymap = <0x00000201
-+						0x00010202
-+						0x00020203
-+						0x01000204
-+						0x01010205
-+						0x01020206
-+						0x02000207
-+						0x02010208
-+						0x02020209
-+						0x0300020A
-+						0x03010200
-+						0x0302020D>;
-+	};
-+
-+	leds {
-+		compatible = "gpio-leds";
-+
-+		led-heartbeat {
-+			gpios = <&mcp23008 7 GPIO_ACTIVE_HIGH>;
-+			linux,default-trigger = "heartbeat";
-+			color = <LED_COLOR_ID_YELLOW>;
-+			function = LED_FUNCTION_HEARTBEAT;
-+		};
-+
-+		led_status_red: led-status-red {
-+			gpios = <&pio 3 16 GPIO_ACTIVE_HIGH>;  /* PD16 */
-+			color = <LED_COLOR_ID_RED>;
-+			function = LED_FUNCTION_STATUS;
-+		};
-+
-+		led_status_green: led-status-green {
-+			gpios = <&pio 3 22 GPIO_ACTIVE_HIGH>;  /* PD22 */
-+			color = <LED_COLOR_ID_GREEN>;
-+			function = LED_FUNCTION_STATUS;
-+		};
-+	};
-+
-+	status-led {
-+		compatible = "leds-group-multicolor";
-+		color = <LED_COLOR_ID_MULTI>;
-+		function = LED_FUNCTION_STATUS;
-+		leds = <&led_status_red &led_status_green>;
-+	};
-+};
-+
-+&ehci0 {
-+	status = "okay";
-+};
-+
-+&i2c2 {
-+	status = "okay";
-+
-+	mcp23008: gpio@20 {
-+		compatible = "microchip,mcp23008";
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+		reg = <0x20>;
-+		interrupts-extended = <&pio 5 6 IRQ_TYPE_LEVEL_LOW>;  /* PF6 */
-+		interrupt-names = "mcp23008@20 irq";
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+};
-+
-+&ohci0 {
-+	status = "okay";
-+};
-+
-+&pio {
-+	gpio-line-names = "", "", "", "", // PA
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "", // PB
-+					  "", "", "UART3_TX", "UART3_RX",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "eMMC_CLK", "eMMC_CMD", // PC
-+					  "eMMC_D2", "eMMC_D1", "eMMC_D0", "eMMC_D3",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "", // PD
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "LED_STATUS_RED", "", "", "",
-+					  "I2C2_SCL", "I2C2_SDA", "LED_STATUS_GREEN", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "ETH_CRSDV", "ETH_RXD0", "ETH_RXD1", "ETH_TXCK", // PE
-+					  "ETH_TXD0", "ETH_TXD1", "ETH_TXEN", "",
-+					  "ETH_MDC", "ETH_MDIO", "QWIIC_nINT", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "", // PF
-+					  "", "", "KEY_nINT", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "ESP_CLK", "ESP_CMD", "ESP_D0", "ESP_D1", // PG
-+					  "ESP_D2", "ESP_D3", "UART1_TXD", "UART1_RXD",
-+					  "ESP_nBOOT", "ESP_nRST", "I2C3_SCL", "I2C3_SDA",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "";
-+};
-+
-+&usb_otg {
-+	dr_mode = "device";
-+	status = "okay";
-+};
-+
-+&usbphy {
-+	status = "okay";
-+};
--- 
-2.39.5
-
-
+Cheers,
+Benno
 
