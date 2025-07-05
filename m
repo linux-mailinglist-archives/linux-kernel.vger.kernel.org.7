@@ -1,528 +1,167 @@
-Return-Path: <linux-kernel+bounces-718191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-718193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BA85AF9E7F
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 08:41:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 430CCAF9E87
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 08:59:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E3B51C274BD
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 06:41:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 914C056557A
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 06:59:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1A701FCFFB;
-	Sat,  5 Jul 2025 06:41:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12A70218AAD;
+	Sat,  5 Jul 2025 06:59:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="EFISkFEX"
-Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3219F18C31
-	for <linux-kernel@vger.kernel.org>; Sat,  5 Jul 2025 06:41:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
+	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="NNImsWkx"
+Received: from m16.mail.126.com (m16.mail.126.com [117.135.210.9])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6E5320330;
+	Sat,  5 Jul 2025 06:58:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751697686; cv=none; b=kPBMx1oTtHGm6WYgbd9GVX48TnBdxUggX5KP0CWigaAq1uPFZTI6SUm7LLX0+xVPaodGEoH41D3ETr26U1odaVzja0vwqGH4NjPRl1vs5OiPN1khk/4Xii8CkO7SOcxdYYd314mdPbA3bAvkztcS24opvQwkKD8TsEP59Z8VYR4=
+	t=1751698744; cv=none; b=jQwaQip1Pct8lkjJzLQM0XAPk1fT0ILzJO+fZQTkan9IWvMhmp5WOnKatEwXcsu0ZHNyyw2FDM/8u3HzydFHlpF+DhUApMDt1eObDjVJStJtbT97yu2wXuWpckkxBu48R7dKuuFjc4vvEi5JbMD9mbcNyYsTqgIaZgxC+WSSs7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751697686; c=relaxed/simple;
-	bh=igXQzalukED0rJo7dDmagEt8kcnSLiMwRAMwgkp+BtU=;
-	h=MIME-Version:Date:Content-Type:From:Message-ID:Subject:To:Cc:
-	 In-Reply-To:References; b=I4uYwbv4oVknKwm2apflYWikMi+fWkomP5JJTDx8i+jE/6IC24wRLYi3g2tScQYG0DKyQDcWbb0ztuEhhIg6iXJXgycsYbhe7cKIYwyfTk+soCG7qVrZplN3acUs6faitofg/XZRYdGs5Xbq2P/to+PeScicoe+12BXcgPwaBPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=EFISkFEX; arc=none smtp.client-ip=95.215.58.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	s=arc-20240116; t=1751698744; c=relaxed/simple;
+	bh=/vI/pctqiLTX0hFAMIl1Ve6WG/lz+qFH6FCsLv3psFo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZER8OvMeABaTVezBYCOoXzIJNKUUtIHcaqV6M6KUPjcf7ziz2z1oEPBzzvtQ+6OyEvp/odtSgoIEeJ2z3p7O3WV0f1ZxeLQHVdwQgbQ1zfWXVPfHC3pD4BEoY+4apgmZNrVnWuiLYiHu6O2+qxE42uez6vg+V2vrqdVWR5D/cBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=NNImsWkx; arc=none smtp.client-ip=117.135.210.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
+	Content-Type; bh=i9PdUsrSzxDvnGGck2LHjgNlbpovBPa7pmcE0HgHa3k=;
+	b=NNImsWkxBNXWemhn6DxDPD3UDQQR/oNQM0tqzF6bDmBktscq7LsM9R2vQBmHfn
+	060pGgukkqp355Na9dIKeYAx1/t2/XP9u3RPxDtgHsCg4AUvyeG6YZRr3SdD82cR
+	iSCJj3dt1Kg942GSFfOTb3vWzGXEb6FlwNYFqsuYqK/TA=
+Received: from [172.19.20.199] (unknown [])
+	by gzga-smtp-mtada-g0-1 (Coremail) with SMTP id _____wD3D7sQzWhoEk+KAw--.56536S2;
+	Sat, 05 Jul 2025 14:58:25 +0800 (CST)
+Message-ID: <102fa362-35c9-46d2-853c-472a5c4cd5d9@126.com>
+Date: Sat, 5 Jul 2025 14:58:24 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1751697682;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RjP7CZmYG3XniR4jO2Z9JhFJtKlfBbTqa8Xif+9DeVQ=;
-	b=EFISkFEX9T0D8IgGCBAV46kQlVXt/QoefNxv5ZAuaMbhlO+ZfQMFAxzz1N9qlNrF5qO27A
-	3zupVa6oRYGSQLjUMDDujasx6wexMrhh35noZ25lNO7SUEm9W4zCac9qJ9lExxegDoER5m
-	5rEO1VoUbtWRvo3M6yo0F0Lgg0sEuRo=
-Date: Sat, 05 Jul 2025 06:41:20 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: qiang.zhang@linux.dev
-Message-ID: <c2e597d2101b588d19a5028b8ae73a33c5240e32@linux.dev>
-TLS-Required: No
-Subject: Re: [bug report] [PATCH v6] net: usb: Convert tasklet API to new
- bottom half workqueue mechanism
-To: "Oleksij Rempel" <o.rempel@pengutronix.de>, "Jun Miao"
- <jun.miao@intel.com>
-Cc: sbhatta@marvell.com, kuba@kernel.org, oneukum@suse.com,
- netdev@vger.kernel.org, linux-usb@vger.kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <74395e33b2175fdb2745211c4ca41e5b2358d80d@linux.dev>
-References: <20250618173923.950510-1-jun.miao@intel.com>
- <aGgD_Lp0i-ZU2xkt@pengutronix.de>
- <74395e33b2175fdb2745211c4ca41e5b2358d80d@linux.dev>
-X-Migadu-Flow: FLOW_OUT
-
->=20
->=20>=20
->=20> Hi Jun,
-> >=20
->=20>=20=20
->=20>=20
->=20>  On Wed, Jun 18, 2025 at 01:39:23PM -0400, Jun Miao wrote:
-> >=20
->=20>=20=20
->=20>=20
->=20>=20=20
->=20>=20
->=20>  Migrate tasklet APIs to the new bottom half workqueue mechanism. I=
-t
-> >=20
->=20>=20=20
->=20>=20
->=20>  replaces all occurrences of tasklet usage with the appropriate wor=
-kqueue
-> >=20
->=20>=20=20
->=20>=20
->=20>  APIs throughout the usbnet driver. This transition ensures compati=
-bility
-> >=20
->=20>=20=20
->=20>=20
->=20>  with the latest design and enhances performance.
-> >=20
->=20>=20=20
->=20>=20
->=20>=20=20
->=20>=20
->=20>  After applying this patch, the smsc95xx driver fails after one dow=
-n/up
-> >=20
->=20>=20=20
->=20>=20
->=20>  cycle.
-> >=20
->=20
-> Hello, Oleksij
->=20
->=20Please try follow patch base on Jun Miao's patchs:
->=20
-
-Sorry,=20please ignore previous, try it:
-
-diff --git a/drivers/net/usb/usbnet.c b/drivers/net/usb/usbnet.c
-index 9564478a79cc..6a3cca104af9 100644
---- a/drivers/net/usb/usbnet.c
-+++ b/drivers/net/usb/usbnet.c
-@@ -861,14 +861,14 @@ int usbnet_stop (struct net_device *net)
-        /* deferred work (timer, softirq, task) must also stop */
-        dev->flags =3D 0;
-        timer_delete_sync(&dev->delay);
--       disable_work_sync(&dev->bh_work);
-+       cancel_work_sync(&dev->bh_work);
-        cancel_work_sync(&dev->kevent);
-=20
-=20       /* We have cyclic dependencies. Those calls are needed
-         * to break a cycle. We cannot fall into the gaps because
-         * we have a flag
-         */
--       disable_work_sync(&dev->bh_work);
-+       cancel_work_sync(&dev->bh_work);
-        timer_delete_sync(&dev->delay);
-        cancel_work_sync(&dev->kevent);
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] efi/tpm: Fix the issue where the CC platforms event log
+ header can't be correctly identified
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: ardb@kernel.org, sathyanarayanan.kuppuswamy@linux.intel.com,
+ ilias.apalodimas@linaro.org, jgg@ziepe.ca, linux-efi@vger.kernel.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org, liuzixing@hygon.cn
+References: <1751510317-12152-1-git-send-email-yangge1116@126.com>
+ <aGczaEkhPuOqhRUv@kernel.org> <2ab4ebba-1f97-4686-9186-5bcaa3549f54@126.com>
+ <aGfvr2pBau6z9GLC@kernel.org>
+From: Ge Yang <yangge1116@126.com>
+In-Reply-To: <aGfvr2pBau6z9GLC@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD3D7sQzWhoEk+KAw--.56536S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxArWDKrWrCr18uw48Wr1rZwb_yoWrJw47pF
+	1Ika1ftrs8Jw1S9wn2vw48Ca1jyws3AFZrXFykG340yrs0gr1xtF42k3Wjkas3Xr47W3ZY
+	qa4jqry3Aa4DuaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jbHUDUUUUU=
+X-CM-SenderInfo: 51dqwwjhrrila6rslhhfrp/1tbiOhSBG2hoxidxiQAAst
 
 
-> diff --git a/drivers/net/usb/usbnet.c b/drivers/net/usb/usbnet.c
->=20
->=20index 9564478a79cc..554f1a1cf247 100644
->=20
->=20--- a/drivers/net/usb/usbnet.c
->=20
->=20+++ b/drivers/net/usb/usbnet.c
->=20
->=20@@ -953,6 +953,7 @@ int usbnet_open (struct net_device *net)
->=20
->=20 dev->pkt_cnt =3D 0;
->=20
->=20 dev->pkt_err =3D 0;
->=20
->=20 clear_bit(EVENT_RX_KILL, &dev->flags);
->=20
->=20+ enable_work(&dev->bh_work);
->=20
->=20=20
->=20
->  // delay posting reads until we're fully open
->=20
->=20 queue_work(system_bh_wq, &dev->bh_work);
->=20
->=20Thanks
->=20
->=20Zqiang
->=20
->=20>=20
->=20> Here is how I can reproduce the issue:
-> >=20
->=20>=20=20
->=20>=20
->=20>  nmcli device set enu1u1 managed no
-> >=20
->=20>=20=20
->=20>=20
->=20>  ip a a 10.10.10.1/24 dev enu1u1
-> >=20
->=20>=20=20
->=20>=20
->=20>  ping -c 4 10.10.10.3
-> >=20
->=20>=20=20
->=20>=20
->=20>  ip l s dev enu1u1 down
-> >=20
->=20>=20=20
->=20>=20
->=20>  ip l s dev enu1u1 up
-> >=20
->=20>=20=20
->=20>=20
->=20>  ping -c 4 10.10.10.3
-> >=20
->=20>=20=20
->=20>=20
->=20>  The second ping does not reach the host. Networking also fails on =
-other
-> >=20
->=20>=20=20
->=20>=20
->=20>  interfaces.
-> >=20
->=20>=20=20
->=20>=20
->=20>  After some delay, the following trace appears:
-> >=20
->=20>=20=20
->=20>=20
->=20>  [ 846.838527] INFO: task kworker/u16:1:308 blocked for more than 1=
-20 seconds.
-> >=20
->=20>=20=20
->=20>=20
->=20>  [ 846.838596] Not tainted 6.16.0-rc3-00963-g4fcedea9cdf2-dirty #32
-> >=20
->=20>=20=20
->=20>=20
->=20>  [ 846.838666] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" d=
-isables this message.
-> >=20
->=20>=20=20
->=20>=20
->=20>  [ 846.838697] task:kworker/u16:1 state:D stack:0 pid:308 tgid:308 =
-ppid:2
-> >=20
->=20>=20=20
->=20>=20
->=20>  task_flags:0x4208060 flags:0x00000010
-> >=20
->=20>=20=20
->=20>=20
->=20>  [ 846.838776] Workqueue: events_unbound linkwatch_event
-> >=20
->=20>=20=20
->=20>=20
->=20>  [ 846.838851] Call trace:
-> >=20
->=20>=20=20
->=20>=20
->=20>  [ 846.838880] __switch_to+0x1d0/0x330 (T)
-> >=20
->=20>=20=20
->=20>=20
->=20>  [ 846.838933] __schedule+0xa88/0x2a90
-> >=20
->=20>=20=20
->=20>=20
->=20>  [ 846.838980] schedule+0x114/0x428
-> >=20
->=20>=20=20
->=20>=20
->=20>  [ 846.839010] schedule_preempt_disabled+0x80/0x118
-> >=20
->=20>=20=20
->=20>=20
->=20>  [ 846.839036] __mutex_lock+0x764/0xba8
-> >=20
->=20>=20=20
->=20>=20
->=20>  [ 846.839060] mutex_lock_nested+0x28/0x38
-> >=20
->=20>=20=20
->=20>=20
->=20>  [ 846.839084] rtnl_lock+0x20/0x30
-> >=20
->=20>=20=20
->=20>=20
->=20>  [ 846.839115] linkwatch_event+0x18/0x70
-> >=20
->=20>=20=20
->=20>=20
->=20>  [ 846.839141] process_one_work+0x760/0x17b0
-> >=20
->=20>=20=20
->=20>=20
->=20>  [ 846.839175] worker_thread+0x768/0xce8
-> >=20
->=20>=20=20
->=20>=20
->=20>  [ 846.839208] kthread+0x3bc/0x690
-> >=20
->=20>=20=20
->=20>=20
->=20>  [ 846.839237] ret_from_fork+0x10/0x20
-> >=20
->=20>=20=20
->=20>=20
->=20>  [ 846.839359] INFO: task kworker/u16:1:308 is blocked on a mutex l=
-ikely
-> >=20
->=20>=20=20
->=20>=20
->=20>  owned by task ip:899.
-> >=20
->=20>=20=20
->=20>=20
->=20>  [ 846.839381] task:ip state:D stack:0 pid:899
-> >=20
->=20>=20=20
->=20>=20
->=20>  tgid:899 ppid:1 task_flags:0x400100 flags:0x00000019
-> >=20
->=20>=20=20
->=20>=20
->=20>  [ 846.839419] Call trace:
-> >=20
->=20>=20=20
->=20>=20
->=20>  [ 846.839432] __switch_to+0x1d0/0x330 (T)
-> >=20
->=20>=20=20
->=20>=20
->=20>  [ 846.839466] __schedule+0xa88/0x2a90
-> >=20
->=20>=20=20
->=20>=20
->=20>  [ 846.839495] schedule+0x114/0x428
-> >=20
->=20>=20=20
->=20>=20
->=20>  [ 846.839524] schedule_timeout+0xec/0x220
-> >=20
->=20>=20=20
->=20>=20
->=20>  [ 846.839551] wait_skb_queue_empty+0xa0/0x168
-> >=20
->=20>=20=20
->=20>=20
->=20>  [ 846.839581] usbnet_terminate_urbs+0x150/0x2c8
-> >=20
->=20>=20=20
->=20>=20
->=20>  [ 846.839609] usbnet_stop+0x41c/0x608
-> >=20
->=20>=20=20
->=20>=20
->=20>  [ 846.839636] __dev_close_many+0x1fc/0x4b8
-> >=20
->=20>=20=20
->=20>=20
->=20>  [ 846.839668] __dev_change_flags+0x33c/0x500
-> >=20
->=20>=20=20
->=20>=20
->=20>  [ 846.839694] netif_change_flags+0x7c/0x158
-> >=20
->=20>=20=20
->=20>=20
->=20>  [ 846.839718] do_setlink.isra.0+0x2040/0x2eb8
-> >=20
->=20>=20=20
->=20>=20
->=20>  [ 846.839745] rtnl_newlink+0xd88/0x16c8
-> >=20
->=20>=20=20
->=20>=20
->=20>  [ 846.839770] rtnetlink_rcv_msg+0x654/0x8c8
-> >=20
->=20>=20=20
->=20>=20
->=20>  [ 846.839795] netlink_rcv_skb+0x19c/0x350
-> >=20
->=20>=20=20
->=20>=20
->=20>  [ 846.839823] rtnetlink_rcv+0x1c/0x30
-> >=20
->=20>=20=20
->=20>=20
->=20>  [ 846.839848] netlink_unicast+0x3c4/0x668
-> >=20
->=20>=20=20
->=20>=20
->=20>  [ 846.839873] netlink_sendmsg+0x620/0xa10
-> >=20
->=20>=20=20
->=20>=20
->=20>  [ 846.839899] ____sys_sendmsg+0x2f8/0x788
-> >=20
->=20>=20=20
->=20>=20
->=20>  [ 846.839924] ___sys_sendmsg+0xf0/0x178
-> >=20
->=20>=20=20
->=20>=20
->=20>  [ 846.839950] __sys_sendmsg+0x104/0x198
-> >=20
->=20>=20=20
->=20>=20
->=20>  [ 846.839975] __arm64_sys_sendmsg+0x74/0xa8
-> >=20
->=20>=20=20
->=20>=20
->=20>  [ 846.840000] el0_svc_common.constprop.0+0xe4/0x338
-> >=20
->=20>=20=20
->=20>=20
->=20>  [ 846.840033] do_el0_svc+0x44/0x60
-> >=20
->=20>=20=20
->=20>=20
->=20>  [ 846.840061] el0_svc+0x3c/0xb0
-> >=20
->=20>=20=20
->=20>=20
->=20>  [ 846.840089] el0t_64_sync_handler+0x104/0x130
-> >=20
->=20>=20=20
->=20>=20
->=20>  [ 846.840117] el0t_64_sync+0x154/0x158
-> >=20
->=20>=20=20
->=20>=20
->=20>  [ 846.840164]
-> >=20
->=20>=20=20
->=20>=20
->=20>  [ 846.840164] Showing all locks held in the system:
-> >=20
->=20>=20=20
->=20>=20
->=20>  [ 846.840199] 1 lock held by khungtaskd/41:
-> >=20
->=20>=20=20
->=20>=20
->=20>  [ 846.840216] #0: ffffffc08424ede0 (rcu_read_lock){....}-{1:3}, at=
-: debug_show_all_locks+0x14/0x1b0
-> >=20
->=20>=20=20
->=20>=20
->=20>  [ 846.840309] 3 locks held by kworker/u16:2/47:
-> >=20
->=20>=20=20
->=20>=20
->=20>  [ 846.840325] #0: ffffff800926a148 ((wq_completion)ipv6_addrconf){=
-+.+.}-{0:0}, at: process_one_work+0x698/0x17b0
-> >=20
->=20>=20=20
->=20>=20
->=20>  [ 846.840406] #1: ffffffc0860f7c00 ((work_completion)(&(&net->ipv6=
-.addr_chk_work)->work)){+.+.}-{0:0}, at: process_one_work+0x6bc/0x17b0
-> >=20
->=20>=20=20
->=20>=20
->=20>  [ 846.840484] #2: ffffffc084924408 (rtnl_mutex){+.+.}-{4:4}, at: r=
-tnl_lock+0x20/0x30
-> >=20
->=20>=20=20
->=20>=20
->=20>  [ 846.840568] 2 locks held by pr/ttymxc1/60:
-> >=20
->=20>=20=20
->=20>=20
->=20>  [ 846.840595] 5 locks held by sugov:0/84:
-> >=20
->=20>=20=20
->=20>=20
->=20>  [ 846.840618] 2 locks held by systemd-journal/124:
-> >=20
->=20>=20=20
->=20>=20
->=20>  [ 846.840639] 3 locks held by kworker/u16:1/308:
-> >=20
->=20>=20=20
->=20>=20
->=20>  [ 846.840655] #0: ffffff8005d00148 ((wq_completion)events_unbound)=
-{+.+.}-{0:0}, at: process_one_work+0x698/0x17b0
-> >=20
->=20>=20=20
->=20>=20
->=20>  [ 846.840733] #1: ffffffc087307c00 ((linkwatch_work).work){+.+.}-{=
-0:0}, at: process_one_work+0x6bc/0x17b0
-> >=20
->=20>=20=20
->=20>=20
->=20>  [ 846.840810] #2: ffffffc084924408 (rtnl_mutex){+.+.}-{4:4}, at: r=
-tnl_lock+0x20/0x30
-> >=20
->=20>=20=20
->=20>=20
->=20>  [ 846.840894] 1 lock held by ip/899:
-> >=20
->=20>=20=20
->=20>=20
->=20>  [ 846.840910] #0: ffffffc084924408 (rtnl_mutex){+.+.}-{4:4}, at: r=
-tnl_newlink+0x5e8/0x16c8
-> >=20
->=20>=20=20
->=20>=20
->=20>  [ 846.840982] 2 locks held by sshd/901:
-> >=20
->=20>=20=20
->=20>=20
->=20>  [ 846.840998] #0: ffffff800aee06b0 (nlk_cb_mutex-ROUTE){+.+.}-{4:4=
-}, at: __netlink_dump_start+0x100/0x800
-> >=20
->=20>=20=20
->=20>=20
->=20>  [ 846.841073] #1: ffffffc084924408 (rtnl_mutex){+.+.}-{4:4}, at: r=
-tnl_dumpit+0x128/0x1a8
-> >=20
->=20>=20=20
->=20>=20
->=20>  [ 846.841149] 2 locks held by sshd/903:
-> >=20
->=20>=20=20
->=20>=20
->=20>  [=20846.841165] #0: ffffff800b1c76b0 (nlk_cb_mutex-ROUTE){+.+.}-{4=
-:4}, at: __netlink_dump_start+0x100/0x800
-> >=20
->=20>=20=20
->=20>=20
->=20>  [ 846.841237] #1: ffffffc084924408 (rtnl_mutex){+.+.}-{4:4}, at: r=
-tnl_dumpit+0x128/0x1a8
-> >=20
->=20>=20=20
->=20>=20
->=20>  Reverting this patch recovers smsc95xx functionality.
-> >=20
->=20>=20=20
->=20>=20
->=20>  Best Regards,
-> >=20
->=20>=20=20
->=20>=20
->=20>  Oleksij
-> >
->
+
+在 2025/7/4 23:13, Jarkko Sakkinen 写道:
+> On Fri, Jul 04, 2025 at 10:53:54AM +0800, Ge Yang wrote:
+>>
+>>
+>> 在 2025/7/4 9:50, Jarkko Sakkinen 写道:
+>>> On Thu, Jul 03, 2025 at 10:38:37AM +0800, yangge1116@126.com wrote:
+>>>> From: Ge Yang <yangge1116@126.com>
+>>>>
+>>>> Since commit d228814b1913 ("efi/libstub: Add get_event_log() support
+>>>> for CC platforms") reuses TPM2 support code for the CC platforms, when
+>>>> launching a TDX virtual machine with coco measurement enabled, the
+>>>> following error log is generated:
+>>>>
+>>>> [Firmware Bug]: Failed to parse event in TPM Final Events Log
+>>>>
+>>>> Call Trace:
+>>>> efi_config_parse_tables()
+>>>>     efi_tpm_eventlog_init()
+>>>>       tpm2_calc_event_log_size()
+>>>>         __calc_tpm2_event_size()
+>>>>
+>>>> The pcr_idx value in the Intel TDX log header is 1, causing the
+>>>> function __calc_tpm2_event_size() to fail to recognize the log header,
+>>>> ultimately leading to the "Failed to parse event in TPM Final Events
+>>>> Log" error.
+>>>>
+>>>> According to UEFI Spec 2.10 Section 38.4.1: For Tdx, TPM PCR 0 maps to
+>>>> MRTD, so the log header uses TPM PCR 1. To successfully parse the TDX
+>>>> event log header, the check for a pcr_idx value of 0 has been removed
+>>>> here, and it appears that this will not affect other functionalities.
+>>>
+>>> I'm not familiar with the original change but with a quick check it did
+>>> not change __calc_tpm2_event_size(). Your change is changing semantics
+>>> to two types of callers:
+>>>
+>>> 1. Those that caused the bug.
+>>> 2. Those that nothing to do with this bug.
+>>>
+>>> I'm not seeing anything explaining that your change is guaranteed not to
+>>> have any consequences to "innocent" callers, which have no relation to
+>>> the bug.
+>>>
+>>
+>> Thank you for your response.
+>>
+>> According to Section 10.2.1, Table 6 (TCG_PCClientPCREvent Structure) in the
+>> TCG PC Client Platform Firmware Profile Specification, determining whether
+>> an event is an event log header does not require checking the pcrIndex
+>> field. The identification can be made based on other fields alone.
+>> Therefore, removing the pcrIndex check here is considered safe
+>> for "innocent" callers.
+> 
+> Thanks for digging that out. Can you add something to the commit
+> message? That spec is common knowledge if you are "into the topic"
+> in the first palace so something along the lines of this would be
+> perfectly fine:
+> 
+> "The check can be safely removed, as ccording to table 6 at section
+> 10.2.1 of TCG PC client specification the index field does not require
+> fixing the PCR index to zero."
+> 
+Ok, thanks.
+
+> But then: we still have that constraint there and we cannot predict the
+> side-effects of removing a constraint, even if it is incorrectly defined
+> constraint. For comparison, it's much less risky situation when adding
+> additional constraints, as possible side-effects in the worst case
+> scenarios can be even theoretically much lighter than in the opposite
+> situation.
+> 
+> For this reasons it would be perhaps better to limit the fix for the
+> CC only, and not change the semantics across the board.
+> 
+Ok, thanks.
+
+I originally intended to add a 
+cc_platform_has(CC_ATTR_GUEST_STATE_ENCRYPT) check inside the 
+__calc_tpm2_event_size() function to limit the fix to Confidential 
+Computing (CC) platforms only. However, this function is also used 
+during the EFI stub phase, where the cc_platform_has() function is not 
+defined.
+
+Call Trace:
+efi_pe_entry()
+   efi_stub_entry()
+     efi_retrieve_eventlog()
+       efi_retrieve_tcg2_eventlog()
+         __calc_tpm2_event_size()
+
+Therefore, I plan to modify __calc_tpm2_event_size() to accept an 
+additional parameter indicating whether the event originates from a CC 
+platform.
+
+
+> BR, Jarkko
+
 
