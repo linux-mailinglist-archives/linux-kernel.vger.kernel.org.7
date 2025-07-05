@@ -1,113 +1,121 @@
-Return-Path: <linux-kernel+bounces-718216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-718211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D49B8AF9EB9
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 09:23:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 48E59AF9EA9
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 09:21:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6E13482363
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 07:22:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 369DF3B2D06
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 07:20:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A44B3288509;
-	Sat,  5 Jul 2025 07:22:00 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27AB12E36E0;
-	Sat,  5 Jul 2025 07:21:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84DDB20468D;
+	Sat,  5 Jul 2025 07:21:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="hoRSOZXN"
+Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D5BB2E36E0
+	for <linux-kernel@vger.kernel.org>; Sat,  5 Jul 2025 07:21:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751700120; cv=none; b=q1Cu8QaqC6nPb/WDUVVh7WCwFDJxAKEErELWLZ5cK1yViBQSX8hsyZECTVEL7Mk8UGvVvzXVQTgMOg0PbRKfkCKuMioICsCXMQYeiKKdWC/cq4Nw+kTzcMNQFe3dC8B8Ikw+uMiAcs36upmJdvUfIRvExYeSZH1L59GzDDQWwhc=
+	t=1751700078; cv=none; b=MWWz3ywmULwDLAqoq7+m31tTLUBDGtxgpu63I/0onJZdjnwO2Cag/nbiycas33r5Pucs5jYtQVGOydhGCpId9+en7/V10wuKkvmf4MXFcXN1VOLKx16dQKBdFbN8LmRugulwXEyCE34T5KKNSVxEwmq33zmqQWs8E2jqAjFU3BA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751700120; c=relaxed/simple;
-	bh=TWhvv9QN+r+7r4W3C1ndhiEYQUdH9CYTQGI8FPOatbk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BJS6OStewFndla7/nc3aAvEAIWJFKtfuv9IIKZFqw99rPx+RibAf3SZIWLUSbeYIQGmpRVFLxO9hG8pDPm3oaFAQhVU75WP1gib+XUIvVoXNGidZSWpfYCvOrSUKwgmUXjr00rKdo9SKsZ2V2QZEorfVXHD4XwBQmVDFK+hCD4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.40.54.123])
-	by gateway (Coremail) with SMTP id _____8DxzOKU0mhoQ7siAQ--.9176S3;
-	Sat, 05 Jul 2025 15:21:56 +0800 (CST)
-Received: from localhost.localdomain (unknown [10.40.54.123])
-	by front1 (Coremail) with SMTP id qMiowJBxZOSA0mhoElgKAA--.60805S6;
-	Sat, 05 Jul 2025 15:21:55 +0800 (CST)
-From: Qunqin Zhao <zhaoqunqin@loongson.cn>
-To: lee@kernel.org,
-	herbert@gondor.apana.org.au,
-	jarkko@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	loongarch@lists.linux.dev,
-	davem@davemloft.net,
-	linux-crypto@vger.kernel.org,
-	peterhuewe@gmx.de,
-	jgg@ziepe.ca,
-	linux-integrity@vger.kernel.org,
-	Qunqin Zhao <zhaoqunqin@loongson.cn>,
-	Huacai Chen <chenhuacai@loongson.cn>
-Subject: [PATCH v12 4/4] MAINTAINERS: Add entry for Loongson Security Engine drivers
-Date: Sat,  5 Jul 2025 15:20:45 +0800
-Message-ID: <20250705072045.1067-5-zhaoqunqin@loongson.cn>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250705072045.1067-1-zhaoqunqin@loongson.cn>
-References: <20250705072045.1067-1-zhaoqunqin@loongson.cn>
+	s=arc-20240116; t=1751700078; c=relaxed/simple;
+	bh=+xBPB/8dTHOxwVpAzuXPV8Ax9paQP4P6o5ZXrcl4zbE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aXFIgVuGFE3/B6gVl5CQgwx/97f9CzKN6hRLcxdVXR+cPZ+X7AZyeRXIKfSw336qlBzKtrIgEzFnS8LQfR0+QTOUJfitPkK4Kz9kmIf9mFfPx7NKuCgIL+9wDY9RMb1Is6e0qIEIo3Ogdozfv2+oyw30sn74CsGu1n7Preso8Ss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=hoRSOZXN; arc=none smtp.client-ip=95.215.58.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <c3e83d38-1192-4c55-a4ea-263639f47ad6@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1751700072;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=euhcLfujtIvPVA/VcYVwZJTUlTuFRe4/HxRQq/ltqzY=;
+	b=hoRSOZXNSXk4tqkpkGPZ6moJ0oX9X2ATr72QOgTxioSC/wY+0yJmMaHHge1BSXpzYK7gDZ
+	h/oGRFZuflNp4k7fSkjYhCG8Io9w359QPR7e4SAQ8z89c0sHjr4gqlOnX6wonNL8gfh5b6
+	2DsvSYunqfnkolmq25dJ3cJXyH3P/iM=
+Date: Sat, 5 Jul 2025 00:21:06 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowJBxZOSA0mhoElgKAA--.60805S6
-X-CM-SenderInfo: 52kd01pxqtx0o6or00hjvr0hdfq/
-X-Coremail-Antispam: 1Uk129KBj9xXoWrurykWw4kZF1xtFykKw13WrX_yoWfuwc_G3
-	yIq397Wr18JF1xK3y8ZrWxAryYqrWfXF1ku3Zrtw15ZayDtry3JrykAFn7W3W3ZrWUuFsx
-	XayxGrn7Cr1xZosvyTuYvTs0mTUanT9S1TB71UUUUj7qnTZGkaVYY2UrUUUUj1kv1TuYvT
-	s0mT0YCTnIWjqI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUI
-	cSsGvfJTRUUUbfAYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20x
-	vaj40_Wr0E3s1l1IIY67AEw4v_Jrv_JF1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
-	w2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
-	WxJVW8Jr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6rxl6s0DM2kKe7AKxVWUAVWUtwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYI
-	kI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWrXVW3
-	AwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI4
-	8JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j
-	6r4UMxCIbckI1I0E14v26r126r1DMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwV
-	AFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv2
-	0xvE14v26ryj6F1UMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4
-	v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AK
-	xVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0_WrPUUUUU==
+Subject: Re: [PATCH 1/2] RISC-V: KVM: Disable vstimecmp before exiting to
+ user-space
+To: Anup Patel <apatel@ventanamicro.com>
+Cc: Palmer Dabbelt <palmer@dabbelt.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Alexandre Ghiti <alex@ghiti.fr>,
+ Andrew Jones <ajones@ventanamicro.com>, Anup Patel <anup@brainfault.org>,
+ kvm@vger.kernel.org, kvm-riscv@lists.infradead.org,
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Heinrich Schuchardt <heinrich.schuchardt@canonical.com>
+References: <20250704153838.6575-1-apatel@ventanamicro.com>
+ <20250704153838.6575-2-apatel@ventanamicro.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Atish Patra <atish.patra@linux.dev>
+In-Reply-To: <20250704153838.6575-2-apatel@ventanamicro.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-This patch adds an entry for Loongson Security Engine drivers in the
-list of maintainers.
 
-Signed-off-by: Qunqin Zhao <zhaoqunqin@loongson.cn>
-Reviewed-by: Huacai Chen <chenhuacai@loongson.cn>
----
- MAINTAINERS | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index fad6cb025..1ccb267ce 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -14153,6 +14153,15 @@ S:	Maintained
- F:	Documentation/devicetree/bindings/pwm/loongson,ls7a-pwm.yaml
- F:	drivers/pwm/pwm-loongson.c
- 
-+LOONGSON SECURITY ENGINE DRIVERS
-+M:	Qunqin Zhao <zhaoqunqin@loongson.cn>
-+L:	linux-crypto@vger.kernel.org
-+S:	Maintained
-+F:	drivers/char/tpm_loongson.c
-+F:	drivers/crypto/loongson/
-+F:	drivers/mfd/loongson-se.c
-+F:	include/linux/mfd/loongson-se.h
-+
- LOONGSON-2 SOC SERIES CLOCK DRIVER
- M:	Yinbo Zhu <zhuyinbo@loongson.cn>
- L:	linux-clk@vger.kernel.org
--- 
-2.45.2
-
+On 7/4/25 8:38 AM, Anup Patel wrote:
+> If VS-timer expires when no VCPU running on a host CPU then WFI
+> executed by such host CPU will be effective NOP resulting in no
+> power savings. This is as-per RISC-V Privileged specificaiton
+> which says: "WFI is also required to resume execution for locally
+> enabled interrupts pending at any privilege level, regardless of
+> the global interrupt enable at each privilege level."
+>
+> To address the above issue, vstimecmp CSR must be set to -1UL over
+> here when VCPU is scheduled-out or exits to user space.
+>
+> Fixes: 8f5cb44b1bae ("RISC-V: KVM: Support sstc extension")
+> Fixes: cea8896bd936 ("RISC-V: KVM: Fix kvm_riscv_vcpu_timer_pending() for Sstc")
+> Reported-by: Heinrich Schuchardt <heinrich.schuchardt@canonical.com>
+> Closes: https://bugs.launchpad.net/ubuntu/+source/linux/+bug/2112578
+> Signed-off-by: Anup Patel <apatel@ventanamicro.com>
+> ---
+>   arch/riscv/kvm/vcpu_timer.c | 16 ++++++++++++++++
+>   1 file changed, 16 insertions(+)
+>
+> diff --git a/arch/riscv/kvm/vcpu_timer.c b/arch/riscv/kvm/vcpu_timer.c
+> index ff672fa71fcc..85a7262115e1 100644
+> --- a/arch/riscv/kvm/vcpu_timer.c
+> +++ b/arch/riscv/kvm/vcpu_timer.c
+> @@ -345,8 +345,24 @@ void kvm_riscv_vcpu_timer_save(struct kvm_vcpu *vcpu)
+>   	/*
+>   	 * The vstimecmp CSRs are saved by kvm_riscv_vcpu_timer_sync()
+>   	 * upon every VM exit so no need to save here.
+> +	 *
+> +	 * If VS-timer expires when no VCPU running on a host CPU then
+> +	 * WFI executed by such host CPU will be effective NOP resulting
+> +	 * in no power savings. This is because as-per RISC-V Privileged
+> +	 * specificaiton: "WFI is also required to resume execution for
+> +	 * locally enabled interrupts pending at any privilege level,
+> +	 * regardless of the global interrupt enable at each privilege
+> +	 * level."
+> +	 *
+> +	 * To address the above issue, vstimecmp CSR must be set to -1UL
+> +	 * over here when VCPU is scheduled-out or exits to user space.
+>   	 */
+>   
+> +	csr_write(CSR_VSTIMECMP, -1UL);
+> +#if defined(CONFIG_32BIT)
+> +	csr_write(CSR_VSTIMECMPH, -1UL);
+> +#endif
+> +
+>   	/* timer should be enabled for the remaining operations */
+>   	if (unlikely(!t->init_done))
+>   		return;
+Reviewed-by: Atish Patra <atishp@rivosinc.com>
 
