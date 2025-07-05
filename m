@@ -1,121 +1,154 @@
-Return-Path: <linux-kernel+bounces-718211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-718217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48E59AF9EA9
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 09:21:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 260D5AF9EBB
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 09:24:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 369DF3B2D06
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 07:20:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 759A05676B8
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 07:24:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84DDB20468D;
-	Sat,  5 Jul 2025 07:21:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D80826CE1F;
+	Sat,  5 Jul 2025 07:24:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="hoRSOZXN"
-Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZDxJQc0/"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D5BB2E36E0
-	for <linux-kernel@vger.kernel.org>; Sat,  5 Jul 2025 07:21:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B00B1EE7B7;
+	Sat,  5 Jul 2025 07:24:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751700078; cv=none; b=MWWz3ywmULwDLAqoq7+m31tTLUBDGtxgpu63I/0onJZdjnwO2Cag/nbiycas33r5Pucs5jYtQVGOydhGCpId9+en7/V10wuKkvmf4MXFcXN1VOLKx16dQKBdFbN8LmRugulwXEyCE34T5KKNSVxEwmq33zmqQWs8E2jqAjFU3BA=
+	t=1751700248; cv=none; b=Gk2wRfBOXcEgxAr9bSp7jxteztqX1KgB3PHDOMFS75jUSbQw3SCAEKIFr6zmgVraZz8r2axxAQnV80mKOR4aUSOqq1PezfQtvNU8yFY9fVJQ/No12hXidddQZswVEazEi8CM8g4OU+Bya3msO9IMnBtVEoVZNErt8F+6WXblXPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751700078; c=relaxed/simple;
-	bh=+xBPB/8dTHOxwVpAzuXPV8Ax9paQP4P6o5ZXrcl4zbE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aXFIgVuGFE3/B6gVl5CQgwx/97f9CzKN6hRLcxdVXR+cPZ+X7AZyeRXIKfSw336qlBzKtrIgEzFnS8LQfR0+QTOUJfitPkK4Kz9kmIf9mFfPx7NKuCgIL+9wDY9RMb1Is6e0qIEIo3Ogdozfv2+oyw30sn74CsGu1n7Preso8Ss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=hoRSOZXN; arc=none smtp.client-ip=95.215.58.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <c3e83d38-1192-4c55-a4ea-263639f47ad6@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1751700072;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=euhcLfujtIvPVA/VcYVwZJTUlTuFRe4/HxRQq/ltqzY=;
-	b=hoRSOZXNSXk4tqkpkGPZ6moJ0oX9X2ATr72QOgTxioSC/wY+0yJmMaHHge1BSXpzYK7gDZ
-	h/oGRFZuflNp4k7fSkjYhCG8Io9w359QPR7e4SAQ8z89c0sHjr4gqlOnX6wonNL8gfh5b6
-	2DsvSYunqfnkolmq25dJ3cJXyH3P/iM=
-Date: Sat, 5 Jul 2025 00:21:06 -0700
+	s=arc-20240116; t=1751700248; c=relaxed/simple;
+	bh=Pz3cRcv1zbZ1CqC7+IZQFU+GLGHXpowDH4OC66sRtkU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ke7SqGuUMr7HcWAHZWdImZrspDfSAZMfDa4NywfmEMXaJ3o3ErjUvoG815CeX571jFsissOQucj4I5MfcrFkCH28PIqfWjaKPgQB85UB70RdA9aTBXscZRr7FSbWdz2oArRAFX5zhLeG9Oa4Oq4TiUo+F28+JRDBAgV3aT00CQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZDxJQc0/; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-450cf0120cdso12224085e9.2;
+        Sat, 05 Jul 2025 00:24:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751700245; x=1752305045; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gLS+BRlEsONV8EMZAn62VOpB8R0Xfmr2sdk/FeNAY8c=;
+        b=ZDxJQc0/AgHmfgGGttl2qzXXWlKV1Gqtk4UdIUAgWDV/2FmUDQvsewWGW60kULHgeO
+         G5HgJgz5gkOiIZgdWoPycq6wwYJYQSbQgfwfXl47X8GoThG9BGfTPkYPuvui34smpoEU
+         m6btVOiX3l17JWhrfUlRRnjCqlOx3jNJHbT6VGlkeyfkMXbji/RhKvbSPr44yEbRosf0
+         8rMuwC88k1haJBAjrsk3Oi7mN4DyikeMlQ0P0tEmpLZI7AFyMIYJmJ3Q23+g9RrclTyn
+         18B7yLgTTeOqtHpgJNUw8vXvYxVuSMOUdhdWQ85D5L1M3CnpsZ93woLYwHmWf+41+O7e
+         jt7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751700245; x=1752305045;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gLS+BRlEsONV8EMZAn62VOpB8R0Xfmr2sdk/FeNAY8c=;
+        b=GcjFnuGy9WDnsyMRkcxzO+VVgTKI12sct4r4+Yc+nMx5DdXBWZIZR4fMFwO1TUeT8u
+         vH0U8GUoipyQtzqXrYfPd9bSK1HlQw8w+iReKZ8Kn8iD/XSIARPlnKesVfg18s/did9t
+         hdzGZB4e4lHK6IjUI71iqMkFaInr53AOTHJ22g768nT+F9/apCg7Pkl8F5dpYE6925LK
+         Vsqkf0NwZTqbvtFUZpx4vOo6OZ08/tAX+50HFfVz5AgmQmhpD7pA/xEebmMACB70DKsf
+         WAonu59Tlw6Xqgy9+FLDkXog58uNtpflx4ps4guR2+hKX912yaLRRVeaBwIQajXa+q9b
+         mizA==
+X-Forwarded-Encrypted: i=1; AJvYcCWBc8cvkMmLgVHVzJvxVyei3P3kGpI0EVUqRwXorgXz9njv3Wp9o2xPqqdtefrYjPl899KltHj4E4H31uk=@vger.kernel.org, AJvYcCXcD+YfIrTAUkcTQqe5nZuM5L54DE07O0BJOuFfa/DzrROtvFO/0ftnfyHnj9IwURMFAUC7k9Ui@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4cls2y/keyham6CNbBo01+D46yU7F6IEuqqGWGxRdY9v1ek3B
+	67qLmxPw0hBzwLKdDRGmfW4osEuu6KZRN2uzDgKH94ihWt649y4vAOGd
+X-Gm-Gg: ASbGncvKW02NNfWYOJozYqjFjEHOfh/UISNnG7yLmCDoFjYRTdFQtAXrZxotTp2n/kc
+	GmruFwlPf6a+mHhzQ/IGqZTlABjL95eqAybvWKQK6dd1sJHEm22oHLGGosb57O5VW4N6/LWX/fq
+	FU9Igw3sEgW8KN2d2oT5NX+A/i+67ahnzoVh8ZiUd2kcS4gOGEPCpN8MjW/konMMWcmCaGx/6pN
+	jsKmLWCje4dYRps1A0xjA34SKCOYGhNYAdVU1PmonPBjzFgBufSP/8XDA8BlbuT24t+7HxBQsen
+	9y0OBaWUINz3cdySwPYvtK8dN2bWwSNNnr0RP9Tlu/rm0EAPDYwS8LxB/iXPSh/b0VR1KMSGaPI
+	mVQgQf3PKjOAv0P1UiA==
+X-Google-Smtp-Source: AGHT+IEq1kay//NkWPi317mX28rlE9Lsk8PLXX7RWA+9ucNeN6EWr6/mdhwPeCNmiUDCSELuiXWCrg==
+X-Received: by 2002:a05:600c:1907:b0:442:e9ec:4654 with SMTP id 5b1f17b1804b1-454b4e76790mr42199375e9.8.1751700245151;
+        Sat, 05 Jul 2025 00:24:05 -0700 (PDT)
+Received: from pumpkin (host-92-21-58-28.as13285.net. [92.21.58.28])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454b1695577sm46582335e9.27.2025.07.05.00.24.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 05 Jul 2025 00:24:04 -0700 (PDT)
+Date: Sat, 5 Jul 2025 08:24:03 +0100
+From: David Laight <david.laight.linux@gmail.com>
+To: Simon Horman <horms@kernel.org>
+Cc: Jijie Shao <shaojijie@huawei.com>, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ andrew+netdev@lunn.ch, shenjian15@huawei.com, liuyonglong@huawei.com,
+ chenhao418@huawei.com, jonathan.cameron@huawei.com,
+ shameerali.kolothum.thodi@huawei.com, salil.mehta@huawei.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net 3/4] net: hns3: fixed vf get max channels bug
+Message-ID: <20250705082403.0ba474f4@pumpkin>
+In-Reply-To: <20250704160537.GH41770@horms.kernel.org>
+References: <20250702130901.2879031-1-shaojijie@huawei.com>
+	<20250702130901.2879031-4-shaojijie@huawei.com>
+	<20250704160537.GH41770@horms.kernel.org>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 1/2] RISC-V: KVM: Disable vstimecmp before exiting to
- user-space
-To: Anup Patel <apatel@ventanamicro.com>
-Cc: Palmer Dabbelt <palmer@dabbelt.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Alexandre Ghiti <alex@ghiti.fr>,
- Andrew Jones <ajones@ventanamicro.com>, Anup Patel <anup@brainfault.org>,
- kvm@vger.kernel.org, kvm-riscv@lists.infradead.org,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- Heinrich Schuchardt <heinrich.schuchardt@canonical.com>
-References: <20250704153838.6575-1-apatel@ventanamicro.com>
- <20250704153838.6575-2-apatel@ventanamicro.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Atish Patra <atish.patra@linux.dev>
-In-Reply-To: <20250704153838.6575-2-apatel@ventanamicro.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+
+On Fri, 4 Jul 2025 17:05:37 +0100
+Simon Horman <horms@kernel.org> wrote:
+
+> + David Laight
+> 
+> On Wed, Jul 02, 2025 at 09:09:00PM +0800, Jijie Shao wrote:
+> > From: Hao Lan <lanhao@huawei.com>
+> > 
+> > Currently, the queried maximum of vf channels is the maximum of channels
+> > supported by each TC. However, the actual maximum of channels is
+> > the maximum of channels supported by the device.
+> > 
+> > Fixes: 849e46077689 ("net: hns3: add ethtool_ops.get_channels support for VF")
+> > Signed-off-by: Jian Shen <shenjian15@huawei.com>
+> > Signed-off-by: Hao Lan <lanhao@huawei.com>
+> > Signed-off-by: Jijie Shao <shaojijie@huawei.com>  
+> 
+> Reviewed-by: Simon Horman <horms@kernel.org>
+> 
+> > ---
+> >  drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c | 6 +-----
+> >  1 file changed, 1 insertion(+), 5 deletions(-)
+> > 
+> > diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
+> > index 33136a1e02cf..626f5419fd7d 100644
+> > --- a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
+> > +++ b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
+> > @@ -3094,11 +3094,7 @@ static void hclgevf_uninit_ae_dev(struct hnae3_ae_dev *ae_dev)
+> >  
+> >  static u32 hclgevf_get_max_channels(struct hclgevf_dev *hdev)
+> >  {
+> > -	struct hnae3_handle *nic = &hdev->nic;
+> > -	struct hnae3_knic_private_info *kinfo = &nic->kinfo;
+> > -
+> > -	return min_t(u32, hdev->rss_size_max,
+> > -		     hdev->num_tqps / kinfo->tc_info.num_tc);
+> > +	return min_t(u32, hdev->rss_size_max, hdev->num_tqps);  
+> 
+> min_t() wasn't needed before and it certainly doesn't seem to be needed
+> now, as both .rss_size_max, and .num_tqps are u16.
+
+It (well something) would have been needed before the min_t() changes.
+The u16 values get promoted to 'signed int' prior to the division.
+
+> 
+> As a follow-up, once this change hits net-next, please update to use min()
+> instead. Likely elsewhere too.
+
+Especially any min_t(u16, ...) or u8 ones.
+They are just so wrong and have caused bugs.
+
+	David
 
 
-On 7/4/25 8:38 AM, Anup Patel wrote:
-> If VS-timer expires when no VCPU running on a host CPU then WFI
-> executed by such host CPU will be effective NOP resulting in no
-> power savings. This is as-per RISC-V Privileged specificaiton
-> which says: "WFI is also required to resume execution for locally
-> enabled interrupts pending at any privilege level, regardless of
-> the global interrupt enable at each privilege level."
->
-> To address the above issue, vstimecmp CSR must be set to -1UL over
-> here when VCPU is scheduled-out or exits to user space.
->
-> Fixes: 8f5cb44b1bae ("RISC-V: KVM: Support sstc extension")
-> Fixes: cea8896bd936 ("RISC-V: KVM: Fix kvm_riscv_vcpu_timer_pending() for Sstc")
-> Reported-by: Heinrich Schuchardt <heinrich.schuchardt@canonical.com>
-> Closes: https://bugs.launchpad.net/ubuntu/+source/linux/+bug/2112578
-> Signed-off-by: Anup Patel <apatel@ventanamicro.com>
-> ---
->   arch/riscv/kvm/vcpu_timer.c | 16 ++++++++++++++++
->   1 file changed, 16 insertions(+)
->
-> diff --git a/arch/riscv/kvm/vcpu_timer.c b/arch/riscv/kvm/vcpu_timer.c
-> index ff672fa71fcc..85a7262115e1 100644
-> --- a/arch/riscv/kvm/vcpu_timer.c
-> +++ b/arch/riscv/kvm/vcpu_timer.c
-> @@ -345,8 +345,24 @@ void kvm_riscv_vcpu_timer_save(struct kvm_vcpu *vcpu)
->   	/*
->   	 * The vstimecmp CSRs are saved by kvm_riscv_vcpu_timer_sync()
->   	 * upon every VM exit so no need to save here.
-> +	 *
-> +	 * If VS-timer expires when no VCPU running on a host CPU then
-> +	 * WFI executed by such host CPU will be effective NOP resulting
-> +	 * in no power savings. This is because as-per RISC-V Privileged
-> +	 * specificaiton: "WFI is also required to resume execution for
-> +	 * locally enabled interrupts pending at any privilege level,
-> +	 * regardless of the global interrupt enable at each privilege
-> +	 * level."
-> +	 *
-> +	 * To address the above issue, vstimecmp CSR must be set to -1UL
-> +	 * over here when VCPU is scheduled-out or exits to user space.
->   	 */
->   
-> +	csr_write(CSR_VSTIMECMP, -1UL);
-> +#if defined(CONFIG_32BIT)
-> +	csr_write(CSR_VSTIMECMPH, -1UL);
-> +#endif
-> +
->   	/* timer should be enabled for the remaining operations */
->   	if (unlikely(!t->init_done))
->   		return;
-Reviewed-by: Atish Patra <atishp@rivosinc.com>
 
