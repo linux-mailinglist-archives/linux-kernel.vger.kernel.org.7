@@ -1,154 +1,236 @@
-Return-Path: <linux-kernel+bounces-718156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-718158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E38EAF9E1B
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 05:20:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3829FAF9E21
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 05:27:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BAA91C26E60
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 03:20:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 531667AC9D4
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 03:26:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D526B27280A;
-	Sat,  5 Jul 2025 03:20:36 +0000 (UTC)
-Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A96A2750EA;
+	Sat,  5 Jul 2025 03:27:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dCY2LoA8"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4EFF3BBF0
-	for <linux-kernel@vger.kernel.org>; Sat,  5 Jul 2025 03:20:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B333139D0A
+	for <linux-kernel@vger.kernel.org>; Sat,  5 Jul 2025 03:27:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751685636; cv=none; b=nfVqNrpCOYivWgpNGyXHaSoAuvSssDk/b0AaR6WI4Nzgx+yI0LkN66J6a2ThKkcIyKHtQf0+usrQEolEOKw0kjeIZdbJ0nh2r9341oTIWwwv/9tASCLvH88oWYmMyA07RucpkW5b9GMTyeU5QsN42JrhtXs+kbPo/1R1slDQ48E=
+	t=1751686046; cv=none; b=HexN6LW0Nwhnv4LWOJJRcSk1yJ/0QabWLjIgG8q2ZcYj9hBsQjDelNfJ3PuLZU+9oUrXSe1oIyC61SPRIwrHiVgC4CC9W0XxuTJWT6VlF+WoaaDxFi32yBEdQIXvTEaToMva1rCOfwzBp3RMQQFZlWgiaiArWmxW+uDM3hja9T4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751685636; c=relaxed/simple;
-	bh=CRQH1IyMz6ahEngxss2MpuakmH5sdxcDBWb+dAf1Xcg=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ZGdJNEQNzTcTrWD++DaAkGLfeJTLMnlaK7mLQ/SlnvZ9XIrQ6odRaHnOOQnXKO3dNXlYXAwjNlqFTHob+ghpTFeunlpNyiGyxtBYOkT+RNpclk9SXEQYCm6pGUvebSlypNNqBrv1qGXfSjKe+O88aX/m04VrYvBk5GTlRbxcfEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-8760733a107so136187039f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Jul 2025 20:20:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751685634; x=1752290434;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9VoFRaj++AKwnWdJ5HOmIe9Mz7Gq3Yw3PkhoxSS2pG8=;
-        b=jNu/eeUsboqxRAQ2ARx77P1+ZYa9KLHDp+YN7W/GB7ubSXCPjKCEkXTU1y/H3KfeD4
-         uePd0K2CC4KpuMI31ZVlX3N4qo9Vo9C4JcE9hqEYqtPIqtZK0vaoY2FxKcnrbsXUiHAq
-         0HeYZtsXYmxn5Fw+AVeA22Y2eZPwcHi7AVRKr5WPColytIIgOnRmjNAebTZFek1Zw0uN
-         XLTD/h8mpfiXVVsDyZ/Pkzflc1O0khwF0PaYhBmSWjU/pA8iuFxbPzxcQ+ktJOwKpJfN
-         JNrBzEhTHjQJpHvxEDr07K5HcaW+aLbITnejJtqnJOa0+am+GYFqDDs3CFy4SxgISgEe
-         zzyA==
-X-Forwarded-Encrypted: i=1; AJvYcCU5Z+T5mRmPEoCT1R4sn15yXWnGah6AT6JMbZfhclwFDcJAwRAHrhNRUjxFqYdrCLfkF2ZHN6xTif+Lklo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkR30aXZPcDcfIqZqvfbjxfAGUs91UQ/ODLQmtHkGqce+d6Cvl
-	0qvim6NUUhnRFC9LDvPHh+Vp+uiMcJw10uzJVTvhsk5BZFwr5RRXlNogUwkGdLwotOxTwYq/06S
-	Wb5OSF5PCfmPoNluq37gijbCpb+WU81sTVrmiUBP7VtTGtFcf61DEBjWRMJg=
-X-Google-Smtp-Source: AGHT+IFF8j/HHW8/8LkD95PaYBUrfKFScw55dIhBkot0qBwCmOs6qGdBWcFM6evhE6Vt9AMI6G+MLw6r/I7iM/2U9aTTDeiSecMu
+	s=arc-20240116; t=1751686046; c=relaxed/simple;
+	bh=rz1YPfn+Xyf97OsN+1k8HXgq3rfV0JI8jj2cnO+tzg8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=iMXrh05E+edEJD7pVQOc6PZkCAaCqMSyITUA03uVykhPqT5v0kPN1jgXMrnR5pwhP0vg5HOuM25CtZ8T4iiCErh2rtszqzKtxU9hb0qgeLwpFdS5T6szkZR0ZZyEG0JpSbGJwtKt5H3nY4eS2nxWX54rrjyAtLkCjmZhSjcQcQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dCY2LoA8; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751686045; x=1783222045;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=rz1YPfn+Xyf97OsN+1k8HXgq3rfV0JI8jj2cnO+tzg8=;
+  b=dCY2LoA8XfQSqx3oUwo0P97Ep1mdCWlYZQx29DF52JEppfSVwxdmdjcV
+   K6CjbUZmHYyTBcfdjuoh0mimLrCLYi+CArl7x6C+/yZrRIPGWcO8/BdsI
+   0V5IBx5AB3QMmFBQE4ucBPpUoRleZ102uptoC83me7lNVgYcp1KBl715E
+   7+7hazgecmiSBalAR8MpSSCh3/xWpjOkdkrCZ1JHY9F/cDhY/w+qZvfFb
+   n5VWephGwDMfFw0+oDeSMbhTl9O/2jre2dV0KZOMwJ2GaWZo2fVCTmWjf
+   nrwEgjItRWyJEJyJ90kVMXBHRt7j2jRCmvOGSpcYvSozxfP25A+ZbS/+Q
+   w==;
+X-CSE-ConnectionGUID: qTbIRxLlQcOg21gdy5hYkg==
+X-CSE-MsgGUID: hHTssmoPR+Gw5liNkIW1hA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11484"; a="53866595"
+X-IronPort-AV: E=Sophos;i="6.16,289,1744095600"; 
+   d="scan'208";a="53866595"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 20:27:25 -0700
+X-CSE-ConnectionGUID: YzEkqh/bRsiuAtOhpEsjAg==
+X-CSE-MsgGUID: eh3wVBO0QpuriMgRp2TlYg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,289,1744095600"; 
+   d="scan'208";a="155237758"
+Received: from igk-lkp-server01.igk.intel.com (HELO 030a839a1121) ([10.91.175.65])
+  by orviesa008.jf.intel.com with ESMTP; 04 Jul 2025 20:27:23 -0700
+Received: from kbuild by 030a839a1121 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uXtYe-0000lV-27;
+	Sat, 05 Jul 2025 03:27:20 +0000
+Date: Sat, 5 Jul 2025 05:26:31 +0200
+From: kernel test robot <lkp@intel.com>
+To: Dave Stevenson <dave.stevenson@raspberrypi.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org, Maxime Ripard <mripard@kernel.org>
+Subject: drivers/gpu/drm/vc4/vc4_drv.c:303:8: warning: cast to smaller
+ integer type 'enum vc4_gen' from 'const void *'
+Message-ID: <202507050513.zh0Xm13T-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a0f:b0:3dc:7fa4:834 with SMTP id
- e9e14a558f8ab-3e13ef0fee3mr9726355ab.15.1751685634030; Fri, 04 Jul 2025
- 20:20:34 -0700 (PDT)
-Date: Fri, 04 Jul 2025 20:20:34 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68689a02.a00a0220.c7b3.002c.GAE@google.com>
-Subject: [syzbot] [kernel?] WARNING in driver_unregister (2)
-From: syzbot <syzbot+6616bba359cec7a1def1@syzkaller.appspotmail.com>
-To: dakr@kernel.org, gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, 
-	rafael@kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hello,
+Hi Dave,
 
-syzbot found the following issue on:
+FYI, the error/warning still remains.
 
-HEAD commit:    c435a4f487e8 Merge tag 'riscv-for-linus-6.16-rc5' of git:/..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=138f8f70580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5ba6cef8f153bfeb
-dashboard link: https://syzkaller.appspot.com/bug?extid=6616bba359cec7a1def1
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10b8febc580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=118f6c8c580000
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   a79a588fc1761dc12a3064fc2f648ae66cea3c5a
+commit: 56aa4c374dbf86d90b7c5aabdc8facbdd3321477 drm/vc4: Use of_device_get_match_data to set generation
+date:   7 months ago
+config: x86_64-buildonly-randconfig-2001-20250705 (https://download.01.org/0day-ci/archive/20250705/202507050513.zh0Xm13T-lkp@intel.com/config)
+compiler: clang version 20.1.7 (https://github.com/llvm/llvm-project 6146a88f60492b520a36f8f8f3231e15f3cc6082)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250705/202507050513.zh0Xm13T-lkp@intel.com/reproduce)
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-c435a4f4.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/691cd7284e87/vmlinux-c435a4f4.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/e61b1a511aab/bzImage-c435a4f4.xz
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507050513.zh0Xm13T-lkp@intel.com/
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+6616bba359cec7a1def1@syzkaller.appspotmail.com
+All warnings (new ones prefixed by >>):
 
-Unexpected driver unregister!
-WARNING: CPU: 1 PID: 6119 at drivers/base/driver.c:273 driver_unregister drivers/base/driver.c:273 [inline]
-WARNING: CPU: 1 PID: 6119 at drivers/base/driver.c:273 driver_unregister+0x90/0xb0 drivers/base/driver.c:270
-Modules linked in:
-CPU: 1 UID: 0 PID: 6119 Comm: syz.0.16 Not tainted 6.16.0-rc4-syzkaller-00286-gc435a4f487e8 #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:driver_unregister drivers/base/driver.c:273 [inline]
-RIP: 0010:driver_unregister+0x90/0xb0 drivers/base/driver.c:270
-Code: 48 89 ef e8 12 8f 55 fc 48 89 df e8 7a 93 ff ff 5b 5d e9 63 cf ae fb e8 5e cf ae fb 90 48 c7 c7 80 ef 41 8c e8 91 8f 6d fb 90 <0f> 0b 90 90 5b 5d e9 45 cf ae fb e8 40 ab 15 fc eb 94 e8 39 ab 15
-RSP: 0018:ffffc900049d79d8 EFLAGS: 00010286
-RAX: 0000000000000000 RBX: ffffffff90173840 RCX: ffffffff817ae278
-RDX: ffff888029d50000 RSI: ffffffff817ae285 RDI: 0000000000000001
-RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000001 R11: 0000000000000001 R12: 0000000000000002
-R13: dffffc0000000000 R14: 0000000000000000 R15: ffff888107f6b800
-FS:  000055555b4fa500(0000) GS:ffff8880d6815000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000001b2e55ffff CR3: 000000002b847000 CR4: 0000000000352ef0
-Call Trace:
- <TASK>
- comedi_device_detach+0x13d/0x9e0 drivers/comedi/drivers.c:207
- comedi_device_attach+0x43d/0x900 drivers/comedi/drivers.c:1000
- do_devconfig_ioctl+0x1a7/0x580 drivers/comedi/comedi_fops.c:855
- comedi_unlocked_ioctl+0x15bb/0x2e90 drivers/comedi/comedi_fops.c:2136
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:907 [inline]
- __se_sys_ioctl fs/ioctl.c:893 [inline]
- __x64_sys_ioctl+0x18b/0x210 fs/ioctl.c:893
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xcd/0x4c0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f587658e929
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fff8eccbf98 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007f58767b5fa0 RCX: 00007f587658e929
-RDX: 0000200000000080 RSI: 0000000040946400 RDI: 0000000000000003
-RBP: 00007f5876610b39 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f58767b5fa0 R14: 00007f58767b5fa0 R15: 0000000000000003
- </TASK>
+   In file included from drivers/gpu/drm/vc4/vc4_drv.c:27:
+   In file included from include/linux/dma-mapping.h:11:
+   In file included from include/linux/scatterlist.h:8:
+   In file included from include/linux/mm.h:2213:
+   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+>> drivers/gpu/drm/vc4/vc4_drv.c:303:8: warning: cast to smaller integer type 'enum vc4_gen' from 'const void *' [-Wvoid-pointer-to-enum-cast]
+     303 |         gen = (enum vc4_gen)of_device_get_match_data(dev);
+         |               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   2 warnings generated.
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+vim +303 drivers/gpu/drm/vc4/vc4_drv.c
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+   288	
+   289	static int vc4_drm_bind(struct device *dev)
+   290	{
+   291		struct platform_device *pdev = to_platform_device(dev);
+   292		const struct drm_driver *driver;
+   293		struct rpi_firmware *firmware = NULL;
+   294		struct drm_device *drm;
+   295		struct vc4_dev *vc4;
+   296		struct device_node *node;
+   297		struct drm_crtc *crtc;
+   298		enum vc4_gen gen;
+   299		int ret = 0;
+   300	
+   301		dev->coherent_dma_mask = DMA_BIT_MASK(32);
+   302	
+ > 303		gen = (enum vc4_gen)of_device_get_match_data(dev);
+   304	
+   305		if (gen > VC4_GEN_4)
+   306			driver = &vc5_drm_driver;
+   307		else
+   308			driver = &vc4_drm_driver;
+   309	
+   310		node = of_find_matching_node_and_match(NULL, vc4_dma_range_matches,
+   311						       NULL);
+   312		if (node) {
+   313			ret = of_dma_configure(dev, node, true);
+   314			of_node_put(node);
+   315	
+   316			if (ret)
+   317				return ret;
+   318		}
+   319	
+   320		vc4 = devm_drm_dev_alloc(dev, driver, struct vc4_dev, base);
+   321		if (IS_ERR(vc4))
+   322			return PTR_ERR(vc4);
+   323		vc4->gen = gen;
+   324		vc4->dev = dev;
+   325	
+   326		drm = &vc4->base;
+   327		platform_set_drvdata(pdev, drm);
+   328	
+   329		if (gen == VC4_GEN_4) {
+   330			ret = drmm_mutex_init(drm, &vc4->bin_bo_lock);
+   331			if (ret)
+   332				goto err;
+   333	
+   334			ret = vc4_bo_cache_init(drm);
+   335			if (ret)
+   336				goto err;
+   337		}
+   338	
+   339		ret = drmm_mode_config_init(drm);
+   340		if (ret)
+   341			goto err;
+   342	
+   343		if (gen == VC4_GEN_4) {
+   344			ret = vc4_gem_init(drm);
+   345			if (ret)
+   346				goto err;
+   347		}
+   348	
+   349		node = of_find_compatible_node(NULL, NULL, "raspberrypi,bcm2835-firmware");
+   350		if (node) {
+   351			firmware = rpi_firmware_get(node);
+   352			of_node_put(node);
+   353	
+   354			if (!firmware) {
+   355				ret = -EPROBE_DEFER;
+   356				goto err;
+   357			}
+   358		}
+   359	
+   360		ret = aperture_remove_all_conflicting_devices(driver->name);
+   361		if (ret)
+   362			goto err;
+   363	
+   364		if (firmware) {
+   365			ret = rpi_firmware_property(firmware,
+   366						    RPI_FIRMWARE_NOTIFY_DISPLAY_DONE,
+   367						    NULL, 0);
+   368			if (ret)
+   369				drm_warn(drm, "Couldn't stop firmware display driver: %d\n", ret);
+   370	
+   371			rpi_firmware_put(firmware);
+   372		}
+   373	
+   374		ret = component_bind_all(dev, drm);
+   375		if (ret)
+   376			goto err;
+   377	
+   378		ret = devm_add_action_or_reset(dev, vc4_component_unbind_all, vc4);
+   379		if (ret)
+   380			goto err;
+   381	
+   382		ret = vc4_plane_create_additional_planes(drm);
+   383		if (ret)
+   384			goto err;
+   385	
+   386		ret = vc4_kms_load(drm);
+   387		if (ret < 0)
+   388			goto err;
+   389	
+   390		drm_for_each_crtc(crtc, drm)
+   391			vc4_crtc_disable_at_boot(crtc);
+   392	
+   393		ret = drm_dev_register(drm, 0);
+   394		if (ret < 0)
+   395			goto err;
+   396	
+   397		drm_client_setup_with_fourcc(drm, DRM_FORMAT_RGB565);
+   398	
+   399		return 0;
+   400	
+   401	err:
+   402		platform_set_drvdata(pdev, NULL);
+   403		return ret;
+   404	}
+   405	
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
