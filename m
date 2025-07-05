@@ -1,104 +1,87 @@
-Return-Path: <linux-kernel+bounces-718251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-718253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74098AF9F2A
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 10:35:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AF3EAAF9F2E
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 10:38:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88D393AA510
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 08:35:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D200485527
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 08:37:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 450DB2882A2;
-	Sat,  5 Jul 2025 08:35:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VxNsaGXm"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECC6F28725C;
+	Sat,  5 Jul 2025 08:38:07 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30E6123AD
-	for <linux-kernel@vger.kernel.org>; Sat,  5 Jul 2025 08:35:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E1B523AD
+	for <linux-kernel@vger.kernel.org>; Sat,  5 Jul 2025 08:38:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751704544; cv=none; b=AcVuJpgiVBiOL/2SR3Zg38VGB42mAyjrW8K7Ej5Iq+/WC9IklUtx9ylrjzDrXi2PfxXHNx9PXgOUaCL9NUcSf+CPXWqHp4Cty0LNdlbQhCWfNHCfChSZkGfPJfDpWNNirhOwyWaX+zKtOYtpGFAkMB64NgVJMcucUX1m4sbwjCY=
+	t=1751704687; cv=none; b=tRj26aPdg09IAvFKYlCJGk/5UDEgrBllxVeazHS6TkCaB3lX63Kc1/JDcGXHjpnQ5WpCYX/O4Mt72Q7CAQcfMWEgkZvAjaxl0AC/AlQeNZmMHJ07m/iHrSWglOiZXUEUVx61A4Ep8TDYw8d8XvklT/lolJiMtQDFRvmFiQ2fOHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751704544; c=relaxed/simple;
-	bh=ah4SIvptMdwSFRwkpjHC9dZIrJE8W7eJFE6nNgvIwz8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IZmmVYrSaWVhFG8IjZmzAYZFr0sOUuW2fWTe4rL45jpF2Bzyu2bD2th6XPqXxUHwIFZFOgo9WEcDO6DcmZxqvWktymNfP+a83SjIC04KCQ8x+ecah7bfy2tUGmMi9fmypQHBrkShavnVgXyro0bBOS0VKEElOfBHR8FJMwbgdzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VxNsaGXm; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3a4f72cba73so1698209f8f.1
-        for <linux-kernel@vger.kernel.org>; Sat, 05 Jul 2025 01:35:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1751704539; x=1752309339; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ah4SIvptMdwSFRwkpjHC9dZIrJE8W7eJFE6nNgvIwz8=;
-        b=VxNsaGXmpFBZzbGKOd6IK9X/JtW/udqf/QFYkdXLMxRPH8E9mWRWHzOT+AbD9nMkC1
-         vaV1j7SBSvjfLydUz29ox3rRRDZpZzJRbQEGkh0GwAz2fLNT0dw0/NXxuNgJZeLMROHS
-         Q349P3/x4ugtlRCxNp3zhbinpl0JTgQokNMmBk+oqFHEDeRH/44vvvHgcyhH1S3X3GX2
-         tz3pFZw9743bK2bsHftHI6JlopBSveB0xVs+haMSn7ibzFOVJFyTRP0hnMuIk6GPjdpz
-         HNHvsXdqQc6gu8JSIiWFTUtYBokNkCcIauhl6GCovDOlUxd6nSbvcDR5KxM1IgzY4s7/
-         oyMQ==
+	s=arc-20240116; t=1751704687; c=relaxed/simple;
+	bh=pd3/bWeNDRMiUMWZrI3C8QH/tnQr1oE7j7E3nU936Ew=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=booHVXQWFqW8Z/fm8jr4ns8F2XiTf8rQGms10+34Gc1j1Lki75VffHx98szpVLOV/FO/gstFUT7FuZUhogj9KZgkoDVmbQD0cU6on0lUv+rb2bUyrejQ3RVYJLHz9Act3EFH/Il1OBM8tFlU6QpkvxZDG3yRyS/En4HS0gTHUIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3ddd5cd020dso40046345ab.0
+        for <linux-kernel@vger.kernel.org>; Sat, 05 Jul 2025 01:38:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751704539; x=1752309339;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ah4SIvptMdwSFRwkpjHC9dZIrJE8W7eJFE6nNgvIwz8=;
-        b=i9kqVto7kdwdI12JfIEEPPHSEY76BPKvuRKYan1jI28qKIO2t6znCrx9JjYQDVHDVx
-         IN4SQWTKtJAhiINn46gRwMU19A9lS2/rsh46xg8PIQciaUx5+dIXMr6crk/oz8ac2Bn/
-         RRToT3pfvEIphErSY23XlVDn3iL/FDwy8REFAvnjswuVYHiOwwtfI0YdkM+22TC2/N9C
-         Tjp7gzwCPkE+wp2BNqCnGGaTV+ZAomFEtVwFLUEFjaJvX8WjGVsgWynUExU39ugc2Q6I
-         E05ojb+IuBf9BDEKXZFOHqtCwGyuTffqVT/Wxjrq2vQQgfH7IqSXm0bvEmwhXCTO7Zts
-         O0Bw==
-X-Forwarded-Encrypted: i=1; AJvYcCXH1dUwzkGApeSWfJ1aujmNGY8Pa/btH/z2rUWppMQLO0xI3NZK+cJad7kRYzKXytiA6xsbMjlTRH7ofmQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzyVIRzGXnIUbq5YTgf0djLdAeNWj5/+mUXznz5YieeFhZ/zeZk
-	0SOurQ4Kw7CiXuoLpGBkePVSBDhC96guGtObR92oQFaX+oc9D/TFEHQKzAePf5aKsa1vop4H6lG
-	DVPlSo+xddJ9A8AtvdF/WgLhhH/VCrXyQ7Ln8Ff1Z
-X-Gm-Gg: ASbGncstqvrWKkIVVPc5qHnWLh9CcHHGlKzRQ8bnGiBsJgpFNu/nZiKmRtH2L/VXe9A
-	mhC1wvXsnkTe+/LVbAj6vHmSiSHxFI08ldOKQFZnMiIg49+4rsyB2wGsdQ65a4YF7g+n6eJUKmn
-	MnDsI2mMaNLT5LifJRxxNHDdUdDpx+8ypn8ULBMER5mLZN0uy1LXZ6YCs=
-X-Google-Smtp-Source: AGHT+IH/pkllT3Sy9Cb1lHriZM/tG78khhI42JnRhbPr8kP9tTs+gtmjri5ZYwhkuP07q9yAkZH9HXYofTd095qzzFE=
-X-Received: by 2002:adf:e18f:0:b0:3a4:c71a:8119 with SMTP id
- ffacd0b85a97d-3b495cc4ea6mr5351566f8f.25.1751704539369; Sat, 05 Jul 2025
- 01:35:39 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1751704685; x=1752309485;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Gh4EdRrW8LNJZpi+F7BKE+mN/n8SDxBPLoMoVetyNa4=;
+        b=tnPEFPl1OThem1sOpiSBpkL7HpmkXGS1HhB57YKksE4rp+j3T1F3jrYD64K7Zdo1pt
+         WnjmPSFMQOtJAqp/+s+WfXlQNrmWNyFwv1nn03eXd28xWK0QFV90Py9nWG6fPXJuac+9
+         pFE/B/n/gx+lrmGR7F5y0C5mB5LD50NY/HfDwEp1QtZDQ/k3StM65iF9SuVkkd9Qre8/
+         1AUEZJ5w8YvN4oNpBmGaCmhfDfb7e+gfNXqVFR2t/xw/+1mxXHyE5nw6WGEjvuNM2a7S
+         H3kGmzil6UVnxNSPsNabs8cHxVhu+bVigV3ijZlnE5slljxyiMl96+xHfT3s9Iyqnp8I
+         dxUg==
+X-Forwarded-Encrypted: i=1; AJvYcCXb0zeZU2wg9AbPQK9IevsPzyiSR/1Q/m95hdXqPJQfoIvIDmHsD6whtRe8LsxWNQNoMEzSZ0eVHxr8Z2Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwT2tOwAG3Jtjx6FmPTzJ1KfV5Don55ED1Ywx6NLNnxs/2Td9en
+	X/Uy1sSS9eJPjeZ9iZT5NKYrgaViV80hICk9yoo2JJMS2ZPBtdGUQc53Ys+c2PF+EzxT9e+DP6Z
+	Mv+wxY7DVz+1iYpKopkNzmqxyIxbN5WH9RH4SHedxDKvFRrwIIM0timUvPkM=
+X-Google-Smtp-Source: AGHT+IFhVV1SaHk58QLG0Xx5l8BncslKZ0nyOqVLOcBqkalo5W21QCSHC6gouZROc0OVfDNnQhu9m3VW3FkFXZuCEAwN8hBCTlTm
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250704-core-cstr-prepare-v1-0-a91524037783@gmail.com> <20250704-core-cstr-prepare-v1-4-a91524037783@gmail.com>
-In-Reply-To: <20250704-core-cstr-prepare-v1-4-a91524037783@gmail.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Sat, 5 Jul 2025 10:35:27 +0200
-X-Gm-Features: Ac12FXyGVQLpnmxvOqtVG7V_plS_x4VHl-FkqPG4Jcdo-zfXWt7_Lhls-5TlbKw
-Message-ID: <CAH5fLgg=4ZqKh1hqFD9bmGJwUf3LK3=K+Q4tTRPnT+NaMubpLQ@mail.gmail.com>
-Subject: Re: [PATCH 4/6] rust: str: remove unnecessary qualification
-To: Tamir Duberstein <tamird@gmail.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
-	rust-for-linux@vger.kernel.org
+X-Received: by 2002:a05:6e02:11:b0:3df:4cf8:dd50 with SMTP id
+ e9e14a558f8ab-3e1355c3aafmr57112365ab.19.1751704685268; Sat, 05 Jul 2025
+ 01:38:05 -0700 (PDT)
+Date: Sat, 05 Jul 2025 01:38:05 -0700
+In-Reply-To: <20250705081850.2552-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6868e46d.a00a0220.c7b3.0030.GAE@google.com>
+Subject: Re: [syzbot] [kernel?] WARNING in driver_unregister (2)
+From: syzbot <syzbot+6616bba359cec7a1def1@syzkaller.appspotmail.com>
+To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 4, 2025 at 10:16=E2=80=AFPM Tamir Duberstein <tamird@gmail.com>=
- wrote:
->
-> `core::ffi::*` is in the prelude, which is imported here.
->
-> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+Hello,
 
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+
+Reported-by: syzbot+6616bba359cec7a1def1@syzkaller.appspotmail.com
+Tested-by: syzbot+6616bba359cec7a1def1@syzkaller.appspotmail.com
+
+Tested on:
+
+commit:         a79a588f Merge tag 'pm-6.16-rc5' of git://git.kernel.o..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=102bc582580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5ba6cef8f153bfeb
+dashboard link: https://syzkaller.appspot.com/bug?extid=6616bba359cec7a1def1
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=16a6f3d4580000
+
+Note: testing is done by a robot and is best-effort only.
 
