@@ -1,139 +1,143 @@
-Return-Path: <linux-kernel+bounces-718199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-718201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48AEDAF9E93
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 09:01:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE8EFAF9E9D
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 09:10:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 946F33AA8CC
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 07:01:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35EF0566EF8
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Jul 2025 07:10:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFFC6230BF8;
-	Sat,  5 Jul 2025 07:01:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ot5FtxDd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26A8D2741AD;
+	Sat,  5 Jul 2025 07:10:15 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B01D1F0E47;
-	Sat,  5 Jul 2025 07:01:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 690DD1DD0D4;
+	Sat,  5 Jul 2025 07:10:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751698899; cv=none; b=MlHVlRT3GxwfHJM4XrfRT3KyddlNuKGIkEzfcoJZTMztHHNNKBmYhVDWlsLlU1N30k5JSC5SH5+cOE1NBhnS9x8eWgm2eplFtxEIZvs8SxV36gwMITwNY8gm6dFy9iF0x1a6oxaNOJyDpUS2m1bktpaEyTSwn8aHdzAupW6vdJo=
+	t=1751699414; cv=none; b=gBO/SiqAEvz6d3/+XOtxqOCpByCYeKvw/vuK7ERUZeOf9jETPvTvAylIkmaNgEuAW0ahdVkM7ztLPoN7R614COUkPh2+/M2Iob+g6jwm2IJ/7GfQIqg4714LvI8hLyXeCHLkRI3Ed5YHEn5rIyNx0IYtLy2gQsl7ohz912XUiic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751698899; c=relaxed/simple;
-	bh=Idmu/dCAYI+cgqBEYepV+Mv0IJ2ByJnr314LV8QmSKk=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=u3VQCiaQzRFDnB7b7f3SxYi/3Rc98A//K9OtFoREF4FP4JjAszR6OL7eya09uDv8kYVmgMSIoNU7JinoC+zHHZylQV3DmE2JyjMEylEzEjL0gKFk92u/Pq93rfoeyL18KeymGgCjtjG/CFo7hEuBF3HYw3zKZwaQEg49n8qTkGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ot5FtxDd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8D1DC4CEE7;
-	Sat,  5 Jul 2025 07:01:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751698897;
-	bh=Idmu/dCAYI+cgqBEYepV+Mv0IJ2ByJnr314LV8QmSKk=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=Ot5FtxDd/DzDG+uyjUTdveMYO13QXkaaamkCO+pyezWTNJXS7NJVaY6jt/fDXh3BI
-	 yrvzzzNAO9Zj/yTXLmdAhrN48kcAvAOeuXiQ/eWpYmTGyArutMm0zRtAwTYiAv6OX5
-	 jWQmMWBQhnAcDw6k2lpRTzFL9lkUHyqlVu7nGOlxIYFHW7mOSFTyjz82nsVI88x8l8
-	 qcNuHgA8x/bcvuWHnj3Ck2+Sy3zdFO2TPPizEYNHLn5Q3iGgttXYDG17e75IfLLKk6
-	 NeFShxy/bVLLaiy7Gs+V8aMJ+b+vzRiWXLnbgQpjVHG+s6Sb7Xxpvg4j693n76fk4k
-	 EMg2seiqYVyOw==
+	s=arc-20240116; t=1751699414; c=relaxed/simple;
+	bh=D7TQOOjltjXwEI9gZjZ2pDomlcz9NTXBEIbpgbwlSLQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lREKmYpkqq88J2zU9hpiDo9Y4D2P788Ljqkx2ZTI3D50D3fVPNl1ts9cEJ+Jk795RGntlYxuBubHMBxeG798o70yJn4D4t7OCUCPKeJ/TsTq5EyenKmxjMWBAe9bVmR5MzjlYbmRtVZMMdORVwyUH20l8w0K7huTgnueQMtJTYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bZ1q55Hn2zYQtLs;
+	Sat,  5 Jul 2025 15:10:09 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.252])
+	by mail.maildlp.com (Postfix) with ESMTP id 8EA471A0847;
+	Sat,  5 Jul 2025 15:10:08 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP3 (Coremail) with SMTP id _Ch0CgBnxyTKz2hoUJLWAg--.53385S3;
+	Sat, 05 Jul 2025 15:10:04 +0800 (CST)
+Message-ID: <094a1420-9060-4dcf-9398-8873193f5f7b@huaweicloud.com>
+Date: Sat, 5 Jul 2025 15:10:02 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: next-20250626: WARNING fs jbd2 transaction.c start_this_handle
+ with ARM64_64K_PAGES
+To: Joseph Qi <jiangqi903@gmail.com>
+Cc: linux-ext4 <linux-ext4@vger.kernel.org>, linux-fsdevel@vger.kernel.org,
+ open list <linux-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org,
+ Linux Regressions <regressions@lists.linux.dev>,
+ LTP List <ltp@lists.linux.it>, Theodore Ts'o <tytso@mit.edu>,
+ Jan Kara <jack@suse.cz>, Anders Roxell <anders.roxell@linaro.org>,
+ Dan Carpenter <dan.carpenter@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
+ Naresh Kamboju <naresh.kamboju@linaro.org>
+References: <CA+G9fYsyYQ3ZL4xaSg1-Tt5Evto7Zd+hgNWZEa9cQLbahA1+xg@mail.gmail.com>
+ <2dbc199b-ef22-4c22-9dbd-5e5876e9f9b4@huaweicloud.com>
+ <CA+G9fYv5zpLxeVLqYbDLLUOxmAzuXDbaZobvpCBBBuZJKLMpPQ@mail.gmail.com>
+ <2ee5547a-fa11-49fb-98b7-898d20457d7e@gmail.com>
+Content-Language: en-US
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+In-Reply-To: <2ee5547a-fa11-49fb-98b7-898d20457d7e@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Date: Sat, 05 Jul 2025 09:01:33 +0200
-Message-Id: <DB3XFMG7M4SO.J6A2LVOAOJDX@kernel.org>
-Cc: <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <dakr@kernel.org>, <ojeda@kernel.org>, <skhan@linuxfoundation.org>,
- <linux-kernel-mentees@lists.linuxfoundation.org>,
- <~lkcamp/patches@lists.sr.ht>
-Subject: Re: [PATCH v5 0/2] rust: revocable: documentation and refactorings
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Marcelo Moreira" <marcelomoreira1905@gmail.com>
-X-Mailer: aerc 0.20.1
-References: <20250626165927.66498-1-marcelomoreira1905@gmail.com>
- <DB29YAYDK6YW.1NF5I2WSI1BPR@kernel.org>
- <CAPZ3m_iqCRYh+XhMip3h=ZWKpw4VPfnRQ6ofmoAnrzKDbOO-PA@mail.gmail.com>
-In-Reply-To: <CAPZ3m_iqCRYh+XhMip3h=ZWKpw4VPfnRQ6ofmoAnrzKDbOO-PA@mail.gmail.com>
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:_Ch0CgBnxyTKz2hoUJLWAg--.53385S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxJry3Gr1kKrW8KF1rCryrtFb_yoW8AF4rpa
+	y3Ja4DCF4UGr18JrWIqF1vqw17ta18tr48Xr9xGry5C3Z0yF1xur4SgF1j9F90vr1xuwnY
+	qr4q9a4I9ayjyaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
+	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
+	ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1
+	7KsUUUUUU==
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-On Sat Jul 5, 2025 at 7:09 AM CEST, Marcelo Moreira wrote:
-> Em qui., 3 de jul. de 2025 =C3=A0s 05:24, Benno Lossin <lossin@kernel.org=
-> escreveu:
+On 2025/7/3 18:47, Joseph Qi wrote:
+> 
+> 
+> On 2025/7/3 15:26, Naresh Kamboju wrote:
+>> On Thu, 26 Jun 2025 at 19:23, Zhang Yi <yi.zhang@huaweicloud.com> wrote:
+>>>
+>>> Hi, Naresh!
+>>>
+>>> On 2025/6/26 20:31, Naresh Kamboju wrote:
+>>>> Regressions noticed on arm64 devices while running LTP syscalls mmap16
+>>>> test case on the Linux next-20250616..next-20250626 with the extra build
+>>>> config fragment CONFIG_ARM64_64K_PAGES=y the kernel warning noticed.
+>>>>
+>>>> Not reproducible with 4K page size.
+>>>>
+>>>> Test environments:
+>>>> - Dragonboard-410c
+>>>> - Juno-r2
+>>>> - rk3399-rock-pi-4b
+>>>> - qemu-arm64
+>>>>
+>>>> Regression Analysis:
+>>>> - New regression? Yes
+>>>> - Reproducibility? Yes
+>>>>
+>>>> Test regression: next-20250626 LTP mmap16 WARNING fs jbd2
+>>>> transaction.c start_this_handle
+>>>>
+>>>> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+>>>
+>>> Thank you for the report. The block size for this test is 1 KB, so I
+>>> suspect this is the issue with insufficient journal credits that we
+>>> are going to resolve.
 >>
->> On Thu Jun 26, 2025 at 6:59 PM CEST, Marcelo Moreira wrote:
->> > This patch series brings documentation and refactorings to the `Revoca=
-ble` type.
->> >
->> > Changes include:
->> > - Clarifying the write invariant and updating associated safety commen=
-ts for `Revocable<T>`.
->> > - Splitting the internal `revoke_internal` function into two distinct,=
- explicit functions: `revoke()` (safe, synchronizing with RCU) and `revoke_=
-nosync()` (unsafe, without RCU synchronization), now returning `bool` to in=
-dicate revocation status.
+>> I have applied your patch set [1] and tested and the reported
+>> regressions did not fix.
+>> Am I missing anything ?
 >>
->> Could you wrap your text to a more readable column? Thanks!
->
-> Sure! Thanks!
->
+>> [1] https://lore.kernel.org/linux-ext4/20250611111625.1668035-1-yi.zhang@huaweicloud.com/
 >>
->> >
->> > Marcelo Moreira (2):
->> >   rust: revocable: Refactor revocation mechanism to remove generic
->> >     revoke_internal
->> >   rust: revocable: Clarify write invariant and update safety comments
->> >
->> > Changelog
->> > ---------
->> >
->> > Changes since v4:
->> > - Rebased the series onto the latest `rfl/rust-next` to integrate rece=
-nt changes, specifically the `bool` return for `revoke()` and `revoke_nosyn=
-c()`.
->> > - Dropped the "rust: revocable: simplify RevocableGuard for internal s=
-afety" patch, as the approach of using a direct reference (`&'a T`) for `Re=
-vocableGuard` was found to be unsound due to Rust's aliasing rules and LLVM=
-'s `dereferencable` attribute guarantees, which require references to remai=
-n valid for the entire function call duration, even if the internal RCU gua=
-rd is dropped earlier.
->> > - Refined the `PinnedDrop::drop` `SAFETY` comment based on Benno Lossi=
-n's and Miguel Ojeda's feedback, adopting a more concise and standard Kerne=
-l-style bullet point format.
->> > - Corrected a duplicated line in the commit message of the second patc=
-h.
->>
->> Now since we had to drop the `RevocableGuard` change, its safety
->> invariant & comment in `deref` is insufficient. It shouldn't have the
->> invariant that the rcu lock is held (since it owns an `rcu::Guard`, that
->> already is guaranteed), but instead it should require that the
->> `data_ref` pointer is valid. That invariant is then used by the safety
->> comment in `deref` to justify dereferencing the pointer.
->>
->> Also, I think it's better to reorder the patches again (since the
->> current first one relies on changes from the second one), the first one
->> should be the change to the invariants section of `Revocable` (so
->> currently the second patch). Then the second and third patches can be
->> the removal of `revoke_internal` and the `RevocableGuard` safety
->> documentation fix.
->
-> All right Benno, I'll prepare the comment for `RevocableGuard` and send v=
-6.
->
-> The order now is:
-> 1- Documentation for invariant and updates associated `SAFETY` comments
-> 2- Remove `revoke_internal` (Refactoring)
-> 3- `RevocableGuard` safety documentation fix.
+> 
+> I can also reproduce the similar warning with xfstests generic/730 under
+> 64k page size + 4k block size.
+> 
 
-Sounds good!
+Hi, Joseph!
 
----
-Cheers,
-Benno
+I cannot reproduce this issue on my machine. Theoretically, the 'rsv_credits'
+should be 113 under 64k page size + 4k block size, I don't think it would
+exceed the max user trans buffers. Could you please give more details?
+What is the configuration of your xfstests? and what does the specific error
+log look like?
+
+Thanks,
+Yi.
+
 
