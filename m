@@ -1,115 +1,119 @@
-Return-Path: <linux-kernel+bounces-718964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-718967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 143C4AFA820
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 00:15:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 85C48AFA830
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 00:29:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A16E41899860
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Jul 2025 22:15:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BCC9189B11D
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Jul 2025 22:30:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAD10285CB8;
-	Sun,  6 Jul 2025 22:14:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 094101FF1A1;
+	Sun,  6 Jul 2025 22:29:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SGgqVBpJ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UaIqaj+b"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC3931F8AC8
-	for <linux-kernel@vger.kernel.org>; Sun,  6 Jul 2025 22:14:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C755846F;
+	Sun,  6 Jul 2025 22:29:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751840094; cv=none; b=ZFWgnFGErKNA0Roy5L0UmGWGSyhFyZl3SeV4ro/VfyqKhsJcUp71rSw93y9XXKhRsxe8EY34T6W+N3pCmwPGoE73gfH7Zici6/iT3My5xyOmCM2Je2jE3EMnlBVPmqxliqeZJHt970y7xtO00Ft8kJbcCjgovMifYmS2c57+HTI=
+	t=1751840989; cv=none; b=HYr87vCEgaDHM7IhQv0eyxT0GRRY9Ncxfmh56YURSAS42sSSQQ3/SnVUqGQH1veZ497AIA6O06C0+MR74ypw5Sg38z785orOnyPPtp9ETlzg/imYGeyAtmtfb1G/H/TH700ZHvnpj9kdnjd2ROB56R/XzVDH5GWZGlrbU5dZA6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751840094; c=relaxed/simple;
-	bh=pSVJG54LbGdf3nf1nJarqLBZcsrGa3Eb7lfuy54k+yg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=puP/q6ympAaeFXz/8jk0glGMyjHw99WrvoCxIt9vT3Xuw2uDplOwaeWpmSfMKJapocjAMfx7ylnCZOYTqY/zKaUlvJFzQOfME3BeSUXPIXdHyDQs+wzjqEFg9F9HMAsSLfgYVjip8lkxqXxpBcKulIoqkDWo/USn5R0LFpOz1i0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SGgqVBpJ; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751840092; x=1783376092;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=pSVJG54LbGdf3nf1nJarqLBZcsrGa3Eb7lfuy54k+yg=;
-  b=SGgqVBpJsoHTJU9ryI8vHgq8XHPPii+ZFKNdDSLHKn9XGW7KGc+BxXgw
-   cfe8mOSeWahJAPoj1JEa1wBKiHivTwTTEIgicuDIqWtcGyy2dbXdP09AE
-   ISqbMnfHuVh+6OkxkvVXjcqWcI7mLrPTBAMvwKjbyQb1WqaJ+p2zeyLgH
-   OLoKbU+veMyJlMnguQgfsrN4h4o/gcrFFrPgJVab+0+iiitAhP1V0BIw1
-   71khqFnORWXj31bCo4xa6mZyQYk2YPnINjFCJhLhbC5oe3hYVOKwWILZo
-   luHPrWjvq3zsZvBMOw5BVGkQikIPQltSLd6h7AlAmcD4jGRtAT6vyY6yS
-   A==;
-X-CSE-ConnectionGUID: m/LdL8okSFucS6TJKBgkaw==
-X-CSE-MsgGUID: /FrSBI02TRKXw4rnuyBrVA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11486"; a="64750154"
-X-IronPort-AV: E=Sophos;i="6.16,292,1744095600"; 
-   d="scan'208";a="64750154"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jul 2025 15:14:52 -0700
-X-CSE-ConnectionGUID: h8Ln0Op/SdO1J2lEc1isMQ==
-X-CSE-MsgGUID: ARpdZbO8Sma/QuScaABcig==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,292,1744095600"; 
-   d="scan'208";a="186075689"
-Received: from lkp-server01.sh.intel.com (HELO def1aeed4587) ([10.239.97.150])
-  by orviesa002.jf.intel.com with ESMTP; 06 Jul 2025 15:14:50 -0700
-Received: from kbuild by def1aeed4587 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uYXdH-000015-2X;
-	Sun, 06 Jul 2025 22:14:47 +0000
-Date: Mon, 7 Jul 2025 06:13:54 +0800
-From: kernel test robot <lkp@intel.com>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>, tglx@linutronix.de
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	ghennadi.procopciuc@oss.nxp.com, S32@nxp.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 19/20] clocksource/drivers/nxp-pit: Add NXP Automotive
- s32g2 / s32g3 support
-Message-ID: <202507070449.1xGzeBPS-lkp@intel.com>
-References: <20250705160129.3688026-19-daniel.lezcano@linaro.org>
+	s=arc-20240116; t=1751840989; c=relaxed/simple;
+	bh=+FqcxieyCSl/BmyJUx6uOpbHQwdGTCBbRvnIJVsyPnQ=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=Lh+QP1I4C6Skgtuw5c4mDZCit3r5HQuM1jEnHR2udsQ21w/oACqJKPYpi9ucFqcuvhm6lAqfDMSGEujRMtEPxDnnc1eA8Ul0opZaRwhqmKdTwAfXUalKGLL/PtZftCxmDhn0U2b8w6zeHyUlviYzgjkHAteElmYxUHQlD8Cw3/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UaIqaj+b; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AD28C4CEED;
+	Sun,  6 Jul 2025 22:29:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751840988;
+	bh=+FqcxieyCSl/BmyJUx6uOpbHQwdGTCBbRvnIJVsyPnQ=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=UaIqaj+bE2PNvlzxHFsU8bKx/TvQ3nxBydLq7fyxyT/z8TiiGRP9154ikYh0K54sb
+	 Z4EZ6WP+xlLWwTRPFvI279+Mu0sNBBWRDyf93thd0x4XgRbRAi9/899cayp1axI3Qq
+	 EX4yMhpZd/Sy8d7UosGDsR4TuLoxLRVpwwKSuDeFL1+akM2+E1ByWZ4LcnDzOzltDM
+	 hTeuVRd+gUQpuOtJ8lda/i58I8WztFNzGk0pcu9nmY2i4NZ116tt+L4mOTB4wA4T13
+	 B1BO2f0YH9Xirjm5Vwyc9JwduiRJwc5yaCwXeqfw6fTuID9y6HlDM1XEm5tFvl3eg0
+	 U+xUMsY5ribCA==
+Date: Sun, 06 Jul 2025 17:29:47 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250705160129.3688026-19-daniel.lezcano@linaro.org>
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: linux-mips@vger.kernel.org, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, ansuelsmth@gmail.com, 
+ Conor Dooley <conor+dt@kernel.org>, Stanislaw Gruszka <stf_xl@wp.pl>, 
+ linux-mediatek@lists.infradead.org, 
+ Johannes Berg <johannes@sipsolutions.net>, linux-wireless@vger.kernel.org, 
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, yangshiji66@qq.com
+To: Rosen Penev <rosenp@gmail.com>
+In-Reply-To: <20250706214111.45687-6-rosenp@gmail.com>
+References: <20250706214111.45687-1-rosenp@gmail.com>
+ <20250706214111.45687-6-rosenp@gmail.com>
+Message-Id: <175184098772.672740.2328928098872646704.robh@kernel.org>
+Subject: Re: [PATCH 5/6] dt-bindings: net: wireless: rt2800: add
 
-Hi Daniel,
 
-kernel test robot noticed the following build warnings:
+On Sun, 06 Jul 2025 14:41:10 -0700, Rosen Penev wrote:
+> Add device-tree bindings for the RT2800 SOC wifi device found in older
+> Ralink/Mediatek devices.
+> 
+> Signed-off-by: Rosen Penev <rosenp@gmail.com>
+> ---
+>  .../bindings/net/wireless/ralink,rt2800.yaml  | 49 +++++++++++++++++++
+>  1 file changed, 49 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/net/wireless/ralink,rt2800.yaml
+> 
 
-[auto build test WARNING on tip/timers/core]
-[also build test WARNING on soc/for-next linus/master v6.16-rc4 next-20250704]
-[cannot apply to daniel-lezcano/clockevents/next]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+My bot found errors running 'make dt_binding_check' on your patch:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Daniel-Lezcano/clocksource-drivers-vf_pit-Add-COMPILE_TEST-option/20250706-000719
-base:   tip/timers/core
-patch link:    https://lore.kernel.org/r/20250705160129.3688026-19-daniel.lezcano%40linaro.org
-patch subject: [PATCH 19/20] clocksource/drivers/nxp-pit: Add NXP Automotive s32g2 / s32g3 support
-config: loongarch-allmodconfig (https://download.01.org/0day-ci/archive/20250707/202507070449.1xGzeBPS-lkp@intel.com/config)
-compiler: clang version 19.1.7 (https://github.com/llvm/llvm-project cd708029e0b2869e80abe31ddb175f7c35361f90)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250707/202507070449.1xGzeBPS-lkp@intel.com/reproduce)
+yamllint warnings/errors:
+./Documentation/devicetree/bindings/net/wireless/ralink,rt2800.yaml:43:5: [warning] wrong indentation: expected 2 but found 4 (indentation)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507070449.1xGzeBPS-lkp@intel.com/
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/wireless/ralink,rt2800.yaml: ignoring, error in schema: examples
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/wireless/ralink,rt2800.yaml: examples: 'wifi@110180000 { compatible = "ralink,rt2880-wifi"; reg = <0x10180000 0x40000>; clocks = <&sysc 16>; interrupt-parent = <&cpuintc>; interrupts = <6>; };' is not of type 'array'
+	from schema $id: http://json-schema.org/draft-07/schema#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/wireless/ralink,rt2800.yaml: examples: 'wifi@110180000 { compatible = "ralink,rt2880-wifi"; reg = <0x10180000 0x40000>; clocks = <&sysc 16>; interrupt-parent = <&cpuintc>; interrupts = <6>; };' is not of type 'array'
+	from schema $id: http://devicetree.org/meta-schemas/base.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/wireless/ralink,rt2800.yaml: properties:interrupt-parent: False schema does not allow {'maxItems': 1}
+	from schema $id: http://devicetree.org/meta-schemas/interrupts.yaml#
+Error: Documentation/devicetree/bindings/net/wireless/ralink,rt2800.example.dts:19.5-6 syntax error
+FATAL ERROR: Unable to parse input tree
+make[2]: *** [scripts/Makefile.dtbs:131: Documentation/devicetree/bindings/net/wireless/ralink,rt2800.example.dtb] Error 1
+make[2]: *** Waiting for unfinished jobs....
+make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1525: dt_binding_check] Error 2
+make: *** [Makefile:248: __sub-make] Error 2
 
-All warnings (new ones prefixed by >>, old ones prefixed by <<):
+doc reference errors (make refcheckdocs):
 
->> WARNING: modpost: vmlinux: section mismatch in reference: pit_timer_init+0x2d4 (section: .text) -> sched_clock_register (section: .init.text)
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250706214111.45687-6-rosenp@gmail.com
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
