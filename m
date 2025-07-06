@@ -1,53 +1,52 @@
-Return-Path: <linux-kernel+bounces-718614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-718616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0108AFA3B9
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Jul 2025 10:37:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A392AFA3BD
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Jul 2025 10:44:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55445189B07D
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Jul 2025 08:37:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66FA23B69B5
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Jul 2025 08:44:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F7DA1CAA6C;
-	Sun,  6 Jul 2025 08:37:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACE671E1A31;
+	Sun,  6 Jul 2025 08:44:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="bQoU4Wm2"
-Received: from mail-10631.protonmail.ch (mail-10631.protonmail.ch [79.135.106.31])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="gBszkqQ8"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6AEC2E36E0
-	for <linux-kernel@vger.kernel.org>; Sun,  6 Jul 2025 08:37:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.31
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF79254652;
+	Sun,  6 Jul 2025 08:44:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751791030; cv=none; b=uRusCKcs3/hkPg08L4Vu3vO7stkjhUyMrospVM2iOr5eB/LLfNXeAnQ6IKHcQ6q9WRzfTxWt1fjgtwcmmJdAQ/QFyYB0SDw/U+b5ZwUwZ20SZsNel7KNnnmaliFw7sF2ZQrCgbsIK4xsrhIZQt4n8gb0jWTPl8261XJMU/1PIqA=
+	t=1751791488; cv=none; b=MU2SFjamkRJrS7+JHoibkc63phR/WlD7manvDhTpYCvauwpzBnWH63UTxcFE2ZZJTciAfTbklvl0IjjKwgcLJ6xBzoeuJ0LtxiyZKe1IIo2EvnEe9Z/zQVvnLp+GfOHZArUbGJIqJlIyo31Pxsyt35Iq/ClKK2X4qU8da6lCuM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751791030; c=relaxed/simple;
-	bh=DA9+R+jk2RshE4iiF4a4aj120wAMzlI+4yOBwVlDfak=;
-	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=a8hwAO0uhaQxuz5TmCOyIjPWCFXoh38spOigTburFFhk7uAeV5qp9oSTLTTSvbZ699w7N0uJ5uXwLvB9dgfZ2ulgMupX/7BNhc0mZkwYxKelt6PScJs+1X2mRMvjzT/nCd+vr6Paj9Nf96jvXyD+R1Z1WyIZWspJJirbFQjWvjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=bQoU4Wm2; arc=none smtp.client-ip=79.135.106.31
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1751791024; x=1752050224;
-	bh=/Ohrs39hlVJ6gfC/U0noqNa3V3N+ZommgmvaEIkhTAQ=;
-	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
-	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
-	b=bQoU4Wm2XIOEOoU/Cxdo7xAG4YjGz3rj1xQE4Os+pTuSbwmrdSK1ROnoTkyJGdRlg
-	 2/Ihs/8Wz2jRe4VrpQ7bw0MpmJ9n0DLwJsUoDgHvEPCfyEgCnUwZC1p/Ke8/XrpX9C
-	 FBpsa9oeGlehPDymhHY7i0/Twrja5WhMLJE7T0Cyp2sQlzQ+NLvDDovgw1UoOmO4t8
-	 UdNMvLcN7B7ELq1AgP0nOWYELYnP+OHXV9+LQ/vMwT71xKIQu6UjqoRAkEmPcadNCA
-	 Die+hwEgVRWJa0cBYBEwaxoIpZkDSYVaQwle0IxtriscTD2KhcUSvDCCcrbWSmbzDo
-	 J3tDcLe7viCbQ==
-Date: Sun, 06 Jul 2025 08:36:58 +0000
-To: hjc@rock-chips.com, heiko@sntech.de, andy.yan@rock-chips.com, maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-From: Piotr Zalewski <pZ010001011111@proton.me>
-Cc: Piotr Zalewski <pZ010001011111@proton.me>, Diederik de Haas <didi.debian@cknow.org>
-Subject: [PATCH v2] rockchip/drm: vop2: make vp registers nonvolatile
-Message-ID: <20250706083629.140332-2-pZ010001011111@proton.me>
-Feedback-ID: 53478694:user:proton
-X-Pm-Message-ID: bdc28c03eaa8b0c275fd97f59617d9355f9144d7
+	s=arc-20240116; t=1751791488; c=relaxed/simple;
+	bh=SrfvA4klo4zj6WDJudJ9E6sL8ZfUxBmkAFhJ20dj/u0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Rd0r41l5NY2rBOGKYY3B15WGinoMvUY0dnyUMUln863ivR0gpsdbWM0MFvX78J4zoZnxz2Ntef4AUxz+0UTjncdVH+9oWyoVoVyt3p9UJYA08paJV2qqtOYXUwlesXmB36AfjcfWVlbkzixWmW/lt19Sn7Ii0tNSvFbdNTTgZgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=gBszkqQ8; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1751791483;
+	bh=SrfvA4klo4zj6WDJudJ9E6sL8ZfUxBmkAFhJ20dj/u0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gBszkqQ8mVuleOeCdaBkeTcMfoHC7tvlv9FbPL92ih7XflO2PEC4ZXlwoxslRdvEa
+	 z6r/DNyy3Ts/woXH7TCFYi4QJKcPeVTFg0qK3mxXgPEDdJo5CO7dASzGmShCePJIk0
+	 64/Nf7+K1cuTwYdt6H8MB6w/XRJexjMa63ycBbGw=
+Date: Sun, 6 Jul 2025 10:44:42 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Willy Tarreau <w@1wt.eu>
+Cc: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, 
+	Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH] tools/nolibc: add support for clock_nanosleep() and
+ nanosleep()
+Message-ID: <a8cf1929-e663-468d-a842-a1a4f4a3b2fe@t-8ch.de>
+References: <20250704-nolibc-nanosleep-v1-1-d79c19701952@linutronix.de>
+ <20250706062633.GB29601@1wt.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,67 +54,40 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250706062633.GB29601@1wt.eu>
 
-Make video port registers nonvolatile. As DSP_CTRL register is written
-to twice due to gamma LUT enable bit which is set outside of the main
-DSP_CTRL initialization within atomic_enable (for rk356x case it is also
-necesarry to always disable gamma LUT before writing a new LUT) there is
-a chance that DSP_CTRL value read-out in gamma LUT init/update code is
-not the one which was written by the preceding DSP_CTRL initialization
-code within atomic_enable. This might result in misconfigured DSP_CTRL
-which leads to no visual output[1]. Since DSP_CTRL write takes effect
-after VSYNC[1] the issue is not always present. When tested on Pinetab2
-with kernel 6.14 it happenes only when DRM is compiled as a module[1].
-In order to confirm that it is a timing issue I inserted 18ms udelay
-before vop2_crtc_atomic_try_set_gamma in atomic enable and compiled DRM
-as module - this has also fixed the issue.
+On 2025-07-06 08:26:33+0200, Willy Tarreau wrote:
+> On Fri, Jul 04, 2025 at 04:19:48PM +0200, Thomas Weißschuh wrote:
+> > +static __attribute__((unused))
+> > +int sys_clock_nanosleep(clockid_t clockid, int flags, const struct timespec *rqtp,
+> > +			struct timespec *rmtp)
+> > +{
+> > +#if defined(__NR_clock_nanosleep)
+> > +	return my_syscall4(__NR_clock_nanosleep, clockid, flags, rqtp, rmtp);
+> > +#elif defined(__NR_clock_nanosleep_time64)
+> > +	struct __kernel_timespec krqtp, krmtp;
+> > +	int ret;
+> > +
+> > +	__nolibc_timespec_user_to_kernel(rqtp, &krqtp);
+> > +	ret = my_syscall4(__NR_clock_nanosleep_time64, clockid, flags, &krqtp, &krmtp);
+> > +	if (rmtp)
+> > +		__nolibc_timespec_kernel_to_user(&krmtp, rmtp);
+> > +	return ret;
+> > +#else
+> > +	return __nolibc_enosys(__func__, clockid, flags, rqtp, rmtp);
+> > +#endif
+> 
+> I don't know which archs do not have clock_nanosleep, but if it becomes
+> needed on some of them, we could probably fall back to pslelect() if
+> available, of course, and ignore the clockid.
 
-[1] https://lore.kernel.org/linux-rockchip/562b38e5.a496.1975f09f983.Corema=
-il.andyshrk@163.com/
+No architecture should ever run into the #else.
+It is mostly for completeness and consistency with other architectures.
+As for falling back to pselect(), the clockid is indeed important :-)
 
-Reported-by: Diederik de Haas <didi.debian@cknow.org>
-Closes: https://lore.kernel.org/linux-rockchip/DAEVDSTMWI1E.J454VZN0R9MA@ck=
-now.org/
-Suggested-by: Andy Yan <andy.yan@rock-chips.com>
-Signed-off-by: Piotr Zalewski <pZ010001011111@proton.me>
----
+> Acked-by: Willy Tarreau <w@1wt.eu>
 
-Notes:
-    Changes in v2:
-        - add spaces before and after '+'
-   =20
-    Link to v1: https://lore.kernel.org/linux-rockchip/20250628180914.11771=
-77-2-pZ010001011111@proton.me/
-
- drivers/gpu/drm/rockchip/rockchip_drm_vop2.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c b/drivers/gpu/drm=
-/rockchip/rockchip_drm_vop2.c
-index d0f5fea15e21..0931cb636493 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
-@@ -2589,12 +2589,13 @@ static int vop2_win_init(struct vop2 *vop2)
- }
-=20
- /*
-- * The window registers are only updated when config done is written.
-- * Until that they read back the old value. As we read-modify-write
-- * these registers mark them as non-volatile. This makes sure we read
-- * the new values from the regmap register cache.
-+ * The window and video port registers are only updated when config
-+ * done is written. Until that they read back the old value. As we
-+ * read-modify-write these registers mark them as non-volatile. This
-+ * makes sure we read the new values from the regmap register cache.
-  */
- static const struct regmap_range vop2_nonvolatile_range[] =3D {
-+=09regmap_reg_range(RK3568_VP0_CTRL_BASE, RK3588_VP3_CTRL_BASE + 255),
- =09regmap_reg_range(0x1000, 0x23ff),
- };
-=20
---=20
-2.50.0
-
-
+Thanks!
 
