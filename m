@@ -1,42 +1,42 @@
-Return-Path: <linux-kernel+bounces-718761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-718834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F8CAAFA5B8
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Jul 2025 16:14:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65712AFA6C4
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Jul 2025 19:17:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CF493BAD08
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Jul 2025 14:13:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AAE93177762
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Jul 2025 17:17:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFBDE286D77;
-	Sun,  6 Jul 2025 14:14:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BF1D28850F;
+	Sun,  6 Jul 2025 17:17:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nuvoton.onmicrosoft.com header.i=@nuvoton.onmicrosoft.com header.b="tV9HqWWe"
-Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazrln10222018.outbound.protection.outlook.com [52.103.194.18])
+	dkim=pass (1024-bit key) header.d=nuvoton.onmicrosoft.com header.i=@nuvoton.onmicrosoft.com header.b="jbR6q9SU"
+Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazrln10223027.outbound.protection.outlook.com [52.103.171.27])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87040F4E2;
-	Sun,  6 Jul 2025 14:14:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.194.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C55EC2AD0B;
+	Sun,  6 Jul 2025 17:17:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.171.27
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751811257; cv=fail; b=IGa9LqnryOZcVbAERlJ/mxSZT5NXTdsZnvVaTvCdzFnO7Fu+rdyawepTKMNAPkWx7RO2mwdWdqQS8lpv5c9l1M4H3Mr3DBOkcoqF0HNaOQdYxGZ56TKhp3jE7dBFQsKqRSxC9EeDzr3yB2i/Qb05drx/2yiPUGxXkYC4098n69w=
+	t=1751822244; cv=fail; b=V+hq/gn3X8u7S9YhDmYE4QECUZzIUpAlec/NebhkjlPuo03tktFoCrcgkE/es2zORkuJTO/1REzqrj4/ha2aFMsbpR3OLCCVu6mS7W9VPWmNKoTnkPju406PO/eZfuAZIrgtCMTGk4pIthBMALdDtmkVyE+DTMHrRrUCf4SN3+0=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751811257; c=relaxed/simple;
-	bh=H5FLtaZsQXutzGECPQ6miEskFjXMJ9XRwO8HCVTmTvM=;
+	s=arc-20240116; t=1751822244; c=relaxed/simple;
+	bh=s7VMnlcYRlXdsDWTq+cogAwm02sTkoT4f7G3RQwGrhs=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=P3GPUTh0NgQbqcPwSkT5K4neHTSOmClbu/CgELHpq/2ZxpZoHnLBgaRv7ZLzbjbsP0dOmumBfLsD7+VgOKq5r8kM/bPxxrKcW14hFlLRZFXPhVqG5xMlyOu4ehgbcMlNrH8hN8FGLFXx8zOY5sD77Alht5CurDcQxhLrNFa9iOA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=none smtp.mailfrom=taln60.nuvoton.co.il; dkim=pass (1024-bit key) header.d=nuvoton.onmicrosoft.com header.i=@nuvoton.onmicrosoft.com header.b=tV9HqWWe; arc=fail smtp.client-ip=52.103.194.18
+	 MIME-Version:Content-Type; b=sxfjGAE/4jINgvnslrTltht2Ohl62tHBD1e2r+iYOxou3W8VGaekPIjxuAgB5n38aJhkdbAZR774XA/XFRO3SwlyE235xAoeLaDG8wCOCfg0GkKzARPIK+8H6KwXystS8BscJXc6KICVKjNTW5WWOvKgS6Zd5dxzD8Tur1Jck8Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=none smtp.mailfrom=taln60.nuvoton.co.il; dkim=pass (1024-bit key) header.d=nuvoton.onmicrosoft.com header.i=@nuvoton.onmicrosoft.com header.b=jbR6q9SU; arc=fail smtp.client-ip=52.103.171.27
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=taln60.nuvoton.co.il
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Drp8TUHm3LZDSp3y/EhDqsEOgdg1z+B5Gyhj8tqOXdcP9KgsTxHROaRtrAbSe48S6bHnVOIWOjchYUH86dW1Q351F6GOIpj6R3vIbezLWWWWrpvzyenBuFPJFtKGyksPCK8mDQD1bzkdA7PaenTQPlEiMRasAZgM/LahU0sGUt90xucTuX6kXRyFqv5mzKaqAosdtw2L3lsTzFgI0APTMDtBDBEV+2Z4Z3qPk49GJLQN7slZ5Zaa8BAO8miyuXY53xfzj+uDVTZcBs+77tDW5ZU5kiHe7D62rAsNhfmu47eyrsUJ+FU8SW8tQRq3wSf0W4P8KCW3VSPQrXSkUf/ujg==
+ b=dSzyWhhKh7DnzisasmcQSqEdRko6WJYzobhFSPt8RQVRetmyp1xfZfcUekZArVZ8SsgX0ngkJfafD6jrbcMFHTVOiTwWucRQIzn2WyHAbP9dvZQ8OwqqE6y/pY7dN8w6bYhwm4c2lEUYeEbLPsYDjv2Ivkyr4O8ogf6lBdqixPnACitvRMBHR8AN38OTWx097BTseiQ1WtuwASStLR2MF4G9J/CYHikMlIvGW+JzTHoI0XSOayYKmhQCcXMItpP/PabLwXOC2AJ+kH60ZUUHgXFXACcbTOTzUroHU1V5/fLlCnylyQmTYTrlWqmtarSgD2SsqoaDTI6K+NEOM9ShNQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=DHVP6Jxn9qePOmfBPh2lMaoICnHmKhheR/oyM5OYcms=;
- b=sMb63v75TyA669/zoIkoArKNgtaY/wVogdoFfkmE53cuGDIbX6eZeAW6Akm1YO7ZwFlFluELrSwnWrcDQZStxeqITa1/CAL2AgBeZX91vOdiQgQuMf8LVbqTWQjFH69+nzFrQGoBt5fqL9h3gwXnVfQcuA4ZFF8ZMlf3Bd8ZIY1sI7KxeVPnQSKtOEstZjpRdgFR3rIBpEWj7KlKBgHBAd6JX2u0wXB0fk+R8/2BAqB54yQpkqpZVpEy3PYbFg0ydSDhTGMyIAwNbIEvF2nLN6rldZM0VG37a+kN4LqrvcyIoth1Nl4z3JsaScszH4gaNk2QNHu7MZ7KsFvPv4pwwA==
+ bh=l9sKOw91WAFiMFFKG33jvuNxfpHDF4CfgkdwnKhB5Vk=;
+ b=WDF1rBRTEcqOyoyfZEHvYFTzhS6RPZE838ff+v58OIxxj8bz7zBrINLuMZGba5BUqmBx7fjNOl6JdddVOiSRb6F68iCk+rdG7CqkldpLTddqZ2BHPIQNqw3Gb2OsW81rKcfyLJ4culrCf0vLH7ei5F3qKCNQMiUNcjWcozsvsJwjPbn0CSG3t3T+kbkuki6dhnvpiA9Z9pu40QSyzFgdxwqcpXavvGXubNGO/t+06QCtc+R5U4ULSQVuNkRWZj2CX7GSFndhVrfKNKX8Ok5eUl6gqpT1G6ofIzA3brOEnjL7D5BVJnbuQ3u7kOv6WjfZ/92o2bHBJZihuwKIOexAEA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none (sender ip is
  175.98.123.7) smtp.rcpttodomain=gmail.com smtp.mailfrom=taln60.nuvoton.co.il;
  dmarc=fail (p=none sp=quarantine pct=100) action=none header.from=gmail.com;
@@ -44,18 +44,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=nuvoton.onmicrosoft.com; s=selector2-nuvoton-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DHVP6Jxn9qePOmfBPh2lMaoICnHmKhheR/oyM5OYcms=;
- b=tV9HqWWeAn3fGeQfVCVi7kQsM+CcLIL+2Tb58QlmPs5i75bttZRoKgIzh6ZS+uP8E/wHHCE9gIm7z/9sH+DBZ3jL6Ohb5RLe0A7hnVwdz2O4S/uJopRivWveSq7wU9GKnsQ/OvokGKPsIv74m1hYkTSaRACaIkUhIu/M/Uyxvd4=
-Received: from TYCP286CA0098.JPNP286.PROD.OUTLOOK.COM (2603:1096:400:2b4::19)
- by KL1PR03MB8317.apcprd03.prod.outlook.com (2603:1096:820:10b::12) with
+ bh=l9sKOw91WAFiMFFKG33jvuNxfpHDF4CfgkdwnKhB5Vk=;
+ b=jbR6q9SUOOIAOU5gvHR4sg60OqYmUtP+koRy3UEyx3o0hk3ufWRPLfGGjhnwHKKCgWtDHBaue14zuKLUkg6brHuz9gXPFpeiFn5lck0vr9chMYIesK89Ng6ub6EVTcz00xQpt+7mZ/3RDmqbIZbXoJnLZ/B7qfFeBnvHkcaeBuw=
+Received: from TYCP286CA0095.JPNP286.PROD.OUTLOOK.COM (2603:1096:400:2b4::18)
+ by TY1PPF538CF1BBD.apcprd03.prod.outlook.com (2603:1096:408::a57) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.25; Sun, 6 Jul
- 2025 13:42:21 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.28; Sun, 6 Jul
+ 2025 13:42:23 +0000
 Received: from TY2PEPF0000AB85.apcprd03.prod.outlook.com
- (2603:1096:400:2b4:cafe::b) by TYCP286CA0098.outlook.office365.com
- (2603:1096:400:2b4::19) with Microsoft SMTP Server (version=TLS1_3,
+ (2603:1096:400:2b4:cafe::f5) by TYCP286CA0095.outlook.office365.com
+ (2603:1096:400:2b4::18) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.20.8901.26 via Frontend Transport; Sun,
- 6 Jul 2025 13:42:20 +0000
+ 6 Jul 2025 13:42:23 +0000
 X-MS-Exchange-Authentication-Results: spf=none (sender IP is 175.98.123.7)
  smtp.mailfrom=taln60.nuvoton.co.il; dkim=none (message not signed)
  header.d=none;dmarc=fail action=none header.from=gmail.com;
@@ -64,23 +64,19 @@ Received-SPF: None (protection.outlook.com: taln60.nuvoton.co.il does not
 Received: from NTHCCAS02.nuvoton.com (175.98.123.7) by
  TY2PEPF0000AB85.mail.protection.outlook.com (10.167.253.5) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8901.15 via Frontend Transport; Sun, 6 Jul 2025 13:42:18 +0000
-Received: from NTHCML01A.nuvoton.com (10.1.8.177) by NTHCCAS02.nuvoton.com
+ 15.20.8901.15 via Frontend Transport; Sun, 6 Jul 2025 13:42:22 +0000
+Received: from NTHCCAS01.nuvoton.com (10.1.8.28) by NTHCCAS02.nuvoton.com
  (10.1.9.121) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.44; Sun, 6 Jul
- 2025 21:42:15 +0800
-Received: from NTHCCAS01.nuvoton.com (10.1.8.28) by NTHCML01A.nuvoton.com
- (10.1.8.177) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.44; Sun, 6 Jul
  2025 21:42:15 +0800
 Received: from taln58.nuvoton.co.il (10.191.1.178) by NTHCCAS01.nuvoton.com
  (10.1.8.28) with Microsoft SMTP Server id 15.1.2507.44 via Frontend
- Transport; Sun, 6 Jul 2025 21:42:14 +0800
+ Transport; Sun, 6 Jul 2025 21:42:15 +0800
 Received: from taln60.nuvoton.co.il (taln60 [10.191.1.180])
-	by taln58.nuvoton.co.il (Postfix) with ESMTP id 4BA8F5F5DA;
+	by taln58.nuvoton.co.il (Postfix) with ESMTP id A95B55F652;
 	Sun,  6 Jul 2025 16:42:14 +0300 (IDT)
 Received: by taln60.nuvoton.co.il (Postfix, from userid 10070)
-	id 48D2ADC3163; Sun,  6 Jul 2025 16:42:14 +0300 (IDT)
+	id A69CCDC3163; Sun,  6 Jul 2025 16:42:14 +0300 (IDT)
 From: Tomer Maimon <tmaimon77@gmail.com>
 To: <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
 	<conor+dt@kernel.org>, <avifishman70@gmail.com>, <tali.perry1@gmail.com>,
@@ -88,9 +84,9 @@ To: <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
 	<benjaminfair@google.com>
 CC: <openbmc@lists.ozlabs.org>, <devicetree@vger.kernel.org>,
 	<linux-kernel@vger.kernel.org>, Tomer Maimon <tmaimon77@gmail.com>
-Subject: [PATCH v1 1/2] arm64: dts: nuvoton: combine NPCM845 reset and clk nodes
-Date: Sun, 6 Jul 2025 16:42:06 +0300
-Message-ID: <20250706134207.2168184-2-tmaimon77@gmail.com>
+Subject: [PATCH v1 2/2] arm64: dts: nuvoton: add refclk and update peripheral clocks for NPCM845
+Date: Sun, 6 Jul 2025 16:42:07 +0300
+Message-ID: <20250706134207.2168184-3-tmaimon77@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250706134207.2168184-1-tmaimon77@gmail.com>
 References: <20250706134207.2168184-1-tmaimon77@gmail.com>
@@ -105,93 +101,134 @@ Content-Type: text/plain
 X-NotSetDelaration: True
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TY2PEPF0000AB85:EE_|KL1PR03MB8317:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6a02e867-afef-407e-9b05-08ddbc92ed47
+X-MS-TrafficTypeDiagnostic: TY2PEPF0000AB85:EE_|TY1PPF538CF1BBD:EE_
+X-MS-Office365-Filtering-Correlation-Id: f632c777-5207-4162-1c5d-08ddbc92ef3a
 X-MS-Exchange-SenderADCheck: 2
 X-MS-Exchange-AntiSpam-Relay: 1
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|48200799018|35950700016|376014|7416014|7093399015|61400799027|82310400026|35450700002;
+	BCL:0;ARA:13230040|61400799027|48200799018|7093399015|7416014|376014|82310400026|35950700016|35450700002;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?1J/ceICg/rMkBC8jNfhibEMvJyI7S2Tj9ptdbUDUhi3V0Dof7jWLduhl8Yi5?=
- =?us-ascii?Q?bU190GbRIknyJGGfZwwbnV+jlMMw/5r6kZuwJIouHrFZriR/DUqHxAyOZ+XI?=
- =?us-ascii?Q?X5vawo8hAp/9JLcB7Fn+EGZRk7cJMz9wcAReYP+WCZ8LeU+nb+f9J70ghal/?=
- =?us-ascii?Q?TDcIiNZvcofWxWNRIgm6ASf8rEmpqoB99UIyHuga98wlrk7omdLjYTtc3C1m?=
- =?us-ascii?Q?rM6Dt8aGtPSYYute34o1gae55ZwHjISKlggcdFJWYUloNOjxYqN7F4H48KUY?=
- =?us-ascii?Q?ltfFgGKOdZNtKWjn5nxa+iviQ9yPiGvN4XdG1H5twMs2FGJp1bvq3IqHNQM7?=
- =?us-ascii?Q?9fxK6figXtDO0WBP8UWP8GU0dLYqeL54AEj0LUnfPEFws8faPUI+qDf/QOuX?=
- =?us-ascii?Q?Pm3EsUi5Mb72NupoxR3xb6qM2W/JOCjAe+8frGSxPGukY7YGrZN4JnFxV7Xl?=
- =?us-ascii?Q?8zOmfJgABVF2nyiX4SsDDHYTA8H9QC1dMyneqcZp3BodprQtVOY+7gRv2lJY?=
- =?us-ascii?Q?eRpBm910WgqxSy6eFPtu1nVymwH9a28d6vWFHHhGSZ9Zko5bR2e8pzBQsCYg?=
- =?us-ascii?Q?N4xWOcHf0n9WAyYw3Af23XJKWJ8n1IxmoiynhanRmgdWqVU0VsxR9Ngprb4u?=
- =?us-ascii?Q?E2/VZDMWYR3S8y8cG5Q+v/WKXXC4yrPfklcFyZ2hJebYSxHeJFj4Dy+l9mX7?=
- =?us-ascii?Q?qDHKRk/dIQveYfr9i8OS4QQp+S79kFUEC9EPJ6SAdbysI3574kv5FKN1JXJK?=
- =?us-ascii?Q?AQ1D1zP4Ljyok9QvUTmJbJeZuGzPyMJMeq6ZpJVqC6yGwz29mTe0inPyTOMU?=
- =?us-ascii?Q?gnRKgd3H0ziPiegosY25t5RsFkg2BczuJD8nobzXjQSlJj2FE9OJ8hY9ietv?=
- =?us-ascii?Q?zOAFPwzfiYgEKimq60oKdMv1VzxXs8+4AiQiccQAWyFnU1VfTbRoTZGLbqaj?=
- =?us-ascii?Q?J8vIJO7o9uQiEFNFlU8jqBC3HXlkvvIHibx3EKtA0t5YJLtu/EcqTXtE+SvY?=
- =?us-ascii?Q?Nuu/mB/P9WHc1I8BhYOSiDdgHjlgJxTuvWFC1gyRQcLqTphZJXpgeq5jeRQh?=
- =?us-ascii?Q?6P/GLbppBCbHe5ljQeinCxqjgVmwn/GW0wBK8iI1kgn9tp1xKs1/738rorE4?=
- =?us-ascii?Q?FZmaF0XgvMeY13/JevMp5Rhct20AEA6i/EGa1B7Af/jn10sIbJhwy0bhQbJh?=
- =?us-ascii?Q?QZ7a0QGcb0p5KGYBLgTwbw+yyCbUjA3CE44tfeQjezrMocMcUrq/Dpo6Fu9B?=
- =?us-ascii?Q?FvGKOlBcj+1Z0alduK6dk58Lq6C9xuAJEBQmlveLAQXmR743NDElpFaZBA5O?=
- =?us-ascii?Q?Dz9wjmHKpdPEFDLcyJEIL4U5WvhhIDB/kXF66W1yjtqeB6T1V9G4sNqqmKxN?=
- =?us-ascii?Q?L9nS9qIP8o/wfBgUVgx962nVysNusFGcXqxMB1TksiW1nQGcWJZM1AnnXT17?=
- =?us-ascii?Q?ZM1Mg3miIeyBuZHaoV9zYD6vlB6BSKLhebYINXutOoUuKgs/z4nYqIcwe1v+?=
- =?us-ascii?Q?dCqRcOJiuXhpGZVLLLs9xHAc8TyfqZ3BOu2g?=
+	=?us-ascii?Q?W/HaM+wWkOwtBHfVauKQDZIIXceKfwW/Z8Au3jNe57Zz0ORd68c0h33gBjXI?=
+ =?us-ascii?Q?Bidh52NNFYrVucp61Kl7QaC4pkv/hSIEM1+jxTZ6Wb0z3WsuSlTjyylGsE0A?=
+ =?us-ascii?Q?bM1RigIsvflHA3MamKLxfTzZcZLK7iNYo9wSWpjjOGNdFCRyyKaLIortakbg?=
+ =?us-ascii?Q?mrlyqaZpnlsnQrKGzFk/VyujWfyiO10Pm7FwVDsxQPJ+RbmZsJurnYuymJqF?=
+ =?us-ascii?Q?7TpfofZGFbvlS/NNFtTawxhIdyxb0SN0l7bCsw1kF7538Y1DpJ6cgOVw9bJu?=
+ =?us-ascii?Q?XrYWF1RSr2afOpmRW39Hu45fNWStNjOZg2kYKci36JJeyzCF4H+2AtS0Et3L?=
+ =?us-ascii?Q?pgQY9cV8Oxmiq4eTVHCHT9vPHk9QarlKTtZVjCAKQJkwVDMhZ9Mnpvc0rayw?=
+ =?us-ascii?Q?ZEehkeO5mntUUtjSq79d0d4luJDpSRjG3o3fBNxbBaibLKrSOdbDlGVE+DCs?=
+ =?us-ascii?Q?S5eqfFKtni8CebQsf2heBUEu/8IueRWsO2xIYi4QvUo+kFhWoIC1DrxCnIAa?=
+ =?us-ascii?Q?b61Zd0j9kOchk8a1LIrItfD9AsrW3kpOL0YFvE4I60fSE831KTaGRyTUPkhW?=
+ =?us-ascii?Q?cCColDX/mmVKN6zpE5X4A0g2qmO5mLPXJzdE3G3VYsNRG587bzLnK8AIEl7/?=
+ =?us-ascii?Q?0Hu7MX0glYxs8jBpuCAxVvKbNoPW6V+/avzoNKnBjR/j91Mm46JjuxeWH4p1?=
+ =?us-ascii?Q?EIvBV4Tk2p03axkxNUREONGZuwuca4Z/ZkI50SDG/LhDGz3ruSsud4kcRmED?=
+ =?us-ascii?Q?YZOvpTGF/YpEa1aXjeguqXjDTgoew6nl6lDmzO7HErzK4YVOg1hBaKovhBJo?=
+ =?us-ascii?Q?auDjlOs5+erjDWB5IX0KIaR2dyedLxR8Y79kkA5K25zt1ESnGICC8IoUoEB9?=
+ =?us-ascii?Q?Is02sDlNn52WQTNMaDPxjrAYJ1ynbeAoqT7XIMU57VCffXGzq/BmMdQ3nnn2?=
+ =?us-ascii?Q?NlIa/JwMv9yY9G1aHSWp2aRbuUGhAuqnhylKEggy8woJNcco+xyzgXtfVL3I?=
+ =?us-ascii?Q?Mxbun4GF1MamSNE4jMS2pVYMyJSMuoJeTTD1leB0TejJdZGtDgYkcg2SZyXX?=
+ =?us-ascii?Q?s49qEc210oZZ9zdi0fBgJuVU6Ol/5HKj080rSMwMfd6FUcFocYKhYiPjoeU7?=
+ =?us-ascii?Q?kKWTh8Zd8RBFqdCP3Mt/Xag6lTZ0Sy+uWFShrAq9YGN/AV9/pDhyka8WveBf?=
+ =?us-ascii?Q?cP3tEGHeFQ9jMInPSyxtfz9nikwgpYxYp8remPNusQwYMMM9lB5Rlj2Yg5+3?=
+ =?us-ascii?Q?LvBtQ/uWCJ7eDuHndFOEvAhXxbXf7MXm4WgJWK0ymbyy/PKb00S1ZSf+T3YI?=
+ =?us-ascii?Q?RnE949HvgxUW1RrkRM9QN5XnbbdeENmltosBxFokmumYruylYIJ7eziFJsSr?=
+ =?us-ascii?Q?fDApIY/z+p4EkVbciZktvJl9XB3XhXYBUGlYCek2M0DvofxGnYxPupmlP5fX?=
+ =?us-ascii?Q?wz1QXjohqNfFkccGdoUCjVKd5kYfk8dSZAJzDst9P43uBzIA3VN6U/q5A8xR?=
+ =?us-ascii?Q?T/O+e9nRXR+3YvkFyAamvLLPmUiFKm+8ZkAh?=
 X-Forefront-Antispam-Report:
-	CIP:175.98.123.7;CTRY:TW;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:NTHCCAS02.nuvoton.com;PTR:175-98-123-7.static.tfn.net.tw;CAT:NONE;SFS:(13230040)(48200799018)(35950700016)(376014)(7416014)(7093399015)(61400799027)(82310400026)(35450700002);DIR:OUT;SFP:1022;
+	CIP:175.98.123.7;CTRY:TW;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:NTHCCAS02.nuvoton.com;PTR:175-98-123-7.static.tfn.net.tw;CAT:NONE;SFS:(13230040)(61400799027)(48200799018)(7093399015)(7416014)(376014)(82310400026)(35950700016)(35450700002);DIR:OUT;SFP:1022;
 X-OriginatorOrg: nuvoton.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Jul 2025 13:42:18.7782
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Jul 2025 13:42:22.0450
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6a02e867-afef-407e-9b05-08ddbc92ed47
+X-MS-Exchange-CrossTenant-Network-Message-Id: f632c777-5207-4162-1c5d-08ddbc92ef3a
 X-MS-Exchange-CrossTenant-Id: a3f24931-d403-4b4a-94f1-7d83ac638e07
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=a3f24931-d403-4b4a-94f1-7d83ac638e07;Ip=[175.98.123.7];Helo=[NTHCCAS02.nuvoton.com]
 X-MS-Exchange-CrossTenant-AuthSource:
 	TY2PEPF0000AB85.apcprd03.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR03MB8317
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PPF538CF1BBD
 
-Combine the NPCM845 reset and clock controller nodes into a single node
-with compatible "nuvoton,npcm845-reset" in nuvoton-common-npcm8xx.dtsi,
-using the auxiliary device framework to provide clock functionality.
+Add a 25 MHz fixed-clock node (refclk) in the NPCM845-EVB board device
+tree to represent the external reference clock used by the NPCM845 reset
+and clock controller.
 
-Update the register range to 0xC4 to cover the shared reset and clock
-registers at 0xf0801000.
+Update peripherals (timer0, watchdog0-2) in the NPCM845 device tree to
+reference this refclk directly instead of the previous clock controller
+output (NPCM8XX_CLK_REFCLK).
 
-Remove the separate nuvoton,npcm845-clk node, as the reset driver now
-handles clocks via an auxiliary device.
+Depends-on: arm64: dts: nuvoton: Combine NPCM845 reset and clk nodes
 
 Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
 ---
- .../boot/dts/nuvoton/nuvoton-common-npcm8xx.dtsi      | 11 +++--------
- 1 file changed, 3 insertions(+), 8 deletions(-)
+ arch/arm64/boot/dts/nuvoton/nuvoton-common-npcm8xx.dtsi | 9 +++++----
+ arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dts     | 6 ++++++
+ 2 files changed, 11 insertions(+), 4 deletions(-)
 
 diff --git a/arch/arm64/boot/dts/nuvoton/nuvoton-common-npcm8xx.dtsi b/arch/arm64/boot/dts/nuvoton/nuvoton-common-npcm8xx.dtsi
-index fead4dde590d..2a36d0b2824e 100644
+index 2a36d0b2824e..04a5029bfc7e 100644
 --- a/arch/arm64/boot/dts/nuvoton/nuvoton-common-npcm8xx.dtsi
 +++ b/arch/arm64/boot/dts/nuvoton/nuvoton-common-npcm8xx.dtsi
-@@ -47,17 +47,12 @@ ahb {
- 		interrupt-parent = <&gic>;
- 		ranges;
- 
--		rstc: reset-controller@f0801000 {
-+		clk: rstc: reset-controller@f0801000 {
- 			compatible = "nuvoton,npcm845-reset";
--			reg = <0x0 0xf0801000 0x0 0x78>;
--			#reset-cells = <2>;
-+			reg = <0x0 0xf0801000 0x0 0xC4>;
+@@ -52,6 +52,7 @@ clk: rstc: reset-controller@f0801000 {
+ 			reg = <0x0 0xf0801000 0x0 0xC4>;
  			nuvoton,sysgcr = <&gcr>;
--		};
--
--		clk: clock-controller@f0801000 {
--			compatible = "nuvoton,npcm845-clk";
-+			#reset-cells = <2>;
+ 			#reset-cells = <2>;
++			clocks = <&refclk>;
  			#clock-cells = <1>;
--			reg = <0x0 0xf0801000 0x0 0x1000>;
  		};
  
- 		apb {
+@@ -76,7 +77,7 @@ timer0: timer@8000 {
+ 				compatible = "nuvoton,npcm845-timer";
+ 				interrupts = <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
+ 				reg = <0x8000 0x1C>;
+-				clocks = <&clk NPCM8XX_CLK_REFCLK>;
++				clocks = <&refclk>;
+ 				clock-names = "refclk";
+ 			};
+ 
+@@ -148,7 +149,7 @@ watchdog0: watchdog@801c {
+ 				interrupts = <GIC_SPI 47 IRQ_TYPE_LEVEL_HIGH>;
+ 				reg = <0x801c 0x4>;
+ 				status = "disabled";
+-				clocks = <&clk NPCM8XX_CLK_REFCLK>;
++				clocks = <&refclk>;
+ 				syscon = <&gcr>;
+ 			};
+ 
+@@ -157,7 +158,7 @@ watchdog1: watchdog@901c {
+ 				interrupts = <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>;
+ 				reg = <0x901c 0x4>;
+ 				status = "disabled";
+-				clocks = <&clk NPCM8XX_CLK_REFCLK>;
++				clocks = <&refclk>;
+ 				syscon = <&gcr>;
+ 			};
+ 
+@@ -166,7 +167,7 @@ watchdog2: watchdog@a01c {
+ 				interrupts = <GIC_SPI 49 IRQ_TYPE_LEVEL_HIGH>;
+ 				reg = <0xa01c 0x4>;
+ 				status = "disabled";
+-				clocks = <&clk NPCM8XX_CLK_REFCLK>;
++				clocks = <&refclk>;
+ 				syscon = <&gcr>;
+ 			};
+ 		};
+diff --git a/arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dts b/arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dts
+index eeceb5b292a8..2638ee1c3846 100644
+--- a/arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dts
++++ b/arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dts
+@@ -19,6 +19,12 @@ chosen {
+ 	memory@0 {
+ 		reg = <0x0 0x0 0x0 0x40000000>;
+ 	};
++
++	refclk: refclk-25mhz {
++		compatible = "fixed-clock";
++		clock-frequency = <25000000>;
++		#clock-cells = <0>;
++	};
+ };
+ 
+ &serial0 {
 -- 
 2.34.1
 
