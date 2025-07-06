@@ -1,152 +1,176 @@
-Return-Path: <linux-kernel+bounces-718760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-718762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B115AFA5B5
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Jul 2025 16:12:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60C56AFA5C0
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Jul 2025 16:22:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9308C1769AA
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Jul 2025 14:12:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D15C43B3B30
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Jul 2025 14:21:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B3EE28726F;
-	Sun,  6 Jul 2025 14:12:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 280392638A3;
+	Sun,  6 Jul 2025 14:22:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eWWolZew"
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="DZG1zwTR"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D9F12135A0;
-	Sun,  6 Jul 2025 14:12:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E50E21BF58
+	for <linux-kernel@vger.kernel.org>; Sun,  6 Jul 2025 14:22:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751811146; cv=none; b=QFr0WmFCHdI75WzBFhngKVAHJAOFrG23MxaIuNThkEFcrPAWwoRT9rjC3pEpZF6+DWM5/SG6HoaxvEqN4E4IbfUZlEauWeLaZ12a6aadbpdZRQwfU1VNN4dKt1hIdD8p9jWEOE+RNgVy5wMomEZsPQTg1AvS4qs/eG3gNfbBrok=
+	t=1751811723; cv=none; b=laRSshK4n5M+b/Lm36fkRclbCmLkyEDfr6PLIuVwx4NfESEGbS65PzLhHyyhAaY7oXO1qd+cHmxlrBldgwJZBzumV0bEM7cmdr6d34S8FQGjv5j/rrUoF+MlMad0YzJHjXww/9hGoKFz3dIQKTdkDJAz7v8a6IYpB0OcetWe2pw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751811146; c=relaxed/simple;
-	bh=YMQPaIuYUDFDFSVv86DN3Q/5Wjot7/hA7gBZ/qS/vLQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qpsQZuHPhUjWQPM1ws66p7Qz4iw4vH/1YItfGwttSN+MsQud03acLV/mMULDEJnyyMnEwWcmqQmi3QROhAcLBHfdrLRIfM6GDXyRQwtFJyCDz2RbgHGF5gc1gY5DIan0dusO6TS+YwkqEw8uSAROxdo6ZlYb7G51GTUWslaE5Qc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eWWolZew; arc=none smtp.client-ip=209.85.215.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-b34a71d9208so1381894a12.3;
-        Sun, 06 Jul 2025 07:12:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751811144; x=1752415944; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=pmty3UwjQYxMt9/q+nVVzFNRCrwm25KzPNS6GD2HyFE=;
-        b=eWWolZew9Eve/E/R+giw+lKeJOC25h9bt4fsJOvmD0CPUM1rchWVfesN7aW9lnTcgG
-         umyIQoFT1gSheOeF0z2oGckj6CLSt18v7bR1UYFJJMkCt8k4QWmcAtNT3Qghubx2XYQ+
-         rkUaBdez3CHuId7A8W2Y8VP+UqbyFMb2CzQXuXBKKSfPvh58wJ759FO4rhUNPXKSeUwD
-         6WCUEmA21VIcz8KXrp4Rh21iSzWU9E9z7v0LPY+NLYqlTpSHhm0ool7caUV4k1TJNOGq
-         SHWxdD6c7nlkAPPhINPeSlpTZjihFjIOCOPmO7WUpqar9pI+mcbr+R+xJuojHjqkUKDM
-         KTsA==
+	s=arc-20240116; t=1751811723; c=relaxed/simple;
+	bh=hGj9ba+WBBvZ9zms61zCDePnwkxudsa8B9DOmH+mpyw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qExwdHdb6uLfTIDfvMLxZwcE7cQiipHslo4BmhfO+LSv4zuJo0W9FX5qROv+oHIndy71ofK0RsqN2Z6kgIq5TjXDm16e7YUdFaPS4x3Ow+EkiIjNEuA5m0AcfmDTCwcjmMI2TwMcIYbh+oH7kRpTowcYHNW5FxLNO+Fgj0CGUpo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=DZG1zwTR; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 566AJ1xH029846
+	for <linux-kernel@vger.kernel.org>; Sun, 6 Jul 2025 14:22:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	+LR59wvaFC1B+jtg9kXlIKRe6vvfPELWKIv1ziuV/xg=; b=DZG1zwTRrWIo8NW0
+	SH7dNDOOY81dG4Haah1W7G5s6GBOxUmt/s7GxQNYDfhqYyGqftftKCN5PYZVkBd5
+	eW/2QXQhinMuQhSGlqvitrcR7+3/wr/H8NceFMJlQhSZsHGMs4T58P8Khl8cZ5YR
+	JRRTaDYfv7Xjl9T9OUVMyHNoHS6Y38lRdZf9HatRxhAIzegnGiIbL5t/hb6IAmO+
+	nt33oMNdKtP3rnCcGBG/q0YMWWlDmr01jTleGo5CDH+NkX9vdCAwiXhAg7BXJVDg
+	ewsraXQEi7s6klzhN5KkVsiYrjtsvVjTAou7UNMP2VfxwHItNevWpjm/pwtIClth
+	rVj0ww==
+Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com [209.85.215.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47pv974g3j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Sun, 06 Jul 2025 14:22:01 +0000 (GMT)
+Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-b38d8ee46a5so1677436a12.1
+        for <linux-kernel@vger.kernel.org>; Sun, 06 Jul 2025 07:22:00 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751811144; x=1752415944;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pmty3UwjQYxMt9/q+nVVzFNRCrwm25KzPNS6GD2HyFE=;
-        b=s49svi97kL8+BeSBza74O8XZC4OH9eEyHcrjkmWuGMexVZDxXfjbSpzpEXCPIsL6FI
-         VC5q9WcTvYhM4j4O/pez2Yfnj58Houdzg2Aahv62cteIgPjYiKxz7F68ikeNk+pEtVC7
-         gCb3wqvRSw0ZiMsrfFTq8qraGZJ491B05PAXuTaetGcUf9jGCPpJj+w/MbPQ49bOpQks
-         NHwOVeQNzUuxoMl4/FpsLCr7/pixpwo0ldyVpar0L80gzdqn3HbCgCQjmIWUl+1qV6g+
-         gQ4mAoBE7oUbJL99HRzHGJ+KP3nMUH2aheY9SgvdLlOMTAgkeyrYKIxT12CtWnm+zi3o
-         VrxA==
-X-Forwarded-Encrypted: i=1; AJvYcCWv1X7wfQaOVTKsGTK+FdUEdp8iQYGux5WVbn2A1UqjP/W49M0N0nFpppB4Pf8ZIf/mhmScqU2RLv/HWnM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5oDAK2PxyQ9cks23NBpvuCEyeKaorira4vXzdEss/r3EWq9l2
-	FDpLP2dtXtLBX66pR9BzVxXNJrrSQsXM4WSkbE7K36iIvjGFFVNxxXBupiHTeg==
-X-Gm-Gg: ASbGnctqIas6+oyv3htl6+VRD01B/KStECZY+C0EjHUzrxoOnTCT6Tzm6G7Sl3z09kD
-	JpI8RgjsPbm4Uz6xEf47KAMPKl6F4tQBLatCapYBNwtTPf3P5TdVke5fifNJF8n1X0Q4ZViDBDy
-	zpjqWKpJqyFp2IRMwCV4gTrKPyUjU/13vyF6vNlfCENFfSRho66GBG0AzD3e2I2Jn2fP1tvaT29
-	iDvHijivYIDYTqTTGIE3ETKQA9JYEUDkLFEUXxXKdxMiT77fGAO22lW+MQnGSzWQZAHvecpmkX0
-	qGP42DyR25Gx/5NtDsSnuUDYbFvsibGe1AA16hd5JAWgcIFPcbUWqW2AiMNhq/wORuIhVfE0cVr
-	W73j/JC1+xeU=
-X-Google-Smtp-Source: AGHT+IHkMY/lRn+VrFKknoTqwsdTVy0zZpH8pPEV8VEaNmKPItjhky43HQDZRy1FJjpVkZPUnxbrIQ==
-X-Received: by 2002:a17:90a:d64c:b0:312:def0:e2dc with SMTP id 98e67ed59e1d1-31aadcf9664mr14554793a91.7.1751811144042;
-        Sun, 06 Jul 2025 07:12:24 -0700 (PDT)
-Received: from minh.192.168.1.1 ([2001:ee0:4f0e:fb30:4ccf:d06a:bc2:ae04])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-23c8457e6d8sm66407425ad.155.2025.07.06.07.12.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 06 Jul 2025 07:12:23 -0700 (PDT)
-From: Bui Quang Minh <minhquangbui99@gmail.com>
-To: netdev@vger.kernel.org
-Cc: "Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	=?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Gavin Li <gavinl@nvidia.com>,
-	Gavi Teitz <gavi@nvidia.com>,
-	Parav Pandit <parav@nvidia.com>,
-	virtualization@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Bui Quang Minh <minhquangbui99@gmail.com>
-Subject: [PATCH net] virtio-net: fix received length check in big packets
-Date: Sun,  6 Jul 2025 21:11:50 +0700
-Message-ID: <20250706141150.25344-1-minhquangbui99@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1751811720; x=1752416520;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+LR59wvaFC1B+jtg9kXlIKRe6vvfPELWKIv1ziuV/xg=;
+        b=kAEsv3SYE6qY43pMCDLs/sYEXldx7irTVvUhOQigdqgLpL7GugGKpInCaI1cUagcOW
+         L9POXg3Bt/ppLY3jy9mG+YpkEezG25CtPmgygIrqKbSKiGk6b5USlBDjnM37wcB2OC32
+         D+FTvGeFkSWqinLWhVOrbyCpn6urtDwrTaqBwsT5AoujDE/HkKxGqzajGx7gbhvjxLQZ
+         atINYjng+ZoPESg1CumCbMYLx8w6dyAzXDNeR7ZqHCqGqbFEDmyxSBojGUoLaCTZH20o
+         saDuCKrgMAG2diYIIBA4JiECKVPFvR4807D6uDYGbgQt7mUW1DUBkcsofbeUtHRx7b/o
+         dzFA==
+X-Forwarded-Encrypted: i=1; AJvYcCWhUGUYiwxZabFfGZJoYhIB+hRD6sJa4FyYQCQr11ndbhTovB8VmFX+I6T9ktrNr9yYNVYoqByp92gJ7/g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx39khiDdm3H6JcBuw6EPNNujfMtPHKQzjLVBZ+GnwLAHGZSu/4
+	Zt3Z2ShhTAKxbcMamQ4MbaprcJr3Hbh0TAHhXMjFWityiE5lmNTa1gM6cgkdzAxij+4NwSkMEe7
+	Bf4APGEdNK1G5TWxzUKSLTEh7IV/bYSbx6kSYiKl3u9ggGCDOXaNfk2q9r3xalcy1MSY=
+X-Gm-Gg: ASbGnct4e31VViusHmyFfegVJiqvSyHHBa20voSgQxiqZSA6Mq34Ietkni6VTjvaqPt
+	cdn8cjBbZwcTcmVqyB/QdpaqTSao7m8C77rGygqG9Jof8FA7bkqniho6RbOaZPC8aLI2pGgBM7f
+	jom5GdXJfpUMn8cqjJeDqjSplzXa+bznxApHXaAloiNiTgkaYxhBmoYcartgURjpf/Q/k+/21xg
+	v1O81r/C+BmjtKsrQCjysnbOI7BkhXgdbc7zwdVoFB8wKoO51XBaEByWxF+e9yasAcp4V6Yzrnj
+	UBo0DHpXzOqHT+ML/rOKVzSsFheL4bzy4DzzzdCjSw==
+X-Received: by 2002:a17:902:c943:b0:221:751f:cfbe with SMTP id d9443c01a7336-23c8595204cmr167337135ad.19.1751811720115;
+        Sun, 06 Jul 2025 07:22:00 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFO93oCbUuKR455AbSvqBvRYCReXzTUnYblW52a/kTh3+cnV2a1b0uxIXTMZ96Ppo2+XoCvjw==
+X-Received: by 2002:a17:902:c943:b0:221:751f:cfbe with SMTP id d9443c01a7336-23c8595204cmr167336735ad.19.1751811719650;
+        Sun, 06 Jul 2025 07:21:59 -0700 (PDT)
+Received: from [192.168.1.5] ([106.222.234.15])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23c8431a4c6sm63428015ad.46.2025.07.06.07.21.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 06 Jul 2025 07:21:59 -0700 (PDT)
+Message-ID: <c20a9713-6f8d-4c20-a031-dc448404d073@oss.qualcomm.com>
+Date: Sun, 6 Jul 2025 19:51:55 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] iommu/arm-smmu: disable PRR on SM8250
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        Rob Clark <robin.clark@oss.qualcomm.com>,
+        Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Bibek Kumar Patro <quic_bibekkum@quicinc.com>
+Cc: iommu@lists.linux.dev, linux-arm-msm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Akhil P Oommen <akhilpo@oss.qualcomm.com>
+References: <20250705-iommu-fix-prr-v2-1-406fecc37cf8@oss.qualcomm.com>
+From: Akhil P Oommen <akhilpo@oss.qualcomm.com>
+Content-Language: en-US
+In-Reply-To: <20250705-iommu-fix-prr-v2-1-406fecc37cf8@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=FrUF/3rq c=1 sm=1 tr=0 ts=686a8689 cx=c_pps
+ a=oF/VQ+ItUULfLr/lQ2/icg==:117 a=D9rl3thw99EfY5kE3N+1UQ==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
+ a=idnX5w4AHIxaUxQtNqEA:9 a=QEXdDO2ut3YA:10 a=3WC7DwWrALyhR5TkjVHa:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA2MDA5MSBTYWx0ZWRfX45JfCggvF6O1
+ gixpB57BHVYePO/as8pJDQrBTBctD0MPIUS+s7rodVjiBqwUiMqoGG/8GtbXwhHs6L4BZ7FnaI5
+ WKMm2z0tCyDNACm2eKipvlFdbmzDSvoRlLYL5zpvH3YwFtNdWH9PrLO96kd0IPBDwA0XLBnxM3v
+ 2plkJ4mOnAieO9OyuaVtJ01IyAoL5FjKgHCrKUFMqAOLVxmQARG30m3g2pqz8c63hDiDVHxSIB8
+ oFo/cXmRLeuFfTayr3MDqHnrFiq/Bw4F165abVUFuI9N0ZWe56r6owsdOSeGFYs0NRYT7OfsPEI
+ YRq6VqRm5ENKbSH1mBXZSQoa0xkeZKDG7ptW0JDS1QY3yIvhfYVs9WmvXiDxwOAtObD699LuIu8
+ 1ZA6Q7gjobp6aYuvCr7+xOuedp9+JxwGPkPz7P6sRGfjcG8QyHYJTY2g0blqP0kDWhql1sJh
+X-Proofpoint-GUID: BLTkZtTYJ7NFTPEGSe_vcC65Mk0BaOtJ
+X-Proofpoint-ORIG-GUID: BLTkZtTYJ7NFTPEGSe_vcC65Mk0BaOtJ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-04_07,2025-07-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 suspectscore=0 clxscore=1015 mlxscore=0 spamscore=0
+ priorityscore=1501 bulkscore=0 lowpriorityscore=0 phishscore=0 malwarescore=0
+ adultscore=0 mlxlogscore=999 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507060091
 
-Since commit 4959aebba8c0 ("virtio-net: use mtu size as buffer length
-for big packets"), the allocated size for big packets is not
-MAX_SKB_FRAGS * PAGE_SIZE anymore but depends on negotiated MTU. The
-number of allocated frags for big packets is stored in
-vi->big_packets_num_skbfrags. This commit fixes the received length
-check corresponding to that change. The current incorrect check can lead
-to NULL page pointer dereference in the below while loop when erroneous
-length is received.
+On 7/5/2025 9:38 PM, Dmitry Baryshkov wrote:
+> On SM8250 / QRB5165-RB5 using PRR bits resets the device, most likely
+> because of the hyp limitations. Disable PRR support on that platform.
+> 
+> Fixes: 7f2ef1bfc758 ("iommu/arm-smmu: Add support for PRR bit setup")
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
-Fixes: 4959aebba8c0 ("virtio-net: use mtu size as buffer length for big packets")
-Signed-off-by: Bui Quang Minh <minhquangbui99@gmail.com>
----
- drivers/net/virtio_net.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+Reviewed-by: Akhil P Oommen <akhilpo@oss.qualcomm.com>
 
-diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-index 5d674eb9a0f2..ead1cd2fb8af 100644
---- a/drivers/net/virtio_net.c
-+++ b/drivers/net/virtio_net.c
-@@ -823,7 +823,7 @@ static struct sk_buff *page_to_skb(struct virtnet_info *vi,
- {
- 	struct sk_buff *skb;
- 	struct virtio_net_common_hdr *hdr;
--	unsigned int copy, hdr_len, hdr_padded_len;
-+	unsigned int copy, hdr_len, hdr_padded_len, max_remaining_len;
- 	struct page *page_to_free = NULL;
- 	int tailroom, shinfo_size;
- 	char *p, *hdr_p, *buf;
-@@ -887,12 +887,16 @@ static struct sk_buff *page_to_skb(struct virtnet_info *vi,
- 	 * tries to receive more than is possible. This is usually
- 	 * the case of a broken device.
- 	 */
--	if (unlikely(len > MAX_SKB_FRAGS * PAGE_SIZE)) {
-+	BUG_ON(offset >= PAGE_SIZE);
-+	max_remaining_len = (unsigned int)PAGE_SIZE - offset;
-+	max_remaining_len += vi->big_packets_num_skbfrags * PAGE_SIZE;
-+	if (unlikely(len > max_remaining_len)) {
- 		net_dbg_ratelimited("%s: too much data\n", skb->dev->name);
- 		dev_kfree_skb(skb);
-+		give_pages(rq, page);
- 		return NULL;
- 	}
--	BUG_ON(offset >= PAGE_SIZE);
-+
- 	while (len) {
- 		unsigned int frag_size = min((unsigned)PAGE_SIZE - offset, len);
- 		skb_add_rx_frag(skb, skb_shinfo(skb)->nr_frags, page, offset,
--- 
-2.43.0
+Unfortunately, there is no way to detect firmware support for PRR safely
+from KMD.
+
+-Akhil.
+
+> ---
+> I currently don't have access to other devices from these generations.
+> It might be necessary to apply the same workaround to other platforms.
+> ---
+> Changes in v2:
+> - Simplify the workaround as the issue seems to be limited to SM8250
+>   only (Rob)
+> - Link to v1: https://lore.kernel.org/r/20250705-iommu-fix-prr-v1-1-ef725033651c@oss.qualcomm.com
+> ---
+>  drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
+> index 62874b18f6459ad9a8b0542ab81c24e3e745c53d..53d88646476e9f193a6275d9c3ee3d084c215362 100644
+> --- a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
+> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
+> @@ -355,7 +355,8 @@ static int qcom_adreno_smmu_init_context(struct arm_smmu_domain *smmu_domain,
+>  	priv->set_prr_addr = NULL;
+>  
+>  	if (of_device_is_compatible(np, "qcom,smmu-500") &&
+> -			of_device_is_compatible(np, "qcom,adreno-smmu")) {
+> +	    !of_device_is_compatible(np, "qcom,sm8250-smmu-500") &&
+> +	    of_device_is_compatible(np, "qcom,adreno-smmu")) {
+>  		priv->set_prr_bit = qcom_adreno_smmu_set_prr_bit;
+>  		priv->set_prr_addr = qcom_adreno_smmu_set_prr_addr;
+>  	}
+> 
+> ---
+> base-commit: 7244e36657076b597ac21d118be9c0b0f15fc622
+> change-id: 20250705-iommu-fix-prr-600451b1d304
+> 
+> Best regards,
 
 
