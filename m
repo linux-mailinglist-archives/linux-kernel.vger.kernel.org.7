@@ -1,121 +1,143 @@
-Return-Path: <linux-kernel+bounces-718849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-718852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D44C9AFA6EC
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Jul 2025 19:38:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30A20AFA6F7
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Jul 2025 20:26:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED21A17B44F
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Jul 2025 17:38:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 40DED7A726E
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Jul 2025 18:24:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F20282BD5BB;
-	Sun,  6 Jul 2025 17:37:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E0141EB1AF;
+	Sun,  6 Jul 2025 18:26:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="orXVAk+F"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="Ld+AhX43"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59F022BD590;
-	Sun,  6 Jul 2025 17:37:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14D1A29E10C;
+	Sun,  6 Jul 2025 18:25:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751823465; cv=none; b=i0z7NxAYizgC4xocyVlpW6GLfueo9p5LNi/q9ExO3DTwXWEpuXd/OWVfdTbW9I7/AH5pKqtIcxrpEiR14f7kIfva+N8dDWpN4a2XSKfCuTig7CUXk62IjogL3+jL9HhWzyQ+jAwn0YHaEQqc5CQU2O70gPqv6ZmfdKIHfVTA64w=
+	t=1751826361; cv=none; b=sQ2rGjMyKnKlds/TiRe+uOogmFz7v2OLUSdscXjskLTXUcaMpJDtzQBjhSHoIwrNtgaBGGCRiIvZSgnrzzF+qnkonKvTScuosgnAgb1IgFzbW3iaklZLNjyZ/zY5XqQeQmwnADmsV+SS/+8YYD4FXZVso22d4HUmKo9r5jMtMB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751823465; c=relaxed/simple;
-	bh=y/NagA9ATWYzQCU9rSacENdhdRjkHrBaR2aM75AXuY4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dnO+Apl5cR/J/b0tGe+1LyQm5sDSybCnFiwNZSm7m6pbKJnQouJ/ptZreXnRF5qLpTOZSWBUNWCjTGWe5G5ik4PCRMTGHbyxhS6KZmlHu+ROMoFmcDH2xZOml2C1mdtQAPF3bYaTJYSJYLsvEhmdIIkw7jF87gGuUE/TXOXhdEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=orXVAk+F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8C44C4CEF2;
-	Sun,  6 Jul 2025 17:37:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751823464;
-	bh=y/NagA9ATWYzQCU9rSacENdhdRjkHrBaR2aM75AXuY4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=orXVAk+FU306mzqc4WhNNGyh/QPVlsfnq/ha7OFRjsYJOwSW73KjZW8tCUBpZgyDP
-	 mbORBDmTYFZkpLbehJgkJhLq/4ZCIXhjynSsAGwf0EqUWpnGo/Muxyl1CI90UJJKtj
-	 ezTaWG8VARDp4Moj71p1hYDbGgLV4RsFLq2LjYpilvFJoDjIE/TwQ1q+qt20QQdgxw
-	 JBWIvDsbrB7vbp7xFHVyRLxEANRyUi9+tRBHqj0kmmt5xyTInSbKrGqGtdo4VNYKQl
-	 wEZTKnNAeDUvtJTb5fRkixKidZjrtzA220veml1DsWHOnnKWfa5unpoP4QXeKE64pL
-	 Mn9V6k6yePUzw==
-Date: Sun, 6 Jul 2025 19:37:42 +0200
-From: Alejandro Colomar <alx@kernel.org>
-To: linux-mm@kvack.org, linux-hardening@vger.kernel.org
-Cc: Alejandro Colomar <alx@kernel.org>, Kees Cook <kees@kernel.org>, 
-	Christopher Bazley <chris.bazley.wg14@gmail.com>, shadow <~hallyn/shadow@lists.sr.ht>, 
-	linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, 
-	kasan-dev@googlegroups.com, Dmitry Vyukov <dvyukov@google.com>, 
-	Alexander Potapenko <glider@google.com>, Marco Elver <elver@google.com>, Christoph Lameter <cl@linux.com>, 
-	David Rientjes <rientjes@google.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>, 
-	Andrew Clayton <andrew@digital-domain.net>
-Subject: [RFC v2 5/5] mm: Fix benign off-by-one bugs
-Message-ID: <08cfdd2bf77911ca6ce3c0b6c310daea77eb307a.1751823326.git.alx@kernel.org>
-X-Mailer: git-send-email 2.50.0
-References: <cover.1751823326.git.alx@kernel.org>
+	s=arc-20240116; t=1751826361; c=relaxed/simple;
+	bh=SqNKvsyPaT4bxu4N9Hr2vwsF5W0btBXizOP0uAlV1Sk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=qz52LjbdgXsv5FTDUcrUQn5ghKD7gURDBo7BE20uFy2Iluwu+WB2X3AaheHl0Q8QN5h3IH3fkUjf+F1DfJyAop2UxtPUnxzaQams49vzpKc/0OnCreXBEy+ZP4OA4sHRc8QaSo8EmFchb8WZ/N1SeI+OxQermTnTn7i8Vmvxj5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=Ld+AhX43; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 144DD20E83;
+	Sun,  6 Jul 2025 20:25:58 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id d5-QImG36bsJ; Sun,  6 Jul 2025 20:25:57 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1751826357; bh=SqNKvsyPaT4bxu4N9Hr2vwsF5W0btBXizOP0uAlV1Sk=;
+	h=From:Subject:Date:To:Cc;
+	b=Ld+AhX438ROcfab8eKAgnooY7HuCoCdlZr8EzF3O5BXJ4XizTaJ1JN2oYQCwm8JRy
+	 /sgnSLYAjEmjgvVGR1mT1avk0W+2msqycpcB87ImplB+vmWMqRXp+lGnpXnFMFwWVu
+	 YRYZUzqJgGaKlMNdJDO8muoPWVonKfhqyWzk5YRAAkq2Bk3VdKn7YiaOIPWxzl87ES
+	 UZ7LdAqVlBaHQVSNtwvveuR/Y5QN4Rr8IE7GY1DH51PVSdIAsU+x32SjdE4S1U0dWJ
+	 6xfBVCDMMjSxVwXtcpEjXckXsbUOENdAmbPE4ZW+pT48zPMQwHJYtEw0n0XRty94vG
+	 JpR9HcYUwCIcQ==
+From: Kaustabh Chakraborty <kauschluss@disroot.org>
+Subject: [PATCH v3 00/13] Support for Exynos7870 DSIM bridge
+Date: Sun, 06 Jul 2025 23:55:34 +0530
+Message-Id: <20250706-exynos7870-dsim-v3-0-9879fb9a644d@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <cover.1751823326.git.alx@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJ6/amgC/2XNQQ6CMBCF4auYrq1pZ4SCK+9hXBTawiykpiUNh
+ HB3C240LP+XzDcLizaQjex2WliwiSL5IQeeT6zt9dBZTiY3AwGFKAC5nebBR1UpwU2kF3dQm9J
+ q1+oCWL56B+to2sXHM3dPcfRh3h8kua1fq5RwsJLkgkuNKJpWV7Vxd0MxeD9efOjYpiX4EUAdB
+ diEK2JTKlSVwX9hXdcPa7QIZ/IAAAA=
+X-Change-ID: 20250523-exynos7870-dsim-f29d6eafca52
+To: Inki Dae <inki.dae@samsung.com>, 
+ Jagan Teki <jagan@amarulasolutions.com>, 
+ Marek Szyprowski <m.szyprowski@samsung.com>, 
+ Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
+ Kyungmin Park <kyungmin.park@samsung.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, 
+ Kaustabh Chakraborty <kauschluss@disroot.org>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1751826342; l=2560;
+ i=kauschluss@disroot.org; s=20250202; h=from:subject:message-id;
+ bh=SqNKvsyPaT4bxu4N9Hr2vwsF5W0btBXizOP0uAlV1Sk=;
+ b=5UGrf1rNSH5A3hsdHEVmc/wTiHGXdhyeYJsw1zTDSHwLuVQEJUZgSiPWGgFBnQ5IWPlqAWZhx
+ 00DazFKQRE+CP8hfrpPZGEZnvtnogRIiFxMtPQ/Uoe4rmHCPmVRFMn8
+X-Developer-Key: i=kauschluss@disroot.org; a=ed25519;
+ pk=h2xeR+V2I1+GrfDPAhZa3M+NWA0Cnbdkkq1bH3ct1hE=
 
-We were wasting a byte due to an off-by-one bug.  s[c]nprintf()
-doesn't write more than $2 bytes including the null byte, so trying to
-pass 'size-1' there is wasting one byte.  Now that we use seprintf(),
-the situation isn't different: seprintf() will stop writing *before*
-'end' --that is, at most the terminating null byte will be written at
-'end-1'--.
+This patch series introduces a lot of changes to the existing DSIM
+bridge driver, by introdcing new registers and making register offsets
+configurable for different SoCs. These preliminary changes are followed
+by the introduction of support for Exynos7870's DSIM IP block.
 
-Cc: Kees Cook <kees@kernel.org>
-Cc: Christopher Bazley <chris.bazley.wg14@gmail.com>
-Signed-off-by: Alejandro Colomar <alx@kernel.org>
+Work is heavily inspired and only possible due to Samsung's vendor
+kernel sources. Testing has been done with Samsung Galaxy J7 Prime
+(samsung-on7xelte), Samsung Galaxy A2 Core (samsung-a2corelte), and
+Samsung Galaxy J6 (samsung-j6lte), all with DSI video mode panels.
+
+Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
 ---
- mm/kfence/kfence_test.c | 4 ++--
- mm/kmsan/kmsan_test.c   | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+Changes in v3:
+- support both legacy STATUS and LINK_STATUS & DPHY_STATUS split (daeinki)
+- Link to v2: https://lore.kernel.org/r/20250627-exynos7870-dsim-v2-0-1433b67378d3@disroot.org
 
-diff --git a/mm/kfence/kfence_test.c b/mm/kfence/kfence_test.c
-index ff734c514c03..f02c3e23638a 100644
---- a/mm/kfence/kfence_test.c
-+++ b/mm/kfence/kfence_test.c
-@@ -110,7 +110,7 @@ static bool report_matches(const struct expect_report *r)
- 
- 	/* Title */
- 	cur = expect[0];
--	end = &expect[0][sizeof(expect[0]) - 1];
-+	end = ENDOF(expect[0]);
- 	switch (r->type) {
- 	case KFENCE_ERROR_OOB:
- 		cur = seprintf(cur, end, "BUG: KFENCE: out-of-bounds %s",
-@@ -140,7 +140,7 @@ static bool report_matches(const struct expect_report *r)
- 
- 	/* Access information */
- 	cur = expect[1];
--	end = &expect[1][sizeof(expect[1]) - 1];
-+	end = ENDOF(expect[1]);
- 
- 	switch (r->type) {
- 	case KFENCE_ERROR_OOB:
-diff --git a/mm/kmsan/kmsan_test.c b/mm/kmsan/kmsan_test.c
-index a062a46b2d24..882500807db8 100644
---- a/mm/kmsan/kmsan_test.c
-+++ b/mm/kmsan/kmsan_test.c
-@@ -105,7 +105,7 @@ static bool report_matches(const struct expect_report *r)
- 
- 	/* Title */
- 	cur = expected_header;
--	end = &expected_header[sizeof(expected_header) - 1];
-+	end = ENDOF(expected_header);
- 
- 	cur = seprintf(cur, end, "BUG: KMSAN: %s", r->error_type);
- 
+Changes in v2:
+- added commit to isolate clock names for each variant
+- replaced clock names with generic ones (krzk)
+- added maxItems to clocks property in dtschema (krzk)
+- Link to v1: https://lore.kernel.org/r/20250612-exynos7870-dsim-v1-0-1a330bca89df@disroot.org
+
+---
+Kaustabh Chakraborty (13):
+      drm/bridge: samsung-dsim: support separate LINK and DPHY status registers
+      drm/bridge: samsung-dsim: add SFRCTRL register
+      drm/bridge: samsung-dsim: add flag to control header FIFO wait
+      drm/bridge: samsung-dsim: allow configuring bits and offsets of CLKCTRL register
+      drm/bridge: samsung-dsim: allow configuring the MAIN_VSA offset
+      drm/bridge: samsung-dsim: allow configuring the VIDEO_MODE bit
+      drm/bridge: samsung-dsim: allow configuring PLL_M and PLL_S offsets
+      drm/bridge: samsung-dsim: allow configuring the PLL_STABLE bit
+      drm/bridge: samsung-dsim: increase timeout value for PLL_STABLE
+      drm/bridge: samsung-dsim: add ability to define clock names for every variant
+      dt-bindings: samsung,mipi-dsim: document exynos7870 DSIM compatible
+      drm/bridge: samsung-dsim: add driver support for exynos7870 DSIM bridge
+      drm/exynos: dsi: add support for exynos7870
+
+ .../bindings/display/bridge/samsung,mipi-dsim.yaml |  27 ++
+ drivers/gpu/drm/bridge/samsung-dsim.c              | 353 ++++++++++++++++-----
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c            |   9 +
+ include/drm/bridge/samsung-dsim.h                  |  16 +-
+ 4 files changed, 317 insertions(+), 88 deletions(-)
+---
+base-commit: 26ffb3d6f02cd0935fb9fa3db897767beee1cb2a
+change-id: 20250523-exynos7870-dsim-f29d6eafca52
+
+Best regards,
 -- 
-2.50.0
+Kaustabh Chakraborty <kauschluss@disroot.org>
 
 
