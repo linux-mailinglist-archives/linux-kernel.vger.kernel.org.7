@@ -1,121 +1,106 @@
-Return-Path: <linux-kernel+bounces-718851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-718866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C6CEAFA6F3
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Jul 2025 20:26:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B196DAFA739
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Jul 2025 20:36:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A33993B2138
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Jul 2025 18:25:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CC1B1893CF9
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Jul 2025 18:36:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00FE329E0FE;
-	Sun,  6 Jul 2025 18:25:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8655429E0E1;
+	Sun,  6 Jul 2025 18:36:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vqe3go0t"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=netcube.li header.i=@netcube.li header.b="H0V8+hih"
+Received: from mail.netcube.li (mail.netcube.li [173.249.15.149])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E6E5522F;
-	Sun,  6 Jul 2025 18:25:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B29301C5D77;
+	Sun,  6 Jul 2025 18:36:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.249.15.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751826358; cv=none; b=a8XirDekdtofFBqldeBe47VlOvQBWAWe+TPzRaVHlKg9CydrA0m6vecf6Qm6fjPX3Cg2fFhSq8KjKiwOjkqZRxY1BjioeC5a1X/z1Ltkr1zj+KYIo1pk+klEXWOpbKncsKzRg+aUJtMo3X2ALhaEZO0igp2+5VUK9irCAmSvESg=
+	t=1751826980; cv=none; b=cdt3aiT91llqCFsTQjXcPjrTTXUao5zpAAfHyyIFl+v3dl9g1/7WR6fS9COcDyIpYnmWnb+lrwF3dPvCqUajLKEv1byxxff0sgGpj/n1D4rvX/w4f3xvVeFUE45NAbNFJi259twP2EBWdYHeoboioTTCBgVhjnfLLdqFaSYR6WQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751826358; c=relaxed/simple;
-	bh=TiRh17OBztLl/5Um33JRzwwVspvarTEzm3jzvByfFbI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AEBFWMyhHyi0iPw0OwF2shT+fPi0lYPXs8cML4JqLyx8t2MAEsPRO/y+/mGT92p4s14zGt3OqOgi4Kfq/Bv1cbdFhlJ61/PbDkIOyZ68C589IOAJ2Q7X/t+TctA73c/dLidTZ++yr0z/GD/FRCroQeg8N+JljSn5vlPaBfo+nK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vqe3go0t; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D7E9C4CEED;
-	Sun,  6 Jul 2025 18:25:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751826357;
-	bh=TiRh17OBztLl/5Um33JRzwwVspvarTEzm3jzvByfFbI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Vqe3go0tIOi/wdCLN4qfOdxNrHYmlMt5FPsrNnA2BPXh6D+V8JgBEh/uOl8usVpnt
-	 LcdFvEGUR8qLAYzxBY1MgTrsNazo10ZAMc57diVKTS/PCwXV3cL7x6jkYdn+YyTz2v
-	 zVKzPyHEmFOzdKRIfXUd1fu+KF0rBZJnMTCp7Kepaund2hyAJsIvrt8UXsZV9d+gZO
-	 IXV7h5nmhmLW7Bo0j6JN46ORuPcQf8yPfJ9l19VrVfNRYnr8p4DSKuyY6ER0K/Tysf
-	 /l9g/3A8t9P8WPWJRQ2QQGxtZ04eCT8QvkwY5t4XqdCqtuuhRhz7TIgoEwQAqp6uAu
-	 MeOO4FnqNI0pQ==
-Message-ID: <fbfbd0e5-2c27-4f32-a3d7-9cf57fde5098@kernel.org>
-Date: Sun, 6 Jul 2025 20:25:52 +0200
+	s=arc-20240116; t=1751826980; c=relaxed/simple;
+	bh=xO9P6sTkdgv1ksgmrMwKNOq6Vvq9pyjH91+AOwv65Co=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=oCswDW+bZ0/W2js2AVNmI0shY6ZXaUiqQ2t9axO24mXA76HTthBgquY0HkG8uuEXVIkxSA/QXPTEeLoEN0iqhGlKjGYibsHOfxnYjexnyYjtvkoB1vsGKtJzL2LQq2FfgVGvgIkKLedrALWebC8lhU0MlW4qUvVJ0p3Nhe7Xr3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=netcube.li; spf=pass smtp.mailfrom=netcube.li; dkim=pass (1024-bit key) header.d=netcube.li header.i=@netcube.li header.b=H0V8+hih; arc=none smtp.client-ip=173.249.15.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=netcube.li
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netcube.li
+dkim-signature: v=1; a=rsa-sha256; d=netcube.li; s=s1;
+	c=relaxed/relaxed; q=dns/txt; h=From:Subject:Date:Message-ID:To:CC:MIME-Version:Content-Transfer-Encoding;
+	bh=8W+qMrtYNnZcx+EJzfAd8UOWFZ0ESxaf0QC+aaxPdLc=;
+	b=H0V8+hihvGTw3plf+Csl99c4Y9hG7Q1bVz9KDEXvesm4isirwp98UB832PtCxJ6uOIwlt2juW/wN2c4T/iTTVuqGqkS7aE2MXZctfZ1x5guYgOOFyDZUneq/yZh+ngAvjt9WHouE64qsobF1jH7IGLEUmush5Kkg587rmFJI+jU=
+Received: from lukas-hpz440workstation.lan.sk100508.local (cm70-231.liwest.at [212.241.70.231])
+	by mail.netcube.li with ESMTPA
+	; Sun, 6 Jul 2025 20:36:15 +0200
+From: Lukas Schmid <lukas.schmid@netcube.li>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	Maxime Ripard <mripard@kernel.org>
+Cc: Lukas Schmid <lukas.schmid@netcube.li>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: [PATCH v2 0/5] Add support for NetCube Systems Nagami SoM and its carrier boards
+Date: Sun,  6 Jul 2025 20:35:53 +0200
+Message-Id: <20250706183601.157523-1-lukas.schmid@netcube.li>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] staging: media: atomisp: Fix premature setting of
- HMM_BO_DEVICE_INITED flag
-To: Abdelrahman Fekry <abdelrahmanfekry375@gmail.com>
-Cc: Andy Shevchenko <andriy.shevchenko@intel.com>,
- Andy Shevchenko <andy.shevchenko@gmail.com>, andy@kernel.org,
- mchehab@kernel.org, sakari.ailus@linux.intel.com,
- gregkh@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- linux-staging@lists.linux.dev, skhan@linuxfoundation.com,
- dan.carpenter@linaro.org
-References: <20250628052536.43737-1-abdelrahmanfekry375@gmail.com>
- <CAHp75Vcy3dHRu8Wb2KZ=xK7adz=-P-iuRTeR8vOWzHzZL9uFeg@mail.gmail.com>
- <CAGn2d8OMRaeozOMxj1Ry8i9T3sJ5J1QqA_Jpk7wYO8KiUbpKBA@mail.gmail.com>
- <aGPYZhK65LaD0wVO@smile.fi.intel.com>
- <836dc6b6-2821-47fc-8f24-0838f979af76@kernel.org>
- <CAGn2d8NBEwWm0mQ0YQ3KZ+V1Zon84zusfsQQV2foVmUTBAzEAQ@mail.gmail.com>
-Content-Language: en-US, nl
-From: Hans de Goede <hansg@kernel.org>
-In-Reply-To: <CAGn2d8NBEwWm0mQ0YQ3KZ+V1Zon84zusfsQQV2foVmUTBAzEAQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Hi, Abdelrahman
+This series adds support for the NetCube Systems Nagami SoM and its
+associated carrier boards, the Nagami Basic Carrier and the Nagami Keypad
+Carrier.
 
-On 1-Jul-25 5:45 PM, Abdelrahman Fekry wrote:
-> Hi Hans,
-> 
-> On Tue, Jul 1, 2025 at 4:54 PM Hans de Goede <hansg@kernel.org> wrote:
+Changes in v2:
+ - Squash the binding patches into one patch
+ - Fix formatting of the phy node in the SoM dtsi
+ - Add description on where the phy is located in the SoM dtsi
+ - Fix the phy address in the SoM dtsi
+ - Move the carrier bindings into the same description as enums
 
-...
+Signed-off-by: Lukas Schmid <lukas.schmid@netcube.li>
+---
+Lukas Schmid (5):
+  dt-bindings: arm: sunxi: Add NetCube Systems Nagami SoM and carrier
+    board bindings
+  riscv: dts: allwinner: d1s-t113: Add pinctrl's required by NetCube
+    Systems Nagami SoM
+  ARM: dts: sunxi: add support for NetCube Systems Nagami SoM
+  ARM: dts: sunxi: add support for NetCube Systems Nagami Basic Carrier
+  ARM: dts: sunxi: add support for NetCube Systems Nagami Keypad Carrier
 
->> Actually I'm pretty sure that there will be quite a few
->> error-handling paths with bugs in the atomisp code given
->> its overall quality. But lets clean things up first, that
->> should make addressing any such cases easier.
->>
-> I totally agree with this , i have submitted a patch that cleans the
-> custom sysfs atrributes
-> as you suggested as a beginning , the patch got reviewed by andy and dan
-> here is the link
-> https://lore.kernel.org/all/20250627100604.29061-1-abdelrahmanfekry375@gmail.com/
-> 
-> What do you think I should work on next after these two patches, do
-> you have any suggestions?
+ .../devicetree/bindings/arm/sunxi.yaml        |  17 ++
+ arch/arm/boot/dts/allwinner/Makefile          |   3 +
+ ...n8i-t113s-netcube-nagami-basic-carrier.dts |  63 +++++
+ ...8i-t113s-netcube-nagami-keypad-carrier.dts | 165 +++++++++++++
+ .../allwinner/sun8i-t113s-netcube-nagami.dtsi | 227 ++++++++++++++++++
+ .../boot/dts/allwinner/sunxi-d1s-t113.dtsi    |  36 +++
+ 6 files changed, 511 insertions(+)
+ create mode 100644 arch/arm/boot/dts/allwinner/sun8i-t113s-netcube-nagami-basic-carrier.dts
+ create mode 100644 arch/arm/boot/dts/allwinner/sun8i-t113s-netcube-nagami-keypad-carrier.dts
+ create mode 100644 arch/arm/boot/dts/allwinner/sun8i-t113s-netcube-nagami.dtsi
 
-The hmm_alloc code can use some more cleanups:
-
-* hmm_get_mmu_base_addr() should be moved to drivers/staging/media/atomisp/pci/hmm/hmm.c
-  and then the "struct hmm_bo_device bo_device;" in hmm.c can be made static
-
-* hmm_init() sets hmm_initialized = true even on errors. It should
-  immediately exit (return ret) on errors instead of continue-ing
-  with calling hmm_alloc() even though hmm_bo_device_init() failed.
-
-* I've checked the code and hmm_init() is called before any hmm_alloc()
-  calls are made so the extra hmm_init() call in __hmm_alloc() can be
-  dropped.
-
-* After dropping the extra hmm_init() call in __hmm_alloc() the
-  hmm_initialized flag can be removed since it is now no longer read
-  anywhere.
-
-* And maybe you'll find more possible cleanups while working on this
-
-Regards,
-
-Hans
+-- 
+2.39.5
 
 
 
