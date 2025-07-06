@@ -1,124 +1,113 @@
-Return-Path: <linux-kernel+bounces-718939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-718937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47A02AFA7C4
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Jul 2025 22:45:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 95DB8AFA7BE
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Jul 2025 22:44:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A532217A215
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Jul 2025 20:45:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07A4D178C68
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Jul 2025 20:44:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F3F71D516C;
-	Sun,  6 Jul 2025 20:45:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47A5A2BD01E;
+	Sun,  6 Jul 2025 20:43:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b="HsQK1gGj"
-Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lOvOH69S";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="CkG1J0Ej"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50D3D1865EE
-	for <linux-kernel@vger.kernel.org>; Sun,  6 Jul 2025 20:45:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46C3B29E10F;
+	Sun,  6 Jul 2025 20:43:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751834722; cv=none; b=Z+sWf0dKAZKTdNjUkvEM88iP/rnC0FrjlA9f5g7GIU0LyCZvsVTCjSHD3fHxdhTmGYS2a6yHDaGYLx3/b0B/wcGvU9mdlaXBI7RwJ9EtroI2Fs1wvjznLDOJ3RPF8dq/qsqmslAFnhMgZboi/sX/RsfsHtQepTXrd9Nx82oMlZU=
+	t=1751834634; cv=none; b=pZUtgfvjeRypU/atwxwVTzdoPdLekoIxIS/K54cMIV7rHUkPUcnjODyG2yjGq5puNg+nVLgbpuk3JZ3LnqV/cbrj3s6ilw3+c5orrkpFRemTPusFz0YGBlPLfh/E/FAyGyv9zjIjY/qeeOMMiCvM+Fs9bj/S8KbxQsSNO37iktI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751834722; c=relaxed/simple;
-	bh=fHTkSG5iV3Yyo/h1LA3Y2voIyx/LC1QXbp7R47QKoTw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AVzd1fJNQVVkGTCc873B33ikmx1MKmhe/hppOfPJD5rtY+Oh8Wi6Qb8mYqKSiuiekeJYDRU6aIMYskjacyPLQ5nW/qbsN5BAtNGaoiLKp7H2qRdoDitFjwIn6QpVMlsAKYcP/KLA3JYug1SPesZ/RxjzKk6AOTUq9shVEUdSwSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=packett.cool; spf=pass smtp.mailfrom=packett.cool; dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b=HsQK1gGj; arc=none smtp.client-ip=95.215.58.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=packett.cool
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=packett.cool
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=packett.cool;
-	s=key1; t=1751834714;
+	s=arc-20240116; t=1751834634; c=relaxed/simple;
+	bh=usPTwVNy/TYUdvESMy1rw1mD95rKVFtnjKLHy2LTfcg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=RjtZwNSiM3Q+h7YKB/Mivshlyg5DCasjDKS3THWPgkVbi/2+ij+FQ2f8FOp6peNjCzDv2Uc+JD4UNoXnWZOEP989mVyjbdqWThM9APK1JYdB/EUTkocY8zI/fYeBmvMtVylYYJXeJxsqWbgXBbx8SKJCURMQZUpLC2EHV80dn2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lOvOH69S; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=CkG1J0Ej; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1751834629;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=XA19Sq9V/6MzTT7NfJNXG6OWdDuf4KxdwbnjQRqh6JY=;
-	b=HsQK1gGjHeJp3bjespEArsTx0gRs1S37mkwpkNEmm0eovpkyCr+L7pZGj5zP7h8kIdbQAM
-	PPFZfU7rWb5ObxQDi4aPllBJ1hbTzj5kNkdmiPww5g8yicH5XFD8qq7uUeEwtm0EQUHgOK
-	WLDhvSWSF0Izi/uS4FPOQ1tO7ACrCdI3JYSd+YfwgP12ubusOh8pbPbVFi5kqzVSEaTGiU
-	rD1SmE4Q5yIECKFxYH1qPunkxODDBB0kM4M76Mfb95+mHOO1UN4hHfTti0+glhEY6pg8vC
-	8m+YqtwKX8z+eX1ta401f8gP9r47jmG2sqf1w9BDkW74G5E5IgdrG1AO9Qtbjw==
-From: Val Packett <val@packett.cool>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Suraj Kandpal <suraj.kandpal@intel.com>,
-	Arun R Murthy <arun.r.murthy@intel.com>
-Cc: Val Packett <val@packett.cool>,
-	ankit.k.nautiyal@intel.com,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/dp: drm_edp_backlight_set_level: do not always send 3-byte commands
-Date: Sun,  6 Jul 2025 17:42:24 -0300
-Message-ID: <20250706204446.8918-1-val@packett.cool>
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HaMWKZFSACMkJF/x1KbPma+33xBrwS00+hXmnNdOlm4=;
+	b=lOvOH69SMeJW7XSU1i1qeC+GJkPScm498GO4iFaSQnJrYk2vNxV/I7wB1kMmczG+RjC+t1
+	sNTvAh2sma9xtPJtUByMPzUQU7sfALHJohE9wBzet0Vi6NkSa3S9lQLkUpZLgFJZjDVCD6
+	GU3kiEXwCgiNFzdOqgQS371mJOvFfq2pBWdd3XtwXX2avFcBKiZ3CCGPFEcKieZyuFIQf+
+	RGvSp1jXATV3jDDrg1boqA6lqFKQLfbP/ZM1gyO4wLth/d2BMk4vOc2ZuZaM9xIvPRyL08
+	hTT/UrHp57vdURrhLTDmiD+T2zAmuGcaWl26379BmLp1OftfaZuRklq7eaO06g==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1751834629;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HaMWKZFSACMkJF/x1KbPma+33xBrwS00+hXmnNdOlm4=;
+	b=CkG1J0EjBS5wGsQmH1a+QFjhkr4r3k8slMTxfndI7cdIdNcYOoj6TC7QYpZ7wdngy3rrtK
+	f3AzK+33Zy0wMeCw==
+To: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+ Andy Lutomirski
+ <luto@kernel.org>, Vincenzo Frascino <vincenzo.frascino@arm.com>, Shuah
+ Khan <shuah@kernel.org>, Anna-Maria Behnsen <anna-maria@linutronix.de>,
+ Frederic Weisbecker <frederic@kernel.org>, John Stultz
+ <jstultz@google.com>, Stephen Boyd <sboyd@kernel.org>, Catalin Marinas
+ <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Arnd Bergmann
+ <arnd@arndb.de>
+Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-arch@vger.kernel.org, Richard
+ Cochran <richardcochran@gmail.com>, Christopher Hall
+ <christopher.s.hall@intel.com>, Frederic Weisbecker <frederic@kernel.org>,
+ Anna-Maria Behnsen <anna-maria@linutronix.de>, Miroslav Lichvar
+ <mlichvar@redhat.com>, Werner Abt <werner.abt@meinberg-usa.com>, David
+ Woodhouse <dwmw2@infradead.org>, Stephen Boyd <sboyd@kernel.org>, Kurt
+ Kanzenbach <kurt@linutronix.de>, Nam Cao <namcao@linutronix.de>, Antoine
+ Tenart <atenart@kernel.org>, Thomas =?utf-8?Q?Wei=C3=9Fschuh?=
+ <thomas.weissschuh@linutronix.de>
+Subject: Re: [PATCH 13/14] Revert "selftests: vDSO: parse_vdso: Use UAPI
+ headers instead of libc headers"
+In-Reply-To: <20250701-vdso-auxclock-v1-13-df7d9f87b9b8@linutronix.de>
+References: <20250701-vdso-auxclock-v1-0-df7d9f87b9b8@linutronix.de>
+ <20250701-vdso-auxclock-v1-13-df7d9f87b9b8@linutronix.de>
+Date: Sun, 06 Jul 2025 22:43:47 +0200
+Message-ID: <87a55hrqws.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-At least some panels using the LSB register are not happy with the
-unconditional increase of the command buffer to 3 bytes.
+On Tue, Jul 01 2025 at 10:58, Thomas Wei=C3=9Fschuh wrote:
+> This reverts commit c9fbaa879508 ("selftests: vDSO: parse_vdso: Use UAPI =
+headers instead of libc headers")
+>
+> The kernel headers were used to make parse_vdso.c compatible with nolibc.
+> Unfortunately linux/elf.h is incompatible with glibc's sys/auxv.h.
+> When using glibc it is therefore not possible build parse_vdso.c as part =
+of the
+> same compilation unit as its caller as sys/auxv.h is needed for getauxval=
+().
+>
+> In the meantime nolibc gained its own elf.h, providing compatibility with=
+ the
+> documented libc interfaces.
 
-With the BOE NE14QDM in my Dell Latitude 7455, the recent patches for
-luminance based brightness have introduced a regression: the brightness
-range stopped being contiguous and became nonsensical (it probably was
-interpreting the last 2 bytes of the buffer and not the first 2).
+I'm kinda surprised to find this here in this series. Isn't that commit
+c9fbaa879508 obsolete since nolibc got it's own elf.h?
 
-Change from using a fixed sizeof() to a length variable that's only
-set to 3 when luminance is used. Let's leave the default as 2 even for
-the single-byte version, since that's how it worked before.
+So this should just go straight to Linus, no?
 
-Fixes: f2db78e37fe7 ("drm/dp: Modify drm_edp_backlight_set_level")
-Signed-off-by: Val Packett <val@packett.cool>
----
+Thanks,
 
-Video evidence (haha): https://files.catbox.moe/sp1g9v.mp4
-
-As this fix is tiny, if you prefer to fix it differently somehow, feel free to
-just redo it yourselves without waiting for me to respin it :)
-
- drivers/gpu/drm/display/drm_dp_helper.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/display/drm_dp_helper.c b/drivers/gpu/drm/display/drm_dp_helper.c
-index db7896c7edb8..7eaa118d78c3 100644
---- a/drivers/gpu/drm/display/drm_dp_helper.c
-+++ b/drivers/gpu/drm/display/drm_dp_helper.c
-@@ -3962,6 +3962,7 @@ int drm_edp_backlight_set_level(struct drm_dp_aux *aux, const struct drm_edp_bac
- 	int ret;
- 	unsigned int offset = DP_EDP_BACKLIGHT_BRIGHTNESS_MSB;
- 	u8 buf[3] = { 0 };
-+	size_t len = 2;
- 
- 	/* The panel uses the PWM for controlling brightness levels */
- 	if (!(bl->aux_set || bl->luminance_set))
-@@ -3974,6 +3975,7 @@ int drm_edp_backlight_set_level(struct drm_dp_aux *aux, const struct drm_edp_bac
- 		buf[1] = (level & 0x00ff00) >> 8;
- 		buf[2] = (level & 0xff0000) >> 16;
- 		offset = DP_EDP_PANEL_TARGET_LUMINANCE_VALUE;
-+		len = 3;
- 	} else if (bl->lsb_reg_used) {
- 		buf[0] = (level & 0xff00) >> 8;
- 		buf[1] = (level & 0x00ff);
-@@ -3981,7 +3983,7 @@ int drm_edp_backlight_set_level(struct drm_dp_aux *aux, const struct drm_edp_bac
- 		buf[0] = level;
- 	}
- 
--	ret = drm_dp_dpcd_write_data(aux, offset, buf, sizeof(buf));
-+	ret = drm_dp_dpcd_write_data(aux, offset, buf, len);
- 	if (ret < 0) {
- 		drm_err(aux->drm_dev,
- 			"%s: Failed to write aux backlight level: %d\n",
--- 
-2.49.0
-
+        tglx
 
