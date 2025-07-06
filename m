@@ -1,64 +1,56 @@
-Return-Path: <linux-kernel+bounces-718972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-718974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFB69AFA83D
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 01:09:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FE5AAFA843
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 01:12:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D9937A412B
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Jul 2025 23:07:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF6863B1B4F
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Jul 2025 23:11:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1418A1FF1A1;
-	Sun,  6 Jul 2025 23:09:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A04C288CBE;
+	Sun,  6 Jul 2025 23:11:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b="GUur+13C"
-Received: from forwardcorp1a.mail.yandex.net (forwardcorp1a.mail.yandex.net [178.154.239.72])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OcgXL7h3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B69B41B3925
-	for <linux-kernel@vger.kernel.org>; Sun,  6 Jul 2025 23:09:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00776288537;
+	Sun,  6 Jul 2025 23:11:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751843352; cv=none; b=pmsSMnqsORFrws8gsT+QUQHO5C+eGEsJGCmAQwLJRT5KK3ZLtZ6gdREKMlVK4R9PqUF+fcO9826gTNes4G+mP8hLRmOc3k+oHNMcadYATU1+ZQwPh7gajacAiC3bHsk4EAgYLtSQuKzW0CUpFj+8uRm1JLk4b6So/ybr87wZpbc=
+	t=1751843503; cv=none; b=jxoweCsD2r01uSQ0KfoD+AnjJqDv1ihT9RKAw6dNSRogmSNGsGsOouryGCouLUAw01QY/vX5xvvmcX0wIF+Duijlz4heKgEZtc2fN+LjET0V6WvnJuuls8dy7s4sY3Qg0rid/2bSpL9Zisq+Pu2SatZBsOsAq7gHW0fT0qse4NA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751843352; c=relaxed/simple;
-	bh=oB2tgyIlqhlAAL7FhpYwuTEpvoVXsD8POM8pltt03Es=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TbJHEv4o09PeeOJLWwV4ULil8e8+2a5QT/iLYc8xYNm8LFfRWIHdbPHZxOA1q6aH/55i7ee49LxlJYLa8rHN2now9NUT9JSZ+ys52u5782mploHt6xxRFONMaeGi8bFlAofA85q5+PmbhlrpMyl6dcL5k3+f88wwkVXK5n3CCag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru; spf=pass smtp.mailfrom=yandex-team.ru; dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b=GUur+13C; arc=none smtp.client-ip=178.154.239.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex-team.ru
-Received: from mail-nwsmtp-smtp-corp-main-69.vla.yp-c.yandex.net (mail-nwsmtp-smtp-corp-main-69.vla.yp-c.yandex.net [IPv6:2a02:6b8:c1f:3a87:0:640:845c:0])
-	by forwardcorp1a.mail.yandex.net (Yandex) with ESMTPS id 63FAE60ACD;
-	Mon,  7 Jul 2025 02:07:05 +0300 (MSK)
-Received: from d-tatianin-lin.yandex-team.ru (unknown [2a02:6bf:8080:41f::1:27])
-	by mail-nwsmtp-smtp-corp-main-69.vla.yp-c.yandex.net (smtpcorp/Yandex) with ESMTPSA id a6pCSa0GheA0-lla0LRIy;
-	Mon, 07 Jul 2025 02:07:04 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru;
-	s=default; t=1751843224;
-	bh=LrCpVuLAUvZWC17CNToIYvvgAeo7G8QEmG5JEtbD7Vo=;
-	h=Message-Id:Date:Cc:Subject:To:From;
-	b=GUur+13C7ypxM6BBbH+w9Jfcj8F7eHQf/dlIpIke3Ja1s2axFlaoHBeFKXCHDxtb6
-	 H5sdOMPpL8Xdpb6G51BoVnP0XBhoAszIBoTG73/yJJWqTHfU3AhCWvtxioU99zxzyH
-	 qU4ywkYWAgsaA94yqzGKAY++NdgoyW+6VWw1X/nY=
-Authentication-Results: mail-nwsmtp-smtp-corp-main-69.vla.yp-c.yandex.net; dkim=pass header.i=@yandex-team.ru
-From: Daniil Tatianin <d-tatianin@yandex-team.ru>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Daniil Tatianin <d-tatianin@yandex-team.ru>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
+	s=arc-20240116; t=1751843503; c=relaxed/simple;
+	bh=b9yTjrbNlpjbYFfN/2AHdX2leYa4WC4arSWKY1vadb0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=vB/F6hILEDTzMSXqOoKf3ZoEa1IJpMlwebMjGjaLKbKXnCDQg/lyJT4Q1ym5omzQnRptFzDY6/VKDj0ExtZD5vy1p2UlgJd8KVk7DSC7YTjp/uwXV04Eto1STe2uRLeL1qdYYchAHZrSHyryoSo6WCD+zHHYfSgwnRtPvWYQHy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OcgXL7h3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD73BC4CEED;
+	Sun,  6 Jul 2025 23:11:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751843502;
+	bh=b9yTjrbNlpjbYFfN/2AHdX2leYa4WC4arSWKY1vadb0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=OcgXL7h3194Y0aIv2wQH6apRZAwSf0HabeYzKqhbhihK0xoL0941lDRb7Xe+jGttT
+	 O/6lnzi8nfPVP2Loj7p7VmRPkips9NbcR0gZPfo0CA2BFqAVqr7TIc1oK8IXAIbsmQ
+	 21VsPhleA6+028Qpb74BJUyUpWI872u39X5pOKYysujb7DRHhf0OML7q7e8j7JnMjE
+	 rDqDs9hv1EybN+ia1p8fco/GX2BiC5VY8eej8Pj7fU3pEa0rwLIuBhdZ79aXwueVgn
+	 EU2K2O7l1FgAvS4AufDsNoJY+wxXJRoleedNRRDlkXcE/3CzgZb9j3MfVaLHmLF5/+
+	 dh5v2Zm3FhIHQ==
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-crypto@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Ard Biesheuvel <ardb@kernel.org>,
+	"Jason A . Donenfeld" <Jason@zx2c4.com>,
+	linux-arm-kernel@lists.infradead.org,
 	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Thomas Huth <thuth@redhat.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] arch/x86/ptrace: remove misleading comments about pt_regs
-Date: Mon,  7 Jul 2025 02:06:28 +0300
-Message-Id: <20250706230628.240966-1-d-tatianin@yandex-team.ru>
-X-Mailer: git-send-email 2.34.1
+	Eric Biggers <ebiggers@kernel.org>
+Subject: [PATCH 0/5] lib/crypto: Poly1305 fixes
+Date: Sun,  6 Jul 2025 16:10:55 -0700
+Message-ID: <20250706231100.176113-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,93 +59,32 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This comment hasn't been true for at least 10 years, ever since commit
-ff467594f2a4 ("x86/asm/entry/64: Save all regs on interrupt entry").
+This series is also available at:                                                                        
+                                                                        
+    git fetch https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git poly1305-fixes
 
-Remove to prevent reader confusion.
+This series fixes the arm, arm64, and x86 Poly1305 functions to not
+corrupt random tasks' registers when called in the "wrong" context.  It
+also fixes a performance regression on x86 with short messages.
 
-Signed-off-by: Daniil Tatianin <d-tatianin@yandex-team.ru>
----
- arch/x86/include/asm/ptrace.h          | 8 ++------
- arch/x86/include/uapi/asm/ptrace-abi.h | 7 ++-----
- arch/x86/include/uapi/asm/ptrace.h     | 7 ++-----
- 3 files changed, 6 insertions(+), 16 deletions(-)
+This series is needed for my upcoming poly1305_kunit test to pass.
 
-diff --git a/arch/x86/include/asm/ptrace.h b/arch/x86/include/asm/ptrace.h
-index 50f75467f73d..dcc6f8beae2c 100644
---- a/arch/x86/include/asm/ptrace.h
-+++ b/arch/x86/include/asm/ptrace.h
-@@ -101,11 +101,7 @@ struct fred_ss {
- };
- 
- struct pt_regs {
--	/*
--	 * C ABI says these regs are callee-preserved. They aren't saved on
--	 * kernel entry unless syscall needs a complete, fully filled
--	 * "struct pt_regs".
--	 */
-+	/* C ABI says these regs are callee-preserved. */
- 	unsigned long r15;
- 	unsigned long r14;
- 	unsigned long r13;
-@@ -113,7 +109,7 @@ struct pt_regs {
- 	unsigned long bp;
- 	unsigned long bx;
- 
--	/* These regs are callee-clobbered. Always saved on kernel entry. */
-+	/* These regs are callee-clobbered. */
- 	unsigned long r11;
- 	unsigned long r10;
- 	unsigned long r9;
-diff --git a/arch/x86/include/uapi/asm/ptrace-abi.h b/arch/x86/include/uapi/asm/ptrace-abi.h
-index 5823584dea13..b06535b1226b 100644
---- a/arch/x86/include/uapi/asm/ptrace-abi.h
-+++ b/arch/x86/include/uapi/asm/ptrace-abi.h
-@@ -26,17 +26,14 @@
- #else /* __i386__ */
- 
- #if defined(__ASSEMBLER__) || defined(__FRAME_OFFSETS)
--/*
-- * C ABI says these regs are callee-preserved. They aren't saved on kernel entry
-- * unless syscall needs a complete, fully filled "struct pt_regs".
-- */
-+/* C ABI says these regs are callee-preserved. */
- #define R15 0
- #define R14 8
- #define R13 16
- #define R12 24
- #define RBP 32
- #define RBX 40
--/* These regs are callee-clobbered. Always saved on kernel entry. */
-+/* These regs are callee-clobbered. */
- #define R11 48
- #define R10 56
- #define R9 64
-diff --git a/arch/x86/include/uapi/asm/ptrace.h b/arch/x86/include/uapi/asm/ptrace.h
-index e0b5b4f6226b..c48e56bc6fa0 100644
---- a/arch/x86/include/uapi/asm/ptrace.h
-+++ b/arch/x86/include/uapi/asm/ptrace.h
-@@ -42,17 +42,14 @@ struct pt_regs {
- #ifndef __KERNEL__
- 
- struct pt_regs {
--/*
-- * C ABI says these regs are callee-preserved. They aren't saved on kernel entry
-- * unless syscall needs a complete, fully filled "struct pt_regs".
-- */
-+/* C ABI says these regs are callee-preserved. */
- 	unsigned long r15;
- 	unsigned long r14;
- 	unsigned long r13;
- 	unsigned long r12;
- 	unsigned long rbp;
- 	unsigned long rbx;
--/* These regs are callee-clobbered. Always saved on kernel entry. */
-+/* These regs are callee-clobbered. */
- 	unsigned long r11;
- 	unsigned long r10;
- 	unsigned long r9;
+Eric Biggers (5):
+  lib/crypto: arm/poly1305: Remove unneeded empty weak function
+  lib/crypto: arm/poly1305: Fix register corruption in no-SIMD contexts
+  lib/crypto: arm64/poly1305: Fix register corruption in no-SIMD
+    contexts
+  lib/crypto: x86/poly1305: Fix register corruption in no-SIMD contexts
+  lib/crypto: x86/poly1305: Fix performance regression on short messages
+
+ lib/crypto/arm/poly1305-glue.c   |  8 ++----
+ lib/crypto/arm64/poly1305-glue.c |  3 +-
+ lib/crypto/x86/poly1305_glue.c   | 48 +++++++++++++++++++++++++++++++-
+ 3 files changed, 51 insertions(+), 8 deletions(-)
+
+
+base-commit: f1da28dfadd26ef95bbd0b1ddf066e7ffe1505ff
 -- 
-2.34.1
+2.50.0
 
 
