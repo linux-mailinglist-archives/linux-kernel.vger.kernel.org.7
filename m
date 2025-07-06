@@ -1,197 +1,104 @@
-Return-Path: <linux-kernel+bounces-718671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-718673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1ACBAFA457
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Jul 2025 12:08:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A5AEAFA45B
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Jul 2025 12:10:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EED2817DFEA
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Jul 2025 10:08:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 651B73AF074
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Jul 2025 10:09:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE1321FDE01;
-	Sun,  6 Jul 2025 10:08:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 584281FF1C4;
+	Sun,  6 Jul 2025 10:10:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=netcube.li header.i=@netcube.li header.b="oyYJcxdv"
-Received: from mail.netcube.li (mail.netcube.li [173.249.15.149])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S+HgeWJy"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 140CE2AD00;
-	Sun,  6 Jul 2025 10:08:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.249.15.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A1251F5847;
+	Sun,  6 Jul 2025 10:10:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751796514; cv=none; b=k9B4A7yJ/m8CerlM5s8kX9RJbzCwLabxAQE3h5RxKrzw11LR7TrcwIHUBe8qP/9eY5RIPQ63J/ssi9Aog50Xh4Onvu+nso2qYOUf143uYR6OwOYU0LUOG1HV7J8rj2DJieV4KqFGWP/Ze9emOlvF+CnVEP47vlVvmd180l7CaBM=
+	t=1751796603; cv=none; b=V94SETD4TmJoHfqBx3vABTpxSQ3lPtqzWaCIKCNiUZ44X5w0ryra7imlVbmGxMbzI5ipsQO25TqEpedrhhwb0C5Yf9QY+sAn1DpFGGEBoIAnKTAbTEpgIIAdA1kBcGnodu02rqp2VJpCRISQ4NFACZ/wgM9jxCLrLU1mykZUMkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751796514; c=relaxed/simple;
-	bh=n77T+/3wzWMkjN3HwXQrl2Yz514wfjWWjXOH1TaiAf4=;
+	s=arc-20240116; t=1751796603; c=relaxed/simple;
+	bh=jV5hk2L/22TCKsTCyR4AWVhsz/bZszE20n4bChKlIP8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Oc+MPoOfclVr2fW0iLNeKKdwqaIucAxJ6GL3ONy48i+WDucia0/y7MmpU5jJcwpldBcDx7tf5nOpGyc1KoLGocpHkbppDAO1jCfbsoRK6bCmnE+lpqLdiNFsTF2RcOSTG6zoPJ9FIIt1uv6Iy179hyZA2O3FXpywAe5JqCT3ltA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=netcube.li; spf=pass smtp.mailfrom=netcube.li; dkim=pass (1024-bit key) header.d=netcube.li header.i=@netcube.li header.b=oyYJcxdv; arc=none smtp.client-ip=173.249.15.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=netcube.li
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netcube.li
-dkim-signature: v=1; a=rsa-sha256; d=netcube.li; s=s1;
-	c=relaxed/relaxed; q=dns/txt; h=From:Subject:Date:Message-ID:To:CC:MIME-Version:Content-Type:In-Reply-To:References;
-	bh=0T5ERNEDk8sZhawQuX8JVZNNOUKlYRbaNNvCcLZi7To=;
-	b=oyYJcxdvi2HSsrtA0NRNLP07hI9ZWZIgqk6i56SdDxhuilLTawGFGOSVJC912TFRMLct63t8lLnzoG7oTvvmDgV4EQBeh92HD+Ur9BHzL4r4O2nzndjBg/jeI4je5pMqv0FgdW6s+GlBpLEj4MSjeLNSdZYVlPYau+ThN9Towh0=
-Received: from lukas-hpz440workstation.localnet (cm70-231.liwest.at [212.241.70.231])
-	by mail.netcube.li with ESMTPSA
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256)
-	; Sun, 6 Jul 2025 12:08:20 +0200
-From: Lukas Schmid <lukas.schmid@netcube.li>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
- Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>,
- Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexandre Ghiti <alex@ghiti.fr>, Maxime Ripard <mripard@kernel.org>,
- Krzysztof Kozlowski <krzk@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
- linux-riscv@lists.infradead.org
-Subject:
- Re: [PATCH v1 3/7] dt-bindings: arm: sunxi: Add NetCube Systems Nagami Keypad
- Carrier Board
-Date: Sun, 06 Jul 2025 12:08:18 +0200
-Message-ID: <22754446.EfDdHjke4D@lukas-hpz440workstation>
-In-Reply-To: <8549188.T7Z3S40VBb@lukas-hpz440workstation>
-References:
- <20250705213900.3614963-1-lukas.schmid@netcube.li>
- <4648f0bf-2957-45bf-a6c1-01787e5d3e88@kernel.org>
- <8549188.T7Z3S40VBb@lukas-hpz440workstation>
+	 MIME-Version; b=MAfwwXfrPwFyrL2MzP9/6w/FhbRYWX6XcQ2tqAVKwzlRzMA50V9DukrfM0mqUJYpFfc6RkbaoigQPblhgiXo4+5xKBkaZ2Uge91oCdi5fsKcXciFmyfPMBIUdSdR9NkqMWZz7OEAIBo5lO3ly4yAHgzDkmANow8bavA6bxku4/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S+HgeWJy; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-450cfb79177so11744655e9.0;
+        Sun, 06 Jul 2025 03:10:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751796600; x=1752401400; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jV5hk2L/22TCKsTCyR4AWVhsz/bZszE20n4bChKlIP8=;
+        b=S+HgeWJy1e75+KWEjW6SRfRYAIDcC4fNmVTfd0O3W5dZR33UWdser3JgPgOq97Tneq
+         /c3EfaVryD9l6/NeoI0EMhCG0g1tBobIo7oYaNtw2bEFwTeJAzlyKW0q6qrTnVgpdI1b
+         dhM2UYvEWT2DlmQMumCdWJ3GDzRriTxTopeDP7xiGPtS0QAaGXtJgiqLURxkfhXq/GJa
+         2wvSzSd8cdM3m25FxhH+xsnONmwiAykwYaUiv8SMl5g6dEIf0mp/7MLbWmcmF+pixzSR
+         8wNDOmnvl2VjZIfmyHod8YdFDXyyXjtVSf5tTQxel72KlE4gItKjYZzDYnbmF49M2RXQ
+         Hceg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751796600; x=1752401400;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jV5hk2L/22TCKsTCyR4AWVhsz/bZszE20n4bChKlIP8=;
+        b=sQoHNAFsNUTklITKm1uImpTfyX0ifOOHTZ37E1PFaFsvTwl04d7OPSbEP/YLTop5/B
+         0/00b7bNSWitI06ka/sMGY0A01PI5otxJuESx0fWKs3U33ejaXJ0c1KFpPgA/kbqgUf1
+         JhkdvybNYX5RUI+hFXgAGjhUAPZ67+/XoEEUbg5QE5pfPQ8ltvzq0BVPZzfN/TqN3svC
+         VTc0rbiqeEDN+hcGGrPJaM8zPIRfDcJ+x3LXfizjVbnKDxbL62llvYM4SDI3AuO0NsAn
+         QuWhoUVXFAFzFVtcjx/1eLr1rslvTs/M6hxapEqpjlSUopKaCOdK0Ufl7ZxtkLzWEoZL
+         v47w==
+X-Forwarded-Encrypted: i=1; AJvYcCUsmGy1oeOeEjsndHhu8jB189pQZr81AFjagk+rmyJNAwvtRxKGCZCaMBPKzKjNTW6lvMD2iZ5AWSc=@vger.kernel.org, AJvYcCXYRQKoFFtN/7/5zEIMWNiHuGcGVl8wR8H8TwDiflluoKg4F6kkS3kgjgFkqVR94Uv+6vQpTA3nqGxQftQF@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgYPV7N4/10buWFvsGnyoin5vzGn3zW40/PT9EX4BOiD4CqB0I
+	Q+yEql913Ricr44yxjyH/C534+iaE3D/K4LGjzoFaqYEoWap3FI+2YET
+X-Gm-Gg: ASbGnctSUVjs/ZTCby/G6cGpKifPG1iUjftxE4oOfgesKT/Juy5a4+Gn5aS6Bl050yI
+	Sm2L1LO8aTIl1sz5YeRQTGS8ghUfZfqyXrfWp+RQtiK0koqkJkWDEIZLGTfheNKazSp05Ou23nI
+	m0nVlZTt9RrLux8vp+Lefuu8URRl+o0HBS3RCLSu7dfuPMBgd/WAXp8d6h65S1xgwYwLCFVaY8k
+	RBjmE3RvljuLHrBdHATetQ3Ucb4XPDviP0i+y4i2HKE1tcPT+qlU6Cf1qtN9pCtBgN7x0BQQ7Me
+	tSQwIIzO0gDlqRat5ueCqdbXh2+lmEifqS5RSQuHOv/LeKbTUfCXG5f7WTAhgIx22I0R51Lr4O/
+	+FQ==
+X-Google-Smtp-Source: AGHT+IFboTpFzUmPBMceP5BQaZY52z0uD8klP61U5hlGg3Max/z1jvvjdVEPb6BxDr0QhRSMuQVpDw==
+X-Received: by 2002:a05:600c:4f16:b0:450:d367:c385 with SMTP id 5b1f17b1804b1-454c576aacfmr1072985e9.16.1751796600196;
+        Sun, 06 Jul 2025 03:10:00 -0700 (PDT)
+Received: from localhost.localdomain ([41.79.198.24])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454a9be0bacsm105336185e9.32.2025.07.06.03.09.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 06 Jul 2025 03:09:59 -0700 (PDT)
+From: Khalid Ali <khaliidcaliy@gmail.com>
+X-Google-Original-From: Khalid Ali <khaliidcaliy@gmail.com
+To: ardb@kernel.org,
+	paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	alex@ghiti.fr
+Cc: gargaditya08@live.com,
+	jonathan@marek.ca,
+	kees@kernel.org,
+	linux-efi@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	lukas@wunner.de,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] efi/libstub: Print uefi status code on error messages
+Date: Sun,  6 Jul 2025 10:08:44 +0000
+Message-ID: <20250706100900.1481-1-khaliidcaliy@gmail.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250706094354.1282-1-khaliidcaliy@gmail.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart7824363.EvYhyI6sBW";
- micalg="pgp-sha512"; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 8bit
 
---nextPart7824363.EvYhyI6sBW
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"; protected-headers="v1"
-From: Lukas Schmid <lukas.schmid@netcube.li>
-Date: Sun, 06 Jul 2025 12:08:18 +0200
-Message-ID: <22754446.EfDdHjke4D@lukas-hpz440workstation>
-In-Reply-To: <8549188.T7Z3S40VBb@lukas-hpz440workstation>
-MIME-Version: 1.0
-
-On Sonntag, 6. Juli 2025 11:58:16 CEST Lukas Schmid wrote:
-> On Sonntag, 6. Juli 2025 11:46:46 CEST Krzysztof Kozlowski wrote:
-> > On 06/07/2025 11:41, Lukas Schmid wrote:
-> > > On Sonntag, 6. Juli 2025 11:36:34 CEST Krzysztof Kozlowski wrote:
-> > >> On 06/07/2025 11:07, Lukas Schmid wrote:
-> > >>> On Sonntag, 6. Juli 2025 09:49:58 CEST Krzysztof Kozlowski wrote:
-> > >>>> On 05/07/2025 23:38, Lukas Schmid wrote:
-> > >>>>> The NetCube Systems Nagami Keypad Carrier is a custom board intended
-> > >>>>> to
-> > >>>>> fit a standard Ritto Intercom enclosure and provides a Keypad,
-> > >>>>> NFC-Reader
-> > >>>>> and Status-LED all controllable over Ethernet with PoE support.
-> > >>>>> 
-> > >>>>> Signed-off-by: Lukas Schmid <lukas.schmid@netcube.li>
-> > >>>>> ---
-> > >>>>> 
-> > >>>>>  Documentation/devicetree/bindings/arm/sunxi.yaml | 6 ++++++
-> > >>>>>  1 file changed, 6 insertions(+)
-> > >>>>> 
-> > >>>>> diff --git a/Documentation/devicetree/bindings/arm/sunxi.yaml
-> > >>>>> b/Documentation/devicetree/bindings/arm/sunxi.yaml index
-> > >>>>> 7919b5bf5..a2f16d064 100644
-> > >>>>> --- a/Documentation/devicetree/bindings/arm/sunxi.yaml
-> > >>>>> +++ b/Documentation/devicetree/bindings/arm/sunxi.yaml
-> > >>>>> 
-> > >>>>> @@ -610,6 +610,12 @@ properties:
-> > >>>>>            - const: netcube,nagami
-> > >>>>>            - const: allwinner,sun8i-t113s
-> > >>>>> 
-> > >>>>> +      - description: NetCube Systems Nagami Keypad Carrier Board
-> > >>>>> +        items:
-> > >>>>> +          - const: netcube,nagami-keypad-carrier
-> > >>>> 
-> > >>>> That's just enum with previous entry. Don't make it over-complicated.
-> > >>>> 
-> > >>>> Best regards,
-> > >>>> Krzysztof
-> > >>> 
-> > >>> Just making sure here. The actual bindings are fine, but I should
-> > >>> merge
-> > >>> them into one patch, correct?
-> > >> 
-> > >> No, you got two comments what should be changed in the binding.
-> > >> 
-> > >> Best regards,
-> > >> Krzysztof
-> > > 
-> > > So if I understand correctly you want me to remove the
-> > > "allwinner,sun8i-t113s" from the carrier boards and keep it for the SoM?
-> > 
-> > No, I spoke nothing about that compatible. My comment is EXACTLY under
-> > the line being incorrect. That entry should have been made enum with
-> > previous board compatible. Look at other vendors, because this file
-> > repeats that pattern for some reason, eh...
-> > 
-> > Best regards,
-> > Krzysztof
-> 
-> Ah sorry. I think i understand now. You want the carrier boards in a single
-> entry with the different compatibles as the enum like:
-> 
->       - description: NetCube Systems Nagami SoM
->         items:
->           - const: netcube,nagami
->           - const: allwinner,sun8i-t113s
-> 
->       - description: NetCube Systems Nagami SoM based boards
->         items:
->           - enum:
->               - netcube,nagami-basic-carrier
->               - netcube,nagami-keypad-carrier
->           - const: netcube,nagami
->           - const: allwinner,sun8i-t113s
-> 
-> Best regards,
-> Lukas
-
-Oh, I will then drop the SoM's entry as well since the SoM is already defined 
-in the carrier boards then. So only
-
-      - description: NetCube Systems Nagami SoM based boards
-        items:
-          - enum:
-              - netcube,nagami-basic-carrier
-              - netcube,nagami-keypad-carrier
-          - const: netcube,nagami
-          - const: allwinner,sun8i-t113s
-
-correct?
-
-Sorry for the back-and-forth, and thanks for your patience.
-
-Best regards,
-Lukas
---nextPart7824363.EvYhyI6sBW
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEPv6dcBmn59ssZMkSJnN+drMVRtgFAmhqSxMACgkQJnN+drMV
-RthYPgf7B7hvP/DGLODPXJ1qjUQvXaRZGtuTOiaLfm61dhyn2IsydYUhpwhhMViQ
-z6T4DAm9Eg8CcJqiTb1kckKS/dheJ+eom2IBK9LLb2JHbXaetlXlSvDfbWlTS1I2
-ofG6QKBDYHccjJiejjI2uEIAYALwCMjqxudUUCoMN2hz8euzwKx8dzEXfdWZmcRj
-OzeZsdwQkv8RvP+eiii1xdu/GbnMGKixs75n40v535LOdVWD/hptkJKMPW0fNe8A
-4Hd6uhLD7lZ3qIuEMZfvcCjOF/iCKafXpjCuK6CdFwfC5j+Sgrr3Z5zMAIJ3WRbr
-qCBfoSswKd8fkF5d6rVpVOBcBOPa5g==
-=JbSx
------END PGP SIGNATURE-----
-
---nextPart7824363.EvYhyI6sBW--
-
-
-
-
+Sorry, i accidentally sent this twice and broke the email thread.
 
