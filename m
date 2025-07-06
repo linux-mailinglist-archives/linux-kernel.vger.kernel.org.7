@@ -1,157 +1,150 @@
-Return-Path: <linux-kernel+bounces-718681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-718683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8762BAFA470
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Jul 2025 12:26:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42980AFA476
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Jul 2025 12:28:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB93F3B1158
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Jul 2025 10:26:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 245CE7AE84F
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Jul 2025 10:26:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F37161FFC41;
-	Sun,  6 Jul 2025 10:26:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t5IsTPSc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1CF7202C26;
+	Sun,  6 Jul 2025 10:27:37 +0000 (UTC)
+Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E08D2E36E0;
-	Sun,  6 Jul 2025 10:26:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 289752E36E0
+	for <linux-kernel@vger.kernel.org>; Sun,  6 Jul 2025 10:27:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751797598; cv=none; b=ZJjGmXn4On1gYS3/CnJ3R0O14N169uFyAepbw/ba+2RyRfLO90V8MNwpvjW33E4qxxoIDu6FUaKenGIB7Sd5tk3eDaKsm631Ow/UM80f0NeHIOT6dqL2PaCkFujo1sVmQ40yLy6IeBbppM4TFZDOF2K0qR7YfnkeUtbWkoL8RR8=
+	t=1751797657; cv=none; b=CupWhqxnxubOPZUZ9sgmJ/le3cbv61sKMvOVU48yKEhRqNgBnyTTsn+s0aGPVd4n73uOs6MnTdzbSSgAB0LQEbmhAS+oNwykF1MLtY53e9u+4j5Xv6z2v/AEpJLAXiqiiegfss4wRGfbOaa1nZC7dPHE2Yf2lMq40b15ORRme4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751797598; c=relaxed/simple;
-	bh=sHztWTj75+wZmzNmNM9hTcX0OSwTHApDHrVwsUSSxa0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Zj+kNB78bh/Xz6a29k0b8uC5Dt+0KaO3BWU6kHy42JmjAdtWJHW9cIVyL0zhIbV2jvOHzVCkoXvSlhr6+tqFLi5bHbuDNVhJBLXOZmUhSLUnWb7dcIiMqVWKt4HRxh5p7oDpe2uaPyv5SdWItDfZqTcUaON2Kl5+hJHaJNPTqr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t5IsTPSc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0150BC4CEED;
-	Sun,  6 Jul 2025 10:26:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751797597;
-	bh=sHztWTj75+wZmzNmNM9hTcX0OSwTHApDHrVwsUSSxa0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=t5IsTPSci3VbTp8DR+IVeOSqAh1sm9ivyibY7v1ThJwk/pyIaOFwpQdpojw2Y2DA+
-	 xBItBdl2XPLa791TtVLIfd/0dfYgbE1eqSdCCofP18bF7c+yuaYWhUJ48vjrquHjVi
-	 NHYunhiL2g3F5f88jV/kwoXO/ITIWKCc2qVVqSDUuv/HMI8Pjkf7phBpBaNkenGlyZ
-	 D4xrzBx019E4RXGmIOJB4NSHy7TX9+F5c47dHyH8CZuZY2q+SjV09CLO4+sCBFNjfR
-	 uWcUUz8VOcA415nSY8OyzGykxy4tggxOFvlGqYHnYY0oslB7SoNLAme5vMvnYsDjUf
-	 LtKVs6oXp5FdQ==
-Date: Sun, 6 Jul 2025 11:26:31 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Crt Mori <cmo@melexis.com>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, David Lechner
- <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy
- Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 38/80] iio: temperature: Remove redundant
- pm_runtime_mark_last_busy() calls
-Message-ID: <20250706112631.33bd5a4d@jic23-huawei>
-In-Reply-To: <20250706112502.72441d9e@jic23-huawei>
-References: <20250704075225.3212486-1-sakari.ailus@linux.intel.com>
-	<20250704075428.3219924-1-sakari.ailus@linux.intel.com>
-	<CAKv63utwwwQVMrAZAGy9rkk5fFPncQ=TzggZf6K0s-+GB-oi6g@mail.gmail.com>
-	<20250706112502.72441d9e@jic23-huawei>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1751797657; c=relaxed/simple;
+	bh=6uMSUsF4i7E2EkwCaC9wZQFxdNNM8J8izZHp0INrJIM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=h6/Qiqsvw8mvWV4SowPLtmGMhC/gERR151DNV66Ks2T2KCO6LYWgQ1JD92mN0EcthqMKh7JAmj62tBJFQ+9xYt5t29h5xe+95NpSMLmqR9jxhamKP0eSjqGIe1ZbFQXDDlxYHX8bNTh53LHJuVr+puW6aQHXHrM6blOjqNL5Iak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-52b2290e290so1367496e0c.1
+        for <linux-kernel@vger.kernel.org>; Sun, 06 Jul 2025 03:27:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751797653; x=1752402453;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=o8Wcac1yphsCtx5A+S7DbTVhEWfZCEpLCH1Zp2uzm3M=;
+        b=AschQrn+H15VcUnAhtYvCfCJ3QRjT4oNNOscun/5qH4Ok8dGfN6ktAoe1w88wJMNYZ
+         VlyI/ZRwYTbjOyhGF9hPJLjcZaY2F7eOjKL5RaTMcUZr/Vw8aU1HTRqGtRw5zFbZTIPr
+         4Mj1tivy+5SX5i56MGgReXSNI5xgX0y14PYQK93cF0ZW8NWszM27hFlBy7rzxkP71KXh
+         nOnrgLfiw2eHKP79CIHL9h4301zIzc1hA8YV6XaXQzbfbDNLz1tKkH+KFTSM62WC4hgs
+         dWeuFo+xUgg78yxBnwKKgTg44mvEWT1UIMt8iZEsN4DvwXdbQuBvKkTaarW1uavvt+pr
+         Km9w==
+X-Forwarded-Encrypted: i=1; AJvYcCVXfL6o2iD/wASfWw5N7/xaJy4cRIDkZCZKlOuayjWCUNQLwy4X19wBa6hIOs8lzK7AORzkNib9zTXHOPM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyARcoDvlAstzAv920sDR12d2w01QDtv4qz5pfOgA6ux1Pnfuuk
+	ZUsmse6G90UYkmhZ0Veg8+fjL8BMhoEToFq/WGNbJaf2RKdqmfJSSjKIwJ4k81sr
+X-Gm-Gg: ASbGncv/M9tDlpGFeOATM4qAmn5T22M1XdPOSuN+cQXaeHxdmfFMABgSCzI9MxDCKIj
+	OQ26jhUjprXTe+V4kgzyHWTwmjFpMe2xFWiReyOarvg/1ahgZAhZmfNEEuleog7tnuBJsikRH1C
+	u17jGw+SWQ8IEdaoG3JY39OX3YczFycVSvFk0mfIL9zYuAc3rZ1L/2/EoVpg6RMxiSAGI1SOg+G
+	fv/1CFv+SOiClRfTGsPw3qogeM5l7+0JVjGZT8HkqT9nNP1knu99iiyFevgwLF0lNQyCwxZlEjh
+	5zkv7jfOx416UKeR0xHoFLfrF7t2RzJMluKccLKGW6INIFidNzDMxgdNjzQFJgAmkQTGZtQmv76
+	ZgwzMytrNotDzDMaHiM+985DdctrC
+X-Google-Smtp-Source: AGHT+IFNlXjcO0vQFpM6I6BocsbceuUhHkN53t1YNNh7L5vwOZjP4sPn9i5SHlU1fUzvs/5EkhMQGA==
+X-Received: by 2002:a05:6122:2a0a:b0:534:6d9c:d544 with SMTP id 71dfb90a1353d-5347e3e2dc6mr5119718e0c.3.1751797653367;
+        Sun, 06 Jul 2025 03:27:33 -0700 (PDT)
+Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com. [209.85.221.175])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-53478dbb08bsm880795e0c.5.2025.07.06.03.27.33
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 06 Jul 2025 03:27:33 -0700 (PDT)
+Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-52d9a275c27so2304446e0c.0
+        for <linux-kernel@vger.kernel.org>; Sun, 06 Jul 2025 03:27:33 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWEv24iHRdDi7k6FrJhlDcAoKq6deKG240YRPu+cMAt5AlVHcxKbNXdC7Bbg/uFcSmWOSUVreJ4634qphg=@vger.kernel.org
+X-Received: by 2002:a05:6102:cca:b0:4e9:c7c8:5e24 with SMTP id
+ ada2fe7eead31-4f2f244f7e2mr4690242137.25.1751797652899; Sun, 06 Jul 2025
+ 03:27:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <d1d4328e5aa9a87bd8352529ce62b767731c0530.1743467205.git.fthain@linux-m68k.org>
+In-Reply-To: <d1d4328e5aa9a87bd8352529ce62b767731c0530.1743467205.git.fthain@linux-m68k.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Sun, 6 Jul 2025 12:27:20 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXY5xv+aqZQmMQ0rDnDWjEF=O0dEaun8x8=J0kb1LZWBQ@mail.gmail.com>
+X-Gm-Features: Ac12FXzwvaf9ptBZ91EIzsqZ1yptuiRs-rvpbLE-5KasykM-HyCxgAn1UjEkTKk
+Message-ID: <CAMuHMdXY5xv+aqZQmMQ0rDnDWjEF=O0dEaun8x8=J0kb1LZWBQ@mail.gmail.com>
+Subject: Re: [PATCH v2] m68k/mvme147: Don't unregister boot console needlessly
+To: Finn Thain <fthain@linux-m68k.org>
+Cc: Daniel Palmer <daniel@0x0f.com>, linux-m68k@lists.linux-m68k.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun, 6 Jul 2025 11:25:02 +0100
-Jonathan Cameron <jic23@kernel.org> wrote:
+Hi Finn,
 
-> On Fri, 4 Jul 2025 18:00:02 +0200
-> Crt Mori <cmo@melexis.com> wrote:
-> 
-> > If that is the case then:
-> > Acked-by: Crt Mori<cmo@melexis.com>
-> > 
-> > 
-> > 
-> > On Fri, 4 Jul 2025 at 09:54, Sakari Ailus <sakari.ailus@linux.intel.com> wrote:  
-> > >
-> > > pm_runtime_put_autosuspend(), pm_runtime_put_sync_autosuspend(),
-> > > pm_runtime_autosuspend() and pm_request_autosuspend() now include a call
-> > > to pm_runtime_mark_last_busy(). Remove the now-reduntant explicit call to
-> > > pm_runtime_mark_last_busy().
-> > >
-> > > Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>  
-> No {} issues in here so applied to the testing branch of iio.git.
-> I'll push it out as togreg later in the week at which point linux-next
-> will see it.
-> 
-Actually - change of plan.  I'll wait on your set with the others fixed
-up as I don't want to pull in the pm-runtime change if I'm only going
-to have a few of these ready by the end of the cycle. I don't mind merging
-that with the whole lot if they are ready though.
+On Tue, 1 Apr 2025 at 02:40, Finn Thain <fthain@linux-m68k.org> wrote:
+> When MACH_IS_MVME147, the boot console calls mvme147_scc_write() to
+> generate console output. That will continue to work even after
+> debug_cons_nputs() becomes unavailable so there's no need to
+> unregister the boot console.
+>
+> Take the opportunity to remove a repeated MACH_IS_* test. Use the
+> actual .write method (instead of a wrapper) and test that pointer
+> instead. This means adding an unused parameter to debug_cons_nputs() for
+> consistency with the struct console API.
+>
+> early_printk.c is only built when CONFIG_EARLY_PRINTK=y. As of late,
+> head.S is only built when CONFIG_MMU_MOTOROLA=y. So let the former symbol
+> depend on the latter, to obviate some ifdef conditionals.
+>
+> Cc: Daniel Palmer <daniel@0x0f.com>
+> Fixes: 077b33b9e283 ("m68k: mvme147: Reinstate early console")
+> Signed-off-by: Finn Thain <fthain@linux-m68k.org>
 
-Jonathan
+Thanks for your patch!
 
-> Jonathan
-> 
-> > > ---
-> > > The cover letter of the set can be found here
-> > > <URL:https://lore.kernel.org/linux-pm/20250704075225.3212486-1-sakari.ailus@linux.intel.com>.
-> > >
-> > > In brief, this patch depends on PM runtime patches adding marking the last
-> > > busy timestamp in autosuspend related functions. The patches are here, on
-> > > rc2:
-> > >
-> > >         git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
-> > >                 pm-runtime-6.17-rc1
-> > >
-> > >  drivers/iio/temperature/mlx90614.c | 1 -
-> > >  drivers/iio/temperature/mlx90632.c | 1 -
-> > >  drivers/iio/temperature/mlx90635.c | 1 -
-> > >  3 files changed, 3 deletions(-)
-> > >
-> > > diff --git a/drivers/iio/temperature/mlx90614.c b/drivers/iio/temperature/mlx90614.c
-> > > index 740018d4b3df..8a44a00bfd5e 100644
-> > > --- a/drivers/iio/temperature/mlx90614.c
-> > > +++ b/drivers/iio/temperature/mlx90614.c
-> > > @@ -225,7 +225,6 @@ static void mlx90614_power_put(struct mlx90614_data *data)
-> > >         if (!data->wakeup_gpio)
-> > >                 return;
-> > >
-> > > -       pm_runtime_mark_last_busy(&data->client->dev);
-> > >         pm_runtime_put_autosuspend(&data->client->dev);
-> > >  }
-> > >  #else
-> > > diff --git a/drivers/iio/temperature/mlx90632.c b/drivers/iio/temperature/mlx90632.c
-> > > index ae4ea587e7f9..bf689f6143f3 100644
-> > > --- a/drivers/iio/temperature/mlx90632.c
-> > > +++ b/drivers/iio/temperature/mlx90632.c
-> > > @@ -1043,7 +1043,6 @@ static int mlx90632_read_raw(struct iio_dev *indio_dev,
-> > >         }
-> > >
-> > >  mlx90632_read_raw_pm:
-> > > -       pm_runtime_mark_last_busy(&data->client->dev);
-> > >         pm_runtime_put_autosuspend(&data->client->dev);
-> > >         return ret;
-> > >  }
-> > > diff --git a/drivers/iio/temperature/mlx90635.c b/drivers/iio/temperature/mlx90635.c
-> > > index f7f88498ba0e..80d0eb7d2294 100644
-> > > --- a/drivers/iio/temperature/mlx90635.c
-> > > +++ b/drivers/iio/temperature/mlx90635.c
-> > > @@ -749,7 +749,6 @@ static int mlx90635_read_raw(struct iio_dev *indio_dev,
-> > >         }
-> > >
-> > >  mlx90635_read_raw_pm:
-> > > -       pm_runtime_mark_last_busy(&data->client->dev);
-> > >         pm_runtime_put_autosuspend(&data->client->dev);
-> > >         return ret;
-> > >  }
-> > > --
-> > > 2.39.5
-> > >    
-> 
+Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
+i.e. will queue in the m68k tree for v6.17...
 
+> --- a/arch/m68k/kernel/early_printk.c
+> +++ b/arch/m68k/kernel/early_printk.c
+> @@ -55,16 +46,12 @@ early_param("earlyprintk", setup_early_printk);
+>   * debug_cons_nputs() defined in arch/m68k/kernel/head.S cannot be called
+>   * after init sections are discarded (for platforms that use it).
+>   */
+
+... with the above comment moved just before the "if"-test below.
+
+> -#if !(defined(CONFIG_SUN3) || defined(CONFIG_M68000) || \
+> -      defined(CONFIG_COLDFIRE))
+>
+>  static int __init unregister_early_console(void)
+>  {
+> -       if (!early_console || MACH_IS_MVME16x)
+> -               return 0;
+> +       if (early_console && early_console->write == debug_cons_nputs)
+> +               return unregister_console(early_console);
+>
+> -       return unregister_console(early_console);
+> +       return 0;
+>  }
+>  late_initcall(unregister_early_console);
+> -
+> -#endif
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
