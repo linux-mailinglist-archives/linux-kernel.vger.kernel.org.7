@@ -1,137 +1,222 @@
-Return-Path: <linux-kernel+bounces-718541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-718543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07932AFA2DA
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Jul 2025 05:10:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBA06AFA2DE
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Jul 2025 05:35:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62FA330173F
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Jul 2025 03:10:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C9C6189F5A4
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Jul 2025 03:36:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03B5E18DB1F;
-	Sun,  6 Jul 2025 03:10:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3F8717DFE7;
+	Sun,  6 Jul 2025 03:35:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.beauty header.i=me@linux.beauty header.b="dYkXmUnv"
-Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="QogZX6tE"
+Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABEB8433CB
-	for <linux-kernel@vger.kernel.org>; Sun,  6 Jul 2025 03:10:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751771418; cv=pass; b=Q1Q4ulzsJOPSe07LjOzC2SHJrzDadeg2SzaQMHs97PZoDbShwGkoW64pTL0+Gvoge0zfIt4YSsk2OY9cIfz1/Diawi8VNcTIY+44rVNBNu0MdLNXtc4xdHi48sYV66wjaX/cKibnONjStLVIfGH8rA4aKKOSDc5JigXJbxZTeZg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751771418; c=relaxed/simple;
-	bh=53OJ8PDmEs0+UoDAaqw1ewYlM+htiRJKt/mW5JxdAb0=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=A+HyUAD/ShVpv8YshcpurgDzd2AxSVJpVJ1s/HT4R0wgE0ayvk4UT5pjBLsO3XkdVi5NbHDevLMDDYRDV4YFJQW/chyoc5pWg4YQJwhvpbmOfaMemvhS+WpyHYj5jRK3pXQIZt9lsiDWbr77R/i084KAbedtCF/mnzHYB+wtCUw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.beauty; spf=pass smtp.mailfrom=linux.beauty; dkim=pass (1024-bit key) header.d=linux.beauty header.i=me@linux.beauty header.b=dYkXmUnv; arc=pass smtp.client-ip=136.143.188.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.beauty
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.beauty
-ARC-Seal: i=1; a=rsa-sha256; t=1751771244; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=RtQjnCzLpHF4J64srZJYAIhUI7H4s1CmZskbEFwxopma0KByx8LmRZXPlAFDayW3G9OE8n+PPcqWwIR6x7/9pPLzAI9AJqOs4g//quIVoG1rPRas9PZF6IX9OUZS3FKxu2WkQp6nsD2LfVhdN8expirarIux9MgfYOOxZB+XAxk=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1751771244; h=Content-Type:Content-Transfer-Encoding:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To:Cc; 
-	bh=msXyCNreV6tVt057JD4kKViyA0dJw9Qv20/D9GHOf6o=; 
-	b=Bp6Wg4Auh2B/+NrVrJtpou8kk+2uT3mM0901cZztDB9TVMPVB36U2qpuqwNP0pEHEvCA1piHKJqQN9ZD8fu99qJnbkXJV+ZArwqKzNMdzhNwPVKkFmskuGBZWZ3+1yqv1gSNWSjqLH4lUX0fKT5w/FLflGx90xlLM8BDdaHnhIs=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=linux.beauty;
-	spf=pass  smtp.mailfrom=me@linux.beauty;
-	dmarc=pass header.from=<me@linux.beauty>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1751771244;
-	s=zmail; d=linux.beauty; i=me@linux.beauty;
-	h=From:From:To:To:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To:Cc;
-	bh=msXyCNreV6tVt057JD4kKViyA0dJw9Qv20/D9GHOf6o=;
-	b=dYkXmUnv+1Rj4sABBaEklUEC5VwUN7Ag5RbGPlcO2yVnjRCtWN7FxsX2r5xRwyh7
-	WYbOWC7PSvuGfR2QvwaWQpF39uaFCL1g57YT+XBemv561g2U9oUTpVS8DEidW2n0QV4
-	uAuXi4EPYhBZDmA07+0CaqRe45CthXA1sqjIHeO8=
-Received: by mx.zohomail.com with SMTPS id 175177124224214.037844208890306;
-	Sat, 5 Jul 2025 20:07:22 -0700 (PDT)
-From: Li Chen <me@linux.beauty>
-To: Li Chen  <me@linux.beauty>," Thomas Gleixner "<tglx@linutronix.de>," Ingo Molnar "<mingo@redhat.com>," Borislav Petkov "<bp@alien8.de>," Dave Hansen "<dave.hansen@linux.intel.com>,<x86@kernel.org>," H . Peter Anvin "<hpa@zytor.com>," Rafael J . Wysocki "<rafael.j.wysocki@intel.com>," Peter Zijlstra "<peterz@infradead.org>," Sohil Mehta "<sohil.mehta@intel.com>," Brian Gerst "<brgerst@gmail.com>," Patryk Wlazlyn " <patryk.wlazlyn@linux.intel.com>,
-	linux-kernel@vger.kernel.org,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	Li Chen <chenl311@chinatelecom.cn>,
-	Sohil Mehta <sohil.mehta@intel.com>,
-	Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>,
-	K Prateek Nayak <kprateek.nayak@amd.com>
-Subject: [PATCH v4 4/4] x86/smpboot: avoid SMT domain attach/destroy if SMT is not enabled
-Date: Sun,  6 Jul 2025 11:06:32 +0800
-Message-ID: <20250706030636.397197-5-me@linux.beauty>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250706030636.397197-1-me@linux.beauty>
-References: <20250706030636.397197-1-me@linux.beauty>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D638329A5
+	for <linux-kernel@vger.kernel.org>; Sun,  6 Jul 2025 03:35:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.98
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751772946; cv=none; b=Flz5MyfKe00WrOgR4DyvAcDdOWZUdsrSiaD22FaD2zfp+rBqFzfYNXKS4ETseVBnsBxkd/GUeWI7JUBuSRD8AR5weW1x1DfkleCb76/i/HuUGuquAz0yboGrKqe7TQSqil0t+XGNpup2bzVbX3+OnHX2i2Ftvt6gVKPNmJQoTXI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751772946; c=relaxed/simple;
+	bh=XUEjV1+nQgo6kAcZ42o2onvzE1dkFgMP0aI/wjt4TDc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tI58UWYfTax4MfI7yYqfkWT/VdW2X53uJ6gfKZq5Q90K2ND0nrhpCUbIM7Yn8rbRyJUt9AEqMJ4KO0gi7/P2vUEOEC9dDMXiFKCAEyLEOICUcoVHZArtv+ACLFbVzDuznrri9WPxA1p8llK65KqA3eOZPwEI+COlvb1tUSzycLo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=QogZX6tE; arc=none smtp.client-ip=115.124.30.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1751772934; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=ry7sk0Q8RX4Rog7LIxYwem8OESuZgL7xJk2VRGHdz4U=;
+	b=QogZX6tEHoTaRXiTSrtQIwECHQxs2a3tiGduP7B4H/AonyXXd7UoB1P9Fs9pEXHK/0iXxabnpMXoDf7126Dl2uBocoSvGCOOmQde+7uJgxs8mEeQ/Ly/jF/eLo4Sds/BaYxpe2idWVbYgDtQvviAmr9TMDmQuJK+4zQQ+9Tnwrw=
+Received: from 30.134.69.216(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WhjEL7l_1751772931 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Sun, 06 Jul 2025 11:35:32 +0800
+Message-ID: <452cad4b-e0c7-4792-9272-69199fa52a55@linux.alibaba.com>
+Date: Sun, 6 Jul 2025 11:35:30 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 4/9] mm/shmem, swap: tidy up swap entry splitting
+To: Kairui Song <kasong@tencent.com>, linux-mm@kvack.org
+Cc: Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins
+ <hughd@google.com>, Matthew Wilcox <willy@infradead.org>,
+ Kemeng Shi <shikemeng@huaweicloud.com>, Chris Li <chrisl@kernel.org>,
+ Nhat Pham <nphamcs@gmail.com>, Baoquan He <bhe@redhat.com>,
+ Barry Song <baohua@kernel.org>, linux-kernel@vger.kernel.org
+References: <20250704181748.63181-1-ryncsn@gmail.com>
+ <20250704181748.63181-5-ryncsn@gmail.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <20250704181748.63181-5-ryncsn@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Li Chen <chenl311@chinatelecom.cn>
 
-Currently, the SMT domain is added into sched_domain_topology by default.
 
-If cpu_attach_domain() finds that the CPU SMT domain’s cpumask_weight
-is just 1, it will destroy it.
+On 2025/7/5 02:17, Kairui Song wrote:
+> From: Kairui Song <kasong@tencent.com>
+> 
+> Instead of keeping different paths of splitting the entry before the
+> swap in start, move the entry splitting after the swapin has put
+> the folio in swap cache (or set the SWAP_HAS_CACHE bit). This way
+> we only need one place and one unified way to split the large entry.
+> Whenever swapin brought in a folio smaller than the shmem swap entry,
+> split the entry and recalculate the entry and index for verification.
+> 
+> This removes duplicated codes and function calls, reduces LOC,
+> and the split is less racy as it's guarded by swap cache now. So it
+> will have a lower chance of repeated faults due to raced split.
+> The compiler is also able to optimize the coder further:
+> 
+> bloat-o-meter results with GCC 14:
+> 
+> With DEBUG_SECTION_MISMATCH (-fno-inline-functions-called-once):
+> ./scripts/bloat-o-meter mm/shmem.o.old mm/shmem.o
+> add/remove: 0/0 grow/shrink: 0/1 up/down: 0/-82 (-82)
+> Function                                     old     new   delta
+> shmem_swapin_folio                          2361    2279     -82
+> Total: Before=33151, After=33069, chg -0.25%
+> 
+> With !DEBUG_SECTION_MISMATCH:
+> ./scripts/bloat-o-meter mm/shmem.o.old mm/shmem.o
+> add/remove: 0/1 grow/shrink: 1/0 up/down: 949/-750 (199)
+> Function                                     old     new   delta
+> shmem_swapin_folio                          2878    3827    +949
+> shmem_split_large_entry.isra                 750       -    -750
+> Total: Before=33086, After=33285, chg +0.60%
+> 
+> Since shmem_split_large_entry is only called in one place now. The
+> compiler will either generate more compact code, or inlined it for
+> better performance.
+> 
+> Signed-off-by: Kairui Song <kasong@tencent.com>
+> ---
+>   mm/shmem.c | 53 +++++++++++++++++++++--------------------------------
+>   1 file changed, 21 insertions(+), 32 deletions(-)
+> 
+> diff --git a/mm/shmem.c b/mm/shmem.c
+> index e43becfa04b3..217264315842 100644
+> --- a/mm/shmem.c
+> +++ b/mm/shmem.c
+> @@ -2266,14 +2266,15 @@ static int shmem_swapin_folio(struct inode *inode, pgoff_t index,
+>   	struct address_space *mapping = inode->i_mapping;
+>   	struct mm_struct *fault_mm = vma ? vma->vm_mm : NULL;
+>   	struct shmem_inode_info *info = SHMEM_I(inode);
+> +	swp_entry_t swap, index_entry;
+>   	struct swap_info_struct *si;
+>   	struct folio *folio = NULL;
+>   	bool skip_swapcache = false;
+> -	swp_entry_t swap;
+>   	int error, nr_pages, order, split_order;
+> +	pgoff_t offset;
+>   
+>   	VM_BUG_ON(!*foliop || !xa_is_value(*foliop));
+> -	swap = radix_to_swp_entry(*foliop);
+> +	swap = index_entry = radix_to_swp_entry(*foliop);
+>   	*foliop = NULL;
+>   
+>   	if (is_poisoned_swp_entry(swap))
+> @@ -2321,46 +2322,35 @@ static int shmem_swapin_folio(struct inode *inode, pgoff_t index,
+>   		}
+>   
+>   		/*
+> -		 * Now swap device can only swap in order 0 folio, then we
+> -		 * should split the large swap entry stored in the pagecache
+> -		 * if necessary.
+> -		 */
+> -		split_order = shmem_split_large_entry(inode, index, swap, gfp);
+> -		if (split_order < 0) {
+> -			error = split_order;
+> -			goto failed;
+> -		}
+> -
+> -		/*
+> -		 * If the large swap entry has already been split, it is
+> +		 * Now swap device can only swap in order 0 folio, it is
+>   		 * necessary to recalculate the new swap entry based on
+> -		 * the old order alignment.
+> +		 * the offset, as the swapin index might be unalgined.
+>   		 */
+> -		if (split_order > 0) {
+> -			pgoff_t offset = index - round_down(index, 1 << split_order);
+> -
+> +		if (order) {
+> +			offset = index - round_down(index, 1 << order);
+>   			swap = swp_entry(swp_type(swap), swp_offset(swap) + offset);
+>   		}
+>   
+> -		/* Here we actually start the io */
+>   		folio = shmem_swapin_cluster(swap, gfp, info, index);
+>   		if (!folio) {
+>   			error = -ENOMEM;
+>   			goto failed;
+>   		}
+> -	} else if (order > folio_order(folio)) {
+> +	}
+> +alloced:
+> +	if (order > folio_order(folio)) {
+>   		/*
+> -		 * Swap readahead may swap in order 0 folios into swapcache
+> +		 * Swapin may get smaller folios due to various reasons:
+> +		 * It may fallback to order 0 due to memory pressure or race,
+> +		 * swap readahead may swap in order 0 folios into swapcache
+>   		 * asynchronously, while the shmem mapping can still stores
+>   		 * large swap entries. In such cases, we should split the
+>   		 * large swap entry to prevent possible data corruption.
+>   		 */
+> -		split_order = shmem_split_large_entry(inode, index, swap, gfp);
+> +		split_order = shmem_split_large_entry(inode, index, index_entry, gfp);
+>   		if (split_order < 0) {
+> -			folio_put(folio);
+> -			folio = NULL;
+>   			error = split_order;
+> -			goto failed;
+> +			goto failed_nolock;
+>   		}
+>   
+>   		/*
+> @@ -2369,15 +2359,13 @@ static int shmem_swapin_folio(struct inode *inode, pgoff_t index,
+>   		 * the old order alignment.
+>   		 */
+>   		if (split_order > 0) {
+> -			pgoff_t offset = index - round_down(index, 1 << split_order);
+> -
+> +			offset = index - round_down(index, 1 << split_order);
+>   			swap = swp_entry(swp_type(swap), swp_offset(swap) + offset);
 
-On a large machine, such as one with 512 cores, this results in
-512 redundant domain attach/destroy operations.
+Obviously, you should use the original swap value 'index_entry' to 
+calculate the new swap value.
 
-Avoid these unnecessary operations by simply checking
-cpu_smt_num_threads and skip SMT domain if the SMT domain is not
-enabled.
+With the following fix, you can add:
+Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+Tested-by: Baolin Wang <baolin.wang@linux.alibaba.com>
 
-Signed-off-by: K Prateek Nayak <kprateek.nayak@amd.com>
-Tested-by: K Prateek Nayak <kprateek.nayak@amd.com>
-Signed-off-by: Li Chen <chenl311@chinatelecom.cn>
----
- arch/x86/kernel/smpboot.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
-index cd70e5322462a..8c1960a455bfb 100644
---- a/arch/x86/kernel/smpboot.c
-+++ b/arch/x86/kernel/smpboot.c
-@@ -492,6 +492,8 @@ static struct sched_domain_topology_level x86_topology[] = {
- 
- static void __init build_sched_topology(void)
- {
-+	struct sched_domain_topology_level *topology = x86_topology;
-+
- 	/*
- 	 * When there is NUMA topology inside the package invalidate the
- 	 * PKG domain since the NUMA domains will auto-magically create the
-@@ -502,7 +504,15 @@ static void __init build_sched_topology(void)
- 
- 		memset(&x86_topology[pkgdom], 0, sizeof(x86_topology[pkgdom]));
- 	}
--	set_sched_topology(x86_topology);
-+
-+    /*
-+     * Drop the SMT domains if there is only one thread per-core
-+     * since it'll get degenerated by the scheduler anyways.
-+     */
-+	if (cpu_smt_num_threads <= 1)
-+		++topology;
-+
-+	set_sched_topology(topology);
- }
- 
- void set_cpu_sibling_map(int cpu)
--- 
-2.49.0
+diff --git a/mm/shmem.c b/mm/shmem.c
+index d530df550f7f..1e8422ac863e 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -2361,7 +2361,7 @@ static int shmem_swapin_folio(struct inode *inode, 
+pgoff_t index,
+                  */
+                 if (split_order > 0) {
+                         offset = index - round_down(index, 1 << 
+split_order);
+-                       swap = swp_entry(swp_type(swap), 
+swp_offset(swap) + offset);
++                       swap = swp_entry(swp_type(swap), 
+swp_offset(index_swap) + offset);
+                 }
+         } else if (order < folio_order(folio)) {
+                 swap.val = round_down(swap.val, 1 << folio_order(folio));
 
 
