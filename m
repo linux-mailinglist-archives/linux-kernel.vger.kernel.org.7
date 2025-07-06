@@ -1,179 +1,147 @@
-Return-Path: <linux-kernel+bounces-718661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-718663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DC62AFA439
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Jul 2025 11:59:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAF40AFA43F
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Jul 2025 12:01:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E17A2189FF5A
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Jul 2025 09:59:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADBC53A4496
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Jul 2025 10:01:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F29D9204F9C;
-	Sun,  6 Jul 2025 09:58:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 918CA1C8621;
+	Sun,  6 Jul 2025 10:01:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=netcube.li header.i=@netcube.li header.b="ZCYWZFzg"
-Received: from mail.netcube.li (mail.netcube.li [173.249.15.149])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qPAwvPqc";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="TnDCM2zf"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4380A202F67;
-	Sun,  6 Jul 2025 09:58:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.249.15.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97BC12E36EF;
+	Sun,  6 Jul 2025 10:01:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751795915; cv=none; b=PD4c32WV/rXamQ4QU4XoBvnWzcQQ9jqrE9woNk1gSOx2V92fV2xgadliZdXbjNMW/TDaiSg5+H5PUqZC+6pzM2nPIbQEsKmJEnY61YJWUaj1QHoMFT4cf9SIsqpqrjECkcReBiURtirGf7CqZ82surCxH8h1F1hwPfLfsVR9izI=
+	t=1751796086; cv=none; b=G4OOUspMxxUo3iDrQoM+lki7ValVEaGcfMejXXj8XZOvFCG2mQugdjsh2jVjR75ER1ubwuJl6f37MheuoOltwUjl8XHlPVObDJbACo1Ju8htzaQdoMlX6PhuMQmfYT6x5T1WmZ8DJOHQtvyaPHr/olXyDEq7j/fLnEJ4W8h9Xng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751795915; c=relaxed/simple;
-	bh=C6qblwhf7Ipn1ASAc76zndedi6aR8+qsdrNjj1sEqWk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZJV8PHPMhrnvrrL6gU50HjIgpkxtCp6A/ffd+/fVBKlwPW+ul824nY3hOT71daUx9TE3a0r/PuMGM9bHojU/S07UeWl1JsrWC7CmtMnNHqIEQDK+NIJrjz/N5tI6ynTAgHZbc/EnszWqijbFTnZllziJuPddM9Iu5dbFHQID2fc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=netcube.li; spf=pass smtp.mailfrom=netcube.li; dkim=pass (1024-bit key) header.d=netcube.li header.i=@netcube.li header.b=ZCYWZFzg; arc=none smtp.client-ip=173.249.15.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=netcube.li
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netcube.li
-dkim-signature: v=1; a=rsa-sha256; d=netcube.li; s=s1;
-	c=relaxed/relaxed; q=dns/txt; h=From:Subject:Date:Message-ID:To:CC:MIME-Version:Content-Type:In-Reply-To:References;
-	bh=7IFUgnPQyuVFa8Jj8ChajhgVnk7mfJFWlHVz17ozesI=;
-	b=ZCYWZFzg4P9WrTsU5d6CCna4Qga4Q/aWUCSIGZfBh+srCwNdj3w3iLVSFj478A/b5BDM7qoD+wsnt06xKUKPe1UqykDHEIDUpUno2Z7hXPAO5oX2zjP1t9FJuObAGEIEFZ52iLRYxY7WTkag5WRFMS+RXWRNl3Cztg/zmMffkuI=
-Received: from lukas-hpz440workstation.localnet (cm70-231.liwest.at [212.241.70.231])
-	by mail.netcube.li with ESMTPSA
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256)
-	; Sun, 6 Jul 2025 11:58:17 +0200
-From: Lukas Schmid <lukas.schmid@netcube.li>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
- Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>,
- Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexandre Ghiti <alex@ghiti.fr>, Maxime Ripard <mripard@kernel.org>,
- Krzysztof Kozlowski <krzk@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
- linux-riscv@lists.infradead.org
-Subject:
- Re: [PATCH v1 3/7] dt-bindings: arm: sunxi: Add NetCube Systems Nagami Keypad
- Carrier Board
-Date: Sun, 06 Jul 2025 11:58:16 +0200
-Message-ID: <8549188.T7Z3S40VBb@lukas-hpz440workstation>
-In-Reply-To: <4648f0bf-2957-45bf-a6c1-01787e5d3e88@kernel.org>
-References:
- <20250705213900.3614963-1-lukas.schmid@netcube.li>
- <2998364.e9J7NaK4W3@lukas-hpz440workstation>
- <4648f0bf-2957-45bf-a6c1-01787e5d3e88@kernel.org>
+	s=arc-20240116; t=1751796086; c=relaxed/simple;
+	bh=KXBup4bw9v/gwx8rjKNqMnPDdqBmdOebrKTvjd3ifGA=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=a0Sfn9ygtDkljJEmZO068ZRPMR3iFt1wthGuy0lziAeq3LxFl2msrUbP0yVZl8pceyfCEmc6QlMgoDrRkjpPl6Ra1sci+q9uCuvUnMw3In9Ss6De3UmJMp3NynQbwkwjJRI1/5mVLnyAjd6CtscwXoBPRCApzwGDydpF8n+tWDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qPAwvPqc; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=TnDCM2zf; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Sun, 06 Jul 2025 10:01:14 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1751796075;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SgK8bkOxLYF46AwADhta0znjIVz7ejANJtAbVBrIwuE=;
+	b=qPAwvPqc6wZnF6+uxmsPhlk6AOhqSx0gx+nlxZI9IMozA7PeBa+vCyqKvZPN6gu2irul2H
+	sfMGQY6PqYP0z55jv29yVh3utQ0Et+Xn6jOrXPN47GS3zjNIQmAa1pVs9+5qn8AuXpYSXG
+	7Riwz0/hgpViiki5urtb7zI9sRo0tSgtf68HbwHQVtpYev95j1zXfRJQOBIC+JVk2/7lqY
+	0ckioAVdxIbQDbu5fuBeRDWOHkOVEfBL63AJEzy/2xw/sKz/j2/SpAVF1B19z68YzKrP+r
+	f7vJBMz2jlQZimR6quqXegNymqC7Q6XSKDK+myS7yhjvR8jq3ByOivfgdnHu/w==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1751796075;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SgK8bkOxLYF46AwADhta0znjIVz7ejANJtAbVBrIwuE=;
+	b=TnDCM2zf9oI0+iaWjHqaHH/Cptvhiho1cfYTnJkkl/9Gj/yXTBZFhDiYo9DeGQ1ztL9/ZE
+	8DJDMyQavy5ytkCw==
+From: "tip-bot2 for Rik van Riel" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: smp/core] smp: Wait only if work was enqueued
+Cc: Jann Horn <jannh@google.com>, Rik van Riel <riel@surriel.com>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ "Yury Norov (NVIDIA)" <yury.norov@gmail.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250703203019.11331ac3@fangorn>
+References: <20250703203019.11331ac3@fangorn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart10685525.nUPlyArG6x";
- micalg="pgp-sha512"; protocol="application/pgp-signature"
+Message-ID: <175179607401.406.16648050119866359640.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
---nextPart10685525.nUPlyArG6x
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"; protected-headers="v1"
-From: Lukas Schmid <lukas.schmid@netcube.li>
-Date: Sun, 06 Jul 2025 11:58:16 +0200
-Message-ID: <8549188.T7Z3S40VBb@lukas-hpz440workstation>
-In-Reply-To: <4648f0bf-2957-45bf-a6c1-01787e5d3e88@kernel.org>
-MIME-Version: 1.0
+The following commit has been merged into the smp/core branch of tip:
 
-On Sonntag, 6. Juli 2025 11:46:46 CEST Krzysztof Kozlowski wrote:
-> On 06/07/2025 11:41, Lukas Schmid wrote:
-> > On Sonntag, 6. Juli 2025 11:36:34 CEST Krzysztof Kozlowski wrote:
-> >> On 06/07/2025 11:07, Lukas Schmid wrote:
-> >>> On Sonntag, 6. Juli 2025 09:49:58 CEST Krzysztof Kozlowski wrote:
-> >>>> On 05/07/2025 23:38, Lukas Schmid wrote:
-> >>>>> The NetCube Systems Nagami Keypad Carrier is a custom board intended
-> >>>>> to
-> >>>>> fit a standard Ritto Intercom enclosure and provides a Keypad,
-> >>>>> NFC-Reader
-> >>>>> and Status-LED all controllable over Ethernet with PoE support.
-> >>>>> 
-> >>>>> Signed-off-by: Lukas Schmid <lukas.schmid@netcube.li>
-> >>>>> ---
-> >>>>> 
-> >>>>>  Documentation/devicetree/bindings/arm/sunxi.yaml | 6 ++++++
-> >>>>>  1 file changed, 6 insertions(+)
-> >>>>> 
-> >>>>> diff --git a/Documentation/devicetree/bindings/arm/sunxi.yaml
-> >>>>> b/Documentation/devicetree/bindings/arm/sunxi.yaml index
-> >>>>> 7919b5bf5..a2f16d064 100644
-> >>>>> --- a/Documentation/devicetree/bindings/arm/sunxi.yaml
-> >>>>> +++ b/Documentation/devicetree/bindings/arm/sunxi.yaml
-> >>>>> 
-> >>>>> @@ -610,6 +610,12 @@ properties:
-> >>>>>            - const: netcube,nagami
-> >>>>>            - const: allwinner,sun8i-t113s
-> >>>>> 
-> >>>>> +      - description: NetCube Systems Nagami Keypad Carrier Board
-> >>>>> +        items:
-> >>>>> +          - const: netcube,nagami-keypad-carrier
-> >>>> 
-> >>>> That's just enum with previous entry. Don't make it over-complicated.
-> >>>> 
-> >>>> Best regards,
-> >>>> Krzysztof
-> >>> 
-> >>> Just making sure here. The actual bindings are fine, but I should merge
-> >>> them into one patch, correct?
-> >> 
-> >> No, you got two comments what should be changed in the binding.
-> >> 
-> >> Best regards,
-> >> Krzysztof
-> > 
-> > So if I understand correctly you want me to remove the
-> > "allwinner,sun8i-t113s" from the carrier boards and keep it for the SoM?
-> 
-> No, I spoke nothing about that compatible. My comment is EXACTLY under
-> the line being incorrect. That entry should have been made enum with
-> previous board compatible. Look at other vendors, because this file
-> repeats that pattern for some reason, eh...
-> 
-> Best regards,
-> Krzysztof
+Commit-ID:     946a7281982530d333eaee62bd1726f25908b3a9
+Gitweb:        https://git.kernel.org/tip/946a7281982530d333eaee62bd1726f25908b3a9
+Author:        Rik van Riel <riel@surriel.com>
+AuthorDate:    Wed, 02 Jul 2025 13:52:54 -04:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Sun, 06 Jul 2025 11:57:39 +02:00
 
-Ah sorry. I think i understand now. You want the carrier boards in a single 
-entry with the different compatibles as the enum like:
+smp: Wait only if work was enqueued
 
-      - description: NetCube Systems Nagami SoM
-        items:
-          - const: netcube,nagami
-          - const: allwinner,sun8i-t113s
+Whenever work is enqueued for a remote CPU, smp_call_function_many_cond()
+may need to wait for that work to be completed. However, if no work is
+enqueued for a remote CPU, because the condition func() evaluated to false
+for all CPUs, there is no need to wait.
 
-      - description: NetCube Systems Nagami SoM based boards
-        items:
-          - enum:
-              - netcube,nagami-basic-carrier
-              - netcube,nagami-keypad-carrier
-          - const: netcube,nagami
-          - const: allwinner,sun8i-t113s
+Set run_remote only if work was enqueued on remote CPUs.
 
-Best regards,
-Lukas
+Document the difference between "work enqueued", and "CPU needs to be
+woken up"
 
+Suggested-by: Jann Horn <jannh@google.com>
+Signed-off-by: Rik van Riel <riel@surriel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Yury Norov (NVIDIA) <yury.norov@gmail.com>
+Link: https://lore.kernel.org/all/20250703203019.11331ac3@fangorn
 
---nextPart10685525.nUPlyArG6x
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
+---
+ kernel/smp.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEPv6dcBmn59ssZMkSJnN+drMVRtgFAmhqSLgACgkQJnN+drMV
-RtiERQgAhtJfnRb+0MWY3I9NrlK10nZqNnvJr1RrRAl3ac/hg00rMlrCjI1GWna3
-WnNjQY8ztNvMI83gXaTLDv1raTVU+6sIMcwiZcSGn8wdWSO/Cx4Rl3ziY/z3mAtc
-axXLv907yLGC62k4U/wpBJ3+wTEe49M4JaBTs868YCa1Q/vjpqZsnIun+1nWlTFR
-hH06vVJhgoV32fDePHQsGyAdn6sQoxt8bLqryu3u2aZaJLDDH/K/bcxpbSCYlSyj
-c84tM50/VIdh8/MyMXUUbas/odCS/+7Tvm6fNdlJG/BdIeWL454EJNaVlUdj+Cvp
-/4qEOroTN+xTqZNKizC7wI6uMqBkjA==
-=g2nF
------END PGP SIGNATURE-----
-
---nextPart10685525.nUPlyArG6x--
-
-
-
-
+diff --git a/kernel/smp.c b/kernel/smp.c
+index 99d1fd0..c5e1da7 100644
+--- a/kernel/smp.c
++++ b/kernel/smp.c
+@@ -802,7 +802,6 @@ static void smp_call_function_many_cond(const struct cpumask *mask,
+ 
+ 	/* Check if we need remote execution, i.e., any CPU excluding this one. */
+ 	if (cpumask_any_and_but(mask, cpu_online_mask, this_cpu) < nr_cpu_ids) {
+-		run_remote = true;
+ 		cfd = this_cpu_ptr(&cfd_data);
+ 		cpumask_and(cfd->cpumask, mask, cpu_online_mask);
+ 		__cpumask_clear_cpu(this_cpu, cfd->cpumask);
+@@ -816,6 +815,9 @@ static void smp_call_function_many_cond(const struct cpumask *mask,
+ 				continue;
+ 			}
+ 
++			/* Work is enqueued on a remote CPU. */
++			run_remote = true;
++
+ 			csd_lock(csd);
+ 			if (wait)
+ 				csd->node.u_flags |= CSD_TYPE_SYNC;
+@@ -827,6 +829,10 @@ static void smp_call_function_many_cond(const struct cpumask *mask,
+ #endif
+ 			trace_csd_queue_cpu(cpu, _RET_IP_, func, csd);
+ 
++			/*
++			 * Kick the remote CPU if this is the first work
++			 * item enqueued.
++			 */
+ 			if (llist_add(&csd->node.llist, &per_cpu(call_single_queue, cpu))) {
+ 				__cpumask_set_cpu(cpu, cfd->cpumask_ipi);
+ 				nr_cpus++;
 
