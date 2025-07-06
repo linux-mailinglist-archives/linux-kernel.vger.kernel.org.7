@@ -1,87 +1,55 @@
-Return-Path: <linux-kernel+bounces-718563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-718566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D89C2AFA327
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Jul 2025 06:38:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBC7BAFA331
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Jul 2025 06:40:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E260C1636BF
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Jul 2025 04:38:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 362CB3BC94E
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Jul 2025 04:40:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABEE61C5D44;
-	Sun,  6 Jul 2025 04:37:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4A3419D8A3;
+	Sun,  6 Jul 2025 04:40:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LAVXJfZE"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="avQ40iEf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C16EE1B4257;
-	Sun,  6 Jul 2025 04:37:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 077C819343B;
+	Sun,  6 Jul 2025 04:40:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751776639; cv=none; b=YhNUT6KDwnbZXDPGeECPPNoNRZTUBq1CG2Ygyy5+NpyzwZW9piBRIXXpWqoKuRwatwg3ozd0KSBK52xcdTQvkWsYeufje/cBpCVBC5uHjiUFT4aLA85L9/rlJsS6+EKk5SwMUQqDynIiJy5MEPetPzZtLTL/nCP5ANB+qW5m21U=
+	t=1751776841; cv=none; b=s1Xo0GCW2BAYUDzDvDUsaEHKKNoXdCSqrmRL45dETADyw4gA2VtEylJG+OS7zVTUzT4GnMKCQr0SVXW/dSpUaPdpK3K9sbUipTXU/22WADohah3/HPw/tAvXtCUNCjxu9G3u48Vt4fhgt8WzCBNVMvavYdhfho41hb/kCDd+tng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751776639; c=relaxed/simple;
-	bh=q6s5Ov3YkPc8DxSGBllfcY6nOWAeMlWy4GrMMNB9wiA=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d50s3VAVl1T09cCvAiybmd/fdYEIFkLEsb+F6ij/CjCRj5Cq+FEGzrCRqOTlMMpOn0L4jfuXy56ovlMN2fK31R6genRG3WztMS6icvprJ5IEOvIfjsUvTVaQq+Hj4uz7oeg6kOXiqVyInXsctv8CrvjTcu3PqtAwHsMfcZYVFxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LAVXJfZE; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-b390d09e957so406341a12.1;
-        Sat, 05 Jul 2025 21:37:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751776637; x=1752381437; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1y2FRrOTA68hlJ+NjGl+jIRexDC9u6D/zy0MCfqEVY4=;
-        b=LAVXJfZETvOTurqWX6rHFL8L+m+Jxwq8ZBqFnC/etC1CAM8Inm7jw4EDzG68Sdrphf
-         LduwEc9pi5rqLzcRi4VwkkTHlAf12RHfgiHZjnPM5VM8N2nWC2JUMrLFnm+jHALEhSxP
-         u0tCikUL7W4GxbRW4aa+RXBGv0HvBvgg9y7ij1sYcq52x3f0VVWBQ6IyIEtjJysoNvEO
-         3Ldzn1DE4AF9uArcDW24uq26nnoa+X4BPYw3DfbXVk/7KH8p21QMoU45O70n8CKyKEyb
-         vPKYsN0BBUE1ZnKtC470jHItEeFp8fD4jgeozcj6PAs3Fm3BycslGMxDQURoeQd81Dy0
-         3weg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751776637; x=1752381437;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1y2FRrOTA68hlJ+NjGl+jIRexDC9u6D/zy0MCfqEVY4=;
-        b=HQ/FkuGQCbd9QsNKO+zJ9RB2RK4OasGq0lpOgAR2zxQupg0ITbnXcCyIl1SS3SNPWA
-         giiAIYpSatpofeWpUdhxL+BllEaFkgltSR8qDSrNrAzO9si5BDuKkE4LrvUB8IoK3Kx1
-         w3aa9mJnEi/8XyooeAXMjwTRg17CjwnOTir6K3uRXpeLOkBMwsxu0/YIDVWzj9FM4npA
-         2GU3GIr5Htx/jwkbjTxJGIjQcs0o+ZWjcMCBfjP1qz+Qzve4/QLpvNgPZaPypIZX6mbh
-         /GzJvYVR49Q6FL/+he4E4oXIhrBtyHR85hfRiRcoVTEOc05IpTWYA7VbRfTCsNiTvy8k
-         PGWg==
-X-Forwarded-Encrypted: i=1; AJvYcCUg68RQue2pnKvegESDl5g2zDg2gfj720+LSY4E/KJlrkNt8KdaA5SdIs8W2oF1Icrvx0YeNo91GKDWKph6@vger.kernel.org, AJvYcCVbJn6jFN5GPZxkxli5CwSfrbjbvIl9fuSC2VVrn3/GjK7syCq75kRRgRBplODl5/WDz/5ObBYM+Qdc@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0DxS2wIqt2KD9CPbdBPSh5R2szOYPhSmeHvYxyqSZkD4/i7CY
-	xT0u4Glqu8dFMDei70fTijjKkX8xUatOJpYwFfU3C0osoObRX/JvHpsm
-X-Gm-Gg: ASbGnctj8r3AhTrFpR9qB71jDhtxWs6gIMyMXWKa5UJShMXsGT4CMWcRAE3saD5eLd0
-	/QokQHgoAbqv2vjemwJm+GYu7VwRIdCFSFs8ssVX6nzAkARfoo6uZSv+z7kLA+W4chphLfjcbnk
-	wmLtarJU3GVxNzrUSkkWVD46EiyndXl+wQtaF/aBWqmzPw2urtqFTsuCnYmT3KJ3q5Ry5OXzCIM
-	zFyFdY+76nw7N/KsQAO9yPytehYlh+M5hpgE98rzw0uY43udNnIbXeucHI8rJZ084JHXXipBUlF
-	MhViN/Hn5KdAfrkqrq0kUNWCMkCDvF1MltrkjWs8MKGOxXWbTABwuB8g0bg2b83fLjEAz6Rybbd
-	aihRZgEyzCo963iYvte+VxTGaUmUCYA6nV8RAe+4=
-X-Google-Smtp-Source: AGHT+IG0ByxlfHWwgJ+AcNjU2yUsaqNnzgD75XgpxrmchkB3mZY7uDwPyNr4YJZ7aw0VrdPW/p4HBw==
-X-Received: by 2002:a05:6a20:7f9e:b0:220:658:855 with SMTP id adf61e73a8af0-2260a69f74amr13517414637.13.1751776637206;
-        Sat, 05 Jul 2025 21:37:17 -0700 (PDT)
-Received: from localhost.localdomain (c-76-133-73-115.hsd1.ca.comcast.net. [76.133.73.115])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b38ee62b1acsm5577847a12.56.2025.07.05.21.37.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 05 Jul 2025 21:37:16 -0700 (PDT)
-Date: Sat, 5 Jul 2025 21:37:14 -0700
-From: Tao Ren <rentao.bupt@gmail.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-	Andrew Lunn <andrew@lunn.ch>, Tao Ren <taoren@meta.com>
-Subject: Re: [PATCH v2 0/9] ARM: dts: aspeed: Add Meta Darwin dts
-Message-ID: <aGn9erhghE0Bpgl9@localhost.localdomain>
-References: <20250706042404.138128-1-rentao.bupt@gmail.com>
+	s=arc-20240116; t=1751776841; c=relaxed/simple;
+	bh=yD7hy+qvA/sqLOhhyRdGian/38CtG4QZ1NJCxIqtssE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t43YmVz/23ptGCkB6cGue6fqblkSk+Tx2uomW7opyYMpUE7og3xoHMnAAWs629wFmw2miPTrbvRK/AIDBsNls4WGjgzweJu5M8U6PVdM7zdYowAOk5B7KRmQYZDf6uF9zCBTNoeFUtLlO+6vJ5vY3aEJdhndclt8Fiaht5Edc3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=avQ40iEf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7337BC4CEF1;
+	Sun,  6 Jul 2025 04:40:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751776840;
+	bh=yD7hy+qvA/sqLOhhyRdGian/38CtG4QZ1NJCxIqtssE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=avQ40iEf43hpf73MdaoS6qgkZ7zLUoNH+dTJpWx0nG+bv3ahSO5tzyH/fw39+18fT
+	 lCOzoW9Wr27hKzrXyHlJSeZcJSNYwL1vFTLvTzAh/TSo3LcfyhbdQj6DJVhea3pqAQ
+	 PO2P3ynl+y63kSZES5Ta/wHe9RW+AnNXXO73uWKafZf05w/+/Cw+IbmBpgXm2digVV
+	 6zM0GVfEaMUOyfNxAfiSWTSpHh/l3dUaQHfQT8GjGkKSrSUZXkvxbRpYRQ2+DnT6T5
+	 RpEzyoIDfRb7GPtyzRD+HMPFNrPL2Vb3LB7L4W03WYqI6WD2+UQLh+lonKszKflULF
+	 6LQXXjYUhcsxw==
+Date: Sat, 5 Jul 2025 21:40:39 -0700
+From: Drew Fustini <fustini@kernel.org>
+To: Yao Zi <ziyao@disroot.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: Avoid DT fetch in possible_parent_show if clk_hw is
+ provided
+Message-ID: <aGn+R1/y8AxoZPsH@x1>
+References: <20250705095816.29480-2-ziyao@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,40 +58,78 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250706042404.138128-1-rentao.bupt@gmail.com>
+In-Reply-To: <20250705095816.29480-2-ziyao@disroot.org>
 
-On Sat, Jul 05, 2025 at 09:23:50PM -0700, rentao.bupt@gmail.com wrote:
-> From: Tao Ren <rentao.bupt@gmail.com>
+On Sat, Jul 05, 2025 at 09:58:17AM +0000, Yao Zi wrote:
+> When showing a parent for which clk_core_get_parent_by_index fails, we
+> may try using the parent's global name or the local name. If this fails
+> either, the parent clock's clock-output-names is fetched through
+> DT-index.
 > 
-> The patch series introduces the initial device tree for Meta/Facebook
-> Darwin AST2600 BMC.
+> struct clk_hw pointer takes precedence with DT-index when registering
+> clocks, thus most drivers only zero the index member of struct
+> clk_parent_data when providing the parent through struct clk_hw pointer.
+> If the pointer cannot resovle to a clock, clk_core_get_parent_by_index
+> will fail as well, in which case possible_parent_show will fetch the
+> parent's clock-output-names property, treat the unintended, zeroed index
+> as valid, and yield a misleading name if the clock controller does come
+> with a clocks property.
 > 
-> Patches #1, #2 and #3 fixes the DTB warnings in wedge400/fuji dts and
-> ast2600-facebook-netbmc-common.dtsi.
+> Let's add an extra check against the struct clk_hw pointer, and only
+> perform the DT-index-based fetch if it isn't provided.
 > 
-> Patches #4, #5 and #6 introduces a new BMC flash layout to be used by
-> wedge400 and fuji (and later more Meta Network BMC platforms).
+> Fixes: 2d156b78ce8f ("clk: Fix debugfs clk_possible_parents for clks without parent string names")
+> Signed-off-by: Yao Zi <ziyao@disroot.org>
+> ---
 > 
-> Patch #7 moves eMMC entries from ast2600-facebook-netbmc-common.dtsi to
-> each BMC platform because eMMC was removed from future Meta Network BMC
-> platforms.
+> This was found when fixing the wrong parent description of
+> clk-th1520-ap.c[1]. Without the patch,
 > 
-> Patches #8 and #9 adds Meta Darwin BMC and updates devicetree bindings.
+> 	# cat /sys/kernel/debug/clk/c910/clk_possible_parents
+> 	osc_24m cpu-pll1
+> 
+> The first parent should be c910-i0, provided by an unresolvable struct
+> clk_hw pointer. osc_24m is the first (and only) parent specified in
+> devicetree for the clock controller. With the patch,
+> 
+> 	# cat /sys/kernel/debug/clk/c910/clk_possible_parents
+> 	(missing) cpu-pll1
+> 
+> [1]: https://lore.kernel.org/linux-riscv/20250705052028.24611-1-ziyao@disroot.org/
+> 
+>  drivers/clk/clk.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 0565c87656cf..280d3a470228 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -3594,7 +3594,7 @@ static void possible_parent_show(struct seq_file *s, struct clk_core *core,
+>  	} else if (core->parents[i].fw_name) {
+>  		seq_printf(s, "<%s>(fw)", core->parents[i].fw_name);
+>  	} else {
+> -		if (core->parents[i].index >= 0)
+> +		if (!core->parents[i].hw && core->parents[i].index >= 0)
+>  			name = of_clk_get_parent_name(core->of_node, core->parents[i].index);
+>  		if (!name)
+>  			name = "(missing)";
+> -- 
+> 2.49.0
+> 
 
-Hi Krzysztof and Andrew,
+Tested-by: Drew Fustini <fustini@kernel.org>
 
-I've fixed all the "checkpatch.pl --strict" warnings except the "new
-file" warning, and I guess I can ignore the warning?
+I've tested this using next-20250704 on with the TH1520-based LPi 4a.
+Without the patch, I also get the misleading output:
 
-Regarding the dtb warnings, I've fixed the warnings from the individual
-dts files, but there are still some warnings from aspeed-g6.dtsi. Are
-these "known" warnings? Or is it because I'm using out-of-dated
-dtschema (2025.6.1)? Please suggest.
+ # cat /sys/kernel/debug/clk/c910/clk_possible_parents
+ osc_24m cpu-pll1
 
-Thank you very much for the review and feedback.
+With this patch applied, the output now reflects the missing parent:
 
+ # cat /sys/kernel/debug/clk/c910/clk_possible_parents
+ (missing) cpu-pll1
 
-Cheers,
-
-Tao
+Thanks,
+Drew
 
