@@ -1,191 +1,160 @@
-Return-Path: <linux-kernel+bounces-718615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-718603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA15FAFA3BB
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Jul 2025 10:40:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C7B20AFA3A4
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Jul 2025 10:23:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2698D1789BF
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Jul 2025 08:40:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBF6416EFE1
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Jul 2025 08:23:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BC6C1DDC23;
-	Sun,  6 Jul 2025 08:40:08 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 433221A841F;
+	Sun,  6 Jul 2025 08:23:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="wEanTL1T";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="YLI61KKj";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="wEanTL1T";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="YLI61KKj"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45BBC2E371A;
-	Sun,  6 Jul 2025 08:40:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0D8F10F1
+	for <linux-kernel@vger.kernel.org>; Sun,  6 Jul 2025 08:23:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751791208; cv=none; b=MohRIAQBGgK958hJcSXXFBB2ruD6yo7jmeAFPLSfh9z0RBxfBntSgthZbNk6N2iiT0CbNIGw5+NCp2o+qNBSR7y5Y+2lqqADmeG/+Myt2KkxR2XinsN4mzUnBAWTbeLb/9rq6/BI3tZPDloyPzYVjkLbvK5f5DQgvcZV7cHjl7o=
+	t=1751790197; cv=none; b=RI/TAM4JrUW+O48YsKzsLUGWcVr+kl/lSfENHe5yq1hnTPd4T3pWCS5DB7fo39fRRl2kgRgTqlUtukhDdbyVAWb6YhRZhh73k4lWc43VR2jC0OgTMCjmNiAzTXzHxcDzbJw48MlBs2Z+qVdHhxwrD+WQCW8kLgsrYM+cj1GW+5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751791208; c=relaxed/simple;
-	bh=qXv649VKrWAK5HkhC3c0jT3TdBk+KKcbPDok3jB1VX4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=FAfrLE9MWoN/5WR14x0fBy6su0i4D0QE6FRUCo0nIp0eB5G5KL1ypPGUBNzOtv4TJ2wNLSKAkvkHsHgviXeV4W0gyDd/GCIa475B4BRXzWroKdyfyA8wawHWoRJTK0ok1u/xNV2tlZRr4R0PU727G66DwTIc+I8shd6l0fZuQYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4bZgLJ0JlkztS2G;
-	Sun,  6 Jul 2025 16:20:56 +0800 (CST)
-Received: from kwepemf100006.china.huawei.com (unknown [7.202.181.220])
-	by mail.maildlp.com (Postfix) with ESMTPS id 220A7180B6A;
-	Sun,  6 Jul 2025 16:22:03 +0800 (CST)
-Received: from [10.174.177.210] (10.174.177.210) by
- kwepemf100006.china.huawei.com (7.202.181.220) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Sun, 6 Jul 2025 16:22:02 +0800
-Message-ID: <ce70f346-88c4-c508-b716-a4af7eadea1e@huawei.com>
-Date: Sun, 6 Jul 2025 16:22:01 +0800
+	s=arc-20240116; t=1751790197; c=relaxed/simple;
+	bh=yKHTUzkMRD/ZbcIS6Da8x1PhdCbAr9s1IP9CUSF7XL4=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lIiA7Lxxzsu7ftceRJB5FHDXYWy/kDqUrF01WBBXsYBCvjY2G2HXJ1E1aq01lHZGbi/0OiTY/Z87cmk8FyLrPTVC0JnI7JmTarkifYLeSbLc1n+N7OWXBbDKtz6xanNghFE5/ryNgPIHLakS3aBJF6f8CtMOe3UZcg8MdrF2vr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=wEanTL1T; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=YLI61KKj; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=wEanTL1T; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=YLI61KKj; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 4ADCE1F388;
+	Sun,  6 Jul 2025 08:22:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1751790129; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=r8S0lBmASZZL78tqk4ub0Y7rTMGUKgNcqPQuidlP1Pk=;
+	b=wEanTL1TtydfJPW95pNjRNSzJ0B3ox/Sm9r4RREO89KhESP/r2oVGWl0BAVBGXNLQFffXo
+	vbdcgvtrZyhnyoVJ+qsTPnoXA68xhqZJn5Wewtb5QCZwitKARYrzqXuNjDQl6dXBLuXnj1
+	alZ+FVn//WvfXuV8qRCB0Rw6v6gt6PQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1751790129;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=r8S0lBmASZZL78tqk4ub0Y7rTMGUKgNcqPQuidlP1Pk=;
+	b=YLI61KKjtO4Q49pvSXAmOYMS6+ZJET+LSqBtUKSWxpLtG5g4CqLv2vX7JCjLrCLIWW/BUF
+	mTwNYaymG0cLMxAg==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=wEanTL1T;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=YLI61KKj
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1751790129; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=r8S0lBmASZZL78tqk4ub0Y7rTMGUKgNcqPQuidlP1Pk=;
+	b=wEanTL1TtydfJPW95pNjRNSzJ0B3ox/Sm9r4RREO89KhESP/r2oVGWl0BAVBGXNLQFffXo
+	vbdcgvtrZyhnyoVJ+qsTPnoXA68xhqZJn5Wewtb5QCZwitKARYrzqXuNjDQl6dXBLuXnj1
+	alZ+FVn//WvfXuV8qRCB0Rw6v6gt6PQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1751790129;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=r8S0lBmASZZL78tqk4ub0Y7rTMGUKgNcqPQuidlP1Pk=;
+	b=YLI61KKjtO4Q49pvSXAmOYMS6+ZJET+LSqBtUKSWxpLtG5g4CqLv2vX7JCjLrCLIWW/BUF
+	mTwNYaymG0cLMxAg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id DE70913A29;
+	Sun,  6 Jul 2025 08:22:08 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id VruUNDAyamhnWwAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Sun, 06 Jul 2025 08:22:08 +0000
+Date: Sun, 06 Jul 2025 10:22:08 +0200
+Message-ID: <87zfdhn2z3.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Baojun Xu <baojun.xu@ti.com>
+Cc: <broonie@kernel.org>,
+	<andriy.shevchenko@linux.intel.com>,
+	<alsa-devel@alsa-project.org>,
+	<shenghao-ding@ti.com>,
+	<navada@ti.com>,
+	<13916275206@139.com>,
+	<v-hampiholi@ti.com>,
+	<v-po@ti.com>,
+	<linux-sound@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1] ALSA: hda/tas2781: Add bus name in device name check
+In-Reply-To: <20250705025333.24346-1-baojun.xu@ti.com>
+References: <20250705025333.24346-1-baojun.xu@ti.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.1
-Subject: Re: [PATCH] nfs: fix the race of lock/unlock and open
-To: Li Lingfeng <lilingfeng3@huawei.com>, <trondmy@kernel.org>,
-	<anna@kernel.org>, <jlayton@kernel.org>, <bcodding@redhat.com>
-CC: <linux-nfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<yukuai1@huaweicloud.com>, <houtao1@huawei.com>, <yi.zhang@huawei.com>,
-	<lilingfeng@huaweicloud.com>
-References: <20250419085709.1452492-1-lilingfeng3@huawei.com>
-From: yangerkun <yangerkun@huawei.com>
-In-Reply-To: <20250419085709.1452492-1-lilingfeng3@huawei.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
- kwepemf100006.china.huawei.com (7.202.181.220)
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 4ADCE1F388
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-3.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	ARC_NA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[139.com];
+	RCVD_TLS_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[kernel.org,linux.intel.com,alsa-project.org,ti.com,139.com,vger.kernel.org];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:dkim,suse.de:mid]
+X-Spam-Score: -3.51
 
-nfs4_reclaim_locks already given us solution:
+On Sat, 05 Jul 2025 04:53:33 +0200,
+Baojun Xu wrote:
+> 
+> Device name start from bus name, as we use strstarts()
+> to do compare, need add it for TXNW2781 device.
+> 
+> Fixes: b2904df0a347 ("ALSA: hda/tas2781: Add compatible for hardware id TIAS2781 and TXNW2781")
+> 
+> Signed-off-by: Baojun Xu <baojun.xu@ti.com>
 
-static int nfs4_reclaim_locks(struct nfs4_state *state, const struct 
-nfs4_state_recovery_ops *ops)
-...
-	/* Guard against delegation returns and new lock/unlock calls */
-	down_write(&nfsi->rwsem);
-	spin_lock(&flctx->flc_lock);
+Applied now.  Thanks.
 
-Can you help try this way?
 
-在 2025/4/19 16:57, Li Lingfeng 写道:
-> LOCK may extend an existing lock and release another one and UNLOCK may
-> also release an existing lock.
-> When opening a file, there may be access to file locks that have been
-> concurrently released by lock/unlock operations, potentially triggering
-> UAF.
-> While certain concurrent scenarios involving lock/unlock and open
-> operations have been safeguarded with locks – for example,
-> nfs4_proc_unlckz() acquires the so_delegreturn_mutex prior to invoking
-> locks_lock_inode_wait() – there remain cases where such protection is not
-> yet implemented.
-> 
-> The issue can be reproduced through the following steps:
-> T1: open in read-only mode with three consecutive lock operations applied
->      lock1(0~100) --> add lock1 to file
->      lock2(120~200) --> add lock2 to file
->      lock3(50~150) --> extend lock1 to cover range 0~200 and release lock2
-> T2: restart nfs-server and run state manager
-> T3: open in write-only mode
->      T1                            T2                                T3
->                              start recover
-> lock1
-> lock2
->                              nfs4_open_reclaim
->                              clear_bit // NFS_DELEGATED_STATE
-> lock3
->   _nfs4_proc_setlk
->    lock so_delegreturn_mutex
->    unlock so_delegreturn_mutex
->    _nfs4_do_setlk
->                              recover done
->                                                  lock so_delegreturn_mutex
->                                                  nfs_delegation_claim_locks
->                                                  get lock2
->     rpc_run_task
->     ...
->     nfs4_lock_done
->      locks_lock_inode_wait
->      ...
->       locks_dispose_list
->       free lock2
->                                                  use lock2
->                                                  // UAF
->                                                  unlock so_delegreturn_mutex
-> 
-> Get so_delegreturn_mutex before calling locks_lock_inode_wait to fix this
-> issue.
-> 
-> Fixes: c69899a17ca4 ("NFSv4: Update of VFS byte range lock must be atomic with the stateid update")
-> Signed-off-by: Li Lingfeng <lilingfeng3@huawei.com>
-> ---
->   fs/nfs/nfs4proc.c | 19 +++++++++++++++----
->   1 file changed, 15 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
-> index 970f28dbf253..297ee2442c02 100644
-> --- a/fs/nfs/nfs4proc.c
-> +++ b/fs/nfs/nfs4proc.c
-> @@ -7112,13 +7112,16 @@ static void nfs4_locku_done(struct rpc_task *task, void *data)
->   		.inode = calldata->lsp->ls_state->inode,
->   		.stateid = &calldata->arg.stateid,
->   	};
-> +	struct nfs4_state_owner *sp = calldata->ctx->state->owner;
->   
->   	if (!nfs4_sequence_done(task, &calldata->res.seq_res))
->   		return;
->   	switch (task->tk_status) {
->   		case 0:
->   			renew_lease(calldata->server, calldata->timestamp);
-> +			mutex_lock(&sp->so_delegreturn_mutex);
->   			locks_lock_inode_wait(calldata->lsp->ls_state->inode, &calldata->fl);
-> +			mutex_unlock(&sp->so_delegreturn_mutex);
->   			if (nfs4_update_lock_stateid(calldata->lsp,
->   					&calldata->res.stateid))
->   				break;
-> @@ -7375,6 +7378,7 @@ static void nfs4_lock_done(struct rpc_task *task, void *calldata)
->   {
->   	struct nfs4_lockdata *data = calldata;
->   	struct nfs4_lock_state *lsp = data->lsp;
-> +	struct nfs4_state_owner *sp = data->ctx->state->owner;
->   
->   	if (!nfs4_sequence_done(task, &data->res.seq_res))
->   		return;
-> @@ -7386,8 +7390,12 @@ static void nfs4_lock_done(struct rpc_task *task, void *calldata)
->   				data->timestamp);
->   		if (data->arg.new_lock && !data->cancelled) {
->   			data->fl.c.flc_flags &= ~(FL_SLEEP | FL_ACCESS);
-> -			if (locks_lock_inode_wait(lsp->ls_state->inode, &data->fl) < 0)
-> +			mutex_lock(&sp->so_delegreturn_mutex);
-> +			if (locks_lock_inode_wait(lsp->ls_state->inode, &data->fl) < 0) {
-> +				mutex_unlock(&sp->so_delegreturn_mutex);
->   				goto out_restart;
-> +			}
-> +			mutex_unlock(&sp->so_delegreturn_mutex);
->   		}
->   		if (data->arg.new_lock_owner != 0) {
->   			nfs_confirm_seqid(&lsp->ls_seqid, 0);
-> @@ -7597,11 +7605,14 @@ static int _nfs4_proc_setlk(struct nfs4_state *state, int cmd, struct file_lock
->   	int status;
->   
->   	request->c.flc_flags |= FL_ACCESS;
-> -	status = locks_lock_inode_wait(state->inode, request);
-> -	if (status < 0)
-> -		goto out;
->   	mutex_lock(&sp->so_delegreturn_mutex);
->   	down_read(&nfsi->rwsem);
-> +	status = locks_lock_inode_wait(state->inode, request);
-> +	if (status < 0) {
-> +		up_read(&nfsi->rwsem);
-> +		mutex_unlock(&sp->so_delegreturn_mutex);
-> +		goto out;
-> +	}
->   	if (test_bit(NFS_DELEGATED_STATE, &state->flags)) {
->   		/* Yes: cache locks! */
->   		/* ...but avoid races with delegation recall... */
+Takashi
 
