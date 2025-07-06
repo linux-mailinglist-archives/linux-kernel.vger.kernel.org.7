@@ -1,105 +1,119 @@
-Return-Path: <linux-kernel+bounces-718930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-718932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 103C3AFA7AA
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Jul 2025 22:26:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6691BAFA7AE
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Jul 2025 22:31:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFF8F189BDE4
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Jul 2025 20:27:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACC9A3A7039
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Jul 2025 20:30:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81F9D2BCF6C;
-	Sun,  6 Jul 2025 20:26:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8BD017DFE7;
+	Sun,  6 Jul 2025 20:31:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="coIZzHni";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="nqs0sa/L"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=star-ark.net header.i=@star-ark.net header.b="Uu9YAdmF";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="BplTOpbL"
+Received: from fout-a1-smtp.messagingengine.com (fout-a1-smtp.messagingengine.com [103.168.172.144])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 860E02E36FE;
-	Sun,  6 Jul 2025 20:26:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2D491A76D0
+	for <linux-kernel@vger.kernel.org>; Sun,  6 Jul 2025 20:31:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751833596; cv=none; b=ViPQahluYdoVnJT/E5m8s02+t36TjtHLOuWutqhjqB4fdIATSzME1M4oL5GCGO8RFBU2ayFqiRfTApe74FZM4qSN92U7WWQ0qqD85BKMN7XD9z73DsvsP2NRAx04yMLK4ApxH+CTABfOa154CYqBdtglizfhZ5xAO18NOz/41y8=
+	t=1751833870; cv=none; b=BCbL6nNBvm3H2m8FWfaSXmJh8rlWg4zLQlWbUJGBfEfZUgHoh9JGOq5dXwLU4qenoWH/eLiw1u8BBtB94WlxmSq8V1kZcwyp/28+HM+GyHroJOUWPK3Ezm29S3vYQ12jA6RK+PBBeWcvd8EDCclI5Ch5CHUNxJk2vzbwqEEFm3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751833596; c=relaxed/simple;
-	bh=usgtwnYV2zSW+LtzIHeU7+mGrxPq/yKmMHF6FWzP6z4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=uEdXV1aBbOk6U5zS0FFY9gdMdMxi/UwiDRU7ask4JQAzOBgzByX4mJ0kQCnJwHQ/6vuyZFsQ499mMFTl4pQbv8DWoRn2SPMf+y+nEmlluDmT2fGDn+VJCCmMc866K6U4TuJzppy6jRxjU1fySh9V7DMAi+NK6mM0vui5UyIjnec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=coIZzHni; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=nqs0sa/L; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1751833592;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=e1Im/IBNO0y7hI7V+On66xP1EYDvFOgnxomSyh9iREE=;
-	b=coIZzHniJqa9x3uqEcYBcBh6IFco8ufa3Rl6nK5J9/1KHfeE7wh567Qg69/3tQHX56t8MT
-	rpQlAQS1vES6w2KZEBsJF5cZ6RVFJ3WXR4Y00ANrrHS8vQ3aDNsb74eNTEaWUpqM1iHBLr
-	f5NtH/m+mC8gc6TeplIESxle85pjHdN0RVin/bzNQJIyZ4e1zFh4YUSvxM6H7siJbcGCk8
-	S8DGx3qKzLCdQUsKnDlX8VOqwSEMnTeVaEmRl2jngSPDbK+54tF6MLYI8SdbwzPIoI0Dro
-	NDLTjxROwWEyKK0OSr0/HEjuIYjuLmFu0ioF9PpUB25x5dFbJFZDsjcr37Ev8w==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1751833592;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=e1Im/IBNO0y7hI7V+On66xP1EYDvFOgnxomSyh9iREE=;
-	b=nqs0sa/Ls300GE1wwnRZMFCNZwbj0GF4RFOMIXnc+Z+pDrx+DuU63uVOI7JLmO9jQsVnGS
-	wXipWqz9uLDpyRCw==
-To: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
- Andy Lutomirski
- <luto@kernel.org>, Vincenzo Frascino <vincenzo.frascino@arm.com>, Shuah
- Khan <shuah@kernel.org>, Anna-Maria Behnsen <anna-maria@linutronix.de>,
- Frederic Weisbecker <frederic@kernel.org>, John Stultz
- <jstultz@google.com>, Stephen Boyd <sboyd@kernel.org>, Catalin Marinas
- <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Arnd Bergmann
- <arnd@arndb.de>
-Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-arch@vger.kernel.org, Richard
- Cochran <richardcochran@gmail.com>, Christopher Hall
- <christopher.s.hall@intel.com>, Frederic Weisbecker <frederic@kernel.org>,
- Anna-Maria Behnsen <anna-maria@linutronix.de>, Miroslav Lichvar
- <mlichvar@redhat.com>, Werner Abt <werner.abt@meinberg-usa.com>, David
- Woodhouse <dwmw2@infradead.org>, Stephen Boyd <sboyd@kernel.org>, Kurt
- Kanzenbach <kurt@linutronix.de>, Nam Cao <namcao@linutronix.de>, Antoine
- Tenart <atenart@kernel.org>, Thomas =?utf-8?Q?Wei=C3=9Fschuh?=
- <thomas.weissschuh@linutronix.de>
-Subject: Re: [PATCH 14/14] selftests/timers/auxclock: Test vDSO functionality
-In-Reply-To: <20250701-vdso-auxclock-v1-14-df7d9f87b9b8@linutronix.de>
-References: <20250701-vdso-auxclock-v1-0-df7d9f87b9b8@linutronix.de>
- <20250701-vdso-auxclock-v1-14-df7d9f87b9b8@linutronix.de>
-Date: Sun, 06 Jul 2025 22:26:31 +0200
-Message-ID: <87cyadrrpk.ffs@tglx>
+	s=arc-20240116; t=1751833870; c=relaxed/simple;
+	bh=gvkt1iq1VIgX+7yiZNz1mCKk+gey9NsbUrQWsmeuPyY=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=jOxl7Ik72A51Bh0/j35pQa0rZzOyej6HvIF286cJuLHBU1QSyzXDE15XVQdIby7OSM54n9YOSRxrN91UVVDpOO0aRk3bm5zFjIqBTLu5U7fS7qaqrb6lDQj7cJLCVSyRU8Db6znyiNK2RrnrV7g/HotEMRp77bhhhooixjoe8wU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=star-ark.net; spf=pass smtp.mailfrom=star-ark.net; dkim=pass (2048-bit key) header.d=star-ark.net header.i=@star-ark.net header.b=Uu9YAdmF; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=BplTOpbL; arc=none smtp.client-ip=103.168.172.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=star-ark.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=star-ark.net
+Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
+	by mailfout.phl.internal (Postfix) with ESMTP id C0AD3EC07BC;
+	Sun,  6 Jul 2025 16:31:06 -0400 (EDT)
+Received: from phl-imap-16 ([10.202.2.88])
+  by phl-compute-01.internal (MEProxy); Sun, 06 Jul 2025 16:31:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=star-ark.net; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1751833866;
+	 x=1751920266; bh=yYcFfoXuFF5HUmksrlq6atyZzV+Wg33Jvb+63D+a7sQ=; b=
+	Uu9YAdmFA8sLyvPI0gQOFRITjqSW7el0NdObXjNHN4TL+ODOYeLvFTLUh9OLKRIp
+	FBNFXNsyn9pBJT2332SbpjaZonIKzyGvtStvamzKvqpAaHSmiBJZOafNHArvbHQm
+	dczcQ1zW8LJ4E61hH4yumlvOTqyS2BFDBQ4SXR8UXveokwAwrITONR2kN6G8n3UM
+	1Hs7UDHYRWCAALn4KF29AyptU7W3H3f2QfEIrmvk8a92/Fr/3tso2/+MmSz/lg9Q
+	MMaA7NB0p0AP8J+CMAswuqb5MYpIotnztxn3dsHjR1kT7VAnA4YX56S/XX5ISVau
+	l0WF+/UENpLq6FzFAu1XMQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1751833866; x=
+	1751920266; bh=yYcFfoXuFF5HUmksrlq6atyZzV+Wg33Jvb+63D+a7sQ=; b=B
+	plTOpbLdKLA+4UiYuc7rMWAOcUBxN6/XkvwTKQYx3Hs2G7PP2sXxOV8NLH3UAbjI
+	HgAjasTwBj1f0zBmjWgrznWm62JOSSK3cyYjeddeI9KfykkDBxIaioa/Ww329qKY
+	KY6iYE79kCl06g2H5lOW6gIpIozx4KF/gb44PZGui5kXxYp1m10xwSpMfaj9dA5V
+	nlZoUyGPUEavEwmmw0YYIZ/6SvlvTOg5On1N0kJGB9aPH4Djx8FuIET2ESHROYby
+	NISSSPEAER6i4KUIKqoutyZZnFq7NybtkPyKID5hs82o1/654c8aeyfawH4GqQGm
+	GBmj/qPPn8N7OrAg0OXoA==
+X-ME-Sender: <xms:Ct1qaEDaEYJazlyp_Obt8Q2QYK24eHiTMw6tKZbNtQ9k9T1LEpXipA>
+    <xme:Ct1qaGiJpWZ7TQ6NlLEqZb1Vk8bH0nVQPhpk58uQh3_XHn8cKcwls3m1b4r3cbDCS
+    kBTAx3DTgzU44W6TZA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddvleekkecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdfnihhllhhi
+    rghnuceuvghrrhihfdcuoehlihhllhhirghnsehsthgrrhdqrghrkhdrnhgvtheqnecugg
+    ftrfgrthhtvghrnhepgfdtgeegtdehfeefkefgfeffieekfedvtdeiudffvdevudekvdfh
+    heekfefhfffhnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
+    homheplhhilhhlihgrnhesshhtrghrqdgrrhhkrdhnvghtpdhnsggprhgtphhtthhopeef
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegrkhhpmheslhhinhhugidqfhhouh
+    hnuggrthhiohhnrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgv
+    rhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepvhhirhhoseiivghnihhvrdhlihhnuh
+    igrdhorhhgrdhukh
+X-ME-Proxy: <xmx:Ct1qaHlJL0GRmZlskkBIlPfLHtAqx5LFqMC1Af3B3wJp4TVPAPu71Q>
+    <xmx:Ct1qaKxqlCu9wX-lf1imltdLomF6zawQAHKOk07O6979NzHihysoeA>
+    <xmx:Ct1qaJS326CWqWGe0WJc1QoV-8x-D8aaaEW_NITF4UrGQZ-m7d07hg>
+    <xmx:Ct1qaFa-0vksuz-OfsBkAj_ZcP4fWfDCJ-pZje2QQX_IPRzWn6d5wA>
+    <xmx:Ct1qaD0zIBjjJUZfeqeOPS8Ipy38z8SIBrLkPrV9ERXBX3WN84n9qzWl>
+Feedback-ID: i8db94900:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 6E7CD2CC0081; Sun,  6 Jul 2025 16:31:06 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+X-ThreadId: T04916d410c8c63fd
+Date: Sun, 06 Jul 2025 22:29:02 +0200
+From: "Lillian Berry" <lillian@star-ark.net>
+To: "Andrew Morton" <akpm@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, "Al Viro" <viro@zeniv.linux.org.uk>
+Message-Id: <6325572b-994d-42da-999a-6c98f240301f@app.fastmail.com>
+In-Reply-To: <20250706131324.613340ff7e99231c383409f5@linux-foundation.org>
+References: <20250706185142.1294007-1-lillian@star-ark.net>
+ <20250706131324.613340ff7e99231c383409f5@linux-foundation.org>
+Subject: Re: [PATCH] init/main.c: add warning when file specified in rdinit is
+ inaccessible
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 01 2025 at 10:58, Thomas Wei=C3=9Fschuh wrote:
+On Sun, Jul 6, 2025, at 10:13 PM, Andrew Morton wrote:
+> "is inaccessible or does not exist", please.
+Will update.
 
-> Extend the auxclock test to also cover the vDSO.
+> Is the "WARNING: " needed?  It's pr_warn(), which implies that it's a warning.
+I saw this on L486 (warn_bootconfig), but can remove.
 
-I'm not really convinved, that this is the right thing to do. Why can't
-this just extend selftests/vDSO instead of creating these
+> It would be good to display the errno itself. 
+Yep! I'll add that.
 
-> +#include "../vDSO/parse_vdso.c"
-> +#include "../vDSO/vdso_config.h"
-> +#include "../vDSO/vdso_call.h"
-
-cross directory oddities? Confused.
-
-Thanks,
-
-        tglx
+Kindly,
+Lillian
 
