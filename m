@@ -1,52 +1,51 @@
-Return-Path: <linux-kernel+bounces-718875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-718873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3E0FAFA754
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Jul 2025 20:47:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 59772AFA753
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Jul 2025 20:47:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6518189CBD2
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Jul 2025 18:47:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C19D189CC64
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Jul 2025 18:47:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ED362BD59B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00B6B2BD585;
 	Sun,  6 Jul 2025 18:47:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dvlYc9uN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ObYzMobi"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FDBE19B5A7;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FD171459FA;
 	Sun,  6 Jul 2025 18:47:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751827630; cv=none; b=gHF4IPEPRIJFMtBhf77nuTJQu+NGNcLHkjZho1/dTy2ZDvdriZI7dbsc1m7F2lPx30Z1fjUJc8e514KtmA6xZqipuTX/hzh3q7cSkWD2ZKIjEGj2nFW1X4wLdu1QyyQwFMiIf/ujQZRkvAzDFPdg8UrkAnTzaCzjVcxijKCAwbQ=
+	t=1751827630; cv=none; b=gW2w/Mevla4+0VacCqrbXPb8RwEfuB82a3pQM5b5AoeVqCs/c79WWabJlgopfmoxmkgMBt/U2Jostbxqa/xyqOZIG1Jjmp/FXQWMd3cR1zvVvqlrAYvLJ+JAbra7IPU30bebqc8VLoaSZKEoDfBcLTYge2eKt82LLhp9BVfAY1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1751827630; c=relaxed/simple;
-	bh=L7bpd1ZTMa/RO66jEZFS9u+3RkkUMvyZlh52Z6kGVtk=;
+	bh=GxyZ76W6YsSH+nEuKRIDiaUia7mvng8ubzru+ZlvBhM=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=gRhenQIDU5b0ymlIYBeFoVb0ntM0iic3y0pZApVpFguiI/IqFenfXiRWF2RcVqvw34Qa0+bmkYrNPd5614ovEDzZ00Llf4P/k3A05nau2BE/WOQZNmFOOB04wceEZYz+CDpzaH4k564KMo+PlWSREEfq7lJmMym2uqSXjsXB2QM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dvlYc9uN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id F1D6CC4CEF5;
+	 In-Reply-To:To:Cc; b=fOexIVux1dHhEjFw8lQqtOkPlLHBq/l9/KnbYk9zpQftVPsEPD5jssQ59kTCZfCBuwyLuoCtqmZTkmdmZ7UlObS6xqE3DjFyBDihZk7IzpqcihuQVlZxwuzm7gvebQgMjz9qRpsWoglhWunzOLwlCwfMuyOyoEjxVDbe4YfmV50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ObYzMobi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id EE454C4CEF4;
 	Sun,  6 Jul 2025 18:47:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1751827630;
-	bh=L7bpd1ZTMa/RO66jEZFS9u+3RkkUMvyZlh52Z6kGVtk=;
+	bh=GxyZ76W6YsSH+nEuKRIDiaUia7mvng8ubzru+ZlvBhM=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=dvlYc9uNoTXQWqk/8z7aijiK3mOHrrsIz1KmOGdw31mZ9by1RjNzXn1jZFcQYHvO9
-	 O9yqPbmEpiouP0ttPpY05zOGikyis/WXatC5UZ0ldq01CCMSK+PNntspIWpYgeqULV
-	 ii8eVeZUYWLDz56b2SDU3PJ+QIgFNy+WSu7NI6dwhUj1OEfq8PpJTYBOglhK8oorN1
-	 YDxmGuD5t672YMyZuEZNyKW4UpUp+RjXwBqapHX7nVMNLKxTVkSY3DSkeK8/gDBcJI
-	 4iAuHrnuxa5bkTFA3X5qJnad8GFvf4RBIGlRGpqoUQp7pY1DzrUJaMCGvv/y2dmV0l
-	 4WuuArBeVxCUA==
+	b=ObYzMobiVGq4GzSc6MzgkZiGl4N+eRaW5XMAxGmYQAAH+elZr7/+hwVjg8+63/1F/
+	 h8RtIldsBhmHTcQvtuF4qA38mvppC7REBjXMFY8JHizkGPiZM7AVS8e3zSc921BFn1
+	 TpZVEImXo9k4h7WqVMz3z7lDvDZ8CWNuA8AJIuP22YzQcTuKc24vnBABGc60Cqxidd
+	 pfTSD8BshCj3WlDJ28V0WVteCGLJs+m7jdkiEaOV2Q4tFefOeEfaE8oZde6xLDfOfY
+	 KW6EZq9XTOZkJAOW5PBQ3p1kvD2laEKKBJZVMlnynp9dOjLkwPDxU/5D56rJT5LlhB
+	 nhmNRK5BAIGLw==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5705C83F0E;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2816C83F0F;
 	Sun,  6 Jul 2025 18:47:09 +0000 (UTC)
 From: Frank Li via B4 Relay <devnull+Frank.Li.nxp.com@kernel.org>
-Date: Sun, 06 Jul 2025 14:46:59 -0400
-Subject: [PATCH 03/11] ARM: dts: lpc4350-hitex-eval: change node name flash
- to flash@0
+Date: Sun, 06 Jul 2025 14:47:00 -0400
+Subject: [PATCH 04/11] ARM: dts: lpc18xx: swap clock-names bic and cui
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,7 +54,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250706-lpc18xxx_dts-v1-3-7ae8cdfe8d7d@nxp.com>
+Message-Id: <20250706-lpc18xxx_dts-v1-4-7ae8cdfe8d7d@nxp.com>
 References: <20250706-lpc18xxx_dts-v1-0-7ae8cdfe8d7d@nxp.com>
 In-Reply-To: <20250706-lpc18xxx_dts-v1-0-7ae8cdfe8d7d@nxp.com>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -64,11 +63,11 @@ Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-kernel@vger.kernel.org, imx@lists.linux.dev, vz@mleia.com, 
  Frank Li <Frank.Li@nxp.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1751827628; l=2299;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1751827628; l=1266;
  i=Frank.Li@nxp.com; s=20240130; h=from:subject:message-id;
- bh=kvKeu0uSL6H9Hui96OrSfKpctNLAKlofzyW2bVVv/us=;
- b=DmxS+F+3f/HV99/JI5dVWvAPzHZmvs9RZBdcB6bZxK7BpzRNWq/oaa6MaGA5njXoJkS+Jmurj
- kKzC2N09XRbDa5xHksZKRuzpSVj3WqhMGYIlpHDpX2G4Wbg0MCfv7Mn
+ bh=UCsVuTJJb65oR4iDCkRHol36phtuS4BFYwUlRuaLl5E=;
+ b=8tTDLVmaoeE+iXXsG2lnWevRaVivwYKePo3fWG6ADYnm7xCFTZ/mI/z+/WPC0lF9Qwv64tDDu
+ 3B2UYDsW8G6CMaArGFZdDqIT9Kmjv41kJrt6LOo2ZrJAF8GqPhoRR0g
 X-Developer-Key: i=Frank.Li@nxp.com; a=ed25519;
  pk=I0L1sDUfPxpAkRvPKy7MdauTuSENRq+DnA+G4qcS94Q=
 X-Endpoint-Received: by B4 Relay for Frank.Li@nxp.com/20240130 with
@@ -78,62 +77,32 @@ Reply-To: Frank.Li@nxp.com
 
 From: Frank Li <Frank.Li@nxp.com>
 
-Change node name 'flash' to 'flash@0' to fix below CHECK_DTB warnings.
-arch/arm/boot/dts/nxp/lpc/lpc4350-hitex-eval.dtb: flash-controller@40003000 (nxp,lpc1773-spifi): Unevaluated properties are not allowed ('flash' was unexpected)
-        from schema $id: http://devicetree.org/schemas/mtd/nxp,lpc1773-spifi.yaml#
+Swap clock-names bic and cui to fix below CHECK_DTB warnings:
+
+/home/lizhi/source/linux-upstream-pci/arch/arm/boot/dts/nxp/lpc/lpc4357-ea4357-devkit.dtb: mmc@40004000 (snps,dw-mshc): clock-names:0: 'biu' was expected
+	from schema $id: http://devicetree.org/schemas/mmc/synopsys-dw-mshc.yaml#
+/home/lizhi/source/linux-upstream-pci/arch/arm/boot/dts/nxp/lpc/lpc4357-ea4357-devkit.dtb: mmc@40004000 (snps,dw-mshc): clock-names:1: 'ciu' was expected
 
 Signed-off-by: Frank Li <Frank.Li@nxp.com>
 ---
- arch/arm/boot/dts/nxp/lpc/lpc4350-hitex-eval.dts    | 3 ++-
- arch/arm/boot/dts/nxp/lpc/lpc4357-ea4357-devkit.dts | 3 ++-
- arch/arm/boot/dts/nxp/lpc/lpc4357-myd-lpc4357.dts   | 3 ++-
- 3 files changed, 6 insertions(+), 3 deletions(-)
+ arch/arm/boot/dts/nxp/lpc/lpc18xx.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/nxp/lpc/lpc4350-hitex-eval.dts b/arch/arm/boot/dts/nxp/lpc/lpc4350-hitex-eval.dts
-index 93d0c2e99e7ced638adbfc8bfccd47d17bbb89e8..8fc89fb6eef1e839ad256ae33942e607fed862c6 100644
---- a/arch/arm/boot/dts/nxp/lpc/lpc4350-hitex-eval.dts
-+++ b/arch/arm/boot/dts/nxp/lpc/lpc4350-hitex-eval.dts
-@@ -451,8 +451,9 @@ &spifi {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&spifi_pins>;
- 
--	flash {
-+	flash@0 {
- 		compatible = "jedec,spi-nor";
-+		reg = <0>;
- 		spi-rx-bus-width = <4>;
- 		#address-cells = <1>;
- 		#size-cells = <1>;
-diff --git a/arch/arm/boot/dts/nxp/lpc/lpc4357-ea4357-devkit.dts b/arch/arm/boot/dts/nxp/lpc/lpc4357-ea4357-devkit.dts
-index 4aefbc01dfc0fe7abbf87a8cdd0d8da179aae3d5..60bcfa5e0518e55eb3e642f146d1c96f2ebd5267 100644
---- a/arch/arm/boot/dts/nxp/lpc/lpc4357-ea4357-devkit.dts
-+++ b/arch/arm/boot/dts/nxp/lpc/lpc4357-ea4357-devkit.dts
-@@ -582,8 +582,9 @@ &spifi {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&spifi_pins>;
- 
--	flash {
-+	flash@0 {
- 		compatible = "jedec,spi-nor";
-+		reg = <0>;
- 		spi-cpol;
- 		spi-cpha;
- 		spi-rx-bus-width = <4>;
-diff --git a/arch/arm/boot/dts/nxp/lpc/lpc4357-myd-lpc4357.dts b/arch/arm/boot/dts/nxp/lpc/lpc4357-myd-lpc4357.dts
-index 846afb8ccbf1de08cccaf445106beeeddee93454..22f7dd671c90d56cc4295151583fd4135c8b707b 100644
---- a/arch/arm/boot/dts/nxp/lpc/lpc4357-myd-lpc4357.dts
-+++ b/arch/arm/boot/dts/nxp/lpc/lpc4357-myd-lpc4357.dts
-@@ -569,8 +569,9 @@ &spifi {
- 	pinctrl-0 = <&spifi_pins>;
- 
- 	/* Atmel AT25DF321A */
--	flash {
-+	flash@0 {
- 		compatible = "jedec,spi-nor";
-+		reg = <0>;
- 		spi-max-frequency = <51000000>;
- 		spi-cpol;
- 		spi-cpha;
+diff --git a/arch/arm/boot/dts/nxp/lpc/lpc18xx.dtsi b/arch/arm/boot/dts/nxp/lpc/lpc18xx.dtsi
+index 80da477bae3d9dc45f0dcdedc275ac2ff09032bf..0be2486f07173c47bdc9d298a11ac9347f81cf02 100644
+--- a/arch/arm/boot/dts/nxp/lpc/lpc18xx.dtsi
++++ b/arch/arm/boot/dts/nxp/lpc/lpc18xx.dtsi
+@@ -115,8 +115,8 @@ mmcsd: mmc@40004000 {
+ 			compatible = "snps,dw-mshc";
+ 			reg = <0x40004000 0x1000>;
+ 			interrupts = <6>;
+-			clocks = <&ccu2 CLK_SDIO>, <&ccu1 CLK_CPU_SDIO>;
+-			clock-names = "ciu", "biu";
++			clocks = <&ccu1 CLK_CPU_SDIO>, <&ccu2 CLK_SDIO>;
++			clock-names = "biu", "ciu";
+ 			resets = <&rgu 20>;
+ 			status = "disabled";
+ 		};
 
 -- 
 2.34.1
