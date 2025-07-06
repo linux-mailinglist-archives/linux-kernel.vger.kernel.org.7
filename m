@@ -1,115 +1,231 @@
-Return-Path: <linux-kernel+bounces-718611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-718613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10DAFAFA3B2
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Jul 2025 10:32:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08F1EAFA3B7
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Jul 2025 10:35:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A88616BCA1
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Jul 2025 08:32:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 329E31791A2
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Jul 2025 08:35:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5A901DB356;
-	Sun,  6 Jul 2025 08:32:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64E7D1DE2D7;
+	Sun,  6 Jul 2025 08:35:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="swpvIHgR"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Pbhg67sX"
+Received: from smtp.smtpout.orange.fr (smtp-23.smtpout.orange.fr [80.12.242.23])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 947E919005E
-	for <linux-kernel@vger.kernel.org>; Sun,  6 Jul 2025 08:32:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F37135972;
+	Sun,  6 Jul 2025 08:35:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751790735; cv=none; b=JvkLHuEd4mm5bSLYvG3pRELx3IXpdxK36V8w7ATOjECdte3Fh+oId9YnQX3Xh13eJN5cpORh/rXFBfalV5ythhWRoH58XnwMj5jCPKBwI9UA0DCRxKoQDHHAPGU0hVZ9uaGmNzce2nsN0SySMVUIEZiUGjPFG+xmz/Vu9sxRBSo=
+	t=1751790936; cv=none; b=hH5WfDeiL/+NdVYN67zwx2VyBedyOOlN4pMtF+ne9JAcZS996fo6GE76cmRv/9Fn5EahAEE+Dv+Y8e7J+PrM68W9x/owR2m8cmMGMFYklbyVeBKI9mod6IgAYCyA58eTaO7RrfM/pCq4eZP18Tvn+BgTVgGFJHj+lOsNqtr26n4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751790735; c=relaxed/simple;
-	bh=SCh0rlkNZFhJ5wI2jry030Huq/MRz92c4m2UkAahWbU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nTz3XxRgkcJaymV1AhFbjVkKIarFmHr98vuFMsde22NdyC5A9WKGCuMxxAIdoTut7xctQcWyzw0N0f3Ou6vMa7HZt9oUZqh55hW0WJhZUFqwVN0/ydc8uvb995WPWfo/TArZ/EgPyVDk0tAYfN/cHdT6SNyzCYDxbAT6ApqZY6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=swpvIHgR; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-454aaade1fbso23782955e9.3
-        for <linux-kernel@vger.kernel.org>; Sun, 06 Jul 2025 01:32:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1751790732; x=1752395532; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SCh0rlkNZFhJ5wI2jry030Huq/MRz92c4m2UkAahWbU=;
-        b=swpvIHgRiP0Z8YZPjJ4tUiHt7S9FtIc3r6BOnkc8TsPmePUqxRx64/IJSqlvBTrVy3
-         CbVigymHiF5wNJxJqL/t9oWBBa+q0j0R7kXUw0igP5lt6l53iExiDbMx4dgdCp8Rigca
-         VI+sD1kE6bKbzty6jwXXNLKK5DfZtg2jD7i039B7hkwOlKqN3udxoHMeF2qKbKFqb3Oe
-         FE9huP9Aur0ocTsl23mNbSO03Zb0yorzUtj2PwvorsUCiXV5Mx0BY0cWQQPCmZlOAGUO
-         BmFCNdPjpX0QpgFagqE0SVXSWLAFm5bJ5bjipFPWTWbzIgaagfrHKUkzUsXmZ+/3acdF
-         +Z3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751790732; x=1752395532;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SCh0rlkNZFhJ5wI2jry030Huq/MRz92c4m2UkAahWbU=;
-        b=JehnBABE1LoCRstFLdwQOesLVaRNs4oRt6s8tZtL08jCuyf2I1PmzPbBjpoH/Lq/0O
-         J+3f8zais22MUyhLs29TqHPtdHeL7M9YVfM6XTXyF+lNJf/8HH9sjltMhlKkAlZK7xZQ
-         CdFZuKK2vq/+mnBvEEcGcICeV+Mx5qGde3fCoqqMUqsYlF4uqiqZEgMK2zY8mioe1wzu
-         ZZH5SZ66qVU0VZZaQV1Znf8kKVtz1moodE2zWNuHfPRkjPH9A3yuv2mhFQix96kmTDqk
-         Q0WaYqkm76AnwpCV5ioWiRv2DfYAWP0qSbuTwnUz8e6jNRRexwhNVYyu81A5epuTYpI8
-         2wXw==
-X-Forwarded-Encrypted: i=1; AJvYcCWUPnfI85Q1oXcJllwBLyqBSR3e95NW/1qMbCUbcwUAVHLbxpQLQH4i95evCGyWGXlR8g/uOk8r4b+S+A0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YypzlrtrD3iELUyFS0Z2h+LRvVJoxRSeMBnz1X97m0NL1sZjExy
-	HZOvFPXj2PTRofXj6zJJPkI40OD4HckG1cHRgC6vEcUpa3Sqn2AgCbycsNcdEBC1YISIZKWnqZt
-	ec4JvFK8Rr5sjYIV1Y3KF6qxZDMY7z6Tw4wJjVx/q
-X-Gm-Gg: ASbGncsQzVZy3pR9MEVSeRpQIQ5OPu80AApnkMkTC4pGT26zkn3h3P2zok7NjJqDt6s
-	WOtHlfOUz5BK2qduFuIdmWO2Z3lWGv9jD0DVV8GvE7y85L11DG2rUgBi6TUfPppFhUG/RrdPvGo
-	dLcohc5GlX5kVjvdlPKmnr++gvpjSkbu4yYexfSF2Yt3I5
-X-Google-Smtp-Source: AGHT+IEGQ1yvGh1y3CB0u/RmI8WwsZH40VLDWwCw3/I8DzRJFsL4891+0YGeKbVlHlDbDSg+hBTaNvwCq+RYP2UKi8U=
-X-Received: by 2002:a05:6000:2f85:b0:3a4:e5fa:73f0 with SMTP id
- ffacd0b85a97d-3b4970195f6mr6202610f8f.20.1751790731838; Sun, 06 Jul 2025
- 01:32:11 -0700 (PDT)
+	s=arc-20240116; t=1751790936; c=relaxed/simple;
+	bh=zZBUK8UI3llPineO/aa9x7oBS9wgghT1PNTWtF3og3M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=epuyRKdVZgirVzsuRu17sIDbNQg88/bdrvdZcW/eHphRlRfwnGT9T+gqR3tDLA/a+90EwukbllvcpW6m1NYYLNa327um/jW9/7uMGcFCWkv2yb4JEJqJBUsVjfFVuDLsR2ZesERVLdmCNGh0qlrtmzf+IzTLOBXQ8pQmjkR+M1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Pbhg67sX; arc=none smtp.client-ip=80.12.242.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
+ ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
+	by smtp.orange.fr with ESMTPA
+	id YKqHuLICcZ4iTYKqHu4AIl; Sun, 06 Jul 2025 10:35:24 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1751790924;
+	bh=MDB5p/WAC2P7Gszd897B3IA9qciUHzVqAJvFbhA+Lk0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=Pbhg67sX+6R6NST17kTPvzXRRIuZTve8csYNJfaBBXyUC6DzontwufivbY2GkUXlq
+	 fU607R+bT7Js4Z+hx8oyXDK26yY6M1Yc5pwwInThh8qqCacfvPWJj42J92IJGH/Rkn
+	 2PwQdjmyPF4ku/J1x/bIKiq0bSNgwOY3GzDhZO6tMVa8pv/oeP/LUWRV/MagN8X048
+	 SHVWwK8dbsEyZODw76WHRwQ4Lc3GAr1AEMZcZ5SlYAQ/2DvgV4Mx+yLh9VLsA1PAfa
+	 PW249lU8AK1EtKcAr6kTkIxyOLhJRzRmb+P6GUGXzDF1HFnKa0L2wy4c1xDOLA498d
+	 4ouFGntQlECOw==
+X-ME-Helo: [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Sun, 06 Jul 2025 10:35:24 +0200
+X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
+Message-ID: <225692dd-c41b-4e9d-a20b-551f9bfb5051@wanadoo.fr>
+Date: Sun, 6 Jul 2025 10:35:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250701-xarray-insert-reserve-v1-0-25df2b0d706a@gmail.com>
- <20250701-xarray-insert-reserve-v1-3-25df2b0d706a@gmail.com> <CANiq72nf-h86GszE3=mLpWHi5Db+Tj0TRyUe9ANfjdNbesBEEg@mail.gmail.com>
-In-Reply-To: <CANiq72nf-h86GszE3=mLpWHi5Db+Tj0TRyUe9ANfjdNbesBEEg@mail.gmail.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Sun, 6 Jul 2025 10:31:59 +0200
-X-Gm-Features: Ac12FXwwPurn4FW_8RxwpWJr25A9vazCDxaz3GDmuhMxLJA4Vob4fuczPZdPUVM
-Message-ID: <CAH5fLgjmUXUcXFFYdrM4f2iZeD-JbEuSV1DuFbGERNQNM+V51w@mail.gmail.com>
-Subject: Re: [PATCH 3/3] rust: xarray: add `insert` and `reserve`
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Tamir Duberstein <tamird@gmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, Matthew Wilcox <willy@infradead.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-mm@kvack.org, Daniel Almeida <daniel.almeida@collabora.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] ASoC: codecs: Add Awinic AW8898 amplifier driver
+To: Luca Weiss <luca@lucaweiss.eu>, ~postmarketos/upstreaming@lists.sr.ht,
+ phone-devel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Weidong Wang <wangweidong.a@awinic.com>
+Cc: linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+References: <20250705-aw8898-v2-0-9c3adb1fc1a2@lucaweiss.eu>
+ <20250705-aw8898-v2-2-9c3adb1fc1a2@lucaweiss.eu>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20250705-aw8898-v2-2-9c3adb1fc1a2@lucaweiss.eu>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 1, 2025 at 6:56=E2=80=AFPM Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
+Le 05/07/2025 à 14:03, Luca Weiss a écrit :
+> Add a driver for the AW8898 Audio Amplifier.
+> 
+> Signed-off-by: Luca Weiss <luca@lucaweiss.eu>
+
+Hi,
+
+...
+
+> +#define AW8898_CFG_NAME				"aw8898_cfg.bin"
+> +
+> +#define AW8898_NUM_SUPPLIES	3
+
+See the probe below, but if simplified, AW8898_NUM_SUPPLIES would be 
+useless and could be removed.
+
+> +static const char *aw8898_supply_names[AW8898_NUM_SUPPLIES] = {
+
+static const char * const ?
+
+> +	"vdd",		/* Battery power */
+> +	"vddio",	/* Digital IO power */
+> +	"dvdd",		/* Digital power */
+> +};
+> +
+> +static const char * const aw8898_dev_mode_text[] = {
+> +	"Speaker",
+> +	"Receiver",
+> +};
+
+...
+
+> +static int aw8898_drv_event(struct snd_soc_dapm_widget *w,
+> +				struct snd_kcontrol *kcontrol, int event)
+> +{
+> +	struct snd_soc_component *component = snd_soc_dapm_to_component(w->dapm);
+> +	struct aw8898 *aw8898 = snd_soc_component_get_drvdata(component);
+> +	int ret;
+
+Maybe ret = 0; to simplify the code below?
+
+Or, as done in aw8898_hw_params(), return -EINVAL; in the default case, 
+and a plain return 0; at the end of the function?
+
+> +
+> +	switch (event) {
+> +	case SND_SOC_DAPM_PRE_PMU:
+> +		aw8898_set_power(aw8898, true);
+> +
+> +		if (!aw8898->cfg_loaded)
+> +			aw8898_cold_start(aw8898);
+> +
+> +		ret = 0;
+> +		break;
+> +	case SND_SOC_DAPM_POST_PMD:
+> +		aw8898_set_power(aw8898, false);
+> +		ret = 0;
+> +		break;
+> +	default:
+> +		dev_err(component->dev, "%s: invalid event %d\n", __func__, event);
+> +		ret = -EINVAL;
+
+Even if useless, having a break is more standard.
+
+> +	}
+> +
+> +	return ret;
+> +}
+
+...
+
+> +static int aw8898_check_chipid(struct aw8898 *aw8898)
+> +{
+> +	unsigned int reg;
+> +	int ret;
+> +
+> +	ret = regmap_read(aw8898->regmap, AW8898_ID, &reg);
+> +	if (ret < 0) {
+> +		dev_err(&aw8898->client->dev,
+> +			"Failed to read register AW8898_ID: %d\n", ret);
+
+aw8898_check_chipid() is only called from the probe, so using return 
+dev_err_probe() should be fine.
+
+> +		return ret;
+> +	}
+> +
+> +	dev_dbg(&aw8898->client->dev, "Read chip ID 0x%x\n", reg);
+> +
+> +	if (reg != AW8898_CHIP_ID) {
+> +		dev_err(&aw8898->client->dev, "Unexpected chip ID: 0x%x\n",
+> +			reg);
+
+Same.
+
+> +		return -EINVAL;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int aw8898_probe(struct i2c_client *client)
+> +{
+> +	struct aw8898 *aw8898;
+> +	int ret;
+> +
+> +	aw8898 = devm_kzalloc(&client->dev, sizeof(*aw8898), GFP_KERNEL);
+> +	if (!aw8898)
+> +		return -ENOMEM;
+> +
+> +	i2c_set_clientdata(client, aw8898);
+> +	aw8898->client = client;
+> +
+> +	aw8898->regmap = devm_regmap_init_i2c(client, &aw8898_regmap);
+> +	if (IS_ERR(aw8898->regmap))
+> +		return dev_err_probe(&client->dev, PTR_ERR(aw8898->regmap),
+> +				     "Failed to allocate register map\n");
+> +
+> +	for (int i = 0; i < ARRAY_SIZE(aw8898->supplies); i++)
+> +		aw8898->supplies[i].supply = aw8898_supply_names[i];
+> +
+> +	ret = devm_regulator_bulk_get(&client->dev, ARRAY_SIZE(aw8898->supplies),
+> +				      aw8898->supplies);
+
+devm_regulator_bulk_get_enable() would simplify the code and 'struct 
+aw8898'.
+
+> +	if (ret)
+> +		return dev_err_probe(&client->dev, ret,
+> +				     "Failed to get regulators\n");
+> +
+> +	ret = regulator_bulk_enable(ARRAY_SIZE(aw8898->supplies),
+> +				    aw8898->supplies);
+> +	if (ret) {
+> +		dev_err(&client->dev, "Failed to enable supplies: %d\n",
+> +			ret);
+
+If dev_err_probe() to be consistent with the code below and above.
+But this would be removed if devm_regulator_bulk_get_enable() is used.
+
+> +		return ret;
+> +	}
+> +
+> +	aw8898->reset = devm_gpiod_get(&client->dev, "reset", GPIOD_OUT_HIGH);
+> +	if (IS_ERR(aw8898->reset))
+> +		return dev_err_probe(&client->dev, PTR_ERR(aw8898->reset),
+> +				     "Failed to get reset GPIO\n");
 >
-> On Tue, Jul 1, 2025 at 6:27=E2=80=AFPM Tamir Duberstein <tamird@gmail.com=
-> wrote:
-> >
-> > Add `Guard::{insert,reserve}` and `Guard::{insert,reserve}_limit`, whic=
-h
-> > are akin to `__xa_{alloc,insert}` in C.
->
-> Who will be using this? i.e. we need to justify adding code, typically
-> by mentioning the users.
 
-Rust Binder does have a user for `reserve`. As for xa_alloc, Rust
-Binder may end up using it, but the current plan is to use Burak's
-bitmap work instead.
+...
 
-Alice
+CJ
 
