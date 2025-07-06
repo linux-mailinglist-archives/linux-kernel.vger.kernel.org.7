@@ -1,242 +1,151 @@
-Return-Path: <linux-kernel+bounces-718706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-718702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE844AFA4AC
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Jul 2025 12:54:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81AC7AFA4A4
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Jul 2025 12:53:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E255189635C
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Jul 2025 10:54:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D3901920275
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Jul 2025 10:53:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 029CC20469E;
-	Sun,  6 Jul 2025 10:53:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 357B7202998;
+	Sun,  6 Jul 2025 10:53:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K+9QeKdJ"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DKKbMx3y"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6020E20371E;
-	Sun,  6 Jul 2025 10:53:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F72717BCE;
+	Sun,  6 Jul 2025 10:53:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751799222; cv=none; b=p0Yp7XmZBWpQVfaRW3XU5D0uCJtwJTTc/0WU66q4R5XPNxHsjY3uQkHqzjIQVKB7rUXLcZEqg4DVWnqng71WJke+GUay13uOFe7nktKGSzxfxiIeTDzyjw2zzduwyAKWuOU9F/CfwrOnIYpppZEF0rkmSjqI2x5jGpVjh5qK+Ow=
+	t=1751799207; cv=none; b=Po5bti9fAVv5aAP0lqm6N0ScmurEFr2TbtZygcZGo298/CUJgIuv8VpxFuhJbGDQDpw9lYPR5vfU+ZosIgBxbpAWQO6fNMVshomXMX9b4fDNCsBhtJ2UfUo8ahmPatAq67imNTVk8h5wBvJtuq3MrjeC2Xi6VReTE1P2ws+DzAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751799222; c=relaxed/simple;
-	bh=4IuGkBAIazyGMLiME+vT9KFCku4kgPkeBaX7/u3IJ/o=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OFaQtlnUIFSdtsv0AkxveTU5vT14ts/4CTuF+q0yduHRXJW3tOJNDVC1+c5COKoOtEYtJUDSHx1t1fSkvpTQwfNOzQ/faReJa5ovf5K7xZJVlKICSqRo4oMUA+ucIuZF6r8cVSHaERr1syuXgFhPdFY1qEO/AKSgRELvJQTvvKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K+9QeKdJ; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4538a2fc7ffso22402205e9.0;
-        Sun, 06 Jul 2025 03:53:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751799218; x=1752404018; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cx5QGxAm4KSR88bli+PY12DeIIpwtafObIGcIC0Auxg=;
-        b=K+9QeKdJ/0RusgKaHmynqy05fmSA4jt3AiCDa7TDzSWBC1eFc69EJRqWXB6+pElJsp
-         hIfNRXzNmi1oPZBQsNQs46/23eosBzH8mt42b3xSRvGm294IHGqW02jGnV2MqDO1tpPV
-         AgLgkbT72F6oVcp5BZowk9F/viXQuy14fRcZVmjlwpacSivt9TH4jhmFWA8+hOxy1nXz
-         5ByDYbLE2Qhj3l96pKFOALzqSqRGeffZ5jp2c6f0ebl3oAztRkG/L14gShgCn/bwEJY+
-         w/y9DAqSKq1FTnQHjomTAL93YDm6eQCUcUbreClJjYEruTNKh11mVOx47G3NDSHDwK3t
-         MoFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751799218; x=1752404018;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cx5QGxAm4KSR88bli+PY12DeIIpwtafObIGcIC0Auxg=;
-        b=eiOY9N1EibSPMPJ2PMlhIR+zKoLs9jNRqT+BnAHrihVYc0zS3uzhZ4h5ErAKV9jNUd
-         McC1WIzE0bjcN7kduRG9Yq3M/O1e+e+VbjhQHfHKpgk2oF+xR7uHrOxYxC+RJVexvgY8
-         vjBucIyxQ8+fKtSAyODZ3RTelJiVa7kAkD4xbUzw+wA+Xl2lohpHldnsH1LvozOwVpwp
-         JBnsBYDon8SdMN5ssXiXjzxa72o2oR+Cm0jo1WLgtEtATrPULpU+SsF+UTB+YuHhwOJ5
-         7wP9LDZTwtK4/hE10DanxABlsozH6goryZpgjtolBYXvyIdWpBbiSMqgSQeKdkMuJIUa
-         pZ2w==
-X-Forwarded-Encrypted: i=1; AJvYcCUAXam4ybqCllPGmDw1Y/soBtndnObxR27EvTq4eN5C1iZqCcdsrNIYepn3ompP0S46/QfBNd/8Hvfc@vger.kernel.org, AJvYcCW3WuOHEqYcuu9Cs6B7f5Au54xEKSMLBKcU4pFKuq/9q+xpBFVJdX3hgG56xKlbgVl1DM3ntQ6xJXMaoRv2@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5mDe6R2GiAfnIMjeB2z8HMCSF2Z9FLqQ7legyDRJ3yBe7wszP
-	F1zYK1FtHk7q5edJPL435FJoFQOX5ZnP3F25QSqfTtJJ4tMQ5lFAEE3+
-X-Gm-Gg: ASbGnctCSmDfpeG2I7TgMAE+SSwtzRxx/8fQ5t9L9xxfn7WNenA41TX1b83efPS7u5B
-	xZJd6hQlnD636N75rS6lncVxdJkaqzei78tV9kSW/mUcK2IUyscGsY1r0mEpn2WCPZsjsWn0pDx
-	WIRkDA5xb6LTcPiFesd4JtpWNrm35BMjXpO02EMo+VHL9A2Y91S/oti+C0dli99R7j3+5cY4vHr
-	zXzH1iOPZZ+RwH1sh6TNsJnvu7En5qagr7rRGqlnGskkBA0+jTl1aUDIj3WAHJ+Q0YNCi9ndnJE
-	nI3iRSiqJpzqRpik427PIhFKpqoJLmnLdrTlIIOIwav+J8JT3/g/J9cy92VZSJErqqnfCxPuew9
-	0DZ4h/IQuXoMl+nWpzjWilUj6omli
-X-Google-Smtp-Source: AGHT+IEjC7VTe9NCDYYryYO3iznsEJZvYcF9cPukiBM5UOv8jBd6MygsaOOP+inmd3JbzzQKP0/aJw==
-X-Received: by 2002:a05:600c:3227:b0:453:79e8:e92d with SMTP id 5b1f17b1804b1-454b1f4891bmr50953675e9.5.1751799217330;
-        Sun, 06 Jul 2025 03:53:37 -0700 (PDT)
-Received: from masalkhi.. (pd907d170.dip0.t-ipconnect.de. [217.7.209.112])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454b1634147sm80283985e9.18.2025.07.06.03.53.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 06 Jul 2025 03:53:37 -0700 (PDT)
-From: Abd-Alrhman Masalkhi <abd.masalkhi@gmail.com>
-To: arnd@arndb.de,
-	gregkh@linuxfoundation.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org
-Cc: conor+dt@kernel.org,
-	luoyifan@cmss.chinamobile.com,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	christophe.jaillet@wanadoo.fr,
-	abd.masalkhi@gmail.com
-Subject: [PATCH v6 3/3] ABI: sysfs: add documentation for ST M24LR EEPROM and control interface
-Date: Sun,  6 Jul 2025 10:53:11 +0000
-Message-ID: <20250706105311.395162-4-abd.masalkhi@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250706105311.395162-1-abd.masalkhi@gmail.com>
-References: <20250706105311.395162-1-abd.masalkhi@gmail.com>
+	s=arc-20240116; t=1751799207; c=relaxed/simple;
+	bh=W5pY1T+zdlN10wL2RQ9+j6hVOu2Gs8GqVwOufukVdok=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DRU/Q54p2Dzw1eeP0u+onQ0qtT+oZ27+xfRjEnSrfDv5VF3JY/tOy8tjnsrTfUdTHXMB9C1vyRp/JPQQbnIRUcsWi5cczudl+nik4v8xCl1OUgN1wqpbqjaVtfiFjVROhoHzwE8WM9NETgchc9NsK9TjtSM+BmR4+QdMceYCA1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DKKbMx3y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F426C4CEED;
+	Sun,  6 Jul 2025 10:53:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751799207;
+	bh=W5pY1T+zdlN10wL2RQ9+j6hVOu2Gs8GqVwOufukVdok=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=DKKbMx3yhrxxgII+dWmdbDaE5uLMwSGpds5xKOpZcL2W27400mFASVTCP9j6hZXDE
+	 petvVi4bbRyuuoA8lHLplwkOEpy+pcyx62JANh4XA5ChYoDhcmDmOCn4NoFfVZZcAI
+	 An8u9/jaoaDSGvy2uQ4BQN6IHtIeq7k/0G30SHR0bJfF02gsQUtSBVjJS25c/VoXVo
+	 4+U1Glk25mPXmUth0Qpp/9Oq+PfVHxhGe3Vl5jPjvTOzWwXpOSs9C6L0wvDJzyIa9z
+	 etkCYQb+JwTUXaY7eTVDHmrkJEPARM/1qtj906Hi3f09zrJ8BY3nUkQD5+uC50Dcxs
+	 NkQwhFd0PulWg==
+Date: Sun, 6 Jul 2025 11:53:19 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Waqar Hameed <waqar.hameed@axis.com>
+Cc: David Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
+ <nuno.sa@analog.com>, "Andy Shevchenko" <andy@kernel.org>, Rob Herring
+ <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, <kernel@axis.com>, <linux-iio@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 2/3] dt-bindings: iio: proximity: Add Nicera
+ D3-323-AA PIR sensor
+Message-ID: <20250706115319.4f663960@jic23-huawei>
+In-Reply-To: <19a2744cebaee57fe5349986094168524baa9838.1751636734.git.waqar.hameed@axis.com>
+References: <cover.1751636734.git.waqar.hameed@axis.com>
+	<19a2744cebaee57fe5349986094168524baa9838.1751636734.git.waqar.hameed@axis.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Add sysfs ABI documentation for the STMicroelectronics M24LR device,
-covering both the control interface (e.g., unlock, password update, UID,
-total sectors, and SSS entries) and EEPROM access via the nvmem subsystem.
+On Fri, 4 Jul 2025 18:14:38 +0200
+Waqar Hameed <waqar.hameed@axis.com> wrote:
 
-Signed-off-by: Abd-Alrhman Masalkhi <abd.masalkhi@gmail.com>
----
-Changes in v6:
- - No changes
- - Link to v5: https://lore.kernel.org/all/20250704123914.11216-4-abd.masalkhi@gmail.com/
+> Nicera D3-323-AA is a PIR sensor for human detection. It has two GPIOs
+> for detection and data communication.
+> 
+> Signed-off-by: Waqar Hameed <waqar.hameed@axis.com>
+> ---
+>  .../iio/proximity/nicera,d3323aa.yaml         | 62 +++++++++++++++++++
+>  1 file changed, 62 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/proximity/nicera,d3323aa.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/proximity/nicera,d3323aa.yaml b/Documentation/devicetree/bindings/iio/proximity/nicera,d3323aa.yaml
+> new file mode 100644
+> index 000000000000..65d9b44fcd5e
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/proximity/nicera,d3323aa.yaml
+> @@ -0,0 +1,62 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/iio/proximity/nicera,d3323aa.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Nicera D3-323-AA PIR sensor
+> +
+> +maintainers:
+> +  - Waqar Hameed <waqar.hameed@axis.com>
+> +
+> +description: |
+> +  PIR sensor for human detection.
+> +  Datasheet: https://www.endrich.com/Datenbl%C3%A4tter/Sensoren/D3-323-AA_e.pdf
+> +
+> +properties:
+> +  compatible:
+> +    const: nicera,d3323aa
+> +
+> +  vdd-supply:
+> +    description:
+> +      Supply voltage (1.8 to 5.5 V).
+> +
+> +  vout-clk-gpios:
+> +    maxItems: 1
+> +    description:
+> +      GPIO for clock and detection.
+> +      After reset, the device signals with two falling edges on this pin that it
+> +      is ready for configuration (within 1.2 s).
+> +      During configuration, it is used as clock for data reading and writing (on
+> +      data-gpios).
+> +      After all this, when device is in operational mode, it signals on this pin
+> +      for any detections.
 
-Changes in v5:
- - Fix dates and update targeted kernel version.
- - Link to v4: https://lore.kernel.org/lkml/20250608182714.3359441-4-abd.masalkhi@gmail.com/
+Don't start a new line for a new sentence. 
 
-Changes in v4:
- - Replaced 'sss<N>' entries with a single binary 'sss' attribute
- - Added 'total_sectors' attribute to report the number of valid SSS bytes
- - removed 'mem_size' attribute
- - Fix dates and update targeted kernel version.
- - Link to v3: https://lore.kernel.org/lkml/20250606120631.3140054-4-abd.masalkhi@gmail.com/
-
-Changes in v3:
- - Updated sysfs entry paths to use <busnum>-<primary-addr> to reflect the
-   control address.
- - Link to v2: https://lore.kernel.org/lkml/20250601153022.2027919-4-abd.masalkhi@gmail.com/
-
-Changes in v2:
- - Added initial sysfs ABI documentation.
----
- .../ABI/testing/sysfs-bus-i2c-devices-m24lr   | 100 ++++++++++++++++++
- 1 file changed, 100 insertions(+)
- create mode 100644 Documentation/ABI/testing/sysfs-bus-i2c-devices-m24lr
-
-diff --git a/Documentation/ABI/testing/sysfs-bus-i2c-devices-m24lr b/Documentation/ABI/testing/sysfs-bus-i2c-devices-m24lr
-new file mode 100644
-index 000000000000..7c51ce8d38ba
---- /dev/null
-+++ b/Documentation/ABI/testing/sysfs-bus-i2c-devices-m24lr
-@@ -0,0 +1,100 @@
-+What:           /sys/bus/i2c/devices/<busnum>-<primary-addr>/unlock
-+Date:           2025-07-04
-+KernelVersion:  6.17
-+Contact:        Abd-Alrhman Masalkhi <abd.masalkhi@gmail.com>
-+Description:
-+                Write-only attribute used to present a password and unlock
-+                access to protected areas of the M24LR chip, including
-+                configuration registers such as the Sector Security Status
-+                (SSS) bytes. A valid password must be written to enable write
-+                access to these regions via the I2C interface.
-+
-+                Format:
-+                  - Hexadecimal string representing a 32-bit (4-byte) password
-+                  - Accepts 1 to 8 hex digits (e.g., "c", "1F", "a1b2c3d4")
-+                  - No "0x" prefix, whitespace, or trailing newline
-+                  - Case-insensitive
-+
-+                Behavior:
-+                  - If the password matches the internal stored value,
-+                    access to protected memory/configuration is granted
-+                  - If the password does not match the internally stored value,
-+                    it will fail silently
-+
-+What:           /sys/bus/i2c/devices/<busnum>-<primary-addr>/new_pass
-+Date:           2025-07-04
-+KernelVersion:  6.17
-+Contact:        Abd-Alrhman Masalkhi <abd.masalkhi@gmail.com>
-+Description:
-+                Write-only attribute used to update the password required to
-+                unlock the M24LR chip.
-+
-+                Format:
-+                  - Hexadecimal string representing a new 32-bit password
-+                  - Accepts 1 to 8 hex digits (e.g., "1A", "ffff", "c0ffee00")
-+                  - No "0x" prefix, whitespace, or trailing newline
-+                  - Case-insensitive
-+
-+                Behavior:
-+                  - Overwrites the current password stored in the I2C password
-+                    register
-+                  - Requires the device to be unlocked before changing the
-+                    password
-+                  - If the device is locked, the write silently fails
-+
-+What:           /sys/bus/i2c/devices/<busnum>-<primary-addr>/uid
-+Date:           2025-07-04
-+KernelVersion:  6.17
-+Contact:        Abd-Alrhman Masalkhi <abd.masalkhi@gmail.com>
-+Description:
-+                Read-only attribute that exposes the 8-byte unique identifier
-+                programmed into the M24LR chip at the factory.
-+
-+                Format:
-+                  - Lowercase hexadecimal string representing a 64-bit value
-+                  - 1 to 16 hex digits (e.g., "e00204f12345678")
-+                  - No "0x" prefix
-+                  - Includes a trailing newline
-+
-+What:           /sys/bus/i2c/devices/<busnum>-<primary-addr>/total_sectors
-+Date:           2025-07-04
-+KernelVersion:  6.17
-+Contact:        Abd-Alrhman Masalkhi <abd.masalkhi@gmail.com>
-+Description:
-+                Read-only attribute that exposes the total number of EEPROM
-+                sectors available in the M24LR chip.
-+
-+                Format:
-+                  - 1 to 2 hex digits (e.g. "F")
-+                  - No "0x" prefix
-+                  - Includes a trailing newline
-+
-+                Notes:
-+                  - Value is encoded by the chip and corresponds to the EEPROM
-+                    size (e.g., 3 = 4 kbit for M24LR04E-R)
-+
-+What:           /sys/bus/i2c/devices/<busnum>-<primary-addr>/sss
-+Date:           2025-07-04
-+KernelVersion:  6.17
-+Contact:        Abd-Alrhman Masalkhi <abd.masalkhi@gmail.com>
-+Description:
-+                Read/write binary attribute representing the Sector Security
-+                Status (SSS) bytes for all EEPROM sectors in STMicroelectronics
-+                M24LR chips.
-+
-+                Each EEPROM sector has one SSS byte, which controls I2C and
-+                RF access through protection bits and optional password
-+                authentication.
-+
-+                Format:
-+                  - The file contains one byte per EEPROM sector
-+                  - Byte at offset N corresponds to sector N
-+                  - Binary access only; use tools like dd, Python, or C that
-+                    support byte-level I/O and offset control.
-+
-+                Notes:
-+                  - The number of valid bytes in this file is equal to the
-+                    value exposed by 'total_sectors' file
-+                  - Write access requires prior password authentication in
-+                    I2C mode
-+                  - Refer to the M24LR datasheet for full SSS bit layout
--- 
-2.43.0
+> +
+> +  data-gpios:
+> +    maxItems: 1
+> +    description:
+> +      GPIO for data reading and writing. This is denoted "DO (SI)" in datasheet.
+> +      During configuration, this pin is used for writing and reading
+> +      configuration data (together with vout-clk-gpios as clock).
+> +      After this, during operational mode, the device will output serial data on
+> +      this GPIO.
+> +
+> +required:
+> +  - compatible
+> +  - vdd-supply
+> +  - vout-clk-gpios
+> +  - data-gpios
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/gpio/gpio.h>
+> +
+> +    proximity {
+> +        compatible = "nicera,d3323aa";
+> +        vdd-supply = <&regulator_3v3>;
+> +        vout-clk-gpios = <&gpio 78 GPIO_ACTIVE_HIGH>;
+> +        data-gpios = <&gpio 76 GPIO_ACTIVE_HIGH>;
+> +    };
+> +...
 
 
