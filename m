@@ -1,131 +1,204 @@
-Return-Path: <linux-kernel+bounces-718595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-718612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFDBAAFA396
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Jul 2025 10:08:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C8E3AFA3B4
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Jul 2025 10:32:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E1A718977E9
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Jul 2025 08:08:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 912AE192065F
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Jul 2025 08:33:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A76E91C84BD;
-	Sun,  6 Jul 2025 08:08:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55C031C84B8;
+	Sun,  6 Jul 2025 08:32:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="N9UpEvdG"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="tFsVxnRw";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="MpAkRBmb";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="tFsVxnRw";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="MpAkRBmb"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D689F9C0
-	for <linux-kernel@vger.kernel.org>; Sun,  6 Jul 2025 08:08:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12FF0191499
+	for <linux-kernel@vger.kernel.org>; Sun,  6 Jul 2025 08:32:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751789316; cv=none; b=PkIz7XMn/34tfwUZcUDovHUJxLSLuVi2dQUvgGg44BTMdUnFXF3VewHte+4d7kMxcmdsf37fnxRB7MX7g9wNT70ggwZfJdglCtBiRgDg4I6/IznbgjO/1pFE/WH+g5UydSX09T68sXmNIaW7vGGYBdwEGunCOXH02haOq9tuMDk=
+	t=1751790769; cv=none; b=NrWiZ2vqpt3OuBeUAvLiJngNPsqXKgw59SmhVubokzl0HH6GkblsvY757FWQO1ZLGop4191BId7I08xMYbXYoJZXxVFuU/gDOuQYfoN5Chcnv+74SS3LgSDmzb15aCqbx8GQwRRaoVWoD4kLeEeEzi5Tc/CUlIXxHq7yTmj9acM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751789316; c=relaxed/simple;
-	bh=TC9xGZ9FIpdxUBANzBmRl2dVl9xGLHp3DC/B8KzpSgU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=aSO6TUaIQT0ER/20336ELHr6URy7L7haEVhe7zk8e8na6XmyQO2NKt8HAo0RV+JI9qraKTXeVg9sA/ChtP+VYuL6vsQ08a5bAtAlAN/5fIvA1MQUk8c+mu3z4XUP2pJGkcntDyUE3y6bqgkffTjbt611GCvOca58Gmek93vRkok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=N9UpEvdG; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 979F440E019D;
-	Sun,  6 Jul 2025 08:08:17 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id lRcd81egTHY9; Sun,  6 Jul 2025 08:08:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1751789294; bh=nl7/IoiT+Xa+ZKuwKP3IxsBEV95ZOdBMXypz5ftlTT4=;
-	h=Date:From:To:Cc:Subject:From;
-	b=N9UpEvdGZBSY0DMcwNMnhxjDWWjEtwjgGS6opb1j8yOr2EKtRtkcGRiG29f+HhVkQ
-	 rFz4yLQr9ZqNpNI5NYGpqTzzr5imCBQyXy8NqlQBwsImRQvmel5andYOaI7tQqWbeb
-	 ijdToQOEeGC7opV5mDQVHcuLUh1cTtnQvJa0YfBdekA85YQTFIDsefRRw7nGcmwdgk
-	 0aHNyMBdj1eW4dQAG8Qp0kHTcTWPtRKV1yP2lYqh/iC6/yHVZUpzLGxMZ+CBH/7iEW
-	 lfGfYcnQHqyU0tepcxUKthpzzDEIdLLfW2On2a1fMDky8smWzfww8EaPTAdeIuqPXu
-	 q6jGVMEi+Zu47ZcjzgJIHe2u9cXlnwN6tALDKPyZ2TGI33DVfTHitl+wyR+sk4klOD
-	 g0Kb+IwtL8Pvw5P+BcVZIrdjL5/Vr4pnLVLedMpaQM851Ft8V3AtPpgS9j+U9rV34L
-	 kpDDH/+ip5pIVOHZajT2zOre6G/v5VdBPDPs+tdQ6gqVfQDsYbwAueJVImh4Uj4ouR
-	 2AMLv8cUR6V76jAGG01Ju7kruE6ny9iZkzkdIPlPq3VQksVAf+fPQM6D+F/o9PSb/A
-	 EeMd8HriVKnvNZaRT0eDG9BxwaW2wPGYESyfACdyYfAvrHgH9DpAfS1Y21Q74bh4dj
-	 94/hUaHVOVXPbDbST6wdRoew=
-Received: from zn.tnic (p57969c58.dip0.t-ipconnect.de [87.150.156.88])
+	s=arc-20240116; t=1751790769; c=relaxed/simple;
+	bh=VpbUf6O5SNTZuNfM6oLLsUo5l5NIjkYdE9EoWhqYBKc=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=unoQfXa5NTN5XhU5lvcPcG/0O7ey4LNSputSI8W3tcxqdPA9a+4ALWwc23OSj2tEpPQ89ekKLWp5ojriwhuEDRXYyGAbiepgIss5N7va321N6kvY8ZJ2IqAaiut13Ty3oTnSfEVuurJsZ7lqNHBEp6EuAWmjx3gqNUAjSR7lrkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=tFsVxnRw; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=MpAkRBmb; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=tFsVxnRw; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=MpAkRBmb; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 461F040E00CE;
-	Sun,  6 Jul 2025 08:08:11 +0000 (UTC)
-Date: Sun, 6 Jul 2025 10:08:09 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] ras/urgent for v6.16-rc5
-Message-ID: <20250706080809.GAaGou6V4B7ke5415r@fat_crate.local>
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 197421F38A;
+	Sun,  6 Jul 2025 08:08:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1751789290; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3BzKPvjoDEpfOl3bBUxy7yxLXT2uY2JY1YGIcua8HXQ=;
+	b=tFsVxnRwXHEmfrRpKnw5mUDt/LHcSGW9D54vR8IbBWZDmk/ctHOUq9cT2RbyCOtqnuaOz+
+	ZifdGLoFrCCwzm6nI7EWylzLClnjowThNwO21fCM/X7YnTyeSPFYkWm0hLRfHAUhgYxfX3
+	6yxSAaNiisBU8wKW1xIyOT86V4s1qUc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1751789290;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3BzKPvjoDEpfOl3bBUxy7yxLXT2uY2JY1YGIcua8HXQ=;
+	b=MpAkRBmbN1KVqlvCvrcsWEtCXO4tNkg2CWYUQvgbA7Tsa7z/Zppm6RjJAzZpLt/LZjmiZn
+	yxS2fm+SrMydrKBA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=tFsVxnRw;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=MpAkRBmb
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1751789290; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3BzKPvjoDEpfOl3bBUxy7yxLXT2uY2JY1YGIcua8HXQ=;
+	b=tFsVxnRwXHEmfrRpKnw5mUDt/LHcSGW9D54vR8IbBWZDmk/ctHOUq9cT2RbyCOtqnuaOz+
+	ZifdGLoFrCCwzm6nI7EWylzLClnjowThNwO21fCM/X7YnTyeSPFYkWm0hLRfHAUhgYxfX3
+	6yxSAaNiisBU8wKW1xIyOT86V4s1qUc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1751789290;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3BzKPvjoDEpfOl3bBUxy7yxLXT2uY2JY1YGIcua8HXQ=;
+	b=MpAkRBmbN1KVqlvCvrcsWEtCXO4tNkg2CWYUQvgbA7Tsa7z/Zppm6RjJAzZpLt/LZjmiZn
+	yxS2fm+SrMydrKBA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 989D813A29;
+	Sun,  6 Jul 2025 08:08:09 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id iehTI+kuamj/VwAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Sun, 06 Jul 2025 08:08:09 +0000
+Date: Sun, 06 Jul 2025 10:08:09 +0200
+Message-ID: <8734b9oi6u.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Baojun Xu <baojun.xu@ti.com>
+Cc: <broonie@kernel.org>,
+	<andriy.shevchenko@linux.intel.com>,
+	<alsa-devel@alsa-project.org>,
+	<shenghao-ding@ti.com>,
+	<navada@ti.com>,
+	<13916275206@139.com>,
+	<v-hampiholi@ti.com>,
+	<v-po@ti.com>,
+	<linux-sound@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1] ALSA: hda/tas2781: Fix calibration data parser issue
+In-Reply-To: <20250705130908.26248-1-baojun.xu@ti.com>
+References: <20250705130908.26248-1-baojun.xu@ti.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 197421F38A
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-3.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	ARC_NA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[139.com];
+	RCVD_TLS_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[kernel.org,linux.intel.com,alsa-project.org,ti.com,139.com,vger.kernel.org];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:dkim,suse.de:mid]
+X-Spam-Score: -3.51
 
-Hi Linus,
+On Sat, 05 Jul 2025 15:09:08 +0200,
+Baojun Xu wrote:
+> 
+> Calibration data was overwritten during parser, it cause issue.
 
-please pull the ras/urgent lineup for v6.16-rc5.
-
-Thx.
-
----
-
-The following changes since commit 86731a2a651e58953fc949573895f2fa6d456841:
-
-  Linux 6.16-rc3 (2025-06-22 13:30:08 -0700)
-
-are available in the Git repository at:
-
-  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/tip/tip tags/ras_urgent_for_v6.16_rc5
-
-for you to fetch changes up to 30ad231a5029bfa16e46ce868497b1a5cdd3c24d:
-
-  x86/mce: Make sure CMCI banks are cleared during shutdown on Intel (2025-06-28 12:45:48 +0200)
-
-----------------------------------------------------------------
-- Do not remove the MCE sysfs hierarchy if thresholding sysfs nodes init
-  fails due to new/unknown banks present, which in itself is not fatal
-  anyway; add default names for new banks
-
-- Make sure MCE polling settings are honored after CMCI storms
-
-- Make sure MCE threshold limit is reset after the thresholding interrupt has
-  been serviced
-
-- Clean up properly and disable CMCI banks on shutdown so that
-  a second/kexec-ed kernel can rediscover those banks again
-
-----------------------------------------------------------------
-JP Kobryn (1):
-      x86/mce: Make sure CMCI banks are cleared during shutdown on Intel
-
-Yazen Ghannam (4):
-      x86/mce: Don't remove sysfs if thresholding sysfs init fails
-      x86/mce: Ensure user polling settings are honored when restarting timer
-      x86/mce/amd: Add default names for MCA banks and blocks
-      x86/mce/amd: Fix threshold limit reset
-
- arch/x86/kernel/cpu/mce/amd.c   | 28 +++++++++++++++++-----------
- arch/x86/kernel/cpu/mce/core.c  | 24 +++++++++++-------------
- arch/x86/kernel/cpu/mce/intel.c |  1 +
- 3 files changed, 29 insertions(+), 24 deletions(-)
+It'd be helpful if you can write a bit more clearly what's the issue
+and what you've done here.
 
 
--- 
-Regards/Gruss,
-    Boris.
+thanks,
 
-https://people.kernel.org/tglx/notes-about-netiquette
+Takashi
+
+> Fixes: 4fe238513407 ("ALSA: hda/tas2781: Move and unified the calibrated-data getting function for SPI and I2C into the tas2781_hda lib")
+> 
+> Signed-off-by: Baojun Xu <baojun.xu@ti.com>
+> ---
+>  sound/pci/hda/tas2781_hda.c | 8 +++++---
+>  1 file changed, 5 insertions(+), 3 deletions(-)
+> 
+> diff --git a/sound/pci/hda/tas2781_hda.c b/sound/pci/hda/tas2781_hda.c
+> index 5f1d4b3e9688..34217ce9f28e 100644
+> --- a/sound/pci/hda/tas2781_hda.c
+> +++ b/sound/pci/hda/tas2781_hda.c
+> @@ -44,7 +44,7 @@ static void tas2781_apply_calib(struct tasdevice_priv *p)
+>  		TASDEVICE_REG(0, 0x13, 0x70),
+>  		TASDEVICE_REG(0, 0x18, 0x7c),
+>  	};
+> -	unsigned int crc, oft;
+> +	unsigned int crc, oft, node_num;
+>  	unsigned char *buf;
+>  	int i, j, k, l;
+>  
+> @@ -80,8 +80,9 @@ static void tas2781_apply_calib(struct tasdevice_priv *p)
+>  			dev_err(p->dev, "%s: CRC error\n", __func__);
+>  			return;
+>  		}
+> +		node_num = tmp_val[1];
+>  
+> -		for (j = 0, k = 0; j < tmp_val[1]; j++) {
+> +		for (j = 0, k = 0; j < node_num; j++) {
+>  			oft = j * 6 + 3;
+>  			if (tmp_val[oft] == TASDEV_UEFI_CALI_REG_ADDR_FLG) {
+>  				for (i = 0; i < TASDEV_CALIB_N; i++) {
+> @@ -99,8 +100,9 @@ static void tas2781_apply_calib(struct tasdevice_priv *p)
+>  				}
+>  
+>  				data[l] = k;
+> +				oft++;
+>  				for (i = 0; i < TASDEV_CALIB_N * 4; i++)
+> -					data[l + i] = data[4 * oft + i];
+> +					data[l + i + 1] = data[4 * oft + i];
+>  				k++;
+>  			}
+>  		}
+> -- 
+> 2.43.0
+> 
 
