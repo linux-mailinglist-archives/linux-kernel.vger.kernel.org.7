@@ -1,65 +1,65 @@
-Return-Path: <linux-kernel+bounces-720217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5839AFB8AB
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 18:32:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7ABB3AFB8AD
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 18:32:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 145C54A250D
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 16:32:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 401DD420242
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 16:32:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A67A2222C2;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9739F22424E;
 	Mon,  7 Jul 2025 16:32:35 +0000 (UTC)
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BB0818035
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 16:32:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45F5172606
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 16:32:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751905954; cv=none; b=V1DbE8QUV7CKDi9DntFQkIq0pWgKgNPV7i+98bN4ebZLExhmfFCdTYaT3nLoFFbZI6v2t486dkhG3R3tYiUMQCBaqdGdQT5c4luW/QlvAryOdDZCQEbJfwb4is97cEqUW2iNHyqf2egXIBogB0VwlG5aQHeaNRmw5I0/c6lI4hg=
+	t=1751905955; cv=none; b=Y/vghi8ZBoR7huc3lnZzO7BijKA5lVs5fUbQGurt2hWezOkE/2x0PAB+YM4otdoOMlIO5xSqvOyXsgnQZ3qAWUQ0CiNZeSUwmzAvGH16vKh0sU+s3aF2Wi7eHqVaXsUyHJ1KnFXN8N9GwuIiZxfwl4FsHA1KMbt+HDJIt3HQWHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751905954; c=relaxed/simple;
-	bh=QhkoOpOrc2KLKM25CBxZwojNZdqTPjmpwHqKnkWvU5Y=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ZX7N4P3M7tMbCvb2aYwb5oq9kmLydDbrd+OhFQG/rtD0IanFIh4Oy48E5kR82IYkQksuwKX3boN/HARYVks8vKXSGTWFX8fviEG3OC6gmVhiGumXez+IYsdToYWdNsqGCJSqmePa1wot4f58slyqPHOPES8aGpRjbTmhylZAQ6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+	s=arc-20240116; t=1751905955; c=relaxed/simple;
+	bh=W/cESdpal0+aRH6FijR4mrjH9vnRB+jK2Q+9mI6NpmY=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=VQobT46hBcqP6U3CztGIvuLiE1c+2OlLgbtE+DXvLdnL3TkZcfbqHIwKsZrzL7dyZ4GscBirSMXUP9a4ajYWfbqob+UAEZnWCY/L60XfV+2FUmRmPk1nc/B3AFXkxc10qsfX1iujtpKoqiL5jR4/KuUAFKF3kb48C1FoUTrnQUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3df33827a8cso79757565ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 09:32:32 -0700 (PDT)
+Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3df40226ab7so79305965ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 09:32:33 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1751905952; x=1752510752;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=4shpgMrHUYMpQvEavxw27uw1dfjEvqrEkx31vuHqsqo=;
-        b=K/vUdYTcyG9HpQnNjlI6cYP6Vw3ClNrPdBWTaioY9wXxV9PMnd18S6tlK7HahJISH0
-         JocuBWbOYEew26WLAAXqxn3CWmIueO4HY0mn5XJfeKp94enBfkfGfW7h1iQDnCuRO7N3
-         gzEeElt4Rzh7zS3XDq3DZq1LKxiotEoHqAJ0srckxfwVTWuYPI0jjW2NAZYH5RMyhSso
-         XJDo5+OfGgq/cAc8B6pFDr/bySwE+qK1K+au2/fxGqDZpEjZNViyITota1+Zr2gHefxT
-         6JvIAfHNizlFU7Wl6wiV6oKQM1564wY9eLDpTMLcyU4sl61iUX6fa4JUMq8MkzoLLZNZ
-         4Zjg==
-X-Forwarded-Encrypted: i=1; AJvYcCUzUJt6r3YcxCDt1itC5U3oQtbbxdIWl1tU0D/RrpR2rfkcsoCzs+GKQqeFqaXrcXZ10tZ4eeadaGYuJ4c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrxFTK35re5aK2cECA9DDF2xADvMzeiLphoIS1uz/EAkXVmvAn
-	FhfgCEJ5BzwK76nbYjhQmgY0a7apWNhfpZwhZzAzDIkbpsYBVXgKs+INorouhAY5gBKXVZknuM9
-	9Xr0P6TvZ8GOrVarCwiEVqZJN22lyLJHsDghSaRwflYj6meU2c4HeMM0im9g=
-X-Google-Smtp-Source: AGHT+IG/yY2tnVRcPfFcaDTdrKQFfM+7kNsqwvSq0QP+BT0pdomiGxwky12gfOre/q2dA7ifHV3FqVgPED92RH8BXVBscnyG32Kg
+        bh=ndE3wqK/4T/8inqY41BAo34YwVTH1tympJR9v8r4fYk=;
+        b=IIx/+nq2866MjnZ2D+POjgGYR6husCNayGGCmd4mSnirZ5DbRz8thqPiKi4wBCZXTC
+         xohp2GNV6ArahUh1g1jlxo03Ju3Z69XNBhYDJsZD4FVs+0xVIagnN2R841IyV8+Y7AAH
+         /clx99aiN1ZtvARWgMgAU2Z9Z1bw1nqjL+u7aiUTAdsZwRrnuuzRugfL02H2D8ADG8FQ
+         wKBjhz+b1jAPXq76OSfsOUBzzzD+Te18L88zRAldlsyktNm/FdA199Nr0rttKY1GTteh
+         TJgX4AwM+Y6Vd94xG0VM44IZL4kBmWlkrhDtNdjfnVLV9CxmI/jks/Os1AgMPRLkFf0k
+         Jr3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVwvSAqORJ50V8VAAPlvRK/ILKJVr/GddqL6N6pzQEwsksbRDTURpR4rMrCDonqkGlOxLoEJzw9njMVk1E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyzUHiEiTyUveAtfxdawknrDeh1tZm6QA27c0oenKz+RXMgBCt
+	sllcgqARvfQsEbZh+nlDHNBve7GW4F3I8WlwXhysfBNkitrF3mDyBEzhDbTEmLqM+0xNTkRjutZ
+	G1XtCN8q9rVPrdX+23TnexmEJdYjObvpJ8DBHpFuq2kEmHz7m0je26f5wVH0=
+X-Google-Smtp-Source: AGHT+IFr6MCBEVM5VTrKxUkpCz04m4ptd5n9tkKiyJv0xVc0BbC47glLukZw9tC9lqqcbW+7R7tp9ORVyiyHIn4IbQK+dVrf2oRS
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:219c:b0:3dd:b523:7abe with SMTP id
- e9e14a558f8ab-3e137218e14mr122114395ab.18.1751905952163; Mon, 07 Jul 2025
+X-Received: by 2002:a05:6e02:1607:b0:3dd:f3e1:2899 with SMTP id
+ e9e14a558f8ab-3e153916ed4mr2907965ab.2.1751905952369; Mon, 07 Jul 2025
  09:32:32 -0700 (PDT)
 Date: Mon, 07 Jul 2025 09:32:32 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <686bf6a0.a00a0220.b087d.01f1.GAE@google.com>
-Subject: [syzbot] [kernel?] BUG: unable to handle kernel paging request in parport_attach
-From: syzbot <syzbot+c47f45cfb7fc1640ced7@syzkaller.appspotmail.com>
+Message-ID: <686bf6a0.a00a0220.b087d.01f2.GAE@google.com>
+Subject: [syzbot] [kernel?] UBSAN: shift-out-of-bounds in aio_iiro_16_attach
+From: syzbot <syzbot+f1bb7e4ea47ea12b535c@syzkaller.appspotmail.com>
 To: abbotti@mev.co.uk, hsweeten@visionengravers.com, 
 	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
@@ -70,109 +70,53 @@ syzbot found the following issue on:
 
 HEAD commit:    a79a588fc176 Merge tag 'pm-6.16-rc5' of git://git.kernel.o..
 git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1466cf70580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=729bc2714205b7c8
-dashboard link: https://syzkaller.appspot.com/bug?extid=c47f45cfb7fc1640ced7
-compiler:       arm-linux-gnueabi-gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: arm
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14e21c8c580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13b62c8c580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=14a4ac8c580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5ba6cef8f153bfeb
+dashboard link: https://syzkaller.appspot.com/bug?extid=f1bb7e4ea47ea12b535c
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12a4ac8c580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13fc9c8c580000
 
 Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/98a89b9f34e4/non_bootable_disk-a79a588f.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/bf35a246f739/vmlinux-a79a588f.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/8e0e99375077/zImage-a79a588f.xz
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-a79a588f.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/c7aa4e6d68b0/vmlinux-a79a588f.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/5d71f2c64f29/bzImage-a79a588f.xz
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+c47f45cfb7fc1640ced7@syzkaller.appspotmail.com
+Reported-by: syzbot+f1bb7e4ea47ea12b535c@syzkaller.appspotmail.com
 
-8<--- cut here ---
-Unable to handle kernel paging request at virtual address fee000f0 when write
-[fee000f0] *pgd=80000080007003, *pmd=00000000
-Internal error: Oops: a06 [#1] SMP ARM
-Modules linked in:
-CPU: 0 UID: 0 PID: 4088 Comm: syz.2.16 Not tainted 6.16.0-rc4-syzkaller #0 PREEMPT 
-Hardware name: ARM-Versatile Express
-PC is at __raw_writeb arch/arm/include/asm/io.h:88 [inline]
-PC is at parport_attach drivers/comedi/drivers/comedi_parport.c:289 [inline]
-PC is at parport_attach+0x174/0x1d0 drivers/comedi/drivers/comedi_parport.c:224
-LR is at parport_attach drivers/comedi/drivers/comedi_parport.c:289 [inline]
-LR is at parport_attach+0x164/0x1d0 drivers/comedi/drivers/comedi_parport.c:224
-pc : [<81398ba8>]    lr : [<81398b98>]    psr: 60000013
-sp : e05e1d38  ip : e05e1d38  fp : e05e1d5c
-r10: 82b15078  r9 : 00000003  r8 : 841493c0
-r7 : e05e1d98  r6 : 841493c0  r5 : 00000000  r4 : 00000000
-r3 : fee000f0  r2 : 81e14f0c  r1 : 00000001  r0 : 81398818
-Flags: nZCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment user
-Control: 30c5387d  Table: 85588d40  DAC: fffffffd
-Register r0 information: non-slab/vmalloc memory
-Register r1 information: non-paged memory
-Register r2 information: non-slab/vmalloc memory
-Register r3 information: 0-page vmalloc region starting at 0xfee00000 allocated at pci_reserve_io+0x0/0x38 arch/arm/mm/mmu.c:1055
-Register r4 information: NULL pointer
-Register r5 information: NULL pointer
-Register r6 information: slab kmalloc-192 start 841493c0 pointer offset 0 size 192
-Register r7 information: 2-page vmalloc region starting at 0xe05e0000 allocated at kernel_clone+0xac/0x3e4 kernel/fork.c:2599
-Register r8 information: slab kmalloc-192 start 841493c0 pointer offset 0 size 192
-Register r9 information: non-paged memory
-Register r10 information: non-slab/vmalloc memory
-Register r11 information: 2-page vmalloc region starting at 0xe05e0000 allocated at kernel_clone+0xac/0x3e4 kernel/fork.c:2599
-Register r12 information: 2-page vmalloc region starting at 0xe05e0000 allocated at kernel_clone+0xac/0x3e4 kernel/fork.c:2599
-Process syz.2.16 (pid: 4088, stack limit = 0xe05e0000)
-Stack: (0xe05e1d38 to 0xe05e2000)
-1d20:                                                       823f88f8 841493c0
-1d40: 829c4b18 829c4b18 81e153cc 00000000 e05e1d94 e05e1d60 81394c60 81398a40
-1d60: b5403587 00000000 83308000 20000080 841493c0 b5403587 20000080 83308000
-1d80: 40946400 00000003 e05e1e4c e05e1d98 813908f0 81394b68 656d6f63 705f6964
-1da0: 6f707261 00007472 00000000 000000f0 80008000 00000001 0000000a 00000000
-1dc0: 00000000 10000001 00000001 00001000 00000001 00000008 00000001 00000006
-1de0: 00000004 0000ffff 00000006 ffffffa7 00000009 fffffffd 00000005 000003ff
-1e00: 00010000 00000800 0000e2df 00000009 000000ff 00000000 00000003 00000007
-1e20: 00000005 00000005 00000000 444c0355 00000000 84fb0240 841493c0 20000080
-1e40: e05e1f14 e05e1e50 813918a4 81390824 00000000 00000000 00000000 444c0355
-1e60: 00000000 00000000 8246a3fc 0000005f 83ff3458 841493f0 8419275c 83308000
-1e80: e05e1ee4 e05e1e90 8079688c 8078cb7c 00000064 00000001 00000000 e05e1eac
-1ea0: 84e83490 8357be58 00006400 0000000b e05e1ea0 00000000 00000000 444c0355
-1ec0: 84fb0240 40946400 20000080 20000080 00000003 84fb0240 e05e1ef4 e05e1ee8
-1ee0: 807969ac 444c0355 e05e1f14 40946400 00000000 84fb0240 20000080 00000003
-1f00: 84fb0240 83308000 e05e1fa4 e05e1f18 8056f16c 813912d4 e05e1f4c e05e1f28
-1f20: 80349a98 8034cdb4 81a2db68 81a2da38 e05e1f54 e05e1f40 8026203c 7ead2920
-1f40: e05e1fa4 e05e1f50 8034a2e0 803499a4 00000000 7ead2920 ffffffff 80234128
-1f60: 00000000 00000000 00000000 00000000 00000000 444c0355 e05e1fac 00000000
-1f80: 00000000 002f6300 00000036 8020029c 83308000 00000036 00000000 e05e1fa8
-1fa0: 80200060 8056f048 00000000 00000000 00000003 40946400 20000080 00000000
-1fc0: 00000000 00000000 002f6300 00000036 00000000 002f62d4 0000047b 00000000
-1fe0: 7ead2780 7ead2770 000193a4 00131f40 60000010 00000003 00000000 00000000
-Call trace: 
-[<81398a34>] (parport_attach) from [<81394c60>] (comedi_device_attach+0x104/0x240 drivers/comedi/drivers.c:996)
- r6:00000000 r5:81e153cc r4:829c4b18
-[<81394b5c>] (comedi_device_attach) from [<813908f0>] (do_devconfig_ioctl+0xd8/0x1e0 drivers/comedi/comedi_fops.c:855)
- r10:00000003 r9:40946400 r8:83308000 r7:20000080 r6:b5403587 r5:841493c0
- r4:20000080
-[<81390818>] (do_devconfig_ioctl) from [<813918a4>] (comedi_unlocked_ioctl+0x5dc/0x1b94 drivers/comedi/comedi_fops.c:2136)
- r6:20000080 r5:841493c0 r4:84fb0240
-[<813912c8>] (comedi_unlocked_ioctl) from [<8056f16c>] (vfs_ioctl fs/ioctl.c:51 [inline])
-[<813912c8>] (comedi_unlocked_ioctl) from [<8056f16c>] (do_vfs_ioctl fs/ioctl.c:861 [inline])
-[<813912c8>] (comedi_unlocked_ioctl) from [<8056f16c>] (__do_sys_ioctl fs/ioctl.c:905 [inline])
-[<813912c8>] (comedi_unlocked_ioctl) from [<8056f16c>] (sys_ioctl+0x130/0xdc8 fs/ioctl.c:893)
- r10:83308000 r9:84fb0240 r8:00000003 r7:20000080 r6:84fb0240 r5:00000000
- r4:40946400
-[<8056f03c>] (sys_ioctl) from [<80200060>] (ret_fast_syscall+0x0/0x1c arch/arm/mm/proc-v7.S:67)
-Exception stack(0xe05e1fa8 to 0xe05e1ff0)
-1fa0:                   00000000 00000000 00000003 40946400 20000080 00000000
-1fc0: 00000000 00000000 002f6300 00000036 00000000 002f62d4 0000047b 00000000
-1fe0: 7ead2780 7ead2770 000193a4 00131f40
- r10:00000036 r9:83308000 r8:8020029c r7:00000036 r6:002f6300 r5:00000000
- r4:00000000
-Code: e596306c e3a04000 e7f33053 e2433612 (e5c34000) 
----[ end trace 0000000000000000 ]---
-----------------
-Code disassembly (best guess):
-   0:	e596306c 	ldr	r3, [r6, #108]	@ 0x6c
-   4:	e3a04000 	mov	r4, #0
-   8:	e7f33053 	ubfx	r3, r3, #0, #20
-   c:	e2433612 	sub	r3, r3, #18874368	@ 0x1200000
-* 10:	e5c34000 	strb	r4, [r3] <-- trapping instruction
+UBSAN: shift-out-of-bounds in drivers/comedi/drivers/aio_iiro_16.c:180:9
+shift exponent 8550 is too large for 32-bit type 'int'
+CPU: 2 UID: 0 PID: 6096 Comm: syz.0.16 Not tainted 6.16.0-rc4-syzkaller-00308-ga79a588fc176 #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x16c/0x1f0 lib/dump_stack.c:120
+ ubsan_epilogue lib/ubsan.c:233 [inline]
+ __ubsan_handle_shift_out_of_bounds+0x27f/0x420 lib/ubsan.c:494
+ aio_iiro_16_attach drivers/comedi/drivers/aio_iiro_16.c:180 [inline]
+ aio_iiro_16_attach.cold+0x19/0x1e drivers/comedi/drivers/aio_iiro_16.c:164
+ comedi_device_attach+0x3b3/0x900 drivers/comedi/drivers.c:996
+ do_devconfig_ioctl+0x1a7/0x580 drivers/comedi/comedi_fops.c:855
+ comedi_unlocked_ioctl+0x15bb/0x2e90 drivers/comedi/comedi_fops.c:2136
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:907 [inline]
+ __se_sys_ioctl fs/ioctl.c:893 [inline]
+ __x64_sys_ioctl+0x18e/0x210 fs/ioctl.c:893
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xcd/0x4c0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f3eb858e929
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffc84ea1e58 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007f3eb87b5fa0 RCX: 00007f3eb858e929
+RDX: 0000200000000140 RSI: 0000000040946400 RDI: 0000000000000003
+RBP: 00007f3eb8610b39 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f3eb87b5fa0 R14: 00007f3eb87b5fa0 R15: 0000000000000003
+ </TASK>
+---[ end trace ]---
 
 
 ---
