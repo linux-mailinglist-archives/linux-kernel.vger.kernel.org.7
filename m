@@ -1,94 +1,99 @@
-Return-Path: <linux-kernel+bounces-720528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1079AFBCE3
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 22:54:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DECAAFBC65
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 22:17:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88D2B5615D7
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 20:53:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7953117E8A6
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 20:17:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C883263F28;
-	Mon,  7 Jul 2025 20:53:21 +0000 (UTC)
-Received: from finn.localdomain (finn.gateworks.com [108.161.129.64])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3131121B8E7;
+	Mon,  7 Jul 2025 20:17:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jOdJdaB8"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FC8A24468D;
-	Mon,  7 Jul 2025 20:53:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=108.161.129.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3353019E97B
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 20:17:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751921600; cv=none; b=lNg6Jse7IiXMWc21S60l8/iEjySVmIgPT4d140iGbjFLh8SEayEr0gn7gbxSND+19Dyajls49hYE5TLDr6KluOcvOrsyVcWxqL8S9dp7tK98AWObNftHDb8DTrtASVcZsMaom0QXskR8uUwUYJYBYALdDmL1EAKdJISxdtUkEj4=
+	t=1751919442; cv=none; b=V0ydfGM1YdCDXN27gOycx9QK233vqeOKu6jm6kwLbVZ48sE9wo2uZdi2Mf1gy0IbrRA8GLBsRowZ9R8sQjbMIcfhSA9iVkDabLGhNwRM1RbnHqsfsGDJIIFC/1G0VmVXKZ7+Zp6uxKZ/xPNqUzSUCBpzZ8PaiMVBCWv/qRDp0b0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751921600; c=relaxed/simple;
-	bh=B0atENrsMkhng+LnAgCTj80pLdT5Gv3Vbb0FCgc3g+w=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=eZTy8f5yb+taoD6ZCFp2ewsIVy8kBt18zt2XS92BhofU3PlwoI8/2VpzcmfxmqUnOiRIPjlP5PSqeddt0zKg/ggdrENOIiQhtP5eLNeWVcP/bZL+gbl2T6NrIhjrsRC65DCu2vWqfSrpVQ4HfU4LKBBMuRpSdnqvvccUgYCEKgA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gateworks.com; spf=pass smtp.mailfrom=gateworks.com; arc=none smtp.client-ip=108.161.129.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gateworks.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gateworks.com
-Received: from syn-068-189-091-139.biz.spectrum.com ([68.189.91.139] helo=tharvey.pdc.gateworks.com)
-	by finn.localdomain with esmtp (Exim 4.95)
-	(envelope-from <tharvey@gateworks.com>)
-	id 1uYsH0-008ZxD-QA;
-	Mon, 07 Jul 2025 20:17:10 +0000
-From: Tim Harvey <tharvey@gateworks.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	devicetree@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	Tim Harvey <tharvey@gateworks.com>
-Subject: [PATCH 7/7] arm64: dts: imx8mm-venice-gw7904: Increase HS400 USDHC clock speed
-Date: Mon,  7 Jul 2025 13:17:02 -0700
-Message-Id: <20250707201702.2930066-7-tharvey@gateworks.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250707201702.2930066-1-tharvey@gateworks.com>
-References: <20250707201702.2930066-1-tharvey@gateworks.com>
+	s=arc-20240116; t=1751919442; c=relaxed/simple;
+	bh=yVuF5SHEUHaijuyW5z50NHMhrRqptIlGfxfOOA3VROs=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=hEGH6/9ziY/8ydoKZAqz/fIDwBPaffMkTZRYJuRPWjiIiG3DSzbKP0tV07PXJIJsnBsgHpzj3tDOHGjZSKlJKzp6byizR2VtfK6GHkWhJ3WD9xaszMaL1fmb8zJmMONEiMppvDcRM/xhvuQi7UtRIkZlrNt9sUD1glb9LUP8Wsc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jOdJdaB8; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1751919440;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=seUUrM/ASxkxzQylj5TXoU27K7t34g1fgNXZf6f6gGU=;
+	b=jOdJdaB8y1Ec1s/sENh1KpfI+iDMsaF4j7QHeGx00wEy7kuSc5dq0dShPrwOePOMwfljO8
+	bi7LAfRXLuWP3exL2UN7vWh5YyDbCArJthscmarJo7sWZ+YnIY26/4xDkTtAmzUr4VwcY0
+	U3Se6bRu6N3hggWNzyB7oGhbjmtMkHc=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-371-NWAj8BxYPlqQ-MyBAbF5mQ-1; Mon,
+ 07 Jul 2025 16:17:17 -0400
+X-MC-Unique: NWAj8BxYPlqQ-MyBAbF5mQ-1
+X-Mimecast-MFC-AGG-ID: NWAj8BxYPlqQ-MyBAbF5mQ_1751919435
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 572251944A8D;
+	Mon,  7 Jul 2025 20:17:15 +0000 (UTC)
+Received: from [10.22.80.10] (unknown [10.22.80.10])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4114F195608F;
+	Mon,  7 Jul 2025 20:17:11 +0000 (UTC)
+Date: Mon, 7 Jul 2025 22:17:07 +0200 (CEST)
+From: Mikulas Patocka <mpatocka@redhat.com>
+To: Dongsheng Yang <dongsheng.yang@linux.dev>
+cc: agk@redhat.com, snitzer@kernel.org, axboe@kernel.dk, hch@lst.de, 
+    dan.j.williams@intel.com, Jonathan.Cameron@Huawei.com, 
+    linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
+    linux-cxl@vger.kernel.org, nvdimm@lists.linux.dev, 
+    dm-devel@lists.linux.dev
+Subject: =?UTF-8?Q?Re=3A_=5BPATCH_v2_00=2F11=5D_dm-pcache_=E2=80=93_pe?=
+ =?UTF-8?Q?rsistent-memory_cache_for_block_devices?=
+In-Reply-To: <85b5cb31-b272-305f-8910-c31152485ecf@redhat.com>
+Message-ID: <80ada691-ffee-f0ce-64df-9b0117cd9845@redhat.com>
+References: <20250707065809.437589-1-dongsheng.yang@linux.dev> <85b5cb31-b272-305f-8910-c31152485ecf@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-The IMX8M reference manuals indicate in the USDHC Clock generator
-section
-that the clock rate for DDR is 1/2 the input clock therefore HS400 rates
-clocked at 200Mhz require a 400Mhz SDHC clock.
+Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
 
-This showed about a 1.5x improvement in read performance for the eMMC's
-used on the various imx8m{m,n,p}-venice boards.
-
-Fixes: b999bdaf0597 ("arm64: dts: imx: Add i.mx8mm Gateworks gw7904 dts support")
-Signed-off-by: Tim Harvey <tharvey@gateworks.com>
 ---
- arch/arm64/boot/dts/freescale/imx8mm-venice-gw7904.dts | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/md/dm-pcache/segment.h |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mm-venice-gw7904.dts b/arch/arm64/boot/dts/freescale/imx8mm-venice-gw7904.dts
-index 86a610de84fe..99572961d9e1 100644
---- a/arch/arm64/boot/dts/freescale/imx8mm-venice-gw7904.dts
-+++ b/arch/arm64/boot/dts/freescale/imx8mm-venice-gw7904.dts
-@@ -682,6 +682,8 @@ &usdhc3 {
- 	pinctrl-0 = <&pinctrl_usdhc3>;
- 	pinctrl-1 = <&pinctrl_usdhc3_100mhz>;
- 	pinctrl-2 = <&pinctrl_usdhc3_200mhz>;
-+	assigned-clocks = <&clk IMX8MM_CLK_USDHC3>;
-+	assigned-clock-rates = <400000000>;
- 	bus-width = <8>;
- 	non-removable;
- 	status = "okay";
--- 
-2.25.1
+Index: linux-2.6/drivers/md/dm-pcache/segment.h
+===================================================================
+--- linux-2.6.orig/drivers/md/dm-pcache/segment.h	2025-07-06 15:13:52.000000000 +0200
++++ linux-2.6/drivers/md/dm-pcache/segment.h	2025-07-06 15:14:17.000000000 +0200
+@@ -3,6 +3,7 @@
+ #define _PCACHE_SEGMENT_H
+ 
+ #include <linux/bio.h>
++#include <linux/bitfield.h>
+ 
+ #include "pcache_internal.h"
+ 
 
 
