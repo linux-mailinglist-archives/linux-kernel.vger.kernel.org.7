@@ -1,199 +1,230 @@
-Return-Path: <linux-kernel+bounces-719842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67B13AFB352
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 14:32:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6EDDAFB354
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 14:32:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2CCC67AA97C
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 12:30:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F27B4A2D85
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 12:32:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FD0329AB11;
-	Mon,  7 Jul 2025 12:32:15 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0141129A331;
+	Mon,  7 Jul 2025 12:32:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="UwH0C2U2";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="L76U4gnl"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA12228937F
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 12:32:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751891534; cv=none; b=rBk9aQxrS2VCTOQBS6Afpwon8vRxVUDZr4fPvRrnj4GWp9oBN5c8+8ytjUiIOR5Abkk2/hl5W4nNgvXM7pJ2+XR/DcSAlkoKfww2+TBy/cWIaHtx0XqRLyVjcOTDcsWYqb/AHEK9x+FGuOJXw5ApVnIRKzOt0y+DdqUNyu4fUTs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751891534; c=relaxed/simple;
-	bh=Xs3aIWRVPOmUJxZYSF0bSCsU7L3fH2o3QpvMU9WeOQU=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bBpNzUAG80f9UeEwpJYmWvjKiSgEbA9lMnD4Y4j3N+zM4g1lplVM4KLazLbF1F7OeGVLYoN2IRgkjDGas4dgU3gqdCXZYC+ukAvT0IkU0lBdarIoB1MDlT18FSIE+93oBZ+0MB2d52bEioLb4sDq/3P8qzY7cJHHwOiIf9jwYH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bbNrV45T2z6M56Q;
-	Mon,  7 Jul 2025 20:31:06 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 0DB1B1402F8;
-	Mon,  7 Jul 2025 20:32:09 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 7 Jul
- 2025 14:32:08 +0200
-Date: Mon, 7 Jul 2025 13:32:07 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Ben Horgan <ben.horgan@arm.com>
-CC: James Morse <james.morse@arm.com>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>, "Rafael J . Wysocki" <rafael@kernel.org>,
-	<sudeep.holla@arm.com>, Rob Herring <robh@kernel.org>, Catalin Marinas
-	<catalin.marinas@arm.com>, <WillDeaconwill@kernel.org>
-Subject: Re: [PATCH v2 1/3] cacheinfo: Set cache 'id' based on DT data
-Message-ID: <20250707133207.00001b88@huawei.com>
-In-Reply-To: <9495df36-053e-49a3-8046-1e6aed63b4af@arm.com>
-References: <20250704173826.13025-1-james.morse@arm.com>
-	<20250704173826.13025-2-james.morse@arm.com>
-	<9495df36-053e-49a3-8046-1e6aed63b4af@arm.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 963001E505
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 12:32:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751891565; cv=fail; b=gKVuUB56A0f6o69l1kcPdtKW6ahuomxMpzIZkT9WV55Q5+pItuSOXd4Qvnc3rvmv7n5zNNnVXYMQWRPtb88dmi6LpTMhLtRPYW0w9sOPBu4RAVsTWhM6rRmM4C5i4Zj/2wmA0EaX36BIaZBSLnd1wcZQ9Cn5WTi/lDny8OijP9g=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751891565; c=relaxed/simple;
+	bh=L5SiZi0WiAFhFvuNeeJoxU7+j0Kxv3GUxtysAJx2Izk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=g8UjhBxDMOU43bCBFS4/QAXPN7AZCcfwP6CKSzW9kTzwmWMb0n/GivRvO7pnedvf4b0XinOOrGUPQN5r61B9h3ynQl5crGpd4WCIEu9hdkalFOyr5UNUQGGKgfFjW1AkuJ2rBVhv7EB3R9/WtPtWwICtuoOd1+3aVnu7hlyk4LI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=UwH0C2U2; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=L76U4gnl; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 567BiWtx032205;
+	Mon, 7 Jul 2025 12:32:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=L5SiZi0WiAFhFvuNee
+	JoxU7+j0Kxv3GUxtysAJx2Izk=; b=UwH0C2U26lITi7hZYzO2ECTKuqtTbVXI2+
+	8bz3wUPEmxH9rKUKYMgmrxvdY18q47ZDuYpKNfh6DPDHk/EMT7dxYk4jFhW6bw41
+	6dV2i38YDjT3mMAqzTju5zpEktmojgkIpqC/iJlSvcpB6nnKbreN+bVTLnzL1TZT
+	Na8AiDJ2WreQUhbIHqgf0c7hrSgKENfABl1DioIPwHNim6YCMu4MPQPvSOP9U33i
+	WeRPgZzd1Rn5wip9kVytRgl0dUbxeyJBcVp7SHIEJaNaqcc2l8f6U59Ti/YwQ+hi
+	C5w5u2KRGd2t39tspQulLyZ5qZewBbkHLT/Y70qHfpuci6sjusag==
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 47rdm3r2f0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 07 Jul 2025 12:32:17 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 567BAhJS014180;
+	Mon, 7 Jul 2025 12:32:16 GMT
+Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10on2045.outbound.protection.outlook.com [40.107.94.45])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 47ptg8x4vx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 07 Jul 2025 12:32:16 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=CW18JZcCDFANtRKJUiHkpAa4Q+OffaJrZFaS8lV2ZY4HuJBcXEXUjUnnp9fte9mvqa+aoOv/sF+ToijixwtY7EMk66NdlOZTR7xWqFBzfqnHozSj+PQdQW+nuh1RVq72qi2ewu3p1SDSqUFJw1JeSX6zfE9MrmCCDHQTot+LgDLQW2ndlr2wB37rKGji3TVNcY5AN0GB/TwaOl9MIWlhSfHNz0Drp/HwFVPPyAhTanP+V+yjsgP9YZOCeZaQUV7RDlPMVmQRLFPkxk9TfVUmL8VHbrOyUOdpGH1uQPLksnb+bPn9uASeKB+IMo52cDs7Iq28fO9LrgEvzGCVGOeY/w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=L5SiZi0WiAFhFvuNeeJoxU7+j0Kxv3GUxtysAJx2Izk=;
+ b=F334CdUR5eVbXcFJR/urTO8Tjod50r2n9HVJYSRvQIV+V8Xrd6SGJg8/4rN6l0bzvCc3xHdOHZH5e7gmK3KM3/GSXD1PGfgISZLsfxDO0IId4byrMFROZLy/gZVXAIndoXUEBwwMwklsNW1WtH74WZffAl1n35wPWEr+WX9zdYGvKBWo2ek/1ojbvc7H7mXcrWEW/Axqgw1oJYbJY7B+NVCF4QvSjTErrZkIIrSXtZ0icqzIB5w8CYI8I3r3znFys38nuDxbR5Bm+FmFSF7yGuQVleSNHLjFEAVH8y8dfqF2TIoyx3B4iQ9rAS/KSMNTkWxEBP0QWyrEwwqcV69ysA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=L5SiZi0WiAFhFvuNeeJoxU7+j0Kxv3GUxtysAJx2Izk=;
+ b=L76U4gnlHns+/SMRoAK9Q+hmdCyIY489VGKKnHsc9AY8Gx+kqV4oD34qzg1nxUaqGMkOrJmptpSY5PYBrnRZQPOBKyRtFiH9/wbbjQCXj4n5K2fQyERsUFZcduAqcDBOznmoYXqHFaVGobO4wDH3oxFxKxszrv9+GNolN7EyfJs=
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
+ by DM4PR10MB6231.namprd10.prod.outlook.com (2603:10b6:8:8e::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.23; Mon, 7 Jul
+ 2025 12:32:13 +0000
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2%6]) with mapi id 15.20.8901.024; Mon, 7 Jul 2025
+ 12:32:13 +0000
+Date: Mon, 7 Jul 2025 13:32:10 +0100
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Yuntao Liu <liuyuntao12@huawei.com>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, mhocko@suse.com, surenb@google.com,
+        rppt@kernel.org, vbabka@suse.cz, Liam.Howlett@oracle.com,
+        akpm@linux-foundation.org
+Subject: Re: [PATCH -next] mm/memory: fix null pointer dereference in
+ fault_dirty_shared_page
+Message-ID: <0bc11a6c-6535-441d-ab55-b4affeb8aef8@lucifer.local>
+References: <20250707105118.413056-1-liuyuntao12@huawei.com>
+ <2b716e2f-0642-49df-a955-abfe0525cefd@lucifer.local>
+ <ea66f8a5-de20-4f6e-afcc-2eda84709958@redhat.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ea66f8a5-de20-4f6e-afcc-2eda84709958@redhat.com>
+X-ClientProxiedBy: LO2P265CA0200.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:9e::20) To DM4PR10MB8218.namprd10.prod.outlook.com
+ (2603:10b6:8:1cc::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500009.china.huawei.com (7.191.174.84) To
- frapeml500008.china.huawei.com (7.182.85.71)
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|DM4PR10MB6231:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8677ad22-b58d-4fc6-f7a5-08ddbd524cd9
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?jzHu44at91qEFOShCqOLSj8xzKYV4whYf6C2JRhgXY1FsxbCFmS0sdc0rzSY?=
+ =?us-ascii?Q?ZHhmh8yEOTXQtGzSsyuOLhUY4vBnqZd0koY+DD+HDfvuC+kTb9jJo3Ew4q2B?=
+ =?us-ascii?Q?ptf9hk0+c06nd8WIpL3Fqcv1C8utGqMRjiX/nvERcW+Ll84MR8SfzqkiDHLb?=
+ =?us-ascii?Q?7CdQAsW5dusHTqTmwagx7jtX3Ze3GUBWEVX0WrkFrCN+DHVf+p+Icv94TEwW?=
+ =?us-ascii?Q?in0oDLXKjcHEvCLPATFHVgQsFSbPyZlq17r/ICZj5UErH421IF+76/WoNNm6?=
+ =?us-ascii?Q?MRFMWbKwZ2escaePbKM/dfUC96VVFm+bwjRwJd4TgCT/BEJaGJZhtVKH4Dlh?=
+ =?us-ascii?Q?/6NZaRauNmrmPbofd5tLxRB0RVKuGuuiPT1/ibBFVLwj0bAfSqP9XPnpAtzt?=
+ =?us-ascii?Q?2Cg5jbQ0y82qtZyv0fZim8cH6K3H0xoiph7sSmA90AX9uS6ak7VedYv68QYW?=
+ =?us-ascii?Q?aj9vq3RhZPdpukGQsRn/44i5eKwNfq5sl78oMn1neQSsdbNSE8EHudzyVLbA?=
+ =?us-ascii?Q?IAdv80p72rgn5bzBgdXkvkMMnBKSSXFHku24GqvQnJk6+hfv5RoQm5wE0ssj?=
+ =?us-ascii?Q?k6NK4hpJyON3m8bkH/E9bBTHx66vfHYogH7ozGh8joK/2+/6eLUy+C2grAG/?=
+ =?us-ascii?Q?b91zDal4G0CMyAJESEg4uQ9sjdryS4Ab8MoELWeaq2DG5iLLOnnmA14uAei8?=
+ =?us-ascii?Q?0XCkUmkm59Bj031Ng4NuiWHe34Di2AO6KxMcg1KlUA7puctk2140JalymUaZ?=
+ =?us-ascii?Q?CEoBxI3g5N+N3SYwP0JxQDXk7Hh8imbuFHaL8ImK7YhMi/Tqtg8M0b/wbizM?=
+ =?us-ascii?Q?+Yj28jm/AeI93gXU0RFvzAqvPkV/gNojSCQ+bjFk769GIjve21RZnSbeC/ib?=
+ =?us-ascii?Q?JLic1vzI99QYDfkIl1quATRMdE//S3F+SRxDMJ5YqHNzd7kZ3bARJaLeelm+?=
+ =?us-ascii?Q?r2UGjj4ZNLzcAr3/0P+LoARyOl+rokyzpQOG0X7Oc+68bk93O9Mw7AHs/X3e?=
+ =?us-ascii?Q?AeXWjuH4lvz9uJZ19DASCxlREY6EAkvORTIfgDBy4UBmcOlSiUT+M7jDA3K4?=
+ =?us-ascii?Q?wMOShHcPKTuCaliH06pjxOQLlrydIe1ZWFOkk1np2UA+/grt8mzUFtFhP2qB?=
+ =?us-ascii?Q?Lug8K2Jq022hIkZEGXgwS7k/GaB4sjYS04CZRm5cMAfGb4L9P10WPcqbarS5?=
+ =?us-ascii?Q?OsCy1JOaK9FKPdSj/pBKU63DN0ExxKZ8x0qwZ1qDCZl560tF9efTsqrglION?=
+ =?us-ascii?Q?c4dXx/Tg2BsI99t2Rk58pKHNDz1BkC/rch55afwNL51ZcnufEoUd/ATgkscc?=
+ =?us-ascii?Q?zdSCuHyZogWG3JRgBMvycTQ6LrEjLH+832u3dQSNVSmRijw1SurWMb6RXlCo?=
+ =?us-ascii?Q?TeEW31SY8OUZn/GuGwBuLfjKdVsNZuahuIFYNIbpw7+k0gkpqQfsb7xCOfHm?=
+ =?us-ascii?Q?rTmq6SaqTPY=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?edRBS7o2KvvDl7VzEr6ZzT374keZOtFWBL+NYCFuR/IIElY+fvv5vidPtQnh?=
+ =?us-ascii?Q?k3nRz3aDfyHnlxkLwEw+CYhteeUDU6DYCQxJnWlfnUM+OQXFM9deQt1FuptJ?=
+ =?us-ascii?Q?AEkWBld5TeVwQRV8hO65TAbqert/YvBtt8xdm/39EE4e3/J3T/IhJw60li/r?=
+ =?us-ascii?Q?u3W+jmzJF1DGiPPk2CF5uLkMg+B6zonhsZCggZ47BdOHTaMPSw8sio2ulvkl?=
+ =?us-ascii?Q?Pr8SVJVvDoN6U6rNh70I1mcpT2r9Rz1T1vHU3yrVfJip3XPc/5TdGd00q/c1?=
+ =?us-ascii?Q?fHK+R/xfA6Lx/KVKznJUpp6Nr8c5V7NXBb2e3eGpUhc/znh4ndmBvbNUPMOd?=
+ =?us-ascii?Q?1vGWRh9nUdscvMpavtA7JbNMevFg63KOw3sVlulfOgxHmsxVUFHdmj7OiNFx?=
+ =?us-ascii?Q?KVFB6Pm9XsnhOsNc9/gCrO2WpWhcknxyK9RRRXgaaB4KYfeg7D5Fk2mbmzc2?=
+ =?us-ascii?Q?jEnW0LHumcmD6PD594r7nGZHg+YDWmhkiwiheUhq4lTrMRjKd5INeeBkCLyY?=
+ =?us-ascii?Q?9pmFNpnAtWs9wLzOV/p4DF0aMZieVkMmPbO+Lg9mqGWhDvN3RijTRnSHSuMK?=
+ =?us-ascii?Q?40zwQov8TrvdL/IoxouehnNCCKMiMzLJ/shp00+YAb0SMnHcq9PUyDI0XHWS?=
+ =?us-ascii?Q?Y4LyAOlNlK4iqbF1fxgSt2PoxLYzuv2r+aFYReLQEB0/cLNv9Ra/ZbN3+Gh1?=
+ =?us-ascii?Q?RXJF2Wtt4IVk1sx2EB9ezdhP20pcbiFeft49m2FSKqPiYX+BaNrXLYX1zJka?=
+ =?us-ascii?Q?Itw154itsaSkTo8IszxcFkiBGDHtop3g9QZRB7KFsGT+jo7767HQxvabB22w?=
+ =?us-ascii?Q?DLDd4+jbohvXOpQ7fioBDVK4L7AKpsmwLintHO4u0v00dki6LLdvNqZf3+Z7?=
+ =?us-ascii?Q?R8eAxXg1Y5pmrekfJNjWvajDPb57o9hdfEgv5aws0cFOJidkQp2t6xN05J0H?=
+ =?us-ascii?Q?k+krfNRUEmRNgb0poVyuPFfFYjQ2lkOeVXYNjA4jys7599OokT3GQWDbV9ZU?=
+ =?us-ascii?Q?9TlYEVHx77foZCfWWRkl/qf+WhtwVYJDbgtsSn4PimQM7C1cvLTZk3ji/t95?=
+ =?us-ascii?Q?i+ORDnoXsVqaBPog2SVnXM6KpKTzhikFcHcS/HD3kXNN5Y+2ObXfVz/81VzU?=
+ =?us-ascii?Q?DiRnAOoo+LORcefB4PySRBE1XFOwGw1dP2V8ap2eIN7PBIj4h2BvC7xS/BtT?=
+ =?us-ascii?Q?c+iBSP3ig2yPNYNaYxxqqkbptuK+fE2YQviMkGjs+rtG0AvQYdPcQD3uMUk6?=
+ =?us-ascii?Q?quclq7wljETJQ3ChBec6DA0TgABCX0Wn9CE4rlGhjzwrHx7JpCYggs6LjzlT?=
+ =?us-ascii?Q?YTq+NUXxB9kVA6n/W/ISADUf2vQ24UC7jpkSuL4B/yAGYR/UXpRdJCd2Xdy8?=
+ =?us-ascii?Q?mj0eRwQTvz2p97UoDsq3J58TkP7Z3KzPUuK9DIDT5OdGoarh/GIAbZtOeoB+?=
+ =?us-ascii?Q?V8V4okf1iyegrfWG+pEn511PKUw1CGKayoERN6nR+P5aozfC6qaPA4Rs4e7Z?=
+ =?us-ascii?Q?GUOTOE4TB10bcmd/EkHzqgFkCemwvNBDsKa6WU391ikgFSRKPXCwAwzuME0P?=
+ =?us-ascii?Q?5ZAa3pVThMaMC2m11Xr6kYHwriZuurp5zHHVBNvKOq/LpLidu6iOafx0RWRZ?=
+ =?us-ascii?Q?LQ=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	5knzlccdYGw2US6OCD+D7VeAywxFt91pOCC3/ixbVl1SLwErB75Bsh8vB1PBr8QqAeWSxxU5mi9ebw9FErOoxZQ2KdzIsju0ma+7MKm+cxEDK/So3IzTirWuftOwEvE9v04rxGgrlu19s2vNauc3rwPY5ksu2wPQBui/uLk6DjrQJO15drG4CKWHHMJ/LJK2Eej8P7iE2FMZi08+n04lfvXkey1xsuMMoRXtmiQyepxIO9SoOaLRbA3eqkR51I+hbqu98dGIuj/RdbCwEgHriMjesxbDR/W4sR5evB3yesZMLhzU2dYzKoj7fuE7fgjhS4VjXsAlbMzR4cwUBjRpdVCNhYTZdYFl6n8m6RJ2J3BOiQzQiCg0hjlAoDDp1PCd+OTyTj0GDzrsZ5NhcxYQWj77/KTt8THh9BXR5nttuiokxT9FbGbn9hSJn19Vjkw0kJdrPZ8FhrBkVnZAY+iFQla6knnXVJPaQxDakgVXABRbKyeZNgxmu1FPIAIKxiNJWqmqzmT5RRfQ6HIOicxedLzPTek9xi9elsxj6xigZby4NRxcjuGOgsyx1VMjZyKqCj/lLZqe9GB1O0eFyCIkgHkRyhLHwoRUavrdAFjYj8E=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8677ad22-b58d-4fc6-f7a5-08ddbd524cd9
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jul 2025 12:32:13.1951
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: PCJxsoh5VwxVXODG8T5iuv1RPX/qwGql7otOvRrjogYDqcQW+jVb8lHBdBaj/kZflLOFKihZiz3FiQc72CuZT/Rp6kiMBbQFltqr8r0ZFRs=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR10MB6231
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-07_03,2025-07-07_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 malwarescore=0 mlxscore=0
+ phishscore=0 bulkscore=0 mlxlogscore=916 spamscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
+ definitions=main-2507070073
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA3MDA3MyBTYWx0ZWRfX5xC0yVvs98rG rz9hIKaNeB4WRqv5No4hwCduVhQ+gM3Now9TM0jHIWI/Ya+3N+k70DeNsPd6RMfWrTU5DZWfei2 Oq4g4jRTen7QfWk0jcCL79Jndg21Z2f4g1eX5zwEG1t2fdu/ZHCs7bIj/wzwt35IDdzxRAO+gg7
+ /V/4oS1SYjBWyOg+fcgUfoCnW8DrLLSbS4p4LR1vDYIKfQawBATyjg5HCrsAbfhgpscwg662RCR iF7cGiBj8bnunId64E0B3n4DxjkNIY/dBJRiJZagTYYqFFMVsHLe41XqYqLD1Co7X1/5Pfr3Hn4 FNUVivO1IaEhaen5nPyTOpOe4N+HM+TzrR6D32+ZdMQ4h62OGKV6XzKVWmSYM8sGGJF5GcTReDz
+ vDUodkNLNHMvtk5zQBRmfsI2BjP4zv+dqsBb81AWbQKgeh/+fwy7d5eVqmQYxsyuJ7PBZ3eV
+X-Proofpoint-ORIG-GUID: 9wR7ciq_dt6EKtDME0R3S8hma5Ff7Ggj
+X-Proofpoint-GUID: 9wR7ciq_dt6EKtDME0R3S8hma5Ff7Ggj
+X-Authority-Analysis: v=2.4 cv=CacI5Krl c=1 sm=1 tr=0 ts=686bbe51 b=1 cx=c_pps a=e1sVV491RgrpLwSTMOnk8w==:117 a=e1sVV491RgrpLwSTMOnk8w==:17 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=Wb1JkmetP80A:10 a=GoEa3M9JfhUA:10 a=0v93pcGMeb4zWV5x07AA:9 a=CjuIK1q_8ugA:10 cc=ntf awl=host:13565
 
-On Mon, 7 Jul 2025 11:27:06 +0100
-Ben Horgan <ben.horgan@arm.com> wrote:
+On Mon, Jul 07, 2025 at 02:27:01PM +0200, David Hildenbrand wrote:
+> IIRC, MAP_ANON |MAP_SHARED would have done a shmem_zero_setup().
+>
+> mm/mmap.c still has the comment "mmap_region() will call shmem_zero_setup()
+> to create a file".
 
-> Hi James,
-> 
-> On 7/4/25 18:38, James Morse wrote:
-> > From: Rob Herring <robh@kernel.org>
-> > 
-> > Use the minimum CPU h/w id of the CPUs associated with the cache for the
-> > cache 'id'. This will provide a stable id value for a given system. As
-> > we need to check all possible CPUs, we can't use the shared_cpu_map
-> > which is just online CPUs. As there's not a cache to CPUs mapping in DT,
-> > we have to walk all CPU nodes and then walk cache levels.
-> > 
-> > The cache_id exposed to user-space has historically been 32 bits, and
-> > is too late to change. This value is parsed into a u32 by user-space
-> > libraries such as libvirt:
-> > https://github.com/libvirt/libvirt/blob/master/src/util/virresctrl.c#L1588
-> > 
-> > Give up on assigning cache-id's if a CPU h/w id greater than 32 bits
-> > is found.
-> > 
-> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-> > Signed-off-by: Rob Herring <robh@kernel.org>
-> > [ ben: converted to use the __free cleanup idiom ]
-> > Signed-off-by: Ben Horgan <ben.horgan@arm.com>
-> > [ morse: Add checks to give up if a value larger than 32 bits is seen. ]
-> > Signed-off-by: James Morse <james.morse@arm.com>
-> > ---
-> > Use as a 32bit value has also been seen in DPDK patches here:
-> > http://inbox.dpdk.org/dev/20241021015246.304431-2-wathsala.vithanage@arm.com/
-> > 
-> > Changes since v1:
-> >   * Remove the second loop in favour of a helper.
-> >   
-> > An open question from v1 is whether it would be preferable to use an
-> > index into the DT of the CPU nodes instead of the hardware id. This would
-> > save an arch specific swizzle - but the numbers would change if the DT
-> > were changed. This scheme isn't sensitive to the order of DT nodes.
-> > 
-> > ---
-> >   drivers/base/cacheinfo.c | 38 ++++++++++++++++++++++++++++++++++++++
-> >   1 file changed, 38 insertions(+)
-> > 
-> > diff --git a/drivers/base/cacheinfo.c b/drivers/base/cacheinfo.c
-> > index cf0d455209d7..df593da0d5f7 100644
-> > --- a/drivers/base/cacheinfo.c
-> > +++ b/drivers/base/cacheinfo.c
-> > @@ -8,6 +8,7 @@
-> >   #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-> >   
-> >   #include <linux/acpi.h>
-> > +#include <linux/bitfield.h>
-> >   #include <linux/bitops.h>
-> >   #include <linux/cacheinfo.h>
-> >   #include <linux/compiler.h>
-> > @@ -183,6 +184,42 @@ static bool cache_node_is_unified(struct cacheinfo *this_leaf,
-> >   	return of_property_read_bool(np, "cache-unified");
-> >   }
-> >   
-> > +static bool match_cache_node(struct device_node *cpu,
-> > +			     const struct device_node *cache_node)
-> > +{
-> > +	for (struct device_node *cache __free(device_node) = of_find_next_cache_node(cpu);  
-> Looks like the creation of this helper function has upset the 
-> device_node reference counting. This first __free(device_node) will only 
-> cause of_node_put() to be called in the case of the early return from 
-> the loop. You've dropped the second __free(device_node) which accounts 
-> for 'cache' changing on each iteration.
+Correct.
 
-Good catch - this behaves differently from many of the of_get_next* type
-helpers in that it doesn't drop the reference to the previous iteration
-within the call.
+>
+> I think this was moved to __mmap_new_vma().
+>
+> Is there any (error) path where we could not call that by accident?
 
-Maybe it should?
+No.
 
-I checked a few of the call sites and some would be simplified if it did
-others would need some more complex restructuring but might benefit as
-well.
+Shared means there's a file.
 
-> > +	     cache != NULL; cache = of_find_next_cache_node(cache)) {
-> > +		if (cache == cache_node)
-> > +			return true;
-> > +	}
-> > +
-> > +	return false;
-> > +}
-> > +
-> > +static void cache_of_set_id(struct cacheinfo *this_leaf,
-> > +			    struct device_node *cache_node)
-> > +{
-> > +	struct device_node *cpu;
-> > +	u32 min_id = ~0;
-> > +
-> > +	for_each_of_cpu_node(cpu) {
-> > +		u64 id = of_get_cpu_hwid(cpu, 0);
-> > +
-> > +		if (FIELD_GET(GENMASK_ULL(63, 32), id)) {
-> > +			of_node_put(cpu);
-> > +			return;
-> > +		}
-> > +
-> > +		if (match_cache_node(cpu, cache_node))
-> > +			min_id = min(min_id, id);
-> > +	}
-> > +
-> > +	if (min_id != ~0) {
-> > +		this_leaf->id = min_id;
-> > +		this_leaf->attributes |= CACHE_ID;
-> > +	}
-> > +}
-> > +
-> >   static void cache_of_set_props(struct cacheinfo *this_leaf,
-> >   			       struct device_node *np)
-> >   {
-> > @@ -198,6 +235,7 @@ static void cache_of_set_props(struct cacheinfo *this_leaf,
-> >   	cache_get_line_size(this_leaf, np);
-> >   	cache_nr_sets(this_leaf, np);
-> >   	cache_associativity(this_leaf);
-> > +	cache_of_set_id(this_leaf, np);
-> >   }
-> >   
-> >   static int cache_setup_of_node(unsigned int cpu)  
-> 
-> 
-> Thanks,
-> 
-> Ben
-> 
-> 
+This also would mean we've been kernel NULL pointer dereferencing since
+2019 btw when this change was made. I don't recall the reports... :>)
 
+I think people get confused because MAP_SHARED | MAP_ANON makes people
+think there won't be a file.
+
+Our terminology sucks...
+
+>
+> --
+> Cheers,
+>
+> David / dhildenb
+>
 
