@@ -1,43 +1,43 @@
-Return-Path: <linux-kernel+bounces-720196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5335AFB86E
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 18:13:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1ACCAFB86D
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 18:13:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33719165429
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 16:13:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0FB5188E2BA
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 16:13:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BE7B22ACEF;
-	Mon,  7 Jul 2025 16:12:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E954122A4FC;
+	Mon,  7 Jul 2025 16:12:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=solidrn.onmicrosoft.com header.i=@solidrn.onmicrosoft.com header.b="R0L2F3Cq";
-	dkim=pass (1024-bit key) header.d=solidrn.onmicrosoft.com header.i=@solidrn.onmicrosoft.com header.b="R0L2F3Cq"
-Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11021113.outbound.protection.outlook.com [52.101.65.113])
+	dkim=pass (1024-bit key) header.d=solidrn.onmicrosoft.com header.i=@solidrn.onmicrosoft.com header.b="KPcj7JMI";
+	dkim=pass (1024-bit key) header.d=solidrn.onmicrosoft.com header.i=@solidrn.onmicrosoft.com header.b="KPcj7JMI"
+Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11020082.outbound.protection.outlook.com [52.101.84.82])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2249522686F;
-	Mon,  7 Jul 2025 16:12:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.113
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C4642264AD;
+	Mon,  7 Jul 2025 16:12:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.82
 ARC-Seal:i=4; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751904754; cv=fail; b=a3HntI2DnWFZ/pF65Gw9OPXKSPLdIi9MOcwvZIkuE9zlLpW7YJnWlASUePaJS2vfjTUi23W/rv2OZWURLf2CgG3bKiTSPE8BTrlrbx0N5Wtxww0OBXDO18XhjlONhxlU0ZutQIdqCOWlynbTf2nBZcqMnxynHfAZ+HbuU0WBcGs=
+	t=1751904752; cv=fail; b=pCB4j6VyR2IMZuUdKEJG/kcdmYdribxGacMouiRmmEoeC145EkXcnbiNFE8ATLSJjxLC7JGkfWcdL01Yg6gvwy3OTFACzOtJJH9E5y5FkC2Ktz8QD3uksKchfbOFDh1UxOs6wY7ZjUeNgy79JVqdhi23BdDh7yqIviLqGjgj9Bw=
 ARC-Message-Signature:i=4; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751904754; c=relaxed/simple;
-	bh=iLwGB9Cz+ekHVEBz74ll88bIdltrxet9rAGtIUnkARw=;
+	s=arc-20240116; t=1751904752; c=relaxed/simple;
+	bh=oUjhUTa5kPgjDqSsyrKh1E0gsz1+z8AejyVHw2KyERk=;
 	h=From:Date:Subject:Content-Type:Message-Id:References:In-Reply-To:
-	 To:Cc:MIME-Version; b=jz8zpO9wNbWZ5jV+V/E5NpvHH5p5SAEKwb28n3IDugtkJOcHWbbA0zQ5wA5Jl67nFLvdOxRgquFz4G2sZSjpfSHYalNcQV//xtjsWxUb0EqTgtmIiGYduJCSbpjaZwmhpRPoR3l4qNX2LuEbqgK1FVXhA2QPkKI0/5SjmRF/VBw=
-ARC-Authentication-Results:i=4; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=solid-run.com; spf=pass smtp.mailfrom=solid-run.com; dkim=pass (1024-bit key) header.d=solidrn.onmicrosoft.com header.i=@solidrn.onmicrosoft.com header.b=R0L2F3Cq; dkim=pass (1024-bit key) header.d=solidrn.onmicrosoft.com header.i=@solidrn.onmicrosoft.com header.b=R0L2F3Cq; arc=fail smtp.client-ip=52.101.65.113
+	 To:Cc:MIME-Version; b=gZGsCerZ/x++XTP9SKIaeZvVXrbjOle5dJ7e/ff3Rx4VWZsa027JWqpGBnkF3aYOJWH2NQjKOuj8GNJ4s1P/EF8EUPy/FFiY+3BxMXxW138tWkgLpE1nADvzOvtMLZAaxlpP+rAlk4feXt+JosLSdQoSsdF3sutGzGaxZ9DAqQg=
+ARC-Authentication-Results:i=4; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=solid-run.com; spf=pass smtp.mailfrom=solid-run.com; dkim=pass (1024-bit key) header.d=solidrn.onmicrosoft.com header.i=@solidrn.onmicrosoft.com header.b=KPcj7JMI; dkim=pass (1024-bit key) header.d=solidrn.onmicrosoft.com header.i=@solidrn.onmicrosoft.com header.b=KPcj7JMI; arc=fail smtp.client-ip=52.101.84.82
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=solid-run.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=solid-run.com
 ARC-Seal: i=3; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
- b=tXyBG0LJiZIxiw3wBlcMTL+At8FO18v8OoecGZpuyU3mAt59ogl4trPEpDQKNWGEEoJ09nYK3sfhZvJ95KWf8jyg/C3pF2esmABdeCshW33Ht99seBjShByhjXTVeOjyaoDG0QnCpGTVwAbPuhb6Vc4gnHrHDt14JP4mlHK783yq9QwHCfPxmHyWk10T/ja4h3AqtWlENMTuK8k111/L60thnLmPvdHK/RYH1pDgdC7Yjll6QJyVTVi+b0Xf3ffBB0QAZH/SAw7YyTfe7FfsF3mbiE1XoYQ8YCDo6N22mxjWe4vygo9jZ+0qo524ZxrLCYdvUItxUSTg2g4rde0jwA==
+ b=Mg5rZxTM5OB3Ns8gdYdofQUD+R7qh6TkBd29WBsZ4Qb8rmQi7E1FX9t2kgo9i1dkloKZCeJJT8EwwvYNOc4pawQCMZHGWe86O8c8GYd/uJMMzzx4DtT/zbWnzKx6qIX+oxlaABlWJuuvUF2UUFAZh38TszW14bpxWF5avvMWREp9cIzmwrnlPttAySFnR6ZNG2n3jBfxHiYQDWliFNty4VlFbEvx4M2FwiObStgTL/0s1QiC6LawWOZAh1j/9Dtj5nV5TPIc5a1M3gBLvsX1IWp1ugBPTN9uj4tIUhXwP1JaZHiZXMGT7n1edKy9roPPm15Y+44ay+Is5OZnme56BA==
 ARC-Message-Signature: i=3; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=sH3nBWchK4dL3OJQih0nbJlMVklro06J6MOi9chmabE=;
- b=GfOXvCg1uZw2jjCQ6kwdyQsptIipiAeh5lX1dZ75PXnKeSoXUbp4yvzZ3S0N2/G8PDjDulD2DyQdOJjsktNSRBxJB/VlV23ldz0B1Sari2MQkFWkqAY0AaqLvNu+5wHnlA4bHOEqIXyoci93QeVXtpQjinEJhxAITl8nJhz0Udn6EDDmCWHkBYxBg8g86p9WscPTHrwqXhnIuScM4rv19VXjT00VcMzn1bebfcTIm/J1yI8cLrZdlAfLbI+VdlYN6E/l3fLbmKbQjQ6GVGhv1635D6ZSwvCwQEtwTE2KjA9ECsxON8IbojfDkQiImrQMn5Zy74hSH2QZ0M5JbpqCAA==
+ bh=2k3sBkaGu3B/cF84YO78zo+BOduDJaqmET/YTERird8=;
+ b=dXBvWPtRnHrJYs6OBRyBwTnKGC6oejld6QL+1GiTwEKLTUdftpQoT5OLbW1HKkifiAr11Y3YMHv72b+U3uMfwSQOGLHzXEz04p6x49GKv1GY5dzCoFAu9eBczyABHzfas2tF1bZKuqi4OpJDllzTpGHJD+IGjricqzP3gkTphUEvePH5TyDH+b1HPXT6ecAQ/1b14WNkyAqinW1k44x6iAsgDaZjw/3wdRdVxolpwSKBpSTeaS5ewkZIkRDRY09Qu46G0mbpMbB2Cif6b6h5O3L1gdfksj5L1oQ37C3J+kyqy3bUz/EucCSDZ7BlcQIXY43Pwyc/S7K8vuKsLxfjLw==
 ARC-Authentication-Results: i=3; mx.microsoft.com 1; spf=fail (sender ip is
  52.17.62.50) smtp.rcpttodomain=gmail.com smtp.mailfrom=solid-run.com;
  dmarc=fail (p=none sp=none pct=100) action=none header.from=solid-run.com;
@@ -47,18 +47,18 @@ ARC-Authentication-Results: i=3; mx.microsoft.com 1; spf=fail (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=solidrn.onmicrosoft.com; s=selector1-solidrn-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sH3nBWchK4dL3OJQih0nbJlMVklro06J6MOi9chmabE=;
- b=R0L2F3CqFlbs/X65+dM35G7CHYsYYKTRTdiftF4NPsNZMQ73e4M1nqnMv6YoL5jVg5jxUI0EvWqdcSZh7e6AzdN/zIAZu1M3WFe2tkIGUnxJ0WptryKrK0wyliqcq5viCJB4XunS+zmiUDbbcQmx1yYr7TGByD26C/nHx6PgXeQ=
-Received: from AM8P189CA0026.EURP189.PROD.OUTLOOK.COM (2603:10a6:20b:218::31)
- by VI2PR04MB10217.eurprd04.prod.outlook.com (2603:10a6:800:228::20) with
+ bh=2k3sBkaGu3B/cF84YO78zo+BOduDJaqmET/YTERird8=;
+ b=KPcj7JMIdNIOmZJi1g9zN7m9CqNb8MtqwWu+/3qQ++Z00xy8R4R2zjikQiBHJFhU69lILlX+1SfnOSHYxBgr+KH68C1b5plVf9PwFfSUo5u36n/QUirXyF2UW1LvAgBXHnJtBA3VQBPZFjHAWo48XLyRaipUJdjUH5BlWA73VB4=
+Received: from AS4PR10CA0019.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:5d8::19)
+ by AM9PR04MB7508.eurprd04.prod.outlook.com (2603:10a6:20b:283::18) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.26; Mon, 7 Jul
- 2025 16:12:25 +0000
-Received: from AMS0EPF000001A0.eurprd05.prod.outlook.com
- (2603:10a6:20b:218:cafe::65) by AM8P189CA0026.outlook.office365.com
- (2603:10a6:20b:218::31) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.25; Mon, 7 Jul
+ 2025 16:12:26 +0000
+Received: from AMS0EPF000001AA.eurprd05.prod.outlook.com
+ (2603:10a6:20b:5d8:cafe::d5) by AS4PR10CA0019.outlook.office365.com
+ (2603:10a6:20b:5d8::19) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.20.8901.26 via Frontend Transport; Mon,
- 7 Jul 2025 16:12:24 +0000
+ 7 Jul 2025 16:12:26 +0000
 X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 52.17.62.50)
  smtp.mailfrom=solid-run.com; dkim=pass (signature was verified)
  header.d=solidrn.onmicrosoft.com;dmarc=fail action=none
@@ -67,57 +67,57 @@ Received-SPF: Fail (protection.outlook.com: domain of solid-run.com does not
  designate 52.17.62.50 as permitted sender) receiver=protection.outlook.com;
  client-ip=52.17.62.50; helo=eu-dlp.cloud-sec-av.com;
 Received: from eu-dlp.cloud-sec-av.com (52.17.62.50) by
- AMS0EPF000001A0.mail.protection.outlook.com (10.167.16.230) with Microsoft
+ AMS0EPF000001AA.mail.protection.outlook.com (10.167.16.150) with Microsoft
  SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.8901.15
- via Frontend Transport; Mon, 7 Jul 2025 16:12:24 +0000
-Received: from emails-7501188-12-mt-prod-cp-eu-2.checkpointcloudsec.com (ip-10-20-5-201.eu-west-1.compute.internal [10.20.5.201])
-	by mta-outgoing-dlp-862-mt-prod-cp-eu-2.checkpointcloudsec.com (Postfix) with ESMTPS id 03E767FFF6;
-	Mon,  7 Jul 2025 16:12:24 +0000 (UTC)
+ via Frontend Transport; Mon, 7 Jul 2025 16:12:25 +0000
+Received: from emails-6403107-12-mt-prod-cp-eu-2.checkpointcloudsec.com (ip-10-20-6-22.eu-west-1.compute.internal [10.20.6.22])
+	by mta-outgoing-dlp-670-mt-prod-cp-eu-2.checkpointcloudsec.com (Postfix) with ESMTPS id C03C7801D1;
+	Mon,  7 Jul 2025 16:12:25 +0000 (UTC)
 ARC-Authentication-Results: i=2; mx.checkpointcloudsec.com; arc=pass;
   dkim=none header.d=none
 ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed;
- d=checkpointcloudsec.com; s=arcselector01; t=1751904744; h=from : to :
+ d=checkpointcloudsec.com; s=arcselector01; t=1751904745; h=from : to :
  subject : date : message-id : content-type : mime-version;
- bh=sH3nBWchK4dL3OJQih0nbJlMVklro06J6MOi9chmabE=;
- b=A5KFZ5Jl5Fm8/ablCYHyQrjeoAN6mjRPqRT/HTFQUxZqxA2yGaYSCT/asnB5jVVATrFKu
- VRFP9GTpTHyqFVJDA7VqmbruKHTf56Z8qvgZJj7hcMXwVUI9l9/yWEyM0m3svqMoSMHZiC+
- rCZopQ5krUm+fiLA9XXI3v9F/5I9Fuc=
+ bh=2k3sBkaGu3B/cF84YO78zo+BOduDJaqmET/YTERird8=;
+ b=CJ59xKItX12eUYnh6QFmxfM3Z5Vi0s74CS3O6EeCwdeAsDaGePkGtsN/em0ui9ANquwQf
+ t0c4oqvzjx+Fz8G2xIsfE96iCUVp2805kG/LyFUlHy0ow0e0OL5USwMv24x81El61PUrBWs
+ Q3JvjEHYTeTIrSPqQTi2hEEHLB03nSA=
 ARC-Seal: i=2; cv=pass; a=rsa-sha256; d=checkpointcloudsec.com;
- s=arcselector01; t=1751904744;
- b=QC2AMT5PFEOXWntRBXBT5HlN9vUNnNBgXbHNwLg30/ntMz34LxSKpGZHuHrx7vY7HXgiw
- m7BXzFEtXq6cyy8MEFHIU7c0EP5DDQ3ehMg68KOVl5wSQAv9r+SnLnCgpCdGZp7JSo/84A3
- dzL4k0EKvFBksmDWr6x7mE049cctBIQ=
+ s=arcselector01; t=1751904745;
+ b=Im7Azy+9HliOEdMwPoFW5taPkNBGbojcrBgRIIOsDsRPRJVA0QaiU6zfurCY2Xj+M8iUt
+ SvAI/I8YeOExeWaGLn+VAfJf3aaWiP4hbY2vRNmGwJLhpmFBb8b+2W/43QcfDD7f+RcPxLS
+ 5jyBs3PNpN4K61qmEKQrymt17hEEnkY=
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=o9RyQI8maJo7JP5J1GkkwOcSzCZwWPrKcBhWatrCnw+qs5fd09Y/jj6XL5j9qf3jXryfhV8JhA2vN77RAkzmUgb/zjsjrV3aAOtAZSMeSVhwb4RKQcay7qfyY7Tki8VdST30Alzuge9k0YoVqi0iayAwxyXC1PG7QDpxacsTHnTfhdant+kdR7kdoodf8lwHvquneJQqgeaHE3VwgQ3UabGWh183weUEvhA23PeuzfxS6uFKbW+pSpC/HGGhXwF012+sQbkzduwmuUeZrzoaQQTT+9XnIJn7ANrlCh3/wMBg2PtYFucF962VHR4n3q86M6pFnM33JHkkdL0kUlVh7A==
+ b=mLrt6wgubFgCbeQ/XGSBfDs00r2Q3tPIEVazBX6OUKpgW4UW4VvwX6DGT2HbwQxMRy5m1TEaH45N40LKpgoRQdEd0FStDbEIEn2fbWODzsZfNXSXqmKaphNZuDsB9COQDfAf6GI6vAjYpt60/Ha3KiXWxS0cZiI9Fr6wdkS7RkmaBFK9xgcKwxVKS74SKc5+4C3xDujgzXNlWbnN6Ue9QuBFmzAkGmNERUZBJpkWcBYMHQPObuAL/62QVH8Pk0H9iKpypuXYE3BXnH5FAO8Q24JyQfefoHy2WHIbu5y/EzoWYNn+PlamUDWvnMu15YLLp/gBDfdyGeS1bNk3AaZ/lg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=sH3nBWchK4dL3OJQih0nbJlMVklro06J6MOi9chmabE=;
- b=wnTWarI82sNdPh82At+ly0a6KFzMlqABeR6N8/lylza8DznBxLx1nHFgKHxSKm+gPE4aq2RRjYgo2aQ5X44kIj2wWTrlU2tJoBcX9jNe2oT2AmiOVSQOKsnd+0WDzdoTdjPP5YG3Efm75sus9dLnh5p96439UQW4yHvFyUAW4faPWqpK46paBO7zHt/njRNaF7vvi27jzOgd534zBYj5v6HcFjhHoNV6uC3iK6KuKt2TsvXIAnwRdsiUdP9LVTm6VGB6ttwHaHL+FwPJ1zI+VHqKNe8Uyy9BEUu/FcNyk+he8vyJPlrmMl6f/UWsptzNuWk5cezlpkePUdrfn/ULoA==
+ bh=2k3sBkaGu3B/cF84YO78zo+BOduDJaqmET/YTERird8=;
+ b=gxNnZhqk66NYZXXfGan+qwVdNehpzYTy9UVFAZc9CAsEnRJVP4E1l/AO4Mk8FWs3W5hPZ7hQg1UUMPsiOyUW8NRU+GQyQ9kiIv+hXE/SURmycHktAIjQmxB0vkgf8NWPpeUayDgFhmGt23Hu3K0CvAvwaYL1+300jn9bwGJKXRVAUBAUAUF6dD6tMY2J+vfJ3fdyX5fb4mAtkkIz0x1tQDiTvjOq9sKOBd2gQ6naV3mj6LFSprJuzUkKHfAdwxnz6FLKe8rSdR5IP1nbQuuYUHZLPe+RwMNJd5Pfh5TpctzJcYyNcGs1XvXJnIyD4d8LdHCuagJJFM9ILcAoecmroQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=solid-run.com; dmarc=pass action=none
  header.from=solid-run.com; dkim=pass header.d=solid-run.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=solidrn.onmicrosoft.com; s=selector1-solidrn-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sH3nBWchK4dL3OJQih0nbJlMVklro06J6MOi9chmabE=;
- b=R0L2F3CqFlbs/X65+dM35G7CHYsYYKTRTdiftF4NPsNZMQ73e4M1nqnMv6YoL5jVg5jxUI0EvWqdcSZh7e6AzdN/zIAZu1M3WFe2tkIGUnxJ0WptryKrK0wyliqcq5viCJB4XunS+zmiUDbbcQmx1yYr7TGByD26C/nHx6PgXeQ=
+ bh=2k3sBkaGu3B/cF84YO78zo+BOduDJaqmET/YTERird8=;
+ b=KPcj7JMIdNIOmZJi1g9zN7m9CqNb8MtqwWu+/3qQ++Z00xy8R4R2zjikQiBHJFhU69lILlX+1SfnOSHYxBgr+KH68C1b5plVf9PwFfSUo5u36n/QUirXyF2UW1LvAgBXHnJtBA3VQBPZFjHAWo48XLyRaipUJdjUH5BlWA73VB4=
 Received: from AM6PR04MB4567.eurprd04.prod.outlook.com (2603:10a6:20b:19::11)
  by PR3PR04MB7354.eurprd04.prod.outlook.com (2603:10a6:102:8e::7) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.26; Mon, 7 Jul
- 2025 16:12:12 +0000
+ 2025 16:12:14 +0000
 Received: from AM6PR04MB4567.eurprd04.prod.outlook.com
  ([fe80::6d60:a27a:fde:6c1f]) by AM6PR04MB4567.eurprd04.prod.outlook.com
  ([fe80::6d60:a27a:fde:6c1f%4]) with mapi id 15.20.8880.021; Mon, 7 Jul 2025
- 16:12:12 +0000
+ 16:12:14 +0000
 From: Josua Mayer <josua@solid-run.com>
-Date: Mon, 07 Jul 2025 19:11:57 +0300
-Subject: [PATCH v2 2/3] arm64: dts: add description for solidrun imx8mp som
- and cubox-m
+Date: Mon, 07 Jul 2025 19:11:58 +0300
+Subject: [PATCH v2 3/3] arm64: dts: add description for solidrun imx8mp
+ hummingboard variants
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250707-imx8mp-sr-som-v2-2-785814ef09a9@solid-run.com>
+Message-Id: <20250707-imx8mp-sr-som-v2-3-785814ef09a9@solid-run.com>
 References: <20250707-imx8mp-sr-som-v2-0-785814ef09a9@solid-run.com>
 In-Reply-To: <20250707-imx8mp-sr-som-v2-0-785814ef09a9@solid-run.com>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -140,156 +140,168 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-TrafficTypeDiagnostic:
-	AM6PR04MB4567:EE_|PR3PR04MB7354:EE_|AMS0EPF000001A0:EE_|VI2PR04MB10217:EE_
-X-MS-Office365-Filtering-Correlation-Id: 71e1b24a-cae0-40d8-7691-08ddbd710f78
+	AM6PR04MB4567:EE_|PR3PR04MB7354:EE_|AMS0EPF000001AA:EE_|AM9PR04MB7508:EE_
+X-MS-Office365-Filtering-Correlation-Id: 955fe459-0588-470b-a131-08ddbd71106a
 X-CLOUD-SEC-AV-Info: solidrun,office365_emails,sent,inline
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam-Untrusted:
  BCL:0;ARA:13230040|1800799024|366016|52116014|376014|7416014|38350700014;
 X-Microsoft-Antispam-Message-Info-Original:
- =?utf-8?B?cFl2RGVoODdVUU8wRWZZMWErS1pqNVNxR2l3YXM2Z2hyYXFwdTl2R0QxUENy?=
- =?utf-8?B?ZHQvbzFjbE8xM0lXQXNsd1BtUmJTRjhka3dXZ01aNUlyL3VDVDJOK21sNzlO?=
- =?utf-8?B?REovNjdBZFpCTUtrLzd0NFplT3d1UndSVno5UGp6bTRZYzF3YzdOZ212RWVR?=
- =?utf-8?B?NDhCZDNZY0J2Vm9ySEk3VEFWdEc1NmJZQmpZNXdyeG9PNndsREFsT0kya0o3?=
- =?utf-8?B?bElEWUNjaE1JT1ljWjN2SjdERmQ2NDMyb0MrWlh2SFBtV1FYNzFMcmVRblVo?=
- =?utf-8?B?T3dCQ2t3NnJlVFE1MmZsWDF1WktZR0c4ZFF3M0p5VFNwYWpQd0x3V3FlSXAw?=
- =?utf-8?B?Qm9JTUU3dTBGeWZQeEhhSnRPNm5uQnJhYThKRWtXU1lFZW8xVkVvVWJFd2xK?=
- =?utf-8?B?eXRRVDJqVFowYURCckcwWUM5c2hraDdxUUpkdjZSY3Bsa3QzUDRCR1NzczQ2?=
- =?utf-8?B?eUp5TEJOVVJDWkZvd0FSb3FqT1luK0prbHFyQk4xU1ZBTUlnM1BVUTdaSG5X?=
- =?utf-8?B?QzBkenkrS3MxMC9jMUMvVUdhaldIVy84TVBVWmcvZi9Za2FhRFdyT0pkcktG?=
- =?utf-8?B?aFBVVCtqd0NuRGRrM3UwWStkcjFqRnA0c3J1b1ZBbys4dzA5T2I4bHRDTXhB?=
- =?utf-8?B?aGo4TC9SN2lzTUh4T1lpWGRINDNndGRheDIwRXBQblZXQ1h3dFhESUwrd2JT?=
- =?utf-8?B?NHBnNlFhcDFwMmFhRjc2MGNZS1ZLSnV3bHhZSnRHazlQSTZ3N05lVWRtNFZY?=
- =?utf-8?B?NlFKdE41ejBYYWFEbGVCci9vR2RYTzJoc3Z0RlpDTEVNSS9sdE1BT3pFOXp0?=
- =?utf-8?B?VlltYVZGMEhIUXhWWnpjM1VOaVVCTm9BT0FDRnQ4QmRTeVd4N0NURnpubngy?=
- =?utf-8?B?Z1cvNVF0TGl0WkxITHJSZ0NuMjgxMkZ3NHFxeU12aWEzTzdYQU1XdVg1V0Nh?=
- =?utf-8?B?VjREaFNsQjBaa1R4bWxaRjg3NFdyVHd2VW82NGl3RlhPN0VGcEswYTM3eldh?=
- =?utf-8?B?Q1dyL1ZORFpHNkxncmY2L1BZRURDZDBDUTFXNzNXWDgxMmszQ3pQSFpvQUZz?=
- =?utf-8?B?QS9SdjRHTUtYUCtyQ1oxUGI2dlcxODZJazRVSVB1c1c3K1pvMEpFb0ZXZWRt?=
- =?utf-8?B?cTJTYllYTStDck5ic0Z0S09yN01QZEg3VDcwWWt0bHJseVBwbnVOKzVwREFZ?=
- =?utf-8?B?UHhJdkI4R1NvU3dWUEFGaC84cUtaQWMzbUNoVkk3Y1pIQXJaQTdhWUxHM0hF?=
- =?utf-8?B?N2RVT3RaWUp4SWUyKytEampLek91R2JHbmFub1haMmZMREpZSmFuWHdWQVcz?=
- =?utf-8?B?NWhlNzVDUmhWRW1HZzc1Zk9tVXlXcFEyTlppbHhaL0NrcGZabStPY25aUldo?=
- =?utf-8?B?UHhjV2w0bWtSMDJaN1B4M2lVcGZsM2dlUWZ6RXQwcklVMDlteTJnNHoxMGxy?=
- =?utf-8?B?TXB3WDEzL1JpNTRNcHpBcU8xL0VVejNIZ01Xdk5aNkRUamZ0ejV1Vmt6bDFE?=
- =?utf-8?B?UGRpaXZiYmtVaEhsUkljSXo3SlAxdjJaYzdIb0k2RkN0MkJOT0V6SkRBc3g5?=
- =?utf-8?B?Q1IvL0dmZEh1VWNxU1dCd3hGbUZjZlRyMk9hT2VPcTNHa2ZMYXdIMUNjaU5r?=
- =?utf-8?B?cDVkYnNTVHRiOC9xVDcrZmFxNi9XWUdlaHFrazRLQmZBNGVHQWtWOGlyQ3pm?=
- =?utf-8?B?ZXdTWnpTdDJNVmhoZ2J3WERBMkJUVU5jMnAveFIweE10dzcyZnptWktVeTMw?=
- =?utf-8?B?OFlhMDh3cEg0ZDBlK0g2N3BlOXRUSVVQbEMzY211WnlhV3BFbVEveHNHSStP?=
- =?utf-8?B?TndUd2NKaHhOcW9RaFNLcnZZV05XTkEzY2NrZkNTNXpJYmh6MVNxRzI2SWIr?=
- =?utf-8?B?Q0h6YkRGblZabEFkczFMMlZaUWZ6cEtFbzhRdzZCYXdPdVc2UjdwVzV0aVB2?=
- =?utf-8?B?eldndWJRNGtSUHRoWFJoRHpZWnJIa2lnenNaMTJaaERWR21IYWpwL3Q5bkFi?=
- =?utf-8?B?MUtoUzJBWUd3PT0=?=
+ =?utf-8?B?NVZ6by9PWnErRjNWVW5lZDBXK1pLc1hTRWFpZEY3YWx0UXp3b3FxZGRYNDIw?=
+ =?utf-8?B?bUVUM1NlNjNYOWRwSHhHT1hGdkQxK1JDc2NMQ3VEZTVtYklGYVNyRGFEb0Fu?=
+ =?utf-8?B?a3R2aXJ6Y2JzNnJVZUpBVjhhVWR0ZHZ4YytQMDBGMEFTWUlqU3QyQko2VU5H?=
+ =?utf-8?B?T0o2cEQxOW93emVzZ1VhemdtM1VpektKVFhxY3h1V0VoeXR6dDlsd0gzNGtr?=
+ =?utf-8?B?bXYvWnZvbC9pQXVLNzdRMTVxUlAxTnVBVk9IQ1RodlhaUDZFL3ZYVDlCTnEx?=
+ =?utf-8?B?VzROaytZdVlNVUc4N2twd25Va1ZsL0hQRG03Vk54OXdISUF4QjlkbS9JclVq?=
+ =?utf-8?B?MXJuOWVha2FKNk82V2pnRTcrVkhiTzlYNktES2lseUJFL3VYcW5ORVpoaDE0?=
+ =?utf-8?B?eEdpUmRHTDJqODlDdGc3NDA3aUJkM0ZVQXFnQVI1enRrdjJJL2NiTS9Wa0lw?=
+ =?utf-8?B?OUptTGFVYjdJdHkyczZDUzJ6QUxoRGJEU0tWUFhLdDBoK2Rvb2VmK2Z6VTIv?=
+ =?utf-8?B?NVVnNGtBQ2VUSFVDWFpLa2p1VmpwRFdmMkxJNWtwSlVTTDNzZjFjV3o4YVF4?=
+ =?utf-8?B?a3UrQkdlYlpxenJ2VWdWOVJqTWRFZzVTNEtaVVBkblJ5cTd2S1RMelI4akd0?=
+ =?utf-8?B?V2dxN3p1WWNpa3BodEcxSCttdzVYS1ZkQjNRWGVvV3ZaaUpCc2FrUHcxWFlO?=
+ =?utf-8?B?SDU1OFBObUEvKzlEWmlXS0NVZ1d4Sm9DN2txYkpibXhWUUFzRDNRb0hTelJ0?=
+ =?utf-8?B?YW9sRCs2LzhSczdzem5YcGozcWdRNHBIRFlWNGNMeTdMbkl2bXdsNTJRb2E2?=
+ =?utf-8?B?L0E4WVhMVDFRSVlzdGRzR2dRaVY0Z28wRS90QWxualhNT2dFdDBmMldVMEdx?=
+ =?utf-8?B?Z0xBcWQ3Q1ZneXg3M0pXYWcwL0lQZjQ0aHVPSHNRMlhLTkdpQURhck9haE45?=
+ =?utf-8?B?UjZmdWZWcWRjeWRMaFRCK2VDcVJWam1lYmFoUzI2QWlYazVYLzU4OXh0OUtR?=
+ =?utf-8?B?bzdXVjBBZmhpcFptQzMyVjNKN3dKSElpS1FCeGc4eTBxY1A1Ti9uUkErRXA1?=
+ =?utf-8?B?akJlUHlVNTRTbFFGcWh6NWVyNHFoc0lsT09idGlhV1A3M3FZYXBEaDkrNys2?=
+ =?utf-8?B?eGJLQStaU08yNTcyZHh4d3ZmaDRnT3pscENXd05UQTJUQzFEem9BK2VGZk1y?=
+ =?utf-8?B?VnoxaklWZlBTenFDMldQVHVOYnV1clZkZG5tbmhLT3BhQkROQ0JYYnJXN2Zu?=
+ =?utf-8?B?YTFWdTJTYjF3cVRnWGp1em1obkZMdWdYLzVaUlpLdEZ6QkR6TnYwL2tFN091?=
+ =?utf-8?B?NmN4MUM1elVPb3JEcWZlUDBCWmMvdDVXdDU3a1MxNHAwTnRoUDZZSlpMbS81?=
+ =?utf-8?B?SWxGSmhRbkUrN3hxNFlXcXBiSkI5dmF5eXFMN21qL0c4UDdUTVo5OWNHMy9G?=
+ =?utf-8?B?Y3d5czh3WVBRMmNBRUFJYVZLTTgrclVhVE4rVnJIeDMwWDN5bDhBVHJVa2Vm?=
+ =?utf-8?B?enBNZEVGb0creDEwSzRwajFnQzFCT0V4TjlCUmZtc29QMGxPSDFlSUxJcW9P?=
+ =?utf-8?B?MTNXVlZ1V2pwbW1ONnFTYUFMeTBuM2FQZ09GV3ppSXN3cFBLekJMYm9LVCtX?=
+ =?utf-8?B?VWt2M1R5bnRpSkl0ZWY5NldLWndCWnR0WUZuUmtGMzhsOGJVVG9rYTJaSUJX?=
+ =?utf-8?B?cElCakJKTzl0VGN1OG5FVFRvOEdBUHhqQnRCb2JBaVhjT28yN1BrU1dsZ1l0?=
+ =?utf-8?B?UG9UV0pqdGZKUk9PeGpxWmdSdFFnUWRPaDJBUG9KcWx5a3czQi8zclpVUTc4?=
+ =?utf-8?B?bDY2QTJXTkZzY05FU3JLY05SYzY4SXdmVkhLb3JRWlM1eEJWYS96VTB0dUFX?=
+ =?utf-8?B?emtIZEV0bUVWdHh6Ykx3bTVxYWM3Y1dGT3k4ZWVJb24rbkFLQ0VYMm9IeHJo?=
+ =?utf-8?B?K01ONEhxd3JJVlRGeHlJZ1d1R3Q2NEREdXhsQ2ZQNGt6UGxyWlh2ak92c3Jv?=
+ =?utf-8?B?WG5mZjB4Ti9nPT0=?=
 X-Forefront-Antispam-Report-Untrusted:
  CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM6PR04MB4567.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(376014)(7416014)(38350700014);DIR:OUT;SFP:1102;
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: PR3PR04MB7354
 X-CLOUD-SEC-AV-INT-Relay: sent<mta-outgoing-dlp-mt-prod-cp-eu-2.checkpointcloudsec.com>
-X-CLOUD-SEC-AV-UUID: 81ee328948bb485cab8288c22d94e9b7:solidrun,office365_emails,sent,inline:9dc78d7a0aea7e94852b4c8673104263
+X-CLOUD-SEC-AV-UUID: cc4fb993940a4d04b93cb1c0fbd5acd7:solidrun,office365_emails,sent,inline:9dc78d7a0aea7e94852b4c8673104263
 Authentication-Results-Original: mx.checkpointcloudsec.com; arc=pass;
  dkim=none header.d=none
 X-EOPAttributedMessage: 0
 X-MS-Exchange-Transport-CrossTenantHeadersStripped:
- AMS0EPF000001A0.eurprd05.prod.outlook.com
+ AMS0EPF000001AA.eurprd05.prod.outlook.com
 X-MS-PublicTrafficType: Email
 X-MS-Office365-Filtering-Correlation-Id-Prvs:
-	6f3cbf3c-0613-4b0a-fa2c-08ddbd710841
+	9e82f9e6-a062-4214-640b-08ddbd71095d
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|35042699022|36860700013|1800799024|7416014|376014|14060799003|82310400026;
+	BCL:0;ARA:13230040|82310400026|35042699022|14060799003|36860700013|1800799024|7416014|376014;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?QU5jUEt4b1Vqd0pHL2QrRVQ3ZzQvSWQzbXE0QWZVeUs4Y3B5bmdQNmVKcXk0?=
- =?utf-8?B?WmRqdFBSdGxkaC9QS1JRajU2SkZvektlSjMwaERYUzh0RldLekY5UElsZ0tI?=
- =?utf-8?B?bVc4K1FVOTFUa2t6N0VRWkhEY1JWSHFFb0JNbmU3UW11WE5ZZm1LWk5EM3dO?=
- =?utf-8?B?d28zUmw4eDN6S0Y3Y2NWdktnSFJPbEhkaFhqbXdXNmlmWnpEZUNzZ0xuajFT?=
- =?utf-8?B?ZFlDbUZWOEUzVlFWSUZRRzRKT0g1L0FXVTVUaC9Gem90bURVZS82K2lsSSs0?=
- =?utf-8?B?aFBpdlRnR2QxVzA4Q2l6ODJTYVFQKzgzNUZ3NmlQd1ZReTFlVUQ1dm8weG1D?=
- =?utf-8?B?SVc5SXFFbmlGZ3NaZ3dpRVJobTEzYWMxRFF2dVM5YXFJY0gxVCtIRjRITlVC?=
- =?utf-8?B?QmtTS3lKd0NHa1poTmk5YlBKdVQ1Q1dmTEhnWEN1dVJOdUd2OC9jZHFySkxF?=
- =?utf-8?B?VmZLWUlVR1hYR2EycnJSQkpiSkpKNkdjTFJDQ2VxQkVuUlhVMjNxZXpHMVdU?=
- =?utf-8?B?Q3pVRVk2NW5yM3BKM1NCVy92a2xQb3lEVkozSm5Ud1hneHRObmZldXdyN0NN?=
- =?utf-8?B?MDFSS2lETnpzb1NrcGJHZUptODhyTVhWdEJ1bnEveG83QWZpU1VTQm5FMVkr?=
- =?utf-8?B?bG5lWE9KVFB3RFpTUE0xbDI2cDdHTFAwTHl1Yi9ja1lPLzlrOFBUUkx0T3pC?=
- =?utf-8?B?ZmpieVBwTE9zSEZna2NKdTZmMG9HUXBtL0tUS1NJaWorNVJXQlo0aFV2eFU5?=
- =?utf-8?B?MmlYMWYxM25tZ2VIeTlqOXF3dGZIYTkzaEFRWDhDbEM0bUQ2U1FKUTM2NWtu?=
- =?utf-8?B?c0p6bXVnU1hBbitQZ2M5RG0yYzQydHI4cERmQVM4di9qc0hhY09pWlVHWlYr?=
- =?utf-8?B?T1JzMFZoR3UyYWdGV2pvekZHRzY4K2wyRHQwQllMNDJRZ1d2UitOYW9oMGw0?=
- =?utf-8?B?TkM3ZmxTVkNrRXY1WkZxaWlBdEgvZWk3c1FuNTIvOFBsS0lXTGxWYThKYllM?=
- =?utf-8?B?bkVHbTc3Zmcya3J3b3RCL3NpUnp5enZGa2JLRUNna3YvV24yTC9renNvdnB2?=
- =?utf-8?B?UkQwQVoxWEJKUmtsaTFEWnZIbXFGSXZDcjJkTXVDY0NpN2dRNjBlZGkvYzVZ?=
- =?utf-8?B?akJSQ1ExREQvUG1nNU5zdXBjSDJBbnNMZXRyM3pjNXdmOEFUeTlkQXZ4aEUy?=
- =?utf-8?B?MlZBUnE0bkJKMWRNQUJJazBoQkpxOE9JeGVTYm9DN3Q1dEd4Tko1NGhlamZF?=
- =?utf-8?B?VFROUC9HUitqbTFhTHVPRXJDR3dWWkw0WUgrZFBodnNrNEczWStYcUNJMnNi?=
- =?utf-8?B?a0ROZktzbXl0MUpRY0YzS3ZDSllsNG5uM3F4U25qY1A4cmJQNS83NjBLSDBK?=
- =?utf-8?B?VSt4dnpndndDMUVacEdMdUdwL0NrcFcrNW1GL1FRMkExbTdWQ2FmQzVJMFVI?=
- =?utf-8?B?U1VvN0VwUTJFd1l2SExLa2hXTkdoeG1xZUtFWi8zcXJOZXQwdjRJVHo1dWVa?=
- =?utf-8?B?aSsvVXNBc3lvaExCZmxqazF2cExucTBWRWhid0FVMFl4QlIzaVh3b2N0NFc2?=
- =?utf-8?B?NEQwdFh4eWI2Q2tBWGxvTHE5UGZ6RGdNN0xndzM3endaRUpzMUhSa3RMc0Rv?=
- =?utf-8?B?dDBCZHZsV1BZVWNEbk9NcS95aUlYZis0b2xld1o0YVdYNzdKbDBRMFhsVjMv?=
- =?utf-8?B?WUdJUG1hcVBoS2M1WE9qUXdIU0IvUjNUTTN6V2QzTkNpUlZYRUs0bWEwdWZT?=
- =?utf-8?B?Sy9uaE5vd0txd3N2QVBLVUxyZkNLRFFKUG5zd3FQeFNzZnUyOGtOTy9vakNQ?=
- =?utf-8?B?MFlZaWF2Y1hDdlJWdnM4VHVSZHJNQTNTeUZDV2t0QlNTR3M1WU8vcXE3cmVM?=
- =?utf-8?B?bTY5QXo4UDArU01lNysvZkFCRVNqSEltNFU4b2lWZzVqY01Md1BBQnhEWlls?=
- =?utf-8?B?TDBBd2h2YXJHSzl0KzR4VHFjdGp4MlVaR2MvNldMVWxvOVhrOVZ6NXhDbWRx?=
- =?utf-8?B?Y2tVM2JadGJUcWdHWlFweldXSUJPR3c4T3hVOHNKa2xEblUwWFpROG1NQm9z?=
- =?utf-8?Q?vus79c?=
+	=?utf-8?B?ZWNyQ1dhaFY3QjFtcFlSR3R4UGFjS1l0VHNrRnZwdXZONUFGQlRHU1JSQTBh?=
+ =?utf-8?B?dTZvWTZIN2Q2VHh5Y3lHMGNhaVFUa3NLUDNoWDhMdC9OOW9YczBmdzVlYXgz?=
+ =?utf-8?B?UVhZSTN2MHNKbE1EclJqZ3BMcWRMdFlxVHZJMmdhWXk4NGMvc2N3ZDdvanF5?=
+ =?utf-8?B?T29vNjBnNWlMN0d6Qm04VnZJZjdOZHQvbFpCZDM0REN0Q2ZaMURVUnV3VkRM?=
+ =?utf-8?B?YitmbEpCOE8zWjVOZm9WeitSTE5mOXZxbUtJWGhTYk8zMTdBM3VBZE53TUZm?=
+ =?utf-8?B?Nzdrc3I2MFBQWnRsd2dieCtaSTZoNTFHT0VRNWczbG0yeVpzaFkvQXpkNDNp?=
+ =?utf-8?B?VjRtb1FNTEtOemtCUHBJdjlxNEJ4NHRYaFNnVGU2NVVWSzFPRGo2Y0N6bm9o?=
+ =?utf-8?B?MDRLWWZGb05NVm9ESUY2MDlVLzhpRGFveXAwM1NOQXoxZ1dJZUgvUXFObEsz?=
+ =?utf-8?B?MEY3YWNCbXlWNGlKVzdWYmtZSTEyQzVYTHJRamMwWFlvQUg2UTBLNjJGZGt2?=
+ =?utf-8?B?MS9nRHkzZW1MNTVVUnhvWVBQZ0pMK2lFZXM4aXhwbC8xcDhtbG1mZEhDbVY3?=
+ =?utf-8?B?TFk2Wm9VcEFQVm9ZdEN3WkFPL1JQcWp5R3d6NFNsRVIxVmF0SU1naWNYd2NF?=
+ =?utf-8?B?SkF5d2ljRzNXU1p4YzYwNmZoS2FreW1yOE1rSVZ4dEREZkszU2EvVFcrWTY2?=
+ =?utf-8?B?REt0TFpmMk11ZjdEQmgzQXE1SlFyUWVzNTV0UXp4STB1aDc3TUo3S0JMV3Ft?=
+ =?utf-8?B?M2kxeVpmUDg5Q29ncHdPellBbjFvQlRkWmtRWmZxT0RObnVGRFpkdTlCUWd1?=
+ =?utf-8?B?dzg0YzVyWDNQVW5LeXgxOGxxV2VvTzcydUdpRjlxRDJlc3BsMTBZcEpyNVdj?=
+ =?utf-8?B?MXBjME5ERkF0UzNGb05KUjFiWGxQSVhRbGZDSGU2RDFQbWwzamduQlVDSGZI?=
+ =?utf-8?B?S0tVVkd5cnJWb3pDUU9YZ21LcGM4SENYRFhzejNDSVVTdmJwYk94SXdBc2FU?=
+ =?utf-8?B?OW9rZXZXNHhoSHU4WWxWOFJMbDVGUEVqWCs2WHVTcGQwTkxJdU1oU0lQRFdn?=
+ =?utf-8?B?VHUyUlo3Wm5SbHR6bW5tK1RsREVraGx0bHFRUjE5UGl5aGNiVzlxSXkrOXZG?=
+ =?utf-8?B?YVhUb3AxV3ZYdjlQRUlGNnhXclFNOFE4ektYKzNTTy83QTJ2WHphYTdOb2lX?=
+ =?utf-8?B?eVZhS0VRZXdZMWZMbW5ETlZ6Vzd6ZXljU2N0Wkh6YzVuZ3E1ZGI0SmduV1Nw?=
+ =?utf-8?B?Tjg4eVhqU2N2REFUTjdNSk16SjJISWE1UzV4NG9VVzlBTlVwaUtsTE4xREhK?=
+ =?utf-8?B?TGZlZUNub245Vmd6Q0F0OXg2TEFoTTF6MndOLzJVKzZZN2hyTEdYMnh0Wm9v?=
+ =?utf-8?B?Y3hqTTBHL2pzR0JzN0lXRWl1U09RYjYxREg2cEs4d3JjWE44TVhlcE0yZkM2?=
+ =?utf-8?B?VjZ3bEg4Ylk2dXBPMmhhbkdGUG85Tm1Uakh4REdCYXNUVHZGUW9Ha1cxdzdm?=
+ =?utf-8?B?UG9kd0pQOUc5SXZXaEdDL0phdEdlSGtaMXRpUzh6Y0NZVU41V0VBdXRJYXRQ?=
+ =?utf-8?B?SXVjMkZhQWpTbjRRTi9qNmhvQ3Z5YXRnVW8xY0M3UHY5NFhneFRUeXB0K1ds?=
+ =?utf-8?B?WWh0NFM3Q2lLNitITWlDek5Ra0lQTTFZTWljYk0vUlduNEltbXhBZEVMcXo3?=
+ =?utf-8?B?WitCMkJVV2l3TkJ3WC82MHpjSU5qSlUwZ09Pb3I0d3VqNmhXZUJ2WXVMU0Vk?=
+ =?utf-8?B?Rko5T21UM21hd2I1WVJQeGhmNk8xbUtibi80ZldIdmNQWWR2Z01XVUQ1ZGds?=
+ =?utf-8?B?Vit5azBhL3orVm5HUzJHeEpkT3dibjF2NmkyQ1F6NzRGY3FBK2d4dng5QStX?=
+ =?utf-8?B?elhQeHRuay9TZVFsM3o4VlN4TGRSdUQvT1hqT0RBaXZzWExUMGR1NGJCMjN4?=
+ =?utf-8?B?UGxEQ0Ird3Q2dWI2NTVzQ0oyTHBiQ1JFTVlDSW93TjliMVowajJJSVkyN0V1?=
+ =?utf-8?B?RWFJTVhVU2hQL2JPd0xaRFNOWUlFZFJoUHJxY3c1ZXRDNWQwangyQllnczhD?=
+ =?utf-8?Q?GkAni1?=
 X-Forefront-Antispam-Report:
-	CIP:52.17.62.50;CTRY:IE;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:eu-dlp.cloud-sec-av.com;PTR:eu-dlp.cloud-sec-av.com;CAT:NONE;SFS:(13230040)(35042699022)(36860700013)(1800799024)(7416014)(376014)(14060799003)(82310400026);DIR:OUT;SFP:1102;
+	CIP:52.17.62.50;CTRY:IE;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:eu-dlp.cloud-sec-av.com;PTR:eu-dlp.cloud-sec-av.com;CAT:NONE;SFS:(13230040)(82310400026)(35042699022)(14060799003)(36860700013)(1800799024)(7416014)(376014);DIR:OUT;SFP:1102;
 X-OriginatorOrg: solid-run.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jul 2025 16:12:24.4056
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jul 2025 16:12:25.9961
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 71e1b24a-cae0-40d8-7691-08ddbd710f78
+X-MS-Exchange-CrossTenant-Network-Message-Id: 955fe459-0588-470b-a131-08ddbd71106a
 X-MS-Exchange-CrossTenant-Id: a4a8aaf3-fd27-4e27-add2-604707ce5b82
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=a4a8aaf3-fd27-4e27-add2-604707ce5b82;Ip=[52.17.62.50];Helo=[eu-dlp.cloud-sec-av.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	AMS0EPF000001A0.eurprd05.prod.outlook.com
+	AMS0EPF000001AA.eurprd05.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI2PR04MB10217
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB7508
 
-Add description for the SolidRun i.MX8M Plus based System on Module, and
-the CuBox-M.
+Add descriptions for the SolidRun i.MX8M Plus System on Module based
+HummingBoard product-line. They share a common designed based on the
+"Pulse" version, defined by various assembly options.
 
-The SoM features:
-- 2x 1Gbps Ethernet with PHY
-- eMMC
-- 1/2/3/8GB DDR
-- MIPI-CSI Camera Connector (not described without specific camera)
-
-The CuBox-M is a complete product with enclosure featuring:
-- 1x 1Gbps RJ45 Ethernet Port
+The HummingBoard Pulse features:
+- 2x RJ45 Ethernet
 - 2x USB-3.0 Type A
 - HDMI connector
+- mini-HDMI connector
 - microSD connector
-- microUSB connector for console (using fdtdi chip)
-- IR receiver
+- mini-PCI-E connector with SIM slot supporting USB-2.0/3.0 interfaces
+- M.2 connector with SIM slot supporting USB-2.0/3.0 interfaces
+- MIPI-CSI Camera Connector (not described without specific camera)
+- 3.5mm Analog Stereo Out / Microphone In Headphone Jack
 - RTC with backup battery
+
+The variants Mate and Ripple are reduced versions of Pulse.
+
+The HummingBoard Pro extends Pulse with PCI-E on M.2 connector.
 
 Signed-off-by: Josua Mayer <josua@solid-run.com>
 ---
- arch/arm64/boot/dts/freescale/Makefile           |   1 +
- arch/arm64/boot/dts/freescale/imx8mp-cubox-m.dts | 224 +++++++++
- arch/arm64/boot/dts/freescale/imx8mp-sr-som.dtsi | 591 +++++++++++++++++++++++
- 3 files changed, 816 insertions(+)
+ arch/arm64/boot/dts/freescale/Makefile             |   4 +
+ .../dts/freescale/imx8mp-hummingboard-mate.dts     |  31 ++
+ .../boot/dts/freescale/imx8mp-hummingboard-pro.dts |  76 ++++
+ .../freescale/imx8mp-hummingboard-pulse-codec.dtsi |  59 ++++
+ .../imx8mp-hummingboard-pulse-common.dtsi          | 384 +++++++++++++++++++++
+ .../freescale/imx8mp-hummingboard-pulse-hdmi.dtsi  |  44 +++
+ .../freescale/imx8mp-hummingboard-pulse-m2con.dtsi |  60 ++++
+ .../imx8mp-hummingboard-pulse-mini-hdmi.dtsi       |  81 +++++
+ .../dts/freescale/imx8mp-hummingboard-pulse.dts    |  84 +++++
+ .../dts/freescale/imx8mp-hummingboard-ripple.dts   |  31 ++
+ 10 files changed, 854 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
-index 0b473a23d12008ff79d6467d9e1c7ab2c4d6a9a6..e98c15eb949957a193eb3a7612f3f0f2b04790af 100644
+index e98c15eb949957a193eb3a7612f3f0f2b04790af..ccc1d6f98495589cb6a55b198d1933bcf076fcb8 100644
 --- a/arch/arm64/boot/dts/freescale/Makefile
 +++ b/arch/arm64/boot/dts/freescale/Makefile
-@@ -194,6 +194,7 @@ imx8mp-aristainetos3-helios-lvds-dtbs += imx8mp-aristainetos3-helios.dtb imx8mp-
- dtb-$(CONFIG_ARCH_MXC) += imx8mp-aristainetos3-helios-lvds.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mp-aristainetos3-proton2s.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mp-beacon-kit.dtb
-+dtb-$(CONFIG_ARCH_MXC) += imx8mp-cubox-m.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mp-data-modul-edm-sbc.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mp-debix-model-a.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mp-debix-som-a-bmb-08.dtb
-diff --git a/arch/arm64/boot/dts/freescale/imx8mp-cubox-m.dts b/arch/arm64/boot/dts/freescale/imx8mp-cubox-m.dts
+@@ -203,6 +203,10 @@ dtb-$(CONFIG_ARCH_MXC) += imx8mp-dhcom-pdk2.dtb
+ dtb-$(CONFIG_ARCH_MXC) += imx8mp-dhcom-pdk3.dtb
+ dtb-$(CONFIG_ARCH_MXC) += imx8mp-dhcom-picoitx.dtb
+ dtb-$(CONFIG_ARCH_MXC) += imx8mp-evk.dtb
++dtb-$(CONFIG_ARCH_MXC) += imx8mp-hummingboard-mate.dtb
++dtb-$(CONFIG_ARCH_MXC) += imx8mp-hummingboard-pro.dtb
++dtb-$(CONFIG_ARCH_MXC) += imx8mp-hummingboard-pulse.dtb
++dtb-$(CONFIG_ARCH_MXC) += imx8mp-hummingboard-ripple.dtb
+ dtb-$(CONFIG_ARCH_MXC) += imx8mp-icore-mx8mp-edimm2.2.dtb
+ dtb-$(CONFIG_ARCH_MXC) += imx8mp-iota2-lumpy.dtb
+ dtb-$(CONFIG_ARCH_MXC) += imx8mp-kontron-bl-osm-s.dtb
+diff --git a/arch/arm64/boot/dts/freescale/imx8mp-hummingboard-mate.dts b/arch/arm64/boot/dts/freescale/imx8mp-hummingboard-mate.dts
 new file mode 100644
-index 0000000000000000000000000000000000000000..13da5e0196a3fc168efdde63d86f0fe776f999fb
+index 0000000000000000000000000000000000000000..00614f5d58ea9de51aad9a5f36212dc3d4f3ecaf
 --- /dev/null
-+++ b/arch/arm64/boot/dts/freescale/imx8mp-cubox-m.dts
-@@ -0,0 +1,224 @@
++++ b/arch/arm64/boot/dts/freescale/imx8mp-hummingboard-mate.dts
+@@ -0,0 +1,31 @@
 +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
 +/*
 + * Copyright 2025 Josua Mayer <josua@solid-run.com>
@@ -297,29 +309,194 @@ index 0000000000000000000000000000000000000000..13da5e0196a3fc168efdde63d86f0fe7
 +
 +/dts-v1/;
 +
-+#include <dt-bindings/leds/common.h>
-+
 +#include "imx8mp-sr-som.dtsi"
++#include "imx8mp-hummingboard-pulse-common.dtsi"
++#include "imx8mp-hummingboard-pulse-hdmi.dtsi"
 +
 +/ {
-+	model = "SolidRun i.MX8MP CuBox-M";
-+	compatible = "solidrun,imx8mp-cubox-m",
++	model = "SolidRun i.MX8MP HummingBoard Mate";
++	compatible = "solidrun,imx8mp-hummingboard-mate",
 +		     "solidrun,imx8mp-sr-som", "fsl,imx8mp";
 +
 +	aliases {
 +		ethernet0 = &eqos;
 +		/delete-property/ ethernet1;
++	};
++};
++
++&fec {
++	/* this board does not use second phy / ethernet on SoM */
++	status = "disabled";
++};
++
++&iomuxc {
++	pinctrl-names = "default";
++	pinctrl-0 = <&mikro_pwm_pins>, <&mikro_int_pins>, <&mikro_rst_pins>;
++};
+diff --git a/arch/arm64/boot/dts/freescale/imx8mp-hummingboard-pro.dts b/arch/arm64/boot/dts/freescale/imx8mp-hummingboard-pro.dts
+new file mode 100644
+index 0000000000000000000000000000000000000000..36cd452f1583987a1e826d33798d9aecaaf21568
+--- /dev/null
++++ b/arch/arm64/boot/dts/freescale/imx8mp-hummingboard-pro.dts
+@@ -0,0 +1,76 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++/*
++ * Copyright 2025 Josua Mayer <josua@solid-run.com>
++ */
++
++/dts-v1/;
++
++#include <dt-bindings/phy/phy-imx8-pcie.h>
++
++#include "imx8mp-sr-som.dtsi"
++#include "imx8mp-hummingboard-pulse-codec.dtsi"
++#include "imx8mp-hummingboard-pulse-common.dtsi"
++#include "imx8mp-hummingboard-pulse-hdmi.dtsi"
++#include "imx8mp-hummingboard-pulse-m2con.dtsi"
++#include "imx8mp-hummingboard-pulse-mini-hdmi.dtsi"
++
++/ {
++	model = "SolidRun i.MX8MP HummingBoard Pro";
++	compatible = "solidrun,imx8mp-hummingboard-pro",
++		     "solidrun,imx8mp-sr-som", "fsl,imx8mp";
++
++	aliases {
++		ethernet0 = &eqos;
++		ethernet1 = &fec;
++	};
++};
++
++&iomuxc {
++	pinctrl-names = "default";
++	pinctrl-0 = <&mikro_pwm_pins>, <&mikro_int_pins>, <&hdmi_pins>,
++		    <&m2_wwan_wake_pins>;
++};
++
++&pcie {
++	pinctrl-0 = <&m2_reset_pins>;
++	pinctrl-names = "default";
++	reset-gpio = <&gpio1 6 GPIO_ACTIVE_LOW>;
++	status = "okay";
++};
++
++&pcie_phy {
++	clocks = <&hsio_blk_ctrl>;
++	clock-names = "ref";
++	fsl,clkreq-unsupported;
++	fsl,refclk-pad-mode = <IMX8_PCIE_REFCLK_PAD_OUTPUT>;
++	status = "okay";
++};
++
++&phy0 {
++	leds {
++		/* ADIN1300 LED_0 pin */
++		led@0 {
++			reg = <0>;
++			color = <LED_COLOR_ID_ORANGE>;
++			function = LED_FUNCTION_LAN;
++			default-state = "keep";
++		};
++
++		/delete-node/ led@1;
++	};
++};
++
++&phy1 {
++	leds {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		/* ADIN1300 LED_0 pin */
++		led@0 {
++			reg = <0>;
++			color = <LED_COLOR_ID_GREEN>;
++			function = LED_FUNCTION_LAN;
++			default-state = "keep";
++		};
++	};
++};
+diff --git a/arch/arm64/boot/dts/freescale/imx8mp-hummingboard-pulse-codec.dtsi b/arch/arm64/boot/dts/freescale/imx8mp-hummingboard-pulse-codec.dtsi
+new file mode 100644
+index 0000000000000000000000000000000000000000..fd16916676db4ec6f0e66d9c52355c37fe06b971
+--- /dev/null
++++ b/arch/arm64/boot/dts/freescale/imx8mp-hummingboard-pulse-codec.dtsi
+@@ -0,0 +1,59 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++/*
++ * Copyright 2025 Josua Mayer <josua@solid-run.com>
++ */
++
++/ {
++	sound-wm8904 {
++		compatible = "fsl,imx-audio-wm8904";
++		model = "audio-wm8904";
++		audio-cpu = <&sai3>;
++		audio-codec = <&codec>;
++		audio-routing =
++			"Headphone Jack", "HPOUTL",
++			"Headphone Jack", "HPOUTR",
++			"AMIC", "MICBIAS",
++			"IN2R", "AMIC";
++	};
++};
++
++&i2c2 {
++	codec: codec@1a {
++		#sound-dai-cells = <0>;
++		compatible = "wlf,wm8904";
++		reg = <0x1a>;
++		clocks = <&audio_blk_ctrl IMX8MP_CLK_AUDIOMIX_SAI3_MCLK1>;
++		clock-names = "mclk";
++		AVDD-supply = <&v_1_8>;
++		CPVDD-supply = <&v_1_8>;
++		DBVDD-supply = <&v_3_3>;
++		DCVDD-supply = <&v_1_8>;
++		MICVDD-supply = <&v_3_3>;
++	};
++};
++
++&iomuxc {
++	sai3_pins: pinctrl-sai3-grp {
++		fsl,pins = <
++			MX8MP_IOMUXC_SAI3_MCLK__AUDIOMIX_SAI3_MCLK	0xd6
++			MX8MP_IOMUXC_SAI3_TXFS__AUDIOMIX_SAI3_TX_SYNC	0xd6
++			MX8MP_IOMUXC_SAI3_TXC__AUDIOMIX_SAI3_TX_BCLK	0xd6
++			MX8MP_IOMUXC_SAI3_TXD__AUDIOMIX_SAI3_TX_DATA00	0xd6
++			MX8MP_IOMUXC_SAI3_RXD__AUDIOMIX_SAI3_RX_DATA00	0xd6
++		>;
++	};
++};
++
++&sai3 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&sai3_pins>;
++	assigned-clocks = <&clk IMX8MP_CLK_SAI3>;
++	assigned-clock-parents = <&clk IMX8MP_AUDIO_PLL1_OUT>;
++	assigned-clock-rates = <12288000>;
++	clocks = <&audio_blk_ctrl IMX8MP_CLK_AUDIOMIX_SAI3_IPG>, <&clk IMX8MP_CLK_DUMMY>,
++		 <&audio_blk_ctrl IMX8MP_CLK_AUDIOMIX_SAI3_MCLK1>, <&clk IMX8MP_CLK_DUMMY>,
++		 <&clk IMX8MP_CLK_DUMMY>;
++	clock-names = "bus", "mclk0", "mclk1", "mclk2", "mclk3";
++	fsl,sai-mclk-direction-output;
++	status = "okay";
++};
+diff --git a/arch/arm64/boot/dts/freescale/imx8mp-hummingboard-pulse-common.dtsi b/arch/arm64/boot/dts/freescale/imx8mp-hummingboard-pulse-common.dtsi
+new file mode 100644
+index 0000000000000000000000000000000000000000..3a43cf3e2ca00741fe15cd834df0ac7c9119ad09
+--- /dev/null
++++ b/arch/arm64/boot/dts/freescale/imx8mp-hummingboard-pulse-common.dtsi
+@@ -0,0 +1,384 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++/*
++ * Copyright 2025 Josua Mayer <josua@solid-run.com>
++ */
++
++#include <dt-bindings/leds/common.h>
++
++/ {
++	aliases {
 +		rtc0 = &carrier_rtc;
 +		rtc1 = &snvs_rtc;
-+	};
-+
-+	ir-receiver {
-+		compatible = "gpio-ir-receiver";
-+		gpios = <&gpio1 10 GPIO_ACTIVE_LOW>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&ir_pins>;
-+		linux,autosuspend-period = <125>;
-+		wakeup-source;
 +	};
 +
 +	leds {
@@ -327,31 +504,54 @@ index 0000000000000000000000000000000000000000..13da5e0196a3fc168efdde63d86f0fe7
 +		pinctrl-names = "default";
 +		pinctrl-0 = <&led_pins>;
 +
-+		status {
-+			label = "status";
-+			color = <LED_COLOR_ID_RED>;
-+			gpios = <&gpio1 12 GPIO_ACTIVE_LOW>;
-+			function = LED_FUNCTION_HEARTBEAT;
++		led-0 {
++			label = "D30";
++			color = <LED_COLOR_ID_GREEN>;
++			gpios = <&gpio5 28 GPIO_ACTIVE_LOW>;
++			default-state = "on";
++		};
++
++		led-1 {
++			label = "D31";
++			color = <LED_COLOR_ID_GREEN>;
++			gpios = <&gpio4 24 GPIO_ACTIVE_LOW>;
++			default-state = "on";
++		};
++
++		led-2 {
++			label = "D32";
++			color = <LED_COLOR_ID_GREEN>;
++			gpios = <&gpio4 23 GPIO_ACTIVE_LOW>;
++			default-state = "on";
++		};
++
++		led-3 {
++			label = "D33";
++			color = <LED_COLOR_ID_GREEN>;
++			gpios = <&gpio4 21 GPIO_ACTIVE_LOW>;
++			default-state = "on";
++		};
++
++		led-4 {
++			label = "D34";
++			color = <LED_COLOR_ID_GREEN>;
++			gpios = <&gpio4 22 GPIO_ACTIVE_LOW>;
++			default-state = "on";
 +		};
 +	};
 +
-+	sound-hdmi {
-+		compatible = "fsl,imx-audio-hdmi";
-+		model = "audio-hdmi";
-+		audio-cpu = <&aud2htx>;
-+		hdmi-out;
-+		status = "okay";
-+	};
-+
-+	vbus: regulator-vbus {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vbus";
-+		gpio = <&gpio1 7 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
++	rfkill-mpcie-wifi {
++		/*
++		 * The mpcie connector only has USB,
++		 * therefore this rfkill is for cellular radios only.
++		 */
++		compatible = "rfkill-gpio";
 +		pinctrl-names = "default";
-+		pinctrl-0 = <&vbus_pins>;
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
++		pinctrl-0 = <&mpcie_rfkill_pins>;
++		label = "mpcie radio";
++		radio-type = "wwan";
++		/* rfkill-gpio inverts internally */
++		shutdown-gpios = <&gpio1 5 GPIO_ACTIVE_HIGH>;
 +	};
 +
 +	vmmc: regulator-mmc {
@@ -364,58 +564,153 @@ index 0000000000000000000000000000000000000000..13da5e0196a3fc168efdde63d86f0fe7
 +		gpio = <&gpio2 19 GPIO_ACTIVE_HIGH>;
 +		startup-delay-us = <250>;
 +	};
++
++	vbus1: regulator-vbus-1 {
++		compatible = "regulator-fixed";
++		regulator-name = "vbus1";
++		gpio = <&gpio1 14 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++		pinctrl-names = "default";
++		pinctrl-0 = <&vbus1_pins>;
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++	};
++
++	vbus2: regulator-vbus-2 {
++		compatible = "regulator-fixed";
++		regulator-name = "vbus2";
++		gpio = <&gpio1 15 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++		pinctrl-names = "default";
++		pinctrl-0 = <&vbus2_pins>;
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++	};
++
++	v_1_2: regulator-1-2 {
++		compatible = "regulator-fixed";
++		regulator-name = "1v2";
++		regulator-min-microvolt = <1200000>;
++		regulator-max-microvolt = <1200000>;
++	};
++
++	vmpcie {
++		/* supplies mpcie and m2 connectors */
++		compatible = "regulator-fixed";
++		regulator-name = "vmpcie";
++		gpio = <&gpio1 10 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++		pinctrl-names = "default";
++		pinctrl-0 = <&vmpcie_pins>;
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		regulator-always-on;
++	};
 +};
 +
-+&aud2htx {
++/* mikrobus spi */
++&ecspi2 {
++	num-cs = <1>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&mikro_spi_pins>;
 +	status = "okay";
 +};
 +
-+&fec {
-+	/* this board does not use second phy / ethernet on SoM */
-+	status = "disabled";
-+};
++&gpio1 {
++	pinctrl-0 = <&mpcie_reset_pins>;
++	pinctrl-names = "default";
 +
-+&hdmi_pvi {
-+	status = "okay";
-+};
-+
-+&hdmi_tx {
-+	status = "okay";
-+};
-+
-+&hdmi_tx_phy {
-+	status = "okay";
++	mpcie-reset-hog {
++		gpio-hog;
++		gpios = <1 GPIO_ACTIVE_LOW>;
++		output-low;
++		line-name = "mpcie-reset";
++	};
 +};
 +
 +&i2c3 {
-+	carrier_rtc: rtc@32 {
-+		compatible = "epson,rx8130";
-+		reg = <0x32>;
++	carrier_rtc: rtc@69 {
++		compatible = "abracon,ab1805";
++		reg = <0x69>;
++		abracon,tc-diode = "schottky";
++		abracon,tc-resistor = <3>;
++	};
++
++	carrier_eeprom: eeprom@57{
++		compatible = "st,24c02", "atmel,24c02";
++		reg = <0x57>;
++		pagesize = <16>;
 +	};
 +};
 +
 +&iomuxc {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&hdmi_pins>;
-+
-+	hdmi_pins: pinctrl-hdmi-grp {
++	csi_pins: pinctrl-csi-grp {
 +		fsl,pins = <
-+			MX8MP_IOMUXC_HDMI_DDC_SCL__HDMIMIX_HDMI_SCL	0x400001c3
-+			MX8MP_IOMUXC_HDMI_DDC_SDA__HDMIMIX_HDMI_SDA	0x400001c3
-+			MX8MP_IOMUXC_HDMI_CEC__HDMIMIX_HDMI_CEC		0x154
-+			MX8MP_IOMUXC_HDMI_HPD__HDMIMIX_HDMI_HPD		0x154
++			/* Pin 24: STROBE */
++			MX8MP_IOMUXC_NAND_DATA01__GPIO3_IO07		0x0
 +		>;
 +	};
 +
-+	ir_pins: pinctrl-ir-grp {
++	mikro_int_pins: pinctrl-mikro-int-grp {
 +		fsl,pins = <
-+			MX8MP_IOMUXC_GPIO1_IO10__GPIO1_IO10		0x4f
++			MX8MP_IOMUXC_ECSPI1_SS0__GPIO5_IO09		0x0
++		>;
++	};
++
++	mikro_pwm_pins: pinctrl-mikro-pwm-grp {
++		fsl,pins = <
++			MX8MP_IOMUXC_ECSPI1_MISO__GPIO5_IO08		0x0
++		>;
++	};
++
++	mikro_rst_pins: pinctrl-mikro-rst-grp {
++		fsl,pins = <
++			MX8MP_IOMUXC_SAI3_RXD__GPIO4_IO30		0x0
++		>;
++	};
++
++	mikro_spi_pins: pinctrl-mikro-spi-grp {
++		fsl,pins = <
++			MX8MP_IOMUXC_ECSPI2_SS0__ECSPI2_SS0		0x40000
++			MX8MP_IOMUXC_ECSPI2_SCLK__ECSPI2_SCLK		0x82
++			MX8MP_IOMUXC_ECSPI2_MISO__ECSPI2_MISO		0x82
++			MX8MP_IOMUXC_ECSPI2_MOSI__ECSPI2_MOSI		0x82
++		>;
++	};
++
++	mikro_uart_pins: pinctrl-mikro-uart-grp {
++		fsl,pins = <
++			MX8MP_IOMUXC_ECSPI1_SCLK__UART3_DCE_RX		0x140
++			MX8MP_IOMUXC_ECSPI1_MOSI__UART3_DCE_TX		0x140
 +		>;
 +	};
 +
 +	led_pins: pinctrl-led-grp {
 +		fsl,pins = <
-+			MX8MP_IOMUXC_GPIO1_IO12__GPIO1_IO12		0x0
++			MX8MP_IOMUXC_SAI2_RXC__GPIO4_IO22		0x0
++			MX8MP_IOMUXC_SAI2_RXFS__GPIO4_IO21		0x0
++			MX8MP_IOMUXC_SAI2_RXD0__GPIO4_IO23		0x0
++			MX8MP_IOMUXC_SAI2_TXFS__GPIO4_IO24		0x0
++			MX8MP_IOMUXC_UART4_RXD__GPIO5_IO28		0x0
++		>;
++	};
++
++	mpcie_reset_pins: pinctrl-mpcie-reset-grp {
++		fsl,pins = <
++			MX8MP_IOMUXC_GPIO1_IO01__GPIO1_IO01		0x0
++		>;
++	};
++
++	mpcie_rfkill_pins: pinctrl-pcie-rfkill-grp {
++		fsl,pins = <
++			/* weak i/o, open drain */
++			MX8MP_IOMUXC_GPIO1_IO05__GPIO1_IO05		0x20
++		>;
++	};
++
++	usb_hub_pins: pinctrl-usb-hub-grp {
++		fsl,pins = <
++			MX8MP_IOMUXC_GPIO1_IO11__GPIO1_IO11		0x0
 +		>;
 +	};
 +
@@ -458,26 +753,66 @@ index 0000000000000000000000000000000000000000..13da5e0196a3fc168efdde63d86f0fe7
 +		>;
 +	};
 +
-+	vbus_pins: pinctrl-vbus-grp {
++	vbus1_pins: pinctrl-vbus-1-grp {
 +		fsl,pins = <
-+			MX8MP_IOMUXC_GPIO1_IO07__GPIO1_IO07		0x100
++			MX8MP_IOMUXC_GPIO1_IO14__GPIO1_IO14		0x20
++		>;
++	};
++
++	vbus2_pins: pinctrl-vbus-2-grp {
++		fsl,pins = <
++			MX8MP_IOMUXC_GPIO1_IO15__GPIO1_IO15		0x20
 +		>;
 +	};
 +
 +	vmmc_pins: pinctrl-vmmc-grp {
 +		fsl,pins = <
-+			MX8MP_IOMUXC_SD2_RESET_B__GPIO2_IO19		0x0
++			MX8MP_IOMUXC_SD2_RESET_B__GPIO2_IO19		0x41
++		>;
++	};
++
++	vmpcie_pins: pinctrl-vmpcie-grp {
++		fsl,pins = <
++			MX8MP_IOMUXC_GPIO1_IO10__GPIO1_IO10		0x0
 +		>;
 +	};
 +};
 +
-+&lcdif3 {
++&phy0 {
++	leds {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		/* ADIN1300 LED_0 pin */
++		led@0 {
++			reg = <0>;
++			color = <LED_COLOR_ID_ORANGE>;
++			function = LED_FUNCTION_LAN;
++			default-state = "keep";
++		};
++
++		/* ADIN1300 LINK_ST pin */
++		led@1 {
++			reg = <1>;
++			color = <LED_COLOR_ID_GREEN>;
++			function = LED_FUNCTION_LAN;
++			default-state = "keep";
++		};
++	};
++};
++
++&snvs_pwrkey {
++	status = "okay";
++};
++
++/* mikrobus uart */
++&uart3 {
 +	status = "okay";
 +};
 +
 +&usb3_phy0 {
 +	fsl,phy-tx-preemp-amp-tune-microamp = <1200>;
-+	vbus-supply = <&vbus>;
++	vbus-supply = <&vbus2>;
 +	status = "okay";
 +};
 +
@@ -486,8 +821,7 @@ index 0000000000000000000000000000000000000000..13da5e0196a3fc168efdde63d86f0fe7
 +};
 +
 +&usb3_phy1 {
-+	fsl,phy-tx-preemp-amp-tune-microamp = <1200>;
-+	vbus-supply = <&vbus>;
++	vbus-supply = <&vbus1>;
 +	status = "okay";
 +};
 +
@@ -501,6 +835,28 @@ index 0000000000000000000000000000000000000000..13da5e0196a3fc168efdde63d86f0fe7
 +
 +&usb_dwc3_1 {
 +	dr_mode = "host";
++	#address-cells = <1>;
++	#size-cells = <0>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&usb_hub_pins>;
++
++	hub_2_0: hub@1 {
++		compatible = "usb4b4,6502", "usb4b4,6506";
++		reg = <1>;
++		peer-hub = <&hub_3_0>;
++		reset-gpios = <&gpio1 11 GPIO_ACTIVE_LOW>;
++		vdd-supply = <&v_1_2>;
++		vdd2-supply = <&v_3_3>;
++	};
++
++	hub_3_0: hub@2 {
++		compatible = "usb4b4,6500", "usb4b4,6504";
++		reg = <2>;
++		peer-hub = <&hub_2_0>;
++		reset-gpios = <&gpio1 11 GPIO_ACTIVE_LOW>;
++		vdd-supply = <&v_1_2>;
++		vdd2-supply = <&v_3_3>;
++	};
 +};
 +
 +&usdhc2 {
@@ -514,602 +870,335 @@ index 0000000000000000000000000000000000000000..13da5e0196a3fc168efdde63d86f0fe7
 +	full-pwr-cycle;
 +	status = "okay";
 +};
-diff --git a/arch/arm64/boot/dts/freescale/imx8mp-sr-som.dtsi b/arch/arm64/boot/dts/freescale/imx8mp-sr-som.dtsi
+diff --git a/arch/arm64/boot/dts/freescale/imx8mp-hummingboard-pulse-hdmi.dtsi b/arch/arm64/boot/dts/freescale/imx8mp-hummingboard-pulse-hdmi.dtsi
 new file mode 100644
-index 0000000000000000000000000000000000000000..a7ee0a4d4f765581dbc27d3c5dfc656b026d27e6
+index 0000000000000000000000000000000000000000..d7a999c0d7e06a8c47a61632a59eb97faea9e3d4
 --- /dev/null
-+++ b/arch/arm64/boot/dts/freescale/imx8mp-sr-som.dtsi
-@@ -0,0 +1,591 @@
++++ b/arch/arm64/boot/dts/freescale/imx8mp-hummingboard-pulse-hdmi.dtsi
+@@ -0,0 +1,44 @@
 +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
 +/*
 + * Copyright 2025 Josua Mayer <josua@solid-run.com>
 + */
 +
-+#include "imx8mp.dtsi"
-+
 +/ {
-+	model = "SolidRun i.MX8MP SoM";
-+	compatible = "solidrun,imx8mp-sr-som", "fsl,imx8mp";
-+
-+	chosen {
-+		bootargs = "earlycon=ec_imx6q,0x30890000,115200";
-+		stdout-path = &uart2;
-+	};
-+
-+	memory@40000000 {
-+		device_type = "memory";
-+		reg = <0x0 0x40000000 0 0xc0000000>,
-+		      <0x1 0x00000000 0 0xc0000000>;
-+	};
-+
-+	usdhc1_pwrseq: usdhc1-pwrseq {
-+		compatible = "mmc-pwrseq-simple";
-+		reset-gpios = <&gpio2 11 GPIO_ACTIVE_LOW>;
-+	};
-+
-+	v_1_8: regulator-1-8 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "1v8";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+	};
-+
-+	v_3_3: regulator-3-3 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "3v3";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
++	sound-hdmi {
++		compatible = "fsl,imx-audio-hdmi";
++		model = "audio-hdmi";
++		audio-cpu = <&aud2htx>;
++		hdmi-out;
 +	};
 +};
 +
-+&eqos {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&eqos_pins>, <&phy0_pins>;
-+	phy-mode = "rgmii-id";
-+	phy = <&phy0>;
-+	snps,force_thresh_dma_mode;
-+	snps,mtl-tx-config = <&mtl_tx_setup>;
-+	snps,mtl-rx-config = <&mtl_rx_setup>;
-+	status = "okay";
-+
-+	mdio {
-+		compatible = "snps,dwmac-mdio";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		phy0: ethernet-phy@0 {
-+			compatible = "ethernet-phy-ieee802.3-c22";
-+			reg = <0>;
-+			reset-gpios = <&gpio4 19 GPIO_ACTIVE_LOW>;
-+			interrupt-parent = <&gpio4>;
-+			interrupts = <18 IRQ_TYPE_LEVEL_LOW>;
-+		};
-+	};
-+
-+	mtl_tx_setup: tx-queues-config {
-+		snps,tx-queues-to-use = <5>;
-+
-+		queue0 {
-+			snps,dcb-algorithm;
-+			snps,priority = <0x1>;
-+		};
-+
-+		queue1 {
-+			snps,dcb-algorithm;
-+			snps,priority = <0x2>;
-+		};
-+
-+		queue2 {
-+			snps,dcb-algorithm;
-+			snps,priority = <0x4>;
-+		};
-+
-+		queue3 {
-+			snps,dcb-algorithm;
-+			snps,priority = <0x8>;
-+		};
-+
-+		queue4 {
-+			snps,dcb-algorithm;
-+			snps,priority = <0xf0>;
-+		};
-+	};
-+
-+	mtl_rx_setup: rx-queues-config {
-+		snps,rx-queues-to-use = <5>;
-+		snps,rx-sched-sp;
-+
-+		queue0 {
-+			snps,dcb-algorithm;
-+			snps,priority = <0x1>;
-+			snps,map-to-dma-channel = <0>;
-+		};
-+
-+		queue1 {
-+			snps,dcb-algorithm;
-+			snps,priority = <0x2>;
-+			snps,map-to-dma-channel = <1>;
-+		};
-+
-+		queue2 {
-+			snps,dcb-algorithm;
-+			snps,priority = <0x4>;
-+			snps,map-to-dma-channel = <2>;
-+		};
-+
-+		queue3 {
-+			snps,dcb-algorithm;
-+			snps,priority = <0x8>;
-+			snps,map-to-dma-channel = <3>;
-+		};
-+
-+		queue4 {
-+			snps,dcb-algorithm;
-+			snps,priority = <0xf0>;
-+			snps,map-to-dma-channel = <4>;
-+		};
-+	};
-+};
-+
-+&fec {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&fec_pins>, <&phy1_pins>;
-+	phy-mode = "rgmii-id";
-+	phy = <&phy1>;
-+	fsl,magic-packet;
-+	status = "okay";
-+
-+	mdio {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		phy1: ethernet-phy@1 {
-+			compatible = "ethernet-phy-ieee802.3-c22";
-+			reg = <0x1>;
-+			reset-gpios = <&gpio4 2 GPIO_ACTIVE_LOW>;
-+			interrupt-parent = <&gpio4>;
-+			interrupts = <3 IRQ_TYPE_LEVEL_LOW>;
-+		};
-+	};
-+};
-+
-+&i2c1 {
-+	clock-frequency = <400000>;
-+	pinctrl-names = "default", "gpio";
-+	pinctrl-0 = <&i2c1_pins>;
-+	pinctrl-1 = <&i2c1_gpio_pins>;
-+	scl-gpios = <&gpio5 14 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+	sda-gpios = <&gpio5 15 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+	status = "okay";
-+
-+	som_eeprom: eeprom@50{
-+		compatible = "st,24c01", "atmel,24c01";
-+		reg = <0x50>;
-+		pagesize = <16>;
-+	};
-+
-+	pmic: pmic@25 {
-+		compatible = "nxp,pca9450c";
-+		reg = <0x25>;
-+		pinctrl-0 = <&pmic_pins>;
-+		pinctrl-names = "default";
-+		interrupt-parent = <&gpio1>;
-+		interrupts = <3 GPIO_ACTIVE_LOW>;
-+		nxp,i2c-lt-enable;
-+
-+		regulators {
-+			buck1: BUCK1 {
-+				regulator-name = "BUCK1";
-+				regulator-min-microvolt = <600000>;
-+				regulator-max-microvolt = <2187500>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+				regulator-ramp-delay = <3125>;
-+			};
-+
-+			buck2: BUCK2 {
-+				regulator-name = "BUCK2";
-+				regulator-min-microvolt = <600000>;
-+				regulator-max-microvolt = <2187500>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+				regulator-ramp-delay = <3125>;
-+				nxp,dvs-run-voltage = <950000>;
-+				nxp,dvs-standby-voltage = <850000>;
-+			};
-+
-+			buck4: BUCK4{
-+				regulator-name = "BUCK4";
-+				regulator-min-microvolt = <600000>;
-+				regulator-max-microvolt = <3400000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			buck5: BUCK5{
-+				regulator-name = "BUCK5";
-+				regulator-min-microvolt = <600000>;
-+				regulator-max-microvolt = <3400000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			buck6: BUCK6 {
-+				regulator-name = "BUCK6";
-+				regulator-min-microvolt = <600000>;
-+				regulator-max-microvolt = <3400000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			ldo1: LDO1 {
-+				regulator-name = "LDO1";
-+				regulator-min-microvolt = <1600000>;
-+				regulator-max-microvolt = <3300000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			ldo2: LDO2 {
-+				regulator-name = "LDO2";
-+				regulator-min-microvolt = <800000>;
-+				regulator-max-microvolt = <1150000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			ldo3: LDO3 {
-+				regulator-name = "LDO3";
-+				regulator-min-microvolt = <800000>;
-+				regulator-max-microvolt = <3300000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			ldo4: LDO4 {
-+				regulator-name = "LDO4";
-+				regulator-min-microvolt = <800000>;
-+				regulator-max-microvolt = <3300000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			ldo5: LDO5 {
-+				regulator-name = "LDO5";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <3300000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+		};
-+	};
-+};
-+
-+&i2c2 {
-+	clock-frequency = <100000>;
-+	pinctrl-names = "default", "gpio";
-+	pinctrl-0 = <&i2c2_pins>;
-+	pinctrl-1 = <&i2c2_gpio_pins>;
-+	scl-gpios = <&gpio5 16 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+	sda-gpios = <&gpio5 17 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
++&aud2htx {
 +	status = "okay";
 +};
 +
-+&i2c3 {
-+	clock-frequency = <100000>;
-+	pinctrl-names = "default", "gpio";
-+	pinctrl-0 = <&i2c3_pins>;
-+	pinctrl-1 = <&i2c3_gpio_pins>;
-+	scl-gpios = <&gpio5 18 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+	sda-gpios = <&gpio5 19 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
++&hdmi_pvi {
 +	status = "okay";
 +};
 +
-+&i2c4 {
-+	/* routed to basler camera connector */
-+	clock-frequency = <100000>;
-+	pinctrl-names = "default", "gpio";
-+	pinctrl-0 = <&i2c4_pins>;
-+	pinctrl-1 = <&i2c4_gpio_pins>;
-+	scl-gpios = <&gpio5 20 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+	sda-gpios = <&gpio5 21 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
++&hdmi_tx {
++	status = "okay";
++};
++
++&hdmi_tx_phy {
 +	status = "okay";
 +};
 +
 +&iomuxc {
-+	eqos_pins: pinctrl-eqos-grp {
++	hdmi_pins: pinctrl-hdmi-grp {
 +		fsl,pins = <
-+			MX8MP_IOMUXC_ENET_MDC__ENET_QOS_MDC		0x3
-+			MX8MP_IOMUXC_ENET_MDIO__ENET_QOS_MDIO		0x3
-+			MX8MP_IOMUXC_ENET_RD0__ENET_QOS_RGMII_RD0	0x91
-+			MX8MP_IOMUXC_ENET_RD1__ENET_QOS_RGMII_RD1	0x91
-+			MX8MP_IOMUXC_ENET_RD2__ENET_QOS_RGMII_RD2	0x91
-+			MX8MP_IOMUXC_ENET_RD3__ENET_QOS_RGMII_RD3	0x91
-+			MX8MP_IOMUXC_ENET_RXC__CCM_ENET_QOS_CLOCK_GENERATE_RX_CLK	0x91
-+			MX8MP_IOMUXC_ENET_RX_CTL__ENET_QOS_RGMII_RX_CTL	0x91
-+			MX8MP_IOMUXC_ENET_TD0__ENET_QOS_RGMII_TD0	0x1f
-+			MX8MP_IOMUXC_ENET_TD1__ENET_QOS_RGMII_TD1	0x1f
-+			MX8MP_IOMUXC_ENET_TD2__ENET_QOS_RGMII_TD2	0x1f
-+			MX8MP_IOMUXC_ENET_TD3__ENET_QOS_RGMII_TD3	0x1f
-+			MX8MP_IOMUXC_ENET_TX_CTL__ENET_QOS_RGMII_TX_CTL	0x1f
-+			MX8MP_IOMUXC_ENET_TXC__CCM_ENET_QOS_CLOCK_GENERATE_TX_CLK	0x1f
-+		>;
-+	};
-+
-+	fec_pins: pinctrl-fec-grp {
-+		fsl,pins = <
-+			MX8MP_IOMUXC_SAI1_RXD2__ENET1_MDC		0x3
-+			MX8MP_IOMUXC_SAI1_RXD3__ENET1_MDIO		0x3
-+			MX8MP_IOMUXC_SAI1_RXD4__ENET1_RGMII_RD0		0x91
-+			MX8MP_IOMUXC_SAI1_RXD5__ENET1_RGMII_RD1		0x91
-+			MX8MP_IOMUXC_SAI1_RXD6__ENET1_RGMII_RD2		0x91
-+			MX8MP_IOMUXC_SAI1_RXD7__ENET1_RGMII_RD3		0x91
-+			MX8MP_IOMUXC_SAI1_TXC__ENET1_RGMII_RXC		0x91
-+			MX8MP_IOMUXC_SAI1_TXFS__ENET1_RGMII_RX_CTL	0x91
-+			MX8MP_IOMUXC_SAI1_TXD0__ENET1_RGMII_TD0		0x1f
-+			MX8MP_IOMUXC_SAI1_TXD1__ENET1_RGMII_TD1		0x1f
-+			MX8MP_IOMUXC_SAI1_TXD2__ENET1_RGMII_TD2		0x1f
-+			MX8MP_IOMUXC_SAI1_TXD3__ENET1_RGMII_TD3		0x1f
-+			MX8MP_IOMUXC_SAI1_TXD4__ENET1_RGMII_TX_CTL	0x1f
-+			MX8MP_IOMUXC_SAI1_TXD5__ENET1_RGMII_TXC		0x1f
-+		>;
-+	};
-+
-+	i2c1_pins: pinctrl-i2c1-grp {
-+		fsl,pins = <
-+			MX8MP_IOMUXC_I2C1_SCL__I2C1_SCL			0x400001c3
-+			MX8MP_IOMUXC_I2C1_SDA__I2C1_SDA			0x400001c3
-+		>;
-+	};
-+
-+	i2c1_gpio_pins: pinctrl-i2c1-gpio-grp {
-+		fsl,pins = <
-+			MX8MP_IOMUXC_I2C1_SCL__GPIO5_IO14		0x400001c3
-+			MX8MP_IOMUXC_I2C1_SDA__GPIO5_IO15		0x400001c3
-+		>;
-+	};
-+
-+	i2c2_pins: pinctrl-i2c2-grp {
-+		fsl,pins = <
-+			MX8MP_IOMUXC_I2C2_SCL__I2C2_SCL			0x400001c3
-+			MX8MP_IOMUXC_I2C2_SDA__I2C2_SDA			0x400001c3
-+		>;
-+	};
-+
-+	i2c2_gpio_pins: pinctrl-i2c2-gpio-grp {
-+		fsl,pins = <
-+			MX8MP_IOMUXC_I2C2_SCL__GPIO5_IO16		0x400001c3
-+			MX8MP_IOMUXC_I2C2_SDA__GPIO5_IO17		0x400001c3
-+		>;
-+	};
-+
-+	i2c3_pins: pinctrl-i2c3-grp {
-+		fsl,pins = <
-+			MX8MP_IOMUXC_I2C3_SCL__I2C3_SCL			0x400001c3
-+			MX8MP_IOMUXC_I2C3_SDA__I2C3_SDA			0x400001c3
-+		>;
-+	};
-+
-+	i2c3_gpio_pins: pinctrl-i2c3-gpio-grp {
-+		fsl,pins = <
-+			MX8MP_IOMUXC_I2C3_SCL__GPIO5_IO18		0x400001c3
-+			MX8MP_IOMUXC_I2C3_SDA__GPIO5_IO19		0x400001c3
-+		>;
-+	};
-+
-+	i2c4_pins: pinctrl-i2c4-grp {
-+		fsl,pins = <
-+			MX8MP_IOMUXC_I2C4_SCL__I2C4_SCL			0x400001c3
-+			MX8MP_IOMUXC_I2C4_SDA__I2C4_SDA			0x400001c3
-+		>;
-+	};
-+
-+	i2c4_gpio_pins: pinctrl-i2c4-gpio-grp {
-+		fsl,pins = <
-+			MX8MP_IOMUXC_I2C4_SCL__GPIO5_IO20			0x400001c3
-+			MX8MP_IOMUXC_I2C4_SDA__GPIO5_IO21			0x400001c3
-+		>;
-+	};
-+
-+	phy0_pins: pinctrl-phy0-grp {
-+		fsl,pins = <
-+			/* RESET_N: weak i/o, open drain, external 1k pull-up */
-+			MX8MP_IOMUXC_SAI1_TXD7__GPIO4_IO19		0x20
-+			/* INT_N: weak i/o, open drain, internal pull-up */
-+			MX8MP_IOMUXC_SAI1_TXD6__GPIO4_IO18		0x160
-+		>;
-+	};
-+
-+	phy1_pins: pinctrl-phy-1-grp {
-+		fsl,pins = <
-+			/* RESET_N: weak i/o, open drain, external 1k pull-up */
-+			MX8MP_IOMUXC_SAI1_RXD0__GPIO4_IO02		0x20
-+			/* INT_N: weak i/o, open drain, internal pull-up */
-+			MX8MP_IOMUXC_SAI1_RXD1__GPIO4_IO03		0x160
-+		>;
-+	};
-+
-+	pmic_pins: pinctrl-pmic-grp {
-+		fsl,pins = <
-+			MX8MP_IOMUXC_GPIO1_IO03__GPIO1_IO03		0x41
-+		>;
-+	};
-+
-+	uart1_pins: pinctrl-uart1-grp {
-+		fsl,pins = <
-+			MX8MP_IOMUXC_UART1_RXD__UART1_DCE_RX		0x140
-+			MX8MP_IOMUXC_UART1_TXD__UART1_DCE_TX		0x140
-+			MX8MP_IOMUXC_UART3_RXD__UART1_DCE_CTS		0x140
-+			MX8MP_IOMUXC_UART3_TXD__UART1_DCE_RTS		0x140
-+			/* BT_REG_ON */
-+			MX8MP_IOMUXC_SD1_RESET_B__GPIO2_IO10		0x0
-+			/* BT_WAKE_DEV */
-+			MX8MP_IOMUXC_SD1_DATA5__GPIO2_IO07		0x0
-+			/* BT_WAKE_HOST */
-+			MX8MP_IOMUXC_SD1_DATA6__GPIO2_IO08		0x100
-+		>;
-+	};
-+
-+	uart2_pins: pinctrl-uart2-grp {
-+		fsl,pins = <
-+			MX8MP_IOMUXC_UART2_RXD__UART2_DCE_RX		0x49
-+			MX8MP_IOMUXC_UART2_TXD__UART2_DCE_TX		0x49
-+		>;
-+	};
-+
-+	usdhc1_pins: pinctrl-usdhc1-grp {
-+		fsl,pins = <
-+			MX8MP_IOMUXC_SD1_CLK__USDHC1_CLK		0x190
-+			MX8MP_IOMUXC_SD1_CMD__USDHC1_CMD		0x1d0
-+			MX8MP_IOMUXC_SD1_DATA0__USDHC1_DATA0		0x1d0
-+			MX8MP_IOMUXC_SD1_DATA1__USDHC1_DATA1		0x1d0
-+			MX8MP_IOMUXC_SD1_DATA2__USDHC1_DATA2		0x1d0
-+			MX8MP_IOMUXC_SD1_DATA3__USDHC1_DATA3		0x1d0
-+			/* WL_REG_ON */
-+			MX8MP_IOMUXC_SD1_STROBE__GPIO2_IO11		0x0
-+			/* WL_WAKE_HOST */
-+			MX8MP_IOMUXC_SD1_DATA7__GPIO2_IO09		0x100
-+		>;
-+	};
-+
-+	usdhc1_100mhz_pins: pinctrl-usdhc1g-100mhz-grp {
-+		fsl,pins = <
-+			MX8MP_IOMUXC_SD1_CLK__USDHC1_CLK		0x194
-+			MX8MP_IOMUXC_SD1_CMD__USDHC1_CMD		0x1d4
-+			MX8MP_IOMUXC_SD1_DATA0__USDHC1_DATA0		0x1d4
-+			MX8MP_IOMUXC_SD1_DATA1__USDHC1_DATA1		0x1d4
-+			MX8MP_IOMUXC_SD1_DATA2__USDHC1_DATA2		0x1d4
-+			MX8MP_IOMUXC_SD1_DATA3__USDHC1_DATA3		0x1d4
-+		>;
-+	};
-+
-+	usdhc1_200mhz_pins: pinctrl-usdhc1-200mhz-grp {
-+		fsl,pins = <
-+			MX8MP_IOMUXC_SD1_CLK__USDHC1_CLK		0x196
-+			MX8MP_IOMUXC_SD1_CMD__USDHC1_CMD		0x1d6
-+			MX8MP_IOMUXC_SD1_DATA0__USDHC1_DATA0		0x1d6
-+			MX8MP_IOMUXC_SD1_DATA1__USDHC1_DATA1		0x1d6
-+			MX8MP_IOMUXC_SD1_DATA2__USDHC1_DATA2		0x1d6
-+			MX8MP_IOMUXC_SD1_DATA3__USDHC1_DATA3		0x1d6
-+		>;
-+	};
-+
-+	usdhc3_pins: pinctrl-usdhc3-grp {
-+		fsl,pins = <
-+			MX8MP_IOMUXC_NAND_WE_B__USDHC3_CLK		0x190
-+			MX8MP_IOMUXC_NAND_WP_B__USDHC3_CMD		0x1d0
-+			MX8MP_IOMUXC_NAND_DATA04__USDHC3_DATA0		0x1d0
-+			MX8MP_IOMUXC_NAND_DATA05__USDHC3_DATA1		0x1d0
-+			MX8MP_IOMUXC_NAND_DATA06__USDHC3_DATA2		0x1d0
-+			MX8MP_IOMUXC_NAND_DATA07__USDHC3_DATA3		0x1d0
-+			MX8MP_IOMUXC_NAND_RE_B__USDHC3_DATA4		0x1d0
-+			MX8MP_IOMUXC_NAND_CE2_B__USDHC3_DATA5		0x1d0
-+			MX8MP_IOMUXC_NAND_CE3_B__USDHC3_DATA6		0x1d0
-+			MX8MP_IOMUXC_NAND_CLE__USDHC3_DATA7		0x1d0
-+			MX8MP_IOMUXC_NAND_CE1_B__USDHC3_STROBE		0x190
-+		>;
-+	};
-+
-+	usdhc3_100mhz_pins: pinctrl-usdhc3-100mhz-grp {
-+		fsl,pins = <
-+			MX8MP_IOMUXC_NAND_WE_B__USDHC3_CLK		0x194
-+			MX8MP_IOMUXC_NAND_WP_B__USDHC3_CMD		0x1d4
-+			MX8MP_IOMUXC_NAND_DATA04__USDHC3_DATA0		0x1d4
-+			MX8MP_IOMUXC_NAND_DATA05__USDHC3_DATA1		0x1d4
-+			MX8MP_IOMUXC_NAND_DATA06__USDHC3_DATA2		0x1d4
-+			MX8MP_IOMUXC_NAND_DATA07__USDHC3_DATA3		0x1d4
-+			MX8MP_IOMUXC_NAND_RE_B__USDHC3_DATA4		0x1d4
-+			MX8MP_IOMUXC_NAND_CE2_B__USDHC3_DATA5		0x1d4
-+			MX8MP_IOMUXC_NAND_CE3_B__USDHC3_DATA6		0x1d4
-+			MX8MP_IOMUXC_NAND_CLE__USDHC3_DATA7		0x1d4
-+			MX8MP_IOMUXC_NAND_CE1_B__USDHC3_STROBE		0x194
-+		>;
-+	};
-+
-+	usdhc3_200mhz_pins: pinctrl-usdhc3-200mhz-grp {
-+		fsl,pins = <
-+			MX8MP_IOMUXC_NAND_WE_B__USDHC3_CLK		0x196
-+			MX8MP_IOMUXC_NAND_WP_B__USDHC3_CMD		0x1d6
-+			MX8MP_IOMUXC_NAND_DATA04__USDHC3_DATA0		0x1d6
-+			MX8MP_IOMUXC_NAND_DATA05__USDHC3_DATA1		0x1d6
-+			MX8MP_IOMUXC_NAND_DATA06__USDHC3_DATA2		0x1d6
-+			MX8MP_IOMUXC_NAND_DATA07__USDHC3_DATA3		0x1d6
-+			MX8MP_IOMUXC_NAND_RE_B__USDHC3_DATA4		0x1d6
-+			MX8MP_IOMUXC_NAND_CE2_B__USDHC3_DATA5		0x1d6
-+			MX8MP_IOMUXC_NAND_CE3_B__USDHC3_DATA6		0x1d6
-+			MX8MP_IOMUXC_NAND_CLE__USDHC3_DATA7		0x1d6
-+			MX8MP_IOMUXC_NAND_CE1_B__USDHC3_STROBE		0x196
-+		>;
-+	};
-+
-+	wdog1_pins: pinctrl-wdog1-grp {
-+		fsl,pins = <
-+			MX8MP_IOMUXC_GPIO1_IO02__WDOG1_WDOG_B		0x140
++			MX8MP_IOMUXC_HDMI_DDC_SCL__HDMIMIX_HDMI_SCL	0x400001c3
++			MX8MP_IOMUXC_HDMI_DDC_SDA__HDMIMIX_HDMI_SDA	0x400001c3
++			MX8MP_IOMUXC_HDMI_CEC__HDMIMIX_HDMI_CEC		0x154
++			MX8MP_IOMUXC_HDMI_HPD__HDMIMIX_HDMI_HPD		0x154
 +		>;
 +	};
 +};
 +
-+&uart1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&uart1_pins>;
-+	uart-has-rtscts;
-+	/* select 80MHz parent clock to support maximum baudrate 4Mbps */
-+	assigned-clocks = <&clk IMX8MP_CLK_UART1>;
-+	assigned-clock-parents = <&clk IMX8MP_SYS_PLL1_80M>;
-+	status = "okay";
-+
-+	bluetooth {
-+		compatible = "brcm,bcm4345c5";
-+		device-wakeup-gpios = <&gpio2 7 GPIO_ACTIVE_HIGH>;
-+		host-wakeup-gpios = <&gpio2 8 GPIO_ACTIVE_HIGH>;
-+		shutdown-gpios = <&gpio2 10 GPIO_ACTIVE_HIGH>;
-+		/* Murata 1MW module supports max. 3M baud */
-+		max-speed = <3000000>;
-+	};
-+};
-+
-+&uart2 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&uart2_pins>;
++&lcdif3 {
 +	status = "okay";
 +};
-+
-+&usdhc1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&usdhc1_pins>;
-+	pinctrl-1 = <&usdhc1_100mhz_pins>;
-+	pinctrl-2 = <&usdhc1_200mhz_pins>;
-+	vmmc-supply = <&v_3_3>;
-+	vqmmc-supply = <&v_1_8>;
-+	bus-width = <4>;
-+	mmc-pwrseq = <&usdhc1_pwrseq>;
-+	status = "okay";
-+};
-+
-+&usdhc3 {
-+	pinctrl-names = "default", "state_100mhz", "state_200mhz";
-+	pinctrl-0 = <&usdhc3_pins>;
-+	pinctrl-1 = <&usdhc3_100mhz_pins>;
-+	pinctrl-2 = <&usdhc3_200mhz_pins>;
-+	vmmc-supply = <&v_3_3>;
-+	vqmmc-supply = <&v_1_8>;
-+	bus-width = <8>;
-+	non-removable;
-+	status = "okay";
-+};
-+
-+&wdog1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&wdog1_pins>;
-+	status = "okay";
-+};
-+
+diff --git a/arch/arm64/boot/dts/freescale/imx8mp-hummingboard-pulse-m2con.dtsi b/arch/arm64/boot/dts/freescale/imx8mp-hummingboard-pulse-m2con.dtsi
+new file mode 100644
+index 0000000000000000000000000000000000000000..b879ca4ed21428b8d4c6866f9a827bcfbef1caee
+--- /dev/null
++++ b/arch/arm64/boot/dts/freescale/imx8mp-hummingboard-pulse-m2con.dtsi
+@@ -0,0 +1,60 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
 +/*
-+ * Reserve all physical memory from within the first 1GB of DDR address
-+ * space to avoid panic on low memory systems.
++ * Copyright 2025 Josua Mayer <josua@solid-run.com>
 + */
-+&dsp_reserved {
-+	reg = <0 0x6f000000 0 0x1000000>;
++
++/ {
++	rfkill-m2-gnss {
++		compatible = "rfkill-gpio";
++		pinctrl-names = "default";
++		pinctrl-0 = <&m2_gnss_rfkill_pins>;
++		label = "m.2 GNSS";
++		radio-type = "gps";
++		/* rfkill-gpio inverts internally */
++		shutdown-gpios = <&gpio1 7 GPIO_ACTIVE_HIGH>;
++	};
++
++	/* M.2 is B-keyed, so w-disable is for WWAN */
++	rfkill-m2-wwan {
++		compatible = "rfkill-gpio";
++		pinctrl-names = "default";
++		pinctrl-0 = <&m2_wwan_rfkill_pins>;
++		label = "m.2 WWAN";
++		radio-type = "wwan";
++		/* rfkill-gpio inverts internally */
++		shutdown-gpios = <&gpio1 13 GPIO_ACTIVE_HIGH>;
++	};
++};
++
++&iomuxc {
++	m2_gnss_rfkill_pins: pinctrl-m2-gnss-rfkill-grp {
++		fsl,pins = <
++			/* weak i/o, open drain */
++			MX8MP_IOMUXC_GPIO1_IO07__GPIO1_IO07		0x20
++		>;
++	};
++
++	m2_wwan_rfkill_pins: pinctrl-m2-wwan-rfkill-grp {
++		fsl,pins = <
++			/* weak i/o, open drain */
++			MX8MP_IOMUXC_GPIO1_IO13__GPIO1_IO13		0x20
++		>;
++	};
++
++	m2_wwan_wake_pins: pinctrl-m2-wwan-wake-grp {
++		fsl,pins = <
++			/* weak i/o, open drain */
++			MX8MP_IOMUXC_GPIO1_IO12__GPIO1_IO12		0x20
++		>;
++	};
++
++	m2_reset_pins: pinctrl-m2-reset-grp {
++		fsl,pins = <
++			/*
++			 * 3.3V domain on SoC, set open-drain to ensure
++			 * 1.8V logic on connector
++			 */
++			MX8MP_IOMUXC_GPIO1_IO06__GPIO1_IO06		0x20
++		>;
++	};
++};
+diff --git a/arch/arm64/boot/dts/freescale/imx8mp-hummingboard-pulse-mini-hdmi.dtsi b/arch/arm64/boot/dts/freescale/imx8mp-hummingboard-pulse-mini-hdmi.dtsi
+new file mode 100644
+index 0000000000000000000000000000000000000000..46916ddc053355b6708629898fa13e55c6493cc2
+--- /dev/null
++++ b/arch/arm64/boot/dts/freescale/imx8mp-hummingboard-pulse-mini-hdmi.dtsi
+@@ -0,0 +1,81 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++/*
++ * Copyright 2025 Josua Mayer <josua@solid-run.com>
++ */
++
++/ {
++	hdmi-connector {
++		compatible = "hdmi-connector";
++		label = "hdmi";
++		type = "c";
++
++		port {
++			hdmi_connector_in: endpoint {
++				remote-endpoint = <&adv7535_out>;
++			};
++		};
++	};
++};
++
++&i2c3 {
++	hdmi@3d {
++		compatible = "adi,adv7535";
++		reg = <0x3d>, <0x3f>, <0x3c>, <0x38>;
++		reg-names = "main", "edid", "cec", "packet";
++		adi,dsi-lanes = <4>;
++		avdd-supply = <&v_1_8>;
++		dvdd-supply = <&v_1_8>;
++		pvdd-supply = <&v_1_8>;
++		a2vdd-supply = <&v_1_8>;
++		v3p3-supply = <&v_3_3>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&mini_hdmi_pins>;
++		interrupt-parent = <&gpio4>;
++		interrupts = <27 IRQ_TYPE_EDGE_FALLING>;
++
++		ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			port@0 {
++				reg = <0>;
++
++				adv7535_from_dsim: endpoint {
++					remote-endpoint = <&dsim_to_adv7535>;
++				};
++			};
++
++			port@1 {
++				reg = <1>;
++
++				adv7535_out: endpoint {
++					remote-endpoint = <&hdmi_connector_in>;
++				};
++			};
++		};
++	};
++};
++
++&iomuxc {
++	mini_hdmi_pins: pinctrl-mini-hdmi-grp {
++		fsl,pins = <
++			MX8MP_IOMUXC_SAI2_MCLK__GPIO4_IO27		0x0
++		>;
++	};
++};
++
++&lcdif1 {
++	status = "okay";
++};
++
++&mipi_dsi {
++	samsung,esc-clock-frequency = <10000000>;
++	status = "okay";
++
++	port@1 {
++		dsim_to_adv7535: endpoint {
++			remote-endpoint = <&adv7535_from_dsim>;
++			attach-bridge;
++		};
++	};
++};
+diff --git a/arch/arm64/boot/dts/freescale/imx8mp-hummingboard-pulse.dts b/arch/arm64/boot/dts/freescale/imx8mp-hummingboard-pulse.dts
+new file mode 100644
+index 0000000000000000000000000000000000000000..e0d6f281837f106bb0b4661d8fe54eaa2cafc3c2
+--- /dev/null
++++ b/arch/arm64/boot/dts/freescale/imx8mp-hummingboard-pulse.dts
+@@ -0,0 +1,84 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++/*
++ * Copyright 2025 Josua Mayer <josua@solid-run.com>
++ */
++
++/dts-v1/;
++
++#include <dt-bindings/phy/phy-imx8-pcie.h>
++
++#include "imx8mp-sr-som.dtsi"
++#include "imx8mp-hummingboard-pulse-codec.dtsi"
++#include "imx8mp-hummingboard-pulse-common.dtsi"
++#include "imx8mp-hummingboard-pulse-hdmi.dtsi"
++#include "imx8mp-hummingboard-pulse-m2con.dtsi"
++#include "imx8mp-hummingboard-pulse-mini-hdmi.dtsi"
++
++/ {
++	model = "SolidRun i.MX8MP HummingBoard Pulse";
++	compatible = "solidrun,imx8mp-hummingboard-pulse",
++		     "solidrun,imx8mp-sr-som", "fsl,imx8mp";
++
++	aliases {
++		ethernet0 = &eqos;
++		ethernet1 = &pcie_eth;
++	};
++};
++
++&fec {
++	/* this board does not use second phy / ethernet on SoM */
++	status = "disabled";
++};
++
++&gpio1 {
++	pinctrl-0 = <&mpcie_reset_pins>, <&m2_reset_pins>;
++	pinctrl-names = "default";
++
++	m2-reset-hog {
++		gpio-hog;
++		gpios = <6 GPIO_ACTIVE_LOW>;
++		output-low;
++		line-name = "m2-reset";
++	};
++};
++
++&iomuxc {
++	pinctrl-names = "default";
++	pinctrl-0 = <&mikro_pwm_pins>, <&mikro_int_pins>, <&hdmi_pins>,
++		    <&m2_wwan_wake_pins>;
++
++	pcie_eth_pins: pinctrl-pcie-eth-grp {
++		fsl,pins = <
++			MX8MP_IOMUXC_SAI3_RXFS__GPIO4_IO28		0x0
++		>;
++	};
++};
++
++&pcie {
++	pinctrl-0 = <&pcie_eth_pins>;
++	pinctrl-names = "default";
++	reset-gpio = <&gpio4 28 GPIO_ACTIVE_LOW>;
++	status = "okay";
++
++	root@0,0 {
++		compatible = "pci16c3,abcd";
++		reg = <0x00000000 0 0 0 0>;
++
++		#address-cells = <3>;
++		#size-cells = <2>;
++
++		/* Intel i210 */
++		pcie_eth: ethernet@1,0 {
++			compatible = "pci8086,157b";
++			reg = <0x00010000 0 0 0 0>;
++		};
++	};
++};
++
++&pcie_phy {
++	clocks = <&hsio_blk_ctrl>;
++	clock-names = "ref";
++	fsl,clkreq-unsupported;
++	fsl,refclk-pad-mode = <IMX8_PCIE_REFCLK_PAD_OUTPUT>;
++	status = "okay";
++};
+diff --git a/arch/arm64/boot/dts/freescale/imx8mp-hummingboard-ripple.dts b/arch/arm64/boot/dts/freescale/imx8mp-hummingboard-ripple.dts
+new file mode 100644
+index 0000000000000000000000000000000000000000..4ce5b799b6abc514ca00e2e2134d5ff1606dc87d
+--- /dev/null
++++ b/arch/arm64/boot/dts/freescale/imx8mp-hummingboard-ripple.dts
+@@ -0,0 +1,31 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++/*
++ * Copyright 2025 Josua Mayer <josua@solid-run.com>
++ */
++
++/dts-v1/;
++
++#include "imx8mp-sr-som.dtsi"
++#include "imx8mp-hummingboard-pulse-common.dtsi"
++#include "imx8mp-hummingboard-pulse-mini-hdmi.dtsi"
++
++/ {
++	model = "SolidRun i.MX8MP HummingBoard Ripple";
++	compatible = "solidrun,imx8mp-hummingboard-ripple",
++		     "solidrun,imx8mp-sr-som", "fsl,imx8mp";
++
++	aliases {
++		ethernet0 = &eqos;
++		/delete-property/ ethernet1;
++	};
++};
++
++&fec {
++	/* this board does not use second phy / ethernet on SoM */
++	status = "disabled";
++};
++
++&iomuxc {
++	pinctrl-names = "default";
++	pinctrl-0 = <&mikro_pwm_pins>, <&mikro_int_pins>, <&mikro_rst_pins>;
 +};
 
 -- 
