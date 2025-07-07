@@ -1,146 +1,152 @@
-Return-Path: <linux-kernel+bounces-720157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7047FAFB7C6
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 17:44:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89F76AFB793
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 17:39:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CD981AA6D66
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 15:44:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E64BF3B41D0
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 15:39:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D3F920101D;
-	Mon,  7 Jul 2025 15:43:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEEB81E8322;
+	Mon,  7 Jul 2025 15:39:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="BmVkK7u+"
-Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q+khIQHn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5116F1E230E
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 15:43:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 481081E0DD8;
+	Mon,  7 Jul 2025 15:39:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751903001; cv=none; b=JiKbU8+5Ax/PuQwOhElxd2TIoPNG0A5WxeFa68UJbOhaN7C4xH4lsWvVuwzLP6Df0digyxebjqmyledSGJppbbzTJU2sCM39egjhZ9azEBJmYhDKnzdbGYyC5MW3ZULq4t/x0KdZdhBjBH0QfroP1cD14Gdg7z7QFKO9PF9WILU=
+	t=1751902788; cv=none; b=Aeu8s8KFP2TIgcZtLItuvdlH7VrEbNHOjMX7haU4316rrKwBBhxIaTG3smTdILkWyUjAcvZlePsPaElmOA7eUyrma3DYnStjB2JXrjnNkaMIfemaluMGKqDM6rvdvy0LXoZ610XJl4BVilH+UGwvrw3pqwA7lXNlEVionH4HooI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751903001; c=relaxed/simple;
-	bh=7JjTGV2EjX+W7UtcP012g5rTZpgzgtn1ezb7Y2UDimQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lQAjx411RGq3YHAHwD+p08eN/GhVgWzCiPZjtpsp+F1P8sfavOGpFHHmXIkIXUBkQHZg4b8EgaUpBEMIVTyPw0f99CrUAAf4zw9ZXDQ2YTVQuicGO1B3YObL1dQlQfyl00tGRjEH8sGD+1PUySOt924R38pEJyqwSBNgnajw7dQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=BmVkK7u+; arc=none smtp.client-ip=91.218.175.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1751902997;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bDpmQYuK0vQauknx7TQlfoEHnUsAxwnLcxPxoWYrPKA=;
-	b=BmVkK7u+CtV+emNIyiPJlmwv2X3VBQJSqMMnfn3tbTYNgnWS2WT3JAp8kYI0i2uNXSeffr
-	h+kP8OPr6EubIOkPsfN1RrDm0iVgIVENBuM7s81elTBD9YdRZXKsWoRSP7TfAsOBC/lRUx
-	eutM/ZkWcqid0v5Aei3g+Yx1hEk9fjs=
-From: Tao Chen <chen.dylane@linux.dev>
-To: ast@kernel.org,
-	daniel@iogearbox.net,
-	john.fastabend@gmail.com,
-	andrii@kernel.org,
-	martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	mattbobrowski@google.com,
-	rostedt@goodmis.org,
-	mhiramat@kernel.org,
-	mathieu.desnoyers@efficios.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	horms@kernel.org,
-	kuniyu@amazon.com,
-	willemb@google.com,
-	jakub@cloudflare.com,
-	pablo@netfilter.org,
-	kadlec@netfilter.org,
-	hawk@kernel.org
-Cc: bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	netfilter-devel@vger.kernel.org,
-	coreteam@netfilter.org,
-	Tao Chen <chen.dylane@linux.dev>
-Subject: [PATCH bpf-next 6/6] bpf: Remove attach_type in bpf_tracing_link
-Date: Mon,  7 Jul 2025 23:39:16 +0800
-Message-ID: <20250707153916.802802-7-chen.dylane@linux.dev>
-In-Reply-To: <20250707153916.802802-1-chen.dylane@linux.dev>
-References: <20250707153916.802802-1-chen.dylane@linux.dev>
+	s=arc-20240116; t=1751902788; c=relaxed/simple;
+	bh=HmhTiVa00MgpfKHIrYzKLuieWi+vDw23ICdBOehXfc0=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
+	 References:In-Reply-To; b=iM4fTUGpA9q+IB4IFEbovF6hkdNmPUF7YkPX5ueRgEu6yxDvRzp2fb+x5h82J9w130XgS7RkWo/VZxx3fLLOkYSGu0LcRTfEhPOCH9gxdwuJZGrYICrMDPwDxsjgd2+pIRqSCJAbg9cgfw7A+8ZAZsFbkb7KlBeJKIP94728Qy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q+khIQHn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AF3EC4CEE3;
+	Mon,  7 Jul 2025 15:39:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751902787;
+	bh=HmhTiVa00MgpfKHIrYzKLuieWi+vDw23ICdBOehXfc0=;
+	h=Date:To:Cc:Subject:From:References:In-Reply-To:From;
+	b=Q+khIQHnpnzCtLIonNrjn2fqLEK8U67EA0IXvjUfI9MIDprrRurhQEpxmZUpFavpz
+	 YQ2CCaHi/gQ2QjtlYwyN+/pW9O/tp0bas+VhQsqADyUM/yYDl0hua9rpm5vfOBb3nK
+	 irJNdMgvHZwbf5/ZXpQ1KfvngmDWINFVkER+VLgMd/NjsAWDodf2EdAzwhZPh5Gj/3
+	 CW026f9ry3ElvwHxwk0vuhyzUlVtvRVE1m6clRUNYtHxRJzf2MY8DtvSp/QrW6XqZj
+	 o+6lzARLXmn+8CcPeUH+gUGDtqE5Fkm5GIzGVhKy6dm00ZNfKu4jYVRSi85HHHnVI3
+	 iBfbMdjzJgWeg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 07 Jul 2025 17:39:43 +0200
+Message-Id: <DB5XPFYBATZZ.5EH3TWGPHTDB@kernel.org>
+To: "Andreas Hindborg" <a.hindborg@kernel.org>
+Cc: "Oliver Mangold" <oliver.mangold@pm.me>, "Miguel Ojeda"
+ <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
+ <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Alice Ryhl"
+ <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>, "Asahi Lina"
+ <lina+kernel@asahilina.net>, <rust-for-linux@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v11 4/4] rust: Add `OwnableRefCounted`
+From: "Benno Lossin" <lossin@kernel.org>
+X-Mailer: aerc 0.20.1
+References: <20250618-unique-ref-v11-0-49eadcdc0aa6@pm.me>
+ <20250618-unique-ref-v11-4-49eadcdc0aa6@pm.me>
+ <DB1LPFAX66WG.1QL5JDCWI7RN4@kernel.org> <aGuAR7JCrlmzQrx4@mango>
+ <gFz7glX0UIHGffQdm4_vD_XkT5GZEKB0Lx0cd8-TCR8glMzIIY7VBIvppFVr2RURNBnGx9lKJqrE5av7xSUcbA==@protonmail.internalid> <DB5PX74OB3DX.1UNT8MIBWNC2G@kernel.org> <87bjpwqmo5.fsf@kernel.org> <gUxXEpuPZ0HXQ-cptykcSOV4dVbZNFvDq4Ey5YR1GT8exNFK0qhYAg4HFgWTvTpDk8HXMGl5XThvR7f4m-T6Sg==@protonmail.internalid> <DB5SRE5S7AR3.QUF369W9JYGJ@kernel.org> <87zfdgp253.fsf@kernel.org>
+In-Reply-To: <87zfdgp253.fsf@kernel.org>
 
-Use attach_type in bpf_link, and remove it in bpf_tracing_link.
+On Mon Jul 7, 2025 at 3:21 PM CEST, Andreas Hindborg wrote:
+> "Benno Lossin" <lossin@kernel.org> writes:
+>
+>> On Mon Jul 7, 2025 at 1:12 PM CEST, Andreas Hindborg wrote:
+>>> "Benno Lossin" <lossin@kernel.org> writes:
+>>>> Ah right, I forgot about this. What was the refcount characteristics o=
+f
+>>>> this again?
+>>>>
+>>>> *  1 =3D in flight, owned by C
+>>>> *  2 =3D in flight, owned by Rust
+>>>> * >2 =3D in flight, owned by Rust + additional references used by Rust
+>>>>        code
+>>>>
+>>>> Correct? Maybe @Andreas can check.
+>>>
+>>> We have been a bit back and forth on this. This is how we would like it
+>>> going forward:
+>>>
+>>>
+>>> /// There are three states for a request that the Rust bindings care ab=
+out:
+>>> ///
+>>> /// - 0: The request is owned by C block layer or is uniquely reference=
+d (by [`Owned<_>`]).
+>>> /// - 1: The request is owned by Rust abstractions but is not reference=
+d.
+>>> /// - 2+: There is one or more [`ARef`] instances referencing the reque=
+st.
+>>
+>> Huh, now I'm more confused... Could you go into the details again?
+>
+> Well, there is not much to it. We found out we can alias "unique" and
+> "owned by C".
+>
+> We initialize the refcount to 0 when we initialize the request
+> structure. This happens at queue creation time.
 
-Signed-off-by: Tao Chen <chen.dylane@linux.dev>
+And IIRC this refcount is only on the Rust side, since you store it in
+some private data, right?
+
+> When C block layer hands over a request for processing to a Rust driver,
+> we `debug_assert!` that the refcount is 0. We unsafely invent an
+> `Owned<Request<_>>` and pass that to the driver.
+
+And you don't increment the refcount?
+
+> The driver has the option of `into_shared` to obtain an
+> `ARef<Request<_>>`. We use this for remote completion and timer
+> completion in rnull.
+
+This operation will set the refcount to 2?
+
+> In most drivers, when the driver hands off the request to the hardware,
+> the driver will stop accounting for the request. The `Owned<Request<_>>`
+> is consumed when issuing to the driver, or the driver could simply drop
+> it. Refcount goes to 1. An ID is passed along to hardware.
+
+And with the current API design it must let go of all `ARef<Request<_>>`
+because otherwise it can't call `end_ok` (or some other method?).
+
+> When a completion comes back from hardware, it carries the ID. We use
+> the C block layer `tag_to_rq` machinery to turn this ID back into an
+> `Owned<Request<_>>`. In that process, we check that `refcount =3D=3D 1` a=
+nd
+> if so, we set refcount to 0 and invent an `Owned<Request<_>>`.
+
+(because if not, this would be wrong)
+
+I have some idea what we should do for the safety requirements of
+`Ownable`, but still need some time to write it down.
+
 ---
- include/linux/bpf.h  | 1 -
- kernel/bpf/syscall.c | 5 ++---
- 2 files changed, 2 insertions(+), 4 deletions(-)
+Cheers,
+Benno
 
-diff --git a/include/linux/bpf.h b/include/linux/bpf.h
-index 12a965362de..9c4ed6b372b 100644
---- a/include/linux/bpf.h
-+++ b/include/linux/bpf.h
-@@ -1783,7 +1783,6 @@ struct bpf_shim_tramp_link {
- 
- struct bpf_tracing_link {
- 	struct bpf_tramp_link link;
--	enum bpf_attach_type attach_type;
- 	struct bpf_trampoline *trampoline;
- 	struct bpf_prog *tgt_prog;
- };
-diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-index 14883b3040a..bed523bf92c 100644
---- a/kernel/bpf/syscall.c
-+++ b/kernel/bpf/syscall.c
-@@ -3414,7 +3414,7 @@ static void bpf_tracing_link_show_fdinfo(const struct bpf_link *link,
- 		   "target_obj_id:\t%u\n"
- 		   "target_btf_id:\t%u\n"
- 		   "cookie:\t%llu\n",
--		   tr_link->attach_type,
-+		   link->attach_type,
- 		   target_obj_id,
- 		   target_btf_id,
- 		   tr_link->link.cookie);
-@@ -3426,7 +3426,7 @@ static int bpf_tracing_link_fill_link_info(const struct bpf_link *link,
- 	struct bpf_tracing_link *tr_link =
- 		container_of(link, struct bpf_tracing_link, link.link);
- 
--	info->tracing.attach_type = tr_link->attach_type;
-+	info->tracing.attach_type = link->attach_type;
- 	info->tracing.cookie = tr_link->link.cookie;
- 	bpf_trampoline_unpack_key(tr_link->trampoline->key,
- 				  &info->tracing.target_obj_id,
-@@ -3516,7 +3516,6 @@ static int bpf_tracing_prog_attach(struct bpf_prog *prog,
- 	bpf_link_init(&link->link.link, BPF_LINK_TYPE_TRACING,
- 		      &bpf_tracing_link_lops, prog, attach_type);
- 
--	link->attach_type = prog->expected_attach_type;
- 	link->link.cookie = bpf_cookie;
- 
- 	mutex_lock(&prog->aux->dst_mutex);
--- 
-2.48.1
+> There was simply no need to have two separate values for "owned by C"
+> and "owned by Rust, not referenced".
+>
+> Best regards,
+> Andreas Hindborg
 
 
