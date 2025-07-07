@@ -1,216 +1,111 @@
-Return-Path: <linux-kernel+bounces-720114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 387F9AFB747
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 17:26:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79BD9AFB746
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 17:26:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86A751AA5F39
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 15:26:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F1EA4A35C1
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 15:26:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AE4F2E2EE2;
-	Mon,  7 Jul 2025 15:25:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B58442E3B0A;
+	Mon,  7 Jul 2025 15:25:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="dsR4xg0i"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="C3FgyR6u"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8A5A2E2EF6;
-	Mon,  7 Jul 2025 15:25:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17CA52E2EF6
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 15:25:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751901934; cv=none; b=LREt0iiPuvNymirAAbsaT0fM99f+sq8kHnwIIy+MA5vlDn9JiE0MzXO4Se/miv1i18VEn3/JUcyxYgLUey7mspz8fPE6lB21f0o5ulFPQOrSOP9OVpn7869uFgCD9kcfQpHM/mot2Z/TMeD1cpAzTG0mMSI6DjRljlBkSFU+g3c=
+	t=1751901944; cv=none; b=C4vBkqcBfA8EbXUS2ClA0zq31+3ZFHGwVU/ZZAYMz47dYZNXtm718N2x8g5X+VN82J90nBmF2xtfrfkmMHpzI7DcxV/aaCOLcpGyyNTAf0KAb5FZCM7YLmLoM+RuVxU+qztRqzVwyxXcsmTJfM2Jt3nu7sJOCf7fS6yIWbClN1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751901934; c=relaxed/simple;
-	bh=mdaLIDVjJ7ih3f59DLnrGDEVt54p29Slav4mQ87b5Ss=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CrZeuDoC3olWROTNKbHnvRPK6ZLt08Qr7K7hXw7QXqKIXEiZsINFsNx4PaZQ8bcapuQiR9SzcQhP75Euyuo8oeWhEOGL4vxoZ09hC1N0XQrZd4WfPs4KW/C7DcFBv8OLB48HX0D9oQsZCLGkdweNDIwvAKP1PE6kLauV8Klzj8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=dsR4xg0i; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=St8BIQfR0g/bkj5Q2vbzyU5XeiMPVTu5DtKzmShcTZA=; b=dsR4xg0ipSXR9KEalJjr778CD8
-	rPdAyDcbkUwvqsSZaYzhNRukXe5zYO2FUe8Y49ijLn++ZiuUs4JyWY6a/c9+q4TdUPqBNhID+8BdG
-	K3mEXx1J1tyWFlidkjkpaUb1bREve84+ueR7B3wZvO10vmveutZQSeUE0PTEY43UoXecugEhHRySO
-	n5r3LX+1gvoKtmf/X+dUCjyI+rAPggCZIW8xNutF2aWq96F3ilVINa/PaA5pGjBRxWleslWcjAh+G
-	ou1BlgNSU6rkQnIbIX64CgjRQH5RxFdqGYsGMjQDpA+C7Xl+2tEuD23hJ1xalrZsCt4D7yjw8fzct
-	nulK/Giw==;
-Received: from [81.79.92.254] (helo=[192.168.0.101])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1uYniZ-00DbXM-Ad; Mon, 07 Jul 2025 17:25:19 +0200
-Message-ID: <790c4053-cc63-4020-96ac-2650c8f009d3@igalia.com>
-Date: Mon, 7 Jul 2025 16:25:18 +0100
+	s=arc-20240116; t=1751901944; c=relaxed/simple;
+	bh=RvIbt4JsfzT8sFtxZjfR7V9phnXTDlBr7TATAuTmAck=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l3RuwTmiFrKsXERVvqIePQ976/k4XgUTgQ78xa+6EijKS0lLPU1QI0at6ud7khjo8FfUPnDuyZKwS51NdI0n1OeCqcm2PhPKYN4hQNT/ISJcw1J9Gyufi985g0xxTCN6rep+SjN+CxrSdvzOYoRBPw31kKv3X0cTGYtTMeb8DHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=C3FgyR6u; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id AEE5540E0205;
+	Mon,  7 Jul 2025 15:25:39 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id uENk_L4ipx_S; Mon,  7 Jul 2025 15:25:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1751901936; bh=fIhd7HOTfR/kWBhN4MAo63YQ841CAFgPo5PQ21Ie9h4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=C3FgyR6u0dIBaYYAmh6fp8C2gVqq1y0YWiTxCFzc3fqwIbDQAqZoiBw7HTThqe/3K
+	 sfiuwKs1jzZRv6S9FAuQ1VYe8er8RCxqJmZotv7Zz4JJ5uXSpJ2SFKpfMFIkPPD6oR
+	 zkSLgqzFn0nIQg1d7WBogCUfrbLeGlnqWbAzCBze38SOfjM45taB2ceT2d6/P1cuE+
+	 0REumGRl5vycG4yCh/EZx2O9iwtf/D9a+PrVKKTjS3HRaQjPOMhBLN1T20SjtvZGv9
+	 mYowAX0wjIfWdSzINVptqMEfQCS8P2Ci0kkdDHofOm0iTng90UewHQOSEsua4n1gqD
+	 TfFEtnYdouItHLC4Gjq26Fb/oKTcqvtPFvYYxQbla38/oxMA2wfZjWBcZsEmFB8u7o
+	 wvi7seQF0CtFm0AMWjvgfe6wnY3+Qjt6XyltGWjno984e4/xzLO+RFPsCr2+C3QdDT
+	 evaiyuU2tBJ7LmtxhDzwLZjbcMOi1OWmGjXkVxiC9sRAJWFwet5FS471EH1yzzrIeX
+	 p0Yv3ruTFGCHIeyfXCiQlDR4lCjWQ05JiJIKdIXhbmkCxsv5+cQZrYpvLDcCqs/lBd
+	 zA4GIjm2p/sbd206YWuK42X4zg+IHekiExNwaDKiaF/4UvkhzNwnn9rjNohAJrdF8W
+	 lFLibLECTn7l/r+RpdyqolrA=
+Received: from zn.tnic (p57969c58.dip0.t-ipconnect.de [87.150.156.88])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 29FF740E0202;
+	Mon,  7 Jul 2025 15:25:28 +0000 (UTC)
+Date: Mon, 7 Jul 2025 17:25:22 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Mikhail Paulyshka <me@mixaill.net>
+Cc: Dave Hansen <dave.hansen@intel.com>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/1] x86/rdrand: disable RDSEED on AMD Cyan Skillfish
+Message-ID: <20250707152522.GCaGvm4uRwQwkflx45@fat_crate.local>
+References: <20250524145319.209075-1-me@mixaill.net>
+ <20250617200551.GIaFHKnyPV_XsSjlMP@fat_crate.local>
+ <cfb12298-5214-4fc1-859c-2218c7da4ce3@intel.com>
+ <40cd274e-a02b-450d-88df-aa2b92b51b12@mixaill.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/7] drm/sched/tests: Implement cancel_job() callback
-To: Philipp Stanner <phasta@kernel.org>, Lyude Paul <lyude@redhat.com>,
- Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Matthew Brost <matthew.brost@intel.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Sumit Semwal <sumit.semwal@linaro.org>,
- Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>
-Cc: dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
-References: <20250707134221.34291-2-phasta@kernel.org>
- <20250707134221.34291-4-phasta@kernel.org>
-Content-Language: en-GB
-From: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
-In-Reply-To: <20250707134221.34291-4-phasta@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <40cd274e-a02b-450d-88df-aa2b92b51b12@mixaill.net>
 
-
-On 07/07/2025 14:42, Philipp Stanner wrote:
-> The GPU Scheduler now supports a new callback, cancel_job(), which lets
-> the scheduler cancel all jobs which might not yet be freed when
-> drm_sched_fini() runs. Using this callback allows for significantly
-> simplifying the mock scheduler teardown code.
+On Mon, Jul 07, 2025 at 01:17:41PM +0300, Mikhail Paulyshka wrote:
+> On 6/17/25 11:21 PM, Dave Hansen wrote:
+> > Heh, maybe if x86_init_rdrand() did RDSEED too, this wouldn't have
+> > slipped through QA.
 > 
-> Implement the cancel_job() callback and adjust the code where necessary.
+> This might be interesting to you: in V1 of this patch set, there was an
+> RDSEED sanity check, and Intel's CI detected broken RDSEED on Comet Lake:
 > 
-> Signed-off-by: Philipp Stanner <phasta@kernel.org>
-> ---
->   .../gpu/drm/scheduler/tests/mock_scheduler.c  | 66 +++++++------------
->   1 file changed, 23 insertions(+), 43 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/scheduler/tests/mock_scheduler.c b/drivers/gpu/drm/scheduler/tests/mock_scheduler.c
-> index 49d067fecd67..2d3169d95200 100644
-> --- a/drivers/gpu/drm/scheduler/tests/mock_scheduler.c
-> +++ b/drivers/gpu/drm/scheduler/tests/mock_scheduler.c
-> @@ -63,7 +63,7 @@ static void drm_mock_sched_job_complete(struct drm_mock_sched_job *job)
->   	lockdep_assert_held(&sched->lock);
->   
->   	job->flags |= DRM_MOCK_SCHED_JOB_DONE;
-> -	list_move_tail(&job->link, &sched->done_list);
-> +	list_del(&job->link);
->   	dma_fence_signal_locked(&job->hw_fence);
->   	complete(&job->done);
->   }
-> @@ -236,26 +236,39 @@ mock_sched_timedout_job(struct drm_sched_job *sched_job)
->   
->   static void mock_sched_free_job(struct drm_sched_job *sched_job)
->   {
-> -	struct drm_mock_scheduler *sched =
-> -			drm_sched_to_mock_sched(sched_job->sched);
->   	struct drm_mock_sched_job *job = drm_sched_job_to_mock_job(sched_job);
-> -	unsigned long flags;
->   
-> -	/* Remove from the scheduler done list. */
-> -	spin_lock_irqsave(&sched->lock, flags);
-> -	list_del(&job->link);
-> -	spin_unlock_irqrestore(&sched->lock, flags);
->   	dma_fence_put(&job->hw_fence);
-> -
->   	drm_sched_job_cleanup(sched_job);
->   
->   	/* Mock job itself is freed by the kunit framework. */
->   }
->   
-> +static void mock_sched_cancel_job(struct drm_sched_job *sched_job)
-> +{
-> +	struct drm_mock_scheduler *sched = drm_sched_to_mock_sched(sched_job->sched);
-> +	struct drm_mock_sched_job *job = drm_sched_job_to_mock_job(sched_job);
-> +	unsigned long flags;
-> +
-> +	hrtimer_cancel(&job->timer);
-> +
-> +	spin_lock_irqsave(&sched->lock, flags);
-> +	if (!dma_fence_is_signaled_locked(&job->hw_fence)) {
-> +		list_del(&job->link);
-> +		dma_fence_set_error(&job->hw_fence, -ECANCELED);
-> +		dma_fence_signal_locked(&job->hw_fence);
-> +	}
-> +	spin_unlock_irqrestore(&sched->lock, flags);
-> +
-> +	/* The GPU Scheduler will call drm_sched_backend_ops.free_job(), still.
-> +	 * Mock job itself is freed by the kunit framework. */
+> https://lore.kernel.org/all/202503211421.fc83271a-lkp@intel.com/
 
-I suggest sticking with the multi-line comment format as used in this 
-file. Ie.
+Right, I'm being told this is preproduction hw:
 
-/*
-  * Multi-line comment.
-  */
+[    2.823625][    T1] smpboot: CPU0: Genuine Intel(R) CPU 0000 @ 3.30GHz (family: 0x6, model: 0xa5, stepping: 0x1)
 
-> +}
-> +
->   static const struct drm_sched_backend_ops drm_mock_scheduler_ops = {
->   	.run_job = mock_sched_run_job,
->   	.timedout_job = mock_sched_timedout_job,
-> -	.free_job = mock_sched_free_job
-> +	.free_job = mock_sched_free_job,
-> +	.cancel_job = mock_sched_cancel_job,
->   };
->   
->   /**
-> @@ -289,7 +302,6 @@ struct drm_mock_scheduler *drm_mock_sched_new(struct kunit *test, long timeout)
->   	sched->hw_timeline.context = dma_fence_context_alloc(1);
->   	atomic_set(&sched->hw_timeline.next_seqno, 0);
->   	INIT_LIST_HEAD(&sched->job_list);
-> -	INIT_LIST_HEAD(&sched->done_list);
+and strictly speaking, RDSEED *can* fail due to resources exhaustion etc
+- doesn't necessarily mean it is broken.
 
-You forgot to remove done_list from the struct definition.
+Thx.
 
-Regards,
+-- 
+Regards/Gruss,
+    Boris.
 
-Tvrtko
-
->   	spin_lock_init(&sched->lock);
->   
->   	return sched;
-> @@ -304,38 +316,6 @@ struct drm_mock_scheduler *drm_mock_sched_new(struct kunit *test, long timeout)
->    */
->   void drm_mock_sched_fini(struct drm_mock_scheduler *sched)
->   {
-> -	struct drm_mock_sched_job *job, *next;
-> -	unsigned long flags;
-> -	LIST_HEAD(list);
-> -
-> -	drm_sched_wqueue_stop(&sched->base);
-> -
-> -	/* Force complete all unfinished jobs. */
-> -	spin_lock_irqsave(&sched->lock, flags);
-> -	list_for_each_entry_safe(job, next, &sched->job_list, link)
-> -		list_move_tail(&job->link, &list);
-> -	spin_unlock_irqrestore(&sched->lock, flags);
-> -
-> -	list_for_each_entry(job, &list, link)
-> -		hrtimer_cancel(&job->timer);
-> -
-> -	spin_lock_irqsave(&sched->lock, flags);
-> -	list_for_each_entry_safe(job, next, &list, link)
-> -		drm_mock_sched_job_complete(job);
-> -	spin_unlock_irqrestore(&sched->lock, flags);
-> -
-> -	/*
-> -	 * Free completed jobs and jobs not yet processed by the DRM scheduler
-> -	 * free worker.
-> -	 */
-> -	spin_lock_irqsave(&sched->lock, flags);
-> -	list_for_each_entry_safe(job, next, &sched->done_list, link)
-> -		list_move_tail(&job->link, &list);
-> -	spin_unlock_irqrestore(&sched->lock, flags);
-> -
-> -	list_for_each_entry_safe(job, next, &list, link)
-> -		mock_sched_free_job(&job->base);
-> -
->   	drm_sched_fini(&sched->base);
->   }
->   
-
+https://people.kernel.org/tglx/notes-about-netiquette
 
