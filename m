@@ -1,93 +1,138 @@
-Return-Path: <linux-kernel+bounces-719912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCA18AFB47E
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 15:26:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6E9AAFB42E
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 15:16:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BFA517008A
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 13:26:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C452188FE2B
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 13:17:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED3242BCF6F;
-	Mon,  7 Jul 2025 13:25:47 +0000 (UTC)
-Received: from mx.skole.hr (mx2.hosting.skole.hr [161.53.165.186])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E81FD29B8E2;
+	Mon,  7 Jul 2025 13:16:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PrO4gOCB";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="yIMzXGKA"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 215AA298CB1;
-	Mon,  7 Jul 2025 13:25:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=161.53.165.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E619522A7F9;
+	Mon,  7 Jul 2025 13:16:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751894747; cv=none; b=kGlL8xTNChNtNrYjypvXHdTsgW0I0bTM/WYVdSq4DMII33qHG0SYhzmqK3/u9RlsjqNjS3Nzc3cwsqKPvmd+rCqI3b0CLdTVQbZqtz1m4wEdDls3UnffjImkI854CjMBFemTuFj1br79T77qVuiPhsbX5MkDYui9u5jM0njTLTs=
+	t=1751894202; cv=none; b=RZOLaAT0YHUJqxscs6fFaJMQe/WIIWM95YZSKcNaKfyYE+svg265ueEFMpK+vwQg82NOa1hdbUumTHWpXReS2bFvYlXyfWTw5CP2dwH0tigIJM9Kwni0kRlEGDtcDnWDKytYgIc0VgFkCtLCwKnolNDLZ2hQB+QE5Lw321R2a3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751894747; c=relaxed/simple;
-	bh=DmqcSYSjwJ1ngk4ooV07QfYE0CJwwndzGHvqhjZ4jbI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=d8AMC2oUwPDY2KqjnoWUkWN71faW+0wiPyu6yyRbaqBhrS7AwpsbuF4XX73hcFtfqoDffa2E6AAoC51IUnZkH8ix18sOuen9aZYzOClhGKtN06PgHoIQ8Bna/MDYru7hVvXEK+/txVlGCIosJD4QBE9YyykNbpf41N9aCNvuaXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=skole.hr; spf=pass smtp.mailfrom=skole.hr; arc=none smtp.client-ip=161.53.165.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=skole.hr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=skole.hr
-Received: from mx2.hosting.skole.hr (localhost.localdomain [127.0.0.1])
-	by mx.skole.hr (mx.skole.hr) with ESMTP id 4C7E38385E;
-	Mon,  7 Jul 2025 15:19:06 +0200 (CEST)
-From: Duje =?UTF-8?B?TWloYW5vdmnEhw==?= <duje.mihanovic@skole.hr>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Lubomir Rintel <lkundrak@v3.sk>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@bootlin.com>,
- Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
- Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>,
- "Guilherme G. Piccoli" <gpiccoli@igalia.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: David Wronek <david@mainlining.org>, Karel Balej <balejk@matfyz.cz>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-hardening@vger.kernel.org,
- phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
- soc@lists.linux.dev, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v15 0/4] Initial Marvell PXA1908 support
-Date: Mon, 07 Jul 2025 15:15:55 +0200
-Message-ID: <5038617.31r3eYUQgx@radijator>
-In-Reply-To: <89072b80-09c0-418d-b104-668f7fdeae82@app.fastmail.com>
-References:
- <20250407-pxa1908-lkml-v15-0-e83ef101f944@skole.hr>
- <89072b80-09c0-418d-b104-668f7fdeae82@app.fastmail.com>
+	s=arc-20240116; t=1751894202; c=relaxed/simple;
+	bh=gwGMCcSgthgpvJwi3Tz2lYnh+90TcrOXqec8mO0R2cg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Cw7Qq5iKR9OJHBllXnESznpHzlIejtz0YKit5fZzBDirMStMIkm0XaOQbsxhQIuZy7OU2gGJP2Pjebgk1e+TLA6cONg3ajX2e2DU399+4pekvtE/lTBauANWeP7zhDEmtVyYLGF58FN/k5TllbfZs6k79d/WRiXQIsyPS9npYv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PrO4gOCB; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=yIMzXGKA; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1751894198;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tQiLw6osaoomL6XHJIB9L74mE4TG/l+SOI/9v+iCbZ8=;
+	b=PrO4gOCBQEoJQOvNC3cnV+csw9i+Ur2uK9M4JKRkiAKSRka78oeRLBGLJEQLWPLTzcvLde
+	B72lqCPZwVKzt0Rk2TAIP4CHqOhJ6bk7388uEd4BYoCY8kzhH/iIRyJy0lOz/dN0bghjyb
+	ctyYspN4Gd+leLUCjfZ0KeMrMrXMdnkybe85qKE/YOBvBZk865ojJ4tXENm5HWYvY5sm8E
+	LEqyiC0+NrsVIqCnWex3WsRZ0rg0cd1f2CG9Iwn/NH68TLKd/+4SU+DeZqfY/SgMK4S+sA
+	bJGNZV+wj/InA+qcf5gUbIPFevvVOWSz0uH3TbO2OKrdGc5TFSxOCvGyhMRSug==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1751894198;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tQiLw6osaoomL6XHJIB9L74mE4TG/l+SOI/9v+iCbZ8=;
+	b=yIMzXGKAosqPgDmoRSm/jdewQDjBi7L2WNRXVi1+obyTr33OQ2/6chzHQkAFEiKXfITk2N
+	ANyVRY9NUhvkxyAA==
+To: Arnd Bergmann <arnd@arndb.de>, Thomas =?utf-8?Q?Wei=C3=9Fschuh?=
+ <thomas.weissschuh@linutronix.de>, Andy Lutomirski <luto@kernel.org>,
+ Vincenzo Frascino <vincenzo.frascino@arm.com>, shuah <shuah@kernel.org>,
+ Anna-Maria Gleixner <anna-maria@linutronix.de>, Frederic Weisbecker
+ <frederic@kernel.org>, John Stultz <jstultz@google.com>, Stephen Boyd
+ <sboyd@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon
+ <will@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, Linux-Arch
+ <linux-arch@vger.kernel.org>, Richard Cochran <richardcochran@gmail.com>,
+ Christopher Hall <christopher.s.hall@intel.com>, Miroslav Lichvar
+ <mlichvar@redhat.com>, Werner Abt <werner.abt@meinberg-usa.com>, David
+ Woodhouse <dwmw2@infradead.org>, Kurt Kanzenbach <kurt@linutronix.de>, Nam
+ Cao <namcao@linutronix.de>, Antoine Tenart <atenart@kernel.org>
+Subject: Re: [PATCH 11/14] vdso/vsyscall: Update auxiliary clock data in the
+ datapage
+In-Reply-To: <2078551b-c0b0-4201-b8d7-1faafa3647e6@app.fastmail.com>
+References: <20250701-vdso-auxclock-v1-0-df7d9f87b9b8@linutronix.de>
+ <20250701-vdso-auxclock-v1-11-df7d9f87b9b8@linutronix.de>
+ <877c0ksd1p.ffs@tglx>
+ <2078551b-c0b0-4201-b8d7-1faafa3647e6@app.fastmail.com>
+Date: Mon, 07 Jul 2025 15:16:36 +0200
+Message-ID: <874ivorvij.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Autocrypt: addr=duje.mihanovic@skole.hr;
- keydata=
- mDMEZokhzhYJKwYBBAHaRw8BAQdAWJZ0hsI/ytTqHGFV8x6tzd5sB596cTeeDB4CQsTf+wC0KER
- 1amUgTWloYW5vdmnEhyA8ZHVqZUBkdWplbWloYW5vdmljLnh5ej6ImQQTFgoAQRYhBG3/QdYN8x
- S1t2umMK0xk1JFj60DBQJmiSHOAhsDBQkJZgGABQsJCAcCAiICBhUKCQgLAgQWAgMBAh4HAheAA
- AoJEK0xk1JFj60D1GABAJVSorZdMOlrp/oQtCSH/G53NE56x/JHA8VX+ZQBd/H3AP4/EcUf6eef
- DUxVMh2bdkmuQKsVZGgOGiXpMksrVntWBrQpRHVqZSBNaWhhbm92acSHIDxkdWplLm1paGFub3Z
- pY0Bza29sZS5ocj6ImQQTFgoAQRYhBG3/QdYN8xS1t2umMK0xk1JFj60DBQJmiSH/AhsDBQkJZg
- GABQsJCAcCAiICBhUKCQgLAgQWAgMBAh4HAheAAAoJEK0xk1JFj60Dlw8A/i4lPOL7NaYoYePDq
- l8MaJaR9qoUi+D+HtD3t0Koi7ztAQCdizXbuqP3AVNxy5Gpb1ozgp9Xqh2MRcNmJCHA1YhWAbg4
- BGaJIc4SCisGAQQBl1UBBQEBB0DEc9JeA55OlZfWKgvmRgw6a/EpBQ8mDl6nQTBmnd1XHAMBCAe
- IfgQYFgoAJhYhBG3/QdYN8xS1t2umMK0xk1JFj60DBQJmiSHOAhsMBQkJZgGAAAoJEK0xk1JFj6
- 0DG5MA/iuo4l2GDEZ1Zf+XaS//8FwdXDO9nHkfbV2MHjF4NZXwAQDroMzBdMcqVvc8GABFlTTgG
- j7KrRDz2HwWNyF8ZeprAQ==
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hello Arnd,
+On Mon, Jul 07 2025 at 13:34, Arnd Bergmann wrote:
+> On Mon, Jul 7, 2025, at 08:57, Thomas Gleixner wrote:
+>> On Tue, Jul 01 2025 at 10:58, Thomas Wei=C3=9Fschuh wrote:
+>>>=20=20
+>>> +#if defined(CONFIG_GENERIC_TIME_VSYSCALL) && defined(CONFIG_GENERIC_GE=
+TTIMEOFDAY) && \
+>>> +	defined(CONFIG_POSIX_AUX_CLOCKS)
+>>
+>> CONFIG_GENERIC_GETTIMEOFDAY requires CONFIG_GENERIC_TIME_VSYSCALL, but
+>> that's not expressed anywhere. This stuff has grown too many config
+>> options over time:
+>>
+>> GENERIC_TIME_VSYSCALL, HAVE_GENERIC_VDSO, GENERIC_VDSO_DATA_STORE
+>>
+>> All architectures except SPARC64 use the generic code and the generic
+>> VDSO data store implementation. That config maze wants to be
+>> consolidated.
+>
+> Would it help to replace the custom sparc64 vdso with the
+> thing that parisc does and call the fallback directly?
 
-On Friday, 4 July 2025 17:24:13 Central European Summer Time Arnd Bergmann 
-wrote:
-> I see you last posted this a few months ago and there was only
-> a small warning that Rob reported. Are you planning to send
-> an updated v16 of the series for it?
+Definitely.
 
-Yes, I have fixed those warnings and will send v16 shortly.
+> I doubt anyone still cares about the clock_gettime() performance
+> on sparc64, and removing it would remove all those special cases:
+>
+>  arch/sparc/Kconfig                  |   1 -
+>  arch/sparc/include/asm/vvar.h       |  75 --------
+>  arch/sparc/kernel/Makefile          |   1 -
+>  arch/sparc/kernel/vdso.c            |  69 --------
+>  arch/sparc/vdso/Makefile            |   2 +-
+>  arch/sparc/vdso/vclock_gettime.c    | 340 +++---------------------------=
+------
+>  arch/sparc/vdso/vdso.lds.S          |   2 -
+>  arch/sparc/vdso/vdso32/vdso32.lds.S |   3 +-
+>  arch/sparc/vdso/vma.c               | 265 +---------------------------
+>  9 files changed, 28 insertions(+), 730 deletions(-)
 
-Regards,
--- 
-Duje
+That's definitely an argument :)
 
+> (the added lines here also fix the missing clock_gettime64,
+> which was equally blocked on the sparc64 oddities)
 
+I'm all for it.
 
+Can you post a patch to that effect?
+
+Thanks,
+
+        tglx
 
