@@ -1,61 +1,58 @@
-Return-Path: <linux-kernel+bounces-719130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AD61AFAA46
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 05:33:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D7DFAFAA4D
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 05:37:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8A753A8246
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 03:32:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4BB1F7A8FE5
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 03:36:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C817725A2AB;
-	Mon,  7 Jul 2025 03:33:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95D7425A2B6;
+	Mon,  7 Jul 2025 03:37:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="HCKd/aYl"
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="WQQQ3KmE"
+Received: from mail-8141.vip.163.com (mail-8141.vip.126.com [60.191.81.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9932B12C544;
-	Mon,  7 Jul 2025 03:33:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E7B3256C71;
+	Mon,  7 Jul 2025 03:37:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.191.81.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751859191; cv=none; b=DO3rIZp9NYlPq7jaz0IR659fmk2R1q5WsKPJzNQuSUIPbNJarznm2jVNaUlRT7Q1cfG2UjJulKBcEcqK2Qgyrty/C1JKlfpYOA4ci5c9c+IMF0h7FRmcof1RHZ0mN25z3IwkYMwqs84brMXz8s8uYB9vfjx+4e9qGbhoeXDVg1k=
+	t=1751859453; cv=none; b=jRu0GBgVP9myOdmHh6CMj6l1AdCorh+y12gQiaakWROWb5wMy0h/WshYwNPJrZ+s1rTjwmJ1tZ0+BtVBxxbybk7V0p28iLlEVSyAxTdkboVKEjEXKRUXDUOTcdFkwIh4IrlTwNJeNkGThxt1HxxmE3XvC+COzAc1go9AQrGnbxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751859191; c=relaxed/simple;
-	bh=e0q8nxNnmBzqWW8SBAa9LaqX4SUMxgP06U2FBY5+lwo=;
+	s=arc-20240116; t=1751859453; c=relaxed/simple;
+	bh=k2TdzviJqSo4LBmcVaK4SGuAEg6ja1WQlCxUn6+mvbw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sjD0yX2LGRfvs0ZEcpG3VBZH3XH4YV7u2iIAsE2RK5HGcqysSsavO17+/Ps4InO9fGOPzP+vtaoaNNsPPI2qWGft9J/GOWXRz3pnEYA7uyuCR1xdZx5XwReCkKgXcFhnE2ym5VjVEcpY28bRT6VRICmHv5d36EtLDTAEI9jb+ho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=HCKd/aYl; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=yYO7oFAcgLtcduhvrZUV+OOPnhvNYuC+oqbqOWaNQf0=; b=HCKd/aYlD1ZmSQmDgwQB7vsZQq
-	P6zEIHrztWbKfE24/OdizeXxLvAEPSnEH7GpqPfUR6WsMUW+eu517RIMJqfrhK6nDYU676YJ7++d3
-	dDXAxTbDiEF/0Kzy7assQb1L1PC1SxFnLNayqRHbWoxRW9tz4X+GFXkK23FLUu1C4INmVKNw8pFwm
-	oK3YtRIINfnIM+rEC0WJxvWy4Z9ImTa8hgEB5hW8sm2tpKaXQT/64keG4GKp36lOcZrn62o9Qsufb
-	0JdLlGFZ65pfSJI4JSL+m1TFj5J74dSiBSgmhdMfaFHWwYYpaqyUYdjknUl2y42kEdyd1vLe/Vl1o
-	duYPj3FQ==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1uYcLp-004VcC-0v;
-	Mon, 07 Jul 2025 11:33:02 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Mon, 07 Jul 2025 15:33:01 +1200
-Date: Mon, 7 Jul 2025 15:33:01 +1200
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Mengbiao Xiong <xisme1998@gmail.com>
-Cc: thomas.lendacky@amd.com, davem@davemloft.net, john.allen@amd.com,
-	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] crypto: ccp - Fix crash when rebind ccp device for
- ccp.ko
-Message-ID: <aGs_7eEgPCRXMtIW@gondor.apana.org.au>
-References: <20250624065418.1743-1-xisme1998@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=riQHVfYbwX1NDQ9tQogr4zX/muvm3So4V6GGUUDIEb3LR/SY0E4p+jCwHHttcBJUDaWAF/1M/6jv6mIvZew5rxh3963e8fI6tApZVM7FxdR8+6g4V9FEDVp1sCiQMn8FkBBaPrFxsUaqFb9o8koU9vSUxOc8ZXQxSNY0NTWA+YI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=WQQQ3KmE; arc=none smtp.client-ip=60.191.81.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=oesmI5ePY0ossKfajmISjSZfcDhggP0bYnh+lj+buoU=;
+	b=WQQQ3KmEPp5jU24e7Wc/uAmsDbH3yhApgLc+2F73BuqLtNc1F81JKBaS1t9AYL
+	EMZO/hRhaD4y4BU4oiGN0kXBUJ5JWOER0NVuIOwWBTp+BEBaMe9FMf2SFK7gGRxO
+	k05ARgRcGFX16oDqyWIoPV47YgrPs3HM7EG+x1D9F5CAs=
+Received: from dragon (unknown [])
+	by gzsmtp2 (Coremail) with SMTP id Ms8vCgCXluOqQGtoLdp1AA--.56829S3;
+	Mon, 07 Jul 2025 11:36:12 +0800 (CST)
+Date: Mon, 7 Jul 2025 11:36:10 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Primoz Fiser <primoz.fiser@norik.com>
+Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/4] arm64: dts: imx93-phycore-som: Add RPMsg overlay
+Message-ID: <aGtAqi7JWbF5F-31@dragon>
+References: <20250619063954.1730231-1-primoz.fiser@norik.com>
+ <20250619063954.1730231-2-primoz.fiser@norik.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,65 +61,117 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250624065418.1743-1-xisme1998@gmail.com>
+In-Reply-To: <20250619063954.1730231-2-primoz.fiser@norik.com>
+X-CM-TRANSID:Ms8vCgCXluOqQGtoLdp1AA--.56829S3
+X-Coremail-Antispam: 1Uf129KBjvJXoWxXF4UXw48tr13Jw48KrWfXwb_yoW5CF43pa
+	92yFW5WFWIgF1xCr9xXrs2qa4DAws5Aayj9w1UWryUKrWUAry2krsxtrW3Wr4xZw4UAw40
+	vFs3WFnFkFnxX3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07U4WlgUUUUU=
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiNAwwlWhrQKx8tgAA34
 
-On Tue, Jun 24, 2025 at 02:54:18PM +0800, Mengbiao Xiong wrote:
-> When CONFIG_CRYPTO_DEV_CCP_DEBUGFS is enabled, rebinding
-> the ccp device causes the following crash:
+On Thu, Jun 19, 2025 at 08:39:51AM +0200, Primoz Fiser wrote:
+> Add an overlay used for remote processor inter-core communication
+> between A55 and M33 cores on the phyCORE-i.MX93 SoM based boards.
 > 
-> $ echo '0000:0a:00.2' > /sys/bus/pci/drivers/ccp/unbind
-> $ echo '0000:0a:00.2' > /sys/bus/pci/drivers/ccp/bind
+> Overlay adds the required reserved memory regions and enables the
+> mailbox unit and the M33 core for RPMsg (Remote Processor Messaging
+> Framework).
 > 
-> [  204.976930] BUG: kernel NULL pointer dereference, address: 0000000000000098
-> [  204.978026] #PF: supervisor write access in kernel mode
-> [  204.979126] #PF: error_code(0x0002) - not-present page
-> [  204.980226] PGD 0 P4D 0
-> [  204.981317] Oops: Oops: 0002 [#1] SMP NOPTI
-> ...
-> [  204.997852] Call Trace:
-> [  204.999074]  <TASK>
-> [  205.000297]  start_creating+0x9f/0x1c0
-> [  205.001533]  debugfs_create_dir+0x1f/0x170
-> [  205.002769]  ? srso_return_thunk+0x5/0x5f
-> [  205.004000]  ccp5_debugfs_setup+0x87/0x170 [ccp]
-> [  205.005241]  ccp5_init+0x8b2/0x960 [ccp]
-> [  205.006469]  ccp_dev_init+0xd4/0x150 [ccp]
-> [  205.007709]  sp_init+0x5f/0x80 [ccp]
-> [  205.008942]  sp_pci_probe+0x283/0x2e0 [ccp]
-> [  205.010165]  ? srso_return_thunk+0x5/0x5f
-> [  205.011376]  local_pci_probe+0x4f/0xb0
-> [  205.012584]  pci_device_probe+0xdb/0x230
-> [  205.013810]  really_probe+0xed/0x380
-> [  205.015024]  __driver_probe_device+0x7e/0x160
-> [  205.016240]  device_driver_attach+0x2f/0x60
-> [  205.017457]  bind_store+0x7c/0xb0
-> [  205.018663]  drv_attr_store+0x28/0x40
-> [  205.019868]  sysfs_kf_write+0x5f/0x70
-> [  205.021065]  kernfs_fop_write_iter+0x145/0x1d0
-> [  205.022267]  vfs_write+0x308/0x440
-> [  205.023453]  ksys_write+0x6d/0xe0
-> [  205.024616]  __x64_sys_write+0x1e/0x30
-> [  205.025778]  x64_sys_call+0x16ba/0x2150
-> [  205.026942]  do_syscall_64+0x56/0x1e0
-> [  205.028108]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> [  205.029276] RIP: 0033:0x7fbc36f10104
-> [  205.030420] Code: 89 02 48 c7 c0 ff ff ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 8d 05 e1 08 2e 00 8b 00 85 c0 75 13 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 54 f3 c3 66 90 41 54 55 49 89 d4 53 48 89 f5
-> 
-> This patch sets ccp_debugfs_dir to NULL after destroying it in
-> ccp5_debugfs_destroy, allowing the directory dentry to be
-> recreated when rebinding the ccp device.
-> 
-> Tested on AMD Ryzen 7 1700X.
-> 
-> Fixes: 3cdbe346ed3f ("crypto: ccp - Add debugfs entries for CCP information")
-> Signed-off-by: Mengbiao Xiong <xisme1998@gmail.com>
+> Signed-off-by: Primoz Fiser <primoz.fiser@norik.com>
 > ---
->  drivers/crypto/ccp/ccp-debugfs.c | 3 +++
->  1 file changed, 3 insertions(+)
+>  arch/arm64/boot/dts/freescale/Makefile        |  4 ++
+>  .../dts/freescale/imx93-phycore-rpmsg.dtso    | 60 +++++++++++++++++++
+>  2 files changed, 64 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/freescale/imx93-phycore-rpmsg.dtso
+> 
+> diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
+> index 0b473a23d120..08a1de299538 100644
+> --- a/arch/arm64/boot/dts/freescale/Makefile
+> +++ b/arch/arm64/boot/dts/freescale/Makefile
+> @@ -324,6 +324,10 @@ dtb-$(CONFIG_ARCH_MXC) += imx93-14x14-evk.dtb
+>  dtb-$(CONFIG_ARCH_MXC) += imx93-kontron-bl-osm-s.dtb
+>  dtb-$(CONFIG_ARCH_MXC) += imx93-phyboard-nash.dtb
+>  dtb-$(CONFIG_ARCH_MXC) += imx93-phyboard-segin.dtb
+> +
+> +imx93-phycore-rpmsg-dtbs += imx93-phyboard-nash.dtb imx93-phyboard-segin.dtb imx93-phycore-rpmsg.dtbo
+> +dtb-$(CONFIG_ARCH_MXC) += imx93-phycore-rpmsg.dtb
+> +
+>  dtb-$(CONFIG_ARCH_MXC) += imx93-tqma9352-mba91xxca.dtb
+>  dtb-$(CONFIG_ARCH_MXC) += imx93-tqma9352-mba93xxca.dtb
+>  dtb-$(CONFIG_ARCH_MXC) += imx93-tqma9352-mba93xxla.dtb
+> diff --git a/arch/arm64/boot/dts/freescale/imx93-phycore-rpmsg.dtso b/arch/arm64/boot/dts/freescale/imx93-phycore-rpmsg.dtso
+> new file mode 100644
+> index 000000000000..9200113c9ec3
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/freescale/imx93-phycore-rpmsg.dtso
+> @@ -0,0 +1,60 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) 2025 PHYTEC Messtechnik GmbH
+> + * Author: Primoz Fiser <primoz.fiser@norik.com>
+> + */
+> +
+> +/dts-v1/;
+> +/plugin/;
+> +
+> +&{/} {
+> +	reserved-memory {
+> +		#address-cells = <2>;
+> +		#size-cells = <2>;
+> +
+> +		vdev0vring0: vdev0vring0@a4000000 {
+> +			reg = <0 0xa4000000 0 0x8000>;
+> +			no-map;
+> +		};
+> +
+> +		vdev0vring1: vdev0vring1@a4008000 {
+> +			reg = <0 0xa4008000 0 0x8000>;
+> +			no-map;
+> +		};
+> +
+> +		vdev1vring0: vdev1vring0@a4010000 {
+> +			reg = <0 0xa4010000 0 0x8000>;
+> +			no-map;
+> +		};
+> +
+> +		vdev1vring1: vdev1vring1@a4018000 {
+> +			reg = <0 0xa4018000 0 0x8000>;
+> +			no-map;
+> +		};
+> +
+> +		rsc_table: rsc-table@2021e000 {
 
-Patch applied.  Thanks.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Can we sort the node in order of unit-address?
+
+Shawn
+
+> +			reg = <0 0x2021e000 0 0x1000>;
+> +			no-map;
+> +		};
+> +
+> +		vdevbuffer: vdevbuffer@a4020000 {
+> +			compatible = "shared-dma-pool";
+> +			reg = <0 0xa4020000 0 0x100000>;
+> +			no-map;
+> +		};
+> +	};
+> +};
+> +
+> +&cm33 {
+> +	mbox-names = "tx", "rx", "rxdb";
+> +	mboxes = <&mu1 0 1>,
+> +		 <&mu1 1 1>,
+> +		 <&mu1 3 1>;
+> +	memory-region = <&vdevbuffer>, <&vdev0vring0>, <&vdev0vring1>,
+> +		 <&vdev1vring0>, <&vdev1vring1>, <&rsc_table>;
+> +	status = "okay";
+> +};
+> +
+> +&mu1 {
+> +	status = "okay";
+> +};
+> -- 
+> 2.34.1
+> 
+
 
