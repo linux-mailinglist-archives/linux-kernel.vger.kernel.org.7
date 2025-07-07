@@ -1,166 +1,134 @@
-Return-Path: <linux-kernel+bounces-720447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93688AFBBE0
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 21:48:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05923AFBBE2
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 21:49:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AFB7B7B1D3E
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 19:47:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 511097A1C12
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 19:47:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1C4426563B;
-	Mon,  7 Jul 2025 19:48:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C36E25A320;
+	Mon,  7 Jul 2025 19:49:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bVJB0nyi"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XxGvlBtf"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ABE61428E7;
-	Mon,  7 Jul 2025 19:48:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD47B13A244
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 19:49:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751917693; cv=none; b=J/bVIWX6sU7hl3gFrz7B5iUcsIVJMsKvLugSaIbZ8T7IE/DJICJdbLIrCFB8NIEIswrn53bPHGsXFpeR24WN23c8N/ZADAvBESgqpduC1tn3gV5FtLsBKUIwDfrdJWD8WV9RUs7e28bJmMEv4dpwEBQhw+QdQ+784YYRKSbDPC4=
+	t=1751917745; cv=none; b=Y+vDI2QWOUXBXkqAXu5Rp/zMU91vLXg0TBSiftRWykKvcaBfla+6GeE8h21VGC88F8s32E5LutIX7MXCOI3KLCWvgqDzcZxSccJ4IRcEFV6jDsiRmA3gy74D4p+fGPnG4tY73Icl3m8fiZVm7ohf+kJcQZjerSDC1HO2KlaqkPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751917693; c=relaxed/simple;
-	bh=ecdVWzxZIierHezK9JWfxYPiiYP/s+IBBE/NxnEUh0k=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=mGt6bYfitstygCdbjT4ptP4ptI40Fn7CIfE3NFNI8zj27gzEAhQsHUGn3KWPXylCoOlbPSb6A6itDUFKKrEXiI+OlN5Ad664FcPlGp3TIVGv6+/rwdLIfbVNEEgAkZIDvR1V3UrMM1cntRzXfa4Ug8E6wwHOMO4kCulgG3SXL3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bVJB0nyi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68626C4CEE3;
-	Mon,  7 Jul 2025 19:48:09 +0000 (UTC)
+	s=arc-20240116; t=1751917745; c=relaxed/simple;
+	bh=NmZU/MvLGmPv9MmKPyMivMr0TayXVXZyGExLDNpv+RM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=ZnP5ybiEQ8RlQhmS6+DxLnIyNsyz2DHNecaLKDOCvWAa8In/aYvXoJbfLpPfRM7Lc6hVuGczvnvN24J4eoC7An6TApAitg7mO2UCZSmH5TjKk1Z31OwFdrcrmpfBgLmuuSRgruz44jeS9dvHpIoWQ3EEdeYLfE5fCEWQesDSzDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XxGvlBtf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D1DBC4CEE3;
+	Mon,  7 Jul 2025 19:49:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751917692;
-	bh=ecdVWzxZIierHezK9JWfxYPiiYP/s+IBBE/NxnEUh0k=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=bVJB0nyiTvMUX98Qa8rWx97izZFRkRGX2NJ7U+Rk/j/xgMZaasL4jGUpwrcAuQ3IY
-	 CfLExvGXJUC7g3NE82DhJeh3aIHOj/RlBXZmjVmrbMjKdT/D98rlo0VzzIfPfADB3L
-	 7g7XM6+FKiMb0+bLlAMM9kuO/k5kFBoDC4/kgycmEQeWDsRpvUfwTsSqdI5BPTwz0P
-	 pAiHBV2OYl8ohN7m88bYmSnXlaFwtPYm6Nt8X3SHQwxqR/13rsBJBevxxUaBGPJk/9
-	 97jjqygPtRw4S8Ts4WrE2xDIqu157tSBkFhUvE9QVf1xBnmEPJtFw1uz2sfISu2FHg
-	 GgBz9XsZWwmxg==
+	s=k20201202; t=1751917745;
+	bh=NmZU/MvLGmPv9MmKPyMivMr0TayXVXZyGExLDNpv+RM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=XxGvlBtfs/ge7p8M0zGPA+Gwy2B6tksexs4+73gYjML3bpJPSKYopa6zkhl6hCUB3
+	 YeuUfYmP8/HYTo3Zjr+GpCt4B5Q7sLHMRJ7Idi3ocNR6KxMv0BHjUAlfygSm4o4EcR
+	 zJ6jJW7BbKiHII5CNoL2FzYPdobPlGaZ+/G9lfe3w7sugfPjSRQkNeq0Judpt71aQW
+	 p11NboEEbXuQmkqieV6qv4AhgwNBHYU1N+gtsnToOOXik2SFoGyzDryjcaRR+NUnsL
+	 4XDoDOnAldcZZ8LcmjWLygYdIZXrKahUoursWr5FHt8JqGaZocS2C/epcdtyEKBLhC
+	 0pSLzNVNcG6Tg==
+Date: Mon, 7 Jul 2025 14:49:03 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: weilinghan <weilinghan@xiaomi.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-kernel@vger.kernel.org,
+	hulingchen <hulingchen@xiaomi.com>,
+	weipengliang <weipengliang@xiaomi.com>,
+	Vidya Sagar <vidyas@nvidia.com>
+Subject: Re: [PATCH] PCI: remove call pci_save_aspm_l1ss_state() from
+ pci_save_pcie_state()
+Message-ID: <20250707194903.GA2096996@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 07 Jul 2025 21:48:07 +0200
-Message-Id: <DB62ZN1LTO31.1HVWDLAWJWVM8@kernel.org>
-Cc: "Boqun Feng" <boqun.feng@gmail.com>, <linux-kernel@vger.kernel.org>,
- <rust-for-linux@vger.kernel.org>, <ojeda@kernel.org>,
- <alex.gaynor@gmail.com>, <gary@garyguo.net>, <a.hindborg@kernel.org>,
- <aliceryhl@google.com>, <tmgross@umich.edu>, <dakr@kernel.org>,
- <peterz@infradead.org>, <mingo@redhat.com>, <will@kernel.org>,
- <longman@redhat.com>, <felipe_life@live.com>, <daniel@sedlak.dev>,
- <bjorn3_gh@protonmail.com>
-Subject: Re: [PATCH v5 2/3] implement ww_mutex abstraction for the Rust tree
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Onur" <work@onurozkan.dev>
-X-Mailer: aerc 0.20.1
-References: <20250621184454.8354-1-work@onurozkan.dev>
- <20250621184454.8354-3-work@onurozkan.dev>
- <DASY7BECFRCT.332X5ZHZMV2W@kernel.org> <aFlQ7K_mYYbrG8Cl@Mac.home>
- <DATYHYJVPL3L.3NLMH7PPHYU9@kernel.org> <aFlpFQ4ivKw81d-y@Mac.home>
- <DAU0ELV91E2Q.35FZOII18W44J@kernel.org>
- <20250707163913.5ffc046d@nimda.home>
- <DB5XIWGZ8U36.1VB58YBJFL7OT@kernel.org>
- <20250707210613.2fd5bb55@nimda.home>
-In-Reply-To: <20250707210613.2fd5bb55@nimda.home>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250707115236.3076-1-weilinghan@xiaomi.com>
 
-On Mon Jul 7, 2025 at 8:06 PM CEST, Onur wrote:
-> On Mon, 07 Jul 2025 17:31:10 +0200
-> "Benno Lossin" <lossin@kernel.org> wrote:
->
->> On Mon Jul 7, 2025 at 3:39 PM CEST, Onur wrote:
->> > On Mon, 23 Jun 2025 17:14:37 +0200
->> > "Benno Lossin" <lossin@kernel.org> wrote:
->> >
->> >> > We also need to take into consideration that the user want to
->> >> > drop any lock in the sequence? E.g. the user acquires a, b and
->> >> > c, and then drop b, and then acquires d. Which I think is
->> >> > possible for ww_mutex.
->> >>=20
->> >> Hmm what about adding this to the above idea?:
->> >>=20
->> >>     impl<'a, Locks> WwActiveCtx<'a, Locks>
->> >>     where
->> >>         Locks: Tuple
->> >>     {
->> >>         fn custom<L2>(self, action: impl FnOnce(Locks) -> L2) ->
->> >> WwActiveCtx<'a, L2>; }
->> >>=20
->> >> Then you can do:
->> >>=20
->> >>     let (a, c, d) =3D ctx.begin()
->> >>         .lock(a)
->> >>         .lock(b)
->> >>         .lock(c)
->> >>         .custom(|(a, _, c)| (a, c))
->> >>         .lock(d)
->> >>         .finish();
->> >
->> >
->> > Instead of `begin` and `custom`, why not something like this:
->> >
->> > 	let (a, c, d) =3D ctx.init()
->> > 	    .lock(a)
->> >             .lock(b)
->> >             .lock(c)
->> >             .unlock(b)
->> >             .lock(d)
->> >             .finish();
->> >
->> > Instead of `begin`, `init` would be better naming to imply `fini`
->> > on the C side, and `unlock` instead of `custom` would make the
->> > intent clearer when dropping locks mid chain.
+[+cc Vidya, author of 4ff116d0d5fd]
 
-Also, I'm not really fond of the name `init`, how about `enter`?
+On Mon, Jul 07, 2025 at 07:52:36PM +0800, weilinghan wrote:
+> During the suspend-resume process, PCIe resumes by enabling L1.2
+> in the pci_restore_state function due to patch 4ff116d0d5fd.
+> However, in the following scenario, the resume process
+> becomes very time-consuming:
+> 
+> 1.The platform has multiple PCI buses.
+> 2.The link transition time from L1.2 to L0 exceeds 100 microseconds by
+> accessing the configuration space of the EP.
+> 3.The PCI framework has async_suspend enabled
+> (by calling device_enable_async_suspend(&dev->dev)
+> in pci_pm_init(struct pci_dev *dev)).
+> 4.On ARM platforms, CONFIG_PCI_LOCKLESS_CONFIG is not enabled, which means
+> the pci_bus_read_config_##size interfaces contain locks (spinlock).
+> 
+> Practical measurements show that enabling L1.2 during the
+> resume process introduces an additional delay of approximately
+> 150ms in the pci_pm_resume_noirq() function for platforms
+> with two PCI buses, compared to when L1.2 is disabled.
 
->>=20
->> I don't think that this `unlock` operation will work. How would you
->> implement it?
->
->
-> We could link mutexes to locks using some unique value, so that we can
-> access locks by passing mutexes (though that sounds a bit odd).
->
-> Another option would be to unlock by the index, e.g.,:
->
-> 	let (a, c) =3D ctx.init()
-> 	    .lock(a)
->             .lock(b)
->             .unlock::<1>()
->             .lock(c)
->             .finish();
+We really need an argument for why this change would be correct, not
+just the fact that it makes resume faster.  Vidya made the change in
+4ff116d0d5fd to fix a problem, and it looks like this patch would
+reintroduce the problem.
 
-Hmm yeah that's interesting, but probably not very readable...
+Nits:
 
-    let (a, c, e) =3D ctx
-        .enter()
-        .lock(a)
-        .lock(b)
-        .lock_with(|(a, b)| b.foo())
-        .unlock::<1>()
-        .lock(c)
-        .lock(d)
-        .lock_with(|(.., d)| d.bar())
-        .unlock::<2>();
+  - Look at previous history and follow the subject line convention.
 
-> The index approach would require us to write something very similar
-> to `Tuple` (with macro obviously) you proposed sometime ago.
->
-> We could also just go back to your `custom` but find a better name
-> for it (such as `retain`).
+  - Add "()" after function names, e.g., pci_restore_state().
 
-Oh yeah the name was just a placeholder.
+  - Omit "the ... function"; it's sufficient to say "in
+    pci_restore_state()" and "in pci_pm_resume_noirq()".
 
-The advantage of custom is that the user can do anything in the closure.
+  - Omit function parameter info since it's not really relevant here.
 
----
-Cheers,
-Benno
+  - Cite commits as: 4ff116d0d5fd ("PCI/ASPM: Save L1 PM Substates
+    Capability for suspend/resume")
+
+  - s/4.0n/4/
+
+> Signed-off-by: weilinghan <weilinghan@xiaomi.com>
+> ---
+>  drivers/pci/pci.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> index 9e42090fb108..0834211b0f8c 100644
+> --- a/drivers/pci/pci.c
+> +++ b/drivers/pci/pci.c
+> @@ -1708,7 +1708,6 @@ static int pci_save_pcie_state(struct pci_dev *dev)
+>  	pcie_capability_read_word(dev, PCI_EXP_LNKCTL2, &cap[i++]);
+>  	pcie_capability_read_word(dev, PCI_EXP_SLTCTL2, &cap[i++]);
+>  
+> -	pci_save_aspm_l1ss_state(dev);
+>  	pci_save_ltr_state(dev);
+>  
+>  	return 0;
+> @@ -1725,7 +1724,6 @@ static void pci_restore_pcie_state(struct pci_dev *dev)
+>  	 * LTR itself in PCI_EXP_DEVCTL2.
+>  	 */
+>  	pci_restore_ltr_state(dev);
+> -	pci_restore_aspm_l1ss_state(dev);
+>  
+>  	save_state = pci_find_saved_cap(dev, PCI_CAP_ID_EXP);
+>  	if (!save_state)
+> -- 
+> 2.43.0
+> 
 
