@@ -1,94 +1,63 @@
-Return-Path: <linux-kernel+bounces-719490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 448E9AFAEAE
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 10:32:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69919AFAEB3
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 10:33:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C74B4A0C21
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 08:32:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A3813B9379
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 08:32:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF59028B518;
-	Mon,  7 Jul 2025 08:32:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b="i9FgiCRt"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4C6427702E
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 08:32:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EFD528A3E1;
+	Mon,  7 Jul 2025 08:33:10 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D46E0286D49;
+	Mon,  7 Jul 2025 08:33:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751877131; cv=none; b=FUSiFs5CdjLX7Qkqzh0MuKZRx9Do1YUgsMfpBvwiGLA4EEh8TDJW90g+0RkuQNQ3RdFx2CcJRKVYTfRw85C4Y5XNhr3xJnvavLct2yazA/POH6w63vTiNzD/s6JarlyVWcD8NK1qWeiVUy9yZBifFy9yYiJWgf6CaFX+1Ky7PAc=
+	t=1751877190; cv=none; b=U/9wlpfM3B71aQsn8qPkBUBLhTn0lhkDyOtsRw30rG8Vt0iev/ebMCFlD7amIPSTlUW1RCNeylkK8XlUDdFcCbEFs2Q9t0MmdhI8ZGbvyT0nse+OBj2La6VQkoBbg8kzjkfSex4vOlY7E174H96aw41uAPvd43FtfZghgAKJ8RI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751877131; c=relaxed/simple;
-	bh=EokrUka+8q9BFBcMOPMx0zXPzrf3e9HtqUOEMOxQYtI=;
+	s=arc-20240116; t=1751877190; c=relaxed/simple;
+	bh=dOerYKCIIu0Ldwt7JnAEhthNKLc0cAZQdHOqiQZGC9c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MBlhOveFnOAEoXJsRca/q+ZETsfKpaTAz4E9ks59AiEPocsYZjqjfHH8Y1cJXeTKNKpvu7CS3lyMyt7B2KnZpikAuw8B+yKB2Zq4ntWj2FTZ0qxbRFtF7rPaUxIewIrXqZ2IM6K7vJf8E4zMO/wbl1CZb1arXLWSeVHTT9eG+7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us; spf=none smtp.mailfrom=resnulli.us; dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b=i9FgiCRt; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=resnulli.us
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4538bc52a8dso21344875e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 01:32:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20230601.gappssmtp.com; s=20230601; t=1751877128; x=1752481928; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jk0DSP+snP0yxTTILdaG1XmNWZzWY5PtYg8JXeBa+lA=;
-        b=i9FgiCRtgGBuQvQOEKORkT3H0sX2nO/em8+ZrCYIaUIlgt+jU5ak5liBvkDdwPE4cn
-         HmvOFeKwbokzfBdnw1jVAWGGHWGH+8aL2q8ruNVM3EepuI25vMPk7YMYdio45hMb4yK5
-         ef9lBfUIQEwVgGvYx1VU41wxXL8b1FZ/fKPRIso0G60Gjm5zCMFzy0RvBMbOSxg3wxEi
-         qIsTm7h7+Z0DfG1BEGJ3NvmFAvM5glsKe9hf12aiB5xDKyF395OCTTzju2tI3mpsobx+
-         HgPq0C+r3g/lUcrFzBoJI4Vr9a+F1nW9HlfnWZCnUwAVT6JKc3XdYNwzo7BPfOrlg+N7
-         bpdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751877128; x=1752481928;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jk0DSP+snP0yxTTILdaG1XmNWZzWY5PtYg8JXeBa+lA=;
-        b=GcWTwKBs0cCBFNGKMe8K0efZ/MvRodCAbWgCg5apGa3/THV7ZsHQhGC6In7ikjgcHT
-         XvEvl5oYNMjMC6Nnz+5BVgvwMUu2ntoOztyMeLkWzBkoD0Nq/LaO8mKKVqeLBnV6F8HF
-         aw1SULeYg50WgMirwybXCQAVEeIhNjFvhg68qrGcDjypZIXSrXWbG/IzFiHBUfq/TfBh
-         LYewVaSifKgNpHbbSj+sod2PQtUZJqVb26B4b7GtJILnFn+tN0zE3UAdMvUwrLCiuOhp
-         MCgy1GCHFdTQgtCgi0jxX8TvZ00TNaeZsUL4y8IAXnRjzZSQeG+tca1EwD8q4WPyTjfd
-         PtDA==
-X-Forwarded-Encrypted: i=1; AJvYcCW3/EnVNQ7JEx/RM0BK6e+23Pa/PkeNgGPgOk33CDL7lXAfkzAYmReJ8vfpqomIen9E8l7X+NnnQlBtfn4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRxTJEXk5xfHYaedyIzCnv4Z08WgWJorel8XzrkU5pggnpR4eg
-	6DGu0uClVlIFpTyqNOS7yo1NO+r809hxqdu4RafsH98YKb9anuTpk5xSyn6q/i3MVkY=
-X-Gm-Gg: ASbGncvK+7DoEvwHKZuVY9gYp9kDX8fFO1FW2OPM3zakXLflFLDxNuZ1lUNM6jJ0qh2
-	+l7PaLwKGSsGPzI4/A40SQ5gGZKPUuejPRaxwK2PCjXGrKqg+ws5l18DpyTLzm9q9hOSR5vsjn2
-	Lp0RtXOIeC4OHZfPOV8RjPFKm72szFbsir4oUZJxKCDPSbm8D3bESeHE5R9uzn2VqxEIEKyDq/S
-	J4K9q7K08+Nf09zqGiVQMQ4cGMUQu95EP/8Pc5ESL+2IQrq+mhQ6T2PKiU8ttm8tO7apLkagNcj
-	6tWW9UVG7kOYXU/LGG7vJHFJrYWW14dKZ/2ruq32xWYPGc88hKvXnZYa9PA+PqY=
-X-Google-Smtp-Source: AGHT+IHColHEC/SleUA2FaGBvscXm99Qomr8ucT1fEnsASZPSUvkTO+j3OPSIwgqWNk5VgdiiF29Ag==
-X-Received: by 2002:a05:600c:3b1a:b0:43c:fffc:7886 with SMTP id 5b1f17b1804b1-454bf4092c3mr47838765e9.8.1751877123334;
-        Mon, 07 Jul 2025 01:32:03 -0700 (PDT)
-Received: from jiri-mlt ([85.163.81.98])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454abea60d5sm94590505e9.1.2025.07.07.01.32.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Jul 2025 01:32:02 -0700 (PDT)
-Date: Mon, 7 Jul 2025 10:32:00 +0200
-From: Jiri Pirko <jiri@resnulli.us>
-To: Ivan Vecera <ivecera@redhat.com>
-Cc: netdev@vger.kernel.org, 
-	Prathosh Satish <Prathosh.Satish@microchip.com>, Vadim Fedorenko <vadim.fedorenko@linux.dev>, 
-	Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Jonathan Corbet <corbet@lwn.net>, Jason Gunthorpe <jgg@ziepe.ca>, 
-	Shannon Nelson <shannon.nelson@amd.com>, Dave Jiang <dave.jiang@intel.com>, 
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, Michal Schmidt <mschmidt@redhat.com>, 
-	Petr Oros <poros@redhat.com>
-Subject: Re: [PATCH net-next v13 12/12] dpll: zl3073x: Add support to get/set
- frequency on pins
-Message-ID: <idzmiaubwlnkzds2jbminyr46vuqo37nz5twj7f2yytn4aqoff@r34cm3qpd5mj>
-References: <20250704182202.1641943-1-ivecera@redhat.com>
- <20250704182202.1641943-13-ivecera@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=aQ/i9+gqvu0eiwdgZgYkA9ob/baziMStuJnL4/SVGdDZsUfcg5lAIttJ5GxChy7A1gtGWYn1JMHcsrzLt6x/V58wrtk5JJvnrait86X4v71jdhriAECfB6xYPWoAGKlqN3HUtHvj+vZxFN2ov2zJkE7I0eRSlvaChgE0O4u33Lw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 46956153B;
+	Mon,  7 Jul 2025 01:32:54 -0700 (PDT)
+Received: from arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 046BB3F6A8;
+	Mon,  7 Jul 2025 01:33:02 -0700 (PDT)
+Date: Mon, 7 Jul 2025 10:32:46 +0200
+From: Beata Michalska <beata.michalska@arm.com>
+To: Prashant Malani <pmalani@google.com>
+Cc: Jie Zhan <zhanjie9@hisilicon.com>,
+	Ionela Voinescu <ionela.voinescu@arm.com>,
+	Ben Segall <bsegall@google.com>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:CPU FREQUENCY SCALING FRAMEWORK" <linux-pm@vger.kernel.org>,
+	Mel Gorman <mgorman@suse.de>, Peter Zijlstra <peterz@infradead.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	z00813676 <zhenglifeng1@huawei.com>
+Subject: Re: [PATCH v2 2/2] cpufreq: CPPC: Dont read counters for idle CPUs
+Message-ID: <aGuGLu2u7iKxR3ul@arm.com>
+References: <20250619000925.415528-1-pmalani@google.com>
+ <20250619000925.415528-3-pmalani@google.com>
+ <ff65b997-eb14-798f-1d2f-c375bf763e71@hisilicon.com>
+ <CAFivqm+hjfDwPJCiHavnZSg2D+OaP5xbQnidmwxQ3HD32ic6EA@mail.gmail.com>
+ <ef3f933a-742c-9e8e-9da4-762b33f2de94@hisilicon.com>
+ <CAFivqmLCW2waDnJ0nGbjBd5gs+w+DeszPKe0be3VRLVu06-Ytg@mail.gmail.com>
+ <CAFivqm+D9mbGku-nZKSUEMcQV5XK_ayarxL9gpV5JyfmhirsPw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,20 +66,113 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250704182202.1641943-13-ivecera@redhat.com>
+In-Reply-To: <CAFivqm+D9mbGku-nZKSUEMcQV5XK_ayarxL9gpV5JyfmhirsPw@mail.gmail.com>
 
-Fri, Jul 04, 2025 at 08:22:02PM +0200, ivecera@redhat.com wrote:
+Hi Prashant,
 
-[...]
+On Wed, Jul 02, 2025 at 11:38:11AM -0700, Prashant Malani wrote:
+> Hi All,
+> 
+> Ionela, Beata, could you kindly review ?
+> 
+> On Fri, 27 Jun 2025 at 10:07, Prashant Malani <pmalani@google.com> wrote:
+> >
+> > Hi Jie,
+> >
+> > On Fri, 27 Jun 2025 at 00:55, Jie Zhan <zhanjie9@hisilicon.com> wrote:
+> > >
+> > >
+> > > Hi Prashant,
+> > >
+> > > Sorry for a late reply as I'm busy on other stuff and this doesn't seem to
+> > > be an easy issue to solve.
+> > >
+> >
+> > No worries, the ping was in general to all the people in the thread :)
+> >
+> > > For the latest kernel, [1] provides a new 'cpuinfo_avg_freq' sysfs file to
+> > > reflect the frequency base on AMUs, which is supposed to be more stable.
+> > > Though it usually shows 'Resource temporarily unavailable' on my platform
+> > > at the moment and looks a bit buggy.
+> > >
+> > > Most of the related discussions can be found in the reference links in [1].
+> > > [1] https://lore.kernel.org/linux-pm/20250131162439.3843071-1-beata.michalska@arm.com/
+> > >
+> > > As reported, the current frequency sampling method may show an large error
+> > > on 1) 100% load, 2) high memory access pressure, 3) idle cpus in your case.
+> > >
+> > > AFAICS, they may all come from the unstable latency accessing remote AMUs
+> > > for 4 times but delaying a fixed 2us sampling window.
+> >
+> > I tried applying [1] which consolidates the ref and del register reads
+> > into 1 IPI, but that did not make a difference. The values still
+> > fluctuate wildly.
+> >
+> > >
+> > > Increase the sampling windows seems to help but also increase the time
+> > > overhead, so that's not favoured by people.
+> > >
+> >
+> > This experiment did not appear to help in our case. It's a point in
+> > the direction that this method is inherently inaccurate during idle
+> > situations.
+> >
+> > > On 20/06/2025 13:07, Prashant Malani wrote:
+> > > > Hi Jie,
+> > > > On Thu, 19 Jun 2025 at 20:53, Jie Zhan <zhanjie9@hisilicon.com> wrote:
+> > > >> On 19/06/2025 08:09, Prashant Malani wrote:
+> > > >>> t0: ref=899127636, del=3012458473
+> > > >>> t1: ref=899129626, del=3012466509
+> > > >>> perf=40
+> > > >>
+> > > >> In this case, the target cpu is mostly idle but not fully idle during the
+> > > >> sampling window since the counter grows a little bit.
+> > > >> Perhaps some interrupts happen to run on the cpu shortly.
+> > >
+> > > Check back here again, I don't think it 'mostly idle'.
+> > > Diff of ref counters is around 2000, and I guess the ref counter freq is
+> > > 1GHz on your platform?  That's exactly 2us, so the target cpu is mostly
+> > > busy.
+> 
+> I think it is pertinent to note: the actual act of reading the CPPC counters
+> will (at least for ACPI_ADR_SPACE_FIXED_HARDWARE counters)
+> wake the CPU up, so even if a CPU *was* idle, the reading of the counters
+> calls cpc_read_ffh() [1] which does an IPI on the target CPU [2] thus waking
+> it up from WFI.
+> 
+> And that brings us back to the original assertion made in this patch:
+> the counter values are quite unreliable when the CPU is in this
+> idle (or rather I should correct that to, waking from WFI) state.
+>
+I'd say that's very platform specific, and as such playing with the delay makes
+little sense. I'd need to do more deliberate testing, but I haven't noticed
+(yet) any discrepancies in AMU counters on waking up.
+Aside, you have mentioned that you've observed the frequency reported to be
+above max one (4GHz vs 3.5HZ if I recall correctly) - shouldn't that be clamped
+by the driver if the values are outside of supported range ?
 
->+static int
->+zl3073x_dpll_input_pin_frequency_set(const struct dpll_pin *dpll_pin,
->+				     void *pin_priv,
->+				     const struct dpll_device *dpll,
->+				     void *dpll_priv, u64 frequency,
->+				     struct netlink_ext_ack *extack)
+Verifying whether the CPU is idle before poking it just to get a counters
+reading to derive current frequency from those does feel rather like an
+appealing idea. Narrowing the scope for ACPI_ADR_SPACE_FIXED_HARDWARE cases
+could be solved by providing a query for the address space. Though I am not an
+expert here so would be good to get some input from someone who is
+(on both).
 
-Unrelated to this patch, but ny idea why we don't implement
-"FREQUENCY_CAN_CHANGE" capability. I think we are missing it.
+---
+BR
+Beata
+> This work around probably hits more types of implementations, but
+> I can't see another way to limit it to only ARM FFH. Open to suggestions!
+> 
+> [1] https://elixir.bootlin.com/linux/v6.15.4/source/arch/arm64/kernel/topology.c#L482
+> [2] https://elixir.bootlin.com/linux/v6.15.4/source/arch/arm64/kernel/topology.c#L453
 
+> 
+> Best regards,
+> 
+> -Prashant
+> 
+> 
+> -- 
+> -Prashant
 
