@@ -1,238 +1,279 @@
-Return-Path: <linux-kernel+bounces-719547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4161AFAF76
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 11:17:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 923DEAFAFA1
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 11:25:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B24C41AA3772
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 09:17:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3792D188F3E8
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 09:26:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D374028C844;
-	Mon,  7 Jul 2025 09:16:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05CDD28DEFC;
+	Mon,  7 Jul 2025 09:25:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="MIp8C1NF"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2067.outbound.protection.outlook.com [40.107.92.67])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bRp95toe"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71F0728C5C5;
-	Mon,  7 Jul 2025 09:16:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.67
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751879818; cv=fail; b=NUnZKuCPm/LHlnQ7aPNZkMXqFYr6g+CurrzhJn4hihwwhskfsU9wJjDiZhp/aOGBYvBHgTjBLC5vrE8Kry2rtl625ZMMFBA08hNx7Ieb8AFB1sdX7jVTZzDZFaDui8zcbwtMzrYtPYg1+10IJhHeU90jfMj9ASNljBSC3K79v04=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751879818; c=relaxed/simple;
-	bh=CF5CLZc7J80GNHm8YiH3flGh1H8ZKkgcp4IHExA/Nig=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=n39YYtJ2ELv68yGXHRiIBg0iBJA4RKHyIDfUbfqrQGtoglOBUYjU0QdQViVIqwuqm0Hao0tQuzf0iIK3w1/0vqbUlzmSqB0hXoL4ox+Wz7BPy5ENzjiWumK2edAX/GSa9UjDLZ0UT8kc5YXtOHcIeMAGmm9cP6WDhy7ibW6CpVg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=MIp8C1NF; arc=fail smtp.client-ip=40.107.92.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=GzH0QTBnPDnvm47unlMPQtOm3ELUB6Zd4vUPqj6QuI8johY5wmSuuHIuKxE00kMAAz38uC5PfeCt/iX5TSDD/ssmOh+vHigltmGm/gN6mfs3cNDCHZ3tCpqsMdH+038uLpwiSRUJLR8pLAZdg2JsaPnXYb2WV4Cyk+4cWIXCgu5xIc6YYHl1dwiUjLSeqP2Gx5Z56keB6X/KQji6i0eHqvLVwO4wMi6za4E5y+mAejHY3cHkbqv/1PeAAO8qqaD7ruFLk31yO2uzZwlph+4tmQMLoMzd1qRGVbBIBAb+3xqAVBvyMDaJmu5i71Et8l94pckDH6V3gkjyN1tWAMmwNw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hkpWajyTkVbtW50HOrzE2K8N8qpm/2+NxXKMMl9Z7xE=;
- b=gPdIuQf7NKpRj1hEOjHVVQUfw0Rrjjm1EtEY7lqw/QW1PAnF/i8bXBsAFjFQFQiP0nHoOxWDZPwpzeNUpMVsknO3Zx7Ci5cvEQY/+52VZOZlrKisWDVpsvHtIw0fiqMWd1H1/c76FZ83bacJY0vfzb9/TSRJ9Oao1+EtKtHwoMu54ifH/VtAGVDWa+Dif9qI6TWJteAy5p56ci0h2uuvQiOHwiPOcFgzguTHZ71m4+saKC3Hdf7ayP/r1nz73ZPD/CYQcpqaTjiULCQhy7SJmENzFrmR5vXAPzRTbHZnSxDFzUlnAVV8ClTKQGMmG+LKxCAUXmEcqOt8EIO3Y2ixsA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hkpWajyTkVbtW50HOrzE2K8N8qpm/2+NxXKMMl9Z7xE=;
- b=MIp8C1NFsPZHURIcIK86ArzPBKY+4Yky008ioTPgzZdNS3nnrFUlU0pOwEMr7ERD0ykUBWkCVDiPq0fTM6N0kt06Fk0JemnfqZlLJ44Pt8suZhefvbzOnV1rKe/vIBWspMxw9ND5TvmW0XMxbeL9BI9m0d/vHlbfJdx+9EnTYFc=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
- by DS7PR12MB5863.namprd12.prod.outlook.com (2603:10b6:8:7a::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.23; Mon, 7 Jul
- 2025 09:16:53 +0000
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5%5]) with mapi id 15.20.8901.024; Mon, 7 Jul 2025
- 09:16:53 +0000
-Message-ID: <1c3f06a0-7678-4e1e-8f7f-d60f2171ac59@amd.com>
-Date: Mon, 7 Jul 2025 11:16:44 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/5] drm/amdgpu: move GTT to shmem after eviction for
- hibernation
-To: Samuel Zhang <guoqing.zhang@amd.com>, alexander.deucher@amd.com,
- rafael@kernel.org, len.brown@intel.com, pavel@kernel.org,
- gregkh@linuxfoundation.org, dakr@kernel.org, airlied@gmail.com,
- simona@ffwll.ch, ray.huang@amd.com, matthew.auld@intel.com,
- matthew.brost@intel.com, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, tzimmermann@suse.de
-Cc: mario.limonciello@amd.com, lijo.lazar@amd.com, victor.zhao@amd.com,
- haijun.chang@amd.com, Qing.Ma@amd.com, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org
-References: <20250704101233.347506-1-guoqing.zhang@amd.com>
- <20250704101233.347506-3-guoqing.zhang@amd.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-In-Reply-To: <20250704101233.347506-3-guoqing.zhang@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BL1PR13CA0384.namprd13.prod.outlook.com
- (2603:10b6:208:2c0::29) To PH7PR12MB5685.namprd12.prod.outlook.com
- (2603:10b6:510:13c::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60075286412;
+	Mon,  7 Jul 2025 09:25:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751880341; cv=none; b=ENJRSlE2Et4vGaU9qfo2JVqFzi0zIyvr3dIHc6rV7ErMP9z0InHFzVk/dRL8K2NdxMn7wM4BhcmNpHmpJuTIDC71g7IrdQzC3hIF8op0reEyU0T8H8AD3JvUbSz1PEdzmXQ7YYqeUPBB9sV2p8X83Q24t5NCoOPyjMyxW2xOqrc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751880341; c=relaxed/simple;
+	bh=kiu74TbM0Cl3ZxjxQf5ILMyGowXJ4logIX6ks4uEFoM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=B9VLv4pExNkHuqxXOwWCY+Szc0otC+CN2iKmbNduvxvRvH6jptDnXu4+aXUnhJFatjgr++sAqPzhQLuBsDh77kMa+EW2eEzkrKPNAR2tEwJcVgMrVz6Uw8QJcTEA+QFO8dv5o4nzME9ZDoGCZAqxy6sTbYW4E3ErRZHhB9/HTE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bRp95toe; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4538a2fc7ffso27356545e9.0;
+        Mon, 07 Jul 2025 02:25:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751880338; x=1752485138; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=uBfXlQ5Rh46iJk1Ot161EwZF/wssDqxpNViVgwXBrGk=;
+        b=bRp95toeDbgrwusQafmBZUEdXNv4ROiYYXc2+FAM8iyo9b0ezluL+H6FDANqa5bWBx
+         LR7fzL5MuVjKTUCkMkA9gWcJGwY/5DiSLTWjzGo8HWNNOwhN0Cr25nsfICj9uJbMTTLA
+         Z3EKfbHhm/LogfvdQMoFKfYv6d/l7yJXgVED2/rHxXjCGjSkAbELL2MzA+Sb7oTH22pI
+         uvGDU+XlRyiCKo4+VidVhZc1YqjtlBBR1DmWarCft8gHsHU+sNv4iXZ/wbYy6PTCyuN2
+         4fHZNq8fVfVCO3uUjyK2Xd5BSP7Us2yySOpHhvRomyG9N/jBVVqXDWSA8fGeWA7JkHtx
+         FlTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751880338; x=1752485138;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uBfXlQ5Rh46iJk1Ot161EwZF/wssDqxpNViVgwXBrGk=;
+        b=UpBfamRd3iB1QdUjfeyMdLm259ESIZlkrGixZW00Kv+JQgMC+WkVWyxyZBBIjMJPSN
+         jwKvKTFu1DuWnxEJXFMIXLEN64YVPYo0URF6LsvJ9+Y5eTdo94dxJ/EJb5HCn2vpD4tS
+         dTSZzEAtRRxrcOxP/84xDAy2mFv5r+bL0NMTzagwblK97pvva47kZysIebPQqndj1eXu
+         8EhT9DbCNkwzrXdeRtuP+c3WBE+5qEWdVb5dWx0k1xdxlOZzCzG39hRVSA/od5Bnt7Ir
+         a4zGr8e+AUuMPnS3fnxAyzNRvtMcY5v4AXlcVF+jQ8qqLfELXHLN2x90OznNzkkrbDvM
+         3u7g==
+X-Forwarded-Encrypted: i=1; AJvYcCXDLbqNDBSJ9qWZODTTBWbxwqqpMOgnY+inm0UPV3/aT9/UfyJS41cTie9uNow5rAAaIEGwgikdabA63u0=@vger.kernel.org, AJvYcCXL3J9fkWlyE524AjvywkE9kyz3/J335oUG7vFbQ2SWeBhje5HFvYP7mI8pXVD1kcv3i2w9aPXg@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxz0j1sySIhgfYUSWnDZ/5kQDS7gCgWy6dUedbapZuaLsEWIQEG
+	lnI7rvDBHUuHHRoeakgCHuLTRsEvyjZK1VQzgg1Ww1IQVhsB4uSSTBk=
+X-Gm-Gg: ASbGncvkjOCZqjhRE04u6p6IXGMg1P710TjUaakZhLDtai6xOwjWE6Tenw73wPxQST6
+	e5Vufa1oYj7cD9RnZGkIGfAGCZ1dW2VjH/zDFfZ8kZTND8ROToSRQA1Tyr4hevJSa5g5QBqHzjb
+	m/kqQFBPs4DVr98WaeK/tTTatM5t/UbrLW386Se52Y2IU/yoyhGrBQhyZEp/YY7ygD3XTK6KrU8
+	LwNOjThHG6Kszm7bMnYwKkJNQcR6C2glv11srKvxPZFXCqjEvCpqocY3c4wsyHUhLQwiYK+jmG2
+	76GiSMoexkGjbYYVuDmkeMmQu61xoQIaCKR7c3LTXyl8Y7GYjdcCEnFgCo/ZrLx9NvaygB6Ws3v
+	hZ8aXUCZa
+X-Google-Smtp-Source: AGHT+IGmJIakfH6RwdWQXAB2RSk4UIYPuqWeGj9ECYYOi5nFOPPfRxhO4I42se2wJJpaehcK/1mujA==
+X-Received: by 2002:a05:600c:1da0:b0:453:835a:db with SMTP id 5b1f17b1804b1-454b1f471fdmr96857885e9.4.1751880337364;
+        Mon, 07 Jul 2025 02:25:37 -0700 (PDT)
+Received: from phoenix.rocket.internal ([2a12:26c0:2205:8802:9bf5:fd10:aa7f:bd06])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454b1890626sm108671325e9.40.2025.07.07.02.25.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Jul 2025 02:25:36 -0700 (PDT)
+From: Rui Salvaterra <rsalvaterra@gmail.com>
+To: anthony.l.nguyen@intel.com,
+	przemyslaw.kitszel@intel.com
+Cc: edumazet@google.com,
+	kuba@kernel.org,
+	intel-wired-lan@lists.osuosl.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Rui Salvaterra <rsalvaterra@gmail.com>
+Subject: [PATCH iwl-next] igc: demote register and ring dumps to debug
+Date: Mon,  7 Jul 2025 10:17:10 +0100
+Message-ID: <20250707092531.365663-1-rsalvaterra@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|DS7PR12MB5863:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7d5183a5-12c2-40fe-a5b7-08ddbd370336
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|1800799024|366016|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?N1lkQ0swcmJIeFBqRytRTXk4SmNScktJalRmR2pOQUE1b3VwZnVLbG9IUVFh?=
- =?utf-8?B?bDlza0hLT2FZTU5FNG1rRXErKzg3THY1UnNmZWFLd1h4N2MzYmxwN29yYkt2?=
- =?utf-8?B?dCsrQVVERnFVWUJmS05LSi9tUVVwWUxnL25aZFRNRnhkZUpnMm92ek5FMEkz?=
- =?utf-8?B?UjFlWjdTME0yTmExNDRIdERPYTRoK3c4bnFTTjBpSmpMdnNSMHlsSzlFZHVp?=
- =?utf-8?B?ZHZkUzFlNHF1NC9aLy9CRGNaeUlTNWZOMGx3TlBwUjBLVUZRNUlKekNpdTFy?=
- =?utf-8?B?c21LL1g1RGluUTd5dUZxbnl6Z1FONzhYc2Facmp4bVdZeFE5MHRPQW96STIy?=
- =?utf-8?B?MlNpTW44Wm9zOHJiL09ZTUE4cUllWVhOc29pWFhDbllqeEY1WlJaQ210eUlv?=
- =?utf-8?B?eEdFeUhLVXJQVzQ4aW92T0tLWEJ0ZUt6aWNhVXdXVEx2aW1Mb2IydDNLMGx6?=
- =?utf-8?B?ODVMbWkyREl5SDAvN3B2L0NpZ28zU29yaCs3ZkFTZGNuYmZaZzV3ZHc5clVB?=
- =?utf-8?B?UVpsZHZ5dU5xTnZKRXlsVVU5elZGVEJSZnNSM0piTUdxZDQrZU5oQ0ZucGdZ?=
- =?utf-8?B?dUh5WWkxQkVZVEM0bTdRcXlDT1ZHU084QVhZRy9vQjhnbUdSNXU5c1JSSUJ4?=
- =?utf-8?B?OHByL1NkTDJFU1BjdEtkVTdYQmtwSm1BT1FTaTZJVlYydDhRc2VtbjI2OUlT?=
- =?utf-8?B?T1VGR09HNDBUMnRNS29BU3JwVnRlSDYvdzJGUmNoVjBNN3g0ZFZyVGVjS3Zx?=
- =?utf-8?B?QzZGUGd1T1dna0YxWlF1dWpZbWV2UXZFSTR5SWNMTXRpNml5eXZ3TXN5TTFo?=
- =?utf-8?B?d1RzbHpiTXNkNDg3SHNXQndLS2p3aDN0M2RGelJKdndQR2wwYStJUTFiWmlS?=
- =?utf-8?B?eHFSeWR6bXJTbWpDYm00NmJDNWcyMCt4ZlZxREoxeThQZjRKR1d6Sm0wUlJL?=
- =?utf-8?B?UWw1ejVPUnY4R2xQWE81MkcvNENTQ2JrVEpZcVgxV3NVZmlHY3pqQWYxcHBk?=
- =?utf-8?B?MDFxVzN6ejJVNHJNMS8zSXFjYlpHMmtOZkhIekFYTjNndlhsYTVlaldZZlg1?=
- =?utf-8?B?aC91cHJOZyt5Mkx3VjQ4SlAzRkFFNjNtUWdrSXRGZ0dHT3FEWkJ3T2F6YXVI?=
- =?utf-8?B?U1BvNkpDMEhxWE1zN1ozOTl3V3V5Q0lJWUFwZ3pMd0FLS010QjZFeGpDeGcz?=
- =?utf-8?B?VDAzQUFJRTRnMXkwVi9uZmFLOEFqOGd4QkdTZFpVL0Y3ZHJzSy9zeGVHRnZq?=
- =?utf-8?B?SXg4dnZOdTdvQUNySHh3VXI3SlU2WHRTTWVwcEdoQThvdFUwWktxR3JSV3B0?=
- =?utf-8?B?dHJOcnpHUnErK2RiV3hDWGdvdjBwWjRjMHJBT0lFWTc4YlJ1R296MWZxN1Vx?=
- =?utf-8?B?NmZIQXprSWVIb3pJSmFOV0ttSjNBUWlmd0dxMUUwRGt0ZElwVE9uQ1FCWHF2?=
- =?utf-8?B?NUtGdmI2UGRRdWlqZEkrYzEyTFV6eGhVWXJma0hWanA2dCs3T1hUZkg3WkQz?=
- =?utf-8?B?VzRBUW56d2l2ajRMQ0gvWUd1SHJFMXdxWUJnZUt6b3h5QnF4UmJIRHluajdC?=
- =?utf-8?B?SWord0JwaDNBNGp2bzZWWlNQZ2ROYitzenBFbUMzeW56aHZkVDJGMUhkbm5T?=
- =?utf-8?B?R1pEZDJ6NFRQSG9oUkJSZ3NHUG1WQ1p5ZVM0NTV2WFdBTWFFZko3Sy93blF3?=
- =?utf-8?B?Znk2UFlyRXFaclE5ZkxGcXRVcFoxRTJXK2EvMEZyWmZSSDV0U3BFSzZJODY1?=
- =?utf-8?B?UEVpdFVxY0tab2dKK2luN1pSMm1BRTNFbURZd1RnTXd6NWZCZ3o3S2ZWYjE5?=
- =?utf-8?B?NzZDZGIxeG5hTlpXM0hYclpQeDFvT0E2ZmFyU3BMaVN3MWpNaXlXMzBkTDlq?=
- =?utf-8?B?a3ptVVc3Y2RCR3p6bTZGM1JqdC9vRENDV1gySUZpajI1YTdMRWg2aTZIQmZM?=
- =?utf-8?B?VkdualNSOXE5SWVtVHNUbTlYSmFtdUhQWGJDZFZOY29qcEQ4dERYUUFSL1Bs?=
- =?utf-8?B?V214bXNLS2lnPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?dE9PamVnMTljb01nekJnNzBvQTJGaDdIb2VTNHVEMWh3ZlJyaG9YNTNjamVp?=
- =?utf-8?B?c3AvSHMzbTlLQk5rQVptWkFmSXE5VFlCVHFvT29QWTYwcEQra28zdUowSnhP?=
- =?utf-8?B?Z2tyUjAvZk5QOCtaUzltckZiZGxZMngzMkVZL3UyYTFQeXFISFVsVXZkMC9N?=
- =?utf-8?B?dTBzVCtrdnV6b2VDM1F6RjlDMnpiMjdueVlaMjVCQ2h4NWVmSytLaDhpdUVV?=
- =?utf-8?B?NTU4MFRTWEI1UHR6OUpDaXZRUTVhTUVrWnYwdzVaNnVTVEF5TDdNT1hZYzdt?=
- =?utf-8?B?c2s1NGdvQVlwbThESU5IMlJhakZQU0doWFV1Ri9nc0xmcHdUdllRbTdHY09O?=
- =?utf-8?B?cHIvaGZtNE5ZM29uWE9PSERSaG5leTdkc3RaK1ZMOCtGNWY5bEUrS0gyVUt5?=
- =?utf-8?B?R1VvWFcyWUVxaXJycDlqQ2FIOHVXcXJpcVhhdkE0aVVMSUV4V3ZFVThNTVhD?=
- =?utf-8?B?MHhSVnlnQitBcHc5azk0eXVaeDcvUzg0MStBWURGVktUejB0MlRaNlJZY3RR?=
- =?utf-8?B?Rm44S0dJbWhXT20yczNaWmpDSFl6VEcvc2JobGNKRjdMWlI3SjZDR2orNEdU?=
- =?utf-8?B?ejl3NmZ0MEwvcFFmVW5wOXQ0ZDVaa1JnK0owcS81MkFNMTRiK0dOVW1nTzRK?=
- =?utf-8?B?eFVnWkNxc3pXdVdFeFdJWjl4SHVRRld0dVVOZnlZcHRZRWtFQjIvSDRVdHB6?=
- =?utf-8?B?eU9RMmFxRmI1MTk4cEhGQmNMVGxEQ2NJdllaTTB4MlJreGhlTXF6UktjYXlJ?=
- =?utf-8?B?a1dyaWYzSGU2N1hrZHoxZGZZdmNENVlwSXkvMmhZYXUzSFR4akcrVFpmTW1p?=
- =?utf-8?B?SndDWXQ3T0NQaE5vZmlHK3VOZGZMWWpmWG5pMUF4YWlnV2RBSGVCU3RVREtF?=
- =?utf-8?B?UG5WNjlBMDh3a3VqaHNQNTZYK0wxTCt3akRudWhPQm1FUVE4Z05IRmprdS9r?=
- =?utf-8?B?c1pkK0c5SjgvZXFxaFNWT3V1UG52VFlkWVVXUHN0ZWVUWDhSaEVUSWdoU2Vy?=
- =?utf-8?B?dUVDQ053bXVZd1VkL0VrU3BnSkUramE5MmRMTnByK2NNL0YzQ0FOdmZGOHp6?=
- =?utf-8?B?anZjZ0o5d2pEQkdGS0pHTE5zaFRDZng0K1J5NDNGby9XaVN3anlMZnBibWdH?=
- =?utf-8?B?bFhNb016KzZzOHZCbVQ4ak9UV0JOV0dTS0p3L3ozQUw5Vk5FdlB5VEhQNnEv?=
- =?utf-8?B?UHo5RFAwNkFJc0k5R3ZUdXhMTzJoNVhyL1ozTlFmakNWNXJtQkV0a0lTN1R3?=
- =?utf-8?B?dWhQdHZ0aHlhQUNSQXpyRVZMb1ViRmdmelpGVHVwUmtRd0FxdzRvbk5TRG1h?=
- =?utf-8?B?bGcxS25nS0pOZVFtVFFzN2F3Z3U2Wm9maFpJMlNUdGhneW4zZzlaMVh1Y0Vp?=
- =?utf-8?B?NVBvaXVUd004N1ZHNGJkekRIdTVwekRCMEJlbnhadzhmWW5CYW9JdlpGSnBR?=
- =?utf-8?B?dUtFdmRJWWU2RnlWcHJWUnJqR211aFVINVRqVXpXK0NOTitpak5raGRxV2NH?=
- =?utf-8?B?SkJ6OTNWV2dJMTN6UWIyY21mWVlYT01zNWVHVkhGUmhGN2pVSXR5azZkajVG?=
- =?utf-8?B?MUtVWGdKK0JINURBZWhhWWdEbU94RGcvUW1Nck1lU3BUVVloRFJTdVEzbTM3?=
- =?utf-8?B?NTFxZndqZ01sL1I1OXBhVldKUkhPbXNUUnNiS1J6ZE1BMlk4Ny8rQm5FeDhj?=
- =?utf-8?B?amlnRDZ2RklzbllrcGpPNWQwSHQvTm8wVk5xYWdBcEZBUm1KUmZ6ODhySFpl?=
- =?utf-8?B?L0NCM0R5K3g0ZnoxdC9KT3pHNkM3ajNFVjlBYVBVRVdFcmdvZ0tkVTN3M2V1?=
- =?utf-8?B?blpFVVRlV21QeGk1VFRNSVBOd1lrY0QvMitCMkxzSVBGMVhGc2dHcG9aeGFE?=
- =?utf-8?B?Z3lQZElXMzM1RXNLRTRKYUZiNzdDSjE0dFVzbGJ3VUVNVjB4MDZ2eXA4U3Iw?=
- =?utf-8?B?bnRyZWt4QnJubjkxY0s1RjE4OEphMFRYVkJkNVRRb04wY1ppcWdqM0VVc0lw?=
- =?utf-8?B?S2hPeXlaQmRPOU9ydm50YXdoV1lFVmtYVHJHdUtHNkUvREVkUGJHaVFOUWI2?=
- =?utf-8?B?MWNtMVl1R09leE9CUGJtN1BnNkxsVElEbnoxUFpGUW5VWDcyanBiVll3YlhT?=
- =?utf-8?Q?l03LRlqmdbjUcsgkLB807DPN6?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7d5183a5-12c2-40fe-a5b7-08ddbd370336
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jul 2025 09:16:53.3296
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: zJvRgITnZzY+3IRF8WI9F1JlVxffPbW1xwESQwpVr0IWU1r2LzpKMz/b36XTk3Nk
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB5863
+Content-Transfer-Encoding: 8bit
 
+This is debug information, upon which the user is not expected to act. Output as
+such. This avoids polluting the dmesg with full register dumps at every link
+down.
 
+Signed-off-by: Rui Salvaterra <rsalvaterra@gmail.com>
+---
 
-On 04.07.25 12:12, Samuel Zhang wrote:
-> When hibernate with data center dGPUs, huge number of VRAM BOs evicted
-> to GTT and takes too much system memory. This will cause hibernation
-> fail due to insufficient memory for creating the hibernation image.
-> 
-> Move GTT BOs to shmem in KMD, then shmem to swap disk in kernel
-> hibernation code to make room for hibernation image.
-> 
-> Signed-off-by: Samuel Zhang <guoqing.zhang@amd.com>
-> ---
->  drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c | 13 ++++++++++++-
->  1 file changed, 12 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
-> index 27ab4e754b2a..a0b0682236e3 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
-> @@ -2414,6 +2414,7 @@ int amdgpu_fill_buffer(struct amdgpu_bo *bo,
->  int amdgpu_ttm_evict_resources(struct amdgpu_device *adev, int mem_type)
->  {
->  	struct ttm_resource_manager *man;
-> +	int r;
->  
->  	switch (mem_type) {
->  	case TTM_PL_VRAM:
-> @@ -2428,7 +2429,17 @@ int amdgpu_ttm_evict_resources(struct amdgpu_device *adev, int mem_type)
->  		return -EINVAL;
->  	}
->  
-> -	return ttm_resource_manager_evict_all(&adev->mman.bdev, man);
-> +	r = ttm_resource_manager_evict_all(&adev->mman.bdev, man);
-> +	if (r) {
-> +		DRM_ERROR("Failed to evict memory type %d\n", mem_type);
-> +		return r;
-> +	}
-> +	if (adev->in_s4 && mem_type == TTM_PL_VRAM) {
-> +		r = ttm_device_prepare_hibernation();
-> +		if (r)
-> +			DRM_ERROR("Failed to swap out, %d\n", r);
-> +	}
-> +	return r;
+This file hasn't been touched in over four years, it's probably from a time when
+the driver was under heavy development (started in 2018). Nevertheless, the
+status quo is positively annoying. :)
 
-That call needs to go into a separate amdgpu_ttm_* function and only be called from amdgpu_device_evict_resources().
+ drivers/net/ethernet/intel/igc/igc_dump.c | 54 +++++++++++------------
+ 1 file changed, 27 insertions(+), 27 deletions(-)
 
-Otherwise the debugfs tests will trigger it as well which is undesirable.
-
-Regards,
-Christian.
-
->  }
->  
->  #if defined(CONFIG_DEBUG_FS)
+diff --git a/drivers/net/ethernet/intel/igc/igc_dump.c b/drivers/net/ethernet/intel/igc/igc_dump.c
+index c09c95cc5f70..e84d09ca8e67 100644
+--- a/drivers/net/ethernet/intel/igc/igc_dump.c
++++ b/drivers/net/ethernet/intel/igc/igc_dump.c
+@@ -98,13 +98,13 @@ static void igc_regdump(struct igc_hw *hw, struct igc_reg_info *reginfo)
+ 			regs[n] = rd32(IGC_TXDCTL(n));
+ 		break;
+ 	default:
+-		netdev_info(dev, "%-15s %08x\n", reginfo->name,
++		netdev_dbg(dev, "%-15s %08x\n", reginfo->name,
+ 			    rd32(reginfo->ofs));
+ 		return;
+ 	}
+ 
+ 	snprintf(rname, 16, "%s%s", reginfo->name, "[0-3]");
+-	netdev_info(dev, "%-15s %08x %08x %08x %08x\n", rname, regs[0], regs[1],
++	netdev_dbg(dev, "%-15s %08x %08x %08x %08x\n", rname, regs[0], regs[1],
+ 		    regs[2], regs[3]);
+ }
+ 
+@@ -123,22 +123,22 @@ void igc_rings_dump(struct igc_adapter *adapter)
+ 	if (!netif_msg_hw(adapter))
+ 		return;
+ 
+-	netdev_info(netdev, "Device info: state %016lX trans_start %016lX\n",
++	netdev_dbg(netdev, "Device info: state %016lX trans_start %016lX\n",
+ 		    netdev->state, dev_trans_start(netdev));
+ 
+ 	/* Print TX Ring Summary */
+ 	if (!netif_running(netdev))
+ 		goto exit;
+ 
+-	netdev_info(netdev, "TX Rings Summary\n");
+-	netdev_info(netdev, "Queue [NTU] [NTC] [bi(ntc)->dma  ] leng ntw timestamp\n");
++	netdev_dbg(netdev, "TX Rings Summary\n");
++	netdev_dbg(netdev, "Queue [NTU] [NTC] [bi(ntc)->dma  ] leng ntw timestamp\n");
+ 	for (n = 0; n < adapter->num_tx_queues; n++) {
+ 		struct igc_tx_buffer *buffer_info;
+ 
+ 		tx_ring = adapter->tx_ring[n];
+ 		buffer_info = &tx_ring->tx_buffer_info[tx_ring->next_to_clean];
+ 
+-		netdev_info(netdev, "%5d %5X %5X %016llX %04X %p %016llX\n",
++		netdev_dbg(netdev, "%5d %5X %5X %016llX %04X %p %016llX\n",
+ 			    n, tx_ring->next_to_use, tx_ring->next_to_clean,
+ 			    (u64)dma_unmap_addr(buffer_info, dma),
+ 			    dma_unmap_len(buffer_info, len),
+@@ -150,7 +150,7 @@ void igc_rings_dump(struct igc_adapter *adapter)
+ 	if (!netif_msg_tx_done(adapter))
+ 		goto rx_ring_summary;
+ 
+-	netdev_info(netdev, "TX Rings Dump\n");
++	netdev_dbg(netdev, "TX Rings Dump\n");
+ 
+ 	/* Transmit Descriptor Formats
+ 	 *
+@@ -165,11 +165,11 @@ void igc_rings_dump(struct igc_adapter *adapter)
+ 
+ 	for (n = 0; n < adapter->num_tx_queues; n++) {
+ 		tx_ring = adapter->tx_ring[n];
+-		netdev_info(netdev, "------------------------------------\n");
+-		netdev_info(netdev, "TX QUEUE INDEX = %d\n",
++		netdev_dbg(netdev, "------------------------------------\n");
++		netdev_dbg(netdev, "TX QUEUE INDEX = %d\n",
+ 			    tx_ring->queue_index);
+-		netdev_info(netdev, "------------------------------------\n");
+-		netdev_info(netdev, "T [desc]     [address 63:0  ] [PlPOCIStDDM Ln] [bi->dma       ] leng  ntw timestamp        bi->skb\n");
++		netdev_dbg(netdev, "------------------------------------\n");
++		netdev_dbg(netdev, "T [desc]     [address 63:0  ] [PlPOCIStDDM Ln] [bi->dma       ] leng  ntw timestamp        bi->skb\n");
+ 
+ 		for (i = 0; tx_ring->desc && (i < tx_ring->count); i++) {
+ 			const char *next_desc;
+@@ -188,7 +188,7 @@ void igc_rings_dump(struct igc_adapter *adapter)
+ 			else
+ 				next_desc = "";
+ 
+-			netdev_info(netdev, "T [0x%03X]    %016llX %016llX %016llX %04X  %p %016llX %p%s\n",
++			netdev_dbg(netdev, "T [0x%03X]    %016llX %016llX %016llX %04X  %p %016llX %p%s\n",
+ 				    i, le64_to_cpu(u0->a),
+ 				    le64_to_cpu(u0->b),
+ 				    (u64)dma_unmap_addr(buffer_info, dma),
+@@ -198,7 +198,7 @@ void igc_rings_dump(struct igc_adapter *adapter)
+ 				    buffer_info->skb, next_desc);
+ 
+ 			if (netif_msg_pktdata(adapter) && buffer_info->skb)
+-				print_hex_dump(KERN_INFO, "",
++				print_hex_dump(KERN_DEBUG, "",
+ 					       DUMP_PREFIX_ADDRESS,
+ 					       16, 1, buffer_info->skb->data,
+ 					       dma_unmap_len(buffer_info, len),
+@@ -208,11 +208,11 @@ void igc_rings_dump(struct igc_adapter *adapter)
+ 
+ 	/* Print RX Rings Summary */
+ rx_ring_summary:
+-	netdev_info(netdev, "RX Rings Summary\n");
+-	netdev_info(netdev, "Queue [NTU] [NTC]\n");
++	netdev_dbg(netdev, "RX Rings Summary\n");
++	netdev_dbg(netdev, "Queue [NTU] [NTC]\n");
+ 	for (n = 0; n < adapter->num_rx_queues; n++) {
+ 		rx_ring = adapter->rx_ring[n];
+-		netdev_info(netdev, "%5d %5X %5X\n", n, rx_ring->next_to_use,
++		netdev_dbg(netdev, "%5d %5X %5X\n", n, rx_ring->next_to_use,
+ 			    rx_ring->next_to_clean);
+ 	}
+ 
+@@ -220,7 +220,7 @@ void igc_rings_dump(struct igc_adapter *adapter)
+ 	if (!netif_msg_rx_status(adapter))
+ 		goto exit;
+ 
+-	netdev_info(netdev, "RX Rings Dump\n");
++	netdev_dbg(netdev, "RX Rings Dump\n");
+ 
+ 	/* Advanced Receive Descriptor (Read) Format
+ 	 *    63                                           1        0
+@@ -245,12 +245,12 @@ void igc_rings_dump(struct igc_adapter *adapter)
+ 
+ 	for (n = 0; n < adapter->num_rx_queues; n++) {
+ 		rx_ring = adapter->rx_ring[n];
+-		netdev_info(netdev, "------------------------------------\n");
+-		netdev_info(netdev, "RX QUEUE INDEX = %d\n",
++		netdev_dbg(netdev, "------------------------------------\n");
++		netdev_dbg(netdev, "RX QUEUE INDEX = %d\n",
+ 			    rx_ring->queue_index);
+-		netdev_info(netdev, "------------------------------------\n");
+-		netdev_info(netdev, "R  [desc]      [ PktBuf     A0] [  HeadBuf   DD] [bi->dma       ] [bi->skb] <-- Adv Rx Read format\n");
+-		netdev_info(netdev, "RWB[desc]      [PcsmIpSHl PtRs] [vl er S cks ln] ---------------- [bi->skb] <-- Adv Rx Write-Back format\n");
++		netdev_dbg(netdev, "------------------------------------\n");
++		netdev_dbg(netdev, "R  [desc]      [ PktBuf     A0] [  HeadBuf   DD] [bi->dma       ] [bi->skb] <-- Adv Rx Read format\n");
++		netdev_dbg(netdev, "RWB[desc]      [PcsmIpSHl PtRs] [vl er S cks ln] ---------------- [bi->skb] <-- Adv Rx Write-Back format\n");
+ 
+ 		for (i = 0; i < rx_ring->count; i++) {
+ 			const char *next_desc;
+@@ -270,13 +270,13 @@ void igc_rings_dump(struct igc_adapter *adapter)
+ 
+ 			if (staterr & IGC_RXD_STAT_DD) {
+ 				/* Descriptor Done */
+-				netdev_info(netdev, "%s[0x%03X]     %016llX %016llX ---------------- %s\n",
++				netdev_dbg(netdev, "%s[0x%03X]     %016llX %016llX ---------------- %s\n",
+ 					    "RWB", i,
+ 					    le64_to_cpu(u0->a),
+ 					    le64_to_cpu(u0->b),
+ 					    next_desc);
+ 			} else {
+-				netdev_info(netdev, "%s[0x%03X]     %016llX %016llX %016llX %s\n",
++				netdev_dbg(netdev, "%s[0x%03X]     %016llX %016llX %016llX %s\n",
+ 					    "R  ", i,
+ 					    le64_to_cpu(u0->a),
+ 					    le64_to_cpu(u0->b),
+@@ -285,7 +285,7 @@ void igc_rings_dump(struct igc_adapter *adapter)
+ 
+ 				if (netif_msg_pktdata(adapter) &&
+ 				    buffer_info->dma && buffer_info->page) {
+-					print_hex_dump(KERN_INFO, "",
++					print_hex_dump(KERN_DEBUG, "",
+ 						       DUMP_PREFIX_ADDRESS,
+ 						       16, 1,
+ 						       page_address
+@@ -309,8 +309,8 @@ void igc_regs_dump(struct igc_adapter *adapter)
+ 	struct igc_reg_info *reginfo;
+ 
+ 	/* Print Registers */
+-	netdev_info(adapter->netdev, "Register Dump\n");
+-	netdev_info(adapter->netdev, "Register Name   Value\n");
++	netdev_dbg(adapter->netdev, "Register Dump\n");
++	netdev_dbg(adapter->netdev, "Register Name   Value\n");
+ 	for (reginfo = (struct igc_reg_info *)igc_reg_info_tbl;
+ 	     reginfo->name; reginfo++) {
+ 		igc_regdump(hw, reginfo);
+-- 
+2.49.0
 
 
