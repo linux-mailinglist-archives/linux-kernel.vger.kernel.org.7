@@ -1,180 +1,470 @@
-Return-Path: <linux-kernel+bounces-720274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 605E6AFB985
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 19:05:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 538F8AFB986
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 19:05:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 018F61AA6F3F
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 17:05:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFE774245F6
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 17:05:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BEDA2E7F20;
-	Mon,  7 Jul 2025 17:04:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BF232E7F22;
+	Mon,  7 Jul 2025 17:05:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HrCYAXbr"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="WXBgAhPx"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 790082E7F34;
-	Mon,  7 Jul 2025 17:04:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E279E2E8DED
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 17:05:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751907872; cv=none; b=ohvsCLnfD2owBvyR3oYy8QH7Sw6hD/a2hk8NqBGIuWd2npix9RhOG4aAjDtkvzXx8C7WnDX/1ca0npeUoOI2J5TgmqIAjhTXFO9by/+/mt45x4Ohbk43ms8oLiYx+SWbbt2ht14EfY2wm/WU2Auc4Ftt/qJpD+uEabSOQw+kLSo=
+	t=1751907909; cv=none; b=QSBZTOKmKY5iYqqALCNaQFpGNkluwgky2vGVNk+1dEJf80Eg8fm9LOC6iQ3Fy2sZku42nZLf/t6UeQu7O/DpGi9oSDv1SPS0Pvvwwdd5HGDVrW022e+DGL32CGdhOxYP9pnchX/AQRae8GfGWlgXl3iiHqRMm+esP+jG+Ya2vLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751907872; c=relaxed/simple;
-	bh=GYasa85fPolMC5UzEKuJVy95/AUHLQ33xNjfnyH420Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cBaa5QZVbUrV2yg4khJV8kDSwnFcQHDhjYn2s9u8WkXFHxxtfBKZNolt/RAp8NcP1O7RXCFtkId31vJIziwzSO+wJqarEwpdReBAkd7Qm4E+XtXCSlg07cdCPpnf3Qe3DBtXvn2XWV/JZi/d5O6O+jnuzNaSxxsJymBo80o1Iuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HrCYAXbr; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751907871; x=1783443871;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=GYasa85fPolMC5UzEKuJVy95/AUHLQ33xNjfnyH420Y=;
-  b=HrCYAXbrwSxcGCPlB30c6UZ/rUm6CPqFmjIz1aoE/pZNIMwyVBmx5Oq1
-   oaK3+9jm0bgQaKMoB5uoUxsOcWb/Xhl6YtI95rLsQQcudIHzlrKhe4KIB
-   9cK1a3Z0Al+tHu6+tLaRCMEAyxtqepCMKvk8EKWV8gxqSAD79gJmtJQQH
-   IHtnjIJQWZMzDsOBc5yJ2lGzcHomsbs1Xkjl5SSKdc1SD/w1jmsEER5In
-   N9132JzHng/VCDmYdKJfZvl/hfMilIzweIYITW/uJjxM4XzE/GJkW8Ij2
-   /ZVeXDKf9ZVF6QFKxLVJ+g0RaJenfMUw9HDEQpFIAL9yswre/4/p3i7/D
-   A==;
-X-CSE-ConnectionGUID: HQRarHaJQsenXROFHQ4ZRQ==
-X-CSE-MsgGUID: EqKrrB6/QMqeHpYF2Hm5aA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="57805393"
-X-IronPort-AV: E=Sophos;i="6.16,294,1744095600"; 
-   d="scan'208";a="57805393"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jul 2025 10:04:30 -0700
-X-CSE-ConnectionGUID: Fvi+HKuGSgOXnCOOEPDJzA==
-X-CSE-MsgGUID: dNQKkJ3nRxSzE1gFhniEGA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,294,1744095600"; 
-   d="scan'208";a="186287216"
-Received: from linux.intel.com ([10.54.29.200])
-  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jul 2025 10:04:30 -0700
-Received: from [10.124.220.149] (unknown [10.124.220.149])
-	by linux.intel.com (Postfix) with ESMTP id 332B320B571C;
-	Mon,  7 Jul 2025 10:04:29 -0700 (PDT)
-Message-ID: <24dfe8e2-e4b3-40e9-b9ac-026e057abd30@linux.intel.com>
-Date: Mon, 7 Jul 2025 10:04:28 -0700
+	s=arc-20240116; t=1751907909; c=relaxed/simple;
+	bh=U6tH5JNsDZZ8W2DW5sPnRjMGj7Yfzjgw1c3fBhEpw6U=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Wl2+VJCY/ST+tun7jIGOnNd5Lel5crWC1X6Vy4wWMQE9uZaCAWncsfMQCgDlFT3D9OsBjzSODCBUocHWlfKxBulzBJQtchOwPc/JGpIPrX6R+5GOGHcL2EgvXZQKU+OYVF0GN5EJEs26LsH9AscibvmdohLaWbtYHuFtJhxwIs0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=WXBgAhPx; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1751907904;
+	bh=U6tH5JNsDZZ8W2DW5sPnRjMGj7Yfzjgw1c3fBhEpw6U=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=WXBgAhPx5rjM20qfPDh14rICaGQ6kRpWOs0mUGc6IKi5LW8P5RAaNAU7850njqZfI
+	 GEYlbICxkOT0lDrvNxuOU4G16vPx23T7oqYFzSMrfgsFG/bIEflbspfCB+gLhz+jPj
+	 A3gaTeB3x45znZz6XybgrMTZD7kLiDuvE0Op3+AsNvCQmQtFyGQ5VUhVSWN0PgHc98
+	 Tt1cvF1pBxIGZKDPNLn7symMW5sKE7n4sfuT2jy3Kd+WfCdt6eWNRVivhFkESP0o3t
+	 WfXGPgZfH07zim8SKWvtiz/KFjEUSE5lxl3RU8HjxyeVAGnqhi3M/f7PGXN0342G8W
+	 1rhmrP7Ivi+Tw==
+Received: from debian-rockchip-rock5b-rk3588.. (unknown [90.168.160.154])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nanokatze)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id EED0617E108A;
+	Mon,  7 Jul 2025 19:05:02 +0200 (CEST)
+From: Caterina Shablia <caterina.shablia@collabora.com>
+To: "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>,
+	"Maxime Ripard" <mripard@kernel.org>,
+	"Thomas Zimmermann" <tzimmermann@suse.de>,
+	"David Airlie" <airlied@gmail.com>,
+	"Simona Vetter" <simona@ffwll.ch>,
+	"Frank Binns" <frank.binns@imgtec.com>,
+	"Matt Coster" <matt.coster@imgtec.com>,
+	"Karol Herbst" <kherbst@redhat.com>,
+	"Lyude Paul" <lyude@redhat.com>,
+	"Danilo Krummrich" <dakr@kernel.org>,
+	"Boris Brezillon" <boris.brezillon@collabora.com>,
+	"Steven Price" <steven.price@arm.com>,
+	"Liviu Dudau" <liviu.dudau@arm.com>,
+	"Lucas De Marchi" <lucas.demarchi@intel.com>,
+	=?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+	"Rodrigo Vivi" <rodrigo.vivi@intel.com>
+Cc: dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	nouveau@lists.freedesktop.org,
+	intel-xe@lists.freedesktop.org,
+	asahi@lists.linux.dev,
+	Asahi Lina <lina@asahilina.net>,
+	Caterina Shablia <caterina.shablia@collabora.com>
+Subject: [PATCH v4 3/7] drm/gpuvm: Pass map arguments through a struct
+Date: Mon,  7 Jul 2025 17:04:29 +0000
+Message-ID: <20250707170442.1437009-4-caterina.shablia@collabora.com>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250707170442.1437009-1-caterina.shablia@collabora.com>
+References: <20250707170442.1437009-1-caterina.shablia@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] PCI/DPC: Extend DPC recovery timeout
-To: Andy Xu <andy.xu@hj-micro.com>, bhelgaas@google.com, lukas@wunner.de
-Cc: mahesh@linux.ibm.com, oohall@gmail.com, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org, jemma.zhang@hj-micro.com, peter.du@hj-micro.com
-References: <20250707103014.1279262-1-andy.xu@hj-micro.com>
-Content-Language: en-US
-From: Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>
-In-Reply-To: <20250707103014.1279262-1-andy.xu@hj-micro.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+From: Boris Brezillon <boris.brezillon@collabora.com>
 
-On 7/7/25 3:30 AM, Andy Xu wrote:
-> From: Hongbo Yao <andy.xu@hj-micro.com>
->
-> Extend the DPC recovery timeout from 4 seconds to 7 seconds to
-> support Mellanox ConnectX series network adapters.
->
-> My environment:
->    - Platform: arm64 N2 based server
->    - Endpoint1: Mellanox Technologies MT27800 Family [ConnectX-5]
->    - Endpoint2: Mellanox Technologies MT2910 Family [ConnectX-7]
->
-> With the original 4s timeout, hotplug would still be triggered:
->
-> [ 81.012463] pcieport 0004:00:00.0: DPC: containment event, status:0x1f01 source:0x0000
-> [ 81.014536] pcieport 0004:00:00.0: DPC: unmasked uncorrectable error detected
-> [ 81.029598] pcieport 0004:00:00.0: PCIe Bus Error: severity=Uncorrected (Non-Fatal), type=Transaction Layer, (Receiver ID)
-> [ 81.040830] pcieport 0004:00:00.0: device [0823:0110] error status/mask=00008000/04d40000
-> [ 81.049870] pcieport 0004:00:00.0: [ 0] ERCR (First)
-> [ 81.053520] pcieport 0004:00:00.0: AER: TLP Header: 60008010 010000ff 00001000 9c4c0000
-> [ 81.065793] mlx5_core 0004:01:00.0: mlx5_pci_err_detected Device state = 1 health sensors: 1 pci_status: 1. Enter, pci channel state = 2
-> [ 81.076183] mlx5_core 0004:01:00.0: mlx5_error_sw_reset:231:(pid 1618): start
-> [ 81.083307] mlx5_core 0004:01:00.0: mlx5_error_sw_reset:252:(pid 1618): PCI channel offline, stop waiting for NIC IFC
-> [ 81.077428] mlx5_core 0004:01:00.0: E-Switch: Disable: mode(LEGACY), nvfs(0), neovfs(0), active vports(0)
-> [ 81.486693] mlx5_core 0004:01:00.0: mlx5_wait_for_pages:786:(pid 1618): Skipping wait for vf pages stage
-> [ 81.496965] mlx5_core 0004:01:00.0: mlx5_wait_for_pages:786:(pid 1618): Skipping wait for vf pages stage
-> [ 82.395040] mlx5_core 0004:01:00.1: print_health:819:(pid 0): Fatal error detected
-> [ 82.395493] mlx5_core 0004:01:00.1: print_health_info:423:(pid 0): PCI slot 1 is unavailable
-> [ 83.431094] mlx5_core 0004:01:00.0: mlx5_pci_err_detected Device state = 2 pci_status: 0. Exit, result = 3, need reset
-> [ 83.442100] mlx5_core 0004:01:00.1: mlx5_pci_err_detected Device state = 2 health sensors: 1 pci_status: 1. Enter, pci channel state = 2
-> [ 83.441801] mlx5_core 0004:01:00.0: mlx5_crdump_collect:50:(pid 2239): crdump: failed to lock gw status -13
-> [ 83.454050] mlx5_core 0004:01:00.1: mlx5_error_sw_reset:231:(pid 1618): start
-> [ 83.454050] mlx5_core 0004:01:00.1: mlx5_error_sw_reset:252:(pid 1618): PCI channel offline, stop waiting for NIC IFC
-> [ 83.849429] mlx5_core 0004:01:00.1: E-Switch: Disable: mode(LEGACY), nvfs(0), neovfs(0), active vports(0)
-> [ 83.858892] mlx5_core 0004:01:00.1: mlx5_wait_for_pages:786:(pid 1618): Skipping wait for vf pages stage
-> [ 83.869464] mlx5_core 0004:01:00.1: mlx5_wait_for_pages:786:(pid 1618): Skipping wait for vf pages stage
-> [ 85.201433] pcieport 0004:00:00.0: pciehp: Slot(41): Link Down
-> [ 85.815016] mlx5_core 0004:01:00.1: mlx5_health_try_recover:335:(pid 2239): handling bad device here
-> [ 85.824164] mlx5_core 0004:01:00.1: mlx5_error_sw_reset:231:(pid 2239): start
-> [ 85.831283] mlx5_core 0004:01:00.1: mlx5_error_sw_reset:252:(pid 2239): PCI channel offline, stop waiting for NIC IFC
-> [ 85.841899] mlx5_core 0004:01:00.1: mlx5_unload_one_dev_locked:1612:(pid 2239): mlx5_unload_one_dev_locked: interface is down, NOP
-> [ 85.853799] mlx5_core 0004:01:00.1: mlx5_health_wait_pci_up:325:(pid 2239): PCI channel offline, stop waiting for PCI
-> [ 85.863494] mlx5_core 0004:01:00.1: mlx5_health_try_recover:338:(pid 2239): health recovery flow aborted, PCI reads still not working
-> [ 85.873231] mlx5_core 0004:01:00.1: mlx5_pci_err_detected Device state = 2 pci_status: 0. Exit, result = 3, need reset
-> [ 85.879899] mlx5_core 0004:01:00.1: E-Switch: Unload vfs: mode(LEGACY), nvfs(0), neovfs(0), active vports(0)
-> [ 85.921428] mlx5_core 0004:01:00.1: E-Switch: Disable: mode(LEGACY), nvfs(0), neovfs(0), active vports(0)
-> [ 85.930491] mlx5_core 0004:01:00.1: mlx5_wait_for_pages:786:(pid 1617): Skipping wait for vf pages stage
-> [ 85.940849] mlx5_core 0004:01:00.1: mlx5_wait_for_pages:786:(pid 1617): Skipping wait for vf pages stage
-> [ 85.949971] mlx5_core 0004:01:00.1: mlx5_uninit_one:1528:(pid 1617): mlx5_uninit_one: interface is down, NOP
-> [ 85.959944] mlx5_core 0004:01:00.1: E-Switch: cleanup
-> [ 86.035541] mlx5_core 0004:01:00.0: E-Switch: Unload vfs: mode(LEGACY), nvfs(0), neovfs(0), active vports(0)
-> [ 86.077568] mlx5_core 0004:01:00.0: E-Switch: Disable: mode(LEGACY), nvfs(0), neovfs(0), active vports(0)
-> [ 86.071727] mlx5_core 0004:01:00.0: mlx5_wait_for_pages:786:(pid 1617): Skipping wait for vf pages stage
-> [ 86.096577] mlx5_core 0004:01:00.0: mlx5_wait_for_pages:786:(pid 1617): Skipping wait for vf pages stage
-> [ 86.106909] mlx5_core 0004:01:00.0: mlx5_uninit_one:1528:(pid 1617): mlx5_uninit_one: interface is down, NOP
-> [ 86.115940] pcieport 0004:00:00.0: AER: subordinate device reset failed
-> [ 86.122557] pcieport 0004:00:00.0: AER: device recovery failed
-> [ 86.128571] mlx5_core 0004:01:00.0: E-Switch: cleanup
->
-> I added some prints and found that:
->   - ConnectX-5 requires >5s for full recovery
->   - ConnectX-7 requires >6s for full recovery
->
-> Setting timeout to 7s covers both devices with safety margin.
+We are about to pass more arguments to drm_gpuvm_sm_map[_ops_create](),
+so, before we do that, let's pass arguments through a struct instead
+of changing each call site every time a new optional argument is added.
 
+Signed-off-by: Boris Brezillon <boris.brezillon@collabora.com>
+Signed-off-by: Caterina Shablia <caterina.shablia@collabora.com>
+---
+ drivers/gpu/drm/drm_gpuvm.c            | 76 ++++++++++----------------
+ drivers/gpu/drm/imagination/pvr_vm.c   | 15 +++--
+ drivers/gpu/drm/nouveau/nouveau_uvmm.c | 11 ++--
+ drivers/gpu/drm/panthor/panthor_mmu.c  | 13 ++++-
+ drivers/gpu/drm/xe/xe_vm.c             | 13 ++++-
+ include/drm/drm_gpuvm.h                | 34 ++++++++++--
+ 6 files changed, 97 insertions(+), 65 deletions(-)
 
-Instead of updating the recovery time, can you check why your device recovery takes
-such a long time and how to fix it from the device end?
-
-
-> Signed-off-by: Hongbo Yao <andy.xu@hj-micro.com>
-> ---
->   drivers/pci/pcie/dpc.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/pci/pcie/dpc.c b/drivers/pci/pcie/dpc.c
-> index fc18349614d7..35a37fd86dcd 100644
-> --- a/drivers/pci/pcie/dpc.c
-> +++ b/drivers/pci/pcie/dpc.c
-> @@ -118,10 +118,10 @@ bool pci_dpc_recovered(struct pci_dev *pdev)
->   	/*
->   	 * Need a timeout in case DPC never completes due to failure of
->   	 * dpc_wait_rp_inactive().  The spec doesn't mandate a time limit,
-> -	 * but reports indicate that DPC completes within 4 seconds.
-> +	 * but reports indicate that DPC completes within 7 seconds.
->   	 */
->   	wait_event_timeout(dpc_completed_waitqueue, dpc_completed(pdev),
-> -			   msecs_to_jiffies(4000));
-> +			   msecs_to_jiffies(7000));
->   
->   	return test_and_clear_bit(PCI_DPC_RECOVERED, &pdev->priv_flags);
->   }
-
+diff --git a/drivers/gpu/drm/drm_gpuvm.c b/drivers/gpu/drm/drm_gpuvm.c
+index e89b932e987c..05978c5c38b1 100644
+--- a/drivers/gpu/drm/drm_gpuvm.c
++++ b/drivers/gpu/drm/drm_gpuvm.c
+@@ -2054,16 +2054,15 @@ EXPORT_SYMBOL_GPL(drm_gpuva_unmap);
+ 
+ static int
+ op_map_cb(const struct drm_gpuvm_ops *fn, void *priv,
+-	  u64 addr, u64 range,
+-	  struct drm_gem_object *obj, u64 offset)
++	  const struct drm_gpuvm_map_req *req)
+ {
+ 	struct drm_gpuva_op op = {};
+ 
+ 	op.op = DRM_GPUVA_OP_MAP;
+-	op.map.va.addr = addr;
+-	op.map.va.range = range;
+-	op.map.gem.obj = obj;
+-	op.map.gem.offset = offset;
++	op.map.va.addr = req->va.addr;
++	op.map.va.range = req->va.range;
++	op.map.gem.obj = req->gem.obj;
++	op.map.gem.offset = req->gem.offset;
+ 
+ 	return fn->sm_step_map(&op, priv);
+ }
+@@ -2102,17 +2101,16 @@ op_unmap_cb(const struct drm_gpuvm_ops *fn, void *priv,
+ static int
+ __drm_gpuvm_sm_map(struct drm_gpuvm *gpuvm,
+ 		   const struct drm_gpuvm_ops *ops, void *priv,
+-		   u64 req_addr, u64 req_range,
+-		   struct drm_gem_object *req_obj, u64 req_offset)
++		   const struct drm_gpuvm_map_req *req)
+ {
+ 	struct drm_gpuva *va, *next;
+-	u64 req_end = req_addr + req_range;
++	u64 req_end = req->va.addr + req->va.range;
+ 	int ret;
+ 
+-	if (unlikely(!drm_gpuvm_range_valid(gpuvm, req_addr, req_range)))
++	if (unlikely(!drm_gpuvm_range_valid(gpuvm, req->va.addr, req->va.range)))
+ 		return -EINVAL;
+ 
+-	drm_gpuvm_for_each_va_range_safe(va, next, gpuvm, req_addr, req_end) {
++	drm_gpuvm_for_each_va_range_safe(va, next, gpuvm, req->va.addr, req_end) {
+ 		struct drm_gem_object *obj = va->gem.obj;
+ 		u64 offset = va->gem.offset;
+ 		u64 addr = va->va.addr;
+@@ -2120,9 +2118,9 @@ __drm_gpuvm_sm_map(struct drm_gpuvm *gpuvm,
+ 		u64 end = addr + range;
+ 		bool merge = !!va->gem.obj;
+ 
+-		if (addr == req_addr) {
+-			merge &= obj == req_obj &&
+-				 offset == req_offset;
++		if (addr == req->va.addr) {
++			merge &= obj == req->gem.obj &&
++				 offset == req->gem.offset;
+ 
+ 			if (end == req_end) {
+ 				ret = op_unmap_cb(ops, priv, va, merge);
+@@ -2141,9 +2139,9 @@ __drm_gpuvm_sm_map(struct drm_gpuvm *gpuvm,
+ 			if (end > req_end) {
+ 				struct drm_gpuva_op_map n = {
+ 					.va.addr = req_end,
+-					.va.range = range - req_range,
++					.va.range = range - req->va.range,
+ 					.gem.obj = obj,
+-					.gem.offset = offset + req_range,
++					.gem.offset = offset + req->va.range,
+ 				};
+ 				struct drm_gpuva_op_unmap u = {
+ 					.va = va,
+@@ -2155,8 +2153,8 @@ __drm_gpuvm_sm_map(struct drm_gpuvm *gpuvm,
+ 					return ret;
+ 				break;
+ 			}
+-		} else if (addr < req_addr) {
+-			u64 ls_range = req_addr - addr;
++		} else if (addr < req->va.addr) {
++			u64 ls_range = req->va.addr - addr;
+ 			struct drm_gpuva_op_map p = {
+ 				.va.addr = addr,
+ 				.va.range = ls_range,
+@@ -2165,8 +2163,8 @@ __drm_gpuvm_sm_map(struct drm_gpuvm *gpuvm,
+ 			};
+ 			struct drm_gpuva_op_unmap u = { .va = va };
+ 
+-			merge &= obj == req_obj &&
+-				 offset + ls_range == req_offset;
++			merge &= obj == req->gem.obj &&
++				 offset + ls_range == req->gem.offset;
+ 			u.keep = merge;
+ 
+ 			if (end == req_end) {
+@@ -2189,7 +2187,7 @@ __drm_gpuvm_sm_map(struct drm_gpuvm *gpuvm,
+ 					.va.range = end - req_end,
+ 					.gem.obj = obj,
+ 					.gem.offset = offset + ls_range +
+-						      req_range,
++						      req->va.range,
+ 				};
+ 
+ 				ret = op_remap_cb(ops, priv, &p, &n, &u);
+@@ -2197,10 +2195,10 @@ __drm_gpuvm_sm_map(struct drm_gpuvm *gpuvm,
+ 					return ret;
+ 				break;
+ 			}
+-		} else if (addr > req_addr) {
+-			merge &= obj == req_obj &&
+-				 offset == req_offset +
+-					   (addr - req_addr);
++		} else if (addr > req->va.addr) {
++			merge &= obj == req->gem.obj &&
++				 offset == req->gem.offset +
++					   (addr - req->va.addr);
+ 
+ 			if (end == req_end) {
+ 				ret = op_unmap_cb(ops, priv, va, merge);
+@@ -2236,9 +2234,7 @@ __drm_gpuvm_sm_map(struct drm_gpuvm *gpuvm,
+ 		}
+ 	}
+ 
+-	return op_map_cb(ops, priv,
+-			 req_addr, req_range,
+-			 req_obj, req_offset);
++	return op_map_cb(ops, priv, req);
+ }
+ 
+ static int
+@@ -2302,11 +2298,8 @@ __drm_gpuvm_sm_unmap(struct drm_gpuvm *gpuvm,
+ /**
+  * drm_gpuvm_sm_map() - creates the &drm_gpuva_op split/merge steps
+  * @gpuvm: the &drm_gpuvm representing the GPU VA space
+- * @req_addr: the start address of the new mapping
+- * @req_range: the range of the new mapping
+- * @req_obj: the &drm_gem_object to map
+- * @req_offset: the offset within the &drm_gem_object
+  * @priv: pointer to a driver private data structure
++ * @req: map request information
+  *
+  * This function iterates the given range of the GPU VA space. It utilizes the
+  * &drm_gpuvm_ops to call back into the driver providing the split and merge
+@@ -2333,8 +2326,7 @@ __drm_gpuvm_sm_unmap(struct drm_gpuvm *gpuvm,
+  */
+ int
+ drm_gpuvm_sm_map(struct drm_gpuvm *gpuvm, void *priv,
+-		 u64 req_addr, u64 req_range,
+-		 struct drm_gem_object *req_obj, u64 req_offset)
++		 const struct drm_gpuvm_map_req *req)
+ {
+ 	const struct drm_gpuvm_ops *ops = gpuvm->ops;
+ 
+@@ -2343,9 +2335,7 @@ drm_gpuvm_sm_map(struct drm_gpuvm *gpuvm, void *priv,
+ 		       ops->sm_step_unmap)))
+ 		return -EINVAL;
+ 
+-	return __drm_gpuvm_sm_map(gpuvm, ops, priv,
+-				  req_addr, req_range,
+-				  req_obj, req_offset);
++	return __drm_gpuvm_sm_map(gpuvm, ops, priv, req);
+ }
+ EXPORT_SYMBOL_GPL(drm_gpuvm_sm_map);
+ 
+@@ -2485,10 +2475,7 @@ static const struct drm_gpuvm_ops gpuvm_list_ops = {
+ /**
+  * drm_gpuvm_sm_map_ops_create() - creates the &drm_gpuva_ops to split and merge
+  * @gpuvm: the &drm_gpuvm representing the GPU VA space
+- * @req_addr: the start address of the new mapping
+- * @req_range: the range of the new mapping
+- * @req_obj: the &drm_gem_object to map
+- * @req_offset: the offset within the &drm_gem_object
++ * @req: map request arguments
+  *
+  * This function creates a list of operations to perform splitting and merging
+  * of existent mapping(s) with the newly requested one.
+@@ -2516,8 +2503,7 @@ static const struct drm_gpuvm_ops gpuvm_list_ops = {
+  */
+ struct drm_gpuva_ops *
+ drm_gpuvm_sm_map_ops_create(struct drm_gpuvm *gpuvm,
+-			    u64 req_addr, u64 req_range,
+-			    struct drm_gem_object *req_obj, u64 req_offset)
++			    const struct drm_gpuvm_map_req *req)
+ {
+ 	struct drm_gpuva_ops *ops;
+ 	struct {
+@@ -2535,9 +2521,7 @@ drm_gpuvm_sm_map_ops_create(struct drm_gpuvm *gpuvm,
+ 	args.vm = gpuvm;
+ 	args.ops = ops;
+ 
+-	ret = __drm_gpuvm_sm_map(gpuvm, &gpuvm_list_ops, &args,
+-				 req_addr, req_range,
+-				 req_obj, req_offset);
++	ret = __drm_gpuvm_sm_map(gpuvm, &gpuvm_list_ops, &args, req);
+ 	if (ret)
+ 		goto err_free_ops;
+ 
+diff --git a/drivers/gpu/drm/imagination/pvr_vm.c b/drivers/gpu/drm/imagination/pvr_vm.c
+index 2896fa7501b1..abfdcd279363 100644
+--- a/drivers/gpu/drm/imagination/pvr_vm.c
++++ b/drivers/gpu/drm/imagination/pvr_vm.c
+@@ -185,12 +185,17 @@ struct pvr_vm_bind_op {
+ static int pvr_vm_bind_op_exec(struct pvr_vm_bind_op *bind_op)
+ {
+ 	switch (bind_op->type) {
+-	case PVR_VM_BIND_TYPE_MAP:
++	case PVR_VM_BIND_TYPE_MAP: {
++		const struct drm_gpuvm_map_req map_req = {
++			.va.addr = bind_op->device_addr,
++			.va.range = bind_op->size,
++			.gem.obj = gem_from_pvr_gem(bind_op->pvr_obj),
++			.gem.offset = bind_op->offset,
++		};
++
+ 		return drm_gpuvm_sm_map(&bind_op->vm_ctx->gpuvm_mgr,
+-					bind_op, bind_op->device_addr,
+-					bind_op->size,
+-					gem_from_pvr_gem(bind_op->pvr_obj),
+-					bind_op->offset);
++					bind_op, &map_req);
++	}
+ 
+ 	case PVR_VM_BIND_TYPE_UNMAP:
+ 		return drm_gpuvm_sm_unmap(&bind_op->vm_ctx->gpuvm_mgr,
+diff --git a/drivers/gpu/drm/nouveau/nouveau_uvmm.c b/drivers/gpu/drm/nouveau/nouveau_uvmm.c
+index 48f105239f42..b481700be666 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_uvmm.c
++++ b/drivers/gpu/drm/nouveau/nouveau_uvmm.c
+@@ -1276,6 +1276,12 @@ nouveau_uvmm_bind_job_submit(struct nouveau_job *job,
+ 			break;
+ 		case OP_MAP: {
+ 			struct nouveau_uvma_region *reg;
++			struct drm_gpuvm_map_req map_req = {
++				.va.addr = op->va.addr,
++				.va.range = op->va.range,
++				.gem.obj = op->gem.obj,
++				.gem.offset = op->gem.offset,
++			};
+ 
+ 			reg = nouveau_uvma_region_find_first(uvmm,
+ 							     op->va.addr,
+@@ -1301,10 +1307,7 @@ nouveau_uvmm_bind_job_submit(struct nouveau_job *job,
+ 			}
+ 
+ 			op->ops = drm_gpuvm_sm_map_ops_create(&uvmm->base,
+-							      op->va.addr,
+-							      op->va.range,
+-							      op->gem.obj,
+-							      op->gem.offset);
++							      &map_req);
+ 			if (IS_ERR(op->ops)) {
+ 				ret = PTR_ERR(op->ops);
+ 				goto unwind_continue;
+diff --git a/drivers/gpu/drm/panthor/panthor_mmu.c b/drivers/gpu/drm/panthor/panthor_mmu.c
+index 9caaba03c5eb..f0a22b775958 100644
+--- a/drivers/gpu/drm/panthor/panthor_mmu.c
++++ b/drivers/gpu/drm/panthor/panthor_mmu.c
+@@ -2236,15 +2236,22 @@ panthor_vm_exec_op(struct panthor_vm *vm, struct panthor_vm_op_ctx *op,
+ 		goto out;
+ 
+ 	switch (op_type) {
+-	case DRM_PANTHOR_VM_BIND_OP_TYPE_MAP:
++	case DRM_PANTHOR_VM_BIND_OP_TYPE_MAP: {
++		const struct drm_gpuvm_map_req map_req = {
++			.va.addr = op->va.addr,
++			.va.range = op->va.range,
++			.gem.obj = op->map.vm_bo->obj,
++			.gem.offset = op->map.bo_offset,
++		};
++
+ 		if (vm->unusable) {
+ 			ret = -EINVAL;
+ 			break;
+ 		}
+ 
+-		ret = drm_gpuvm_sm_map(&vm->base, vm, op->va.addr, op->va.range,
+-				       op->map.vm_bo->obj, op->map.bo_offset);
++		ret = drm_gpuvm_sm_map(&vm->base, vm, &map_req);
+ 		break;
++	}
+ 
+ 	case DRM_PANTHOR_VM_BIND_OP_TYPE_UNMAP:
+ 		ret = drm_gpuvm_sm_unmap(&vm->base, vm, op->va.addr, op->va.range);
+diff --git a/drivers/gpu/drm/xe/xe_vm.c b/drivers/gpu/drm/xe/xe_vm.c
+index 861577746929..80bc741bdb6b 100644
+--- a/drivers/gpu/drm/xe/xe_vm.c
++++ b/drivers/gpu/drm/xe/xe_vm.c
+@@ -2246,10 +2246,17 @@ vm_bind_ioctl_ops_create(struct xe_vm *vm, struct xe_bo *bo,
+ 
+ 	switch (operation) {
+ 	case DRM_XE_VM_BIND_OP_MAP:
+-	case DRM_XE_VM_BIND_OP_MAP_USERPTR:
+-		ops = drm_gpuvm_sm_map_ops_create(&vm->gpuvm, addr, range,
+-						  obj, bo_offset_or_userptr);
++	case DRM_XE_VM_BIND_OP_MAP_USERPTR: {
++		struct drm_gpuvm_map_req map_req = {
++			.va.addr = addr,
++			.va.range = range,
++			.gem.obj = obj,
++			.gem.offset = bo_offset_or_userptr,
++		};
++
++		ops = drm_gpuvm_sm_map_ops_create(&vm->gpuvm, &map_req);
+ 		break;
++	}
+ 	case DRM_XE_VM_BIND_OP_UNMAP:
+ 		ops = drm_gpuvm_sm_unmap_ops_create(&vm->gpuvm, addr, range);
+ 		break;
+diff --git a/include/drm/drm_gpuvm.h b/include/drm/drm_gpuvm.h
+index 6fdf2aff3e90..a6e6c33fc10b 100644
+--- a/include/drm/drm_gpuvm.h
++++ b/include/drm/drm_gpuvm.h
+@@ -1049,10 +1049,37 @@ struct drm_gpuva_ops {
+  */
+ #define drm_gpuva_next_op(op) list_next_entry(op, entry)
+ 
++/**
++ * struct drm_gpuvm_map_req - arguments passed to drm_gpuvm_sm_map[_ops_create]()
++ */
++struct drm_gpuvm_map_req {
++	/** @va: virtual address related fields */
++	struct {
++		/** @va.addr: start of the virtual address range to map to */
++		u64 addr;
++
++		/** @va.size: size of the virtual address range to map to */
++		u64 range;
++	} va;
++
++	/** @gem: GEM related fields */
++	struct {
++		/**
++		 * @obj: GEM object to map.
++		 *
++		 * Can be NULL if the virtual range is not backed by a GEM object.
++		 */
++		struct drm_gem_object *obj;
++
++		/** @offset: offset in the GEM */
++		u64 offset;
++	} gem;
++};
++
+ struct drm_gpuva_ops *
+ drm_gpuvm_sm_map_ops_create(struct drm_gpuvm *gpuvm,
+-			    u64 addr, u64 range,
+-			    struct drm_gem_object *obj, u64 offset);
++			    const struct drm_gpuvm_map_req *req);
++
+ struct drm_gpuva_ops *
+ drm_gpuvm_sm_unmap_ops_create(struct drm_gpuvm *gpuvm,
+ 			      u64 addr, u64 range);
+@@ -1198,8 +1225,7 @@ struct drm_gpuvm_ops {
+ };
+ 
+ int drm_gpuvm_sm_map(struct drm_gpuvm *gpuvm, void *priv,
+-		     u64 addr, u64 range,
+-		     struct drm_gem_object *obj, u64 offset);
++		     const struct drm_gpuvm_map_req *req);
+ 
+ int drm_gpuvm_sm_unmap(struct drm_gpuvm *gpuvm, void *priv,
+ 		       u64 addr, u64 range);
 -- 
-Sathyanarayanan Kuppuswamy
-Linux Kernel Developer
+2.47.2
 
 
