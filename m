@@ -1,234 +1,229 @@
-Return-Path: <linux-kernel+bounces-720500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AE1EAFBC99
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 22:33:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A8A1AFBC9E
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 22:36:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0836C4A1436
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 20:33:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 55EB97AC338
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 20:34:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C080221297;
-	Mon,  7 Jul 2025 20:33:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1512621E082;
+	Mon,  7 Jul 2025 20:36:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lRQ9Wapz"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="HUcH24Dw"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D768D12FF69;
-	Mon,  7 Jul 2025 20:33:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.9
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751920406; cv=fail; b=C+vFFCQaIDa1Bwbh5lnFeuDzEbVt2ePtRRN1fPdR8ETvIq5WZlfeFZDKyUcqfJBMv0ZDh7zUovYBhryY/WlFpaK2pB1AaB1Dmg3rtblCQdJYjbNUTOmieR2Yu7GY/zUEc05YaDIwKop/FwGBuyYQzx0pZuCVjGlAd+vtWT9O7RQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751920406; c=relaxed/simple;
-	bh=VCt1+S7H/EMGoCeJnYLyOi5LibUNWx4ZgdijGxgafTc=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=q9x/YKpDC0uZhXaswLrqpCPvWRZ1ty0gB3wZCStXQ6nIA3CHuDM+aAmDnA88k56NysNFrQbswABwm9QfZsTEmMYPbgsj8uLks+Y8LeMKng+wM6lHktgySaIJCmhyGDc3IiXhACfYKIhROlUrJE5Eglj7AvsxFCd+032HIRTCWWU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lRQ9Wapz; arc=fail smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751920405; x=1783456405;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=VCt1+S7H/EMGoCeJnYLyOi5LibUNWx4ZgdijGxgafTc=;
-  b=lRQ9Wapz2uCtr975sRsm8l2PNv27SBDRNO6cOeuXCur/SC6JD0CKeGbg
-   xd9jYYsW6RuAQa/ssnGWckviU24HONYQpsJixMdqBIHtYERH2psv0ktxw
-   Mog0rFjrx6POtWZdwROrQhJqxRlZFP0qtyKikzhbKk2/xQdHgkgWygUq4
-   5rlQwRk8fe46fsdLok9p9RVn1vGoVe5WiJVdT71H4RP22jMT6TSpPWRZc
-   2pMHJDdc0h2IPfHLIsetMtOuUEk7hmjHuDdZFHlg6RFEe9z2gtM1BE+a0
-   jU5EhbxJ8w/aUUNr7bdvrH2vzDXbc17NOJAdRvU/E8SlM1nGnldhdZ2r4
-   Q==;
-X-CSE-ConnectionGUID: czteHvLrQkmpc5SGBPsYQg==
-X-CSE-MsgGUID: Bv707XxgR+eZE0tR5kugGw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="76700880"
-X-IronPort-AV: E=Sophos;i="6.16,295,1744095600"; 
-   d="scan'208";a="76700880"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jul 2025 13:33:25 -0700
-X-CSE-ConnectionGUID: iwWq3R3XSEmR2jKoE9GGOw==
-X-CSE-MsgGUID: p/VB0ZcHRWCzGgyucxjOmQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,295,1744095600"; 
-   d="scan'208";a="155045928"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
-  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jul 2025 13:33:24 -0700
-Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Mon, 7 Jul 2025 13:33:23 -0700
-Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25 via Frontend Transport; Mon, 7 Jul 2025 13:33:23 -0700
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (40.107.102.56)
- by edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Mon, 7 Jul 2025 13:33:23 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=KeHqWVdwZZW//vmkIxdAGTIE/IzqrfsNWtBHwnQJTnPYcPXmlSdJbkYyJ8lxK5+70Quyb3pqLULe0C4IiVkGaZhbmTC4ehZ05QLXHmYMSL0pG9RrehKavBWpIM1kC/j0ma4L7oCtfx8AjgE4o3ydIuS7/Xero4CGXkwqrR0ZyJSqZJOQK0wlRhbRgOWdFFLFNavob7UBZaIxhAMQNmagTtgQdpzwu6x0ljTPcYtB/GQk7xxsABRcu0mw/4PTO32XrI5NyBRwTepfCzBlqe+fVkcTdfb/O9UssgQi+zPxKkS6znsy9kvj/NOvUZIUTqxHjkVaCTMkoaVMcmmkNb7N+w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=y/r3yUegZRBFQZlsN4XMRiZatJpk9d2e0dzZFWQgYVA=;
- b=nSEweLMZTfWUhH9ozJpc3ZCH6NhsI2yDZfExGCnUWPdF6zpSnFL33Kdf0prZi832ThLvAWRRPVRcMeu0PR/+qKWniMfpHYVF0o6IIFB+cKYxvki7992k5YprBYQ5wMRfOnE1NUwBI2b6uoGXU9JBdVFtboMqQCf4krWjH1pyoYHyRVN2OJEFBV+L9dzwSe6M5VfUWQqibDNeQkfFG2oS8v4qB3+567jcg6m0/lltosqf8e0bNhSGtvUepBl0AgnqKV043yni9BVb1nMLqhUX8CFZfngJr9IInfUnJxwDz202FApNZoX3xhc1U9qIs7988TZim+mm6nbtIkuROuDiWw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from BYAPR11MB3320.namprd11.prod.outlook.com (2603:10b6:a03:18::25)
- by CO1PR11MB5058.namprd11.prod.outlook.com (2603:10b6:303:99::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.26; Mon, 7 Jul
- 2025 20:33:21 +0000
-Received: from BYAPR11MB3320.namprd11.prod.outlook.com
- ([fe80::e8c4:59e3:f1d5:af3b]) by BYAPR11MB3320.namprd11.prod.outlook.com
- ([fe80::e8c4:59e3:f1d5:af3b%7]) with mapi id 15.20.8901.024; Mon, 7 Jul 2025
- 20:33:21 +0000
-Message-ID: <ff11fc78-91ed-47ab-8c29-9ca45d163808@intel.com>
-Date: Mon, 7 Jul 2025 13:33:19 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 00/10] x86: Add support for NMI-source reporting with
- FRED
-Content-Language: en-US
-To: "Zhuo, Qiuxu" <qiuxu.zhuo@intel.com>, "x86@kernel.org" <x86@kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC: Xin Li <xin@zytor.com>, "H . Peter Anvin" <hpa@zytor.com>, Andy Lutomirski
-	<luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
-	<mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
-	<dave.hansen@linux.intel.com>, Peter Zijlstra <peterz@infradead.org>, "Sean
- Christopherson" <seanjc@google.com>, "Hunter, Adrian"
-	<adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, "Luck,
- Tony" <tony.luck@intel.com>, "Zhang, Rui" <rui.zhang@intel.com>, "Steven
- Rostedt" <rostedt@goodmis.org>, "andrew.cooper3@citrix.com"
-	<andrew.cooper3@citrix.com>, "Kirill A . Shutemov"
-	<kirill.shutemov@linux.intel.com>, Jacob Pan <jacob.pan@linux.microsoft.com>,
-	Andi Kleen <ak@linux.intel.com>, "Huang, Kai" <kai.huang@intel.com>,
-	"Sandipan Das" <sandipan.das@amd.com>, "linux-perf-users@vger.kernel.org"
-	<linux-perf-users@vger.kernel.org>, "linux-edac@vger.kernel.org"
-	<linux-edac@vger.kernel.org>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	"linux-trace-kernel@vger.kernel.org" <linux-trace-kernel@vger.kernel.org>
-References: <20250612214849.3950094-1-sohil.mehta@intel.com>
- <CY8PR11MB71342AE041733CA1E299901F894FA@CY8PR11MB7134.namprd11.prod.outlook.com>
-From: Sohil Mehta <sohil.mehta@intel.com>
-In-Reply-To: <CY8PR11MB71342AE041733CA1E299901F894FA@CY8PR11MB7134.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SJ0PR05CA0020.namprd05.prod.outlook.com
- (2603:10b6:a03:33b::25) To BYAPR11MB3320.namprd11.prod.outlook.com
- (2603:10b6:a03:18::25)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C06ECA932;
+	Mon,  7 Jul 2025 20:36:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751920574; cv=none; b=X/8czirzFPRbLZdsb2j9DwDc7FL7CQ1BjckhyllAOUSN47vkS3WMQLRC9Hf2iomfdli0orHptFOOJ3iXthIoREBACPBLeykzMyICx4M14QvA+LETdE79y6uKAsDu20+5qxfgThULbPdk1gnOBnKTS4po+tjaCaovIc7jYj0vTGc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751920574; c=relaxed/simple;
+	bh=zWPrwd3wg5x9gNKa3ecf3D48+KXLVbGRBDo1at35nuI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cDSNsCrMC05lTnxo5kB/q/vO1OgICXhsx40olIBUIrYP5IPxz/ccFoSXR+paZ6/JaPlDNUOSz9uXCeiGRz5A9QNieYj8H97KuwUGV6aYVlbnDfEZVX2W1pHy4AZ/ofAd9XT9pkDO4LoqteyCB/LihxY58GhaqMR7MLZTaC7pj2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=HUcH24Dw; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 567IkRLv020724;
+	Mon, 7 Jul 2025 20:35:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=BFnUtE
+	rzqi+YrOuLQHHe/HmmEuiWzUgAukevdWHaQtE=; b=HUcH24DwcvCPOm3PDDcfLM
+	HVIMdtaBq+zjU+EnIVaKtvk/C0Ei4HkfmBYrKj83PDR47o9Ndy/q67RdjBzsrYUr
+	MBor8MHerh6BtErq14W2pZVcbqui/RUKemAKfd2JLDsdA97WRiHV6poIcmcC99Jf
+	G/HVrWKjo4gRapnVvvwHNTzV41mRj27seDusIe2cC3zJe3lZcSBwMGHaTc9LxL8z
+	3+tHOeEKsj0b53lUmhfGHI0S4IQqPWHOyLOGX5TDRpq/0p2tIFoGMsIXWhvOBx48
+	TB7/sor1/z4FFI/hwS5E2yNdYvOKyuJG3fvhSX91hezE6k9gyQiOZzYSeVZPfFQg
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47pur6uwwx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 07 Jul 2025 20:35:41 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 567KZfrJ024112;
+	Mon, 7 Jul 2025 20:35:41 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47pur6uwwu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 07 Jul 2025 20:35:41 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 567HSKfa003123;
+	Mon, 7 Jul 2025 20:35:39 GMT
+Received: from smtprelay03.dal12v.mail.ibm.com ([172.16.1.5])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 47qfvm7px5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 07 Jul 2025 20:35:39 +0000
+Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
+	by smtprelay03.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 567KZbLm19989208
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 7 Jul 2025 20:35:38 GMT
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D991D58066;
+	Mon,  7 Jul 2025 20:35:37 +0000 (GMT)
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 05CDD58059;
+	Mon,  7 Jul 2025 20:35:36 +0000 (GMT)
+Received: from [9.61.104.52] (unknown [9.61.104.52])
+	by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Mon,  7 Jul 2025 20:35:35 +0000 (GMT)
+Message-ID: <e8aa7f94-3e52-488d-a858-564d3d1edd4b@linux.ibm.com>
+Date: Mon, 7 Jul 2025 16:35:35 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BYAPR11MB3320:EE_|CO1PR11MB5058:EE_
-X-MS-Office365-Filtering-Correlation-Id: 62ca33a0-588f-4213-5623-08ddbd9583c2
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?V0IzbWhiaGRkYzdzSXZ4L2l4Qm9oU2h0U2d3a2NoZkxVT0ZxalY0d3B2NnI2?=
- =?utf-8?B?V3YyOWRFVTZ6R0xmd0lCUDNRc0VNZU5NQXlxZmh0RmJvbjJsdDg0QW1lamhx?=
- =?utf-8?B?OGw5N3V6WThHSkIrU1BvRHdxZWVPRUd5ZkQzSXJia045bzFxWnVtVXFBbUI2?=
- =?utf-8?B?clhjS29HOGRQckt5bnZ5U1I0eE5lbXdaR24yOVRQQmE5M0hVZXF5MHQyenAz?=
- =?utf-8?B?SmpBc0tWNDdnT2hYV3I5Vy9MWG9qKzRya2J5aGNFOU1sTVRyZ241a01QTjda?=
- =?utf-8?B?WlNlelpVa2QwR0J4Ujk3Q0RrVmxMRFd2bWpJa2NPY0VHUG82UmFVUmIzT3di?=
- =?utf-8?B?a2NhYmNjMTZlckR6SklDSEJZeG1BalFQZE9la2VNMVVCVmFZdlM2RmdBeG55?=
- =?utf-8?B?YTMwZDlQTC9hclF3cXlGWjZVQkhoTzB5cE15QmJuQWJmTkNJUUJlQVhqenI4?=
- =?utf-8?B?ZmJMc2NIaVBqZmZ6ZXNmL2lzUEUzeisyTE1IT1lBcVh1WERLRzZ3Q3lyakpp?=
- =?utf-8?B?Q3dmSUg5N0pucVkraWdTcWdiVHBvYnpqSlNrODZTV1pyRDNrYmJjVEh2aWM3?=
- =?utf-8?B?cU1zRmdCMDAxNCs5MjhYYmVDWklJL2tNVHNHZzdzaDV0bUw5aUNGaUR4UEhn?=
- =?utf-8?B?eTJHZnNEejBlRi9aUHNjeE4rT2dtdGFIVDRZbkU3MkJLdHF0cDU0dVN4NTZT?=
- =?utf-8?B?eFpYTVhpS3U1bWYzdlFweHBUNVhNb1UyVXo4aHpYSU5ld3l0dGF3ZHE3b0VI?=
- =?utf-8?B?UmVhemlVMlpTVlBMd2tZcVRCcHVOZzc0dkpKZjFMenVWbWliT1o4S0pqUGcx?=
- =?utf-8?B?Ky9XUDdrZ0Q0dXBKNWtJZVR6SzM0akFobndZTzZiY04vNnIydFdUZ1h3bDNq?=
- =?utf-8?B?clJzLy82Ky9kM3hxOUU2VEtvcDFEd01IcTZXUndXMWxmK0g5UFo4RGVjRE9D?=
- =?utf-8?B?a2FGeWEyZ1dKLzRaNElzY0pzL0pic0FLSG1ZS0VtSDJZQ0k3UjBYbVhWNDFn?=
- =?utf-8?B?TVgwTkIyWXNkRGVHRytvaHBHOUxzSzV4ZFBkMGJqcitiSVBiTGZyYTd6NWdT?=
- =?utf-8?B?bUNmeW11NTJ1YnpJOG1hSUpWK1pOV3k1YlkvRmgyYm9uaXpVejh1UjdYcnYy?=
- =?utf-8?B?NnJnMXNqQkZqcmNOQlY2dVJVYWxOODV2VTRGNG14YUxmc0dwUXp6anVpaWdx?=
- =?utf-8?B?dGszT2pDWDA5UmovRUJPSnUvMkI3ZXorRFhwaCthM0t4akZUSlYwbzEvbjVJ?=
- =?utf-8?B?SUdBaitnbkRmeHpzMlk0TUJqQS9EaWtuOUpGQlgvRU1DS3ZxSTNnaHgzTjdu?=
- =?utf-8?B?NlB1Kzg3NlJIamt4TllacWorUHNRQnEzUUxGdUR1bXBPc3c5STNDRzE4WTBu?=
- =?utf-8?B?bm1NRWtTUyt0ZjJvQmZNM2FNZDZsdG1jQm8yZk5uOUxQSFFZZDhRaEZib1M3?=
- =?utf-8?B?TWhpTjFjOWFTUmJqQXI1MkN5bDU5OGI1SEY2b2tpOVRJQ3ZEMnFaOFl4UWx6?=
- =?utf-8?B?bTNBcjRyd0lUR1E0VTdEZkJUZDN4d2tWU2M0Q0FINmM3azNyV2c0UzBTYXRF?=
- =?utf-8?B?ZTNTL2hMZkdGMWwyaHJGNi8zUS9rczFXZTk1T3FTcGllRS8zbHJkT3F0WDU5?=
- =?utf-8?B?bFdJWE12YU5zS3FnOFN6MGljdC9Nci8vcVlsRXlpZWdWYUlpODNWVVJlZWhz?=
- =?utf-8?B?NjJrRXRaakdvTkxxUUZKYlFnUmlWQ2IwVWRaMGxwR3BnWHhvSHE4SHFoSWdj?=
- =?utf-8?B?N1JJdkxYM0ZTTEtCbnJCKzhURW42Z2lBUVVqSGp5akp1eW50VUdZdTM0YTY2?=
- =?utf-8?B?UkRPQy8xd3JtelFSY3NRRWFweGpDZzVFUTU2d0REMDBUbXU0ekdib0FmQ0lj?=
- =?utf-8?B?dWV4aTBrOGJlMUlzNnNxL0loZVBBMUdhKzNvOXl0RlZUMUF5Y1JUcW9MODZF?=
- =?utf-8?Q?gXiE5c8CGfw=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR11MB3320.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?aGZCSEVDdHRVc2lXZ045bXoxRUdmcWtGZWlwQVVCQTRRWGx0anc2eUpqY0pF?=
- =?utf-8?B?RUZmRGV6RUhiZHRucGtmSWNYaFdmYmQ5TTNOcTNkd2RhNkJPeSs5UnhSaHVa?=
- =?utf-8?B?VDNhUlRUV3dnQzUyZ2ZqTzNjTk92cnA0YllCcnlEZWVGeE9vYUFjWlhjd0Rt?=
- =?utf-8?B?cnYvbUx4RHpHRVNWOEV6NkFHTmliOXg4cnZGRFIzL3lhT25EUFFuTEN0MjBn?=
- =?utf-8?B?SUlZbTdrd1JWOWpmQkMrUjBOZHlqbXJIRzR6cUw1aGNybU1PeVhzbm5Xbm9Y?=
- =?utf-8?B?MGJ4eldYazF3aERmcFhZK21hWGpMalBPUllRU3FOdk1haW5wQndPazVtelpD?=
- =?utf-8?B?Mzg1eForVXBEQlhPaUt6bzVnS1ptdlYyVjExV0dVTU5EYlhSZWxmK1kveUFJ?=
- =?utf-8?B?MExieVh5ak9NSDVmcWR5cURBUUVtMTlnNGxEM1ZJL0orZUUxVUxOdlQ3cnV6?=
- =?utf-8?B?NkJPQ0Q1d0xYRGNQeVo0d1Yrcy9Jbk1ldUhHaUlob1lJU2Vic0d2MC90V3Ja?=
- =?utf-8?B?N3RwWEhkZ0RBWEpIaXdmV0NBZVNRMlIxUWtqK1JjQm1XUm5WS2haclBxbEEy?=
- =?utf-8?B?Nmt3eURoQnhhVzFQK0FXY242VXkxZ2hiZ1VaejZ5c2FJaHZrcUZ1VTMrMXp3?=
- =?utf-8?B?cWRVZzNFV25LOXB5a0RHRlVobGJOS0svUFV1d1ZZdlg0SmFBWnQ4R3pTOHdS?=
- =?utf-8?B?Lyt1ampoblVpUmdBbDhuMlZySmxRcHlwcUJTUW9mbE1ISG4rSUxKU2l6TEUx?=
- =?utf-8?B?ZXBIUHJDdjN6ei9MZFptQU9Db1k5RTVYVGNuTThrYmZOSUZhbXgrTWpSTGN4?=
- =?utf-8?B?YmVBYmpiUW9uaXMzckRXTHZQenVxMUFPNWRnTUFyR3ZrWWpwTUpKWkFvQytZ?=
- =?utf-8?B?cTBPcUdBNXYreUhyL3F3VStDck9KdXdtN1ZlNlU1RVNlTWpMMHVxeUFmVkdm?=
- =?utf-8?B?MEZRUVFEVjZIL0xiNnJCZ2EwL1NwYS84VWtEZjBJZmpaaXMwdGUvR3BpTUQr?=
- =?utf-8?B?ZFhnR1BOMkN6ZUd3WVByOWdqV0JHcEtpeExTcUpLek9GWk5nS3l0VG1heDVM?=
- =?utf-8?B?OXAyRVpmR0JrMTlSR3htM1B3TldMTFB5Y3BwZWZucW5IQVEvUHhBOExZMS93?=
- =?utf-8?B?TG9wQ08yY1BvK1R1V2dlSDU4VEZBTFM3Z2lXZVVYc0RjV25WU3d6RzJXZFlS?=
- =?utf-8?B?MlZ3ZWlYcnRsSHNuakx0aXNSRTAwWUFWT3RuMEdrZHk0OTM0ZW02aXluN3Zh?=
- =?utf-8?B?S2FRTHRLWEw4dkRWLzFtd3JMM1RlVnJhblZ4R2ltQmRGaXIzVEpWMHp6Zk5D?=
- =?utf-8?B?QzBSRHo1c0tadXlnZll5YkIrbkNKT3ovMlRCNE5RUGVhSEVsb290V3k0MUNG?=
- =?utf-8?B?TDhsWnhhTXVGTndhUllqYllBb2tFbG12Y3VTbzlGRDFXZXNqK2RyWmYwL2dH?=
- =?utf-8?B?TzZ0aE1sV01tRFh3NTkwRVZpWWY1aXZSdjR5WnNQaWIrQVNOcndib1hIOE1k?=
- =?utf-8?B?Ry8rRHp1cGpaRU9jVkpGM0pKNlUyRHdSRktUbXJycElDTWFaVTJXWmYvdG9W?=
- =?utf-8?B?ZDhYN0I5Qml6L2lNbGQvWDVCZSttSUxmQm5vQXFGRytiWUxtcU5uV1FJN1ZV?=
- =?utf-8?B?aitra1c1aDFzeHVmQitOOWFxa01uU1g5VldOUTkyRWZxMzh0cGltWHIvVGdp?=
- =?utf-8?B?eHYzYmlsdW5XbStDMFJSUmQ1SHEwdERuRjd4V0ZXU2RkVnYyNXM0ellEWGxt?=
- =?utf-8?B?VzBrdVhQSzBKR0dlNUJtK3hYdnlGOGlNOHEwaWVYMFJUNkJFbk93bkdFR3VX?=
- =?utf-8?B?QTFOektCdE0rek5RbGVQQkNYdmQ0Y3kweEJ6WE5lZm15L1RKRVVuQXVhc0Ni?=
- =?utf-8?B?V2xqNjhQL3AvVHc3dVViNjNBV0Jkdm1DaWM4MzRGV3E4b3JxNDRLNEFZU3lm?=
- =?utf-8?B?c0lNV1dEQ25MZExkQStpWjZCbkcxTEtwaGFVdzFrVEFvSU9udi9laEMyUXI5?=
- =?utf-8?B?cUNsM2wybGkrNUFPQWVXZ21rejdLMWZVZlFaS0VhTVNYT0NXMzVwRjhsYnZu?=
- =?utf-8?B?QnJxSE1BU2tPSTFSdkhuZU9uYlRVd29UZEVMZnpuZE1MTXd6REJnWDhlZDZZ?=
- =?utf-8?Q?MBu42EsjimqHRPTl4E2YUE4h2?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 62ca33a0-588f-4213-5623-08ddbd9583c2
-X-MS-Exchange-CrossTenant-AuthSource: BYAPR11MB3320.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jul 2025 20:33:21.6098
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 9ujDFt/+zvA8eY+yzROunGm7Lsd5J3fxpqEwvLRwR5Ry1O50dejGJLGUaya6wIEf1n3UVQWLjKvZEUwNfploHQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR11MB5058
-X-OriginatorOrg: intel.com
-
-On 7/7/2025 6:56 AM, Zhuo, Qiuxu wrote:
->> From: Sohil Mehta <sohil.mehta@intel.com>
->> [...]
->> Subject: [PATCH v7 00/10] x86: Add support for NMI-source reporting with
->> FRED
-> 
-> Aside from the comments for patches 5 & 6, the others LGTM.
-> 
->      Reviewed-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] integrity: Extract secure boot enquiry function out of
+ IMA
+To: GONG Ruiqi <gongruiqi1@huawei.com>, Mimi Zohar <zohar@linux.ibm.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Madhavan Srinivasan <maddy@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>
+Cc: Eric Snowberg <eric.snowberg@oracle.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>, "Lee, Chun-Yi" <jlee@suse.com>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-integrity@vger.kernel.org,
+        keyrings@vger.kernel.org, Lu Jialin <lujialin4@huawei.com>
+References: <20250628063251.321370-1-gongruiqi1@huawei.com>
+ <eb91dcf034db28e457a4482faa397dd7632f00fd.camel@linux.ibm.com>
+ <4c59f417-86cc-4dec-ae45-8fcf8c7eb16a@huawei.com>
+Content-Language: en-US
+From: Nayna Jain <nayna@linux.ibm.com>
+In-Reply-To: <4c59f417-86cc-4dec-ae45-8fcf8c7eb16a@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA3MDEzNCBTYWx0ZWRfX53yA02ssT3+2 /gIxgy0haxwvya29kT6g0bpAanaNmXV5bL1kndK/P0mrTKdZ49SFu1TJP5w1IqUWfbQ8Q/7bznI p29/fompY+x+URuYQnREA77BOBHkHDEmm6AN+HjDBDDd/RTr2UaK74qWvyJpHwehOnPzp5QzpxI
+ ViFpWyHYtpHSNs7sq+DgHFFe3uHzVgoK0nLx9qzRJhfYstdyq+scQd26JdcgQnPrcJKdrxtstzl Y7GBE8NyVQz6HC57xZGbQLTG+sCw7gv8tihuKzlQYUUQ+ap1JWDBvUxKlEN17jKZRMOzcH6dAYJ bexK7F/f5ySSxPQ058yPVn13UnaJHWwzTgez/gZP7lcrVUBsHmwJqAMghch41iaIIy1XpOVbOIK
+ X1P4HInyVbuTTrX82/sSSTp06SuDddd+PLM1rGoky6MjBgSeqcetdZDjnk+u5rQfeghbBPu9
+X-Proofpoint-GUID: 9YY1oyQC6cHyMbd3txRAWdcUnljcso27
+X-Proofpoint-ORIG-GUID: ApRdDBF3eK6BnW2c7Srv0xd8U7XS3XOg
+X-Authority-Analysis: v=2.4 cv=W/M4VQWk c=1 sm=1 tr=0 ts=686c2f9d cx=c_pps a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=i0EeH86SAAAA:8 a=0SdL4vufndsjM6Dj2E8A:9 a=3ZKOabzyN94A:10
+ a=QEXdDO2ut3YA:10 a=GHzZeaHGQcwA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-07_05,2025-07-07_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 phishscore=0
+ mlxscore=0 priorityscore=1501 adultscore=0 clxscore=1011 suspectscore=0
+ spamscore=0 lowpriorityscore=0 mlxlogscore=999 bulkscore=0 impostorscore=0
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507070134
 
 
-Thank you! Appreciate the review.
+On 7/2/25 10:07 PM, GONG Ruiqi wrote:
+> Hi Mimi,
+>
+> On 7/3/2025 9:38 AM, Mimi Zohar wrote:
+>> [CC: Nayna Jain]
+>>
+>> On Sat, 2025-06-28 at 14:32 +0800, GONG Ruiqi wrote:
+>>> ...
+>> The original reason for querying the secure boot status of the system was in
+>> order to differentiate IMA policies.  Subsequently, the secure boot check was
+>> also added to safely allow loading of the certificates stored in MOK. So loading
+>> IMA policies and the MOK certificates ARE dependent on the secure boot mode.
+>>                                                                                  
+>> What is your real motivation for moving the secure boot checking out of IMA?
+>>                                                                                  
+> Sorry for not stating that clearly in this patch. I think the cover
+> letter of V3 I just sent few minutes ago can answer your question, and I
+> quote:
+>
+> "We encountered a boot failure issue in an in-house testing, where the
+> kernel refused to load its modules since it couldn't verify their
+> signature. The root cause turned out to be the early return of
+> load_uefi_certs(), where arch_ima_get_secureboot() returned false
+> unconditionally due to CONFIG_IMA_SECURE_AND_OR_TRUSTED_BOOT=n, even
+> though the secure boot was enabled.
+Thanks for sharing additional details.
+
+ From x86 Kconfig:
+
+/For config x86:
+
+     imply IMA_SECURE_AND_OR_TRUSTED_BOOT    if EFI
+/
+And IMA_SECURE_AND_OR_TRUSTED_BOOT is dependent on IMA_ARCH_POLICY .
+
+And from Linux Kernel Kbuild documentation( 
+https://docs.kernel.org/kbuild/kconfig-language.html) :
+
+/weak reverse dependencies: “imply” <symbol> [“if” <expr>]
+
+This is similar to “select” as it enforces a lower limit on another 
+symbol except that the “implied” symbol’s value may still be set to n 
+from a direct dependency or with a visible prompt.
+
+/Following the example from the documentation, if  it is EFI enabled and 
+IMA_ARCH_POLICY is set to y then this config should be default enabled.
+
+If it is EFI enabled and IMA_ARCH_POLICY is set to N, then the setting 
+for IMA_SECURE_AND_OR_TRUSTED_BOOT should be prompted during the build. 
+The default setting for prompt is N. So, the person doing the build 
+should actually select Y to enable IMA_ARCH_POLICY.
+
+Wondering what is the scenario for you? Unless you have IMA_ARCH_POLICY 
+set to N, this config should have been ideally enabled. If you have 
+explicitly set it to N, am curious any specific reason for that.
+
+Thanks & Regards,
+
+    - Nayna
+>
+> This patch set attempts to remove this implicit dependency by shifting
+> the functionality of efi secure boot enquiry from IMA to the integrity
+> subsystem, so that both certificate loading and IMA can make use of it
+> independently."
+>
+> Here's the link of V3, and please take a look:
+> https://lore.kernel.org/all/20250703014353.3366268-1-gongruiqi1@huawei.com/T/#mef6d5ea47a4ee19745c5292ab8948eba9e16628d
+>
+>> FYI, there are a number of problems with the patch itself.  From a very high
+>> level:
+>>                                                                                  
+>> - The EFI secure boot check is co-located with loading the architecture specific
+>> policies.  By co-locating the secure boot check with loading the architecture
+>> specific IMA policies, there aren't any ifdef's in C code.  Please refer to the
+>> "conditional compilation" section in the kernel coding-style documentation on
+>> avoiding ifdef's in C code.
+>>                                                                                  
+>> - Each architecture has it's own method of detecting secure boot. Originally the
+>> x86 code was in arch/x86, but to prevent code duplication it was moved to IMA.
+>> The new file should at least be named efi_secureboot.c.
+> You're right. I didn't realize it's arch-specific in the first place,
+> and moving and renaming arch_ima_get_secureboot() turned out to be a
+> real mess ...
+>
+> So the V3 keeps the prototype of arch_ima_get_secureboot(), and only
+> moves out its body, which I think can also better represent the
+> intention of the patch.
+>
+> As of the name of the new file, as V3 has been sent earlier and still
+> uses secureboot.c, I can't change it there. I can do it in V4.
+>
+> -Ruiqi
+>
+>>                                                                                  
+>> - The patch title should be about moving and renaming the secure boot check.
+>> The patch description should include a valid reason for the change.
+>>
+>> Mimi & Nayna
 
