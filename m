@@ -1,173 +1,234 @@
-Return-Path: <linux-kernel+bounces-719602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0450AFB02C
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 11:49:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8CAEAFB049
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 11:51:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E7F13A7040
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 09:48:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFBF34A1A19
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 09:51:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E43B2291C11;
-	Mon,  7 Jul 2025 09:48:57 +0000 (UTC)
-Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com [209.85.222.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7ABC293C6A;
+	Mon,  7 Jul 2025 09:50:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lSep1Zqy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64FB118C31;
-	Mon,  7 Jul 2025 09:48:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22FE5291C1F;
+	Mon,  7 Jul 2025 09:50:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751881737; cv=none; b=C1zPQdUnfFkxhNx2oEQDrKIwRlSSTtZ+1paYizeU1HgibS1peg6MNmKeZr68HJH+w/QraAkvQodRyk5WImudNelFycT3b1BQYtYEepqqul93ac7xmy1v1PyWiCtqiP70WWl0VtJDXSptx1AaZ/qMOSdE2OVT7zdr/j2MlFBCnVI=
+	t=1751881807; cv=none; b=cm1BYnNA0VIpRd1BzxFaW0Jqxe1WElN8RZxbEbP/QR6GA3N29uk9l/eq0Lxweumi/I4hwp1IOyPhPhKInvUKRD76QGpHcyB+4+PWdeVgAMNk0KkQ/JYH6DDD+Hn6QeGWivynWOeGvJ+NRSvLVVEhSi0CkE5E8omtWLH/ehDQ3AE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751881737; c=relaxed/simple;
-	bh=yAwrHTTSCwzfQyTa/J0bibSx7PafptauV3h4+P74mnU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sKR83O6ptfVXjIKvZ5DeBgUeMEeNLvjg0OhAN0ma31hrg7A/yfBNdH5EiBC0DQjQKwmsHPZPlYD3zHi+I2xdt1czCk8Y2wngZh4RWKUTxuzHIjzG0JOQsRj8y+lns7docGbINy6VAk4vUro9hGdzL1HWjqRoosYCNQOO4de6QAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f45.google.com with SMTP id a1e0cc1a2514c-87f26496daeso671155241.2;
-        Mon, 07 Jul 2025 02:48:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751881732; x=1752486532;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=X30nyVEkbf97p7ejjgeZnsoLvwP5WN63qwGxzHA4Chg=;
-        b=L09ElENQjSRsO3qchbRluNrxtjqyBbMChHaV/kYLzxRkXFPR2rDvf4Wq5cS6QXo068
-         EuuAG7CRAhjuCCs0IxPAk21tzm5mpxuQCiifgyfNEe7YDrsb0opeym3/5hTKc7A/j1Zz
-         K00KYyW0t/BWHG6VFGc1yuwluQcXZ0RgGiRIBaIu9sQTPsKVIrY3ZegUYKjh/NBm9nEo
-         iwOYAdK9595FSmatg+/n97fv6ZofNrvEyBGx7LMpu5KkYBaK04noNQwzVqwd5BFl3O17
-         NkHsUMCxkAY1W5bZARBCEVoHgtMeL8Kgvbd+pJFM1Lb4kBR6H/bXczFkG4kT+FzgsgrA
-         n34g==
-X-Forwarded-Encrypted: i=1; AJvYcCUseZcqaYinp5wBBH5bYrTGMs+LPYw67F8H1HE4NuvHXBrn7SEhF29wZXxWrS3+1Lbonsdo727WrsWK/rTL@vger.kernel.org, AJvYcCVnS/g6t67IgYuSOnWd6xhxXnM5Wqi8Swkf2/+ZCWyRjIyPmsD4JF9UMS57z5q5cV5OCkyeoXnuMCs0@vger.kernel.org, AJvYcCXmlbU8vHnRluMvGxjy5kdrTwNDu44Yia4t7TNbUF4nNlkCMfzM1L6BJ6qeeE4oQ0X6mnUM9Q0ZpetCq5jNNP7YVKg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3oZGFA9w8JV7H1yt2wGmVvexlZC1mIDGmYTiUYmh4y72DYEyu
-	HDHoOhunQmC9Qoe2QdYPadPqmYZq88a9uIu8ZKQJvHNAbUJCa/luuVifsYU42mPH
-X-Gm-Gg: ASbGnctYnaapjRdXsDUFkzt227LhNOT7CHiKgI34T6+miyfTfgJtzvEBayYIERmI680
-	+1yPhOC3yRKBei9Erdd9RQe0B2Vzrd49mkC0iwlsj/lSTbaqDb1UmzaXVyEZ7iG1UKH5sB2zmjg
-	g+cC4Ddf3aQ9TI+ni35oFtwO3UBLmrRn1+eoePecGyeqM6EVVawtl0Qm/pvAIpRNTwe1rYr2pgb
-	0N2jzRKpxyV2OWb/lNIgGGvwNcqtGuVCZbwRJ3lduS3S+MXediQFl8qBDH34Q7Ar6cFwTMMZ3OH
-	QAas7cFkGDNYcQ2RP9dJy/LPFQU9HErPcKM/ZV4oPtQK/0oLKnzlUgOAIP+bC3z66DRmiLHE9jR
-	90YFCA5xVywgL12kayCIPTwOs
-X-Google-Smtp-Source: AGHT+IHYF9AB5d1FThVD6J80zFnKDSHHRfIp0EvpxufUtpPETyWGs9Iz/e69fH0CzCeTHUzvdDHXNw==
-X-Received: by 2002:a05:6102:2b99:b0:4ec:c53f:bd10 with SMTP id ada2fe7eead31-4f2f244587dmr5969314137.16.1751881731922;
-        Mon, 07 Jul 2025 02:48:51 -0700 (PDT)
-Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com. [209.85.222.43])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4f2ea543c1csm1075906137.7.2025.07.07.02.48.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Jul 2025 02:48:51 -0700 (PDT)
-Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-886b2fdba07so804971241.1;
-        Mon, 07 Jul 2025 02:48:51 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUxbSoUPBFtGRjjKhfanPGGbB695Q5P/9UPdi6LLDyCW5e4bhkqJRqu2B8ZaPHjU8IiolaX+U0uRRBTurJ4B7dOhyM=@vger.kernel.org, AJvYcCVXz1YvOH5VPresiDrIwaFLy+BpwQ6trITOgfXCEaTIgUe7MwLhsSeTaGAUJoaOxV0SBF0XbhFYAZ23CJ0L@vger.kernel.org, AJvYcCVzH5ti7UacRNezwMH62LR4op6zyJEnioQVQZasFKII92eAQaCIEniwpAlUQYkZV+oyyptEhPr9NkJu@vger.kernel.org
-X-Received: by 2002:a05:6102:50a5:b0:4ec:285:72e1 with SMTP id
- ada2fe7eead31-4f2f1e677e7mr5866844137.6.1751881731290; Mon, 07 Jul 2025
- 02:48:51 -0700 (PDT)
+	s=arc-20240116; t=1751881807; c=relaxed/simple;
+	bh=7KaMEj8xzP0ksk4G6oStKO53a2h7yxZ7Hc/eGxrDOXQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AJSL27xx+2gvFD1HnwrIKXLrsD7uoV2geNS3OvUO7b4NhHCXLiBoT1KX71fgzgWV5gr6949G3Uku6H+78qxXZZ6ljWumhIIVRZc0MbV4BRoECWJ8Zg7fGuMQ3BtCruj6TJVsdaW6Y2aTEd1WmmWTagYwskQx40Xqx8lO06nGrLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lSep1Zqy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BDCFC4CEE3;
+	Mon,  7 Jul 2025 09:50:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751881806;
+	bh=7KaMEj8xzP0ksk4G6oStKO53a2h7yxZ7Hc/eGxrDOXQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=lSep1Zqyp2fCZ2aHu/ClmOtBmegeHNX1KWMkwEJSwk1hm3x0Igup/b4yK6iYkOeaK
+	 BTv45DfgHNxl++y+8O9k3KhzSeoP0YJECwvbqvNyO2KwOPqWScF3JYnAuiVubwW9o2
+	 1VfHEu2GpUuCeBi+pfhyvVJUrO4BHYIX75qD0r0OIqvAD9ZZPhjcyf9RWsl9aaSQAn
+	 CmoDak9t7OhOWnRB9Z23mD6iDLzv4jA0OSO+nJCizbi5CJyrc3sg2W3EyA9ylppM3/
+	 9uo+ShwcOXcinxILcSHQPapGk5JQxJCaIzGQttT9eE+/qlEq6/rDcesj7BolOdutPh
+	 E60aO22ywZ0XQ==
+Message-ID: <a4380f08-bd39-42ea-a77d-7a6662ad8a34@kernel.org>
+Date: Mon, 7 Jul 2025 11:50:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250625153042.159690-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250625153042.159690-5-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdUuqwo5Q2SuB=GBMLVYr1yNTB0hoOCohV=HeQ09NE32xw@mail.gmail.com>
-In-Reply-To: <CAMuHMdUuqwo5Q2SuB=GBMLVYr1yNTB0hoOCohV=HeQ09NE32xw@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 7 Jul 2025 11:48:39 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdU1G=h5AptjmO=i1Rfu7DhDKy0cHs4jhvXxrheYNny4zg@mail.gmail.com>
-X-Gm-Features: Ac12FXwyVXqd2V4btALDd9XkZXt7CMeZ8youkn0AjHf_1VLV6yj7Dj-maR7VVLY
-Message-ID: <CAMuHMdU1G=h5AptjmO=i1Rfu7DhDKy0cHs4jhvXxrheYNny4zg@mail.gmail.com>
-Subject: Re: [PATCH 4/6] arm64: dts: renesas: r9a09g087: Add SDHI nodes
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 2/3] media: uvcvideo: use
+ usb_alloc_noncoherent/usb_free_noncoherent()
+To: Xu Yang <xu.yang_2@nxp.com>, ezequiel@vanguardiasur.com.ar,
+ mchehab@kernel.org, laurent.pinchart@ideasonboard.com,
+ gregkh@linuxfoundation.org, mingo@kernel.org, tglx@linutronix.de,
+ andriy.shevchenko@linux.intel.com, viro@zeniv.linux.org.uk,
+ thomas.weissschuh@linutronix.de
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-usb@vger.kernel.org, imx@lists.linux.dev, jun.li@nxp.com
+References: <20250704095751.73765-1-xu.yang_2@nxp.com>
+ <20250704095751.73765-3-xu.yang_2@nxp.com>
+Content-Language: en-US, nl
+From: Hans de Goede <hansg@kernel.org>
+In-Reply-To: <20250704095751.73765-3-xu.yang_2@nxp.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, 3 Jul 2025 at 11:56, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->
-> Hi Prabhakar,
->
-> On Wed, 25 Jun 2025 at 17:31, Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Add SDHI0-SDHI1 nodes to RZ/N2H ("R9A09G087") SoC DTSI.
-> >
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Thanks for your patch!
->
-> > --- a/arch/arm64/boot/dts/renesas/r9a09g087.dtsi
-> > +++ b/arch/arm64/boot/dts/renesas/r9a09g087.dtsi
-> > @@ -155,6 +155,46 @@ gic: interrupt-controller@83000000 {
-> >                         interrupt-controller;
-> >                         interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_LOW>;
-> >                 };
-> > +
-> > +               sdhi0: mmc@92080000  {
-> > +                       compatible = "renesas,sdhi-r9a09g087",
-> > +                                    "renesas,sdhi-r9a09g057";
-> > +                       reg = <0x0 0x92080000 0 0x10000>;
-> > +                       interrupts = <GIC_SPI 782 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                    <GIC_SPI 783 IRQ_TYPE_LEVEL_HIGH>;
-> > +                       clocks = <&cpg CPG_MOD 1212>,
->
-> 1112?
->
-> > +                                <&cpg CPG_CORE R9A09G087_SDHI_CLKHS>;
-> > +                       clock-names = "aclk", "clkh";
-> > +                       power-domains = <&cpg>;
-> > +                       status = "disabled";
-> > +
-> > +                       sdhi0_vqmmc: vqmmc-regulator {
-> > +                               regulator-name = "SDHI0-VQMMC";
-> > +                               regulator-min-microvolt = <1800000>;
-> > +                               regulator-max-microvolt = <3300000>;
-> > +                               status = "disabled";
-> > +                       };
-> > +               };
-> > +
-> > +               sdhi1: mmc@92090000 {
-> > +                       compatible = "renesas,sdhi-r9a09g087",
-> > +                                    "renesas,sdhi-r9a09g057";
-> > +                       reg = <0x0 0x92090000 0 0x10000>;
-> > +                       interrupts = <GIC_SPI 784 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                    <GIC_SPI 785 IRQ_TYPE_LEVEL_HIGH>;
-> > +                       clocks = <&cpg CPG_MOD 1213>,
->
-> 1113?
->
-> > +                                <&cpg CPG_CORE R9A09G087_SDHI_CLKHS>;
-> > +                       clock-names = "aclk", "clkh";
-> > +                       power-domains = <&cpg>;
-> > +                       status = "disabled";
-> > +
-> > +                       sdhi1_vqmmc: vqmmc-regulator {
-> > +                               regulator-name = "SDHI1-VQMMC";
-> > +                               regulator-min-microvolt = <1800000>;
-> > +                               regulator-max-microvolt = <3300000>;
-> > +                               status = "disabled";
-> > +                       };
-> > +               };
-> >         };
-> >
+Hi,
 
-Same here: it is indeed 1212/1213 as the bits belong to MSTPCRM register.
+On 4-Jul-25 11:57, Xu Yang wrote:
+> This will use USB noncoherent API to alloc/free urb buffers, then
+> uvc driver needn't to do dma sync operations by itself.
+> 
+> Reviewed-by: Ricardo Ribalda <ribalda@chromium.org>
+> Signed-off-by: Xu Yang <xu.yang_2@nxp.com>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Thanks, patch looks good to me:
 
-Gr{oetje,eeting}s,
+Reviewed-by: Hans de Goede <hansg@kernel.org>
 
-                        Geert
+Regards,
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Hans
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+
+> ---
+> Changes in v5:
+>  - add Rb tag
+> Changes in v4:
+>  - remove uvc_stream_to_dmadev()
+> Changes in v3:
+>  - no changes
+> ---
+>  drivers/media/usb/uvc/uvc_video.c | 61 +++++++------------------------
+>  1 file changed, 14 insertions(+), 47 deletions(-)
+> 
+> diff --git a/drivers/media/usb/uvc/uvc_video.c b/drivers/media/usb/uvc/uvc_video.c
+> index e3567aeb0007..a75af314e46b 100644
+> --- a/drivers/media/usb/uvc/uvc_video.c
+> +++ b/drivers/media/usb/uvc/uvc_video.c
+> @@ -1275,20 +1275,6 @@ static inline enum dma_data_direction uvc_stream_dir(
+>  		return DMA_TO_DEVICE;
+>  }
+>  
+> -static inline struct device *uvc_stream_to_dmadev(struct uvc_streaming *stream)
+> -{
+> -	return bus_to_hcd(stream->dev->udev->bus)->self.sysdev;
+> -}
+> -
+> -static int uvc_submit_urb(struct uvc_urb *uvc_urb, gfp_t mem_flags)
+> -{
+> -	/* Sync DMA. */
+> -	dma_sync_sgtable_for_device(uvc_stream_to_dmadev(uvc_urb->stream),
+> -				    uvc_urb->sgt,
+> -				    uvc_stream_dir(uvc_urb->stream));
+> -	return usb_submit_urb(uvc_urb->urb, mem_flags);
+> -}
+> -
+>  /*
+>   * uvc_video_decode_data_work: Asynchronous memcpy processing
+>   *
+> @@ -1310,7 +1296,7 @@ static void uvc_video_copy_data_work(struct work_struct *work)
+>  		uvc_queue_buffer_release(op->buf);
+>  	}
+>  
+> -	ret = uvc_submit_urb(uvc_urb, GFP_KERNEL);
+> +	ret = usb_submit_urb(uvc_urb->urb, GFP_KERNEL);
+>  	if (ret < 0)
+>  		dev_err(&uvc_urb->stream->intf->dev,
+>  			"Failed to resubmit video URB (%d).\n", ret);
+> @@ -1736,12 +1722,6 @@ static void uvc_video_complete(struct urb *urb)
+>  	/* Re-initialise the URB async work. */
+>  	uvc_urb->async_operations = 0;
+>  
+> -	/* Sync DMA and invalidate vmap range. */
+> -	dma_sync_sgtable_for_cpu(uvc_stream_to_dmadev(uvc_urb->stream),
+> -				 uvc_urb->sgt, uvc_stream_dir(stream));
+> -	invalidate_kernel_vmap_range(uvc_urb->buffer,
+> -				     uvc_urb->stream->urb_size);
+> -
+>  	/*
+>  	 * Process the URB headers, and optionally queue expensive memcpy tasks
+>  	 * to be deferred to a work queue.
+> @@ -1750,7 +1730,7 @@ static void uvc_video_complete(struct urb *urb)
+>  
+>  	/* If no async work is needed, resubmit the URB immediately. */
+>  	if (!uvc_urb->async_operations) {
+> -		ret = uvc_submit_urb(uvc_urb, GFP_ATOMIC);
+> +		ret = usb_submit_urb(uvc_urb->urb, GFP_ATOMIC);
+>  		if (ret < 0)
+>  			dev_err(&stream->intf->dev,
+>  				"Failed to resubmit video URB (%d).\n", ret);
+> @@ -1765,17 +1745,15 @@ static void uvc_video_complete(struct urb *urb)
+>   */
+>  static void uvc_free_urb_buffers(struct uvc_streaming *stream)
+>  {
+> -	struct device *dma_dev = uvc_stream_to_dmadev(stream);
+> +	struct usb_device *udev = stream->dev->udev;
+>  	struct uvc_urb *uvc_urb;
+>  
+>  	for_each_uvc_urb(uvc_urb, stream) {
+>  		if (!uvc_urb->buffer)
+>  			continue;
+>  
+> -		dma_vunmap_noncontiguous(dma_dev, uvc_urb->buffer);
+> -		dma_free_noncontiguous(dma_dev, stream->urb_size, uvc_urb->sgt,
+> -				       uvc_stream_dir(stream));
+> -
+> +		usb_free_noncoherent(udev, stream->urb_size, uvc_urb->buffer,
+> +				     uvc_stream_dir(stream), uvc_urb->sgt);
+>  		uvc_urb->buffer = NULL;
+>  		uvc_urb->sgt = NULL;
+>  	}
+> @@ -1786,26 +1764,13 @@ static void uvc_free_urb_buffers(struct uvc_streaming *stream)
+>  static bool uvc_alloc_urb_buffer(struct uvc_streaming *stream,
+>  				 struct uvc_urb *uvc_urb, gfp_t gfp_flags)
+>  {
+> -	struct device *dma_dev = uvc_stream_to_dmadev(stream);
+> -
+> -	uvc_urb->sgt = dma_alloc_noncontiguous(dma_dev, stream->urb_size,
+> -					       uvc_stream_dir(stream),
+> -					       gfp_flags, 0);
+> -	if (!uvc_urb->sgt)
+> -		return false;
+> -	uvc_urb->dma = uvc_urb->sgt->sgl->dma_address;
+> -
+> -	uvc_urb->buffer = dma_vmap_noncontiguous(dma_dev, stream->urb_size,
+> -						 uvc_urb->sgt);
+> -	if (!uvc_urb->buffer) {
+> -		dma_free_noncontiguous(dma_dev, stream->urb_size,
+> -				       uvc_urb->sgt,
+> -				       uvc_stream_dir(stream));
+> -		uvc_urb->sgt = NULL;
+> -		return false;
+> -	}
+> +	struct usb_device *udev = stream->dev->udev;
+>  
+> -	return true;
+> +	uvc_urb->buffer = usb_alloc_noncoherent(udev, stream->urb_size,
+> +						gfp_flags, &uvc_urb->dma,
+> +						uvc_stream_dir(stream),
+> +						&uvc_urb->sgt);
+> +	return !!uvc_urb->buffer;
+>  }
+>  
+>  /*
+> @@ -1953,6 +1918,7 @@ static int uvc_init_video_isoc(struct uvc_streaming *stream,
+>  		urb->complete = uvc_video_complete;
+>  		urb->number_of_packets = npackets;
+>  		urb->transfer_buffer_length = size;
+> +		urb->sgt = uvc_urb->sgt;
+>  
+>  		for (i = 0; i < npackets; ++i) {
+>  			urb->iso_frame_desc[i].offset = i * psize;
+> @@ -2009,6 +1975,7 @@ static int uvc_init_video_bulk(struct uvc_streaming *stream,
+>  				  size, uvc_video_complete, uvc_urb);
+>  		urb->transfer_flags = URB_NO_TRANSFER_DMA_MAP;
+>  		urb->transfer_dma = uvc_urb->dma;
+> +		urb->sgt = uvc_urb->sgt;
+>  
+>  		uvc_urb->urb = urb;
+>  	}
+> @@ -2120,7 +2087,7 @@ static int uvc_video_start_transfer(struct uvc_streaming *stream,
+>  
+>  	/* Submit the URBs. */
+>  	for_each_uvc_urb(uvc_urb, stream) {
+> -		ret = uvc_submit_urb(uvc_urb, gfp_flags);
+> +		ret = usb_submit_urb(uvc_urb->urb, gfp_flags);
+>  		if (ret < 0) {
+>  			dev_err(&stream->intf->dev,
+>  				"Failed to submit URB %u (%d).\n",
+
 
