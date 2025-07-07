@@ -1,231 +1,176 @@
-Return-Path: <linux-kernel+bounces-720426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B5B7AFBB8F
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 21:09:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E06DDAFBB95
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 21:11:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C7D747AAFF0
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 19:08:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 989BE7AD016
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 19:09:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61E3B26A1D9;
-	Mon,  7 Jul 2025 19:08:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5892D265CC2;
+	Mon,  7 Jul 2025 19:11:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Kz2KgJzV"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fHHW0nmM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E39A26A0D5;
-	Mon,  7 Jul 2025 19:08:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE08E19755B;
+	Mon,  7 Jul 2025 19:11:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751915320; cv=none; b=V3G+Jdz5sBpIgcKza8euBFXeM90B+mvS2TsvrO7Xz9TVTEzdYG6rXLzU7PTqF+sOdrG7dv0m58ohTN0KIgfM8e1Jji0DWz2uOewJAfhnmWafH16R7QBSyBDMdhLt8FR/tg+Y/5aPylk5MNl7YHZ34mlu9B2ejZg9beU6168khOQ=
+	t=1751915473; cv=none; b=JkHt2Ov3T5RBgB2eGXX0Twx8GHTi5ttIWQwy2xhATF9hALRMTOPowW9ifOvjEBZzVWfCsVRxy93KITc4RJQbuk/vNGm1iyXU9x1zPlWRSvq8XZhCJlQ2WeCIKG5MfBTG6LIKoqPZwj1ICTRp40xktF3wqSU4ASxSmULBPEDOJRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751915320; c=relaxed/simple;
-	bh=8tmgbOODpqXAz69qvJ5O94Ewtt+UMmTEQs3Nx3MdaHg=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ezy/A+HJa788xlNiAt7Voz6YENG8U3UlUJF1uvD4iwUU3JnezA8RKws/zN5LOurp4xGgYtJwBo4f//GhGwmoyx9jh0RLHw8+/Mtw9AdJddu5yI11E90/S+EsrgKD+OHUQaEb5qlfhRt8xyTpHN90lKhGIjqUKJrgOp7YVsZnI+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Kz2KgJzV; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 567J8VYl297638;
-	Mon, 7 Jul 2025 14:08:31 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1751915311;
-	bh=md0BwfJmA9gIM32S1QSqVz0A4WkieDc/rC2kd1592Is=;
-	h=From:To:CC:Subject:Date;
-	b=Kz2KgJzVbLbG9C2Y4p063ZMVoZvqVLJOruBaIZtB9NBEVmEITNMOxk2SvnePFH+RP
-	 hz6XRx/J10/X0nOjiXnZsqIF6ynuu8CQSe7UFFOLoqen3y1af1sP+u4yVyZTP7RbCv
-	 nUpHZJnrLNMsK6d8Dypc9xtxk0X7udKFS+oKyT78=
-Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
-	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 567J8VUg2503220
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Mon, 7 Jul 2025 14:08:31 -0500
-Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Mon, 7
- Jul 2025 14:08:30 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Mon, 7 Jul 2025 14:08:30 -0500
-Received: from judy-hp.dhcp.ti.com (judy-hp.dhcp.ti.com [128.247.81.105])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 567J8Ubv436914;
-	Mon, 7 Jul 2025 14:08:30 -0500
-From: Judith Mendez <jm@ti.com>
-To: Judith Mendez <jm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>
-CC: Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2] arm64: dts: ti: k3-am62*: Move eMMC pinmux to top level board file
-Date: Mon, 7 Jul 2025 14:08:30 -0500
-Message-ID: <20250707190830.3951619-1-jm@ti.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1751915473; c=relaxed/simple;
+	bh=jyeQQgJy/kgZ+VcJ2KuOWLRT94HaQ85k1BKEOhxnP8I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=O/9AYu2wmCy8T1ZI6NX4IDvhHfRC7OCFRU1d9g0v4AqZOA0SAPDZ39Blu7iNWI0RRYKC+poBQrWB5fiDEE02q1qWv31HpE9sTvKIt/8IIk45Qw4/gQdeSPt+e1udWHZ7Qw5lhGiEawz5hH24EqyWQzUn1jOVPYuvsudjqXkKq20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fHHW0nmM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33E4FC4CEE3;
+	Mon,  7 Jul 2025 19:11:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751915473;
+	bh=jyeQQgJy/kgZ+VcJ2KuOWLRT94HaQ85k1BKEOhxnP8I=;
+	h=Date:Reply-To:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=fHHW0nmMsBwv8rMX00PuOEcDw/lS8dryl6B3FKbBejkZocyYBzl+ji4mMx7loAAzR
+	 ziMU8QyiZPlxlEUTwi7HfPIJ9CwgfE7CWj0C5+tHL50z+Wdjsvd8BitF8pDD6b2UuA
+	 TaLn4NsTSzc6ztgsMFCH2y/OiZf6FKWruiCs8kMzqdh+NZCEzeyR0Twk6oUey7tHiC
+	 Z5x4c095DaXtudKYGi/zFUbAwRkpVa4zdHW9JRHlcW5q/4loDYaPG1CCsr3Z5fxpzH
+	 Q5a8aQfam0AuXLQg758xvMTYFdpGDQJsrb4Do6W61i9/289vF1NQwxVVQnk+kIR000
+	 5wsH+/w7CpG8A==
+Message-ID: <a9eade27-9b77-431f-b7c8-24c3fb891673@kernel.org>
+Date: Mon, 7 Jul 2025 21:11:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Reply-To: Daniel Gomez <da.gomez@kernel.org>
+Subject: Re: [PATCH 2/3] module: make structure definitions always visible
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+ Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>,
+ Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez
+ <da.gomez@samsung.com>, Brendan Higgins <brendan.higgins@linux.dev>,
+ David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>
+Cc: linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com
+References: <20250612-kunit-ifdef-modules-v1-0-fdccd42dcff8@linutronix.de>
+ <20250612-kunit-ifdef-modules-v1-2-fdccd42dcff8@linutronix.de>
+Content-Language: en-US
+From: Daniel Gomez <da.gomez@kernel.org>
+Organization: kernel.org
+In-Reply-To: <20250612-kunit-ifdef-modules-v1-2-fdccd42dcff8@linutronix.de>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-This moves pinmux child nodes for sdhci0 node from k3-am62x-sk-common
-to each top level board file. This is needed since we require internal
-pullups for AM62x SK and not for AM62 LP SK since it has external
-pullups on DATA 1-7.
+On 12/06/2025 16.53, Thomas WeiÃschuh wrote:
+> To write code that works with both CONFIG_MODULES=y and CONFIG_MODULES=n
+> it is convenient to use "if (IS_ENABLED(CONFIG_MODULES))" over raw #ifdef.
+> The code will still fully typechecked but the unreachable parts are
+> discarded by the compiler. This prevents accidental breakage when a certain
+> kconfig combination was not specifically tested by the developer.
+> This pattern is already supported to some extend by module.h defining
+> empty stub functions if CONFIG_MODULES=n.
+> However some users of module.h work on the structured defined by module.h.
+> 
+> Therefore these structure definitions need to be visible, too.
 
-Internal pulls are required for AM62 SK as per JESD84 spec
-recommendation to prevent unconnected lines floating.
+We are missing here which structures are needed. + we are making more things
+visible than what we actually need.
 
-Fixes: d19a66ae488a ("arm64: dts: ti: k3-am625-sk: Enable on board peripherals")
-Cc: stable@vger.kernel.org
-Signed-off-by: Judith Mendez <jm@ti.com>
----
-Changes since v1:
-- patch was split from series [0]
-- merge conflict fix with disable-wp
+> 
+> Many structure members are still gated by specific configuration settings.
+> The assumption for those is that the code using them will be gated behind
+> the same configuration setting anyways.
 
-v1[0]: https://lore.kernel.org/linux-mmc/20250624221230.1952291-1-jm@ti.com/
----
- arch/arm64/boot/dts/ti/k3-am62-lp-sk.dts      | 24 +++++++++++++++++++
- arch/arm64/boot/dts/ti/k3-am625-sk.dts        | 24 +++++++++++++++++++
- .../arm64/boot/dts/ti/k3-am62x-sk-common.dtsi | 24 -------------------
- 3 files changed, 48 insertions(+), 24 deletions(-)
+I think code and kconfig need to reflect the actual dependencies. For example,
+if CONFIG_LIVEPATCH depends on CONFIG_MODULES, we need to specify that in
+Kconfig with depends on, as well as keep the code gated by these 2 configs with
+ifdef/IS_ENABLED.
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am62-lp-sk.dts b/arch/arm64/boot/dts/ti/k3-am62-lp-sk.dts
-index aafdb90c0eb7..4609f366006e 100644
---- a/arch/arm64/boot/dts/ti/k3-am62-lp-sk.dts
-+++ b/arch/arm64/boot/dts/ti/k3-am62-lp-sk.dts
-@@ -74,6 +74,22 @@ vddshv_sdio: regulator-4 {
- };
- 
- &main_pmx0 {
-+	main_mmc0_pins_default: main-mmc0-default-pins {
-+		bootph-all;
-+		pinctrl-single,pins = <
-+			AM62X_IOPAD(0x220, PIN_INPUT, 0) /* (V3) MMC0_CMD */
-+			AM62X_IOPAD(0x218, PIN_INPUT, 0) /* (Y1) MMC0_CLK */
-+			AM62X_IOPAD(0x214, PIN_INPUT, 0) /* (V2) MMC0_DAT0 */
-+			AM62X_IOPAD(0x210, PIN_INPUT, 0) /* (V1) MMC0_DAT1 */
-+			AM62X_IOPAD(0x20c, PIN_INPUT, 0) /* (W2) MMC0_DAT2 */
-+			AM62X_IOPAD(0x208, PIN_INPUT, 0) /* (W1) MMC0_DAT3 */
-+			AM62X_IOPAD(0x204, PIN_INPUT, 0) /* (Y2) MMC0_DAT4 */
-+			AM62X_IOPAD(0x200, PIN_INPUT, 0) /* (W3) MMC0_DAT5 */
-+			AM62X_IOPAD(0x1fc, PIN_INPUT, 0) /* (W4) MMC0_DAT6 */
-+			AM62X_IOPAD(0x1f8, PIN_INPUT, 0) /* (V4) MMC0_DAT7 */
-+		>;
-+	};
-+
- 	vddshv_sdio_pins_default: vddshv-sdio-default-pins {
- 		pinctrl-single,pins = <
- 			AM62X_IOPAD(0x07c, PIN_OUTPUT, 7) /* (M19) GPMC0_CLK.GPIO0_31 */
-@@ -144,6 +160,14 @@ exp2: gpio@23 {
- 	};
- };
- 
-+&sdhci0 {
-+	bootph-all;
-+	non-removable;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&main_mmc0_pins_default>;
-+	status = "okay";
-+};
-+
- &sdhci1 {
- 	vmmc-supply = <&vdd_mmc1>;
- 	vqmmc-supply = <&vddshv_sdio>;
-diff --git a/arch/arm64/boot/dts/ti/k3-am625-sk.dts b/arch/arm64/boot/dts/ti/k3-am625-sk.dts
-index 2fbfa3719345..d240165bda9c 100644
---- a/arch/arm64/boot/dts/ti/k3-am625-sk.dts
-+++ b/arch/arm64/boot/dts/ti/k3-am625-sk.dts
-@@ -106,6 +106,22 @@ vcc_1v8: regulator-5 {
- };
- 
- &main_pmx0 {
-+	main_mmc0_pins_default: main-mmc0-default-pins {
-+		bootph-all;
-+		pinctrl-single,pins = <
-+			AM62X_IOPAD(0x220, PIN_INPUT, 0) /* (Y3) MMC0_CMD */
-+			AM62X_IOPAD(0x218, PIN_INPUT, 0) /* (AB1) MMC0_CLK */
-+			AM62X_IOPAD(0x214, PIN_INPUT, 0) /* (AA2) MMC0_DAT0 */
-+			AM62X_IOPAD(0x210, PIN_INPUT_PULLUP, 0) /* (AA1) MMC0_DAT1 */
-+			AM62X_IOPAD(0x20c, PIN_INPUT_PULLUP, 0) /* (AA3) MMC0_DAT2 */
-+			AM62X_IOPAD(0x208, PIN_INPUT_PULLUP, 0) /* (Y4) MMC0_DAT3 */
-+			AM62X_IOPAD(0x204, PIN_INPUT_PULLUP, 0) /* (AB2) MMC0_DAT4 */
-+			AM62X_IOPAD(0x200, PIN_INPUT_PULLUP, 0) /* (AC1) MMC0_DAT5 */
-+			AM62X_IOPAD(0x1fc, PIN_INPUT_PULLUP, 0) /* (AD2) MMC0_DAT6 */
-+			AM62X_IOPAD(0x1f8, PIN_INPUT_PULLUP, 0) /* (AC2) MMC0_DAT7 */
-+		>;
-+	};
-+
- 	main_rgmii2_pins_default: main-rgmii2-default-pins {
- 		bootph-all;
- 		pinctrl-single,pins = <
-@@ -195,6 +211,14 @@ exp1: gpio@22 {
- 	};
- };
- 
-+&sdhci0 {
-+	bootph-all;
-+	non-removable;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&main_mmc0_pins_default>;
-+	status = "okay";
-+};
-+
- &sdhci1 {
- 	vmmc-supply = <&vdd_mmc1>;
- 	vqmmc-supply = <&vdd_sd_dv>;
-diff --git a/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi b/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi
-index ee8337bfbbfd..13e1d36123d5 100644
---- a/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi
-@@ -203,22 +203,6 @@ AM62X_IOPAD(0x0b4, PIN_INPUT_PULLUP, 1) /* (K24/H19) GPMC0_CSn3.I2C2_SDA */
- 		>;
- 	};
- 
--	main_mmc0_pins_default: main-mmc0-default-pins {
--		bootph-all;
--		pinctrl-single,pins = <
--			AM62X_IOPAD(0x220, PIN_INPUT, 0) /* (Y3/V3) MMC0_CMD */
--			AM62X_IOPAD(0x218, PIN_INPUT, 0) /* (AB1/Y1) MMC0_CLK */
--			AM62X_IOPAD(0x214, PIN_INPUT, 0) /* (AA2/V2) MMC0_DAT0 */
--			AM62X_IOPAD(0x210, PIN_INPUT, 0) /* (AA1/V1) MMC0_DAT1 */
--			AM62X_IOPAD(0x20c, PIN_INPUT, 0) /* (AA3/W2) MMC0_DAT2 */
--			AM62X_IOPAD(0x208, PIN_INPUT, 0) /* (Y4/W1) MMC0_DAT3 */
--			AM62X_IOPAD(0x204, PIN_INPUT, 0) /* (AB2/Y2) MMC0_DAT4 */
--			AM62X_IOPAD(0x200, PIN_INPUT, 0) /* (AC1/W3) MMC0_DAT5 */
--			AM62X_IOPAD(0x1fc, PIN_INPUT, 0) /* (AD2/W4) MMC0_DAT6 */
--			AM62X_IOPAD(0x1f8, PIN_INPUT, 0) /* (AC2/V4) MMC0_DAT7 */
--		>;
--	};
--
- 	main_mmc1_pins_default: main-mmc1-default-pins {
- 		bootph-all;
- 		pinctrl-single,pins = <
-@@ -457,14 +441,6 @@ &main_i2c2 {
- 	clock-frequency = <400000>;
- };
- 
--&sdhci0 {
--	bootph-all;
--	status = "okay";
--	non-removable;
--	pinctrl-names = "default";
--	pinctrl-0 = <&main_mmc0_pins_default>;
--};
--
- &sdhci1 {
- 	/* SD/MMC */
- 	bootph-all;
--- 
-2.49.0
+> 
+> Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+> ---
+>  include/linux/module.h | 23 ++++++++++++-----------
+>  1 file changed, 12 insertions(+), 11 deletions(-)
+> 
+> diff --git a/include/linux/module.h b/include/linux/module.h
+> index 52f7b0487a2733c56e2531a434887e56e1bf45b2..7f783e71636542b99db3dd869a9387d14992df45 100644
+> --- a/include/linux/module.h
+> +++ b/include/linux/module.h
+> @@ -302,17 +302,6 @@ static typeof(name) __mod_device_table__##type##__##name		\
+>  
+>  struct notifier_block;
+>  
+> -#ifdef CONFIG_MODULES
+> -
+> -extern int modules_disabled; /* for sysctl */
+> -/* Get/put a kernel symbol (calls must be symmetric) */
+> -void *__symbol_get(const char *symbol);
+> -void *__symbol_get_gpl(const char *symbol);
+> -#define symbol_get(x)	({ \
+> -	static const char __notrim[] \
+> -		__used __section(".no_trim_symbol") = __stringify(x); \
+> -	(typeof(&x))(__symbol_get(__stringify(x))); })
+> -
+>  enum module_state {
+>  	MODULE_STATE_LIVE,	/* Normal state. */
+>  	MODULE_STATE_COMING,	/* Full formed, running module_init. */
+> @@ -598,6 +587,18 @@ struct module {
+>  	struct _ddebug_info dyndbg_info;
+>  #endif
+>  } ____cacheline_aligned __randomize_layout;
+> +
+> +#ifdef CONFIG_MODULES
+> +
+> +extern int modules_disabled; /* for sysctl */
+> +/* Get/put a kernel symbol (calls must be symmetric) */
+> +void *__symbol_get(const char *symbol);
+> +void *__symbol_get_gpl(const char *symbol);
+> +#define symbol_get(x)	({ \
+> +	static const char __notrim[] \
+> +		__used __section(".no_trim_symbol") = __stringify(x); \
+> +	(typeof(&x))(__symbol_get(__stringify(x))); })
+> +
 
+The patch exposes data structures that are not needed. + breaks the
+config dependencies.
+
+For example, before this patch:
+
+#ifdef CONFIG_MODULES
+
+{...}
+
+struct mod_tree_node {
+
+{...}
+
+struct module_memory {
+	void *base;
+	bool is_rox;
+	unsigned int size;
+
+#ifdef CONFIG_MODULES_TREE_LOOKUP
+	struct mod_tree_node mtn;
+#endif
+};
+
+{...}
+#endif /* CONFIG_MODULES */
+
+After the patch, mod_tree_node is not needed externally. And the mtn field
+in module_memory is exposed only under MODULES_TREE_LOOKUP and not MODULES
++ MODULES_TREE_LOOKUP.
+
+I general, I see the issues I mentioned with LIVEPATCH, mod_tree_node, macros,
+and LOOKUP.
+
+>  #define MODULE_ARCH_INIT {}
+>  #endif
+> 
 
