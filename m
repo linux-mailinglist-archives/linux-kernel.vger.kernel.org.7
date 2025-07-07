@@ -1,127 +1,125 @@
-Return-Path: <linux-kernel+bounces-719930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A16F8AFB4C4
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 15:39:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4FC8AFB512
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 15:48:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB5773BCE8A
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 13:38:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEC01188FE14
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 13:48:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B480129B776;
-	Mon,  7 Jul 2025 13:39:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EABA2C159D;
+	Mon,  7 Jul 2025 13:45:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cgeruFAl"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b="Q76cGeZs"
+Received: from forward501d.mail.yandex.net (forward501d.mail.yandex.net [178.154.239.209])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C7FA2882C2
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 13:39:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC4BB2C08C1;
+	Mon,  7 Jul 2025 13:45:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.209
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751895554; cv=none; b=WBUZHzBWje13HpNj8DxstrxSUZIxrEUsF1BvXUnN2rcamrJbtBbjdRQaZ0soB9IASNEEdcHUy4spluTSqbKHxIybSBp6JucQ3HL0TFagNXylhLJQM7xv4XomLEOwyxzs3i9SXbPzecCA9vhk0FRFtfKs28LHDGdX1IODRUu9xcc=
+	t=1751895917; cv=none; b=qdmkwDseYcEmGOIMBmJMgOfTLIbukaW4nXjud+jQCblR95ZlF3wVHfqaiEl3v5FLC7A/etJ2gAiyxdTLGgIFRz5nDxsCaRqTm5HR8BL0LVZa516VX9Mw1gV3MqGnPtFKN8WO1PfOaH+AzpFync+G9RldjJMV2Xr8ebGnIhr9pTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751895554; c=relaxed/simple;
-	bh=rSVN+37OZ1nxxk0c4XpB4pzH8Koab5xLneDmAWjx9j0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AQejLkX0DgyPjSEvbIxUGbuDh75EsTYY4VOI3MiKIiM3N/nlxQuj84LCS72PsjMQSB1eRiDsvwZ4bro/UIzqg1/QXnrXjJm8lskIfoxgJ1JgER9Q1RSlBQLL7vkgYazA3GwKGdpDEGbdBSfh7Uih/J2kxH4f+mvPTbDshAq4/J8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cgeruFAl; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-45348bff79fso34417555e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 06:39:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1751895551; x=1752500351; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4FB3akW2uROgcxiqH7umM6G5loDI0rtj9L6/XnUx0ZE=;
-        b=cgeruFAlQMbMVDkMS24jz1ZYefPwkPp5X4CLsNx8OB+O1XKw7vxVEQCTLd6RuJZIaf
-         BE1oe2FpKlXvodaQy+g9BzGFuTs/qyAhkWBggTZmttg6ivTqHUvDiCWTIvlIcYz8KDAz
-         R9qi7kSQOYF79VdbWE1Bhdi05FfOOoLbwrOmZO9BI7SmHUqTeRBdxdvBE1Fje2YIP5KT
-         phFvVHEtPA9Zn4V7DeRbzVXCnSQQqttYgewIM/9EvsY7Xu2ZPB5kEFw0Bb2rW47ZwPkF
-         SJogtXtIBVw7dr+kQUIXPahibcKERSrLKz5CqUmYQzREzf3Q/8CscVPcTx/vbjjh+kHl
-         7FZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751895551; x=1752500351;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4FB3akW2uROgcxiqH7umM6G5loDI0rtj9L6/XnUx0ZE=;
-        b=t1tm5XVvJC3wn4yVcs7Is46hh8dsyjkLrH58tauD4Q+d3w4N1aBjxkziioSgnUXWt4
-         t42OUnuzpZhngRDHUhg+ltS6MKWvqEVhKxOYwNxA5HdmEUoA+TVGEnjhE0WUR21YYARv
-         3+Htg0mXcao17kQR76lzOX3It6/KtBePt3h+YOXqP8Q5oIWDsdq39VVdA5j6+MKAfpF7
-         ILX1OTJ0W77fIR0QJFmfkAT8GQ7doU36+4vCIf1AWrGKVJ9F7ZlWqkkJGAuuoTXxhuba
-         d3N/0wu4kO4Dw5DS7XWwJquFKKFNb1Y95L1WRlVr32DRwtzmeNWAdTKwMFeig9YcdaYB
-         DFLw==
-X-Forwarded-Encrypted: i=1; AJvYcCWSgr2QAkjBW0WTqiNDqCSSGi/BmMBkBoesokKf69o+2oE9fjNmmqm1sV5f4nFbTU+Rqd/VtzNVq1q4D00=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzexZhcPVpcZaZxsp3eIWS6jTEbbbOG22PpgDj4gfs7K/H5LRRv
-	D0FDi03B/BMVHiCBduo3jzXRB4b7XMhWjrIcZQgsHk9Bt4oplrTBGeBbR7r5wvObZUz8FZKZ1AG
-	OCgqMxeMLNV7ikFCI72me+KQBbj/jREEsbhe2TSRq
-X-Gm-Gg: ASbGncuY35puohOjWVuUOPK+FnIhHPQDLaGEaORee+4itTRIKTyuNa+88RPA2lClaUd
-	Gc5C9o/Ub/q2p1cIBEp2kv5TUbYV2jZyf0XUamrrJCqgRb9nYxz6jGy2ATtAMEDl8u5Xf3G3fLP
-	D8L2gpj+HQhZA66L0wbDt+8l0eropwvytrk6g6befvsfa2KD5fFCBvJLW8+A8U7VmDRY6kvBSPo
-	72ptApjkQ==
-X-Google-Smtp-Source: AGHT+IEaUZnenYQLKgYyVo3pyfBJMB9pXTg1TRSCW3BPSEm7LC8Pa9g2F7WOtEqZWQqlTsZ6zPdnN8WIllT+obQvkzc=
-X-Received: by 2002:a05:600c:8594:b0:450:cf42:7565 with SMTP id
- 5b1f17b1804b1-454b51126afmr73979285e9.23.1751895550535; Mon, 07 Jul 2025
- 06:39:10 -0700 (PDT)
+	s=arc-20240116; t=1751895917; c=relaxed/simple;
+	bh=9YH64J8df+mV7SsYcJMl4LWc54kpzxJDKJgWscfJCY4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=C6hvGmvqmgnLK/9c5RYWhp1GiyDd6xPO0N0G40DdSFy5YV3lKd0DFz8KSUlMfaqkekAoT59B5s8rMBGkGvO2lYl58DIfPoseKzcj7T6Hu7Uqfl+xmvIWRHwuL/jUd5PK4/bw8UvxiAgjrfICYw+lOr4sZbQoHJRqWQQ0J6HBwDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev; spf=pass smtp.mailfrom=onurozkan.dev; dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b=Q76cGeZs; arc=none smtp.client-ip=178.154.239.209
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=onurozkan.dev
+Received: from mail-nwsmtp-smtp-production-main-81.klg.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-81.klg.yp-c.yandex.net [IPv6:2a02:6b8:c43:8a4:0:640:a4f2:0])
+	by forward501d.mail.yandex.net (Yandex) with ESMTPS id DC9A860C0B;
+	Mon,  7 Jul 2025 16:39:19 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-81.klg.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id EdgS1NTLsKo0-D3lddOQH;
+	Mon, 07 Jul 2025 16:39:18 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=onurozkan.dev;
+	s=mail; t=1751895559;
+	bh=ymQK026zKhq52+ZEOyApVIOybNr3zS2/dj01HDCd98E=;
+	h=Cc:Message-ID:Subject:Date:References:To:From:In-Reply-To;
+	b=Q76cGeZsH2it4GI2mq/kv9uN907QH7KjfZw8gfijY7v0CIQEgJb9Xu97/YVVOl1Fb
+	 vOyuKsKzojHrx+no6KJ5UHKRsP5B+BxUcArqJZSVWY2FYbVxDhqRYQyjm/qaO9R/eV
+	 2BpXoiT8DTshfOzT1cLm9bvEG0nunHR/LXby255o=
+Authentication-Results: mail-nwsmtp-smtp-production-main-81.klg.yp-c.yandex.net; dkim=pass header.i=@onurozkan.dev
+Date: Mon, 7 Jul 2025 16:39:13 +0300
+From: Onur <work@onurozkan.dev>
+To: "Benno Lossin" <lossin@kernel.org>
+Cc: "Boqun Feng" <boqun.feng@gmail.com>, <linux-kernel@vger.kernel.org>,
+ <rust-for-linux@vger.kernel.org>, <ojeda@kernel.org>,
+ <alex.gaynor@gmail.com>, <gary@garyguo.net>, <a.hindborg@kernel.org>,
+ <aliceryhl@google.com>, <tmgross@umich.edu>, <dakr@kernel.org>,
+ <peterz@infradead.org>, <mingo@redhat.com>, <will@kernel.org>,
+ <longman@redhat.com>, <felipe_life@live.com>, <daniel@sedlak.dev>,
+ <bjorn3_gh@protonmail.com>
+Subject: Re: [PATCH v5 2/3] implement ww_mutex abstraction for the Rust tree
+Message-ID: <20250707163913.5ffc046d@nimda.home>
+In-Reply-To: <DAU0ELV91E2Q.35FZOII18W44J@kernel.org>
+References: <20250621184454.8354-1-work@onurozkan.dev>
+	<20250621184454.8354-3-work@onurozkan.dev>
+	<DASY7BECFRCT.332X5ZHZMV2W@kernel.org>
+	<aFlQ7K_mYYbrG8Cl@Mac.home>
+	<DATYHYJVPL3L.3NLMH7PPHYU9@kernel.org>
+	<aFlpFQ4ivKw81d-y@Mac.home>
+	<DAU0ELV91E2Q.35FZOII18W44J@kernel.org>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-unknown-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250707-module-params-v3-v15-0-c1f4269a57b9@kernel.org> <20250707-module-params-v3-v15-1-c1f4269a57b9@kernel.org>
-In-Reply-To: <20250707-module-params-v3-v15-1-c1f4269a57b9@kernel.org>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Mon, 7 Jul 2025 15:38:58 +0200
-X-Gm-Features: Ac12FXx_fVjA2nF_nJiYWwsUf6PmudMDj0J-14ydNb016WmDb53IS0-a5p2ihe4
-Message-ID: <CAH5fLgiKo=jN_V5cAe_AJqxxp7mQWqhKx7knkEj6js3yiU9sqA@mail.gmail.com>
-Subject: Re: [PATCH v15 1/7] rust: sync: add `SetOnce`
-To: Andreas Hindborg <a.hindborg@kernel.org>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Luis Chamberlain <mcgrof@kernel.org>, Danilo Krummrich <dakr@kernel.org>, Benno Lossin <lossin@kernel.org>, 
-	Nicolas Schier <nicolas.schier@linux.dev>, Trevor Gross <tmgross@umich.edu>, 
-	Adam Bratschi-Kaye <ark.email@gmail.com>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
-	Petr Pavlu <petr.pavlu@suse.com>, Sami Tolvanen <samitolvanen@google.com>, 
-	Daniel Gomez <da.gomez@samsung.com>, Simona Vetter <simona.vetter@ffwll.ch>, 
-	Greg KH <gregkh@linuxfoundation.org>, Fiona Behrens <me@kloenk.dev>, 
-	Daniel Almeida <daniel.almeida@collabora.com>, linux-modules@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jul 7, 2025 at 3:32=E2=80=AFPM Andreas Hindborg <a.hindborg@kernel.=
-org> wrote:
->
-> Introduce the `SetOnce` type, a container that can only be written once.
-> The container uses an internal atomic to synchronize writes to the intern=
-al
-> value.
->
-> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
+On Mon, 23 Jun 2025 17:14:37 +0200
+"Benno Lossin" <lossin@kernel.org> wrote:
 
-LGTM:
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+> > We also need to take into consideration that the user want to drop
+> > any lock in the sequence? E.g. the user acquires a, b and c, and
+> > then drop b, and then acquires d. Which I think is possible for
+> > ww_mutex.
+> 
+> Hmm what about adding this to the above idea?:
+> 
+>     impl<'a, Locks> WwActiveCtx<'a, Locks>
+>     where
+>         Locks: Tuple
+>     {
+>         fn custom<L2>(self, action: impl FnOnce(Locks) -> L2) ->
+> WwActiveCtx<'a, L2>; }
+> 
+> Then you can do:
+> 
+>     let (a, c, d) = ctx.begin()
+>         .lock(a)
+>         .lock(b)
+>         .lock(c)
+>         .custom(|(a, _, c)| (a, c))
+>         .lock(d)
+>         .finish();
 
-> +impl<T> Drop for SetOnce<T> {
-> +    fn drop(&mut self) {
-> +        if self.init.load(Acquire) =3D=3D 2 {
-> +            // SAFETY: By the type invariants of `Self`, `self.init =3D=
-=3D 2` means that `self.value`
-> +            // contains a valid value. We have exclusive access, as we h=
-old a `mut` reference to
-> +            // `self`.
-> +            unsafe { drop_in_place(self.value.get()) };
 
-This load does not need to be Acquire. It can be a Relaxed load or
-even an unsynchronized one since the access is exclusive.
+Instead of `begin` and `custom`, why not something like this:
 
-Alice
+	let (a, c, d) = ctx.init()
+	    .lock(a)
+            .lock(b)
+            .lock(c)
+            .unlock(b)
+            .lock(d)
+            .finish();
+
+Instead of `begin`, `init` would be better naming to imply `fini` on the
+C side, and `unlock` instead of `custom` would make the intent clearer
+when dropping locks mid chain.
+
+I guess `lock()` is going to use the slow path since it's infallible? It
+might be good to provide a `try_lock` that returns -DEADLOCK
+immediately without blocking when it can't acquire the lock.
+
+Regards,
+Onur
 
