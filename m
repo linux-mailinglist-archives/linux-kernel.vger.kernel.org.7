@@ -1,189 +1,147 @@
-Return-Path: <linux-kernel+bounces-719020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4902EAFA8D5
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 03:22:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D202AFA90D
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 03:36:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91159176E23
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 01:22:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8063D1892E74
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 01:36:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A57C419B3EC;
-	Mon,  7 Jul 2025 01:22:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="NjGjmhOp"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54CB82153C6;
+	Mon,  7 Jul 2025 01:32:49 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 762611373
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 01:22:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDB7120AF9C;
+	Mon,  7 Jul 2025 01:32:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751851327; cv=none; b=uWEKiZ6U5QHPLECVbUjZdR7dX1kVX0PlLQmk9V09Sj9YZd4Gdi+LeMHPoDvuWGzn2uZ3VSHgtkpOy1g6Vm2+sGCNL5vVtwrCzmNu/hWsXT13yuCS+KUzqYB12Xm+5vcSCMZbu6YDv5OrbPjKF4sKIfddx/2Z99yhBVsaSGXbl78=
+	t=1751851968; cv=none; b=VmJj1+dyAbvHBNax2IrCCgMHAEUr8xddO2DuvNR1ZWf6d0wXb4CResCu2UG/Hfw937h2OJJZv7Iei9aUykWhmhHglfSxn01wriHAJLzwv6bN64yMa7JQP9niJPnH5m3vH6qGU/uF7tZQqrQ1Kq+p6N6QvPRiOaSmiXMi2XDh2zE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751851327; c=relaxed/simple;
-	bh=9NwGVncvxKMkaM44hYWhWAwxYrfgYjHJFYDWSh/PDMc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EZos+Lzlhb5gT/C0lBimw+SSeOeOBkDI+WXWT5IWxS5KmNckd+4GKHECwMRRhY2mLYuhZAo4uHjRqtoz496oTtafsVH2NdMuXZ/ucd+witHMsD7B/W50b9rRmakI4sSNLVYFiuG2AcVCm36gTUFRSBN/BzaaSyjxgHPuY0sPsSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=NjGjmhOp; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 566MurAt009670
-	for <linux-kernel@vger.kernel.org>; Mon, 7 Jul 2025 01:21:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	YGTEHq4IajGxUn2mf1ux8G7XL8Yixn+AipVYC3nee/o=; b=NjGjmhOpTMbWmN33
-	mO3imoHpweZEY6jBfi/omYJl/pKFRtYRJ6sMhVkOIIoaIPHQpVMJnFinvQ3in5vT
-	6AuvvOwiRY8vANIXvbF7JBu7jjDoy4+PsEqNSJe4nPolGpqmhxGQtNVZ6ZLcGV3d
-	ODRIyn+ZQpMyaw8S0r6TOjzc4Yk2tuiPxzXOtiOAvzaiRkO8bPblMqeDACid4fq0
-	+FTaL/qHv8RiCybJ3AOCC1fTzHl+FxCKI482mtbYVv1WeCnxWTQHxC0/xX/KTS7q
-	I+ngBIkmIhqV1GABdAWgJmjcpasugjNzrMiuDMFdhSE06uNxhfv6kRF3MGUxwKXA
-	ZcRsYg==
-Received: from mail-oi1-f198.google.com (mail-oi1-f198.google.com [209.85.167.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47pvtk7mbf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 01:21:58 +0000 (GMT)
-Received: by mail-oi1-f198.google.com with SMTP id 5614622812f47-408d05d8c03so700523b6e.3
-        for <linux-kernel@vger.kernel.org>; Sun, 06 Jul 2025 18:21:58 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751851318; x=1752456118;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YGTEHq4IajGxUn2mf1ux8G7XL8Yixn+AipVYC3nee/o=;
-        b=ZUxemKMrXVQk+qZT+1KDEKMUmBtyxhJtVYBQSKSt7+27moOKHj5NDrlME0AfG08rrr
-         R7qQr8e/zzrCLHieiTlOmZLwlfXsQ4wOfP80HDdgfNdQLFul1ysX7mT87NydZU/xU5IV
-         pExxCFQZED3BBrZheLH6wtXXMt/by7mRSugJJIZMkV34XsOPA1NXnuOHlsYGQzWsyGBQ
-         y7EPTd/HXeaUz+nRR6+L5/AIP3NTdSTEBUEtfvDsi5eZnYS4/h8FVgNLco9UY6Tm0GoE
-         elLWIsmdMvA9SYt8WMEAKyNfJgf+HBWQfRFbWZS4C4E2a1thSNWczz/RVP5Eswf8jiwX
-         La0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVnE/DEhOSeRhtFjrvCwK0T7sDijvAMFWEAtgHWl0kRybc0pSU4Dk3hzLZU+IS9APzRWWRuSKuLXjlZh34=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRHfmfTd8kSQRDHltPwkRx/ruTY+59rqQY9UVTOg1Il5tWkRFL
-	uhuK0WexBCvdvrnmg2Mvp8DZTuwrf2U9hsIm5y/dhOf3uEH9n9hhetN9ZJhinqQI1p4/kDq9ZPt
-	FDVTEVhzWjf6fL348pKcaAeC0MaHU9YOtW8GkKSo5G9B0SwILd8EYfM8cXZlUMe8L7lyMlO/sRk
-	9mclA5df+FH2d3JtIQz8q/yQExPXoc6qiQBsbPUaE/Sg==
-X-Gm-Gg: ASbGncuV3XWB0RCGH0TUsc3D2N01qEzIBtA0R2PpcamTHW86K8jKunuUYiduzDobBER
-	maR1sWsOl12NgCZkN9NH2WHy3pcwZ+Zxo86Vj93yugv9t+XwL8QcK9QjoWR0SA2n3x6mw6VDFGk
-	OgvmumZYnxIS9LSLR/lb7yk0mkrmgzUZtPVWw=
-X-Received: by 2002:a05:6808:6c85:b0:40c:fc48:33b5 with SMTP id 5614622812f47-40d2b968e58mr5796407b6e.12.1751851317863;
-        Sun, 06 Jul 2025 18:21:57 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFFs2KQvXeA8I+eNNlGJhs4a9HX4VvgO+pAA9xWcKrJk8Ka7dlkr/CtyJI2GXTeTCdlInF915oStCiYnr0X/MU=
-X-Received: by 2002:a05:6808:6c85:b0:40c:fc48:33b5 with SMTP id
- 5614622812f47-40d2b968e58mr5796393b6e.12.1751851317490; Sun, 06 Jul 2025
- 18:21:57 -0700 (PDT)
+	s=arc-20240116; t=1751851968; c=relaxed/simple;
+	bh=HYK1oedwmLdwVlRLBg19mNSaqT3tblBIZs990YTzH9k=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mw9T215eZ8VtxPSxYvd/g53uvOm4Gx+bPzR3gcuu4ac5bwUGcVcJRWiRFiueMaaNuoA/WI/Bp8+OWBMOYjEOE4naKQ2rNFhG+t63N9epS7zJ+xnz1JGgy2GBMujf/XMbMx4vkFWo22oU+MdxLLRArgm15mtn+OxCl91eAA3zStc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4bb6Dl2njRzKHMh8;
+	Mon,  7 Jul 2025 09:32:39 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.252])
+	by mail.maildlp.com (Postfix) with ESMTP id D036E1A0C45;
+	Mon,  7 Jul 2025 09:32:37 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP3 (Coremail) with SMTP id _Ch0CgDnSCazI2to_nSRAw--.35890S4;
+	Mon, 07 Jul 2025 09:32:37 +0800 (CST)
+From: Yu Kuai <yukuai1@huaweicloud.com>
+To: agk@redhat.com,
+	snitzer@kernel.org,
+	mpatocka@redhat.com,
+	song@kernel.org,
+	yukuai3@huawei.com
+Cc: dm-devel@lists.linux.dev,
+	linux-raid@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	yukuai1@huaweicloud.com,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com,
+	johnny.chenyi@huawei.com
+Subject: [PATCH v5 00/15] md/md-bitmap: introduce CONFIG_MD_BITMAP
+Date: Mon,  7 Jul 2025 09:26:56 +0800
+Message-Id: <20250707012711.376844-1-yukuai1@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250706-ubwc-no-ubwc-v1-1-e39552aa04df@oss.qualcomm.com>
-In-Reply-To: <20250706-ubwc-no-ubwc-v1-1-e39552aa04df@oss.qualcomm.com>
-From: Robin Clark <robin.clark@oss.qualcomm.com>
-Date: Sun, 6 Jul 2025 18:21:46 -0700
-X-Gm-Features: Ac12FXwpGmCmQ8_MwW7xpPT4fw4jzAuObtuXcAM1LUtEgzggh8phHjbplkb8mVU
-Message-ID: <CACSVV02AvJb_mb+Hw1aQPP+WTDTgG+f0n=kK50On1g54HnBuMA@mail.gmail.com>
-Subject: Re: [PATCH] soc: qcom: ubwc: provide no-UBWC configuration
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA3MDAwNiBTYWx0ZWRfXxkhwEjJXgIh/
- wCo1lPdMMgqczVXCi0c4JCbmSafXpGVNIhEU5oFZ5jOJ5RowkETLUb1Nd1GOrts0FKIt45cnNJP
- 16gqC6boavsx1tYh/9vFZc86YHDgC3K3olcQjHCOZqXSLdvkqcjuhbBRmN1Pd+KwjWpRuvgJIvf
- sgViMxb29QMR9ZrL9a8P26aipL7oM/3AA9aW/4mSfFl3/kAc2RaZ//7uyEeeaeyzEQhPvs1haYD
- QMUygDx2wotQb2eiD4kEOhqS7ooCibwskqBAuNc1cO27ioOcbiP2aQVq64YsdnxgYkZV3shxxTA
- IJNSdguUnuFsgU/HyBFbpYUBqwbKm+59RJVxdrPO7EE/NZaEy+m7Hu5jsAE9jHSvHgHtbMyeup8
- Vkn2hBfRLTWT/A46HRduhGoyhoOlmHCa7wf2jiwpXIjaoGnKhclZN1CmqeZpBqdTdUiCaDSp
-X-Authority-Analysis: v=2.4 cv=Vq0jA/2n c=1 sm=1 tr=0 ts=686b2137 cx=c_pps
- a=4ztaESFFfuz8Af0l9swBwA==:117 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10
- a=EUspDBNiAAAA:8 a=1Na2Qn3s6HqEfW6eAF4A:9 a=QEXdDO2ut3YA:10
- a=TPnrazJqx2CeVZ-ItzZ-:22
-X-Proofpoint-ORIG-GUID: B4cRYKKPzwk4B8zN8g9VvFFN7lEEsw9Z
-X-Proofpoint-GUID: B4cRYKKPzwk4B8zN8g9VvFFN7lEEsw9Z
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-04_07,2025-07-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 adultscore=0 bulkscore=0 phishscore=0 lowpriorityscore=0
- clxscore=1015 mlxscore=0 malwarescore=0 mlxlogscore=999 impostorscore=0
- suspectscore=0 priorityscore=1501 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507070006
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_Ch0CgDnSCazI2to_nSRAw--.35890S4
+X-Coremail-Antispam: 1UD129KBjvJXoW7ur1UXFWDKr4rtFyDGFyUJrb_yoW8Kw13pa
+	9xt343uw13JFW2qFnxJFW8CF1rXwn7tF9Fkr92kw4rWFyUZF98Xr48KFy0yrykWryfXa43
+	Jr15tr4xGr1rXa7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
+	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
+	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
+	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
+	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
+	nIWIevJa73UjIFyTuYvjfUonmRUUUUU
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Sun, Jul 6, 2025 at 4:01=E2=80=AFAM Dmitry Baryshkov
-<dmitry.baryshkov@oss.qualcomm.com> wrote:
->
-> After the commit 45a2974157d2 ("drm/msm: Use the central UBWC config
-> database") the MDSS driver errors out if UBWC database didn't provide it
-> with the UBWC configuration. Make UBWC database return zero data for
-> MSM8916 / APQ8016, MSM8974 / APQ8074, MSM8226 and MSM8939.
->
-> Fixes: 1924272b9ce1 ("soc: qcom: Add UBWC config provider")
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> ---
-> Note: the driver is a part of drivers/soc, but as it got merged through
-> drm/msm tree, this fix should also go through the drm/msm tree.
+From: Yu Kuai <yukuai3@huawei.com>
 
-Reviewed-by: Rob Clark <robin.clark@oss.qualcomm.com>
+Changes in v5:
+ - rebase on the top of md-6.17;
+ - fix compile problem if md-mod is build as module;
+ - fix two problems for lvm2 dm-raid tests, patch 5,13
+ - other cleanups;
+Changes in v4:
+ - rebase on the top of other patchset;
+Changes in v3:
+ - update commit message.
+Changes in v2:
+ - don't export apis, and don't support build md-bitmap as module
 
-> ---
->  drivers/soc/qcom/ubwc_config.c | 10 ++++++++++
->  1 file changed, 10 insertions(+)
->
-> diff --git a/drivers/soc/qcom/ubwc_config.c b/drivers/soc/qcom/ubwc_confi=
-g.c
-> index bd0a98aad9f3b222abcf0a7af85a318caffa9841..df074520a8cae1a202a14ca09=
-4903bb1e7389066 100644
-> --- a/drivers/soc/qcom/ubwc_config.c
-> +++ b/drivers/soc/qcom/ubwc_config.c
-> @@ -12,6 +12,10 @@
->
->  #include <linux/soc/qcom/ubwc.h>
->
-> +static const struct qcom_ubwc_cfg_data no_ubwc_data =3D {
-> +       /* no UBWC, no HBB */
-> +};
-> +
->  static const struct qcom_ubwc_cfg_data msm8937_data =3D {
->         .ubwc_enc_version =3D UBWC_1_0,
->         .ubwc_dec_version =3D UBWC_1_0,
-> @@ -215,11 +219,17 @@ static const struct qcom_ubwc_cfg_data x1e80100_dat=
-a =3D {
->  };
->
->  static const struct of_device_id qcom_ubwc_configs[] __maybe_unused =3D =
-{
-> +       { .compatible =3D "qcom,apq8016", .data =3D &no_ubwc_data },
-> +       { .compatible =3D "qcom,apq8074", .data =3D &no_ubwc_data },
->         { .compatible =3D "qcom,apq8096", .data =3D &msm8998_data },
-> +       { .compatible =3D "qcom,msm8226", .data =3D &no_ubwc_data },
-> +       { .compatible =3D "qcom,msm8916", .data =3D &no_ubwc_data },
->         { .compatible =3D "qcom,msm8917", .data =3D &msm8937_data },
->         { .compatible =3D "qcom,msm8937", .data =3D &msm8937_data },
-> +       { .compatible =3D "qcom,msm8939", .data =3D &no_ubwc_data },
->         { .compatible =3D "qcom,msm8953", .data =3D &msm8937_data },
->         { .compatible =3D "qcom,msm8956", .data =3D &msm8937_data },
-> +       { .compatible =3D "qcom,msm8974", .data =3D &no_ubwc_data },
->         { .compatible =3D "qcom,msm8976", .data =3D &msm8937_data },
->         { .compatible =3D "qcom,msm8996", .data =3D &msm8998_data },
->         { .compatible =3D "qcom,msm8998", .data =3D &msm8998_data },
->
-> ---
-> base-commit: 8290d37ad2b087bbcfe65fa5bcaf260e184b250a
-> change-id: 20250706-ubwc-no-ubwc-3c5919273e03
->
-> Best regards,
-> --
-> With best wishes
-> Dmitry
->
+Due to known performance issues with md-bitmap and the unreasonable
+implementations like following:
+
+ - self-managed pages, bitmap_storage->filemap;
+ - self-managed IO submitting like filemap_write_page();
+ - global spin_lock
+ ...
+
+I have decided not to continue optimizing based on the current bitmap
+implementation, and plan to invent a new lock-less bitmap. And a new
+kconfig option is a good way for isolation.
+
+However, we still encourage anyone who wants to continue optimizing the
+current implementation
+
+Yu Kuai (15):
+  md/raid1: change r1conf->r1bio_pool to a pointer type
+  md/raid1: remove struct pool_info and related code
+  md/md-bitmap: remove the parameter 'init' for bitmap_ops->resize()
+  md/md-bitmap: merge md_bitmap_group into bitmap_operations
+  md/md-bitmap: add a new parameter 'flush' to bitmap_ops->enabled
+  md/md-bitmap: add md_bitmap_registered/enabled() helper
+  md/md-bitmap: handle the case bitmap is not enabled before
+    start_sync()
+  md/md-bitmap: handle the case bitmap is not enabled before end_sync()
+  md/raid1: check bitmap before behind write
+  md/raid1: check before referencing mddev->bitmap_ops
+  md/raid10: check before referencing mddev->bitmap_ops
+  md/raid5: check before referencing mddev->bitmap_ops
+  md/dm-raid: check before referencing mddev->bitmap_ops
+  md: check before referencing mddev->bitmap_ops
+  md/md-bitmap: introduce CONFIG_MD_BITMAP
+
+ drivers/md/Kconfig      |  18 +++++
+ drivers/md/Makefile     |   3 +-
+ drivers/md/dm-raid.c    |  18 +++--
+ drivers/md/md-bitmap.c  |  74 +++++++++---------
+ drivers/md/md-bitmap.h  |  62 ++++++++++++++-
+ drivers/md/md-cluster.c |   2 +-
+ drivers/md/md.c         | 112 +++++++++++++++++++--------
+ drivers/md/md.h         |   4 +-
+ drivers/md/raid1-10.c   |   2 +-
+ drivers/md/raid1.c      | 163 +++++++++++++++++++---------------------
+ drivers/md/raid1.h      |  22 +-----
+ drivers/md/raid10.c     |  49 ++++++------
+ drivers/md/raid5.c      |  30 ++++----
+ 13 files changed, 330 insertions(+), 229 deletions(-)
+
+-- 
+2.39.2
+
 
