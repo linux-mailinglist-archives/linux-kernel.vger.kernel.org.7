@@ -1,178 +1,112 @@
-Return-Path: <linux-kernel+bounces-720547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1942AFBD2F
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 23:06:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04BD6AFBD32
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 23:06:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC9A117FFFB
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 21:06:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31198480D22
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 21:06:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77498285C8B;
-	Mon,  7 Jul 2025 21:06:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E38A285C8C;
+	Mon,  7 Jul 2025 21:06:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GvKG/PDe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="WT62MW0i"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFCCE28507E;
-	Mon,  7 Jul 2025 21:06:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06940219A6B
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 21:06:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751922366; cv=none; b=b7gpsQ/wNJsmQRN5OJpAHzEx+ETD3rkqCypDne5YS9DW+i4J+BUSj/bR8kMaVHeMgrISMpmOayGUs4bYYsm96JNPAW6natC/wpehxMxmMkJ2cK/19lloGFDyztDyIX/jsD4d+dCp/l0D1bhFSVfdij/fw9eWonFQAZxJaxvAeXs=
+	t=1751922381; cv=none; b=YzvXJlzPVxOqEo/ehoDSy9MuHw6gPFJyO0qHHzNBM/hgWYn5q+WYoimEKpjInYC0afFPwBRLKXHJKvad+ek7h/yTmN/ybEo+18msKiWxZNemeYQHDp64RL36KJhoMRdLfOEZMm6atWy5d57LbTl9Ou6B31UaiT/n3kMYkXlt3aQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751922366; c=relaxed/simple;
-	bh=QkW1aiHP0NVpsrzGt8fVbIRYg7YfdAj+v9Qot7Jf2tU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Lg6RvWQbOK2csql1d4oMHtqoLC0K0FezLHOGKsk/nYQqlxQ7l7IvXTfW/Lmi9sRU0Mw/2/tUp9e8sfxVo5S741mhICjHDbLkl3UwV/Yj/w6k2pn0MuH5/503XbH5PebbgQiSFr0KcFSqGpCEwns3Y9LhHCnIIdK5pl5+bPpqkT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GvKG/PDe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B346C4CEE3;
-	Mon,  7 Jul 2025 21:06:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751922366;
-	bh=QkW1aiHP0NVpsrzGt8fVbIRYg7YfdAj+v9Qot7Jf2tU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GvKG/PDewjeuSt9IUMciZqQ1yEcp5aclexa+R+dA/1sMXrcuoLv7mLLFkJ3DQnm8I
-	 nAdInF13toY5N+rGJ6NIdDae+CuE4fUyOEXUXTlq5HwplCm1cVmk762AGVYvy1sD5R
-	 JDJwcFaeSQdZXJ9h/WTxfdOboNJepEKSbQLdvQAef+ZbCLPS3BrV+cNtyxA4zOlzzx
-	 KcfMrXrq7bYPbn0rSWpVhWxw/TRZmDTQESwzG4ntFWA5sIF8gpMA4bpVekSBN0MxBc
-	 I48iUaz0rqWiq4Bnb1v3pDtIClT18yqp/kKkuJKHND+/BtZZDzsA5kBUe4za6Q+Jqd
-	 CXhg5/k7a4OyA==
-Date: Mon, 7 Jul 2025 23:05:57 +0200
-From: Alejandro Colomar <alx@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-mm@kvack.org, linux-hardening@vger.kernel.org, 
-	Kees Cook <kees@kernel.org>, Christopher Bazley <chris.bazley.wg14@gmail.com>, 
-	shadow <~hallyn/shadow@lists.sr.ht>, linux-kernel@vger.kernel.org, 
-	Andrew Morton <akpm@linux-foundation.org>, kasan-dev@googlegroups.com, Dmitry Vyukov <dvyukov@google.com>, 
-	Alexander Potapenko <glider@google.com>, Marco Elver <elver@google.com>, Christoph Lameter <cl@linux.com>, 
-	David Rientjes <rientjes@google.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>, 
-	Andrew Clayton <andrew@digital-domain.net>, Sven Schnelle <svens@linux.ibm.com>, 
-	Heiko Carstens <hca@linux.ibm.com>, Tvrtko Ursulin <tvrtko.ursulin@igalia.com>, 
-	"Huang, Ying" <ying.huang@intel.com>, Lee Schermerhorn <lee.schermerhorn@hp.com>, 
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, Chao Yu <chao.yu@oppo.com>
-Subject: Re: [RFC v3 3/7] mm: Use seprintf() instead of less ergonomic APIs
-Message-ID: <gjxc2cxjlsnccopdghektco2oulmhyhonigy7lwsaqqcbn62wj@wa3tidbvpyvk>
-References: <cover.1751862634.git.alx@kernel.org>
- <033bf00f1fcf808245ae150346019aa7b997ea11.1751862634.git.alx@kernel.org>
- <CAHk-=wh9Pqz07ne9iSt1_v0c14rkOGvF9AbEkaq1KnFhQD1SSA@mail.gmail.com>
- <ugf4pu7qrojegz7arkcpa4cyde6hoyh73h66oc4f6ncc7jg23t@bklkbbotyzvp>
- <CAHk-=whQ_0qFvg3cugt84+iKXi_eebNGY4so+PSnyyVNGVde1A@mail.gmail.com>
+	s=arc-20240116; t=1751922381; c=relaxed/simple;
+	bh=27bHZ/4eKvwAUCagjp6sf6uz6xVWNuE4Dw+QOys8IA0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VdkSq5vRR4ODJMG7BDXfQPw7vsptVOqSQ5g4tXnhTaRnMsEE/AHxDCBvSBClBoVBB2/8JAGIknnO4PPUsR9ZkHDzYd+uA7ffO/rN6m0Ni5Q/Cc1jc3PlWE56yV1qU+RDod3Ew5WvF8bayMnw+FAZxGhNdjjBMp0qnKbJbWAWM80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=WT62MW0i; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-60c6fea6742so7571089a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 14:06:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ionos.com; s=google; t=1751922377; x=1752527177; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=10PSMDzHwVgV/mqQhAfZ9cWCULE5QFj3JDa6enCguHg=;
+        b=WT62MW0ies0kcBDB0PTRpFCEoAwXBIjTTWx8qhR9SsnpUaIke1MxEjReXhdVq9o+dR
+         Bl5t6mkaWFPPO+iKTqf3lPddMm4vxXBDeAKwHUwygpfnLoe4u3uJt5CnHV1GPF9q6lRB
+         Nv4CDykOrmkWrWXonoTq4K87G0LzjOz7xLv+dFhVUUBRwwOLeTpyZ1kUSUby0TbpnSMG
+         KlJXulJvqrfFfWhb5zl//5fQo2REHLDpB88Tux9taz24LS9G8bu0n76j0KrbI6bS4KDV
+         YTpN66yBss5t3mQJ0HMbzSHDwW+GeyRKES9a+xWfXMthGRVXtHp+ODUl5ldEX+ynv8dI
+         a1JA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751922377; x=1752527177;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=10PSMDzHwVgV/mqQhAfZ9cWCULE5QFj3JDa6enCguHg=;
+        b=hC5bp/e4CeDk1Tgd7jiyUnpWpj0JhF8gwCH2BzSZKyiuEP5kur4Jg76d8U47Ct48bD
+         JuBw4j//Tn3CNAJIJL1LGLHCz0ZmooeP3pHF8sDX6kHjkqC9cbBKwNuTwFdFIEdPtD/z
+         0iUwo+vquSol/5VrynXv0uhfeg58YiSA8fIdySTStr/tpsSMv6z7IMUsRbB8PxkOxOtk
+         tQDVYfK+R89Cwz/+2/YXxu3Rf5q9nxUunB38G4LWHAzk3EkBnBDpRY1UVkUjAiYydiBM
+         SBGkF7RmF0IAQdE23uukgIQX8ebY5U/tPzWND+ybn1mQ9k/ZPYt2oyiGENQCJ5Iz9pW6
+         nDPg==
+X-Forwarded-Encrypted: i=1; AJvYcCXJXWv4cU+WyXJwGRE1IKVohfkzT3zaP54VM7IV1wUxMNl/Vai0sAUY3cTVx0VNWy88DwOVD9uY7ismGrA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0LQONVc/OiQ0pi/vswkgDkW6L2ByTyJOrjzOGo4+HKgwuYw3j
+	SRImAcWC/AW8w2JgEFzijFaVmcaHxwM/cFvavXcuW+HiVeqkLf8WiZaQ8ldh7oNt53o4i63h2Xd
+	8V28YYfbapK5M6+LIFergxc5IDQbj5P0KS4kCusVvPNTS6UE8Ei/DSQg=
+X-Gm-Gg: ASbGnctjoE3Nvd6qtByw4VGL6tgHenZ1vMGJBAa6n7FCta1nycbHw+CKyBQhWU/yXgP
+	ogG+73SWNGT++39R2WRcOXCRgL355BAu71nrYsCQKF7JXlYOmay6RA6aQW4qYEebXz9CvpFDD7U
+	0QKx1VHB5BjpNw2VwcDxQtAi6pvPWVgAt6XqPMOzVwJvDCyhXvZcvr1JD2/fat5Sp3sMUY534=
+X-Google-Smtp-Source: AGHT+IE43oRWvMb64GujIJJWzdPLDEMjenv4v0Jum7a6AMAGjdiKsKVlgDSBcomtOCCjl6Gzq3fmh8OM1iG4AkHi16w=
+X-Received: by 2002:a17:907:d583:b0:ae0:bf55:5c48 with SMTP id
+ a640c23a62f3a-ae6b0048ef1mr71288366b.7.1751922377307; Mon, 07 Jul 2025
+ 14:06:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="3rxu64vcup7p4zp6"
-Content-Disposition: inline
-In-Reply-To: <CAHk-=whQ_0qFvg3cugt84+iKXi_eebNGY4so+PSnyyVNGVde1A@mail.gmail.com>
-
-
---3rxu64vcup7p4zp6
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
+References: <20250707172956.GF1880847@ZenIV> <CAKPOu+87UytVk_7S4L-y9We710j4Gh8HcacffwG99xUA5eGh7A@mail.gmail.com>
+ <20250707180026.GG1880847@ZenIV> <CAKPOu+-QzSzUw4q18FsZFR74OJp90rs9X08gDxWnsphfwfwxoQ@mail.gmail.com>
+ <20250707193115.GH1880847@ZenIV> <CAKPOu+_q7--Yfoko2F2B1WD=rnq94AduevZD1MeFW+ib94-Pxg@mail.gmail.com>
+ <20250707203104.GJ1880847@ZenIV> <CAKPOu+8kLwwG4aKiArX2pKq-jroTgq0MSWW2AC1SjO-G9O_Aog@mail.gmail.com>
+ <20250707204918.GK1880847@ZenIV> <CAKPOu+9qpqSSr300ZDduXRbj6dwQo8Cp2bskdS=gfehcVx-=ug@mail.gmail.com>
+ <20250707205952.GL1880847@ZenIV>
+In-Reply-To: <20250707205952.GL1880847@ZenIV>
+From: Max Kellermann <max.kellermann@ionos.com>
+Date: Mon, 7 Jul 2025 23:06:06 +0200
+X-Gm-Features: Ac12FXy6F50P4NXWOvvKplRVqEF2pMhcw6bU6vdK48DU3ApJChGmWA58w4Y44CU
+Message-ID: <CAKPOu+8zjtLkjYzCCVyyC80YgekMws4vGOvnPLjvUiQ6zWaqaA@mail.gmail.com>
+Subject: Re: [PATCH v3 20/21] __dentry_kill(): new locking scheme
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-mm@kvack.org, linux-hardening@vger.kernel.org, 
-	Kees Cook <kees@kernel.org>, Christopher Bazley <chris.bazley.wg14@gmail.com>, 
-	shadow <~hallyn/shadow@lists.sr.ht>, linux-kernel@vger.kernel.org, 
-	Andrew Morton <akpm@linux-foundation.org>, kasan-dev@googlegroups.com, Dmitry Vyukov <dvyukov@google.com>, 
-	Alexander Potapenko <glider@google.com>, Marco Elver <elver@google.com>, Christoph Lameter <cl@linux.com>, 
-	David Rientjes <rientjes@google.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>, 
-	Andrew Clayton <andrew@digital-domain.net>, Sven Schnelle <svens@linux.ibm.com>, 
-	Heiko Carstens <hca@linux.ibm.com>, Tvrtko Ursulin <tvrtko.ursulin@igalia.com>, 
-	"Huang, Ying" <ying.huang@intel.com>, Lee Schermerhorn <lee.schermerhorn@hp.com>, 
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, Chao Yu <chao.yu@oppo.com>
-Subject: Re: [RFC v3 3/7] mm: Use seprintf() instead of less ergonomic APIs
-References: <cover.1751862634.git.alx@kernel.org>
- <033bf00f1fcf808245ae150346019aa7b997ea11.1751862634.git.alx@kernel.org>
- <CAHk-=wh9Pqz07ne9iSt1_v0c14rkOGvF9AbEkaq1KnFhQD1SSA@mail.gmail.com>
- <ugf4pu7qrojegz7arkcpa4cyde6hoyh73h66oc4f6ncc7jg23t@bklkbbotyzvp>
- <CAHk-=whQ_0qFvg3cugt84+iKXi_eebNGY4so+PSnyyVNGVde1A@mail.gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <CAHk-=whQ_0qFvg3cugt84+iKXi_eebNGY4so+PSnyyVNGVde1A@mail.gmail.com>
 
-Hi Linus,
+On Mon, Jul 7, 2025 at 10:59=E2=80=AFPM Al Viro <viro@zeniv.linux.org.uk> w=
+rote:
+> Umm...  Note that further in that loop we'll be actively stealing the stu=
+ff from that
+> shrink list that hasn't gotten to __dentry_kill().  Does your busy loop g=
+o into
+> if (data.victim) after the second d_walk()?  IOW, does it manage to pull =
+anything out
+> of that shrink list?
 
-On Mon, Jul 07, 2025 at 01:49:20PM -0700, Linus Torvalds wrote:
-> On Mon, 7 Jul 2025 at 13:29, Alejandro Colomar <alx@kernel.org> wrote:
-> >
-> > I am in the C Committee, and have proposed this API for standardization.
-> > I have a feeling that the committee might be open to it.
->=20
-> Honestly, how about fixing the serious problems with the language instead?
+No, I traced this, there is never a "data.victim" because none of the
+dentries has DCACHE_SHRINK_LIST. "data.found" is only ever incremented
+once (per loop iteration) because a "dead" lockref was found. The
+second d_walk() doesn't find anything because it doesn't look for dead
+(dying) dentries. You added that check only to the first call (only to
+select_collect(), but not to select_collect2()).
 
-I'm doing some work on that.  See the new _Countof() operator?  That was
-my first introduction in the standard, last year.
-
-I'm working on an extension to it that I believe will make array
-parameters safer.
-
-> Get rid of the broken "strict aliasing" garbage.
-
-I don't feel qualified to comment on that.
-
-> Get rid of the random "undefined behavior" stuff that is literally
-> designed to let compilers intentionally mis-compile code.
-
-We're indeed working on that.  The last committee meeting removed a
-large number of undefined behaviors, and turned them into mandatory
-diagnostics.  And there's ongoing work on removing more of those.
-
-> Because as things are, "I am on the C committee" isn't a
-> recommendation. It's a "we have decades of bad decisions to show our
-> credentials".
-
-I joined in 2024 because I was fed up with the shit they were producing
-and wanted to influence it.  You don't need to convince me.
-
-> In the kernel, I have made it very very clear that we do not use
-> standard C, because standard C is broken.
-
-I agree.  I personally use GNU C and tend to ignore the standard.  But
-I'm still working on improving the standard, even if just to avoid
-having to learn Rust (and also because GCC and glibc don't accept any
-improvements or fixes if they don't go through the standard, these
-days).
-
-
-Have a lovely day!
-Alex
-
-> I stand by my "let's not add random letters to existing functions that
-> are already too confusing".
->=20
->               Linus
-
---=20
-<https://www.alejandro-colomar.es/>
-
---3rxu64vcup7p4zp6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmhsNq8ACgkQ64mZXMKQ
-wqk41w//ZtMNK1v7cKQ0lZlTUqTrnD/HJrjpT73G+qAbUCgmMraH4Xk+LYomGqUq
-XJ5sCg2eHN76EUVvTNOVWQHCSLlmdMEheQSoIN9mpesMkPmmCMuvQpZ27WKvYUIR
-y4yEZ4BWlX9kVxpacTa50QHVIg/BVEloY3lcUodp5rVvlqi6QWSp15/wzf6spfc1
-l1PV/nmntBAq9XUv3XgNZ3T8nxNtBmaYW+PKdqQyi2xnt5TNOBff/E4sf4K+HUn+
-T2eHsOg8VPHZ4Nz9/cAHNFb7ZHjXAIkCWzjwayQrPyBPP2zL6GaFkKYGmPNcDz2U
-qmB0mJ6OQOk/lIuRr2K1CskmqUxRY0Ejt/5TIuzRQBR6Z1Dxaixp/DusKD/pcVlm
-E9lTV/NR0E0OLGXRCuCqC3BmOBQC6sZJPDoNObStAjSSlhA5PVBGc5O0AtWGn/NO
-7xX5gNtFWW4Yth0Reqd0HsZS3R5u5HaRI9q9KVEgVPKvSbizuSbKTEi4jRABdZ6s
-ekfxn3t2f3l8F+yWPZ2QFyPf5/c6xADdvLe5iYQgbkbCHPgRKzdfQV/pY3jgds7c
-Ct8TbV95pYM0xDnmS1P3FpyRfTrfkscJTfdilRdx8V0g/P9pG6A+rKDRJX3dFwG6
-HsA2MA0KFcYR43mRRKXNBvzAGdMHWZfqumHJlaW1s67BIqeLn8Q=
-=VDh/
------END PGP SIGNATURE-----
-
---3rxu64vcup7p4zp6--
+I think we're getting closer to the point I was trying to make :-)
 
