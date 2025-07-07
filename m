@@ -1,337 +1,161 @@
-Return-Path: <linux-kernel+bounces-719569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E252AAFAFBA
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 11:30:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECC1BAFAFAF
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 11:30:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3669B4A128A
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 09:30:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 374EA3AA49D
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 09:29:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D01728C86D;
-	Mon,  7 Jul 2025 09:30:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0735928B516;
+	Mon,  7 Jul 2025 09:29:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="MadFQYoD"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="GjkOdYZm";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ooT1C0WG";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="GjkOdYZm";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ooT1C0WG"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D84DD28FFE6
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 09:30:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF55D261595
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 09:29:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751880604; cv=none; b=FIlWSo6l66z3GAvuMb5qdC2czfm9TI90KFdmSf6hpXxhfN7rtmGROFaTmYRuA6YAjeTS41UJkayahPcqreRaVo3rlcY2hi4J+7/pVBpMlh+bwcd7oosmDEJCzt5QmIgJsVKOwfAQe7hCcjSG2b/eDDJjaRIc1MWMp3qpf28lQBs=
+	t=1751880595; cv=none; b=tCtcdEnsnkvgHP4WB0npnPWfAUlog2xK9mGWqmZKSxGGD7bgFvVRCCTRMPWIcZYcgXTx0HWYgF9t8WUbwc83/M0IPkIDIZaN8Q0aenf1xlpYbLnsfv3Jpx1h/2+49y7tqhS0SJvKNIxx81gKdo0mpw3jvGrzzJui4gLwgRe3UTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751880604; c=relaxed/simple;
-	bh=5jvcgDEantFuEhTdDGL+ocpN5YEQvBVC+/WveJlL0us=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tHmsp0Sk5vPcRSEyxWshm/ymnkuSERZxzaR+wT5E71Xnw0FaAv7G0YT+l+YsblbORSIahgFKKep74udY/lI0VDS/1RMBD2eThDWDmcPs6Eap4JwWIZExTR/RZLxDiyaf9lWsBGoXjhyCUlCA/QgpQihovQKv7d2ktP6ppi8tcJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=MadFQYoD; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-454b1d0a115so8171565e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 02:30:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1751880599; x=1752485399; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YBopqN4/kQa+aOaqKN5s0U/OHv3IvGI0wkWm8ojU9sA=;
-        b=MadFQYoDqAbJqP972mFgidGmgvPleg0hGnSkB6iI6aFQ4YFPGay9WHy1UktzDiRiKp
-         EEcJOxsLyoijM0UkzbN6+2Lz004RJpRcS9oJ5Zhbk2hEyK/1802bGfOzlLU+LiRBbUto
-         nuHvw9gxENRGM49czSeNWA0Gj7VXdsuYCIcioMVRYF60CVYG035vQPfex8Qvypmy2Xfj
-         z5eIaJYBOOnFKrjfoIHvAWc2Lsut/q99kTgOhPwwfEjhUZ3DuPeuKY/9JSJL7g9DPvUb
-         N+tpW+dkip6QvqojEV7Vl43Z8QTm/eFNA9X2ovHzmmGq7VdG08vlf3ZE2g0nZw4tIpBK
-         L5pw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751880599; x=1752485399;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YBopqN4/kQa+aOaqKN5s0U/OHv3IvGI0wkWm8ojU9sA=;
-        b=nPAEOzrzwex9XEbQhiwTVN3pyS1nd5GzixXxKbAC61aKndJhrG9rie0AhP/STn5X+q
-         fgsvYJuruXHZkAYKT967DjaRWU1HhR9+m9FBaEsdUQO9CaHVK/BfGw+PMMcvbj+W51rQ
-         iAdo5WNu55MrRTnfKY3hgTOf1j52SulxQAvlMO73Ic5luHgXq+1kvfbmAaAUaNJUR4Po
-         DH5odJeDSWSD0ltXpsLeA5+/7Raim7rMCy1S2UqBKYOGZsLvZ8by+RXpaLQp28ytZLUe
-         ZOR4wOqmgZHDvyrSPE8hYYwSLkN0oVUcueFS/TDOM1J7DeNP544CtbLgIE4WGVBpTr9A
-         eYPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW3cAFfshhz/vM+tNsMzWPV+GkoJzjXnau16QUbzF0l4Q2ruwNDx0bJEQQdVcqb8Z+6ZjvZJhGMa2cruQg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzyWxh9iMcHy9IPzg3XaRMQOz3krzhWHnTmkgPUBjCPNHgbKsr/
-	d8jI0mr6cBkcKVjm8CkoBi4u+aMDSvc2C18GBBaKG9lPt4Np7z5zDNkzF7E28Hlm4PvfNd5nrFe
-	GfmA2s84YDyA0rH4ihqHkmztFG+COW0GrpZKdjMKtwA==
-X-Gm-Gg: ASbGncuinG6hfhwUzA6ncbjlLbH1WIzsDtx5NbQa6dyqiMObAZZ8Yc1IRstD14NMeFf
-	ideEJFJ5xgr0d0bgEiqEthJEBajZIPaqNqQXBqqfWDDSnNzI7D/z47KzOO9q7fLSZ1vH00vOSxW
-	uXCOMWYR8VhsKTt5AQS41q8+umvrolO68DPtDiRk2yGwyrxg==
-X-Google-Smtp-Source: AGHT+IFYO17VdpJkXKyCPrctRgd0p1eg8twLrHrvA7MgQGyjyYonUinveltNkkukOIhcTx/2KGStT26+0oMi0Y4ix74=
-X-Received: by 2002:a05:6000:4909:b0:3a6:d6e4:dffd with SMTP id
- ffacd0b85a97d-3b497019165mr9286179f8f.14.1751880598925; Mon, 07 Jul 2025
- 02:29:58 -0700 (PDT)
+	s=arc-20240116; t=1751880595; c=relaxed/simple;
+	bh=UsGNeftounXhkbUe+5yOIq3FSti9y3K1tTSifx6MZAc=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Y1qdgXcIxQnDaVkigCh4AjOOZdHvwM7Ap3NDc9FqKkfwpWrIFHRAcOJ8pIG+y2Dxz/4v2WHbhdm0PjCpWI9DQYugq7kBTRHBaMLA1PuqFoPI1msfWWsDrEicqVwo1j3S5ekYIQsme67gl+duJzGTXvuotoujfRdZuCdUPdSkDGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=GjkOdYZm; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ooT1C0WG; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=GjkOdYZm; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ooT1C0WG; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 3A2AF21170;
+	Mon,  7 Jul 2025 09:29:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1751880592; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DE+nzHmTe/W5DTzuY77SnXTWP102InHxz+4dQ7YSFPI=;
+	b=GjkOdYZmoyOfqaX2oWHgliNhg+pIa0byAHBvTnZvU3zPST5zLI009OYyak39ydBYC14IqQ
+	7j0uZ+bmbwOlJ7Bv7BSzl50njfgGpIrDYR1//7Pq5/u/ffiV0ngIvq73+8oHVmKjRUDkkj
+	Fdllk7RYBYVIClRlVWGw5gR8SFirWFE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1751880592;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DE+nzHmTe/W5DTzuY77SnXTWP102InHxz+4dQ7YSFPI=;
+	b=ooT1C0WGP7I4vBb79uWeDq4ZC2nDh2w9xS3GoyHvANIG6fNZjMUXThR9X8RjVXqDRUzpNQ
+	+ckpPvZz+fSq9qCA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1751880592; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DE+nzHmTe/W5DTzuY77SnXTWP102InHxz+4dQ7YSFPI=;
+	b=GjkOdYZmoyOfqaX2oWHgliNhg+pIa0byAHBvTnZvU3zPST5zLI009OYyak39ydBYC14IqQ
+	7j0uZ+bmbwOlJ7Bv7BSzl50njfgGpIrDYR1//7Pq5/u/ffiV0ngIvq73+8oHVmKjRUDkkj
+	Fdllk7RYBYVIClRlVWGw5gR8SFirWFE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1751880592;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DE+nzHmTe/W5DTzuY77SnXTWP102InHxz+4dQ7YSFPI=;
+	b=ooT1C0WGP7I4vBb79uWeDq4ZC2nDh2w9xS3GoyHvANIG6fNZjMUXThR9X8RjVXqDRUzpNQ
+	+ckpPvZz+fSq9qCA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id DE25913A5E;
+	Mon,  7 Jul 2025 09:29:51 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id YYeFNI+Ta2jPSQAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Mon, 07 Jul 2025 09:29:51 +0000
+Date: Mon, 07 Jul 2025 11:29:51 +0200
+Message-ID: <87cyacnyb4.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Baojun Xu <baojun.xu@ti.com>
+Cc: <broonie@kernel.org>,
+	<andriy.shevchenko@linux.intel.com>,
+	<alsa-devel@alsa-project.org>,
+	<shenghao-ding@ti.com>,
+	<navada@ti.com>,
+	<13916275206@139.com>,
+	<v-hampiholi@ti.com>,
+	<v-po@ti.com>,
+	<linux-sound@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] ALSA: hda/tas2781: Fix calibration data parser issue
+In-Reply-To: <20250707090513.1462-1-baojun.xu@ti.com>
+References: <20250707090513.1462-1-baojun.xu@ti.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250415024532.26632-1-songmuchun@bytedance.com>
- <20250415024532.26632-27-songmuchun@bytedance.com> <aGKHXWJl0ECKN1Zh@hyeyoo> <aGRdVzB5Ao1KkEu1@hyeyoo>
-In-Reply-To: <aGRdVzB5Ao1KkEu1@hyeyoo>
-From: Muchun Song <songmuchun@bytedance.com>
-Date: Mon, 7 Jul 2025 17:29:22 +0800
-X-Gm-Features: Ac12FXwHR19F3-OQz6JNsz_IWrXQcKv3piDCzJFFhHLteEbVb23UBkLndGuMBtA
-Message-ID: <CAMZfGtVh0bYd5E=kK0ZMqECJraif+t0HrqVR046Q29aSJVZNvQ@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH RFC 26/28] mm: memcontrol: introduce memcg_reparent_ops
-To: Harry Yoo <harry.yoo@oracle.com>
-Cc: hannes@cmpxchg.org, mhocko@kernel.org, roman.gushchin@linux.dev, 
-	shakeel.butt@linux.dev, muchun.song@linux.dev, akpm@linux-foundation.org, 
-	david@fromorbit.com, zhengqi.arch@bytedance.com, yosry.ahmed@linux.dev, 
-	nphamcs@gmail.com, chengming.zhou@linux.dev, linux-kernel@vger.kernel.org, 
-	cgroups@vger.kernel.org, linux-mm@kvack.org, hamzamahfooz@linux.microsoft.com, 
-	apais@linux.microsoft.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_TLS_ALL(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	FREEMAIL_ENVRCPT(0.00)[139.com];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_CC(0.00)[kernel.org,linux.intel.com,alsa-project.org,ti.com,139.com,vger.kernel.org];
+	TO_DN_SOME(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid]
+X-Spam-Flag: NO
+X-Spam-Score: -3.30
 
-On Wed, Jul 2, 2025 at 6:13=E2=80=AFAM Harry Yoo <harry.yoo@oracle.com> wro=
-te:
->
-> On Mon, Jun 30, 2025 at 09:47:25PM +0900, Harry Yoo wrote:
-> > On Tue, Apr 15, 2025 at 10:45:30AM +0800, Muchun Song wrote:
-> > > In the previous patch, we established a method to ensure the safety o=
-f the
-> > > lruvec lock and the split queue lock during the reparenting of LRU fo=
-lios.
-> > > The process involves the following steps:
-> > >
-> > >     memcg_reparent_objcgs(memcg)
-> > >         1) lock
-> > >         // lruvec belongs to memcg and lruvec_parent belongs to paren=
-t memcg.
-> > >         spin_lock(&lruvec->lru_lock);
-> > >         spin_lock(&lruvec_parent->lru_lock);
-> > >
-> > >         2) relocate from current memcg to its parent
-> > >         // Move all the pages from the lruvec list to the parent lruv=
-ec list.
-> > >
-> > >         3) unlock
-> > >         spin_unlock(&lruvec_parent->lru_lock);
-> > >         spin_unlock(&lruvec->lru_lock);
-> > >
-> > > In addition to the folio lruvec lock, the deferred split queue lock
-> > > (specific to THP) also requires a similar approach. Therefore, we abs=
-tract
-> > > the three essential steps from the memcg_reparent_objcgs() function.
-> > >
-> > >     memcg_reparent_objcgs(memcg)
-> > >         1) lock
-> > >         memcg_reparent_ops->lock(memcg, parent);
-> > >
-> > >         2) relocate
-> > >         memcg_reparent_ops->relocate(memcg, reparent);
-> > >
-> > >         3) unlock
-> > >         memcg_reparent_ops->unlock(memcg, reparent);
-> > >
-> > > Currently, two distinct locks (such as the lruvec lock and the deferr=
-ed
-> > > split queue lock) need to utilize this infrastructure. In the subsequ=
-ent
-> > > patch, we will employ these APIs to ensure the safety of these locks
-> > > during the reparenting of LRU folios.
-> > >
-> > > Signed-off-by: Muchun Song <songmuchun@bytedance.com>
-> > > ---
-> > >  include/linux/memcontrol.h | 20 ++++++++++++
-> > >  mm/memcontrol.c            | 62 ++++++++++++++++++++++++++++++------=
---
-> > >  2 files changed, 69 insertions(+), 13 deletions(-)
-> > >
-> > > diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-> > > index 27b23e464229..0e450623f8fa 100644
-> > > --- a/include/linux/memcontrol.h
-> > > +++ b/include/linux/memcontrol.h
-> > > @@ -311,6 +311,26 @@ struct mem_cgroup {
-> > >     struct mem_cgroup_per_node *nodeinfo[];
-> > >  };
-> > >
-> > > +struct memcg_reparent_ops {
-> > > +   /*
-> > > +    * Note that interrupt is disabled before calling those callbacks=
-,
-> > > +    * so the interrupt should remain disabled when leaving those cal=
-lbacks.
-> > > +    */
-> > > +   void (*lock)(struct mem_cgroup *src, struct mem_cgroup *dst);
-> > > +   void (*relocate)(struct mem_cgroup *src, struct mem_cgroup *dst);
-> > > +   void (*unlock)(struct mem_cgroup *src, struct mem_cgroup *dst);
-> > > +};
-> > > +
-> > > +#define DEFINE_MEMCG_REPARENT_OPS(name)                             =
-       \
-> > > +   const struct memcg_reparent_ops memcg_##name##_reparent_ops =3D {=
- \
-> > > +           .lock           =3D name##_reparent_lock,                =
- \
-> > > +           .relocate       =3D name##_reparent_relocate,            =
- \
-> > > +           .unlock         =3D name##_reparent_unlock,              =
- \
-> > > +   }
-> > > +
-> > > +#define DECLARE_MEMCG_REPARENT_OPS(name)                           \
-> > > +   extern const struct memcg_reparent_ops memcg_##name##_reparent_op=
-s
-> > > +
-> > >  /*
-> > >   * size of first charge trial.
-> > >   * TODO: maybe necessary to use big numbers in big irons or dynamic =
-based of the
-> > > diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> > > index 1f0c6e7b69cc..3fac51179186 100644
-> > > --- a/mm/memcontrol.c
-> > > +++ b/mm/memcontrol.c
-> > > @@ -194,24 +194,60 @@ static struct obj_cgroup *obj_cgroup_alloc(void=
-)
-> > >     return objcg;
-> > >  }
-> > >
-> > > -static void memcg_reparent_objcgs(struct mem_cgroup *memcg)
-> > > +static void objcg_reparent_lock(struct mem_cgroup *src, struct mem_c=
-group *dst)
-> > > +{
-> > > +   spin_lock(&objcg_lock);
-> > > +}
-> > > +
-> > > +static void objcg_reparent_relocate(struct mem_cgroup *src, struct m=
-em_cgroup *dst)
-> > >  {
-> > >     struct obj_cgroup *objcg, *iter;
-> > > -   struct mem_cgroup *parent =3D parent_mem_cgroup(memcg);
-> > >
-> > > -   objcg =3D rcu_replace_pointer(memcg->objcg, NULL, true);
-> > > +   objcg =3D rcu_replace_pointer(src->objcg, NULL, true);
-> > > +   /* 1) Ready to reparent active objcg. */
-> > > +   list_add(&objcg->list, &src->objcg_list);
-> > > +   /* 2) Reparent active objcg and already reparented objcgs to dst.=
- */
-> > > +   list_for_each_entry(iter, &src->objcg_list, list)
-> > > +           WRITE_ONCE(iter->memcg, dst);
-> > > +   /* 3) Move already reparented objcgs to the dst's list */
-> > > +   list_splice(&src->objcg_list, &dst->objcg_list);
-> > > +}
-> > >
-> > > -   spin_lock_irq(&objcg_lock);
-> > > +static void objcg_reparent_unlock(struct mem_cgroup *src, struct mem=
-_cgroup *dst)
-> > > +{
-> > > +   spin_unlock(&objcg_lock);
-> > > +}
-> > >
-> > > -   /* 1) Ready to reparent active objcg. */
-> > > -   list_add(&objcg->list, &memcg->objcg_list);
-> > > -   /* 2) Reparent active objcg and already reparented objcgs to pare=
-nt. */
-> > > -   list_for_each_entry(iter, &memcg->objcg_list, list)
-> > > -           WRITE_ONCE(iter->memcg, parent);
-> > > -   /* 3) Move already reparented objcgs to the parent's list */
-> > > -   list_splice(&memcg->objcg_list, &parent->objcg_list);
-> > > -
-> > > -   spin_unlock_irq(&objcg_lock);
-> > > +static DEFINE_MEMCG_REPARENT_OPS(objcg);
-> > > +
-> > > +static const struct memcg_reparent_ops *memcg_reparent_ops[] =3D {
-> > > +   &memcg_objcg_reparent_ops,
-> > > +};
-> > > +
-> > > +#define DEFINE_MEMCG_REPARENT_FUNC(phase)                          \
-> > > +   static void memcg_reparent_##phase(struct mem_cgroup *src,      \
-> > > +                                      struct mem_cgroup *dst)      \
-> > > +   {                                                               \
-> > > +           int i;                                                  \
-> > > +                                                                   \
-> > > +           for (i =3D 0; i < ARRAY_SIZE(memcg_reparent_ops); i++)   =
- \
-> > > +                   memcg_reparent_ops[i]->phase(src, dst);         \
-> > > +   }
-> > > +
-> > > +DEFINE_MEMCG_REPARENT_FUNC(lock)
-> > > +DEFINE_MEMCG_REPARENT_FUNC(relocate)
-> > > +DEFINE_MEMCG_REPARENT_FUNC(unlock)
-> > > +
-> > > +static void memcg_reparent_objcgs(struct mem_cgroup *src)
-> > > +{
-> > > +   struct mem_cgroup *dst =3D parent_mem_cgroup(src);
-> > > +   struct obj_cgroup *objcg =3D rcu_dereference_protected(src->objcg=
-, true);
-> > > +
-> > > +   local_irq_disable();
-> > > +   memcg_reparent_lock(src, dst);
-> > > +   memcg_reparent_relocate(src, dst);
-> > > +   memcg_reparent_unlock(src, dst);
-> > > +   local_irq_enable();
-> >
-> > Hi,
-> >
-> > It seems unnecessarily complicated to 1) acquire objcg, lruvec and
-> > thp_sq locks, 2) call their ->relocate() callbacks, and
-> > 3) release those locks.
-> >
-> > Why not simply do the following instead?
-> >
-> > for (i =3D 0; i < ARRAY_SIZE(memcg_reparent_ops); i++) {
-> >       local_irq_disable();
-> >       memcg_reparent_ops[i]->lock(src, dst);
-> >       memcg_reparent_ops[i]->relocate(src, dst);
-> >       memcg_reparent_ops[i]->unlock(src, dst);
-> >       local_irq_enable();
-> > }
-> >
-> > As there is no actual lock dependency between the three.
-> >
-> > Or am I missing something important about the locking requirements?
->
-> Hmm... looks like I was missing some important requirements!
->
-> It seems like:
->
-> 1) objcg should be reparented under lruvec locks, otherwise
->    users can observe folio_memcg(folio) !=3D lruvec_memcg(lruvec)
->
-> 2) Similarly, lruvec_reparent_relocate() should reparent all folios
->    at once under lruvec locks, otherwise users can observe
->    folio_memcg(folio) !=3D lruvec_memcg(lruvec) for some folios.
->
->    IoW, lruvec_reparent_relocate() cannot do something like this:
->    while (lruvec is not empty) {
->            move some pages;
->            unlock lruvec locks;
->            cond_resched();
->            lock lruvec locks;
->    }
->
-> Failing to satisfy 1) and 2) means user can't rely on a stable binding
-> between a folio and a memcg, which is a no-go.
->
-> Also, 2) makes it quite undesirable to iterate over folios and move each
-> one to the right generation in MGLRU as this will certainly introduce
-> soft lockups as the memcg size grows...
+On Mon, 07 Jul 2025 11:05:13 +0200,
+Baojun Xu wrote:
+> 
+> We will copy calibration data from position behind to front.
+> We has created a variable (tmp_val) point on top of calibration data
+> buffer, and tmp_val[1] is max of node number in original calibration
+> data structure, it will be overwritten after first data copy,
+> so can't be used as max node number check in for loop.
+> So we create a new variable to save max of node number (tmp_val[1]),
+> used to check if max node number was reached in for loop.
+> And a point need to be increased to point at calibration data in node.
+> Data saved position also need to be increased one byte.
+> 
+> Fixes: 4fe238513407 ("ALSA: hda/tas2781: Move and unified the calibrated-data getting function for SPI and I2C into the tas2781_hda lib")
+> 
+> Signed-off-by: Baojun Xu <baojun.xu@ti.com>
+> 
+> ---
+> Change in v2:
+>  - Add more description about this fix.
 
-Sorry for the late reply. Yes, you are right. We should iterate each folio
-without holding any spinlocks. So I am confirming if we could do some
-preparation work like making it suitable for reparenting without holding an=
-y
-spinlock. Then we could reparent those folios like the non-MGLRU case.
+Applied now.  Thanks.
 
-Thanks.
 
->
-> Is my reasoning correct?
-> If so, adding a brief comment about 1 and 2 wouldn't hurt ;)
-
-OK.
-
->
-> --
-> Cheers,
-> Harry / Hyeonggon
+Takashi
 
