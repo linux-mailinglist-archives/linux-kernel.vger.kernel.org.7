@@ -1,247 +1,154 @@
-Return-Path: <linux-kernel+bounces-719600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FEA0AFB028
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 11:48:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7203AFB022
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 11:48:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD21916F5B4
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 09:48:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D9B41896B8D
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 09:48:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5452293C6A;
-	Mon,  7 Jul 2025 09:48:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IYaGOFXe"
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3EB8291C10;
+	Mon,  7 Jul 2025 09:48:13 +0000 (UTC)
+Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com [209.85.222.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 146EE293C66
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 09:48:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF04F290DAC;
+	Mon,  7 Jul 2025 09:48:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751881702; cv=none; b=HSn9DbKfgpkRnO61nsu8NcaouFDZkgaKbGRD1UtWBC6y569qzcmcgi3vHCkiBLWPwMEFFdsF4ZoqwUWcFndjwAI3Q2XipIRKETA0oqxZMHes91PdlRGmkkmGt3nW9boLBgPDdRtyci/yAfGxTpldOHW72kRtpBiQzG81mjW6ueY=
+	t=1751881693; cv=none; b=fZxFVSQjwiAuUIWSuiC/ZXHp1ErmF9KA6ZvCc8/7LaTpo3jEwZUh4dPqqqV5c2iQCJueGkyEa53wwnyenadoj/Sfhc8NTJWvv2YPlzpB57QZI6pMgsj0RW+He9AbUo+DS1WwyNpUhHbSyYTX6GBtZgpzI7j3OlQk06hHD/FhcJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751881702; c=relaxed/simple;
-	bh=P/bSqtL2IcNiFIBFWz48MnCREeUKmBoK8JlXKJD8PYQ=;
+	s=arc-20240116; t=1751881693; c=relaxed/simple;
+	bh=xPqjeLGrN84XU+Uf4j/F7qDEi3SEs6EqUp1K+CP05No=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rYjAFF4D95dFGltGI3AyTen8Xj5/cKlTuOnHNGR1kXMdR8PGV6yGoLt7pYl32uMKgBQAar7wy36sxmhq4kAHVSzRqgotlZcd1trIlwWBJ2DNBN2IKMEqqsNp2/sjo1i7JAqSYO17RqEvx9cMTtKocAfugK2EK1e05bKas6poub8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IYaGOFXe; arc=none smtp.client-ip=209.85.219.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6f8aa9e6ffdso28743256d6.3
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 02:48:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1751881700; x=1752486500; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=frbjbKfca0mgstlmUpI74NtNTt6lUs+p9/a8UNKkFt4=;
-        b=IYaGOFXeGK6KPh4UXnIvGGLoas9zc4CogJFviBdhTiVvHnSKDxwISd8V6v3oNtNS79
-         5YY7TKfQvYXITui9NPXYn7y/9Oe5CmgG4k/EHl3gQbGlWLGBg5Scz5q+yWwz8Zd1YIif
-         hvd0OFhMeAuR6xsp/6F50vESGfzRtSd8CNT7zuZgtHnbiGy/L7n7XtiYhIoxGc7lpI2Y
-         Px9kdy2QRQ1u432dttWA06gSudnsgcF9pEkWhTnLZkgcZJaQBpFa9ODXODEzoZPgyb7o
-         8a7EtnYyiBJ//eMqJhu6Dd9cdYqxytd6F9l/OvvPwXJIDJQT1VEbnat9heQC+1stFRIY
-         HhHg==
+	 To:Cc:Content-Type; b=Zhjt7+CCW6WUx4BOp6+3fctqj4DnvgpVTYiAqKXF+rCXY8rs06NCSTi25wcAWrW6R1hJCHSfPcA7zENUZzisY1cj6Sd12CoVnm9WxSSchQE34DfbKL/8SeQEHPxP6f27hJBbxUHhnqXK/2qlmdMJzxBYgNR4dHMbkgx3bXVuOTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f45.google.com with SMTP id a1e0cc1a2514c-87f74a28a86so2211054241.2;
+        Mon, 07 Jul 2025 02:48:10 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751881700; x=1752486500;
+        d=1e100.net; s=20230601; t=1751881689; x=1752486489;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=frbjbKfca0mgstlmUpI74NtNTt6lUs+p9/a8UNKkFt4=;
-        b=wsEOKnlkTg3Vqqt26AvmWwKtNID4DQcXlF99nYS6Q/6ANczZjfPCtJApF3tAnhDJ77
-         s65rSGYmkSeihKhzInYFakJKcGE0B+wUFVRnOGn2n7dsuT/Th67MovSFj8uSn+vVUzWp
-         zIOJ5SRmSulp8ZbQZnxHnRhr2PSc7D75jq9nd5tGltyzfZHCqitxHqohXxyRYBCtQ+w/
-         3c8XvZIcDw7VytYqSx4QxOkUmFki7zfA9/Fs07C5tXFO82n1DKqeBOsEzn/V/2xY1eio
-         +5ETjTTtbxQ7XrFnT1YXhOus7rFpEMKPSCmyMmGFKQqHssuancC2WfBGhGhogEJadx85
-         ffsw==
-X-Forwarded-Encrypted: i=1; AJvYcCUbYNRlWOb/de+nGXkUGX7QT6EOeI7b7XSZUCwzoZisJvGTkY9wovVXC1xFxQeb0vs2MYQBZb1odH2TCvc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRNfclKJ2v/1VPO7sA71OE4f07myQwd20k8dmdNYGc7PlZ+LvH
-	Pz23k/NYJDQyXGbZsUf7a+qj787aF0AEwrePs6l/uD3to0tQJWhOGCR7xeONPxGEqG1g9lyUhrG
-	Bj7PykPm/vi4qrepGonxP/Wi4qVUrBu07k+EnUIDQ
-X-Gm-Gg: ASbGnctG1YIXpH8qTLDO8niHmoLJTtBD6LDvPN0wa5kp3Zr/VNRLjS+j10hURZ/Is0U
-	LDBV49JuT0BWvoEwsv9Sag9cBKtDVmr860S5RfQ0Q8wJ2g/WFgbMUtZ7ZzEbqciJaMud9RAfmqr
-	BU1WsRjpbM4QUonNPeT5gVPJHe1G2TcjtpykqsEssMpau8RJOZntQ3aO2oMP1ZifjcGXEvGBswl
-	w==
-X-Google-Smtp-Source: AGHT+IHcO/y74R/A4icF5JMOnPuik0+R72LDFyPIAjvRILtiYXcsXDsbfAQD1GOxerZ6cpwinFaAl6Ff+ph2u1beSIo=
-X-Received: by 2002:a05:6214:5d0f:b0:6fd:609d:e924 with SMTP id
- 6a1803df08f44-702d16b5b13mr143596346d6.36.1751881699546; Mon, 07 Jul 2025
- 02:48:19 -0700 (PDT)
+        bh=g5+0wSppynSOvi12ZXXCldghKFMbBMT5s4dqf8/U7JI=;
+        b=LJNGL0rtv0Q86ZoCnL0i7JA5/Oz1Ihto0TeCk0e+yTsT0LDs6pspylH+m7bIj0nfQk
+         rIW8urr9KFKKh6P3vs/cDCQFof4WpyI4DcxDFeItwoEtCJ0IUoq5I9WuXCWp7KsY7lO0
+         tDUe6+tTpyR+w6Z5P1ax0721MCwnl7asykWa2oX3El3N87aidvbkv40kbAMn55V7kiDG
+         JJCrvdzBUxLg31WM2Ez+bu9YCgV+A/qGsC2+d9IK6xsE+2nHMK/mTytbtS3YdFsybBpG
+         XCP9e5xoEJOKolgqGg8IGrJQn1eDMadIqdtsvrRk6+aLiedwnDRgnRYETIV184z9JTFe
+         AYYw==
+X-Forwarded-Encrypted: i=1; AJvYcCVJqmqKDdIv73YhTtXe2/KOuTNfkkZM5xMh3AQEG9udWWcGD6Qkho8xQUml25y7zaw+otNEe+E4FST1jZ4Q@vger.kernel.org, AJvYcCVjjKnKPO5+ViBuVcCto4yTleATwMDpEB6mpnM7LOt4gehEqZ5IxSdQQtbt0+CrOd1rWiVYBy9gRBh0@vger.kernel.org, AJvYcCWrM3eyF6GRxYw3ospOcCkPlkwMoRs4omrlEw13dxr5anukh7Hsndw6IRVtRq2mKP+zbxZtECO7nQAU9bWXz/zU/cM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9Sn33MyNd83zI4ai9oiO8Id8+mvFdJwBHmNLEpXiZ25aQJJde
+	yFh4Iwn4e1b6JyzsxAN2r+ArurEyqNf6TUNdG4f7G8X8rRrsdQoy0490U9I/zXAV
+X-Gm-Gg: ASbGnct3H7pN6+K23K6Ifz13KK1z2Xe7ZcVWaaZXle3h0Huo83eU5UoecatJwRSLGvd
+	QlA4lIiLRWhcBkCBYh3wLjoSneQwp84BOKgtL5koyO6Rukxz3ttBAzwxwpMLpU2B0rSeSB5n064
+	ZQY/Iilwt9TSSxM+4mLKY3j05DwuxthHbHu75Nxzn7ok7y5OlC4bjIoGYHyH8ZKWCjKTE2dFqBa
+	sNPuY6gs5NQxgfRorzb0DRpFjT+j4iVVUeP+I6Bpb3f36nRIBPPpBbcsEfag6RocO83CpMFSh++
+	m7UGgIAM2usJrdc7eDE+RsV7+o8xSf0rUIFXAf1SXeah06Nu7HY3ehssfyL7bjbv38oxWFaQmgt
+	VGiIFqj4gBJtKdx1IgjGsFM1B
+X-Google-Smtp-Source: AGHT+IHz7I5x8Vn0GSCUXD2D/tHeBm/akguzfwh58wk5Yu3k+WwHNqs/JwD5ar//86dk0mQZvkn4cQ==
+X-Received: by 2002:a05:6102:4bc1:b0:4e5:9380:9c20 with SMTP id ada2fe7eead31-4f3059d1057mr4537370137.2.1751881689232;
+        Mon, 07 Jul 2025 02:48:09 -0700 (PDT)
+Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com. [209.85.222.45])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4f2ea73b275sm1129437137.28.2025.07.07.02.48.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Jul 2025 02:48:08 -0700 (PDT)
+Received: by mail-ua1-f45.google.com with SMTP id a1e0cc1a2514c-87f04817bf6so2373410241.0;
+        Mon, 07 Jul 2025 02:48:08 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUjSeG4DR7o6XBfO1ND2jkLlOv3gJFoO0oIREnBn0254WSbpF3nU+cjOUN8TgEIbRod6cpVyo2CWAVFLFUmRlTqZqE=@vger.kernel.org, AJvYcCW1Eq8AFcVFGQKNIWnYntL55h4XwPnQKHCDhQZ1FlbjohypSR1B6MOl11H8ozfUG5BHYf+fALAPzq6v@vger.kernel.org, AJvYcCXqkS2qGE2+4kJ1wgBduZKmysXY04ioo7Lhmwux3OywhVBSLcuSUOs6+NnXxjEY4lXrotI3ay889KTwLQrr@vger.kernel.org
+X-Received: by 2002:a05:6102:5813:b0:4e7:dbd2:4605 with SMTP id
+ ada2fe7eead31-4f305bbfb6bmr4049680137.24.1751881688643; Mon, 07 Jul 2025
+ 02:48:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1751747518.git.alx@kernel.org> <2d20eaf1752efefcc23d0e7c5c2311dd5ae252af.1751747518.git.alx@kernel.org>
-In-Reply-To: <2d20eaf1752efefcc23d0e7c5c2311dd5ae252af.1751747518.git.alx@kernel.org>
-From: Alexander Potapenko <glider@google.com>
-Date: Mon, 7 Jul 2025 11:47:43 +0200
-X-Gm-Features: Ac12FXyyIGAsATyNgJop_7rvBktTGUGYSMPyLaAqY218kgxIasAxME7dbvT6CZY
-Message-ID: <CAG_fn=UG3O-3_ik0TY_kstxzMVh4Z9noTP1cYfAiWvCnaXQ-6A@mail.gmail.com>
-Subject: Re: [RFC v1 1/3] vsprintf: Add [v]seprintf(), [v]stprintf()
-To: Alejandro Colomar <alx@kernel.org>
-Cc: linux-mm@kvack.org, linux-hardening@vger.kernel.org, 
-	Kees Cook <kees@kernel.org>, Christopher Bazley <chris.bazley.wg14@gmail.com>, 
-	shadow <~hallyn/shadow@lists.sr.ht>, linux-kernel@vger.kernel.org, 
-	Andrew Morton <akpm@linux-foundation.org>, kasan-dev@googlegroups.com, 
-	Dmitry Vyukov <dvyukov@google.com>, Marco Elver <elver@google.com>, Christoph Lameter <cl@linux.com>, 
-	David Rientjes <rientjes@google.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>
+References: <20250625153042.159690-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250625153042.159690-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <CAMuHMdVvxebkm9A4g9hADww=9zREXJqyW3eQ6tFVwVJvkUkEOw@mail.gmail.com>
+ <CA+V-a8s9r9U91CqUdC5zDxZGuAA51upduJ1epgmMdKPeYPJQxQ@mail.gmail.com> <CA+V-a8uW00iMUFfSczBsFsC3JLSK8SbufMhYGd_1XgrZ29C1Cg@mail.gmail.com>
+In-Reply-To: <CA+V-a8uW00iMUFfSczBsFsC3JLSK8SbufMhYGd_1XgrZ29C1Cg@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 7 Jul 2025 11:47:56 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdX1zijwTD1SvY6XiURuiudBwssGGLD1PVGgDTVtqedCLw@mail.gmail.com>
+X-Gm-Features: Ac12FXwVostGJK4bmk6-YLvJ5Eo2LTSPTjjWfX8r5k5Seon-rDbubPXDfeaBzR8
+Message-ID: <CAMuHMdX1zijwTD1SvY6XiURuiudBwssGGLD1PVGgDTVtqedCLw@mail.gmail.com>
+Subject: Re: [PATCH 3/6] arm64: dts: renesas: r9a09g077: Add SDHI nodes
+To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Jul 5, 2025 at 10:33=E2=80=AFPM Alejandro Colomar <alx@kernel.org> =
-wrote:
->
-> seprintf()
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->
-> seprintf() is a function similar to stpcpy(3) in the sense that it
-> returns a pointer that is suitable for chaining to other copy
-> operations.
->
-> It takes a pointer to the end of the buffer as a sentinel for when to
-> truncate, which unlike a size, doesn't need to be updated after every
-> call.  This makes it much more ergonomic, avoiding manually calculating
-> the size after each copy, which is error prone.
->
-> It also makes error handling much easier, by reporting truncation with
-> a null pointer, which is accepted and transparently passed down by
-> subsequent seprintf() calls.  This results in only needing to report
-> errors once after a chain of seprintf() calls, unlike snprintf(3), which
-> requires checking after every call.
->
->         p =3D buf;
->         e =3D buf + countof(buf);
->         p =3D seprintf(p, e, foo);
->         p =3D seprintf(p, e, bar);
->         if (p =3D=3D NULL)
->                 goto trunc;
->
-> vs
->
->         len =3D 0;
->         size =3D countof(buf);
->         len +=3D snprintf(buf + len, size - len, foo);
->         if (len >=3D size)
->                 goto trunc;
->
->         len +=3D snprintf(buf + len, size - len, bar);
->         if (len >=3D size)
->                 goto trunc;
->
-> And also better than scnprintf() calls:
->
->         len =3D 0;
->         size =3D countof(buf);
->         len +=3D scnprintf(buf + len, size - len, foo);
->         len +=3D scnprintf(buf + len, size - len, bar);
->         if (len >=3D size)
->                 goto trunc;
->
-> It seems aparent that it's a more elegant approach to string catenation.
->
-> stprintf()
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->
-> stprintf() is a helper that is needed for implementing seprintf()
-> --although it could be open-coded within vseprintf(), of course--, but
-> it's also useful by itself.  It has the same interface properties as
-> strscpy(): that is, it copies with truncation, and reports truncation
-> with -E2BIG.  It would be useful to replace some calls to snprintf(3)
-> and scnprintf() which don't need chaining, and where it's simpler to
-> pass a size.
->
-> It is better than plain snprintf(3), because it results in simpler error
-> detection (it doesn't need a check >=3Dcountof(buf), but rather <0).
->
-> Cc: Kees Cook <kees@kernel.org>
-> Cc: Christopher Bazley <chris.bazley.wg14@gmail.com>
-> Signed-off-by: Alejandro Colomar <alx@kernel.org>
-> ---
->  lib/vsprintf.c | 109 +++++++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 109 insertions(+)
->
-> diff --git a/lib/vsprintf.c b/lib/vsprintf.c
-> index 01699852f30c..a3efacadb5e5 100644
-> --- a/lib/vsprintf.c
-> +++ b/lib/vsprintf.c
-> @@ -2892,6 +2892,37 @@ int vsnprintf(char *buf, size_t size, const char *=
-fmt_str, va_list args)
->  }
->  EXPORT_SYMBOL(vsnprintf);
->
-> +/**
-> + * vstprintf - Format a string and place it in a buffer
-> + * @buf: The buffer to place the result into
-> + * @size: The size of the buffer, including the trailing null space
-> + * @fmt: The format string to use
-> + * @args: Arguments for the format string
-> + *
-> + * The return value is the length of the new string.
-> + * If the string is truncated, the function returns -E2BIG.
-> + *
-> + * If you're not already dealing with a va_list consider using stprintf(=
-).
-> + *
-> + * See the vsnprintf() documentation for format string extensions over C=
-99.
-> + */
-> +int vstprintf(char *buf, size_t size, const char *fmt, va_list args)
-> +{
-> +       int len;
-> +
-> +       len =3D vsnprintf(buf, size, fmt, args);
-> +
-> +       // It seems the kernel's vsnprintf() doesn't fail?
-> +       //if (unlikely(len < 0))
-> +       //      return -E2BIG;
-> +
-> +       if (unlikely(len >=3D size))
-> +               return -E2BIG;
-> +
-> +       return len;
-> +}
-> +EXPORT_SYMBOL(vstprintf);
-> +
->  /**
->   * vscnprintf - Format a string and place it in a buffer
->   * @buf: The buffer to place the result into
-> @@ -2923,6 +2954,36 @@ int vscnprintf(char *buf, size_t size, const char =
-*fmt, va_list args)
->  }
->  EXPORT_SYMBOL(vscnprintf);
->
-> +/**
-> + * vseprintf - Format a string and place it in a buffer
-> + * @p: The buffer to place the result into
-> + * @end: A pointer to one past the last character in the buffer
-> + * @fmt: The format string to use
-> + * @args: Arguments for the format string
-> + *
-> + * The return value is a pointer to the trailing '\0'.
-> + * If @p is NULL, the function returns NULL.
-> + * If the string is truncated, the function returns NULL.
-> + *
-> + * If you're not already dealing with a va_list consider using seprintf(=
-).
-> + *
-> + * See the vsnprintf() documentation for format string extensions over C=
-99.
-> + */
-> +char *vseprintf(char *p, const char end[0], const char *fmt, va_list arg=
-s)
-> +{
-> +       int len;
-> +
-> +       if (unlikely(p =3D=3D NULL))
-> +               return NULL;
-> +
-> +       len =3D vstprintf(p, end - p, fmt, args);
+Hi Prabhakar,
 
-It's easy to imagine a situation in which `end` is calculated from the
-user input and may overflow.
-Maybe we can add a check for `end > p` to be on the safe side?
+On Fri, 4 Jul 2025 at 19:13, Lad, Prabhakar <prabhakar.csengg@gmail.com> wr=
+ote:
+> On Fri, Jul 4, 2025 at 12:52=E2=80=AFAM Lad, Prabhakar
+> <prabhakar.csengg@gmail.com> wrote:
+> > On Thu, Jul 3, 2025 at 10:56=E2=80=AFAM Geert Uytterhoeven <geert@linux=
+-m68k.org> wrote:
+> > > On Wed, 25 Jun 2025 at 17:31, Prabhakar <prabhakar.csengg@gmail.com> =
+wrote:
+> > > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > > >
+> > > > Add SDHI0-SDHI1 nodes to RZ/T2H ("R9A09G077") SoC DTSI.
+> > > >
+> > > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.c=
+om>
+> > >
+> > > Thanks for your patch!
+> > >
+> > > > --- a/arch/arm64/boot/dts/renesas/r9a09g077.dtsi
+> > > > +++ b/arch/arm64/boot/dts/renesas/r9a09g077.dtsi
+> > > > @@ -155,6 +155,46 @@ gic: interrupt-controller@83000000 {
+> > > >                         interrupt-controller;
+> > > >                         interrupts =3D <GIC_PPI 9 IRQ_TYPE_LEVEL_LO=
+W>;
+> > > >                 };
+> > > > +
+> > > > +               sdhi0: mmc@92080000  {
+> > > > +                       compatible =3D "renesas,sdhi-r9a09g077",
+> > > > +                                    "renesas,sdhi-r9a09g057";
+> > > > +                       reg =3D <0x0 0x92080000 0 0x10000>;
+> > > > +                       interrupts =3D <GIC_SPI 782 IRQ_TYPE_LEVEL_=
+HIGH>,
+> > > > +                                    <GIC_SPI 783 IRQ_TYPE_LEVEL_HI=
+GH>;
+> > > > +                       clocks =3D <&cpg CPG_MOD 1212>,
+> > >
+> > > 1112?
+> > >
+> > Agreed (and below).
+> >
+> Sorry, it is indeed 1212/1213 as the bits belong to MSTPCRM register.
+
+Oops, you're right. Sorry for the noise.
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
