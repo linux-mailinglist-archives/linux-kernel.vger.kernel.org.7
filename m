@@ -1,349 +1,299 @@
-Return-Path: <linux-kernel+bounces-720236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0987FAFB8EF
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 18:49:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E663AAFB8FB
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 18:49:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3DC61AA189E
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 16:49:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 65D407AEF24
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 16:48:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5425B2264CF;
-	Mon,  7 Jul 2025 16:49:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0925D22C35D;
+	Mon,  7 Jul 2025 16:49:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="KnDPeRdf";
-	dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="etceAG32"
-Received: from mailrelay-egress16.pub.mailoutpod3-cph3.one.com (mailrelay-egress16.pub.mailoutpod3-cph3.one.com [46.30.212.3])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="PMUbdx/e"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2081.outbound.protection.outlook.com [40.107.244.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8102722127A
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 16:49:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.30.212.3
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751906959; cv=none; b=X8CUixcBGbe53YJ8CpJgqOqMk5RbRpiPOXUD9Thy7RPgO3qwqbjTUcngv4L80oYjDWlXzxlkIvQlFyKEQno+f2IY6lYxzxRSgj/fwOf17xYJUCxl+QkZCAXXO6bcsOzdD0jHV8sYc5l2+CrPY5WE3+9lB32FbWDp3fzyidZBYJU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751906959; c=relaxed/simple;
-	bh=9Yvt7naFGKNgxRNpX6BqHPftkUCGRa72Wyu+8PPM0kY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=mocnKZKf/oWpSzvOeHpNEUjGq+jK62AF7g3gjGnVqU+VUV3v7HerF1vFtNriECwnESH7aFsjc0Fk7hukLPvMcRIGlL2+b0qATao6EpzVwNrt/MhJKRY97advgBrlusx6c2XcMGGanDbzQmy/7/duW2P1r4xYtMD7uK56L4K0cto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se; spf=none smtp.mailfrom=konsulko.se; dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=KnDPeRdf; dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=etceAG32; arc=none smtp.client-ip=46.30.212.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=konsulko.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1751906956; x=1752511756;
-	d=konsulko.se; s=rsa1;
-	h=content-transfer-encoding:mime-version:references:in-reply-to:message-id:date:
-	 subject:cc:to:from:from;
-	bh=HMcuy67aBnM2gEG1I5gjH0uFFk4qS0eIAy3dUVDgrME=;
-	b=KnDPeRdfn56fvvr9LGU/Paj2H3lxD6C9A15tSvoHAdk/HdGHM6KXOmblV9arts6cJpcR6VHp+jnm6
-	 mljnce99PK/MlLtSPv3b8PpJ3BMuZmYN8u3I/mUfFrW4EI/8woDHQbW9PAEmLb++wn0k0KRkYDclEv
-	 /9Hu9xsPDWa/gpeAZL07lXsJ5TwYaqSd15WoERBcdZ/rhZG5KUwuRVOAUgezAkuy5/jZ8VFL0aZUpO
-	 2nAQq2winyG0qNl9bcVTTC+UR3+eX3WSEUJZaX8aj0zaHlELaRQLdkeLBF/toRK4gNRHgFYrYA2reM
-	 rUkOGv1Z2RiCDXFuMzqSGXOSzDuDKdg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1751906956; x=1752511756;
-	d=konsulko.se; s=ed1;
-	h=content-transfer-encoding:mime-version:references:in-reply-to:message-id:date:
-	 subject:cc:to:from:from;
-	bh=HMcuy67aBnM2gEG1I5gjH0uFFk4qS0eIAy3dUVDgrME=;
-	b=etceAG329BurawTE71FPKlzJkyHlilIJyjx8TU37hcwrImnDr3iERBE0iCbLhqvYW1J6WL5ZwnLNz
-	 7a3pU4HBA==
-X-HalOne-ID: 4fa49f16-5b52-11f0-a4bb-fb5fec76084d
-Received: from localhost.localdomain (host-90-238-19-233.mobileonline.telia.com [90.238.19.233])
-	by mailrelay3.pub.mailoutpod3-cph3.one.com (Halon) with ESMTPSA
-	id 4fa49f16-5b52-11f0-a4bb-fb5fec76084d;
-	Mon, 07 Jul 2025 16:49:14 +0000 (UTC)
-From: Vitaly Wool <vitaly.wool@konsulko.se>
-To: linux-mm@kvack.org
-Cc: akpm@linux-foundation.org,
-	linux-kernel@vger.kernel.org,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	rust-for-linux@vger.kernel.org,
-	Vitaly Wool <vitaly.wool@konsulko.se>
-Subject: [PATCH v11 2/4] mm/slub: allow to set node and align in k[v]realloc
-Date: Mon,  7 Jul 2025 18:49:08 +0200
-Message-Id: <20250707164908.631462-1-vitaly.wool@konsulko.se>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20250707164755.631374-1-vitaly.wool@konsulko.se>
-References: <20250707164755.631374-1-vitaly.wool@konsulko.se>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70B06224B1B;
+	Mon,  7 Jul 2025 16:49:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.81
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751906971; cv=fail; b=r/jryWjVCPVhgW88/o1fj76ekxIUFhbfzyXXDQ0N63ytXWzlFViIQsf3R81zX43nhR+6M3E7FVkPGnHjEIS/WmgqYaWQds60ablq3z+KjHakYVDW6hZ32m1oGmz76KHp6NY0+M+3pGircrSjSB9IxP3VHgXqou08B0ZfzfP7C1U=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751906971; c=relaxed/simple;
+	bh=6xKFPDXYR9wLSq1aeWdTkJd1QZLOZSUdfS1rT5syuMU=;
+	h=Message-ID:Date:To:Cc:References:From:Subject:In-Reply-To:
+	 Content-Type:MIME-Version; b=qoLcwij4JcVHBOO7zRynz2TfEL86qsQQYQopcIIBo2u1fjGCZn+Q7cie0AG/lz3Om+Rf/ta2BzH4jrWZQJUSyo3ScfQYTfoc2l8X9YdQcan9IfcKW6h3+AqlZQjmc3dWT9iX+OwMSoZdnQkfoaAqZXjCx0U61zE0pYWC8MHREuo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=PMUbdx/e; arc=fail smtp.client-ip=40.107.244.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=RAJjbbMkJk6sI+DV74WTCFUVaQgMjD0S9gz8I9jHI767panhsWXE6fVxVaZvJSijAlHzLtbZPYvnUITOoY7Kl1KZYjTmh/RPJo1kSOuo9PeYEgcs24+wD3fDxuOSWxXAY4zY7hG9SnUYLyAy2pL6cWIOCZEv3RFokcrDWpJwTKNupm+lrJto/ECCiIe8Wc7H0e4bB2EIH+V1zC5CMRjLkD1pW1TXPMIj9FVj6ACk5dnidieZTJLd8aFil0lzHYY06zGDYjaVUjiiCpTD0R6SO7hHrs9HlzyENHbMRETrAmW36kjy8d7o0ft7QPux+A+VJLp0Uv2uhG3X1bPO5AQIxQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=SJ4VxPg9CXPHd6TtY6Gpvw9Z3z/lUQrciRexBDs+xNs=;
+ b=aVpmyJxFSwJNkOqZZAauqekgtOrpEAdyUbmoPgiZPE8X6nGm1mIVcLZy+U4YvOrcNKo/UGdRpl4oNE8Pb9VUq3cTpyCdJHHD4IOJ68An4FSxlJ6ML74rCGsZrTFZH2I85B+lhgfDnxKxrnG5P+JsBhWz43xkQDq77aNywZwl4U74C0e+T2CazYTqaPhdNCZ1Ee+IfnOE/pyJ9vUscrg0smFfa7bfZncg7HMBkeFC308ogApm05zDdEdry+LSdrBJ5c4xG1Io37XszNVHW1cCdbzz5jG/edElBVA2hTLTC2Z+clvfaPvD17x1R82a/yeJkMe2GruqDRDQGK2ld7VdpA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SJ4VxPg9CXPHd6TtY6Gpvw9Z3z/lUQrciRexBDs+xNs=;
+ b=PMUbdx/e/yTFUoJp+EB6e/i18knlbWYOdm8o5hrFKrKDyRUs7afmbFb3EvbST5jr2zBESywImiYUVpJKrIzqtSpayQPd9kXAFYZgT5cj0fUlSZa6iqy2+Tn4YlYfLBvJK2hkMQ98a/he6F6aJ/46nVxFomGDnVhFJ/q7Kaa9dBo=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DM4PR12MB5070.namprd12.prod.outlook.com (2603:10b6:5:389::22)
+ by SJ5PPF1394451C7.namprd12.prod.outlook.com (2603:10b6:a0f:fc02::98b) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.23; Mon, 7 Jul
+ 2025 16:49:25 +0000
+Received: from DM4PR12MB5070.namprd12.prod.outlook.com
+ ([fe80::20a9:919e:fd6b:5a6e]) by DM4PR12MB5070.namprd12.prod.outlook.com
+ ([fe80::20a9:919e:fd6b:5a6e%7]) with mapi id 15.20.8901.023; Mon, 7 Jul 2025
+ 16:49:23 +0000
+Message-ID: <a3c5017f-d9bf-828f-90e1-61d0c1add14f@amd.com>
+Date: Mon, 7 Jul 2025 11:49:19 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Content-Language: en-US
+To: Ashish Kalra <Ashish.Kalra@amd.com>, corbet@lwn.net, seanjc@google.com,
+ pbonzini@redhat.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+ john.allen@amd.com, herbert@gondor.apana.org.au, davem@davemloft.net,
+ akpm@linux-foundation.org, rostedt@goodmis.org, paulmck@kernel.org
+Cc: nikunj@amd.com, Neeraj.Upadhyay@amd.com, aik@amd.com, ardb@kernel.org,
+ michael.roth@amd.com, arnd@arndb.de, linux-doc@vger.kernel.org,
+ linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kvm@vger.kernel.org
+References: <cover.1751397223.git.ashish.kalra@amd.com>
+ <68885411fddfdba2fe0c3ab023dc5d5eb108689b.1751397223.git.ashish.kalra@amd.com>
+From: Tom Lendacky <thomas.lendacky@amd.com>
+Subject: Re: [PATCH v5 5/7] crypto: ccp - Add support to enable
+ CipherTextHiding on SNP_INIT_EX
+In-Reply-To: <68885411fddfdba2fe0c3ab023dc5d5eb108689b.1751397223.git.ashish.kalra@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SN4PR0501CA0005.namprd05.prod.outlook.com
+ (2603:10b6:803:40::18) To DM4PR12MB5070.namprd12.prod.outlook.com
+ (2603:10b6:5:389::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR12MB5070:EE_|SJ5PPF1394451C7:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0b99792c-70cd-439d-0376-08ddbd763991
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|7416014|376014|366016|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?M0phamRDS3FpTWJ4LzhjUGU0OGVNODhadTV4c2hpTThzVU5XQytGd3FhekNh?=
+ =?utf-8?B?Y3VJWjcwdG1tZFdzdWIyekZockhqYXJSbll5TWVxQVhsYzVUVElnVGlOUDRk?=
+ =?utf-8?B?NjBPNm8rTVdrRnJ5MER1SjRqUWsvMWcvTTduOGRXblZCcWIwcE5INm9iU3l0?=
+ =?utf-8?B?VUxjTkNBdlM4Tk1qYkRGSzVSQzc3MGZjejhabGFOaGhHcWpqbGsvSU90d3dS?=
+ =?utf-8?B?bGJENUpCakZDQzZ2c2EwL0JKa0o0UFBQamxxcVQzOUdybU01TldTWWJLdnk0?=
+ =?utf-8?B?dnlJaDE2TWFkRTNlZ2RKSW8zelpBeGJ1ZG1MallKTkZMOVNaek1WbDEybkxa?=
+ =?utf-8?B?QnpBcHZiRkY0QUhBQ3RPczBLOUQwZ0tvL1JxK0phOVd3cHF2NFFJZncxV2xs?=
+ =?utf-8?B?aCszZUdzSlo4NHVzUTFObVpDT1hYWEpPNWtidHFxeVNmcy95VE1ZT3VIMXMw?=
+ =?utf-8?B?OE0zVGRUZnppeU1BTitrOEI5bkRDWmk4YU0rSFhMbVVjQWE5RjU3bTlORVhJ?=
+ =?utf-8?B?WGc1YXR0U2JFeVVqdVhUWkY3b1JVWTlUNVkrQ3ltV1BNcDNLd2NyVmlBQnIx?=
+ =?utf-8?B?RGd5Q3RsMFAydUM2SlRtUkdMQjI2Sm4rU0hna2c2bnVyVEVJellHMktsOFdQ?=
+ =?utf-8?B?YmxJb1J3UDlrLzdoSzU2VVJxcURKOFRRanlhRnM5dkZjTFUvaytyWjZwTDVL?=
+ =?utf-8?B?M1BzVzF4RGk4THc1aFhBMER2RFhjeXpraGNWSHBramRnV3pURituMDMwWC9X?=
+ =?utf-8?B?Sk42SmF1blZyajJQMVpRaTYwMlpRN3ZZYkZBb3ZPU3FrYk0yQmpCWmp3aFVE?=
+ =?utf-8?B?bnlMaXR3LzhSYUdrSzBoUjdLSUkwdFhCRXlUTk9pOFZDUjlTS0R3YlVUcFZL?=
+ =?utf-8?B?WkJ3Y0ZPd2Z3Q3lEcWlPT24vVE1mUlVHQTFKdStuWmFmdEptMmhoLzQ0Q1RB?=
+ =?utf-8?B?SVY0cGRGYytuY1dLaTNyeDIzOG5zQTNXdUcwWUNveTV6Q3VDakdjUVc0V1lP?=
+ =?utf-8?B?Z1BGOGcvOEVHTlhlMTNrZ3ZTaUp2Z1dFbEg2bElPak5HaDl2eGZBMWlqU0Nx?=
+ =?utf-8?B?U0NWbVNMamhDZmdTb0JZNTUxamNhaXZEOVBkMjIxZFhCV1lBaU5ZQXY1Um5n?=
+ =?utf-8?B?YlZEUlgwNG5XRlFyTFo1SFkyS05JRjdISnVPb2xtTnNldS95czhKR3Z3SWU1?=
+ =?utf-8?B?a3pmeHNnaHc5SEl5UW5sSG1NZ01NbHJ0djdQQStiSi9lRFNTZmdpeU9JcGJS?=
+ =?utf-8?B?bEVVWFMra2wyV0hWQ2krOWtIcXJ4ZTVPRktWOTRuV0RLN1ZFVjc4ZUdhU01O?=
+ =?utf-8?B?UkVTQTlrdDJWUjVyZEJDa29tdUlWSVNnZTZxaGxLN3UxTHBUdDY1c0FOR25i?=
+ =?utf-8?B?SGorTW5QcFNBSmh4aUN6Unp1YWFTY3FVOUF2NkNBT1RuY2tvZnlEWWNGY2Ix?=
+ =?utf-8?B?VzdiZHRjZ2dxMzFmZWlLay9idjg1ckYwZE53WXJoM1MvQStndDVOTUhkWWk0?=
+ =?utf-8?B?S2JIYzRlRUk1UFpuNDdhMHl1c1QzQndCYWg3VmVlblRjN1VOaE9MQ3hzY3Jt?=
+ =?utf-8?B?K2t3aDltcjlYUS9DZUJMU0w4MFkrQi94Z29wUGxNcWRuWis3MmVtejVHSmsy?=
+ =?utf-8?B?aDdRNUZmanNodkFVK3ZWbnVINmJ0b1kvWUFVV2tDSkl3Uk0rVU9HYmNCLytV?=
+ =?utf-8?B?NUhIeDA1VG1xNnJRSDhZcklpNVVEWmZRUHkraStteWdPSElBRXFSMjRrbS9O?=
+ =?utf-8?B?UTZtQlBTRDlKaVl6cG1sQWkxNGJnQVhDTkNBMHk2TU00UDR2b1RBb2FLM3Ra?=
+ =?utf-8?B?Q3VKb2hhMkM2MHN2MWtySE03RjlmNk5aZmh1YjQxUnJyT0lnM2dTT1d0UC9S?=
+ =?utf-8?B?dE5ndHJPYzVTbytFbEhlc01xb0UrTThEZ1p4WHZ4QWVyUUVOUVgyLzVTUDVC?=
+ =?utf-8?B?TEVvMEhleWZOb21nS2VzaWhsMkJxUHV5ZDkvcEdjclpLWmZOQXc4M3Z3bjdG?=
+ =?utf-8?B?Q0RlRkh3U21BPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5070.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?UllBVURtR0RJMHVzT1ZGNis3Q1hnYnhuY0hBWVFaUUpnbmdyRGg0NFBjZjJw?=
+ =?utf-8?B?UzcwVXZGK0ZnUUV4bml6dnBnOU4xNDV6NmxvU2NteGxrN0dhcVVsNWRXdmxQ?=
+ =?utf-8?B?bFNVVVZqT2hLWE54Z0FHUUs5UTVjczJLRnhRczNHR0gvUzhhdkxHaUZEaGJJ?=
+ =?utf-8?B?TE5BNUd5VkZmMEFhUVdPNTlabzNOSktKRWY4TzNBbkFQQVlTU2htUjBmdzQv?=
+ =?utf-8?B?cFVyUHgrazIzMTVidTVlZkwvTC9ObEJKYWQ3VWhNVTJmUGYyRUZtdWlGbldT?=
+ =?utf-8?B?bktDU1NOODJ2TzU3V3RGbHFQajhYbjhxckhkaHZoMnR1NU56TU50bjdNZEJZ?=
+ =?utf-8?B?N2VWaUMxWktvOUJZSnNWWU1Cb3NEdWZURHo4aEF2Sk5Wdk9vK3hJdGpjTmVG?=
+ =?utf-8?B?YzMvRU02TjhGaDZlbU44dnN5Z1pzMHZaNlpNdjIzOHF3VVVsYVpsYXVDcXFD?=
+ =?utf-8?B?bHU2MDVJVHZNVHg1MnJyQnFHWHgxZURXM2dSRG5pb3ZyZVEzeGl0NjBsRWFN?=
+ =?utf-8?B?ak5Od09LaVNkZWxqalVnNkVyTWFHRkxaT3hQbjZ3dFpqS1JIU3lMSWxFYTBO?=
+ =?utf-8?B?Qk1yRjYzeW1tNTRtVlQ0ZldWcUd6Mk04bXJ0akRjSnZCdjdBNDFQelB5M2Rh?=
+ =?utf-8?B?NTBITzR0SysrbmFhclVZSVlzN1JxVUFUV1h6NGJQcWhrNlFFUmJkcEtSRHJ3?=
+ =?utf-8?B?dzVxS1JWWUJQcS9hVmdzOHNvV2dSY3gvVTRkOTNvRis2dGtUUlFMeUdGUUY5?=
+ =?utf-8?B?WFdrbnFTWUM3dkszdWQ2a2IyblJQRUxXbmFjTi9LU2R5Z053cEc4WHNLL2li?=
+ =?utf-8?B?MHhoNW9CaFFPTGZ5WEdWNjRVVG1rMTA3bmVvR0VTMWlNUjNuTU5YUDBnRXcr?=
+ =?utf-8?B?YmV1cXF5SlNVL3VicmhMMEN2M3ZCZFV4a3I2VzJxbldpY05zM0xLSGx0VWZE?=
+ =?utf-8?B?ejhGZVFYcCtSa2RZY3NITEhDR3ZMQ2NmM1VtOTEyUnJNV1pYS1dSOTVKRVMr?=
+ =?utf-8?B?VjdTYkg3QWdSTGJIeHVQWnV5dEtEYTNqUzhldW9jVGZRMlZMcW0xT2dwUGVp?=
+ =?utf-8?B?MitGTEltWE9jeDNOdHo3Mzc2bWliQnMycFl3NUxQalFKVVhjOWlQNnlKZHJl?=
+ =?utf-8?B?Vkc0eG5sSkswd0IxOTl2Q3RPTElIYllBdkFsTDZkMlRKbnVCUW8wMUxOeXEr?=
+ =?utf-8?B?SXBQQ2ZLQ3dUbVFQVkZVTkhOL0lEeTlxcXJ3YWV6Z0hqZnJQbXg1NmlDZTZG?=
+ =?utf-8?B?T2NLTXNVUWdEVGxoY0xPWERjUmE3SnV6WlJJYWs3QUp6RldDelJ0dG9WbDJz?=
+ =?utf-8?B?WGlVNTVVclN2Z1VpbExPM054ZkdRZGVFV2hrM0QxRk5TQ3pzcFdtVFVJcHBu?=
+ =?utf-8?B?YVBNd2tGZzlFK1N4bkZ6Y01oaHdxeE5mTHBxaitrSmxTeWhzUWpWWHR0NTZG?=
+ =?utf-8?B?QnJ2cDNEZnFrdUdYeFErK1ZxUTl4R1cvZU9GRzNtT3JJSkt3cmMveE14aWJu?=
+ =?utf-8?B?NmsxUElCR0ZtQm0xM21UNnByNHRlNE1ySkZGK3MzTFlHZFNFQVFmOTJBQUVY?=
+ =?utf-8?B?ZTZ3SFdKcmpxcjVNNXlzZmxsUGdJSGlBY0Q0MUJBY0J3bDFlc1ZYSDY5ajhi?=
+ =?utf-8?B?MFVmNVB0dGZoWjBNZGJYU0tjc2VlS0JkektEalhkTXhNS1V3WWt5L0VCNG53?=
+ =?utf-8?B?RVdQL3VkbEZzaENIMjJvSVEydjJZTENMQzZ3ZkpmcHpsNC9OajBaZjRpZ3dW?=
+ =?utf-8?B?VDBiNEFlQW81blpUc2R2RzBkTFJwS2toMmo0N1hrOFRISTVmd0Via2U1aEI3?=
+ =?utf-8?B?V0FIaW9YZGZBQnFaVXpSSTA4UUJzOTI0NUs5T04zcGROelg4R3M3TTZJRW52?=
+ =?utf-8?B?K0hGZ0RpRm93S1J4VXkwck5DWVp5YVFyb1czR2l3K0xvTC96K0hudHdMUGx2?=
+ =?utf-8?B?L09XQVBEeWFhM0FFenhCWjJ4VWNtTTg5eFJ2cWt0d1JYSzIzSjNiaW8ySDZn?=
+ =?utf-8?B?eWRjdDNVbURzMzcyaXdBa3czdEFjelE2Y0txaGdiM1JXcGxTUk9JaENVQkFy?=
+ =?utf-8?B?YWhMcGpsZGFOU0Yvc0pza3plM1E5YlRjUkF6QVZuTFdUdlJKVk1mTi9FTjRF?=
+ =?utf-8?Q?nOFPB5kXzLsGXSM648UoTN29z?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0b99792c-70cd-439d-0376-08ddbd763991
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5070.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jul 2025 16:49:22.9307
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 5IC8D3D4O1ZeKZ2SeCh1YLva4uRYBxWqz/z+8zJ3HzHA2J8wFoUhmGhY98YTgrvdgMS9y8RRZnJ/ezl3TzAypg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ5PPF1394451C7
 
-Reimplement k[v]realloc_node() to be able to set node and
-alignment should a user need to do so. In order to do that while
-retaining the maximal backward compatibility, add
-k[v]realloc_node_align() functions and redefine the rest of API
-using these new ones.
+On 7/1/25 15:15, Ashish Kalra wrote:
+> From: Ashish Kalra <ashish.kalra@amd.com>
+> 
+> Ciphertext hiding needs to be enabled on SNP_INIT_EX.
 
-With that change we also provide the ability for the Rust part of
-the kernel to set node and alignment in its K[v]xxx
-[re]allocations.
+How about:
 
-Signed-off-by: Vitaly Wool <vitaly.wool@konsulko.se>
----
- include/linux/slab.h | 40 ++++++++++++++++++---------
- mm/slub.c            | 64 ++++++++++++++++++++++++++++++--------------
- 2 files changed, 71 insertions(+), 33 deletions(-)
+In order for ciphertext hiding to be enabled, it must be specified on
+the SNP_INIT_EX command as part of SNP initialization.
 
-diff --git a/include/linux/slab.h b/include/linux/slab.h
-index d5a8ab98035c..13abcf4ada22 100644
---- a/include/linux/slab.h
-+++ b/include/linux/slab.h
-@@ -465,9 +465,15 @@ int kmem_cache_shrink(struct kmem_cache *s);
- /*
-  * Common kmalloc functions provided by all allocators
-  */
--void * __must_check krealloc_noprof(const void *objp, size_t new_size,
--				    gfp_t flags) __realloc_size(2);
--#define krealloc(...)				alloc_hooks(krealloc_noprof(__VA_ARGS__))
-+void * __must_check krealloc_node_align_noprof(const void *objp, size_t new_size,
-+					       unsigned long align,
-+					       gfp_t flags, int nid) __realloc_size(2);
-+#define krealloc_node_noprof(_p, _s, _f, _n) \
-+	krealloc_node_align_noprof(_p, _s, 1, _f, _n)
-+#define krealloc_noprof(...)		krealloc_node_noprof(__VA_ARGS__, NUMA_NO_NODE)
-+#define krealloc_node_align(...)	alloc_hooks(krealloc_node_align_noprof(__VA_ARGS__))
-+#define krealloc_node(...)		alloc_hooks(krealloc_node_noprof(__VA_ARGS__))
-+#define krealloc(...)			alloc_hooks(krealloc_noprof(__VA_ARGS__))
- 
- void kfree(const void *objp);
- void kfree_sensitive(const void *objp);
-@@ -1041,18 +1047,23 @@ static inline __alloc_size(1) void *kzalloc_noprof(size_t size, gfp_t flags)
- #define kzalloc(...)				alloc_hooks(kzalloc_noprof(__VA_ARGS__))
- #define kzalloc_node(_size, _flags, _node)	kmalloc_node(_size, (_flags)|__GFP_ZERO, _node)
- 
--void *__kvmalloc_node_noprof(DECL_BUCKET_PARAMS(size, b), gfp_t flags, int node) __alloc_size(1);
--#define kvmalloc_node_noprof(size, flags, node)	\
--	__kvmalloc_node_noprof(PASS_BUCKET_PARAMS(size, NULL), flags, node)
-+void *__kvmalloc_node_noprof(DECL_BUCKET_PARAMS(size, b), unsigned long align,
-+			     gfp_t flags, int node) __alloc_size(1);
-+#define kvmalloc_node_align_noprof(_size, _align, _flags, _node)	\
-+	__kvmalloc_node_noprof(PASS_BUCKET_PARAMS(_size, NULL), _align, _flags, _node)
-+#define kvmalloc_node_noprof(_size, _flags, _node)	\
-+	kvmalloc_node_align_noprof(_size, 1, _flags, _node)
-+#define kvmalloc_node_align(...)		\
-+	alloc_hooks(kvmalloc_node_align_noprof(__VA_ARGS__))
- #define kvmalloc_node(...)			alloc_hooks(kvmalloc_node_noprof(__VA_ARGS__))
- 
--#define kvmalloc(_size, _flags)			kvmalloc_node(_size, _flags, NUMA_NO_NODE)
--#define kvmalloc_noprof(_size, _flags)		kvmalloc_node_noprof(_size, _flags, NUMA_NO_NODE)
-+#define kvmalloc_noprof(...)			kvmalloc_node_noprof(__VA_ARGS__, NUMA_NO_NODE)
-+#define kvmalloc(...)				alloc_hooks(kvmalloc_noprof(__VA_ARGS__))
- #define kvzalloc(_size, _flags)			kvmalloc(_size, (_flags)|__GFP_ZERO)
- 
--#define kvzalloc_node(_size, _flags, _node)	kvmalloc_node(_size, (_flags)|__GFP_ZERO, _node)
-+#define kvzalloc_node(_s, _f, _n)		kvmalloc_node(_s, (_f)|__GFP_ZERO, _n)
- #define kmem_buckets_valloc(_b, _size, _flags)	\
--	alloc_hooks(__kvmalloc_node_noprof(PASS_BUCKET_PARAMS(_size, _b), _flags, NUMA_NO_NODE))
-+	alloc_hooks(__kvmalloc_node_noprof(PASS_BUCKET_PARAMS(_size, _b), 1, _flags, NUMA_NO_NODE))
- 
- static inline __alloc_size(1, 2) void *
- kvmalloc_array_node_noprof(size_t n, size_t size, gfp_t flags, int node)
-@@ -1068,13 +1079,16 @@ kvmalloc_array_node_noprof(size_t n, size_t size, gfp_t flags, int node)
- #define kvmalloc_array_noprof(...)		kvmalloc_array_node_noprof(__VA_ARGS__, NUMA_NO_NODE)
- #define kvcalloc_node_noprof(_n,_s,_f,_node)	kvmalloc_array_node_noprof(_n,_s,(_f)|__GFP_ZERO,_node)
- #define kvcalloc_noprof(...)			kvcalloc_node_noprof(__VA_ARGS__, NUMA_NO_NODE)
--
- #define kvmalloc_array(...)			alloc_hooks(kvmalloc_array_noprof(__VA_ARGS__))
- #define kvcalloc_node(...)			alloc_hooks(kvcalloc_node_noprof(__VA_ARGS__))
- #define kvcalloc(...)				alloc_hooks(kvcalloc_noprof(__VA_ARGS__))
- 
--void *kvrealloc_noprof(const void *p, size_t size, gfp_t flags)
--		__realloc_size(2);
-+void *kvrealloc_node_align_noprof(const void *p, size_t size, unsigned long align,
-+				  gfp_t flags, int nid) __realloc_size(2);
-+#define kvrealloc_node_align(...)		kvrealloc_node_align_noprof(__VA_ARGS__)
-+#define kvrealloc_node_noprof(_p, _s, _f, _n)	kvrealloc_node_align_noprof(_p, _s, 1, _f, _n)
-+#define kvrealloc_node(...)			alloc_hooks(kvrealloc_node_noprof(__VA_ARGS__))
-+#define kvrealloc_noprof(...)			kvrealloc_node_noprof(__VA_ARGS__, NUMA_NO_NODE)
- #define kvrealloc(...)				alloc_hooks(kvrealloc_noprof(__VA_ARGS__))
- 
- extern void kvfree(const void *addr);
-diff --git a/mm/slub.c b/mm/slub.c
-index c4b64821e680..881244c357dd 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -4845,7 +4845,7 @@ void kfree(const void *object)
- EXPORT_SYMBOL(kfree);
- 
- static __always_inline __realloc_size(2) void *
--__do_krealloc(const void *p, size_t new_size, gfp_t flags)
-+__do_krealloc(const void *p, size_t new_size, unsigned long align, gfp_t flags, int nid)
- {
- 	void *ret;
- 	size_t ks = 0;
-@@ -4859,6 +4859,20 @@ __do_krealloc(const void *p, size_t new_size, gfp_t flags)
- 	if (!kasan_check_byte(p))
- 		return NULL;
- 
-+	/* refuse to proceed if alignment is bigger than what kmalloc() provides */
-+	if (!IS_ALIGNED((unsigned long)p, align) || new_size < align)
-+		return NULL;
-+
-+	/*
-+	 * If reallocation is not necessary (e. g. the new size is less
-+	 * than the current allocated size), the current allocation will be
-+	 * preserved unless __GFP_THISNODE is set. In the latter case a new
-+	 * allocation on the requested node will be attempted.
-+	 */
-+	if (unlikely(flags & __GFP_THISNODE) && nid != NUMA_NO_NODE &&
-+		     nid != page_to_nid(vmalloc_to_page(p)))
-+		goto alloc_new;
-+
- 	if (is_kfence_address(p)) {
- 		ks = orig_size = kfence_ksize(p);
- 	} else {
-@@ -4903,7 +4917,7 @@ __do_krealloc(const void *p, size_t new_size, gfp_t flags)
- 	return (void *)p;
- 
- alloc_new:
--	ret = kmalloc_node_track_caller_noprof(new_size, flags, NUMA_NO_NODE, _RET_IP_);
-+	ret = kmalloc_node_track_caller_noprof(new_size, flags, nid, _RET_IP_);
- 	if (ret && p) {
- 		/* Disable KASAN checks as the object's redzone is accessed. */
- 		kasan_disable_current();
-@@ -4915,10 +4929,12 @@ __do_krealloc(const void *p, size_t new_size, gfp_t flags)
- }
- 
- /**
-- * krealloc - reallocate memory. The contents will remain unchanged.
-+ * krealloc_node_align - reallocate memory. The contents will remain unchanged.
-  * @p: object to reallocate memory for.
-  * @new_size: how many bytes of memory are required.
-+ * @align: desired alignment.
-  * @flags: the type of memory to allocate.
-+ * @nid: NUMA node or NUMA_NO_NODE
-  *
-  * If @p is %NULL, krealloc() behaves exactly like kmalloc().  If @new_size
-  * is 0 and @p is not a %NULL pointer, the object pointed to is freed.
-@@ -4947,7 +4963,8 @@ __do_krealloc(const void *p, size_t new_size, gfp_t flags)
-  *
-  * Return: pointer to the allocated memory or %NULL in case of error
-  */
--void *krealloc_noprof(const void *p, size_t new_size, gfp_t flags)
-+void *krealloc_node_align_noprof(const void *p, size_t new_size, unsigned long align,
-+				 gfp_t flags, int nid)
- {
- 	void *ret;
- 
-@@ -4956,13 +4973,13 @@ void *krealloc_noprof(const void *p, size_t new_size, gfp_t flags)
- 		return ZERO_SIZE_PTR;
- 	}
- 
--	ret = __do_krealloc(p, new_size, flags);
-+	ret = __do_krealloc(p, new_size, align, flags, nid);
- 	if (ret && kasan_reset_tag(p) != kasan_reset_tag(ret))
- 		kfree(p);
- 
- 	return ret;
- }
--EXPORT_SYMBOL(krealloc_noprof);
-+EXPORT_SYMBOL(krealloc_node_align_noprof);
- 
- static gfp_t kmalloc_gfp_adjust(gfp_t flags, size_t size)
- {
-@@ -4993,6 +5010,7 @@ static gfp_t kmalloc_gfp_adjust(gfp_t flags, size_t size)
-  * failure, fall back to non-contiguous (vmalloc) allocation.
-  * @size: size of the request.
-  * @b: which set of kmalloc buckets to allocate from.
-+ * @align: desired alignment.
-  * @flags: gfp mask for the allocation - must be compatible (superset) with GFP_KERNEL.
-  * @node: numa node to allocate from
-  *
-@@ -5005,19 +5023,22 @@ static gfp_t kmalloc_gfp_adjust(gfp_t flags, size_t size)
-  *
-  * Return: pointer to the allocated memory of %NULL in case of failure
-  */
--void *__kvmalloc_node_noprof(DECL_BUCKET_PARAMS(size, b), gfp_t flags, int node)
-+void *__kvmalloc_node_noprof(DECL_BUCKET_PARAMS(size, b), unsigned long align,
-+			     gfp_t flags, int node)
- {
- 	void *ret;
- 
- 	/*
- 	 * It doesn't really make sense to fallback to vmalloc for sub page
--	 * requests
-+	 * requests and small alignments
- 	 */
--	ret = __do_kmalloc_node(size, PASS_BUCKET_PARAM(b),
--				kmalloc_gfp_adjust(flags, size),
--				node, _RET_IP_);
--	if (ret || size <= PAGE_SIZE)
--		return ret;
-+	if (size >= align) {
-+		ret = __do_kmalloc_node(size, PASS_BUCKET_PARAM(b),
-+					kmalloc_gfp_adjust(flags, size),
-+					node, _RET_IP_);
-+		if (ret || size <= PAGE_SIZE)
-+			return ret;
-+	}
- 
- 	/* non-sleeping allocations are not supported by vmalloc */
- 	if (!gfpflags_allow_blocking(flags))
-@@ -5035,7 +5056,7 @@ void *__kvmalloc_node_noprof(DECL_BUCKET_PARAMS(size, b), gfp_t flags, int node)
- 	 * about the resulting pointer, and cannot play
- 	 * protection games.
- 	 */
--	return __vmalloc_node_range_noprof(size, 1, VMALLOC_START, VMALLOC_END,
-+	return __vmalloc_node_range_noprof(size, align, VMALLOC_START, VMALLOC_END,
- 			flags, PAGE_KERNEL, VM_ALLOW_HUGE_VMAP,
- 			node, __builtin_return_address(0));
- }
-@@ -5079,10 +5100,12 @@ void kvfree_sensitive(const void *addr, size_t len)
- EXPORT_SYMBOL(kvfree_sensitive);
- 
- /**
-- * kvrealloc - reallocate memory; contents remain unchanged
-+ * kvrealloc_node_align - reallocate memory; contents remain unchanged
-  * @p: object to reallocate memory for
-  * @size: the size to reallocate
-+ * @align: desired alignment
-  * @flags: the flags for the page level allocator
-+ * @nid: NUMA node id
-  *
-  * If @p is %NULL, kvrealloc() behaves exactly like kvmalloc(). If @size is 0
-  * and @p is not a %NULL pointer, the object pointed to is freed.
-@@ -5100,17 +5123,18 @@ EXPORT_SYMBOL(kvfree_sensitive);
-  *
-  * Return: pointer to the allocated memory or %NULL in case of error
-  */
--void *kvrealloc_noprof(const void *p, size_t size, gfp_t flags)
-+void *kvrealloc_node_align_noprof(const void *p, size_t size, unsigned long align,
-+				  gfp_t flags, int nid)
- {
- 	void *n;
- 
- 	if (is_vmalloc_addr(p))
--		return vrealloc_noprof(p, size, flags);
-+		return vrealloc_node_align_noprof(p, size, align, flags, nid);
- 
--	n = krealloc_noprof(p, size, kmalloc_gfp_adjust(flags, size));
-+	n = krealloc_node_align_noprof(p, size, align, kmalloc_gfp_adjust(flags, size), nid);
- 	if (!n) {
- 		/* We failed to krealloc(), fall back to kvmalloc(). */
--		n = kvmalloc_noprof(size, flags);
-+		n = kvmalloc_node_align_noprof(size, align, flags, nid);
- 		if (!n)
- 			return NULL;
- 
-@@ -5126,7 +5150,7 @@ void *kvrealloc_noprof(const void *p, size_t size, gfp_t flags)
- 
- 	return n;
- }
--EXPORT_SYMBOL(kvrealloc_noprof);
-+EXPORT_SYMBOL(kvrealloc_node_align_noprof);
- 
- struct detached_freelist {
- 	struct slab *slab;
--- 
-2.39.2
+> 
+> Enhance sev_platform_init_args by adding a new argument that enables the
+> KVM module to specify whether the Ciphertext Hiding feature should be
+> activated during SNP initialization. Additionally, this argument will
+> allow for the definition of the maximum ASID that can be used for an
+> SEV-SNP guest when Ciphertext Hiding is enabled.
 
+Modify the sev_platform_init_args structure used as input to
+sev_platform_init(), to add a field that, when non-zero, indicates
+ciphertext hiding should be enabled and indicates the maximum ASID that
+can be used for an SEV-SNP guest.
+
+I think that reads a bit cleaner and clearer.
+
+> 
+> Signed-off-by: Ashish Kalra <ashish.kalra@amd.com>
+> ---
+>  drivers/crypto/ccp/sev-dev.c | 12 +++++++++---
+>  include/linux/psp-sev.h      | 10 ++++++++--
+>  2 files changed, 17 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/crypto/ccp/sev-dev.c b/drivers/crypto/ccp/sev-dev.c
+> index 3f2bbba93617..c883ccf8c3ff 100644
+> --- a/drivers/crypto/ccp/sev-dev.c
+> +++ b/drivers/crypto/ccp/sev-dev.c
+> @@ -1186,7 +1186,7 @@ static int snp_filter_reserved_mem_regions(struct resource *rs, void *arg)
+>  	return 0;
+>  }
+>  
+> -static int __sev_snp_init_locked(int *error)
+> +static int __sev_snp_init_locked(int *error, unsigned int max_snp_asid)
+>  {
+>  	struct psp_device *psp = psp_master;
+>  	struct sev_data_snp_init_ex data;
+> @@ -1247,6 +1247,12 @@ static int __sev_snp_init_locked(int *error)
+>  		}
+>  
+>  		memset(&data, 0, sizeof(data));
+> +
+> +		if (max_snp_asid) {
+> +			data.ciphertext_hiding_en = 1;
+> +			data.max_snp_asid = max_snp_asid;
+> +		}
+> +
+>  		data.init_rmp = 1;
+>  		data.list_paddr_en = 1;
+>  		data.list_paddr = __psp_pa(snp_range_list);
+> @@ -1433,7 +1439,7 @@ static int _sev_platform_init_locked(struct sev_platform_init_args *args)
+>  	if (sev->sev_plat_status.state == SEV_STATE_INIT)
+>  		return 0;
+>  
+> -	rc = __sev_snp_init_locked(&args->error);
+> +	rc = __sev_snp_init_locked(&args->error, args->max_snp_asid);
+>  	if (rc && rc != -ENODEV)
+>  		return rc;
+>  
+> @@ -1516,7 +1522,7 @@ static int snp_move_to_init_state(struct sev_issue_cmd *argp, bool *shutdown_req
+>  {
+>  	int error, rc;
+>  
+> -	rc = __sev_snp_init_locked(&error);
+> +	rc = __sev_snp_init_locked(&error, 0);
+>  	if (rc) {
+>  		argp->error = SEV_RET_INVALID_PLATFORM_STATE;
+>  		return rc;
+> diff --git a/include/linux/psp-sev.h b/include/linux/psp-sev.h
+> index ca19fddfcd4d..b6eda9c560ee 100644
+> --- a/include/linux/psp-sev.h
+> +++ b/include/linux/psp-sev.h
+> @@ -748,10 +748,13 @@ struct sev_data_snp_guest_request {
+>  struct sev_data_snp_init_ex {
+>  	u32 init_rmp:1;
+>  	u32 list_paddr_en:1;
+> -	u32 rsvd:30;
+> +	u32 rapl_dis:1;
+> +	u32 ciphertext_hiding_en:1;
+> +	u32 rsvd:28;
+>  	u32 rsvd1;
+>  	u64 list_paddr;
+> -	u8  rsvd2[48];
+> +	u16 max_snp_asid;
+> +	u8  rsvd2[46];
+>  } __packed;
+>  
+>  /**
+> @@ -800,10 +803,13 @@ struct sev_data_snp_shutdown_ex {
+>   * @probe: True if this is being called as part of CCP module probe, which
+>   *  will defer SEV_INIT/SEV_INIT_EX firmware initialization until needed
+>   *  unless psp_init_on_probe module param is set
+> + * @max_snp_asid: maximum ASID usable for SEV-SNP guest if
+> + *  CipherTextHiding feature is to be enabled
+
+when non-zero, enable ciphertext hiding and specify the maximum ASID
+that can be used for an SEV-SNP guest.
+
+Thanks,
+Tom
+
+>   */
+>  struct sev_platform_init_args {
+>  	int error;
+>  	bool probe;
+> +	unsigned int max_snp_asid;
+>  };
+>  
+>  /**
 
