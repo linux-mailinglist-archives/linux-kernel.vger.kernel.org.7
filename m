@@ -1,145 +1,146 @@
-Return-Path: <linux-kernel+bounces-719836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60928AFB34A
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 14:31:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21592AFB351
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 14:32:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A051F3BC684
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 12:30:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D77AC7AA32F
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 12:30:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B052B14A60D;
-	Mon,  7 Jul 2025 12:30:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2153929ACDA;
+	Mon,  7 Jul 2025 12:31:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="JADAi+vt"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b="B5yWjzj0"
+Received: from www62.your-server.de (www62.your-server.de [213.133.104.62])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F6AFAD21;
-	Mon,  7 Jul 2025 12:30:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751891459; cv=pass; b=olEKUB9B5UfNvkmxaNXPvDh/py1Xdo+Ido3IyGQQv/40KdHNTehA60l10Sh1dYgX443wbs07bKpjnhhlXIg2Yr+wFjDtxFpg6ViLJ+rRJe0H9dwSCBN1ewd0KSuQ7vVkK4LXBGmSX9iGPMXV46CpZRjYUmKHweI/OkmXprZrrVM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751891459; c=relaxed/simple;
-	bh=mrX151EJF7Pcl37M7XXhv1rCHMoq0+4T4pL6rb4tY4Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IKla8fw/LmDDihv5QCIFtx4pZN+abqUJhjcqNEAC75KgIcxnAbKpzakLXw+LnT5huFqg/wzXZB5j9DMbUa61H22Z1O0Eoh5OiSArIaJhjgW13A/SN7qdWDnY4xidKNR+r4B7qPnB8kn2Lsh8OQ0VgsGpUHM1XGyVedCvQA3+rX8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=JADAi+vt; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1751891423; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=guxRtBBaoBOEbe2mv519AShg7WTGKpai/GyzQOpPeKEsp86SflGgsZPw5MLFV9ymNrAVdvxujmsEPkbH+3v3ashCOAsaWRhUxfcNBpU/+SYWaGwobEpeJxTkGvhQ6UwNgUV4RRB+f2mjaeEdYl2WFz74F18SWNOq1B5nycNtwPA=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1751891423; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=Hb6TrggivYkthnZKYMQ9PhC1kEPhFxpQeSRzkBBHQEA=; 
-	b=U36TrsD4eINCTFoWjiQbKwGX8xiddAAgrsQv9DEm7kr40VK5RED1blR2aCsFpH0DN2ODJ+QDbQ3aFmAuHfBoTrcsN76XmvUy7vu36C1A0IrodxgStHQj3Dscm9Ym0wAve+Rrgn7AZdDjpOQns0tydxYpqMpGt99LHG0957B8QQA=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
-	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1751891423;
-	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
-	bh=Hb6TrggivYkthnZKYMQ9PhC1kEPhFxpQeSRzkBBHQEA=;
-	b=JADAi+vt3MiH5E9UlXPBZri8ivvFMgidymfePSPtrA/1/z0O8gMJy1zsvbixTdJS
-	cad+XfO9xMhL3f7WS8IERNGyh6DEKfQhhhdYRGNmzqqi52dCpVXVIlL8LB/cucdRLgb
-	l+Xa1TULSKpav/KTj/fTi31YcwmGmTCK17kco9b8=
-Received: by mx.zohomail.com with SMTPS id 1751891419333639.0502213968841;
-	Mon, 7 Jul 2025 05:30:19 -0700 (PDT)
-From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-To: David Laight <david.laight.linux@gmail.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Randy Dunlap <rdunlap@infradead.org>,
- kernel@collabora.com, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] docs: document linked lists
-Date: Mon, 07 Jul 2025 14:30:15 +0200
-Message-ID: <2391623.ElGaqSPkdT@workhorse>
-In-Reply-To: <20250707101156.2cc84294@pumpkin>
-References:
- <20250702-linked-list-docs-v2-1-e36532f4b638@collabora.com>
- <20250707101156.2cc84294@pumpkin>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4FF413635C;
+	Mon,  7 Jul 2025 12:31:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.133.104.62
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751891518; cv=none; b=IzLz0iAXcw6tHJxWGhOVUULDotrYKhdLvrf7ZUmBjqjF1qUbaM+LH25S/d5CA0wkCZLn4OiKkvODTeR4wu59rF32SNeX1wZoKfZPe5znQmf9bXhgwdz8h5G57JZStxHagipwMFwE5QHPGyoeGwmg/uZCvEWm9AR2OY+jpIsDCCM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751891518; c=relaxed/simple;
+	bh=wvly/6V0VhTLw5qhV1M0kl22++EJC0qJq/oWdAgapQY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Pt+Nyuv0scFaDXFlIGRieLMqGOUCGDY7C0ivVYBj7EV2oqB0NAzOJK9Y8ecbJ+KoPPT2Cs3sK2M3rRDeoFLkNOTIPz3GiMHsxJfWG3m0N6+FXNlz9RNj/0hizzcjTavc1jTZTCAAmFk6GssJMLid/94+yvkklwSMl1xSkdD8kh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net; spf=pass smtp.mailfrom=iogearbox.net; dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b=B5yWjzj0; arc=none smtp.client-ip=213.133.104.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iogearbox.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=iogearbox.net; s=default2302; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=u+p92K+WF5x52aje9i/LpkCJfE+P3HIQKZfRO6Uc4pc=; b=B5yWjzj0u62lJ8SIrqAQ3ddPkL
+	IXQJN0FgsdkRkgKMXgQxNWl5DXdybQG+LJ+ONxnTY4LxFWD+aNw5LmV7/9tCLbxI4HogN7M/HrfrT
+	5KdtGKU3udFZ41m3tIBWb3Xi5m3ZS9+Hjha2M2/B4G49UT0oyfBPHfv4pKlH/1kL+M7EGLcUl15bb
+	QE00i5MVhZrI4l8fyr8OICjoJ81fpZ764LSPwHrXgu3JoRC6IWeanTWuYcfxX/WjxW3lqMXTjIfwE
+	H7hkMX4v/BA3yA3eYzkMdxGJiRwnU7VMFE8pw8PHUbDaHySKtmUW0pUWbkmQB8bT7SGhsPRojn6wu
+	foHxYxrw==;
+Received: from sslproxy06.your-server.de ([78.46.172.3])
+	by www62.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96.2)
+	(envelope-from <daniel@iogearbox.net>)
+	id 1uYl0Q-000FEO-2A;
+	Mon, 07 Jul 2025 14:31:36 +0200
+Received: from localhost ([127.0.0.1])
+	by sslproxy06.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <daniel@iogearbox.net>)
+	id 1uYl0P-0004Qg-2E;
+	Mon, 07 Jul 2025 14:31:33 +0200
+Message-ID: <98f27ecc-a69f-4bcb-a2d7-6fff91383225@iogearbox.net>
+Date: Mon, 7 Jul 2025 14:31:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] selftests/bpf: Set CONFIG_PACKET=y for selftests
+To: Saket Kumar Bhaskar <skb99@linux.ibm.com>, bpf@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: hbathini@linux.ibm.com, sachinpb@linux.ibm.com, andrii@kernel.org,
+ eddyz87@gmail.com, mykolal@fb.com, ast@kernel.org, martin.lau@linux.dev,
+ song@kernel.org, yonghong.song@linux.dev, john.fastabend@gmail.com,
+ kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org,
+ shuah@kernel.org
+References: <20250707071735.705137-1-skb99@linux.ibm.com>
+Content-Language: en-US
+From: Daniel Borkmann <daniel@iogearbox.net>
+Autocrypt: addr=daniel@iogearbox.net; keydata=
+ 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
+In-Reply-To: <20250707071735.705137-1-skb99@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: Clear (ClamAV 1.0.7/27692/Mon Jul  7 10:35:53 2025)
 
-On Monday, 7 July 2025 11:11:56 Central European Summer Time David Laight wrote:
-> On Wed, 02 Jul 2025 22:24:47 +0200
-> Nicolas Frattaroli <nicolas.frattaroli@collabora.com> wrote:
+On 7/7/25 9:17 AM, Saket Kumar Bhaskar wrote:
+> BPF selftest fails to build with below error:
 > 
-> > The kernel contains various generic data structures that should ideally
-> > not be reinvented. However, it often fails to document the usage of
-> > these in the in-tree kernel documentation beyond just a listing of
-> > header symbols in the very lengthy kernel-api docs page. This is fine
-> > for things that have simple invocations, but occasionally things devolve
-> > into several layers of concatenating macros, which are subpar for humans
-> > to parse.
-> > 
-> > Begin making a small impact by adding some rudimentary example-driven
-> > documentation for the linked list functions. Many aspects are covered,
-> > though it is not an exhaustive listing of the entire set of list
-> > operations. We also direct readers towards further documentation should
-> > they be interested in concurrency.
-> >
+>    CLNG-BPF [test_progs] lsm_cgroup.bpf.o
+> progs/lsm_cgroup.c:105:21: error: variable has incomplete type 'struct sockaddr_ll'
+>    105 |         struct sockaddr_ll sa = {};
+>        |                            ^
+> progs/lsm_cgroup.c:105:9: note: forward declaration of 'struct sockaddr_ll'
+>    105 |         struct sockaddr_ll sa = {};
+>        |                ^
+> 1 error generated.
 > 
-> Jeepers; TLDR.
-> I don't think the kernel docs are a place to explain linked lists.
-
-That is not what this is doing. In fact, the very first paragraph
-of the documentation page that was too long for you to read does
-explain this. What are you trying to achieve with this response?
-
-> What may be relevant is a description of the types of linked list
-> the kernel uses.
-
-That is what this is.
-
-> For that you pretty much only need a picture of the head and two
-> items showing both the forward and backward pointers.
-
-No you don't, that does not explain the operations on them. The way
-the kernel embeds nodes as struct members to then do a container_of
-on is not obvious to many, as is evidenced by there existing out-of-
-tree documentation explaining this very fact. The way this interacts
-with how these list operations are called is worth documenting.
-
-> Then a list of the valid operations for that list type.
-
-Function names are not self-explanatory. That lists are circular and
-how that can break traversal after list modifications is not immediately
-evident.
-
-> What you can (efficiently) do with a list depends very much on how
-> it is constructed.
-
-No. O-notation was invented for a reason. There is no way in which you
-can construct a list to make it not a linear search, even if you sort
-it.
-
+> lsm_cgroup selftest requires sockaddr_ll structure which is not there
+> in vmlinux.h when the kernel is built with CONFIG_PACKET=m.
 > 
-> Then repeat for hlist and hlist_nulls - I think they are the other
-> main list types.
+> Enabling CONFIG_PACKET=y ensures that sockaddr_ll is available in vmlinux,
+> allowing it to be captured in the generated vmlinux.h for bpf selftests.
 > 
+> Reported-by: Sachin P Bappalige <sachinpb@linux.ibm.com>
+> Signed-off-by: Saket Kumar Bhaskar <skb99@linux.ibm.com>
 
-hlist literally just lacks a single pointer in the head, it does not
-differ from the kernel's doubly linked list in any meaningful way,
-and would be an actual TL;DR.
-
-> IIRC 'LIST' is a double-linked list through a dummy item.
-> Not my favourite list type and can cause the sanitisers grief.
-
-I don't see how your opinion on the datastructure is relevant here.
-
-> 
-> 	David
-> 
-
-
+Acked-by: Daniel Borkmann <daniel@iogearbox.net>
 
