@@ -1,113 +1,94 @@
-Return-Path: <linux-kernel+bounces-719568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73E7CAFAFB7
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 11:30:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA31CAFAFBB
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 11:30:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F08C83ABB62
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 09:29:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41CA34A0A86
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 09:30:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 795A8291C01;
-	Mon,  7 Jul 2025 09:30:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wahg4mq8"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B5D3293C57;
+	Mon,  7 Jul 2025 09:30:05 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B8C5261595
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 09:29:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80232292B27
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 09:30:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751880601; cv=none; b=KT4WymSnmhthfMkCbq/Ut9O6X9qk3zsHF4WM1N0ds2njCBamXNKRcu0AysTSNC+y5wvXWQkOukvaRUlI4vpuSfTmjQc7Y4utDK4iJQftAjjTbVCY7n4iDaFdMSS+cKIuwoZa8BmELchfd5v0GY59OeU5GtVu66eyVumJjaQhdK4=
+	t=1751880605; cv=none; b=rukspzrWEVIet2u5/+aqIX02rjHEPZCWhTEl3TS9+S7503KKRUxdjzB77QLc9I0ZG24qS9mezKDmwxyOPlWqoKWSoDz92Su/X3IOV/BdFTJ7aFP5nQk4k2ZEre8HFUjGRIYlPxuAYRkqbFCqnu+uPcb9wvdNxBCA6Elwc9zTOMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751880601; c=relaxed/simple;
-	bh=Tcz/ZSON6tyal3jWImYScvZPwBqGMsZpcQToQ5CN7DE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e8xb2bshGD0wfTC1aLPoMt/uazpXKHa0vOmgp8OSeEz9Zrc+tK2WAv0EyiIWK4TGgi9EpxdfpPzuHNPLMVxymPL4Oqo+5eAMaMA2VcFLHKismLZkiQ95vO2UJtupgIDB+Zoc85tB5IVIkFBMNb9DyjnUUK4HFj0o/m67F4OCqIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wahg4mq8; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3a575a988f9so1723345f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 02:29:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1751880598; x=1752485398; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=IG5Dp7YEckX2tzrC76ZgnO2aWG2ab/HrAoOTloA/d6s=;
-        b=wahg4mq8wZ3AoWxrd8aqF0xLGbOmgqzToBp7PaAZi/yW4e07Ky64sXpFueo7mF9ptp
-         n66O2IBKAUiSNnA1HaBPThAiSQn4nxrCedyHkzoMNUSLn8lS5g9aEpJFGwSnbm/EAv9P
-         yKEzOSugrv28+S8KJOefZwfvVrKwtUqZdsKjvjkMvEfYhmSl1d1ltM2kSYkZ570zF0OL
-         zNqLrAMw28uXZWhtnEO6Ryn0vMF4hDPT1lEWVWkEktAObBtdfyRLHgPIWEwbKpx2twNC
-         AzXEMz28dnVkZGBysQKzw1nwMMd4X4/WEZNLEKchGonDEgihp18q3qcF32toZzeBMEfw
-         3www==
+	s=arc-20240116; t=1751880605; c=relaxed/simple;
+	bh=pMhlVEkUFYx16frqYD2ys/zp4Vacync+fTFQLO8Y7j8=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=msfdcxmLNtcvn8WhllRCToQU/eQhYmV5HRNUG8og2cAKHkEuilPXxtDcVTB+lsjrl9wxFAGe8ZStCLKMbTQ3u+TxFGNc45ysOgHfgs6gU/RztHPgmK0ivP9Xq8y5i6/MPyFGKcNM0Kxl3v4cESFTVyzPmtnKWKZDDl0TxR1Wg1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3e05997f731so72292425ab.3
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 02:30:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751880598; x=1752485398;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1751880603; x=1752485403;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IG5Dp7YEckX2tzrC76ZgnO2aWG2ab/HrAoOTloA/d6s=;
-        b=gLNdWDt8ntfqeDAhvDL1EtRUQHSXgZRKWfq1vKDasIMPHSXCdy6KPAzdBP8WPc6th0
-         GBvV8ZujuON/qQqXU4wjf2gf1AjkVOU8JIokvbBPHmUgCOUhD1T3v5YdgGxSefXwFmWe
-         9QBat6bmHm5AVJNJNXaU+0vBin9AMP1HhoAE8FwUkQGrcMDaKUH9qY1T7ZR8wK6fRH9/
-         8r85tCUw7d9mfgu7ZzmuPFbhsDWju/E2XDDdzIw2znAMR/HHXzrhlG1Zl0OiEoBXTL5a
-         4K5xi0tdIppXxOOXMEG3RvLG8emwvQVFg897vAV7ZyHAbWy+BGlePbOQryu6O7Nz1bi9
-         FPvA==
-X-Forwarded-Encrypted: i=1; AJvYcCUTqh4OER24x1ifmOSoNqSg7vQLt+ynir0dOPv0NkGZIazqrwDXNzGMDkXaWmhOrJYYwoeA71YsG+cEzdA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxq7kZpQUIokYG/Q097vo2n+ZyfN/nE+7fYit4MI0ZCy4/y7qs7
-	n+QGLODshAEhZGJU5PNWql2JvA1dI0geLjm8NrjwBWqL8UEdpuIzMEhggoHqzStrzJE=
-X-Gm-Gg: ASbGncvyZ2CJePDpWYYcZKpkSXOtAyyGA2wTvM7kl5rmdfEwO/OBv8rcFhsuv1VrNvG
-	oHmfgVDaSK5goKqOPNvZD+4yyyuFwANZhnsRAcDxAYitbksTOB3ZaheIMEc0ERZVwJ7vrOJHt5J
-	9ki3OSB3IPsK4VvmfO0YOXyAB5Y+xAQKJ5HreAkNuwfK5/ouzIDNRs0pFL8rLzkHZLKE8xmfI+W
-	XL1m2lLWh+va5ohJccYL7+jVMex/Q38SQsKLYAFGqHe5AKQE1NZxix/OWZ2kIo2jYbxf4IwSDus
-	Q1pBxAxDCH+87+o6DNmL0h1L/Mc+R2+rkn4RjI3hjJKX9xdmb1lwN1HczEwbUZx6u5RCXSaQ6G8
-	Bo9BAe4CNtLRhPzy7wle/RqonSbz6JDsZ5hbLnA==
-X-Google-Smtp-Source: AGHT+IH6vBe89bzij44XDEItcxOcNLjzsQbkPRwS+ZfcpIFZigGMShngtte+AasQfadHQ7sAC2jgvw==
-X-Received: by 2002:a05:6000:430a:b0:3a6:d403:6e75 with SMTP id ffacd0b85a97d-3b49a9fed4emr4082140f8f.4.1751880598209;
-        Mon, 07 Jul 2025 02:29:58 -0700 (PDT)
-Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b46d4c8619sm9520972f8f.0.2025.07.07.02.29.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Jul 2025 02:29:57 -0700 (PDT)
-Message-ID: <cce7a38c-a90b-4f9d-b1cd-06dfadef2159@linaro.org>
-Date: Mon, 7 Jul 2025 10:29:56 +0100
+        bh=i3FrwSzkZRQpjEv5ax7x7GcgrRUZI1/BeJkblnIIDas=;
+        b=Fx4JfQHjHptzTnInlIo5J+GFBtXbTG95H1ja3SS7xTYxpWS0hCMJJda9pvTu0l45SE
+         VimOcXWJaXOzWc0pKNIII+249BvTJOHMPK0GwA6igAck3GSaIatFnZkGxiBUCfkhb0ON
+         x0uKmW7k4UIkyMSEResz3BQjnA7FXBo7Hxz+D8DeZF41gYF5N3aVvfDG5sH+nOCpvRt7
+         A1d8VsYoA28eAlzX5Wj2KlBXg/S+svpm3AA6U6egp9wTBZ+yKj/6uno8AbZCfrgBHanO
+         cTcIXafKCiLeQCdCsrc2aY0R6jj8TlAm/RSphR4abTKhB6MfpzxQdFzTmqvZtgrNmIeJ
+         zNBA==
+X-Forwarded-Encrypted: i=1; AJvYcCV8XI4VDmZkij3DZeknejCD63evUf4S5TEk3OMJ6hz//jdN+Cft//4RRk0wbQKrmvRGRD1MvQLN62gJePI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/J0xzRnG5djrwoHsjGoPFlRvCzucns5iSI5/SPhVHeOrBbHxA
+	s4+CySF8d1k5lN4z0TKJDHkaCKFmCd/oS+tV1GTC8IHbmeo+8a+IuGTyxVAlSWCmo+SFrqdPtEI
+	4rKwuG13Fqb19CUaRgODqJpsGc+ONgZ+ZAFeZf34yATEH9nRSm9rhxbZXe+w=
+X-Google-Smtp-Source: AGHT+IH5hJ99iBdAZ2eUEYhkALrqUM1smJuemUwvFzbEb4CHV+YszENd6TVowh9yRirN1q24ejmtOnIeaAYKcZbBaU/7HfoXhukt
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/5] media: dt-bindings: venus: Add qcm2290 dt schema
-To: Jorge Ramirez <jorge.ramirez@oss.qualcomm.com>
-Cc: Vikash Garodia <quic_vgarodia@quicinc.com>, krzk+dt@kernel.org,
- quic_dikshita@quicinc.com, mchehab@kernel.org, robh@kernel.org,
- conor+dt@kernel.org, konradybcio@kernel.org, andersson@kernel.org,
- linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250626135931.700937-1-jorge.ramirez@oss.qualcomm.com>
- <20250626135931.700937-2-jorge.ramirez@oss.qualcomm.com>
- <76492de3-c200-535a-aa1b-c617ba6146f1@quicinc.com> <aGuOMrjfQBNYAjmF@trex>
- <aGuS1X+RfX38krpf@trex>
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Content-Language: en-US
-In-Reply-To: <aGuS1X+RfX38krpf@trex>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:216b:b0:3df:4738:977e with SMTP id
+ e9e14a558f8ab-3e1371d527fmr93550285ab.10.1751880602735; Mon, 07 Jul 2025
+ 02:30:02 -0700 (PDT)
+Date: Mon, 07 Jul 2025 02:30:02 -0700
+In-Reply-To: <67917ed8.050a0220.15cac.02eb.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <686b939a.a00a0220.c7b3.007e.GAE@google.com>
+Subject: Re: [syzbot] [fs?] BUG: corrupted list in remove_wait_queue (2)
+From: syzbot <syzbot+4e21d5f67b886a692b55@syzkaller.appspotmail.com>
+To: brauner@kernel.org, gregkh@linuxfoundation.org, jack@suse.cz, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-media@vger.kernel.org, lizhi.xu@windriver.com, mchehab@kernel.org, 
+	standback@126.com, superman.xpt@gmail.com, syzkaller-bugs@googlegroups.com, 
+	viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 
-On 07/07/2025 10:26, Jorge Ramirez wrote:
->>>> +    maxItems: 5
->>> 2 should be good to support non secure usecases. 5 not needed.
->> ok
-> isnt it better to just leave 5 here - thinking of the future support for
-> secure buffers - and just update the dts?
+syzbot has bisected this issue to:
 
-It should describe the real capabilities of the hardware, not the 
-expected use-cases.
+commit 8ffdff6a8cfbdc174a3a390b6f825a277b5bb895
+Author: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date:   Wed Apr 14 08:58:10 2021 +0000
 
----
-bod
+    staging: comedi: move out of staging directory
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13009f70580000
+start commit:   05df91921da6 Merge tag 'v6.16-rc4-smb3-client-fixes' of gi..
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=10809f70580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=17009f70580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=45bd916a213c79bb
+dashboard link: https://syzkaller.appspot.com/bug?extid=4e21d5f67b886a692b55
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=161cdc8c580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14d1a582580000
+
+Reported-by: syzbot+4e21d5f67b886a692b55@syzkaller.appspotmail.com
+Fixes: 8ffdff6a8cfb ("staging: comedi: move out of staging directory")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
