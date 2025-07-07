@@ -1,236 +1,234 @@
-Return-Path: <linux-kernel+bounces-720064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62FCAAFB68E
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 16:55:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02BDCAFB695
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 16:56:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5113420F71
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 14:54:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B4C81AA5203
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 14:57:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8CBA2E172F;
-	Mon,  7 Jul 2025 14:55:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EB81199EBB;
+	Mon,  7 Jul 2025 14:56:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vykBEbzG"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="lOyMZOsm"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2040.outbound.protection.outlook.com [40.107.243.40])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77ECF2D97A5
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 14:55:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751900117; cv=none; b=ilNG0wjZ0ikZe34qIpgjALPiItdSY3xp7vomTujuCbo9f5inZfge6KJjOIiYZLv4PZroVyg5Yy2p6rOb0BNXi+hREv3oqHKvKZEB/eNScfUGnSFmNwBWKt3Sv9ERFKSyyCuqJO3+tevA4YCL4nV1IW/eWIoO+MAcjiTtAwnB0sM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751900117; c=relaxed/simple;
-	bh=B7JxrGmXJuGH2czgl8Oj0PyXhtTmI8a8+b/ZFGmsa4s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ff8O/h0NVNiWeXnld4MwtJmoP9Tupj/QAaRmht5mRhn+AxP6CsOt1q2YLIH5I5HBoz6HO2VmoHZSmOOsalNZLw50QYIM7oVgNNcfP4vRdGL65JAOUGV6ZSOoKJcz/D2F8bPxD9syb1eVhQWwP1DNkQUA79hushiTZWB3IAVIMhg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vykBEbzG; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-237f270513bso653365ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 07:55:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1751900115; x=1752504915; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uRktVXf5mIe78Av0JuWhtfTpF59d0PhecR0EGwcUxk0=;
-        b=vykBEbzG3aqu3jv+dtxchb5PNU8deluNdq7ncJuZYXEh8UgvlnXjOgApOm3tUUIv1G
-         1LyGn1tRgFQMCECQnGMF1mWm/t7rYDUIRmhGCRIiOuaHCOfnW328wJeJPoy8xACTnFCx
-         0qT3os0m6Ok7uA/MN3Z3DArosVEkoAt59uVvLO2+BFwDSjvn7d+eCHv96cEf4ZZr8pEu
-         kH2h3bFPQ2zQZLja79EoWV85vfajI+ka5hc5Bx1DC4PxAP/nYBWfJ3N9GFbGESU3R/vl
-         bjmplIoih9ouWaT9H/dHzaxXY39ZrasBsrHWlIQEPg4n/9pbByDXcxYx42ou/BiQ2JZW
-         Iauw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751900115; x=1752504915;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uRktVXf5mIe78Av0JuWhtfTpF59d0PhecR0EGwcUxk0=;
-        b=pTVIdFWTepULyu0up/vcAHfJm81FH6ga+L7lJ6S7xFNYdW4EU1ySqO7znSlf6UCZ8L
-         tlJuxpyXeLvwnuuK2bTqNFOzkmrSNJz2krz94qzJXdU/xJsGp0AL/bjtiez/wuFLcZ6Q
-         /BkJV3TLBY7N+qRbrCBzTM/4ZgQodmeWIdKru+3Hnws4vw28w2QSzBhpCCTj0eYBaw8h
-         j1h4HFHdRzzXj4hRzB2s72EhvpG5zEHZaHLEtLgQdvH8XlqFoFii89hf+9bt84U+Y8rJ
-         RZmC+BZzw+Mp1D/yd9gxPVdUmY1gwu2E9RlS02Fl5Z0XNr/pWctq+a8Y5ITaAxgnVrrP
-         WFeg==
-X-Forwarded-Encrypted: i=1; AJvYcCWxOSVfO78s02yEztfix53Q/6iD2d7+ptrZpyyE9th0+HUEQY1hnNrbSDNfqSBTZE2tvRlcNGWcJWEjVUU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yws851sdz9mTvgzC07QCR9hX0TM2+rug9A0cAMYWEmqgkJHb7Kn
-	XYmtf8umqHPnFZxW0R7x6GgaUl3DiAHjApHMj0lTjeIEmM6ElbGnjCiiM5dq58pjI9Po7nEt6gr
-	9mAXKAlnfEueXKZxBW7OLgZmkIc4b3VOidl18Y4PLjRRXiRoreA7uLbYItWFQPQ==
-X-Gm-Gg: ASbGncv7RWzrJibDKtywh61hgtVWh+nB1E82Cv7dVBguPGmgl3Z6nhtVUqowFGP1e/W
-	0sRtDceiVWRNPQgNdLXsaWFjIPS3qmxBGUHmaWJHXwUxQ/f2eyH3a2ocMA6MWnwgVIUQv9mzB51
-	Rr8d+rd8ZS85iZk9HFqpw6zK7KqDmdcW32IHJn/YkbmJ0MKrElypNC3JwqGkiAAfWYMqUq8eO5a
-	iGG
-X-Google-Smtp-Source: AGHT+IEJT+lPpiVSgfMXZ2IKzRwmdKmEWyobwf3mOCnOwgAU724C9llo2Jg9w2I/TgbZ9BGhgSoxJ70KADaog3FlAY8=
-X-Received: by 2002:a17:902:d492:b0:234:8eeb:d81a with SMTP id
- d9443c01a7336-23c79c421fdmr9042025ad.16.1751900113952; Mon, 07 Jul 2025
- 07:55:13 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA83B220F30;
+	Mon,  7 Jul 2025 14:56:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.40
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751900199; cv=fail; b=Zz62G4vgzQ62X4cfT1xTWhMiF7qRRwzLBrwIOebjLXbxkokHhXL9S613xnhj4aijeohtvLbuk35Z1q7sZVeGEmEpcq98B9/j6FKoVaqd8eVA5OmS7FZFnabNCn5MPdDB+vcnPQanOhwSXXqSIFHCfjmDTOnAWSN3VHlW77kbtW8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751900199; c=relaxed/simple;
+	bh=PzqBJOPNMUSMysSxSzF76KYFS6Y7d70Gz+GA+bWyglA=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=rEsCUCcZ76Zrzp8NeiLcBbhJwI6FnTrhWdHXPBGlW2INFQiy8Sjakw4Ud1LAY4j2R1swlYLQsVhP52oRm2Sm+invIU5g8xrHxEWCv+PAhMrehLbIMbf7Pd13wjIi4v+rqnafd8G7/SEaqusV6z4mwEk3BE+bBoPQIb+qr6vi8oU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=lOyMZOsm; arc=fail smtp.client-ip=40.107.243.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Q0SUv1skgmETSoB+M5QYsdPg1mo8qm3wUO6RKNIQDT0PKWqs2kO+hHAp8xfLsTgUIoH1NRZIffYpTsK2pQmTqEnS2YAKo026gjtz3aVLbtnyVgG5sceN0mtlLAKx3xLti9fRV+aZHO31/OnF6V7owpW+b5qoU4GpNZE1FmR+CvN9GQ5Jqgsiu0g5QuFzToobEpqyFtp4ZmA+eqwQfmTX4rqCM6/lR1ZfTsm6FkY4FAYAyGmgyohWsFnna3FkZp6WEpfa1SKVbgs5nsRx6PkBZX19zQ6sBvWoJ5rtdwaeJLYEKcUEE6lIRQEW9M2lHv1syOy7FC6M2CT318gIeKgchw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=T7eBL3T7F5FDkAC6HtDKopk4py84wfEU51BK4T70KA8=;
+ b=FUhbV/UdtM9kEQrWh+XrMu8m33l5oGl6B3JTqGEgVz47mAa42f5A1CFC+drv22N48QhF56OApv7znIVQuHf/O212SJm68KlQmG7VJ/0DtHP074Mt2KZ1Eb2Duy1qRmD3mZnyWei1QERwchyEQS4+bhTvFh5OwTKY03qNARWcfeW7OTrSeOIz0b8C+MVznFGPEWn9A83BYXgCVbJg+t/v/Fcwi0a0FMvWtGrWZ9k90HkkuNDfpSrA0ndc6acWtUvqzdLmJN6Sl6H0C+9wacC9HVeOAxr7/BEB/EXnJkVjLXLZRPkvu1e2cti3RJH8O1LIIQT2Y6jP19+xpcO6JmLavw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=T7eBL3T7F5FDkAC6HtDKopk4py84wfEU51BK4T70KA8=;
+ b=lOyMZOsmWYjxQufHQrvIE9NXkFwTujmVp1GlXqVxqgqTd1EXwwiopsDthzL7j6OAL4KQRnvHxKElw9wvAkva2ncAUeXbf0SejbZPHxNgdx1zsVRiE8XUmz7xTPuzBDB0vzAqgCKK2GD2hPzfbqhIbkf86VYPmWO3EZjTMKUPnF8=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from IA1PR12MB9064.namprd12.prod.outlook.com (2603:10b6:208:3a8::19)
+ by PH7PR12MB8107.namprd12.prod.outlook.com (2603:10b6:510:2bb::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.26; Mon, 7 Jul
+ 2025 14:56:30 +0000
+Received: from IA1PR12MB9064.namprd12.prod.outlook.com
+ ([fe80::1f25:d062:c8f3:ade3]) by IA1PR12MB9064.namprd12.prod.outlook.com
+ ([fe80::1f25:d062:c8f3:ade3%6]) with mapi id 15.20.8901.023; Mon, 7 Jul 2025
+ 14:56:29 +0000
+Message-ID: <1a7190d4-f3ef-744c-4e46-8cb255dee6cf@amd.com>
+Date: Mon, 7 Jul 2025 20:26:20 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Subject: Re: [PATCH v3 10/14] RDMA/ionic: Register device ops for control path
+Content-Language: en-US
+To: Leon Romanovsky <leon@kernel.org>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>, shannon.nelson@amd.com,
+ brett.creeley@amd.com, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, corbet@lwn.net, andrew+netdev@lunn.ch,
+ allen.hubbe@amd.com, nikhil.agarwal@amd.com, linux-rdma@vger.kernel.org,
+ netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Andrew Boyer <andrew.boyer@amd.com>
+References: <20250624121315.739049-1-abhijit.gangurde@amd.com>
+ <20250624121315.739049-11-abhijit.gangurde@amd.com>
+ <20250701103844.GB118736@unreal> <20250702131803.GB904431@ziepe.ca>
+ <20250702180007.GK6278@unreal> <bb0ac425-2f01-b8c7-2fd7-4ecf9e9ef8b1@amd.com>
+ <20250704170807.GO6278@unreal> <15b773a4-424b-4aa9-2aa4-457fbbee8ec7@amd.com>
+ <20250707072137.GU6278@unreal>
+From: Abhijit Gangurde <abhijit.gangurde@amd.com>
+In-Reply-To: <20250707072137.GU6278@unreal>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PN4P287CA0116.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:c01:2b0::8) To IA1PR12MB9064.namprd12.prod.outlook.com
+ (2603:10b6:208:3a8::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250529054227.hh2f4jmyqf6igd3i@amd.com> <diqz1prqvted.fsf@ackerleytng-ctop.c.googlers.com>
- <20250702232517.k2nqwggxfpfp3yym@amd.com> <CAGtprH-=f1FBOS=xWciBU6KQJ9LJQ5uZoms83aSRBDsC3=tpZA@mail.gmail.com>
- <20250703041210.uc4ygp4clqw2h6yd@amd.com> <CAGtprH9sckYupyU12+nK-ySJjkTgddHmBzrq_4P1Gemck5TGOQ@mail.gmail.com>
- <20250703203944.lhpyzu7elgqmplkl@amd.com>
-In-Reply-To: <20250703203944.lhpyzu7elgqmplkl@amd.com>
-From: Vishal Annapurve <vannapurve@google.com>
-Date: Mon, 7 Jul 2025 07:55:01 -0700
-X-Gm-Features: Ac12FXz_kcb6k45NrqHWXfpE1zl6Ylgp3cPdDP8rbyvC0i3k7kTaxp08jYwop3A
-Message-ID: <CAGtprH9_zS=QMW9y8krZ5Hq5jTL3Y9v0iVxxUY2+vSe9Mz83Tw@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 02/51] KVM: guest_memfd: Introduce and use
- shareability to guard faulting
-To: Michael Roth <michael.roth@amd.com>
-Cc: Ackerley Tng <ackerleytng@google.com>, kvm@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, x86@kernel.org, linux-fsdevel@vger.kernel.org, 
-	aik@amd.com, ajones@ventanamicro.com, akpm@linux-foundation.org, 
-	amoorthy@google.com, anthony.yznaga@oracle.com, anup@brainfault.org, 
-	aou@eecs.berkeley.edu, bfoster@redhat.com, binbin.wu@linux.intel.com, 
-	brauner@kernel.org, catalin.marinas@arm.com, chao.p.peng@intel.com, 
-	chenhuacai@kernel.org, dave.hansen@intel.com, david@redhat.com, 
-	dmatlack@google.com, dwmw@amazon.co.uk, erdemaktas@google.com, 
-	fan.du@intel.com, fvdl@google.com, graf@amazon.com, haibo1.xu@intel.com, 
-	hch@infradead.org, hughd@google.com, ira.weiny@intel.com, 
-	isaku.yamahata@intel.com, jack@suse.cz, james.morse@arm.com, 
-	jarkko@kernel.org, jgg@ziepe.ca, jgowans@amazon.com, jhubbard@nvidia.com, 
-	jroedel@suse.de, jthoughton@google.com, jun.miao@intel.com, 
-	kai.huang@intel.com, keirf@google.com, kent.overstreet@linux.dev, 
-	kirill.shutemov@intel.com, liam.merwick@oracle.com, 
-	maciej.wieczor-retman@intel.com, mail@maciej.szmigiero.name, maz@kernel.org, 
-	mic@digikod.net, mpe@ellerman.id.au, muchun.song@linux.dev, nikunj@amd.com, 
-	nsaenz@amazon.es, oliver.upton@linux.dev, palmer@dabbelt.com, 
-	pankaj.gupta@amd.com, paul.walmsley@sifive.com, pbonzini@redhat.com, 
-	pdurrant@amazon.co.uk, peterx@redhat.com, pgonda@google.com, pvorel@suse.cz, 
-	qperret@google.com, quic_cvanscha@quicinc.com, quic_eberman@quicinc.com, 
-	quic_mnalajal@quicinc.com, quic_pderrin@quicinc.com, quic_pheragu@quicinc.com, 
-	quic_svaddagi@quicinc.com, quic_tsoni@quicinc.com, richard.weiyang@gmail.com, 
-	rick.p.edgecombe@intel.com, rientjes@google.com, roypat@amazon.co.uk, 
-	rppt@kernel.org, seanjc@google.com, shuah@kernel.org, steven.price@arm.com, 
-	steven.sistare@oracle.com, suzuki.poulose@arm.com, tabba@google.com, 
-	thomas.lendacky@amd.com, usama.arif@bytedance.com, vbabka@suse.cz, 
-	viro@zeniv.linux.org.uk, vkuznets@redhat.com, wei.w.wang@intel.com, 
-	will@kernel.org, willy@infradead.org, xiaoyao.li@intel.com, 
-	yan.y.zhao@intel.com, yilun.xu@intel.com, yuzenghui@huawei.com, 
-	zhiquan1.li@intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: IA1PR12MB9064:EE_|PH7PR12MB8107:EE_
+X-MS-Office365-Filtering-Correlation-Id: 47958195-08e8-47cf-963b-08ddbd667477
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?YnFJclJuQndXMnlmNHVFVlk1bEJGeXJWTXJiV1MrZWplU0w2T1doZnoyLy80?=
+ =?utf-8?B?MDJ5VFN2TE00aS8yano0RUkvSzRRQTNKVnhoL2dPekdJTk5Zczk2OXBYNXIw?=
+ =?utf-8?B?dDdENnEyMWFkVWlwczhEUUtwVWxQUVBqd3RlMmFyT2xXcVdHN3dmOWlaMkhP?=
+ =?utf-8?B?U2V5UlphNjc3VTVoMkx6anBjSFpIV1Q1YitRWjBTS01uUGN0aGlLTzVhSVVr?=
+ =?utf-8?B?SFNGbk9Md1c3N1Q2dmpoZllVMk9UalhLSHdpT21pY0tHb0ZFMTZEK0xBOHc0?=
+ =?utf-8?B?M0gzUks2U1I1bDRScXJraFBCL3psclZHenI3aG1NZkFLalo3a2dqSUNEc0s1?=
+ =?utf-8?B?MCtKNlZ4cHA5QXR3Qk1QaTRRbzhWVmpITGo1THJMVkFEVVBNdDhjR1pPWEZv?=
+ =?utf-8?B?NTU5dTBVMklRRTQ0SFIybWZxZFFTM1Yxb0hpKzBQWXVXSk1CK1VqaFNjR3B0?=
+ =?utf-8?B?TFJkS0ZnVWJ0YlcxbDdQaXRicmUvV3RCSjBNaUhVWWFESDBINkk3QWMxZVpN?=
+ =?utf-8?B?RWFmR1VENnFhZ2hlVTQrOVN4SWVFc0U5Y0x1MHpSSVhsQnBTci9Jd1VyV09l?=
+ =?utf-8?B?T3NiN0phVHAvdk0zS1ZsRVBraEljS0kva0ZLcDRpd1dPYkZvQWpPMVdFcUkw?=
+ =?utf-8?B?UGljcFNNSUNjL3NIbjd4T3BsVUJXZnF1VkVrSGd0VHI4ZmtiU3FzdnpXR01C?=
+ =?utf-8?B?M2Q5Y2wrbUdyYnNxMkxJRHowMm13RWkvblVsWnRZYTZMSElTck1sV01WTkFI?=
+ =?utf-8?B?ZlV6ekRoNWpoL2NFeVc0NU00Z2JoL2NhWFQ4eDFkV2tBRlZtMEdaOFF2Vko4?=
+ =?utf-8?B?R1lkMDhBSnBtcEJ1VThhU2hSeWZNOGdhNjMybXdyZUd4Y1FVeHFzNXdQUmF4?=
+ =?utf-8?B?V214c3pOSEdLOHY1d3IyMFJ0WTNhVjB4NW5IUWkvaFBaVC9wa2JwaW44dUta?=
+ =?utf-8?B?SWdBMWdqNDhieEJxUWdKWTRQdTB3TW5Ea0J1R0dYWVhQTm8zL21KYWRZVHhl?=
+ =?utf-8?B?ZCsvSUZQSHZXNXI4ZVplejhDd09IcW5ENVlzaStNYkhuSnN5Mmg1dmdFVDhW?=
+ =?utf-8?B?Q0MvTjVUTXRrcU1QWVM1VUpPMWRBZGNHdlIyYWZraWltUjBGM0kyRlBhc0M1?=
+ =?utf-8?B?elBuSjJxam5NNWVOenRlRWs0QVVLMVlpd1NEWnRoVDN0ZUgxU0lnaWk4TWhp?=
+ =?utf-8?B?eEZHSHRLS2JhOUVqTk04aXdnZlNvU09Dd3ZDaEExalAzaVZIOGpOY3JxNzNE?=
+ =?utf-8?B?VzlqdHg3Q01vYlJlU2UzaVI4YmJJRGprVEhZY2xsd1NjOTZSSXBIOHZ1MmZl?=
+ =?utf-8?B?MEhoZGlnNXRqUjZWQ0RFRWc4S3JDZ0YwZ1BZOSsrenJDajdCTmVEdUk2dTlZ?=
+ =?utf-8?B?Ui9KMnE5a2t0c2QxSllzSnhOcnRaTUFxUlc3NnBEWjBVaVM1WEZrNGc1VmZY?=
+ =?utf-8?B?dXcyWFZtRnQrU2ZtdHBlajBIUDRwV05raEVnL3JVdTdJckE0dnV2a0tRa2FO?=
+ =?utf-8?B?REdKbjVnaS9YVGJCbjJJSXZKMldQWGRtbDlSM1Erc1o1eElyQXJ6TEx1eVho?=
+ =?utf-8?B?TG5PeGgxRGxCL29kY2plR3hhWUs3Mko3bGpxYnRJRFFIeHlxS3dyMTluS0pz?=
+ =?utf-8?B?cWtQSTYzMkUvTFY2NXV5QW9odHlyeThTc3FnOGVGU2RDd2tKdEFNRWxjcFhW?=
+ =?utf-8?B?UjZuVDllOTVKbVNtN1FNcmZmeEIxU3hqSkZwNkwvTDFLV3EwMHdPNGFMc3ZN?=
+ =?utf-8?B?VFVjaE1sTEV4L0hMQjQ3amhCZ0pUSXMyN2JMOURDbU1GVklqTnZQVEcrUGxL?=
+ =?utf-8?B?MEdEcTgyeGQ4YXhzdjdudjZjZUVnaXZXOTlScm9tOGhpUkN2a1hhTy9OYmkx?=
+ =?utf-8?B?aUFjcXlXTUVlQ1FOUXZQd1lnY1NUYU1JbDY5aGRGNE5xanFuMFZiUlZpWCtN?=
+ =?utf-8?Q?cpnhHRofRzY=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA1PR12MB9064.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?RmhHU3BNNGJZV3N6OXlscnhzVG1sZzhvVHpTNkFVdlNLZml5RTdSK1oyMi9x?=
+ =?utf-8?B?c3p6Uk9iNjBGRkgrZEg0Nm43MnBjN1I1cTVvUStVd3RWM3BzTXlvL296bmd4?=
+ =?utf-8?B?RnkrV0NjdENGWXV0OEFOajZrWmdRdWhiTHV4bkE0U0w2Wmg5TmZHQnh4MXpG?=
+ =?utf-8?B?N1VFb2NQa0VOMG9hWWIzcGpPaVdiaERyWDVYTjF4Z2lpQzJIb0EzREg4TFIv?=
+ =?utf-8?B?RGlaK1JaMnMxaHU4T2podktWVVM3Q29rdTRkbTZVa0tQdTFtSVRpOE00cUJ4?=
+ =?utf-8?B?V3liWkJWYnQyMTBVdFJwcU56OVcyRjd6VlZYNjhNV2pIMzc4SnlQSmFCTU1v?=
+ =?utf-8?B?L2wyM2tESTMzVUtxMy93TS9RUHBBTDAzSU5QblJwM2h5bjVUM052K0hwY01B?=
+ =?utf-8?B?SlZaZ2RUN2J5dmhnVXMrOHlEdCttSUtaejA4TnJ3WG1EWnlZa1hOTU93Zk1i?=
+ =?utf-8?B?TDc0cUpWNEhLYWhVaGJKSlBjZE4wcmlVZnk0cWJ2YjF5VTlabmVQczhGRnlu?=
+ =?utf-8?B?YThvR1JpQUViWFo0bmJzVjBRbmQrTmZZL21acWZHM2loS2c5RWxYbmlOS0tl?=
+ =?utf-8?B?cTk5VVZSR2hiQkszNnRsdVNjMDRkWUl6aWdQMi82dDlQN3RUZWdNYUlHUHBn?=
+ =?utf-8?B?dVRMa1dJVGxDd0p3TUI5TUZqY1FFUHJwZVpESkIzUHcyYUJGWXlFK0ZpUzNE?=
+ =?utf-8?B?SW0wK0Q3VEYrS3I1M0gxZzUxNGpUU0tKMjBjdjkzazROVU93RVBTdFRCcnE5?=
+ =?utf-8?B?dFBTQ1U0Z3lmekdKWTVRbW5NZlVTYXVKajBucU5uOWs5c014eDVtWXVrTXds?=
+ =?utf-8?B?MHZ1Z1Ivc1YrRDA4RmlXSHlRV28ycVVKMUVGOEpMSlpuc2xpRGVhN2tJak96?=
+ =?utf-8?B?R1Z5R1hUODFSTWZQUVRTenEzVW9nbmFvdTR2UmVGNnhnOWhiVVlLS1IwNXlL?=
+ =?utf-8?B?N0s0bFAwc2ZKYk5QdldvczRoL0xEcDJkc2RYTTJlQU02UzlJTmYxZjNDVlUr?=
+ =?utf-8?B?UlF1MFVjY0FHc0taRHFPbFVJVjlGakZ5Z3pzb3Q5TEJxK1VETXZsaFhyYjVM?=
+ =?utf-8?B?TmFCUUN5SUh4NVo0akZTOG9ScEdhRkZRbnQ4dWVrbFdwQzhBL05HeXRTUUpX?=
+ =?utf-8?B?Q3FnZGlRRUlGRm1JYXVnUnpDdnJWLzBFMkF6UXVjVkc4cm1MRm1VVnM4eFlS?=
+ =?utf-8?B?V1dwblNFY1ZYcU5QZlFqcDEzdDBOVmM0ZHdMU0htVGZVaE1sRy9VNHRFVWlh?=
+ =?utf-8?B?OXJENGlud2F0Vk5pajhNbFN1blp5T1FiKy85ZFZ4M24waVVIbEpXYjJRdE54?=
+ =?utf-8?B?SmQyZC9LRE1sZmovMVhRanZJWUUvRUh6dldtWHNPRXNWd1Jyc3JVUEZUemRF?=
+ =?utf-8?B?WDJmMlNiNzhmVWpaVko3d3AyRmNYMGxZaG0wT2Y0VU0rMVoxMjZTTk1xVVhI?=
+ =?utf-8?B?clliUE1jYnpGbTY1aUFlNk1DZHBNdk52Ry9qMGJmUU80K2FoN2Zpb1ZyZXZF?=
+ =?utf-8?B?RWZ6cGZvR0E3N2NYOWwyZmVRbHBzOXA5VDRYZ2x2eG14M2drRERTM2UycXdL?=
+ =?utf-8?B?bGp3U2l3TjFiaDFxWmp1ZFFycmFUMkhLSGw0SG1rNzArUGRpWlMxbXZSYW9R?=
+ =?utf-8?B?S3pmUGVTL0d3dFNjTkEyS2dMT3RSdmFtbDFGMXoxUmIxYldBNzRhTWtaVFVO?=
+ =?utf-8?B?dy9mbkw4b0lYcU1NMi9hTXgxdW5ueGNBa1Z0UVpvYXMyN0UxTFlscmtBdEVH?=
+ =?utf-8?B?K29MKzFSRFc2Q21JOHZpQVhtenM4KzdRWVM3c3hVbDM3Y1NPVCtydlZ6eG5i?=
+ =?utf-8?B?R05iRDJQTTY3aVI2WGpDR21iK3kyV2hxRHFCbHRlN21zc0ZRSHZTTHl1eCtw?=
+ =?utf-8?B?QVdaMEIwc0hSa0lxc1A5L2VNVFNreG5VdWIxRlVTKzFucFpuR2ZpS29pWkRh?=
+ =?utf-8?B?STN6SmVlek4wNldxUzN6Zk9DMzlSSTlXNkQ4YWdJU1lIVkRPWW5BWENDQW4r?=
+ =?utf-8?B?bG5mWXp2NTlSOHJqbCtpa1FVQUtmUGZVaWxrb3dMR2theUtvMzRYeW5zdUFQ?=
+ =?utf-8?B?akV3b2NGelhYd1B5UnhMSldvWXgxSTMzelpGa2JqeFhIcThMWXZPMzRNWWhy?=
+ =?utf-8?Q?bhWtKVWm+dY/S6pLO48vS4l7m?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 47958195-08e8-47cf-963b-08ddbd667477
+X-MS-Exchange-CrossTenant-AuthSource: IA1PR12MB9064.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jul 2025 14:56:29.8395
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: spp7nyi29CjDCuXblFFroZOhJzm0jUlUCmmudReXpSqpMINX0ulmzqAs7k60nCvSJul6+fCXL+RW/Pln/XNfRw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB8107
 
-On Thu, Jul 3, 2025 at 1:41=E2=80=AFPM Michael Roth <michael.roth@amd.com> =
-wrote:
-> > > > > >
-> > > > > > Because shared pages are split once any memory is allocated, ha=
-ving a
-> > > > > > way to INIT_PRIVATE could avoid the split and then merge on
-> > > > > > conversion. I feel that is enough value to have this config fla=
-g, what
-> > > > > > do you think?
-> > > > > >
-> > > > > > I guess we could also have userspace be careful not to do any a=
-llocation
-> > > > > > before converting.
-> > >
-> > > (Re-visiting this with the assumption that we *don't* intend to use m=
-map() to
-> > > populate memory (in which case you can pretty much ignore my previous
-> > > response))
-> >
-> > I am assuming in-place conversion with huge page backing for the
-> > discussion below.
-> >
-> > Looks like there are three scenarios/usecases we are discussing here:
-> > 1) Pre-allocating guest_memfd file offsets
-> >    - Userspace can use fallocate to do this for hugepages by keeping
-> > the file ranges marked private.
-> > 2) Prefaulting guest EPT/NPT entries
-> > 3) Populating initial guest payload into guest_memfd memory
-> >    - Userspace can mark certain ranges as shared, populate the
-> > contents and convert the ranges back to private. So mmap will come in
-> > handy here.
-> >
-> > >
-> > > I'm still not sure where the INIT_PRIVATE flag comes into play. For S=
-NP,
-> > > userspace already defaults to marking everything private pretty close=
- to
-> > > guest_memfd creation time, so the potential for allocations to occur
-> > > in-between seems small, but worth confirming.
-> >
-> > Ok, I am not much worried about whether the INIT_PRIVATE flag gets
-> > supported or not, but more about the default setting that different
-> > CVMs start with. To me, it looks like all CVMs should start as
-> > everything private by default and if there is a way to bake that
-> > configuration during guest_memfd creation time that would be good to
-> > have instead of doing "create and convert" operations and there is a
-> > fairly low cost to support this flag.
-> >
-> > >
-> > > But I know in the past there was a desire to ensure TDX/SNP could
-> > > support pre-allocating guest_memfd memory (and even pre-faulting via
-> > > KVM_PRE_FAULT_MEMORY), but I think that could still work right? The
-> > > fallocate() handling could still avoid the split if the whole hugepag=
-e
-> > > is private, though there is a bit more potential for that fallocate()
-> > > to happen before userspace does the "manually" shared->private
-> > > conversion. I'll double-check on that aspect, but otherwise, is there
-> > > still any other need for it?
-> >
-> > This usecase of being able to preallocate should still work with
-> > in-place conversion assuming all ranges are private before
-> > pre-population.
+
+On 7/7/25 12:51, Leon Romanovsky wrote:
+> On Mon, Jul 07, 2025 at 10:57:13AM +0530, Abhijit Gangurde wrote:
+>> On 7/4/25 22:38, Leon Romanovsky wrote:
+>>> On Thu, Jul 03, 2025 at 12:49:30PM +0530, Abhijit Gangurde wrote:
+>>>> On 7/2/25 23:30, Leon Romanovsky wrote:
+>>>>> On Wed, Jul 02, 2025 at 10:18:03AM -0300, Jason Gunthorpe wrote:
+>>>>>> On Tue, Jul 01, 2025 at 01:38:44PM +0300, Leon Romanovsky wrote:
+>>>>>>>> +static void ionic_flush_qs(struct ionic_ibdev *dev)
+>>>>>>>> +{
+>>>>>>>> +	struct ionic_qp *qp, *qp_tmp;
+>>>>>>>> +	struct ionic_cq *cq, *cq_tmp;
+>>>>>>>> +	LIST_HEAD(flush_list);
+>>>>>>>> +	unsigned long index;
+>>>>>>>> +
+>>>>>>>> +	/* Flush qp send and recv */
+>>>>>>>> +	rcu_read_lock();
+>>>>>>>> +	xa_for_each(&dev->qp_tbl, index, qp) {
+>>>>>>>> +		kref_get(&qp->qp_kref);
+>>>>>>>> +		list_add_tail(&qp->ibkill_flush_ent, &flush_list);
+>>>>>>>> +	}
+>>>>>>>> +	rcu_read_unlock();
+>>>>>>> Same question as for CQ. What does RCU lock protect here?
+>>>>>> It should protect the kref_get against free of qp. The qp memory must
+>>>>>> be RCU freed.
+>>>>> I'm not sure that this was intension here. Let's wait for an answer from the author.
+>>>> As Jason mentioned, It was intended to protect the kref_get against free of
+>>>> cq and qp
+>>>> in the destroy path.
+>>> How is it possible? IB/core is supposed to protect from accessing verbs
+>>> resources post their release/destroy.
+>>>
+>>> After you answered what RCU is protecting, I don't see why you would
+>>> have custom kref over QP/CQ/e.t.c objects.
+>>>
+>>> Thanks
+>> The RCU protected kref here is making sure that all the hw events are
+>> processed before destroy callback returns. Similarly, when driver is
+>> going for ib_unregister_device, it is draining the pending WRs and events.
+> I asked why do you have kref in first place? When ib_unregister_device
+> is called all "pending MR" already supposed to be destroyed.
 >
-> Ok, I think I was missing that the merge logic here will then restore it
-> to 1GB before the guest starts, so the folio isn't permanently split if
-> we do the mmap() and that gives us more flexibility on how we can use
-> it.
->
-> I was thinking we needed to avoid the split from the start by avoiding
-> paths like mmap() which might trigger the split. I was trying to avoid
-> any merge->unsplit logic in the THP case (or unsplit in general), in
-> which case we'd get permanent splits via the mmap() approach, but for
-> 2MB that's probably not a big deal.
+> Thansk
 
-After initial payload population, during its runtime guest can cause
-different hugepages to get split which can remain split even after
-guest converts them back to private. For THP there may not be much
-benefit of merging those pages together specially if NPT/EPT entries
-can't be promoted back to hugepage mapping and there is no memory
-penalty as THP doesn't use HVO.
+The custom kref on QP/CQ object is holding the completion for the 
+destroy callback.
+If any pending async hw events are being processed, destroy would wait 
+on this completion
+before it returns.
 
-Wishful thinking on my part: It would be great to figure out a way to
-promote these pagetable entries without relying on the guest, if
-possible with ABI updates, as I think the host should have some
-control over EPT/NPT granularities even for Confidential VMs. Along
-the similar lines, it would be great to have "page struct"-less memory
-working for Confidential VMs, which should greatly reduce the toil
-with merge/split operations and will render the conversions mostly to
-be pagetable manipulations.
+Thanks
 
-That being said, memory split and merge seem to be relatively
-lightweight for THP (with no memory allocation/freeing) and reusing
-the memory files after reboot of the guest VM will require pages to be
-merged to start with a clean slate. One possible option is to always
-merge as early as possible, second option is to invent a new UAPI to
-do it on demand.
-
-For 1G pages, even if we go with 1G -> 2M -> 4K split stages, page
-splits result in higher memory usage with HVO around and it becomes
-useful to merge them back as early as possible as guest proceeds to
-convert subranges of different hugepages over its lifetime. Merging
-pages as early as possible also allows reusing of memory files during
-the next reboot without having to invent a new UAPI.
-
-Caveats with "merge as early as possible":
-- Shared to private conversions will be slower for hugetlb pages.
-   * Counter argument: These conversions are already slow as we need
-safe refcounts to reach on the ranges getting converted.
-- If guests convert a particular range often then extra merge/split
-operations will result in overhead.
-   * Counter argument: Since conversions are anyways slow, it's
-beneficial for guests to avoid such a scenario and keep back and forth
-conversions as less frequent as possible.
 
