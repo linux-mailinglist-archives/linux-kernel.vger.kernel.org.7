@@ -1,61 +1,56 @@
-Return-Path: <linux-kernel+bounces-720182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EB32AFB83D
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 18:05:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34872AFB843
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 18:05:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1515B1774D7
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 16:05:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDB7517BF4C
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 16:05:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D80E225A40;
-	Mon,  7 Jul 2025 16:04:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OxwnLMu8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C962513EFE3;
-	Mon,  7 Jul 2025 16:04:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69ECC2264A7;
+	Mon,  7 Jul 2025 16:05:16 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A564042049;
+	Mon,  7 Jul 2025 16:05:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751904298; cv=none; b=S7pJ0eYhosneUuPM0kFCUu/etjJ026yKfJXzlnuFlgtd6hrcxWrhMaoYff0+sHVMcc9PR4Fdb+7EQCYSi1Kzp5+75F9oVWbh3CrvL8UgqRzGz9FseQ2Ej6LXC0vc1zjaxd1E86g6X6vPuP/lUk0x7kfuQNlI1lkjlOB/t2rP+tI=
+	t=1751904316; cv=none; b=RbG84uTMBYXHPhdZ/HKPsZwMSvLZowcm02c6ysmPS95o+nfnyz5LH3FsQqi3snjJd8wqkM1UNe5xBfuh3tRiK1m4zmPlFjIka49xk5qjBxcicen55AmCFmtPoOw7wrtbvh/1RwZVZWpJPi1XTApKBd+vo6mxY+8Lr621SwQWdlU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751904298; c=relaxed/simple;
-	bh=PZguKu1gWtvJhhVgX3umyBR/niONdHTl+p+DO/QP/Sw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=mCA2gG8lZ+4Ra4mIpTcWNPwXRa5C6KY5r7L/omjQomZp2pz6LGFtuepxzrSf8IXfY4vJRoCXLJYEklH9YMgw6fV0FF4PZnrDEcJi+BNGKn4yxMw7WR3rjgi2jNhXrkWkN8na9P47GSwGrhkoaGjR0p0HZkN5DEiZzdcRNVCgABk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OxwnLMu8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D29BC4CEE3;
-	Mon,  7 Jul 2025 16:04:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751904298;
-	bh=PZguKu1gWtvJhhVgX3umyBR/niONdHTl+p+DO/QP/Sw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=OxwnLMu8FrXZcRkLG0kH45/ZQD56qNSbv9rildxJXMX0TpWG6e6VXaBatZcRSEWMq
-	 twtzFouCMYadDU3K3e+6Up6OIxPQxjWlW843LkTFPek5fAbs3nhO/TIbdkT75pH0fW
-	 BE5Gu5ZG+5hkEKOSuH690HTUXEmHTp6+cj6yjjBHcjNfLxJmQ4pDnvCBqop4tNFn7G
-	 ZATDDDEDCVqWpZNeVUoYFi1wDO6CG6/aV+g8FpRg/BnPizfz7Len7pzlN4EJOaaJFS
-	 L+nXq0rYBAWXykXtfNYXHLil55+buG5n0UX9w7IuCsGJc/W/xhR0gDJYtDF3fpRWAn
-	 wS2MzeC5KzP5A==
-Date: Mon, 7 Jul 2025 11:04:56 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-Cc: linux-hyperv@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	mhklinux@outlook.com, tglx@linutronix.de, bhelgaas@google.com,
-	romank@linux.microsoft.com, kys@microsoft.com,
-	haiyangz@microsoft.com, wei.liu@kernel.org, decui@microsoft.com,
-	catalin.marinas@arm.com, will@kernel.org, mingo@redhat.com,
-	bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
-	lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
-	jinankjain@linux.microsoft.com, skinsburskii@linux.microsoft.com,
-	mrathor@linux.microsoft.com, x86@kernel.org
-Subject: Re: [PATCH v2 1/6] PCI: hv: Don't load the driver for baremetal root
- partition
-Message-ID: <20250707160456.GA2086564@bhelgaas>
+	s=arc-20240116; t=1751904316; c=relaxed/simple;
+	bh=RtFr/cqQgHAVjVm38k71NKvlszLoElaLqQn9+ycjRsI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=vGYaVxp1iOD1+mdNmHZxK0sHgOcOF/9Kx51NH9WPc6F93ko/lPzknHdPEyqa7jEzJaRXlMs1Cimn64hRAIJgmL9M35y1cUyLRlVt+zpo02hxurHyt5eXEzt7GSwXN5/aPKNcDibbuRBGo2DR/pkTPqXXioGn7mD02fUd7yk9QHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8501C168F;
+	Mon,  7 Jul 2025 09:05:00 -0700 (PDT)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 426BA3F694;
+	Mon,  7 Jul 2025 09:05:09 -0700 (PDT)
+Date: Mon, 7 Jul 2025 17:05:00 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Colton Lewis <coltonlewis@google.com>
+Cc: kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Mingwei Zhang <mizhang@google.com>, Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>, Shuah Khan <shuah@kernel.org>,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	linux-perf-users@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v3 01/22] arm64: cpufeature: Add cpucap for HPMN0
+Message-ID: <aGvwLIAN8rhxtA_V@J2N7QTR9R3>
+References: <20250626200459.1153955-1-coltonlewis@google.com>
+ <20250626200459.1153955-2-coltonlewis@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,43 +59,97 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1751582677-30930-2-git-send-email-nunodasneves@linux.microsoft.com>
+In-Reply-To: <20250626200459.1153955-2-coltonlewis@google.com>
 
-On Thu, Jul 03, 2025 at 03:44:32PM -0700, Nuno Das Neves wrote:
-> From: Mukesh Rathor <mrathor@linux.microsoft.com>
+On Thu, Jun 26, 2025 at 08:04:37PM +0000, Colton Lewis wrote:
+> Add a capability for FEAT_HPMN0, whether MDCR_EL2.HPMN can specify 0
+> counters reserved for the guest.
 > 
-> The root partition only uses VMBus when running nested.
-> 
-> When running on baremetal the Hyper-V PCI driver is not needed,
-> so do not initialize it.
-> 
-> Signed-off-by: Mukesh Rathor <mrathor@linux.microsoft.com>
-> Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-> Reviewed-by: Roman Kisel <romank@linux.microsoft.com>
+> This required changing HPMN0 to an UnsignedEnum in tools/sysreg
+> because otherwise not all the appropriate macros are generated to add
+> it to arm64_cpu_capabilities_arm64_features.
 
-Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+I agree it's appropriate to mark ID_AA64DFR0_EL1.HPMN0 as an
+UnsignedEnum. It follows the usual ID scheme per ARM DDI 0487 L.a
+section D24.1.3, and zero means not present, so it must be unsigned.
 
-I assume this series will be merged elsewhere.
+Likewise, the value renames (UNPREDICTABLE => NI and DEF => IMP) look
+fine to me.
+
+> Signed-off-by: Colton Lewis <coltonlewis@google.com>
+
+I have one minor nit below, but either way:
+
+Acked-by: Mark Rutland <mark.rutland@arm.com>
 
 > ---
->  drivers/pci/controller/pci-hyperv.c | 3 +++
->  1 file changed, 3 insertions(+)
+>  arch/arm64/kernel/cpufeature.c | 8 ++++++++
+>  arch/arm64/tools/cpucaps       | 1 +
+>  arch/arm64/tools/sysreg        | 6 +++---
+>  3 files changed, 12 insertions(+), 3 deletions(-)
 > 
-> diff --git a/drivers/pci/controller/pci-hyperv.c b/drivers/pci/controller/pci-hyperv.c
-> index b4f29ee75848..4d25754dfe2f 100644
-> --- a/drivers/pci/controller/pci-hyperv.c
-> +++ b/drivers/pci/controller/pci-hyperv.c
-> @@ -4150,6 +4150,9 @@ static int __init init_hv_pci_drv(void)
->  	if (!hv_is_hyperv_initialized())
->  		return -ENODEV;
+> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+> index b34044e20128..73a7dac4b6f6 100644
+> --- a/arch/arm64/kernel/cpufeature.c
+> +++ b/arch/arm64/kernel/cpufeature.c
+> @@ -548,6 +548,7 @@ static const struct arm64_ftr_bits ftr_id_mmfr0[] = {
+>  };
 >  
-> +	if (hv_root_partition() && !hv_nested)
-> +		return -ENODEV;
-> +
->  	ret = hv_pci_irqchip_init();
->  	if (ret)
->  		return ret;
+>  static const struct arm64_ftr_bits ftr_id_aa64dfr0[] = {
+> +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64DFR0_EL1_HPMN0_SHIFT, 4, 0),
+>  	S_ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64DFR0_EL1_DoubleLock_SHIFT, 4, 0),
+>  	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64DFR0_EL1_PMSVer_SHIFT, 4, 0),
+>  	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64DFR0_EL1_CTX_CMPs_SHIFT, 4, 0),
+> @@ -2896,6 +2897,13 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
+>  		.matches = has_cpuid_feature,
+>  		ARM64_CPUID_FIELDS(ID_AA64MMFR0_EL1, FGT, FGT2)
+>  	},
+> +	{
+> +		.desc = "FEAT_HPMN0",
+
+Minor nit, but we can drop the "FEAT_" prefix here, for consistency with
+other features (e.g. E0PD, FPMR).
+
+Mark.
+
+> +		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
+> +		.capability = ARM64_HAS_HPMN0,
+> +		.matches = has_cpuid_feature,
+> +		ARM64_CPUID_FIELDS(ID_AA64DFR0_EL1, HPMN0, IMP)
+> +	},
+>  #ifdef CONFIG_ARM64_SME
+>  	{
+>  		.desc = "Scalable Matrix Extension",
+> diff --git a/arch/arm64/tools/cpucaps b/arch/arm64/tools/cpucaps
+> index 10effd4cff6b..5b196ba21629 100644
+> --- a/arch/arm64/tools/cpucaps
+> +++ b/arch/arm64/tools/cpucaps
+> @@ -39,6 +39,7 @@ HAS_GIC_CPUIF_SYSREGS
+>  HAS_GIC_PRIO_MASKING
+>  HAS_GIC_PRIO_RELAXED_SYNC
+>  HAS_HCR_NV1
+> +HAS_HPMN0
+>  HAS_HCX
+>  HAS_LDAPR
+>  HAS_LPA2
+> diff --git a/arch/arm64/tools/sysreg b/arch/arm64/tools/sysreg
+> index 8a8cf6874298..d29742481754 100644
+> --- a/arch/arm64/tools/sysreg
+> +++ b/arch/arm64/tools/sysreg
+> @@ -1531,9 +1531,9 @@ EndEnum
+>  EndSysreg
+>  
+>  Sysreg	ID_AA64DFR0_EL1	3	0	0	5	0
+> -Enum	63:60	HPMN0
+> -	0b0000	UNPREDICTABLE
+> -	0b0001	DEF
+> +UnsignedEnum	63:60	HPMN0
+> +	0b0000	NI
+> +	0b0001	IMP
+>  EndEnum
+>  UnsignedEnum	59:56	ExtTrcBuff
+>  	0b0000	NI
 > -- 
-> 2.34.1
+> 2.50.0.727.gbf7dc18ff4-goog
 > 
 
