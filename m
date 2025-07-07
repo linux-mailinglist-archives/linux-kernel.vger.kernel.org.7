@@ -1,302 +1,318 @@
-Return-Path: <linux-kernel+bounces-719914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA9DEAFB482
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 15:27:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DDF5AFB494
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 15:32:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1ECDC3AA7FA
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 13:26:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 159BB1AA4CE6
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 13:32:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5085A2980B4;
-	Mon,  7 Jul 2025 13:27:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E902D29C347;
+	Mon,  7 Jul 2025 13:31:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="gzlsbwFh"
-Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E8Uvu177"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B53401E22FC
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 13:27:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EED7B7E9;
+	Mon,  7 Jul 2025 13:31:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751894823; cv=none; b=PbLWiOhaNExHyXOVp/BYLZ5xWRl+TIn3vOf+/TeLFPF3pHQhNYy9vsDihhK1AUrV1keRnDAJC3jIca8LDyzHLjN1CpTLGvZI6BJgbVINVgy3rb3WzC9bPVogk+ZAvI4qKTzRHdXqGh9zoPEG7FBCRUMEhHeZJ/UkdTfiViuD82E=
+	t=1751895117; cv=none; b=YdUVfXnzuSwIfcy+T0StuNyh1R7hoB+YXTTd3GdIwrk+HFq8svPXVEMxtNbG4E9ifWskzurYiWpUg4rn6Ucpxjmk9SPLQFW4TBPnpIsRE6jiMVB05O4DBkPaC/svmaG9WW42x1gE2HPI3lNUjczTfmP1SATf0LqwcUN41u3IgMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751894823; c=relaxed/simple;
-	bh=3ietx0ofqi6mn1rjSW7Z6012jGl4TXWv2+pakZQ6JGs=;
-	h=MIME-Version:Date:Content-Type:From:Message-ID:Subject:To:Cc:
-	 In-Reply-To:References; b=u9stvpOrHpg6brMCgmdi+PWqEmgzDZgdVv6kRCctHy0FPMhCnKqp9CrvxlSLKrjS1wYGiedxKFrjTGN45m1TnVky3Fba18m0f+K5gIiJT+8gZE6u9GIWBRsWU1JTeqvz6Cu2iamKBeHHptc1ftgWkI3+QrFwxj3nnLO9HxCLcR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=gzlsbwFh; arc=none smtp.client-ip=95.215.58.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	s=arc-20240116; t=1751895117; c=relaxed/simple;
+	bh=/xgaS6YXL0ZblKGyNClOQWDl5/08tgHTD+Vr4BGAPWw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=MqVQlhA8FDX6NZZUMlhfx7fHCJeArGz8Sawq5Ju+d85wivw4ZVG7XcvzJZfTSAbiGDDCdzTH5UNlg0J+UqLl/IyvmxNkuBPM28/tSmAsWadYuNcTzx1eort7CbSCWaYazhlSf3Gz9Sq3qU6BTE/kh2iHnEVlZhCcM0Lj899yvDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E8Uvu177; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5042BC4CEF4;
+	Mon,  7 Jul 2025 13:31:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751895116;
+	bh=/xgaS6YXL0ZblKGyNClOQWDl5/08tgHTD+Vr4BGAPWw=;
+	h=From:Subject:Date:To:Cc:From;
+	b=E8Uvu177fz7wSM5BP+iniOavGnpP68GsNKetVK/bGU/sbEjEGpabDqsl5ahAJ90ss
+	 LYmszpPv64JOVT2TV5vefo6Nf8TdnoD/mLYawHxVe3ZO3nY+OjNwgGA/DIc6oxyT/5
+	 4r9OuM2Xb4NXCygMq0cWJUytiF0/ax8D6/ca++JDYi+vTWd544L4g1HRkKyy3kgnJE
+	 F1/QYn8vkKD/rtzOHLOqtyvuw7BflIuVSkQDaZyJuqdyuCz2/2jhNlco2aIwSBudFQ
+	 o1OraerJKRh6QcLWMrdrO32qAGTvoTBKR3jIeJe4Hs00Zt/3PsWH1mG3DBOYFJMVqo
+	 8QJvoSvpKcp0A==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+Subject: [PATCH v15 0/7] rust: extend `module!` macro with integer
+ parameter support
+Date: Mon, 07 Jul 2025 15:29:04 +0200
+Message-Id: <20250707-module-params-v3-v15-0-c1f4269a57b9@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1751894819;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=E+sLFlb61uxhm84r2R5IWZpx5sgQHLlxHf5gjLWdiro=;
-	b=gzlsbwFhc8xYSQzw4WtIhG0I68RN6NgMJv+398SBvQJMJtZPaCS/qHJA6wPWCUeSq4zMy4
-	hn4pGPWliTtg5Qvpgmvmn1jqKWztAsTdileWZx56WYFXhbuPB6ud9CmP7Z4NfrEa7mbsfV
-	tLJ1zb4xj4U0IBTnH9Sw3oq1ptrwuiQ=
-Date: Mon, 07 Jul 2025 13:26:56 +0000
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: qiang.zhang@linux.dev
-Message-ID: <527a257218a02fe85571746d339a4c24f5564d68@linux.dev>
-TLS-Required: No
-Subject: Re: [PATCH RFC 1/3] rcu: Fix rcu_read_unlock() deadloop due to IRQ
- work
-To: "Joel Fernandes" <joelagnelf@nvidia.com>, linux-kernel@vger.kernel.org,
- "Paul E. McKenney" <paulmck@kernel.org>, "Frederic Weisbecker"
- <frederic@kernel.org>, "Neeraj Upadhyay" <neeraj.upadhyay@kernel.org>,
- "Josh Triplett" <josh@joshtriplett.org>, "Boqun Feng"
- <boqun.feng@gmail.com>, "Uladzislau Rezki" <urezki@gmail.com>, "Steven
- Rostedt" <rostedt@goodmis.org>, "Mathieu Desnoyers"
- <mathieu.desnoyers@efficios.com>, "Lai Jiangshan"
- <jiangshanlai@gmail.com>
-Cc: rcu@vger.kernel.org
-In-Reply-To: <20250705203918.4149863-1-joelagnelf@nvidia.com>
-References: <20250705203918.4149863-1-joelagnelf@nvidia.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKDLa2gC/23Ty07rMBAA0F+psr6OPH67K/4DsfBjUqLbJJC0E
+ Qjx70wKqEF2lI0t+Xgeno9mwbnHpTkePpoZ137pp5EWoP8dmvQcxhOyPtNGI7hQIADYMOXrGdl
+ LmMOwsFWygBZ1ctlFHRo69jJj17/dzMcnWj/3y2Wa329XrHLb/cVkidHPmXI6cNAhidQ9/Md5x
+ HM7zadm01b1K2gO3FcERUIS3MXURQQoBX0XBFcVQZMQO42kKDBCF4LZCbWSrIYEoaLwNuekZC4
+ EuxdcRbAkaITQhZhCglgIbicIWxHcVgekz+nspbKF4O+CFLUs/JaFi57rTqBUZR2A3wlqR4UAv
+ vUzB2ppllSIigF7Q9QMIMNwb5zVQUTrSkPsDVMzxFYNrrLjyRECpSHvhoFqHNvbjEmATxmC7Cp
+ x7B6nreeyvU4dISUpJFB7/xif3+Mz4+uVJvHyPUNNDAuyNA1DfzkeVtOCYXPS26gNuCzhNqLHw
+ 0/gDoyibrfgHVgGLE6v17HtcDw9nIbQn1uC6KLPL5jFuZr6AwAA
+X-Change-ID: 20241211-module-params-v3-ae7e5c8d8b5a
+To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Alice Ryhl <aliceryhl@google.com>, Masahiro Yamada <masahiroy@kernel.org>, 
+ Nathan Chancellor <nathan@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+ Danilo Krummrich <dakr@kernel.org>, Benno Lossin <lossin@kernel.org>, 
+ Benno Lossin <lossin@kernel.org>, Nicolas Schier <nicolas.schier@linux.dev>
+Cc: Trevor Gross <tmgross@umich.edu>, 
+ Adam Bratschi-Kaye <ark.email@gmail.com>, rust-for-linux@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+ Petr Pavlu <petr.pavlu@suse.com>, Sami Tolvanen <samitolvanen@google.com>, 
+ Daniel Gomez <da.gomez@samsung.com>, Simona Vetter <simona.vetter@ffwll.ch>, 
+ Greg KH <gregkh@linuxfoundation.org>, Fiona Behrens <me@kloenk.dev>, 
+ Daniel Almeida <daniel.almeida@collabora.com>, 
+ linux-modules@vger.kernel.org, Andreas Hindborg <a.hindborg@kernel.org>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=10676;
+ i=a.hindborg@kernel.org; h=from:subject:message-id;
+ bh=/xgaS6YXL0ZblKGyNClOQWDl5/08tgHTD+Vr4BGAPWw=;
+ b=owEBbQKS/ZANAwAIAeG4Gj55KGN3AcsmYgBoa8uwpzMyFYPLlkS+0+qcJmVmXrplHH3RxlXVv
+ XS9/UbDt/OJAjMEAAEIAB0WIQQSwflHVr98KhXWwBLhuBo+eShjdwUCaGvLsAAKCRDhuBo+eShj
+ d89ED/9A12eyTLO+Kq6Xdc9FZTi2bDq7UXcPXvuLEFGez81f0B9lPmVfA/bBMKbJtuQLaNUb9Ic
+ vAo4mq5w/073t7XeVP/Imu7SEDWaCP4MWEZHM6kaZT14MwcDfYMO3O49JvbVo4VFob40kZF+J16
+ idI4dDnSFp7/Jr/MqlAc+NU6thqrzlwvGNyijCEIeFMDyVFcv++filzEteI128WMKV2TcoRbW11
+ p0/u0wx4PdxPPc9NkN6golDDzQ8Hht9fjF/TAqxd25TKQjsVU1TSTNXRuwjTq1XN7htKrpkfpDT
+ hQCNr9fS8ldlzrtoe2CCmbM1Ht52qPZk2RHHSbJvDAecgU/nyiFfjqNUM/MqjLsHC1MoyTG5U8z
+ UHeujVn7/bbWsh+CqOMutgXBogZJxZU5yXE/oVaV7tdLtfcLj8/2seG71txlycxPgVKeilkI/kP
+ R0tchFqafCFcfblBahw0AsuflFs/Y5u9qZ6tDWOvClnAszpE1w2vJpmqJkpNO7FeTnDDbw5m68u
+ esqFgWUWicaaB7QBfRAQ1OoBKImSt20Sw9gLZvZsh12MoRH578VtNd4f9GiPiYpASbVsyBTGFWS
+ +F1ZjHqqrRjmWCApr0A8SsHIp3GEnCqmbbTUzzqSbNIOHm1lMNSkQbxXI/08FgJndpJMA3Be88g
+ mj/a5qRudYuggyg==
+X-Developer-Key: i=a.hindborg@kernel.org; a=openpgp;
+ fpr=3108C10F46872E248D1FB221376EB100563EF7A7
 
->=20
->=20Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
->=20
->=20---
->=20
->=20 kernel/rcu/tree.h | 11 ++++++++++-
->=20
->=20 kernel/rcu/tree_plugin.h | 29 ++++++++++++++++++++++-------
->=20
->=20 2 files changed, 32 insertions(+), 8 deletions(-)
->=20
->=20diff --git a/kernel/rcu/tree.h b/kernel/rcu/tree.h
->=20
->=20index 3830c19cf2f6..f8f612269e6e 100644
->=20
->=20--- a/kernel/rcu/tree.h
->=20
->=20+++ b/kernel/rcu/tree.h
->=20
->=20@@ -174,6 +174,15 @@ struct rcu_snap_record {
->=20
->=20 unsigned long jiffies; /* Track jiffies value */
->=20
->=20 };
->=20
->=20=20
->=20
-> +/*
->=20
->=20+ * The IRQ work (deferred_qs_iw) is used by RCU to get scheduler's a=
-ttention.
->=20
->=20+ * It can be in one of the following states:
->=20
->=20+ * - DEFER_QS_IDLE: An IRQ work was never scheduled.
->=20
->=20+ * - DEFER_QS_PENDING: An IRQ work was scheduler but never run.
->=20
->=20+ */
->=20
->=20+#define DEFER_QS_IDLE 0
->=20
->=20+#define DEFER_QS_PENDING 1
->=20
->=20+
->=20
->=20 /* Per-CPU data for read-copy update. */
->=20
->=20 struct rcu_data {
->=20
->=20 /* 1) quiescent-state and grace-period handling : */
->=20
->=20@@ -192,7 +201,7 @@ struct rcu_data {
->=20
->=20 /* during and after the last grace */
->=20
->=20 /* period it is aware of. */
->=20
->=20 struct irq_work defer_qs_iw; /* Obtain later scheduler attention. */
->=20
->=20- bool defer_qs_iw_pending; /* Scheduler attention pending? */
->=20
->=20+ int defer_qs_iw_pending; /* Scheduler attention pending? */
->=20
->=20 struct work_struct strict_work; /* Schedule readers for strict GPs. =
-*/
->=20
->=20=20
->=20
->  /* 2) batch handling */
->=20
->=20diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
->=20
->=20index dd1c156c1759..baf57745b42f 100644
->=20
->=20--- a/kernel/rcu/tree_plugin.h
->=20
->=20+++ b/kernel/rcu/tree_plugin.h
->=20
->=20@@ -486,13 +486,16 @@ rcu_preempt_deferred_qs_irqrestore(struct task_=
-struct *t, unsigned long flags)
->=20
->=20 struct rcu_node *rnp;
->=20
->=20 union rcu_special special;
->=20
->=20=20
->=20
-> + rdp =3D this_cpu_ptr(&rcu_data);
->=20
->=20+ if (rdp->defer_qs_iw_pending =3D=3D DEFER_QS_PENDING)
->=20
->=20+ rdp->defer_qs_iw_pending =3D DEFER_QS_IDLE;
->=20
->=20+
->=20
->=20 /*
->=20
->=20 * If RCU core is waiting for this CPU to exit its critical section,
->=20
->=20 * report the fact that it has exited. Because irqs are disabled,
->=20
->=20 * t->rcu_read_unlock_special cannot change.
->=20
->=20 */
->=20
->=20 special =3D t->rcu_read_unlock_special;
->=20
->=20- rdp =3D this_cpu_ptr(&rcu_data);
->=20
->=20 if (!special.s && !rdp->cpu_no_qs.b.exp) {
->=20
->=20 local_irq_restore(flags);
->=20
->=20 return;
->=20
->=20@@ -623,12 +626,24 @@ notrace void rcu_preempt_deferred_qs(struct tas=
-k_struct *t)
->=20
->=20 */
->=20
->=20 static void rcu_preempt_deferred_qs_handler(struct irq_work *iwp)
->=20
->=20 {
->=20
->=20- unsigned long flags;
->=20
->=20- struct rcu_data *rdp;
->=20
->=20+ volatile unsigned long flags;
->=20
->=20+ struct rcu_data *rdp =3D this_cpu_ptr(&rcu_data);
->=20
->=20=20
->=20
-> - rdp =3D container_of(iwp, struct rcu_data, defer_qs_iw);
->=20
->=20 local_irq_save(flags);
->=20
->=20- rdp->defer_qs_iw_pending =3D false;
->=20
->=20+
->=20
->=20+ /*
->=20
->=20+ * Requeue the IRQ work on next unlock in following situation:
->=20
->=20+ * 1. rcu_read_unlock() queues IRQ work (state -> DEFER_QS_PENDING)
->=20
->=20+ * 2. CPU enters new rcu_read_lock()
->=20
->=20+ * 3. IRQ work runs but cannot report QS due to rcu_preempt_depth() =
-> 0
->=20
->=20+ * 4. rcu_read_unlock() does not re-queue work (state still PENDING)
->=20
->=20+ * 5. Deferred QS reporting does not happen.
->=20
->=20+ */
->=20
->=20+ if (rcu_preempt_depth() > 0) {
+Extend the `module!` macro with support module parameters. Also add some string
+to integer parsing functions and updates `BStr` with a method to strip a string
+prefix.
+
+Based on code by Adam Bratschi-Kaye lifted from the original `rust` branch [1].
+
+Link: https://github.com/Rust-for-Linux/linux/tree/bc22545f38d74473cfef3e9fd65432733435b79f [1]
+Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
+---
+Changes in v15:
+- Rebase on v6.16-rc5.
+- Dedent code in module macro for better formatting.
+- Rename `OnceLock` to `SetOnce`.
+- Use "being initialized" rather than "being mutably accessed" when
+  describing initialization state of `OnceLock`.
+- Use `Relaxed` ordering when transitioning to exclusive access in
+  `OnceLock`.
+- Add drop implementation for `OnceLock`.
+- Re-export `OnceLock` from `kernel::sync` module.
+- Improve indentation of in macro code. Prefix `cfg` to `::core::cfg` in
+  macro code.
+- Use `core::ptr::from_ref` rather than `as` casts.
+- Hide `KernelParam` instances behind `const _: ()` blocks.
+- Rename `ModuleParamAccess::get` to `ModuleParamAccess::value`.
+- Rename `RacyKernelParam` to `KernelParam`.
+- Remove `ModuleParam::Value`.
+- Move `copy` implementation of `OnceLock`.
+- Update safety comments and invariants of `OnceLock`.
+- Link to v14: https://lore.kernel.org/r/20250702-module-params-v3-v14-0-5b1cc32311af@kernel.org
+
+Note: This series now depends on the atomics series [1].
+
+[1] https://lore.kernel.org/all/20250618164934.19817-1-boqun.feng@gmail.com
+
+Changes in v14:
+- Remove unnecessary `crate::` prefix from `module_param::set_param`.
+- Make `FromStrRadix` safe again by moving unsafe blocks to macro implementation (thanks Benno).
+- Use `core::ptr::write` in `set_param` and drop safety requirement regarding initialization.
+- Add a TODO to use `SyncUnsafeCell` for `ModuleParamAccess` when available.
+- Add a NOTE regarding `Copy` bound on `ModuleParam`.
+- Remove `'static` lifetime qualifier from `ModuleParam::try_from_param_arg` argument.
+- Fix a typo in the safety requirements for `set_param`.
+- Remove unused `#[macro_export]` attribute.
+- Remove obsolete documentation for `ModuleParam::try_from_param_arg`.
+- Make `RacyKernelParam` tuple field private.
+- Introduce `OnceLock` and use that to synchronize population of parameter values.
+- Link to v13: https://lore.kernel.org/r/20250612-module-params-v3-v13-0-bc219cd1a3f8@kernel.org
+
+Changes in v13:
+- remove absolute path for `ffi` types.
+- Split patch 2 into 4 separate patches.
+- Overhaul safety framework for `set_param`.
+- Remove generated docs for `kernel_param_ops`.
+- Move `parse_int` to separate file.
+- Rebase on v6.16-rc1
+- Link to v12: https://lore.kernel.org/r/20250506-module-params-v3-v12-0-c04d80c8a2b1@kernel.org
+
+Changes in v12:
+- Assign through pointer rather than using `core::ptr::replace`.
+- Prevent a potential use-after-free during module teardown.
+- Link to v11: https://lore.kernel.org/r/20250502-module-params-v3-v11-0-6096875a2b78@kernel.org
+
+Changes in v11:
+- Apply a few nits from Miguel.
+- Link to v10: https://lore.kernel.org/r/20250501-module-params-v3-v10-0-4da485d343d5@kernel.org
+
+Changes in v10:
+- Apply fixups from Miguel:
+  - Add integer type suffixes to `assert!` in tests.
+  - Fix links to docs.kernel.org.
+  - Applyy markdown and intra-doc links where possible.
+  - Change to `///` for `mod` docs.
+  - Slightly reword a comment.
+  - Pluralize "Examples" section name.
+  - Hide `use`s in example.
+  - Removed `#[expect]` for the `rusttest` target.
+- Link to v9: https://lore.kernel.org/r/20250321-module-params-v3-v9-0-28b905f2e345@kernel.org
+
+Changes in v9:
+- Remove UB when parsing the minimum integer values.
+- Make `FromStr` trait unsafe, since wrong implementations can cause UB.
+- Drop patches that were applied to rust-next.
+- Link to v8: https://lore.kernel.org/r/20250227-module-params-v3-v8-0-ceeee85d9347@kernel.org
+
+Changes in v8:
+- Change print statement in sample to better communicate parameter name.
+- Use imperative mode in commit messages.
+- Remove prefix path from `EINVAL`.
+- Change `try_from_param_arg` to accept `&BStr` rather than `&[u8]`.
+- Parse integers without 128 bit integer types.
+- Seal trait `FromStrRadix`.
+- Strengthen safety requirement of `set_param`.
+- Remove comment about Display and `PAGE_SIZE`.
+- Add note describing why `ModuleParamAccess` is pub.
+- Typo and grammar fixes for documentation.
+- Update MAINTAINERS with rust module files.
+- Link to v7: https://lore.kernel.org/r/20250218-module-params-v3-v7-0-5e1afabcac1b@kernel.org
+
+Changes in v7:
+- Remove dependency on `pr_warn_once` patches, replace with TODO.
+- Rework `ParseInt::from_str` to avoid allocating.
+- Add a comment explaining how we parse "0".
+- Change trait bound on `Index` impl for `BStr` to match std library approach.
+- Link to v6: https://lore.kernel.org/r/20250211-module-params-v3-v6-0-24b297ddc43d@kernel.org
+
+Changes in v6:
+- Fix a bug that prevented parsing of negative default values for
+  parameters in the `module!` macro.
+- Fix a bug that prevented parsing zero in `strip_radix`. Also add a
+  test case for this.
+- Add `AsRef<BStr>` for `[u8]` and `BStr`.
+- Use `impl AsRef<BStr>` as type of prefix in `BStr::strip_prefix`.
+- Link to v5: https://lore.kernel.org/r/20250204-module-params-v3-v5-0-bf5ec2041625@kernel.org
+
+Changes in v5:
+- Fix a typo in a safety comment in `set_param`.
+- Use a match statement in `parse_int::strip_radix`.
+- Add an implementation of `Index` for `BStr`.
+- Fix a logic inversion bug where parameters would not be parsed.
+- Use `kernel::ffi::c_char` in `set_param` rather than the one in `core`.
+- Use `kernel::c_str!` rather than `c"..."` literal in module macro.
+- Rebase on v6.14-rc1.
+- Link to v4: https://lore.kernel.org/r/20250109-module-params-v3-v4-0-c208bcfbe11f@kernel.org
+
+Changes in v4:
+- Add module maintainers to Cc list (sorry)
+- Add a few missing [`doc_links`]
+- Add panic section to `expect_string_field`
+- Fix a typo in safety requirement of `module_params::free`
+- Change `assert!` to `pr_warn_once!` in `module_params::set_param`
+- Remove `module_params::get_param` and install null pointer instead
+- Remove use of the unstable feature `sync_unsafe_cell`
+- Link to v3: https://lore.kernel.org/r/20241213-module-params-v3-v3-0-485a015ac2cf@kernel.org
+
+Changes in v3:
+- use `SyncUnsafeCell` rather than `static mut` and simplify parameter access
+- remove `Display` bound from `ModuleParam`
+- automatically generate documentation for `PARAM_OPS_.*`
+- remove `as *const _ as *mut_` phrasing
+- inline parameter name in struct instantiation in  `emit_params`
+- move `RacyKernelParam` out of macro template
+- use C string literals rather than byte string literals with explicit null
+- template out `__{name}_{param_name}` in `emit_param`
+- indent template in `emit_params`
+- use let-else expression in `emit_params` to get rid of an indentation level
+- document `expect_string_field`
+- move invication of `impl_int_module_param` to be closer to macro def
+- move attributes after docs in `make_param_ops`
+- rename `impl_module_param` to impl_int_module_param`
+- use `ty` instead of `ident` in `impl_parse_int`
+- use `BStr` instead of `&str` for string manipulation
+- move string parsing functions to seperate patch and add examples, fix bugs
+- degrade comment about future support from doc comment to regular comment
+- remove std lib path from `Sized` marker
+- update documentation for `trait ModuleParam`
+- Link to v2: https://lore.kernel.org/all/20240819133345.3438739-1-nmi@metaspace.dk/
+
+Changes in v2:
+- Remove support for params without values (`NOARG_ALLOWED`).
+- Improve documentation for `try_from_param_arg`.
+- Use prelude import.
+- Refactor `try_from_param_arg` to return `Result`.
+- Refactor `ParseInt::from_str` to return `Result`.
+- Move C callable functions out of `ModuleParam` trait.
+- Rename literal string field parser to `expect_string_field`.
+- Move parameter parsing from generation to parsing stage.
+- Use absolute type paths in macro code.
+- Inline `kparam`and `read_func` values.
+- Resolve TODO regarding alignment attributes.
+- Remove unnecessary unsafe blocks in macro code.
+- Improve error message for unrecognized parameter types.
+- Do not use `self` receiver when reading parameter value.
+- Add parameter documentation to `module!` macro.
+- Use empty `enum` for parameter type.
+- Use `addr_of_mut` to get address of parameter value variable.
+- Enabled building of docs for for `module_param` module.
+- Link to v1: https://lore.kernel.org/rust-for-linux/20240705111455.142790-1-nmi@metaspace.dk/
+
+---
+Andreas Hindborg (7):
+      rust: sync: add `SetOnce`
+      rust: str: add radix prefixed integer parsing functions
+      rust: introduce module_param module
+      rust: module: use a reference in macros::module::module
+      rust: module: update the module macro with module parameter support
+      rust: samples: add a module parameter to the rust_minimal sample
+      modules: add rust modules files to MAINTAINERS
+
+ MAINTAINERS                  |   2 +
+ rust/kernel/lib.rs           |   1 +
+ rust/kernel/module_param.rs  | 181 +++++++++++++++++++++++++++++++++++++++
+ rust/kernel/str.rs           |   2 +
+ rust/kernel/str/parse_int.rs | 148 ++++++++++++++++++++++++++++++++
+ rust/kernel/sync.rs          |   2 +
+ rust/kernel/sync/set_once.rs | 125 +++++++++++++++++++++++++++
+ rust/macros/helpers.rs       |  25 ++++++
+ rust/macros/lib.rs           |  31 +++++++
+ rust/macros/module.rs        | 198 ++++++++++++++++++++++++++++++++++++++-----
+ samples/rust/rust_minimal.rs |  10 +++
+ 11 files changed, 705 insertions(+), 20 deletions(-)
+---
+base-commit: 47633099a672fc7bfe604ef454e4f116e2c954b1
+change-id: 20241211-module-params-v3-ae7e5c8d8b5a
+prerequisite-message-id: 20250618164934.19817-1-boqun.feng@gmail.com
+prerequisite-patch-id: 997f74bd63d81dc66725d7f84ffcf5a3517da1eb
+prerequisite-patch-id: 3e3f8bdada027406a356a2b35aebe13edbda0a94
+prerequisite-patch-id: 468b093532aa503c23302142b8cfe7989e3cb8f1
+prerequisite-patch-id: 96ca162a1e95a29d3aca2e748d600a31417b83e5
+prerequisite-patch-id: 8f78abede975c0c9690ee0f4cf4e7af3cb145191
+prerequisite-patch-id: a716ee7a51184d224ef60812ecfffadb51980153
+prerequisite-patch-id: e54f74896a75147b66e509c1281804047d41f08b
+prerequisite-patch-id: 3f77e2179901ae664a2d2e58965a9725ad13189e
+prerequisite-patch-id: e964a9576f9c3970bb7a34b4d2891ffb92939d0e
+prerequisite-patch-id: bba35ecdf783653e0fa46015bc289706508fac55
+
+Best regards,
+-- 
+Andreas Hindborg <a.hindborg@kernel.org>
 
 
-For Preempt-RT kernels, the rcu_preempt_deferred_qs_handler() be invoked
-in per-cpu irq_work kthreads, the return value of rcu_preempt_depth()
-may always be 0, should we use IRQ_WORK_INIT_HARD() to initialize defer_q=
-s_iw?
-
-Thanks
-Zqiang
-
-
-
->=20
->=20+ WRITE_ONCE(rdp->defer_qs_iw_pending, DEFER_QS_IDLE);
->=20
->=20+ local_irq_restore(flags);
->=20
->=20+ return;
->=20
->=20+ }
->=20
->=20 local_irq_restore(flags);
->=20
->=20 }
->=20
->=20=20
->=20
-> @@ -675,7 +690,7 @@ static void rcu_read_unlock_special(struct task_str=
-uct *t)
->=20
->=20 set_tsk_need_resched(current);
->=20
->=20 set_preempt_need_resched();
->=20
->=20 if (IS_ENABLED(CONFIG_IRQ_WORK) && irqs_were_disabled &&
->=20
->=20- expboost && !rdp->defer_qs_iw_pending && cpu_online(rdp->cpu)) {
->=20
->=20+ expboost && rdp->defer_qs_iw_pending !=3D DEFER_QS_PENDING && cpu_o=
-nline(rdp->cpu)) {
->=20
->=20 // Get scheduler to re-evaluate and call hooks.
->=20
->=20 // If !IRQ_WORK, FQS scan will eventually IPI.
->=20
->=20 if (IS_ENABLED(CONFIG_RCU_STRICT_GRACE_PERIOD) &&
->=20
->=20@@ -685,7 +700,7 @@ static void rcu_read_unlock_special(struct task_s=
-truct *t)
->=20
->=20 else
->=20
->=20 init_irq_work(&rdp->defer_qs_iw,
->=20
->=20 rcu_preempt_deferred_qs_handler);
->=20
->=20- rdp->defer_qs_iw_pending =3D true;
->=20
->=20+ rdp->defer_qs_iw_pending =3D DEFER_QS_PENDING;
->=20
->=20 irq_work_queue_on(&rdp->defer_qs_iw, rdp->cpu);
->=20
->=20 }
->=20
->=20 }
->=20
->=20--=20
->=20
-> 2.43.0
->
 
