@@ -1,93 +1,149 @@
-Return-Path: <linux-kernel+bounces-720170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEE7FAFB81B
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 17:59:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 16474AFB82A
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 18:02:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC64F189D9FD
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 16:00:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41F6C189F2ED
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 16:02:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58D0E2222D7;
-	Mon,  7 Jul 2025 15:59:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OxEKQ2u3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C58A022541B;
+	Mon,  7 Jul 2025 16:01:20 +0000 (UTC)
+Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6AFC1A23B5;
-	Mon,  7 Jul 2025 15:59:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2B2B22B5AC;
+	Mon,  7 Jul 2025 16:01:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751903984; cv=none; b=VgzSPGnkveX7c+Bvyh1xw1CsVvPMdCtssoZHnf+Un0oBfG0FEGKLZftP62R7uAb7IhA8aF5uQTLBaSScuEFlxrjim0M0kc08ZSvJ8MEpgE8H5u1/qk+5s1/F/R2Z/dSGyteqhGFnWohK3pfT/htJOefNi3Rs+W8e0JQ/+1Izgsk=
+	t=1751904080; cv=none; b=AIP6jVNWnO/zg7a/JTUw0JzyemJmp8OdL79DrBmtf9Y5vxSBePeXxrpKLSbP9Apxlfpj4CXpYH8Y/INgx67CRMePODQUeWNv7zRPtMWL5hY8OhuXbIJ3S4iBYbP16pkhL1fCzOPxHEHPW6WUP0Xu/hrPYuHNcoMqkm2KD/ibxhY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751903984; c=relaxed/simple;
-	bh=culOqIjkOS4OE1KS1E208+mey1VA6KfcxMPlrRWyHh8=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=SG0HCDI/bLxOMQL2UBHmsIkx4rLu3/rrJc4T6euMTr2jETCrQqx5Nml6tKwtuW2n+MW2Y9ttJVDzoVHsltSi82KuijVdSuHjyzX43YJptyjdwOOG4WjkDp8n8tYfzXn0SEfCdBympE7UT5MTJX8rbuc1MPuwpN8YA3yLTe+EiFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OxEKQ2u3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AC01C4CEF1;
-	Mon,  7 Jul 2025 15:59:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751903983;
-	bh=culOqIjkOS4OE1KS1E208+mey1VA6KfcxMPlrRWyHh8=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=OxEKQ2u35ZJYZfdiwzUDxzwRFcUJIStOuDcMgtGxEdtQ6gmIls9mjOMO2tnppqNFB
-	 yu4nX4gwES1HrLnH76q9LUC+TiDWmcSGR5knG4DE2yM4M/Qmi8vdnnUsvYaW1UHuhx
-	 njhEqfaWm8OZJt+5EVRg9/L9OSjOry4euP+UZkxTBhxy6jifbWjd+NDOITtCB7kwwM
-	 n+fObhKGFVWEA+HqvWmNZysNS6IbsrBP8GrODAJjU2NLQTKpOTzp4BW2h6k1Dqd24B
-	 czG5842oJ4X6YdXFS7HhebOYj2yVrv8ZCUe13b5tW0+2hLpF5XKcbUXrLr4SJx6wTE
-	 PnJD2UuHpzY7g==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AD813383BA25;
-	Mon,  7 Jul 2025 16:00:07 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1751904080; c=relaxed/simple;
+	bh=Hp7HNGXV/MgXNjT6THHxJ7gOgkHDeA1sjiSWQuHH9+4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=pwWh+00qdcnQGXQ9zwrktAKSB4iE5VmSEjvVutPb800ExnXmNwqU+D+9ncUtFnHnw9I9hZUSh2QziFwA97j8AXcDDVfvN0VbSQRMxeUZ4cVZTqlTR+HeqPeBReEO7ozGF//mpYlfD7+o3D4CPQgFAe0urdl6kuNiHug4Syk9hhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-6facc3b9559so55455656d6.0;
+        Mon, 07 Jul 2025 09:01:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751904074; x=1752508874;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=G7hosWBn35t4Uk2u8zfbBq4Gr7N31VV3afuofXRc6qA=;
+        b=Yj1xwn009pCP2LMHmbFVhWSEKfTMLz/NU4fKvBRvANXUhISrlNdNDiJbisThl5gyJg
+         AENXhMDF04qA+ApQOGbkuLsq8l1rNSpnSYm3a5VwlZXvEJaaGh+5ddSQXEJRmdGeqCBd
+         O9Y3DruofwaJKLw1sVamtVrKmMuAYdw5lPGj7C6erMyHsk62BNRYDirmdy73KhJpbKLL
+         voulC03B8eTXMecjoVWe4kcSyAHLOs8pusWNK7OauUtKDpDBdDFhUxkb6KgzibjHm6fx
+         emczLviVwt3WJi9AsrAlQAypPM0QEtLoBWZ+LOxZhGSAdEP89d8+QbDSdwmHVzZkJA4k
+         loUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWYP2CunOAZiTdAcUpSMaPTFpOo/hU5slBk2rEH2Fclq3Hs59l/M5h5gZQOUT8t7UBpNZpZGvSoV0xVZZoG@vger.kernel.org, AJvYcCWiQ74F/if8Bc41tLAU5+ml4F4TfCuHv1xSWGkJ8jVNoLyR4ajpbMKBDOSuSZ0zo8yKfUKzqLuclFs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyaF1bfPy2nzaw1q4ZVXQ1ddHfv/6rEFS2STLvqXQfaXBjnNKQ9
+	MepaodL3BypD6Xuu+JIL7MQ9zd3Wzo/4aeFMECxho8xxN2qfZiJV5js8
+X-Gm-Gg: ASbGncuJsTKITuw5QXMQGI2EyK5cZ7NMzE8oq0lvLnaKCMKjX9YkQWQ4gW4052GmOMa
+	XATaNldsIeJLEQpgE1EmNSd3VohvH6f3A3xelHsV9ez7HTUDjBX4w1WL7//MwgkFPFtThmaUtVq
+	/K1XM5aMfMVgIJBhHmPcAvqenzKhZ4279ypMZP7jZHqlQr9cQPcQKxTghbCPtdKMcCx9YP4GBIF
+	bKe5+41i9XN3JoPHcC+6ukeavGwKX/gFWhU3aujEMtOkMtYhWe+pU9fMRg0ZnTOkBDVhHmCruzj
+	l9bZH6QLsoQ7qrm8K3f68h1ZBH4AENcWzSlUfDkOw6OzISDuOswYHIEunk7S5is=
+X-Google-Smtp-Source: AGHT+IE3CmPzV/fhqf7jC7u04UVH+5AgGt2F4Bb0kNv0jDOEuc/afA1koRlX0ZFh4r2J4ny2rBHCog==
+X-Received: by 2002:a05:6214:301a:b0:6fb:5ac8:2b79 with SMTP id 6a1803df08f44-702c6d3338amr218150046d6.19.1751904068420;
+        Mon, 07 Jul 2025 09:01:08 -0700 (PDT)
+Received: from localhost ([2a03:2880:20ff:8::])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-702c4cc765csm61512726d6.24.2025.07.07.09.01.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Jul 2025 09:01:07 -0700 (PDT)
+From: Breno Leitao <leitao@debian.org>
+Subject: [PATCH 0/8] arm64: set VMAP_STACK by default
+Date: Mon, 07 Jul 2025 09:01:00 -0700
+Message-Id: <20250707-arm64_vmap-v1-0-8de98ca0f91c@debian.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH bpf-next v2] bpf: Clean code with bpf_copy_to_user
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175190400658.3343361.17710196557155966641.git-patchwork-notify@kernel.org>
-Date: Mon, 07 Jul 2025 16:00:06 +0000
-References: <20250703163700.677628-1-chen.dylane@linux.dev>
-In-Reply-To: <20250703163700.677628-1-chen.dylane@linux.dev>
-To: Tao Chen <chen.dylane@linux.dev>
-Cc: ast@kernel.org, daniel@iogearbox.net, john.fastabend@gmail.com,
- andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
- yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me,
- haoluo@google.com, jolsa@kernel.org, bpf@vger.kernel.org,
- linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADzva2gC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDcwNz3cSiXDOT+LLcxALdtERzg6RE42TL5LQkJaCGgqLUtMwKsGHRsbW
+ 1AI9YSptcAAAA
+X-Change-ID: 20250707-arm64_vmap-fa70ba3c9cfb
+To: Catalin Marinas <catalin.marinas@arm.com>, 
+ Will Deacon <will@kernel.org>, Ard Biesheuvel <ardb@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ linux-efi@vger.kernel.org, Breno Leitao <leitao@debian.org>, 
+ leo.yan@arm.com, kernel-team@meta.com, mark.rutland@arm.com
+X-Mailer: b4 0.15-dev-42535
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1987; i=leitao@debian.org;
+ h=from:subject:message-id; bh=Hp7HNGXV/MgXNjT6THHxJ7gOgkHDeA1sjiSWQuHH9+4=;
+ b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBoa+9CFdUxQt/eVM2JgHj/tHQ/mYlGIUbwuXKE/
+ IfZ7+aKK1aJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCaGvvQgAKCRA1o5Of/Hh3
+ beqZEACwK1m/IBiWsuZm/yCweFTl5CvloY8Omq7+onAp9NAmo3f3fq3dWNvd1fInjjIp6USlV4T
+ 3i9TffnzmSZLQgAiZsBYTnKA4N1tcOIFO5eCTXUYYFEewG2LnIaFs3IzDqIkd5wI4CQ/s4FDJmV
+ tKcgvDAzFmqTEiBdK+re5/18pEZNyNkmXjel83K5NRnK5slBYOKGtJ61CkzUiZTye6oza/vQhYl
+ hZzW6B56W26AxpieyGwQBGD+4YsevmxZeXCzPkwijUg3gD0ikrgPILnwzaQ4mpEFq5zQzFZnmSQ
+ 0JhAvJvCvQW07yFK9k9s7HbCNtGN3ZBehVZzZMAk7mu8E7f6B6/nG6c4w65BnOtKGH/41fLkNXG
+ j2mV5p5B/rcE5v6iaPQ8lvdVz0DBVrMQnW7ko9NOCF9rqcCYfjyDngxaTluIEmIGiYCgHuTxQuB
+ rHvQK/UOgaYRNF9it5XieDiejviBBTAjfku0UdbYAzxcjMXNiVN3at1OQabS/k8g6wpYnXSvPdP
+ ArpsCqIZaz3tzbWrKOwcXHu7UQD5ud3f/1oISW3vkMdBYhPecgGmAytUr0rkbdz/EJrAUoad0wg
+ hBkd8j2PMfbfNsFE5dULVs0QOsanR7JIumvN4BnXV8Qhjx9BT6nAv0oSC+z00JaCWPnFvdTPJPC
+ K2FdLBzpLZuS4Qg==
+X-Developer-Key: i=leitao@debian.org; a=openpgp;
+ fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
 
-Hello:
+Hi all,
 
-This patch was applied to bpf/bpf-next.git (master)
-by Alexei Starovoitov <ast@kernel.org>:
+This patchset select VMAP_STACK on arm64 by default, and cleans up the
+code by removing all associated CONFIG_VMAP_STACK conditionals.
 
-On Fri,  4 Jul 2025 00:37:00 +0800 you wrote:
-> No logic change, just use bpf_copy_to_user to clean code.
-> 
-> Signed-off-by: Tao Chen <chen.dylane@linux.dev>
-> ---
->  kernel/bpf/syscall.c | 17 +++--------------
->  1 file changed, 3 insertions(+), 14 deletions(-)
-> 
-> [...]
+This is a suggestion from Will Deacon from another discussion[1].
 
-Here is the summary with links:
-  - [bpf-next,v2] bpf: Clean code with bpf_copy_to_user
-    https://git.kernel.org/bpf/bpf-next/c/3413bc0cf16e
+With VMAP_STACK now always enabled on arm64, the code can be
+significantly simplified, reducing complexity and potential for
+misconfiguration.
 
-You are awesome, thank you!
+Overview of Changes
+
+    * Remove all #ifdef CONFIG_VMAP_STACK and related runtime checks
+      throughout the architecture codebase.
+    * Replace runtime checks with build-time assertions where
+      appropriate.
+
+Link: https://lore.kernel.org/all/aGfYL8eXjTA9puQr@willie-the-truck/ [1]
+
+Signed-off-by: Breno Leitao <leitao@debian.org>
+---
+Breno Leitao (8):
+      arm64: Enable VMAP_STACK support
+      arm64: efi: Remove CONFIG_VMAP_STACK check
+      arm64: Remove CONFIG_VMAP_STACK conditionals from THREAD_SHIFT and THREAD_ALIGN
+      arm64: remove CONFIG_VMAP_STACK conditionals from irq stack setup
+      arm64: remove CONFIG_VMAP_STACK conditionals from traps overflow stack
+      arm64: remove CONFIG_VMAP_STACK checks from stacktrace overflow logic
+      arm64: remove CONFIG_VMAP_STACK checks from SDEI stack handling
+      arm64: remove CONFIG_VMAP_STACK checks from entry code
+
+ arch/arm64/Kconfig                  |  1 +
+ arch/arm64/include/asm/memory.h     |  6 +-----
+ arch/arm64/include/asm/stacktrace.h |  6 +-----
+ arch/arm64/kernel/efi.c             |  5 -----
+ arch/arm64/kernel/entry-common.c    |  2 --
+ arch/arm64/kernel/entry.S           |  6 ------
+ arch/arm64/kernel/irq.c             | 13 -------------
+ arch/arm64/kernel/sdei.c            |  8 ++------
+ arch/arm64/kernel/stacktrace.c      |  4 +---
+ arch/arm64/kernel/traps.c           |  3 ---
+ 10 files changed, 6 insertions(+), 48 deletions(-)
+---
+base-commit: 9dd1757493416310a5e71146a08bc228869f8dae
+change-id: 20250707-arm64_vmap-fa70ba3c9cfb
+
+Best regards,
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+Breno Leitao <leitao@debian.org>
 
 
