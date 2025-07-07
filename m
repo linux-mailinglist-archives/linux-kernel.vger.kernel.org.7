@@ -1,146 +1,165 @@
-Return-Path: <linux-kernel+bounces-720437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C08DAFBBA6
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 21:18:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DA40AFBBAB
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 21:25:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7D6E42541C
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 19:17:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CEA874A63CB
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 19:25:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4748D266582;
-	Mon,  7 Jul 2025 19:18:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 594CD266EF1;
+	Mon,  7 Jul 2025 19:25:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="OYJYOE5+"
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p80+dC/N"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FBA523027C
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 19:18:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B646A224B0E;
+	Mon,  7 Jul 2025 19:25:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751915895; cv=none; b=nqpxFo7nbhHhG+gsx7O0C/auX+i+liW1I3XRPtu9b6aQH59G4I1M7iM5adZ8IS7adLyiitXk3Zzal1BRhfUvqUPmQju2L6eaxUBEGoZtn2GLmTRQtuDg90YNXX1ZUvD2+dvIDaNkFTbgwyEsK/ZUP4Ugw3/awlpauQAqsdcCiZU=
+	t=1751916320; cv=none; b=dGflg5nmUUQfW6WOdCasyvixJtnexbp43u3YG+/ef3QiagUXTDyRlqZVRbo5sTriIQkqQblYukzaciovV22vJnoTKV9Entu6KaUvDU4KZOneLPFY70Cu47wfoMGTrYo8fqzbq4v40/wN63UKBXda7NqAGtz/RFuwWSaVZ0OK8qA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751915895; c=relaxed/simple;
-	bh=YF9SUdNS4UFtTk087mgYFaRJjT30f7TNpxtcud3aEYo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NWy3hBp0CmGctLD/YNd+FcrkjtWFjl1q5dSZYiHCJqfvEvei2pD4RC/tMnUmnyjC/dnGsKDRh6Z8kWDtROvbpDBbrSU1LYb1dKdFf5YY6KIrUBX3HjqKvDVU3XVBySQhV9MQ6ZIkHQVE9bkHR61E4DX28niiHCCy5N4h1ILexUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=OYJYOE5+; arc=none smtp.client-ip=209.85.219.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
-Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-701046cfeefso68746226d6.2
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 12:18:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1751915893; x=1752520693; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=86Um/oGfXBVHaAngu0B8h+3DIlXKpnkZFqZaOl/fGcM=;
-        b=OYJYOE5+pIl0pgrqSgNZwYJmkrX8eaD095eeFLX+cqcd5wiqtwRNFVJwacGzXLFHxp
-         VTHtZ6oA3oxJfh/YA1UWsBUna57qnsH8hU1kkMNxlVOyJiOnrCNIWmQW1tUDlOKRFu3C
-         wV6YAuw0CBBYuEab2nash1/8nyEiwnjSyldADQLRCJNFz8E3b81UWWS6BIzYnJMho9Sw
-         OB0n1lihLebHzgu5Bg6g/8fXS62OOJO5cVMuqR9/TfkLe9HgotKVL+e6fbzpUt+tOkv7
-         ZxgIvhjf4Zaldepg0ZUZBg0faPkPpxBndy2u+xGv/v2octIclzE+kRvZl2dPYsd2S6RE
-         cOrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751915893; x=1752520693;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=86Um/oGfXBVHaAngu0B8h+3DIlXKpnkZFqZaOl/fGcM=;
-        b=qKfeSt1DOYa/U8YKuxgU6dfsmqMtrgAzz7r3lyIaMi8ytIpnmvtPVf/jFfRibKgZrP
-         rjQaoIdM8IISDgZ34tPkiMFte8SZxx9+rbjaddiyIRnhjLDN4QpF3j5Y8/bzLWgpkQrI
-         U7tdggjb6vQPDTGhmKbcjYWjXLFlGs1qRBFhdBN7Gu51+zKeoNcknLzM5oVqOrqEM3jF
-         19ow1e8u0EyDKuqxYhWFuqgmS9N4qH2JpH4EoY3oxr+HgOidA/kpqlfSd/G8302DMmSa
-         AOLx4GYRl3YEkEsRgO3mVbzjwXBLDjyvkPWs9l7oVLfe2gcVmecBPkDRMSkbTCIbILRF
-         +K9A==
-X-Forwarded-Encrypted: i=1; AJvYcCUImdHOGbhEf65TIT6LRIQV6s0nSKXswubiGNWCCBn1WLcG9EnHoTV/MSxfKdQgwEzN+/bk87JxKN/egjw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywul7rn75ifE9d7/hD2btZZwLQZir+3SwQhgofPvfevFErXjfES
-	IIRwYLtKNoXBsXUilxw6SS5ZM1xgVaIRAQtJqFTEdFK/qJ5Xzme200xzz9ThcBroSg==
-X-Gm-Gg: ASbGncv5rzTm4teeKqm3inK8RXRVI5XmZg4LeEXSEdfxB84mTrylV4lE5Zn6baxY9a6
-	Lhs7SS0t0pFyj2r8NyVbB7KXtOlUhqvFRpnW2uiXfMq3Ma1F9/8AQZUi8wlnyKpEKK2k+xDg3/7
-	oK9BXkK9AEjPAXkYEVprokhCCEbX59+/byDgTxwxX6+b91duUiETcPOv0Khr7t7kow5g04twD6U
-	DteA86FQseG1ThE1xsefw1CNcWgUuIvAqO7QWvTPtDEYxzs3i1sYunJJkISNHccykDC0LODBOnN
-	pvRwnZKv8YoypRjIlKB3sQo8aiBM2oowOAgT1xyfFPjXhd9CA4UHN4MI0tEm+gE7hjrKL8iD2q1
-	5u8sMtProhX1Qn2g4te/OzhXmH6nrQc34YOI9HNT3j6KCC/eiufI8j7Q=
-X-Google-Smtp-Source: AGHT+IEsXOhPOpYzahtFBIem1W72v4wRmVgiUgUVjEEfhHLpilQo8hWzadCpQVVWgg0u28b40ROhiw==
-X-Received: by 2002:a05:6214:419e:b0:6fa:ce21:cad with SMTP id 6a1803df08f44-7047cf09751mr9817856d6.18.1751915892554;
-        Mon, 07 Jul 2025 12:18:12 -0700 (PDT)
-Received: from rowland.harvard.edu (nat-65-112-8-52.harvard-secure.wrls.harvard.edu. [65.112.8.52])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-702c4cc779bsm64489986d6.19.2025.07.07.12.18.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Jul 2025 12:18:12 -0700 (PDT)
-Date: Mon, 7 Jul 2025 15:18:09 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: syzbot <syzbot+8258d5439c49d4c35f43@syzkaller.appspotmail.com>
-Cc: contact@arnaud-lcm.com, gregkh@linuxfoundation.org,
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-	manas18244@iiitd.ac.in, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [usb?] KASAN: slab-out-of-bounds Read in
- mon_copy_to_buff
-Message-ID: <72fea4f2-40d7-4f9f-a08d-b1ada781256e@rowland.harvard.edu>
-References: <5de04492-01d3-4b2c-b3f4-8c2237dfed6a@rowland.harvard.edu>
- <686c14c0.a00a0220.6237c.0000.GAE@google.com>
+	s=arc-20240116; t=1751916320; c=relaxed/simple;
+	bh=hP82dDhok+6gAH/5p/uOZI8kvP28j/8sBKLtucO7i/E=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=S+satZSuJEHol4fGkH3NM+VkAfBNihDlvFSVkLl1Q1ZpOvs+oIbCXazz7AxqcHnfe8YI4FHS25hT08k/X+hl4b1anXqh4/QBTqrsaellaPe46roD10uFLNr0byE+dYRlz+Fk75LUp50liWkFDUe/A8ykOH2q7XIbQuZOI9rVZNY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p80+dC/N; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5828CC4CEE3;
+	Mon,  7 Jul 2025 19:25:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751916320;
+	bh=hP82dDhok+6gAH/5p/uOZI8kvP28j/8sBKLtucO7i/E=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=p80+dC/NCnHnEbiDeDorpKK+/+72fDO6sO0W69Q0RnQXiYZkCGVnyK/Js9VAWXKbJ
+	 eLgWJeTm0gW3GpylTxzy3Y2sDESv/XcL63cLzvN+UAFDszY//i8jvC1pSjS2fpaWuW
+	 HA5qWiM+Vw8l7hQSysqWFBUAZzwr9KCxA7GrZBItrl/4dErwr03XmXdXj4PpoGbZi5
+	 SYCo81vWotKyb/BpeHQ1eGruR4PaTFP2SybJwMXR0ITnD1gMGdfVgn8AcQXHPVU/Lz
+	 FzmEi9uV1PSBNYSfdei1oQLchNO3G/NgzTZMjbDgJZlsiYOZP3sizEFQVlB6V/iQuA
+	 XCM7aErY2aXSw==
+Message-ID: <a7621e726227260396291e82363d2b82e5f2ad73.camel@kernel.org>
+Subject: Re: [PATCH 2/2] NFS: Improve nfsiod workqueue detection for
+ allocation flags
+From: Trond Myklebust <trondmy@kernel.org>
+To: Benjamin Coddington <bcodding@redhat.com>, Anna Schumaker
+ <anna@kernel.org>,  Tejun Heo <tj@kernel.org>, Lai Jiangshan
+ <jiangshanlai@gmail.com>
+Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	djeffery@redhat.com, loberman@redhat.com
+Date: Mon, 07 Jul 2025 12:25:17 -0700
+In-Reply-To: <a4548815532fb7ad71a4e7c45b3783651c86c51f.1751913604.git.bcodding@redhat.com>
+References: <cover.1751913604.git.bcodding@redhat.com>
+	 <a4548815532fb7ad71a4e7c45b3783651c86c51f.1751913604.git.bcodding@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <686c14c0.a00a0220.6237c.0000.GAE@google.com>
 
-On Mon, Jul 07, 2025 at 11:41:04AM -0700, syzbot wrote:
-> Hello,
-> 
-> syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-> KASAN: slab-out-of-bounds Read in mon_copy_to_buff
-> 
-> microsoft 0003:045E:07DA.0001: unknown main item tag 0x0
-> microsoft 0003:045E:07DA.0001: ignoring exceeding usage max
-> usbhid 1-1:0.0: count 0 reportnum 0 buf[0] 0
+On Mon, 2025-07-07 at 14:46 -0400, Benjamin Coddington wrote:
+> The NFS client writeback paths change which flags are passed to their
+> memory allocation calls based on whether the current task is running
+> from
+> within a workqueue or not.=C2=A0 More specifically, it appears that durin=
+g
+> writeback allocations with PF_WQ_WORKER set on current->flags will
+> add
+> __GFP_NORETRY | __GFP_NOWARN.=C2=A0 Presumably this is because nfsiod can
+> simply fail quickly and later retry to write back that specific page
+> should
+> the allocation fail.
+>=20
+> However, the check for PF_WQ_WORKER is too general because tasks can
+> enter NFS
+> writeback paths from other workqueues.=C2=A0 Specifically, the loopback
+> driver
+> tends to perform writeback into backing files on NFS with
+> PF_WQ_WORKER set,
+> and additionally sets PF_MEMALLOC_NOIO.=C2=A0 The combination of
+> PF_MEMALLOC_NOIO with __GFP_NORETRY can easily result in allocation
+> failures and the loopback driver has no retry functionality.=C2=A0 As a
+> result,
+> after commit 0bae835b63c5 ("NFS: Avoid writeback threads getting
+> stuck in
+> mempool_alloc()") users are seeing corrupted loop-mounted filesystems
+> backed
+> by image files on NFS.
+>=20
+> In a preceding patch, we introduced a function to allow NFS to detect
+> if
+> the task is executing within a specific workqueue.=C2=A0 Here we use that
+> helper
+> to set __GFP_NORETRY | __GFP_NOWARN only if the workqueue is nfsiod.
+>=20
+> Fixes: 0bae835b63c5 ("NFS: Avoid writeback threads getting stuck in
+> mempool_alloc()")
+> Signed-off-by: Benjamin Coddington <bcodding@redhat.com>
+> ---
+> =C2=A0fs/nfs/internal.h | 12 +++++++++++-
+> =C2=A01 file changed, 11 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/fs/nfs/internal.h b/fs/nfs/internal.h
+> index 69c2c10ee658..173172afa3f5 100644
+> --- a/fs/nfs/internal.h
+> +++ b/fs/nfs/internal.h
+> @@ -12,6 +12,7 @@
+> =C2=A0#include <linux/nfs_page.h>
+> =C2=A0#include <linux/nfslocalio.h>
+> =C2=A0#include <linux/wait_bit.h>
+> +#include <linux/workqueue.h>
+> =C2=A0
+> =C2=A0#define NFS_SB_MASK (SB_NOSUID|SB_NODEV|SB_NOEXEC|SB_SYNCHRONOUS)
+> =C2=A0
+> @@ -669,9 +670,18 @@ nfs_write_match_verf(const struct nfs_writeverf
+> *verf,
+> =C2=A0		!nfs_write_verifier_cmp(&req->wb_verf, &verf-
+> >verifier);
+> =C2=A0}
+> =C2=A0
+> +static inline bool is_nfsiod(void)
+> +{
+> +	struct workqueue_struct *current_wq =3D current_workqueue();
+> +
+> +	if (current_wq)
+> +		return current_wq =3D=3D nfsiod_workqueue;
+> +	return false;
+> +}
+> +
+> =C2=A0static inline gfp_t nfs_io_gfp_mask(void)
+> =C2=A0{
+> -	if (current->flags & PF_WQ_WORKER)
+> +	if (is_nfsiod())
+> =C2=A0		return GFP_KERNEL | __GFP_NORETRY | __GFP_NOWARN;
+> =C2=A0	return GFP_KERNEL;
+> =C2=A0}
 
-Aha!  As I expected.
 
-> ==================================================================
-> BUG: KASAN: slab-out-of-bounds in mon_copy_to_buff+0xc2/0x170 drivers/usb/mon/mon_bin.c:252
-> Read of size 3904 at addr ffff8880222d53c1 by task kworker/1:2/3689
+Instead of trying to identify the nfsiod_workqueue, why not apply
+current_gfp_context() in order to weed out callers that set
+PF_MEMALLOC_NOIO and PF_MEMALLOC_NOFS?
 
-Let's see if this fixes it.
+i.e.
 
-Alan Stern
 
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/ d7b8f8e20813
+static inline gfp_t nfs_io_gfp_mask(void)
+{
+	gfp_t ret =3D current_gfp_context(GFP_KERNEL);
 
- drivers/hid/usbhid/hid-core.c |   15 +++++++--------
- 1 file changed, 7 insertions(+), 8 deletions(-)
+	if ((current->flags & PF_WQ_WORKER) && ret =3D=3D GFP_KERNEL)
+		ret |=3D __GFP_NORETRY | __GFP_NOWARN;
+	return ret;
+}
 
-Index: usb-devel/drivers/hid/usbhid/hid-core.c
-===================================================================
---- usb-devel.orig/drivers/hid/usbhid/hid-core.c
-+++ usb-devel/drivers/hid/usbhid/hid-core.c
-@@ -911,14 +911,13 @@ static int usbhid_set_raw_report(struct
- 	struct usb_host_interface *interface = intf->cur_altsetting;
- 	int ret, skipped_report_id = 0;
- 
--	/* Byte 0 is the report number. Report data starts at byte 1.*/
--	if ((rtype == HID_OUTPUT_REPORT) &&
--	    (hid->quirks & HID_QUIRK_SKIP_OUTPUT_REPORT_ID))
--		buf[0] = 0;
--	else
--		buf[0] = reportnum;
--
--	if (buf[0] == 0x0) {
-+	/*
-+	 * If the report ID number is 0 then report data starts at byte 0.
-+	 * Otherwise byte 0 is the report number and report data starts
-+	 * at byte 1.
-+	 */
-+	if (rtype == HID_OUTPUT_REPORT && reportnum > 0 &&
-+	    (hid->quirks & HID_QUIRK_SKIP_OUTPUT_REPORT_ID)) {
- 		/* Don't send the Report ID */
- 		buf++;
- 		count--;
+
+--=20
+Trond Myklebust
+Linux NFS client maintainer, Hammerspace
+trondmy@kernel.org, trond.myklebust@hammerspace.com
 
