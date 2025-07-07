@@ -1,152 +1,71 @@
-Return-Path: <linux-kernel+bounces-719677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B8FBAFB13C
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 12:30:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAE78AFB141
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 12:31:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FCC94A0A7D
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 10:30:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C715C3AEEFD
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 10:31:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D5D228DB59;
-	Mon,  7 Jul 2025 10:30:31 +0000 (UTC)
-Received: from mail-m49194.qiye.163.com (mail-m49194.qiye.163.com [45.254.49.194])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED475293C7F;
+	Mon,  7 Jul 2025 10:31:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jf/9DyWw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 996B2156C6F;
-	Mon,  7 Jul 2025 10:30:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C89A19F10A;
+	Mon,  7 Jul 2025 10:31:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751884231; cv=none; b=HalU1hb4e+ITqUO8R5JYNNKIyeD8uxPpUyVNBAOrrsTDgoKQ7bc2FfhaBUyJTcxh1EnkZyrHrUkMmyAkK9C38vyXxrLT/uOA4av1PZjaisqQlBLtHDc64/ArCqaxqJJIQsq98MdiYwScVDyvdeKllUnMwDjTxsmFP0MU2Ti2/bc=
+	t=1751884305; cv=none; b=MC4AYn90haZkswQQiKCaHqdTGZulWoiDagjMmbRP2Y+eqSJ/WSJ+syumD3bB1ueyA9GghlIH3E+/QTM5wcmo209B1wQULcAzeUksrHn1j5wgw5kHlivqytAuXbLqH36Y0kw0rzeYE4N+ifsIcMrbqfPqujcXqIfHSoQk49rI78o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751884231; c=relaxed/simple;
-	bh=wzvySkfSkJ4e8dwMvyxg2jF5Ke08l5dP7TDvrD6QV24=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=X1oLQaLGMAptKG14K7XCs0rtJ4i88rdszk4rEBErJtPKWAjXLhBJe347giO7TtYqAEDEg1BkXHQXHj571yKITMVn1tHbV3IjEbo5X/qf1drS1Az9un4AtOSp5o1wW1RMTyHcF9MWJO06h6bH3pwUv6GnSQ80nir1pLQB5lPtp7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hj-micro.com; spf=pass smtp.mailfrom=hj-micro.com; arc=none smtp.client-ip=45.254.49.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hj-micro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hj-micro.com
-Received: from localhost.localdomain (unknown [122.224.147.158])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 1b2c5dbcb;
-	Mon, 7 Jul 2025 18:30:16 +0800 (GMT+08:00)
-From: Andy Xu <andy.xu@hj-micro.com>
-To: bhelgaas@google.com,
-	lukas@wunner.de
-Cc: mahesh@linux.ibm.com,
-	oohall@gmail.com,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	jemma.zhang@hj-micro.com,
-	peter.du@hj-micro.com,
-	Hongbo Yao <andy.xu@hj-micro.com>
-Subject: [PATCH] PCI/DPC: Extend DPC recovery timeout
-Date: Mon,  7 Jul 2025 18:30:14 +0800
-Message-ID: <20250707103014.1279262-1-andy.xu@hj-micro.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1751884305; c=relaxed/simple;
+	bh=zNVRCJVhxcyQEuZZNNKwSVumR6ZaqRVDBCyfbvp2W6Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RcIyA/huZU2URr000XnzGBGR5lAybMJOoPCfRhXd9JB0ukHp6tkXPhdL9cZM0v/Io0UpYsZh6gl5Rxvyr6u0GknTWMVSIyrr+Fol0i/PLBiNcbHpiLTvV/O9rfkkg/WlMP0s/eZWKu55Khvykqdl7siMyIQqOVNsMCYDjdVxOVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jf/9DyWw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B692AC4CEE3;
+	Mon,  7 Jul 2025 10:31:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751884303;
+	bh=zNVRCJVhxcyQEuZZNNKwSVumR6ZaqRVDBCyfbvp2W6Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jf/9DyWw2d48bKozsDaLn0IYfnQhzqps2iChqOnzZLDmFvmCJHYKUAOhftt9BzoqN
+	 EWIB47MQ0Y7OEnXUE9dZ7XnK2wgC5IsNeLmoi8jcfmUjJWApD4c+V7GKKK9eYBcNA4
+	 cRJYyceIlQ8SfajM1joSBd/Dyoq5JvVrPASRSO5eCsi+Gp61r2ZXK/myWOVKCTUsbx
+	 kM+W0TqUevi/7ywtKliOKcXLVFCII3Nfe2yNU53P7f6Xf1FpY3wGOqTqEChB70DNRM
+	 g7JS86ZA76mbh1pf7q1ZcJ4Xc6EqUoQl82/kzfJrN98iP79Azxh6hCuhi88gpVxBD0
+	 SeRdKqVO81jZw==
+Date: Mon, 7 Jul 2025 11:31:40 +0100
+From: Simon Horman <horms@kernel.org>
+To: Ahelenia =?utf-8?Q?Ziemia=C5=84ska?= <nabijaczleweli@nabijaczleweli.xyz>
+Cc: Chas Williams <3chas3@gmail.com>,
+	linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] atm: lanai: fix "take a while" typo
+Message-ID: <20250707103140.GD89747@horms.kernel.org>
+References: <mn5rh6i773csmcrpfcr6bogvv2auypz2jwjn6dap2rxousxnw5@tarta.nabijaczleweli.xyz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlCSUsfVk4YShhOGRpCTExKHlYVFAkWGhdVEwETFh
-	oSFyQUDg9ZV1kYEgtZQVlKSUlVSUlPVUpPTFVKTkNZV1kWGg8SFR0UWUFZT0tIVUpLSUhCSENVSk
-	tLVUpCS0tZBg++
-X-HM-Tid: 0a97e46fb83003afkunmcba88557e5ad6a
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6PU06LBw6PTErETcvUUtKCTYI
-	IwgaCiNVSlVKTE5KQ0NPSUpMSEJCVTMWGhIXVRoVHwJVAw47ExFWFhIYCRRVGBQWRVlXWRILWUFZ
-	SklJVUlJT1VKT0xVSk5DWVdZCAFZQU1OT0k3Bg++
+In-Reply-To: <mn5rh6i773csmcrpfcr6bogvv2auypz2jwjn6dap2rxousxnw5@tarta.nabijaczleweli.xyz>
 
-From: Hongbo Yao <andy.xu@hj-micro.com>
+On Thu, Jul 03, 2025 at 08:21:16PM +0200, Ahelenia Ziemiańska wrote:
+> Signed-off-by: Ahelenia Ziemiańska <nabijaczleweli@nabijaczleweli.xyz>
+> ---
+> v1: https://lore.kernel.org/lkml/h2ieddqja5jfrnuh3mvlxt6njrvp352t5rfzp2cvnrufop6tch@tarta.nabijaczleweli.xyz/t/#u
 
-Extend the DPC recovery timeout from 4 seconds to 7 seconds to
-support Mellanox ConnectX series network adapters.
+Reviewed-by: Simon Horman <horms@kernel.org>
 
-My environment:
-  - Platform: arm64 N2 based server
-  - Endpoint1: Mellanox Technologies MT27800 Family [ConnectX-5]
-  - Endpoint2: Mellanox Technologies MT2910 Family [ConnectX-7]
-
-With the original 4s timeout, hotplug would still be triggered:
-
-[ 81.012463] pcieport 0004:00:00.0: DPC: containment event, status:0x1f01 source:0x0000
-[ 81.014536] pcieport 0004:00:00.0: DPC: unmasked uncorrectable error detected
-[ 81.029598] pcieport 0004:00:00.0: PCIe Bus Error: severity=Uncorrected (Non-Fatal), type=Transaction Layer, (Receiver ID)
-[ 81.040830] pcieport 0004:00:00.0: device [0823:0110] error status/mask=00008000/04d40000
-[ 81.049870] pcieport 0004:00:00.0: [ 0] ERCR (First)
-[ 81.053520] pcieport 0004:00:00.0: AER: TLP Header: 60008010 010000ff 00001000 9c4c0000
-[ 81.065793] mlx5_core 0004:01:00.0: mlx5_pci_err_detected Device state = 1 health sensors: 1 pci_status: 1. Enter, pci channel state = 2
-[ 81.076183] mlx5_core 0004:01:00.0: mlx5_error_sw_reset:231:(pid 1618): start
-[ 81.083307] mlx5_core 0004:01:00.0: mlx5_error_sw_reset:252:(pid 1618): PCI channel offline, stop waiting for NIC IFC
-[ 81.077428] mlx5_core 0004:01:00.0: E-Switch: Disable: mode(LEGACY), nvfs(0), neovfs(0), active vports(0)
-[ 81.486693] mlx5_core 0004:01:00.0: mlx5_wait_for_pages:786:(pid 1618): Skipping wait for vf pages stage
-[ 81.496965] mlx5_core 0004:01:00.0: mlx5_wait_for_pages:786:(pid 1618): Skipping wait for vf pages stage
-[ 82.395040] mlx5_core 0004:01:00.1: print_health:819:(pid 0): Fatal error detected
-[ 82.395493] mlx5_core 0004:01:00.1: print_health_info:423:(pid 0): PCI slot 1 is unavailable
-[ 83.431094] mlx5_core 0004:01:00.0: mlx5_pci_err_detected Device state = 2 pci_status: 0. Exit, result = 3, need reset
-[ 83.442100] mlx5_core 0004:01:00.1: mlx5_pci_err_detected Device state = 2 health sensors: 1 pci_status: 1. Enter, pci channel state = 2
-[ 83.441801] mlx5_core 0004:01:00.0: mlx5_crdump_collect:50:(pid 2239): crdump: failed to lock gw status -13
-[ 83.454050] mlx5_core 0004:01:00.1: mlx5_error_sw_reset:231:(pid 1618): start
-[ 83.454050] mlx5_core 0004:01:00.1: mlx5_error_sw_reset:252:(pid 1618): PCI channel offline, stop waiting for NIC IFC
-[ 83.849429] mlx5_core 0004:01:00.1: E-Switch: Disable: mode(LEGACY), nvfs(0), neovfs(0), active vports(0)
-[ 83.858892] mlx5_core 0004:01:00.1: mlx5_wait_for_pages:786:(pid 1618): Skipping wait for vf pages stage
-[ 83.869464] mlx5_core 0004:01:00.1: mlx5_wait_for_pages:786:(pid 1618): Skipping wait for vf pages stage
-[ 85.201433] pcieport 0004:00:00.0: pciehp: Slot(41): Link Down
-[ 85.815016] mlx5_core 0004:01:00.1: mlx5_health_try_recover:335:(pid 2239): handling bad device here
-[ 85.824164] mlx5_core 0004:01:00.1: mlx5_error_sw_reset:231:(pid 2239): start
-[ 85.831283] mlx5_core 0004:01:00.1: mlx5_error_sw_reset:252:(pid 2239): PCI channel offline, stop waiting for NIC IFC
-[ 85.841899] mlx5_core 0004:01:00.1: mlx5_unload_one_dev_locked:1612:(pid 2239): mlx5_unload_one_dev_locked: interface is down, NOP
-[ 85.853799] mlx5_core 0004:01:00.1: mlx5_health_wait_pci_up:325:(pid 2239): PCI channel offline, stop waiting for PCI
-[ 85.863494] mlx5_core 0004:01:00.1: mlx5_health_try_recover:338:(pid 2239): health recovery flow aborted, PCI reads still not working
-[ 85.873231] mlx5_core 0004:01:00.1: mlx5_pci_err_detected Device state = 2 pci_status: 0. Exit, result = 3, need reset
-[ 85.879899] mlx5_core 0004:01:00.1: E-Switch: Unload vfs: mode(LEGACY), nvfs(0), neovfs(0), active vports(0)
-[ 85.921428] mlx5_core 0004:01:00.1: E-Switch: Disable: mode(LEGACY), nvfs(0), neovfs(0), active vports(0)
-[ 85.930491] mlx5_core 0004:01:00.1: mlx5_wait_for_pages:786:(pid 1617): Skipping wait for vf pages stage
-[ 85.940849] mlx5_core 0004:01:00.1: mlx5_wait_for_pages:786:(pid 1617): Skipping wait for vf pages stage
-[ 85.949971] mlx5_core 0004:01:00.1: mlx5_uninit_one:1528:(pid 1617): mlx5_uninit_one: interface is down, NOP
-[ 85.959944] mlx5_core 0004:01:00.1: E-Switch: cleanup
-[ 86.035541] mlx5_core 0004:01:00.0: E-Switch: Unload vfs: mode(LEGACY), nvfs(0), neovfs(0), active vports(0)
-[ 86.077568] mlx5_core 0004:01:00.0: E-Switch: Disable: mode(LEGACY), nvfs(0), neovfs(0), active vports(0)
-[ 86.071727] mlx5_core 0004:01:00.0: mlx5_wait_for_pages:786:(pid 1617): Skipping wait for vf pages stage
-[ 86.096577] mlx5_core 0004:01:00.0: mlx5_wait_for_pages:786:(pid 1617): Skipping wait for vf pages stage
-[ 86.106909] mlx5_core 0004:01:00.0: mlx5_uninit_one:1528:(pid 1617): mlx5_uninit_one: interface is down, NOP
-[ 86.115940] pcieport 0004:00:00.0: AER: subordinate device reset failed
-[ 86.122557] pcieport 0004:00:00.0: AER: device recovery failed
-[ 86.128571] mlx5_core 0004:01:00.0: E-Switch: cleanup
-
-I added some prints and found that:
- - ConnectX-5 requires >5s for full recovery
- - ConnectX-7 requires >6s for full recovery
-
-Setting timeout to 7s covers both devices with safety margin.
-
-Signed-off-by: Hongbo Yao <andy.xu@hj-micro.com>
----
- drivers/pci/pcie/dpc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/pci/pcie/dpc.c b/drivers/pci/pcie/dpc.c
-index fc18349614d7..35a37fd86dcd 100644
---- a/drivers/pci/pcie/dpc.c
-+++ b/drivers/pci/pcie/dpc.c
-@@ -118,10 +118,10 @@ bool pci_dpc_recovered(struct pci_dev *pdev)
- 	/*
- 	 * Need a timeout in case DPC never completes due to failure of
- 	 * dpc_wait_rp_inactive().  The spec doesn't mandate a time limit,
--	 * but reports indicate that DPC completes within 4 seconds.
-+	 * but reports indicate that DPC completes within 7 seconds.
- 	 */
- 	wait_event_timeout(dpc_completed_waitqueue, dpc_completed(pdev),
--			   msecs_to_jiffies(4000));
-+			   msecs_to_jiffies(7000));
- 
- 	return test_and_clear_bit(PCI_DPC_RECOVERED, &pdev->priv_flags);
- }
--- 
-2.43.0
 
 
