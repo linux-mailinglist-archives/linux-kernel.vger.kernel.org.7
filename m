@@ -1,140 +1,129 @@
-Return-Path: <linux-kernel+bounces-719340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52BCAAFACED
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 09:19:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DF01AFACF1
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 09:20:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95A5F1755CB
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 07:19:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0596189737F
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 07:20:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5AAE28003A;
-	Mon,  7 Jul 2025 07:19:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28C1C28688A;
+	Mon,  7 Jul 2025 07:20:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oaIoVQBT"
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XI/WP+1U"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73822273D89
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 07:19:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04A0827B4E8
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 07:20:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751872768; cv=none; b=IV81oDQYbZpRNGtS0sVwsfL43p45EdoYZ62bXtWu05KfVzLOiUOKp6B3h4fUb/ZZHhboDrCg1RMhTAk3KFy4Kp5RWmOYTKvfTNUVLP/UvmV8KcCNcMUqJi4QeQ2XDsuHp03LJHS5zflCM9P86esTZVuCGuj6cUk4ulpD4723xPs=
+	t=1751872817; cv=none; b=ESSuuoMI2ttbecQUddCYYTIoqTjGMNYm5L9CkctwT9RuXCSHqHmnqZ0PS56JruLPyRY6+d5VXSo6RUYLyO8rKtuv2i1N0Hzuorfs9HGatgFXQsdsEm2zu+HAsai0UzrD65wAzAD6pNlihTN/dYGbH4iQpaLvn5padz9+S8aBQG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751872768; c=relaxed/simple;
-	bh=htJZpPOj4gZZRU0I+jiYOIF5YRNV0fn3GX0M2AlliDQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cWZO/Fqj5VEwXM6MI+pZYe2r84+WBsMZozfW8Npo9evi5No1uhRedO1adz8pdRnM6lNuFJz1skMMHRVtD3VcgG4ZkS1m7enAREN61Zl5v/tdMmpgGzlGMj1J5rw/Rn27X7GIJUy3oS5YpuB/AUMskaCQRURYBS+H3Skd+EFyFSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oaIoVQBT; arc=none smtp.client-ip=209.85.160.171
+	s=arc-20240116; t=1751872817; c=relaxed/simple;
+	bh=87Ke5nC7A24u7KtVf8kqJVSYbabKjGlRuRbxRJNwnno=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=U9zqX9vrthLH5ngudeqRgp4Ga8us2ILBu2n0P7kQCHPmMTVEZA4iHOuIVuD7KjMud9LHD8Zk1uIzfHnFIRdqfGmH003rLf8U8c+8+02LlgwHp61HJ0g/hongJOBcDQXdrLbqW/oSkdhooyrj1BhRLPAhbSQlF4SKo5k5dXl3swA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XI/WP+1U; arc=none smtp.client-ip=209.85.128.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4a7a8c2b7b9so42270501cf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 00:19:26 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-454c2c08d36so6783825e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 00:20:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1751872765; x=1752477565; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zTVfC4cPTOGFHouVuim000ml3X3p9Az99Bki20NcXwY=;
-        b=oaIoVQBTwC1tHoM7er1y3GzkdMZXtjLOFvV5P9BLDyFA502cxxz8LC1SSynprtri+Y
-         KpCdGIcxVmLc05OMITGAJfXmayHqPZFept6SxGYm+m0AsZzFDmkJAhdezuwkP4tFKDD0
-         WTzAxzpyvByFpYOWbxEz//cHeOZegaWkag7xkGpSL/cSNbiLvERC9fxeLj3Jq8uMuIAw
-         cVEtIQaJzBvoyb2qeBNVdR6tNgK2scOrKlgbKMR3+xkJ8XINWVl6tPnQRyDaHG5Yqm3s
-         zRxAP6wHOlm4XxAq1RmSfOxjm45Fe8NiO1gafPpDdTK77wEVqJ5C7wn+lvksJMNPV9Ta
-         uo7g==
+        d=google.com; s=20230601; t=1751872814; x=1752477614; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=CPa/GNPaGoYDS7VJTJPTGS9zhlJrJsTcMsk83eU4tMI=;
+        b=XI/WP+1UkgUgJQNXkAtnfoLImU/pkNWnfWbpDMdSDX7j/C3YsKu+zakYq7hXMpHPrv
+         plbr79oP2v9o004Nl/DNaEMqirGgruRowsyRrT8DTYm8JKDN/U6zn0y4LoTKYl+qE7ar
+         HHxviqGRLg+IfV65VLWBzJXs1OoW0/+f3+Oxum/p82REndjaZvg1oRwRvZUifGg5rijd
+         u2ZYrCpvgxmphBfgUXrkWmpE8xvQchqtaTmUzN/3lmHyDM7PtaFG4fC3ShviCV2uXWsm
+         tBSUkSAZkmXFW/xso6G3WvqCA4vAQc2YdK5MTrCahAgrXpIOaJRcahJBu6MzipB0Ysgd
+         kOvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751872765; x=1752477565;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zTVfC4cPTOGFHouVuim000ml3X3p9Az99Bki20NcXwY=;
-        b=JFKYev4Ta8CHasl1L77RoyUkBJOJUG0Ejovc7AN08Olj5cQviKcgymy3FwOlu+fByc
-         PBOmg59FxgtLpWsAmLxyXj9b0BfiCelKIoXMrir90TsvqZ0jIADRXBsd4mzd9ECTsR4W
-         9mxg+NHNwKtsRZfDSLC82YONRPsX4CzSzU0PV/z72DAQWQGCtQ5PHMvCsrkNY1Mm10tF
-         QVU3irMr8gDcMYPkG4dvklzM8+sLGdQrWy+A//vtdeeyTb05X3XFFIrLzIP1dshv15nt
-         aueCdLG0nt0CW6Q/KKk1fVsw4I85OHX5urBR+QyNG6iv+EJdhfIp0wauyKrbqZ8KjTa4
-         qK5A==
-X-Forwarded-Encrypted: i=1; AJvYcCWf0XgBjOA1ZaASuiqsjDI7Jn2GPtlBv1Fat70NwQcfM2tAph1B4SE6pgA3czi7KC7AYGcR6mWiZQQsyes=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxv0w+O4HLBtgBjWPK+4NYlZalEIVgED7OEm19eTOlwdXj+cBet
-	CGf3rQGg18NA6qPnxhA7Xs3gfZSmXJbTyz2Gt8/XQ2x1pTGkaJd0Hld6i9L3N8ptrRficshGX6F
-	NO7M/WUQEgck934rCDsZw5B3elidwsPUce0wM5BC8
-X-Gm-Gg: ASbGncuVQkv55l8qjWUeMDl+oe9g2xblOSbmz4rd/QgDWvOidjBE1RcF6Kfp8T9AKqM
-	pISsBHSyBsISH/ZBUUwPhcAhvYquzZzDDoNv0T1gufyhUCTG+y9xAl+Ni9Aev6KjtlwjUjpXsBE
-	mLeITCt4fVEhpPiD1vbRGhkuki7ggkSWGSLCkYxOOckQ==
-X-Google-Smtp-Source: AGHT+IEYyJhquDhXJu2A8CjIMcrkTyNJiyOZCUfQrqQPO5fEMO//qsgPpSXFGCGxLZ6mkwnM1V3ab9TFgsOoAydVU/I=
-X-Received: by 2002:ac8:5fcf:0:b0:4a4:3d6e:57d4 with SMTP id
- d75a77b69052e-4a99883ca50mr157286881cf.46.1751872765053; Mon, 07 Jul 2025
- 00:19:25 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1751872814; x=1752477614;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CPa/GNPaGoYDS7VJTJPTGS9zhlJrJsTcMsk83eU4tMI=;
+        b=K/NvrtYqLu3IkOgeo6yMulyEKRPwW7G9ObHU6YuF6nhUeorDdVG7MC62nFL1G64XLL
+         6RWu2NJpODPw3VMrJ/hQUgF/TMOFCRiz8fHPig/fti1gBC3+0K2g357A+7lu8q8AdOgx
+         0Nm8tGRfmu/EAZgkUHzRhY1J//c7qKjAG03Lz39AAsDCS06admnG2VTSeOskaRkq8H5w
+         /CeEK2gWUO8f/pNl5q6MsYUGW1uFiLmmaIlve7EqeuIWf6VNSRa3N+gGURI3epeokULq
+         0cE03YpNAKK2LvvsJUlN0MgTOhgWsNYQ5kegF6pqHT2qNhKKm0+PHehssdovVQTd/VpI
+         iSTg==
+X-Forwarded-Encrypted: i=1; AJvYcCUFLrPO4DQSa2pxCLLi1yU5Y+H1Z+HnJc7eDj+3ytkzRD65nQ7dPwyTQwn1up/yKq9eFlgPS/3gFF8D/cs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyii79Z/zofF8sxmZTnmU04cYjgv1dFYnIdunV5xlZzof7jzFab
+	VY9V3mBi+y+hRYLYGeHV/WI6fskrszE7sBJyYzP89r3iiuzbRQYIS2h/LNaxRder7gcWMaEV1Nl
+	o7KSTcz8bMxWhAtlFLw==
+X-Google-Smtp-Source: AGHT+IFc7KjdNjSAMcYeehUHBQshvYidNFTTtOkCBEt+IJunO64ZHKge3ng0VY/1tFIuP98OJUwpkNE/tVUytCk=
+X-Received: from wrbep8.prod.google.com ([2002:a05:6000:42c8:b0:3a4:f6c6:e37f])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6000:1a8b:b0:3a5:27ba:479c with SMTP id ffacd0b85a97d-3b49702e827mr8298792f8f.43.1751872814443;
+ Mon, 07 Jul 2025 00:20:14 -0700 (PDT)
+Date: Mon, 7 Jul 2025 07:20:12 +0000
+In-Reply-To: <aGgETV_-MgEiZDHC@Mac.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <1a24a603-b49f-4692-a116-f25605301af6@redhat.com> <20250707061707.74848-1-yangfeng59949@163.com>
-In-Reply-To: <20250707061707.74848-1-yangfeng59949@163.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Mon, 7 Jul 2025 00:19:13 -0700
-X-Gm-Features: Ac12FXz9Oflp4WxYHT8N81vIRj_r3KU6iZACjxfFM-KEdW2Z-wtBpQlqG96pyAg
-Message-ID: <CANn89iLPYTArYRBKQmXF7TkcUxQCK53SJuAwmZY0GCxdFL7iNQ@mail.gmail.com>
-Subject: Re: [PATCH v3] skbuff: Add MSG_MORE flag to optimize large packet transmission
-To: Feng Yang <yangfeng59949@163.com>
-Cc: pabeni@redhat.com, aleksander.lobakin@intel.com, almasrymina@google.com, 
-	asml.silence@gmail.com, davem@davemloft.net, david.laight.linux@gmail.com, 
-	ebiggers@google.com, horms@kernel.org, kerneljasonxing@gmail.com, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	stfomichev@gmail.com, willemb@google.com, yangfeng@kylinos.cn
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+References: <20250703-topics-tyr-request_irq-v6-0-74103bdc7c52@collabora.com>
+ <20250703-topics-tyr-request_irq-v6-3-74103bdc7c52@collabora.com>
+ <aGgDpWkU6xAn5IFN@Mac.home> <aGgETV_-MgEiZDHC@Mac.home>
+Message-ID: <aGt1LLA8acAzDAGU@google.com>
+Subject: Re: [PATCH v6 3/6] rust: irq: add support for non-threaded IRQs and handlers
+From: Alice Ryhl <aliceryhl@google.com>
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: Daniel Almeida <daniel.almeida@collabora.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Benno Lossin <lossin@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, 
+	"Krzysztof =?utf-8?Q?Wilczy=C2=B4nski?=" <kwilczynski@kernel.org>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, linux-pci@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 
-On Sun, Jul 6, 2025 at 11:17=E2=80=AFPM Feng Yang <yangfeng59949@163.com> w=
-rote:
+On Fri, Jul 04, 2025 at 09:41:49AM -0700, Boqun Feng wrote:
+> On Fri, Jul 04, 2025 at 09:39:01AM -0700, Boqun Feng wrote:
+> > On Thu, Jul 03, 2025 at 04:30:01PM -0300, Daniel Almeida wrote:
+> > [...]
+> > > +#[pin_data]
+> > > +pub struct Registration<T: Handler + 'static> {
+> > > +    #[pin]
+> > > +    inner: Devres<RegistrationInner>,
+> > > +
+> > > +    #[pin]
+> > > +    handler: T,
+> > 
+> > IIRC, as a certain point, we want this to be a `UnsafePinned<T>`, is
+> > that requirement gone or we still need that but 1) `UnsafePinned` is not
+> > available and 2) we can rely on the whole struct being !Unpin for the
+> > address stability temporarily?
+> > 
+> > I think it was not a problem until we switched to `try_pin_init!()`
+> > instead of `pin_init_from_closure()` because we then had to pass the
+> > address of `handler` instead of the whole struct.
+> > 
+> > Since we certainly want to use `try_pin_init!()` and we certainly will
+> > have `UnsafePinned`, I think we should just keep this as it is for now,
+> 
+> Of course the assumption is we want to it in before `UnsafePinned` ;-)
+> Alternatively we can do what `Devres` did:
+> 
+> 	https://lore.kernel.org/rust-for-linux/20250626200054.243480-4-dakr@kernel.org/
+> 
+> using an `Opaque` and manually drop for now.
 
->
-> So do I need to resend the v2 version again (https://lore.kernel.org/all/=
-20250627094406.100919-1-yangfeng59949@163.com/),
-> or is this version also inapplicable in some cases?
+The struct uses PhantomPinned, so the code is correct as-is. Using a
+common abstraction for UnsafePinned is of course nice, but I suggest
+that we keep it like this if both patches land in the same cycle. We can
+always have it use UnsafePinned in a follow-up.
 
-Or a V3 perhaps, limiting MSG_MORE hint to TCP sockets where it is
-definitely safe.
-
-diff --git a/net/core/skbuff.c b/net/core/skbuff.c
-index d6420b74ea9c6a9c53a7c16634cce82a1cd1bbd3..dc440252a68e5e7bb0588ab230f=
-bc5b7a656e220
-100644
---- a/net/core/skbuff.c
-+++ b/net/core/skbuff.c
-@@ -3235,6 +3235,7 @@ typedef int (*sendmsg_func)(struct sock *sk,
-struct msghdr *msg);
- static int __skb_send_sock(struct sock *sk, struct sk_buff *skb, int offse=
-t,
-                           int len, sendmsg_func sendmsg, int flags)
- {
-+       int more_hint =3D sk_is_tcp(sk) ? MSG_MORE : 0;
-        unsigned int orig_len =3D len;
-        struct sk_buff *head =3D skb;
-        unsigned short fragidx;
-@@ -3252,7 +3253,8 @@ static int __skb_send_sock(struct sock *sk,
-struct sk_buff *skb, int offset,
-                kv.iov_len =3D slen;
-                memset(&msg, 0, sizeof(msg));
-                msg.msg_flags =3D MSG_DONTWAIT | flags;
--
-+               if (slen < len)
-+                       msg.msg_flags |=3D more_hint;
-                iov_iter_kvec(&msg.msg_iter, ITER_SOURCE, &kv, 1, slen);
-                ret =3D INDIRECT_CALL_2(sendmsg, sendmsg_locked,
-                                      sendmsg_unlocked, sk, &msg);
-@@ -3292,6 +3294,8 @@ static int __skb_send_sock(struct sock *sk,
-struct sk_buff *skb, int offset,
-                                             flags,
-                        };
-
-+                       if (slen < len)
-+                               msg.msg_flags |=3D more_hint;
-                        bvec_set_page(&bvec, skb_frag_page(frag), slen,
-                                      skb_frag_off(frag) + offset);
-                        iov_iter_bvec(&msg.msg_iter, ITER_SOURCE, &bvec, 1,
+Alice
 
