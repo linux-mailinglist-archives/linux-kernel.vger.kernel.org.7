@@ -1,101 +1,125 @@
-Return-Path: <linux-kernel+bounces-719732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41DA7AFB1ED
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 13:05:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82BE3AFB1AE
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 12:51:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B58C7A6923
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 11:03:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5000E1AA23D0
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 10:51:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ADBD287503;
-	Mon,  7 Jul 2025 11:04:57 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EC092957DE;
+	Mon,  7 Jul 2025 10:51:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U2gp0c+K"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BA301F8BCB
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 11:04:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 755A0293B55;
+	Mon,  7 Jul 2025 10:51:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751886297; cv=none; b=qNFt4EDGXgq7Q+AbwNvfX9ag6+hyGeYjfW4i2tz3zt0lR2qUiLU0w6jxz2GwD64H/alBX0exVEjFfbV4gU0P5uzXEYIyGwapes1aYE5vGXOhb6bjqNDImKdZX6MBrpRZVwQ/t9rzOOIOSZMSJjbVZJIAr8mbBplpBjqzeSEAyV0=
+	t=1751885486; cv=none; b=uREPV+u23hbcLWV4iPpZfuJs6T4RNcePhyw2ZMntkFee2FFzAqOQtjWaqupC/julecpSzgQ/4O0QwGjlDmvwYV91Y0YLUAmH8auiurW1gC/3NHzNIbWvLO+4tKDSalWhw72W6drehzzCek3s9yWyjI/hb2ITOJE3ddahhufgoXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751886297; c=relaxed/simple;
-	bh=9p8xTo8+z1wX9jIntt/DEWR+55R0l9UvlDWk3HYd5TI=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=F1kU5NCIynNIl74vJshaS4ljvRGOlndfsCiFH29yOJI9LvsHTclWkEes6JQ4J1HY/JFRvAiHqdx+0Q51ZCexsDIQtYdDbEQyFFqS1jxRnoPCZPi3qtkDrywUMH8vKlSy1oyHTtfQ7ENSKA+mVmy8fClIPaqMbONsZBMHaWrJ5yY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4bbLtp4FfNz2SSwY;
-	Mon,  7 Jul 2025 19:02:58 +0800 (CST)
-Received: from kwepemg500010.china.huawei.com (unknown [7.202.181.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 6150B1A016C;
-	Mon,  7 Jul 2025 19:04:51 +0800 (CST)
-Received: from huawei.com (10.67.174.76) by kwepemg500010.china.huawei.com
- (7.202.181.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 7 Jul
- 2025 19:04:50 +0800
-From: Yuntao Liu <liuyuntao12@huawei.com>
-To: <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>
-CC: <mhocko@suse.com>, <surenb@google.com>, <rppt@kernel.org>,
-	<vbabka@suse.cz>, <Liam.Howlett@oracle.com>, <lorenzo.stoakes@oracle.com>,
-	<liuyuntao12@huawei.com>, <david@redhat.com>, <akpm@linux-foundation.org>
-Subject: [PATCH -next] mm/memory: fix null pointer dereference in fault_dirty_shared_page
-Date: Mon, 7 Jul 2025 10:51:18 +0000
-Message-ID: <20250707105118.413056-1-liuyuntao12@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1751885486; c=relaxed/simple;
+	bh=slOPMNTVA3FLhW65MdVR4aR/1OsxKkcOkNICbnYATJA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P6SVUtDLNN07XL4Lvi5gIR8tJIOEkWklg0U481LHUatnwagWxMjUdLUosrelIgzlA3cFKjTpPZkqZUEwXnTY4rRubOWYH7SW2wLrZN4naFrQc7MZDcPEg0MC1vb9hpjbO/kG7hDEvQrBDxif5dy3dXyzi8OeqCY2jJ1qqH/yVGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U2gp0c+K; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EAE75C4CEE3;
+	Mon,  7 Jul 2025 10:51:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751885486;
+	bh=slOPMNTVA3FLhW65MdVR4aR/1OsxKkcOkNICbnYATJA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=U2gp0c+Kgl9cK3ut2JrE9CJJHpRfc/LdGEG/KOkwFoNM2tzjS6Gpgtdl0j73+sA3l
+	 LZwsIIdjoZpSq9M+0BVFvIwGKR1JqPaoR7U9MHGaE/emID7fM7KE/PBaFsrAorSWeY
+	 JN4P/OYiUOkcrxwVcCKv5sxcle9qFoAB20AsVcPG7kFGveEiY3GOpd//CRrMONQQV0
+	 uqHvM6G2urwFfMYi6kzPuvAZG0PHBfjO5h9Y9skbuZNTVec/17yQeJIujj30IJ2ubj
+	 XcnvVsZaaVaAjIN3T4DxdS1Tds+5rN/lI7K9YHC19wsPJuzl7GRUxNhWK/YwleTjFf
+	 /vtjzlcW+4Rjw==
+Date: Mon, 7 Jul 2025 11:51:20 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Shengjiu Wang <shengjiu.wang@nxp.com>, Frank Li <Frank.Li@nxp.com>,
+	Marco Felsch <m.felsch@pengutronix.de>,
+	Marc Kleine-Budde <mkl@pengutronix.de>,
+	Alexander Stein <alexander.stein@ew.tq-group.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	devicetree@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 4/6] arm64: dts: imx8mp: convert 'aips5' to 'aipstz5'
+Message-ID: <a5c902f4-6f10-4a1f-8d57-b232583e4556@sirena.org.uk>
+References: <20250610160152.1113930-1-laurentiumihalcea111@gmail.com>
+ <20250610160152.1113930-5-laurentiumihalcea111@gmail.com>
+ <ac1daf6b-ee06-4076-b86f-b436ca0acd6d@sirena.org.uk>
+ <c3deef24-fed7-4405-9953-804bff118c11@gmail.com>
+ <8ef60a13-015f-4228-b834-799592342ae6@sirena.org.uk>
+ <225eb39b-958c-4e40-96be-272a8dc9ce12@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
- kwepemg500010.china.huawei.com (7.202.181.71)
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="6IZozApVFuUcVoyp"
+Content-Disposition: inline
+In-Reply-To: <225eb39b-958c-4e40-96be-272a8dc9ce12@gmail.com>
+X-Cookie: We are what we are.
 
-Page mapping with "VM_READ|VM_WRITE|VM_MAYREAD|VM_MAYWRITE|VM_SHARED",
-the first time accessing this address through a write operation will
-trigger a do_shared_fault, if mapping is anonymous, it can lead to a
-null pointer dereference.
 
-[   23.232336][  T195] Call trace:
-[   23.232542][  T195]  file_update_time+0x2c/0xd8
-[   23.232801][  T195]  fault_dirty_shared_page+0x1a0/0x220
-[   23.233099][  T195]  do_shared_fault+0xe8/0x240
-[   23.233374][  T195]  do_fault+0x78/0x240
-[   23.233629][  T195]  handle_pte_fault+0x1f0/0x3f0
-[   23.233905][  T195]  __handle_mm_fault+0x2b0/0x548
-[   23.234186][  T195]  handle_mm_fault+0xd4/0x2f8
-[   23.234462][  T195]  do_page_fault+0x2f0/0x5f8
-[   23.234727][  T195]  do_translation_fault+0x8c/0xc8
-[   23.235021][  T195]  do_mem_abort+0x68/0x100
-[   23.235283][  T195]  el0_da+0x4c/0x1a8
-[   23.235551][  T195]  el0t_64_sync_handler+0xe4/0x158
-[   23.235861][  T195]  el0t_64_sync+0x37c/0x380
+--6IZozApVFuUcVoyp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Yuntao Liu <liuyuntao12@huawei.com>
----
- mm/memory.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Sat, Jul 05, 2025 at 05:41:17PM +0300, Laurentiu Mihalcea wrote:
+> On 7/3/2025 6:25 PM, Mark Brown wrote:
 
-diff --git a/mm/memory.c b/mm/memory.c
-index eaf98d518289..8106ef8a5036 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -3412,7 +3412,7 @@ static vm_fault_t fault_dirty_shared_page(struct vm_fault *vmf)
- 	mapping = folio_raw_mapping(folio);
- 	folio_unlock(folio);
- 
--	if (!page_mkwrite)
-+	if (!page_mkwrite && vma->vm_file)
- 		file_update_time(vma->vm_file);
- 
- 	/*
--- 
-2.34.1
+> > This also appears to be the source of the boot issues I mentioned on the
+> > EVK, affecting ramdisk only boots:
 
+> >    https://lava.sirena.org.uk/scheduler/job/1533032
+
+> > as well as NFS.  The board seems to get to userspace but then not
+> > respond to serial input, it looks like it's hit something while loading
+> > modules and locked up but ICBW.
+
+> OK, this is very odd. I've tried the ramdisk boot using the files from the CI job: Image,
+> modules, CPIO and my own flash.bin (u-boot and ATF hashes match those shown in
+> the CI job) on an EVK board and so far no hang.
+
+It may not actually be hung, it may just be hitting long timeouts in
+userspace (I notice that all the boots with a NFS root are doing module
+autoloading, and the ramdisk ones have tried to bring up the network).
+
+> What I've noticed though is that the bridge does indeed not get probed. So, for now,
+> I think I'm going to submit a patch to enable the driver config in the defconfig so
+> we can get the Verdin failures out of the way.
+
+If the driver is now required then it does need to be enabled.
+
+--6IZozApVFuUcVoyp
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmhrpqcACgkQJNaLcl1U
+h9Dwlgf+KcOwF5vR7PuxEJNsgZjoa9GnoGnVh+0CPAuGUe3yEo9/PeR8jVAdVjyO
+gdI8ymNYVm+xOaeRJiIgxFxA/CocttzXKGcw23uB5cM9hwaVkAmOaoqLVE+ef9xn
+hNu96YXWRPNskp5mB5d5WQcT/rfid/iaAzpCWktqFMLvZmzjaTdnSDDdJ1eqbUqL
+kgpSxE12xPns8/o8SPVU9rB7ShPuc16AdOJ5phCrMNnfnu0IAVTTpQJpr8LZhV9M
+MavTiyLgRI7EMXGXfQrxgRl8mbCIAe08ESsIjjNf+UB4nwXFZIAg00h9xqHt2LXp
+6sqF82kfizbNMybb9BmMbzXehQoUCA==
+=xYTV
+-----END PGP SIGNATURE-----
+
+--6IZozApVFuUcVoyp--
 
