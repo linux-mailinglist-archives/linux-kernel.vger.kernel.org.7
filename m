@@ -1,411 +1,126 @@
-Return-Path: <linux-kernel+bounces-719053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1CF1AFA940
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 03:42:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 606B1AFA93E
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 03:41:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE43218922A5
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 01:41:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B895B17A9BD
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 01:41:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8FBC29B201;
-	Mon,  7 Jul 2025 01:33:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="eUopBNLU"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CC131E51FE;
+	Mon,  7 Jul 2025 01:33:52 +0000 (UTC)
+Received: from smtpbguseast1.qq.com (smtpbguseast1.qq.com [54.204.34.129])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F6241DE4F6;
-	Mon,  7 Jul 2025 01:33:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1318D1E379B;
+	Mon,  7 Jul 2025 01:33:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.204.34.129
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751852005; cv=none; b=XEyfnaITs5W4Mdb5WqjiJ9sJIVhO9f5MHh3AdD38YfzYHdr4cevm9cK7m1cFMP2+tsGBNYDp9f9kCnC/V+onma95UvPt/uCQ77ljRF0GZhYYy0hFQ+6FOw3w4T3prx+ZRLHLjy9dhsvbn/2v/fxykCz/hh5UhIHobA1VFmPz/T4=
+	t=1751852032; cv=none; b=i2NFzkcZUwfwEtOFoVC+0eBTjoqvL526oc78yORTJqxgTy/H9iplFFwITyp9z7yg0ILiNxRKiTzi+ex2tUzb9ODhUZRlzcZqi/BKKlSTRpy4fEIOHsEcPXET/GSxUyEtpemJA0T046v/AenLOeG7acCfAdoqFTzdPjt9X6Be7K4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751852005; c=relaxed/simple;
-	bh=szSylqPLSyERIV9Op4cBozZth7ADCg93kmlVby1emgM=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gL5GOnBjYH/ZgV7uqH+mPtz449SFMRQkMqAkFkjagxPtu1I3uSJWVKE6WiSkid3jrOyEbwEhMsBUrTQsA8OQxMKqlYhQSSVTOegdz4D/oIyWCH3TjWYKdny2k6c7mB0xmGz9kZeAhLA3uA1WoHQwgLGl+izZT/RLe1dioheOGaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=eUopBNLU; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 5aba923e5ad211f0b1510d84776b8c0b-20250707
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=qGhF4xjLVXPOOuOMkbfISUd7i+FvW0Z2/VH51vlf5ds=;
-	b=eUopBNLUbqx+pbrX73SzMeLBSBAVPihHHIsJDQbyS2o3dSb111F3XlgFWeKkmeafw8M6VQo+a6gGvOjAhmvzhZ8Zkm8hocwfiBR2RBAVLbrT2Bys1uV8JpGWiaJTo3QB3zDu6JB3XGFl6eyz0qRqmRhQn28a8HOKRuWRwfh6heA=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.2,REQID:f3f54cf3-0406-41e4-9ea1-be3824010f24,IP:0,UR
-	L:0,TC:0,Content:-5,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:-5
-X-CID-META: VersionHash:9eb4ff7,CLOUDID:52def073-15a7-4ae6-ad4b-94c27b45c266,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:81|82|102,TC:nil,Content:0|50,EDM:-3
-	,IP:nil,URL:99|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0
-	,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: 5aba923e5ad211f0b1510d84776b8c0b-20250707
-Received: from mtkmbs11n2.mediatek.inc [(172.21.101.187)] by mailgw01.mediatek.com
-	(envelope-from <shangyao.lin@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1242543706; Mon, 07 Jul 2025 09:33:16 +0800
-Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
- mtkmbs13n2.mediatek.inc (172.21.101.108) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.39; Mon, 7 Jul 2025 09:33:14 +0800
-Received: from mtksitap99.mediatek.inc (10.233.130.16) by
- mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1258.39 via Frontend Transport; Mon, 7 Jul 2025 09:33:14 +0800
-From: shangyao lin <shangyao.lin@mediatek.com>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>
-CC: Shangyao Lin <shangyao.lin@mediatek.com>, <linux-media@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
-	<dri-devel@lists.freedesktop.org>, <linaro-mm-sig@lists.linaro.org>,
-	<Project_Global_Chrome_Upstream_Group@mediatek.com>
-Subject: [PATCH v2 13/13] media: uapi: mediatek: document ISP7x camera system and user controls
-Date: Mon, 7 Jul 2025 09:31:54 +0800
-Message-ID: <20250707013154.4055874-14-shangyao.lin@mediatek.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250707013154.4055874-1-shangyao.lin@mediatek.com>
-References: <20250707013154.4055874-1-shangyao.lin@mediatek.com>
+	s=arc-20240116; t=1751852032; c=relaxed/simple;
+	bh=MciWweHvQB2NtpzxZf2w/+oDgf2sdTGWiZTywc435t0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PEh/CfXnoRku4Xb6cNwn8nKazcQ/rtsWq1IDjTYFCO9Fah6IpIvQdeFQaxy8H23QMi4GI/wr6wY0PcRAZt5NpN3K3PqT5X+oDwHq6mjp+IbOVQCiWa6f2oZiwlGz1ZlJvuG+/srvla45C36Jd4RpAU46SQKmhWDmWgh7uEY3gpM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=54.204.34.129
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
+X-QQ-mid: zesmtpgz3t1751851963t07aee121
+X-QQ-Originating-IP: qa6YJhuflzK+wHht4l6gRJZFvUQBoyK2hYypibZViIU=
+Received: from localhost ( [203.174.112.180])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Mon, 07 Jul 2025 09:32:41 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 10452172534868935923
+Date: Mon, 7 Jul 2025 09:32:36 +0800
+From: Yibo Dong <dong100@mucse.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, horms@kernel.org, corbet@lwn.net,
+	andrew+netdev@lunn.ch, gur.stavi@huawei.com, maddy@linux.ibm.com,
+	mpe@ellerman.id.au, danishanwar@ti.com, lee@trager.us,
+	gongfan1@huawei.com, lorenzo@kernel.org, geert+renesas@glider.be,
+	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
+	alexanderduyck@fb.com, netdev@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 02/15] net: rnpgbe: Add n500/n210 chip support
+Message-ID: <0412FE867055AD77+20250707013236.GA122831@nic-Precision-5820-Tower>
+References: <20250703014859.210110-1-dong100@mucse.com>
+ <20250703014859.210110-3-dong100@mucse.com>
+ <3d0a5666-c57a-4026-b6a1-284821f25943@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3d0a5666-c57a-4026-b6a1-284821f25943@lunn.ch>
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpgz:mucse.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: OHTF91J1Rz8hoMMIA7Duh70bMvN4qNV/yNfMxMdX6l9I5zx5RegTJj9S
+	t0vp5cwkF9KuBpMn/ZSxzQXAfxdQwcqQvejWBmZjRjsJhaI+a0pNAL/QELutMSj/sDpykwl
+	BNwpbVgqyQG6fIEdhMFuuJPmU+CB6j/9Dmsx4FrQyw9S9P/BwXZ4o8E0o38klYErVKtbP/F
+	Ggja6hjdMCF6FKcI0PpTG3OZSQQe4s+SJFoSt7Bjz/02kjH7ZjpxdZigWMuVBZUlloNj8Y+
+	aOXoFI+7YQleoix3HLLyQhnFIHn4q5kJuBWFI3YR1MTaI/oyBAES3eTCJsTnVhTOUeVlpNq
+	SGhmLCodELvJ5WuGhrAie9ghl5K4GAq4wfcDH1uQgy9E07l536DttTaM3RmcA3FhKxCyMxg
+	qjnPHxPSjQezMiWToTse2hdo3J5gTfrfP9YyPPbwckpMYzLk8hvLmFxh1kf2E8YNlc/xUDP
+	/4wV9FAZ1ITH/E1UMA3lb24+/xt1TFz+hddgtQ2Ze2yIeCMO+4uqxJTCu/sDivroUfqOPFv
+	y7iD6hC0uIlH45YoKTUfqFqScvgnyQcHiFahRxWRwBbp1jeHybhvcHfkuvusJTIvpDSjfFS
+	Xg3aPBInFgzQRYd5tATbpbVKArlyjJglMOpoTbToWyzRFWV9rLoKYG2eXs28ZUJOmUf2LQl
+	ZXR0A2WxKtpkER02Yt92k3SJGuGxIklxhFfWPSgjOdZcibsWlSYC2xyfr7EcCPInXpza4sJ
+	Z/MxPbDs9xQpXVGuf+8j4agJzHoRelLvf1gwWbsuV+fPxHUI7wrR/BDgYETVKz0g4nHzfns
+	CqNsZgWK4E5yXqqb7IoOox0uJrlWiY2Uh2fSantZf1+w+db5x4nqqIPg8tghBwUZ4O/iDKQ
+	TA2VHVCG43j5xFKpAw/tqLU4/sZLmm3U0NQS5VPxl5jBgMc9bFqEMLSr/OvgSZEbReiy+FW
+	I5PFm5dyxvIMLZ38Di+5YJSYf
+X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
+X-QQ-RECHKSPAM: 0
 
-From: "shangyao.lin" <shangyao.lin@mediatek.com>
-
-This document covers:
-- The hardware pipeline and firmware interface
-- Integration with the V4L2 CAMSYS/media controller framework
-- The list of custom V4L2 controls, their usage, valid ranges, and typical usage flow
-
-Signed-off-by: shangyao.lin <shangyao.lin@mediatek.com>
----
- .../media/v4l/mtk-isp7x-camsys.rst            |  94 +++++++++
- .../media/v4l/mtk-isp7x-controls.rst          | 199 ++++++++++++++++++
- 2 files changed, 293 insertions(+)
- create mode 100755 Documentation/userspace-api/media/v4l/mtk-isp7x-camsys.rst
- create mode 100755 Documentation/userspace-api/media/v4l/mtk-isp7x-controls.rst
-
-diff --git a/Documentation/userspace-api/media/v4l/mtk-isp7x-camsys.rst b/Documentation/userspace-api/media/v4l/mtk-isp7x-camsys.rst
-new file mode 100755
-index 000000000000..04a1fe1c448d
---- /dev/null
-+++ b/Documentation/userspace-api/media/v4l/mtk-isp7x-camsys.rst
-@@ -0,0 +1,94 @@
-+==========================
-+MediaTek ISP7x Camera System
-+==========================
-+
-+Overview
-+========
-+
-+The MediaTek ISP7x camera system is designed to provide a flexible, high-performance image capture pipeline for SoCs, leveraging the Linux V4L2 framework. The system is composed of multiple hardware modules (Sensor, SENINF, RAW ISP, etc.) and a firmware backend, with a clear separation of control and data flow. This document describes the hardware architecture from the perspective of the interface exposed to the firmware (backend), and how it integrates with the V4L2 CAMSYS framework.
-+
-+V4L2 CAMSYS Framework Overview
-+==============================
-+
-+The V4L2 CAMSYS framework models the camera pipeline as a set of interconnected devices and subdevices:
-+
-+- **Video Device**: Exposes buffer queue/dequeue (enque/deque) operations to user space, allowing applications to stream image data.
-+- **Subdevice**: Represents a hardware block (e.g., sensor, SENINF, RAW ISP) and handles control/configuration operations.
-+- **Pads and Links**: Each subdevice has pads (input/output endpoints). Media links connect pads, representing the physical and logical data flow between hardware blocks.
-+
-+The topology and link state are established at probe time and can be dynamically enabled/disabled by user space, depending on the desired pipeline configuration.
-+
-+Hardware Pipeline
-+=================
-+
-+A typical pipeline consists of:
-+
-+.. code-block::
-+
-+    Sensor --> SENINF --> RAW ISP --> (optional: YUV ISP) --> Memory
-+
-+- **Sensor**: Provides MIPI CSI-2 data.
-+- **SENINF**: Receives and demultiplexes sensor data, supports virtual channel (VC) and data type (DT) routing.
-+- **RAW ISP**: Main image signal processor, handles demosaicing, noise reduction, and other image enhancements.
-+- **YUV ISP** (optional): Further processing for YUV output.
-+- **CAMSYS**: System controller, manages pipeline state, buffer flow, and synchronization.
-+
-+Firmware Interface
-+==================
-+
-+The firmware (backend, e.g., CCD/SCP) is responsible for:
-+
-+- Calculating hardware settings (3A, tuning, DMA, FBC, Twin, etc.) for each frame.
-+- Generating command queues (CQ) and descriptors to program the hardware.
-+- Abstracting hardware-specific details from the kernel driver.
-+
-+The kernel driver communicates with the firmware via an inter-processor interface (IPI), typically using RPMSG. The main interactions are:
-+
-+1. **Session Management**: The kernel establishes a session with the firmware at stream-on, and destroys it at stream-off.
-+2. **Per-frame Request Scheduling**: For each user request (frame), the kernel sends a request to the firmware, including sensor settings, buffer addresses, and control parameters.
-+3. **CQ Generation**: The firmware generates the necessary command queues and returns them to the kernel.
-+4. **Event Notification**: The firmware notifies the kernel of CQ completion, errors, or other events.
-+
-+Request Scheduling and Buffer Flow
-+==================================
-+
-+The request scheduling flow is as follows:
-+
-+1. **User space** submits a request (with buffer and control settings) via V4L2.
-+2. **PipeMgr** (user space) collects requests, groups them by file descriptor, and sends them to the kernel CAMSYS driver.
-+3. **CAMSYS** schedules requests, manages buffer flow, and coordinates with the firmware for hardware programming.
-+4. **Firmware** processes each request, generates CQ, and signals completion.
-+5. **Kernel** dequeues the buffer and notifies user space.
-+
-+The system supports per-frame control, allowing sensor settings and ISP parameters to be updated on a frame-by-frame basis.
-+
-+Media Controller Topology
-+=========================
-+
-+The media controller graph models the hardware pipeline as a set of entities (video devices, subdevices) connected by links. Each entity exposes pads, and links are established at probe time based on the hardware configuration and device tree.
-+
-+.. code-block::
-+
-+    +---------+     +--------+     +--------+     +------+
-+    | Sensor  | --> | SENINF | --> | RAW ISP| --> | Video|
-+    +---------+     +--------+     +--------+     +------+
-+
-+- Solid lines: active links (enabled)
-+- Dashed lines: inactive links (disabled)
-+
-+User space can query and configure the topology using standard V4L2 and media controller APIs.
-+
-+Backend Abstraction
-+===================
-+
-+The backend firmware abstracts hardware-specific programming, allowing the kernel driver to remain generic and maintainable. All hardware register programming, tuning, and advanced features are handled in the firmware, with the kernel acting as a control and data flow manager.
-+
-+This separation ensures that proprietary hardware details remain in the firmware, while the kernel driver exposes a standard V4L2 interface.
-+
-+Summary
-+=======
-+
-+- The MediaTek ISP7x camera system is built on the V4L2 media controller framework, with a modular pipeline of video devices and subdevices.
-+- The kernel driver manages pipeline state, buffer flow, and per-frame control, while delegating hardware programming to the backend firmware via IPI.
-+- The firmware interface is session-based, supports per-frame CQ generation, and abstracts all hardware-specific details from the kernel.
-+- The media controller graph models the hardware pipeline, allowing flexible configuration and dynamic topology management.
-\ No newline at end of file
-diff --git a/Documentation/userspace-api/media/v4l/mtk-isp7x-controls.rst b/Documentation/userspace-api/media/v4l/mtk-isp7x-controls.rst
-new file mode 100755
-index 000000000000..0e8d41d339e7
---- /dev/null
-+++ b/Documentation/userspace-api/media/v4l/mtk-isp7x-controls.rst
-@@ -0,0 +1,199 @@
-+==========================================
-+MediaTek ISP Camsys User Space Interface
-+==========================================
-+
-+Overview
-+--------
-+
-+The MediaTek ISP camsys driver provides a set of custom V4L2 controls for user space
-+applications to configure and query the ISP hardware. These controls allow
-+fine-grained management of resource allocation, feature enablement, and
-+hardware-specific settings.
-+
-+Typical Usage Flow
-+------------------
-+
-+1. Open the video device node (e.g., ``/dev/video0``).
-+2. Set required V4L2 controls using ``VIDIOC_S_CTRL`` or ``VIDIOC_S_EXT_CTRLS``.
-+3. Set up video format and buffers (``VIDIOC_S_FMT``, ``VIDIOC_REQBUFS``, etc.).
-+4. Start streaming with ``VIDIOC_STREAMON``.
-+5. Queue and dequeue buffers for image processing (``VIDIOC_QBUF``, ``VIDIOC_DQBUF``).
-+6. Stop streaming with ``VIDIOC_STREAMOFF``.
-+
-+Control List and Documentation
-+-----------------------------
-+
-+Below is a list of custom V4L2 controls provided by the camsys driver, with detailed descriptions.
-+
-+.. list-table::
-+   :header-rows: 1
-+
-+   * - Control Name
-+     - Type
-+     - Description
-+     - Valid Values / Range
-+     - When to Set
-+
-+   * - ``V4L2_CID_MTK_CAM_USED_ENGINE_LIMIT``
-+     - Integer
-+     - Limits the maximum number of RAW engines (hardware pipelines) that can be used for this stream.
-+     - 1 ~ 2 (default: 2)
-+     - Before streaming
-+
-+   * - ``V4L2_CID_MTK_CAM_BIN_LIMIT``
-+     - Integer
-+     - Sets the maximum binning ratio allowed for the stream.
-+     - 0 ~ 0xFFF (default: 0)
-+     - Before streaming
-+
-+   * - ``V4L2_CID_MTK_CAM_FRZ_LIMIT``
-+     - Integer
-+     - Sets the maximum resizer (FRZ) ratio allowed (as a percentage).
-+     - 70 ~ 100 (default: 100)
-+     - Before streaming
-+
-+   * - ``V4L2_CID_MTK_CAM_RESOURCE_PLAN_POLICY``
-+     - Integer (Enum)
-+     - Selects the resource planning policy for the stream.
-+     - 0: Default, 1: Power-saving, 2: Performance, ... (0~10)
-+     - Before streaming
-+
-+   * - ``V4L2_CID_MTK_CAM_USED_ENGINE``
-+     - Integer
-+     - Reports or sets the number of RAW engines actually used for this stream after negotiation.
-+     - 1 ~ 2 (default: 2)
-+     - After resource negotiation
-+
-+   * - ``V4L2_CID_MTK_CAM_BIN``
-+     - Boolean
-+     - Enables or disables binning for the stream.
-+     - 0 (disable), 1 (enable, default)
-+     - Before streaming
-+
-+   * - ``V4L2_CID_MTK_CAM_FRZ``
-+     - Integer
-+     - Sets the resizer (FRZ) ratio (as a percentage) for the stream.
-+     - 70 ~ 100 (default: 100)
-+     - Before streaming
-+
-+   * - ``V4L2_CID_MTK_CAM_USED_ENGINE_TRY``
-+     - Integer
-+     - Reports the number of RAW engines that would be used for the current "try" format negotiation.
-+     - 1 ~ 2 (default: 2)
-+     - After VIDIOC_TRY_FMT
-+
-+   * - ``V4L2_CID_MTK_CAM_BIN_TRY``
-+     - Boolean
-+     - Reports whether binning would be enabled for the current "try" format negotiation.
-+     - 0, 1 (default: 1)
-+     - After VIDIOC_TRY_FMT
-+
-+   * - ``V4L2_CID_MTK_CAM_FRZ_TRY``
-+     - Integer
-+     - Reports the resizer ratio that would be used for the current "try" format negotiation.
-+     - 70 ~ 100 (default: 100)
-+     - After VIDIOC_TRY_FMT
-+
-+   * - ``V4L2_CID_MTK_CAM_PIXEL_RATE``
-+     - Integer64
-+     - Sets the pixel rate (in pixels per second) of the sensor for resource calculation.
-+     - 0 ~ 0xFFFFFFFF
-+     - Before streaming
-+
-+   * - ``V4L2_CID_MTK_CAM_FEATURE``
-+     - Bitmask (Integer64)
-+     - Bitmask of enabled features for the stream (e.g., HDR, 3A, etc.). See driver header for details.
-+     - Bitmask (0 ~ RAW_FUNCTION_END)
-+     - Before streaming or per-frame
-+
-+   * - ``V4L2_CID_MTK_CAM_SYNC_ID``
-+     - Integer64
-+     - Frame synchronization ID for multi-sensor or multi-pipeline synchronization.
-+     - -1 ~ 0x7FFFFFFF (default: -1)
-+     - Before streaming or per-frame
-+
-+   * - ``V4L2_CID_MTK_CAM_RAW_PATH_SELECT``
-+     - Integer
-+     - Selects the RAW path (e.g., main or secondary) for the stream.
-+     - 0, 1 (default: 1)
-+     - Before streaming
-+
-+   * - ``V4L2_CID_MTK_CAM_HSF_EN``
-+     - Integer
-+     - Enables or disables hardware secure flow (HSF) for the stream.
-+     - 0 (disable), 1 (enable)
-+     - Before streaming
-+
-+   * - ``V4L2_CID_MTK_CAM_PDE_INFO``
-+     - Integer (struct mtk_cam_pde_info)
-+     - Provides or sets phase detection (PDE) information for PDAF/AF features.
-+     - See struct definition
-+     - Before streaming or per-frame
-+
-+   * - ``V4L2_CID_MTK_CAM_MSTREAM_EXPOSURE``
-+     - Integer/Integer64
-+     - Controls multi-stream exposure settings for advanced HDR or multi-exposure modes.
-+     - See driver header
-+     - Before streaming or per-frame
-+
-+   * - ``V4L2_CID_MTK_CAM_RAW_RESOURCE_CALC``
-+     - Compound (struct mtk_cam_resource)
-+     - Triggers resource calculation for the current format and settings.
-+     - See struct definition
-+     - During format negotiation
-+
-+   * - ``V4L2_CID_MTK_CAM_TG_FLASH_CFG``
-+     - Integer/struct
-+     - Configures timing generator (TG) and flash synchronization.
-+     - See driver header
-+     - Before streaming or per-frame
-+
-+   * - ``V4L2_CID_MTK_CAM_RAW_RESOURCE_UPDATE``
-+     - Integer
-+     - Notifies the driver of a sensor mode update (e.g., seamless switch).
-+     - 0 ~ 0xF (default: 0)
-+     - When sensor mode changes
-+
-+   * - ``V4L2_CID_MTK_CAM_CAMSYS_HW_MODE``
-+     - Integer64
-+     - Selects the hardware mode for the CAMSYS pipeline (e.g., normal, secure, etc.).
-+     - 0 ~ 0x7FFFFFFF
-+     - Before streaming
-+
-+Control Usage Patterns
-+---------------------
-+
-+- Controls with ``_TRY`` suffix are used to query the result of a "try" format negotiation (``VIDIOC_TRY_FMT``), without committing changes.
-+- Controls without ``_TRY`` are used to set or get the actual configuration (``VIDIOC_S_FMT``, ``VIDIOC_G_CTRL``).
-+- Use ``V4L2_CID_MTK_CAM_RAW_RESOURCE_CALC`` to check if the requested format and settings are feasible, and to get recommended values.
-+- Use ``V4L2_CID_MTK_CAM_RAW_RESOURCE_UPDATE`` to notify the driver of a sensor mode change (e.g., seamless switch).
-+- Use ``V4L2_CID_MTK_CAM_SYNC_ID`` to synchronize frames across multiple pipelines.
-+- Use ``V4L2_CID_MTK_CAM_FEATURE`` to enable/disable advanced features (bitmask).
-+- Use ``V4L2_CID_MTK_CAM_PDE_INFO`` to set/get phase detection information for PDAF/AF.
-+- Use ``V4L2_CID_MTK_CAM_PIXEL_RATE`` to inform the driver of the sensor's pixel rate for bandwidth/resource calculation.
-+
-+Example: Setting a Control
-+--------------------------
-+
-+.. code-block:: c
-+
-+   int fd = open("/dev/video0", O_RDWR);
-+   struct v4l2_control ctrl = {
-+       .id = V4L2_CID_MTK_CAM_BIN_LIMIT,
-+       .value = 2,
-+   };
-+   if (ioctl(fd, VIDIOC_S_CTRL, &ctrl) < 0) {
-+       perror("Failed to set BIN_LIMIT");
-+   }
-+
-+Notes
-+-----
-+
-+- All controls should be set before starting the video stream unless otherwise specified.
-+- Refer to the driver header file for detailed struct definitions and bitmask values.
-+- The driver will reject invalid values or unsupported configurations with -EINVAL.
-+
-+References
-+----------
-+
-+- V4L2 documentation: https://www.kernel.org/doc/html/latest/userspace-api/media/v4l/v4l2.html
-\ No newline at end of file
--- 
-2.18.0
-
+On Fri, Jul 04, 2025 at 08:03:47PM +0200, Andrew Lunn wrote:
+> > +#define M_NET_FEATURE_SG ((u32)(1 << 0))
+> > +#define M_NET_FEATURE_TX_CHECKSUM ((u32)(1 << 1))
+> > +#define M_NET_FEATURE_RX_CHECKSUM ((u32)(1 << 2))
+> 
+> Please use the BIT() macro.
+> 
+Got it, I will fix this.
+> > +	u32 feature_flags;
+> > +	u16 usecstocount;
+> > +};
+> > +
+> 
+> > +#define rnpgbe_rd_reg(reg) readl((void *)(reg))
+> > +#define rnpgbe_wr_reg(reg, val) writel((val), (void *)(reg))
+> 
+> These casts look wrong. You should be getting your basic iomem pointer
+> from a function which returns an void __iomem* pointer, so the cast
+> should not be needed.
+> 
+Yes, I also get failed from 'patch status' website, I should remove
+'void *' here.
+> > -static int rnpgbe_add_adpater(struct pci_dev *pdev)
+> > +static int rnpgbe_add_adpater(struct pci_dev *pdev,
+> > +			      const struct rnpgbe_info *ii)
+> >  {
+> > +	int err = 0;
+> >  	struct mucse *mucse = NULL;
+> >  	struct net_device *netdev;
+> > +	struct mucse_hw *hw = NULL;
+> > +	u8 __iomem *hw_addr = NULL;
+> > +	u32 dma_version = 0;
+> >  	static int bd_number;
+> > +	u32 queues = ii->total_queue_pair_cnts;
+> 
+> You need to work on your reverse Christmas tree. Local variables
+> should be ordered longest to shortest.
+> 
+>        Andrew
+> 
+Got it, I will fix it, and try to check other patches.
+Thanks for your feedback.
 
