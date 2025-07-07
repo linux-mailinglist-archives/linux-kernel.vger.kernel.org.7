@@ -1,217 +1,80 @@
-Return-Path: <linux-kernel+bounces-719459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47763AFAE36
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 10:08:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 759B2AFAE41
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 10:09:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49C021648EB
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 08:08:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3870A17F331
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 08:09:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68E9528CF7B;
-	Mon,  7 Jul 2025 08:05:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7307728EA65;
+	Mon,  7 Jul 2025 08:07:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="ncEG1NsO"
-Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="BbL1vs6b"
+Received: from proxy41135.mail.163.com (proxy25215.mail.163.com [103.129.252.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EAEE288530
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 08:05:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.97
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BDB828A1FB;
+	Mon,  7 Jul 2025 08:07:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.129.252.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751875552; cv=none; b=AKUteDe/GQq35D6toahOzNfGNCU1gCn9fElEtaTr5ROAHZEXRR9DG1cRCBXb/M4kcGBzmbnw5t7JxfCBgo8ZM6ckgbYw33c+m2HbCfXd1qa2NfyfnXRqg3BjCjDmE49ctWz96uSjB4r8LpC31KdiirJ081NnOg5xg4pJUrnfqIg=
+	t=1751875649; cv=none; b=mzAoIRV0pN62ZOz1qBT9vdEZal7sT+eqiRdlcalo0IIypv62TLtimM2YCeNDoPWdDzoRo+Ardln1lgkFvznKhDhSftV+8MhXVJZ2EM1W24y16Nmv/7/18prcmz0fsxAiFB1r8iRtxuUfewxkgbLLlUZEl6AAdtpUwC9LM2KItpM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751875552; c=relaxed/simple;
-	bh=zVS4eUUXEyCGzEMd4nwd8vgnioEF2O+BO0GVlZ++aBw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WfUFHYMtbQ8mci6RtlbTJF2lzl0H4cwNCfXF5qxdgEG29svRhWWrgMKaGcvsh5vAT5Fi8mR4SdY+aIqIRY2GgPMHMGuQjNdRe2rnBsTNfcKDeaOODFDJ3CMVi5MnG/+7XQWZKoRCO40PV3069da1f3obR7EHYcNiYsn7zYPwSHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=ncEG1NsO; arc=none smtp.client-ip=115.124.30.97
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1751875542; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=3Pzd5KEVdO94fQQ2PxE2ZqO2v+Merdc/BNYLsIfYkjo=;
-	b=ncEG1NsO1SGsZd/xo6CmR8LgLeicRQOrpumbmYjv14vJx7RQSc7d1QnyHV95QnLTWUOP8edfT6wVqpdaMtlICBN10HCTETGsTFWDx0a5tP/b2eBe6aGP+afUEGzWhVv1eN9ZHndqlEgjHInvbQ4GvRZ+0pEK4kKCJy57a1e9cvs=
-Received: from 30.74.144.127(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0Wi3WIrV_1751875540 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Mon, 07 Jul 2025 16:05:40 +0800
-Message-ID: <2b1c5548-bf66-4d4a-a379-d9c6bf35283c@linux.alibaba.com>
-Date: Mon, 7 Jul 2025 16:05:39 +0800
+	s=arc-20240116; t=1751875649; c=relaxed/simple;
+	bh=Q6WPFHuWWUDH9MZY9SgddwsUkXudgzIVOChasOefjEo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O/ldDzqJwBC+7NtldYlOQJK2yN/UHpt7F8a2ucNGnpOvX+VEgkv7BoS+nDEtExAA0fQD/VP8JoMZ7LTvWEWJGqRKuUQhBNSPaur3VT0KTChHReKcReOahRPiENES9fKl8WPx+FK4xHy5WJkWa1cLXXxD3RypzyZe7hgBn0i5twA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=BbL1vs6b; arc=none smtp.client-ip=103.129.252.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=VwnTHZKkfxEnp/Ss1vXJUtlWc7EFWd8bXzp0BCH6DE4=;
+	b=BbL1vs6bgrfXA5oer3T3euuo1ru71ZQhna5Ez6l37/zsnzehv65QHggSz5CZEh
+	50ITyzDsyTxJFWeerdBL0BjHoBHJ9BJC1v5PpkcC5zMcPmGDg7U5wooY/KbZXry2
+	km9L1+KIljbYgKP9PixWKdPPnEZUQD9BbbJaBakQx+xyM=
+Received: from dragon (unknown [])
+	by gzsmtp1 (Coremail) with SMTP id Mc8vCgBnlanpf2toiac8AA--.9068S3;
+	Mon, 07 Jul 2025 16:06:03 +0800 (CST)
+Date: Mon, 7 Jul 2025 16:06:00 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Primoz Fiser <primoz.fiser@norik.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, upstream@lists.phytec.de
+Subject: Re: [PATCH v2] arm64: dts: freescale: imx93-phycore-som: Add
+ watchdog ext-reset-output pin
+Message-ID: <aGt_6Kfe4IJ0XeVc@dragon>
+References: <20250626071629.3380656-1-primoz.fiser@norik.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 6/9] mm/shmem, swap: never use swap cache and readahead
- for SWP_SYNCHRONOUS_IO
-To: Kairui Song <kasong@tencent.com>, linux-mm@kvack.org
-Cc: Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins
- <hughd@google.com>, Matthew Wilcox <willy@infradead.org>,
- Kemeng Shi <shikemeng@huaweicloud.com>, Chris Li <chrisl@kernel.org>,
- Nhat Pham <nphamcs@gmail.com>, Baoquan He <bhe@redhat.com>,
- Barry Song <baohua@kernel.org>, linux-kernel@vger.kernel.org
-References: <20250704181748.63181-1-ryncsn@gmail.com>
- <20250704181748.63181-7-ryncsn@gmail.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <20250704181748.63181-7-ryncsn@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250626071629.3380656-1-primoz.fiser@norik.com>
+X-CM-TRANSID:Mc8vCgBnlanpf2toiac8AA--.9068S3
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUOmhFUUUUU
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiNQsPdGhrf+tXygAA3P
 
-
-
-On 2025/7/5 02:17, Kairui Song wrote:
-> From: Kairui Song <kasong@tencent.com>
+On Thu, Jun 26, 2025 at 09:16:29AM +0200, Primoz Fiser wrote:
+> On phyCORE-i.MX93 SoM, the SoC WDOG_ANY output line is connected to the
+> external pca9451a PMIC WDOG_B input. Apply pinctrl and set the property
+> "fsl,ext-reset-output" for watchdog to trigger board reset via PMIC on
+> timeout/reset.
 > 
-> Currently if a THP swapin failed due to reasons like partially
-> conflicting swap cache or ZSWAP enabled, it will fallback to
-> cached swapin.
-> 
-> Right now the swap cache still has a non-trivial overhead, and readahead
-> is not helpful for SWP_SYNCHRONOUS_IO devices, so we should always skip
-> the readahead and swap cache even if the swapin falls back to order 0.
-> 
-> So handle the fallback logic without falling back to the cached read.
-> 
-> Signed-off-by: Kairui Song <kasong@tencent.com>
-> ---
->   mm/shmem.c | 55 +++++++++++++++++++++++++++++++++++-------------------
->   1 file changed, 36 insertions(+), 19 deletions(-)
-> 
-> diff --git a/mm/shmem.c b/mm/shmem.c
-> index 2ab214e2771c..1fe9a3eb92b1 100644
-> --- a/mm/shmem.c
-> +++ b/mm/shmem.c
-> @@ -1975,13 +1975,16 @@ static struct folio *shmem_alloc_and_add_folio(struct vm_fault *vmf,
->   	return ERR_PTR(error);
->   }
->   
-> -static struct folio *shmem_swap_alloc_folio(struct inode *inode,
-> +static struct folio *shmem_swapin_direct(struct inode *inode,
->   		struct vm_area_struct *vma, pgoff_t index,
-> -		swp_entry_t entry, int order, gfp_t gfp)
-> +		swp_entry_t swap, swp_entry_t index_entry,
+> Signed-off-by: Primoz Fiser <primoz.fiser@norik.com>
 
-IMO, 'swap' and 'index_entry' are confusing, and it's easy to be unclear 
-about their roles. I suggest only passing the original swap value. If it 
-falls back to order 0, the swap value can be recalculated, which is more 
-readable as well as maintaining the independence of the function.
-
-> +		int order, gfp_t gfp)
->   {
->   	struct shmem_inode_info *info = SHMEM_I(inode);
-> +	swp_entry_t entry = index_entry;
->   	int nr_pages = 1 << order;
->   	struct folio *new;
-> +	gfp_t alloc_gfp;
->   	void *shadow;
->   
->   	/*
-> @@ -1989,6 +1992,7 @@ static struct folio *shmem_swap_alloc_folio(struct inode *inode,
->   	 * limit chance of success with further cpuset and node constraints.
->   	 */
->   	gfp &= ~GFP_CONSTRAINT_MASK;
-> +	alloc_gfp = gfp;
->   	if (!IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE)) {
->   		if (WARN_ON_ONCE(order))
->   			return ERR_PTR(-EINVAL);
-> @@ -2003,19 +2007,22 @@ static struct folio *shmem_swap_alloc_folio(struct inode *inode,
->   		if ((vma && unlikely(userfaultfd_armed(vma))) ||
->   		     !zswap_never_enabled() ||
->   		     non_swapcache_batch(entry, nr_pages) != nr_pages)
-> -			return ERR_PTR(-EINVAL);
-> +			goto fallback;
->   
-> -		gfp = limit_gfp_mask(vma_thp_gfp_mask(vma), gfp);
-> +		alloc_gfp = limit_gfp_mask(vma_thp_gfp_mask(vma), gfp);
-> +	}
-> +retry:
-> +	new = shmem_alloc_folio(alloc_gfp, order, info, index);
-> +	if (!new) {
-> +		new = ERR_PTR(-ENOMEM);
-> +		goto fallback;
->   	}
-> -
-> -	new = shmem_alloc_folio(gfp, order, info, index);
-> -	if (!new)
-> -		return ERR_PTR(-ENOMEM);
->   
->   	if (mem_cgroup_swapin_charge_folio(new, vma ? vma->vm_mm : NULL,
-> -					   gfp, entry)) {
-> +					   alloc_gfp, entry)) {
->   		folio_put(new);
-> -		return ERR_PTR(-ENOMEM);
-> +		new = ERR_PTR(-ENOMEM);
-> +		goto fallback;
->   	}
->   
->   	/*
-> @@ -2030,7 +2037,9 @@ static struct folio *shmem_swap_alloc_folio(struct inode *inode,
->   	 */
->   	if (swapcache_prepare(entry, nr_pages)) {
->   		folio_put(new);
-> -		return ERR_PTR(-EEXIST);
-> +		new = ERR_PTR(-EEXIST);
-> +		/* Try smaller folio to avoid cache conflict */
-> +		goto fallback;
->   	}
->   
->   	__folio_set_locked(new);
-> @@ -2044,6 +2053,15 @@ static struct folio *shmem_swap_alloc_folio(struct inode *inode,
->   	folio_add_lru(new);
->   	swap_read_folio(new, NULL);
->   	return new;
-> +fallback:
-> +	/* Order 0 swapin failed, nothing to fallback to, abort */
-> +	if (!order)
-> +		return new;
-> +	order = 0;
-> +	nr_pages = 1;
-> +	alloc_gfp = gfp;
-> +	entry = swap;
-> +	goto retry;
->   }
->   
->   /*
-> @@ -2309,25 +2327,24 @@ static int shmem_swapin_folio(struct inode *inode, pgoff_t index,
->   			count_vm_event(PGMAJFAULT);
->   			count_memcg_event_mm(fault_mm, PGMAJFAULT);
->   		}
-> -
-
-Nit: do not add unnecessary change.
-
->   		/* Skip swapcache for synchronous device. */
->   		if (data_race(si->flags & SWP_SYNCHRONOUS_IO)) {
-> -			folio = shmem_swap_alloc_folio(inode, vma, index,
-> -						       index_entry, order, gfp);
-> +			folio = shmem_swapin_direct(inode, vma, index, swap,
-> +						    index_entry, order, gfp);
->   			if (!IS_ERR(folio)) {
-> -				swap = index_entry;
-> +				if (folio_test_large(folio))
-> +					swap = index_entry;
->   				skip_swapcache = true;
->   				goto alloced;
->   			}
->   
->   			/*
-> -			 * Fallback to swapin order-0 folio unless the swap entry
-> -			 * already exists.
-> +			 * Direct swapin handled order 0 fallback already,
-> +			 * if it failed, abort.
->   			 */
->   			error = PTR_ERR(folio);
->   			folio = NULL;
-> -			if (error == -EEXIST)
-> -				goto failed;
-> +			goto failed;
->   		}
->   		/* Cached swapin with readahead, only supports order 0 */
->   		folio = shmem_swapin_cluster(swap, gfp, info, index);
+Applied, thanks!
 
 
