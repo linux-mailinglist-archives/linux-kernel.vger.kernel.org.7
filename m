@@ -1,120 +1,250 @@
-Return-Path: <linux-kernel+bounces-720490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7BF1AFBC7B
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 22:25:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47664AFBC7F
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 22:26:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC6674A65A9
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 20:25:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA22D4240AD
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 20:25:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A46C921D5B2;
-	Mon,  7 Jul 2025 20:25:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63B1B21CC59;
+	Mon,  7 Jul 2025 20:26:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RFS1cZSk"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="p2L5tIjv"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6985A21C9E4;
-	Mon,  7 Jul 2025 20:25:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09AF9219EAD
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 20:26:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751919930; cv=none; b=g01Ldwu55anlsW6O1bbsuJP+8ycH8Uh3OFzPlSSM23IauZYQ81KMdQv3N/jZ9XRDyQ9BaOWDmRolFIYfmxrpjZ8mtvySdLhU9TqTLg1HwilTPUIYLCwZ316j7udOyC1HHdsRXDrTvJJBqLOIm2OyjNW/pLG4RT3+8A3fMajM+Yg=
+	t=1751919962; cv=none; b=H9CrarNNhX8E5BcA42Dm/u9Ox4xFsuEY25YX/Ad6zd/tZSOotMFhESpRKfARKpTTG1LzcvkiXCsuG70cO0Hl4I6ZjXmgmMGpNrC0Qn/W43fEPHkjx0XMWyUWhoi5wd4R7XhaUbV8b4jujszKFTVBzAtx1k1cXIK5Y3xPTrCoNTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751919930; c=relaxed/simple;
-	bh=ALU+dhe7RMxGCeWyGHrchm7rctCqe3A9IXlJ6lhSGrY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qbLZczth8DhvDmBxGJuG4OqEhiFtJVDGRpP3On5hnCykQbBfX1B19GEA+QAlVOiy7sIU9t3JCyaoIPSRmXJCAg+SvDdEu4cdtHTvYjDW9xgCFjqKN4LaANWO0ms6IKp4CwUAjaIcO9VwKfE3N9xqzXSEIb8Xt1C/Sfed3lRKjlo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RFS1cZSk; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751919929; x=1783455929;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ALU+dhe7RMxGCeWyGHrchm7rctCqe3A9IXlJ6lhSGrY=;
-  b=RFS1cZSkUIpx2aI04bglM3XjKf/aUP9yIWXxkUgGKre9Kah7MHdXr/gw
-   8V/iE4zu2J0fEO/Zrx6jfzmhOQMf7OeHObVm6mtb43W59v3s5Gtyrf2Ct
-   sKRzOKx9J2hU2fyNAyh/Siu3qSut0nf+00iyiUaE2kSh/JZn6jc+CzV6d
-   pudPnLbHwdSXEyumfMjdtUPJa8p9EFAKFMpUSx6FR+yHRCy2phlp+vk9U
-   V0WLWr162YBHzdu9ElfYAueilQoybwY7wJ45tku31m65JJbHwXk6a4KyE
-   2DKWrO71epSDqENpY6XskvppA6+eIog2vivmjl2kRJSxf95vffReHealW
-   A==;
-X-CSE-ConnectionGUID: kvffNH5xT9GOqufedXWIfw==
-X-CSE-MsgGUID: IKClOxFZTeOVeNI/42YEQg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="76700290"
-X-IronPort-AV: E=Sophos;i="6.16,295,1744095600"; 
-   d="scan'208";a="76700290"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jul 2025 13:25:28 -0700
-X-CSE-ConnectionGUID: K05odVfnT1KfGBLQIyD4vg==
-X-CSE-MsgGUID: Nrj/hWGmQjON/Ypi+mr9HQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,295,1744095600"; 
-   d="scan'208";a="155044368"
-Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
-  by orviesa009.jf.intel.com with ESMTP; 07 Jul 2025 13:25:25 -0700
-Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uYsOw-0000it-2k;
-	Mon, 07 Jul 2025 20:25:22 +0000
-Date: Tue, 8 Jul 2025 04:25:10 +0800
-From: kernel test robot <lkp@intel.com>
-To: Rosen Penev <rosenp@gmail.com>, netdev@vger.kernel.org
-Cc: Paul Gazzillo <paul@pgazz.com>,
-	Necip Fazil Yildiran <fazilyildiran@gmail.com>,
-	oe-kbuild-all@lists.linux.dev, Andrew Lunn <andrew@lunn.ch>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	=?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <clement.leger@bootlin.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] net: dsa: rzn1_a5psw: add COMPILE_TEST
-Message-ID: <202507080426.3RX5BOHi-lkp@intel.com>
-References: <20250707003918.21607-2-rosenp@gmail.com>
+	s=arc-20240116; t=1751919962; c=relaxed/simple;
+	bh=CUORdPvw1cX4h66ndzLvStG5j7Op+139XvwyrrREJrk=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=GUGVhCDrknDT5BKzUrf+VXExngsudhjWQrltKQuEeUssqQKv7PJrGcrrX2uiCI2UahMiqocvCFel5NY3HPtYNTC9YSoNCFu1HIFAuasMs1ouWZT/8BaG3hU1Phkg2i3necp9fbP42PmEq3j/HWLv5MDNz8cr7E81f9rnTH047ck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=p2L5tIjv; arc=none smtp.client-ip=209.85.215.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b39280167fdso360642a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 13:26:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1751919960; x=1752524760; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iDHpPitSS0mzs6saY8nYUe4AbTUUpZo+s9Jeux1OhIQ=;
+        b=p2L5tIjvqzyikO684wUOuFMy03ShPidY57Ke1k1vhi45gealcxG/mNbVVvZuTurre7
+         fkt+49lGawnIQ8LpicG6fKSmy881+qq8WNrXDSmScIZSOG/M/UX2zHOnb6xwohL5a1qN
+         E/4j4pUSZ0p+B75nGVtFaBPDO1fBSm1fplvNCfcQGhB8v0FR1UxMHiE3Bes9wWASCx17
+         +l7YwSiULCx4cGSymfHE9h3rH6rid20ggxDe6Le1aMhaRObbo5U9TKHgqQ8TpyFHLcRI
+         aIuxUFsVOhGj1PfklZzburCGRPLDjIM+jZMJ6dKu2QEkAqtM68uAUHe1g5nQtj+l21Sg
+         F6rQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751919960; x=1752524760;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=iDHpPitSS0mzs6saY8nYUe4AbTUUpZo+s9Jeux1OhIQ=;
+        b=PK6WGu0gI8R+q0uTBqay7Su54qb6+CNx4y26DyY1zty5pXEJgndTGJsnoMU9VnoXyw
+         tJPX2lhW6sQyj0xTBPSZjv0gyIhpBHemy+IRg8MyYk5V4MS7MVPhq7DOR4W0eUiminD2
+         ZL9r8q3jWSBmpfzcY9jlsItbMKzswFKm1cY5QnbSN3sNCgqRjQYhY4DPTBnYpXu9FH5d
+         8/0mhrisi4aY1kwphFTLZZA9lhibTNMqOixHLCNovREWcYD97QmA1Y9gVHDmxxnMxsk/
+         bn/TTzbanlj/E28VBKB3ehGyZzfNw6XIOeg9pNd8vzMxB6sJOBJGHLlwrAGadtKUuXCD
+         Xabg==
+X-Forwarded-Encrypted: i=1; AJvYcCUIRqS8iL0wBDwfNVRJIQqXWeqFPrUab2lqFkSxUokFS6THPnh0CMFawFKxrpsNgOD5xMYHauVsnDodQeM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSulGVLT7HkzNSmKWJblNf7vwv0kdeb6flt/AlbKsnd07JeZ3h
+	nB0YEot5VgckYX0FBxP9KXlbymZSjODVfBMsyManujfsLAj2YnC6P0EjLj2DvbRNBzlsdncsOCP
+	09CGPgA==
+X-Google-Smtp-Source: AGHT+IFl8zMk4n4kKwZdLDcVRgIXGtT2XaLzjhr0sN/pKm4EFVOSPvZMjw56qXhYU9AsX5p7+6HZjthUz/0=
+X-Received: from pgbee1.prod.google.com ([2002:a05:6a02:4581:b0:b1f:fd39:8314])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:12c7:b0:21f:51ea:5c57
+ with SMTP id adf61e73a8af0-22b437de321mr627011637.16.1751919960279; Mon, 07
+ Jul 2025 13:26:00 -0700 (PDT)
+Date: Mon, 7 Jul 2025 13:25:59 -0700
+In-Reply-To: <aF8FwqaBpfvQ7dYW@char.us.oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250707003918.21607-2-rosenp@gmail.com>
+Mime-Version: 1.0
+References: <20250626125720.3132623-1-alexandre.chartre@oracle.com>
+ <aF1S2EIJWN47zLDG@google.com> <67bd4e2f-24a8-49d8-80af-feaca6926e45@intel.com>
+ <61df5e77-dfc4-4189-a86d-f1b2cabcac88@oracle.com> <aF8FwqaBpfvQ7dYW@char.us.oracle.com>
+Message-ID: <aGwtV8f253c6IOwC@google.com>
+Subject: Re: [PATCH] kvm/x86: ARCH_CAPABILITIES should not be advertised on AMD
+From: Sean Christopherson <seanjc@google.com>
+To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc: Alexandre Chartre <alexandre.chartre@oracle.com>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Xiaoyao Li <xiaoyao.li@intel.com>, 
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org, pbonzini@redhat.com, 
+	x86@kernel.org, boris.ostrovsky@oracle.com, Jim Mattson <jmattson@google.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Rosen,
+On Fri, Jun 27, 2025, Konrad Rzeszutek Wilk wrote:
+> On Fri, Jun 27, 2025 at 08:23:52AM +0200, Alexandre Chartre wrote:
+> >=20
+> > On 6/27/25 07:41, Xiaoyao Li wrote:
+> > > On 6/26/2025 10:02 PM, Sean Christopherson wrote:
+> > > > +Jim
+> > > >=20
+> > > > For the scope, "KVM: x86:"
+> > > >=20
+> > > > On Thu, Jun 26, 2025, Alexandre Chartre wrote:
+> > > > > KVM emulates the ARCH_CAPABILITIES on x86 for both vmx and svm.
+> > > > > However the IA32_ARCH_CAPABILITIES MSR is an Intel-specific MSR
+> > > > > so it makes no sense to emulate it on AMD.
+> > > > >=20
+> > > > > The AMD documentation specifies that this MSR is not defined on
+> > > > > the AMD architecture. So emulating this MSR on AMD can even cause
+> > > > > issues (like Windows BSOD) as the guest OS might not expect this
+> > > > > MSR to exist on such architecture.
+> > > > >=20
+> > > > > Signed-off-by: Alexandre Chartre<alexandre.chartre@oracle.com>
+> > > > > ---
+> > > > >=20
+> > > > > A similar patch was submitted some years ago but it looks like it=
+ felt
+> > > > > through the cracks:
+> > > > > https://lore.kernel.org/kvm/20190307093143.77182-1- xiaoyao.li@li=
+nux.intel.com/
+> > > > It didn't fall through the cracks, we deliberately elected to emula=
+te the MSR in
+> > > > common code so that KVM's advertised CPUID support would match KVM'=
+s emulation.
+> > > >=20
+> > > > =C2=A0=C2=A0 On Thu, 2019-03-07 at 19:15 +0100, Paolo Bonzini wrote=
+:
+> > > > =C2=A0=C2=A0 > On 07/03/19 18:37, Sean Christopherson wrote:
+> > > > =C2=A0=C2=A0 > > On Thu, Mar 07, 2019 at 05:31:43PM +0800, Xiaoyao =
+Li wrote:
+> > > > =C2=A0=C2=A0 > > > At present, we report F(ARCH_CAPABILITIES) for x=
+86 arch(both vmx and svm)
+> > > > =C2=A0=C2=A0 > > > unconditionally, but we only emulate this MSR in=
+ vmx. It will cause #GP
+> > > > =C2=A0=C2=A0 > > > while guest kernel rdmsr(MSR_IA32_ARCH_CAPABILIT=
+IES) in an AMD host.
+> > > > =C2=A0=C2=A0 > > >
+> > > > =C2=A0=C2=A0 > > > Since MSR IA32_ARCH_CAPABILITIES is an intel-spe=
+cific MSR, it makes no
+> > > > =C2=A0=C2=A0 > > > sense to emulate it in svm. Thus this patch choo=
+ses to only emulate it
+> > > > =C2=A0=C2=A0 > > > for vmx, and moves the related handling to vmx r=
+elated files.
+> > > > =C2=A0=C2=A0 > >
+> > > > =C2=A0=C2=A0 > > What about emulating the MSR on an AMD host for te=
+sting purpsoes?=C2=A0 It
+> > > > =C2=A0=C2=A0 > > might be a useful way for someone without Intel ha=
+rdware to test spectre
+> > > > =C2=A0=C2=A0 > > related flows.
+> > > > =C2=A0=C2=A0 > >
+> > > > =C2=A0=C2=A0 > > In other words, an alternative to restricting emul=
+ation of the MSR to
+> > > > =C2=A0=C2=A0 > > Intel CPUS would be to move MSR_IA32_ARCH_CAPABILI=
+TIES handling into
+> > > > =C2=A0=C2=A0 > > kvm_{get,set}_msr_common().=C2=A0 Guest access to =
+MSR_IA32_ARCH_CAPABILITIES
+> > > > =C2=A0=C2=A0 > > is gated by X86_FEATURE_ARCH_CAPABILITIES in the g=
+uest's CPUID, e.g.
+> > > > =C2=A0=C2=A0 > > RDMSR will naturally #GP fault if userspace passes=
+ through the host's
+> > > > =C2=A0=C2=A0 > > CPUID on a non-Intel system.
+> > > > =C2=A0=C2=A0 >
+> > > > =C2=A0=C2=A0 > This is also better because it wouldn't change the g=
+uest ABI for AMD
+> > > > =C2=A0=C2=A0 > processors.=C2=A0 Dropping CPUID flags is generally =
+not a good idea.
+> > > > =C2=A0=C2=A0 >
+> > > > =C2=A0=C2=A0 > Paolo
+> > > >=20
+> > > > I don't necessarily disagree about emulating ARCH_CAPABILITIES bein=
+g pointless,
+> > > > but Paolo's point about not changing ABI for existing setups still =
+stands.=C2=A0 This
+> > > > has been KVM's behavior for 6 years (since commit 0cf9135b773b ("KV=
+M: x86: Emulate
+> > > > MSR_IA32_ARCH_CAPABILITIES on AMD hosts"); 7 years, if we go back t=
+o when KVM
+> > > > enumerated support without emulating the MSR (commit 1eaafe91a0df (=
+"kvm: x86:
+> > > > IA32_ARCH_CAPABILITIES is always supported").
+> > > >=20
+> > > > And it's not like KVM is forcing userspace to enumerate support for
+> > > > ARCH_CAPABILITIES, e.g. QEMU's named AMD configs don't enumerate su=
+pport.=C2=A0 So
+> > > > while I completely agree KVM's behavior is odd and annoying for use=
+rspace to deal
+> > > > with, this is probably something that should be addressed in usersp=
+ace.
+> > > >=20
+> > > > > I am resurecting this change because some recent Windows updates =
+(like OS Build
+> > > > > 26100.4351) crashes on AMD KVM guests (BSOD with Stop code: UNSUP=
+PORTED PROCESSOR)
+> > > > > just because the ARCH_CAPABILITIES is available.
+> > >=20
+> > > Isn't it the Windows bugs? I think it is incorrect to assume AMD will=
+ never implement ARCH_CAPABILITIES.
+> > >=20
+> >=20
+> > Yes, although on one hand they are just following the current AMD speci=
+fication which
+> > says that ARCH_CAPABILITIES is not defined on AMD cpus; but on the othe=
+r hand they are
+> > breaking a 6+ years behavior. So it might be nice if we could prevent s=
+uch an issue in
+> > the future.
+>=20
+> Hi Sean,
+>=20
+> Part of the virtualization stack is to lie accurately and in this case
+> KVM is doing it incorrectly.=20
 
-kernel test robot noticed the following build warnings:
+No, KVM isn't doing anything "incorrectly".  The ioctl in question,
+KVM_GET_SUPPORTED_CPUID, advertises what *KVM* supports.  The CPUID model t=
+hat
+is configured for and presented to the guest is fully controlled by userspa=
+ce,
+i.e. by QEMU.
 
-[auto build test WARNING on net/main]
-[also build test WARNING on net-next/main linus/master horms-ipvs/master v6.16-rc5 next-20250704]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+And relative to what KVM is advertising, KVM's behavior is correct.  Prior =
+to
+commit 0cf9135b773b, KVM was indeed buggy, because KVM didn't emulate a fea=
+ture
+that was advertised to userspace.  But that hasn't been the case for 6+ yea=
+rs.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Rosen-Penev/net-dsa-rzn1_a5psw-add-COMPILE_TEST/20250707-130922
-base:   net/main
-patch link:    https://lore.kernel.org/r/20250707003918.21607-2-rosenp%40gmail.com
-patch subject: [PATCH 1/2] net: dsa: rzn1_a5psw: add COMPILE_TEST
-config: alpha-kismet-CONFIG_PCS_RZN1_MIIC-CONFIG_NET_DSA_RZN1_A5PSW-0-0 (https://download.01.org/0day-ci/archive/20250708/202507080426.3RX5BOHi-lkp@intel.com/config)
-reproduce: (https://download.01.org/0day-ci/archive/20250708/202507080426.3RX5BOHi-lkp@intel.com/reproduce)
+Even if KVM were explicitly setting guest CPUID, KVM's behavior _still_ wou=
+ldn't
+be incorrect, because it wouldn't violate AMD's architecture.  Per AMD's AP=
+M,
+software cannot assume reserved CPUID bits are '0':
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507080426.3RX5BOHi-lkp@intel.com/
+  All bit positions that are not defined as fields are reserved. The value =
+of
+  bits within reserved ranges cannot be relied upon to be zero. Software mu=
+st
+  mask off all reserved bits in the return value prior to making any value
+  comparisons of represented information.
 
-kismet warnings: (new ones prefixed by >>)
->> kismet: WARNING: unmet direct dependencies detected for PCS_RZN1_MIIC when selected by NET_DSA_RZN1_A5PSW
-   WARNING: unmet direct dependencies detected for PCS_RZN1_MIIC
-     Depends on [n]: NETDEVICES [=y] && OF [=n] && (ARCH_RZN1 [=n] || COMPILE_TEST [=y])
-     Selected by [y]:
-     - NET_DSA_RZN1_A5PSW [=y] && NETDEVICES [=y] && NET_DSA [=y] && (OF [=n] && ARCH_RZN1 [=n] || COMPILE_TEST [=y])
+> Not fixing it b/c of it being for 7 years in and being part of an ABI but
+> saying it should be fixed in QEMU sounds like you agree technically, but =
+are
+> constrained by a policy.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+I'm not constrained by policy, I'm weighing the risk vs. reward of changing=
+ KVM's
+ABI to remedy a problem that affects exactly one configuration in one VMM, =
+is
+relatively straightforward to address in said VMM, and has already been fix=
+ed in
+the affected guest kernel (because as above, QEMU's behavior isn't a violat=
+ion
+of AMD's architecture).
 
