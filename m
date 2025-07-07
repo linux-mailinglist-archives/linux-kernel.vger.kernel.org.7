@@ -1,148 +1,152 @@
-Return-Path: <linux-kernel+bounces-720284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3E9CAFB9A6
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 19:08:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50B96AFB99B
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 19:07:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4845B1BC0119
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 17:07:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97F433B271C
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 17:06:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3004E2E88B1;
-	Mon,  7 Jul 2025 17:05:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C17C2E88AF;
+	Mon,  7 Jul 2025 17:06:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lbrGxHAG"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hWCEone0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EF78253B58;
-	Mon,  7 Jul 2025 17:05:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 549512264A0;
+	Mon,  7 Jul 2025 17:06:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751907956; cv=none; b=cD+o96XffsHS4+ejlwOoq41EmV/fpd9Mz9e1IRfrQFhkLzQC1c6KQV9O4dTQM8rx2Rk3F/xU3UkoEomXzQN34nuPrgKt7OjuJ1jlnHDoY/fjd5zgvs8NZzQc4wS0TuzmuvPwsPeREZvPc/CJvFnoXB8a0IdMFYBVuube1BoVVGM=
+	t=1751908006; cv=none; b=R4J6g4OSSUqDWSh+BqKgXCWzobuiA2fVbOoEzHG8dK7GOZZmhoP7UgJ1FTOmoGF8MWq0jsoG/O8vhwTm9XNr+Ol446sWe+Eb2MZSAQbTWZczUYS8fubPcQzh78ba2ScNuzfMqQck1h7k3D7X1tWXfXxrsrjA5LEnwUYJkJk6m8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751907956; c=relaxed/simple;
-	bh=PY+mw4mTUhq/6RadpdMRqZgmrB8wZ5jm+Z1Dkpgo29Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=j7jkHLN+0SGGz8QyHLk6e3wsq3seWAqw2fQcavuCrorPVF7WZd2Q529QJKsqNkenJQ1dhO9Utd1wMN+qazgubr0eYPG1P4bcCvB9Rq2VOVKjSA+lCSy2ZXiUtypWqcu4BXl8vSy7+0PuFWXmLHzZDNQ0+Sy//Bu0oS68TJSct7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lbrGxHAG; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-3137c2021a0so2761413a91.3;
-        Mon, 07 Jul 2025 10:05:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751907954; x=1752512754; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=TpMdXzDnCfdN/GalFwfGmK2Pny6VW2Rxcn9/iXdWGFw=;
-        b=lbrGxHAGaSV5fsR+2Q3fCX8wlID0lMC68OpJYdZCd0MqwdOnAyAbvYjEhvse1+Ig3r
-         tJ7QqjdI8kY7KvSnV83YSi6Ks4L+xW8bLmcFcLnt1Mi9cZFvRU22F45E3OKen2jwzEfl
-         +4DkzM73G9HDWFXUK4PhX3oruVXPaPxB+KHgLjsGJxveberQivKXChSOfJ1Hkid2MpfC
-         MG3yYGuiBrwBF+amDm6LMaH9vK8Kr5Zi2y+7pG0DJIt2rsla5T96qNTknb3Jyxmuu+DL
-         sgEK/ZekbuFM6nmfZBdaf7W74ifDP9ImVqYTKM9xt/wn+Kxg8xbMddzHsNsgz8cYK8kE
-         R+7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751907954; x=1752512754;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TpMdXzDnCfdN/GalFwfGmK2Pny6VW2Rxcn9/iXdWGFw=;
-        b=ZX2XgjrW6G6xSPs9IRH68ZpyjUjF0DqEI1gjoD82QX8XmkdWSE+2pH7RRPPVEQWlXp
-         +Omlo5Z0xOHULAQT5TFjFEmG+OAkp0vb6K/e/9DN18n7rqWFTpKsQZ+S/X+/OCrOAPnn
-         50J9+NdrwYgiRRKofPk+XcGlGs6nfR81sc62cKW1bbPAQ8cp2jZg3UqUPqEOyWuvSsr9
-         Ufo4pHls+/8kUIxF8xA/Z+UcmLmjaQ7Re4q0cQ0LeOMwp+jocy5DNEy9qk6vrZE6zqLM
-         2rME/p7YSN4qKVPYSA1I6cHqXKwUtry4sZNbZC7FeokniS/6Qom0/cyMFX5CkmMj7lVe
-         uc1A==
-X-Forwarded-Encrypted: i=1; AJvYcCWDzKomL5+B58W1Gq5ap1NhL/qbffyCOuU+Cmjd51haxEVBxtuHG2/GpEK1zDbBMGEE7ebwZfJU6dVPlmkb@vger.kernel.org, AJvYcCWJNa0P5AJ9v68Sq9kmW8nopdm03ptf5jwB9Kz10ipNSbXW4Eto65vVnYx9kjMpYmszrRdueKG0SlA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/QshsY/JXovlFkPnRefmRnKED7SBlIwUXL1y7REy0iDGxx3wb
-	ZIoOpvb9KP+0TOcGtLmzgyc+0pqC3Mc2c7n4KRUSL/Y3VHglRulzQ60F
-X-Gm-Gg: ASbGncvVEyrQF8uX2FhNME52SA3AdR5wCHRJvYlFYTKlaw1Zvqv1WhJ0j7RkCCdzAx4
-	2R3242i9DGYXGi87ZaLQEWCbDRpHp2CPcz9+XnkCQsfFR0IYaeo15gIiLXiCojS2kH4+y7aruzj
-	HyySCfp0uih72ApKxTJiZyMJg3HRIKYYZia5ZDIDysoNNpMTZhM/iiKdnlU4TCJu56bNEB62B1r
-	Gbc5KZQZBo9+y4rm7DrVFTulbMaXGr+zKQlFAWc7WpO0KAh5mM9sCQSUKLOe7equWhGGxOR9zT5
-	hJrMuy3uWIvh5nc1hRRq9+LTFSnDtC13pixdekQdjz1wkQ+0m1v9zFDlzACU+apcyBfl2V6RnPo
-	=
-X-Google-Smtp-Source: AGHT+IEF5fattogvax5kob4VN55wmQfM65/bVQ74yFaRHd7Gk2rpdUBuYA2r6FYpXtk6hWnOBGZqww==
-X-Received: by 2002:a17:90b:4b43:b0:312:29e:9ed5 with SMTP id 98e67ed59e1d1-31c20e59333mr265155a91.23.1751907954241;
-        Mon, 07 Jul 2025 10:05:54 -0700 (PDT)
-Received: from [10.0.0.86] ([122.172.85.55])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31a9f17bc5bsm11683652a91.48.2025.07.07.10.05.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Jul 2025 10:05:53 -0700 (PDT)
-Message-ID: <c7296a36-0bdd-464d-a681-517c814afed7@gmail.com>
-Date: Mon, 7 Jul 2025 22:35:44 +0530
+	s=arc-20240116; t=1751908006; c=relaxed/simple;
+	bh=RmgBMi2VW8e/N4LvJnOaj4Wgc8weyyjOi7wU4geY8+U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=prZ9M2ZfbnSRseMdGd1bNg5cas9vzMtGfq45DhHHlnCYu09X9UxL9ZV+TlcREOi/vkKH2rMrmlwlCCzhqbisTmoTenppv65OHNJdJfdmPDxbwVjob4/QDkP7rdj/3Xh1Mz8bZqoM0dUcIiRGK9nrt3gquxrC394tDsTgt3igTE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hWCEone0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 959F7C4CEFA;
+	Mon,  7 Jul 2025 17:06:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751908005;
+	bh=RmgBMi2VW8e/N4LvJnOaj4Wgc8weyyjOi7wU4geY8+U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hWCEone0nNbiHJxkCKz0vnh51AVh/vJy0rWCQrBt2WkMeze4hEgcDH97m75KDycrK
+	 mxoRh7QXG/32b7PiDrQ+kaBICHKPE5MUKDkCHh4JYxvS+vBEVAc/m2+EHg2udAjV7Q
+	 FWxxqpNYsQO+oiuFWcfesOWnOUqyhtNmM4Io5/B88l0pCaYuALyRF430bgAAKh4BXn
+	 CVZALtGxrQiNikRInRzoneEcekpnNalAZHlTvavpGdCPXjR/GM15DRfQSWfBhaqcNJ
+	 fLPvspMAoBH1fvPweStN9HzAdvp7eCj2qoxI2yKsLp06pGRxL54Y8LRH5QPhEgvMg1
+	 t0PFw9aHTc0WQ==
+Date: Mon, 7 Jul 2025 18:06:36 +0100
+From: Simon Horman <horms@kernel.org>
+To: Yassine Oudjana <y.oudjana@protonmail.com>
+Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas.schier@linux.dev>,
+	Alexander Sverdlin <alexander.sverdlin@gmail.com>,
+	Sean Nyekjaer <sean@geanix.com>,
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	Antoniu Miclaus <antoniu.miclaus@analog.com>,
+	Ramona Gradinariu <ramona.gradinariu@analog.com>,
+	"Yo-Jung (Leo) Lin" <0xff07@gmail.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	=?utf-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <barnabas.czeman@mainlining.org>,
+	Danila Tikhonov <danila@jiaxyga.com>,
+	Antoni Pokusinski <apokusinski01@gmail.com>,
+	Vasileios Amoiridis <vassilisamir@gmail.com>,
+	Petar Stoykov <pd.pstoykov@gmail.com>,
+	shuaijie wang <wangshuaijie@awinic.com>,
+	Yasin Lee <yasin.lee.x@gmail.com>,
+	"Borislav Petkov (AMD)" <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Tony Luck <tony.luck@intel.com>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Ingo Molnar <mingo@kernel.org>,
+	Yassine Oudjana <yassine.oudjana@gmail.com>,
+	linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, netdev@vger.kernel.org,
+	linux-kbuild@vger.kernel.org
+Subject: Re: [PATCH 2/3] net: qrtr: Define macro to convert QMI version and
+ instance to QRTR instance
+Message-ID: <20250707170636.GR89747@horms.kernel.org>
+References: <20250406140706.812425-1-y.oudjana@protonmail.com>
+ <20250406140706.812425-3-y.oudjana@protonmail.com>
+ <fb61323b-aabd-4661-a202-02da7da557ea@oss.qualcomm.com>
+ <aMbAZigHiAN2xupOYs9DodY2mOdNtw_oVjOaweflgA8IoXRQ5ctoZ8GYJ8PNAKDgL4f9N_UD7tFmkePUy9BCE8v20Mae2x-eL1ZpyJEdLZY=@protonmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] drm: docs: Remove completed task from drm TODO list
-To: Brigham Campbell <me@brighamcampbell.com>, dianders@chromium.org,
- skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev,
- dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Jonathan Corbet <corbet@lwn.net>
-References: <20250707075659.75810-1-me@brighamcampbell.com>
- <20250707075659.75810-4-me@brighamcampbell.com>
-Content-Language: en-US
-From: Tejas Vipin <tejasvipin76@gmail.com>
-In-Reply-To: <20250707075659.75810-4-me@brighamcampbell.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aMbAZigHiAN2xupOYs9DodY2mOdNtw_oVjOaweflgA8IoXRQ5ctoZ8GYJ8PNAKDgL4f9N_UD7tFmkePUy9BCE8v20Mae2x-eL1ZpyJEdLZY=@protonmail.com>
 
-Hi,
-
-On 7/7/25 1:26 PM, Brigham Campbell wrote:
-> Remove TODO item from drm documentation to transition away from using
-> mipi_dsi_*_write_seq() macros now that the work is complete.
+On Sat, Jul 05, 2025 at 06:29:39PM +0000, Yassine Oudjana wrote:
+> On Wednesday, April 9th, 2025 at 3:54 PM, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com> wrote:
 > 
-> Signed-off-by: Brigham Campbell <me@brighamcampbell.com>
-> ---
->  Documentation/gpu/todo.rst | 18 ------------------
->  1 file changed, 18 deletions(-)
+> > On 4/6/25 4:07 PM, Yassine Oudjana wrote:
+
+...
+
+> > > diff --git a/include/linux/soc/qcom/qrtr.h b/include/linux/soc/qcom/qrtr.h
+> > > index 4d7f25c64c56..10c89a35cbb9 100644
+> > > --- a/include/linux/soc/qcom/qrtr.h
+> > > +++ b/include/linux/soc/qcom/qrtr.h
+> > > @@ -13,6 +13,8 @@ struct qrtr_device {
+> > > 
+> > > #define to_qrtr_device(d) container_of(d, struct qrtr_device, dev)
+> > > 
+> > > +#define QRTR_INSTANCE(qmi_version, qmi_instance) (qmi_version | qmi_instance << 8)
+> > 
+> > 
+> > Please use FIELD_PREP + GENMASK to avoid potential overflows
+> > 
+> > Konrad
 > 
-> diff --git a/Documentation/gpu/todo.rst b/Documentation/gpu/todo.rst
-> index be8637da3fe9..76afb8a784e3 100644
-> --- a/Documentation/gpu/todo.rst
-> +++ b/Documentation/gpu/todo.rst
-> @@ -497,24 +497,6 @@ Contact: Douglas Anderson <dianders@chromium.org>
->  
->  Level: Intermediate
->  
-> -Transition away from using mipi_dsi_*_write_seq()
-> --------------------------------------------------
-> -
-> -The macros mipi_dsi_generic_write_seq() and mipi_dsi_dcs_write_seq() are
-> -non-intuitive because, if there are errors, they return out of the *caller's*
-> -function. We should move all callers to use mipi_dsi_generic_write_seq_multi()
-> -and mipi_dsi_dcs_write_seq_multi() macros instead.
-> -
-> -Once all callers are transitioned, the macros and the functions that they call,
-> -mipi_dsi_generic_write_chatty() and mipi_dsi_dcs_write_buffer_chatty(), can
-> -probably be removed. Alternatively, if people feel like the _multi() variants
-> -are overkill for some use cases, we could keep the mipi_dsi_*_write_seq()
-> -variants but change them not to return out of the caller.
-> -
-> -Contact: Douglas Anderson <dianders@chromium.org>
-> -
-> -Level: Starter
-> -
->  Remove devm_drm_put_bridge()
->  ----------------------------
->  
+> Since I'm using this macro in initializing QRTR match tables I am unable to use
+> FIELD_PREP. When I do, I get such errors:
 
-Personally I think there's merit in keeping this TODO around until all
-the other mipi_dsi functions are transitioned as well and removed
-entirely. Maybe rewording it to reflect this could be better?
+Does using FIELD_PREP_CONST, say in a QRTR_INSTANCE_CONST variant, help?
 
--- 
-Tejas Vipin
+> 
+> In file included from ../arch/arm64/include/asm/sysreg.h:1108,
+>                  from ../arch/arm64/include/asm/memory.h:223,
+>                  from ../arch/arm64/include/asm/pgtable-prot.h:8,
+>                  from ../arch/arm64/include/asm/sparsemem.h:8,
+>                  from ../include/linux/numa.h:23,
+>                  from ../include/linux/cpumask.h:17,
+>                  from ../include/linux/smp.h:13,
+>                  from ../include/linux/lockdep.h:14,
+>                  from ../include/linux/mutex.h:17,
+>                  from ../include/linux/kernfs.h:11,
+>                  from ../include/linux/sysfs.h:16,
+>                  from ../include/linux/iio/buffer.h:9,
+>                  from ../drivers/iio/common/qcom_smgr/qcom_smgr.c:8:
+> ../include/linux/bitfield.h:114:9: error: braced-group within expression allowed only inside a function
+>   114 |         ({                                                              \
+>       |         ^
+> ../include/linux/soc/qcom/qrtr.h:21:10: note: in expansion of macro 'FIELD_PREP'
+>    21 |         (FIELD_PREP(GENMASK(7, 0), qmi_version) | FIELD_PREP(GENMASK(15, 8), qmi_instance))
+>       |          ^~~~~~~~~~
+> ../drivers/iio/common/qcom_smgr/qcom_smgr.c:825:29: note: in expansion of macro 'QRTR_INSTANCE'
+>   825 |                 .instance = QRTR_INSTANCE(SNS_SMGR_QMI_SVC_V1,
+>       |                             ^~~~~~~~~~~~~
+
+...
 
