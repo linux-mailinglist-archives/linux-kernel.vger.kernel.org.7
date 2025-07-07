@@ -1,86 +1,101 @@
-Return-Path: <linux-kernel+bounces-719926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F2CFAFB4B3
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 15:35:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C85C7AFB4CF
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 15:41:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A7E59172832
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 13:34:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2EDD21726E2
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 13:41:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0879D2BD59B;
-	Mon,  7 Jul 2025 13:33:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 962EB29CB3E;
+	Mon,  7 Jul 2025 13:41:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a0qKtf6Z"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b="HeYnO4Dm"
+Received: from smtp72.iad3b.emailsrvr.com (smtp72.iad3b.emailsrvr.com [146.20.161.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62F122BD022;
-	Mon,  7 Jul 2025 13:33:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C8D329C346
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 13:41:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=146.20.161.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751895221; cv=none; b=J4IqGhnx8q9N61RSbwDtuctpSXKus3lxbWv80s99sD1ZLnsbznn28p/nhpN59GNyKSCW/9nqWPU1tD3Q1epw7T/PgJkihIhRmnXQgJUpFCAK1eiGSoMSKPPQ6oZEQGOAuv1vM4jyZGVrIOPnWFJTUjD1/Xx3UbrkpMK+yLrT4JU=
+	t=1751895702; cv=none; b=VacjoCkTnmd5fRjXA+C7joIMQIX3d1VS2BQz4w9dlH2qti+XZqxq3XpbUC9sUjnyiURMrCgcAjFUXdmIXuiTzEY+ekP0uVoaBV1izhaA8cKMWymJTiq7N7nHWaBW/ngZqLFkEb6IdKgi1t5nmY13xB826ZmezlYQ0u0g6u7f2b0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751895221; c=relaxed/simple;
-	bh=coXCHRXOLr4GBqKYtVnKxnzaHo047ON5CiWcIERo0lI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=N2vIpfUiqvHtAPq+cgZRTERnw65eOlkhp1/IzF90iwGhZjDpy+T/naGbGjirAUPjLI7CsVMAL2IMzb3zQ2P6Xt1ngrSGQubBZS2Si44k8Ba6msDI10hB1lypFYvhQdPNK3zDqEoDA9WfAHHSL/RxSSOiw+CAfYy7blbsuBKm4EI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a0qKtf6Z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA1A0C4CEF4;
-	Mon,  7 Jul 2025 13:33:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751895221;
-	bh=coXCHRXOLr4GBqKYtVnKxnzaHo047ON5CiWcIERo0lI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=a0qKtf6ZkWcuQioVgBBE2fdWpt4oO1ur5XMfBRWWrZ5RjZvb6kTnCNB6kp+ejV4o3
-	 k+Kpi6UpZEwpZ2RvfWPO1lkfq/nl0qzmz9Zo223jO2b5ksI8yKCVY6xq8lK9qPk7bP
-	 v2S4kdjRrytm8XvUtzrFrcjh+AaBgWS+G/jN8Auqnba5i82ZHsXE/4/rwLToM+mTaL
-	 PCxbcsdJFT/QGKLAlptqCnitBv0BqK0w/FryzqnmsXLg+y9rl/gLxgEAXvU5Q+h4QK
-	 UZGDJuT9xvv+9Eo/uFSLoktRGObHhxsAlBIbjwaE4BFK/VSy6ZK9zK8w/P6pfcQFlA
-	 CV7HtlptpvDiQ==
-Message-ID: <1017a5b4-478a-48ee-805d-363a4c0ca220@kernel.org>
-Date: Mon, 7 Jul 2025 14:33:37 +0100
+	s=arc-20240116; t=1751895702; c=relaxed/simple;
+	bh=F6TLP7RxSLc86v4OJcnDbSakXy8hmn4QJph5g43BHPY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qZbB3NBU7khZU/Cul0aMHEBnr/gsrfo0OmO/Xw13IobWYZiaueDtJOA6cTjBOSdyWsUxSxrFcYRLT/xFS9RFCcFevP7K3HoqxfFU1Otg1xGUUW+3roFDOVL/MTVMSZiMHeFF+zZo5ObjEW661dn23MEGB5duEd+MIyF0MAyFzVc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk; spf=pass smtp.mailfrom=mev.co.uk; dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b=HeYnO4Dm; arc=none smtp.client-ip=146.20.161.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mev.co.uk
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mev.co.uk;
+	s=20221208-6x11dpa4; t=1751895279;
+	bh=F6TLP7RxSLc86v4OJcnDbSakXy8hmn4QJph5g43BHPY=;
+	h=From:To:Subject:Date:From;
+	b=HeYnO4Dm8Xhd+Bbh2iV34+oBhCqFY7iPzGPb0/ucHQoNVAAaXyxYYOJVmeAzXS/ih
+	 vTT4TX2T5gElT0fbOouzTBgKv2xCMEcSkSv2e289FFQh6PiqtlTE/nRumK+WX/nNu2
+	 xcwusHP1gmY1YCAoYvE3vvtHU9cxeNnvyb1kL75I=
+X-Auth-ID: abbotti@mev.co.uk
+Received: by smtp18.relay.iad3b.emailsrvr.com (Authenticated sender: abbotti-AT-mev.co.uk) with ESMTPSA id 11B5AE021F;
+	Mon,  7 Jul 2025 09:34:38 -0400 (EDT)
+From: Ian Abbott <abbotti@mev.co.uk>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Ian Abbott <abbotti@mev.co.uk>,
+	H Hartley Sweeten <hsweeten@visionengravers.com>,
+	syzbot+32de323b0addb9e114ff@syzkaller.appspotmail.com,
+	stable@vger.kernel.org
+Subject: [PATCH] comedi: pcl812: Fix bit shift out of bounds
+Date: Mon,  7 Jul 2025 14:34:29 +0100
+Message-ID: <20250707133429.73202-1-abbotti@mev.co.uk>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] tools/libbpf: add WERROR option
-To: Daniel Borkmann <daniel@iogearbox.net>, Sam James <sam@gentoo.org>,
- bpf@vger.kernel.org, Andrii Nakryiko <andrii@kernel.org>,
- Eduard Zingerman <eddyz87@gmail.com>, Alexei Starovoitov <ast@kernel.org>,
- Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-References: <7e6c41e47c6a8ab73945e6aac319e0dd53337e1b.1751712192.git.sam@gentoo.org>
- <c883e328-9d08-4a6c-b02a-f33e0e287555@iogearbox.net>
-From: Quentin Monnet <qmo@kernel.org>
-Content-Language: en-GB
-In-Reply-To: <c883e328-9d08-4a6c-b02a-f33e0e287555@iogearbox.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Classification-ID: 1e8ffcc9-0a2f-41b8-877b-4512870c96d1-1-1
 
-2025-07-07 15:18 UTC+0200 ~ Daniel Borkmann <daniel@iogearbox.net>
-> On 7/5/25 12:43 PM, Sam James wrote:
->> Check the 'WERROR' variable and suppress adding '-Werror' if WERROR=0.
->>
->> This mirrors what tools/perf and other directories in tools do to handle
->> -Werror rather than adding it unconditionally.
-> 
-> Could you also add to the commit desc why you need it? Are there particular
-> warnings you specifically need to suppress when building under gentoo?
+When checking for a supported IRQ number, the following test is used:
 
+	if ((1 << it->options[1]) & board->irq_bits) {
 
-And if you need to disable the flag on a particular target, have you
-considered using the existing variables and pass EXTRA_CFLAGS=-Wno-error
-rather than adding another flag?
+However, `it->options[i]` is an unchecked `int` value from userspace, so
+the shift amount could be negative or out of bounds.  Fix the test by
+requiring `it->options[1]` to be within bounds before proceeding with
+the original test.  Valid `it->options[1]` values that select the IRQ
+will be in the range [1,15]. The value 0 explicitly disables the use of
+interrupts.
 
-Quentin
+Reported-by: syzbot+32de323b0addb9e114ff@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=32de323b0addb9e114ff
+Fixes: fcdb427bc7cf ("Staging: comedi: add pcl821 driver")
+Cc: <stable@vger.kernel.org> # 5.13+
+Signed-off-by: Ian Abbott <abbotti@mev.co.uk>
+---
+Patch does not apply cleanly to longterm kernels 5.4.x and 5.10.x.
+---
+ drivers/comedi/drivers/pcl812.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/comedi/drivers/pcl812.c b/drivers/comedi/drivers/pcl812.c
+index 0df639c6a595..abca61a72cf7 100644
+--- a/drivers/comedi/drivers/pcl812.c
++++ b/drivers/comedi/drivers/pcl812.c
+@@ -1149,7 +1149,8 @@ static int pcl812_attach(struct comedi_device *dev, struct comedi_devconfig *it)
+ 		if (IS_ERR(dev->pacer))
+ 			return PTR_ERR(dev->pacer);
+ 
+-		if ((1 << it->options[1]) & board->irq_bits) {
++		if (it->options[1] > 0 && it->options[1] < 16 &&
++		    (1 << it->options[1]) & board->irq_bits) {
+ 			ret = request_irq(it->options[1], pcl812_interrupt, 0,
+ 					  dev->board_name, dev);
+ 			if (ret == 0)
+-- 
+2.47.2
+
 
