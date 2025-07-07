@@ -1,215 +1,212 @@
-Return-Path: <linux-kernel+bounces-720535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78A44AFBCF7
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 22:55:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A821AFBCFA
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 22:58:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDB08174CB7
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 20:55:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8249916D7DF
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 20:58:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A8BB270551;
-	Mon,  7 Jul 2025 20:55:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39F8B26FA4B;
+	Mon,  7 Jul 2025 20:58:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="esdLHl1G"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b1qfPnAl"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A03B26CE13;
-	Mon,  7 Jul 2025 20:55:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DC6333086;
+	Mon,  7 Jul 2025 20:58:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751921746; cv=none; b=teSboUG7zJxWNLmBrSxtjMRwGNd14M+szIJBnllYcPvhvESeFEjfcJmKqR84B5MwKGVKdUXekYx3BCQQajkl1xBkNVUviS5l2741WPXYHiDB+dNn16Aw3G3vI9u9bopm1nCnhDNuGMm/RT0zKDTrf0Smk6sYdOE7uNMu+yJKAxI=
+	t=1751921895; cv=none; b=c4Sks5+xpdHd4BnHPwYADuqJn/QIjXj8m72n6hYhersKx6wk0nHnjWf3tfHcYvTEp2xEVVB2RITE87e60ipguybij6cocfmO2G2OorcDNILpQszOtatfTnldHwBCJngzv5dPY/R/8+6j7jz5pebIVy28V8mIW/NUnt6pbejauAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751921746; c=relaxed/simple;
-	bh=N2m18nhNQA4hki2dztBKwI3mRty+hyjFtNl6bA4Wodc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JVQx/tbddcZ/e1ZBXgNVXjeKu3dO32azgJAyd+5vzEpYx35qUkk7xe4Tc9wWXJTmZ4WRHAKPl+jSAw9u+Wo0eOJRrrfjSpL8ZHsnS9tQxeK2zqXZCALC1aZGUdo0XtseY1g/4yUH/Ye87iS84qrNuNFlmwJ7PhFtpbV3+IhYZKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=esdLHl1G; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C420C4CEEF;
-	Mon,  7 Jul 2025 20:55:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751921745;
-	bh=N2m18nhNQA4hki2dztBKwI3mRty+hyjFtNl6bA4Wodc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=esdLHl1GyBSlq6xK35kbDEc8PgESk9H+3LXSa1vfDzeEVNeLVF+3i5M5tdb8IEsIo
-	 dHMtzTRwXoSCEweSgVW6Er+h9WqRL9FihJS9K8YVJJOYHc3ccA9pB7gs6RLfzHskq7
-	 tFNGFyawXk8N/E6k1nZfxNGzNktFmTVupxSpVCfNgvZF/4qtYblt1IVzodAedmwZBn
-	 wQ9f/MFVIjS3YOKiG+E1jvwLCYTbgVtqM6sROV2awkS5F7XzZ53QrgX/yPyxhPO1Sv
-	 8G/qANBP8lh5b0LrhFh6SfxZakHCGS4ZhgoM4pcmd2L3y0ThzzBAPpnTk9YFBd0Heu
-	 uBhyoN+n5+AbQ==
-Message-ID: <5ae0db7f-6528-4eeb-8747-09be203e0089@kernel.org>
-Date: Mon, 7 Jul 2025 22:55:41 +0200
+	s=arc-20240116; t=1751921895; c=relaxed/simple;
+	bh=1yfgLOFQaiPln+5UECEysOSL8yOtlnqkjI3h5BWsKRs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T+eCy7mD6nfbsbGZMkTl+gcf3lZDdklIVp3HJHLSOee3cpmUDV9DnyNP8bisbu6reRPq0etPj7XCobQewlegNG4OSUat8Uaxsz3ha8MbL5pUwVsJ/Jrvzr5aQ9+0g0Vjm9ITW9i8ciTj1hO/bd9q6Kl4vzcm/S5QR9RkXR2NfiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b1qfPnAl; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-74ce477af25so2152211b3a.3;
+        Mon, 07 Jul 2025 13:58:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751921893; x=1752526693; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vdtzQHXmDsLgtDJHYdjLmDT6a/R1cKsr1fz9USt0LtY=;
+        b=b1qfPnAlL7t0zfzOx34Qu8w0ym21NtTaw1IUEa8fNLWXVg/Uz+K3/hWqDgOhw2f0F8
+         oB2RBKkjrasSaQEiSSIj6LPBxMENc/r9HBRc6IxByxOSVu8UBdN7bkAEuHSJNtYPzSma
+         tX5aG30wyPDUEryajB7UZls3b6basaP3DFRRnuFf6onLc2Re6/rQVj/kICWuISUE2ZM9
+         1YF5TexXJYNycoUafxhN5vLumxsv7jBQkJf3LHhQpvFRh4akyY8wP0G5PTw940TLpiqM
+         A0u4UIo6AuvTyWZlkB2/84JO+1LeDI6NVzkAsD6juSaqtLhiyGTXt9elt15pbNV7IjgX
+         0z0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751921893; x=1752526693;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vdtzQHXmDsLgtDJHYdjLmDT6a/R1cKsr1fz9USt0LtY=;
+        b=Ck85/tkxKjeX9kHUlnxdk8pJSLpXb4o/4e6xG7opEXJMagolWZmUwUWklhEnDF4SDG
+         DrU0st/5NxG5IZY/PNF7TdIg0arBY2buajc/Q6Uqct4oK5bJeiPTfk5+3BH+DdIuWdwc
+         e4xzsTQCKrpfRMIED8SFgxSBoSjRwarQ1bjjlmLcTdKroArqsJHWHIolJC6fGIcyEO3O
+         YO8q+hS4IkrYsk+8k85mM5uZq9vHMXoxUl+jZlT5XCv1TOYNDYlr6cqgj4bsoTNg4kxC
+         +uQiIPgkulJ9tTJTB45XNgfOCms+5I0VDOwrPQhP+HB689O/5eFPswzQFxkkJCNgKrEi
+         DV0w==
+X-Forwarded-Encrypted: i=1; AJvYcCWLZkm3/Axs8DFmtteZ+nWLU8h5RsjeaysrzJClCcUO6gS9rYaQ+GHEbg5aiWCqJmtFvcX7EyeyWXaz@vger.kernel.org, AJvYcCXdDWgGBeggjPfBQFICZc47PoqmY7T9iWbSjPwOUKX/oC3SBryvycW+vn+5QyvCoJ1MAXjL5eU1tfz5b94eo9s=@vger.kernel.org, AJvYcCXrAOob/FSCzpNEQrD3nsGGcwOzLlTPh/tNoxV1atiZxKEI8iyLZHJofEcedkJzPPs4bB3bY8q9ymm4tR4c@vger.kernel.org
+X-Gm-Message-State: AOJu0Yys/8sev21paLo+xdj2f88IFwZcMVdvHzuJwkn4ztConxpNqxWc
+	WHZ8b/BXSUJjvkMgQMDx3GgTCfneek54hoDCSMqd1tCa7NQy+m/tiiZf7J1mFg==
+X-Gm-Gg: ASbGncvjDuoc6fBk528UbnvWQSMrj4XeYgwd4kL1Pee79m16Wc65scJGhoiAj4TJkm+
+	6H+LvYbcVIIUVX4t4FmO1laYTf6oW06njwKHFv9MjODWPwo7KFQuQVTzKtVex28k5Y6rsOIjg0z
+	f5EhWzCDnUl1Bf1DoQyKIagVvDlBgUzaPg7WFzC0MvUz/j9JmFU7XgaKLG5MNyMYd8UhfyUQXr4
+	aQ6sS49lgz+iN3WeQa3qrYncE94tI2RLZfrD+7rysu62v8BJTbN3HbJOUHH8mxmRLHV7CHHil+Y
+	AMWvDo+kd9yP8jgoMTrmObc3US+Fw+IUvlZKEtHB78kQKw1vstm/EEVyn8436OIaZPD6mQTDglE
+	QmIikrzUYiw==
+X-Google-Smtp-Source: AGHT+IHa33IoJDkkiAUXOiNtnScGLdwFfsOuTvhHokB8mo7xs2anSqK5WIaSd1T5qMmvoHWiD9OYSg==
+X-Received: by 2002:a05:6a00:1910:b0:736:4d05:2e2e with SMTP id d2e1a72fcca58-74ce6417d49mr19430623b3a.6.1751921893287;
+        Mon, 07 Jul 2025 13:58:13 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74ce35cc72dsm9826565b3a.42.2025.07.07.13.58.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Jul 2025 13:58:12 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Mon, 7 Jul 2025 13:58:12 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Judith Mendez <jm@ti.com>
+Cc: Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Tero Kristo <kristo@kernel.org>, linux-watchdog@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Andrew Davis <afd@ti.com>
+Subject: Re: [PATCH v3 2/2] watchdog: rti_wdt: Add reaction control
+Message-ID: <cc37e797-d3e5-444d-8016-c437a0534001@roeck-us.net>
+References: <20250707180002.3918865-1-jm@ti.com>
+ <20250707180002.3918865-3-jm@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 3/5] media: uvcvideo: Introduce dev->meta_formats
-To: Ricardo Ribalda <ribalda@chromium.org>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-usb@vger.kernel.org
-References: <20250707-uvc-meta-v8-0-ed17f8b1218b@chromium.org>
- <20250707-uvc-meta-v8-3-ed17f8b1218b@chromium.org>
-Content-Language: en-US, nl
-From: Hans de Goede <hansg@kernel.org>
-In-Reply-To: <20250707-uvc-meta-v8-3-ed17f8b1218b@chromium.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250707180002.3918865-3-jm@ti.com>
 
-Hi,
-
-On 7-Jul-25 8:34 PM, Ricardo Ribalda wrote:
-> Right now, there driver supports devices with one or two metadata
-> formats. Prepare it to support more than two metadata formats.
+On Mon, Jul 07, 2025 at 01:00:02PM -0500, Judith Mendez wrote:
+> This allows to configure reaction between NMI and reset for WWD.
 > 
-> This is achieved with the introduction of a new field `meta_formats`,
-> that contains the array of metadata formats supported by the device, in
-> the order expected by userspace.
+> On K3 SoC's other than AM62L SoC [0], watchdog reset output is routed
+> to the ESM module which can subsequently route the signal to safety
+> master or SoC reset. On AM62L, the watchdog reset output is routed
+> to the SoC HW reset block. So, add a new compatible for AM62l to add
+> SoC data and configure reaction to reset instead of NMI.
 > 
-> Suggested-by: Hans de Goede <hansg@kernel.org>
-> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-
-Thanks, patch looks good to me:
-
-Reviewed-by: Hans de Goede <hansg@kernel.org>
-
-Regards,
-
-Hans
-
-
-
+> [0] https://www.ti.com/product/AM62L
+> Signed-off-by: Judith Mendez <jm@ti.com>
 > ---
->  drivers/media/usb/uvc/uvc_driver.c   |  2 ++
->  drivers/media/usb/uvc/uvc_metadata.c | 38 +++++++++++++++++++++++++++++-------
->  drivers/media/usb/uvc/uvcvideo.h     |  6 ++++++
->  3 files changed, 39 insertions(+), 7 deletions(-)
+>  drivers/watchdog/rti_wdt.c | 32 ++++++++++++++++++++++++++++----
+>  1 file changed, 28 insertions(+), 4 deletions(-)
 > 
-> diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
-> index 62eb45435d8bec5c955720ecb46fb8936871e6cc..56ea20eeb7b9d5d92f3d837c15bdf11d536e9f2d 100644
-> --- a/drivers/media/usb/uvc/uvc_driver.c
-> +++ b/drivers/media/usb/uvc/uvc_driver.c
-> @@ -2315,6 +2315,8 @@ static int uvc_probe(struct usb_interface *intf,
->  		goto error;
->  	}
+> diff --git a/drivers/watchdog/rti_wdt.c b/drivers/watchdog/rti_wdt.c
+> index d1f9ce4100a8..c9ee443c70af 100644
+> --- a/drivers/watchdog/rti_wdt.c
+> +++ b/drivers/watchdog/rti_wdt.c
+> @@ -35,7 +35,8 @@
+>  #define RTIWWDRXCTRL	0xa4
+>  #define RTIWWDSIZECTRL	0xa8
 >  
-> +	uvc_meta_init(dev);
+> -#define RTIWWDRX_NMI	0xa
+> +#define RTIWWDRXN_RST	0x5
+> +#define RTIWWDRXN_NMI	0xa
+>  
+>  #define RTIWWDSIZE_50P		0x50
+>  #define RTIWWDSIZE_25P		0x500
+> @@ -63,22 +64,29 @@
+>  
+>  static int heartbeat;
+>  
+> +struct rti_wdt_data {
+> +	bool reset;
+> +};
 > +
->  	if (dev->quirks & UVC_QUIRK_NO_RESET_RESUME)
->  		udev->quirks &= ~USB_QUIRK_RESET_RESUME;
+>  /*
+>   * struct to hold data for each WDT device
+>   * @base - base io address of WD device
+>   * @freq - source clock frequency of WDT
+>   * @wdd  - hold watchdog device as is in WDT core
+> + * @data - hold configuration data
+>   */
+>  struct rti_wdt_device {
+>  	void __iomem		*base;
+>  	unsigned long		freq;
+>  	struct watchdog_device	wdd;
+> +	const struct rti_wdt_data *data;
+>  };
 >  
-> diff --git a/drivers/media/usb/uvc/uvc_metadata.c b/drivers/media/usb/uvc/uvc_metadata.c
-> index 82de7781f5b6b70c5ba16bcba9e0741231231904..4bcbc22f47e67c52baf6e133f240131ff3d32a03 100644
-> --- a/drivers/media/usb/uvc/uvc_metadata.c
-> +++ b/drivers/media/usb/uvc/uvc_metadata.c
-> @@ -64,14 +64,20 @@ static int uvc_meta_v4l2_try_format(struct file *file, void *fh,
->  	struct uvc_device *dev = stream->dev;
->  	struct v4l2_meta_format *fmt = &format->fmt.meta;
->  	u32 fmeta = fmt->dataformat;
-> +	u32 i;
+>  static int rti_wdt_start(struct watchdog_device *wdd)
+>  {
+>  	u32 timer_margin;
+>  	struct rti_wdt_device *wdt = watchdog_get_drvdata(wdd);
+> +	u8 reaction;
+>  	int ret;
 >  
->  	if (format->type != vfh->vdev->queue->type)
->  		return -EINVAL;
+>  	ret = pm_runtime_resume_and_get(wdd->parent);
+> @@ -101,8 +109,13 @@ static int rti_wdt_start(struct watchdog_device *wdd)
+>  	 */
+>  	wdd->min_hw_heartbeat_ms = 520 * wdd->timeout + MAX_HW_ERROR;
 >  
-> +	for (i = 0; (fmeta != dev->meta_formats[i]) && dev->meta_formats[i];
-> +	     i++)
-> +		;
-> +	if (!dev->meta_formats[i])
-> +		fmeta = V4L2_META_FMT_UVC;
-> +
->  	memset(fmt, 0, sizeof(*fmt));
->  
-> -	fmt->dataformat = fmeta == dev->info->meta_format
-> -			? fmeta : V4L2_META_FMT_UVC;
-> +	fmt->dataformat = fmeta;
->  	fmt->buffersize = UVC_METADATA_BUF_SIZE;
->  
->  	return 0;
-> @@ -112,17 +118,21 @@ static int uvc_meta_v4l2_enum_formats(struct file *file, void *fh,
->  	struct v4l2_fh *vfh = file->private_data;
->  	struct uvc_streaming *stream = video_get_drvdata(vfh->vdev);
->  	struct uvc_device *dev = stream->dev;
-> -	u32 index = fdesc->index;
-> +	u32 i;
-> +
-> +	if (fdesc->type != vfh->vdev->queue->type)
-> +		return -EINVAL;
->  
-> -	if (fdesc->type != vfh->vdev->queue->type ||
-> -	    index > 1U || (index && !dev->info->meta_format))
-> +	for (i = 0; (i < fdesc->index) && dev->meta_formats[i]; i++)
-> +		;
-> +	if (!dev->meta_formats[i])
->  		return -EINVAL;
->  
->  	memset(fdesc, 0, sizeof(*fdesc));
->  
->  	fdesc->type = vfh->vdev->queue->type;
-> -	fdesc->index = index;
-> -	fdesc->pixelformat = index ? dev->info->meta_format : V4L2_META_FMT_UVC;
-> +	fdesc->index = i;
-> +	fdesc->pixelformat = dev->meta_formats[i];
->  
->  	return 0;
->  }
-> @@ -174,3 +184,17 @@ int uvc_meta_register(struct uvc_streaming *stream)
->  					 V4L2_BUF_TYPE_META_CAPTURE,
->  					 &uvc_meta_fops, &uvc_meta_ioctl_ops);
->  }
-> +
-> +void uvc_meta_init(struct uvc_device *dev)
-> +{
-> +	unsigned int i = 0;
-> +
-> +	dev->meta_formats[i++] = V4L2_META_FMT_UVC;
-> +
-> +	if (dev->info->meta_format &&
-> +	    !WARN_ON(dev->info->meta_format == V4L2_META_FMT_UVC))
-> +		dev->meta_formats[i++] = dev->info->meta_format;
-> +
-> +	 /* IMPORTANT: for new meta-formats update UVC_MAX_META_DATA_FORMATS. */
-> +	dev->meta_formats[i++] = 0;
-> +}
-> diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
-> index 11d6e3c2ebdfbabd7bbe5722f88ff85f406d9bb6..b3c094c6591e7a71fc00e1096bcf493a83f330ad 100644
-> --- a/drivers/media/usb/uvc/uvcvideo.h
-> +++ b/drivers/media/usb/uvc/uvcvideo.h
-> @@ -572,6 +572,8 @@ struct uvc_status {
->  	};
->  } __packed;
->  
-> +#define UVC_MAX_META_DATA_FORMATS 3
-> +
->  struct uvc_device {
->  	struct usb_device *udev;
->  	struct usb_interface *intf;
-> @@ -582,6 +584,9 @@ struct uvc_device {
->  
->  	const struct uvc_device_info *info;
->  
-> +	/* Zero-ended list of meta formats */
-> +	u32 meta_formats[UVC_MAX_META_DATA_FORMATS + 1];
-> +
->  	atomic_t nmappings;
->  
->  	/* Video control interface */
-> @@ -751,6 +756,7 @@ int uvc_query_ctrl(struct uvc_device *dev, u8 query, u8 unit,
->  void uvc_video_clock_update(struct uvc_streaming *stream,
->  			    struct vb2_v4l2_buffer *vbuf,
->  			    struct uvc_buffer *buf);
-> +void uvc_meta_init(struct uvc_device *dev);
->  int uvc_meta_register(struct uvc_streaming *stream);
->  
->  int uvc_register_video_device(struct uvc_device *dev,
-> 
+> -	/* Generate NMI when wdt expires */
+> -	writel_relaxed(RTIWWDRX_NMI, wdt->base + RTIWWDRXCTRL);
+> +	/* Reset device if wdt serviced outside of window or generate NMI if available */
 
+Shouldn't that be "or generate NMI if _not_ available" ?
+
+Guenter
+
+> +	if (wdt->data->reset)
+> +		reaction = RTIWWDRXN_RST;
+> +	else
+> +		reaction = RTIWWDRXN_NMI;
+> +
+> +	writel_relaxed(reaction, wdt->base + RTIWWDRXCTRL);
+>  
+>  	/* Open window size 50%; this is the largest window size available */
+>  	writel_relaxed(RTIWWDSIZE_50P, wdt->base + RTIWWDSIZECTRL);
+> @@ -255,6 +268,8 @@ static int rti_wdt_probe(struct platform_device *pdev)
+>  	wdd->timeout = DEFAULT_HEARTBEAT;
+>  	wdd->parent = dev;
+>  
+> +	wdt->data = device_get_match_data(dev);
+> +
+>  	watchdog_set_drvdata(wdd, wdt);
+>  	watchdog_set_nowayout(wdd, 1);
+>  	watchdog_set_restart_priority(wdd, 128);
+> @@ -369,8 +384,17 @@ static void rti_wdt_remove(struct platform_device *pdev)
+>  	pm_runtime_disable(&pdev->dev);
+>  }
+>  
+> +static struct rti_wdt_data j7_wdt = {
+> +	.reset = false,
+> +};
+> +
+> +static struct rti_wdt_data am62l_wdt = {
+> +	.reset = true,
+> +};
+> +
+>  static const struct of_device_id rti_wdt_of_match[] = {
+> -	{ .compatible = "ti,j7-rti-wdt", },
+> +	{ .compatible = "ti,j7-rti-wdt", .data = &j7_wdt },
+> +	{ .compatible = "ti,am62l-rti-wdt", .data = &am62l_wdt },
+>  	{},
+>  };
+>  MODULE_DEVICE_TABLE(of, rti_wdt_of_match);
+> -- 
+> 2.49.0
+> 
 
