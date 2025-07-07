@@ -1,124 +1,134 @@
-Return-Path: <linux-kernel+bounces-720201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 388C0AFB87B
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 18:15:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94B86AFB91C
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 18:53:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 032763AC76F
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 16:14:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 016294A6269
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 16:52:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 418D721B196;
-	Mon,  7 Jul 2025 16:14:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A9B722DFB1;
+	Mon,  7 Jul 2025 16:51:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="XCzhS0Mh"
-Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
+	dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b="IKamk4RV"
+Received: from smtp79.iad3a.emailsrvr.com (smtp79.iad3a.emailsrvr.com [173.203.187.79])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D19E41E3DC8;
-	Mon,  7 Jul 2025 16:14:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5986F224B0E
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 16:51:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.203.187.79
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751904898; cv=none; b=qGv8mpC5NMaW7QutQzcnIXwd1w/iBqB30EabiZ2mcYoxVL3v06McDNFPqe3EnRRod+szjb8030JHmfyYec+LrsKQOG7rwgtboYHtjXQ1yA9HzHQlX+AY/upEfAzj9JruaY+eD2c0VwV0Ry6DscIOK7bdqXh0FH4bqAGlQKm5BZs=
+	t=1751907110; cv=none; b=crCNEqO+VEmOgiw3jCfsAQ9PYrbGwjRq1hlH0Gr/qu/Bs0l+RNdOgyfc/j5Msh2fAKCMuaIqMYwUBdBykyQ9XzWk4dng7iOmNNc/9zMMSqzCM7zPohA8FMqNhojnqdbRt5CtAEkgHpO7fJNKEVzf6n3HSoWzdqgIowjKFyGtEZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751904898; c=relaxed/simple;
-	bh=LO7QEAUNlrgXSkEoT3jKZHQtzk6EPA+7iKa1WuhezPM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VxESjnGbDv+IjtYUCQZ607ZeZZaNVnLC2Va25s8JP9VdldQDC3KfqDcN+JV6GJk6b9lSLdBCAAOG3alSgk+M5fe7SXdYRun2YSN/EKejAmf0m7qCV96BlYkd7UVuNX9jFvYoinLbXvNLsEA1812y61/VQ39R3dLG19hq4JICPe8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=XCzhS0Mh; arc=none smtp.client-ip=199.89.3.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 003.mia.mailroute.net (Postfix) with ESMTP id 4bbTpd6XF1zltKGZ;
-	Mon,  7 Jul 2025 16:14:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1751904887; x=1754496888; bh=DhBmOe4x1JLcoZy9mys+lB4+
-	WJiQRcQ3Aao9PKPfMf8=; b=XCzhS0MhtHZh1gZfve9dCCHnaQ14ohGk/X9Al/G4
-	WG8xmUu0nDRuTkjj5caY+e5sBmnc4rdlHVAIQl2karkC8vuCbg0+PJkxy6QQXMIf
-	nNvr7YdzL9WUmRHpLsKAW6zaTVQb86ezgxVMHgrHByXTSYM1olbx48Ipl+To23Eh
-	RBrrMxAeheBcJ4jaSVlDOgeYVKaI3pZHYNchGZKq79XzcuFE2GDjMEn/EAMUkms7
-	BJsmdxqA6yygCkjQ17Ypq1XU840d/a74YyEj9VjIYdLrbu0TMmxsk5oZ7q5FfRgF
-	kfR8rJsrzmjWN3vzvumoynJ1JO3FFoCB8NwLH8rSMi9/Hw==
-X-Virus-Scanned: by MailRoute
-Received: from 003.mia.mailroute.net ([127.0.0.1])
- by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id SVxenN_q8gk4; Mon,  7 Jul 2025 16:14:47 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4bbTpQ64vXzlng93;
-	Mon,  7 Jul 2025 16:14:37 +0000 (UTC)
-Message-ID: <2700084c-5241-468a-a80e-971e42560d31@acm.org>
-Date: Mon, 7 Jul 2025 09:14:36 -0700
+	s=arc-20240116; t=1751907110; c=relaxed/simple;
+	bh=BAtdjqU+UrMQvby1bp04z3uiYeP5xMV3MbeUNW96Mo8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=meRoGhWUj77M+FzzJktkBA/XWgjXkgUcXgzZlbUvXtWsGz0JutiyhZQBhQqfhCRAEqjJq+5n1GUGqOyIAsWNbQ1hY6Wm0oUPVCAlJB+2eV60VAORNHO4AhKrrEuSr+McjQS36F+ulkAxINrVf6H5sr97jb6hOb/cgvJ+CN2bYug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk; spf=pass smtp.mailfrom=mev.co.uk; dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b=IKamk4RV; arc=none smtp.client-ip=173.203.187.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mev.co.uk
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mev.co.uk;
+	s=20221208-6x11dpa4; t=1751904889;
+	bh=BAtdjqU+UrMQvby1bp04z3uiYeP5xMV3MbeUNW96Mo8=;
+	h=From:To:Subject:Date:From;
+	b=IKamk4RVTnnuD+lnuicDE3w1Fhn353KfTUDIBoHO903B8/ZnVXG1VyzgdL8X/fml9
+	 1smCAfU6EOuzgmHqpxYOeBJZnigEUauut7aH6r0+BTxrHf4vIo+VC6AywhZwrdQGX6
+	 5IRogg/Mk3CKW1ZmFtruc0jcB0Kl6ggCQKky6/ls=
+X-Auth-ID: abbotti@mev.co.uk
+Received: by smtp10.relay.iad3a.emailsrvr.com (Authenticated sender: abbotti-AT-mev.co.uk) with ESMTPSA id 883D65DB7;
+	Mon,  7 Jul 2025 12:14:48 -0400 (EDT)
+From: Ian Abbott <abbotti@mev.co.uk>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Ian Abbott <abbotti@mev.co.uk>,
+	H Hartley Sweeten <hsweeten@visionengravers.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] comedi: Fix initialization of data for instructions that write to subdevice
+Date: Mon,  7 Jul 2025 17:14:39 +0100
+Message-ID: <20250707161439.88385-1-abbotti@mev.co.uk>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] scsi: ufs: preventing bus hang crash during emergency
- power off
-To: Bo Ye <bo.ye@mediatek.com>, Alim Akhtar <alim.akhtar@samsung.com>,
- Avri Altman <avri.altman@wdc.com>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: xiujuan.tan@mediatek.com, Qilin Tan <qilin.tan@mediatek.com>,
- linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-References: <20250519073814.167264-1-bo.ye@mediatek.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20250519073814.167264-1-bo.ye@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Classification-ID: ee79df78-f328-41a5-9cda-7d77cfae3ae9-1-1
 
+Some Comedi subdevice instruction handlers are known to access
+instruction data elements beyond the first `insn->n` elements in some
+cases.  The `do_insn_ioctl()` and `do_insnlist_ioctl()` functions
+allocate at least `MIN_SAMPLES` (16) data elements to deal with this,
+but they do not initialize all of that.  For Comedi instruction codes
+that write to the subdevice, the first `insn->n` data elements are
+copied from user-space, but the remaining elements are left
+uninitialized.  That could be a problem if the subdevice instruction
+handler reads the uninitialized data.  Ensure that the first
+`MIN_SAMPLES` elements are initialized before calling these instruction
+handlers, filling the uncopied elements with 0.  For
+`do_insnlist_ioctl()`, the same data buffer elements are used for
+handling a list of instructions, so ensure the first `MIN_SAMPLES`
+elements are initialized for each instruction that writes to the
+subdevice.
 
-On 5/19/25 12:38 AM, Bo Ye wrote:
-> The root cause is that scsi_device_quiesce and blk_mq_freeze_queue
-> only drain the requests in the request queue but don't guarantee that
-> all requests have been dispatched to the UFS host and completed.
-> Requests may remain pending in the hardware dispatch queue and be
-> rescheduled later.
+Fixes: ed9eccbe8970 ("Staging: add comedi core")
+Cc: <stable@vger.kernel.org> # 5.13+
+Signed-off-by: Ian Abbott <abbotti@mev.co.uk>
+---
+Patch does not apply cleanly to longterm kernels 5.4.x and 5.10.x.
+---
+ drivers/comedi/comedi_fops.c | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
 
-The above is confusing. scsi_device_quiesce() drains both the request
-queue and the hardware queues for all commands associated with a single
-logical unit. The problem that you are encountering is probably that
-scsi_device_quiesce() is only called for the WLUN but not for the other
-logical units and hence that there still may be commands being processed
-for other logical units after scsi_device_quiesce() has returned.
+diff --git a/drivers/comedi/comedi_fops.c b/drivers/comedi/comedi_fops.c
+index 3383a7ce27ff..0f8b471d5032 100644
+--- a/drivers/comedi/comedi_fops.c
++++ b/drivers/comedi/comedi_fops.c
+@@ -1556,21 +1556,27 @@ static int do_insnlist_ioctl(struct comedi_device *dev,
+ 	}
+ 
+ 	for (i = 0; i < n_insns; ++i) {
++		unsigned int n = insns[i].n;
++
+ 		if (insns[i].insn & INSN_MASK_WRITE) {
+ 			if (copy_from_user(data, insns[i].data,
+-					   insns[i].n * sizeof(unsigned int))) {
++					   n * sizeof(unsigned int))) {
+ 				dev_dbg(dev->class_dev,
+ 					"copy_from_user failed\n");
+ 				ret = -EFAULT;
+ 				goto error;
+ 			}
++			if (n < MIN_SAMPLES) {
++				memset(&data[n], 0, (MIN_SAMPLES - n) *
++						    sizeof(unsigned int));
++			}
+ 		}
+ 		ret = parse_insn(dev, insns + i, data, file);
+ 		if (ret < 0)
+ 			goto error;
+ 		if (insns[i].insn & INSN_MASK_READ) {
+ 			if (copy_to_user(insns[i].data, data,
+-					 insns[i].n * sizeof(unsigned int))) {
++					 n * sizeof(unsigned int))) {
+ 				dev_dbg(dev->class_dev,
+ 					"copy_to_user failed\n");
+ 				ret = -EFAULT;
+@@ -1633,6 +1639,10 @@ static int do_insn_ioctl(struct comedi_device *dev,
+ 			ret = -EFAULT;
+ 			goto error;
+ 		}
++		if (insn->n < MIN_SAMPLES) {
++			memset(&data[insn->n], 0,
++			       (MIN_SAMPLES - insn->n) * sizeof(unsigned int));
++		}
+ 	}
+ 	ret = parse_insn(dev, insn, data, file);
+ 	if (ret < 0)
+-- 
+2.47.2
 
-> diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
-> index 7735421e3991..a1013aea8e90 100644
-> --- a/drivers/ufs/core/ufshcd.c
-> +++ b/drivers/ufs/core/ufshcd.c
-> @@ -10262,6 +10262,7 @@ static void ufshcd_wl_shutdown(struct device *dev)
->   		scsi_device_set_state(sdev, SDEV_OFFLINE);
->   		mutex_unlock(&sdev->state_mutex);
->   	}
-> +	ufshcd_wait_for_doorbell_clr(hba, 5 * USEC_PER_SEC);
->   	__ufshcd_wl_suspend(hba, UFS_SHUTDOWN_PM);
->   
->   	/*
-
-The name of the ufshcd_wait_for_doorbell_clr() function is confusing
-since "doorbell" refers to a legacy single doorbell mode concept while
-the function supports both legacy mode and MCQ. After this patch has
-been queued I plan to submit a patch that renames this function.
-
-If the patch description of this patch is improved I will add my
-Reviewed-by to this patch.
-
-Thanks,
-
-Bart.
 
