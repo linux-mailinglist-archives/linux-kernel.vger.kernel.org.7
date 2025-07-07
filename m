@@ -1,251 +1,108 @@
-Return-Path: <linux-kernel+bounces-720326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99297AFBA50
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 20:02:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E722AAFBA53
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 20:03:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25C03422B5F
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 18:01:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BAC8A1AA6A73
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 18:04:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A502E1DEFE9;
-	Mon,  7 Jul 2025 18:02:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 236A6225793;
+	Mon,  7 Jul 2025 18:03:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="exGgoLyT"
-Received: from smtp-fw-52004.amazon.com (smtp-fw-52004.amazon.com [52.119.213.154])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YzpMLjN1"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DF5D170826;
-	Mon,  7 Jul 2025 18:02:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED9A5288A2;
+	Mon,  7 Jul 2025 18:03:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751911331; cv=none; b=tk0y8jAc/lfL60WnL83bIa9NynBviOi/sYe/G01baFx76k20OaQFKev151gk+wJDMgEGW2dw9Ow0P5IXaHwIUQekolmUFxPa1kHmq8yTm3fW+eGzEv2V/zqeoYwbLXUrFP0bO9+Q0ezhXyaD8wgMvYQV7c1JFxc3CHMLDTZR1cc=
+	t=1751911430; cv=none; b=nq3SYZUnUe1FERpZr7NKPDAfu9g8myD/QQfWYGOCQo5kNOzEYCJRl4/4zBupw+eAx4SvgZRgrW1Nq5zCtldYvu/7xDINUTNDw6xSrJPEXDz53nUy5ZediZBIoUW4xn1D9ZGHFYwhf0QalDavYM3f5sH8ftJTP8muBf9LBbrzdKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751911331; c=relaxed/simple;
-	bh=NWeu7SGxhSVdlS/9NEE0yCEzhnJvx/RVSKT6SyfInrk=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GUb1CEKxyCAunfyZnPZLxi8aijBvKykaAPpXZWAVpVt/Lo8ce1qNdLq1gZrJgdb+FBTFEv4CsG9NXt4JhRLx5e36GSYFHCIUhWWaQ6zKdtS0A68p3f3tRKYXTiz4oEqIiD1yUY/5eAjLJbNMdxJ6usk0y7k05xNAOom+qEq4t+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=exGgoLyT; arc=none smtp.client-ip=52.119.213.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
-  t=1751911329; x=1783447329;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=JEmWEpxhOD1z6zGsch4in/Gj59Ug9axXAUztg6+oJPc=;
-  b=exGgoLyT6hjFXI5Aqp/Ie7R0A+CrrVozT/iOYE57QeDuz7xGWrtT/XcU
-   oWMHGhVaXrRLHvYUlDyXyx/6uHB8BIRPtNP+3E872x4YKFUcdG2Hs7N7I
-   lTXHpDC+pojvWsVbtE4dw+zVuiGTxxj3zLOVYeb+SbXno65n3p8V4z75p
-   6zPGVbqBaI6i0ogGe9DB9bN6FMKlsuTddID9t58EdI1mDj9shuymTjhAd
-   4/KrRtxQUHYdeGQ27UjVArZJWYqYr5djLKQnJZn2WoN5JoT6vCVMsXDMh
-   ph0FQr1ysEPcnWVs1WDYjYTug/2cEGxxsfBYOfXYASX0X8G4FhgshmNyi
-   w==;
-X-IronPort-AV: E=Sophos;i="6.16,295,1744070400"; 
-   d="scan'208";a="315409596"
-Received: from iad12-co-svc-p1-lb1-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.2])
-  by smtp-border-fw-52004.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jul 2025 18:02:05 +0000
-Received: from EX19MTAUWA001.ant.amazon.com [10.0.38.20:28506]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.38.16:2525] with esmtp (Farcaster)
- id b7392d5e-6d2c-480f-a030-0f0585b05e06; Mon, 7 Jul 2025 18:02:05 +0000 (UTC)
-X-Farcaster-Flow-ID: b7392d5e-6d2c-480f-a030-0f0585b05e06
-Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
- EX19MTAUWA001.ant.amazon.com (10.250.64.204) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Mon, 7 Jul 2025 18:02:04 +0000
-Received: from c889f3b07a0a.amazon.com (10.106.82.15) by
- EX19D001UWA001.ant.amazon.com (10.13.138.214) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Mon, 7 Jul 2025 18:02:02 +0000
-From: Yuto Ohnuki <ytohnuki@amazon.com>
-To: Tony Nguyen <anthony.l.nguyen@intel.com>, Przemek Kitszel
-	<przemyslaw.kitszel@intel.com>
-CC: Andrew Lunn <andrew+netdev@lunn.ch>, "David S . Miller"
-	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	<intel-wired-lan@lists.osuosl.org>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <ytohnuki@amazon.com>, Kohei Enju
-	<enjuk@amazon.com>
-Subject: [PATCH iwl-next v1] igbvf: remove unused fields from struct igbvf_adapter
-Date: Mon, 7 Jul 2025 19:01:17 +0100
-Message-ID: <20250707180116.44657-2-ytohnuki@amazon.com>
-X-Mailer: git-send-email 2.50.0
+	s=arc-20240116; t=1751911430; c=relaxed/simple;
+	bh=aJ7JldmUgMHyfMjWgIQRPx9WBvTGcpM5qbU4suhhjWE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Nyy7LwfVFq+s19XVKCEPg4gbqmH64XV1Ovgt6C2iMOBmtmysTFwcksVoQn18WDj1onLFtapPA4tOzY+11J/L6c0X3zENvdKJw1j+Vv0fN0XEKe/f/8Vaw9Rak/ICjbjIU+JNpaFOoyjV3f3LzfVtzz8NMFMY5myIM9g7mFm4TTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YzpMLjN1; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751911429; x=1783447429;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=aJ7JldmUgMHyfMjWgIQRPx9WBvTGcpM5qbU4suhhjWE=;
+  b=YzpMLjN1L2UAG3TGzoh+nqa9FvKB7Lre2ERrxp+B8BBd+SpPSzBxhoq9
+   oxyTaW79+NbKlLhStCvSfxpjIOLthKVuwOngcHrSMvuTPlpX1gi5xJX0K
+   8tIyA+L1wvm9g1QA4rC7Jg1PYntzAZJYf1qTMSprWCcICXoINoRVyLmHz
+   zKf5tvGVCjqzqqFWlK5OGHczt0JZbosjWJ3NQGPSXdToxTudqIklhmv0G
+   a4VtQZizalHVB+aIuEmsqOOOs2fW5Q7ct//0CAhUnJi9wpCTDUKBOTlfm
+   QXOAGygsNBrh4iaX3/jFqLrqlsdDKipokbe7hSCpOi1xhSpUj4XA9Gz1g
+   Q==;
+X-CSE-ConnectionGUID: c546ZXnUSIm+RNqEEG4njw==
+X-CSE-MsgGUID: tKu0OIV5SkWL2S7mTgyh3w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="54277670"
+X-IronPort-AV: E=Sophos;i="6.16,295,1744095600"; 
+   d="scan'208";a="54277670"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jul 2025 11:03:48 -0700
+X-CSE-ConnectionGUID: 38aihURwSsmtgjRemK20DQ==
+X-CSE-MsgGUID: LRAtAHBkT426tvLsCLXmQw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,295,1744095600"; 
+   d="scan'208";a="155377034"
+Received: from agluck-desk3.sc.intel.com (HELO agluck-desk3) ([172.25.103.51])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jul 2025 11:03:48 -0700
+Date: Mon, 7 Jul 2025 11:03:47 -0700
+From: "Luck, Tony" <tony.luck@intel.com>
+To: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+Cc: Borislav Petkov <bp@alien8.de>, James Morse <james.morse@arm.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Robert Richter <rric@kernel.org>, Lili Li <lili.li@intel.com>,
+	Laurens SEGHERS <laurens@rale.com>,
+	VikasX Chougule <vikasx.chougule@intel.com>,
+	linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/3] EDAC: Add three Intel CPUs for EDAC support
+Message-ID: <aGwMA0jZWbQeBIuZ@agluck-desk3>
+References: <20250704151609.7833-1-qiuxu.zhuo@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ClientProxiedBy: EX19D043UWC003.ant.amazon.com (10.13.139.240) To
- EX19D001UWA001.ant.amazon.com (10.13.138.214)
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250704151609.7833-1-qiuxu.zhuo@intel.com>
 
-Remove following unused fields from struct igbvf_adapter that are never
-referenced in the driver.
+On Fri, Jul 04, 2025 at 11:16:06PM +0800, Qiuxu Zhuo wrote:
+> Add EDAC support for three Intel CPUs: 
+> 
+>   - Patch 1: Wildcat Lake SoCs with In-Band ECC.
+>   - Patch 2: Granite Rapids-D for micro-server and edge computing applications.
+>   - Patch 3: Raptor Lake HX series SoCs with Out-of-Band ECC.
+> 
+> This patch series is on top of RAS edac-drivers branch.
+> 
+> Lili Li (1):
+>   EDAC/igen6: Add Intel Wildcat Lake SoCs support
+> 
+> Qiuxu Zhuo (2):
+>   EDAC/i10nm: Add Intel Granite Rapids-D support
+>   EDAC/ie31200: Add Intel Raptor Lake-HX SoCs support
+> 
+>  drivers/edac/i10nm_base.c   | 12 +++++++++++-
+>  drivers/edac/ie31200_edac.c |  4 ++++
+>  drivers/edac/igen6_edac.c   | 15 +++++++++++++++
+>  3 files changed, 30 insertions(+), 1 deletion(-)
 
-- blink_timer
-- eeprom_wol
-- fc_autoneg
-- int_mode
-- led_status
-- mng_vlan_id
-- polling_interval
-- rx_dma_failed
-- test_icr
-- test_rx_ring
-- test_tx_ring
-- tx_dma_failed
-- tx_fifo_head
-- tx_fifo_size
-- tx_head_addr
+Added all three to RAS tree, branch edac-drivers.
 
-Also removed the following fields from struct igbvf_adapter since they
-are never read or used after initialization by igbvf_probe() and igbvf_sw_init().
+Thanks
 
-- bd_number
-- rx_abs_int_delay
-- tx_abs_int_delay
-- rx_int_delay
-- tx_int_delay
-
-This changes simplify the igbvf driver by removing unused fields, which
-improves maintenability.
-
-Tested-by: Kohei Enju <enjuk@amazon.com>
-Signed-off-by: Yuto Ohnuki <ytohnuki@amazon.com>
----
- drivers/net/ethernet/intel/igbvf/igbvf.h  | 25 -----------------------
- drivers/net/ethernet/intel/igbvf/netdev.c |  7 -------
- 2 files changed, 32 deletions(-)
-
-diff --git a/drivers/net/ethernet/intel/igbvf/igbvf.h b/drivers/net/ethernet/intel/igbvf/igbvf.h
-index ca6e44245a7b..a61e8eeb4121 100644
---- a/drivers/net/ethernet/intel/igbvf/igbvf.h
-+++ b/drivers/net/ethernet/intel/igbvf/igbvf.h
-@@ -154,7 +154,6 @@ struct igbvf_ring {
- /* board specific private data structure */
- struct igbvf_adapter {
- 	struct timer_list watchdog_timer;
--	struct timer_list blink_timer;
- 
- 	struct work_struct reset_task;
- 	struct work_struct watchdog_task;
-@@ -162,10 +161,7 @@ struct igbvf_adapter {
- 	const struct igbvf_info *ei;
- 
- 	unsigned long active_vlans[BITS_TO_LONGS(VLAN_N_VID)];
--	u32 bd_number;
- 	u32 rx_buffer_len;
--	u32 polling_interval;
--	u16 mng_vlan_id;
- 	u16 link_speed;
- 	u16 link_duplex;
- 
-@@ -183,9 +179,6 @@ struct igbvf_adapter {
- 	unsigned int restart_queue;
- 	u32 txd_cmd;
- 
--	u32 tx_int_delay;
--	u32 tx_abs_int_delay;
--
- 	unsigned int total_tx_bytes;
- 	unsigned int total_tx_packets;
- 	unsigned int total_rx_bytes;
-@@ -193,23 +186,15 @@ struct igbvf_adapter {
- 
- 	/* Tx stats */
- 	u32 tx_timeout_count;
--	u32 tx_fifo_head;
--	u32 tx_head_addr;
--	u32 tx_fifo_size;
--	u32 tx_dma_failed;
- 
- 	/* Rx */
- 	struct igbvf_ring *rx_ring;
- 
--	u32 rx_int_delay;
--	u32 rx_abs_int_delay;
--
- 	/* Rx stats */
- 	u64 hw_csum_err;
- 	u64 hw_csum_good;
- 	u64 rx_hdr_split;
- 	u32 alloc_rx_buff_failed;
--	u32 rx_dma_failed;
- 
- 	unsigned int rx_ps_hdr_size;
- 	u32 max_frame_size;
-@@ -229,26 +214,16 @@ struct igbvf_adapter {
- 	struct e1000_vf_stats stats;
- 	u64 zero_base;
- 
--	struct igbvf_ring test_tx_ring;
--	struct igbvf_ring test_rx_ring;
--	u32 test_icr;
--
- 	u32 msg_enable;
- 	struct msix_entry *msix_entries;
--	int int_mode;
- 	u32 eims_enable_mask;
- 	u32 eims_other;
- 	u32 int_counter0;
- 	u32 int_counter1;
- 
--	u32 eeprom_wol;
- 	u32 wol;
- 	u32 pba;
- 
--	bool fc_autoneg;
--
--	unsigned long led_status;
--
- 	unsigned int flags;
- 	unsigned long last_reset;
- };
-diff --git a/drivers/net/ethernet/intel/igbvf/netdev.c b/drivers/net/ethernet/intel/igbvf/netdev.c
-index e55dd9345833..c5e677d07a20 100644
---- a/drivers/net/ethernet/intel/igbvf/netdev.c
-+++ b/drivers/net/ethernet/intel/igbvf/netdev.c
-@@ -1633,10 +1633,6 @@ static int igbvf_sw_init(struct igbvf_adapter *adapter)
- 	adapter->max_frame_size = netdev->mtu + ETH_HLEN + ETH_FCS_LEN;
- 	adapter->min_frame_size = ETH_ZLEN + ETH_FCS_LEN;
- 
--	adapter->tx_int_delay = 8;
--	adapter->tx_abs_int_delay = 32;
--	adapter->rx_int_delay = 0;
--	adapter->rx_abs_int_delay = 8;
- 	adapter->requested_itr = 3;
- 	adapter->current_itr = IGBVF_START_ITR;
- 
-@@ -2712,7 +2708,6 @@ static int igbvf_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	struct igbvf_adapter *adapter;
- 	struct e1000_hw *hw;
- 	const struct igbvf_info *ei = igbvf_info_tbl[ent->driver_data];
--	static int cards_found;
- 	int err;
- 
- 	err = pci_enable_device_mem(pdev);
-@@ -2784,8 +2779,6 @@ static int igbvf_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	netdev->watchdog_timeo = 5 * HZ;
- 	strscpy(netdev->name, pci_name(pdev), sizeof(netdev->name));
- 
--	adapter->bd_number = cards_found++;
--
- 	netdev->hw_features = NETIF_F_SG |
- 			      NETIF_F_TSO |
- 			      NETIF_F_TSO6 |
--- 
-2.47.1
-
-
-
-
-Amazon Web Services EMEA SARL, 38 avenue John F. Kennedy, L-1855 Luxembourg, R.C.S. Luxembourg B186284
-
-Amazon Web Services EMEA SARL, Irish Branch, One Burlington Plaza, Burlington Road, Dublin 4, Ireland, branch registration number 908705
-
-
-
+-Tony
 
