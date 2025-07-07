@@ -1,63 +1,59 @@
-Return-Path: <linux-kernel+bounces-720608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D8A6AFBE38
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 00:22:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF81AAFBE39
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 00:26:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 057F47AF420
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 22:20:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D3A201899E09
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 22:26:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D343525D535;
-	Mon,  7 Jul 2025 22:22:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E13526AA83;
+	Mon,  7 Jul 2025 22:26:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MfKa/VY/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="E7fjmCc9"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 390161CAA6C;
-	Mon,  7 Jul 2025 22:22:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 123FC186A;
+	Mon,  7 Jul 2025 22:26:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751926933; cv=none; b=iEfFnIwY8K9BK1r8FcoKJSxv/w3yuyr2U5crlIuC+Wn+XyokdI2FDxygApZI7nVdmsMeEeywkg0HmBWiG6ffrNSHzeAbkvk+/5+JtAU/q5QpCcB4QsO+tRXv5ekYzrwmblP9vhotjm2FNm5cvBr9o4n3TYbhlhyY96oXTIEv7ZI=
+	t=1751927177; cv=none; b=bKisyZkIWYLDKA2UAzM/30dqqIIS3SwRsEU6BWUTrOwb7Blge5T3xFgMX6ENVAh5or69YC9z3q+1t+CKVbRoc/1PU490HrVbp6OqlVYkRL9A53xVdJqsNwkkobmVtH530dcb0FitQzLODD4KP6vWAvmoKRZ7lnaIryT3g4vy0bo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751926933; c=relaxed/simple;
-	bh=VKmtbfxhoTD48D/ekjwLMwNv+Dp8aDndHjI4BucvUmw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=ZiKjDWwhCm6MbJU3D827mo2Xf00iY029CNacF17nCbVpaz1XF9ZfryVWqercTXl2TCPVm/0qwycIsk6e4Fka2cFaLvvjBwnyPbdQVb4s87zPvrOAm9r3xUS3xbIKN1HF4//lw1oAkH5YAkHOXYqjFSioBbXT9m4oNlySyhTPsaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MfKa/VY/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 690CEC4CEE3;
-	Mon,  7 Jul 2025 22:22:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751926932;
-	bh=VKmtbfxhoTD48D/ekjwLMwNv+Dp8aDndHjI4BucvUmw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=MfKa/VY/D8o8WU7cbff2usg9a9qVjvAGjstrw4JfKOUNiEmnK9naUFS4mixRLJPk1
-	 jJ2V7GtmTRQ3z95LkSEx6PD8pJAAcx4qR8ZhIMV1HFBPkGP/b1MEqj9rlfp7YHZ1go
-	 6s6D8X/Im9CgH+leQZTYV+lNEyL1w0QCOBu7n3Q57j6qrpdNPviZpzpFwRtaJRZzWO
-	 wEm0LUHD4zVPrPrnc1B+Zs5qHC73U5SR19nj3EGKXpRLurHN7xTlvB4T7xcLT6kHUr
-	 KxemPjXfbUU7B6+tUQRp49II+xFWg0p5Zhs8v/PjK57RzlYWvDbxivuRx8EETx3jLh
-	 rb+BuzBG+NS3A==
-Date: Mon, 7 Jul 2025 17:22:10 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Geraldo Nascimento <geraldogabriel@gmail.com>
-Cc: linux-rockchip@lists.infradead.org,
-	Shawn Lin <shawn.lin@rock-chips.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Heiko Stuebner <heiko@sntech.de>, Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Rick wertenbroek <rick.wertenbroek@gmail.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Valmantas Paliksa <walmis@gmail.com>, linux-phy@lists.infradead.org,
-	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	s=arc-20240116; t=1751927177; c=relaxed/simple;
+	bh=gHkf2cujb+trpgM2oTxU2vt97Dgnq5s/OXDze+10Pvw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W3UP+7DD2s5ziDakRZDK259ZDpV9B7RiC1UdN13F3cixhaOwMMYwlfnYH04ZOORpNTWrEn1iOr5WQmuquT+7Un9xlTvshpeFq4FnKWq5zAz/8dPwJEF6GdcmAubz412lGAxf/AF2vozqYkYMNRHioO+yRF/ryv+VYX6MLgYlGlg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=E7fjmCc9; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description;
+	bh=EzIem5ISPiXtqhmnYKa2/9ZUhiwjfO7LzPdKS2Q4R1o=; b=E7fjmCc90FNh+QXwjI5bs1yv3w
+	U0TnPu2sx7jkAj1IMZ9HV3G2OJLMFHFi/PwM2KP8FIAUKjsG2hyk43ukwOoNpH70KT6em1GJPwo1d
+	1vueSqCfWgbRO8pt6cU4LLZ/c2R3mmrN3QA/PRVAwOqdFglJvpsPyVQivi5PqLhATjANvWNGj4xr/
+	0sXGpcNYgi3+CLMG+0DxhyRvoeU3x4sW7I0urw2Lp9wuky972pQePC2MIkYGir+vD9lNqsfAdtUSV
+	1bpVu67mf45YMhToTbr51in/xEUIyssp4wf4iQ9KB2MNtnLCoAgppSCyo8G18ON5qhWyT+m2dwnP/
+	HGSNqZmA==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uYuHs-00000004HqV-1W2o;
+	Mon, 07 Jul 2025 22:26:12 +0000
+Date: Mon, 7 Jul 2025 23:26:12 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Max Kellermann <max.kellermann@ionos.com>
+Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>,
 	linux-kernel@vger.kernel.org
-Subject: Re: [RESEND PATCH v9 1/4] PCI: rockchip: Use standard PCIe defines
-Message-ID: <20250707222210.GA2114615@bhelgaas>
+Subject: Re: [PATCH v3 20/21] __dentry_kill(): new locking scheme
+Message-ID: <20250707222612.GP1880847@ZenIV>
+References: <20231124060200.GR38156@ZenIV>
+ <20231124060422.576198-1-viro@zeniv.linux.org.uk>
+ <20231124060422.576198-20-viro@zeniv.linux.org.uk>
+ <CAKPOu+_Ktbp5OMZv77UfLRyRaqmK1kUpNHNd1C=J9ihvjWLDZg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,35 +63,14 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <e81700ef4b49f584bc8834bfb07b6d8995fc1f42.1751322015.git.geraldogabriel@gmail.com>
+In-Reply-To: <CAKPOu+_Ktbp5OMZv77UfLRyRaqmK1kUpNHNd1C=J9ihvjWLDZg@mail.gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Mon, Jun 30, 2025 at 07:24:41PM -0300, Geraldo Nascimento wrote:
-> Current code uses custom-defined register offsets and bitfields for
-> standard PCIe registers. Change to using standard PCIe defines. Since
-> we are now using standard PCIe defines, drop unused custom-defined ones,
-> which are now referenced from offset at added Capabilities Register.
+On Mon, Jul 07, 2025 at 07:20:28PM +0200, Max Kellermann wrote:
+> Hi Al,
+> 
+> On Mon, Jul 7, 2025 at 7:04 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
 
-> @@ -278,10 +278,10 @@ static void rockchip_pcie_set_power_limit(struct rockchip_pcie *rockchip)
->  		power = power / 10;
->  	}
->  
-> -	status = rockchip_pcie_read(rockchip, PCIE_RC_CONFIG_DCR);
-> -	status |= (power << PCIE_RC_CONFIG_DCR_CSPL_SHIFT) |
-> -		  (scale << PCIE_RC_CONFIG_DCR_CPLS_SHIFT);
-> -	rockchip_pcie_write(rockchip, status, PCIE_RC_CONFIG_DCR);
-> +	status = rockchip_pcie_read(rockchip, PCIE_RC_CONFIG_CR + PCI_EXP_DEVCAP);
-> +	status |= FIELD_PREP(PCI_EXP_DEVCAP_PWR_VAL, power);
-> +	status |= FIELD_PREP(PCI_EXP_DEVCAP_PWR_SCL, scale);
-
-Added #include <linux/bitfield.h> for this:
-
-  CC      drivers/pci/controller/pcie-rockchip-host.o
-drivers/pci/controller/pcie-rockchip-host.c: In function ‘rockchip_pcie_set_power_limit’:
-drivers/pci/controller/pcie-rockchip-host.c:272:24: error: implicit declaration of function ‘FIELD_MAX’ [-Werror=implicit-function-declaration]
-  272 |         while (power > FIELD_MAX(PCI_EXP_DEVCAP_PWR_VAL)) {
-      |                        ^~~~~~~~~
-drivers/pci/controller/pcie-rockchip-host.c:282:19: error: implicit declaration of function ‘FIELD_PREP’ [-Werror=implicit-function-declaration]
-  282 |         status |= FIELD_PREP(PCI_EXP_DEVCAP_PWR_VAL, power);
-      |                   ^~~~~~~~~~
+BTW, a minor nit: that was Fri, 24 Nov 2023 06:04:21 +0000...
 
 
