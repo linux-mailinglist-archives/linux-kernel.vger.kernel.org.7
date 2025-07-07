@@ -1,106 +1,134 @@
-Return-Path: <linux-kernel+bounces-720230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33740AFB8DC
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 18:43:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 15DBEAFB8E4
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 18:46:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 890244A43BE
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 16:43:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F6794A4474
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 16:46:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEE90225A4F;
-	Mon,  7 Jul 2025 16:43:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4BD72264D0;
+	Mon,  7 Jul 2025 16:46:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aluFT9jJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iImCV4x0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1346E3214;
-	Mon,  7 Jul 2025 16:43:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4156823CB;
+	Mon,  7 Jul 2025 16:46:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751906628; cv=none; b=IETti6wgF8OlqlcOR/fp3I019wK7sdiDiRg00x+cLtXkI/Mckbv9PjKGiwEHv2odGa3JeIpn4ArX5Dfp1JVaOJUxVG5eVDh4ArYAMRPhvCexJsreip4orA7ISZmOEvYHctO6pEuixAJDkMuL9sCkU+SaDfATVQKfvFiRTKlm4z4=
+	t=1751906774; cv=none; b=VFaRApAGMhWcTp3RlRoqoW+oRuuqHOuLJGnJCNy57Snb9y9m+fvD0uB1ZuKybAWmQf9r7Qr7qxJFIDRnqxPp9/oKcOAWuuUqgtNSDfjuORr1l7/xoU+RsEvIleMeDGPe3F4wVlISndJX3cRwKTTErfLBUM5EA8Zlx+4vYQXU65k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751906628; c=relaxed/simple;
-	bh=qo0v+QPLlpiFYrEAjLkcdvARHqyBsCjBOsJK6mdXbq0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hH6r20oWY9qZTuJ+x0SW30BUf3hvqC4vFIERLnEqwiqoOKtcgWBQX39q5htG95AqC/9XhBpR2+onIH8hl+gQn4AfaqDp5cbFsAsWHzOTiKpVCP4jKZcQhyGTag987XYbrlvUs/2wK+e2ae+mSFMBfhESbXewxSqO0zczbzRrubY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aluFT9jJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88D88C4CEF5;
-	Mon,  7 Jul 2025 16:43:47 +0000 (UTC)
+	s=arc-20240116; t=1751906774; c=relaxed/simple;
+	bh=DKaftTULC2lZO2SgPJoyxwC9BBKawMi6GjYIWxGfhGY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ivPf2fpq7/JYZiAmyT+WLPhGTHQtr2OsSTACLUK1WbySyFXsFcMjW873z7uOoimo0F4ahqJ8S1LEG3yyb0ca2liG+bNb1e6Zjujgo2Kw7QuCAqd1zvxnK7jp96IyeCi13X9px4DUla6mr5g1OWOJ8Za6AWfVMelgWs7+Dastu8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iImCV4x0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CD4BC4CEE3;
+	Mon,  7 Jul 2025 16:46:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751906627;
-	bh=qo0v+QPLlpiFYrEAjLkcdvARHqyBsCjBOsJK6mdXbq0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=aluFT9jJOhqWwZHBSIAzUt84iaQjIQSqK6Ifk9MFTdW6GcTowZvF/c6XT+9dl54PE
-	 bOaTeaT8x6FpeMqK6BTokO7xjrXQE863F+lLT3rCi7IQua8/RcNzAmJuJhgwI86z8J
-	 jC5TdboOy0Pt8xdtacIp4/l1h8ZdzMvy/baDHQabe2l7YI66bPX0j0PPB8fkJcUAKq
-	 HlhNfF/cOboqfBTrNKKxG5zV0xq2j2AbBokg/E4I797itIauboRDBd8/CDnQ+t+lqK
-	 YlXFrucikYqyPpScJZKQF5jSVvQudVr0KP4r0xFRR89iQUPYtQnOJK5ip0xyXn6oMh
-	 GUjLCxh9lUC7A==
-Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-40d12821c1cso1537149b6e.2;
-        Mon, 07 Jul 2025 09:43:47 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUx8dxxxxQwGv/oMadxXyF1+HtnbdFcYxej61FT5tP51l/2Wce6NZwBcn+7KyA35LZ/Z1G+03cuRmS7qLs4@vger.kernel.org, AJvYcCWE0+s69zKTS/Do/Z50uaI7WzPMOtKB0+Gc5UljixtjV11olWefn/zoipmQugG5aXgS+TE3ooTmNfbD@vger.kernel.org, AJvYcCWvCHQ8vzKRQeHcouJ5QLavP24JkrSt9VVz5fgKvoEIAIPMy2hvokv9DOZbf7tocVUnwqlfjvGeX1I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwcZKQfPSu+QUE2VjsG4ckoReXnJURRvuRM/kvwMzt3aST/YLp5
-	q7wj847thX8bF+RpQs9RGdouhP7ndUzn3fu7jasOIg3yejuwniuS7sMFEIWO2hVi883taqCUy/7
-	4RVPgwoL9JJO0zlrr8GtnNQXL2jZWzPg=
-X-Google-Smtp-Source: AGHT+IFDHeZTD7NQfecuChnzhujOybAaAYpaZaRxBlkUeTvBG5UHH4Tb0mjM99CwSaIJZ4hQuFK50vf9N/cCsM23b24=
-X-Received: by 2002:a05:6808:67c9:b0:406:6a21:524f with SMTP id
- 5614622812f47-40d043e7524mr11111111b6e.19.1751906626865; Mon, 07 Jul 2025
- 09:43:46 -0700 (PDT)
+	s=k20201202; t=1751906773;
+	bh=DKaftTULC2lZO2SgPJoyxwC9BBKawMi6GjYIWxGfhGY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iImCV4x0TM4+bkiAERE4JrSI+fyuAz1JvQd/HgO/DvKMunrt4VWLdgXjFRaJqBv1R
+	 6p/1lV+OzKlgPhoi0alDI01MFD8tEsoslqANNh45Bi09mUBN6ZiUCDZRIKsa3C4HqZ
+	 RDKDB/EVSIZMtP/8XkalVIAaBPBEP8UtL8f43Qs97Lgy0IXHs8hUb6i/E7WO4g3u3V
+	 GmVvKwTgsFgg9oeUUMMm4AyJ7Baiaqlm1tAFZzHSAKXmSPU6i1NQCyOiz/M4HYdt2M
+	 WKTSglyQhJJBCPNVRB4swfdtDYETHRtfE3xpy0kb/eWDZLiFVX/GKF26aP3jF7L7f/
+	 kZmny0SoEGteQ==
+Date: Mon, 7 Jul 2025 19:46:09 +0300
+From: Leon Romanovsky <leon@kernel.org>
+To: Abhijit Gangurde <abhijit.gangurde@amd.com>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>, shannon.nelson@amd.com,
+	brett.creeley@amd.com, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, corbet@lwn.net,
+	andrew+netdev@lunn.ch, allen.hubbe@amd.com, nikhil.agarwal@amd.com,
+	linux-rdma@vger.kernel.org, netdev@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Andrew Boyer <andrew.boyer@amd.com>
+Subject: Re: [PATCH v3 10/14] RDMA/ionic: Register device ops for control path
+Message-ID: <20250707164609.GA592765@unreal>
+References: <20250624121315.739049-1-abhijit.gangurde@amd.com>
+ <20250624121315.739049-11-abhijit.gangurde@amd.com>
+ <20250701103844.GB118736@unreal>
+ <20250702131803.GB904431@ziepe.ca>
+ <20250702180007.GK6278@unreal>
+ <bb0ac425-2f01-b8c7-2fd7-4ecf9e9ef8b1@amd.com>
+ <20250704170807.GO6278@unreal>
+ <15b773a4-424b-4aa9-2aa4-457fbbee8ec7@amd.com>
+ <20250707072137.GU6278@unreal>
+ <1a7190d4-f3ef-744c-4e46-8cb255dee6cf@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250705110005.4343-1-sumeet4linux@gmail.com>
-In-Reply-To: <20250705110005.4343-1-sumeet4linux@gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 7 Jul 2025 18:43:35 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0ghk=s9r3BHW6A19_RwfCFhFconmR-aWKv7O9SCdgKSMQ@mail.gmail.com>
-X-Gm-Features: Ac12FXwknHctRSFbyQILlEAe-z-BjIXdYKFXUwEq4gZdL5JRwp__LwaXRQUGcp0
-Message-ID: <CAJZ5v0ghk=s9r3BHW6A19_RwfCFhFconmR-aWKv7O9SCdgKSMQ@mail.gmail.com>
-Subject: Re: [PATCH v2] ACPI: FAN: Update fps count debug print
-To: Sumeet Pawnikar <sumeet4linux@gmail.com>
-Cc: rafael@kernel.org, linux-acpi@vger.kernel.org, lenb@kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1a7190d4-f3ef-744c-4e46-8cb255dee6cf@amd.com>
 
-On Sat, Jul 5, 2025 at 1:00=E2=80=AFPM Sumeet Pawnikar <sumeet4linux@gmail.=
-com> wrote:
->
-> Update invalid control value returned debug print with
-> appropriate message as no matching fps control value
-> for checking fan fps count condition.
->
-> Signed-off-by: Sumeet Pawnikar <sumeet4linux@gmail.com>
-> ---
-> v1->v2: Addressed review comment received from Rafael Wysocki
->         to update the debug message appropriately.
-> ---
->  drivers/acpi/fan_core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/acpi/fan_core.c b/drivers/acpi/fan_core.c
-> index 8ad12ad3aaaf..095502086b41 100644
-> --- a/drivers/acpi/fan_core.c
-> +++ b/drivers/acpi/fan_core.c
-> @@ -102,7 +102,7 @@ static int fan_get_state_acpi4(struct acpi_device *de=
-vice, unsigned long *state)
->                         break;
->         }
->         if (i =3D=3D fan->fps_count) {
-> -               dev_dbg(&device->dev, "Invalid control value returned\n")=
-;
-> +               dev_dbg(&device->dev, "No matching fps control value\n");
->                 return -EINVAL;
->         }
->
-> --
+On Mon, Jul 07, 2025 at 08:26:20PM +0530, Abhijit Gangurde wrote:
+> 
+> On 7/7/25 12:51, Leon Romanovsky wrote:
+> > On Mon, Jul 07, 2025 at 10:57:13AM +0530, Abhijit Gangurde wrote:
+> > > On 7/4/25 22:38, Leon Romanovsky wrote:
+> > > > On Thu, Jul 03, 2025 at 12:49:30PM +0530, Abhijit Gangurde wrote:
+> > > > > On 7/2/25 23:30, Leon Romanovsky wrote:
+> > > > > > On Wed, Jul 02, 2025 at 10:18:03AM -0300, Jason Gunthorpe wrote:
+> > > > > > > On Tue, Jul 01, 2025 at 01:38:44PM +0300, Leon Romanovsky wrote:
+> > > > > > > > > +static void ionic_flush_qs(struct ionic_ibdev *dev)
+> > > > > > > > > +{
+> > > > > > > > > +	struct ionic_qp *qp, *qp_tmp;
+> > > > > > > > > +	struct ionic_cq *cq, *cq_tmp;
+> > > > > > > > > +	LIST_HEAD(flush_list);
+> > > > > > > > > +	unsigned long index;
+> > > > > > > > > +
+> > > > > > > > > +	/* Flush qp send and recv */
+> > > > > > > > > +	rcu_read_lock();
+> > > > > > > > > +	xa_for_each(&dev->qp_tbl, index, qp) {
+> > > > > > > > > +		kref_get(&qp->qp_kref);
+> > > > > > > > > +		list_add_tail(&qp->ibkill_flush_ent, &flush_list);
+> > > > > > > > > +	}
+> > > > > > > > > +	rcu_read_unlock();
+> > > > > > > > Same question as for CQ. What does RCU lock protect here?
+> > > > > > > It should protect the kref_get against free of qp. The qp memory must
+> > > > > > > be RCU freed.
+> > > > > > I'm not sure that this was intension here. Let's wait for an answer from the author.
+> > > > > As Jason mentioned, It was intended to protect the kref_get against free of
+> > > > > cq and qp
+> > > > > in the destroy path.
+> > > > How is it possible? IB/core is supposed to protect from accessing verbs
+> > > > resources post their release/destroy.
+> > > > 
+> > > > After you answered what RCU is protecting, I don't see why you would
+> > > > have custom kref over QP/CQ/e.t.c objects.
+> > > > 
+> > > > Thanks
+> > > The RCU protected kref here is making sure that all the hw events are
+> > > processed before destroy callback returns. Similarly, when driver is
+> > > going for ib_unregister_device, it is draining the pending WRs and events.
+> > I asked why do you have kref in first place? When ib_unregister_device
+> > is called all "pending MR" already supposed to be destroyed.
+> > 
+> > Thansk
+> 
+> The custom kref on QP/CQ object is holding the completion for the destroy
+> callback.
+> If any pending async hw events are being processed, destroy would wait on
+> this completion
+> before it returns.
 
-Applied as 6.17 material with edited subject, thanks!
+Please see how other drivers avoid such situation. There is no need in
+custom kref.
+
+Thanks
+
+> 
+> Thanks
+> 
 
