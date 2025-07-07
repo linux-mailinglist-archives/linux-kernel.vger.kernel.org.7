@@ -1,309 +1,129 @@
-Return-Path: <linux-kernel+bounces-720539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 319A5AFBD0E
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 23:02:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C697AFBD12
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 23:02:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 534783AED58
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 21:01:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A5233B95C8
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 21:02:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A75A2857E6;
-	Mon,  7 Jul 2025 21:02:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08E31281376;
+	Mon,  7 Jul 2025 21:02:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ghZyrLLN"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="H7HyeO6J"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81B37219300;
-	Mon,  7 Jul 2025 21:02:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA006281520
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 21:02:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751922125; cv=none; b=O37Ktoy5jd4vz5dFxcqgxScMXg1X7EH7DdvEMH8+fTVx6KzqwpESRaSorGAqCswOsxwQE3Ek0X2gedC5KzL7/dIhXhIlH52P4jNH90BY+pX3IZKitNc6A/ookGJnLiTyrqkMkc3BS9DD7VbpSx8QVnfV3io9QFnJxJ/AafefNNE=
+	t=1751922167; cv=none; b=QT8v6KNOLVvsfOv7whv5F0k3AP3hAEJ+09K0J8Xr7XMKg5dpjd5bGeTwVLxTc35hTXFR1aUyR4elmZMwYQ2SBy8ntLgscewjOeGTwaMKBLn1PEHPO2wNgtx7DUP748U6z9Isnl/SXb7BOlEkywhgIVOUXTqAvzWM4uIMYhVswGg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751922125; c=relaxed/simple;
-	bh=/snNK1gcGR4AUFDaQtgHQLqOJK90XFRCeKSSseXe54g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O8CebZ7//EtQ/TCoAvH+oxo1Pqw8dm4wRgC/sKjaNMnWtVaVoVHu5iPLHuhv7qdPiFFmO7qSyA2gyO4AhTstEyu9ja5ykEhSS7i8+SZSyRyUojevjpE2kjO6taFN3oUYxedjtQJ7d/QpQLTCbWWVJioXe1UMy+yoVGKRMlC06ns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ghZyrLLN; arc=none smtp.client-ip=198.175.65.13
+	s=arc-20240116; t=1751922167; c=relaxed/simple;
+	bh=ICoVwVADTl9nAU2euM0zrWfkTMa7JrDNknhItQyi5cw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=h8g0qgJQcS43DWD5Ou/mVBfuFT0sIalhlbUs07S07rwxITo1ppwF44RANJE+Q/+gwAB9bVvBzLC4Wb9DZw3bv3IfTKTPFP19ANWMKAtgcjxyXUAlWuqGtlwGvVAGMJvFpWrIVWFlZkJiLG6VmYdEO70+PhC6DonDm+khM+32p6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=H7HyeO6J; arc=none smtp.client-ip=198.175.65.16
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751922124; x=1783458124;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=/snNK1gcGR4AUFDaQtgHQLqOJK90XFRCeKSSseXe54g=;
-  b=ghZyrLLNOXhWvURnB2CjpgooeOtg/nGaOmDtqj0iQDrc7BduNn7AcDcK
-   8OuEBy6vKOw3mGdLHdKDd9BS2rtBz0uPEm8NTe6iU0AtJRCMe5aFXt8Ql
-   xOwsTjpSnnvRwVhkCCljsHb82ia7Jm0YvHwL5e134932IckmaqmD5GmHx
-   A/B+Tir/R/FHJ7knfY1Zh9zTyAyCt83tO4prneX+HbAOuTgARiFMAaZXu
-   oGBVcq1j7wbdSiazV1NhREdu5Zytnr9rm84bQw2hyPxHSO6EL54L2yVTS
-   EmcgxUnxHvjVVJNdrlRqbbRg/gkwXK5+MYR1A1ceZXbNFcRbE1Yxf5R61
+  t=1751922166; x=1783458166;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=ICoVwVADTl9nAU2euM0zrWfkTMa7JrDNknhItQyi5cw=;
+  b=H7HyeO6JAfZGquZebpoPN0WQC1Ee873qFcUc4IINJkg4YXSBnyHN6+b4
+   cB+3eMYVyazLlMLBrP+yGMIMk5TF9Oy2slGkkK8JGuxZyrfsSoidlxWwf
+   ttanuoWTKKS3mZNu/4Va6PlfitotJC3q92/jtQqy7ivMcTjpN/H8Y2OQz
+   sYweJ6zz5KzT+b4iwMkSV3ob+sAB04CQmGHo1qR8KYO20GLMGHTO4EQQO
+   1WoWwU22jnHdJmJDCpdVLWTTfJtleIHHaoUSmd3v5kytD5zKPQjLojlVE
+   s2pI+b+uhbbIxmX8BDqINExohr+tuTDh5muusN7meBu1JhoWIrEF+Cy6e
    Q==;
-X-CSE-ConnectionGUID: k5NHlYMoSgKAcHBAoZxsCQ==
-X-CSE-MsgGUID: vd6lTJrrSli9eMbMhGa3sA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="65215279"
+X-CSE-ConnectionGUID: IgqxVf2jReiWqxq9tJXYQQ==
+X-CSE-MsgGUID: 8Eo+NYvESu6mUAzF2IcQDg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="54278869"
 X-IronPort-AV: E=Sophos;i="6.16,295,1744095600"; 
-   d="scan'208";a="65215279"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jul 2025 14:02:02 -0700
-X-CSE-ConnectionGUID: sAQ9d22YRBaRzIbrKBCasA==
-X-CSE-MsgGUID: OzwtYBTaRoG6tjhUhOaR9A==
+   d="scan'208";a="54278869"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jul 2025 14:02:45 -0700
+X-CSE-ConnectionGUID: hzS6DW1uSSiJMeV9aG8RIA==
+X-CSE-MsgGUID: 8DVIq27lSOaghk2bF7eS+g==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.16,295,1744095600"; 
-   d="scan'208";a="154733864"
-Received: from cpetruta-mobl1.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.244.166])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jul 2025 14:01:57 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id 5AD1F11FC1A;
-	Tue,  8 Jul 2025 00:01:54 +0300 (EEST)
-Date: Mon, 7 Jul 2025 21:01:54 +0000
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Ricardo Ribalda <ribalda@chromium.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-acpi@vger.kernel.org
-Subject: Re: [PATCH v2 02/12] media: v4l: fwnode: Support ACPI's _PLD for
- v4l2_fwnode_device_parse
-Message-ID: <aGw1wo3lUCJtzLiZ@kekkonen.localdomain>
-References: <20250605-uvc-orientation-v2-0-5710f9d030aa@chromium.org>
- <20250605-uvc-orientation-v2-2-5710f9d030aa@chromium.org>
- <1ac49bd3-1b65-4611-8c90-92fb2c2ffd4a@linux.intel.com>
- <CANiDSCuRLVtT54ZxxAh6031OLg422VApsocvOTCOnavQgifTaA@mail.gmail.com>
+   d="scan'208";a="154720619"
+Received: from mjruhl-desk.amr.corp.intel.com (HELO [10.124.220.88]) ([10.124.220.88])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jul 2025 14:02:44 -0700
+Message-ID: <74aafe194ff81c668f8efd792a42f464d097d978.camel@linux.intel.com>
+Subject: Re: [RFC patch v3 02/20] sched: Several fixes for cache aware
+ scheduling
+From: Tim Chen <tim.c.chen@linux.intel.com>
+To: Shrikanth Hegde <sshegde@linux.ibm.com>, Peter Zijlstra
+	 <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, K Prateek Nayak
+	 <kprateek.nayak@amd.com>, "Gautham R . Shenoy" <gautham.shenoy@amd.com>
+Cc: Chen Yu <yu.c.chen@intel.com>, Juri Lelli <juri.lelli@redhat.com>, 
+ Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt
+ <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,  Mel Gorman
+ <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>, Tim Chen
+ <tim.c.chen@intel.com>,  Vincent Guittot <vincent.guittot@linaro.org>, Libo
+ Chen <libo.chen@oracle.com>, Abel Wu <wuyun.abel@bytedance.com>,  Madadi
+ Vineeth Reddy <vineethr@linux.ibm.com>, Hillf Danton <hdanton@sina.com>,
+ Len Brown <len.brown@intel.com>,  linux-kernel@vger.kernel.org
+Date: Mon, 07 Jul 2025 14:02:43 -0700
+In-Reply-To: <398a83d7-0a8c-42cb-af66-5974582cc2ae@linux.ibm.com>
+References: <cover.1750268218.git.tim.c.chen@linux.intel.com>
+	 <d73418022de76dab9f60c0c5432d783b3b2833dc.1750268218.git.tim.c.chen@linux.intel.com>
+	 <398a83d7-0a8c-42cb-af66-5974582cc2ae@linux.ibm.com>
+Autocrypt: addr=tim.c.chen@linux.intel.com; prefer-encrypt=mutual;
+ keydata=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
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CANiDSCuRLVtT54ZxxAh6031OLg422VApsocvOTCOnavQgifTaA@mail.gmail.com>
 
-Hi Ricardo,
+On Fri, 2025-07-04 at 01:03 +0530, Shrikanth Hegde wrote:
+>=20
+>=20
+> > diff --git a/kernel/sched/features.h b/kernel/sched/features.h
+> > index 3c12d9f93331..d2af7bfd36bf 100644
+> > --- a/kernel/sched/features.h
+> > +++ b/kernel/sched/features.h
+> > @@ -87,6 +87,7 @@ SCHED_FEAT(TTWU_QUEUE, true)
+> >    */
+> >   SCHED_FEAT(SIS_UTIL, true)
+> >  =20
+> > +SCHED_FEAT(SCHED_CACHE, true)
+>=20
+> Having both SCHED_FEAT and CONFIG_SCHED_CACHE seems like overkill.
+> Is it really necessary to have both?
 
-On Tue, Jul 01, 2025 at 11:04:25AM +0200, Ricardo Ribalda wrote:
-> Hi Sakari
-> 
-> Thanks for your review!
-> 
-> On Mon, 30 Jun 2025 at 09:06, Sakari Ailus <sakari.ailus@linux.intel.com> wrote:
-> >
-> > Hi Ricardo,
-> >
-> > Thanks for the update.
-> >
-> > On 6/5/25 20:52, Ricardo Ribalda wrote:
-> > > Currently v4l2_fwnode_device_parse() obtains the orientation and
-> > > rotation via fwnode properties.
-> > >
-> > > Extend the function to support as well ACPI devices with _PLD info.
-> > >
-> > > We give a higher priority to fwnode, because it might contain quirks
-> > > injected via swnodes.
-> > >
-> > > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> > > ---
-> > >   drivers/media/v4l2-core/v4l2-fwnode.c | 85 ++++++++++++++++++++++++++++++++---
-> > >   1 file changed, 79 insertions(+), 6 deletions(-)
-> > >
-> > > diff --git a/drivers/media/v4l2-core/v4l2-fwnode.c b/drivers/media/v4l2-core/v4l2-fwnode.c
-> > > index cb153ce42c45d69600a3ec4e59a5584d7e791a2a..379290ab3cfde74c8f663d61837a9a95011b5ae0 100644
-> > > --- a/drivers/media/v4l2-core/v4l2-fwnode.c
-> > > +++ b/drivers/media/v4l2-core/v4l2-fwnode.c
-> > > @@ -15,6 +15,7 @@
-> > >    * Author: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
-> > >    */
-> > >   #include <linux/acpi.h>
-> > > +#include <acpi/acpi_bus.h>
-> > >   #include <linux/kernel.h>
-> > >   #include <linux/mm.h>
-> > >   #include <linux/module.h>
-> > > @@ -807,16 +808,65 @@ int v4l2_fwnode_connector_add_link(struct fwnode_handle *fwnode,
-> > >   }
-> > >   EXPORT_SYMBOL_GPL(v4l2_fwnode_connector_add_link);
-> > >
-> > > -int v4l2_fwnode_device_parse(struct device *dev,
-> > > -                          struct v4l2_fwnode_device_properties *props)
-> > > +static int v4l2_fwnode_device_parse_acpi(struct device *dev,
-> > > +                                      struct v4l2_fwnode_device_properties *props)
-> > > +{
-> > > +     struct acpi_pld_info *pld;
-> > > +     int ret = 0;
-> > > +
-> > > +     if (!is_acpi_device_node(dev_fwnode(dev)))
-> > > +             return 0;
-> > > +
-> > > +     if (!acpi_get_physical_device_location(ACPI_HANDLE(dev), &pld)) {
-> > > +             dev_dbg(dev, "acpi _PLD call failed\n");
-> >
-> > I'd do:
-> >
-> > acpi_handle_debug(ACPI_HANDLE(dev), "cannot obtain _PLD\n");
-> ack
-> >
-> > > +             return 0;
-> > > +     }
-> > > +
-> > > +     if (props->orientation != V4L2_FWNODE_PROPERTY_UNSET) {
-> > > +             switch (pld->panel) {
-> > > +             case ACPI_PLD_PANEL_FRONT:
-> > > +                     props->orientation = V4L2_FWNODE_ORIENTATION_FRONT;
-> > > +                     break;
-> > > +             case ACPI_PLD_PANEL_BACK:
-> > > +                     props->orientation = V4L2_FWNODE_ORIENTATION_BACK;
-> > > +                     break;
-> > > +             case ACPI_PLD_PANEL_TOP:
-> > > +             case ACPI_PLD_PANEL_LEFT:
-> > > +             case ACPI_PLD_PANEL_RIGHT:
-> > > +             case ACPI_PLD_PANEL_UNKNOWN:
-> > > +                     props->orientation = V4L2_FWNODE_ORIENTATION_EXTERNAL;
-> > > +                     break;
-> > > +             default:
-> > > +                     dev_dbg(dev, "Unknown _PLD panel val %d\n", pld->panel);
-> >
-> > Similarly:
-> >
-> > acpi_handle_debug(ACPI_HANDLE(dev), "invalid panel %u in _PLD\n",
-> >                   pld->panel);
-> >
-> > > +                     ret = -EINVAL;
-> >
-> > Should this be an error or should we simply ignore it here (and maybe
-> > use acpi_handle_warn())?
-> 
-> v4l2_fwnode_device_parse_of() returns -EINVAL for a similar situation,
-> so I think it is better to be consistent and return -EINVAL here.
-> But I agree that acpi_handle_warn() better suits here than _dbg.
+As Peter pointed out previously, a runtime knob is still preferable.
 
-Ack.
+>=20
+> Also, given the complexity it brings and only a workloads which spawns th=
+reads
+> which have data sharing among them benefit, it could be false by default.
 
-> 
-> >
-> > > +                     goto done;
-> > > +             }
-> > > +     }
-> > > +
-> > > +     if (props->rotation != V4L2_FWNODE_PROPERTY_UNSET) {
-> > > +             switch (pld->rotation) {
-> > > +             case 0 ... 7:
-> > > +                     props->rotation = pld->rotation * 45;
-> > > +                     break;
-> > > +             default:
-> > > +                     dev_dbg(dev, "Unknown _PLD rotation val %d\n", pld->panel);
-> >
-> > acpi_handle_debug(ACPI_HANDLE(dev), "invalid rotation %u in _PLD\n",
-> >                   pld->rotation);
-> >
-> > > +                     ret = -EINVAL;
-> > > +                     goto done;
-> > > +             }
-> > > +     }
-> > > +
-> > > +done:
-> > > +     ACPI_FREE(pld);
-> > > +     return ret;
-> > > +}
-> > > +
-> > > +static int v4l2_fwnode_device_parse_dt(struct device *dev,
-> >
-> > I'd call this v4l2_fwnode_device_parse_of() as we're parsing OF nodes
-> > and properties here.
-> ack
-> >
-> > > +                                    struct v4l2_fwnode_device_properties *props)
-> > >   {
-> > >       struct fwnode_handle *fwnode = dev_fwnode(dev);
-> > >       u32 val;
-> > >       int ret;
-> > >
-> > > -     memset(props, 0, sizeof(*props));
-> > > -
-> > > -     props->orientation = V4L2_FWNODE_PROPERTY_UNSET;
-> > >       ret = fwnode_property_read_u32(fwnode, "orientation", &val);
-> > >       if (!ret) {
-> > >               switch (val) {
-> > > @@ -833,7 +883,6 @@ int v4l2_fwnode_device_parse(struct device *dev,
-> > >               dev_dbg(dev, "device orientation: %u\n", val);
-> > >       }
-> > >
-> > > -     props->rotation = V4L2_FWNODE_PROPERTY_UNSET;
-> > >       ret = fwnode_property_read_u32(fwnode, "rotation", &val);
-> > >       if (!ret) {
-> > >               if (val >= 360) {
-> > > @@ -847,6 +896,30 @@ int v4l2_fwnode_device_parse(struct device *dev,
-> > >
-> > >       return 0;
-> > >   }
-> > > +
-> > > +int v4l2_fwnode_device_parse(struct device *dev,
-> > > +                          struct v4l2_fwnode_device_properties *props)
-> > > +{
-> > > +     int ret;
-> > > +
-> > > +     memset(props, 0, sizeof(*props));
-> > > +
-> > > +     props->orientation = V4L2_FWNODE_PROPERTY_UNSET;
-> > > +     props->rotation = V4L2_FWNODE_PROPERTY_UNSET;
-> > > +
-> > > +     /* Start by looking into swnodes and dt. */
+That's true. We'll try to address such cases in the next version with a
+default behavior that's more conservative.
 
-s/dt/DT/
+Tim
+>=20
+> >   /*
+> >    * Issue a WARN when we do multiple update_rq_clock() calls
+> >    * in a single rq->lock section. Default disabled because the
+>=20
 
-> > > +     ret =  v4l2_fwnode_device_parse_dt(dev, props);
-
-		 ^
-
-Extra space.
-
-> > > +     if (ret)
-> > > +             return ret;
-> > > +
-> > > +     /* Orientation and rotation found!, we are ready. */
-> > > +     if (props->orientation != V4L2_FWNODE_PROPERTY_UNSET &&
-> > > +         props->rotation != V4L2_FWNODE_PROPERTY_UNSET)
-> > > +             return 0;
-> >
-> > I think you can remove this check without affecting the functionality.
-> I want to avoid calling an acpi method unless it is strictly
-> necessary. The check is not that ugly... if it is ok with you i'd
-> rather keep it.
-
-The function is already checking the node is an ACPI node and returns 0
-otherwise. The above is simply redundant.
-
-> 
-> >
-> > > +
-> > > +     /* Let's check the acpi table. */
-
-s/acpi/ACPI/
-
-> > > +     return v4l2_fwnode_device_parse_acpi(dev, props);
-> > > +}
-> > >   EXPORT_SYMBOL_GPL(v4l2_fwnode_device_parse);
-> > >
-> > >   /*
-> > >
-
--- 
-Regards,
-
-Sakari Ailus
 
