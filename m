@@ -1,151 +1,213 @@
-Return-Path: <linux-kernel+bounces-720637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62B19AFBE9B
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 01:29:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D41FAFBE9D
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 01:32:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96396425F43
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 23:29:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75C844A1E6C
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 23:32:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F72B289379;
-	Mon,  7 Jul 2025 23:29:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7959C26FDBB;
+	Mon,  7 Jul 2025 23:32:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f6oYTr5b"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CnDT9NnY"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 276E31A76D0;
-	Mon,  7 Jul 2025 23:29:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FCDF27713
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 23:32:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751930975; cv=none; b=Va6G1utD0Xf0Um9DZjGK1HxpgADsiXPtytIsJ5vruX5TUjVn0vmgW06MTX3oHy3PIrqGGYfzlAmYGMSx8JIK9Gx+Iooxo5WYbep6n0IwEtvHzdONN4ODCo1BBxKkjmoI6zkK3E+9FgT1hb4h+SctNLO5sjEXBY/gnfbGIqUY5fg=
+	t=1751931131; cv=none; b=EXwDWoQRIu+jCBz8ewIafn1eJBYngLpVbTjBNmhT1sGaxQDZClitjaW4K528c6svzlYfS8tBf7k/imag9WdQa651p5qtLq32ouwvU+ylwF3VOw4LnVdc+VdE2E4tO7YgjcXs5/L4Phh4MsjWU0s8nASy1QGmfXbJoV4LRhLZt0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751930975; c=relaxed/simple;
-	bh=tDfslSGThUSSeDw6MEDGAodzhrzY37bUiuz93OXBkP4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=hWfIuaBOirky8LfvOg52jK3LcUdOhw3WivLUu7kvJXDvxV4dnkwY3qZ87rpmbTWSb+z8tzrNSz6T5DcsjVn6hjJRigLjNB0QK+uX3vAQ6OWTWXkk8FDRlw/3DaWPZ5ql7k8wFQUzW3ETX2fYZoFVdyuqg1jjR/oiQlQBKmDJ5Kw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f6oYTr5b; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-b34a8f69862so3005946a12.2;
-        Mon, 07 Jul 2025 16:29:33 -0700 (PDT)
+	s=arc-20240116; t=1751931131; c=relaxed/simple;
+	bh=1ffb14bfAcbOruhUZZk4RbIL9SB3DbmZ8qKgrgg4Hec=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=k3crJTT0iWLeGq318T/E1Dwatzenao/8azix3G1hqpYu4CPcMHLyFt7PmNJRiq1xsOBm37OmMu6x7nQqjzSbvl9wwabSCAeE3rA5KUNkcXoGw8rekGxPGXHbetz5Bq8GaGKdM77ylgZg3MHdtubsGuMCh+dkHguhP5GmJbUbEn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CnDT9NnY; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-235e389599fso98595ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 16:32:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751930973; x=1752535773; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=E2q/+ZmwOZVJfPSae1Ojo1PnKlFTAiIjYB1Ogh0Ew14=;
-        b=f6oYTr5bdFeHm2JKwrHCYK0p1b/J0NHdVsfZOVbOPNLVwmMD7PmvhZ4cUaAdiM6spv
-         e0s0ogS1/lGYtUvyeQNl0ZCtIRfgM0ha5tfnYcJI8DtbMPksY1tI/yYOd25p/84QfOl7
-         ATx7indAF77cTeahDrAc47kZgNnozs1yw4JRFkHbHnXDkCiqoe4JgGBufecs5DTU/w2t
-         TFdA5mtz9CMHUZ8UBQ6LiPIQ3w0XPgM39+f2PV6CGGxqd7U/GMwnVV5tyH8ODamcS09Q
-         vNT00mKh8Ah1HMDY5IOhTB+285bRA+m2mQAeHNWtbCq8ReevbWyYDmevh8WdidXOYH0K
-         xchg==
+        d=google.com; s=20230601; t=1751931130; x=1752535930; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=b25Saen0Ouv9TFO7AIEKB3BvyD7uu12IqNtwgf3v9N0=;
+        b=CnDT9NnYxL/0+3mvjXmqEsI1eOoOhMfTykQC7ueiVbnoeEQsvUwmSL/yLQItI6DMlR
+         y+L7q/Lk1qy5LKLNxhqV3Hos8wokW7bhH9Ka8C20wZ0cDRjn5Vpy6eFbfIa2QdTH5sL5
+         q3iDg9Yp3NQuWYho5pZ8GA+rZV7H9v+CBvz1u/+QWfU1qAMk+zCTrXBBOSoS+fa21fIp
+         565Wc1N94lkhxO8mZ2F0MY6qNfgt1t+7iQaGAUVEtphoRmfgm7+6158qGx3fjFbqDhpa
+         O0GFs6cbhNKwEu2ix1P5G2pxdRigPB2tE0Xc/et/L7LXgFDrkTGoHM6g2rmSAEd7CJjS
+         e6ww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751930973; x=1752535773;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=E2q/+ZmwOZVJfPSae1Ojo1PnKlFTAiIjYB1Ogh0Ew14=;
-        b=D92qyw9f6PBhZKNcMVDAqAqFt5L79QoNHJKgkPhWiNzCqA5lqSy8KjqyykM2n02paj
-         zzGWQ8g94IkW8VOHdIgHhNnCoc/GbV5rwkqj/zQfM2CgIZ7MIx6klRRORZEVksrL2FiD
-         dk6PvfJmU8T2vo8FIelQ+k5al/At4nKPVvnOgbP3/U1QV1cfbuxdoMpk+jaP74E2WZa1
-         jO5BuFErmjsKTfWnrT+BAIfjrRy8MKZqn5U37XUTzcm7gpqUSp/N/YBdMc1FwEHRbIsG
-         /K1AEMGtnXowRkkXwSfTetLEr0DEQ8BduQqGLjyexmdsXBHsda9uth29MzKPb7Cwonk2
-         bFGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU/5eJxtH6mtA+LGrL+WmdqOmeQ99ykDJb8sOUP3ajURwdy64b0ybYWa6YYIA3OzI8HFJf4YkzR@vger.kernel.org, AJvYcCWwH80N9VBPAwwgqC7mWwI50MYColfNrcRZ8HMKMPXvTLuowx6QDs1yDwv17J9T63s4+ys=@vger.kernel.org, AJvYcCXkRQGIm/czxCVC2y9/Oo0aB9ZW/7pnuRQk3lBLwUnwI9IPUu4xd7rl0KQ8+rzpt8r5YVUdNIA32ExUMO/5@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFScCagIwGFkxvamUTHFMCVS/c3EaBj/Mkv6Y4KYp68LtUReRM
-	vQhK/a460jVhOoTHoqihpZIFtz1sJajQlnv3kFq4hPAlLyi8sBu+b7Fd
-X-Gm-Gg: ASbGncvFtbwTxK2xQvvIXl0T4XnLTGvNPTEMWf6IQPYAA0ubFi+dWyNUtEcPwpML/Z1
-	khMco/khoSglInYUa94373PvV8J1yzTKG9vJOL2tXyeN1zpow33M2BVpuyHMd7RTtU7oyaSHWIQ
-	oYro1yZCZyvuWbJf8h00LBElZ4xEcOfjcDisxPzsOdRA8/B5O+urwOQ7SNaXxZ3t8rQbEL1QLlr
-	1eUh8bu+5abXc1qQhQZYPPj0qK/WuhYfmHvJwZTQoK2wU0X2eiwgNi6V45r/f0eEPCsXBeXlTt9
-	+YiH+2cI/4zEONQ3KXWM7i2k96QjgZ/BEh9hwB8oIOxY+twG0abArL6C+kf81sePxvOEjKOn3p/
-	upA==
-X-Google-Smtp-Source: AGHT+IErKy9RXCWcp7pW7oyb6XeYmVhmOvLiTSI7Vg7m1R7gHY/FjLmoN5ZMF2R+4YVgEEH8vs/AKQ==
-X-Received: by 2002:a05:6a20:43a1:b0:218:17c4:248c with SMTP id adf61e73a8af0-2260b2953dfmr21552737637.22.1751930973280;
-        Mon, 07 Jul 2025 16:29:33 -0700 (PDT)
-Received: from ?IPv6:2620:10d:c096:14a::647? ([2620:10d:c090:600::1:6ad])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b38ee450a61sm9882340a12.8.2025.07.07.16.29.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Jul 2025 16:29:32 -0700 (PDT)
-Message-ID: <2fb0a354ec117d36a24fe37a3184c1d40849ef1a.camel@gmail.com>
-Subject: Re: [syzbot] [bpf?] WARNING in reg_bounds_sanity_check
-From: Eduard Zingerman <eddyz87@gmail.com>
-To: Paul Chaignon <paul.chaignon@gmail.com>
-Cc: syzbot <syzbot+c711ce17dd78e5d4fdcf@syzkaller.appspotmail.com>, 
-	andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org,
- daniel@iogearbox.net, 	haoluo@google.com, john.fastabend@gmail.com,
- jolsa@kernel.org, kpsingh@kernel.org, 	linux-kernel@vger.kernel.org,
- martin.lau@linux.dev, netdev@vger.kernel.org, 	sdf@fomichev.me,
- song@kernel.org, syzkaller-bugs@googlegroups.com, 	yonghong.song@linux.dev
-Date: Mon, 07 Jul 2025 16:29:30 -0700
-In-Reply-To: <aGxKcF2Ceany8q7W@mail.gmail.com>
-References: <68649190.a70a0220.3b7e22.20e8.GAE@google.com>
-	 <aGa3iOI1IgGuPDYV@Tunnel>
-	 <865f2345eaa61afbd26d9de0917e3b1d887c647d.camel@gmail.com>
-	 <aGgL_g3wA2w3yRrG@mail.gmail.com>
-	 <df2cdc5f4fa16a4e3e08e6a997af3722f3673d38.camel@gmail.com>
-	 <e43c25b451395edff0886201ad3358acd9670eda.camel@gmail.com>
-	 <aGxKcF2Ceany8q7W@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+        d=1e100.net; s=20230601; t=1751931130; x=1752535930;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=b25Saen0Ouv9TFO7AIEKB3BvyD7uu12IqNtwgf3v9N0=;
+        b=Q8nGtxD9pY3ywR4WnyOYNQsz6IPazvdYgizicKhVJSN2Vs7NTkq5evx9ygfXsxzLOM
+         f5C9lzIt8tzcoic8i7P6hE7ZjAHw8lkoPc5LWbhYg+g9WmAq76FNqh8p3RGvB4AtAPjB
+         QgJf1u5/aW+u/atKyLxMisbjKC3l7Nec0bITkuDZPjT+fSGa60bkRa1HiqRqm70suVoM
+         dY5qO1AvVUvc2q6EGNaGmDY5TEn17U2bgXaj9b6gpdHFs7QxNsnMgeXp4mLtoGWDKLXj
+         E23Y6sh8xgIYFianWH+UP05scLTq3TCm62tDLV1B9l4M6Pe0w7IsqFfz7amN+zDqo8D4
+         X3Fg==
+X-Forwarded-Encrypted: i=1; AJvYcCXRhgVmwowcJl4noY+6JJdSUfEOjA2XrqnycDOQU7ZvfW5YPho+ppmLP+1ih5SnFduo/nmJAn7TL9m+XwM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzy5eBJ0atsDQdcGgesyoa8tQytr9rPPjIwoQe/GZ8SsSL7P8zL
+	qK1QjQDLsTbmx6W4cmp7/Obn1dPmGNT9QA0VSsr7GVshx+xzlgmQ9WnRnuZHf9f5ybQsZ0VGL7w
+	2I1usuZltA7TsyD8x5HChH20az3UNxcitGYO6tT02
+X-Gm-Gg: ASbGnctZ2UVH9VL3QxcV9gO73cVDc/Le4lUAUHLg8TCvCOQifK6Ra1ikY1yiE7KTEOy
+	GGkEbveMFKVhtcdxhC9j5pL2wzKUVdkfhMGWsW8udQuGuKLet2wITXpnegVzd37FyUFlg/r8V6s
+	tlO0kZRkEkhqJj6Zy5oNw94uwhfihL8RQNXwhiHZ+FjJxvEFw7fo5UigSX1/dgCm/jxRt+dtsib
+	A==
+X-Google-Smtp-Source: AGHT+IGqmRprZYTBLI8qv+P8RjDA1HbE3ENdRoMTXbFRRnjoRR+yK0qlEKy2k3qHP1SasQQQ8ZzgWChIrCrLnGg4qR8=
+X-Received: by 2002:a17:903:2f81:b0:23c:5f63:b67 with SMTP id
+ d9443c01a7336-23dd0f824a5mr1163805ad.4.1751931129206; Mon, 07 Jul 2025
+ 16:32:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250703153712.155600-1-adrian.hunter@intel.com>
+ <20250703153712.155600-3-adrian.hunter@intel.com> <CAGtprH8boLi3PjXqU=bXA8th0s7=XE4gtFL+6wmmGaRqWQvAMw@mail.gmail.com>
+ <2e444491-f296-4fa4-9221-036f9b010c1d@intel.com>
+In-Reply-To: <2e444491-f296-4fa4-9221-036f9b010c1d@intel.com>
+From: Vishal Annapurve <vannapurve@google.com>
+Date: Mon, 7 Jul 2025 16:31:56 -0700
+X-Gm-Features: Ac12FXwUanPwhUwd2qO24xrbiqz5Xe6HKml-XwovpsbcB_MYLVSiljzosapeYaw
+Message-ID: <CAGtprH8SqMH6GiRp=kgkUHxiPhtYDcrN8=AiudeTsS+7q2WGbQ@mail.gmail.com>
+Subject: Re: [PATCH V2 2/2] x86/tdx: Skip clearing reclaimed pages unless
+ X86_BUG_TDX_PW_MCE is present
+To: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>, pbonzini@redhat.com, seanjc@google.com, 
+	Tony Luck <tony.luck@intel.com>, Borislav Petkov <bp@alien8.de>, Thomas Gleixner <tglx@linutronix.de>, 
+	Ingo Molnar <mingo@redhat.com>, x86@kernel.org, H Peter Anvin <hpa@zytor.com>, 
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org, rick.p.edgecombe@intel.com, 
+	kirill.shutemov@linux.intel.com, kai.huang@intel.com, 
+	reinette.chatre@intel.com, xiaoyao.li@intel.com, 
+	tony.lindgren@linux.intel.com, binbin.wu@linux.intel.com, 
+	isaku.yamahata@intel.com, yan.y.zhao@intel.com, chao.gao@intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 2025-07-08 at 00:30 +0200, Paul Chaignon wrote:
-
-[...]
-
-> This is really nice! I think we can extend it to detect some
-> always-true branches as well, and thus handle the initial case reported
-> by syzbot.
+On Thu, Jul 3, 2025 at 10:38=E2=80=AFPM Adrian Hunter <adrian.hunter@intel.=
+com> wrote:
 >
-> - if a_min =3D=3D 0: we don't deduce anything
-> - bits that may be set in 'a' are: possible_a =3D or_range(a_min, a_max)
-> - bits that are always set in 'b' are: always_b =3D b_value & ~b_mask
-> - if possible_a & always_b =3D=3D possible_a: only true branch is possibl=
+> On 03/07/2025 20:06, Vishal Annapurve wrote:
+> > On Thu, Jul 3, 2025 at 8:37=E2=80=AFAM Adrian Hunter <adrian.hunter@int=
+el.com> wrote:
+> >>
+> >> Avoid clearing reclaimed TDX private pages unless the platform is affe=
+cted
+> >> by the X86_BUG_TDX_PW_MCE erratum. This significantly reduces VM shutd=
+own
+> >> time on unaffected systems.
+> >>
+> >> Background
+> >>
+> >> KVM currently clears reclaimed TDX private pages using MOVDIR64B, whic=
+h:
+> >>
+> >>    - Clears the TD Owner bit (which identifies TDX private memory) and
+> >>      integrity metadata without triggering integrity violations.
+> >>    - Clears poison from cache lines without consuming it, avoiding MCE=
+s on
+> >>      access (refer TDX Module Base spec. 16.5. Handling Machine Check
+> >>      Events during Guest TD Operation).
+> >>
+> >> The TDX module also uses MOVDIR64B to initialize private pages before =
+use.
+> >> If cache flushing is needed, it sets TDX_FEATURES.CLFLUSH_BEFORE_ALLOC=
+.
+> >> However, KVM currently flushes unconditionally, refer commit 94c477a75=
+1c7b
+> >> ("x86/virt/tdx: Add SEAMCALL wrappers to add TD private pages")
+> >>
+> >> In contrast, when private pages are reclaimed, the TDX Module handles
+> >> flushing via the TDH.PHYMEM.CACHE.WB SEAMCALL.
+> >>
+> >> Problem
+> >>
+> >> Clearing all private pages during VM shutdown is costly. For guests
+> >> with a large amount of memory it can take minutes.
+> >>
+> >> Solution
+> >>
+> >> TDX Module Base Architecture spec. documents that private pages reclai=
+med
+> >> from a TD should be initialized using MOVDIR64B, in order to avoid
+> >> integrity violation or TD bit mismatch detection when later being read
+> >> using a shared HKID, refer April 2025 spec. "Page Initialization" in
+> >> section "8.6.2. Platforms not Using ACT: Required Cache Flush and
+> >> Initialization by the Host VMM"
+> >>
+> >> That is an overstatement and will be clarified in coming versions of t=
+he
+> >> spec. In fact, as outlined in "Table 16.2: Non-ACT Platforms Checks on
+> >> Memory" and "Table 16.3: Non-ACT Platforms Checks on Memory Reads in L=
+i
+> >> Mode" in the same spec, there is no issue accessing such reclaimed pag=
+es
+> >> using a shared key that does not have integrity enabled. Linux always =
+uses
+> >> KeyID 0 which never has integrity enabled. KeyID 0 is also the TME Key=
+ID
+> >> which disallows integrity, refer "TME Policy/Encryption Algorithm" bit
+> >> description in "Intel Architecture Memory Encryption Technologies" spe=
+c
+> >> version 1.6 April 2025. So there is no need to clear pages to avoid
+> >> integrity violations.
+> >>
+> >> There remains a risk of poison consumption. However, in the context of
+> >> TDX, it is expected that there would be a machine check associated wit=
+h the
+> >> original poisoning. On some platforms that results in a panic. However
+> >> platforms may support "SEAM_NR" Machine Check capability, in which cas=
 e
-> - otherwise, we can't deduce anything
+> >> Linux machine check handler marks the page as poisoned, which prevents=
+ it
+> >> from being allocated anymore, refer commit 7911f145de5fe ("x86/mce:
+> >> Implement recovery for errors in TDX/SEAM non-root mode")
+> >>
+> >> Improvement
+> >>
+> >> By skipping the clearing step on unaffected platforms, shutdown time
+> >> can improve by up to 40%.
+> >
+> > This patch looks good to me.
+> >
+> > I would like to raise a related topic, is there any requirement for
+> > zeroing pages on conversion from private to shared before
+> > userspace/guest faults in the gpa ranges as shared?
 >
-> For BPF_X case, we probably want to also check the reverse with
-> possible_b & always_a.
+> For TDX, clearing must still be done for platforms with the
+> partial-write errata (SPR and EMR).
+>
 
-So, this would extend existing predictions:
-- [old] always_a & always_b -> infer always true
-- [old] !(possible_a & possible_b) -> infer always false
-- [new] if possible_a & always_b =3D=3D possible_a -> infer true
-        (but make sure 0 is not in possible_a)
+So I take it that vmm/guest_memfd can safely assume no responsibility
+of clearing contents on conversion outside of the X86_BUG_TDX_PW_MCE
+scenario, given that the spec doesn't dictate initial contents of
+converted memory and no guest/host software should depend on the
+initial values after conversion.
 
-And it so happens, that it covers example at hand.
-Note that or_range(1, (u64)-1) =3D=3D (u64)-1, so maybe tnum would be
-sufficient, w/o the need for or_range().
+> >
+> > If the answer is no for all CoCo architectures then guest_memfd can
+> > simply just zero pages on allocation for all it's users and not worry
+> > about zeroing later.
+>
+> In fact TDX does not need private pages to be zeroed on allocation
+> because the TDX Module always does that.
+>
 
-The part of the verifier that narrows the range after prediction:
-
-  regs_refine_cond_op:
-
-         case BPF_JSET | BPF_X: /* reverse of BPF_JSET, see rev_opcode() */
-                 if (!is_reg_const(reg: reg2, subreg32: is_jmp32))
-                         swap(reg1, reg2);
-                 if (!is_reg_const(reg: reg2, subreg32: is_jmp32))
-                         break;
-                 val =3D reg_const_value(reg: reg2, subreg32: is_jmp32);
-		 ...
-                         reg1->var_off =3D tnum_and(a: reg1->var_off, b: tn=
-um_const(value: ~val));
-		 ...
-                 break;
-
-And after suggested change this part would be executed only if tnum
-bounds can be changed by jset. So, this eliminates at-least a
-sub-class of a problem.
+guest_memfd allocated pages may get faulted in as shared first. To
+keep things simple, guest_memfd can start with the "just zero on
+allocation" policy which works for all current/future CoCo/non-CoCo
+users of guest_memfd and we can later iterate with any arch-specific
+optimizations as needed.
 
