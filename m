@@ -1,162 +1,131 @@
-Return-Path: <linux-kernel+bounces-719695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9CA9AFB17D
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 12:44:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BEFAAFB183
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 12:44:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8DFC3ADFFD
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 10:43:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15913421455
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 10:44:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5969299951;
-	Mon,  7 Jul 2025 10:43:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QiDoMvaM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9376296158;
+	Mon,  7 Jul 2025 10:44:15 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 475FA288C8D;
-	Mon,  7 Jul 2025 10:43:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFF52294A0A;
+	Mon,  7 Jul 2025 10:44:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751885015; cv=none; b=foYk78YXBAi1jMq8tBxS0bFkdKT+UqHKAnkXFzZ8250Q93abDhAPDzVEhibXQvFlQYH1LKUXZwzIqy3mW7eem9qMtQYonzPZAMr06IWmCG/wApFlQC3p8avjqKS6cF12mYAvJsHVGNZMPt5UgDl6A74g8bS97TO5TbREx6/gqN4=
+	t=1751885055; cv=none; b=eUfPi94Qop6KFgsSP20gcgHRIx2IBaLRGcHo601zb0GivzF8V7vXRGXxbJZCTD1EBQ/A0J7fNgNSbpPN1iJ1FoBFq9IOwukZob5c1BUXgzW+9YfAuyT0zLbXCgNCVsZMLfXxnsuxWInPKCle1fRqkxxL851MjsCoQaFiILIFwOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751885015; c=relaxed/simple;
-	bh=ZAHncvRq/os3HYtn8J7X9/8sN0J5JEZiybhSWcC8h+8=;
+	s=arc-20240116; t=1751885055; c=relaxed/simple;
+	bh=c5yRczUDFSdAdgPbN6dY3TNT3pnHLBR0hx9+hGQJrKw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vol3DIqJTVxYG9CIJoPSmm6dy9s3iA4vgBO1yGjDDa0WQX/OYSk/qUSBYlP25UsfECHR/xqQp1HInq0G2TKFIDJBrKzRF1U1all5iRqOxxYY0omF9UubLNsie2EjNusmGOlYvB9bTk3Abfe5lDSwHXjzDbkoVTqp+JiQGlxMIbU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QiDoMvaM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED05DC4CEF5;
-	Mon,  7 Jul 2025 10:43:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751885014;
-	bh=ZAHncvRq/os3HYtn8J7X9/8sN0J5JEZiybhSWcC8h+8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QiDoMvaMaEtgtwLkbm7fWeJkr74MnR9ckIpH80fi864JSTlJW8GAN+l4MQWNo/QIr
-	 KDoX+f13espcJXebVoABhzBqq8HV+GR1+B27AMR1DUe7cOvaBti79jKPsDVm40IQKv
-	 6wd5DeUd8v6lV9xth8qOBezBUrCPRfODIbomdLpfUmgkeIUKIx5/GUpwxVRLgVDpXt
-	 0lJGqztvJw9fvqFYY1wZ018EOUwfoslkiwCMdpHT2lP4Mg0dAo5FsnvO/9VLI1hDBl
-	 zamXhcQZEOLlZVd7alhNqDcn8BuEzs4w1CZe3YRmg0cROX90bT4zliB2UFS/1+9nOL
-	 WLgwzoxlObrCA==
-Date: Mon, 7 Jul 2025 11:43:29 +0100
-From: Simon Horman <horms@kernel.org>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Lorenzo Bianconi <lorenzo@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Felix Fietkau <nbd@nbd.name>, Sean Wang <sean.wang@mediatek.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Alex Elder <elder@kernel.org>, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
+	 Content-Type:Content-Disposition:In-Reply-To; b=WKTBCaixYPNXxAwuw3EtrHoMo/KTLehoSM8NeBA55uskeBgNC4rafwwPj/lff5Jb+ExqpN6PDiwzRhXfM8Q2aJAFQDHh+GDQbe/UGnxboElPStP2oMblOnQebHOEzhtX3rvawM53Rx0dKOngPykm+WVLfFBe2vWl5a2fHql2Zqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Received: from localhost (unknown [116.232.48.207])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dlan)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id CCFDA3410B7;
+	Mon, 07 Jul 2025 10:44:12 +0000 (UTC)
+Date: Mon, 7 Jul 2025 10:44:03 +0000
+From: Yixun Lan <dlan@gentoo.org>
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Alex Elder <elder@riscstar.com>, linux-clk@vger.kernel.org,
+	spacemit@lists.linux.dev, linux-riscv@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: Use of_reserved_mem_region_to_resource{_byname}()
- for "memory-region"
-Message-ID: <20250707104329.GF89747@horms.kernel.org>
-References: <20250703183459.2074381-1-robh@kernel.org>
+Subject: Re: [GIT PULL] Immutable tag between SpacemiT's reset and clock
+ trees for v6.17
+Message-ID: <20250707104403-GYA312629@gentoo>
+References: <20250703151823-GYA312602@gentoo>
+ <daf9ddad1aa24ee18abdc11a9b26ef03bdcbae16.camel@pengutronix.de>
+ <20250706040646-GYA408198@gentoo>
+ <3732050b6b756868543012c1a1cebbe7cce74d61.camel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250703183459.2074381-1-robh@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <3732050b6b756868543012c1a1cebbe7cce74d61.camel@pengutronix.de>
 
-On Thu, Jul 03, 2025 at 01:34:57PM -0500, Rob Herring (Arm) wrote:
-> Use the newly added of_reserved_mem_region_to_resource{_byname}()
-> functions to handle "memory-region" properties.
+Hi Philipp,
+
+On 11:46 Mon 07 Jul     , Philipp Zabel wrote:
+> On So, 2025-07-06 at 04:06 +0000, Yixun Lan wrote:
+> > Hi Philipp,
+> > 
+> > On 12:02 Fri 04 Jul     , Philipp Zabel wrote:
+> > > On Do, 2025-07-03 at 15:18 +0000, Yixun Lan wrote:
+> > > > Hi Philipp,
+> > > > 
+> > > > Please pull the following change into the reset tree. This
+> > > > allows you to apply the patch 5 of the SpacemiT reset driver [1].
+> > > > 
+> > > > Thanks,
+> > > > Yixun Lan
+> > > > 
+> > > > Link: https://lore.kernel.org/r/20250702113709.291748-6-elder@riscstar.com [1]
+> > > 
+> > > Sorry I didn't notice before, this is missing k1-syscon.h from Patch 2.
+> > >  
+> > no problem
+> > 
+> > > Can we get a clock maintainer ack to place patch 2 in the shared tag as
+> > > well? Otherwise you could split patch 2 into soc and clk parts.
+> > for the ack, I'd assume Stephen have no objection (Cc him explicitly)
+> > 
+> > technically, there is no problem to place more patches in the shared
+> > tag, since the tag will be both sent(by me) to clock and reset tree,
+> > so no conflicts in the end.
+> > 
+> > if you expect to at least pass compiling test with patch 5 in reset
+> > branch only, then patch 1, 2, 3 should be included, otherwise need to
+> > pull clk branch for additional dependency patches.
 > 
-> The error handling is a bit different for mtk_wed_mcu_load_firmware().
-> A failed match of the "memory-region-names" would skip the entry, but
-> then other errors in the lookup and retrieval of the address would not
-> skip the entry. However, that distinction is not really important.
-> Either the region is available and usable or it is not. So now, errors
-> from of_reserved_mem_region_to_resource() are ignored so the region is
-> simply skipped.
+> 3 as well? Oh, that's for struct spacemit_ccu_adev. IMHO this patch
+> series is not well structured for applying across trees. This should
+> have been a single patch that adds include/soc/spacemit/k1-syscon.h, to
+> be shared by both clk and reset trees, and no other dependencies
+> between clk and reset patches for this to work well.
 
-Thanks for explaining this, it's much appreciated.
+I feel this is much difficult, e.g. the patch 2 touches both drivers/clk
+and include/soc/spacemit/k1-syscon.h - moving definitions, and splitting
+into two patches sounds weird
 
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
->  drivers/net/ethernet/airoha/airoha_npu.c    | 25 ++++++----------
->  drivers/net/ethernet/mediatek/mtk_wed.c     | 24 ++++------------
->  drivers/net/ethernet/mediatek/mtk_wed_mcu.c | 32 +++++++--------------
->  drivers/net/ipa/ipa_main.c                  | 12 ++------
+> 
+> > I would propose to have shared tag to include patch 1-4, then you can
+> > pick patch 5, in this way, it should both pass all tests (both
+> > compile-time and run-time)would would 
+> 
+> Since this is a new driver, passing run-time tests is not a concern.
+> Compile-time is, since that would break bisectability for everyone.
+> 
+make sense
 
-FWIIW, I would slightly prefer one patch per driver.
+> > what do you think?
+> 
+> I feel like it's easier and safer for the whole series to be merged via
+> the clk tree. Since this adds a new reset driver, the only possible
+> merge conflicts are trivial ones in drivers/reset/{Kconfig,Makefile}.
+> 
+ok, I agree, then let's route the whole series via clk tree, and I assume 
+Stephen is fine with this, since it's indeed much simple.
 
-...
+thanks
 
-> diff --git a/drivers/net/ethernet/mediatek/mtk_wed.c b/drivers/net/ethernet/mediatek/mtk_wed.c
-> index 351dd152f4f3..73c26fcfd85e 100644
-> --- a/drivers/net/ethernet/mediatek/mtk_wed.c
-> +++ b/drivers/net/ethernet/mediatek/mtk_wed.c
-> @@ -1318,26 +1318,14 @@ mtk_wed_rro_ring_alloc(struct mtk_wed_device *dev, struct mtk_wed_ring *ring,
->  static int
->  mtk_wed_rro_alloc(struct mtk_wed_device *dev)
->  {
-> -	struct reserved_mem *rmem;
-> -	struct device_node *np;
-> -	int index;
-> +	struct resource res;
-> +	int ret;
->  
-> -	index = of_property_match_string(dev->hw->node, "memory-region-names",
-> -					 "wo-dlm");
-> -	if (index < 0)
-> -		return index;
-> -
-> -	np = of_parse_phandle(dev->hw->node, "memory-region", index);
-> -	if (!np)
-> -		return -ENODEV;
-> -
-> -	rmem = of_reserved_mem_lookup(np);
-> -	of_node_put(np);
-> -
-> -	if (!rmem)
-> -		return -ENODEV;
-> +	ret = of_reserved_mem_region_to_resource_byname(dev->hw->node, "wo-dlm", &res);
-
-Please consider line-wrapping the line above so it is 80 columns wide or
-less, as is still preferred for Networking code.
-
-> +	if (ret)
-> +		return ret;
->  
-> -	dev->rro.miod_phys = rmem->base;
-> +	dev->rro.miod_phys = res.start;
->  	dev->rro.fdbk_phys = MTK_WED_MIOD_COUNT + dev->rro.miod_phys;
->  
->  	return mtk_wed_rro_ring_alloc(dev, &dev->rro.ring,
-
-> diff --git a/drivers/net/ethernet/mediatek/mtk_wed_mcu.c b/drivers/net/ethernet/mediatek/mtk_wed_mcu.c
-
-...
-
-> @@ -319,13 +313,7 @@ mtk_wed_mcu_load_firmware(struct mtk_wed_wo *wo)
->  
->  	/* load firmware region metadata */
->  	for (i = 0; i < ARRAY_SIZE(mem_region); i++) {
-> -		int index = of_property_match_string(wo->hw->node,
-> -						     "memory-region-names",
-> -						     mem_region[i].name);
-> -		if (index < 0)
-> -			continue;
-> -
-> -		ret = mtk_wed_get_memory_region(wo->hw, index, &mem_region[i]);
-> +		ret = mtk_wed_get_memory_region(wo->hw, mem_region[i].name, &mem_region[i]);
-
-Ditto.
-
->  		if (ret)
->  			return ret;
->  	}
-
-...
+-- 
+Yixun Lan (dlan)
 
