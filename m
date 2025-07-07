@@ -1,197 +1,296 @@
-Return-Path: <linux-kernel+bounces-719357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4B6CAFAD1B
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 09:30:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD83DAFAD48
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 09:35:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C20D7A9359
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 07:29:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 79E3B7ACE83
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 07:33:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D95D5287257;
-	Mon,  7 Jul 2025 07:30:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E4C4289829;
+	Mon,  7 Jul 2025 07:33:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="nTcmJlWE"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	dkim=pass (1024-bit key) header.d=Bruker.onmicrosoft.com header.i=@Bruker.onmicrosoft.com header.b="SrmaTv+Y";
+	dkim=pass (2048-bit key) header.d=bruker.com header.i=@bruker.com header.b="aTaAUARK"
+Received: from mx-relay06-hz2.antispameurope.com (mx-relay06-hz2.antispameurope.com [83.246.65.92])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2F5A286D7C
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 07:30:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751873423; cv=none; b=ODazqbgckYW1o2gWu6Q0E6yqBLJN+xbdbm4cfy+m+gLkt+ItK0sAHshZHuZPci46+3bo3hxZ+g+8j2LzGjFZ+FxGVKx/gDAXPEkSyXkPN1BILTWdlC79li6hQAUdtdIEUUTyXcIprdMaVjyT1OiQKbD2Qn9CRZetMWvUtbB5Ck4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751873423; c=relaxed/simple;
-	bh=aSpnSLUsKoIud4TMn2Bqvcleyy0rBk7G0hRpyIo8X6c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=XVvuwvooVApNTPe8c7bOBslhy7SnpfrwQPqQJh/+QJOINCCqBPoSqZpiIpVlNMFTav+q/xM/w9vOFU3EAAHo/JxqqxEiLp8hHnvw7sSYMZjO4y7Mlc1ZVHS7wDIwmDokhJf0P4sJyOOYEQCF/jaJoyE7EFFZkdWWFs+SOiv4t0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=nTcmJlWE; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250707073019euoutp02a91394c87378c123b4062a8c100ee5ee~P55fY7eU31518415184euoutp024
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 07:30:19 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250707073019euoutp02a91394c87378c123b4062a8c100ee5ee~P55fY7eU31518415184euoutp024
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1751873419;
-	bh=Q5MiDO4kvDAjyRPyePkrhFPW14vb6d7EHum8/0WQ8v4=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=nTcmJlWE9ADFjtTB8/5dbhfElVYFVx1jEthmk7Ctq63wpWZA0y3SsvT87qm57mCtz
-	 rUjt3bDhvweBckPVDFw5OznBTOS+vV7+8SZ9nHBpYZQENs4/FWNurFGCw+oFHkPpQ1
-	 XHWI3W7f3PQJvFFlwDzHrIxWLH38TC9yfJ59Mtd0=
-Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250707073018eucas1p1a0c2e714826a2571f8c5281b8ef0457c~P55eomzep1941219412eucas1p1u;
-	Mon,  7 Jul 2025 07:30:18 +0000 (GMT)
-Received: from [192.168.1.44] (unknown [106.210.136.40]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250707073017eusmtip20a0a1f63bf89beef337da1edc73632c1~P55dgBGZm2165621656eusmtip2K;
-	Mon,  7 Jul 2025 07:30:17 +0000 (GMT)
-Message-ID: <002c8275-f17d-4a4e-b6b8-4dc74c4d510d@samsung.com>
-Date: Mon, 7 Jul 2025 09:30:17 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C75A91F872D
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 07:33:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=83.246.65.92
+ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751873587; cv=fail; b=MmzGDwD5UHoNKoEoI/wd5HDkHlVmApPL1FxP0cHZlug39ADJTTCrQgWi1qVjPekMab3peyvL21kf4iPWz2Q83JErdfadexAlLLoQKWAC8E+KrWbbYIEHaKwMj+lqGZJxVQ3+jRtoEkCnj0Rob4uJNPHNob7O/5AStez9md/VHfM=
+ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751873587; c=relaxed/simple;
+	bh=E+ZVpI87qa5fzJBR7LSm1D7Dp52JItz4URXqmeXju0c=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=nKq7Bqbj6fvIYGwqpvvkJwUI6nMg7RpptR5xexAUXaIS546E0djGRfRccIzIgT0T1xQBSbjHj30Xg5VjpkU0HUo1zx5Lj7b0v/THR8LgONAOVP77XFXC1cs0rMxOzUcsC/z2oiGheP1tRk/Yos4lweJKlQyqLMVhf4vkjfkI+OU=
+ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bruker.com; spf=pass smtp.mailfrom=bruker.com; dkim=pass (1024-bit key) header.d=Bruker.onmicrosoft.com header.i=@Bruker.onmicrosoft.com header.b=SrmaTv+Y; dkim=pass (2048-bit key) header.d=bruker.com header.i=@bruker.com header.b=aTaAUARK; arc=fail smtp.client-ip=83.246.65.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bruker.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bruker.com
+ARC-Authentication-Results: i=2; mx-gate06-hz2.hornetsecurity.com 1; spf=fail
+ reason=mailfrom (ip=91.229.168.76, headerfrom=bruker.com)
+ smtp.mailfrom=bruker.com smtp.helo=bruexc108.brumgt.local; dkim=pass
+ header.d=bruker.onmicrosoft.com header.s=selector2-bruker-onmicrosoft-com
+ header.a=rsa-sha256; dmarc=fail header.from=bruker.com
+ orig.disposition=quarantine
+ARC-Message-Signature: a=rsa-sha256;
+ bh=Sn7hR5IAkLoT5L0BGiQ64n/XZOG+FPwZnnF3/oBo/wQ=; c=relaxed/relaxed;
+ d=hornetsecurity.com; h=from:to:date:subject:mime-version:; i=2; s=hse1;
+ t=1751873497;
+ b=Ej3AawHwa4VZqGYdyKpyNI0aYAmrT3loYYerWPae/dWU+AoNEx55P60dGnhLc7KOzmcHfb6r
+ a6cm24iJ8TgEzh8R4xESpslfcWMDd65NPqfiqiANQHyr98kJWfIIGFJc0RuBDDCqhKH2OPrbnTI
+ hnHFIfecufak0kQ5BVtC2bjbeWMIPvwezbyrQskaEqR0wQwuaCz9F1xPXHoGYwxQgKq7KYMMDSa
+ jx+71whCLRo4RvZ5+I08cWcXMU+O1JAgmC6zvEODs0K7GRGH2LrkPKctv9kyoC+sqUpOdWFGEzL
+ 2MNlJPfcvpsxTfqa90tclRYdMtvdppP/MBINcc08wog7g==
+ARC-Seal: a=rsa-sha256; cv=pass; d=hornetsecurity.com; i=2; s=hse1;
+ t=1751873497;
+ b=Oq3cAzbY1TJD7UGuRo0qzLHeVn9RrVZZVfQ8S1Fe/jm4TRLE8olpYntS8XPOeC42xy7JwEy4
+ mMVk6TcocfEn6Duo9HrQhXT12V0ORRlrUYgcVSvLMPF3reNdZWu2izxBYlMdMFCp0qleUuA1W+Q
+ eT33IlZVh3St/BKHdVVGYDcBJj00rsEiMUzBHPxo2hBo/GVf1tWCjMG5oqOtfwzXPdEN03P4I5y
+ jz7DLJo51jVX1bbH+Csx1u9mGXrhch1cV0crj4KgtNq4J+HdTqr+r2i7zf2ezmvoEMtGb4rHx41
+ BgIaeOpZ4npkEQVD87XfUg7hH2IJun7xTUZtgcV3RcZEg==
+Received: from smtp-out.all-for-one.com ([91.229.168.76]) by mx-relay06-hz2.antispameurope.com;
+ Mon, 07 Jul 2025 09:31:37 +0200
+Received: from bruexc108.brumgt.local (10.251.3.84) by bruexc108.brumgt.local
+ (10.251.3.84) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Mon, 7 Jul
+ 2025 09:30:38 +0200
+Received: from FR6P281CU001.outbound.protection.outlook.com (10.251.3.124) by
+ bruexc108.brumgt.local (10.251.3.84) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10 via Frontend Transport; Mon, 7 Jul 2025 09:30:38 +0200
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=W5ia1EASy6btja8sAhpKm77MdIaGY4uaw2PoJrzORZjWPgu7x4qzPwcXSjdghfqiYsT0s/BCDkwrc5VG6EGyYVVWhXJ/VBxHDh7AlhX6NDxOxV1BkWnEmsukK2zeIC4OERyZlkdBP3fRF0SF6c+ssEehEeQOTnAcWRKwn+R0syOsYsrIw0wQjtisCYyeQVuh40mk1kjuWrsZTC83xPWNm7ko3Wwp6zY+j3eBOQvctIr5dVHdWcdvLi5zcVjeAKMqtZPG3xOH3uyiK5iRoQUA3NrIrVvFm8vIaxsYWlUxI+96THpTzBEBnrtfaFDqdXCcC/gD5CVX3VbkhiyMz5plOQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Sn7hR5IAkLoT5L0BGiQ64n/XZOG+FPwZnnF3/oBo/wQ=;
+ b=t9xt62sd8qSka0gFGc8X+rZar/Fesz5B0ftgapy2iJTY7ehnDU2uX30Cq30SBuLnkCHVUBXSjvVQ+6+H3QY/xfyn7YmlChipOVk+xJNf+mu4yJeewbPbh3osUxN3A5pBkFiux20feoY8Wz3gp6re+TWuwieA1dHN5sun4PLvkvu2hcQQ3iCU8bbHozmafLEn6gvYtnMzBh0gh4ANP6XWIguMRc6O3xxw049XcuEvOl8yZ/fP2AOeA4mITJmw+7ZnAwGq1VPK95dBGv4sPHeplZUyMogaUZB+BDYF7XZtvkFPK6VE1Jlbg+GZccYfsBcJ2XUsrXdKt/vdEs3uuAwkOw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bruker.com; dmarc=pass action=none header.from=bruker.com;
+ dkim=pass header.d=bruker.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=Bruker.onmicrosoft.com; s=selector2-Bruker-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Sn7hR5IAkLoT5L0BGiQ64n/XZOG+FPwZnnF3/oBo/wQ=;
+ b=SrmaTv+Y//HLvMjVVl7CkG9Rt6apbJOJCQoYyp4M+F4JvVkRJoVShj3DQU/X6Qyf6DXIyvJhTak4dFk6KkKpirPXL5uYN6mRcEyw/LNRrkVleaSndLOrfvDZxFEa47Tf0TrIXbHDH10Og4I+Nn8VJO+tsOLZdXg4r1r7/UOz0l4=
+Received: from FR4P281MB3434.DEUP281.PROD.OUTLOOK.COM (2603:10a6:d10:d3::6) by
+ FR3PPFEF176FF63.DEUP281.PROD.OUTLOOK.COM (2603:10a6:d18:2::1a7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.22; Mon, 7 Jul
+ 2025 07:30:30 +0000
+Received: from FR4P281MB3434.DEUP281.PROD.OUTLOOK.COM
+ ([fe80::9d0e:acae:7d6d:f567]) by FR4P281MB3434.DEUP281.PROD.OUTLOOK.COM
+ ([fe80::9d0e:acae:7d6d:f567%4]) with mapi id 15.20.8901.024; Mon, 7 Jul 2025
+ 07:30:29 +0000
+From: "Hohn, Torben" <Torben.Hohn@bruker.com>
+To: Mark Brown <broonie@kernel.org>
+CC: "amit.kumar-mahapatra@amd.com" <amit.kumar-mahapatra@amd.com>,
+	"frogger@hardanger.blackshift.org" <frogger@hardanger.blackshift.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>, "linux@roeck-us.net"
+	<linux@roeck-us.net>
+Subject: AW: [PATCH v2] spi: Raise limit on number of chip selects
+Thread-Topic: [PATCH v2] spi: Raise limit on number of chip selects
+Thread-Index: AQHb5rZPfQusim3qPkGfN64hDqfGqLQW2AgAgATR8EU=
+Date: Mon, 7 Jul 2025 07:30:29 +0000
+Message-ID: <FR4P281MB34343BD0D260C127866768298346A@FR4P281MB3434.DEUP281.PROD.OUTLOOK.COM>
+References: <FR4P281MB343441EB901D3DD286B923D6837AA@FR4P281MB3434.DEUP281.PROD.OUTLOOK.COM>
+ <aF553GU_btT81_b_@finisterre.sirena.org.uk>
+In-Reply-To: <aF553GU_btT81_b_@finisterre.sirena.org.uk>
+Accept-Language: de-DE, en-US
+Content-Language: de-DE
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels: MSIP_Label_e340eb20-1c5f-4409-b1a4-85adc943d5d7_Enabled=True;MSIP_Label_e340eb20-1c5f-4409-b1a4-85adc943d5d7_SiteId=375ce1b8-8db1-479b-a12c-06fa9d2a2eaf;MSIP_Label_e340eb20-1c5f-4409-b1a4-85adc943d5d7_SetDate=2025-07-07T07:30:29.2230000Z;MSIP_Label_e340eb20-1c5f-4409-b1a4-85adc943d5d7_Name=-Bruker
+ Confidential-;MSIP_Label_e340eb20-1c5f-4409-b1a4-85adc943d5d7_ContentBits=3;MSIP_Label_e340eb20-1c5f-4409-b1a4-85adc943d5d7_Method=Standard
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=bruker.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: FR4P281MB3434:EE_|FR3PPFEF176FF63:EE_
+x-ms-office365-filtering-correlation-id: 5914eeb3-8bfb-4921-cb8d-08ddbd28266d
+x-ms-exchange-atpmessageproperties: SA
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|38070700018;
+x-microsoft-antispam-message-info: =?utf-7?B?SHVMWHVSTUF3eHljUmQyUCstTWVIcXNEOWpIZnBtNFhvT2tHcFdJWDlvTncy?=
+ =?utf-7?B?RElxR0s2RWNNU0tpa3l3UXltaXkwWDQ4NVJ0bjFrUFVPVCstcWxNNUtjajFN?=
+ =?utf-7?B?YkdyQ3pPaUttMUtNT3RRWmhHU0xUM0RnUkM0M2phQThhVEEvUCstQ3BaS3c=?=
+ =?utf-7?B?Ky1CVFY4V21QZHY1RUx3d0hLUWYvRVZ0RGU1UU9PM3VHbmkwMXIrLVNXbyst?=
+ =?utf-7?B?c01KZ3E4STU5cGRuQXNpQWtHYkM3WHQ0eWlZa3dhNWNOWkJGd3dQVzlCRFVZ?=
+ =?utf-7?B?eXAvbjNlTzRzZ1lPOW9USm4zR241OVIzcHlld29NL1BnV010c0VUMXFNR1h2?=
+ =?utf-7?B?dUhkVFRMcystSmxMMGd5SzdhKy1ReEZwelFFZzVtZ3JwTTQ3allrS2t3b1l2?=
+ =?utf-7?B?UW5ucXFRdEZFM1gxR2Z6YTBnSSstUzE1OTM2QWxPZUV2VHY5TmVUNGl6NGpz?=
+ =?utf-7?B?alozREx0TWVqQ0dFalVNenhoeXZITm9oUUk5RWJDbkZpLzdydVB0OER1aVpR?=
+ =?utf-7?B?OHBVZ3FZUlhBdVZ6eER4dWZsZzBSR2hmRGRGNGZBaXRVMFZXOFQ5RWhRNkJx?=
+ =?utf-7?B?Zm9wOVUwd1FDd3lJRHRobTFsaDVxaGpxSDFydlRxUjlUKy1oejFLSXY5dnlY?=
+ =?utf-7?B?clVhb0lUcmFSM090dnFpY2ZBMm1qTktGenN2Ym5aMmZFZUk3bnY1Smo2WWU4?=
+ =?utf-7?B?L2dSSzFGUnkwV1dPWXYzSTh2c1dCbFBzalIzSlZPcVlZREcxMVBUUTExd1Fw?=
+ =?utf-7?B?Z0xzT2xmalRac0F2bTlNRVZrZ2Zsa29GQzY1clBQclhuR1BZb243Vk9YVnkw?=
+ =?utf-7?B?OUNnYXlJUXBlcHhTNmU3TWttaXZHU0pubExyU1BQSTJQak5idFJFbk51Ky16?=
+ =?utf-7?B?N3FYYTNrMUNrTDE3RTcydWUwS2wwTjNxWVhwVll6QllVNGZjNE1CZSstYktK?=
+ =?utf-7?B?aCstKy1OdncrLWp4czYvZWNXbEl0OW9zNTBsZXpnZExTdks5M0l5WEtQMU8v?=
+ =?utf-7?B?dDVVeldiYlErLXlLQkJNeElrTjhscVgwM3Zab1o4WE1uekhiSnU1cE52cnkv?=
+ =?utf-7?B?b3c2WVNhZGNjRlpCQVUzSDJkQXRNS2hXWG43c1JIR01nZHVmZlhkVkdBZUxU?=
+ =?utf-7?B?VUJEZDUwdWltNmtRSjl5dVQya01PL3NvV09yakp2OWQ5TlQyUnhqUGlaelRu?=
+ =?utf-7?B?NzBnRjNTSk1oNkIrLU56cDUyRGZlQmViRWJDb2FqUzQzbjJFOGNXT3NuQ1M3?=
+ =?utf-7?B?NXhhUXN5QkxEV29DVFBNci9wZVdKZXFCWWZoWk1DZ1FXaDlubE5sSmFCbUpV?=
+ =?utf-7?B?enkrLXdRNmx1cVAyU3RlRVIxOVI0MFgyU0s3Y0lGbEw2UEZGWVN3SGpCcktj?=
+ =?utf-7?B?andaS2lOZWI5TUF3WngrLXVRaDhTdmVpZnVKZTdzMjBxcERZeFFaYVY0ODIw?=
+ =?utf-7?B?NVh4UXdzclo2MXllTjFYNUZIZkZVdnNUR3hUejJTMGRnYmVHc1Jqb1lpYjgv?=
+ =?utf-7?B?dzRLVURvbWNvWGt6VHc1dm5yL0w3VDBEREUrLUFlMDhlanIyd3EwSDlEVkJS?=
+ =?utf-7?B?eGVEbnFtMUNxc2pkYkZKQzl2bEx5RUhkcGNOT3I5d0Y2VkpaMzlYdkRKSnJR?=
+ =?utf-7?B?QTdmSEMxVUpteG96RUR4SE83ZFJWcGZxNmh2WlFZZXJLdE9EY1BWSTIxZURH?=
+ =?utf-7?B?c1g1SDdLcmlaYTRSdFhqZFNMSzI2VkluR01naE5hckNaWE0rLVJqbThvSjB6?=
+ =?utf-7?B?TjAxbzFDcm5vWVN6ZUJpRmZSVXhGaWVHdmtoaXpnVXpPRElUay9rdDZtOHlU?=
+ =?utf-7?B?OVh1VjREZ2lzUG53c3pPQTcvVUZXQ3VNNmtrbWNKVDU4SnhETndhS0hnUzA1?=
+ =?utf-7?B?SWhGRFJhWXFOTkdWMXd0TzhzRWV3aVYwOHl6Y2lremJ3YmhwVEtiVVlsNDNo?=
+ =?utf-7?B?R3prQlhRbHppN3JaMUVmSWVGTDlsZ2Z2b05yYjRVaVdnK0FEMC0=?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:FR4P281MB3434.DEUP281.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-7?B?bG1nTWg4c21lV1d3NVJsaUFwZFRYSystbTBOQnBtMlovOCstNDNBaUdWUkRu?=
+ =?utf-7?B?bFNjV1BUMVBHVHJVY1JKSmdkZzlEWEY2RG1Jc0hOL0tFRFFOOUZUS3BaZVhh?=
+ =?utf-7?B?YWtyOTkxV3F0Tmo1VmswZEJ3VmIrLVd4WURITDh1bHdwMURBZmFpdHR1b2F0?=
+ =?utf-7?B?Q29RNystUnQvSHdLRWllbk1DM0I1ekRoNHZORVFDKy1FUlQxdWNyTTBqVVI=?=
+ =?utf-7?B?bystWjZtTlhnQkpra0tWc2NuSU9DVGxyNTVTVjdicGJ4cFFlSkx0anE5OTdK?=
+ =?utf-7?B?dTd3OHNVbVFzWmJQQ1VNZ0NtSFJha3JKQTBBKy13NS9KKy04MGRQc2xVaVNG?=
+ =?utf-7?B?S2swVHRCN0U5Q3BBcS9uKy1Pa05NKy1BV3VyTVJ1UUxKN0tzT0dTaHI0RVNC?=
+ =?utf-7?B?eGc3dExzZlVUTnRQRHJIdTdVMzczSEJoZ05wU3BPUHl3aWM4Snh4Sm1kSjRp?=
+ =?utf-7?B?TjEvbnRGYlJnYlVmN1l0a21jNVdmTkVJWVlyczlwc1JpV2pndnJBekk4SXFx?=
+ =?utf-7?B?emhIUHl0bHRodllSY3d6c1NBaEliZHhPVkhDRGlYd3p4bU5ZSndnUEFoTXZ1?=
+ =?utf-7?B?bDFtYms0NHFCbjhzNjFZaWpoV2pRM2d6ZFVXb3paa0VPZE5Rb2N1Y1ViOW1a?=
+ =?utf-7?B?czhCL3BmWTZvU1ZFWXVmeE05WkcxQ0NaSjMxbHpJa1k4d0gvZ1RXVFg1dU9H?=
+ =?utf-7?B?YWs3b1F1bWFTTU9ua1crLUZaV3JHRzZpUHFlelZ3bUlvWGlFNTNlR21hVlYv?=
+ =?utf-7?B?WTVZOWlCbGdiN2tqb3BuUENkY0lMd0ozRTFSRGtIb0FVWUY4N1YzNmxhSFY5?=
+ =?utf-7?B?YjlYWVltaXdmczhtT3dPMVoyRFl2QldQVHNiRElxZElYa2QzdkRFKy1sTm0=?=
+ =?utf-7?B?MistRE8zTWVjZjRPSFNEbUpUUVpXeVhNaDZYSnJEZFp0a0ZhM1V0emczQ2Fh?=
+ =?utf-7?B?WURGalF2N3pXYXlBT1hIa2NjbHJqYU1Fb0VKZ2YyTDVRSTUwUDV5TmxxZ0dj?=
+ =?utf-7?B?T3BDMmtxYmRVUElPaFZaaDhYdkFoMjBwNWFQZHEyMWo4dlpHVTlBdFk3MnhU?=
+ =?utf-7?B?YnNmRlZyS2RRc0wrLUdPdnpuWkQxZUFyUHF2ZHl1TklKZC9BY2dEWjVLNWZV?=
+ =?utf-7?B?QzNPZUxkeEQ4NVdhODc3enBxeVJQbEg1ZnVUWEQ0dTJyZDdhdkgyL1htbVNG?=
+ =?utf-7?B?bFc0L2p6NHdOUWxmMjhWNUpCbC8vckIrLTM2YU5ISzdVMWxVdFFHMFd0ajJL?=
+ =?utf-7?B?S2ZNTzYwR05RN01JMm9saS9EdVpPMHVPYUw1RFJBVE5ieFQzYWpNVHhxemt0?=
+ =?utf-7?B?V25Tclc0YURtWmZMeDZ6ekg3SWwzSHNpaWdScHNrejR5aTM5c2lPTjgwTTdE?=
+ =?utf-7?B?YzlJeTVMTWFUczE0WFZYUXV3em5PMnVWU2I4UWxnYktuTDlNUjBIazdFbWVP?=
+ =?utf-7?B?WE1Ma0xSamJZcDRLb2hPMi9yMm1GSE4ydXJLd1VKRURlbUhqOTBnbVJGS2d1?=
+ =?utf-7?B?M2N1cllTSmFXM0dINXFRcWh6Vlh5N1NpSy9RNUtaemM4YSstVlFhNkdNT0Qv?=
+ =?utf-7?B?b3ZqYmFYVmlKY0JGOHN4b0ZFM3l4UFY2NzAzRDZHazZCWU8wN0g2Si9wZ2Uy?=
+ =?utf-7?B?MEEwdjV6RnU4WFlTdTUrLTJxQzY4a080MGhSU1ZYVXFqTW90SzNJVCstU2Q4?=
+ =?utf-7?B?djZkUm03bGJjY1g4MXRWeVZyOUl4VzRQeWVEbm94VHV1ZUlGcFFwU1FsaUhX?=
+ =?utf-7?B?TjhSY0NrdVVneWc1VGh2TGlMeEpUZXdtSjhvdkZWbTJSTlVyR3QyelB3QWtE?=
+ =?utf-7?B?eC9Fbk9QYmFuRVdvanZwcmo3dURzU3RaZHhGUC9GWS9BeWQweWY1cFUzYUVK?=
+ =?utf-7?B?c2JDcmZGWnZOdHVGVEh6S214YU4yVVdwanlMdll6MFkrLUc5WE5YM1VGUlMv?=
+ =?utf-7?B?WDVFNG1jKy1WcFlhRHNLYTg5Y1ZYbU4rLSstYldXMnF3a0JYUVIxYzQ1bHBr?=
+ =?utf-7?B?aGlwRC9LWVl3VS9XV0NaQk8vdjNRYldIMUhESFMzQ3pjL0tWR2V1bistL2d3?=
+ =?utf-7?B?ZnJMeXM5aU1HUG1vODFUKy02TTMyRXNuNm51Y05NNVRUdHRUN0VPQm53eXA=?=
+ =?utf-7?B?Ky1IMk5zUkpwb0tvYlA2MEE2bldJUXdNWHk3bE9FaUFkcDFhcnU1NkhLY0pk?=
+ =?utf-7?B?cUU3NFN4Y1c=?=
+Content-Type: text/plain; charset="utf-7"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 2/6] rust: pwm: Add complete abstraction layer
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, Miguel Ojeda
-	<ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng
-	<boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas
-	Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor
-	Gross <tmgross@umich.edu>, Guo Ren <guoren@kernel.org>, Fu Wei
-	<wefu@redhat.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
-	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Paul Walmsley
-	<paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
-	<aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, Marek Szyprowski
-	<m.szyprowski@samsung.com>, Benno Lossin <lossin@kernel.org>, Michael
-	Turquette <mturquette@baylibre.com>, Drew Fustini <fustini@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, linux-riscv@lists.infradead.org,
-	devicetree@vger.kernel.org
-Content-Language: en-US
-From: Michal Wilczynski <m.wilczynski@samsung.com>
-In-Reply-To: <aGpqqGMTU3a3O8cn@pollux>
-Content-Transfer-Encoding: 7bit
-X-CMS-MailID: 20250707073018eucas1p1a0c2e714826a2571f8c5281b8ef0457c
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250706114605eucas1p17d1cbd035d14d95f4ad0588c2572b3e2
-X-EPHeader: CA
-X-CMS-RootMailID: 20250706114605eucas1p17d1cbd035d14d95f4ad0588c2572b3e2
-References: <20250706-rust-next-pwm-working-fan-for-sending-v9-0-42b5ac2101c7@samsung.com>
-	<CGME20250706114605eucas1p17d1cbd035d14d95f4ad0588c2572b3e2@eucas1p1.samsung.com>
-	<20250706-rust-next-pwm-working-fan-for-sending-v9-2-42b5ac2101c7@samsung.com>
-	<aGpqqGMTU3a3O8cn@pollux>
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: FR4P281MB3434.DEUP281.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5914eeb3-8bfb-4921-cb8d-08ddbd28266d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Jul 2025 07:30:29.7154
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 375ce1b8-8db1-479b-a12c-06fa9d2a2eaf
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 8ztet97MxPteoYHcO4lfJz1PTWUcAqEUEgQu2akDPIWtWzkJJAnKDcVT7iMZXNe5itDk+7HV+SMlXQ3rjW3D8w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: FR3PPFEF176FF63
+X-OriginatorOrg: bruker.com
+X-cloud-security-sender:torben.hohn@bruker.com
+X-cloud-security-recipient:linux-kernel@vger.kernel.org
+X-cloud-security-crypt: load encryption module
+X-cloud-security-Virusscan:CLEAN
+X-cloud-security-disclaimer: This E-Mail was scanned by E-Mailservice on mx-relay06-hz2.antispameurope.com with 4bbGBh4qljznlLB
+X-cloud-security-connect: smtp-out.all-for-one.com[91.229.168.76], TLS=1, IP=91.229.168.76
+X-cloud-security-Digest:994187259b4a24605fb67b77ea2b7b5b
+X-cloud-security:scantime:2.276
+DKIM-Signature: a=rsa-sha256;
+ bh=Sn7hR5IAkLoT5L0BGiQ64n/XZOG+FPwZnnF3/oBo/wQ=; c=relaxed/relaxed;
+ d=bruker.com; h=content-type:mime-version:subject:from:to:message-id:date;
+ s=hse1; t=1751873497; v=1;
+ b=aTaAUARK6FXnr/zGf49ZapiUsOX83MBdEDnHokNcqyEtTamnct60N6B2dGkyU6js90pVhlOw
+ TFXjWlsl6me/5ZY2PizCRo6C0IeDJYufq7FuVWaYHE22smQ4AkibbMw8UZXXhdu/aw7UgyZzgM0
+ ov2WvaPRIwamN4Q3n5JN2rVQdRyVChCLMETjK01puowv0CLikqUkvaz4K10wiQbxi3zQtgHm4Sv
+ oQrIqGFgjhzsY9WH1WIxdHvZioPP0EUiKYCTngmTXu0pEPGsiOsqJboueUbqX2CtVGjfjt84xBi
+ +NjxIQUjJzPCy3GROYCS5VPnonfSzA8AvhyKKB0lwYXRg==
+
+Hello Mark,
+
+
+-Bruker Confidential-
++AD4- On Thu, Jun 26, 2025 at 04:58:20PM +-0000, Hohn, Torben wrote:
++AD4- +AD4- Hello Marc,
++AD4-
++AD4- That isn't my name...
+
+Sorry for that. I was also communicating with Marc Kleine-Budde and got con=
+fused.
+
++AD4-
++AD4- +AD4- +-+ACM-define SPI+AF8-CS+AF8-CNT+AF8-MAX 16
++AD4-
++AD4- +AD4- If this is increased to 24 now, we need to carry another patch =
+on top of mainline again once we add another Chipselect
++AD4- +AD4- into our FPGA, or into the next iteration of our hardware. We w=
+ould really prefer that a Kconfig value is used.
++AD4- +AD4- We have handed a patch to pengutronix, because they can send pr=
+oper emails.
+
++AD4- +AD4- In the IIO framework there is a Konfig Value for something simi=
+lar:
++AD4- +AD4- https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.=
+git/tree/include/linux/iio/trigger.h+ACM-n74
++AD4-
++AD4- This doesn't really work, we're supposed to support single kernel ima=
+ge
++AD4- so putting per platform configuration in Kconfig ends up being at bes=
+t a
++AD4- usability problem.  At some point it's better to just bite the bullet
++AD4- and make things dynamic.
+
+After looking a bit more throughly at the code, i dont think it is necessar=
+y to make this dynamic.
+The Value at hand is actually the number of Chipselects a Device might have=
+ and not the the maximum number
+of Chipselects a Controller might have.
+
+However, the check that is failing is this one:
+
+if (ctlr-+AD4-num+AF8-chipselect +AD4- SPI+AF8-CS+AF8-CNT+AF8-MAX) +AHs-
+                dev+AF8-err(+ACY-ctlr-+AD4-dev, +ACI-No. of CS is more than=
+ max. no. of supported CS+AFw-n+ACI-)+ADs-
+                return -EINVAL+ADs-
++AH0-
+
+I do now believe, that the proper fix is to remove this check, and then red=
+uce SPI+AF8-CS+AF8-CNT+AF8-MAX to 4 again.
+Because it was increased to 16 only to satify this condition here. The code=
+ however does not depend on ctrl-+AD4-num+AF8-chipselects being smaller
+than SPI+AF8-CS+AF8-CNT+AF8-MAX. The only occurence of this in struct spi+A=
+F8-controller is the last+AF8-cs stuff, which just requires array sizes of =
+the maximum
+number a device might have.
+
+I guess the define should get a better name that makes this relationship mo=
+re clear. like SPI+AF8-CS+AF8-CNT+AF8-MAX+AF8-PER+AF8-DEV or something ?
+We have discovered the b4 web submit and are now able to post proper patche=
+s. Will do that once we have tested this here.
+
+Regards,
+Torben
 
 
 
-On 7/6/25 14:23, Danilo Krummrich wrote:
-> On Sun, Jul 06, 2025 at 01:45:13PM +0200, Michal Wilczynski wrote:
->> +/// Trait defining the operations for a PWM driver.
->> +pub trait PwmOps: 'static + Sized {
->> +    /// The type of the owned driver data (e.g., `Pin<KBox<...>>`).
->> +    type DrvData: 'static + ForeignOwnable;
->> +    /// The driver-specific hardware representation of a waveform.
->> +    ///
->> +    /// This type must be [`Copy`], [`Default`], and fit within `PWM_WFHWSIZE`.
->> +    type WfHw: Copy + Default;
->> +
->> +    /// Optional hook for when a PWM device is requested.
->> +    fn request(
->> +        _chip: &Chip<Self::DrvData>,
->> +        _pwm: &Device,
->> +        _parent_dev: &device::Device<Bound>,
->> +    ) -> Result {
->> +        Ok(())
->> +    }
->> +
->> +    /// Optional hook for when a PWM device is freed.
->> +    fn free(_chip: &Chip<Self::DrvData>, _pwm: &Device, _parent_dev: &device::Device<Bound>) {}
-> 
-> NIT: I can't think of a case providing this callback in Rust is useful. Do you
-> have a clear use-case in mind? Otherwise, I'd not provide this callback until
-> you have one. Should be trivial to add later on.
-> 
->> +impl<T: PwmOps> Adapter<T> {
-> 
-> <snip>
-> 
->> +    /// # Safety
->> +    ///
->> +    /// `dev` must be a valid pointer to a `bindings::device` embedded within a
->> +    /// `bindings::pwm_chip`. This function is called by the device core when the
->> +    /// last reference to the device is dropped.
->> +    unsafe extern "C" fn release_callback(dev: *mut bindings::device) {
->> +        // SAFETY: The function's contract guarantees that `dev` points to a `device`
->> +        // field embedded within a valid `pwm_chip`. `container_of!` can therefore
->> +        // safely calculate the address of the containing struct.
->> +        let c_chip_ptr = unsafe { container_of!(dev, bindings::pwm_chip, dev) };
->> +
->> +        // SAFETY: `c_chip_ptr` is a valid pointer to a `pwm_chip` as established
->> +        // above. Calling this FFI function is safe.
->> +        let drvdata_ptr = unsafe { bindings::pwmchip_get_drvdata(c_chip_ptr) };
->> +
->> +        if !drvdata_ptr.is_null() {
-> 
-> Is this check needed? I think one can't create a pwm::Chip instance without
-> providing a T, so this pointer can't be NULL I think.
-> 
->> +            // SAFETY: `drvdata_ptr` was stored by `Chip::new` from an owned `T::DrvData`
->> +            // and is guaranteed to be valid if non-null. `from_foreign` can safely
->> +            // reclaim ownership to allow Rust to drop and free the data.
->> +            let _owned_drvdata = unsafe { T::DrvData::from_foreign(drvdata_ptr.cast()) };
->> +        }
->> +    }
-> 
-> If you overwrite this callback (as you do below) you're leaking the memory
-> allocated by pwmchip_alloc().
-> 
-> The simple way to solve this would be to call pwmchip_release() from here.
-
-Thanks, a pwmchip_release() is static though, so it's either expose the
-pwmchip_release in the header, or call kfree() here directly on pwmchip.
-
-> 
-> <snip>
-> 
->> +impl<T: 'static + ForeignOwnable> Chip<T> {
->> +    /// Allocates and wraps a PWM chip using `bindings::pwmchip_alloc`.
->> +    ///
->> +    /// Returns an [`ARef<Chip>`] managing the chip's lifetime via refcounting
->> +    /// on its embedded `struct device`.
->> +    pub fn new<O: PwmOps<DrvData = T>>(
->> +        parent_dev: &device::Device,
->> +        npwm: u32,
->> +        sizeof_priv: usize,
->> +        drvdata: T,
->> +    ) -> Result<ARef<Self>> {
->> +        // SAFETY: `parent_device_for_dev_field.as_raw()` is valid.
->> +        // `bindings::pwmchip_alloc` returns a valid `*mut bindings::pwm_chip` (refcount 1)
->> +        // or an ERR_PTR.
->> +        let c_chip_ptr_raw =
->> +            unsafe { bindings::pwmchip_alloc(parent_dev.as_raw(), npwm, sizeof_priv) };
->> +
->> +        let c_chip_ptr: *mut bindings::pwm_chip = error::from_err_ptr(c_chip_ptr_raw)?;
->> +
->> +        // Set the custom release function on the embedded device. This is the crucial step
->> +        // to ensure `drvdata` is freed when the chip's refcount reaches zero, regardless
->> +        // of whether `Registration::register` was called.
->> +        // SAFETY: `c_chip_ptr` points to a valid chip.
->> +        unsafe { (*c_chip_ptr).dev.release = Some(Adapter::<O>::release_callback); }
-> 
-> This overwrites [1].
-> 
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/pwm/core.c?h=v6.16-rc4#n1601
-> 
-
-Best regards,
--- 
-Michal Wilczynski <m.wilczynski@samsung.com>
 
