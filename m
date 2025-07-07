@@ -1,138 +1,111 @@
-Return-Path: <linux-kernel+bounces-720128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A093AFB76C
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 17:32:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BC48AFB76D
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 17:32:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A08B3B5E16
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 15:32:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A182F4A43B9
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 15:32:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCCCD19005E;
-	Mon,  7 Jul 2025 15:32:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NFqYy9Uf"
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 736F119F461;
+	Mon,  7 Jul 2025 15:32:47 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0B86881E;
-	Mon,  7 Jul 2025 15:32:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 166C34A1D
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 15:32:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751902345; cv=none; b=OsdxWoWQ5lM5H4HrhkeMsC5t+ISCaEYARJsPjDXlQKLtQRmiy/pnwaH/uvEhoGAVdjg3d/QwDBN71P6HzovOURQO7+1d8+BzEyBM7F5HlGKBjvEbNr+fMbABr1lQYSAvMjSx6otBdi1FJXUVg81NrKPqSlo0MAxfqPJjCwsEI4E=
+	t=1751902367; cv=none; b=oVU1ECY/SvQNKkJWyeErPolknSMpIhYe9YXBZxAIda9IQdgtMiet8uds1Ur8qg3qjmvyvpInfu/THiglDAXWR0yrL6HQTdBGYtf1jzKGBhHWrNkucIk2oblRc4j5o6kRjs11Cn2uUG3W4ML3vpTG3sABtZZQd3M6NTqgJFm/UUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751902345; c=relaxed/simple;
-	bh=3cUG4Qr+IPNv64Z1EWnT8TrT8XUMf+AT0Rh3TTHODsk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Xd+HNwqgbGicqZ4n+ZIZx8D/kRTX1mbzH1xa83zSCTXn1dsuoUboK4UI0f8vetGpdftM0lUzlj6Vr9hg63+3n4rVtNyaE93PormHk99K5wlir4fXST+o+qZ+Gz4qnp5NzZ6dq1rV54heJc8otp60GOJuBZuV9fnY0kpVPSXJpgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NFqYy9Uf; arc=none smtp.client-ip=209.85.128.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-70a57a8ffc3so26392537b3.0;
-        Mon, 07 Jul 2025 08:32:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751902343; x=1752507143; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=z2RtvBnwq2IfJ0CHGCYGxVehGv3P86Mh/6/45Jb+Dlk=;
-        b=NFqYy9Ufp9r8b/81rzU6jaUinDICszmIl43b6vk7Zt/6aYTAm5Kk0QCMytJUD23feT
-         cEl0Vi+W8aJPOWpH/ff1b6K1RpVvUzad0kV+jIRarYyHvQ8t7Uoe9LCLJYhGhBTspwf4
-         IvYZrLEeF6MWjA+MMJ9Jj/ni0mvzeERqFOHoR4dw9X9zcdgejqJuhGaOWth3vPcy4yG6
-         vlOJ9gxGWLkKLQ9BuRzHHrYP1Q9K8qk7bLHAlE4ydmo7ZtjVlGRjV/owWbnH1xzthdRL
-         QqMFXe24FgJHzy9es7alLxYO5k+8qCXW+NX/BaeuZ0GLTlmaZodpDENxxGFDgmaG33dY
-         l6JA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751902343; x=1752507143;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=z2RtvBnwq2IfJ0CHGCYGxVehGv3P86Mh/6/45Jb+Dlk=;
-        b=ItNyiISUxhcZjU1kOyTCDG6jWhoTZzmtHUj8MrLcYZ5addBuxpobOqKQs40DZTDb4k
-         o/a0KwN0DLtsRUySonfrSJ803u4FjRghocO4mzgzigSlMR9hhXY7hvIUVjNcrqOKUucw
-         iFstgX79DawDqvs8K2VlDy2mL64oGNsPH243rTOPiumc/WHMfbemtCHMh7OiSH1eSybS
-         HuGG1Dec/kpmrzOIJ3cPOAYEmKY+NwaG+O7AF9sJlaiAH3xbc3pULX83wwU22SyXCrP9
-         N/GyE4hYLa7I1z8gOsJEiorNX78riCg9aVDoCCim6440UhqYvSTMZoEJDsybed7wIbjZ
-         YQNA==
-X-Forwarded-Encrypted: i=1; AJvYcCU2jRaTPDmeNcva1ff0c/tR3WkaXhMW7JBze6fK9fTdLeQtDwGtaMGX7gX/9lXQ3ObzXcYDijHB5z+MjwVMru61T5rP@vger.kernel.org, AJvYcCVlYP0eNL49su6VP4KaALH5/JWkdsJcHbioiRsYgQmkHtbARABoyMxnYRj3SjlY01Suka+e+Oibp3R0Trc=@vger.kernel.org, AJvYcCXkkJ7ANtTsMZN1kjE7OkAX9KZev3MXp4EoZ+bG82QoDgz1NBpkGDSI5t7zbHlmnPD72+jtsbwV2DcFPq0vrA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOJrPxlINjT8/ntCMwSmfp5g0aGstvu+F5BKVnCCgyG8Lv3Mkz
-	wDzywq7wpf68o/C0hfYA0oVSs0yPM3RlniWGB8t+bZs7j+sE5KrSA7PPbEqei2rAisd4gjj/wei
-	tjaIeXZO+9kIzsoR3l3y+D6gMjom/atw=
-X-Gm-Gg: ASbGncsDCjkFwhUBOKXY4okQ1o+ydq3HJ+YKSy34c2IZ9MTuDeRUlPlEqSWTRxXJcHQ
-	h7j1UYRn9ZiRcyHVmeuz0p1yT/7026Cx4GpDV2yBgWHf16Ftr6UuhjbESW+4ls1nOxFANpAIgKm
-	AGxO2crZXXpNkVkqofjr3YYu7KPz9XLcrv1W7NZd0MEBhPiokcpAc5FIdibCe3d1XqBC3iHEm3N
-	Dha
-X-Google-Smtp-Source: AGHT+IHobRt0IVZ9y2H5aHieKxZBuZ9kYKxX7bRopQYtEGb00kgxf2fb/BJfcAAzEetydaLae4Xw+yKZZLvrXk3th6Q=
-X-Received: by 2002:a05:690c:6911:b0:70e:2a0c:bc5 with SMTP id
- 00721157ae682-7176ccf0b4amr110470747b3.38.1751902342763; Mon, 07 Jul 2025
- 08:32:22 -0700 (PDT)
+	s=arc-20240116; t=1751902367; c=relaxed/simple;
+	bh=3H0CG6IpeGFzd6/CFArKmAex/IIH+zHe8rbOipSW5EY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=brkBj5LunByEv7JMM5TTDT1BocLhZMLogHXWziyt3VYcTzmU88EnSwy6AzM83P2BSxv6MsM11p9SvMNEiu9Cpo1zaSLCXST1M+HkIUxTpMpb9I8yGX/z+sBK901OnOvP61zi7tCEA42MqcIBq0RnIvIGZsul+Y9Rd+rZyMKJkK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1uYnpb-0007aI-Qr; Mon, 07 Jul 2025 17:32:35 +0200
+Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1uYnpa-007GvS-0E;
+	Mon, 07 Jul 2025 17:32:34 +0200
+Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1uYnpZ-004YEe-30;
+	Mon, 07 Jul 2025 17:32:33 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org,
+	Russell King <linux@armlinux.org.uk>,
+	netdev@vger.kernel.org,
+	Andre Edich <andre.edich@microchip.com>,
+	Lukas Wunner <lukas@wunner.de>
+Subject: [PATCH net v1 0/2] net: phy: smsc: use IRQ + relaxed polling to fix missed link-up
+Date: Mon,  7 Jul 2025 17:32:30 +0200
+Message-Id: <20250707153232.1082819-1-o.rempel@pengutronix.de>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250704134943.3524829-1-rppt@kernel.org> <20250704134943.3524829-4-rppt@kernel.org>
-In-Reply-To: <20250704134943.3524829-4-rppt@kernel.org>
-From: Yann Ylavic <ylavic.dev@gmail.com>
-Date: Mon, 7 Jul 2025 17:32:11 +0200
-X-Gm-Features: Ac12FXyaAajnDBmF1qqrRhSguxWKBF3vJJ9uNxcN4-zDud7xknCeyy1uyLlWfCY
-Message-ID: <CAKQ1sVN9KZYt=M5cst+BonDMVL_wO3sbhgZ+JPzc=Rw9Qfz9tw@mail.gmail.com>
-Subject: Re: [PATCH 3/8] execmem: rework execmem_cache_free()
-To: Mike Rapoport <rppt@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>, 
-	Borislav Petkov <bp@alien8.de>, Daniel Gomez <da.gomez@samsung.com>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Ingo Molnar <mingo@redhat.com>, 
-	Luis Chamberlain <mcgrof@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Petr Pavlu <petr.pavlu@suse.com>, 
-	Sami Tolvanen <samitolvanen@google.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-modules@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Fri, Jul 4, 2025 at 3:54=E2=80=AFPM Mike Rapoport <rppt@kernel.org> wrot=
-e:
-> +
-> +static void execmem_cache_free_slow(struct work_struct *work)
-> +{
-> +       struct maple_tree *busy_areas =3D &execmem_cache.busy_areas;
-> +       MA_STATE(mas, busy_areas, 0, ULONG_MAX);
-> +       void *area;
-> +
-> +       guard(mutex)(&execmem_cache.mutex);
-> +
-> +       if (!execmem_cache.pending_free_cnt)
-> +               return;
-> +
-> +       mas_for_each(&mas, area, ULONG_MAX) {
-> +               if (!is_pending_free(area))
-> +                       continue;
-> +
-> +               pending_free_clear(area);
+This series makes the SMSC LAN8700 (LAN9512) family reliable again
+when it is forced to 10 Mb/s and the link partner still advertises
+autonegotiation:
 
-Probably:
-                  area =3D pending_free_clear(area);
-?
+Patch 1 – core: treat get_next_update_time() as a reason to keep
+the phylib timer running.
 
-> +               if (__execmem_cache_free(&mas, area, GFP_KERNEL))
-> +                       continue;
-> +
-> +               execmem_cache.pending_free_cnt--;
-> +       }
-> +
-> +       if (execmem_cache.pending_free_cnt)
-> +               schedule_delayed_work(&execmem_cache_free_work, FREE_DELA=
-Y);
-> +       else
-> +               schedule_work(&execmem_cache_clean_work);
-> +}
+Patch 2 – smsc-phy: combine the existing interrupt line with a new
+adaptive poll:
+- poll every 1 s while the link is down or for 30 s after the last
+  interrupt (catches the silent link-up),
+- poll only every 30 s once the link is up (reduces wake-ups and saves
+  power).  IRQs are still delivered immediately, so genuine link changes
+  are reported with minimal latency.
 
+Testing:
+Baseline, parallel-detection and advertisement test suites were run on a
+LAN9512 (LAN8700 core) against an Intel I350 NIC. All relevant tests
+passed.
 
-Regards;
-Yann.
+Thanks,
+Oleksij Rempel
+
+Oleksij Rempel (2):
+  net: phy: enable polling when driver implements get_next_update_time
+  net: phy: smsc: add adaptive polling to recover missed link-up on
+    LAN8700
+
+ drivers/net/phy/smsc.c | 43 ++++++++++++++++++++++++++++++++++++++++++
+ include/linux/phy.h    |  2 +-
+ 2 files changed, 44 insertions(+), 1 deletion(-)
+
+--
+2.39.5
+
 
