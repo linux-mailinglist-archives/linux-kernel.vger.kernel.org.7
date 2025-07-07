@@ -1,102 +1,149 @@
-Return-Path: <linux-kernel+bounces-719511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C42FDAFAEEB
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 10:49:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46B7CAFAEF5
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 10:52:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62120189D88F
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 08:49:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E48871698A0
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 08:52:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 586E528B3F1;
-	Mon,  7 Jul 2025 08:49:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CC8D28C2C4;
+	Mon,  7 Jul 2025 08:52:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="DEmAoLcy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fvqE07jI"
+Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B62491C5D7D;
-	Mon,  7 Jul 2025 08:49:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1905A28A70D
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 08:52:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751878170; cv=none; b=niul0cE0P3+HYhWzLrsJSsl2HDRWhWf/J+a8FXeW43foDyv1YZ7rXO/DZxt28t8dQ4w3oUPnJbcb93phNGa8Wzl/YGB4KILAnJwMlcZk1n0NAA9j++ueY8F6BklSXvk41NwTOqbjyAv++ZPsdxO97zLs5RuTEvX7/izfNAAgh3Q=
+	t=1751878334; cv=none; b=nJN/PitB0MZhIgI3DFGv35Xhd5CJCY003wFQH/UksB9P1A+pce+fI0SjvTMT6dt3kimQij3yzk3nZZ0en97oc1VCJ74Q+X+SGv/j/Bs5eLU+Az/dKVG9B/M9YAsNE7G29V3xV0FyadsxPHjJSW1YQ8lMefUlcie8RQXeNRBpHVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751878170; c=relaxed/simple;
-	bh=E08jZN7k1pGrat/Cyavs0pVvrOcz/fVCkhhacbMrFTo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mB1+CVqvsM4WqNiyFCEZ1ffG5gJMS15ZBCL2oc6MuGqF9mw1md+ZA10qlQ0Z7ZWT7eX2Ls/BTueBZsR9R4BKV4CqkUGJDwe0NmW9L5BmUgGODUSfpDYQjQf2etYu7eBM8IuYBv/R9FpahL7m0+Y+r7JSzq4Xa4Y2Oty2WDZaKRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=DEmAoLcy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCD4CC4CEE3;
-	Mon,  7 Jul 2025 08:49:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1751878170;
-	bh=E08jZN7k1pGrat/Cyavs0pVvrOcz/fVCkhhacbMrFTo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DEmAoLcyPU6g1PcARkcmA8exKvrDl2iQGIh3JHaxrqJYS17xpDwKhIwjQXN+IELSv
-	 O0tYgeEi5TvD2+2TrVKhjWs6qpez8zczDINsIJHEXaGM+kR+yZ7f32m17suRpTXyx1
-	 yDtdYoL81aSRJRpQ3HsyHXX21lMANklSea/Nv11M=
-Date: Mon, 7 Jul 2025 10:49:27 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Jie Deng <dengjie03@kylinos.cn>
-Cc: stern@rowland.harvard.edu, linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org, usb-storage@lists.one-eyed-alien.net
-Subject: Re: [PATCH v2] usb: storage: Ignore UAS driver for SanDisk Extreme
- Pro 55AF storage device
-Message-ID: <2025070702-unsigned-runny-62c6@gregkh>
-References: <2025070422-punctured-opal-f51e@gregkh>
- <20250707062507.39531-1-dengjie03@kylinos.cn>
+	s=arc-20240116; t=1751878334; c=relaxed/simple;
+	bh=NDVPiT3y/IEBQaw7UV/tz0okFb5sjvyKj7Prqist9Bk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VWGsi60cmTzz9TmbXFkOOhfBJCkJ0uYVoaiIF6ynzxHFJ7x9yhExvBpSsZu9QBj9fCaKXIS1QMCGFmznbJ/2mGL0N8FY1ATBA0dllx5ME4Nru3Gnag0hVDXA23RiTi5+03+14Wc5cdRV3UmnmqN60uFq3443JN7o7flmS41Z9fc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fvqE07jI; arc=none smtp.client-ip=209.85.160.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-2ea35edc691so758237fac.2
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 01:52:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1751878332; x=1752483132; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NDVPiT3y/IEBQaw7UV/tz0okFb5sjvyKj7Prqist9Bk=;
+        b=fvqE07jIpvy4ifNW0ENVM5dM8uK9HHJEA7cAtS3tvy/2syphxGzcHiDj0jB/UKb476
+         cmUfcqrq+/gWOmz9amXLx0K8j/MCGQcmq3uj8FAizeNPpeimQ0BwqaITr2pMY/Ry3+VA
+         xPkZMqx1C4pocgEJPguG0d8TlgVHk0c5l2atN4NZxjgbDjlrVpSUSsWgviiRlNaIf/Rk
+         dzxrDoyjcxg8vu+l9HuuLnEPJ7vfs8VfDQUBmkpunc0nQsDMRAsUIucA2NEIiYsxK6xU
+         ycf1skxi0hFJGUi3whQVT6UMDajY8qRGQxRMa9bjfDbak23ZXhlI+YfWqTU0xXpvvrOM
+         y4yA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751878332; x=1752483132;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NDVPiT3y/IEBQaw7UV/tz0okFb5sjvyKj7Prqist9Bk=;
+        b=cSr01XHo8psMUzurhC3j2bJR3wGmKwpEzfdb0Vbs+V1rv/uQm/4yYMOMJI0zgZvz+y
+         f3acluoZpkJI+YPQEP2itLIfLMVxqJ2mM/jkDPxNCH0pZC3ODpG+sB/tTD33cVpNb8MG
+         kauvE9xEYAndRYXws3wH2PDFI/RKSafC5L0RNW6rOqmb9RWBPEB1/624/iryqTjRy6/L
+         8qYuT6VY2H9JtkA9TqXyJZN3M29cC+McZXx5w5BNak0c4PXIhcNz+yrELMHGtBdffMOO
+         AMVxqc5EzQ1LIRIKwUTCWg+H5mL2rtAcBsXf2eRypaNtxT6bWs9LoIL5T+pE1n6UPCf3
+         CYNw==
+X-Forwarded-Encrypted: i=1; AJvYcCWKWtEqIudzI6TvzoJH/Z9SoGpvLqPw+Xgb3lZ7G9NYzDSzfXF5IuAdaLxz4EWcVFIOLMFPcAh4Y50IaAU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxI/nUaRs7pMXC7EjGQNKQzzurZjMn1ySBLcjlH7YoXZrqeetxJ
+	rJNJYCGVou+TimOrmVy6Ya7o3h0MkV0vk/LOcAp17G26QtFh54e7pcRtowehr9c9aZEzvpT0xBn
+	r4bga1y/pimgl1t5V/mfQP8IzRfdlgU4aAnxtI1StCg==
+X-Gm-Gg: ASbGncuN52bgk0exB0j4K/+kk36knnrYjQUisOWRDjzK34mvc94X0u5FM47cUYmvcAx
+	Od19BPgXx0nVQT4GG8YRClC0fCrSkhw831e4DWWs1kNJlYTGhazx/zXnvIW1lpmAL2RopJ0ugBS
+	YESNU0HSMa/wxD2fIiGXOfKbZJjWBq3qmomUE+SclDHSuY
+X-Google-Smtp-Source: AGHT+IEj3geuDFpX++SDMrn/ji9XGPECs4W5y0PIqWxFAyffhSBGzwoeTrtt+GXfjptm1UQik2oIQixEFyIbodoYkeE=
+X-Received: by 2002:a05:6870:9687:b0:2d9:45b7:8ffc with SMTP id
+ 586e51a60fabf-2f7afde4ee8mr5416161fac.3.1751878332040; Mon, 07 Jul 2025
+ 01:52:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250707062507.39531-1-dengjie03@kylinos.cn>
+References: <20250523-b4-gs101_max77759_fg-v4-0-b49904e35a34@uclouvain.be>
+ <20250523-b4-gs101_max77759_fg-v4-2-b49904e35a34@uclouvain.be>
+ <CADrjBPqOMOyHP=aQ1+fg2X58NWRp-=MJBRZfpbEhQsTzaZ9LHw@mail.gmail.com>
+ <bc40326f-db40-4657-84a7-152def2ca9e3@uclouvain.be> <CADrjBPo2=FajKA0t7TTMdH6iK_qbWCSJK-hEqh+UWEuzC7wyGQ@mail.gmail.com>
+ <2e26f8f534284b280e9d5e8d4ae556a452e93ff5.camel@linaro.org>
+In-Reply-To: <2e26f8f534284b280e9d5e8d4ae556a452e93ff5.camel@linaro.org>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Mon, 7 Jul 2025 09:52:00 +0100
+X-Gm-Features: Ac12FXypfLDLEdnbrTBCEZv832mBaFKGNgc3VgFrnkzOkozoICaCDgwT3JcKDwQ
+Message-ID: <CADrjBPr_UY6LDxTqHAszC1nhq+qdV7OC5M2y+z2C2iwOKzqWYw@mail.gmail.com>
+Subject: Re: [PATCH v4 2/5] power: supply: add support for max77759 fuel gauge
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Cc: Thomas Antoine <t.antoine@uclouvain.be>, Sebastian Reichel <sre@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Dimitri Fedrau <dima.fedrau@gmail.com>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 07, 2025 at 02:25:07PM +0800, Jie Deng wrote:
-> The SanDisk Extreme Pro 55AF storage device(0781:55af) has poor compatibility with UAS drivers.
-> The logs:
-> [    1.359859][ 0] [  T163] usb 2-1: new SuperSpeed Gen 1 USB device number 2 using xhci_hcd
+Hi Andr=C3=A9
 
-Nit, the [] stuff should all be removed, it's not relevant, right?
+On Mon, 7 Jul 2025 at 09:04, Andr=C3=A9 Draszik <andre.draszik@linaro.org> =
+wrote:
+>
+> Hi,
+>
+> On Mon, 2025-07-07 at 08:16 +0100, Peter Griffin wrote:
+> > Hi Thomas,
+> >
+> > On Tue, 24 Jun 2025 at 16:45, Thomas Antoine <t.antoine@uclouvain.be> w=
+rote:
+> >
+> > > I am unsure about what to do about this initalization, especially for=
+ values
+> > > which slightly differ from the devicetree. I think for next version, =
+I
+> > > will have the same parameters be passed in the devicetree like androi=
+d.
+> >
+> > We don't really pass register values like the downstream driver is
+> > doing in the device tree. I think you will likely need to add a
+> > max77759-gs101-oriole compatible to the driver and then have the
+> > application specific values, and m5 gauge model algorithm as static
+> > info in the driver applied from the dedicated compatible. It would
+> > also be worth checking whether any more of those register values can
+> > be represented by the standard power-supply binding properties that
+> > already exist.
+>
+> I believe these are likely battery specific values, and were obtained dur=
+ing
+> battery characterization by the vendor (or Maxim). They can change (with =
+a
+> different battery supplier etc, hence I don't think basing this on a
+> max77759-gs101-oriole would be correct here.
+>
+> As we learned from the Pixel 6a battery updates, the same phone may use
+> batteries (e.g. from different suppliers).
+>
+> Either it needs to know about the specific battery model, or the values
+> should be passed from DT in some way.
 
-> [    1.385708][ 0] [  T163] usb 2-1: New USB device found, idVendor=0781, idProduct=55af, bcdDevice=10.85
-> [    1.385709][ 0] [  T163] usb 2-1: New USB device strings: Mfr=2, Product=3, SerialNumber=1
-> [    1.385710][ 0] [  T163] usb 2-1: Product: Extreme Pro 55AF
-> [    1.385711][ 0] [  T163] usb 2-1: Manufacturer: SanDisk
-> [    1.385711][ 0] [  T163] usb 2-1: SerialNumber: 323234323935343030343636
-> [    1.927603][ 0] [  T306] usbcore: registered new interface driver usb-storage
-> [    1.940511][ 0] [  T306] scsi host3: uas
-> [    1.940584][ 0] [  T306] usbcore: registered new interface driver uas
-> [    1.940843][ 0] [  T188] scsi 3:0:0:0: Direct-Access     SanDisk  Extreme Pro 55AF 1085 PQ: 0 ANSI: 6
-> [    1.941363][ 0] [  T188] scsi 3:0:0:1: Enclosure         SanDisk  SES Device       1085 PQ: 0 ANSI: 6
-> [    1.941697][ 0] [  T188] sd 3:0:0:0: Attached scsi generic sg0 type 0
-> [    1.941783][ 0] [  T188] scsi 3:0:0:1: Attached scsi generic sg1 type 13
-> [    1.942296][ 0] [  T189] sd 3:0:0:0: [sda] 1953459617 512-byte logical blocks: (1.00 TB/931 GiB)
-> [    1.942373][ 0] [  T189] sd 3:0:0:0: [sda] Write Protect is off
-> [    1.942374][ 0] [  T189] sd 3:0:0:0: [sda] Mode Sense: 37 00 10 00
-> [    1.942534][ 0] [  T189] sd 3:0:0:0: [sda] Write cache: enabled, read cache: enabled, supports DPO and FUA
-> [    1.943586][ 0] [  T189] sd 3:0:0:0: [sda] Optimal transfer size 2097152 bytes
-> [    1.976797][ 0] [  T189]  sda: sda1
-> [    1.977898][ 0] [  T189] sd 3:0:0:0: [sda] Attached SCSI disk
-> [    1.980406][ 0] [  T267] scsi 3:0:0:1: Failed to get diagnostic page 0x1
-> [    1.980408][ 0] [  T267] scsi 3:0:0:1: Failed to bind enclosure -19
-> [    1.980414][ 0] [  T267] ses 3:0:0:1: Attached Enclosure device
-> [    1.981068][ 0] [    C0] sd 3:0:0:0: [sda] tag#10 data cmplt err -75 uas-tag 1 inflight: CMD
-> [    1.981071][ 0] [    C0] sd 3:0:0:0: [sda] tag#10 CDB: Read(10) 28 00 74 6f 6d 00 00 00 08 00
-> [   33.819186][ 0] [  T188] sd 3:0:0:0: [sda] tag#10 uas_eh_abort_handler 0 uas-tag 1 inflight: CMD
-> [   33.819188][ 0] [  T188] sd 3:0:0:0: [sda] tag#10 CDB: Read(10) 28 00 74 6f 6d 00 00 00 08 00
-> [   33.843186][ 0] [  T309] scsi host3: uas_eh_device_reset_handler start
+Some of the fg-params values are characterization values like
+QResidual, Rcomp0 and others. I hadn't really considered different
+batteries for the same phone model. Given that information I think one
+would need to investigate in more detail how downstream chooses what
+battery it has and what set of values to use.
 
-So new devices are being made that can not handle UAS?  Are you sure
-there's not some other quirk that could be used here instead?  How does
-this device work on other operating systems with the UAS drivers there?
+Thanks,
 
-thanks,
-
-greg k-h
+Peter
 
