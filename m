@@ -1,93 +1,65 @@
-Return-Path: <linux-kernel+bounces-720521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 174A8AFBCC8
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 22:48:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1858AFBCCD
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 22:49:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF31E1BC2096
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 20:48:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAC103A6A1E
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 20:49:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CCED21CC63;
-	Mon,  7 Jul 2025 20:48:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD552220F5A;
+	Mon,  7 Jul 2025 20:49:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZmnoBVwr"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="SFp8HQFZ"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A5743597A;
-	Mon,  7 Jul 2025 20:48:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 644853597A;
+	Mon,  7 Jul 2025 20:49:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751921295; cv=none; b=UJgRvcvIL8jCYVxnqPJ3CPLky6GAGaAuP5GBCwbJLq6jZx0p5XrX556s0rUy3jToIHr7OGrBY+PPHMLBDxjxJr4e/a13Px2CzZXjFg1tY2/8lHmfsn5oWR/CjC2toPhj/a3QzlFqw5cWKsLULNAuvfpEQpBtOL7jUMlUI6+y7H0=
+	t=1751921362; cv=none; b=qDX7GBO2Opzx56jBjJdW8QQ7PQV9zT+xcVIBJGoferlRJmGM8kprRRm8+3U2nPyQzb2hFq7C6FGMBqniIp9+RwfoCy+ha7EIWEogy6iFw0dlJ48Lv2sapgERRdJvOvbipQfp2sVEWsvK64mhrT1wj1m1bjLB2Xvu3a/a02nIHuo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751921295; c=relaxed/simple;
-	bh=0LyE35m8eGiFlVySwAeG7x+SezPWKMVGpHRDKOL3s2I=;
+	s=arc-20240116; t=1751921362; c=relaxed/simple;
+	bh=OPwYRsV2ja4jyraAWVchxj36SMa89ln97ao5fJsFkJI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HdVfuReo1w8jjuPQD890oIyn+DX8xWTXhjrm72S8w3aCD8hTpU6mGmLHXXQpJKrufiRxKkxmL5h2Y0nn5dyltdEavRQgvnwPXmTzJfDLOWnpkJalCu/Tk+U9/uuwrx0gnCuMGjnqHDb1mU+CD8kta3amUbLzCfXFK7oIc245n1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZmnoBVwr; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-315f6b20cf9so3710524a91.2;
-        Mon, 07 Jul 2025 13:48:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751921293; x=1752526093; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XF8yJPEDjiuHbqKfKD0xRU3CXXpK0mf7JKANzcAD7fw=;
-        b=ZmnoBVwri+Ys0YEQv94ofKhn0MjpnR2F9iBfE76zsLOdn246K7Ni4Ze2vkSweUT06A
-         5azU0w06G6ueVwt/yYUkcrvR+qHR6nl9/anmEAAazecwrSKB/sM1U3J4VmI93jdM623c
-         F/wDmNmWMwkA0qiGx1Iacfl3JM48r8vpPYDg4Oqb3bqbHsghVZxZJlpLfGmm2Ka68oPT
-         3VPo5512XSybxMY5aezGEEXyJs2uFbVjZxnhSU1xR+40MkLC8QwYbQO+KNCIOCtS1ux4
-         xPPmEY057h1tgD58fDz6jr2Wx8Jl22gi7QnIPsPwVC+MK/K7F5ehEXFz484y+kpdEa0D
-         +n/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751921293; x=1752526093;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XF8yJPEDjiuHbqKfKD0xRU3CXXpK0mf7JKANzcAD7fw=;
-        b=aQ2CXH4nLL2xsAS+8WM9xgXTjhkhB5L8CblO8Xf3r6W0bNaMDbBCgecDya72XZejek
-         iRxFJjcxOQvOOq6Oci73FCP6NyPi6vRKX5re6GTRoIL/f1+RHB0hko/+omc9hf57HIFu
-         gL70QFDzcE3QyUDmtocUzac+m8zuhcuq6zMIrasJHJ2vUMfh2vcI/6JvaK313W04FIRI
-         t2XI2yuZQw6fkXWsNc5GHopAwGlIgvOysrGbdkxGm4V4NyqBoeqkEVyC0rP+msjKJRHo
-         XS1NgA0sYfg7beCOCxpR/G+qV8ajIbKzlSKsdMP5OFv6n+VaSbrAq6/HOZ5AEG4KCEOa
-         VfUg==
-X-Forwarded-Encrypted: i=1; AJvYcCV9QI9h0Jz8blfoyCE7icXPtcotprpqD69vsf3O4VNs5eYHIey47VGXguGhoFXLXEEphGm0Gb5toYCK5EM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjZYQgXrnv7s40wLk65H39I3nAn8C0NYE+FPL979YsYJ0rrevr
-	D/XBDMMcGkDivwh86KBEjHKzWl0ah4PHQEWrtIPHUKyJs3p7gFpVD2Wz
-X-Gm-Gg: ASbGncvLMcVNPMu3mA2jkYWYhus5WlpbNnBkYo2cCXT0ltX8Q1uo/ahG+QZv146NoR+
-	71I8pnq+vByn3ria9MLKErbTcOHJxcCGA58ymAidzsls3ZDemwy0zxbq4b6wPVLvWQT0BkkgDGk
-	BoK6M0v0XFfglu9Jdg+/YwUsz9H1EtD2qgfeSnaBXTuroYXgxwLPEo3HYOasOy1ABul3vyFXgZ9
-	CJgSy0Ozaxh78BpyfMk5rVYFbWcUZDm99OUBnHBiYQCF8kPCU/nnbYKamN59uVYY8j6OY+Atilg
-	YULbxjNC2DAmxeFKzkLTKsjuLx3lG5ryWSAUcoz+8C3DsbW8fCPOb0AzzWt403qnxiQO47dI/nM
-	fNKDr+a310A==
-X-Google-Smtp-Source: AGHT+IFnGPopEwxi19+AVmddL6Q79QsAwXX8s12yZFjnSUGbziH4oWCaeqZ0smSWjCzluneBrcJuwA==
-X-Received: by 2002:a17:90b:51d1:b0:312:eaea:afa1 with SMTP id 98e67ed59e1d1-31aaddb4b02mr21412268a91.29.1751921293142;
-        Mon, 07 Jul 2025 13:48:13 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31c21d67b7dsm210122a91.11.2025.07.07.13.48.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Jul 2025 13:48:12 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Mon, 7 Jul 2025 13:48:11 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
-	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
-	hargar@microsoft.com, broonie@kernel.org
-Subject: Re: [PATCH 6.12 000/413] 6.12.35-rc2 review
-Message-ID: <6bd90403-d7ed-4683-90a8-98f945a3ae36@roeck-us.net>
-References: <20250624121426.466976226@linuxfoundation.org>
- <3037c3e6-558b-4824-8c78-a36990f4e4d6@roeck-us.net>
- <2025070613-escalate-action-761d@gregkh>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XFRHmh2EeN4mHqM0Fy0Vdtl9s9DRh2xkX3zNEq2UnPLj1lLJ98JW4F+5UgSmIJPL52TWzBO9+Rbree4VlW4U1IyRdrcf1pvoYScmyIsr5/OLU9I9CwLR+3wCW+bL4RT0F/DPt4W2bWgGzwYy/hEkCzv+nROPRP6dk9NGNBHV+FQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=SFp8HQFZ; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=g0QMBx8KfGZY6hoKAphVq9VC9pOgKSRRzHza0BduFT8=; b=SFp8HQFZS9B6BcK7cJRTTGidpl
+	2yXK35INgDDJW82fCJRD5mNHWCUCOnHkZYmGyLfVMplP0dNWjjW2d3ld+FJ1u25gTTYATnUEyxQ+c
+	HM5BHMx+PD1D/56MBBCe1/ZbcONdRV3XqyyQTfzDrpVAe8o4uWLq5+c1m36LID9Vt/Vkn/6y0bjqe
+	Wn8N9b0+OxF+bozpsBPnRXUg/8HZwTz/Tm9Qkfo+0Jk92bOs5BDkHKKEbNxinHXDWncPdO7fEonDz
+	5OsF0SG45UiFFw99ftjXlJyUxLv9zvhV1wW8h414N0mC5qOOcWeosShyv6U4Y5UTLrbiEbNWYkM8v
+	0ivzN53w==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uYsm6-00000003jOm-34RN;
+	Mon, 07 Jul 2025 20:49:18 +0000
+Date: Mon, 7 Jul 2025 21:49:18 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Max Kellermann <max.kellermann@ionos.com>
+Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 20/21] __dentry_kill(): new locking scheme
+Message-ID: <20250707204918.GK1880847@ZenIV>
+References: <20231124060422.576198-20-viro@zeniv.linux.org.uk>
+ <CAKPOu+_Ktbp5OMZv77UfLRyRaqmK1kUpNHNd1C=J9ihvjWLDZg@mail.gmail.com>
+ <20250707172956.GF1880847@ZenIV>
+ <CAKPOu+87UytVk_7S4L-y9We710j4Gh8HcacffwG99xUA5eGh7A@mail.gmail.com>
+ <20250707180026.GG1880847@ZenIV>
+ <CAKPOu+-QzSzUw4q18FsZFR74OJp90rs9X08gDxWnsphfwfwxoQ@mail.gmail.com>
+ <20250707193115.GH1880847@ZenIV>
+ <CAKPOu+_q7--Yfoko2F2B1WD=rnq94AduevZD1MeFW+ib94-Pxg@mail.gmail.com>
+ <20250707203104.GJ1880847@ZenIV>
+ <CAKPOu+8kLwwG4aKiArX2pKq-jroTgq0MSWW2AC1SjO-G9O_Aog@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,42 +68,23 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2025070613-escalate-action-761d@gregkh>
+In-Reply-To: <CAKPOu+8kLwwG4aKiArX2pKq-jroTgq0MSWW2AC1SjO-G9O_Aog@mail.gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Sun, Jul 06, 2025 at 08:03:56AM +0200, Greg Kroah-Hartman wrote:
-> On Sat, Jul 05, 2025 at 12:37:52PM -0700, Guenter Roeck wrote:
-> > Hi Greg,
-> > 
-> > On Tue, Jun 24, 2025 at 01:29:53PM +0100, Greg Kroah-Hartman wrote:
-> > > This is the start of the stable review cycle for the 6.12.35 release.
-> > > There are 413 patches in this series, all will be posted as a response
-> > > to this one.  If anyone has any issues with these being applied, please
-> > > let me know.
-> > > 
-> > > Responses should be made by Thu, 26 Jun 2025 12:13:28 +0000.
-> > > Anything received after that time might be too late.
-> > > 
-> > 
-> > Some subsequent fixes are missing:
-> > 
-> > > Tzung-Bi Shih <tzungbi@kernel.org>
-> > >     drm/i915/pmu: Fix build error with GCOV and AutoFDO enabled
-> > > 
-> > 
-> > Fixed by commit d02b2103a08b ("drm/i915: fix build error some more").
+On Mon, Jul 07, 2025 at 10:39:27PM +0200, Max Kellermann wrote:
+> > Busy loop here means that everything in the tree is either busy or already
+> > in process of being torn down *by* *another* *thread*.  And that's already
+> > in process - not just selected for it (see collect2 in the same loop).
 > 
-> How did you check?  This is already in the queues for 6.6, 6.12, and
-> 6.15.
+> The busy process isn't doing anything. All it does is busy-wait for
+> another task to complete the evict() call. A pointless waste of CPU
+> cycles.
 > 
-...
+> > The interesting question is what the other thread is doing...
 > 
-> They are going to be in THIS release, with one exception as noted above.
-> I think something went really wrong with your checking scripts :(
-> 
-Frankly, I have no clue what I did ;-). I _thought_ I pulled the branch
-and checked, but apparently I didn't. Maybe I was dreaming.
+> ceph_evict_inode() is waiting for the Ceph server to acknowledge a
+> pending I/O operation.
 
-Sorry for the noise.
-
-Guenter
+Yes, but where does that ceph_evict_inode() come from?  What's in its call chain?
+Is it several shrink_dcache_parent() fighting each other on the same tree, or...?
 
