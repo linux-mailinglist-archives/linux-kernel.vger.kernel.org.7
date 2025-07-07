@@ -1,509 +1,305 @@
-Return-Path: <linux-kernel+bounces-719379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E812AFAD5A
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 09:41:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2160AFAD63
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 09:42:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9BC5516A432
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 07:41:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67141189B9BC
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 07:42:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B953289E17;
-	Mon,  7 Jul 2025 07:41:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEDF228A1F6;
+	Mon,  7 Jul 2025 07:41:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Vi2wDCXs"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2066.outbound.protection.outlook.com [40.107.236.66])
+	dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b="T2UrGMXE"
+Received: from lahtoruutu.iki.fi (lahtoruutu.iki.fi [185.185.170.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 533BF279DC0;
-	Mon,  7 Jul 2025 07:41:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0C7A21FF29;
+	Mon,  7 Jul 2025 07:41:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.185.170.37
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751874082; cv=fail; b=UlLI0XLle2IhZD3WuWwGVYPX6jwzHVxFsgNAbplj45Ib+2NHk/t9Qrg/kT78V5Zsowow4E7MWMOE+7sBALhkQf5SIMEp6qaoLazeMKSYXkSo7w9weYVI4R+202cYJ4ZX9ZOR9g5TVFrED7LuwC1vHZkBEMpnafUBarEKL2/TKbc=
+	t=1751874115; cv=pass; b=YVN0uEEBGcFjxGwxAvFBw/77GMWOpcNOfvnLbfmd68S7t/oHyIVx/6YCmM95TArmjhQWVXHo2W50c5l9+3zvBbTleK45CT3jfFLnuIeBVeCNPCP/E771Y/kO8kXl/s4fUhtA/RIo43eNLlm3om605Pum2fIej6tcQoDaIIcsH/E=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751874082; c=relaxed/simple;
-	bh=B4PMfFhB9xbbnUPX5bl6a+NbiaFO0X0UhKTmBrBhhTc=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=LM4gFhdX2Hk1HkRAB8XHUOlkgKdDIqEv4Ib2eg6foeRnqfEH+5LaxMV83+kDRO6wnzdYjADjVYHsUX4v5tT0+U6WgaY4KYTaqEfU4wRATZ7ru97QIKfLoUFxBu5flce2n67j0P9svLOGK6JVMEIxV2C8HQta2jbpr2s667mGD1Y=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Vi2wDCXs; arc=fail smtp.client-ip=40.107.236.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=mImHEGzEJFgAhC6xm222rkjAys9setcfwtAgEAHYckv2+IE21AS4nO7fX25HAAd2CtiFbiajxhvtKo1JqmIIzBnLH4lsFgYYLLSsF4FBRTiKVszBDd5kIiJNDpw2TpTpJNhFRq8xvT58mXEiyYO+tDu5cPRqu/GkzbKmcm4kuOHrTlYhwgi8wHKQT0Y3B04ZtYH+Ox81CXLVf77z3MBrvHBQxDS8Wx/FuB4la2atVcP2GuSJeMK5t7fdbvENf8CHnnVAaZm8SqgHMJx96BRcOw5Kijxn+eeDZmeK/cGstUK0hG7u3CcFbsvTWgmr9xRzptj1DQZtsqrAFH3c6uOy+w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=iwTQe4gD2q8C0CNnXKBBzjOx9f1TZaoez635t+0Ukws=;
- b=cik+U4EaRdc60MICSZN5NC5XRi60OMinryYBgkj4L3jRfeB4j56MbUUYqdAAv1/PID6L9dfFBWisOYagdFeIqLwqUIFxKTpxCEZxgrq0hG1lHDj5bb0J3oe8nopM+t6K3Jir8iH9PXqvpvs1AqOMzF8y26tdTkzc09w52xdTjvt7aDGzpU9t+65YeHMF4I4BFCM+Iyltvuyr0eVoOGoggisTiuDLLOwEirHt7TeK5GFVdpV4/ZrAHUhjjiGEhuLH6JvHYOjKpASyW7DJdIw/2nwZ6GgXXGxvPf+JivUqorPySK8i3yxrCEjZRGNa1yT1ckUWkv4ejmxv2Aqp1qT5gQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=iwTQe4gD2q8C0CNnXKBBzjOx9f1TZaoez635t+0Ukws=;
- b=Vi2wDCXsLvdZEwy9hYPtqeyzS4fNSvSqlXB3Bs0yvthJQ+7pM4cPtfcemgLuvEAqjCHhkZmKom0rHFkj2Lj8KCtDlKIQXC47LjfOsBVFefhCHWGxf9m6Enr3Nbd09vP+PQRVMdiaOCiuh3RZixIYYZELDTtU/SbGSnWgO5qRLSc=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DS7PR12MB6048.namprd12.prod.outlook.com (2603:10b6:8:9f::5) by
- DM6PR12MB4337.namprd12.prod.outlook.com (2603:10b6:5:2a9::12) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8901.24; Mon, 7 Jul 2025 07:41:14 +0000
-Received: from DS7PR12MB6048.namprd12.prod.outlook.com
- ([fe80::6318:26e5:357a:74a5]) by DS7PR12MB6048.namprd12.prod.outlook.com
- ([fe80::6318:26e5:357a:74a5%5]) with mapi id 15.20.8901.018; Mon, 7 Jul 2025
- 07:41:14 +0000
-Message-ID: <1f18d7a3-b515-4096-aff5-1aea31ce4f7e@amd.com>
-Date: Mon, 7 Jul 2025 13:11:00 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 14/29] iommufd/viommu: Add IOMMUFD_CMD_HW_QUEUE_ALLOC
- ioctl
-To: Nicolin Chen <nicolinc@nvidia.com>, jgg@nvidia.com, kevin.tian@intel.com,
- corbet@lwn.net, will@kernel.org
-Cc: bagasdotme@gmail.com, robin.murphy@arm.com, joro@8bytes.org,
- thierry.reding@gmail.com, vdumpa@nvidia.com, jonathanh@nvidia.com,
- shuah@kernel.org, jsnitsel@redhat.com, nathan@kernel.org,
- peterz@infradead.org, yi.l.liu@intel.com, mshavit@google.com,
- praan@google.com, zhangzekun11@huawei.com, iommu@lists.linux.dev,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
- linux-kselftest@vger.kernel.org, patches@lists.linux.dev, mochs@nvidia.com,
- alok.a.tiwari@oracle.com, dwmw2@infradead.org, baolu.lu@linux.intel.com
-References: <cover.1751677708.git.nicolinc@nvidia.com>
- <49a93d92ce657cf6a0d588d2b31ad3600ace21f7.1751677708.git.nicolinc@nvidia.com>
-Content-Language: en-US
-From: Vasant Hegde <vasant.hegde@amd.com>
-In-Reply-To: <49a93d92ce657cf6a0d588d2b31ad3600ace21f7.1751677708.git.nicolinc@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PN4PR01CA0102.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:2ac::7) To DS7PR12MB6048.namprd12.prod.outlook.com
- (2603:10b6:8:9f::5)
+	s=arc-20240116; t=1751874115; c=relaxed/simple;
+	bh=EEvrguarnDhVlbcjHI4o/Byu1O/5VKQZB2CJ3M6w1BU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Q3HjWxplvoNmw55rZXMPjkH3SYQDjaBt4iSkWPHfCd4F6hWq3ah0564TOiWmeCW0RGKa4pey/dRMI+zrDlXbj4VQVu770/WlefWfX4BTYsDZQfNJzcaldGxA9UGT2/BU9OhZQ527AZhGh5gSA7+y9Xqn18ebB5/x+7+VQIGKiaM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b=T2UrGMXE; arc=pass smtp.client-ip=185.185.170.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
+Received: from [192.168.1.195] (unknown [IPv6:2a0c:f040:0:2790::a03d])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pav@iki.fi)
+	by lahtoruutu.iki.fi (Postfix) with ESMTPSA id 4bbGQW1GK8z49Py8;
+	Mon,  7 Jul 2025 10:41:39 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=lahtoruutu;
+	t=1751874100;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=7+mwUpiMnx981qagHlNXIXl+8q7sLqHuoxEHPtxJ+WM=;
+	b=T2UrGMXEGTMBnh13iGVE1koeNS6HetAJQ3Gy2TbgWLWMtyNBs5b4nSbSlDkvz6K9fDTgAx
+	XCL90dBc2nD9KBJQvRjs0a4C+FA8i49VaODfJRp7oHAf6tRpOWrGOFMPeqGU2uws6jxo92
+	xMMpkDUhc+n+KQt//+lFYfvxFWPaQLp6Af+a4KUT4XKdKBZUXbj6k9eXdb9J6U5rM9m35o
+	JgQIwLeaiJvYpQ0Y1nCfCaXI7aU4/xdcLNZ6ddw62VKwmqqkIT8UEYBBGvXUpIoUGQ/CT3
+	TwYa4R0Jlu7xrS1esl2GQixFRJCRbxuTb+ukBO8vyKvL4UdC64eg55l3bpomoQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
+	s=lahtoruutu; t=1751874100;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=7+mwUpiMnx981qagHlNXIXl+8q7sLqHuoxEHPtxJ+WM=;
+	b=NGLlF7FQ3s3A3qWjaXpn+sVyseNw4M96YHTeq49loEg2pjLmIeX0C7Z/lEKhtBHkCdI5qm
+	RAvj9FDleMLgnF7S2A73nic0aSZ48tFFV5wha/XtcvAQnCiFIbOaDvKR0HEyzsDf5TVWPB
+	wQyJQYWyl08yFuU/BSJ9Uq0HnTYDrEIgY2VvdcTaQfS36AcHIYN386o/dcYAbCrlvv6zPj
+	vkj3Q9whHUK0EPY0pqqTqtjl74Z+fer8Su1U4alSIeZoaJie0izH0vMX294KXkctZ72czh
+	WA3uFikqOe7ZHc4tKEkDzDm0mAB3JGBhdwIWqczfYIAsxpBNVAjJVy8Y3hr8Yg==
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=pav@iki.fi smtp.mailfrom=pav@iki.fi
+ARC-Seal: i=1; s=lahtoruutu; d=iki.fi; t=1751874100; a=rsa-sha256;
+	cv=none;
+	b=aHoEWx8VCg26aHNgLKKR3i+iFDU/cWuiQagEv56T1IzKDwZAdu3cho78pnBk6KNeNvlhKP
+	admPgzOThqaFwRgXrfYb8sQuTZgvEgzgbvXS0xYRQeC+wDUeEKhtCBeNZO3oRo2uGcFP5L
+	QRsAkiBDkdRXS9bGUCctMdtthbqHro9kM2FqvkKjQ6Qx/8ugH1D3UqIBczsVKVNsB93at+
+	4B/xzF/wUmas3iy+h0iHLFpEKuBiOCmlQCxiz1hVk4gPRGmJOk8h3R9l8CbHm/J2JV1w/j
+	CwO4+FE8ONDqQZ4qBxW7dX+7QNCl63hrztdVnERW4jNqmPwsdOCotsbpG6dLyQ==
+Message-ID: <3586e2f53a1a4c0772515846cf5ec91044e2cfec.camel@iki.fi>
+Subject: Re: [PATCH v3] Bluetooth: ISO: Support SCM_TIMESTAMPING for ISO TS
+From: Pauli Virtanen <pav@iki.fi>
+To: Yang Li <yang.li@amlogic.com>, Marcel Holtmann <marcel@holtmann.org>, 
+ Johan Hedberg <johan.hedberg@gmail.com>, Luiz Augusto von Dentz
+ <luiz.dentz@gmail.com>, "David S. Miller"	 <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski	 <kuba@kernel.org>, Paolo
+ Abeni <pabeni@redhat.com>, Simon Horman	 <horms@kernel.org>
+Cc: linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Date: Mon, 07 Jul 2025 10:41:36 +0300
+In-Reply-To: <df9f6977-0d63-41b3-8d9b-c3a293ed78ec@amlogic.com>
+References: <20250704-iso_ts-v3-1-2328bc602961@amlogic.com>
+	 <bebb44579ed8379a0d69a2f2793a70471b08ea91.camel@iki.fi>
+	 <df9f6977-0d63-41b3-8d9b-c3a293ed78ec@amlogic.com>
+Autocrypt: addr=pav@iki.fi; prefer-encrypt=mutual;
+ keydata=mQINBGX+qmEBEACt7O4iYRbX80B2OV+LbX06Mj1Wd67SVWwq2sAlI+6fK1YWbFu5jOWFy
+ ShFCRGmwyzNvkVpK7cu/XOOhwt2URcy6DY3zhmd5gChz/t/NDHGBTezCh8rSO9DsIl1w9nNEbghUl
+ cYmEvIhQjHH3vv2HCOKxSZES/6NXkskByXtkPVP8prHPNl1FHIO0JVVL7/psmWFP/eeB66eAcwIgd
+ aUeWsA9+/AwcjqJV2pa1kblWjfZZw4TxrBgCB72dC7FAYs94ebUmNg3dyv8PQq63EnC8TAUTyph+M
+ cnQiCPz6chp7XHVQdeaxSfcCEsOJaHlS+CtdUHiGYxN4mewPm5JwM1C7PW6QBPIpx6XFvtvMfG+Ny
+ +AZ/jZtXxHmrGEJ5sz5YfqucDV8bMcNgnbFzFWxvVklafpP80O/4VkEZ8Og09kvDBdB6MAhr71b3O
+ n+dE0S83rEiJs4v64/CG8FQ8B9K2p9HE55Iu3AyovR6jKajAi/iMKR/x4KoSq9Jgj9ZI3g86voWxM
+ 4735WC8h7vnhFSA8qKRhsbvlNlMplPjq0f9kVLg9cyNzRQBVrNcH6zGMhkMqbSvCTR5I1kY4SfU4f
+ QqRF1Ai5f9Q9D8ExKb6fy7ct8aDUZ69Ms9N+XmqEL8C3+AAYod1XaXk9/hdTQ1Dhb51VPXAMWTICB
+ dXi5z7be6KALQARAQABtCZQYXVsaSBWaXJ0YW5lbiA8cGF1bGkudmlydGFuZW5AaWtpLmZpPokCWg
+ QTAQgARAIbAwUJEswDAAULCQgHAgIiAgYVCgkICwIEFgIDAQIeBwIXgBYhBGrOSfUCZNEJOswAnOS
+ aCbhLOrBPBQJl/qsDAhkBAAoJEOSaCbhLOrBPB/oP/1j6A7hlzheRhqcj+6sk+OgZZ+5eX7mBomyr
+ 76G+m/3RhPGlKbDxKTWtBZaIDKg2c0Q6yC1TegtxQ2EUD4kk7wKoHKj8dKbR29uS3OvURQR1guCo2
+ /5kzQQVxQwhIoMdHJYF0aYNQgdA+ZJL09lDz+JC89xvup3spxbKYc9Iq6vxVLbVbjF9Uv/ncAC4Bs
+ g1MQoMowhKsxwN5VlUdjqPZ6uGebZyC+gX6YWUHpPWcHQ1TxCD8TtqTbFU3Ltd3AYl7d8ygMNBEe3
+ T7DV2GjBI06Xqdhydhz2G5bWPM0JSodNDE/m6MrmoKSEG0xTNkH2w3TWWD4o1snte9406az0YOwkk
+ xDq9LxEVoeg6POceQG9UdcsKiiAJQXu/I0iUprkybRUkUj+3oTJQECcdfL1QtkuJBh+IParSF14/j
+ Xojwnf7tE5rm7QvMWWSiSRewro1vaXjgGyhKNyJ+HCCgp5mw+ch7KaDHtg0fG48yJgKNpjkzGWfLQ
+ BNXqtd8VYn1mCM3YM7qdtf9bsgjQqpvFiAh7jYGrhYr7geRjary1hTc8WwrxAxaxGvo4xZ1XYps3u
+ ayy5dGHdiddk5KJ4iMTLSLH3Rucl19966COQeCwDvFMjkNZx5ExHshWCV5W7+xX/2nIkKUfwXRKfK
+ dsVTL03FG0YvY/8A98EMbvlf4TnpyyaytBtQYXVsaSBWaXJ0YW5lbiA8cGF2QGlraS5maT6JAlcEE
+ wEIAEEWIQRqzkn1AmTRCTrMAJzkmgm4SzqwTwUCZf6qYQIbAwUJEswDAAULCQgHAgIiAgYVCgkICw
+ IEFgIDAQIeBwIXgAAKCRDkmgm4SzqwTxYZD/9hfC+CaihOESMcTKHoK9JLkO34YC0t8u3JAyetIz3
+ Z9ek42FU8fpf58vbpKUIR6POdiANmKLjeBlT0D3mHW2ta90O1s711NlA1yaaoUw7s4RJb09W2Votb
+ G02pDu2qhupD1GNpufArm3mOcYDJt0Rhh9DkTR2WQ9SzfnfzapjxmRQtMzkrH0GWX5OPv368IzfbJ
+ S1fw79TXmRx/DqyHg+7/bvqeA3ZFCnuC/HQST72ncuQA9wFbrg3ZVOPAjqrjesEOFFL4RSaT0JasS
+ XdcxCbAu9WNrHbtRZu2jo7n4UkQ7F133zKH4B0SD5IclLgK6Zc92gnHylGEPtOFpij/zCRdZw20VH
+ xrPO4eI5Za4iRpnKhCbL85zHE0f8pDaBLD9L56UuTVdRvB6cKncL4T6JmTR6wbH+J+s4L3OLjsyx2
+ LfEcVEh+xFsW87YQgVY7Mm1q+O94P2soUqjU3KslSxgbX5BghY2yDcDMNlfnZ3SdeRNbssgT28PAk
+ 5q9AmX/5YyNbexOCyYKZ9TLcAJJ1QLrHGoZaAIaR72K/kmVxy0oqdtAkvCQw4j2DCQDR0lQXsH2bl
+ WTSfNIdSZd4pMxXHFF5iQbh+uReDc8rISNOFMAZcIMd+9jRNCbyGcoFiLa52yNGOLo7Im+CIlmZEt
+ bzyGkKh2h8XdrYhtDjw9LmrprPQ==
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB6048:EE_|DM6PR12MB4337:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3b0751d8-3441-4dc5-047e-08ddbd29a609
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|1800799024|366016|376014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?UnhNSzJYdXA3eWpxc2Y5S2c1RVJ1UHY0VCtFS0dmby9nUVJLQU1tL1F5U2NC?=
- =?utf-8?B?WkdEUEozNFk4M0V6aFhMTDFRQXo1ck0zWnlSL2pRS202dXFSejRKU2RVSHhv?=
- =?utf-8?B?bGlWWDFtVXl2VG9nZXNGbUVmT0N0RzRRTlFFUW9nZmw1UVJ3bHhzNVNSTE00?=
- =?utf-8?B?M3RLazl2TXM5Zno4TjhURHBXMi91YlRwZ3JiNUFSVHl1KysyekJVRWdMb0Vy?=
- =?utf-8?B?cWpXUng1U2tVYk1ESCtzRWJBY2Z0bUNHUHlSa3dZckgzRzkzYjVtUzFOb3l2?=
- =?utf-8?B?cmFuS0VsUWt1YzBRcGk1ZUQzeC81SktJZXVvcEpqQlFDTFdRWDR5QXM3YUtC?=
- =?utf-8?B?RThzMkxPYmFyNjNNQmgyRElPOTg0UENaUEp2V0E1SytrNHFwZ2pESFJsT2dB?=
- =?utf-8?B?d0hxaGR0LzEvTStGMDhEdG1XYnNacHp3ZklHekxDWDZaTFVxWnB6Z3JDMDAv?=
- =?utf-8?B?MXNwZnhiTll0QzlMU0hnTGY2K3ZzSWVuWWpDeWtJWSszclVQcFNjRGV2QTVa?=
- =?utf-8?B?bHpjZFZKa0dVWXhDUGZjZmN4cjR2YzZOV09JaWxZSUdYZW83Vm5OeXVrSE9q?=
- =?utf-8?B?SnpZaHMxSWhsZjgwYjV2Yk5rd1ZTVWV1enB5QUxpeHo5Q3JZY05BYjdrUEww?=
- =?utf-8?B?MWZMSmQ2RVhEaFVtdUVNYnVoRVU3T3F1WUVUelUrK3NBc0JjbUJLZE96SElR?=
- =?utf-8?B?d0ZpMURVZ015SnUxWmZxMlNjeUNJV1lMdmlOYkpsNVBDeFc2R1BHUk43ajkr?=
- =?utf-8?B?THRHcm95RENSQ3RRQzJ5QjVWTUV6RExKaU56anc2aHFCWmVJc3dLRjFQcjdC?=
- =?utf-8?B?Qk9WNGRkaTYrdndkdkdwbTJJRWhZejFvUkYxbTkxV3pRWTdwTndmREg0VVFN?=
- =?utf-8?B?TUs5bTNvMDlJcTkrMnR0RGFyeU9VTWRNMU40YkJYV0FDaFR5T2hkQ2ZTZTZG?=
- =?utf-8?B?TlJBeW9sL3JDMlJIVHIyeHZmNFQ4a3pvdmpBaFg4Y1N1TmYrQkt1SkpDbi9F?=
- =?utf-8?B?RXg3WklFdmdHNDFoLzZLRlhvVDY0NzVDUVJlNVRzd2lyMU8wNDBjTWpnUG1W?=
- =?utf-8?B?SWNNYmZCeEF5aEJqSTRXN0o3ZkUrNzVCYjJYZ202WVFqZWZzWk5IajNOQXBp?=
- =?utf-8?B?UmFMVWJPbXJhRFdpWjQya0RqaHdHSVpKYkk0K2lKOGdXek9rQlBZbm9ZM09v?=
- =?utf-8?B?c3R6RkdWaGpnekNBS2R1dWZkRXJIQTVINHRTNm52aDdkQlAzRG1kLzBrNU01?=
- =?utf-8?B?SERRR0RML1ZrenVBT0Z0QnhqZFkvMkxTUlNTWXNEMVRBeUk5VS96bndIMHpL?=
- =?utf-8?B?cVZ0a3NQcklTYldMYXBEL0krZmZYSGhiRi84K1E3Y1FMbTQ2SDgxa24rUjhU?=
- =?utf-8?B?Wmw1dWVnbzM2am1MRUtqN3NtQk0xU3NMVnR6UVZvcWNNb2FoZUM2QU5RaWJZ?=
- =?utf-8?B?SGVjb2NhSTJIMGhrS2hJNzlCK2psdmtMd25zZ3NYemVPeG95azhDODVyRjFK?=
- =?utf-8?B?UmdSTjAzSXZiVU96TDdRWDJHbUhmWEhaV3V2cTNMQkR5bGtKeXkwQzY5c28v?=
- =?utf-8?B?MFI5bEFqWkpFUmdwWUNrRlVzUVFycFY2U3AwczlWK1UrSWdhQVZnV2hpZzhO?=
- =?utf-8?B?OGlIMVVUR3ZtUVMvdEhrTHgxMkN4RXBObnhCbUl2dnc2VU95M054dEVvdlB0?=
- =?utf-8?B?YmhNbEVpcE1zZnd2QVZ0U2hRT1FOT2V4MlpGaXhEMzNGMW5SSHpoeHZKWGp1?=
- =?utf-8?B?TDJVc0ZmWjl5bmpONi9DSVozMTlQeGVkSVpzVmo0L0JJWVh4amYwQmhUOXhw?=
- =?utf-8?B?aTUybTBFOUUwK2VJemJsQ0JGdGZtbXFmVmxXbDhvYUJPc25rdGl4NzByNlZO?=
- =?utf-8?B?ODlkZkZTdVNoVHFQZjBLdDVFa1N4bWJEVDZlSUdPSUhjS2psQmVtRGt4YnJw?=
- =?utf-8?Q?Lki01KOK6EA=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB6048.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(366016)(376014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?aTBxMTBaZXlpODBCYm5FVTdVYjY3NzhZLzZVOFNwQ3gvQmp3eEJ5OU16MXlm?=
- =?utf-8?B?aEtuT3VpaVcrL1cwYUFacjZTTGlNKzZpbGhaYW9FTm5MaTVUaXFQb01qLzN3?=
- =?utf-8?B?NUIxWFB3Q2U1V0psbjhuSnhUNitZdFdwbmVnMGhLbE0yU2pOTjl1NHM1bE55?=
- =?utf-8?B?UlVnNWlOTVU4bTRNcHJqWHdwWW1NbEhuWkpTQlNQODhNZVZiVk0vZ0FKck5S?=
- =?utf-8?B?OXVhZGRIa3RHUkR0bXFlWk9hQ1g4cGlhRk13RDVBdW4vbGtXWUpobEh0bDRY?=
- =?utf-8?B?amFxMmNsUDJITWVRUllzVzZwZDNFTFVBenZEL0t3ZHliQ3hRTUc4NjZORkVp?=
- =?utf-8?B?MjB3eXdJM0R2NFhkWVJOWVVFcWgxcDZzN2NQL3JTVlhjSXVOK2dvVGZ2alF6?=
- =?utf-8?B?M2lmUnVUOFFpMzBjOUpRenZFZzNsbDd3RnBTZ1pROHU0RllIOEVLVGY5YndH?=
- =?utf-8?B?cGxCSk4xWDdLR0QzOFN1L2F4VXVZMFNvd1c3eGtFa0J2ZFFWMFBSdWk4Vml2?=
- =?utf-8?B?VUgyRzhDQkl5MEpRK3pIM2VnUml3cDNKS3lMTCtsSUVIZ3NkOFRaUEpwc25n?=
- =?utf-8?B?ODNyOXczSVp0MG5sT2VVSFlCMHNFWnRycHNFbHVIS3FzdTVrcHRMRVB5NU1U?=
- =?utf-8?B?eUx1YU85Qmk4RDRaYUhKUlVCdTBwRzhHL3VaY00zVHVISnZPU1NaeUtUdlBQ?=
- =?utf-8?B?SE4rdnZQM0FZS0JLc3MxOFgzdmFNUElqV0V6UkZUNllFTDhxakNkNHczdnRr?=
- =?utf-8?B?TGFwdENjYUN2TGhQYmpEZHdVdnphREFNa3lpWDYzNTEwNzZKMWVrRVFOWFl1?=
- =?utf-8?B?Q0psdWF3dE92ZFBTTlFNcC9qT2VldHdreFpNbFBxMm5Rc1VWd0xzemJyN3px?=
- =?utf-8?B?RGNrblJYTDVQa21Ma1ZDYitXU08rUmNiOHZQTkkyWTlGa0JWOXZJbmtXZmkz?=
- =?utf-8?B?L0I5aWpCT21jOU9GL1BkQVhacCtya2NnMk9LWTVQUlRPUmU3ZWI5N3U0R0tx?=
- =?utf-8?B?UGU3ZmhIeUZ6emRsLzNvQnNoRzJDaTBpQWgwaVdsVGdBMlJwUVl2UXptTG5J?=
- =?utf-8?B?aVFDODg1SSt0N0lGVW9HUHV0OGxjQW5OeUk2VkxxaExxdmd0TFMzalQwWUg3?=
- =?utf-8?B?U0xEVy9RTnRET3hPM0Q2ZUZxZ1hrYm52dHlYVnQ5WUtwUm1Yc2dKOXhobVNw?=
- =?utf-8?B?N3pTeVZyanhQa0FvSkFOTVhSZDgraTFLMTBISWU3bTk4MzVkdnJjUnJveWNx?=
- =?utf-8?B?R1paQmpUdUg0eUgvOUplOFNrVXVaWWY4M1U0bXgyblNzZmdsVnFTenB0K2U2?=
- =?utf-8?B?emFLQVorQWZGVG5LWlhaRWcyN1QvaHVMWmJ5dzAxcUs3T1pETlMrNmdzMFp6?=
- =?utf-8?B?NFVRV3k4Wk5JZkh1b0FRMWlGcll5ejNpYTI1a21ZU000Y1F2K2dhU2FvK0VH?=
- =?utf-8?B?Y1pSaEtnOS9WbVpXbmpZVWN2eEthWHV5ZnBtZG9ENWczVWF2NnN4S0lzOFZ5?=
- =?utf-8?B?amh1MXpFU0RSZjRRZFcrU2RSR0l3NjJZWVZUcHVrUlM3TFNjWkwwcVZWVVNh?=
- =?utf-8?B?R0NpUW4zb0pMb0VITHBtUlkwMWphOE0wM2RvUDVsdFBMZE10eFVjbnp1OTFh?=
- =?utf-8?B?dElzTStPdU1ZSDJ6Mm5nV1l5RG5DZXVIRit3R1pLOEVDY2JCMkR0dzRtaXF0?=
- =?utf-8?B?WEtIWUxzZjRkd00rVDQ4clBsUGhsd0FuUmxjM0g4SkZsRy83RVMra3B3MmZs?=
- =?utf-8?B?cjB2R21BbFowU3ZTR2ZWbzBQT2o4QlR5SEJpMm9Ld1RyV1AvOENjbmlzZzht?=
- =?utf-8?B?OVhYc3d1V3RZOTQrMjc2Ky9UR2hIOUJEWFFoMVVlMkYzQm9JbTZ4eFpEMVNj?=
- =?utf-8?B?YzVNMm5OM2RyREZtOThpQmVGUmJlM2VwaHFsOXFxV1ZxWldqb0JRTkZIeWtG?=
- =?utf-8?B?N3dQRGZqV0tNVkZNcSszYk5mam5oTEdwcUlKaDdjcGJidXZyb1FWaVFNckUy?=
- =?utf-8?B?MjU5eXptN21wUkxhcTltQmt2V3BHSnVQYXlBOW5GNnZVVGVlRjNicFJCa2FW?=
- =?utf-8?B?Y05Ld2pCZ0R2d0ZHRmJDaU1tem1HcHhoQ3dCTkw4QllCS1JLWE1FeHVmaVRu?=
- =?utf-8?Q?3axzj01Eirv/ceJRdZqDBaEeX?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3b0751d8-3441-4dc5-047e-08ddbd29a609
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB6048.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jul 2025 07:41:13.9373
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: qZnm960t1b/fOefuH4M35hgTvfoA8W5bYQ+1YDSg0D5NA/TdDiRj70Mz9FDIEOVImvvedstdFbdlqXsCCeruTg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4337
 
-Hi ,
+Hi,
 
+ma, 2025-07-07 kello 09:48 +0800, Yang Li kirjoitti:
+> Hi,
+> > [ EXTERNAL EMAIL ]
+> >=20
+> > Hi,
+> >=20
+> > pe, 2025-07-04 kello 13:36 +0800, Yang Li via B4 Relay kirjoitti:
+> > > From: Yang Li <yang.li@amlogic.com>
+> > >=20
+> > > User-space applications (e.g., PipeWire) depend on
+> > > ISO-formatted timestamps for precise audio sync.
+> > >=20
+> > > Signed-off-by: Yang Li <yang.li@amlogic.com>
+> > > ---
+> > > Changes in v3:
+> > > - Change to use hwtimestamp
+> > > - Link to v2: https://lore.kernel.org/r/20250702-iso_ts-v2-1-723d199c=
+8068@amlogic.com
+> > >=20
+> > > Changes in v2:
+> > > - Support SOCK_RCVTSTAMPNS via CMSG for ISO sockets
+> > > - Link to v1: https://lore.kernel.org/r/20250429-iso_ts-v1-1-e586f30d=
+e6cb@amlogic.com
+> > > ---
+> > >   net/bluetooth/iso.c | 10 +++++++++-
+> > >   1 file changed, 9 insertions(+), 1 deletion(-)
+> > >=20
+> > > diff --git a/net/bluetooth/iso.c b/net/bluetooth/iso.c
+> > > index fc22782cbeeb..67ff355167d8 100644
+> > > --- a/net/bluetooth/iso.c
+> > > +++ b/net/bluetooth/iso.c
+> > > @@ -2301,13 +2301,21 @@ void iso_recv(struct hci_conn *hcon, struct s=
+k_buff *skb, u16 flags)
+> > >                if (ts) {
+> > >                        struct hci_iso_ts_data_hdr *hdr;
+> > >=20
+> > > -                     /* TODO: add timestamp to the packet? */
+> > >                        hdr =3D skb_pull_data(skb, HCI_ISO_TS_DATA_HDR=
+_SIZE);
+> > >                        if (!hdr) {
+> > >                                BT_ERR("Frame is too short (len %d)", =
+skb->len);
+> > >                                goto drop;
+> > >                        }
+> > >=20
+> > > +                     /* The ISO ts is based on the controller=E2=80=
+=99s clock domain,
+> > > +                      * so hardware timestamping (hwtimestamp) must =
+be used.
+> > > +                      * Ref: Documentation/networking/timestamping.r=
+st,
+> > > +                      * chapter 3.1 Hardware Timestamping.
+> > > +                      */
+> > > +                     struct skb_shared_hwtstamps *hwts =3D skb_hwtst=
+amps(skb);
+> > > +                     if (hwts)
+> > In addition to the moving variable on top, the null check is spurious
+> > as skb_hwtstamps is never NULL (driver/net/* do not check it either).
+> >=20
+> > Did you test this with SOF_TIMESTAMPING_RX_HARDWARE in userspace?
+> > Pipewire does not try to get HW timestamps right now.
+> >=20
+> > Would be good to also add some tests in bluez/tools/iso-tester.c
+> > although this needs some extension to the emulator/* to support
+> > timestamps properly.
+>=20
+>=20
+> Yes, here is the patch and log based on testing with Pipewire:
+>=20
+> diff --git a/spa/plugins/bluez5/media-source.c=20
+> b/spa/plugins/bluez5/media-source.c
+> index 2fe08b8..10e9378 100644
+> --- a/spa/plugins/bluez5/media-source.c
+> +++ b/spa/plugins/bluez5/media-source.c
+> @@ -407,7 +413,7 @@ static int32_t read_data(struct impl *this) {
+>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct msghdr msg =3D {0};
+>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct iovec iov;
+>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 char control[128];
+> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct timespec *ts =3D NULL;
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct scm_timestamping *ts =3D NUL=
+L;
+>=20
+>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 iov.iov_base =3D this->buffer=
+_read;
+>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 iov.iov_len =3D b_size;
+> @@ -439,12 +445,14 @@ again:
+>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct cmsghdr *cmsg;
+>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 for (cmsg =3D CMSG_FIRSTHDR(&=
+msg); cmsg !=3D NULL; cmsg =3D=20
+> CMSG_NXTHDR(&msg, cmsg)) {
+>  =C2=A0#ifdef SCM_TIMESTAMPING
+>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 /* Check for timestamp */
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 if (cmsg->cmsg_level =3D=3D SOL_SOCKET && cmsg->cmsg_type =3D=
+=3D=20
+> SCM_TIMESTAMPING) {
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ts =3D (struct=
+ scm_timestamping *)CMSG_DATA(cmsg);
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 spa_log_error(=
+this->log, "%p: received timestamp=20
+> %ld.%09ld",
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 this, ts->ts[2].tv_sec,=20
+> ts->ts[2].tv_nsec);
+>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 break;
+>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 }
+>  =C2=A0#endif
+>=20
+>  =C2=A0@@ -726,9 +734,9 @@ static int transport_start(struct impl *this)
+>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (setsockopt(this->fd, SOL_=
+SOCKET, SO_PRIORITY, &val,=20
+> sizeof(val)) < 0)
+>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 spa_log_warn(this->log, "SO_PRIORITY failed: %m");
+>=20
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 val =3D SOF_TIMESTAMPING_RX_HARDWAR=
+E | SOF_TIMESTAMPING_RAW_HARDWARE;
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (setsockopt(this->fd, SOL_SOCKET=
+, SO_TIMESTAMPING, &val,=20
+> sizeof(val)) < 0) {
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 spa_log_warn(this->log, "SO_TIMESTAMPING failed: %m");
+>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 /* don't fail if timestamping is not supported */
+>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+>=20
+> trace log=EF=BC=9A
+>=20
+> read_data: 0x1e78d68: received timestamp 7681.972000000
+> read_data: 0x1e95000: received timestamp 7681.972000000
+> read_data: 0x1e78d68: received timestamp 7691.972000000
+> read_data: 0x1e95000: received timestamp 7691.972000000
 
-On 7/5/2025 6:43 AM, Nicolin Chen wrote:
-> Introduce a new IOMMUFD_CMD_HW_QUEUE_ALLOC ioctl for user space to allocate
-> a HW QUEUE object for a vIOMMU specific HW-accelerated queue, e.g.:
->  - NVIDIA's Virtual Command Queue
->  - AMD vIOMMU's Command Buffer, Event Log Buffers, and PPR Log Buffers
-> 
-> Since this is introduced with NVIDIA's VCMDQs that access the guest memory
-> in the physical address space, add an iommufd_hw_queue_alloc_phys() helper
-> that will create an access object to the queue memory in the IOAS, to avoid
-> the mappings of the guest memory from being unmapped, during the life cycle
-> of the HW queue object.
-> 
-> AMD's HW will need an hw_queue_init op that is mutually exclusive with the
-> hw_queue_init_phys op, and their case will bypass the access part, i.e. no
-> iommufd_hw_queue_alloc_phys() call.
+The counter increases by 10 *seconds* on each step. Is there some
+scaling problem here, or is the hardware producing bogus values?
 
-Thanks. We will implement hw_queue_init[_iova] to support AMD driver and fixup
-iommufd_hw_queue_alloc_ioctl(). Is that the correct understanding?
+Isn't it supposed to increase by ISO interval (10 *milliseconds*)?
 
--Vasant
+> read_data: 0x1e78d68: received timestamp 7701.972000000
+> read_data: 0x1e95000: received timestamp 7701.972000000
+> read_data: 0x1e78d68: received timestamp 7711.972000000
+> read_data: 0x1e95000: received timestamp 7711.972000000
+> read_data: 0x1e78d68: received timestamp 7721.972000000
+> read_data: 0x1e95000: received timestamp 7721.972000000
+> read_data: 0x1e78d68: received timestamp 7731.972000000
+>=20
+> >=20
+> > > +                             hwts->hwtstamp =3D us_to_ktime(le32_to_=
+cpu(hdr->ts));
+> > > +
+> > >                        len =3D __le16_to_cpu(hdr->slen);
+> > >                } else {
+> > >                        struct hci_iso_data_hdr *hdr;
+> > >=20
+> > > ---
+> > > base-commit: 3bc46213b81278f3a9df0324768e152de71eb9fe
+> > > change-id: 20250421-iso_ts-c82a300ae784
+> > >=20
+> > > Best regards,
+> > --
+> > Pauli Virtanen
 
-> 
-> Reviewed-by: Pranjal Shrivastava <praan@google.com>
-> Reviewed-by: Kevin Tian <kevin.tian@intel.com>
-> Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
-> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
-> --->  drivers/iommu/iommufd/iommufd_private.h |   2 +
->  include/linux/iommufd.h                 |   1 +
->  include/uapi/linux/iommufd.h            |  33 +++++
->  drivers/iommu/iommufd/main.c            |   6 +
->  drivers/iommu/iommufd/viommu.c          | 177 ++++++++++++++++++++++++
->  5 files changed, 219 insertions(+)
-> 
-> diff --git a/drivers/iommu/iommufd/iommufd_private.h b/drivers/iommu/iommufd/iommufd_private.h
-> index 06b8c2e2d9e6..dcd609573244 100644
-> --- a/drivers/iommu/iommufd/iommufd_private.h
-> +++ b/drivers/iommu/iommufd/iommufd_private.h
-> @@ -652,6 +652,8 @@ int iommufd_viommu_alloc_ioctl(struct iommufd_ucmd *ucmd);
->  void iommufd_viommu_destroy(struct iommufd_object *obj);
->  int iommufd_vdevice_alloc_ioctl(struct iommufd_ucmd *ucmd);
->  void iommufd_vdevice_destroy(struct iommufd_object *obj);
-> +int iommufd_hw_queue_alloc_ioctl(struct iommufd_ucmd *ucmd);
-> +void iommufd_hw_queue_destroy(struct iommufd_object *obj);
->  
->  #ifdef CONFIG_IOMMUFD_TEST
->  int iommufd_test(struct iommufd_ucmd *ucmd);
-> diff --git a/include/linux/iommufd.h b/include/linux/iommufd.h
-> index f13f3ca6adb5..ce4011a2fc27 100644
-> --- a/include/linux/iommufd.h
-> +++ b/include/linux/iommufd.h
-> @@ -123,6 +123,7 @@ struct iommufd_vdevice {
->  struct iommufd_hw_queue {
->  	struct iommufd_object obj;
->  	struct iommufd_viommu *viommu;
-> +	struct iommufd_access *access;
->  
->  	u64 base_addr; /* in guest physical address space */
->  	size_t length;
-> diff --git a/include/uapi/linux/iommufd.h b/include/uapi/linux/iommufd.h
-> index 640a8b5147c2..55459b9eee31 100644
-> --- a/include/uapi/linux/iommufd.h
-> +++ b/include/uapi/linux/iommufd.h
-> @@ -56,6 +56,7 @@ enum {
->  	IOMMUFD_CMD_VDEVICE_ALLOC = 0x91,
->  	IOMMUFD_CMD_IOAS_CHANGE_PROCESS = 0x92,
->  	IOMMUFD_CMD_VEVENTQ_ALLOC = 0x93,
-> +	IOMMUFD_CMD_HW_QUEUE_ALLOC = 0x94,
->  };
->  
->  /**
-> @@ -1156,4 +1157,36 @@ enum iommu_hw_queue_type {
->  	IOMMU_HW_QUEUE_TYPE_DEFAULT = 0,
->  };
->  
-> +/**
-> + * struct iommu_hw_queue_alloc - ioctl(IOMMU_HW_QUEUE_ALLOC)
-> + * @size: sizeof(struct iommu_hw_queue_alloc)
-> + * @flags: Must be 0
-> + * @viommu_id: Virtual IOMMU ID to associate the HW queue with
-> + * @type: One of enum iommu_hw_queue_type
-> + * @index: The logical index to the HW queue per virtual IOMMU for a multi-queue
-> + *         model
-> + * @out_hw_queue_id: The ID of the new HW queue
-> + * @nesting_parent_iova: Base address of the queue memory in the guest physical
-> + *                       address space
-> + * @length: Length of the queue memory
-> + *
-> + * Allocate a HW queue object for a vIOMMU-specific HW-accelerated queue, which
-> + * allows HW to access a guest queue memory described using @nesting_parent_iova
-> + * and @length.
-> + *
-> + * A vIOMMU can allocate multiple queues, but it must use a different @index per
-> + * type to separate each allocation, e.g.
-> + *     Type1 HW queue0, Type1 HW queue1, Type2 HW queue0, ...
-> + */
-> +struct iommu_hw_queue_alloc {
-> +	__u32 size;
-> +	__u32 flags;
-> +	__u32 viommu_id;
-> +	__u32 type;
-> +	__u32 index;
-> +	__u32 out_hw_queue_id;
-> +	__aligned_u64 nesting_parent_iova;
-> +	__aligned_u64 length;
-> +};
-> +#define IOMMU_HW_QUEUE_ALLOC _IO(IOMMUFD_TYPE, IOMMUFD_CMD_HW_QUEUE_ALLOC)
->  #endif
-> diff --git a/drivers/iommu/iommufd/main.c b/drivers/iommu/iommufd/main.c
-> index 778694d7c207..4e8dbbfac890 100644
-> --- a/drivers/iommu/iommufd/main.c
-> +++ b/drivers/iommu/iommufd/main.c
-> @@ -354,6 +354,7 @@ union ucmd_buffer {
->  	struct iommu_destroy destroy;
->  	struct iommu_fault_alloc fault;
->  	struct iommu_hw_info info;
-> +	struct iommu_hw_queue_alloc hw_queue;
->  	struct iommu_hwpt_alloc hwpt;
->  	struct iommu_hwpt_get_dirty_bitmap get_dirty_bitmap;
->  	struct iommu_hwpt_invalidate cache;
-> @@ -396,6 +397,8 @@ static const struct iommufd_ioctl_op iommufd_ioctl_ops[] = {
->  		 struct iommu_fault_alloc, out_fault_fd),
->  	IOCTL_OP(IOMMU_GET_HW_INFO, iommufd_get_hw_info, struct iommu_hw_info,
->  		 __reserved),
-> +	IOCTL_OP(IOMMU_HW_QUEUE_ALLOC, iommufd_hw_queue_alloc_ioctl,
-> +		 struct iommu_hw_queue_alloc, length),
->  	IOCTL_OP(IOMMU_HWPT_ALLOC, iommufd_hwpt_alloc, struct iommu_hwpt_alloc,
->  		 __reserved),
->  	IOCTL_OP(IOMMU_HWPT_GET_DIRTY_BITMAP, iommufd_hwpt_get_dirty_bitmap,
-> @@ -559,6 +562,9 @@ static const struct iommufd_object_ops iommufd_object_ops[] = {
->  	[IOMMUFD_OBJ_FAULT] = {
->  		.destroy = iommufd_fault_destroy,
->  	},
-> +	[IOMMUFD_OBJ_HW_QUEUE] = {
-> +		.destroy = iommufd_hw_queue_destroy,
-> +	},
->  	[IOMMUFD_OBJ_HWPT_PAGING] = {
->  		.destroy = iommufd_hwpt_paging_destroy,
->  		.abort = iommufd_hwpt_paging_abort,
-> diff --git a/drivers/iommu/iommufd/viommu.c b/drivers/iommu/iommufd/viommu.c
-> index 081ee6697a11..00641204efb2 100644
-> --- a/drivers/iommu/iommufd/viommu.c
-> +++ b/drivers/iommu/iommufd/viommu.c
-> @@ -201,3 +201,180 @@ int iommufd_vdevice_alloc_ioctl(struct iommufd_ucmd *ucmd)
->  	iommufd_put_object(ucmd->ictx, &viommu->obj);
->  	return rc;
->  }
-> +
-> +static void iommufd_hw_queue_destroy_access(struct iommufd_ctx *ictx,
-> +					    struct iommufd_access *access,
-> +					    u64 base_iova, size_t length)
-> +{
-> +	iommufd_access_unpin_pages(access, base_iova, length);
-> +	iommufd_access_detach_internal(access);
-> +	iommufd_access_destroy_internal(ictx, access);
-> +}
-> +
-> +void iommufd_hw_queue_destroy(struct iommufd_object *obj)
-> +{
-> +	struct iommufd_hw_queue *hw_queue =
-> +		container_of(obj, struct iommufd_hw_queue, obj);
-> +
-> +	if (hw_queue->destroy)
-> +		hw_queue->destroy(hw_queue);
-> +	if (hw_queue->access)
-> +		iommufd_hw_queue_destroy_access(hw_queue->viommu->ictx,
-> +						hw_queue->access,
-> +						hw_queue->base_addr,
-> +						hw_queue->length);
-> +	if (hw_queue->viommu)
-> +		refcount_dec(&hw_queue->viommu->obj.users);
-> +}
-> +
-> +/*
-> + * When the HW accesses the guest queue via physical addresses, the underlying
-> + * physical pages of the guest queue must be contiguous. Also, for the security
-> + * concern that IOMMUFD_CMD_IOAS_UNMAP could potentially remove the mappings of
-> + * the guest queue from the nesting parent iopt while the HW is still accessing
-> + * the guest queue memory physically, such a HW queue must require an access to
-> + * pin the underlying pages and prevent that from happening.
-> + */
-> +static struct iommufd_access *
-> +iommufd_hw_queue_alloc_phys(struct iommu_hw_queue_alloc *cmd,
-> +			    struct iommufd_viommu *viommu, phys_addr_t *base_pa)
-> +{
-> +	struct iommufd_access *access;
-> +	struct page **pages;
-> +	size_t max_npages;
-> +	size_t length;
-> +	u64 offset;
-> +	size_t i;
-> +	int rc;
-> +
-> +	offset =
-> +		cmd->nesting_parent_iova - PAGE_ALIGN(cmd->nesting_parent_iova);
-> +	/* DIV_ROUND_UP(offset + cmd->length, PAGE_SIZE) */
-> +	if (check_add_overflow(offset, cmd->length, &length))
-> +		return ERR_PTR(-ERANGE);
-> +	if (check_add_overflow(length, PAGE_SIZE - 1, &length))
-> +		return ERR_PTR(-ERANGE);
-> +	max_npages = length / PAGE_SIZE;
-> +
-> +	/*
-> +	 * Use kvcalloc() to avoid memory fragmentation for a large page array.
-> +	 * Set __GFP_NOWARN to avoid syzkaller blowups
-> +	 */
-> +	pages = kvcalloc(max_npages, sizeof(*pages), GFP_KERNEL | __GFP_NOWARN);
-> +	if (!pages)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	access = iommufd_access_create_internal(viommu->ictx);
-> +	if (IS_ERR(access)) {
-> +		rc = PTR_ERR(access);
-> +		goto out_free;
-> +	}
-> +
-> +	rc = iommufd_access_attach_internal(access, viommu->hwpt->ioas);
-> +	if (rc)
-> +		goto out_destroy;
-> +
-> +	rc = iommufd_access_pin_pages(access, cmd->nesting_parent_iova,
-> +				      cmd->length, pages, 0);
-> +	if (rc)
-> +		goto out_detach;
-> +
-> +	/* Validate if the underlying physical pages are contiguous */
-> +	for (i = 1; i < max_npages; i++) {
-> +		if (page_to_pfn(pages[i]) == page_to_pfn(pages[i - 1]) + 1)
-> +			continue;
-> +		rc = -EFAULT;
-> +		goto out_unpin;
-> +	}
-> +
-> +	*base_pa = page_to_pfn(pages[0]) << PAGE_SHIFT;
-> +	kfree(pages);
-> +	return access;
-> +
-> +out_unpin:
-> +	iommufd_access_unpin_pages(access, cmd->nesting_parent_iova,
-> +				   cmd->length);
-> +out_detach:
-> +	iommufd_access_detach_internal(access);
-> +out_destroy:
-> +	iommufd_access_destroy_internal(viommu->ictx, access);
-> +out_free:
-> +	kfree(pages);
-> +	return ERR_PTR(rc);
-> +}
-> +
-> +int iommufd_hw_queue_alloc_ioctl(struct iommufd_ucmd *ucmd)
-> +{
-> +	struct iommu_hw_queue_alloc *cmd = ucmd->cmd;
-> +	struct iommufd_hw_queue *hw_queue;
-> +	struct iommufd_viommu *viommu;
-> +	struct iommufd_access *access;
-> +	size_t hw_queue_size;
-> +	phys_addr_t base_pa;
-> +	u64 last;
-> +	int rc;
-> +
-> +	if (cmd->flags || cmd->type == IOMMU_HW_QUEUE_TYPE_DEFAULT)
-> +		return -EOPNOTSUPP;
-> +	if (!cmd->length)
-> +		return -EINVAL;
-> +	if (check_add_overflow(cmd->nesting_parent_iova, cmd->length - 1,
-> +			       &last))
-> +		return -EOVERFLOW;
-> +
-> +	viommu = iommufd_get_viommu(ucmd, cmd->viommu_id);
-> +	if (IS_ERR(viommu))
-> +		return PTR_ERR(viommu);
-> +
-> +	if (!viommu->ops || !viommu->ops->get_hw_queue_size ||
-> +	    !viommu->ops->hw_queue_init_phys) {
-> +		rc = -EOPNOTSUPP;
-> +		goto out_put_viommu;
-> +	}
-> +
-> +	hw_queue_size = viommu->ops->get_hw_queue_size(viommu, cmd->type);
-> +	if (!hw_queue_size) {
-> +		rc = -EOPNOTSUPP;
-> +		goto out_put_viommu;
-> +	}
-> +
-> +	/*
-> +	 * It is a driver bug for providing a hw_queue_size smaller than the
-> +	 * core HW queue structure size
-> +	 */
-> +	if (WARN_ON_ONCE(hw_queue_size < sizeof(*hw_queue))) {
-> +		rc = -EOPNOTSUPP;
-> +		goto out_put_viommu;
-> +	}
-> +
-> +	hw_queue = (struct iommufd_hw_queue *)_iommufd_object_alloc_ucmd(
-> +		ucmd, hw_queue_size, IOMMUFD_OBJ_HW_QUEUE);
-> +	if (IS_ERR(hw_queue)) {
-> +		rc = PTR_ERR(hw_queue);
-> +		goto out_put_viommu;
-> +	}
-> +
-> +	access = iommufd_hw_queue_alloc_phys(cmd, viommu, &base_pa);
-> +	if (IS_ERR(access)) {
-> +		rc = PTR_ERR(access);
-> +		goto out_put_viommu;
-> +	}
-> +
-> +	hw_queue->viommu = viommu;
-> +	refcount_inc(&viommu->obj.users);
-> +	hw_queue->access = access;
-> +	hw_queue->type = cmd->type;
-> +	hw_queue->length = cmd->length;
-> +	hw_queue->base_addr = cmd->nesting_parent_iova;
-> +
-> +	rc = viommu->ops->hw_queue_init_phys(hw_queue, cmd->index, base_pa);
-> +	if (rc)
-> +		goto out_put_viommu;
-> +
-> +	cmd->out_hw_queue_id = hw_queue->obj.id;
-> +	rc = iommufd_ucmd_respond(ucmd, sizeof(*cmd));
-> +
-> +out_put_viommu:
-> +	iommufd_put_object(ucmd->ictx, &viommu->obj);
-> +	return rc;
-> +}
-
+--=20
+Pauli Virtanen
 
