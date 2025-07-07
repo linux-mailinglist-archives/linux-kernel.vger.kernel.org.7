@@ -1,224 +1,218 @@
-Return-Path: <linux-kernel+bounces-720354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A987BAFBAAF
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 20:32:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A197AFBAB3
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 20:33:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC6BA420D3F
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 18:32:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2EA721AA2667
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 18:34:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 528242638B2;
-	Mon,  7 Jul 2025 18:32:32 +0000 (UTC)
-Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 865DE264604;
+	Mon,  7 Jul 2025 18:33:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="4FNez5Sn"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2086.outbound.protection.outlook.com [40.107.223.86])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E0507DA6D
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 18:32:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751913151; cv=none; b=KuZYw8ZLUg/RSukWGh4gvHodJkwywCiY5aind8wgr053Ms/TPXBCrktwWAaUJBqpuJqOaBTEOHjonImjlIa6dsAX+qGqJiq11I6Kgq+aTkddnmir8Cpi0A/GAkUhuDOfsNNpxzA9Xq4bsSRSR51aNJNhMSqaQXCY0VclYt0m+T8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751913151; c=relaxed/simple;
-	bh=8GiBBHQtfHOqzVmO7ETkwvN+twiPkofVYk2vF8hzh38=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ReWqpZyb7JwFVC6GqFfd52bTVAgDWeQL5wh3pca0HkqaGW+SSVyomFZhelncNwcoAiRWmGKe77a/WviY9sR44hDBdlUUdQr5t5z4ACQ2cyvSDXWSJITbYPrqozHi8b049Sy4DUvYv0mL/0/bskO5LvYRiZ9/cIQNOE4LgFZsTXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-873fd6e896bso321263139f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 11:32:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751913149; x=1752517949;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=HlY8XzQoFKoWs7qfmY3eXvDw2cI1dpWN0OkxWj1+lnw=;
-        b=tP3oCyGyA8uNY/5S/2Aif3kut7EiwYcOFGTDuw6TkpHHhWS+qxakCWfSyTrEa3xm8n
-         Jz8xUq9CEZAr6RELlKobAbDBpyfOUUsCjt4mib9guXPcFNLt46LZcOc8xiBffIdUa0Hr
-         /0Mm+qKN+Pa+m+F8M5peHwYq97MewZjlykFbi57Jg1ptt0YQjvT3ZGfLylKEgqJPjolB
-         LCFP9ZFYzAnNlxipxNWLJbfh9+P3Tuyf4v3zsc/3XODi6GumIhELJE6BSb8+J8S6JJDt
-         WK+K/Qt2zmYISN5jBeb32IdoDrTEIGoeJ7TTPfe3KPujD2kfD2LCTW6aZl7WV8ORdQ5E
-         IA0g==
-X-Forwarded-Encrypted: i=1; AJvYcCUYOwc17SZhfewaYggsCQZ93nJ0tW/lA6d/qozrJo6vUzELZxCb4XAtoJdD/DvkXMiL5L2k11J+5YVg9bQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRoltHEwRoHlLofBnjB9WvWl4AUU8gI+UvhBI7VqFtzrpA5Hy0
-	onR7XcGzx1bbC5O5Pxk+aaMtuj46zl/NSoaBF5ezKCFDOkQyCYtH6n3PMNTT5FyyVcxE2kJs2Og
-	ml/eplxKKYosRE6J6q3SfBjBiMvN6Jne5bD4UMr2vVPPfqW7sxhZosWiL1dY=
-X-Google-Smtp-Source: AGHT+IG6yNnQ72xHq9NTlfxRXNyfzdNtSpzEJBPqaM6dD/lmZSg1jnqnnTf+VrJfGijBrgADT2S8rw8fC1g1TOPJdzRi1uKPNDgY
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4785022D790
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 18:33:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.86
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751913216; cv=fail; b=IRX3CzEN3FHuOMSIp3H4wAqS/bz/lfksPgXsNqo167BbVW7dwYts47+FnGiYFYYyuXCFijh3PoNugmkgddLk4tM1PChXZc30LY776VtFcexw5E/eX6hZOGxDZMaMEmidun+XarFRVoEfGuEskz1PV88RmuIjXF7IwKhWV/S1Qqo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751913216; c=relaxed/simple;
+	bh=vQ11HxzO9ULd3EAkw7QZ+T/3hQZlkQGTmOm30r0Lepk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Eu0l4+2XiO4OkHbLiCkaxu5Zowf6roJAencanajWSDfIJFGtB8tOqRbcX8+59YHGaZmCaITd/jWvZ56M9oDC03N2cT9qM/HmvQO2Eqe8waZZ5dGs35DI0oUeYRdanfsZXPALTfOdK/TsAiuVEGDGkhBR4fJFXFhnW96EqOOH91Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=4FNez5Sn; arc=fail smtp.client-ip=40.107.223.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=BhdsYdgU6Tq54oKTlZtUn3qgLlIQdNQB/tPdwIGSiYaCMO4zUml64entrLCvSITBQPms1eWc0Dp+E8M0iSR42P3fPktA3GDCBkoVjM7ABibGb/7HewphsRVKdWJj9Vz8S/pAfjvtpKRsFNu8+xo2CGJYPT8x/5crgrKgbn6zI6qaeygYVdUoj7R8EyRszBDIj8J4ZFDslZOIp9l2AtjXXj8VGsOql6NI7XWgfRaBotD+Vrz0Yq3QtKHDJVz1PWv/tyeOONpD8MDT9vZrfhqtztCpio+28xgl+qZu/dG0bRaogxkJzKlqX6aE1ph2ScqSTeFl6yayoeBKIdhzLKJSIw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ZHsoLCfWY4TitHEX+7gPncYL8XshduL2yoUQ1IUPUgY=;
+ b=P5Z2TycW7xhqinBwojCG0x9sMSZQO7w6II6SGIYbJy55jkPsqwStFiXwdzrx8XSNEnj+aKF/1Pl47Pl0i8/YzCSE3JgY6joRC1dn0R/arwCuW9GiMBCHCvibVvEPvcygFv4+/ql2V34TUYY3N0YyGYZOS/xbQBMTgAj9UIrH5w2QKsKkLxbTIMi/IwSEFgGA+u8ZObNsXcj0SLwhhq7LXoIr1NztpLaovUcb+GxTeit6jZm2jYOUSxlH3ZT6PvL6dMsyJUg72EuT7JilGfpvZUiU+185wkAe/PUbdaIDJgYg0ngGfRbA4lO7F0XAck131u4yz6wSmOpwBU3n1bg7CA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=linutronix.de smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ZHsoLCfWY4TitHEX+7gPncYL8XshduL2yoUQ1IUPUgY=;
+ b=4FNez5SnSnn30e7koxrcKNyL8ltrK93kcWYzgMXbiKhF8Zja/G1yEywl8Q3fviSfyvdQezhgHDDjjI1Fk1yuiV83BV0pWyyuw2oR8shX7OdwM0bDParmf6fLN5+Zd71DsGxnZN6K4AZdlSzCJIMAavooCWJKxTavnFItox3PK6c=
+Received: from BY5PR16CA0004.namprd16.prod.outlook.com (2603:10b6:a03:1a0::17)
+ by CY8PR12MB8316.namprd12.prod.outlook.com (2603:10b6:930:7a::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.23; Mon, 7 Jul
+ 2025 18:33:29 +0000
+Received: from MWH0EPF000989E8.namprd02.prod.outlook.com
+ (2603:10b6:a03:1a0:cafe::e4) by BY5PR16CA0004.outlook.office365.com
+ (2603:10b6:a03:1a0::17) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8901.27 via Frontend Transport; Mon,
+ 7 Jul 2025 18:33:29 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ MWH0EPF000989E8.mail.protection.outlook.com (10.167.241.135) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8901.20 via Frontend Transport; Mon, 7 Jul 2025 18:33:28 +0000
+Received: from tiny.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 7 Jul
+ 2025 13:33:27 -0500
+From: David Kaplan <david.kaplan@amd.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
+	Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, Ingo Molnar
+	<mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>,
+	<x86@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>
+CC: <linux-kernel@vger.kernel.org>
+Subject: [PATCH v6 00/21] Attack vector controls (part 2)
+Date: Mon, 7 Jul 2025 13:32:55 -0500
+Message-ID: <20250707183316.1349127-1-david.kaplan@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:1587:b0:861:7d39:d4d3 with SMTP id
- ca18e2360f4ac-8794b431a8amr17982739f.3.1751913149022; Mon, 07 Jul 2025
- 11:32:29 -0700 (PDT)
-Date: Mon, 07 Jul 2025 11:32:29 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <686c12bd.a70a0220.29fe6c.0b13.GAE@google.com>
-Subject: [syzbot] [bluetooth?] KASAN: null-ptr-deref Write in
- l2cap_sock_resume_cb (4)
-From: syzbot <syzbot+e2df3a66f7d16fa6ec55@syzkaller.appspotmail.com>
-To: johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, luiz.dentz@gmail.com, marcel@holtmann.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MWH0EPF000989E8:EE_|CY8PR12MB8316:EE_
+X-MS-Office365-Filtering-Correlation-Id: b788b6a8-f20a-4678-e7de-08ddbd84c4b6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|82310400026|36860700013|1800799024|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?ifIzGy/h0cJBGfvIe7w+g/G5821IwiksRGH+l0iYNwofY8RqRbOg1GmgLhvv?=
+ =?us-ascii?Q?pSkWavXmdXU6PYEOCz+NFFdVxbebdzf9tmfEC9hFiu0lWtjbOLKifthmu/HG?=
+ =?us-ascii?Q?MEz8Jia68GnwsUEYWP7Ibz4uMu4suoi6Kgwe8ahRb7391hHTzStVwn38k9Jj?=
+ =?us-ascii?Q?wZpwQOy96Hcc7lRexFsYh9JptrfJeaiTejLoNXRSC5aN5lOAlqemid655LvJ?=
+ =?us-ascii?Q?0EF87uVHMWJGo969yXZ+K9XhrRV3FTNn83EblO5OvE3+0yHf0r+v23DNYHel?=
+ =?us-ascii?Q?w/xGRzZYafyiVMtS7gEMMhp173RJaRawepc2NjF4uHU8GpIMp1N1mg3MhVvQ?=
+ =?us-ascii?Q?uF9Y0lxVxpWuAH/F0Z3LhaFEOo20LpfBUn5cXU5m4yT0zj95+ulE2ej+cGEK?=
+ =?us-ascii?Q?IvX5uMg2UyiduIsqbvF0SPHpNP+vSaFKMcBRMtOjfU4b/skPj2EGDQMSCvtT?=
+ =?us-ascii?Q?7SgTfZFheICFFTIROt8tgbT+Df73M+O6/7SrwKQ9QIZM38Q9Ted7PkUFR55s?=
+ =?us-ascii?Q?bppHTuxtwoLs5Oeb9qpANXNLALuTQtVeoq+sTS1WJtvU0bI+PPSTzuXFinkh?=
+ =?us-ascii?Q?L4EsVnjjGr3sGwGvrMlKMf46j138Y0v4bLc29VBFcGDJoWupxGKijE6/CIkl?=
+ =?us-ascii?Q?1ymXEWKQVmYHiiDvx9tD0uG/8p3jVIcDlTzRmbjESvYXRDS40+voAV2RkE1m?=
+ =?us-ascii?Q?/BbCgdB5aaUJLEcONeGOACe8ZhTpiLr5ThbEqadkT1oRN7gCQV1eTAVN8u30?=
+ =?us-ascii?Q?Ykxt2kvLI9kKL0FLdzV2aSLfbK28j3W5luTK5BQnwis9blnKt1RRXHkKGMAe?=
+ =?us-ascii?Q?6WYdV3IYL1oA6m4q//y+eoICSBv7Lcm4JprEgcg+Y1wvSQY/zgORVFJXL2KB?=
+ =?us-ascii?Q?gjnHXhNw1z/C2GE1i7LJO2cnKmVvRTHtfK3nuFJUfdAUq2p9F15dmSs1UTp3?=
+ =?us-ascii?Q?xkXDFfYKEo9yDjTKvCLoE8VJxhJivXkL7oJpn6ANc5MkXVfcnWjLEih92tiI?=
+ =?us-ascii?Q?RDuqzh1LU/7ABpPkz3w7yNeoJnq/4eREvAgZqHQO45ZGUEtwbYhPfvlvjKb+?=
+ =?us-ascii?Q?963M+RjaPfta5H5UUyCTi0r/Nv+9QZaOpn5J1lIcBMmk6zon/DRBo3KPSNUc?=
+ =?us-ascii?Q?9c9rQdaM4r7vlx9ZG9D0ZgneqDZKc5h4sU+NAKPnmST6Lp7RpINcs2RYID7l?=
+ =?us-ascii?Q?CGtBNCF/wVXwX3l+wb6DZhjGbp63bSG9hpYEi4SrXnFO6+a3KbJU+ebVIKsK?=
+ =?us-ascii?Q?CD6UidEgvF1gYLq3HauCmpgVB6qykIA189iu6p1x1NRRSbaTIYTHpTRDFMwA?=
+ =?us-ascii?Q?kXvSpUYt1zOELFA7k7Q+uzzgtMprasJiJAZwyq+INHfFosXhv9gI6tJ6ZMsG?=
+ =?us-ascii?Q?e/0hQrQ5SoIoRrTLqXVKjnB7/4DctVgH3bAkf3PrjZxB9XpnxjYHHLxguIX0?=
+ =?us-ascii?Q?RZb0FRkMOdk/9vVtWcWIBHohk2cRISIRF9dGQAbF21DxvODeRjw7rATW3roX?=
+ =?us-ascii?Q?TtCvWpI29HlQulcxPXQnLc1fvDOnObd5j9awcoNBBYtN2w/P/JVtOqEcnw?=
+ =?us-ascii?Q?=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(7416014)(82310400026)(36860700013)(1800799024)(13003099007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jul 2025 18:33:28.8743
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b788b6a8-f20a-4678-e7de-08ddbd84c4b6
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	MWH0EPF000989E8.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB8316
 
-Hello,
+This is an updated version of the second half of the attack vector
+series which adds new attack vector command line options designed to make
+it easier to control which CPU mitigations are enabled.
 
-syzbot found the following issue on:
+The first half of this series focused on bugs.c restructuring and was
+merged on May 2.  Link:
+https://lore.kernel.org/all/20250418161721.1855190-1-david.kaplan@amd.com/
 
-HEAD commit:    7482bb149b9f Merge branch 'for-next/core' into for-kernelci
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=1597828c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3c06e3e2454512b3
-dashboard link: https://syzkaller.appspot.com/bug?extid=e2df3a66f7d16fa6ec55
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-userspace arch: arm64
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17c4cbd4580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13d11f70580000
+Attack vector options are designed to make it easier to select appropriate
+mitigations based on the usage of the system.  While many users may not be
+intimately familiar with the details of these CPU vulnerabilities, they are
+likely better able to understand the intended usage of their system.  As a
+result, unneeded mitigations may be disabled, allowing users to recoup more
+performance.  New documentation is included with recommendations on what to
+consider when choosing which attack vectors to enable/disable.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/f623d741d651/disk-7482bb14.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/483e23ae71b1/vmlinux-7482bb14.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/79b5baaa1b50/Image-7482bb14.gz.xz
+In this series, attack vector options are chosen using the mitigations=
+command line.  Attack vectors may be individually disabled such as
+'mitigations=auto;no_user_kernel,no_user_user'.  The 'mitigations=off'
+option is equivalent to disabling all attack vectors.  'mitigations=off'
+therefore disables all mitigations, unless bug-specific command line
+options are used to re-enable some.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+e2df3a66f7d16fa6ec55@syzkaller.appspotmail.com
+Note that this patch series does not change any of the existing
+mitigation defaults.
 
-Bluetooth: hci0: unexpected event 0x06 length: 4 > 3
-==================================================================
-BUG: KASAN: null-ptr-deref in instrument_atomic_write include/linux/instrumented.h:82 [inline]
-BUG: KASAN: null-ptr-deref in clear_bit include/asm-generic/bitops/instrumented-atomic.h:41 [inline]
-BUG: KASAN: null-ptr-deref in l2cap_sock_resume_cb+0xb4/0x17c net/bluetooth/l2cap_sock.c:1711
-Write of size 8 at addr 0000000000000570 by task kworker/u9:0/52
+Changes in v6:
+   - Added ITS attack vector support
+   - Removed new BHI user->kernel only mitigation (can be added later if
+     desired)
 
-CPU: 1 UID: 0 PID: 52 Comm: kworker/u9:0 Not tainted 6.16.0-rc4-syzkaller-g7482bb149b9f #0 PREEMPT 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-Workqueue: hci0 hci_rx_work
-Call trace:
- show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:501 (C)
- __dump_stack+0x30/0x40 lib/dump_stack.c:94
- dump_stack_lvl+0xd8/0x12c lib/dump_stack.c:120
- print_report+0x58/0x84 mm/kasan/report.c:524
- kasan_report+0xb0/0x110 mm/kasan/report.c:634
- check_region_inline mm/kasan/generic.c:-1 [inline]
- kasan_check_range+0x264/0x2a4 mm/kasan/generic.c:189
- __kasan_check_write+0x20/0x30 mm/kasan/shadow.c:37
- instrument_atomic_write include/linux/instrumented.h:82 [inline]
- clear_bit include/asm-generic/bitops/instrumented-atomic.h:41 [inline]
- l2cap_sock_resume_cb+0xb4/0x17c net/bluetooth/l2cap_sock.c:1711
- l2cap_security_cfm+0x524/0xea0 net/bluetooth/l2cap_core.c:7357
- hci_auth_cfm include/net/bluetooth/hci_core.h:2092 [inline]
- hci_auth_complete_evt+0x2e8/0xa4c net/bluetooth/hci_event.c:3514
- hci_event_func net/bluetooth/hci_event.c:7511 [inline]
- hci_event_packet+0x650/0xe9c net/bluetooth/hci_event.c:7565
- hci_rx_work+0x320/0xb18 net/bluetooth/hci_core.c:4070
- process_one_work+0x7e8/0x155c kernel/workqueue.c:3238
- process_scheduled_works kernel/workqueue.c:3321 [inline]
- worker_thread+0x958/0xed8 kernel/workqueue.c:3402
- kthread+0x5fc/0x75c kernel/kthread.c:464
- ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:847
-==================================================================
-Unable to handle kernel NULL pointer dereference at virtual address 0000000000000570
-Mem abort info:
-  ESR = 0x0000000096000006
-  EC = 0x25: DABT (current EL), IL = 32 bits
-  SET = 0, FnV = 0
-  EA = 0, S1PTW = 0
-  FSC = 0x06: level 2 translation fault
-Data abort info:
-  ISV = 0, ISS = 0x00000006, ISS2 = 0x00000000
-  CM = 0, WnR = 0, TnD = 0, TagAccess = 0
-  GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-user pgtable: 4k pages, 48-bit VAs, pgdp=0000000121d3b000
-[0000000000000570] pgd=0800000121d58403, p4d=0800000121d58403, pud=0800000121d81403, pmd=0000000000000000
-Internal error: Oops: 0000000096000006 [#1]  SMP
-Modules linked in:
-CPU: 1 UID: 0 PID: 52 Comm: kworker/u9:0 Tainted: G    B               6.16.0-rc4-syzkaller-g7482bb149b9f #0 PREEMPT 
-Tainted: [B]=BAD_PAGE
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-Workqueue: hci0 hci_rx_work
-pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : __lse_atomic64_andnot arch/arm64/include/asm/atomic_lse.h:131 [inline]
-pc : arch_atomic64_andnot arch/arm64/include/asm/atomic.h:64 [inline]
-pc : raw_atomic64_andnot include/linux/atomic/atomic-arch-fallback.h:3675 [inline]
-pc : raw_atomic_long_andnot include/linux/atomic/atomic-long.h:964 [inline]
-pc : arch_clear_bit include/asm-generic/bitops/atomic.h:25 [inline]
-pc : clear_bit include/asm-generic/bitops/instrumented-atomic.h:42 [inline]
-pc : l2cap_sock_resume_cb+0xc0/0x17c net/bluetooth/l2cap_sock.c:1711
-lr : __lse_atomic64_andnot arch/arm64/include/asm/atomic_lse.h:131 [inline]
-lr : arch_atomic64_andnot arch/arm64/include/asm/atomic.h:64 [inline]
-lr : raw_atomic64_andnot include/linux/atomic/atomic-arch-fallback.h:3675 [inline]
-lr : raw_atomic_long_andnot include/linux/atomic/atomic-long.h:964 [inline]
-lr : arch_clear_bit include/asm-generic/bitops/atomic.h:25 [inline]
-lr : clear_bit include/asm-generic/bitops/instrumented-atomic.h:42 [inline]
-lr : l2cap_sock_resume_cb+0xbc/0x17c net/bluetooth/l2cap_sock.c:1711
-sp : ffff8000991975b0
-x29: ffff8000991975b0 x28: ffff0000d89f6000 x27: dfff800000000000
-x26: ffff700013232ec8 x25: 0000000000000001 x24: ffff80008db6f6c0
-x23: ffff0000d89f6480 x22: dfff800000000000 x21: 0000000000000002
-x20: 0000000000000570 x19: 0000000000000000 x18: 1fffe000337d8876
-x17: 0000000000000000 x16: ffff80008ae642c8 x15: 0000000000000001
-x14: 1ffff000125d90f8 x13: 0000000000000000 x12: 0000000000000000
-x11: ffff7000125d90f9 x10: 0000000000ff0100 x9 : 0000000000000000
-x8 : 0000000000000002 x7 : 0000000000000001 x6 : 0000000000000001
-x5 : ffff800099196e18 x4 : ffff80008f766c20 x3 : ffff8000803b80e0
-x2 : 0000000000000001 x1 : 0000000000000000 x0 : 0000000000000000
-Call trace:
- __lse_atomic64_andnot arch/arm64/include/asm/atomic_lse.h:-1 [inline] (P)
- arch_atomic64_andnot arch/arm64/include/asm/atomic.h:64 [inline] (P)
- raw_atomic64_andnot include/linux/atomic/atomic-arch-fallback.h:3675 [inline] (P)
- raw_atomic_long_andnot include/linux/atomic/atomic-long.h:964 [inline] (P)
- arch_clear_bit include/asm-generic/bitops/atomic.h:25 [inline] (P)
- clear_bit include/asm-generic/bitops/instrumented-atomic.h:42 [inline] (P)
- l2cap_sock_resume_cb+0xc0/0x17c net/bluetooth/l2cap_sock.c:1711 (P)
- l2cap_security_cfm+0x524/0xea0 net/bluetooth/l2cap_core.c:7357
- hci_auth_cfm include/net/bluetooth/hci_core.h:2092 [inline]
- hci_auth_complete_evt+0x2e8/0xa4c net/bluetooth/hci_event.c:3514
- hci_event_func net/bluetooth/hci_event.c:7511 [inline]
- hci_event_packet+0x650/0xe9c net/bluetooth/hci_event.c:7565
- hci_rx_work+0x320/0xb18 net/bluetooth/hci_core.c:4070
- process_one_work+0x7e8/0x155c kernel/workqueue.c:3238
- process_scheduled_works kernel/workqueue.c:3321 [inline]
- worker_thread+0x958/0xed8 kernel/workqueue.c:3402
- kthread+0x5fc/0x75c kernel/kthread.c:464
- ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:847
-Code: 977fc1f2 d503201f 977fc0f7 52800048 (f828129f) 
----[ end trace 0000000000000000 ]---
-----------------
-Code disassembly (best guess):
-   0:	977fc1f2 	bl	0xfffffffffdff07c8
-   4:	d503201f 	nop
-   8:	977fc0f7 	bl	0xfffffffffdff03e4
-   c:	52800048 	mov	w8, #0x2                   	// #2
-* 10:	f828129f 	stclr	x8, [x20] <-- trapping instruction
+Changes in v5:
+   - Updated table layout in documentation file
+   - Minor clean up
+
+David Kaplan (21):
+  Documentation/x86: Document new attack vector controls
+  cpu: Define attack vectors
+  x86/Kconfig: Add arch attack vector support
+  x86/bugs: Define attack vectors relevant for each bug
+  x86/bugs: Add attack vector controls for MDS
+  x86/bugs: Add attack vector controls for TAA
+  x86/bugs: Add attack vector controls for MMIO
+  x86/bugs: Add attack vector controls for RFDS
+  x86/bugs: Add attack vector controls for SRBDS
+  x86/bugs: Add attack vector controls for GDS
+  x86/bugs: Add attack vector controls for spectre_v1
+  x86/bugs: Add attack vector controls for retbleed
+  x86/bugs: Add attack vector controls for spectre_v2_user
+  x86/bugs: Add attack vector controls for BHI
+  x86/bugs: Add attack vector controls for spectre_v2
+  x86/bugs: Add attack vector controls for L1TF
+  x86/bugs: Add attack vector controls for SRSO
+  x86/bugs: Add attack vector controls for ITS
+  x86/pti: Add attack vector controls for PTI
+  x86/bugs: Print enabled attack vectors
+  cpu: Show attack vectors in sysfs
+
+ .../hw-vuln/attack_vector_controls.rst        | 237 +++++++++++++++
+ Documentation/admin-guide/hw-vuln/index.rst   |   1 +
+ .../admin-guide/kernel-parameters.txt         |   4 +
+ arch/Kconfig                                  |   3 +
+ arch/x86/Kconfig                              |   1 +
+ arch/x86/kernel/cpu/bugs.c                    | 269 ++++++++++++++----
+ arch/x86/mm/pti.c                             |   4 +-
+ drivers/base/cpu.c                            |  67 +++++
+ include/linux/cpu.h                           |  21 ++
+ kernel/cpu.c                                  | 130 ++++++++-
+ 10 files changed, 668 insertions(+), 69 deletions(-)
+ create mode 100644 Documentation/admin-guide/hw-vuln/attack_vector_controls.rst
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+base-commit: f339770f60d9c3312133cfe6a349476848d9b128
+-- 
+2.34.1
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
