@@ -1,85 +1,118 @@
-Return-Path: <linux-kernel+bounces-720410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88710AFBB32
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 20:52:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75C36AFBB37
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 20:57:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B3461BC157D
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 18:53:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAC8617516D
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 18:57:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 574A1264FA9;
-	Mon,  7 Jul 2025 18:52:41 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0010.hostedemail.com [216.40.44.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FE42264A65;
+	Mon,  7 Jul 2025 18:56:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hdJuKRG7"
+Received: from mail-oi1-f169.google.com (mail-oi1-f169.google.com [209.85.167.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C05F7219311;
-	Mon,  7 Jul 2025 18:52:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 931F3262FFE;
+	Mon,  7 Jul 2025 18:56:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751914361; cv=none; b=hizhsYjPYbGKYDMSMr77MwxpD/6CIOtiWS5P1gZT7hcZ4VynwPT8sXBsiEY4XVoaQE8wh1Hf4z/rBzlqih7vM63HhfGbXrDYvrlpHInR12q/pzPKCxM/agX9vsKDODNAm9L+xE37RB39pkiHxy/bNbFzXZftX9KyLlMMxZT3Cv4=
+	t=1751914615; cv=none; b=f9AWSichdmYJMJ/G8gr/1A66ps4CCiwTJvsfVgjDx+P5A2fZ4/WMNORKBcs7yRk/PKeWNcPzDNXdRZh2MHQragsBvguT9l5jAICvmbi3IS0I/RyIifYnWcDYgXOjsuRCixzQWsFj8qhpiIzJvGmT3ZLGiwp6ND1qTsRTUBtGcwM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751914361; c=relaxed/simple;
-	bh=+9uNWNwUoOguNrh0MWB0aDiKzTBk8vpWgi+MvD5HvaA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nfmniIhFXI3iYXBzcCzhBQI3zwIxmIJNBIVTfwfC9DzDxPI7XXwFNwR3NAt6bb/oNir3O30Lt1giTDdnD0tsIIjFBYeJMJugKDGvMp9DW3I70cRlqxbh+MJtX4UKN9zVy/77HWJev62hY8b2TZbeVCzF37N1m5hsJ9wn/n+mqGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf03.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay04.hostedemail.com (Postfix) with ESMTP id B17AF1A02AF;
-	Mon,  7 Jul 2025 18:52:31 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf03.hostedemail.com (Postfix) with ESMTPA id A39946000A;
-	Mon,  7 Jul 2025 18:52:29 +0000 (UTC)
-Date: Mon, 7 Jul 2025 14:52:28 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Menglong Dong <menglong8.dong@gmail.com>
-Cc: alexei.starovoitov@gmail.com, jolsa@kernel.org, bpf@vger.kernel.org,
- Menglong Dong <dongml2@chinatelecom.cn>, Mark Rutland
- <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH bpf-next v2 04/18] ftrace: add reset_ftrace_direct_ips
-Message-ID: <20250707145228.43c669f6@batman.local.home>
-In-Reply-To: <CADxym3YaHGxQ7AORGka1CV+KpnPOknohP9a6zi=3RSPXYBKC-g@mail.gmail.com>
-References: <20250703121521.1874196-1-dongml2@chinatelecom.cn>
-	<20250703121521.1874196-5-dongml2@chinatelecom.cn>
-	<20250703113001.099dc88f@batman.local.home>
-	<CADxym3YaHGxQ7AORGka1CV+KpnPOknohP9a6zi=3RSPXYBKC-g@mail.gmail.com>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1751914615; c=relaxed/simple;
+	bh=9ZxsGfMNuIDd8PUZJl180e6uYMTAtfiL4MXB7zLYGfY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rcwO/x5fzqnGgMk85gz+i3VrOFBKDTiy58p0jvKkLFC0r4LP8YC9lw03QYhYFEM5FbdIpl/UGbNLGX09P4g9iJ/MvXeVPfJPOWQoIZVek1iAdfDo/UARc9eyao2w76BA/Aocyy3argrqI8WTTQZlkBOFhnhG/JevuSstAMkM/0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hdJuKRG7; arc=none smtp.client-ip=209.85.167.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f169.google.com with SMTP id 5614622812f47-40a6692b75cso2511344b6e.1;
+        Mon, 07 Jul 2025 11:56:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751914612; x=1752519412; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=K6ayYvKDTLhKWG6B6PhMbZPiXC1I4Lt8zkiYPs7tjWQ=;
+        b=hdJuKRG7feEnfbyfqLiNNJO6afcGq0+v7Rq001Iods3tZncRid9p93sdsGJXh0kOHS
+         WL3WmUIg10SJE55lEp2ZtnSMFUbGM0oSNySSm/ERoitPR5vKnxj3FGV333qX8X8CMINs
+         FTnA68OxP/H1RvfFG21jVaEx1pyEhhLiwjUTiQmFm5Khb76qs42sO4ll0Mml0ea3q3Cd
+         3BYr8cFyd2tzE6Zf7DeQqYU9/cVtjG9sit3dZXErlwftsta+n1IGj7RgJ+jF7k7rtLdG
+         FiILZTlomN6meCpVmitRTO4vQvkb1xPm2Q3xrMV19c2it8E8NPmXnMScRFT+eJ5H+h4P
+         HQmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751914612; x=1752519412;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=K6ayYvKDTLhKWG6B6PhMbZPiXC1I4Lt8zkiYPs7tjWQ=;
+        b=w9+xUCGhA2dCtn3lPNFUegWT/ApTqO7q/Gc9jEey4z5MvjfARdHnwUORfh/aZKStzW
+         R5EACD8nLOSCdXu0NUW45SghOa3IBDUEoDE4vhuzbK49wCcCVvvd25o/g8g/1edYvkpA
+         MsdnRK0KePUcQp1jG0HU3hqMeRYmVRTi4tYiDvEgUB1di6VQxvUno2KlSxpZznaiQEeM
+         4bUi/9yhCr86fCAe+XPn0gKR0cz2ty91L/gaDi/k/rhhH9TOVHBJTHxDRZdEMqCBcqIn
+         DT7ruQkfJdX8mdcwIL/decbX45QdYRtzp7PA7hdRdjObjQsnHLH2/9UdIaq7ZPGmFpfZ
+         HrMA==
+X-Forwarded-Encrypted: i=1; AJvYcCW3UQNvBZj4lqGcokYqWpi4EDiSI9Pp6KAuKp62J+pY9mRppKrXQ5aqmPxIbz/ELwiQEu1QxN0uW0RRKI0=@vger.kernel.org, AJvYcCWyAOpuFFmdKBIBgqZ2SEK5oBniWEhzLHYb/e+vECQNVC5m1BGNHr0RJ9eposoQa/E56Hze19OpfNEb@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZVJvRESe8VnmowygvxOrcr2QjAUDASLZANCgJDJsB66L1eD9q
+	kKcDHskBPYrBjyM3dsrCBKCn6QHesJH9/9oNuFkGM4nW3GpkTdR65yhS
+X-Gm-Gg: ASbGnct7scSQal9Xi6H1vFEgSBeyWJeLSZk3GXplLrAETYiPDQureZKSOHDvANvxx+4
+	Q9XQHuBSN4by7krjFea3bSuMABN0u15ZNZ1TJq9rrna4vQScpe2Si+zjuxFSmCXfsZCoO2/jsGv
+	MrUO8vtUBBCTbwhXh9DVy/2PrKNk+QobBcongtO3akx8Q5pSPlCa+Q1ij4um4ERByXV481Mu7Qg
+	60VxDI2iuNiRL6RS+Hb6VXonOmYmAtRCpeh4OOb4TtJ2z+52GmGr40wQq5WDcD0yDF5S6JTJeBb
+	rnXupASj2jvPf5c/oYHG7R5xeOFpm+xbeVZA1qxI4UQR/gJKjdxHny3VuRP2DrM=
+X-Google-Smtp-Source: AGHT+IG9Bu90q0WTjtWxz7HDuJ2Rzyfv/8PajDWomE8All5ggz2bpklWeqOUkIt8krxiv5gByH/Xcw==
+X-Received: by 2002:a05:6808:1a0e:b0:406:71fd:b610 with SMTP id 5614622812f47-40d073ed6d3mr8063252b6e.33.1751914612548;
+        Mon, 07 Jul 2025 11:56:52 -0700 (PDT)
+Received: from s-machine2.. ([2806:2f0:5501:d07c:d8b:9d6d:a96d:6f71])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-40d02ab27c3sm1400851b6e.32.2025.07.07.11.56.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Jul 2025 11:56:52 -0700 (PDT)
+From: Sergio Perez Gonzalez <sperezglz@gmail.com>
+To: zhoubinbin@loongson.cn,
+	ulf.hansson@linaro.org
+Cc: Sergio Perez Gonzalez <sperezglz@gmail.com>,
+	linux-mmc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] mmc: loongson2: prevent integer overflow in ret variable
+Date: Mon,  7 Jul 2025 12:55:41 -0600
+Message-ID: <20250707185545.46275-1-sperezglz@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: 95a8k6ienbz8rqbrctynjw3ezmx355qx
-X-Rspamd-Server: rspamout07
-X-Rspamd-Queue-Id: A39946000A
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX18Mfh5tsCyW2yAj7VkmmhrAhpOV5HeX750=
-X-HE-Tag: 1751914349-443376
-X-HE-Meta: U2FsdGVkX19TYR69O3Hdm/4ht9uO86N3LmzV5jWzVaB0EkVyRqHPW54KBGNipbjT4qeTnoSR+/RgBlYz/+07ycDukYP+pSXOU5gFLQbiOXVJilKWvEzBYWT2Rz73WlV8AHy7baQssxv9cYYSVQjXeRnGygFn1DzUQeJBW3y1SV+H1jnwsl+fZv8eVd+4ntBlHaqHmo+la2HIUNO2T7SHlSr/zI9kQV0XDmBChpOwo4D4IHjM/aj8fHHhWIGJ61ztE7fmR7BTQjviJ1HnWP9cxdTcD9tdjEpolhqFSd9CAh432MNl6zwEsxHIaHzGUqbyk+YH3jOf5he9Sm7mP8j+BLN42nLfxsUU
+Content-Transfer-Encoding: 8bit
 
-On Fri, 4 Jul 2025 09:54:52 +0800
-Menglong Dong <menglong8.dong@gmail.com> wrote:
+In loongson2_mmc_dll_mode_init(), `ret` variable is declared
+as u32 but it is expected to hold an int value.
 
-> > What exactly do you mean by "reset"?  
-> 
-> It means to reset the filter hash of the ftrace_ops to ips. In
-> the origin logic, the filter hash of a direct ftrace_ops will not
-> be changed. However, in the tracing-multi case, there are
-> multi functions in the filter hash and can change. This function
-> is used to change the filter hash of a direct ftrace_ops.
+Fixes: d0f8e961deae ("mc: loongson2: Add Loongson-2K2000 SD/SDIO/eMMC controller driver")
+Reported-by: https://scan7.scan.coverity.com/#/project-view/53936/11354?selectedIssue=1644958
 
-The above still doesn't make sense to me.
+Signed-off-by: Sergio Perez Gonzalez <sperezglz@gmail.com>
+---
+ drivers/mmc/host/loongson2-mmc.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Can you explain more what exactly you are doing at a higher level? To
-me "reset" means to set back to what it originally was (which usually
-is zero or nothing).
+diff --git a/drivers/mmc/host/loongson2-mmc.c b/drivers/mmc/host/loongson2-mmc.c
+index 515ccf834f0a..ba6bb8fd5535 100644
+--- a/drivers/mmc/host/loongson2-mmc.c
++++ b/drivers/mmc/host/loongson2-mmc.c
+@@ -485,7 +485,8 @@ static irqreturn_t loongson2_mmc_irq(int irq, void *devid)
+ 
+ static void loongson2_mmc_dll_mode_init(struct loongson2_mmc_host *host)
+ {
+-	u32 val, pad_delay, delay, ret;
++	u32 val, pad_delay, delay;
++	int ret;
+ 
+ 	regmap_update_bits(host->regmap, LOONGSON2_MMC_REG_SEL,
+ 			   LOONGSON2_MMC_SEL_DATA, LOONGSON2_MMC_SEL_DATA);
+-- 
+2.43.0
 
--- Steve
 
