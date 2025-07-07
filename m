@@ -1,107 +1,168 @@
-Return-Path: <linux-kernel+bounces-719749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AF7FAFB229
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 13:20:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D4CFAFB22D
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 13:22:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66E3B189C258
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 11:20:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A4153BF282
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 11:22:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA7F229994B;
-	Mon,  7 Jul 2025 11:20:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77661299AAA;
+	Mon,  7 Jul 2025 11:22:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="R8LinyIA"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DgKaYjdz"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9272C1EA7F4;
-	Mon,  7 Jul 2025 11:20:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2793F288C32;
+	Mon,  7 Jul 2025 11:22:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751887216; cv=none; b=X2QhdqeQN+AAiPwU2UEqeTIb0F757F5lqBfRMHF5+gI0wHm+evTTBaYxvyS0XaKhpACEgM1QK5VqF5Zxat30wkDyvSQL/IVQ/MZs3kEYI+3Cpa5syb//SoM6oMGM8BB8Wrwduxj5411VL5/eXo9NmfM6zdPv/Z9SSEU7UbhDTTo=
+	t=1751887355; cv=none; b=mIC/Z2Bx6K9A6F+sPrmLweh1MIn1/K1hF5qCetMEgM6MnBR2xFJ6QL0ZCjSc/WEudqDtCHA7O5BFN5/FPViKoxv4AkVxMkM9eMudPNiKQKuy6PGLPME9rcJAkTVsP5ZjiGJmfUk4IyIH853pK1IULQlrcLB0XB9GpyvAj2X/Hv0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751887216; c=relaxed/simple;
-	bh=jGJv2jD1XliaBIVIsdqHQMv9dLKCXfRhTPtoA4SGGAE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gMqEeU8JYl+uFWNznKedfxfwGSTWIXFTfSNx2DZ0pUfJkQLge8LCMH/oTz99N48jNWcL3hbJjXpyw3zatL2rYGdfdltKzTY0DgOHJtLUl4SSbZnp2yEdYyLWGjAEJVCPdl5kdXrYU2hxQMxKN6sXkTRwEBKE+STWcbgPxjjQXAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=R8LinyIA; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=AFfQkkgZzfauywkGBPgbqC8epe1MW8MLE7JR074khWM=; b=R8LinyIA58zjWkyc7cu3rYC/52
-	QZcZ01yx++c2zOAcfnhH10NsxZ4ceEpqwyFmXyHRye2oE2t8ZseJ8+HJrWJh/qGc+oi8m2lMeRn8A
-	p/cZIigLytjdPiCz/8iSV/q+SfXzYrr2YWCveOdy5kgDcvVt0b2qPejgcz0ydp87WTq8QeY44T9xa
-	SxC3kgyjKKE3JHNs8mBZpqWRQkuNpQ1dn5ae2IlNDRJYpPPMDNZhTolgl/KLjbKSUIqF95LyMuVPh
-	/JPzRIwM4ME3MMfZ8uUkNJPcJPxYWGa835ACJ1yuPofqhYsfOCthJaRC3Q8QvGVN+SMKuPkbCqt7F
-	+RDbidiw==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uYjtD-00000008TYL-3zoG;
-	Mon, 07 Jul 2025 11:20:04 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 7CB5B300399; Mon, 07 Jul 2025 13:20:03 +0200 (CEST)
-Date: Mon, 7 Jul 2025 13:20:03 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Wander Lairson Costa <wander@redhat.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	David Woodhouse <dwmw@amazon.co.uk>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:TRACING" <linux-trace-kernel@vger.kernel.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Clark Williams <williams@redhat.com>,
-	Gabriele Monaco <gmonaco@redhat.com>
-Subject: Re: [PATCH v3 2/2] tracing/preemptirq: Optimize
- preempt_disable/enable() tracepoint overhead
-Message-ID: <20250707112003.GY1613376@noisy.programming.kicks-ass.net>
-References: <20250704170748.97632-1-wander@redhat.com>
- <20250704170748.97632-3-wander@redhat.com>
+	s=arc-20240116; t=1751887355; c=relaxed/simple;
+	bh=auNc4q5k6WOOpCz8yUc9QQvG0PQvjGchvMgSYprHzEA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DTxX9NQqJJvzWqn9bNcX38NxFluefIOGbQb3X7N3Vxo94hoOW3dUhmvlFMFqHTxLI2Hr443jx6NCAsxpYiT6SCo6HuSauJW+778uEcBzcL5EAu3tjCJX64iSV008i0WIxwvOVtPGOgHw9iyA2kR5mo7iz2++D6cRcioFLUC3iUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DgKaYjdz; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-451d6ade159so25294075e9.1;
+        Mon, 07 Jul 2025 04:22:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751887352; x=1752492152; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=EzuNbdmGUYx5Y7Vkv6KzZL1Zh++TdqOfzMO1Yq9uvLA=;
+        b=DgKaYjdzUkj5EtHWCYRokfLe5Iiv1tN+xl5OtzQvxN/JLtYrZGjDtID7Mdikvs5+XE
+         rZZ8Nr1QczvDf3by10dPjWMSJr/aA1MR5kD3JLcF/s28nqRZ+aInEbldbpv4vNvzX+Tw
+         str7pIthkeeBr5WiK7zunaLPBnDtDYl1RQYOR0NZJSAN8ZuSH4isHc1DixwO76kBGiPO
+         lQwiYPoIuG33FBpWHCF2y4GHE4pU8JmCDlSUc6+xqcgzjW+gkHw3KNy8VGoNYklc1j+t
+         +wi7jqzYs8Uq5VuUKpgvfY/0uWgZv4dt5NHQQihertRF2KQNpOkfFI+Pke3byswzzxHB
+         jcBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751887352; x=1752492152;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=EzuNbdmGUYx5Y7Vkv6KzZL1Zh++TdqOfzMO1Yq9uvLA=;
+        b=ajcfOoLBZ6ypAWl4BN6j47pPwgntZ1cCU/8/3WxK0T0Bq2ymIJsEayE4b+t6Liup8N
+         S5ddCvYEmfYucIRbXi+EEjuP1sGwBl9PFvpgvsWumInInHJ/ShFWqBQSywGpXs5A1sMb
+         lL/D+XiQTxUO54XtmTSXb4tdkea4WubfrLOiGXufckdX16QhXPNLQhrZVy7rXzudj2C/
+         ajvUdsd/32Q4OwGulVsYv5EkIxe5pSU65bzZsi7GXKjWqJx44FUNHAq1lvQpegU9fE+0
+         VnYGbDqJaijrq7fCT7RzcRx1ZSUrCjXkU4kDV1iV3hLrnvudzr/n25InGw7z6iivrqlb
+         fk1A==
+X-Forwarded-Encrypted: i=1; AJvYcCVN9k9zB7uXzsVSytJQ6MIi0py4vyLltHUkFuaDlG/c0RaVbF5qzVySjMPBgasl0ArwbcSkGLqcSymNE8ml@vger.kernel.org, AJvYcCViEpI/GZ6mZGbE/U6oiMJDhx8Fr9lDmQUGNebSqKTCTK1enYLi+pcPELZ3zHiQVFEkobyGxTXXZpI=@vger.kernel.org, AJvYcCW3c2ZAX1v3fL3AgJahmt9u4vriR+Zw+Jl07hrr4GUsL1Jmw0pnR/naeuWAAJXvNIHEPM9P/CQCKGK0sr0PEFE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YysuRVR758p35QLVoPcrgB7ZRLzMfX56UhMXKi4T8EXOiB03Tyi
+	9hBXnYs3EniK9OMaEoNdbGQ5cSsUrsr2Uv8h3+oj5zUUAjdTeOe67HTe
+X-Gm-Gg: ASbGnct2lAp4T+h2hJuKG84hWf2bCNXCyGJrJi+7EyR3bRWBL4+1dZBUHb4FpzAmN3i
+	9EWQ7wvdqxONxcxjQBMBf2Gnet9ydj/O/lEm1zMFbIIaqx0+1b8nE58aMMd4oyRLVLjLTlyXkZm
+	mfaoS1d92knbkuF7XQjWyX0bnpyLOaD7Q2yohaY2uU+GokdwnpEhgTgLRrt9GiTKdDhGMXd2qcc
+	R2qR/w7+dcbsM+/OCaKgPi2nfznqepfalBFbw8VhpcQRk9maX3mTQDAP9vtyaUnIJID1oPiAwaG
+	CDoGkKetVUhEx+RzCsJtt8X5B60XSnel8w+l0FgrFSeTIqI51KvD56AFSSrJEWuyDndL
+X-Google-Smtp-Source: AGHT+IEHeL1XoVCWaQmmQo9Sa1mjZcf1RV3n52Bddt+fuIeociziWR7HAGkg1jsESIwXlO3SJyYdkQ==
+X-Received: by 2002:a05:600c:5247:b0:453:b1c:442a with SMTP id 5b1f17b1804b1-454c0fc516bmr45761905e9.27.1751887351874;
+        Mon, 07 Jul 2025 04:22:31 -0700 (PDT)
+Received: from [10.38.1.85] ([188.39.32.4])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454b161fb78sm109255405e9.1.2025.07.07.04.22.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Jul 2025 04:22:31 -0700 (PDT)
+Message-ID: <954a40a4-2f5a-4ef8-84ea-3d2ba2c85cfe@gmail.com>
+Date: Mon, 7 Jul 2025 12:20:15 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250704170748.97632-3-wander@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/4] rust: i2c: add manual I2C device creation
+ abstractions
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>,
+ Asahi Lina <lina+kernel@asahilina.net>,
+ Wedson Almeida Filho <wedsonaf@gmail.com>, Alex Hung <alex.hung@amd.com>,
+ Tamir Duberstein <tamird@gmail.com>,
+ Xiangfei Ding <dingxiangfei2009@gmail.com>, linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org, linux-i2c@vger.kernel.org
+References: <20250704153332.1193214-1-igor.korotin.linux@gmail.com>
+ <20250704153912.1197034-1-igor.korotin.linux@gmail.com>
+ <aGgxfNh-sgkJls_h@cassiopeiae>
+Content-Language: en-US
+From: Igor Korotin <igor.korotin.linux@gmail.com>
+In-Reply-To: <aGgxfNh-sgkJls_h@cassiopeiae>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jul 04, 2025 at 02:07:43PM -0300, Wander Lairson Costa wrote:
-> Similar to the IRQ tracepoint, the preempt tracepoints are typically
-> disabled in production systems due to the significant overhead they
-> introduce even when not in use.
-> 
-> The overhead primarily comes from two sources: First, when tracepoints
-> are compiled into the kernel, preempt_count_add() and preempt_count_sub()
-> become external function calls rather than inlined operations. Second,
-> these functions perform unnecessary preempt_count() checks even when the
-> tracepoint itself is disabled.
-> 
-> This optimization introduces an early check of the tracepoint static key,
-> which allows us to skip both the function call overhead and the redundant
-> preempt_count() checks when tracing is disabled. The change maintains all
-> existing functionality when tracing is active while significantly
-> reducing overhead for the common case where tracing is inactive.
-> 
 
-This one in particular I worry about the code gen impact. There are a
-*LOT* of preempt_{dis,en}able() sites in the kernel and now they all get
-this static branch and call crud on.
 
-We spend significant effort to make preempt_{dis,en}able() as small as
-possible.
+On 7/4/25 20:54, Danilo Krummrich wrote:
+> On Fri, Jul 04, 2025 at 04:39:12PM +0100, Igor Korotin wrote:
+>> -pub struct Device<Ctx: device::DeviceContext = device::Normal>(
+>> +pub struct Device<Ctx: device::DeviceContext = device::Normal, State: DeviceState = state::Borrowed>(
+>>      Opaque<bindings::i2c_client>,
+>>      PhantomData<Ctx>,
+>> +    PhantomData<State>,
+>>  );
+> 
+> I see what you're doing here, but I think you're thinking this way too
+> complicated.
+> 
+> I recommend not to reuse the Device type to register a new I2C client device,
+> it's adding too much complexity without any real value.
+> 
+> You also don't want the DeviceContext types for a device registration, since the
+> registration will never have any other DeviceContext than device::Normal (see
+> also my comment on the sample module).
+> 
+> DeviceContext types are only useful for &Device (i.e. references) given out for
+> a specific scope, such as probe(), remove(), etc.
+> 
+> The only thing you really want to do is to register a new I2C client device, get
+> a i2c::Registration instance and call i2c_unregister_device() when the
+> i2c::Registration is dropped.
+> 
+> This is exactly the same use-case as we have in the auxiliary bus. I highly
+> recommend looking at what auxiliary::Registration does [1].
+> 
+> Also note that if you want a reference to the device in the i2c::Registration,
+> you can also add a i2c::Registration::device() method that returns an
+> &i2c::Device, which through into() you can obtain an ARef<i2c::Device> from.
+> 
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/rust/kernel/auxiliary.rs?h=v6.16-rc4#n299
+
+I took a quick look at the auxiliary Registration abstraction and I see
+that it is not applicable for I2C subsystem. The issue here is that I2C
+C code doesn't provide with an API that can registers an I2C client from
+already existing `struct i2c_client`.
+
+All the APIs provided require `i2c_adapter` with some other inputs
+depending on a specific API, they return `i2c_client` being allocated
+and registered by the Kernel C code.
+
+Since I'm not controlling initial object allocation, I need somehow to
+mark created i2c_client to be dropped automatically and that's why I
+implemented `Borrowed/Owned` generic parameter along with this
+`DeviceOwned(Device<Ctx, state::Owned>)`. One of the main purposes of
+this Borrowed/Owned to prevent accidental casting of `i2c_client` structs.
+
+Alternatively, it could be an implementation of `unregister` method that
+user should call explicitly to de-register manually created
+`i2c_client`, but as far as I understand this is not Rust "way".
+
+Best Regards
+Igor
+
+
 
