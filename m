@@ -1,251 +1,200 @@
-Return-Path: <linux-kernel+bounces-719623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9F52AFB070
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 11:57:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 08C1FAFB08F
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 11:59:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD80B7A4C65
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 09:55:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 546237A2ACB
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 09:57:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2E0C289376;
-	Mon,  7 Jul 2025 09:57:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B88328D85C;
+	Mon,  7 Jul 2025 09:58:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ipRjMHMh"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="nKhuQZle"
+Received: from mail.kapsi.fi (mail-auth.kapsi.fi [91.232.154.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5191C21FF27
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 09:56:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF34E2D78A;
+	Mon,  7 Jul 2025 09:58:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.232.154.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751882220; cv=none; b=fJodXm+YmU01UCXxG/qu/pEh4VLgB/FHNjKS6FuqDKavWZxAMe637z6LucXFu9Wz7JJv5KlTowTY29/Xr9PwHb8w1iBHixBwZjLtpBxVF4MDOaL0HCUDNcENkVAj/XJPtuSUiE2VWOB+imT2RmYQYP+lN3MUbN4QIpOZqJrwtDA=
+	t=1751882334; cv=none; b=UvPcKoZXfgPenC3K65o0kZGx/K7xAYsUgHLeMlGLJJPRprZsNJ1QKzjGn9jhE0knSnjiJsl1tav75FPkSm/MZqQBoMOcWXttR5u6PUHVj6REcbXN/3HOh+03xy3wS8eDDOLY9zvC/Bh7i6PlQ66VZTSG+MECeV1aFalbu8TWduM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751882220; c=relaxed/simple;
-	bh=18YR99uXCyEZk77ThDFqutW4vFM4pTkYue+/FBulMLg=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fY4QZvf6OWb+61F/pbdazskxSx32DK0mwFSE1lZ9TLhfrS8MH2GDRPtLEUd3/VPoYnCGWClyO2juWwX7H0X9RHlNBv0aVwMzhgcGdOd0j08RhpAW5AkEOlahwGTIzchWsNOW/kIgcvX3GdAWKlccrHbnyfsS2jnzueXAT1g3fx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ipRjMHMh; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5679neso013448
-	for <linux-kernel@vger.kernel.org>; Mon, 7 Jul 2025 09:56:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=EOkscAPglu6pNYZf/TxA87OL
-	ergxaMCP9y55D8Mo79k=; b=ipRjMHMh7ptxXvwLj+25db+3re9z/kUJtcwn/MPk
-	aYGp3b3xrQ63+vhrZLEwf3AsBL4rj8XyPdLEwwZHrqw+Zj1Nd3ifkdt2eY5HfVwj
-	lwHSZYHMBo43JaYucfkXmYvz08yrKF3u3EHr131mXd7aiiEL74mHpsHEEO9dLs6z
-	zvQhpWIQUbuiXI8OX1/g5aV+PTkIzMrIs2j+S3pjsPX1S10Y6yyTApV7TQSLDH7u
-	YPg2CLgFalLCQN+PIhwjxS7kWScnrkmi+teHgVNKnPusKfdhnLSndUDIDCYacjuE
-	OXBa88jBSmLh76xpiLjv5kETArloapFNAVPIdEz8XpKa1A==
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47pvtkbnd4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 09:56:58 +0000 (GMT)
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7c760637fe5so394800985a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 02:56:58 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751882217; x=1752487017;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EOkscAPglu6pNYZf/TxA87OLergxaMCP9y55D8Mo79k=;
-        b=eGciYlUIW+8IDdGWo4MXmDIJ6CbclLP69kb5E/pwyGWzXaqEVx+3P6ePXZ7QOBghzh
-         hNop/3Lys0FCHyt6nqcOtrPNWy/89CcIt7skY7xMyzphm+ilBGAIRl64D8cQevKUcXs9
-         BLmrSvgxYobbsnK1OrNVm/t6NzpOVT9piIqFT3i2G3sLYTiW7Fslp2d8+LwufWgHKhmm
-         eszl28gXG0KGZtFQuvxTn6oOkZcOWX+VeICuEFuW/YnnVRL4L2o2hl4c7tURS7tmr2P2
-         0HMoGHNNRph292JSeKguwaqr4+PuEZ8/p85A1Isok8A7w1xIsPaASuDzZLyUmB1Nnoz8
-         xNjw==
-X-Forwarded-Encrypted: i=1; AJvYcCWU1zkMCDfqQC7qeYhROhaV7tTzNYT+IKRb2iYIlLPDi+DS5BZRQPoUpmWw9PT0veEoBt+UIBD9MlrAZvI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzaZnUcxUQPWzOa7HjRP1WTbNXUKnfg363mBX05I/GcPdAo2CDp
-	eHAn3VDgjxskvHVBxGVp2G9CHM3ZICnyF1L2yCvmK8wzAYvB8f/mtIMTziFScz5aXM5eEl/RoRM
-	cB7uW2/z3uUcD+4W6RrUYgQ3GnF2eYYFhN8WiXERe2D8aY5NHCKBTMO46ktlr+Pc7Sfo=
-X-Gm-Gg: ASbGncuxmBkQCc3gCaQukWlOpVg9aKioRUeMEyayqB2ciXuqQdXYKK9DTD1T6JGZpg1
-	8fjbNMqn6ulcjSyupSxu/G+uh3UKQSavrJ27Fjo1DT8RnQ0t4qnpwmmzGHMxoWZGI2O0W8hSg2L
-	B3jTa9tyOWsonytVvV1ys5nCzTAD8mLamdtjHe61V+Z0y8S7dAbkaMVTvs/vsi9sv/DUsRLZ85M
-	l0hPhzZNjvBaiMXLDxb1cwy22XFZO4DiHPeH3bZgD8TShuhx9EUce6LOAefriHdzTIYWrpo65q/
-	agk2rOC9MGdyk6+dBvwvXnZVhRAuOZf1g7tOSoQWUc9L0Aj3rb6DAm4=
-X-Received: by 2002:a05:620a:8083:b0:7d2:15e:1f9d with SMTP id af79cd13be357-7d5f20b7efamr1156797185a.53.1751882217021;
-        Mon, 07 Jul 2025 02:56:57 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH8HJEkPslMRBZD2ONOEBO+PEUNCALtoyCPDK0CyJ4VcqyQXuJqvMV6aeF1c958pDPXhcvw3g==
-X-Received: by 2002:a05:620a:8083:b0:7d2:15e:1f9d with SMTP id af79cd13be357-7d5f20b7efamr1156794685a.53.1751882216608;
-        Mon, 07 Jul 2025 02:56:56 -0700 (PDT)
-Received: from trex (97.red-79-144-186.dynamicip.rima-tde.net. [79.144.186.97])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454b16288b5sm108476705e9.9.2025.07.07.02.56.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Jul 2025 02:56:56 -0700 (PDT)
-From: Jorge Ramirez <jorge.ramirez@oss.qualcomm.com>
-X-Google-Original-From: Jorge Ramirez <JorgeRamirez-Ortiz>
-Date: Mon, 7 Jul 2025 11:56:54 +0200
-To: Dikshita Agarwal <quic_dikshita@quicinc.com>
-Cc: Jorge Ramirez <jorge.ramirez@oss.qualcomm.com>, krzk+dt@kernel.org,
-        bryan.odonoghue@linaro.org, quic_vgarodia@quicinc.com,
-        mchehab@kernel.org, robh@kernel.org, conor+dt@kernel.org,
-        konradybcio@kernel.org, andersson@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 3/5] media: venus: hfi_plat_v6_lite: Populate decode
- capabilities
-Message-ID: <aGuZ5h7LpPu5Pbnr@trex>
-References: <20250626135931.700937-1-jorge.ramirez@oss.qualcomm.com>
- <20250626135931.700937-4-jorge.ramirez@oss.qualcomm.com>
- <bac6a881-90b6-4f33-d9a8-61aa8daea330@quicinc.com>
- <aGuPpzU0VCg45Plg@trex>
- <db7fbfb8-b0fe-58e2-4564-f24d6a551232@quicinc.com>
+	s=arc-20240116; t=1751882334; c=relaxed/simple;
+	bh=mfywlIon05GmSQBSaq9TMA0n5Dr/tJ2GG+p4Un6YPuE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=U3aBHD4AFseaZgruPkRk/9pqRtdLitrI0Hf5oApBEv6D91PcLCdOabRzVczh5I9/IMf3T89ptcxkovJaMuA5WLPiTlSjMVj3FudluzwdhK6auSBBZQ7z+Ze6RHgFbSU7PSjzt+VFGMUW1QefKdSbpFZpHEjf+OifWeLA5rOQJUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kapsi.fi; spf=pass smtp.mailfrom=kapsi.fi; dkim=pass (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b=nKhuQZle; arc=none smtp.client-ip=91.232.154.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kapsi.fi
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kapsi.fi
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
+	s=20161220; h=Cc:To:Message-Id:Content-Transfer-Encoding:Content-Type:
+	MIME-Version:Subject:Date:From:Sender:Reply-To:Content-ID:Content-Description
+	:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=DJTmg+WhfK7CgNVvUl2qBtbYazeyB4bBuWMjCQQUljw=; b=nKhuQZleEvyG0SR1w10ngQz4pU
+	soNjHDDfGpzJnV0HmdwVlXtsCUnPmc/yihuJ2+7u99keOUcGLCvjkOoF9MxQRTMuFqt/Qdl0S9nRz
+	bYugarW1bArLJElUSgaU3g+SBeZJottEun2B0i8yASBrEG/nEKJH3opLw+JotZuxCyFNLzKtZZ9Qe
+	sTOZpmObzShKGTvgjP2K83hGuxs/OOQgwuKYVQVjKR3fGMj/pKe0pk7/ppCvnhrI0O1CkFP1cHLDa
+	gVHOTwj1s9uJ0Nlpa0uF3koEDdjKsIsHDKQ+yeS6QcY43weMeK3QfODCd9bZGRf1iHVR3TNM8LpC8
+	fjq2pDQA==;
+Received: from [2404:7a80:b960:1a00:5eaa:b33c:a197:a90f] (helo=senjougahara.localdomain)
+	by mail.kapsi.fi with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <cyndis@kapsi.fi>)
+	id 1uYicZ-003up3-2D;
+	Mon, 07 Jul 2025 12:58:48 +0300
+From: Mikko Perttunen <cyndis@kapsi.fi>
+Date: Mon, 07 Jul 2025 18:58:32 +0900
+Subject: [PATCH] gpu: host1x: Syncpoint interrupt performance optimization
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <db7fbfb8-b0fe-58e2-4564-f24d6a551232@quicinc.com>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA3MDA1NyBTYWx0ZWRfXwGFn2ah8xXVb
- MEe0ulVfkapDolPa8rWuSt5REgFsSJDG+8ZAxARQ5RtMzBj+u9D7gaAtFssJil9CPArNi1Xikcu
- tDp8PG0yOmnNnxn/rSS02hSS0KnCXyvaZtUK/GRZu2cSwBofDJkCdtPIEXbIpINoTWl6rvsxf5n
- O+WBbstHDxHkyiyubkbbjmTlwT2jWKc7HA1P1LrzelpB/kf8xPQT54UTIz0iZeNaHOyViE3leZR
- GHllekR6WHKqSxmQqGwDtqermic25TC0HKETabSVAs4U+r8HtJFFwMDBh5z/kSoCMwrkwNeownq
- NSunmUGme7FI0nAw0vjn9Rxm2hR7eKO6ya6SpXviFfuUIRQCrIj9E69f+DGHtXEU3wU8LhVuJFk
- 84CiRafsCRZeljmTlsCfLrdQviXiwnD3/jEoZcIugfYV/hDCO9g5caq5W2dARssxXpSxLT9n
-X-Authority-Analysis: v=2.4 cv=Vq0jA/2n c=1 sm=1 tr=0 ts=686b99ea cx=c_pps
- a=qKBjSQ1v91RyAK45QCPf5w==:117 a=oX6B8lV6/A+qF9mARCc04Q==:17
- a=kj9zAlcOel0A:10 a=Wb1JkmetP80A:10 a=P-IC7800AAAA:8 a=EUspDBNiAAAA:8
- a=nYNRSA1dgNPy7Ku2h68A:9 a=CjuIK1q_8ugA:10 a=NFOGd7dJGGMPyQGDc5-O:22
- a=d3PnA9EDa4IxuAV0gXij:22
-X-Proofpoint-ORIG-GUID: AQJ5-5RlP8n4HaSbbrqfyGgIxdrBTRI8
-X-Proofpoint-GUID: AQJ5-5RlP8n4HaSbbrqfyGgIxdrBTRI8
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-07_02,2025-07-07_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 adultscore=0 bulkscore=0 phishscore=0 lowpriorityscore=0
- clxscore=1015 mlxscore=0 malwarescore=0 mlxlogscore=999 impostorscore=0
- suspectscore=0 priorityscore=1501 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507070057
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250707-host1x-syncpt-irq-perf-v1-1-16d53e516895@nvidia.com>
+X-B4-Tracking: v=1; b=H4sIAEeaa2gC/x3MwQqDMAyA4VeRnA00Finbq4wdnE1nLrVLRJTiu
+ 694/A7/X8FYhQ2eXQXlXUzW3EB9B/My5S+jxGYY3DC64AIuq210oJ15LhuK/rCwJpzIfSg+PPm
+ YoMVFOclxj1/v6/oDGlzGMmgAAAA=
+X-Change-ID: 20250707-host1x-syncpt-irq-perf-a10b1d9313df
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Mikko Perttunen <mperttunen@nvidia.com>
+X-Mailer: b4 0.14.2
+X-SA-Exim-Connect-IP: 2404:7a80:b960:1a00:5eaa:b33c:a197:a90f
+X-SA-Exim-Mail-From: cyndis@kapsi.fi
+X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
 
-On 07/07/25 14:59:05, Dikshita Agarwal wrote:
-> 
-> 
-> On 7/7/2025 2:43 PM, Jorge Ramirez wrote:
-> > On 27/06/25 19:02:13, Dikshita Agarwal wrote:
-> >>
-> >>
-> >> On 6/26/2025 7:29 PM, Jorge Ramirez-Ortiz wrote:
-> >>> Add hfi platform file with decoding capabilities for hfi v6_lite.
-> >>>
-> >>> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez@oss.qualcomm.com>
-> >>> ---
-> >>>  drivers/media/platform/qcom/venus/Makefile    |   2 +-
-> >>>  .../media/platform/qcom/venus/hfi_platform.c  |   2 +
-> >>>  .../media/platform/qcom/venus/hfi_platform.h  |   1 +
-> >>>  .../qcom/venus/hfi_platform_v6_lite.c         | 148 ++++++++++++++++++
-> >>>  4 files changed, 152 insertions(+), 1 deletion(-)
-> >>>  create mode 100644 drivers/media/platform/qcom/venus/hfi_platform_v6_lite.c
-> >>>
-> >>> diff --git a/drivers/media/platform/qcom/venus/Makefile b/drivers/media/platform/qcom/venus/Makefile
-> >>> index 91ee6be10292..4a6a942db58b 100644
-> >>> --- a/drivers/media/platform/qcom/venus/Makefile
-> >>> +++ b/drivers/media/platform/qcom/venus/Makefile
-> >>> @@ -5,7 +5,7 @@ venus-core-objs += core.o helpers.o firmware.o \
-> >>>  		   hfi_venus.o hfi_msgs.o hfi_cmds.o hfi.o \
-> >>>  		   hfi_parser.o pm_helpers.o dbgfs.o \
-> >>>  		   hfi_platform.o hfi_platform_v4.o \
-> >>> -		   hfi_platform_v6.o hfi_plat_bufs_v6.o \
-> >>> +		   hfi_platform_v6.o hfi_plat_bufs_v6.o hfi_platform_v6_lite.o \
-> >> s/hfi_platform_v6_lite/hfi_platform_v4_lite
-> > 
-> > will remove, will use platform_v4 instead
-> > 
-> >>>  
-> >>>  venus-dec-objs += vdec.o vdec_ctrls.o
-> >>>  venus-enc-objs += venc.o venc_ctrls.o
-> >>> diff --git a/drivers/media/platform/qcom/venus/hfi_platform.c b/drivers/media/platform/qcom/venus/hfi_platform.c
-> >>> index 643e5aa138f5..f56b8f9946d7 100644
-> >>> --- a/drivers/media/platform/qcom/venus/hfi_platform.c
-> >>> +++ b/drivers/media/platform/qcom/venus/hfi_platform.c
-> >>> @@ -13,6 +13,8 @@ const struct hfi_platform *hfi_platform_get(enum hfi_version version)
-> >>>  		return &hfi_plat_v4;
-> >>>  	case HFI_VERSION_6XX:
-> >>>  		return &hfi_plat_v6;
-> >>> +	case HFI_VERSION_6XX_LITE:
-> >>> +		return &hfi_plat_v6_lite;
-> >> update here as well.
-> > 
-> > yes, this function wont get changed
-> > 
-> >>>  	default:
-> >>>  		break;
-> >>>  	}
-> >>> diff --git a/drivers/media/platform/qcom/venus/hfi_platform.h b/drivers/media/platform/qcom/venus/hfi_platform.h
-> >>> index ec89a90a8129..6356e4bd0de2 100644
-> >>> --- a/drivers/media/platform/qcom/venus/hfi_platform.h
-> >>> +++ b/drivers/media/platform/qcom/venus/hfi_platform.h
-> >>> @@ -58,6 +58,7 @@ struct hfi_platform {
-> >>>  
-> >>>  extern const struct hfi_platform hfi_plat_v4;
-> >>>  extern const struct hfi_platform hfi_plat_v6;
-> >>> +extern const struct hfi_platform hfi_plat_v6_lite;
-> >> ditto
-> > 
-> > neither this one
-> > 
-> >>>  
-> >>>  const struct hfi_platform *hfi_platform_get(enum hfi_version version);
-> >>>  unsigned long hfi_platform_get_codec_vpp_freq(enum hfi_version version, u32 codec,
-> >>> diff --git a/drivers/media/platform/qcom/venus/hfi_platform_v6_lite.c b/drivers/media/platform/qcom/venus/hfi_platform_v6_lite.c
-> >>> new file mode 100644
-> >>> index 000000000000..41958a3e353b
-> >>> --- /dev/null
-> >>> +++ b/drivers/media/platform/qcom/venus/hfi_platform_v6_lite.c
-> >>> @@ -0,0 +1,148 @@
-> >>> +// SPDX-License-Identifier: GPL-2.0-only
-> >>> +/*
-> >>> + * Copyright (c) 2025, The Linux Foundation. All rights reserved.
-> >>> + */
-> >>> +#include "hfi_platform.h"
-> >>> +
-> >>> +static const struct hfi_plat_caps caps[] = {
-> >>> +{
-> >>> +	.codec = HFI_VIDEO_CODEC_H264,
-> >>> +	.domain = VIDC_SESSION_TYPE_DEC,
-> >>> +	.caps[0] = {HFI_CAPABILITY_FRAME_WIDTH, 128, 1920, 1},
-> >>> +	.caps[1] = {HFI_CAPABILITY_FRAME_HEIGHT, 128, 1080, 1},
-> >>> +	.caps[2] = {HFI_CAPABILITY_MBS_PER_FRAME, 64, 8160, 1},
-> >>> +	.caps[3] = {HFI_CAPABILITY_BITRATE, 1, 60000000, 1 },
-> >>> +	.caps[4] = {HFI_CAPABILITY_MBS_PER_SECOND, 64, 244800, 1},
-> >>> +	.caps[5] = {HFI_CAPABILITY_FRAMERATE, 1, 120, 1},
-> >>> +	.caps[6] = {HFI_CAPABILITY_MAX_VIDEOCORES, 0, 1, 1},
-> >>> +	.num_caps = 7,
-> >>> +	.pl[0] = {HFI_H264_PROFILE_BASELINE, HFI_H264_LEVEL_1},
-> >>> +	.pl[1] = {HFI_H264_PROFILE_MAIN, HFI_H264_LEVEL_41},
-> >>> +	.pl[2] = {HFI_H264_PROFILE_HIGH, HFI_H264_LEVEL_5},
-> >>> +	.pl[3] = {HFI_H264_PROFILE_CONSTRAINED_BASE, HFI_H264_LEVEL_41},
-> >>> +	.pl[4] = {HFI_H264_PROFILE_CONSTRAINED_HIGH, HFI_H264_LEVEL_41},
-> >> what is the reference for these values?
-> > 
-> > what do you mean? what should be the reference? I didnt see a downstream
-> > equivalente to base on so based on the 4XX settings these seem
-> > consistent.
-> > 
-> My question was regarding the profile and level mapping.
-> The profiles added are consistent with 4xx, I agree. But the value of
-> levels mapped with each profile is not matching with [1], hence the
-> question about the reference used for this mapping.
-> 
-> [1]
-> https://elixir.bootlin.com/linux/v6.16-rc4/source/drivers/media/platform/qcom/venus/hfi_platform_v4.c#L23
+From: Mikko Perttunen <mperttunen@nvidia.com>
 
+Optimize performance of syncpoint interrupt handling by reading
+the status register in 64-bit chunks when possible, and skipping
+processing when the read value is zero.
 
-ah right, AR50_LITE does not support 52 (the highest is 5).
-I see your point - you are right of course.
-I was doing a quite a bit of testing with fluster and I left the wrong values. My fault.
-will fix.
+Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+---
+ drivers/gpu/host1x/dev.c        |  9 +++++++++
+ drivers/gpu/host1x/dev.h        |  3 +++
+ drivers/gpu/host1x/hw/intr_hw.c | 40 ++++++++++++++++++++++++++++++----------
+ 3 files changed, 42 insertions(+), 10 deletions(-)
 
-thanks!
+diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
+index 1f93e5e276c0835eac2f713ffcd60a9db8db2c21..80380b6138276877be9709048c15da85d079f977 100644
+--- a/drivers/gpu/host1x/dev.c
++++ b/drivers/gpu/host1x/dev.c
+@@ -71,6 +71,15 @@ u32 host1x_sync_readl(struct host1x *host1x, u32 r)
+ 	return readl(sync_regs + r);
+ }
+ 
++#ifdef CONFIG_64BIT
++u64 host1x_sync_readq(struct host1x *host1x, u32 r)
++{
++	void __iomem *sync_regs = host1x->regs + host1x->info->sync_offset;
++
++	return readq(sync_regs + r);
++}
++#endif
++
+ void host1x_ch_writel(struct host1x_channel *ch, u32 v, u32 r)
+ {
+ 	writel(v, ch->regs + r);
+diff --git a/drivers/gpu/host1x/dev.h b/drivers/gpu/host1x/dev.h
+index d3855a1c6b472a9bd289c753d79906463e6bcdb4..ef44618ed88a128bae9ab712bf49f8abc0f3b778 100644
+--- a/drivers/gpu/host1x/dev.h
++++ b/drivers/gpu/host1x/dev.h
+@@ -179,6 +179,9 @@ void host1x_hypervisor_writel(struct host1x *host1x, u32 v, u32 r);
+ u32 host1x_hypervisor_readl(struct host1x *host1x, u32 r);
+ void host1x_sync_writel(struct host1x *host1x, u32 v, u32 r);
+ u32 host1x_sync_readl(struct host1x *host1x, u32 r);
++#ifdef CONFIG_64BIT
++u64 host1x_sync_readq(struct host1x *host1x, u32 r);
++#endif
+ void host1x_ch_writel(struct host1x_channel *ch, u32 v, u32 r);
+ u32 host1x_ch_readl(struct host1x_channel *ch, u32 r);
+ 
+diff --git a/drivers/gpu/host1x/hw/intr_hw.c b/drivers/gpu/host1x/hw/intr_hw.c
+index 415f8d7e42021b791550ca719adafa088cd34101..fe45890a9bfb1dfcbc0354f76d625e78e72ee548 100644
+--- a/drivers/gpu/host1x/hw/intr_hw.c
++++ b/drivers/gpu/host1x/hw/intr_hw.c
+@@ -11,26 +11,46 @@
+ #include "../intr.h"
+ #include "../dev.h"
+ 
++static void process_32_syncpts(struct host1x *host, u32 val, u32 reg_offset)
++{
++	unsigned int id;
++
++	if (!val)
++		return;
++
++	host1x_sync_writel(host, val, HOST1X_SYNC_SYNCPT_THRESH_INT_DISABLE(reg_offset));
++	host1x_sync_writel(host, val, HOST1X_SYNC_SYNCPT_THRESH_CPU0_INT_STATUS(reg_offset));
++
++	for_each_set_bit(id, (unsigned long *)&val, 32)
++		host1x_intr_handle_interrupt(host, reg_offset * 32 + id);
++}
++
+ static irqreturn_t syncpt_thresh_isr(int irq, void *dev_id)
+ {
+ 	struct host1x_intr_irq_data *irq_data = dev_id;
+ 	struct host1x *host = irq_data->host;
+ 	unsigned long reg;
+-	unsigned int i, id;
++	unsigned int i;
+ 
++#if !defined(CONFIG_64BIT)
+ 	for (i = irq_data->offset; i < DIV_ROUND_UP(host->info->nb_pts, 32);
+ 	     i += host->num_syncpt_irqs) {
+ 		reg = host1x_sync_readl(host,
+ 			HOST1X_SYNC_SYNCPT_THRESH_CPU0_INT_STATUS(i));
+ 
+-		host1x_sync_writel(host, reg,
+-			HOST1X_SYNC_SYNCPT_THRESH_INT_DISABLE(i));
+-		host1x_sync_writel(host, reg,
+-			HOST1X_SYNC_SYNCPT_THRESH_CPU0_INT_STATUS(i));
++		process_32_syncpts(host, reg, i);
++	}
++#else
++	/* All 64-bit capable SoCs have number of syncpoints divisible by 64 */
++	for (i = irq_data->offset; i < DIV_ROUND_UP(host->info->nb_pts, 64);
++	     i += host->num_syncpt_irqs) {
++		reg = host1x_sync_readq(host,
++			HOST1X_SYNC_SYNCPT_THRESH_CPU0_INT_STATUS(i*2));
+ 
+-		for_each_set_bit(id, &reg, 32)
+-			host1x_intr_handle_interrupt(host, i * 32 + id);
++		process_32_syncpts(host, lower_32_bits(reg), i*2+0);
++		process_32_syncpts(host, upper_32_bits(reg), i*2+1);
+ 	}
++#endif
+ 
+ 	return IRQ_HANDLED;
+ }
+@@ -68,12 +88,12 @@ host1x_intr_init_host_sync(struct host1x *host, u32 cpm)
+ 
+ 	/*
+ 	 * Program threshold interrupt destination among 8 lines per VM,
+-	 * per syncpoint. For each group of 32 syncpoints (corresponding to one
+-	 * interrupt status register), direct to one interrupt line, going
++	 * per syncpoint. For each group of 64 syncpoints (corresponding to two
++	 * interrupt status registers), direct to one interrupt line, going
+ 	 * around in a round robin fashion.
+ 	 */
+ 	for (id = 0; id < host->info->nb_pts; id++) {
+-		u32 reg_offset = id / 32;
++		u32 reg_offset = id / 64;
+ 		u32 irq_index = reg_offset % host->num_syncpt_irqs;
+ 
+ 		host1x_sync_writel(host, irq_index, HOST1X_SYNC_SYNCPT_INTR_DEST(id));
+
+---
+base-commit: 2aeda9592360c200085898a258c4754bfe879921
+change-id: 20250707-host1x-syncpt-irq-perf-a10b1d9313df
+
 
