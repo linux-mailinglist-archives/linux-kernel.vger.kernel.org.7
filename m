@@ -1,305 +1,201 @@
-Return-Path: <linux-kernel+bounces-720234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E287BAFB8EC
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 18:48:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CC0DAFB8ED
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 18:49:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 765177AE966
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 16:47:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 600D7423BDD
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 16:48:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DADBE226CE5;
-	Mon,  7 Jul 2025 16:48:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BFB31FC109;
+	Mon,  7 Jul 2025 16:49:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WJL3ZCEM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="hAytTvgW";
+	dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="9vTdHmBm"
+Received: from mailrelay-egress16.pub.mailoutpod3-cph3.one.com (mailrelay-egress16.pub.mailoutpod3-cph3.one.com [46.30.212.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F054F2E370C;
-	Mon,  7 Jul 2025 16:48:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5258E21B9FD
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 16:48:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.30.212.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751906902; cv=none; b=Bmx2geicEvCOlSFDrCfAZfyTOqfmA3803O/y2Nt1I+lKqqdx1UoItwEM0xJHgmfBEI0/4exC+Z9VrS034JUJAGcvqC6hv2EPKzN5aeNrWpRnfvvNPbwlyVrUsOVblmDxo1Qoy2OvLgFexvYK3CGGj7Mu1keCiCcPfgMAQqZo0Ak=
+	t=1751906941; cv=none; b=Hi/z+EAIDcpiRkQyVxqzDnn8lVZS4QlQEm3CF8qgrEKz2bxyFrQ0G0UM1+xyy/xkOa3UNHVOkCBz9a9Y6mjxnvTifwtZR2LHWl7fXun9X6AU6qNUF/0cdSmacikP4jlIusL553/UgWlGPTWSnHv4Chbig1KdUrvffCrEugMKXzo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751906902; c=relaxed/simple;
-	bh=lr5Ok0BtzLVe2DMzdRYn2HLQ6o5Js7Aoy/d36/h8hMQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=u7d6sXUopfGXgBv1TNtgy7oMgljuZliSRXMzZ1Ke+aVQFeXQDkCByo6OObiRCp+ygJ7T+nY+4+94Tqx8gheEseSmXyN3Z660RcFV9F4n9QSjr8/Vq88DwM5I9Xvx26zuZZAsIsF9iM4fZogIagKSJTfp/ZqTS7JhLwgD86RioXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WJL3ZCEM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84335C4CEFA;
-	Mon,  7 Jul 2025 16:48:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751906901;
-	bh=lr5Ok0BtzLVe2DMzdRYn2HLQ6o5Js7Aoy/d36/h8hMQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=WJL3ZCEMDK6r6o718A0CMFAGlKrU4TlzSuYmw4B9Xkc2CR2QBc7fhnm+yhjjLwiIv
-	 hXiV0I2RF+VLDSFkFPeTuD6W0PBDLD28JDFNyX+e4CG3kBAVX04Az3yaG04MlgtHfU
-	 WcJ1wdfMVL7kKQA2EqMyrlmZDRAWw+E8LWhGEEo2+Q7QII0nzfGaR8LrhblPqGbg2+
-	 z4T1rylWUgHUucLPWRl6OTJY/KdGGDwa660tgEuA/KN+HaIfF///a24qPsXt8OgygK
-	 Yqeto7maIdjmk0+BdAE5vvOKApxXEc0Fa0UAqMLKnECoNLJ/d44lBadfzWBqyiJ5Wq
-	 P85tvLYhmyBUg==
-Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-6119cd1a154so1633329eaf.0;
-        Mon, 07 Jul 2025 09:48:21 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV27fdVXT7zkfP5TysGKXUfII3s7k2mJbkJZlSEh/YgWgnIh1oU3BrR+NrZYV90JcKKwJv77rild5f1@vger.kernel.org, AJvYcCVSA02YNVhCd8VEJ3wGvPEs870MmEkb6wfMcNFZtt8UyTeUWr2Yx2UR74xcXKB62D7s/ip0bTP0dS78@vger.kernel.org, AJvYcCX9HIktmvG5BWD97P5gzGQ6UucFapgCXmOdXcn8lZGW0cSw7WIaNgxqMOAT/Rz0RCdSj6BxkA0c1uaomA==@vger.kernel.org, AJvYcCXQJaaRPhg6guwIDWkCcPKuGx3k5rBjOgL7B/oOzC8TVdRySJiLQ5+fGzJv9IDNB3Tt3KmCKZn6zA5xPLvK@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkIFP1Ad6v+vruQZF6M2+AoVhLjp83lG+MdujI7Q7b8H3AL9R+
-	Vd7SXfrDqcAlZ5wDlPIY5emQqMAaQch1i2y4tUVETNGq2xRMnLH7m1uZn2qx9PU4fy+ZrjdbQy7
-	r5GHvm9VMt0DMv871V6u6os/0/GQz/eo=
-X-Google-Smtp-Source: AGHT+IEL+yp0PljSvznfGMai9yp43Jg5JZrJU1ZvqcX+Hp8ViTDobsjmMWoaW+8AGloguCZxPuIaWdlqHhYISu0rqFo=
-X-Received: by 2002:a05:6820:1999:b0:611:31a:6ff5 with SMTP id
- 006d021491bc7-61392c26c5fmr8986475eaf.7.1751906900608; Mon, 07 Jul 2025
- 09:48:20 -0700 (PDT)
+	s=arc-20240116; t=1751906941; c=relaxed/simple;
+	bh=Mr7elblSUqUXGrMtzINa5Wza39p3cXhcVjbqr+OtG54=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=ir5oyO5/Zglxp5K3dJCX//4Cmo++JbjufjTPOgxPEKfZUu1gXjBsUpiMqfQPZ0b9/ebJz/l+Dnkjfd4G9WnYmv1/HMSlF/6mz0U8+VJqSogDnyzfqL6osSC3ZMN3HLn9s0VCmdHOEyyXuDOFtOgEb4t8f4p41gpZwsdK0LnQ7DE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se; spf=none smtp.mailfrom=konsulko.se; dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=hAytTvgW; dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=9vTdHmBm; arc=none smtp.client-ip=46.30.212.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=konsulko.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1751906937; x=1752511737;
+	d=konsulko.se; s=rsa1;
+	h=content-transfer-encoding:mime-version:references:in-reply-to:message-id:date:
+	 subject:cc:to:from:from;
+	bh=OLXfbJyhoKxoT4YykcPTKSb3/uR3jlHoqcpTBeW4v6s=;
+	b=hAytTvgWOQ+f8qXBb95id/65h68KdMw9zaVtKyUO4PE/Z8ylrYWwVuGfHjiqbR2t4Eyn5mF2sPd9B
+	 3GBbKzCuGyKhoohLz6ltdFb0vx6ql6Qcxk8jZlvK67paSoFcG5aMyj7rdSdhIVK5WR7VadCRbpPKWs
+	 9VryaLZxdrwmlCLr3L8IdqsRKsO5b22IGzVkRb4rsbTR+yfK4hz3dh5l98kpqay0P7CIssb5vWwvGi
+	 aswksDWNFcN2/4eB/DM3aXD+5vXWst9XXeYgEqlD3AGNzyzhWPh+0z9B1RUHtr+wVOQAANsoA5uYoV
+	 v+ZqE/pPPMUnFT/YzKGtpg21QbSSlvw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1751906937; x=1752511737;
+	d=konsulko.se; s=ed1;
+	h=content-transfer-encoding:mime-version:references:in-reply-to:message-id:date:
+	 subject:cc:to:from:from;
+	bh=OLXfbJyhoKxoT4YykcPTKSb3/uR3jlHoqcpTBeW4v6s=;
+	b=9vTdHmBmlIVZbVo5hc4c4dNwJBc+CTTBJpgQ3K+SwHd5blvdgKl2Gv2ZbgUKZjnDwxG250o3gcPNj
+	 lJl9G/qDQ==
+X-HalOne-ID: 459027f8-5b52-11f0-8ca0-81a63d10fb2d
+Received: from localhost.localdomain (host-90-238-19-233.mobileonline.telia.com [90.238.19.233])
+	by mailrelay5.pub.mailoutpod3-cph3.one.com (Halon) with ESMTPSA
+	id 459027f8-5b52-11f0-8ca0-81a63d10fb2d;
+	Mon, 07 Jul 2025 16:48:57 +0000 (UTC)
+From: Vitaly Wool <vitaly.wool@konsulko.se>
+To: linux-mm@kvack.org
+Cc: akpm@linux-foundation.org,
+	linux-kernel@vger.kernel.org,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	rust-for-linux@vger.kernel.org,
+	Vitaly Wool <vitaly.wool@konsulko.se>
+Subject: [PATCH v11 1/4] mm/vmalloc: allow to set node and align in vrealloc
+Date: Mon,  7 Jul 2025 18:48:43 +0200
+Message-Id: <20250707164843.631434-1-vitaly.wool@konsulko.se>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20250707164755.631374-1-vitaly.wool@konsulko.se>
+References: <20250707164755.631374-1-vitaly.wool@konsulko.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250704070356.1683992-1-apatel@ventanamicro.com> <20250704070356.1683992-15-apatel@ventanamicro.com>
-In-Reply-To: <20250704070356.1683992-15-apatel@ventanamicro.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 7 Jul 2025 18:48:09 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0iX2KRXb5CdY9FbnMSR5RUEG7eBn2QQQKj2wa4doWh_nw@mail.gmail.com>
-X-Gm-Features: Ac12FXwHpPP-bFT_eng9Gfv5MuT8xuYuEAg81du49PdE3XAR8ZaXZPBtBzvvsG0
-Message-ID: <CAJZ5v0iX2KRXb5CdY9FbnMSR5RUEG7eBn2QQQKj2wa4doWh_nw@mail.gmail.com>
-Subject: Re: [PATCH v8 14/24] ACPI: property: Refactor acpi_fwnode_get_reference_args()
- to support nargs_prop
-To: Anup Patel <apatel@ventanamicro.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jassi Brar <jassisinghbrar@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	"Rafael J . Wysocki" <rafael@kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Alexandre Ghiti <alex@ghiti.fr>, Len Brown <lenb@kernel.org>, Sunil V L <sunilvl@ventanamicro.com>, 
-	Rahul Pathak <rpathak@ventanamicro.com>, Leyfoon Tan <leyfoon.tan@starfivetech.com>, 
-	Atish Patra <atish.patra@linux.dev>, Andrew Jones <ajones@ventanamicro.com>, 
-	Samuel Holland <samuel.holland@sifive.com>, Anup Patel <anup@brainfault.org>, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-acpi@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jul 4, 2025 at 9:07=E2=80=AFAM Anup Patel <apatel@ventanamicro.com>=
- wrote:
->
-> From: Sunil V L <sunilvl@ventanamicro.com>
->
-> Currently, acpi_fwnode_get_reference_args() delegates to the internal
-> function __acpi_node_get_property_reference() to retrieve property
-> references. However, this function does not handle the nargs_prop (cells
-> property) parameter, and instead expects the number of arguments (nargs)
-> to be known or hardcoded.
->
-> As a result, when fwnode_property_get_reference_args() is used with a
-> valid nargs_prop, the ACPI backend ignores it, whereas the Device Tree
-> (DT) backend uses the #*-cells property from the reference node to
-> determine the number of arguments dynamically.
->
-> To support the nargs_prop in ACPI, refactor the code as follows:
->
-> - Move the implementation from __acpi_node_get_property_reference()
->   into acpi_fwnode_get_reference_args().
->
-> - Update __acpi_node_get_property_reference() to call the (now updated)
->   acpi_fwnode_get_reference_args() passing NULL as nargs_prop to keep
->   the behavior of __acpi_node_get_property_reference() intact.
->
-> Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Signed-off-by: Sunil V L <sunilvl@ventanamicro.com>
-> Signed-off-by: Anup Patel <apatel@ventanamicro.com>
+Reimplement vrealloc() to be able to set node and alignment should
+a user need to do so. Rename the function to vrealloc_node_align()
+to better match what it actually does now and introduce macros for
+vrealloc() and friends for backward compatibility.
 
-LGTM now, so
+With that change we also provide the ability for the Rust part of
+the kernel to set node and alignment in its allocations.
 
-Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Vitaly Wool <vitaly.wool@konsulko.se>
+Reviewed-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+---
+ include/linux/vmalloc.h | 12 +++++++++---
+ mm/nommu.c              |  3 ++-
+ mm/vmalloc.c            | 28 +++++++++++++++++++++++-----
+ 3 files changed, 34 insertions(+), 9 deletions(-)
 
-> ---
->  drivers/acpi/property.c | 101 ++++++++++++++++++++--------------------
->  1 file changed, 50 insertions(+), 51 deletions(-)
->
-> diff --git a/drivers/acpi/property.c b/drivers/acpi/property.c
-> index 436019d96027..d4863746fb11 100644
-> --- a/drivers/acpi/property.c
-> +++ b/drivers/acpi/property.c
-> @@ -882,45 +882,10 @@ static struct fwnode_handle *acpi_parse_string_ref(=
-const struct fwnode_handle *f
->         return &dn->fwnode;
->  }
->
-> -/**
-> - * __acpi_node_get_property_reference - returns handle to the referenced=
- object
-> - * @fwnode: Firmware node to get the property from
-> - * @propname: Name of the property
-> - * @index: Index of the reference to return
-> - * @num_args: Maximum number of arguments after each reference
-> - * @args: Location to store the returned reference with optional argumen=
-ts
-> - *       (may be NULL)
-> - *
-> - * Find property with @name, verifify that it is a package containing at=
- least
-> - * one object reference and if so, store the ACPI device object pointer =
-to the
-> - * target object in @args->adev.  If the reference includes arguments, s=
-tore
-> - * them in the @args->args[] array.
-> - *
-> - * If there's more than one reference in the property value package, @in=
-dex is
-> - * used to select the one to return.
-> - *
-> - * It is possible to leave holes in the property value set like in the
-> - * example below:
-> - *
-> - * Package () {
-> - *     "cs-gpios",
-> - *     Package () {
-> - *        ^GPIO, 19, 0, 0,
-> - *        ^GPIO, 20, 0, 0,
-> - *        0,
-> - *        ^GPIO, 21, 0, 0,
-> - *     }
-> - * }
-> - *
-> - * Calling this function with index %2 or index %3 return %-ENOENT. If t=
-he
-> - * property does not contain any more values %-ENOENT is returned. The N=
-ULL
-> - * entry must be single integer and preferably contain value %0.
-> - *
-> - * Return: %0 on success, negative error code on failure.
-> - */
-> -int __acpi_node_get_property_reference(const struct fwnode_handle *fwnod=
-e,
-> -       const char *propname, size_t index, size_t num_args,
-> -       struct fwnode_reference_args *args)
-> +static int acpi_fwnode_get_reference_args(const struct fwnode_handle *fw=
-node,
-> +                                         const char *propname, const cha=
-r *nargs_prop,
-> +                                         unsigned int args_count, unsign=
-ed int index,
-> +                                         struct fwnode_reference_args *a=
-rgs)
->  {
->         const union acpi_object *element, *end;
->         const union acpi_object *obj;
-> @@ -999,7 +964,7 @@ int __acpi_node_get_property_reference(const struct f=
-wnode_handle *fwnode,
->
->                         ret =3D acpi_get_ref_args(idx =3D=3D index ? args=
- : NULL,
->                                                 acpi_fwnode_handle(device=
-),
-> -                                               &element, end, num_args);
-> +                                               &element, end, args_count=
-);
->                         if (ret < 0)
->                                 return ret;
->
-> @@ -1017,7 +982,7 @@ int __acpi_node_get_property_reference(const struct =
-fwnode_handle *fwnode,
->
->                         ret =3D acpi_get_ref_args(idx =3D=3D index ? args=
- : NULL,
->                                                 ref_fwnode, &element, end=
-,
-> -                                               num_args);
-> +                                               args_count);
->                         if (ret < 0)
->                                 return ret;
->
-> @@ -1039,6 +1004,50 @@ int __acpi_node_get_property_reference(const struc=
-t fwnode_handle *fwnode,
->
->         return -ENOENT;
->  }
-> +
-> +/**
-> + * __acpi_node_get_property_reference - returns handle to the referenced=
- object
-> + * @fwnode: Firmware node to get the property from
-> + * @propname: Name of the property
-> + * @index: Index of the reference to return
-> + * @num_args: Maximum number of arguments after each reference
-> + * @args: Location to store the returned reference with optional argumen=
-ts
-> + *       (may be NULL)
-> + *
-> + * Find property with @name, verifify that it is a package containing at=
- least
-> + * one object reference and if so, store the ACPI device object pointer =
-to the
-> + * target object in @args->adev.  If the reference includes arguments, s=
-tore
-> + * them in the @args->args[] array.
-> + *
-> + * If there's more than one reference in the property value package, @in=
-dex is
-> + * used to select the one to return.
-> + *
-> + * It is possible to leave holes in the property value set like in the
-> + * example below:
-> + *
-> + * Package () {
-> + *     "cs-gpios",
-> + *     Package () {
-> + *        ^GPIO, 19, 0, 0,
-> + *        ^GPIO, 20, 0, 0,
-> + *        0,
-> + *        ^GPIO, 21, 0, 0,
-> + *     }
-> + * }
-> + *
-> + * Calling this function with index %2 or index %3 return %-ENOENT. If t=
-he
-> + * property does not contain any more values %-ENOENT is returned. The N=
-ULL
-> + * entry must be single integer and preferably contain value %0.
-> + *
-> + * Return: %0 on success, negative error code on failure.
-> + */
-> +int __acpi_node_get_property_reference(const struct fwnode_handle *fwnod=
-e,
-> +                                      const char *propname, size_t index=
-,
-> +                                      size_t num_args,
-> +                                      struct fwnode_reference_args *args=
-)
-> +{
-> +       return acpi_fwnode_get_reference_args(fwnode, propname, NULL, ind=
-ex, num_args, args);
-> +}
->  EXPORT_SYMBOL_GPL(__acpi_node_get_property_reference);
->
->  static int acpi_data_prop_read_single(const struct acpi_device_data *dat=
-a,
-> @@ -1558,16 +1567,6 @@ acpi_fwnode_property_read_string_array(const struc=
-t fwnode_handle *fwnode,
->                                    val, nval);
->  }
->
-> -static int
-> -acpi_fwnode_get_reference_args(const struct fwnode_handle *fwnode,
-> -                              const char *prop, const char *nargs_prop,
-> -                              unsigned int args_count, unsigned int inde=
-x,
-> -                              struct fwnode_reference_args *args)
-> -{
-> -       return __acpi_node_get_property_reference(fwnode, prop, index,
-> -                                                 args_count, args);
-> -}
-> -
->  static const char *acpi_fwnode_get_name(const struct fwnode_handle *fwno=
-de)
->  {
->         const struct acpi_device *adev;
-> --
-> 2.43.0
->
+diff --git a/include/linux/vmalloc.h b/include/linux/vmalloc.h
+index fdc9aeb74a44..68791f7cb3ba 100644
+--- a/include/linux/vmalloc.h
++++ b/include/linux/vmalloc.h
+@@ -197,9 +197,15 @@ extern void *__vcalloc_noprof(size_t n, size_t size, gfp_t flags) __alloc_size(1
+ extern void *vcalloc_noprof(size_t n, size_t size) __alloc_size(1, 2);
+ #define vcalloc(...)		alloc_hooks(vcalloc_noprof(__VA_ARGS__))
+ 
+-void * __must_check vrealloc_noprof(const void *p, size_t size, gfp_t flags)
+-		__realloc_size(2);
+-#define vrealloc(...)		alloc_hooks(vrealloc_noprof(__VA_ARGS__))
++void *__must_check vrealloc_node_align_noprof(const void *p, size_t size,
++		unsigned long align, gfp_t flags, int nid) __realloc_size(2);
++#define vrealloc_node_noprof(_p, _s, _f, _nid)	\
++	vrealloc_node_align_noprof(_p, _s, 1, _f, _nid)
++#define vrealloc_noprof(_p, _s, _f)		\
++	vrealloc_node_align_noprof(_p, _s, 1, _f, NUMA_NO_NODE)
++#define vrealloc_node_align(...)		alloc_hooks(vrealloc_node_align_noprof(__VA_ARGS__))
++#define vrealloc_node(...)			alloc_hooks(vrealloc_node_noprof(__VA_ARGS__))
++#define vrealloc(...)				alloc_hooks(vrealloc_noprof(__VA_ARGS__))
+ 
+ extern void vfree(const void *addr);
+ extern void vfree_atomic(const void *addr);
+diff --git a/mm/nommu.c b/mm/nommu.c
+index 87e1acab0d64..8359b2025b9f 100644
+--- a/mm/nommu.c
++++ b/mm/nommu.c
+@@ -119,7 +119,8 @@ void *__vmalloc_noprof(unsigned long size, gfp_t gfp_mask)
+ }
+ EXPORT_SYMBOL(__vmalloc_noprof);
+ 
+-void *vrealloc_noprof(const void *p, size_t size, gfp_t flags)
++void *vrealloc_node_align_noprof(const void *p, size_t size, unsigned long align,
++				 gfp_t flags, int node)
+ {
+ 	return krealloc_noprof(p, size, (flags | __GFP_COMP) & ~__GFP_HIGHMEM);
+ }
+diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+index 6dbcdceecae1..412664656870 100644
+--- a/mm/vmalloc.c
++++ b/mm/vmalloc.c
+@@ -4089,13 +4089,22 @@ void *vzalloc_node_noprof(unsigned long size, int node)
+ EXPORT_SYMBOL(vzalloc_node_noprof);
+ 
+ /**
+- * vrealloc - reallocate virtually contiguous memory; contents remain unchanged
++ * vrealloc_node_align_noprof - reallocate virtually contiguous memory; contents
++ * remain unchanged
+  * @p: object to reallocate memory for
+  * @size: the size to reallocate
++ * @align: requested alignment
+  * @flags: the flags for the page level allocator
++ * @nid: node number of the target node
++ *
++ * If @p is %NULL, vrealloc_XXX() behaves exactly like vmalloc(). If @size is
++ * 0 and @p is not a %NULL pointer, the object pointed to is freed.
+  *
+- * If @p is %NULL, vrealloc() behaves exactly like vmalloc(). If @size is 0 and
+- * @p is not a %NULL pointer, the object pointed to is freed.
++ * if @nid is not NUMA_NO_NODE, this function will try to allocate memory on
++ * the given node. If reallocation is not necessary (e. g. the new size is less
++ * than the current allocated size), the current allocation will be preserved
++ * unless __GFP_THISNODE is set. In the latter case a new allocation on the
++ * requested node will be attempted.
+  *
+  * If __GFP_ZERO logic is requested, callers must ensure that, starting with the
+  * initial memory allocation, every subsequent call to this API for the same
+@@ -4111,7 +4120,8 @@ EXPORT_SYMBOL(vzalloc_node_noprof);
+  * Return: pointer to the allocated memory; %NULL if @size is zero or in case of
+  *         failure
+  */
+-void *vrealloc_noprof(const void *p, size_t size, gfp_t flags)
++void *vrealloc_node_align_noprof(const void *p, size_t size, unsigned long align,
++				 gfp_t flags, int nid)
+ {
+ 	struct vm_struct *vm = NULL;
+ 	size_t alloced_size = 0;
+@@ -4135,6 +4145,12 @@ void *vrealloc_noprof(const void *p, size_t size, gfp_t flags)
+ 		if (WARN(alloced_size < old_size,
+ 			 "vrealloc() has mismatched area vs requested sizes (%p)\n", p))
+ 			return NULL;
++		if (WARN(!IS_ALIGNED((unsigned long)p, align),
++			 "will not reallocate with a bigger alignment (0x%lx)\n", align))
++			return NULL;
++		if (unlikely(flags & __GFP_THISNODE) && nid != NUMA_NO_NODE &&
++			     nid != page_to_nid(vmalloc_to_page(p)))
++			goto need_realloc;
+ 	}
+ 
+ 	/*
+@@ -4165,8 +4181,10 @@ void *vrealloc_noprof(const void *p, size_t size, gfp_t flags)
+ 		return (void *)p;
+ 	}
+ 
++need_realloc:
+ 	/* TODO: Grow the vm_area, i.e. allocate and map additional pages. */
+-	n = __vmalloc_noprof(size, flags);
++	n = __vmalloc_node_noprof(size, align, flags, nid, __builtin_return_address(0));
++
+ 	if (!n)
+ 		return NULL;
+ 
+-- 
+2.39.2
+
 
