@@ -1,197 +1,238 @@
-Return-Path: <linux-kernel+bounces-719911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85275AFB47A
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 15:25:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 98A87AFB44A
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 15:20:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 550E47B18A5
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 13:24:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 279097AB31A
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 13:18:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8800295D8F;
-	Mon,  7 Jul 2025 13:25:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1812729E104;
+	Mon,  7 Jul 2025 13:19:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=twosigma.com header.i=@twosigma.com header.b="BjdMN9To"
-Received: from mxo1.dft.dmz.twosigma.com (mxo1.dft.dmz.twosigma.com [208.77.212.183])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="c9C4FE3H"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38FB01E22FC
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 13:25:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=208.77.212.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4F1929CB57
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 13:19:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751894743; cv=none; b=BBHLeNY3s5BG9Y6TBSrSZ6AuruNmPAQztIwZxmzc7qFmVVnTG4HIigMCf74GJYq2Q3qSI+z8xRGtoJWs1V4T9NEVMWR+yeaAhCK3hqWA1Ofg33ED023Kk2tD3KBqafpXBpr1PGPP+CbYtvxNpssX/CJvGfTopKA43RaV6+SEt9E=
+	t=1751894387; cv=none; b=MWiWfmoWqCAhGrzEBWGiv9G3Vw3fyrUnVnL7y1nOC0Q7dMp/GUeMDW5ktFbGD8zkYD97FcRPQ/dokt4dNSuukVEoOMLbIJ4grK1iqXQcudF5l87EOcW012K8RtjSA0qZ2PdfQj2KDv2+mBXHUKQmI8fc4xZGOMCOnTT7+OvYBVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751894743; c=relaxed/simple;
-	bh=5+TOCvYeaJxWPrfmRTjs2ARhB4VPpz309QFH2xI12v0=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Rl9P4WRCImxodp+zSnlitbDZ3nOEIhIKQG2+6bmRKbFPgrVtkQw9oJxE9gOZpqhk2X4AEbcdDtGVzWw2e/GDE3QzfUFyF6Z7EMTENbVqynoDQTw+DgH8EMUqZYKt848LZgb1UeG96dfWi0w50nDAHVoqhSLkj97WT48m4dOc+WY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=twosigma.com; spf=pass smtp.mailfrom=twosigma.com; dkim=pass (2048-bit key) header.d=twosigma.com header.i=@twosigma.com header.b=BjdMN9To; arc=none smtp.client-ip=208.77.212.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=twosigma.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=twosigma.com
-Received: from localhost (localhost [127.0.0.1])
-	by mxo1.dft.dmz.twosigma.com (Postfix) with ESMTP id 4bbPw84WYSzBslN
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 13:19:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=twosigma.com;
-	s=202008; t=1751894360;
-	bh=plXFavDQH65EWu2VaxclA8kgZR1LWcTNgtglg5W7Ns0=;
-	h=Date:From:To:Subject:From;
-	b=BjdMN9TobPt9SfNQU2Sn3VdlHMmeZY059PkAZP1FgFs/NTRt4VYdaeVQNM8Fx/Kpx
-	 j0c6GcLhddVZnWeF1vcUkth6wk3pcEqHkVogfiBGvI5kThN5/9iKcSn8jv7BpcaOrT
-	 LakJJ6RGuDLvsAn2T8ayEERyaZ0SSId7XG3J9/F92iH2lEfi+K1slsLFGPgKPwpHmb
-	 KrtZ1rSlNvYOhI9geX8asipuvQawvR0K2UG1BQNdeDOKbajE+D2cG15NVRRlWIfkF3
-	 HLy8TsLXPGTKEVlNU/U30YdrPGly/JsimmWiBjm+QiW9yItGToPzCc52+/gnjUeb4D
-	 JMzxQJHs3Kpqw==
-X-Virus-Scanned: Debian amavisd-new at twosigma.com
-Received: from mxo1.dft.dmz.twosigma.com ([127.0.0.1])
-	by localhost (mxo1.dft.dmz.twosigma.com [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id aVgVx9oOmjD9 for <linux-kernel@vger.kernel.org>;
-	Mon,  7 Jul 2025 13:19:20 +0000 (UTC)
-Received: from gsnje-exhy04.ad.twosigma.com (gsnje-exhy04.ad.twosigma.com [172.20.16.88])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mxo1.dft.dmz.twosigma.com (Postfix) with ESMTPS id 4bbPw83tNQzBrLm
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 13:19:20 +0000 (UTC)
-Received: from gsnje-exhy04.ad.twosigma.com (172.20.16.88) by
- gsnje-exhy04.ad.twosigma.com (172.20.16.88) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.10; Mon, 7 Jul 2025 09:19:20 -0400
-Received: from slctms-stg-build-1.dft.twosigma.com (172.20.188.122) by
- gsnje-exhy04.ad.twosigma.com (172.20.16.88) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.10 via Frontend Transport; Mon, 7 Jul 2025 09:19:20 -0400
-Date: Mon, 7 Jul 2025 09:19:19 -0400
-From: Thomas Walker <Thomas.Walker@twosigma.com>
-To: <linux-kernel@vger.kernel.org>
-Subject: rq->clock_update_flags < RQCF_ACT_SKIP in dl_rq_change_utilization()
-Message-ID: <xdt2jn3c26vekaf7y66xqjcveae4f65c7gquxolsgdbtf3wwfu@iljfgue43ns2>
+	s=arc-20240116; t=1751894387; c=relaxed/simple;
+	bh=rtct0nDU+j5TyrJZ+m4PVNBMC7iyuPfgezwKp+Qwn8k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=m5rsFGSb/hlMUc8tqHoU1SRd/J94hWc+FLrm2hdhDM2m30Y/GZqXIE1vseDMoTxFul3q8ELlqxC/Gn6uSH2jmS08vsBEbgSEtevFgtqSatuxyhYMVLQ3mmZ72TIUHU8zXo2yiUXwifW0c1YVUSdmk39ItQl0fmLifRQJusNdxl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=c9C4FE3H; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1751894384;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=nXmXDjuLCVo5wU4ylvvDNkZan/QGMn2o2rEiwIbCGFU=;
+	b=c9C4FE3H9pgTNEchH9pm4btVJEsIm9T6YaTqbeu0cDbtBFXPuktx8wyRbnTPvj5yh8OOLi
+	X3v9u9OVmHncu21+aSf2ssnN6EHY0Cp3OjuEn8gSmDYUwK44r+JrYOUzTfB9XfmvFSluNV
+	RiR7OnXm1E+ldF2qPmeKv3I73ALmous=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-346-2MGbBGiQOnuTmbCYLRAqXw-1; Mon, 07 Jul 2025 09:19:41 -0400
+X-MC-Unique: 2MGbBGiQOnuTmbCYLRAqXw-1
+X-Mimecast-MFC-AGG-ID: 2MGbBGiQOnuTmbCYLRAqXw_1751894380
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-45359bfe631so16116595e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 06:19:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751894380; x=1752499180;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=nXmXDjuLCVo5wU4ylvvDNkZan/QGMn2o2rEiwIbCGFU=;
+        b=KQlzbqIunyJI6FHyTJtLehEvLF/tR7+hJzDjRb1GcD2Dpep7CkhH6Cohi+NhUBUMN1
+         XkfbU6iN01UII/k6LLgcE8z7B/iMl8a6EZvAsz9kHkpkQ8CWoPFBtGo/IVd1KkZybORl
+         wR4v7Nv1IqAQL55SlBXISH5TeRMxY0+3XNFJUhXshs83Ug8slKdQa047GPOENXkcfXIB
+         g9HFZYeLNslzE4/BSdjXkf8JgNMi6/MiYFYpEuhuLSvA3X7tl3yWb8J0BPOBRlyzTkVt
+         ofPawMPvi+x9tdgHG44HmtgGhPMK5JwrZ7pAroXwrp5Br27sSZ7YQKKlWNOzSbQkIq5L
+         9G0A==
+X-Forwarded-Encrypted: i=1; AJvYcCUcgXqV6O2vIy/eWuK6OxUvr83+zeXFZBpo8Nd8AY9oVuzpxA+3XjMB4Qa4PeGIP922uW8wHyD5Z735HEg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YysaxyGljds6pHD4VZuI347fK99d+ZBckdEl5m+AB7YKTv+4zbt
+	kmQPDJDw6lx3Y7//60tDaALIamcJGP3VqOrpbpLCZ3t42mo/d8s+JOnhVxm8dB5kh6syMe4SZCo
+	Pi470/m8B3hWKk2zOFNvZWyjHrxOvSnPa3/C/FGYMYkpPGSgAS+G4h6g8qCeTgPmSnQ==
+X-Gm-Gg: ASbGnctWQfZQg0GQ12uqYh9YSARV/wKv5TYHVSJpqzM7rGRNKdXN9iTiDSC+YLI7Fdw
+	2bb9otjVaYq2UFWrhQKlnLq34DayV1/3IwPW6C2ZTfTCKsFeMNFH8IeIQY0tHxO2hDfFCmjBwkT
+	455OWD2EHh7+SDurmvLFJg7tuHeqvs/ZMM1Zx7Fyynu3XgMaBFOcvPQ561V95ulL5Vt756D5pUz
+	EBpn3zMXHok7l7VxgCrqfwZH/JOfln+TwXXpmmZ6yrcL3KgzafaYYmKp0grpTtTWhZZjZ8fRbyn
+	4rhtSZsQS5hqvse1U6v26brxZuHFELvSQ/inxHPD12NYLcZwHU3IsnFhbb1+2rQ6pbZ5x2ZLs1v
+	f2pMpzznDAv36xqO0Syo0OkCsbbEbmhEpDF6KSZummneuxrhbdw==
+X-Received: by 2002:a05:600c:3e86:b0:43c:f0ae:da7 with SMTP id 5b1f17b1804b1-454c476aea4mr40553235e9.7.1751894380098;
+        Mon, 07 Jul 2025 06:19:40 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFBfyFuBcaLgbZfGzjnsuMh9lvvAvuC5DlcIKIEAKGMTIqV5yEm9tkEm1VZ5eMoCw4nja+MJw==
+X-Received: by 2002:a05:600c:3e86:b0:43c:f0ae:da7 with SMTP id 5b1f17b1804b1-454c476aea4mr40552695e9.7.1751894379602;
+        Mon, 07 Jul 2025 06:19:39 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f38:1d00:657c:2aac:ecf5:5df8? (p200300d82f381d00657c2aacecf55df8.dip0.t-ipconnect.de. [2003:d8:2f38:1d00:657c:2aac:ecf5:5df8])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454a9beb22asm141802825e9.36.2025.07.07.06.19.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Jul 2025 06:19:39 -0700 (PDT)
+Message-ID: <36dd6b12-f683-48a2-8b9c-c8cd0949dfdc@redhat.com>
+Date: Mon, 7 Jul 2025 15:19:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 01/14] mm/memory: drop highest_memmap_pfn sanity check
+ in vm_normal_page()
+To: Hugh Dickins <hughd@google.com>
+Cc: Lance Yang <lance.yang@linux.dev>, Oscar Salvador <osalvador@suse.de>,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, nvdimm@lists.linux.dev,
+ Andrew Morton <akpm@linux-foundation.org>, Juergen Gross <jgross@suse.com>,
+ Stefano Stabellini <sstabellini@kernel.org>,
+ Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
+ Dan Williams <dan.j.williams@intel.com>, Alistair Popple
+ <apopple@nvidia.com>, Matthew Wilcox <willy@infradead.org>,
+ Jan Kara <jack@suse.cz>, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Zi Yan <ziy@nvidia.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
+ Barry Song <baohua@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
+ Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
+ Michal Hocko <mhocko@suse.com>, Jann Horn <jannh@google.com>,
+ Pedro Falcato <pfalcato@suse.de>, Lance Yang <ioworker0@gmail.com>
+References: <20250617154345.2494405-1-david@redhat.com>
+ <20250617154345.2494405-2-david@redhat.com>
+ <aFVZCvOpIpBGAf9w@localhost.localdomain>
+ <c88c29d2-d887-4c5a-8b4e-0cf30e71d596@redhat.com>
+ <CABzRoyZtxBgJUZK4p0V1sPAqbNr=6S-aE1S68u8tKo=cZ2ELSw@mail.gmail.com>
+ <5e5e8d79-61b1-465d-ab5a-4fa82d401215@redhat.com>
+ <aa977869-f93f-4c2b-a189-f90e2d3bc7da@linux.dev>
+ <b6d79033-b887-4ce7-b8f2-564cad7ec535@redhat.com>
+ <b0984e6e-eabd-ed71-63c3-4c4d362553e8@google.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <b0984e6e-eabd-ed71-63c3-4c4d362553e8@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi, we have a couple of workloads running on 6.12 kernels that showed some =
-slightly increased latency tails with fair_server enabled, so we disable it=
- on boot on some number of isolated (nohz_full, etc) cores.
+On 07.07.25 08:31, Hugh Dickins wrote:
+> On Fri, 4 Jul 2025, David Hildenbrand wrote:
+>> On 03.07.25 16:44, Lance Yang wrote:
+>>> On 2025/7/3 20:39, David Hildenbrand wrote:
+>>>> On 03.07.25 14:34, Lance Yang wrote:
+>>>>> On Mon, Jun 23, 2025 at 10:04 PM David Hildenbrand <david@redhat.com>
+>>>>> wrote:
+>>>>>>
+>>>>>> On 20.06.25 14:50, Oscar Salvador wrote:
+>>>>>>> On Tue, Jun 17, 2025 at 05:43:32PM +0200, David Hildenbrand wrote:
+>>>>>>>> In 2009, we converted a VM_BUG_ON(!pfn_valid(pfn)) to the current
+>>>>>>>> highest_memmap_pfn sanity check in commit 22b31eec63e5 ("badpage:
+>>>>>>>> vm_normal_page use print_bad_pte"), because highest_memmap_pfn was
+>>>>>>>> readily available.
+>>>>>>>>
+>>>>>>>> Nowadays, this is the last remaining highest_memmap_pfn user, and this
+>>>>>>>> sanity check is not really triggering ... frequently.
+>>>>>>>>
+>>>>>>>> Let's convert it to VM_WARN_ON_ONCE(!pfn_valid(pfn)), so we can
+>>>>>>>> simplify and get rid of highest_memmap_pfn. Checking for
+>>>>>>>> pfn_to_online_page() might be even better, but it would not handle
+>>>>>>>> ZONE_DEVICE properly.
+>>>>>>>>
+>>>>>>>> Do the same in vm_normal_page_pmd(), where we don't even report a
+>>>>>>>> problem at all ...
+>>>>>>>>
+>>>>>>>> What might be better in the future is having a runtime option like
+>>>>>>>> page-table-check to enable such checks dynamically on-demand.
+>>>>>>>> Something
+>>>>>>>> for the future.
+>>>>>>>>
+>>>>>>>> Signed-off-by: David Hildenbrand <david@redhat.com>
+> 
+> The author of 22b31eec63e5 thinks this is not at all an improvement.
+> Of course the condition is not triggering frequently, of course it
+> should not happen: but it does happen, and it still seems worthwhile
+> to catch it in production with a "Bad page map" than to let it run on
+> to whatever kind of crash it hits instead.
 
-$ echo -1 | sudo tee /proc/sys/kernel/sched_rt_runtime_us
-$ for f in $(seq 2 2 16); do echo 0 | sudo tee /sys/kernel/debug/sched/fair=
-_server/cpu${f}/runtime ; done
+Well, obviously I don't agree and was waiting for having this discussion :)
 
-Which works as expected but, more often than not, triggers the following WA=
-RN_ON.  Any suggestions for debugging further would be greatly appreciated.
+We catch corruption in a handful of PTE bits, and that's about it. You 
+neither detect corruption of flags nor of PFN bits that result in 
+another valid PFN.
 
-[  653.430659] rq->clock_update_flags < RQCF_ACT_SKIP
-[  653.430663] WARNING: CPU: 87 PID: 14185 at kernel/sched/sched.h:1649 dl_=
-rq_change_utilization+0x225/0x250
-[  653.430671] Modules linked in: uas usb_storage tcp_diag inet_diag tls nv=
-me_fabrics nvme_keyring dell_rbu xfs dm_crypt rpcrdma sunrpc rdma_ucm ib_is=
-er rdma_cm iw_cm xt_conntrack ib_cm nf_conntrack libiscsi scsi_transport_is=
-csi nf_defrag_ipv6 intel_rapl_msr nf_defrag_ipv4 intel_rapl_common xt_comme=
-nt intel_uncore_frequency xt_set intel_uncore_frequency_common intel_ifs xt=
-_tcpudp i10nm_edac ipt_REJECT skx_edac_common nf_reject_ipv4 nfit xt_LOG nf=
-_log_syslog libnvdimm nft_compat nf_tables x86_pkg_temp_thermal intel_power=
-clamp coretemp kvm_intel irdma libcrc32c kvm i40e ib_uverbs ip_set_hash_net=
- irqbypass crct10dif_pclmul ghash_clmulni_intel sha512_ssse3 ip_set_bitmap_=
-port sha256_ssse3 sha1_ssse3 ip_set aesni_intel gf128mul crypto_simd cryptd=
- binfmt_misc nfnetlink ib_core ipmi_ssif snd_pcm rapl intel_cstate drm_shme=
-m_helper snd_timer deflate drm_kms_helper iaa_crypto intel_uncore snd dell_=
-pc nls_ascii idxd pmt_telemetry nls_cp437 evdev intel_sdsi mei_me pmt_class=
- dell_smbios vfat platform_profile iTCO_wdt dax_hmem dcdbas
-[  653.430731]  fat soundcore mei intel_pmc_bxt ipmi_si cxl_acpi dell_wmi_d=
-escriptor pcspkr wmi_bmof iTCO_vendor_support isst_if_mbox_pci isst_if_mmio=
- acpi_power_meter watchdog acpi_ipmi i2c_algo_bit ipmi_devintf isst_if_comm=
-on idxd_bus intel_vsec ipmi_msghandler sg button tcp_scalable drm loop dm_m=
-od efi_pstore configfs efivarfs ip_tables x_tables autofs4 ext4 crc32c_gene=
-ric crc16 mbcache jbd2 sd_mod xhci_pci sfc xhci_hcd mpi3mr ahci nvme libahc=
-i ice libata usbcore scsi_transport_sas nvme_core tg3 mtd i2c_i801 crc32_pc=
-lmul gnss scsi_mod libphy i2c_ismt nvme_auth crc32c_intel usb_common mdio l=
-ibie i2c_smbus wmi scsi_common pinctrl_emmitsburg
-[  653.430774] CPU: 87 UID: 0 PID: 14185 Comm: tee Not tainted 6.12.35 #2
-[  653.430776] Hardware name: Dell Inc. PowerEdge R660/XXXXXX, BIOS 2.6.3 0=
-3/26/2025
-[  653.430778] RIP: 0010:dl_rq_change_utilization+0x225/0x250
-[  653.430782] Code: 09 00 00 72 d2 e9 7d fe ff ff 80 3d c2 55 cf 01 00 0f =
-85 9f fe ff ff 48 c7 c7 28 88 11 a2 c6 05 ae 55 cf 01 01 e8 9b 64 f9 ff <0f=
-> 0b e9 85 fe ff ff e8 bf 1e f9 ff e9 e6 fd ff ff 48 c7 c7 88 8d
-[  653.430784] RSP: 0018:ff70e427e8b0fbf0 EFLAGS: 00010082
-[  653.430786] RAX: 0000000000000000 RBX: ff169e20be6b5e40 RCX: 00000000000=
-00027
-[  653.430787] RDX: ff169e60bf5a1748 RSI: 0000000000000001 RDI: ff169e60bf5=
-a1740
-[  653.430788] RBP: ff169e20be6b67a8 R08: 0000000000000000 R09: ff70e427e8b=
-0fa70
-[  653.430789] R10: ff169e60bdf3ffa8 R11: 0000000000000003 R12: ff169e20be6=
-a1680
-[  653.430790] R13: 0000000000000000 R14: ffffffffa0d3fe50 R15: ff169e21c6a=
-3f800
-[  653.430792] FS:  00007facf3351740(0000) GS:ff169e60bf580000(0000) knlGS:=
-0000000000000000
-[  653.430794] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  653.430795] CR2: 000055c54ae470b8 CR3: 00000040e3f92004 CR4: 0000000000f=
-73ef0
-[  653.430797] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 00000000000=
-00000
-[  653.430797] DR3: 0000000000000000 DR6: 00000000fffe07f0 DR7: 00000000000=
-00400
-[  653.430799] PKRU: 55555554
-[  653.430800] Call Trace:
-[  653.430801]  <TASK>
-[  653.430805]  dl_server_apply_params+0x282/0x320
-[  653.430809]  sched_fair_server_write.isra.0+0x11a/0x1d0
-[  653.430813]  full_proxy_write+0x4e/0x90
-[  653.430816]  vfs_write+0xf5/0x450
-[  653.430819]  ? vfs_write+0x28d/0x450
-[  653.430822]  ksys_write+0x6d/0xf0
-[  653.430824]  do_syscall_64+0x82/0x190
-[  653.430828]  ? do_syscall_64+0x8e/0x190
-[  653.430830]  ? syscall_exit_to_user_mode+0x4d/0x210
-[  653.430832]  ? do_syscall_64+0x8e/0x190
-[  653.430833]  ? __memcg_slab_free_hook+0xf7/0x140
-[  653.430836]  ? __x64_sys_close+0x3c/0x80
-[  653.430839]  ? kmem_cache_free+0x3ee/0x440
-[  653.430841]  ? syscall_exit_to_user_mode+0x4d/0x210
-[  653.430843]  ? do_syscall_64+0x8e/0x190
-[  653.430845]  ? exc_page_fault+0x7e/0x180
-[  653.430847]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-[  653.430850] RIP: 0033:0x7facf344c300
-[  653.430852] Code: 40 00 48 8b 15 01 9b 0d 00 f7 d8 64 89 02 48 c7 c0 ff =
-ff ff ff eb b7 0f 1f 00 80 3d e1 22 0e 00 00 74 17 b8 01 00 00 00 0f 05 <48=
-> 3d 00 f0 ff ff 77 58 c3 0f 1f 80 00 00 00 00 48 83 ec 28 48 89
-[  653.430853] RSP: 002b:00007ffefcf68c88 EFLAGS: 00000202 ORIG_RAX: 000000=
-0000000001
-[  653.430855] RAX: ffffffffffffffda RBX: 0000000000000002 RCX: 00007facf34=
-4c300
-[  653.430857] RDX: 0000000000000002 RSI: 00007ffefcf68da0 RDI: 00000000000=
-00003
-[  653.430857] RBP: 00007ffefcf68da0 R08: 0000000000000004 R09: 00000000000=
-00001
-[  653.430858] R10: 00007facf3368f18 R11: 0000000000000202 R12: 00000000000=
-00002
-[  653.430859] R13: 000055c54ae45470 R14: 0000000000000002 R15: 00007facf35=
-229e0
-[  653.430862]  </TASK>
-[  653.430863] ---[ end trace 0000000000000000 ]---
-[  653.430865] Fair server disabled in CPU 2, system may crash due to starv=
-ation.
-[  653.480471] Fair server disabled in CPU 4, system may crash due to starv=
-ation.
-[  653.533134] Fair server disabled in CPU 6, system may crash due to starv=
-ation.
-[  653.586481] Fair server disabled in CPU 8, system may crash due to starv=
-ation.
-[  653.636169] Fair server disabled in CPU 10, system may crash due to star=
-vation.
-[  653.685718] Fair server disabled in CPU 12, system may crash due to star=
-vation.
-[  653.737015] Fair server disabled in CPU 14, system may crash due to star=
-vation.
-[  653.787139] Fair server disabled in CPU 16, system may crash due to star=
-vation.
+Corruption of the "special" bit might be fun.
+
+When I was able to trigger this during development once, the whole 
+machine went down shortly after -- mostly because of use-after-free of 
+something that is now a page table, which is just bad for both users of 
+such a page!
+
+E.g., quit that process and we will happily clear the PTE, corrupting 
+data of the other user. Fun.
+
+I'm sure I could find a way to unify the code while printing some 
+comparable message, but this check as it stands is just not worth it 
+IMHO: trying to handle something gracefully that shouldn't happen, when 
+really we cannot handle it gracefully.
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
