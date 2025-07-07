@@ -1,347 +1,377 @@
-Return-Path: <linux-kernel+bounces-719565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B521AFAFAD
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 11:28:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8C4AAFAFB2
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 11:30:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A62A11894D73
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 09:29:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41CB71AA1DF0
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 09:30:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D91E128DEEE;
-	Mon,  7 Jul 2025 09:28:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0A62290BD5;
+	Mon,  7 Jul 2025 09:30:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="TC+ursSo";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="LMqtgO/q";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="TC+ursSo";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="LMqtgO/q"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="QBMYEj9X"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11B082566DF
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 09:28:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D5C428F94E;
+	Mon,  7 Jul 2025 09:29:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751880517; cv=none; b=Muu8nNMP1X+ceX/duyZw+PGci/DJp1j79bW7Xjn8oUvF7onBa7VcsYRsXmO1Jgi3wT2nha5vt4RChIRrzgHzZTNhi627QqMpIRByjqclg3YfE0BM+SSCudK4Tf5aYM2zEqmdxPkckGmFhpig9X3WeaMPhsAdQzQZSALI0yn8BII=
+	t=1751880600; cv=none; b=OWyPf0M1VXMAfiCS0nT9R+fr+wy2EKSxMPkIPNz7U60b8j/sw7u/MH/RBH41QthDYeWYGhu52hp3nvIslk9rvWdAkqHkzHpCIWcIos9twNdf6e9566HwyAeo9CaQegwN3d6lXOPvJKpqz75eYty7GBrCHhxs7T5ArjT/cTdCxpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751880517; c=relaxed/simple;
-	bh=ZMHdi0SnJHqhSSL602JQ63PpGr+1bPxuw49Ffkp5erg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HIgznDW+WemxS+sPmAYn/qaFW+J0/fD+OJVxhaH1k3OCrmHcWRnbpUgBs3EszxxtmokfyEMhpDn0u8Pjeut1Nj4/0aRULTC8BsevJoqd8RzX8iGT5UkE0sf76rESygx//gMr7ANtyXi2TlSquvarfpRiebb+Tbb0awWqNkPm+Po=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=TC+ursSo; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=LMqtgO/q; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=TC+ursSo; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=LMqtgO/q; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 375072116D;
-	Mon,  7 Jul 2025 09:28:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1751880513; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=9iQ7DawpwPzZCnm56uTdrEOMCJb3eFpUr4GQt0vpKIc=;
-	b=TC+ursSoaWCx/iqqJgM4edVIigG6GDRpaIj0tX1xYdBWtpbCscJGT6EkqXvJMz08i8Yopo
-	RlXXookv08UlRtKXm1/mnLdsravavVwOBE2+FvtrYKgaodYVx1AuQQuzJeLlzWvC1P4TEC
-	F/vC+03SaQf5fogBPT7bdvDUtKoQD5w=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1751880513;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=9iQ7DawpwPzZCnm56uTdrEOMCJb3eFpUr4GQt0vpKIc=;
-	b=LMqtgO/qNnxNu8Z66zq5+YJoG271+MCbTlEeC/PWzEKSJ2d+SDiYE2K5Teb6umMEVEj1gb
-	5ibkrihDnkvHVbAg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1751880513; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=9iQ7DawpwPzZCnm56uTdrEOMCJb3eFpUr4GQt0vpKIc=;
-	b=TC+ursSoaWCx/iqqJgM4edVIigG6GDRpaIj0tX1xYdBWtpbCscJGT6EkqXvJMz08i8Yopo
-	RlXXookv08UlRtKXm1/mnLdsravavVwOBE2+FvtrYKgaodYVx1AuQQuzJeLlzWvC1P4TEC
-	F/vC+03SaQf5fogBPT7bdvDUtKoQD5w=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1751880513;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=9iQ7DawpwPzZCnm56uTdrEOMCJb3eFpUr4GQt0vpKIc=;
-	b=LMqtgO/qNnxNu8Z66zq5+YJoG271+MCbTlEeC/PWzEKSJ2d+SDiYE2K5Teb6umMEVEj1gb
-	5ibkrihDnkvHVbAg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0387013A5E;
-	Mon,  7 Jul 2025 09:28:32 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id qfRAO0CTa2hUSQAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Mon, 07 Jul 2025 09:28:32 +0000
-Message-ID: <1687bb52-e724-46a8-af75-26b486634c20@suse.de>
-Date: Mon, 7 Jul 2025 11:28:32 +0200
+	s=arc-20240116; t=1751880600; c=relaxed/simple;
+	bh=cUJkHRlPU3dD0Kkj2ZVPP5tJvDBnfXGcTn0wZIquuws=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ZQsAsiyKIQDeKG+rdZIloeil3XD6mXdkTc9+9Hn9HG7458sul0VxDmix9PtbhXLW/cbfYDXOf6DKHg3EpU1cRxPA9snOgRfx+Q16+SGANDY0ATwAAJYMLiRb+yWiZzjkpQAUMBIdOetiq7zUahVdhPIYOuHPyS9XHh9HL/qYUdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=QBMYEj9X; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56794slE018246;
+	Mon, 7 Jul 2025 09:29:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	baq6KL++M3MprFl78c1tCIhzfanJerfYZfqtXVk74q0=; b=QBMYEj9XVrBEFaMf
+	7Z2WfHwxoRZdqYxoV3lcV+aX4Omfu+R47NkrnW19gis37CO65DDCyejOZyMLIPzC
+	YlH8SdTjMc4YZ3C+Q4vOyubK5hUY252+ChCJGVrvy3S/FZD3TNe8TbhancoMeNsx
+	lL1wnuayseDllY8QXINb/iqhyNmWOcJpFQkIp4d78U0iAJ+HWXUR92+RaIyLkYbt
+	dukdi6RgQJXh0LGnZ4MScCysglYV2CGfgURbOimjlgqKVtm+fnGzEq6CIFRjdSKT
+	LlQ0GehDY+FCL8fMskYdO0SY2nEGq1ftrC0yW2Z+FbjMeKWZkoJnBFifsB/nEsuy
+	/t132A==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47pv4xm6xt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 07 Jul 2025 09:29:53 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5679TqOt019010
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 7 Jul 2025 09:29:52 GMT
+Received: from [10.204.100.197] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Mon, 7 Jul
+ 2025 02:29:49 -0700
+Message-ID: <db7fbfb8-b0fe-58e2-4564-f24d6a551232@quicinc.com>
+Date: Mon, 7 Jul 2025 14:59:05 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fbdev: efifb: do not load efifb if PCI BAR has changed
- but not fixuped
-To: Shixiong Ou <oushixiong1025@163.com>, Helge Deller <deller@gmx.de>
-Cc: Peter Jones <pjones@redhat.com>, linux-fbdev@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- Shixiong Ou <oushixiong@kylinos.cn>
-References: <20250626094937.515552-1-oushixiong1025@163.com>
- <3b3feb03-c417-4569-b7b0-44565d7cce4f@suse.de>
- <a937f41f-2cee-459d-b94f-b7f979072f3e@163.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH v5 3/5] media: venus: hfi_plat_v6_lite: Populate decode
+ capabilities
+To: Jorge Ramirez <jorge.ramirez@oss.qualcomm.com>
+CC: <krzk+dt@kernel.org>, <bryan.odonoghue@linaro.org>,
+        <quic_vgarodia@quicinc.com>, <mchehab@kernel.org>, <robh@kernel.org>,
+        <conor+dt@kernel.org>, <konradybcio@kernel.org>,
+        <andersson@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20250626135931.700937-1-jorge.ramirez@oss.qualcomm.com>
+ <20250626135931.700937-4-jorge.ramirez@oss.qualcomm.com>
+ <bac6a881-90b6-4f33-d9a8-61aa8daea330@quicinc.com> <aGuPpzU0VCg45Plg@trex>
 Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <a937f41f-2cee-459d-b94f-b7f979072f3e@163.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_TO(0.00)[163.com,gmx.de];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[163.com,gmx.de];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid]
-X-Spam-Flag: NO
-X-Spam-Score: -4.30
+From: Dikshita Agarwal <quic_dikshita@quicinc.com>
+In-Reply-To: <aGuPpzU0VCg45Plg@trex>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA3MDA1NCBTYWx0ZWRfX24CRgfaFmKDY
+ HZIEkszEPVBNiCTE34VvPdTglRACkYDFF5NVHooxKg4G37TgjzIjVckXXki6JKRI2or9MBsy/Xy
+ lzfrXxAzOj0C+Um44zRhDxoNNSU/HMMxZsEvPu4lhJkf6Pk6Fe1J0JgnwNheqWAELABJaEabpRi
+ mDyiTMSF9mo9WRe+ozWkrpQsh4/AEqM8kIP9HF+b2Qa1+66iGjgTRG3s0aJvKsrPCqKBhmsfR+T
+ c0K/4rIW14c8UCiBS6s5oLRO6YlPiQRKGqFrUFoMcR4fAwHrKZI+DUxFlWkptHGBUKOt0iqky7/
+ 9m8dsSvuwh1GgAfPcHGXIX7oAjQJ562kl2NRTRtnrcV2MpS70XbCnnkgltLXwxj9zi9BYT30rt6
+ 58+fJ+j9VgO+mfxtDuEfhI87JUClAYkOCI5JNk9WU0PcHptnApdsmw15E2mZxlTiPzpdWX+S
+X-Proofpoint-ORIG-GUID: Jk5ZkcFZ0xsgkSM4CGmtcBHLYD02OTqR
+X-Authority-Analysis: v=2.4 cv=DNCP4zNb c=1 sm=1 tr=0 ts=686b9392 cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=P-IC7800AAAA:8
+ a=EUspDBNiAAAA:8 a=BhxOyAfbP4nqgobld3cA:9 a=QEXdDO2ut3YA:10
+ a=d3PnA9EDa4IxuAV0gXij:22
+X-Proofpoint-GUID: Jk5ZkcFZ0xsgkSM4CGmtcBHLYD02OTqR
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-07_01,2025-07-07_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 adultscore=0 spamscore=0 clxscore=1015 phishscore=0
+ malwarescore=0 mlxlogscore=999 mlxscore=0 lowpriorityscore=0 bulkscore=0
+ impostorscore=0 suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507070054
 
-Hi
 
-Am 07.07.25 um 11:24 schrieb Shixiong Ou:
->
-> 在 2025/6/27 17:13, Thomas Zimmermann 写道:
->> Hi
+
+On 7/7/2025 2:43 PM, Jorge Ramirez wrote:
+> On 27/06/25 19:02:13, Dikshita Agarwal wrote:
 >>
->> Am 26.06.25 um 11:49 schrieb oushixiong1025@163.com:
->>> From: Shixiong Ou <oushixiong@kylinos.cn>
->>>
->>> [WHY]
->>> On an ARM machine, the following log is present:
->>> [    0.900884] efifb: framebuffer at 0x1020000000, using 3072k, 
->>> total 3072k
->>> [    2.297884] amdgpu 0000:04:00.0: 
->>> remove_conflicting_pci_framebuffers: bar 0: 0x1000000000 -> 
->>> 0x100fffffff
->>> [    2.297886] amdgpu 0000:04:00.0: 
->>> remove_conflicting_pci_framebuffers: bar 2: 0x1010000000 -> 
->>> 0x10101fffff
->>> [    2.297888] amdgpu 0000:04:00.0: 
->>> remove_conflicting_pci_framebuffers: bar 5: 0x58200000 -> 0x5823ffff
->>>
->>> It show that the efifb framebuffer base is out of PCI BAR, and this
->>> results in both efi-framebuffer and amdgpudrmfb co-existing.
->>>
->>> The fbcon will be bound to efi-framebuffer by default and cannot be 
->>> used.
->>>
->>> [HOW]
->>> Do not load efifb driver if PCI BAR has changed but not fixuped.
->>> In the following cases:
->>>     1. screen_info_lfb_pdev is NULL.
->>>     2. __screen_info_relocation_is_valid return false.
 >>
->> Apart from ruling out invalid screen_info, did you figure out why the 
->> relocation tracking didn't work? It would be good to fix this if 
->> possible.
->>
->> Best regards
->> Thomas
->>
-> I haven’t figure out the root cause yet.
->
-> This issue is quite rare and might be related to the EFI firmware.
-> However, I wonder if we could add some handling when no PCI resources 
-> are found in screen_info_fixup_lfb(), as a temporary workaround for 
-> the problem I mentioned earlier.
-
-As I said elsewhere in the thread, you can clear the screen_info's video 
-type in the branch at [1] to disable it entirely. We should have 
-probably done this anyway. Knowing the cause of the issue would still be 
-nice though.
-
-Best regards
-Thomas
-
-[1] 
-https://elixir.bootlin.com/linux/v6.15.5/source/drivers/video/screen_info_pci.c#L44
-
->
-> Best regards
-> Shixiong Ou
->
+>> On 6/26/2025 7:29 PM, Jorge Ramirez-Ortiz wrote:
+>>> Add hfi platform file with decoding capabilities for hfi v6_lite.
 >>>
->>> Signed-off-by: Shixiong Ou <oushixiong@kylinos.cn>
+>>> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez@oss.qualcomm.com>
 >>> ---
->>>   drivers/video/fbdev/efifb.c     |  4 ++++
->>>   drivers/video/screen_info_pci.c | 24 ++++++++++++++++++++++++
->>>   include/linux/screen_info.h     |  5 +++++
->>>   3 files changed, 33 insertions(+)
+>>>  drivers/media/platform/qcom/venus/Makefile    |   2 +-
+>>>  .../media/platform/qcom/venus/hfi_platform.c  |   2 +
+>>>  .../media/platform/qcom/venus/hfi_platform.h  |   1 +
+>>>  .../qcom/venus/hfi_platform_v6_lite.c         | 148 ++++++++++++++++++
+>>>  4 files changed, 152 insertions(+), 1 deletion(-)
+>>>  create mode 100644 drivers/media/platform/qcom/venus/hfi_platform_v6_lite.c
 >>>
->>> diff --git a/drivers/video/fbdev/efifb.c b/drivers/video/fbdev/efifb.c
->>> index 0e1bd3dba255..de8d016c9a66 100644
->>> --- a/drivers/video/fbdev/efifb.c
->>> +++ b/drivers/video/fbdev/efifb.c
->>> @@ -303,6 +303,10 @@ static void efifb_setup(struct screen_info *si, 
->>> char *options)
->>>     static inline bool fb_base_is_valid(struct screen_info *si)
->>>   {
->>> +    /* check whether fb_base has changed but not fixuped */
->>> +    if (!screen_info_is_useful())
->>> +        return false;
+>>> diff --git a/drivers/media/platform/qcom/venus/Makefile b/drivers/media/platform/qcom/venus/Makefile
+>>> index 91ee6be10292..4a6a942db58b 100644
+>>> --- a/drivers/media/platform/qcom/venus/Makefile
+>>> +++ b/drivers/media/platform/qcom/venus/Makefile
+>>> @@ -5,7 +5,7 @@ venus-core-objs += core.o helpers.o firmware.o \
+>>>  		   hfi_venus.o hfi_msgs.o hfi_cmds.o hfi.o \
+>>>  		   hfi_parser.o pm_helpers.o dbgfs.o \
+>>>  		   hfi_platform.o hfi_platform_v4.o \
+>>> -		   hfi_platform_v6.o hfi_plat_bufs_v6.o \
+>>> +		   hfi_platform_v6.o hfi_plat_bufs_v6.o hfi_platform_v6_lite.o \
+>> s/hfi_platform_v6_lite/hfi_platform_v4_lite
+> 
+> will remove, will use platform_v4 instead
+> 
+>>>  
+>>>  venus-dec-objs += vdec.o vdec_ctrls.o
+>>>  venus-enc-objs += venc.o venc_ctrls.o
+>>> diff --git a/drivers/media/platform/qcom/venus/hfi_platform.c b/drivers/media/platform/qcom/venus/hfi_platform.c
+>>> index 643e5aa138f5..f56b8f9946d7 100644
+>>> --- a/drivers/media/platform/qcom/venus/hfi_platform.c
+>>> +++ b/drivers/media/platform/qcom/venus/hfi_platform.c
+>>> @@ -13,6 +13,8 @@ const struct hfi_platform *hfi_platform_get(enum hfi_version version)
+>>>  		return &hfi_plat_v4;
+>>>  	case HFI_VERSION_6XX:
+>>>  		return &hfi_plat_v6;
+>>> +	case HFI_VERSION_6XX_LITE:
+>>> +		return &hfi_plat_v6_lite;
+>> update here as well.
+> 
+> yes, this function wont get changed
+> 
+>>>  	default:
+>>>  		break;
+>>>  	}
+>>> diff --git a/drivers/media/platform/qcom/venus/hfi_platform.h b/drivers/media/platform/qcom/venus/hfi_platform.h
+>>> index ec89a90a8129..6356e4bd0de2 100644
+>>> --- a/drivers/media/platform/qcom/venus/hfi_platform.h
+>>> +++ b/drivers/media/platform/qcom/venus/hfi_platform.h
+>>> @@ -58,6 +58,7 @@ struct hfi_platform {
+>>>  
+>>>  extern const struct hfi_platform hfi_plat_v4;
+>>>  extern const struct hfi_platform hfi_plat_v6;
+>>> +extern const struct hfi_platform hfi_plat_v6_lite;
+>> ditto
+> 
+> neither this one
+> 
+>>>  
+>>>  const struct hfi_platform *hfi_platform_get(enum hfi_version version);
+>>>  unsigned long hfi_platform_get_codec_vpp_freq(enum hfi_version version, u32 codec,
+>>> diff --git a/drivers/media/platform/qcom/venus/hfi_platform_v6_lite.c b/drivers/media/platform/qcom/venus/hfi_platform_v6_lite.c
+>>> new file mode 100644
+>>> index 000000000000..41958a3e353b
+>>> --- /dev/null
+>>> +++ b/drivers/media/platform/qcom/venus/hfi_platform_v6_lite.c
+>>> @@ -0,0 +1,148 @@
+>>> +// SPDX-License-Identifier: GPL-2.0-only
+>>> +/*
+>>> + * Copyright (c) 2025, The Linux Foundation. All rights reserved.
+>>> + */
+>>> +#include "hfi_platform.h"
 >>> +
->>>       if (si->lfb_base)
->>>           return true;
->>>   diff --git a/drivers/video/screen_info_pci.c 
->>> b/drivers/video/screen_info_pci.c
->>> index 66bfc1d0a6dc..ac57dcaf0cac 100644
->>> --- a/drivers/video/screen_info_pci.c
->>> +++ b/drivers/video/screen_info_pci.c
->>> @@ -9,6 +9,8 @@ static struct pci_dev *screen_info_lfb_pdev;
->>>   static size_t screen_info_lfb_bar;
->>>   static resource_size_t screen_info_lfb_res_start; // original 
->>> start of resource
->>>   static resource_size_t screen_info_lfb_offset; // framebuffer 
->>> offset within resource
->>> +static bool screen_info_changed;
->>> +static bool screen_info_fixuped;
->>>     static bool __screen_info_relocation_is_valid(const struct 
->>> screen_info *si, struct resource *pr)
->>>   {
->>> @@ -24,6 +26,24 @@ static bool 
->>> __screen_info_relocation_is_valid(const struct screen_info *si, stru
->>>       return true;
->>>   }
->>>   +bool screen_info_is_useful(void)
+>>> +static const struct hfi_plat_caps caps[] = {
 >>> +{
->>> +    unsigned int type;
->>> +    const struct screen_info *si = &screen_info;
+>>> +	.codec = HFI_VIDEO_CODEC_H264,
+>>> +	.domain = VIDC_SESSION_TYPE_DEC,
+>>> +	.caps[0] = {HFI_CAPABILITY_FRAME_WIDTH, 128, 1920, 1},
+>>> +	.caps[1] = {HFI_CAPABILITY_FRAME_HEIGHT, 128, 1080, 1},
+>>> +	.caps[2] = {HFI_CAPABILITY_MBS_PER_FRAME, 64, 8160, 1},
+>>> +	.caps[3] = {HFI_CAPABILITY_BITRATE, 1, 60000000, 1 },
+>>> +	.caps[4] = {HFI_CAPABILITY_MBS_PER_SECOND, 64, 244800, 1},
+>>> +	.caps[5] = {HFI_CAPABILITY_FRAMERATE, 1, 120, 1},
+>>> +	.caps[6] = {HFI_CAPABILITY_MAX_VIDEOCORES, 0, 1, 1},
+>>> +	.num_caps = 7,
+>>> +	.pl[0] = {HFI_H264_PROFILE_BASELINE, HFI_H264_LEVEL_1},
+>>> +	.pl[1] = {HFI_H264_PROFILE_MAIN, HFI_H264_LEVEL_41},
+>>> +	.pl[2] = {HFI_H264_PROFILE_HIGH, HFI_H264_LEVEL_5},
+>>> +	.pl[3] = {HFI_H264_PROFILE_CONSTRAINED_BASE, HFI_H264_LEVEL_41},
+>>> +	.pl[4] = {HFI_H264_PROFILE_CONSTRAINED_HIGH, HFI_H264_LEVEL_41},
+>> what is the reference for these values?
+> 
+> what do you mean? what should be the reference? I didnt see a downstream
+> equivalente to base on so based on the 4XX settings these seem
+> consistent.
+> 
+My question was regarding the profile and level mapping.
+The profiles added are consistent with 4xx, I agree. But the value of
+levels mapped with each profile is not matching with [1], hence the
+question about the reference used for this mapping.
+
+[1]
+https://elixir.bootlin.com/linux/v6.16-rc4/source/drivers/media/platform/qcom/venus/hfi_platform_v4.c#L23
+
+Thanks,
+Dikshita
+> IS there any internal document that you can point me to please?
+> 
+> 
+>>> +	.num_pl = 5,
+>>> +	.fmts[0] = {HFI_BUFFER_OUTPUT, HFI_COLOR_FORMAT_NV12_UBWC},
+>>> +	.fmts[1] = {HFI_BUFFER_OUTPUT2, HFI_COLOR_FORMAT_NV12_UBWC},
+>>> +	.fmts[2] = {HFI_BUFFER_OUTPUT2, HFI_COLOR_FORMAT_NV12},
+>>> +	.fmts[3] = {HFI_BUFFER_OUTPUT2, HFI_COLOR_FORMAT_NV21},
+>>> +	.num_fmts = 4,
+>>> +}, {
+>>> +	.codec = HFI_VIDEO_CODEC_HEVC,
+>>> +	.domain = VIDC_SESSION_TYPE_DEC,
+>>> +	.caps[0] = {HFI_CAPABILITY_FRAME_WIDTH, 128, 1920, 1},
+>>> +	.caps[1] = {HFI_CAPABILITY_FRAME_HEIGHT, 128, 1080, 1},
+>>> +	.caps[2] = {HFI_CAPABILITY_MBS_PER_FRAME, 64, 8160, 1},
+>>> +	.caps[3] = {HFI_CAPABILITY_BITRATE, 1, 60000000, 1 },
+>>> +	.caps[4] = {HFI_CAPABILITY_MBS_PER_SECOND, 64, 244800, 1},
+>>> +	.caps[5] = {HFI_CAPABILITY_FRAMERATE, 1, 120, 1},
+>>> +	.caps[6] = {HFI_CAPABILITY_MAX_VIDEOCORES, 0, 1, 1},
+>>> +	.num_caps = 7,
+>>> +	.pl[0] = {HFI_HEVC_PROFILE_MAIN, HFI_HEVC_LEVEL_5 | HFI_HEVC_TIER_MAIN},
+>>> +	.pl[1] = {HFI_HEVC_PROFILE_MAIN10, HFI_HEVC_LEVEL_5 | HFI_HEVC_TIER_MAIN},
+>> what is the reference for these values?
+> 
+> same as above.
+> 
+> what internal documents do you typically reference to? Havent seen these
+> references in previous commits.
+> 
+> could you clarify please?
+> 
+> 
+>>> +	.num_pl = 2,
+>>> +	.fmts[0] = {HFI_BUFFER_OUTPUT, HFI_COLOR_FORMAT_NV12_UBWC},
+>>> +	.fmts[1] = {HFI_BUFFER_OUTPUT2, HFI_COLOR_FORMAT_NV12_UBWC},
+>>> +	.fmts[2] = {HFI_BUFFER_OUTPUT2, HFI_COLOR_FORMAT_NV12},
+>>> +	.fmts[3] = {HFI_BUFFER_OUTPUT2, HFI_COLOR_FORMAT_NV21},
+>>> +	.num_fmts = 4,
+>>> +}, {
+>>> +	.codec = HFI_VIDEO_CODEC_VP9,
+>>> +	.domain = VIDC_SESSION_TYPE_DEC,
+>>> +	.caps[0] = {HFI_CAPABILITY_FRAME_WIDTH, 128, 1920, 1},
+>>> +	.caps[1] = {HFI_CAPABILITY_FRAME_HEIGHT, 128, 1080, 1},
+>>> +	.caps[2] = {HFI_CAPABILITY_MBS_PER_FRAME, 64, 8160, 1},
+>>> +	.caps[3] = {HFI_CAPABILITY_BITRATE, 1, 60000000, 1 },
+>>> +	.caps[4] = {HFI_CAPABILITY_MBS_PER_SECOND, 64, 244800, 1},
+>>> +	.caps[5] = {HFI_CAPABILITY_FRAMERATE, 1, 120, 1},
+>>> +	.caps[6] = {HFI_CAPABILITY_MAX_VIDEOCORES, 0, 1, 1},
+>>> +	.num_caps = 7,
+>>> +	.pl[0] = {HFI_VP9_PROFILE_P0, 200},
+>>> +	.pl[1] = {HFI_VP9_PROFILE_P2_10B, 200},
+>>> +	.num_pl = 2,
+>>> +	.fmts[0] = {HFI_BUFFER_OUTPUT, HFI_COLOR_FORMAT_NV12_UBWC},
+>>> +	.fmts[1] = {HFI_BUFFER_OUTPUT2, HFI_COLOR_FORMAT_NV12_UBWC},
+>>> +	.fmts[2] = {HFI_BUFFER_OUTPUT2, HFI_COLOR_FORMAT_NV12},
+>>> +	.fmts[3] = {HFI_BUFFER_OUTPUT2, HFI_COLOR_FORMAT_NV21},
+>>> +	.num_fmts = 4,
+>>> +} };
 >>> +
->>> +    type = screen_info_video_type(si);
->>> +    if (type != VIDEO_TYPE_EFI)
->>> +        return true;
->>> +
->>> +    if (screen_info_changed && !screen_info_fixuped) {
->>> +        pr_warn("The screen_info has changed but not fixuped");
->>> +        return false;
->>> +    }
->>> +
->>> +    pr_info("The screen_info is useful");
->>> +    return true;
+>>> +static const struct hfi_plat_caps *get_capabilities(unsigned int *entries)
+>>> +{
+>>> +	*entries = ARRAY_SIZE(caps);
+>>> +	return caps;
 >>> +}
 >>> +
->>>   void screen_info_apply_fixups(void)
->>>   {
->>>       struct screen_info *si = &screen_info;
->>> @@ -32,18 +52,22 @@ void screen_info_apply_fixups(void)
->>>           struct resource *pr = 
->>> &screen_info_lfb_pdev->resource[screen_info_lfb_bar];
->>>             if (pr->start != screen_info_lfb_res_start) {
->>> +            screen_info_changed = true;
->>>               if (__screen_info_relocation_is_valid(si, pr)) {
->>>                   /*
->>>                    * Only update base if we have an actual
->>>                    * relocation to a valid I/O range.
->>>                    */
->>>                   __screen_info_set_lfb_base(si, pr->start + 
->>> screen_info_lfb_offset);
->>> +                screen_info_fixuped = true;
->>>                   pr_info("Relocating firmware framebuffer to offset 
->>> %pa[d] within %pr\n",
->>>                       &screen_info_lfb_offset, pr);
->>>               } else {
->>>                   pr_warn("Invalid relocating, disabling firmware 
->>> framebuffer\n");
->>>               }
->>>           }
->>> +    } else {
->>> +        screen_info_changed = true;
->>>       }
->>>   }
->>>   diff --git a/include/linux/screen_info.h 
->>> b/include/linux/screen_info.h
->>> index 923d68e07679..632cdbb1adbe 100644
->>> --- a/include/linux/screen_info.h
->>> +++ b/include/linux/screen_info.h
->>> @@ -138,9 +138,14 @@ ssize_t screen_info_resources(const struct 
->>> screen_info *si, struct resource *r,
->>>   u32 __screen_info_lfb_bits_per_pixel(const struct screen_info *si);
->>>     #if defined(CONFIG_PCI)
->>> +bool screen_info_is_useful(void);
->>>   void screen_info_apply_fixups(void);
->>>   struct pci_dev *screen_info_pci_dev(const struct screen_info *si);
->>>   #else
->>> +bool screen_info_is_useful(void)
+>>> +static void get_codecs(u32 *enc_codecs, u32 *dec_codecs, u32 *count)
 >>> +{
->>> +    return true;
+>>> +	*enc_codecs = 0x0;
+>>> +	*dec_codecs = HFI_VIDEO_CODEC_H264 | HFI_VIDEO_CODEC_HEVC |
+>>> +		      HFI_VIDEO_CODEC_VP9;
+>>> +	*count = 3;
 >>> +}
->>>   static inline void screen_info_apply_fixups(void)
->>>   { }
->>>   static inline struct pci_dev *screen_info_pci_dev(const struct 
->>> screen_info *si)
+>>> +
+>>> +static const struct hfi_platform_codec_freq_data codec_freq_data[] = {
+>>> +	{ V4L2_PIX_FMT_H264, VIDC_SESSION_TYPE_DEC, 440, 0, 440 },
+>>> +	{ V4L2_PIX_FMT_HEVC, VIDC_SESSION_TYPE_DEC, 440, 0, 440 },
+>>> +	{ V4L2_PIX_FMT_VP9, VIDC_SESSION_TYPE_DEC, 440, 0, 440 },
+>>> +};
+>>> +
+>>> +static const struct hfi_platform_codec_freq_data *
+>>> +get_codec_freq_data(u32 session_type, u32 pixfmt)
+>>> +{
+>>> +	const struct hfi_platform_codec_freq_data *data = codec_freq_data;
+>>> +	unsigned int i, data_size = ARRAY_SIZE(codec_freq_data);
+>>> +	const struct hfi_platform_codec_freq_data *found = NULL;
+>>> +
+>>> +	for (i = 0; i < data_size; i++) {
+>>> +		if (data[i].pixfmt == pixfmt &&
+>>> +		    data[i].session_type == session_type) {
+>>> +			found = &data[i];
+>>> +			break;
+>>> +		}
+>>> +	}
+>>> +
+>>> +	return found;
+>>> +}
+>>> +
+>>> +static unsigned long codec_vpp_freq(u32 session_type, u32 codec)
+>>> +{
+>>> +	const struct hfi_platform_codec_freq_data *data;
+>>> +
+>>> +	data = get_codec_freq_data(session_type, codec);
+>>> +	if (data)
+>>> +		return data->vpp_freq;
+>>> +
+>>> +	return 0;
+>>> +}
+>>> +
+>>> +static unsigned long codec_vsp_freq(u32 session_type, u32 codec)
+>>> +{
+>>> +	const struct hfi_platform_codec_freq_data *data;
+>>> +
+>>> +	data = get_codec_freq_data(session_type, codec);
+>>> +	if (data)
+>>> +		return data->vsp_freq;
+>>> +
+>>> +	return 0;
+>>> +}
+>>> +
+>>> +static unsigned long codec_lp_freq(u32 session_type, u32 codec)
+>>> +{
+>>> +	const struct hfi_platform_codec_freq_data *data;
+>>> +
+>>> +	data = get_codec_freq_data(session_type, codec);
+>>> +	if (data)
+>>> +		return data->low_power_freq;
+>>> +
+>>> +	return 0;
+>>> +}
+>>> +
+>>> +const struct hfi_platform hfi_plat_v6_lite = {
+>>> +	.codec_vpp_freq = codec_vpp_freq,
+>>> +	.codec_vsp_freq = codec_vsp_freq,
+>>> +	.codec_lp_freq = codec_lp_freq,
+>>> +	.codecs = get_codecs,
+>>> +	.capabilities = get_capabilities,
+>>> +	.bufreq = hfi_plat_bufreq_v6,
+>> buffer requirement should come from firmware, pls drop.
+> 
+> yes, this will be hfi_plat_v4 only
+> 
+>>> +};
 >>
->
-
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
-
+>> lot of code duplication here, pls see the possibility to commonize the
+>>> code.
+> 
+> this file is no longer needed
+> 
+>>
+>> Thanks,
+>> Dikshita
 
