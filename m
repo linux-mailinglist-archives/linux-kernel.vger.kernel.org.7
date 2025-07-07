@@ -1,111 +1,134 @@
-Return-Path: <linux-kernel+bounces-720226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18214AFB8C9
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 18:39:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C00E8AFB8C7
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 18:39:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18C09188C86B
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 16:39:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C87918815AF
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 16:39:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E57D822DFB1;
-	Mon,  7 Jul 2025 16:38:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F24022D79F;
+	Mon,  7 Jul 2025 16:38:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rong.moe header.i=i@rong.moe header.b="Z81NEhW6"
-Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="hFrg47bn"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81EFA22A4E8;
-	Mon,  7 Jul 2025 16:38:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751906321; cv=pass; b=NXumIWJRb1jEBKBjnBm16N8Pcq4CnblsDVGwcKNGMkD+A11IMla0tUgQQCY+MGU7qZn7HPLhVwtd6opW7bfCI4nBAEcR5TEDRdBpDjlrjxPTTfARQeoEfGDTnIcPXAurEkdWrQQwTyaA04mgLkeG14lJHqRD2Hc2dGV5lCXBlWQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751906321; c=relaxed/simple;
-	bh=XpKnMJqwV7riptPK0Cvr/eXezIQ8tIihZ11L1F0k4ig=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=K1AowD+eoc5jIJz4jJO/m+eyReKIkbJxjSO6eRx0uOfXw+IjA2et5dy3Wr+kuSt0wMQ+vjJQmv06Vq57ELPPhE96E9FiFQJZ5xd2jDAoEYEvk8y7p+ugu2/WPDnGmo+sDO6OXdg2NFheSeEoV82m72c9lFogcWO0q6XEnwjB+s4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rong.moe; spf=pass smtp.mailfrom=rong.moe; dkim=pass (1024-bit key) header.d=rong.moe header.i=i@rong.moe header.b=Z81NEhW6; arc=pass smtp.client-ip=136.143.188.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rong.moe
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rong.moe
-ARC-Seal: i=1; a=rsa-sha256; t=1751906302; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=dFiIjtTCTSVg5f9LB/3GZSbHEKQuiEeisAtrCTn26YmmKEZD0VIuFpRYjIWPHvvWPqOMcnOLhkvsiFZYSRJiCHizfRbFSvJJFckBHrURwMiYdn0bM3iEdvQOIQPzIwmB/fZezcv4UzvZIQuPzgZ4Vcsa7eFnBBiLIjjfTpssIUE=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1751906302; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=IyZ30ONk3667u+R0j5jnQIo/ViwgAs3JR32ehGptRv8=; 
-	b=g/ePRwlLglvOV4LWirDHAa0+xaYxJOqzsIvjvjzK6ht0CsVKPhKv+iCeat8r3tudsSpJi8uKi5o591ngpoZdVKjW41aQs183ARDxozf+lfX3k9Nxt7gHDZNi4QfnCHuHzT3+qO4f9eYJnLWSLGyqMU4dIFH87/q5xpAX9mLnXWE=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=rong.moe;
-	spf=pass  smtp.mailfrom=i@rong.moe;
-	dmarc=pass header.from=<i@rong.moe>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1751906302;
-	s=zmail; d=rong.moe; i=i@rong.moe;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=IyZ30ONk3667u+R0j5jnQIo/ViwgAs3JR32ehGptRv8=;
-	b=Z81NEhW6zGUDxyt0SzaRes73zfnw0rouDwe6+KMfSPLey454feuXD1P/7dp9F1ke
-	syGw17qSwEKCGwbvt49dJNYdcJj7FxcIAuiR76Alf2vSkh7KoxNeaSeFjNgdDLrognA
-	OzAejXqhd3Yj3oaaWpKtfK/+BJeFf1V0e1JdFn4Q=
-Received: by mx.zohomail.com with SMTPS id 1751906301060801.5068744885242;
-	Mon, 7 Jul 2025 09:38:21 -0700 (PDT)
-From: Rong Zhang <i@rong.moe>
-To: Ike Panhc <ikepanhc@gmail.com>,
-	Hans de Goede <hansg@kernel.org>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: Rong Zhang <i@rong.moe>,
-	platform-driver-x86@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Gergo Koteles <soyer@irl.hu>,
-	=?UTF-8?q?Barnab=C3=A1s=20P=C5=91cze?= <pobrn@protonmail.com>,
-	stable@vger.kernel.org
-Subject: [PATCH 2/2] platform/x86: ideapad-laptop: Fix kbd backlight not remembered among boots
-Date: Tue,  8 Jul 2025 00:38:07 +0800
-Message-ID: <20250707163808.155876-3-i@rong.moe>
-X-Mailer: git-send-email 2.50.0
-In-Reply-To: <20250707163808.155876-1-i@rong.moe>
-References: <20250707163808.155876-1-i@rong.moe>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 652AE2248A8
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 16:38:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751906319; cv=none; b=ea+rfmPTYfY8mH3+kGkvXPmWMRZDP9LVyWrYY+oMwaD30DBkL0l6p2B4rDIT9aecRvUveW23TAEu1ih/1GzOGRMLp2xhbsa6F+uc60gtT0j0FXa+E7r3jD+cm3eJ7CLRlUuA8sHIMU2hcMTXL+MyU3IzbgxTuthSbLDOMT19ME4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751906319; c=relaxed/simple;
+	bh=S3amwlujUkc5UJJ8aquZiBQnf83DeXQQ7Cd8Fx38bII=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uyPMtBqwZJtJ7NvpCA3kUIQG7DgKB9G68kj/xKo3fyIh9hBlh4R61ClEtnzqSgHmc9RAdLJ8eX6pNwJeZSW5ysonOWiMN4stkEjk4Lfo6g0euHIgP/CmoUkU2Ebc9wKHbwJrYAwAX9vEtjqlOji1J6hO40D0EAuYabGfpePGifM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=hFrg47bn; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4538bc52a8dso26542105e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 09:38:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1751906316; x=1752511116; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=S3amwlujUkc5UJJ8aquZiBQnf83DeXQQ7Cd8Fx38bII=;
+        b=hFrg47bn3oGSaJ8TYTi7uFYP/TLLKVuEJD9wlrnmatFoEpq66zXTXHMy31OkBU8Nz3
+         CkS+80t+iBMsXee3jg+xAyaix7dwDiczlWc8GvrLSBegL7UnPYEDq2WNvNaBWcA+PgOe
+         3Vh5cgke8csovGL4d3wG1/dgxywxJhNy+l2kCiZMHJis6FMEYW6mK1nBddAMt5ST6pkl
+         nOXbMau0aKgrWNvdOP1HFOu0SGdo8q2n2OH56EqrYDBn/aD5attPtjK0AkL1vuo+YPOB
+         Gs1NN5urCK9MD2n+iOwlsbWv/7CFS2Kh/eN9cRmR9negd8fe0hTKV8es9kQa9PkVTAd1
+         jQ0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751906316; x=1752511116;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=S3amwlujUkc5UJJ8aquZiBQnf83DeXQQ7Cd8Fx38bII=;
+        b=FJhG+lu56n6x9lAVlmiofz4a/5uPWLALzHvRiMDxko8ewWDERwqdqNMWv4s2pKA3Mh
+         o42ojDg/n8VxTo9oCKqptHb/SeX5X5ErjAv7ajVGPhZ2T4pfsIWlmxIH6IkSUDbvGICo
+         1+RKRoUgX6ZUEsuli1CMDejehPFVlwka//EwmAmC8BD7Tk0waBLltwwotxetEkNmAdGI
+         7WqBh3s6aeIFWpsOxh8JWl395ngl2D5oXFi+j6Q22CuMCCKWT8hlGVveR1m3mqymn6hE
+         92J+7X3t+gCJTeFJC/RcgW+1T6x57uvGR79mk0NmtYHCVOP5hEqJTA9IQQM/9gKRGN29
+         cdfg==
+X-Forwarded-Encrypted: i=1; AJvYcCWRvBM5JCVVQJvV+6691eKOpeYsXOC8+MWqJzTi9CxhRkJLzBP+EsG7bK4hEqVhkYR482+XDD8w9gIHkfg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyKkRmx4vv/93fjQzl2/HX8wFErbB5u16s1bUwYK176Xc1XLfr
+	Cw9prO+0blKaEzIYX2LraawKwgOWjlskPScy/chy7rWe9qF/BqeZtEA98uHpAsknSoM=
+X-Gm-Gg: ASbGnctHschmggd3+ht3w6RBnXK9YvSCObQwGNneCtO61sajvMJRm4c+ovB87+R4mZ1
+	GPkZ49WeD378LYT0KLhZ8iZiq4oRI2+Kbko+4CVXuOBxCaOfsQ8vW5uZMen9kIWSxvn0odEu7ea
+	PWUAbpME5rgsYoBVqZip1WofDHWRGQcEmKeq6ul6zaMAn4kalsVpJepVL4t0dFlyzqFqr0J4vua
+	STY0WHLIqN606Tq4oMa3aaBQjuJ3AphTCJaJ9bwSX9I1gXQNmKURYCNr+vdmmLy49mdu7YJ4wh5
+	JmSnqUIfwDVCu+iW6/Jvl3A1dmamyK47aQ0bFSM3ukY89nBgxMNJwq8lzv0hJEDh
+X-Google-Smtp-Source: AGHT+IEcytjspScMaqVQ9Um6yyQbzDnCUR35ZFequhb17ooZKv5F3UDEUBaebbJ6Kjo7xHpVLJe9MA==
+X-Received: by 2002:a05:600c:530c:b0:450:d367:c385 with SMTP id 5b1f17b1804b1-454cccb93afmr3367165e9.16.1751906315548;
+        Mon, 07 Jul 2025 09:38:35 -0700 (PDT)
+Received: from blackdock.suse.cz ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454a997ae2esm145978095e9.9.2025.07.07.09.38.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Jul 2025 09:38:35 -0700 (PDT)
+Date: Mon, 7 Jul 2025 18:38:33 +0200
+From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
+To: Chen Ridong <chenridong@huaweicloud.com>
+Cc: peterz@infradead.org, rafael@kernel.org, pavel@kernel.org, 
+	timvp@google.com, tj@kernel.org, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, lujialin4@huawei.com, chenridong@huawei.com
+Subject: Re: [PATCH next] sched,freezer: prevent tasks from escaping being
+ frozen
+Message-ID: <3omgn6ualvnncessgeuc27nmrqmn7ufjvuqfy7v3ppc6irp5xg@unvxbtff3qor>
+References: <20250703133427.3301899-1-chenridong@huaweicloud.com>
+ <n23vsu6y6cjf2vwdbfcjl2mj7venvpzpblncoa7adn3q5r4lph@qsfa3deqtamc>
+ <f4c4f465-72b9-4682-99e6-c249ecab8572@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="pedi25sm2ripaoax"
+Content-Disposition: inline
+In-Reply-To: <f4c4f465-72b9-4682-99e6-c249ecab8572@huaweicloud.com>
 
-On some models supported by ideapad-laptop, the HW/FW can remember the
-state of keyboard backlight among boots. However, it is always turned
-off while shutting down, as a side effect of the LED class device
-unregistering sequence.
 
-This is inconvenient for users who always prefer turning on the
-keyboard backlight. Thus, set LED_RETAIN_AT_SHUTDOWN on the LED class
-device so that the state of keyboard backlight gets remembered, which
-also aligns with the behavior of manufacturer utilities on Windows.
+--pedi25sm2ripaoax
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Subject: Re: [PATCH next] sched,freezer: prevent tasks from escaping being
+ frozen
+MIME-Version: 1.0
 
-Fixes: 503325f84bc0 ("platform/x86: ideapad-laptop: add keyboard backlight control support")
-Cc: stable@vger.kernel.org
-Signed-off-by: Rong Zhang <i@rong.moe>
----
- drivers/platform/x86/ideapad-laptop.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Fri, Jul 04, 2025 at 11:02:52AM +0800, Chen Ridong <chenridong@huaweicloud.com> wrote:
+> Regarding your question: Did you mean that the task was frozen, received
+> another signal to wake up, but should have remained frozen instead of
+> entering the running state?
 
-diff --git a/drivers/platform/x86/ideapad-laptop.c b/drivers/platform/x86/ideapad-laptop.c
-index 62a72b09fc3a..edb9d2fb02ec 100644
---- a/drivers/platform/x86/ideapad-laptop.c
-+++ b/drivers/platform/x86/ideapad-laptop.c
-@@ -1669,7 +1669,7 @@ static int ideapad_kbd_bl_init(struct ideapad_private *priv)
- 	priv->kbd_bl.led.name                    = "platform::" LED_FUNCTION_KBD_BACKLIGHT;
- 	priv->kbd_bl.led.brightness_get          = ideapad_kbd_bl_led_cdev_brightness_get;
- 	priv->kbd_bl.led.brightness_set_blocking = ideapad_kbd_bl_led_cdev_brightness_set;
--	priv->kbd_bl.led.flags                   = LED_BRIGHT_HW_CHANGED;
-+	priv->kbd_bl.led.flags                   = LED_BRIGHT_HW_CHANGED | LED_RETAIN_AT_SHUTDOWN;
- 
- 	err = led_classdev_register(&priv->platform_device->dev, &priv->kbd_bl.led);
- 	if (err)
--- 
-2.50.0
+My response was a knee-jerk after seeing the move inside the loop.
+Since the task is in __refrigerator(), it would've been already frozen,
+so the 2nd (and more) checks should be OK and it wouldn't escape
+freezing despite the concurrent reader.
 
+A task in __refrigerator() shouldn't be woken up by a signal, no? So
+your original conservative fix might have been sufficient afterall.
+(A conservative fix is what I'd strive for here, given it's the legacy
+cgroup freezer.)
+
+Thanks,
+Michal
+
+--pedi25sm2ripaoax
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRCE24Fn/AcRjnLivR+PQLnlNv4CAUCaGv4BwAKCRB+PQLnlNv4
+CN48AP9CGbMaWlet0JJRWDJPP8tZt7TWUthxoNxXutxy8cUFdgD/Rtja2l4GZrb/
+19ugZNDMwDQO+gArFD3bC+aIChoBogg=
+=5Duw
+-----END PGP SIGNATURE-----
+
+--pedi25sm2ripaoax--
 
