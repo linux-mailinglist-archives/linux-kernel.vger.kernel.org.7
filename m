@@ -1,102 +1,132 @@
-Return-Path: <linux-kernel+bounces-720654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7221AFBECE
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 01:51:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E0A42AFBECF
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 01:53:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAFDE4A772A
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 23:51:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39A604A357A
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 23:53:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17EFC28BA9B;
-	Mon,  7 Jul 2025 23:51:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="DZdFm7fj"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D05F28727A;
+	Mon,  7 Jul 2025 23:53:26 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0012.hostedemail.com [216.40.44.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C51CB28641B;
-	Mon,  7 Jul 2025 23:51:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 793D927713
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 23:53:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751932282; cv=none; b=ruNZtLWQDmp53NlMOne1lFJ27RycVTJZKmrtjcOGuD80oVf9jITKqWi7XyC63HZ05Wt5BOrDCBmQkcM6RbFbJX8vs/jthoKQbeWs55FizCvwYDi1SrYuA006KMeypdkrJe2YLdlWFWiJIy9nKlr8J3FhMglsmn/BRwjLvN69trQ=
+	t=1751932406; cv=none; b=PdKaHDHh423/lgojmJyp0GI7Zac9carWgT1T6klX4zzJTbNpZr4pOc+cE+5kskUEfYsERwABtfQj6Q8Ip04++Ymg57qDymcNw8FFxQTHmjxeLKnbAs6laTAd3dGfkucuvnvshrh9Lk0af8JLTCwXq/wTM6Ex5iIhzeCky8x9RXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751932282; c=relaxed/simple;
-	bh=3YPjMLZTVygdM8dEsnVyxD48BuxrOc3p56jKv+wzmFM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=P3x2rVryRw3ziFl9qT3o6tVZoDgkNtcCHoKajO3tk1jHtWNA9Fo+pp/p7Airz8xuWOvQowgqgpQIqpq+aNcSjDDmWMPXgTT/AXsfzIOVhkX5i0sE+coITmSDy+t6a9SzKbGBn4QuMKGgNeTo8974DaOvDjKmJpRN9kjjsiLvp7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=DZdFm7fj; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1751932223;
-	bh=JO3i9JPD8qnuRTsURPAV3l4t79n+m7y3BVBVrImp4us=;
-	h=Date:From:To:Cc:Subject:From;
-	b=DZdFm7fjBf/HmoVE2c4YJ+hoa/bKV9twVtr8l+FM0z9BAQH1VhU8fTGL07cNVx1gf
-	 VbeU/6YW8ZnIaOTQUiSi4dNx+JfVu4maLik0eGsxbLBfDwkI92NSLZvfdlWd8F/sQm
-	 T5qmBpksU69Ose2qj/VEiocpBBr5ucbIIDmdiHGwhCbnc8Ke/fHoNeDgHTL3OcOFqH
-	 5Ivif+0svhvmABSZaDZTuBbUQ3XQqXTMZKpgkSGD3YP8KkPks5OS7DVYt//iqtskgT
-	 jnsBZVCKXvRt2T4U3UREvZk+7OApxzd6V3BOhv+aTywXTdSAFqSjygOzmRJObK12mz
-	 CVivtFiGU5Nmw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bbgwH3pwxz4wbW;
-	Tue,  8 Jul 2025 09:50:23 +1000 (AEST)
-Date: Tue, 8 Jul 2025 09:51:18 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patch in the vfs-brauner tree
-Message-ID: <20250708095118.58337fec@canb.auug.org.au>
+	s=arc-20240116; t=1751932406; c=relaxed/simple;
+	bh=59a5+/4pwVWmNffzrQS7H7kdgAzRylgAqxxbC/2s9d0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sFvtZWmVDS/Jb/uNw4h1Z6pCl02C2qXsNk6UhSszCVt2dyXvPZa/0Y6SLDqOxBf+bLhO9vDc7y/fyJ7f7NkHT6BX/6WqHfrT4IjuEjwOc3nMq/0obnMmCN4VOoy+eQkCNlULkcLZz9Kx2gOeNFc4Cp/ZQWfd6qfECSD8f4iUcO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf20.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay02.hostedemail.com (Postfix) with ESMTP id A7F68128A1D;
+	Mon,  7 Jul 2025 23:53:21 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf20.hostedemail.com (Postfix) with ESMTPA id 3A4AA20026;
+	Mon,  7 Jul 2025 23:53:19 +0000 (UTC)
+Date: Mon, 7 Jul 2025 19:53:18 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Li,Rongqing" <lirongqing@baidu.com>
+Cc: Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ David Laight <david.laight.linux@gmail.com>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, "vschneid@redhat.com"
+ <vschneid@redhat.com>, "mgorman@suse.de" <mgorman@suse.de>,
+ "bsegall@google.com" <bsegall@google.com>, "dietmar.eggemann@arm.com"
+ <dietmar.eggemann@arm.com>, "vincent.guittot@linaro.org"
+ <vincent.guittot@linaro.org>, "juri.lelli@redhat.com"
+ <juri.lelli@redhat.com>, "mingo@redhat.com" <mingo@redhat.com>
+Subject: Re: [????] Re: divide error in x86 and cputime
+Message-ID: <20250707195318.0c7f401d@gandalf.local.home>
+In-Reply-To: <2ef88def90634827bac1874d90e0e329@baidu.com>
+References: <78a0d7bb20504c0884d474868eccd858@baidu.com>
+	<20250707220937.GA15787@redhat.com>
+	<20250707223038.GB15787@redhat.com>
+	<2ef88def90634827bac1874d90e0e329@baidu.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/7Uxg6u8CmbhdC2RObd8gaUK";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/7Uxg6u8CmbhdC2RObd8gaUK
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: zwxk4nrxgdr6esdbrjgghoo5esugs38i
+X-Rspamd-Server: rspamout01
+X-Rspamd-Queue-Id: 3A4AA20026
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1+ENrYwZT/NTfM7vuG0zW8vu+8BvH8G/34=
+X-HE-Tag: 1751932399-456642
+X-HE-Meta: U2FsdGVkX199z3S/FAf93rtIrG8RFdh9Ta4tb9KZyL3x+dedBy82Lcaea/qCf0PcrkcR2rULmZF0CInp45KqYiBSyjYKMmyXbrJuf5s1rEJ4fJ0qyKFKoEGYUeKg6aJWfC7r+ylH5YnRHSfW29Q37auYKJZmYG74hzPzI02bg63kgxcFVFPwa0rBz8SMI7RyjqC0g3q4lEGR69IitXw57v1WjsjxA41B+oXgtk9wf7GhdEwGi3ZZEMn2/MaL2kPgtalHVGXImFhSCNlUCrB9RBTjUnasztYoV7UvNnGJypYltbapxxo3220jrm1Znh4Pzl9QfOBgdV5swCxCuNjWwHiaD7mUz6U+
 
-Hi all,
+On Mon, 7 Jul 2025 23:41:14 +0000
+"Li,Rongqing" <lirongqing@baidu.com> wrote:
 
-The following commit is also in the vfs-brauner-fixes tree as a different
-commit (but the same patch):
+> > On a second thought, this
+> > 
+> >     mul_u64_u64_div_u64(0x69f98da9ba980c00, 0xfffd213aabd74626,
+> > 0x09e00900);
+> >                         stime               rtime
+> > stime + utime
+> > 
+> > looks suspicious:
+> > 
+> > 	- stime > stime + utime
+> > 
+> > 	- rtime = 0xfffd213aabd74626 is absurdly huge
+> > 
+> > so perhaps there is another problem?
+> >   
+> 
+> it happened when a process with 236 busy polling threads , run about 904 days, the total time will overflow the 64bit
+> 
+> non-x86 system maybe has same issue, once (stime + utime) overflows 64bit, mul_u64_u64_div_u64 from lib/math/div64.c maybe cause division by 0
+> 
+> so to cputime, could cputime_adjust() return stime if stime if stime + utime is overflow
+> 
+> diff --git a/kernel/sched/cputime.c b/kernel/sched/cputime.c
+> index 6dab4854..db0c273 100644
+> --- a/kernel/sched/cputime.c
+> +++ b/kernel/sched/cputime.c
+> @@ -579,6 +579,10 @@ void cputime_adjust(struct task_cputime *curr, struct prev_cputime *prev,
+>                 goto update;
+>         }
+> 
+> +       if (stime > (stime + utime)) {
+> +               goto update;
+> +       }
+> +
+>         stime = mul_u64_u64_div_u64(stime, rtime, stime + utime);
+>         /*
+>          * Because mul_u64_u64_div_u64() can approximate on some
+> 
 
-  8c0bcafc722c ("coredump: fix PIDFD_INFO_COREDUMP ioctl check")
+Are you running 5.10.0? Because a diff of 5.10.238 from 5.10.0 gives:
 
-This is commit
+@@ -579,6 +579,12 @@ void cputime_adjust(struct task_cputime *curr, struct prev_cputime *prev,
+        }
+ 
+        stime = mul_u64_u64_div_u64(stime, rtime, stime + utime);
++       /*
++        * Because mul_u64_u64_div_u64() can approximate on some
++        * achitectures; enforce the constraint that: a*b/(b+c) <= a.
++        */
++       if (unlikely(stime > rtime))
++               stime = rtime;
+ 
+ update:
 
-  830a9e37cfb2 ("coredump: fix PIDFD_INFO_COREDUMP ioctl check")
 
-in te vfs-brauner-fixes tree.
+Thus the result is what's getting screwed up.
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/7Uxg6u8CmbhdC2RObd8gaUK
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmhsXXYACgkQAVBC80lX
-0GwQNAf8Dve1qviY4ELOddFMC57/DhJvb/TlhLloTYpX+4vbURboDteBPzl+gdFc
-p1t8xQawM7t/s/ZE6VxBtTVGa1h9wknB0BVcdfg1DR1FO8vDNmJW03i1+lFeYYwN
-gMHPODrBjCKj0t9rn3tX35xvzc9iozI6+aMBIDlyK3578FFUL0llxE8ydhQT3ojX
-nSpfLya/k1P4g929t9lwtKXY6YrkORZnOi36RnSBqHLf/Up7s09TmnBRtna6TjSh
-rVoMAZxumqIs+SzJpmxZJOHNpviMIEuD+JzhorNJKRK/fLa9raPcnnnaWtEv8we3
-I6z8TUeo5BdxI8y+qlfkVRNdGAb+xA==
-=Wc60
------END PGP SIGNATURE-----
-
---Sig_/7Uxg6u8CmbhdC2RObd8gaUK--
+-- Steve
 
