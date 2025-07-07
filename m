@@ -1,135 +1,117 @@
-Return-Path: <linux-kernel+bounces-720294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D658CAFB9D2
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 19:24:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DA8BAFB9D9
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 19:26:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A111424C34
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 17:24:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9622A4250E5
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 17:25:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 078902E88A6;
-	Mon,  7 Jul 2025 17:24:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="B0le2tee"
-Received: from 004.mia.mailroute.net (004.mia.mailroute.net [199.89.3.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7585B2135CE;
-	Mon,  7 Jul 2025 17:24:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C1DD2E7F3A;
+	Mon,  7 Jul 2025 17:26:04 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF81422127A;
+	Mon,  7 Jul 2025 17:26:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751909067; cv=none; b=eqh8Kw8IFjBJOaSp+KRyy/FHtOigd+vrMRIvBmlIEDeTyebcyTMdthMgoFhwFiuNKH/S4ijhplpkGpzkN2cvfSYlf+BnDYJHgjhc/jDY6707yqhdJbjurnIFqKdL4SwJ4VJhDlNyfdU0spFDiVsDrgt0jFzKSXNnf3I8upMnpO4=
+	t=1751909164; cv=none; b=Pw6t/1wXNSRawxon+sxlZHL9b/y+1w3M+v/I7LkTIy4q01XYSBOiJj2lfv2Raoph2kEbkZJ2dgqxTaBa2ZI0TvIzSfwteNzNppsEwYDhkx65hLAqlEW35fJs3BWJUA5x7ujL+YdslM8DfqBaS9n63lulTi/HuLY0Ru9CoLXdc+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751909067; c=relaxed/simple;
-	bh=LE5lOnV1r6sEYCrRLSbv+JwAGegUabn8yUwH1H/NhFg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=i/BmhiHweptdiyEHBR/XD7VuYUt1H0xOu/Sd9fyEildJaiyup3sAd7WZms9bYx95HiBkd5ACF0s+dwaIVySENsMD+NkNFDAR6XX3E/7Jz1o4fvkjXlaqVZL2wHfZ31V83uMV9bWU/7zLxJuTzCMhSN3eiPRL5mO922/PMJei41M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=B0le2tee; arc=none smtp.client-ip=199.89.3.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 004.mia.mailroute.net (Postfix) with ESMTP id 4bbWLw2f9Xzm0ySS;
-	Mon,  7 Jul 2025 17:24:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1751909061; x=1754501062; bh=69KTYEFmtifFl6F+XwfdQSIS
-	iwSApdb5o2AdPYlIDQM=; b=B0le2teessx03Mvotp6H2wWDVBfklJXHzPY2eRtu
-	2Kt6d89ZTST2ezD6vD14RsTtINUAq0oSWMMDI3XtQB4V0iUWUj1KTwSYrHUtpwkD
-	NJj89Hq3l8epZx91bp8ToczxTUi7k4EWGcC5WXjQVM2YxPM56nFSWSQeOjU/A6b6
-	ohV2h3a9MBLu0x9LYFV+cLXhdBjfLXIPpzb+fyEpibUTlWyW+CezVff+2u+nYSM4
-	z2Ec+QP8UoOoGWkRbAOyG0bHv2ay6JjwjR2UpBsXkODD1t7PoaEV4JxdBDCk7Vyy
-	HwKsIDXKBbezJ4wzpP/TwVFkHpBEjQUmEYfTzrPtMb2Thw==
-X-Virus-Scanned: by MailRoute
-Received: from 004.mia.mailroute.net ([127.0.0.1])
- by localhost (004.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id vZUE9ek8VnuB; Mon,  7 Jul 2025 17:24:21 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 004.mia.mailroute.net (Postfix) with ESMTPSA id 4bbWLc6BJ0zm0yTF;
-	Mon,  7 Jul 2025 17:24:08 +0000 (UTC)
-Message-ID: <970182d5-6b67-4b02-aa05-0485d0f801d6@acm.org>
-Date: Mon, 7 Jul 2025 10:24:06 -0700
+	s=arc-20240116; t=1751909164; c=relaxed/simple;
+	bh=uTGGSkDiwNf2+d48FdgJ5vLX6nsin8g7naCfFupDseE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G67hDd81VSkMIIzGtOYNXBA9SsX73V5UlKKgsLWSEfCLtTne8qlVQ9ISO5Vewvg5HBZZZ/OfwR5WdruItMNJRXqsuS8ozX6pS3GtPeDQAKAz8k2KTI4qBRb3qfx5xDvwiXknLC3+G/2F7PRlun1tYcP5Vo/PFI/NGXNjqiW3Yo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C8A7C168F;
+	Mon,  7 Jul 2025 10:25:49 -0700 (PDT)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 652A03F66E;
+	Mon,  7 Jul 2025 10:26:00 -0700 (PDT)
+Date: Mon, 7 Jul 2025 18:25:57 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Breno Leitao <leitao@debian.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-efi@vger.kernel.org, leo.yan@arm.com, kernel-team@meta.com
+Subject: Re: [PATCH 0/8] arm64: set VMAP_STACK by default
+Message-ID: <aGwDJXTGAdV_VqY2@J2N7QTR9R3>
+References: <20250707-arm64_vmap-v1-0-8de98ca0f91c@debian.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] scsi: ufs: exynos: fix programming of HCI_UTRL_NEXUS_TYPE
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>,
- Peter Griffin <peter.griffin@linaro.org>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- Krzysztof Kozlowski <krzk@kernel.org>, Seungwon Jeon <essuuj@gmail.com>,
- Avri Altman <avri.altman@wdc.com>, Kiwoong Kim <kwmad.kim@samsung.com>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>,
- Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
- linux-scsi@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20250707-ufs-exynos-shift-v1-1-1418e161ae40@linaro.org>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20250707-ufs-exynos-shift-v1-1-1418e161ae40@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250707-arm64_vmap-v1-0-8de98ca0f91c@debian.org>
 
-On 7/7/25 10:05 AM, Andr=C3=A9 Draszik wrote:
-> On Google gs101, the number of UTP transfer request slots (nutrs) is
-> 32, and in this case the driver ends up programming the UTRL_NEXUS_TYPE
-> incorrectly as 0.
->=20
-> This is because the left hand side of the shift is 1, which is of type
-> int, i.e. 31 bits wide. Shifting by more than that width results in
-> undefined behaviour.
->=20
-> Fix this by switching to the BIT() macro, which applies correct type
-> casting as required. This ensures the correct value is written to
-> UTRL_NEXUS_TYPE (0xffffffff on gs101), and it also fixes a UBSAN shift
-> warning:
->      UBSAN: shift-out-of-bounds in drivers/ufs/host/ufs-exynos.c:1113:2=
-1
->      shift exponent 32 is too large for 32-bit type 'int'
->=20
-> For consistency, apply the same change to the nutmrs / UTMRL_NEXUS_TYPE
-> write.
->=20
-> Fixes: 55f4b1f73631 ("scsi: ufs: ufs-exynos: Add UFS host support for E=
-xynos SoCs")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+On Mon, Jul 07, 2025 at 09:01:00AM -0700, Breno Leitao wrote:
+> Hi all,
+> 
+> This patchset select VMAP_STACK on arm64 by default, and cleans up the
+> code by removing all associated CONFIG_VMAP_STACK conditionals.
+> 
+> This is a suggestion from Will Deacon from another discussion[1].
+> 
+> With VMAP_STACK now always enabled on arm64, the code can be
+> significantly simplified, reducing complexity and potential for
+> misconfiguration.
+> 
+> Overview of Changes
+> 
+>     * Remove all #ifdef CONFIG_VMAP_STACK and related runtime checks
+>       throughout the architecture codebase.
+>     * Replace runtime checks with build-time assertions where
+>       appropriate.
+> 
+> Link: https://lore.kernel.org/all/aGfYL8eXjTA9puQr@willie-the-truck/ [1]
+> 
+> Signed-off-by: Breno Leitao <leitao@debian.org>
+
+Nice!
+
+Aside from a minor comment on the first patch, this all looks good to
+me. For the series:
+
+Acked-by: Mark Rutland <mark.rutland@arm.com>
+
+Mark.
+
 > ---
->   drivers/ufs/host/ufs-exynos.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/ufs/host/ufs-exynos.c b/drivers/ufs/host/ufs-exyno=
-s.c
-> index 3e545af536e53e06b66c624ed0dc6dc7de13549f..f0adcd9dd553d2e630c75e8=
-c3220e21bc5f7c8d8 100644
-> --- a/drivers/ufs/host/ufs-exynos.c
-> +++ b/drivers/ufs/host/ufs-exynos.c
-> @@ -1110,8 +1110,8 @@ static int exynos_ufs_post_link(struct ufs_hba *h=
-ba)
->   	hci_writel(ufs, val, HCI_TXPRDT_ENTRY_SIZE);
->  =20
->   	hci_writel(ufs, ilog2(DATA_UNIT_SIZE), HCI_RXPRDT_ENTRY_SIZE);
-> -	hci_writel(ufs, (1 << hba->nutrs) - 1, HCI_UTRL_NEXUS_TYPE);
-> -	hci_writel(ufs, (1 << hba->nutmrs) - 1, HCI_UTMRL_NEXUS_TYPE);
-> +	hci_writel(ufs, BIT(hba->nutrs) - 1, HCI_UTRL_NEXUS_TYPE);
-> +	hci_writel(ufs, BIT(hba->nutmrs) - 1, HCI_UTMRL_NEXUS_TYPE);
->   	hci_writel(ufs, 0xf, HCI_AXIDMA_RWDATA_BURST_LEN);
->  =20
->   	if (ufs->opts & EXYNOS_UFS_OPT_SKIP_CONNECTION_ESTAB)
-
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+> Breno Leitao (8):
+>       arm64: Enable VMAP_STACK support
+>       arm64: efi: Remove CONFIG_VMAP_STACK check
+>       arm64: Remove CONFIG_VMAP_STACK conditionals from THREAD_SHIFT and THREAD_ALIGN
+>       arm64: remove CONFIG_VMAP_STACK conditionals from irq stack setup
+>       arm64: remove CONFIG_VMAP_STACK conditionals from traps overflow stack
+>       arm64: remove CONFIG_VMAP_STACK checks from stacktrace overflow logic
+>       arm64: remove CONFIG_VMAP_STACK checks from SDEI stack handling
+>       arm64: remove CONFIG_VMAP_STACK checks from entry code
+> 
+>  arch/arm64/Kconfig                  |  1 +
+>  arch/arm64/include/asm/memory.h     |  6 +-----
+>  arch/arm64/include/asm/stacktrace.h |  6 +-----
+>  arch/arm64/kernel/efi.c             |  5 -----
+>  arch/arm64/kernel/entry-common.c    |  2 --
+>  arch/arm64/kernel/entry.S           |  6 ------
+>  arch/arm64/kernel/irq.c             | 13 -------------
+>  arch/arm64/kernel/sdei.c            |  8 ++------
+>  arch/arm64/kernel/stacktrace.c      |  4 +---
+>  arch/arm64/kernel/traps.c           |  3 ---
+>  10 files changed, 6 insertions(+), 48 deletions(-)
+> ---
+> base-commit: 9dd1757493416310a5e71146a08bc228869f8dae
+> change-id: 20250707-arm64_vmap-fa70ba3c9cfb
+> 
+> Best regards,
+> -- 
+> Breno Leitao <leitao@debian.org>
+> 
 
