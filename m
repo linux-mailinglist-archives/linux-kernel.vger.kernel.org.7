@@ -1,125 +1,195 @@
-Return-Path: <linux-kernel+bounces-719956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4FC8AFB512
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 15:48:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3083BAFB4C9
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 15:40:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEC01188FE14
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 13:48:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE3E918929A1
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 13:41:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EABA2C159D;
-	Mon,  7 Jul 2025 13:45:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6483529E11F;
+	Mon,  7 Jul 2025 13:40:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b="Q76cGeZs"
-Received: from forward501d.mail.yandex.net (forward501d.mail.yandex.net [178.154.239.209])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TyOkhIep"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC4BB2C08C1;
-	Mon,  7 Jul 2025 13:45:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.209
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E151329B792
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 13:40:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751895917; cv=none; b=qdmkwDseYcEmGOIMBmJMgOfTLIbukaW4nXjud+jQCblR95ZlF3wVHfqaiEl3v5FLC7A/etJ2gAiyxdTLGgIFRz5nDxsCaRqTm5HR8BL0LVZa516VX9Mw1gV3MqGnPtFKN8WO1PfOaH+AzpFync+G9RldjJMV2Xr8ebGnIhr9pTM=
+	t=1751895646; cv=none; b=EJhHsP1v3fDXVYLMp3ZppUaKwJRBtxCJDcix7+A0EMmDmQSyubyqoa43J/ZOOY7tU8C7vcFp16UcUMtTqn1tYqo4/6ddcBkMmC4MovCGuUIMMMn6BtNEeLEZHrDcIhbYnzt04ka1IlsLZPAb/uAZUkljpz1yDGNG3FCkYpRVyuk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751895917; c=relaxed/simple;
-	bh=9YH64J8df+mV7SsYcJMl4LWc54kpzxJDKJgWscfJCY4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=C6hvGmvqmgnLK/9c5RYWhp1GiyDd6xPO0N0G40DdSFy5YV3lKd0DFz8KSUlMfaqkekAoT59B5s8rMBGkGvO2lYl58DIfPoseKzcj7T6Hu7Uqfl+xmvIWRHwuL/jUd5PK4/bw8UvxiAgjrfICYw+lOr4sZbQoHJRqWQQ0J6HBwDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev; spf=pass smtp.mailfrom=onurozkan.dev; dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b=Q76cGeZs; arc=none smtp.client-ip=178.154.239.209
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=onurozkan.dev
-Received: from mail-nwsmtp-smtp-production-main-81.klg.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-81.klg.yp-c.yandex.net [IPv6:2a02:6b8:c43:8a4:0:640:a4f2:0])
-	by forward501d.mail.yandex.net (Yandex) with ESMTPS id DC9A860C0B;
-	Mon,  7 Jul 2025 16:39:19 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-81.klg.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id EdgS1NTLsKo0-D3lddOQH;
-	Mon, 07 Jul 2025 16:39:18 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=onurozkan.dev;
-	s=mail; t=1751895559;
-	bh=ymQK026zKhq52+ZEOyApVIOybNr3zS2/dj01HDCd98E=;
-	h=Cc:Message-ID:Subject:Date:References:To:From:In-Reply-To;
-	b=Q76cGeZsH2it4GI2mq/kv9uN907QH7KjfZw8gfijY7v0CIQEgJb9Xu97/YVVOl1Fb
-	 vOyuKsKzojHrx+no6KJ5UHKRsP5B+BxUcArqJZSVWY2FYbVxDhqRYQyjm/qaO9R/eV
-	 2BpXoiT8DTshfOzT1cLm9bvEG0nunHR/LXby255o=
-Authentication-Results: mail-nwsmtp-smtp-production-main-81.klg.yp-c.yandex.net; dkim=pass header.i=@onurozkan.dev
-Date: Mon, 7 Jul 2025 16:39:13 +0300
-From: Onur <work@onurozkan.dev>
-To: "Benno Lossin" <lossin@kernel.org>
-Cc: "Boqun Feng" <boqun.feng@gmail.com>, <linux-kernel@vger.kernel.org>,
- <rust-for-linux@vger.kernel.org>, <ojeda@kernel.org>,
- <alex.gaynor@gmail.com>, <gary@garyguo.net>, <a.hindborg@kernel.org>,
- <aliceryhl@google.com>, <tmgross@umich.edu>, <dakr@kernel.org>,
- <peterz@infradead.org>, <mingo@redhat.com>, <will@kernel.org>,
- <longman@redhat.com>, <felipe_life@live.com>, <daniel@sedlak.dev>,
- <bjorn3_gh@protonmail.com>
-Subject: Re: [PATCH v5 2/3] implement ww_mutex abstraction for the Rust tree
-Message-ID: <20250707163913.5ffc046d@nimda.home>
-In-Reply-To: <DAU0ELV91E2Q.35FZOII18W44J@kernel.org>
-References: <20250621184454.8354-1-work@onurozkan.dev>
-	<20250621184454.8354-3-work@onurozkan.dev>
-	<DASY7BECFRCT.332X5ZHZMV2W@kernel.org>
-	<aFlQ7K_mYYbrG8Cl@Mac.home>
-	<DATYHYJVPL3L.3NLMH7PPHYU9@kernel.org>
-	<aFlpFQ4ivKw81d-y@Mac.home>
-	<DAU0ELV91E2Q.35FZOII18W44J@kernel.org>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-unknown-linux-gnu)
+	s=arc-20240116; t=1751895646; c=relaxed/simple;
+	bh=ul3tvYiiYuyxmNUs6c6tGf8iXCr1hDf1jpTi6pw0cEE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OnB7NWkE+yN8kBSH/N86wMSQZZZXJzAMbL3Di9rChAUIVTO4DsGaJkvA8WXT6OjPfhvUal9JH8UYVfKrmnT826+Nkztv0GAGnXVq+R1ndyAoIWAeIZ2MgDJGUkNIKhoD78bXVopDvcngEEHwB2rOPkcd2nffzMU7TGcOiVcIohY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TyOkhIep; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1751895643;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=W2KJ06Vv9jNgPK/f5x2D67o6F5iefXJHvVBymbKYkgw=;
+	b=TyOkhIepXfcr+KziT/ZMJwROkrJCWuUX5xkVBr9K7ClIQfqY3gnfSdEIGTJawIqeVIrdnn
+	Hurin1Wi/d5Ib8xw4TaJeMYKTnB2ST8zyk4dXb56EUQWhVAZgvsmYNHz8BjnnMEmfy3RXO
+	BhWqeCez4wmLsLNBQC3c6d2mxoSknas=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-356-2DBnUcsfOZi0bxHUUB0rbw-1; Mon, 07 Jul 2025 09:40:42 -0400
+X-MC-Unique: 2DBnUcsfOZi0bxHUUB0rbw-1
+X-Mimecast-MFC-AGG-ID: 2DBnUcsfOZi0bxHUUB0rbw_1751895641
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-45311704d22so17869915e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 06:40:42 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751895641; x=1752500441;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=W2KJ06Vv9jNgPK/f5x2D67o6F5iefXJHvVBymbKYkgw=;
+        b=hJO07vzL6t8KoA0jOHCKxU2TJcO1AGjpYwZCPF7583xoRshb8SFzV5R82PFS1ZGG35
+         xbHitNECJqJcgbZtEf6f7miuG4u0EhqfXCu0aQNpxNOrqZtpHw9Nsr31/MiGmRlOi2hU
+         WFsfIXG3Fn0CqiwJmOCckuykVw5usIkGWcn0Z0PDIoreLQGnDBXiu9SGWfzqCEfvR+ua
+         bYv7Vk7/KwYhH01NGXZ7AUhUprYn6wHDo/RY+SXZ+eSUQvh74iuZX1K8/vU39i0VcEBZ
+         MRPWtP+X2MiXQ0+YkzI3xWNFHwVX3r23iFrIUAUzkCgASSKyCyoSMi+HqwT40wyF2t9S
+         ctaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUvbIicqIjwGvTxlyFu8d88F9gIBgBZaV/IZ660P/rIqVoVF13Ybj+/BpQqyeN+28I40n/9zV132ScZQsI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywsuxs/jacRVT4C5vzT/AAD0nU1vTZJqgkqlAjS6SXkuvukAF3P
+	VJugkiMYDUlizu1K/aaV0udYR1LZzgIbfJRCz/4p2wZxd24jajS3WmkdEgQRdJzQI6Qw60+IdYf
+	9u3TAIbrOAGjBw38PAKt+53q/4Vw0/2FkhmXaFSjduOqgpODmFV9j0AQ01o3zDhcGWA==
+X-Gm-Gg: ASbGncuYUFeZcRZ4NMKOcwEkT3lwUs0dRfeOrbAl/DvIIJA5x0QUlWtIKni0LaCMOG4
+	eFSmA6HI4G04Kn07LUet/sxrtcxiCnLT/3Px/XE2vCrnWhFsBDl0TYjWiPt/qJ5LbuLHHDSVHB+
+	7L3HXJWKh/RtlfPw8ZcJw3psZ+J73P3wawJAyKoCfL/3aPEpq7GqPDbhDX3IXYNWg5bQ9+rZHYZ
+	wI3ANMKi4mi4AS8PZkjhEDW7wKaJs+e93V1RYemHzcyjXfFCZCDqwbwtYwEQUoB1QmZEEqpBLZl
+	GKyaHW4ZOOSCqZyqZ1sypNR6dMnD
+X-Received: by 2002:a05:600c:8214:b0:450:d568:909b with SMTP id 5b1f17b1804b1-454b4e74957mr117204105e9.14.1751895641293;
+        Mon, 07 Jul 2025 06:40:41 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGZ3sl8II9VgNMv0Hs+oc26TdXSoZydYWxbok3SEgKNUWhqxxpymtncK0H5qwe1x6+STsNFHw==
+X-Received: by 2002:a05:600c:8214:b0:450:d568:909b with SMTP id 5b1f17b1804b1-454b4e74957mr117203465e9.14.1751895640329;
+        Mon, 07 Jul 2025 06:40:40 -0700 (PDT)
+Received: from sgarzare-redhat ([193.207.144.135])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b47285c9f9sm10339166f8f.93.2025.07.07.06.40.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Jul 2025 06:40:39 -0700 (PDT)
+Date: Mon, 7 Jul 2025 15:40:31 +0200
+From: Stefano Garzarella <sgarzare@redhat.com>
+To: Xuewei Niu <niuxuewei97@gmail.com>
+Cc: "K. Y. Srinivasan" <kys@microsoft.com>, 
+	Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	linux-hyperv@vger.kernel.org, virtualization@lists.linux.dev, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Xuewei Niu <niuxuewei.nxw@antgroup.com>, fupan.lfp@antgroup.com
+Subject: Re: [PATCH net-next v5 1/4] hv_sock: Return the readable bytes in
+ hvs_stream_has_data()
+Message-ID: <xhzslzuxrhdoixffmzwprn254ctolimj7giuxj4nfrfg23eesy@ycpe6kma5vih>
+References: <20250706-siocinq-v5-0-8d0b96a87465@antgroup.com>
+ <20250706-siocinq-v5-1-8d0b96a87465@antgroup.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20250706-siocinq-v5-1-8d0b96a87465@antgroup.com>
 
-On Mon, 23 Jun 2025 17:14:37 +0200
-"Benno Lossin" <lossin@kernel.org> wrote:
+On Sun, Jul 06, 2025 at 12:36:29PM +0800, Xuewei Niu wrote:
 
-> > We also need to take into consideration that the user want to drop
-> > any lock in the sequence? E.g. the user acquires a, b and c, and
-> > then drop b, and then acquires d. Which I think is possible for
-> > ww_mutex.
-> 
-> Hmm what about adding this to the above idea?:
-> 
->     impl<'a, Locks> WwActiveCtx<'a, Locks>
->     where
->         Locks: Tuple
->     {
->         fn custom<L2>(self, action: impl FnOnce(Locks) -> L2) ->
-> WwActiveCtx<'a, L2>; }
-> 
-> Then you can do:
-> 
->     let (a, c, d) = ctx.begin()
->         .lock(a)
->         .lock(b)
->         .lock(c)
->         .custom(|(a, _, c)| (a, c))
->         .lock(d)
->         .finish();
+Again, this patch should have `From: Dexuan Cui <decui@microsoft.com>` 
+on first line, and this is done automatically by `git format-patch` (or 
+others tools) if the author is the right one in your branch.
+I'm not sure what is going on on your side, but you should avoid to 
+reset the original author.
+Applying this patch we will have:
 
+     commit ed36075e04ecbb1dd02a3d8eba5bfac6469d73e4
+     Author: Xuewei Niu <niuxuewei97@gmail.com>
+     Date:   Sun Jul 6 12:36:29 2025 +0800
 
-Instead of `begin` and `custom`, why not something like this:
+         hv_sock: Return the readable bytes in hvs_stream_has_data()
 
-	let (a, c, d) = ctx.init()
-	    .lock(a)
-            .lock(b)
-            .lock(c)
-            .unlock(b)
-            .lock(d)
-            .finish();
+This is not what we want, right?
 
-Instead of `begin`, `init` would be better naming to imply `fini` on the
-C side, and `unlock` instead of `custom` would make the intent clearer
-when dropping locks mid chain.
+>When hv_sock was originally added, __vsock_stream_recvmsg() and
+>vsock_stream_has_data() actually only needed to know whether there
+>is any readable data or not, so hvs_stream_has_data() was written to
+>return 1 or 0 for simplicity.
+>
+>However, now hvs_stream_has_data() should return the readable bytes
+>because vsock_data_ready() -> vsock_stream_has_data() needs to know the
+>actual bytes rather than a boolean value of 1 or 0.
+>
+>The SIOCINQ ioctl support also needs hvs_stream_has_data() to return
+>the readable bytes.
+>
+>Let hvs_stream_has_data() return the readable bytes of the payload in
+>the next host-to-guest VMBus hv_sock packet.
+>
+>Note: there may be multpile incoming hv_sock packets pending in the
+>VMBus channel's ringbuffer, but so far there is not a VMBus API that
+>allows us to know all the readable bytes in total without reading and
+>caching the payload of the multiple packets, so let's just return the
+>readable bytes of the next single packet. In the future, we'll either
+>add a VMBus API that allows us to know the total readable bytes without
+>touching the data in the ringbuffer, or the hv_sock driver needs to
+>understand the VMBus packet format and parse the packets directly.
+>
+>Signed-off-by: Dexuan Cui <decui@microsoft.com>
 
-I guess `lock()` is going to use the slow path since it's infallible? It
-might be good to provide a `try_lock` that returns -DEADLOCK
-immediately without blocking when it can't acquire the lock.
+Your S-o-b was fine here, I was talking about the author.
 
-Regards,
-Onur
+Thanks,
+Stefano
+
+>---
+> net/vmw_vsock/hyperv_transport.c | 17 ++++++++++++++---
+> 1 file changed, 14 insertions(+), 3 deletions(-)
+>
+>diff --git a/net/vmw_vsock/hyperv_transport.c b/net/vmw_vsock/hyperv_transport.c
+>index 31342ab502b4fc35feb812d2c94e0e35ded73771..432fcbbd14d4f44bd2550be8376e42ce65122758 100644
+>--- a/net/vmw_vsock/hyperv_transport.c
+>+++ b/net/vmw_vsock/hyperv_transport.c
+>@@ -694,15 +694,26 @@ static ssize_t hvs_stream_enqueue(struct vsock_sock *vsk, struct msghdr *msg,
+> static s64 hvs_stream_has_data(struct vsock_sock *vsk)
+> {
+> 	struct hvsock *hvs = vsk->trans;
+>+	bool need_refill;
+> 	s64 ret;
+>
+> 	if (hvs->recv_data_len > 0)
+>-		return 1;
+>+		return hvs->recv_data_len;
+>
+> 	switch (hvs_channel_readable_payload(hvs->chan)) {
+> 	case 1:
+>-		ret = 1;
+>-		break;
+>+		need_refill = !hvs->recv_desc;
+>+		if (!need_refill)
+>+			return -EIO;
+>+
+>+		hvs->recv_desc = hv_pkt_iter_first(hvs->chan);
+>+		if (!hvs->recv_desc)
+>+			return -ENOBUFS;
+>+
+>+		ret = hvs_update_recv_data(hvs);
+>+		if (ret)
+>+			return ret;
+>+		return hvs->recv_data_len;
+> 	case 0:
+> 		vsk->peer_shutdown |= SEND_SHUTDOWN;
+> 		ret = 0;
+>
+>-- 
+>2.34.1
+>
+
 
