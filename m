@@ -1,302 +1,161 @@
-Return-Path: <linux-kernel+bounces-719858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE3CDAFB396
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 14:50:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 991D7AFB3B0
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 14:56:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 06AC24A3217
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 12:50:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41C061AA12BF
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 12:56:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3827229B22C;
-	Mon,  7 Jul 2025 12:50:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80B1829B22A;
+	Mon,  7 Jul 2025 12:56:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="G4GjxMA7"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="dAkx+Vc2"
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6814829ACEE
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 12:50:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E14E20010C
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 12:56:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751892644; cv=none; b=ss5Fp14H2KcxXvoXu32H/Il2iwGxQ4ao0EJJtAFoFF1w5tWb650kVzinNl1w5HlmLZ/9oEbeufbc5/R+KG1e7ZQvHNyk57gw+GGPYjuJ5r6tR+zUWRaw3nSgBirituBlVahg4vd9r7ol8qIXV64kxx5aysSIWldY5OixQRmdOB8=
+	t=1751892988; cv=none; b=i1b70G73uDFKAGmwkHnvyutESK80NCDHQDySu73MNAxImgHOarA6eavmAp/XhfVZzUGkHV/A6KzbaPAg8srWfMFfWeYegyQkq21269tArLc8fjy+pvH1WSbEr0Sjeij3ozherFc1X9Ky/ij+SS9KILg0oBD8A3aHCAP/MRiyh8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751892644; c=relaxed/simple;
-	bh=OvbwvHy8NKIk2Ezwx0joZLsA+nIKCuJt511I75yLdvo=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=p1wjcgo0LiidIsTfhiioz4imswOuaFT24K+wTbP4q6iZgUQKJBXFatmWFX+v9Ac403OYzUF1lRCoAvI4mDp06ty4HAeAnWe3AZMcns5lYUjklCcI2TZO6dhr2jLLXQbVeNbMgmIBH0KJagM6qj13/QnaWr+zbQfk74FOl4PzM3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=G4GjxMA7; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3b20fcbaf3aso545665f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 05:50:42 -0700 (PDT)
+	s=arc-20240116; t=1751892988; c=relaxed/simple;
+	bh=KPnqWiL2m2VKTHNqcysco6Gf4y9Poqeia0SBD9/VpIo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iLVXT+Ur4/mU3Gg1YZ/5NHmbvISpXdztnTKu9ebcRBxL+TvJrktejMFpt5b9R0gZ1NZP4onfnHt2sf3NikA5WRXeOmZlr2Qkqh8xzx7snOAhEeKCTeiZWtNB9j7Il18tZsbP3p/Se9Sxrj0m50QsaBjK26kgcU3HMJOQsIVaUtQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=dAkx+Vc2; arc=none smtp.client-ip=209.85.219.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6faf66905baso45874246d6.2
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 05:56:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1751892641; x=1752497441; darn=vger.kernel.org;
-        h=in-reply-to:references:from:to:cc:subject:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ft2gGM1xdSh/BYGEm14JWzh26OBrCpmeDTwJtAeavYc=;
-        b=G4GjxMA7W+KAnFsfNJfF5p6F+dXfkrsX82jBy+5bgRiKLxwjStK2dHzl5lGHu2qOen
-         CkJQWhwRGPXLOLcS/zGXxJGcGozKrgWlLDba7ov0FNLkS4IxIOiAqIUZfqp/KbttHUq7
-         nmFR+xcB82XRsLaUH3a036vbv0qCa9cHA5JXLh0onOURy1W/xMESV+shSJfiobzOENbU
-         bew3l6b/9fAK+2fjj5dCAoGsqBx4E6tEtwmhGsAINHp1ukjUz0IPKq9wwPbR2gwg3hgb
-         ZIEOGg7eH3OmM4cBv0FTxSFudp8wK2jNzDZUnJHFCEmADlArVkJNOS6nLHPtYdBBuk2v
-         9NAQ==
+        d=ziepe.ca; s=google; t=1751892986; x=1752497786; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Qk23V2JOAJIYWEJqL9VccK1Z/r5nCIAurwcBtCjyYA0=;
+        b=dAkx+Vc2N9ndeDo9RI1vrSG+hc7dpyum3vkZ5/7/MoZDXd4FoggeKV9V1M3SgQtMLO
+         wP+lJDr9PZJMqpxu/ThL319GeJZcm0jcxxdWHz1lpPy0wggx9sRERg+Ff/I6EmuPxJ6Q
+         SIu9j6jbIOti4gmqayZD0ekSZpbPRj0ectneS3yzfDrvK5TVbgw8JlNdX+Y8ZhhjMWmt
+         TA5zH0u540CWmVCfgAr8u6bYG0xxS0we0/a3NCqdYInr0EcsRUdNFLVP759qaawRJcuN
+         2DQxz5Zf7v4rmdwO4Jj/j/77Fz8sFBlbt7wM4cvWS3Bbb0lJD4NsTjeFDXKLo5vJYVSi
+         A/Dw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751892641; x=1752497441;
-        h=in-reply-to:references:from:to:cc:subject:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ft2gGM1xdSh/BYGEm14JWzh26OBrCpmeDTwJtAeavYc=;
-        b=NGEprXUpVp2quYYaOtgsMsJYhyii0p9Ga9yciP4H3m/NiBgg1I9Le3PgxuDt3rMBI1
-         0rc5CL+jBqj5lsMSFZKQOPuBg4XbO9oKSUvS7kJzxsKEDXHkI87LyRG4FzISUaAtLuRN
-         B8JLQnjhZBPekeCaDC8BF98ZhZb4YVRYLDQpLZZ7AngkUpDZJ3pRuLZnyw6JOR1F6/sd
-         xcXoTPaM1qn40OimBRtuNayWc9yWcz3DrnKdkGJ9RUF13eqLehUkgXw3rZm1Y4Hv2ETY
-         4DF63a4IopZuCARTUPyAiy1jHY2xpY08NuTixO3oHxXlvHM8BpZDpKV9Jrb9eHOv2jr3
-         X5kg==
-X-Forwarded-Encrypted: i=1; AJvYcCXJRniG3e1vtQp1uHl8dWpe+CJSWWpXyJZwcjBX3Ezar4FagYpvtuiGnztW8i41EBev4zc2pRaVvSnMTho=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/PAJmYWqajy3jZABRiR+GmYhvopIEMvrx1Y0Uny5iNEzb9FNT
-	mic/XH2LcfooRN3LhgLCX4iN1FDWSRl0m4+hvaYiVh/Szu5RWnolJLY1Vxx2NyXt4uk=
-X-Gm-Gg: ASbGncv7slcwTm3l/CkRsiungsFHVodMCfSTcqE5uL7V+jp8yTsw9wrazTgtVvq6BPj
-	zQ3ZEtZz9r1twYjkHbM6lsvhVZXQkSg7AlSYk1/+H4r/zwXuJZz4rCAl9oIalEtHOx6CRjbl0eg
-	al5hP7hxN5uOEFKzRx46JOPMzhHcf7cziDbhFmN0ycJjCFmvo+HPQpFbxnzCgHW3kSqOeV90Q9H
-	dum6x8ZBVt0dydiyQH//oQzJeM/7Fbw4I8pxHUcKQtpDRrnP6aS40QNe7kxNYz/Euy7bNr9KwTd
-	+9fPZf28XXijLg1/rp3aKz0V1MS3bWSieN6m9rtHr0jZR8t+Zx86LQ1QYuy0Fiy9fUUk
-X-Google-Smtp-Source: AGHT+IEe0+QxHUH3lQ2uYaYi9vgxze6Sq1IneFmRKgL0IxDHY9UDkF9+kDTqonNSeqj2Uz7UzM76SQ==
-X-Received: by 2002:a05:6000:2086:b0:3a4:eb46:7258 with SMTP id ffacd0b85a97d-3b496617d36mr3681711f8f.15.1751892640390;
-        Mon, 07 Jul 2025 05:50:40 -0700 (PDT)
-Received: from localhost ([2a02:8308:a00c:e200:df6:4ed7:c6e7:1ee1])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b47285bdf8sm9939855f8f.87.2025.07.07.05.50.39
+        d=1e100.net; s=20230601; t=1751892986; x=1752497786;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Qk23V2JOAJIYWEJqL9VccK1Z/r5nCIAurwcBtCjyYA0=;
+        b=nBLouYuFzfsGan1P0QnHVaHWTXibn8ysjQoL5bHV5WOtpYTrZ6Dd7coKKKLxwYDO0t
+         3wDx/rH7ir9t7k+YKkw6A3sYPJaNrapxtFSjyuavrQAo4lYwZSZ5Ax5ohGpsDiaYs0ao
+         CWlGTWlHi5SOd5eQ4p9zHHmgQAxI+w69g0jy0C8VpANnnmlClNf5ELX7Vy7n0SeGnzWw
+         mVKNDW5M6wdNJxwBlcp43R/hlJMtaIeDaRPttRMKPbps7RZRQDWmUGFMmy2LlgAdrXjb
+         qyn45wD2qj6lWkrLu2z8OVnXSu/pq4xLjIUmxWYh9cSKzrDWVVSJKEttJV1fKrXKAUup
+         JZ3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV7BA/n6GV+F1t7qyiJpJqbVvtGcC6toQt0Z9elv8VwoH7IBrDHcS/0aZJXd2llcURzv3qT5hpXgQSSJlQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2m0twovbph2ObSgv7nwQsn2NE5SYlHKSFMQuFr05yjbsEUb6M
+	Z5Yaxawjkngkhfj4Y/DXOjQxO27dEjQDxL9OpA3j82vs0qHv4OKKk2l5hcny6SHskho=
+X-Gm-Gg: ASbGncuW1GyKOV/+8DHcQ7P7jYuu/V3D9OgwWfHnlLG4mIDLD4S5OdsbQath5w6+OVO
+	qHNmoN1/iJ5p+w0h4CGBb48ulKrRbV0Tdqi7C+EI4yqv8A0f3J6FJfYk+jASxby9H/fJRdxUQin
+	sA7eMukqr2jvVUdnVGcSabgrtG7vFRbch8Uyuhb8XZvZMjUkeuxHHfatpZG0/7G1X46/0R35ANk
+	RFl5XJG70n/lLiU13BMB0/A0hwDxUJiwOvuBCYdSiSjrfW/cV38Z2oABT/Wa0vGXZorDr4/w9Vu
+	jk1hk3m/xytPIIrnhVnNf+e1itP/obV1xffTnLDo5xUFCe72O5Zi/nS/4YOveCoMo6diP0++CAD
+	8tDH8ZTxUAKfJ8+yhDC+bxt287NHrbyjQY7Fvtw==
+X-Google-Smtp-Source: AGHT+IHpUaaVcJ5DRQCtRGMCJ6nO666Q1wL9WL24RtajZdpjAA2S6AsDZqcLbeUtsD0vEBZQLx+sMA==
+X-Received: by 2002:a05:6214:2b89:b0:702:d60b:c037 with SMTP id 6a1803df08f44-702d60bd72dmr108206296d6.29.1751892985849;
+        Mon, 07 Jul 2025 05:56:25 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-167-56-70.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.167.56.70])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7d5dbdb4bd6sm598121385a.28.2025.07.07.05.56.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Jul 2025 05:50:40 -0700 (PDT)
+        Mon, 07 Jul 2025 05:56:25 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1uYlOS-00000006LRj-2Hey;
+	Mon, 07 Jul 2025 09:56:24 -0300
+Date: Mon, 7 Jul 2025 09:56:24 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Mike Rapoport <rppt@kernel.org>
+Cc: Pratyush Yadav <pratyush@kernel.org>,
+	David Matlack <dmatlack@google.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Pasha Tatashin <pasha.tatashin@soleen.com>, jasonmiu@google.com,
+	graf@amazon.com, changyuanl@google.com, rientjes@google.com,
+	corbet@lwn.net, rdunlap@infradead.org,
+	ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com,
+	ojeda@kernel.org, aliceryhl@google.com, masahiroy@kernel.org,
+	akpm@linux-foundation.org, tj@kernel.org, yoann.congal@smile.fr,
+	mmaurer@google.com, roman.gushchin@linux.dev, chenridong@huawei.com,
+	axboe@kernel.dk, mark.rutland@arm.com, jannh@google.com,
+	vincent.guittot@linaro.org, hannes@cmpxchg.org,
+	dan.j.williams@intel.com, david@redhat.com,
+	joel.granados@kernel.org, rostedt@goodmis.org,
+	anna.schumaker@oracle.com, song@kernel.org, zhangguopeng@kylinos.cn,
+	linux@weissschuh.net, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-mm@kvack.org,
+	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com,
+	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
+	hpa@zytor.com, rafael@kernel.org, dakr@kernel.org,
+	bartosz.golaszewski@linaro.org, cw00.choi@samsung.com,
+	myungjoo.ham@samsung.com, yesanishhere@gmail.com,
+	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com,
+	aleksander.lobakin@intel.com, ira.weiny@intel.com,
+	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de,
+	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com,
+	stuart.w.hayes@gmail.com
+Subject: Re: [RFC v2 10/16] luo: luo_ioctl: add ioctl interface
+Message-ID: <20250707125624.GO904431@ziepe.ca>
+References: <20250515182322.117840-1-pasha.tatashin@soleen.com>
+ <20250515182322.117840-11-pasha.tatashin@soleen.com>
+ <20250624-akzeptabel-angreifbar-9095f4717ca4@brauner>
+ <CA+CK2bBu4ex9O5kPcR7++DVg3RM8ZWg3BCpcc6CboJ=aG8mVmQ@mail.gmail.com>
+ <20250625-akrobatisch-libellen-352997eb08ef@brauner>
+ <CALzav=d+XgS1bUs-v7+ws5nYU9y=4uc1c8oVLHrJ16qLpnUi9Q@mail.gmail.com>
+ <mafs0sejmse57.fsf@kernel.org>
+ <aGqJIFs8GpvHn_Yy@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 07 Jul 2025 14:50:39 +0200
-Message-Id: <DB5U402ARSEO.4H4PE19LGCR7@ventanamicro.com>
-Subject: [PATCH] RISC-V: store percpu offset in CSR_SCRATCH
-Cc: "linux-riscv" <linux-riscv-bounces@lists.infradead.org>
-To: "Yunhui Cui" <cuiyunhui@bytedance.com>, <masahiroy@kernel.org>,
- <nathan@kernel.org>, <nicolas.schier@linux.dev>, <dennis@kernel.org>,
- <tj@kernel.org>, <cl@gentwo.org>, <paul.walmsley@sifive.com>,
- <palmer@dabbelt.com>, <aou@eecs.berkeley.edu>, <alex@ghiti.fr>,
- <andybnac@gmail.com>, <bjorn@rivosinc.com>, <cyrilbur@tenstorrent.com>,
- <rostedt@goodmis.org>, <puranjay@kernel.org>, <ben.dooks@codethink.co.uk>,
- <zhangchunyan@iscas.ac.cn>, <ruanjinjie@huawei.com>, <jszhang@kernel.org>,
- <charlie@rivosinc.com>, <cleger@rivosinc.com>, <antonb@tenstorrent.com>,
- <ajones@ventanamicro.com>, <debug@rivosinc.com>, <haibo1.xu@intel.com>,
- <samuel.holland@sifive.com>, <linux-kbuild@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
- <linux-riscv@lists.infradead.org>
-From: =?utf-8?q?Radim_Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@ventanamicro.com>
-References: <20250704084500.62688-1-cuiyunhui@bytedance.com>
-In-Reply-To: <20250704084500.62688-1-cuiyunhui@bytedance.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aGqJIFs8GpvHn_Yy@kernel.org>
 
-2025-07-04T16:45:00+08:00, Yunhui Cui <cuiyunhui@bytedance.com>:
-> The following data was collected from tests conducted on the
-> Spacemit(R) X60 using the fixed register method:
-> [...]
-> The fixed register method reduced performance by 5.29%.
-> The per-CPU offset optimization improved performance by 2.52%.
+On Sun, Jul 06, 2025 at 05:33:04PM +0300, Mike Rapoport wrote:
 
-What is the performance if you use the scratch register?
+> One of the points in Christian's suggestion was that ioctl doesn't have to
+> be bound to a misc device. Even if we don't use read()/write()/link() etc,
+> we can have a filesystem that exposes, say, "control" file and that file
+> has the same liveupdate_ioctl() in its fops as we have now in miscdev.
 
-The patch below is completely unoptimized as I didn't want to shuffle
-code around too much, but it could give a rough idea.
+IMHO for this application there is nothing wrong with a misc
+device. The intention is for a single userspace process to use this as
+some kind of request broker and provide the required policy layer.
 
-Thanks.
+Creating a VFS and then running ioctl inside the VFS just seems like
+over-engineering to me. We can't really avoid the ioctls.
 
----8<---
-The scratch register currently denotes the mode before exception, but we
-can just use two different exception entry points to provide the same
-information, which frees the scratch register for the percpu offset.
+This is not really managing files in the sense of string named objects
+with bytestreams associated with them.
 
-The user/kernel entry paths need more through rewrite, because they are
-terribly wasteful right now.
----
-Applies on top of d7b8f8e20813f0179d8ef519541a3527e7661d3a (v6.16-rc5)
+I've also heard people saying things like configs were a mistake, so
+I'm not so sure about this. IIRC VFS brings a bunch of standard use
+models and their associated races that the kernel is forced to deal
+with, while the simple ioctl here has none of that complexity.
 
- arch/riscv/include/asm/percpu.h | 13 ++++++++++
- arch/riscv/kernel/entry.S       | 46 ++++++++++++++++++++-------------
- arch/riscv/kernel/head.S        |  7 +----
- arch/riscv/kernel/smpboot.c     |  7 +++++
- arch/riscv/kernel/stacktrace.c  |  4 +--
- 5 files changed, 51 insertions(+), 26 deletions(-)
- create mode 100644 arch/riscv/include/asm/percpu.h
+> The cost is indeed a bit of boilerplate code to create the filesystem, but
+> it would be easier to extend for per-service and containers support.
 
-diff --git a/arch/riscv/include/asm/percpu.h b/arch/riscv/include/asm/percp=
-u.h
-new file mode 100644
-index 000000000000..2c838514e3ea
---- /dev/null
-+++ b/arch/riscv/include/asm/percpu.h
-@@ -0,0 +1,13 @@
-+#ifndef __ASM_PERCPU_H
-+#define __ASM_PERCPU_H
-+
-+static inline void set_my_cpu_offset(unsigned long off)
-+{
-+	csr_write(CSR_SCRATCH, off);
-+}
-+
-+#define __my_cpu_offset csr_read(CSR_SCRATCH)
-+
-+#include <asm-generic/percpu.h>
-+
-+#endif
-diff --git a/arch/riscv/kernel/entry.S b/arch/riscv/kernel/entry.S
-index 75656afa2d6b..e48c553d6779 100644
---- a/arch/riscv/kernel/entry.S
-+++ b/arch/riscv/kernel/entry.S
-@@ -91,18 +91,8 @@
- 	REG_L	a0, TASK_TI_A0(tp)
- .endm
-=20
--
--SYM_CODE_START(handle_exception)
--	/*
--	 * If coming from userspace, preserve the user thread pointer and load
--	 * the kernel thread pointer.  If we came from the kernel, the scratch
--	 * register will contain 0, and we should continue on the current TP.
--	 */
--	csrrw tp, CSR_SCRATCH, tp
--	bnez tp, .Lsave_context
--
--.Lrestore_kernel_tpsp:
--	csrr tp, CSR_SCRATCH
-+SYM_CODE_START(handle_kernel_exception)
-+	csrw CSR_SCRATCH, tp
-=20
- #ifdef CONFIG_64BIT
- 	/*
-@@ -126,8 +116,22 @@ SYM_CODE_START(handle_exception)
- 	bnez sp, handle_kernel_stack_overflow
- 	REG_L sp, TASK_TI_KERNEL_SP(tp)
- #endif
-+	j handle_exception
-+ASM_NOKPROBE(handle_kernel_exception)
-+SYM_CODE_END(handle_kernel_exception)
-=20
--.Lsave_context:
-+SYM_CODE_START(handle_user_exception)
-+	/*
-+	 * If coming from userspace, preserve the user thread pointer and load
-+	 * the kernel thread pointer.
-+	 */
-+	csrrw tp, CSR_SCRATCH, tp
-+	j handle_exception
-+
-+SYM_CODE_END(handle_user_exception)
-+ASM_NOKPROBE(handle_user_exception)
-+
-+SYM_CODE_START_NOALIGN(handle_exception)
- 	REG_S sp, TASK_TI_USER_SP(tp)
- 	REG_L sp, TASK_TI_KERNEL_SP(tp)
- 	addi sp, sp, -(PT_SIZE_ON_STACK)
-@@ -158,11 +162,15 @@ SYM_CODE_START(handle_exception)
- 	REG_S s4, PT_CAUSE(sp)
- 	REG_S s5, PT_TP(sp)
-=20
--	/*
--	 * Set the scratch register to 0, so that if a recursive exception
--	 * occurs, the exception vector knows it came from the kernel
--	 */
--	csrw CSR_SCRATCH, x0
-+	REG_L s0, TASK_TI_CPU(tp)
-+	slli s0, s0, 3
-+	la s1, __per_cpu_offset
-+	add s1, s1, s0
-+	REG_L s1, 0(s1)
-+
-+	csrw CSR_SCRATCH, s1
-+	la s1, handle_kernel_exception
-+	csrw CSR_TVEC, s1
-=20
- 	/* Load the global pointer */
- 	load_global_pointer
-@@ -236,6 +244,8 @@ SYM_CODE_START_NOALIGN(ret_from_exception)
- 	 * structures again.
- 	 */
- 	csrw CSR_SCRATCH, tp
-+	la a0, handle_user_exception
-+	csrw CSR_TVEC, a0
- 1:
- #ifdef CONFIG_RISCV_ISA_V_PREEMPTIVE
- 	move a0, sp
-diff --git a/arch/riscv/kernel/head.S b/arch/riscv/kernel/head.S
-index bdf3352acf4c..d8858334af2d 100644
---- a/arch/riscv/kernel/head.S
-+++ b/arch/riscv/kernel/head.S
-@@ -188,14 +188,9 @@ secondary_start_sbi:
- .align 2
- .Lsetup_trap_vector:
- 	/* Set trap vector to exception handler */
--	la a0, handle_exception
-+	la a0, handle_kernel_exception
- 	csrw CSR_TVEC, a0
-=20
--	/*
--	 * Set sup0 scratch register to 0, indicating to exception vector that
--	 * we are presently executing in kernel.
--	 */
--	csrw CSR_SCRATCH, zero
- 	ret
-=20
- SYM_CODE_END(_start)
-diff --git a/arch/riscv/kernel/smpboot.c b/arch/riscv/kernel/smpboot.c
-index 601a321e0f17..2db44b10bedb 100644
---- a/arch/riscv/kernel/smpboot.c
-+++ b/arch/riscv/kernel/smpboot.c
-@@ -41,6 +41,11 @@
-=20
- static DECLARE_COMPLETION(cpu_running);
-=20
-+void __init smp_prepare_boot_cpu(void)
-+{
-+	set_my_cpu_offset(per_cpu_offset(smp_processor_id()));
-+}
-+
- void __init smp_prepare_cpus(unsigned int max_cpus)
- {
- 	int cpuid;
-@@ -225,6 +230,8 @@ asmlinkage __visible void smp_callin(void)
- 	mmgrab(mm);
- 	current->active_mm =3D mm;
-=20
-+	set_my_cpu_offset(per_cpu_offset(curr_cpuid));
-+
- 	store_cpu_topology(curr_cpuid);
- 	notify_cpu_starting(curr_cpuid);
-=20
-diff --git a/arch/riscv/kernel/stacktrace.c b/arch/riscv/kernel/stacktrace.=
-c
-index 3fe9e6edef8f..69b2f390a2d4 100644
---- a/arch/riscv/kernel/stacktrace.c
-+++ b/arch/riscv/kernel/stacktrace.c
-@@ -16,7 +16,7 @@
-=20
- #ifdef CONFIG_FRAME_POINTER
-=20
--extern asmlinkage void handle_exception(void);
-+extern asmlinkage void handle_kernel_exception(void);
- extern unsigned long ret_from_exception_end;
-=20
- static inline int fp_is_valid(unsigned long fp, unsigned long sp)
-@@ -72,7 +72,7 @@ void notrace walk_stackframe(struct task_struct *task, st=
-ruct pt_regs *regs,
- 			fp =3D frame->fp;
- 			pc =3D ftrace_graph_ret_addr(current, &graph_idx, frame->ra,
- 						   &frame->ra);
--			if (pc >=3D (unsigned long)handle_exception &&
-+			if (pc >=3D (unsigned long)handle_kernel_exception &&
- 			    pc < (unsigned long)&ret_from_exception_end) {
- 				if (unlikely(!fn(arg, pc)))
- 					break;
+I don't think it really improves that. You still have a single policy
+agent in userspace that has to control this thing. 
+
+On the other side you'd have a much more complex serialization job
+because you have to capture an open ended filesystem instead of the
+much simpler u64 key/value scheme the ioctl is using.
+
+Jason
 
