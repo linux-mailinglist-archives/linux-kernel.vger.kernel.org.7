@@ -1,213 +1,228 @@
-Return-Path: <linux-kernel+bounces-719768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44FA6AFB262
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 13:35:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FA00AFB274
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 13:41:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E08C91AA31CB
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 11:36:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FB2C4A05C3
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 11:41:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4862129A9C3;
-	Mon,  7 Jul 2025 11:35:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9837B29A9F5;
+	Mon,  7 Jul 2025 11:40:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GUOlkHqM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q0JtoiJd"
+Received: from mail-pf1-f196.google.com (mail-pf1-f196.google.com [209.85.210.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93EDC26057F;
-	Mon,  7 Jul 2025 11:35:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86EFF299A85;
+	Mon,  7 Jul 2025 11:40:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751888128; cv=none; b=dCujQLVoeI6SA0eg0BTj9SGspmyqv7DppFu0ubEtnS810DceYlnA8Mqon99L0z2r4wXr6PTDh1F4jzN+eBqcLDBwuq2sGF027YAkJv4V710RkRYXKkgZjv72FxXUedLpMpu9ZvnnUwCmnwF5HQbKvtrmcTbQ/fn3RFSvcG0g0Bc=
+	t=1751888451; cv=none; b=jIjBMl/tO4Z0M3w6XLlg19yaDG+6G2/RFqW8Hic5N0tlS6CSsnHeLZ4vY2RfTmmOhGHAFQC+qq0vMYn8jso0dUhtJc1vfHPxFhtkTK5/BXgRbkwRuBWgflYHEVj3O6iYCCa5q038WAcK3ULn2Xjk+dP93bAHJaAA+tByGm+0abQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751888128; c=relaxed/simple;
-	bh=DeMOpLVRvQ+k/8Qw0Fw8HCHhiC6ZbqH44x3ZVxYPW9Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TBlA0OMynN/HYYNNMALWDLpKtfBllL4ocz9Q0L+VLYhUz/BCswzG0li5E9w2K6IHjvkOTJTdkNoOj8YD9aI/DYnfK2HZzCjD1QGRDRRTkwyJN5tGp9EfzwbfwfgBoThkGm98wa5cbSKclEf1i9DX88jnbHlp9WLzma+8g0hmQ38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GUOlkHqM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5594CC4CEE3;
-	Mon,  7 Jul 2025 11:35:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751888128;
-	bh=DeMOpLVRvQ+k/8Qw0Fw8HCHhiC6ZbqH44x3ZVxYPW9Y=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=GUOlkHqM3Nh1vwF9xsQjLcPfizY/UrSWW5hwhb2pyTKQD6nPO0axX5/IxQGcoJxTG
-	 o8Qx5V5TyAU1L0UJv5nhq1z3fIhtOQirhxjFXNYpdQ+H3zqNO8jZCQvq8PbUpuJb1j
-	 VuUXYb6BQFuOl5NRVyEg5pkf+Zwti/cqy3uBRGzTRc1jdYsNZuDpGb6RRK3J3AiMYE
-	 PI56ATa98i3l7sqjVnTIpyKn+GLNqWEF0kO1a7ZTqAfflONdG9h5d4Qu224gZ08+XR
-	 z70bWV0COcRbXjf7aJ7Io8HMQ6bCnhkIOnNJ7g6LuunkfR5KOId2kHMkOpgj2HWolE
-	 MotyiPHh+bdOA==
-Message-ID: <7ee5018a-8479-4c2c-a997-2d2900f937c1@kernel.org>
-Date: Mon, 7 Jul 2025 13:35:24 +0200
+	s=arc-20240116; t=1751888451; c=relaxed/simple;
+	bh=TBB5VKm8Ip2OBXmBLCzsvp4tYv+QIET8QncFz4GIo4M=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kTAOvd+IgDz31awHMr2yrHdYK5NOcrkPn3lsElBkLaZDlaOK13elJ6n33eCJNjPWhlh3vZbCLu/z5CD31PZCCgSOeVWeYj3gBUib0URwc6H25riO+3La5C5MlW9W2j4YvHHeT+2Gd0RBkxTIY8gsxhpn5A33pdXQMfIQ/gnmEHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q0JtoiJd; arc=none smtp.client-ip=209.85.210.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f196.google.com with SMTP id d2e1a72fcca58-7490702fc7cso1728258b3a.1;
+        Mon, 07 Jul 2025 04:40:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751888449; x=1752493249; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6N2lwFDeBxpdj+xu2gSGUcRobXnUkCGs6+LBZY90J9E=;
+        b=Q0JtoiJd0lJngrySzUL65qINyf4ydtpuMnWzjMpsiWeoAunVNKVjnSMADLyRM10iXQ
+         f2+cEWkudHq/or384C03X65zf/UpCOjFZfina3VON12nNAigivd8Kp06AOK5B8XSwu8/
+         vUlP1DwHwYs87ias5bwbC1uSWHAOuE5+23dLPFAg5qAQt1TPR9yB73a8+27/SqtUbZKM
+         38GjULi558dDkxbQY7pHwM6UWq5LT+wh+eOf4HhS+ovQXyzMnA926fJH2z8VkWnyIxaq
+         g0u8+JSkSWDRDWG1JARq0CTxWHckhbdZFJAKjzNd304nTgOL1L11POf2AOatU7J2S363
+         0JWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751888449; x=1752493249;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6N2lwFDeBxpdj+xu2gSGUcRobXnUkCGs6+LBZY90J9E=;
+        b=AYm0d/xTm6nA2JwoTQMhsHXcQwDLivo8XZ7FRwvTanhroplaRnaENCiBwsmEBrmIQD
+         pkxwYfoOq9XOoiD67IknopXdM4MdXDlzT6ThE6w8mAOYIGrKWd1xM3Zei1g9JThwi022
+         d1sh9l/eYmdot+87nTaCxJ+Z9jENCoZn2Ai+vghPn0aFdKQ5T9WO5S1QUQzKBotxhm4D
+         gwzAPhYV8ZqMBr3xTlb6954jPTB4hXDJ+0z6hyZuk6XHSKgtX6UzwwtYTsj47lwcLQen
+         +OwY2SuYAf1eb0UFVYOxMqQsSNPm5C4l0lhthPo2UT+BYOSf+mZRwPTPbhHw/FZEKsM4
+         LHfw==
+X-Forwarded-Encrypted: i=1; AJvYcCW155L1R2WhS1U3SA5hGwziXTa4GkH8cNa/js7SLm6OKS1vsBgX95zG1uEdqkqWqCbi+tggkVfehaML4Lub@vger.kernel.org, AJvYcCWizKwXdbsmg3FrBjf+SDASdNIVI4zBqpgeObyOgFPMniNraFttAumrtNyr+Ox/P9h7Ais=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUp9nPvSR6/ZvvTt6FvkCrXGwjfLQ1wmCpjgZSNU+2wM6qQ2lU
+	nhfREuRY1WWfk4bEObUggVYIrblc+EA8MEkBqq9wSiCgH5Wx9cym4Vki
+X-Gm-Gg: ASbGncvjZ6JZs+22KFHPGMw2NgMBkxUWSB2s0ERbxROc6yj1wugqCHnkE1wolWnG3R+
+	EbJOmp4s55L8ZcXSmxM7sUjPqWY40+VThQvKOKdswr41ggZahWcIVdLm6CF6jViucpe9FvYXNSP
+	gNNRR7D3TukHIVnrtbcPSO8WTIk4xPaVXV14QBOueLd/YufH8XsUwYPWEmV+c38cR7wNfk6NPce
+	8jqMzVcqO6dG0PNSUY8tsxfryNvQJvmKKkf7pS3rtggx93IqIMil1VvnJm3MjZ+LlZFe6SBVzoV
+	t6QsSwOvRd6zFYt6Qkvae3ORJbm3RjwI5GauVs8BcspdxsqC8M+oanaAsQ29Mq+C5egPCd9kBq7
+	RwXI=
+X-Google-Smtp-Source: AGHT+IG2205mR589RM3rlU4Ix7jntnifujjs2m6SK4wtKGTVyIiDeqwIh0ptTSeUNUU9kn3mPfuzCA==
+X-Received: by 2002:a05:6a00:140f:b0:742:aecc:c46b with SMTP id d2e1a72fcca58-74cf6fb8582mr11492344b3a.15.1751888448644;
+        Mon, 07 Jul 2025 04:40:48 -0700 (PDT)
+Received: from localhost.localdomain ([43.129.244.20])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74ce35cdaaasm8793211b3a.61.2025.07.07.04.40.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Jul 2025 04:40:48 -0700 (PDT)
+From: Menglong Dong <menglong8.dong@gmail.com>
+X-Google-Original-From: Menglong Dong <dongml2@chinatelecom.cn>
+To: ast@kernel.org
+Cc: daniel@iogearbox.net,
+	john.fastabend@gmail.com,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Menglong Dong <dongml2@chinatelecom.cn>
+Subject: [PATCH bpf-next] bpf: make the attach target more accurate
+Date: Mon,  7 Jul 2025 19:35:28 +0800
+Message-Id: <20250707113528.378303-1-dongml2@chinatelecom.cn>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 3/5] media: uvcvideo: Introduce dev->meta_formats
-To: Ricardo Ribalda <ribalda@chromium.org>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-usb@vger.kernel.org
-References: <20250617-uvc-meta-v7-0-9c50623e2286@chromium.org>
- <20250617-uvc-meta-v7-3-9c50623e2286@chromium.org>
-Content-Language: en-US, nl
-From: Hans de Goede <hansg@kernel.org>
-In-Reply-To: <20250617-uvc-meta-v7-3-9c50623e2286@chromium.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi Ricardo,
+For now, we lookup the address of the attach target in
+bpf_check_attach_target() with find_kallsyms_symbol_value or
+kallsyms_lookup_name, which is not accurate in some cases.
 
-On 17-Jun-25 16:42, Ricardo Ribalda wrote:
-> Right now, there driver supports devices with one or two metadata
-> formats. Prepare it to support more than two metadata formats.
-> 
-> This is achieved with the introduction of a new field `meta_formats`,
-> that contains the array of metadata formats supported by the device, in
-> the order expected by userspace.
-> 
-> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+For example, we want to attach to the target "t_next", but there are
+multiple symbols with the name "t_next" exist in the kallsyms. The one
+that kallsyms_lookup_name() returned may have no ftrace record, which
+makes the attach target not available. So we want the one that has ftrace
+record to be returned.
 
-Thank you for doing this. See my review remarks on patch 4/5 .
+Meanwhile, there may be multiple symbols with the name "t_next" in ftrace
+record. In this case, the attach target is ambiguous, so the attach should
+fail.
 
-Regards,
+Introduce the function bpf_lookup_attach_addr() to do the address lookup,
+which is able to solve this problem.
 
-Hans
+Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
+---
+ kernel/bpf/verifier.c | 76 ++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 71 insertions(+), 5 deletions(-)
 
-
-> ---
->  drivers/media/usb/uvc/uvc_driver.c   |  7 ++++++
->  drivers/media/usb/uvc/uvc_metadata.c | 46 ++++++++++++++++++++++++++++++------
->  drivers/media/usb/uvc/uvcvideo.h     |  2 ++
->  3 files changed, 48 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
-> index 62eb45435d8bec5c955720ecb46fb8936871e6cc..9de5abb43e19d9e876cddc5d7124592953db89ac 100644
-> --- a/drivers/media/usb/uvc/uvc_driver.c
-> +++ b/drivers/media/usb/uvc/uvc_driver.c
-> @@ -2315,6 +2315,13 @@ static int uvc_probe(struct usb_interface *intf,
->  		goto error;
->  	}
->  
-> +	ret = uvc_meta_init(dev);
-> +	if (ret < 0) {
-> +		dev_err(&dev->udev->dev,
-> +			"Error initializing the metadata formats (%d)\n", ret);
-> +		goto error;
-> +	}
-> +
->  	if (dev->quirks & UVC_QUIRK_NO_RESET_RESUME)
->  		udev->quirks &= ~USB_QUIRK_RESET_RESUME;
->  
-> diff --git a/drivers/media/usb/uvc/uvc_metadata.c b/drivers/media/usb/uvc/uvc_metadata.c
-> index 82de7781f5b6b70c5ba16bcba9e0741231231904..bc84e849174397f41d1e20bf890a876eeb5a9c67 100644
-> --- a/drivers/media/usb/uvc/uvc_metadata.c
-> +++ b/drivers/media/usb/uvc/uvc_metadata.c
-> @@ -64,14 +64,20 @@ static int uvc_meta_v4l2_try_format(struct file *file, void *fh,
->  	struct uvc_device *dev = stream->dev;
->  	struct v4l2_meta_format *fmt = &format->fmt.meta;
->  	u32 fmeta = fmt->dataformat;
-> +	u32 i;
->  
->  	if (format->type != vfh->vdev->queue->type)
->  		return -EINVAL;
->  
-> +	for (i = 0; (fmeta != dev->meta_formats[i]) && dev->meta_formats[i];
-> +	     i++)
-> +		;
-> +	if (!dev->meta_formats[i])
-> +		fmeta = V4L2_META_FMT_UVC;
-> +
->  	memset(fmt, 0, sizeof(*fmt));
->  
-> -	fmt->dataformat = fmeta == dev->info->meta_format
-> -			? fmeta : V4L2_META_FMT_UVC;
-> +	fmt->dataformat = fmeta;
->  	fmt->buffersize = UVC_METADATA_BUF_SIZE;
->  
->  	return 0;
-> @@ -112,17 +118,21 @@ static int uvc_meta_v4l2_enum_formats(struct file *file, void *fh,
->  	struct v4l2_fh *vfh = file->private_data;
->  	struct uvc_streaming *stream = video_get_drvdata(vfh->vdev);
->  	struct uvc_device *dev = stream->dev;
-> -	u32 index = fdesc->index;
-> +	u32 i;
-> +
-> +	if (fdesc->type != vfh->vdev->queue->type)
-> +		return -EINVAL;
->  
-> -	if (fdesc->type != vfh->vdev->queue->type ||
-> -	    index > 1U || (index && !dev->info->meta_format))
-> +	for (i = 0; (i < fdesc->index) && dev->meta_formats[i]; i++)
-> +		;
-> +	if (!dev->meta_formats[i])
->  		return -EINVAL;
->  
->  	memset(fdesc, 0, sizeof(*fdesc));
->  
->  	fdesc->type = vfh->vdev->queue->type;
-> -	fdesc->index = index;
-> -	fdesc->pixelformat = index ? dev->info->meta_format : V4L2_META_FMT_UVC;
-> +	fdesc->index = i;
-> +	fdesc->pixelformat = dev->meta_formats[i];
->  
->  	return 0;
->  }
-> @@ -174,3 +184,25 @@ int uvc_meta_register(struct uvc_streaming *stream)
->  					 V4L2_BUF_TYPE_META_CAPTURE,
->  					 &uvc_meta_fops, &uvc_meta_ioctl_ops);
->  }
-> +
-> +int uvc_meta_init(struct uvc_device *dev)
-> +{
-> +	static const u32 uvch_only[] = {V4L2_META_FMT_UVC, 0};
-> +	static const u32 d4xx_format[] = {V4L2_META_FMT_UVC, V4L2_META_FMT_D4XX,
-> +					  0};
-> +
-> +	switch (dev->info->meta_format) {
-> +	case V4L2_META_FMT_D4XX:
-> +		dev->meta_formats = d4xx_format;
-> +		break;
-> +	case 0:
-> +		dev->meta_formats = uvch_only;
-> +		break;
-> +	default:
-> +		dev_err(&dev->udev->dev, "Unknown metadata format 0x%x\n",
-> +			dev->info->meta_format);
-> +		return -EINVAL;
-> +	}
-> +
-> +	return 0;
-> +}
-> diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
-> index 11d6e3c2ebdfbabd7bbe5722f88ff85f406d9bb6..502f1d5608637cd28ce6f01aee31c4f5df160081 100644
-> --- a/drivers/media/usb/uvc/uvcvideo.h
-> +++ b/drivers/media/usb/uvc/uvcvideo.h
-> @@ -581,6 +581,7 @@ struct uvc_device {
->  	char name[32];
->  
->  	const struct uvc_device_info *info;
-> +	const u32 *meta_formats; /* Zero-ended list of meta formats */
->  
->  	atomic_t nmappings;
->  
-> @@ -751,6 +752,7 @@ int uvc_query_ctrl(struct uvc_device *dev, u8 query, u8 unit,
->  void uvc_video_clock_update(struct uvc_streaming *stream,
->  			    struct vb2_v4l2_buffer *vbuf,
->  			    struct uvc_buffer *buf);
-> +int uvc_meta_init(struct uvc_device *dev);
->  int uvc_meta_register(struct uvc_streaming *stream);
->  
->  int uvc_register_video_device(struct uvc_device *dev,
-> 
+diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+index 0f6cc2275695..9a7128da6d13 100644
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -23436,6 +23436,72 @@ static int check_non_sleepable_error_inject(u32 btf_id)
+ 	return btf_id_set_contains(&btf_non_sleepable_error_inject, btf_id);
+ }
+ 
++struct symbol_lookup_ctx {
++	const char *name;
++	unsigned long addr;
++};
++
++static int symbol_callback(void *data, unsigned long addr)
++{
++	struct symbol_lookup_ctx *ctx = data;
++
++	if (!ftrace_location(addr))
++		return 0;
++
++	if (ctx->addr)
++		return -EADDRNOTAVAIL;
++
++	ctx->addr = addr;
++
++	return 0;
++}
++
++static int symbol_mod_callback(void *data, const char *name, unsigned long addr)
++{
++	if (strcmp(((struct symbol_lookup_ctx *)data)->name, name) != 0)
++		return 0;
++
++	return symbol_callback(data, addr);
++}
++
++/**
++ * bpf_lookup_attach_addr: Lookup address for a symbol
++ *
++ * @mod: kernel module to lookup the symbol, NULL means to lookup the kernel
++ * symbols
++ * @sym: the symbol to resolve
++ * @addr: pointer to store the result
++ *
++ * Lookup the address of the symbol @sym, and the address should has
++ * corresponding ftrace location. If multiple symbols with the name @sym
++ * exist, the one that has ftrace location will be returned. If more than
++ * 1 has ftrace location, -EADDRNOTAVAIL will be returned.
++ *
++ * Returns: 0 on success, -errno otherwise.
++ */
++static int bpf_lookup_attach_addr(const struct module *mod, const char *sym,
++				  unsigned long *addr)
++{
++	struct symbol_lookup_ctx ctx = { .addr = 0, .name = sym };
++	int err;
++
++	if (!mod)
++		err = kallsyms_on_each_match_symbol(symbol_callback, sym, &ctx);
++	else
++		err = module_kallsyms_on_each_symbol(mod->name, symbol_mod_callback,
++						     &ctx);
++
++	if (!ctx.addr)
++		return -ENOENT;
++
++	if (err)
++		return err;
++
++	*addr = ctx.addr;
++
++	return 0;
++}
++
+ int bpf_check_attach_target(struct bpf_verifier_log *log,
+ 			    const struct bpf_prog *prog,
+ 			    const struct bpf_prog *tgt_prog,
+@@ -23689,18 +23755,18 @@ int bpf_check_attach_target(struct bpf_verifier_log *log,
+ 			if (btf_is_module(btf)) {
+ 				mod = btf_try_get_module(btf);
+ 				if (mod)
+-					addr = find_kallsyms_symbol_value(mod, tname);
++					ret = bpf_lookup_attach_addr(mod, tname, &addr);
+ 				else
+-					addr = 0;
++					ret = -ENOENT;
+ 			} else {
+-				addr = kallsyms_lookup_name(tname);
++				ret = bpf_lookup_attach_addr(NULL, tname, &addr);
+ 			}
+-			if (!addr) {
++			if (ret) {
+ 				module_put(mod);
+ 				bpf_log(log,
+ 					"The address of function %s cannot be found\n",
+ 					tname);
+-				return -ENOENT;
++				return ret;
+ 			}
+ 		}
+ 
+-- 
+2.39.5
 
 
