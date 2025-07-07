@@ -1,99 +1,227 @@
-Return-Path: <linux-kernel+bounces-720312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 702E4AFBA24
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 19:53:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F152FAFBA28
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 19:53:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E4D21AA6900
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 17:53:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 449E51AA69C5
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 17:54:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 777722620E4;
-	Mon,  7 Jul 2025 17:53:00 +0000 (UTC)
-Received: from bmailout3.hostsharing.net (bmailout3.hostsharing.net [176.9.242.62])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ED312638BC;
+	Mon,  7 Jul 2025 17:53:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="sa/y7kEq"
+Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AED411A0728;
-	Mon,  7 Jul 2025 17:52:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.9.242.62
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DCFC1E25FA
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 17:53:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751910780; cv=none; b=XbxX6QhyPkyemClLkOAllcyOE7ZPm7nDOb2JGhXjHdUfG6iG1F3fy8u3eGlxcgHvW4T0E7aKAwwWpOtaI8OtjGpL5l/E8yxK2XAdAVzK3zMcHXnnbN84YX+rMb1OROgB5hy/ov+1j8NQrL3QBbYsCUHV9zla87XMpKkTndSCEeQ=
+	t=1751910816; cv=none; b=fdCONSp1n+FzX/THkBRP/k3qIfp/x+IbiJwRKGQwPco02D9vt5V7YolEElx7GAVSWQx6zPOwbrjiEDPiWaYLWeUDx+nU4C4uQOaB5MyV6ySEil8SyAPBQc6Hj9Q3wWU9g+VbBh//AoFoUHZCtYDSDAG6GAtfPemo6GmQSLAFLK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751910780; c=relaxed/simple;
-	bh=AsTcTGqi6Fn5LcdCeig/ngKT0YoLhCTEOGgFgHjH8KQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KGyOk2m4+04AN8s8EkVbK2/Kvf0f+PiTGHUSXQZtFqw6OU98hNxXkJJuyKKgDI10gNOLbwCK1/dpYTDWUChfOkPjH7H2Hat4n8DGvX9m8VeRfXvgppcBYOwfE2YfMzn9SAEvL3MYW5ISlI7uiuSdZMD8mZwWNhjfC5urO2n8Ejk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=176.9.242.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout3.hostsharing.net (Postfix) with ESMTPS id F06482C0163C;
-	Mon,  7 Jul 2025 19:52:47 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id C17FD423825; Mon,  7 Jul 2025 19:52:47 +0200 (CEST)
-Date: Mon, 7 Jul 2025 19:52:47 +0200
-From: Lukas Wunner <lukas@wunner.de>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	kernel@pengutronix.de, linux-kernel@vger.kernel.org,
-	Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
-	Andre Edich <andre.edich@microchip.com>
-Subject: Re: [PATCH net v1 4/4] net: phy: smsc: Disable IRQ support to
- prevent link state corruption
-Message-ID: <aGwJbzY9cwtLlBWA@wunner.de>
-References: <20250701122146.35579-1-o.rempel@pengutronix.de>
- <20250701122146.35579-5-o.rempel@pengutronix.de>
- <aGPba6fX1bqgVfYC@wunner.de>
- <aGT_3SpVVzJFzT6B@pengutronix.de>
+	s=arc-20240116; t=1751910816; c=relaxed/simple;
+	bh=PJCUxndDyy9aKoL7TqeI0FjfwhSH8f/NYHniHwJOEvQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HnY5izk+srmoMEmU3LplSNwHL67K8QJKLGO/rYDZ+NxHofeqh4pHNJLTfBG8+v1jeLizRZk1EEJczv1FjQjsCWLMXNmq4LkRPhKXPVWWjQTyYjhkDqvfKB0o/fC+nEBHtM4T5SBbQTCVfffroi21GWO2K0x1HWheEbzoWKM5A0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=sa/y7kEq; arc=none smtp.client-ip=91.218.175.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <74ae6eb2-cea7-4e3e-82eb-72978dd0f101@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1751910812;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=AQHayfYIL+d6HS8rf76iOroTc9ml4KgNSGNH0xgeoG4=;
+	b=sa/y7kEq3NvAVMCZWcAKa8HALGKl+Ftu6Y9Le6CVHE2UAFzNqMkOaw3FJDpPYTfvRTZzV6
+	NQbTd7RS/k/2lIMK5rIeu8b8VQZjq87jud6HPv7Z6uL8hpftsT0Vuxj3lAG0ewOurVToDl
+	QINEbvKN4Tnwr0RgYmfV/P9vHIcP000=
+Date: Mon, 7 Jul 2025 10:53:24 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aGT_3SpVVzJFzT6B@pengutronix.de>
+Subject: Re: [PATCH v5 bpf-next 1/5] namei: Introduce new helper function
+ path_walk_parent()
+Content-Language: en-GB
+To: Song Liu <songliubraving@meta.com>
+Cc: Song Liu <song@kernel.org>, "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-security-module@vger.kernel.org"
+ <linux-security-module@vger.kernel.org>, Kernel Team <kernel-team@meta.com>,
+ "andrii@kernel.org" <andrii@kernel.org>,
+ "eddyz87@gmail.com" <eddyz87@gmail.com>, "ast@kernel.org" <ast@kernel.org>,
+ "daniel@iogearbox.net" <daniel@iogearbox.net>,
+ "martin.lau@linux.dev" <martin.lau@linux.dev>,
+ "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+ "brauner@kernel.org" <brauner@kernel.org>, "jack@suse.cz" <jack@suse.cz>,
+ "kpsingh@kernel.org" <kpsingh@kernel.org>,
+ "mattbobrowski@google.com" <mattbobrowski@google.com>,
+ "m@maowtm.org" <m@maowtm.org>, "neil@brown.name" <neil@brown.name>
+References: <20250617061116.3681325-1-song@kernel.org>
+ <20250617061116.3681325-2-song@kernel.org>
+ <2459c10e-d74c-4118-9b6d-c37d05ecec02@linux.dev>
+ <58FB95C4-1499-4865-8FA7-3E1F64EB5EDE@meta.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yonghong Song <yonghong.song@linux.dev>
+In-Reply-To: <58FB95C4-1499-4865-8FA7-3E1F64EB5EDE@meta.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Jul 02, 2025 at 11:46:05AM +0200, Oleksij Rempel wrote:
-> On Tue, Jul 01, 2025 at 02:58:19PM +0200, Lukas Wunner wrote:
-> > Without support for interrupt handling, we can't take advantage
-> > of the GPIOs on the chip for interrupt generation.  Nor can we
-> > properly support runtime PM if no cable is attached.
-> 
-> Hm... the PHY smsc driver is not using EDPD mode by default if PHY
-> interrupts are enabled. Or do you mean other kind of PM?
 
-See commit 2642cc6c3bbe ("net: phy: smsc: Disable Energy Detect
-Power-Down in interrupt mode"):
 
-The LAN9514 used on older RasPi boards only supports SUSPEND0,
-SUSPEND1, SUSPEND2.  Other incarnations of the LAN95xx family
-such as LAN9500A additionally support SUSPEND3.  The smsc95xx.c
-driver enables suspend only on SUSPEND3-capable chips.
+On 7/6/25 4:54 PM, Song Liu wrote:
+>
+>> On Jul 4, 2025, at 10:40 AM, Yonghong Song <yonghong.song@linux.dev> wrote:
+> [...]
+>>> +static struct dentry *__path_walk_parent(struct path *path, const struct path *root, int flags)
+>>>   {
+>>> - struct dentry *parent;
+>>> -
+>>> - if (path_equal(&nd->path, &nd->root))
+>>> + if (path_equal(path, root))
+>>>    goto in_root;
+>>> - if (unlikely(nd->path.dentry == nd->path.mnt->mnt_root)) {
+>>> - struct path path;
+>>> + if (unlikely(path->dentry == path->mnt->mnt_root)) {
+>>> + struct path new_path;
+>>>   - if (!choose_mountpoint(real_mount(nd->path.mnt),
+>>> -       &nd->root, &path))
+>>> + if (!choose_mountpoint(real_mount(path->mnt),
+>>> +       root, &new_path))
+>>>    goto in_root;
+>>> - path_put(&nd->path);
+>>> - nd->path = path;
+>>> - nd->inode = path.dentry->d_inode;
+>>> - if (unlikely(nd->flags & LOOKUP_NO_XDEV))
+>>> + path_put(path);
+>>> + *path = new_path;
+>>> + if (unlikely(flags & LOOKUP_NO_XDEV))
+>>>    return ERR_PTR(-EXDEV);
+>>>    }
+>>>    /* rare case of legitimate dget_parent()... */
+>>> - parent = dget_parent(nd->path.dentry);
+>>> + return dget_parent(path->dentry);
+>> I have some confusion with this patch when crossing mount boundary.
+>>
+>> In d_path.c, we have
+>>
+>> static int __prepend_path(const struct dentry *dentry, const struct mount *mnt,
+>>                           const struct path *root, struct prepend_buffer *p)
+>> {
+>>         while (dentry != root->dentry || &mnt->mnt != root->mnt) {
+>>                 const struct dentry *parent = READ_ONCE(dentry->d_parent);
+>>
+>>                 if (dentry == mnt->mnt.mnt_root) {
+>>                         struct mount *m = READ_ONCE(mnt->mnt_parent);
+>>                         struct mnt_namespace *mnt_ns;
+>>
+>>                         if (likely(mnt != m)) {
+>>                                 dentry = READ_ONCE(mnt->mnt_mountpoint);
+>>                                 mnt = m;
+>>                                 continue;
+>>                         }
+>>                         /* Global root */
+>>                         mnt_ns = READ_ONCE(mnt->mnt_ns);
+>>                         /* open-coded is_mounted() to use local mnt_ns */
+>>                         if (!IS_ERR_OR_NULL(mnt_ns) && !is_anon_ns(mnt_ns))
+>>                                 return 1;       // absolute root
+>>                         else
+>>                                 return 2;       // detached or not attached yet
+>>                 }
+>>
+>>                 if (unlikely(dentry == parent))
+>>                         /* Escaped? */
+>>                         return 3;
+>>
+>>                 prefetch(parent);
+>>                 if (!prepend_name(p, &dentry->d_name))
+>>                         break;
+>>                 dentry = parent;
+>>         }
+>>         return 0;
+>> }
+>>
+>> At the mount boundary and not at root mount, the code has
+>> dentry = READ_ONCE(mnt->mnt_mountpoint);
+>> mnt = m; /* 'mnt' will be parent mount */
+>> continue;
+>>
+>> After that, we have
+>> const struct dentry *parent = READ_ONCE(dentry->d_parent);
+>> if (dentry == mnt->mnt.mnt_root) {
+>> /* assume this is false */
+>> }
+>> ...
+>> prefetch(parent);
+>>         if (!prepend_name(p, &dentry->d_name))
+>>                 break;
+>>         dentry = parent;
+>>
+>> So the prepend_name(p, &dentry->d_name) is actually from mnt->mnt_mountpoint.
+> I am not quite following the question. In the code below:
+>
+>                 if (dentry == mnt->mnt.mnt_root) {
+>                         struct mount *m = READ_ONCE(mnt->mnt_parent);
+>                         struct mnt_namespace *mnt_ns;
+>
+>                         if (likely(mnt != m)) {
+>                                 dentry = READ_ONCE(mnt->mnt_mountpoint);
+>                                 mnt = m;
+>                                 continue;
+> /* We either continue, here */
+>
+>                         }
+>                         /* Global root */
+>                         mnt_ns = READ_ONCE(mnt->mnt_ns);
+>                         /* open-coded is_mounted() to use local mnt_ns */
+>                         if (!IS_ERR_OR_NULL(mnt_ns) && !is_anon_ns(mnt_ns))
+>                                 return 1;       // absolute root
+>                         else
+>                                 return 2;       // detached or not attached yet
+> /* Or return here */
+>                 }
+>
+> So we will not hit prepend_name(). Does this answer the
+> question?
+>
+>> In your above code, maybe we should return path->dentry in the below if statement?
+>>
+>>         if (unlikely(path->dentry == path->mnt->mnt_root)) {
+>>                 struct path new_path;
+>>
+>>                 if (!choose_mountpoint(real_mount(path->mnt),
+>>                                        root, &new_path))
+>>                         goto in_root;
+>>                 path_put(path);
+>>                 *path = new_path;
+>>                 if (unlikely(flags & LOOKUP_NO_XDEV))
+>>                         return ERR_PTR(-EXDEV);
+>> + return path->dentry;
+>>         }
+>>         /* rare case of legitimate dget_parent()... */
+>>         return dget_parent(path->dentry);
+>>
+>> Also, could you add some selftests cross mount points? This will
+>> have more coverages with __path_walk_parent().
 
-I was planning to add suspend support for LAN9514 but never got
-around to finish it.  Enabling SUSPEND1 if no cable is attached
-saves quite a bit of power, so RasPis without a network connection
-consume less.
+Looks like __path_walk_parent() works for the root of mounted fs.
+If this is the case, the implementation is correct. It could be
+good to add some comments to clarify.
 
-Back in the day I did some tests and noticed that while EDPD
-wasn't working at all outside of SUSPEND modes, it did work
-at least sometimes to wake up from SUSPEND1.  The driver fiddles
-with EDPD settings upon entering suspend.  I concluded that more
-testing is necessary to enable EDPD before SUSPEND1 and that's
-when I had to put this project aside. :(
+> Yeah, I will try to add more tests in the next revision.
+>
+> Thanks,
+> Song
+>
 
-Thanks,
-
-Lukas
 
