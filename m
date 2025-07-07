@@ -1,91 +1,56 @@
-Return-Path: <linux-kernel+bounces-720198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 651E7AFB871
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 18:13:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85D61AFB879
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 18:14:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75B424A110B
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 16:13:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE25F7A7B1F
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 16:12:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D788A224B1B;
-	Mon,  7 Jul 2025 16:13:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zKLr/UlW"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 838BA213254
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 16:13:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07C6822DA1C;
+	Mon,  7 Jul 2025 16:13:20 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63BFA21B9E1;
+	Mon,  7 Jul 2025 16:13:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751904788; cv=none; b=WGNK/JKpq5YbC9O+7NIlLbLUsXNce6EewqwhIhzC0BhOgiAsGcyHIitMA7oVQFJl0fWLeAN0fypKtnITqlnquqtQVY28MnG8T3Y/OffMwFG2QvrNNIOzKNHn4nXh7ov1jCpPbEKbrFeJNf7xx/jDybJ/W8+B6N1jDB4pnKqr/QA=
+	t=1751904799; cv=none; b=m6N1paO4MxCa9/6ksWJRFR16rblHbYH+D0gmJXio6BnBTivfQvUkt8KGe8oeM333+v4QeWZyZazOQL7d/tLhGp7BjvyjRx36IDEGb+f9s4orYxOoCfgEBVD9CagWhOInod7HxjPlKSYTJUODEUFDh0tbCWff8cUfZ0WLv9Vjp9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751904788; c=relaxed/simple;
-	bh=0h2aJlmPnSWDsdCU/F4A5RMFeDhbcjsspm212YRtJYA=;
+	s=arc-20240116; t=1751904799; c=relaxed/simple;
+	bh=RSfPX5OlM5EPwWYG9glTngNgWsvp+E2YSiuIqQJ6RuY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tirgHpGlYOpA/SKkWky+21mLDrHRC7gFQMRd4qTl1cCC5BNwFgnBdE0aLfG2NYtSFHs+f6j7CGiVoTJ4O5BFE9QOGUr/eD76jOO3bxEBI/h7O9M69F6kpOJn8OXTFZsHMgonDOvI/B3HtmID5gjlYzN3JED2JdWSvFrRgH8T2Ls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zKLr/UlW; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-23526264386so31908795ad.2
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 09:13:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1751904786; x=1752509586; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=rTB9AhUzbXze0SvlJXhNv6ywJb1Le3/qXDwCwOY7m50=;
-        b=zKLr/UlWJwuskqYq7hPRwBppAXf5ZQ5CtyG1cc+EiIomGunmRQJMPE72jlED3iBXqb
-         9Yp33pgKrOVLzniBfepJ5WSW0PY4eQD9ubNCYw3vaKljNh+xoaUW9z/QOCj7F09obFC2
-         qVfF88yp4Z5EeQNqqblEP/YXp4lxxNaoyPcoYk2Sxs3xm/VcdV7ollGPrZc+37M1JX9r
-         8G6/JlJ9k07u1xkUwVM5/iBqVBQHgXLyB7GzB1jTUr7CcgsmBQHIocxYBNLUNols4ng8
-         PqthJcN0RFHx6oPLsyioj3RgWEUOxCJQvKVgLFlMsTaYRwF0d21/696K/zE1G36/cYbL
-         oWwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751904786; x=1752509586;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rTB9AhUzbXze0SvlJXhNv6ywJb1Le3/qXDwCwOY7m50=;
-        b=UNT6lo612iDLC3fg3X3l9qR65rp0I04B6SMlrmmhft7MZuvpOBJ6Xb+OXKB6JcLxMH
-         4naRbPu+imKiemnXyeTxY7PBm013WiE7Q+Unw4BUBIe7xXylKjV5KAk7/X8AstCOYFhy
-         y9PzgglZN4G/1/tPdaS+PNEOKAoabs5zg7I68WeD9bC5zJDRgE9NGPGfD/jMJPzPJeDR
-         7TiXeOqDDAPZbxMvvwPE2KDgGvtoN3KU5wzuSkAMXsvRFKLe+LRVBkRwyiBWbbXxahMp
-         u9A3F5tMJE9Jpimf5vCKbzlsBOPT7SxfuGywBZFzMwoitJGFl1vvbeJKHqCEsEehiHPe
-         vg0A==
-X-Forwarded-Encrypted: i=1; AJvYcCXoiPhuhGRDPK3VXyjrP8ZO9URx8XOhAVBCynvnNw2mcMNFVj2oR+a2zNIJdP0+8mKl3Wsk0gWAi3TOeQs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0LbzdImkFMYS+xbhC2teSiGwkmv3G7TaG+73/hsiZ7WAuowgQ
-	FSoYPdBJfH5pQb0StkOT+kcEVVJXwIoZ9BItDIaMvOm61hi5fxc8FCdenirz0hmGoaY=
-X-Gm-Gg: ASbGncsYnT0Lvy5YVCnp3K5tXWNXeCD9Met3/e2VquSSDPLmX8YV7di+Eg9cgzfDFIZ
-	0dyLkt4Y7nKmfVS46TkRBtRkqkeDpDRkEqh8kouGUg5Xvq4i6YDUnhzhUuMW95Gjmlh4Z+4jbha
-	OFmHoHs/uPHrz2NwBpAmU9Go9xxejSY7gl/nbKGmgqcaxWpIhMDJYzOMs8tq+HmyEwYpy0cY+E5
-	QDJB7S0fbIzYJS4FKT1/sw5/Bxxo1r7E1nb196oRHwkH7tNMUYBz2jfB55lr64y9RBfPxfVFw3f
-	8gip9MSDkUVBKpbCj6gaS8cjBAmzc58P6XDKKtWrJ0OKgLjsCBBcXEtJwJ/H/MJ+tA==
-X-Google-Smtp-Source: AGHT+IEQezXaHRglxK6u+wE7BwHS5SdjM0yKB0UdNJiBREdoJn93Iqgm0TzBfL2Hm1mR3xJxK3359A==
-X-Received: by 2002:a17:903:41c1:b0:235:c781:c305 with SMTP id d9443c01a7336-23c8755c92amr199352805ad.24.1751904785665;
-        Mon, 07 Jul 2025 09:13:05 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:1746:c463:9d35:6eed])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b38ee475a3asm9236671a12.17.2025.07.07.09.13.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Jul 2025 09:13:05 -0700 (PDT)
-Date: Mon, 7 Jul 2025 10:13:02 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Hiago De Franco <hiagofranco@gmail.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Iuliana Prodan <iuliana.prodan@nxp.com>,
-	Peng Fan <peng.fan@nxp.com>, Daniel Baluta <daniel.baluta@nxp.com>,
-	linux-remoteproc@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Hiago De Franco <hiago.franco@toradex.com>,
-	Ritesh Kumar <ritesh.kumar@toradex.com>
-Subject: Re: [PATCH] remoteproc: imx_rproc: merge ITCM and DTCM regions
-Message-ID: <aGvyDp36iWv5UQ19@p14s>
-References: <20250703130831.18830-1-hiagofranco@gmail.com>
- <aGgAbwToGhsc5VV9@p14s>
- <20250704190816.kth7bdf34ufc2ht6@hiagonb>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ENM7xmgD+6rK28VsN//au7Vdbu21KQ+rwENQSWqXdsF0215aKeUTyvJDudHm7FojiXmImy7konIlwwGr+Xd4s+E1UzbQq0sf5rAZefkcRR8DVfobn5MOc1iwuhH7ESvIK0EYS60XPcK4E5oFP3mZVXXdhoC++KsV9+vt/MaCNEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 30B30168F;
+	Mon,  7 Jul 2025 09:13:04 -0700 (PDT)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E71B83F694;
+	Mon,  7 Jul 2025 09:13:12 -0700 (PDT)
+Date: Mon, 7 Jul 2025 17:13:10 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Colton Lewis <coltonlewis@google.com>
+Cc: kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Mingwei Zhang <mizhang@google.com>, Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>, Shuah Khan <shuah@kernel.org>,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	linux-perf-users@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v3 04/22] KVM: arm64: Cleanup PMU includes
+Message-ID: <aGvyFiyEEsMrhN0i@J2N7QTR9R3>
+References: <20250626200459.1153955-1-coltonlewis@google.com>
+ <20250626200459.1153955-5-coltonlewis@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,106 +59,226 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250704190816.kth7bdf34ufc2ht6@hiagonb>
+In-Reply-To: <20250626200459.1153955-5-coltonlewis@google.com>
 
-On Fri, Jul 04, 2025 at 04:08:16PM -0300, Hiago De Franco wrote:
-> Hi Mathieu,
+On Thu, Jun 26, 2025 at 08:04:40PM +0000, Colton Lewis wrote:
+> From: Marc Zyngier <maz@kernel.org>
 > 
-> On Fri, Jul 04, 2025 at 10:25:19AM -0600, Mathieu Poirier wrote:
-> > Good morning,
-> > 
-> > On Thu, Jul 03, 2025 at 10:08:31AM -0300, Hiago De Franco wrote:
-> > > From: Hiago De Franco <hiago.franco@toradex.com>
-> > > 
-> > > Merge the contiguous ITCM and DTCM regions into a single region to
-> > > prevent failures when loading ELF files with large sections:
-> > > 
-> > > remoteproc remoteproc0: powering up imx-rproc
-> > > remoteproc remoteproc0: Booting fw image rproc-imx-rproc-fw, size 151824
-> > > imx-rproc imx8mp-cm7: Translation failed: da = 0x1f48 len = 0x1fcb0
-> > > remoteproc remoteproc0: bad phdr da 0x1f48 mem 0x1fcb0
-> > > remoteproc remoteproc0: Failed to load program segments: -22
-> > > remoteproc remoteproc0: Boot failed: -22
-> > > 
-> > > This approach is the same as commit 8749919defb8 ("remoteproc:
-> > > imx_rproc: Merge TCML/U").
-> > > 
-> > > Suggested-by: Ritesh Kumar <ritesh.kumar@toradex.com>
-> > > Signed-off-by: Hiago De Franco <hiago.franco@toradex.com>
-> > > ---
-> > > Hi,
-> > > 
-> > > The ELF I tested had the following data section:
-> > > 
-> > > Memory region         Used Size  Region Size  %age Used
-> > >     m_interrupts:         680 B         1 KB     66.41%
-> > >           m_text:        6984 B       127 KB      5.37%
-> > >           m_data:      130224 B       128 KB     99.35%
-> > >          m_data2:          0 GB        16 MB      0.00%
-> > > [100%] Built target hello_world_cm7.elf
-> > > 
-> > > Which triggered the error. After this patch, remoteproc was able to boot
-> > > and work fine. Thanks!
-> > > ---
-> > >  drivers/remoteproc/imx_rproc.c | 6 ++----
-> > >  1 file changed, 2 insertions(+), 4 deletions(-)
-> > > 
-> > > diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-> > > index 74299af1d7f1..bbf089ef48ee 100644
-> > > --- a/drivers/remoteproc/imx_rproc.c
-> > > +++ b/drivers/remoteproc/imx_rproc.c
-> > > @@ -166,8 +166,8 @@ static const struct imx_rproc_att imx_rproc_att_imx8qxp[] = {
-> > >  
-> > >  static const struct imx_rproc_att imx_rproc_att_imx8mn[] = {
-> > >  	/* dev addr , sys addr  , size	    , flags */
-> > > -	/* ITCM   */
-> > > -	{ 0x00000000, 0x007E0000, 0x00020000, ATT_OWN | ATT_IOMEM },
-> > > +	/* D/ITCM */
-> > > +	{ 0x00000000, 0x007E0000, 0x00040000, ATT_OWN | ATT_IOMEM },
-> > >  	/* OCRAM_S */
-> > >  	{ 0x00180000, 0x00180000, 0x00009000, 0 },
-> > >  	/* OCRAM */
-> > > @@ -180,8 +180,6 @@ static const struct imx_rproc_att imx_rproc_att_imx8mn[] = {
-> > >  	{ 0x08000000, 0x08000000, 0x08000000, 0 },
-> > >  	/* DDR (Code) - alias */
-> > >  	{ 0x10000000, 0x40000000, 0x0FFE0000, 0 },
-> > > -	/* DTCM */
-> > > -	{ 0x20000000, 0x00800000, 0x00020000, ATT_OWN | ATT_IOMEM },
-> > 
-> > In commit 8749919defb8 "dev addr" and "sys addr" were both contiguous, but in
-> > this patch "dev addr" is not.  How will this work with new kernel that use old
-> > FW images?  Am I missing something?
-> 
-> No, you are correct, I think the use case I tested was not good enough.
-> 
-> If I understand correctly, this will break older firmware expecting
-> .data at 0x20000000 because dev_addr is no longer mapped for DTCM entry.
-> 
+> Reorganize these tangled headers.
 
-Correct.  Older firmware would still expect DTCM at 0x20000000.
+In prior versions of this series, there was some earlier text explaining that
+there was a circular header dependency. In v2:
 
+  https://lore.kernel.org/linux-arm-kernel/20250620221326.1261128-6-coltonlewis@google.com/
 
-> Do you think it is possible (or reccomend) another approach to fix this
-> issue? In this case to keep using the TCM, instead of going to OCRAM or
-> DDR.
->
+... it said:
 
-To me the best way to proceed is understand why using the current mapping is a
-problem.  The changelog describes a failure condition when dealing with large
-sections but does not indicate _why_ that is happening.  I think that's what
-needs to be fixed rather than trying to move mappings around.
- 
-> Thanks,
-> Hiago.
+| asm/kvm_host.h includes asm/arm_pmu.h which includes perf/arm_pmuv3.h
+| which includes asm/arm_pmuv3.h which includes asm/kvm_host.h This
+| causes compilation problems why trying to use anything defined in any
+| of the headers in any other headers.
+
+Was there some reason for dropping that? It's a bit odd to start without a
+problem statement.
+
 > 
-> > 
-> > Thanks,
-> > Mathieu
-> > 
-> > >  	/* OCRAM_S - alias */
-> > >  	{ 0x20180000, 0x00180000, 0x00008000, ATT_OWN },
-> > >  	/* OCRAM */
-> > > -- 
-> > > 2.39.5
-> > > 
+> * Respect the move defining the interface between KVM and PMU in its
+>   own header asm/kvm_pmu.h
+> 
+> * Define an empty struct arm_pmu so it is defined for those interface
+>   functions when compiling with CONFIG_KVM but not CONFIG_ARM_PMU
+
+Which functions in particular are those? What prevents them from depending on
+CONFIG_ARM_PMU?
+
+Mark.
+
+> Signed-off-by: Marc Zyngier <maz@kernel.org>
+> Signed-off-by: Colton Lewis <coltonlewis@google.com>
+> ---
+>  arch/arm64/include/asm/arm_pmuv3.h      |  2 +-
+>  arch/arm64/include/asm/kvm_host.h       | 15 +--------------
+>  arch/arm64/include/asm/kvm_pmu.h        | 15 +++++++++++++++
+>  arch/arm64/kvm/debug.c                  |  1 +
+>  arch/arm64/kvm/hyp/include/hyp/switch.h |  1 +
+>  arch/arm64/kvm/pmu.c                    |  2 ++
+>  arch/arm64/kvm/sys_regs.c               |  1 +
+>  include/linux/perf/arm_pmu.h            |  5 +++++
+>  virt/kvm/kvm_main.c                     |  1 +
+>  9 files changed, 28 insertions(+), 15 deletions(-)
+> 
+> diff --git a/arch/arm64/include/asm/arm_pmuv3.h b/arch/arm64/include/asm/arm_pmuv3.h
+> index 8a777dec8d88..32c003a7b810 100644
+> --- a/arch/arm64/include/asm/arm_pmuv3.h
+> +++ b/arch/arm64/include/asm/arm_pmuv3.h
+> @@ -6,7 +6,7 @@
+>  #ifndef __ASM_PMUV3_H
+>  #define __ASM_PMUV3_H
+>  
+> -#include <asm/kvm_host.h>
+> +#include <asm/kvm_pmu.h>
+>  
+>  #include <asm/cpufeature.h>
+>  #include <asm/sysreg.h>
+> diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
+> index 27ed26bd4381..2df76689381a 100644
+> --- a/arch/arm64/include/asm/kvm_host.h
+> +++ b/arch/arm64/include/asm/kvm_host.h
+> @@ -14,6 +14,7 @@
+>  #include <linux/arm-smccc.h>
+>  #include <linux/bitmap.h>
+>  #include <linux/types.h>
+> +#include <linux/irq_work.h>
+>  #include <linux/jump_label.h>
+>  #include <linux/kvm_types.h>
+>  #include <linux/maple_tree.h>
+> @@ -1487,25 +1488,11 @@ void kvm_arch_vcpu_ctxflush_fp(struct kvm_vcpu *vcpu);
+>  void kvm_arch_vcpu_ctxsync_fp(struct kvm_vcpu *vcpu);
+>  void kvm_arch_vcpu_put_fp(struct kvm_vcpu *vcpu);
+>  
+> -static inline bool kvm_pmu_counter_deferred(struct perf_event_attr *attr)
+> -{
+> -	return (!has_vhe() && attr->exclude_host);
+> -}
+> -
+>  #ifdef CONFIG_KVM
+> -void kvm_set_pmu_events(u64 set, struct perf_event_attr *attr);
+> -void kvm_clr_pmu_events(u64 clr);
+> -bool kvm_set_pmuserenr(u64 val);
+>  void kvm_enable_trbe(void);
+>  void kvm_disable_trbe(void);
+>  void kvm_tracing_set_el1_configuration(u64 trfcr_while_in_guest);
+>  #else
+> -static inline void kvm_set_pmu_events(u64 set, struct perf_event_attr *attr) {}
+> -static inline void kvm_clr_pmu_events(u64 clr) {}
+> -static inline bool kvm_set_pmuserenr(u64 val)
+> -{
+> -	return false;
+> -}
+>  static inline void kvm_enable_trbe(void) {}
+>  static inline void kvm_disable_trbe(void) {}
+>  static inline void kvm_tracing_set_el1_configuration(u64 trfcr_while_in_guest) {}
+> diff --git a/arch/arm64/include/asm/kvm_pmu.h b/arch/arm64/include/asm/kvm_pmu.h
+> index baf028d19dfc..ad3247b46838 100644
+> --- a/arch/arm64/include/asm/kvm_pmu.h
+> +++ b/arch/arm64/include/asm/kvm_pmu.h
+> @@ -11,9 +11,15 @@
+>  #include <linux/kvm_types.h>
+>  #include <linux/perf_event.h>
+>  #include <linux/perf/arm_pmuv3.h>
+> +#include <linux/perf/arm_pmu.h>
+>  
+>  #define KVM_ARMV8_PMU_MAX_COUNTERS	32
+>  
+> +#define kvm_pmu_counter_deferred(attr)			\
+> +	({						\
+> +		!has_vhe() && (attr)->exclude_host;	\
+> +	})
+> +
+>  #if IS_ENABLED(CONFIG_HW_PERF_EVENTS) && IS_ENABLED(CONFIG_KVM)
+>  struct kvm_pmc {
+>  	u8 idx;	/* index into the pmu->pmc array */
+> @@ -68,6 +74,9 @@ int kvm_arm_pmu_v3_has_attr(struct kvm_vcpu *vcpu,
+>  int kvm_arm_pmu_v3_enable(struct kvm_vcpu *vcpu);
+>  
+>  struct kvm_pmu_events *kvm_get_pmu_events(void);
+> +void kvm_set_pmu_events(u64 set, struct perf_event_attr *attr);
+> +void kvm_clr_pmu_events(u64 clr);
+> +bool kvm_set_pmuserenr(u64 val);
+>  void kvm_vcpu_pmu_restore_guest(struct kvm_vcpu *vcpu);
+>  void kvm_vcpu_pmu_restore_host(struct kvm_vcpu *vcpu);
+>  void kvm_vcpu_pmu_resync_el0(void);
+> @@ -161,6 +170,12 @@ static inline u64 kvm_pmu_get_pmceid(struct kvm_vcpu *vcpu, bool pmceid1)
+>  
+>  #define kvm_vcpu_has_pmu(vcpu)		({ false; })
+>  static inline void kvm_pmu_update_vcpu_events(struct kvm_vcpu *vcpu) {}
+> +static inline void kvm_set_pmu_events(u64 set, struct perf_event_attr *attr) {}
+> +static inline void kvm_clr_pmu_events(u64 clr) {}
+> +static inline bool kvm_set_pmuserenr(u64 val)
+> +{
+> +	return false;
+> +}
+>  static inline void kvm_vcpu_pmu_restore_guest(struct kvm_vcpu *vcpu) {}
+>  static inline void kvm_vcpu_pmu_restore_host(struct kvm_vcpu *vcpu) {}
+>  static inline void kvm_vcpu_reload_pmu(struct kvm_vcpu *vcpu) {}
+> diff --git a/arch/arm64/kvm/debug.c b/arch/arm64/kvm/debug.c
+> index 1a7dab333f55..a554c3e368dc 100644
+> --- a/arch/arm64/kvm/debug.c
+> +++ b/arch/arm64/kvm/debug.c
+> @@ -9,6 +9,7 @@
+>  
+>  #include <linux/kvm_host.h>
+>  #include <linux/hw_breakpoint.h>
+> +#include <linux/perf/arm_pmuv3.h>
+>  
+>  #include <asm/debug-monitors.h>
+>  #include <asm/kvm_asm.h>
+> diff --git a/arch/arm64/kvm/hyp/include/hyp/switch.h b/arch/arm64/kvm/hyp/include/hyp/switch.h
+> index 7599844908c0..825b81749972 100644
+> --- a/arch/arm64/kvm/hyp/include/hyp/switch.h
+> +++ b/arch/arm64/kvm/hyp/include/hyp/switch.h
+> @@ -14,6 +14,7 @@
+>  #include <linux/kvm_host.h>
+>  #include <linux/types.h>
+>  #include <linux/jump_label.h>
+> +#include <linux/perf/arm_pmuv3.h>
+>  #include <uapi/linux/psci.h>
+>  
+>  #include <asm/barrier.h>
+> diff --git a/arch/arm64/kvm/pmu.c b/arch/arm64/kvm/pmu.c
+> index 6b48a3d16d0d..8bfc6b0a85f6 100644
+> --- a/arch/arm64/kvm/pmu.c
+> +++ b/arch/arm64/kvm/pmu.c
+> @@ -8,6 +8,8 @@
+>  #include <linux/perf/arm_pmu.h>
+>  #include <linux/perf/arm_pmuv3.h>
+>  
+> +#include <asm/kvm_pmu.h>
+> +
+>  static DEFINE_PER_CPU(struct kvm_pmu_events, kvm_pmu_events);
+>  
+>  /*
+> diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
+> index 99fdbe174202..eaff6d63ef77 100644
+> --- a/arch/arm64/kvm/sys_regs.c
+> +++ b/arch/arm64/kvm/sys_regs.c
+> @@ -18,6 +18,7 @@
+>  #include <linux/printk.h>
+>  #include <linux/uaccess.h>
+>  #include <linux/irqchip/arm-gic-v3.h>
+> +#include <linux/perf/arm_pmuv3.h>
+>  
+>  #include <asm/arm_pmuv3.h>
+>  #include <asm/cacheflush.h>
+> diff --git a/include/linux/perf/arm_pmu.h b/include/linux/perf/arm_pmu.h
+> index 6dc5e0cd76ca..fb382bcd4f4b 100644
+> --- a/include/linux/perf/arm_pmu.h
+> +++ b/include/linux/perf/arm_pmu.h
+> @@ -187,6 +187,11 @@ void armpmu_free_irq(int irq, int cpu);
+>  
+>  #define ARMV8_PMU_PDEV_NAME "armv8-pmu"
+>  
+> +#else
+> +
+> +struct arm_pmu {
+> +};
+> +
+>  #endif /* CONFIG_ARM_PMU */
+>  
+>  #define ARMV8_SPE_PDEV_NAME "arm,spe-v1"
+> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+> index e2f6344256ce..25259fcf3115 100644
+> --- a/virt/kvm/kvm_main.c
+> +++ b/virt/kvm/kvm_main.c
+> @@ -48,6 +48,7 @@
+>  #include <linux/lockdep.h>
+>  #include <linux/kthread.h>
+>  #include <linux/suspend.h>
+> +#include <linux/perf_event.h>
+>  
+>  #include <asm/processor.h>
+>  #include <asm/ioctl.h>
+> -- 
+> 2.50.0.727.gbf7dc18ff4-goog
+> 
 
