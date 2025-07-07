@@ -1,94 +1,80 @@
-Return-Path: <linux-kernel+bounces-720611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 271C8AFBE40
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 00:30:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19FBEAFBE42
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 00:31:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 593624803A4
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 22:30:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72DF74A6F98
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 22:31:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2C5C288C1E;
-	Mon,  7 Jul 2025 22:30:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32C6B259C93;
+	Mon,  7 Jul 2025 22:31:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gVTbBXgO"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LZofK6Ll"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CBB1800;
-	Mon,  7 Jul 2025 22:30:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B151C800
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 22:31:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751927416; cv=none; b=aYB8k6SRmfCNnYdyX0vodNlt/Vkrp3Yj94vyvaJhuuMBiFz67FrZvPQU5kuB8l/8pJhpf47xdAZpG/rANXj8sk9C4jCz70AiH8pgJnGBFZqdcCNlgVkHESkglbeY97diKujb36ZxLs8ZshPOv+I/iQ3p47/+/4WnCYzoD1LRVtw=
+	t=1751927500; cv=none; b=p4sb5t4JXCkwX9PyEQ2Izd/5Ahnfwi46XsZwzFeYhPPG1zd4wQtE7Ba62WJi491pELp8yGG5WnzddTiEjNIXEuIH0FprZ20FS4C+Eoo8UL+Vq27iXcjyFOyGwDlIy1JW2VIKcOI1Ilw39trfv70w20nL5rB4Q6Lw6T7DgeimcXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751927416; c=relaxed/simple;
-	bh=n/qlHRTZ75H/a48PwtdzLEoZbFCMammRCYqg3lcrv2c=;
+	s=arc-20240116; t=1751927500; c=relaxed/simple;
+	bh=plx+fMI+rybtWwn7NZMF4AKSnaAHQCfmFYEX9bkJPLo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T5O2icHaDQe3nTiG75llaqZuwEcWT2mMeMQDM0/b0id+aPXxaKI2yWYBmIBg6fjiCqrWSSgv6rwjy04j8XiUnaXGIvdHMZE9n4Hza25aUmilwiLpC6XtJeHktSKg1ShDdd3dKiRyS87E1B+4RVkY1BaTYM2jo46H36KoWsI8uSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gVTbBXgO; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-450cf214200so27638015e9.1;
-        Mon, 07 Jul 2025 15:30:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751927412; x=1752532212; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=zEFz/bgHfmwoyPjkuXzwFcQmAm/NUFdt3vHCXoJuaSs=;
-        b=gVTbBXgOSlE1FWR8XkexHFxNEqBcAMwaUw7fQ76ys6a5sK/gkRIfXQdT7WzKv7IBNt
-         Kj8mgDlr3OESbGmWGRAv00tizkYbjzXJh4AWIiAzBul3J/6RN1yS09S1EyuJouyNJhJm
-         eqXhb6RCZvP8ZriF81Kd7tYIUxEohqm0eZUhaUHYZXwe7gzpbRu3MsVsfM2bws4Ujmp0
-         NCKscq7I3TCo2Gc/XdIU9ezz8l/xYCK0Z/cGNypd9q9hKHroRFFesZDaD8WaVtb3nyKA
-         xSHF9CX6rg0BQJ1uM8v19c+g085uXTRx1ZxiCl3B8qFqu/R4EYiRQWyGq7981x9VwJsG
-         FVbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751927412; x=1752532212;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zEFz/bgHfmwoyPjkuXzwFcQmAm/NUFdt3vHCXoJuaSs=;
-        b=UCdOXledMMlhA1LYXaH4RXdDG9fDgmD8+CqSPPu1hNZ6u2R87+cai3RtFs6mJkhsRC
-         RV9DMBouONgmU1UTj1XNat5wfU5B5dUNSeLYatK91X0xLXb9eQ83prBDGObhIC5MWoVB
-         zO0K//zKpAXlbyWgTSCZlU5HGCjAD1Se22oeZDf3TIsjtjRmqSS84kSDkzRzv4SsJDee
-         ZsGUeAJM4g91eaGhxpHsgVnNsCSrKAThk8EX4Z9uPYm7jTUdjMn0IprE8+PfaYaKlqia
-         W3u3u4xb9j4giezMC8Eoj4hTYen7zkYD+QucouOLtlF5MxC4rswoV+e8YVrpTMNmGWIp
-         8xow==
-X-Forwarded-Encrypted: i=1; AJvYcCUbY5QgGyWxHKE4nFIKIL7A+RSqDS4g4a6QvTcpMMrSh/OThrmcRKvrNCXZP70ukeVUbuuPQDZC@vger.kernel.org, AJvYcCUd1i7tb2usS6rwMa1KSP0wIHCeZjfBl4vlray1hGo+xaME2NltJ/84ydfVAYjRm75OigoUGdIqVthpo2uF@vger.kernel.org, AJvYcCWEHg7CBTvFK/W5bmYYMn2Gfjr+IhDuQCt8SADyLm7cubh2W17NYeLrGISgvH/meGGwH5k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw49ciFereAj7EaOXzNabY2ffM2Xw4xna9egD6QowaJkEklp/Fe
-	TvCWYsimrS2W0FxcH70e77tWZG+O5jzsy7wulyzngq8f4YttKaj8qgm8
-X-Gm-Gg: ASbGncsrXB8pyePu1NBBfKvSOaheEMUNO34EZVg4lM+jCtbIQyu7kUlewpRdNJ3f+gg
-	O5IkGWcyhiiV3FuIGXmqtl/AQ+mKA5/aXFkn8FSY/VoUEyfNvYaaMkTbO736XxvyicB1WUCylnL
-	JA+1NXH73vewrLL26/BmzZg31alj8x3Ca649mntVaFGFoEi+TqMvciw7TwKkc7hklvwoB9Sf9x+
-	fgWBOyIW3CjPUBLPiLpFucw7+pnTJOXxTQRYsebgO8eSu+bTLbguIgw7nWJTr3FuipogXtRY835
-	G9P1SopAZGOD7Uz0kOyooHO9T6wVmfMdRB+KItFCje16nXfYBGUuvQWlBVgILMx8j9fgGiRoQ5Q
-	5o0TjWOdhVhL5KxPkBNx5v9JopEr/XctN3u16RRqp5CUwA7AejxZiZ8LgfZIy
-X-Google-Smtp-Source: AGHT+IFoutiUWetGy1YNhenkO17nBMKVYaqDf5EVl3PadIgE92GhfhTiWV4f0mWKtdpRsNq7RQ6yEA==
-X-Received: by 2002:a05:600c:8416:b0:450:d4a6:799d with SMTP id 5b1f17b1804b1-454b306b0c9mr120056765e9.7.1751927411292;
-        Mon, 07 Jul 2025 15:30:11 -0700 (PDT)
-Received: from mail.gmail.com (2a01cb0889497e00f536999e2663c8dd.ipv6.abo.wanadoo.fr. [2a01:cb08:8949:7e00:f536:999e:2663:c8dd])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454cd3d25e4sm4154125e9.26.2025.07.07.15.30.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Jul 2025 15:30:10 -0700 (PDT)
-Date: Tue, 8 Jul 2025 00:30:08 +0200
-From: Paul Chaignon <paul.chaignon@gmail.com>
-To: Eduard Zingerman <eddyz87@gmail.com>
-Cc: syzbot <syzbot+c711ce17dd78e5d4fdcf@syzkaller.appspotmail.com>,
-	andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org,
-	daniel@iogearbox.net, haoluo@google.com, john.fastabend@gmail.com,
-	jolsa@kernel.org, kpsingh@kernel.org, linux-kernel@vger.kernel.org,
-	martin.lau@linux.dev, netdev@vger.kernel.org, sdf@fomichev.me,
-	song@kernel.org, syzkaller-bugs@googlegroups.com,
-	yonghong.song@linux.dev
-Subject: Re: [syzbot] [bpf?] WARNING in reg_bounds_sanity_check
-Message-ID: <aGxKcF2Ceany8q7W@mail.gmail.com>
-References: <68649190.a70a0220.3b7e22.20e8.GAE@google.com>
- <aGa3iOI1IgGuPDYV@Tunnel>
- <865f2345eaa61afbd26d9de0917e3b1d887c647d.camel@gmail.com>
- <aGgL_g3wA2w3yRrG@mail.gmail.com>
- <df2cdc5f4fa16a4e3e08e6a997af3722f3673d38.camel@gmail.com>
- <e43c25b451395edff0886201ad3358acd9670eda.camel@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=eyi3ShAlLon2iSm7VpbN/Fmzd+UrZGmH/3Jh4Q6Sb/qmZr2ZFsMhw1YtnyDolQ9Bzjs4lZGg9yV1qVU32QbCXAOgUt9WGSc1Z01Co4v4UYgb4G9IKyLCXGUnnURiej/WTRI1J4dSi5LXacOlIax6kkdDNikMp45ANYKZ0pvItEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LZofK6Ll; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1751927497;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+5OEi+9BHeekLk8bhDMoxCU3qoaXnzLRyCWqOXKGTJY=;
+	b=LZofK6Ll0VutjigEUAsQDPQmn/GX9Ccg5ekTJUubF/t7LdXPXXofJYa3yURyw0mx9dloFV
+	gHGH1/52aSjHpftgD2GLFUo4nxZYwLCzzbMWeapD1jXEpiyao/4d07DT/ZxC0X8K5g4+FQ
+	64dhapfrKQhtRzwP4zxoJfpZkGrwTQo=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-424-TDniujyNOIKQK_NIlCwWIQ-1; Mon,
+ 07 Jul 2025 18:31:33 -0400
+X-MC-Unique: TDniujyNOIKQK_NIlCwWIQ-1
+X-Mimecast-MFC-AGG-ID: TDniujyNOIKQK_NIlCwWIQ_1751927492
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 91FBB1956061;
+	Mon,  7 Jul 2025 22:31:31 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.16])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 2A39D19560AB;
+	Mon,  7 Jul 2025 22:31:26 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Tue,  8 Jul 2025 00:30:44 +0200 (CEST)
+Date: Tue, 8 Jul 2025 00:30:38 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: "Li,Rongqing" <lirongqing@baidu.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	David Laight <david.laight.linux@gmail.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"vschneid@redhat.com" <vschneid@redhat.com>,
+	"mgorman@suse.de" <mgorman@suse.de>,
+	"bsegall@google.com" <bsegall@google.com>,
+	"rostedt@goodmis.org" <rostedt@goodmis.org>,
+	"dietmar.eggemann@arm.com" <dietmar.eggemann@arm.com>,
+	"vincent.guittot@linaro.org" <vincent.guittot@linaro.org>,
+	"juri.lelli@redhat.com" <juri.lelli@redhat.com>,
+	"mingo@redhat.com" <mingo@redhat.com>
+Subject: Re: divide error in x86 and cputime
+Message-ID: <20250707223038.GB15787@redhat.com>
+References: <78a0d7bb20504c0884d474868eccd858@baidu.com>
+ <20250707220937.GA15787@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,119 +83,67 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <e43c25b451395edff0886201ad3358acd9670eda.camel@gmail.com>
+In-Reply-To: <20250707220937.GA15787@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On Fri, Jul 04, 2025 at 02:13:15PM -0700, Eduard Zingerman wrote:
-> On Fri, 2025-07-04 at 10:26 -0700, Eduard Zingerman wrote:
-> > On Fri, 2025-07-04 at 19:14 +0200, Paul Chaignon wrote:
-> > > On Thu, Jul 03, 2025 at 11:54:27AM -0700, Eduard Zingerman wrote:
-> 
-> [...]
-> 
-> > > > I think is_branch_taken() modification should not be too complicated.
-> > > > For JSET it only checks tnum, but does not take ranges into account.
-> > > > Reasoning about ranges is something along the lines:
-> > > > - for unsigned range a = b & CONST -> a is in [b_min & CONST, b_max & CONST];
-> > > > - for signed ranged same thing, but consider two unsigned sub-ranges;
-> > > > - for non CONST cases, I think same reasoning can apply, but more
-> > > >   min/max combinations need to be explored.
-> > > > - then check if zero is a member or 'a' range.
-> > > > 
-> > > > Wdyt?
-> > > 
-> > > I might be missing something, but I'm not sure that works. For the
-> > > unsigned range, if we have b & 0x2 with b in [2; 10], then we'd end up
-> > > with a in [2; 2] and would conclude that the jump is never taken. But
-> > > b=8 proves us wrong.
-> > 
-> > I see, what is really needed is an 'or' joined mask of all 'b' values.
-> > I need to think how that can be obtained (or approximated).
-> 
-> I think the mask can be computed as in or_range() function at the
-> bottom of the email. This gives the following algorithm, if only
-> unsigned range is considered:
-> 
-> - assume prediction is needed for "if a & b goto ..."
-> - bits that may be set in 'a' are or_range(a_min, a_max)
-> - bits that may be set in 'b' are or_range(b_min, b_max)
-> - if computed bit masks intersect: both branches are possible
-> - otherwise only false branch is possible.
-> 
-> Wdyt?
+On a second thought, this
 
-This is really nice! I think we can extend it to detect some
-always-true branches as well, and thus handle the initial case reported
-by syzbot.
+    mul_u64_u64_div_u64(0x69f98da9ba980c00, 0xfffd213aabd74626, 0x09e00900);
+                        stime               rtime               stime + utime	
 
-- if a_min == 0: we don't deduce anything
-- bits that may be set in 'a' are: possible_a = or_range(a_min, a_max)
-- bits that are always set in 'b' are: always_b = b_value & ~b_mask
-- if possible_a & always_b == possible_a: only true branch is possible
-- otherwise, we can't deduce anything
+looks suspicious:
 
-For BPF_X case, we probably want to also check the reverse with
-possible_b & always_a.
+	- stime > stime + utime
 
----
+	- rtime = 0xfffd213aabd74626 is absurdly huge
 
-#include <stdint.h>
-#include <stdio.h>
-#include <stdbool.h>
+so perhaps there is another problem?
 
-static uint64_t or_range(uint64_t lo, uint64_t hi)
-{
-  uint64_t m;
-  uint32_t i;
+Oleg.
 
-  m = hi;
-  i = 0;
-  while (lo != hi) {
-    m |= 1lu << i;
-    lo >>= 1;
-    hi >>= 1;
-    i++;
-  }
-  return m;
-}
-
-static bool always_matches(uint64_t lo, uint64_t hi, uint64_t mask)
-{
-  uint64_t possible_bits = or_range(lo, hi);
-  return possible_bits & mask == possible_bits;
-}
-
-static bool always_matches_naive(uint64_t lo, uint64_t hi, uint64_t mask)
-{
-  uint64_t v = 0;
-
-  for (v = lo; v <= hi; v++) {
-    if (!(v & mask)) {
-      return false;
-    }
-  }
-  return true;
-}
-
-int main(int argc, char *argv[])
-{
-  int max = 0x300;
-
-  for (int mask = 0; mask < max; mask++) {
-    for (int lo = 1; lo < max; lo++) {
-      for (int hi = lo; hi < max; hi++) {
-        bool expected = always_matches_naive(lo, hi, mask);
-        bool result = always_matches(lo, hi, mask);
-
-        if (result == true && expected == false) {
-          printf("mismatch: %x..%x & %x -> expecting %d, result %d\n",
-                 lo, hi, mask, expected, result);
-          return 1;
-        }
-      }
-    }
-  }
-  printf("all ok\n");
-  return 0;
-}
+On 07/08, Oleg Nesterov wrote:
+>
+> On 07/07, Li,Rongqing wrote:
+> >
+> > [78250815.703847] divide error: 0000 [#1] PREEMPT SMP NOPTI
+>
+> ...
+>
+> > It caused by a process with many threads running very long,
+> > and utime+stime overflowed 64bit, then cause the below div
+> >
+> > mul_u64_u64_div_u64(0x69f98da9ba980c00, 0xfffd213aabd74626, 0x09e00900);
+> >
+> > I see the comments of mul_u64_u64_div_u64() say:
+> >
+> > Will generate an #DE when the result doesn't fit u64, could fix with an
+> > __ex_table[] entry when it becomes an issu
+> >
+> > Seem __ex_table[] entry for div does not work ?
+>
+> Well, the current version doesn't have an __ex_table[] entry for div...
+>
+> I do not know what can/should we do in this case... Perhaps
+>
+> 	static inline u64 mul_u64_u64_div_u64(u64 a, u64 mul, u64 div)
+> 	{
+> 		int ok = 0;
+> 		u64 q;
+>
+> 		asm ("mulq %3; 1: divq %4; movl $1,%1; 2:\n"
+> 			_ASM_EXTABLE(1b, 2b)
+> 			: "=a" (q), "+r" (ok)
+> 			: "a" (a), "rm" (mul), "rm" (div)
+> 			: "rdx");
+>
+> 		return ok ? q : -1ul;
+> 	}
+>
+> ?
+>
+> Should return ULLONG_MAX on #DE.
+>
+> Oleg.
 
 
