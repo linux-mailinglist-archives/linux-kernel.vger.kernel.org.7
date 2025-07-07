@@ -1,201 +1,218 @@
-Return-Path: <linux-kernel+bounces-720250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3594BAFB917
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 18:52:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B72AEAFB919
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 18:53:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32C351AA7292
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 16:52:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C69C94A6177
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 16:52:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6964B23817A;
-	Mon,  7 Jul 2025 16:49:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBB3A22A1D5;
+	Mon,  7 Jul 2025 16:50:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="l9qKFm4l";
-	dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="i6SzDl3b"
-Received: from mailrelay-egress16.pub.mailoutpod3-cph3.one.com (mailrelay-egress16.pub.mailoutpod3-cph3.one.com [46.30.212.3])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QmFaFG9a"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC96922D9EB
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 16:49:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.30.212.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F5C3224B0E;
+	Mon,  7 Jul 2025 16:50:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751906996; cv=none; b=YQ16l8QU/+AzSyhaVywSZswcAeE6iyuKLtyTZN70/zNLjrS1K8QsY7ednCOoT5coL+Z/1moo4iV3nWamAEJuU6JN5LtXO6/WBvWRCzbKqKdF82yjwQq1KWPsny7qcrN4g/BAGf3BnLhAQ/EmJjZ5tOSeCPRNQwhrQKIyOKXyOSg=
+	t=1751907039; cv=none; b=mTztLtihQOJeZsq2SIpu+ltuofHdfCS6HYo8t+waknV2/U8k1nENX1e3zSvr4HZUqi7vsEIWiGFfooSApX92aMuBM1qWyXeWvDpAvB/o7bwkbv0DDpxbX0bDRAT31sOoZxU6QTUlkx0/A9K9/g8pC4z7cZO0lNo+qRBeNx4Pbz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751906996; c=relaxed/simple;
-	bh=MTKhWYanFHmDIRGL0Jj9ubJHr5Fr1P4v9U6oHDrxVmU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=H7WANmljOcn/0pmG7ZNQWbbrJTdv/5vJwcA/Ww4705rwBsMxT47SzauMxt/KAiZ+1jP4CkZyrl7QU/bv2DDO8Jus0Fw7biU74H0Y+B0Bl+sOPOqAyy/ToFj0/zW1grkEGMsaErXC9169GrET77OpDTGBvI3xntN8fU407jbfBvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se; spf=none smtp.mailfrom=konsulko.se; dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=l9qKFm4l; dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=i6SzDl3b; arc=none smtp.client-ip=46.30.212.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=konsulko.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1751906993; x=1752511793;
-	d=konsulko.se; s=rsa1;
-	h=content-transfer-encoding:mime-version:references:in-reply-to:message-id:date:
-	 subject:cc:to:from:from;
-	bh=rzdRn1Qcob7EAGVu1OyPPS40VD+6WTHhgqmTCL9uZC4=;
-	b=l9qKFm4ll2ra2a4udIm8cFCGlWUTXylG5roJgFLliEdsO+9vdk8qnIuZphM/oq/9XC5EDj101gkdS
-	 YONGQnDyTw0qq192B3Odl4EZeBOSqHxCjQFup5e9enIOKBwoPjDwhk43XqKz/dXE09ReXa+wPMvzo2
-	 L8r1HB/x3I8UI9WgPEB7FAboS40MTx6olBUqJX5DgiZq4DmqqoCGvxAog+GrQlmd5rY4QOT/zR38XE
-	 XlZx6O/jfoCQUXWnAHA70B+vZzwK1+o6eMukFdBrnKBYzdmoL21GwZvMTffzfwwlEnce/EIWsZm0lj
-	 AXIXQtXk5/SQM1a0Q+GnrGJh1BlGm8Q==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1751906993; x=1752511793;
-	d=konsulko.se; s=ed1;
-	h=content-transfer-encoding:mime-version:references:in-reply-to:message-id:date:
-	 subject:cc:to:from:from;
-	bh=rzdRn1Qcob7EAGVu1OyPPS40VD+6WTHhgqmTCL9uZC4=;
-	b=i6SzDl3bE8grLjZMBMXMlOri/TfS7ySO7zaKi0uSTPP378TwuywPnLZh3Jtm5QdJ1PmPBZcbu84Fk
-	 VAZ3aDXDA==
-X-HalOne-ID: 66528b92-5b52-11f0-97e1-494313b7f784
-Received: from localhost.localdomain (host-90-238-19-233.mobileonline.telia.com [90.238.19.233])
-	by mailrelay6.pub.mailoutpod2-cph3.one.com (Halon) with ESMTPSA
-	id 66528b92-5b52-11f0-97e1-494313b7f784;
-	Mon, 07 Jul 2025 16:49:52 +0000 (UTC)
-From: Vitaly Wool <vitaly.wool@konsulko.se>
-To: linux-mm@kvack.org
-Cc: akpm@linux-foundation.org,
-	linux-kernel@vger.kernel.org,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	rust-for-linux@vger.kernel.org,
-	Vitaly Wool <vitaly.wool@konsulko.se>
-Subject: [PATCH v11 4/4] rust: support large alignments in allocations
-Date: Mon,  7 Jul 2025 18:49:48 +0200
-Message-Id: <20250707164948.631563-1-vitaly.wool@konsulko.se>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20250707164755.631374-1-vitaly.wool@konsulko.se>
-References: <20250707164755.631374-1-vitaly.wool@konsulko.se>
+	s=arc-20240116; t=1751907039; c=relaxed/simple;
+	bh=9a1wcjgGyuGBH9dz8iciM2zoxRYiXr1OThzA70moRAg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eyhkisEdnwrKVHMcGgQ4l7bcghz3ZbZ8HD5naIdoyOSFLZJlhvq1YKLcnbdrXt/z0ieg36DiEjSUMLLK15KPncwz3dKUtZTStz91Ap9uN1ySc3Vt5cK1lAUrK0JzvqtJHNLSqbD31KqHA04XOq1mJmsAMOSwis5kYoVwRQofOVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QmFaFG9a; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95487C4CEF1;
+	Mon,  7 Jul 2025 16:50:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751907038;
+	bh=9a1wcjgGyuGBH9dz8iciM2zoxRYiXr1OThzA70moRAg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=QmFaFG9amTsKCMhZTdRsdRLBhzbA9RgaZYGw7TGX/1hNfeXtiwzqS577/OOcXfVOe
+	 VJ5VDUIUOkUQZbjDJ1waqGZyhKQO7/oelpE8cgIMrOTdHs7WjpGKuTpTKNGek7XAvZ
+	 wGdmbnZOA7lKx52GlkSCtztm4URBUMKpHvFuY1wt+ge9xmnS1+9Ay5d7vB1bpiTjUN
+	 1ZE33gDJOzihdZqw6Q040WHZgWYvyDg7pcE6IfxlTwgOMseNl0z+NMPWZq7tkY4xBY
+	 +QbM0DsXHkDFVXSYu09qZo5Zs4ofrP1/0B1w5uomHVQ8A7hyzi+xMMNUZiUPk4bpSp
+	 a6ydhRgQPR7tA==
+Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-61208b86da2so784750eaf.2;
+        Mon, 07 Jul 2025 09:50:38 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU6QB6LuEfEm+W36AK9wYtrRhrfePr5S+PI4YmzTMD6RdIOHW6pVO+EHiC7WhJ0sDjdNPpN2KqpVMS5PjjT@vger.kernel.org, AJvYcCVfTklTGF3hl78JEc7uQKcGsLIrczUnCzEd24Bo6gqKbfCqYs56nZgjWRO1JOZUapOymv91V4tbRijP@vger.kernel.org, AJvYcCWGgtVPTPh5uWE0FzN9ODyA/KU26Tx5AsUfUNdv0Tr0xsuagVbW5krqy9NIPamc1OMvYv9KkZhe1DTxIQ==@vger.kernel.org, AJvYcCXjHVU5Yq0NsDgRNNuMdvdtIsc2rn72XHyia31eLSnyMHVOcR/N0BzELY0XVCsD+PKakVXl32W+kIg8@vger.kernel.org
+X-Gm-Message-State: AOJu0YzyFXDmBQflpSLyFFG4aGm7Ek0QTNf+bIp8sa6eV2Ij0jXzFYmf
+	ApWaNSURKP+6iQSzAjjLMaVMYzLz0cOV7EKeOIvE6nG8XhPfZT4QZcbifB2N09IRQ+CMt18XP13
+	SxQt9+5pOVQcFvK4RHOmJWU24kmEi4wI=
+X-Google-Smtp-Source: AGHT+IHNACN6r3MQBzl2AxnxkY7b3vwCCOzvxM4DbSJ5BWQkgWMplMg/AADsP0wxtsyFOxnDcsFDRO8teU3gGL28ZLg=
+X-Received: by 2002:a05:6820:2901:b0:611:ab60:3003 with SMTP id
+ 006d021491bc7-613c02a087bmr171510eaf.8.1751907037895; Mon, 07 Jul 2025
+ 09:50:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250704070356.1683992-1-apatel@ventanamicro.com> <20250704070356.1683992-16-apatel@ventanamicro.com>
+In-Reply-To: <20250704070356.1683992-16-apatel@ventanamicro.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 7 Jul 2025 18:50:27 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0i0n3twH8qPR04bX5uRzXXSmKhB72WfFEAuG+nbMOJcFw@mail.gmail.com>
+X-Gm-Features: Ac12FXzt6T3E94Z3HOk5kB7YG-fbGgkcx6q0up1mrENTBphzopL9rtBmotWtHfA
+Message-ID: <CAJZ5v0i0n3twH8qPR04bX5uRzXXSmKhB72WfFEAuG+nbMOJcFw@mail.gmail.com>
+Subject: Re: [PATCH v8 15/24] ACPI: Add support for nargs_prop in acpi_fwnode_get_reference_args()
+To: Anup Patel <apatel@ventanamicro.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jassi Brar <jassisinghbrar@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	"Rafael J . Wysocki" <rafael@kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Alexandre Ghiti <alex@ghiti.fr>, Len Brown <lenb@kernel.org>, Sunil V L <sunilvl@ventanamicro.com>, 
+	Rahul Pathak <rpathak@ventanamicro.com>, Leyfoon Tan <leyfoon.tan@starfivetech.com>, 
+	Atish Patra <atish.patra@linux.dev>, Andrew Jones <ajones@ventanamicro.com>, 
+	Samuel Holland <samuel.holland@sifive.com>, Anup Patel <anup@brainfault.org>, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-acpi@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add support for large (> PAGE_SIZE) alignments in Rust allocators.
-All the preparations on the C side are already done, we just need
-to add bindings for <alloc>_node_align() functions and start
-using those.
+On Fri, Jul 4, 2025 at 9:07=E2=80=AFAM Anup Patel <apatel@ventanamicro.com>=
+ wrote:
+>
+> From: Sunil V L <sunilvl@ventanamicro.com>
+>
+> Currently, ACPI does not support the use of a nargs_prop (e.g.,
+> associated with a reference in fwnode_property_get_reference_args().
+> Instead, ACPI expects the number of arguments (nargs) to be explicitly
+> passed or known.
+>
+> This behavior diverges from Open Firmware (OF), which allows the use of
+> a #*-cells property in the referenced node to determine the number of
+> arguments. Since fwnode_property_get_reference_args() is a common
+> interface used across both OF and ACPI firmware paradigms, it is
+> desirable to have a unified calling convention that works seamlessly for
+> both.
+>
+> Add the support for ACPI to parse a nargs_prop from the referenced
+> fwnode, aligning its behavior with the OF backend. This allows drivers
+> and subsystems using fwnode_property_get_reference_args() to work in a
+> firmware-agnostic way without having to hardcode or special-case
+> argument counts for ACPI.
+>
+> Signed-off-by: Sunil V L <sunilvl@ventanamicro.com>
+> Signed-off-by: Anup Patel <apatel@ventanamicro.com>
 
-Signed-off-by: Vitaly Wool <vitaly.wool@konsulko.se>
----
- rust/helpers/slab.c            | 10 ++++++----
- rust/helpers/vmalloc.c         |  5 +++--
- rust/kernel/alloc/allocator.rs | 27 ++++++++-------------------
- 3 files changed, 17 insertions(+), 25 deletions(-)
+LGTM now, so
 
-diff --git a/rust/helpers/slab.c b/rust/helpers/slab.c
-index 8472370a4338..d729be798f31 100644
---- a/rust/helpers/slab.c
-+++ b/rust/helpers/slab.c
-@@ -3,13 +3,15 @@
- #include <linux/slab.h>
- 
- void * __must_check __realloc_size(2)
--rust_helper_krealloc_node(const void *objp, size_t new_size, gfp_t flags, int node)
-+rust_helper_krealloc_node_align(const void *objp, size_t new_size, unsigned long align,
-+				gfp_t flags, int node)
- {
--	return krealloc_node(objp, new_size, flags, node);
-+	return krealloc_node_align(objp, new_size, align, flags, node);
- }
- 
- void * __must_check __realloc_size(2)
--rust_helper_kvrealloc_node(const void *p, size_t size, gfp_t flags, int node)
-+rust_helper_kvrealloc_node_align(const void *p, size_t size, unsigned long align,
-+				gfp_t flags, int node)
- {
--	return kvrealloc_node(p, size, flags, node);
-+	return kvrealloc_node_align(p, size, align, flags, node);
- }
-diff --git a/rust/helpers/vmalloc.c b/rust/helpers/vmalloc.c
-index 62d30db9a1a6..7d7f7336b3d2 100644
---- a/rust/helpers/vmalloc.c
-+++ b/rust/helpers/vmalloc.c
-@@ -3,7 +3,8 @@
- #include <linux/vmalloc.h>
- 
- void * __must_check __realloc_size(2)
--rust_helper_vrealloc_node(const void *p, size_t size, gfp_t flags, int node)
-+rust_helper_vrealloc_node_align(const void *p, size_t size, unsigned long align,
-+				gfp_t flags, int node)
- {
--	return vrealloc_node(p, size, flags, node);
-+	return vrealloc_node_align(p, size, align, flags, node);
- }
-diff --git a/rust/kernel/alloc/allocator.rs b/rust/kernel/alloc/allocator.rs
-index 7f9f4900da33..2a61372d878d 100644
---- a/rust/kernel/alloc/allocator.rs
-+++ b/rust/kernel/alloc/allocator.rs
-@@ -61,20 +61,21 @@ struct ReallocFunc(
-     unsafe extern "C" fn(
-         *const crate::ffi::c_void,
-         usize,
-+        crate::ffi::c_ulong,
-         u32,
-         crate::ffi::c_int,
-     ) -> *mut crate::ffi::c_void,
- );
- 
- impl ReallocFunc {
--    // INVARIANT: `krealloc_node` satisfies the type invariants.
--    const KREALLOC: Self = Self(bindings::krealloc_node);
-+    // INVARIANT: `krealloc_node_align` satisfies the type invariants.
-+    const KREALLOC: Self = Self(bindings::krealloc_node_align);
- 
--    // INVARIANT: `vrealloc_node` satisfies the type invariants.
--    const VREALLOC: Self = Self(bindings::vrealloc_node);
-+    // INVARIANT: `vrealloc_node_align` satisfies the type invariants.
-+    const VREALLOC: Self = Self(bindings::vrealloc_node_align);
- 
--    // INVARIANT: `kvrealloc_node` satisfies the type invariants.
--    const KVREALLOC: Self = Self(bindings::kvrealloc_node);
-+    // INVARIANT: `kvrealloc_node_align` satisfies the type invariants.
-+    const KVREALLOC: Self = Self(bindings::kvrealloc_node_align);
- 
-     /// # Safety
-     ///
-@@ -116,7 +117,7 @@ unsafe fn call(
-         // - Those functions provide the guarantees of this function.
-         let raw_ptr = unsafe {
-             // If `size == 0` and `ptr != NULL` the memory behind the pointer is freed.
--            self.0(ptr.cast(), size, flags.0, nid.0).cast()
-+            self.0(ptr.cast(), size, layout.align(), flags.0, nid.0).cast()
-         };
- 
-         let ptr = if size == 0 {
-@@ -160,12 +161,6 @@ unsafe fn realloc(
-         flags: Flags,
-         nid: NumaNode,
-     ) -> Result<NonNull<[u8]>, AllocError> {
--        // TODO: Support alignments larger than PAGE_SIZE.
--        if layout.align() > bindings::PAGE_SIZE {
--            pr_warn!("Vmalloc does not support alignments larger than PAGE_SIZE yet.\n");
--            return Err(AllocError);
--        }
--
-         // SAFETY: If not `None`, `ptr` is guaranteed to point to valid memory, which was previously
-         // allocated with this `Allocator`.
-         unsafe { ReallocFunc::VREALLOC.call(ptr, layout, old_layout, flags, nid) }
-@@ -185,12 +180,6 @@ unsafe fn realloc(
-         flags: Flags,
-         nid: NumaNode,
-     ) -> Result<NonNull<[u8]>, AllocError> {
--        // TODO: Support alignments larger than PAGE_SIZE.
--        if layout.align() > bindings::PAGE_SIZE {
--            pr_warn!("KVmalloc does not support alignments larger than PAGE_SIZE yet.\n");
--            return Err(AllocError);
--        }
--
-         // SAFETY: If not `None`, `ptr` is guaranteed to point to valid memory, which was previously
-         // allocated with this `Allocator`.
-         unsafe { ReallocFunc::KVREALLOC.call(ptr, layout, old_layout, flags, nid) }
--- 
-2.39.2
+Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
+> ---
+>  drivers/acpi/property.c | 29 +++++++++++++++++++++++++----
+>  drivers/base/property.c |  2 +-
+>  2 files changed, 26 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/acpi/property.c b/drivers/acpi/property.c
+> index d4863746fb11..e92402deee77 100644
+> --- a/drivers/acpi/property.c
+> +++ b/drivers/acpi/property.c
+> @@ -804,13 +804,35 @@ acpi_fwnode_get_named_child_node(const struct fwnod=
+e_handle *fwnode,
+>         return NULL;
+>  }
+>
+> +static unsigned int acpi_fwnode_get_args_count(struct fwnode_handle *fwn=
+ode,
+> +                                              const char *nargs_prop)
+> +{
+> +       const struct acpi_device_data *data;
+> +       const union acpi_object *obj;
+> +       int ret;
+> +
+> +       data =3D acpi_device_data_of_node(fwnode);
+> +       if (!data)
+> +               return 0;
+> +
+> +       ret =3D acpi_data_get_property(data, nargs_prop, ACPI_TYPE_INTEGE=
+R, &obj);
+> +       if (ret)
+> +               return 0;
+> +
+> +       return obj->integer.value;
+> +}
+> +
+>  static int acpi_get_ref_args(struct fwnode_reference_args *args,
+>                              struct fwnode_handle *ref_fwnode,
+> +                            const char *nargs_prop,
+>                              const union acpi_object **element,
+>                              const union acpi_object *end, size_t num_arg=
+s)
+>  {
+>         u32 nargs =3D 0, i;
+>
+> +       if (nargs_prop)
+> +               num_args =3D acpi_fwnode_get_args_count(ref_fwnode, nargs=
+_prop);
+> +
+>         /*
+>          * Assume the following integer elements are all args. Stop count=
+ing on
+>          * the first reference (possibly represented as a string) or end =
+of the
+> @@ -961,10 +983,10 @@ static int acpi_fwnode_get_reference_args(const str=
+uct fwnode_handle *fwnode,
+>                                 return -EINVAL;
+>
+>                         element++;
+> -
+>                         ret =3D acpi_get_ref_args(idx =3D=3D index ? args=
+ : NULL,
+>                                                 acpi_fwnode_handle(device=
+),
+> -                                               &element, end, args_count=
+);
+> +                                               nargs_prop, &element, end=
+,
+> +                                               args_count);
+>                         if (ret < 0)
+>                                 return ret;
+>
+> @@ -979,9 +1001,8 @@ static int acpi_fwnode_get_reference_args(const stru=
+ct fwnode_handle *fwnode,
+>                                 return -EINVAL;
+>
+>                         element++;
+> -
+>                         ret =3D acpi_get_ref_args(idx =3D=3D index ? args=
+ : NULL,
+> -                                               ref_fwnode, &element, end=
+,
+> +                                               ref_fwnode, nargs_prop, &=
+element, end,
+>                                                 args_count);
+>                         if (ret < 0)
+>                                 return ret;
+> diff --git a/drivers/base/property.c b/drivers/base/property.c
+> index f626d5bbe806..6a63860579dd 100644
+> --- a/drivers/base/property.c
+> +++ b/drivers/base/property.c
+> @@ -578,7 +578,7 @@ EXPORT_SYMBOL_GPL(fwnode_property_match_property_stri=
+ng);
+>   * @prop:      The name of the property
+>   * @nargs_prop:        The name of the property telling the number of
+>   *             arguments in the referred node. NULL if @nargs is known,
+> - *             otherwise @nargs is ignored. Only relevant on OF.
+> + *             otherwise @nargs is ignored.
+>   * @nargs:     Number of arguments. Ignored if @nargs_prop is non-NULL.
+>   * @index:     Index of the reference, from zero onwards.
+>   * @args:      Result structure with reference and integer arguments.
+> --
+> 2.43.0
+>
 
