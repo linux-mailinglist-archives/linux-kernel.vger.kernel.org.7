@@ -1,136 +1,182 @@
-Return-Path: <linux-kernel+bounces-720070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4ED3CAFB6A1
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 16:59:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90A6FAFB6A3
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 16:59:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6573E1AA5AE0
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 14:59:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EAFB2170B05
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 14:59:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 480F52E172F;
-	Mon,  7 Jul 2025 14:59:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E37F2E1C58;
+	Mon,  7 Jul 2025 14:59:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ho/SLovv"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AvUGVCWn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 529AD2D8DA8
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 14:59:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E00C52D8DA8;
+	Mon,  7 Jul 2025 14:59:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751900372; cv=none; b=lzLWaDEr1KOpwnxBEoAxzifBH6OVO9I4g/aO2c2UWu421mo9kvJ3RYBMjwbzWxD4CFduGjWfSMcFsL0L3/FM5c8G11+n5SagbrFpl3c8848rCJA9Bax+hTBrNYT4Gl00jlaoOd9llI3ZZp84Z5vWNvMrEwLohR6JWUlfk5eC1g4=
+	t=1751900376; cv=none; b=ebU4P1bRofLYx8o0kSOUnljc+WVfY68YxGd8+HsQmdyTp9AvIj/G4wdgZN5NQYz488nCIAbwmthIzlR9JLMkknHGGfx4kbvm7d+ej0k8k2wZuq9etdNikEEuz8pud0ZQ79ET+YCHh3HWl6OZ0lzr2Of61aLE1QGv+0R2bbhfkfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751900372; c=relaxed/simple;
-	bh=5J6/q/GM8RZ99jS9z81cyaKyHg6P0FVUWfxHrUa5/58=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VG2X5HtbvIwKcp/KpIXW2z9U7JK486YVeN7a9CcpwnH4xdZJ3fqHIlUgru78rkv4VM2C8IdnMj5YGbEEpUuzgtydKhHxidQW45KqrllvvrVJ8P4wYUNGbCqzGhzjQDtmTU9JL/Ch5VHG/TW7ZfCLKUBhHlNOorVCU531ZyFZqrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ho/SLovv; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-313910f392dso2621346a91.2
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 07:59:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1751900371; x=1752505171; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=6TQLxoKJTtnPQL66AOVz1qBZAurWsbbtmQ08gZuI+u0=;
-        b=ho/SLovv7ZTD7nf26TVEZqkkJaOXDwFjpqiXUIT/mABz1JG8jIXNfwKzgyuOKoqpPa
-         GjNHc+OF0/cykuCxakHldGkpfmpZwXnLo4N0t9tbfYp05nGkdH+WmWBl94BO5BulKe3O
-         J2DsBKYVcU0wDeTVaSStyZ4YqAUZcbmt11q4v+IaAjZzrE21xoMzRKyQQ/sJ9Qo6u0RA
-         Y3OOJmWqwmb9S9SC35B2bVbeOpShkTqrzwlHrr/Fm3R2oDGtK34o0yH/jb099G4Yn+mW
-         Iq+is9JHTAzQx4LkvrI92DKSKk9AOuWa//YdW1a3boFCa5ihHOzTcvzNcSqaI9LjQvOZ
-         cIPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751900371; x=1752505171;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6TQLxoKJTtnPQL66AOVz1qBZAurWsbbtmQ08gZuI+u0=;
-        b=i/9hIsoADMUMA+wmxU74p7/QqO63WZHGugfU8PZ4lgXhdyUvuHQxIdujOvyJUfIsdS
-         uKm/UHD+1PPpVlHrSqLeQe9V21tVeF60PyFTZQQd9z+kmH9xFcYfQet/vu9ZT6/qfPLe
-         /n36ymdZwAF75HKWOMG70grjZWn32PGgLw7maKr38m8iAG977GDX3y/347BY8A0oZMw9
-         /DFw6CdFRaCPnKvnBSGvK9kCBuUg+rRjmf6LrPkk1xVhlI9u4ZSEoG1hlHnzr1vNIeWE
-         96kBgd0s957Pw4JmSKBPS1KNuZtcL7Fyu6DolWYBqJsd773Gqi85L8AORqMywXwS7ocx
-         YZCA==
-X-Forwarded-Encrypted: i=1; AJvYcCU1buktSxscNquitBxH3H/bJkm8T6MlvoIwiahf8CfSK/XiwIUYpecaesblIYbPPxPmTTBwKmTTLNFFNAY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGemGVV/W4TWK5KwDZL6cIVeuss3eMQyb8/2PzbSj4o1P1Y20P
-	weQiVsm6adMvoDYLplEhhWPuJ/6ByVS4AZgc+3kLZZj72anxRXG+0/xbchKgw1VRnseVgsTSW0Z
-	WfbzyPk/idG9CXeN5jqTel2pdUUJKpnQIso3CA441
-X-Gm-Gg: ASbGncvrHK1vTuuxfAdWoMlbjqA/dIviA7nlGJkPRsOk5/bSSZszzptW+8sy375TDnc
-	S77XW3QpuGfPbqDmAFcuIePVuzrg+Kr+bUTChe5YvtbXbGNP5zrEegtrjzb5L/Zw4y+Y8XGDq2p
-	BFtmS/eEtuLwQXjOkKQo0NkudSe2+mDs9Vcdtp5s46
-X-Google-Smtp-Source: AGHT+IE9YWkTfOUxIPM2EzEa1lJ2gNYhmQvgWwWfNnfCuD/M3jrRM4u+/9ssAC3XE0kDqrvmOJaz3qcx79G+IEBBFhg=
-X-Received: by 2002:a17:90b:3f48:b0:312:b4a:6342 with SMTP id
- 98e67ed59e1d1-31aaddfc24amr20985661a91.33.1751900370388; Mon, 07 Jul 2025
- 07:59:30 -0700 (PDT)
+	s=arc-20240116; t=1751900376; c=relaxed/simple;
+	bh=AWC2+QrGGPhLVXZSYH0uztW+sd6LA96IpxcDRobGl9E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GZKe1JFYOM28pDNZD2mRDuWCM/kSaZEZ7cxiitgIhY1XURAkTGt4g4ZswclaoSf1tqiG289+FD3MMbB1Y7FVdeubsPgb2BmTSQBUdJWV4ypHmsexRKmB0iRyZNM6r28/A6btyM3QaF/HIGhip9nc3K6UpLdy66UqpE2Re0OKiwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AvUGVCWn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A9B6C4AF0B;
+	Mon,  7 Jul 2025 14:59:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751900375;
+	bh=AWC2+QrGGPhLVXZSYH0uztW+sd6LA96IpxcDRobGl9E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AvUGVCWnNmAO7W75Rs5AQJ2G0//FEvucDQ7gqxUQ/y4B8Yo3GiF+faeaf3/k9+Tyq
+	 ODyO0zPgv8p2wRTSg3dnHc89kMCjYD7XsJ0lQIyaIAd6PBjOpwG3cKHrKVe63ofmM3
+	 /Q6Tl1qysl/uuTjH/KyDoorCG9Q62QGUY8PgT5e4v1IJl2uLNSdwmyv6Pk0HdyD3h/
+	 NuWVN9teFs3JLpCn4BuUkiztcuER+3A47aOx6ykJMUhbAvAbJPtcruE8g05rhqHT0k
+	 xW0n2lMOoATxPZrYEcMOfWTWWSGB/pJBkm4uv6J3aiHaILT0dkT2rpijVBhPjkMMEv
+	 7qdS8BViWInbA==
+Date: Mon, 7 Jul 2025 16:59:32 +0200
+From: Alejandro Colomar <alx@kernel.org>
+To: Alexander Potapenko <glider@google.com>
+Cc: linux-mm@kvack.org, linux-hardening@vger.kernel.org, 
+	Kees Cook <kees@kernel.org>, Christopher Bazley <chris.bazley.wg14@gmail.com>, 
+	shadow <~hallyn/shadow@lists.sr.ht>, linux-kernel@vger.kernel.org, 
+	Andrew Morton <akpm@linux-foundation.org>, kasan-dev@googlegroups.com, Dmitry Vyukov <dvyukov@google.com>, 
+	Marco Elver <elver@google.com>, Christoph Lameter <cl@linux.com>, 
+	David Rientjes <rientjes@google.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>
+Subject: Re: [RFC v1 1/3] vsprintf: Add [v]seprintf(), [v]stprintf()
+Message-ID: <a3f7i56s5fmg2kcc2j2yledsyxfgepvf62jquqhjzckvg2ojwp@nokqxjgqpman>
+References: <cover.1751747518.git.alx@kernel.org>
+ <2d20eaf1752efefcc23d0e7c5c2311dd5ae252af.1751747518.git.alx@kernel.org>
+ <CAG_fn=UG3O-3_ik0TY_kstxzMVh4Z9noTP1cYfAiWvCnaXQ-6A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1751862634.git.alx@kernel.org> <033bf00f1fcf808245ae150346019aa7b997ea11.1751862634.git.alx@kernel.org>
- <CANpmjNMPWWdushTvUqYJzqQJz4SJLgPggH9cs4KPob_9=1T-nw@mail.gmail.com> <kicfhrecpahv5kkawnnazsuterxjoqscwf3rb4u6in5gig2bq6@jbt6dwnzs67r>
-In-Reply-To: <kicfhrecpahv5kkawnnazsuterxjoqscwf3rb4u6in5gig2bq6@jbt6dwnzs67r>
-From: Marco Elver <elver@google.com>
-Date: Mon, 7 Jul 2025 16:58:53 +0200
-X-Gm-Features: Ac12FXxNc7MVDdqbSkiHg-OPuizBzk24Lc8ThBNq8a8QxrLwekty4YemWnP4YPo
-Message-ID: <CANpmjNNXyyfmYFPYm2LCF_+vdPtWED3xj5gOJPQazpGhBizk5w@mail.gmail.com>
-Subject: Re: [RFC v3 3/7] mm: Use seprintf() instead of less ergonomic APIs
-To: Alejandro Colomar <alx@kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ltlrnmdc5i3ybtlp"
+Content-Disposition: inline
+In-Reply-To: <CAG_fn=UG3O-3_ik0TY_kstxzMVh4Z9noTP1cYfAiWvCnaXQ-6A@mail.gmail.com>
+
+
+--ltlrnmdc5i3ybtlp
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: Alexander Potapenko <glider@google.com>
 Cc: linux-mm@kvack.org, linux-hardening@vger.kernel.org, 
 	Kees Cook <kees@kernel.org>, Christopher Bazley <chris.bazley.wg14@gmail.com>, 
 	shadow <~hallyn/shadow@lists.sr.ht>, linux-kernel@vger.kernel.org, 
-	Andrew Morton <akpm@linux-foundation.org>, kasan-dev@googlegroups.com, 
-	Dmitry Vyukov <dvyukov@google.com>, Alexander Potapenko <glider@google.com>, Christoph Lameter <cl@linux.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, kasan-dev@googlegroups.com, Dmitry Vyukov <dvyukov@google.com>, 
+	Marco Elver <elver@google.com>, Christoph Lameter <cl@linux.com>, 
 	David Rientjes <rientjes@google.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>, 
-	Andrew Clayton <andrew@digital-domain.net>, Sven Schnelle <svens@linux.ibm.com>, 
-	Heiko Carstens <hca@linux.ibm.com>, Tvrtko Ursulin <tvrtko.ursulin@igalia.com>, 
-	"Huang, Ying" <ying.huang@intel.com>, Lee Schermerhorn <lee.schermerhorn@hp.com>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, 
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, 
-	Chao Yu <chao.yu@oppo.com>
-Content-Type: text/plain; charset="UTF-8"
+	Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>
+Subject: Re: [RFC v1 1/3] vsprintf: Add [v]seprintf(), [v]stprintf()
+References: <cover.1751747518.git.alx@kernel.org>
+ <2d20eaf1752efefcc23d0e7c5c2311dd5ae252af.1751747518.git.alx@kernel.org>
+ <CAG_fn=UG3O-3_ik0TY_kstxzMVh4Z9noTP1cYfAiWvCnaXQ-6A@mail.gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <CAG_fn=UG3O-3_ik0TY_kstxzMVh4Z9noTP1cYfAiWvCnaXQ-6A@mail.gmail.com>
 
-On Mon, 7 Jul 2025 at 16:39, Alejandro Colomar <alx@kernel.org> wrote:
->
-> Hi Marco,
->
-> On Mon, Jul 07, 2025 at 09:44:09AM +0200, Marco Elver wrote:
-> > On Mon, 7 Jul 2025 at 07:06, Alejandro Colomar <alx@kernel.org> wrote:
-> > >
-> > > While doing this, I detected some anomalies in the existing code:
-> > >
-> > > mm/kfence/kfence_test.c:
-> > >
-> > >         -  The last call to scnprintf() did increment 'cur', but it's
-> > >            unused after that, so it was dead code.  I've removed the dead
-> > >            code in this patch.
-> >
-> > That was done to be consistent with the other code for readability,
-> > and to be clear where the next bytes should be appended (if someone
-> > decides to append more). There is no runtime dead code, the compiler
-> > optimizes away the assignment. But I'm indifferent, so removing the
-> > assignment is fine if you prefer that.
->
-> Yeah, I guessed that might be the reason.  I'm fine restoring it if you
-> prefer it.  I tend to use -Wunused-but-set-variable, but if it is not
-> used here and doesn't trigger, I guess it's fine to keep it.
+Hi Alexander,
 
-Feel free to make it warning-free, I guess that's useful.
+On Mon, Jul 07, 2025 at 11:47:43AM +0200, Alexander Potapenko wrote:
+> > +/**
+> > + * vseprintf - Format a string and place it in a buffer
+> > + * @p: The buffer to place the result into
+> > + * @end: A pointer to one past the last character in the buffer
+> > + * @fmt: The format string to use
+> > + * @args: Arguments for the format string
+> > + *
+> > + * The return value is a pointer to the trailing '\0'.
+> > + * If @p is NULL, the function returns NULL.
+> > + * If the string is truncated, the function returns NULL.
+> > + *
+> > + * If you're not already dealing with a va_list consider using seprint=
+f().
+> > + *
+> > + * See the vsnprintf() documentation for format string extensions over=
+ C99.
+> > + */
+> > +char *vseprintf(char *p, const char end[0], const char *fmt, va_list a=
+rgs)
+> > +{
+> > +       int len;
+> > +
+> > +       if (unlikely(p =3D=3D NULL))
+> > +               return NULL;
+> > +
+> > +       len =3D vstprintf(p, end - p, fmt, args);
+>=20
+> It's easy to imagine a situation in which `end` is calculated from the
+> user input and may overflow.
+> Maybe we can add a check for `end > p` to be on the safe side?
 
-> > Did you run the tests? Do they pass?
->
-> I don't know how to run them.  I've only built the kernel.  If you point
-> me to instructions on how to run them, I'll do so.  Thanks!
+That would technically be already UB at the moment you hold the 'end'
+pointer, so the verification should in theory happen much earlier.
 
-Should just be CONFIG_KFENCE_KUNIT_TEST=y -- then boot kernel and
-check that the test reports "ok".
+However, if we've arrived here with an overflown 'end', the safety is in
+vsnprintf(), which has
 
-Thanks,
--- marco
+        /* Reject out-of-range values early.  Large positive sizes are
+           used for unknown buffer sizes. */
+        if (WARN_ON_ONCE(size > INT_MAX))
+                return 0;
+
+The sequence is:
+
+-  vseprintf() calls vstprintf() where end-p =3D> size.
+-  vstprintf() calls vsnprintf() with size.
+-  vsnprintf() would return 0, and the contents of the string are
+   undefined, as we haven't written anything.  It's not even truncated.
+
+Which, indeed, doesn't sound like a safety.  We've reported a successful
+copy of 0 bytes, but we actually failed.
+
+Which BTW is a reminder that this implementation of vsnprintf() seems
+dangerous to me, and not conforming to the standard vsnprintf(3).
+
+Maybe we should do the check in vstprintf() and report an error as
+-E2BIG (which is later translated into NULL by vseprintf()).  This is
+what sized_strscpy() does, so sounds reasonable.  I'll add this test.
+
+Thanks!
+
+
+Have a lovely day!
+Alex
+
+--=20
+<https://www.alejandro-colomar.es/>
+
+--ltlrnmdc5i3ybtlp
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmhr4M4ACgkQ64mZXMKQ
+wqmu/w//WwZs9mMUUpehQAZpcLdKgHxOjWIoVERVVix9JXaMkRjvecmLbMcM09Gq
+VaIcLpSsccjhDCyz1HKOgvnjIXR/s7bDsy13cjIDwQ7LA8dcT15srw5TAFJhdIlB
+LgXQLbewhPidtpcqQBlZavyw2bhL6qhr/1RsI9vaRv6+fpz/TunEP6No1PogIwHB
+jTtats/jSKw+PwMukd2a7ZAuBsuopcP+vehDSgr5C+L6v2bG7adoFaiyZT6w3zLS
+Tp21Q1bZpQGtD2O6dHWcyn+mrr6i5XP/jKT9r0KQP/HEa28uHSEm/R4oi2RDtr7G
+PgJokX5UT8Jfj1YOOebpi0gp30hHEpyWNDPIoLxTqxRYhUja4yJQr//qrSxI++ec
+ZXEr4WNNMFDBiVLSfzan8TSJqxEL2KuexQbk89WfPdUw0xEV5bXbIRdIJAjoEM9o
+ZWpD61Fsk5vhiB++H4vHK7xVKvlbbdydWGr4/gEhw2Fb6TTUeR7yw24aBXjUSvWh
+TyDvLRfKpEy5GDmpzt3goQddiF3T4yP8mrcRXvvnJkyOyqJBX0TsMyLh32zTYoF/
+GvrcWFlZvMYB6HuW470wsTDDmQR4NfMdvlD5S/8gBOsIdmjLOMhyViZgYDsb5S5G
+xkvPd/+crvso450yOEVkbQMRMgQnx2IexlfON3fHYrQZ2EuSNi4=
+=2l/v
+-----END PGP SIGNATURE-----
+
+--ltlrnmdc5i3ybtlp--
 
