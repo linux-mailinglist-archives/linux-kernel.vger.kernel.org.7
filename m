@@ -1,170 +1,160 @@
-Return-Path: <linux-kernel+bounces-719435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14595AFADF3
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 10:02:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FF83AFADEF
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 10:02:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A27417F59F
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 08:02:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 149521888E96
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 08:02:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 198B3289E2D;
-	Mon,  7 Jul 2025 08:02:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8966286412;
+	Mon,  7 Jul 2025 08:02:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="jb3BXnqx"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="h2dBAFzd"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12FA62798EA;
-	Mon,  7 Jul 2025 08:02:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FC35800;
+	Mon,  7 Jul 2025 08:02:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751875353; cv=none; b=D7xULisZ/02+Kj0BY+EcvuRbqrrM01xwfmfSag0st+DIlM9Ij2tLWU8+IAf+Zd2mDfSqvCjtmo5vzeWQd01hxenWJr0KVySUbo8hS7tQzfv2CKca2fFdaWGIdWeucSmKxl0n1Nkkp5oAOcvUpjnWX5buqharYuVq/U0Vo50i+Ik=
+	t=1751875343; cv=none; b=i0wQH9UPaZm5R/v9SHkqfcrQ9sfg7knojD8aejwm9qaTf3pQ5RmhwM7OYxlUiN0gcsdd/+mhC2XtrCamg07SfS2UvTWL6eJ08xcI5patqUUfGTKrtcqRkZuxzSAZGXd2agLi1R/IWye5N92WS2WpCN5jD8tbMYUy4R1RgtYmUi8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751875353; c=relaxed/simple;
-	bh=lARdiQiADgYgkEt5lX0u1z/fVTK6JG75XBExtSpj7e8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uwefKFmL58xN3e2+A0Yk58v4y9NNKFaZZwuHOBUqUbH9G9PhdAuwyWWQk2bT6NiZD9NAbvidKvh/sUXZbSuNeEF1Q3P9E2aD0r2tSIyG7F5wm9o1MqXMYxM0xkusEXOk7ynhbDZyZbh1k6TmpBas6Yf22gwUhqleLMxIlJbe4gM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=jb3BXnqx; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 566ElGFi026476;
-	Mon, 7 Jul 2025 08:02:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=vmhU+FR2k26av2hIZ
-	iV+NNFmRQFDTiIkuVxAjb0IsSQ=; b=jb3BXnqxVUicitAdHvgfSUqNzpKpMXj6b
-	+C6FeogoxevXVHbac2rL5KiC+LG2JNGbiKSJAQ6exqPhU71fm4MmpzRwKDlAU21g
-	p4LutUUXAsfcB/wgfLC1cJ+hltNPcpYdJki+ZUrni+xgw6yM0H5YaYNw7nPWKKdE
-	YptVQbqscHjUk1TJrfPnQMJogWkCmWztK8t5trQgHpT/IHCkw5mdreNUupeiBqK7
-	R+4ma7jywF2VWlrtYVrPRQLPHgTGBO42kX0wZLQrdLbji0X/hbUD/UdAFqWOAyVJ
-	JLZKrXMTW/BS8UQ7TcBzBSlO2bRoqfn+u09RES7/YsJwXYwZzc44w==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47pusrr8sn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 07 Jul 2025 08:02:16 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 5677mxpO004028;
-	Mon, 7 Jul 2025 08:02:16 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47pusrr8sf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 07 Jul 2025 08:02:16 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5674OPID025528;
-	Mon, 7 Jul 2025 08:02:15 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 47qfcnw4kw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 07 Jul 2025 08:02:15 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 56782BNX60359056
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 7 Jul 2025 08:02:11 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0C8412004B;
-	Mon,  7 Jul 2025 08:02:11 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 96CED2004D;
-	Mon,  7 Jul 2025 08:02:08 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.43.94.242])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Mon,  7 Jul 2025 08:02:08 +0000 (GMT)
-From: Aditya Bodkhe <adityab1@linux.ibm.com>
-To: linuxppc-dev@lists.ozlabs.org
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-        maddy@linux.ibm.com, mpe@ellerman.id.au, npiggin@gmail.com,
-        christophe.leroy@csgroup.eu, rostedt@goodmis.org, mhiramat@kernel.org,
-        mark.rutland@arm.com, Hari Bathini <hbathini@linux.ibm.com>,
-        Aditya Bodkhe <adityab1@linux.ibm.com>
-Subject: [PATCH 2/2] powerpc/fprobe: fix updated fprobe for function-graph tracer
-Date: Mon,  7 Jul 2025 13:31:56 +0530
-Message-ID: <20250707080156.64874-2-adityab1@linux.ibm.com>
-X-Mailer: git-send-email 2.50.0
-In-Reply-To: <20250707080156.64874-1-adityab1@linux.ibm.com>
-References: <20250707080156.64874-1-adityab1@linux.ibm.com>
+	s=arc-20240116; t=1751875343; c=relaxed/simple;
+	bh=N7TeHc8uA+dRWRGg8sis7a69LSQxgrglsAuwm+wt4Co=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mXsNl2PuIEtl0yywpBQ9uKrqcbT7xo6B5zCd0z3XXDvtCvFbLkNQTFE6jhPRvARuFVap9lAPGBOvNFRgzPyobLbgmuKhAPp4oWXVMU1e41F8UpevN/QPbVh5BUiTD3YTn943tYbTvNBYDrqTy7N+OmSnLnmF3QLsXqw4QTVX8bk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=h2dBAFzd; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751875342; x=1783411342;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=N7TeHc8uA+dRWRGg8sis7a69LSQxgrglsAuwm+wt4Co=;
+  b=h2dBAFzdP+kHxLVQp+unNgq7+D3QAN2iM9LHf4IuSV9qNAwotP3ngKfN
+   dnVBw+OO4LYD1KmREHARwnV9w1MozMXeOuxARev/OfUS6zKc5CF7wUMvP
+   QNdN6Nw4yfSO+/t/7Ol3jl/MP6vh6LjG/uAErdIpMfx4ytyFXvc5tDZxN
+   6Dnh+2V6h9qLXM8bhTi7v98XdBysIaX+gfNV5/+i+IVt1HQZJrHOnba9I
+   +6e1HURkeT5IqiFVrobqq1XvAvJJiN/okFhvt6YpQZn8ucfgJOH1F/PlI
+   N+mFc6DqvWticLjhkds+9tJ6LxXWxtJvZoAX0SXwVlJYRsg9FeYakTYFJ
+   w==;
+X-CSE-ConnectionGUID: K0UdxFVbQhmxICk1YI54yQ==
+X-CSE-MsgGUID: zcbVEhLyScmp8ulTSWSS4w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11486"; a="65541986"
+X-IronPort-AV: E=Sophos;i="6.16,293,1744095600"; 
+   d="scan'208";a="65541986"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jul 2025 01:02:20 -0700
+X-CSE-ConnectionGUID: VSf3HB/2Qi+d4IAoxJBfJg==
+X-CSE-MsgGUID: rAXXNYSFSwmLSxUNL/u5dQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,293,1744095600"; 
+   d="scan'208";a="154565268"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa006.jf.intel.com with ESMTP; 07 Jul 2025 01:02:08 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id 5DB11182; Mon, 07 Jul 2025 11:02:06 +0300 (EEST)
+Date: Mon, 7 Jul 2025 11:02:06 +0300
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: David Laight <david.laight.linux@gmail.com>
+Cc: Dave Hansen <dave.hansen@intel.com>, Andy Lutomirski <luto@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Ard Biesheuvel <ardb@kernel.org>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>, 
+	Xiongwei Song <xiongwei.song@windriver.com>, Xin Li <xin3.li@intel.com>, 
+	"Mike Rapoport (IBM)" <rppt@kernel.org>, Brijesh Singh <brijesh.singh@amd.com>, 
+	Michael Roth <michael.roth@amd.com>, Tony Luck <tony.luck@intel.com>, 
+	Alexey Kardashevskiy <aik@amd.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Sohil Mehta <sohil.mehta@intel.com>, 
+	Ingo Molnar <mingo@kernel.org>, Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, 
+	Daniel Sneddon <daniel.sneddon@linux.intel.com>, Kai Huang <kai.huang@intel.com>, 
+	Sandipan Das <sandipan.das@amd.com>, Breno Leitao <leitao@debian.org>, 
+	Rick Edgecombe <rick.p.edgecombe@intel.com>, Alexei Starovoitov <ast@kernel.org>, 
+	Hou Tao <houtao1@huawei.com>, Juergen Gross <jgross@suse.com>, 
+	Vegard Nossum <vegard.nossum@oracle.com>, Kees Cook <kees@kernel.org>, Eric Biggers <ebiggers@google.com>, 
+	Jason Gunthorpe <jgg@ziepe.ca>, "Masami Hiramatsu (Google)" <mhiramat@kernel.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Yuntao Wang <ytcoode@gmail.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Tejun Heo <tj@kernel.org>, Changbin Du <changbin.du@huawei.com>, 
+	Huang Shijie <shijie@os.amperecomputing.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Namhyung Kim <namhyung@kernel.org>, Arnaldo Carvalho de Melo <acme@redhat.com>, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org, 
+	linux-mm@kvack.org
+Subject: Re: [PATCHv8 02/17] x86/asm: Introduce inline memcpy and memset
+Message-ID: <eq5h4a5dvlkncthg3lic3go22op2docbhdaolpfwrq2ieai3qo@j3b26mmhf52q>
+References: <20250701095849.2360685-1-kirill.shutemov@linux.intel.com>
+ <20250701095849.2360685-3-kirill.shutemov@linux.intel.com>
+ <49f7c370-1e28-494b-96a9-f45e06ed4631@intel.com>
+ <20250706101342.069b5068@pumpkin>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=Vaj3PEp9 c=1 sm=1 tr=0 ts=686b7f08 cx=c_pps a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17 a=Wb1JkmetP80A:10 a=VnNF1IyMAAAA:8 a=eJdZZeSqwtc_5qrUTOUA:9
-X-Proofpoint-GUID: ATgY4xVqoYy0zFQSa2JxU8rxQcmuDFq3
-X-Proofpoint-ORIG-GUID: _GclW8kBloXE7CtCBkTpiYDakd8G5Bsx
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA3MDA0NCBTYWx0ZWRfX45WWdWiqH+H6 zsEF8g73Ft4aEfhHN2VazVV1jF6hsvDjS3v5B4BiN0/lTYWWqhhHhBhH8OrasTEcVWuUoIwT69c HGauyyVa2URH8NGWcDzv3UoaqI9RP5GABTxxHuv9iUshGWlVWiLhLCbTthzVkjyeD8uZi+hH7ak
- Pg7cYSnEcbdhBherRwW5Pb8bwrXU7fRgpO9ED3YcnMcE3hFghdms5kAsORKC33M7VVUclENsb++ 9/XNHkKmw7sqvvyshmRDMFzuD8Rtm3BVOAlMCBSVPxzlTKFIYar3VOh4CeXqgMa7C9lLltps0yV I3Jx0TAlirwCV1Lu3SYlxZz9mM3EIP3H9VSG6CopYdNi40WGE56BDPZuTlSMWRP+K4dLLkmRCcJ
- B5lt/hC5/KqCIZEWW7Y7h9bv+Lzf9/7y8npoHhZZDA37SblU+KW6s9O02ZcvlZI0uE9WzW/T
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-07_01,2025-07-07_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- mlxlogscore=606 suspectscore=0 clxscore=1015 adultscore=0
- lowpriorityscore=0 impostorscore=0 malwarescore=0 bulkscore=0 mlxscore=0
- spamscore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507070044
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250706101342.069b5068@pumpkin>
 
-From: Hari Bathini <hbathini@linux.ibm.com>
+On Sun, Jul 06, 2025 at 10:13:42AM +0100, David Laight wrote:
+> On Thu, 3 Jul 2025 10:13:44 -0700
+> Dave Hansen <dave.hansen@intel.com> wrote:
+> 
+> > On 7/1/25 02:58, Kirill A. Shutemov wrote:
+> > > Extract memcpy and memset functions from copy_user_generic() and
+> > > __clear_user().
+> > > 
+> > > They can be used as inline memcpy and memset instead of the GCC builtins
+> > > whenever necessary. LASS requires them to handle text_poke.  
+> > 
+> > Why are we messing with the normal user copy functions? Code reuse is
+> > great, but as you're discovering, the user copy code is highly
+> > specialized and not that easy to reuse for other things.
+> > 
+> > Don't we just need a dirt simple chunk of code that does (logically):
+> > 
+> > 	stac();
+> > 	asm("rep stosq...");
+> > 	clac();
+> > 
+> > Performance doesn't matter for text poking, right? It could be stosq or
+> > anything else that you can inline. It could be a for() loop for all I
+> > care as long as the compiler doesn't transform it into some out-of-line
+> > memset. Right?
+> > 
+> 
+> It doesn't even really matter if there is an out-of-line memset.
+> All you need to do is 'teach' objtool it isn't a problem.
 
-Since commit 4346ba160409 ("fprobe: Rewrite fprobe on function-graph
-tracer"), FPROBE depends on HAVE_FUNCTION_GRAPH_FREGS. With previous
-patch adding HAVE_FUNCTION_GRAPH_FREGS for powerpc, FPROBE can be
-enabled on powerpc. But with the commit b5fa903b7f7c ("fprobe: Add
-fprobe_header encoding feature"), asm/fprobe.h header is needed to
-define arch dependent encode/decode macros. The fprobe header MSB
-pattern on powerpc is not 0xf. So, define FPROBE_HEADER_MSB_PATTERN
-expected on powerpc.
+PeterZ was not fan of the idead;
 
-Also, commit 762abbc0d09f ("fprobe: Use ftrace_regs in fprobe exit
-handler") introduced HAVE_FTRACE_REGS_HAVING_PT_REGS for archs that
-have pt_regs in ftrace_regs. Advertise that on powerpc to reuse
-common definitions like ftrace_partial_regs().
+https://lore.kernel.org/all/20241029113611.GS14555@noisy.programming.kicks-ass.net/
 
-Signed-off-by: Hari Bathini <hbathini@linux.ibm.com>
-Signed-off-by: Aditya Bodkhe <adityab1@linux.ibm.com>
----
- arch/powerpc/Kconfig              |  1 +
- arch/powerpc/include/asm/fprobe.h | 12 ++++++++++++
- 2 files changed, 13 insertions(+)
- create mode 100644 arch/powerpc/include/asm/fprobe.h
+> Is this for the boot-time asm-alternatives?
 
-diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-index 9163521bc4b9..2203e4fb64c1 100644
---- a/arch/powerpc/Kconfig
-+++ b/arch/powerpc/Kconfig
-@@ -246,6 +246,7 @@ config PPC
- 	select HAVE_EFFICIENT_UNALIGNED_ACCESS
- 	select HAVE_GUP_FAST
- 	select HAVE_FTRACE_GRAPH_FUNC
-+	select HAVE_FTRACE_REGS_HAVING_PT_REGS
- 	select HAVE_FTRACE_MCOUNT_RECORD
- 	select HAVE_FUNCTION_ARG_ACCESS_API
- 	select HAVE_FUNCTION_DESCRIPTORS	if PPC64_ELF_ABI_V1
-diff --git a/arch/powerpc/include/asm/fprobe.h b/arch/powerpc/include/asm/fprobe.h
-new file mode 100644
-index 000000000000..d64bc28fb3d3
---- /dev/null
-+++ b/arch/powerpc/include/asm/fprobe.h
-@@ -0,0 +1,12 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _ASM_PPC_FPROBE_H
-+#define _ASM_PPC_FPROBE_H
-+
-+#include <asm-generic/fprobe.h>
-+
-+#ifdef CONFIG_64BIT
-+#undef FPROBE_HEADER_MSB_PATTERN
-+#define FPROBE_HEADER_MSB_PATTERN	(PAGE_OFFSET & ~FPROBE_HEADER_MSB_MASK)
-+#endif
-+
-+#endif /* _ASM_PPC_FPROBE_H */
+Not only boot-time. static_branches are switchable at runtime.
+
+> In that case I wonder why a 'low' address is being used?
+> With LASS enabled using a low address on a life kernel would make it
+> harder for another cpu to leverage the writable code page, but
+> that isn't a requirement of LASS.
+
+Because kernel side of address space is shared across all CPU and we don't
+want kernel code to be writable to all CPUs
+
+> If it is being used for later instruction patching you need the
+> very careful instruction sequences and cpu synchronisation.
+> In that case I suspect you need to add conditional stac/clac
+> to the existing patching code (and teach objtool it is all ok).
+
+STAC/CLAC is conditional in text poke on LASS presence on the machine.
+
 -- 
-2.50.0
-
+  Kiryl Shutsemau / Kirill A. Shutemov
 
