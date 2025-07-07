@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-720264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDCACAFB94B
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 18:57:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0987FAFB8EF
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 18:49:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CFB74A7A80
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 16:56:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3DC61AA189E
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 16:49:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2BCA286894;
-	Mon,  7 Jul 2025 16:55:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5425B2264CF;
+	Mon,  7 Jul 2025 16:49:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="yveiteqG"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="KnDPeRdf";
+	dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="etceAG32"
+Received: from mailrelay-egress16.pub.mailoutpod3-cph3.one.com (mailrelay-egress16.pub.mailoutpod3-cph3.one.com [46.30.212.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F6E9255F22;
-	Mon,  7 Jul 2025 16:55:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8102722127A
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 16:49:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.30.212.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751907358; cv=none; b=nDTky3ZoEX4ouWsts2S4OUY/4Mte4B65ES8xrvInlNUJr02KCKQvMVoq8FUtaov96MzRDQtX6Bhw3J4jnHXf5LUqHsSZRpJ2Aq2rD+XD6wc74HH0XQO2AJZyDQgkHSLu7Aze4FrdHbwuCG2SphM631QZ4XPhsSiQtwWeOkOv8Zs=
+	t=1751906959; cv=none; b=X8CUixcBGbe53YJ8CpJgqOqMk5RbRpiPOXUD9Thy7RPgO3qwqbjTUcngv4L80oYjDWlXzxlkIvQlFyKEQno+f2IY6lYxzxRSgj/fwOf17xYJUCxl+QkZCAXXO6bcsOzdD0jHV8sYc5l2+CrPY5WE3+9lB32FbWDp3fzyidZBYJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751907358; c=relaxed/simple;
-	bh=HTYtfIZaU0IISaNC8EoPJlLRQ0RpkF34zxfeQMah8mw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tH7RjmWu9yC+57CYzZ3F494bqzbzwrbXZriOuOrOw/ugdk19CG9eM4txUrPb221p+ldXXHypAWW023oZzYlcWm8UgxCJ1WxDiHboGsmfm0SQuVcaxbLmBL72yJ3waEY9FDHAUxPEXf92KguQe37MNTsw9QxqRT9FUudxCMvyp2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=yveiteqG; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Transfer-Encoding:MIME-Version:References:
-	In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To:Content-Type;
-	bh=FBkOzD22uC8TIZOltlSVNHsJqb3ZyD7/5ACUKJRygzc=; b=yveiteqGRw+GqinEANa2wqFgJC
-	NNpONaZ55YGsw8HuCGIfqEktn/gV9sC16ymuH5WCeG70RYOSpsYsZBHpyNLk9oOp5GgcBNxHc2w7s
-	pfXFhhEavvPZYn7gywwDbQpMhpLu97n0XlUqA8+zBYhyIQy2fVsT3YyNKR+qwbQBk9YNlMzzgsLFk
-	XtcatsDyQqbxq8SlHKfFgiodjFVamhh2mPD8wjDcPQeEFuzMrhahHsKLXtJz0qyzoYv3s3/c280Wz
-	6YwQ/2jtexiXlZWSuMUk8aNJkozqr+++nogYOt6M1+wTZxnt7xp0BKpbitr46Jev5LtQeWLcqA4YN
-	V4iaKzVA==;
-Received: from i53875bf5.versanet.de ([83.135.91.245] helo=localhost.localdomain)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1uYp1y-0004yl-7q; Mon, 07 Jul 2025 18:49:26 +0200
-From: Heiko Stuebner <heiko@sntech.de>
-To: heiko@sntech.de
-Cc: neil.armstrong@linaro.org,
-	quic_jesszhan@quicinc.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	hjc@rock-chips.com,
-	andy.yan@rock-chips.com,
-	andyshrk@163.com,
-	nicolas.frattaroli@collabora.com,
-	dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
+	s=arc-20240116; t=1751906959; c=relaxed/simple;
+	bh=9Yvt7naFGKNgxRNpX6BqHPftkUCGRa72Wyu+8PPM0kY=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=mocnKZKf/oWpSzvOeHpNEUjGq+jK62AF7g3gjGnVqU+VUV3v7HerF1vFtNriECwnESH7aFsjc0Fk7hukLPvMcRIGlL2+b0qATao6EpzVwNrt/MhJKRY97advgBrlusx6c2XcMGGanDbzQmy/7/duW2P1r4xYtMD7uK56L4K0cto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se; spf=none smtp.mailfrom=konsulko.se; dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=KnDPeRdf; dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=etceAG32; arc=none smtp.client-ip=46.30.212.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=konsulko.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1751906956; x=1752511756;
+	d=konsulko.se; s=rsa1;
+	h=content-transfer-encoding:mime-version:references:in-reply-to:message-id:date:
+	 subject:cc:to:from:from;
+	bh=HMcuy67aBnM2gEG1I5gjH0uFFk4qS0eIAy3dUVDgrME=;
+	b=KnDPeRdfn56fvvr9LGU/Paj2H3lxD6C9A15tSvoHAdk/HdGHM6KXOmblV9arts6cJpcR6VHp+jnm6
+	 mljnce99PK/MlLtSPv3b8PpJ3BMuZmYN8u3I/mUfFrW4EI/8woDHQbW9PAEmLb++wn0k0KRkYDclEv
+	 /9Hu9xsPDWa/gpeAZL07lXsJ5TwYaqSd15WoERBcdZ/rhZG5KUwuRVOAUgezAkuy5/jZ8VFL0aZUpO
+	 2nAQq2winyG0qNl9bcVTTC+UR3+eX3WSEUJZaX8aj0zaHlELaRQLdkeLBF/toRK4gNRHgFYrYA2reM
+	 rUkOGv1Z2RiCDXFuMzqSGXOSzDuDKdg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1751906956; x=1752511756;
+	d=konsulko.se; s=ed1;
+	h=content-transfer-encoding:mime-version:references:in-reply-to:message-id:date:
+	 subject:cc:to:from:from;
+	bh=HMcuy67aBnM2gEG1I5gjH0uFFk4qS0eIAy3dUVDgrME=;
+	b=etceAG329BurawTE71FPKlzJkyHlilIJyjx8TU37hcwrImnDr3iERBE0iCbLhqvYW1J6WL5ZwnLNz
+	 7a3pU4HBA==
+X-HalOne-ID: 4fa49f16-5b52-11f0-a4bb-fb5fec76084d
+Received: from localhost.localdomain (host-90-238-19-233.mobileonline.telia.com [90.238.19.233])
+	by mailrelay3.pub.mailoutpod3-cph3.one.com (Halon) with ESMTPSA
+	id 4fa49f16-5b52-11f0-a4bb-fb5fec76084d;
+	Mon, 07 Jul 2025 16:49:14 +0000 (UTC)
+From: Vitaly Wool <vitaly.wool@konsulko.se>
+To: linux-mm@kvack.org
+Cc: akpm@linux-foundation.org,
 	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org
-Subject: [PATCH 13/13] arm64: dts: rockchip: add dm-m10r800-v3s overlay for roc-rk3576-pc
-Date: Mon,  7 Jul 2025 18:49:06 +0200
-Message-ID: <20250707164906.1445288-14-heiko@sntech.de>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250707164906.1445288-1-heiko@sntech.de>
-References: <20250707164906.1445288-1-heiko@sntech.de>
+	Uladzislau Rezki <urezki@gmail.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	rust-for-linux@vger.kernel.org,
+	Vitaly Wool <vitaly.wool@konsulko.se>
+Subject: [PATCH v11 2/4] mm/slub: allow to set node and align in k[v]realloc
+Date: Mon,  7 Jul 2025 18:49:08 +0200
+Message-Id: <20250707164908.631462-1-vitaly.wool@konsulko.se>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20250707164755.631374-1-vitaly.wool@konsulko.se>
+References: <20250707164755.631374-1-vitaly.wool@konsulko.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,181 +77,273 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add DT-overlay for the DM-M10R800-V3S display module when connected to
-the ROC-RK3576-PC board. It contains a bestar,bsd1218-a101kl68 display
-and a Goodix GT911 touchscreen in one enclosed case.
+Reimplement k[v]realloc_node() to be able to set node and
+alignment should a user need to do so. In order to do that while
+retaining the maximal backward compatibility, add
+k[v]realloc_node_align() functions and redefine the rest of API
+using these new ones.
 
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+With that change we also provide the ability for the Rust part of
+the kernel to set node and alignment in its K[v]xxx
+[re]allocations.
+
+Signed-off-by: Vitaly Wool <vitaly.wool@konsulko.se>
 ---
- arch/arm64/boot/dts/rockchip/Makefile         |   5 +
- .../rk3576-roc-pc-dm-m10r800-v3s.dtso         | 134 ++++++++++++++++++
- 2 files changed, 139 insertions(+)
- create mode 100644 arch/arm64/boot/dts/rockchip/rk3576-roc-pc-dm-m10r800-v3s.dtso
+ include/linux/slab.h | 40 ++++++++++++++++++---------
+ mm/slub.c            | 64 ++++++++++++++++++++++++++++++--------------
+ 2 files changed, 71 insertions(+), 33 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/rockchip/Makefile b/arch/arm64/boot/dts/rockchip/Makefile
-index 4bf84622db47..f320dd2b5f6f 100644
---- a/arch/arm64/boot/dts/rockchip/Makefile
-+++ b/arch/arm64/boot/dts/rockchip/Makefile
-@@ -145,6 +145,7 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-wolfvision-pf5-io-expander.dtbo
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3576-armsom-sige5.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3576-evb1-v10.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3576-roc-pc.dtb
-+dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3576-roc-pc-dm-m10r800-v3s.dtbo
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3576-rock-4d.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3582-radxa-e52c.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-armsom-sige7.dtb
-@@ -225,6 +226,10 @@ rk3568-wolfvision-pf5-vz-2-uhd-dtbs := rk3568-wolfvision-pf5.dtb \
- 	rk3568-wolfvision-pf5-display-vz.dtbo \
- 	rk3568-wolfvision-pf5-io-expander.dtbo
+diff --git a/include/linux/slab.h b/include/linux/slab.h
+index d5a8ab98035c..13abcf4ada22 100644
+--- a/include/linux/slab.h
++++ b/include/linux/slab.h
+@@ -465,9 +465,15 @@ int kmem_cache_shrink(struct kmem_cache *s);
+ /*
+  * Common kmalloc functions provided by all allocators
+  */
+-void * __must_check krealloc_noprof(const void *objp, size_t new_size,
+-				    gfp_t flags) __realloc_size(2);
+-#define krealloc(...)				alloc_hooks(krealloc_noprof(__VA_ARGS__))
++void * __must_check krealloc_node_align_noprof(const void *objp, size_t new_size,
++					       unsigned long align,
++					       gfp_t flags, int nid) __realloc_size(2);
++#define krealloc_node_noprof(_p, _s, _f, _n) \
++	krealloc_node_align_noprof(_p, _s, 1, _f, _n)
++#define krealloc_noprof(...)		krealloc_node_noprof(__VA_ARGS__, NUMA_NO_NODE)
++#define krealloc_node_align(...)	alloc_hooks(krealloc_node_align_noprof(__VA_ARGS__))
++#define krealloc_node(...)		alloc_hooks(krealloc_node_noprof(__VA_ARGS__))
++#define krealloc(...)			alloc_hooks(krealloc_noprof(__VA_ARGS__))
  
-+dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3576-roc-pc-dm-m10r800-v3s.dtb
-+rk3576-roc-pc-dm-m10r800-v3s-dtbs := rk3576-roc-pc.dtb \
-+	rk3576-roc-pc-dm-m10r800-v3s.dtbo
+ void kfree(const void *objp);
+ void kfree_sensitive(const void *objp);
+@@ -1041,18 +1047,23 @@ static inline __alloc_size(1) void *kzalloc_noprof(size_t size, gfp_t flags)
+ #define kzalloc(...)				alloc_hooks(kzalloc_noprof(__VA_ARGS__))
+ #define kzalloc_node(_size, _flags, _node)	kmalloc_node(_size, (_flags)|__GFP_ZERO, _node)
+ 
+-void *__kvmalloc_node_noprof(DECL_BUCKET_PARAMS(size, b), gfp_t flags, int node) __alloc_size(1);
+-#define kvmalloc_node_noprof(size, flags, node)	\
+-	__kvmalloc_node_noprof(PASS_BUCKET_PARAMS(size, NULL), flags, node)
++void *__kvmalloc_node_noprof(DECL_BUCKET_PARAMS(size, b), unsigned long align,
++			     gfp_t flags, int node) __alloc_size(1);
++#define kvmalloc_node_align_noprof(_size, _align, _flags, _node)	\
++	__kvmalloc_node_noprof(PASS_BUCKET_PARAMS(_size, NULL), _align, _flags, _node)
++#define kvmalloc_node_noprof(_size, _flags, _node)	\
++	kvmalloc_node_align_noprof(_size, 1, _flags, _node)
++#define kvmalloc_node_align(...)		\
++	alloc_hooks(kvmalloc_node_align_noprof(__VA_ARGS__))
+ #define kvmalloc_node(...)			alloc_hooks(kvmalloc_node_noprof(__VA_ARGS__))
+ 
+-#define kvmalloc(_size, _flags)			kvmalloc_node(_size, _flags, NUMA_NO_NODE)
+-#define kvmalloc_noprof(_size, _flags)		kvmalloc_node_noprof(_size, _flags, NUMA_NO_NODE)
++#define kvmalloc_noprof(...)			kvmalloc_node_noprof(__VA_ARGS__, NUMA_NO_NODE)
++#define kvmalloc(...)				alloc_hooks(kvmalloc_noprof(__VA_ARGS__))
+ #define kvzalloc(_size, _flags)			kvmalloc(_size, (_flags)|__GFP_ZERO)
+ 
+-#define kvzalloc_node(_size, _flags, _node)	kvmalloc_node(_size, (_flags)|__GFP_ZERO, _node)
++#define kvzalloc_node(_s, _f, _n)		kvmalloc_node(_s, (_f)|__GFP_ZERO, _n)
+ #define kmem_buckets_valloc(_b, _size, _flags)	\
+-	alloc_hooks(__kvmalloc_node_noprof(PASS_BUCKET_PARAMS(_size, _b), _flags, NUMA_NO_NODE))
++	alloc_hooks(__kvmalloc_node_noprof(PASS_BUCKET_PARAMS(_size, _b), 1, _flags, NUMA_NO_NODE))
+ 
+ static inline __alloc_size(1, 2) void *
+ kvmalloc_array_node_noprof(size_t n, size_t size, gfp_t flags, int node)
+@@ -1068,13 +1079,16 @@ kvmalloc_array_node_noprof(size_t n, size_t size, gfp_t flags, int node)
+ #define kvmalloc_array_noprof(...)		kvmalloc_array_node_noprof(__VA_ARGS__, NUMA_NO_NODE)
+ #define kvcalloc_node_noprof(_n,_s,_f,_node)	kvmalloc_array_node_noprof(_n,_s,(_f)|__GFP_ZERO,_node)
+ #define kvcalloc_noprof(...)			kvcalloc_node_noprof(__VA_ARGS__, NUMA_NO_NODE)
+-
+ #define kvmalloc_array(...)			alloc_hooks(kvmalloc_array_noprof(__VA_ARGS__))
+ #define kvcalloc_node(...)			alloc_hooks(kvcalloc_node_noprof(__VA_ARGS__))
+ #define kvcalloc(...)				alloc_hooks(kvcalloc_noprof(__VA_ARGS__))
+ 
+-void *kvrealloc_noprof(const void *p, size_t size, gfp_t flags)
+-		__realloc_size(2);
++void *kvrealloc_node_align_noprof(const void *p, size_t size, unsigned long align,
++				  gfp_t flags, int nid) __realloc_size(2);
++#define kvrealloc_node_align(...)		kvrealloc_node_align_noprof(__VA_ARGS__)
++#define kvrealloc_node_noprof(_p, _s, _f, _n)	kvrealloc_node_align_noprof(_p, _s, 1, _f, _n)
++#define kvrealloc_node(...)			alloc_hooks(kvrealloc_node_noprof(__VA_ARGS__))
++#define kvrealloc_noprof(...)			kvrealloc_node_noprof(__VA_ARGS__, NUMA_NO_NODE)
+ #define kvrealloc(...)				alloc_hooks(kvrealloc_noprof(__VA_ARGS__))
+ 
+ extern void kvfree(const void *addr);
+diff --git a/mm/slub.c b/mm/slub.c
+index c4b64821e680..881244c357dd 100644
+--- a/mm/slub.c
++++ b/mm/slub.c
+@@ -4845,7 +4845,7 @@ void kfree(const void *object)
+ EXPORT_SYMBOL(kfree);
+ 
+ static __always_inline __realloc_size(2) void *
+-__do_krealloc(const void *p, size_t new_size, gfp_t flags)
++__do_krealloc(const void *p, size_t new_size, unsigned long align, gfp_t flags, int nid)
+ {
+ 	void *ret;
+ 	size_t ks = 0;
+@@ -4859,6 +4859,20 @@ __do_krealloc(const void *p, size_t new_size, gfp_t flags)
+ 	if (!kasan_check_byte(p))
+ 		return NULL;
+ 
++	/* refuse to proceed if alignment is bigger than what kmalloc() provides */
++	if (!IS_ALIGNED((unsigned long)p, align) || new_size < align)
++		return NULL;
 +
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-edgeble-neu6a-wifi.dtb
- rk3588-edgeble-neu6a-wifi-dtbs := rk3588-edgeble-neu6a-io.dtb \
- 	rk3588-edgeble-neu6a-wifi.dtbo
-diff --git a/arch/arm64/boot/dts/rockchip/rk3576-roc-pc-dm-m10r800-v3s.dtso b/arch/arm64/boot/dts/rockchip/rk3576-roc-pc-dm-m10r800-v3s.dtso
-new file mode 100644
-index 000000000000..2817cc585c3a
---- /dev/null
-+++ b/arch/arm64/boot/dts/rockchip/rk3576-roc-pc-dm-m10r800-v3s.dtso
-@@ -0,0 +1,134 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright (C) 2025 Heiko Stuebner <heiko@sntech.de>
-+ *
-+ * DM-M10R800-V3S display module for ROC-RK3576-PC
-+ * https://en.t-firefly.com/doc/download/303.html
-+ *
-+ * DT-overlay for the DM-M10R800-V3S display module when connected to a
-+ * ROC-RK3576-PC board. It contains a bestar,bsd1218-a101kl68 display
-+ * and a Goodix GT911 touchscreen in one enclosed case.
-+ */
++	/*
++	 * If reallocation is not necessary (e. g. the new size is less
++	 * than the current allocated size), the current allocation will be
++	 * preserved unless __GFP_THISNODE is set. In the latter case a new
++	 * allocation on the requested node will be attempted.
++	 */
++	if (unlikely(flags & __GFP_THISNODE) && nid != NUMA_NO_NODE &&
++		     nid != page_to_nid(vmalloc_to_page(p)))
++		goto alloc_new;
 +
-+/dts-v1/;
-+/plugin/;
-+
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/pinctrl/rockchip.h>
-+#include <dt-bindings/soc/rockchip,vop2.h>
-+
-+&{/} {
-+	backlight: backlight {
-+		compatible = "pwm-backlight";
-+		enable-gpios = <&gpio3 RK_PA2 GPIO_ACTIVE_HIGH>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&mipi_bl_en>;
-+		pwms = <&pwm1_6ch_1 0 50000 1>;
-+	};
-+
-+	vcc_tp: regulator-vcc-tp {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vcc-tp";
-+		regulator-min-microvolt = <3000000>;
-+		regulator-max-microvolt = <3000000>;
-+		vin-supply = <&vcc5v0_device_s0>;
-+	};
-+};
-+
-+&dsi {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	status = "okay";
-+
-+	panel@0 {
-+		compatible = "bestar,bsd1218-a101kl68", "ilitek,ili9881c";
-+		reg = <0>;
-+		backlight = <&backlight>;
-+		power-supply = <&vcc3v3_lcd_s0>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&lcd_reset_l>;
-+		reset-gpios = <&gpio0 RK_PB4 GPIO_ACTIVE_LOW>;
-+
-+		port {
-+			mipi_panel_in: endpoint {
-+				remote-endpoint = <&dsi_out_panel>;
-+			};
-+		};
-+	};
-+};
-+
-+&dsi_in {
-+	dsi_in_vp1: endpoint {
-+		remote-endpoint = <&vp1_out_dsi>;
-+	};
-+};
-+
-+&dsi_out {
-+	dsi_out_panel: endpoint {
-+		remote-endpoint = <&mipi_panel_in>;
-+	};
-+};
-+
-+&i2c0 {
-+	/* GT911 is limited to 400KHz */
-+	clock-frequency = <400000>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c0m1_xfer>;
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	status = "okay";
-+
-+	touchscreen@14 {
-+		compatible = "goodix,gt911";
-+		reg = <0x14>;
-+		interrupt-parent = <&gpio0>;
-+		interrupts = <RK_PC6 IRQ_TYPE_LEVEL_LOW>;
-+		irq-gpios = <&gpio0 RK_PC6 GPIO_ACTIVE_HIGH>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&touch_int>, <&touch_reset>;
-+		reset-gpios = <&gpio0 RK_PD0 GPIO_ACTIVE_HIGH>;
-+		AVDD28-supply = <&vcc_tp>;
-+		VDDIO-supply = <&vcc3v3_lcd_s0>;
-+	};
-+};
-+
-+&mipidcphy {
-+	status = "okay";
-+};
-+
-+&pinctrl {
-+	dsi {
-+		lcd_reset_l: lcd-reset-l {
-+			rockchip,pins = <0 RK_PB4 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+
-+		mipi_bl_en: mipi-bl-en {
-+			rockchip,pins = <3 RK_PA2 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+	};
-+
-+	touch {
-+		touch_int: touch-int {
-+			rockchip,pins = <0 RK_PC6 RK_FUNC_GPIO &pcfg_pull_up>;
-+		};
-+
-+		touch_reset: touch-reset {
-+			rockchip,pins = <0 RK_PD0 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+	};
-+};
-+
-+&pwm1_6ch_1 {
-+	status = "okay";
-+};
-+
-+&vp1 {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+
-+	vp1_out_dsi: endpoint@ROCKCHIP_VOP2_EP_MIPI0 {
-+		reg = <ROCKCHIP_VOP2_EP_MIPI0>;
-+		remote-endpoint = <&dsi_in_vp1>;
-+	};
-+};
+ 	if (is_kfence_address(p)) {
+ 		ks = orig_size = kfence_ksize(p);
+ 	} else {
+@@ -4903,7 +4917,7 @@ __do_krealloc(const void *p, size_t new_size, gfp_t flags)
+ 	return (void *)p;
+ 
+ alloc_new:
+-	ret = kmalloc_node_track_caller_noprof(new_size, flags, NUMA_NO_NODE, _RET_IP_);
++	ret = kmalloc_node_track_caller_noprof(new_size, flags, nid, _RET_IP_);
+ 	if (ret && p) {
+ 		/* Disable KASAN checks as the object's redzone is accessed. */
+ 		kasan_disable_current();
+@@ -4915,10 +4929,12 @@ __do_krealloc(const void *p, size_t new_size, gfp_t flags)
+ }
+ 
+ /**
+- * krealloc - reallocate memory. The contents will remain unchanged.
++ * krealloc_node_align - reallocate memory. The contents will remain unchanged.
+  * @p: object to reallocate memory for.
+  * @new_size: how many bytes of memory are required.
++ * @align: desired alignment.
+  * @flags: the type of memory to allocate.
++ * @nid: NUMA node or NUMA_NO_NODE
+  *
+  * If @p is %NULL, krealloc() behaves exactly like kmalloc().  If @new_size
+  * is 0 and @p is not a %NULL pointer, the object pointed to is freed.
+@@ -4947,7 +4963,8 @@ __do_krealloc(const void *p, size_t new_size, gfp_t flags)
+  *
+  * Return: pointer to the allocated memory or %NULL in case of error
+  */
+-void *krealloc_noprof(const void *p, size_t new_size, gfp_t flags)
++void *krealloc_node_align_noprof(const void *p, size_t new_size, unsigned long align,
++				 gfp_t flags, int nid)
+ {
+ 	void *ret;
+ 
+@@ -4956,13 +4973,13 @@ void *krealloc_noprof(const void *p, size_t new_size, gfp_t flags)
+ 		return ZERO_SIZE_PTR;
+ 	}
+ 
+-	ret = __do_krealloc(p, new_size, flags);
++	ret = __do_krealloc(p, new_size, align, flags, nid);
+ 	if (ret && kasan_reset_tag(p) != kasan_reset_tag(ret))
+ 		kfree(p);
+ 
+ 	return ret;
+ }
+-EXPORT_SYMBOL(krealloc_noprof);
++EXPORT_SYMBOL(krealloc_node_align_noprof);
+ 
+ static gfp_t kmalloc_gfp_adjust(gfp_t flags, size_t size)
+ {
+@@ -4993,6 +5010,7 @@ static gfp_t kmalloc_gfp_adjust(gfp_t flags, size_t size)
+  * failure, fall back to non-contiguous (vmalloc) allocation.
+  * @size: size of the request.
+  * @b: which set of kmalloc buckets to allocate from.
++ * @align: desired alignment.
+  * @flags: gfp mask for the allocation - must be compatible (superset) with GFP_KERNEL.
+  * @node: numa node to allocate from
+  *
+@@ -5005,19 +5023,22 @@ static gfp_t kmalloc_gfp_adjust(gfp_t flags, size_t size)
+  *
+  * Return: pointer to the allocated memory of %NULL in case of failure
+  */
+-void *__kvmalloc_node_noprof(DECL_BUCKET_PARAMS(size, b), gfp_t flags, int node)
++void *__kvmalloc_node_noprof(DECL_BUCKET_PARAMS(size, b), unsigned long align,
++			     gfp_t flags, int node)
+ {
+ 	void *ret;
+ 
+ 	/*
+ 	 * It doesn't really make sense to fallback to vmalloc for sub page
+-	 * requests
++	 * requests and small alignments
+ 	 */
+-	ret = __do_kmalloc_node(size, PASS_BUCKET_PARAM(b),
+-				kmalloc_gfp_adjust(flags, size),
+-				node, _RET_IP_);
+-	if (ret || size <= PAGE_SIZE)
+-		return ret;
++	if (size >= align) {
++		ret = __do_kmalloc_node(size, PASS_BUCKET_PARAM(b),
++					kmalloc_gfp_adjust(flags, size),
++					node, _RET_IP_);
++		if (ret || size <= PAGE_SIZE)
++			return ret;
++	}
+ 
+ 	/* non-sleeping allocations are not supported by vmalloc */
+ 	if (!gfpflags_allow_blocking(flags))
+@@ -5035,7 +5056,7 @@ void *__kvmalloc_node_noprof(DECL_BUCKET_PARAMS(size, b), gfp_t flags, int node)
+ 	 * about the resulting pointer, and cannot play
+ 	 * protection games.
+ 	 */
+-	return __vmalloc_node_range_noprof(size, 1, VMALLOC_START, VMALLOC_END,
++	return __vmalloc_node_range_noprof(size, align, VMALLOC_START, VMALLOC_END,
+ 			flags, PAGE_KERNEL, VM_ALLOW_HUGE_VMAP,
+ 			node, __builtin_return_address(0));
+ }
+@@ -5079,10 +5100,12 @@ void kvfree_sensitive(const void *addr, size_t len)
+ EXPORT_SYMBOL(kvfree_sensitive);
+ 
+ /**
+- * kvrealloc - reallocate memory; contents remain unchanged
++ * kvrealloc_node_align - reallocate memory; contents remain unchanged
+  * @p: object to reallocate memory for
+  * @size: the size to reallocate
++ * @align: desired alignment
+  * @flags: the flags for the page level allocator
++ * @nid: NUMA node id
+  *
+  * If @p is %NULL, kvrealloc() behaves exactly like kvmalloc(). If @size is 0
+  * and @p is not a %NULL pointer, the object pointed to is freed.
+@@ -5100,17 +5123,18 @@ EXPORT_SYMBOL(kvfree_sensitive);
+  *
+  * Return: pointer to the allocated memory or %NULL in case of error
+  */
+-void *kvrealloc_noprof(const void *p, size_t size, gfp_t flags)
++void *kvrealloc_node_align_noprof(const void *p, size_t size, unsigned long align,
++				  gfp_t flags, int nid)
+ {
+ 	void *n;
+ 
+ 	if (is_vmalloc_addr(p))
+-		return vrealloc_noprof(p, size, flags);
++		return vrealloc_node_align_noprof(p, size, align, flags, nid);
+ 
+-	n = krealloc_noprof(p, size, kmalloc_gfp_adjust(flags, size));
++	n = krealloc_node_align_noprof(p, size, align, kmalloc_gfp_adjust(flags, size), nid);
+ 	if (!n) {
+ 		/* We failed to krealloc(), fall back to kvmalloc(). */
+-		n = kvmalloc_noprof(size, flags);
++		n = kvmalloc_node_align_noprof(size, align, flags, nid);
+ 		if (!n)
+ 			return NULL;
+ 
+@@ -5126,7 +5150,7 @@ void *kvrealloc_noprof(const void *p, size_t size, gfp_t flags)
+ 
+ 	return n;
+ }
+-EXPORT_SYMBOL(kvrealloc_noprof);
++EXPORT_SYMBOL(kvrealloc_node_align_noprof);
+ 
+ struct detached_freelist {
+ 	struct slab *slab;
 -- 
-2.47.2
+2.39.2
 
 
