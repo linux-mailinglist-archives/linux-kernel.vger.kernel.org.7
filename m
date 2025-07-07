@@ -1,134 +1,199 @@
-Return-Path: <linux-kernel+bounces-720225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C00E8AFB8C7
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 18:39:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8463BAFB8CA
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 18:39:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C87918815AF
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 16:39:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5AA016C775
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 16:39:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F24022D79F;
-	Mon,  7 Jul 2025 16:38:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19380221FBC;
+	Mon,  7 Jul 2025 16:39:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="hFrg47bn"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="scGorbum"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 652AE2248A8
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 16:38:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E67919F461;
+	Mon,  7 Jul 2025 16:39:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751906319; cv=none; b=ea+rfmPTYfY8mH3+kGkvXPmWMRZDP9LVyWrYY+oMwaD30DBkL0l6p2B4rDIT9aecRvUveW23TAEu1ih/1GzOGRMLp2xhbsa6F+uc60gtT0j0FXa+E7r3jD+cm3eJ7CLRlUuA8sHIMU2hcMTXL+MyU3IzbgxTuthSbLDOMT19ME4=
+	t=1751906383; cv=none; b=kBZI2Z/+tfuWiPYP2zDp4Xz8XaWJUhgOPwFkxo06hmEYtNMu4ibAb0Y5GtCeSh+d5b5y6yyNr99rragT4KtwUTgmsUoYOAkH5b/R+qDYsvwztCH/RKUHC18Sh+jLSB0lFvmp6MTtvYF6vhHVgPOe3Th+U0rr3F9zqcl6B20agv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751906319; c=relaxed/simple;
-	bh=S3amwlujUkc5UJJ8aquZiBQnf83DeXQQ7Cd8Fx38bII=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uyPMtBqwZJtJ7NvpCA3kUIQG7DgKB9G68kj/xKo3fyIh9hBlh4R61ClEtnzqSgHmc9RAdLJ8eX6pNwJeZSW5ysonOWiMN4stkEjk4Lfo6g0euHIgP/CmoUkU2Ebc9wKHbwJrYAwAX9vEtjqlOji1J6hO40D0EAuYabGfpePGifM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=hFrg47bn; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4538bc52a8dso26542105e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 09:38:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1751906316; x=1752511116; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=S3amwlujUkc5UJJ8aquZiBQnf83DeXQQ7Cd8Fx38bII=;
-        b=hFrg47bn3oGSaJ8TYTi7uFYP/TLLKVuEJD9wlrnmatFoEpq66zXTXHMy31OkBU8Nz3
-         CkS+80t+iBMsXee3jg+xAyaix7dwDiczlWc8GvrLSBegL7UnPYEDq2WNvNaBWcA+PgOe
-         3Vh5cgke8csovGL4d3wG1/dgxywxJhNy+l2kCiZMHJis6FMEYW6mK1nBddAMt5ST6pkl
-         nOXbMau0aKgrWNvdOP1HFOu0SGdo8q2n2OH56EqrYDBn/aD5attPtjK0AkL1vuo+YPOB
-         Gs1NN5urCK9MD2n+iOwlsbWv/7CFS2Kh/eN9cRmR9negd8fe0hTKV8es9kQa9PkVTAd1
-         jQ0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751906316; x=1752511116;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=S3amwlujUkc5UJJ8aquZiBQnf83DeXQQ7Cd8Fx38bII=;
-        b=FJhG+lu56n6x9lAVlmiofz4a/5uPWLALzHvRiMDxko8ewWDERwqdqNMWv4s2pKA3Mh
-         o42ojDg/n8VxTo9oCKqptHb/SeX5X5ErjAv7ajVGPhZ2T4pfsIWlmxIH6IkSUDbvGICo
-         1+RKRoUgX6ZUEsuli1CMDejehPFVlwka//EwmAmC8BD7Tk0waBLltwwotxetEkNmAdGI
-         7WqBh3s6aeIFWpsOxh8JWl395ngl2D5oXFi+j6Q22CuMCCKWT8hlGVveR1m3mqymn6hE
-         92J+7X3t+gCJTeFJC/RcgW+1T6x57uvGR79mk0NmtYHCVOP5hEqJTA9IQQM/9gKRGN29
-         cdfg==
-X-Forwarded-Encrypted: i=1; AJvYcCWRvBM5JCVVQJvV+6691eKOpeYsXOC8+MWqJzTi9CxhRkJLzBP+EsG7bK4hEqVhkYR482+XDD8w9gIHkfg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwyKkRmx4vv/93fjQzl2/HX8wFErbB5u16s1bUwYK176Xc1XLfr
-	Cw9prO+0blKaEzIYX2LraawKwgOWjlskPScy/chy7rWe9qF/BqeZtEA98uHpAsknSoM=
-X-Gm-Gg: ASbGnctHschmggd3+ht3w6RBnXK9YvSCObQwGNneCtO61sajvMJRm4c+ovB87+R4mZ1
-	GPkZ49WeD378LYT0KLhZ8iZiq4oRI2+Kbko+4CVXuOBxCaOfsQ8vW5uZMen9kIWSxvn0odEu7ea
-	PWUAbpME5rgsYoBVqZip1WofDHWRGQcEmKeq6ul6zaMAn4kalsVpJepVL4t0dFlyzqFqr0J4vua
-	STY0WHLIqN606Tq4oMa3aaBQjuJ3AphTCJaJ9bwSX9I1gXQNmKURYCNr+vdmmLy49mdu7YJ4wh5
-	JmSnqUIfwDVCu+iW6/Jvl3A1dmamyK47aQ0bFSM3ukY89nBgxMNJwq8lzv0hJEDh
-X-Google-Smtp-Source: AGHT+IEcytjspScMaqVQ9Um6yyQbzDnCUR35ZFequhb17ooZKv5F3UDEUBaebbJ6Kjo7xHpVLJe9MA==
-X-Received: by 2002:a05:600c:530c:b0:450:d367:c385 with SMTP id 5b1f17b1804b1-454cccb93afmr3367165e9.16.1751906315548;
-        Mon, 07 Jul 2025 09:38:35 -0700 (PDT)
-Received: from blackdock.suse.cz ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454a997ae2esm145978095e9.9.2025.07.07.09.38.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Jul 2025 09:38:35 -0700 (PDT)
-Date: Mon, 7 Jul 2025 18:38:33 +0200
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: Chen Ridong <chenridong@huaweicloud.com>
-Cc: peterz@infradead.org, rafael@kernel.org, pavel@kernel.org, 
-	timvp@google.com, tj@kernel.org, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, lujialin4@huawei.com, chenridong@huawei.com
-Subject: Re: [PATCH next] sched,freezer: prevent tasks from escaping being
- frozen
-Message-ID: <3omgn6ualvnncessgeuc27nmrqmn7ufjvuqfy7v3ppc6irp5xg@unvxbtff3qor>
-References: <20250703133427.3301899-1-chenridong@huaweicloud.com>
- <n23vsu6y6cjf2vwdbfcjl2mj7venvpzpblncoa7adn3q5r4lph@qsfa3deqtamc>
- <f4c4f465-72b9-4682-99e6-c249ecab8572@huaweicloud.com>
+	s=arc-20240116; t=1751906383; c=relaxed/simple;
+	bh=4opHbQCA27MNwwMHt2GLaUhExkIEeheJ7fdPOa2b83E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gs7VyzPzNu83V+E9jHAWBRAnRpthuyfuTHvphNTgOURVkYz2lw0CcGo/x0jT2s/VHwW+dS9AH8cnZrZgaY9vQr4iBHnc45eNmEFdjWM19YcDsiN11rDyAjRaHca6BSB1BwIgikE8iwyjZ4FjBffoZCLvKgck1jj8AI16ksKO6vk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=scGorbum; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E185BC4CEF5;
+	Mon,  7 Jul 2025 16:39:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751906382;
+	bh=4opHbQCA27MNwwMHt2GLaUhExkIEeheJ7fdPOa2b83E=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=scGorbumwG/w5BCteMs02zO2ME1r0zgNEOd/K5MuA2Nuh8cwm3rHPi37uLXtiZQEa
+	 TyqTq1fRLLqnTkW5pIx1Ue/i4wpql4uMxxvxRHMo4PGE34yClfcHaf5+rtgLo3rMTE
+	 TYIYPYTQWcYPEiVU5OuKbVwZ5L+cRTG0jVqujOvNJ+YJPYnrZtIi7VYiM7x3I0NV1o
+	 32GdehvHpNCsKPmn7p9JOoxPVbcHHQLsrMNrVM7Bm4VeGEV+DU6/CZHsdrpBKphvyF
+	 IXHy0x6bqGQJ3zQVLcFEPLgD1/BRJmXkl6wcNK7V/DkOY03DGyb60JlfiGuagtNoui
+	 DdxQsteJ4OyaQ==
+Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-73caf1152bdso1462056a34.3;
+        Mon, 07 Jul 2025 09:39:42 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUDEd0HJv34ihU60bjw9wQ7swtiI6XBd9XlVOgLVWM9iZ4XfMlZV9gGjgOyRPCFIoqc4UZwJtZi1cP6eULB@vger.kernel.org, AJvYcCUipPBxF2Yk5OGM2T2eg3bFNg8ikUYMAr1vELBC4PWxN8BGqfkkEsi+rVNgYKUsmla0eTt86Sb7F5K/@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/MkU4WmUeEtJyD0RdwCFuI/OjUKZftIYBDJgWeZOvaABiQwgF
+	LxCCQAO8VlbWX5wBSRu9zSHJ9vJVtwBL1ubsHFrssm7oAA6jzRTNW2nK1EHQgnshbdmK2PlNKsv
+	8/sB+3/gQFzCZXNAw4bWO706Xp3XnN6Y=
+X-Google-Smtp-Source: AGHT+IHQiZbWmqIr7meT9HgdbspOEOBUFep8B2XUsJE3NGIv1r2zW+bY3ecngGD5T/1zU964WypJf0QnkuJinHiMDlU=
+X-Received: by 2002:a05:6830:6204:b0:727:24ab:3e4 with SMTP id
+ 46e09a7af769-73cd63b441amr9319a34.9.1751906382139; Mon, 07 Jul 2025 09:39:42
+ -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="pedi25sm2ripaoax"
-Content-Disposition: inline
-In-Reply-To: <f4c4f465-72b9-4682-99e6-c249ecab8572@huaweicloud.com>
+References: <20250704014104.82524-1-qiyuzhu2@amd.com>
+In-Reply-To: <20250704014104.82524-1-qiyuzhu2@amd.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 7 Jul 2025 18:39:30 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0ixL985XeTPbgwC3iedZgHK_TqFOejAdQse5b4dOTBjXw@mail.gmail.com>
+X-Gm-Features: Ac12FXzp7GxbYkoj8EYqqFGXxvBIn-N0Ogs6irefqp5XgWMBIAnPm5Egvf8ZIC4
+Message-ID: <CAJZ5v0ixL985XeTPbgwC3iedZgHK_TqFOejAdQse5b4dOTBjXw@mail.gmail.com>
+Subject: Re: [PATCH V6] ACPI:PRM: Reduce unnecessary printing to avoid the
+ worries of regular users
+To: Zhu Qiyu <qiyuzhu2@amd.com>
+Cc: rafael@kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, Jul 4, 2025 at 3:41=E2=80=AFAM Zhu Qiyu <qiyuzhu2@amd.com> wrote:
+>
+> Commit 088984c8d54c ("ACPI: PRM: Find EFI_MEMORY_RUNTIME block for PRM
+> handler and context") introduces non-essential printing "Failed to find
+> VA for GUID: xxxx, PA: 0x0" which causes unnecessary worry for regular
+> users.
+>
+> Refer to PRM Spec Section 4.1.2[1], both static data buffer address
+> and ACPI parameter buffer address may be NULL if they are not needed.
+> So there is no need to print out "Failed to find VA ... " to intimidate
+> regular users in that case.
+>
+> Link: https://uefi.org/sites/default/files/resources/Platform%20Runtime%2=
+0Mechanism%20-%20with%20legal%20notice.pdf # [1]
+>
+> Signed-off-by: Zhu Qiyu <qiyuzhu2@amd.com>
+> ---
+> Previous versions can be found at:
+> v1: https://lore.kernel.org/linux-acpi/20250427075317.42687-1-qiyuzhu2@am=
+d.com/
+> v2: https://lore.kernel.org/linux-acpi/20250512010620.142155-1-qiyuzhu2@a=
+md.com/#r
+> v3: https://lore.kernel.org/linux-acpi/20250512011833.142204-1-qiyuzhu2@a=
+md.com/t/#u
+> v4: https://lore.kernel.org/linux-acpi/20250518062507.218855-1-qiyuzhu2@a=
+md.com/
+> v5: https://lore.kernel.org/all/20250527024259.56996-1-qiyuzhu2@amd.com/
+>
+> Changes in v2:
+>  - Reduce the code changes.
+> Changes in v3:
+>  - Fixed title letters not showing.
+> Changes in v4:
+>  - Only print the necessary warnings.
+> Changes in v5:
+>  - Add more cases of print warnings.
+> Changes in v6:
+> -  Adjust the code comments.
+>
+>  drivers/acpi/prmt.c | 28 ++++++++++++++++++++++++++--
+>  1 file changed, 26 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/acpi/prmt.c b/drivers/acpi/prmt.c
+> index e549914a636c..d7857ca8fb4c 100644
+> --- a/drivers/acpi/prmt.c
+> +++ b/drivers/acpi/prmt.c
+> @@ -85,8 +85,6 @@ static u64 efi_pa_va_lookup(efi_guid_t *guid, u64 pa)
+>                 }
+>         }
+>
+> -       pr_warn("Failed to find VA for GUID: %pUL, PA: 0x%llx", guid, pa)=
+;
+> -
+>         return 0;
+>  }
+>
+> @@ -154,13 +152,39 @@ acpi_parse_prmt(union acpi_subtable_headers *header=
+, const unsigned long end)
+>                 guid_copy(&th->guid, (guid_t *)handler_info->handler_guid=
+);
+>                 th->handler_addr =3D
+>                         (void *)efi_pa_va_lookup(&th->guid, handler_info-=
+>handler_address);
+> +               /*
+> +                * Print a warning message if handler_addr is zero which =
+is not expected to
+> +                * ever happen.
+> +                */
+> +               if (unlikely(!th->handler_addr))
+> +                       pr_warn("Failed to find VA of handler for GUID: %=
+pUL, PA: 0x%llx",
+> +                               &th->guid, handler_info->handler_address)=
+;
+>
+>                 th->static_data_buffer_addr =3D
+>                         efi_pa_va_lookup(&th->guid, handler_info->static_=
+data_buffer_address);
+> +               /*
+> +                * According to the PRM specification, static_data_buffer=
+_address can be zero,
+> +                * so avoid printing a warning message in that case.
+> +                * If the static_data_buffer_address passed to efi_pa_va_=
+lookup() is nonzero
+> +                * and the return value is zero, print a warning message =
+in that case.
+> +                */
+> +               if (unlikely(!th->static_data_buffer_addr && handler_info=
+->static_data_buffer_address))
+> +                       pr_warn("Failed to find VA of static data buffer =
+for GUID: %pUL, PA: 0x%llx",
+> +                               &th->guid, handler_info->static_data_buff=
+er_address);
+>
+>                 th->acpi_param_buffer_addr =3D
+>                         efi_pa_va_lookup(&th->guid, handler_info->acpi_pa=
+ram_buffer_address);
+>
+> +               /*
+> +                * According to the PRM specification, acpi_param_buffer_=
+address can be zero,
+> +                * so avoid printing a warning message in that case.
+> +                * If the acpi_param_buffer_address passed to efi_pa_va_l=
+ookup() is nonzero and
+> +                * the return value is zero, print a warning message in t=
+hat case.
+> +                */
+> +               if (unlikely(!th->acpi_param_buffer_addr && handler_info-=
+>acpi_param_buffer_address))
+> +                       pr_warn("Failed to find VA of acpi param buffer f=
+or GUID: %pUL, PA: 0x%llx",
+> +                               &th->guid, handler_info->acpi_param_buffe=
+r_address);
+> +
+>         } while (++cur_handler < tm->handler_count && (handler_info =3D g=
+et_next_handler(handler_info)));
+>
+>         return 0;
+>
+> base-commit: a5806cd506af5a7c19bcd596e4708b5c464bfd21
+> --
 
---pedi25sm2ripaoax
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Subject: Re: [PATCH next] sched,freezer: prevent tasks from escaping being
- frozen
-MIME-Version: 1.0
+Applied as 6.17 material with some edits in the subject and changelog,
+and in the new code comments added by the patch.
 
-On Fri, Jul 04, 2025 at 11:02:52AM +0800, Chen Ridong <chenridong@huaweicloud.com> wrote:
-> Regarding your question: Did you mean that the task was frozen, received
-> another signal to wake up, but should have remained frozen instead of
-> entering the running state?
-
-My response was a knee-jerk after seeing the move inside the loop.
-Since the task is in __refrigerator(), it would've been already frozen,
-so the 2nd (and more) checks should be OK and it wouldn't escape
-freezing despite the concurrent reader.
-
-A task in __refrigerator() shouldn't be woken up by a signal, no? So
-your original conservative fix might have been sufficient afterall.
-(A conservative fix is what I'd strive for here, given it's the legacy
-cgroup freezer.)
-
-Thanks,
-Michal
-
---pedi25sm2ripaoax
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRCE24Fn/AcRjnLivR+PQLnlNv4CAUCaGv4BwAKCRB+PQLnlNv4
-CN48AP9CGbMaWlet0JJRWDJPP8tZt7TWUthxoNxXutxy8cUFdgD/Rtja2l4GZrb/
-19ugZNDMwDQO+gArFD3bC+aIChoBogg=
-=5Duw
------END PGP SIGNATURE-----
-
---pedi25sm2ripaoax--
+Thanks!
 
