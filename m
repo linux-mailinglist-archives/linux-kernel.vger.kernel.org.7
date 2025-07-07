@@ -1,180 +1,119 @@
-Return-Path: <linux-kernel+bounces-719451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30A13AFAE27
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 10:07:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2573BAFADF5
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 10:03:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B6341AA2005
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 08:06:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F318B1AA0A7D
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 08:03:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D50A293C78;
-	Mon,  7 Jul 2025 08:03:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A348B28A1F3;
+	Mon,  7 Jul 2025 08:03:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="R9JeVgnF"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="X9Ev8Ni8"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9419C29346F;
-	Mon,  7 Jul 2025 08:03:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B966800
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 08:03:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751875426; cv=none; b=Gz1aCjM2RKRqistEYyhDi+JQeZ3sD5DY8su/p7ZiZhwMAS6/8Dsm6t5NMgNhgbAHdAFqrI81gbh/XtblDMV+N/fyYMPrybdq2/BK7HY4VnyFpSO0AiemwNKUgT04P2ULVvyzumhI6ODmBM3lbkY8KzLfx3hFKlV4sV4FdpHfNDg=
+	t=1751875403; cv=none; b=mlT+hirhAAFgHTVC3R280wIQkznAOxzvployVVqmQQd765zejKZasxSHik6ID1yvhui0+PlovpBiN69c0Z6FHhb5Q0JC6dV5YnhhDtODYJxedcdTJ10oLaTmYpZfafiOrGnGhy9bXt4+mim/At/8OR26Kpuks0hWucAcYjnFd/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751875426; c=relaxed/simple;
-	bh=zmJ0SsTgrIsGwH/KhdgcrCgX4qTp57IuWr6AQEqkrvM=;
+	s=arc-20240116; t=1751875403; c=relaxed/simple;
+	bh=WQE2kv3HQ0gTQZ4sJoK5QnluNwdWhUSE4VaZEjb6gBg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gXRcjzLAdMpLnUaCJ+2b2oB+/qPxXCvQRmCQWqjUUQYQAK4GG8Ua8SgnztAUwse/IRVIEYqfWe25/1d4tpofQuW8SSWbB1GD2m2w6xcW6Z5w3kEsnb82u7hRsS+KIyaL6azRDz+SpMEqFBuW6+abMQkZhffcc+IuBgCx6xXbSMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.helo=mgamail.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=R9JeVgnF; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.helo=mgamail.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751875425; x=1783411425;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=zmJ0SsTgrIsGwH/KhdgcrCgX4qTp57IuWr6AQEqkrvM=;
-  b=R9JeVgnF33ux6dCFjWbHNtmVyF+ePU3No+J2GfIHLYxO8DOE2uf6GMM2
-   w7iYzPtzbAXRcQ36ZAj0Dg2saiEYod8rBgL6U25s7kg4jAnnxyVNIKtM/
-   kB+V/8ZK/BldukDsYoqjMOOVr/hYykz1o+YsinBfNcV3rNJcvyM1Ib+Th
-   pjjpI2DRSxaiV1KvPx2FpczOT/hx1cgy0nWL3qZc4IXhknmx81z0uYE5w
-   QEUBtJfKxmmrwep8TL9VJidAW1awA2NuOEv9+2hSPmbdkz9ClFwEb1H3R
-   TtOeSpyrx9gzX8yD4DcfCwRvD/deBRceH8otFx9cOjxk+BpVZNWPkLzC7
-   Q==;
-X-CSE-ConnectionGUID: jGf0D+X+Tn6S3Lda1D+/Hw==
-X-CSE-MsgGUID: OuNsnhRdTna6X2RmOVyZ6Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11486"; a="57891170"
-X-IronPort-AV: E=Sophos;i="6.16,293,1744095600"; 
-   d="scan'208";a="57891170"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jul 2025 01:03:43 -0700
-X-CSE-ConnectionGUID: 2AH2cPTGSACdcl2bkvyuZQ==
-X-CSE-MsgGUID: rhjMIjipQl++rGKx2/3w4w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,293,1744095600"; 
-   d="scan'208";a="186171990"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa002.jf.intel.com with ESMTP; 07 Jul 2025 01:03:31 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id 6D8F4BC2; Mon, 07 Jul 2025 11:03:18 +0300 (EEST)
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Andy Lutomirski <luto@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Xiongwei Song <xiongwei.song@windriver.com>,
-	Xin Li <xin3.li@intel.com>,
-	"Mike Rapoport (IBM)" <rppt@kernel.org>,
-	Brijesh Singh <brijesh.singh@amd.com>,
-	Michael Roth <michael.roth@amd.com>,
-	Tony Luck <tony.luck@intel.com>,
-	Alexey Kardashevskiy <aik@amd.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Jonathan Corbet <corbet@lwn.net>,
-	Sohil Mehta <sohil.mehta@intel.com>,
-	Ingo Molnar <mingo@kernel.org>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	Daniel Sneddon <daniel.sneddon@linux.intel.com>,
-	Kai Huang <kai.huang@intel.com>,
-	Sandipan Das <sandipan.das@amd.com>,
-	Breno Leitao <leitao@debian.org>,
-	Rick Edgecombe <rick.p.edgecombe@intel.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Hou Tao <houtao1@huawei.com>,
-	Juergen Gross <jgross@suse.com>,
-	Vegard Nossum <vegard.nossum@oracle.com>,
-	Kees Cook <kees@kernel.org>,
-	Eric Biggers <ebiggers@google.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Yuntao Wang <ytcoode@gmail.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Tejun Heo <tj@kernel.org>,
-	Changbin Du <changbin.du@huawei.com>,
-	Huang Shijie <shijie@os.amperecomputing.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Arnaldo Carvalho de Melo <acme@redhat.com>,
-	linux-doc@vger.kernel.org,
+	 MIME-Version:Content-Type; b=BW1HNpbfQTH4LyjXB5aQWK0El1kbw3KrBIcCptqDTsrSVGuGFW6inL28ytfIa3aFJTrQphhsqiQZKciWwtVi8ZNe/j+qwDh6rCfkDKr13dWMha+t7b7eNmS8xocbtWEaklE2bCmdxdUVnOO/mGn09zeF0prR1UYkpN+h/VwDl2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=X9Ev8Ni8; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3a6cd1a6fecso2734093f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 01:03:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1751875400; x=1752480200; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=j8ER9RiwBf3a0PNuzWR+wHPlPKYNVAx60ODVLZpCr8E=;
+        b=X9Ev8Ni8VR+vXSZ17LvHTTqKiBx58SkM/ADlXFfNLgkbZ252vTGdrnC5PhAyDlzmPq
+         tbVIe35BJ8G75QMDg4Ya6L5jTbqbXqTugWaS+uCqUhkVe9Y8CJxIroW5zT9DiuxhS8aT
+         i5GIP0TUhNzpooMwpVK2UZCsyUULoymVSO/Jd8cWYLl7FMOyZAqKOPuNSHMMYSr0o10L
+         SjhEfnlidBHMSmmZr9Aa07r3cnzzL4lo4wdBO1vAx+IzqKrx0h+9Mh78LGTIdCfz8gNf
+         KO3ykplQ709pTXgmxOfDu3x2D/KedTxBSHJsVktTfDMbNTKtVfS3jw2X9hZPc84xszpi
+         oSWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751875400; x=1752480200;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=j8ER9RiwBf3a0PNuzWR+wHPlPKYNVAx60ODVLZpCr8E=;
+        b=T+7AHtKCg4KOV5vUCsbZ/Knz2W+QQgOtE2iimzjX50wljY37t9niMN2ctN+07qcjYi
+         r/uXFPXjbja0BU/SC/gL4JvAmNT5kvPc20cL6aHANcxQP4VByz8RWr1o/0q0QD3djwnz
+         hCNg/bxZiWyCXehRX+UhDHKMKI4ZQmVDZThXQVerPdhVwLWu5mVgEtarQRK29MQ8rGU8
+         OJkn676J2jlOlxbRf/UzUhjYoJ5BvjUFquh0kuoWjCrJtIlUD1Weusn7/Iz45hcZXkmw
+         XJh4NhaZWG4W2fZEthRjx4oa/7dG4ZGMPckzITAodqEUT8Z7GVuwb/hYhigWz0QDJEau
+         OZHA==
+X-Forwarded-Encrypted: i=1; AJvYcCX/T2agxd9i+HrgARxjStihNzNwgREYPxKvd7H8/e9IaewBHlhqKmGVvmfvcwCnKQEAfTWy2EoiOWm9A54=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzcAsJdu+pDtQOeTXwXsmtxXjOttZsDuXQfUlvAEAKUPtM6spCr
+	J9oCB6DlyUeyww3jxAoHgWmE1fH0RHRrTvYSHBekERubODZEMKuoYXbzYrSjM2qBMyY=
+X-Gm-Gg: ASbGncthVkwIJOPxoYetzlItvbDVXBFoVWYAWJK5MzxPEF5++bDH6TleCaZoBxjj/1c
+	xai1f3tdbsd8i7YfQcrVW41XJy14+u1IeM4gDTeDwn/E0cyCUpWqAX5gBpTKdoxss4r0r8RNH6m
+	XAUpDG4YUcy6kwDOaJbmxJXrH+y9uyFOc6J+OHtvMqpYAfHVecASBIvEi9HCb+QtB9nbeG6QUDO
+	xbR4A4/yZLdEP0tsre6D40RWPUPovP6E3CtBNsWBKF052d/+ax5TZk9UA5xiEhJQ4XD0gbsW3eI
+	q6xcSdabvDjuoZRSHtNSxECE/mRJyLBqha9R+4PBn/f0Q+F9U1sifl4PzY4AEAE=
+X-Google-Smtp-Source: AGHT+IEuKhwyI5Z+SjqvtbsXi6ZzIS1X4CZuWomS6qhOy+fAEFEaFFSGiYj31JlHRtL0PKXI2U00Ng==
+X-Received: by 2002:a5d:64c9:0:b0:3b1:9259:3ead with SMTP id ffacd0b85a97d-3b49aa73e31mr5001650f8f.28.1751875399847;
+        Mon, 07 Jul 2025 01:03:19 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:3cf3:a61f:85ed:69db])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454a997e367sm130980235e9.15.2025.07.07.01.03.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Jul 2025 01:03:19 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: linux-pm@vger.kernel.org,
+	Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
 	linux-kernel@vger.kernel.org,
-	linux-efi@vger.kernel.org,
-	linux-mm@kvack.org,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: [PATCHv9 16/16] x86: Re-enable Linear Address Masking
-Date: Mon,  7 Jul 2025 11:03:16 +0300
-Message-ID: <20250707080317.3791624-17-kirill.shutemov@linux.intel.com>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250707080317.3791624-1-kirill.shutemov@linux.intel.com>
-References: <20250707080317.3791624-1-kirill.shutemov@linux.intel.com>
+	"Rafael J. Wysocki" <rafael@kernel.org>
+Subject: Re: (subset) [PATCH 00/80] treewide: Remove redundant pm_runtime_mark_last_busy() calls
+Date: Mon,  7 Jul 2025 10:03:18 +0200
+Message-ID: <175187539072.14957.12381640890960188309.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250704075225.3212486-1-sakari.ailus@linux.intel.com>
+References: <20250704075225.3212486-1-sakari.ailus@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-This reverts commit 3267cb6d3a174ff83d6287dcd5b0047bbd912452.
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-LASS mitigates the Spectre based on LAM (SLAM) [1] and the previous
-commit made LAM depend on LASS, so we no longer need to disable LAM at
-compile time, so revert the commit that disables LAM.
 
-Adjust USER_PTR_MAX if LAM enabled, allowing tag bits to be set for
-userspace pointers. The value for the constant is defined in a way to
-avoid overflow compiler warning on 32-bit config.
+On Fri, 04 Jul 2025 10:52:25 +0300, Sakari Ailus wrote:
+> Late last year I posted a set to switch to __pm_runtime_mark_last_busy()
+> and gradually get rid of explicit pm_runtime_mark_last_busy() calls in
+> drivers, embedding them in the appropriate pm_runtime_*autosuspend*()
+> calls. The overall feedback I got at the time was that this is an
+> unnecessary intermediate step, and removing the
+> pm_runtime_mark_last_busy() calls can be done after adding them to the
+> relevant Runtime PM autosuspend related functions. The latter part has
+> been done and is present in Rafael's tree at the moment, also see
+> <URL:https://lore.kernel.org/linux-pm/CAJZ5v0g7-8UWp6ATOy+=oGdxDaCnfKHBG_+kbiTr+VeuXZsUFQ@mail.gmail.com/>:
+> 
+> [...]
 
-[1] https://download.vusec.net/papers/slam_sp24.pdf
+Applied, thanks!
 
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Cc: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
----
- arch/x86/Kconfig             | 1 -
- arch/x86/kernel/cpu/common.c | 5 +----
- 2 files changed, 1 insertion(+), 5 deletions(-)
+[15/80] gpio: arizona: Remove redundant pm_runtime_mark_last_busy() calls
+        https://git.kernel.org/brgl/linux/c/2fd13c8e5be15369d157da3277ac7407fa73f90a
 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 71019b3b54ea..2b48e916b754 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -2181,7 +2181,6 @@ config RANDOMIZE_MEMORY_PHYSICAL_PADDING
- config ADDRESS_MASKING
- 	bool "Linear Address Masking support"
- 	depends on X86_64
--	depends on COMPILE_TEST || !CPU_MITIGATIONS # wait for LASS
- 	help
- 	  Linear Address Masking (LAM) modifies the checking that is applied
- 	  to 64-bit linear addresses, allowing software to use of the
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 382b687ce7e2..7ae757498a6f 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -2553,11 +2553,8 @@ void __init arch_cpu_finalize_init(void)
- 	if (IS_ENABLED(CONFIG_X86_64)) {
- 		unsigned long USER_PTR_MAX = TASK_SIZE_MAX;
- 
--		/*
--		 * Enable this when LAM is gated on LASS support
- 		if (cpu_feature_enabled(X86_FEATURE_LAM))
--			USER_PTR_MAX = (1ul << 63) - PAGE_SIZE;
--		 */
-+			USER_PTR_MAX = (-1UL >> 1) & PAGE_MASK;
- 		runtime_const_init(ptr, USER_PTR_MAX);
- 
- 		/*
+Best regards,
 -- 
-2.47.2
-
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
