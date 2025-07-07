@@ -1,282 +1,222 @@
-Return-Path: <linux-kernel+bounces-719461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF56BAFAE38
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 10:08:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61803AFAE3E
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 10:09:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CDC642221E
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 08:08:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 074AD4229A4
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 08:08:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6E6028ECF4;
-	Mon,  7 Jul 2025 08:06:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1F6628A726;
+	Mon,  7 Jul 2025 08:07:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pbu+3ye7"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b="GSgjWZWa"
+Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 421F228E611;
-	Mon,  7 Jul 2025 08:06:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 005C7283FEA
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 08:07:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751875569; cv=none; b=gnursqbEO+frIJWB3mPIcLJeoPBnjW8VqpBwBwWa3A34NsYEYezkK0VeNWHhXrREOJpHvkKBx+SF9tDdtQqAm5mKC41I3fNnkCy4bYN87AftEhtSd1EY/LSIxWhs6k6TmX+RH1Fn/xGfztm8e9vQ7wGjRrHQ+a5u9H8n5gmU0zE=
+	t=1751875675; cv=none; b=j3hzSmJEl+Phxn4ud8iOpZsD2cqb/xzfB0E5OKm6M8ikhdBeJ4mn6u0WQUUEiaCVx2/O9plVHsGukGVNdi/ryTW4eS4t70OQ4QEjbAOPfYRxhiHCPktboSGY4CAA/f4PZuwC6L2FhOvjM27+UTQcx/gnYP8hdldAlO5tHhmdixs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751875569; c=relaxed/simple;
-	bh=XDfWIMxWUeHrbbXI8QCVF0GGTp/5rM+MI4T8JkvNJeI=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=OuJ27w0Wn8XMfbQlASXui5t11n5CQAdW4clYNtSSzpLklNPUMNV01mZfiPFtxKQ1HytrmvzeoyO23D6f71B3yRMpjGDw6nrr3mWgPpXEjqKO368DI0GhbJrsryUcjije4oFBYnFAl4KwEVsYV14qhM2Jrsf9GlwuOLi+yFc5aKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Pbu+3ye7; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4539cd7990cso15293805e9.0;
-        Mon, 07 Jul 2025 01:06:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751875565; x=1752480365; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=lJ5fTuEdw7YqQY7xYpqA1BOH/dSbL0Ja1NH1d9NSPy4=;
-        b=Pbu+3ye74HLNfamFWoYp86ID8ed+RM+rJNXjhNr8lVSIzJzCgNlcJkg/arGP6wWJR7
-         ohWbpmg3Le20uHjLjSQOGLDYqENGK/Ynkw/44AztbXnRP71PPU45kX8dnbqe+pRZ+muV
-         vrVWnDcZnQyvVohVjyxPdYosTqM77Tmh5+B3m2y1DikrehMdV6wiyukCC3PWzJEB6qQW
-         xiD5sxE7DIzcr7/TG7WV5NTrIyixQClUzR4HIIkq30zmd/GAd1uWE+G1/sU8lwKo/Jxo
-         0zyLv3XtCcfZLKQRlHhln85Lkugvr2L9yJBsPhKaECKSGpMFhY5V8jgdw+wIANPzpapX
-         1O9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751875565; x=1752480365;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lJ5fTuEdw7YqQY7xYpqA1BOH/dSbL0Ja1NH1d9NSPy4=;
-        b=dWKv3fhy1cy86uU2es6fHmUIHSjO23GuZSVeKKku/5I/5waowgls8ahi8RIW1zdxN4
-         3dtij0Vx6WQ75MXVW1RggzP5P3deKJFUOJ0F/yXtXXNxPqHpxjOY3vpGW0lFRbfutbSY
-         N373ghvCMM1NCPgZd5dFWi8SYHEvtkcW7xUGWBqXBqs3c4x5LE2pwdK4RBNSDnYFUx49
-         UKu3w2N5trF1fFbMmWYSpisZ3I0oB3H8az3+VwOQhLbjgP9BlJ3Pt7Hj49IIJT8HXMrn
-         uyDMpCBcEpHXEirR3r4yalr+Ve6jdXHw9eJh1wNHv77ZyUYGIFZkpzwmQmvqmpl2CToB
-         9F2w==
-X-Forwarded-Encrypted: i=1; AJvYcCV0a5G/tw5FL5+br+WOuFthP0OQXYyBPoN4sHeTIjzZ5fHvebG1pxYPbmnTQCZHD9oQ+1nwB0RDtp2S/t1D@vger.kernel.org, AJvYcCX2reT49qRqhlzL8X5fVDxkUKSGokDXcJ1ewor+OwEd5FFq05DbJL6WL+VNcfueU6B1znVpn4Z/qj0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YytutE91TGH0p9qdRigXVGfOm+x0cCb27v0weFv82X9TvC2IaUx
-	x+YU6QwaO0eNYvgH0UB+AJ8z9K87sgFXFvNaXlse35PkcJ4PxAJU7wWaixGQxpH9
-X-Gm-Gg: ASbGncsYYMKEN31kZhZBIo0hXVr0MDqjVdu/b433lbRO+SqkS/Ix310IeGo4bj6Ug4W
-	KsfJHnJZ82nKSrbQHs8HjXZUw7VMvZHDPU0FXEjStIFNLGSeEvkfCIt+WbS8jRYdtalo16tJTqg
-	XXcRMFkSTu8fdraJIE04ISO8NiTmcy3LBdY5F8mrv8K/azbPQXIK24dtBADFNi5OoQ98kLzN6dE
-	QmoYTbLrdK+sXfDO7Ud71213yoQfz0744PNdUoqvY42m6uPL8Lo3ZBzL4kZyPLOP/l1Vemx2RVs
-	uaRZGMwWWWXCYMYvD6H7pFnOmd+HMcV/oY8HhaVkdSBbfh3wBRq49OblTvJfx28InYanIw==
-X-Google-Smtp-Source: AGHT+IFQ2f4St3DLbQs92jBrAAO2X2yEEnK7bcOhaFRHHY6SHpMqgrghbnHgsQ+Fh4ANN+VEfn2gWA==
-X-Received: by 2002:a05:600c:604d:b0:43c:f3e1:a729 with SMTP id 5b1f17b1804b1-454b1f69c85mr84113725e9.12.1751875565139;
-        Mon, 07 Jul 2025 01:06:05 -0700 (PDT)
-Received: from [192.168.1.187] ([161.230.67.253])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454adc71aadsm122123075e9.25.2025.07.07.01.06.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Jul 2025 01:06:04 -0700 (PDT)
-Message-ID: <fca5a3d0a89b82b2e1a6d9e440cc2fe8896b73af.camel@gmail.com>
-Subject: Re: [PATCH v3] iio: adc: ad7173: fix num_slots
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: David Lechner <dlechner@baylibre.com>, Lars-Peter Clausen
- <lars@metafoo.de>,  Michael Hennerich <Michael.Hennerich@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, Nuno =?ISO-8859-1?Q?S=E1?=	
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- linux-iio@vger.kernel.org, 	linux-kernel@vger.kernel.org
-Date: Mon, 07 Jul 2025 09:06:16 +0100
-In-Reply-To: <20250706-iio-adc-ad7173-fix-num_slots-on-most-chips-v3-1-d1f5453198a7@baylibre.com>
-References: 
-	<20250706-iio-adc-ad7173-fix-num_slots-on-most-chips-v3-1-d1f5453198a7@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 
+	s=arc-20240116; t=1751875675; c=relaxed/simple;
+	bh=BreYJuDfZoFdRiabZxtNWF9SABVBZKncFsrha+MOSMw=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bpLNoa4wel2pA1IT8VNuCyE97FvuYPPMkWUwIE9UEIlxxgeirWhVysltp2QrPOoubs3qUmU/hv6CTwxXTSsTnllgUeg2tPYb2elGIlvrn9L7OMiTQyjObAZcabBl7W2jGEr6M5tpWsjbmY6P3iZChB9WBRGqXFqSH2lmqpx4AmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me; spf=pass smtp.mailfrom=pm.me; dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b=GSgjWZWa; arc=none smtp.client-ip=185.70.43.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pm.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pm.me;
+	s=protonmail3; t=1751875666; x=1752134866;
+	bh=eTGqtzCvOXwTu3qziUAcUbBhhfKcqKOqyU9syJBnr6M=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=GSgjWZWavYTnlP1AW4PKEQag9P5elGs/5VhwUpQAnf1Hii942CYuSJEvTfRyO28XS
+	 9dQywgyfGftoz07t+Na6ebjSbH+ln2RtD6k/UIJ6UChsSTqe19vkUdV2GomHbXPb2o
+	 kv014ypTHGbjerukjjFBjP5brP5BdBCegDT3woKf6+BBnLccspuIF3bn1TP0VmyCtI
+	 RZbfkz5oMWpJmIDasGEhvFWEdZ/g0aroEETv3vhnFe59yKVo0/ehsu03Sh4J+cDas6
+	 vFQeDXgtwp/spPXJQCHDfWq5hmhtmFKtLc9PVVyPSvyy/dO9Z0Or5HriU5KUfEJFb+
+	 QgRYZr55oN/EA==
+Date: Mon, 07 Jul 2025 08:07:40 +0000
+To: Benno Lossin <lossin@kernel.org>
+From: Oliver Mangold <oliver.mangold@pm.me>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Asahi Lina <lina+kernel@asahilina.net>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v11 4/4] rust: Add `OwnableRefCounted`
+Message-ID: <aGuAR7JCrlmzQrx4@mango>
+In-Reply-To: <DB1LPFAX66WG.1QL5JDCWI7RN4@kernel.org>
+References: <20250618-unique-ref-v11-0-49eadcdc0aa6@pm.me> <20250618-unique-ref-v11-4-49eadcdc0aa6@pm.me> <DB1LPFAX66WG.1QL5JDCWI7RN4@kernel.org>
+Feedback-ID: 31808448:user:proton
+X-Pm-Message-ID: 84a19212b4ee4925539886f811bb5b09e24fb104
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, 2025-07-06 at 13:53 -0500, David Lechner wrote:
-> Fix the num_slots value for most chips in the ad7173 driver. The correct
-> value is the number of CHANNELx registers on the chip.
+On 250702 1524, Benno Lossin wrote:
+> On Wed Jun 18, 2025 at 2:27 PM CEST, Oliver Mangold wrote:
+> > diff --git a/rust/kernel/types/ownable.rs b/rust/kernel/types/ownable.r=
+s
+> > index 80cd990f6601767aa5a742a6c0997f4f67d06453..b5626dead6bb25ea76a0ae5=
+77db1b130308d98b1 100644
+> > --- a/rust/kernel/types/ownable.rs
+> > +++ b/rust/kernel/types/ownable.rs
+> > @@ -2,6 +2,7 @@
+> >
+> >  //! Owned reference types.
+> >
+> > +use crate::types::{ARef, RefCounted};
+> >  use core::{
+> >      marker::PhantomData,
+> >      mem::ManuallyDrop,
+> > @@ -18,8 +19,9 @@
+> >  ///
+> >  /// Note: Implementing this trait allows types to be wrapped in an [`O=
+wned<Self>`]. This does not
+> >  /// provide reference counting but represents a unique, owned referenc=
+e. If reference counting is
+> > -/// required [`RefCounted`](crate::types::RefCounted) should be implem=
+ented which allows types to be
+> > -/// wrapped in an [`ARef<Self>`](crate::types::ARef).
+> > +/// required [`RefCounted`] should be implemented which allows types t=
+o be wrapped in an
+> > +/// [`ARef<Self>`]. Implementing the trait [`OwnableRefCounted`] allow=
+s to convert between unique
+> > +/// and shared references (i.e. [`Owned<Self>`] and [`ARef<Self>`]).
 >=20
-> In commit 4310e15b3140 ("iio: adc: ad7173: don't make copy of
-> ad_sigma_delta_info struct"), we refactored struct ad_sigma_delta_info
-> to be static const data instead of being dynamically populated during
-> driver probe. However, there was an existing bug in commit 76a1e6a42802
-> ("iio: adc: ad7173: add AD7173 driver") where num_slots was incorrectly
-> set to the number of CONFIGx registers instead of the number of
-> CHANNELx registers. This bug was partially propagated to the refactored
-> code in that the 16-channel chips were only given 8 slots instead of
-> 16 although we did managed to fix the 8-channel chips and one of the
-> 4-channel chips in that commit. However, we botched two of the 4-channel
-> chips and ended up incorrectly giving them 8 slots during the
-> refactoring.
->=20
-> This patch fixes that mistake on the 4-channel chips and also
-> corrects the 16-channel chips to have 16 slots.
->=20
-> Fixes: 4310e15b3140 ("iio: adc: ad7173: don't make copy of ad_sigma_delta=
-_info
-> struct")
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
-> ---
+> This change should probably be in the earlier patch.
 
-Reviewed-by: Nuno S=C3=A1 <nuno.sa@analog.com>
+Ah, yes. Must have happened while splitting the patches.
 
-> Here is the patch that actually compiles on the fixes-togreg branch.
-> ---
-> Changes in v3:
-> - Drop supports_spi_offload field.
-> - Link to v2:
-> https://lore.kernel.org/r/20250704-iio-adc-ad7173-fix-num_slots-on-most-c=
-hips-v2-1-a74941609143@baylibre.com
+> >  ///
+> >  /// # Safety
+> >  ///
+> > @@ -132,3 +134,124 @@ fn drop(&mut self) {
+> >          unsafe { T::release(self.ptr) };
+> >      }
+> >  }
+> > +
+> > +/// A trait for objects that can be wrapped in either one of the refer=
+ence types [`Owned`] and
+> > +/// [`ARef`].
+> > +///
+> > +/// # Safety
+> > +///
+> > +/// Implementers must ensure that:
+> > +///
+> > +/// - [`try_from_shared()`](OwnableRefCounted::into_shared) only retur=
+ns an [`Owned<Self>`] if
+> > +///   exactly one [`ARef<Self>`] exists.
 >=20
-> Changes in v2:
-> - Improve commit message.
-> - Link to v1:
-> https://lore.kernel.org/r/20250703-iio-adc-ad7173-fix-num_slots-on-most-c=
-hips-v1-1-326c5d113e15@baylibre.com
-> ---
-> =C2=A0drivers/iio/adc/ad7173.c | 36 ++++++++++++++++++++++++++----------
-> =C2=A01 file changed, 26 insertions(+), 10 deletions(-)
+> This shouldn't be required?
+
+Ehm, why not? `Owned<T>` is supposed to be unique.
+
+> > +/// - [`into_shared()`](OwnableRefCounted::into_shared) set the refere=
+nce count to the value which
+> > +///   the returned [`ARef<Self>`] expects for an object with a single =
+reference in existence. This
+> > +///   implies that if [`into_shared()`](OwnableRefCounted::into_shared=
+) is left on the default
+> > +///   implementation, which just rewraps the underlying object, the re=
+ference count needs not to be
+> > +///   modified when converting an [`Owned<Self>`] to an [`ARef<Self>`]=
+.
 >=20
-> diff --git a/drivers/iio/adc/ad7173.c b/drivers/iio/adc/ad7173.c
-> index
-> 1966a9bc331401af118334a7be4c1a5b8d381473..c41bc5b9ac597f57eea6a097cc3a118=
-de7b4
-> 2210 100644
-> --- a/drivers/iio/adc/ad7173.c
-> +++ b/drivers/iio/adc/ad7173.c
-> @@ -772,10 +772,26 @@ static const struct ad_sigma_delta_info
-> ad7173_sigma_delta_info_8_slots =3D {
-> =C2=A0	.num_slots =3D 8,
-> =C2=A0};
-> =C2=A0
-> +static const struct ad_sigma_delta_info ad7173_sigma_delta_info_16_slots=
- =3D {
-> +	.set_channel =3D ad7173_set_channel,
-> +	.append_status =3D ad7173_append_status,
-> +	.disable_all =3D ad7173_disable_all,
-> +	.disable_one =3D ad7173_disable_one,
-> +	.set_mode =3D ad7173_set_mode,
-> +	.has_registers =3D true,
-> +	.has_named_irqs =3D true,
-> +	.addr_shift =3D 0,
-> +	.read_mask =3D BIT(6),
-> +	.status_ch_mask =3D GENMASK(3, 0),
-> +	.data_reg =3D AD7173_REG_DATA,
-> +	.num_resetclks =3D 64,
-> +	.num_slots =3D 16,
-> +};
-> +
-> =C2=A0static const struct ad7173_device_info ad4111_device_info =3D {
-> =C2=A0	.name =3D "ad4111",
-> =C2=A0	.id =3D AD4111_ID,
-> -	.sd_info =3D &ad7173_sigma_delta_info_8_slots,
-> +	.sd_info =3D &ad7173_sigma_delta_info_16_slots,
-> =C2=A0	.num_voltage_in_div =3D 8,
-> =C2=A0	.num_channels =3D 16,
-> =C2=A0	.num_configs =3D 8,
-> @@ -797,7 +813,7 @@ static const struct ad7173_device_info ad4111_device_=
-info
-> =3D {
-> =C2=A0static const struct ad7173_device_info ad4112_device_info =3D {
-> =C2=A0	.name =3D "ad4112",
-> =C2=A0	.id =3D AD4112_ID,
-> -	.sd_info =3D &ad7173_sigma_delta_info_8_slots,
-> +	.sd_info =3D &ad7173_sigma_delta_info_16_slots,
-> =C2=A0	.num_voltage_in_div =3D 8,
-> =C2=A0	.num_channels =3D 16,
-> =C2=A0	.num_configs =3D 8,
-> @@ -818,7 +834,7 @@ static const struct ad7173_device_info ad4112_device_=
-info
-> =3D {
-> =C2=A0static const struct ad7173_device_info ad4113_device_info =3D {
-> =C2=A0	.name =3D "ad4113",
-> =C2=A0	.id =3D AD4113_ID,
-> -	.sd_info =3D &ad7173_sigma_delta_info_8_slots,
-> +	.sd_info =3D &ad7173_sigma_delta_info_16_slots,
-> =C2=A0	.num_voltage_in_div =3D 8,
-> =C2=A0	.num_channels =3D 16,
-> =C2=A0	.num_configs =3D 8,
-> @@ -837,7 +853,7 @@ static const struct ad7173_device_info ad4113_device_=
-info
-> =3D {
-> =C2=A0static const struct ad7173_device_info ad4114_device_info =3D {
-> =C2=A0	.name =3D "ad4114",
-> =C2=A0	.id =3D AD4114_ID,
-> -	.sd_info =3D &ad7173_sigma_delta_info_8_slots,
-> +	.sd_info =3D &ad7173_sigma_delta_info_16_slots,
-> =C2=A0	.num_voltage_in_div =3D 16,
-> =C2=A0	.num_channels =3D 16,
-> =C2=A0	.num_configs =3D 8,
-> @@ -856,7 +872,7 @@ static const struct ad7173_device_info ad4114_device_=
-info
-> =3D {
-> =C2=A0static const struct ad7173_device_info ad4115_device_info =3D {
-> =C2=A0	.name =3D "ad4115",
-> =C2=A0	.id =3D AD4115_ID,
-> -	.sd_info =3D &ad7173_sigma_delta_info_8_slots,
-> +	.sd_info =3D &ad7173_sigma_delta_info_16_slots,
-> =C2=A0	.num_voltage_in_div =3D 16,
-> =C2=A0	.num_channels =3D 16,
-> =C2=A0	.num_configs =3D 8,
-> @@ -875,7 +891,7 @@ static const struct ad7173_device_info ad4115_device_=
-info
-> =3D {
-> =C2=A0static const struct ad7173_device_info ad4116_device_info =3D {
-> =C2=A0	.name =3D "ad4116",
-> =C2=A0	.id =3D AD4116_ID,
-> -	.sd_info =3D &ad7173_sigma_delta_info_8_slots,
-> +	.sd_info =3D &ad7173_sigma_delta_info_16_slots,
-> =C2=A0	.num_voltage_in_div =3D 11,
-> =C2=A0	.num_channels =3D 16,
-> =C2=A0	.num_configs =3D 8,
-> @@ -894,7 +910,7 @@ static const struct ad7173_device_info ad4116_device_=
-info
-> =3D {
-> =C2=A0static const struct ad7173_device_info ad7172_2_device_info =3D {
-> =C2=A0	.name =3D "ad7172-2",
-> =C2=A0	.id =3D AD7172_2_ID,
-> -	.sd_info =3D &ad7173_sigma_delta_info_8_slots,
-> +	.sd_info =3D &ad7173_sigma_delta_info_4_slots,
-> =C2=A0	.num_voltage_in =3D 5,
-> =C2=A0	.num_channels =3D 4,
-> =C2=A0	.num_configs =3D 4,
-> @@ -927,7 +943,7 @@ static const struct ad7173_device_info
-> ad7172_4_device_info =3D {
-> =C2=A0static const struct ad7173_device_info ad7173_8_device_info =3D {
-> =C2=A0	.name =3D "ad7173-8",
-> =C2=A0	.id =3D AD7173_ID,
-> -	.sd_info =3D &ad7173_sigma_delta_info_8_slots,
-> +	.sd_info =3D &ad7173_sigma_delta_info_16_slots,
-> =C2=A0	.num_voltage_in =3D 17,
-> =C2=A0	.num_channels =3D 16,
-> =C2=A0	.num_configs =3D 8,
-> @@ -944,7 +960,7 @@ static const struct ad7173_device_info
-> ad7173_8_device_info =3D {
-> =C2=A0static const struct ad7173_device_info ad7175_2_device_info =3D {
-> =C2=A0	.name =3D "ad7175-2",
-> =C2=A0	.id =3D AD7175_2_ID,
-> -	.sd_info =3D &ad7173_sigma_delta_info_8_slots,
-> +	.sd_info =3D &ad7173_sigma_delta_info_4_slots,
-> =C2=A0	.num_voltage_in =3D 5,
-> =C2=A0	.num_channels =3D 4,
-> =C2=A0	.num_configs =3D 4,
-> @@ -961,7 +977,7 @@ static const struct ad7173_device_info
-> ad7175_2_device_info =3D {
-> =C2=A0static const struct ad7173_device_info ad7175_8_device_info =3D {
-> =C2=A0	.name =3D "ad7175-8",
-> =C2=A0	.id =3D AD7175_8_ID,
-> -	.sd_info =3D &ad7173_sigma_delta_info_8_slots,
-> +	.sd_info =3D &ad7173_sigma_delta_info_16_slots,
-> =C2=A0	.num_voltage_in =3D 17,
-> =C2=A0	.num_channels =3D 16,
-> =C2=A0	.num_configs =3D 8,
+> This also seems pretty weird...
 >=20
-> ---
-> base-commit: 731bfc181896a4dfd20a8c219bef1c205dd1d708
-> change-id: 20250703-iio-adc-ad7173-fix-num_slots-on-most-chips-b982206a20=
-b1
+> I feel like `OwnableRefCounted` is essentially just a compatibility
+> condition between `Ownable` and `RefCounted`. It ensures that the
+> ownership declared in `Ownable` corresponds to exactly one refcount
+> declared in `RefCounted`.
 >=20
-> Best regards,
+> That being said, I think a `RefCounted` *always* canonically is
+> `Ownable` by the following impl:
+>=20
+>     unsafe impl<T: RefCounted> Ownable for T {
+>         unsafe fn release(this: NonNull<Self>) {
+>             T::dec_ref(this)
+>         }
+>     }
+>=20
+> So I don't think that we need this trait at all?
+
+No. For an `ARef<T>` to be converted to an `Owned<T>` it requires a
+`try_from_shared()` implementation. It is not even a given that the
+function can implemented, if all the kernel exposes are some kind of
+`inc_ref()` and `dec_ref()`.
+
+Also there are more complicated cases like with `Mq::Request`, where the
+existence of an `Owned<T>` cannot be represented by the same refcount value
+as the existence of exactly one `ARef<T>`.
+
+> > +///
+> > +/// # Examples
+>=20
+> If we're having an example here, then we should also have on on `Owned`.
+
+Yes, maybe. I mostly felt the need to create one for `OwnableRefCounted`
+because it is a more complex idea than `Ownable`.
+
+If I remember correctly, I didn't create one for `Owned`, as it should
+probably more or less the same as for `ARef` and the one there has even
+more problems of the kind you are pointing out. So maybe it would be best
+to wait until someone fixes that and have the fixed version copied over to
+`Owned` in the process?
+
+> > +///
+> > +/// A minimal example implementation of [`OwnableRefCounted`], [`Ownab=
+le`] and its usage with
+> > +/// [`ARef`] and [`Owned`] looks like this:
+> > +///
+> > +/// ```
+> > +/// # #![expect(clippy::disallowed_names)]
+> > +/// use core::cell::Cell;
+> > +/// use core::ptr::NonNull;
+> > +/// use kernel::alloc::{flags, kbox::KBox, AllocError};
+> > +/// use kernel::types::{
+> > +///     ARef, RefCounted, Owned, Ownable, OwnableRefCounted,
+> > +/// };
+> > +///
+> > +/// struct Foo {
+> > +///     refcount: Cell<usize>,
+> > +/// }
+> > +///
+> > +/// impl Foo {
+> > +///     fn new() -> Result<Owned<Self>, AllocError> {
+> > +///         // Use a `KBox` to handle the actual allocation.
+> > +///         let result =3D KBox::new(
+> > +///             Foo {
+> > +///                 refcount: Cell::new(1),
+> > +///             },
+> > +///             flags::GFP_KERNEL,
+> > +///         )?;
+> > +///         let result =3D NonNull::new(KBox::into_raw(result))
+> > +///             .expect("Raw pointer to newly allocation KBox is null,=
+ this should never happen.");
+>=20
+> I'm not really convinced that an example using `KBox` is a good one...
+> Maybe we should just have a local invisible `bindings` module that
+> exposes a `-> *mut foo`. (internally it can just create a KBox`)
+
+The example would become quite a bit more complicated then, no?
+
+> > +///         // SAFETY: We just allocated the `Foo`, thus it is valid.
+>=20
+> This isn't going through all the requirements on `from_raw`...
+
+Yes, this comment should probably be detailed.
+
+Best,
+
+Oliver
+
 
