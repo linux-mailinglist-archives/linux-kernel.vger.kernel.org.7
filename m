@@ -1,165 +1,161 @@
-Return-Path: <linux-kernel+bounces-719498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 431F9AFAEC4
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 10:41:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93D4EAFAED0
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 10:42:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D99B11AA0EFD
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 08:41:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1A9B17FEED
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 08:42:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB36828A731;
-	Mon,  7 Jul 2025 08:41:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADBC928C2B6;
+	Mon,  7 Jul 2025 08:42:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="vFtvqEFJ"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="As5udUkk"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 420441096F
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 08:41:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9880028BAB1;
+	Mon,  7 Jul 2025 08:42:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751877670; cv=none; b=cvrnNUWyUhXYnmGwN3zGhCXFWOruSvl4avYjDR6tufneKT3rP/Fxhmr2WznrCReCIUcbG/JDsCP7cJ/sniPYUb4andeiDW8achH2al62/IeQnMZ4eft9YPoY0kERIoGrVJMV3E4CvLH9J5I3zw2b02AqRQj+B1w2DHGbgNTahSk=
+	t=1751877744; cv=none; b=bY5s6Sre4slSxWVTxz6DN7CSY0glO5N39+ojJrDxvHzuy/gSIkimC2lewPR+b0ShL6uLhzwrTEwFZFpVwQ/bSZrrLUIj7LFbg1u/dRWqWZjKH3M3/rftFIYazdxBOGtL+4OYUQtNblJJm32NbUl72AtZCKOD5lz01AXyBEhbssk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751877670; c=relaxed/simple;
-	bh=HKns79cZKbgw1Ijaw8npP7c4PLViVmBrtOVBmRo3pDk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Hevf5YKchpEvmZYre/dnYSLyfr0Ysc6wRevqzfyJoV++tZZoVwpihwpOkRBA5l2H2zGiW8+6uf0MXwaWbUazvtXlBf8GuqGgX4SuqBRVpBHn44kcH/5jh1QYczltnTrH+i+qKJIPzmYG/FcbLWvr1heDyFWUG7wm2xSnkHtB5ms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=vFtvqEFJ; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-55516abe02cso2930568e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 01:41:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1751877666; x=1752482466; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=M2ty42UaDUqlMkiP5xE2a1tdArjdzwbm7ssbtaWE4oU=;
-        b=vFtvqEFJzcZEReFV3StKrJWMyFTySw8qEAF8K3rGcKFJ0iKpKv5weHgXfN4kdQGivc
-         80h1pSpUGgWD5EWnQO/0jYACMi1I+XUIbaqzwKB72OitSicVwaPc4KfhUFj0Ocl4zvft
-         0QhPGD3OyI9544xzLxIST1Lh/kDymloAH1zLMP89furWUlKaz4WmnkhD7VhDPMXNoqtV
-         oCDadgIpSYCPNWASbDlK3ejR6VA/yu/hWOXAM3OdJ2YFvc7WRPoUoSRvWeZNtZrVslNH
-         kv4wWgtXx/2ZumLswYPeWjvh/h+1+2d5J73zWufxi++0g6ud40Q9miAbzaBLaZ48S4hP
-         LQjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751877666; x=1752482466;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=M2ty42UaDUqlMkiP5xE2a1tdArjdzwbm7ssbtaWE4oU=;
-        b=BaZGfeZqDJ52r3FHWJFsdGlB9psAjzFx/ssUWuxJtZnkFKznlT0D5ob4J1O7m5QdKf
-         5VVxehipdz48YC65K1okuUskYLlNWjRqe9zSxlrqbPXZfBC87iB21e0uy0JX3xPHp+mN
-         DciiVnnp+uNSRmEwDrLXuoZL4iYILB9GDKZRUTFGHIgbXDo5Up+CFHr6nG2VnKzWCSmh
-         wfpqjtelepkGIr5CI58vOEdXW7r22kzWz/JjO3uCUtoaXcDtq+nV5a+iaY6r4iWvBBNE
-         CWG5kr+VMc0MgTWGWCyLBFZaGOALudJYsFMjQdww2c3+yYVfV58TwLpRCvBDlb2O8QEK
-         pXqw==
-X-Forwarded-Encrypted: i=1; AJvYcCXQ61y6eqEc0tlhaJ++T61//P72iVN+/7s3UEBbVlJ4JSENZ0pSB5+CcNT5YdPBGKlRR8xTYEgMjJLsE0o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQJCY4JQCL07Jg5rbmSYttULhV9KoNhGBSI6M3P5k8B3u/tZag
-	N7SLsHEjKdwJ6DltTi0Hw0MISC7+gjDxyToyAn1TaNq4YM+cvK1Ug0ektwUGVrvjZ/mCOsnNDXu
-	tSidfYkXGdlHxzgasmuRGEMqGATwL1xLtJJJXRi9QBQ==
-X-Gm-Gg: ASbGncs3uS/lJA08Ary4OD+8hj7z5Ecjwy4LoHI2WtMRqH3RG8fdGUkvh9igo8x7PRC
-	pHPQQu0sy/mFYjGzGFHUxQPHxfvvodAUtXrhomdJEy94/xS9iVTLgf2IzRV7j7eDLvmzP+omLJN
-	HuGgbjWrgdHsM3thcweRshI/BfEFGlXZI4jP74cW5jXBZVb0IYJ1q43IaajEsrr1cplkVf9bPoM
-	0o=
-X-Google-Smtp-Source: AGHT+IEBQJMgjjxGPUxNMZyf6ChFNk5EekGKfeAHU3z/3d2roa2tlgeHgq/aGpK6K+cYyFTqaK6iHRGTmDCxnni6ogY=
-X-Received: by 2002:a05:6512:b24:b0:554:f82f:181a with SMTP id
- 2adb3069b0e04-55658402866mr3009050e87.2.1751877666314; Mon, 07 Jul 2025
- 01:41:06 -0700 (PDT)
+	s=arc-20240116; t=1751877744; c=relaxed/simple;
+	bh=ecvnWjDs6rHGQNSELOd1WnhXoUc1cYs4DlZY2AAw8nQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Pox/B0bsF/QW/Q0URSKdwuGVNk0JZK3683zBRA07W7Loy33WlUegyYR/8fDyR0HDg7mfB3iWKn9WmbV1uhErl7vFw/HZjhXOqnU0iAOAYWxvKEgug9xasSpIJoPNIuCdqzH8cMJzJ5Idv7GyO9AHgRl4Teb/SyuMuJZK+QfiQ7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=As5udUkk; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=TTouOHxjRQpAGzsi8stU4ElD0h3yn0qT6ATOrQoRPxg=; b=As5udUkkgrFjaRppQlcm07WCnc
+	j44IVoEpB+m42ag1j8NFPdUsuvvGdnUFT02o/hImA9CkJfKn6+Nw4Ll35W0wxAVn/U55cbH6RZ/LZ
+	CGYIPhOHw/lG4PF9BzHKGqcNn5kejcaqboiMO9NrbOW1TNIkFECXZ664f6nAcF8/DbOg/5KX+NYZs
+	lr9QHzJ3CUimXXbEtLqUIMS2S/NH/9pvE/00b3zu4epzx7JAKEmKFfjlixIeKzOWqmDlHQ6eaw5l0
+	9hiQGOB32Mz+sPjgY5an+2yOVtvR54MSzCYteNou5faBlqFU7+fdUKtv9a28ozLVvrP1zozleTX64
+	cXhCkNBw==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uYhQV-0000000CE5p-0TiR;
+	Mon, 07 Jul 2025 08:42:15 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 455E0300212; Mon, 07 Jul 2025 10:42:14 +0200 (CEST)
+Date: Mon, 7 Jul 2025 10:42:14 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Zihuan Zhang <zhangzihuan@kylinos.cn>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, pavel@kernel.org,
+	len.brown@intel.com, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Oleg Nesterov <oleg@redhat.com>
+Subject: Re: [PATCH v3 1/1] PM / Freezer: Skip zombie/dead processes to
+Message-ID: <20250707084214.GD1613200@noisy.programming.kicks-ass.net>
+References: <20250611101247.15522-1-zhangzihuan@kylinos.cn>
+ <20250611101247.15522-2-zhangzihuan@kylinos.cn>
+ <CAJZ5v0jpuUVM73M=Gzq36je=K_7zEkvVd8bxohi6N5OYgxgUug@mail.gmail.com>
+ <20250703164021.GY1613200@noisy.programming.kicks-ass.net>
+ <CAJZ5v0j29Nu2nitmj6tPhOQYuSaHBtXQVR21ikDtrxpejPdW8A@mail.gmail.com>
+ <20250704081941.GC2001818@noisy.programming.kicks-ass.net>
+ <67997bdd-d00a-413a-a565-188c4b06f385@kylinos.cn>
+ <20250704092144.GH2001818@noisy.programming.kicks-ass.net>
+ <de7e327a-202c-4b28-b372-2d648c680dbe@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250610-gpiochip-set-rv-soc-v1-0-1a0c36c9deed@linaro.org>
- <CAMRc=McVV=VBw0DRiz-4tTjh7ZtRLWg=N_LQ2-7O1sKyW30rxw@mail.gmail.com>
- <c6eece57-8767-4435-beda-c9f399e3fa80@csgroup.eu> <CAMRc=MdYuk_O3P1QtepvF-6m01jn3xpDP4YxttQSp1-J-J2GvA@mail.gmail.com>
- <f527c6a8-faf2-45b8-81f5-03def802e485@csgroup.eu>
-In-Reply-To: <f527c6a8-faf2-45b8-81f5-03def802e485@csgroup.eu>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Mon, 7 Jul 2025 10:40:55 +0200
-X-Gm-Features: Ac12FXzfvvERymQK11WeRhKmee48-1A3WRn820qRFk7sl4RxseqyIge4xppkQTw
-Message-ID: <CAMRc=McCu=VdHAEaYwdD5OLTy9MrFO=Mqq-drU1Dnr=-KfJHJw@mail.gmail.com>
-Subject: Re: [PATCH 0/2] soc: use new GPIO line value setter callbacks
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: Qiang Zhao <qiang.zhao@nxp.com>, Linus Walleij <linus.walleij@linaro.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <de7e327a-202c-4b28-b372-2d648c680dbe@kylinos.cn>
 
-On Mon, Jun 23, 2025 at 12:05=E2=80=AFPM Christophe Leroy
-<christophe.leroy@csgroup.eu> wrote:
->
->
->
-> Le 23/06/2025 =C3=A0 11:55, Bartosz Golaszewski a =C3=A9crit :
-> > On Mon, Jun 23, 2025 at 11:54=E2=80=AFAM Christophe Leroy
-> > <christophe.leroy@csgroup.eu> wrote:
-> >>
-> >> Hi,
-> >>
-> >>
-> >> Le 23/06/2025 =C3=A0 09:33, Bartosz Golaszewski a =C3=A9crit :
-> >>> On Tue, Jun 10, 2025 at 2:38=E2=80=AFPM Bartosz Golaszewski <brgl@bgd=
-ev.pl> wrote:
-> >>>>
-> >>>> Commit 98ce1eb1fd87e ("gpiolib: introduce gpio_chip setters that ret=
-urn
-> >>>> values") added new line setter callbacks to struct gpio_chip. They a=
-llow
-> >>>> to indicate failures to callers. We're in the process of converting =
-all
-> >>>> GPIO controllers to using them before removing the old ones. This se=
-ries
-> >>>> converts all GPIO chips implemented under drivers/soc/.
-> >>>>
-> >>>> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >>>> ---
-> >>>> Bartosz Golaszewski (2):
-> >>>>         soc: fsl: qe: use new GPIO line value setter callbacks
-> >>>>         soc: renesas: pwc-rzv2m: use new GPIO line value setter call=
-backs
-> >>>>
-> >>>>    drivers/soc/fsl/qe/gpio.c       | 6 ++++--
-> >>>>    drivers/soc/renesas/pwc-rzv2m.c | 8 +++++---
-> >>>>    2 files changed, 9 insertions(+), 5 deletions(-)
-> >>>> ---
-> >>>> base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
-> >>>> change-id: 20250523-gpiochip-set-rv-soc-14e1d9414f70
-> >>>>
-> >>>> Best regards,
-> >>>> --
-> >>>> Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >>>>
-> >>>
-> >>> I see Geert queued patch 2/2, who would take patch 1/2?
-> >>
-> >>
-> >> It is in my pipe for v6.17 but if someone else wants to take it I can
-> >> Ack it instead.
-> >>
-> >> Christophe
-> >
-> > No, that's alright, I just didn't get any notification nor is it in
-> > linux-next yet.
->
-> Don't worry, it is not lost, see
-> https://patchwork.ozlabs.org/project/linuxppc-dev/list/?series=3D&submitt=
-er=3D&state=3D&q=3D&archive=3D&delegate=3D61610
+On Mon, Jul 07, 2025 at 09:00:12AM +0800, Zihuan Zhang wrote:
+> 
+> 在 2025/7/4 17:21, Peter Zijlstra 写道:
+> > You're missing the obvious. How about we 'fix' the PF_NOFREEZE handling
+> > and help all cases that set that and not only zombies?　　　 　 　 　　 　 　 　 　 　 　 　 　 　 　　
+> 
+> It sounds like a good idea, but there’s a potential risk in relying solely
+> on PF_NOFREEZE: it’s a mutable flag that can be set or cleared dynamically
+> during runtime, even within the freeze window.
 
-Hi,
+> If a task changes its PF_NOFREEZE state after passing the early check in
+> try_to_freeze_task(), we might skip freezing it incorrectly, leading to
+> inconsistent behavior or unexpected task escapes. This is particularly
+> tricky for some kernel threads or exit paths where PF_NOFREEZE is
+> manipulated as part of cleanup or teardown.
 
-This is still not in linux-next and the status on patchwork didn't
-change. This will be the last remaining patch not under drivers/gpio/
-that's needed to complete this rework by the next cycle. Would you
-mind just Acking it and I can take it through the GPIO tree?
+A quick browse through the code seems to suggest that for user tasks,
+PF_NOFREEZE is set just like exit_state, once at death.
 
-Bart
+For kernel threads the situation is a little more complex; but typically
+a kthread is spawned with PF_NOFREEZE set, and then some will clear it
+again, but always before then calling a TASK_FREEZABLE wait.
+
+The only thing I didn't fully investigate is this
+{,un}lock_system_sleep() thing. But that would appear to need at least
+the below fixlet.
+
+diff --git a/kernel/power/main.c b/kernel/power/main.c
+index 3d484630505a..a415e7d30a2c 100644
+--- a/kernel/power/main.c
++++ b/kernel/power/main.c
+@@ -52,8 +52,8 @@ void pm_restrict_gfp_mask(void)
+ unsigned int lock_system_sleep(void)
+ {
+ 	unsigned int flags = current->flags;
+-	current->flags |= PF_NOFREEZE;
+ 	mutex_lock(&system_transition_mutex);
++	current->flags |= PF_NOFREEZE;
+ 	return flags;
+ }
+ EXPORT_SYMBOL_GPL(lock_system_sleep);
+
+
+Anyway, this seems to suggest something relatively simple like this here
+should do:
+
+diff --git a/kernel/freezer.c b/kernel/freezer.c
+index 8d530d0949ff..8b7cecd17564 100644
+--- a/kernel/freezer.c
++++ b/kernel/freezer.c
+@@ -162,20 +162,22 @@ static bool __freeze_task(struct task_struct *p)
+  */
+ bool freeze_task(struct task_struct *p)
+ {
+-	unsigned long flags;
+-
+-	spin_lock_irqsave(&freezer_lock, flags);
+-	if (!freezing(p) || frozen(p) || __freeze_task(p)) {
+-		spin_unlock_irqrestore(&freezer_lock, flags);
++	/*
++	 * User tasks get NOFREEZE in do_task_dead().
++	 */
++	if ((p->flags & (PF_NOFREEZE | PF_KTHREAD)) == PF_NOFREEZE)
+ 		return false;
+-	}
+ 
+-	if (!(p->flags & PF_KTHREAD))
+-		fake_signal_wake_up(p);
+-	else
+-		wake_up_state(p, TASK_NORMAL);
++	scoped_guard (spinlock_irqsave, &freezer_lock) {
++		if (!freezing(p) || frozen(p) || __freeze_task(p))
++			return false;
++
++		if (!(p->flags & PF_KTHREAD))
++			fake_signal_wake_up(p);
++		else
++			wake_up_state(p, TASK_NORMAL);
++	}
+ 
+-	spin_unlock_irqrestore(&freezer_lock, flags);
+ 	return true;
+ }
+ 
 
