@@ -1,320 +1,298 @@
-Return-Path: <linux-kernel+bounces-719601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BBF4AFB02B
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 11:49:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16428AFB033
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 11:50:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A01923A9930
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 09:48:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF3C41894821
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 09:49:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 223E7293C66;
-	Mon,  7 Jul 2025 09:48:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7180292B47;
+	Mon,  7 Jul 2025 09:49:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NCQNC38z"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Bc1ckXy8"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 561CF293C65
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 09:48:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE71E28FFD8
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 09:49:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751881706; cv=none; b=mEIvc/fADRd83sJEunPDxJ+mBYnLHTW15SX+cVToiMBnld/K0up9lYXYuUcKIaDUYqAvm5ae/x/A2F8labxe6vc0W0RptcdOqttMcBxlNvaLYaymcA/ntJNpCarZCEwkXiZZObEiZjaix60SGErjBw59WLoPj9dgPpzyLQRNE5E=
+	t=1751881771; cv=none; b=kvucIoKcd5KNRVuK4avX/IUR9j/iUP8Fs+eUxEYB0xfJZh+J1Db4KbndniAU2b6Q19zFcrdr6zBFcgL+KQemarylck0+4UdNhplToqxymvWAhV7CbLidZaNmpbFBwUqhfLOqKocbjXUagB8apRoqEPdJXG/dBRK3amAKssZbOAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751881706; c=relaxed/simple;
-	bh=9dAF3cEjm8FTwqY4rSN+zW6ytqAo718oWGU0+iw7aHI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EaaAF979+tpq5WI1XnCDbkSqmGqdrNvQsME0XNexXsoOQWWPse1qJvKYKXAjsW79zAhElyeRrflbHJg8BGCL/16vVzhXAjIOr+2m9jYXJmBbV6pozfeGRmL1dKVf+5zwWuy7puAUg6jVCN0r88K/UrATdxywfS8FcQura3U/9ro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NCQNC38z; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1751881702;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=l2eNwpRiJz06WSkXzHwTd+TpkPf6RGsoGF5CBNNzDXI=;
-	b=NCQNC38zNC3JZfYZwOCJxgQjiApqW6KaPpq6z2XdHiQNBs2VIu0cHs0OZeJS6MTHfNxa20
-	820tTq/xy8RGadIOf1mrtRyUIRlOY+fW2zgSqXV1RSEZWYYezYsPRN1VaMaa5dfCpK5fUV
-	KclnDuxsB1ovyt7laH26CK0bm+whLns=
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
- [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-391-JCjYllCwMBep_emoSTw4Mw-1; Mon, 07 Jul 2025 05:48:21 -0400
-X-MC-Unique: JCjYllCwMBep_emoSTw4Mw-1
-X-Mimecast-MFC-AGG-ID: JCjYllCwMBep_emoSTw4Mw_1751881700
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-702ac10ef53so50131176d6.1
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 02:48:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751881700; x=1752486500;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=l2eNwpRiJz06WSkXzHwTd+TpkPf6RGsoGF5CBNNzDXI=;
-        b=By7C9XovsPMPUwuBOMY1Djlv2+J660cfD5c3ZGrXKzjNQkrmmEdDAs5OK4jE/Ercuk
-         ZnBVa4PtsFAQBPriLYUTJTzw3Dka91DTffjg6Fvwxy0Nz1B3RAAVm5r7eQxzFyIjQAK/
-         knp2eVIXccN5WEZw/oXteW9mlf6LXdvs79pxFUEur6CQR9BsaGKi1mFT2pYCthHlnpqW
-         nK+RU7jF3GwtRySt9XcWiBe8EpfptA59LdGKLSXyZJpGHMIZIN5xIfLowVjNdEtKivi9
-         to+O8fhEOnG6RCByZRMD/1k43wkZCZPa6HULHPKteNZzyUmLWouHjuhdDSuRYrcf+pUL
-         CvkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV3lMh+reBktRzjTFuyUtG2m8ekv7L3XViLr8xthupSZWjsMVanNcrJTStlXnGiq6P86yfm6N9asPkWnZE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyoWTXsr/uCZ+FLZ96GBjjMPXKmu8Zu7o6Ttgtve6rQA5gQgzx/
-	Ry0lsnG3HuuQPQzzYKslOULzpxlkz+3l84Aw77Q0QuFhlVjvef2rQhMEc8osRaA7ZrjdYE7UBEN
-	6a0SwMGlQ+15001EpZeAMyZH1bIpxVLAQg/5A/jDP2TkncL+MKAx68tx7I2OE76Vg+g==
-X-Gm-Gg: ASbGncshuhkm1mEBAswRPmL5pxQ8MwCNR6Mjak+72juOSQ5So6mOv0jt/nld+0bUCcY
-	5N4eXOEPRRKUGzZSEh8rUj2S0EMUu5NYAGtclovCxeT7bH6l8A/nP46auzdQnFdqT4s0//YUpjs
-	Wo5JHk7SJWXOU0BaVW3a+q5osJTCGBb4AF5TZNE0I4u8HsTqYdc9LMCPJJNce3Iko6e+8fu9B2e
-	z2E6wkv+rll3G9Qce3lBQ4lQyajLPK9FmTqea08oDmtyOGZX5DmeS40/RIQcxUBxM5NDBkMx96F
-	LyK5koDftFYqqHlFtPXFFxKTJ04=
-X-Received: by 2002:a05:6214:4d03:b0:702:bcf6:34ad with SMTP id 6a1803df08f44-702c4e526d3mr166782436d6.12.1751881700472;
-        Mon, 07 Jul 2025 02:48:20 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE8iMbasc13Fuwl+kvH+EXxUYVaBsAF6X+9vjiPzFiXhyNXG8gzIQz568Gm4AGMdxJ9Ye1AUA==
-X-Received: by 2002:a05:6214:4d03:b0:702:bcf6:34ad with SMTP id 6a1803df08f44-702c4e526d3mr166782136d6.12.1751881700017;
-        Mon, 07 Jul 2025 02:48:20 -0700 (PDT)
-Received: from sgarzare-redhat ([193.207.202.41])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-702c4cc75afsm55632036d6.5.2025.07.07.02.48.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Jul 2025 02:48:19 -0700 (PDT)
-Date: Mon, 7 Jul 2025 11:48:07 +0200
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: Qunqin Zhao <zhaoqunqin@loongson.cn>
-Cc: lee@kernel.org, herbert@gondor.apana.org.au, jarkko@kernel.org, 
-	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev, davem@davemloft.net, 
-	linux-crypto@vger.kernel.org, peterhuewe@gmx.de, jgg@ziepe.ca, linux-integrity@vger.kernel.org, 
-	Yinggang Gu <guyinggang@loongson.cn>, Huacai Chen <chenhuacai@loongson.cn>
-Subject: Re: [PATCH v12 3/4] tpm: Add a driver for Loongson TPM device
-Message-ID: <4uhbqaq6obk626r6dk27opaksuwezizx5bpq4eacqjogrdk6as@sinmwzhfjrsn>
-References: <20250705072045.1067-1-zhaoqunqin@loongson.cn>
- <20250705072045.1067-4-zhaoqunqin@loongson.cn>
+	s=arc-20240116; t=1751881771; c=relaxed/simple;
+	bh=eDZfNIGenW85ow3dtHyTqVMIgYTyNFouRdL0ZV6sNQI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:To:Cc:Content-Type:
+	 References; b=ObEe1ztCnJnfaugYUo/jrIiOfBs8D3LAXmafqRt09CeK5PJwfPfv9g97eFv89sPS3PlyvKjRjEcqxf6bJVHGF6TLdWr9muO7giBhmE+crNr7A0KQWaW+A1j/s13FD1zsc6FJOzivKtlEYx0qPO47uAbfw8j0DZtHvJ7LxrtuhiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Bc1ckXy8; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250707094927euoutp0188e1ab88532bd8f63ff034cb0cb3cf2c~P7y90i_YL2150121501euoutp01c
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 09:49:27 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250707094927euoutp0188e1ab88532bd8f63ff034cb0cb3cf2c~P7y90i_YL2150121501euoutp01c
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1751881767;
+	bh=lflOaptrVidU3pWDXvEgPkzK45YEv/mwQ+lLdAaF1gU=;
+	h=From:Subject:Date:To:Cc:References:From;
+	b=Bc1ckXy8vxsgLSTjzHZ5ieUFVaLU7fDwolK3X9tnsc7QQb0pumysLnzOIoHhP92op
+	 IWuemEEIXx5ZTtgPfdtDRR+0bxKFHMwI9nA17WV8DE1W+cYtB3Gq4Gw2EIAaaYYuXw
+	 R5jMjHkTIdFBxDRpn6x6tA6JDieoH63aSKKCcqVE=
+Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250707094926eucas1p155bd967b6986c4a999776839b1aa1fc6~P7y9Hi07y0323103231eucas1p1i;
+	Mon,  7 Jul 2025 09:49:26 +0000 (GMT)
+Received: from AMDC4942.eu.corp.samsungelectronics.net (unknown
+	[106.210.136.40]) by eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250707094924eusmtip1a2ada80141a1ed4fffe3caea64299151~P7y7yT7Eu1942119421eusmtip1N;
+	Mon,  7 Jul 2025 09:49:24 +0000 (GMT)
+From: Michal Wilczynski <m.wilczynski@samsung.com>
+Subject: [PATCH v10 0/7] Rust Abstractions for PWM subsystem with TH1520 PWM
+ driver
+Date: Mon, 07 Jul 2025 11:48:28 +0200
+Message-Id: <20250707-rust-next-pwm-working-fan-for-sending-v10-0-d0c5cf342004@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20250705072045.1067-4-zhaoqunqin@loongson.cn>
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOyXa2gC/5XSPW4CMRAF4Ksg13HkGf+tqXKPKIXX9sAqYhfZs
+	BAh7h5DwyrbOOV7xfemmBsrKQ+psO3mxnKahzJMYw0g3jYs7P24S3yItWAoUAuNiudzOfExXU/
+	8eDnwy5S/h3HHyY+cpsxLGuMja40+YoQenGTVOuZEw/U59PlV834opyn/PHdneLT/XZiBC97HO
+	qKFU0T2o/hDOY+79zAd2GNjxpdrQLS6WF2rZUKnNQGItSuXrm11ZXUhBN8pGww5Wrtq6Xatrqq
+	uNx47wt7Ezq9dvXBRtrq6uiJ4lLYejDKtXfNyrYBW11QXLQgnkQyZfu3apYutrq2usYmkI4KIb
+	u12S7f5z7rqOg1Jqw6Do7h23dI1ra6rrsJe+4AgIPz53/v9/gtTvA9SnQMAAA==
+X-Change-ID: 20250524-rust-next-pwm-working-fan-for-sending-552ad2d1b193
+To: =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,  Miguel Ojeda
+	<ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,  Boqun Feng
+	<boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,  Andreas
+	Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,  Trevor
+	Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>,  Michal
+	Wilczynski <m.wilczynski@samsung.com>, Guo Ren <guoren@kernel.org>,  Fu Wei
+	<wefu@redhat.com>, Rob Herring <robh@kernel.org>,  Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,  Conor Dooley <conor+dt@kernel.org>,  Paul Walmsley
+	<paul.walmsley@sifive.com>,  Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
+	<aou@eecs.berkeley.edu>,  Alexandre Ghiti <alex@ghiti.fr>,  Marek Szyprowski
+	<m.szyprowski@samsung.com>,  Benno Lossin <lossin@kernel.org>,  Michael
+	Turquette <mturquette@baylibre.com>,  Drew Fustini <fustini@kernel.org>,
+	Benno Lossin <lossin@kernel.org>,  Drew Fustini <fustini@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	devicetree@vger.kernel.org,  Krzysztof Kozlowski
+	<krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.15-dev
+X-CMS-MailID: 20250707094926eucas1p155bd967b6986c4a999776839b1aa1fc6
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250707094926eucas1p155bd967b6986c4a999776839b1aa1fc6
+X-EPHeader: CA
+X-CMS-RootMailID: 20250707094926eucas1p155bd967b6986c4a999776839b1aa1fc6
+References: <CGME20250707094926eucas1p155bd967b6986c4a999776839b1aa1fc6@eucas1p1.samsung.com>
 
-On Sat, Jul 05, 2025 at 03:20:44PM +0800, Qunqin Zhao wrote:
->Loongson Security Engine supports random number generation, hash,
->symmetric encryption and asymmetric encryption. Based on these
->encryption functions, TPM2 have been implemented in the Loongson
->Security Engine firmware. This driver is responsible for copying data
->into the memory visible to the firmware and receiving data from the
->firmware.
->
->Co-developed-by: Yinggang Gu <guyinggang@loongson.cn>
->Signed-off-by: Yinggang Gu <guyinggang@loongson.cn>
->Signed-off-by: Qunqin Zhao <zhaoqunqin@loongson.cn>
->Reviewed-by: Huacai Chen <chenhuacai@loongson.cn>
->---
-> drivers/char/tpm/Kconfig        |  9 ++++
-> drivers/char/tpm/Makefile       |  1 +
-> drivers/char/tpm/tpm_loongson.c | 84 +++++++++++++++++++++++++++++++++
-> 3 files changed, 94 insertions(+)
-> create mode 100644 drivers/char/tpm/tpm_loongson.c
+This patch series introduces Rust support for the T-HEAD TH1520 PWM
+controller and demonstrates its use for fan control on the Sipeed Lichee
+Pi 4A board.
 
-TPM_CHIP_FLAG_SYNC support is now merged in linux-tpmdd/next tree, so 
-IMHO this driver can also set it and implement a synchronous send() in 
-this way (untested):
+The primary goal of this patch series is to introduce a basic set of
+Rust abstractions for the Linux PWM subsystem. As a first user and
+practical demonstration of these abstractions, the series also provides
+a functional PWM driver for the T-HEAD TH1520 SoC. This allows control
+of its PWM channels and ultimately enables temperature controlled fan
+support for the Lichee Pi 4A board. This work aims to explore the use of
+Rust for PWM drivers and lay a foundation for potential future
+Rust based PWM drivers.
 
-diff --git a/drivers/char/tpm/tpm_loongson.c b/drivers/char/tpm/tpm_loongson.c
-index a4ec23639911..0e8eb8cee13c 100644
---- a/drivers/char/tpm/tpm_loongson.c
-+++ b/drivers/char/tpm/tpm_loongson.c
-@@ -15,36 +15,35 @@ struct tpm_loongson_cmd {
-  	u32 pad[5];
-  };
+The core of this series is a new rust/kernel/pwm.rs module that provides
+abstractions for writing PWM chip provider drivers in Rust. This has
+been significantly reworked from v1 based on extensive feedback. The key
+features of the new abstraction layer include:
 
--static int tpm_loongson_recv(struct tpm_chip *chip, u8 *buf, size_t count)
-+static int tpm_loongson_send(struct tpm_chip *chip, u8 *buf, size_t bufsiz,
-+			     size_t cmd_len)
-  {
-  	struct loongson_se_engine *tpm_engine = dev_get_drvdata(&chip->dev);
--	struct tpm_loongson_cmd *cmd_ret = tpm_engine->command_ret;
--
--	if (cmd_ret->data_len > count)
--		return -EIO;
-+	struct tpm_loongson_cmd *cmd = tpm_engine->command;
-+	struct tpm_loongson_cmd *cmd_ret;
-+	int ret;
+ - Ownership and Lifetime Management: The pwm::Chip wrapper is managed
+   by ARef, correctly tying its lifetime to its embedded struct device
+   reference counter. Chip registration is handled by a pwm::Registration
+   RAII guard, which guarantees that pwmchip_add is always paired with
+   pwmchip_remove, preventing resource leaks.
 
--	memcpy(buf, tpm_engine->data_buffer, cmd_ret->data_len);
-+	if (cmd_len > tpm_engine->buffer_size)
-+		return -E2BIG;
+ - Modern and Safe API: The PwmOps trait is now based on the modern
+   waveform API (round_waveform_tohw, write_waveform, etc.) as recommended
+   by the subsystem maintainer. It is generic over a driver's
+   hardware specific data structure, moving all unsafe serialization logic
+   into the abstraction layer and allowing drivers to be written in 100%
+   safe Rust.
 
--	return cmd_ret->data_len;
--}
-+	cmd->data_len = cmd_len;
-+	memcpy(tpm_engine->data_buffer, buf, cmd_len);
+ - Ergonomics: The API provides safe, idiomatic wrappers for other PWM
+   types (State, Args, Device, etc.) and uses standard kernel error
+   handling patterns.
 
--static int tpm_loongson_send(struct tpm_chip *chip, u8 *buf, size_t count)
--{
--	struct loongson_se_engine *tpm_engine = dev_get_drvdata(&chip->dev);
--	struct tpm_loongson_cmd *cmd = tpm_engine->command;
-+	ret = loongson_se_send_engine_cmd(tpm_engine);
-+	if (ret)
-+		return ret;
+The series is structured as follows:
+ - Expose static function pwmchip_release.
+ - Rust PWM Abstractions: The new safe abstraction layer.
+ - TH1520 PWM Driver: A new Rust driver for the TH1520 SoC, built on
+   top of the new abstractions.
+ - Device Tree Bindings & Nodes: The remaining patches add the necessary
+   DT bindings and nodes for the TH1520 PWM controller, and the PWM fan
+   configuration for the Lichee Pi 4A board.
 
--	if (count > tpm_engine->buffer_size)
--		return -E2BIG;
-+	cmd_ret = tpm_engine->command_ret;
-+	if (cmd_ret->data_len > bufsiz)
-+		return -EIO;
+Testing:
+Tested on the TH1520 SoC. The fan works correctly. The duty/period
+calculations are correct. Fan starts slow when the chip is not hot and
+gradually increases the speed when PVT reports higher temperatures.
 
--	cmd->data_len = count;
--	memcpy(tpm_engine->data_buffer, buf, count);
-+	memcpy(buf, tpm_engine->data_buffer, cmd_ret->data_len);
+The patches are based on mainline, with some dependencies which are not
+merged yet - platform Io support [1].
 
--	return loongson_se_send_engine_cmd(tpm_engine);
-+	return cmd_ret->data_len;
-  }
+Reference repository with all the patches together can be found on
+github [2].
 
-  static const struct tpm_class_ops tpm_loongson_ops = {
-  	.flags = TPM_OPS_AUTO_STARTUP,
--	.recv = tpm_loongson_recv,
-  	.send = tpm_loongson_send,
-  };
+[1] - https://lore.kernel.org/rust-for-linux/20250509-topics-tyr-platform_iomem-v8-0-e9f1725a40da@collabora.com/
+[2] - https://github.com/mwilczy/linux/commits/rust-next-pwm-working-fan-for-sending-v15/
 
-@@ -65,7 +64,7 @@ static int tpm_loongson_probe(struct platform_device *pdev)
-  	chip = tpmm_chip_alloc(dev, &tpm_loongson_ops);
-  	if (IS_ERR(chip))
-  		return PTR_ERR(chip);
--	chip->flags = TPM_CHIP_FLAG_TPM2 | TPM_CHIP_FLAG_IRQ;
-+	chip->flags = TPM_CHIP_FLAG_TPM2 | TPM_CHIP_FLAG_SYNC;
-  	dev_set_drvdata(&chip->dev, tpm_engine);
+---
+Changes in v10:
+ - Exported the C pwmchip_release function and called it from the custom
+   Rust release_callback to fix a memory leak of the pwm_chip struct.
+ - Removed the PwmOps::free callback, as it is not needed for idiomatic
+   Rust resource management.
+ - Removed the redundant is_null check for drvdata in the release handler,
+   as the Rust API guarantees a valid pointer is always provided.
 
-  	return tpm_chip_register(chip);
+- Link to v9: https://lore.kernel.org/r/20250706-rust-next-pwm-working-fan-for-sending-v9-0-42b5ac2101c7@samsung.com
 
-Thanks,
-Stefano
+Changes in v9:
+ - Encapsulated vtable setup in Chip::new(): The Chip::new() function is
+   now generic over the PwmOps implementation. This allows it to create and
+   assign the vtable internally, which simplifies the public API by
+   removing the ops_vtable parameter from Registration::register().
+ - Fixed memory leak with a release handler: A custom release_callback is
+   now assigned to the embedded struct device's release hook. This
+   guarantees that driver specific data is always freed when the chip is
+   destroyed, even if registration fails.
+ - The PwmOpsVTable is now defined as a const associated item to ensure
+   it has a 'static lifetime.
+ - Combined introductory commits: The Device, Chip, and PwmOps abstractions
+   are now introduced in a single commit. This was necessary to resolve the
+   circular dependencies between them and present a clean, compilable unit
+   for review.
 
->
->diff --git a/drivers/char/tpm/Kconfig b/drivers/char/tpm/Kconfig
->index dddd702b2..ba3924eb1 100644
->--- a/drivers/char/tpm/Kconfig
->+++ b/drivers/char/tpm/Kconfig
->@@ -189,6 +189,15 @@ config TCG_IBMVTPM
-> 	  will be accessible from within Linux.  To compile this driver
-> 	  as a module, choose M here; the module will be called tpm_ibmvtpm.
->
->+config TCG_LOONGSON
->+	tristate "Loongson TPM Interface"
->+	depends on MFD_LOONGSON_SE
->+	help
->+	  If you want to make Loongson TPM support available, say Yes and
->+	  it will be accessible from within Linux. To compile this
->+	  driver as a module, choose M here; the module will be called
->+	  tpm_loongson.
->+
-> config TCG_XEN
-> 	tristate "XEN TPM Interface"
-> 	depends on TCG_TPM && XEN
->diff --git a/drivers/char/tpm/Makefile b/drivers/char/tpm/Makefile
->index 9de1b3ea3..5b5cdc0d3 100644
->--- a/drivers/char/tpm/Makefile
->+++ b/drivers/char/tpm/Makefile
->@@ -46,3 +46,4 @@ obj-$(CONFIG_TCG_ARM_CRB_FFA) += tpm_crb_ffa.o
-> obj-$(CONFIG_TCG_VTPM_PROXY) += tpm_vtpm_proxy.o
-> obj-$(CONFIG_TCG_FTPM_TEE) += tpm_ftpm_tee.o
-> obj-$(CONFIG_TCG_SVSM) += tpm_svsm.o
->+obj-$(CONFIG_TCG_LOONGSON) += tpm_loongson.o
->diff --git a/drivers/char/tpm/tpm_loongson.c b/drivers/char/tpm/tpm_loongson.c
->new file mode 100644
->index 000000000..a4ec23639
->--- /dev/null
->+++ b/drivers/char/tpm/tpm_loongson.c
->@@ -0,0 +1,84 @@
->+// SPDX-License-Identifier: GPL-2.0
->+/* Copyright (c) 2025 Loongson Technology Corporation Limited. */
->+
->+#include <linux/device.h>
->+#include <linux/mfd/loongson-se.h>
->+#include <linux/platform_device.h>
->+#include <linux/wait.h>
->+
->+#include "tpm.h"
->+
->+struct tpm_loongson_cmd {
->+	u32 cmd_id;
->+	u32 data_off;
->+	u32 data_len;
->+	u32 pad[5];
->+};
->+
->+static int tpm_loongson_recv(struct tpm_chip *chip, u8 *buf, size_t count)
->+{
->+	struct loongson_se_engine *tpm_engine = dev_get_drvdata(&chip->dev);
->+	struct tpm_loongson_cmd *cmd_ret = tpm_engine->command_ret;
->+
->+	if (cmd_ret->data_len > count)
->+		return -EIO;
->+
->+	memcpy(buf, tpm_engine->data_buffer, cmd_ret->data_len);
->+
->+	return cmd_ret->data_len;
->+}
->+
->+static int tpm_loongson_send(struct tpm_chip *chip, u8 *buf, size_t count)
->+{
->+	struct loongson_se_engine *tpm_engine = dev_get_drvdata(&chip->dev);
->+	struct tpm_loongson_cmd *cmd = tpm_engine->command;
->+
->+	if (count > tpm_engine->buffer_size)
->+		return -E2BIG;
->+
->+	cmd->data_len = count;
->+	memcpy(tpm_engine->data_buffer, buf, count);
->+
->+	return loongson_se_send_engine_cmd(tpm_engine);
->+}
->+
->+static const struct tpm_class_ops tpm_loongson_ops = {
->+	.flags = TPM_OPS_AUTO_STARTUP,
->+	.recv = tpm_loongson_recv,
->+	.send = tpm_loongson_send,
->+};
->+
->+static int tpm_loongson_probe(struct platform_device *pdev)
->+{
->+	struct loongson_se_engine *tpm_engine;
->+	struct device *dev = &pdev->dev;
->+	struct tpm_loongson_cmd *cmd;
->+	struct tpm_chip *chip;
->+
->+	tpm_engine = loongson_se_init_engine(dev->parent, SE_ENGINE_TPM);
->+	if (!tpm_engine)
->+		return -ENODEV;
->+	cmd = tpm_engine->command;
->+	cmd->cmd_id = SE_CMD_TPM;
->+	cmd->data_off = tpm_engine->buffer_off;
->+
->+	chip = tpmm_chip_alloc(dev, &tpm_loongson_ops);
->+	if (IS_ERR(chip))
->+		return PTR_ERR(chip);
->+	chip->flags = TPM_CHIP_FLAG_TPM2 | TPM_CHIP_FLAG_IRQ;
->+	dev_set_drvdata(&chip->dev, tpm_engine);
->+
->+	return tpm_chip_register(chip);
->+}
->+
->+static struct platform_driver tpm_loongson = {
->+	.probe   = tpm_loongson_probe,
->+	.driver  = {
->+		.name  = "tpm_loongson",
->+	},
->+};
->+module_platform_driver(tpm_loongson);
->+
->+MODULE_ALIAS("platform:tpm_loongson");
->+MODULE_LICENSE("GPL");
->+MODULE_DESCRIPTION("Loongson TPM driver");
->-- 
->2.45.2
->
->
+- Link to v8: https://lore.kernel.org/r/20250704-rust-next-pwm-working-fan-for-sending-v8-0-951e5482c9fd@samsung.com
+
+Changes in v8:
+ - Dropped already accepted commit, re-based on top of linux-next
+ - Reworked the Chip and PwmOps APIs to address the drvdata() type-safety
+   comment. Chip is now generic, and PwmOps uses an associated type
+   to provide compile-time guarantees.
+ - Added a parent device sanity check to Registration::register().
+ - Updated drvdata() to return the idiomatic T::Borrowed<'_>.
+ - added temporary unsafe blocks in the driver, as the current
+   abstraction for Clk is neiter Safe nor Sync. I think eventually
+   proper abstraction for Clk will be added as in a current state it's
+   not very useful.
+
+- Link to v7: https://lore.kernel.org/r/20250702-rust-next-pwm-working-fan-for-sending-v7-0-67ef39ff1d29@samsung.com
+
+Changes in v7:
+- Made parent_device function private and moved casts to Device<Bound>
+  there as well.
+- Link to v6: https://lore.kernel.org/r/20250701-rust-next-pwm-working-fan-for-sending-v6-0-2710932f6f6b@samsung.com
+
+Changes in v6:
+ - Re-based on top of linux-next, dropped two already accepted commits.
+ - After re-basing the IoMem dependent patchset stopped working,
+   reworked it to use similar API like the PCI subsystem (I think it
+   will end up the same). Re-worked the driver for it as well.
+ - Remove the apply and get_state callbacks, and most of the State as
+   well, as the old way of implementing drivers should not be possible
+   in Rust. Left only enabled(), since it's useful for my driver.
+ - Removed the public set_drvdata() method from pwm::Chip
+ - Moved WFHWSIZE to the public include/linux/pwm.h header and renamed it
+   to PWM_WFHWSIZE, allowing bindgen to create safe FFI bindings.
+ - Corrected the ns_to_cycles integer calculation in the TH1520 driver to
+   handle overflow correctly.
+ - Updated the Kconfig entry for the TH1520 driver to select the Rust
+   abstractions for a better user experience.
+
+- Link to v5: https://lore.kernel.org/r/20250623-rust-next-pwm-working-fan-for-sending-v5-0-0ca23747c23e@samsung.com
+
+Changes in v5:
+- Reworked `pwm::Chip` creation to take driver data directly, which
+  allowed making the `chip.drvdata()` accessor infallible
+- added missing `pwm.c` file lost during the commit split (sorry !)
+- Link to v4: https://lore.kernel.org/r/20250618-rust-next-pwm-working-fan-for-sending-v4-0-a6a28f2b6d8a@samsung.com
+
+Changes in v4:
+ - Reworked the pwm::Registration API to use the devres framework,
+   addressing lifetime issue.
+ - Corrected the PwmOps trait and its callbacks to use immutable references
+   (&Chip, &Device) for improved safety.
+ - Applied various code style and naming cleanups based on feedback
+
+- Link to v3: https://lore.kernel.org/r/20250617-rust-next-pwm-working-fan-for-sending-v3-0-1cca847c6f9f@samsung.com
+
+Changes in v3:
+ - Addressed feedback from Uwe by making multiple changes to the TH1520
+   driver and the abstraction layer.
+ - Split the core PWM abstractions into three focused commits to ease
+   review per Benno request.
+ - Confirmed the driver now works correctly with CONFIG_PWM_DEBUG enabled
+   by implementing the full waveform API, which correctly reads the
+   hardware state.
+ - Refactored the Rust code to build cleanly with
+   CONFIG_RUST_BUILD_ASSERT_ALLOW=n, primarily by using the try_* family of
+   functions for IoMem access.
+ - Included several cosmetic changes and cleanups to the abstractions
+   per Miguel review.
+
+- Link to v2: https://lore.kernel.org/r/20250610-rust-next-pwm-working-fan-for-sending-v2-0-753e2955f110@samsung.com
+
+Changes in v2:
+ - Reworked the PWM abstraction layer based on extensive feedback.
+ - Replaced initial devm allocation with a proper ARef<Chip> lifetime model
+   using AlwaysRefCounted.
+ - Implemented a Registration RAII guard to ensure safe chip add/remove.
+ - Migrated the PwmOps trait from the legacy .apply callback to the modern
+   waveform API.
+ - Refactored the TH1520 driver to use the new, safer abstractions.
+ - Added a patch to mark essential bus clocks as CLK_IGNORE_UNUSED to fix
+   boot hangs when the PWM and thermal sensors are enabled.
+- Link to v1: https://lore.kernel.org/r/20250524-rust-next-pwm-working-fan-for-sending-v1-0-bdd2d5094ff7@samsung.com
+
+---
+Michal Wilczynski (7):
+      pwm: Export `pwmchip_release` for external use
+      rust: pwm: Add Kconfig and basic data structures
+      rust: pwm: Add complete abstraction layer
+      pwm: Add Rust driver for T-HEAD TH1520 SoC
+      dt-bindings: pwm: thead: Add T-HEAD TH1520 PWM controller
+      riscv: dts: thead: Add PWM controller node
+      riscv: dts: thead: Add PWM fan and thermal control
+
+ .../devicetree/bindings/pwm/thead,th1520-pwm.yaml  |  48 ++
+ MAINTAINERS                                        |   8 +
+ arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts  |  67 ++
+ arch/riscv/boot/dts/thead/th1520.dtsi              |   7 +
+ drivers/pwm/Kconfig                                |  24 +
+ drivers/pwm/Makefile                               |   1 +
+ drivers/pwm/core.c                                 |   2 +-
+ drivers/pwm/pwm_th1520.rs                          | 352 +++++++++
+ include/linux/pwm.h                                |   5 +
+ rust/bindings/bindings_helper.h                    |   1 +
+ rust/helpers/helpers.c                             |   1 +
+ rust/helpers/pwm.c                                 |  20 +
+ rust/kernel/lib.rs                                 |   2 +
+ rust/kernel/pwm.rs                                 | 800 +++++++++++++++++++++
+ 14 files changed, 1337 insertions(+), 1 deletion(-)
+---
+base-commit: 47753b5a1696283930a78aae79b29371f96f5bca
+change-id: 20250524-rust-next-pwm-working-fan-for-sending-552ad2d1b193
+
+Best regards,
+-- 
+Michal Wilczynski <m.wilczynski@samsung.com>
 
 
