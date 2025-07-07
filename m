@@ -1,119 +1,115 @@
-Return-Path: <linux-kernel+bounces-720306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55ABEAFBA0E
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 19:42:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93763AFBA11
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 19:44:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 554F57A9A88
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 17:41:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D22AC3B93D5
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 17:43:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD1AC2E8DEA;
-	Mon,  7 Jul 2025 17:42:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14A3C2E7F18;
+	Mon,  7 Jul 2025 17:44:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ABDOEf3I"
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="ZZ6vvviz"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5BD12E2644;
-	Mon,  7 Jul 2025 17:42:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9879C18A6DF
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 17:44:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751910131; cv=none; b=kOFiWdhLWgCE08fam31HJtXKcpWO4ydVs0lxcRv+mWvPXudrvR76bGnciiIjD0o3BfQyBh272VikDVZrwKkGT7azMAK/mBsT+D8KkAb64tcZfe6xwut8lw0FnPSUsnDYZQZTDkTFH5iiltt5zL9mLz39GuZNqLV6PqmmBtAoEGU=
+	t=1751910246; cv=none; b=s2iwV4mJa0+t+nob5Bp/h16WqvnRFqvtEYbbe9tftVjnrO2jVDUMO+aMy0m8UJunsHY6kYE+QlyxILIHY/0s0ZcUnJ+jn5HqOJvlFNYa0tIBCsIbzkfuWrrfXvPWZWx68QrUWSOBV/zo09ZLxyc3CH19iwKieqY+NwIhFpHo+aI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751910131; c=relaxed/simple;
-	bh=BcRJsM9iy/XMPZrWki3/WFSDgpuo7Zx4XQLpPLhix74=;
+	s=arc-20240116; t=1751910246; c=relaxed/simple;
+	bh=o/HDZs7XPt+q8MHWK8dAkhY3tq2nEc40nkWYVoPA6DA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VWK3lZtcOGna4iSGMKjcc293U6JLup7ESrBW0i4L591tVvQZ67NyuSJbWXAUvYF+sKvEPcQ++X/zd+sQrvij78fPaIxWY/4ki7aKGOH2EFBo8oy1puqk/JezTZ3h4Lqt4DkgMQm6KJYJUL9JdCRW89/gMWCdHFMj3rMjWyf+Cck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ABDOEf3I; arc=none smtp.client-ip=209.85.219.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e812fc35985so2804107276.0;
-        Mon, 07 Jul 2025 10:42:09 -0700 (PDT)
+	 To:Cc:Content-Type; b=k4HcFywFrNJduGmLL1KNP24pM0IswaRwubWBFB0L1ZPY7hO0X5D3eKF+peo6kSO+6vyEpRgPjv3KV4d0ofn07hYfCHMXoZDXO80FYewmqMpOkbJBkUXyvir31QL1VloSwsf5hZ3KzcdqB7nWUJE72tNvSeNC9LsMFcn5Y43Rdas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=ZZ6vvviz; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-6088d856c6eso6783671a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 10:44:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751910129; x=1752514929; darn=vger.kernel.org;
+        d=ionos.com; s=google; t=1751910243; x=1752515043; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=42jtsUDXPCPmNytXrx59THHUxajHEyTomBc5xpmWMc0=;
-        b=ABDOEf3IUGHC/HErXGiIfHLXtMFA7tCrzNJYIrgndc0vaD4XQjvev/SQvK8XeJMNWv
-         lBxr2qIp/7Pk6Mm1n2Hu80ctuvG6NQ+j5bnGj1kWwhdRtU3GhGESwiHx4N8oiR6PuTFu
-         4wUFvqEAYm8ed3d+fpDjJ2gHvvV/3dja/nga7ZR8/gBJShIInqq1wUhJS8L1Kuawq48l
-         4SEcZBs65yoYR8TlAvuGKOkDDlfHGYhNqXGoSl3WN9hY7eFvOhT7b52G+DzgmQiCoPmN
-         aB9NG5jJ1zsFfZFflvITH+oAGX1keso5eiFo3ujLQ23NHkyn7Q/WlqFToyh5fMuUZYNh
-         1A7A==
+        bh=z6DAOBmHCUHaxqHYSRkMxeN53Fncoy3XLXn7MalUFJo=;
+        b=ZZ6vvvizpt2uudiiQ4A8FKN+MD6qjVHiHj2geugqLmwv7eUdXLVW+taMGCKrQgAv79
+         X+TIIgMNqkqK1ovNQXpkBqwoLPWCUouJU7EMnhclpTZWXp8OR3fwH9yNOejdCdraW9tG
+         L77KqudpEWo5Xbr16CYOcevyVG12ppMTbmyxfOoeXr8n2NFAQcyjxRmAfc75GxdXFe03
+         ZW/KKdF6gWPTwFZKCUm2AYUj2P0GMfztOiNQaD/0iOlQYWKN2ToQ87CwV0490E0bc1hr
+         jKoWF3RciHSPd2/hPzVqkgtW85076x8LFu9s6pFmXhpGVIwi0ecJ27+VDJLncuQw7KKO
+         Fv/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751910129; x=1752514929;
+        d=1e100.net; s=20230601; t=1751910243; x=1752515043;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=42jtsUDXPCPmNytXrx59THHUxajHEyTomBc5xpmWMc0=;
-        b=NsNX7z/f5KT1nfZYA6gr71aVFi12avEa6rvdP+0H4PdBcSoZ9/O6MYv7Q9u3ELsSf1
-         vWaRVpbQjHx9YhY7IpCHk5MNPhZyJdqoEF8xqZLzRCEE6Ek0bHEKZ8luNuukrbnypAQZ
-         ygwBcNuZO5Frn8qfujvaIY+LShg4Mm2NpTRLzdcsPCrASc9JLDbmDoBU5J3zKGgTAWOT
-         dJbsudyEFkRH5FvBNSEtuT+VMVkSbB62tjK99s7SuxJPBlyXDRYrgrTlJQ2rdpv4AaGP
-         O58rQz9ZDp9/5g9kWCEiElA0RFw8Kh51yByWQGN+Yt0MFBgGXgvxXyJDvIwvieEsfKJr
-         8+7w==
-X-Forwarded-Encrypted: i=1; AJvYcCUSvMGpqiqkSia3JGfWIne7djbpD6eaC10YBf98rSy8F7fTQgmwN+k6HsRfhAh9NKsVd7HNsh41B4gjQw==@vger.kernel.org, AJvYcCWA2cY35jjYB0PruZQlPnPm0X4s1CyZfcEFFFHnPjCdtJq9OEykuPPKa+I+2zFV00yLqSKrzEomRiRI1FDc@vger.kernel.org, AJvYcCXYeqgnD1XFHu8WhDqFQTfSlYR68+MmRsF0E2wgJIUkH9SsKeHBUe9CAv3fTHrvTwW/+jcvirn3EQ6U@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5NTpwnL3hKqfk5CxUJLDzK7vorcsAx8kqxc8fhj65Dbfr/8vE
-	uo1Vkq5fiUmG9XwP48+RYHvgxMwsgn5sBm0GWMoC2ari/fuUqXXr53xjXjbIYGEOH4/uenmFQ9b
-	47zG3P8gigWvBBAJT5Zq2J/4eSiyXiCI=
-X-Gm-Gg: ASbGncuDO2dbvog8JVczWaffa3ATbVHlwBnTnkybDt8Yg9cpVM85hUoS060lJiUHcF8
-	c0zRzeZxuRuDWdhqTTUhsf9DzAVKRZFa2JCldcRvgDdFMNpsl4mVUTnnT4eW8mQojf4P7wtRU2X
-	/tbZYpXefI0xZHfcCnUJGsLTJsQy3hLUncZfLvgKQuuj4kJ6ZDKclRMeSA
-X-Google-Smtp-Source: AGHT+IGdu+lUB6aYqtWH4AiO6Py1SgyDO+jxiLBNa4PCqXrusbUeunWL1E2NWxsWS+1ctn1q5K5//624lv0vLW+ua3Q=
-X-Received: by 2002:a05:690c:f8e:b0:70c:c013:f2f with SMTP id
- 00721157ae682-7179e44d3e9mr7404627b3.35.1751910128762; Mon, 07 Jul 2025
- 10:42:08 -0700 (PDT)
+        bh=z6DAOBmHCUHaxqHYSRkMxeN53Fncoy3XLXn7MalUFJo=;
+        b=tzXpevkcEKC5pQoYor6434wqvNEY92L94csta05+ptzaEW+JgwceknQKLL/yROktc/
+         5CY9WVOgek6luxB2p7HCqi6w7SmPNK9RxvWa8hd6EkNiwsbiQNrFQ/xEWN26GFYI+hkf
+         cAGTbIj/b0vdrL9G0MVjHglXoToXWZ/HXN7KAKxemlJXWHS7ZpAIlwu0UKSJRVybzZUM
+         0i1Qq0cbEuNiCz3m66COV6fuujp21lGLsSouzt9xeSQZEII/SzjonyiZjIwzIrlMHaAk
+         Q6kuvjENE7kuw1KHfqc1gkIrXJLhfkFmzMPiWLMN4ig7dH7v/dOT4r/4xaaHrAONOWx8
+         pyxg==
+X-Forwarded-Encrypted: i=1; AJvYcCUBbwzkBFrE5m9jLAqe83NIXy6GI34fj826kgLfjwpiIbuySTETBl/E6ExXU7okqeBa0r78vnrheiM1GKk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRrLmKZ/30Bj1DAPnV2+oDdjCvVslu2A3x/zCxyrbvxfJLLT/3
+	LLWdcce2Zf+YcdxsPnmQwegmj+EkY+noioICB9LE825AGqIwi/reYJAPnk6iMflCSE5yojh586K
+	WVtcvofZKw7x3t5KGsKEzaAisigxPeyJqAfe7uZNvmg==
+X-Gm-Gg: ASbGncuHOZhIyKkZLGrismZRNPegFWV0AKtg3Ar4cGROKPKr5aw9a6dpv9qJ15XuVSO
+	dVzWlbfOdB86PyDrv53xa37m6HSNY97hZwZAs7tFnxdHWGAettW2QgZxfk52PO1Ii2oTsHuhqrN
+	f+L6GIjh12kZ/xmlRpwZJkVTvDu171ChfQVLVegiiauQt05DPiQdzcp8SVAZKkxg3cNbqvJj4pc
+	/4hVdIteQ==
+X-Google-Smtp-Source: AGHT+IHansgZkeOlieDK57LFfjlu4rcmUxtW3lZTuC3Ur35sXnZg9qWS5gVNMrBeeSWLdaOlkpMIsGFOiNHbh9ej7Mc=
+X-Received: by 2002:a17:907:3c8e:b0:ae0:da2f:dcf3 with SMTP id
+ a640c23a62f3a-ae6b02bf79cmr7436366b.59.1751910242854; Mon, 07 Jul 2025
+ 10:44:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250706214111.45687-1-rosenp@gmail.com> <8c6f18ca47bf0dd78b6675d8b94000679b6c75cd.camel@sipsolutions.net>
-In-Reply-To: <8c6f18ca47bf0dd78b6675d8b94000679b6c75cd.camel@sipsolutions.net>
-From: Rosen Penev <rosenp@gmail.com>
-Date: Mon, 7 Jul 2025 10:41:58 -0700
-X-Gm-Features: Ac12FXwpmQW7d4a2Au2Yz5auZhjQPGBnlW83MkM8UJ0V9bkuM1yY9_y20XPBBjc
-Message-ID: <CAKxU2N9vs5o4tj-9KxCHKevWU+J9wv+ZCOeD8o602y1GY8FzNw@mail.gmail.com>
-Subject: Re: [PATCH 0/6] wifi: rt2x00: add OF bindings + cleanup
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: linux-wireless@vger.kernel.org, yangshiji66@qq.com, ansuelsmth@gmail.com, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Stanislaw Gruszka <stf_xl@wp.pl>, 
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
-	"open list:MIPS" <linux-mips@vger.kernel.org>, 
-	"moderated list:ARM/Mediatek SoC support" <linux-arm-kernel@lists.infradead.org>, 
-	"moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>
+References: <20231124060200.GR38156@ZenIV> <20231124060422.576198-1-viro@zeniv.linux.org.uk>
+ <20231124060422.576198-20-viro@zeniv.linux.org.uk> <CAKPOu+_Ktbp5OMZv77UfLRyRaqmK1kUpNHNd1C=J9ihvjWLDZg@mail.gmail.com>
+ <20250707172956.GF1880847@ZenIV>
+In-Reply-To: <20250707172956.GF1880847@ZenIV>
+From: Max Kellermann <max.kellermann@ionos.com>
+Date: Mon, 7 Jul 2025 19:43:49 +0200
+X-Gm-Features: Ac12FXwa1m6lh5O0rYtmshnvYFRpOLMyvh-XRnRfNKbXLatxwTMpJYQvwe0IrE8
+Message-ID: <CAKPOu+87UytVk_7S4L-y9We710j4Gh8HcacffwG99xUA5eGh7A@mail.gmail.com>
+Subject: Re: [PATCH v3 20/21] __dentry_kill(): new locking scheme
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 7, 2025 at 2:01=E2=80=AFAM Johannes Berg <johannes@sipsolutions=
-.net> wrote:
+On Mon, Jul 7, 2025 at 7:29=E2=80=AFPM Al Viro <viro@zeniv.linux.org.uk> wr=
+ote:
+> > (It checks for "dead" or "killed" entries, but why aren't you using
+> > __lockref_is_dead() here?)
 >
-> On Sun, 2025-07-06 at 14:41 -0700, Rosen Penev wrote:
-> > It doesn't even compile. Added OF bindings, documentation, and other
-> > stuff to hopefully this doesn't happen again.
-> >
-> > Rosen Penev (6):
-> >   wifi: rt2x00: fix compilation
-> >
->
-> That was half covered by Felix already, and really shouldn't do two
-> things at the same time anyway.
-Just saw what you're talking about. That's gonna be annoying though.
-The COMPILE_TEST commit will cause compilation to fail and the bot to
-complain before Felix' patch gets merged.
->
-> Also please add [PATCH wireless] or [PATCH wireless-next] prefix when
-> you submit patches, to make it clear where the series is targeted. In
-> this case, you probably should've split it up, but Felix already covered
-> the immediate bug.
-Will do.
->
-> johannes
+> What's the difference?  It checks for dentries currently still going thro=
+ugh
+> ->d_prune()/->d_iput()/->d_release().
+
+Just clarity. There exists a function and using it would make clearer
+what you're really checking for.
+
+> What are you using shrink_dcache_parent() for?
+
+I don't. It's called by Ceph code, i.e. send_mds_reconnect(). A broken
+Ceph-MDS connection apparently triggered this busy loop.
+
+(I'm not a Ceph developer. I just care for the monthly Ceph regression
+that breaks all of our web servers on each and every Linux kernel
+update. Sad story. However, the Ceph bug I'm really hunting is
+unrelated to this dcache busy loop.)
+
+Max
 
