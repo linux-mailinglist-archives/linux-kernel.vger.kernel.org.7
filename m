@@ -1,146 +1,117 @@
-Return-Path: <linux-kernel+bounces-720561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACB71AFBD7A
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 23:27:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F485AFBD7D
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 23:29:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D884188A775
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 21:27:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 979EE3B48F5
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 21:28:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5495E287275;
-	Mon,  7 Jul 2025 21:27:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TPeaJUeW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 295A52874F3;
+	Mon,  7 Jul 2025 21:28:58 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0010.hostedemail.com [216.40.44.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF804194C96;
-	Mon,  7 Jul 2025 21:27:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66C4A194C96;
+	Mon,  7 Jul 2025 21:28:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751923623; cv=none; b=sfx+R3XEq7vLYZqusFVARX9Wze634OJwvPWF9kRjEKLkHbq2vCiCOF6HS4pFzWGyRd9QiOyLachbzO0RarDQN2ewsovr+WKooGWLjSlrFct+jwOUWQZDT+VfRETEH3nJA8GaCauIJYX3+1NpmJSxqZVPIFmtxkzDLQZ4gDcGME8=
+	t=1751923737; cv=none; b=Us5BZYsOdYvZc7zeLyI3Sgk75h0SVH0oQEqju0nAti6uEe0ziIPbt6425DPLoTht2uHudNda+G9G+MV5EsKd58A9LrUOBGC503cf7mZA0dP2ppepMJlfU65dejTOS2LxuCMjQzLRYpGeawytlk5sdpUNJOLc6zc8XhUioUPZgNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751923623; c=relaxed/simple;
-	bh=PWdIqfq1lShjgNPU1FmwHqSMd26+YTTb1xk5ITmstGw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h4Dk3QcrzqaUPBy6sYxko4ncRO7/Q707VwqLZobVrvZxdUN5muCGrOjsWFae4ngWg8kOnYTFX7kVN+8nq6jXxGxlsMPXv/7x4k+QZ/vuHEn/mzvwfZtWFN2t5cJm8nxIJpNBp6lNt6mBAAAfouo+o0iMjxr0GyT8b2In7iUx/4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TPeaJUeW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FF7FC4CEE3;
-	Mon,  7 Jul 2025 21:26:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751923623;
-	bh=PWdIqfq1lShjgNPU1FmwHqSMd26+YTTb1xk5ITmstGw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TPeaJUeWzFWNndA5+LyG7Cuo6HDkcosyoYsPpgViGWK7zXQ2rx7g2ZZpBZo2V72Iw
-	 qfgYCeLtnZltnNM8uD/T9eGCESXdv4SaWbe2aCaZhlNITTjvtaZYMlso72nT4zS5vC
-	 dz/YlmeyTsPnY0p/jjWDjcFnETE6qIaIRZSLwx0zGN9EnJ5Ighv+T7VrBZx/MLYiDd
-	 5PWKLARp5sZSE45yjwtmnZq09Q5+bE8xJ0Yxx0DHjMc3LjhJX9EeDx2hFyNvystu79
-	 NaiVILtUD/+cOgh0Ap5w+svqPiR33Tkg+/LZ8IBns9xA2YwQC+EVJ+tppEZ4F6/9SR
-	 GODH7SOS66pGg==
-Date: Mon, 7 Jul 2025 23:26:49 +0200
-From: Alejandro Colomar <alx@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-mm@kvack.org, linux-hardening@vger.kernel.org, 
-	Kees Cook <kees@kernel.org>, Christopher Bazley <chris.bazley.wg14@gmail.com>, 
-	shadow <~hallyn/shadow@lists.sr.ht>, linux-kernel@vger.kernel.org, 
-	Andrew Morton <akpm@linux-foundation.org>, kasan-dev@googlegroups.com, Dmitry Vyukov <dvyukov@google.com>, 
-	Alexander Potapenko <glider@google.com>, Marco Elver <elver@google.com>, Christoph Lameter <cl@linux.com>, 
-	David Rientjes <rientjes@google.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>, 
-	Andrew Clayton <andrew@digital-domain.net>, Sven Schnelle <svens@linux.ibm.com>, 
-	Heiko Carstens <hca@linux.ibm.com>, Tvrtko Ursulin <tvrtko.ursulin@igalia.com>, 
-	"Huang, Ying" <ying.huang@intel.com>, Lee Schermerhorn <lee.schermerhorn@hp.com>, 
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, Chao Yu <chao.yu@oppo.com>
-Subject: Re: [RFC v3 3/7] mm: Use seprintf() instead of less ergonomic APIs
-Message-ID: <r43lulact3247k23clhbqnp3ms75vykf7yxa526agenq2b4osk@q6qp7hk7efo2>
-References: <cover.1751862634.git.alx@kernel.org>
- <033bf00f1fcf808245ae150346019aa7b997ea11.1751862634.git.alx@kernel.org>
- <CAHk-=wh9Pqz07ne9iSt1_v0c14rkOGvF9AbEkaq1KnFhQD1SSA@mail.gmail.com>
- <ugf4pu7qrojegz7arkcpa4cyde6hoyh73h66oc4f6ncc7jg23t@bklkbbotyzvp>
- <CAHk-=whQ_0qFvg3cugt84+iKXi_eebNGY4so+PSnyyVNGVde1A@mail.gmail.com>
- <gjxc2cxjlsnccopdghektco2oulmhyhonigy7lwsaqqcbn62wj@wa3tidbvpyvk>
+	s=arc-20240116; t=1751923737; c=relaxed/simple;
+	bh=YY91jF2kIXgCSrAhHbLH3CIxeqcI9tB+rbtCD3eLjz8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=uhl+OM39rY2JAJ0lZsFEt9DdKLjhQ3kRzK2ZlBOT+rtCyTz7+u8klpJNABgHssgpn8nNu/FUBm5hoBvoFtDF/XRayGQPnmGj04EjKT9ubPOmAIh8oi1uSiOuDv5sq8RHqLlh6xRdLjLDBBNYtQMHPUi5reg40yMyn2teAOFMh9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf13.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay07.hostedemail.com (Postfix) with ESMTP id F40E81603A7;
+	Mon,  7 Jul 2025 21:28:52 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf13.hostedemail.com (Postfix) with ESMTPA id 5720820010;
+	Mon,  7 Jul 2025 21:28:48 +0000 (UTC)
+Date: Mon, 7 Jul 2025 17:28:47 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Jens Remus <jremus@linux.ibm.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ bpf@vger.kernel.org, x86@kernel.org, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra
+ <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Jiri Olsa
+ <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Thomas Gleixner
+ <tglx@linutronix.de>, Andrii Nakryiko <andrii@kernel.org>, Indu Bhagat
+ <indu.bhagat@oracle.com>, "Jose E. Marchesi" <jemarch@gnu.org>, Beau
+ Belgrave <beaub@linux.microsoft.com>, Andrew Morton
+ <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>, Florian Weimer
+ <fweimer@redhat.com>
+Subject: Re: [PATCH v12 02/14] unwind_user: Add frame pointer support
+Message-ID: <20250707172847.75bb6190@batman.local.home>
+In-Reply-To: <d4fb9d4c-13d6-41fc-8c17-dee6cc0a77eb@linux.ibm.com>
+References: <20250701005321.942306427@goodmis.org>
+	<20250701005450.888492528@goodmis.org>
+	<CAHk-=wiWOYB4c3E-Cc=D89j0txbN4AGqm0j1dojqHq3uzJ+LqQ@mail.gmail.com>
+	<20250630225603.72c84e67@gandalf.local.home>
+	<a6a460e6-8cff-4353-a9e1-2e071d28e993@linux.ibm.com>
+	<20250702195058.7ebb026d@gandalf.local.home>
+	<d4fb9d4c-13d6-41fc-8c17-dee6cc0a77eb@linux.ibm.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="4tam3kmtkoib67ue"
-Content-Disposition: inline
-In-Reply-To: <gjxc2cxjlsnccopdghektco2oulmhyhonigy7lwsaqqcbn62wj@wa3tidbvpyvk>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: sakoqdihpa7b49ngohg5pdhgdcunrjrp
+X-Rspamd-Server: rspamout01
+X-Rspamd-Queue-Id: 5720820010
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1/BaoY0sYmWm4CGwHUM7pkPRsQVgrbcglY=
+X-HE-Tag: 1751923728-40853
+X-HE-Meta: U2FsdGVkX1+6lJPe/TyS0k8S8ysy1ySKSNO9cRN3ne/FLvKPmvmCe27F5fMYniDvvpVXbr41FBJPafYCZE1OtkCsUj1yHGIYqt2qulZs3RvBIBvSdnzusIRCf+fVRGBrnF5aDcZOOtGnwmMWU9XRwqnTffdJlKUd3X8381wPe4w3tLXOBh/0MrE5jyD+ScRk3BATac6GBy6y+N2ji46T4GFzIaKEjvnXqSFF+nxJZRmoKzDLPMVHEljGMXEe0CF/oRbzDxEJhgOklsI5D1lr8RYTl/PzYUw7lDKgzDIHhErDTKB2iRvywJ4iK7bV/SBCMb4vXawyZrfIjc3xVSLV8g2bKR9YGs9iW/fkQwi13BKVfLHqM0Vdqg==
 
+On Thu, 3 Jul 2025 18:21:10 +0200
+Jens Remus <jremus@linux.ibm.com> wrote:
 
---4tam3kmtkoib67ue
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-mm@kvack.org, linux-hardening@vger.kernel.org, 
-	Kees Cook <kees@kernel.org>, Christopher Bazley <chris.bazley.wg14@gmail.com>, 
-	shadow <~hallyn/shadow@lists.sr.ht>, linux-kernel@vger.kernel.org, 
-	Andrew Morton <akpm@linux-foundation.org>, kasan-dev@googlegroups.com, Dmitry Vyukov <dvyukov@google.com>, 
-	Alexander Potapenko <glider@google.com>, Marco Elver <elver@google.com>, Christoph Lameter <cl@linux.com>, 
-	David Rientjes <rientjes@google.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>, 
-	Andrew Clayton <andrew@digital-domain.net>, Sven Schnelle <svens@linux.ibm.com>, 
-	Heiko Carstens <hca@linux.ibm.com>, Tvrtko Ursulin <tvrtko.ursulin@igalia.com>, 
-	"Huang, Ying" <ying.huang@intel.com>, Lee Schermerhorn <lee.schermerhorn@hp.com>, 
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, Chao Yu <chao.yu@oppo.com>
-Subject: Re: [RFC v3 3/7] mm: Use seprintf() instead of less ergonomic APIs
-References: <cover.1751862634.git.alx@kernel.org>
- <033bf00f1fcf808245ae150346019aa7b997ea11.1751862634.git.alx@kernel.org>
- <CAHk-=wh9Pqz07ne9iSt1_v0c14rkOGvF9AbEkaq1KnFhQD1SSA@mail.gmail.com>
- <ugf4pu7qrojegz7arkcpa4cyde6hoyh73h66oc4f6ncc7jg23t@bklkbbotyzvp>
- <CAHk-=whQ_0qFvg3cugt84+iKXi_eebNGY4so+PSnyyVNGVde1A@mail.gmail.com>
- <gjxc2cxjlsnccopdghektco2oulmhyhonigy7lwsaqqcbn62wj@wa3tidbvpyvk>
-MIME-Version: 1.0
-In-Reply-To: <gjxc2cxjlsnccopdghektco2oulmhyhonigy7lwsaqqcbn62wj@wa3tidbvpyvk>
+> >> 	/* stack going in wrong direction? */
+> >> 	if (sp <= state->sp - topmost)
+> >> 		goto done;  
+> > 
+> > How do you calculate "topmost" then?
+> > 
+> > Is it another field you add to "state"?  
+> 
+> Correct.  It is a boolean set to true in unwind_user_start() and set to
+> false in unwind_user_next() when updating the state.
 
-On Mon, Jul 07, 2025 at 11:06:06PM +0200, Alejandro Colomar wrote:
-> > I stand by my "let's not add random letters to existing functions that
-> > are already too confusing".
+So it's subtracting 1 or zero? So that the topmost can be equal. Well,
+that would need a bit of commenting.
 
-If the name is your main concern, we can discuss a more explicit name in
-the kernel.
+> 
+> I assume most architectures need above change, as their SP at function
+> entry should be equal to the SP at call site (unlike x86-64 due to CALL).
+> 
+> s390 also needs this information to allow restoring of FP/RA saved in
+> other registers (instead of on the stack) only for the topmost frame.
+> For any other frame arbitrary register contents would not be available,
+> as user unwind only unwinds SP, FP, and RA.
+> 
+> I would post my s390 sframe support patches as RFC once you have
+> provided a merged sframe branch as discussed in:
+> https://lore.kernel.org/all/20250702124737.565934b5@batman.local.home/
 
-I still plan to propose it as seprintf() for standardization, and for
-libc, but if that reads as a letter soup to you, I guess we can call it
-sprintf_end() or whatever, for the kernel.
+I did have a merge branch on my repo. But I was hoping to see your code
+so that I can add this to this patch before having to post again. But
+now I'm posting without this change, as I don't want to screw it up. I
+think I know what it it looks like, but it would be better to see what
+you did to make sure what I envision is correct.
 
-Does that sound reasonable enough?  What do you think about the diff
-itself ignoring the function name?
+Oh well. I'll post v13 without it.
 
-
-Cheers,
-Alex
-
---=20
-<https://www.alejandro-colomar.es/>
-
---4tam3kmtkoib67ue
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmhsO5kACgkQ64mZXMKQ
-wqmfxA//c8S1dBGM6C2xdsVSN9VQGixTM+3FYuFDeOMfw3aJA3T74AUqgcqoNktT
-PdHNMk63xbAZwzFx3VVNdNVOtUMBuW70OfoOSFzVMwYYxrnVSoZUE95diweHAPvi
-hnPR6uvqM4TDiSpC4nI21I/fAuyQ9SI/E5eeUd23yDzAUHeXkNPCSnvAeiHSmZA0
-aaFn53PZV9aljWxzwWXI4ybptt+Zl3Y34ic70IFJ2SmBmzigJ3FOnH4LtOf5JvMl
-0zpzJkcUc9ZnhLfPt23qm3hoFzO7QSBNFMqzSdYby45I9ggRgE8Q3CNnvJZswzQ3
-bqEzuO/xHpKWU/Ost/Di26ckySPVv9LZcMhLThNlXD/iG4HuHeElInBham9vBsS7
-96xpy569tpZT6MJtOPpnZ1S/CKpUbsqCg5Bk0WHCyMLxU3c9RK21BPCkKArtMo0U
-loc1IW75iUG3Hyegg2vdalX4synsd1OyKZU6saIyP85Nga+gQ1Ou8gLJngq2Q8JR
-dZHpILVaJ4avAIjHrcwWnh3IBmQMphV29hLFxJmPM8fPpPHsfNODJLbrjgPP7ydR
-MhHsaP545Yx2j1a3X/CWNFNVYv7S31p9QDz694HMPU0Gdik0LYChP6iEgWexlqsF
-p23zq/kpLmR3XELdUin0C1ijMXokwxgG49UWy9nSlnW1S/GnPBk=
-=WSVf
------END PGP SIGNATURE-----
-
---4tam3kmtkoib67ue--
+-- Steve
 
