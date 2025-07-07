@@ -1,41 +1,42 @@
-Return-Path: <linux-kernel+bounces-720390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41388AFBB05
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 20:44:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F20AEAFBB09
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 20:45:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E5574A17F3
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 18:44:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B058189E287
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 18:45:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 976BA2135CE;
-	Mon,  7 Jul 2025 18:44:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FC86265281;
+	Mon,  7 Jul 2025 18:44:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=netcube.li header.i=@netcube.li header.b="0F72HcT3"
+	dkim=pass (1024-bit key) header.d=netcube.li header.i=@netcube.li header.b="G7i+/20f"
 Received: from mail.netcube.li (mail.netcube.li [173.249.15.149])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0085713959D;
-	Mon,  7 Jul 2025 18:44:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCCFD265631;
+	Mon,  7 Jul 2025 18:44:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.249.15.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751913890; cv=none; b=f3ku4WUAY3/nmtHNB2EjjD27s5j3GyTa8E8R5CzIbjKx9fwPV5Os+AwATCg2v1xBFYnIJcFrozT0L/8OdJeyosOumAnIHd2XBC46Q7wYmDR/syl4/ErDK9K3b+Ee8vBcdXR//7DdD54UApkroGIeXfk7MHzMaXbtlGZ6eIm2bec=
+	t=1751913894; cv=none; b=GRG7CgLEUOn1NQ7S0z9Om99ndcEnp09RGoX9TdqR+bqurMfqcT+ml7IFfrD/OAoKlLylBS6gBO9n7/Ak1snkV4dodIBim9CSf5P5L5EcJrmG/wR6CabmRoa+ycDwSzK6PQxQXxuXHhEtqNkT7kR+5qfOEdjK9FE2RktU0EsQAOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751913890; c=relaxed/simple;
-	bh=M1ZViLM7NqgbmcK3XZ6B/433qKxpj9xglo4vIziF4tI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hYg3zNSUz5GCa3EalFcoTRq9Piy6NXxoJOrxsKEghVuJ0TFtMnmGEXTeYnwkc6deUtgbIUs3DczGPiHcq8f5+lhI6UW4d4gC0uEMBV9nHCU1wYekcsNPypyCoLEFI2jDrLVeJZ4cYBozignDyTP18fymdSCixAVE3BCGq0x5IMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=netcube.li; spf=pass smtp.mailfrom=netcube.li; dkim=pass (1024-bit key) header.d=netcube.li header.i=@netcube.li header.b=0F72HcT3; arc=none smtp.client-ip=173.249.15.149
+	s=arc-20240116; t=1751913894; c=relaxed/simple;
+	bh=LiItecIz2CKXaIRb8e9S2YFmXeiRt9ltTALDdhpunqo=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=ESwVIY1wj3PxEJw565F/uACdaxGfIsF3Wiy+xa6ZszwLvKoTSkZKrrIbS2uwiKCBEKO+UGq8ZG5cOgZinR1a7yiRikzw979kgUMkSXmF5FgEpowsXfFJN6ETW3x9L90e9gSieSsQNwUSRvkucSj7hc9BecBRq+UqvyvPiHY46EY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=netcube.li; spf=pass smtp.mailfrom=netcube.li; dkim=pass (1024-bit key) header.d=netcube.li header.i=@netcube.li header.b=G7i+/20f; arc=none smtp.client-ip=173.249.15.149
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=netcube.li
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netcube.li
 dkim-signature: v=1; a=rsa-sha256; d=netcube.li; s=s1;
-	c=relaxed/relaxed; q=dns/txt; h=From:Subject:Date:Message-ID:To:CC:MIME-Version:Content-Transfer-Encoding;
-	bh=nXnojJGU29m0hFOXhR2jYRK6bl5DCglZXHWgm+c9MAE=;
-	b=0F72HcT37nPTuXXMO/qnx25gw/sIHQi5I5J7MkjnUr++gF3GEGZ/HpviU+EQskxSn6gia62m6OnUPD76udOMgqTEbArX05JwPv3Djag+HJ5EvBVs3NmbES0L1wxBcodvmz8f9sFOcmTkbvtVohBH2rEEBihua3QaH7wQvUTmkKU=
+	c=relaxed/relaxed; q=dns/txt; h=From:Subject:Date:Message-ID:To:CC:MIME-Version:Content-Transfer-Encoding:In-Reply-To:References;
+	bh=YDfXJU8fIVQMbHdyhBrUiSya/JtiQ768dcd2UAeGU6M=;
+	b=G7i+/20fh1lQeZ9sxZiq10ZRqXvh2uGL4Yk7hQFsw+++QqXwSM/O1bZEFhOywNP4SrHlqYUZKeU2Z+YxvPtV5WGTF20Fhxw/gdfYEjHq34iCDet8c7ufqmtvM30mdAV4wJkfDX6+HqvTiYEsGLwiHEjRL+XZRgF9NbJ9dcwOsUc=
 Received: from lukas-hpz440workstation.lan.sk100508.local (cm70-231.liwest.at [212.241.70.231])
 	by mail.netcube.li with ESMTPA
-	; Mon, 7 Jul 2025 20:44:40 +0200
+	; Mon, 7 Jul 2025 20:44:43 +0200
 From: Lukas Schmid <lukas.schmid@netcube.li>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -49,15 +50,18 @@ To: Rob Herring <robh@kernel.org>,
 	Alexandre Ghiti <alex@ghiti.fr>,
 	Maxime Ripard <mripard@kernel.org>
 Cc: Lukas Schmid <lukas.schmid@netcube.li>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
 	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-sunxi@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
 	linux-riscv@lists.infradead.org
-Subject: [PATCH v3 0/5] Add support for NetCube Systems Nagami SoM and its carrier boards
-Date: Mon,  7 Jul 2025 20:44:12 +0200
-Message-Id: <20250707184420.275991-1-lukas.schmid@netcube.li>
+Subject: [PATCH v3 1/5] dt-bindings: arm: sunxi: Add NetCube Systems Nagami SoM and carrier board bindings
+Date: Mon,  7 Jul 2025 20:44:13 +0200
+Message-Id: <20250707184420.275991-2-lukas.schmid@netcube.li>
 X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250707184420.275991-1-lukas.schmid@netcube.li>
+References: <20250707184420.275991-1-lukas.schmid@netcube.li>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,42 +70,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This series adds support for the NetCube Systems Nagami SoM and its
-associated carrier boards, the Nagami Basic Carrier and the Nagami Keypad
-Carrier.
+The NetCube Systems Nagami is an System on Module base on the Allwinner
+T113s SoC. It is intended to be used in low cost devices which require
+simple layouts and low BOM cost.
 
-Changes in v3:
-  - Add missing dcxo node to the SoM dtsi
+The NetCube Systems Nagami Basic Carrier Board is a simple carrier for the
+Nagami SoM. It is intended to serve as a simple reference design for a
+custom implementation or just evaluating the module with other peripherals
 
-Changes in v2:
- - Squash the binding patches into one patch
- - Fix formatting of the phy node in the SoM dtsi
- - Add description on where the phy is located in the SoM dtsi
- - Fix the phy address in the SoM dtsi
- - Move the carrier bindings into the same description as enums
+The NetCube Systems Nagami Keypad Carrier is a custom board intended to
+fit a standard Ritto Intercom enclosure and provides a Keypad, NFC-Reader
+and Status-LED all controllable over Ethernet with PoE support.
 
 Signed-off-by: Lukas Schmid <lukas.schmid@netcube.li>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
-Lukas Schmid (5):
-  dt-bindings: arm: sunxi: Add NetCube Systems Nagami SoM and carrier
-    board bindings
-  riscv: dts: allwinner: d1s-t113: Add pinctrl's required by NetCube
-    Systems Nagami SoM
-  ARM: dts: sunxi: add support for NetCube Systems Nagami SoM
-  ARM: dts: sunxi: add support for NetCube Systems Nagami Basic Carrier
-  ARM: dts: sunxi: add support for NetCube Systems Nagami Keypad Carrier
+ Documentation/devicetree/bindings/arm/sunxi.yaml | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
- .../devicetree/bindings/arm/sunxi.yaml        |   8 +
- arch/arm/boot/dts/allwinner/Makefile          |   3 +
- ...n8i-t113s-netcube-nagami-basic-carrier.dts |  63 +++++
- ...8i-t113s-netcube-nagami-keypad-carrier.dts | 165 +++++++++++++
- .../allwinner/sun8i-t113s-netcube-nagami.dtsi | 228 ++++++++++++++++++
- .../boot/dts/allwinner/sunxi-d1s-t113.dtsi    |  36 +++
- 6 files changed, 503 insertions(+)
- create mode 100644 arch/arm/boot/dts/allwinner/sun8i-t113s-netcube-nagami-basic-carrier.dts
- create mode 100644 arch/arm/boot/dts/allwinner/sun8i-t113s-netcube-nagami-keypad-carrier.dts
- create mode 100644 arch/arm/boot/dts/allwinner/sun8i-t113s-netcube-nagami.dtsi
-
+diff --git a/Documentation/devicetree/bindings/arm/sunxi.yaml b/Documentation/devicetree/bindings/arm/sunxi.yaml
+index 7807ea613..50f08d8d2 100644
+--- a/Documentation/devicetree/bindings/arm/sunxi.yaml
++++ b/Documentation/devicetree/bindings/arm/sunxi.yaml
+@@ -599,6 +599,14 @@ properties:
+           - const: netcube,kumquat
+           - const: allwinner,sun8i-v3s
+ 
++      - description: NetCube Systems Nagami SoM based boards
++        items:
++          - enum:
++              - netcube,nagami-basic-carrier
++              - netcube,nagami-keypad-carrier
++          - const: netcube,nagami
++          - const: allwinner,sun8i-t113s
++
+       - description: NextThing Co. CHIP
+         items:
+           - const: nextthing,chip
 -- 
 2.39.5
 
