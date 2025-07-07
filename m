@@ -1,406 +1,158 @@
-Return-Path: <linux-kernel+bounces-720238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A648BAFB900
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 18:50:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AD7DAFB902
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 18:50:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAD594A5A41
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 16:50:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B5B71AA5E7D
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 16:50:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAA8323027C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F91722F774;
 	Mon,  7 Jul 2025 16:49:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="bl1HvjNG";
-	dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="cuW8y+VU"
-Received: from mailrelay-egress16.pub.mailoutpod3-cph3.one.com (mailrelay-egress16.pub.mailoutpod3-cph3.one.com [46.30.212.3])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SxaJEAvc"
+Received: from mail-yb1-f195.google.com (mail-yb1-f195.google.com [209.85.219.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84F961FC109
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 16:49:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.30.212.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C8DD224B0E;
+	Mon,  7 Jul 2025 16:49:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751906982; cv=none; b=j/JM2rzTgQXNcpnFOIiNNC1bpJyxzeWLItKiY9VjWW520JhpVUQMnNb5J52gXKd1JWon/i6XEBkDSWQ4ppGwkaKxi77askV5kKzEJaTVcz38ANQ1EWTR3J503EVTbI9DBQrQLNxLJ9Ilf0DSuOb4x9iZrvO+QUayd95EffERDl0=
+	t=1751906982; cv=none; b=kxyVB9ZpPaXsewjIa+qbOP/1jPgBBtN8quix40p9OanKazqTa+KRHM2wtYnDClzR5n7LjcIas40pB/hS+Lu65i2SewU4CBKjjTiwHo70cy6tU/GxCGAdOVZr3V7ipRoBv77k5iQ7meO0LoAg8+5EKjj7t1Pd+jVmYDPUh8ZkQ0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1751906982; c=relaxed/simple;
-	bh=zyRvSTlBjuVQs9dCA6yutOAebQukB0dzTX7pY5vuQNo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=fQvXjFxoSbEv+6Cb8OvreJA5KXQ3MFbihT7AtBuGy4GFs5mrsoyMY7h6uxNs9IhYJVTSapQnhuIH+4YOQqmfo5BMcNtOPjur++oThBByy8VdEb5E4w/65uuenFQEngoXARtWoTw4D3x8rLW1jCooT3KjmqNd89UmkJTzNkHuyfM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se; spf=none smtp.mailfrom=konsulko.se; dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=bl1HvjNG; dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=cuW8y+VU; arc=none smtp.client-ip=46.30.212.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=konsulko.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1751906978; x=1752511778;
-	d=konsulko.se; s=rsa1;
-	h=content-transfer-encoding:mime-version:references:in-reply-to:message-id:date:
-	 subject:cc:to:from:from;
-	bh=YkagBLpoCjEmvZi1Fin3EK+OFCNhN5dvK1nYrJGq8d8=;
-	b=bl1HvjNGtJ11SYpHl1q1RQFpPQ76QY3rxdHEuMUs8FkDN5I9E5ToZahu66sBfK5GutKOS8Aie0psR
-	 fYsaGafbz3iW9mz1PzxXM5/5/dD71tGUWfXCGWcNE3WfbBnu5jMEKF6RJ70NzmrstBj8mN4WkIPaIQ
-	 kCMoMfPGQQ63029YJBHNsidj1XMfvGyLdobjXlpOf+m9SSvSvh6W4HqrVwAuCk+MonQ7q5i6JVc+eE
-	 lZ32B4Y1FdHDZVPOnVi8U7+Xbz1xPlQzz0V14uQ8z5rBcLYRQdCZ4OiUBM4bu+1SHinX54aaanCWY8
-	 ySRg3kPm0zP98PT52wjm/VwWxQmVuEw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1751906978; x=1752511778;
-	d=konsulko.se; s=ed1;
-	h=content-transfer-encoding:mime-version:references:in-reply-to:message-id:date:
-	 subject:cc:to:from:from;
-	bh=YkagBLpoCjEmvZi1Fin3EK+OFCNhN5dvK1nYrJGq8d8=;
-	b=cuW8y+VUPju2J4eKbfiyAFrcK9vLgh9crM5nJOFUnSPv5gjwJ2HpLhDBGZzkWN+2cT9E3wXk1NEzq
-	 oJZJuu4BQ==
-X-HalOne-ID: 5df864e8-5b52-11f0-a95e-f78b1f841584
-Received: from localhost.localdomain (host-90-238-19-233.mobileonline.telia.com [90.238.19.233])
-	by mailrelay1.pub.mailoutpod2-cph3.one.com (Halon) with ESMTPSA
-	id 5df864e8-5b52-11f0-a95e-f78b1f841584;
-	Mon, 07 Jul 2025 16:49:37 +0000 (UTC)
-From: Vitaly Wool <vitaly.wool@konsulko.se>
-To: linux-mm@kvack.org
-Cc: akpm@linux-foundation.org,
-	linux-kernel@vger.kernel.org,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	rust-for-linux@vger.kernel.org,
-	Vitaly Wool <vitaly.wool@konsulko.se>
-Subject: [PATCH v11 3/4] rust: add support for NUMA ids in allocations
-Date: Mon,  7 Jul 2025 18:49:34 +0200
-Message-Id: <20250707164934.631500-1-vitaly.wool@konsulko.se>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20250707164755.631374-1-vitaly.wool@konsulko.se>
-References: <20250707164755.631374-1-vitaly.wool@konsulko.se>
+	bh=2qpWdHuWmXVbwdu0z0dszit3gKd+4ot0FUdDS48fSgI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MppshHmWUOlCjZUM70nG6o0gkjk1oEEE1EAM/xkKEKL6Dmc+6iLYBaPx7NA3uwfMOvD4l76UBCMWJb1OluAPvywmj+gzTrs2k/Gz+dWGHV4p+HwxU6qt5zJOn3JmtY2VD1MhNKmuyUXY56sLhsVVIM11T5VBBO33AIlYkit1HaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SxaJEAvc; arc=none smtp.client-ip=209.85.219.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f195.google.com with SMTP id 3f1490d57ef6-e8b3cc05665so1468358276.2;
+        Mon, 07 Jul 2025 09:49:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751906980; x=1752511780; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=u1xOWZOyoPm540GobFdkxEMray8IVt4E7vfdVGtWbcI=;
+        b=SxaJEAvcODg8FPB0/uuvtexW/OFfPehlsOjPdiW19C41zKOnu+FNFEEbV6+W77rEqY
+         f3gk/RuPK8jmEyYg/ptLDfzxH9BaKBALv8aop4cgMoGuW3DV3rTCXDJfFIC2CkmkNSWL
+         L5TQwoDRPDEHpfkmWFNaNOEan08HAZo4eWU8ZSj+lSvAurmsMuFQPSAjK2FNCs09clvb
+         17t5LpA3HLMA1dqGo77fMkrAjNXG1B1B1GGz4QGWwH6AGHXq+cagJg2OxXOnT8ARHx73
+         SN2NMAtsBIZvc8JGTG7hkp1Mrh3mWSEquYie4cs0irbUgSeIn2T5HAgCvfFcQWdabEGx
+         xLVw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751906980; x=1752511780;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=u1xOWZOyoPm540GobFdkxEMray8IVt4E7vfdVGtWbcI=;
+        b=DKmR7Dd1+Jg6QusXu4SHqIxOE98JDVsT31OZO56PCNQ9cqQf0G1pOC0YsKrsOUfOFv
+         jMN/10+CFhSPArPj8P0K2FNKn8ggayAE2uu+XdKBPYTCPdvXQ0fzqlo7JjKOclcELXoO
+         K63uu+2QiO+WcOxTIHI4tiUe8TAFcurwguD5iR8dIowEMzvvY8RJPpn027D06nOZmmTM
+         GPrA9Pg7IYq3780/Wnvm/OgHjEgPHRxAexmm0elV9ZcThrpiR+arSTgVr/HpdHfgrJJC
+         N0lHW2biwWyWPyceeOyDC+aGZyRm7XWwlmse69w1jWtiWBB7lFoDWFZlWUb4z3IBfu14
+         NPtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX/iUJgghUHUvR/fsBYlnDkEk1cfAP31exKYjc5POj2CmM/a2WBXSnpMb4uOAaxjPQTQc+aHzf4ekVhpec=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9rt3qw1eeKcTc2Rs6pDPdsACZRPkOa0HgGMiS73vKOK7d0WHc
+	Jv04Z5wDcthVUTIXa4ygBGhGqr6GYS9RsoWbcewwCqARYMEvhEQHR+Q5
+X-Gm-Gg: ASbGncv3mOhEE+OFvvijW9wmpE0TGq9b3wqIVn58H8JZQXenxePqRdPpVR6NK0e3g4Y
+	AUa+W7bVcOSO6Hayto5N/LZjveLUHH3fSlmjqDzxOvrZn7rhXZ39Ni7C5oyHlWMUh9Ea/cf/EhE
+	dKYHVYMY6+BYuCA8dvN8xR+gOOtENRW+wjHqh/XfMGmK5SNRzl2uQj4it49nrc5L+C6djFJQzqJ
+	vVJY5pinZH0jwXahPyERuAY70o9YkgC/cPczMvZqaQaN2pBw2RWFieBTmZA9g0xWQ9lKXI5RroW
+	fIGw9pD7sIGQGJCzwuumV6hcDPuy7hkOn3YnAbY/f9MqZZmgaIdn9xdzsMkkcKxg7tL1EV2NSGy
+	iX5gPBg2O
+X-Google-Smtp-Source: AGHT+IEb39Z0BOySPnuTvXs3SmBQemC+SyqVyRj1OliqOspcPBmsWCNbNxGyQ9B5BaQfJESFgNSDTw==
+X-Received: by 2002:a05:690c:6082:b0:70e:2c7f:2ed4 with SMTP id 00721157ae682-71668b45afamr187921317b3.0.1751906979843;
+        Mon, 07 Jul 2025 09:49:39 -0700 (PDT)
+Received: from [10.102.6.66] ([208.97.243.82])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-71665b12c7dsm17204217b3.93.2025.07.07.09.49.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Jul 2025 09:49:39 -0700 (PDT)
+Message-ID: <4998a14e-f755-44a2-b5c3-f966056acb1d@gmail.com>
+Date: Mon, 7 Jul 2025 12:49:39 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net] net: bridge: Do not offload IGMP/MLD messages
+To: Vladimir Oltean <vladimir.oltean@nxp.com>,
+ Joseph Huang <Joseph.Huang@garmin.com>
+Cc: netdev@vger.kernel.org, Nikolay Aleksandrov <razor@blackwall.org>,
+ Ido Schimmel <idosch@nvidia.com>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+ Florian Fainelli <f.fainelli@gmail.com>,
+ Tobias Waldekranz <tobias@waldekranz.com>, bridge@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+References: <20250701193639.836027-1-Joseph.Huang@garmin.com>
+ <20250707130052.wwd7e6fenp7imvy7@skbuf>
+Content-Language: en-US
+From: Joseph Huang <joseph.huang.2024@gmail.com>
+In-Reply-To: <20250707130052.wwd7e6fenp7imvy7@skbuf>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Add a new type to support specifying NUMA identifiers in Rust
-allocators and extend the allocators to have NUMA id as a
-parameter. Thus, modify ReallocFunc to use the new extended realloc
-primitives from the C side of the kernel (i. e.
-k[v]realloc_node_align/vrealloc_node_align) and add the new function
-alloc_node to the Allocator trait while keeping the existing one
-(alloc) for backward compatibility.
+On 7/7/2025 9:00 AM, Vladimir Oltean wrote:
+> Hi Joseph,
+> 
+> On Tue, Jul 01, 2025 at 03:36:38PM -0400, Joseph Huang wrote:
+>> Do not offload IGMP/MLD messages as it could lead to IGMP/MLD Reports
+>> being unintentionally flooded to Hosts. Instead, let the bridge decide
+>> where to send these IGMP/MLD messages.
+>> 
+>> Fixes: 472111920f1c ("net: bridge: switchdev: allow the TX data plane forwarding to be offloaded")
+>> Signed-off-by: Joseph Huang <Joseph.Huang@garmin.com>
+>> ---
+>>  net/bridge/br_switchdev.c | 3 ++-
+>>  1 file changed, 2 insertions(+), 1 deletion(-)
+>> 
+>> diff --git a/net/bridge/br_switchdev.c b/net/bridge/br_switchdev.c
+>> index 95d7355a0407..757c34bf5931 100644
+>> --- a/net/bridge/br_switchdev.c
+>> +++ b/net/bridge/br_switchdev.c
+>> @@ -18,7 +18,8 @@ static bool nbp_switchdev_can_offload_tx_fwd(const struct net_bridge_port *p,
+>>                 return false;
+>> 
+>>         return (p->flags & BR_TX_FWD_OFFLOAD) &&
+>> -              (p->hwdom != BR_INPUT_SKB_CB(skb)->src_hwdom);
+>> +              (p->hwdom != BR_INPUT_SKB_CB(skb)->src_hwdom) &&
+>> +              !br_multicast_igmp_type(skb);
+>>  }
+>> 
+>>  bool br_switchdev_frame_uses_tx_fwd_offload(struct sk_buff *skb)
+>> --
+>> 2.49.0
+>>
+> 
+> Can you please incorporate the extra clarifications made to Tobias in
+> the commit message? They provide valuable background.
 
-This will allow to specify node to use for allocation of e. g.
-{KV}Box, as well as for future NUMA aware users of the API.
+Will do.
 
-Signed-off-by: Vitaly Wool <vitaly.wool@konsulko.se>
----
- rust/helpers/slab.c            |  8 +++---
- rust/helpers/vmalloc.c         |  4 +--
- rust/kernel/alloc.rs           | 52 ++++++++++++++++++++++++++++++----
- rust/kernel/alloc/allocator.rs | 33 +++++++++++++--------
- rust/kernel/alloc/kbox.rs      |  4 +--
- rust/kernel/alloc/kvec.rs      | 11 +++++--
- 6 files changed, 85 insertions(+), 27 deletions(-)
+> 
+> Also, keeping in mind I have no experience with IGMP/MLD snooping:
+> aren't there IGMP/MLD messages which should be delivered to all hosts?
+> Are you looking for BR_INPUT_SKB_CB_MROUTERS_ONLY(skb) as a substitute
+> to br_multicast_igmp_type() instead?
+> 
 
-diff --git a/rust/helpers/slab.c b/rust/helpers/slab.c
-index a842bfbddcba..8472370a4338 100644
---- a/rust/helpers/slab.c
-+++ b/rust/helpers/slab.c
-@@ -3,13 +3,13 @@
- #include <linux/slab.h>
- 
- void * __must_check __realloc_size(2)
--rust_helper_krealloc(const void *objp, size_t new_size, gfp_t flags)
-+rust_helper_krealloc_node(const void *objp, size_t new_size, gfp_t flags, int node)
- {
--	return krealloc(objp, new_size, flags);
-+	return krealloc_node(objp, new_size, flags, node);
- }
- 
- void * __must_check __realloc_size(2)
--rust_helper_kvrealloc(const void *p, size_t size, gfp_t flags)
-+rust_helper_kvrealloc_node(const void *p, size_t size, gfp_t flags, int node)
- {
--	return kvrealloc(p, size, flags);
-+	return kvrealloc_node(p, size, flags, node);
- }
-diff --git a/rust/helpers/vmalloc.c b/rust/helpers/vmalloc.c
-index 80d34501bbc0..62d30db9a1a6 100644
---- a/rust/helpers/vmalloc.c
-+++ b/rust/helpers/vmalloc.c
-@@ -3,7 +3,7 @@
- #include <linux/vmalloc.h>
- 
- void * __must_check __realloc_size(2)
--rust_helper_vrealloc(const void *p, size_t size, gfp_t flags)
-+rust_helper_vrealloc_node(const void *p, size_t size, gfp_t flags, int node)
- {
--	return vrealloc(p, size, flags);
-+	return vrealloc_node(p, size, flags, node);
- }
-diff --git a/rust/kernel/alloc.rs b/rust/kernel/alloc.rs
-index a2c49e5494d3..69cf0c5f7702 100644
---- a/rust/kernel/alloc.rs
-+++ b/rust/kernel/alloc.rs
-@@ -28,6 +28,8 @@
- /// Indicates an allocation error.
- #[derive(Copy, Clone, PartialEq, Eq, Debug)]
- pub struct AllocError;
-+
-+use crate::error::{code::EINVAL, Result};
- use core::{alloc::Layout, ptr::NonNull};
- 
- /// Flags to be used when allocating memory.
-@@ -115,6 +117,29 @@ pub mod flags {
-     pub const __GFP_NOWARN: Flags = Flags(bindings::__GFP_NOWARN);
- }
- 
-+/// Non Uniform Memory Access (NUMA) node identifier
-+#[derive(Clone, Copy, PartialEq)]
-+pub struct NumaNode(i32);
-+
-+impl NumaNode {
-+    /// create a new NUMA node identifer (non-negative integer)
-+    /// returns EINVAL if a negative id or an id exceeding MAX_NUMNODES is specified
-+    pub fn new(node: i32) -> Result<Self> {
-+        // SAFETY: MAX_NUMNODES never exceeds 2**10 because NODES_SHIFT is 0..10
-+        if node < 0 || node >= bindings::MAX_NUMNODES as i32 {
-+            return Err(EINVAL);
-+        }
-+        Ok(Self(node))
-+    }
-+}
-+
-+/// Specify necessary constant to pass the information to Allocator that the caller doesn't care
-+/// about the NUMA node to allocate memory from.
-+impl NumaNode {
-+    /// No node preference
-+    pub const NO_NODE: NumaNode = NumaNode(bindings::NUMA_NO_NODE);
-+}
-+
- /// The kernel's [`Allocator`] trait.
- ///
- /// An implementation of [`Allocator`] can allocate, re-allocate and free memory buffers described
-@@ -137,7 +162,7 @@ pub mod flags {
- /// - Implementers must ensure that all trait functions abide by the guarantees documented in the
- ///   `# Guarantees` sections.
- pub unsafe trait Allocator {
--    /// Allocate memory based on `layout` and `flags`.
-+    /// Allocate memory based on `layout`, `flags` and `nid`.
-     ///
-     /// On success, returns a buffer represented as `NonNull<[u8]>` that satisfies the layout
-     /// constraints (i.e. minimum size and alignment as specified by `layout`).
-@@ -153,13 +178,21 @@ pub unsafe trait Allocator {
-     ///
-     /// Additionally, `Flags` are honored as documented in
-     /// <https://docs.kernel.org/core-api/mm-api.html#mm-api-gfp-flags>.
--    fn alloc(layout: Layout, flags: Flags) -> Result<NonNull<[u8]>, AllocError> {
-+    fn alloc(layout: Layout, flags: Flags, nid: NumaNode) -> Result<NonNull<[u8]>, AllocError> {
-         // SAFETY: Passing `None` to `realloc` is valid by its safety requirements and asks for a
-         // new memory allocation.
--        unsafe { Self::realloc(None, layout, Layout::new::<()>(), flags) }
-+        unsafe { Self::realloc(None, layout, Layout::new::<()>(), flags, nid) }
-     }
- 
--    /// Re-allocate an existing memory allocation to satisfy the requested `layout`.
-+    /// Re-allocate an existing memory allocation to satisfy the requested `layout` and
-+    /// a specific NUMA node request to allocate the memory for.
-+    ///
-+    /// Systems employing a Non Uniform Memory Access (NUMA) architecture contain collections of
-+    /// hardware resources including processors, memory, and I/O buses, that comprise what is
-+    /// commonly known as a NUMA node.
-+    ///
-+    /// `nid` stands for NUMA id, i. e. NUMA node identifier, which is a non-negative
-+    /// integer if a node needs to be specified, or NO_NODE if the caller doesn't care.
-     ///
-     /// If the requested size is zero, `realloc` behaves equivalent to `free`.
-     ///
-@@ -196,6 +229,7 @@ unsafe fn realloc(
-         layout: Layout,
-         old_layout: Layout,
-         flags: Flags,
-+        nid: NumaNode,
-     ) -> Result<NonNull<[u8]>, AllocError>;
- 
-     /// Free an existing memory allocation.
-@@ -211,7 +245,15 @@ unsafe fn free(ptr: NonNull<u8>, layout: Layout) {
-         // SAFETY: The caller guarantees that `ptr` points at a valid allocation created by this
-         // allocator. We are passing a `Layout` with the smallest possible alignment, so it is
-         // smaller than or equal to the alignment previously used with this allocation.
--        let _ = unsafe { Self::realloc(Some(ptr), Layout::new::<()>(), layout, Flags(0)) };
-+        let _ = unsafe {
-+            Self::realloc(
-+                Some(ptr),
-+                Layout::new::<()>(),
-+                layout,
-+                Flags(0),
-+                NumaNode::NO_NODE,
-+            )
-+        };
-     }
- }
- 
-diff --git a/rust/kernel/alloc/allocator.rs b/rust/kernel/alloc/allocator.rs
-index aa2dfa9dca4c..7f9f4900da33 100644
---- a/rust/kernel/alloc/allocator.rs
-+++ b/rust/kernel/alloc/allocator.rs
-@@ -13,7 +13,7 @@
- use core::ptr;
- use core::ptr::NonNull;
- 
--use crate::alloc::{AllocError, Allocator};
-+use crate::alloc::{AllocError, Allocator, NumaNode};
- use crate::bindings;
- use crate::pr_warn;
- 
-@@ -58,18 +58,23 @@ fn aligned_size(new_layout: Layout) -> usize {
- ///
- /// One of the following: `krealloc`, `vrealloc`, `kvrealloc`.
- struct ReallocFunc(
--    unsafe extern "C" fn(*const crate::ffi::c_void, usize, u32) -> *mut crate::ffi::c_void,
-+    unsafe extern "C" fn(
-+        *const crate::ffi::c_void,
-+        usize,
-+        u32,
-+        crate::ffi::c_int,
-+    ) -> *mut crate::ffi::c_void,
- );
- 
- impl ReallocFunc {
--    // INVARIANT: `krealloc` satisfies the type invariants.
--    const KREALLOC: Self = Self(bindings::krealloc);
-+    // INVARIANT: `krealloc_node` satisfies the type invariants.
-+    const KREALLOC: Self = Self(bindings::krealloc_node);
- 
--    // INVARIANT: `vrealloc` satisfies the type invariants.
--    const VREALLOC: Self = Self(bindings::vrealloc);
-+    // INVARIANT: `vrealloc_node` satisfies the type invariants.
-+    const VREALLOC: Self = Self(bindings::vrealloc_node);
- 
--    // INVARIANT: `kvrealloc` satisfies the type invariants.
--    const KVREALLOC: Self = Self(bindings::kvrealloc);
-+    // INVARIANT: `kvrealloc_node` satisfies the type invariants.
-+    const KVREALLOC: Self = Self(bindings::kvrealloc_node);
- 
-     /// # Safety
-     ///
-@@ -87,6 +92,7 @@ unsafe fn call(
-         layout: Layout,
-         old_layout: Layout,
-         flags: Flags,
-+        nid: NumaNode,
-     ) -> Result<NonNull<[u8]>, AllocError> {
-         let size = aligned_size(layout);
-         let ptr = match ptr {
-@@ -110,7 +116,7 @@ unsafe fn call(
-         // - Those functions provide the guarantees of this function.
-         let raw_ptr = unsafe {
-             // If `size == 0` and `ptr != NULL` the memory behind the pointer is freed.
--            self.0(ptr.cast(), size, flags.0).cast()
-+            self.0(ptr.cast(), size, flags.0, nid.0).cast()
-         };
- 
-         let ptr = if size == 0 {
-@@ -134,9 +140,10 @@ unsafe fn realloc(
-         layout: Layout,
-         old_layout: Layout,
-         flags: Flags,
-+        nid: NumaNode,
-     ) -> Result<NonNull<[u8]>, AllocError> {
-         // SAFETY: `ReallocFunc::call` has the same safety requirements as `Allocator::realloc`.
--        unsafe { ReallocFunc::KREALLOC.call(ptr, layout, old_layout, flags) }
-+        unsafe { ReallocFunc::KREALLOC.call(ptr, layout, old_layout, flags, nid) }
-     }
- }
- 
-@@ -151,6 +158,7 @@ unsafe fn realloc(
-         layout: Layout,
-         old_layout: Layout,
-         flags: Flags,
-+        nid: NumaNode,
-     ) -> Result<NonNull<[u8]>, AllocError> {
-         // TODO: Support alignments larger than PAGE_SIZE.
-         if layout.align() > bindings::PAGE_SIZE {
-@@ -160,7 +168,7 @@ unsafe fn realloc(
- 
-         // SAFETY: If not `None`, `ptr` is guaranteed to point to valid memory, which was previously
-         // allocated with this `Allocator`.
--        unsafe { ReallocFunc::VREALLOC.call(ptr, layout, old_layout, flags) }
-+        unsafe { ReallocFunc::VREALLOC.call(ptr, layout, old_layout, flags, nid) }
-     }
- }
- 
-@@ -175,6 +183,7 @@ unsafe fn realloc(
-         layout: Layout,
-         old_layout: Layout,
-         flags: Flags,
-+        nid: NumaNode,
-     ) -> Result<NonNull<[u8]>, AllocError> {
-         // TODO: Support alignments larger than PAGE_SIZE.
-         if layout.align() > bindings::PAGE_SIZE {
-@@ -184,6 +193,6 @@ unsafe fn realloc(
- 
-         // SAFETY: If not `None`, `ptr` is guaranteed to point to valid memory, which was previously
-         // allocated with this `Allocator`.
--        unsafe { ReallocFunc::KVREALLOC.call(ptr, layout, old_layout, flags) }
-+        unsafe { ReallocFunc::KVREALLOC.call(ptr, layout, old_layout, flags, nid) }
-     }
- }
-diff --git a/rust/kernel/alloc/kbox.rs b/rust/kernel/alloc/kbox.rs
-index c386ff771d50..5c0b020fb2a4 100644
---- a/rust/kernel/alloc/kbox.rs
-+++ b/rust/kernel/alloc/kbox.rs
-@@ -4,7 +4,7 @@
- 
- #[allow(unused_imports)] // Used in doc comments.
- use super::allocator::{KVmalloc, Kmalloc, Vmalloc};
--use super::{AllocError, Allocator, Flags};
-+use super::{AllocError, Allocator, Flags, NumaNode};
- use core::alloc::Layout;
- use core::fmt;
- use core::marker::PhantomData;
-@@ -271,7 +271,7 @@ pub fn new(x: T, flags: Flags) -> Result<Self, AllocError> {
-     /// ```
-     pub fn new_uninit(flags: Flags) -> Result<Box<MaybeUninit<T>, A>, AllocError> {
-         let layout = Layout::new::<MaybeUninit<T>>();
--        let ptr = A::alloc(layout, flags)?;
-+        let ptr = A::alloc(layout, flags, NumaNode::NO_NODE)?;
- 
-         // INVARIANT: `ptr` is either a dangling pointer or points to memory allocated with `A`,
-         // which is sufficient in size and alignment for storing a `T`.
-diff --git a/rust/kernel/alloc/kvec.rs b/rust/kernel/alloc/kvec.rs
-index 1a0dd852a468..aa5d27176d9c 100644
---- a/rust/kernel/alloc/kvec.rs
-+++ b/rust/kernel/alloc/kvec.rs
-@@ -5,7 +5,7 @@
- use super::{
-     allocator::{KVmalloc, Kmalloc, Vmalloc},
-     layout::ArrayLayout,
--    AllocError, Allocator, Box, Flags,
-+    AllocError, Allocator, Box, Flags, NumaNode,
- };
- use core::{
-     fmt,
-@@ -633,6 +633,7 @@ pub fn reserve(&mut self, additional: usize, flags: Flags) -> Result<(), AllocEr
-                 layout.into(),
-                 self.layout.into(),
-                 flags,
-+                NumaNode::NO_NODE,
-             )?
-         };
- 
-@@ -1058,7 +1059,13 @@ pub fn collect(self, flags: Flags) -> Vec<T, A> {
-             // the type invariant to be smaller than `cap`. Depending on `realloc` this operation
-             // may shrink the buffer or leave it as it is.
-             ptr = match unsafe {
--                A::realloc(Some(buf.cast()), layout.into(), old_layout.into(), flags)
-+                A::realloc(
-+                    Some(buf.cast()),
-+                    layout.into(),
-+                    old_layout.into(),
-+                    flags,
-+                    NumaNode::NO_NODE,
-+                )
-             } {
-                 // If we fail to shrink, which likely can't even happen, continue with the existing
-                 // buffer.
--- 
-2.39.2
+Yes, there are messages which should be delivered to all hosts, but if 
+we offload these messages, we're at the mercy of the multicast_flood 
+setting on each port and whether or not 224.0.0.1/ff02::1 are "known" 
+multicast groups. (There's a discrepancy between the bridge and DSA 
+subsystem on how 224.0.0.1/ff02::1 groups are handled.)
 
+Group Specific Queries might be the only ones which are safe to offload 
+regardless of what multicast_flood setting is, but I don't think the 
+bridge has a flag specifically for those.
+
+Thanks,
+Joseph
 
