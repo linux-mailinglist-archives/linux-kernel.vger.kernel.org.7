@@ -1,118 +1,95 @@
-Return-Path: <linux-kernel+bounces-720497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C69DCAFBC8E
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 22:30:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7259FAFBC90
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 22:31:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6375C424131
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 20:30:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 513101BC1841
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 20:31:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68C6321FF30;
-	Mon,  7 Jul 2025 20:30:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EAEE21ABB7;
+	Mon,  7 Jul 2025 20:31:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nJ4zCZAl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="b/jq0y3R"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB96621ABB7;
-	Mon,  7 Jul 2025 20:30:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B53CD140E5F;
+	Mon,  7 Jul 2025 20:31:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751920232; cv=none; b=IRJuqDfj8koryThlqF+ocHSRrX3h1PzlWut52mcsLZaLmrMChAgkTM/UHtGPoBEh71kLMA0KQvXH656Nw4eAWK+DZRH7xUEqow/59h0bvnUDZeWJTCDpCSp9p99TRIQdDguxfQD37gXiipYG6mbMV5WbkwlKTyAdLi9yVDbqKTA=
+	t=1751920268; cv=none; b=Vjjp7VtGUJyBSbaiVh6jhy0Qpf+pV2IYJIoIt4A9HH+CmP8hGrWnEKbd8EuIZZRW/Iu07sbrWcfmuLztD9pcj3Oq5YE7ZoLl+x3PZgrhObvctIIUFNtzDSuG1iHBQ1qUIaP+krbcwlVjVQ6Ez/emCvVyUFRONNDsItkpYQo5UP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751920232; c=relaxed/simple;
-	bh=C0ELEEnglIhvtCBJRI+7bckrda+P++efeIdBibyAEps=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=Xxg9VD49UYwviqvKjTPC9Br8uaInwau/Lbj0vHq2Ue+rTAmiIO7oE/mcWyfZuQZ/mVJfQkCtAis3Bi8brx06IbfyDu85AMG15qQSbGWkarTTSphDyUfZnasex4+vkXT0yFzfVVKoZ7fy/ZLzKOXDN5XBcVP4nBuSq9GoD5ZXa4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nJ4zCZAl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E052BC4CEE3;
-	Mon,  7 Jul 2025 20:30:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751920232;
-	bh=C0ELEEnglIhvtCBJRI+7bckrda+P++efeIdBibyAEps=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=nJ4zCZAlyjGDjSCdRpyeWnC9SZbTFHChqTTXnkuVzo3j+0OK3cZvcyI3vg66gaHSY
-	 vAml93ZPMQqFwYI/ZAqmQWf/MJNW2D0SWocat7HYl9Zspml/2dvaJtK2hdFFPVtId1
-	 znrzTeXDRuh5zqfQkJrXKmMPbINE71zCxBUVbLdBOGvYkdcXngWTUk8ZoTv3syRhMk
-	 6W3zYC2hfxTRKXSYxvkgNZHSZMArIkyIJdmSsBlIXpGKzAKC+dVuBzGnikxVIh8lH9
-	 2IhUaADWeJ7Y5I02NWIRyshagX7BaJpp0rbdmf3rmQEk7OtYIpUd0dvSyH67zr27Xl
-	 up2f60jGraCNw==
+	s=arc-20240116; t=1751920268; c=relaxed/simple;
+	bh=rcLGs81dEuE2WrY2i4IJDgzSU2LysNj8u+zcb0ZjCRw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uDqoaqHELjGX8TJULhmyzZjJEzICpMIprSGueIJzlhiknECnUonO/8ZJBDi0O/tL2hc8sIlJntlz4m+uoz6084ihekiQkHj9623RzmQBFQTntjjhNeojO1tpHnF62l6RLDDsTpWDK98NrljEtQayQ7wcPVwVVaBDBEcb7eDzyQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=b/jq0y3R; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=TWA6hnzzmpQYsP3KcpmzS787HeWtSRU6ku7pCLKy0Ko=; b=b/jq0y3RqBLieMltlRZZec29Zq
+	60xRVxkfzoq6x4+ygQj26eL8V7nrVWVDAjuPZ1pf3EmHAB2jvyUsmvFwHe9E6yP7jxN0sKP3DRrjz
+	Yh2I8297EiYhSpV8QkEJyuYEIy1UK35gF8IEZccm2TEULzHgy5ihH2KSqqJ36RhRfULF36XqT11Gb
+	pHAXRCGi6wUxIP6Pm5uYD5GI+BFsus+wE5GojyJnOxISrHrgUspgCKNX6nDG3206ZIRyfO5xlOQGU
+	AYz7NSrLg1VE6+bSMTyrFJ+ndLgZ9MPi1PVof3M76mI3qRLdvkEL/lXOXc2x/IpZpZ5barQwe1GIt
+	sB+oTLcw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uYsUS-00000003boR-0BbP;
+	Mon, 07 Jul 2025 20:31:04 +0000
+Date: Mon, 7 Jul 2025 21:31:04 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Max Kellermann <max.kellermann@ionos.com>
+Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 20/21] __dentry_kill(): new locking scheme
+Message-ID: <20250707203104.GJ1880847@ZenIV>
+References: <20231124060200.GR38156@ZenIV>
+ <20231124060422.576198-1-viro@zeniv.linux.org.uk>
+ <20231124060422.576198-20-viro@zeniv.linux.org.uk>
+ <CAKPOu+_Ktbp5OMZv77UfLRyRaqmK1kUpNHNd1C=J9ihvjWLDZg@mail.gmail.com>
+ <20250707172956.GF1880847@ZenIV>
+ <CAKPOu+87UytVk_7S4L-y9We710j4Gh8HcacffwG99xUA5eGh7A@mail.gmail.com>
+ <20250707180026.GG1880847@ZenIV>
+ <CAKPOu+-QzSzUw4q18FsZFR74OJp90rs9X08gDxWnsphfwfwxoQ@mail.gmail.com>
+ <20250707193115.GH1880847@ZenIV>
+ <CAKPOu+_q7--Yfoko2F2B1WD=rnq94AduevZD1MeFW+ib94-Pxg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 07 Jul 2025 22:30:27 +0200
-Message-Id: <DB63W1N89KFT.2J2X3Y7SEX1KF@kernel.org>
-Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
- "Trevor Gross" <tmgross@umich.edu>, "Danilo Krummrich" <dakr@kernel.org>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, "Thomas Gleixner" <tglx@linutronix.de>, "Bjorn
- Helgaas" <bhelgaas@google.com>, =?utf-8?q?Krzysztof_Wilczy=C5=84ski?=
- <kwilczynski@kernel.org>, <linux-kernel@vger.kernel.org>,
- <rust-for-linux@vger.kernel.org>, <linux-pci@vger.kernel.org>
-Subject: Re: [PATCH v6 3/6] rust: irq: add support for non-threaded IRQs and
- handlers
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Daniel Almeida" <daniel.almeida@collabora.com>, "Alice Ryhl"
- <aliceryhl@google.com>
-X-Mailer: aerc 0.20.1
-References: <20250703-topics-tyr-request_irq-v6-0-74103bdc7c52@collabora.com> <20250703-topics-tyr-request_irq-v6-3-74103bdc7c52@collabora.com> <aGeIF_LcesUM9DHk@google.com> <F3D3BD51-65D8-44BE-9007-FBA556DFB7E5@collabora.com>
-In-Reply-To: <F3D3BD51-65D8-44BE-9007-FBA556DFB7E5@collabora.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKPOu+_q7--Yfoko2F2B1WD=rnq94AduevZD1MeFW+ib94-Pxg@mail.gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Mon Jul 7, 2025 at 6:18 PM CEST, Daniel Almeida wrote:
-> Alice,
->
-> [=E2=80=A6]
->
->>> +/// The value that can be returned from an IrqHandler or a ThreadedIrq=
-Handler.
->>> +pub enum IrqReturn {
->>> +    /// The interrupt was not from this device or was not handled.
->>> +    None,
->>> +
->>> +    /// The interrupt was handled by this device.
->>> +    Handled,
->>> +}
->>> +
->>> +impl IrqReturn {
->>> +    fn into_inner(self) -> u32 {
->>> +        match self {
->>> +            IrqReturn::None =3D> bindings::irqreturn_IRQ_NONE,
->>> +            IrqReturn::Handled =3D> bindings::irqreturn_IRQ_HANDLED,
->>=20
->> One option is to specify these in the enum:
->>=20
->> /// The value that can be returned from an IrqHandler or a ThreadedIrqHa=
-ndler.
->> pub enum IrqReturn {
->>    /// The interrupt was not from this device or was not handled.
->>    None =3D bindings::irqreturn_IRQ_NONE,
->>=20
->>    /// The interrupt was handled by this device.
->>    Handled =3D bindings::irqreturn_IRQ_HANDLED,
->> }
->
-> This requires explicitly setting #[repr(u32)], which is something that wa=
-s
-> reverted at an earlier iteration of the series on Benno=E2=80=99s request=
-.
+On Mon, Jul 07, 2025 at 10:00:38PM +0200, Max Kellermann wrote:
 
-Yeah I requested this, because it increases the size of the enum to 4
-bytes and I think we should try to make rust enums as small as possible.
+> Sorry Al, I don't get it.
+> I understand that objects that are still referenced must not be freed,
+> and of course a dentry that has started the process of dying by
+> __dentry_kill() needs to remain in the tree, and that its parent must
+> not be freed either. Of course!
+> 
+> But none of this explains why you added this "d_lockref.count<0"
+> check, which I doubt is correct because it causes a busy loop, burning
+> CPU cycles without doing anything.
 
-@Alice what's the benefit of doing it directly in the enum?
+Busy loop here means that everything in the tree is either busy or already
+in process of being torn down *by* *another* *thread*.  And that's already
+in process - not just selected for it (see collect2 in the same loop).
 
----
-Cheers,
-Benno
+What *can* we do in that case?  On the level of shrink_dcache_parent(), that
+is.  Ignore that these suckers are there?  Fine, but that means we are failing
+to evict the stuff that has no busy descendents.
+
+The interesting question is what the other thread is doing...
 
