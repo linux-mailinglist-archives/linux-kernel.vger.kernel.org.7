@@ -1,150 +1,202 @@
-Return-Path: <linux-kernel+bounces-720142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91159AFB78A
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 17:37:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F854AFB78B
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 17:37:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36F5042179B
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 15:36:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D890C7AD73F
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 15:36:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D0641F0E53;
-	Mon,  7 Jul 2025 15:36:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="W5iExPLV"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82F071D63F5
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 15:36:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF0751E008B;
+	Mon,  7 Jul 2025 15:37:21 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE0D11D5AB7;
+	Mon,  7 Jul 2025 15:37:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751902564; cv=none; b=oWM5GiTpKWLVD64BqRsBP2UV4I2YEVQ2KAl9bAbv14hGGzGQs5LkldXcow3UO9z3b+PzxUfvnKx5w6eE2DroA9WsxLGBBIFnW4jmuO3hd5zM4Q+a/ITxplh468czqNFp14msEr3sEY/ocOtDKEj3TpS/8F0apsxWO5WQlu5LzvI=
+	t=1751902641; cv=none; b=T9BooskVuFnfx29N114pmGnls+b1oOth0mONx5wDjG+Rm5JKI21ZEfxKvK2GScckIsb4oKAQXaYBpwJtAzyHLu/afc2iTYVV9mVVIVeTlYLHs2IoBGB0xH8QoPZsKI1lE9Gkrr3z0wHCmVmPOtqVNYM+y8XoFAsEgKfBVdaSfKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751902564; c=relaxed/simple;
-	bh=HcQchtRslDyRXYgw4RtewbOf6/LJsYueNE8Laf4FCKc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=aHWACxWeeBMDmp3L33SmM9mSp535y3M9qTiEifXqJWN73MWAAgyw8J6IlZw9rj+OJq0z6V7BVawXMgc7P3pXvKuSLb22RMvR18HSvH9WPRcythPicRbWZWiRIm5UcgLQbK1in6ijJWXieVe/jOhyQMPO52037DloUTLZlSiZ2bI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=W5iExPLV; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-450cf214200so25037575e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 08:36:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1751902561; x=1752507361; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IH9KVtMgBsrkYXH8nnFecmz5YKaJj3+GxgiEXc+y1YA=;
-        b=W5iExPLVe4nn2yGzBbaYvlIZdtKzogoInG2GPlw3JOT4i8rfuUSx6P4wrddne+oXb0
-         vwrx6FN+Ffe3IoI0Yyq3iRT6FMM7g8II5hy+yB/MnzaRCirKdB16VJXaajSH15Q+Y5IT
-         G07xBOdW1uvOL850whxUgiBb92sbentYfSuxVv6JofdNJhAAbb0CbeO4RWd2F65hxlgL
-         LY4uxf2oJkyuevVNn8Nh/kUKioBb/p//aICissCn/85tHgzcCeU9zU7dHSY0WRrj0VZT
-         QMscqVsz7DRbIlaSrXV586C8cfu6fwFsSsemSJtfOC/Tw+9sWYcEGr992jBo4rXw4/Dq
-         BNGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751902561; x=1752507361;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IH9KVtMgBsrkYXH8nnFecmz5YKaJj3+GxgiEXc+y1YA=;
-        b=P6iYQNhw9u81YsRi7PP4Yty/1IE1xZMe1wBravNQBBlNJHL79LJllm3TRlfXCnNHbh
-         H1wnQYWfH9siZ2lMZCGUhq3nKpObKDA0y/NrONj739ac43Vat9hrrxYsAVNV7VegsJcL
-         9MH38ipcA+ojMDGpqBiUMlxw+IqyLi87MHoZ0Drd1/STFHmJUoT6WngPKuY2sgLZoyyV
-         4DJa7tBGEE89qPAFE3iD7fIVHnF6qMzh+yI22ZZ86HuM46v/Uz8xQ04Fj/6kbM0njTLI
-         0PmOxiaEB9Vnxir6AiwSHWSIa0Rvx8LubSs6+tqOgrHQRBp1gdOPXVlOeSBPYn6FgTvU
-         OYdQ==
-X-Gm-Message-State: AOJu0YzLztwn+G+jF+tjcnuDPevdljNKR5pRc5eJ+OEPzIFXXgbd1wuK
-	c43d85O2dFz7cRRAGI06sMu3EFjeQyrrRc3EW6mblkm3jIr/XybhqHmBLgK3Pes0xVo=
-X-Gm-Gg: ASbGncuW/Qd0fvXH8eCydNZ3eO+b/18xl6ADTEPBcCv4RPBkyXmUtetb/Zqs2hq+y+I
-	ONhXOKe7c7os0+ZsNmC/zOYYC481zI/cpjuz8wjOnWbYIgzoheRXbh0wTZ650yRKWg5rUeGLoT1
-	lK5gvv9ioB6/xf+JVzxJ9uws/zfsgAPFWdaiwVShUZhAKv20ohrKxckfsXktoh9Us4dD0yAQpIh
-	UGMcweYAel3WwuJH+O0DSeT3wZFNRdWosyVD13XEWcTy1SHxhP5oO/4+719klm/Jm2Yzt3U3Smy
-	+MSQhSWsUlzj6fM4XDVwyOyfTW5fkOw7YIxLcVhluAxJcJHjLfE+NC8syCAKI8Bc1jaXku+iQR7
-	k
-X-Google-Smtp-Source: AGHT+IGes0ufFH5VmLZsiJtyyublkopHtpaYl2Uv7IhC3VQUUkrA40ug/nbGGBQCxtDhT7AejuRV5Q==
-X-Received: by 2002:a05:600c:8416:b0:450:d4a6:799d with SMTP id 5b1f17b1804b1-454b306b0c9mr109664975e9.7.1751902560647;
-        Mon, 07 Jul 2025 08:36:00 -0700 (PDT)
-Received: from [127.0.1.1] ([2a01:e0a:e50:3860:43f7:96cc:da3f:e6bb])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b47030bd4dsm10409968f8f.7.2025.07.07.08.36.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Jul 2025 08:36:00 -0700 (PDT)
-From: Guillaume La Roque <glaroque@baylibre.com>
-Date: Mon, 07 Jul 2025 17:35:58 +0200
-Subject: [PATCH 2/2] soc: ti: ti_sci_inta_msi: Enable module compilation
- support
+	s=arc-20240116; t=1751902641; c=relaxed/simple;
+	bh=GEvLhH+HdHGBlGq1TRR0in6YZ+bDbe9WfJqwHXAUymM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bzE9O3UMOVmSVd61C7cuM0CuFmAFgRqKddLOxuG/6HcSJgX0nm709KDLyy+ufsPw/RaBwWm61X5D3bukoLhyqhJqOuW0hM4v48nhzXaLAyLGbk4nkqe9flnMShKu3eEgShYDic883Bb6Xl3SB0i6Xjjr4cDFsspHX7l8TK5z0ZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DA592168F;
+	Mon,  7 Jul 2025 08:36:59 -0700 (PDT)
+Received: from localhost (e132581.arm.com [10.1.196.87])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E1F443F77D;
+	Mon,  7 Jul 2025 08:37:11 -0700 (PDT)
+Date: Mon, 7 Jul 2025 16:37:10 +0100
+From: Leo Yan <leo.yan@arm.com>
+To: James Clark <james.clark@linaro.org>
+Cc: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Alexandru Elisei <Alexandru.Elisei@arm.com>,
+	Anshuman Khandual <Anshuman.Khandual@arm.com>,
+	Rob Herring <Rob.Herring@arm.com>,
+	Suzuki Poulose <Suzuki.Poulose@arm.com>,
+	Robin Murphy <Robin.Murphy@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] perf: arm_spe: Disable buffer before writing to
+ PMBPTR_EL1 or PMBSR_EL1
+Message-ID: <20250707153710.GB2182465@e132581.arm.com>
+References: <20250701-james-spe-vm-interface-v1-0-52a2cd223d00@linaro.org>
+ <20250701-james-spe-vm-interface-v1-2-52a2cd223d00@linaro.org>
+ <20250704155016.GI1039028@e132581.arm.com>
+ <b77f12e7-ea3f-4c57-9706-ff8e32721cc8@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250707-timsi-v1-2-80ae43b2c550@baylibre.com>
-References: <20250707-timsi-v1-0-80ae43b2c550@baylibre.com>
-In-Reply-To: <20250707-timsi-v1-0-80ae43b2c550@baylibre.com>
-To: Thomas Gleixner <tglx@linutronix.de>, vigneshr@ti.com, 
- Nishanth Menon <nm@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, 
- Tero Kristo <kristo@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- Guillaume La Roque <glaroque@baylibre.com>
-X-Mailer: b4 0.14.1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b77f12e7-ea3f-4c57-9706-ff8e32721cc8@linaro.org>
 
-Add module support to the TI SCI INTA MSI driver:
-- Change Kconfig from bool to tristate to allow module compilation
-- Add linux/module.h include for module functionality
-- Add MODULE_LICENSE, MODULE_DESCRIPTION, and MODULE_AUTHOR macros
+On Mon, Jul 07, 2025 at 12:39:57PM +0100, James Clark wrote:
 
-This allows the driver to be compiled as a loadable kernel module
-named ti_sci_inta_msi.
+[...]
 
-Signed-off-by: Guillaume La Roque <glaroque@baylibre.com>
----
- drivers/soc/ti/Kconfig           | 5 ++++-
- drivers/soc/ti/ti_sci_inta_msi.c | 5 +++++
- 2 files changed, 9 insertions(+), 1 deletion(-)
+> > > @@ -661,16 +666,24 @@ static irqreturn_t arm_spe_pmu_irq_handler(int irq, void *dev)
+> > >   	 */
+> > >   	irq_work_run();
+> > > +	/*
+> > > +	 * arm_spe_pmu_buf_get_fault_act() already drained, and PMBSR_EL1.S == 1
+> > > +	 * means that StatisticalProfilingEnabled() == false. So now we can
+> > > +	 * safely disable the buffer.
+> > > +	 */
+> > > +	write_sysreg_s(0, SYS_PMBLIMITR_EL1);
+> > > +	isb();
+> > > +
+> > > +	/* Status can be cleared now that PMBLIMITR_EL1.E == 0 */
+> > > +	write_sysreg_s(0, SYS_PMBSR_EL1);
+> > > +
+> > 
+> > An important thing is about sequence:
+> > As described in arm_spe_pmu_disable_and_drain_local(), should we always
+> > clear ELs bits in PMSCR_EL1 before clear PMBLIMITR_EL1.E bit? As a
+> > reference, we could see TRBE always clear ELx bits before disable trace
+> > buffer.
+> > 
+> > And a trivial flaw:
+> > 
+> > If the TRUNCATED flag has been set, the irq_work_run() above runs the
+> > IRQ work to invoke the arm_spe_pmu_stop() to disable trace buffer, which
+> > clear SYS_PMBLIMITR_EL1.E bit. This is why the current code does not
+> > explictly clear SYS_PMBLIMITR_EL1.E bit.
+> > 
+> > With this patch, the interrupt handler will clear SYS_PMBLIMITR_EL1.E
+> > bit twice for a trunacated case.
+> 
+> I suppose that's a rarer case that we don't necessarily have to optimize
+> for. I don't think it will do any harm, but is it even possible to avoid?
+> 
+> There are already some other duplications in the driver, for example in
+> arm_spe_pmu_stop() we call arm_spe_pmu_disable_and_drain_local() which
+> drains, and then arm_spe_pmu_buf_get_fault_act() which also drains again.
 
-diff --git a/drivers/soc/ti/Kconfig b/drivers/soc/ti/Kconfig
-index 1a93001c9e36..0a9eb5ac264b 100644
---- a/drivers/soc/ti/Kconfig
-+++ b/drivers/soc/ti/Kconfig
-@@ -85,7 +85,10 @@ config TI_PRUSS
- endif # SOC_TI
- 
- config TI_SCI_INTA_MSI_DOMAIN
--	bool
-+	tristate "TI SCI INTA MSI Domain driver"
- 	select GENERIC_MSI_IRQ
- 	help
- 	  Driver to enable Interrupt Aggregator specific MSI Domain.
-+
-+	  Say Y here to compile it into the kernel or M to compile it as a
-+	  module. The module will be called ti_sci_inta_msi.
-diff --git a/drivers/soc/ti/ti_sci_inta_msi.c b/drivers/soc/ti/ti_sci_inta_msi.c
-index 193266f5e3f9..d92cab319d57 100644
---- a/drivers/soc/ti/ti_sci_inta_msi.c
-+++ b/drivers/soc/ti/ti_sci_inta_msi.c
-@@ -8,6 +8,7 @@
- 
- #include <linux/irq.h>
- #include <linux/irqdomain.h>
-+#include <linux/module.h>
- #include <linux/msi.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
-@@ -115,3 +116,7 @@ int ti_sci_inta_msi_domain_alloc_irqs(struct device *dev,
- 	return ret;
- }
- EXPORT_SYMBOL_GPL(ti_sci_inta_msi_domain_alloc_irqs);
-+
-+MODULE_LICENSE("GPL");
-+MODULE_DESCRIPTION("Texas Instruments K3 Interrupt Aggregator MSI bus");
-+MODULE_AUTHOR("Lokesh Vutla <lokeshvutla@ti.com>");
+If we don't need to worry about duplicated operations in the truncated
+case, then for easier maintenance and better readability, I'm wondering
+if we could simplify the interrupt handler as follows:
 
--- 
-2.34.1
+    arm_spe_pmu_irq_handler()
+    {
+        ...
 
+        act = arm_spe_pmu_buf_get_fault_act(handle);
+        if (act == SPE_PMU_BUF_FAULT_ACT_SPURIOUS)
+                return IRQ_NONE;
+
+        arm_spe_pmu_disable_and_drain_local();
+
+        /* Status can be cleared now that PMBLIMITR_EL1.E == 0 */
+        write_sysreg_s(0, SYS_PMBSR_EL1);
+        isb();
+
+        switch (act) {
+            ...
+        }
+    }
+
+This approach complies with DEN0154 - we must clear PMBLIMITR_EL1.E
+before writing to other SPE system registers (e.g., PMBSR).
+
+The reason for using arm_spe_pmu_disable_and_drain_local() is that we
+first need to disable profiling instructions by clearing PMSCR_EL1/EL2,
+and then is it safe to disable the profiling buffer.
+
+[...]
+
+> > >   	case SPE_PMU_BUF_FAULT_ACT_OK:
+> > >   		/*
+> > > @@ -679,18 +692,14 @@ static irqreturn_t arm_spe_pmu_irq_handler(int irq, void *dev)
+> > >   		 * PMBPTR might be misaligned, but we'll burn that bridge
+> > >   		 * when we get to it.
+> > >   		 */
+> > > -		if (!(handle->aux_flags & PERF_AUX_FLAG_TRUNCATED)) {
+> > > +		if (!(handle->aux_flags & PERF_AUX_FLAG_TRUNCATED))
+> > >   			arm_spe_perf_aux_output_begin(handle, event);
+> > > -			isb();
+> > 
+> > I am a bit suspecious we can remove this isb().
+> > 
+> > As a reference to the software usage PKLXF in Arm ARM (DDI 0487 L.a),
+> > after enable TRBE trace unit, an ISB is mandatory. Maybe check a bit
+> > for this?
+>
+> Wasn't this isb() to separate the programming of the registers with the
+> status register clear at the end of this function to enable profiling?
+
+Enabling profiling buffer followed an isb() is not only for separating
+other register programming.
+
+As described in section D17.9, Synchronization and Statistical Profiling
+in Arm ARM:
+
+  "A Context Synchronization event guarantees that a direct write to a
+  System register made by the PE in program order before the Context
+  synchronization event are observable by indirect reads and indirect
+  writes of the same System register made by a profiling operation
+  relating to a sampled operation in program order after the Context
+  synchronization event."
+
+My understanding is: after the ARM SPE profiling is enabled, the
+followed ISB is a Synchronization to make sure the system register
+values are observed by SPE. And we cannot rely on ERET, especially if
+we are tracing the kernel mode.
+
+Thanks,
+Leo
+
+> But now we enable profiling with the write to PMBLIMITR_EL1 in
+> arm_spe_perf_aux_output_begin() and the last thing here is the ERET. That's
+> specifically mentioned as enough synchronization in PKLXF:
+> 
+>   In the common case, this is an ERET instruction that returns to a
+>   different Exception level where tracing is allowed.
+> 
+> > > -		}
+> > >   		break;
+> > >   	case SPE_PMU_BUF_FAULT_ACT_SPURIOUS:
+> > >   		/* We've seen you before, but GCC has the memory of a sieve. */
+> > >   		break;
+> > >   	}
+> > > -	/* The buffer pointers are now sane, so resume profiling. */
+> > > -	write_sysreg_s(0, SYS_PMBSR_EL1);
+> > >   	return IRQ_HANDLED;
+> > >   }
+> > > 
+> > > -- 
+> > > 2.34.1
+> > > 
+> > > 
+> 
 
