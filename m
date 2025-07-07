@@ -1,176 +1,176 @@
-Return-Path: <linux-kernel+bounces-720430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E06DDAFBB95
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 21:11:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76FEDAFBB98
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 21:13:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 989BE7AD016
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 19:09:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23977188FBB2
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 19:13:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5892D265CC2;
-	Mon,  7 Jul 2025 19:11:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 017E8265CCB;
+	Mon,  7 Jul 2025 19:13:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fHHW0nmM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Xxp4S3Fg"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE08E19755B;
-	Mon,  7 Jul 2025 19:11:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9831265288
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 19:13:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751915473; cv=none; b=JkHt2Ov3T5RBgB2eGXX0Twx8GHTi5ttIWQwy2xhATF9hALRMTOPowW9ifOvjEBZzVWfCsVRxy93KITc4RJQbuk/vNGm1iyXU9x1zPlWRSvq8XZhCJlQ2WeCIKG5MfBTG6LIKoqPZwj1ICTRp40xktF3wqSU4ASxSmULBPEDOJRs=
+	t=1751915601; cv=none; b=AXcjujyvh0rvwnTXZFxH5FA5INfb7KZ318ciFG5FBjW7n24ykRDJ6zVmyz1Bo5rzCYzocGT4gO6i0v400kRZ7zcMqRNn0N016YcR6UdCY+lIwhYY1bBpZyh9z1+M4FpvACJ4x/AOl6RNiOQnpqfQ1ZLUaGk0t4/woJ73nWCr0LA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751915473; c=relaxed/simple;
-	bh=jyeQQgJy/kgZ+VcJ2KuOWLRT94HaQ85k1BKEOhxnP8I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=O/9AYu2wmCy8T1ZI6NX4IDvhHfRC7OCFRU1d9g0v4AqZOA0SAPDZ39Blu7iNWI0RRYKC+poBQrWB5fiDEE02q1qWv31HpE9sTvKIt/8IIk45Qw4/gQdeSPt+e1udWHZ7Qw5lhGiEawz5hH24EqyWQzUn1jOVPYuvsudjqXkKq20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fHHW0nmM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33E4FC4CEE3;
-	Mon,  7 Jul 2025 19:11:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751915473;
-	bh=jyeQQgJy/kgZ+VcJ2KuOWLRT94HaQ85k1BKEOhxnP8I=;
-	h=Date:Reply-To:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=fHHW0nmMsBwv8rMX00PuOEcDw/lS8dryl6B3FKbBejkZocyYBzl+ji4mMx7loAAzR
-	 ziMU8QyiZPlxlEUTwi7HfPIJ9CwgfE7CWj0C5+tHL50z+Wdjsvd8BitF8pDD6b2UuA
-	 TaLn4NsTSzc6ztgsMFCH2y/OiZf6FKWruiCs8kMzqdh+NZCEzeyR0Twk6oUey7tHiC
-	 Z5x4c095DaXtudKYGi/zFUbAwRkpVa4zdHW9JRHlcW5q/4loDYaPG1CCsr3Z5fxpzH
-	 Q5a8aQfam0AuXLQg758xvMTYFdpGDQJsrb4Do6W61i9/289vF1NQwxVVQnk+kIR000
-	 5wsH+/w7CpG8A==
-Message-ID: <a9eade27-9b77-431f-b7c8-24c3fb891673@kernel.org>
-Date: Mon, 7 Jul 2025 21:11:05 +0200
+	s=arc-20240116; t=1751915601; c=relaxed/simple;
+	bh=q075Lf2icGWDq5hYoOOTF4GRd9e4zdBmS++T0iJcauY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=kfZpy1jEyO/x8LVqN2COeSDSv4FjC5dGcToMwkrgwV6HsbOeTjguWYKdn0Y0o07ESk/S7CTp0WCjE91TPwXNgG7v2LfS4X+BzjyQsSCJk9rIzAYQw0v0YwJRVOkcT7SCoeu7/OHFxvbQdWwMZ+CapvYyehi+zQKJHEEhwx/cZJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Xxp4S3Fg; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751915600; x=1783451600;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=q075Lf2icGWDq5hYoOOTF4GRd9e4zdBmS++T0iJcauY=;
+  b=Xxp4S3FgPCZm+uO/GWcBz/fSpYntnFjEvLxqFO91lx+x6Y0wy5PyQNLY
+   RTI6QDU3u4QhnAqDp+E3Oip2allzinc/NBO6CBqmDq9n6rE846ThCL/Vx
+   KQZJNoIyYetiApDqv/yLZjyM/8dyU0/iZI1jVBlvjYIZkoQblObWE/ndS
+   PqWEKMRBx+BiISaH1KW9gPlpt490tAHr7Miw/2n1VUMgNtxCke1KWDshk
+   c0G5mF5KJouGHqskJaXPWKWXKnx/LS+JlKnNOi6njsgB2U9U31TlzZcQH
+   XbNrVeno/UAky2GBDSmkH3y7d1hUPaM20d5td8pxhAq+hShSUoCeiKu1b
+   g==;
+X-CSE-ConnectionGUID: 4HHHXxVSQdyzoE3uhzq8Vg==
+X-CSE-MsgGUID: NV592kjDQR2wZrTqmiyd8Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="65206110"
+X-IronPort-AV: E=Sophos;i="6.16,295,1744095600"; 
+   d="scan'208";a="65206110"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jul 2025 12:13:20 -0700
+X-CSE-ConnectionGUID: DS73QkxCSmWNIEqxDiNpbQ==
+X-CSE-MsgGUID: 0qHqrZVwRSS7e8TZ5J2olA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,295,1744095600"; 
+   d="scan'208";a="155418156"
+Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
+  by orviesa007.jf.intel.com with ESMTP; 07 Jul 2025 12:13:18 -0700
+Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uYrH9-0000fr-0w;
+	Mon, 07 Jul 2025 19:13:15 +0000
+Date: Tue, 8 Jul 2025 03:12:19 +0800
+From: kernel test robot <lkp@intel.com>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org, x86@kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: [tip:timers/ptp 39/39] lib/vdso/gettimeofday.c:335:17: warning:
+ shift count >= width of type
+Message-ID: <202507080348.hKtUspGk-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: Daniel Gomez <da.gomez@kernel.org>
-Subject: Re: [PATCH 2/3] module: make structure definitions always visible
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
- Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>,
- Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez
- <da.gomez@samsung.com>, Brendan Higgins <brendan.higgins@linux.dev>,
- David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>
-Cc: linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com
-References: <20250612-kunit-ifdef-modules-v1-0-fdccd42dcff8@linutronix.de>
- <20250612-kunit-ifdef-modules-v1-2-fdccd42dcff8@linutronix.de>
-Content-Language: en-US
-From: Daniel Gomez <da.gomez@kernel.org>
-Organization: kernel.org
-In-Reply-To: <20250612-kunit-ifdef-modules-v1-2-fdccd42dcff8@linutronix.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 12/06/2025 16.53, Thomas WeiÃschuh wrote:
-> To write code that works with both CONFIG_MODULES=y and CONFIG_MODULES=n
-> it is convenient to use "if (IS_ENABLED(CONFIG_MODULES))" over raw #ifdef.
-> The code will still fully typechecked but the unreachable parts are
-> discarded by the compiler. This prevents accidental breakage when a certain
-> kconfig combination was not specifically tested by the developer.
-> This pattern is already supported to some extend by module.h defining
-> empty stub functions if CONFIG_MODULES=n.
-> However some users of module.h work on the structured defined by module.h.
-> 
-> Therefore these structure definitions need to be visible, too.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers/ptp
+head:   7893ea1006fcbb876ddf53ad4ebba4a054add4b2
+commit: 7893ea1006fcbb876ddf53ad4ebba4a054add4b2 [39/39] vdso/gettimeofday: Add support for auxiliary clocks
+config: powerpc-allyesconfig (https://download.01.org/0day-ci/archive/20250708/202507080348.hKtUspGk-lkp@intel.com/config)
+compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project 01c97b4953e87ae455bd4c41e3de3f0f0f29c61c)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250708/202507080348.hKtUspGk-lkp@intel.com/reproduce)
 
-We are missing here which structures are needed. + we are making more things
-visible than what we actually need.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507080348.hKtUspGk-lkp@intel.com/
 
-> 
-> Many structure members are still gated by specific configuration settings.
-> The assumption for those is that the code using them will be gated behind
-> the same configuration setting anyways.
+All warnings (new ones prefixed by >>):
 
-I think code and kconfig need to reflect the actual dependencies. For example,
-if CONFIG_LIVEPATCH depends on CONFIG_MODULES, we need to specify that in
-Kconfig with depends on, as well as keep the code gated by these 2 configs with
-ifdef/IS_ENABLED.
+   In file included from <built-in>:4:
+>> lib/vdso/gettimeofday.c:335:17: warning: shift count >= width of type [-Wshift-count-overflow]
+     335 |         else if (msk & VDSO_AUX)
+         |                        ^~~~~~~~
+   include/vdso/datapage.h:50:18: note: expanded from macro 'VDSO_AUX'
+      50 | #define VDSO_AUX        __GENMASK(CLOCK_AUX_LAST, CLOCK_AUX)
+         |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/uapi/linux/bits.h:7:56: note: expanded from macro '__GENMASK'
+       7 | #define __GENMASK(h, l) (((~_UL(0)) << (l)) & (~_UL(0) >> (BITS_PER_LONG - 1 - (h))))
+         |                                                        ^  ~~~~~~~~~~~~~~~~~~~~~~~~~
+   In file included from <built-in>:4:
+   lib/vdso/gettimeofday.c:481:19: warning: shift count >= width of type [-Wshift-count-overflow]
+     481 |         } else if (msk & VDSO_AUX) {
+         |                          ^~~~~~~~
+   include/vdso/datapage.h:50:18: note: expanded from macro 'VDSO_AUX'
+      50 | #define VDSO_AUX        __GENMASK(CLOCK_AUX_LAST, CLOCK_AUX)
+         |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/uapi/linux/bits.h:7:56: note: expanded from macro '__GENMASK'
+       7 | #define __GENMASK(h, l) (((~_UL(0)) << (l)) & (~_UL(0) >> (BITS_PER_LONG - 1 - (h))))
+         |                                                        ^  ~~~~~~~~~~~~~~~~~~~~~~~~~
+   2 warnings generated.
+--
+   In file included from <built-in>:4:
+>> lib/vdso/gettimeofday.c:335:17: warning: shift count >= width of type [-Wshift-count-overflow]
+     335 |         else if (msk & VDSO_AUX)
+         |                        ^~~~~~~~
+   include/vdso/datapage.h:50:18: note: expanded from macro 'VDSO_AUX'
+      50 | #define VDSO_AUX        __GENMASK(CLOCK_AUX_LAST, CLOCK_AUX)
+         |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/uapi/linux/bits.h:7:56: note: expanded from macro '__GENMASK'
+       7 | #define __GENMASK(h, l) (((~_UL(0)) << (l)) & (~_UL(0) >> (BITS_PER_LONG - 1 - (h))))
+         |                                                        ^  ~~~~~~~~~~~~~~~~~~~~~~~~~
+   In file included from <built-in>:4:
+   lib/vdso/gettimeofday.c:481:19: warning: shift count >= width of type [-Wshift-count-overflow]
+     481 |         } else if (msk & VDSO_AUX) {
+         |                          ^~~~~~~~
+   include/vdso/datapage.h:50:18: note: expanded from macro 'VDSO_AUX'
+      50 | #define VDSO_AUX        __GENMASK(CLOCK_AUX_LAST, CLOCK_AUX)
+         |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/uapi/linux/bits.h:7:56: note: expanded from macro '__GENMASK'
+       7 | #define __GENMASK(h, l) (((~_UL(0)) << (l)) & (~_UL(0) >> (BITS_PER_LONG - 1 - (h))))
+         |                                                        ^  ~~~~~~~~~~~~~~~~~~~~~~~~~
+   2 warnings generated.
 
-> 
-> Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
-> ---
->  include/linux/module.h | 23 ++++++++++++-----------
->  1 file changed, 12 insertions(+), 11 deletions(-)
-> 
-> diff --git a/include/linux/module.h b/include/linux/module.h
-> index 52f7b0487a2733c56e2531a434887e56e1bf45b2..7f783e71636542b99db3dd869a9387d14992df45 100644
-> --- a/include/linux/module.h
-> +++ b/include/linux/module.h
-> @@ -302,17 +302,6 @@ static typeof(name) __mod_device_table__##type##__##name		\
->  
->  struct notifier_block;
->  
-> -#ifdef CONFIG_MODULES
-> -
-> -extern int modules_disabled; /* for sysctl */
-> -/* Get/put a kernel symbol (calls must be symmetric) */
-> -void *__symbol_get(const char *symbol);
-> -void *__symbol_get_gpl(const char *symbol);
-> -#define symbol_get(x)	({ \
-> -	static const char __notrim[] \
-> -		__used __section(".no_trim_symbol") = __stringify(x); \
-> -	(typeof(&x))(__symbol_get(__stringify(x))); })
-> -
->  enum module_state {
->  	MODULE_STATE_LIVE,	/* Normal state. */
->  	MODULE_STATE_COMING,	/* Full formed, running module_init. */
-> @@ -598,6 +587,18 @@ struct module {
->  	struct _ddebug_info dyndbg_info;
->  #endif
->  } ____cacheline_aligned __randomize_layout;
-> +
-> +#ifdef CONFIG_MODULES
-> +
-> +extern int modules_disabled; /* for sysctl */
-> +/* Get/put a kernel symbol (calls must be symmetric) */
-> +void *__symbol_get(const char *symbol);
-> +void *__symbol_get_gpl(const char *symbol);
-> +#define symbol_get(x)	({ \
-> +	static const char __notrim[] \
-> +		__used __section(".no_trim_symbol") = __stringify(x); \
-> +	(typeof(&x))(__symbol_get(__stringify(x))); })
-> +
 
-The patch exposes data structures that are not needed. + breaks the
-config dependencies.
+vim +335 lib/vdso/gettimeofday.c
 
-For example, before this patch:
+   313	
+   314	static __always_inline bool
+   315	__cvdso_clock_gettime_common(const struct vdso_time_data *vd, clockid_t clock,
+   316				     struct __kernel_timespec *ts)
+   317	{
+   318		const struct vdso_clock *vc = vd->clock_data;
+   319		u32 msk;
+   320	
+   321		if (!vdso_clockid_valid(clock))
+   322			return false;
+   323	
+   324		/*
+   325		 * Convert the clockid to a bitmask and use it to check which
+   326		 * clocks are handled in the VDSO directly.
+   327		 */
+   328		msk = 1U << clock;
+   329		if (likely(msk & VDSO_HRES))
+   330			vc = &vc[CS_HRES_COARSE];
+   331		else if (msk & VDSO_COARSE)
+   332			return do_coarse(vd, &vc[CS_HRES_COARSE], clock, ts);
+   333		else if (msk & VDSO_RAW)
+   334			vc = &vc[CS_RAW];
+ > 335		else if (msk & VDSO_AUX)
+   336			return do_aux(vd, clock, ts);
+   337		else
+   338			return false;
+   339	
+   340		return do_hres(vd, vc, clock, ts);
+   341	}
+   342	
 
-#ifdef CONFIG_MODULES
-
-{...}
-
-struct mod_tree_node {
-
-{...}
-
-struct module_memory {
-	void *base;
-	bool is_rox;
-	unsigned int size;
-
-#ifdef CONFIG_MODULES_TREE_LOOKUP
-	struct mod_tree_node mtn;
-#endif
-};
-
-{...}
-#endif /* CONFIG_MODULES */
-
-After the patch, mod_tree_node is not needed externally. And the mtn field
-in module_memory is exposed only under MODULES_TREE_LOOKUP and not MODULES
-+ MODULES_TREE_LOOKUP.
-
-I general, I see the issues I mentioned with LIVEPATCH, mod_tree_node, macros,
-and LOOKUP.
-
->  #define MODULE_ARCH_INIT {}
->  #endif
-> 
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
