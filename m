@@ -1,153 +1,105 @@
-Return-Path: <linux-kernel+bounces-720039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB422AFB62D
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 16:34:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDC2EAFB601
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 16:28:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6CB81685B3
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 14:34:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58E924A6F27
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 14:27:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32BE42D8DA8;
-	Mon,  7 Jul 2025 14:34:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C6152DCBF9;
+	Mon,  7 Jul 2025 14:23:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="a4rIafs7"
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="292lFkKv";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="f5nSlQy6"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E69542BDC2C;
-	Mon,  7 Jul 2025 14:34:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 356912D94A3;
+	Mon,  7 Jul 2025 14:23:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751898847; cv=none; b=eRO/GltdNfK9FiAJmeVtsjWIiZfxui01qEytqkb+4NJoJWFGALBJmq5F3P9GfAWUuU7D5zLfU2mGon5KMEy9WsEiWD0+g843GaKWlwEmxk/wZyGfd9lHenGKg+ql42p3AeaHCM8oaXS567L0XzDIhUcy3E9fqCh5ct47/dXyhrg=
+	t=1751898228; cv=none; b=c6E9zqBCp0lAgqtJ/gIgPWIjAjpy6Y4PfZ4cTmM0hJAKYeb3leC0doffoMryoRcHWZ0vauECpOtxK/3vFnvKKqa8fTa7Kan0Ux8u0upSypMfDVlnMtYnSjAyS2oEkUX+lHjKt3pcl1pl2lhmumiUO9lqQ8lyP/m1z8oAodJZ6JA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751898847; c=relaxed/simple;
-	bh=HfEBjhDybxA/lCndKha/gf5kwENN2tgin7s12uZ7/gw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MjKuGXCedRBDpTQIwxDuWG06JRtqHIry3GcxXqr6+nY5nIK9wXbWFRWRVBnc3r4jHLp37lpi7/utWogQmR3+5aod4PO82X3ZR9hIoQWdKo9a8gBFKVbqOJSM5uycB5u+l0bfCHWft3A4mUef2vJmAq70wK7o0MyUXz5QrPEy8Zw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=a4rIafs7; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4bbRLn36V0z9sqV;
-	Mon,  7 Jul 2025 16:24:01 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1751898241;
+	s=arc-20240116; t=1751898228; c=relaxed/simple;
+	bh=JcmvL25bXQfaLkY11Owes9dUKbSJPxPQqJEIshQR/o0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ETNjPs7SUnlFeL6d6nBOIYCT/sV2g8mrapDC2wTzGAVWpoMwChAmq9hKF9DRVpoQ9nVaiedRvS1ut8QOpUfClOVePpdRLckZNVfpoQm4rsBDgGgEPQS5TyqACLnHLNdC6oAEHE11aguci/RJTosmmhRCfs3ncf63pLaR3MwZQBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=292lFkKv; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=f5nSlQy6; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1751898223;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=24KDo3KRXZxzAB+MpsSNoPOtleVCAJRJx+y6hk41NC4=;
-	b=a4rIafs7ejMCL/CNvTdRuBlYOowXAqIKjXtP4LS8rmCWE0hVIYMqBPxATAFWTzPY7eKHhY
-	vOZHuibUJbYTQF5RkUjg95/WDGjODG+LS2eqsuQTluKkzxuNuGgFY4JdPIusFIDrranKjQ
-	+Flk3LB7JQlfmkzTS8eQkssBRm22SB28a+4UNq+HVGloMpqEQrg84FH5bJu/xRCLtcMQMQ
-	EES7IR7CXKkDkdUeuygNJ7xJ/LWFp9gvhxgm9lO0YIYFIPDEqZvXY7zXpBqHVScIJMQBEK
-	UKInRCqeEpexdwcfpcP1KLRuPlsBXssNB4gpHZpZRpM/92Mill8wrk8sY7dRFg==
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: Suren Baghdasaryan <surenb@google.com>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Zi Yan <ziy@nvidia.com>,
-	Mike Rapoport <rppt@kernel.org>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Michal Hocko <mhocko@suse.com>,
-	David Hildenbrand <david@redhat.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Nico Pache <npache@redhat.com>,
-	Dev Jain <dev.jain@arm.com>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Jens Axboe <axboe@kernel.dk>
-Cc: linux-kernel@vger.kernel.org,
-	willy@infradead.org,
-	linux-mm@kvack.org,
-	x86@kernel.org,
-	linux-block@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	"Darrick J . Wong" <djwong@kernel.org>,
-	mcgrof@kernel.org,
-	gost.dev@samsung.com,
-	kernel@pankajraghav.com,
-	hch@lst.de,
-	Pankaj Raghav <p.raghav@samsung.com>
-Subject: [PATCH v2 5/5] block: use largest_zero_folio in __blkdev_issue_zero_pages()
-Date: Mon,  7 Jul 2025 16:23:19 +0200
-Message-ID: <20250707142319.319642-6-kernel@pankajraghav.com>
-In-Reply-To: <20250707142319.319642-1-kernel@pankajraghav.com>
-References: <20250707142319.319642-1-kernel@pankajraghav.com>
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=KoxGtcBc84Qj+eZza6DcHhhNFnBejxE85d5gTKWJM3g=;
+	b=292lFkKviW4VDspmiXGr9X6zd7pTzi4gdEhYNczjE4HhdB2pSQzat7Y+QLqNkLr+dVtiyJ
+	utea+SUY4FDRFLLNjciL3ms4/L/Ch+WjxVXCvN6wmtM5tdBmPtnIZ3WDfkTa6amGyMF4XG
+	C8bbyVAxKJshn94Mjs03MP1DMMXX1Ib4U5ANmtCSyHlDTfhDCaTNNCgvTDqvBpe0LMmvap
+	a2Pv5aStyum80Ynng857tb5ah4ws0KJXSpHdh+DdJ8qlqmSD4PuQv1iT1jX6XoOFRR8xzB
+	mwOLXgP1IRDHmP/T2Iv0b1Ck54UXk5nVIOxwobzWMVEpEzcmNne6zglrP1FuDQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1751898223;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=KoxGtcBc84Qj+eZza6DcHhhNFnBejxE85d5gTKWJM3g=;
+	b=f5nSlQy6z6zb+klFWCyhuFMBgrjf95Ao9lR4qqiqC5tuyJbeQtfu5Vve26+NSDuNSIGzLr
+	9uuxs5d3ZZpxW2DQ==
+Subject: [PATCH 0/5] selftests: vDSO: Clean up vdso_test_abi and drop
+ vdso_test_clock_getres
+Date: Mon, 07 Jul 2025 16:23:38 +0200
+Message-Id: <20250707-vdso-tests-fixes-v1-0-545be9781b0c@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 4bbRLn36V0z9sqV
+X-B4-Tracking: v=1; b=H4sIAGrYa2gC/x3LMQqAMAxA0atIZgO1KAGvIg5iUs3SSlOKIN7d4
+ vj4/AdMsorB3D2Qpappig1D38F+bvEQVG4G7/zkyBFWtoRFrBgGvcWQZGQOgSl4grZdWf7QrmV
+ 93w/7B2edYgAAAA==
+X-Change-ID: 20250707-vdso-tests-fixes-7e4ddffd7f27
+To: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
+ Vincenzo Frascino <vincenzo.frascino@arm.com>, 
+ Shuah Khan <shuah@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1751898221; l=906;
+ i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
+ bh=JcmvL25bXQfaLkY11Owes9dUKbSJPxPQqJEIshQR/o0=;
+ b=BVHHojJOW4YuJCthlaAtxpdUoAlDID+JzAbAEIb8pXQ5lHvJEFB2Xfau8tcKMg9G8wDhNFj93
+ zw47VkaBth5A/tsRXnzsulxwSsvdseS7DK9HVaquRn+IZg2E7Mp1oki
+X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
+ pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 
-From: Pankaj Raghav <p.raghav@samsung.com>
+Some cleanups for the vDSO selftests.
 
-Use largest_zero_folio() in __blkdev_issue_zero_pages().
-
-On systems with CONFIG_STATIC_PMD_ZERO_PAGE enabled, we will end up
-sending larger bvecs instead of multiple small ones.
-
-Noticed a 4% increase in performance on a commercial NVMe SSD which does
-not support OP_WRITE_ZEROES. The device's MDTS was 128K. The performance
-gains might be bigger if the device supports bigger MDTS.
-
-Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
+Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
 ---
- block/blk-lib.c | 17 ++++++++++-------
- 1 file changed, 10 insertions(+), 7 deletions(-)
+Thomas Weißschuh (5):
+      selftests: vDSO: vdso_test_abi: Use ksft_finished()
+      selftests: vDSO: vdso_test_abi: Drop clock availability tests
+      selftests: vDSO: vdso_test_abi: Use explicit indices for name array
+      selftests: vDSO: vdso_test_abi: Test CPUTIME clocks
+      selftests: vDSO: Drop vdso_test_clock_getres
 
-diff --git a/block/blk-lib.c b/block/blk-lib.c
-index 4c9f20a689f7..70a5700b6717 100644
---- a/block/blk-lib.c
-+++ b/block/blk-lib.c
-@@ -196,6 +196,10 @@ static void __blkdev_issue_zero_pages(struct block_device *bdev,
- 		sector_t sector, sector_t nr_sects, gfp_t gfp_mask,
- 		struct bio **biop, unsigned int flags)
- {
-+	struct folio *zero_folio;
-+
-+	zero_folio = largest_zero_folio();
-+
- 	while (nr_sects) {
- 		unsigned int nr_vecs = __blkdev_sectors_to_bio_pages(nr_sects);
- 		struct bio *bio;
-@@ -208,15 +212,14 @@ static void __blkdev_issue_zero_pages(struct block_device *bdev,
- 			break;
- 
- 		do {
--			unsigned int len, added;
-+			unsigned int len;
- 
--			len = min_t(sector_t,
--				PAGE_SIZE, nr_sects << SECTOR_SHIFT);
--			added = bio_add_page(bio, ZERO_PAGE(0), len, 0);
--			if (added < len)
-+			len = min_t(sector_t, folio_size(zero_folio),
-+				    nr_sects << SECTOR_SHIFT);
-+			if (!bio_add_folio(bio, zero_folio, len, 0))
- 				break;
--			nr_sects -= added >> SECTOR_SHIFT;
--			sector += added >> SECTOR_SHIFT;
-+			nr_sects -= len >> SECTOR_SHIFT;
-+			sector += len >> SECTOR_SHIFT;
- 		} while (nr_sects);
- 
- 		*biop = bio_chain_and_submit(*biop, bio);
+ tools/testing/selftests/vDSO/Makefile              |   2 -
+ tools/testing/selftests/vDSO/vdso_test_abi.c       |  57 +++-------
+ .../selftests/vDSO/vdso_test_clock_getres.c        | 123 ---------------------
+ 3 files changed, 17 insertions(+), 165 deletions(-)
+---
+base-commit: 437079605c26dc7c98586580a8c01b5f7f746a79
+change-id: 20250707-vdso-tests-fixes-7e4ddffd7f27
+
+Best regards,
 -- 
-2.49.0
+Thomas Weißschuh <thomas.weissschuh@linutronix.de>
 
 
