@@ -1,264 +1,306 @@
-Return-Path: <linux-kernel+bounces-720382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F812AFBAD9
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 20:38:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52432AFBADE
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 20:40:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7F941AA83A2
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 18:39:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70CC7426640
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 18:38:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAB25279DB0;
-	Mon,  7 Jul 2025 18:34:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 773EB265CAD;
+	Mon,  7 Jul 2025 18:34:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ZBFLNEG3"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tM4l6M15"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 420C6271A7B
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 18:34:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2768263F59
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 18:34:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751913249; cv=none; b=IP1zsjJrCnp9oEjaJw8KagXQoOTjIZRFCzveEr07+tFWsVUJqSHz/ARUK/EO69xoyOoKZvCkldxzZ9H0dNui16P4ake/8/42Mwh/TjZ8+JciWUDeKqROLJWYWId+t5Su1A5JeeZqnSdgD0oR/CE4VWuZFdCIh66u/p1NXBc7nvo=
+	t=1751913286; cv=none; b=uzSgv8Dw7XKxCr3YdaS7/ChSZImTb76Hh2yDf3gU6Eipr7WtCiCFleIxhjdjH+Q2h5Kp7dCfNvQ+ttyAO5sMzx50oiC3tTkdLTfMNwU/2U0Sfqg3iaLLznWUE+6c0QYqzaHIbdSsAwFVipMbo6GTlPU3/OksGZIG76FwedVdLew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751913249; c=relaxed/simple;
-	bh=sVG3jXB7G5g5VkbTuzz7YugXFtGc7x/LVOgePX3jelA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=S3l3n6pRf16R0uRLkeZjwLkUM2hswOkoyi4cm3WzfTJtgN1qWwu222TCzF2uGkw84ouOcTbnZ9Jmp9u+UVnizYv0TO74tJpTVusKmkOGR3wsnULd7ymp28DddE2VvtjbF3xXam+Ld/HY1Jz3Gwx0LM7OOQp06Q/emo/FuPOHv4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=ZBFLNEG3; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-556fd896c99so2877558e87.3
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 11:34:06 -0700 (PDT)
+	s=arc-20240116; t=1751913286; c=relaxed/simple;
+	bh=Um0oYyu7k4JpYbGqbsldakoUc2EQjiRUa3q9O9boM4Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TOTvhp54vGTfz+HIKMQDu4FuQREiy3sjfEYXS6i9ibBv6dkLbDv03vwZ8jZRSCbsGf/nIscj4ZLt6bl0Fjug7b6EN9tZuNow9gpUHlg85TIy9Y74IUxhtZW7rxgq0gQFqgth6xkBcVqFcpJJWwFkPEb/FugHYwK4Yz6rt3Zc4jU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tM4l6M15; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-312e747d2d8so3673331a91.0
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 11:34:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1751913245; x=1752518045; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KPIaOyTFadqUjMfdacN75cl1wBFQWTU+JWrkSX4D/W4=;
-        b=ZBFLNEG35hnvby1Y3HSJ8IKqvtDwfp5sbN7xUI8nCARUgOZmGNXy+kBaMV0w6N6cXG
-         gKeSxnBSvYh/n/we88HN4VUsh2ZLqo9tX1NVsFKjSEpyi9duCnb/Mn8pVzK1M1fSEFxP
-         MSUKkEXvCosXWNJHVTY1Q+dWas6Ez7vMJO6ZM=
+        d=linaro.org; s=google; t=1751913284; x=1752518084; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=WcBksvQbypHtiAeUZ4HW01cr+T4SMyo2vgYr43Sj8Zg=;
+        b=tM4l6M15lOz6P1ghCTssMKM/NAioUUWto/ecX5m0U+xzLQ9FFemIdUGrIZgrJ+MD8J
+         vYQrHlpdtoybV+JZkfifhn/KR8V59ZVP4ivwXNx2JZXRKg5nbHtoLlx4pSWRGTj1C5sJ
+         Orjc/EGnxFshjmhptGE4fM+KtAKlpeGFkN+WPPDSRg8JbK8RBgS1Zm+XAk9QqGZwqetr
+         1OqToKD6FaTbCVoutpPEnMK0FNK1pdL1JWBShXm9SNW234jPCS/+S8NDCWsdUo23+2CB
+         6Pa6MA203dVKMErrL1liBY93JvSSE69xQZZu6R34Vkc1+7H+sbnICZEn3zWq6ax/gvyf
+         h72Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751913245; x=1752518045;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KPIaOyTFadqUjMfdacN75cl1wBFQWTU+JWrkSX4D/W4=;
-        b=Bh0uA++1+RBWtSYY7FNFWOw8/ckmzAAgLyl6gEcOnl8ACPEm9gynRYPTKhZ4Ziufwv
-         1PwDv/8kLwJxXiaresamTWsM/Ptb2KWO8DHBBuWJzZ4AoO6gIc/Rblg+TdJ1jAUBChG7
-         Jz864htTfY1xglxJbRx0yj8NeApg3MPp9sk/aJTPxNwfbXLFO/IDEYdUzNFdNJ1ji62S
-         1xOL/r7zaCGj3+sUJ9zx+1V7M7GPZ0gPmPUbjJSw9TZJwhnnzO9XF26a5IrtcXRl/8ww
-         sDdzB9t/aImhGVA6/aoJAn9Kmb6WHL9wCsmD1PPoOUciGiFY1giScKRJcnPqlz9PzvGl
-         kDPw==
-X-Forwarded-Encrypted: i=1; AJvYcCXVdWh7rfM+5gM+7wBKvNSBLgtd+KKh0ErQI+vOxMEbnOn6Ekumh7sqEKRym89IM6ntv0zUW+biqIGvaY0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwatSaH1POvRWvrTqbHZtCNE3cpL5HM8TVh8Eh7sex/7nF/PSEz
-	2s8dHFDUgKxperrPbWDDzE4DzYsko2O80+wpQs22o8gPli9DUEZ4PZJdw8mmHsTyaUg07XE7X3S
-	5q6Y=
-X-Gm-Gg: ASbGnctOn8olNUGX3b4z6bCwN2+VW2jXfYnMhI9S/Is78vz2rvdKb29YVZI2wFrWtXx
-	R7GP3tUiJh14q6dOL15VVxb6qu4EcsoJGCJiBbAeIEj6SdZ/lHcCdwrdDLNC0S82DsyCEddR1nP
-	TUHPsBHIjKI1HVieSr2rXHszLc2BVH3+kwNHNLK3lFHDrpBjvNWt3IebRvovJVKlgM6Pg+gRJXH
-	uP/ICYwqsGmEnrR8oCS7BC4tPoeTfZ5GXqH+DV2NlWwGouS32K2yqbKWecBBmPixCB2W+3M6fBx
-	DdIzAehV/7/uRh5wIYfurM8L1snR2pM4mJB2q7drkrwl775tFeWZDEwc+kbUbFMVYU6blERbU3C
-	VVTMZHKeZwfT76KUl4JPcn8f7MYJEYsBVh6LUcNxLjw==
-X-Google-Smtp-Source: AGHT+IE4uyqyZpucH4y+ZvlBsX58kvvph8A860fajfAiOIZDRFqwIHkUsRPLwiIFiVEjP0cClON7YQ==
-X-Received: by 2002:a05:6512:3e25:b0:553:2698:99c5 with SMTP id 2adb3069b0e04-557aa86aae9mr3669267e87.39.1751913244975;
-        Mon, 07 Jul 2025 11:34:04 -0700 (PDT)
-Received: from ribalda.c.googlers.com (166.141.88.34.bc.googleusercontent.com. [34.88.141.166])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-556383d31a6sm1417630e87.61.2025.07.07.11.34.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Jul 2025 11:34:04 -0700 (PDT)
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Mon, 07 Jul 2025 18:34:05 +0000
-Subject: [PATCH v8 5/5] media: uvcvideo: Auto-set UVC_QUIRK_MSXU_META
+        d=1e100.net; s=20230601; t=1751913284; x=1752518084;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WcBksvQbypHtiAeUZ4HW01cr+T4SMyo2vgYr43Sj8Zg=;
+        b=ddNsciOVU+CNEQ7G++hWfl3OUw58DtQxVRaieNF29Wf3jOau4Mju8iJqspiHFbKjx3
+         ctivCSak7l9U8WiwutP4jST+fMUNw9u45p3EpBf+KqqIkJF5zHTVg3ZQmHbYx3t0FkBb
+         wfFmaiDlRbOVLblBjMXVgU47xMxDQ6kiZQolyaDE7ITjMCRFwph7AFQzaDatLxD+Lt65
+         71JjwK7gbG9NLBtWr8BHzvrHzYMlDEyc8YJTHlnXKN8t8ojN17kcfEk+oZPVDeNRacLe
+         9RWiSuDxEUR4eJ0uUmroqQ/hSucvJlRqL516+NAJAKxorsIGaiEbjKsP3RSOwfVMsw9r
+         q26Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWXrvUYsA5LafZJjsBdIaiLyrzg9V8Wa1dZBgV0kek4BUma8KntKjJ0iCrnhfaLV1q4cerg74JBPSY746Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXLiXOOVLqHYDtzj2kR4wgjAORZD+q7Me1xlENknqcgvZ3GmKo
+	IWeSv+WT7q9QBUJXirRN1IJd6HS6SHaAzeAzw8nP979fSqhXW7ZNRfPyBJxPCbLuEEL176uK3cJ
+	x20yJhSvsRiLF5/aGRs6cXZh8Won+QIL1ATz4EKOVqw==
+X-Gm-Gg: ASbGncvdRdHuDyiWlKVI26n9pTyoQQN8e4G6bCnE37BfQNnFzh3lozUfkNc2TW3ygVE
+	5TqCpEJM4KccAGrGvL4cbFUcQtfBqY/N1gaZxBEZy5hSXPTwiKZ8vPWEt3pM0Hj7Ar/exkOFRBw
+	7i5VO8Zz7JLoPgpNDkhzY/Fffy/VH4gc1Yqmzdg3vqJjDllmPdiA1sYD71N6V8S9Dq6UPhcAkD3
+	ngo
+X-Google-Smtp-Source: AGHT+IF4DHMtu/8XzqyyjksrX7oYkB2E3adFdnp5Z4MPmxgZAGZEnl1dF828ysLD318xNtfPVJSGgCHuAZthONd3KV4=
+X-Received: by 2002:a17:90b:3dc8:b0:312:e73e:cded with SMTP id
+ 98e67ed59e1d1-31c20ee73bamr657740a91.16.1751913283927; Mon, 07 Jul 2025
+ 11:34:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250707-uvc-meta-v8-5-ed17f8b1218b@chromium.org>
-References: <20250707-uvc-meta-v8-0-ed17f8b1218b@chromium.org>
-In-Reply-To: <20250707-uvc-meta-v8-0-ed17f8b1218b@chromium.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Hans de Goede <hansg@kernel.org>, Hans de Goede <hansg@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-usb@vger.kernel.org, Ricardo Ribalda <ribalda@chromium.org>
-X-Mailer: b4 0.14.2
+References: <20250704125604.759558342@linuxfoundation.org> <CA+G9fYvidpyHTQ179dAJ4TSdhthC-Mtjuks5iQjMf+ovfPQbTg@mail.gmail.com>
+In-Reply-To: <CA+G9fYvidpyHTQ179dAJ4TSdhthC-Mtjuks5iQjMf+ovfPQbTg@mail.gmail.com>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Tue, 8 Jul 2025 00:04:32 +0530
+X-Gm-Features: Ac12FXw91HKsheSK6jhmieYW1joU8vjVobkJPgsXFAIzdUhWT_mURweSl-tFB_Q
+Message-ID: <CA+G9fYub_Ln=EPp2mgL4-2ewvorZ6O7btM97Ka6RrWhO1o0Liw@mail.gmail.com>
+Subject: Re: [PATCH 6.15 000/263] 6.15.5-rc2 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Linus Torvalds <torvalds@linux-foundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, akpm@linux-foundation.org, linux@roeck-us.net, 
+	shuah@kernel.org, patches@kernelci.org, lkft-triage@lists.linaro.org, 
+	pavel@denx.de, jonathanh@nvidia.com, f.fainelli@gmail.com, 
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de, 
+	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, 
+	Dan Carpenter <dan.carpenter@linaro.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Anders Roxell <anders.roxell@linaro.org>, jakub.lewalski@nokia.com, 
+	Elodie Decerle <elodie.decerle@nokia.com>
+Content-Type: text/plain; charset="UTF-8"
 
-If the camera supports the MSXU_CONTROL_METADATA control, auto set the
-MSXU_META quirk.
+On Sun, 6 Jul 2025 at 15:50, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
+>
+> On Fri, 4 Jul 2025 at 20:14, Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> >
+> > This is the start of the stable review cycle for the 6.15.5 release.
+> > There are 263 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> >
+> > Responses should be made by Sun, 06 Jul 2025 12:55:09 +0000.
+> > Anything received after that time might be too late.
+> >
+> > The whole patch series can be found in one patch at:
+> >         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.15.5-rc2.gz
+> > or in the git tree and branch at:
+> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.15.y
+> > and the diffstat can be found below.
+> >
+> > thanks,
+> >
+> > greg k-h
+>
+> Approximately 20% of devices are experiencing intermittent boot failures
+> with this kernel version. The issue appears to be related to auto login
+> failures, where an incorrect password is being detected on the serial
+> console during the login process.
 
-Reviewed-by: Hans de Goede <hansg@kernel.org>
-Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
----
- drivers/media/usb/uvc/uvc_driver.c   |  7 +++-
- drivers/media/usb/uvc/uvc_metadata.c | 75 +++++++++++++++++++++++++++++++++++-
- drivers/media/usb/uvc/uvcvideo.h     |  2 +-
- include/linux/usb/uvc.h              |  3 ++
- 4 files changed, 84 insertions(+), 3 deletions(-)
+Reported issue is also noticed on Linux tree 6.16-rc5 build.
 
-diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
-index 56ea20eeb7b9d5d92f3d837c15bdf11d536e9f2d..9de5abb43e19d9e876cddc5d7124592953db89ac 100644
---- a/drivers/media/usb/uvc/uvc_driver.c
-+++ b/drivers/media/usb/uvc/uvc_driver.c
-@@ -2315,7 +2315,12 @@ static int uvc_probe(struct usb_interface *intf,
- 		goto error;
- 	}
- 
--	uvc_meta_init(dev);
-+	ret = uvc_meta_init(dev);
-+	if (ret < 0) {
-+		dev_err(&dev->udev->dev,
-+			"Error initializing the metadata formats (%d)\n", ret);
-+		goto error;
-+	}
- 
- 	if (dev->quirks & UVC_QUIRK_NO_RESET_RESUME)
- 		udev->quirks &= ~USB_QUIRK_RESET_RESUME;
-diff --git a/drivers/media/usb/uvc/uvc_metadata.c b/drivers/media/usb/uvc/uvc_metadata.c
-index 77e03273d3cf6b00cac6ebb9b29b941f1cbfd9f7..59bb133baf9a73ef6a30fa8ead85aa90653d60f4 100644
---- a/drivers/media/usb/uvc/uvc_metadata.c
-+++ b/drivers/media/usb/uvc/uvc_metadata.c
-@@ -10,6 +10,7 @@
- #include <linux/list.h>
- #include <linux/module.h>
- #include <linux/usb.h>
-+#include <linux/usb/uvc.h>
- #include <linux/videodev2.h>
- 
- #include <media/v4l2-ioctl.h>
-@@ -166,6 +167,71 @@ static const struct v4l2_file_operations uvc_meta_fops = {
- 	.mmap = vb2_fop_mmap,
- };
- 
-+static struct uvc_entity *uvc_meta_find_msxu(struct uvc_device *dev)
-+{
-+	static const u8 uvc_msxu_guid[16] = UVC_GUID_MSXU_1_5;
-+	struct uvc_entity *entity;
-+
-+	list_for_each_entry(entity, &dev->entities, list) {
-+		if (!memcmp(entity->guid, uvc_msxu_guid, sizeof(entity->guid)))
-+			return entity;
-+	}
-+
-+	return NULL;
-+}
-+
-+#define MSXU_CONTROL_METADATA 0x9
-+static int uvc_meta_detect_msxu(struct uvc_device *dev)
-+{
-+	u32 *data __free(kfree) = NULL;
-+	struct uvc_entity *entity;
-+	int ret;
-+
-+	entity = uvc_meta_find_msxu(dev);
-+	if (!entity)
-+		return 0;
-+
-+	/*
-+	 * USB requires buffers aligned in a special way, simplest way is to
-+	 * make sure that query_ctrl will work is to kmalloc() them.
-+	 */
-+	data = kmalloc(sizeof(*data), GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
-+
-+	/* Check if the metadata is already enabled. */
-+	ret = uvc_query_ctrl(dev, UVC_GET_CUR, entity->id, dev->intfnum,
-+			     MSXU_CONTROL_METADATA, data, sizeof(*data));
-+	if (ret)
-+		return 0;
-+
-+	if (*data) {
-+		dev->quirks |= UVC_QUIRK_MSXU_META;
-+		return 0;
-+	}
-+
-+	/*
-+	 * We have seen devices that require 1 to enable the metadata, others
-+	 * requiring a value != 1 and others requiring a value >1. Luckily for
-+	 * us, the value from GET_MAX seems to work all the time.
-+	 */
-+	ret = uvc_query_ctrl(dev, UVC_GET_MAX, entity->id, dev->intfnum,
-+			     MSXU_CONTROL_METADATA, data, sizeof(*data));
-+	if (ret || !*data)
-+		return 0;
-+
-+	/*
-+	 * If we can set MSXU_CONTROL_METADATA, the device will report
-+	 * metadata.
-+	 */
-+	ret = uvc_query_ctrl(dev, UVC_SET_CUR, entity->id, dev->intfnum,
-+			     MSXU_CONTROL_METADATA, data, sizeof(*data));
-+	if (!ret)
-+		dev->quirks |= UVC_QUIRK_MSXU_META;
-+
-+	return 0;
-+}
-+
- int uvc_meta_register(struct uvc_streaming *stream)
- {
- 	struct uvc_device *dev = stream->dev;
-@@ -185,9 +251,14 @@ int uvc_meta_register(struct uvc_streaming *stream)
- 					 &uvc_meta_fops, &uvc_meta_ioctl_ops);
- }
- 
--void uvc_meta_init(struct uvc_device *dev)
-+int uvc_meta_init(struct uvc_device *dev)
- {
- 	unsigned int i = 0;
-+	int ret;
-+
-+	ret = uvc_meta_detect_msxu(dev);
-+	if (ret)
-+		return ret;
- 
- 	dev->meta_formats[i++] = V4L2_META_FMT_UVC;
- 
-@@ -201,4 +272,6 @@ void uvc_meta_init(struct uvc_device *dev)
- 
- 	 /* IMPORTANT: for new meta-formats update UVC_MAX_META_DATA_FORMATS. */
- 	dev->meta_formats[i++] = 0;
-+
-+	return 0;
- }
-diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
-index 616adc417c62a58686beccbc440a5dfac0a2d588..a4c064c5e046f2a4adba742c8777a10619569606 100644
---- a/drivers/media/usb/uvc/uvcvideo.h
-+++ b/drivers/media/usb/uvc/uvcvideo.h
-@@ -757,7 +757,7 @@ int uvc_query_ctrl(struct uvc_device *dev, u8 query, u8 unit,
- void uvc_video_clock_update(struct uvc_streaming *stream,
- 			    struct vb2_v4l2_buffer *vbuf,
- 			    struct uvc_buffer *buf);
--void uvc_meta_init(struct uvc_device *dev);
-+int uvc_meta_init(struct uvc_device *dev);
- int uvc_meta_register(struct uvc_streaming *stream);
- 
- int uvc_register_video_device(struct uvc_device *dev,
-diff --git a/include/linux/usb/uvc.h b/include/linux/usb/uvc.h
-index bce95153e5a65613a710d7316fc17cf5462b5bce..ee19e9f915b8370c333c426dc1ee4202c7b75c5b 100644
---- a/include/linux/usb/uvc.h
-+++ b/include/linux/usb/uvc.h
-@@ -29,6 +29,9 @@
- #define UVC_GUID_EXT_GPIO_CONTROLLER \
- 	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, \
- 	 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x03}
-+#define UVC_GUID_MSXU_1_5 \
-+	{0xdc, 0x95, 0x3f, 0x0f, 0x32, 0x26, 0x4e, 0x4c, \
-+	 0x92, 0xc9, 0xa0, 0x47, 0x82, 0xf4, 0x3b, 0xc8}
- 
- #define UVC_GUID_FORMAT_MJPEG \
- 	{ 'M',  'J',  'P',  'G', 0x00, 0x00, 0x10, 0x00, \
-
--- 
-2.50.0.727.gbf7dc18ff4-goog
-
+> We are investigating this problem.
+>
+> Test environments:
+>  - dragonboard-410c
+>  - dragonboard-845c
+>  - e850-96
+>  - juno-r2
+>  - rk3399-rock-pi-4b
+>  - x86
+>
+> Regression Analysis:
+> - New regression? Yes
+> - Reproducibility? 20% only
+>
+> Test regression: 6.15.5-rc2 auto login failed Login incorrect
+>
+> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+>
+> ## log in problem
+>
+> runner-ns46nmmj-project-40964107-concurrent-0 login: #
+> Password:
+> Login incorrect
+> runner-ns46nmmj-project-40964107-concurrent-0 login:
+>
+> * log 1: https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.15.y/build/v6.15.4-264-gf6977c36decb/testrun/29021685/suite/boot/test/clang-20-lkftconfig/log
+> * log 2: https://qa-reports.linaro.org/api/testruns/29021720/log_file/
+> * Boot test: https://regressions.linaro.org/lkft/linux-stable-rc-linux-6.15.y/v6.15.4-264-gf6977c36decb/boot/clang-20-lkftconfig/
+> * LAVA jobs 1: https://lkft.validation.linaro.org/scheduler/job/8344153#L1186
+> * LAVA jobs 2: https://lkft.validation.linaro.org/scheduler/job/8343870#L1266
+>
+> ## Build
+> * kernel: 6.15.5-rc2
+> * git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+> * git commit: f6977c36decb0875e78bdb8599749bce1e84c753
+> * git describe: v6.15.4-264-gf6977c36decb
+> * test details:
+> https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.15.y/build/v6.15.4-264-gf6977c36decb
+>
+> ## Test Regressions (compared to v6.15.3-590-gd93bc5feded1)
+> * dragonboard-410c, boot
+>   - clang-20-lkftconfig
+>   - clang-nightly-lkftconfig-kselftest
+>   - gcc-13-lkftconfig-debug
+>
+> * dragonboard-845c, boot
+>   - clang-20-lkftconfig
+>   - korg-clang-20-lkftconfig-lto-thing
+>
+> * dragonboard-845c-compat, boot
+>   - gcc-13-lkftconfig-compat
+>
+> * e850-96, boot
+>   - gcc-13-lkftconfig-no-kselftest-frag
+>
+> * juno-r2, boot
+>   - clang-20-lkftconfig
+>   - gcc-13-lkftconfig-debug
+>   - gcc-13-lkftconfig-kselftest
+>
+> * rk3399-rock-pi-4b, boot
+>   - clang-20-lkftconfig
+>
+> * x86, boot
+>   - clang-20-lkftconfig
+>   - clang-20-lkftconfig-no-kselftest-frag
+>   - clang-nightly-lkftconfig-kselftest
+>   - clang-nightly-lkftconfig-lto-thing
+>   - gcc-13-defconfig-preempt_rt
+>   - gcc-13-lkftconfig-no-kselftest-frag
+>
+> ## Metric Regressions (compared to v6.15.3-590-gd93bc5feded1)
+>
+> ## Test Fixes (compared to v6.15.3-590-gd93bc5feded1)
+>
+> ## Metric Fixes (compared to v6.15.3-590-gd93bc5feded1)
+>
+> ## Test result summary
+> total: 259237, pass: 235906, fail: 6376, skip: 16955, xfail: 0
+>
+> ## Build Summary
+> * arc: 5 total, 5 passed, 0 failed
+> * arm: 139 total, 138 passed, 1 failed
+> * arm64: 57 total, 57 passed, 0 failed
+> * i386: 18 total, 18 passed, 0 failed
+> * mips: 34 total, 27 passed, 7 failed
+> * parisc: 4 total, 4 passed, 0 failed
+> * powerpc: 40 total, 39 passed, 1 failed
+> * riscv: 25 total, 25 passed, 0 failed
+> * s390: 22 total, 22 passed, 0 failed
+> * sh: 5 total, 5 passed, 0 failed
+> * sparc: 4 total, 3 passed, 1 failed
+> * x86_64: 49 total, 49 passed, 0 failed
+>
+> ## Test suites summary
+> * boot
+> * commands
+> * kselftest-arm64
+> * kselftest-breakpoints
+> * kselftest-capabilities
+> * kselftest-cgroup
+> * kselftest-clone3
+> * kselftest-core
+> * kselftest-cpu-hotplug
+> * kselftest-cpufreq
+> * kselftest-efivarfs
+> * kselftest-exec
+> * kselftest-fpu
+> * kselftest-ftrace
+> * kselftest-futex
+> * kselftest-gpio
+> * kselftest-intel_pstate
+> * kselftest-ipc
+> * kselftest-kcmp
+> * kselftest-kvm
+> * kselftest-livepatch
+> * kselftest-membarrier
+> * kselftest-memfd
+> * kselftest-mincore
+> * kselftest-mm
+> * kselftest-mqueue
+> * kselftest-net
+> * kselftest-net-mptcp
+> * kselftest-openat2
+> * kselftest-ptrace
+> * kselftest-rseq
+> * kselftest-rtc
+> * kselftest-rust
+> * kselftest-seccomp
+> * kselftest-sigaltstack
+> * kselftest-size
+> * kselftest-tc-testing
+> * kselftest-timers
+> * kselftest-tmpfs
+> * kselftest-tpm2
+> * kselftest-user_events
+> * kselftest-vDSO
+> * kselftest-x86
+> * kunit
+> * kvm-unit-tests
+> * lava
+> * libgpiod
+> * libhugetlbfs
+> * log-parser-boot
+> * log-parser-build-clang
+> * log-parser-build-gcc
+> * log-parser-test
+> * ltp-capability
+> * ltp-commands
+> * ltp-containers
+> * ltp-controllers
+> * ltp-cpuhotplug
+> * ltp-crypto
+> * ltp-cve
+> * ltp-dio
+> * ltp-fcntl-locktests
+> * ltp-fs
+> * ltp-fs_bind
+> * ltp-fs_perms_simple
+> * ltp-hugetlb
+> * ltp-math
+> * ltp-mm
+> * ltp-nptl
+> * ltp-pty
+> * ltp-sched
+> * ltp-smoke
+> * ltp-syscalls
+> * ltp-tracing
+> * modules
+> * perf
+> * rcutorture
+> * rt-tests-cyclicdeadline
+> * rt-tests-pi-stress
+> * rt-tests-pmqtest
+> * rt-tests-rt-migrate-test
+> * rt-tests-signaltest
+>
+> --
+> Linaro LKFT
+> https://lkft.linaro.org
 
