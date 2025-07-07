@@ -1,154 +1,157 @@
-Return-Path: <linux-kernel+bounces-720160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45EB7AFB7D4
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 17:46:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22A52AFB7DB
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 17:47:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E415B188466E
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 15:46:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CC273B54E3
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 15:47:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A3532066DE;
-	Mon,  7 Jul 2025 15:46:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="hmtt/vub";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="PD747uzS"
-Received: from fout-a5-smtp.messagingengine.com (fout-a5-smtp.messagingengine.com [103.168.172.148])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D0481E22FC;
+	Mon,  7 Jul 2025 15:47:37 +0000 (UTC)
+Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com [209.85.221.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFCA71E7C2D;
-	Mon,  7 Jul 2025 15:46:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76A8242A99
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 15:47:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751903166; cv=none; b=hznCSVq1WTSVgV8lhH2hnZVnDQvEJEhWCoZ5kP86oW68gJexL4QOWzdEFvj+g0JCd86V4PeKVvTKo5wUy3BT3YteTdTbjj0j/Rg3N++clfjNUec6SS1vVIaeG4BODkB0s00d2GN9v7uG4Px2owojDcHjD7/pTUqdMxfJvOtM8Lk=
+	t=1751903256; cv=none; b=W8cr3s2ZSo1XbNb3PlRBBB4Oz2KKr8q6DHMLJQASUAFHR7KQxPyLhLwUk0dNFvhnbHn48+7btrabv/ytDk5JtYiZh8yl5pcbxRCIFuUYmEizEkkl4Io7k718FXt16t+jVTNYORszcwZyoKyGJNJ6kH2+0jkX0eJBGSG6LYuYJHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751903166; c=relaxed/simple;
-	bh=k+Zo9DwDn7cmRtehkkin80GQIRrIRJXwwglai0q/P5U=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=ZR7syuh2++KLEbNVCm7BbRkJluHtGO7GuIGN6ytSthd6wu8zEsowuuLqJiZlUtlFSrMtRvuuWFspsvhA5pTf0UNZGPqZo36DR1W6dFl4yob8tMyJwMmLqWEsx+4F9NqeBICQkKap2KK0axETxkdN7iSq0vbftL9725tJD1V5LS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=hmtt/vub; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=PD747uzS; arc=none smtp.client-ip=103.168.172.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfout.phl.internal (Postfix) with ESMTP id 26063EC0BB6;
-	Mon,  7 Jul 2025 11:46:01 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-05.internal (MEProxy); Mon, 07 Jul 2025 11:46:01 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1751903161;
-	 x=1751989561; bh=+Un+RGUiJ149lGAuhrtubfEw3DZX4pSjaf8URdRFHiM=; b=
-	hmtt/vubB5feY0mZ5Ji1CfCDASCA/AcD2pTVZANulMdR1a7f/3NzHVOWySpM0GMP
-	/W+DLWf/Xe0wfUKQJggXpgC8Wg9MFal1i/Xwwa/VIoLfKp/E6Nusr1vJUCEtTF2o
-	QJhLvjEJODqLX7g9zFSIOCigk9v8C/EWxw5OTxMubXJBQO53KWBbo33bCqiBXah9
-	8gTKRQlfag/8wUNKKJ5e3lTExLYaFybUXmVevFznCzUzedp4oLuTPQtmOp8rA3uk
-	+AvU7+/O9gNyxGTSMkBrzz9RQU3GP926v3kNsSu1//ueOia7Ue/aOUVckGfm31Kb
-	/RSVUW9IewSPJzZ3zNWV3A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1751903161; x=
-	1751989561; bh=+Un+RGUiJ149lGAuhrtubfEw3DZX4pSjaf8URdRFHiM=; b=P
-	D747uzS2acBPqps9sDDtyqo8jJIOC4VvnHp5Eid1MSs/Y6aVstHN8uIm5zfWBs3f
-	v6lH5My2cw8XTiV6lJPJ5Qy+PmN4alxlYNe+NXc9+jY33t1hVm+llD9DzzqwwP6c
-	iyoreuxCYKpdUzxo/NuBb8pQ8oblAkePmpvEQVL1AH63NjSEGcYaSbyXWyTNE5OB
-	DO9ojX5QFqZNeyDtUPlBrNO28up4LlTjb5WjJLPjWVtClEfpvwyKRkl7eaAJd40/
-	IGp9bukl+FwWY5a9H0WjDVPvgQGxjcC9e2sd5gXgH8ib6AeSxGVnhEEfgyY9FP1i
-	Xn/G3tWdwJKmEE1NBHm9Q==
-X-ME-Sender: <xms:uOtraK-IytIFgw8yTrzqMPktMw5129gToBQyCQtuS2eK0zVQWpHwbw>
-    <xme:uOtraKuIU8JFishj823QiD_1_txkc_wU0h7kyBh2IqfLLHB9Izg_FwWC6uHDB9cvc
-    7UPfS0A52B4WDoSvjc>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdefvddulecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
-    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
-    hnpeefhfehteffuddvgfeigefhjeetvdekteekjeefkeekleffjeetvedvgefhhfeihfen
-    ucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenuc
-    frrghrrghmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghp
-    thhtohepudekpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegtrghtrghlihhnrd
-    hmrghrihhnrghssegrrhhmrdgtohhmpdhrtghpthhtohepvhhinhgtvghniihordhfrhgr
-    shgtihhnohesrghrmhdrtghomhdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofh
-    htrdhnvghtpdhrtghpthhtoheprghnughrvggrshesghgrihhslhgvrhdrtghomhdprhgt
-    phhtthhopegvsghighhgvghrshesghhoohhglhgvrdgtohhmpdhrtghpthhtohepjhhsth
-    hulhhtiiesghhoohhglhgvrdgtohhmpdhrtghpthhtoheprghrnhgusehkvghrnhgvlhdr
-    ohhrghdprhgtphhtthhopehfrhgvuggvrhhitgeskhgvrhhnvghlrdhorhhgpdhrtghpth
-    htoheplhhuthhosehkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:uOtraOetqdjQNoh3fHCBDTFWqAcLBK6Pyto43ykqD5j9MrQkxqKm6w>
-    <xmx:uOtraJksi7dWZHIKcKWpQEUrH7KkNBNv67Y2hBYBiUXSor6CG66HuQ>
-    <xmx:uOtraIwyFpe8N7kSdAGClIN7B-7U_ISVXPzV1z0zHne-2E7_oLTzxw>
-    <xmx:uOtraEME5Eq_lRcY4f6oa75Pu2gJRi9knV-dzcstHJmA4wK4sqSYzg>
-    <xmx:uetraIQCTD8jn7c_T2CEfjTLhvD-qs0pIwwbP4D7uyEjq4y5YWjSd293>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 6559D700065; Mon,  7 Jul 2025 11:46:00 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1751903256; c=relaxed/simple;
+	bh=CZuAQ9diVZDmt3+ZqSs5UaeNeVFfqrgNCWnyCkmtNhA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=u72xqKnjyhWoyXlTsHsAhvHMC27Smhelcr/eMFJpUiVxNgZ64QqXoX6+FW82kTUMx9G6WMKz37ACs69DUpS92KUAm8Ioq5bo3wCuWDik7gQyrsd9gYI1KZVU4Z5rdpIuX/FRJfy+PCrTpdktuKqj33s4XRQbDCghl43Y6ePdGJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-52d9a275c27so3752776e0c.0
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 08:47:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751903254; x=1752508054;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WWAje+TfHCruGybMEHfBY+8ZUpO/up4oHuhPw5vp5fE=;
+        b=f37C9FASwn99Nz7twqcaRc/xTqItgNv2PObw//zUoX+5E30G0Nup4LVUHekb88AQ/h
+         CfLcjcvCanCNGW+b2wZmN29mtyX5Enp0sgZRfDRMrB0edhToBQuLBjCkJuj/5zq3NUZM
+         EMzt+0KkFOcCuxroMOtqMMG4BN2dk0LxQtrOlPIGs9SfWhWjh2K1ynua2Doijcl5z2qI
+         G2QMJZMp2ts/76dhC80F1Mz7P1z2ufjRlPU3EMW3MDo2ONrndhICvHxaBdyL56T+VNuh
+         Rodem67rjXzKRvp5ykG7NqZQUOd7IlMiIRTbdorS3SS7EzJ4y0Ics5SoFVn0bJfnN79i
+         6wJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUyjo7h4Kqldx6fC4Tb+s8Ti6BydDDLvHErKq1veWSVTYBOqg8eLOt7d1WFBjXzsEakZ/DJbDH2WAzDurI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJ8W9MBR4p/6kqVlf7qNvxFxdF52C6xQDRh1mMRWNa0Jsp5JBI
+	5qVgmaAiKF5+ewZjabiNukepUCyDJIB9KFOLi6sHq8iROzLtLoAtc04sMzNNlCSnpSolm7iBaM0
+	17l5DRGUnT3AbaG/goT+z/rWKImlgKb0=
+X-Gm-Gg: ASbGnctg3adL7V/ex4aWNmr26DCehk13kxjd1D1AVqHSEVB01NSY3iw1TtZEgiAAF6Y
+	UXGe1MJJZrnNwDU/wuSU0UoL6H0qCHxT1hfSUlxdaXPQW3+WWlqF253SHjqYS2sJRPhqArNfa4x
+	LSXDOxDxopSBrwTM2kjBDmi94ViX1s3563wlQIAJ7Wxp/GLwqUq3KJ/wQ=
+X-Google-Smtp-Source: AGHT+IE833j0/lVpKZX+KPtFSePtF4+1IEDQqHjPEGgdCfGk57QwMgoGEUubWqc2Jv3YYoVViwTUp5SCjjobcj2Tpyc=
+X-Received: by 2002:a05:6122:660c:b0:530:5308:42ec with SMTP id
+ 71dfb90a1353d-5347e7545e7mr7554655e0c.8.1751903254221; Mon, 07 Jul 2025
+ 08:47:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: T47b27644593db411
-Date: Mon, 07 Jul 2025 17:45:35 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "John Paul Adrian Glaubitz" <glaubitz@physik.fu-berlin.de>,
- "Arnd Bergmann" <arnd@kernel.org>, "Thomas Gleixner" <tglx@linutronix.de>,
- =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
- "David S . Miller" <davem@davemloft.net>,
- "Andreas Larsson" <andreas@gaisler.com>
-Cc: "Andy Lutomirski" <luto@kernel.org>,
- "Vincenzo Frascino" <vincenzo.frascino@arm.com>, shuah <shuah@kernel.org>,
- "Anna-Maria Gleixner" <anna-maria@linutronix.de>,
- "Frederic Weisbecker" <frederic@kernel.org>,
- "John Stultz" <jstultz@google.com>, "Stephen Boyd" <sboyd@kernel.org>,
- "Catalin Marinas" <catalin.marinas@arm.com>, "Will Deacon" <will@kernel.org>,
- "Eric Biggers" <ebiggers@google.com>, sparclinux@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Message-Id: <5c479b4d-65f1-466e-a79e-43f6dfc9345c@app.fastmail.com>
-In-Reply-To: 
- <a2cfee1a725f24f90937f070eacdedd2716ef307.camel@physik.fu-berlin.de>
-References: <20250707144726.4008707-1-arnd@kernel.org>
- <a2cfee1a725f24f90937f070eacdedd2716ef307.camel@physik.fu-berlin.de>
-Subject: Re: [PATCH 1/2] vdso: sparc: stub out custom vdso implementation
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+References: <440940e78aeb7430c5cc8b6d2088ae98265b9809.1751599072.git.baolin.wang@linux.alibaba.com>
+In-Reply-To: <440940e78aeb7430c5cc8b6d2088ae98265b9809.1751599072.git.baolin.wang@linux.alibaba.com>
+From: Barry Song <baohua@kernel.org>
+Date: Mon, 7 Jul 2025 23:47:21 +0800
+X-Gm-Features: Ac12FXx8oWQdUphdbM5vEIm5WcLCzobffFJgLPPrNw0K1ckpoEsbg-1aB-8khwM
+Message-ID: <CAGsJ_4w1Ag5K3uy1+hBXt8cEvMcaGyC-w-th8h3cspEbwUwZXg@mail.gmail.com>
+Subject: Re: [PATCH v2] mm: fault in complete folios instead of individual
+ pages for tmpfs
+To: Baolin Wang <baolin.wang@linux.alibaba.com>
+Cc: akpm@linux-foundation.org, hughd@google.com, david@redhat.com, 
+	ziy@nvidia.com, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, 
+	npache@redhat.com, ryan.roberts@arm.com, dev.jain@arm.com, vbabka@suse.cz, 
+	rppt@kernel.org, surenb@google.com, mhocko@suse.com, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 7, 2025, at 17:22, John Paul Adrian Glaubitz wrote:
-> Hello Arnd,
+On Fri, Jul 4, 2025 at 11:19=E2=80=AFAM Baolin Wang
+<baolin.wang@linux.alibaba.com> wrote:
 >
-> On Mon, 2025-07-07 at 16:46 +0200, Arnd Bergmann wrote:
->> Rip out the whole thing and replace it with a minimal stub as we do
->> on parisc and uml. This introduces a small performance regression when
->> using a libc that is aware of the vdso (glibc-2.29 or higher).
+> After commit acd7ccb284b8 ("mm: shmem: add large folio support for tmpfs"=
+),
+> tmpfs can also support large folio allocation (not just PMD-sized large
+> folios).
 >
-> Can this performance hit quantified in any way?
+> However, when accessing tmpfs via mmap(), although tmpfs supports large f=
+olios,
+> we still establish mappings at the base page granularity, which is unreas=
+onable.
+>
+> We can map multiple consecutive pages of a tmpfs folios at once according=
+ to
+> the size of the large folio. On one hand, this can reduce the overhead of=
+ page
+> faults; on the other hand, it can leverage hardware architecture optimiza=
+tions
+> to reduce TLB misses, such as contiguous PTEs on the ARM architecture.
+>
+> Moreover, tmpfs mount will use the 'huge=3D' option to control large foli=
+o
+> allocation explicitly. So it can be understood that the process's RSS sta=
+tistics
+> might increase, and I think this will not cause any obvious effects for u=
+sers.
+>
+> Performance test:
+> I created a 1G tmpfs file, populated with 64K large folios, and write-acc=
+essed it
+> sequentially via mmap(). I observed a significant performance improvement=
+:
+>
+> Before the patch:
+> real    0m0.158s
+> user    0m0.008s
+> sys     0m0.150s
+>
+> After the patch:
+> real    0m0.021s
+> user    0m0.004s
+> sys     0m0.017s
+>
+> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
 
-It's trivial to test calling glibc clock_gettime() in a loop
-on a specific piece of hardware, the difference should largely
-depend on how long the timer hardware access takes compared
-to the syscall overhead.
+Reviewed-by: Barry Song <baohua@kernel.org>
 
-On machines that have neither TICK nor STICK clocksource, the
-simpler version should even be minimally faster, on those that
-have one of the two, there is an added cost for entering the
-syscall on every clock_gettime() as we do on architectures without
-vdso.
-
-> And is there previous serious where this change was made for other archs?
-
-See 
-https://lore.kernel.org/lkml/2078551b-c0b0-4201-b8d7-1faafa3647e6@app.fastmail.com/#t
-for the thread that led to this one.
-
-There is also commit 5f55e098b8d0 ("parisc: Add 64-bit gettimeofday()
-and clock_gettime() vDSO functions") that adds similar stubs on
-parisc.
-
-      Arnd
+> ---
+> Changes from v1:
+>  - Drop the unnecessary IS_ALIGNED() check, per David.
+>  - Update the commit message, per David.
+> ---
+>  mm/memory.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/mm/memory.c b/mm/memory.c
+> index 0f9b32a20e5b..9944380e947d 100644
+> --- a/mm/memory.c
+> +++ b/mm/memory.c
+> @@ -5383,10 +5383,10 @@ vm_fault_t finish_fault(struct vm_fault *vmf)
+>
+>         /*
+>          * Using per-page fault to maintain the uffd semantics, and same
+> -        * approach also applies to non-anonymous-shmem faults to avoid
+> +        * approach also applies to non shmem/tmpfs faults to avoid
+>          * inflating the RSS of the process.
+>          */
+> -       if (!vma_is_anon_shmem(vma) || unlikely(userfaultfd_armed(vma)) |=
+|
+> +       if (!vma_is_shmem(vma) || unlikely(userfaultfd_armed(vma)) ||
+>             unlikely(needs_fallback)) {
+>                 nr_pages =3D 1;
+>         } else if (nr_pages > 1) {
+> --
+> 2.43.5
+>
+>
 
