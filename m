@@ -1,469 +1,183 @@
-Return-Path: <linux-kernel+bounces-720133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52B4BAFB775
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 17:34:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C51BDAFB777
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 17:35:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2378B3A6AE7
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 15:34:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11BEA1AA2C58
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 15:35:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BC001E230E;
-	Mon,  7 Jul 2025 15:34:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC8931D5CF2;
+	Mon,  7 Jul 2025 15:34:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="V7IWyz8D"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="A+RayFWF"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B96731DDC18;
-	Mon,  7 Jul 2025 15:34:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F6D442049
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 15:34:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751902471; cv=none; b=KPnWJpxtZQVaEyK/i3h47dk+P315Gj1q1kWlOY8hHGrAI0tnuCpOX9qKlqLY0RvVxUMLiqG79WJxzd7FrFvJsUEXDgdctwkkp/OxwsbBtt2rARFlRHWYu2J/e6QZeKQQ53IDFw+6tvx6YfbVgfT+U9XPNXW5sHwSmp2LqZaVbbU=
+	t=1751902484; cv=none; b=fkMmwMWwB6dO1hIsOhGe11F0NII1pIQqOi9w2u8J6XybJi7AX+8CfGkgargGVKEDO9E8tHW4wgXt9QwnvtvhORbodw9bSfXnXtC5QY/nv+S6lDIVKxx61Mln2ZPvx445Ap/w4aWZ2rJ2bZhEJ6aEgUAHihEYq3jYyGRzRlvmNOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751902471; c=relaxed/simple;
-	bh=SN/xL8yKBP8HlhBQQQQnh+jf1D5UxAoCxwI6KUFoDD4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=T3xmfOxTvDNB00CSQeo4zBtL18ryRYDCapjImXL8MtpDxuwdFIdMw5P9JsN9MqJ1iH0giu0/xWBfdZljXI0VC6njEtg9AUObtA7Y2mlhaO2vgnQd1IcQJkHvW27t6sVWwPYsQfZjDQRfHN+D+nnjAVDunIfolZzihOexcyzVDNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=V7IWyz8D; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:
-	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=VZCZ2Hrknfz1HMaRosugwKH9d/EZdla3A2Jkyh8AqBg=; b=V7IWyz8Dgo2vC+NL4B856hiEwJ
-	kfarTdwPzf25PBVSkNKKbP0kCG3GN7NY/ph7Z11529BJoznVuLuJ9whjqSInpWmfBxS4kbnLUIhTL
-	YmiSiFy7W6uLg5JyZ21Y+2EdAmHy0T2Z1nvCvT2QMvXCb12856ZwKOJJ+Ugcs9/RPKdyHeoqtki93
-	3FKou45PK1cGLCoen0uI/PNuMWvgxlpGNwV7dKjYfb+pZsqDHj+xMfB2xDQ8dGVCHtu3xDIrWDsbS
-	pF5tbYKJ3xl3JH8+jzRzXEcmxFDd4asixvVrlY566nCGmHz6FjKfmYPJRU4IUXJQhxzwczFT9OA0u
-	/1QdTGMQ==;
-Received: from bl23-10-177.dsl.telepac.pt ([144.64.10.177] helo=localhost)
-	by fanzine2.igalia.com with utf8esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1uYnrJ-00DbhV-7J; Mon, 07 Jul 2025 17:34:21 +0200
-From: Luis Henriques <luis@igalia.com>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Bernd Schubert <bernd@bsbernd.com>,
-	Laura Promberger <laura.promberger@cern.ch>,
-	Dave Chinner <david@fromorbit.com>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel-dev@igalia.com,
-	Matt Harvey <mharvey@jumptrading.com>,
-	Luis Henriques <luis@igalia.com>
-Subject: [PATCH v4] fuse: new work queue to periodically invalidate expired dentries
-Date: Mon,  7 Jul 2025 16:34:13 +0100
-Message-ID: <20250707153413.19393-1-luis@igalia.com>
+	s=arc-20240116; t=1751902484; c=relaxed/simple;
+	bh=Gm2HviMnOw2RYyeKG0yGzeIo3cXAifm0whf6Vye+kSk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Z+zxQ98xP0GoNuc2P980ivJ8P9lRBLJcXdvEYUpocjq76cZgrFSlLAvMss3Tlg+Ae0Z0hJQOzrwNrTQqCkRF3kkhz2fve26hj3VArWr9ZTf8hR/q5P9lIpjw3CDyyDJkS81OA1Qqa58CplYbfwGC8PHDmSout+5nkwM5OMfLg74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=A+RayFWF; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1751902481;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0v2CaHY1VAi0HOiCc4Zf7ehSdSOjQyZPIEDJJM+6zG0=;
+	b=A+RayFWFnsiFnny7RMPusMO/lB+c4iqFpfMKV3OprIe7fo3WAKNagKGYImR32/oySqhAmP
+	OV58jr7lVO/nl95b3mWOYb+y9Nec+o5+kAMAJAjxRZVcPjVibsopjraQhr8w+7Bm3W3SfE
+	H7reraSS2DWVafUjRZ6ktM2uLzB3m6s=
+Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com
+ [209.85.208.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-398-9PJhDxnNPXOG1DSumY-iVQ-1; Mon, 07 Jul 2025 11:34:39 -0400
+X-MC-Unique: 9PJhDxnNPXOG1DSumY-iVQ-1
+X-Mimecast-MFC-AGG-ID: 9PJhDxnNPXOG1DSumY-iVQ_1751902478
+Received: by mail-lj1-f198.google.com with SMTP id 38308e7fff4ca-32b71af3b28so7830731fa.3
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 08:34:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751902478; x=1752507278;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0v2CaHY1VAi0HOiCc4Zf7ehSdSOjQyZPIEDJJM+6zG0=;
+        b=fDI7fzjBLpXaXUL3gzZcatAZQyAT6IlGU16FKAvEjnlfjXhEpE09gHqBXyHmJeOETn
+         ObJlpo/0MXgKDzaQVDc7329M5kpm8pa2pF8Sfq4ppyZdWGh+EFDLL5FUc6UKZLFdF8dk
+         pwO3KHwYEwsa9cthElWyaWjLbv7T4dIMBLSsp13UQxpuV7o5BdpWYfSuqTsRZtjY9LmR
+         GL90Q60bLT3m8du906L2pXKRxs4OFnGOfljPPf+/WPcxdOoYkKQcPj82nfULlEMdmRgX
+         t2sZDQxAB0ONqVx9+SF+CGbk71BxLGCrq1YoDl3oFSwv+UJk0jkadtVAinR93uUFBCCP
+         ViQA==
+X-Forwarded-Encrypted: i=1; AJvYcCU6eyxE1eW2Q1c3YH10utwGuTC8mGq0pI+UQ35witEgr8c4CA5WVaW9kPuBMgYiuXlPJmZk6fsEBR1weTI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6+b9pfneEQA6pyxNeWq1+CmJ1YFHt2lPKHIGb3w5VKRZqL14B
+	pFPRFi4eHYCooqf1FCETIA/Rq5AWhIqw+8ey8tJ3exlPzYfTaqXegtFb4pmOemstSrl72pyt3Ff
+	qoHSDYyKJaA2vnOqDLO534bHZXT+CXpg1k2KLD+IQb4DV6FWIPfTCB6n/JBjdKHthiR8nVzI1w8
+	XPVGP4qn5t3tzOOUs7Xk0BerW5JJPCyckU6VzB2AYQ
+X-Gm-Gg: ASbGnctmuVytOqT0NGNbuQwP3aGiQj+pZpw7nb4OOAPsLEM0jsX9i0dZ2USOtPumnF5
+	Xts5cc+jYxiyPXtRqsJNaVVgznmAtfnzTONRsoH1LAPNhI0iJFQetsjtM/ENnanMBcF846ig9AN
+	DoXA==
+X-Received: by 2002:a05:651c:511:b0:32a:7270:5c29 with SMTP id 38308e7fff4ca-32f00c8798cmr38754521fa.2.1751902478101;
+        Mon, 07 Jul 2025 08:34:38 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGKIHiywACdGBCTH/X8Ige8Yin2oQ8Gj/tg8va7lfqvYjW2jr4+erCyQPrXLSYqAtP0qHUjYrx+aoXHh15am7o=
+X-Received: by 2002:a05:651c:511:b0:32a:7270:5c29 with SMTP id
+ 38308e7fff4ca-32f00c8798cmr38754371fa.2.1751902477586; Mon, 07 Jul 2025
+ 08:34:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250625201853.84062-1-stuart.w.hayes@gmail.com>
+ <20250703114656.GE17686@lst.de> <aGaklKejxefXTQB4@jeremy-HP-Z840-Workstation>
+ <CA+-xHTFC6KTs6D8EdvmVe=buqw9oN5P7GJ-WWvam6M3SzeZF4g@mail.gmail.com> <aGgAuje4tpIOveFc@sultan-box>
+In-Reply-To: <aGgAuje4tpIOveFc@sultan-box>
+From: David Jeffery <djeffery@redhat.com>
+Date: Mon, 7 Jul 2025 11:34:25 -0400
+X-Gm-Features: Ac12FXy7hQPGBK3xlwuh3LCyK0QkERATPwkzNINwGBKvhalA6yUfuGbVbXEvMNc
+Message-ID: <CA+-xHTFNRwbxH=zNMM4kasB=kUAne0b6cxPM+sq5FyM32k8peg@mail.gmail.com>
+Subject: Re: [PATCH v10 0/5] shut down devices asynchronously
+To: Sultan Alsawaf <sultan@kerneltoast.com>
+Cc: Jeremy Allison <jra@samba.org>, Christoph Hellwig <hch@lst.de>, Stuart Hayes <stuart.w.hayes@gmail.com>, 
+	linux-kernel@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Rafael J . Wysocki" <rafael@kernel.org>, Martin Belanger <Martin.Belanger@dell.com>, 
+	"Oliver O'Halloran" <oohall@gmail.com>, Daniel Wagner <dwagner@suse.de>, Keith Busch <kbusch@kernel.org>, 
+	Lukas Wunner <lukas@wunner.de>, Jeremy Allison <jallison@ciq.com>, Jens Axboe <axboe@fb.com>, 
+	Sagi Grimberg <sagi@grimberg.me>, linux-nvme@lists.infradead.org, 
+	Nathan Chancellor <nathan@kernel.org>, Jan Kiszka <jan.kiszka@seimens.com>, 
+	Bert Karwatzki <spasswolf@web.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This patch adds a new module parameter 'inval_wq' which is used to start a
-work queue that will periodically invalidate expired dentries.  The value
-of this new parameter is the period, in seconds, of the work queue.  When
-it is set, every new dentry will be added to an rbtree, sorted by the
-dentry's expiry time.
+On Fri, Jul 4, 2025 at 12:26=E2=80=AFPM Sultan Alsawaf <sultan@kerneltoast.=
+com> wrote:
+>
+> On Fri, Jul 04, 2025 at 09:45:44AM -0400, David Jeffery wrote:
+> > On Thu, Jul 3, 2025 at 12:13=E2=80=AFPM Jeremy Allison <jra@samba.org> =
+wrote:
+> > >
+> > > On Thu, Jul 03, 2025 at 01:46:56PM +0200, Christoph Hellwig wrote:
+> > > >On Wed, Jun 25, 2025 at 03:18:48PM -0500, Stuart Hayes wrote:
+> > > >> Address resource and timing issues when spawning a unique async th=
+read
+> > > >> for every device during shutdown:
+> > > >>   * Make the asynchronous threads able to shut down multiple devic=
+es,
+> > > >>     instead of spawning a unique thread for every device.
+> > > >>   * Modify core kernel async code with a custom wake function so i=
+t
+> > > >>     doesn't wake up threads waiting to synchronize every time the =
+cookie
+> > > >>     changes
+> > > >
+> > > >Given all these thread spawning issues, why can't we just go back
+> > > >to the approach that kicks off shutdown asynchronously and then wait=
+s
+> > > >for it without spawning all these threads?
+> > >
+> > > It isn't just an nvme issue. Red Hat found the same issue
+> > > with SCSI devices.
+> > >
+> > > My colleague Sultan Alsawaf posted a simpler fix for the
+> > > earlier patch here:
+> > >
+> > > https://lists.infradead.org/pipermail/linux-nvme/2025-January/053666.=
+html
+> > >
+> > > Maybe this could be explored.
+> > >
+> >
+> > Unfortunately, this approach looks flawed. If I am reading it right,
+> > it assumes async shutdown devices do not have dependencies on sync
+> > shutdown devices.
+>
+> It does not make any such assumption. Dependency on a sync device is hand=
+led
+> through a combination of queue_device_async_shutdown() setting an async d=
+evice's
+> shutdown_after and the synchronous shutdown loop dispatching an "async" s=
+hutdown
+> for a sync device when it encounters a sync device that has a downstream =
+async
+> dependency.
+>
 
-When the work queue is executed, it will check the dentries in the tree
-and invalidate them if:
+Yes, but not what I think fails. This handles a sync parent having an
+async child. It does not handle the reverse, a sync child having an
+async parent.
 
-  - The dentry has timed-out, or
-  - The connection epoch has been incremented.
+For example, take a system with 1 pci nvme device. The nvme device
+which is flagged for async shutdown can have sync shutdown children as
+well as a sync shutdown parent. The patch linked pulls the async
+device off the shutdown list into a separate async list, then starts
+this lone async device with queue_device_async_shutdown from being on
+the async list. The device then is passed to the async subsystem
+running shutdown_one_device_async where it will immediately do
+shutdown due to a zero value shutdown_after. The patch sets
+shutdown_after for its parent, but there is nothing connecting and
+ordering the async device to its sync children which will be shutdown
+later from the original device_shutdown task.
 
-The work queue will reschedule itself if the dentries tree isn't empty.
+> > Maintaining all the dependencies is the core problem and source of the
+> > complexity of the async shutdown patches.
+>
+> I am acutely aware. Please take a closer look at my patch.
+>
 
-The work queue period is set per file system with the 'inval_wq' parameter
-value when it is mounted.  This value can not be smaller than 5 seconds.
-If this module parameter is changed later on, the mounted file systems
-will keep using the old value until they are remounted.
+I have, and it still looks incomplete to me.
 
-Signed-off-by: Luis Henriques <luis@igalia.com>
----
-Hi Miklos,
+David Jeffery
 
-I'm sending v4 without implementing your request to turn the dentries
-trees and work queues into global data structures.  After thinking about
-it a bit more, I'm not sure anymore that it makes sense.  And the reason
-is that the epoch is a per-connection attribute.  I couldn't find an
-elegant way of having a single work queue with a global tree to handle the
-fact that the epoch of a connection may have been incremented.  Any option
-to avoid walking through all the tree dentries when an epoch is
-incremented would be more complex than simply keeping it (and work queue)
-per connection.
-
-Does this make sense?
-
-Changes since v3:
-
-- Use of need_resched() instead of limiting the work queue to run for 5
-  seconds
-- Restore usage of union with rcu_head, in struct fuse_dentry
-- Minor changes in comments (e.g. s/workqueue/work queue/)
-
-Changes since v2:
-
-- Major rework, the dentries tree nodes are now in fuse_dentry and they are
-  tied to the actual dentry lifetime
-- Mount option is now a module parameter
-- workqueue now runs for at most 5 seconds before rescheduling
-
- fs/fuse/dev.c    |   2 -
- fs/fuse/dir.c    | 179 +++++++++++++++++++++++++++++++++++++++++------
- fs/fuse/fuse_i.h |  12 ++++
- fs/fuse/inode.c  |  21 ++++++
- 4 files changed, 189 insertions(+), 25 deletions(-)
-
-diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-index e80cd8f2c049..2ec7fefcc1a1 100644
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -2034,8 +2034,6 @@ static int fuse_notify_resend(struct fuse_conn *fc)
- /*
-  * Increments the fuse connection epoch.  This will result of dentries from
-  * previous epochs to be invalidated.
-- *
-- * XXX optimization: add call to shrink_dcache_sb()?
-  */
- static int fuse_notify_inc_epoch(struct fuse_conn *fc)
- {
-diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index 45b4c3cc1396..7eba86fe52d6 100644
---- a/fs/fuse/dir.c
-+++ b/fs/fuse/dir.c
-@@ -34,33 +34,152 @@ static void fuse_advise_use_readdirplus(struct inode *dir)
- 	set_bit(FUSE_I_ADVISE_RDPLUS, &fi->state);
- }
- 
--#if BITS_PER_LONG >= 64
--static inline void __fuse_dentry_settime(struct dentry *entry, u64 time)
-+struct fuse_dentry {
-+	u64 time;
-+	union {
-+		struct rcu_head rcu;
-+		struct rb_node node;
-+	};
-+	struct dentry *dentry;
-+};
-+
-+static void __fuse_dentry_tree_del_node(struct fuse_conn *fc,
-+					struct fuse_dentry *fd)
- {
--	entry->d_fsdata = (void *) time;
-+	if (!RB_EMPTY_NODE(&fd->node)) {
-+		rb_erase(&fd->node, &fc->dentry_tree);
-+		RB_CLEAR_NODE(&fd->node);
-+	}
- }
- 
--static inline u64 fuse_dentry_time(const struct dentry *entry)
-+static void fuse_dentry_tree_del_node(struct dentry *dentry)
- {
--	return (u64)entry->d_fsdata;
-+	struct fuse_conn *fc = get_fuse_conn_super(dentry->d_sb);
-+	struct fuse_dentry *fd = dentry->d_fsdata;
-+
-+	if (!fc->inval_wq)
-+		return;
-+
-+	spin_lock(&fc->dentry_tree_lock);
-+	__fuse_dentry_tree_del_node(fc, fd);
-+	spin_unlock(&fc->dentry_tree_lock);
- }
- 
--#else
--union fuse_dentry {
--	u64 time;
--	struct rcu_head rcu;
--};
-+static void fuse_dentry_tree_add_node(struct dentry *dentry)
-+{
-+	struct fuse_conn *fc = get_fuse_conn_super(dentry->d_sb);
-+	struct fuse_dentry *fd = dentry->d_fsdata;
-+	struct fuse_dentry *cur;
-+	struct rb_node **p, *parent = NULL;
-+	bool start_work = false;
-+
-+	if (!fc->inval_wq)
-+		return;
-+
-+	spin_lock(&fc->dentry_tree_lock);
-+
-+	if (!fc->inval_wq) {
-+		spin_unlock(&fc->dentry_tree_lock);
-+		return;
-+	}
-+
-+	start_work = RB_EMPTY_ROOT(&fc->dentry_tree);
-+	__fuse_dentry_tree_del_node(fc, fd);
-+
-+	p = &fc->dentry_tree.rb_node;
-+	while (*p) {
-+		parent = *p;
-+		cur = rb_entry(*p, struct fuse_dentry, node);
-+		if (fd->time > cur->time)
-+			p = &(*p)->rb_left;
-+		else
-+			p = &(*p)->rb_right;
-+	}
-+	rb_link_node(&fd->node, parent, p);
-+	rb_insert_color(&fd->node, &fc->dentry_tree);
-+	spin_unlock(&fc->dentry_tree_lock);
-+
-+	if (start_work)
-+		schedule_delayed_work(&fc->dentry_tree_work,
-+				      secs_to_jiffies(fc->inval_wq));
-+}
-+
-+void fuse_dentry_tree_prune(struct fuse_conn *fc)
-+{
-+	struct rb_node *n;
-+
-+	if (!fc->inval_wq)
-+		return;
-+
-+	fc->inval_wq = 0;
-+	cancel_delayed_work_sync(&fc->dentry_tree_work);
-+
-+	spin_lock(&fc->dentry_tree_lock);
-+	while (!RB_EMPTY_ROOT(&fc->dentry_tree)) {
-+		n = rb_first(&fc->dentry_tree);
-+		rb_erase(n, &fc->dentry_tree);
-+		RB_CLEAR_NODE(&rb_entry(n, struct fuse_dentry, node)->node);
-+	}
-+	spin_unlock(&fc->dentry_tree_lock);
-+}
-+
-+/*
-+ * work queue that, when enabled, will periodically check for expired dentries
-+ * in the dentries tree.
-+ *
-+ * A dentry has expired if:
-+ *
-+ *   1) it has been around for too long (timeout) or if
-+ *
-+ *   2) the connection epoch has been incremented.
-+ *
-+ * The work queue will be rescheduled itself as long as the dentries tree is not
-+ * empty.
-+ */
-+void fuse_dentry_tree_work(struct work_struct *work)
-+{
-+	struct fuse_conn *fc = container_of(work, struct fuse_conn,
-+					    dentry_tree_work.work);
-+	struct fuse_dentry *fd;
-+	struct rb_node *node;
-+	u64 start;
-+	int epoch;
-+	bool reschedule;
-+
-+	spin_lock(&fc->dentry_tree_lock);
-+	start = get_jiffies_64();
-+	epoch = atomic_read(&fc->epoch);
-+
-+	node = rb_first(&fc->dentry_tree);
-+	while (node && !need_resched()) {
-+		fd = rb_entry(node, struct fuse_dentry, node);
-+		if ((fd->dentry->d_time < epoch) || (fd->time < start)) {
-+			rb_erase(&fd->node, &fc->dentry_tree);
-+			RB_CLEAR_NODE(&fd->node);
-+			spin_unlock(&fc->dentry_tree_lock);
-+			d_invalidate(fd->dentry);
-+			spin_lock(&fc->dentry_tree_lock);
-+		} else
-+			break;
-+		node = rb_first(&fc->dentry_tree);
-+	}
-+	reschedule = !RB_EMPTY_ROOT(&fc->dentry_tree);
-+	spin_unlock(&fc->dentry_tree_lock);
-+
-+	if (reschedule)
-+		schedule_delayed_work(&fc->dentry_tree_work,
-+				      secs_to_jiffies(fc->inval_wq));
-+}
- 
- static inline void __fuse_dentry_settime(struct dentry *dentry, u64 time)
- {
--	((union fuse_dentry *) dentry->d_fsdata)->time = time;
-+	((struct fuse_dentry *) dentry->d_fsdata)->time = time;
- }
- 
- static inline u64 fuse_dentry_time(const struct dentry *entry)
- {
--	return ((union fuse_dentry *) entry->d_fsdata)->time;
-+	return ((struct fuse_dentry *) entry->d_fsdata)->time;
- }
--#endif
- 
- static void fuse_dentry_settime(struct dentry *dentry, u64 time)
- {
-@@ -81,6 +200,7 @@ static void fuse_dentry_settime(struct dentry *dentry, u64 time)
- 	}
- 
- 	__fuse_dentry_settime(dentry, time);
-+	fuse_dentry_tree_add_node(dentry);
- }
- 
- /*
-@@ -283,21 +403,36 @@ static int fuse_dentry_revalidate(struct inode *dir, const struct qstr *name,
- 	goto out;
- }
- 
--#if BITS_PER_LONG < 64
- static int fuse_dentry_init(struct dentry *dentry)
- {
--	dentry->d_fsdata = kzalloc(sizeof(union fuse_dentry),
--				   GFP_KERNEL_ACCOUNT | __GFP_RECLAIMABLE);
-+	struct fuse_dentry *fd;
-+
-+	fd = kzalloc(sizeof(struct fuse_dentry),
-+			  GFP_KERNEL_ACCOUNT | __GFP_RECLAIMABLE);
-+	if (!fd)
-+		return -ENOMEM;
-+
-+	fd->dentry = dentry;
-+	RB_CLEAR_NODE(&fd->node);
-+	dentry->d_fsdata = fd;
-+
-+	return 0;
-+}
-+
-+static void fuse_dentry_prune(struct dentry *dentry)
-+{
-+	struct fuse_dentry *fd = dentry->d_fsdata;
- 
--	return dentry->d_fsdata ? 0 : -ENOMEM;
-+	if (!RB_EMPTY_NODE(&fd->node))
-+		fuse_dentry_tree_del_node(dentry);
- }
-+
- static void fuse_dentry_release(struct dentry *dentry)
- {
--	union fuse_dentry *fd = dentry->d_fsdata;
-+	struct fuse_dentry *fd = dentry->d_fsdata;
- 
- 	kfree_rcu(fd, rcu);
- }
--#endif
- 
- static int fuse_dentry_delete(const struct dentry *dentry)
- {
-@@ -331,18 +466,16 @@ static struct vfsmount *fuse_dentry_automount(struct path *path)
- const struct dentry_operations fuse_dentry_operations = {
- 	.d_revalidate	= fuse_dentry_revalidate,
- 	.d_delete	= fuse_dentry_delete,
--#if BITS_PER_LONG < 64
- 	.d_init		= fuse_dentry_init,
-+	.d_prune	= fuse_dentry_prune,
- 	.d_release	= fuse_dentry_release,
--#endif
- 	.d_automount	= fuse_dentry_automount,
- };
- 
- const struct dentry_operations fuse_root_dentry_operations = {
--#if BITS_PER_LONG < 64
- 	.d_init		= fuse_dentry_init,
-+	.d_prune	= fuse_dentry_prune,
- 	.d_release	= fuse_dentry_release,
--#endif
- };
- 
- int fuse_valid_type(int m)
-diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index b54f4f57789f..638d62d995a2 100644
---- a/fs/fuse/fuse_i.h
-+++ b/fs/fuse/fuse_i.h
-@@ -975,6 +975,15 @@ struct fuse_conn {
- 		/* Request timeout (in jiffies). 0 = no timeout */
- 		unsigned int req_timeout;
- 	} timeout;
-+
-+	/** Cache dentries tree */
-+	struct rb_root dentry_tree;
-+	/** Look to protect dentry_tree access */
-+	spinlock_t dentry_tree_lock;
-+	/** Periodic delayed work to invalidate expired dentries */
-+	struct delayed_work dentry_tree_work;
-+	/** Period for the invalidation work queue */
-+	unsigned int inval_wq;
- };
- 
- /*
-@@ -1259,6 +1268,9 @@ void fuse_wait_aborted(struct fuse_conn *fc);
- /* Check if any requests timed out */
- void fuse_check_timeout(struct work_struct *work);
- 
-+void fuse_dentry_tree_prune(struct fuse_conn *fc);
-+void fuse_dentry_tree_work(struct work_struct *work);
-+
- /**
-  * Invalidate inode attributes
-  */
-diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-index 9572bdef49ee..df20ff91898f 100644
---- a/fs/fuse/inode.c
-+++ b/fs/fuse/inode.c
-@@ -58,6 +58,20 @@ MODULE_PARM_DESC(max_user_congthresh,
-  "Global limit for the maximum congestion threshold an "
-  "unprivileged user can set");
- 
-+static unsigned __read_mostly inval_wq;
-+static int inval_wq_set(const char *val, const struct kernel_param *kp)
-+{
-+	return param_set_uint_minmax(val, kp, 5, (unsigned int)(-1));
-+}
-+static const struct kernel_param_ops inval_wq_ops = {
-+	.set = inval_wq_set,
-+	.get = param_get_uint,
-+};
-+module_param_cb(inval_wq, &inval_wq_ops, &inval_wq, 0644);
-+__MODULE_PARM_TYPE(inval_wq, "uint");
-+MODULE_PARM_DESC(inval_wq,
-+		 "Dentries invalidation work queue period in secs (>= 5).");
-+
- #define FUSE_DEFAULT_BLKSIZE 512
- 
- /** Maximum number of outstanding background requests */
-@@ -963,6 +977,7 @@ void fuse_conn_init(struct fuse_conn *fc, struct fuse_mount *fm,
- 	memset(fc, 0, sizeof(*fc));
- 	spin_lock_init(&fc->lock);
- 	spin_lock_init(&fc->bg_lock);
-+	spin_lock_init(&fc->dentry_tree_lock);
- 	init_rwsem(&fc->killsb);
- 	refcount_set(&fc->count, 1);
- 	atomic_set(&fc->dev_count, 1);
-@@ -972,6 +987,8 @@ void fuse_conn_init(struct fuse_conn *fc, struct fuse_mount *fm,
- 	INIT_LIST_HEAD(&fc->bg_queue);
- 	INIT_LIST_HEAD(&fc->entry);
- 	INIT_LIST_HEAD(&fc->devices);
-+	fc->dentry_tree = RB_ROOT;
-+	fc->inval_wq = 0;
- 	atomic_set(&fc->num_waiting, 0);
- 	fc->max_background = FUSE_DEFAULT_MAX_BACKGROUND;
- 	fc->congestion_threshold = FUSE_DEFAULT_CONGESTION_THRESHOLD;
-@@ -1848,6 +1865,9 @@ int fuse_fill_super_common(struct super_block *sb, struct fuse_fs_context *ctx)
- 	fc->group_id = ctx->group_id;
- 	fc->legacy_opts_show = ctx->legacy_opts_show;
- 	fc->max_read = max_t(unsigned int, 4096, ctx->max_read);
-+	fc->inval_wq = inval_wq;
-+	if (fc->inval_wq > 0)
-+		INIT_DELAYED_WORK(&fc->dentry_tree_work, fuse_dentry_tree_work);
- 	fc->destroy = ctx->destroy;
- 	fc->no_control = ctx->no_control;
- 	fc->no_force_umount = ctx->no_force_umount;
-@@ -2052,6 +2072,7 @@ void fuse_conn_destroy(struct fuse_mount *fm)
- 
- 	fuse_abort_conn(fc);
- 	fuse_wait_aborted(fc);
-+	fuse_dentry_tree_prune(fc);
- 
- 	if (!list_empty(&fc->entry)) {
- 		mutex_lock(&fuse_mutex);
 
