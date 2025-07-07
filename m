@@ -1,115 +1,149 @@
-Return-Path: <linux-kernel+bounces-720166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28CA2AFB80D
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 17:56:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62716AFB811
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 17:57:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8086C175CB0
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 15:56:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F26511898E10
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 15:57:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C609A21FF57;
-	Mon,  7 Jul 2025 15:56:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB969221264;
+	Mon,  7 Jul 2025 15:57:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HdJ5BOzL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mknh5w67"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EEF62144CF;
-	Mon,  7 Jul 2025 15:56:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C0C81D5145;
+	Mon,  7 Jul 2025 15:57:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751903765; cv=none; b=PlbqClWCLKWyiVQMMG9VeMZmdoJjbaSuwp2ToA/A1j46DmLSwEfFhR+n01EVUU7rg4mWWZjiklr8FFuff+iY8spZ9afAZilL4+9iGghKxqJLdEBaUi5KdoiWqpCJM3M6HiJysCDOZGkKAIrrPquyYesoNPfY1ZiVdooYkngkcp8=
+	t=1751903840; cv=none; b=SzbX9He15/a+xOk5pkVHWiqxLRei2fYq605qIa8ncW0iFnMppN8dVT64qZ+Sy5jIDSFcmSIjwwmP21zGqtibIzLaOqjWdiK/vFOLLfYqw+adqyiw97DKpdyEBsCVKf82S4XmYTOYTWwIxsHVwhOO5RfXGPDsfkAi7zyJNq/k2/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751903765; c=relaxed/simple;
-	bh=f6DsW0WYHxLyXHwiXum+i83pkEndPZCJeiW0ueulBxk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=vDrA3HD+MrKpXSBB9KnSZmiHR+aYXZdTe3yG4WjMI1G8VR2Pccn+cdA1hgOaH5tDUzxymM7/rb6Hw65hZ1JUIj1TfM5DAXyHjdcizmBfZrBYOVZxpc81lmY9fsDLuwOd2qSmaLw5lZDk9j+wmlKnNYt1RKRFB/jSaWnIOH9IXO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HdJ5BOzL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF57BC4CEE3;
-	Mon,  7 Jul 2025 15:56:04 +0000 (UTC)
+	s=arc-20240116; t=1751903840; c=relaxed/simple;
+	bh=cOPqcxIf5X1X2HD8wmgQa984+uwttfeDa/9MRlym0cc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=l7rLN7J6xTHJdpSwfwRtBeFEL509s7eGXNGJyy65Fo5vId++Pr3PHVU/54dtzXIZ+mhZDooW6S9zrhZnSph6mewcQglUPJRtmn5fAVeaGy+Q8Sb3CFWLZZ78mZcRRqHt6ImqQmjQhAbkFrNQJXlyQF0N3t04yTpRg1U93WLDJ5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mknh5w67; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2091C4CEF4;
+	Mon,  7 Jul 2025 15:57:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751903764;
-	bh=f6DsW0WYHxLyXHwiXum+i83pkEndPZCJeiW0ueulBxk=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=HdJ5BOzLRtXDqoOLhhV2Qj7wOmLCaQaRGPPjUhbV9euuRWBaKS7jy+ZQnxnfG5VvY
-	 iH4qta6l2IYoiANGgt2ib240phFrRp6C4kPvqGPkhCjDthYNvsj2YbuTWEWIBy5aP/
-	 k2pYmyygJrtZdAbnr+KEj1Oaz2kXMIsb5VcE4c2f+9x1j9smvvGYvDwVun8/QXZ0sT
-	 rNKrEKCa324UB4CPM+2TDltWJnAJKvb7jGUoIyd43xnE+lCTJ9gMeccooSG3fW7fX8
-	 eKiN2C4smyNGFsaq8RlAE7jOSm0DM0SS1oG7541oI+yq6gmg7YgkpA6ry0u81kAQUe
-	 E03HVM1hiIuOg==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 553B4CE09EB; Mon,  7 Jul 2025 08:56:04 -0700 (PDT)
-Date: Mon, 7 Jul 2025 08:56:04 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Joel Fernandes <joelagnelf@nvidia.com>, linux-kernel@vger.kernel.org,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Andrea Righi <arighi@nvidia.com>,
-	Frederic Weisbecker <frederic@kernel.org>, rcu@vger.kernel.org
-Subject: Re: [PATCH v2] smp: Document preemption and stop_machine() mutual
- exclusion
-Message-ID: <298d86df-65bc-4f7a-a361-a8382cdee296@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20250705172328.4114289-1-joelagnelf@nvidia.com>
- <20250707075050.GB1613200@noisy.programming.kicks-ass.net>
+	s=k20201202; t=1751903839;
+	bh=cOPqcxIf5X1X2HD8wmgQa984+uwttfeDa/9MRlym0cc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Mknh5w67+oZcvYnxfTf5SObhpeuygcV7+wQz5THrA095mP+3YluTKI25/pX/5q7md
+	 xuS3Dtw4Itai3fUbwgqBdG58BnqHNU+JrduGTPp4lf5eDfCaBb71WZbJJx6x4EzQPq
+	 fbGVoqBexCC8dpSY+SNzDZGxYBOt1j4s1HA4iPykrdk+V6wW4npZqMi5vSaMuL2r0r
+	 rDByPDjxeZ9xDGVOyexH93aEtOFtbal35NL0LYFZvnR/chJYTL4xdPCTldNi7Y9R3G
+	 w2aGrnLdc/+FYZZzESNhltUKMTtiFQhGVn7Uak8e1zEIzblSNciqmosLm4sADWhFIF
+	 tjgy7FxVeXzaA==
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-ae36e88a5daso686256266b.1;
+        Mon, 07 Jul 2025 08:57:19 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCULJKOeMxwDV2boJGDHKEjDSe9O1aVV8gFCLbHcELkcEv4s2l64s2Hq7q4SsMo9kiiBjRwvl7xdVCj0JS6H@vger.kernel.org, AJvYcCVO2KEwHAlX1eyZoUUSWY9KMfq3LDoY31yxidVG7YodFbHkSIMiNACaLLoJcIrMuwppOGQBmCaQAQA=@vger.kernel.org, AJvYcCXDIqZS6FzCOqr1d3/Bo18EpOVeDynHidBpftjsokBD4mXmrAPZdUCH+Adkv4YUBTpzX4nb3pbGZ0gTbVlkfT2hVg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzden3scLFiFwiuSRnwnP8HKxh4MlgpkUkaXfAznc1vuxwD1Xkh
+	51rGrJrLuW+8tpcWesnGrcR6/0P2EbPsNJH8+QU7vsQ2jAlv2/1wLompOPDRzCwMdAMXc4CxSmE
+	bi8Bk4V+s4T0j7mNTVnn3gUUPuqx8gQ==
+X-Google-Smtp-Source: AGHT+IGROcI/rOerYv7nZXlhWEmc4bo4VMMhzIieXt0ir3fuJoe5yHNFs/XUqQmhE3pqqxvZ92DyoWse/8P+jtjd2j0=
+X-Received: by 2002:a17:906:6a08:b0:ae3:c6a3:f833 with SMTP id
+ a640c23a62f3a-ae3fbcb576amr1339358466b.23.1751903838354; Mon, 07 Jul 2025
+ 08:57:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250707075050.GB1613200@noisy.programming.kicks-ass.net>
+References: <20250611-arm-brbe-v19-v23-0-e7775563036e@kernel.org>
+ <20250611-arm-brbe-v19-v23-4-e7775563036e@kernel.org> <aGgM4Pk5dU1LXd2I@J2N7QTR9R3>
+In-Reply-To: <aGgM4Pk5dU1LXd2I@J2N7QTR9R3>
+From: Rob Herring <robh@kernel.org>
+Date: Mon, 7 Jul 2025 10:57:06 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqKPjQE99d27pBHffo=K6stT1QaaeVyeqSeRKa9m8OSmxw@mail.gmail.com>
+X-Gm-Features: Ac12FXxiERhwrk8TwYBiCk2nTj5uV-39ekDgmaoI7v4X8_oFWq7oDAhMnIvdJ90
+Message-ID: <CAL_JsqKPjQE99d27pBHffo=K6stT1QaaeVyeqSeRKa9m8OSmxw@mail.gmail.com>
+Subject: Re: [PATCH v23 4/4] perf: arm_pmuv3: Add support for the Branch
+ Record Buffer Extension (BRBE)
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: Will Deacon <will@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+	Joey Gouly <joey.gouly@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
+	Zenghui Yu <yuzenghui@huawei.com>, James Clark <james.clark@linaro.org>, 
+	Anshuman Khandual <anshuman.khandual@arm.com>, Leo Yan <leo.yan@arm.com>, 
+	linux-arm-kernel@lists.infradead.org, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	kvmarm@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 07, 2025 at 09:50:50AM +0200, Peter Zijlstra wrote:
-> On Sat, Jul 05, 2025 at 01:23:27PM -0400, Joel Fernandes wrote:
-> > Recently while revising RCU's cpu online checks, there was some discussion
-> > around how IPIs synchronize with hotplug.
-> > 
-> > Add comments explaining how preemption disable creates mutual exclusion with
-> > CPU hotplug's stop_machine mechanism. The key insight is that stop_machine()
-> > atomically updates CPU masks and flushes IPIs with interrupts disabled, and
-> > cannot proceed while any CPU (including the IPI sender) has preemption
-> > disabled.
-> 
-> I'm very conflicted on this. While the added comments aren't wrong,
-> they're not quite accurate either. Stop_machine doesn't wait for people
-> to enable preemption as such.
-> 
-> Fundamentally there seems to be a misconception around what stop machine
-> is and how it works, and I don't feel these comments make things better.
-> 
-> Basically, stop-machine (and stop_one_cpu(), stop_two_cpus()) use the
-> stopper task, a task running at the ultimate priority; if it is
-> runnable, it will run.
-> 
-> Stop-machine simply wakes all the stopper tasks and co-ordinates them to
-> literally stop the machine. All CPUs have the stopper task scheduled and
-> then they go sit in a spin-loop driven state machine with IRQs disabled.
-> 
-> There really isn't anything magical about any of this.
+On Fri, Jul 4, 2025 at 12:18=E2=80=AFPM Mark Rutland <mark.rutland@arm.com>=
+ wrote:
+>
+> Hi Rob,
+>
+> Thanks for this; I think this is in good shape now. There's a couple of
+> thing I think we should fixup, described below and diff provided at the
+> end of this mail. That aside I reckon we should apply this shortly.
+>
+> Will, are you happy to apply that diff when picking this up?
+>
+> On Wed, Jun 11, 2025 at 01:01:14PM -0500, Rob Herring (Arm) wrote:
+> > +/*
+> > + * BRBE is assumed to be disabled/paused on entry
+> > + */
+> > +void brbe_enable(const struct arm_pmu *arm_pmu)
+> > +{
+> > +     struct pmu_hw_events *cpuc =3D this_cpu_ptr(arm_pmu->hw_events);
+> > +     u64 brbfcr =3D 0, brbcr =3D 0;
+> > +
+> > +     /*
+> > +      * Merge the permitted branch filters of all events.
+> > +      */
+> > +     for (int i =3D 0; i < ARMPMU_MAX_HWEVENTS; i++) {
+> > +             struct perf_event *event =3D cpuc->events[i];
+> > +
+> > +             if (event && has_branch_stack(event)) {
+> > +                     brbfcr |=3D event->hw.branch_reg.config;
+> > +                     brbcr |=3D event->hw.extra_reg.config;
+> > +             }
+> > +     }
+>
+> I see that in v20 you moved the brbe_invaliate() form here into
+> brbe_read_filtered_entries(), when entries are read upon an event
+> overflowing. The changelog says:
+>
+> | Rework BRBE invalidation to avoid invalidating in interrupt handler
+> | when no handled events capture the branch stack (i.e. when there are
+> | multiple users).
+>
+> I don't think that's quite right. Since BRBCR_ELx.FZP causes a freeze
+> BRBFCR_EL1.PAUSE to be set when *any* event overflows, not discarding
+> across an overflow or other transient disable/enable can introduce a
+> discontinuity in the branch records.
 
-There is the mechanism (which you have described above), and then there
-are the use cases.  Those of us maintaining a given mechanism might
-argue that a detailed description of the mechanism suffices, but that
-argument does not always win the day.
+My thought was the discontinuity is samples from the PMU interrupt
+which we don't want to sample anyways, so better to keep samples from
+prior to the unrelated interrupt.
 
-I do like the description in the stop_machine() kernel-doc header:
+> The rationale for doing the invalidation here was to avoid the
+> possiblity of any such discontinuity, and to do so simply, at the cost
+> of discarding records in some cases where we could theoretically keep
+> them around.
 
- * This can be thought of as a very heavy write lock, equivalent to
- * grabbing every spinlock in the kernel.
+That's fine by me as well. It probably doesn't really matter much in
+practice as you would have to get 2 PMU interrupts fairly close
+together to lose samples (from before the first interrupt).
 
-Though doesn't this need to upgrace "spinlock" to "raw spinlock"
-now that PREEMPT_RT is in mainline?
+>
+> I would prefer the invalidate to be performed within brbe_enable()
+> (before the actual enable/unpause), and for armv8pmu_restart() to be
+> folded back into armv8pmu_start().
+>
+> I've provided a diff/fixup at the end of this reply.
 
-Also, this function is more powerful than grabbing every write lock
-in the kernel because it also excludes all regions of code that have
-preemption disabled, which is one thing that CPU hotplug is relying on.
-Any objection to calling out that additional semantic?
+Thanks.
 
-							Thanx, Paul
+Rob
 
