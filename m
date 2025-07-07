@@ -1,74 +1,73 @@
-Return-Path: <linux-kernel+bounces-719865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21CC2AFB3C4
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 15:00:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B42CAFB3C8
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 15:00:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC42B1AA2A76
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 13:00:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3ABA54A38BD
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 13:00:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4299929B21C;
-	Mon,  7 Jul 2025 13:00:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16F9429DB96;
+	Mon,  7 Jul 2025 13:00:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FanFTgxl"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XXzT9kpo"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 556DA29ACD4;
-	Mon,  7 Jul 2025 13:00:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0397629CB5A;
+	Mon,  7 Jul 2025 13:00:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751893207; cv=none; b=TQsh6NU5DyrFMVQxgFFF1PIeGqvjaqklUv2lHvB618O5QF8nBzHoC5iwLbzA24DRoh5n93HGjaaW4tGDnpVuB4vsiK4v0TbZdpxW/+BBBQLPcIIeEz38rZ4jSesq3v0AdF1Lqdzwxd6Jp59SPyfO5VbeT1OZzpq44RymWOEs/Ho=
+	t=1751893213; cv=none; b=FjsOr6gCuRy+frUqyQHALppAF08uXqET3YKM9ncMp28IFrzPBS5XQPkNaudrYeIi4C0KzfqE8+2sXWa47WqRCXs/j+NFlgdhj8fos1PZxKDd2WuiwNMLcmxj7RjS+FejNGC7dmiLoggEIvTsHF0w1pbTMPFAteOoaMccMlsoBBA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751893207; c=relaxed/simple;
-	bh=OYuuq41zyZEuye2UbQAlUX3ToiLuKhLbzSgHgVRSXmY=;
+	s=arc-20240116; t=1751893213; c=relaxed/simple;
+	bh=J3DjD0salwf2bBWotRPZRsxToyGSYa/Dj6wJBZqh9D4=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=BAm/7gfETMtWAcWEC/qDWKpEl7TWehwsG8lklnnx1s03DoAmrEkeiM1tKDS4s4S/gA9is1oNxUkuMzM8phNJ2bZQ1Q/D9Lar2eknBFUVu4wTF13X5VhlCxDWUiqmrxs7+SENgCxQjYUH+SPkj9VRNS7N6NqW3wxl0f1aRY3bJ4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FanFTgxl; arc=none smtp.client-ip=198.175.65.19
+	 MIME-Version:Content-Type; b=n3Oi+hEdtx2RevGpQJb6wVAyIEN0c2fTBAazQYMUqR7I3jVUezs9nywJJ7RWBFr9RdzC7Q0ftchiaOA3uP3qMEytzg0/8jd9NyKB07HDeLHVPZmsaYSl/i7eW1mNd6uAzBIYWOFkrb0LrpStSN/Ii5H1goIT4NSS2fJ3g1kQyJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XXzT9kpo; arc=none smtp.client-ip=198.175.65.17
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751893206; x=1783429206;
+  t=1751893212; x=1783429212;
   h=from:to:cc:in-reply-to:references:subject:message-id:
    date:mime-version:content-transfer-encoding;
-  bh=OYuuq41zyZEuye2UbQAlUX3ToiLuKhLbzSgHgVRSXmY=;
-  b=FanFTgxlVXtOO/UtmnA6J+GL4UUs1C5Kv+g32VAvE8rKREosCeQbIidz
-   2GTErg5ogiAkNbl0Jorw3CO+zUCFJS/j70absxCmRo4qsEDQobP9W78Iu
-   EiJlVlRq2Dfqq5qCAiiagBkOJfWhV3Tr+G6luGr26Ls9wEYKragdC1Rgu
-   GrdxC6Fy18e+WMz3EiEPuijhK31OW5M4hmF7gl8Jc7G8ZgGrrppb/IJ5O
-   vBp8GmaIN3PffFNhuuCS12KHOmi7PAx6WGyXs/oLwtm2qLt8cLqaFX0vp
-   xzTpDD3SOe0Oq8+j5Suxl0MJt1Jl53767kPvguknsAPyrX0+nU7GLcxw1
+  bh=J3DjD0salwf2bBWotRPZRsxToyGSYa/Dj6wJBZqh9D4=;
+  b=XXzT9kpordaFF1haLad/aod3M5Srx4g7mGQ8wnTVrPVm9QIczVxNs/fM
+   1BhRowAgsjuEAY7C8I9JQE7W4gdkJXNEopcfm6EWrn/Rqiiyss2g0Hvcq
+   YOWfBaaweBL4+37WFGPnxwdWBWfzmCSwPUagS739FRoDUB0eWGenQFfM8
+   euK+dayoFYMUA754AfadZJ9SxsS4REWqBtM9964SZ3vuxQ/0Gtg/UB6ay
+   etgs2Hs9eYFE7EEvqe7EBzAUSmvpCWU7jSgyFI/RGjzrmItuIGcwxSeZ7
+   XoleJ22GNm8wdF6byFZzYG0Pt93niXY8RyDQYQbNE9V3LhtToj+tIuXwO
    Q==;
-X-CSE-ConnectionGUID: Sw1rhplPTBCA83iYatpcyw==
-X-CSE-MsgGUID: GZruzkpwQuCZMY2hiLvH5Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="53970649"
+X-CSE-ConnectionGUID: 5lnmwUg3QPGeB5Dj9z2wCA==
+X-CSE-MsgGUID: Dsey4dQkTkmT/pCzOqsmSw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="54079782"
 X-IronPort-AV: E=Sophos;i="6.16,294,1744095600"; 
-   d="scan'208";a="53970649"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jul 2025 06:00:03 -0700
-X-CSE-ConnectionGUID: 9D9/kXgeSCaii8wYgwAduw==
-X-CSE-MsgGUID: 95eWDQAqRy2B9tzh3WdcYg==
+   d="scan'208";a="54079782"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jul 2025 06:00:11 -0700
+X-CSE-ConnectionGUID: mNeIJhdfRjqijpugQR9ARg==
+X-CSE-MsgGUID: C+3EcmpIR92v/zVMOmM/ng==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.16,294,1744095600"; 
-   d="scan'208";a="154634834"
+   d="scan'208";a="159481007"
 Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.104])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jul 2025 06:00:01 -0700
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jul 2025 06:00:09 -0700
 From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: Hans de Goede <hansg@kernel.org>, Armin Wolf <W_Armin@gmx.de>, 
- Mario Limonciello <mario.limonciello@amd.com>, 
- Kurt Borja <kuurtb@gmail.com>
-Cc: platform-driver-x86@vger.kernel.org, Dell.Client.Kernel@dell.com, 
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-In-Reply-To: <20250707-dmi-fix-v1-1-6730835d824d@gmail.com>
-References: <20250707-dmi-fix-v1-1-6730835d824d@gmail.com>
-Subject: Re: [PATCH] platform/x86: alienware-wmi-wmax: Fix `dmi_system_id`
- array
-Message-Id: <175189319656.2280.5627704855016194059.b4-ty@linux.intel.com>
-Date: Mon, 07 Jul 2025 15:59:56 +0300
+To: sre@kernel.org, Hans de Goede <hansg@kernel.org>, 
+ Armin Wolf <W_Armin@gmx.de>
+Cc: linux-pm@vger.kernel.org, platform-driver-x86@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250627205124.250433-1-W_Armin@gmx.de>
+References: <20250627205124.250433-1-W_Armin@gmx.de>
+Subject: Re: [PATCH 1/3] power: supply: core: Add
+ power_supply_get/set_property_direct()
+Message-Id: <175189320409.2280.2456749792554779164.b4-ty@linux.intel.com>
+Date: Mon, 07 Jul 2025 16:00:04 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,11 +78,18 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.13.0
 
-On Mon, 07 Jul 2025 03:24:05 -0300, Kurt Borja wrote:
+On Fri, 27 Jun 2025 22:51:22 +0200, Armin Wolf wrote:
 
-> Add missing empty member to `awcc_dmi_table`.
+> Power supply extensions might want to interact with the underlying
+> power supply to retrieve data like serial numbers, charging status
+> and more. However doing so causes psy->extensions_sem to be locked
+> twice, possibly causing a deadlock.
 > 
+> Provide special variants of power_supply_get/set_property() that
+> ignore any power supply extensions and thus do not touch the
+> associated psy->extensions_sem lock.
 > 
+> [...]
 
 
 Thank you for your contribution, it has been applied to my local
@@ -92,8 +98,12 @@ platform-drivers-x86/review-ilpo-fixes branch only once I've pushed my
 local branch there, which might take a while.
 
 The list of commits applied:
-[1/1] platform/x86: alienware-wmi-wmax: Fix `dmi_system_id` array
-      commit: 8346c6af27f1c1410eb314f4be5875fdf1579a10
+[1/3] power: supply: core: Add power_supply_get/set_property_direct()
+      commit: 3ebed2fddf6fac5729ffc8c471c87d111b641678
+[2/3] power: supply: test-power: Test access to extended power supply
+      commit: a5f354232118751fe43be6ac896f8d6e7d7418b5
+[3/3] platform/x86: dell-ddv: Fix taking the psy->extensions_sem lock twice
+      commit: d4e83784b2a9be58b938d55efb232d2751c4cab4
 
 --
  i.
