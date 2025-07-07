@@ -1,227 +1,219 @@
-Return-Path: <linux-kernel+bounces-719950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A8A6AFB505
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 15:46:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01AFCAFB509
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 15:46:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C611F1AA5A58
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 13:46:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56B1617DDA5
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 13:46:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E5B02BEC4A;
-	Mon,  7 Jul 2025 13:45:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 027EB2C0331;
+	Mon,  7 Jul 2025 13:45:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Dl1wiALK"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="J85/qWgH"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 973AE2BE042
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 13:45:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 243AF2BEC31;
+	Mon,  7 Jul 2025 13:45:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751895908; cv=none; b=KOptWoiBca5MvtDVngLwmN8eg/bqg/gKesGeFoxjDXIrdkzuTXuUJHEQ7G7AiCyTF4bEj0WcgTXkeW6AWSzSYR2xbgFpD/2tWYQa6E0VCeba5qA2Vbmga7h84o8HtsnWNvHW+7XKxhysQT2wLOfkOzzQ4iXC5KoxDBxA9W7GDt8=
+	t=1751895911; cv=none; b=ZmOQ6fuP4NQZ4gt6ygwKWoo1KdqA2OP/KHognFWoxLh5sLv5Jm9+TOcW0BFGjLklGYRqQ0K5cFB2V/ZV/rLK8oznTY4Nk8I9VPBfbPlPtgu0mxx3vp5xmmZIXDuFEX4IJtImhx1HsJ8xeI2LJGzQiAxOl32DTJ1baBu7x9Tmkng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751895908; c=relaxed/simple;
-	bh=4nWoZbXOa3P4G9LNEOg28qNQ+DH/iPMz3tL8J2Ld194=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t9lyC+ekbjzO4Xl3Ukj3InIuMCWDue7y4CY54FePUX5a7aTXmhsebVpW0RyoF1a1Eml/GRfc2QnSFls9551QSEU8auGgOimUwr+7os8+eH56ig6tp20bOdZN69IBi09YIYtfj/8LyCgTTkwB9eZB7CHNB2hFrY/rEcA1e99TPvU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Dl1wiALK; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1751895904;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tvcFV1GeeG+eHTh3R+owfSySEvVbzEe5U4S54265WlQ=;
-	b=Dl1wiALK5DKszWr5C+7k25yDQ84fbd7xRjvLOZxFyGbXK3Drk6+YFBwLRwOVkSHZsAUHf2
-	/U/PfTwm2ErKShYnrrkgVxvTYHG/oPaPGaMHKV96z2fY3ExRCmm+LpqW3rhF3cFJTgxQ3r
-	Ux6Hm341auugWLboH1Wq49QrhbgREJA=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-551-bq9ryVy6PemoizLQ8jJu-g-1; Mon, 07 Jul 2025 09:45:03 -0400
-X-MC-Unique: bq9ryVy6PemoizLQ8jJu-g-1
-X-Mimecast-MFC-AGG-ID: bq9ryVy6PemoizLQ8jJu-g_1751895902
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4530ec2c87cso24220325e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 06:45:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751895902; x=1752500702;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tvcFV1GeeG+eHTh3R+owfSySEvVbzEe5U4S54265WlQ=;
-        b=EUlUkZQnPeyKYlRrdsSBpbez3d4vT36mJxdeIImRMhZUTsQt0T0qCDvs6vz36VVaJp
-         iQSz+Py8t017kUMUMzFSC8cFdwHOwPtfp9gADNfVzws/qbThZKpy0gzX+49oSn+f87yX
-         i6Znx4viPnocBGld5a/37JUn4IqxmhMGshgdfYStG22TdX1/3eFUaXlc1ZLdxCRj2WMa
-         167T6H0cb+Z43hbN/J6mwETEuT0uDovqsezJh+NrG+CljmeA4H8DRffQboA2iOASK2/E
-         hPANmuQhqzCsB6de2Vop1d4r5GNQCpovQ1Kk9i/2NV/bKgXsrDdY5UUPTIIss0IKTBRa
-         Wj3g==
-X-Forwarded-Encrypted: i=1; AJvYcCVD3KX2j3SFc/hl9Jj3RyxrXDy7ux93FV77O0pz6RYtN62QYSvhhdjcXMvxeBClTAtDuKhljVRsuiXOouA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNivYv84F5h6lTR4Wf8bFZCpRqNlM4Dirg0FflNJQzqFpkgILZ
-	xql+fTO3jN5/PtoctSMQb7zWgFjEx7SDwQ3UaVVyBUx9eGHtfibOmFX3RDIwgBLf8AxrwHghJee
-	koLRpvHij7joHVsRCKaj7o05xIXpB2hns3Fd7Etpde6PktR2kerjHk3ChSyhHspX7kZP6bzMNQw
-	==
-X-Gm-Gg: ASbGncvM010e96Bs29QsjGtQH0AtexlTsui3ZFOePXNEbBWmpkVdiV9BX/ZjL4RrLLo
-	hlUYuxwET8TOUNIGX6FFm01TpbodApryoSRhSY8fQECy2L0vgh8FziotUbZuVJmMk4GZOLz599B
-	euGQJH2zdjAeSuRUFQijfna4RM4/1LZmgcFeI1Anj8w263kXAAdj64KNPEgSOgY+33Fr+o+zQpa
-	SWH1tijLlp5CtJRYdTKROF6Uqlh0sAD3SPHSvfbIMUH79JrYeWgrr6ie9yiHhVHGDr5zbeU05zH
-	kYtt6K85vvRWhQsTE+pIt0MPuq5h
-X-Received: by 2002:a05:6000:2dc7:b0:3a4:ed62:c7e1 with SMTP id ffacd0b85a97d-3b4964f4d29mr11481317f8f.12.1751895901417;
-        Mon, 07 Jul 2025 06:45:01 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEiCATki+fxjScyrWgdR20S4tEFICHWDwdGQaRK/ERz5vFB0AIkRXK12Rj52ppnflqLQWuEzA==
-X-Received: by 2002:a05:6000:2dc7:b0:3a4:ed62:c7e1 with SMTP id ffacd0b85a97d-3b4964f4d29mr11481287f8f.12.1751895900730;
-        Mon, 07 Jul 2025 06:45:00 -0700 (PDT)
-Received: from sgarzare-redhat ([193.207.144.135])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b47030b9desm10348678f8f.19.2025.07.07.06.44.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Jul 2025 06:45:00 -0700 (PDT)
-Date: Mon, 7 Jul 2025 15:44:49 +0200
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: Xuewei Niu <niuxuewei97@gmail.com>
-Cc: "K. Y. Srinivasan" <kys@microsoft.com>, 
-	Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	linux-hyperv@vger.kernel.org, virtualization@lists.linux.dev, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Xuewei Niu <niuxuewei.nxw@antgroup.com>, fupan.lfp@antgroup.com
-Subject: Re: [PATCH net-next v5 0/4] vsock: Introduce SIOCINQ ioctl support
-Message-ID: <yx44jpqxyi5yujwgdvyzajsjyf6rjqht5ypvp7q72imc6cfs2e@7yzhohzyilpq>
-References: <20250706-siocinq-v5-0-8d0b96a87465@antgroup.com>
+	s=arc-20240116; t=1751895911; c=relaxed/simple;
+	bh=uF2AKEB66mbucdHZm59kAVoaRsS9wpNJ/B8bilV0bZI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=m5IbFSEUuz45Kg3LMgv0MiFv3l1mPG8Kh6da6llo5riEwIP6I0u00shMoILdcGPE7AH/MQRMce8Zh6y2GwX+/nAPAMvBIojKuxHAgSuvoDSzV5grKlasZ42HzgCMu/MmGiAaJyAO2oVwHeg1SSENXgy2Oi9qkKkigjwfvGWUYic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=J85/qWgH; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1751895907;
+	bh=uF2AKEB66mbucdHZm59kAVoaRsS9wpNJ/B8bilV0bZI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=J85/qWgH5t4wZoP/UwKy1PoCDcUruo/vUTf0pTyfLMPg516CyYgqchhaJ4+KYrlJT
+	 Kc0wy/iWcrrE4zNGfGChUv+Xg+PuqaWCWNxDsz66iU+BrD3BrCYkf+z8t/l4rrOZai
+	 57mfzyd7sb60CthKwYh6CiQZoLyipn8bAJGep+VXZ8YICAqMXiAMSmCFhw5spOBCpA
+	 eBHOqpSDM7F345SahqK2h2Oh1tEIwTUzbIexCsoeWcz98FHewzHh5mSoY62yXr57Z1
+	 I21IN6NyWVTg8OvynRYj3yX158kTWvi/EN6kae6cJBBCwERP3vkLOq49Rpb8xqc+hS
+	 nZuGz6Vjk75fg==
+Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id AD05317E0657;
+	Mon,  7 Jul 2025 15:45:06 +0200 (CEST)
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+To: linux-mediatek@lists.infradead.org
+Cc: lee@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	kernel@collabora.com,
+	=?UTF-8?q?N=C3=ADcolas=20F=2E=20R=2E=20A=2E=20Prado?= <nfraprado@collabora.com>
+Subject: [PATCH v2 7/8] dt-bindings: mfd: Add binding for MediaTek MT6363 series SPMI PMIC
+Date: Mon,  7 Jul 2025 15:44:50 +0200
+Message-ID: <20250707134451.154346-8-angelogioacchino.delregno@collabora.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250707134451.154346-1-angelogioacchino.delregno@collabora.com>
+References: <20250707134451.154346-1-angelogioacchino.delregno@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20250706-siocinq-v5-0-8d0b96a87465@antgroup.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Sun, Jul 06, 2025 at 12:36:28PM +0800, Xuewei Niu wrote:
->Introduce SIOCINQ ioctl support for vsock, indicating the length of unread
->bytes.
->
->Similar with SIOCOUTQ ioctl, the information is transport-dependent.
->
->The first patch adds SIOCINQ ioctl support in AF_VSOCK.
->
->Thanks to @dexuan, the second patch is to fix the issue where hyper-v
->`hvs_stream_has_data()` doesn't return the readable bytes.
->
->The third patch wraps the ioctl into `ioctl_int()`, which implements a
->retry mechanism to prevent immediate failure.
->
->The last one adds two test cases to check the functionality. The changes
->have been tested, and the results are as expected.
->
->Signed-off-by: Xuewei Niu <niuxuewei.nxw@antgroup.com>
->
->--
->
->v1->v2:
->https://lore.kernel.org/lkml/20250519070649.3063874-1-niuxuewei.nxw@antgroup.com/
->- Use net-next tree.
->- Reuse `rx_bytes` to count unread bytes.
->- Wrap ioctl syscall with an int pointer argument to implement a retry
->  mechanism.
->
->v2->v3:
->https://lore.kernel.org/netdev/20250613031152.1076725-1-niuxuewei.nxw@antgroup.com/
->- Update commit messages following the guidelines
->- Remove `unread_bytes` callback and reuse `vsock_stream_has_data()`
->- Move the tests to the end of array
->- Split the refactoring patch
->- Include <sys/ioctl.h> in the util.c
->
->v3->v4:
->https://lore.kernel.org/netdev/20250617045347.1233128-1-niuxuewei.nxw@antgroup.com/
->- Hyper-v `hvs_stream_has_data()` returns the readable bytes
->- Skip testing the null value for `actual` (int pointer)
->- Rename `ioctl_int()` to `vsock_ioctl_int()`
->- Fix a typo and a format issue in comments
->- Remove the `RECEIVED` barrier.
->- The return type of `vsock_ioctl_int()` has been changed to bool
->
->v4->v5:
->https://lore.kernel.org/netdev/20250630075727.210462-1-niuxuewei.nxw@antgroup.com/
->- Put the hyper-v fix before the SIOCINQ ioctl implementation.
->- Remove my SOB from the hyper-v fix patch.
+Add a binding for the MediaTek MT6363/6373 (and similar) multi
+function PMICs connected over SPMI.
 
-Has I mentioned, that was not the issue, but the wrong Author.
+These PMICs are found on board designs using newer MediaTek SoCs,
+such as the Dimensity 9400 Smartphone chip, or the Chromebook
+MT8196 chip.
 
-There are also other issue, not sure how you're sending them, but I 
-guess there are some issues with you `git format-patch` configuration:
+Reviewed-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+Link: https://lore.kernel.org/r/20250623120038.108891-2-angelogioacchino.delregno@collabora.com
+Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+---
+ .../bindings/mfd/mediatek,mt6363.yaml         | 115 ++++++++++++++++++
+ 1 file changed, 115 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mfd/mediatek,mt6363.yaml
 
-$ ./scripts/checkpatch.pl -g net-next..HEAD --codespell
------------------------------------------------------------------------------------
-Commit ed36075e04ec ("hv_sock: Return the readable bytes in hvs_stream_has_data()")
------------------------------------------------------------------------------------
-WARNING: 'multpile' may be misspelled - perhaps 'multiple'?
-#23:
-Note: there may be multpile incoming hv_sock packets pending in the
-                    ^^^^^^^^
-
-ERROR: Missing Signed-off-by: line by nominal patch author 'Xuewei Niu <niuxuewei97@gmail.com>'
-
-total: 1 errors, 1 warnings, 0 checks, 29 lines checked
-
-NOTE: For some of the reported defects, checkpatch may be able to
-       mechanically convert to the typical style using --fix or --fix-inplace.
-
-Commit ed36075e04ec ("hv_sock: Return the readable bytes in hvs_stream_has_data()") has style problems, please review.
-------------------------------------------------------------
-Commit 4e5c39e373fa ("vsock: Add support for SIOCINQ ioctl")
-------------------------------------------------------------
-WARNING: From:/Signed-off-by: email address mismatch: 'From: Xuewei Niu <niuxuewei97@gmail.com>' != 'Signed-off-by: Xuewei Niu <niuxuewei.nxw@antgroup.com>'
-
-total: 0 errors, 1 warnings, 0 checks, 28 lines checked
-
-NOTE: For some of the reported defects, checkpatch may be able to
-       mechanically convert to the typical style using --fix or --fix-inplace.
-
-Commit 4e5c39e373fa ("vsock: Add support for SIOCINQ ioctl") has style problems, please review.
-------------------------------------------------------------------------
-Commit 3eb323b2d9f4 ("test/vsock: Add retry mechanism to ioctl wrapper")
-------------------------------------------------------------------------
-WARNING: From:/Signed-off-by: email address mismatch: 'From: Xuewei Niu <niuxuewei97@gmail.com>' != 'Signed-off-by: Xuewei Niu <niuxuewei.nxw@antgroup.com>'
-
-total: 0 errors, 1 warnings, 62 lines checked
-
-NOTE: For some of the reported defects, checkpatch may be able to
-       mechanically convert to the typical style using --fix or --fix-inplace.
-
-Commit 3eb323b2d9f4 ("test/vsock: Add retry mechanism to ioctl wrapper") has style problems, please review.
-
-NOTE: If any of the errors are false positives, please report
-       them to the maintainer, see CHECKPATCH in MAINTAINERS.
-
->- Move the `need_refill` initialization into the `case 1` block.
->- Remove the `actual` argument from `vsock_ioctl_int()`.
->- Replace `TIOCINQ` with `SIOCINQ`.
->
->---
->Xuewei Niu (4):
->      hv_sock: Return the readable bytes in hvs_stream_has_data()
->      vsock: Add support for SIOCINQ ioctl
->      test/vsock: Add retry mechanism to ioctl wrapper
->      test/vsock: Add ioctl SIOCINQ tests
->
-> net/vmw_vsock/af_vsock.c         | 22 +++++++++++
-> net/vmw_vsock/hyperv_transport.c | 17 +++++++--
-> tools/testing/vsock/util.c       | 30 ++++++++++-----
-> tools/testing/vsock/util.h       |  1 +
-> tools/testing/vsock/vsock_test.c | 79 ++++++++++++++++++++++++++++++++++++++++
-> 5 files changed, 137 insertions(+), 12 deletions(-)
->---
->base-commit: 5f712c3877f99d5b5e4d011955c6467ae0e535a6
->change-id: 20250703-siocinq-9e2907939806
->
->Best regards,
->-- 
->Xuewei Niu <niuxuewei.nxw@antgroup.com>
->
+diff --git a/Documentation/devicetree/bindings/mfd/mediatek,mt6363.yaml b/Documentation/devicetree/bindings/mfd/mediatek,mt6363.yaml
+new file mode 100644
+index 000000000000..0d1078e92232
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mfd/mediatek,mt6363.yaml
+@@ -0,0 +1,115 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/mfd/mediatek,mt6363.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: MediaTek MT6363 series SPMI PMICs multi-function device
++
++maintainers:
++  - AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
++
++description: |
++  Some MediaTek Power Management ICs (PMICs) found in board designs with
++  the Helio, Dimensity and/or Kompanio series of SoCs are interfaced to
++  the chip via the System Power Management Interface (SPMI) bus.
++
++  These PMICs are multi-function devices with various sub modules.
++  For example, those may include one, or more of the following:
++  - Auxiliary ADC Controller
++  - Clock Controller
++  - eFuses
++  - GPIO Controller
++  - Interrupt Controller
++  - Keys
++  - LEDs Controller
++  - Regulators
++  - RTC
++
++properties:
++  compatible:
++    enum:
++      - mediatek,mt6363
++      - mediatek,mt6373
++
++  reg:
++    maxItems: 1
++
++  '#address-cells':
++    const: 0
++
++  '#size-cells':
++    const: 0
++
++  interrupts:
++    maxItems: 1
++
++  interrupt-controller: true
++
++  "#interrupt-cells":
++    const: 3
++
++  adc:
++    type: object
++    $ref: /schemas/iio/adc/mediatek,mt6359-auxadc.yaml#
++    unevaluatedProperties: false
++
++  regulators:
++    type: object
++    additionalProperties: true
++
++required:
++  - compatible
++  - reg
++  - '#address-cells'
++
++allOf:
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: mediatek,mt6363-regulator
++    then:
++      properties:
++        regulators:
++          $ref: /schemas/regulator/mediatek,mt6363-regulator.yaml#
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: mediatek,mt6373-regulator
++    then:
++      properties:
++        regulators:
++          $ref: /schemas/regulator/mediatek,mt6373-regulator.yaml#
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/irq.h>
++    #include <dt-bindings/spmi/spmi.h>
++
++    spmi {
++      #address-cells = <2>;
++      #size-cells = <0>;
++
++      pmic@4 {
++        compatible = "mediatek,mt6363";
++        reg = <0x4 SPMI_USID>;
++        interrupts = <4 64 IRQ_TYPE_LEVEL_HIGH>;
++        interrupt-controller;
++        #address-cells = <0>;
++        #interrupt-cells = <3>;
++
++        adc {
++            compatible = "mediatek,mt6363-auxadc";
++            #io-channel-cells = <1>;
++        };
++
++        regulators {
++            compatible = "mediatek,mt6363-regulator";
++        };
++      };
++    };
+-- 
+2.49.0
 
 
