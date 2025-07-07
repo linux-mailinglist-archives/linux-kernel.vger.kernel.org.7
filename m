@@ -1,185 +1,180 @@
-Return-Path: <linux-kernel+bounces-719085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A634AFA9B1
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 04:34:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32D40AFA9AB
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 04:31:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3D8918980B5
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 02:34:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80A193A8F2F
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 02:30:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 204BA19DFA2;
-	Mon,  7 Jul 2025 02:34:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FF1818A6DB;
+	Mon,  7 Jul 2025 02:30:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="KC3qIZyb"
-Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Tc9Wy5p5"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C108E17D7
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 02:34:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ADF7219EB
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 02:30:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751855659; cv=none; b=m1orXM7inu8/PFSt7EMncGTzEN7ktkJO9/+MusVswwpCxEfu+XBmoSYzcl6oK2nIThWL7iKIwxmm1WRQo++FP1AjQLbAlEWQm6upggrXomCyiIL/VztW7hl5Avh701jJwkqlypAkegxOktEC0r6ZVqY3JZfVzsFPzHsCcNkENQU=
+	t=1751855453; cv=none; b=k8g8Cszhnp58431312n71ej/cgQkGExD0Z8pUB/4omE5B160fLTt/Jpw7zLwq3/2D4qEu72PLkMinYNEvry+bIKxasWPtMeF2VUd7Vk+SHNcNXlg8OZ52i1S5OmZXIDDsuJ/qHt1JqbOW6SBmEWbw6MLN8tMFeozm0A+Kog0SRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751855659; c=relaxed/simple;
-	bh=nVWtJ2pwpgHwfEVgi3VsH5d4JHY4Z3H2osyztStCp4Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=B+jjW7iHyOjCeaqB9s8oSOrkPdHOOgES34Yw8NVKQaCq8CZoSA40Ckm9QXW2Uvs+/1qIj3rPQV608YsVdqOs3vgwRwCdv3x5i1wJMeXNDYMcLu371ltquoFMQ7jsmARNEzor0XiGuGsQLoHBwZr2kKRitl/YOM6XeZMxu6CNudc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=KC3qIZyb; arc=none smtp.client-ip=95.215.58.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <ac47ba40-0b5e-4273-af7a-a34086ae4a80@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1751855644;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nVWtJ2pwpgHwfEVgi3VsH5d4JHY4Z3H2osyztStCp4Y=;
-	b=KC3qIZybjr7t2gHu6+oHYKLSbVc0J/VxAjWOmRMPaYQXYpxqRy04NDl0FWLGWM5ZkDm++D
-	OPAt0sBnrl7xKZXGcC2cmXgX0Nt6ZoWeRuaZPIWhWcLlTAaAu8DyynrwOOmnmfhtjqY6kj
-	2HwGvemc75GIWp6LPQKpIv4QnmUjF/U=
-Date: Mon, 7 Jul 2025 10:33:53 +0800
+	s=arc-20240116; t=1751855453; c=relaxed/simple;
+	bh=45Jh8xqcMuVmWcxUNLWFpAIQj11BsmVdcsHdw2DhEFs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MM2TodcoWtvIozSDPoYTn2aaOlg8vp4Pdf51nXtIvFaJ8iJJo82HzcSckr6K83Ljus9teN2D/sUdeBgLt7In8huzJ/O0IKDUDQIEO7q1Szq3kDfk5gCAD0OErDj/b4LX4dpQSELyyggplgdrALqjAL+UCpGdUn4M1hrP1iI/s1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Tc9Wy5p5; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751855451; x=1783391451;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=45Jh8xqcMuVmWcxUNLWFpAIQj11BsmVdcsHdw2DhEFs=;
+  b=Tc9Wy5p5IdvQKTrXBs5QjrB50sO3uxYKIveiZz1S5LSNIBBDpvbr55lk
+   Lq3JOdu74KQab3xzoVIYytAA16FF86A0RNY0OOOfsu5sMEcFYTaAU8SD5
+   plPpjFLRUHhlt55aYr9DpPVgug/ifTZoDAiL/q41OovpVJUBkTGNacUlQ
+   u9xw+j1XNncCuj7XAsIIX1Qo/1YC/feMS1CccFFhO8J2H267cIDBYJFDn
+   MAbqPDP1u4gjOxCRzeV3nahOlMgWq3d3YZS6L5giFsgncXqNTg78kBTdw
+   8GU+vziKU/Ns5n7EmGiPHjDBEApEgmDWxfkff611sM7jGyTnG/8LhUL15
+   A==;
+X-CSE-ConnectionGUID: yDOTd0axQ/uaz5dUKyxpRg==
+X-CSE-MsgGUID: hPDaqs3mRLuB0RnW+dg7Zw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11486"; a="64756902"
+X-IronPort-AV: E=Sophos;i="6.16,293,1744095600"; 
+   d="scan'208";a="64756902"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jul 2025 19:30:51 -0700
+X-CSE-ConnectionGUID: j4qGjXP1TDWvGd8nes6JKg==
+X-CSE-MsgGUID: ms2kk6OmSbuRE+1nfyi74A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,293,1744095600"; 
+   d="scan'208";a="159361605"
+Received: from linux-pnp-server-17.sh.intel.com ([10.239.166.49])
+  by fmviesa005.fm.intel.com with ESMTP; 06 Jul 2025 19:30:49 -0700
+From: Pan Deng <pan.deng@intel.com>
+To: peterz@infradead.org,
+	mingo@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	tianyou.li@intel.com,
+	tim.c.chen@linux.intel.com,
+	yu.c.chen@intel.com,
+	pan.deng@intel.com
+Subject: [PATCH 0/4] sched/rt: mitigate root_domain cache line contention
+Date: Mon,  7 Jul 2025 10:35:24 +0800
+Message-ID: <cover.1751852370.git.pan.deng@intel.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] LoongArch: Support mem=SIZE kernel parameter
-To: Ming Wang <wangming01@loongson.cn>, Huacai Chen <chenhuacai@kernel.org>,
- WANG Xuerui <kernel@xen0n.name>, Andrew Morton <akpm@linux-foundation.org>,
- Bibo Mao <maobibo@loongson.cn>, Hari Bathini <hbathini@linux.ibm.com>,
- Guo Weikang <guoweikang.kernel@gmail.com>,
- Sourabh Jain <sourabhjain@linux.ibm.com>, Usama Arif
- <usamaarif642@gmail.com>, loongarch@lists.linux.dev,
- linux-kernel@vger.kernel.org
-Cc: lixuefeng@loongson.cn, chenhuacai@loongson.cn, gaojuxin@loongson.cn
-References: <20250701090449.2426151-1-wangming01@loongson.cn>
- <0561da2c-a4d7-49bb-8394-930f10880610@linux.dev>
- <e89f6ce6-d9f4-4744-b6a6-9a82412795a0@loongson.cn>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yanteng Si <si.yanteng@linux.dev>
-In-Reply-To: <e89f6ce6-d9f4-4744-b6a6-9a82412795a0@loongson.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
+From: Deng Pan <pan.deng@intel.com>
 
-在 7/3/25 9:36 AM, Ming Wang 写道:
-> Hi Yanteng,
->
-> Thanks for reviewing the patch and for your insightful question.
->
-> On 7/2/25 10:11, Yanteng Si wrote:
->> 在 7/1/25 5:04 PM, Ming Wang 写道:
->>> The LoongArch mem= parameter parser was previously limited to the
->>> mem=SIZE@START format. This was inconvenient for the common use case
->>> of simply capping the total system memory, as it forced users to
->>> manually specify a start address. It was also inconsistent with the
->>> behavior on other architectures.
->>>
->>> This patch enhances the parser in early_parse_mem() to also support the
->>> more user-friendly mem=SIZE format. The implementation now checks for
->>> the presence of the '@' symbol to determine the user's intent:
->>>
->>> - If mem=SIZE is provided (no '@'), the kernel now calls
->>>    memblock_enforce_memory_limit(). This trims memory from the top down
->>>    to the specified size.
->>> - If mem=SIZE@START is used, the original behavior is retained for
->>>    backward compatibility. This allows for defining specific memory
->>>    banks.
->>>
->>> This change introduces an important usage rule reflected in the code's
->>> comments: the mem=SIZE format should only be specified once on the
->>> kernel command line. It acts as a single, global cap on total memory. In
->>> contrast, the mem=SIZE@START format can be used multiple times to
->>> define several distinct memory regions.
->>>
->>> Signed-off-by: Ming Wang <wangming01@loongson.cn>
->>> ---
->>>   arch/loongarch/kernel/setup.c | 18 ++++++++++--------
->>>   1 file changed, 10 insertions(+), 8 deletions(-)
->>>
->>> diff --git a/arch/loongarch/kernel/setup.c b/arch/loongarch/kernel/ setup.c
->>> index b99fbb388fe0..af59ba180dc2 100644
->>> --- a/arch/loongarch/kernel/setup.c
->>> +++ b/arch/loongarch/kernel/setup.c
->>> @@ -191,6 +191,16 @@ static int __init early_parse_mem(char *p)
->>>           return -EINVAL;
->>>       }
->>> +    start = 0;
->>> +    size = memparse(p, &p);
->>> +    if (*p == '@')    /* Every mem=... should contain '@' */
->>> +        start = memparse(p + 1, &p);
->>> +    else {            /* Only one mem=... is allowed if no '@' */
->>> +        usermem = 1;
->>> +        memblock_enforce_memory_limit(size);
->>> +        return 0;
->>> +    }
->>> +
->>>       /*
->>>        * If a user specifies memory size, we
->>>        * blow away any automatically generated
->>> @@ -201,14 +211,6 @@ static int __init early_parse_mem(char *p)
->>>           memblock_remove(memblock_start_of_DRAM(),
->>>               memblock_end_of_DRAM() - memblock_start_of_DRAM());
->>>       }
->>> -    start = 0;
->>> -    size = memparse(p, &p);
->>> -    if (*p == '@')
->>> -        start = memparse(p + 1, &p);
->>> -    else {
->>> -        pr_err("Invalid format!\n");
->>> -        return -EINVAL;
->>> -    }
->> I don't understand. Isn't it better to modify the else{} directly here?
->>
-> You've raised a very good point. The reason for moving the parsing logic to the top, rather than just modifying the original else block, is to handle the fundamentally different behaviors required for mem=SIZE versus mem=SIZE@START. The key lies in thisexisting block of code which handles the mem=SIZE@START case:
->
-> ```
-> /*
-> * If a user specifies memory size, we
-> * blow away any automatically generated
-> * size.
-> */
-> if (usermem == 0) {
->     usermem = 1;
->     memblock_remove(memblock_start_of_DRAM(),
->             memblock_end_of_DRAM() - memblock_start_of_DRAM());
-> }
-> ```
->
-> This code is destructive. As the comment says, it "blows away" the entire memory map discovered from the firmware (UEFI/ACPI). After this call, memblock is essentially empty, waiting for new regions to be added via memblock_add(). This is the correct behavior for mem=SIZE@START.
->
-> However, the new mem=SIZE functionality is meant to be non-destructive. It should take the existing firmware-provided memory map and simply trim it down to the desired size. The function memblock_enforce_memory_limit() is designed for this purpose—it operates on the current state of memblock.
->
-> If we were to keep the parsing logic at the end and only modify the else block, the destructive memblock_remove() call would have already executed for both cases. By that point, calling memblock_enforce_memory_limit() would be meaningless, as there would be no memory regions left in memblock to limit.
->
-> Therefore, the patch moves the parsing logic to the very beginning to create a clean separation:
-> 1. It first checks if the format is mem=SIZE (no '@').
-> 2. If it is, it performs the non-destructive limit on the intact memory map and returns immediately, completely bypassing the destructive memblock_remove() logic.
-> 3. If the format is mem=SIZE@START, it falls through to the original destructive path as before.
+When running multi-instance FFmpeg workload in cloud environment,
+cache line contention is severe during the access to root_domain data
+structures, which significantly degrades performance.
 
-I have an idea: what if we move the destructive code into the if block?
+The SUT is a 2-socket machine with 240 physical cores and 480 logical
+CPUs. 60 FFmpeg instances are launched, each pinned to 4 physical cores
+(8 logical CPUs) for transcoding tasks. Sub-threads use RT priority 99
+with FIFO scheduling. FPS is used as score.
 
+Profiling shows the kernel consumes ~20% of CPU cycles, which is
+excessive in this scenario. The overhead primarily comes from RT task
+scheduling functions like `cpupri_set`, `cpupri_find_fitness`,
+`dequeue_pushable_task`, `enqueue_pushable_task`, `pull_rt_task`,
+`__find_first_and_bit`, and `__bitmap_and`. This is due to read/write
+contention on root_domain cache lines.
 
-Thanks,
+The `perf c2c` report, sorted by contention severity, reveals:
 
-Yanteng
+root_domain cache line 3:
+- `cpupri->pri_to_cpu[0].count` is heavily loaded/stored,
+   since counts[0] is more frequently updated than others along with a
+   rt task enqueues an empty runq or dequeues from a non-overloaded runq.
+- `rto_mask` is heavily loaded
+- `rto_loop_next` and `rto_loop_start` are frequently stored
+- `rto_push_work` and `rto_lock` are lightly accessed
+- cycles per load: ~10K to 59K.
 
->
-> I hope this explanation clarifies why the code structure was changed this way. It's crucial to ensure the non-destructive path is handled before any memory map information is lost.
->
-> Best regards,
-> Ming
->
->
->> Thanks,
->> Yanteng
->>
->
+root_domain cache line 1:
+- `rto_count` is frequently loaded/stored
+- `overloaded` is heavily loaded
+- cycles per load: ~2.8K to 44K
+
+cpumask (bitmap) cache line of cpupri_vec->mask:
+- bits are loaded during cpupri_find
+- bits are stored during cpupri_set
+- cycles per load: ~2.2K to 8.7K
+
+The end cache line of cpupri:
+- `cpupri_vec->count` and `mask` contends. The transcoding threads use
+  rt pri 99, so that the contention occurs in the end.
+- cycles per load: ~1.5K to 10.5K
+
+According to above, we propose 4 patches to mitigate the contention.
+Patch 1: Reorganize `cpupri_vec`, separate `count`, `mask` fields,
+         reducing contention on root_domain cache line 3 and cpupri's
+         last cache line.
+Patch 2: Restructure `root_domain` structure to minimize contention of
+         root_domain cache line 1 and 3 by reordering fields.
+Patch 3: Split `root_domain->rto_count` to per-NUMA-node counters,
+         reducing the contention on root_domain cache line 1.
+Patch 4: Split `cpupri_vec->cpumask` to per-NUMA-node bitmaps, reducing
+         load/store contention on the cpumask bitmap cache line.
+
+Evaluation:
+
+Performance improvements (FPS, relative to baseline):
+- Patch 1: +11.0%
+- Patch 2:  +5.0%
+- Patch 3:  +4.0%
+- Patch 4:  +3.8%
+
+Kernel CPU cycle usage reduction:
+- Patch 1: 20.0% -> 11.0%
+- Patch 2: 20.0% -> 17.7%
+- Patch 3: 20.0% -> 18.6%
+- Patch 4: 20.0% -> 18.7%
+
+Cycles per load reduction (by perf c2c report):
+- Patch 1:
+  - `root_domain` cache line 3:    10K–59K    ->  0.5K–8K
+  - `cpupri` last cache line:      1.5K–10.5K ->  eliminated
+- Patch 2:
+  - `root_domain` cache line 1:    2.8K–44K   ->  2.1K–2.7K
+  - `root_domain` cache line 3:    10K–59K    ->  eliminated
+- Patch 3:
+  - `root_domain` cache line 1:    2.8K–44K   ->  eliminated
+- Patch 4:
+  - `cpupri_vec->mask` cache line: 2.2K–8.7K  ->  0.5K–2.2K
+
+Comments are appreciated.
+
+Pan Deng (4):
+  sched/rt: Optimize cpupri_vec layout to mitigate cache line contention
+  sched/rt: Restructure root_domain to reduce cacheline contention
+  sched/rt: Split root_domain->rto_count to per-NUMA-node counters
+  sched/rt: Split cpupri_vec->cpumask to per NUMA node to reduce
+    contention
+
+ kernel/sched/cpupri.c   | 200 ++++++++++++++++++++++++++++++++++++----
+ kernel/sched/cpupri.h   |   6 +-
+ kernel/sched/rt.c       |  65 ++++++++++++-
+ kernel/sched/sched.h    |  61 ++++++------
+ kernel/sched/topology.c |   7 ++
+ 5 files changed, 291 insertions(+), 48 deletions(-)
+
+-- 
+2.43.5
+
 
