@@ -1,157 +1,254 @@
-Return-Path: <linux-kernel+bounces-719546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A0AAAFAF6F
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 11:17:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04B3DAFAF63
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 11:16:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6397117FB61
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 09:17:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 433B73B54C0
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 09:15:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BC5428ECF4;
-	Mon,  7 Jul 2025 09:16:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEDD028D8CA;
+	Mon,  7 Jul 2025 09:15:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XR9CzcvC"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Swleq3Ic"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61E3D28D859;
-	Mon,  7 Jul 2025 09:16:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98FFB278E63
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 09:15:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751879796; cv=none; b=aRogmxc6gpBruXctmzzaverROJ4wu+iDsLPMgFf+L9oRX9Y4Xbe1ffTW9e/gY0ffk927SqNtGrKaLWxZSkS5YU0ZPmDUhlyjL0uJehRY6re3+j1T4lvPg2y8IgjBDwcSTPTMLaJae1zTJhzOiEREdSSezamN8z9K4m099qB2G5c=
+	t=1751879758; cv=none; b=o55A1sV9l7S6GlVrSF+KljOXWqkUiI4rYnqxwr7RGP0ukuq1cF8cd/APJixj0pviOj8BznCV/9WyEV9LKtAPWUKMpE+KStvO0u2n2zuzjE5B+QlHuQwj1corBDBOsHFvOoFlvQinAQKnx5lsAfiiqs+ukKeIXdoQJ08w0Bp5oHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751879796; c=relaxed/simple;
-	bh=ghKjjOoGQAtw9BMALmm0BexzAjmhW80mDMPfIHuAecQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SxVpdl1IAoycD4f7bHzWyqbBL0oKHWcxZ+77ZSfWRAt0ln8/mNJnjz92WBcBxkec+5Muo3f5aLaki9WgYN+RIMy2vvGDope4e1jZpS9i4jowtTrZk48g/il5A5oLxUcykCb/ZuUdJIR68T1qklFlad0Uft6nsuR2vkz2KhOd854=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XR9CzcvC; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-23694cec0feso23417465ad.2;
-        Mon, 07 Jul 2025 02:16:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751879794; x=1752484594; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8hTLLYw6/QBTKtK+3/a3XlzlZMqMIP2SKDniG4sqvQo=;
-        b=XR9CzcvCn6vinIQf9NNSEL7o6H9LiRAUREbu45UO1Wdg47So6qQEgdT6uoQwYr5ly5
-         zOPmd0vPsMhLT25xCWbySLzDAv0LxnIZS4llxgy4/K8wW198UlMPtpFyvYHQzEVTjzXK
-         Vw1IkXWgjVMRXR9GRBWzKUNDUZ07Zqaa8jGFz/r16S5WhzviArsjWKSLI4XlAsJd4/dL
-         16cN8Te6SGfyX8ZTuKDahuB1QOahIQ1/EiGRgPr68FhfseTQQ5AF2oGVkf+exQDa+iGw
-         Zs7mCLf2mngvI+vSkiVhl0RIJF+hmbr/NMSDZlSHKjsdKGi6M1t/dCgxiQ9s7aGfU08W
-         qHWQ==
+	s=arc-20240116; t=1751879758; c=relaxed/simple;
+	bh=1xedEVDzsSxxbrLYD+QB7jvQWEPveVoc0Amb9x1OZm4=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DmMNnfQ6AbRuGt0/rM8yJ4MMhXf2tZMoyuJ1Cdy63YSxPeL5d53KNTBWISVWAK/bSviy0yvALjOTkObdUv3AxB3mYt6WDvgcbviNIh/Ih1nPuGFmB3EvVINu2UsDdA+A2qZ79+pLwT+Rlc1Kf7dEoWJUsREDucs8DlNOQ9/8zWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Swleq3Ic; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56792iPC032724
+	for <linux-kernel@vger.kernel.org>; Mon, 7 Jul 2025 09:15:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=EaUOc8gZnCaiHfxMVU/rdhzj
+	ZBI8Ckok1Y/QujtjMx8=; b=Swleq3IcdpUXqWzYole/NGaH1CtisoWQwetpdhsX
+	dIfw6VYNhJEYSN7CRc9ABwpPZHfAaEbtz6+MgIcjTIaJkIuDWkOJeGYTrTM9Zx2D
+	D+t0UADw6/+NFSVebUP8zRVcyT4hI6jYxHK3ghUKmSXKqxhU87OyTBxnOMOhyGU9
+	KoHR4CEKxmq4Ofu1aRTBHwvF6G6SfLOFViHfgV4Xaknqq0YPTro+mSSi0KX72Sen
+	hn3XnI6gihWOK6rMxIEtgHxjkus9hB1IxyTDvR4Ww8PmP01kgXKaa7awga67v0in
+	6mfv2Pp7NlH66i5k86SGzQnkTgBCcTELjsABVJdwG3xlZQ==
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47pw7qb9gv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 09:15:55 +0000 (GMT)
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4a9af8a0e58so41011841cf.1
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 02:15:55 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751879794; x=1752484594;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8hTLLYw6/QBTKtK+3/a3XlzlZMqMIP2SKDniG4sqvQo=;
-        b=aIxK/eha+5zxeOQeJMoMI5qW2MAh/nDBLYbBCOoK+yNnfmlGXWHQvCPvzXbxCdqbWt
-         dANaxkbLlMU3Vf8VQmCYHMzeq3yN8wp8NLjn81L2szkgpsWvvSCI2csG8xgtTF6eKkUP
-         EkENYShSdcQfxL4SKPzlzqL8rj+PJ+LVUyFUjpoW4fBFYxgGvktc3rygQ14lu/e8UQR7
-         4wccz3Cuz8VDASOoQgTU5TCbtK3ZxMt6eWA+TUx82kFGU3DXYmd9grUiJ4C0xu5icqj9
-         AeAWFJuiKaD3jZ/Elub1Cor91z82dQua88nF9GyE3L7tSill6As5NracDBdfBQFCaBMM
-         tJRw==
-X-Forwarded-Encrypted: i=1; AJvYcCUdfxUB+j+p5XWipHRCYDvRdkVajMKH+o0rZMtvWR0M0GvKz1qa3xFqufS4Puz/33e2knznGJS5@vger.kernel.org, AJvYcCX32L1fJ3Liup+XD28PDAep3oKYDm/GLr2uz6XSsMO+PUqDMYQByM6cgNNBQ2tNrDrfMMceTUaN0Vn5n1g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyuZ1W5aDkLQ7KStoIcJ0XWarClNRkSVT/LDYciCxSrfwoMWpph
-	5xI4W5gHyaBa+EFIhrBP7q5X9iMAabLEiODKGY5cd+lb2c+rbr1/5lGe
-X-Gm-Gg: ASbGncsDRUM0MnG7ocfZehb6SzOwwFEESpHmhvfRDAbd5ZLEixttm/CeLe+DIM1n5Tj
-	ZbfNvyw+LpxFKnxd7C1RdmsXXdBQvPwdA+OCv+SJr+c9BmckEcL44wcQthV8Vvk74R1lEhbrr+4
-	zSIiwC565tGc9i90+2OGHghAUGuY+a5ulcn6ypcReCRlqNPHcUMLvMGSjZO6HRo8EinyivGiQip
-	0JstHcI9fGTs2XBKWMq/uF+wFimpQMnV9rGAC8yGBrKPYn4SO6z7PTD4yLKc4dzsLZU5A28Cucn
-	kQa/Gt4Skns85W5tlvhVZQtDQRyK3Z6oGlTaFAkxYl85MwdeOHlYmPAKpBVc/E2l2fCRGTneZ7J
-	WQ1hDCtHN8dHq
-X-Google-Smtp-Source: AGHT+IGkkRwlGblMPdmExw1hW/k3UyhI1KyPF4+HG/Dxr3g1aD2uQCTIqBLt7GLJrLQbKkLjIUgu4A==
-X-Received: by 2002:a17:902:db0c:b0:234:8ec1:4af6 with SMTP id d9443c01a7336-23c91056ecfmr121419135ad.45.1751879794505;
-        Mon, 07 Jul 2025 02:16:34 -0700 (PDT)
-Received: from localhost.localdomain ([43.224.245.243])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23c845bdb15sm80504165ad.243.2025.07.07.02.16.32
+        d=1e100.net; s=20230601; t=1751879754; x=1752484554;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EaUOc8gZnCaiHfxMVU/rdhzjZBI8Ckok1Y/QujtjMx8=;
+        b=m7ASsRS4eBMO4keReFO5nim32GtDTdn56e+byIqlWzW06x6O0ro6F5DtTkGF7P9I9G
+         O1KzT7YG5G6AglFFZMmnCShx0H4HYRkP4kysl0S5uua5+q/SqFOvC7cfZr2LwUdju2IL
+         Y/bzkdbkIqVeIr0UVU4z9DCu1NzCDJTN71lIyJfRPUoc6LRk6S6Eca0jLzdoDfm115II
+         ONcBZ1mgahWGgimVVUrh40phUpZKboQDUnDfXnT4egCyvb7JmurWYrXpcQKxvGisdJUr
+         O/R9qabHlijmU78sxOjs6JLTr9ggjZNAtPRB+5k11+9UzDkKphasFps6mvPWtMOXgtpL
+         0Hww==
+X-Forwarded-Encrypted: i=1; AJvYcCVgBWvdGCImd35MWG3TqVibtdGI1VDkBUoNKbvD4ACYdZRDb0j3Kag2+SnWD0FZPtiMb7HXzWeF7UiKGEk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwuKx0eter0/JcWnxVGDbjAc9JSqtn92J0kCZnbGg4wqOjPhZrs
+	wbOXnhvtBImiiwKXQckKbEHYLUn7KVGEZYS/n+y+qfI4jYx1FwuGwoU34DsDk72OcEsbDXWTwUu
+	If3H09TSWhlZui732u1dJY98XSUhhDTx2E0qEcssEDLT6TrD+bNlDC8tDAbpIXCtiq+4=
+X-Gm-Gg: ASbGncsevbRM6HfgmZ4RDmZNu/5hs4Q3tb+opiAHzpKX+DgIKEtA6P4Nd2ItlARFgvX
+	FQYMkObHAYR1+sk4lpLZRYMhNlt/JvQFXb+xKyV9a+ijPNQddzi9hOm90x98wW05bpIY16VWvbq
+	GGc5Q4rySefoVIzjxeflTV+A/dTDKf2K+PsPVxIkzX2BGKcR8TaTgn2VypnbM7Lx7QQyTnMTtRa
+	clnTZ+mgAbXGt5BBvL6rUygWPy84kMj6sDr/aMG1hnhZNeFaCNsWHMpdluZReh4LawkrjELrLCZ
+	BZyPCJSjlgw9pQXFhVlja0oKFJxJmKIg7wMTzxcICWN6mBD2hYub/To=
+X-Received: by 2002:a05:620a:1aa7:b0:7d4:57a5:9742 with SMTP id af79cd13be357-7d5dcd0783amr1550595585a.39.1751879754059;
+        Mon, 07 Jul 2025 02:15:54 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFVADocE7bXOXurJZ6dv/hL0nI9aX9Csz55eF2TfSxS1UBR2Q2notThFEzW/XQxmcaZfbwOTg==
+X-Received: by 2002:a05:620a:1aa7:b0:7d4:57a5:9742 with SMTP id af79cd13be357-7d5dcd0783amr1550592085a.39.1751879753422;
+        Mon, 07 Jul 2025 02:15:53 -0700 (PDT)
+Received: from trex (97.red-79-144-186.dynamicip.rima-tde.net. [79.144.186.97])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454a9bcebf7sm136453855e9.21.2025.07.07.02.15.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Jul 2025 02:16:34 -0700 (PDT)
-From: Wanchuan Li <gnblao@gmail.com>
-X-Google-Original-From: Wanchuan Li <liwanchuan@xiaomi.com>
-To: jv@jvosburgh.net
-Cc: andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Wanchuan Li <liwanchuan@xiaomi.com>
-Subject: [PATCH 2/2] bonding: add module param coupled_control
-Date: Mon,  7 Jul 2025 17:15:49 +0800
-Message-ID: <20250707091549.3995140-2-liwanchuan@xiaomi.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250707091549.3995140-1-liwanchuan@xiaomi.com>
-References: <20250707091549.3995140-1-liwanchuan@xiaomi.com>
+        Mon, 07 Jul 2025 02:15:52 -0700 (PDT)
+From: Jorge Ramirez <jorge.ramirez@oss.qualcomm.com>
+X-Google-Original-From: Jorge Ramirez <JorgeRamirez-Ortiz>
+Date: Mon, 7 Jul 2025 11:15:51 +0200
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Vikash Garodia <quic_vgarodia@quicinc.com>,
+        Jorge Ramirez <jorge.ramirez@oss.qualcomm.com>, krzk+dt@kernel.org,
+        bryan.odonoghue@linaro.org, quic_dikshita@quicinc.com,
+        mchehab@kernel.org, robh@kernel.org, conor+dt@kernel.org,
+        konradybcio@kernel.org, andersson@kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 5/5] arm64: dts: qcom: qcm2290: Add venus video node
+Message-ID: <aGuQR194iqu0Qs97@trex>
+References: <20250626135931.700937-1-jorge.ramirez@oss.qualcomm.com>
+ <20250626135931.700937-6-jorge.ramirez@oss.qualcomm.com>
+ <6e330e8f-5856-ef8e-5fe3-52bd61b59e02@quicinc.com>
+ <aF6PqCY/E6H0Mc2/@trex>
+ <2722e70a-1080-c9f3-eb56-4a6e79084bdc@quicinc.com>
+ <aF6z7iaicHyNXg6w@trex>
+ <e704535c-0004-6dbd-bc81-b4ebc7747881@quicinc.com>
+ <bac1e5e4-ed18-4e26-a883-2a41bf8468a8@oss.qualcomm.com>
+ <a934bb78-587b-6aca-2fb1-38605d3b385a@quicinc.com>
+ <7df8a438-364e-431e-8424-209ad7482efc@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7df8a438-364e-431e-8424-209ad7482efc@oss.qualcomm.com>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA3MDA1MyBTYWx0ZWRfXzoE0PsDS6va7
+ 37qs6x8ASLBelQBycGGT1z7Qs8VgdqDP5gVheE9RAchGk8CripANdsRCzDa0m5m42X2re8xpAfu
+ FNeaZ1ZSXNogpVxCHjnx3O1NkJHWEEGad9C56eWwzdOrNLir9X5Whx3H2b8SnXScD0TZlI+fR9O
+ x/pUBJFghFUZfxQH8jZ89T6CEsTJxYQtukwNQwXVPQu8GG6EtuJIDehFzOWR9sL95NuhpC9JR2P
+ CrScr4VfFj2oWb0O03FIjX65RREp7hn0MZ6J8AEf2DDbDiHc8KQHWYzwVV8o92w4AUrTAnWi1FK
+ uoYQX7l+2ej/T1PexrgUjQhVOFFtRbiwvfyP0Gsn0e6lCZt1deJ8jdMpsjIgvF4t6NFQUlrh50Q
+ bhtuEIbMxTwxkwdB2R+PhFM8K2eTKl57tIAmTnFi2r4L3fN3z7uQcUIPegb6ojYlcbGV/toH
+X-Proofpoint-GUID: BUDqmdGOcvEiJLPK8MculR9oQ3XxCR7D
+X-Proofpoint-ORIG-GUID: BUDqmdGOcvEiJLPK8MculR9oQ3XxCR7D
+X-Authority-Analysis: v=2.4 cv=SOBCVPvH c=1 sm=1 tr=0 ts=686b904b cx=c_pps
+ a=WeENfcodrlLV9YRTxbY/uA==:117 a=oX6B8lV6/A+qF9mARCc04Q==:17
+ a=kj9zAlcOel0A:10 a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=g0UWXt2G9gbouz_zptwA:9
+ a=CjuIK1q_8ugA:10 a=kacYvNCVWA4VmyqE58fU:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-07_01,2025-07-07_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 priorityscore=1501 lowpriorityscore=0 bulkscore=0
+ impostorscore=0 mlxlogscore=999 mlxscore=0 phishscore=0 malwarescore=0
+ adultscore=0 suspectscore=0 spamscore=0 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507070053
 
-Allows configuration parameters coupled_control in
-the module during initialization.
+On 27/06/25 17:27:04, Konrad Dybcio wrote:
+> On 6/27/25 5:23 PM, Vikash Garodia wrote:
+> > 
+> > On 6/27/2025 8:50 PM, Konrad Dybcio wrote:
+> >> On 6/27/25 5:12 PM, Vikash Garodia wrote:
+> >>>
+> >>> On 6/27/2025 8:38 PM, Jorge Ramirez wrote:
+> >>>> On 27/06/25 20:28:29, Vikash Garodia wrote:
+> >>>>>
+> >>>>> On 6/27/2025 6:03 PM, Jorge Ramirez wrote:
+> >>>>>> On 27/06/25 17:40:19, Vikash Garodia wrote:
+> >>>>>>>
+> >>>>>>> On 6/26/2025 7:29 PM, Jorge Ramirez-Ortiz wrote:
+> >>>>>>>> Add DT entries for the qcm2290 venus encoder/decoder.
+> >>>>>>>>
+> >>>>>>>> Co-developed-by: Loic Poulain <loic.poulain@oss.qualcomm.com>
+> >>>>>>>> Signed-off-by: Loic Poulain <loic.poulain@oss.qualcomm.com>
+> >>>>>>>> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez@oss.qualcomm.com>
+> >>>>>>>> ---
+> >>>>>>>>  arch/arm64/boot/dts/qcom/qcm2290.dtsi | 57 +++++++++++++++++++++++++++
+> >>>>>>>>  1 file changed, 57 insertions(+)
+> >>>>>>>>
+> >>>>>>>> diff --git a/arch/arm64/boot/dts/qcom/qcm2290.dtsi b/arch/arm64/boot/dts/qcom/qcm2290.dtsi
+> >>>>>>>> index f49ac1c1f8a3..5326c91a0ff0 100644
+> >>>>>>>> --- a/arch/arm64/boot/dts/qcom/qcm2290.dtsi
+> >>>>>>>> +++ b/arch/arm64/boot/dts/qcom/qcm2290.dtsi
+> >>>>>>>> @@ -1628,6 +1628,63 @@ adreno_smmu: iommu@59a0000 {
+> >>>>>>>>  			#iommu-cells = <2>;
+> >>>>>>>>  		};
+> >>>>>>>>  
+> >>>>>>>> +		venus: video-codec@5a00000 {
+> >>>>>>>> +			compatible = "qcom,qcm2290-venus";
+> >>>>>>>> +			reg = <0 0x5a00000 0 0xf0000>;
+> >>>>>>>> +			interrupts = <GIC_SPI 225 IRQ_TYPE_LEVEL_HIGH>;
+> >>>>>>>> +
+> >>>>>>>> +			power-domains = <&gcc GCC_VENUS_GDSC>,
+> >>>>>>>> +					<&gcc GCC_VCODEC0_GDSC>,
+> >>>>>>>> +					<&rpmpd QCM2290_VDDCX>;
+> >>>>>>>> +			power-domain-names = "venus",
+> >>>>>>>> +					     "vcodec0",
+> >>>>>>>> +					     "cx";
+> >>>>>>>> +			operating-points-v2 = <&venus_opp_table>;
+> >>>>>>>> +
+> >>>>>>>> +			clocks = <&gcc GCC_VIDEO_VENUS_CTL_CLK>,
+> >>>>>>>> +				 <&gcc GCC_VIDEO_AHB_CLK>,
+> >>>>>>>> +				 <&gcc GCC_VENUS_CTL_AXI_CLK>,
+> >>>>>>>> +				 <&gcc GCC_VIDEO_THROTTLE_CORE_CLK>,
+> >>>>>>>> +				 <&gcc GCC_VIDEO_VCODEC0_SYS_CLK>,
+> >>>>>>>> +				 <&gcc GCC_VCODEC0_AXI_CLK>;
+> >>>>>>>> +			clock-names = "core",
+> >>>>>>>> +				      "iface",
+> >>>>>>>> +				      "bus",
+> >>>>>>>> +				      "throttle",
+> >>>>>>>> +				      "vcodec0_core",
+> >>>>>>>> +				      "vcodec0_bus";
+> >>>>>>>> +
+> >>>>>>>> +			memory-region = <&pil_video_mem>;
+> >>>>>>>> +			iommus = <&apps_smmu 0x860 0x0>,
+> >>>>>>>> +				 <&apps_smmu 0x880 0x0>,
+> >>>>>>>> +				 <&apps_smmu 0x861 0x04>,
+> >>>>>>>> +				 <&apps_smmu 0x863 0x0>,
+> >>>>>>>> +				 <&apps_smmu 0x804 0xe0>;
+> >>>>>>> keep only the non secure ones.
+> >>>>>>
+> >>>>>> ok
+> >>>>>>
+> >>>>>>>> +
+> >>>>>>>> +			interconnects = <&mmnrt_virt MASTER_VIDEO_P0 RPM_ALWAYS_TAG
+> >>>>>>>> +					 &bimc SLAVE_EBI1 RPM_ALWAYS_TAG>,
+> >>>>>>>> +					<&bimc MASTER_APPSS_PROC RPM_ACTIVE_TAG
+> >>>>>>>> +					 &config_noc SLAVE_VENUS_CFG RPM_ACTIVE_TAG>;
+> >>>>>>>> +			interconnect-names = "video-mem",
+> >>>>>>>> +					     "cpu-cfg";
+> >>>>>>>> +
+> >>>>>>>> +			status = "okay";
+> >>>>>>>> +
+> >>>>>>>> +			venus_opp_table: opp-table {
+> >>>>>>>> +				compatible = "operating-points-v2";
+> >>>>>>>> +
+> >>>>>>>> +				opp-133000000 {
+> >>>>>>>> +					opp-hz = /bits/ 64 <133000000>;
+> >>>>>>>> +					required-opps = <&rpmpd_opp_low_svs>;
+> >>>>>>>> +				};
+> >>>>>>> Fix the corner freq value
+> >>>>>>
+> >>>>>> can you add some reference please?
+> >>>>>>
+> >>>>>> I took this data from an internal document - not sure why the downstream
+> >>>>>> driver supports different values or where those were taken from (AFAIK
+> >>>>>> they are not supported)
+> >>>>> Most likely you have referred incorrect downstream file. Refer scuba-vidc.dtsi.
+> >>>>
+> >>>> I took them from actual documents (which might or might not be obsolete,
+> >>>> hard to say but they were the latest version and as such, they
+> >>>> contradict the downstream dtsi).
+> >>>>
+> >>>> So I'd rather not use downstream - could you point me to the reference
+> >>>> you used please - I wonder if the fix is required downstream instead of here?
+> >>>
+> >>> You can look for this file gcc-scuba.c and refer gcc_video_venus_clk_src which
+> >>> is the src for different venus clocks.
+> >>
+> >> This is not a good source in general, GCC often has more rates defined
+> >> than the consumer is supposed to finally run at (because they were deemed
+> >> power-inefficient or similar, you can pretty much set any rate you want
+> >> on the clocks fwiw)
+> > Count wise, i agree. Value-wise, afaik, corners should match OR are you saying
+> > client scaling request for 133.0 MHz is ok when src is generating 133.33 MHz ?
+> 
+> I *think* we're running a closest-match in there.. but I'd love to
+> have the clock and consumer drivers agree on the rate exactly
+> (which in this case would be 133333333 - and the clock plan in
+> our docs agrees)
+>
 
-Signed-off-by: Wanchuan Li <liwanchuan@xiaomi.com>
----
- drivers/net/bonding/bond_main.c | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+ok, will use this instead
 
-diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_main.c
-index c4d53e8e7c15..c86c72bb432c 100644
---- a/drivers/net/bonding/bond_main.c
-+++ b/drivers/net/bonding/bond_main.c
-@@ -123,6 +123,7 @@ static struct bond_params bonding_defaults;
- static int resend_igmp = BOND_DEFAULT_RESEND_IGMP;
- static int packets_per_slave = 1;
- static int lp_interval = BOND_ALB_DEFAULT_LP_INTERVAL;
-+static int coupled_control = 1;
- 
- module_param(max_bonds, int, 0);
- MODULE_PARM_DESC(max_bonds, "Max number of bonded devices");
-@@ -144,6 +145,11 @@ MODULE_PARM_DESC(downdelay, "Delay before considering link down, "
- module_param(use_carrier, int, 0);
- MODULE_PARM_DESC(use_carrier, "Use netif_carrier_ok (vs MII ioctls) in miimon; "
- 			      "0 for off, 1 for on (default)");
-+
-+module_param(coupled_control, int, 0);
-+MODULE_PARM_DESC(coupled_control, "Coupled and Independent control state machine; "
-+			      "0 for off, 1 for on (default)");
-+
- module_param(mode, charp, 0);
- MODULE_PARM_DESC(mode, "Mode of operation; 0 for balance-rr, "
- 		       "1 for active-backup, 2 for balance-xor, "
-@@ -6195,6 +6201,12 @@ static int __init bond_check_params(struct bond_params *params)
- 		use_carrier = 1;
- 	}
- 
-+	if ((coupled_control != 0) && (coupled_control != 1)) {
-+		pr_warn("Warning: coupled_control module parameter (%d), not of valid value (0/1), so it was set to 1\n",
-+			coupled_control);
-+		coupled_control = 1;
-+	}
-+
- 	if (num_peer_notif < 0 || num_peer_notif > 255) {
- 		pr_warn("Warning: num_grat_arp/num_unsol_na (%d) not in range 0-255 so it was reset to 1\n",
- 			num_peer_notif);
-@@ -6455,7 +6467,7 @@ static int __init bond_check_params(struct bond_params *params)
- 	params->ad_actor_sys_prio = ad_actor_sys_prio;
- 	eth_zero_addr(params->ad_actor_system);
- 	params->ad_user_port_key = ad_user_port_key;
--	params->coupled_control = 1;
-+	params->coupled_control = coupled_control;
- 	if (packets_per_slave > 0) {
- 		params->reciprocal_packets_per_slave =
- 			reciprocal_value(packets_per_slave);
--- 
-2.49.0
-
+> Konrad
 
