@@ -1,86 +1,89 @@
-Return-Path: <linux-kernel+bounces-720450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96685AFBBE5
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 21:50:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BE07AFBBDF
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 21:48:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E28A316B304
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 19:50:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D79861AA7391
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 19:48:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28018267729;
-	Mon,  7 Jul 2025 19:50:00 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0012.hostedemail.com [216.40.44.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40E60266EFC;
+	Mon,  7 Jul 2025 19:48:06 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 145BA13A244;
-	Mon,  7 Jul 2025 19:49:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D70511428E7
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 19:48:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751917799; cv=none; b=W3dvxY2sp6NlG+tpkHES+6IGpaPw23L/EDXN0Mtl5zC/lk/Lu9xjO8BfgdJCoXMx2t3PVhPCzeq3pD56WVGHLTZ7dYi6stRHMN7/zdJfXBvMo/LyujHarghrsFiRKjmthIWX6OzvSloVcwcVXw1WY0DNjk++iz4s+qghn94Cozs=
+	t=1751917685; cv=none; b=UlDd/3O7Wv9XdM9UQnFCHmZHT05EsOgaNp4rDGzPiSAlciFO3i4hB//2dWvxq0HGngSt+5DjdnquPbzxvLUpvXdfRVLVNc3LuElA/l9HIsd11YjlQfhMMKvJEvxUw1x6eTvB6vF5aD7AjYBCd4hlkICcK4PnESKdW+yUFcYksoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751917799; c=relaxed/simple;
-	bh=C/pxVwNNcO2P81TrbKVfUEX/hAn4awsUloccI8+e050=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aUvt+kXLC4/1edT6/biAkjXSbvrSJ7jSfhI4opxOiFfCVwH/xXoMe89DJUcYgEUgfvIXhGJOrkpcetMGBpZ8iu+thjDF9H/bgaR5JkEEy/g5UeJFVZLPabTHF9CLvUAmxaHV4wA6ZBjHyd9UlIQs7KblYRJc7wIauYH5iD9BSqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf06.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay02.hostedemail.com (Postfix) with ESMTP id BBABA128655;
-	Mon,  7 Jul 2025 19:42:50 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf06.hostedemail.com (Postfix) with ESMTPA id 5AB922000E;
-	Mon,  7 Jul 2025 19:42:46 +0000 (UTC)
-Date: Mon, 7 Jul 2025 15:42:45 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- bpf@vger.kernel.org, x86@kernel.org, Masami Hiramatsu
- <mhiramat@kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra
- <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Jiri Olsa
- <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Thomas Gleixner
- <tglx@linutronix.de>, Andrii Nakryiko <andrii@kernel.org>, Indu Bhagat
- <indu.bhagat@oracle.com>, "Jose E. Marchesi" <jemarch@gnu.org>, Beau
- Belgrave <beaub@linux.microsoft.com>, Jens Remus <jremus@linux.ibm.com>,
- Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton
- <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>, Florian Weimer
- <fweimer@redhat.com>
-Subject: Re: [PATCH v12 01/14] unwind_user: Add user space unwinding API
-Message-ID: <20250707154245.7eeeb448@batman.local.home>
-In-Reply-To: <12c620ea-4bee-4019-8143-8ecbaeeafc11@efficios.com>
-References: <20250701005321.942306427@goodmis.org>
-	<20250701005450.721228270@goodmis.org>
-	<12c620ea-4bee-4019-8143-8ecbaeeafc11@efficios.com>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1751917685; c=relaxed/simple;
+	bh=TuWmJzXscKf3ZHtljDfhNIF0AVhdGCIkXNPZJPrGjeA=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=nHDrcHuNK7VpsGTp9H7dZcHr2Mtbn+03jfgZK8BduzVPs9kknCQrNLCMsEFMg/aSSj02qdaPeC8YyFAoLtOcY9tdQOxgbUFc1JxWaMtYW8QEvKCEwCLDAwmRssvNd/Qj7cxzC1Tk3o943xJwTOBwTSzUIYXaPrduexshI7wC5Dk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-86d07ccc9ecso268122839f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 12:48:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751917683; x=1752522483;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1hoWMOP+KagcUR6OfQbc7kG/bxEdCmumdthhOD57rYs=;
+        b=plpz8Y2mEZnXdjzZRgu64uFeWJTvDxalHIYtBQspt3Sli45QqNNxGEagT3QRc6f6rq
+         488ahf5crg3qUjzm9NjgjMDHcAu29KKcVF/U0+lRIQuLOcOKAha9Ci3u99QsPh3norCM
+         9+kXJZXIHHoaaWEsC/43d9fJU3zJ8E80Hvlr0U/8HGxA3yyBB6CCaOztoAW0gj5Pvfvj
+         SQqwExFvXt2ZyJAs3r0BnO4dL7h5AJQyNF7upf6Al+TLkUC/r46ZDGyAA8bUh8bte7RH
+         ZyjhwdbfCJREvdkkUc+TeH8+9hWgc0BFrZ9wDHRIdtuzo1Lg4ybimDkeIArPtblmG8Ww
+         2O9A==
+X-Forwarded-Encrypted: i=1; AJvYcCUjfDhHe1vfCVDD373CkhdykR74/sxd9Of7lWWP2JK1AgSFE3SXxLjySP45WsjMi6icb8wyTTQSOOy0DK4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjgvAhGsh3nVnZXB/v18e5bjJBjwu7I+C9bKFYXswbTT5kLiPx
+	/rqGXXZ4eqHi0LApjeqHukgmgzn2m+1yd53132sWzYcGGp38Ll3FtUEEaHtsikANDq9oiatzR66
+	Z+vwmKgAfaZxNm30WcI3LDngwNqV9ixYtqClFk8oT05B3YKuAnResYvahMo0=
+X-Google-Smtp-Source: AGHT+IGnNDtAp7BDNfzZPfiGJkUe1l1lIbuZMFhDCSKX5R4/PBHEIi/mHZOlZcFOgVDRnHaFxUGrJR5H9tfnPb+bqxnsyiYSsjL/
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: uffcqguk36b5rtzjb97yrcmziuh1i78n
-X-Rspamd-Server: rspamout07
-X-Rspamd-Queue-Id: 5AB922000E
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1+hZRXtt2n9xM25ZjI5RbURs4uzubwh+r8=
-X-HE-Tag: 1751917366-491360
-X-HE-Meta: U2FsdGVkX1+TlfiLJboUxWFVhq/aBl2bQgU922t12rSyi1JWsFcrAHFLerzbTnq0xq41SHga/xi2kKB4hiRLNrK7Sr/df8bn4Ok62X/V3VK/V3SswAQzMX9VCDljJDlt7APU+uY5E1je+9lfT+EYlIA4gPiazZCNjkMqgqs0aHjqNHR9km2DNUlKiZna5qWTOEtyUxQ2vMYb86+abAM+c1AsOtBnALmMrkH0DfjCFVvUMNArbVac5C55LarMjElCob+NOedjbvXxRkqbN3v6NiL2gdG8qQWXdxCGbT6cDbbjTcUvnFsDoSCTTgP+Cp9IUDWchw8XOXUjEDadYhZZbyb72eQ9VbN+QrFcopOe0qhoKDnLwNsyka8qd3KG6kFL
+X-Received: by 2002:a05:6602:6d0f:b0:85b:538e:1fad with SMTP id
+ ca18e2360f4ac-876e15ada4dmr1462372439f.6.1751917683076; Mon, 07 Jul 2025
+ 12:48:03 -0700 (PDT)
+Date: Mon, 07 Jul 2025 12:48:03 -0700
+In-Reply-To: <72fea4f2-40d7-4f9f-a08d-b1ada781256e@rowland.harvard.edu>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <686c2473.a00a0220.6237c.0003.GAE@google.com>
+Subject: Re: [syzbot] [usb?] KASAN: slab-out-of-bounds Read in mon_copy_to_buff
+From: syzbot <syzbot+8258d5439c49d4c35f43@syzkaller.appspotmail.com>
+To: contact@arnaud-lcm.com, gregkh@linuxfoundation.org, 
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
+	manas18244@iiitd.ac.in, stern@rowland.harvard.edu, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, 4 Jul 2025 14:20:54 -0400
-Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
+Hello,
 
-> > None of the structures introduced will be exposed to user space tooling.  
-> 
-> Would it be possible to make those unwind APIs EXPORT_SYMBOL_GPL
-> so they are available for GPL kernel modules ?
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-I'm OK with that, but others tend to complain about EXPORT_SYMBOL_GPL
-for functions not used by modules in the kernel. But I personally feel
-that LTTng should get an exception for that rule ;-)
+Reported-by: syzbot+8258d5439c49d4c35f43@syzkaller.appspotmail.com
+Tested-by: syzbot+8258d5439c49d4c35f43@syzkaller.appspotmail.com
 
--- Steve
+Tested on:
+
+commit:         d7b8f8e2 Linux 6.16-rc5
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/
+console output: https://syzkaller.appspot.com/x/log.txt?x=1517428c580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f51185bd4f40ad44
+dashboard link: https://syzkaller.appspot.com/bug?extid=8258d5439c49d4c35f43
+compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=122e9582580000
+
+Note: testing is done by a robot and is best-effort only.
 
