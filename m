@@ -1,232 +1,165 @@
-Return-Path: <linux-kernel+bounces-720352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23589AFBAA6
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 20:28:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 66F48AFBAAD
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 20:31:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68457168B44
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 18:28:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2A4C16641B
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 18:31:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C354C264A90;
-	Mon,  7 Jul 2025 18:28:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 252312641CC;
+	Mon,  7 Jul 2025 18:31:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kq2C6f9n"
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="zeF/cp7Z";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="CyHDB5Y+";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="zeF/cp7Z";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="CyHDB5Y+"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91150263F28
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 18:28:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F53122D790
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 18:31:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751912888; cv=none; b=V8WG3R33/2anx/QoYDIQ3o0uLOPUEZ/t9x/RjdndhXoor+p/66/hvp2NkVbKLZmwhLCiDTPwxN2Wq6FTA0DBObbovhFKerEWWQNILnp091d4J6O2jIg30hZBKU2iJTqdWgoO9B6Dyon/4VpdIEf3XMgiTaxe6dX3O5FGkBICqYQ=
+	t=1751913104; cv=none; b=gdqaVqoI2qvX98kGFKEw/2E78l/dj8WuGANd3fHItrUNuMd4QKE0wqFiOTlFQXpOF+1mGB3rr8Y0/oBF/+sHzJSIQMv/GSVkAaCH9XMfCIAzCcghgklXlpuX3xvjUBaeb9Y1HEhLPYQ9+XDI3lcRFtj2E3h25tyOSAYN/n1Ula0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751912888; c=relaxed/simple;
-	bh=S9kEKj1+iXu7ajcvT5kRaKFBGmOU+As9xblZjGoEOIE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=i6+WRRYXZX7Ta2jmVNmrN4VUw2um1bII09rxu1XmMkleaEnkTD9P0QP7TkPa0w/Lt66HeUGJqaJq9gX4oi54Wzowo7PlOVHWo35KNDg52pN8cPn/7WY44sGywhF/N6sm+vhwZfD3LEKGiQYLsKgGFruRzMpzmCJi4Ghq8sxE4rQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kq2C6f9n; arc=none smtp.client-ip=209.85.219.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e7b4ba530feso2879938276.1
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 11:28:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1751912885; x=1752517685; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=owDFJen4YTDNma7AUk9STl34vl+r82F90HPmi/p/5YA=;
-        b=kq2C6f9nruYK5wyeHuaOOIuRZ6dzl9peIokrlyXBlVlFq1UBUVtmIKl2dADSEWhaVr
-         qcGjUqH+zuEwJ96AGPUq6dCM4LQp7DH6UnYE+6pwEtYSDbQym9gYqHMC4cDypOD/n7hU
-         6HGrBS/N2kE1//jDeutAplge27QLLdN6fCsNn707x531twz8EN0ai3mIAo/iM0ILfZUZ
-         8lKIWXhv9aUuB4N1rDxl7CHTLmtGUls8UdPHXoSXDq5gvsmuHx+WOqiJ/xRQKW2FFiVG
-         igLnjEh3eqU+Zu5FUTR+jVwbvNgtXirmHwTaI0MuhYugW+JKV1KyAV04hZcrBKCww7Tw
-         n74Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751912885; x=1752517685;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=owDFJen4YTDNma7AUk9STl34vl+r82F90HPmi/p/5YA=;
-        b=bwuMQG9TOxCUGDPKgQve8IqLHRoOKyLcfXEor7LBYVB8OgNiAlMKJvUsBg6UAUBL+7
-         DIMpWww7C/lKl5S/hRJwYLyLrdFRuoaz/Ur7u6W8K2E3tCVOdq1qIqsJ8Iz8P8vjrFt6
-         2MAwrm1XYmyT/XYY5t6kz0XNzB9GwrMtH/Z+l6+3l7ligXbiQUi9Kg0MaeOlgHFd8YQ0
-         I5SzbwgGN0t+S74zEm+rJGBVJ3KD0OxH55R3gGnoQ2zyM5KqoAO7CQpFnJgt+AdpUYsV
-         fX2FsaFEHFqwHC2JVwMUZ71D0hyAWDS4CkoJjkJJg73BnKbXUrJsmLDvALkKAb9MXUgf
-         Q5Jg==
-X-Forwarded-Encrypted: i=1; AJvYcCU5/yWiCjg3cXcFAwiYXjz8UnQpVw2Dm/iwIK2ZbD1gHwurg58LCgzdaAQtvAVUFMeN3Bv+2ZP6Vt7q9Ag=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEu/pSCJYnL5Ya1sF+B0fXnhREDh3cNDznO5T5B47wt95/4yHc
-	Dg/AHn4ZQJ7j2ecWbcgNwkuk/e43ucYsbZHerebMYme3KCTTRcvGXHEwHH0dNaJy3a7+LonhLj+
-	mqqM6pJJDWuatuZ6MBSx5RnlnVJKF8A9+pqgV0O7e
-X-Gm-Gg: ASbGncuFhOphP2Ec6hvhj20rTdod9eMjEnNN3cJ2oeN6mkEXrn7Ar3p/4H06ePYvU0y
-	be0/YkXGjTa5VAbv5TyHyzzX2urcSvwNq+anGcAgDhTZlfNvu9cg16gZjuMxkE7rkMcsdKDHWOk
-	T8afyKJe+WL9clQ17+WjUw/sX4rAlT8+Y1GUytKuKx8yY2wQIApSxp1x6dj/XCBp3KM+a0U4AVX
-	w==
-X-Google-Smtp-Source: AGHT+IGALxRhMgh7BE91T+jJhyG+rEGC8sNFThaOOtDHVthOVl+i2kZqlVjxvI4H8+dEE+6nS2sYRpdFrW0Z4Ws+/BQ=
-X-Received: by 2002:a05:690c:6f02:b0:713:f7dd:5d7c with SMTP id
- 00721157ae682-71668ded91cmr174799297b3.19.1751912884636; Mon, 07 Jul 2025
- 11:28:04 -0700 (PDT)
+	s=arc-20240116; t=1751913104; c=relaxed/simple;
+	bh=tJ3W2FGEgUNZAQ+g4pK8UqDdKq8uofcqVO4QGbsrejY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gGHyadRS1MA2kW+8mCOHXnt9WdDqfXR1FWLh/3aFbsXHwWq4GaT0R+9M3+v47KrkA1CSOvmWnEiWXjMm8Ewy2RVesbmufrrb6SZeGXf5DN45RMUPkzmeHyEz5NKgrBEL4nXP5mGDVHR8dB3ahlUsMOfzm/sqkRYwv8RvbeW6oFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=zeF/cp7Z; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=CyHDB5Y+; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=zeF/cp7Z; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=CyHDB5Y+; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from lion.mk-sys.cz (unknown [10.100.225.114])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 434B62115F;
+	Mon,  7 Jul 2025 18:31:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1751913101; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tJ3W2FGEgUNZAQ+g4pK8UqDdKq8uofcqVO4QGbsrejY=;
+	b=zeF/cp7ZoF2nr3kicRO9AzTugHnxQKuTqQQEmUG+0cT/khe9z5OgEPKatOyUWzQ1KZM4LE
+	V1u8DoC1jkAoDlLUnOA5MnkBHfioc0t+5q0l1tBANsn3zb4Rc5E1xKxQVOnUQh+bkhvj10
+	EXTZi/ZX/imk/cMg0D7HYbzg50MJZ7o=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1751913101;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tJ3W2FGEgUNZAQ+g4pK8UqDdKq8uofcqVO4QGbsrejY=;
+	b=CyHDB5Y+VEp8N+R2EfDs+4Icp5tuBWu9Sj4Xn6eN53dAzomuAKO6glbRZH7rig/Q7AQetT
+	ca4oxcxsnxI5dEBQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1751913101; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tJ3W2FGEgUNZAQ+g4pK8UqDdKq8uofcqVO4QGbsrejY=;
+	b=zeF/cp7ZoF2nr3kicRO9AzTugHnxQKuTqQQEmUG+0cT/khe9z5OgEPKatOyUWzQ1KZM4LE
+	V1u8DoC1jkAoDlLUnOA5MnkBHfioc0t+5q0l1tBANsn3zb4Rc5E1xKxQVOnUQh+bkhvj10
+	EXTZi/ZX/imk/cMg0D7HYbzg50MJZ7o=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1751913101;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tJ3W2FGEgUNZAQ+g4pK8UqDdKq8uofcqVO4QGbsrejY=;
+	b=CyHDB5Y+VEp8N+R2EfDs+4Icp5tuBWu9Sj4Xn6eN53dAzomuAKO6glbRZH7rig/Q7AQetT
+	ca4oxcxsnxI5dEBQ==
+Received: by lion.mk-sys.cz (Postfix, from userid 1000)
+	id 186DD20057; Mon, 07 Jul 2025 20:31:41 +0200 (CEST)
+Date: Mon, 7 Jul 2025 20:31:41 +0200
+From: Michal Kubecek <mkubecek@suse.cz>
+To: Kory Maincent <kory.maincent@bootlin.com>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Andrew Lunn <andrew@lunn.ch>, 
+	Kyle Swenson <kyle.swenson@est.tech>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH ethtool-next 2/2] ethtool: pse-pd: Add PSE priority and
+ event monitoring support
+Message-ID: <4bwqn7klcstlyiaig7ceonzl6om3mtn454q3tyauyjjusyt6xh@dlcz64sbxdvl>
+References: <20250620-b4-feature_poe_pw_budget-v1-0-0bdb7d2b9c8f@bootlin.com>
+ <20250620-b4-feature_poe_pw_budget-v1-2-0bdb7d2b9c8f@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1747264138.git.ackerleytng@google.com> <8548af334e01401a776aae37a0e9f30f9ffbba8c.1747264138.git.ackerleytng@google.com>
-In-Reply-To: <8548af334e01401a776aae37a0e9f30f9ffbba8c.1747264138.git.ackerleytng@google.com>
-From: James Houghton <jthoughton@google.com>
-Date: Mon, 7 Jul 2025 11:27:28 -0700
-X-Gm-Features: Ac12FXwfXFYyW7dt7flmw9fdJeBgsdRSXtn9Ce_9e810HW9a_XvXDOUG_TQfUZU
-Message-ID: <CADrL8HXczKJnrCA0wD2qMHPtV1+VCW+mgJC2LSa5DsEuX4++Uw@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 16/51] mm: hugetlb: Consolidate interpretation of
- gbl_chg within alloc_hugetlb_folio()
-To: Ackerley Tng <ackerleytng@google.com>
-Cc: kvm@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	x86@kernel.org, linux-fsdevel@vger.kernel.org, aik@amd.com, 
-	ajones@ventanamicro.com, akpm@linux-foundation.org, amoorthy@google.com, 
-	anthony.yznaga@oracle.com, anup@brainfault.org, aou@eecs.berkeley.edu, 
-	bfoster@redhat.com, binbin.wu@linux.intel.com, brauner@kernel.org, 
-	catalin.marinas@arm.com, chao.p.peng@intel.com, chenhuacai@kernel.org, 
-	dave.hansen@intel.com, david@redhat.com, dmatlack@google.com, 
-	dwmw@amazon.co.uk, erdemaktas@google.com, fan.du@intel.com, fvdl@google.com, 
-	graf@amazon.com, haibo1.xu@intel.com, hch@infradead.org, hughd@google.com, 
-	ira.weiny@intel.com, isaku.yamahata@intel.com, jack@suse.cz, 
-	james.morse@arm.com, jarkko@kernel.org, jgg@ziepe.ca, jgowans@amazon.com, 
-	jhubbard@nvidia.com, jroedel@suse.de, jun.miao@intel.com, kai.huang@intel.com, 
-	keirf@google.com, kent.overstreet@linux.dev, kirill.shutemov@intel.com, 
-	liam.merwick@oracle.com, maciej.wieczor-retman@intel.com, 
-	mail@maciej.szmigiero.name, maz@kernel.org, mic@digikod.net, 
-	michael.roth@amd.com, mpe@ellerman.id.au, muchun.song@linux.dev, 
-	nikunj@amd.com, nsaenz@amazon.es, oliver.upton@linux.dev, palmer@dabbelt.com, 
-	pankaj.gupta@amd.com, paul.walmsley@sifive.com, pbonzini@redhat.com, 
-	pdurrant@amazon.co.uk, peterx@redhat.com, pgonda@google.com, pvorel@suse.cz, 
-	qperret@google.com, quic_cvanscha@quicinc.com, quic_eberman@quicinc.com, 
-	quic_mnalajal@quicinc.com, quic_pderrin@quicinc.com, quic_pheragu@quicinc.com, 
-	quic_svaddagi@quicinc.com, quic_tsoni@quicinc.com, richard.weiyang@gmail.com, 
-	rick.p.edgecombe@intel.com, rientjes@google.com, roypat@amazon.co.uk, 
-	rppt@kernel.org, seanjc@google.com, shuah@kernel.org, steven.price@arm.com, 
-	steven.sistare@oracle.com, suzuki.poulose@arm.com, tabba@google.com, 
-	thomas.lendacky@amd.com, usama.arif@bytedance.com, vannapurve@google.com, 
-	vbabka@suse.cz, viro@zeniv.linux.org.uk, vkuznets@redhat.com, 
-	wei.w.wang@intel.com, will@kernel.org, willy@infradead.org, 
-	xiaoyao.li@intel.com, yan.y.zhao@intel.com, yilun.xu@intel.com, 
-	yuzenghui@huawei.com, zhiquan1.li@intel.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="jisrgrp2ty56pzqo"
+Content-Disposition: inline
+In-Reply-To: <20250620-b4-feature_poe_pw_budget-v1-2-0bdb7d2b9c8f@bootlin.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-5.90 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SIGNED_PGP(-2.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	MIME_GOOD(-0.20)[multipart/signed,text/plain];
+	NEURAL_HAM_SHORT(-0.20)[-0.989];
+	RCVD_TLS_LAST(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_COUNT_ONE(0.00)[1];
+	FROM_EQ_ENVFROM(0.00)[];
+	MIME_TRACE(0.00)[0:+,1:+,2:~];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	MISSING_XM_UA(0.00)[];
+	TO_DN_SOME(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Score: -5.90
+
+
+--jisrgrp2ty56pzqo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 14, 2025 at 4:43=E2=80=AFPM Ackerley Tng <ackerleytng@google.co=
-m> wrote:
->
-> Previously, gbl_chg was passed from alloc_hugetlb_folio() into
-> dequeue_hugetlb_folio_vma(), leaking the concept of gbl_chg into
-> dequeue_hugetlb_folio_vma().
->
-> This patch consolidates the interpretation of gbl_chg into
-> alloc_hugetlb_folio(), also renaming dequeue_hugetlb_folio_vma() to
-> dequeue_hugetlb_folio() so dequeue_hugetlb_folio() can just focus on
-> dequeuing a folio.
->
-> Change-Id: I31bf48af2400b6e13b44d03c8be22ce1a9092a9c
-> Signed-off-by: Ackerley Tng <ackerleytng@google.com>
-
-I think I agree with Binbin[1] to either put the rename of
-dequeue_hugetlb_folio{_vma =3D> }() in its own patch or drop it
-entirely.
-
-I think the rename would 100% make sense if all of the
-dequeue_hugetlb_folio*() functions were called from
-dequeue_hugetlb_folio_vma() (i.e., after this patch,
-dequeue_hugetlb_folio() was always the entry point to dequeue a
-folio), but in fact dequeue_hugetlb_folio_nodemask() is not always
-called from dequeue_hugetlb_folio_vma().
-
-I don't feel strongly at all, either way the name is not confusing. So
-feel free to add:
-
-Reviewed-by: James Houghton <jthoughton@google.com>
-
-[1]: https://lore.kernel.org/all/ad77da83-0e6e-47a1-abe7-8cfdfce8b254@linux=
-.intel.com/
-
+On Fri, Jun 20, 2025 at 02:33:07PM GMT, Kory Maincent wrote:
+> From: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
+>=20
+> Add support for PSE (Power Sourcing Equipment) priority management and
+> event monitoring capabilities:
+>=20
+> - Add priority configuration parameter (prio) for port priority management
+> - Display power domain index, maximum priority, and current priority
+> - Add PSE event monitoring support in ethtool monitor command
+>=20
+> Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
 > ---
->  mm/hugetlb.c | 28 +++++++++++-----------------
->  1 file changed, 11 insertions(+), 17 deletions(-)
->
-> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-> index 6ea1be71aa42..b843e869496f 100644
-> --- a/mm/hugetlb.c
-> +++ b/mm/hugetlb.c
-> @@ -1364,9 +1364,9 @@ static unsigned long available_huge_pages(struct hs=
-tate *h)
->         return h->free_huge_pages - h->resv_huge_pages;
->  }
->
-> -static struct folio *dequeue_hugetlb_folio_vma(struct hstate *h,
-> -                               struct vm_area_struct *vma,
-> -                               unsigned long address, long gbl_chg)
-> +static struct folio *dequeue_hugetlb_folio(struct hstate *h,
-> +                                          struct vm_area_struct *vma,
-> +                                          unsigned long address)
->  {
->         struct folio *folio =3D NULL;
->         struct mempolicy *mpol;
-> @@ -1374,13 +1374,6 @@ static struct folio *dequeue_hugetlb_folio_vma(str=
-uct hstate *h,
->         nodemask_t *nodemask;
->         int nid;
->
-> -       /*
-> -        * gbl_chg=3D=3D1 means the allocation requires a new page that w=
-as not
-> -        * reserved before.  Making sure there's at least one free page.
-> -        */
-> -       if (gbl_chg && !available_huge_pages(h))
-> -               goto err;
-> -
->         gfp_mask =3D htlb_alloc_mask(h);
->         nid =3D huge_node(vma, address, gfp_mask, &mpol, &nodemask);
->
-> @@ -1398,9 +1391,6 @@ static struct folio *dequeue_hugetlb_folio_vma(stru=
-ct hstate *h,
->
->         mpol_cond_put(mpol);
->         return folio;
-> -
-> -err:
-> -       return NULL;
->  }
->
->  /*
-> @@ -3074,12 +3064,16 @@ struct folio *alloc_hugetlb_folio(struct vm_area_=
-struct *vma,
->                 goto out_uncharge_cgroup_reservation;
->
->         spin_lock_irq(&hugetlb_lock);
-> +
->         /*
-> -        * glb_chg is passed to indicate whether or not a page must be ta=
-ken
-> -        * from the global free pool (global change).  gbl_chg =3D=3D 0 i=
-ndicates
-> -        * a reservation exists for the allocation.
-> +        * gbl_chg =3D=3D 0 indicates a reservation exists for the alloca=
-tion - so
-> +        * try dequeuing a page. If there are available_huge_pages(), try=
- using
-> +        * them!
->          */
-> -       folio =3D dequeue_hugetlb_folio_vma(h, vma, addr, gbl_chg);
-> +       folio =3D NULL;
-> +       if (!gbl_chg || available_huge_pages(h))
-> +               folio =3D dequeue_hugetlb_folio(h, vma, addr);
-> +
->         if (!folio) {
->                 spin_unlock_irq(&hugetlb_lock);
->                 folio =3D alloc_buddy_hugetlb_folio_with_mpol(h, vma, add=
-r);
-> --
-> 2.49.0.1045.g170613ef41-goog
->
+
+This patch adds two different features which do not seem to be related
+so closely that they would have to be added in one patch. Could you
+please split it into two separate patches?
+
+Michal=20
+
+--jisrgrp2ty56pzqo
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEWN3j3bieVmp26mKO538sG/LRdpUFAmhsEokACgkQ538sG/LR
+dpWCGwf8CkTtL2nv5F64hNcocItrYSmh9XvU+YuiYUQslvDkRZ2q5rXVEdn3od49
+RaTj+AHiDWUo18N8gyHUAX84ZUxkJW47F/WFRnMv0dryYPFYLeEKxmgKuJqN6qmt
+u48UEONzdcqFbUL2vUn5BjhXcwRqAONnQCwjKU4hEeDR3aTlRJwCfrCLcLX2uTSU
+rr5jVgf+8+bZvMLbGnTz1lXiugA1M55xgHIXRQSBmc1aeoB4OVOehBEKBEDmfipm
+y6Fyo0M4aYA4i2G1WN/qe+QFsy65hvEA4xdhQpmf+avB5wISew2MjKnAV5IPcYtK
+nUXDtRy8bdwH/AtZHGxkkbww90Kdpw==
+=FZLI
+-----END PGP SIGNATURE-----
+
+--jisrgrp2ty56pzqo--
 
