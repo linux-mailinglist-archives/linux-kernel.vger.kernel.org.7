@@ -1,130 +1,129 @@
-Return-Path: <linux-kernel+bounces-719839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D437EAFB34E
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 14:31:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3472BAFB31E
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 14:23:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B3E04A2CFB
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 12:31:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42DD17AEFC2
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 12:21:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E480D21C176;
-	Mon,  7 Jul 2025 12:31:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7B6929AB16;
+	Mon,  7 Jul 2025 12:22:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QA22Yq3f"
-Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aroYKfJf"
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C23A01E505;
-	Mon,  7 Jul 2025 12:31:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70E07202965
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 12:22:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751891495; cv=none; b=DpdHQ9WIQvFeFG1/rKPClNdnOcMq1pcnsVrvpQPTFvgD/6aXzg92leMO/SrFHbFcyVLnryH4bQdqSa/4oa1vz52XP1ITNrtOZOl17vNZPYTd+AWyje75uyCUeiHHZ/bawlkplHvu+RI3zegq+b0ghMNukLpMt+KZEcpxBl6cSB0=
+	t=1751890978; cv=none; b=aUQM2qi5tDvIlB701LhVjt297r2n+qtQZnuQP8dhbpF/1zYPmAZS2b5HhijYWclHx94aDpUZBwm3qW+cqDrR4DE5G0N9BwpiN9gGJ0JFKlrXpoCU1mbzHE+3dOBN+aHRIRpnJ4ZBrvzNhNpuOUzipd3Uui7PYQK5Xv0wqgbDJBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751891495; c=relaxed/simple;
-	bh=s3pDDpFXx97+Sx3EQPnHs8UpupyLeVIWcjLWW9LMm5g=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Cwg2wP/rfNFI8olkx69oN8lglW2PALo8Dc1tytCEvl/N2jxzsUIufV2UP8N1pql/EwR9lFygYCqYJ9xmTeUOmsg4AoJexvNQ/TeDTibnYbe8HNdG14hyUuS3te+jDUeHqUDInJC3xYqxyWEV/pSSIiS6TnCQ08/XbzXPm8rkddE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QA22Yq3f; arc=none smtp.client-ip=209.85.221.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-531466622beso1037928e0c.1;
-        Mon, 07 Jul 2025 05:31:33 -0700 (PDT)
+	s=arc-20240116; t=1751890978; c=relaxed/simple;
+	bh=EbIwVWGrvCj/w9SGk7EAImBhD9ATPqR/BLUabvsyYm0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nVrHHMg0QNgcGYkZDOUsEOUEaov8Cq+aV11a+UHD8mZjh/GMoy79J5J2X+GJafTYMFDRc0cVMLSJEqGtj0C81hWppJjyEUPxT+mjl89kIARPcNUgAyxKPqJ8pQ6kxn+ZRGUf1omImNnjncRiYqYKxELtGXkNGCRbqbjjcODVw/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aroYKfJf; arc=none smtp.client-ip=209.85.160.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4a44e94f0b0so40553181cf.1
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 05:22:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751891493; x=1752496293; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=w5Y/5ojhkIa9XtEOclDEI/2rgRb96fIBfSAga+PCtpI=;
-        b=QA22Yq3fZlheyBG9ozhciTvm4oK7wrsQTrjUaKVH/gvDoFU5C0Xv2rKwA+OfJngJ26
-         Ufxf+mw96qZMfRiQAG1w+/V2sWz+kjSN/DF74/A/1PORaI0La8mDMBN21EDIswfbhpS0
-         k4V00EBNEg0eJlVmx2l2s0xMpeqTiA9I5rBX14RKeRzWDlDNxxuofN4j0NXxm31u81Ia
-         q5jVkG1UV+HSFsIDavOsamO82o+5EEOyPQptytP0aqU9dUa++cxSFelNLogrReLAokPB
-         v7eV3NT9bXCquHKrhtO8a/9GeerQi0E9epMt+gts+JyNFclXQlPMjA8q8wH9Ig4sHb0I
-         RlAA==
+        d=google.com; s=20230601; t=1751890975; x=1752495775; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kC2OTWmkGVSsuY5pTtvXdp/tUOOzmOOr9IcRB4wUDDM=;
+        b=aroYKfJftD16ZuvOuV8wMdmzkvcDv2PXn2Rhv+hhCFD80ltv8cFTTqDY/4XBOaFDpx
+         DJhoIFQu9cWEoVhDM25qYKgFNW5eCCDT7VZjPZosJt+LZqtnzlJmA068zRFPt5P3Y1FF
+         4U0kwKlU9/NlERCnBlRkw8Ahjda0h8qX23W3cgko1NkOb88zMBgI00JyFdw99EOdpRqJ
+         O+vmEd7VBWDgfpi35c+tGSK/JrFZZCQg7CGUFPfFPIvcOmQ1hfYZdoF8xsg3/1yJ2m7E
+         eylWcH4bjEoPUqdlLRBMiCMSyaw+/q97OpJpIw3Whq/knt2IexzR0RjjQPiCAxkO3p8f
+         lhgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751891493; x=1752496293;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=w5Y/5ojhkIa9XtEOclDEI/2rgRb96fIBfSAga+PCtpI=;
-        b=V2+bg+x724U0HgSzg1b3Vc6oopzs5CurK9EJCFM6i91cBjTvNk3228I3mwWY7UPCr/
-         u6BNbo3KTzw8VXSFbVQNkhYhF9J5RsnOGwdS8QXAcZmIEMtElRFZOfySvsXF1Z7IFwqH
-         WiLUWtr6tn7utPrpIkd9KzRHxP27PK6/EzAHfxS2LmhBbZZt7clwD1+9FKhGwf/7UMCQ
-         7wZojCxhI7d6WeG7NJKUGGWYy2hzhj59e33hrdJz39nBBsoP1d6cdVA55J5ZzdYJ379s
-         Dcx5mkQC5U+N8XDBQg7oJDI3pmLO1oHoo7+bhxUtOP1Aq69CApxyegf0ShtY3dm1Kw30
-         zOkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVOIa2uXjN/qZ0knoapY2NZ5XjB+GYN/pVIwXADsOmkMDdzcu7MobNTy3qtPncs2TIZkflBI9HfSiqYgPY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzP2LTkBHGOuTKCNJMP4ggnOvieQTFxeijR5mPCRn9OeLBdbWG9
-	AF3if2AseqeiSGS+onJjrtk/QJfEl2NLP7atbzDYTE/XdUjX7mBc5rKy
-X-Gm-Gg: ASbGncsEPEBebWPqrczU6RkZ6mDWef9KuJTvV7Sr3OMpim+SWeIwrbjAnU6AUa45OPV
-	w6sFm8P15DzwdqvBtrveE9p8oe4a/zlyyWhrmg8AjLTCBACDWIcAa9F2NbLf84DuQregxOlIHKt
-	/V2TKDtjdh7SQCA3KYXRLIZBCqoBzQs5pJiRknc8C1uadvgkHfsZm/Ra5i13wx+a0kryi9L04KD
-	bcT99C6cZBa6CG7dAZ68l3vkBJ61Msse7SeSP6TFpNiTPMWmXG7ggNDNYw5qBdqbd55JfKYxbIt
-	wa0iL2uKyK63cjxZkerejS2yI2rsd18buQwFLGkxIp/mqUKjvZrQmbGXAAvnpDwNBYSurPuQ0sN
-	aBeIy6+cySaWkU59AnyBtoD9QLRancmx7GJY3O1s=
-X-Google-Smtp-Source: AGHT+IFYDKX1+EeyiZ94rnlAWM8p0evZNtPvNgaFjxinR5XWMDIn7irLF7W0020p8ShAdf7Q2SvFxQ==
-X-Received: by 2002:a05:6122:3d0f:b0:520:4996:7d2a with SMTP id 71dfb90a1353d-534f6697023mr3926920e0c.10.1751891492493;
-        Mon, 07 Jul 2025 05:31:32 -0700 (PDT)
-Received: from Ubuntu.. (syn-097-097-020-058.res.spectrum.com. [97.97.20.58])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-534790f2a20sm1270649e0c.45.2025.07.07.05.31.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Jul 2025 05:31:32 -0700 (PDT)
-From: Jonathan Velez <jonvelez12345@gmail.com>
-To: dlemoal@kernel.org,
-	cassel@kernel.org
-Cc: linux-ide@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	shuah@kernel.org,
-	Jonathan Velez <jonvelez12345@gmail.com>
-Subject: [PATCH] ata: libata-transport: replace scnprintf with sysfs_emit for simple attributes
-Date: Mon,  7 Jul 2025 12:20:04 +0000
-Message-ID: <20250707122004.224770-1-jonvelez12345@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1751890975; x=1752495775;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kC2OTWmkGVSsuY5pTtvXdp/tUOOzmOOr9IcRB4wUDDM=;
+        b=wL+vtVJ3JvH9AhiS/lw6vGiutLWlUkQWhZaVoBntqRClOJSzMxlcTVoYGOrf+zxeHE
+         e2ndhBT5o3EfL/mNGGcgrXyPZRQq7Bo9OqdF3J41pL8VC74zFLjjNh282GAosIyZTb/m
+         mtBVVEsPm/bYKPFdfjo6A2Ci6wfMxgaOmP6VBcvlikeuWZMwU0AGUMtS+y7b0Uy3WHI9
+         qYleh3E7hg9DMKG9iXoKJDMXCOqS1qzaXWGua6pgrqJ8bkOQ1n+NyHqklJHiCzER35hd
+         RlcinEUy4ZCW1NfRICsRCj0g00KHX2lv2wOD8gYmfdTgfvihqpUEb9cRTYIKZgLUPBtB
+         bcuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVUgAyjQWirzBzcWpYTD4KmAhX2N+2e4rrinDrtC/RE7qvSH1YUGW79NkoTJHwEiTASbeOlxp0ZEEg/NM8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzszh70oQEm0+7gXBiV+lCVMZ6cjCsjPqspLn1cXkyUSjPc5mF3
+	iY3CpHbHBHNITYZJP+8HpZX+lO1QY9+HGOF0i4h7ewtpdCu1kNmvf0VVkRqoEEByA+0CYR3mHwI
+	9oihrnEtaBHY3tejtaSrP73w+HrDqlU62vmbkPJpj
+X-Gm-Gg: ASbGncugYLDLhw2iACkHf1hNcU0bsL81+eXvpMWDri6aMic5i9Q+BSsc65WArwJ3inv
+	GXy0ZTm2FBQnhHrKlBCqsHqsiMNgwZoibtgDL1IMpgNvkN+vpMjegCwwtuxT6hIHOZr6GfxV3wr
+	qoMv40GCg9Zf34DtHbQcUZuOgjg2R8uyAF0rNgw8kGors=
+X-Google-Smtp-Source: AGHT+IGmu1jMB8m9mV8Tvai9M9eqluKCKwizyfOIqDCTpHTFG9NpgFDmREZITt+nSs5e8TFauiHUjuiBum43hF1gaYA=
+X-Received: by 2002:a05:622a:5e83:b0:4a7:1403:15c0 with SMTP id
+ d75a77b69052e-4a9a6828d6bmr143410911cf.4.1751890974914; Mon, 07 Jul 2025
+ 05:22:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <CANn89iJvyYjiweCESQL8E-Si7M=gosYvh1BAVWwAWycXW8GSdg@mail.gmail.com>
+ <202507071846455418y7RHD-cnstxL3SlD6hBH@zte.com.cn>
+In-Reply-To: <202507071846455418y7RHD-cnstxL3SlD6hBH@zte.com.cn>
+From: Eric Dumazet <edumazet@google.com>
+Date: Mon, 7 Jul 2025 05:22:43 -0700
+X-Gm-Features: Ac12FXxCIE-AGdCW1zPw0jMzjWM8tMZL_ZlRElWTTwxHobUT7zQ-ePBitnGFpAw
+Message-ID: <CANn89i+JGSt=_CtWfhDXypWW-34a6SoP3RAzWQ9B9VL4+PHjDw@mail.gmail.com>
+Subject: Re: [PATCH net-next v2] tcp: extend tcp_retransmit_skb tracepoint
+ with failure reasons
+To: xu.xin16@zte.com.cn
+Cc: kuba@kernel.org, kuniyu@amazon.com, ncardwell@google.com, 
+	davem@davemloft.net, horms@kernel.org, dsahern@kernel.org, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, fan.yu9@zte.com.cn
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-sprintf, snprintf, and scnprintf do not consider the PAGE_SIZE maximum
-of the temporary buffer used for outputting sysfs content and they may
-overrun the PAGE_SIZE buffer length.
+On Mon, Jul 7, 2025 at 3:47=E2=80=AFAM <xu.xin16@zte.com.cn> wrote:
+>
+> > >
+> > > -/*
+> > > - * tcp event with arguments sk and skb
+> > > - *
+> > > - * Note: this class requires a valid sk pointer; while skb pointer c=
+ould
+> > > - *       be NULL.
+> > > - */
+> > > -DECLARE_EVENT_CLASS(tcp_event_sk_skb,
+> > > +#define TCP_RETRANSMIT_QUIT_REASON             \
+> > > +               ENUM(TCP_RETRANS_ERR_DEFAULT,           "retransmit t=
+erminate unexpectedly")    \
+> > > +               ENUM(TCP_RETRANS_SUCCESS,               "retransmit s=
+uccessfully")              \
+> > > +               ENUM(TCP_RETRANS_IN_HOST_QUEUE,         "packet still=
+ queued in driver")        \
+> > > +               ENUM(TCP_RETRANS_END_SEQ_ERROR,         "invalid end =
+sequence")                 \
+> > > +               ENUM(TCP_RETRANS_TRIM_HEAD_NOMEM,       "trim head no=
+ memory")                  \
+> > > +               ENUM(TCP_RETRANS_UNCLONE_NOMEM,         "skb unclone =
+keeptruesize no memory")   \
+> > > +               ENUM(TCP_RETRANS_FRAG_NOMEM,            "fragment no =
+memory")                   \
+> >
+> > Do we really need 3 + 1 different 'NOMEMORY' status ?
+>
+> Yes, different "NOMEM" status pinpoint exact failure stages in packet ret=
+ransmission,
+> which helps distinguish which process triggered it. Beneficia
 
-To avoid output defects with the ATA transport class simple attributes,
-scnprintf() was converted to sysfs_emit(). This aligns with the sysfs
-guidance provided in Documentation/filesystems/sysfs.rst.
+ENOMEM is ENOMEM. Honestly I fail to see why it matters.
 
-Signed-off-by: Jonathan Velez <jonvelez12345@gmail.com>
----
- drivers/ata/libata-transport.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/ata/libata-transport.c b/drivers/ata/libata-transport.c
-index e898be49df6b..62415fe67a11 100644
---- a/drivers/ata/libata-transport.c
-+++ b/drivers/ata/libata-transport.c
-@@ -202,7 +202,7 @@ show_ata_port_##name(struct device *dev,				\
- {									\
- 	struct ata_port *ap = transport_class_to_port(dev);		\
- 									\
--	return scnprintf(buf, 20, format_string, cast ap->field);	\
-+	return sysfs_emit(buf, format_string, cast ap->field);	        \
- }
- 
- #define ata_port_simple_attr(field, name, format_string, type)		\
-@@ -389,7 +389,7 @@ show_ata_dev_##field(struct device *dev,				\
- {									\
- 	struct ata_device *ata_dev = transport_class_to_dev(dev);	\
- 									\
--	return scnprintf(buf, 20, format_string, cast ata_dev->field);	\
-+	return sysfs_emit(buf, format_string, cast ata_dev->field);	\
- }
- 
- #define ata_dev_simple_attr(field, format_string, type)		\
--- 
-2.43.0
-
+If this was the case, we would have thousands of different ENOMEM errnos.
 
