@@ -1,432 +1,388 @@
-Return-Path: <linux-kernel+bounces-719654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C91DDAFB0E6
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 12:14:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0FBBAFB0F3
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 12:17:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7988B188C076
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 10:14:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39AA017EB08
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 10:17:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 081272957C0;
-	Mon,  7 Jul 2025 10:13:56 +0000 (UTC)
-Received: from leonov.paulk.fr (leonov.paulk.fr [185.233.101.22])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E783F2918D5;
+	Mon,  7 Jul 2025 10:17:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="OZ15/u1N";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="lMvW1v9l";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="OZ15/u1N";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="lMvW1v9l"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57D3626057F;
-	Mon,  7 Jul 2025 10:13:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.233.101.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D808B287269
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 10:17:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751883235; cv=none; b=X1uM31MboLx+NrVn0D5dS/u8NyBRD5V6xlbiJGjqc2mgDMgptJpor7TKfOhbIigNcfTbOpLHm9Cjck4cx/4y1E7895SWy92P004sz4fEQU47OfYaAfP46tI2oZOEnZT8iv9K7GtbDur6f/6skqpuugfEviUzLaQssF0DPgC0TvY=
+	t=1751883439; cv=none; b=DMAytvmrl0gDIRErntBTEsAZGr/c1jaKi5SFC1+oTzI7G4JcTWovb983282kSwsIFANlBxLmxYGDKOmUbqxh8lvq5zm0zNad9jFj4bYbOiLhNw7wWpaM98hQqLyJLIsXeE4p55uequQVzIdYhdLuasJIBhbgjtu9dy/1wj1Cuxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751883235; c=relaxed/simple;
-	bh=CV1n2Ca1CRz/Vqwuq/jZCCA8Yxvy0aZV9rmI+cWy3c4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p5bwiXyb7qu7y0OvM7H8E2qqB6WagL9c6N4pTOgzZpL/I7iDtPcwe9UnFalzxnIzimC6e8AWqVRiw86nFrjRF3NB/W9fsANws+LYwKHehYqQwa5QOzElEORVQbTCri5Ptwlm1vYCPCtU/Z+XiYY6j5QvJYYPngMEwao86DH1Rb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sys-base.io; spf=pass smtp.mailfrom=sys-base.io; arc=none smtp.client-ip=185.233.101.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sys-base.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sys-base.io
-Received: from laika.paulk.fr (12.234.24.109.rev.sfr.net [109.24.234.12])
-	by leonov.paulk.fr (Postfix) with ESMTPS id 42BAD1F00056;
-	Mon,  7 Jul 2025 10:13:44 +0000 (UTC)
-Received: by laika.paulk.fr (Postfix, from userid 65534)
-	id 91573ACACDB; Mon,  7 Jul 2025 10:13:42 +0000 (UTC)
-X-Spam-Level: 
-Received: from collins (unknown [192.168.1.1])
-	by laika.paulk.fr (Postfix) with ESMTPSA id 98F05ACACD3;
-	Mon,  7 Jul 2025 10:13:39 +0000 (UTC)
-Date: Mon, 7 Jul 2025 12:13:37 +0200
-From: Paul Kocialkowski <paulk@sys-base.io>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Andre Przywara <andre.przywara@arm.com>, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/5] pinctrl: sunxi: Fix a100 emac pin function name
-Message-ID: <aGud0aVLHGoql3Vj@collins>
-References: <20250626080923.632789-1-paulk@sys-base.io>
- <20250626080923.632789-2-paulk@sys-base.io>
- <20250704233535.4b026641@minigeek.lan>
- <20250705153825.2be2b333@minigeek.lan>
- <aGm8n_wJPiGk85E4@collins>
- <CAGb2v66s-nWA2dFRpgX6DbDET3dWOm1jPKWm1k9SmGSqhTWoWA@mail.gmail.com>
- <aGuV3gcKSRIyey53@collins>
- <CAGb2v66U94RxVTC4O-Z9Pn2RyJK5Xz=pNZCvkFN-5Ax0wG6Cug@mail.gmail.com>
+	s=arc-20240116; t=1751883439; c=relaxed/simple;
+	bh=GMPLjG51PABkEjO8LkcqqhXFFGOWfPOr81sitTZJI3A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pYGz18vHewEhvZSq40Ope87PkHuYUaaQ1WUVY/ssWWyvb7IhwUBmztbOSnf7zxzW9iGKHxJ47VoDmUgmrgw3rZkCSM0mtQPAjJ+VTSzSTbE5UjQlU1c4fLS1C9GQYwIBEOzveXz5RDFAdlb2AgJ11lKLEa+ELu97a4uBK9U+Gx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=OZ15/u1N; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=lMvW1v9l; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=OZ15/u1N; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=lMvW1v9l; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id E6D8021199;
+	Mon,  7 Jul 2025 10:17:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1751883435; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=DE2k96o9iD+lqRTj460+OBpJ9c3Jss1dAuax0OXiA08=;
+	b=OZ15/u1NnN/LfxoMWgJ0qoFvtXMP7BOl2FNLR81Cf6WFoNb24W9oNxc5ycteG4qc8eC6X4
+	yqy7UsMPWFwwId7xByuaXMS98hIiIE8SKQo5HHn1Zkol0RLe0F5+QXrU0Ss5tsyzkoA1Om
+	MTRXs/Am8L3eD9v9p0P63BPMT/HY+QI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1751883435;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=DE2k96o9iD+lqRTj460+OBpJ9c3Jss1dAuax0OXiA08=;
+	b=lMvW1v9lPd+8P5GUZC82JRnqQHmU1c95QVvLU8oKus5Bhr8TiYJavPx/gzS7SIztfMuwvq
+	buCUOSIsrf+4S0Ag==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b="OZ15/u1N";
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=lMvW1v9l
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1751883435; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=DE2k96o9iD+lqRTj460+OBpJ9c3Jss1dAuax0OXiA08=;
+	b=OZ15/u1NnN/LfxoMWgJ0qoFvtXMP7BOl2FNLR81Cf6WFoNb24W9oNxc5ycteG4qc8eC6X4
+	yqy7UsMPWFwwId7xByuaXMS98hIiIE8SKQo5HHn1Zkol0RLe0F5+QXrU0Ss5tsyzkoA1Om
+	MTRXs/Am8L3eD9v9p0P63BPMT/HY+QI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1751883435;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=DE2k96o9iD+lqRTj460+OBpJ9c3Jss1dAuax0OXiA08=;
+	b=lMvW1v9lPd+8P5GUZC82JRnqQHmU1c95QVvLU8oKus5Bhr8TiYJavPx/gzS7SIztfMuwvq
+	buCUOSIsrf+4S0Ag==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id AF6D713757;
+	Mon,  7 Jul 2025 10:17:14 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id I4ZRKaqea2iVWQAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Mon, 07 Jul 2025 10:17:14 +0000
+Message-ID: <2c02e746-73d0-4d3c-aa2e-093523d4d58d@suse.de>
+Date: Mon, 7 Jul 2025 12:17:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="yZa9VLu47USVw4Sh"
-Content-Disposition: inline
-In-Reply-To: <CAGb2v66U94RxVTC4O-Z9Pn2RyJK5Xz=pNZCvkFN-5Ax0wG6Cug@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fbdev: efifb: do not load efifb if PCI BAR has changed
+ but not fixuped
+To: Shixiong Ou <oushixiong1025@163.com>, Helge Deller <deller@gmx.de>
+Cc: Peter Jones <pjones@redhat.com>, linux-fbdev@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ Shixiong Ou <oushixiong@kylinos.cn>
+References: <20250626094937.515552-1-oushixiong1025@163.com>
+ <3b3feb03-c417-4569-b7b0-44565d7cce4f@suse.de>
+ <a937f41f-2cee-459d-b94f-b7f979072f3e@163.com>
+ <1687bb52-e724-46a8-af75-26b486634c20@suse.de>
+ <1567a84b-3f78-4f0a-9549-bfe9fd4aa96b@163.com>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <1567a84b-3f78-4f0a-9549-bfe9fd4aa96b@163.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: E6D8021199
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FREEMAIL_TO(0.00)[163.com,gmx.de];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[163.com,gmx.de];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,kylinos.cn:email,suse.de:dkim,suse.de:mid]
+X-Spam-Score: -4.51
 
+Hi
 
---yZa9VLu47USVw4Sh
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Am 07.07.25 um 12:02 schrieb Shixiong Ou:
+>
+> 在 2025/7/7 17:28, Thomas Zimmermann 写道:
+>> Hi
+>>
+>> Am 07.07.25 um 11:24 schrieb Shixiong Ou:
+>>>
+>>> 在 2025/6/27 17:13, Thomas Zimmermann 写道:
+>>>> Hi
+>>>>
+>>>> Am 26.06.25 um 11:49 schrieb oushixiong1025@163.com:
+>>>>> From: Shixiong Ou <oushixiong@kylinos.cn>
+>>>>>
+>>>>> [WHY]
+>>>>> On an ARM machine, the following log is present:
+>>>>> [    0.900884] efifb: framebuffer at 0x1020000000, using 3072k, 
+>>>>> total 3072k
+>>>>> [    2.297884] amdgpu 0000:04:00.0: 
+>>>>> remove_conflicting_pci_framebuffers: bar 0: 0x1000000000 -> 
+>>>>> 0x100fffffff
+>>>>> [    2.297886] amdgpu 0000:04:00.0: 
+>>>>> remove_conflicting_pci_framebuffers: bar 2: 0x1010000000 -> 
+>>>>> 0x10101fffff
+>>>>> [    2.297888] amdgpu 0000:04:00.0: 
+>>>>> remove_conflicting_pci_framebuffers: bar 5: 0x58200000 -> 0x5823ffff
+>>>>>
+>>>>> It show that the efifb framebuffer base is out of PCI BAR, and this
+>>>>> results in both efi-framebuffer and amdgpudrmfb co-existing.
+>>>>>
+>>>>> The fbcon will be bound to efi-framebuffer by default and cannot 
+>>>>> be used.
+>>>>>
+>>>>> [HOW]
+>>>>> Do not load efifb driver if PCI BAR has changed but not fixuped.
+>>>>> In the following cases:
+>>>>>     1. screen_info_lfb_pdev is NULL.
+>>>>>     2. __screen_info_relocation_is_valid return false.
+>>>>
+>>>> Apart from ruling out invalid screen_info, did you figure out why 
+>>>> the relocation tracking didn't work? It would be good to fix this 
+>>>> if possible.
+>>>>
+>>>> Best regards
+>>>> Thomas
+>>>>
+>>> I haven’t figure out the root cause yet.
+>>>
+>>> This issue is quite rare and might be related to the EFI firmware.
+>>> However, I wonder if we could add some handling when no PCI 
+>>> resources are found in screen_info_fixup_lfb(), as a temporary 
+>>> workaround for the problem I mentioned earlier.
+>>
+>> As I said elsewhere in the thread, you can clear the screen_info's 
+>> video type in the branch at [1] to disable it entirely. We should 
+>> have probably done this anyway. Knowing the cause of the issue would 
+>> still be nice though.
+>>
+>> Best regards
+>> Thomas
+>>
+>> [1] 
+>> https://elixir.bootlin.com/linux/v6.15.5/source/drivers/video/screen_info_pci.c#L44 
+>>
+>>
+> thanks for you suggestion, while there are two cases:
+>     1. screen_info_lfb_pdev is NULL.
+>     2. __screen_info_relocation_is_valid return false.
+>
+> should we do it at [1] too?
 
-Hi,
+No. This being NULL is an entirely valid state.
 
-Le Mon 07 Jul 25, 17:52, Chen-Yu Tsai a =C3=A9crit :
-> On Mon, Jul 7, 2025 at 5:39=E2=80=AFPM Paul Kocialkowski <paulk@sys-base.=
-io> wrote:
-> >
-> > Hi Chen-Yu,
-> >
-> > Le Sun 06 Jul 25, 23:04, Chen-Yu Tsai a =C3=A9crit :
-> > > On Sun, Jul 6, 2025 at 8:00=E2=80=AFAM Paul Kocialkowski <paulk@sys-b=
-ase.io> wrote:
-> > > >
-> > > > Hi Andre,
-> > > >
-> > > > Le Sat 05 Jul 25, 15:38, Andre Przywara a =C3=A9crit :
-> > > > > On Fri, 4 Jul 2025 23:35:35 +0100
-> > > > > Andre Przywara <andre.przywara@arm.com> wrote:
-> > > > >
-> > > > > Hi,
-> > > > >
-> > > > > > On Thu, 26 Jun 2025 10:09:19 +0200
-> > > > > > Paul Kocialkowski <paulk@sys-base.io> wrote:
-> > > > > >
-> > > > > > Hi Paul,
-> > > > > >
-> > > > > > > The Allwinner A100/A133 only has a single emac instance, whic=
-h is
-> > > > > > > referred to as "emac" everywhere. Fix the pin names to drop t=
-he
-> > > > > > > trailing "0" that has no reason to be.
-> > > > > >
-> > > > > > Sorry, but this is wrong. There *is* a second EMAC on the A133 =
-die: it's
-> > > > > > indeed not mentioned in the manual, but you can probe its MMIO
-> > > > > > registers (@0x5030000), and there is a second syscon register
-> > > > > > (@0x03000034). It's mentioned in several BSP code places ([1]).
-> > > > > > It seem like no suitable pins are connected on the A133
-> > > > > > package, but that should not affect the A100 .dtsi (we use a si=
-milar
-> > > > > > approach for the H616 and A523).
-> > > > > >
-> > > > > > So I think we should keep the emac0 name.
-> > > > >
-> > > > > just thinking that it's even worse: this changes the DT visible p=
-inctrl
-> > > > > function name, so it's a DT ABI change. With the "emac0" function=
- name,
-> > > > > Ethernet would work with stable kernels already (as everything is
-> > > > > compatible, it's just about DT changes). But with this change, pi=
-nctrl
-> > > > > drivers in older kernels would not match.
-> > > >
-> > > > Given that the port is still very early and experimental and has ve=
-ry few users
-> > > > and no field deployment so I don't really think it would have annoy=
-ed anybody in
-> > > > practice. But yes in principle you are right, while the header rena=
-mes keep the
-> > > > same value, the string names are used to match the device-tree defi=
-nitions and
-> > > > this constitues ABI that needs to remain stable.
-> > > >
-> > > > > So I would very much like to see this patch moved out. Is it just=
- in
-> > > > > LinusW's tree so far? I don't see it in -next yet.
-> > > >
-> > > > I don't think the patches were accepted for over a week so we can p=
-robably
-> > > > still act. I will send reverts, unless maintainers want to manually=
- remove
-> > > > these commits?
-> > >
-> > > I can drop the dts patches from the sunxi tree. Linus might be able to
-> > > drop the pinctrl patch.
-> > >
-> > > You definitely need to send a revert for the DT binding patch that is
-> > > already in net-next.
-> >
-> > Should this really affect the bindings though?
-> >
-> > From what Andre reported, both EMAC0 and EMAC1 should be the same block=
- so it
-> > doesn't seem particularly necessary to have a different compatible.
-> >
-> > Looking at Allwiner's BSP code for the A133[0], I don't see any differe=
-nce
-> > between the two. While there's device_type property in Allwinner's dt, =
-it's
-> > apparently not used by the driver[1].
-> >
-> > So I think we're still fine with a single compatible (without the contr=
-oller
-> > index in it).
->=20
-> The block is the same, but the integration is slightly different, as
-> the register for the RGMII clock delays and other stuff is at a different
-> offset in the system controller. The BSP handles this by directly
-> including the register in the "reg" property.
+Best regards
+Thomas
 
-Ah I see, I forgot about the syscon register. However it doesn't seem like a
-very good approach to have a different compatible to express the idea that =
-an
-external resource is different. Just like we do for clocks, resets and other
-things, we should probably find a way to express the offset via some dedica=
-ted
-property instead of spinning a different compatible each time it changes.
+>
+> Best regards
+> Shixiong Ou
+>
+> [1] 
+> https://elixir.bootlin.com/linux/v6.15.5/source/drivers/video/screen_info_pci.c#L47
+>
+>>>
+>>> Best regards
+>>> Shixiong Ou
+>>>
+>>>>>
+>>>>> Signed-off-by: Shixiong Ou <oushixiong@kylinos.cn>
+>>>>> ---
+>>>>>   drivers/video/fbdev/efifb.c     |  4 ++++
+>>>>>   drivers/video/screen_info_pci.c | 24 ++++++++++++++++++++++++
+>>>>>   include/linux/screen_info.h     |  5 +++++
+>>>>>   3 files changed, 33 insertions(+)
+>>>>>
+>>>>> diff --git a/drivers/video/fbdev/efifb.c 
+>>>>> b/drivers/video/fbdev/efifb.c
+>>>>> index 0e1bd3dba255..de8d016c9a66 100644
+>>>>> --- a/drivers/video/fbdev/efifb.c
+>>>>> +++ b/drivers/video/fbdev/efifb.c
+>>>>> @@ -303,6 +303,10 @@ static void efifb_setup(struct screen_info 
+>>>>> *si, char *options)
+>>>>>     static inline bool fb_base_is_valid(struct screen_info *si)
+>>>>>   {
+>>>>> +    /* check whether fb_base has changed but not fixuped */
+>>>>> +    if (!screen_info_is_useful())
+>>>>> +        return false;
+>>>>> +
+>>>>>       if (si->lfb_base)
+>>>>>           return true;
+>>>>>   diff --git a/drivers/video/screen_info_pci.c 
+>>>>> b/drivers/video/screen_info_pci.c
+>>>>> index 66bfc1d0a6dc..ac57dcaf0cac 100644
+>>>>> --- a/drivers/video/screen_info_pci.c
+>>>>> +++ b/drivers/video/screen_info_pci.c
+>>>>> @@ -9,6 +9,8 @@ static struct pci_dev *screen_info_lfb_pdev;
+>>>>>   static size_t screen_info_lfb_bar;
+>>>>>   static resource_size_t screen_info_lfb_res_start; // original 
+>>>>> start of resource
+>>>>>   static resource_size_t screen_info_lfb_offset; // framebuffer 
+>>>>> offset within resource
+>>>>> +static bool screen_info_changed;
+>>>>> +static bool screen_info_fixuped;
+>>>>>     static bool __screen_info_relocation_is_valid(const struct 
+>>>>> screen_info *si, struct resource *pr)
+>>>>>   {
+>>>>> @@ -24,6 +26,24 @@ static bool 
+>>>>> __screen_info_relocation_is_valid(const struct screen_info *si, stru
+>>>>>       return true;
+>>>>>   }
+>>>>>   +bool screen_info_is_useful(void)
+>>>>> +{
+>>>>> +    unsigned int type;
+>>>>> +    const struct screen_info *si = &screen_info;
+>>>>> +
+>>>>> +    type = screen_info_video_type(si);
+>>>>> +    if (type != VIDEO_TYPE_EFI)
+>>>>> +        return true;
+>>>>> +
+>>>>> +    if (screen_info_changed && !screen_info_fixuped) {
+>>>>> +        pr_warn("The screen_info has changed but not fixuped");
+>>>>> +        return false;
+>>>>> +    }
+>>>>> +
+>>>>> +    pr_info("The screen_info is useful");
+>>>>> +    return true;
+>>>>> +}
+>>>>> +
+>>>>>   void screen_info_apply_fixups(void)
+>>>>>   {
+>>>>>       struct screen_info *si = &screen_info;
+>>>>> @@ -32,18 +52,22 @@ void screen_info_apply_fixups(void)
+>>>>>           struct resource *pr = 
+>>>>> &screen_info_lfb_pdev->resource[screen_info_lfb_bar];
+>>>>>             if (pr->start != screen_info_lfb_res_start) {
+>>>>> +            screen_info_changed = true;
+>>>>>               if (__screen_info_relocation_is_valid(si, pr)) {
+>>>>>                   /*
+>>>>>                    * Only update base if we have an actual
+>>>>>                    * relocation to a valid I/O range.
+>>>>>                    */
+>>>>>                   __screen_info_set_lfb_base(si, pr->start + 
+>>>>> screen_info_lfb_offset);
+>>>>> +                screen_info_fixuped = true;
+>>>>>                   pr_info("Relocating firmware framebuffer to 
+>>>>> offset %pa[d] within %pr\n",
+>>>>>                       &screen_info_lfb_offset, pr);
+>>>>>               } else {
+>>>>>                   pr_warn("Invalid relocating, disabling firmware 
+>>>>> framebuffer\n");
+>>>>>               }
+>>>>>           }
+>>>>> +    } else {
+>>>>> +        screen_info_changed = true;
+>>>>>       }
+>>>>>   }
+>>>>>   diff --git a/include/linux/screen_info.h 
+>>>>> b/include/linux/screen_info.h
+>>>>> index 923d68e07679..632cdbb1adbe 100644
+>>>>> --- a/include/linux/screen_info.h
+>>>>> +++ b/include/linux/screen_info.h
+>>>>> @@ -138,9 +138,14 @@ ssize_t screen_info_resources(const struct 
+>>>>> screen_info *si, struct resource *r,
+>>>>>   u32 __screen_info_lfb_bits_per_pixel(const struct screen_info *si);
+>>>>>     #if defined(CONFIG_PCI)
+>>>>> +bool screen_info_is_useful(void);
+>>>>>   void screen_info_apply_fixups(void);
+>>>>>   struct pci_dev *screen_info_pci_dev(const struct screen_info *si);
+>>>>>   #else
+>>>>> +bool screen_info_is_useful(void)
+>>>>> +{
+>>>>> +    return true;
+>>>>> +}
+>>>>>   static inline void screen_info_apply_fixups(void)
+>>>>>   { }
+>>>>>   static inline struct pci_dev *screen_info_pci_dev(const struct 
+>>>>> screen_info *si)
+>>>>
+>>>
+>>
+>
+>
 
-> So yes, you do need a separate compatible string, if only to deal with
-> the slight difference in the integration layer.
+-- 
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
 
-So maybe an additional allwinner,syscon-offset property or a new
-allwinner,syscon that takes the syscon phandle first and the offset second?
-It seems that various other platforms are doing similar things (e.g.
-ti,syscon-pcie-mode).
-
-Thanks
-
-Paul
-
->=20
-> ChenYu
->=20
-> > [0]: https://github.com/engSinteck/A133_Image/blob/main/longan/kernel/l=
-inux-4.9/arch/arm64/boot/dts/sunxi/sun50iw10p1.dtsi#L2016
-> > [1]: https://github.com/engSinteck/A133_Image/blob/main/longan/kernel/l=
-inux-4.9/drivers/net/ethernet/allwinner/sunxi-gmac.c
-> >
-> > All the best,
-> >
-> > Paul
-> >
-> > >
-> > > ChenYu
-> > >
-> > >
-> > > > Cheers,
-> > > >
-> > > > Paul
-> > > >
-> > > > > Cheers,
-> > > > > Andre.
-> > > > >
-> > > > > > [1]
-> > > > > > https://github.com/qiaoweibiao/T507_Kernel/blob/main/arch/arm64=
-/boot/dts/sunxi/sun50iw10p1.dtsi
-> > > > > >
-> > > > > >
-> > > > > > >
-> > > > > > > Fixes: 473436e7647d ("pinctrl: sunxi: add support for the All=
-winner A100 pin controller")
-> > > > > > > Signed-off-by: Paul Kocialkowski <paulk@sys-base.io>
-> > > > > > > ---
-> > > > > > >  drivers/pinctrl/sunxi/pinctrl-sun50i-a100.c | 32 ++++++++++-=
-----------
-> > > > > > >  1 file changed, 16 insertions(+), 16 deletions(-)
-> > > > > > >
-> > > > > > > diff --git a/drivers/pinctrl/sunxi/pinctrl-sun50i-a100.c b/dr=
-ivers/pinctrl/sunxi/pinctrl-sun50i-a100.c
-> > > > > > > index b97de80ae2f3..95b764ee1c0d 100644
-> > > > > > > --- a/drivers/pinctrl/sunxi/pinctrl-sun50i-a100.c
-> > > > > > > +++ b/drivers/pinctrl/sunxi/pinctrl-sun50i-a100.c
-> > > > > > > @@ -546,33 +546,33 @@ static const struct sunxi_desc_pin a100=
-_pins[] =3D {
-> > > > > > >             SUNXI_FUNCTION(0x0, "gpio_in"),
-> > > > > > >             SUNXI_FUNCTION(0x1, "gpio_out"),
-> > > > > > >             SUNXI_FUNCTION(0x2, "i2c0"),          /* SCK */
-> > > > > > > -           SUNXI_FUNCTION(0x5, "emac0"),         /* RXD1 */
-> > > > > > > +           SUNXI_FUNCTION(0x5, "emac"),          /* RXD1 */
-> > > > > > >             SUNXI_FUNCTION_IRQ_BANK(0x6, 6, 0)),
-> > > > > > >   SUNXI_PIN(SUNXI_PINCTRL_PIN(H, 1),
-> > > > > > >             SUNXI_FUNCTION(0x0, "gpio_in"),
-> > > > > > >             SUNXI_FUNCTION(0x1, "gpio_out"),
-> > > > > > >             SUNXI_FUNCTION(0x2, "i2c0"),          /* SDA */
-> > > > > > > -           SUNXI_FUNCTION(0x5, "emac0"),         /* RXD0 */
-> > > > > > > +           SUNXI_FUNCTION(0x5, "emac"),          /* RXD0 */
-> > > > > > >             SUNXI_FUNCTION_IRQ_BANK(0x6, 6, 1)),
-> > > > > > >   SUNXI_PIN(SUNXI_PINCTRL_PIN(H, 2),
-> > > > > > >             SUNXI_FUNCTION(0x0, "gpio_in"),
-> > > > > > >             SUNXI_FUNCTION(0x1, "gpio_out"),
-> > > > > > >             SUNXI_FUNCTION(0x2, "i2c1"),          /* SCK */
-> > > > > > > -           SUNXI_FUNCTION(0x5, "emac0"),         /* RXCTL */
-> > > > > > > +           SUNXI_FUNCTION(0x5, "emac"),          /* RXCTL */
-> > > > > > >             SUNXI_FUNCTION_IRQ_BANK(0x6, 6, 2)),
-> > > > > > >   SUNXI_PIN(SUNXI_PINCTRL_PIN(H, 3),
-> > > > > > >             SUNXI_FUNCTION(0x0, "gpio_in"),
-> > > > > > >             SUNXI_FUNCTION(0x1, "gpio_out"),
-> > > > > > >             SUNXI_FUNCTION(0x2, "i2c1"),          /* SDA */
-> > > > > > >             SUNXI_FUNCTION(0x3, "cir0"),          /* OUT */
-> > > > > > > -           SUNXI_FUNCTION(0x5, "emac0"),         /* CLKIN */
-> > > > > > > +           SUNXI_FUNCTION(0x5, "emac"),          /* CLKIN */
-> > > > > > >             SUNXI_FUNCTION_IRQ_BANK(0x6, 6, 3)),
-> > > > > > >   SUNXI_PIN(SUNXI_PINCTRL_PIN(H, 4),
-> > > > > > >             SUNXI_FUNCTION(0x0, "gpio_in"),
-> > > > > > >             SUNXI_FUNCTION(0x1, "gpio_out"),
-> > > > > > >             SUNXI_FUNCTION(0x2, "uart3"),         /* TX */
-> > > > > > >             SUNXI_FUNCTION(0x3, "spi1"),          /* CS */
-> > > > > > > -           SUNXI_FUNCTION(0x5, "emac0"),         /* TXD1 */
-> > > > > > > +           SUNXI_FUNCTION(0x5, "emac"),          /* TXD1 */
-> > > > > > >             SUNXI_FUNCTION_IRQ_BANK(0x6, 6, 4)),
-> > > > > > >   SUNXI_PIN(SUNXI_PINCTRL_PIN(H, 5),
-> > > > > > >             SUNXI_FUNCTION(0x0, "gpio_in"),
-> > > > > > > @@ -580,14 +580,14 @@ static const struct sunxi_desc_pin a100=
-_pins[] =3D {
-> > > > > > >             SUNXI_FUNCTION(0x2, "uart3"),         /* RX */
-> > > > > > >             SUNXI_FUNCTION(0x3, "spi1"),          /* CLK */
-> > > > > > >             SUNXI_FUNCTION(0x4, "ledc"),
-> > > > > > > -           SUNXI_FUNCTION(0x5, "emac0"),         /* TXD0 */
-> > > > > > > +           SUNXI_FUNCTION(0x5, "emac"),          /* TXD0 */
-> > > > > > >             SUNXI_FUNCTION_IRQ_BANK(0x6, 6, 5)),
-> > > > > > >   SUNXI_PIN(SUNXI_PINCTRL_PIN(H, 6),
-> > > > > > >             SUNXI_FUNCTION(0x0, "gpio_in"),
-> > > > > > >             SUNXI_FUNCTION(0x1, "gpio_out"),
-> > > > > > >             SUNXI_FUNCTION(0x2, "uart3"),         /* RTS */
-> > > > > > >             SUNXI_FUNCTION(0x3, "spi1"),          /* MOSI */
-> > > > > > > -           SUNXI_FUNCTION(0x5, "emac0"),         /* TXCK */
-> > > > > > > +           SUNXI_FUNCTION(0x5, "emac"),          /* TXCK */
-> > > > > > >             SUNXI_FUNCTION_IRQ_BANK(0x6, 6, 6)),
-> > > > > > >   SUNXI_PIN(SUNXI_PINCTRL_PIN(H, 7),
-> > > > > > >             SUNXI_FUNCTION(0x0, "gpio_in"),
-> > > > > > > @@ -595,7 +595,7 @@ static const struct sunxi_desc_pin a100_p=
-ins[] =3D {
-> > > > > > >             SUNXI_FUNCTION(0x2, "uart3"),         /* CTS */
-> > > > > > >             SUNXI_FUNCTION(0x3, "spi1"),          /* MISO */
-> > > > > > >             SUNXI_FUNCTION(0x4, "spdif"),         /* OUT */
-> > > > > > > -           SUNXI_FUNCTION(0x5, "emac0"),         /* TXCTL */
-> > > > > > > +           SUNXI_FUNCTION(0x5, "emac"),          /* TXCTL */
-> > > > > > >             SUNXI_FUNCTION_IRQ_BANK(0x6, 6, 7)),
-> > > > > > >   SUNXI_PIN(SUNXI_PINCTRL_PIN(H, 8),
-> > > > > > >             SUNXI_FUNCTION(0x0, "gpio_in"),
-> > > > > > > @@ -611,7 +611,7 @@ static const struct sunxi_desc_pin a100_p=
-ins[] =3D {
-> > > > > > >             SUNXI_FUNCTION(0x2, "dmic"),          /* DATA0 */
-> > > > > > >             SUNXI_FUNCTION(0x3, "spi2"),          /* CLK */
-> > > > > > >             SUNXI_FUNCTION(0x4, "i2s2"),          /* BCLK */
-> > > > > > > -           SUNXI_FUNCTION(0x5, "emac0"),         /* MDC */
-> > > > > > > +           SUNXI_FUNCTION(0x5, "emac"),          /* MDC */
-> > > > > > >             SUNXI_FUNCTION_IRQ_BANK(0x6, 6, 9)),
-> > > > > > >   SUNXI_PIN(SUNXI_PINCTRL_PIN(H, 10),
-> > > > > > >             SUNXI_FUNCTION(0x0, "gpio_in"),
-> > > > > > > @@ -619,7 +619,7 @@ static const struct sunxi_desc_pin a100_p=
-ins[] =3D {
-> > > > > > >             SUNXI_FUNCTION(0x2, "dmic"),          /* DATA1 */
-> > > > > > >             SUNXI_FUNCTION(0x3, "spi2"),          /* MOSI */
-> > > > > > >             SUNXI_FUNCTION(0x4, "i2s2"),          /* LRCK */
-> > > > > > > -           SUNXI_FUNCTION(0x5, "emac0"),         /* MDIO */
-> > > > > > > +           SUNXI_FUNCTION(0x5, "emac"),          /* MDIO */
-> > > > > > >             SUNXI_FUNCTION_IRQ_BANK(0x6, 6, 10)),
-> > > > > > >   SUNXI_PIN(SUNXI_PINCTRL_PIN(H, 11),
-> > > > > > >             SUNXI_FUNCTION(0x0, "gpio_in"),
-> > > > > > > @@ -642,33 +642,33 @@ static const struct sunxi_desc_pin a100=
-_pins[] =3D {
-> > > > > > >             SUNXI_FUNCTION(0x1, "gpio_out"),
-> > > > > > >             SUNXI_FUNCTION(0x3, "i2c3"),          /* SCK */
-> > > > > > >             SUNXI_FUNCTION(0x4, "i2s3"),          /* MCLK */
-> > > > > > > -           SUNXI_FUNCTION(0x5, "emac0"),         /* EPHY */
-> > > > > > > +           SUNXI_FUNCTION(0x5, "emac"),          /* EPHY */
-> > > > > > >             SUNXI_FUNCTION_IRQ_BANK(0x6, 6, 13)),
-> > > > > > >   SUNXI_PIN(SUNXI_PINCTRL_PIN(H, 14),
-> > > > > > >             SUNXI_FUNCTION(0x0, "gpio_in"),
-> > > > > > >             SUNXI_FUNCTION(0x1, "gpio_out"),
-> > > > > > >             SUNXI_FUNCTION(0x4, "i2s3"),          /* BCLK */
-> > > > > > > -           SUNXI_FUNCTION(0x5, "emac0"),         /* RXD3 */
-> > > > > > > +           SUNXI_FUNCTION(0x5, "emac"),          /* RXD3 */
-> > > > > > >             SUNXI_FUNCTION_IRQ_BANK(0x6, 6, 14)),
-> > > > > > >   SUNXI_PIN(SUNXI_PINCTRL_PIN(H, 15),
-> > > > > > >             SUNXI_FUNCTION(0x0, "gpio_in"),
-> > > > > > >             SUNXI_FUNCTION(0x1, "gpio_out"),
-> > > > > > >             SUNXI_FUNCTION(0x4, "i2s3"),          /* LRCK */
-> > > > > > > -           SUNXI_FUNCTION(0x5, "emac0"),         /* RXD2 */
-> > > > > > > +           SUNXI_FUNCTION(0x5, "emac"),          /* RXD2 */
-> > > > > > >             SUNXI_FUNCTION_IRQ_BANK(0x6, 6, 15)),
-> > > > > > >   SUNXI_PIN(SUNXI_PINCTRL_PIN(H, 16),
-> > > > > > >             SUNXI_FUNCTION(0x0, "gpio_in"),
-> > > > > > >             SUNXI_FUNCTION(0x1, "gpio_out"),
-> > > > > > >             SUNXI_FUNCTION(0x3, "i2s3_dout0"),    /* DOUT0 */
-> > > > > > >             SUNXI_FUNCTION(0x4, "i2s3_din1"),     /* DIN1 */
-> > > > > > > -           SUNXI_FUNCTION(0x5, "emac0"),         /* RXCK */
-> > > > > > > +           SUNXI_FUNCTION(0x5, "emac"),          /* RXCK */
-> > > > > > >             SUNXI_FUNCTION_IRQ_BANK(0x6, 6, 16)),
-> > > > > > >   SUNXI_PIN(SUNXI_PINCTRL_PIN(H, 17),
-> > > > > > >             SUNXI_FUNCTION(0x0, "gpio_in"),
-> > > > > > >             SUNXI_FUNCTION(0x1, "gpio_out"),
-> > > > > > >             SUNXI_FUNCTION(0x3, "i2s3_dout1"),    /* DOUT1 */
-> > > > > > >             SUNXI_FUNCTION(0x4, "i2s3_din0"),     /* DIN0 */
-> > > > > > > -           SUNXI_FUNCTION(0x5, "emac0"),         /* TXD3 */
-> > > > > > > +           SUNXI_FUNCTION(0x5, "emac"),          /* TXD3 */
-> > > > > > >             SUNXI_FUNCTION_IRQ_BANK(0x6, 6, 17)),
-> > > > > > >   SUNXI_PIN(SUNXI_PINCTRL_PIN(H, 18),
-> > > > > > >             SUNXI_FUNCTION(0x0, "gpio_in"),
-> > > > > > > @@ -676,7 +676,7 @@ static const struct sunxi_desc_pin a100_p=
-ins[] =3D {
-> > > > > > >             SUNXI_FUNCTION(0x2, "cir0"),          /* OUT */
-> > > > > > >             SUNXI_FUNCTION(0x3, "i2s3_dout2"),    /* DOUT2 */
-> > > > > > >             SUNXI_FUNCTION(0x4, "i2s3_din2"),     /* DIN2 */
-> > > > > > > -           SUNXI_FUNCTION(0x5, "emac0"),         /* TXD2 */
-> > > > > > > +           SUNXI_FUNCTION(0x5, "emac"),          /* TXD2 */
-> > > > > > >             SUNXI_FUNCTION_IRQ_BANK(0x6, 6, 18)),
-> > > > > > >   SUNXI_PIN(SUNXI_PINCTRL_PIN(H, 19),
-> > > > > > >             SUNXI_FUNCTION(0x0, "gpio_in"),
-> > > > > >
-> > > > > >
-> > > > >
-> > > >
-> > > > --
-> > > > Paul Kocialkowski,
-> > > >
-> > > > Independent contractor - sys-base - https://www.sys-base.io/
-> > > > Free software developer - https://www.paulk.fr/
-> > > >
-> > > > Expert in multimedia, graphics and embedded hardware support with L=
-inux.
-> >
-> > --
-> > Paul Kocialkowski,
-> >
-> > Independent contractor - sys-base - https://www.sys-base.io/
-> > Free software developer - https://www.paulk.fr/
-> >
-> > Expert in multimedia, graphics and embedded hardware support with Linux.
-
---=20
-Paul Kocialkowski,
-
-Independent contractor - sys-base - https://www.sys-base.io/
-Free software developer - https://www.paulk.fr/
-
-Expert in multimedia, graphics and embedded hardware support with Linux.
-
---yZa9VLu47USVw4Sh
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEAbcMXZQMtj1fphLChP3B6o/ulQwFAmhrndEACgkQhP3B6o/u
-lQxU5w//XeJBg1LfklJq+6k5MFiGmENiAMlLOG5lZARbxyA5fB6PA7HVBW22PwSG
-ssmozFf/NveM0koeSRSeDFYJ9dhCgEMl3PkC4BWa9ifKawl8C6e1l+ntr6pS3LK8
-fgmikJbvGbgpjg/RxafPTcIfo3YGVX/mNKoVJE8kf/n5AiIcG2fVWC/TcWEYuYDf
-PPTLT81HrvKqyDMkGw/xt2VceyHJOB0nTNRUVDCf+50qy0k4SE2eJF3Pbj9iN9ZZ
-UTj2X/OaTVsJ7ie+LO5xoZNWCUCv/ZiOdDNt+hODF6UbS8QnQdSrQ+/zSKxse6Xm
-jHZbYfuTRUKDZSR+EIAt9GDDBlwmqIs5QGGIiJ9GvB0dpAz3ZPgDOIGPtW+RWMqE
-jGzM1C+oLTU09V1eAkFj+mI72Wmb1qjHjgoE6x4e99LcAS9V92KwP+aOuJMiVdB8
-Wef8haAwKrX3UkFKUv02Hq6vxrrF4CpvdA3RfXShvLjQKow05dmenzc3gpPNYdgV
-5/ZAfTOkra5NoX8cnJPJHdbvNaQJxbe/qLQttUs9t2ayaUb2Tdfbji274CBCPDEx
-DaOriH8OpJHV8M+fAgk1sRbZyZUX3+2TJ0pbBsHi37B24LY/muiwapqlMSK5dUnb
-LEa07CHuUs1R03XGaZRYVjWEGKdF9g7wRprEtxbWYmGXQv+x99o=
-=e1Oj
------END PGP SIGNATURE-----
-
---yZa9VLu47USVw4Sh--
 
