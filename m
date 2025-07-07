@@ -1,166 +1,109 @@
-Return-Path: <linux-kernel+bounces-720388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA2F7AFBB01
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 20:43:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41388AFBB05
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 20:44:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65BCB188B402
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 18:44:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E5574A17F3
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 18:44:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE821265631;
-	Mon,  7 Jul 2025 18:43:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 976BA2135CE;
+	Mon,  7 Jul 2025 18:44:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I1Gc354h"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=netcube.li header.i=@netcube.li header.b="0F72HcT3"
+Received: from mail.netcube.li (mail.netcube.li [173.249.15.149])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD67F262FF0;
-	Mon,  7 Jul 2025 18:43:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0085713959D;
+	Mon,  7 Jul 2025 18:44:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.249.15.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751913812; cv=none; b=FE+1iLnT6ekWPO/MEBUcl766mMJmVnWSvPQ6at5tOpjK2FPSN+LU65xnlfeQcGvZOoaj5nGAoMvA1+nlfwCHBFnq5KKlA2elJm7iuvOHZTjc03cTPWKjhy9FVDPcE1xhjjvJnsoqIFiktu6Ru1T6Vo2NiO794rzao3bvL96/0Ew=
+	t=1751913890; cv=none; b=f3ku4WUAY3/nmtHNB2EjjD27s5j3GyTa8E8R5CzIbjKx9fwPV5Os+AwATCg2v1xBFYnIJcFrozT0L/8OdJeyosOumAnIHd2XBC46Q7wYmDR/syl4/ErDK9K3b+Ee8vBcdXR//7DdD54UApkroGIeXfk7MHzMaXbtlGZ6eIm2bec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751913812; c=relaxed/simple;
-	bh=hrM7TAUwUzWNU7f4k4yx1Gu9ZxX5m6dymI/e327xOKY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UdH406kFvGLfVRdgv9sRdiXwFre76j8Cm1g9IwyPPjVSqlT1gM35Dxa62cG4UwQ6gjWUs9kJJuXwHVJ7Ch8+RYQANshLK/2aQYXGGEcBb7GidrjKeUfE1l3eX/c6C3wmPbyzcJa3pofG8yRVmUD+hcKrGcd6uWwJA0k9bQzhUvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I1Gc354h; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77161C4AF0F;
-	Mon,  7 Jul 2025 18:43:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751913811;
-	bh=hrM7TAUwUzWNU7f4k4yx1Gu9ZxX5m6dymI/e327xOKY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=I1Gc354hwbuJzz57xuHU0adjTwd//JV0gPzmskPDKzgFi0rUipml8X0O2V6LITrXo
-	 3E8TyhoiOVpRorL5Je7NJYQJm7wFgMsRyX73rzrAPpeRq5Y6mKZ/snvPp9NZnIQljo
-	 EJ/Yb7UdKN5WtGgio8YxdoU+yw6/C05cM08V0Q4zjByYzRZFUAg7rdN4loP5CZ0m7N
-	 DSAIL4wUpN9lWI2/2fezfjt8ic6poJ7CHum+6NsaPgJsidjfva1nIMP/bhQLou0fTs
-	 z74T2zsEVCgOebD+jix36p0L6MdL6vdi5pf9RYqMHBP7hnTRoskg4TuCI+hiEinqgi
-	 MQud3uX4AQx2g==
-Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-61390809a36so956977eaf.1;
-        Mon, 07 Jul 2025 11:43:31 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUHutvs2AN81vZ6J6Q44DnFjKkFGsfTsMHcGCDetQlgfAE+a3iARkRtgaHwExh0oQKXOXqInpwmGaIa@vger.kernel.org, AJvYcCUo0ZaWXpF053kafWae7MwisDyQ0QlbMGyIEojlRqTWsH/zzJUeuZlDZMDfrevYJcfdo2TjWKJ5CQbL@vger.kernel.org, AJvYcCUwOqRHYxAO9vvknUtTXYhqSAWbZaurZJgn+NEYh+zHE2kW38f5gR3qywEvit0301JGgO9OPe5ce/AEDIjF05AVfA==@vger.kernel.org, AJvYcCV3+1Z22IW6zQmqMbl8WjcjY4zpbRxmlnnsWu0AMqaN4wbXtvSPjJJzFnxyPExWJZytA2r8tkWUJepuONNk@vger.kernel.org, AJvYcCV8JgaoCGEwfMiHrZI9nSaZ6n60BzWuf0DRBxy6tTFSkW7l11jFrnR34rCf/f1Sm72JCA8Y4t6ut8nG@vger.kernel.org, AJvYcCVAjpxXZce9ThTnKCtLFdNDBQJ6dFkbn4E1lYjAjfDgOhxZnbF/BdocT3/7/Xx72aeJrrLnR8FzoqmWAIJ6@vger.kernel.org, AJvYcCVgSUnObPlYLwb1yKcxjJ6OtcDsOYjJv8GIJNvHCYWyU9NYVqL0+ibanlbx80WuXgNgecQz/KhWc8qq@vger.kernel.org, AJvYcCVwzyL4hvT+Ci/bldHrMMZ9+H09l9AT17O5r31rmOXV15IztHMs8HrgsQVTID8q/ieBVikSVCnE2l55gEOZSN9dlYo=@vger.kernel.org, AJvYcCWlv+YsG3nt98nHkqFtTTWakByeRqg32/XeY6IA7Pu5cuU4C6uGVF3b4zLWtJtp74SU7eXQcPIOBuVSfiE=@vger.kernel.org, AJvYcCWtB2OrmkOS
- bK0Vu1CHes+E3pkuD5poesbhjL3HEtVYLVtu4+yn+eOawr5CY21GsbnY2mjbZM5xGzBb@vger.kernel.org, AJvYcCWxW6EtxI1dpYAYx59v5ff2MrnQUsU3u2e+GCDu/FYhc1sWB3lIXnJC2r5lNGqTCeFGSvrgYrVIJkg=@vger.kernel.org, AJvYcCXfL4M0d21XFlYxz9O0xXWGcCpQVj0YtD7X5IBJ7DcmnSDnjD7zrrcwBqRJgWJ992l2yxT/RJNTZmcuOb6i@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4hAwDnHt3HYo7wiMB+zRmQf8Sg4F2mN7dks+B1034Qjsfrx5G
-	1LZ/VxRskxHsyYVoNLwEdExgiATxzrjleqOwKFoUxo6WcMLXhIuIXgLVmlYYohmWqlJFUla1Smw
-	lZT7gDMfj47W4I/CtgAVjjATrj+5zIW0=
-X-Google-Smtp-Source: AGHT+IGWFo0UcD4MojnRdJcVhqk/giYu4pxqlIjmLkAJEnDd4MWXJ9qI/qzV8bVwGlXxOpEoErWIuer/la1NZ2vHba8=
-X-Received: by 2002:a05:6820:c8d:b0:611:e30a:f9c7 with SMTP id
- 006d021491bc7-613c0292e6amr496213eaf.7.1751913810559; Mon, 07 Jul 2025
- 11:43:30 -0700 (PDT)
+	s=arc-20240116; t=1751913890; c=relaxed/simple;
+	bh=M1ZViLM7NqgbmcK3XZ6B/433qKxpj9xglo4vIziF4tI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hYg3zNSUz5GCa3EalFcoTRq9Piy6NXxoJOrxsKEghVuJ0TFtMnmGEXTeYnwkc6deUtgbIUs3DczGPiHcq8f5+lhI6UW4d4gC0uEMBV9nHCU1wYekcsNPypyCoLEFI2jDrLVeJZ4cYBozignDyTP18fymdSCixAVE3BCGq0x5IMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=netcube.li; spf=pass smtp.mailfrom=netcube.li; dkim=pass (1024-bit key) header.d=netcube.li header.i=@netcube.li header.b=0F72HcT3; arc=none smtp.client-ip=173.249.15.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=netcube.li
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netcube.li
+dkim-signature: v=1; a=rsa-sha256; d=netcube.li; s=s1;
+	c=relaxed/relaxed; q=dns/txt; h=From:Subject:Date:Message-ID:To:CC:MIME-Version:Content-Transfer-Encoding;
+	bh=nXnojJGU29m0hFOXhR2jYRK6bl5DCglZXHWgm+c9MAE=;
+	b=0F72HcT37nPTuXXMO/qnx25gw/sIHQi5I5J7MkjnUr++gF3GEGZ/HpviU+EQskxSn6gia62m6OnUPD76udOMgqTEbArX05JwPv3Djag+HJ5EvBVs3NmbES0L1wxBcodvmz8f9sFOcmTkbvtVohBH2rEEBihua3QaH7wQvUTmkKU=
+Received: from lukas-hpz440workstation.lan.sk100508.local (cm70-231.liwest.at [212.241.70.231])
+	by mail.netcube.li with ESMTPA
+	; Mon, 7 Jul 2025 20:44:40 +0200
+From: Lukas Schmid <lukas.schmid@netcube.li>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	Maxime Ripard <mripard@kernel.org>
+Cc: Lukas Schmid <lukas.schmid@netcube.li>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: [PATCH v3 0/5] Add support for NetCube Systems Nagami SoM and its carrier boards
+Date: Mon,  7 Jul 2025 20:44:12 +0200
+Message-Id: <20250707184420.275991-1-lukas.schmid@netcube.li>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250703112708.1621607-1-claudiu.beznea.uj@bp.renesas.com>
- <CAPDyKFoznqfdX7Dvu3VPa5Me10VHGphnRRHrU17w-fie7HrQ5g@mail.gmail.com> <CAJZ5v0gH9ZAK9br58KB0VEtG+4VdwO7vEKtrKbpcYOKnZPf7bg@mail.gmail.com>
-In-Reply-To: <CAJZ5v0gH9ZAK9br58KB0VEtG+4VdwO7vEKtrKbpcYOKnZPf7bg@mail.gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 7 Jul 2025 20:43:18 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0gZK_JYgXYdbJ9pOBgrMO9sBa=VWP8HGOVV4C2mCOSSWg@mail.gmail.com>
-X-Gm-Features: Ac12FXx21d9hRiF0Pqe_4V96M5MioxLeGCoj8OSAh6lGgwSlfReCuBO8e1tghsQ
-Message-ID: <CAJZ5v0gZK_JYgXYdbJ9pOBgrMO9sBa=VWP8HGOVV4C2mCOSSWg@mail.gmail.com>
-Subject: Re: [PATCH v5 0/3] PM: domains: Detach on device_unbind_cleanup()
-To: Ulf Hansson <ulf.hansson@linaro.org>, Claudiu <claudiu.beznea@tuxon.dev>
-Cc: linux@armlinux.org.uk, gregkh@linuxfoundation.org, 
-	david.m.ertman@intel.com, ira.weiny@intel.com, leon@kernel.org, 
-	dakr@kernel.org, len.brown@intel.com, pavel@kernel.org, andersson@kernel.org, 
-	mturquette@baylibre.com, sboyd@kernel.org, maarten.lankhorst@linux.intel.com, 
-	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, 
-	wsa+renesas@sang-engineering.com, mathieu.poirier@linaro.org, 
-	vkoul@kernel.org, yung-chuan.liao@linux.intel.com, 
-	pierre-louis.bossart@linux.dev, broonie@kernel.org, robh@kernel.org, 
-	jirislaby@kernel.org, saravanak@google.com, jic23@kernel.org, 
-	dmitry.torokhov@gmail.com, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org, 
-	linux-mmc@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
-	linux-sound@vger.kernel.org, linux-spi@vger.kernel.org, 
-	linux-serial@vger.kernel.org, bhelgaas@google.com, geert@linux-m68k.org, 
-	linux-iio@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	fabrizio.castro.jz@renesas.com, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jul 4, 2025 at 9:53=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.org=
-> wrote:
->
-> On Fri, Jul 4, 2025 at 1:16=E2=80=AFPM Ulf Hansson <ulf.hansson@linaro.or=
-g> wrote:
-> >
-> > On Thu, 3 Jul 2025 at 13:27, Claudiu <claudiu.beznea@tuxon.dev> wrote:
-> > >
-> > > From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> > >
-> > > Hi,
-> > >
-> > > Series drops the dev_pm_domain_detach() from platform bus remove and
-> > > adds it in device_unbind_cleanup() to avoid runtime resumming the dev=
-ice
-> > > after it was detached from its PM domain.
-> > >
-> > > Please provide your feedback.
-> > >
-> > > Thank you,
-> > > Claudiu
-> > >
-> > > Changes in v5:
-> > > - added PD_FLAG_ATTACH_POWER_ON, PD_FLAG_DETACH_POWER_OFF;
-> > >   due to this a new patch was introduced
-> > >   "PM: domains: Add flags to specify power on attach/detach"
-> > >
-> > > Changes in v4:
-> > > - added a flag in dev_pm_info that is saved in dev_pm_domain_attach()
-> > >   and used in device_unbind_cleanup()
-> > >
-> > > Changes in v3:
-> > > - add devm_pm_domain_attach()
-> > >
-> > > Changes in v2:
-> > > - dropped the devres group open/close approach and use
-> > >   devm_pm_domain_attach()
-> > > - adjusted patch description to reflect the new approach
-> > >
-> > >
-> > > Claudiu Beznea (3):
-> > >   PM: domains: Add flags to specify power on attach/detach
-> > >   PM: domains: Detach on device_unbind_cleanup()
-> > >   driver core: platform: Drop dev_pm_domain_detach() call
-> > >
-> > >  drivers/amba/bus.c                       |  4 ++--
-> > >  drivers/base/auxiliary.c                 |  2 +-
-> > >  drivers/base/dd.c                        |  2 ++
-> > >  drivers/base/platform.c                  |  9 +++------
-> > >  drivers/base/power/common.c              |  9 ++++++---
-> > >  drivers/clk/qcom/apcs-sdx55.c            |  2 +-
-> > >  drivers/gpu/drm/display/drm_dp_aux_bus.c |  2 +-
-> > >  drivers/i2c/i2c-core-base.c              |  2 +-
-> > >  drivers/mmc/core/sdio_bus.c              |  2 +-
-> > >  drivers/rpmsg/rpmsg_core.c               |  2 +-
-> > >  drivers/soundwire/bus_type.c             |  2 +-
-> > >  drivers/spi/spi.c                        |  2 +-
-> > >  drivers/tty/serdev/core.c                |  2 +-
-> > >  include/linux/pm.h                       |  1 +
-> > >  include/linux/pm_domain.h                | 10 ++++++++--
-> > >  15 files changed, 31 insertions(+), 22 deletions(-)
-> > >
-> > > --
-> > > 2.43.0
-> > >
-> >
-> > The series looks good to me, please add:
-> > Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-> >
-> > Rafael, do you intend to pick this via your tree?
->
-> I do in general, but I haven't looked at this version yet.  I'll get
-> to it early next week.
+This series adds support for the NetCube Systems Nagami SoM and its
+associated carrier boards, the Nagami Basic Carrier and the Nagami Keypad
+Carrier.
 
-Now applied as 6.17 material, thanks!
+Changes in v3:
+  - Add missing dcxo node to the SoM dtsi
+
+Changes in v2:
+ - Squash the binding patches into one patch
+ - Fix formatting of the phy node in the SoM dtsi
+ - Add description on where the phy is located in the SoM dtsi
+ - Fix the phy address in the SoM dtsi
+ - Move the carrier bindings into the same description as enums
+
+Signed-off-by: Lukas Schmid <lukas.schmid@netcube.li>
+---
+Lukas Schmid (5):
+  dt-bindings: arm: sunxi: Add NetCube Systems Nagami SoM and carrier
+    board bindings
+  riscv: dts: allwinner: d1s-t113: Add pinctrl's required by NetCube
+    Systems Nagami SoM
+  ARM: dts: sunxi: add support for NetCube Systems Nagami SoM
+  ARM: dts: sunxi: add support for NetCube Systems Nagami Basic Carrier
+  ARM: dts: sunxi: add support for NetCube Systems Nagami Keypad Carrier
+
+ .../devicetree/bindings/arm/sunxi.yaml        |   8 +
+ arch/arm/boot/dts/allwinner/Makefile          |   3 +
+ ...n8i-t113s-netcube-nagami-basic-carrier.dts |  63 +++++
+ ...8i-t113s-netcube-nagami-keypad-carrier.dts | 165 +++++++++++++
+ .../allwinner/sun8i-t113s-netcube-nagami.dtsi | 228 ++++++++++++++++++
+ .../boot/dts/allwinner/sunxi-d1s-t113.dtsi    |  36 +++
+ 6 files changed, 503 insertions(+)
+ create mode 100644 arch/arm/boot/dts/allwinner/sun8i-t113s-netcube-nagami-basic-carrier.dts
+ create mode 100644 arch/arm/boot/dts/allwinner/sun8i-t113s-netcube-nagami-keypad-carrier.dts
+ create mode 100644 arch/arm/boot/dts/allwinner/sun8i-t113s-netcube-nagami.dtsi
+
+-- 
+2.39.5
+
+
 
