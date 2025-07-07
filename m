@@ -1,115 +1,261 @@
-Return-Path: <linux-kernel+bounces-720307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93763AFBA11
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 19:44:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16459AFBA16
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 19:47:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D22AC3B93D5
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 17:43:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B625C189DBB6
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 17:47:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14A3C2E7F18;
-	Mon,  7 Jul 2025 17:44:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B2E01FFC41;
+	Mon,  7 Jul 2025 17:47:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="ZZ6vvviz"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R7BfBLRh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9879C18A6DF
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 17:44:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9D1C18BBAE;
+	Mon,  7 Jul 2025 17:47:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751910246; cv=none; b=s2iwV4mJa0+t+nob5Bp/h16WqvnRFqvtEYbbe9tftVjnrO2jVDUMO+aMy0m8UJunsHY6kYE+QlyxILIHY/0s0ZcUnJ+jn5HqOJvlFNYa0tIBCsIbzkfuWrrfXvPWZWx68QrUWSOBV/zo09ZLxyc3CH19iwKieqY+NwIhFpHo+aI=
+	t=1751910450; cv=none; b=axMt7nFpSWEofoPTxYB1ftCboJBWTuutdKo3uA7OmZQK85CyyMqHvGpkjtbi7Wl5vN1JTpwJniQt3Bi0TkMI8/PQ64GEzfwPMcmEG3754pbFKhvvpCJNbpue9DWTspAXMorDEY1uvmMn7gmHjmBvsXeK2hDq9VgjkyQ/fvMTBsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751910246; c=relaxed/simple;
-	bh=o/HDZs7XPt+q8MHWK8dAkhY3tq2nEc40nkWYVoPA6DA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=k4HcFywFrNJduGmLL1KNP24pM0IswaRwubWBFB0L1ZPY7hO0X5D3eKF+peo6kSO+6vyEpRgPjv3KV4d0ofn07hYfCHMXoZDXO80FYewmqMpOkbJBkUXyvir31QL1VloSwsf5hZ3KzcdqB7nWUJE72tNvSeNC9LsMFcn5Y43Rdas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=ZZ6vvviz; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-6088d856c6eso6783671a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 10:44:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1751910243; x=1752515043; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=z6DAOBmHCUHaxqHYSRkMxeN53Fncoy3XLXn7MalUFJo=;
-        b=ZZ6vvvizpt2uudiiQ4A8FKN+MD6qjVHiHj2geugqLmwv7eUdXLVW+taMGCKrQgAv79
-         X+TIIgMNqkqK1ovNQXpkBqwoLPWCUouJU7EMnhclpTZWXp8OR3fwH9yNOejdCdraW9tG
-         L77KqudpEWo5Xbr16CYOcevyVG12ppMTbmyxfOoeXr8n2NFAQcyjxRmAfc75GxdXFe03
-         ZW/KKdF6gWPTwFZKCUm2AYUj2P0GMfztOiNQaD/0iOlQYWKN2ToQ87CwV0490E0bc1hr
-         jKoWF3RciHSPd2/hPzVqkgtW85076x8LFu9s6pFmXhpGVIwi0ecJ27+VDJLncuQw7KKO
-         Fv/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751910243; x=1752515043;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=z6DAOBmHCUHaxqHYSRkMxeN53Fncoy3XLXn7MalUFJo=;
-        b=tzXpevkcEKC5pQoYor6434wqvNEY92L94csta05+ptzaEW+JgwceknQKLL/yROktc/
-         5CY9WVOgek6luxB2p7HCqi6w7SmPNK9RxvWa8hd6EkNiwsbiQNrFQ/xEWN26GFYI+hkf
-         cAGTbIj/b0vdrL9G0MVjHglXoToXWZ/HXN7KAKxemlJXWHS7ZpAIlwu0UKSJRVybzZUM
-         0i1Qq0cbEuNiCz3m66COV6fuujp21lGLsSouzt9xeSQZEII/SzjonyiZjIwzIrlMHaAk
-         Q6kuvjENE7kuw1KHfqc1gkIrXJLhfkFmzMPiWLMN4ig7dH7v/dOT4r/4xaaHrAONOWx8
-         pyxg==
-X-Forwarded-Encrypted: i=1; AJvYcCUBbwzkBFrE5m9jLAqe83NIXy6GI34fj826kgLfjwpiIbuySTETBl/E6ExXU7okqeBa0r78vnrheiM1GKk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRrLmKZ/30Bj1DAPnV2+oDdjCvVslu2A3x/zCxyrbvxfJLLT/3
-	LLWdcce2Zf+YcdxsPnmQwegmj+EkY+noioICB9LE825AGqIwi/reYJAPnk6iMflCSE5yojh586K
-	WVtcvofZKw7x3t5KGsKEzaAisigxPeyJqAfe7uZNvmg==
-X-Gm-Gg: ASbGncuHOZhIyKkZLGrismZRNPegFWV0AKtg3Ar4cGROKPKr5aw9a6dpv9qJ15XuVSO
-	dVzWlbfOdB86PyDrv53xa37m6HSNY97hZwZAs7tFnxdHWGAettW2QgZxfk52PO1Ii2oTsHuhqrN
-	f+L6GIjh12kZ/xmlRpwZJkVTvDu171ChfQVLVegiiauQt05DPiQdzcp8SVAZKkxg3cNbqvJj4pc
-	/4hVdIteQ==
-X-Google-Smtp-Source: AGHT+IHansgZkeOlieDK57LFfjlu4rcmUxtW3lZTuC3Ur35sXnZg9qWS5gVNMrBeeSWLdaOlkpMIsGFOiNHbh9ej7Mc=
-X-Received: by 2002:a17:907:3c8e:b0:ae0:da2f:dcf3 with SMTP id
- a640c23a62f3a-ae6b02bf79cmr7436366b.59.1751910242854; Mon, 07 Jul 2025
- 10:44:02 -0700 (PDT)
+	s=arc-20240116; t=1751910450; c=relaxed/simple;
+	bh=WEbn4fdeKYnXwstffB/UnbRRLMg5J1b7MykCMDCQ+Cg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qUvNkhUTawZTe4Jwb8Ix/Ynn1npu7rt6mA1Ckuxnq+rd21U1z2McBlLDs/hcMwCI5arQ8xMQKBDO4ljvPK4XzBYdftP7khEQIxXRl86omYIPB2rBFXFpl29kldRIdzTwUPGg3hbK2vXc4Fee0cbFcyZLL4CfzCOw1ozB7+8GieA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R7BfBLRh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF0A4C4CEE3;
+	Mon,  7 Jul 2025 17:47:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751910450;
+	bh=WEbn4fdeKYnXwstffB/UnbRRLMg5J1b7MykCMDCQ+Cg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=R7BfBLRhOw3m1S86T8jinmmTSwb5dXtSFNlMDU67529GItm7rXD7o7pLdSAF4do2W
+	 gVRC9jONTWBWyRJvXYFM9sXn5coJ8raK0zlJng8ZYvMX9p6rj0M+Pp9yvJeXGDE/Yb
+	 EtBERaDjqzvHEu3LE4LZl/22bvKNuHMnFANFmNRqFwxa0cEOVbZlIPCmKzoSFNgUBM
+	 n9IDkgMHEhwjCxPpOTVkgfg3B2haMupWUoGAJXodak2cqBWQsEmR4Kv9LBXTQAEc/k
+	 H3yl4O9P5SHRRF2c1eDdTerdPh1ZuIiRnhvXRbI1JbEjCM0JgiyQiKg4Z0836z5jCU
+	 AGr/n9iTte00g==
+Date: Mon, 7 Jul 2025 18:47:18 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Nuno =?UTF-8?B?U8Oh?= <noname.nuno@gmail.com>
+Cc: David Lechner <dlechner@baylibre.com>, Lars-Peter Clausen
+ <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, Nuno
+ =?UTF-8?B?U8Oh?=	 <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] iio: adc: ad7173: fix num_slots
+Message-ID: <20250707184718.115bdb3a@jic23-huawei>
+In-Reply-To: <fca5a3d0a89b82b2e1a6d9e440cc2fe8896b73af.camel@gmail.com>
+References: <20250706-iio-adc-ad7173-fix-num_slots-on-most-chips-v3-1-d1f5453198a7@baylibre.com>
+	<fca5a3d0a89b82b2e1a6d9e440cc2fe8896b73af.camel@gmail.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231124060200.GR38156@ZenIV> <20231124060422.576198-1-viro@zeniv.linux.org.uk>
- <20231124060422.576198-20-viro@zeniv.linux.org.uk> <CAKPOu+_Ktbp5OMZv77UfLRyRaqmK1kUpNHNd1C=J9ihvjWLDZg@mail.gmail.com>
- <20250707172956.GF1880847@ZenIV>
-In-Reply-To: <20250707172956.GF1880847@ZenIV>
-From: Max Kellermann <max.kellermann@ionos.com>
-Date: Mon, 7 Jul 2025 19:43:49 +0200
-X-Gm-Features: Ac12FXwa1m6lh5O0rYtmshnvYFRpOLMyvh-XRnRfNKbXLatxwTMpJYQvwe0IrE8
-Message-ID: <CAKPOu+87UytVk_7S4L-y9We710j4Gh8HcacffwG99xUA5eGh7A@mail.gmail.com>
-Subject: Re: [PATCH v3 20/21] __dentry_kill(): new locking scheme
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 7, 2025 at 7:29=E2=80=AFPM Al Viro <viro@zeniv.linux.org.uk> wr=
-ote:
-> > (It checks for "dead" or "killed" entries, but why aren't you using
-> > __lockref_is_dead() here?)
->
-> What's the difference?  It checks for dentries currently still going thro=
-ugh
-> ->d_prune()/->d_iput()/->d_release().
+On Mon, 07 Jul 2025 09:06:16 +0100
+Nuno S=C3=A1 <noname.nuno@gmail.com> wrote:
 
-Just clarity. There exists a function and using it would make clearer
-what you're really checking for.
+> On Sun, 2025-07-06 at 13:53 -0500, David Lechner wrote:
+> > Fix the num_slots value for most chips in the ad7173 driver. The correct
+> > value is the number of CHANNELx registers on the chip.
+> >=20
+> > In commit 4310e15b3140 ("iio: adc: ad7173: don't make copy of
+> > ad_sigma_delta_info struct"), we refactored struct ad_sigma_delta_info
+> > to be static const data instead of being dynamically populated during
+> > driver probe. However, there was an existing bug in commit 76a1e6a42802
+> > ("iio: adc: ad7173: add AD7173 driver") where num_slots was incorrectly
+> > set to the number of CONFIGx registers instead of the number of
+> > CHANNELx registers. This bug was partially propagated to the refactored
+> > code in that the 16-channel chips were only given 8 slots instead of
+> > 16 although we did managed to fix the 8-channel chips and one of the
+> > 4-channel chips in that commit. However, we botched two of the 4-channel
+> > chips and ended up incorrectly giving them 8 slots during the
+> > refactoring.
+> >=20
+> > This patch fixes that mistake on the 4-channel chips and also
+> > corrects the 16-channel chips to have 16 slots.
+> >=20
+> > Fixes: 4310e15b3140 ("iio: adc: ad7173: don't make copy of ad_sigma_del=
+ta_info
+> > struct")
+> > Signed-off-by: David Lechner <dlechner@baylibre.com>
+> > --- =20
+>=20
+> Reviewed-by: Nuno S=C3=A1 <nuno.sa@analog.com>
+As discussed. Dropped patch 12 of the other series.  Applied this one to th=
+e fixes-togreg
+branch of iio.git.  I'll let it soak a couple of days before I do a pull re=
+quest.
 
-> What are you using shrink_dcache_parent() for?
+>=20
+> > Here is the patch that actually compiles on the fixes-togreg branch.
+> > ---
+> > Changes in v3:
+> > - Drop supports_spi_offload field.
+> > - Link to v2:
+> > https://lore.kernel.org/r/20250704-iio-adc-ad7173-fix-num_slots-on-most=
+-chips-v2-1-a74941609143@baylibre.com
+> >=20
+> > Changes in v2:
+> > - Improve commit message.
+> > - Link to v1:
+> > https://lore.kernel.org/r/20250703-iio-adc-ad7173-fix-num_slots-on-most=
+-chips-v1-1-326c5d113e15@baylibre.com
+> > ---
+> > =C2=A0drivers/iio/adc/ad7173.c | 36 ++++++++++++++++++++++++++----------
+> > =C2=A01 file changed, 26 insertions(+), 10 deletions(-)
+> >=20
+> > diff --git a/drivers/iio/adc/ad7173.c b/drivers/iio/adc/ad7173.c
+> > index
+> > 1966a9bc331401af118334a7be4c1a5b8d381473..c41bc5b9ac597f57eea6a097cc3a1=
+18de7b4
+> > 2210 100644
+> > --- a/drivers/iio/adc/ad7173.c
+> > +++ b/drivers/iio/adc/ad7173.c
+> > @@ -772,10 +772,26 @@ static const struct ad_sigma_delta_info
+> > ad7173_sigma_delta_info_8_slots =3D {
+> > =C2=A0	.num_slots =3D 8,
+> > =C2=A0};
+> > =C2=A0
+> > +static const struct ad_sigma_delta_info ad7173_sigma_delta_info_16_slo=
+ts =3D {
+> > +	.set_channel =3D ad7173_set_channel,
+> > +	.append_status =3D ad7173_append_status,
+> > +	.disable_all =3D ad7173_disable_all,
+> > +	.disable_one =3D ad7173_disable_one,
+> > +	.set_mode =3D ad7173_set_mode,
+> > +	.has_registers =3D true,
+> > +	.has_named_irqs =3D true,
+> > +	.addr_shift =3D 0,
+> > +	.read_mask =3D BIT(6),
+> > +	.status_ch_mask =3D GENMASK(3, 0),
+> > +	.data_reg =3D AD7173_REG_DATA,
+> > +	.num_resetclks =3D 64,
+> > +	.num_slots =3D 16,
+> > +};
+> > +
+> > =C2=A0static const struct ad7173_device_info ad4111_device_info =3D {
+> > =C2=A0	.name =3D "ad4111",
+> > =C2=A0	.id =3D AD4111_ID,
+> > -	.sd_info =3D &ad7173_sigma_delta_info_8_slots,
+> > +	.sd_info =3D &ad7173_sigma_delta_info_16_slots,
+> > =C2=A0	.num_voltage_in_div =3D 8,
+> > =C2=A0	.num_channels =3D 16,
+> > =C2=A0	.num_configs =3D 8,
+> > @@ -797,7 +813,7 @@ static const struct ad7173_device_info ad4111_devic=
+e_info
+> > =3D {
+> > =C2=A0static const struct ad7173_device_info ad4112_device_info =3D {
+> > =C2=A0	.name =3D "ad4112",
+> > =C2=A0	.id =3D AD4112_ID,
+> > -	.sd_info =3D &ad7173_sigma_delta_info_8_slots,
+> > +	.sd_info =3D &ad7173_sigma_delta_info_16_slots,
+> > =C2=A0	.num_voltage_in_div =3D 8,
+> > =C2=A0	.num_channels =3D 16,
+> > =C2=A0	.num_configs =3D 8,
+> > @@ -818,7 +834,7 @@ static const struct ad7173_device_info ad4112_devic=
+e_info
+> > =3D {
+> > =C2=A0static const struct ad7173_device_info ad4113_device_info =3D {
+> > =C2=A0	.name =3D "ad4113",
+> > =C2=A0	.id =3D AD4113_ID,
+> > -	.sd_info =3D &ad7173_sigma_delta_info_8_slots,
+> > +	.sd_info =3D &ad7173_sigma_delta_info_16_slots,
+> > =C2=A0	.num_voltage_in_div =3D 8,
+> > =C2=A0	.num_channels =3D 16,
+> > =C2=A0	.num_configs =3D 8,
+> > @@ -837,7 +853,7 @@ static const struct ad7173_device_info ad4113_devic=
+e_info
+> > =3D {
+> > =C2=A0static const struct ad7173_device_info ad4114_device_info =3D {
+> > =C2=A0	.name =3D "ad4114",
+> > =C2=A0	.id =3D AD4114_ID,
+> > -	.sd_info =3D &ad7173_sigma_delta_info_8_slots,
+> > +	.sd_info =3D &ad7173_sigma_delta_info_16_slots,
+> > =C2=A0	.num_voltage_in_div =3D 16,
+> > =C2=A0	.num_channels =3D 16,
+> > =C2=A0	.num_configs =3D 8,
+> > @@ -856,7 +872,7 @@ static const struct ad7173_device_info ad4114_devic=
+e_info
+> > =3D {
+> > =C2=A0static const struct ad7173_device_info ad4115_device_info =3D {
+> > =C2=A0	.name =3D "ad4115",
+> > =C2=A0	.id =3D AD4115_ID,
+> > -	.sd_info =3D &ad7173_sigma_delta_info_8_slots,
+> > +	.sd_info =3D &ad7173_sigma_delta_info_16_slots,
+> > =C2=A0	.num_voltage_in_div =3D 16,
+> > =C2=A0	.num_channels =3D 16,
+> > =C2=A0	.num_configs =3D 8,
+> > @@ -875,7 +891,7 @@ static const struct ad7173_device_info ad4115_devic=
+e_info
+> > =3D {
+> > =C2=A0static const struct ad7173_device_info ad4116_device_info =3D {
+> > =C2=A0	.name =3D "ad4116",
+> > =C2=A0	.id =3D AD4116_ID,
+> > -	.sd_info =3D &ad7173_sigma_delta_info_8_slots,
+> > +	.sd_info =3D &ad7173_sigma_delta_info_16_slots,
+> > =C2=A0	.num_voltage_in_div =3D 11,
+> > =C2=A0	.num_channels =3D 16,
+> > =C2=A0	.num_configs =3D 8,
+> > @@ -894,7 +910,7 @@ static const struct ad7173_device_info ad4116_devic=
+e_info
+> > =3D {
+> > =C2=A0static const struct ad7173_device_info ad7172_2_device_info =3D {
+> > =C2=A0	.name =3D "ad7172-2",
+> > =C2=A0	.id =3D AD7172_2_ID,
+> > -	.sd_info =3D &ad7173_sigma_delta_info_8_slots,
+> > +	.sd_info =3D &ad7173_sigma_delta_info_4_slots,
+> > =C2=A0	.num_voltage_in =3D 5,
+> > =C2=A0	.num_channels =3D 4,
+> > =C2=A0	.num_configs =3D 4,
+> > @@ -927,7 +943,7 @@ static const struct ad7173_device_info
+> > ad7172_4_device_info =3D {
+> > =C2=A0static const struct ad7173_device_info ad7173_8_device_info =3D {
+> > =C2=A0	.name =3D "ad7173-8",
+> > =C2=A0	.id =3D AD7173_ID,
+> > -	.sd_info =3D &ad7173_sigma_delta_info_8_slots,
+> > +	.sd_info =3D &ad7173_sigma_delta_info_16_slots,
+> > =C2=A0	.num_voltage_in =3D 17,
+> > =C2=A0	.num_channels =3D 16,
+> > =C2=A0	.num_configs =3D 8,
+> > @@ -944,7 +960,7 @@ static const struct ad7173_device_info
+> > ad7173_8_device_info =3D {
+> > =C2=A0static const struct ad7173_device_info ad7175_2_device_info =3D {
+> > =C2=A0	.name =3D "ad7175-2",
+> > =C2=A0	.id =3D AD7175_2_ID,
+> > -	.sd_info =3D &ad7173_sigma_delta_info_8_slots,
+> > +	.sd_info =3D &ad7173_sigma_delta_info_4_slots,
+> > =C2=A0	.num_voltage_in =3D 5,
+> > =C2=A0	.num_channels =3D 4,
+> > =C2=A0	.num_configs =3D 4,
+> > @@ -961,7 +977,7 @@ static const struct ad7173_device_info
+> > ad7175_2_device_info =3D {
+> > =C2=A0static const struct ad7173_device_info ad7175_8_device_info =3D {
+> > =C2=A0	.name =3D "ad7175-8",
+> > =C2=A0	.id =3D AD7175_8_ID,
+> > -	.sd_info =3D &ad7173_sigma_delta_info_8_slots,
+> > +	.sd_info =3D &ad7173_sigma_delta_info_16_slots,
+> > =C2=A0	.num_voltage_in =3D 17,
+> > =C2=A0	.num_channels =3D 16,
+> > =C2=A0	.num_configs =3D 8,
+> >=20
+> > ---
+> > base-commit: 731bfc181896a4dfd20a8c219bef1c205dd1d708
+> > change-id: 20250703-iio-adc-ad7173-fix-num_slots-on-most-chips-b982206a=
+20b1
+> >=20
+> > Best regards, =20
+>=20
 
-I don't. It's called by Ceph code, i.e. send_mds_reconnect(). A broken
-Ceph-MDS connection apparently triggered this busy loop.
-
-(I'm not a Ceph developer. I just care for the monthly Ceph regression
-that breaks all of our web servers on each and every Linux kernel
-update. Sad story. However, the Ceph bug I'm really hunting is
-unrelated to this dcache busy loop.)
-
-Max
 
