@@ -1,149 +1,178 @@
-Return-Path: <linux-kernel+bounces-720545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7FD7AFBD2C
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 23:05:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1942AFBD2F
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 23:06:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A31061890054
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 21:05:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC9A117FFFB
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 21:06:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE228285CAD;
-	Mon,  7 Jul 2025 21:05:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77498285C8B;
+	Mon,  7 Jul 2025 21:06:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Wyh3TsFo"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GvKG/PDe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4ADB219A6B;
-	Mon,  7 Jul 2025 21:05:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFCCE28507E;
+	Mon,  7 Jul 2025 21:06:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751922328; cv=none; b=NW6ulX6ozLDNLO+YaaYlpoFjIuY5QIjeqYGAfYE934M+TasHZZvkb2rHtWyAMXooMXRu5CrswYHCFxEc/DfATfZrdi0irY+oUZQtez/6t2vfQgSiC7/FKlcs7PeBanVqIEb+xhRZ/5OFohbcBndXNPOJvPtmVQvzHNSEmifzMiM=
+	t=1751922366; cv=none; b=b7gpsQ/wNJsmQRN5OJpAHzEx+ETD3rkqCypDne5YS9DW+i4J+BUSj/bR8kMaVHeMgrISMpmOayGUs4bYYsm96JNPAW6natC/wpehxMxmMkJ2cK/19lloGFDyztDyIX/jsD4d+dCp/l0D1bhFSVfdij/fw9eWonFQAZxJaxvAeXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751922328; c=relaxed/simple;
-	bh=Msw1wwMIj6bBrU/TIW6lTu4STpQvmw8gNG14LUH91S4=;
+	s=arc-20240116; t=1751922366; c=relaxed/simple;
+	bh=QkW1aiHP0NVpsrzGt8fVbIRYg7YfdAj+v9Qot7Jf2tU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YC1aFPbYJn8dFxD+spamMyVzgka2o4XASQqxtspCnrSeRXeftwKuBtR/3jMOQe5VtHdXDiW/Br98l/9GXu1rkdppTAsrJMQe5QL7K0q6Y+ROuseg9Urr5LBpfcqIypPAH7Bds45Yxxgo7DycYlWT2geWCWkTJbCMsCzmSQuUk40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Wyh3TsFo; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751922327; x=1783458327;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Msw1wwMIj6bBrU/TIW6lTu4STpQvmw8gNG14LUH91S4=;
-  b=Wyh3TsFoqhK4tvmS3CFH9ORXH8XSnJSqZTzKlBPrCLsXGx8EcRmQWTly
-   uH3Gv+wznesqEOck4QXJgyHFXj6YW5gGfUwGcivBdcOD2laxgqKe5lW3L
-   oRYLa6js+Ln+9yEMgOQsm2dZEe2Uun6H2+XfB0Ks3BkYHTT37Ln0R+DfM
-   oiOGjMGnHAwBNTLRV4MAzVJDOOOsVu4qMMR4ZfRoz5hiQVPKRxTNhUlms
-   Q1nZo5Qu4yeFePUEJVNuBM88z9bfsjd7wO5o9KWnKA898tEQR/2Mzx/YR
-   TFkMagwAgRCm9mq7sCTxQwDNdR+1CQp4kshRy6BzHRBgutt85rvAV1d7Y
-   Q==;
-X-CSE-ConnectionGUID: 9Ay4YK0mQX2tTVGnBveFOA==
-X-CSE-MsgGUID: 8+n5R5XfRB+MmBunCOUlkw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="64400404"
-X-IronPort-AV: E=Sophos;i="6.16,295,1744095600"; 
-   d="scan'208";a="64400404"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jul 2025 14:05:27 -0700
-X-CSE-ConnectionGUID: Is9nNTIMT+aYqgs+4rTEkQ==
-X-CSE-MsgGUID: djdgfGkZQPmGGO4uqQrFOQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,295,1744095600"; 
-   d="scan'208";a="192499157"
-Received: from cpetruta-mobl1.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.244.166])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jul 2025 14:05:22 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id 707C911FC1A;
-	Tue,  8 Jul 2025 00:05:19 +0300 (EEST)
-Date: Mon, 7 Jul 2025 21:05:19 +0000
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Ricardo Ribalda <ribalda@chromium.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-acpi@vger.kernel.org
-Subject: Re: [PATCH v2 03/12] ACPI: mipi-disco-img: Do not duplicate rotation
- info into swnodes
-Message-ID: <aGw2j1iHD6POx3yF@kekkonen.localdomain>
-References: <20250605-uvc-orientation-v2-0-5710f9d030aa@chromium.org>
- <20250605-uvc-orientation-v2-3-5710f9d030aa@chromium.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Lg6RvWQbOK2csql1d4oMHtqoLC0K0FezLHOGKsk/nYQqlxQ7l7IvXTfW/Lmi9sRU0Mw/2/tUp9e8sfxVo5S741mhICjHDbLkl3UwV/Yj/w6k2pn0MuH5/503XbH5PebbgQiSFr0KcFSqGpCEwns3Y9LhHCnIIdK5pl5+bPpqkT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GvKG/PDe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B346C4CEE3;
+	Mon,  7 Jul 2025 21:06:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751922366;
+	bh=QkW1aiHP0NVpsrzGt8fVbIRYg7YfdAj+v9Qot7Jf2tU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GvKG/PDewjeuSt9IUMciZqQ1yEcp5aclexa+R+dA/1sMXrcuoLv7mLLFkJ3DQnm8I
+	 nAdInF13toY5N+rGJ6NIdDae+CuE4fUyOEXUXTlq5HwplCm1cVmk762AGVYvy1sD5R
+	 JDJwcFaeSQdZXJ9h/WTxfdOboNJepEKSbQLdvQAef+ZbCLPS3BrV+cNtyxA4zOlzzx
+	 KcfMrXrq7bYPbn0rSWpVhWxw/TRZmDTQESwzG4ntFWA5sIF8gpMA4bpVekSBN0MxBc
+	 I48iUaz0rqWiq4Bnb1v3pDtIClT18yqp/kKkuJKHND+/BtZZDzsA5kBUe4za6Q+Jqd
+	 CXhg5/k7a4OyA==
+Date: Mon, 7 Jul 2025 23:05:57 +0200
+From: Alejandro Colomar <alx@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-mm@kvack.org, linux-hardening@vger.kernel.org, 
+	Kees Cook <kees@kernel.org>, Christopher Bazley <chris.bazley.wg14@gmail.com>, 
+	shadow <~hallyn/shadow@lists.sr.ht>, linux-kernel@vger.kernel.org, 
+	Andrew Morton <akpm@linux-foundation.org>, kasan-dev@googlegroups.com, Dmitry Vyukov <dvyukov@google.com>, 
+	Alexander Potapenko <glider@google.com>, Marco Elver <elver@google.com>, Christoph Lameter <cl@linux.com>, 
+	David Rientjes <rientjes@google.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>, 
+	Andrew Clayton <andrew@digital-domain.net>, Sven Schnelle <svens@linux.ibm.com>, 
+	Heiko Carstens <hca@linux.ibm.com>, Tvrtko Ursulin <tvrtko.ursulin@igalia.com>, 
+	"Huang, Ying" <ying.huang@intel.com>, Lee Schermerhorn <lee.schermerhorn@hp.com>, 
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, Chao Yu <chao.yu@oppo.com>
+Subject: Re: [RFC v3 3/7] mm: Use seprintf() instead of less ergonomic APIs
+Message-ID: <gjxc2cxjlsnccopdghektco2oulmhyhonigy7lwsaqqcbn62wj@wa3tidbvpyvk>
+References: <cover.1751862634.git.alx@kernel.org>
+ <033bf00f1fcf808245ae150346019aa7b997ea11.1751862634.git.alx@kernel.org>
+ <CAHk-=wh9Pqz07ne9iSt1_v0c14rkOGvF9AbEkaq1KnFhQD1SSA@mail.gmail.com>
+ <ugf4pu7qrojegz7arkcpa4cyde6hoyh73h66oc4f6ncc7jg23t@bklkbbotyzvp>
+ <CAHk-=whQ_0qFvg3cugt84+iKXi_eebNGY4so+PSnyyVNGVde1A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="3rxu64vcup7p4zp6"
 Content-Disposition: inline
-In-Reply-To: <20250605-uvc-orientation-v2-3-5710f9d030aa@chromium.org>
+In-Reply-To: <CAHk-=whQ_0qFvg3cugt84+iKXi_eebNGY4so+PSnyyVNGVde1A@mail.gmail.com>
 
-Hi Ricardo,
 
-A few more comments.
+--3rxu64vcup7p4zp6
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-mm@kvack.org, linux-hardening@vger.kernel.org, 
+	Kees Cook <kees@kernel.org>, Christopher Bazley <chris.bazley.wg14@gmail.com>, 
+	shadow <~hallyn/shadow@lists.sr.ht>, linux-kernel@vger.kernel.org, 
+	Andrew Morton <akpm@linux-foundation.org>, kasan-dev@googlegroups.com, Dmitry Vyukov <dvyukov@google.com>, 
+	Alexander Potapenko <glider@google.com>, Marco Elver <elver@google.com>, Christoph Lameter <cl@linux.com>, 
+	David Rientjes <rientjes@google.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>, 
+	Andrew Clayton <andrew@digital-domain.net>, Sven Schnelle <svens@linux.ibm.com>, 
+	Heiko Carstens <hca@linux.ibm.com>, Tvrtko Ursulin <tvrtko.ursulin@igalia.com>, 
+	"Huang, Ying" <ying.huang@intel.com>, Lee Schermerhorn <lee.schermerhorn@hp.com>, 
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, Chao Yu <chao.yu@oppo.com>
+Subject: Re: [RFC v3 3/7] mm: Use seprintf() instead of less ergonomic APIs
+References: <cover.1751862634.git.alx@kernel.org>
+ <033bf00f1fcf808245ae150346019aa7b997ea11.1751862634.git.alx@kernel.org>
+ <CAHk-=wh9Pqz07ne9iSt1_v0c14rkOGvF9AbEkaq1KnFhQD1SSA@mail.gmail.com>
+ <ugf4pu7qrojegz7arkcpa4cyde6hoyh73h66oc4f6ncc7jg23t@bklkbbotyzvp>
+ <CAHk-=whQ_0qFvg3cugt84+iKXi_eebNGY4so+PSnyyVNGVde1A@mail.gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <CAHk-=whQ_0qFvg3cugt84+iKXi_eebNGY4so+PSnyyVNGVde1A@mail.gmail.com>
 
-On Thu, Jun 05, 2025 at 05:52:56PM +0000, Ricardo Ribalda wrote:
-> The function v4l2_fwnode_device_parse() is not capable of parsint the
+Hi Linus,
 
-s/not/now/
-s/parsin\Kt/g/
+On Mon, Jul 07, 2025 at 01:49:20PM -0700, Linus Torvalds wrote:
+> On Mon, 7 Jul 2025 at 13:29, Alejandro Colomar <alx@kernel.org> wrote:
+> >
+> > I am in the C Committee, and have proposed this API for standardization.
+> > I have a feeling that the committee might be open to it.
+>=20
+> Honestly, how about fixing the serious problems with the language instead?
 
-?
+I'm doing some work on that.  See the new _Countof() operator?  That was
+my first introduction in the standard, last year.
 
-> _PLD method, there is no need to duplicate the rotation information in a
-> swnode.
-> 
-> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> ---
->  drivers/acpi/mipi-disco-img.c | 15 ---------------
->  1 file changed, 15 deletions(-)
-> 
-> diff --git a/drivers/acpi/mipi-disco-img.c b/drivers/acpi/mipi-disco-img.c
-> index 5b85989f96beeb726f59ac9e12e965a215fb38f6..b58b5ba22a47a4afc5212998074d322f0b7586dc 100644
-> --- a/drivers/acpi/mipi-disco-img.c
-> +++ b/drivers/acpi/mipi-disco-img.c
-> @@ -617,21 +617,6 @@ static void init_crs_csi2_swnodes(struct crs_csi2 *csi2)
->  
->  	adev_fwnode = acpi_fwnode_handle(adev);
->  
-> -	/*
-> -	 * If the "rotation" property is not present, but _PLD is there,
-> -	 * evaluate it to get the "rotation" value.
-> -	 */
-> -	if (!fwnode_property_present(adev_fwnode, "rotation")) {
-> -		struct acpi_pld_info *pld;
-> -
-> -		if (acpi_get_physical_device_location(handle, &pld)) {
-> -			swnodes->dev_props[NEXT_PROPERTY(prop_index, DEV_ROTATION)] =
-> -					PROPERTY_ENTRY_U32("rotation",
-> -							   pld->rotation * 45U);
-> -			kfree(pld);
-> -		}
-> -	}
-> -
->  	if (!fwnode_property_read_u32(adev_fwnode, "mipi-img-clock-frequency", &val))
->  		swnodes->dev_props[NEXT_PROPERTY(prop_index, DEV_CLOCK_FREQUENCY)] =
->  			PROPERTY_ENTRY_U32("clock-frequency", val);
-> 
+I'm working on an extension to it that I believe will make array
+parameters safer.
 
--- 
-Regards,
+> Get rid of the broken "strict aliasing" garbage.
 
-Sakari Ailus
+I don't feel qualified to comment on that.
+
+> Get rid of the random "undefined behavior" stuff that is literally
+> designed to let compilers intentionally mis-compile code.
+
+We're indeed working on that.  The last committee meeting removed a
+large number of undefined behaviors, and turned them into mandatory
+diagnostics.  And there's ongoing work on removing more of those.
+
+> Because as things are, "I am on the C committee" isn't a
+> recommendation. It's a "we have decades of bad decisions to show our
+> credentials".
+
+I joined in 2024 because I was fed up with the shit they were producing
+and wanted to influence it.  You don't need to convince me.
+
+> In the kernel, I have made it very very clear that we do not use
+> standard C, because standard C is broken.
+
+I agree.  I personally use GNU C and tend to ignore the standard.  But
+I'm still working on improving the standard, even if just to avoid
+having to learn Rust (and also because GCC and glibc don't accept any
+improvements or fixes if they don't go through the standard, these
+days).
+
+
+Have a lovely day!
+Alex
+
+> I stand by my "let's not add random letters to existing functions that
+> are already too confusing".
+>=20
+>               Linus
+
+--=20
+<https://www.alejandro-colomar.es/>
+
+--3rxu64vcup7p4zp6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmhsNq8ACgkQ64mZXMKQ
+wqk41w//ZtMNK1v7cKQ0lZlTUqTrnD/HJrjpT73G+qAbUCgmMraH4Xk+LYomGqUq
+XJ5sCg2eHN76EUVvTNOVWQHCSLlmdMEheQSoIN9mpesMkPmmCMuvQpZ27WKvYUIR
+y4yEZ4BWlX9kVxpacTa50QHVIg/BVEloY3lcUodp5rVvlqi6QWSp15/wzf6spfc1
+l1PV/nmntBAq9XUv3XgNZ3T8nxNtBmaYW+PKdqQyi2xnt5TNOBff/E4sf4K+HUn+
+T2eHsOg8VPHZ4Nz9/cAHNFb7ZHjXAIkCWzjwayQrPyBPP2zL6GaFkKYGmPNcDz2U
+qmB0mJ6OQOk/lIuRr2K1CskmqUxRY0Ejt/5TIuzRQBR6Z1Dxaixp/DusKD/pcVlm
+E9lTV/NR0E0OLGXRCuCqC3BmOBQC6sZJPDoNObStAjSSlhA5PVBGc5O0AtWGn/NO
+7xX5gNtFWW4Yth0Reqd0HsZS3R5u5HaRI9q9KVEgVPKvSbizuSbKTEi4jRABdZ6s
+ekfxn3t2f3l8F+yWPZ2QFyPf5/c6xADdvLe5iYQgbkbCHPgRKzdfQV/pY3jgds7c
+Ct8TbV95pYM0xDnmS1P3FpyRfTrfkscJTfdilRdx8V0g/P9pG6A+rKDRJX3dFwG6
+HsA2MA0KFcYR43mRRKXNBvzAGdMHWZfqumHJlaW1s67BIqeLn8Q=
+=VDh/
+-----END PGP SIGNATURE-----
+
+--3rxu64vcup7p4zp6--
 
