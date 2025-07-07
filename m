@@ -1,156 +1,115 @@
-Return-Path: <linux-kernel+bounces-720165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86887AFB807
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 17:53:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28CA2AFB80D
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 17:56:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FEA61AA4B41
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 15:53:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8086C175CB0
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 15:56:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A7D52144CF;
-	Mon,  7 Jul 2025 15:52:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C609A21FF57;
+	Mon,  7 Jul 2025 15:56:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b="CxrWI4uP"
-Received: from ahti.lucaweiss.eu (ahti.lucaweiss.eu [128.199.32.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HdJ5BOzL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E52920B215;
-	Mon,  7 Jul 2025 15:52:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=128.199.32.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EEF62144CF;
+	Mon,  7 Jul 2025 15:56:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751903540; cv=none; b=DhiqvVEyktWXgogeWq6+D/lIxGT2YczpSHBKJXLvQtIp6A7LlCVuOSgqFN481mPWQU4h5sGgFmjVNZGBlyEbz10DU8SEH4B9Tc82Nrfx3+2CudvjMiYfw40XpUY5/VkOyBRsfE3z8TcZVP2XxETCyjgF7ghN57BsSvKEeDQuvLs=
+	t=1751903765; cv=none; b=PlbqClWCLKWyiVQMMG9VeMZmdoJjbaSuwp2ToA/A1j46DmLSwEfFhR+n01EVUU7rg4mWWZjiklr8FFuff+iY8spZ9afAZilL4+9iGghKxqJLdEBaUi5KdoiWqpCJM3M6HiJysCDOZGkKAIrrPquyYesoNPfY1ZiVdooYkngkcp8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751903540; c=relaxed/simple;
-	bh=WOYH2WVXKCFmx3sT48e2VzIxCSs3naav41v/IxkJFw0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZL0NJuUlyjxnNCt9LFVCYArNuSSUdq2ItKE/i0ULcMttkvQH50AqvUBzvq6JX/qJANTAKeEBQ2i9cGovV06m1aF+llqCTY+55Ub+ZgzL0/qFxAI0OIzV2yOsRjGwvWAC+zoqANk0nWVhfRLayX0fmJPEdfc2RIJi35K4o2ZDfLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lucaweiss.eu; spf=pass smtp.mailfrom=lucaweiss.eu; dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b=CxrWI4uP; arc=none smtp.client-ip=128.199.32.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lucaweiss.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lucaweiss.eu
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lucaweiss.eu; s=s1;
-	t=1751903528; bh=WOYH2WVXKCFmx3sT48e2VzIxCSs3naav41v/IxkJFw0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=CxrWI4uPSs+Plme+tQ42p1o7N6K/3CYgq1B74Nbbwjvtx+joytqArMikGeLVm9AVo
-	 4AliM5NtWhkgXxK3IcM8XHeP8dAUejyX+ZfxPC/g+eE8RMVF9v0S1ri1vz3FhTeAW/
-	 kdgeK1Bitfskwn9pNVPkrae30cdrxriyAXFjEH6k=
-Message-ID: <cb84e711-1169-4c12-b866-9dd4f06ea3d3@lucaweiss.eu>
-Date: Mon, 7 Jul 2025 17:52:08 +0200
+	s=arc-20240116; t=1751903765; c=relaxed/simple;
+	bh=f6DsW0WYHxLyXHwiXum+i83pkEndPZCJeiW0ueulBxk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=vDrA3HD+MrKpXSBB9KnSZmiHR+aYXZdTe3yG4WjMI1G8VR2Pccn+cdA1hgOaH5tDUzxymM7/rb6Hw65hZ1JUIj1TfM5DAXyHjdcizmBfZrBYOVZxpc81lmY9fsDLuwOd2qSmaLw5lZDk9j+wmlKnNYt1RKRFB/jSaWnIOH9IXO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HdJ5BOzL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF57BC4CEE3;
+	Mon,  7 Jul 2025 15:56:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751903764;
+	bh=f6DsW0WYHxLyXHwiXum+i83pkEndPZCJeiW0ueulBxk=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=HdJ5BOzLRtXDqoOLhhV2Qj7wOmLCaQaRGPPjUhbV9euuRWBaKS7jy+ZQnxnfG5VvY
+	 iH4qta6l2IYoiANGgt2ib240phFrRp6C4kPvqGPkhCjDthYNvsj2YbuTWEWIBy5aP/
+	 k2pYmyygJrtZdAbnr+KEj1Oaz2kXMIsb5VcE4c2f+9x1j9smvvGYvDwVun8/QXZ0sT
+	 rNKrEKCa324UB4CPM+2TDltWJnAJKvb7jGUoIyd43xnE+lCTJ9gMeccooSG3fW7fX8
+	 eKiN2C4smyNGFsaq8RlAE7jOSm0DM0SS1oG7541oI+yq6gmg7YgkpA6ry0u81kAQUe
+	 E03HVM1hiIuOg==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 553B4CE09EB; Mon,  7 Jul 2025 08:56:04 -0700 (PDT)
+Date: Mon, 7 Jul 2025 08:56:04 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Joel Fernandes <joelagnelf@nvidia.com>, linux-kernel@vger.kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Andrea Righi <arighi@nvidia.com>,
+	Frederic Weisbecker <frederic@kernel.org>, rcu@vger.kernel.org
+Subject: Re: [PATCH v2] smp: Document preemption and stop_machine() mutual
+ exclusion
+Message-ID: <298d86df-65bc-4f7a-a361-a8382cdee296@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20250705172328.4114289-1-joelagnelf@nvidia.com>
+ <20250707075050.GB1613200@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v2 2/3] ASoC: codecs: Add Awinic AW8898 amplifier driver
-Content-Language: en-US
-To: Mark Brown <broonie@kernel.org>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
- Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Weidong Wang <wangweidong.a@awinic.com>, linux-sound@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org
-References: <20250705-aw8898-v2-0-9c3adb1fc1a2@lucaweiss.eu>
- <20250705-aw8898-v2-2-9c3adb1fc1a2@lucaweiss.eu>
- <57472ea1-a9c1-472b-a178-eae1cb207468@sirena.org.uk>
-From: Luca Weiss <luca@lucaweiss.eu>
-In-Reply-To: <57472ea1-a9c1-472b-a178-eae1cb207468@sirena.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250707075050.GB1613200@noisy.programming.kicks-ass.net>
 
-Hi Mark,
-
-On 07-07-2025 2:02 p.m., Mark Brown wrote:
-> On Sat, Jul 05, 2025 at 02:03:06PM +0200, Luca Weiss wrote:
+On Mon, Jul 07, 2025 at 09:50:50AM +0200, Peter Zijlstra wrote:
+> On Sat, Jul 05, 2025 at 01:23:27PM -0400, Joel Fernandes wrote:
+> > Recently while revising RCU's cpu online checks, there was some discussion
+> > around how IPIs synchronize with hotplug.
+> > 
+> > Add comments explaining how preemption disable creates mutual exclusion with
+> > CPU hotplug's stop_machine mechanism. The key insight is that stop_machine()
+> > atomically updates CPU masks and flushes IPIs with interrupts disabled, and
+> > cannot proceed while any CPU (including the IPI sender) has preemption
+> > disabled.
 > 
->> +static void aw8898_update_dev_mode(struct aw8898 *aw8898)
->> +{
->> +	unsigned int mode = AW8898_SYSCTRL_SPK_MODE;
->> +
->> +	if (aw8898->dev_mode == AW8898_RECEIVER)
->> +		mode = AW8898_SYSCTRL_RCV_MODE;
->> +
->> +	regmap_update_bits(aw8898->regmap, AW8898_SYSCTRL,
->> +			   AW8898_SYSCTRL_MODE_MASK,
->> +			   FIELD_PREP(AW8898_SYSCTRL_MODE_MASK, mode));
->> +}
+> I'm very conflicted on this. While the added comments aren't wrong,
+> they're not quite accurate either. Stop_machine doesn't wait for people
+> to enable preemption as such.
 > 
-> Why is this open coded rather than just being a standard enum?  AFAICT
-> we never reference dev_mode outside of here or the _get() and put()
-> callbacks.  You might be looking for a _VALUE_ENUM?
-
-Thanks for the reference, I'll take a look!
-
+> Fundamentally there seems to be a misconception around what stop machine
+> is and how it works, and I don't feel these comments make things better.
 > 
->> +	if (!fw) {
->> +		dev_err(&aw8898->client->dev, "Failed to load firmware\n");
->> +		return;
->> +	}
->> +
->> +	dev_dbg(&aw8898->client->dev, "Loaded %s - size: %zu\n", AW8898_CFG_NAME, fw->size);
+> Basically, stop-machine (and stop_one_cpu(), stop_two_cpus()) use the
+> stopper task, a task running at the ultimate priority; if it is
+> runnable, it will run.
 > 
-> We print the firmware name we were looking for if we loaded it, but not
-> if we failed to load it when it's probably more useful.
-
-I can remove the debug print, I think if the firmware fails to load 
-we'll also get an error print from the driver core with the file name? 
-But I can double check it.
-
+> Stop-machine simply wakes all the stopper tasks and co-ordinates them to
+> literally stop the machine. All CPUs have the stopper task scheduled and
+> then they go sit in a spin-loop driven state machine with IRQs disabled.
 > 
->> +	aw8898_cfg_write(aw8898, aw8898_cfg);
-> 
-> The "firmware" here is just a list of arbatrary register writes with no
-> validation of addresses or anything...
+> There really isn't anything magical about any of this.
 
-Yes... Got any suggestions how to make it better? This "firmware" file 
-is the one that's also usable with the original driver from the 
-amplifier vendor.
+There is the mechanism (which you have described above), and then there
+are the use cases.  Those of us maintaining a given mechanism might
+argue that a detailed description of the mechanism suffices, but that
+argument does not always win the day.
 
-I honestly haven't really checked whether all the registers that are 
-written there are documented well enough in the datasheet I have, so 
-that this sequence could be replaced by proper DT values. But for sure 
-already I know that some registers which are used and functional, are 
-not documented at all unfortunately.
+I do like the description in the stop_machine() kernel-doc header:
 
-> 
->> +	switch (fmt & SND_SOC_DAIFMT_FORMAT_MASK) {
->> +	case SND_SOC_DAIFMT_I2S:
->> +		if ((fmt & SND_SOC_DAIFMT_CLOCK_PROVIDER_MASK)
->> +				!= SND_SOC_DAIFMT_CBC_CFC) {
->> +			dev_err(component->dev, "Invalid codec master mode: %d\n",
-> 
-> Clock provider mode.
+ * This can be thought of as a very heavy write lock, equivalent to
+ * grabbing every spinlock in the kernel.
 
-Sure, will update.
+Though doesn't this need to upgrace "spinlock" to "raw spinlock"
+now that PREEMPT_RT is in mainline?
 
-> 
->> +static int aw8898_startup(struct snd_pcm_substream *substream,
->> +               struct snd_soc_dai *dai)
->> +{
->> +	struct aw8898 *aw8898 = snd_soc_component_get_drvdata(dai->component);
->> +	unsigned int val;
->> +	int err;
->> +
->> +	err = regmap_read_poll_timeout(aw8898->regmap, AW8898_SYSST,
->> +				       val, val & AW8898_SYSST_PLLS,
->> +				       2000, 1 * USEC_PER_SEC);
-> 
-> What's this actually checking?  You shouldn't rely on I2S being clocked
-> prior to trigger...
+Also, this function is more powerful than grabbing every write lock
+in the kernel because it also excludes all regions of code that have
+preemption disabled, which is one thing that CPU hotplug is relying on.
+Any objection to calling out that additional semantic?
 
-I've also taken this from the original driver, so I do not know the 
-original purpose of it.
-
-The register description is "System Status Register" "PLL locked status. 
-1: locked, 0: unlocked", so presumably waiting for the amplifier itself 
-to get ready for playing audio.
-
-Regards
-Luca
+							Thanx, Paul
 
