@@ -1,119 +1,141 @@
-Return-Path: <linux-kernel+bounces-719437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2573BAFADF5
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 10:03:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7135FAFAE31
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 10:08:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F318B1AA0A7D
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 08:03:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1BE71AA1B98
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 08:07:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A348B28A1F3;
-	Mon,  7 Jul 2025 08:03:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE17E28B3EE;
+	Mon,  7 Jul 2025 08:04:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="X9Ev8Ni8"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OrAeMbWM"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B966800
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 08:03:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D65428A71D
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 08:04:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751875403; cv=none; b=mlT+hirhAAFgHTVC3R280wIQkznAOxzvployVVqmQQd765zejKZasxSHik6ID1yvhui0+PlovpBiN69c0Z6FHhb5Q0JC6dV5YnhhDtODYJxedcdTJ10oLaTmYpZfafiOrGnGhy9bXt4+mim/At/8OR26Kpuks0hWucAcYjnFd/c=
+	t=1751875461; cv=none; b=PUzAdWy/hpCPai4l0e2NFvAdoVbprr8eV2znoJV+ewDEsO8N/nfKvxAR/4O0tc65UhOGY0yQY8/Ed+H4dqmo9jTtxWbJ6YWguqxL8gbw+6ydsFJVBwVkrDpTiZNHWUuSUTONQpy64e+EtOYPa6acuaS5fhUGGt27mtIUfVHEABE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751875403; c=relaxed/simple;
-	bh=WQE2kv3HQ0gTQZ4sJoK5QnluNwdWhUSE4VaZEjb6gBg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BW1HNpbfQTH4LyjXB5aQWK0El1kbw3KrBIcCptqDTsrSVGuGFW6inL28ytfIa3aFJTrQphhsqiQZKciWwtVi8ZNe/j+qwDh6rCfkDKr13dWMha+t7b7eNmS8xocbtWEaklE2bCmdxdUVnOO/mGn09zeF0prR1UYkpN+h/VwDl2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=X9Ev8Ni8; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3a6cd1a6fecso2734093f8f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 01:03:21 -0700 (PDT)
+	s=arc-20240116; t=1751875461; c=relaxed/simple;
+	bh=IEoYgZVPqV6REtyvNEYkqmdU4AlOYV3bBv9n+zrtW+0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=D13vrE5k2oc+u5txE3GZSSuH6k8jKGUtORmxpAALWRS9jYrCIatbwniUe9vLGmNwvfJtUH5X/BgFbrl/zc9SG+ay0Nt4M6slzza+R/7UF2xjKVLmtTQ5aOFCcTK5gJe5czALEnW3P0WXWi24JVfXztHCjEz80Y5nHVQIdSjRY8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OrAeMbWM; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3a51481a598so1488055f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 01:04:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1751875400; x=1752480200; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=j8ER9RiwBf3a0PNuzWR+wHPlPKYNVAx60ODVLZpCr8E=;
-        b=X9Ev8Ni8VR+vXSZ17LvHTTqKiBx58SkM/ADlXFfNLgkbZ252vTGdrnC5PhAyDlzmPq
-         tbVIe35BJ8G75QMDg4Ya6L5jTbqbXqTugWaS+uCqUhkVe9Y8CJxIroW5zT9DiuxhS8aT
-         i5GIP0TUhNzpooMwpVK2UZCsyUULoymVSO/Jd8cWYLl7FMOyZAqKOPuNSHMMYSr0o10L
-         SjhEfnlidBHMSmmZr9Aa07r3cnzzL4lo4wdBO1vAx+IzqKrx0h+9Mh78LGTIdCfz8gNf
-         KO3ykplQ709pTXgmxOfDu3x2D/KedTxBSHJsVktTfDMbNTKtVfS3jw2X9hZPc84xszpi
-         oSWA==
+        d=linaro.org; s=google; t=1751875457; x=1752480257; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=IEoYgZVPqV6REtyvNEYkqmdU4AlOYV3bBv9n+zrtW+0=;
+        b=OrAeMbWMGSqIdFhUjy2qNfv5YBKOfuqvgNPSGBqk9aclu0IZgqRwttTG3akD7TAlst
+         Dr5vjqlBcG8iOK4ZN9kQdgO4ShCmi2l1UBC4Tq9UWqGgHsu0p5ysxA+9Rlov7EXp1QdR
+         4CYbcr+MD9/bdV6BagNrbqx7CTKPA0V8mlIT6FmTTMaJjJ9jSxSMH0plhbJH+rfDxIg2
+         2Ze63+yXKmr991n7Z6jHYBientUxswE8D0AYyPNPpbZ37lPiOCYFzIWmMPVQKhw+ojAM
+         kJzuyeSna28MRFSTRuIEnSR22BtxHG7bH9mx1pi7qckY50/UzjDA7bhQcpwAWLonaBOb
+         0ikQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751875400; x=1752480200;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=j8ER9RiwBf3a0PNuzWR+wHPlPKYNVAx60ODVLZpCr8E=;
-        b=T+7AHtKCg4KOV5vUCsbZ/Knz2W+QQgOtE2iimzjX50wljY37t9niMN2ctN+07qcjYi
-         r/uXFPXjbja0BU/SC/gL4JvAmNT5kvPc20cL6aHANcxQP4VByz8RWr1o/0q0QD3djwnz
-         hCNg/bxZiWyCXehRX+UhDHKMKI4ZQmVDZThXQVerPdhVwLWu5mVgEtarQRK29MQ8rGU8
-         OJkn676J2jlOlxbRf/UzUhjYoJ5BvjUFquh0kuoWjCrJtIlUD1Weusn7/Iz45hcZXkmw
-         XJh4NhaZWG4W2fZEthRjx4oa/7dG4ZGMPckzITAodqEUT8Z7GVuwb/hYhigWz0QDJEau
-         OZHA==
-X-Forwarded-Encrypted: i=1; AJvYcCX/T2agxd9i+HrgARxjStihNzNwgREYPxKvd7H8/e9IaewBHlhqKmGVvmfvcwCnKQEAfTWy2EoiOWm9A54=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzcAsJdu+pDtQOeTXwXsmtxXjOttZsDuXQfUlvAEAKUPtM6spCr
-	J9oCB6DlyUeyww3jxAoHgWmE1fH0RHRrTvYSHBekERubODZEMKuoYXbzYrSjM2qBMyY=
-X-Gm-Gg: ASbGncthVkwIJOPxoYetzlItvbDVXBFoVWYAWJK5MzxPEF5++bDH6TleCaZoBxjj/1c
-	xai1f3tdbsd8i7YfQcrVW41XJy14+u1IeM4gDTeDwn/E0cyCUpWqAX5gBpTKdoxss4r0r8RNH6m
-	XAUpDG4YUcy6kwDOaJbmxJXrH+y9uyFOc6J+OHtvMqpYAfHVecASBIvEi9HCb+QtB9nbeG6QUDO
-	xbR4A4/yZLdEP0tsre6D40RWPUPovP6E3CtBNsWBKF052d/+ax5TZk9UA5xiEhJQ4XD0gbsW3eI
-	q6xcSdabvDjuoZRSHtNSxECE/mRJyLBqha9R+4PBn/f0Q+F9U1sifl4PzY4AEAE=
-X-Google-Smtp-Source: AGHT+IEuKhwyI5Z+SjqvtbsXi6ZzIS1X4CZuWomS6qhOy+fAEFEaFFSGiYj31JlHRtL0PKXI2U00Ng==
-X-Received: by 2002:a5d:64c9:0:b0:3b1:9259:3ead with SMTP id ffacd0b85a97d-3b49aa73e31mr5001650f8f.28.1751875399847;
-        Mon, 07 Jul 2025 01:03:19 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:3cf3:a61f:85ed:69db])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454a997e367sm130980235e9.15.2025.07.07.01.03.19
+        d=1e100.net; s=20230601; t=1751875457; x=1752480257;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=IEoYgZVPqV6REtyvNEYkqmdU4AlOYV3bBv9n+zrtW+0=;
+        b=c8aC6ujT/VTWZiRvv8A+XrwvK6uA54BaTHKWz3yblbh9oe5EJ5paG1wdvsplnNZ5pu
+         AzU8x7atC7oxaJwk4vZKHptjn4VVnXcjk9c582mHaj+rAjbf8rgMy6UKFq+NF1JAzKsz
+         Sa2Nbnl1O5XfAvQlRN1BS2XZhoNyYTkQj3RfYn+Bmx/uAoKk7+XG3OL/WjVLf0tE9bIA
+         ySIobaaQkFnv45AJ3VMNqQQLrHgYHH68qxyusnb7gUpo1kzRRLxpAI4o9jhPZfS2pIel
+         sibvlr/nm+NUATpt6KJQz/0aoRW9YdVAvhz1/Sj+oXSUIizvpDYBlB9kL0K0jBF1Jlpe
+         gqEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVR4P+GSkXHk4YilAiEZXq3zv3ysHyTKwzFfPvftjhvvBXSJXGnALibx60JNr1cqc7YlCTEG0iP6rIdloc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YziA2uHy/naFO7k3yW+lS1lHMyZ+jjTWUu1naqw6xSNn6QL6Zod
+	kL8ssoHTTCvLS6Ya/GmLhCMMt9IZ/4YfNVnSYPKhoDxGCv8gGojljwjPynvl0sGK6zc=
+X-Gm-Gg: ASbGncuBu4rBhoeewTgqB0EDqIj7ZjerzHRPqASmfxz5mFDnij3Fd+RNmfRvRXBKF2q
+	DeY7Hcsh5/dHdjTbb6FdLpR+g3z1GjkJBpjlQxVLeaSYRhGfdULyOWHi4EEdd9ZHe9x10qEmHaN
+	Yqxl7E8K/PHMfhS5vDo2Ch3ORrJhIdFt24yYQLIlT9pn3Wi1t8M0vEACIa2+UkuzgYZ7rgcQRmX
+	q3/FLxTxWQp1R3I2V8Cs2JwCvPy4H9V/Vs3sjY2ffBBTqF06qUKugdhQAZT5LmbfSnomB/INWc9
+	oPFrchiD6ixfeB8gYGY3gWxEmRdcEctXYbbLlif/JDgzDImt87MkX1pYhkaG+aHFzg==
+X-Google-Smtp-Source: AGHT+IHEIeX1O24CgOzuWsNBfkxeH6TOmmWEVLZJcsdlbgvxYrZII56COdsRCTeJJ4eyH1AmqDGCWg==
+X-Received: by 2002:a5d:64e5:0:b0:3a4:e609:dc63 with SMTP id ffacd0b85a97d-3b49701fd14mr7926081f8f.20.1751875456566;
+        Mon, 07 Jul 2025 01:04:16 -0700 (PDT)
+Received: from [10.1.1.59] ([80.111.64.44])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454b1698f54sm103519225e9.33.2025.07.07.01.04.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Jul 2025 01:03:19 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: linux-pm@vger.kernel.org,
-	Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	linux-kernel@vger.kernel.org,
-	"Rafael J. Wysocki" <rafael@kernel.org>
-Subject: Re: (subset) [PATCH 00/80] treewide: Remove redundant pm_runtime_mark_last_busy() calls
-Date: Mon,  7 Jul 2025 10:03:18 +0200
-Message-ID: <175187539072.14957.12381640890960188309.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250704075225.3212486-1-sakari.ailus@linux.intel.com>
-References: <20250704075225.3212486-1-sakari.ailus@linux.intel.com>
+        Mon, 07 Jul 2025 01:04:16 -0700 (PDT)
+Message-ID: <2e26f8f534284b280e9d5e8d4ae556a452e93ff5.camel@linaro.org>
+Subject: Re: [PATCH v4 2/5] power: supply: add support for max77759 fuel
+ gauge
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Peter Griffin <peter.griffin@linaro.org>, Thomas Antoine
+	 <t.antoine@uclouvain.be>
+Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski	 <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Dimitri Fedrau	 <dima.fedrau@gmail.com>, Catalin
+ Marinas <catalin.marinas@arm.com>, Will Deacon	 <will@kernel.org>, Tudor
+ Ambarus <tudor.ambarus@linaro.org>, Alim Akhtar	 <alim.akhtar@samsung.com>,
+ linux-pm@vger.kernel.org, 	linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, 	linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org
+Date: Mon, 07 Jul 2025 09:04:14 +0100
+In-Reply-To: <CADrjBPo2=FajKA0t7TTMdH6iK_qbWCSJK-hEqh+UWEuzC7wyGQ@mail.gmail.com>
+References: <20250523-b4-gs101_max77759_fg-v4-0-b49904e35a34@uclouvain.be>
+	 <20250523-b4-gs101_max77759_fg-v4-2-b49904e35a34@uclouvain.be>
+	 <CADrjBPqOMOyHP=aQ1+fg2X58NWRp-=MJBRZfpbEhQsTzaZ9LHw@mail.gmail.com>
+	 <bc40326f-db40-4657-84a7-152def2ca9e3@uclouvain.be>
+	 <CADrjBPo2=FajKA0t7TTMdH6iK_qbWCSJK-hEqh+UWEuzC7wyGQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.1-1+build1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Hi,
 
+On Mon, 2025-07-07 at 08:16 +0100, Peter Griffin wrote:
+> Hi Thomas,
+>=20
+> On Tue, 24 Jun 2025 at 16:45, Thomas Antoine <t.antoine@uclouvain.be> wro=
+te:
+>=20
+> > I am unsure about what to do about this initalization, especially for v=
+alues
+> > which slightly differ from the devicetree. I think for next version, I
+> > will have the same parameters be passed in the devicetree like android.
+>=20
+> We don't really pass register values like the downstream driver is
+> doing in the device tree. I think you will likely need to add a
+> max77759-gs101-oriole compatible to the driver and then have the
+> application specific values, and m5 gauge model algorithm as static
+> info in the driver applied from the dedicated compatible. It would
+> also be worth checking whether any more of those register values can
+> be represented by the standard power-supply binding properties that
+> already exist.
 
-On Fri, 04 Jul 2025 10:52:25 +0300, Sakari Ailus wrote:
-> Late last year I posted a set to switch to __pm_runtime_mark_last_busy()
-> and gradually get rid of explicit pm_runtime_mark_last_busy() calls in
-> drivers, embedding them in the appropriate pm_runtime_*autosuspend*()
-> calls. The overall feedback I got at the time was that this is an
-> unnecessary intermediate step, and removing the
-> pm_runtime_mark_last_busy() calls can be done after adding them to the
-> relevant Runtime PM autosuspend related functions. The latter part has
-> been done and is present in Rafael's tree at the moment, also see
-> <URL:https://lore.kernel.org/linux-pm/CAJZ5v0g7-8UWp6ATOy+=oGdxDaCnfKHBG_+kbiTr+VeuXZsUFQ@mail.gmail.com/>:
-> 
-> [...]
+I believe these are likely battery specific values, and were obtained durin=
+g
+battery characterization by the vendor (or Maxim). They can change (with a
+different battery supplier etc, hence I don't think basing this on a
+max77759-gs101-oriole would be correct here.
 
-Applied, thanks!
+As we learned from the Pixel 6a battery updates, the same phone may use
+batteries (e.g. from different suppliers).
 
-[15/80] gpio: arizona: Remove redundant pm_runtime_mark_last_busy() calls
-        https://git.kernel.org/brgl/linux/c/2fd13c8e5be15369d157da3277ac7407fa73f90a
+Either it needs to know about the specific battery model, or the values
+should be passed from DT in some way.
 
-Best regards,
--- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Cheers,
+Andre'
 
