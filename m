@@ -1,118 +1,155 @@
-Return-Path: <linux-kernel+bounces-720411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75C36AFBB37
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 20:57:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33696AFBB3B
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 21:01:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAC8617516D
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 18:57:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61D493A8388
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 19:00:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FE42264A65;
-	Mon,  7 Jul 2025 18:56:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42367265282;
+	Mon,  7 Jul 2025 19:01:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hdJuKRG7"
-Received: from mail-oi1-f169.google.com (mail-oi1-f169.google.com [209.85.167.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wd60hZX/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 931F3262FFE;
-	Mon,  7 Jul 2025 18:56:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A5BA4D8CE;
+	Mon,  7 Jul 2025 19:01:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751914615; cv=none; b=f9AWSichdmYJMJ/G8gr/1A66ps4CCiwTJvsfVgjDx+P5A2fZ4/WMNORKBcs7yRk/PKeWNcPzDNXdRZh2MHQragsBvguT9l5jAICvmbi3IS0I/RyIifYnWcDYgXOjsuRCixzQWsFj8qhpiIzJvGmT3ZLGiwp6ND1qTsRTUBtGcwM=
+	t=1751914860; cv=none; b=EvyhFpRIZiN4Z8clRUzY2Z9lem5KonAaPD4gCl06UznsIHnYrk9VIbgy7Wa6dAOOlbEfpuL4Jj69s/SymeTmOMXmQMbZiCuBcfR5ugUzq4sABrK4pQZsWNM5tYZqwKPLrX2NoIsR1kv3CsoNancvOY01TCc01DEM+LFaHvA/7oc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751914615; c=relaxed/simple;
-	bh=9ZxsGfMNuIDd8PUZJl180e6uYMTAtfiL4MXB7zLYGfY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rcwO/x5fzqnGgMk85gz+i3VrOFBKDTiy58p0jvKkLFC0r4LP8YC9lw03QYhYFEM5FbdIpl/UGbNLGX09P4g9iJ/MvXeVPfJPOWQoIZVek1iAdfDo/UARc9eyao2w76BA/Aocyy3argrqI8WTTQZlkBOFhnhG/JevuSstAMkM/0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hdJuKRG7; arc=none smtp.client-ip=209.85.167.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f169.google.com with SMTP id 5614622812f47-40a6692b75cso2511344b6e.1;
-        Mon, 07 Jul 2025 11:56:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751914612; x=1752519412; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=K6ayYvKDTLhKWG6B6PhMbZPiXC1I4Lt8zkiYPs7tjWQ=;
-        b=hdJuKRG7feEnfbyfqLiNNJO6afcGq0+v7Rq001Iods3tZncRid9p93sdsGJXh0kOHS
-         WL3WmUIg10SJE55lEp2ZtnSMFUbGM0oSNySSm/ERoitPR5vKnxj3FGV333qX8X8CMINs
-         FTnA68OxP/H1RvfFG21jVaEx1pyEhhLiwjUTiQmFm5Khb76qs42sO4ll0Mml0ea3q3Cd
-         3BYr8cFyd2tzE6Zf7DeQqYU9/cVtjG9sit3dZXErlwftsta+n1IGj7RgJ+jF7k7rtLdG
-         FiILZTlomN6meCpVmitRTO4vQvkb1xPm2Q3xrMV19c2it8E8NPmXnMScRFT+eJ5H+h4P
-         HQmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751914612; x=1752519412;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=K6ayYvKDTLhKWG6B6PhMbZPiXC1I4Lt8zkiYPs7tjWQ=;
-        b=w9+xUCGhA2dCtn3lPNFUegWT/ApTqO7q/Gc9jEey4z5MvjfARdHnwUORfh/aZKStzW
-         R5EACD8nLOSCdXu0NUW45SghOa3IBDUEoDE4vhuzbK49wCcCVvvd25o/g8g/1edYvkpA
-         MsdnRK0KePUcQp1jG0HU3hqMeRYmVRTi4tYiDvEgUB1di6VQxvUno2KlSxpZznaiQEeM
-         4bUi/9yhCr86fCAe+XPn0gKR0cz2ty91L/gaDi/k/rhhH9TOVHBJTHxDRZdEMqCBcqIn
-         DT7ruQkfJdX8mdcwIL/decbX45QdYRtzp7PA7hdRdjObjQsnHLH2/9UdIaq7ZPGmFpfZ
-         HrMA==
-X-Forwarded-Encrypted: i=1; AJvYcCW3UQNvBZj4lqGcokYqWpi4EDiSI9Pp6KAuKp62J+pY9mRppKrXQ5aqmPxIbz/ELwiQEu1QxN0uW0RRKI0=@vger.kernel.org, AJvYcCWyAOpuFFmdKBIBgqZ2SEK5oBniWEhzLHYb/e+vECQNVC5m1BGNHr0RJ9eposoQa/E56Hze19OpfNEb@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZVJvRESe8VnmowygvxOrcr2QjAUDASLZANCgJDJsB66L1eD9q
-	kKcDHskBPYrBjyM3dsrCBKCn6QHesJH9/9oNuFkGM4nW3GpkTdR65yhS
-X-Gm-Gg: ASbGnct7scSQal9Xi6H1vFEgSBeyWJeLSZk3GXplLrAETYiPDQureZKSOHDvANvxx+4
-	Q9XQHuBSN4by7krjFea3bSuMABN0u15ZNZ1TJq9rrna4vQScpe2Si+zjuxFSmCXfsZCoO2/jsGv
-	MrUO8vtUBBCTbwhXh9DVy/2PrKNk+QobBcongtO3akx8Q5pSPlCa+Q1ij4um4ERByXV481Mu7Qg
-	60VxDI2iuNiRL6RS+Hb6VXonOmYmAtRCpeh4OOb4TtJ2z+52GmGr40wQq5WDcD0yDF5S6JTJeBb
-	rnXupASj2jvPf5c/oYHG7R5xeOFpm+xbeVZA1qxI4UQR/gJKjdxHny3VuRP2DrM=
-X-Google-Smtp-Source: AGHT+IG9Bu90q0WTjtWxz7HDuJ2Rzyfv/8PajDWomE8All5ggz2bpklWeqOUkIt8krxiv5gByH/Xcw==
-X-Received: by 2002:a05:6808:1a0e:b0:406:71fd:b610 with SMTP id 5614622812f47-40d073ed6d3mr8063252b6e.33.1751914612548;
-        Mon, 07 Jul 2025 11:56:52 -0700 (PDT)
-Received: from s-machine2.. ([2806:2f0:5501:d07c:d8b:9d6d:a96d:6f71])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-40d02ab27c3sm1400851b6e.32.2025.07.07.11.56.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Jul 2025 11:56:52 -0700 (PDT)
-From: Sergio Perez Gonzalez <sperezglz@gmail.com>
-To: zhoubinbin@loongson.cn,
-	ulf.hansson@linaro.org
-Cc: Sergio Perez Gonzalez <sperezglz@gmail.com>,
-	linux-mmc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] mmc: loongson2: prevent integer overflow in ret variable
-Date: Mon,  7 Jul 2025 12:55:41 -0600
-Message-ID: <20250707185545.46275-1-sperezglz@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1751914860; c=relaxed/simple;
+	bh=JrAruPZZICWqW2vK7DBmGDuymxQKXoE78qBV16PFDAE=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:From:Subject:Cc:
+	 References:In-Reply-To; b=kRMLDNHReigRiC/bXIOK4ovP6seAum1iffn+0ToSbTQGfmIRB7B5UNvS9w60xTVmEPwKoW0S8DuH8kVLLhem9awh3pGEnEekB+7KlWOAAV5ZGLS6oSvekQUY/j643XMzbC5mUkebecKso+yvBIAknP7Vmh+sUWUmEKK0e53lYnY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wd60hZX/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12F37C4CEE3;
+	Mon,  7 Jul 2025 19:00:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751914860;
+	bh=JrAruPZZICWqW2vK7DBmGDuymxQKXoE78qBV16PFDAE=;
+	h=Date:To:From:Subject:Cc:References:In-Reply-To:From;
+	b=Wd60hZX/n+mVlLQdJZ8cSY5GCefwIDWb3REjM7QJDLgSV+IERRHOm0R2c5dueJ5mB
+	 GK9DhFfJSgBLrxyUdYWDmw4IbnkLe/q2F3XMqCui8hZAhXDb/wpcabcW7noi/pK4oU
+	 KKtlDS7Cya/C2m7iZtMfbc1ZhX5N76f+NkNgDaobA/zuSkiIfMnDfsuo4coAnVonXg
+	 kE55immiFicSkg4JuWZywrUvU7tuX09yQvaY7w0vsVf9qP5YsIB6yvLp8BQMxbPbzp
+	 ZPinUYU2DRjXZEBe0Vfowu2RzsBLK0CzgvFLh/ssM9B4d9MZC+qetxgf/DIAOwFsaT
+	 7mA13sHjG28eg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 07 Jul 2025 21:00:54 +0200
+Message-Id: <DB61ZHDINPNE.1VFXNF2XXSJPA@kernel.org>
+To: "Caterina Shablia" <caterina.shablia@collabora.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+Subject: Re: [PATCH v4 4/7] drm/gpuvm: Add a helper to check if two VA can
+ be merged
+Cc: "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard"
+ <mripard@kernel.org>, "Thomas Zimmermann" <tzimmermann@suse.de>, "David
+ Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Frank
+ Binns" <frank.binns@imgtec.com>, "Matt Coster" <matt.coster@imgtec.com>,
+ "Karol Herbst" <kherbst@redhat.com>, "Lyude Paul" <lyude@redhat.com>,
+ "Boris Brezillon" <boris.brezillon@collabora.com>, "Steven Price"
+ <steven.price@arm.com>, "Liviu Dudau" <liviu.dudau@arm.com>, "Lucas De
+ Marchi" <lucas.demarchi@intel.com>, =?utf-8?q?Thomas_Hellstr=C3=B6m?=
+ <thomas.hellstrom@linux.intel.com>, "Rodrigo Vivi"
+ <rodrigo.vivi@intel.com>, <dri-devel@lists.freedesktop.org>,
+ <linux-kernel@vger.kernel.org>, <nouveau@lists.freedesktop.org>,
+ <intel-xe@lists.freedesktop.org>, <asahi@lists.linux.dev>, "Asahi Lina"
+ <lina@asahilina.net>
+References: <20250707170442.1437009-1-caterina.shablia@collabora.com>
+ <20250707170442.1437009-5-caterina.shablia@collabora.com>
+In-Reply-To: <20250707170442.1437009-5-caterina.shablia@collabora.com>
 
-In loongson2_mmc_dll_mode_init(), `ret` variable is declared
-as u32 but it is expected to hold an int value.
+On Mon Jul 7, 2025 at 7:04 PM CEST, Caterina Shablia wrote:
+> diff --git a/drivers/gpu/drm/drm_gpuvm.c b/drivers/gpu/drm/drm_gpuvm.c
+> index 05978c5c38b1..dc3c2f906400 100644
+> --- a/drivers/gpu/drm/drm_gpuvm.c
+> +++ b/drivers/gpu/drm/drm_gpuvm.c
+> @@ -2098,12 +2098,48 @@ op_unmap_cb(const struct drm_gpuvm_ops *fn, void =
+*priv,
+>  	return fn->sm_step_unmap(&op, priv);
+>  }
+> =20
+> +static bool can_merge(struct drm_gpuvm *gpuvm, const struct drm_gpuva *a=
+,
+> +		      const struct drm_gpuva *b)
+> +{
+> +	/* Only GEM-based mappings can be merged, and they must point to
+> +	 * the same GEM object.
+> +	 */
+> +	if (a->gem.obj !=3D b->gem.obj || !a->gem.obj)
+> +		return false;
+> +
+> +	/* Let's keep things simple for now and force all flags to match. */
+> +	if (a->flags !=3D b->flags)
+> +		return false;
+> +
+> +	/* Order VAs for the rest of the checks. */
+> +	if (a->va.addr > b->va.addr)
+> +		swap(a, b);
+> +
+> +	/* We assume the caller already checked that VAs overlap or are
+> +	 * contiguous.
+> +	 */
+> +	if (drm_WARN_ON(gpuvm->drm, b->va.addr > a->va.addr + a->va.range))
+> +		return false;
+> +
+> +	/* We intentionally ignore u64 underflows because all we care about
+> +	 * here is whether the VA diff matches the GEM offset diff.
+> +	 */
+> +	return b->va.addr - a->va.addr =3D=3D b->gem.offset - a->gem.offset;
+> +}
+> +
+>  static int
+>  __drm_gpuvm_sm_map(struct drm_gpuvm *gpuvm,
+>  		   const struct drm_gpuvm_ops *ops, void *priv,
+>  		   const struct drm_gpuvm_map_req *req)
+>  {
+>  	struct drm_gpuva *va, *next;
+> +	struct drm_gpuva reqva =3D {
+> +		.va.addr =3D req->va.addr,
+> +		.va.range =3D req->va.range,
+> +		.gem.offset =3D req->gem.offset,
+> +		.gem.obj =3D req->gem.obj,
+> +		.flags =3D req->flags,
 
-Fixes: d0f8e961deae ("mc: loongson2: Add Loongson-2K2000 SD/SDIO/eMMC controller driver")
-Reported-by: https://scan7.scan.coverity.com/#/project-view/53936/11354?selectedIssue=1644958
+Huh? Where does req->flags come from? I don't remember that this flag exist=
+s in
+struct drm_gpuvm_map_req in the preceding patch?
 
-Signed-off-by: Sergio Perez Gonzalez <sperezglz@gmail.com>
----
- drivers/mmc/host/loongson2-mmc.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+> +	};
+>  	u64 req_end =3D req->va.addr + req->va.range;
+>  	int ret;
+> =20
+> @@ -2116,12 +2152,9 @@ __drm_gpuvm_sm_map(struct drm_gpuvm *gpuvm,
+>  		u64 addr =3D va->va.addr;
+>  		u64 range =3D va->va.range;
+>  		u64 end =3D addr + range;
+> -		bool merge =3D !!va->gem.obj;
+> +		bool merge =3D can_merge(gpuvm, va, &reqva);
 
-diff --git a/drivers/mmc/host/loongson2-mmc.c b/drivers/mmc/host/loongson2-mmc.c
-index 515ccf834f0a..ba6bb8fd5535 100644
---- a/drivers/mmc/host/loongson2-mmc.c
-+++ b/drivers/mmc/host/loongson2-mmc.c
-@@ -485,7 +485,8 @@ static irqreturn_t loongson2_mmc_irq(int irq, void *devid)
- 
- static void loongson2_mmc_dll_mode_init(struct loongson2_mmc_host *host)
- {
--	u32 val, pad_delay, delay, ret;
-+	u32 val, pad_delay, delay;
-+	int ret;
- 
- 	regmap_update_bits(host->regmap, LOONGSON2_MMC_REG_SEL,
- 			   LOONGSON2_MMC_SEL_DATA, LOONGSON2_MMC_SEL_DATA);
--- 
-2.43.0
+I know you want to do the swap() trick above, but I don't like creating a
+temporary struct drm_gpuva with all the other uninitialized fields.
 
+If you really want this, can we please limit the scope? Maybe the following
+helper:
+
+	static bool can_merge(struct drm_gpuvm *gpuvm,
+			      const struct drm_gpuva *va,
+			      struct drm_gpuvm_map_req *req)
+	{
+		struct drm_gpuva reqva =3D { ... };
+		return __can_merge(gpuvm, va, reqva);
+	}
 
