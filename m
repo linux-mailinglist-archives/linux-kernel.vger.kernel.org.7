@@ -1,90 +1,102 @@
-Return-Path: <linux-kernel+bounces-719509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76BF6AFAEE6
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 10:48:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C42FDAFAEEB
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 10:49:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C00F33AC306
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 08:48:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62120189D88F
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 08:49:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1649528AB1A;
-	Mon,  7 Jul 2025 08:48:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 586E528B3F1;
+	Mon,  7 Jul 2025 08:49:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KcI49CtW"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="DEmAoLcy"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66A5027AC34
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 08:48:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B62491C5D7D;
+	Mon,  7 Jul 2025 08:49:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751878125; cv=none; b=F40OStQxAfuFoC4VPWZJiPeirYyy3U8XnJBXgjpPfJP1t64EBIksFh/30ZBz+rmrbnHuv8FlhtNMAudz0GDFpu2L1d917gmT6+3s1qxP50X1zXCLC/X1BUIu7DsZUFQr+eAPZKgCdg0KZDQynKizrJwee/JgnLpoaF5PuU/iXGo=
+	t=1751878170; cv=none; b=niul0cE0P3+HYhWzLrsJSsl2HDRWhWf/J+a8FXeW43foDyv1YZ7rXO/DZxt28t8dQ4w3oUPnJbcb93phNGa8Wzl/YGB4KILAnJwMlcZk1n0NAA9j++ueY8F6BklSXvk41NwTOqbjyAv++ZPsdxO97zLs5RuTEvX7/izfNAAgh3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751878125; c=relaxed/simple;
-	bh=uiIk70uCYwETE2dDCVRHrmM+gZH1tMbl0071RZi0VdY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=P+8QbycQ9Vxk7J6I5LCW5pBV6xscF7NiNcXv/97nPJVWnvxpljq95TYTFdxcd/lshltc2mB956uQrO+h+2FH6GwkAn5nla0TOHJPoY7f0lD8w6x6MtRh4D7uyAkqn6IdBBYiPOsSTtwfMV7h9/MyP3nJ5FXVsCvmzHyc9l20vFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KcI49CtW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2713C4CEF6;
-	Mon,  7 Jul 2025 08:48:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751878124;
-	bh=uiIk70uCYwETE2dDCVRHrmM+gZH1tMbl0071RZi0VdY=;
-	h=From:To:Cc:Subject:Date:From;
-	b=KcI49CtWXHDjyhTOkMyYB2HvRWc/FzkQodgzcKnxVdaVM2fbDwc9UR/E9g83ZN7r8
-	 iI9X85SdKziFouceKFOXI6rp7yglcHiar5ngNx2JAIpG0FMuO97j+8ZSvNKjUPHrat
-	 hHnfJBU4lEnCaV+ayx5jMJ4WSbM/cKbG6JZH331Is5/2aHR2rTH0zKrPpcwuCLfwEX
-	 7aglVQt7oU1+XOItw7jyxMhn7SxbPmEkbcr73suL0l1r0j0ldU3cknTKwSfMHK52XO
-	 KO2pc1gGnNQ6Nb959SpfDB8lMBzKxZKz7OATN9JLarOmwFxgIrBIKfcFAl8fFleoZs
-	 PaaS2IbtX2+JA==
-From: Chao Yu <chao@kernel.org>
-To: xiang@kernel.org
-Cc: linux-erofs@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org,
-	Yue Hu <zbestahu@gmail.com>,
-	Jeffle Xu <jefflexu@linux.alibaba.com>,
-	Sandeep Dhavale <dhavale@google.com>,
-	Hongbo Li <lihongbo22@huawei.com>,
-	Chao Yu <chao@kernel.org>
-Subject: [PATCH] erofs: fix to add missing tracepoint in erofs_readahead()
-Date: Mon,  7 Jul 2025 16:48:32 +0800
-Message-ID: <20250707084832.2725677-1-chao@kernel.org>
-X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
+	s=arc-20240116; t=1751878170; c=relaxed/simple;
+	bh=E08jZN7k1pGrat/Cyavs0pVvrOcz/fVCkhhacbMrFTo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mB1+CVqvsM4WqNiyFCEZ1ffG5gJMS15ZBCL2oc6MuGqF9mw1md+ZA10qlQ0Z7ZWT7eX2Ls/BTueBZsR9R4BKV4CqkUGJDwe0NmW9L5BmUgGODUSfpDYQjQf2etYu7eBM8IuYBv/R9FpahL7m0+Y+r7JSzq4Xa4Y2Oty2WDZaKRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=DEmAoLcy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCD4CC4CEE3;
+	Mon,  7 Jul 2025 08:49:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1751878170;
+	bh=E08jZN7k1pGrat/Cyavs0pVvrOcz/fVCkhhacbMrFTo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DEmAoLcyPU6g1PcARkcmA8exKvrDl2iQGIh3JHaxrqJYS17xpDwKhIwjQXN+IELSv
+	 O0tYgeEi5TvD2+2TrVKhjWs6qpez8zczDINsIJHEXaGM+kR+yZ7f32m17suRpTXyx1
+	 yDtdYoL81aSRJRpQ3HsyHXX21lMANklSea/Nv11M=
+Date: Mon, 7 Jul 2025 10:49:27 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Jie Deng <dengjie03@kylinos.cn>
+Cc: stern@rowland.harvard.edu, linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org, usb-storage@lists.one-eyed-alien.net
+Subject: Re: [PATCH v2] usb: storage: Ignore UAS driver for SanDisk Extreme
+ Pro 55AF storage device
+Message-ID: <2025070702-unsigned-runny-62c6@gregkh>
+References: <2025070422-punctured-opal-f51e@gregkh>
+ <20250707062507.39531-1-dengjie03@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250707062507.39531-1-dengjie03@kylinos.cn>
 
-Commit 771c994ea51f ("erofs: convert all uncompressed cases to iomap")
-converts to use iomap interface, it removed trace_erofs_readahead()
-tracepoint in the meantime, let's add it back.
+On Mon, Jul 07, 2025 at 02:25:07PM +0800, Jie Deng wrote:
+> The SanDisk Extreme Pro 55AF storage device(0781:55af) has poor compatibility with UAS drivers.
+> The logs:
+> [    1.359859][ 0] [  T163] usb 2-1: new SuperSpeed Gen 1 USB device number 2 using xhci_hcd
 
-Fixes: 771c994ea51f ("erofs: convert all uncompressed cases to iomap")
-Signed-off-by: Chao Yu <chao@kernel.org>
----
- fs/erofs/data.c | 3 +++
- 1 file changed, 3 insertions(+)
+Nit, the [] stuff should all be removed, it's not relevant, right?
 
-diff --git a/fs/erofs/data.c b/fs/erofs/data.c
-index 6a329c329f43..534ac359976e 100644
---- a/fs/erofs/data.c
-+++ b/fs/erofs/data.c
-@@ -356,6 +356,9 @@ static int erofs_read_folio(struct file *file, struct folio *folio)
- 
- static void erofs_readahead(struct readahead_control *rac)
- {
-+	trace_erofs_readahead(rac->mapping->host, readahead_index(rac),
-+					readahead_count(rac), true);
-+
- 	return iomap_readahead(rac, &erofs_iomap_ops);
- }
- 
--- 
-2.49.0
+> [    1.385708][ 0] [  T163] usb 2-1: New USB device found, idVendor=0781, idProduct=55af, bcdDevice=10.85
+> [    1.385709][ 0] [  T163] usb 2-1: New USB device strings: Mfr=2, Product=3, SerialNumber=1
+> [    1.385710][ 0] [  T163] usb 2-1: Product: Extreme Pro 55AF
+> [    1.385711][ 0] [  T163] usb 2-1: Manufacturer: SanDisk
+> [    1.385711][ 0] [  T163] usb 2-1: SerialNumber: 323234323935343030343636
+> [    1.927603][ 0] [  T306] usbcore: registered new interface driver usb-storage
+> [    1.940511][ 0] [  T306] scsi host3: uas
+> [    1.940584][ 0] [  T306] usbcore: registered new interface driver uas
+> [    1.940843][ 0] [  T188] scsi 3:0:0:0: Direct-Access     SanDisk  Extreme Pro 55AF 1085 PQ: 0 ANSI: 6
+> [    1.941363][ 0] [  T188] scsi 3:0:0:1: Enclosure         SanDisk  SES Device       1085 PQ: 0 ANSI: 6
+> [    1.941697][ 0] [  T188] sd 3:0:0:0: Attached scsi generic sg0 type 0
+> [    1.941783][ 0] [  T188] scsi 3:0:0:1: Attached scsi generic sg1 type 13
+> [    1.942296][ 0] [  T189] sd 3:0:0:0: [sda] 1953459617 512-byte logical blocks: (1.00 TB/931 GiB)
+> [    1.942373][ 0] [  T189] sd 3:0:0:0: [sda] Write Protect is off
+> [    1.942374][ 0] [  T189] sd 3:0:0:0: [sda] Mode Sense: 37 00 10 00
+> [    1.942534][ 0] [  T189] sd 3:0:0:0: [sda] Write cache: enabled, read cache: enabled, supports DPO and FUA
+> [    1.943586][ 0] [  T189] sd 3:0:0:0: [sda] Optimal transfer size 2097152 bytes
+> [    1.976797][ 0] [  T189]  sda: sda1
+> [    1.977898][ 0] [  T189] sd 3:0:0:0: [sda] Attached SCSI disk
+> [    1.980406][ 0] [  T267] scsi 3:0:0:1: Failed to get diagnostic page 0x1
+> [    1.980408][ 0] [  T267] scsi 3:0:0:1: Failed to bind enclosure -19
+> [    1.980414][ 0] [  T267] ses 3:0:0:1: Attached Enclosure device
+> [    1.981068][ 0] [    C0] sd 3:0:0:0: [sda] tag#10 data cmplt err -75 uas-tag 1 inflight: CMD
+> [    1.981071][ 0] [    C0] sd 3:0:0:0: [sda] tag#10 CDB: Read(10) 28 00 74 6f 6d 00 00 00 08 00
+> [   33.819186][ 0] [  T188] sd 3:0:0:0: [sda] tag#10 uas_eh_abort_handler 0 uas-tag 1 inflight: CMD
+> [   33.819188][ 0] [  T188] sd 3:0:0:0: [sda] tag#10 CDB: Read(10) 28 00 74 6f 6d 00 00 00 08 00
+> [   33.843186][ 0] [  T309] scsi host3: uas_eh_device_reset_handler start
 
+So new devices are being made that can not handle UAS?  Are you sure
+there's not some other quirk that could be used here instead?  How does
+this device work on other operating systems with the UAS drivers there?
+
+thanks,
+
+greg k-h
 
