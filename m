@@ -1,134 +1,130 @@
-Return-Path: <linux-kernel+bounces-720506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12BB8AFBCB2
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 22:41:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F67CAFBCB4
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 22:42:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36C5B16B88B
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 20:41:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4079F4A61E8
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 20:42:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E738221FC9;
-	Mon,  7 Jul 2025 20:41:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBDFF221F1F;
+	Mon,  7 Jul 2025 20:42:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VeXjWCcK"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="snCrH+3n"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE7171FBE8B;
-	Mon,  7 Jul 2025 20:41:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EAA31FBE8B;
+	Mon,  7 Jul 2025 20:42:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751920898; cv=none; b=Vcx/rSma/Qra5dDBnIGsdAJ+P2snQ0bXrjvhIfosXiMvQgcmhGkNwsY1MsIIuPmqgO+5FcV5fr/2nGT4CSQ/h/JXK7sPUJWBoZZozjKnEYBYXAcLaYXRpmwYCyb2/Cl5jEtEeKK4XrIR30OrC7SdlFf6kK07BqFUqiq5JeHymkM=
+	t=1751920935; cv=none; b=MIhg2DGINko4NJkiRP7D9CnsyWJGBEdkG2d9BpTKyGQMWQry5XtDKL9sIsB22DQQUxX72KYLigz5UAM2Ewwr1/vKBvLQwdJnrlVZbsk8x4GV3EyLAX2MIh44hd1MRWiohpbxYousIQR/53SYyHesf86j5BnvacMZt266Wo1EW3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751920898; c=relaxed/simple;
-	bh=ZGQ4IAp72CD0dvJdEiopEpJnXGG+TmleeD6jQxCqY6s=;
+	s=arc-20240116; t=1751920935; c=relaxed/simple;
+	bh=TFwuCdZGPMLUWkDUlk7xc4pd4TWR/hWivyhMGdCjHvc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WdMFAWCi1uE4mcp+bemPS+6Zl3BL+cJNigA8krLLk73TPGiXtZFg0L19PwUQSuKDsLp2aCrXg98/h3UL79Ie2QFky2UJ4eBb1OX5QDXL2U+jwkRdCGj7Vlj5LjCCln+KRfiCuMfOJFjs8gsl3vfohDPmHtGxAaUhqhqPq0NNKNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VeXjWCcK; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751920897; x=1783456897;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ZGQ4IAp72CD0dvJdEiopEpJnXGG+TmleeD6jQxCqY6s=;
-  b=VeXjWCcKc82F7YtqXVKkjkpZb7zuBSwb2dDfpO3ykygCt2W2PxXe0tBi
-   OJDXxQbYaYqpxH260ZlJ3HU2m2JgmfKk+WtQNI1s3aUlsnT2pEq+mjIlc
-   RJ8EOH12IKnxbvwsPLKkHP3GNXSU9XDwKUyprpiMtHy/q81UASBJGzod7
-   HZjbgqhHMc20wS87auVCqkB6rMMkFQYeH/+Gb2mIv3D3gGP0EvaN2yNVK
-   yEvR+HE2dw5MwX/Ev1ALLalHUVKSeTJGlVxeWKlq3UANecQ6EWIAUGEiI
-   l8iJLkClwbX2bgQRpdOhd+o6hZENuKfosxn7JNtQGb5Rnt9IytXJlJ+yk
-   A==;
-X-CSE-ConnectionGUID: pLhOTarRScGlKkEvcdTynw==
-X-CSE-MsgGUID: S5A6f9z1T5OJXaIaatgzOw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="79582753"
-X-IronPort-AV: E=Sophos;i="6.16,295,1744095600"; 
-   d="scan'208";a="79582753"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jul 2025 13:41:35 -0700
-X-CSE-ConnectionGUID: 6ZV0IcV6Tc++xPaC45N/Cw==
-X-CSE-MsgGUID: G755qW21QSO3Gx55MFvZOw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,295,1744095600"; 
-   d="scan'208";a="186342805"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jul 2025 13:41:29 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1uYseS-0000000DORp-3aM4;
-	Mon, 07 Jul 2025 23:41:24 +0300
-Date: Mon, 7 Jul 2025 23:41:24 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Anup Patel <apatel@ventanamicro.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Alexandre Ghiti <alex@ghiti.fr>, Len Brown <lenb@kernel.org>,
-	Sunil V L <sunilvl@ventanamicro.com>,
-	Rahul Pathak <rpathak@ventanamicro.com>,
-	Leyfoon Tan <leyfoon.tan@starfivetech.com>,
-	Atish Patra <atish.patra@linux.dev>,
-	Andrew Jones <ajones@ventanamicro.com>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Anup Patel <anup@brainfault.org>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-acpi@vger.kernel.org,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 15/24] ACPI: Add support for nargs_prop in
- acpi_fwnode_get_reference_args()
-Message-ID: <aGww9GWPdwTFw2kl@smile.fi.intel.com>
-References: <20250704070356.1683992-1-apatel@ventanamicro.com>
- <20250704070356.1683992-16-apatel@ventanamicro.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=HYWQwrTsfKDQX0kOGuoReavsspxqeLZUmU7jEpMxWhzXT7KWXlnlNLo0A2EJqQO8go9AM55OxQRtzMJyI9i+bfcvO9Zh9BPjg7tRrYIjTerwh/+6kjuOSP97M2eTwhs+AfOPpJKL2MMn97oZIGDFqWT3xUClA7658VrOaJQ13F0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=snCrH+3n; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E221BC4CEE3;
+	Mon,  7 Jul 2025 20:42:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751920934;
+	bh=TFwuCdZGPMLUWkDUlk7xc4pd4TWR/hWivyhMGdCjHvc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=snCrH+3n8WvC2YHtpwm12rKOgMBbsXOQTBPqas3wvKn/0BFXm2hxqaA7yKKCWxf3c
+	 NoVQcmD3pEwW7bzk6Ul2sTXoK9T8g72Et4EuUAwdw5dG3i0JQ/ds3QHORR3Hv12E1o
+	 OTZTRgH1MhERnuMWloeA/Q3CNgdhJnis94FPatSBZoi3XVXc6O3TSSyMv1hQEMij3Q
+	 YFncjgr40t66854TLRjKZ9Lr8atSm3AH4q/DkzTx8N3MHQT7ZxjYzUWEmxd6kmg4hn
+	 ehxiYqERfkHSS25plVukikQSCuU60gK6+zLa4D5cvvo4VMAsuJ/V4crT9D6kTUIzd1
+	 bqgxKEiwkv6JA==
+Date: Mon, 7 Jul 2025 21:42:07 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Nick Li <nick.li@foursemi.com>
+Cc: lgirdwood@gmail.com, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, perex@perex.cz, tiwai@suse.com,
+	xiaoming.yang@foursemi.com, danyang.zheng@foursemi.com,
+	linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 2/4] ASoC: codecs: Add FourSemi FS2104/5S audio
+ amplifier driver
+Message-ID: <f2055d69-af5a-46a9-8bb7-46ec3175b790@sirena.org.uk>
+References: <20250703035639.7252-1-nick.li@foursemi.com>
+ <20250703035639.7252-3-nick.li@foursemi.com>
+ <b1ad15d1-bf9f-4b94-abb8-1e9c6d512987@sirena.org.uk>
+ <1C4720AC50797830+aGe3L70OToh6txmC@foursemi.com>
+ <0370941d-63eb-4676-8a74-b8afef524376@sirena.org.uk>
+ <88CC983A5550253C+aGuGe7pQvIBPclfz@foursemi.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="2q2hNUYdsLxioORi"
+Content-Disposition: inline
+In-Reply-To: <88CC983A5550253C+aGuGe7pQvIBPclfz@foursemi.com>
+X-Cookie: We are what we are.
+
+
+--2q2hNUYdsLxioORi
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250704070356.1683992-16-apatel@ventanamicro.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Fri, Jul 04, 2025 at 12:33:47PM +0530, Anup Patel wrote:
-> 
-> Currently, ACPI does not support the use of a nargs_prop (e.g.,
-> associated with a reference in fwnode_property_get_reference_args().
-> Instead, ACPI expects the number of arguments (nargs) to be explicitly
-> passed or known.
-> 
-> This behavior diverges from Open Firmware (OF), which allows the use of
-> a #*-cells property in the referenced node to determine the number of
-> arguments. Since fwnode_property_get_reference_args() is a common
-> interface used across both OF and ACPI firmware paradigms, it is
-> desirable to have a unified calling convention that works seamlessly for
-> both.
-> 
-> Add the support for ACPI to parse a nargs_prop from the referenced
-> fwnode, aligning its behavior with the OF backend. This allows drivers
-> and subsystems using fwnode_property_get_reference_args() to work in a
-> firmware-agnostic way without having to hardcode or special-case
-> argument counts for ACPI.
+On Mon, Jul 07, 2025 at 04:34:03PM +0800, Nick Li wrote:
+> On Fri, Jul 04, 2025 at 03:37:32PM +0100, Mark Brown wrote:
+> > On Fri, Jul 04, 2025 at 07:12:47PM +0800, Nick Li wrote:
+> > > On Thu, Jul 03, 2025 at 03:59:34PM +0100, Mark Brown wrote:
+> > > > On Thu, Jul 03, 2025 at 11:56:37AM +0800, Nick wrote:
 
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > > the volume will be masked in fs210x->vol[2],
+> > > we restore the volume when the driver resumes(reinitializes) the deivce.
 
--- 
-With Best Regards,
-Andy Shevchenko
+> > You're not just restoring the values on resume, you're also overwriting
+> > them on probe.
 
+> Yes, the volume will be set to the default value at the first time of initialization on probe,
+> and it may be updated by volume control later.
+> It's a good way to use the regmap cache(REGCACHE_RBTREE) to cache the volumes.
 
+Great.  Note that for new things you should generally use _MAPLE
+instead, it's a more modern data structure - _RBTREE can still make
+sense for some specialist use cases but this is unlikely to be one of
+them.
+
+> > There's not great options here, and you're going to loose the start of
+> > playback especially with devices that don't start clocking until audio
+> > starts.  You really need the CPU vendors you're working with to
+> > implement SND_SOC_DAIFMT_CONT or expose their clocks via the clock API
+> > but not all hardware is able to do this.  I think given how limited your
+> > hardware is here you really need something in trigger() or some new
+> > callback that runs later than that, the delayed work you've got there is
+> > trying to fudge things to run after trigger.
+
+> We will start the start_work in dai->trigger if there is no clock bclk
+> for us to control, and disable fading in/out in firmware to reduce
+> the time consumption if it is needed(As a backup plan).
+
+Great.  You could also make the fade in/out user selectable so the
+application can trade off between pops/clicks and cut off audio.
+
+--2q2hNUYdsLxioORi
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmhsMR4ACgkQJNaLcl1U
+h9DXjgf/eR8r8mxqzf9OIJmirwEwrZZshozNp2kzXNehBqVpfmktmHfHwNvO3dQb
+MWtqyl54nwZmR7AYLS6Bsb33Qd5EdDxzZWYkJF9WnrTwkzsS5YyNeBjQ2Yad70/h
+1r11szUlBFLhg8DC4g1ERUGm1+QYrHHbiTv2UDTub+hktMViUNrHJ6hAIfgeCu49
+6MjcRy20ycMhZsxEXSEyHa/PaMuIqPP6HydelwDOKaas6V3+L1aejjiApLH6xOFn
+7GNR4OlC4W7yImsahefryZU149mY6tgxuaf/DWk9JKSxSfneQNzTe2M4g586EqkH
+TGl5VwCSKnrqzrPuqZ2YJ8Q+rPyb6g==
+=A+bV
+-----END PGP SIGNATURE-----
+
+--2q2hNUYdsLxioORi--
 
