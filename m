@@ -1,111 +1,203 @@
-Return-Path: <linux-kernel+bounces-720115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79BD9AFB746
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 17:26:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5996DAFB749
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 17:27:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F1EA4A35C1
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 15:26:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 225094A3A20
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 15:26:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B58442E3B0A;
-	Mon,  7 Jul 2025 15:25:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8DBF2E2EF4;
+	Mon,  7 Jul 2025 15:26:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="C3FgyR6u"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j9h7uVuK"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17CA52E2EF6
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 15:25:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66B352E2EE0;
+	Mon,  7 Jul 2025 15:26:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751901944; cv=none; b=C4vBkqcBfA8EbXUS2ClA0zq31+3ZFHGwVU/ZZAYMz47dYZNXtm718N2x8g5X+VN82J90nBmF2xtfrfkmMHpzI7DcxV/aaCOLcpGyyNTAf0KAb5FZCM7YLmLoM+RuVxU+qztRqzVwyxXcsmTJfM2Jt3nu7sJOCf7fS6yIWbClN1c=
+	t=1751901970; cv=none; b=NsWtH9ux0TXOcKbomG3eV1kDjfezLCxQ4ccqXOGG0FP6y/PnqbuPUI83t3OZe96iKGLNzznR+UyGU+K/+9R0xqG4ot2ap31SDcLeeHqIj0yfLfAQAfvbpUQP8s3mG5M6C1XSXkHqNKBryobg4YPxpDwYRgeT1R46OXzzU/ouaT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751901944; c=relaxed/simple;
-	bh=RvIbt4JsfzT8sFtxZjfR7V9phnXTDlBr7TATAuTmAck=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l3RuwTmiFrKsXERVvqIePQ976/k4XgUTgQ78xa+6EijKS0lLPU1QI0at6ud7khjo8FfUPnDuyZKwS51NdI0n1OeCqcm2PhPKYN4hQNT/ISJcw1J9Gyufi985g0xxTCN6rep+SjN+CxrSdvzOYoRBPw31kKv3X0cTGYtTMeb8DHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=C3FgyR6u; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id AEE5540E0205;
-	Mon,  7 Jul 2025 15:25:39 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id uENk_L4ipx_S; Mon,  7 Jul 2025 15:25:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1751901936; bh=fIhd7HOTfR/kWBhN4MAo63YQ841CAFgPo5PQ21Ie9h4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=C3FgyR6u0dIBaYYAmh6fp8C2gVqq1y0YWiTxCFzc3fqwIbDQAqZoiBw7HTThqe/3K
-	 sfiuwKs1jzZRv6S9FAuQ1VYe8er8RCxqJmZotv7Zz4JJ5uXSpJ2SFKpfMFIkPPD6oR
-	 zkSLgqzFn0nIQg1d7WBogCUfrbLeGlnqWbAzCBze38SOfjM45taB2ceT2d6/P1cuE+
-	 0REumGRl5vycG4yCh/EZx2O9iwtf/D9a+PrVKKTjS3HRaQjPOMhBLN1T20SjtvZGv9
-	 mYowAX0wjIfWdSzINVptqMEfQCS8P2Ci0kkdDHofOm0iTng90UewHQOSEsua4n1gqD
-	 TfFEtnYdouItHLC4Gjq26Fb/oKTcqvtPFvYYxQbla38/oxMA2wfZjWBcZsEmFB8u7o
-	 wvi7seQF0CtFm0AMWjvgfe6wnY3+Qjt6XyltGWjno984e4/xzLO+RFPsCr2+C3QdDT
-	 evaiyuU2tBJ7LmtxhDzwLZjbcMOi1OWmGjXkVxiC9sRAJWFwet5FS471EH1yzzrIeX
-	 p0Yv3ruTFGCHIeyfXCiQlDR4lCjWQ05JiJIKdIXhbmkCxsv5+cQZrYpvLDcCqs/lBd
-	 zA4GIjm2p/sbd206YWuK42X4zg+IHekiExNwaDKiaF/4UvkhzNwnn9rjNohAJrdF8W
-	 lFLibLECTn7l/r+RpdyqolrA=
-Received: from zn.tnic (p57969c58.dip0.t-ipconnect.de [87.150.156.88])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 29FF740E0202;
-	Mon,  7 Jul 2025 15:25:28 +0000 (UTC)
-Date: Mon, 7 Jul 2025 17:25:22 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Mikhail Paulyshka <me@mixaill.net>
-Cc: Dave Hansen <dave.hansen@intel.com>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/1] x86/rdrand: disable RDSEED on AMD Cyan Skillfish
-Message-ID: <20250707152522.GCaGvm4uRwQwkflx45@fat_crate.local>
-References: <20250524145319.209075-1-me@mixaill.net>
- <20250617200551.GIaFHKnyPV_XsSjlMP@fat_crate.local>
- <cfb12298-5214-4fc1-859c-2218c7da4ce3@intel.com>
- <40cd274e-a02b-450d-88df-aa2b92b51b12@mixaill.net>
+	s=arc-20240116; t=1751901970; c=relaxed/simple;
+	bh=1vjBYMQeftqWi7FZi8y1ssVtN6H/J3kGxcSJ0LgdVFo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LjwxEWrJZDEu9dCDygWCyk2E7XTUKk4dwO4IM+KNkEH4+oV3qsAn9Q/y1SjXBvvWmjSmlLrGi/rgeJ10wSKvbxrqOX3vHzeSaZ/3r0yIHJ3F/VdSB38M6utJ37w0fRUQmaUBCULLJXcYWfNDh5TaoEt6WRY/ovvYalXcUwvBPws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j9h7uVuK; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2349f096605so47081845ad.3;
+        Mon, 07 Jul 2025 08:26:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751901968; x=1752506768; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6T6ShIaDgYa+eLDzLK1Z4CLo4u4A8Rd31tmUlpMfZZg=;
+        b=j9h7uVuK37bvQh8Ysax2df4JWK49wrZaVoBKOAkm+UWvKHCcIWlHxRY3+8aRBRECLe
+         cQBuYI5x0UZcwVSabeNLBq2aPEHxXbNQhqd9/Ls6zfDXmUagJVv/sfrkzcUsl0ozCTid
+         F5Oj3EOs75c6enHLEIyirnSJSSxTXzS8Hspb0XV43evRowjiXtdsz7MuWfljOPjlPMJZ
+         7s3OIzdXnOTMzZB8ztjfRngEjoyBqow86zDx83IQ9zpFuFsTw7hfonS1uS36EyLXdgfS
+         LggLwLEt7kreFrVQFxxnVOgPn8ZiwskFlrF13ysVZlOnEkSnK+8EhgRvfnNVQS/S3oUw
+         V0fA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751901968; x=1752506768;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6T6ShIaDgYa+eLDzLK1Z4CLo4u4A8Rd31tmUlpMfZZg=;
+        b=A1emW0b/n6RNniINsNqteVy2KCNX+f+L6RtIKizUbdX1k8u5g1Vj8PPhITzsrJnK85
+         NT2Uq7RXMw9LFQ3Oatyd/wVPxMLEKQ/XC10sQ3rhQxIQx/cDnnoJVGKXW/saM/scw0Xo
+         wkblCOBj9OibI++wzSY+qalvo9D1jscADWlAnR/cGuinMcqPTxJQL4canwlKSBneXt+d
+         aztHUvkUexo5b5zbBHFWFUUispGDaZhwqig2BFqewnHsPPfmeKwsnGz6SwBz5I2jUSEJ
+         Typ+CdXtR6NOCGxXJP3imHp8zK0GHm1n9J9Rn3eKhNnJQ9lRm7ouRjsUZK08seQIg1wF
+         ZeKw==
+X-Forwarded-Encrypted: i=1; AJvYcCVTBkP75kyzpBPIV6yRQ3XMwAfrt6waHdmGDYuHfrLvU9R7/BYhrKGmp+YbzClQx89sP1UBYajdNalPMvc=@vger.kernel.org, AJvYcCXmC+fd0VVB9p3SuzKewcCaiQ8NKo1MIQpYK7cslwJGP7nIeBBp7T5AG/wCN7SqM6fnE2Mf4zlJ/9qoJuNfBjBT@vger.kernel.org
+X-Gm-Message-State: AOJu0YwuBdjJqZhThxiwkgI98muwIZkTTmHZJTwcKKSDydfMYboUpDIJ
+	gaRDAeWUxws71CCKUxzisAWQL5ESJ39Isdaz4FtClZA0KhzH9GHbbNKg
+X-Gm-Gg: ASbGncuqbQN6WYtYJxDuGFm6uHKIwVBxe2wZp0hSJYRTP6wkbuxZdXm9nYvUwsgyrF3
+	iiQ8ZhgclKxslWQ1pppZ2vtBG+UG3+a0apcaQRTVs3SK0/9CX2obtvJK2BfwwUPrGTAwoTfFzrP
+	OSGjS+16tu0GfIS1Xu3sN/sO7gbQeBTdgyOd0qDLAPqRcamfV1dV7N790uCHugJt5slm6elyVXC
+	GuGQn79P7QsSmAt+HPsGdgx9bGj4H1LqaPT2Mn3x/E7jsyKtOZl4EVEAzh9PdKM8+0cXK3FXxGi
+	hTL9EqJgNHwbRw3zDWCbQdbMUBXEw9li/qlWS3W5NyosKYCQxRGQ9vvcjQoG4R0=
+X-Google-Smtp-Source: AGHT+IG5SRYDX/otRUvxb1vrGIRBHOn23NuN9PHO89Y/+FotRBvffqs8Ouyh0Bp2FwSJf8AUd5unng==
+X-Received: by 2002:a17:902:ec91:b0:235:129a:175f with SMTP id d9443c01a7336-23c8755bef6mr202997435ad.34.1751901967601;
+        Mon, 07 Jul 2025 08:26:07 -0700 (PDT)
+Received: from skc-Dell-Pro-16-Plus-PB16250.. ([132.237.156.254])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23c84593e0asm87533495ad.193.2025.07.07.08.26.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Jul 2025 08:26:07 -0700 (PDT)
+From: Suresh K C <suresh.k.chandrappa@gmail.com>
+X-Google-Original-From: Suresh K C
+To: nphamcs@gmail.com,
+	hannes@cmpxchg.org,
+	joshua.hahnjy@gmail.com,
+	shuah@kernel.org
+Cc: linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Suresh K C <suresh.k.chandrappa@gmail.com>
+Subject: [PATCH v2 1/2] selftests: cachestat: add tests for mmap
+Date: Mon,  7 Jul 2025 20:55:56 +0530
+Message-ID: <20250707152557.49877-1-suresh.k.chandrappa@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <40cd274e-a02b-450d-88df-aa2b92b51b12@mixaill.net>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jul 07, 2025 at 01:17:41PM +0300, Mikhail Paulyshka wrote:
-> On 6/17/25 11:21 PM, Dave Hansen wrote:
-> > Heh, maybe if x86_init_rdrand() did RDSEED too, this wouldn't have
-> > slipped through QA.
-> 
-> This might be interesting to you: in V1 of this patch set, there was an
-> RDSEED sanity check, and Intel's CI detected broken RDSEED on Comet Lake:
-> 
-> https://lore.kernel.org/all/202503211421.fc83271a-lkp@intel.com/
+From: Suresh K C <suresh.k.chandrappa@gmail.com>
 
-Right, I'm being told this is preproduction hw:
+Add a test case to verify cachestat behavior with memory-mapped files
+using mmap(). This ensures that pages accessed via mmap are correctly
+accounted for in the page cache.
 
-[    2.823625][    T1] smpboot: CPU0: Genuine Intel(R) CPU 0000 @ 3.30GHz (family: 0x6, model: 0xa5, stepping: 0x1)
+Tested on x86_64 with default kernel config
 
-and strictly speaking, RDSEED *can* fail due to resources exhaustion etc
-- doesn't necessarily mean it is broken.
+Signed-off-by: Suresh K C <suresh.k.chandrappa@gmail.com>
+---
+ .../selftests/cachestat/test_cachestat.c      | 39 ++++++++++++++++---
+ 1 file changed, 33 insertions(+), 6 deletions(-)
 
-Thx.
-
+diff --git a/tools/testing/selftests/cachestat/test_cachestat.c b/tools/testing/selftests/cachestat/test_cachestat.c
+index 632ab44737ec..b6452978dae0 100644
+--- a/tools/testing/selftests/cachestat/test_cachestat.c
++++ b/tools/testing/selftests/cachestat/test_cachestat.c
+@@ -33,6 +33,11 @@ void print_cachestat(struct cachestat *cs)
+ 	cs->nr_evicted, cs->nr_recently_evicted);
+ }
+ 
++enum file_type {
++	FILE_MMAP,
++	FILE_SHMEM
++};
++
+ bool write_exactly(int fd, size_t filesize)
+ {
+ 	int random_fd = open("/dev/urandom", O_RDONLY);
+@@ -202,7 +207,7 @@ static int test_cachestat(const char *filename, bool write_random, bool create,
+ 	return ret;
+ }
+ 
+-bool test_cachestat_shmem(void)
++bool run_cachestat_test(enum file_type type)
+ {
+ 	size_t PS = sysconf(_SC_PAGESIZE);
+ 	size_t filesize = PS * 512 * 2; /* 2 2MB huge pages */
+@@ -212,27 +217,43 @@ bool test_cachestat_shmem(void)
+ 	char *filename = "tmpshmcstat";
+ 	struct cachestat cs;
+ 	bool ret = true;
++	int fd;
+ 	unsigned long num_pages = compute_len / PS;
+-	int fd = shm_open(filename, O_CREAT | O_RDWR, 0600);
++	if (type == FILE_SHMEM)
++		fd = shm_open(filename, O_CREAT | O_RDWR, 0600);
++	else
++		fd = open(filename, O_RDWR | O_CREAT | O_TRUNC, 0666);
+ 
+ 	if (fd < 0) {
+-		ksft_print_msg("Unable to create shmem file.\n");
++		ksft_print_msg("Unable to create file.\n");
+ 		ret = false;
+ 		goto out;
+ 	}
+ 
+ 	if (ftruncate(fd, filesize)) {
+-		ksft_print_msg("Unable to truncate shmem file.\n");
++		ksft_print_msg("Unable to truncate file.\n");
+ 		ret = false;
+ 		goto close_fd;
+ 	}
+ 
+ 	if (!write_exactly(fd, filesize)) {
+-		ksft_print_msg("Unable to write to shmem file.\n");
++		ksft_print_msg("Unable to write to file.\n");
+ 		ret = false;
+ 		goto close_fd;
+ 	}
+ 
++	if (type == FILE_MMAP){
++		char *map = mmap(NULL, filesize, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
++		if (map == MAP_FAILED) {
++			ksft_print_msg("mmap failed.\n");
++			ret = false;
++			goto close_fd;
++		}
++		for (int i = 0; i < filesize; i++) {
++			map[i] = 'A';
++		}
++		map[filesize - 1] = 'X';
++	}
+ 	syscall_ret = syscall(__NR_cachestat, fd, &cs_range, &cs, 0);
+ 
+ 	if (syscall_ret) {
+@@ -308,12 +329,18 @@ int main(void)
+ 		break;
+ 	}
+ 
+-	if (test_cachestat_shmem())
++	if (run_cachestat_test(FILE_SHMEM))
+ 		ksft_test_result_pass("cachestat works with a shmem file\n");
+ 	else {
+ 		ksft_test_result_fail("cachestat fails with a shmem file\n");
+ 		ret = 1;
+ 	}
+ 
++	if (run_cachestat_test(FILE_MMAP))
++		ksft_test_result_pass("cachestat works with a mmap file\n");
++	else {
++		ksft_test_result_fail("cachestat fails with a mmap file\n");
++		ret = 1;
++	}
+ 	return ret;
+ }
 -- 
-Regards/Gruss,
-    Boris.
+2.43.0
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
