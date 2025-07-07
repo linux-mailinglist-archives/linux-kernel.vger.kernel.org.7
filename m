@@ -1,163 +1,114 @@
-Return-Path: <linux-kernel+bounces-720651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7455AFBEC6
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 01:49:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17598AFBECC
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 01:51:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 90A9A7A5CBF
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 23:48:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46CD43B89D6
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 23:50:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B249F28A704;
-	Mon,  7 Jul 2025 23:49:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF22228B3F9;
+	Mon,  7 Jul 2025 23:51:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="de0F1KQc"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lMNqaREG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6126E267F58;
-	Mon,  7 Jul 2025 23:49:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34C0017DFE7;
+	Mon,  7 Jul 2025 23:51:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751932166; cv=none; b=XOks6ejyp7a9CspUMjqzAgcAoYl2CRIZLjD8NMdYDQ5NoaHtWKMeuUa41Po3dKaGIcJoEGAdLUte2Jkrd3H/CQaT1rwHtUh3Tlc59Vniy5JTAyFqLV40q9fUaMkot0+XnKHt+H5MulsKYajvHKmuE9BMHPZ7w1lE9liiknaHwrU=
+	t=1751932276; cv=none; b=hlUz67T7d85TIt+ZaR1TC0aD0rSjRXFv9pqS3J6gHbB8IaHIk2l4MXJlXHEEvxN6MYCpI2kUkmu12f7LA/hPj8FAYzg7HIH3z6pNYrnuMZQAlTkCMD9d8FGaRmf+AZNJ8+2/yxL7aDM7FGzVwafkl5RO5f7OgYiIiKEuPGQ0dgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751932166; c=relaxed/simple;
-	bh=TCFRprCP4msMIURmCuCelD52LF+zoH7SAbFwNKfZ62I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fNwHAUcehDHsuyLowoVKCbB4kGji3RkZkRoEe/q/iGNSaIs/dR0PPmNRZ8iEFVP/dj05axGlAosVDU8W9VFk+wmG8KJJAQlMpEGRdo7ymLOgh7jsXeCxcpp/wi4BOUmmBORuFD9v7ZzWj3EFitJgKy55sDt7pqZZZZcHo3fucLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=de0F1KQc; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-60867565fb5so6187184a12.3;
-        Mon, 07 Jul 2025 16:49:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751932163; x=1752536963; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=96edAJ78aoq+ligp1pRPgUyMQ47YjBrb5R36hN7T77Y=;
-        b=de0F1KQcLGYu4IsFUlbwKWLVm+fhAGe8GybDIuq5gIFdH4+J7IZxXIHWesGhOOZsO4
-         C6KDs2LfSsUbLlQdHmcJ0cgzkRcY1HT2k8BJztaYOo+1D6zebjKVXCuKCo/9KBlc7u2A
-         WrsDsVgoU+DvsBlVdrbsJ0knOebhiOl9M8UEDwI2qta0yqaIRj235a/4l6ZeL2elV8Lc
-         OQMRULNrCiO6ODq6S0Rni8RCf1WRP/ysSDJC/15NcVa0Zc7dYWx5cVwdt2DK1/ryp9t7
-         CtBTQTiP+pXfmqRVxuxlscwyDbRsq+AJh+kA29d8xhYpsrryq+Iy6QE/8C8iNSlaUwUU
-         f9Og==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751932163; x=1752536963;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=96edAJ78aoq+ligp1pRPgUyMQ47YjBrb5R36hN7T77Y=;
-        b=r0/DXTdq/ojmBa7o+1OX+IvhFHceYre+83ie6G8n0SCChLG0253zTMYnTpkuxuGfSs
-         4eU2rZ/giHhikWSJKZmGcRb1L6xZPFygcUpiQOy3V7z6+901Q38Rto63JzvNo8sugPFW
-         2rK41noh18FP61CJNl7ISu0rr5MrHV1ALjpmHW5K+eNDglid2Efh1ELS2eoiBfL1rKle
-         yaW9T8b1s8LQQ6H4MN/dz4PANOz8CsID3za4kUjptMeMj7rz7J5EZ3Ap+jsHHqEQc4Bn
-         TAaydmQmYw/tvtg7ujt+KS2wJBzUfIyBEbW/emeNQNMTuwh9Av+zhg1fyFpiRjeAMKvU
-         oh5A==
-X-Forwarded-Encrypted: i=1; AJvYcCU5uQDDlGelxcSJlvASnF7SsHtFYvwKmx7kaNGEQLM55yyNM5X+3s5fyP7m+CiFxzQbiu8KI7fhpWtL@vger.kernel.org, AJvYcCUoIeqCD7U7dDyaHLJYzMZiPC8znrvoLSiuz4uP5l00Ov/zB3T1rDUIi2cv8ibOQlEYFXQ1OwWs9MK0K3on@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzh32QDpzGOnHHY7exVt8ydd30tlJ4zfvm9wZqtEEieFRRREcZ7
-	m4+jwMg8101Wa2xUcwLO9G9vE5y4cJqdaUP8s7idOx0h7Q8V6qwRTdOz
-X-Gm-Gg: ASbGncuk4rsSQ82AOOAfIMSlZTLGYw6IDqFXs+EA2WpaVq+CD+ZcqoMbFJM9fWEay4T
-	gnG22SfU3yeJSrSEN0X9Drb7c973xcJM9XGIwd6hxw0JDmCt5UD3+iZreJLpXxSK6u/VhdO51n9
-	usYJAp8OAluRUOtOtFWfrqqqK1L+Jf+BYW3zjy7JVD0H1sOsEwBWvjAFYUjkw5gBWfbDDVI+NHy
-	boF20gK1M4jEzVM0a4tCwMRERPiR+dJDYViZoXYBD6R70qWXvhBOiTPpfUbTQSUeGeTvYIu6E6F
-	OFO6RnfZuSFdNkUg05yl9251UQgxlmi6y9+uTzBPMvKCURPVASfWUheQkRlWnOZF7xnIiDujv5R
-	lJ5mIfNimSpqozQ==
-X-Google-Smtp-Source: AGHT+IEFkAXubR8nGNnpMMcgpN1NSWw4WX7eaJmPIaLLZ4fC713GtP5JLryHmUzd1bIBXHOSvqiWdQ==
-X-Received: by 2002:a17:906:9f84:b0:ae0:b22a:29b4 with SMTP id a640c23a62f3a-ae6b069d5ebmr97623066b.39.1751932162362;
-        Mon, 07 Jul 2025 16:49:22 -0700 (PDT)
-Received: from [192.168.1.129] ([82.79.237.69])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae3f6b02f68sm790697866b.117.2025.07.07.16.49.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Jul 2025 16:49:21 -0700 (PDT)
-Message-ID: <2939a44f-a70e-41a9-9203-83a87c9a4be1@gmail.com>
-Date: Tue, 8 Jul 2025 02:49:20 +0300
+	s=arc-20240116; t=1751932276; c=relaxed/simple;
+	bh=g6Zd4/YDNPpc8R6MR1dmXxoBbReZK1XUHG0S0Nc65TU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=i807rY5yn7G2h/K1yqkApd4vrX50zs13fNMa1TI/ap4kvBURNnEuhZp3l0WaHyhQIl4lUIiKF4pBaaAAPvuAz7yxxZqKUoSrI9NCm+9Xb2i/C8ei28N5Mh+h9sDYza5cuh42pXnOuduR9I64TlSsdDPUSSJPzPsWn/1FZpHhg9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lMNqaREG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF649C4CEE3;
+	Mon,  7 Jul 2025 23:51:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751932275;
+	bh=g6Zd4/YDNPpc8R6MR1dmXxoBbReZK1XUHG0S0Nc65TU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=lMNqaREGgynbC0APNevxTVYNZc4nSkfrn4meWm+WKY3wNJbRiPoJ2KTo11gJzjUEu
+	 num6hHNDYkC/hEcpfkkkc5N8IXWvtkJNGyZkkU+PqVDc395zu3HtZUVgyY111lalL2
+	 unsDRf5xAR4htC5bY/yisBW3XNIwhjFyNyRo66MHJgcSLeW+mQVgXP9Eu+ISWcs3bP
+	 ILklmt3qhIKtuXWNkbbfIBsp1qBO/s7hKXO3XO3L8fAXR0AHG+3m6nrCoLAY1GWi6L
+	 wWOQADFgiySRGy45N6hOMtFGfyMrPVjG44Qv/nn1W7oAKAm0oCtb2kC35uS2S7lmCs
+	 NLvwU7ekmwtKA==
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-54b10594812so4573768e87.1;
+        Mon, 07 Jul 2025 16:51:15 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU4a9BB05sZUIgvIECldvPYLTqi5L5ra3fTswAz9CmuWxrsoG3nmTzCjyc1HYpQIRVy1/evWav0Elw=@vger.kernel.org, AJvYcCV9hxK8bY5oZyvEW7WLexdBIGrQChnJpsYMBcsCW/fih6BVpECwpd/XCNSQIsZhJw/IQZ3lA2wQ/ez02FrH@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbgNLkIwfUE8aePF8GmszofAaUkJsXlv3WzRLBZqqd4cnWhNwi
+	2ZqEr9WF0iz9kC7gfvmEM+0FrqAx64noovYfwpOHutjc/bV+pEDiCcnNPQlDt45hIPmlSFnz++T
+	VdUFgaemli3TGpJZB4EqNfDuDI1PBe8c=
+X-Google-Smtp-Source: AGHT+IGMaguh6toiAh/k7cFQ1tuRjFzWdDQNSdoI3c4ua80mQ80lPdQl7Oxx/+O05xgqGkLgYx6+sISNhnhDmYkrTVI=
+X-Received: by 2002:a05:6512:e83:b0:553:543d:d999 with SMTP id
+ 2adb3069b0e04-557aa2930f2mr4546082e87.32.1751932274154; Mon, 07 Jul 2025
+ 16:51:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 4/6] arm64: dts: imx8mp: convert 'aips5' to 'aipstz5'
-To: Alexander Stein <alexander.stein@ew.tq-group.com>,
- Mark Brown <broonie@kernel.org>, linux-arm-kernel@lists.infradead.org
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
- Daniel Baluta <daniel.baluta@nxp.com>, Shengjiu Wang
- <shengjiu.wang@nxp.com>, Frank Li <Frank.Li@nxp.com>,
- Marco Felsch <m.felsch@pengutronix.de>,
- Marc Kleine-Budde <mkl@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>, devicetree@vger.kernel.org,
- imx@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20250610160152.1113930-1-laurentiumihalcea111@gmail.com>
- <ac1daf6b-ee06-4076-b86f-b436ca0acd6d@sirena.org.uk>
- <c3deef24-fed7-4405-9953-804bff118c11@gmail.com>
- <5029548.31r3eYUQgx@steina-w>
-Content-Language: en-US
-From: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
-In-Reply-To: <5029548.31r3eYUQgx@steina-w>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250606154112.311565-1-vkuznets@redhat.com> <256ad7fc-c6d4-470d-a434-7b5556c3b8f6@redhat.com>
+ <e1644469-77ca-4770-bc79-5243a46b8a9e@redhat.com>
+In-Reply-To: <e1644469-77ca-4770-bc79-5243a46b8a9e@redhat.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Tue, 8 Jul 2025 09:51:01 +1000
+X-Gmail-Original-Message-ID: <CAMj1kXFg7wnfn=ipd86XNxeoXa=LtWviAgiVoTL1Y76q0yWA9g@mail.gmail.com>
+X-Gm-Features: Ac12FXyFHDNA3lSkwd3CiRKZ5s-R6kUiH-K04bNkBonH3HICWhgRZ4ZqunZ7Dsw
+Message-ID: <CAMj1kXFg7wnfn=ipd86XNxeoXa=LtWviAgiVoTL1Y76q0yWA9g@mail.gmail.com>
+Subject: Re: [PATCH] efi: Drop preprocessor directives from zboot.lds
+To: Luiz Capitulino <luizcap@redhat.com>
+Cc: Vitaly Kuznetsov <vkuznets@redhat.com>, linux-efi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-
-
-On 7/7/2025 8:11 AM, Alexander Stein wrote:
-> Hi,
+On Tue, 8 Jul 2025 at 07:36, Luiz Capitulino <luizcap@redhat.com> wrote:
 >
-> Am Mittwoch, 2. Juli 2025, 21:54:09 CEST schrieb Laurentiu Mihalcea:
->> On 7/2/2025 9:49 PM, Mark Brown wrote:
->>> On Tue, Jun 10, 2025 at 12:01:50PM -0400, Laurentiu Mihalcea wrote:
->>>> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
->>>>
->>>> AIPS5 is actually AIPSTZ5 as it offers some security-related
->>>> configurations. Since these configurations need to be applied before
->>>> accessing any of the peripherals on the bus, it's better to make AIPSTZ5
->>>> be their parent instead of keeping AIPS5 and adding a child node for
->>>> AIPSTZ5. Also, because of the security configurations, the address space
->>>> of the bus has to be changed to that of the configuration registers.
->>>>
->>>> Finally, since AIPSTZ5 belongs to the AUDIOMIX power domain, add the
->>>> missing 'power-domains' property. The domain needs to be powered on before
->>>> attempting to configure the security-related registers.
->>> I'm seeing failures to probe the audio devices on the i.MX8MP Verdin
->>> system in -next which seem to bisect down to this commit,  I'm seeing
->>> separate boot failures on the EVK so haven't been able to confirm the
->>> status there.  There's no obvious logging, the dt selftest shows:
->>>
->>> # not ok 141 /sound
->>> # not ok 142 /sound-hdmi
->>>
->>> Full log at:
->>>
->>>   https://lava.sirena.org.uk/scheduler/job/1530197#L5119
->> Hi Mark,
->>
->> Thanks for catching this!
->>
->> After browsing through the provided logs it would seem like no device under the
->> AIPSTZ bus gets probed. Right now, my guess is that the AIPSTZ driver is not being
->> compiled since CONFIG_IMX_AIPSTZ might be set to 'n'.
->>
->> Which defconfig is the CI using? Is it arch/arm64/configs/defconfig?
-> I'm also seeing audio problems starting with this commit. In my case I get
-> the following error:
-> fsl-asoc-card sound: failed to find CPU DAI device
-> fsl-asoc-card sound: probe with driver fsl-asoc-card failed with error -22
+> On 2025-06-06 11:55, Luiz Capitulino wrote:
+> > On 2025-06-06 11:41, Vitaly Kuznetsov wrote:
+> >> Older versions of `ld` don't seem to support preprocessor directives in
+> >> linker scripts, e.g. on RHEL9's ld-2.35.2-63.el9 the build fails with:
+> >>
+> >>   ld:./drivers/firmware/efi/libstub/zboot.lds:32: ignoring invalid character `#' in expression
+> >>   ld:./drivers/firmware/efi/libstub/zboot.lds:33: syntax error
+> >>
+> >> We don't seem to need these '#ifdef', no empty .sbat section is created
+> >> when CONFIG_EFI_SBAT_FILE="":
+> >>
+> >>   # objdump -h arch/arm64/boot/vmlinuz.efi
+> >>
+> >>   arch/arm64/boot/vmlinuz.efi:     file format pei-aarch64-little
+> >>
+> >>   Sections:
+> >>   Idx Name          Size      VMA               LMA               File off  Algn
+> >>     0 .text         00b94000  0000000000001000  0000000000001000  00001000  2**2
+> >>                     CONTENTS, ALLOC, LOAD, READONLY, CODE
+> >>     1 .data         00000200  0000000000b95000  0000000000b95000  00b95000  2**2
+> >>                     CONTENTS, ALLOC, LOAD, DATA
+> >>
+> >> Fixes: 0f9a1739dd0e ("efi: zboot specific mechanism for embedding SBAT section")
+> >> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+> >
+> > Thanks for fixing Vitaly:
+> >
+> > Tested-by: Luiz Capitulino <luizcap@redhat.com>
+> >
+> > (this is for the build test, not SBAT testing).
 >
-> DAI device is sai5 aka /soc@0/bus@30df0000/spba-bus@30c00000/sai@30c50000.
-> It turns out that the module snd_soc_fsl_sai is not even autoloaded. Loading
-> manually doesn't have any effect. So I assume starting from this commit
-> the subnodes (at least sai5) are not even populated.
-> Reverting this commit fixes my setup.
-> I've set CONFIG_IMX_AIPSTZ to both  'y' or 'm' and doesn't change anything.
+> Vitaly, Ard,
+>
+> Are we planning to include this fix for 6.16? I'm afraid we'll introduce a
+> regression if we don't include it.
+>
 
-ACK. Would you mind giving [1] a try and letting me know if that fixes the issue for you?
-
-[1]: https://lore.kernel.org/lkml/20250707234628.164151-2-laurentiumihalcea111@gmail.com/
-
-Thanks!
+Apologies, I let this sit for a bit longer than I intended. I'll send
+out the PR today.
 
