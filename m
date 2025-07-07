@@ -1,128 +1,137 @@
-Return-Path: <linux-kernel+bounces-720046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4E37AFB638
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 16:36:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C17BAFB63A
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 16:37:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 134CF1620A7
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 14:36:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8882162396
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 14:37:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D0242E172D;
-	Mon,  7 Jul 2025 14:36:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D2A42D8373;
+	Mon,  7 Jul 2025 14:37:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2eX4RYSq";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WH0KFYuI"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bwyxl93z"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1AA52BD003
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 14:36:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EEC2288C19
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 14:37:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751898997; cv=none; b=meZWUDVsu2hWhvgkosPqZn6evh5DOgKnyJfrU5SCBaXPP2A6DG6PErLk3Pcqgudtl4w31qHmjQ5KenirXN3FBNdyL2BeE0RSTTG5kVQWJJpYqz0/7YXCaJesSEhYzGnawFyzIqu1QjHxDifWCgEUPrc22yzeK+o0DeQ6o/B8caY=
+	t=1751899049; cv=none; b=huUWQBpRa4u3YBwGzSXb+ZRFunUg0R/tWKMIrp1g9+V70G4BPZcsy+Ufb1c1qinedh8N+qA1ckrjSJEgmOaxje7tH7tvq6aYkqdHRUWGc7JruOnfGtViBQwQA9OcIdCZvzfpLrCFpWmXF5AFumaW2YbQnHQm4j6okg0nKXFn1Pk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751898997; c=relaxed/simple;
-	bh=ySN3IGPUH+v7e9U5lCxAVJ3MoLm0PADu3ghbduR7DKY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ppyr8hHrEBSK1Idjxe7xRJH1bgkYmQ43bZ7PgTNeTZxIX6GlyVq0RJOe+9U82tzGRQ5IcFs4jSnQuvDPONiZsUeBgwCLXaYywI8m1dMxL3Q26qFnpFZNmbPRWtE3cChOS01GdVK79HVxJ1HkguTiz0BxeYNOsuuhRAInUXfOuLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2eX4RYSq; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WH0KFYuI; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1751898993;
+	s=arc-20240116; t=1751899049; c=relaxed/simple;
+	bh=JVzEUf8d46X+1TyurtsvmvEPFDWxvAuVaAPdsdMEda0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=L1Ngbv8K31GhWmQjb92IkUnx+sKe1tJY2kSoTxzB5z1BzPH1H7LxM5+dAoutggQSF2h1SyGAU1Qc6W9umQFaad7maI6yKD9T54O0sXsxF/e4Sz6jqAkgFCUwa93AKk+si0wIq8DKNany164nMHzAAh1bKLxuYqEBlkFOvDWtbOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bwyxl93z; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1751899045;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=IHGi2Z6OPIJ5p7McK8oBTflMeJCBgNq0gbXegoXbuGE=;
-	b=2eX4RYSqGjV/7uflYqxCMiCpj4vMdQeakbuWrF1MCfjryZDCk08vS9oDf1A+ilrDJQivQA
-	hKboxnSbRBJxTa3mgvwLJ86GGmv4GEls3UIfRUuf4DIQViPrx6JaOyQxzFNHbtXIlbVHBf
-	9VfeZ4858ukQ5e+1Nvmy08cbP7Nh7YZUsMg9ZlaJmpGJAl0b2y9qzFNLRsiym+WPwV5gzm
-	JaPu0q8rrrOSInCJNyMC8odBUJsf0uZqv1uLcvrAbWps6LYOJreyZrW2cgeJO1/g9CpljV
-	QoitWn+LAwn7Bn+aEYyeVxfuBkQVqjaO95eFdiJENZ1mpF71dNGzQIXjHG++7g==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1751898993;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IHGi2Z6OPIJ5p7McK8oBTflMeJCBgNq0gbXegoXbuGE=;
-	b=WH0KFYuILpYAxnbmniyxgk0cFbIvLdzfk3sWeMGkcgwa6agkvYYGQNLVVkmVDtVJ+5f+JV
-	UxrtPVKJ9GZlVlCw==
-To: linux-kernel@vger.kernel.org
-Cc: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
-	Darren Hart <dvhart@infradead.org>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Waiman Long <longman@redhat.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH 3/3] futex: Make futex_private_hash_get() static
-Date: Mon,  7 Jul 2025 16:36:23 +0200
-Message-ID: <20250707143623.70325-4-bigeasy@linutronix.de>
-In-Reply-To: <20250707143623.70325-1-bigeasy@linutronix.de>
-References: <20250707143623.70325-1-bigeasy@linutronix.de>
+	bh=GqvKlmPJ4I9gAV0QuPRJRq7KjZnBRHxmrPJwdWlhbu0=;
+	b=bwyxl93zIiv0OLrCviWjwgkKhr+mMmFCwJGxdc5hHsuFe3LMcDUuB2oDAYZsf+lpNSp7lZ
+	52/6A2EqV8SdjwkUDWTfTlA34//nM9imI78+TQZG+wNVZ1lJMKByhNHIqXojyT1K4oZLjQ
+	VuXADs1HWWQah+0PVd1a/mf7kYlPupE=
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
+ [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-26-ZMgHtrd9MRqQklkfXoZZeQ-1; Mon, 07 Jul 2025 10:37:24 -0400
+X-MC-Unique: ZMgHtrd9MRqQklkfXoZZeQ-1
+X-Mimecast-MFC-AGG-ID: ZMgHtrd9MRqQklkfXoZZeQ_1751899043
+Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-adb33457610so314937966b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 07:37:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751899043; x=1752503843;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GqvKlmPJ4I9gAV0QuPRJRq7KjZnBRHxmrPJwdWlhbu0=;
+        b=ubZCMiqhB9FDrJ1wBuA9cVndvyyw29k64RA0timHNidhp8t/ulF2TKsMPrt400/lrr
+         v/XetWPXuEQqCxxGEBl6fbUFEZT4MEMmlKL4Bas59GGdgZwLkCRFSmRwwXDnD7mlToUo
+         j+J5OMDMlJNHST6YO2ywkM4hcyI8a23kChyR4hZcyruO+8ooGdDxRNw4FswF0hIyaW+Q
+         DdrBHqoqhw090BqpB73TublpZWW0UQAIPuZp6PFR7eeAJ3byP799o6KcGQCsTjog9uqi
+         2XPDdYjoQW/NugMT5N/43E+M8PQhXgYBdVghWk2h7yRdX7HvWN7aNiRzq/MvFHC014pD
+         k5zg==
+X-Gm-Message-State: AOJu0YxMyfVQjC0nAvb3m3wzoxT+uKcw/RTZsnlzilAWBwnrYpqfipEJ
+	Gq3CP9xiakJnwwBsmm54XCMV4RfMNykm6dOI9O6HXmk1KjLtYP5/BNikZpBGvy4t/f4dm0xz9x/
+	xWw4eqpU1xh7XBklW3WQx6ewSJZQagI1LdtUveswdT/8hQeNXrqSlK+5QHCVgG+gt35hdc2AsLd
+	j/mvA+tVwsWG81HPWafOXFlxnZCoKOlcvwWP3pWG01h8KME6Gp
+X-Gm-Gg: ASbGnctK0ddamlnrE+fqM2+UQhAn3E19diRWbdQZLqA/jihxkDPtJezyLYwitJd0Y8C
+	RUTglaQ2FF1SMMLxPETo6IyAb8BLrVtHWvgEYgEgPPHkkH76V895BHQcRxwqbno7ZGzM1wOmech
+	zXZUriVUqEF2GmsWT4VNq6+bQTRjgd2tB+
+X-Received: by 2002:a17:907:6ea5:b0:ae3:5e2d:a8bf with SMTP id a640c23a62f3a-ae3fe5bde90mr1254027166b.14.1751899043141;
+        Mon, 07 Jul 2025 07:37:23 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG2rWxllcFS5ywAo3gj1UHR4L/AtdKnBTyuC4S6YZ6OMP3OMSoEKTk5WznoWU5bL+m01nCsSBqDVUmGdQ0WBXo=
+X-Received: by 2002:a17:907:6ea5:b0:ae3:5e2d:a8bf with SMTP id
+ a640c23a62f3a-ae3fe5bde90mr1254025566b.14.1751899042790; Mon, 07 Jul 2025
+ 07:37:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250530200305.85319-2-jsavitz@redhat.com> <CAL1p7m53yJ-dpg6L2QVQM7bshWYXAxOJjrVGdTG8cDMEhNogyA@mail.gmail.com>
+ <CAL1p7m4bK1LA6Atc4P0h_wC1Kb47Vzb93C8tmJtMiEBDLy6yzA@mail.gmail.com> <CAL1p7m4PzOvrAT70RVWR-cQ48-h2MZ_nms-SE_GsZ_GLujZXnQ@mail.gmail.com>
+In-Reply-To: <CAL1p7m4PzOvrAT70RVWR-cQ48-h2MZ_nms-SE_GsZ_GLujZXnQ@mail.gmail.com>
+From: Joel Savitz <jsavitz@redhat.com>
+Date: Mon, 7 Jul 2025 10:37:07 -0400
+X-Gm-Features: Ac12FXyA1Qs-O3SUdp1en-yGcbMitQ0dXqRQAUSO0sQBLQ0wLTe0u7yMI1v0JGc
+Message-ID: <CAL1p7m4+6S95fKZ6ZEBTXgvFqTHa5=SqkHKrESSg8-MPmgiD5Q@mail.gmail.com>
+Subject: Re: [PATCH 0/3] kernel/nsproxy: Minor nsproxy code simplification
+To: linux-kernel@vger.kernel.org
+Cc: Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-futex_private_hash_get() is not used outside if its compilation unit.
-Make it static.
+On Tue, Jul 1, 2025 at 12:41=E2=80=AFPM Joel Savitz <jsavitz@redhat.com> wr=
+ote:
+>
+> On Wed, Jun 18, 2025 at 3:49=E2=80=AFPM Joel Savitz <jsavitz@redhat.com> =
+wrote:
+> >
+> > On Mon, Jun 9, 2025 at 10:23=E2=80=AFAM Joel Savitz <jsavitz@redhat.com=
+> wrote:
+> > >
+> > > On Fri, May 30, 2025 at 4:03=E2=80=AFPM Joel Savitz <jsavitz@redhat.c=
+om> wrote:
+> > > >
+> > > > The first patch removes an unnecessary guard by the same logic as
+> > > > commit 5caa2d89b7f1 ("kernel/nsproxy: remove unnecessary guards").
+> > > >
+> > > > The second patch fixes the total ordering of resource acquisition
+> > > > in validate_nsset().
+> > > >
+> > > > The third patch implements usage of the cleanup helper added by com=
+mit
+> > > > d057c108155a ("nsproxy: add a cleanup helper for nsproxy").
+> > > >
+> > > > Joel Savitz (3):
+> > > >   kernel/nsproxy: remove unnecessary guard in validate_nsset()
+> > > >   kernel/nsproxy: fix put_*() call ordering in validate_nsset()
+> > > >   kernel/nsproxy: utilize cleanup helper for nsproxy references
+> > > >
+> > > >  kernel/nsproxy.c | 12 +++---------
+> > > >  1 file changed, 3 insertions(+), 9 deletions(-)
+> > > >
+> > > > --
+> > > > 2.45.2
+> > > >
+> > >
+> > > ping
+> >
+> > ping 2
+>
+> ping 3
 
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
----
- kernel/futex/core.c  | 2 +-
- kernel/futex/futex.h | 2 --
- 2 files changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/kernel/futex/core.c b/kernel/futex/core.c
-index b578a536a4fe2..f184d92ed7264 100644
---- a/kernel/futex/core.c
-+++ b/kernel/futex/core.c
-@@ -143,7 +143,7 @@ static inline bool futex_key_is_private(union futex_key=
- *key)
- 	return !(key->both.offset & (FUT_OFF_INODE | FUT_OFF_MMSHARED));
- }
-=20
--bool futex_private_hash_get(struct futex_private_hash *fph)
-+static bool futex_private_hash_get(struct futex_private_hash *fph)
- {
- 	if (fph->immutable)
- 		return true;
-diff --git a/kernel/futex/futex.h b/kernel/futex/futex.h
-index fcd1617212eed..c74eac572acd7 100644
---- a/kernel/futex/futex.h
-+++ b/kernel/futex/futex.h
-@@ -228,14 +228,12 @@ extern void futex_hash_get(struct futex_hash_bucket *=
-hb);
- extern void futex_hash_put(struct futex_hash_bucket *hb);
-=20
- extern struct futex_private_hash *futex_private_hash(void);
--extern bool futex_private_hash_get(struct futex_private_hash *fph);
- extern void futex_private_hash_put(struct futex_private_hash *fph);
-=20
- #else /* !CONFIG_FUTEX_PRIVATE_HASH */
- static inline void futex_hash_get(struct futex_hash_bucket *hb) { }
- static inline void futex_hash_put(struct futex_hash_bucket *hb) { }
- static inline struct futex_private_hash *futex_private_hash(void) { return=
- NULL; }
--static inline bool futex_private_hash_get(void) { return false; }
- static inline void futex_private_hash_put(struct futex_private_hash *fph) =
-{ }
- #endif
-=20
---=20
-2.50.0
+ping 4
 
 
