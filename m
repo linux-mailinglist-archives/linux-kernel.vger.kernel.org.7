@@ -1,94 +1,100 @@
-Return-Path: <linux-kernel+bounces-719576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DE64AFAFCD
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 11:34:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92313AFAFD8
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 11:35:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 196DF1890AA1
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 09:35:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A656E420A26
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 09:35:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E76528A72A;
-	Mon,  7 Jul 2025 09:34:53 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E717728FA91;
+	Mon,  7 Jul 2025 09:35:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="c3BDEB8s"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEB7235949
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 09:34:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E04828A72A;
+	Mon,  7 Jul 2025 09:35:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751880892; cv=none; b=oojCUasim708kzo467yaWU+2B6zgwXKrNJJRsrObFRxig2YQX68RR6hPXLQRLt3zxqqLQcY0OeF1Ct9R5EvfHXgOE5FNrQI0hgrB5PMmS0qgMs4im8VgRhmkXOoUm5jbu3Lkn81MOils44zNofDh4vRgXiLxgNz8vnFK4GXxPr8=
+	t=1751880922; cv=none; b=f9aIaRR82qjkIPmnI5e9diCb/CmASmmvBLNfXZrKWx7AacSL/Mk2X9bmFGAa4PaDGByGC1Ad/Jy43kkcVfYpVWOC3vmwPPxPSO0Xbi5XfKSu9hgFQjJBS6qdp2OI22mBGmVGbcZZsJ3PUFq9dAZM1fTZURfE/PmAUUEFhLg8nhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751880892; c=relaxed/simple;
-	bh=WSBW0JtGktdegldlhyuz+NoZCuNVfYMYO/cEKFexvns=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=e5vAJCkEaR60HNCnh/VTeZD9Uwpeu6OEuHEZDP5AGPQ5QuS60pEMa7rwC418BJ9hLW57OPcwelGXUrZQz6Yv88qUlDEPj5NTmyFTCv95OhlY1a662xQU4Y1QRTprSeEGFFP+TWoifadmENjqIvmsVQs13tTH6YlvHESzJjfqbwQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bbJsM5F1Wz6L5H5;
-	Mon,  7 Jul 2025 17:31:35 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 15D311402F0;
-	Mon,  7 Jul 2025 17:34:42 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 7 Jul
- 2025 11:34:41 +0200
-Date: Mon, 7 Jul 2025 10:34:40 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: James Morse <james.morse@arm.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J . Wysocki"
-	<rafael@kernel.org>, <sudeep.holla@arm.com>, Rob Herring <robh@kernel.org>,
-	Ben Horgan <ben.horgan@arm.com>, Catalin Marinas <catalin.marinas@arm.com>,
-	<WillDeaconwill@kernel.org>
-Subject: Re: [PATCH v2 1/3] cacheinfo: Set cache 'id' based on DT data
-Message-ID: <20250707103440.000048ff@huawei.com>
-In-Reply-To: <20250704173826.13025-2-james.morse@arm.com>
-References: <20250704173826.13025-1-james.morse@arm.com>
-	<20250704173826.13025-2-james.morse@arm.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1751880922; c=relaxed/simple;
+	bh=3La3UPJ4ZAMHJ3BAEXORg3GiHQryGDV9WCTeMDTd35c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=F90nm84tbTVLZAERv4/UGbjmkpb0DGCesDeLWZQUvo6KznU08r+qMTfkMWAYWgv3jxttAGkXmLW/ISQx6LKCu7LU3RbLR2s8AFKf2FB/MYnasV/40Or/jbZKBVhVkwEXKA7okwiWaOHTaPJ8E9yswyhDhYqG44TcGp/WrcXuZ5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=c3BDEB8s; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1751880918;
+	bh=3La3UPJ4ZAMHJ3BAEXORg3GiHQryGDV9WCTeMDTd35c=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=c3BDEB8slb5r/poY7adzPw/Hl3p3xBCDxOvIY11eDdWzp/JxGpabSNqzSN11D0K0B
+	 SZnx1m2y/a73e+9g1zZ4NK8uaqC2ToQyKbIO+UvckbyqaAT1szEFDwMXonBwRsbzbL
+	 4LPkIToeE9Jp8dZDB6W1zfG2Sv5sZQevtVUedPBmdjrDv09z5u4yPUkHMilaNNBOah
+	 VfY8oqhRF23SXg4IEaiyPXGdxorCHIs24QH5oV3ij1trlsT362waxDEhmX6LcVp/Zv
+	 WkKs3SDrIO9k21cTOh2Y9pdzoYTZydLtH0Ur9YOgitTvJZpX7mQUuhr/8LBHsjaJK3
+	 8DumFN0ZvMVvA==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 1F46317E05F0;
+	Mon,  7 Jul 2025 11:35:17 +0200 (CEST)
+Message-ID: <d24bfc7f-c970-4082-83c3-896fb353b0ff@collabora.com>
+Date: Mon, 7 Jul 2025 11:35:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 67/80] usb: Remove redundant pm_runtime_mark_last_busy()
+ calls
+To: Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Peter Chen <peter.chen@kernel.org>, Pawel Laszczak <pawell@cadence.com>,
+ Roger Quadros <rogerq@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Thinh Nguyen <Thinh.Nguyen@synopsys.com>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Michal Simek <michal.simek@amd.com>,
+ Chunfeng Yun <chunfeng.yun@mediatek.com>,
+ Mathias Nyman <mathias.nyman@intel.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>, Bastien Nocera <hadess@hadess.net>,
+ Bin Liu <b-liu@ti.com>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org,
+ linux-omap@vger.kernel.org
+References: <20250704075225.3212486-1-sakari.ailus@linux.intel.com>
+ <20250704075453.3222311-1-sakari.ailus@linux.intel.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20250704075453.3222311-1-sakari.ailus@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500003.china.huawei.com (7.191.162.67) To
- frapeml500008.china.huawei.com (7.182.85.71)
 
-On Fri, 4 Jul 2025 17:38:24 +0000
-James Morse <james.morse@arm.com> wrote:
+Il 04/07/25 09:54, Sakari Ailus ha scritto:
+> pm_runtime_put_autosuspend(), pm_runtime_put_sync_autosuspend(),
+> pm_runtime_autosuspend() and pm_request_autosuspend() now include a call
+> to pm_runtime_mark_last_busy(). Remove the now-reduntant explicit call to
+> pm_runtime_mark_last_busy().
+> 
+> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-> From: Rob Herring <robh@kernel.org>
-> 
-> Use the minimum CPU h/w id of the CPUs associated with the cache for the
-> cache 'id'. This will provide a stable id value for a given system. As
-> we need to check all possible CPUs, we can't use the shared_cpu_map
-> which is just online CPUs. As there's not a cache to CPUs mapping in DT,
-> we have to walk all CPU nodes and then walk cache levels.
-> 
-> The cache_id exposed to user-space has historically been 32 bits, and
-> is too late to change. This value is parsed into a u32 by user-space
-> libraries such as libvirt:
-> https://github.com/libvirt/libvirt/blob/master/src/util/virresctrl.c#L1588
-> 
-> Give up on assigning cache-id's if a CPU h/w id greater than 32 bits
-> is found.
-> 
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> [ ben: converted to use the __free cleanup idiom ]
-> Signed-off-by: Ben Horgan <ben.horgan@arm.com>
-> [ morse: Add checks to give up if a value larger than 32 bits is seen. ]
-> Signed-off-by: James Morse <james.morse@arm.com>
 
-Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+For MediaTek MTU3:
+
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+
 
