@@ -1,256 +1,244 @@
-Return-Path: <linux-kernel+bounces-719126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B5B6AFAA3D
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 05:31:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55BF5AFAA1F
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 05:15:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2B6B3B8B4D
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 03:30:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 945A2189ABB8
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 03:15:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B902A25B1EA;
-	Mon,  7 Jul 2025 03:30:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35670202C46;
+	Mon,  7 Jul 2025 03:15:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="iO2AS+Bt"
-Received: from m16.mail.126.com (m16.mail.126.com [220.197.31.8])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60B8B12B94;
-	Mon,  7 Jul 2025 03:30:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.8
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751859047; cv=none; b=df5aZIkn52NIvwG1bJ3eu1eGsNFEpJZInhA/yaQt6kqO4mXOh450BNBXlb30wmlCraBqevZ4X+lh0zD+9LVwqzcMEvZhmuhl/q/XTfVjbp+WcgZAyiFVl5337y0Yg1SoZXkTPHTdQDHsIWFU5i8BFaSZ5IJG7TldsflBAG0vUDo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751859047; c=relaxed/simple;
-	bh=kxBDgCOSz0tq1MaLRMuxn7XrqsVVSATXO/ynrjrJbd0=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=dbN/bd3RaaebwIbS8un1mtquzB9sI7mz2OHSvEJetWC9kAa9oWfA+ioKt0j/RD6W/mgWLcTzM5FyA22rZ+mHJK7hCer2BpS1BUTMBuZma2FNjV2t1+edssbQlyvQePHNIHlKo6EPfMrB9K6MnVap8e1G7FnNKeV1isPVJu9cFaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=iO2AS+Bt; arc=none smtp.client-ip=220.197.31.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id; bh=HP8tZujBjcSHGre
-	MG32sL06BiLfrv9CiKF8NSKgD8CQ=; b=iO2AS+Bt7g1bJfHsadCJ/avBYWhlivM
-	hGDlFCw4gJZjPqnyyWWxzbnXbPeR1Fb4HaeMAUw8+XRjaWGvzvIzb7whz7S7AQnA
-	i/ePZUoox4I+ZaUytryt2THzbQRet/GLEjglDFLc7B6UnGqQwBw6i9u5ZTU6956x
-	1DjdcyXLrzeQ=
-Received: from hg-OptiPlex-7040.hygon.cn (unknown [])
-	by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id _____wDnr9uoO2tor4cpBA--.25530S2;
-	Mon, 07 Jul 2025 11:14:49 +0800 (CST)
-From: yangge1116@126.com
-To: ardb@kernel.org
-Cc: jarkko@kernel.org,
-	sathyanarayanan.kuppuswamy@linux.intel.com,
-	ilias.apalodimas@linaro.org,
-	jgg@ziepe.ca,
-	linux-efi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	liuzixing@hygon.cn,
-	Ge Yang <yangge1116@126.com>
-Subject: [PATCH V3] efi/tpm: Fix the issue where the CC platforms event log header can't be correctly identified
-Date: Mon,  7 Jul 2025 11:14:47 +0800
-Message-Id: <1751858087-10366-1-git-send-email-yangge1116@126.com>
-X-Mailer: git-send-email 2.7.4
-X-CM-TRANSID:_____wDnr9uoO2tor4cpBA--.25530S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxtryxtrW3CF4DXrW3Xr13Jwb_yoW3JF4DpF
-	48Jr9Yyr45ta1Igw1fAw1UCwsxXw4ktrZrGFyDK34jyrnxWFyIgFWUGFy5GF93trs7J3Z0
-	qa4Utr17Ca4UuaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zRoKZXUUUUU=
-X-CM-SenderInfo: 51dqwwjhrrila6rslhhfrp/1tbiOhGDG2hrOMlJZwAAsv
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="IPGEVUza"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12olkn2011.outbound.protection.outlook.com [40.92.22.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B46502264CD;
+	Mon,  7 Jul 2025 03:15:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.22.11
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751858104; cv=fail; b=UiMsPr2ZqyHGun80xTDCMtVEHUPLo4tgK0CwmqqpUtcE3JiaRe8oYAjhPY1DB7QVl7pJqZEnm1H5d2RMut3zBCqSxD9XAdXAmYnXJ4hRME2NFwlR5MJe7qzUgZ8ypwB3L/7pL2W7QT4ldCChMRXbuJ9yeQG9voWoK0G2wAtayGc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751858104; c=relaxed/simple;
+	bh=Anq/1ytGl4Z1CXsZJigXXlrO2GcDSfBuhytq3hG3PkU=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=KN6jvnW8UOgDSTSCEPpp8tQLW4qvN4dU8QUdt9FHQJ9xzF4v8ymv9aPyibwRBH+TguyqdrpJdAns40YJWTDhFXLmj6Y4srESOZgD7ww0FOL7V17YYGyAhvRe9VOg0TMw1L8Ckj+g4mdon1J7Lvuh2tNPZq41LQfgnKz8Hs3I+go=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=IPGEVUza; arc=fail smtp.client-ip=40.92.22.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=lSiU0P6ND5fz21O8+RJXIu6mgeiaEUy3QH2ygMisQNV0LLzro7A0AblzTaJXYp0XCXwWAWsgX/6dSvpxoCWZfdQ9jIZT5xsLNXHxsxNT+kH+Xd2pEaCHAaMeK7hTs6dF7/J9uJIP1f3BRZE2CYv2Etu7FSGd5pp3v8UGm+PDO7JY0lWXVUKFDph2Lczw0g9j//ZUq+Bzb+Szt5sj7kYZazILev5+/8hkI1JSLvTD+9LoruZbAoGJ17K4HTKmaTtnfmyZp9YEWqgpPOddAxc0podGa83OxFCJ/ZgQgvF/p68FyhDU2LH+H17Neq3q9c1uhyo1Nb6BOPwI13nDTTqOBQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=HcO8QLIypgKyxH0bxVKzrYq+JbcHld8D2VN/MzNDwl8=;
+ b=GG3O1to0sd59H6oigur2tBOCFDRdcignTuZDSc869eUbeP0jxdLjFao9R80oo+4z1GPMqB57YmG4mf7b0Ib50nGRrcsDQgjs8TuGX7hgoQKj9jQDRmKFetq+0N2lU3aT3INbIjC/5cqLlplC7+j46UildIcRID1bCQFs4Zn6ouXcAL+Df9fmw7lQvn0JGuWU2zkUwHbw2GOtu8qXz885cnQB6oeJW521Q8D96c0OAXZYnzUh8F7S2sED8oGY9Dz+Lg48dzcvEqNvqOgmyM1nLXPY47amzbGd6BT4c82LnHr7ZJr0/3b7hXbrkQN07SY/GcoZcer8ZukHw4CmYIB4jQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=HcO8QLIypgKyxH0bxVKzrYq+JbcHld8D2VN/MzNDwl8=;
+ b=IPGEVUzab6SA6cAIKuPWsHkORb/KqmgtVviisdAPajQXXzyLICSRetvoUNdo1lWppfZdSGJsXVmPqd9aIJPyu+/iHjt6a+WUWlBuXi1SUqoVomBv7gSLa3zVmAcN6h0EFWOXfraWJFwWPgF4PwHBYUJ9Al4P/sD6iAy1N5YTPJa+kQ5sbh4UpClvVuNnaUe0IWoNfUURhUEkpMuPhUWq1lhNuUuU5154d9Uyyhib7JydanpbMTexnTuqL4Ba4cjHaTaQNGxnToAIyMplfonmC2nhA5I2YlTW6J5OhAx6YWBYB5xnd1FVRLtCl9XOD8Q/Z8dE9gsfFo/eTtKPFqusRw==
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
+ by SA1PR02MB8543.namprd02.prod.outlook.com (2603:10b6:806:1fa::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.22; Mon, 7 Jul
+ 2025 03:15:00 +0000
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df%4]) with mapi id 15.20.8901.018; Mon, 7 Jul 2025
+ 03:15:00 +0000
+From: Michael Kelley <mhklinux@outlook.com>
+To: Nuno Das Neves <nunodasneves@linux.microsoft.com>,
+	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-pci@vger.kernel.org"
+	<linux-pci@vger.kernel.org>, "tglx@linutronix.de" <tglx@linutronix.de>,
+	"bhelgaas@google.com" <bhelgaas@google.com>, "romank@linux.microsoft.com"
+	<romank@linux.microsoft.com>
+CC: "kys@microsoft.com" <kys@microsoft.com>, "haiyangz@microsoft.com"
+	<haiyangz@microsoft.com>, "wei.liu@kernel.org" <wei.liu@kernel.org>,
+	"decui@microsoft.com" <decui@microsoft.com>, "catalin.marinas@arm.com"
+	<catalin.marinas@arm.com>, "will@kernel.org" <will@kernel.org>,
+	"mingo@redhat.com" <mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "hpa@zytor.com"
+	<hpa@zytor.com>, "lpieralisi@kernel.org" <lpieralisi@kernel.org>,
+	"kw@linux.com" <kw@linux.com>, "robh@kernel.org" <robh@kernel.org>,
+	"jinankjain@linux.microsoft.com" <jinankjain@linux.microsoft.com>,
+	"skinsburskii@linux.microsoft.com" <skinsburskii@linux.microsoft.com>,
+	"mrathor@linux.microsoft.com" <mrathor@linux.microsoft.com>, "x86@kernel.org"
+	<x86@kernel.org>
+Subject: RE: [PATCH v2 6/6] PCI: hv: Use the correct hypercall for unmasking
+ interrupts on nested
+Thread-Topic: [PATCH v2 6/6] PCI: hv: Use the correct hypercall for unmasking
+ interrupts on nested
+Thread-Index: AQHb7GwZPffbSdf3XEm7nF8dQ6XbXLQkHnZQ
+Date: Mon, 7 Jul 2025 03:15:00 +0000
+Message-ID:
+ <SN6PR02MB415778476C69E61B7103D63FD44FA@SN6PR02MB4157.namprd02.prod.outlook.com>
+References:
+ <1751582677-30930-1-git-send-email-nunodasneves@linux.microsoft.com>
+ <1751582677-30930-7-git-send-email-nunodasneves@linux.microsoft.com>
+In-Reply-To:
+ <1751582677-30930-7-git-send-email-nunodasneves@linux.microsoft.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|SA1PR02MB8543:EE_
+x-ms-office365-filtering-correlation-id: 9e08b0f7-b5c2-4627-e8d4-08ddbd04754a
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|8062599006|8060799009|19110799006|15080799009|461199028|40105399003|3412199025|440099028|102099032;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?9hpcD9LdUW6aCTTjzMWPvZt2iVWjlyN0EcV/8R98LIWxjJQO1E/1OcraqVx5?=
+ =?us-ascii?Q?OAGPldryNLk5RMKVRB6EYabnirQvDdItcCahfWcMTFC+M7ek3e3rRvacczR7?=
+ =?us-ascii?Q?/p6mdpjnzyn81t4cIsTkwGr/9u6GuFUq92pBu+4olFuRt9uaHTftqltGvjOu?=
+ =?us-ascii?Q?9IWpH5I3TouwGFneM1lTNHQdHMATZuFWDaHBMUUZP3p35mRLvn+CnYE3Hh6u?=
+ =?us-ascii?Q?Fm1PtQ4e0ZiHStXyTAfqzoqW/8Jznx52SljMiir/+PbX3Ni9hgQsgAykyKm9?=
+ =?us-ascii?Q?sNxMrN7NhmFlR8iysA8bflSZ/1CCVehntjKINFvQk18enYpwBEjX7eByGZTG?=
+ =?us-ascii?Q?5cOTq9ZxkHQ33CszzOO0V75h45ovObAm3drrPdiyAC1HQqZLn+ZsWfHfp2HJ?=
+ =?us-ascii?Q?DadpN1ikJ+HyKl+sJoUsLCfV2IGbCIJX880Dwo2Vho9ZjoIAR4k0cHN/paef?=
+ =?us-ascii?Q?XuU5hqxhn085SM6cgytCRoXzuV1glpfcBsNYkeeLhIKlofugwl2aI28YHmT4?=
+ =?us-ascii?Q?6hIn/EnJyVUlVknEk+/6hwEbfwFiZdfPayy22XaWa9DiCxfN99R4KeQu20aK?=
+ =?us-ascii?Q?pNFMKXaB/QDMNZyvrHltU+kbgsjP0T0sk5sc/SMp992KkBTHqfCX16s6uVAl?=
+ =?us-ascii?Q?LlCMfpt++9ZTnYNjEVHzBJeRud5A1yh7hK1hbZi1eDuEDnJUohJt4sNwg8Qz?=
+ =?us-ascii?Q?QIFLjXJfy9iRu+TCfvxG1dzxDyjHUYs9WS0IkEyL2Dk8ltOtCA9kf3iq4w+f?=
+ =?us-ascii?Q?66/TqmF3gFrO9nJ7hLJWUv5pjKd4VNBDHvSUezkn5rK8+J0rz4xOqK7GNj/J?=
+ =?us-ascii?Q?AGreAUjtsfDv8P/3bZJ1xUJxZ+hULJQaE+yRjIayhUNoDSLae10Z+t5P6LWT?=
+ =?us-ascii?Q?mbtUNrmQJ/0/IL35sbi2UWbHPwQS5bTrQd+iZfH/5zjl5pWXcGrfvpnrzTx8?=
+ =?us-ascii?Q?eVlLWz1KlSRKFqG7W3Gr4WUjxg2VQld07omrHaxMzYaCKx9oova9sz2frNJl?=
+ =?us-ascii?Q?7A18c5UhyhoPRtxpcabNySGeVvyXQuRFv/+u9c8padjgMlP65J+Kip/8Loey?=
+ =?us-ascii?Q?8nvxn/mp1/VOBRq7QFcD/TRYf9UwOqAYqPgPYpB4zaudDhW84xuMhL0tuu26?=
+ =?us-ascii?Q?cHg9rGdXUirz?=
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?2XHE0tQijw1KtjKGi9A7gUUIuFDPVLXRh7HeBGrAB1Bkc1XWMZmXEIGPcJLH?=
+ =?us-ascii?Q?Ycj8hK0vH02nLPBOuVxZjD64s/INfxtU5WhiC+D+PCmryniAgWioulZ1Nx7H?=
+ =?us-ascii?Q?DbgjqtVKfizph/8ubaoidnJNfTyyCVbmgzOFR1xhtTw0fmyHp8aE/jtT6peh?=
+ =?us-ascii?Q?kKx8WgCph8nYybQWrjOH5jzUfugYQHxt95UYJyDXb3LLDy96ACFiV2R15fpN?=
+ =?us-ascii?Q?yVjVyYU7erAruQhzaQyK0mOyECDAGsLYu/GEIt2FNkDMrY8sBnAzapzIOfuN?=
+ =?us-ascii?Q?6xlIN6iaQ/66gF3CZ7szgciif5WsR6x5BfSr+WfCqQRO684x0tCxc8c7UktK?=
+ =?us-ascii?Q?0pN1QXJaYajLxFP10bZ/UBZcS8AZJn1VEvO10rMYb0g2YTSarxrGFeRNjJLI?=
+ =?us-ascii?Q?bABBJmCoLOR22bMaykY8+o++HLH2ORHGdX0twooq4jIomO/8LlfgecsHnB7i?=
+ =?us-ascii?Q?fu9ekNV9AuUqNboO6ruTpLttgTdkn9hcrIMme66JgYupmt9lvr2eGwZj6J5w?=
+ =?us-ascii?Q?uw/vaGnJ9NInuOI3vr0aUIq4tTrQpJZixyFXSXBTVD3YHkdI9TLlSA2t6Va+?=
+ =?us-ascii?Q?JD+ivn2ZhivNdhF7Ox9iVuo/f7j2VY/a0sjT8MsJxe9h6aR3JXU+Y6mh6GuK?=
+ =?us-ascii?Q?VMKA1RCUQEX1gHxhcTu4hFpWNcJoCtljBxRSuq3If1MioINqK1Hg4MRvNnpc?=
+ =?us-ascii?Q?ancZzcvyzRH77MP73yYchvVSElj8obdzvJZn5W1lygXh1HWY0Ysd/Q6Omb5E?=
+ =?us-ascii?Q?ws6oY9l6XuStB1XcwcN30GvHJLJPDsCIEMQplG4mLMzIoNkPqfRw3GDYQ21H?=
+ =?us-ascii?Q?FFxgsPu/HUQ2BoyKLqynD+LEH4V7izDs21tdfNiYrta5Ij2A0K9l92KJrSQG?=
+ =?us-ascii?Q?Dq2Z1VlSeLHWroUR2gJ4Qn804FN8vyirXKcmJK/p3qBCCAZVIsQnbixTRJIu?=
+ =?us-ascii?Q?O7u/4dN/dCYnsZtvSD76y8aBbJQ5R+sfRlwLWeJLG4XN5XmPh4Kr9IHcOnmn?=
+ =?us-ascii?Q?w6pxqeSOXbhuMMh5zzHD/9CZYMbNjikPI0OygP2hy7jL/kOLQEAaC6/1EHun?=
+ =?us-ascii?Q?XobO5ccBDt8KDN05KN/PyqaZzN5TQfPQAOYLCqY+Qs3ZJU1Wf/ek8uNfWIkM?=
+ =?us-ascii?Q?y5360TeXF3D7sAfNho59LcXRdyPwXV52RtseGZLnPy83Mb18yOHb9OqvOpW2?=
+ =?us-ascii?Q?vQubuE+ph6CJj9gqzHUk6Y01Bu34O3jJz1FpMknLa0/XMMgQYl8V3tBkElI?=
+ =?us-ascii?Q?=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9e08b0f7-b5c2-4627-e8d4-08ddbd04754a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Jul 2025 03:15:00.1673
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR02MB8543
 
-From: Ge Yang <yangge1116@126.com>
+From: Nuno Das Neves <nunodasneves@linux.microsoft.com> Sent: Thursday, Jul=
+y 3, 2025 3:45 PM
+>=20
+> From: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
+>=20
+> Running as nested root on MSHV imposes a different requirement
+> for the pci-hyperv controller.
+>=20
+> In this setup, the interrupt will first come to the L1 (nested) hyperviso=
+r,
+> which will deliver it to the appropriate root CPU. Instead of issuing the
+> RETARGET hypercall, issue the MAP_DEVICE_INTERRUPT hypercall to L1 to
+> complete the setup.
+>=20
+> Rename hv_arch_irq_unmask() to hv_irq_retarget_interrupt().
+>=20
+> Co-developed-by: Jinank Jain <jinankjain@linux.microsoft.com>
+> Signed-off-by: Jinank Jain <jinankjain@linux.microsoft.com>
+> Signed-off-by: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
+> Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+> Reviewed-by: Roman Kisel <romank@linux.microsoft.com>
+> ---
+>  drivers/pci/controller/pci-hyperv.c | 18 ++++++++++++++++--
+>  1 file changed, 16 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/pci/controller/pci-hyperv.c b/drivers/pci/controller=
+/pci-hyperv.c
+> index 4d25754dfe2f..9a8cba39ea6b 100644
+> --- a/drivers/pci/controller/pci-hyperv.c
+> +++ b/drivers/pci/controller/pci-hyperv.c
+> @@ -600,7 +600,7 @@ static unsigned int hv_msi_get_int_vector(struct irq_=
+data
+> *data)
+>  #define hv_msi_prepare		pci_msi_prepare
+>=20
+>  /**
+> - * hv_arch_irq_unmask() - "Unmask" the IRQ by setting its current
+> + * hv_irq_retarget_interrupt() - "Unmask" the IRQ by setting its current
+>   * affinity.
+>   * @data:	Describes the IRQ
+>   *
+> @@ -609,7 +609,7 @@ static unsigned int hv_msi_get_int_vector(struct irq_=
+data
+> *data)
+>   * is built out of this PCI bus's instance GUID and the function
+>   * number of the device.
+>   */
+> -static void hv_arch_irq_unmask(struct irq_data *data)
+> +static void hv_irq_retarget_interrupt(struct irq_data *data)
+>  {
+>  	struct msi_desc *msi_desc =3D irq_data_get_msi_desc(data);
+>  	struct hv_retarget_device_interrupt *params;
+> @@ -714,6 +714,20 @@ static void hv_arch_irq_unmask(struct irq_data *data=
+)
+>  		dev_err(&hbus->hdev->device,
+>  			"%s() failed: %#llx", __func__, res);
+>  }
+> +
+> +static void hv_arch_irq_unmask(struct irq_data *data)
+> +{
+> +	if (hv_root_partition())
+> +		/*
+> +		 * In case of the nested root partition, the nested hypervisor
+> +		 * is taking care of interrupt remapping and thus the
+> +		 * MAP_DEVICE_INTERRUPT hypercall is required instead of
+> +		 * RETARGET_INTERRUPT.
+> +		 */
+> +		(void)hv_map_msi_interrupt(data, NULL);
+> +	else
+> +		hv_irq_retarget_interrupt(data);
+> +}
+>  #elif defined(CONFIG_ARM64)
+>  /*
+>   * SPI vectors to use for vPCI; arch SPIs range is [32, 1019], but leavi=
+ng a bit
+> --
+> 2.34.1
 
-Since commit d228814b1913 ("efi/libstub: Add get_event_log() support
-for CC platforms") reuses TPM2 support code for the CC platforms, when
-launching a TDX virtual machine with coco measurement enabled, the
-following error log is generated:
-
-[Firmware Bug]: Failed to parse event in TPM Final Events Log
-
-Call Trace:
-efi_config_parse_tables()
-  efi_tpm_eventlog_init()
-    tpm2_calc_event_log_size()
-      __calc_tpm2_event_size()
-
-The pcr_idx value in the Intel TDX log header is 1, causing the function
-__calc_tpm2_event_size() to fail to recognize the log header, ultimately
-leading to the "Failed to parse event in TPM Final Events Log" error.
-
-According to UEFI Specification 2.10, Section 38.4.1: For TDX, TPM PCR
-0 maps to MRTD, so the log header uses TPM PCR 1 instead. To successfully
-parse the TDX event log header, the check for a pcr_idx value of 0
-must be skipped.
-
-According to Table 6 in Section 10.2.1 of the TCG PC Client
-Specification, the index field does not require the PCR index to be
-fixed at zero. Therefore, skipping the check for a pcr_idx value of
-0 for CC platforms is safe.
-
-Link: https://uefi.org/specs/UEFI/2.10/38_Confidential_Computing.html#intel-trust-domain-extension
-Link: https://trustedcomputinggroup.org/wp-content/uploads/TCG_PCClient_PFP_r1p05_v23_pub.pdf
-Fixes: d228814b1913 ("efi/libstub: Add get_event_log() support for CC platforms")
-Signed-off-by: Ge Yang <yangge1116@126.com>
-Cc: stable@vger.kernel.org
----
-
-V3:
-- fix build error
-
-V2:
-- limit the fix for CC only suggested by Jarkko and Sathyanarayanan
-
- drivers/char/tpm/eventlog/tpm2.c   |  4 +++-
- drivers/firmware/efi/libstub/tpm.c | 13 +++++++++----
- drivers/firmware/efi/tpm.c         |  4 +++-
- include/linux/tpm_eventlog.h       | 14 +++++++++++---
- 4 files changed, 26 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/char/tpm/eventlog/tpm2.c b/drivers/char/tpm/eventlog/tpm2.c
-index 37a0580..30ef47c 100644
---- a/drivers/char/tpm/eventlog/tpm2.c
-+++ b/drivers/char/tpm/eventlog/tpm2.c
-@@ -18,6 +18,7 @@
- #include <linux/module.h>
- #include <linux/slab.h>
- #include <linux/tpm_eventlog.h>
-+#include <linux/cc_platform.h>
- 
- #include "../tpm.h"
- #include "common.h"
-@@ -36,7 +37,8 @@
- static size_t calc_tpm2_event_size(struct tcg_pcr_event2_head *event,
- 				   struct tcg_pcr_event *event_header)
- {
--	return __calc_tpm2_event_size(event, event_header, false);
-+	return __calc_tpm2_event_size(event, event_header, false,
-+			cc_platform_has(CC_ATTR_GUEST_STATE_ENCRYPT));
- }
- 
- static void *tpm2_bios_measurements_start(struct seq_file *m, loff_t *pos)
-diff --git a/drivers/firmware/efi/libstub/tpm.c b/drivers/firmware/efi/libstub/tpm.c
-index a5c6c4f..9728060 100644
---- a/drivers/firmware/efi/libstub/tpm.c
-+++ b/drivers/firmware/efi/libstub/tpm.c
-@@ -50,7 +50,8 @@ void efi_enable_reset_attack_mitigation(void)
- static void efi_retrieve_tcg2_eventlog(int version, efi_physical_addr_t log_location,
- 				       efi_physical_addr_t log_last_entry,
- 				       efi_bool_t truncated,
--				       struct efi_tcg2_final_events_table *final_events_table)
-+				       struct efi_tcg2_final_events_table *final_events_table,
-+				       bool is_cc_event)
- {
- 	efi_guid_t linux_eventlog_guid = LINUX_EFI_TPM_EVENT_LOG_GUID;
- 	efi_status_t status;
-@@ -87,7 +88,8 @@ static void efi_retrieve_tcg2_eventlog(int version, efi_physical_addr_t log_loca
- 			last_entry_size =
- 				__calc_tpm2_event_size((void *)last_entry_addr,
- 						    (void *)(long)log_location,
--						    false);
-+						    false,
-+						    is_cc_event);
- 		} else {
- 			last_entry_size = sizeof(struct tcpa_event) +
- 			   ((struct tcpa_event *) last_entry_addr)->event_size;
-@@ -123,7 +125,8 @@ static void efi_retrieve_tcg2_eventlog(int version, efi_physical_addr_t log_loca
- 			header = data + offset + final_events_size;
- 			event_size = __calc_tpm2_event_size(header,
- 						   (void *)(long)log_location,
--						   false);
-+						   false,
-+						   is_cc_event);
- 			/* If calc fails this is a malformed log */
- 			if (!event_size)
- 				break;
-@@ -157,6 +160,7 @@ void efi_retrieve_eventlog(void)
- 	efi_tcg2_protocol_t *tpm2 = NULL;
- 	efi_bool_t truncated;
- 	efi_status_t status;
-+	bool is_cc_event = false;
- 
- 	status = efi_bs_call(locate_protocol, &tpm2_guid, NULL, (void **)&tpm2);
- 	if (status == EFI_SUCCESS) {
-@@ -186,11 +190,12 @@ void efi_retrieve_eventlog(void)
- 
- 		final_events_table =
- 			get_efi_config_table(EFI_CC_FINAL_EVENTS_TABLE_GUID);
-+		is_cc_event = true;
- 	}
- 
- 	if (status != EFI_SUCCESS || !log_location)
- 		return;
- 
- 	efi_retrieve_tcg2_eventlog(version, log_location, log_last_entry,
--				   truncated, final_events_table);
-+				   truncated, final_events_table, is_cc_event);
- }
-diff --git a/drivers/firmware/efi/tpm.c b/drivers/firmware/efi/tpm.c
-index cdd4310..ca8535d 100644
---- a/drivers/firmware/efi/tpm.c
-+++ b/drivers/firmware/efi/tpm.c
-@@ -12,6 +12,7 @@
- #include <linux/init.h>
- #include <linux/memblock.h>
- #include <linux/tpm_eventlog.h>
-+#include <linux/cc_platform.h>
- 
- int efi_tpm_final_log_size;
- EXPORT_SYMBOL(efi_tpm_final_log_size);
-@@ -23,7 +24,8 @@ static int __init tpm2_calc_event_log_size(void *data, int count, void *size_inf
- 
- 	while (count > 0) {
- 		header = data + size;
--		event_size = __calc_tpm2_event_size(header, size_info, true);
-+		event_size = __calc_tpm2_event_size(header, size_info, true,
-+				     cc_platform_has(CC_ATTR_GUEST_STATE_ENCRYPT));
- 		if (event_size == 0)
- 			return -1;
- 		size += event_size;
-diff --git a/include/linux/tpm_eventlog.h b/include/linux/tpm_eventlog.h
-index 891368e..b3380c9 100644
---- a/include/linux/tpm_eventlog.h
-+++ b/include/linux/tpm_eventlog.h
-@@ -143,6 +143,7 @@ struct tcg_algorithm_info {
-  * @event:        Pointer to the event whose size should be calculated
-  * @event_header: Pointer to the initial event containing the digest lengths
-  * @do_mapping:   Whether or not the event needs to be mapped
-+ * @is_cc_event:  Whether or not the event is from a CC platform
-  *
-  * The TPM2 event log format can contain multiple digests corresponding to
-  * separate PCR banks, and also contains a variable length of the data that
-@@ -159,7 +160,8 @@ struct tcg_algorithm_info {
- 
- static __always_inline u32 __calc_tpm2_event_size(struct tcg_pcr_event2_head *event,
- 					 struct tcg_pcr_event *event_header,
--					 bool do_mapping)
-+					 bool do_mapping,
-+					 bool is_cc_event)
- {
- 	struct tcg_efi_specid_event_head *efispecid;
- 	struct tcg_event_field *event_field;
-@@ -201,8 +203,14 @@ static __always_inline u32 __calc_tpm2_event_size(struct tcg_pcr_event2_head *ev
- 	count = event->count;
- 	event_type = event->event_type;
- 
--	/* Verify that it's the log header */
--	if (event_header->pcr_idx != 0 ||
-+	/*
-+	 * Verify that it's the log header. According to the TCG PC Client
-+	 * Specification, when identifying a log header, the check for a
-+	 * pcr_idx value of 0 is not required. For CC platforms, skipping
-+	 * this check during log header is necessary; otherwise, the CC
-+	 * platform's log header may fail to be recognized.
-+	 */
-+	if ((!is_cc_event && event_header->pcr_idx != 0) ||
- 	    event_header->event_type != NO_ACTION ||
- 	    memcmp(event_header->digest, zero_digest, sizeof(zero_digest))) {
- 		size = 0;
--- 
-2.7.4
+Reviewed-by: Michael Kelley <mhklinux@outlook.com>
 
 
