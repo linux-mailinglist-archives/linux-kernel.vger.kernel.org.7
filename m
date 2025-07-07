@@ -1,181 +1,130 @@
-Return-Path: <linux-kernel+bounces-720203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2323FAFB880
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 18:17:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CBDCAFB883
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 18:19:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA8FC1AA62A8
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 16:18:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16F971AA0F23
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 16:20:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEBEF1DDC18;
-	Mon,  7 Jul 2025 16:17:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49F7021B196;
+	Mon,  7 Jul 2025 16:19:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ddoJmrOo"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="jbsbNS7T"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6B7B2E370C
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 16:17:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751905069; cv=none; b=RgBgoYlIUbtJlKClztOIR2/qjQRZ9H/Egt1OACO8vpXLTbTA4KEvEJvVe8d8m6d6Ux63F2ehbChAags77O6LNVy6OCgC7xJ7fzcS7mHVbosUx8P98JDnEYBaEXtp0E3CVE0lgx90+mjfFJQjkf6+goBayp9SYHthgIo/IJDvyyo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751905069; c=relaxed/simple;
-	bh=XZbnKWyFZhZtbahv5e3vtqR6XmGL4qjI2x8T7SqxLO0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ifiKqhxux4IWOsB+nGcShuZG0JAcR+hbERPK9SiJZGqftiRRJYTTWNMCdwn5kaoleRyfuyzgqzx4H5ADMbaxA94kTw9xgSNVTAhnuSyhS/YpMcl/7ASllPWi7c7dKXzcHWZ02rxe/xTv8SuTnqKTF/r/Pqd6wE0P6FL84Z+wwLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ddoJmrOo; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2363616a1a6so30758215ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 09:17:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751905066; x=1752509866; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=plhscmn8unqBogHCLfe3zzhmsxB9tOjf382Kqk10WmM=;
-        b=ddoJmrOo/NKf6frhzJnt1gDMEmvfML+fjBzj2meFRX8aHi0OlwNcWiVaq1iukEQslf
-         mTsdUnOdLmhWKTIl3/6H65kgz2lwOk0Cs23TMz09kI0sAIc8R3Yr1Tlzs7FJMVfOQ6gF
-         /NMEqQ1+wDn3hjOTlAx5KMG8tRGqVTv8Qe5V6jftW9rjhsbnBE1DJzO6yQwuV6zk+9Yr
-         mZCzbypUMWOTUrJL897g+YE9PmP2PoKXaYXsKS+vvfxjwBl6me0+MIHbsOmcKAgNRJna
-         b9AT3lH1ZiU3Ji4YGnvS5IUMM7L0U4ZrnxbAXQJ+Y1Qde2A9kX1inOteILOvl/0JeKiH
-         stXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751905066; x=1752509866;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=plhscmn8unqBogHCLfe3zzhmsxB9tOjf382Kqk10WmM=;
-        b=Zk8hMTJr1hswdphb0T0MWzt3s/bWvfGAldcGbQqFzJepo8sojUcN7i2lU8GmGDKG4T
-         p3ILUm88dp7gAy3aKn30AkWvtqJ/N511VjRVKHRXOJjv6UiM2tK8fSIUv8eH/2ymdbvp
-         RG8tw7j1QDzA6P9s35z2z0/9XXionfJ5nyloj2myfYKNRDFh75VplZnXvBx2bEF9qlmZ
-         aedcf9zJgj2QIYthMujTImZTuOXMxeXy+42T135dFklb3aTygNAehfr6pfNG3HtMypvY
-         QEiHfiO8nZS44YYpjXiDOQQ/Q74VuxRledXQh5CRbqgH3jkSzSEEzA7tEOvA0gtuOExT
-         9GSA==
-X-Forwarded-Encrypted: i=1; AJvYcCVK0dTcgLy247gI0a4IHDvFPxLFXNXV9kTtcN5YDh7/d3VXj0bYBr5t0ajKGbXZulzioJ9IZNA8tHVqE0g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRH9INyLwDYIsVt1GrhXxAN8orPWpmCaWNlnKo2CvvD60c8fBx
-	cBnnYa0xkNjRuwco+prYC012dfjrSS2nVM2qLWpr+eD4X/w8DUpnSvjp
-X-Gm-Gg: ASbGncscZc5ziGW+V4lsnpzUeoYqjDntE6Kd446ZNNbHeMUk3Xvo2Y5uwpyJIWv48tZ
-	A0k/f2+pEPxZIUydTEH1VZHjQ7vcQnI3BjZ/5Mq+S0G38Fo3yPW7twAjbadJ4EYOyZAVKhmUQQt
-	ULc0G7wBromdGJpw8D59whhw21fq7obsMf2CzAtHMkocAlniDUQ2yTgSKSj8WMxzGUR7kIxpAhI
-	Ch+8MekQwZEdDBX3/qTdcNPjMSmAuhVEB4EtIybwXX8vRhItpRNkr87k7X9xI5ARL4Ujyig/Uxk
-	7emOID9VGTgQ7BVnuez4KjZMKCsQ0Iggl8vuXhIx791HdXjyA4ps95d79lTf4w==
-X-Google-Smtp-Source: AGHT+IF1moARBkgm2lhQ9mBywi0r3o93XpJWFbU3tfKbOXZ3T+6OukiapWmLixUD8Kkr0uNvuebhpQ==
-X-Received: by 2002:a17:903:b07:b0:234:948b:91c7 with SMTP id d9443c01a7336-23c875d2f93mr217129395ad.51.1751905065725;
-        Mon, 07 Jul 2025 09:17:45 -0700 (PDT)
-Received: from localhost ([216.228.127.130])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b38ee450a61sm9260195a12.8.2025.07.07.09.17.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Jul 2025 09:17:45 -0700 (PDT)
-Date: Mon, 7 Jul 2025 12:17:42 -0400
-From: Yury Norov <yury.norov@gmail.com>
-To: mailhol.vincent@wanadoo.fr
-Cc: Lucas De Marchi <lucas.demarchi@intel.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	Andi Shyti <andi.shyti@linux.intel.com>,
-	David Laight <David.Laight@aculab.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 0/3] bits: Split asm and non-asm GENMASK*() and unify
- definitions
-Message-ID: <aGvzHdDACM1Cw97f@yury>
-References: <20250609-consolidate-genmask-v2-0-b8cce8107e49@wanadoo.fr>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D059F1A316E;
+	Mon,  7 Jul 2025 16:19:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751905185; cv=pass; b=PoVpB3Z7L2DeLQQKCFyJgjmRSsW4bnsez3Y/yz9cggKfpXOZzrL+8waxlDiKkkIg8+Qb5ayx8bEBs1HsHiawTJNsIROmVH008NxGpfnI1gU78C76WpDWtiglZqNEcNAjOUELXDWOIj1Lr58DtIVRyovgR5qqJVkwYr+RFL3toxo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751905185; c=relaxed/simple;
+	bh=R94avkSZjApSXUNZ0YQ4lxwJ6hTJ8++8l+29QNsZDtY=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=WAUBVDIDlYfVO2Yh+y/j/lsLZNbUk9tmrG1OqIk8CxeJrW7ZV7/Tkq1RPgrL6ZDKfM4AIJk70+ryHPOXWRAi+nLEe4yp6bGoPnPAH/O5/JRXF1GEvmBiBLYGPezK+Yk4TRDiuzIe6KjpvcVrVUWiJ8BMeFhXadbQeP2h2wuxS3E=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=jbsbNS7T; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1751905144; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=HZgmv52LJzlDRI+1GRTwzz6PMhGLJhuRxzJpb0yIdCcPaih8VQ3fweQAXXeOFXzrC2XxvJJBUnTTg49My+drZ0MC8F5uFODrxzexW74seKuoJHRMhGVyr4CXm3QHQarPU4XyfVQqtZF9/X9015gWaWkr2zv29XvBV7HatTjeE+A=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1751905144; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=ETLYFfIfOLg2rNaiX6F+ay4E3ts9u33x29yYCRsWi/Q=; 
+	b=QV0n3xPTo4wpnOHZ8/GpbIWmsodmAMsxpnU+Hg4C925qOyQ4s0q0sYnMRlgFrkUUYFRfW5xIdINqrWltAexi+EN6j79x8r+weRtLDw29Fgw5AgcTgeWW3cydX5kbUkuyAX96EFtnXiek7ELv8vRmk+4ejOFosh7z7x0eK9Jb8co=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1751905144;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=ETLYFfIfOLg2rNaiX6F+ay4E3ts9u33x29yYCRsWi/Q=;
+	b=jbsbNS7T+VebJkTLbe5JY2EU29NdGsT8DyGAXgge+jagX2BQD4mR1vRX/+60vchh
+	Oaj3A2+WGZlyPwQWZdBPUfJo6fwKORY9EPpOBKVKD10jmuUle8ai+5z7axDm9/WoSKY
+	QK2D2yBxPe6mWcAu6Ev1x/TtGn3tCpaA0TmjLt7c=
+Received: by mx.zohomail.com with SMTPS id 1751905142619899.7142083393121;
+	Mon, 7 Jul 2025 09:19:02 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250609-consolidate-genmask-v2-0-b8cce8107e49@wanadoo.fr>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
+Subject: Re: [PATCH v6 3/6] rust: irq: add support for non-threaded IRQs and
+ handlers
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <aGeIF_LcesUM9DHk@google.com>
+Date: Mon, 7 Jul 2025 13:18:45 -0300
+Cc: Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Trevor Gross <tmgross@umich.edu>,
+ Danilo Krummrich <dakr@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Benno Lossin <lossin@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ =?utf-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+ linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org,
+ linux-pci@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <F3D3BD51-65D8-44BE-9007-FBA556DFB7E5@collabora.com>
+References: <20250703-topics-tyr-request_irq-v6-0-74103bdc7c52@collabora.com>
+ <20250703-topics-tyr-request_irq-v6-3-74103bdc7c52@collabora.com>
+ <aGeIF_LcesUM9DHk@google.com>
+To: Alice Ryhl <aliceryhl@google.com>
+X-Mailer: Apple Mail (2.3826.600.51.1.1)
+X-ZohoMailClient: External
 
-On Mon, Jun 09, 2025 at 11:45:44AM +0900, Vincent Mailhol via B4 Relay wrote:
-> This is a subset of below series:
-> 
->   bits: Fixed-type GENMASK_U*() and BIT_U*()
->   Link: https://lore.kernel.org/r/20250308-fixed-type-genmasks-v6-0-f59315e73c29@wanadoo.fr
-> 
-> Yury suggested to split the above series in two steps:
-> 
->   #1 Introduce the new fixed type GENMASK_U*() (already merged upstream)
->   #2 Consolidate the existing GENMASK*()
-> 
-> This new series is the resulting step #2 following the split.
-> 
-> And thus, this series consolidate all the non-asm GENMASK*() so that
-> they now all depend on GENMASK_TYPE() which was introduced in step #1.
-> 
-> To do so, I had to split the definition of the asm and non-asm
-> GENMASK(). I think this is controversial. So I initially implemented a
-> first draft in which both the asm and non-asm version would rely on
-> the same helper macro, i.e. adding this:
-> 
->   #define __GENMASK_TYPE(t, w, h, l)		\
->   	(((t)~_ULL(0) << (l)) &			\
->   	 ((t)~_ULL(0) >> (w - 1 - (h))))
-> 
-> to uapi/bits.h. And then, the different GENMASK()s would look like
-> this:
-> 
->   #define __GENMASK(h, l) __GENMASK_TYPE(unsigned long, __BITS_PER_LONG, h, l)
-> 
-> and so on.
-> 
-> I implemented it, and the final result looked quite ugly. Not only do
-> we need to manually provide the width each time, the biggest concern
-> is that adding this to the uapi is asking for trouble. Who knows how
-> people are going to use this? And once it is in the uapi, there is
-> virtually no way back.
-> 
-> Adding to this, that macro can not even be generalised to u128
-> integers, whereas after the split, it can.
-> 
-> And so, after implementing both, the asm seems way cleaner than the
-> non-asm split and is, I think, the best compromise.
-> 
-> Aside from the split, the asm's GENMASK() and GENMASK_ULL() are left
-> untouched. While there are some strong incentives to also simplify
-> these as pointed by David Laight in this thread:
-> 
->   https://lore.kernel.org/all/20250309102312.4ff08576@pumpkin/
-> 
-> this series deliberately limit its scope to the non-asm variants.
-> 
-> Here are the bloat-o-meter stats:
-> 
->   $ ./scripts/bloat-o-meter vmlinux_before.o vmlinux_after.o
->   add/remove: 0/0 grow/shrink: 4/2 up/down: 5/-9 (-4)
->   Function                                     old     new   delta
->   intel_psr_invalidate                         352     354      +2
->   mst_stream_compute_config                   1589    1590      +1
->   intel_psr_flush                              707     708      +1
->   intel_dp_compute_link_config                1338    1339      +1
->   intel_drrs_activate                          398     395      -3
->   cfg80211_inform_bss_data                    5137    5131      -6
->   Total: Before=23333846, After=23333842, chg -0.00%
-> 
-> (done with GCC 12.4.1 on an x86_64 defconfig)
+Alice,
 
-So, I'm still concerned about that split for C and asm implementations.
-But seemingly nobody else does, and after all it's a nice consolidation.
+[=E2=80=A6]
 
-I've moved this in bitmap-for-next for testing. Thank you Vincent for
-your work.
+>> +/// The value that can be returned from an IrqHandler or a =
+ThreadedIrqHandler.
+>> +pub enum IrqReturn {
+>> +    /// The interrupt was not from this device or was not handled.
+>> +    None,
+>> +
+>> +    /// The interrupt was handled by this device.
+>> +    Handled,
+>> +}
+>> +
+>> +impl IrqReturn {
+>> +    fn into_inner(self) -> u32 {
+>> +        match self {
+>> +            IrqReturn::None =3D> bindings::irqreturn_IRQ_NONE,
+>> +            IrqReturn::Handled =3D> bindings::irqreturn_IRQ_HANDLED,
+>=20
+> One option is to specify these in the enum:
+>=20
+> /// The value that can be returned from an IrqHandler or a =
+ThreadedIrqHandler.
+> pub enum IrqReturn {
+>    /// The interrupt was not from this device or was not handled.
+>    None =3D bindings::irqreturn_IRQ_NONE,
+>=20
+>    /// The interrupt was handled by this device.
+>    Handled =3D bindings::irqreturn_IRQ_HANDLED,
+> }
 
-Thanks,
-Yury
+This requires explicitly setting #[repr(u32)], which is something that =
+was
+reverted at an earlier iteration of the series on Benno=E2=80=99s =
+request.
+
+=E2=80=94 Daniel=
 
