@@ -1,96 +1,99 @@
-Return-Path: <linux-kernel+bounces-720311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1CBCAFBA22
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 19:52:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 702E4AFBA24
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 19:53:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F68D4A22AC
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 17:52:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E4D21AA6900
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 17:53:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0A412620FC;
-	Mon,  7 Jul 2025 17:51:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="ka3ZcCjB"
-Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 777722620E4;
+	Mon,  7 Jul 2025 17:53:00 +0000 (UTC)
+Received: from bmailout3.hostsharing.net (bmailout3.hostsharing.net [176.9.242.62])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1DDC288A2;
-	Mon,  7 Jul 2025 17:51:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AED411A0728;
+	Mon,  7 Jul 2025 17:52:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.9.242.62
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751910717; cv=none; b=Rt+8KNZYULDxbM/70zKCb3WnjwacsMivjVp7t/4gtFIeXUchdoaj5DnSlSfHjQQvH+CpqEdVrsYccl4U4R9PHL4CAFgJCd7HuZv+aFhgpwB0K9JmMygLOl/facTcYLB5uL1HLh0n8cpc1KoJ42aosTi9AbnsqORdSWnVFBCmMQc=
+	t=1751910780; cv=none; b=XbxX6QhyPkyemClLkOAllcyOE7ZPm7nDOb2JGhXjHdUfG6iG1F3fy8u3eGlxcgHvW4T0E7aKAwwWpOtaI8OtjGpL5l/E8yxK2XAdAVzK3zMcHXnnbN84YX+rMb1OROgB5hy/ov+1j8NQrL3QBbYsCUHV9zla87XMpKkTndSCEeQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751910717; c=relaxed/simple;
-	bh=HwIRnkbFAWO6CYfUOL97cpMsQAsCRiVq+cpS2M7o5gI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HRI4w7RxRqz1PwVB+5pNqocJkvyG69pdPI3yh72jSiORhfHU9nhHG+SD0XLyjJMqVSJCauLbsuSyA5Oo7mCfs5enK6rv8q03zMl3fHicrjKQXjSZFCTb9Z5gTqQhyjTENfZTJ5yg2hMfTMFhEUkIcR+Zr9GPClt4DtSAAURrHjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=ka3ZcCjB; arc=none smtp.client-ip=199.89.3.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 003.mia.mailroute.net (Postfix) with ESMTP id 4bbWyf4hphzlgqTy;
-	Mon,  7 Jul 2025 17:51:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1751910712; x=1754502713; bh=HwIRnkbFAWO6CYfUOL97cpMs
-	QAsCRiVq+cpS2M7o5gI=; b=ka3ZcCjBksSmrQedpg40JAVPmpIf9L1UdLsuECDb
-	jLaSU5AwjZhS1HK3ihgd/O+rrXReSqmXeP/G6Ci4gAzCVboUW24fPQ7oEOCG8BfU
-	cqrjZUZiDPQMqWMQYEByxmFOHW2JK5W07pc6kA0DuC2aMLlLduTI7zCkQOGJs6AQ
-	3lqkzip1dgGwTlcoXIcNRLDRQr8jaP6LScRR0nrrNhhLmflqZ1ug0B2ehDqhTnQD
-	2+SDW7dt1e1Yyy4CcKMs6IoIcMKmplvVXTKO5i1xsNL3U2NLTCJLK7Tdr95M1661
-	d3P4e6nMbYzmtMdCbwWKbsSSUNBRVBiCa02teqBzd15FCw==
-X-Virus-Scanned: by MailRoute
-Received: from 003.mia.mailroute.net ([127.0.0.1])
- by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id qvjNIwFEOy-6; Mon,  7 Jul 2025 17:51:52 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
+	s=arc-20240116; t=1751910780; c=relaxed/simple;
+	bh=AsTcTGqi6Fn5LcdCeig/ngKT0YoLhCTEOGgFgHjH8KQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KGyOk2m4+04AN8s8EkVbK2/Kvf0f+PiTGHUSXQZtFqw6OU98hNxXkJJuyKKgDI10gNOLbwCK1/dpYTDWUChfOkPjH7H2Hat4n8DGvX9m8VeRfXvgppcBYOwfE2YfMzn9SAEvL3MYW5ISlI7uiuSdZMD8mZwWNhjfC5urO2n8Ejk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=176.9.242.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4bbWyR1gFNzlgqV5;
-	Mon,  7 Jul 2025 17:51:42 +0000 (UTC)
-Message-ID: <3c8622ed-db52-46e7-86db-c170b4aae55a@acm.org>
-Date: Mon, 7 Jul 2025 10:51:41 -0700
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout3.hostsharing.net (Postfix) with ESMTPS id F06482C0163C;
+	Mon,  7 Jul 2025 19:52:47 +0200 (CEST)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id C17FD423825; Mon,  7 Jul 2025 19:52:47 +0200 (CEST)
+Date: Mon, 7 Jul 2025 19:52:47 +0200
+From: Lukas Wunner <lukas@wunner.de>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	kernel@pengutronix.de, linux-kernel@vger.kernel.org,
+	Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
+	Andre Edich <andre.edich@microchip.com>
+Subject: Re: [PATCH net v1 4/4] net: phy: smsc: Disable IRQ support to
+ prevent link state corruption
+Message-ID: <aGwJbzY9cwtLlBWA@wunner.de>
+References: <20250701122146.35579-1-o.rempel@pengutronix.de>
+ <20250701122146.35579-5-o.rempel@pengutronix.de>
+ <aGPba6fX1bqgVfYC@wunner.de>
+ <aGT_3SpVVzJFzT6B@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC/RFT 2/5] ufs: ufs-qcom: Remove inferred MCQ mappings
-To: Konrad Dybcio <konradybcio@kernel.org>,
- Manivannan Sadhasivam <mani@kernel.org>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- Asutosh Das <quic_asutoshd@quicinc.com>,
- Stanley Chu <stanley.chu@mediatek.com>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>,
- Can Guo <quic_cang@quicinc.com>, Nitin Rawat <quic_nitirawa@quicinc.com>,
- linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org,
- linux-kernel@vger.kernel.org, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-References: <20250704-topic-qcom_ufs_mcq_cleanup-v1-0-c70d01b3d334@oss.qualcomm.com>
- <20250704-topic-qcom_ufs_mcq_cleanup-v1-2-c70d01b3d334@oss.qualcomm.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20250704-topic-qcom_ufs_mcq_cleanup-v1-2-c70d01b3d334@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aGT_3SpVVzJFzT6B@pengutronix.de>
 
-On 7/4/25 10:36 AM, Konrad Dybcio wrote:
-> There are currently no platforms with MCQ enabled, so there is no
-> functional change.
+On Wed, Jul 02, 2025 at 11:46:05AM +0200, Oleksij Rempel wrote:
+> On Tue, Jul 01, 2025 at 02:58:19PM +0200, Lukas Wunner wrote:
+> > Without support for interrupt handling, we can't take advantage
+> > of the GPIOs on the chip for interrupt generation.  Nor can we
+> > properly support runtime PM if no cable is attached.
+> 
+> Hm... the PHY smsc driver is not using EDPD mode by default if PHY
+> interrupts are enabled. Or do you mean other kind of PM?
 
-Hmm ... my understanding is that your employer provides multiple
-development boards that support MCQ?
+See commit 2642cc6c3bbe ("net: phy: smsc: Disable Energy Detect
+Power-Down in interrupt mode"):
+
+The LAN9514 used on older RasPi boards only supports SUSPEND0,
+SUSPEND1, SUSPEND2.  Other incarnations of the LAN95xx family
+such as LAN9500A additionally support SUSPEND3.  The smsc95xx.c
+driver enables suspend only on SUSPEND3-capable chips.
+
+I was planning to add suspend support for LAN9514 but never got
+around to finish it.  Enabling SUSPEND1 if no cable is attached
+saves quite a bit of power, so RasPis without a network connection
+consume less.
+
+Back in the day I did some tests and noticed that while EDPD
+wasn't working at all outside of SUSPEND modes, it did work
+at least sometimes to wake up from SUSPEND1.  The driver fiddles
+with EDPD settings upon entering suspend.  I concluded that more
+testing is necessary to enable EDPD before SUSPEND1 and that's
+when I had to put this project aside. :(
 
 Thanks,
 
-Bart.
+Lukas
 
