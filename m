@@ -1,184 +1,160 @@
-Return-Path: <linux-kernel+bounces-719281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71CF7AFAC25
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 08:51:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5BCAAFAC38
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 08:53:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 195C93A6BE0
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 06:51:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C54416C6B2
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 06:53:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44BAF27C84E;
-	Mon,  7 Jul 2025 06:50:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D0B727C16A;
+	Mon,  7 Jul 2025 06:53:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="b+5Q91nP"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CTjzJMeT"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 293F9286430
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 06:50:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA9B427AC34
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 06:53:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751871036; cv=none; b=m3El5RExg/q3Je1kBAuBAtNMCIvHlLhDKgdB6h2kk8RLZoerc/HMlzkchHdS3cUNRBGkZX5M0VQ6TERTdXV5CfsyAT7ihrcM6FPW/NInKhbU3N423g9bEmQ3oWuXZMtI2e1qshvvmmbCGljWmKagm0eKjXrIHTL2jVhVNyiMHKw=
+	t=1751871198; cv=none; b=H8TuS6mRNVVllCgicRKctLcjsE4Ydb98ohzF78eWrDkW1gh7FmfzZ0mkH6MXHXqNuSYA6O3j4IwUzHSoe7vy3JTLEkUyJLvCrSfVRafjH95evYHYtzTRXyuuJOjsLY6XsTkhUHly3HuzzO1waEDSH6/kZkqtBgPkOEYyz3qZuQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751871036; c=relaxed/simple;
-	bh=ls52+XrvwO/234TukpAvew2O69meLJpK2+6xI0hEEfk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=io/9C7opFxhRzp+bDwWoZ2TPSbc9Bbez4FPgTHSL4CWg27KlZFPtMdGXT2dmLbB++afLp/mQMVUqj6biAAcFl4a656vrE3jLfmF5qpe6+RgKYRqnTw7WljCz9epwZvwvbQKNaz3ckZzQkr6+0fBA4AmsX9bSCe0M7ycClmzFtsw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=b+5Q91nP; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-23636167afeso24619335ad.3
-        for <linux-kernel@vger.kernel.org>; Sun, 06 Jul 2025 23:50:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1751871034; x=1752475834; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DJCrtQpscf7JigPaIY2b7xTm+tWVRMcaJVrpHVo23Lg=;
-        b=b+5Q91nPBQWTJvIg/RM8snOHNnHpph0Inl1kCuZRedVF3VT2VC+Ufkk73pHkvshwNn
-         KmEHWH3XafI6BHoD222KeD/9bbw55wZEVOKZCYI+zcGoACktQK9+o8snVlrOCBI0Vj80
-         NcgPTt0clkEB5+mwNhxojCrwxKCKDx9p+k/L2tyVmqXc3Ry2m6FHwe+8FzLvqmsrc/IX
-         AroBlwFX2zTwm9j2C4VY2BEhk9OfRqb+7HAJaIcVnKV2lyJgPBI2DJwlrdNnwqDBlbvb
-         sHZhBa2hGDpD6O1YTpKNRGL/kPaJgpTJz0+Q8bDb+4OE2GpesTeN+LFtBWauNoDgZ4Ly
-         v4Qw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751871034; x=1752475834;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DJCrtQpscf7JigPaIY2b7xTm+tWVRMcaJVrpHVo23Lg=;
-        b=TMKf21jEf6B4PLmgU+80jncJ8LzMjDflUZcJgl2N6yRpJrK7j4ivwtU3Pa8ba6LoeQ
-         RQS4aKIWz58TgEAMWrot9YunkLDMt3T2bKt9TSMKCUgbQ4aznUDglv/bEUO0rD885HUf
-         lqNHxThwyf86OD0qoMs6hmeCJh6EI1iS1xcBdp/wyTKeWK0KjpIUF8h5WAr7FpQdn810
-         jmIijtwwLFlzdggqoBbZMHnA8oEwCWTe1ZAvefSkgIJ/eJDt91nkTGKjonMnvs0IuuGr
-         Sn1hBULIwd8RHctiAjPAS1H3NbN0FfhYESklY29s5z4fiDxNg6zOP5+YvoV+oU/l3ijN
-         do2g==
-X-Forwarded-Encrypted: i=1; AJvYcCVjjZzGUoMIu+2V9emOVC0Qcy7xj+zOUIWK44G5a5t5SDKffRGe1QdMvQwiJq8f/bskg0+pF9E8yckvLx8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvyP+5g7UspPQztEVkD7ut/2jCzjv25zPcK/H3vjFtnOMEjh7/
-	cC1Y6Br6sFks20Dna9ZbedWE/y9YDSruLEIVxuv1i7Y1VS7UOEeYuUnfrc6UBd6sQwQ=
-X-Gm-Gg: ASbGncuITrYroM38mo9Z7GdOPA2YT/9nhuiGJPkPWxeflw4YZHIOYaAlE9RlRrRW2ge
-	e1uIz0cPEofEvkNNA03fGkaMFbFop1kgSLOZCBwhsjaDBIe/DQf3QHJbpKTp/5Cf16JbWPlU7Hz
-	OUl/zG78ndB0UE/gfVD3MWLrH3OGNEsMbdE6CYEAYw4sGX6EhLX9DxYvfVMQpgvTuZWsi7zHK0q
-	ddPukKoXQh79Vb+GDnyveyKNjeM+OqPL6oPfkpm2zTyALgGAlCD5iRogL/uV1eAyqDmRFLk5IeR
-	6FaNLAtQypfnzQIDDOEQ8SKrfD7yzMCTVniXsdN+xBNsVmE1jsTxp7X7zBDuev1P9WGh/Ahlp64
-	aO8rD/14m1THXQjTKcU2hZQw=
-X-Google-Smtp-Source: AGHT+IGh2/KBCNysHt7plUCFAgV1uGLkxyUZAwvcA0Vu+vwTRDqonN+b71HZNp4xw4YPISfBYqMzdA==
-X-Received: by 2002:a17:902:e5d0:b0:234:c8ec:51b5 with SMTP id d9443c01a7336-23c875e4d89mr159552995ad.53.1751871034310;
-        Sun, 06 Jul 2025 23:50:34 -0700 (PDT)
-Received: from localhost.localdomain ([203.208.189.9])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23c8431a1aasm77377635ad.15.2025.07.06.23.50.30
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Sun, 06 Jul 2025 23:50:34 -0700 (PDT)
-From: lizhe.67@bytedance.com
-To: alex.williamson@redhat.com,
-	akpm@linux-foundation.org,
-	david@redhat.com,
-	jgg@ziepe.ca,
-	peterx@redhat.com
-Cc: kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	lizhe.67@bytedance.com
-Subject: [PATCH v3 5/5] vfio/type1: optimize vfio_unpin_pages_remote()
-Date: Mon,  7 Jul 2025 14:49:50 +0800
-Message-ID: <20250707064950.72048-6-lizhe.67@bytedance.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250707064950.72048-1-lizhe.67@bytedance.com>
-References: <20250707064950.72048-1-lizhe.67@bytedance.com>
+	s=arc-20240116; t=1751871198; c=relaxed/simple;
+	bh=Em469fJKz9rkiRR0gFrK5W6JZWJxcpDQWQsw4nPHfF8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qZtdWhuWsB6OT2xtuReb55VTLMn488rX0a01iI+rIaVRHCL7lKMEbYqCxhC9FZVnt09dRfgoO2Z1G1+W5I3kGh9cGZlDWzOXacy6+48iia0g6BfXa9RWwcS1njm1cZ08FYwwW5zYdXLwATdL2tvPwZety3BIlhpjYUVIXGnD6jQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CTjzJMeT; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751871197; x=1783407197;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Em469fJKz9rkiRR0gFrK5W6JZWJxcpDQWQsw4nPHfF8=;
+  b=CTjzJMeTb4RYd7Ib7wexAIEKAKhl3IKrnNXrELIWql+D9axAZQk8ql1O
+   nW6Rt1Df9Cw86f2dECyChfcO2PVexaVjqKkRdpNE1qZOYVA6RR8knRYF7
+   O0FvJXGJPnaxW9tlxwlv/Qp1dWhjdbgSHYdlljyfF7WwYEWIgEPKWR520
+   FbkqcgCFjmhgVkgeBGHCNy1zDMoaR5ha6Fbu9PIbA1RySFO6bUIYTXNIr
+   zlTm2unO/7aF2TsSByisD+LVauKKh+DW9DzHgGD+hMaShh3QjfwRhIKNN
+   UWduX8kfU0MlrSXdsKDjsQjqMWRCZJ1zuTQCobH+fG1BAHd+F3PiAtuTD
+   Q==;
+X-CSE-ConnectionGUID: SadIbz7HRje+86P821kR4Q==
+X-CSE-MsgGUID: /WhflrzgQtCKmeLyC1KY9g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11486"; a="54204626"
+X-IronPort-AV: E=Sophos;i="6.16,293,1744095600"; 
+   d="scan'208";a="54204626"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jul 2025 23:53:16 -0700
+X-CSE-ConnectionGUID: Pk/Sf3k9SgGbdNEBKpg5Xw==
+X-CSE-MsgGUID: a20EZDxYRF6CabT1uJsS3A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,293,1744095600"; 
+   d="scan'208";a="160794453"
+Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
+  by orviesa005.jf.intel.com with ESMTP; 06 Jul 2025 23:53:14 -0700
+Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uYfix-0000CR-0q;
+	Mon, 07 Jul 2025 06:53:11 +0000
+Date: Mon, 7 Jul 2025 14:53:05 +0800
+From: kernel test robot <lkp@intel.com>
+To: Pan Deng <pan.deng@intel.com>, mingo@kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org, tianyou.li@intel.com,
+	tim.c.chen@linux.intel.com, yu.c.chen@intel.com, pan.deng@intel.com
+Subject: Re: [PATCH 3/4] sched/rt: Split root_domain->rto_count to
+ per-NUMA-node counters
+Message-ID: <202507071418.sFa0bilv-lkp@intel.com>
+References: <2c1e1dbacaddd881f3cca340ece1f9268029b620.1751852370.git.pan.deng@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2c1e1dbacaddd881f3cca340ece1f9268029b620.1751852370.git.pan.deng@intel.com>
 
-From: Li Zhe <lizhe.67@bytedance.com>
+Hi Pan,
 
-When vfio_unpin_pages_remote() is called with a range of addresses that
-includes large folios, the function currently performs individual
-put_pfn() operations for each page. This can lead to significant
-performance overheads, especially when dealing with large ranges of pages.
+kernel test robot noticed the following build warnings:
 
-It would be very rare for reserved PFNs and non reserved will to be mixed
-within the same range. So this patch utilizes the has_rsvd variable
-introduced in the previous patch to determine whether batch put_pfn()
-operations can be performed. Moreover, compared to put_pfn(),
-unpin_user_page_range_dirty_lock() is capable of handling large folio
-scenarios more efficiently.
+[auto build test WARNING on v6.16-rc5]
+[also build test WARNING on linus/master]
+[cannot apply to tip/sched/core peterz-queue/sched/core tip/master tip/auto-latest next-20250704]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-The performance test results for completing the 16G VFIO IOMMU DMA
-unmapping are as follows.
+url:    https://github.com/intel-lab-lkp/linux/commits/Pan-Deng/sched-rt-Optimize-cpupri_vec-layout-to-mitigate-cache-line-contention/20250707-131831
+base:   v6.16-rc5
+patch link:    https://lore.kernel.org/r/2c1e1dbacaddd881f3cca340ece1f9268029b620.1751852370.git.pan.deng%40intel.com
+patch subject: [PATCH 3/4] sched/rt: Split root_domain->rto_count to per-NUMA-node counters
+config: arm-allnoconfig (https://download.01.org/0day-ci/archive/20250707/202507071418.sFa0bilv-lkp@intel.com/config)
+compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project 01c97b4953e87ae455bd4c41e3de3f0f0f29c61c)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250707/202507071418.sFa0bilv-lkp@intel.com/reproduce)
 
-Base(v6.16-rc4):
-./vfio-pci-mem-dma-map 0000:03:00.0 16
-------- AVERAGE (MADV_HUGEPAGE) --------
-VFIO UNMAP DMA in 0.135 s (118.6 GB/s)
-------- AVERAGE (MAP_POPULATE) --------
-VFIO UNMAP DMA in 0.312 s (51.3 GB/s)
-------- AVERAGE (HUGETLBFS) --------
-VFIO UNMAP DMA in 0.136 s (117.3 GB/s)
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507071418.sFa0bilv-lkp@intel.com/
 
-With this patchset:
-------- AVERAGE (MADV_HUGEPAGE) --------
-VFIO UNMAP DMA in 0.045 s (357.0 GB/s)
-------- AVERAGE (MAP_POPULATE) --------
-VFIO UNMAP DMA in 0.288 s (55.6 GB/s)
-------- AVERAGE (HUGETLBFS) --------
-VFIO UNMAP DMA in 0.045 s (353.9 GB/s)
+All warnings (new ones prefixed by >>):
 
-For large folio, we achieve an over 66% performance improvement in
-the VFIO UNMAP DMA item. For small folios, the performance test
-results appear to show a slight improvement.
+   In file included from kernel/sched/build_policy.c:52:
+   kernel/sched/rt.c:496:21: error: unknown type name 'atomic_tp'; did you mean 'atomic_t'?
+     496 | int rto_counts_init(atomic_tp **rto_counts)
+         |                     ^~~~~~~~~
+         |                     atomic_t
+   include/linux/types.h:183:3: note: 'atomic_t' declared here
+     183 | } atomic_t;
+         |   ^
+   In file included from kernel/sched/build_policy.c:52:
+>> kernel/sched/rt.c:496:5: warning: no previous prototype for function 'rto_counts_init' [-Wmissing-prototypes]
+     496 | int rto_counts_init(atomic_tp **rto_counts)
+         |     ^
+   kernel/sched/rt.c:496:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
+     496 | int rto_counts_init(atomic_tp **rto_counts)
+         | ^
+         | static 
+   kernel/sched/rt.c:501:25: error: unknown type name 'atomic_tp'; did you mean 'atomic_t'?
+     501 | void rto_counts_cleanup(atomic_tp *rto_counts)
+         |                         ^~~~~~~~~
+         |                         atomic_t
+   include/linux/types.h:183:3: note: 'atomic_t' declared here
+     183 | } atomic_t;
+         |   ^
+   In file included from kernel/sched/build_policy.c:52:
+>> kernel/sched/rt.c:501:6: warning: no previous prototype for function 'rto_counts_cleanup' [-Wmissing-prototypes]
+     501 | void rto_counts_cleanup(atomic_tp *rto_counts)
+         |      ^
+   kernel/sched/rt.c:501:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
+     501 | void rto_counts_cleanup(atomic_tp *rto_counts)
+         | ^
+         | static 
+   2 warnings and 2 errors generated.
 
-Suggested-by: Jason Gunthorpe <jgg@ziepe.ca>
-Signed-off-by: Li Zhe <lizhe.67@bytedance.com>
----
- drivers/vfio/vfio_iommu_type1.c | 20 ++++++++++++++++----
- 1 file changed, 16 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
-index 13c5667d431c..208576bd5ac3 100644
---- a/drivers/vfio/vfio_iommu_type1.c
-+++ b/drivers/vfio/vfio_iommu_type1.c
-@@ -792,17 +792,29 @@ static long vfio_pin_pages_remote(struct vfio_dma *dma, unsigned long vaddr,
- 	return pinned;
- }
- 
-+static inline void put_valid_unreserved_pfns(unsigned long start_pfn,
-+		unsigned long npage, int prot)
-+{
-+	unpin_user_page_range_dirty_lock(pfn_to_page(start_pfn), npage,
-+					 prot & IOMMU_WRITE);
-+}
-+
- static long vfio_unpin_pages_remote(struct vfio_dma *dma, dma_addr_t iova,
- 				    unsigned long pfn, unsigned long npage,
- 				    bool do_accounting)
- {
- 	long unlocked = 0, locked = vpfn_pages(dma, iova, npage);
--	long i;
- 
--	for (i = 0; i < npage; i++)
--		if (put_pfn(pfn++, dma->prot))
--			unlocked++;
-+	if (dma->has_rsvd) {
-+		unsigned long i;
- 
-+		for (i = 0; i < npage; i++)
-+			if (put_pfn(pfn++, dma->prot))
-+				unlocked++;
-+	} else {
-+		put_valid_unreserved_pfns(pfn, npage, dma->prot);
-+		unlocked = npage;
-+	}
- 	if (do_accounting)
- 		vfio_lock_acct(dma, locked - unlocked, true);
- 
+vim +/rto_counts_init +496 kernel/sched/rt.c
+
+   495	
+ > 496	int rto_counts_init(atomic_tp **rto_counts)
+   497	{
+   498		return 0;
+   499	}
+   500	
+ > 501	void rto_counts_cleanup(atomic_tp *rto_counts)
+   502	{
+   503	}
+   504	
+
 -- 
-2.20.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
