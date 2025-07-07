@@ -1,345 +1,236 @@
-Return-Path: <linux-kernel+bounces-720626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86F80AFBE65
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 00:50:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7E57AFBE6B
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 00:55:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D22AA5613BB
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 22:50:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3EEFC16FE21
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 22:55:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2F182E92BE;
-	Mon,  7 Jul 2025 22:48:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF21E28936B;
+	Mon,  7 Jul 2025 22:55:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wq/iQLYx"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WECOzjhb"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EB572E8E02
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 22:48:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E3482E370C;
+	Mon,  7 Jul 2025 22:55:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751928519; cv=none; b=Rjn9C/OC3WVWi/kCuiLHAsPek6MdIOTKqkXOW2ztRpfUE8WNTO+Xz6vVHKFZBXemDYN9Bn02vUTbY00LesJThzqz6q8jAs3Kyt0SykFgQOLyVN1d0iBoF7kKYOMEaL0evkjZamz5GLkN7346jDmnEXlsH2v2/y23tfgUVJkrvjY=
+	t=1751928904; cv=none; b=dBRxi2Drw0RmFIOX5jSjzJVBoQU75kC8Ut382yLOSvQSxNwpaybl9/I0oE0Vf+npSrd3jtYXu8V+aQqtZ/SiREG+Q6JxZ71Xoh8cx32opGO+a0J7u0vZLUFLzkcbhO3AKdiMtLVbz5YqkRLn5GnYhFK+w6pIqxVKFldgrHiRio0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751928519; c=relaxed/simple;
-	bh=+B1tzUeRnbjcRJrdTNGtKuA80J+Vd/hMm8gBBpvb0H8=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=SjR7oIqBuz0Ioc+lByyopasCMdksKnZspK4SOTeUHWkPmJgCcch8/CzRvugqKQqV1BZtp9IEOjSxwtUBHgyrYasBtQ5fZuKU57dWpII1IqsJJ94gqONv7x3iVhPHHwjdPREWW3VOWDqpIioMFVG3QF1g4tfi9me2PjPriVsGAG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jthoughton.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wq/iQLYx; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jthoughton.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-31218e2d5b0so6187705a91.2
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 15:48:37 -0700 (PDT)
+	s=arc-20240116; t=1751928904; c=relaxed/simple;
+	bh=+G+RIcW9LTIQlqVUhDb94U9QPdzuIs2sWuY6iBWt0mQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WrdF25OHFeygt+8rVQQICuCJgnrhr0uaQBANkbOpboM1wqkVEqDDraNNt6+yRESliTfb5eccp/pTzU55xKNG1koZ+SLHihqGX4J2Ma4I1Dr5xs3vStFaeFbjTr+I07zxymXqEeGZfFbS07foOiWjivDQe3KG2/QEkgk+rLbhmmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WECOzjhb; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-234fcadde3eso54737585ad.0;
+        Mon, 07 Jul 2025 15:55:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1751928517; x=1752533317; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Rwbn8AkKKcNl/7mjlcPAAJ9HVPrgom/gFcHQx8uwU7o=;
-        b=wq/iQLYx6YNSMa3posLyN0vz67FEF5eLNxwOhMtf/1iR/SgaLFxIjJr2pxLLoR66I8
-         q8L7iwTuAZMjtacc8rSQMiFzDLDbBq+M/m7SzY8YXuSvgsiBTRngkYZPjkwDXPV6PC9h
-         63xh4fE3sABZZL2VKL5V/lLi+yyRV0W+X1UtploivulQjbRJ0wLADypjp0/CHFwWbTBJ
-         o0GeV0M0iRmGIo+HD0wzasPtU+1ZdCo9WyZ/jKaYbnGlIeuS3jX2DIzKRqNxiLCOIG1w
-         204TmEqHgt/wQqTIXlzEaDqT7to+xQqhG1EsHFIvqwL1E90WOJKSFNbSZNnkjRKloDvP
-         QbMg==
+        d=gmail.com; s=20230601; t=1751928902; x=1752533702; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2Q3eO8XR+BDXiQEg/nZxeSyP3WmhBw4zvdWqBxn/MlY=;
+        b=WECOzjhb/Zww6Sasy0sBjK87b5oBWX2T9oy1P6sSSA/8bWHGynCyGE2sMV3T3lmLIc
+         u1xvzNvbnLraYqCbb1VrnYtR9p/y0VMsXCT3nggaWjs8fCP5sQ1r1qDuMjq/4zdDCq0j
+         pcg1S2GwafhFrG27j1/6oC2yMgJ0phQvBsR/CLVAHOEWiodmbzB2ilyftRy7Wym0EgH4
+         IBwk53GQfJXXGgjOpoRrzZF5ehPmj3e0l9mejSKIcsTcczcxc5d6dHOtxUsHFbIalrHt
+         h0XANtF59xTBUPNKiVhQOj/32YQdeTGbX8kzUhysf5XjtWM0/XHqw0QuAfZI7xjTH5YY
+         m+OA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751928517; x=1752533317;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Rwbn8AkKKcNl/7mjlcPAAJ9HVPrgom/gFcHQx8uwU7o=;
-        b=kOtrVLLs1w44rFEk7V02E7X1vK4JjW/5m/clZQ7bUSn8DQQ8J9JylQuRhkpHNLucx8
-         kdm5xC+RxEp2Cx1BS/8ACiQgEfTTNpbnHpqmpctZOabOTJvU17TYJI1drfq3e8HDhEiu
-         ZjCyhuw4mjiOj2ywgU0pBJ0hx9y+3UN+D8MU+fyGDyM4tnDfqj28yOdEPHTuRD7VTY4p
-         C+Itr0ECYLlCa4TKj6NLntNCPzQI91MNd40V+xdQ5Ed6fszdbNXSNdRvlKt7kRea03S0
-         4Szr+GAP6okab6ErZeTRJPgLEEN4+74mXb+Vf0InPOWR+2Pv6KVG9l+yGd82zUjfshIC
-         zaEA==
-X-Forwarded-Encrypted: i=1; AJvYcCUfr48aYu/oRv/+n/80BlYOi21+TcqChmlTHFQSY3+mS9JZQOXuij1hBcRmTwq+u5b+k5Gs0ALiQTUep2k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyN0r9vqWB6qvCIO172IFRBYWfPWcl2lCe0SBuYn7sUNSLQp5+7
-	p5+ChSqEXxU0sWOsS9/QxC002CXv6OJKCnVEnZrh/mYmybPmh/VyFzCTsTJX3fuMFI4tnHMZGRa
-	zj1LSv2TOEqh3C8ItZvAeyQ==
-X-Google-Smtp-Source: AGHT+IFxcSTgLeGyYaHVsYcNu0MgQB9pPS3S5NDxa7lwYcKq/ZVn+af7NlY69BJsaMTfNIQybdrsbm+PcQfF1m4U
-X-Received: from pja12.prod.google.com ([2002:a17:90b:548c:b0:312:e266:f849])
- (user=jthoughton job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:90b:3c50:b0:311:d28a:73ef with SMTP id 98e67ed59e1d1-31aac447bc9mr22346078a91.10.1751928516542;
- Mon, 07 Jul 2025 15:48:36 -0700 (PDT)
-Date: Mon,  7 Jul 2025 22:47:20 +0000
-In-Reply-To: <20250707224720.4016504-1-jthoughton@google.com>
+        d=1e100.net; s=20230601; t=1751928902; x=1752533702;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2Q3eO8XR+BDXiQEg/nZxeSyP3WmhBw4zvdWqBxn/MlY=;
+        b=GaDKE0PXCRNM0AAd6D4hLtO8Wf54UoEA0X/1pv/4B4foVdFoKKI8xg35nqWw6gJrvW
+         yldNxJEaEnnlXBVzDfGlDtZikUvykQYwtmApdE6UcLtebS/QgaiWZzRbgOYT8kFpAOrN
+         WGHuSEaVwfUWTcrp824FcKY75hW5bYCpLncSWDe1XOybJ+qSH/MaUGoTmycEoLzx2AZg
+         qS5AuN9yaZ8KtPUnoxZ5ujiFFfgPp1zg2jFmrhA4il/fkskke4F7rK/M36eKhdCfYa1l
+         PVB48lBbA6AQTPPV1LFC8mzDcgiwPWdEJ0CQC0dFOXzZPwhrEfqwXjK3SHgoOz5BY4H1
+         a3ag==
+X-Forwarded-Encrypted: i=1; AJvYcCUdEfPVeJH2ihiYCra/dPdyABap7LzA0nZs8AhCMLWNPlMFNglw387UTRXXQvYTwTWAF8efBn5hPJSD@vger.kernel.org, AJvYcCVBPj0Umonh2UDSAI2BEOqv+A54SljghArCDlHEKoFG4HHfsE2lUgx1DMYN2rwJAMKXzVF8XUumv9TabQW6@vger.kernel.org, AJvYcCW/7TR0YnXAXyXBhEwQBskctyjynAVgKRj5Omevvpuz24ZJRQ1lk6PPoRBxbDU8MKe6kcYzGjthNZQxirIhtnY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyaReYaY4+pTmQr7iVRtzZvIedS6tghr+9aU85NRJtr1U+a3lCt
+	KN9w9yNjMO4htUyXIXsVT4nL3F2+lZFw2Xwhj1JRbliHkcD/RAy6xOU4
+X-Gm-Gg: ASbGnctpn4+N7NWhnz0st7jvinBR9Ibg6N3XLs7ceFX5hv4gIyvq1ktptxfO+mIosKV
+	2e0cnXuAYZ9ywCXrE+BZfcctwauWGdyKJJzylRMevo7mUDxFdLNQ2qXxFG9YY93heQstCiLnyjT
+	QDhDaPKWFREtf8z/bU8eB/hCWXXmUGIUgXO7R5yUNsNEHZhkWPIlICQ1WekTizg686Ss8JB8/nH
+	//pn46sJkWc0xsy4M1w5uI6ZQtPkgfoWHPykdmMhd64SngKxzXwFz8ynX4l7nzQpjAm3TX9gS9V
+	X4YG5wngkDmI8PyXzU8iIRlQtyDkmpJcq4DWxbYwvAAuvU9kVsrkbaqk+bQhMz5xoXZkKb9/iog
+	=
+X-Google-Smtp-Source: AGHT+IEV3IPAVCe5TkFaSzyJRvAmPhce9EAkTmETBTmJeqm0WuuEjr7zVyTKVNdaiPxhQUd4IvoEkA==
+X-Received: by 2002:a17:902:ccc4:b0:235:e942:cb9d with SMTP id d9443c01a7336-23c8747dfafmr178981485ad.17.1751928901713;
+        Mon, 07 Jul 2025 15:55:01 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23c8431a3e5sm98447515ad.2.2025.07.07.15.55.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Jul 2025 15:55:01 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Mon, 7 Jul 2025 15:55:00 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Andrew Davis <afd@ti.com>
+Cc: Judith Mendez <jm@ti.com>, Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Tero Kristo <kristo@kernel.org>, linux-watchdog@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] watchdog: rti_wdt: Add reaction control
+Message-ID: <953f78a8-3928-479d-8700-dfe1cea15454@roeck-us.net>
+References: <20250707180002.3918865-1-jm@ti.com>
+ <20250707180002.3918865-3-jm@ti.com>
+ <cc37e797-d3e5-444d-8016-c437a0534001@roeck-us.net>
+ <d96541bc-644d-4c90-b9f7-1e4afd16aeb6@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250707224720.4016504-1-jthoughton@google.com>
-X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
-Message-ID: <20250707224720.4016504-8-jthoughton@google.com>
-Subject: [PATCH v5 7/7] KVM: selftests: Add an NX huge pages jitter test
-From: James Houghton <jthoughton@google.com>
-To: Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>
-Cc: Vipin Sharma <vipinsh@google.com>, David Matlack <dmatlack@google.com>, 
-	James Houghton <jthoughton@google.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d96541bc-644d-4c90-b9f7-1e4afd16aeb6@ti.com>
 
-Add a test that checks how much NX huge page recovery affects vCPUs that
-are faulting on pages not undergoing NX huge page recovery. To do this,
-this test uses a single vCPU to touch all of guest memory. After every
-1G of guest memory, it will switch from writing to executing. Only the
-writes are timed.
+On Mon, Jul 07, 2025 at 04:49:31PM -0500, Andrew Davis wrote:
+> On 7/7/25 3:58 PM, Guenter Roeck wrote:
+> > On Mon, Jul 07, 2025 at 01:00:02PM -0500, Judith Mendez wrote:
+> > > This allows to configure reaction between NMI and reset for WWD.
+> > > 
+> > > On K3 SoC's other than AM62L SoC [0], watchdog reset output is routed
+> > > to the ESM module which can subsequently route the signal to safety
+> > > master or SoC reset. On AM62L, the watchdog reset output is routed
+> > > to the SoC HW reset block. So, add a new compatible for AM62l to add
+> > > SoC data and configure reaction to reset instead of NMI.
+> > > 
+> > > [0] https://www.ti.com/product/AM62L
+> > > Signed-off-by: Judith Mendez <jm@ti.com>
+> > > ---
+> > >   drivers/watchdog/rti_wdt.c | 32 ++++++++++++++++++++++++++++----
+> > >   1 file changed, 28 insertions(+), 4 deletions(-)
+> > > 
+> > > diff --git a/drivers/watchdog/rti_wdt.c b/drivers/watchdog/rti_wdt.c
+> > > index d1f9ce4100a8..c9ee443c70af 100644
+> > > --- a/drivers/watchdog/rti_wdt.c
+> > > +++ b/drivers/watchdog/rti_wdt.c
+> > > @@ -35,7 +35,8 @@
+> > >   #define RTIWWDRXCTRL	0xa4
+> > >   #define RTIWWDSIZECTRL	0xa8
+> > > -#define RTIWWDRX_NMI	0xa
+> > > +#define RTIWWDRXN_RST	0x5
+> > > +#define RTIWWDRXN_NMI	0xa
+> > >   #define RTIWWDSIZE_50P		0x50
+> > >   #define RTIWWDSIZE_25P		0x500
+> > > @@ -63,22 +64,29 @@
+> > >   static int heartbeat;
+> > > +struct rti_wdt_data {
+> > > +	bool reset;
+> > > +};
+> > > +
+> > >   /*
+> > >    * struct to hold data for each WDT device
+> > >    * @base - base io address of WD device
+> > >    * @freq - source clock frequency of WDT
+> > >    * @wdd  - hold watchdog device as is in WDT core
+> > > + * @data - hold configuration data
+> > >    */
+> > >   struct rti_wdt_device {
+> > >   	void __iomem		*base;
+> > >   	unsigned long		freq;
+> > >   	struct watchdog_device	wdd;
+> > > +	const struct rti_wdt_data *data;
+> > >   };
+> > >   static int rti_wdt_start(struct watchdog_device *wdd)
+> > >   {
+> > >   	u32 timer_margin;
+> > >   	struct rti_wdt_device *wdt = watchdog_get_drvdata(wdd);
+> > > +	u8 reaction;
+> > >   	int ret;
+> > >   	ret = pm_runtime_resume_and_get(wdd->parent);
+> > > @@ -101,8 +109,13 @@ static int rti_wdt_start(struct watchdog_device *wdd)
+> > >   	 */
+> > >   	wdd->min_hw_heartbeat_ms = 520 * wdd->timeout + MAX_HW_ERROR;
+> > > -	/* Generate NMI when wdt expires */
+> > > -	writel_relaxed(RTIWWDRX_NMI, wdt->base + RTIWWDRXCTRL);
+> > > +	/* Reset device if wdt serviced outside of window or generate NMI if available */
+> > 
+> > Shouldn't that be "or generate NMI if _not_ available" ?
+> > 
+> 
+> For almost all the K3 devices, the WDT has two selectable outputs, one resets
+> the device directly, the other is this "NMI" which is wired to an ESM module
+> which can take other actions (but usually it just also resets the device).
+> For AM62L that second NMI output is not wired (no ESM module), so our only
+> choice is to set the WDT to direct reset mode.
+> 
+> The wording is a little strange, but the "or generate NMI if available" meaning
+> if NMI is available, then do that. Reset being the fallback when _not_ available.
+> 
+> Maybe this would work better:
+> 
+> /* If WDT is serviced outside of window, generate NMI if available, or reset device */
+> 
 
-With this setup, while the guest is in the middle of reading a 1G
-region, NX huge page recovery (provided it is set aggressive enough)
-will start to recover huge pages in the previous 1G region.
+The problem is that the code doesn't match the comment. The code checks the
+"reset" flag and requests a reset if available. If doesn't check an "nmi"
+flag.
 
-Signed-off-by: James Houghton <jthoughton@google.com>
----
- tools/testing/selftests/kvm/Makefile.kvm      |   1 +
- .../kvm/x86/nx_huge_pages_perf_test.c         | 223 ++++++++++++++++++
- 2 files changed, 224 insertions(+)
- create mode 100644 tools/testing/selftests/kvm/x86/nx_huge_pages_perf_test.c
+If the preference is NMI, as your comment suggests, the flag should be named
+"nmi" and be set if NMI is available. That would align the code and the
+comment. Right now both code and comment are misleading, since the presence
+of a reset flag (and setting it to false) suggests that a direct reset is
+not available, and that reset is preferred if available. A reset is the
+normally expected behavior for a watchdog, so the fact that this is _not_
+the case for this watchdog should be made more visible.
 
-diff --git a/tools/testing/selftests/kvm/Makefile.kvm b/tools/testing/selftests/kvm/Makefile.kvm
-index 0dc435e944632..4b5be9f0bac5b 100644
---- a/tools/testing/selftests/kvm/Makefile.kvm
-+++ b/tools/testing/selftests/kvm/Makefile.kvm
-@@ -88,6 +88,7 @@ TEST_GEN_PROGS_x86 += x86/kvm_buslock_test
- TEST_GEN_PROGS_x86 += x86/monitor_mwait_test
- TEST_GEN_PROGS_x86 += x86/nested_emulation_test
- TEST_GEN_PROGS_x86 += x86/nested_exceptions_test
-+TEST_GEN_PROGS_x86 += x86/nx_huge_pages_perf_test
- TEST_GEN_PROGS_x86 += x86/platform_info_test
- TEST_GEN_PROGS_x86 += x86/pmu_counters_test
- TEST_GEN_PROGS_x86 += x86/pmu_event_filter_test
-diff --git a/tools/testing/selftests/kvm/x86/nx_huge_pages_perf_test.c b/tools/testing/selftests/kvm/x86/nx_huge_pages_perf_test.c
-new file mode 100644
-index 0000000000000..e33e913ec7dfa
---- /dev/null
-+++ b/tools/testing/selftests/kvm/x86/nx_huge_pages_perf_test.c
-@@ -0,0 +1,223 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * nx_huge_pages_perf_test
-+ *
-+ * Copyright (C) 2025, Google LLC.
-+ *
-+ * Performance test for NX hugepage recovery.
-+ *
-+ * This test checks for long faults on allocated pages when NX huge page
-+ * recovery is taking place on pages mapped by the VM.
-+ */
-+#include <fcntl.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <time.h>
-+
-+#include "test_util.h"
-+
-+#include "kvm_util.h"
-+#include "processor.h"
-+#include "ucall_common.h"
-+
-+/* Default guest test virtual memory offset */
-+#define DEFAULT_GUEST_TEST_MEM		0xc0000000
-+
-+/* Default size (2GB) of the memory for testing */
-+#define DEFAULT_TEST_MEM_SIZE		(2 << 30)
-+
-+/*
-+ * Guest virtual memory offset of the testing memory slot.
-+ * Must not conflict with identity mapped test code.
-+ */
-+static uint64_t guest_test_virt_mem = DEFAULT_GUEST_TEST_MEM;
-+
-+static struct kvm_vcpu *vcpu;
-+
-+struct test_params {
-+	enum vm_mem_backing_src_type backing_src;
-+	uint64_t memory_bytes;
-+};
-+
-+struct guest_args {
-+	uint64_t guest_page_size;
-+	uint64_t pages;
-+};
-+
-+static struct guest_args guest_args;
-+
-+#define RETURN_OPCODE 0xC3
-+
-+static void guest_code(int vcpu_idx)
-+{
-+	struct guest_args *args = &guest_args;
-+	uint64_t page_size = args->guest_page_size;
-+	uint64_t max_cycles = 0UL;
-+	volatile char *gva;
-+	uint64_t page;
-+
-+
-+	for (page = 0; page < args->pages; ++page) {
-+		gva = (volatile char *)guest_test_virt_mem + page * page_size;
-+
-+		/*
-+		 * To time the jitter on all faults on pages that are not
-+		 * undergoing nx huge page recovery, only execute on every
-+		 * other 1G region, and only time the non-executing pass.
-+		 */
-+		if (page & (1UL << 18)) {
-+			uint64_t tsc1, tsc2;
-+
-+			tsc1 = rdtsc();
-+			*gva = 0;
-+			tsc2 = rdtsc();
-+
-+			if (tsc2 - tsc1 > max_cycles)
-+				max_cycles = tsc2 - tsc1;
-+		} else {
-+			*gva = RETURN_OPCODE;
-+			((void (*)(void)) gva)();
-+		}
-+	}
-+
-+	GUEST_SYNC1(max_cycles);
-+}
-+
-+struct kvm_vm *create_vm(uint64_t memory_bytes,
-+			 enum vm_mem_backing_src_type backing_src)
-+{
-+	uint64_t backing_src_pagesz = get_backing_src_pagesz(backing_src);
-+	struct guest_args *args = &guest_args;
-+	uint64_t guest_num_pages;
-+	uint64_t region_end_gfn;
-+	uint64_t gpa, size;
-+	struct kvm_vm *vm;
-+
-+	args->guest_page_size = getpagesize();
-+
-+	guest_num_pages = vm_adjust_num_guest_pages(VM_MODE_DEFAULT,
-+				memory_bytes / args->guest_page_size);
-+
-+	TEST_ASSERT(memory_bytes % getpagesize() == 0,
-+		    "Guest memory size is not host page size aligned.");
-+
-+	vm = __vm_create_with_one_vcpu(&vcpu, guest_num_pages, guest_code);
-+
-+	/* Put the test region at the top guest physical memory. */
-+	region_end_gfn = vm->max_gfn + 1;
-+
-+	/*
-+	 * If there should be more memory in the guest test region than there
-+	 * can be pages in the guest, it will definitely cause problems.
-+	 */
-+	TEST_ASSERT(guest_num_pages < region_end_gfn,
-+		    "Requested more guest memory than address space allows.\n"
-+		    "    guest pages: %" PRIx64 " max gfn: %" PRIx64
-+		    " wss: %" PRIx64 "]",
-+		    guest_num_pages, region_end_gfn - 1, memory_bytes);
-+
-+	gpa = (region_end_gfn - guest_num_pages - 1) * args->guest_page_size;
-+	gpa = align_down(gpa, backing_src_pagesz);
-+
-+	size = guest_num_pages * args->guest_page_size;
-+	pr_info("guest physical test memory: [0x%lx, 0x%lx)\n",
-+		gpa, gpa + size);
-+
-+	/*
-+	 * Pass in MAP_POPULATE, because we are trying to test how long
-+	 * we have to wait for a pending NX huge page recovery to take.
-+	 * We do not want to also wait for GUP itself.
-+	 */
-+	vm_mem_add(vm, backing_src, gpa, 1,
-+		   guest_num_pages, 0, -1, 0, MAP_POPULATE);
-+
-+	virt_map(vm, guest_test_virt_mem, gpa, guest_num_pages);
-+
-+	args->pages = guest_num_pages;
-+
-+	/* Export the shared variables to the guest. */
-+	sync_global_to_guest(vm, guest_args);
-+
-+	return vm;
-+}
-+
-+static void run_vcpu(struct kvm_vcpu *vcpu)
-+{
-+	struct timespec ts_elapsed;
-+	struct timespec ts_start;
-+	struct ucall uc = {};
-+	int ret;
-+
-+	clock_gettime(CLOCK_MONOTONIC, &ts_start);
-+
-+	ret = _vcpu_run(vcpu);
-+
-+	ts_elapsed = timespec_elapsed(ts_start);
-+
-+	TEST_ASSERT(ret == 0, "vcpu_run failed: %d", ret);
-+
-+	TEST_ASSERT(get_ucall(vcpu, &uc) == UCALL_SYNC,
-+		    "Invalid guest sync status: %" PRIu64, uc.cmd);
-+
-+	pr_info("Duration: %ld.%09lds\n",
-+		ts_elapsed.tv_sec, ts_elapsed.tv_nsec);
-+	pr_info("Max fault latency: %" PRIu64 " cycles\n", uc.args[0]);
-+}
-+
-+static void run_test(struct test_params *params)
-+{
-+	/*
-+	 * The fault + execute pattern in the guest relies on having more than
-+	 * 1GiB to use.
-+	 */
-+	TEST_ASSERT(params->memory_bytes > PAGE_SIZE << 18,
-+		    "Must use more than 1GiB of memory.");
-+
-+	create_vm(params->memory_bytes, params->backing_src);
-+
-+	pr_info("\n");
-+
-+	run_vcpu(vcpu);
-+}
-+
-+static void help(char *name)
-+{
-+	puts("");
-+	printf("usage: %s [-h] [-b bytes] [-s mem_type]\n",
-+	       name);
-+	puts("");
-+	printf(" -h: Display this help message.");
-+	printf(" -b: specify the size of the memory region which should be\n"
-+	       "     dirtied by the guest. e.g. 2048M or 3G.\n"
-+	       "     (default: 2G, must be greater than 1G)\n");
-+	backing_src_help("-s");
-+	puts("");
-+	exit(0);
-+}
-+
-+int main(int argc, char *argv[])
-+{
-+	struct test_params params = {
-+		.backing_src = DEFAULT_VM_MEM_SRC,
-+		.memory_bytes = DEFAULT_TEST_MEM_SIZE,
-+	};
-+	int opt;
-+
-+	while ((opt = getopt(argc, argv, "hb:s:")) != -1) {
-+		switch (opt) {
-+		case 'b':
-+			params.memory_bytes = parse_size(optarg);
-+			break;
-+		case 's':
-+			params.backing_src = parse_backing_src_type(optarg);
-+			break;
-+		case 'h':
-+		default:
-+			help(argv[0]);
-+			break;
-+		}
-+	}
-+
-+	run_test(&params);
-+}
--- 
-2.50.0.727.gbf7dc18ff4-goog
+Guenter
 
+> Andrew
+> 
+> > Guenter
+> > 
+> > > +	if (wdt->data->reset)
+> > > +		reaction = RTIWWDRXN_RST;
+> > > +	else
+> > > +		reaction = RTIWWDRXN_NMI;
+> > > +
+> > > +	writel_relaxed(reaction, wdt->base + RTIWWDRXCTRL);
+> > >   	/* Open window size 50%; this is the largest window size available */
+> > >   	writel_relaxed(RTIWWDSIZE_50P, wdt->base + RTIWWDSIZECTRL);
+> > > @@ -255,6 +268,8 @@ static int rti_wdt_probe(struct platform_device *pdev)
+> > >   	wdd->timeout = DEFAULT_HEARTBEAT;
+> > >   	wdd->parent = dev;
+> > > +	wdt->data = device_get_match_data(dev);
+> > > +
+> > >   	watchdog_set_drvdata(wdd, wdt);
+> > >   	watchdog_set_nowayout(wdd, 1);
+> > >   	watchdog_set_restart_priority(wdd, 128);
+> > > @@ -369,8 +384,17 @@ static void rti_wdt_remove(struct platform_device *pdev)
+> > >   	pm_runtime_disable(&pdev->dev);
+> > >   }
+> > > +static struct rti_wdt_data j7_wdt = {
+> > > +	.reset = false,
+> > > +};
+> > > +
+> > > +static struct rti_wdt_data am62l_wdt = {
+> > > +	.reset = true,
+> > > +};
+> > > +
+> > >   static const struct of_device_id rti_wdt_of_match[] = {
+> > > -	{ .compatible = "ti,j7-rti-wdt", },
+> > > +	{ .compatible = "ti,j7-rti-wdt", .data = &j7_wdt },
+> > > +	{ .compatible = "ti,am62l-rti-wdt", .data = &am62l_wdt },
+> > >   	{},
+> > >   };
+> > >   MODULE_DEVICE_TABLE(of, rti_wdt_of_match);
+> > > -- 
+> > > 2.49.0
+> > > 
 
