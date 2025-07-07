@@ -1,149 +1,98 @@
-Return-Path: <linux-kernel+bounces-720612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19FBEAFBE42
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 00:31:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AAEAAFBE43
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 00:33:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72DF74A6F98
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 22:31:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C65281707C0
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 22:33:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32C6B259C93;
-	Mon,  7 Jul 2025 22:31:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LZofK6Ll"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D645127B51A;
+	Mon,  7 Jul 2025 22:33:38 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B151C800
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 22:31:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52602261595
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 22:33:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751927500; cv=none; b=p4sb5t4JXCkwX9PyEQ2Izd/5Ahnfwi46XsZwzFeYhPPG1zd4wQtE7Ba62WJi491pELp8yGG5WnzddTiEjNIXEuIH0FprZ20FS4C+Eoo8UL+Vq27iXcjyFOyGwDlIy1JW2VIKcOI1Ilw39trfv70w20nL5rB4Q6Lw6T7DgeimcXs=
+	t=1751927618; cv=none; b=txZPuypQZ+zhJ8sY4R7Ey+GrB9+FXpnKh1n9pDngNJJAerB4wLtM7BRqk0UqEO2JOfPy+Ci/OL8B1RU13ZDs998EjW4XQicSLe3OY8VXXFCK+GhFx0ymA53w2n7JTBgoKaKVNoKjzp3s1mhyutuYgKfocvdGUCCTSEtU84hvrZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751927500; c=relaxed/simple;
-	bh=plx+fMI+rybtWwn7NZMF4AKSnaAHQCfmFYEX9bkJPLo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eyi3ShAlLon2iSm7VpbN/Fmzd+UrZGmH/3Jh4Q6Sb/qmZr2ZFsMhw1YtnyDolQ9Bzjs4lZGg9yV1qVU32QbCXAOgUt9WGSc1Z01Co4v4UYgb4G9IKyLCXGUnnURiej/WTRI1J4dSi5LXacOlIax6kkdDNikMp45ANYKZ0pvItEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LZofK6Ll; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1751927497;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+5OEi+9BHeekLk8bhDMoxCU3qoaXnzLRyCWqOXKGTJY=;
-	b=LZofK6Ll0VutjigEUAsQDPQmn/GX9Ccg5ekTJUubF/t7LdXPXXofJYa3yURyw0mx9dloFV
-	gHGH1/52aSjHpftgD2GLFUo4nxZYwLCzzbMWeapD1jXEpiyao/4d07DT/ZxC0X8K5g4+FQ
-	64dhapfrKQhtRzwP4zxoJfpZkGrwTQo=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-424-TDniujyNOIKQK_NIlCwWIQ-1; Mon,
- 07 Jul 2025 18:31:33 -0400
-X-MC-Unique: TDniujyNOIKQK_NIlCwWIQ-1
-X-Mimecast-MFC-AGG-ID: TDniujyNOIKQK_NIlCwWIQ_1751927492
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 91FBB1956061;
-	Mon,  7 Jul 2025 22:31:31 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.16])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 2A39D19560AB;
-	Mon,  7 Jul 2025 22:31:26 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Tue,  8 Jul 2025 00:30:44 +0200 (CEST)
-Date: Tue, 8 Jul 2025 00:30:38 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: "Li,Rongqing" <lirongqing@baidu.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	David Laight <david.laight.linux@gmail.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"vschneid@redhat.com" <vschneid@redhat.com>,
-	"mgorman@suse.de" <mgorman@suse.de>,
-	"bsegall@google.com" <bsegall@google.com>,
-	"rostedt@goodmis.org" <rostedt@goodmis.org>,
-	"dietmar.eggemann@arm.com" <dietmar.eggemann@arm.com>,
-	"vincent.guittot@linaro.org" <vincent.guittot@linaro.org>,
-	"juri.lelli@redhat.com" <juri.lelli@redhat.com>,
-	"mingo@redhat.com" <mingo@redhat.com>
+	s=arc-20240116; t=1751927618; c=relaxed/simple;
+	bh=gHuOtVbKthgr22SBGZy/A0wvt+qeFmQUe444seNla3E=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dnWxZj+yGmqiB9VypgEhkJ3bAMdSqrKI6LphjkEtf4MVMrg56E5o6HxutssSe+QEkiFKAFFB6JZgte3SwcHb7ch3xUFO5bRZwT0LeT7VIsmLG01OuZjT0LKtknz5oaiZX+OqWwM7KMeqNgqLf6Vo0QGMxij+P5F15lq1+HpsV+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf08.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay03.hostedemail.com (Postfix) with ESMTP id 81F0CB9379;
+	Mon,  7 Jul 2025 22:33:34 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf08.hostedemail.com (Postfix) with ESMTPA id 0D1322002A;
+	Mon,  7 Jul 2025 22:33:31 +0000 (UTC)
+Date: Mon, 7 Jul 2025 18:33:31 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: "Li,Rongqing" <lirongqing@baidu.com>, Peter Zijlstra
+ <peterz@infradead.org>, David Laight <david.laight.linux@gmail.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "vschneid@redhat.com" <vschneid@redhat.com>, "mgorman@suse.de"
+ <mgorman@suse.de>, "bsegall@google.com" <bsegall@google.com>,
+ "dietmar.eggemann@arm.com" <dietmar.eggemann@arm.com>,
+ "vincent.guittot@linaro.org" <vincent.guittot@linaro.org>,
+ "juri.lelli@redhat.com" <juri.lelli@redhat.com>, "mingo@redhat.com"
+ <mingo@redhat.com>
 Subject: Re: divide error in x86 and cputime
-Message-ID: <20250707223038.GB15787@redhat.com>
+Message-ID: <20250707183331.029570bf@gandalf.local.home>
+In-Reply-To: <20250707182056.66a8468a@gandalf.local.home>
 References: <78a0d7bb20504c0884d474868eccd858@baidu.com>
- <20250707220937.GA15787@redhat.com>
+	<20250707220937.GA15787@redhat.com>
+	<20250707182056.66a8468a@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250707220937.GA15787@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: 8biuro3kk731n1rhaipw8c6wmip4uc1s
+X-Rspamd-Server: rspamout08
+X-Rspamd-Queue-Id: 0D1322002A
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX18yspf9x5BL3vabmTX9xXWNr0IMyvZTkUU=
+X-HE-Tag: 1751927611-184412
+X-HE-Meta: U2FsdGVkX1+GZHjmh4I8/ObKNWNaz5K9EYO/QRXkFLTg5OdJ0oj5R3kbVPyknrFVDaX4i0Kks4v5nwnk6VjeXhyIaCZwPkGQjBsH4v53bmsLlW4ptQiVQJEncnwNLLfOUqdslZcpVRRVQRwzmQbBgX8hUHCTOqQf9RlXU7cEvpzyBNAjEk6g130gQ30LMvvO132SAnhtKUiufzbE8el5cQAH22Q1ctTBVWK2G5g5LMk0F1T2u48f+V3b4HQkJGZY9o0cUuaOEUHt/ZjvmyugHU4NO4djwwVMjSTPFjPgYFMCusxir6Hmr7TfQFX8S/K1r+WH74m4pzLF2vWIr8SRR795gbuYNv3c4545PzoFyqtdNVAlOJTFRS7tzfsA1kdj
 
-On a second thought, this
+On Mon, 7 Jul 2025 18:20:56 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-    mul_u64_u64_div_u64(0x69f98da9ba980c00, 0xfffd213aabd74626, 0x09e00900);
-                        stime               rtime               stime + utime	
+> I would say this should never happen and if it does, let the kernel crash.
 
-looks suspicious:
+>> [78250815.703852] CPU: 127 PID: 83435 Comm: killall Kdump: loaded Tainted: P           OE K   5.10.0 #1
 
-	- stime > stime + utime
+This happened on a 5.10 kernel with a proprietary module loaded, so
+honestly, if it can't be reproduced on a newer kernel without any
+proprietary modules loaded, I say we don't worry about it.
 
-	- rtime = 0xfffd213aabd74626 is absurdly huge
+I also don't by the utime + stime overflowing a 64bit number.
 
-so perhaps there is another problem?
+  2^64 / 2 = 2^63 = 9223372036854775808
 
-Oleg.
+That would be:
 
-On 07/08, Oleg Nesterov wrote:
->
-> On 07/07, Li,Rongqing wrote:
-> >
-> > [78250815.703847] divide error: 0000 [#1] PREEMPT SMP NOPTI
->
-> ...
->
-> > It caused by a process with many threads running very long,
-> > and utime+stime overflowed 64bit, then cause the below div
-> >
-> > mul_u64_u64_div_u64(0x69f98da9ba980c00, 0xfffd213aabd74626, 0x09e00900);
-> >
-> > I see the comments of mul_u64_u64_div_u64() say:
-> >
-> > Will generate an #DE when the result doesn't fit u64, could fix with an
-> > __ex_table[] entry when it becomes an issu
-> >
-> > Seem __ex_table[] entry for div does not work ?
->
-> Well, the current version doesn't have an __ex_table[] entry for div...
->
-> I do not know what can/should we do in this case... Perhaps
->
-> 	static inline u64 mul_u64_u64_div_u64(u64 a, u64 mul, u64 div)
-> 	{
-> 		int ok = 0;
-> 		u64 q;
->
-> 		asm ("mulq %3; 1: divq %4; movl $1,%1; 2:\n"
-> 			_ASM_EXTABLE(1b, 2b)
-> 			: "=a" (q), "+r" (ok)
-> 			: "a" (a), "rm" (mul), "rm" (div)
-> 			: "rdx");
->
-> 		return ok ? q : -1ul;
-> 	}
->
-> ?
->
-> Should return ULLONG_MAX on #DE.
->
-> Oleg.
+                                   minutes    days
+                                      v        v
+  9223372036854775808 / 1000000000 / 60 / 60 / 24 / 365.25 = 292.27
+                           ^               ^         ^
+                        ns -> sec       hours       years
 
+So the report says they have threads running for a very long time, it would
+still be 292 years of run time!
+
+-- Steve
 
