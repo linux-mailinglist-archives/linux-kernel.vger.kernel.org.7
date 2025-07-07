@@ -1,130 +1,247 @@
-Return-Path: <linux-kernel+bounces-720507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F67CAFBCB4
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 22:42:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E5ABAFBCB6
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 22:43:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4079F4A61E8
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 20:42:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD127165F5B
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 20:43:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBDFF221F1F;
-	Mon,  7 Jul 2025 20:42:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE3F4221F01;
+	Mon,  7 Jul 2025 20:42:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="snCrH+3n"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RvzLteeg"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EAA31FBE8B;
-	Mon,  7 Jul 2025 20:42:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14EC61FBE8B;
+	Mon,  7 Jul 2025 20:42:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751920935; cv=none; b=MIhg2DGINko4NJkiRP7D9CnsyWJGBEdkG2d9BpTKyGQMWQry5XtDKL9sIsB22DQQUxX72KYLigz5UAM2Ewwr1/vKBvLQwdJnrlVZbsk8x4GV3EyLAX2MIh44hd1MRWiohpbxYousIQR/53SYyHesf86j5BnvacMZt266Wo1EW3c=
+	t=1751920979; cv=none; b=RlL3shdam0UsvTrnr8iFuZHQaCtPsq7cTCNgvNsYrfRETcC7wPIwY7Pd880TqYNPM9rVQ5/mrYcn+fIYKzUntef11z3x0OpYeO22I+PiNnJTIpUY33xOTysEn00qWy913P6Nv+vY9iUj9gCwXexiZ7J50sqdRJMFyhhKDIW0RQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751920935; c=relaxed/simple;
-	bh=TFwuCdZGPMLUWkDUlk7xc4pd4TWR/hWivyhMGdCjHvc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HYWQwrTsfKDQX0kOGuoReavsspxqeLZUmU7jEpMxWhzXT7KWXlnlNLo0A2EJqQO8go9AM55OxQRtzMJyI9i+bfcvO9Zh9BPjg7tRrYIjTerwh/+6kjuOSP97M2eTwhs+AfOPpJKL2MMn97oZIGDFqWT3xUClA7658VrOaJQ13F0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=snCrH+3n; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E221BC4CEE3;
-	Mon,  7 Jul 2025 20:42:10 +0000 (UTC)
+	s=arc-20240116; t=1751920979; c=relaxed/simple;
+	bh=dhRrfTWj8er4vwalaYURgw32Qgf7G5tjpwUBWOr6Zio=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=rbSMYTBrj03z+2CS8obH0BwwLHUvs8rk2Kmt8I0FMg7fwHksqQ4vxxN+wHmEhLsQ04IXRkcfmowv2jZ6G6anvVmzdCMtB0mUFPzjH64WRDLcFSdJqFibEyYHnregkB6gIBdjLkQACmXlXM61zpFQveg2XgIS+TUVTq0p2bZMPpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RvzLteeg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75833C4CEE3;
+	Mon,  7 Jul 2025 20:42:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751920934;
-	bh=TFwuCdZGPMLUWkDUlk7xc4pd4TWR/hWivyhMGdCjHvc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=snCrH+3n8WvC2YHtpwm12rKOgMBbsXOQTBPqas3wvKn/0BFXm2hxqaA7yKKCWxf3c
-	 NoVQcmD3pEwW7bzk6Ul2sTXoK9T8g72Et4EuUAwdw5dG3i0JQ/ds3QHORR3Hv12E1o
-	 OTZTRgH1MhERnuMWloeA/Q3CNgdhJnis94FPatSBZoi3XVXc6O3TSSyMv1hQEMij3Q
-	 YFncjgr40t66854TLRjKZ9Lr8atSm3AH4q/DkzTx8N3MHQT7ZxjYzUWEmxd6kmg4hn
-	 ehxiYqERfkHSS25plVukikQSCuU60gK6+zLa4D5cvvo4VMAsuJ/V4crT9D6kTUIzd1
-	 bqgxKEiwkv6JA==
-Date: Mon, 7 Jul 2025 21:42:07 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Nick Li <nick.li@foursemi.com>
-Cc: lgirdwood@gmail.com, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, perex@perex.cz, tiwai@suse.com,
-	xiaoming.yang@foursemi.com, danyang.zheng@foursemi.com,
-	linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 2/4] ASoC: codecs: Add FourSemi FS2104/5S audio
- amplifier driver
-Message-ID: <f2055d69-af5a-46a9-8bb7-46ec3175b790@sirena.org.uk>
-References: <20250703035639.7252-1-nick.li@foursemi.com>
- <20250703035639.7252-3-nick.li@foursemi.com>
- <b1ad15d1-bf9f-4b94-abb8-1e9c6d512987@sirena.org.uk>
- <1C4720AC50797830+aGe3L70OToh6txmC@foursemi.com>
- <0370941d-63eb-4676-8a74-b8afef524376@sirena.org.uk>
- <88CC983A5550253C+aGuGe7pQvIBPclfz@foursemi.com>
+	s=k20201202; t=1751920978;
+	bh=dhRrfTWj8er4vwalaYURgw32Qgf7G5tjpwUBWOr6Zio=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=RvzLteegWx6Fc8nPrxM9k0VY6xDuWUQwlbIes83kkQWKEXlEDZOquuNOrnXoJ0tsB
+	 PhVaapqpJX/plRmlf4XjSO5N9wQdX9pYq0lzlnx+HKhl88qsxfNdEOq69KK6K0Pl3h
+	 C93dKegJ9MUIZh07FiIn9LgjzAsg0iK6JIdrWU6veYVNLcCxo/rNgdLFUvhTq2rRrx
+	 wrmTtVKaqY8U5LUbsx+8gw22SYYrkFPjvvFuNOdC+tQdduJC0dB0vdYJ+PG36wld0A
+	 NnbPyxdJsQcshkP6ogel0ghLLnA2tbjAzlnD4KretTLLSSGVsDNc3g1d0mazKxfG+g
+	 yimELCPyjYPkA==
+Message-ID: <11d6227ddd04c64751956d75d0a5065f48b0e3a5.camel@kernel.org>
+Subject: Re: [PATCH 2/2] NFS: Improve nfsiod workqueue detection for
+ allocation flags
+From: Trond Myklebust <trondmy@kernel.org>
+To: Benjamin Coddington <bcodding@redhat.com>
+Cc: Anna Schumaker <anna@kernel.org>, Tejun Heo <tj@kernel.org>, Lai
+ Jiangshan	 <jiangshanlai@gmail.com>, linux-nfs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, djeffery@redhat.com, loberman@redhat.com
+Date: Mon, 07 Jul 2025 13:42:56 -0700
+In-Reply-To: <B3C40644-332F-415A-98A0-875C230A709D@redhat.com>
+References: <cover.1751913604.git.bcodding@redhat.com>
+	 <a4548815532fb7ad71a4e7c45b3783651c86c51f.1751913604.git.bcodding@redhat.com>
+	 <a7621e726227260396291e82363d2b82e5f2ad73.camel@kernel.org>
+	 <B3C40644-332F-415A-98A0-875C230A709D@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="2q2hNUYdsLxioORi"
-Content-Disposition: inline
-In-Reply-To: <88CC983A5550253C+aGuGe7pQvIBPclfz@foursemi.com>
-X-Cookie: We are what we are.
 
+On Mon, 2025-07-07 at 16:12 -0400, Benjamin Coddington wrote:
+> On 7 Jul 2025, at 15:25, Trond Myklebust wrote:
+>=20
+> > On Mon, 2025-07-07 at 14:46 -0400, Benjamin Coddington wrote:
+> > > The NFS client writeback paths change which flags are passed to
+> > > their
+> > > memory allocation calls based on whether the current task is
+> > > running
+> > > from
+> > > within a workqueue or not.=C2=A0 More specifically, it appears that
+> > > during
+> > > writeback allocations with PF_WQ_WORKER set on current->flags
+> > > will
+> > > add
+> > > __GFP_NORETRY | __GFP_NOWARN.=C2=A0 Presumably this is because nfsiod
+> > > can
+> > > simply fail quickly and later retry to write back that specific
+> > > page
+> > > should
+> > > the allocation fail.
+> > >=20
+> > > However, the check for PF_WQ_WORKER is too general because tasks
+> > > can
+> > > enter NFS
+> > > writeback paths from other workqueues.=C2=A0 Specifically, the
+> > > loopback
+> > > driver
+> > > tends to perform writeback into backing files on NFS with
+> > > PF_WQ_WORKER set,
+> > > and additionally sets PF_MEMALLOC_NOIO.=C2=A0 The combination of
+> > > PF_MEMALLOC_NOIO with __GFP_NORETRY can easily result in
+> > > allocation
+> > > failures and the loopback driver has no retry functionality.=C2=A0 As
+> > > a
+> > > result,
+> > > after commit 0bae835b63c5 ("NFS: Avoid writeback threads getting
+> > > stuck in
+> > > mempool_alloc()") users are seeing corrupted loop-mounted
+> > > filesystems
+> > > backed
+> > > by image files on NFS.
+> > >=20
+> > > In a preceding patch, we introduced a function to allow NFS to
+> > > detect
+> > > if
+> > > the task is executing within a specific workqueue.=C2=A0 Here we use
+> > > that
+> > > helper
+> > > to set __GFP_NORETRY | __GFP_NOWARN only if the workqueue is
+> > > nfsiod.
+> > >=20
+> > > Fixes: 0bae835b63c5 ("NFS: Avoid writeback threads getting stuck
+> > > in
+> > > mempool_alloc()")
+> > > Signed-off-by: Benjamin Coddington <bcodding@redhat.com>
+> > > ---
+> > > =C2=A0fs/nfs/internal.h | 12 +++++++++++-
+> > > =C2=A01 file changed, 11 insertions(+), 1 deletion(-)
+> > >=20
+> > > diff --git a/fs/nfs/internal.h b/fs/nfs/internal.h
+> > > index 69c2c10ee658..173172afa3f5 100644
+> > > --- a/fs/nfs/internal.h
+> > > +++ b/fs/nfs/internal.h
+> > > @@ -12,6 +12,7 @@
+> > > =C2=A0#include <linux/nfs_page.h>
+> > > =C2=A0#include <linux/nfslocalio.h>
+> > > =C2=A0#include <linux/wait_bit.h>
+> > > +#include <linux/workqueue.h>
+> > > =C2=A0
+> > > =C2=A0#define NFS_SB_MASK
+> > > (SB_NOSUID|SB_NODEV|SB_NOEXEC|SB_SYNCHRONOUS)
+> > > =C2=A0
+> > > @@ -669,9 +670,18 @@ nfs_write_match_verf(const struct
+> > > nfs_writeverf
+> > > *verf,
+> > > =C2=A0		!nfs_write_verifier_cmp(&req->wb_verf, &verf-
+> > > > verifier);
+> > > =C2=A0}
+> > > =C2=A0
+> > > +static inline bool is_nfsiod(void)
+> > > +{
+> > > +	struct workqueue_struct *current_wq =3D
+> > > current_workqueue();
+> > > +
+> > > +	if (current_wq)
+> > > +		return current_wq =3D=3D nfsiod_workqueue;
+> > > +	return false;
+> > > +}
+> > > +
+> > > =C2=A0static inline gfp_t nfs_io_gfp_mask(void)
+> > > =C2=A0{
+> > > -	if (current->flags & PF_WQ_WORKER)
+> > > +	if (is_nfsiod())
+> > > =C2=A0		return GFP_KERNEL | __GFP_NORETRY |
+> > > __GFP_NOWARN;
+> > > =C2=A0	return GFP_KERNEL;
+> > > =C2=A0}
+> >=20
+> >=20
+> > Instead of trying to identify the nfsiod_workqueue, why not apply
+> > current_gfp_context() in order to weed out callers that set
+> > PF_MEMALLOC_NOIO and PF_MEMALLOC_NOFS?
+> >=20
+> > i.e.
+> >=20
+> >=20
+> > static inline gfp_t nfs_io_gfp_mask(void)
+> > {
+> > 	gfp_t ret =3D current_gfp_context(GFP_KERNEL);
+> >=20
+> > 	if ((current->flags & PF_WQ_WORKER) && ret =3D=3D GFP_KERNEL)
+> > 		ret |=3D __GFP_NORETRY | __GFP_NOWARN;
+> > 	return ret;
+> > }
+>=20
+> This would fix the problem we see, but we'll also end up carrying the
+> flags
+> from the layer above NFS into the client's current allocation
+> strategy.
+> That seems fragile to part of the original intent - we have static
+> known
+> flags for NFS' allocation in either context.
 
---2q2hNUYdsLxioORi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Yes, but if the PF_MEMALLOC_NOIO or PF_MEMALLOC_NOFS flags are set, the
+memory manager will in any case water those flags down using the same
+call to current_gfp_context().
 
-On Mon, Jul 07, 2025 at 04:34:03PM +0800, Nick Li wrote:
-> On Fri, Jul 04, 2025 at 03:37:32PM +0100, Mark Brown wrote:
-> > On Fri, Jul 04, 2025 at 07:12:47PM +0800, Nick Li wrote:
-> > > On Thu, Jul 03, 2025 at 03:59:34PM +0100, Mark Brown wrote:
-> > > > On Thu, Jul 03, 2025 at 11:56:37AM +0800, Nick wrote:
+This is really just making sure that we don't set the __GFP_NORETRY
+flag in that case, because in a low memory situation that could end up
+deadlocking due to being unable to kick off I/O in order to free up
+memory.
 
-> > > the volume will be masked in fs210x->vol[2],
-> > > we restore the volume when the driver resumes(reinitializes) the deivce.
+> On the other hand, perhaps we want to honor those flags if the upper
+> layer
+> is setting them, because it should have a good reason -- to avoid
+> deadlocks.
+>=20
+> We originally considered your suggested flag-checking approach, but
+> went the
+> "is_nfsiod" way because that seems like the actual intent of checking
+> for
+> PF_WQ_WORKER.=C2=A0 The code then clarifies what's actually wanted, and w=
+e
+> don't
+> end up with future problems (what if nfsiod changes its PF_ flags in
+> the
+> future but the author doesn't know to update this function?)
 
-> > You're not just restoring the values on resume, you're also overwriting
-> > them on probe.
+If that were ever to happen, then we'd be well up the creek and without
+a paddle.
 
-> Yes, the volume will be set to the default value at the first time of initialization on probe,
-> and it may be updated by volume control later.
-> It's a good way to use the regmap cache(REGCACHE_RBTREE) to cache the volumes.
+Firstly, there is so much VFS work going on in nfsiod (dput(),
+path_put(), iput(),....), that we really do not want to encumber it
+with any PF_MEMALLOC restrictions.
 
-Great.  Note that for new things you should generally use _MAPLE
-instead, it's a more modern data structure - _RBTREE can still make
-sense for some specialist use cases but this is unlikely to be one of
-them.
+Secondly, if we were to do so anyway, we definitely would want to
+revisit this function, in addition to all those RPC callbacks that
+would be affected.
 
-> > There's not great options here, and you're going to loose the start of
-> > playback especially with devices that don't start clocking until audio
-> > starts.  You really need the CPU vendors you're working with to
-> > implement SND_SOC_DAIFMT_CONT or expose their clocks via the clock API
-> > but not all hardware is able to do this.  I think given how limited your
-> > hardware is here you really need something in trigger() or some new
-> > callback that runs later than that, the delayed work you've got there is
-> > trying to fudge things to run after trigger.
+> Do you prefer this approach?=C2=A0 I can send it with your Suggested-by o=
+r
+> authorship.
+>=20
+> The other way to fix this might be to create a mempool for nfs_page -
+> which
+> is the one place that uses nfs_io_gfp_mask() that doesn't fall back
+> to a
+> mempool.=C2=A0 We haven't tested that.
 
-> We will start the start_work in dai->trigger if there is no clock bclk
-> for us to control, and disable fading in/out in firmware to reduce
-> the time consumption if it is needed(As a backup plan).
+I think I prefer an approach that is aware of the limitations imposed
+by the memory manager rather than one that just worries about which
+workqueue we're on.
 
-Great.  You could also make the fade in/out user selectable so the
-application can trade off between pops/clicks and cut off audio.
+Note that one of the main differences between rpciod and nfsiod is
+precisely the PF_MEMALLOC settings.
 
---2q2hNUYdsLxioORi
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmhsMR4ACgkQJNaLcl1U
-h9DXjgf/eR8r8mxqzf9OIJmirwEwrZZshozNp2kzXNehBqVpfmktmHfHwNvO3dQb
-MWtqyl54nwZmR7AYLS6Bsb33Qd5EdDxzZWYkJF9WnrTwkzsS5YyNeBjQ2Yad70/h
-1r11szUlBFLhg8DC4g1ERUGm1+QYrHHbiTv2UDTub+hktMViUNrHJ6hAIfgeCu49
-6MjcRy20ycMhZsxEXSEyHa/PaMuIqPP6HydelwDOKaas6V3+L1aejjiApLH6xOFn
-7GNR4OlC4W7yImsahefryZU149mY6tgxuaf/DWk9JKSxSfneQNzTe2M4g586EqkH
-TGl5VwCSKnrqzrPuqZ2YJ8Q+rPyb6g==
-=A+bV
------END PGP SIGNATURE-----
-
---2q2hNUYdsLxioORi--
+--=20
+Trond Myklebust
+Linux NFS client maintainer, Hammerspace
+trondmy@kernel.org, trond.myklebust@hammerspace.com
 
