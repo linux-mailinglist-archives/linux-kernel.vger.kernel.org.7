@@ -1,52 +1,55 @@
-Return-Path: <linux-kernel+bounces-719021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D25C1AFA8D7
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 03:26:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BDB5AFA8C4
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 03:18:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DEAE77A7F8F
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 01:25:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4FF03B0A24
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 01:18:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0373619DFA2;
-	Mon,  7 Jul 2025 01:26:36 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 487CC1993B7;
+	Mon,  7 Jul 2025 01:18:40 +0000 (UTC)
+Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8C9E1373;
-	Mon,  7 Jul 2025 01:26:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60BEB10E4;
+	Mon,  7 Jul 2025 01:18:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751851595; cv=none; b=KxCoIDE+xmlGRVQqAt0f6zwCcPhuiEBedZFJC1x4yi8MZiVZ3tdv03SjrJ0UY/Qei/r/v4arwdHiSK4le/kh/MIL7VlE72dLYx5CBgo46mX6rii1tpktuHhwRvB64VY9ysogNS8g5Hm/SUHiaz+1y8gfhvP17IKOQxoitsdk1ts=
+	t=1751851119; cv=none; b=Tn47S87XJx8YsfgrLJpc0kWnsVH6OJ9nrUdQiVM95IjOEnUE0eN+xZLfrE+eFJmJ5sbO4SiT8s2/72AHNs8EVNiI/WRhsHWQDTG3m0KJGbMPaXCXXlznjE0oaHQprqsRAcF5QZS5VdR0LRfsNozhU0t0gGskVVZ334RjKkEL2/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751851595; c=relaxed/simple;
-	bh=F99Y9Nl0L+tPWONLGzd7cu1Iv6bSj6id5Kb4yAQhMxo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=c/rI9SuT9ZaFuBJPttcnD4BAFY2x6FyOe2vSQClHewg3TXtz+jPIkEAxEoQBRT7ew14JHUKRQYelTuvNwUe0a1T/0IRWeVtMy+gi4xeUuzbiWND9SEBTEBYss8NK+rnryF0SsbpBfbUHu56RAUNyxTdwwh44VoUPr0Rgj58H84Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bb5k26d8czYQtnf;
-	Mon,  7 Jul 2025 09:09:30 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.252])
-	by mail.maildlp.com (Postfix) with ESMTP id BB9571A0DC4;
-	Mon,  7 Jul 2025 09:09:29 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.170])
-	by APP3 (Coremail) with SMTP id _Ch0CgB32SZGHmto0L6PAw--.34564S4;
-	Mon, 07 Jul 2025 09:09:28 +0800 (CST)
-From: Wang Zhaolong <wangzhaolong@huaweicloud.com>
-To: sfrench@samba.org,
-	pshilov@microsoft.com,
-	aaptel@suse.com
-Cc: linux-cifs@vger.kernel.org,
-	samba-technical@lists.samba.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH V2] smb: client: fix use-after-free in cifs_oplock_break
-Date: Mon,  7 Jul 2025 09:09:26 +0800
-Message-Id: <20250707010926.31623-1-wangzhaolong@huaweicloud.com>
-X-Mailer: git-send-email 2.34.3
+	s=arc-20240116; t=1751851119; c=relaxed/simple;
+	bh=nYmHBfKC1In8qDW3GIo2UwVe9MvCXebLZr99Zm4j1bM=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GtYHOW0HZoYMzxkGQ5JcwFEO+55nSH43GNGRhAvArbOEqBOPgOzL1YwkLzd6XW1VIuA9yteTDsZ6iSj/K/3WFwaK1ffO6kMHz0CuqxfdE7Olw93u6ElyMzPgRwxhohYBkbfLj/WUoVikkU/sFc5Gku5wFpwJnl7GiMuQnwuY/vk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
+Received: from TWMBX01.aspeed.com (192.168.0.62) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Mon, 7 Jul
+ 2025 09:18:26 +0800
+Received: from twmbx02.aspeed.com (192.168.10.13) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
+ Transport; Mon, 7 Jul 2025 09:18:26 +0800
+From: Ryan Chen <ryan_chen@aspeedtech.com>
+To: ryan_chen <ryan_chen@aspeedtech.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Philipp Zabel
+	<p.zabel@pengutronix.de>, Joel Stanley <joel@jms.id.au>, Andrew Jeffery
+	<andrew@codeconstruct.com.au>, Rob Herring <robh@kernel.org>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-aspeed@lists.ozlabs.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Mo Elbadry <elbadrym@google.com>, "Rom
+ Lemarchand" <romlem@google.com>, William Kennington <wak@google.com>, "Yuxiao
+ Zhang" <yuxiaozhang@google.com>, <wthai@nvidia.com>, <leohu@nvidia.com>,
+	<dkodihalli@nvidia.com>, <spuranik@nvidia.com>
+Subject: [PATCH v11 0/3] Add support for AST2700 clk driver
+Date: Mon, 7 Jul 2025 09:18:23 +0800
+Message-ID: <20250707011826.3719229-1-ryan_chen@aspeedtech.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,113 +57,137 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_Ch0CgB32SZGHmto0L6PAw--.34564S4
-X-Coremail-Antispam: 1UD129KBjvJXoWxAF4kGF4kuFy5uFW5JFyxXwb_yoW5Zr1kpF
-	13tr15Gr45GryUuwsaqF4ru3W3t3WkWa1F9ry8uw1Sy3sxA3ySgF4Fyr129F4SqFWkAr1q
-	gF4jg3yqvF1UArJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUyKb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6r1S6rWUM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI
-	7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
-	Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY
-	6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6x
-	AIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY
-	1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUwxhLUUUUU
-X-CM-SenderInfo: pzdqw6xkdrz0tqj6x35dzhxuhorxvhhfrp/
+Content-Type: text/plain
 
-A race condition can occur in cifs_oplock_break() leading to a
-use-after-free of the cinode structure when unmounting:
+This patch series is add clk driver for AST2700.
 
-  cifs_oplock_break()
-    _cifsFileInfo_put(cfile)
-      cifsFileInfo_put_final()
-        cifs_sb_deactive()
-          [last ref, start releasing sb]
-            kill_sb()
-              kill_anon_super()
-                generic_shutdown_super()
-                  evict_inodes()
-                    dispose_list()
-                      evict()
-                        destroy_inode()
-                          call_rcu(&inode->i_rcu, i_callback)
-    spin_lock(&cinode->open_file_lock)  <- OK
-                            [later] i_callback()
-                              cifs_free_inode()
-                                kmem_cache_free(cinode)
-    spin_unlock(&cinode->open_file_lock)  <- UAF
-    cifs_done_oplock_break(cinode)       <- UAF
+AST2700 is the 8th generation of Integrated Remote Management Processor
+introduced by ASPEED Technology Inc. Which is Board Management controller
+(BMC) SoC family. AST2700 have two SoC connected, one is SoC0, another
+is SoC1, it has it's own scu, this driver inlcude SCU0 and SCU1 driver.
 
-The issue occurs when umount has already released its reference to the
-superblock. When _cifsFileInfo_put() calls cifs_sb_deactive(), this
-releases the last reference, triggering the immediate cleanup of all
-inodes under RCU. However, cifs_oplock_break() continues to access the
-cinode after this point, resulting in use-after-free.
+v11:
+-update patch(1/3) commit message subject prefix dt-binding: to dt-bindings:
 
-Fix this by holding an extra reference to the superblock during the
-entire oplock break operation. This ensures that the superblock and
-its inodes remain valid until the oplock break completes.
+v10:
+-aspeed,ast2700-scu.h:
+-add SOC0_CLK_AHBMUX, SOC0_CLK_MPHYSRC, SOC0_CLK_U2PHY_REFCLKSRC,
+ SOC1_CLK_I3C.
+-clk-ast2700.c
+-add #include <linux/auxiliary_bus.h>
+-remove #include <soc/aspeed/reset-aspeed.h>
+-use devm_auxiliary_device_create replace aspeed_reset_controller_register
+-reset-aspeed.c:
+-remove aspeed_reset_unregister_adev, aspeed_reset_adev_release,
+ aspeed_reset_controller_register.
+-compatible name change reset_aspeed.reset0/1 -> clk_ast2700.reset0/1
+-remove reset-aspeed.h
 
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=220309
-Fixes: b98749cac4a6 ("CIFS: keep FileInfo handle live during oplock break")
-Signed-off-by: Wang Zhaolong <wangzhaolong@huaweicloud.com>
----
- fs/smb/client/file.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+v9:
+-aspeed,ast2700-scu.h: no change.
+add more clear commit description.
+-clk-ast2700.c:
+add inlcude bitfield.h
+remove redundant clk_parent_data soc0_mpll_div8/soc0_ahb/uart13clk/
+uart14clk/uart15clk/uart16clk/soc1_ahb/d_clk_sels
 
-V1 -> V2:
-Correct the commit message call stack
+v8:
+-aspeed,ast2700-scu.h: remove no use soc0 clock, add new clock
+-clk-ast2700.c: remove include <linux/auxiliary_bus.h>,
+include <linux/clk-provider.h>, include <linux/of_address.h>
+-clk-ast2700.c: add include <linux/mod_devicetable.h>
+-clk-ast2700.c: modify include <soc/aspeed/reset-aspeed.h> order before
+dt-bindings
+-clk-ast2700.c: modify define to be tabbed out space
+-clk-ast2700.c: add union struct for each clk type
+	union {
+		struct ast2700_clk_fixed_factor_data factor;
+		struct ast2700_clk_fixed_rate_data rate;
+		struct ast2700_clk_gate_data gate;
+		struct ast2700_clk_div_data div;
+		struct ast2700_clk_pll_data pll;
+		struct ast2700_clk_mux_data mux;
+	} data;
+-clk-ast2700.c: modify clk_data = device_get_match_data(dev);
+-clk-ast2700.c: modify builtin_platform_driver_probe to 
+arch_initcall(clk_ast2700_init)
+-clk-ast2700.c: ast2700_clk_hw_register_hpll explain: scu010[4:2],
+scu010[4:2] = 010, hpll force 1.8Ghz
+scu010[4:2] = 011, hpll force 1.7Ghz
+scu010[4:2] = 110, hpll force 1.2Ghz
+scu010[4:2] = 111, hpll force 800Mhz
+others depend on hpll parameter register setting.
 
-diff --git a/fs/smb/client/file.c b/fs/smb/client/file.c
-index e9212da32f01..1421bde045c2 100644
---- a/fs/smb/client/file.c
-+++ b/fs/smb/client/file.c
-@@ -3086,20 +3086,27 @@ bool is_size_safe_to_change(struct cifsInodeInfo *cifsInode, __u64 end_of_file,
- void cifs_oplock_break(struct work_struct *work)
- {
- 	struct cifsFileInfo *cfile = container_of(work, struct cifsFileInfo,
- 						  oplock_break);
- 	struct inode *inode = d_inode(cfile->dentry);
--	struct cifs_sb_info *cifs_sb = CIFS_SB(inode->i_sb);
-+	struct super_block *sb = inode->i_sb;
-+	struct cifs_sb_info *cifs_sb = CIFS_SB(sb);
- 	struct cifsInodeInfo *cinode = CIFS_I(inode);
- 	struct cifs_tcon *tcon;
- 	struct TCP_Server_Info *server;
- 	struct tcon_link *tlink;
- 	int rc = 0;
- 	bool purge_cache = false, oplock_break_cancelled;
- 	__u64 persistent_fid, volatile_fid;
- 	__u16 net_fid;
- 
-+	/*
-+	 * Hold a reference to the superblock to prevent it and its inodes from
-+	 * being freed while we are accessing cinode. Otherwise, _cifsFileInfo_put()
-+	 * may release the last reference to the sb and trigger inode eviction.
-+	 */
-+	cifs_sb_active(sb);
- 	wait_on_bit(&cinode->flags, CIFS_INODE_PENDING_WRITERS,
- 			TASK_UNINTERRUPTIBLE);
- 
- 	tlink = cifs_sb_tlink(cifs_sb);
- 	if (IS_ERR(tlink))
-@@ -3168,10 +3175,11 @@ void cifs_oplock_break(struct work_struct *work)
- 		spin_unlock(&cinode->open_file_lock);
- 
- 	cifs_put_tlink(tlink);
- out:
- 	cifs_done_oplock_break(cinode);
-+	cifs_sb_deactive(sb);
- }
- 
- static int cifs_swap_activate(struct swap_info_struct *sis,
- 			      struct file *swap_file, sector_t *span)
- {
+v7:
+-reset-aspeed.h: fix declare static inline aspeed_reset_controller_register
+if the function is not used.
+
+v6:
+-patch-2: add reset-aspeed.h
+-reset-aspeed: add include cleanup.h for guard()
+-reset-aspeed: change ids name clk_aspeed to reset_aspeed
+-reset-aspeed: move aspeed_reset_controller_register,
+aspeed_reset_adev_release, aspeed_reset_unregister_adev from clk-ast2700.c
+-reset-aspeed: drop base check, since it check in clk-ast2700.c
+-clk-ast2700: sync each gate name from *clk to *clk-gate name.
+-clk-ast2700: add CLK_GATE_ASPEED to diff clk_hw_register_gate and
+ast2700_clk_hw_register_gate.
+
+v5:
+-patch-2 Kconfig: add select AUXILIARY_BUS
+-reset-aspeed: #define to_aspeed_reset(p) turn into static inline function.
+-reset-aspeed: modify spin_lock_irqsave to guard(spinlock_irqsave)
+-reset-aspeed: remove unnecessary parentheses.
+-clk-ast2700: use <linux/units.h> and refrain from define clk
+
+v4:
+-yaml: keep size-cells=<1>.
+-merge clk,reset dt binding header with yaml the same patch.
+-rename clk,reset dt binding header to aspeed,ast2700-scu.h
+-reset-aspeed: update tables tabs sapces to consistent spaces.
+-reset-aspeed: remove no use dev_set_drvdata.
+-clk-ast2700: modify reset_name to const int scu in struct clk_data.
+-clk-ast2700: use scu number in clk_data generate reset_name for reset
+ driver register.
+-clk-ast2700: fix pll number mix up scu0,scu1.
+-clk-ast2700: update dt-binding clock include file.
+
+v3:
+-yaml: v2 missing send yaml patch, v3 add.
+-yaml: drop 64bits address example.
+-yaml: add discription about soc0 and soc1
+-dt-bindings: remove (), *_NUMS, reserved.
+-dt-bindings: remove dulipated define number.
+-dt-bindings: merge clk and reset to be one patch.
+-reset-aspeed: add auxiliary device for reset driver.
+-clk-ast2700: modify reset to be auxiliary add.
+-clk-ast2700: modify to be platform driver.
+-clk-ast2700: modify each clk to const clk array.
+
+v2:
+-yaml: drop 64bits address example.
+-yaml: add discription about soc0 and soc1
+-dt-bindings: remove (), *_NUMS, reserved.
+-dt-bindings: remove dulipated define number
+-clk-ast2700: drop WARN_ON, weird comment.
+
+Ryan Chen (3):
+  dt-bindings: clock: ast2700: modify soc0/1 clock define
+  reset: aspeed: register AST2700 reset auxiliary bus device
+  clk: aspeed: add AST2700 clock driver
+
+ drivers/clk/Kconfig                           |    8 +
+ drivers/clk/Makefile                          |    1 +
+ drivers/clk/clk-ast2700.c                     | 1138 +++++++++++++++++
+ drivers/reset/Kconfig                         |    7 +
+ drivers/reset/Makefile                        |    1 +
+ drivers/reset/reset-aspeed.c                  |  253 ++++
+ .../dt-bindings/clock/aspeed,ast2700-scu.h    |    4 +
+ 7 files changed, 1412 insertions(+)
+ create mode 100644 drivers/clk/clk-ast2700.c
+ create mode 100644 drivers/reset/reset-aspeed.c
+
 -- 
-2.34.3
+2.34.1
 
 
