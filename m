@@ -1,161 +1,98 @@
-Return-Path: <linux-kernel+bounces-720052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8A9AAFB648
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 16:42:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92BDAAFB64C
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 16:43:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DBF1189BAB3
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 14:43:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79054176266
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 14:43:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 983262DFF18;
-	Mon,  7 Jul 2025 14:42:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB2DA2E11C5;
+	Mon,  7 Jul 2025 14:43:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V4OaCflZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hW7AEn/k"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED4032D8DA0;
-	Mon,  7 Jul 2025 14:42:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3314D81724;
+	Mon,  7 Jul 2025 14:43:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751899368; cv=none; b=TX560iaAv2gLv9u7dmwQO5QBi0y8FzuX5zCF3uFAB24m7iAD+Yf6Z7mJCNqaTx2EXxRFV4HiVUj/OFQJu7F8mRwCTqAFJxOrFmBv+4O1NZi+PDDI6HDtuWly/KmjM2DwL8KWtrHockVZEgVSX9tkiNiAZSJ7cHFEFP/zfpTcdEs=
+	t=1751899422; cv=none; b=rqYh/f9TP2ok1lmQNXNaqGiGEggjH9O+OSIfsNUxKJ8l94ES7+9S8b/5aLBspaMBR8wN/qrOs6SNFkn4bAew4jojqK+CRXy52y1ZnqJe6UQQ77XTo2Ssjk/1IB/KJRrWc9Qkq48mMoiQadly1RJVqWq3Pnv6AT2bODZPQIKyWUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751899368; c=relaxed/simple;
-	bh=MDzuMRrp2AXCWKZWYbBsCLTTjaSYUNv6L3J0WLWh/vQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IdHMrp72KZ4+P4QG/XVDQOFxzx5ZyY83OR6FeUnTWxXe8zlWRHefvEJcLmW/IblVrcB4mQ4vw+wjoKbTbZ0BZW+ihUljUn3TNRDxanHUtIZ9MZA9Xy6GZDjW5C5h8TMFyhXWdvGyJTlWRf3qNl6FhMw9aOKJC3BKWY8yqGqNsCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V4OaCflZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DCBDC4CEE3;
-	Mon,  7 Jul 2025 14:42:45 +0000 (UTC)
+	s=arc-20240116; t=1751899422; c=relaxed/simple;
+	bh=pygmB6Y0A8GnIvfkKxpvuMj1/8T5+x16Brq+Mu3flTM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=d7Zf+Lw/JYp47Efp0Wg6ieQgakyoACzZud1gnoOtrLav+lVmcmszxPOtAEfLf5S3SHmbeqUV0IBQZtupbzRhcGGEMI0/s4pTSAL3+AtjIHO7KxmaDflAf0qJOnWsxs35Q5OD8VewOZBzfP8yRys6TqG2Ppsd9ueKgRFZIWU0UYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hW7AEn/k; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4AD9C4CEF4;
+	Mon,  7 Jul 2025 14:43:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751899366;
-	bh=MDzuMRrp2AXCWKZWYbBsCLTTjaSYUNv6L3J0WLWh/vQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=V4OaCflZjkEO5qWNNtTxP65kPvUz4/hSXVxXXK2dYGHyENjl8f0zGFt6YNIAgsQqe
-	 yYsDzE5XADCTX73JfOJrydbNoJyD0mdpxcFFi68fDTEwioDZ1ByKpSR6Yu5fMI98zy
-	 hX8aY4MlK6F0kbNd2j8bRL2GFV5Wk9CyW9rNFz62BCd8w24QJZXGSNoz12uDC1fUUf
-	 EINc4QmLSd/MpU2QGCSeCHulaU05uY5kIHh0Rmi1lpmLyNgkHT6mAi4Jw0gLiL6aXW
-	 4r2EbSTE9u0Z7RFm1NORCO7DavMvrLtqVWWL9YaVjEhJ4vYBk/TtXPiV4VfaCtZ68p
-	 ZIYRajREJivIA==
-Date: Mon, 7 Jul 2025 16:42:43 +0200
-From: Alejandro Colomar <alx@kernel.org>
-To: Michal Hocko <mhocko@suse.com>
-Cc: Marco Elver <elver@google.com>, linux-mm@kvack.org, 
-	linux-hardening@vger.kernel.org, Kees Cook <kees@kernel.org>, 
-	Christopher Bazley <chris.bazley.wg14@gmail.com>, shadow <~hallyn/shadow@lists.sr.ht>, 
-	linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, 
-	kasan-dev@googlegroups.com, Dmitry Vyukov <dvyukov@google.com>, 
-	Alexander Potapenko <glider@google.com>, Christoph Lameter <cl@linux.com>, 
-	David Rientjes <rientjes@google.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>, 
-	Andrew Clayton <andrew@digital-domain.net>, Jann Horn <jannh@google.com>, 
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [RFC v3 5/7] mm: Fix benign off-by-one bugs
-Message-ID: <g6kp4vwuh7allqnbky6wcic4lbmnlctjldo4nins7ifn3633u7@lwuenzur5d4u>
-References: <cover.1751862634.git.alx@kernel.org>
- <740755c1a888ae27de3f127c27bf925a91e9b264.1751862634.git.alx@kernel.org>
- <CANpmjNNQaAExO-E3-Z83MKfgavX4kb2C5GmefRZ0pXc5FPBazw@mail.gmail.com>
- <aGt8-4Dbgb-XmreV@tiehlicka>
+	s=k20201202; t=1751899421;
+	bh=pygmB6Y0A8GnIvfkKxpvuMj1/8T5+x16Brq+Mu3flTM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=hW7AEn/kJoZ8G/Ci6vwPyUhco7+VT+w71XTx1ckOOlEvFJ/XKwDhl5sE5b9n0vETn
+	 EoBQn8bKGxm2xp53PmFWiarQqh3pag3ilMqvwhTHb3byIy+pYBNJSt52ADXNa/MOFS
+	 +St49nQkrtc6KQHchPzRFYKXHZIdwRyz1ELm99WFwf2g00rsR9i0S6bgj0rpxYxHuL
+	 5PigZFIt0Es2ZgJV0o8sqXtLuX+r7gcko2jCPn8vGe4Lng1QsjwOuSMZLDyMrFf0Wc
+	 IFOnWDqHkuLn04u1NoOC2CQOYtSHxEo9oBSMWBRjdi6oZ3bQwILTM5qDqUhwWEOJ8M
+	 QHRiEECr41zTQ==
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-ae0de0c03e9so550485866b.2;
+        Mon, 07 Jul 2025 07:43:41 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUx2CsW5Dj3VM8kkvB0clcusEKyVO/CJ8U11NYjQD9c4CBoaTQGrmLEZO+sDuqP5ongqreafLtY8hVFbtc=@vger.kernel.org, AJvYcCX9yhULsz75g4zM/PAUvnYuNLtyMqxVgz+NQvTwPmDjmI91azrVqdTOsoTUTYV9ESCC1h7cG8eL2SJo@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmyAqj7gg3J0TOUCJ0Jgw7d6XT7bLie5vVQN+y/jwr9041R5UL
+	si61oRL9LJHa3vXi/UkwjWWQ4KblF7r5Ps7LT9cpFTzIYTs//bx2HEfvs5WfWQr677sMf00s0bF
+	ZZow5k+Sn+upXg/dg1QAzmWFI477ocw==
+X-Google-Smtp-Source: AGHT+IH+f8zvdudHp1LuRKAAn7cL9u6+1JqOnozuxrIIQH8whQPjPMtiGupPBrID+yAocJ3AfWvuowkyHK1U/F/njY4=
+X-Received: by 2002:a17:907:96ac:b0:ae6:abe9:8cbc with SMTP id
+ a640c23a62f3a-ae6abe98e66mr63239166b.12.1751899420274; Mon, 07 Jul 2025
+ 07:43:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="tmiwotmrfmdi6oyz"
-Content-Disposition: inline
-In-Reply-To: <aGt8-4Dbgb-XmreV@tiehlicka>
-
-
---tmiwotmrfmdi6oyz
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
+References: <20250703183537.2075746-1-robh@kernel.org> <1e33e6b6-845a-44bf-a398-4a9fb895a125@sirena.org.uk>
+In-Reply-To: <1e33e6b6-845a-44bf-a398-4a9fb895a125@sirena.org.uk>
+From: Rob Herring <robh@kernel.org>
+Date: Mon, 7 Jul 2025 09:43:27 -0500
+X-Gmail-Original-Message-ID: <CAL_Jsq+8ObyEM-f88QSq1QfptVPrk5s5mVM-irq4ZTGNW9NKTw@mail.gmail.com>
+X-Gm-Features: Ac12FXwY1NqOYzEWnEAy2ESIy7UgECjX4aJqnXTz286AyGb5Rk-mUEzeguxMrTU
+Message-ID: <CAL_Jsq+8ObyEM-f88QSq1QfptVPrk5s5mVM-irq4ZTGNW9NKTw@mail.gmail.com>
+Subject: Re: [PATCH] spi: stm32-ospi: Use of_reserved_mem_region_to_resource()
+ for "memory-region"
+To: Mark Brown <broonie@kernel.org>
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, linux-spi@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: Michal Hocko <mhocko@suse.com>
-Cc: Marco Elver <elver@google.com>, linux-mm@kvack.org, 
-	linux-hardening@vger.kernel.org, Kees Cook <kees@kernel.org>, 
-	Christopher Bazley <chris.bazley.wg14@gmail.com>, shadow <~hallyn/shadow@lists.sr.ht>, 
-	linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, 
-	kasan-dev@googlegroups.com, Dmitry Vyukov <dvyukov@google.com>, 
-	Alexander Potapenko <glider@google.com>, Christoph Lameter <cl@linux.com>, 
-	David Rientjes <rientjes@google.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>, 
-	Andrew Clayton <andrew@digital-domain.net>, Jann Horn <jannh@google.com>, 
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [RFC v3 5/7] mm: Fix benign off-by-one bugs
-References: <cover.1751862634.git.alx@kernel.org>
- <740755c1a888ae27de3f127c27bf925a91e9b264.1751862634.git.alx@kernel.org>
- <CANpmjNNQaAExO-E3-Z83MKfgavX4kb2C5GmefRZ0pXc5FPBazw@mail.gmail.com>
- <aGt8-4Dbgb-XmreV@tiehlicka>
-MIME-Version: 1.0
-In-Reply-To: <aGt8-4Dbgb-XmreV@tiehlicka>
 
-Hi Michal,
+On Fri, Jul 4, 2025 at 8:50=E2=80=AFAM Mark Brown <broonie@kernel.org> wrot=
+e:
+>
+> On Thu, Jul 03, 2025 at 01:35:37PM -0500, Rob Herring (Arm) wrote:
+> > Use the newly added of_reserved_mem_region_to_resource() function to
+> > handle "memory-region" properties.
+>
+> This breaks an allmodconfig build:
+>
+> /build/stage/linux/drivers/spi/spi-stm32-ospi.c:775:23: error: unused var=
+iable 'rmem' [-Werror,-Wunused-variable]
+>   775 |         struct reserved_mem *rmem =3D NULL;
+>       |                              ^~~~
+> /build/stage/linux/drivers/spi/spi-stm32-ospi.c:776:22: error: unused var=
+iable 'node' [-Werror,-Wunused-variable]
+>   776 |         struct device_node *node;
+>       |                             ^~~~
 
-On Mon, Jul 07, 2025 at 09:53:31AM +0200, Michal Hocko wrote:
-> On Mon 07-07-25 09:46:12, Marco Elver wrote:
-> > On Mon, 7 Jul 2025 at 07:06, Alejandro Colomar <alx@kernel.org> wrote:
-> > >
-> > > We were wasting a byte due to an off-by-one bug.  s[c]nprintf()
-> > > doesn't write more than $2 bytes including the null byte, so trying to
-> > > pass 'size-1' there is wasting one byte.  Now that we use seprintf(),
-> > > the situation isn't different: seprintf() will stop writing *before*
-> > > 'end' --that is, at most the terminating null byte will be written at
-> > > 'end-1'--.
-> > >
-> > > Fixes: bc8fbc5f305a (2021-02-26; "kfence: add test suite")
-> > > Fixes: 8ed691b02ade (2022-10-03; "kmsan: add tests for KMSAN")
-> >=20
-> > Not sure about the Fixes - this means it's likely going to be
-> > backported to stable kernels, which is not appropriate. There's no
-> > functional problem, and these are tests only, so not worth the churn.
->=20
-> As long as there is no actual bug fixed then I believe those Fixes tags
-> are more confusing than actually helpful. And that applies to other
-> patches in this series as well.
-
-For the dead code, I can remove the fixes tags, and even the changes
-themselves, since there are good reasons to keep the dead code
-(consistency, and avoiding a future programmer forgetting to add it back
-when adding a subsequent seprintf() call).
-
-For the fixes to UB, do you prefer the Fixes tags to be removed too?
+Sigh. I swear I had fixed that...
 
 
-Have a lovely day!
-Alex
-
-> --=20
-> Michal Hocko
-> SUSE Labs
-
---=20
-<https://www.alejandro-colomar.es/>
-
---tmiwotmrfmdi6oyz
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmhr3OMACgkQ64mZXMKQ
-wqmhQhAAs+ekX9398aALI01OsOZ18qRcUwUGAgNGOEKzODVWKq+ZfCv5kpLjB8Rx
-mz7WZld1t7roGUyTkEE6qInFFtJ9EB2Oc0WqZCBNEHvS7hRiWLbJdaYv3vdT5hl6
-++tJ/HhXTGChathW1i4KfKiu5iZdre5B0h36dXQJvU70Xewnca8uY7Vq4u4mfpwU
-POUiVLo1FPMx5PfJYILFFMhI8PRWrAwx6wlkbjHBmVaRqG4z286j4FonO8wwwwNt
-8E8KmyNt2a8wsc0+ezpmDJ7lgsWpxr3qTp3FGIby9yokzHBUrc4IAlzj9agSPmlT
-qWLcFUwdFPzKb4bQCX2zVfjidlbO14g6iS71wINotWZvKhy8e9Wtza78qUFhpGV4
-77u0tXXT1dVd3K2P0HYz8AmXtgawUDUA/8DAF25SxfHIodsdJq35OsSGPzfrbIfC
-BuT+K4OhfWoODvzcOYFpEyrz2a+YgXRep4GfRDc69PrGhmQk8S68V9vcMft/tzvy
-k+ggvc9f1Y1Y1MtXFKV91pGhD5//TnJA1UYduI/HOz+2DeTFk+s62nHjiy/zXdzE
-fvsiLzgRkXT8geMyrGRtKxnKKWqWEXrt0kmfr8h6FwjrBjL3hRzsrCCSyqCgmKyJ
-isD88CxA4o8wntqCuOxhMtsOVK5jXG6pN56W+eZ/LOfzfz1MSRE=
-=mTHU
------END PGP SIGNATURE-----
-
---tmiwotmrfmdi6oyz--
+Rob
 
