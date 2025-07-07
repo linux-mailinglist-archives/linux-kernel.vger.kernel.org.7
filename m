@@ -1,124 +1,101 @@
-Return-Path: <linux-kernel+bounces-719710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3BDEAFB1AB
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 12:51:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41DA7AFB1ED
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 13:05:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CB561AA2055
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 10:51:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B58C7A6923
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 11:03:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8F9329A9CB;
-	Mon,  7 Jul 2025 10:50:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Qo0V5/uK"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ADBD287503;
+	Mon,  7 Jul 2025 11:04:57 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ECDB295DBE
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 10:50:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BA301F8BCB
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 11:04:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751885436; cv=none; b=GajTErOCzDybPquLGuFXfM4Mn0dm8hshr3SHJ19U0LRXhTUL7RUnJU5xL3y4vM4z8ZTkCkz8oUKXdtJMf9IL/C1SNrXyNa+KMYRMVIpHyDw4qfko/OTKXjC6TGzOfZApsV0v3xVv6m96hTNCqO2rXKzkBjmTkqRwQfMAde2Oa34=
+	t=1751886297; cv=none; b=qNFt4EDGXgq7Q+AbwNvfX9ag6+hyGeYjfW4i2tz3zt0lR2qUiLU0w6jxz2GwD64H/alBX0exVEjFfbV4gU0P5uzXEYIyGwapes1aYE5vGXOhb6bjqNDImKdZX6MBrpRZVwQ/t9rzOOIOSZMSJjbVZJIAr8mbBplpBjqzeSEAyV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751885436; c=relaxed/simple;
-	bh=0DjKBEEYRbVy4AQeYlNr37VxbcA1nPmfYINGRxp0EWU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=oQbQa/8Lq/rVXSixEcrfsqQdwQBCsvOEDgO31SKyyY8H13NDiEsZmSuysikcUmK5JGdwJGIBV2XarpMcCjUvxm/H/6o/vkWOwVrWcf/NENMjabyoY9UO54JCsohCb6BNuJYa775xb1YdRqfEWVl+sIkcwvWzpcHfdnluo8voTEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Qo0V5/uK; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-60c5b7cae8bso4634675a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 03:50:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1751885433; x=1752490233; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=M0Uhf9cokxwTL0c2ydgWGzKYaoyMWc7a0121SK5qMwA=;
-        b=Qo0V5/uKxwkrRwOdKq7OurPUP3WxYLYRA9fAsn0HL2g0/qCLXYS/+8cq+C1Eiqvr89
-         Lcme7YYj/zq2yiy0Sq7OlqDcbvd5HpaaDGXC5obaPPXw6AUBOm73Z2A5GkQvNxxfvyzi
-         Q7+2O6AZARp8ybodC3yAg5pH7v1EV2NKjRSqCEWCeSsOXPe+uNX9HHwRI8lv84hFGL4+
-         eeI9p4/SRYJlooFV9Cr3oZeYZpArQhvBhyKZZQA3B1q6LYhoPPccxznVQ/MGoect6EAJ
-         it7eXo5DBofBc3RYH9dNX9PpW/NOxbSFQJxkYbZmYC9GgAS0UzYRgeerFAUERLDVm26Z
-         XfHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751885433; x=1752490233;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=M0Uhf9cokxwTL0c2ydgWGzKYaoyMWc7a0121SK5qMwA=;
-        b=FH/AjswOsy/XtodfUIHBG+E5qjaS25FC+hbOg/HFPJunNMvrDZ4EQCEUtcScU6PUo4
-         1XOvurlfwO8sYb74lutvUiJDabfFfjOFZZ3S7JIkq7pT13X8G0hw8mzNl4ByNM2uF2wj
-         gVicOvgRqyFWr5Sme+7sA8Kusas0fydMJIHWP2qJutZ7VLZiUuo2YSqYvUAel3Tf+8nI
-         YaKx94RuCaSlsxT2aLNo/X6Z1vnYd4RZlbdhBrveGIy/XmGPdWYxQVcsRoUMRM9S19QC
-         md7vim1DNV3DIR0DS4uxGkAiY2DiH4bt7fv5QwD+SRrU1wTmNQ7uWQ9J40k8iYuKi5eY
-         rX1A==
-X-Forwarded-Encrypted: i=1; AJvYcCVlXWFntaJpJ2ozG/AYDlLbjQDN5KClnzAjlXtN043veFcxeBkdEAJkIKmL5xwVUf8740nKyI2AYTjiWSA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdNKxNOKxQ4tOXRKRNZfHjxOcg+ZHecIi9Iu9n4YB6UpLYxDwP
-	m5vDbinuPXCf+FOfCdzeDvYnYjeZ1/HyCZYYu1mKbRB94+v+NR6E2ZysuP49R5XmySU=
-X-Gm-Gg: ASbGncv0jINZWDlpQDQlEYPOJeOsCeMH21wV1y9qmH80QKiWz21KnFiiPkuXP+ZzSVr
-	wflt6zLHY8qszgnBox/F1ytK5zWS3/OZTL7Xa3cQVC8H2b4bv/gDO5M1/SsHr/1gk3r3FRW5MjQ
-	eQ2fIwHF74Tle7wTH5Zp88D2y1Fem8H3+EkoPn9eoIz5HRbucTXjcWkrNL3Iv9ujnm57CLyCMP6
-	8C/JG1wi7J+Cu/S0xLxSSMOCU+8Yyu0NYexu7Lo5Zt0HRuSuDpN02KPxDTHw5/1nPOSo554+qYQ
-	VdjbMhKsfdgDWE7UsiuzsUXxwrVCCnFDNQkdOSYEINSaBxezfIYojQLTetf0hdckvmVcejH1swQ
-	ESjozSIJpwwCBR6oOcx7J3v7kVWkjSvJf1pm2w6BBZK9xBw==
-X-Google-Smtp-Source: AGHT+IEnDjsO6opm22lwjQu/Rj7KamWYfLbMulTjzO/UV9wnDWne15HveaE9d9M6MYNJffXab6eCtg==
-X-Received: by 2002:a17:906:6a0a:b0:ad5:a121:6ebc with SMTP id a640c23a62f3a-ae3fb98bdcbmr1157384666b.0.1751885432641;
-        Mon, 07 Jul 2025 03:50:32 -0700 (PDT)
-Received: from puffmais.c.googlers.com (8.239.204.35.bc.googleusercontent.com. [35.204.239.8])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae3f66d9263sm685589566b.32.2025.07.07.03.50.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Jul 2025 03:50:31 -0700 (PDT)
-From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Mon, 07 Jul 2025 11:50:29 +0100
-Subject: [PATCH 3/3] usb: typec: tcpm/tcpci_maxim: enable
- PROBE_PREFER_ASYNCHRONOUS
+	s=arc-20240116; t=1751886297; c=relaxed/simple;
+	bh=9p8xTo8+z1wX9jIntt/DEWR+55R0l9UvlDWk3HYd5TI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=F1kU5NCIynNIl74vJshaS4ljvRGOlndfsCiFH29yOJI9LvsHTclWkEes6JQ4J1HY/JFRvAiHqdx+0Q51ZCexsDIQtYdDbEQyFFqS1jxRnoPCZPi3qtkDrywUMH8vKlSy1oyHTtfQ7ENSKA+mVmy8fClIPaqMbONsZBMHaWrJ5yY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4bbLtp4FfNz2SSwY;
+	Mon,  7 Jul 2025 19:02:58 +0800 (CST)
+Received: from kwepemg500010.china.huawei.com (unknown [7.202.181.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 6150B1A016C;
+	Mon,  7 Jul 2025 19:04:51 +0800 (CST)
+Received: from huawei.com (10.67.174.76) by kwepemg500010.china.huawei.com
+ (7.202.181.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 7 Jul
+ 2025 19:04:50 +0800
+From: Yuntao Liu <liuyuntao12@huawei.com>
+To: <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>
+CC: <mhocko@suse.com>, <surenb@google.com>, <rppt@kernel.org>,
+	<vbabka@suse.cz>, <Liam.Howlett@oracle.com>, <lorenzo.stoakes@oracle.com>,
+	<liuyuntao12@huawei.com>, <david@redhat.com>, <akpm@linux-foundation.org>
+Subject: [PATCH -next] mm/memory: fix null pointer dereference in fault_dirty_shared_page
+Date: Mon, 7 Jul 2025 10:51:18 +0000
+Message-ID: <20250707105118.413056-1-liuyuntao12@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250707-max77759-irq-wake-v1-3-d367f633e4bc@linaro.org>
-References: <20250707-max77759-irq-wake-v1-0-d367f633e4bc@linaro.org>
-In-Reply-To: <20250707-max77759-irq-wake-v1-0-d367f633e4bc@linaro.org>
-To: Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Badhri Jagan Sridharan <badhri@google.com>, 
- Amit Sunil Dhamne <amitsd@google.com>, 
- Peter Griffin <peter.griffin@linaro.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
- linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-X-Mailer: b4 0.14.2
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
+ kwepemg500010.china.huawei.com (7.202.181.71)
 
-This driver works fine with asynchronous probe.
+Page mapping with "VM_READ|VM_WRITE|VM_MAYREAD|VM_MAYWRITE|VM_SHARED",
+the first time accessing this address through a write operation will
+trigger a do_shared_fault, if mapping is anonymous, it can lead to a
+null pointer dereference.
 
-Signed-off-by: André Draszik <andre.draszik@linaro.org>
+[   23.232336][  T195] Call trace:
+[   23.232542][  T195]  file_update_time+0x2c/0xd8
+[   23.232801][  T195]  fault_dirty_shared_page+0x1a0/0x220
+[   23.233099][  T195]  do_shared_fault+0xe8/0x240
+[   23.233374][  T195]  do_fault+0x78/0x240
+[   23.233629][  T195]  handle_pte_fault+0x1f0/0x3f0
+[   23.233905][  T195]  __handle_mm_fault+0x2b0/0x548
+[   23.234186][  T195]  handle_mm_fault+0xd4/0x2f8
+[   23.234462][  T195]  do_page_fault+0x2f0/0x5f8
+[   23.234727][  T195]  do_translation_fault+0x8c/0xc8
+[   23.235021][  T195]  do_mem_abort+0x68/0x100
+[   23.235283][  T195]  el0_da+0x4c/0x1a8
+[   23.235551][  T195]  el0t_64_sync_handler+0xe4/0x158
+[   23.235861][  T195]  el0t_64_sync+0x37c/0x380
+
+Signed-off-by: Yuntao Liu <liuyuntao12@huawei.com>
 ---
- drivers/usb/typec/tcpm/tcpci_maxim_core.c | 1 +
- 1 file changed, 1 insertion(+)
+ mm/memory.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/usb/typec/tcpm/tcpci_maxim_core.c b/drivers/usb/typec/tcpm/tcpci_maxim_core.c
-index 43b0ec2d12ba6d4c1cfccbfd355af3e5d9ce1385..19f63865079658fb2a446dc390262d141b940e9a 100644
---- a/drivers/usb/typec/tcpm/tcpci_maxim_core.c
-+++ b/drivers/usb/typec/tcpm/tcpci_maxim_core.c
-@@ -572,6 +572,7 @@ MODULE_DEVICE_TABLE(of, max_tcpci_of_match);
- static struct i2c_driver max_tcpci_i2c_driver = {
- 	.driver = {
- 		.name = "maxtcpc",
-+		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
- 		.of_match_table = max_tcpci_of_match,
- 		.pm = &max_tcpci_pm_ops,
- 	},
-
+diff --git a/mm/memory.c b/mm/memory.c
+index eaf98d518289..8106ef8a5036 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -3412,7 +3412,7 @@ static vm_fault_t fault_dirty_shared_page(struct vm_fault *vmf)
+ 	mapping = folio_raw_mapping(folio);
+ 	folio_unlock(folio);
+ 
+-	if (!page_mkwrite)
++	if (!page_mkwrite && vma->vm_file)
+ 		file_update_time(vma->vm_file);
+ 
+ 	/*
 -- 
-2.50.0.727.gbf7dc18ff4-goog
+2.34.1
 
 
