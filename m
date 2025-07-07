@@ -1,110 +1,98 @@
-Return-Path: <linux-kernel+bounces-720147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09B7FAFB79F
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 17:41:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 179F3AFB798
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 17:40:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6488C1AA0588
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 15:40:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 31EB57AF4F4
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 15:38:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 132A61F17E8;
-	Mon,  7 Jul 2025 15:40:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A457B1F3BB5;
+	Mon,  7 Jul 2025 15:39:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="thtA1SXU"
-Received: from 004.mia.mailroute.net (004.mia.mailroute.net [199.89.3.7])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iFz1/JjF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 701D21F09A5;
-	Mon,  7 Jul 2025 15:40:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3A301E9B31;
+	Mon,  7 Jul 2025 15:39:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751902813; cv=none; b=FwZZZiL91+gtNT/uyR622UOYabQS5piM7SOPpAHbAQcWvZQoZ7Aik8anoMMgI/8tet8EFzaQiLiBToOmwEjwNSRMrcjOt6BqAVLPN/79obkUmUvYZx62/BZO5keh6lGPXPIosDmpEcDSxvxY625NR0Ism8D/VJLTVNd6osXT5ZQ=
+	t=1751902789; cv=none; b=jIOZ0d3ECgCogp/dtbACd+I/UTSnv2km+PYLOXFVqYZgLfMITcVNgjFyJ+rWMZeWsoeJ/JhiUs5QlsUbpTWj63YC8krVC/79vPlA36qnrLyw53jjBnHdeOeddnUi3Zf9L4an7/zS8KXeP+1vo9VJzM0PBhcXHuKDlIB2ORW+Ljk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751902813; c=relaxed/simple;
-	bh=hNy9q8E+jaKYA95rrAmxOa1YboE2IejBQgnmMkL288c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uGDoI14tanaqxLHH0x9CiesHLzl3nA58OjFta5gFI4GXC3Wl1Nm9Gw2mIoCkfG/KF5xMMuIn/fTwBaazOOfZhWoMuD2Z4NW5qmKiBeb57nfnfRl5cbmfNzgIBkSvvEnJP8ZHTSfqNLwPiNv0tNQ50Na9uWM0dA4+b4FbQ/0VOWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=thtA1SXU; arc=none smtp.client-ip=199.89.3.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 004.mia.mailroute.net (Postfix) with ESMTP id 4bbT2W6Yp2zm0ySb;
-	Mon,  7 Jul 2025 15:40:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1751902801; x=1754494802; bh=hNy9q8E+jaKYA95rrAmxOa1Y
-	boE2IejBQgnmMkL288c=; b=thtA1SXUtKqdE6w0yDKP75OWI1o/e8/VAs2EmRQt
-	ySYhzHcqBG5NI8K4z6949nonnkm/OnuZKh+UQDZnhOoXGP6V9utxiH5qMYVNqn6y
-	6gqV0hKbqRXFvm9pEwjK4R1Nk9Ka7ii+JZnyqLkkKIfxtmr+Aot+8HMzFTL0u19g
-	IVnRM5Oxi+maxqVNc+n4CvwIZnCv92439lzc2dHqhxpUwJFpi+ef2XJgDMshHU/i
-	n5J+GdiEmGf6W9HafRxNUwibr9SziBTLMwNrXO8JqM0b+Q0vcvlxqhTu/AiA0Xwc
-	zr8z99TNQiZ9/lE/cVCXwvBQ8C/UEWKAFdmNHd/tHrhdfw==
-X-Virus-Scanned: by MailRoute
-Received: from 004.mia.mailroute.net ([127.0.0.1])
- by localhost (004.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id 822Kd6-Eq7YK; Mon,  7 Jul 2025 15:40:01 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 004.mia.mailroute.net (Postfix) with ESMTPSA id 4bbT2J2NTCzm0ySj;
-	Mon,  7 Jul 2025 15:39:51 +0000 (UTC)
-Message-ID: <9f281874-21b7-4561-914a-52c8ef16b03a@acm.org>
-Date: Mon, 7 Jul 2025 08:39:50 -0700
+	s=arc-20240116; t=1751902789; c=relaxed/simple;
+	bh=REZLQrlRb8EJsN7RuVszma03pCayuWgDp1TpIzshJZs=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=m9teBDJ3Gng8lYfmRbFWdspZE1UNGr4Q42wohgPn3A0AVG9KkgnM2Irpx+oai4Z/tWdzXthMHhVd12EPvsWAyjfOu+AMnGn0z+EGoAt9QNFeqnYmBHpZygmLe/F4dOM3Oi3uC9gpA7/Ct58kxDOjFX69FGzus0mN1OcCHgv1kgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iFz1/JjF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EC19C4CEE3;
+	Mon,  7 Jul 2025 15:39:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751902788;
+	bh=REZLQrlRb8EJsN7RuVszma03pCayuWgDp1TpIzshJZs=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=iFz1/JjFtuU3YPv0UBNQpZf3JxMuM63gaMmJGqk/jMRWuYPFSqmdit7xgynU+km7P
+	 RNmFWQNYQ9TBFnObWI1misfa0sl8s26Or13jt2SOwfUExNilF97v3CS3eohLXQpqnm
+	 +ZhB1463qvUt/VCT4thCgsL0qfSCOOzL1VPTsxTPpCyzd2c8CE4cexM8jbda8mft3p
+	 jrBhw7ZHvtwbLLKjY6MWzQUyCRj2/xI711hSqZo7Vy5R3ecY24YubHPo8616L2QsqO
+	 ak6eYfhlvGIaYmpUhNvJoewP97lSI4DWmsalkIpNrTbvfGOPENYPD3QJHQQ6r0nqBD
+	 h7Wg0unJ/fKhg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB008383BA25;
+	Mon,  7 Jul 2025 15:40:12 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: =?UTF-8?B?UmU6IOWbnuimhjogW1BBVENIXSBzY3NpOiB1ZnM6IHByZXZlbnRpbmcg?=
- =?UTF-8?Q?bus_hang_crash_during_emergency_power_off?=
-To: =?UTF-8?B?Qm8gWWUgKOWPtuazoik=?= <Bo.Ye@mediatek.com>,
- Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: =?UTF-8?B?WGl1anVhbiBUYW4gKOiwreengOWonyk=?= <xiujuan.tan@mediatek.com>,
- =?UTF-8?B?UWlsaW4gVGFuICjosK3pupLpup8p?= <Qilin.Tan@mediatek.com>,
- "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>
-References: <20250519073814.167264-1-bo.ye@mediatek.com>
- <a15b8f6e-5ad5-4d16-98d4-79cf63619f6e@acm.org>
- <SEYPR03MB6531CD4D3FAD80339F8E693B944FA@SEYPR03MB6531.apcprd03.prod.outlook.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <SEYPR03MB6531CD4D3FAD80339F8E693B944FA@SEYPR03MB6531.apcprd03.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] selftests/bpf: Set CONFIG_PACKET=y for selftests
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <175190281175.3336255.8398481475533442439.git-patchwork-notify@kernel.org>
+Date: Mon, 07 Jul 2025 15:40:11 +0000
+References: <20250707071735.705137-1-skb99@linux.ibm.com>
+In-Reply-To: <20250707071735.705137-1-skb99@linux.ibm.com>
+To: Saket Kumar Bhaskar <skb99@linux.ibm.com>
+Cc: bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org, hbathini@linux.ibm.com, sachinpb@linux.ibm.com,
+ andrii@kernel.org, eddyz87@gmail.com, mykolal@fb.com, ast@kernel.org,
+ daniel@iogearbox.net, martin.lau@linux.dev, song@kernel.org,
+ yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+ sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, shuah@kernel.org
 
-On 7/7/25 12:49 AM, Bo Ye (=E5=8F=B6=E6=B3=A2) wrote:
-> Thank you for your feedback.
-> I believe ufshcd_wait_for_doorbell_clr() can handle both legacy single=20
-> doorbell mode and MCQ [ ... ]
+Hello:
 
-Agreed.
+This patch was applied to bpf/bpf-next.git (master)
+by Alexei Starovoitov <ast@kernel.org>:
 
-> Therefore, the current implementation should support both modes.
-> Please let me know if you have further concerns.
+On Mon,  7 Jul 2025 12:47:35 +0530 you wrote:
+> BPF selftest fails to build with below error:
+> 
+>   CLNG-BPF [test_progs] lsm_cgroup.bpf.o
+> progs/lsm_cgroup.c:105:21: error: variable has incomplete type 'struct sockaddr_ll'
+>   105 |         struct sockaddr_ll sa = {};
+>       |                            ^
+> progs/lsm_cgroup.c:105:9: note: forward declaration of 'struct sockaddr_ll'
+>   105 |         struct sockaddr_ll sa = {};
+>       |                ^
+> 1 error generated.
+> 
+> [...]
 
-The Fixes tag seems wrong to me. I think it should be changed into the
-following:
+Here is the summary with links:
+  - selftests/bpf: Set CONFIG_PACKET=y for selftests
+    https://git.kernel.org/bpf/bpf-next/c/0f626c98fd10
 
-Fixes: 19a198b67767 ("scsi: ufs: core: Set SDEV_OFFLINE when UFS is shut=20
-down")
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-I will add more comments as a reply to the original patch.
 
-Bart.
 
