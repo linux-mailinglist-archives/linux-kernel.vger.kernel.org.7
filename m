@@ -1,155 +1,105 @@
-Return-Path: <linux-kernel+bounces-720183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34872AFB843
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 18:05:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C201AFB84D
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 18:06:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDB7517BF4C
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 16:05:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A2764207A7
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 16:05:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69ECC2264A7;
-	Mon,  7 Jul 2025 16:05:16 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A564042049;
-	Mon,  7 Jul 2025 16:05:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F9972264AC;
+	Mon,  7 Jul 2025 16:05:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Sr0HqWeS"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DBF2225A5B;
+	Mon,  7 Jul 2025 16:05:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751904316; cv=none; b=RbG84uTMBYXHPhdZ/HKPsZwMSvLZowcm02c6ysmPS95o+nfnyz5LH3FsQqi3snjJd8wqkM1UNe5xBfuh3tRiK1m4zmPlFjIka49xk5qjBxcicen55AmCFmtPoOw7wrtbvh/1RwZVZWpJPi1XTApKBd+vo6mxY+8Lr621SwQWdlU=
+	t=1751904354; cv=none; b=OOUSrdKA00leckfcFUQTtHluqPg9LU6A+MVWzADRr2g2GFP4ByddbEHReFnnYatmA+EfdiP1hjpf6T53dDcYhzLZBAKJTYSsylP/48GuN5N//ytu35wjtlke9egUVPBXwh9RzBFoRJmVTt3yh5x7zAQ1wAx7///vP3k4Vc4rmks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751904316; c=relaxed/simple;
-	bh=RtFr/cqQgHAVjVm38k71NKvlszLoElaLqQn9+ycjRsI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=vGYaVxp1iOD1+mdNmHZxK0sHgOcOF/9Kx51NH9WPc6F93ko/lPzknHdPEyqa7jEzJaRXlMs1Cimn64hRAIJgmL9M35y1cUyLRlVt+zpo02hxurHyt5eXEzt7GSwXN5/aPKNcDibbuRBGo2DR/pkTPqXXioGn7mD02fUd7yk9QHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8501C168F;
-	Mon,  7 Jul 2025 09:05:00 -0700 (PDT)
-Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 426BA3F694;
-	Mon,  7 Jul 2025 09:05:09 -0700 (PDT)
-Date: Mon, 7 Jul 2025 17:05:00 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Colton Lewis <coltonlewis@google.com>
-Cc: kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Mingwei Zhang <mizhang@google.com>, Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>, Shuah Khan <shuah@kernel.org>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-	linux-perf-users@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v3 01/22] arm64: cpufeature: Add cpucap for HPMN0
-Message-ID: <aGvwLIAN8rhxtA_V@J2N7QTR9R3>
-References: <20250626200459.1153955-1-coltonlewis@google.com>
- <20250626200459.1153955-2-coltonlewis@google.com>
+	s=arc-20240116; t=1751904354; c=relaxed/simple;
+	bh=7+F/8Z+sos27/lZyHVZY96P6qXDO5dzJeLbCcUBiX9U=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=W1/3RAHaOLbVA0uOoRQK2NL1nLxV5HrxCYGyUDghhlYYpH1sqL/xWFRTBbVjrhJsUVEAJbLcfkyFOwb2fbvGzyv8LPFNviUU5GvIuAGLp9IDhIulhFyJi7C9cepFUYyXIJxE7Av+L9PEVIeYuB4IyTuCWFx7ZhAmsQOSrsv5wCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Sr0HqWeS; arc=none smtp.client-ip=117.135.210.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=wx
+	Vdpvg7FeWQxkIMif3XMYiXYJJQ4LWlvR78pfeDiE0=; b=Sr0HqWeSroYdLh7VtF
+	7Oz9uPLf8S10XbTfNA1l/POCAdraR3f3VaxzCEfFwaNT6p7psn+vQJVeiEvaGSf+
+	Hz4hkPihNprS9MmacFVIaimxJpu7PH5qrOH7mLzaxSWOrApqr+fkxnvt70Ar0Mbf
+	acL1N+sWopf6L4kA+ahuFuG8g=
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [])
+	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wD3d+Uw8Gto+_41DQ--.4123S4;
+	Tue, 08 Jul 2025 00:05:05 +0800 (CST)
+From: Haoxiang Li <haoxiang_li2024@163.com>
+To: steffen.klassert@secunet.com,
+	herbert@gondor.apana.org.au,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Haoxiang Li <haoxiang_li2024@163.com>
+Subject: [PATCH v2] af_key: Add check for the return value of pfkey_sadb2xfrm_user_sec_ctx()
+Date: Tue,  8 Jul 2025 00:05:03 +0800
+Message-Id: <20250707160503.2834390-1-haoxiang_li2024@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250626200459.1153955-2-coltonlewis@google.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD3d+Uw8Gto+_41DQ--.4123S4
+X-Coremail-Antispam: 1Uf129KBjvJXoW7GFWrWrWDKFyDZryfGw1fXrb_yoW8JrWDpF
+	48G3sFgr4UZr15ta4xta1DuF4Fgr1rXrWqgFWSyw1agrn8Jw18G3yfKFWj9F1rZrZxJFWx
+	JFW5urZYka45XrUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pis2-rUUUUU=
+X-CM-SenderInfo: xkdr5xpdqjszblsqjki6rwjhhfrp/xtbBEg+Dbmhr7XlD-AAAsY
 
-On Thu, Jun 26, 2025 at 08:04:37PM +0000, Colton Lewis wrote:
-> Add a capability for FEAT_HPMN0, whether MDCR_EL2.HPMN can specify 0
-> counters reserved for the guest.
-> 
-> This required changing HPMN0 to an UnsignedEnum in tools/sysreg
-> because otherwise not all the appropriate macros are generated to add
-> it to arm64_cpu_capabilities_arm64_features.
+Add check for the return value of pfkey_sadb2xfrm_user_sec_ctx()
+in pfkey_compile_policy(), and set proper error flag.
 
-I agree it's appropriate to mark ID_AA64DFR0_EL1.HPMN0 as an
-UnsignedEnum. It follows the usual ID scheme per ARM DDI 0487 L.a
-section D24.1.3, and zero means not present, so it must be unsigned.
+Signed-off-by: Haoxiang Li <haoxiang_li2024@163.com>
+---
+Changes in v2:
+- Set error flag '*dir' properly.
+- Hi, Steffen! I know that inside pfkey_sadb2xfrm_user_sec_ctx(), null
+value check has been done. This patch does the null value check after
+pfkey_sadb2xfrm_user_sec_ctx() being called in pfkey_compile_policy().
+Also, set proper error flag if pfkey_sadb2xfrm_user_sec_ctx() returns
+null. This patch code is similar to [1]. Thanks, Steffen!
 
-Likewise, the value renames (UNPREDICTABLE => NI and DEF => IMP) look
-fine to me.
+[1]https://github.com/torvalds/linux/blob/master/net/key/af_key.c#L2404
+---
+ net/key/af_key.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-> Signed-off-by: Colton Lewis <coltonlewis@google.com>
+diff --git a/net/key/af_key.c b/net/key/af_key.c
+index efc2a91f4c48..9cd14a31a427 100644
+--- a/net/key/af_key.c
++++ b/net/key/af_key.c
+@@ -3335,6 +3335,11 @@ static struct xfrm_policy *pfkey_compile_policy(struct sock *sk, int opt,
+ 		if ((*dir = verify_sec_ctx_len(p)))
+ 			goto out;
+ 		uctx = pfkey_sadb2xfrm_user_sec_ctx(sec_ctx, GFP_ATOMIC);
++		if (!uctx) {
++			*dir = -ENOMEM;
++			goto out;
++		}
++
+ 		*dir = security_xfrm_policy_alloc(&xp->security, uctx, GFP_ATOMIC);
+ 		kfree(uctx);
+ 
+-- 
+2.25.1
 
-I have one minor nit below, but either way:
-
-Acked-by: Mark Rutland <mark.rutland@arm.com>
-
-> ---
->  arch/arm64/kernel/cpufeature.c | 8 ++++++++
->  arch/arm64/tools/cpucaps       | 1 +
->  arch/arm64/tools/sysreg        | 6 +++---
->  3 files changed, 12 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-> index b34044e20128..73a7dac4b6f6 100644
-> --- a/arch/arm64/kernel/cpufeature.c
-> +++ b/arch/arm64/kernel/cpufeature.c
-> @@ -548,6 +548,7 @@ static const struct arm64_ftr_bits ftr_id_mmfr0[] = {
->  };
->  
->  static const struct arm64_ftr_bits ftr_id_aa64dfr0[] = {
-> +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64DFR0_EL1_HPMN0_SHIFT, 4, 0),
->  	S_ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64DFR0_EL1_DoubleLock_SHIFT, 4, 0),
->  	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64DFR0_EL1_PMSVer_SHIFT, 4, 0),
->  	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64DFR0_EL1_CTX_CMPs_SHIFT, 4, 0),
-> @@ -2896,6 +2897,13 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
->  		.matches = has_cpuid_feature,
->  		ARM64_CPUID_FIELDS(ID_AA64MMFR0_EL1, FGT, FGT2)
->  	},
-> +	{
-> +		.desc = "FEAT_HPMN0",
-
-Minor nit, but we can drop the "FEAT_" prefix here, for consistency with
-other features (e.g. E0PD, FPMR).
-
-Mark.
-
-> +		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
-> +		.capability = ARM64_HAS_HPMN0,
-> +		.matches = has_cpuid_feature,
-> +		ARM64_CPUID_FIELDS(ID_AA64DFR0_EL1, HPMN0, IMP)
-> +	},
->  #ifdef CONFIG_ARM64_SME
->  	{
->  		.desc = "Scalable Matrix Extension",
-> diff --git a/arch/arm64/tools/cpucaps b/arch/arm64/tools/cpucaps
-> index 10effd4cff6b..5b196ba21629 100644
-> --- a/arch/arm64/tools/cpucaps
-> +++ b/arch/arm64/tools/cpucaps
-> @@ -39,6 +39,7 @@ HAS_GIC_CPUIF_SYSREGS
->  HAS_GIC_PRIO_MASKING
->  HAS_GIC_PRIO_RELAXED_SYNC
->  HAS_HCR_NV1
-> +HAS_HPMN0
->  HAS_HCX
->  HAS_LDAPR
->  HAS_LPA2
-> diff --git a/arch/arm64/tools/sysreg b/arch/arm64/tools/sysreg
-> index 8a8cf6874298..d29742481754 100644
-> --- a/arch/arm64/tools/sysreg
-> +++ b/arch/arm64/tools/sysreg
-> @@ -1531,9 +1531,9 @@ EndEnum
->  EndSysreg
->  
->  Sysreg	ID_AA64DFR0_EL1	3	0	0	5	0
-> -Enum	63:60	HPMN0
-> -	0b0000	UNPREDICTABLE
-> -	0b0001	DEF
-> +UnsignedEnum	63:60	HPMN0
-> +	0b0000	NI
-> +	0b0001	IMP
->  EndEnum
->  UnsignedEnum	59:56	ExtTrcBuff
->  	0b0000	NI
-> -- 
-> 2.50.0.727.gbf7dc18ff4-goog
-> 
 
