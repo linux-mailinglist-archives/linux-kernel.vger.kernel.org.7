@@ -1,420 +1,285 @@
-Return-Path: <linux-kernel+bounces-720401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4E61AFBB1E
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 20:49:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BD17AFBB22
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 20:49:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37887188B2D1
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 18:49:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76F1A188DF61
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 18:50:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1B742638B2;
-	Mon,  7 Jul 2025 18:49:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEE30253B4C;
+	Mon,  7 Jul 2025 18:49:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="a2sLvREU"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10olkn2059.outbound.protection.outlook.com [40.92.42.59])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="m3uyMnY8"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FEF5199E89;
-	Mon,  7 Jul 2025 18:49:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.42.59
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751914147; cv=fail; b=Qr0KIkxdLVJqA6y2vG8WCVSIfxZP8qbGEz0kjb9DKiSWNR1QWDOZ66HZwI9cf9eqWgJHuSlF0s+teR1e+iE0Jm1jGEVpKORFgxyto1xsXTYmKNBDcGLfZol4GBZZz0hke7xB9n/BhJT0mFz+a0TmoC5fIBxsFJOFzjRRtWWiSX4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751914147; c=relaxed/simple;
-	bh=yHeZUTuTqfVjqNmhUCEMwu+JE8Wx3ywe3DXepEDIXLA=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=HuODuqVBP/SUR75O9BHlvUzZWEJv+CKVxXcoOoDf5+3IM9+WRP0EdJomXAbXtmQSBXCslBcMOhnQlyEi4lSbAHv4HZcgDMQWIYVU8VLSJbFrUMU1Xgg21Y6xUbQ3wHvwtow5KoFPRo0pdrCNocbTfPlh8yWAjz3gnddScaqMMUk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=a2sLvREU; arc=fail smtp.client-ip=40.92.42.59
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=tg3TgCNZfX+71EEVGltswvFnAN4IYt6DJaNP5xbEHvwORQyIdTwZ5INotxpbh9el3/KKwUU0A3gjhyq2rxeiWx+ceL1Eghy08DLAtAzDAB/129ZWTwHMnbtqQRpIDBPI967bccwUzzO5aTPDnCrtOtx4zFDsuxbw9PLuU9arJ+LKS3HSOIMZ0CIkSr3NUaeqzjMRKYonbo1eB9disQ3sWcnHHVJJSPJZxQq36qvv5GSxqWSuaFRFYU9JH15nuZjDVLFBmIPG3IX65zevBRqXeqtkGxjK7o05JM3433P5uNARtKs7gg8mY6sfvVReQwknJo+IW4LI3cCTi64EdP0N7Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6kSvKRL+6sADdx44ORttc/0mwM2YZk9r04HLkqfUj48=;
- b=u+N2C0Fw2PgjCG6YKZeA4SiM61DKtUKJoGNhnH1whw4eeDavWhtQ09SiEDPYfliFgAvYHtmSxIhr3iXhnZQSqu/O2Ag/YG7YUMz4okpWVFy8YZxMOKyOqE7oJRzjmM3rYp0SsYdhcfXub618ZvLWBonHy7XpZvgRoaaGFvQrD4Ol7QajY7oSDo8VLlqvZKnvAkUk8XZf3X6p3ReM+DWR5PZDeEOyLiRCIDgFfWDnM0CsFJX9EO2n2Mv64quE2dRYBv5+JzKAcXRuBcgQilUdraGlqb/7R4bapUBDjRgaWovjBlJm3NM3WEmvtPTWw5rVx4Ig7q5FSzJ84Np6CPmWPQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6kSvKRL+6sADdx44ORttc/0mwM2YZk9r04HLkqfUj48=;
- b=a2sLvREUKgjDdN7Te/pDJfrovJqKfLY3CHl88yb327aw1cXKr5L1+5NjLneFcT7uniCgVYKZyrGeb22VypG3GDh46Mye5xr0vqCayF79EH4YutbzUocJ32vOhmxmvm3itw72utw4hYnA1RBGUOvJ8EJUKe6F0mj4vsUXyK2ZaKlz1TjXfSBiJsqQGvrWn8hGlMWxVTPnJa6nKoeCWAibMqx8C2KYWPoyhHubjSFUtOeJDqok206Sak2XKAljd0EzgRz8VeipoXGKkYooqj0cEYB97Ytyu9GUK/+0aGYjByWmN3XWqTu29lfPuuJ2vmcaVfZ8sCW0C3+Sa7OgaTgm/Q==
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
- by MW4PR02MB7281.namprd02.prod.outlook.com (2603:10b6:303:66::24) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.24; Mon, 7 Jul
- 2025 18:49:02 +0000
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df%4]) with mapi id 15.20.8901.018; Mon, 7 Jul 2025
- 18:49:02 +0000
-From: Michael Kelley <mhklinux@outlook.com>
-To: Nam Cao <namcao@linutronix.de>, Marc Zyngier <maz@kernel.org>, Thomas
- Gleixner <tglx@linutronix.de>, "David S . Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
-	<pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open
- list:Hyper-V/Azure CORE AND DRIVERS" <linux-hyperv@vger.kernel.org>
-CC: Manivannan Sadhasivam <mani@kernel.org>, Bjorn Helgaas
-	<bhelgaas@google.com>
-Subject: RE: [PATCH for-netdev v2 2/2] PCI: hv: Switch to
- msi_create_parent_irq_domain()
-Thread-Topic: [PATCH for-netdev v2 2/2] PCI: hv: Switch to
- msi_create_parent_irq_domain()
-Thread-Index: AQHb7xf/A8zJRWFEyk2mZWYCCrZaYbQm/Dxw
-Date: Mon, 7 Jul 2025 18:49:02 +0000
-Message-ID:
- <SN6PR02MB41577987DB4DA08E86403738D44FA@SN6PR02MB4157.namprd02.prod.outlook.com>
-References: <cover.1751875853.git.namcao@linutronix.de>
- <7b99cca47b41dacc9a82b96093935eab07cac43a.1751875853.git.namcao@linutronix.de>
-In-Reply-To:
- <7b99cca47b41dacc9a82b96093935eab07cac43a.1751875853.git.namcao@linutronix.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|MW4PR02MB7281:EE_
-x-ms-office365-filtering-correlation-id: 6ff331ba-7351-4b1a-249b-08ddbd86f12a
-x-ms-exchange-slblob-mailprops:
- dx7TrgQSB6eQGC/G7Dawllljy95FzHWbT6yKBgT772Qf4EbSIkMHVgZofVfovKAhCHDZdJTGdkTPxGHPw2KhmPOxgYuf/Kri8QzaqRVzrPAHXF2gAas6rQbRNJVAS1b53DHY3uY7252gSXlu8F5+/LxErT9+AEOo/lpw9xkvZsjjdiRxLTVURClwAVWzMUmPRUCWjRM89wxtQBZz2Pscvh+RreN1ETeXPc/XfmEOQv2PfrxrZdwlueiJ45M2PRDQzVRyN/taY88KgmXEC7v5tiKJVmfUhqMsztCcdypVRHTVUf1EkmZduuKMrC3ydb7+jxS1WjTyzswSv4JkdBkNPrHUFeckU/a+SwnavW6+WVVoOcwO6q29AFS/osfDwv2Lx2isnRxwi1gIlm6YigCHBRRwRAV8IWmCJQmKMvW1Y/dXplU2k/aFqQ990UsUNRIsKdfSZDDGZ5fUjs+BfuS4Bw1r994yJ0REdkIVl0KMJS3q5s25Kl2uBToN2w5ojsG5sxn0qiorQznYVaD1yq1N1AFEQwRIsI5hqJjLGsvC1ow1ID2+ME0kneUXdcqA5HVMv4v6px5w3vaB6aQ57Hk7+cnKOOYzpp2Xt3PP0y2pocFT2hMWSbP8k8LONixKFrFZtEhRjHWMG1JvTW/vVwJ70Eb0KRl4+y6EFOv8+hwrLjRwqVQc+G4WyewDjRTz+Rm0cghtWp6mwY9x62KWQq4kNye5EGF8JbfVAV+ILHsJOgAIyC7zRa6lVO8sEm/hvjrg+p45JqFbm5A=
-x-microsoft-antispam:
- BCL:0;ARA:14566002|8060799012|41001999006|461199028|8062599008|13031999003|40105399003|52005399003|3412199025|440099028|19111999003|12091999003|102099032;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?klzeea0quABvrQ6R/F2qHHntAGDj5ui1xgzYeZI12J/8BdewfhpkWdPfn7ba?=
- =?us-ascii?Q?LNiHvtJGgRApxPLz/lHwhkfg7V3+fvIWh4sYXSZDVkXSgiNmlRPMGdnkBc+R?=
- =?us-ascii?Q?3LwNsVlyCmAlGW7CUbKcbulbIcHhqBmJPBJdjbsi/CNMNEnjau1Wye80gvxK?=
- =?us-ascii?Q?rak9iGU4tb1p+GR3ldN/Hdu7UnfJaOEeTnVe0wsGoBNUuMGn/DHbGfbLjccB?=
- =?us-ascii?Q?xy+pn8PIiic/qkVo5fOaJtyWmSgonAbId+xiUnI6AT/CApHH89tnFcen+WVp?=
- =?us-ascii?Q?vlornUPGqeg0VkHkXdGrPz7eahJUEW1BP9JmofdWtuqvUeejZV74hpE8114t?=
- =?us-ascii?Q?3HvwoXd5Y3XEi2AFx0N/N6OdkMmanWP8mdUmOJDAsyusoQtd0gbSchgbAvAL?=
- =?us-ascii?Q?G9k33ACPIGCLy5tS4/WMUmCOkFGo3qie1XR1hybwISkk+ExycbjacUw44vdo?=
- =?us-ascii?Q?1y6kYYlxe8hFsMNqe+H9OwDlaeTkdUpFXlnqdtJcFy2p//Qy20j7GvLjcY4w?=
- =?us-ascii?Q?iuavLMz62Cj/t6fIUiB9aP78QzS/QzviJgqBsb+5Z1phZ1oPO3kOlaD34YA3?=
- =?us-ascii?Q?JU9VVDN9etLDrfMHhmq/b4X39NVhpmSHrDdSN8hnxJvUaUU+BRMwWpcaBtsk?=
- =?us-ascii?Q?Q+XDM1ci2qmbgL9UF7UIn1vVlGUQ10UY+WpQdET3v9vrXo0cAveBjm641wPS?=
- =?us-ascii?Q?75UT0ogNhBhbl+j6QOrhpANUfTaXeubOD2d3rdFH8c7QNY+HLxBFgeiw9v09?=
- =?us-ascii?Q?n2R/9fU5bIoGfGyn9rYLAbUv3UbwsMUgiUVsucpqgZI0/NJeqV6AdnrlP/aX?=
- =?us-ascii?Q?mKIYnTf7Z6O+cli7FpNzWZafXjKn0iqCTMpQAHi5uqGv+PqNzucaLLPpksdR?=
- =?us-ascii?Q?1OJUO54Sef0heciN7tBNWLAcWMhKPgVPKL86uao65Xdu4g+t8yeqCramL/QA?=
- =?us-ascii?Q?+ssh4xuXn9pROuC6cwbethS927ZgZRdtRl9IKd/JmCE9SRM5MeFa3leFyBKo?=
- =?us-ascii?Q?5McoggqFImMa1xHu2s1NGBBuQu4nv341DLH9iwCKc0XmM2zGCPDV1Ghgrshu?=
- =?us-ascii?Q?cJ75VEh9H6qhaAQgS5ltxULRvhnmB4GUyoYshhupnGxEO2WpZ+m6UKGO0sDC?=
- =?us-ascii?Q?fEcfNYKCIpb3MsjwSSdkT+DOhjfZvIQERAxp+3WY1kPcfNFVAf1PQiIPznu7?=
- =?us-ascii?Q?5yg6oY8XD8hx++WajrC5sQ3N1gQ1vjTy1UZQLg=3D=3D?=
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?roMo70hx0Y8KSwteE3eclIuDUNGLY01GBCUoRvQDlYvifVGW9mSWW7870u+q?=
- =?us-ascii?Q?7wLnrSz/lUkMcNxbxjIqsOVBI8o2WjbeBLZYS01Ns3NOpo9W1qX+mVIF7qVE?=
- =?us-ascii?Q?aJ8r0DIilsXMfAe7l5CGDcRpUhFPfejOqJZZk+pWKaMlM1TC8u7mWaUVM/QN?=
- =?us-ascii?Q?BELWUR3uBlZ0mzZOLciil4JK7TDsQt04Y8a/1fE97M+l62HmgpJNvdWkC2K4?=
- =?us-ascii?Q?yC36X511lpDu6a/XBK8LXB4PkHq/TVlhcYrd879Thh76JW/BtD+E069pr8BI?=
- =?us-ascii?Q?mdlTqPD1O930nVE/NszWNepHdjZrCWoP8gOt+VqtgKu4Vd4w1BwEJO30eBDS?=
- =?us-ascii?Q?oQAuDXy1mE8fAoo4D6WUzTBMQDKVdR8lW2eR9/uTUVBSgKwnPoYoaYxH6AOj?=
- =?us-ascii?Q?RvR95h/Ie2JxNa5fBZNectWDaB9HsydgFwXhhiK/5ZwgBuMU5GsJHqr1O0gQ?=
- =?us-ascii?Q?D8IhTgiF9N9DL+q2bjbXhMQXsKcg5MGouHtByLa0nQL/xHJZBehjR5gWd7nQ?=
- =?us-ascii?Q?GY953Qvsgn7UEHk+qr2upPbgHhM1zH7dWrzU9yL6AWAk6x9MnFplfK7jARH1?=
- =?us-ascii?Q?wtkX7PFFPr8a8sJrTCGuehBhnDGB419CsoK0gaZOmjZSFJfnczm8DcDEU0Rh?=
- =?us-ascii?Q?h3ZAmMk5jziabhUnP8d484Bp0/27FvZxJfo8svptXIxg8b7mAAdWzX4tsoi4?=
- =?us-ascii?Q?aZakDf/ros9WqPUnEK58dUvD8wuqdgIfRfcwyKS4KJoltcEiG1yVk4HJV7iE?=
- =?us-ascii?Q?q4fsuIV+SnKDHI91TrMoDcCtXvQVbeBiQZDTM8rEpoNHYYRL0+UtrVDvuEyi?=
- =?us-ascii?Q?M7DCydOwfajSTOYINevATeeBcULE2LZ/a4xDSIJ3Aw2qxqhzN4I/MrlEESxo?=
- =?us-ascii?Q?Hg3RVZkZ2OGQr41X0g4CDcgLbVkYAg9px4elC+eIDKr9LfKVSy5Jlvyo0dBd?=
- =?us-ascii?Q?LJHkqQ3blfqggTPXB9AxwBtDA7GBzVmHr/vQSqzfzZLoe2prtH5cHRpSGInc?=
- =?us-ascii?Q?xGwnXnVXFsMjg6fPOPh4MmeL4Hk3yr7ZXHD/zLvm8T6rgMpV61DzpsbyyBaK?=
- =?us-ascii?Q?JmBRXAAkYf0mk2lZfTeUIF3dKOB49+5xUhXRO7QAZWLHu/FAoFK8hXi/7Hwz?=
- =?us-ascii?Q?LJh5h4CpJ+EZUeZaa04q4uyapUakIvyRbnCWFhrkjnvRyMAcciUZihpVL9Iq?=
- =?us-ascii?Q?Su2K2hRhlXMmwoEcacBBu/S1Kf6mllDnwjZWSL+QDeQ8RT95X4Eb38zkCm0?=
- =?us-ascii?Q?=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 701A6233133
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 18:49:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751914178; cv=none; b=QZlG6h6W8CbFr0vtqAtknDKBeKCTqAmleELwUotPcz5qvfeKZ3cskuQ4FQc9bWt4aVY/T6t1J3qDwMRsfuSppBPg3O90Vgyq9qLXUMSR0ZtCqg93Wj/lzx23iqKNtFuifffYRx2Apgroi0Zeb6U9clEIayDwf7ZdnklMUsoQkvI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751914178; c=relaxed/simple;
+	bh=LXHR0uhH026jnDoTiILU0QQs16u4cWjTYoSGvYZpeLM=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=da9hAZMA/ohAGWvDNQtf08q0Elw/syhfrnPdyleWwlEMlXmyQebtSjunHj1MxLwm8653Ysq8L6K1ldEZATmElkqG7DLUPReryNQX2nJ6SN8zTkNFV+Cl+2LcfcyEQ3RRE/6BrubiHEdeylR9XKjK/07BzjXEgNa9exFnYQvgvgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=m3uyMnY8; arc=none smtp.client-ip=209.85.210.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-74943a7cd9aso5378268b3a.3
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 11:49:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1751914176; x=1752518976; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=XiZtjCuXu6VUlzg7WNmrhQE5Jv+jYJ68gKGt6GVpTiM=;
+        b=m3uyMnY8ziPBnC4FY3zkgau8a9JpGxoxFmjYo5Zm5R3tAwy+y+fwSOqvFtnd3TKn85
+         ST6iTns5hyjBs2shiKj98jcOC7OuOJs797RsYfggnWCib9XDX3W/gT/C8/iveyxD9d2H
+         LmsLIb5GAIvMTomeIrqUCf9pa35QQnIeGhteu6/TDtS0S2m0T7OEve8cdrdTzDDbpMjP
+         bDJCIxqkzx7sJhaSGfyjjRXIxc+IDb83zV3I6+5yY9kNxUAcOn5XoNkKvbM+U65KN37L
+         UUb6WusDc61fgQkY4KuYYWmLD06/QFKfqfAi58DyIABf4RXsaTggJc62s6hXGr084wo0
+         DjaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751914176; x=1752518976;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XiZtjCuXu6VUlzg7WNmrhQE5Jv+jYJ68gKGt6GVpTiM=;
+        b=riFslyWgORXaLwhRBVKSwV3CjR67oypqelXyoVVdlbLZu0kMW0tOJ7rzVT/O93y3d6
+         BewkKySphsPA/SkDp3AxPCd5niAvOO7syArcL8Wmk0s/MHSzz+JFL0jFkFNbTvi9gYQD
+         YaD0Dkb3YK+EuzYqVEmGQ0uvoFJ9VWzrCiG+2e21eFF77tZytgoaJTBfK1RXxYwktHtG
+         3d24VfVVULkd9SsvUJ6ZzJymJM5TBe/k2OKhaRxm/wFuB+2AxmG5HTdk58Jw3OZ2HB/y
+         AbsWNGjBp9kRwFbgibXS6bmx/HnS/LW2OxtJWeeXVLO/BI9pwLd5XYxNqVf12nVDOP9k
+         ivzg==
+X-Forwarded-Encrypted: i=1; AJvYcCV+LWyvPhnXrsRPeUa0Fgr9kuSJwVSPOsYYdPqsBx+3WI8O3Id3v+M5l8pDBwFlpksAEwRBQACIs2sN5h4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyuDc4ustVFbEGxUGvivjnkxdUtPwXTJqicjxGSas6c8yQLLIdd
+	6XD7hVWGLYtH53c9fGw/l1S0v6ZDO9j4tY0O3b0XiBf2ue6eqyL6rjH1Zn7gFCOpMHRlrX/eqyJ
+	SJl7+UQ==
+X-Google-Smtp-Source: AGHT+IHGn8Uxvz+lSthO8udA+t0GcVRzKHgJAJRhGYDyoqQCuBbpAGuq+sZU3f2jJv1XsfzMmaICh7XBBpY=
+X-Received: from pfbbj17.prod.google.com ([2002:a05:6a00:3191:b0:746:21fd:3f7a])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:2d83:b0:74b:4cab:f01d
+ with SMTP id d2e1a72fcca58-74ce8ab1545mr18533794b3a.12.1751914175836; Mon, 07
+ Jul 2025 11:49:35 -0700 (PDT)
+Date: Mon, 7 Jul 2025 11:49:34 -0700
+In-Reply-To: <aGJf7v9EQoEZiQUk@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6ff331ba-7351-4b1a-249b-08ddbd86f12a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Jul 2025 18:49:02.5189
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR02MB7281
+Mime-Version: 1.0
+References: <20250624092256.1105524-1-keirf@google.com> <20250624092256.1105524-4-keirf@google.com>
+ <aFrANSe6fJOfMpOC@google.com> <aGJf7v9EQoEZiQUk@google.com>
+Message-ID: <aGwWvp_JeWe9tIJx@google.com>
+Subject: Re: [PATCH 3/3] KVM: Avoid synchronize_srcu() in kvm_io_bus_register_dev()
+From: Sean Christopherson <seanjc@google.com>
+To: Keir Fraser <keirf@google.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	kvm@vger.kernel.org, Eric Auger <eric.auger@redhat.com>, 
+	Oliver Upton <oliver.upton@linux.dev>, Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Li RongQing <lirongqing@baidu.com>
+Content-Type: text/plain; charset="us-ascii"
 
-From: Nam Cao <namcao@linutronix.de> Sent: Monday, July 7, 2025 1:20 AM
->=20
-> Move away from the legacy MSI domain setup, switch to use
-> msi_create_parent_irq_domain().
->=20
-> While doing the conversion, I noticed that hv_compose_msi_msg() is doing
-> more than it is supposed to (composing message). This function also
-> allocates and populates struct tran_int_desc, which should be done in
-> hv_pcie_domain_alloc() instead. It works, but it is not the correct desig=
-n.
-> However, I have no hardware to test such change, therefore I leave a TODO
-> note.
->=20
-> Acked-by: Bjorn Helgaas <bhelgaas@google.com>
-> Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
-> Signed-off-by: Nam Cao <namcao@linutronix.de>
+On Mon, Jun 30, 2025, Keir Fraser wrote:
+> On Tue, Jun 24, 2025 at 08:11:49AM -0700, Sean Christopherson wrote:
+> > +Li
+> > 
+> > On Tue, Jun 24, 2025, Keir Fraser wrote:
+> > > Device MMIO registration may happen quite frequently during VM boot,
+> > > and the SRCU synchronization each time has a measurable effect
+> > > on VM startup time. In our experiments it can account for around 25%
+> > > of a VM's startup time.
+> > > 
+> > > Replace the synchronization with a deferred free of the old kvm_io_bus
+> > > structure.
+> > > 
+> > > Signed-off-by: Keir Fraser <keirf@google.com>
+> > > ---
+> > >  include/linux/kvm_host.h |  1 +
+> > >  virt/kvm/kvm_main.c      | 10 ++++++++--
+> > >  2 files changed, 9 insertions(+), 2 deletions(-)
+> > > 
+> > > diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+> > > index 3bde4fb5c6aa..28a63f1ad314 100644
+> > > --- a/include/linux/kvm_host.h
+> > > +++ b/include/linux/kvm_host.h
+> > > @@ -205,6 +205,7 @@ struct kvm_io_range {
+> > >  struct kvm_io_bus {
+> > >  	int dev_count;
+> > >  	int ioeventfd_count;
+> > > +	struct rcu_head rcu;
+> > >  	struct kvm_io_range range[];
+> > >  };
+> > >  
+> > > diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+> > > index eec82775c5bf..b7d4da8ba0b2 100644
+> > > --- a/virt/kvm/kvm_main.c
+> > > +++ b/virt/kvm/kvm_main.c
+> > > @@ -5924,6 +5924,13 @@ int kvm_io_bus_read(struct kvm_vcpu *vcpu, enum kvm_bus bus_idx, gpa_t addr,
+> > >  }
+> > >  EXPORT_SYMBOL_GPL(kvm_io_bus_read);
+> > >  
+> > > +static void __free_bus(struct rcu_head *rcu)
+> > > +{
+> > > +	struct kvm_io_bus *bus = container_of(rcu, struct kvm_io_bus, rcu);
+> > > +
+> > > +	kfree(bus);
+> > > +}
+> > > +
+> > >  int kvm_io_bus_register_dev(struct kvm *kvm, enum kvm_bus bus_idx, gpa_t addr,
+> > >  			    int len, struct kvm_io_device *dev)
+> > >  {
+> > > @@ -5962,8 +5969,7 @@ int kvm_io_bus_register_dev(struct kvm *kvm, enum kvm_bus bus_idx, gpa_t addr,
+> > >  	memcpy(new_bus->range + i + 1, bus->range + i,
+> > >  		(bus->dev_count - i) * sizeof(struct kvm_io_range));
+> > >  	rcu_assign_pointer(kvm->buses[bus_idx], new_bus);
+> > > -	synchronize_srcu_expedited(&kvm->srcu);
+> > > -	kfree(bus);
+> > > +	call_srcu(&kvm->srcu, &bus->rcu, __free_bus);
+> > 
+> > I'm 99% certain this will break ABI.  KVM needs to ensure all readers are
+> > guaranteed to see the new device prior to returning to userspace.
+> 
+> I'm not sure I understand this. How can userspace (or a guest VCPU) know that
+> it is executing *after* the MMIO registration, except via some form of
+> synchronization or other ordering of its own? For example, that PCI BAR setup
+> happens as part of PCI probing happening early in device registration in the
+> guest OS, strictly before the MMIO region will be accessed. Otherwise the
+> access is inherently racy against the registration?
 
-[Adding linux-hyperv@vger.kernel.org so that the Linux on Hyper-V folks
-have visibility.]
+Yes, guest software needs its own synchronization.  What I am pointing out is that,
+very strictly speaking, KVM relies on synchronize_srcu_expedited() to ensure that
+KVM's emulation of MMIO accesses are correctly ordered with respect to the guest's
+synchronization.
 
-This all looks good to me now. Thanks for the additional explanation of
-the TODO. I understand what you are suggesting. Moving the interaction
-with the Hyper-V host into hv_pcie_domain_alloc() has additional appeal
-because it should eliminate the need for the ugly polling for a VMBus
-response. However, I'm unlikely to be the person implementing the
-TODO. hv_compose_msi_msg() is a real beast of a function, and I lack
-access to hardware to fully test the move, particularly a device that
-does multi MSI. I don't think such a device is available in a VM in the
-Azure public cloud.
+It's legal, though *extremely* uncommon, for KVM to emulate large swaths of guest
+code, including emulated MMIO accesses.  If KVM grabs kvm->buses at the start of
+an emulation block, and then uses that reference to resolve MMIO, it's theoretically
+possible for KVM to mishandle an access due to using a stale bus.
 
-I've tested this patch in an Azure VM that has a MANA NIC. The MANA
-driver has updates in linux-next to use MSIX dynamic allocation, and
-that dynamic allocation appears to work correctly with this patch. My
-testing included unbind and rebind the driver several times so that
-the full round-trip is tested.
+Today, such scenarios are effectively prevented by synchronize_srcu_expedited().
+Using kvm->buses outside of SRCU protection would be a bug (per KVM's locking
+rules), i.e. a large emulation block must take and hold SRCU for its entire
+duration.  And so waiting for all SRCU readers to go away ensures that the new
+kvm->buses will be observed if KVM starts a new emulation block.
 
-Reviewed-by: Michael Kelley <mhklinux@outlook.com>
-Tested-by: Michael Kelley <mhklinux@outlook.com>
+AFAIK, the only example of such emulation is x86's handle_invalid_guest_state().
+And in practice, it's probably impossible for the compiler to keep a reference to
+kvm->buses across multiple invocations of kvm_emulate_instruction() while still
+honoring the READ_ONCE() in __rcu_dereference_check().
+ 
+But I don't want to simply drop KVM's synchronization, because we need a rule of
+some kind to ensure correct ordering, even if it's only for documentation purposes
+for 99% of cases.  And because the existence of kvm_get_bus() means that it would
+be possible for KVM to grab a long-term reference to kvm->buses and use it across
+emulation of multiple instructions (though actually doing that would be all kinds
+of crazy).
 
-> ---
-> v2:
->   - rebase onto netdev/next
->   - clarify the TODO note
->   - fixup arm64
->   - Add HV_MSI_CHIP_FLAGS macro and reduce the amount of #ifdef
-> ---
->  drivers/pci/Kconfig                 |   1 +
->  drivers/pci/controller/pci-hyperv.c | 111 +++++++++++++++++++++-------
->  2 files changed, 84 insertions(+), 28 deletions(-)
->=20
-> diff --git a/drivers/pci/Kconfig b/drivers/pci/Kconfig
-> index 9c0e4aaf4e8c..9a249c65aedc 100644
-> --- a/drivers/pci/Kconfig
-> +++ b/drivers/pci/Kconfig
-> @@ -223,6 +223,7 @@ config PCI_HYPERV
->  	tristate "Hyper-V PCI Frontend"
->  	depends on ((X86 && X86_64) || ARM64) && HYPERV && PCI_MSI && SYSFS
->  	select PCI_HYPERV_INTERFACE
-> +	select IRQ_MSI_LIB
->  	help
->  	  The PCI device frontend driver allows the kernel to import arbitrary
->  	  PCI devices from a PCI backend to support PCI driver domains.
-> diff --git a/drivers/pci/controller/pci-hyperv.c b/drivers/pci/controller=
-/pci-hyperv.c
-> index 86ca041bf74a..ebe39218479a 100644
-> --- a/drivers/pci/controller/pci-hyperv.c
-> +++ b/drivers/pci/controller/pci-hyperv.c
-> @@ -44,6 +44,7 @@
->  #include <linux/delay.h>
->  #include <linux/semaphore.h>
->  #include <linux/irq.h>
-> +#include <linux/irqchip/irq-msi-lib.h>
->  #include <linux/msi.h>
->  #include <linux/hyperv.h>
->  #include <linux/refcount.h>
-> @@ -508,7 +509,6 @@ struct hv_pcibus_device {
->  	struct list_head children;
->  	struct list_head dr_list;
->=20
-> -	struct msi_domain_info msi_info;
->  	struct irq_domain *irq_domain;
->=20
->  	struct workqueue_struct *wq;
-> @@ -576,9 +576,8 @@ struct hv_pci_compl {
->  static void hv_pci_onchannelcallback(void *context);
->=20
->  #ifdef CONFIG_X86
-> -#define DELIVERY_MODE	APIC_DELIVERY_MODE_FIXED
-> -#define FLOW_HANDLER	handle_edge_irq
-> -#define FLOW_NAME	"edge"
-> +#define DELIVERY_MODE		APIC_DELIVERY_MODE_FIXED
-> +#define HV_MSI_CHIP_FLAGS	MSI_CHIP_FLAG_SET_ACK
->=20
->  static int hv_pci_irqchip_init(void)
->  {
-> @@ -723,8 +722,7 @@ static void hv_arch_irq_unmask(struct irq_data *data)
->  #define HV_PCI_MSI_SPI_START	64
->  #define HV_PCI_MSI_SPI_NR	(1020 - HV_PCI_MSI_SPI_START)
->  #define DELIVERY_MODE		0
-> -#define FLOW_HANDLER		NULL
-> -#define FLOW_NAME		NULL
-> +#define HV_MSI_CHIP_FLAGS	MSI_CHIP_FLAG_SET_EOI
->  #define hv_msi_prepare		NULL
->=20
->  struct hv_pci_chip_data {
-> @@ -1687,7 +1685,7 @@ static void hv_msi_free(struct irq_domain *domain, =
-struct
-> msi_domain_info *info,
->  	struct msi_desc *msi =3D irq_data_get_msi_desc(irq_data);
->=20
->  	pdev =3D msi_desc_to_pci_dev(msi);
-> -	hbus =3D info->data;
-> +	hbus =3D domain->host_data;
->  	int_desc =3D irq_data_get_irq_chip_data(irq_data);
->  	if (!int_desc)
->  		return;
-> @@ -1705,7 +1703,6 @@ static void hv_msi_free(struct irq_domain *domain, =
-struct
-> msi_domain_info *info,
->=20
->  static void hv_irq_mask(struct irq_data *data)
->  {
-> -	pci_msi_mask_irq(data);
->  	if (data->parent_data->chip->irq_mask)
->  		irq_chip_mask_parent(data);
->  }
-> @@ -1716,7 +1713,6 @@ static void hv_irq_unmask(struct irq_data *data)
->=20
->  	if (data->parent_data->chip->irq_unmask)
->  		irq_chip_unmask_parent(data);
-> -	pci_msi_unmask_irq(data);
->  }
->=20
->  struct compose_comp_ctxt {
-> @@ -2101,25 +2097,87 @@ static void hv_compose_msi_msg(struct irq_data *d=
-ata, struct msi_msg *msg)
->  	msg->data =3D 0;
->  }
->=20
-> +static bool hv_pcie_init_dev_msi_info(struct device *dev, struct irq_dom=
-ain *domain,
-> +				      struct irq_domain *real_parent, struct msi_domain_info *info)
-> +{
-> +	struct irq_chip *chip =3D info->chip;
-> +
-> +	if (!msi_lib_init_dev_msi_info(dev, domain, real_parent, info))
-> +		return false;
-> +
-> +	info->ops->msi_prepare =3D hv_msi_prepare;
-> +
-> +	chip->irq_set_affinity =3D irq_chip_set_affinity_parent;
-> +
-> +	if (IS_ENABLED(CONFIG_X86))
-> +		chip->flags |=3D IRQCHIP_MOVE_DEFERRED;
-> +
-> +	return true;
-> +}
-> +
-> +#define HV_PCIE_MSI_FLAGS_REQUIRED (MSI_FLAG_USE_DEF_DOM_OPS	| \
-> +				    MSI_FLAG_USE_DEF_CHIP_OPS		| \
-> +				    MSI_FLAG_PCI_MSI_MASK_PARENT)
-> +#define HV_PCIE_MSI_FLAGS_SUPPORTED (MSI_FLAG_MULTI_PCI_MSI	| \
-> +				     MSI_FLAG_PCI_MSIX			| \
-> +				     MSI_FLAG_PCI_MSIX_ALLOC_DYN	| \
-> +				     MSI_GENERIC_FLAGS_MASK)
-> +
-> +static const struct msi_parent_ops hv_pcie_msi_parent_ops =3D {
-> +	.required_flags		=3D HV_PCIE_MSI_FLAGS_REQUIRED,
-> +	.supported_flags	=3D HV_PCIE_MSI_FLAGS_SUPPORTED,
-> +	.bus_select_token	=3D DOMAIN_BUS_PCI_MSI,
-> +	.chip_flags		=3D HV_MSI_CHIP_FLAGS,
-> +	.prefix			=3D "HV-",
-> +	.init_dev_msi_info	=3D hv_pcie_init_dev_msi_info,
-> +};
-> +
->  /* HW Interrupt Chip Descriptor */
->  static struct irq_chip hv_msi_irq_chip =3D {
->  	.name			=3D "Hyper-V PCIe MSI",
->  	.irq_compose_msi_msg	=3D hv_compose_msi_msg,
->  	.irq_set_affinity	=3D irq_chip_set_affinity_parent,
-> -#ifdef CONFIG_X86
->  	.irq_ack		=3D irq_chip_ack_parent,
-> -	.flags			=3D IRQCHIP_MOVE_DEFERRED,
-> -#elif defined(CONFIG_ARM64)
->  	.irq_eoi		=3D irq_chip_eoi_parent,
-> -#endif
->  	.irq_mask		=3D hv_irq_mask,
->  	.irq_unmask		=3D hv_irq_unmask,
->  };
->=20
-> -static struct msi_domain_ops hv_msi_ops =3D {
-> -	.msi_prepare	=3D hv_msi_prepare,
-> -	.msi_free	=3D hv_msi_free,
-> -	.prepare_desc	=3D pci_msix_prepare_desc,
-> +static int hv_pcie_domain_alloc(struct irq_domain *d, unsigned int virq,=
- unsigned int nr_irqs,
-> +			       void *arg)
-> +{
-> +	/*
-> +	 * TODO: Allocating and populating struct tran_int_desc in hv_compose_m=
-si_msg()
-> +	 * should be moved here.
-> +	 */
-> +	int ret;
-> +
-> +	ret =3D irq_domain_alloc_irqs_parent(d, virq, nr_irqs, arg);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	for (int i =3D 0; i < nr_irqs; i++) {
-> +		irq_domain_set_hwirq_and_chip(d, virq + i, 0, &hv_msi_irq_chip, NULL);
-> +		if (IS_ENABLED(CONFIG_X86))
-> +			__irq_set_handler(virq + i, handle_edge_irq, 0, "edge");
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static void hv_pcie_domain_free(struct irq_domain *d, unsigned int virq,=
- unsigned int nr_irqs)
-> +{
-> +	struct msi_domain_info *info =3D d->host_data;
-> +
-> +	for (int i =3D 0; i < nr_irqs; i++)
-> +		hv_msi_free(d, info, virq + i);
-> +
-> +	irq_domain_free_irqs_top(d, virq, nr_irqs);
-> +}
-> +
-> +static const struct irq_domain_ops hv_pcie_domain_ops =3D {
-> +	.alloc	=3D hv_pcie_domain_alloc,
-> +	.free	=3D hv_pcie_domain_free,
->  };
->=20
->  /**
-> @@ -2137,17 +2195,14 @@ static struct msi_domain_ops hv_msi_ops =3D {
->   */
->  static int hv_pcie_init_irq_domain(struct hv_pcibus_device *hbus)
->  {
-> -	hbus->msi_info.chip =3D &hv_msi_irq_chip;
-> -	hbus->msi_info.ops =3D &hv_msi_ops;
-> -	hbus->msi_info.flags =3D (MSI_FLAG_USE_DEF_DOM_OPS |
-> -		MSI_FLAG_USE_DEF_CHIP_OPS | MSI_FLAG_MULTI_PCI_MSI |
-> -		MSI_FLAG_PCI_MSIX | MSI_FLAG_PCI_MSIX_ALLOC_DYN);
-> -	hbus->msi_info.handler =3D FLOW_HANDLER;
-> -	hbus->msi_info.handler_name =3D FLOW_NAME;
-> -	hbus->msi_info.data =3D hbus;
-> -	hbus->irq_domain =3D pci_msi_create_irq_domain(hbus->fwnode,
-> -						     &hbus->msi_info,
-> -						     hv_pci_get_root_domain());
-> +	struct irq_domain_info info =3D {
-> +		.fwnode		=3D hbus->fwnode,
-> +		.ops		=3D &hv_pcie_domain_ops,
-> +		.host_data	=3D hbus,
-> +		.parent		=3D hv_pci_get_root_domain(),
-> +	};
-> +
-> +	hbus->irq_domain =3D msi_create_parent_irq_domain(&info, &hv_pcie_msi_p=
-arent_ops);
->  	if (!hbus->irq_domain) {
->  		dev_err(&hbus->hdev->device,
->  			"Failed to build an MSI IRQ domain\n");
-> --
-> 2.39.5
+> > I'm quite confident there are other flows that rely on the synchronization,
+> > the vGIC case is simply the one that's documented.
+> 
+> If they're in the kernel they can be fixed? If necessary I'll go audit the callers.
+
+Yes, I'm sure there's a solution.  Thinking more about this, you make a good
+point that KVM needs to order access with respect to instruction execution, not
+with respect to the start of KVM_RUN.
+
+For all intents and purposes, holding kvm->srcu across VM-Enter/VM-Exit is
+disallowed (though I don't think this is formally documented), i.e. every
+architecture is guaranteed to do srcu_read_lock() after a VM-Exit, prior to
+reading kvm->buses.  And srcu_read_lock() contains a full smp_mb(), which ensures
+KVM will get a fresh kvm->buses relative to the instruction that triggered the
+exit.
+
+So for the common case of one-off accesses after a VM-Exit, I think we can simply
+add calls to smp_mb__after_srcu_read_lock() (which is a nop on all architectures)
+to formalize the dependency on reacquiring SRCU.  AFAICT, that would also suffice
+for arm64's use of kvm_io_bus_get_dev().  And then add an explicit barrier of some
+kind in handle_invalid_guest_state()?
+
+Then to prevent grabbing long-term references to a bus, require kvm->slots_lock
+in kvm_get_bus() (and special case the kfree() in VM destruction).
+
+So something like this?  I think the barriers would pair with the smp_store_release()
+in rcu_assign_pointer()?
+
+diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+index 4953846cb30d..057fb4ce66b0 100644
+--- a/arch/x86/kvm/vmx/vmx.c
++++ b/arch/x86/kvm/vmx/vmx.c
+@@ -5861,6 +5861,9 @@ static int handle_invalid_guest_state(struct kvm_vcpu *vcpu)
+                if (kvm_test_request(KVM_REQ_EVENT, vcpu))
+                        return 1;
+ 
++               /* Or maybe smp_mb()?  Not sure what this needs to be. */
++               barrier();
++
+                if (!kvm_emulate_instruction(vcpu, 0))
+                        return 0;
+ 
+diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+index 3bde4fb5c6aa..066438b6571a 100644
+--- a/include/linux/kvm_host.h
++++ b/include/linux/kvm_host.h
+@@ -967,9 +967,8 @@ static inline bool kvm_dirty_log_manual_protect_and_init_set(struct kvm *kvm)
+ 
+ static inline struct kvm_io_bus *kvm_get_bus(struct kvm *kvm, enum kvm_bus idx)
+ {
+-       return srcu_dereference_check(kvm->buses[idx], &kvm->srcu,
+-                                     lockdep_is_held(&kvm->slots_lock) ||
+-                                     !refcount_read(&kvm->users_count));
++       return rcu_dereference_protected(kvm->buses[idx],
++                                        lockdep_is_held(&kvm->slots_lock));
+ }
+ 
+ static inline struct kvm_vcpu *kvm_get_vcpu(struct kvm *kvm, int i)
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index eec82775c5bf..7b0e881351f7 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -1228,7 +1228,8 @@ static struct kvm *kvm_create_vm(unsigned long type, const char *fdname)
+ out_err_no_arch_destroy_vm:
+        WARN_ON_ONCE(!refcount_dec_and_test(&kvm->users_count));
+        for (i = 0; i < KVM_NR_BUSES; i++)
+-               kfree(kvm_get_bus(kvm, i));
++               kfree(rcu_dereference_check(kvm->buses[i], &kvm->srcu,
++                                           !refcount_read(&kvm->users_count));
+        kvm_free_irq_routing(kvm);
+ out_err_no_irq_routing:
+        cleanup_srcu_struct(&kvm->irq_srcu);
+@@ -5847,6 +5848,9 @@ int kvm_io_bus_write(struct kvm_vcpu *vcpu, enum kvm_bus bus_idx, gpa_t addr,
+                .len = len,
+        };
+ 
++       /* comment goes here */
++       smp_mb__after_srcu_read_lock();
++
+        bus = srcu_dereference(vcpu->kvm->buses[bus_idx], &vcpu->kvm->srcu);
+        if (!bus)
+                return -ENOMEM;
+@@ -5866,6 +5870,9 @@ int kvm_io_bus_write_cookie(struct kvm_vcpu *vcpu, enum kvm_bus bus_idx,
+                .len = len,
+        };
+ 
++       /* comment goes here */
++       smp_mb__after_srcu_read_lock();
++
+        bus = srcu_dereference(vcpu->kvm->buses[bus_idx], &vcpu->kvm->srcu);
+        if (!bus)
+                return -ENOMEM;
+@@ -6025,6 +6032,9 @@ struct kvm_io_device *kvm_io_bus_get_dev(struct kvm *kvm, enum kvm_bus bus_idx,
+ 
+        srcu_idx = srcu_read_lock(&kvm->srcu);
+ 
++       /* comment goes here */
++       smp_mb__after_srcu_read_lock();
++
+        bus = srcu_dereference(kvm->buses[bus_idx], &kvm->srcu);
+        if (!bus)
+                goto out_unlock;
+
 
 
