@@ -1,115 +1,167 @@
-Return-Path: <linux-kernel+bounces-720103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70877AFB721
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 17:20:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 900D9AFB727
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 17:21:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC51917B81A
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 15:20:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A2D61AA0FA0
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 15:21:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B3132E2651;
-	Mon,  7 Jul 2025 15:20:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EBC82E266D;
+	Mon,  7 Jul 2025 15:21:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HGMLmkC3"
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="Hhtprq5E"
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18E9E2D9785;
-	Mon,  7 Jul 2025 15:20:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F16622D9785;
+	Mon,  7 Jul 2025 15:20:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751901624; cv=none; b=Y0l6Xd4YjRBzs/qPxkTOeJrZEmWuqS0qtLMz3sWazMm2yVQFJ+QYBH3JuJWW92+8TOb++j1LjzkwK/9stLLlARbeUD121/95u+bwI3U4hFg03Y6EreQz85vUN0l+qRKMDukhKIPqUZxj5C4IPnAEM84Z4Yvqde9MXMsOxRCInlU=
+	t=1751901662; cv=none; b=YrjI3Oh78jMSNv8tWhPEP4dXmle99vY3K5u5mLefBKSrRV1m6/omI7kgnWWkHS4UqYfMgvm94NJ2lhP3ahjLOGtRanfVs3TS4wfZOwJVZf3Mne6rhb7hBEr0vJFvzZUA5dJeD2VClXV8AuO9HOLdsbwZDEcOAxIBjUiylBKdjR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751901624; c=relaxed/simple;
-	bh=5UEyGDGNHUh6RZqadrlKQCu6X7b9GWVQD6GpVxDY4ys=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=drB5jqLKsClXa9WDtbXDLwsH8ex+bNcRz1coLu2i/Pt75tfyMrDhEefzt8tWcuLjKiexukpawGlXDb6H0tE6NWKHNtxT2QiUDzNdI90OL7xaVgfZncOWpUWp2Ais4qR2vGFcvXVLQsyNcEZu6kzENbgbyjpAtV7vQ47n4wBUSZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HGMLmkC3; arc=none smtp.client-ip=209.85.215.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-b34a8f69862so2569423a12.2;
-        Mon, 07 Jul 2025 08:20:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751901622; x=1752506422; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jAPqu21NTo8BYyCnSmBn0KSAk3v+gE45TqPe3FODGXc=;
-        b=HGMLmkC36XYL5ZEROpmkhJi8eb9tNpoz3GEHx2zeLzUKvwJZjbG9t8nc9bFSUy7oGj
-         XvXIIFFBrOfp6y9LU9Y5qgId/AoA45oM+kdc1QoGpNU7nexve324NAFpVN0/v6OSPG1B
-         uzLg9VQiK5GGjL+U62L+I2DRHcK58lm4ChLCCX0dLqGO3sMspzSsGBys9ZHEv9vPaSJw
-         sw8pm4yORqdsezunfO6WNE9a3JRTJEPdmfWwnx2wwMJYn/XfKULq42hqvR66hZrp0D+1
-         neRZKe3cp9SkajeuGl0AIThqSJAzQUGQgAB7esBSC/900zO26nB/OUEqOBn01gkGC/Cn
-         lFNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751901622; x=1752506422;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jAPqu21NTo8BYyCnSmBn0KSAk3v+gE45TqPe3FODGXc=;
-        b=HfWqBsBLai1hrmc14B6Sm/88ULW/vGUTdjwc0p6FMCop2bOfgN6tjHObzpcjhyq1M1
-         euWLd2JYvftQikltbEmGqpqeXDZWBcoAY3U7f0LnISNDqEXqY7YmkAW5jMtjRq+twzlj
-         IvevWqVFrujbuYlN7fyNRDRMunu0RCMqOajYq7TA8dabeiy4VhjdTgPwm1ZXYgl2cf0b
-         8PNAZ3YakxLfheiYAywKQ6v/bjkt1F9S3pj2gK7B/lao1SJhtgkDnSbhzlKbHs0bpXBb
-         /UT9tXQkd9FaDju3e+dmTR1vx/hdb6uDYvW+htAE+kfGmGdaxusqADZUXhyAzq5u4sSA
-         ZHCg==
-X-Forwarded-Encrypted: i=1; AJvYcCWK0rCPnwdk+jRHXSc5oYIPnPer08Bo6zc6BJnvYZRxgQ9Rz8wee+Sx1hYAAT01S7QyzvQjdaEOs4lVdfg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQd6z/FTGtoyRgdJpKMHKtJyM2/gjcp5KhUTD6Zmi2ydQqAbJQ
-	oHhqTACrTaTz8E8YhEonBC8PHqTV0L5uDTgGCuFdhEjPYGAqtJlnTL9CgmgucA==
-X-Gm-Gg: ASbGncvU8WY0t2LR+JSLF53xD30g0z9vFUOIqcBWOaJtF/YGQv+pT7JkPOVWiq6GTuI
-	cKugkwHXnXPvRKicmTUA8/e/A2up3Ju+R+EI0vN6lHHV9e0MJo+Y0uM/MZohWFTTfAJa1hM4UmI
-	tdVUqrsaqbBcSq0x2tZH0rZAn0FjAYeCZ/pgEol//FOCDcPCG+0I8bXpS9SV0TD9HeCnNk4F958
-	ZiYt9LnOhPFojxS8sN9GA6Tia3gogUgCGNeW2UQdZU6P0ZwufXZBTv6tevSQYulL/7sTFJf9srC
-	TNOm+dZZ3CMnaaPnP09i7oZLfuPmDZBB0jjZfbaSF7JYqHbFJITcPxuXnvQ6gxfsPtA9G8/PAws
-	=
-X-Google-Smtp-Source: AGHT+IGnizYunFpSenPdVyJrCiuFufKGWT/loCBTenordDF8T4xZtxQ0l3MyreeYUCJDwjygnsUYzQ==
-X-Received: by 2002:a17:90b:3f48:b0:312:b4a:6342 with SMTP id 98e67ed59e1d1-31aaddfc24amr21116327a91.33.1751901622140;
-        Mon, 07 Jul 2025 08:20:22 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23c8459737csm91801415ad.220.2025.07.07.08.20.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Jul 2025 08:20:21 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Mon, 7 Jul 2025 08:20:20 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Wim Van Sebroeck <wim@linux-watchdog.org>
-Subject: Re: [PATCH v2 1/1] watchdog: Don't use "proxy" headers
-Message-ID: <94695f5a-3a92-421e-8dfd-6cee13343a3f@roeck-us.net>
-References: <20250627073753.589509-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1751901662; c=relaxed/simple;
+	bh=MMDzTIwflD/c7ViaPINS1dRraANKxnV5iV4Y9/FiAnM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=moW4g6XH4KDSmoTIm3uiCmAmajjIpGPBaBMvd8NVgVKwxQtMS5pgBqbhi/Wx6s6IOH/UyZP1MCOv3EIedxo4Ok+MFPhVLWTZIzruJUi0YY4OTMy0EPcpGB96N96OekSRu83At9ttDd53PKbrljJuA5MeJU5LYl4oRQwdA4DMuqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=Hhtprq5E; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=Zq2+ThBa+lAaOI5QZ1x0KzDEfrFEgq2eWz6RBj1v4QA=; b=Hhtprq5EbhIkcc473r6XI9FsIt
+	HPcAgrYA2Xhl9aRlTYSrPcW5cn0+koJvrV7aIWpDBxzSEUcavfOdvUiMIsOYZZh+qlq4e5qEUM14A
+	19h6waJK7mSkuNbH8PaPbQB9LpHZrqXpAkIEwxW+YSs37lR6LPWQqJ9I1ffA+Qkky56dsxFVago2S
+	P8iceOHi56MH9KiHUSX9rMxsvgtMnScTyclY1DwxeeEOu7M9lZT2dhkZyC6BQQqWmuJovlZuyasfv
+	AV2lESv+GF/JqcRn+LGiojiVinT0Bace7NC4JIG5xBtgi++YgmEyGS293I2JkTXVStHBERw64ZDDc
+	sziUIqWQ==;
+Received: from [81.79.92.254] (helo=[192.168.0.101])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1uYndu-00DbQm-Id; Mon, 07 Jul 2025 17:20:30 +0200
+Message-ID: <d4323b23-e977-4ea9-892a-78e11a2e98a9@igalia.com>
+Date: Mon, 7 Jul 2025 16:20:28 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250627073753.589509-1-andriy.shevchenko@linux.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/7] drm/sched/tests: Add unit test for cancel_job()
+To: Philipp Stanner <phasta@kernel.org>, Lyude Paul <lyude@redhat.com>,
+ Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Matthew Brost <matthew.brost@intel.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Sumit Semwal <sumit.semwal@linaro.org>,
+ Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>
+Cc: dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
+References: <20250707134221.34291-2-phasta@kernel.org>
+ <20250707134221.34291-5-phasta@kernel.org>
+Content-Language: en-GB
+From: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
+In-Reply-To: <20250707134221.34291-5-phasta@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jun 27, 2025 at 10:37:22AM +0300, Andy Shevchenko wrote:
-> Update header inclusions to follow IWYU (Include What You Use)
-> principle.
+
+On 07/07/2025 14:42, Philipp Stanner wrote:
+> The scheduler unit tests now provide a new callback, cancel_job(). This
+> callback gets used by drm_sched_fini() for all still pending jobs to
+> cancel them.
 > 
-> Note that kernel.h is discouraged to be included as it's written
-> at the top of that file.
+> Implement a new unit test to test this.
 > 
+> Signed-off-by: Philipp Stanner <phasta@kernel.org>
+> ---
+>   drivers/gpu/drm/scheduler/tests/tests_basic.c | 43 +++++++++++++++++++
+>   1 file changed, 43 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/scheduler/tests/tests_basic.c b/drivers/gpu/drm/scheduler/tests/tests_basic.c
+> index 7230057e0594..fa3da2db4893 100644
+> --- a/drivers/gpu/drm/scheduler/tests/tests_basic.c
+> +++ b/drivers/gpu/drm/scheduler/tests/tests_basic.c
+> @@ -204,6 +204,48 @@ static struct kunit_suite drm_sched_basic = {
+>   	.test_cases = drm_sched_basic_tests,
+>   };
+>   
+> +static void drm_sched_basic_cancel(struct kunit *test)
+> +{
+> +	struct drm_mock_sched_entity *entity;
+> +	struct drm_mock_scheduler *sched;
+> +	struct drm_mock_sched_job *job;
+> +	bool done;
+> +
+> +	/*
+> +	 * Check that the configured credit limit is respected.
+> +	 */
 
-0-day still reports:
+Copy & paste mishap.
 
-All errors (new ones prefixed by >>):
+> +
+> +	sched = drm_mock_sched_new(test, MAX_SCHEDULE_TIMEOUT);
+> +	sched->base.credit_limit = 1;
 
-   drivers/watchdog/it87_wdt.c: In function 'superio_enter':
->> drivers/watchdog/it87_wdt.c:121:14: error: implicit declaration of function 'request_muxed_region' [-Werror=implicit-function-declaration]
-     121 |         if (!request_muxed_region(REG, 2, WATCHDOG_NAME))
-         |              ^~~~~~~~~~~~~~~~~~~~
-   drivers/watchdog/it87_wdt.c: In function 'superio_exit':
->> drivers/watchdog/it87_wdt.c:135:9: error: implicit declaration of function 'release_region' [-Werror=implicit-function-declaration]
-     135 |         release_region(REG, 2);
+Ditto.
 
-Guenter
+> +
+> +	entity = drm_mock_sched_entity_new(test, DRM_SCHED_PRIORITY_NORMAL,
+> +					   sched);
+> +
+> +	job = drm_mock_sched_job_new(test, entity);
+> +
+> +	drm_mock_sched_job_submit(job);
+> +
+> +	done = drm_mock_sched_job_wait_scheduled(job, HZ);
+> +	KUNIT_ASSERT_TRUE(test, done);
+> +
+> +	drm_mock_sched_entity_free(entity);
+> +	drm_mock_sched_fini(sched);
+> +
+> +	KUNIT_ASSERT_EQ(test, job->hw_fence.error, -ECANCELED);
+> +}
+> +
+> +static struct kunit_case drm_sched_cancel_tests[] = {
+> +	KUNIT_CASE(drm_sched_basic_cancel),
+> +	{}
+> +};
+> +
+> +static struct kunit_suite drm_sched_cancel = {
+> +	.name = "drm_sched_basic_cancel_tests",
+> +	.init = drm_sched_basic_init,
+> +	.exit = drm_sched_basic_exit,
+> +	.test_cases = drm_sched_cancel_tests,
+> +};
+> +
+>   static void drm_sched_basic_timeout(struct kunit *test)
+>   {
+>   	struct drm_mock_scheduler *sched = test->priv;
+> @@ -471,6 +513,7 @@ static struct kunit_suite drm_sched_credits = {
+>   
+>   kunit_test_suites(&drm_sched_basic,
+>   		  &drm_sched_timeout,
+> +		  &drm_sched_cancel,
+>   		  &drm_sched_priority,
+>   		  &drm_sched_modify_sched,
+>   		  &drm_sched_credits);
+
+The rest looks good. With the comment fixed and credit limit setting 
+removed:
+
+Reviewed-by: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
+
+Regards,
+
+Tvrtko
+
 
