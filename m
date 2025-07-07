@@ -1,170 +1,148 @@
-Return-Path: <linux-kernel+bounces-719392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BE5BAFAD8A
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 09:47:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5ACFAFAD87
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 09:46:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CAE0C7ADB85
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 07:45:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECE653A6E5B
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 07:46:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB89E28A1F2;
-	Mon,  7 Jul 2025 07:46:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B85F928A1DB;
+	Mon,  7 Jul 2025 07:46:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="x+r1gjNG"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="0eU2vdzO"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9840428A1D3
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 07:46:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85E79279DC4
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 07:46:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751874412; cv=none; b=Rd9kqm+QSn6As+QC4DGNDYjhoH1ZgA3HWBP05gnnBWZujJnbD2RzL6KIf2u6ZVZGIZoIZsJ6RIQ7ZuY+5fc/Dhqup9LcSRHwSXjvPywaTAum5O8/nuJp8R/ytaXQhlES4CgVV648GGQGADManhp9BZv6N3GLpJNt6+hsAVLFjQQ=
+	t=1751874381; cv=none; b=bZYb51gd+yuIt32ZMLbY8SDGiUpUnJbsURwk8WLrTD/jSiRtHiFs7TWxt2qTqFoIkH9O0A2qtCdJfCe5zpPN63rlOScD69vHwQoFkLndT25S9vDqkOLfM7uFTAzpmva3IYnEKUPEkPPyEMsiAS2d+aWxcL3B5VaBbl85ab1FLVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751874412; c=relaxed/simple;
-	bh=wgirFmFyQOVRX7pwQ81LfLbwnMDKABb03D/FH3MjlU4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uCAjvfcICVBQqZSwBHt6Hv142KE1+4o+vkX1NUqR0qK4xxnn8fY/sQCD2dCkDz8i1f77Ss08XVkgjlzGA/iCyIPJxoHse4N0XWTjL99ZLljBgI84ze3ZVw/WCPkyHo+RqktSmw0AqmBj/LhB++yIDIB69KVWrZWODvlhaqkxiho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=x+r1gjNG; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-b2c2c762a89so2046179a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 00:46:50 -0700 (PDT)
+	s=arc-20240116; t=1751874381; c=relaxed/simple;
+	bh=o64n8HoG1i9o095L4gEk8V0ocOswj4uaUVhng4InqrE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QknN64cAKr9HqeBL9Kh0Wwd0p2rPly7UHYsRp6dcJ1UXxi0x1D1zeUjFOTixcJXQ/3zSzgPwBVg3THNPigdnfJt95IwgrM08f/HOvSMMwVMK9rowrLy4nVIOT0y21+jKkSWdZfL9yWzypwRM02ryAbkZKOKDthD4E0iF+svlm1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=0eU2vdzO; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-45348bff79fso30062595e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 00:46:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1751874410; x=1752479210; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=9fNW/ipNPp9E7WVydECVXrddec24Up9r1hPRynNq8M0=;
-        b=x+r1gjNGxw5g6G4kRYli/oyr4WXcCKQlzS3l8Q/oGyj1ZNPUWinqAJwheRFDZw+nOG
-         Bmob8DrWWS/E1T5zbiKh3t+eJkhaeAfRu4cIrUrHF6WWAyLXZhD787eoMQ0EojqGDoob
-         SzGiRxvA5YnxvufcLIEn011zKa3rg/WNdJq9fxylJCBn5OzrZ1hirNeTUZ1FdoyMAGlK
-         QIwHTwDw1wGm0qE8YB/UAf7yU25Wh61ytuJGRV6CpYT3GsOi1lZMZc9jxZDgchablKJc
-         QwNjSM2YVwjiFbZMeUB3xFirh34yGfkAJtvkjLmd7CSqGaLWaUSUjvlhb2aiL/Zzjplu
-         mUlA==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1751874378; x=1752479178; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RZ+2wJfPgdP5WPc++dQKTvMgEl9z5w1HH5OLhshcQSs=;
+        b=0eU2vdzOQ0Wl2S9F2s6jEqFb/ol7G3W02l7CyhpQmr8Yd/3wSstVJhMCQOrH13aJZz
+         ZV3x5nTD50082GLbcHPJnx0weq71Z0kO4tWqw88JI/3Nkn+blGVpRfreNz5qOEAP1sIO
+         mbtLV7wxinbCETjzY4i/4gsrvY3iezJlN+pe/xDmhRPc2oTiMVRMua2p1QCGyI15irNh
+         BsPgwrOu0BipmGOBR7jfFUf5wA1+WGmegWReGStO22Sk3nXE+cVyC/Ig+AsOBlaCTgQJ
+         gZ+XNxaL16WgBcsThoYlD8wkH94rr5JpuIIHw21u6f/oPPhoNweIJ/+DMjQN9K+z7TpD
+         q37Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751874410; x=1752479210;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9fNW/ipNPp9E7WVydECVXrddec24Up9r1hPRynNq8M0=;
-        b=tuX6w+5kyLkdt1o6Lr51MZtUcdtuxF6ED2qk67H1YjJwRbjIqjYOO+VnPi5Js6b8AV
-         MbmOnomfL9tMvvXcKmvblwz34eSVcSexiBGBGHKYAl1pybdOcxpfB+ZxzqJrz2qBXuvq
-         epRZPp6itzZKMsmrzunSxCZHa7iaKGQo+Y20/Qadyl2Tbnb1wGv9daT+Xo5ubSV3AE0/
-         LkzNtezj4duOlVGr05o+sIa+nUCDyI3/WrjW8hbWIF5gaSPl3pfjQfuL+5Xs6CQcrqWm
-         2bJ6CMpfgIWBhZhll+9BAST4zGmTNY+5TRlF2gAOWiWm5mGOSO7EpmoPq0XzpZPWO0Go
-         uLBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU5kOxwUODr2XeUf4XiONVM8pf4DeKtXqFYiGUQzYPmbDodgIARi7nx8ZGXMgn0kyWMzbNf26RTmB84muc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywyh+mrc7Yb/hBAV2jkMrMabI0RnUSIljrsk/1A//EofSu0oNgZ
-	Q80AAtA6WmxwamQ484B3XmcbWgRDC3qk+RhiESPtUyGfvQ9vvFPhUti9l1+tlhQwFS18gV3r7Xc
-	nT/4OGyb6TaQDoGsKrTIQz9VQTh5LRM22TDl2h63s
-X-Gm-Gg: ASbGncsoqAl4gsDVLlMYTGLoJarcq/ZNWvHs715IYIYB0k0liuzjHRbw01Dc6l5mIDP
-	RN5h1HRZKe7lWaFtzSpbqIUlZCAY74+H0fB0pZ3d+Ah2zSeoibG10XtqA1aiAFIa+gqBEI2zOq9
-	UJYOcqrNTsM5msOyC/cZ32bI/RDe9V/gSFhXYQHBvtgJJEXWQzD4ZS4CD7VsgcLZX8kyH+YRE2A
-	g==
-X-Google-Smtp-Source: AGHT+IGqO9oM46vaRZElMnGr6n15joXe3K7RM5q8sFYWV7Px+OQQzqoIe4GGrFaVhxXnxZxDnFNqlZsOgY72zLirvzc=
-X-Received: by 2002:a17:90b:57d0:b0:30e:5c7f:5d26 with SMTP id
- 98e67ed59e1d1-31aba8d28a3mr10983089a91.24.1751874409534; Mon, 07 Jul 2025
- 00:46:49 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1751874378; x=1752479178;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RZ+2wJfPgdP5WPc++dQKTvMgEl9z5w1HH5OLhshcQSs=;
+        b=IW3A6nO9758Ls5N/eR9a+h+K0JXmaiDay6nlGNyITM7srfwbZDZ7dOwjSkZS70IjIO
+         DjJnxWuZb1iD5yTj8VKQB50RWnAkZOCCRp3aeD2H8+UZgGqux1+ylRXN12+iuPdKTbGO
+         ZCZFpJaEyBxsMunS6oEiwLmpebvHGMbk3a0ZAf51jCalx63tFODk+3A3agvrYNz9qX3K
+         Pd2o7zN4Ke2U55UMBmovUVHpvGdNeac/Wx9V+4AAAd+Tz0dhPH1NIYG0p9k/ntTePn/H
+         XXCF5sYKzyT2RaZXX4cPKxExnAj+Iuracq23ODskZToxQotccsQHFy22gtyn95dOqOY2
+         erKA==
+X-Forwarded-Encrypted: i=1; AJvYcCXS3gYy6Cs42xEwRX3lI2/XPCBf1NYwgfzFXgmBoQusEp56IsUeFNa9yrT1B6cwlos/wzmY2tFXcGxGo+U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMfGC3+Bj7Qv1P426ME5NglQf+SP8UQMW7fIfdZUOzYDg48YD1
+	zry1JNrTFOul6sCbuswNlFSMVj15vs6lJGx9mnopHxNhmXY/HR4sKCkRQSWHTBrtnVM=
+X-Gm-Gg: ASbGncuOIrIav5jl0cV9F/ZRgXc2BYoPhp/tXipl2UzNyeuuFpAlRxFk7BROLa/Uwrw
+	Ju99jgclu457lWJ906XEF6XIY36X39ExMFwElbUgaJ3BiEuvGKxxr8mb9NEXagNoBau4J7YYiV0
+	XBn2XRfKJUb21XLhcY4fv0X2yRK+SSJGXmB6ICkJPqqCl+L3Ku4ALzvsu6akOt9U0b89OYRvfjm
+	XvFIo7VITeprakhdSoJYqrVCoElvoa2k36y0K3C42WwGhz1gucrDFJhQKHZCyhPuLcpRRRUzNr/
+	ckoLbpjATSZzFK8QvdP1DoNVqChRerakjc2qOpo7pL3VZdMPsPR87RknS0r6erE=
+X-Google-Smtp-Source: AGHT+IGTaLLGKNXhhZgLe2AjuiYxPCN/bEhBq84ie1Igf5JBLfyMw4WewC+BXOddVp59zT0kTEeIWg==
+X-Received: by 2002:a05:600c:1c21:b0:43c:fcbc:9680 with SMTP id 5b1f17b1804b1-454b4eb8326mr94737935e9.25.1751874377684;
+        Mon, 07 Jul 2025 00:46:17 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:3cf3:a61f:85ed:69db])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454b161e8fcsm105474075e9.7.2025.07.07.00.46.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Jul 2025 00:46:17 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Robert Richter <rric@kernel.org>,
+	Aaro Koskinen <aaro.koskinen@iki.fi>,
+	Andreas Kemnade <andreas@kemnade.info>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Roger Quadros <rogerq@kernel.org>,
+	Tony Lindgren <tony@atomide.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	linux-gpio@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-omap@vger.kernel.org
+Subject: Re: [PATCH 00/12] gpio: use new GPIO line value setter callbacks
+Date: Mon,  7 Jul 2025 09:46:15 +0200
+Message-ID: <175187437017.12064.15350480191939974588.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250702-gpiochip-set-rv-gpio-round3-v1-0-0d23be74f71d@linaro.org>
+References: <20250702-gpiochip-set-rv-gpio-round3-v1-0-0d23be74f71d@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1751862634.git.alx@kernel.org> <740755c1a888ae27de3f127c27bf925a91e9b264.1751862634.git.alx@kernel.org>
-In-Reply-To: <740755c1a888ae27de3f127c27bf925a91e9b264.1751862634.git.alx@kernel.org>
-From: Marco Elver <elver@google.com>
-Date: Mon, 7 Jul 2025 09:46:12 +0200
-X-Gm-Features: Ac12FXwJB9HCD4i8JLB6RoA7PkR95ZBhaAJktuICujVit91FZfsr8G443fGUagE
-Message-ID: <CANpmjNNQaAExO-E3-Z83MKfgavX4kb2C5GmefRZ0pXc5FPBazw@mail.gmail.com>
-Subject: Re: [RFC v3 5/7] mm: Fix benign off-by-one bugs
-To: Alejandro Colomar <alx@kernel.org>
-Cc: linux-mm@kvack.org, linux-hardening@vger.kernel.org, 
-	Kees Cook <kees@kernel.org>, Christopher Bazley <chris.bazley.wg14@gmail.com>, 
-	shadow <~hallyn/shadow@lists.sr.ht>, linux-kernel@vger.kernel.org, 
-	Andrew Morton <akpm@linux-foundation.org>, kasan-dev@googlegroups.com, 
-	Dmitry Vyukov <dvyukov@google.com>, Alexander Potapenko <glider@google.com>, Christoph Lameter <cl@linux.com>, 
-	David Rientjes <rientjes@google.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>, 
-	Andrew Clayton <andrew@digital-domain.net>, Jann Horn <jannh@google.com>, 
-	Linus Torvalds <torvalds@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Mon, 7 Jul 2025 at 07:06, Alejandro Colomar <alx@kernel.org> wrote:
->
-> We were wasting a byte due to an off-by-one bug.  s[c]nprintf()
-> doesn't write more than $2 bytes including the null byte, so trying to
-> pass 'size-1' there is wasting one byte.  Now that we use seprintf(),
-> the situation isn't different: seprintf() will stop writing *before*
-> 'end' --that is, at most the terminating null byte will be written at
-> 'end-1'--.
->
-> Fixes: bc8fbc5f305a (2021-02-26; "kfence: add test suite")
-> Fixes: 8ed691b02ade (2022-10-03; "kmsan: add tests for KMSAN")
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Not sure about the Fixes - this means it's likely going to be
-backported to stable kernels, which is not appropriate. There's no
-functional problem, and these are tests only, so not worth the churn.
 
-Did you run the tests?
+On Wed, 02 Jul 2025 11:14:01 +0200, Bartosz Golaszewski wrote:
+> Commit 98ce1eb1fd87e ("gpiolib: introduce gpio_chip setters that return
+> values") added new line setter callbacks to struct gpio_chip. They allow
+> to indicate failures to callers. We're in the process of converting all
+> GPIO controllers to using them before removing the old ones. This series
+> converts another round of GPIO drivers.
+> 
+> 
+> [...]
 
-Otherwise:
+Applied, thanks!
 
-Acked-by: Marco Elver <elver@google.com>
+[01/12] gpio: tegra186: don't call the set() callback directly
+        https://git.kernel.org/brgl/linux/c/47c228d9fc9fe7e3b6f0e7f88f40779f0bb96469
+[02/12] gpio: tegra186: use new GPIO line value setter callbacks
+        https://git.kernel.org/brgl/linux/c/871e1aee00298fccbda04eacd9e3bb5f46f446b9
+[03/12] gpio: tegra: use new GPIO line value setter callbacks
+        https://git.kernel.org/brgl/linux/c/8a81d128e1377a7662d0913bc5013eb8a90c3e33
+[04/12] gpio: thunderx: use new GPIO line value setter callbacks
+        https://git.kernel.org/brgl/linux/c/ecf0c0278f4799f6af245131f02dbb8587f87d29
+[05/12] gpio: timberdale: use new GPIO line value setter callbacks
+        https://git.kernel.org/brgl/linux/c/dd66f8862f8418d989a8e342ff7af26bf4a0ae8f
+[06/12] gpio: tpic2810: remove unneeded callbacks
+        https://git.kernel.org/brgl/linux/c/00c337cc68c34302fc0af2d9ac47be5c638d4a78
+[07/12] gpio: tpic2810: use new GPIO line value setter callbacks
+        https://git.kernel.org/brgl/linux/c/4ffdd9d8a37eaf4e25855e1038b9e1091401c252
+[08/12] gpio: tps65086: use new GPIO line value setter callbacks
+        https://git.kernel.org/brgl/linux/c/2a5be7a80b3b1036fba5dae13dd55c97fb7eabaa
+[09/12] gpio: tps65218: remove unneeded callbacks
+        https://git.kernel.org/brgl/linux/c/913cbf8a0d4b0554d66cdc608b231cdf2401a496
+[10/12] gpio: tps65218: use new GPIO line value setter callbacks
+        https://git.kernel.org/brgl/linux/c/4ca81a1f3a46603986cbdd11348433b0746ce483
+[11/12] gpio: tps65219: use new GPIO line value setter callbacks
+        https://git.kernel.org/brgl/linux/c/fc0e4091afa9b6c02f1cc2ddec75b248c25cefe6
+[12/12] gpio: tps6586x: use new GPIO line value setter callbacks
+        https://git.kernel.org/brgl/linux/c/e3ec7ad5ab139ad9e0ed8931ba562f95698c3b2f
 
-> Cc: Kees Cook <kees@kernel.org>
-> Cc: Christopher Bazley <chris.bazley.wg14@gmail.com>
-> Cc: Alexander Potapenko <glider@google.com>
-> Cc: Marco Elver <elver@google.com>
-> Cc: Dmitry Vyukov <dvyukov@google.com>
-> Cc: Alexander Potapenko <glider@google.com>
-> Cc: Jann Horn <jannh@google.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> Signed-off-by: Alejandro Colomar <alx@kernel.org>
-> ---
->  mm/kfence/kfence_test.c | 4 ++--
->  mm/kmsan/kmsan_test.c   | 2 +-
->  2 files changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/mm/kfence/kfence_test.c b/mm/kfence/kfence_test.c
-> index ff734c514c03..f02c3e23638a 100644
-> --- a/mm/kfence/kfence_test.c
-> +++ b/mm/kfence/kfence_test.c
-> @@ -110,7 +110,7 @@ static bool report_matches(const struct expect_report *r)
->
->         /* Title */
->         cur = expect[0];
-> -       end = &expect[0][sizeof(expect[0]) - 1];
-> +       end = ENDOF(expect[0]);
->         switch (r->type) {
->         case KFENCE_ERROR_OOB:
->                 cur = seprintf(cur, end, "BUG: KFENCE: out-of-bounds %s",
-> @@ -140,7 +140,7 @@ static bool report_matches(const struct expect_report *r)
->
->         /* Access information */
->         cur = expect[1];
-> -       end = &expect[1][sizeof(expect[1]) - 1];
-> +       end = ENDOF(expect[1]);
->
->         switch (r->type) {
->         case KFENCE_ERROR_OOB:
-> diff --git a/mm/kmsan/kmsan_test.c b/mm/kmsan/kmsan_test.c
-> index a062a46b2d24..882500807db8 100644
-> --- a/mm/kmsan/kmsan_test.c
-> +++ b/mm/kmsan/kmsan_test.c
-> @@ -105,7 +105,7 @@ static bool report_matches(const struct expect_report *r)
->
->         /* Title */
->         cur = expected_header;
-> -       end = &expected_header[sizeof(expected_header) - 1];
-> +       end = ENDOF(expected_header);
->
->         cur = seprintf(cur, end, "BUG: KMSAN: %s", r->error_type);
->
-> --
-> 2.50.0
->
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
