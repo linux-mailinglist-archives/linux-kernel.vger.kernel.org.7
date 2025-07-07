@@ -1,103 +1,166 @@
-Return-Path: <linux-kernel+bounces-719890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2013AFB431
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 15:17:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7681BAFB3F6
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 15:11:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 242613AA244
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 13:16:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D71CB17DD17
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 13:11:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C44B275867;
-	Mon,  7 Jul 2025 13:16:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0079529C347;
+	Mon,  7 Jul 2025 13:10:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b="hjHI+TV1"
-Received: from smtp76.ord1d.emailsrvr.com (smtp76.ord1d.emailsrvr.com [184.106.54.76])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DnULwCO6"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7EFD29DB96
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 13:16:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=184.106.54.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B05EE29AB0F
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 13:10:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751894207; cv=none; b=gndbNI3MvnhLeMipEbVBnzV8gGDTiNDavwBpG/aXsuxBcaBgEG9Pl57bpMUg3fnyrPcJBOR0r5dpi8Cs0ipiCc2gpQzq7DkArbze/EF+4G31fPX3rsN9vNp42vklTJZr1EGwMGWAL7LRykFVSj6xrv3CTqEmz6dsjtJkeDQilNQ=
+	t=1751893850; cv=none; b=eJeHkXkGfzlCXVQ7RSN2C9Kvf28npbMoAfVQNc7n+BnDwfIngK1rumQiCIjLENUxF92kNMrc0pg8GPfavFpE5RGhACMA3OJD+XxhMPeEdjXXnDpKzr2gnO/KrMZLI4KTvclY5mEGhskGn8nPrqMqN9g37mkW5sof3kXw1WP4f7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751894207; c=relaxed/simple;
-	bh=+MQNrRajYzgRvJT9hs9COOwWego2BbwUc1ZTW5K/jsc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UCg/G/wHrMjQsK/Asan4cUhRawHg2FE46EX7AHUDcxp8GYvJrBMqgSGbTdKnTSGQXu/jCjsKggl9Cb7dtTTsW5cHvPV6mPLnx+vfto5dIM7mBf6X6K6r1cXBs98H1V3m1VHCnVNadXmZpPF48e7n917UyCFQ6+RpnoYNYUsg7ZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk; spf=pass smtp.mailfrom=mev.co.uk; dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b=hjHI+TV1; arc=none smtp.client-ip=184.106.54.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mev.co.uk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mev.co.uk;
-	s=20221208-6x11dpa4; t=1751893769;
-	bh=+MQNrRajYzgRvJT9hs9COOwWego2BbwUc1ZTW5K/jsc=;
-	h=From:To:Subject:Date:From;
-	b=hjHI+TV16vJ28lA73bl0OFuRRqePNCgVDLiDuZP/HJJZg87fNC0Ojta2iE8khUHPE
-	 gCJMNhj7OKHyet9Ojt85ak7bv/7IXbZZ0+Rsy1heGDMBfRXU1NaepvAlycdkSa42uu
-	 sFc00qaOazzoqCRMzqbBaBLCqcg2P6BV5+H/qHeU=
-X-Auth-ID: abbotti@mev.co.uk
-Received: by smtp10.relay.ord1d.emailsrvr.com (Authenticated sender: abbotti-AT-mev.co.uk) with ESMTPSA id 5C9C4A0219;
-	Mon,  7 Jul 2025 09:09:28 -0400 (EDT)
-From: Ian Abbott <abbotti@mev.co.uk>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Ian Abbott <abbotti@mev.co.uk>,
-	H Hartley Sweeten <hsweeten@visionengravers.com>,
-	syzbot+c52293513298e0fd9a94@syzkaller.appspotmail.com,
-	"Enju, Kohei" <enjuk@amazon.co.jp>,
-	stable@vger.kernel.org
-Subject: [PATCH] comedi: das16m1: Fix bit shift out of bounds
-Date: Mon,  7 Jul 2025 14:09:08 +0100
-Message-ID: <20250707130908.70758-1-abbotti@mev.co.uk>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1751893850; c=relaxed/simple;
+	bh=T2e37E+d/+lUzdWBKT7ClU2tmNtETnO9/Zor50pUvEI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Febm3M068cG9UjGDb+5SWJjXDWRihEE4BA/XMH4D/bWTf3WUnw8hqSBXlMixQF/EcJVqdI2Oe7Jt7/oWd/QRZ+O7iCXwAMDQZ0jUOLOXymN9BT3XnfLhMQXU+lCoe3wFZUOfw4vRSANWIjqNYgaIgs/vyLCodlVMgJdBRAjOfCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DnULwCO6; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1751893847;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XEurCXj6cd5Czu7Fsl+l7GrfZnKLx/Ef+aDXjk7dI/Y=;
+	b=DnULwCO6he/Uh80N4noxlGcrHTL8qv5YT9uO+oLIj3IfW4PUI/4GcW2ULUzkCWGfHTQsf0
+	QQ06xmkPF9N9/t4lxGVDtag++kO+RNRzskwlRWIiC1K3Gr4rOBvI/YQIN8+IGYP0p0e3SL
+	FKElSdJtMXesHHYtUXEz1s15m5+184Q=
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
+ [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-137-_XPxgxA_P5WWJa8d4LFntQ-1; Mon, 07 Jul 2025 09:10:46 -0400
+X-MC-Unique: _XPxgxA_P5WWJa8d4LFntQ-1
+X-Mimecast-MFC-AGG-ID: _XPxgxA_P5WWJa8d4LFntQ_1751893846
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7d099c1779dso456656885a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 06:10:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751893846; x=1752498646;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XEurCXj6cd5Czu7Fsl+l7GrfZnKLx/Ef+aDXjk7dI/Y=;
+        b=cG4EHrA6Phg4+gJ1p0wTLA76Xb7C9ddc5i/ghlHJ01IiMKGcBn5IB8yw3/3KgCXRl8
+         vyLzTRoiUKLfQOHjHgUSV5nH65cXmLCAvnI+s53drG9NDenrBX0jcUgM80j+PSaPlls4
+         Q2xepxTwsRPoyIqrmDXYwDVlZbGB8g1vSRTRUY4AiCvU3m+2tIul8GLXDHxmHq5obU+u
+         bG2VYoelNENJfQtbkixKqVrZeO7P+f9GUSpcR40Ba0MH9mR1DomMgEk+1dSGOFopEorN
+         3wxzX3ZcPz0juxn1cAkKIlwJ/A/sXjnWRSv1gVLD/qv9On/Vxr6Xh5KFRCh7c7btIltk
+         laOA==
+X-Forwarded-Encrypted: i=1; AJvYcCXwQ8L0nFeZJlfpPCE3MoZajhOofVkCMUjKc7mvyXyI82Nm1Ip7ozrtTfyR5vD07rGGttjYImHEmAE27r4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzbHPyJrn1FFdwpdUkq5F4Y51GcLwLmrY23uy1sn9CCqZSqEhLd
+	RFSgMrhazAgZxMsb83DIqb6dJchqE8H8m6tYDW1OafwCY6AwQTcnSFAIQ2RJqHdfxYn+5RCIoN+
+	Dpgf2nz9DmvjzibAzzUQoskJgNJnOmVflvbc+pnXiURwBCi2WmjVGx/Q8XL37hOHhTg==
+X-Gm-Gg: ASbGncuLDYdPTVITVpHDc2/a7RDon/o5dP3KSn83zfHN529nf9rV+fobl18NoaCMpEv
+	qUvfBQVi+q6BJYX0mDYs4IQkcH7L1gP6zzYIeg4tZtLVB6kyl2CepwA6vEu8/Ol3/0hFzLSA695
+	4ZP8BG5yiY6461npusaDzWUb+3fmY7qX9wDgky2uxD5LxQa8HepdlApCh9sRID2enl7r7MYOZQZ
+	kNiSkMRDNSRcu5xZCcy5qnk0wPbYPWt65Js2nUxirbrqoscWHmlFTRedcfY2wJUaRaQgZjQ9+3E
+	gc+aRwTIAwH/CHzN7Jv4oD0UeBOYTmNo4xBxOZJgqnT22z80x7V49w==
+X-Received: by 2002:a05:6214:2269:b0:6fb:597f:b4d0 with SMTP id 6a1803df08f44-702c6d0e528mr171252556d6.6.1751893845176;
+        Mon, 07 Jul 2025 06:10:45 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHES3tBHX5kljzjo+zsdbXDUJb6DU8frN39bUwjA5eUGrwKv9iaI5DG5u57DeA1U5hMj2i4tA==
+X-Received: by 2002:a05:6214:2269:b0:6fb:597f:b4d0 with SMTP id 6a1803df08f44-702c6d0e528mr171251906d6.6.1751893844672;
+        Mon, 07 Jul 2025 06:10:44 -0700 (PDT)
+Received: from jkangas-thinkpadp1gen3.rmtuswa.csb ([2601:1c2:4301:5e20:98fe:4ecb:4f14:576b])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-702c4cc771esm57828126d6.6.2025.07.07.06.10.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Jul 2025 06:10:44 -0700 (PDT)
+Date: Mon, 7 Jul 2025 06:10:41 -0700
+From: Jared Kangas <jkangas@redhat.com>
+To: sumit.semwal@linaro.org, benjamin.gaignard@collabora.com,
+	Brian.Starkey@arm.com, jstultz@google.com, tjmercier@google.com,
+	christian.koenig@amd.com
+Cc: mripard@kernel.org, linux-media@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 0/3] dma-buf: heaps: Use constant name for CMA heap
+Message-ID: <aGvHUTC7Kbe9lru3@jkangas-thinkpadp1gen3.rmtuswa.csb>
+References: <20250610131231.1724627-1-jkangas@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Classification-ID: c1dbfb42-cac4-4372-8215-e9f6cc597d88-1-1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250610131231.1724627-1-jkangas@redhat.com>
 
-When checking for a supported IRQ number, the following test is used:
+On Tue, Jun 10, 2025 at 06:12:28AM -0700, Jared Kangas wrote:
+> Hi all,
+> 
+> This patch series is based on a previous discussion around CMA heap
+> naming. [1] The heap's name depends on the device name, which is
+> generally "reserved", "linux,cma", or "default-pool", but could be any
+> arbitrary name given to the default CMA area in the devicetree. For a
+> consistent userspace interface, the series introduces a constant name
+> for the CMA heap, and for backwards compatibility, an additional Kconfig
+> that controls the creation of a legacy-named heap with the same CMA
+> backing.
+> 
+> The ideas to handle backwards compatibility in [1] are to either use a
+> symlink or add a heap node with a duplicate minor. However, I assume
+> that we don't want to create symlinks in /dev from module initcalls, and
+> attempting to duplicate minors would cause device_create() to fail.
+> Because of these drawbacks, after brainstorming with Maxime Ripard, I
+> went with creating a new node in devtmpfs with its own minor. This
+> admittedly makes it a little unclear that the old and new nodes are
+> backed by the same heap when both are present. The only approach that I
+> think would provide total clarity on this in userspace is symlinking,
+> which seemed like a fairly involved solution for devtmpfs, but if I'm
+> wrong on this, please let me know.
+> 
+> Changelog:
+> 
+> v4:
+>   - Fix ERR_PTR() usage for negative return value.
+> 
+> v3:
+>   - Extract documentation markup fix to separate patch.
+>   - Adjust DEFAULT_CMA_NAME per discussion in [2].
+>   - Warn if the legacy heap name and the default heap name are the same.
+>   - Fix DMABUF_HEAPS_CMA_LEGACY prompt.
+>   - Touch up commit log wording.
+> 
+> v2:
+>   - Use tabs instead of spaces for large vertical alignment.
+> 
+> [1]: https://lore.kernel.org/all/f6412229-4606-41ad-8c05-7bbba2eb6e08@ti.com/
+> [2]: https://lore.kernel.org/all/CANDhNCroe6ZBtN_o=c71kzFFaWK-fF5rCdnr9P5h1sgPOWSGSw@mail.gmail.com/
+> 
+> Jared Kangas (3):
+>   Documentation: dma-buf: heaps: Fix code markup
+>   dma-buf: heaps: Parameterize heap name in __add_cma_heap()
+>   dma-buf: heaps: Give default CMA heap a fixed name
+> 
+>  Documentation/userspace-api/dma-buf-heaps.rst | 11 +++---
+>  drivers/dma-buf/heaps/Kconfig                 | 10 ++++++
+>  drivers/dma-buf/heaps/cma_heap.c              | 36 +++++++++++++++----
+>  3 files changed, 46 insertions(+), 11 deletions(-)
+> 
+> -- 
+> 2.49.0
+> 
 
-	/* only irqs 2, 3, 4, 5, 6, 7, 10, 11, 12, 14, and 15 are valid */
-	if ((1 << it->options[1]) & 0xdcfc) {
+Hi Sumit,
 
-However, `it->options[i]` is an unchecked `int` value from userspace, so
-the shift amount could be negative or out of bounds.  Fix the test by
-requiring `it->options[1]` to be within bounds before proceeding with
-the original test.
+Just wanted to check in on this since discussion has died down this
+iteration: what's the status on this series? If there's anything I can
+do to help, I'm happy to lend a hand.
 
-Reported-by: syzbot+c52293513298e0fd9a94@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=c52293513298e0fd9a94
-Fixes: 729988507680 ("staging: comedi: das16m1: tidy up the irq support in das16m1_attach()")
-Tested-by: syzbot+c52293513298e0fd9a94@syzkaller.appspotmail.com
-Suggested-by: "Enju, Kohei" <enjuk@amazon.co.jp>
-Cc: <stable@vger.kernel.org> # 5.13+
-Signed-off-by: Ian Abbott <abbotti@mev.co.uk>
----
-Patch does not apply cleanly to longterm kernels 5.4.x and 5.10.x.
----
- drivers/comedi/drivers/das16m1.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/comedi/drivers/das16m1.c b/drivers/comedi/drivers/das16m1.c
-index b8ea737ad3d1..1b638f5b5a4f 100644
---- a/drivers/comedi/drivers/das16m1.c
-+++ b/drivers/comedi/drivers/das16m1.c
-@@ -522,7 +522,8 @@ static int das16m1_attach(struct comedi_device *dev,
- 	devpriv->extra_iobase = dev->iobase + DAS16M1_8255_IOBASE;
- 
- 	/* only irqs 2, 3, 4, 5, 6, 7, 10, 11, 12, 14, and 15 are valid */
--	if ((1 << it->options[1]) & 0xdcfc) {
-+	if (it->options[1] >= 2 && it->options[1] <= 15 &&
-+	    (1 << it->options[1]) & 0xdcfc) {
- 		ret = request_irq(it->options[1], das16m1_interrupt, 0,
- 				  dev->board_name, dev);
- 		if (ret == 0)
--- 
-2.47.2
+Thanks,
+Jared
 
 
