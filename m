@@ -1,200 +1,136 @@
-Return-Path: <linux-kernel+bounces-720585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2225CAFBDCF
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 23:45:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5B54AFBDD3
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 23:47:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F30AA7A9A89
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 21:43:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40D004A2631
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 21:47:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE12828A704;
-	Mon,  7 Jul 2025 21:45:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D86B9273D89;
+	Mon,  7 Jul 2025 21:47:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="k528TRLa"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="I1yqhyV2"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53D5D1C6FE1;
-	Mon,  7 Jul 2025 21:45:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F8289461
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 21:47:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751924702; cv=none; b=gq3AgvRuhARGnt5et6WcBMPSvWtleVvX8mW/Z75CKtk2O8bPVstWwFLMPmF+QDo/6rCZT+2ytCJnQDahKkMQiybVoDpjEz5F3wKdWQgy3kXVwGuG0Spi/5RwzjbD8o478CA7+pqLI0iR6+7JTXf/2n2SwBXyUEMaQeAUC3IcsbE=
+	t=1751924839; cv=none; b=jGCORn4jWPKs1VaFIIr/OBWpOB+GXR0mwBVF5GyguRBmkbx4j/4Owwrl8cpPHjng7l8LR620VKvb8B3MnThW2y9X+/c81s4CHBz/Vc2voWCiGKjfaY4rBmHouVIjaJ1GsR3ajipAgWnmEhI/14fpsB01rrAe/aAyvpPquYTxXfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751924702; c=relaxed/simple;
-	bh=0tUdt6DB/neRCcNzGewSHU8P2x8r0GshuAng71UKIZo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VwdE1vTThXGIJSGmPCQAJmz89b9GF4pVrwMhLm18qLflP+yfoJGDpHDUjRDI6vwPlRVEuQSE2tcufvq4mJ8rHLWUE8vMF7MmVqfL8CjzGVet18JVI3YDxi6t99PDxVM3aj4EKHiJfeWE2dp7UsPEGAAe4ejLZXaESQMKlxWCIJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=k528TRLa; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751924701; x=1783460701;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=0tUdt6DB/neRCcNzGewSHU8P2x8r0GshuAng71UKIZo=;
-  b=k528TRLaLawefhOLLqFFzhRf0E4jgH8enb44bfClyEy6B2CC1zgMsmRo
-   Rr+mHTuAlZeFpeMsDYYVOhKOx6ed0vW7MOp2LNauqFLDaTuZX9qnTwTAL
-   rdrGxUjpKkjubl8Ih9roxCaBRQdAtGTrlniOnljmx9/Fj654pzWBDglYh
-   Sm7WjT8m5YzjKAQnQw7bdANOYvNmF9byEb+VwjTmPJoiSez2N79kX1BT4
-   hxMgxy4/zsjivhlXi0ElDLdln0J8fnUkcvns7/XdeNH5KdnPGPjJQOLV/
-   IUYgPLz4P05IM1v4lxoEe9gvyFurWrFLTCXusYkELJfQboqsk2AW0S3SJ
-   A==;
-X-CSE-ConnectionGUID: yLjwkDkXT9effGiZrIyx4g==
-X-CSE-MsgGUID: PqTjcx6GSZiSvLY5ZmHWfg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="65506076"
-X-IronPort-AV: E=Sophos;i="6.16,295,1744095600"; 
-   d="scan'208";a="65506076"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jul 2025 14:45:00 -0700
-X-CSE-ConnectionGUID: 4oRYXnwDTbCQvHvzk/H1kg==
-X-CSE-MsgGUID: 5b2sbxx1QpeewBLwqhQTag==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,295,1744095600"; 
-   d="scan'208";a="160870545"
-Received: from cpetruta-mobl1.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.244.166])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jul 2025 14:44:55 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with ESMTP id 2720711F94F;
-	Tue,  8 Jul 2025 00:44:53 +0300 (EEST)
-Date: Mon, 7 Jul 2025 21:44:53 +0000
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Ricardo Ribalda <ribalda@chromium.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-acpi@vger.kernel.org
-Subject: Re: [PATCH v2 05/12] media: ipu-bridge: Use v4l2_fwnode for unknown
- rotations
-Message-ID: <aGw_1T_Edm8--gXW@kekkonen.localdomain>
-References: <20250605-uvc-orientation-v2-0-5710f9d030aa@chromium.org>
- <20250605-uvc-orientation-v2-5-5710f9d030aa@chromium.org>
+	s=arc-20240116; t=1751924839; c=relaxed/simple;
+	bh=xQDbRNfVfZv0+y11tB2EKaA8FFqA1z3RBvBPSbFeA54=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GL1+GCaxLGD/DCWivskwkNaDMXaEg3oMb2MXr7xuGfzcL+Cp6G5n1Lk3rrGTFif4CooGlclXBgg8oQNO/FlJtTT5l3IIjIf/qwbCcR2GAo3/hSGrLJRosPcbCQ+5TbZcH/YSrgwKB4OkHTkc80Qms/CH1vNAPJZW1dD1aYd9D2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=I1yqhyV2; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-ae0c571f137so705336966b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 14:47:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ionos.com; s=google; t=1751924835; x=1752529635; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cqRVwJSKQQY1nSLn4FD47iWJkCmPkugCmM3eGBfPGHU=;
+        b=I1yqhyV2odvwzxWvpMbpf/82KvQ45JEuNCbbQnU92/4Sg/WO4WLWf+tj9nlPkN5nmH
+         g9skFBVuqsk9JxuXkXalv7csXub7RmmLxHKlUWA1fTygCl0nEFWrt0Tmdskl0AYA3+CF
+         JQtom/cuVXV6lCGhvYr0Y8LpuupR2QE41ZW2hFmQfiw4hw53SZzF8TnCDSJWwKRv4jkd
+         sJr2EubV+Psb8NeGweUT/7BgwlIWuOQvx7mcjb16KHsL2Y8ehi7yaSxUo1JnS9eXbPsn
+         XnDGznT3ulG6ofkPmXKhTXedDjVLdtE+lZ4NlnW73h/ZgUf4z/sjfNLaPj1t2/PvNu4R
+         jheQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751924835; x=1752529635;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cqRVwJSKQQY1nSLn4FD47iWJkCmPkugCmM3eGBfPGHU=;
+        b=NkAy3oYe3GSY9zj2stkRsBFCutId9sym7cmOgzHPZxGT4J1OrBM59pUF8Q0SSkvL8d
+         uZP4aIJhELLT7VNpdWOl4YAOLs0YSdy5yjmVKPC2jjzHTqZan3uSYcwb7itd4f+tALl7
+         cbIYS1dcuoZyim6Fpui2/MBsrtLgY+e39NxSBFpMCeRK1c+ppfn7C4lTEWNipl/N9v7B
+         Zm/bflUfynZCfMB9Nmt+eXw75Qu6/d4CxS8V0BPmXSc+8hERASx6VjsNhNfCdHGQ6TkW
+         8hkzDbZuOF97VdRk7ZJxWCQX9LTXjR6akkDZOUo0t+EVIgN8wRFP+NpJPkwbdM7n3duq
+         wlUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWpMec14jGuzM/glAYeqHMoh7H0Vg0X2hYbhrh+q/PX7rZM64JbNth8T7U83ZdGu/6M0QFtn1437VWk1nw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWKW6JNOQORtoRZZNWwjWVvA2VJYbtvVoX2jkUwnW+otWqjm65
+	XS4o3uv74miojZfqzO4Re0aHnKxmyg6unhWGIKE/JG17/8NvSf98aS8WBrNMpxvs47BrkXumPv/
+	qgOHnP2jKInU0gnqDlsLvsI0XDF2bSyUUSFNDQJwuLOhG+npQbrS6
+X-Gm-Gg: ASbGnct8gdMks7ZBGCmoVlthWq8mHncBhOlZl/8kiBpon3GPhlCY6jFn7SdfMygnS+o
+	5hdBGq1BoWYDBGdTCn7eD6g40m4qadeXeAE5UuPmvEEJ+Cb9t4j7YvH+etQqaO3reaTZBQHgwZq
+	uEFUTIbIyS3sIf01n5SexbPs94R+oegbfJ4OwqeIvdyrYaDKUg1BYOfXkB3rRLQjnrBXbwFP+YA
+	qhk4kW93w==
+X-Google-Smtp-Source: AGHT+IFPNoVmEcs7wAEqVmA7HP71JAVStC82SXtVhf0LshRru5Fe87brBKKj2kBthtNK6RIi+HisBFxJJ25oCTP+9Ag=
+X-Received: by 2002:a17:907:3cc9:b0:ae0:da2f:dcf3 with SMTP id
+ a640c23a62f3a-ae6b0ef437fmr55035866b.59.1751924835558; Mon, 07 Jul 2025
+ 14:47:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250605-uvc-orientation-v2-5-5710f9d030aa@chromium.org>
+References: <20250707180026.GG1880847@ZenIV> <CAKPOu+-QzSzUw4q18FsZFR74OJp90rs9X08gDxWnsphfwfwxoQ@mail.gmail.com>
+ <20250707193115.GH1880847@ZenIV> <CAKPOu+_q7--Yfoko2F2B1WD=rnq94AduevZD1MeFW+ib94-Pxg@mail.gmail.com>
+ <20250707203104.GJ1880847@ZenIV> <CAKPOu+8kLwwG4aKiArX2pKq-jroTgq0MSWW2AC1SjO-G9O_Aog@mail.gmail.com>
+ <20250707204918.GK1880847@ZenIV> <CAKPOu+9qpqSSr300ZDduXRbj6dwQo8Cp2bskdS=gfehcVx-=ug@mail.gmail.com>
+ <20250707205952.GL1880847@ZenIV> <CAKPOu+8zjtLkjYzCCVyyC80YgekMws4vGOvnPLjvUiQ6zWaqaA@mail.gmail.com>
+ <20250707213214.GM1880847@ZenIV>
+In-Reply-To: <20250707213214.GM1880847@ZenIV>
+From: Max Kellermann <max.kellermann@ionos.com>
+Date: Mon, 7 Jul 2025 23:47:04 +0200
+X-Gm-Features: Ac12FXzyHE2ANbrRtR4qKsoA3RappyPKFiS-DEojD2-bZWUpdKSvG5cpmZY2wDo
+Message-ID: <CAKPOu+-JxtBnjxiLDXWFNQrD=4dR_KtJbvEdNEzJA33ZqKGuAw@mail.gmail.com>
+Subject: Re: [PATCH v3 20/21] __dentry_kill(): new locking scheme
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Ricardo,
+On Mon, Jul 7, 2025 at 11:32=E2=80=AFPM Al Viro <viro@zeniv.linux.org.uk> w=
+rote:
+> The second d_walk() does not have the if (!data.found) break; after it.
+> So if your point is that we should ignore these and bail out as soon as w=
+e
+> reach that state, we are not getting any closer to it.
 
-On Thu, Jun 05, 2025 at 05:52:58PM +0000, Ricardo Ribalda wrote:
-> The v4l2_fwnode_device_properties contains information about the
-> rotation. Use it if the ssdb data is inconclusive.
+Not quite. My point is that you shouldn't be busy-waiting. And
+whatever it is that leads to busy-waiting, it should be fixed
 
-As SSDB and _PLD provide the same information, are they always aligned? Do
-you have any experience on how is this actually in firmware?
+I don't know how the dcache works, and whatever solution I suggest,
+it's not well-founded. I still don't even know why you added that "<0"
+check.
 
-_PLD is standardised so it would seem reasonable to stick to that -- if it
-exists. Another approach could be to pick the one that doesn't translate to
-a sane default (0°).
+> The second d_walk() is specifically about the stuff already in some other
+> thread's shrink list.  If it finds more than that, all the better, but th=
+e
+> primary goal is to make some progress in case if there's something in
+> another thread's shrink list they are yet to get around to evicting.
+>
+> Again, what would you have it do?  The requirement is to take out everyth=
+ing
+> that has no busy descendents.
 
-> 
-> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> ---
->  drivers/media/pci/intel/ipu-bridge.c | 30 +++++++++++++++++++-----------
->  1 file changed, 19 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/media/pci/intel/ipu-bridge.c b/drivers/media/pci/intel/ipu-bridge.c
-> index 020aa52f590d66b6d333adc56ebfb9ab0561db51..6f436a8b4d23373af8a6668530333a827eca467a 100644
-> --- a/drivers/media/pci/intel/ipu-bridge.c
-> +++ b/drivers/media/pci/intel/ipu-bridge.c
-> @@ -236,37 +236,41 @@ static int ipu_bridge_read_acpi_buffer(struct acpi_device *adev, char *id,
->  }
->  
->  static u32 ipu_bridge_parse_rotation(struct acpi_device *adev,
-> -				     struct ipu_sensor_ssdb *ssdb)
-> +				     struct ipu_sensor_ssdb *ssdb,
-> +				     struct v4l2_fwnode_device_properties *props)
->  {
->  	switch (ssdb->degree) {
->  	case IPU_SENSOR_ROTATION_NORMAL:
->  		return 0;
->  	case IPU_SENSOR_ROTATION_INVERTED:
->  		return 180;
-> -	default:
-> +	}
-> +
-> +	if (props->rotation == V4L2_FWNODE_PROPERTY_UNSET) {
->  		dev_warn(ADEV_DEV(adev),
->  			 "Unknown rotation %d. Assume 0 degree rotation\n",
->  			 ssdb->degree);
->  		return 0;
->  	}
-> +
-> +	return props->rotation;
->  }
->  
-> -static enum v4l2_fwnode_orientation ipu_bridge_parse_orientation(struct acpi_device *adev)
-> +static enum v4l2_fwnode_orientation
-> +ipu_bridge_parse_orientation(struct acpi_device *adev,
-> +			     struct v4l2_fwnode_device_properties *props)
->  {
-> -	struct v4l2_fwnode_device_properties props;
-> -	int ret;
-> -
-> -	ret = v4l2_fwnode_device_parse(ADEV_DEV(adev), &props);
-> -	if (!ret || props.rotation == V4L2_FWNODE_PROPERTY_UNSET) {
-> +	if (props->orientation == V4L2_FWNODE_PROPERTY_UNSET) {
->  		dev_warn(ADEV_DEV(adev), "Using default orientation\n");
->  		return V4L2_FWNODE_ORIENTATION_EXTERNAL;
->  	}
->  
-> -	return props.orientation;
-> +	return props->orientation;
->  }
->  
->  int ipu_bridge_parse_ssdb(struct acpi_device *adev, struct ipu_sensor *sensor)
->  {
-> +	struct v4l2_fwnode_device_properties props;
->  	struct ipu_sensor_ssdb ssdb = {};
->  	int ret;
->  
-> @@ -274,6 +278,10 @@ int ipu_bridge_parse_ssdb(struct acpi_device *adev, struct ipu_sensor *sensor)
->  	if (ret)
->  		return ret;
->  
-> +	ret = v4l2_fwnode_device_parse(ADEV_DEV(adev), &props);
-> +	if (ret)
-> +		return ret;
-> +
->  	if (ssdb.vcmtype > ARRAY_SIZE(ipu_vcm_types)) {
->  		dev_warn(ADEV_DEV(adev), "Unknown VCM type %d\n", ssdb.vcmtype);
->  		ssdb.vcmtype = 0;
-> @@ -287,8 +295,8 @@ int ipu_bridge_parse_ssdb(struct acpi_device *adev, struct ipu_sensor *sensor)
->  	sensor->link = ssdb.link;
->  	sensor->lanes = ssdb.lanes;
->  	sensor->mclkspeed = ssdb.mclkspeed;
-> -	sensor->rotation = ipu_bridge_parse_rotation(adev, &ssdb);
-> -	sensor->orientation = ipu_bridge_parse_orientation(adev);
-> +	sensor->rotation = ipu_bridge_parse_rotation(adev, &ssdb, &props);
-> +	sensor->orientation = ipu_bridge_parse_orientation(adev, &props);
->  
->  	if (ssdb.vcmtype)
->  		sensor->vcm_type = ipu_vcm_types[ssdb.vcmtype - 1];
-> 
+A descendant that is dying (i.e. d_lockref.count<0 but still linked in
+its parent because Ceph is waiting for an I/O completion), is that
+"busy" or "not busy"? What was your idea of handling such a dentry
+when you wrote this patch?
 
--- 
-Regards,
+> BTW, is that the same dentry all along in your reproducer?  Or does it sw=
+itch
+> to a different dentry after a while?
 
-Sakari Ailus
+I'm hunting a Ceph bug that causes I/O completion wait to never finish
+while reconnecting to the Ceph MDS, therefore it's always the same
+dentry. But that's only an extreme example - the general problem with
+busy looping in the dentry cache is always there, even when the
+request finishes after a few milliseconds - that means you'll be
+busy-waiting for these milliseconds, which is still a bad idea. It
+wastes CPU cycles for no reason and drains the battery / accelerates
+climate change.
 
