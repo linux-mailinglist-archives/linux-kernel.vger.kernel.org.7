@@ -1,168 +1,201 @@
-Return-Path: <linux-kernel+bounces-720302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE117AFBA01
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 19:38:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EC69AFBA05
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 19:39:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A10837AD5B8
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 17:37:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A090189F8B6
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 17:40:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE0B223027C;
-	Mon,  7 Jul 2025 17:38:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5F212D8779;
+	Mon,  7 Jul 2025 17:39:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.us header.i=len.bao@gmx.us header.b="jzZAXPQK"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HPttIjEn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2A0C1531D5
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 17:38:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F35E1C7009;
+	Mon,  7 Jul 2025 17:39:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751909906; cv=none; b=Jt/9pMH6Gt42k2fvIknl/dq9JMA50Vzhx/eoEi9YPFXU5PZ7YXd2xXRb06zOota3A5j+qK+1DE68oITKpJNVVd5oY6f8x+F+jbs006QXoniT0vBGvpn1TztG0+BBD5J3zRe7y0yc3VlPWFutnq4hTlUTGDiYLLqPzNTvyzVfl94=
+	t=1751909984; cv=none; b=ClkME5EBTtYCS9tK+svig97wczKIwUiLmbhxLm8WQuH5AFEqG+ptRB3GkXH96XczZia6MQuZkTz4cb7U2FPeQynuv3KMiKZTiFRJYKKJeSlb2L9v58KI6kZefy0P8aexV+MNkI2jtaBF4mNGB6MVyg+0OuPupBUJ+n7ReC4+UUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751909906; c=relaxed/simple;
-	bh=nVDkaUfKo3r4J+x2tvT9MRT1HddQxYFEW8i1YBoXzQQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Qmt3vFQa+Neqw6mXdciAV6Ztans4sWg/CFZSfADgIUaoe7h2FRLNpswH23+AoX4dFR98P9cLWvBRBzHswUdc4b4BWnHOIO88xGoRjz9pfDIllfceG16AhhjoROKyrcRR//Beiebj3fGWiqzbE1xZv5HAUpSinotmO6jaX7UCeV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.us; spf=pass smtp.mailfrom=gmx.us; dkim=pass (2048-bit key) header.d=gmx.us header.i=len.bao@gmx.us header.b=jzZAXPQK; arc=none smtp.client-ip=212.227.17.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.us
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.us
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.us;
-	s=s31663417; t=1751909891; x=1752514691; i=len.bao@gmx.us;
-	bh=M/R9PLJBJYuOUjT8ZMwGj7nkYG6TVpUT7FXWdZjV6ZE=;
-	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-ID:
-	 MIME-Version:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=jzZAXPQKQNW/wGESODtspOsnjMhsoxmh9Ot1EQB7mPepZITXmLNNU98gvWY5STsv
-	 vuVfc9yF+NZIxyHLzod+T+P9ZONhdtoV6vg8QJi9BNA85Brs8z+gsqBpLzGKkx+OE
-	 rOazV4KKJYt9HpIs7iBzefuDZ4aVUvSJdZzzlsMMJumTecemALcafsKeYa++xAb1b
-	 sI6R5USytS1ZsHF1kI0iSrI/IkKltA62pw8+0yoP6w6VRCzbz/m3pVyc5ws7sDHqV
-	 XA0W7LmYbdKtbcd/+VF0jH0L7e37QmstqXH6GNEQGsXD15eRtKkIkwOgc2YZegUGF
-	 0VHyp+XqODx3Z040WA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from ubuntu ([79.159.188.137]) by mail.gmx.net (mrgmx105
- [212.227.17.174]) with ESMTPSA (Nemesis) id 1MeCpb-1v7tED2n3P-00lozv; Mon, 07
- Jul 2025 19:38:11 +0200
-From: Len Bao <len.bao@gmx.us>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>
-Cc: Len Bao <len.bao@gmx.us>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] drm/dp: Remove dead code after return statement
-Date: Mon,  7 Jul 2025 17:37:34 +0000
-Message-ID: <20250707173736.13743-1-len.bao@gmx.us>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1751909984; c=relaxed/simple;
+	bh=l+3iXjYGj1UpOXLJrT43d9M5v15VGrgjIsaEmWHnlnQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q5H6LxHl4/MYBcqt9UVEoZmhLarUnikTdQ2Qh3pzOTswRa2Cof21lWiopDcoZHs55lcShXdeUS/1IByWVom3Nr96zVCITfuMm7P9evLBNDFAmhpGtbfNCEjaV6Au7PzYphpkEcbdABmXw2M3VSPpgM3y9UBF32enkkaY9Wsf5qM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HPttIjEn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93A93C4CEE3;
+	Mon,  7 Jul 2025 17:39:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751909982;
+	bh=l+3iXjYGj1UpOXLJrT43d9M5v15VGrgjIsaEmWHnlnQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HPttIjEnmPAnCKgpeOWt4ktMrN65mudK91LH4ggTI9W1jtedjRId7w5nmq4vHdyTr
+	 CEtduZ+pljjwRe6H66Gc5GHT0y7i3zGZ3uCldWnx+wC8sR4+JIDYYbZTNsNWZLXdE2
+	 15lWasxQTL4GDer73CwNfUPutq3FS6KcjyVZ3Vkrh7/k93R1GDL3AylQulro2TKFmx
+	 kfqsX7Rv2PKmDBdtKF8VGsMAtwhy4xv0dB8erpvX3T4ySF4vY+x9/FfhITDmyiWPEq
+	 9fci7JmKqnt7VFb7xgCcljSQXm6wgbFwfa4hm8sWSmN4yEMXyX7j2Z9pFuiRA5mJ8W
+	 MRfIeNrPqkppw==
+Date: Mon, 7 Jul 2025 10:39:42 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: John Groves <John@groves.net>
+Cc: Amir Goldstein <amir73il@gmail.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	Bernd Schubert <bschubert@ddn.com>,
+	John Groves <jgroves@micron.com>, Jonathan Corbet <corbet@lwn.net>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Jeff Layton <jlayton@kernel.org>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Stefan Hajnoczi <shajnocz@redhat.com>,
+	Joanne Koong <joannelkoong@gmail.com>,
+	Josef Bacik <josef@toxicpanda.com>,
+	Aravind Ramesh <arramesh@micron.com>,
+	Ajay Joshi <ajayjoshi@micron.com>
+Subject: Re: [RFC V2 10/18] famfs_fuse: Basic fuse kernel ABI enablement for
+ famfs
+Message-ID: <20250707173942.GC2672029@frogsfrogsfrogs>
+References: <20250703185032.46568-1-john@groves.net>
+ <20250703185032.46568-11-john@groves.net>
+ <CAOQ4uxi7fvMgYqe1M3_vD3+YXm7x1c4YjA=eKSGLuCz2Dsk0TQ@mail.gmail.com>
+ <yhso6jddzt6c7glqadrztrswpisxmuvg7yopc6lp4gn44cxd4m@my4ajaw47q7d>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:3CTQjgmwRVdVmDjx4HGYavnyrdnxebsFFlGi7tDWRcZvYkiEniq
- 1LM1I5kS3Zo1bX2wp3h7HvwBEJ59ZD+wKrA8slmc19fhSSxIkHusmcdc4lQ2C4yC9rD6Q0C
- 0tpuiMeJfP7dfLtGw2PsEtRODt4KCREphWSLc/cOYSHW/vapsXNWg9wu97za/TWJUpVAChZ
- vPlEVqPydoWZ50vywndNQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:WsczdQz7jgc=;X3icrgLILKzbIvyv+3kmSrXscXJ
- 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
- mDQqSrxA+4bSXDJPknGQ==
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <yhso6jddzt6c7glqadrztrswpisxmuvg7yopc6lp4gn44cxd4m@my4ajaw47q7d>
 
-Coverity noticed that the code after the return statement in the
-"drm_dp_pcon_frl_configure_2" function is never reached. So, it can be
-safely removed.
+On Fri, Jul 04, 2025 at 08:39:59AM -0500, John Groves wrote:
+> On 25/07/04 09:54AM, Amir Goldstein wrote:
+> > On Thu, Jul 3, 2025 at 8:51 PM John Groves <John@groves.net> wrote:
+> > >
+> > > * FUSE_DAX_FMAP flag in INIT request/reply
+> > >
+> > > * fuse_conn->famfs_iomap (enable famfs-mapped files) to denote a
+> > >   famfs-enabled connection
+> > >
+> > > Signed-off-by: John Groves <john@groves.net>
+> > > ---
+> > >  fs/fuse/fuse_i.h          |  3 +++
+> > >  fs/fuse/inode.c           | 14 ++++++++++++++
+> > >  include/uapi/linux/fuse.h |  4 ++++
+> > >  3 files changed, 21 insertions(+)
+> > >
+> > > diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+> > > index 9d87ac48d724..a592c1002861 100644
+> > > --- a/fs/fuse/fuse_i.h
+> > > +++ b/fs/fuse/fuse_i.h
+> > > @@ -873,6 +873,9 @@ struct fuse_conn {
+> > >         /* Use io_uring for communication */
+> > >         unsigned int io_uring;
+> > >
+> > > +       /* dev_dax_iomap support for famfs */
+> > > +       unsigned int famfs_iomap:1;
+> > > +
+> > 
+> > pls move up to the bit fields members.
+> 
+> Oops, done, thanks.
+> 
+> > 
+> > >         /** Maximum stack depth for passthrough backing files */
+> > >         int max_stack_depth;
+> > >
+> > > diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+> > > index 29147657a99f..e48e11c3f9f3 100644
+> > > --- a/fs/fuse/inode.c
+> > > +++ b/fs/fuse/inode.c
+> > > @@ -1392,6 +1392,18 @@ static void process_init_reply(struct fuse_mount *fm, struct fuse_args *args,
+> > >                         }
+> > >                         if (flags & FUSE_OVER_IO_URING && fuse_uring_enabled())
+> > >                                 fc->io_uring = 1;
+> > > +                       if (IS_ENABLED(CONFIG_FUSE_FAMFS_DAX) &&
+> > > +                           flags & FUSE_DAX_FMAP) {
+> > > +                               /* XXX: Should also check that fuse server
+> > > +                                * has CAP_SYS_RAWIO and/or CAP_SYS_ADMIN,
+> > > +                                * since it is directing the kernel to access
+> > > +                                * dax memory directly - but this function
+> > > +                                * appears not to be called in fuse server
+> > > +                                * process context (b/c even if it drops
+> > > +                                * those capabilities, they are held here).
+> > > +                                */
+> > > +                               fc->famfs_iomap = 1;
+> > > +                       }
+> > 
+> > 1. As long as the mapping requests are checking capabilities we should be ok
+> >     Right?
+> 
+> It depends on the definition of "are", or maybe of "mapping requests" ;)
+> 
+> Forgive me if this *is* obvious, but the fuse server capabilities are what
+> I think need to be checked here - not the app that it accessing a file.
+> 
+> An app accessing a regular file doesn't need permission to do raw access to
+> the underlying block dev, but the fuse server does - becuase it is directing
+> the kernel to access that for apps.
+> 
+> > 2. What's the deal with capable(CAP_SYS_ADMIN) in process_init_limits then?
+> 
+> I *think* that's checking the capabilities of the app that is accessing the
+> file, and not the fuse server. But I might be wrong - I have not pulled very
+> hard on that thread yet.
 
-Coverity-id: 1648885
-Fixes: af67978ee37e5 ("drm/display: dp: use new DCPD access helpers")
-Signed-off-by: Len Bao <len.bao@gmx.us>
-=2D--
-Changes in v2:
- - Remove the variable definition (kernel test robot)
+The init reply should be processed in the context of the fuse server.
+At that point the kernel hasn't exposed the fs to user programs, so
+(AFAICT) there won't be any other programs accessing that fuse mount.
 
-v1 -> https://lore.kernel.org/all/20250706162431.15029-1-len.bao@gmx.us/
-=2D--
- drivers/gpu/drm/display/drm_dp_helper.c | 5 -----
- 1 file changed, 5 deletions(-)
+> > 3. Darrick mentioned the need for a synchronic INIT variant for his work on
+> >     blockdev iomap support [1]
+> 
+> I'm not sure that's the same thing (Darrick?), but I do think Darrick's
+> use case probably needs to check capabilities for a server that is sending
+> apps (via files) off to access extents of block devices.
 
-diff --git a/drivers/gpu/drm/display/drm_dp_helper.c b/drivers/gpu/drm/dis=
-play/drm_dp_helper.c
-index dc622c78d..fcff51b6e 100644
-=2D-- a/drivers/gpu/drm/display/drm_dp_helper.c
-+++ b/drivers/gpu/drm/display/drm_dp_helper.c
-@@ -3577,7 +3577,6 @@ EXPORT_SYMBOL(drm_dp_pcon_frl_configure_1);
- int drm_dp_pcon_frl_configure_2(struct drm_dp_aux *aux, int max_frl_mask,
- 				u8 frl_type)
- {
--	int ret;
- 	u8 buf =3D max_frl_mask;
-=20
- 	if (frl_type =3D=3D DP_PCON_FRL_LINK_TRAIN_EXTENDED)
-@@ -3586,10 +3585,6 @@ int drm_dp_pcon_frl_configure_2(struct drm_dp_aux *=
-aux, int max_frl_mask,
- 		buf &=3D ~DP_PCON_FRL_LINK_TRAIN_EXTENDED;
-=20
- 	return drm_dp_dpcd_write_byte(aux, DP_PCON_HDMI_LINK_CONFIG_2, buf);
--	if (ret < 0)
--		return ret;
--
--	return 0;
- }
- EXPORT_SYMBOL(drm_dp_pcon_frl_configure_2);
-=20
-=2D-=20
-2.43.0
+I don't know either, Miklos hasn't responded to my questions.  I think
+the motivation for a synchronous 
 
+As for fuse/iomap, I just only need to ask the kernel if iomap support
+is available before calling ext2fs_open2() because the iomap question
+has some implications for how we open the ext4 filesystem.
+
+> > I also wonder how much of your patches and Darrick's patches end up
+> > being an overlap?
+> 
+> Darrick and I spent some time hashing through this, and came to the conclusion
+> that the actual overlap is slim-to-none. 
+
+Yeah.  The neat thing about FMAPs is that you can establish repeating
+patterns, which is useful for interleaved DRAM/pmem devices.  Disk
+filesystems don't do repeating patterns, so they'd much rather manage
+non-repeating mappings.
+
+--D
+
+> > 
+> > Thanks,
+> > Amir.
+> > 
+> > [1] https://lore.kernel.org/linux-fsdevel/20250613174413.GM6138@frogsfrogsfrogs/
+> 
+> Thank you!
+> John
+> 
 
