@@ -1,88 +1,153 @@
-Return-Path: <linux-kernel+bounces-720537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6053DAFBCFF
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 23:00:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A1DBAFBD02
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 23:00:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1AA231AA7A3B
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 21:00:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A4C91BC0DA5
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 21:01:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A06C326FD97;
-	Mon,  7 Jul 2025 20:59:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0C1427FD50;
+	Mon,  7 Jul 2025 21:00:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="rRKLJxfJ"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bCS4dlVm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 438BD192580;
-	Mon,  7 Jul 2025 20:59:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3886E27E04F;
+	Mon,  7 Jul 2025 21:00:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751921996; cv=none; b=LP4SLJvHqXQDT1OLsppiYCUolt/PlxaPxIFi57oXHCiGLKHpEF4YEzuygHq/Hgd0swZS5JyVY2C96VCilCIiqQCqcb8fkLaPYfMJl7RHF4KX3LXAqd1wsKRRl8eWl9+TBQgGXurhn6CprgZrNPIlIqJjfUFH0Iadcyj8WgtIiJ8=
+	t=1751922040; cv=none; b=T4LrJQJuLF75DF984Z7gFGxkLeeOdxpnqPYG5gW9LR+aLvnAjOpscSJmJj9nqAhUDwk58PQZwrQLk9aEbrdhmew5s49aDAtkMvvbKZbKa8Q4KeFJ5UIqiiPhqEXpvD8f21XpH7xnFmUkvBrMuppmSOeanh421wEXa7vACLmUrTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751921996; c=relaxed/simple;
-	bh=+y7EztdV6WpqRU9cifADpRNzPWKc1leXEQnVxp6c7mo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f9O+eSKzyl7cAKl1W1ta1SQYxXorIoq1727fWzBwjJKJQlnQ1tP07nenLV2cvlPpaAhBrRjOBAMd5tTD2vK8Wr/LvOx1zDoOY+ly7dJrDuq7nxNUTRjU/n9v1RQ3vh+WHcbLMsII+dGKwASPA3AX2bE0gbbBXEhC/lT/uae2BmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=rRKLJxfJ; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description;
-	bh=Z8/myWqj0qI/9Ufgc2xvyx0Q85nxC+PgJ1iynCR7Yew=; b=rRKLJxfJMHMB5RbPOmMYnJjqAq
-	ZnPaUUdgjIqHmnqiOTthVYC0WT0nErQdCANOsXRyqcIloLoVDFDNU+vFrmtmMXJK6u3p64PAkOMcO
-	1oPCCzysGIYKz6MMRiOQ0nXutNh13q142fvvLXrSbWF/8U25UK7X7oFgNl5msPJ4+Tu8pfVp1j8TC
-	jkGhJMSPoNTkcSM1KKS90SxLR7e90Odhya3kTjlgBFnF73Qxfw4oRcrvKR9RkmVDfdrwfT5JvAStY
-	8M/QeV9bJ/aCKdfAg8WKBpk/nqocrufzqUI8ssh6RXIciFjnFU/RPGqyD9BLeDTEMe13LcngCND+z
-	IfmNzYOw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uYswK-00000003nYD-2TUZ;
-	Mon, 07 Jul 2025 20:59:52 +0000
-Date: Mon, 7 Jul 2025 21:59:52 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Max Kellermann <max.kellermann@ionos.com>
-Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 20/21] __dentry_kill(): new locking scheme
-Message-ID: <20250707205952.GL1880847@ZenIV>
-References: <20250707172956.GF1880847@ZenIV>
- <CAKPOu+87UytVk_7S4L-y9We710j4Gh8HcacffwG99xUA5eGh7A@mail.gmail.com>
- <20250707180026.GG1880847@ZenIV>
- <CAKPOu+-QzSzUw4q18FsZFR74OJp90rs9X08gDxWnsphfwfwxoQ@mail.gmail.com>
- <20250707193115.GH1880847@ZenIV>
- <CAKPOu+_q7--Yfoko2F2B1WD=rnq94AduevZD1MeFW+ib94-Pxg@mail.gmail.com>
- <20250707203104.GJ1880847@ZenIV>
- <CAKPOu+8kLwwG4aKiArX2pKq-jroTgq0MSWW2AC1SjO-G9O_Aog@mail.gmail.com>
- <20250707204918.GK1880847@ZenIV>
- <CAKPOu+9qpqSSr300ZDduXRbj6dwQo8Cp2bskdS=gfehcVx-=ug@mail.gmail.com>
+	s=arc-20240116; t=1751922040; c=relaxed/simple;
+	bh=ly/B021ynYzPCz1B63mrRbLIIKOdCMkQUxYcm0H81YE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Bu5v1HR72U8avCRHuHd7gudPkT9nXLRJQdJ+TUHcXxDEFQKpXPxsxdpnzuddeAb96ip8SCq21+touL4jXfMtZ0uqLqUPIWqsMTeYFDY94+RLZXtSl1bhsuctbKG3okCQBdTeWnEnsZEnmQ2XejUAXEchQPQNrdX7OtnOGHQHXQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bCS4dlVm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E01C2C4CEE3;
+	Mon,  7 Jul 2025 21:00:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751922039;
+	bh=ly/B021ynYzPCz1B63mrRbLIIKOdCMkQUxYcm0H81YE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=bCS4dlVmb6G0eHO6gwM5KgLApXv+p1pvwi3tE8cLIzARq+1MaJZueScgTDRlYcKox
+	 zyKGQU6239B8KB7wr9wlfoAYbfzN8jxl7L5jHmwjk0XLIK7zko5+LLcPe0TG6NerME
+	 Bd+xw0KWwETD68YqKtNwnGITXWdoIX1y5ga7EZzVIZyUXi7MjodUcsAta15Kyafu6l
+	 luTscLqYgBJ3WwZAJPwvzfptMsgc4yQAen2oFlqn94BJVGX5DZKnxdJ68vb/YRJTly
+	 MqEzv/wggfp3NTFcU8QyTY3KY6rj8Vr4n6TLdaE1WHORP93dyDAZD7sxiUhzTth/HT
+	 tPA7H9IOGYPjQ==
+Message-ID: <54f9d2ee-5c04-4756-8695-54a9176ddac6@kernel.org>
+Date: Mon, 7 Jul 2025 23:00:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAKPOu+9qpqSSr300ZDduXRbj6dwQo8Cp2bskdS=gfehcVx-=ug@mail.gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 0/5] media: uvcvideo: Introduce
+ V4L2_META_FMT_UVC_MSXU_1_5 + other meta fixes
+To: Ricardo Ribalda <ribalda@chromium.org>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-usb@vger.kernel.org, stable@vger.kernel.org
+References: <20250707-uvc-meta-v8-0-ed17f8b1218b@chromium.org>
+Content-Language: en-US, nl
+From: Hans de Goede <hansg@kernel.org>
+In-Reply-To: <20250707-uvc-meta-v8-0-ed17f8b1218b@chromium.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jul 07, 2025 at 10:52:38PM +0200, Max Kellermann wrote:
-> On Mon, Jul 7, 2025 at 10:49 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
-> > Yes, but where does that ceph_evict_inode() come from?  What's in its call chain?
-> > Is it several shrink_dcache_parent() fighting each other on the same tree, or...?
+Hi Ricardo,
+
+On 7-Jul-25 8:34 PM, Ricardo Ribalda wrote:
+> This series introduces a new metadata format for UVC cameras and adds a
+> couple of improvements to the UVC metadata handling.
 > 
-> I described that already in my first email, but here you have a full
-> kernel call stack (in this example, the shrinker is invoked from a
-> user process due to memcg pressure):
+> The new metadata format can be enabled in runtime with quirks.
+> 
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> ---
+> Changes in v8:
+> - Dynamically fill dev->meta_formats instead of be const.
+> - Link to v7: https://lore.kernel.org/r/20250617-uvc-meta-v7-0-9c50623e2286@chromium.org
 
-Umm...  Note that further in that loop we'll be actively stealing the stuff from that
-shrink list that hasn't gotten to __dentry_kill().  Does your busy loop go into
-if (data.victim) after the second d_walk()?  IOW, does it manage to pull anything out
-of that shrink list?
+Thank you for the new version. I've merged this series
+and pushed this to uvc/for-next now.
+
+Regards,
+
+Hans
+
+
+
+
+> Changes in v7:
+> - Add patch: Introduce dev->meta_formats
+> - Link to v6: https://lore.kernel.org/r/20250604-uvc-meta-v6-0-7141d48c322c@chromium.org
+> 
+> Changes in v6 (Thanks Laurent):
+> - Fix typo in metafmt-uvc.rst
+> - Improve metafmt-uvc-msxu-1-5.rst
+> - uvc_meta_v4l2_try_format() block MSXU format unless the quirk is
+>   active
+> - Refactor uvc_enable_msxu
+> - Document uvc_meta_detect_msxu
+> - Rebase series
+> - Add R-b
+> - Link to v5: https://lore.kernel.org/r/20250404-uvc-meta-v5-0-f79974fc2d20@chromium.org
+> 
+> Changes in v5:
+> - Fix codestyle and kerneldoc warnings reported by media-ci
+> - Link to v4: https://lore.kernel.org/r/20250403-uvc-meta-v4-0-877aa6475975@chromium.org
+> 
+> Changes in v4:
+> - Rename format to V4L2_META_FMT_UVC_MSXU_1_5 (Thanks Mauro)
+> - Flag the new format with a quirk.
+> - Autodetect MSXU devices.
+> - Link to v3: https://lore.kernel.org/linux-media/20250313-uvc-metadata-v3-0-c467af869c60@chromium.org/
+> 
+> Changes in v3:
+> - Fix doc syntax errors.
+> - Link to v2: https://lore.kernel.org/r/20250306-uvc-metadata-v2-0-7e939857cad5@chromium.org
+> 
+> Changes in v2:
+> - Add metadata invalid fix
+> - Move doc note to a separate patch
+> - Introduce V4L2_META_FMT_UVC_CUSTOM (thanks HdG!).
+> - Link to v1: https://lore.kernel.org/r/20250226-uvc-metadata-v1-1-6cd6fe5ec2cb@chromium.org
+> 
+> ---
+> Ricardo Ribalda (5):
+>       media: uvcvideo: Do not mark valid metadata as invalid
+>       media: Documentation: Add note about UVCH length field
+>       media: uvcvideo: Introduce dev->meta_formats
+>       media: uvcvideo: Introduce V4L2_META_FMT_UVC_MSXU_1_5
+>       media: uvcvideo: Auto-set UVC_QUIRK_MSXU_META
+> 
+>  .../userspace-api/media/v4l/meta-formats.rst       |   1 +
+>  .../media/v4l/metafmt-uvc-msxu-1-5.rst             |  23 +++++
+>  .../userspace-api/media/v4l/metafmt-uvc.rst        |   4 +-
+>  MAINTAINERS                                        |   1 +
+>  drivers/media/usb/uvc/uvc_driver.c                 |   7 ++
+>  drivers/media/usb/uvc/uvc_metadata.c               | 115 +++++++++++++++++++--
+>  drivers/media/usb/uvc/uvc_video.c                  |  12 +--
+>  drivers/media/usb/uvc/uvcvideo.h                   |   7 ++
+>  drivers/media/v4l2-core/v4l2-ioctl.c               |   1 +
+>  include/linux/usb/uvc.h                            |   3 +
+>  include/uapi/linux/videodev2.h                     |   1 +
+>  11 files changed, 161 insertions(+), 14 deletions(-)
+> ---
+> base-commit: a8598c7de1bcd94461ca54c972efa9b4ea501fb9
+> change-id: 20250403-uvc-meta-e556773d12ae
+> 
+> Best regards,
+
 
