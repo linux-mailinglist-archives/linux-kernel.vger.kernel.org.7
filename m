@@ -1,390 +1,277 @@
-Return-Path: <linux-kernel+bounces-719040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B600AFA91E
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 03:38:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D51EAFA8DC
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 03:32:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CF7E189B7F0
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 01:37:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B17F1894E84
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 01:32:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5AA7223702;
-	Mon,  7 Jul 2025 01:32:52 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47DD81A5BAF;
+	Mon,  7 Jul 2025 01:32:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="Et7mPVOA"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 531AF1C7017;
-	Mon,  7 Jul 2025 01:32:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8F65C2D1;
+	Mon,  7 Jul 2025 01:32:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751851971; cv=none; b=CjbfPC+E8QRJ1Iq42iBykJYx8erLT4taBN4YK4HZgi+YhEuIosaobrO2CjKyOWqTW4hS4AGtO0HC0y+x40BX6rLNx9GLCjmRp25q8fiMjc8wiBm/xyBxWugJtusX3mZGK9rApJL6sQ/eAqfdSM8MFjsI3pAp929YzULWDqQO7ao=
+	t=1751851931; cv=none; b=KthSVD01zYTe3gJsFHv3ZxVeerBmaBPot3FFC2h0ygwlzjZC5qbYRcy6CQgxb1UUxaC0qAyN6T1fN3wyrsFCc9njmTDrUVazdnOPvfefJVoxJ0OFUA0zJhXWMTxKsTePwz4chhssIECvo/yB2Lyx00FtvsNaqXJ2WPNljDBJMR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751851971; c=relaxed/simple;
-	bh=n27BftNqXRM7r3ieQZr04aRkNFf2LZTYJj09JWVEgy8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=dvAIHp1fP8GqxYTpqby4kyFHuHKdOiGPQ6Ug3bZJTaYcmyW+maz7TUtNQEBSiWaVPoRlBnyZTFcn59ZZr+oW62knnaaYdFsGY1Yvc8oLrmlBZLS9W8ftR6Z8y9/LQ2h3SHFlVn4DXX0dVX6Mfca7kwrl0EUpKWq3eHbhyissM8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bb6Dv0BJGzYQv55;
-	Mon,  7 Jul 2025 09:32:47 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.252])
-	by mail.maildlp.com (Postfix) with ESMTP id D2AD01A0CEC;
-	Mon,  7 Jul 2025 09:32:45 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP3 (Coremail) with SMTP id _Ch0CgDnSCazI2to_nSRAw--.35890S19;
-	Mon, 07 Jul 2025 09:32:45 +0800 (CST)
-From: Yu Kuai <yukuai1@huaweicloud.com>
-To: agk@redhat.com,
-	snitzer@kernel.org,
-	mpatocka@redhat.com,
-	song@kernel.org,
-	yukuai3@huawei.com
-Cc: dm-devel@lists.linux.dev,
-	linux-raid@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	yukuai1@huaweicloud.com,
-	yi.zhang@huawei.com,
-	yangerkun@huawei.com,
-	johnny.chenyi@huawei.com
-Subject: [PATCH v5 15/15] md/md-bitmap: introduce CONFIG_MD_BITMAP
-Date: Mon,  7 Jul 2025 09:27:11 +0800
-Message-Id: <20250707012711.376844-16-yukuai1@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20250707012711.376844-1-yukuai1@huaweicloud.com>
-References: <20250707012711.376844-1-yukuai1@huaweicloud.com>
+	s=arc-20240116; t=1751851931; c=relaxed/simple;
+	bh=IW19vkM+WgzYyKgs+KB1+kX5URfaqgNo4sRqlgvsJks=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HGKdHIqgOMkbGu47adVpgqnRC57/JLfmWH7v8wvPcWh0uwQeOBnVaXxwe6FF9iZf2qr0Jw7/S9LVj/TzzY9WhvOlE5Eb5kcfutuZRppDEicMBujVw3lRhzoONssusJceR/xEubI+g+OXI6LUoFZr2h61D2dxTDkC/LTagX+3rbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=Et7mPVOA; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 2b112de05ad211f0b1510d84776b8c0b-20250707
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=fWI6BpT7hGFbp5pWpPP8o4VtcwWijLHVnyFJ8IuxvbE=;
+	b=Et7mPVOAUW0I5DXsHwyUNoaK4TKlqzfWY+if8+fVV4eQOw11sw1V8t7xkx/ztKV5uZMHOmdBrFB82b8sf9BinpySZZyV4ziLoSboJs/ywyndBvqvabJccZ1Y1kAuA7CN3f32rbNRldX8YJM/ZMMZqxd87GK7mwe8zAj5x18OZvA=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.2,REQID:92eafe6f-46ba-4bca-bd60-cbcebc3d543c,IP:0,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
+	elease,TS:0
+X-CID-META: VersionHash:9eb4ff7,CLOUDID:27fec79c-b8a9-480a-b7e5-687022facff7,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:-3,IP:ni
+	l,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: 2b112de05ad211f0b1510d84776b8c0b-20250707
+Received: from mtkmbs14n2.mediatek.inc [(172.21.101.76)] by mailgw01.mediatek.com
+	(envelope-from <shangyao.lin@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1183457902; Mon, 07 Jul 2025 09:31:56 +0800
+Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
+ mtkmbs13n2.mediatek.inc (172.21.101.108) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.39; Mon, 7 Jul 2025 09:31:54 +0800
+Received: from mtksitap99.mediatek.inc (10.233.130.16) by
+ mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1258.39 via Frontend Transport; Mon, 7 Jul 2025 09:31:54 +0800
+From: shangyao lin <shangyao.lin@mediatek.com>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>
+CC: Shangyao Lin <shangyao.lin@mediatek.com>, <linux-media@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
+	<dri-devel@lists.freedesktop.org>, <linaro-mm-sig@lists.linaro.org>,
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>
+Subject: [PATCH v2 00/13] Add MediaTek ISP7.x camera system support
+Date: Mon, 7 Jul 2025 09:31:41 +0800
+Message-ID: <20250707013154.4055874-1-shangyao.lin@mediatek.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+MIME-Version: 1.0 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_Ch0CgDnSCazI2to_nSRAw--.35890S19
-X-Coremail-Antispam: 1UD129KBjvJXoWxKF4rWw4fury3CrWrWFWDCFg_yoWfJF1kpF
-	WrJF15Cr45JFWaqa17Ja4DuFyYqr1ktr9rtryfGw1rCF9xXr98JF4rWFyUtrykGFyxZFsx
-	Za1rGFWUCF1UWr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUmS14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
-	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
-	z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F
-	4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq
-	3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7
-	IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4U
-	M4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2
-	kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkE
-	bVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67
-	AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVW8JVW5JwCI
-	42IY6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF
-	4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBI
-	daVFxhVjvjDU0xZFpf9x0JUQFxUUUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Content-Type: text/plain
 
-From: Yu Kuai <yukuai3@huawei.com>
+Based on linux-next tag: next-20250630
 
-Now that all implementations are internal, it's sensible to add a config
-option for md-bitmap, and it's a good way for isolation.
+This patch set adds the MediaTek ISP7.x camera system hardware driver.
 
-Signed-off-by: Yu Kuai <yukuai3@huawei.com>
----
- drivers/md/Kconfig     | 18 ++++++++++++++++++
- drivers/md/Makefile    |  3 ++-
- drivers/md/md-bitmap.c | 23 +++++++++++++++++++++--
- drivers/md/md-bitmap.h | 17 +++++++++++++++--
- drivers/md/md.c        | 40 ++++++++++++++++++++++++++++------------
- drivers/md/md.h        |  3 +--
- 6 files changed, 85 insertions(+), 19 deletions(-)
+The driver sets up ISP hardware, handles interrupts, and initializes
+V4L2 device nodes and functions. It also implements a V4L2 standard video
+driver utilizing the media framework APIs, connects sensors and the ISP
+via the seninf interface, and communicates with the SCP co-processor to
+compose ISP registers in firmware.
 
-diff --git a/drivers/md/Kconfig b/drivers/md/Kconfig
-index ddb37f6670de..f913579e731c 100644
---- a/drivers/md/Kconfig
-+++ b/drivers/md/Kconfig
-@@ -37,6 +37,21 @@ config BLK_DEV_MD
- 
- 	  If unsure, say N.
- 
-+config MD_BITMAP
-+	bool "MD RAID bitmap support"
-+	default y
-+	depends on BLK_DEV_MD
-+	help
-+	  If you say Y here, support for the write intent bitmap will be
-+	  enabled. The bitmap can be used to optimize resync speed after power
-+	  failure or readding a disk, limiting it to recorded dirty sectors in
-+	  bitmap.
-+
-+	  This feature can be added to existing MD array or MD array can be
-+	  created with bitmap via mdadm(8).
-+
-+	  If unsure, say Y.
-+
- config MD_AUTODETECT
- 	bool "Autodetect RAID arrays during kernel boot"
- 	depends on BLK_DEV_MD=y
-@@ -54,6 +69,7 @@ config MD_AUTODETECT
- config MD_BITMAP_FILE
- 	bool "MD bitmap file support (deprecated)"
- 	default y
-+	depends on MD_BITMAP
- 	help
- 	  If you say Y here, support for write intent bitmaps in files on an
- 	  external file system is enabled.  This is an alternative to the internal
-@@ -174,6 +190,7 @@ config MD_RAID456
- 
- config MD_CLUSTER
- 	tristate "Cluster Support for MD"
-+	select MD_BITMAP
- 	depends on BLK_DEV_MD
- 	depends on DLM
- 	default n
-@@ -393,6 +410,7 @@ config DM_RAID
-        select MD_RAID1
-        select MD_RAID10
-        select MD_RAID456
-+       select MD_BITMAP
-        select BLK_DEV_MD
- 	help
- 	 A dm target that supports RAID1, RAID10, RAID4, RAID5 and RAID6 mappings
-diff --git a/drivers/md/Makefile b/drivers/md/Makefile
-index 87bdfc9fe14c..2e18147a9c40 100644
---- a/drivers/md/Makefile
-+++ b/drivers/md/Makefile
-@@ -27,7 +27,8 @@ dm-clone-y	+= dm-clone-target.o dm-clone-metadata.o
- dm-verity-y	+= dm-verity-target.o
- dm-zoned-y	+= dm-zoned-target.o dm-zoned-metadata.o dm-zoned-reclaim.o
- 
--md-mod-y	+= md.o md-bitmap.o
-+md-mod-y	+= md.o
-+md-mod-$(CONFIG_MD_BITMAP)	+= md-bitmap.o
- raid456-y	+= raid5.o raid5-cache.o raid5-ppl.o
- linear-y       += md-linear.o
- 
-diff --git a/drivers/md/md-bitmap.c b/drivers/md/md-bitmap.c
-index 5bd75fa6ee1d..28dd66ab8df9 100644
---- a/drivers/md/md-bitmap.c
-+++ b/drivers/md/md-bitmap.c
-@@ -224,6 +224,8 @@ struct bitmap {
- 	int cluster_slot;
- };
- 
-+static struct workqueue_struct *md_bitmap_wq;
-+
- static int __bitmap_resize(struct bitmap *bitmap, sector_t blocks,
- 			   int chunksize, bool init);
- 
-@@ -2980,6 +2982,12 @@ static struct attribute_group md_bitmap_group = {
- };
- 
- static struct bitmap_operations bitmap_ops = {
-+	.head = {
-+		.type	= MD_BITMAP,
-+		.id	= ID_BITMAP,
-+		.name	= "bitmap",
-+	},
-+
- 	.enabled		= bitmap_enabled,
- 	.create			= bitmap_create,
- 	.resize			= bitmap_resize,
-@@ -3014,7 +3022,18 @@ static struct bitmap_operations bitmap_ops = {
- 	.group			= &md_bitmap_group,
- };
- 
--void mddev_set_bitmap_ops(struct mddev *mddev)
-+int md_bitmap_init(void)
-+{
-+	md_bitmap_wq = alloc_workqueue("md_bitmap", WQ_MEM_RECLAIM | WQ_UNBOUND,
-+				       0);
-+	if (!md_bitmap_wq)
-+		return -ENOMEM;
-+
-+	return register_md_submodule(&bitmap_ops.head);
-+}
-+
-+void md_bitmap_exit(void)
- {
--	mddev->bitmap_ops = &bitmap_ops;
-+	destroy_workqueue(md_bitmap_wq);
-+	unregister_md_submodule(&bitmap_ops.head);
- }
-diff --git a/drivers/md/md-bitmap.h b/drivers/md/md-bitmap.h
-index 61cfc650c69c..42f91755a341 100644
---- a/drivers/md/md-bitmap.h
-+++ b/drivers/md/md-bitmap.h
-@@ -62,6 +62,8 @@ struct md_bitmap_stats {
- };
- 
- struct bitmap_operations {
-+	struct md_submodule_head head;
-+
- 	bool (*enabled)(void *data, bool flush);
- 	int (*create)(struct mddev *mddev);
- 	int (*resize)(struct mddev *mddev, sector_t blocks, int chunksize);
-@@ -105,8 +107,6 @@ struct bitmap_operations {
- };
- 
- /* the bitmap API */
--void mddev_set_bitmap_ops(struct mddev *mddev);
--
- static inline bool md_bitmap_registered(struct mddev *mddev)
- {
- 	return mddev->bitmap_ops != NULL;
-@@ -147,4 +147,17 @@ static inline void md_bitmap_end_sync(struct mddev *mddev, sector_t offset,
- 	mddev->bitmap_ops->end_sync(mddev, offset, blocks);
- }
- 
-+#ifdef CONFIG_MD_BITMAP
-+int md_bitmap_init(void);
-+void md_bitmap_exit(void);
-+#else
-+static inline int md_bitmap_init(void)
-+{
-+	return 0;
-+}
-+static inline void md_bitmap_exit(void)
-+{
-+}
-+#endif
-+
- #endif
-diff --git a/drivers/md/md.c b/drivers/md/md.c
-index 2f7e8d77e7ef..c2a90d8ec06d 100644
---- a/drivers/md/md.c
-+++ b/drivers/md/md.c
-@@ -94,7 +94,6 @@ static struct workqueue_struct *md_wq;
-  * workqueue whith reconfig_mutex grabbed.
-  */
- static struct workqueue_struct *md_misc_wq;
--struct workqueue_struct *md_bitmap_wq;
- 
- static int remove_and_add_spares(struct mddev *mddev,
- 				 struct md_rdev *this);
-@@ -670,15 +669,34 @@ static void active_io_release(struct percpu_ref *ref)
- 
- static void no_op(struct percpu_ref *r) {}
- 
-+static void mddev_set_bitmap_ops(struct mddev *mddev, enum md_submodule_id id)
-+{
-+	xa_lock(&md_submodule);
-+	mddev->bitmap_ops = xa_load(&md_submodule, id);
-+	xa_unlock(&md_submodule);
-+	if (!mddev->bitmap_ops)
-+		pr_warn_once("md: can't find bitmap id %d\n", id);
-+}
-+
-+static void mddev_clear_bitmap_ops(struct mddev *mddev)
-+{
-+	mddev->bitmap_ops = NULL;
-+}
-+
- int mddev_init(struct mddev *mddev)
- {
-+	/* TODO: support more versions */
-+	mddev_set_bitmap_ops(mddev, ID_BITMAP);
- 
- 	if (percpu_ref_init(&mddev->active_io, active_io_release,
--			    PERCPU_REF_ALLOW_REINIT, GFP_KERNEL))
-+			    PERCPU_REF_ALLOW_REINIT, GFP_KERNEL)) {
-+		mddev_clear_bitmap_ops(mddev);
- 		return -ENOMEM;
-+	}
- 
- 	if (percpu_ref_init(&mddev->writes_pending, no_op,
- 			    PERCPU_REF_ALLOW_REINIT, GFP_KERNEL)) {
-+		mddev_clear_bitmap_ops(mddev);
- 		percpu_ref_exit(&mddev->active_io);
- 		return -ENOMEM;
- 	}
-@@ -706,7 +724,6 @@ int mddev_init(struct mddev *mddev)
- 	mddev->resync_min = 0;
- 	mddev->resync_max = MaxSector;
- 	mddev->level = LEVEL_NONE;
--	mddev_set_bitmap_ops(mddev);
- 
- 	INIT_WORK(&mddev->sync_work, md_start_sync);
- 	INIT_WORK(&mddev->del_work, mddev_delayed_delete);
-@@ -717,6 +734,7 @@ EXPORT_SYMBOL_GPL(mddev_init);
- 
- void mddev_destroy(struct mddev *mddev)
- {
-+	mddev_clear_bitmap_ops(mddev);
- 	percpu_ref_exit(&mddev->active_io);
- 	percpu_ref_exit(&mddev->writes_pending);
- }
-@@ -10038,8 +10056,12 @@ static void md_geninit(void)
- 
- static int __init md_init(void)
- {
--	int ret = -ENOMEM;
-+	int ret = md_bitmap_init();
- 
-+	if (ret)
-+		return ret;
-+
-+	ret = -ENOMEM;
- 	md_wq = alloc_workqueue("md", WQ_MEM_RECLAIM, 0);
- 	if (!md_wq)
- 		goto err_wq;
-@@ -10048,11 +10070,6 @@ static int __init md_init(void)
- 	if (!md_misc_wq)
- 		goto err_misc_wq;
- 
--	md_bitmap_wq = alloc_workqueue("md_bitmap", WQ_MEM_RECLAIM | WQ_UNBOUND,
--				       0);
--	if (!md_bitmap_wq)
--		goto err_bitmap_wq;
--
- 	ret = __register_blkdev(MD_MAJOR, "md", md_probe);
- 	if (ret < 0)
- 		goto err_md;
-@@ -10071,12 +10088,11 @@ static int __init md_init(void)
- err_mdp:
- 	unregister_blkdev(MD_MAJOR, "md");
- err_md:
--	destroy_workqueue(md_bitmap_wq);
--err_bitmap_wq:
- 	destroy_workqueue(md_misc_wq);
- err_misc_wq:
- 	destroy_workqueue(md_wq);
- err_wq:
-+	md_bitmap_exit();
- 	return ret;
- }
- 
-@@ -10379,8 +10395,8 @@ static __exit void md_exit(void)
- 	spin_unlock(&all_mddevs_lock);
- 
- 	destroy_workqueue(md_misc_wq);
--	destroy_workqueue(md_bitmap_wq);
- 	destroy_workqueue(md_wq);
-+	md_bitmap_exit();
- }
- 
- subsys_initcall(md_init);
-diff --git a/drivers/md/md.h b/drivers/md/md.h
-index d6fba4240f97..b7dc8253efd8 100644
---- a/drivers/md/md.h
-+++ b/drivers/md/md.h
-@@ -38,7 +38,7 @@ enum md_submodule_id {
- 	ID_RAID6	= 6,
- 	ID_RAID10	= 10,
- 	ID_CLUSTER,
--	ID_BITMAP,	/* TODO */
-+	ID_BITMAP,
- 	ID_LLBITMAP,	/* TODO */
- };
- 
-@@ -1012,7 +1012,6 @@ struct mdu_array_info_s;
- struct mdu_disk_info_s;
- 
- extern int mdp_major;
--extern struct workqueue_struct *md_bitmap_wq;
- void md_autostart_arrays(int part);
- int md_set_array_info(struct mddev *mddev, struct mdu_array_info_s *info);
- int md_add_new_disk(struct mddev *mddev, struct mdu_disk_info_s *info);
--- 
-2.39.2
+These patches include:
+
+CSI data reception from sensors Sensor interface bridge RAW/YUV image
+pre-processing ISP utility and control modules
+
+Changelog (v2):
+
+ - Fix documentation typos 
+ - Address review comments from v1
+
+Note: At this stage (v2), the related firmware interface and headers are
+still under development and review. Once the code is more stable and ready
+for upstream submission, we will provide the corresponding linux-firmware
+submission and clearly document which MediaTek SCP firmware version is
+required for this driver.  Thank you for reviewing these patches.
+
+shangyao.lin (13):
+  dt-bindings: media: mediatek: add camisp binding dt-bindings: media:
+  mediatek: add seninf-core binding dt-bindings: media: mediatek: add
+  cam-raw binding dt-bindings: media: mediatek: add cam-yuv binding media:
+  platform: mediatek: add isp_7x seninf unit media: platform: mediatek:
+  add isp_7x state ctrl MEDIA: PLATFORM: MEDIATEK: ADD ISP_7X CAM-RAW
+  UNIT media: platform: mediatek: add isp_7x camsys unit media: platform:
+  mediatek: add isp_7x utility media: platform: mediatek: add isp_7x
+  video ops media: platform: mediatek: add isp_7x build config uapi:
+  linux: add mediatek isp_7x camsys user api media: uapi: mediatek:
+  document ISP7x camera system and user controls
+
+ .../mediatek/mediatek,mt8188-cam-raw.yaml     |  156 +
+ .../mediatek/mediatek,mt8188-cam-yuv.yaml     |  134 +
+ .../mediatek/mediatek,mt8188-camisp.yaml      |   68 +
+ .../mediatek/mediatek,mt8188-seninf-core.yaml |  121 +
+ .../media/v4l/mtk-isp7x-camsys.rst            |   94 +
+ .../media/v4l/mtk-isp7x-controls.rst          |  199 +
+ drivers/media/platform/mediatek/Kconfig       |    1 +
+ drivers/media/platform/mediatek/Makefile      |    2 +
+ drivers/media/platform/mediatek/isp/Kconfig   |   21 +
+ .../platform/mediatek/isp/isp_7x/Makefile     |    7 +
+ .../mediatek/isp/isp_7x/camsys/Makefile       |   14 +
+ .../isp_7x/camsys/kd_imgsensor_define_v4l2.h  |   86 +
+ .../mediatek/isp/isp_7x/camsys/mtk_cam-ctrl.c | 1409 +++++
+ .../mediatek/isp/isp_7x/camsys/mtk_cam-ctrl.h |  131 +
+ .../mediatek/isp/isp_7x/camsys/mtk_cam-defs.h |  161 +
+ .../mediatek/isp/isp_7x/camsys/mtk_cam-fmt.h  |   87 +
+ .../mediatek/isp/isp_7x/camsys/mtk_cam-ipi.h  |  213 +
+ .../isp/isp_7x/camsys/mtk_cam-meta-mt8188.h   | 2296 ++++++++
+ .../isp/isp_7x/camsys/mtk_cam-plat-util.c     |  141 +
+ .../isp/isp_7x/camsys/mtk_cam-plat-util.h     |   15 +
+ .../mediatek/isp/isp_7x/camsys/mtk_cam-pool.c |  394 ++
+ .../mediatek/isp/isp_7x/camsys/mtk_cam-pool.h |   28
+ + .../mediatek/isp/isp_7x/camsys/mtk_cam-raw.c  | 4883
+ +++++++++++++++++ .../mediatek/isp/isp_7x/camsys/mtk_cam-raw.h  |
+ 323 ++ .../isp/isp_7x/camsys/mtk_cam-regs-mt8188.h   |  374
+ ++ .../isp/isp_7x/camsys/mtk_cam-seninf-def.h    |  237 +
+ .../isp/isp_7x/camsys/mtk_cam-seninf-drv.c    | 1441 +++++
+ .../isp/isp_7x/camsys/mtk_cam-seninf-drv.h    |   16 +
+ .../isp/isp_7x/camsys/mtk_cam-seninf-hw.h     |  108 +
+ .../isp/isp_7x/camsys/mtk_cam-seninf-if.h     |   24 +
+ .../isp/isp_7x/camsys/mtk_cam-seninf-regs.h   |   44 +
+ .../isp/isp_7x/camsys/mtk_cam-seninf-route.c  |  279 +
+ .../isp/isp_7x/camsys/mtk_cam-seninf-route.h  |   20 +
+ .../isp/isp_7x/camsys/mtk_cam-seninf.h        |  161 +
+ .../isp/isp_7x/camsys/mtk_cam-timesync.c      |  125 +
+ .../isp/isp_7x/camsys/mtk_cam-timesync.h      |   12 +
+ .../isp/isp_7x/camsys/mtk_cam-video.c         | 1594
+ ++++++ .../isp/isp_7x/camsys/mtk_cam-video.h         |
+ 223 + .../mediatek/isp/isp_7x/camsys/mtk_cam.c      | 3977
+ ++++++++++++++ .../mediatek/isp/isp_7x/camsys/mtk_cam.h      |
+ 718 +++ .../isp_7x/camsys/mtk_camera-v4l2-controls.h  |   63
+ + .../isp_7x/camsys/mtk_csi_phy_2_0/Makefile    |    5 +
+ .../mtk_csi_phy_2_0/mtk_cam-seninf-cammux.h   |  679 +++
+ .../mtk_cam-seninf-csi0-cphy.h                |   51 +
+ .../mtk_cam-seninf-csi0-dphy.h                |   98 +
+ .../mtk_cam-seninf-hw_phy_2_0.c               | 1932 +++++++
+ .../mtk_cam-seninf-mipi-rx-ana-cdphy-csi0a.h  |  165 +
+ .../mtk_cam-seninf-seninf1-csi2.h             |  264 +
+ .../mtk_cam-seninf-seninf1-mux.h              |  120 +
+ .../mtk_csi_phy_2_0/mtk_cam-seninf-seninf1.h  |   46 +
+ .../mtk_csi_phy_2_0/mtk_cam-seninf-tg1.h      |   43 +
+ .../mtk_csi_phy_2_0/mtk_cam-seninf-top-ctrl.h |   76 +
+ include/uapi/linux/mtkisp_camsys.h            |  132 +
+ include/uapi/linux/videodev2.h                |   87 +
+ 54 files changed, 24098 insertions(+) create mode 100755
+ Documentation/devicetree/bindings/media/mediatek/mediatek,mt8188-cam-raw.yaml
+ create mode 100755
+ Documentation/devicetree/bindings/media/mediatek/mediatek,mt8188-cam-yuv.yaml
+ create mode 100755
+ Documentation/devicetree/bindings/media/mediatek/mediatek,mt8188-camisp.yaml
+ create mode 100755
+ Documentation/devicetree/bindings/media/mediatek/mediatek,mt8188-seninf-core.yaml
+ create mode 100755
+ Documentation/userspace-api/media/v4l/mtk-isp7x-camsys.rst create mode
+ 100755 Documentation/userspace-api/media/v4l/mtk-isp7x-controls.rst mode
+ change 100644 => 100755 drivers/media/platform/mediatek/Kconfig mode
+ change 100644 => 100755 drivers/media/platform/mediatek/Makefile create
+ mode 100755 drivers/media/platform/mediatek/isp/Kconfig create mode
+ 100755 drivers/media/platform/mediatek/isp/isp_7x/Makefile create mode
+ 100755 drivers/media/platform/mediatek/isp/isp_7x/camsys/Makefile
+ create mode 100755
+ drivers/media/platform/mediatek/isp/isp_7x/camsys/kd_imgsensor_define_v4l2.h
+ create mode 100755
+ drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk_cam-ctrl.c
+ create mode 100755
+ drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk_cam-ctrl.h
+ create mode 100755
+ drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk_cam-defs.h
+ create mode 100755
+ drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk_cam-fmt.h
+ create mode 100755
+ drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk_cam-ipi.h
+ create mode 100755
+ drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk_cam-meta-mt8188.h
+ create mode 100755
+ drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk_cam-plat-util.c
+ create mode 100755
+ drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk_cam-plat-util.h
+ create mode 100755
+ drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk_cam-pool.c
+ create mode 100755
+ drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk_cam-pool.h
+ create mode 100755
+ drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk_cam-raw.c
+ create mode 100755
+ drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk_cam-raw.h
+ create mode 100755
+ drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk_cam-regs-mt8188.h
+ create mode 100755
+ drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk_cam-seninf-def.h
+ create mode 100755
+ drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk_cam-seninf-drv.c
+ create mode 100755
+ drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk_cam-seninf-drv.h
+ create mode 100755
+ drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk_cam-seninf-hw.h
+ create mode 100755
+ drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk_cam-seninf-if.h
+ create mode 100755
+ drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk_cam-seninf-regs.h
+ create mode 100755
+ drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk_cam-seninf-route.c
+ create mode 100755
+ drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk_cam-seninf-route.h
+ create mode 100755
+ drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk_cam-seninf.h
+ create mode 100755
+ drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk_cam-timesync.c
+ create mode 100755
+ drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk_cam-timesync.h
+ create mode 100755
+ drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk_cam-video.c
+ create mode 100755
+ drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk_cam-video.h create
+ mode 100755 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk_cam.c
+ create mode 100755
+ drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk_cam.h
+ create mode 100755
+ drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk_camera-v4l2-controls.h
+ create mode 100755
+ drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk_csi_phy_2_0/Makefile
+ create mode 100755
+ drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk_csi_phy_2_0/mtk_cam-seninf-cammux.h
+ create mode 100755
+ drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk_csi_phy_2_0/mtk_cam-seninf-csi0-cphy.h
+ create mode 100755
+ drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk_csi_phy_2_0/mtk_cam-seninf-csi0-dphy.h
+ create mode 100755
+ drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk_csi_phy_2_0/mtk_cam-seninf-hw_phy_2_0.c
+ create mode 100755
+ drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk_csi_phy_2_0/mtk_cam-seninf-mipi-rx-ana-cdphy-csi0a.h
+ create mode 100755
+ drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk_csi_phy_2_0/mtk_cam-seninf-seninf1-csi2.h
+ create mode 100755
+ drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk_csi_phy_2_0/mtk_cam-seninf-seninf1-mux.h
+ create mode 100755
+ drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk_csi_phy_2_0/mtk_cam-seninf-seninf1.h
+ create mode 100755
+ drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk_csi_phy_2_0/mtk_cam-seninf-tg1.h
+ create mode 100755
+ drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk_csi_phy_2_0/mtk_cam-seninf-top-ctrl.h
+ create mode 100755 include/uapi/linux/mtkisp_camsys.h mode change 100644
+ => 100755 include/uapi/linux/videodev2.h
+
+-- 2.18.0
 
 
