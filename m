@@ -1,76 +1,104 @@
-Return-Path: <linux-kernel+bounces-720609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF81AAFBE39
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 00:26:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D67DFAFBE3D
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 00:29:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D3A201899E09
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 22:26:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08876189E17C
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 22:29:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E13526AA83;
-	Mon,  7 Jul 2025 22:26:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="E7fjmCc9"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F345C26E71D;
+	Mon,  7 Jul 2025 22:29:18 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 123FC186A;
-	Mon,  7 Jul 2025 22:26:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3982186A;
+	Mon,  7 Jul 2025 22:29:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751927177; cv=none; b=bKisyZkIWYLDKA2UAzM/30dqqIIS3SwRsEU6BWUTrOwb7Blge5T3xFgMX6ENVAh5or69YC9z3q+1t+CKVbRoc/1PU490HrVbp6OqlVYkRL9A53xVdJqsNwkkobmVtH530dcb0FitQzLODD4KP6vWAvmoKRZ7lnaIryT3g4vy0bo=
+	t=1751927358; cv=none; b=cld3INtt372+Xc2DxIOPKs27ScJ+NusaEejOo69FsbGCivo1zRZewVRWYRg8tq8RJxgOauBGUy4xctIK2MzLKYTiGwufElOQkP10aTNCWr2FJ86uikcpqUgcHqOYKQUPBo/LS9sp3fdg8QEs+xzSplEqO0jDKOdQZPznR1f7JFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751927177; c=relaxed/simple;
-	bh=gHkf2cujb+trpgM2oTxU2vt97Dgnq5s/OXDze+10Pvw=;
+	s=arc-20240116; t=1751927358; c=relaxed/simple;
+	bh=MDF8zUlS1Pi0x+G3G5UDKyYb4IezZltpmz4zl1fscw4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W3UP+7DD2s5ziDakRZDK259ZDpV9B7RiC1UdN13F3cixhaOwMMYwlfnYH04ZOORpNTWrEn1iOr5WQmuquT+7Un9xlTvshpeFq4FnKWq5zAz/8dPwJEF6GdcmAubz412lGAxf/AF2vozqYkYMNRHioO+yRF/ryv+VYX6MLgYlGlg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=E7fjmCc9; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description;
-	bh=EzIem5ISPiXtqhmnYKa2/9ZUhiwjfO7LzPdKS2Q4R1o=; b=E7fjmCc90FNh+QXwjI5bs1yv3w
-	U0TnPu2sx7jkAj1IMZ9HV3G2OJLMFHFi/PwM2KP8FIAUKjsG2hyk43ukwOoNpH70KT6em1GJPwo1d
-	1vueSqCfWgbRO8pt6cU4LLZ/c2R3mmrN3QA/PRVAwOqdFglJvpsPyVQivi5PqLhATjANvWNGj4xr/
-	0sXGpcNYgi3+CLMG+0DxhyRvoeU3x4sW7I0urw2Lp9wuky972pQePC2MIkYGir+vD9lNqsfAdtUSV
-	1bpVu67mf45YMhToTbr51in/xEUIyssp4wf4iQ9KB2MNtnLCoAgppSCyo8G18ON5qhWyT+m2dwnP/
-	HGSNqZmA==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uYuHs-00000004HqV-1W2o;
-	Mon, 07 Jul 2025 22:26:12 +0000
-Date: Mon, 7 Jul 2025 23:26:12 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Max Kellermann <max.kellermann@ionos.com>
-Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 20/21] __dentry_kill(): new locking scheme
-Message-ID: <20250707222612.GP1880847@ZenIV>
-References: <20231124060200.GR38156@ZenIV>
- <20231124060422.576198-1-viro@zeniv.linux.org.uk>
- <20231124060422.576198-20-viro@zeniv.linux.org.uk>
- <CAKPOu+_Ktbp5OMZv77UfLRyRaqmK1kUpNHNd1C=J9ihvjWLDZg@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=owZXkTXi+RPvvXBGrLK4d1ZomjhXnldGpw2XZXLyNrD06PFRzpbE6AtsUosUmR0nPf/mIURVToYLKsytTBjs4AkRgSjHG14AZ0GZGaBsSdFULsGEIrvzlVtSOypuSniPlNVhw0PdMyzKF6WxLcjl3RF0N9/bFLVJGQzWyz70B0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Received: from localhost (unknown [116.232.48.207])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dlan)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id 156F6340F39;
+	Mon, 07 Jul 2025 22:29:14 +0000 (UTC)
+Date: Mon, 7 Jul 2025 22:29:10 +0000
+From: Yixun Lan <dlan@gentoo.org>
+To: Conor Dooley <conor@kernel.org>
+Cc: Guodong Xu <guodong@riscstar.com>, ukleinek@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, paul.walmsley@sifive.com, palmer@dabbelt.com,
+	aou@eecs.berkeley.edu, alex@ghiti.fr, p.zabel@pengutronix.de,
+	drew@pdp7.com, inochiama@gmail.com, geert+renesas@glider.be,
+	heylenay@4d2.org, tglx@linutronix.de, hal.feng@starfivetech.com,
+	unicorn_wang@outlook.com, duje.mihanovic@skole.hr,
+	heikki.krogerus@linux.intel.com, elder@riscstar.com,
+	linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+	spacemit@lists.linux.dev
+Subject: Re: [PATCH v3 6/6] riscv: defconfig: Enable PWM support for SpacemiT
+ K1 SoC
+Message-ID: <20250707222910-GYC408198@gentoo>
+References: <20250429085048.1310409-1-guodong@riscstar.com>
+ <20250429085048.1310409-7-guodong@riscstar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAKPOu+_Ktbp5OMZv77UfLRyRaqmK1kUpNHNd1C=J9ihvjWLDZg@mail.gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <20250429085048.1310409-7-guodong@riscstar.com>
 
-On Mon, Jul 07, 2025 at 07:20:28PM +0200, Max Kellermann wrote:
-> Hi Al,
+Hi Conor,
+  Can you take this patch? I've checked with riscv's tree for-next
+branch, it's still applicable and meet the "savedefconfig" criteria.
+  Thanks
+
+On 16:50 Tue 29 Apr     , Guodong Xu wrote:
+> Enable CONFIG_PWM and CONFIG_PWM_PXA in the defconfig
+> to support the PWM controller used on the SpacemiT K1 SoC.
 > 
-> On Mon, Jul 7, 2025 at 7:04 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+> Signed-off-by: Guodong Xu <guodong@riscstar.com>
+Reviewed-by: Yixun Lan <dlan@gentoo.org>
 
-BTW, a minor nit: that was Fri, 24 Nov 2023 06:04:21 +0000...
+> ---
+> v3: No change
+> v2: Changed PWM_PXA from built-in to a loadable module (=m)
+> 
+>  arch/riscv/configs/defconfig | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/arch/riscv/configs/defconfig b/arch/riscv/configs/defconfig
+> index 3c8e16d71e17..3c4d9bb8f01e 100644
+> --- a/arch/riscv/configs/defconfig
+> +++ b/arch/riscv/configs/defconfig
+> @@ -257,6 +257,8 @@ CONFIG_RPMSG_CTRL=y
+>  CONFIG_RPMSG_VIRTIO=y
+>  CONFIG_PM_DEVFREQ=y
+>  CONFIG_IIO=y
+> +CONFIG_PWM=y
+> +CONFIG_PWM_PXA=m
+>  CONFIG_THEAD_C900_ACLINT_SSWI=y
+>  CONFIG_PHY_SUN4I_USB=m
+>  CONFIG_PHY_STARFIVE_JH7110_DPHY_RX=m
+> -- 
+> 2.43.0
+> 
 
+-- 
+Yixun Lan (dlan)
 
