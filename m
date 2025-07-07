@@ -1,98 +1,231 @@
-Return-Path: <linux-kernel+bounces-720053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92BDAAFB64C
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 16:43:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01D32AFB6A8
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 17:00:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79054176266
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 14:43:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73F4A3B8FD6
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 15:00:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB2DA2E11C5;
-	Mon,  7 Jul 2025 14:43:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hW7AEn/k"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF0F22E1724;
+	Mon,  7 Jul 2025 15:00:29 +0000 (UTC)
+Received: from lgeamrelo03.lge.com (lgeamrelo03.lge.com [156.147.51.102])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3314D81724;
-	Mon,  7 Jul 2025 14:43:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC9E02D052
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 15:00:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.147.51.102
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751899422; cv=none; b=rqYh/f9TP2ok1lmQNXNaqGiGEggjH9O+OSIfsNUxKJ8l94ES7+9S8b/5aLBspaMBR8wN/qrOs6SNFkn4bAew4jojqK+CRXy52y1ZnqJe6UQQ77XTo2Ssjk/1IB/KJRrWc9Qkq48mMoiQadly1RJVqWq3Pnv6AT2bODZPQIKyWUc=
+	t=1751900429; cv=none; b=T+ifUHW9P8RzB+Bx8cUR3GeVhaD+jG+dMzCEl/DaKh+YNAhICyqmoWWI5Xfy7ytDOHUBqgTJhLnxyS09D3Hp1iY2htFyrUzNMBM4jBRCDQ43zoYhHXp9CbaWERVvxljaT98c+tPi1iihQiMm4gTkSjPcbxyuTZlIazQrl/7+MfY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751899422; c=relaxed/simple;
-	bh=pygmB6Y0A8GnIvfkKxpvuMj1/8T5+x16Brq+Mu3flTM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=d7Zf+Lw/JYp47Efp0Wg6ieQgakyoACzZud1gnoOtrLav+lVmcmszxPOtAEfLf5S3SHmbeqUV0IBQZtupbzRhcGGEMI0/s4pTSAL3+AtjIHO7KxmaDflAf0qJOnWsxs35Q5OD8VewOZBzfP8yRys6TqG2Ppsd9ueKgRFZIWU0UYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hW7AEn/k; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4AD9C4CEF4;
-	Mon,  7 Jul 2025 14:43:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751899421;
-	bh=pygmB6Y0A8GnIvfkKxpvuMj1/8T5+x16Brq+Mu3flTM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=hW7AEn/kJoZ8G/Ci6vwPyUhco7+VT+w71XTx1ckOOlEvFJ/XKwDhl5sE5b9n0vETn
-	 EoBQn8bKGxm2xp53PmFWiarQqh3pag3ilMqvwhTHb3byIy+pYBNJSt52ADXNa/MOFS
-	 +St49nQkrtc6KQHchPzRFYKXHZIdwRyz1ELm99WFwf2g00rsR9i0S6bgj0rpxYxHuL
-	 5PigZFIt0Es2ZgJV0o8sqXtLuX+r7gcko2jCPn8vGe4Lng1QsjwOuSMZLDyMrFf0Wc
-	 IFOnWDqHkuLn04u1NoOC2CQOYtSHxEo9oBSMWBRjdi6oZ3bQwILTM5qDqUhwWEOJ8M
-	 QHRiEECr41zTQ==
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-ae0de0c03e9so550485866b.2;
-        Mon, 07 Jul 2025 07:43:41 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUx2CsW5Dj3VM8kkvB0clcusEKyVO/CJ8U11NYjQD9c4CBoaTQGrmLEZO+sDuqP5ongqreafLtY8hVFbtc=@vger.kernel.org, AJvYcCX9yhULsz75g4zM/PAUvnYuNLtyMqxVgz+NQvTwPmDjmI91azrVqdTOsoTUTYV9ESCC1h7cG8eL2SJo@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmyAqj7gg3J0TOUCJ0Jgw7d6XT7bLie5vVQN+y/jwr9041R5UL
-	si61oRL9LJHa3vXi/UkwjWWQ4KblF7r5Ps7LT9cpFTzIYTs//bx2HEfvs5WfWQr677sMf00s0bF
-	ZZow5k+Sn+upXg/dg1QAzmWFI477ocw==
-X-Google-Smtp-Source: AGHT+IH+f8zvdudHp1LuRKAAn7cL9u6+1JqOnozuxrIIQH8whQPjPMtiGupPBrID+yAocJ3AfWvuowkyHK1U/F/njY4=
-X-Received: by 2002:a17:907:96ac:b0:ae6:abe9:8cbc with SMTP id
- a640c23a62f3a-ae6abe98e66mr63239166b.12.1751899420274; Mon, 07 Jul 2025
- 07:43:40 -0700 (PDT)
+	s=arc-20240116; t=1751900429; c=relaxed/simple;
+	bh=tzJDDfDgVvwSOVvEga/nDK+KU2Bmv+Hr9yybDjPvMFo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hD3gN5g2xFC6EYUG+ZFY45kSM14hzj89eGPXM55eHGO9z4hlhy/mEHLZXvF/e8KCpjwP7WkkE9bVNchMEK1VfFPKkxsERpktQnUfqya62MaNBkKAU3takCGDNwhkHFJcLyEWslZmKe0ldYDyFa+6tYFDlFjresMMhnrEcQNh4aI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com; spf=pass smtp.mailfrom=lge.com; arc=none smtp.client-ip=156.147.51.102
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lge.com
+Received: from unknown (HELO yjaykim-PowerEdge-T330) (10.177.112.156)
+	by 156.147.51.102 with ESMTP; 7 Jul 2025 23:45:25 +0900
+X-Original-SENDERIP: 10.177.112.156
+X-Original-MAILFROM: youngjun.park@lge.com
+Date: Mon, 7 Jul 2025 23:45:25 +0900
+From: YoungJun Park <youngjun.park@lge.com>
+To: Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>
+Cc: linux-mm@kvack.org, akpm@linux-foundation.org, hannes@cmpxchg.org,
+	mhocko@kernel.org, roman.gushchin@linux.dev, shakeel.butt@linux.dev,
+	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+	shikemeng@huaweicloud.com, kasong@tencent.com, nphamcs@gmail.com,
+	bhe@redhat.com, baohua@kernel.org, chrisl@kernel.org,
+	muchun.song@linux.dev, iamjoonsoo.kim@lge.com, taejoon.song@lge.com,
+	gunho.lee@lge.com
+Subject: Re: [RFC PATCH 1/2] mm/swap, memcg: basic structure and logic for
+ per cgroup swap priority control
+Message-ID: <aGvdhXFtVDR60MMn@yjaykim-PowerEdge-T330>
+References: <20250612103743.3385842-1-youngjun.park@lge.com>
+ <20250612103743.3385842-2-youngjun.park@lge.com>
+ <pcji4n5tjsgjwbp7r65gfevkr3wyghlbi2vi4mndafzs4w7zs4@2k4citaugdz2>
+ <aFIJDQeHmTPJrK57@yjaykim-PowerEdge-T330>
+ <rivwhhhkuqy7p4r6mmuhpheaj3c7vcw4w4kavp42avpz7es5vp@hbnvrmgzb5tr>
+ <aFKsF9GaI3tZL7C+@yjaykim-PowerEdge-T330>
+ <bhcx37fve7sgyod3bxsky5wb3zixn4o3dwuiknmpy7fsbqgtli@rmrxmvjro4ht>
+ <aGPd3hIuEVF2Ykoy@yjaykim-PowerEdge-T330>
+ <nyzhn5e5jxk2jscf7rrsrcpgoblppdrbi7odgkwl5elgkln4bq@mdhevtbwp7co>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250703183537.2075746-1-robh@kernel.org> <1e33e6b6-845a-44bf-a398-4a9fb895a125@sirena.org.uk>
-In-Reply-To: <1e33e6b6-845a-44bf-a398-4a9fb895a125@sirena.org.uk>
-From: Rob Herring <robh@kernel.org>
-Date: Mon, 7 Jul 2025 09:43:27 -0500
-X-Gmail-Original-Message-ID: <CAL_Jsq+8ObyEM-f88QSq1QfptVPrk5s5mVM-irq4ZTGNW9NKTw@mail.gmail.com>
-X-Gm-Features: Ac12FXwY1NqOYzEWnEAy2ESIy7UgECjX4aJqnXTz286AyGb5Rk-mUEzeguxMrTU
-Message-ID: <CAL_Jsq+8ObyEM-f88QSq1QfptVPrk5s5mVM-irq4ZTGNW9NKTw@mail.gmail.com>
-Subject: Re: [PATCH] spi: stm32-ospi: Use of_reserved_mem_region_to_resource()
- for "memory-region"
-To: Mark Brown <broonie@kernel.org>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, linux-spi@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <nyzhn5e5jxk2jscf7rrsrcpgoblppdrbi7odgkwl5elgkln4bq@mdhevtbwp7co>
 
-On Fri, Jul 4, 2025 at 8:50=E2=80=AFAM Mark Brown <broonie@kernel.org> wrot=
-e:
->
-> On Thu, Jul 03, 2025 at 01:35:37PM -0500, Rob Herring (Arm) wrote:
-> > Use the newly added of_reserved_mem_region_to_resource() function to
-> > handle "memory-region" properties.
->
-> This breaks an allmodconfig build:
->
-> /build/stage/linux/drivers/spi/spi-stm32-ospi.c:775:23: error: unused var=
-iable 'rmem' [-Werror,-Wunused-variable]
->   775 |         struct reserved_mem *rmem =3D NULL;
->       |                              ^~~~
-> /build/stage/linux/drivers/spi/spi-stm32-ospi.c:776:22: error: unused var=
-iable 'node' [-Werror,-Wunused-variable]
->   776 |         struct device_node *node;
->       |                             ^~~~
+On Mon, Jul 07, 2025 at 11:59:49AM +0200, Michal Koutný wrote:
+> Hello.
+> 
+> On Tue, Jul 01, 2025 at 10:08:46PM +0900, YoungJun Park <youngjun.park@lge.com> wrote:
+> >   memory.swap.priority
+> ...
+> 
+> >         To assign priorities to swap devices in the current cgroup,
+> >         write one or more lines in the following format:
+> > 
+> >           <swap_device_unique_id> <priority>
+> 
+> How would the user know this unique_id? (I don't see it in /proc/swaps.)
 
-Sigh. I swear I had fixed that...
+The unique_id is a new concept I introduced to refer to assigned
+swap devices. It's allocated whenever a swap device is turned on. I did
+explore other key identifiers like the swap device path, but I
+determined that providing a separate unique_id is more suitable for
+this context. Initially, I proposed printing it directly from
+memory.swap.priority to facilitate usage like:
 
+$ swapon
+NAME       TYPE      SIZE USED PRIO
+/dev/sdb   partition 300M  0B   10
+/dev/sdc   partition 300M  0B    5
 
-Rob
+$ cat memory.swap.priority
+Active
+/dev/sdb   unique:1  prio:10
+/dev/sdc   unique:2  prio:5
+Following your suggestion, I've deprecated this initial proposal and
+considered four alternatives. I'm currently leaning towards
+options 2 and 4, and I plan to propose option 4 as the primary
+approach:
+
+1. /proc/swaps with ID: We've rejected this due to potential ABI
+changes.
+
+2. New /proc interface: This could be /proc/swaps with the ID,
+or a dedicated swapdevice file with the ID. While viable, I prefer
+not to add new /proc interfaces if we can avoid it.
+
+3. /sys/kernel/mm/swap/ location: (Similar to vma_ra_enabled)
+This was rejected because sysfs typically shows configured values,
+not dynamic identifiers, which would be inconsistent with existing
+conventions.
+
+4. Align memory.swap.priority.effective with /proc/swaps:
+Aligning the order of id prio pairs in
+memory.swap.priority.effective with the output order of
+/proc/swaps would allow users to infer which swap device
+corresponds to which ID. For example:
+
+$ swapon
+NAME       TYPE      SIZE USED PRIO
+/dev/sdb   partition 300M  0B   10
+/dev/sdc   partition 300M  0B    5
+
+$ cat memory.swap.priority.effective
+Active
+1 10     // this is /dev/sdb
+2 5      // this is /dev/sdc
+
+> >         Note:
+> >           A special value of -1 means the swap device is completely
+> >           excluded from use by this cgroup. Unlike the global swap
+> >           priority, where negative values simply lower the priority,
+> >           setting -1 here disables allocation from that device for the
+> >           current cgroup only.
+> 
+> The divergence from the global semantics is little bit confusing.
+> There should better be a special value (like 'disabled') in the interface.
+> And possible second special value like 'none' that denotes the default
+> (for new (unconfigured) cgroups or when a new swap device is activated).
+> 
+
+Thank you for your insightful comments and suggestions regarding the
+default values. I was initially focused on providing numerical values
+for these settings. However, using keywords like "none" and
+"disabled" for default values makes the semantics much more natural
+and user-friendly.
+
+Based on your feedback and the cgroup-v2.html documentation on default
+values, I propose the following semantics:
+
+none: This applies priority based on the global swap
+priority. It's important to note that for negative priorities,
+this implies following NUMA auto-binding rules, rather than a direct
+application of the negative value itself.
+
+disabled: This keyword explicitly excludes the swap device
+from use by this cgroup.
+
+Here's how these semantics would translate into usage:
+
+echo "default none" > memory.swap.priority or
+echo "none" > memory.swap.priority:
+* When swapon is active, the cgroup's swap device priority will
+follow the global swap priority.
+
+echo "default disabled" > memory.swap.priority or
+echo "default" > memory.swap.priority:
+* When swapon is active, the swap device will be excluded from
+allocation within this cgroup.
+
+echo "<id> none" > memory.swap.priority:
+* The specified swap device will follow its global swap priority.
+
+echo "<id> disabled" > memory.swap.priority:
+* The specified swap device will be excluded from allocation for
+this cgroup.
+
+echo "<id> <prio>" > memory.swap.priority:
+* This sets a specific priority for the specified swap device.
+
+> ...
+> >         In this case:
+> >           - If no cgroup sets any configuration, the output matches the
+> >             global `swapon` priority.
+> >           - If an ancestor has a configuration, the child inherits it
+> >             and ignores its own setting.
+> 
+> The child's priority could be capped by ancestors' instead of wholy
+> overwritten? (So that remains some effect both.)
+
+Regarding the child's priority being capped or refined by ancestors'
+settings, I've considered allowing the child's priority to resolve its
+own settings when the sorted priority order is consistent and the
+child's swap devices are a subset of the parent's. Here's a visual
+representation of how that might work:
+
++-----------------+
+| Parent cgroup   |
+| (Swaps: A, B, C)|
++--------+--------+
+         |
+         | (Child applies settings to its own children)
+         v
++--------+--------+
+| Child cgroup    |
+| (Swaps: B, C)   |
+| (B & C resolved by child's settings)
++--------+--------+
+         |
+         +-------------------+
+         |                   |
+         v                   v
++--------+--------+   +--------+--------+
+| Grandchild cgroup |   | Grandchild 2 cgroup |
+| (Swaps: C)        |   | (Swaps: A)        |
+| (C resolved by    |   | (A not in B,C;    |
+|  grandchild's     |   |  resolved by      |
+|  child's settings)|   |  child's settings)|
++-------------------+   +-------------------+
+
+However, this feature isn't currently required for our immediate use
+case, and it adds notable complexity to the implementation. I suggest
+we consider this as a next step if the current feature is integrated
+into the kernel and sees widespread adoption or
+any further use cases or requirements.
+
+Best regards,
+Youngjun Park
 
