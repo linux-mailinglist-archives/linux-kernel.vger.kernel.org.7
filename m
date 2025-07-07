@@ -1,91 +1,223 @@
-Return-Path: <linux-kernel+bounces-720494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85C8BAFBC85
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 22:29:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A0DDAFBC89
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 22:30:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D12AF1886859
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 20:29:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E2A57AD112
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 20:28:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96EA721CA0A;
-	Mon,  7 Jul 2025 20:29:04 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3FAD21CA0D;
+	Mon,  7 Jul 2025 20:29:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LoB2iX7G"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9F5621507F
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 20:29:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 016DE202997;
+	Mon,  7 Jul 2025 20:29:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751920144; cv=none; b=nwNgnJWRGhzlEshAQI+DFg+UAl9Obqb6kQAcBHoT1DqCU0boX85xUN9wijzx+lscWFBQXF1RJoUK6OWfzFh4XnL/J+q8uj6Tnh5VwpgYJJ04hLVLmRYOlxynDmYZHqhqPEeZ83d07yZCcD7EiYT0kDvj9WEacfsx7iN3uJ62k+Q=
+	t=1751920190; cv=none; b=tzeFnXAy/sWypFOA/QRYycQJVyy/YB5Y/Many4p15qxpaes6++YB1Ps1jKH3p+I99mXva225XszZOp1H+HRuK+RjrNKcmFbd2dDavhLV4yOYxBN/CHSOoOcCki4bnC0DkU0Ld3L+JhfFnXVnhwNr+k2JRvPlgcvi/D9tn37zv1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751920144; c=relaxed/simple;
-	bh=Ot02nqPa2ouHZW90wl6dQuaul5Pxf/vDsrQRSgDI/iw=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=XXTc1SIHqRCgqk60tPoCsFyExvBNiuhMM+fHP8SwZyaVdbPnWfVgn0baTYBboxHjaaVNUJuCXOWbBfq3z8mk1qelryq/gsNu92aUydyyb/h1n7kdXrryBo0MDIJPCI9apo9CE9tY2789CtLqk7n7hDrK4fAW4Ie5+xJ/DFOfSIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-86463467dddso356979339f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 13:29:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751920142; x=1752524942;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=91bX3oUdnFkBh3AWeRAT8/+UY28YiWDPjER4C9ZXoqM=;
-        b=RicJnNQewUeNkVvVhlS6k1gl+8+BIc6exwUVDoIytSdiRESgld0zgtHh2OSNHaaH0e
-         NBlXu6P83eyRGLlRWyu7EfOlif2w5UQ97e3CCLkklZt5YhlwpDauVi6ckjjozQ53r66/
-         zbuwtWZv4oMZ0N4Qqnxrp8pbx1SJ3lt3b5dYNWfqDQ50oxIqViFNEL6BHH2285wCAyBq
-         FY08ONTPnsOCRD3sdaxcKXIApjT01bR9PZtI8KNuxt9uvs0D2VeDnr0pdt7OBSxfbyJR
-         Vz2SP4yEsit/N9f0DAGkZeWMEQeXraZW48+Y41V44IAMN3aAu4EoP09CStiJbaKnLYcF
-         WvvA==
-X-Forwarded-Encrypted: i=1; AJvYcCW8MZkl+0j0cRqtVKaPEdNThz5nqYS45Lgf0ElmOLKF3TfSQ7lrTyykFRD4R23Re5Kg1PTrMBA2W/Lp6qo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8C6j8QIrZZQ2bp8C1pt/4GosiyelF8+wL33eIsmGpw/N8YXhz
-	H5FFLrCKJgGzvpNPD3biLQAv/yu677QkfNLd0ukhsJLrNRjUw5tO9tdJwhOjbMBtg9yZ9JW4VcS
-	ZkUtNzi15PNzPOjYooUmo0jkEEHTJI2TYO1w7aTDkFacCxDXV6vUDqotebjk=
-X-Google-Smtp-Source: AGHT+IEbhTNVlC0ZTsaebcDui8mxJFU+YnwEblKdyep073zKGmZKVQEUYTykOVv7m/b7JvfHQgW6v9hQzDrk6VWeQSQWmGU6SRAE
+	s=arc-20240116; t=1751920190; c=relaxed/simple;
+	bh=KaVF9Ika1Iq/rw5JBpEqeImU31PCs6bqzlHNSQVTiWU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KB3LatktiH9Mo/SfPBUBmKAWENfnqJuRk+7yK2wvczCq2hxM7B752wXcqsHq582gy2whtU8F90JNYB9/wuOIXSbvzru3ceJqFm/GFUFnT4GaGLNnOV0XBnIWn7MdGs6tP7uWvwXs3w9vZHrgcwiOfDFgaw2tTQIL5EbImPZefXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LoB2iX7G; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 678F2C4CEE3;
+	Mon,  7 Jul 2025 20:29:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751920189;
+	bh=KaVF9Ika1Iq/rw5JBpEqeImU31PCs6bqzlHNSQVTiWU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LoB2iX7GwIPMHbCQequWgcamiRQuaMGvkg4ELR1vaCbhzPPF3h58ByrezX1MhEAL+
+	 WT2Tbg9Tdb92vUry9ZKvo2yXI7nlUqoWcF8wMvOnYq/GwNm2aqJFMAWPzaknfM+20C
+	 3wcPXqVIeRtwTZyivD6ttTBM5CJqoT38d7dJAfCOL/Wh0vEnvBtQFNy/QMZAFKGEDI
+	 rUsO2bMmtlgneg5LR5ZgL5DS+3G2N+Euph0bycMVA7pgSj0279Ei9R2idnA0YK/oJJ
+	 6FEa+0ZLOq6n/bWt61LeSAnhFLE8XRrosmOC6X+CThJlchIix0KgOiOZQpyuwb8XwC
+	 xgh4hU16jbQDQ==
+Date: Mon, 7 Jul 2025 22:29:40 +0200
+From: Alejandro Colomar <alx@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-mm@kvack.org, linux-hardening@vger.kernel.org, 
+	Kees Cook <kees@kernel.org>, Christopher Bazley <chris.bazley.wg14@gmail.com>, 
+	shadow <~hallyn/shadow@lists.sr.ht>, linux-kernel@vger.kernel.org, 
+	Andrew Morton <akpm@linux-foundation.org>, kasan-dev@googlegroups.com, Dmitry Vyukov <dvyukov@google.com>, 
+	Alexander Potapenko <glider@google.com>, Marco Elver <elver@google.com>, Christoph Lameter <cl@linux.com>, 
+	David Rientjes <rientjes@google.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>, 
+	Andrew Clayton <andrew@digital-domain.net>, Sven Schnelle <svens@linux.ibm.com>, 
+	Heiko Carstens <hca@linux.ibm.com>, Tvrtko Ursulin <tvrtko.ursulin@igalia.com>, 
+	"Huang, Ying" <ying.huang@intel.com>, Lee Schermerhorn <lee.schermerhorn@hp.com>, 
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, Chao Yu <chao.yu@oppo.com>
+Subject: Re: [RFC v3 3/7] mm: Use seprintf() instead of less ergonomic APIs
+Message-ID: <ugf4pu7qrojegz7arkcpa4cyde6hoyh73h66oc4f6ncc7jg23t@bklkbbotyzvp>
+References: <cover.1751862634.git.alx@kernel.org>
+ <033bf00f1fcf808245ae150346019aa7b997ea11.1751862634.git.alx@kernel.org>
+ <CAHk-=wh9Pqz07ne9iSt1_v0c14rkOGvF9AbEkaq1KnFhQD1SSA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:360d:b0:86c:efdb:6eb9 with SMTP id
- ca18e2360f4ac-876e4904de5mr1025624039f.10.1751920141991; Mon, 07 Jul 2025
- 13:29:01 -0700 (PDT)
-Date: Mon, 07 Jul 2025 13:29:01 -0700
-In-Reply-To: <67f76c11.050a0220.258fea.0029.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <686c2e0d.a00a0220.6237c.0004.GAE@google.com>
-Subject: Re: [syzbot] [bcachefs?] kernel BUG in __bch2_str_hash_check_key
-From: syzbot <syzbot+843981bb836d699c07d1@syzkaller.appspotmail.com>
-To: contact@arnaud-lcm.com, joshua@froggi.es, kent.overstreet@linux.dev, 
-	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="hm3euuqedab7podc"
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wh9Pqz07ne9iSt1_v0c14rkOGvF9AbEkaq1KnFhQD1SSA@mail.gmail.com>
 
-syzbot suspects this issue was fixed by commit:
 
-commit 757601ef853359fe2d57d75c00b5045f62efc608
-Author: Kent Overstreet <kent.overstreet@linux.dev>
-Date:   Sun Jun 8 15:40:00 2025 +0000
+--hm3euuqedab7podc
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-mm@kvack.org, linux-hardening@vger.kernel.org, 
+	Kees Cook <kees@kernel.org>, Christopher Bazley <chris.bazley.wg14@gmail.com>, 
+	shadow <~hallyn/shadow@lists.sr.ht>, linux-kernel@vger.kernel.org, 
+	Andrew Morton <akpm@linux-foundation.org>, kasan-dev@googlegroups.com, Dmitry Vyukov <dvyukov@google.com>, 
+	Alexander Potapenko <glider@google.com>, Marco Elver <elver@google.com>, Christoph Lameter <cl@linux.com>, 
+	David Rientjes <rientjes@google.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>, 
+	Andrew Clayton <andrew@digital-domain.net>, Sven Schnelle <svens@linux.ibm.com>, 
+	Heiko Carstens <hca@linux.ibm.com>, Tvrtko Ursulin <tvrtko.ursulin@igalia.com>, 
+	"Huang, Ying" <ying.huang@intel.com>, Lee Schermerhorn <lee.schermerhorn@hp.com>, 
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, Chao Yu <chao.yu@oppo.com>
+Subject: Re: [RFC v3 3/7] mm: Use seprintf() instead of less ergonomic APIs
+References: <cover.1751862634.git.alx@kernel.org>
+ <033bf00f1fcf808245ae150346019aa7b997ea11.1751862634.git.alx@kernel.org>
+ <CAHk-=wh9Pqz07ne9iSt1_v0c14rkOGvF9AbEkaq1KnFhQD1SSA@mail.gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <CAHk-=wh9Pqz07ne9iSt1_v0c14rkOGvF9AbEkaq1KnFhQD1SSA@mail.gmail.com>
 
-    bcachefs: Don't put rhashtable on stack
+Hi Linus,
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15319582580000
-start commit:   a79be02bba5c Fix mis-uses of 'cc-option' for warning disab..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3bbffc3b5b4301e1
-dashboard link: https://syzkaller.appspot.com/bug?extid=843981bb836d699c07d1
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11f8c1b3980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=177ce574580000
+On Mon, Jul 07, 2025 at 12:17:11PM -0700, Linus Torvalds wrote:
+> On Sun, 6 Jul 2025 at 22:06, Alejandro Colomar <alx@kernel.org> wrote:
+> >
+> > -       p +=3D snprintf(p, ID_STR_LENGTH - (p - name), "%07u", s->size);
+> > +       p =3D seprintf(p, e, "%07u", s->size);
+>=20
+> I am *really* not a fan of introducing yet another random non-standard
+> string function.
 
-If the result looks correct, please mark the issue as fixed by replying with:
+I am in the C Committee, and have proposed this API for standardization.
+I have a feeling that the committee might be open to it.
 
-#syz fix: bcachefs: Don't put rhashtable on stack
+> This 'seprintf' thing really seems to be a completely made-up thing.
+> Let's not go there. It just adds more confusion - it may be a simpler
+> interface, but it's another cogniitive load thing,
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+I understand the part of your concern that relates to
+<https://xkcd.com/927/>.
+
+However, I've shown how in mm/, I got rid of most snprintf() and
+scnprintf() calls.  I could even get rid of the remaining snprintf()
+ones; I didn't do it to avoid churn, but they're just 3, so I could do
+it, as a way to remove all uses of snprintf(3).
+
+I also got rid of all scnprintf() uses except for 2.  Not because those
+two cannot be removed, but because the code was scary enough that I
+didn't dare touch it.  I'd like someone to read it and confirm that it
+can be replaced.
+
+> and honestly, that
+> "beginning and end" interface is not great.
+
+Just look at the diffs.  It is great, in terms of writing less code.
+
+In some cases, it makes sense to pass a size.  Those cases are when you
+don't want to chain several calls.  That's the case of stprintf(), and
+it's wrapper STPRINTF(), which calls ARRAY_SIZE() internally.
+
+But most of the time you want to chain calls, and 'end' beats 'size'
+there.
+
+> I think we'd be better off with real "character buffer" interfaces,
+> and they should be *named* that way, not be yet another "random
+> character added to the printf family".
+
+You might want to do that, but I doubt it's an easy change.  On the
+other hand, this change is trivial, and can be done incrementally,
+without needing to modify the buffer since its inception.
+
+And you can come back later to wrap this in some API that does what you
+want.  Nothing stops you from doing that.
+
+But this fixes several cases of UB in a few files that I've looked at,
+with minimal diffs.
+
+> The whole "add a random character" thing is a disease. But at least
+> with printf/fprintf/vprintf/vsnprintf/etc, it's a _standard_ disease,
+> so people hopefully know about it.
+
+seprint(2) was implemented in Plan9 many decades ago.  It's not
+standard, because somehow Plan9 has been ignored by history, but the
+name has a long history.
+
+<https://plan9.io/magic/man2html/2/print>
+
+Plus, I'm making seprintf() standard (if I can convince the committee).
+
+Yesterday night, I presented the proposal to the committee, informally
+(via email).  You can read a copy here:
+<https://lore.kernel.org/linux-hardening/cover.1751747518.git.alx@kernel.or=
+g/T/#m9311035d60b4595db62273844d16671601e77a50>
+
+I'll present it formally in a month, since I have a batch of proposals
+for the committee in the works.
+
+
+Have a lovely day!
+Alex
+
+> So I really *really* don't like things like seprintf(). It just makes me =
+go WTF?
+>=20
+> Interfaces that have worked for us are things like "seq_printf()", which
+>=20
+>  (a) has sane naming, not "add random characters"
+>=20
+>  (b) has real abstractions (in that case 'struct seq_file') rather
+> than adding random extra arguments to the argument list.
+>=20
+> and we do have something like that in 'struct seq_buf'.  I'm not
+> convinced that's the optimal interface, but I think it's *better*.
+> Because it does both encapsulate a proper "this is my buffer" type,
+> and has a proper "this is a buffer operation" function name.
+>=20
+> So I'd *much* rather people would try to convert their uses to things
+> like that, than add random letter combinations.
+>=20
+>              Linus
+
+--=20
+<https://www.alejandro-colomar.es/>
+
+--hm3euuqedab7podc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmhsLi0ACgkQ64mZXMKQ
+wqmzHhAAiWAsGEbvSPpIRKjHFLRmZ1qgrHgSd2MJ5KPyYritnzqRD0gE1mRApWtk
+kfVZhvAa0ud09ds81/+KW/SAYw5VsHdJuyDpLxfNNaP0sKJRuTUgHPmjqBsj3N3F
+4MtyXQ1P6YjydvSUQ200zKyXaPBsPTqJEz2M+gXxNgghYp07sEYcEEKKV1X1j6vK
+atcQsESKA+/+V9kPiHFgGQsaX7/e/nvSVpao5gnZ8oIxsqDN/zPosSks7wxBptyJ
+FSMMer6X3IUsh7innNWu4QSPXObRGS5BJol6Ev1d5IKvXTkmxipe4vXWO7OQ9Un4
+LNBAqD8+SQWbqHFHjEH1VUqr9wzJNFnJrjGUsz+kwtV4dHtbATi/7peYZA7Ht0CA
+arhageKLWRn2JUM5beeIug/CJHZ150+m/M1Dc0Ec6K9rxJUj10sP/t09WIljrJzF
+4D8lBcrZVMjz+NkOWQNn55ZN9VU7r/6y57Dv090D0ysBmmE2fG7GzGbJJMYqEGrb
+nXAFN1giVxeg2t/tlbzAGJ09EZkxinK0EHEzY/4bgT5gDw/tMMBqsX4qTp7qa9Va
+JzUTGvdbS5I1Px04zRDJrOvNyx5vyFRj+ZROPop/tO3Jucf1BWE2sxBezKoCK1zl
+3NiRecJc2x2mDZnh2mDRcMuEMkprSbFB/5KS56i0ayITLsqauSk=
+=E6l+
+-----END PGP SIGNATURE-----
+
+--hm3euuqedab7podc--
 
