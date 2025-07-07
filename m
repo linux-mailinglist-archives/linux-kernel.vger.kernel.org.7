@@ -1,101 +1,182 @@
-Return-Path: <linux-kernel+bounces-719934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C85C7AFB4CF
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 15:41:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D363CAFB4B5
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 15:35:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2EDD21726E2
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 13:41:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 053A63B04B3
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 13:35:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 962EB29CB3E;
-	Mon,  7 Jul 2025 13:41:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AE9829B229;
+	Mon,  7 Jul 2025 13:35:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b="HeYnO4Dm"
-Received: from smtp72.iad3b.emailsrvr.com (smtp72.iad3b.emailsrvr.com [146.20.161.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="t++THqT9"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C8D329C346
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 13:41:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=146.20.161.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13EE1293C6A
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 13:35:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751895702; cv=none; b=VacjoCkTnmd5fRjXA+C7joIMQIX3d1VS2BQz4w9dlH2qti+XZqxq3XpbUC9sUjnyiURMrCgcAjFUXdmIXuiTzEY+ekP0uVoaBV1izhaA8cKMWymJTiq7N7nHWaBW/ngZqLFkEb6IdKgi1t5nmY13xB826ZmezlYQ0u0g6u7f2b0=
+	t=1751895323; cv=none; b=mCuRk0LelESOiooIb5vbOQsBIlUlWpo6h3yNELLi0g2wxmemiAKqwsN4D004LkFye39N+zH5yNpv7prL6omuVQoB3g/ysmcDkP69z+XOhcsl2p/3w0hxqmPRX2KMidGG8v6CZXv8csLVkEj5koop/RW9z8o86SxBiXU4tgDbAbM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751895702; c=relaxed/simple;
-	bh=F6TLP7RxSLc86v4OJcnDbSakXy8hmn4QJph5g43BHPY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qZbB3NBU7khZU/Cul0aMHEBnr/gsrfo0OmO/Xw13IobWYZiaueDtJOA6cTjBOSdyWsUxSxrFcYRLT/xFS9RFCcFevP7K3HoqxfFU1Otg1xGUUW+3roFDOVL/MTVMSZiMHeFF+zZo5ObjEW661dn23MEGB5duEd+MIyF0MAyFzVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk; spf=pass smtp.mailfrom=mev.co.uk; dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b=HeYnO4Dm; arc=none smtp.client-ip=146.20.161.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mev.co.uk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mev.co.uk;
-	s=20221208-6x11dpa4; t=1751895279;
-	bh=F6TLP7RxSLc86v4OJcnDbSakXy8hmn4QJph5g43BHPY=;
-	h=From:To:Subject:Date:From;
-	b=HeYnO4Dm8Xhd+Bbh2iV34+oBhCqFY7iPzGPb0/ucHQoNVAAaXyxYYOJVmeAzXS/ih
-	 vTT4TX2T5gElT0fbOouzTBgKv2xCMEcSkSv2e289FFQh6PiqtlTE/nRumK+WX/nNu2
-	 xcwusHP1gmY1YCAoYvE3vvtHU9cxeNnvyb1kL75I=
-X-Auth-ID: abbotti@mev.co.uk
-Received: by smtp18.relay.iad3b.emailsrvr.com (Authenticated sender: abbotti-AT-mev.co.uk) with ESMTPSA id 11B5AE021F;
-	Mon,  7 Jul 2025 09:34:38 -0400 (EDT)
-From: Ian Abbott <abbotti@mev.co.uk>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Ian Abbott <abbotti@mev.co.uk>,
-	H Hartley Sweeten <hsweeten@visionengravers.com>,
-	syzbot+32de323b0addb9e114ff@syzkaller.appspotmail.com,
-	stable@vger.kernel.org
-Subject: [PATCH] comedi: pcl812: Fix bit shift out of bounds
-Date: Mon,  7 Jul 2025 14:34:29 +0100
-Message-ID: <20250707133429.73202-1-abbotti@mev.co.uk>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1751895323; c=relaxed/simple;
+	bh=O8hQBASf5iMOBLgxVLic0uuXr1IXkFH1Kh4Bty5fihM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mM4jSNnCRSvVGZGd/Qc9cTVv/LN85nYN/sW1/z5SdqedGWw2kSzXpdG/V3opeGqLA9vanETU9CXMG/x+UhPJfsRrD0d26ZkHYOCCwMrtx1yUr+0GbZVvRGAaQ35XEMy/cA/PGMoB2sVndEmzOOP8yroJ/+/8gXGbl9Z9UikNjq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=t++THqT9; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-60867565fb5so5151936a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 06:35:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1751895320; x=1752500120; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iglN2fDJo6Jj8oOAA17PlpCWLQPcfqHRK3QqDqJauNc=;
+        b=t++THqT95wpZgG/8BQyOvlDdpS61ZE5mR5RIGRcuwNE0bFbY3U5+c0F3bPrvTcDeWL
+         +r/f9QOjdiw16LIXmsn9jRKfaXrLZUcsozK67OV5m2IKpFq0iTaNG6NgzIVwEIF0/Erl
+         61kbwrrqb25HXLB9SleCLITSkJsKPhhZHC+UX5Y+Eg24a2MfiW5ZgmTQ8OdxQjRKzKjr
+         fzyvKq2FxjNuzDuHm0jP59RjqP0fdjpyvESC6K3fb/Nv5QYkJEH+PaZ5AuLE8c6mxx8k
+         HSmbnr5g9DIdWpQwcndOJQ4exk3xXvvt1i4sQ/3Ea/3+fX1SPvOH4WB8S4oIVvH34a1/
+         fGEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751895320; x=1752500120;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iglN2fDJo6Jj8oOAA17PlpCWLQPcfqHRK3QqDqJauNc=;
+        b=teXgHliUIRoU+4Mv8RN3XMPvlJLcXxrHMzoIzzLEoo5fRumAJFUm+Ft6a0QkfrpXn8
+         92h5TQGDi/+i2eBqeRgTIaQA767EVp3GtSKHfDPHSQ9af0g3ybolCjg+M75ew5uea2Ob
+         i87REfm0936RHIrjhQEqktRZoNT6qgl3//yg7bi3DlyVqxrnQQr8rqGSe0ovUPc1ki21
+         eK1Fhnjb2rjgs4FLlJ+APEsnF4t/FgSC/MGNBcGKpqeLBZSywCyOibEucZrNhfZvLUrd
+         dH3VQnWg3u+fdRbKKoJWkLrksgXGMzkYm/74xzIeRomUnL1YRA3I/hpBYTTrCavBnblW
+         H3VA==
+X-Forwarded-Encrypted: i=1; AJvYcCU4o0mGUWOnISAGBOK0Csn1hG223Ij9O3KeQSkp1aEozI5HjsUjvTDUSIHK3kFKVxcLRO3jyoVuN8S0Cck=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmqOW5Tmk2OroOsEVuClcUtvcmTf/vC8T5h7+3VSP/CeLtLRct
+	eGM4vysjn4qYnPVjsVL/6986d4XAwwo0i5Nr6w5EYTRXO4h4+wI4Gwb1DUuJuZdjY3I3B3sN+Un
+	58j+U1rxqtkTMF6PinsEkD4wUpWletvTCUSTgFCUKzMkvOV1etKbL9xo=
+X-Gm-Gg: ASbGnctE8/xp/qSd7GAMHK9Ulchn5AiXYT5vZiDMV98HE8SqrnvIjf6Mnh+RSSpa+JD
+	I8zaJjmLQr+0wyo5zsTYZwcBiRws5AZ5O7izWsI2hCyj7pDkfm3IJh+odtVxTQEytxk83n9Z3ne
+	euIKmg8KJ3MgM5SEIGaomBseD/m75bRBdUTMv48DL7GH344YlaPNoYycNEyK6PMx7DeOP78Zv5+
+	leeKQZ8Oo6Ihg==
+X-Google-Smtp-Source: AGHT+IET++QyEw80P77BIRzs6JWa9kHBMfwtkMIUTg5pCT3exqjnCE5AHFUJIOdI1A973C72FUTiNPTJJ/5qE+IOutw=
+X-Received: by 2002:a50:eb0c:0:b0:607:32e8:652 with SMTP id
+ 4fb4d7f45d1cf-60ff3c0d6e8mr6977121a12.19.1751895320263; Mon, 07 Jul 2025
+ 06:35:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Classification-ID: 1e8ffcc9-0a2f-41b8-877b-4512870c96d1-1-1
+References: <20250610131231.1724627-1-jkangas@redhat.com> <aGvHUTC7Kbe9lru3@jkangas-thinkpadp1gen3.rmtuswa.csb>
+In-Reply-To: <aGvHUTC7Kbe9lru3@jkangas-thinkpadp1gen3.rmtuswa.csb>
+From: Sumit Semwal <sumit.semwal@linaro.org>
+Date: Mon, 7 Jul 2025 19:05:09 +0530
+X-Gm-Features: Ac12FXyRxHcDe4-WqyYgc42A2U_9x5Uy_U3EHMTjmhyPcBLa1jvXKcYwtoIgS80
+Message-ID: <CAO_48GHtUG_hTFvLVQfG06FxdO_6z5m0WofXKh=WhgCjNguxPg@mail.gmail.com>
+Subject: Re: [PATCH v4 0/3] dma-buf: heaps: Use constant name for CMA heap
+To: Jared Kangas <jkangas@redhat.com>
+Cc: benjamin.gaignard@collabora.com, Brian.Starkey@arm.com, jstultz@google.com, 
+	tjmercier@google.com, christian.koenig@amd.com, mripard@kernel.org, 
+	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-When checking for a supported IRQ number, the following test is used:
+Hello Jared,
 
-	if ((1 << it->options[1]) & board->irq_bits) {
+On Mon, 7 Jul 2025 at 18:40, Jared Kangas <jkangas@redhat.com> wrote:
+>
+> On Tue, Jun 10, 2025 at 06:12:28AM -0700, Jared Kangas wrote:
+> > Hi all,
+> >
+> > This patch series is based on a previous discussion around CMA heap
+> > naming. [1] The heap's name depends on the device name, which is
+> > generally "reserved", "linux,cma", or "default-pool", but could be any
+> > arbitrary name given to the default CMA area in the devicetree. For a
+> > consistent userspace interface, the series introduces a constant name
+> > for the CMA heap, and for backwards compatibility, an additional Kconfi=
+g
+> > that controls the creation of a legacy-named heap with the same CMA
+> > backing.
+> >
+> > The ideas to handle backwards compatibility in [1] are to either use a
+> > symlink or add a heap node with a duplicate minor. However, I assume
+> > that we don't want to create symlinks in /dev from module initcalls, an=
+d
+> > attempting to duplicate minors would cause device_create() to fail.
+> > Because of these drawbacks, after brainstorming with Maxime Ripard, I
+> > went with creating a new node in devtmpfs with its own minor. This
+> > admittedly makes it a little unclear that the old and new nodes are
+> > backed by the same heap when both are present. The only approach that I
+> > think would provide total clarity on this in userspace is symlinking,
+> > which seemed like a fairly involved solution for devtmpfs, but if I'm
+> > wrong on this, please let me know.
+> >
+> > Changelog:
+> >
+> > v4:
+> >   - Fix ERR_PTR() usage for negative return value.
+> >
+> > v3:
+> >   - Extract documentation markup fix to separate patch.
+> >   - Adjust DEFAULT_CMA_NAME per discussion in [2].
+> >   - Warn if the legacy heap name and the default heap name are the same=
+.
+> >   - Fix DMABUF_HEAPS_CMA_LEGACY prompt.
+> >   - Touch up commit log wording.
+> >
+> > v2:
+> >   - Use tabs instead of spaces for large vertical alignment.
+> >
+> > [1]: https://lore.kernel.org/all/f6412229-4606-41ad-8c05-7bbba2eb6e08@t=
+i.com/
+> > [2]: https://lore.kernel.org/all/CANDhNCroe6ZBtN_o=3Dc71kzFFaWK-fF5rCdn=
+r9P5h1sgPOWSGSw@mail.gmail.com/
+> >
+> > Jared Kangas (3):
+> >   Documentation: dma-buf: heaps: Fix code markup
+> >   dma-buf: heaps: Parameterize heap name in __add_cma_heap()
+> >   dma-buf: heaps: Give default CMA heap a fixed name
+> >
+> >  Documentation/userspace-api/dma-buf-heaps.rst | 11 +++---
+> >  drivers/dma-buf/heaps/Kconfig                 | 10 ++++++
+> >  drivers/dma-buf/heaps/cma_heap.c              | 36 +++++++++++++++----
+> >  3 files changed, 46 insertions(+), 11 deletions(-)
+> >
+> > --
+> > 2.49.0
+> >
+>
+> Hi Sumit,
+>
+> Just wanted to check in on this since discussion has died down this
+> iteration: what's the status on this series? If there's anything I can
+> do to help, I'm happy to lend a hand.
 
-However, `it->options[i]` is an unchecked `int` value from userspace, so
-the shift amount could be negative or out of bounds.  Fix the test by
-requiring `it->options[1]` to be within bounds before proceeding with
-the original test.  Valid `it->options[1]` values that select the IRQ
-will be in the range [1,15]. The value 0 explicitly disables the use of
-interrupts.
+I'm sorry, I had to be out for a bit due to some personal reasons;
+overall it looks good to me. I'll apply it very soon.
 
-Reported-by: syzbot+32de323b0addb9e114ff@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=32de323b0addb9e114ff
-Fixes: fcdb427bc7cf ("Staging: comedi: add pcl821 driver")
-Cc: <stable@vger.kernel.org> # 5.13+
-Signed-off-by: Ian Abbott <abbotti@mev.co.uk>
----
-Patch does not apply cleanly to longterm kernels 5.4.x and 5.10.x.
----
- drivers/comedi/drivers/pcl812.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Thank you for your patience!
 
-diff --git a/drivers/comedi/drivers/pcl812.c b/drivers/comedi/drivers/pcl812.c
-index 0df639c6a595..abca61a72cf7 100644
---- a/drivers/comedi/drivers/pcl812.c
-+++ b/drivers/comedi/drivers/pcl812.c
-@@ -1149,7 +1149,8 @@ static int pcl812_attach(struct comedi_device *dev, struct comedi_devconfig *it)
- 		if (IS_ERR(dev->pacer))
- 			return PTR_ERR(dev->pacer);
- 
--		if ((1 << it->options[1]) & board->irq_bits) {
-+		if (it->options[1] > 0 && it->options[1] < 16 &&
-+		    (1 << it->options[1]) & board->irq_bits) {
- 			ret = request_irq(it->options[1], pcl812_interrupt, 0,
- 					  dev->board_name, dev);
- 			if (ret == 0)
--- 
-2.47.2
+>
+> Thanks,
+> Jared
+Best,
+Sumit.
+>
 
+
+--=20
+Thanks and regards,
+
+Sumit Semwal (he / him)
+Senior Tech Lead - Android, Platforms and Virtualisation
+Linaro.org =E2=94=82 Arm Solutions at Light Speed
 
