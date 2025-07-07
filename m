@@ -1,84 +1,84 @@
-Return-Path: <linux-kernel+bounces-719835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51100AFB340
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 14:28:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A28EAFB34C
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 14:31:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A601C1633CA
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 12:28:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E32BA422604
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 12:31:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF80629B200;
-	Mon,  7 Jul 2025 12:28:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0DA129B217;
+	Mon,  7 Jul 2025 12:31:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outer-limits.org header.i=@outer-limits.org header.b="Bdkg20iO";
-	dkim=permerror (0-bit key) header.d=outer-limits.org header.i=@outer-limits.org header.b="OrFmtsad"
-Received: from mo4-p02-ob.smtp.rzone.de (mo4-p02-ob.smtp.rzone.de [81.169.146.169])
+	dkim=pass (2048-bit key) header.d=outer-limits.org header.i=@outer-limits.org header.b="Gu2llJiI";
+	dkim=permerror (0-bit key) header.d=outer-limits.org header.i=@outer-limits.org header.b="cDJeZ0cq"
+Received: from mo4-p02-ob.smtp.rzone.de (mo4-p02-ob.smtp.rzone.de [85.215.255.82])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0F9519F41C;
-	Mon,  7 Jul 2025 12:28:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=81.169.146.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6BE229A331;
+	Mon,  7 Jul 2025 12:31:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=85.215.255.82
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751891292; cv=pass; b=TAA5V77F3XvJ0SRtdnfJSRH1d+CA0Sf91jZ0sUjMdtLMaOGHR/HcURyjXUbejyOLFosLCEHig2zMqII8TQLf9gS8QcdX4pJ8scJFyIeSXFNRnqQKWOFNCBpuEvH1jFRiMoX//atIj895eQrvNBswYGxHiAfYtzoZyD5nEktuRHk=
+	t=1751891474; cv=pass; b=mwh0eXtOVh4WhLRZlHGXMPVHRNknaMTiWG5srv9yEfRGJmQlY0Y0Hu5uDQyl0i71juK/1ZMwULLP6vusWhV/CWYxmwTfdB9iOYpOi0wt63nDKQl26tqyfXDgWxcU0OifYEZxdY9j3x6EhUQcU9rx1pTVroGvumpir3xjQs9PU2U=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751891292; c=relaxed/simple;
-	bh=iF6svWQxjhfH01K5GB6VJBFDspeZkf1NcAWZPZoRlP8=;
+	s=arc-20240116; t=1751891474; c=relaxed/simple;
+	bh=RFNsgxe2C6r+SN1MHnmdrNC2twMDtlwKmmZEi0IeFfQ=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=M3tHvW+Oag1rMyAvUQwG50fVBevlo6nZzjTwX3mPKxH2uq4fHBjqQk7gbJqmN4+PBNdPrtT7ubzQlXHWhLYwIyzVHgYSGqWiwYO23hIrFaSc/TxCfpM/PslRlpSBOi9XcK4Bj4Hikdb0h2+eel3+0GItqYoBOvm02wzJuG4ZFcc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=outer-limits.org; spf=none smtp.mailfrom=outer-limits.org; dkim=pass (2048-bit key) header.d=outer-limits.org header.i=@outer-limits.org header.b=Bdkg20iO; dkim=permerror (0-bit key) header.d=outer-limits.org header.i=@outer-limits.org header.b=OrFmtsad; arc=pass smtp.client-ip=81.169.146.169
+	 MIME-Version:Content-Type; b=CN3cSqP3TjCtk23/hO+whH+XxK5B4NNjefETNoABiUVdeGoc/rWhGd2CAmUXO3AU70hx8rXvvK0PwiB7/2mjOOPnnmuFkShz8aEDUsbmjP/ajUT6VggFrYF+NtStm1ASyjOOSC1Gc2wFDsn2ZoLLM2rQbAlkkIn7O6gQJe5sYYw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=outer-limits.org; spf=none smtp.mailfrom=outer-limits.org; dkim=pass (2048-bit key) header.d=outer-limits.org header.i=@outer-limits.org header.b=Gu2llJiI; dkim=permerror (0-bit key) header.d=outer-limits.org header.i=@outer-limits.org header.b=cDJeZ0cq; arc=pass smtp.client-ip=85.215.255.82
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=outer-limits.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=outer-limits.org
-ARC-Seal: i=1; a=rsa-sha256; t=1751891116; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1751891117; cv=none;
     d=strato.com; s=strato-dkim-0002;
-    b=CmyLSpV0f0A6u/wPTg6M/HJeDLkeGstf09O8ADNSEsshTnZvhZ1EHsDlrWd2RAnie/
-    RxHB3d+oyBcHxTBzi/GErimzZjZlFQ/aB17PC4vA3vtoihKDxIORIg0pPnMhLoJFLUAt
-    NRD3v2prdkHJ153gCmf1F4u1bS3Zuu2MorpgutLfNG9Pn0g6QmhIRxkGbhPaf0oeUbEj
-    H9SveKs1HtGcD2wCcbbuRiI5oEWS3rOqZoQ0DBh9MpyjZ6QmvPtqhZqA6ppvqarup0EU
-    0P8F9+EfvmKjf/P+XNBUn4eSu1MasLgOHzp+Z2/8myYUljN0cpmFe9ypk/+UIy8rHIyB
-    F6bg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1751891116;
+    b=d1CqLAMQXRbwKaP24cKZDEfvDxAgCurI/UxqM3rEbgnZc3BxUpUUiWJzYzNT/KiRQs
+    7c0L8wBcLENGJn2A+i7a+iKmaOBzQ0JOOYv2j3MUCIdje/I/yyQcA2MFXWlgpf1Ivx9h
+    DYIkPBIuaYfUh33Rwht7UUrYTtXt5mmXBuj34tgqyug29uBeV2k0YzNK9UbI8LbfN4Y+
+    R3hfzoePpeDHBP+BNyg5NBIEv4sJW4eOtfcoAz7jRGA178jrFH5AFsur128kThxwmoYa
+    8GME7GYKzyvi2hr0//9sYZdiAjVCDT5/T04zn5p7tPTrj6PegaCUjTI8l4D8g85YHn6+
+    IWsA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1751891117;
     s=strato-dkim-0002; d=strato.com;
     h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Cc:Date:
     From:Subject:Sender;
-    bh=EVp3iPa/GUn3mF6v3cUjP293u2lfu/v36mq2O4KGlBE=;
-    b=e8ZfLwhqKedh8v9UYoDqmSibGHqx2gySksYO0pMy8kraNTwW8uohoButlB3VEkLW+k
-    AHZgKWide+uHWQ9iu49dEZEY0oiF9s1WaHjxv3d3FRX0AKBgEUm8X/h6eMiwc9S3ZOM2
-    /+8PW2Dsp3JWKstKK5WoxkJCes66V2OTJweMmn7LdHPPdra9X7OqomuosOGUITK0OMhi
-    zekh2Z/RkyklRbTuWviRea22qC57eckckmoEoLCgBL/CmT02sL+kCmxGtfn2qwaIDCEw
-    RIEFwgAnPrjUWPjciFAtDWDg5SazxPoxRDiDv697levVvWJGBjwkPiQDes+L9o8AW1AZ
-    nF4Q==
+    bh=ZFRrdSFaCSnM9EDX8a/HbF+5M4Jjf0Gf8M15CKb/DB0=;
+    b=gI26z75+IWV7j7tuWTMlvkC4irToRlDbqbD9OZ/oEieso71muKA93U54ZIx2DGr7jC
+    XeYk58DSz5Wiv/B5txkqHsMOGgbKKJndKn4EUCXEnnQpTwz/nNdLgQk7gM1DLpIr1j9r
+    bmhprbfk13mQNn4ijyKxi372yJpq0v8dp/pczuv4YZALxYHeHjh9dJVEwBqQN8BWJnK+
+    8ObclZwfiKK/tRGxtXDMREvRxhQ+YThZuvucPVtbFENruDgj/8n/q/zipgD7LarFZmSR
+    rkT1+LtzSoxhfEuejUkdcZPS2v1u7WzmTAcvdFrbqHUGlHCZvGAcCn1LNn9wIFA+MdUu
+    Sexw==
 ARC-Authentication-Results: i=1; strato.com;
     arc=none;
     dkim=none
 X-RZG-CLASS-ID: mo02
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1751891116;
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1751891117;
     s=strato-dkim-0002; d=outer-limits.org;
     h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Cc:Date:
     From:Subject:Sender;
-    bh=EVp3iPa/GUn3mF6v3cUjP293u2lfu/v36mq2O4KGlBE=;
-    b=Bdkg20iOdKsh1NuxcCxBADqfLmfPnnZlCNYV15wzsPE/+8ReAA3yawiafx2GzNHXvo
-    d7so43mN4zr/e9YikLUdMcrgv4CCzWY/J1RyLAQf51NkojQveiS0fnFJq9HRvV+d61O7
-    GcEKUs0sl5orwd+JEi/eQ5bMHQdsC1ltR30h1z1vEQclo9XcjqSGmEaRvU8lrTaFpJoy
-    RQToWb+Y8Vzy4g7dUQEYyftFMBsALkeBb4Jwf2Z5nXMYTbDMrAt2kXT5D2fN72RFVlHe
-    +lp4CYqXLBIIVSWx+z2FNc3y0aF6hG+YMfHYXa/c6Sq+KrZqLYhxTPBdy/qV9ik/2rf3
-    G2Lw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1751891116;
+    bh=ZFRrdSFaCSnM9EDX8a/HbF+5M4Jjf0Gf8M15CKb/DB0=;
+    b=Gu2llJiINjP2mOITX2ej9EYgt1CJ+R9HH7p0xQS9Wxtkz7ORjB+yw4RYaQlSycc/np
+    m2LVNzcKwW+NvSMerCqJSA5ALKh84YXeb/VLUBUA1LdIAT+s8ywLhqijwykcCFmIBlF8
+    eLPolgX+o0XsmSzKvJsFzqeA1blYZcIXceF9zrm++kxJ12A2Zz4UbUg1jQ27QALqoqQ2
+    HC1rjyEr98V0pYcs9SR/B9HCjlEuHB5qRsrQwPHfRKhy6wiX4TXIyU+6hXQ3yxFq30yj
+    DkIG5yt2kTeE9JJy51891ovH+N1vOA3FBhyAq+Xqxcgj5kc/WnDHEiI2njcf7oiHyew9
+    UtIg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1751891117;
     s=strato-dkim-0003; d=outer-limits.org;
     h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Cc:Date:
     From:Subject:Sender;
-    bh=EVp3iPa/GUn3mF6v3cUjP293u2lfu/v36mq2O4KGlBE=;
-    b=OrFmtsadi6gzppAd9HFMYY5G/jlF3mEbloSVhHcHblVuMZw8bazkGTz17TiOwhrAGb
-    xt6O4H3MPNxXQR2yyUDg==
+    bh=ZFRrdSFaCSnM9EDX8a/HbF+5M4Jjf0Gf8M15CKb/DB0=;
+    b=cDJeZ0cq4FBuy6ED+iNZNY3muKMkwsgTQ+qQlhOIYW24esaS+GWJ8+5tdW9ZysYjCS
+    6pyvZUOHHHS4hT/YU0DA==
 X-RZG-AUTH: ":JnkIfEGmW/AMJS6HttH4FbRVwc4dHlPLCp4e/IoHo8zEMMHAgwTfqBEHcVJSv9P5mRTGd2ImeA=="
 Received: from ws2104.lan.kalrayinc.com
     by smtp.strato.de (RZmta 51.3.0 AUTH)
-    with ESMTPSA id J1bd32167CPG714
+    with ESMTPSA id J1bd32167CPH717
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
 	(Client did not present a certificate);
-    Mon, 7 Jul 2025 14:25:16 +0200 (CEST)
+    Mon, 7 Jul 2025 14:25:17 +0200 (CEST)
 From: Julian Vetter <julian@outer-limits.org>
 To: Peter Zijlstra <peterz@infradead.org>,
 	Ingo Molnar <mingo@redhat.com>,
@@ -96,9 +96,9 @@ To: Peter Zijlstra <peterz@infradead.org>,
 Cc: linux-perf-users@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Julian Vetter <julian@outer-limits.org>
-Subject: [PATCH RESEND 3/5] tools: Replace __get_unaligned_cpu32 in jhash function
-Date: Mon,  7 Jul 2025 14:24:58 +0200
-Message-Id: <20250707122500.724699-4-julian@outer-limits.org>
+Subject: [PATCH RESEND 4/5] tools: Remove unaligned/packed_struct.h header
+Date: Mon,  7 Jul 2025 14:24:59 +0200
+Message-Id: <20250707122500.724699-5-julian@outer-limits.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250707122500.724699-1-julian@outer-limits.org>
 References: <20250707122500.724699-1-julian@outer-limits.org>
@@ -111,40 +111,68 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain; charset="us-ascii"
 
-The __get_unaligned_cpu32 function is deprecated. So, replace it with
-the more generic get_unaligned and just cast the input parameter.
+The functions in this header are deprecated and are not used anymore.
+So, remove the header entirely.
 
 Signed-off-by: Julian Vetter <julian@outer-limits.org>
 ---
- tools/include/linux/jhash.h | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ tools/include/linux/unaligned/packed_struct.h | 47 -------------------
+ 1 file changed, 47 deletions(-)
+ delete mode 100644 tools/include/linux/unaligned/packed_struct.h
 
-diff --git a/tools/include/linux/jhash.h b/tools/include/linux/jhash.h
-index af8d0fe1c6ce..5ff3c8275281 100644
---- a/tools/include/linux/jhash.h
-+++ b/tools/include/linux/jhash.h
-@@ -24,7 +24,7 @@
-  * Jozsef
-  */
- #include <linux/bitops.h>
--#include <linux/unaligned/packed_struct.h>
-+#include <linux/unaligned.h>
- 
- /* Best hash sizes are of power of two */
- #define jhash_size(n)   ((u32)1<<(n))
-@@ -77,9 +77,9 @@ static inline u32 jhash(const void *key, u32 length, u32 initval)
- 
- 	/* All but the last block: affect some 32 bits of (a,b,c) */
- 	while (length > 12) {
--		a += __get_unaligned_cpu32(k);
--		b += __get_unaligned_cpu32(k + 4);
--		c += __get_unaligned_cpu32(k + 8);
-+		a += get_unaligned((u32 *)k);
-+		b += get_unaligned((u32 *)(k + 4));
-+		c += get_unaligned((u32 *)(k + 8));
- 		__jhash_mix(a, b, c);
- 		length -= 12;
- 		k += 12;
+diff --git a/tools/include/linux/unaligned/packed_struct.h b/tools/include/linux/unaligned/packed_struct.h
+deleted file mode 100644
+index dbd93c7df2e1..000000000000
+--- a/tools/include/linux/unaligned/packed_struct.h
++++ /dev/null
+@@ -1,47 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0 */
+-#ifndef _LINUX_UNALIGNED_PACKED_STRUCT_H
+-#define _LINUX_UNALIGNED_PACKED_STRUCT_H
+-
+-#include <linux/kernel.h>
+-
+-struct __una_u16 { u16 x; } __packed;
+-struct __una_u32 { u32 x; } __packed;
+-struct __una_u64 { u64 x; } __packed;
+-
+-static inline u16 __get_unaligned_cpu16(const void *p)
+-{
+-	const struct __una_u16 *ptr = (const struct __una_u16 *)p;
+-	return ptr->x;
+-}
+-
+-static inline u32 __get_unaligned_cpu32(const void *p)
+-{
+-	const struct __una_u32 *ptr = (const struct __una_u32 *)p;
+-	return ptr->x;
+-}
+-
+-static inline u64 __get_unaligned_cpu64(const void *p)
+-{
+-	const struct __una_u64 *ptr = (const struct __una_u64 *)p;
+-	return ptr->x;
+-}
+-
+-static inline void __put_unaligned_cpu16(u16 val, void *p)
+-{
+-	struct __una_u16 *ptr = (struct __una_u16 *)p;
+-	ptr->x = val;
+-}
+-
+-static inline void __put_unaligned_cpu32(u32 val, void *p)
+-{
+-	struct __una_u32 *ptr = (struct __una_u32 *)p;
+-	ptr->x = val;
+-}
+-
+-static inline void __put_unaligned_cpu64(u64 val, void *p)
+-{
+-	struct __una_u64 *ptr = (struct __una_u64 *)p;
+-	ptr->x = val;
+-}
+-
+-#endif /* _LINUX_UNALIGNED_PACKED_STRUCT_H */
 -- 
 2.34.1
 
