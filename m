@@ -1,229 +1,203 @@
-Return-Path: <linux-kernel+bounces-720589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61B58AFBDDC
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 23:51:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E13AAFBDE0
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 23:52:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1069F1BC27FB
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 21:52:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9F344A4E81
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 21:52:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C69327A47A;
-	Mon,  7 Jul 2025 21:51:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C5FF28541F;
+	Mon,  7 Jul 2025 21:52:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ejaH0v6/"
-Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="cd/Jy8N+"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2071.outbound.protection.outlook.com [40.107.223.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA1A81BF37
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 21:51:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751925096; cv=none; b=BGs9GcnCyjvOWEHNqTZu8sex42KQ1bIloXRzRIgcLFzk7Pb6BznPFacokCDQc7Rc1P+bDax3w0RY72Cke+q2RWBiB6DmyTVv3Pe72Zii4gLx2sAtaV/+YJL4LEfaziAWIKo1sfx6iqJASM8kykokU+wqncl0wRFtYxzdO2PFAp4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751925096; c=relaxed/simple;
-	bh=LuJ6h3GiaW30BQVR+beHdeZA9CJXH9c4tGfQmIJLzho=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=OXOAaNqJ+Bg8PxcDidkqxAqFVIwAr53vopMxOGsBqYb1QKR1LkGiOzc7AkxqLiERFdMi4aNBfNx269o06Jgk8ZR3anHM7Vv9Aknu5L3wAjN9A0rB+YkpkKi4llXJ7T8r+NPvq7hrFIW/gqTwJQpVsHMIK0Pe0JI5Fkjc3qmzE60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ejaH0v6/; arc=none smtp.client-ip=209.85.222.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-7d3dd14a7edso586111185a.2
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 14:51:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751925094; x=1752529894; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=qBG8RgRp5aWpRNqXfp/hHId5FOptjrBygU9EaAjmUuU=;
-        b=ejaH0v6/FbDYHyX9W+HMbprdWaQMdy8LvZrDdI0ogfB713oFE02DQOn2l/DKdaR98Q
-         IVq4BD6mZ16DOk8wZb5eYIbUV8U9CKmgr9GWDB96+DYj34l4Iwa311dc393Wn4U9yrEa
-         19Ukxj87x+sOLI3eogA5KKryUrdo0Vn/c6/xaW4lSyRaZr3PeiazUjbLYHElI183Acdy
-         Yd6LjQfq2Io2lxrtdi1UdDe3VBUI55Jyfs9lx2G1rOMUZWO1TiwIR7hw4p5zjtxaq9DT
-         Mbd/JNM6ItisowK4azCwtJobkjskCXNnt80HzxdVxjnfQVQ07kn7jKeIOCbZN3sCo0PN
-         C/bA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751925094; x=1752529894;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qBG8RgRp5aWpRNqXfp/hHId5FOptjrBygU9EaAjmUuU=;
-        b=SLw+qjT0QNjE0BLUx3NQWF0P+QJ0HLelzWtjvlTrdsrvgOsjhg1ZyKA4VzpDOJNUjr
-         pUeegQ+NfTCaU5Aw3shCHUvzxHLwxEvqPsP2zVN/s20jdQjGlJM7lRckS4VtEeYkT1pr
-         kYF3Zi+3n5OUIpOUxT12YMHcCebGt/fztMdoeh5DTbNoLlVEo8ELBIcsnNW3XHfCVx3l
-         sqmJPje2qrA1+HYxsaDPWsfIREDdaxHlyhplCcTBAjCqsPIn0hO1wF6aVWHTFiNtPjiI
-         dytmDisMZEw8YlXI1h0ZW357UhRPji20qSe8MMj6kiv3+EtAL2RK6A6HjLt+zTYmfA9z
-         N8+A==
-X-Forwarded-Encrypted: i=1; AJvYcCVVbhaoZAqBP4GnxRhmyIjZjnkA2fswXJkA9wQOWqo65FQC9bE5yjKNo5SzAunvxc36AIOg3vqfOMh2ZLg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlPJItPF9PUKLpt0+o8fK0K9jYgfmQTqAnJsPAEIo5iOGwpRz4
-	AaO0gO5vSFB6VX9JZJ4/weHylC+fZUuoo5dDuk2/ikN6PGvf6y/150d95rwbj2Kh5ImOYSYYyky
-	S6y7UXOCIk0dxPvx+3sryD0T/28wyQl2NPz8OZ98=
-X-Gm-Gg: ASbGncv569zENWjqfRnh0hntuW+uq2QYkpKE/5tsjbeN0pEgNUOqhoWkRoB/Fp+iggq
-	EAHqHOWAMRxqyszx3FFRsW8fj7nBaTbzGN7FU1yxVaV4rq7/D1iy77IGw0H7Xo5KasHZGvcrSRc
-	Q9sZAFRuP5E62sn14h6Prcg83XmUUgRKYNsKyKC5XdSdA+9ZLmxxfFWSFaodyK6PJioMYWX7fQI
-	mi9oyXJFjs11hUn
-X-Google-Smtp-Source: AGHT+IH/WpBXkCAX5gTtSFLfM0VHrfYiIyCEHbg1/iwHSjr4d+fy0Ff9QmZAqzy8rURzr5JkI4V2XmoySpRzI3xVa2o=
-X-Received: by 2002:a05:620a:708e:b0:7d0:98fc:83f9 with SMTP id
- af79cd13be357-7d5dcc7297emr1805784085a.18.1751925093768; Mon, 07 Jul 2025
- 14:51:33 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1233D1BF37;
+	Mon,  7 Jul 2025 21:52:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.71
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751925157; cv=fail; b=ljo/8nZCwDk4vlfxKb71dL8t6ZzymZwdOhy+ornfygLm5uah26OVEjZNQ43WzBlZeJ4sGvsXVRcoESBpeMP6QZPeLkFN1G+HB+bRbJ5lf6MfdQi0SY1TXMzqc9VlaJZg0MCmvirSbq3gUiRAsAM5sOzhJBqCdShQkStuPZZ+A6U=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751925157; c=relaxed/simple;
+	bh=lOQaU0Opls+xoOrJWIbL0ooNd+eOrHMIH17smxQ5JDw=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Srasy72P6ZEhSQVVtdqk4gPhXy/o+vmk8bRm9Sgj9UHIyY8FVeW97SIHT3LEJTLHTDNtFxrGia4279YLJf1V3OWE8dXy4HS/e3VxboeeZj3ZnJWC00XWTbXdHwGVnumZ4cAPRVEGix3yOYR/9unKzfQVPfrAnYtj06NLMiZfyyc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=cd/Jy8N+; arc=fail smtp.client-ip=40.107.223.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Iq5BXdr34tFTu9jW2LTNoya8PI5V2qZ8zAyXwO/DXWlxxLcfB96JipL7z8uZm0lXS9a76feP4J4mAhrLsH4wqDV253RVhOBUZysanuct2OuupWzcfjQDcb+g4JMRXmr6xzm7Jo62t0jrGv/PjhqQDRkhock8dj+0HKn5epClUzM2MfB7PBQbQMUJhMu7L//nQ1ai2/BcNM828h0o7vEKb86C6z1lkYxXCWgDWo0B44wOtY8xaPUOPliWCK/N62c0XXEm5S3XyWISkm9uG+mg7WsMDBvCcjZz6bPCmSfUc6MF5qmonBvTF0mgHFQjV4lglTMpgpVta1i7ebsuu+lRcw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/6bjSlRw05dM7PWaNHBUMtQwsphmpphYVjEjR1Lb9yA=;
+ b=NjNL95eDFOGgLv8LsWLTJzz1+rr/7Ia4ZjEROsztz7+9csmIWLlE/bwWz5MWuRedJI4JycCBKu6s0LBTcPTBmTT21WuCwMuCT7Ls9ltu4PC7UXPKKBEExLC8FGFseg2nG9kv5FNq6U8PCROarilKcyeOz+a/dgLtqqWh9N1b7CXcaReL7fmjei8BqUAtVDzdwpQ00wgVPXSR6uzd0h3FE4OuDT4IXMfxxYv33e3J9+Fipbp7v9vqhIoGuT2CYSmajgw3daKZU9etpFbF4+AW8Lt75tzXEQAdUVzjW/lnd4vg8KQgMpdi/qWLvg/WBJ17elLTsUDBfsLg5b1y6oMbIA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/6bjSlRw05dM7PWaNHBUMtQwsphmpphYVjEjR1Lb9yA=;
+ b=cd/Jy8N+XSepUjoGWs8XGwjT9dgYRxUSwwvfW/O21dS6dLopa6FsP4m91gMQvLfKg+kKV8dQnwou8adT9SOktl0c3hLCsISumnMN4FbP84Wem5xkcN/2xJA3vbrLGZKGHZoHvJxqzUUR9wp25S5HHzifoyp8ylY4gDWRcWR6BWk=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
+ by MW6PR12MB9017.namprd12.prod.outlook.com (2603:10b6:303:23b::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.26; Mon, 7 Jul
+ 2025 21:52:32 +0000
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca%4]) with mapi id 15.20.8901.021; Mon, 7 Jul 2025
+ 21:52:32 +0000
+Message-ID: <f8446083-815e-41e9-a1e8-f8d5c409dc36@amd.com>
+Date: Mon, 7 Jul 2025 17:52:30 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: Linux 6.15.5
+To: =?UTF-8?Q?J=C3=B6rg-Volker_Peetz?= <jvpeetz@web.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+ torvalds@linux-foundation.org, stable@vger.kernel.org,
+ gautham.shenoy@amd.com, dhananjay.ugwekar@amd.com, ray.huang@amd.com,
+ perry.yuan@amd.com, rafael@kernel.org, viresh.kumar@linaro.org
+Cc: lwn@lwn.net, jslaby@suse.cz
+References: <2025070646-unopposed-nutrient-8e1c@gregkh>
+ <d7527ee9-fba1-49ad-9a71-6d955eeddc3e@web.de>
+Content-Language: en-US
+From: Mario Limonciello <mario.limonciello@amd.com>
+In-Reply-To: <d7527ee9-fba1-49ad-9a71-6d955eeddc3e@web.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: YT4PR01CA0284.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:109::12) To MN0PR12MB6101.namprd12.prod.outlook.com
+ (2603:10b6:208:3cb::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Steve French <smfrench@gmail.com>
-Date: Mon, 7 Jul 2025 16:51:22 -0500
-X-Gm-Features: Ac12FXy3learX7rqABOLMiQr7WvFHfcz0ICgQjm93cahy8vEBhOo_shQG00bqMU
-Message-ID: <CAH2r5msTzHGf5YhYra+_5yFFGkc=1o2z_-QmtsA=5rNdy35j0g@mail.gmail.com>
-Subject: Flood of RIPs in DRM driver starting with 6.16-rc5
-To: David Airlie <airlied@redhat.com>, "simona@ffwll.ch" <simona@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|MW6PR12MB9017:EE_
+X-MS-Office365-Filtering-Correlation-Id: 511aec49-7c44-4f46-d977-08ddbda09391
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|376014|7416014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?VE9qcDhZU2s4SlVQYTA3bUVxOXBHcnQ5V3BZQWtBSkJiQ0svWktGcDZ3Sk5m?=
+ =?utf-8?B?a1ZvQnRRV0lxQU5OdCs2bVU1YURMNis2b1ZEb0owN0VtRDlVWHVmSnBIdVNI?=
+ =?utf-8?B?VGd1Z1kzeWJhV0RVZWlNMDQ0dnFhK2E2amVaZEhrM3kwR2Y1OGhhSjBXaEFm?=
+ =?utf-8?B?RzhVdUtROHNLY2djai9aaG1uYmlPWW1wQ09KWEZFQmE3QUJqYjBHZU9EU3gy?=
+ =?utf-8?B?VkE1VHRERVpWYXMzMXFoeFl0UVdtR1N5MVp3YU53R005SkdUMWZJQmJTbkNH?=
+ =?utf-8?B?QjZRQ0FRUTZKeTV2MEhTbGxYc05aSjV4dGhITmE5RU5HbU84MGxhdWNkZUJB?=
+ =?utf-8?B?YVBaSklIQW1MVWxpcHdRK09za1hHd2VGNGVTbHh1eUhJVDd1dGg5S3VoYmU0?=
+ =?utf-8?B?ODg3NWJlS1JuK1I4MnRUVkZnWnc1L2w5TXNlaU95T1FNZnNxZDNWY1c3YVc3?=
+ =?utf-8?B?S3hXdlBlbVg2M2FYNzAyaTY1VmJCZWpVMXBVUjZlUkZxWmlnTXNQVTRMYWdE?=
+ =?utf-8?B?OE1MUHRVS1pZRHNVRTdpZGV3QndTUitmQU1nMDAzWVcvQ3h4czlZRGUzQWJq?=
+ =?utf-8?B?SHdkK3R1L0VVOHlkNEZRWTJSUFV6Z3VEV0YzZkEvTWdlYVpXYkhETk1UUmI5?=
+ =?utf-8?B?ZHhtSHprOFdqRHpIZlVuM3plcitOK2RiQkYzZFNuMnNYTXdzVE85d01sbEhj?=
+ =?utf-8?B?RitPYU1YVFVNaHlpSEFsRjBkQUdGUWN2bjFMYlJvRTg3eXFNQ2dWZmdiYW1I?=
+ =?utf-8?B?TFNhOXdtenNwTnJtbWZ4RWUrSm9ZMDltNzU0UWdYeXI0Qk9pRnBRYzlsQnlj?=
+ =?utf-8?B?YmxaMHlSL3FFQkJmY0RNdmphM3VpczJmV3BzaVlpd2w3TkgwVTJoMDJwaDls?=
+ =?utf-8?B?aTluOTdsKzhTeTVTNUNXaUMwVldiNTBtblNHajhZZWlMYXV5ZVppLzBrWTRk?=
+ =?utf-8?B?RHlieGI1UkkwTEVyNy9kYzRJaXVmNWFFeEhWbFFDVE1oRnNMRUQwOVhMUU9L?=
+ =?utf-8?B?VzlSdFZncXZEVGlWc0J1TUdQNW5pUDBIVC96aTQvU2ZacTFNUnkrbzBRUzNM?=
+ =?utf-8?B?cXhIZWJ6OCtSbklMVkZJUEE3K0dVTjBvcmFqRjMyVWVkTUdKRXoxckxhb1BZ?=
+ =?utf-8?B?dHY4Nm1KRjNFR2tqcFF0UjVkQlh1T3Y0NGdIMm40bk9qaXVBZ291OVdocC9i?=
+ =?utf-8?B?WW5PZE4vcUQxcFFjOVM5bk1JMnNiWnkzTzR0VW44dVA2eW1HaG5wQm5VSlVi?=
+ =?utf-8?B?Y3FrQS9XU3Fmenc3dTVRWENJNDRJbEZ3M2NvL2VwVzBGR3pxSEhudG93TVhF?=
+ =?utf-8?B?YnN2K1FUSXk2S2IxNGs4ZGtrdUlzNHdQbjZWQjZ2aTBRZ0VXMHdRNEdKcmc2?=
+ =?utf-8?B?eWhlSWlQNDcvRERyeUpYV0lma3VnTzA1d0ovZkpmdm85bEI4Y1A0RjUwRW1B?=
+ =?utf-8?B?MUhLQWo0TXhtcFpKZmlWaU1saFExSzVUeTdLMGVScmVVdHE5c2x4Qk1NZm9P?=
+ =?utf-8?B?V1kzdXE0Zys2NU5FZ2UrVTFadEVqSkFQVWp0Y3gvY1lrR0xvK2V5Ty9VUzdQ?=
+ =?utf-8?B?b1NWWGNERW1FMmJGT1pWSlVMcVY5WFJ2RmVVaWxpbGZEUTRNOUtHeHBLTTBw?=
+ =?utf-8?B?OGt5TStkNWxJSTJ5ZVlVTlNNR2xaS2UvL2tEWmNOWUxIYWt2V3JvaFNZMGdw?=
+ =?utf-8?B?QVlRWThZdncwbXRKQ0xlMHlsdDBlb2pJTk9EbGlZdm9VT0NmN09PN3AzcC9D?=
+ =?utf-8?B?d0M1RkM0bmV6VC9xY1pqR0pHV3pqbzMrVkJXT2dzU2p4cEczK1hiU2c2Ly9R?=
+ =?utf-8?B?bTJoZ1R1VnQwbDRvWWJjUW55SlNrQi9kMnN2M2RQNTVVNGxrUVZqTDI1Z1o4?=
+ =?utf-8?B?T2JoK2dhYVVUdDRkV1A3T0lIc3NwOUlIOWdXdExiNTBaeVhuWTRLSkF1dnVy?=
+ =?utf-8?B?SmpRSWFqODdVU0NQNDlBcmt1WlBZMnR4THlhWG8wM0JWakVJUm02LzA4N2xa?=
+ =?utf-8?B?TFJjaVltT3JRPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?UDRhM0Y3SkxBSlllblI4T1puQ0F2TUxiaTcxcU45Y2wxa1hEcWlHck1sci90?=
+ =?utf-8?B?aVJRelhYdGRmSEtad1kxanpIOVk4bGY4bUdaWHdFZ1ZPUnhyNHJiNXFzQVNm?=
+ =?utf-8?B?bTF2azBMRWJRK3JVSDZjaXJQR0hSdngxRGNRdTljQXZZaklTUHpQay9SeEFW?=
+ =?utf-8?B?MG5lRno1RWlpSTdjOWhPeS94SCtrK3Z5VUllWCtjQy9sQVZMLy9yOC9GN21C?=
+ =?utf-8?B?ZyttUUg4UmFqeWhXeEZwK0k3dk5vbnVoYWVhbG1JcHJqYkt5SURZUHJPWnNU?=
+ =?utf-8?B?KzFjd1BaY25iUjVJeHB4RlJPWDJzZHgxTVRGMldxaDExRkl1SmJ3Qzc0ODls?=
+ =?utf-8?B?bWQvQWlibmRVeG13RlhEZnBGdHhMY3FaS0xEeEdOZGxPbC9ZTzlXSktYWGd3?=
+ =?utf-8?B?eUtzbXAvMldxWXQwYkdHRGExckdUMGp3QXZOSmJ1K0ROVEFoYUVsSGdIdlcw?=
+ =?utf-8?B?TkFDOXRGNEJJaXZDMDdBNzBoa0NvQVZNWVBrc3JtKzR3cUtqTEI3Rk4rTng0?=
+ =?utf-8?B?a0RLUUl0SkhUUklkZXlZMHNUQm1xKzFMZHVNRStEdFhLWHgyRkdoUzNjdGhw?=
+ =?utf-8?B?d3YzUVFkTC9qQWhYRHoyOWhSMlJqZTVXQlZXWmZPQlZMc2lJZmxqTFp2Sjgv?=
+ =?utf-8?B?QjNjaUlyMllzaVdYQmZIb1hGSng0aXhJUUZPTmNxRjlYcDVhVVNSOGpaRVpG?=
+ =?utf-8?B?TFl5aHpTeS81Z2hJSVZlb3Y2a2F0SGZUWGpzWVpzanlLVzlsMjlLOVJkaERy?=
+ =?utf-8?B?WEU2bHg5eXJtbXBmeTY2V1NxK1pXZlFHZTQ3NXA0WEI3UFhmY0E0SzZpSWZs?=
+ =?utf-8?B?WjMzMHpJdGFVK0l0UFFMTlRodFNYSEVjUFRoQ2o2aW9razRGMmM0VU9GMzUz?=
+ =?utf-8?B?VzFoOWI2RHdaVDJCbGxjSkxldUxoOUozdDFEYmd4NUFKcG5FMVhmd2hVakFl?=
+ =?utf-8?B?Rjhmbloxd1N0Wi9vUjVOYkdiVXJBa2Q1a1F6dEFhOGpIblhqYUtkTVF6czd6?=
+ =?utf-8?B?YW1LUmJla1BWVWZJeDVWM0lRcVJhYW1XaGZFcDdmbFdyRWovK1VRNi9kdTZE?=
+ =?utf-8?B?UEdCOGE0R1dXVnA1amdNa3lkOXUvMGdwaWd4WkZBcWI1NFc0MEorOVl1YTFk?=
+ =?utf-8?B?aGs2Uit1b1g2NDZUd1Z3Tk56aVg4dkY0Vm9PYlVvZ2NJMHVJa0grRjdVbk0z?=
+ =?utf-8?B?TmowYzJ2NW1WM3czTTF1bStyUXNrejh6QlM1VjJzclJxQ0VxVTltZm5nbVBI?=
+ =?utf-8?B?M3ZuZVVwbmN0Q0UycmI0SWM4Q0dJNFd1YVRjZzY2ZVArSFZ2VnZXdDkwNmNj?=
+ =?utf-8?B?ek1SSEFWellkOXpGZWRRem4wTjF4QjdCTnZMaGRUL3l0RXpya1N4MHkrR3Ix?=
+ =?utf-8?B?eFRzT1RCWDZ5VjZieTVyRm1yV1pWanpHdTltYXpyMjlvaTVZdFd2c3pwUUht?=
+ =?utf-8?B?QzUrZmM0b2Z5S21iUUhydS9FTm5Md0l2REVmV2Jybkx2TUg1UXQ5T0lsNTZJ?=
+ =?utf-8?B?Q3VnZHJ6aEd5Wjl4b2M2cnZhQjZOK1RyUVdXajRnR0FWUHN2dzRScHVLdTNk?=
+ =?utf-8?B?WmpNcDZ4NTB4Z29ZRjdmbll5S3QxYmp6K3VTV1h6Qmd4am9SVUUyZUV5ZEli?=
+ =?utf-8?B?ZHRPcW5rNXNRNmFrdlZOMWNzOWlNVG82QTAvaUJmRzZxMUYxR20xTFNFVjZq?=
+ =?utf-8?B?UDdMTGRjZVQwWmYwVlk4N3EvOEc3S1krbWhnZ3V6U3dsK2VEQTIwY2lSaFdC?=
+ =?utf-8?B?Q3pRWGdNOUNNa0Zhd0p1M0dXVHVnRWR1QllSWWtLZlRxUDQvSExka3AzZzFH?=
+ =?utf-8?B?WUhQVVBuamJvYmRZemZ4OGlqRXdLalBsdXdQVGdUaC9RNEhBZzRTQXdBWmp0?=
+ =?utf-8?B?ODJaUXU2SzlLamw5MDZHSnlhVk9RYzFoM0l2bG9zTGIybXRaQ2tQK2VlNW5Z?=
+ =?utf-8?B?Z0VockxHYmM0VEVhNFRWaVJlUnE1ZlB6akE2SGdhd28vQlo5TkIxTDQ3TWpH?=
+ =?utf-8?B?Z0Ztb1FjeEVrWlpYUHZWN3l2VmtVMTcrcy85cXZKcTRtZksvbGYzakpzdWxN?=
+ =?utf-8?B?TzN6bzJMNDE4T1g0NmRNRUdtYzBLQWNMYkhoWDlkeWVSYmV3YVg4ME9iRCtC?=
+ =?utf-8?Q?SII06sAeVaIbVowJZzzaABLeh?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 511aec49-7c44-4f46-d977-08ddbda09391
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jul 2025 21:52:32.6794
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: /7V3wMEwlR2ihSRFTfN0Kn8d1PORab+3evFTV/5FqV2cYGP1WT75PbOAAJ5d2XpSzZNaeHA9Qa4YHcYrgttPlQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR12MB9017
 
-I see these RIP logged every second or two with 6.16-rc5 on boot, and
-they continue indefinitely.  I don't remember seeing these on rc4.
-This happens when booting up, even when doing nothing on laptop
-(Lenovo P52, Ubuntu 24 running normal build of mainline 6.16-rc5) and
-they keep occurring.
+On 7/7/2025 6:41 AM, Jörg-Volker Peetz wrote:
+> Hi,
+> 
+> upgrading from linux kernel 6.14.9 to 6.15.2 and also now with 6.15.5 I 
+> noticed that on my system with cpufreq scaling driver amd-pstate the 
+> frequencies cpuinfo_min_freq and cpuinfo_max_freq increased, the min 
+> from 400 to 422.334 MHz, the max from 4,673 to 4,673.823 MHz. The CPU is 
+> an AMD Ryzen 7 5700G.
+> This in turn increases other values (scaling_min_freq, scaling_max_freq, 
+> amd_pstate_lowest_nonlinear_freq, etc.).
+> 
+> Bisecting this leads to
+> 
+> commit a9b9b4c2a4cdd00428d14914e3c18be3856aba71
+> From: Mario Limonciello <mario.limonciello@amd.com>
+> Date: Thu, 23 Jan 2025 16:16:01 -0600
+> Subject: [PATCH] cpufreq/amd-pstate: Drop min and max cached frequencies
+> 
+> Did you notice the increase at AMD? Is it intended?
+> 
+> Thanks,
+> Jörg.
 
-6.16.0-061600rc5-generic #202507062141 PREEMPT(voluntary)
-[  642.019544] Tainted: [W]=WARN
-[  642.019549] Hardware name: LENOVO 20MAS08500/20MAS08500, BIOS
-N2CET70W (1.53 ) 03/11/2024
-[  642.019556] RIP: 0010:drm_gem_object_handle_put_unlocked+0xc5/0x100
-[  642.019570] Code: ca ff eb 9c 4c 89 e7 e8 09 cf 64 00 eb d0 48 8b
-43 08 48 8d b8 e8 05 00 00 e8 47 8b 60 00 c7 83 e0 00 00 00 00 00 00
-00 eb 90 <0f> 0b 5b 41 5c 5d 31 c0 31 f6 31 ff c3 cc cc cc cc 48 8b 83
-40 01
-[  642.019579] RSP: 0018:ffffd003454f38c8 EFLAGS: 00010246
-[  642.019590] RAX: 0000000000000000 RBX: 0000000000000001 RCX: 0000000000000000
-[  642.019596] RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff8ced0e693000
-[  642.019602] RBP: ffffd003454f38d8 R08: 0000000000000000 R09: 0000000000000000
-[  642.019609] R10: 0000000000000000 R11: 0000000000000000 R12: ffff8ced06634000
-[  642.019615] R13: 0000000000000000 R14: ffffd003454f3a30 R15: ffff8ced06634000
-[  642.019622] FS:  00007f0b743986c0(0000) GS:ffff8cf4cbd88000(0000)
-knlGS:0000000000000000
-[  642.019630] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  642.019637] CR2: 00007f0af0384000 CR3: 000000016c6a0006 CR4: 00000000003726f0
-[  642.019645] Call Trace:
-[  642.019651]  <TASK>
-[  642.019658]  drm_gem_fb_destroy+0x35/0x80
-[  642.019673]  drm_framebuffer_free+0x40/0xa0
-[  642.019706]  drm_mode_object_put.part.0+0x5d/0xa0
-[  642.019718]  drm_mode_object_put+0x15/0x30
-[  642.019727]  drm_mode_closefb_ioctl+0x76/0xa0
-[  642.019738]  ? __pfx_drm_mode_closefb_ioctl+0x10/0x10
-[  642.019748]  drm_ioctl_kernel+0xb2/0x110
-[  642.019760]  drm_ioctl+0x2ea/0x5b0
-[  642.019767]  ? __pfx_drm_mode_closefb_ioctl+0x10/0x10
-[  642.019788]  nouveau_drm_ioctl+0x5e/0xc0 [nouveau]
-[  642.020378]  __x64_sys_ioctl+0xa2/0x100
-[  642.020392]  x64_sys_call+0x106b/0x2320
-[  642.020403]  do_syscall_64+0x80/0xe80
-[  642.020416]  ? do_syscall_64+0xb6/0xe80
-[  642.020429]  ? __rseq_handle_notify_resume+0x36/0x70
-[  642.020444]  ? arch_exit_to_user_mode_prepare.isra.0+0xa0/0xc0
-[  642.020455]  ? do_syscall_64+0xb6/0xe80
-[  642.020474]  ? kick_ilb+0x52/0x180
-[  642.020488]  ? update_load_avg+0x8b/0x410
-[  642.020502]  ? __update_blocked_fair+0xac/0x550
-[  642.020515]  ? __note_gp_changes+0x1ca/0x220
-[  642.020529]  ? note_gp_changes+0x8f/0xa0
-[  642.020541]  ? rcu_core+0x1b6/0x370
-[  642.020553]  ? rcu_core_si+0xe/0x20
-[  642.020564]  ? handle_softirqs+0xe4/0x340
-[  642.020576]  ? arch_exit_to_user_mode_prepare.isra.0+0xd/0xc0
-[  642.020588]  ? irqentry_exit_to_user_mode+0x2d/0x1d0
-[  642.020599]  ? irqentry_exit+0x43/0x50
-[  642.020609]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-[  642.020618] RIP: 0033:0x7f0b7ad24ded
-[  642.020627] Code: 04 25 28 00 00 00 48 89 45 c8 31 c0 48 8d 45 10
-c7 45 b0 10 00 00 00 48 89 45 b8 48 8d 45 d0 48 89 45 c0 b8 10 00 00
-00 0f 05 <89> c2 3d 00 f0 ff ff 77 1a 48 8b 45 c8 64 48 2b 04 25 28 00
-00 00
-[  642.020635] RSP: 002b:00007ffca5eb8f50 EFLAGS: 00000246 ORIG_RAX:
-0000000000000010
-[  642.020647] RAX: ffffffffffffffda RBX: 000055b1a5e17cc0 RCX: 00007f0b7ad24ded
-[  642.020654] RDX: 00007ffca5eb8fe0 RSI: 00000000c00864d0 RDI: 000000000000000c
-[  642.020661] RBP: 00007ffca5eb8fa0 R08: 0000000000000000 R09: 00007f0b7ae03ac0
-[  642.020667] R10: 0000000000000008 R11: 0000000000000246 R12: 00007ffca5eb8fe0
-[  642.020673] R13: 00000000c00864d0 R14: 000000000000000c R15: 000000002640746b
-[  642.020702]  </TASK>
-[  642.020707] ---[ end trace 0000000000000000 ]---
-
-...
-
-6.16.0-061600rc5-generic #202507062141 PREEMPT(voluntary)
-[  795.464458] Tainted: [W]=WARN
-[  795.464460] Hardware name: LENOVO 20MAS08500/20MAS08500, BIOS
-N2CET70W (1.53 ) 03/11/2024
-[  795.464462] RIP: 0010:drm_gem_object_handle_put_unlocked+0xc5/0x100
-[  795.464468] Code: ca ff eb 9c 4c 89 e7 e8 09 cf 64 00 eb d0 48 8b
-43 08 48 8d b8 e8 05 00 00 e8 47 8b 60 00 c7 83 e0 00 00 00 00 00 00
-00 eb 90 <0f> 0b 5b 41 5c 5d 31 c0 31 f6 31 ff c3 cc cc cc cc 48 8b 83
-40 01
-[  795.464471] RSP: 0018:ffffd003454f3898 EFLAGS: 00010246
-[  795.464476] RAX: 0000000000000000 RBX: 0000000000000001 RCX: 0000000000000000
-[  795.464479] RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff8ced0e693000
-[  795.464481] RBP: ffffd003454f38a8 R08: 0000000000000000 R09: 0000000000000000
-[  795.464484] R10: 0000000000000000 R11: 0000000000000000 R12: ffff8ced06634000
-[  795.464486] R13: 0000000000000000 R14: ffffd003454f3a00 R15: ffff8ced06634000
-[  795.464489] FS:  00007f0b743986c0(0000) GS:ffff8cf4cb988000(0000)
-knlGS:0000000000000000
-[  795.464492] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  795.464495] CR2: 00007f0b6c6a9020 CR3: 000000016c6a0006 CR4: 00000000003726f0
-[  795.464498] Call Trace:
-[  795.464500]  <TASK>
-[  795.464504]  drm_gem_fb_destroy+0x35/0x80
-[  795.464510]  drm_framebuffer_free+0x40/0xa0
-[  795.464515]  drm_mode_object_put.part.0+0x5d/0xa0
-[  795.464520]  drm_mode_object_put+0x15/0x30
-[  795.464524]  drm_mode_closefb_ioctl+0x76/0xa0
-[  795.464528]  ? __pfx_drm_mode_closefb_ioctl+0x10/0x10
-[  795.464533]  drm_ioctl_kernel+0xb2/0x110
-[  795.464537]  drm_ioctl+0x2ea/0x5b0
-[  795.464541]  ? __pfx_drm_mode_closefb_ioctl+0x10/0x10
-[  795.464550]  nouveau_drm_ioctl+0x5e/0xc0 [nouveau]
-[  795.464783]  __x64_sys_ioctl+0xa2/0x100
-[  795.464790]  x64_sys_call+0x106b/0x2320
-[  795.464794]  do_syscall_64+0x80/0xe80
-[  795.464802]  ? __x64_sys_poll+0xd2/0x180
-[  795.464808]  ? arch_exit_to_user_mode_prepare.isra.0+0xd/0xc0
-[  795.464813]  ? do_syscall_64+0xb6/0xe80
-[  795.464819]  ? futex_hash+0xe/0x20
-[  795.464823]  ? futex_wake+0x89/0x1b0
-[  795.464830]  ? do_futex+0x18e/0x260
-[  795.464835]  ? __x64_sys_futex+0x127/0x200
-[  795.464839]  ? eventfd_write+0xdc/0x200
-[  795.464844]  ? security_file_permission+0x5b/0x170
-[  795.464850]  ? arch_exit_to_user_mode_prepare.isra.0+0xd/0xc0
-[  795.464854]  ? do_syscall_64+0xb6/0xe80
-[  795.464862]  ? ksys_write+0xd9/0xf0
-[  795.464869]  ? arch_exit_to_user_mode_prepare.isra.0+0xd/0xc0
-[  795.464873]  ? do_syscall_64+0xb6/0xe80
-[  795.464878]  ? do_syscall_64+0xb6/0xe80
-[  795.464883]  ? arch_exit_to_user_mode_prepare.isra.0+0xd/0xc0
-[  795.464888]  ? irqentry_exit_to_user_mode+0x2d/0x1d0
-[  795.464893]  ? irqentry_exit+0x43/0x50
-[  795.464897]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-[  795.464901] RIP: 0033:0x7f0b7ad24ded
-[  795.464904] Code: 04 25 28 00 00 00 48 89 45 c8 31 c0 48 8d 45 10
-c7 45 b0 10 00 00 00 48 89 45 b8 48 8d 45 d0 48 89 45 c0 b8 10 00 00
-00 0f 05 <89> c2 3d 00 f0 ff ff 77 1a 48 8b 45 c8 64 48 2b 04 25 28 00
-00 00
-[  795.464907] RSP: 002b:00007ffca5eb8f50 EFLAGS: 00000246 ORIG_RAX:
-0000000000000010
-[  795.464912] RAX: ffffffffffffffda RBX: 000055b1a8710050 RCX: 00007f0b7ad24ded
-[  795.464915] RDX: 00007ffca5eb8fe0 RSI: 00000000c00864d0 RDI: 000000000000000c
-[  795.464917] RBP: 00007ffca5eb8fa0 R08: 0000000000000000 R09: 00007f0b7ae03ac0
-[  795.464920] R10: 0000000000000008 R11: 0000000000000246 R12: 00007ffca5eb8fe0
-[  795.464922] R13: 00000000c00864d0 R14: 000000000000000c R15: 000000002f66b7a8
-[  795.464929]  </TASK>
-[  795.464931] ---[ end trace 0000000000000000 ]---
-
-
--- 
-Thanks,
-
-Steve
+Yes; this was noticed back when it was created too.  It's intended.
 
