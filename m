@@ -1,52 +1,52 @@
-Return-Path: <linux-kernel+bounces-720279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B837AFB987
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 19:05:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E4FAAFB989
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 19:05:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59C32424466
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 17:05:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBE4A3B5DC2
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 17:05:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C31E2E8E00;
-	Mon,  7 Jul 2025 17:05:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 210032E92A0;
+	Mon,  7 Jul 2025 17:05:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Xfptt2Oz"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="DSU8wyYl"
 Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C6932E7F20
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 17:05:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B667B2E7F28
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 17:05:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751907910; cv=none; b=nLUVlHbYXQ66JpUlY6Lw24CCdoQ8Iqy3hW7MdUzVxkvDXOPi2NJYWV9apIwMHG08rGq3zyRNW1TaEiBnQOgM8shheI7+EqkrWfGI8qR3sq0vtrmGUxC4yn0OjPQ/HKxAIQG0oVUT3MSrOSEAvKtaxiizC2m7JEXdVQyh30DUGmk=
+	t=1751907912; cv=none; b=JhUPoJZbE8O0G46t6zZVvkb6Dd64tdmcBhIJZ0uVzeOo3mejXIes1qTngo+ONqTCB80XiP2j05rs81LqjlGkrF4yc0quOUBHytcALAIcU4vR1qbzpNLFSUUCP8UVPfWIWEooKv5y+3HAiclVUAkgjMPXYI3i3ABKggor5T5+Z7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751907910; c=relaxed/simple;
-	bh=9A/8qRN3N5EQ/idueTkzfofxl+ak2m/9E8a9eLvVQf4=;
+	s=arc-20240116; t=1751907912; c=relaxed/simple;
+	bh=akBcOMf2yaT9+54T4JiDFinAfyszlhXfN+hd5VU7pxs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=S1ohwckNqh+lORr3/RGiDpucxABSgskXFsp0NGVXO+MWniJgpLsbOXNV7AtnqBAyA5HrsdalP64dujIl+VMyterBwpigu87wYUv6LI97m08RDdClsf2HLYVS2ZSwVbaL+oP9Td+cMMb2lOBJLOt0yu9f88H+lZkjFAC+IpPMnRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Xfptt2Oz; arc=none smtp.client-ip=148.251.105.195
+	 MIME-Version; b=RZusYNdjdHjhKRESgpTmo6IO03zRx03ukNzgKJZRv/ZVNhaXM1Oxo/r9XgZEyQfEj2sCrMOS0fkoaz0qLtmFbr2loFd5zmpe5YQIa58pdK3YgkfGUL+3iXt9sroxFGcYA4Lji4jiG7VdMA4a6e0myuh6Gmi/iL0n+Zo20uHbJf0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=DSU8wyYl; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1751907906;
-	bh=9A/8qRN3N5EQ/idueTkzfofxl+ak2m/9E8a9eLvVQf4=;
+	s=mail; t=1751907909;
+	bh=akBcOMf2yaT9+54T4JiDFinAfyszlhXfN+hd5VU7pxs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Xfptt2Ozmxd3hEOz3iPMnAdT2OgLJ67BhOzhLVH1DaZHv4cY93DBHb9MuYx719idr
-	 bTNOpCFUG6QcvKMkxIS3TFCYdFkL3GpiSn168zCoXHnHhft96WEDHo9qo+UaNVWco7
-	 7bc3ZzwfoDOxBBwyMtu8HqRJNtV3OrSUm/cSbtTsGNBU0p1+cxJ/NlhnaXJIfdavBH
-	 WVgkw2pf9OXaFEvvpAF7mHMmrJHz6NmnS8SOct2sRzCBzj/xVCNdCMNae6Kzt1F0r5
-	 9doJGxlJaEPVGG01YzvvNaCnQiy3v2r7gqHzvzk4xwDICDS5Ia/zeWj6mtkc0rZx7h
-	 fz0DbgSM2wTtA==
+	b=DSU8wyYlQCn+tAXjJkoR0l9B3baQkuzMRCWFSTvbZLnJkWcQn4EMH16aRsXZHzUjY
+	 vGB9yIYtgtfr6C292lr613erbe6MiXDfHNOr5vaYShYuLNaiQceSd6bsshYP/7m8Mi
+	 HDhqmbk4dvPLZhgVQUpryMSQMpMwMft6zrIYMxAoI2EguuCGVn84skj8rTcGab0ulV
+	 XUa95uZBp58lQRRN4cmxamBonkUAZyJeMv2IZIuVZbVegk95k6+VaSRgayneK3cxre
+	 O2UqKnSOFKjU6VmAAhdAiFaNbz8otuDUFrtUHO2Uxt3sex2GhEJa4q7oPUbVlWRbR7
+	 5zQBMdIRFVUig==
 Received: from debian-rockchip-rock5b-rk3588.. (unknown [90.168.160.154])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: nanokatze)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 3C59C17E046D;
-	Mon,  7 Jul 2025 19:05:05 +0200 (CEST)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id B8EC417E04EE;
+	Mon,  7 Jul 2025 19:05:07 +0200 (CEST)
 From: Caterina Shablia <caterina.shablia@collabora.com>
 To: "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>,
 	"Maxime Ripard" <mripard@kernel.org>,
@@ -71,9 +71,9 @@ Cc: dri-devel@lists.freedesktop.org,
 	asahi@lists.linux.dev,
 	Asahi Lina <lina@asahilina.net>,
 	Caterina Shablia <caterina.shablia@collabora.com>
-Subject: [PATCH v4 4/7] drm/gpuvm: Add a helper to check if two VA can be merged
-Date: Mon,  7 Jul 2025 17:04:30 +0000
-Message-ID: <20250707170442.1437009-5-caterina.shablia@collabora.com>
+Subject: [PATCH v4 5/7] drm/gpuvm: Add a flags field to drm_gpuvm_map_req/drm_gpuva_op_map
+Date: Mon,  7 Jul 2025 17:04:31 +0000
+Message-ID: <20250707170442.1437009-6-caterina.shablia@collabora.com>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250707170442.1437009-1-caterina.shablia@collabora.com>
 References: <20250707170442.1437009-1-caterina.shablia@collabora.com>
@@ -85,107 +85,118 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Boris Brezillon <boris.brezillon@collabora.com>
+From: Asahi Lina <lina@asahilina.net>
 
-We are going to add flags/properties that will impact the VA merging
-ability. Instead of sprinkling tests all over the place in
-__drm_gpuvm_sm_map(), let's add a helper aggregating all these checks
-can call it for every existing VA we walk through in the
-__drm_gpuvm_sm_map() loop.
+drm_gpuva objects have a flags field. Currently, this can be managed by
+drivers out-of-band, without any special handling in drm_gpuvm.
 
-Signed-off-by: Boris Brezillon <boris.brezillon@collabora.com>
+To be able to introduce flags that do affect the logic in the drm_gpuvm
+core, we need to plumb it through the map calls. This will allow the
+core to check the flags on map and alter the merge/split logic depending
+on the requested flags and the flags of the existing drm_gpuva ranges
+that are being split.
+
+Signed-off-by: Asahi Lina <lina@asahilina.net>
 Signed-off-by: Caterina Shablia <caterina.shablia@collabora.com>
 ---
- drivers/gpu/drm/drm_gpuvm.c | 47 +++++++++++++++++++++++++++++--------
- 1 file changed, 37 insertions(+), 10 deletions(-)
+ drivers/gpu/drm/drm_gpuvm.c | 7 +++++++
+ include/drm/drm_gpuvm.h     | 9 +++++++++
+ 2 files changed, 16 insertions(+)
 
 diff --git a/drivers/gpu/drm/drm_gpuvm.c b/drivers/gpu/drm/drm_gpuvm.c
-index 05978c5c38b1..dc3c2f906400 100644
+index dc3c2f906400..dd949a8853b0 100644
 --- a/drivers/gpu/drm/drm_gpuvm.c
 +++ b/drivers/gpu/drm/drm_gpuvm.c
-@@ -2098,12 +2098,48 @@ op_unmap_cb(const struct drm_gpuvm_ops *fn, void *priv,
- 	return fn->sm_step_unmap(&op, priv);
+@@ -2063,6 +2063,7 @@ op_map_cb(const struct drm_gpuvm_ops *fn, void *priv,
+ 	op.map.va.range = req->va.range;
+ 	op.map.gem.obj = req->gem.obj;
+ 	op.map.gem.offset = req->gem.offset;
++	op.map.flags = req->flags;
+ 
+ 	return fn->sm_step_map(&op, priv);
  }
- 
-+static bool can_merge(struct drm_gpuvm *gpuvm, const struct drm_gpuva *a,
-+		      const struct drm_gpuva *b)
-+{
-+	/* Only GEM-based mappings can be merged, and they must point to
-+	 * the same GEM object.
-+	 */
-+	if (a->gem.obj != b->gem.obj || !a->gem.obj)
-+		return false;
-+
-+	/* Let's keep things simple for now and force all flags to match. */
-+	if (a->flags != b->flags)
-+		return false;
-+
-+	/* Order VAs for the rest of the checks. */
-+	if (a->va.addr > b->va.addr)
-+		swap(a, b);
-+
-+	/* We assume the caller already checked that VAs overlap or are
-+	 * contiguous.
-+	 */
-+	if (drm_WARN_ON(gpuvm->drm, b->va.addr > a->va.addr + a->va.range))
-+		return false;
-+
-+	/* We intentionally ignore u64 underflows because all we care about
-+	 * here is whether the VA diff matches the GEM offset diff.
-+	 */
-+	return b->va.addr - a->va.addr == b->gem.offset - a->gem.offset;
-+}
-+
- static int
- __drm_gpuvm_sm_map(struct drm_gpuvm *gpuvm,
- 		   const struct drm_gpuvm_ops *ops, void *priv,
- 		   const struct drm_gpuvm_map_req *req)
- {
- 	struct drm_gpuva *va, *next;
-+	struct drm_gpuva reqva = {
-+		.va.addr = req->va.addr,
-+		.va.range = req->va.range,
-+		.gem.offset = req->gem.offset,
-+		.gem.obj = req->gem.obj,
-+		.flags = req->flags,
-+	};
- 	u64 req_end = req->va.addr + req->va.range;
- 	int ret;
- 
-@@ -2116,12 +2152,9 @@ __drm_gpuvm_sm_map(struct drm_gpuvm *gpuvm,
- 		u64 addr = va->va.addr;
- 		u64 range = va->va.range;
- 		u64 end = addr + range;
--		bool merge = !!va->gem.obj;
-+		bool merge = can_merge(gpuvm, va, &reqva);
- 
- 		if (addr == req->va.addr) {
--			merge &= obj == req->gem.obj &&
--				 offset == req->gem.offset;
--
- 			if (end == req_end) {
- 				ret = op_unmap_cb(ops, priv, va, merge);
- 				if (ret)
-@@ -2163,8 +2196,6 @@ __drm_gpuvm_sm_map(struct drm_gpuvm *gpuvm,
+@@ -2175,6 +2176,7 @@ __drm_gpuvm_sm_map(struct drm_gpuvm *gpuvm,
+ 					.va.range = range - req->va.range,
+ 					.gem.obj = obj,
+ 					.gem.offset = offset + req->va.range,
++					.flags = va->flags,
+ 				};
+ 				struct drm_gpuva_op_unmap u = {
+ 					.va = va,
+@@ -2193,6 +2195,7 @@ __drm_gpuvm_sm_map(struct drm_gpuvm *gpuvm,
+ 				.va.range = ls_range,
+ 				.gem.obj = obj,
+ 				.gem.offset = offset,
++				.flags = va->flags,
  			};
  			struct drm_gpuva_op_unmap u = { .va = va };
  
--			merge &= obj == req->gem.obj &&
--				 offset + ls_range == req->gem.offset;
- 			u.keep = merge;
+@@ -2219,6 +2222,7 @@ __drm_gpuvm_sm_map(struct drm_gpuvm *gpuvm,
+ 					.gem.obj = obj,
+ 					.gem.offset = offset + ls_range +
+ 						      req->va.range,
++					.flags = va->flags,
+ 				};
  
- 			if (end == req_end) {
-@@ -2196,10 +2227,6 @@ __drm_gpuvm_sm_map(struct drm_gpuvm *gpuvm,
- 				break;
- 			}
- 		} else if (addr > req->va.addr) {
--			merge &= obj == req->gem.obj &&
--				 offset == req->gem.offset +
--					   (addr - req->va.addr);
--
- 			if (end == req_end) {
- 				ret = op_unmap_cb(ops, priv, va, merge);
- 				if (ret)
+ 				ret = op_remap_cb(ops, priv, &p, &n, &u);
+@@ -2247,6 +2251,7 @@ __drm_gpuvm_sm_map(struct drm_gpuvm *gpuvm,
+ 					.va.range = end - req_end,
+ 					.gem.obj = obj,
+ 					.gem.offset = offset + req_end - addr,
++					.flags = va->flags,
+ 				};
+ 				struct drm_gpuva_op_unmap u = {
+ 					.va = va,
+@@ -2290,6 +2295,7 @@ __drm_gpuvm_sm_unmap(struct drm_gpuvm *gpuvm,
+ 			prev.va.range = req_addr - addr;
+ 			prev.gem.obj = obj;
+ 			prev.gem.offset = offset;
++			prev.flags = va->flags;
+ 
+ 			prev_split = true;
+ 		}
+@@ -2299,6 +2305,7 @@ __drm_gpuvm_sm_unmap(struct drm_gpuvm *gpuvm,
+ 			next.va.range = end - req_end;
+ 			next.gem.obj = obj;
+ 			next.gem.offset = offset + (req_end - addr);
++			next.flags = va->flags;
+ 
+ 			next_split = true;
+ 		}
+diff --git a/include/drm/drm_gpuvm.h b/include/drm/drm_gpuvm.h
+index a6e6c33fc10b..f77a89e791f1 100644
+--- a/include/drm/drm_gpuvm.h
++++ b/include/drm/drm_gpuvm.h
+@@ -847,6 +847,11 @@ struct drm_gpuva_op_map {
+ 		 */
+ 		struct drm_gem_object *obj;
+ 	} gem;
++
++	/**
++	 * @flags: requested flags for the &drm_gpuva for this mapping
++	 */
++	enum drm_gpuva_flags flags;
+ };
+ 
+ /**
+@@ -1074,6 +1079,9 @@ struct drm_gpuvm_map_req {
+ 		/** @offset: offset in the GEM */
+ 		u64 offset;
+ 	} gem;
++
++	/** @flags: combination of DRM_GPUVA_ flags describing the mapping properties. */
++	enum drm_gpuva_flags flags;
+ };
+ 
+ struct drm_gpuva_ops *
+@@ -1097,6 +1105,7 @@ void drm_gpuva_ops_free(struct drm_gpuvm *gpuvm,
+ static inline void drm_gpuva_init_from_op(struct drm_gpuva *va,
+ 					  struct drm_gpuva_op_map *op)
+ {
++	va->flags = op->flags;
+ 	va->va.addr = op->va.addr;
+ 	va->va.range = op->va.range;
+ 	va->gem.obj = op->gem.obj;
 -- 
 2.47.2
 
