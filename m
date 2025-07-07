@@ -1,160 +1,127 @@
-Return-Path: <linux-kernel+bounces-719816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A11E0AFB2F9
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 14:13:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9EA3AFB31C
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 14:21:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75EB516CFAF
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 12:13:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 211BF4A2572
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 12:21:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B53942874E4;
-	Mon,  7 Jul 2025 12:13:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4371E29AAEA;
+	Mon,  7 Jul 2025 12:21:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="qY8Na0yh";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="MeenbD46";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="qY8Na0yh";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="MeenbD46"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b="k2MUdrXk"
+Received: from smtp118.ord1d.emailsrvr.com (smtp118.ord1d.emailsrvr.com [184.106.54.118])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76D3CFBF0
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 12:13:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D76E4202965
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 12:21:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=184.106.54.118
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751890394; cv=none; b=QyuLnqcgFrcO52XBnY/NzgKcGB266A3kMJ68NvuMmR1Pobr1AJTmWjHbIaSlNdGbUpbfLfMRh3Ae8UTy9zEgtCe+K59Kx5eC3jXK38IpgIp17uCejvwCBPWcb8ZdstOzfXnCKrkwlvPjzaH4t0955fdhg2hT0BHXK8TTmkcEJuI=
+	t=1751890911; cv=none; b=LnUTj4MMbic2XxuDCAmaR2T7gMek51uhxVEV7Fdqlf34lzLEsrbCpbH5COuFoEIGx4baVNNzDXPb5Oyh1dt1IPCsypTf1ZHH67MX08H+qLD/29hPWBLE5IVmcLKRJ8VS3HjuIWzShS956DndjvEa1BcoZvqEZU84zR127GRuGTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751890394; c=relaxed/simple;
-	bh=EEtFPftDdya78fGhWRXqObrSHj26breUX5tp4zPFS0M=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UhX5SxW241qNSAicf7Os6zkoBReyfjIe2CP29a0SabvnBDmg/kTq9iBB0b8vnSlTUafWH6BBezAnO9WF5R+BZLE2Chz7Bllz5xBTOrgWKz75ngPREdZwWi+U2OxvgaO+JY1E1/LOfLfFSYzvrKkkGfJh2yx6GmQoxqWsfQotFNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=qY8Na0yh; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=MeenbD46; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=qY8Na0yh; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=MeenbD46; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 7E4992116D;
-	Mon,  7 Jul 2025 12:13:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1751890390; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hpcT1qLuxwqxwWuLVauiWjf+S8BeY2MPti+d1R7eXMA=;
-	b=qY8Na0yhMNX0R9fJ56E+QSRNdWWnqEbu3TLmSEC9pb9HO92Z7AO0u4RnahzgzTKuPqrTpQ
-	P/V9SQSasJt4aIzUGUO/cUjyhp9G8vZWeXp7q/S4dsH2lXHPKMe1qhpv7MaguJYipi9mPc
-	EZ7IzOD9xYo2+a8EypQ7REWgV7m28Gg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1751890390;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hpcT1qLuxwqxwWuLVauiWjf+S8BeY2MPti+d1R7eXMA=;
-	b=MeenbD46GaAzupErnY9uR9/438/ClZ9MPtGYHrvenei2NW0s9tRD7O5pgUvqvKS8o6ug7U
-	vo4Gu6gnexyMgmCw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=qY8Na0yh;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=MeenbD46
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1751890390; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hpcT1qLuxwqxwWuLVauiWjf+S8BeY2MPti+d1R7eXMA=;
-	b=qY8Na0yhMNX0R9fJ56E+QSRNdWWnqEbu3TLmSEC9pb9HO92Z7AO0u4RnahzgzTKuPqrTpQ
-	P/V9SQSasJt4aIzUGUO/cUjyhp9G8vZWeXp7q/S4dsH2lXHPKMe1qhpv7MaguJYipi9mPc
-	EZ7IzOD9xYo2+a8EypQ7REWgV7m28Gg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1751890390;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hpcT1qLuxwqxwWuLVauiWjf+S8BeY2MPti+d1R7eXMA=;
-	b=MeenbD46GaAzupErnY9uR9/438/ClZ9MPtGYHrvenei2NW0s9tRD7O5pgUvqvKS8o6ug7U
-	vo4Gu6gnexyMgmCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3011E13A5E;
-	Mon,  7 Jul 2025 12:13:10 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 5IieCta5a2iWAQAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Mon, 07 Jul 2025 12:13:10 +0000
-Date: Mon, 07 Jul 2025 14:13:09 +0200
-Message-ID: <87ms9gdwru.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Edson Juliano Drosdeck <edson.drosdeck@gmail.com>
-Cc: tiwai@suse.com,
-	perex@perex.cz,
-	kailang@realtek.com,
-	sbinding@opensource.cirrus.com,
-	chris.chiu@canonical.com,
-	simont@opensource.cirrus.com,
-	josh@joshuagrisham.com,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ALSA: hda/realtek: Enable headset Mic on Positivo K116J
-In-Reply-To: <20250707114537.8291-1-edson.drosdeck@gmail.com>
-References: <20250707114537.8291-1-edson.drosdeck@gmail.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1751890911; c=relaxed/simple;
+	bh=3iScXbxYofXSm0B2ulbFEyNLXMiq9RavLL9F//9h/bM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iOV8C9ugXKz+ueCdglV/FQWJh7ogimPya80mqKxikQX/VZGdjEPiq65O4a0N2hyBwTEPZJH3ymUvA3XH/1Awo8bb7Na5jLuyQbK4PtVlp1q9zNt1oDwMTI/jkpH1Xhwkm3anD2frQZa2E1UdrhRWuT9MCkubaYJSSIDeII1TIuc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk; spf=pass smtp.mailfrom=mev.co.uk; dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b=k2MUdrXk; arc=none smtp.client-ip=184.106.54.118
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mev.co.uk
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mev.co.uk;
+	s=20221208-6x11dpa4; t=1751890570;
+	bh=3iScXbxYofXSm0B2ulbFEyNLXMiq9RavLL9F//9h/bM=;
+	h=From:To:Subject:Date:From;
+	b=k2MUdrXkaTgLxx0mqUI3GP5k+/3rVhjUPNi8xpchxqYqGtVLeBqAog2d0kqcdWcBm
+	 YnJaBdvv/LGpduub8W8gYKiaU8+o4Yk9T84hbj2/VEdCdMYcQBYb0qq8ww5jqU4O13
+	 aMkI8GlZm4ARHb73X3CA6cjw2Ixui1nHE0juGBRA=
+X-Auth-ID: abbotti@mev.co.uk
+Received: by smtp7.relay.ord1d.emailsrvr.com (Authenticated sender: abbotti-AT-mev.co.uk) with ESMTPSA id C54DF201B3;
+	Mon,  7 Jul 2025 08:16:09 -0400 (EDT)
+From: Ian Abbott <abbotti@mev.co.uk>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Ian Abbott <abbotti@mev.co.uk>,
+	H Hartley Sweeten <hsweeten@visionengravers.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] comedi: Fix some signed shift left operations
+Date: Mon,  7 Jul 2025 13:15:55 +0100
+Message-ID: <20250707121555.65424-1-abbotti@mev.co.uk>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 7E4992116D
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-2.01 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FREEMAIL_TO(0.00)[gmail.com];
-	MIME_TRACE(0.00)[0:+];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	TAGGED_RCPT(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:dkim,suse.de:mid]
-X-Spam-Score: -2.01
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Classification-ID: cf8e6bf8-4b84-4e0a-a6ee-31907b6702d4-1-1
 
-On Mon, 07 Jul 2025 13:45:37 +0200,
-Edson Juliano Drosdeck wrote:
-> 
-> Positivo K116J is equipped with ALC269VC, and needs a fix to make
-> the headset mic to work.
-> Also must to limits the internal microphone boost.
-> 
-> Signed-off-by: Edson Juliano Drosdeck <edson.drosdeck@gmail.com>
+Correct some left shifts of the signed integer constant 1 by some
+unsigned number less than 32.  Change the constant to 1U to avoid
+shifting a 1 into the sign bit.
 
-Applied now.  Thanks.
+The corrected functions are comedi_dio_insn_config(),
+comedi_dio_update_state(), and __comedi_device_postconfig().
 
+Fixes: e523c6c86232 ("staging: comedi: drivers: introduce comedi_dio_insn_config()")
+Fixes: 05e60b13a36b ("staging: comedi: drivers: introduce comedi_dio_update_state()")
+Fixes: 09567cb4373e ("staging: comedi: initialize subdevice s->io_bits in postconfig")
+Cc: <stable@vger.kernel.org> # 5.13+
+Signed-off-by: Ian Abbott <abbotti@mev.co.uk>
+---
+ drivers/comedi/drivers.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-Takashi
+diff --git a/drivers/comedi/drivers.c b/drivers/comedi/drivers.c
+index 376130bfba8a..922fe20738ef 100644
+--- a/drivers/comedi/drivers.c
++++ b/drivers/comedi/drivers.c
+@@ -339,10 +339,10 @@ int comedi_dio_insn_config(struct comedi_device *dev,
+ 			   unsigned int *data,
+ 			   unsigned int mask)
+ {
+-	unsigned int chan_mask = 1 << CR_CHAN(insn->chanspec);
++	unsigned int chan = CR_CHAN(insn->chanspec);
+ 
+-	if (!mask)
+-		mask = chan_mask;
++	if (!mask && chan < 32)
++		mask = 1U << chan;
+ 
+ 	switch (data[0]) {
+ 	case INSN_CONFIG_DIO_INPUT:
+@@ -382,7 +382,7 @@ EXPORT_SYMBOL_GPL(comedi_dio_insn_config);
+ unsigned int comedi_dio_update_state(struct comedi_subdevice *s,
+ 				     unsigned int *data)
+ {
+-	unsigned int chanmask = (s->n_chan < 32) ? ((1 << s->n_chan) - 1)
++	unsigned int chanmask = (s->n_chan < 32) ? ((1U << s->n_chan) - 1)
+ 						 : 0xffffffff;
+ 	unsigned int mask = data[0] & chanmask;
+ 	unsigned int bits = data[1];
+@@ -625,8 +625,8 @@ static int insn_rw_emulate_bits(struct comedi_device *dev,
+ 	if (insn->insn == INSN_WRITE) {
+ 		if (!(s->subdev_flags & SDF_WRITABLE))
+ 			return -EINVAL;
+-		_data[0] = 1 << (chan - base_chan);		    /* mask */
+-		_data[1] = data[0] ? (1 << (chan - base_chan)) : 0; /* bits */
++		_data[0] = 1U << (chan - base_chan);		     /* mask */
++		_data[1] = data[0] ? (1U << (chan - base_chan)) : 0; /* bits */
+ 	}
+ 
+ 	ret = s->insn_bits(dev, s, &_insn, _data);
+@@ -709,7 +709,7 @@ static int __comedi_device_postconfig(struct comedi_device *dev)
+ 
+ 		if (s->type == COMEDI_SUBD_DO) {
+ 			if (s->n_chan < 32)
+-				s->io_bits = (1 << s->n_chan) - 1;
++				s->io_bits = (1U << s->n_chan) - 1;
+ 			else
+ 				s->io_bits = 0xffffffff;
+ 		}
+-- 
+2.47.2
+
 
