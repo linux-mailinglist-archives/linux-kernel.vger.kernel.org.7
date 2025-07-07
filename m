@@ -1,218 +1,92 @@
-Return-Path: <linux-kernel+bounces-720251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B72AEAFB919
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 18:53:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 181A7AFB91D
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 18:53:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C69C94A6177
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 16:52:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DE044A649E
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 16:53:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBB3A22A1D5;
-	Mon,  7 Jul 2025 16:50:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BA6322F764;
+	Mon,  7 Jul 2025 16:51:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QmFaFG9a"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="eEIItSYk";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WX6Rwkjs"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F5C3224B0E;
-	Mon,  7 Jul 2025 16:50:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BF16227EAA
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 16:51:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751907039; cv=none; b=mTztLtihQOJeZsq2SIpu+ltuofHdfCS6HYo8t+waknV2/U8k1nENX1e3zSvr4HZUqi7vsEIWiGFfooSApX92aMuBM1qWyXeWvDpAvB/o7bwkbv0DDpxbX0bDRAT31sOoZxU6QTUlkx0/A9K9/g8pC4z7cZO0lNo+qRBeNx4Pbz0=
+	t=1751907110; cv=none; b=Gm6aLkvkN4yTKciiU+8QYPHSKtoj77A5CdcQJLwuMl0DgVOxczyTCncnFwg+n/2BL/RfTPNuKYZ1rB3oxdlCKYGsyp5ofucKzqsxO6awIU4R46hESpeLSojUhHNNCNeiPw2n6hGwVlmMyhVwkaCWG7h5fSz/93ec6NH1vXBi/SA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751907039; c=relaxed/simple;
-	bh=9a1wcjgGyuGBH9dz8iciM2zoxRYiXr1OThzA70moRAg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eyhkisEdnwrKVHMcGgQ4l7bcghz3ZbZ8HD5naIdoyOSFLZJlhvq1YKLcnbdrXt/z0ieg36DiEjSUMLLK15KPncwz3dKUtZTStz91Ap9uN1ySc3Vt5cK1lAUrK0JzvqtJHNLSqbD31KqHA04XOq1mJmsAMOSwis5kYoVwRQofOVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QmFaFG9a; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95487C4CEF1;
-	Mon,  7 Jul 2025 16:50:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751907038;
-	bh=9a1wcjgGyuGBH9dz8iciM2zoxRYiXr1OThzA70moRAg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=QmFaFG9amTsKCMhZTdRsdRLBhzbA9RgaZYGw7TGX/1hNfeXtiwzqS577/OOcXfVOe
-	 VJ5VDUIUOkUQZbjDJ1waqGZyhKQO7/oelpE8cgIMrOTdHs7WjpGKuTpTKNGek7XAvZ
-	 wGdmbnZOA7lKx52GlkSCtztm4URBUMKpHvFuY1wt+ge9xmnS1+9Ay5d7vB1bpiTjUN
-	 1ZE33gDJOzihdZqw6Q040WHZgWYvyDg7pcE6IfxlTwgOMseNl0z+NMPWZq7tkY4xBY
-	 +QbM0DsXHkDFVXSYu09qZo5Zs4ofrP1/0B1w5uomHVQ8A7hyzi+xMMNUZiUPk4bpSp
-	 a6ydhRgQPR7tA==
-Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-61208b86da2so784750eaf.2;
-        Mon, 07 Jul 2025 09:50:38 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU6QB6LuEfEm+W36AK9wYtrRhrfePr5S+PI4YmzTMD6RdIOHW6pVO+EHiC7WhJ0sDjdNPpN2KqpVMS5PjjT@vger.kernel.org, AJvYcCVfTklTGF3hl78JEc7uQKcGsLIrczUnCzEd24Bo6gqKbfCqYs56nZgjWRO1JOZUapOymv91V4tbRijP@vger.kernel.org, AJvYcCWGgtVPTPh5uWE0FzN9ODyA/KU26Tx5AsUfUNdv0Tr0xsuagVbW5krqy9NIPamc1OMvYv9KkZhe1DTxIQ==@vger.kernel.org, AJvYcCXjHVU5Yq0NsDgRNNuMdvdtIsc2rn72XHyia31eLSnyMHVOcR/N0BzELY0XVCsD+PKakVXl32W+kIg8@vger.kernel.org
-X-Gm-Message-State: AOJu0YzyFXDmBQflpSLyFFG4aGm7Ek0QTNf+bIp8sa6eV2Ij0jXzFYmf
-	ApWaNSURKP+6iQSzAjjLMaVMYzLz0cOV7EKeOIvE6nG8XhPfZT4QZcbifB2N09IRQ+CMt18XP13
-	SxQt9+5pOVQcFvK4RHOmJWU24kmEi4wI=
-X-Google-Smtp-Source: AGHT+IHNACN6r3MQBzl2AxnxkY7b3vwCCOzvxM4DbSJ5BWQkgWMplMg/AADsP0wxtsyFOxnDcsFDRO8teU3gGL28ZLg=
-X-Received: by 2002:a05:6820:2901:b0:611:ab60:3003 with SMTP id
- 006d021491bc7-613c02a087bmr171510eaf.8.1751907037895; Mon, 07 Jul 2025
- 09:50:37 -0700 (PDT)
+	s=arc-20240116; t=1751907110; c=relaxed/simple;
+	bh=06MGt39LsqGSUhPV94+hP4L8EkX+7nMB0woh5SXVhY8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UmdsSylb8NoR540KSizm6Im21qtu0F1DdsbbLALeEJ9cBKkdiU53uCi8PKmsnWw7yB35rfVQKaunhECaYpcbqqOMOkHd9WsK/fiRLjeAf5EcVQ2SUn2baSCl0hYDNY5YhzAR7qk+JvkFiBBdWd8nOqdmQNsqkCEhhm3+cDxvg8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=eEIItSYk; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WX6Rwkjs; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 7 Jul 2025 18:51:45 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1751907107;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=X/LOiAvJ72lpg6zVQ7UqekT6IMCqQe42xPEKSqzYEjo=;
+	b=eEIItSYkf3kuxJc5fKC/8LY6qpD/XV6mtOt1ghF+XupNyBzX9UC1BEWvf/h5ZvTLyCfLtq
+	+VGZlMYMyMuHKMZXAKWNTUsl1vzxUjiFAYjDY+SORbX4TXCOShk0yrpjWOBaBHHsLCuP+c
+	uVHSwI7YG4ifX9+sRp6DxASKqzRQgGLeo7jRoc63PSx6/nxKjnpdjzyPo1vG+lCIyNXAfo
+	O/aV7PIYydGgTFT5ipsJy438WS0hC7amyWdlDQTD8l7Ef+TOtwZSd+V3r4rd7nyWy0S+Gl
+	bF5qAup0su4tSgtZCRLmSs8f7bbGxvkCeg9bKukVWVzpMwT+RAy+nVYndKk91A==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1751907107;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=X/LOiAvJ72lpg6zVQ7UqekT6IMCqQe42xPEKSqzYEjo=;
+	b=WX6RwkjsxuvXp5xu/qIIboGbGxIhwRiIThApdDPjKUCU8k54UCHuNVT+wQLH85PvZcE7Lk
+	kxySsqZAs0Abg8Bg==
+From: "Ahmed S. Darwish" <darwi@linutronix.de>
+To: Cezary Rojewski <cezary.rojewski@intel.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Andrew Cooper <andrew.cooper3@citrix.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Sean Christopherson <seanjc@google.com>,
+	Sohil Mehta <sohil.mehta@intel.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	John Ogness <john.ogness@linutronix.de>, x86@kernel.org,
+	x86-cpuid@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 02/44] ASoC: Intel: avs: Include CPUID header at file
+ scope
+Message-ID: <aGv7IZmcqiYSU4My@lx-t490>
+References: <20250612234010.572636-1-darwi@linutronix.de>
+ <20250612234010.572636-3-darwi@linutronix.de>
+ <da5bf77b-5bdb-440f-92b5-db35d8687987@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250704070356.1683992-1-apatel@ventanamicro.com> <20250704070356.1683992-16-apatel@ventanamicro.com>
-In-Reply-To: <20250704070356.1683992-16-apatel@ventanamicro.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 7 Jul 2025 18:50:27 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0i0n3twH8qPR04bX5uRzXXSmKhB72WfFEAuG+nbMOJcFw@mail.gmail.com>
-X-Gm-Features: Ac12FXzt6T3E94Z3HOk5kB7YG-fbGgkcx6q0up1mrENTBphzopL9rtBmotWtHfA
-Message-ID: <CAJZ5v0i0n3twH8qPR04bX5uRzXXSmKhB72WfFEAuG+nbMOJcFw@mail.gmail.com>
-Subject: Re: [PATCH v8 15/24] ACPI: Add support for nargs_prop in acpi_fwnode_get_reference_args()
-To: Anup Patel <apatel@ventanamicro.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jassi Brar <jassisinghbrar@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	"Rafael J . Wysocki" <rafael@kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Alexandre Ghiti <alex@ghiti.fr>, Len Brown <lenb@kernel.org>, Sunil V L <sunilvl@ventanamicro.com>, 
-	Rahul Pathak <rpathak@ventanamicro.com>, Leyfoon Tan <leyfoon.tan@starfivetech.com>, 
-	Atish Patra <atish.patra@linux.dev>, Andrew Jones <ajones@ventanamicro.com>, 
-	Samuel Holland <samuel.holland@sifive.com>, Anup Patel <anup@brainfault.org>, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-acpi@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <da5bf77b-5bdb-440f-92b5-db35d8687987@intel.com>
 
-On Fri, Jul 4, 2025 at 9:07=E2=80=AFAM Anup Patel <apatel@ventanamicro.com>=
- wrote:
+On Mon, 16 Jun 2025, Cezary Rojewski wrote:
 >
-> From: Sunil V L <sunilvl@ventanamicro.com>
+> The existing location of #include isn't my best work, clearly. Thank
+> you for addressing that, Ahmed. For the avs-driver bits:
 >
-> Currently, ACPI does not support the use of a nargs_prop (e.g.,
-> associated with a reference in fwnode_property_get_reference_args().
-> Instead, ACPI expects the number of arguments (nargs) to be explicitly
-> passed or known.
+> Acked-by: Cezary Rojewski <cezary.rojewski@intel.com>
 >
-> This behavior diverges from Open Firmware (OF), which allows the use of
-> a #*-cells property in the referenced node to determine the number of
-> arguments. Since fwnode_property_get_reference_args() is a common
-> interface used across both OF and ACPI firmware paradigms, it is
-> desirable to have a unified calling convention that works seamlessly for
-> both.
->
-> Add the support for ACPI to parse a nargs_prop from the referenced
-> fwnode, aligning its behavior with the OF backend. This allows drivers
-> and subsystems using fwnode_property_get_reference_args() to work in a
-> firmware-agnostic way without having to hardcode or special-case
-> argument counts for ACPI.
->
-> Signed-off-by: Sunil V L <sunilvl@ventanamicro.com>
-> Signed-off-by: Anup Patel <apatel@ventanamicro.com>
 
-LGTM now, so
-
-Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-
-> ---
->  drivers/acpi/property.c | 29 +++++++++++++++++++++++++----
->  drivers/base/property.c |  2 +-
->  2 files changed, 26 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/acpi/property.c b/drivers/acpi/property.c
-> index d4863746fb11..e92402deee77 100644
-> --- a/drivers/acpi/property.c
-> +++ b/drivers/acpi/property.c
-> @@ -804,13 +804,35 @@ acpi_fwnode_get_named_child_node(const struct fwnod=
-e_handle *fwnode,
->         return NULL;
->  }
->
-> +static unsigned int acpi_fwnode_get_args_count(struct fwnode_handle *fwn=
-ode,
-> +                                              const char *nargs_prop)
-> +{
-> +       const struct acpi_device_data *data;
-> +       const union acpi_object *obj;
-> +       int ret;
-> +
-> +       data =3D acpi_device_data_of_node(fwnode);
-> +       if (!data)
-> +               return 0;
-> +
-> +       ret =3D acpi_data_get_property(data, nargs_prop, ACPI_TYPE_INTEGE=
-R, &obj);
-> +       if (ret)
-> +               return 0;
-> +
-> +       return obj->integer.value;
-> +}
-> +
->  static int acpi_get_ref_args(struct fwnode_reference_args *args,
->                              struct fwnode_handle *ref_fwnode,
-> +                            const char *nargs_prop,
->                              const union acpi_object **element,
->                              const union acpi_object *end, size_t num_arg=
-s)
->  {
->         u32 nargs =3D 0, i;
->
-> +       if (nargs_prop)
-> +               num_args =3D acpi_fwnode_get_args_count(ref_fwnode, nargs=
-_prop);
-> +
->         /*
->          * Assume the following integer elements are all args. Stop count=
-ing on
->          * the first reference (possibly represented as a string) or end =
-of the
-> @@ -961,10 +983,10 @@ static int acpi_fwnode_get_reference_args(const str=
-uct fwnode_handle *fwnode,
->                                 return -EINVAL;
->
->                         element++;
-> -
->                         ret =3D acpi_get_ref_args(idx =3D=3D index ? args=
- : NULL,
->                                                 acpi_fwnode_handle(device=
-),
-> -                                               &element, end, args_count=
-);
-> +                                               nargs_prop, &element, end=
-,
-> +                                               args_count);
->                         if (ret < 0)
->                                 return ret;
->
-> @@ -979,9 +1001,8 @@ static int acpi_fwnode_get_reference_args(const stru=
-ct fwnode_handle *fwnode,
->                                 return -EINVAL;
->
->                         element++;
-> -
->                         ret =3D acpi_get_ref_args(idx =3D=3D index ? args=
- : NULL,
-> -                                               ref_fwnode, &element, end=
-,
-> +                                               ref_fwnode, nargs_prop, &=
-element, end,
->                                                 args_count);
->                         if (ret < 0)
->                                 return ret;
-> diff --git a/drivers/base/property.c b/drivers/base/property.c
-> index f626d5bbe806..6a63860579dd 100644
-> --- a/drivers/base/property.c
-> +++ b/drivers/base/property.c
-> @@ -578,7 +578,7 @@ EXPORT_SYMBOL_GPL(fwnode_property_match_property_stri=
-ng);
->   * @prop:      The name of the property
->   * @nargs_prop:        The name of the property telling the number of
->   *             arguments in the referred node. NULL if @nargs is known,
-> - *             otherwise @nargs is ignored. Only relevant on OF.
-> + *             otherwise @nargs is ignored.
->   * @nargs:     Number of arguments. Ignored if @nargs_prop is non-NULL.
->   * @index:     Index of the reference, from zero onwards.
->   * @args:      Result structure with reference and integer arguments.
-> --
-> 2.43.0
->
+Sure, no problem.  Thanks for the Acked-by :-)
 
