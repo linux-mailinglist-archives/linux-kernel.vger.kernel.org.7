@@ -1,155 +1,201 @@
-Return-Path: <linux-kernel+bounces-720469-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE19EAFBC38
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 22:03:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF335AFBC3F
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 22:04:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 726B816897F
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 20:03:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A877117F153
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 20:03:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBD11269B0D;
-	Mon,  7 Jul 2025 20:01:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5E7326A0FD;
+	Mon,  7 Jul 2025 20:01:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H4rbsVh7"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="cDTLZ9TY"
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99807268FF1;
-	Mon,  7 Jul 2025 20:01:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA60A14A82
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 20:01:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751918490; cv=none; b=H+n8WV+D+utcd1JI2pE14MjbhGhhJV2s3zG6luut9+0gSF6hiD6HzOTkjGROOI8GrO/4MtFq7BCizUH3DEV1gAOIkt6jbSiqDHOKjHtpwTzaEAgDfD+VJOgdkSg7oLzWjwjCuSjKz0HS0OPKgga6DYQxBi50rQEwtaLa4b4FtOo=
+	t=1751918503; cv=none; b=gWkHXP75We6cOA48O+/lAPcyPn0FRLmo4PfxbOykmwXQq8WhOvIkq9w4Dx3BMvLZ0Qshp0G6tYLNxvcErAqyGaHHg0nPSBETTFKelgiw4E5XwF8scBRrI0Av3koeYSMl7/LpuS9YQ25Yzh1FJqrICMEVcXPF+LpFOOFdKP6RMfA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751918490; c=relaxed/simple;
-	bh=qCgV8OST611D59NkSzc/EwdIYtLmNBOrjzx63kXgCD4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bwQ/IhW4cn/abrIRuToyF5vjo6czzOFy1IZerFNRPNyIzZdZJKnkMjVJb0jnOVVHM50kOLZnvFN95JReg7ZHJ10X+mne3zopR2mWpihza6c+Te4562K4O23JtX2K38cqFq7Lx2sZLrqzZhqMmDZp0nsSa30/8HWlci2FJsV0jc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H4rbsVh7; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-451dbe494d6so40170955e9.1;
-        Mon, 07 Jul 2025 13:01:28 -0700 (PDT)
+	s=arc-20240116; t=1751918503; c=relaxed/simple;
+	bh=FdEbLOGjzd4t658A5Peq0X8hOkXjkWfiWfkvvcSRkzc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nSurt5lreguTK5tR8qvTn2SY20g0LqXWElS/mIEYv9Q6JeBbqTJ/kcl7NfMNCxsB87Gp3RmEQYL8rZ0ALcDa5Ig4weIqooou6Hs735TuV35pm75/eeG8AtzqWn7kx8jg6JQXRGRwU6qAEoRJD8GwE6Srdut+admHNOR+oRH/Drc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=cDTLZ9TY; arc=none smtp.client-ip=209.85.128.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-71173646662so31652357b3.2
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 13:01:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751918487; x=1752523287; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=paul-moore.com; s=google; t=1751918501; x=1752523301; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ZZrpm9nJM06WerhRVJGiNfhVOSjxE8zl1qw3t/9H9SI=;
-        b=H4rbsVh7OPqOv8bwjUX51Ug2Hb2w+00ayDgpLTk8Yw3muP25/jbGrV65+EInG545vu
-         Ucph4hHU+W+CgDUaIW7Kg6o25fFsaGDXKNNYc7xdMbPXg7fIyHZItWcJ8eztmMjoWJl8
-         a61zKCb/3j2UTbcCMSxH+NqG4hVxR5I9PL/GHISWJCIA01Wgk0LOuYl7EebrwrtanzDJ
-         7HFDDJQ5+Z8PoGVxFTZhkG1nLyCwVNNLiR06FkUnkOldvqRTpYjzXmlPvXWnePzg0AOL
-         HQQ9uHx5kXV4uItDor9sY/lxTCiEDvOe8oWcYLTu7iVnInUYdWpMCnlKaLBhE3gYh7hQ
-         eyWQ==
+        bh=rKLu5W4g48bt+4yviXuICuogMC7NETqzFrH52NDnWkc=;
+        b=cDTLZ9TYrPqyUZUHPV4652jc20Kjmp0EL8+jEIzcvMMdn7pIqDLFh1Tvh9Os4/PBv8
+         fUdozMNQlDAbUz+Y58iFU3mklwjb4FhT1EJbksqxoxMFn6pa8IiE2v9BH3YNwThAXAUE
+         yfQCA8EIE/3Qx70DBEXLLBw2Z8UhGmmljBDKGJmV4SClH3LRGhUHIC3vOpbTBt9lsm1f
+         oMOrI14nU1bk6yVZlTzpWkYusvKHVHcBEhd4KylzBaaqqNYrlrCAb6TpZo8Up8al0NUn
+         CgVK4KMjKVhBc11UDWZEV7/mFfygXLU64F4YmOEHzNte+S6UY74WKleTSAM3GT/0h4eY
+         CnGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751918487; x=1752523287;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1751918501; x=1752523301;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ZZrpm9nJM06WerhRVJGiNfhVOSjxE8zl1qw3t/9H9SI=;
-        b=IJ7UyCyiOlcIxtlzpEf2Ait+/PboyyxLa7ZxSpP7IDMxrX6nVylGrvfDgwUOo6hzvI
-         wsyutNvPdYpUUha2pLP9Yx2+8P0GXC+XAXpJsRUoc9v11fFk223NJOREDrdQ4IlEdu96
-         SkKBS2nJEsPTLcK3vSR35FbIqf6WOfMKdfqPo61b/P/nIJRcy991i9JR3B5Cio6uHzOr
-         AnbxaQMhngpSbHkPJ2TC3Rl3dTaoSS57BPo0FkcQE0IvvGWmRqUrFP2AHl8FIlrd/Po1
-         5az1d1mwvShzR+gWe43RcBa//jB3pFytd/8FoRxUUnsFnY+JTyfBXaBS+QWgUVOuhW8l
-         wiHw==
-X-Forwarded-Encrypted: i=1; AJvYcCUuaktf6t4NVSoZU3zqmR3siPduC6M8Kkf+Z1Dc6LiwRlR4e5sR94t7QtMYPZT5uKASEGmlxW4y9aaPBM8=@vger.kernel.org, AJvYcCWKYVQCV+QgEOQf7NQum+ylxWC4ySgAQTRcF4YsvsYktTPZihg2P+ZlQYVb2Y01VWJ0hxY5QQxAPPuSAe8imQnkzvM=@vger.kernel.org, AJvYcCXDJQYrWB8OhdOSgUwNBNzAP26qkQD/snFL2ofiNTvm+ctXOKvKresxpCtGVyua68cTRjWr6JnoiWnFs01ugaE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx15QS7XnckJ13n6xqJJ3Dp0qcvdPsuAkaWLhNdo8J7kIcuSIAP
-	loq1Ny53mcdMFxfZphVZHb+TorStWkuMYg6wQoNWaN7tUfIM1xT6yC3dLEvb7w==
-X-Gm-Gg: ASbGncsmfjvkFJzeaIakyxWeSkdBYPdULKxTAj3awOVQpwcZG2cd0gcbmyUUrwF7GWW
-	d8ltML5F0xWMixwtq53oVJBa2ko6DpdxRiEwMplFavBn5m7wWEvS66JSZ6WKNYxp8kHajf7i9HC
-	AkjOl9cYxfAgwu7i0H2O5PJYKKNpW1ISVvhb4OgqOGQYPdMgu9w4yPtY1xhHx/wvAeAqQe/K7p0
-	OH45ngj3Rim+0THBY+OhHArIb790l/BmwkP1HgVdBWhQzYfmd+COggyMrTo5zQWM+layASzfj72
-	XNeQ8jKvQkF4kglkAUymDqwcnQtMfyc5UmPVJmnsR5PLJvev+J8bSOXc2m2sdMFUbYJ2QpH+hP8
-	MDlTyIoMBs5SOofNs6p4=
-X-Google-Smtp-Source: AGHT+IHY/v+RTL08PLy6womTLLxmQhluTTjkkedNBxyHc/zF4l2YyC6M/aeDVLyO9W9pfxaF8QBdeA==
-X-Received: by 2002:a05:600c:a104:b0:453:7713:539f with SMTP id 5b1f17b1804b1-454b4eb8afdmr90464455e9.26.1751918486617;
-        Mon, 07 Jul 2025 13:01:26 -0700 (PDT)
-Received: from iku.example.org ([2a06:5906:61b:2d00:d418:e5eb:1bc:30dd])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b471b97376sm11268995f8f.61.2025.07.07.13.01.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Jul 2025 13:01:25 -0700 (PDT)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	linux-watchdog@vger.kernel.org
-Cc: devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Prabhakar <prabhakar.csengg@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 9/9] watchdog: rzv2h_wdt: Improve error strings and add newlines
-Date: Mon,  7 Jul 2025 21:01:11 +0100
-Message-ID: <20250707200111.329663-10-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250707200111.329663-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20250707200111.329663-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        bh=rKLu5W4g48bt+4yviXuICuogMC7NETqzFrH52NDnWkc=;
+        b=CB0MgjDn9gDliNRko9kZp1TiRUCdP4kaN37nupbJLjWzcGNeB7Ev0KMP6L/E2Z102L
+         kOVT5V7VMEkT0T2HkrsPddagIlCVs+K2EJsMonpbOa7W4fbYyE9OiymWqgLFU2Mh4/sG
+         tpYla0XbBQgdSa74EuptT1G0QqI86FJJ0HuWv1kc/Us8f8jNTTM4l/rPpJo0/o7CqjbO
+         Jcsun0sMNlqOuhgKKxi1uN68776a/I9mJldeMVMkvmxMyiXwQUcpHXc67hUh30AuGdf9
+         UdK55jRiOOt2I4fk0bPgIgGPBPO5DCA7ccNebAOzkpC5V3dScEJ1ofVPmob/UPX3Ppaa
+         ts9g==
+X-Forwarded-Encrypted: i=1; AJvYcCUR/OSIZEpM7lcOqqTwRMfGGW7ci3JVFLj2XkvulSoh3dtACxrR7yn3igxMrepu2CsD/2IPxKC50Il7DiM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzeYEkUJeKRZOxou97xiBXTmeXWMuMAQzJtuCx8jV0GYMwXEw+j
+	ChaAQmNA8zZmaNEOQuMh/BKAKzXpJdA0tPJnhKxiV97xmUlC44Q8JBWye+c+mygMHUGKQg0c1xg
+	5nTRVaWa68zGJYUyiJNlXuWYUO84xJ9ug+q6viwFK
+X-Gm-Gg: ASbGncuOc/p53wnMmTN3GEs2ItJ+zDaAk17AvbHlr8Ypf15R4nT4VJBBYSdoR0IwvCH
+	OeYNbUxIQUqyx2utEFqTUknZfUppmE7ZUsWQRZLws0q8jV7AOQbb7iDh10xuicw5EJRHk+Hql0e
+	xUZvkznIf4Ls/f0O9uemx5U167QfcS+vfy6R+EXi3/WQI=
+X-Google-Smtp-Source: AGHT+IHLYTU4kBITzhD3jz6dc9Ywq+TkUQw8uddLaok7bGe3BDRvXBsFsPv9J8pTF74kHSNW6YoQwtEeQTNvu7SccGQ=
+X-Received: by 2002:a05:690c:4507:b0:70e:2ba2:659d with SMTP id
+ 00721157ae682-71668ded751mr165544117b3.23.1751918500803; Mon, 07 Jul 2025
+ 13:01:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250626191425.9645-5-shivankg@amd.com> <a888364d0562815ca7e848b4d4f5b629@paul-moore.com>
+ <67c40ef1-8d90-44c5-b071-b130a960ecc4@amd.com>
+In-Reply-To: <67c40ef1-8d90-44c5-b071-b130a960ecc4@amd.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Mon, 7 Jul 2025 16:01:29 -0400
+X-Gm-Features: Ac12FXweLS9FMTeg88WL40gFmqBUb7ZnlDziG-m_E-Jv5rzfO0-ilcmo0yLCqmI
+Message-ID: <CAHC9VhTXheV6vxEFMUw4M=fN3mKsT0Ygv2oRFU7Sq_gEcx2iyg@mail.gmail.com>
+Subject: Re: [PATCH v3] fs: generalize anon_inode_make_secure_inode() and fix
+ secretmem LSM bypass
+To: Shivank Garg <shivankg@amd.com>
+Cc: david@redhat.com, akpm@linux-foundation.org, brauner@kernel.org, 
+	rppt@kernel.org, viro@zeniv.linux.org.uk, seanjc@google.com, vbabka@suse.cz, 
+	willy@infradead.org, pbonzini@redhat.com, tabba@google.com, 
+	afranji@google.com, ackerleytng@google.com, jack@suse.cz, hch@infradead.org, 
+	cgzones@googlemail.com, ira.weiny@intel.com, roypat@amazon.co.uk, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	selinux@vger.kernel.org, selinux-refpolicy@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Fri, Jul 4, 2025 at 6:41=E2=80=AFAM Shivank Garg <shivankg@amd.com> wrot=
+e:
+> On 7/3/2025 7:43 AM, Paul Moore wrote:
+> > On Jun 26, 2025 Shivank Garg <shivankg@amd.com> wrote:
+>
+> ...
+>
+> > Thanks again for your continued work on this!  I think the patch looks
+> > pretty reasonable, but it would be good to hear a bit about how you've
+> > tested this before ACK'ing the patch.  For example, have you tested thi=
+s
+> > against any of the LSMs which provide anonymous inode support?
+> >
+> > At the very least, the selinux-testsuite has a basic secretmem test, it
+> > would be good to know if the test passes with this patch or if any
+> > additional work is needed to ensure compatibility.
+> >
+> > https://github.com/SELinuxProject/selinux-testsuite
+>
+> Hi Paul,
+>
+> Thank you for pointing me to the selinux-testsuite. I wasn't sure how to =
+properly
+> test this patch, so your guidance was very helpful.
+>
+> With the current test policy (test_secretmem.te), I initially encountered=
+ the following failures:
+>
+> ~/selinux-testsuite/tests/secretmem# ./test
+> memfd_secret() failed:  Permission denied
+> 1..6
+> memfd_secret() failed:  Permission denied
+> ok 1
+> ftruncate failed:  Permission denied
+> unable to mmap secret memory:  Permission denied
+> not ok 2
 
-Update rzv2h_wdt_probe() to provide clearer error strings when retrieving
-the pclk, oscclk, and reset controller, and append missing newline
-characters to dev_err_probe() and dev_warn() calls for proper log
-formatting.
+...
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
- drivers/watchdog/rzv2h_wdt.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+> To resolve this, I updated test_secretmem.te to add additional required
+> permissions {create, read, write, map}
+> With this change, all tests now pass successfully:
+>
+> diff --git a/policy/test_secretmem.te b/policy/test_secretmem.te
+> index 357f41d..4cce076 100644
+> --- a/policy/test_secretmem.te
+> +++ b/policy/test_secretmem.te
+> @@ -13,12 +13,12 @@ testsuite_domain_type_minimal(test_nocreate_secretmem=
+_t)
+>  # Domain allowed to create secret memory with the own domain type
+>  type test_create_secretmem_t;
+>  testsuite_domain_type_minimal(test_create_secretmem_t)
+> -allow test_create_secretmem_t self:anon_inode create;
+> +allow test_create_secretmem_t self:anon_inode { create read write map };
+>
+>  # Domain allowed to create secret memory with the own domain type and al=
+lowed to map WX
+>  type test_create_wx_secretmem_t;
+>  testsuite_domain_type_minimal(test_create_wx_secretmem_t)
+> -allow test_create_wx_secretmem_t self:anon_inode create;
+> +allow test_create_wx_secretmem_t self:anon_inode { create read write map=
+ };
 
-diff --git a/drivers/watchdog/rzv2h_wdt.c b/drivers/watchdog/rzv2h_wdt.c
-index 1b32bab87d67..db76a7c0e1d6 100644
---- a/drivers/watchdog/rzv2h_wdt.c
-+++ b/drivers/watchdog/rzv2h_wdt.c
-@@ -292,16 +292,16 @@ static int rzv2h_wdt_probe(struct platform_device *pdev)
- 
- 	priv->pclk = devm_clk_get_prepared(dev, "pclk");
- 	if (IS_ERR(priv->pclk))
--		return dev_err_probe(dev, PTR_ERR(priv->pclk), "no pclk");
-+		return dev_err_probe(dev, PTR_ERR(priv->pclk), "Failed to get pclk\n");
- 
- 	priv->oscclk = devm_clk_get_optional_prepared(dev, "oscclk");
- 	if (IS_ERR(priv->oscclk))
--		return dev_err_probe(dev, PTR_ERR(priv->oscclk), "no oscclk");
-+		return dev_err_probe(dev, PTR_ERR(priv->oscclk), "Failed to get oscclk\n");
- 
- 	priv->rstc = devm_reset_control_get_optional_exclusive(dev, NULL);
- 	if (IS_ERR(priv->rstc))
- 		return dev_err_probe(dev, PTR_ERR(priv->rstc),
--				     "failed to get cpg reset");
-+				     "Failed to get cpg reset\n");
- 
- 	switch (priv->of_data->count_source) {
- 	case COUNT_SOURCE_LOCO:
-@@ -338,7 +338,7 @@ static int rzv2h_wdt_probe(struct platform_device *pdev)
- 
- 	ret = watchdog_init_timeout(&priv->wdev, 0, dev);
- 	if (ret)
--		dev_warn(dev, "Specified timeout invalid, using default");
-+		dev_warn(dev, "Specified timeout invalid, using default\n");
- 
- 	return devm_watchdog_register_device(dev, &priv->wdev);
- }
--- 
-2.49.0
+I believe this domain also needs the anon_inode/execute permission.
 
+>  allow test_create_wx_secretmem_t self:process execmem;
+>
+>  # Domain not allowed to create secret memory via a type transition to a =
+private type
+> @@ -30,4 +30,4 @@ type_transition test_nocreate_transition_secretmem_t te=
+st_nocreate_transition_se
+>  type test_create_transition_secretmem_t;
+>  testsuite_domain_type_minimal(test_create_transition_secretmem_t)
+>  type_transition test_create_transition_secretmem_t test_create_transitio=
+n_secretmem_t:anon_inode test_secretmem_inode_t "[secretmem]";
+> -allow test_create_transition_secretmem_t test_secretmem_inode_t:anon_ino=
+de create;
+> +allow test_create_transition_secretmem_t test_secretmem_inode_t:anon_ino=
+de { create read write map };
+>
+> Does this approach look correct to you? Please let me know if my understa=
+nding
+> makes sense and what should be my next step for patch.
+
+[NOTE: added selinux@vger and selinux-refpolicy@vger to the To/CC line]
+
+Hi Shivank,
+
+My apologies for not responding earlier, Friday was a holiday and I
+was away over the weekend.  Getting back at it this morning I ran into
+the same failures as you described, and had to make similar changes to
+the selinux-testsuite policy (see the anon_inode/execute comment
+above, I also added the capability/ipc_lock permission as needed).
+
+Strictly speaking this is a regression in the kernel, even if the new
+behavior is correct.  I'm CC'ing the SELinux and Reference Policy
+lists so that the policy devs can take a look and see what impacts
+there might be to the various public SELinux policies.  If this looks
+like it may be a significant issue, we'll need to work around this
+with a SELinux "policy capability" or some other compatibility
+solution.
+
+--=20
+paul-moore.com
 
