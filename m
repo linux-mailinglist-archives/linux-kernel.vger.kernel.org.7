@@ -1,95 +1,91 @@
-Return-Path: <linux-kernel+bounces-719145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F1D2AFAA68
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 05:53:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFA54AFAA6D
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 05:54:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2EB90189B27B
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 03:53:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF3D91882545
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 03:54:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE80C259CBC;
-	Mon,  7 Jul 2025 03:53:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D43C71373;
+	Mon,  7 Jul 2025 03:53:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="M85gggbz"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="o1vQ2ZeV"
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6DDC242D9A
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 03:53:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDFE01514F6
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 03:53:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751860389; cv=none; b=BVw8ohhhfRuPlCtfdwQvPVDMEG1Sc5vcmzsHkeCpOMGeyh5AeD9BHqExn9y8N9QVeIdbY55p4nYcXGP6PwOHaK6PYTwUSig38Dn1b/EQOLc3rOX5Sv2Swx7EIsQc4tHDIkeJGVjU4gfOoxmE78JYa1OPuXLK0IRhzvNdwVxFzug=
+	t=1751860437; cv=none; b=oUN1C5PkDkeE9cWc/4LaukDx9IJCdInj4xb6EZ5VBjHLBu+QMYU3ajcqNWK7VvrpoBwRn5YrsCkiJvpqFBcKrNC9NHMt4LLV3K7O+EjQKTs4fUSgYBMGnDQC9vNPUzs9EHl8XtBJv1wviCSpQAgMDrcqfhW3+NL/qWGRaPsG7Fc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751860389; c=relaxed/simple;
-	bh=/fve97GTd9bXitqStqnzD3wq1Emy4aKwuUyvzEethf0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WyY+1TgxgD0lSw0ET4SrbPxg4UJSNWNQhJE2MRSYf6j9mOLpUH64qQUQIXQE3+M1BUCAGqd59ln0S55MKFm6PRHK9inWQo0VoUWBnNC3DAZPYde7ZzcRpyYplmkCOKq81LxCv3KVpdfYPxKoUQGtfagiKtsB5WYjkEqIaGU8t9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=M85gggbz; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-74264d1832eso3263170b3a.0
-        for <linux-kernel@vger.kernel.org>; Sun, 06 Jul 2025 20:53:07 -0700 (PDT)
+	s=arc-20240116; t=1751860437; c=relaxed/simple;
+	bh=L3zNIEBUJGar6s3zpXt8LnbzVSyh0BYXS9gj5vPYO3Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=II0PZDTRnN32iIm4r7k8kgvvE44IAJOJw8WIRj0GMeyMPTAyvxwiB3FKMExix3BS3CtWdTO58R3EU6PaKhCpUxJCuGsYDWMEVg/bvpoyctWVi3JN7Hi9NDXqd7s8Xkh1jxg+a4LWtzO6+i5ZZqIVkrwLn8vz7O2Af4lAbrzhapc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=o1vQ2ZeV; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-b34a6d0c9a3so2619276a12.3
+        for <linux-kernel@vger.kernel.org>; Sun, 06 Jul 2025 20:53:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1751860387; x=1752465187; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mub7PjK+ZQMm18cy8qNtEOXQgRqk+RrTOpKNrinRMis=;
-        b=M85gggbzleyl75AKcW75Gr+fuPYxB3zn8bnX3qIGBLkv9LG8oewUWUfCFns/SZFqP+
-         ZHipB8vpt8/6TrgOmIF/4+R3m/1M6uhLUmXb3GlY64fG/Ttf3kaUlQ0OYZu6PsHP/tPv
-         WWt2Jg1OiS6yTlUYN6OO4zaC/Ofrnqc+iEKetJvVbGYJfMHJrSDgH+ywo+Y86RPk2G6i
-         RKNj3kY0CMZm481x66rqyXoqOfIGRdcMe8hwjjztBUzmMnGZsMpoQzPf5g105pYR7Goc
-         msHLyKrGvglB5pvrpcVbEJ5NQZFQLwKSne3SRK94zoEfYdELnd2ktZrspdqpj7hT7ohQ
-         3NrQ==
+        d=ventanamicro.com; s=google; t=1751860435; x=1752465235; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=i5wHfXXQ4zEBMf9atQWdwXzfnG4mDo9qjXuqOPXqkyY=;
+        b=o1vQ2ZeVy8XivPaXub0K2AIcLoF9Y2V/1dXeWO9Gs6JUQLrPrwSIU1tiAiSqcX3ByL
+         GRW/J/UhJpU/y055HZcJB++dZiIfgO9c1wX/Wsxle5NPnY9fEhZz8jMYjvMx0hwW1APs
+         uga8dCf1QIaMgmut3K+RqBLeNBSbaBM7lsf6ufRc3nD6HLYMnKbk3MpDSTetC+kZ49qm
+         jSiKNeF8mLH1pHiUxSmzb2PlsIiQrhoulnjY58E2mKsmXcSMxztnMx1g5eRTx8X9k7m1
+         HRoHR/XY4dYKgCGWpScDvUw9+JU62VH7OpmArwclySotixprTecxoJT3dvCIw+oF/tG5
+         /g4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751860387; x=1752465187;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mub7PjK+ZQMm18cy8qNtEOXQgRqk+RrTOpKNrinRMis=;
-        b=si/f8Prs5b2jsK3zMjma066+1g7nwvKFNJPwAZ01cDBMZmOo2L/fno5QYFMDYGwX9s
-         Rv/Gr2A8ecRE5dVhyTPQVe9CSws7ExxzMXjspUiPjmlMSaDPkt68vG7o9I1zAenSpgWI
-         rjEVBgtrwcyDyPQDLcxQR+mscJcDmGHgCWn0F18CBZGKoYlvQXhtVCHndAK3oTppckHc
-         YSLoe2NphsGs+2cB0iqx5aVyG8Gfda4iXnG8l6nsZTDEzeWhVvW9/kwiwGruu6p8d8Zu
-         3WbfqdJyRXLaqV71WQiHNku7bZwBxJmbJmHs0ao/izSMdPTNeS8j1MzEWAd746Vuvzcm
-         HmnA==
-X-Forwarded-Encrypted: i=1; AJvYcCWkWdrKcxDo2q19hGwgjv4uImh0/ZEl4jLQhdUazIcnKRsEcjPO6Cq/V1wmRYDKOpdz05qQKHlFgO+tR4Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1aIcE9JKjRuSDcqBuRv5/yK/3CawFwd3sVmNduvawpVZB5dLH
-	C2h5Hn56jfl9paQjWTROaum2oVH8z4aMj4W7luwMFnqmSZZ78N2camc46RopNxFbXxY=
-X-Gm-Gg: ASbGncuLt830FpcPQ8fvewrreAbZvJ/W/WUty8Qw/gZQ4ftk8UQ1foai6TvAi9j9Nwk
-	8alz+Vu8bvVlURWRWZzAo4ZZUGvxhey76Ti+dj2GlRvD1sSAJ8fC4JfqzEK/afhPObzEGw/V3M+
-	7Wr911LsNUkb5iukOUsNJb7Imn67nahoeFNnXtT6YaYAOlNT89SjjuKadhcfvp9C2IJiP45lT0m
-	P5Cv1i5JZAp4gcDQk6hzaG+q53OPmfNg0eA2o0REw1Zhdx90WDk43zv+kICjGaUVHI/voPYt1yv
-	X6n1Y2bwQMRS5K5rQ7yNkn+9KNwGLt6MdwgUQuzs1Qfw1UPezto9RXQY+HpM15bzqbBaOS+IqpF
-	S1oOtQFcQxgc1UuI7xdIUdJU=
-X-Google-Smtp-Source: AGHT+IFtHyTBc6qEYu6hdCH6cigb35sVn8qLgWaMfVrg0MupVPG7/z/yW4uRvdyfX28do9yc+RvdzQ==
-X-Received: by 2002:a05:6a20:6a0d:b0:225:defd:26f0 with SMTP id adf61e73a8af0-2260c92da99mr18422851637.32.1751860387103;
-        Sun, 06 Jul 2025 20:53:07 -0700 (PDT)
-Received: from localhost.localdomain ([203.208.189.6])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b38ee74cf48sm7538658a12.77.2025.07.06.20.53.02
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Sun, 06 Jul 2025 20:53:06 -0700 (PDT)
-From: lizhe.67@bytedance.com
-To: lkp@intel.com
-Cc: akpm@linux-foundation.org,
-	alex.williamson@redhat.com,
-	david@redhat.com,
-	jgg@ziepe.ca,
+        d=1e100.net; s=20230601; t=1751860435; x=1752465235;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=i5wHfXXQ4zEBMf9atQWdwXzfnG4mDo9qjXuqOPXqkyY=;
+        b=N3lb3tR8finBiPKOLbuFm15UTk3451y6K/RxGLRWms8Nq/QLC32/0d90fXMC+PTtlU
+         D2zkfEd4zF4HTT/r1DpDxis+Bsq4eQzJ4GKp70vfzMmJMqGNZvS6q3YtbcFbPlTxQ5Gz
+         zfwXvDvLodXqdSL9rIYXDfdyJuIqhm62V26gyWtldN7TZy8/TeLyIauW3vnVhV/cy2sj
+         AozETpwHLiRIX2zb9xiovKGDEDRAWDqrKtH491JdgHCnqUNg/kkCnJe7Q7QqgeOhB2Zt
+         3LQ1/8szxAiYN8csuJxMgG/+gLqdqAkX+GzcSQcKZLw/iaaoQnQCUf4YE+yWy1dNz2EX
+         LVGA==
+X-Forwarded-Encrypted: i=1; AJvYcCXL7RTwUaL3u3OFL8dR7sMmTxBH/hemIZJKxnCXNBZg2rtXIk7Ie0VMrqng4YdvM8qJez7Ok4XVRN4jNtM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyN7dsFL0MZb5r4Tk2XCFdS/70PL8McBxaonXDdoz9csag3hpsb
+	wa3mqFHdpaIqovzpj4mWsQTgxy4Va2fd+5ixy1og/82LTRQSac/ejoKuqvA3n4lyQqg=
+X-Gm-Gg: ASbGnctrtO8MWHcD0uloTam3V2P5Xhr1Wz0eE6jSpDn0jHlogQfcAUiyUOf/c9Um4E5
+	yLvY+XqJ1c7DZee7fwF5edr3e8Jo/SYI15EvYLKt3as5OLr8IIljFumaL+DV2AYvbsNtzmSmZPX
+	fWzXDprtZ+dw92wNPtYAdW69xHFx3XhClNTwML6XPwCcztuqQ4ahOlOUni9E5Kq3FmXk1eOyEty
+	XuYH+kk/YDkpPc6eGpu4W9WeWniQ+XzXsbIbJGW1318fGjJ85XknLwxSjfun9T1sTECPU+PHlT8
+	7rPrlS3Fgqshlt2mhJwXzMW5VlmOhf27M38GtZyQDeI0uKkc9qlUZJlDnvzVjKt1gVFymzc9cy4
+	OL8yzKy2mfH1YVTUSos0=
+X-Google-Smtp-Source: AGHT+IH3PnAiGTyAZ+6qYrNH6yhveNJVZ6r8Z9td+wti94tqoIsXso9lzCWFTyC7yioqYXSlTSnKJw==
+X-Received: by 2002:a17:90b:3c50:b0:311:d28a:73ef with SMTP id 98e67ed59e1d1-31aac447bc9mr17532339a91.10.1751860435085;
+        Sun, 06 Jul 2025 20:53:55 -0700 (PDT)
+Received: from localhost.localdomain ([122.171.23.152])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31aaae80ae0sm8159137a91.21.2025.07.06.20.53.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 06 Jul 2025 20:53:54 -0700 (PDT)
+From: Anup Patel <apatel@ventanamicro.com>
+To: Atish Patra <atish.patra@linux.dev>
+Cc: Palmer Dabbelt <palmer@dabbelt.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	Andrew Jones <ajones@ventanamicro.com>,
+	Anup Patel <anup@brainfault.org>,
 	kvm@vger.kernel.org,
+	kvm-riscv@lists.infradead.org,
+	linux-riscv@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	lizhe.67@bytedance.com,
-	oe-kbuild-all@lists.linux.dev,
-	peterx@redhat.com
-Subject: Re: [PATCH v2 1/5] mm: introduce num_pages_contiguous()
-Date: Mon,  7 Jul 2025 11:52:59 +0800
-Message-ID: <20250707035259.61640-1-lizhe.67@bytedance.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <202507050529.EoMuEtd8-lkp@intel.com>
-References: <202507050529.EoMuEtd8-lkp@intel.com>
+	Anup Patel <apatel@ventanamicro.com>
+Subject: [PATCH v2 0/2] Few timer and AIA fixes for KVM RISC-V
+Date: Mon,  7 Jul 2025 09:23:42 +0530
+Message-ID: <20250707035345.17494-1-apatel@ventanamicro.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -98,79 +94,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-On Sat, 5 Jul 2025 05:19:34 +0800, lkp@intel.com wrote:
- 
-> All errors (new ones prefixed by >>):
-> 
->    In file included from arch/sh/include/asm/page.h:160,
->                     from arch/sh/include/asm/thread_info.h:13,
->                     from include/linux/thread_info.h:60,
->                     from include/asm-generic/preempt.h:5,
->                     from ./arch/sh/include/generated/asm/preempt.h:1,
->                     from include/linux/preempt.h:79,
->                     from include/linux/spinlock.h:56,
->                     from include/linux/mmzone.h:8,
->                     from include/linux/gfp.h:7,
->                     from include/linux/mm.h:7,
->                     from arch/sh/kernel/asm-offsets.c:14:
->    include/linux/mm.h: In function 'num_pages_contiguous':
-> >> include/asm-generic/memory_model.h:48:21: error: implicit declaration of function 'page_to_section'; did you mean 'present_section'? [-Wimplicit-function-declaration]
->       48 |         int __sec = page_to_section(__pg);                      \
->          |                     ^~~~~~~~~~~~~~~
->    include/asm-generic/memory_model.h:53:32: note: in definition of macro '__pfn_to_page'
->       53 | ({      unsigned long __pfn = (pfn);                    \
->          |                                ^~~
->    include/asm-generic/memory_model.h:65:21: note: in expansion of macro '__page_to_pfn'
->       65 | #define page_to_pfn __page_to_pfn
->          |                     ^~~~~~~~~~~~~
->    include/linux/mm.h:200:38: note: in expansion of macro 'page_to_pfn'
->      200 | #define nth_page(page,n) pfn_to_page(page_to_pfn((page)) + (n))
->          |                                      ^~~~~~~~~~~
->    include/linux/mm.h:221:33: note: in expansion of macro 'nth_page'
->      221 |                 if (pages[i] != nth_page(first_page, i))
->          |                                 ^~~~~~~~
->    include/linux/mm.h: At top level:
-> >> include/linux/mm.h:2002:29: error: conflicting types for 'page_to_section'; have 'long unsigned int(const struct page *)'
->     2002 | static inline unsigned long page_to_section(const struct page *page)
->          |                             ^~~~~~~~~~~~~~~
->    include/asm-generic/memory_model.h:48:21: note: previous implicit declaration of 'page_to_section' with type 'int()'
->       48 |         int __sec = page_to_section(__pg);                      \
->          |                     ^~~~~~~~~~~~~~~
->    include/asm-generic/memory_model.h:53:32: note: in definition of macro '__pfn_to_page'
->       53 | ({      unsigned long __pfn = (pfn);                    \
->          |                                ^~~
->    include/asm-generic/memory_model.h:65:21: note: in expansion of macro '__page_to_pfn'
->       65 | #define page_to_pfn __page_to_pfn
->          |                     ^~~~~~~~~~~~~
->    include/linux/mm.h:200:38: note: in expansion of macro 'page_to_pfn'
->      200 | #define nth_page(page,n) pfn_to_page(page_to_pfn((page)) + (n))
->          |                                      ^~~~~~~~~~~
->    include/linux/mm.h:221:33: note: in expansion of macro 'nth_page'
->      221 |                 if (pages[i] != nth_page(first_page, i))
->          |                                 ^~~~~~~~
->    make[3]: *** [scripts/Makefile.build:98: arch/sh/kernel/asm-offsets.s] Error 1
->    make[3]: Target 'prepare' not remade because of errors.
->    make[2]: *** [Makefile:1274: prepare0] Error 2
->    make[2]: Target 'prepare' not remade because of errors.
->    make[1]: *** [Makefile:248: __sub-make] Error 2
->    make[1]: Target 'prepare' not remade because of errors.
->    make: *** [Makefile:248: __sub-make] Error 2
->    make: Target 'prepare' not remade because of errors.
-> 
-> 
-> vim +2002 include/linux/mm.h
-> 
-> bf4e8902ee5080 Daniel Kiper      2011-05-24  2001  
-> aa462abe8aaf21 Ian Campbell      2011-08-17 @2002  static inline unsigned long page_to_section(const struct page *page)
-> d41dee369bff3b Andy Whitcroft    2005-06-23  2003  {
-> d41dee369bff3b Andy Whitcroft    2005-06-23  2004  	return (page->flags >> SECTIONS_PGSHIFT) & SECTIONS_MASK;
-> d41dee369bff3b Andy Whitcroft    2005-06-23  2005  }
-> 308c05e35e3517 Christoph Lameter 2008-04-28  2006  #endif
-> d41dee369bff3b Andy Whitcroft    2005-06-23  2007  
+The RISC-V Privileged specificaiton says the following: "WFI is also
+required to resume execution for locally enabled interrupts pending
+at any privilege level, regardless of the global interrupt enable at
+each privilege level."
 
-Thank you. Let's move function num_pages_contiguous() below the
-definition of page_to_section() to resolve this compilation error.
+Based on the above, if there is pending VS-timer interrupt when the
+host (aka HS-mode) executes WFI then such a WFI will simply become NOP
+and not do anything. This result in QEMU RISC-V consuming a lot of CPU
+time on the x86 machine where it is running. The PATCH1 solves this
+issue by adding appropriate cleanup in KVM RISC-V timer virtualization.
 
-Thanks,
-Zhe
+As a result PATCH1, race conditions in updating HGEI[E|P] CSRs when a
+VCPU is moved from one host CPU to another are being observed on QEMU
+so the PATCH2 tries to minimize the chances of these race conditions.
+
+Changes since v1:
+ - Added more details about race condition in PATCH2 commit description.
+
+Anup Patel (2):
+  RISC-V: KVM: Disable vstimecmp before exiting to user-space
+  RISC-V: KVM: Move HGEI[E|P] CSR access to IMSIC virtualization
+
+ arch/riscv/include/asm/kvm_aia.h |  4 ++-
+ arch/riscv/kvm/aia.c             | 51 +++++---------------------------
+ arch/riscv/kvm/aia_imsic.c       | 45 ++++++++++++++++++++++++++++
+ arch/riscv/kvm/vcpu.c            |  2 --
+ arch/riscv/kvm/vcpu_timer.c      | 16 ++++++++++
+ 5 files changed, 71 insertions(+), 47 deletions(-)
+
+-- 
+2.43.0
+
 
