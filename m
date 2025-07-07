@@ -1,98 +1,74 @@
-Return-Path: <linux-kernel+bounces-719216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93381AFAB3D
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 07:50:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D6674AFAB4F
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 07:56:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E56C189D253
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 05:50:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44AAF189E03D
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 05:56:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE25E274FD7;
-	Mon,  7 Jul 2025 05:50:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0BAC2750E5;
+	Mon,  7 Jul 2025 05:55:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dIut4TWp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="TCHUcLQq"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51D803597A;
-	Mon,  7 Jul 2025 05:50:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41748279358;
+	Mon,  7 Jul 2025 05:55:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751867403; cv=none; b=n4aR2S2BPdnZLKQmqRgUQVl+I0N7wmngk4Nugvjv8YmNVJ7r+gQwZ1nBpSk0smvG3/ksjNwte2qxrJTyCOgZBfrVIj0HaSp7dXbU+wGRZzRMT79D34caMoAMw8Ng3kbuC/28I3KbBbe//NYKHuOALovrja9Zt7i2hK3nZ1pX6HI=
+	t=1751867735; cv=none; b=MevhyR2RioQwEcToQCRPScaM6Biwh/1kbx55IqvqH3scn2M5Rg7oR+YrYcdJWhmQocHlSimdovXn7oE35aySxBJ82U/1v5Snmc2tojki090jGBCfvqHVSWsTQu1ZknIfKnoLhKYU5koIWKewT1oWVDHZK0owSIg89q3H7uVyJHQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751867403; c=relaxed/simple;
-	bh=H1uS+lRJDdIKeULrbOYxVDA++ia5TLO7SuOj0M3uK/w=;
+	s=arc-20240116; t=1751867735; c=relaxed/simple;
+	bh=agT+rksJrE3ABKNsxwdmU+u2gNiWvtWgQOiuxjDV/vQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OSfH3abOuT753hEDeQyUSTdOM6RCAKl8WYb6lTjZwMYfmEHWfoyinVrXitqoq8OZpfyC33F3ss3X2Czlcgu80gvlTe4MpI2vLbibVE7p9Gw+TB1ITEbTBX+jJwiJpzGOg7et0uyX01528Zs9W6fzrbo+Wfcy8pLv6IQXhw45aRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dIut4TWp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4264AC4CEE3;
-	Mon,  7 Jul 2025 05:50:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751867402;
-	bh=H1uS+lRJDdIKeULrbOYxVDA++ia5TLO7SuOj0M3uK/w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dIut4TWp53JwMnw9mex2FsExLGQGUavwebot/I3b/t4xvw0IIJk3dPFPV3CAF+0eq
-	 /fWy9f3vAMXBRl4DZFFWTEuIWnztk0EYLXmHR3yWtFoTjDrL+EKH6KC5VKtTKLMm6T
-	 HP7sP9REben2i/iLwmdN5Qt5BypVMEu1SN6VYzgZ1Dn+nTCNc06wbkdX5xi3iyD8wd
-	 KVDuiaTyKjYQIfrZ9ag5OZ+5a13QrodgbuReDEqA61toH6f8R2zvMn++eQwxLnlfUu
-	 UGa9GPrt5QIX3IBMjkFIrXeLdRFN093xAIhwUFsbAO6t32olgE2lR6y0d46f5wBZys
-	 +9khuLgxKw+6w==
-Date: Mon, 7 Jul 2025 07:50:00 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: shangyao lin <shangyao.lin@mediatek.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org, dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
-	Project_Global_Chrome_Upstream_Group@mediatek.com
-Subject: Re: [PATCH v2 05/13] media: platform: mediatek: add isp_7x seninf
- unit
-Message-ID: <20250707-lavender-peacock-of-patience-fdc712@krzk-bin>
-References: <20250707013154.4055874-1-shangyao.lin@mediatek.com>
- <20250707013154.4055874-6-shangyao.lin@mediatek.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YqeWl3zxAk7eyfpXcbHMyif6kMjvOFLlvWUMCSuzzgiTudVSMzbnZPyBx2Nr/0Odcjd93rBYgIOL3pCZC20dPTeBTaAL3Zi1mAFU1Z+1lX9dPwa6S+M5BPqLIJd8Vy5gzwnoxDxYYBDd3PD2rUjGv1icyUr+9SMWLHplerkecXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=TCHUcLQq; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=Ayac4Wu6F6RskgZmI4mhqRr5rEoHR5pqbZM0eTHhi9U=; b=TCHUcLQqlzAfLejpy3IuqdGgCh
+	59DNK5YRFHiTMfCTzYTEeeilvnpQS0ZR0+ifkmLof5r3/R8ke3fKM3tT3B4o+eYIPIsNgF/fkx0Qe
+	apFHU7NAPppHSl+LUcmWiXgHMzegZNyyN7tqpWyR88AH04Xee/ZyiCMjMz57TG6r9TeU=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uYeoz-000gCY-Ue; Mon, 07 Jul 2025 07:55:21 +0200
+Date: Mon, 7 Jul 2025 07:55:21 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Rosen Penev <rosenp@gmail.com>
+Cc: netdev@vger.kernel.org, Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	=?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <clement.leger@bootlin.com>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:RENESAS RZ/N1 A5PSW SWITCH DRIVER" <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH 1/2] net: dsa: rzn1_a5psw: add COMPILE_TEST
+Message-ID: <08324803-3039-4814-b93e-12b863bbadd1@lunn.ch>
+References: <20250707003918.21607-1-rosenp@gmail.com>
+ <20250707003918.21607-2-rosenp@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250707013154.4055874-6-shangyao.lin@mediatek.com>
+In-Reply-To: <20250707003918.21607-2-rosenp@gmail.com>
 
-On Mon, Jul 07, 2025 at 09:31:46AM +0800, shangyao lin wrote:
-> From: "shangyao.lin" <shangyao.lin@mediatek.com>
-
-My most frequent comment last year to Mediatek. I even asked to come
-with some internal procedure so you will not keep repating the same
-mistake in author's name.
-
-Any success?
-
+On Sun, Jul 06, 2025 at 05:39:17PM -0700, Rosen Penev wrote:
+> There's no architecture specific requirement for it to compile. Allows
+> the bots to test compilation properly.
 > 
-> Introduce support for the MediaTek sensor interface (seninf) in the SoC camera
-
-...
-
-> 
-> ---
-> 
-> Note:
-> The PHY operations have been refactored and separated from the seninf driver,
-> but there are still some issues to confirm with reviewers in this v2 patch
-> (dt-bindings: media: mediatek: add seninf-core binding). The PHY part will be
-> moved to drivers/phy/mediatek/ in v3.
-> 
-> Signed-off-by: shangyao.lin <shangyao.lin@mediatek.com>
-
-and here the same.
-
-Best regards,
-Krzysztof
+> Signed-off-by: Rosen Penev <rosenp@gmail.com>
 
 
