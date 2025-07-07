@@ -1,174 +1,161 @@
-Return-Path: <linux-kernel+bounces-720051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4057FAFB646
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 16:42:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8A9AAFB648
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 16:42:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AED723BB969
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 14:42:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DBF1189BAB3
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 14:43:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D40582DC355;
-	Mon,  7 Jul 2025 14:42:41 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0551F2D8DA0;
-	Mon,  7 Jul 2025 14:42:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 983262DFF18;
+	Mon,  7 Jul 2025 14:42:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V4OaCflZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED4032D8DA0;
+	Mon,  7 Jul 2025 14:42:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751899361; cv=none; b=MNiU4O419wbJiF7fiA0OH1YZXht7x7cVaxAuXP4mw84i2GobiwFn1YF4+VFD/oEJzJcqCZtX9yZJmETx2Dzn13WIGFmI4H2akFfA2AR55G/F1VCmXUFRlBzvtu/L7GY0xK9mJz8RP4jvB/0xAJm76WPY2ZqMRbVlLOCIfuLknyI=
+	t=1751899368; cv=none; b=TX560iaAv2gLv9u7dmwQO5QBi0y8FzuX5zCF3uFAB24m7iAD+Yf6Z7mJCNqaTx2EXxRFV4HiVUj/OFQJu7F8mRwCTqAFJxOrFmBv+4O1NZi+PDDI6HDtuWly/KmjM2DwL8KWtrHockVZEgVSX9tkiNiAZSJ7cHFEFP/zfpTcdEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751899361; c=relaxed/simple;
-	bh=aGSW7OBBLIvjnmpwU5rvqybWN2QOUzpmJie8klPw+rs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=L7xYJsT9gv0FpnJpJhPkhqdCquwWsdOgpoTQaDlydNZ6aKBCHo5q9mhC/1Q+xeW8F0e3dS1EoG3dLM1wSJaYWBKjAn13YSfMmt5qbD9Vp8/u0/6KrGS9Zm12GCTEV27VuUuOoKsu5D2BYsChgLPaPa2vo4EpFVpsobQhHGhhm/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 90A95168F;
-	Mon,  7 Jul 2025 07:42:22 -0700 (PDT)
-Received: from pluto.guest.local (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9A7083F694;
-	Mon,  7 Jul 2025 07:42:33 -0700 (PDT)
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	arm-scmi@vger.kernel.org
-Cc: sudeep.holla@arm.com,
-	peng.fan@oss.nxp.com,
-	Cristian Marussi <cristian.marussi@arm.com>
-Subject: [PATCH] firmware: arm_scmi: Optimize notifiers registration
-Date: Mon,  7 Jul 2025 15:42:20 +0100
-Message-ID: <20250707144220.485365-1-cristian.marussi@arm.com>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1751899368; c=relaxed/simple;
+	bh=MDzuMRrp2AXCWKZWYbBsCLTTjaSYUNv6L3J0WLWh/vQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IdHMrp72KZ4+P4QG/XVDQOFxzx5ZyY83OR6FeUnTWxXe8zlWRHefvEJcLmW/IblVrcB4mQ4vw+wjoKbTbZ0BZW+ihUljUn3TNRDxanHUtIZ9MZA9Xy6GZDjW5C5h8TMFyhXWdvGyJTlWRf3qNl6FhMw9aOKJC3BKWY8yqGqNsCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V4OaCflZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DCBDC4CEE3;
+	Mon,  7 Jul 2025 14:42:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751899366;
+	bh=MDzuMRrp2AXCWKZWYbBsCLTTjaSYUNv6L3J0WLWh/vQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=V4OaCflZjkEO5qWNNtTxP65kPvUz4/hSXVxXXK2dYGHyENjl8f0zGFt6YNIAgsQqe
+	 yYsDzE5XADCTX73JfOJrydbNoJyD0mdpxcFFi68fDTEwioDZ1ByKpSR6Yu5fMI98zy
+	 hX8aY4MlK6F0kbNd2j8bRL2GFV5Wk9CyW9rNFz62BCd8w24QJZXGSNoz12uDC1fUUf
+	 EINc4QmLSd/MpU2QGCSeCHulaU05uY5kIHh0Rmi1lpmLyNgkHT6mAi4Jw0gLiL6aXW
+	 4r2EbSTE9u0Z7RFm1NORCO7DavMvrLtqVWWL9YaVjEhJ4vYBk/TtXPiV4VfaCtZ68p
+	 ZIYRajREJivIA==
+Date: Mon, 7 Jul 2025 16:42:43 +0200
+From: Alejandro Colomar <alx@kernel.org>
+To: Michal Hocko <mhocko@suse.com>
+Cc: Marco Elver <elver@google.com>, linux-mm@kvack.org, 
+	linux-hardening@vger.kernel.org, Kees Cook <kees@kernel.org>, 
+	Christopher Bazley <chris.bazley.wg14@gmail.com>, shadow <~hallyn/shadow@lists.sr.ht>, 
+	linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, 
+	kasan-dev@googlegroups.com, Dmitry Vyukov <dvyukov@google.com>, 
+	Alexander Potapenko <glider@google.com>, Christoph Lameter <cl@linux.com>, 
+	David Rientjes <rientjes@google.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>, 
+	Andrew Clayton <andrew@digital-domain.net>, Jann Horn <jannh@google.com>, 
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [RFC v3 5/7] mm: Fix benign off-by-one bugs
+Message-ID: <g6kp4vwuh7allqnbky6wcic4lbmnlctjldo4nins7ifn3633u7@lwuenzur5d4u>
+References: <cover.1751862634.git.alx@kernel.org>
+ <740755c1a888ae27de3f127c27bf925a91e9b264.1751862634.git.alx@kernel.org>
+ <CANpmjNNQaAExO-E3-Z83MKfgavX4kb2C5GmefRZ0pXc5FPBazw@mail.gmail.com>
+ <aGt8-4Dbgb-XmreV@tiehlicka>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="tmiwotmrfmdi6oyz"
+Content-Disposition: inline
+In-Reply-To: <aGt8-4Dbgb-XmreV@tiehlicka>
 
-Some platforms could be configured not to support notification events from
-specific sources and such a case is already handled properly by avoiding
-even to attempt to send a notification enable request since it would be
-doomed to fail anyway.
 
-In an extreme scenario, though, a platform could support not even one
-single source on a specific event: in such a case would be meaningless to
-even allow to register a notifier and we can bail-out immediately, saving
-a lot of needless computation.
+--tmiwotmrfmdi6oyz
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: Michal Hocko <mhocko@suse.com>
+Cc: Marco Elver <elver@google.com>, linux-mm@kvack.org, 
+	linux-hardening@vger.kernel.org, Kees Cook <kees@kernel.org>, 
+	Christopher Bazley <chris.bazley.wg14@gmail.com>, shadow <~hallyn/shadow@lists.sr.ht>, 
+	linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, 
+	kasan-dev@googlegroups.com, Dmitry Vyukov <dvyukov@google.com>, 
+	Alexander Potapenko <glider@google.com>, Christoph Lameter <cl@linux.com>, 
+	David Rientjes <rientjes@google.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>, 
+	Andrew Clayton <andrew@digital-domain.net>, Jann Horn <jannh@google.com>, 
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [RFC v3 5/7] mm: Fix benign off-by-one bugs
+References: <cover.1751862634.git.alx@kernel.org>
+ <740755c1a888ae27de3f127c27bf925a91e9b264.1751862634.git.alx@kernel.org>
+ <CANpmjNNQaAExO-E3-Z83MKfgavX4kb2C5GmefRZ0pXc5FPBazw@mail.gmail.com>
+ <aGt8-4Dbgb-XmreV@tiehlicka>
+MIME-Version: 1.0
+In-Reply-To: <aGt8-4Dbgb-XmreV@tiehlicka>
 
-Flag such condition, when detected at protocol initialization time, and
-reject upfront any attempt to register a notifier for such completely
-unsupported events with -ENOTSUPP.
+Hi Michal,
 
-Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
----
- drivers/firmware/arm_scmi/notify.c | 39 +++++++++++++++++++++++-------
- 1 file changed, 30 insertions(+), 9 deletions(-)
+On Mon, Jul 07, 2025 at 09:53:31AM +0200, Michal Hocko wrote:
+> On Mon 07-07-25 09:46:12, Marco Elver wrote:
+> > On Mon, 7 Jul 2025 at 07:06, Alejandro Colomar <alx@kernel.org> wrote:
+> > >
+> > > We were wasting a byte due to an off-by-one bug.  s[c]nprintf()
+> > > doesn't write more than $2 bytes including the null byte, so trying to
+> > > pass 'size-1' there is wasting one byte.  Now that we use seprintf(),
+> > > the situation isn't different: seprintf() will stop writing *before*
+> > > 'end' --that is, at most the terminating null byte will be written at
+> > > 'end-1'--.
+> > >
+> > > Fixes: bc8fbc5f305a (2021-02-26; "kfence: add test suite")
+> > > Fixes: 8ed691b02ade (2022-10-03; "kmsan: add tests for KMSAN")
+> >=20
+> > Not sure about the Fixes - this means it's likely going to be
+> > backported to stable kernels, which is not appropriate. There's no
+> > functional problem, and these are tests only, so not worth the churn.
+>=20
+> As long as there is no actual bug fixed then I believe those Fixes tags
+> are more confusing than actually helpful. And that applies to other
+> patches in this series as well.
 
-diff --git a/drivers/firmware/arm_scmi/notify.c b/drivers/firmware/arm_scmi/notify.c
-index e160ecb22948..dee9f238f6fd 100644
---- a/drivers/firmware/arm_scmi/notify.c
-+++ b/drivers/firmware/arm_scmi/notify.c
-@@ -318,6 +318,9 @@ struct scmi_registered_events_desc {
-  *	    customized event report
-  * @num_sources: The number of possible sources for this event as stated at
-  *		 events' registration time
-+ * @not_supported_by_platform: A flag to indicate that not even one source was
-+ *			       found to be supported by the platform for this
-+ *			       event
-  * @sources: A reference to a dynamically allocated array used to refcount the
-  *	     events' enable requests for all the existing sources
-  * @sources_mtx: A mutex to serialize the access to @sources
-@@ -334,6 +337,7 @@ struct scmi_registered_event {
- 	const struct scmi_event	*evt;
- 	void		*report;
- 	u32		num_sources;
-+	bool		not_supported_by_platform;
- 	refcount_t	*sources;
- 	/* locking to serialize the access to sources */
- 	struct mutex	sources_mtx;
-@@ -811,10 +815,19 @@ int scmi_register_protocol_events(const struct scmi_handle *handle, u8 proto_id,
- 		if (!r_evt->report)
- 			return -ENOMEM;
- 
--		for (id = 0; id < r_evt->num_sources; id++)
--			if (ee->ops->is_notify_supported &&
--			    !ee->ops->is_notify_supported(ph, r_evt->evt->id, id))
--				refcount_set(&r_evt->sources[id], NOTIF_UNSUPP);
-+		if (ee->ops->is_notify_supported) {
-+			int supported = 0;
-+
-+			for (id = 0; id < r_evt->num_sources; id++) {
-+				if (!ee->ops->is_notify_supported(ph, r_evt->evt->id, id))
-+					refcount_set(&r_evt->sources[id], NOTIF_UNSUPP);
-+				else
-+					supported++;
-+			}
-+
-+			/* Not even one source has been found to be supported */
-+			r_evt->not_supported_by_platform = !supported;
-+		}
- 
- 		pd->registered_events[i] = r_evt;
- 		/* Ensure events are updated */
-@@ -936,6 +949,11 @@ static inline int scmi_bind_event_handler(struct scmi_notify_instance *ni,
- 	 * of protocol instance.
- 	 */
- 	hash_del(&hndl->hash);
-+
-+	/* Bailout if event is not supported at all */
-+	if (r_evt->not_supported_by_platform)
-+		return -EOPNOTSUPP;
-+
- 	/*
- 	 * Acquire protocols only for NON pending handlers, so as NOT to trigger
- 	 * protocol initialization when a notifier is registered against a still
-@@ -1060,6 +1078,9 @@ __scmi_event_handler_get_ops(struct scmi_notify_instance *ni,
- 	r_evt = SCMI_GET_REVT(ni, KEY_XTRACT_PROTO_ID(evt_key),
- 			      KEY_XTRACT_EVT_ID(evt_key));
- 
-+	if (r_evt && r_evt->not_supported_by_platform)
-+		return ERR_PTR(-EOPNOTSUPP);
-+
- 	mutex_lock(&ni->pending_mtx);
- 	/* Search registered events at first ... if possible at all */
- 	if (r_evt) {
-@@ -1087,7 +1108,7 @@ __scmi_event_handler_get_ops(struct scmi_notify_instance *ni,
- 				hndl->key);
- 			/* this hndl can be only a pending one */
- 			scmi_put_handler_unlocked(ni, hndl);
--			hndl = NULL;
-+			hndl = ERR_PTR(-EINVAL);
- 		}
- 	}
- 	mutex_unlock(&ni->pending_mtx);
-@@ -1370,8 +1391,8 @@ static int scmi_notifier_register(const struct scmi_handle *handle,
- 	evt_key = MAKE_HASH_KEY(proto_id, evt_id,
- 				src_id ? *src_id : SRC_ID_MASK);
- 	hndl = scmi_get_or_create_handler(ni, evt_key);
--	if (!hndl)
--		return -EINVAL;
-+	if (IS_ERR(hndl))
-+		return PTR_ERR(hndl);
- 
- 	blocking_notifier_chain_register(&hndl->chain, nb);
- 
-@@ -1416,8 +1437,8 @@ static int scmi_notifier_unregister(const struct scmi_handle *handle,
- 	evt_key = MAKE_HASH_KEY(proto_id, evt_id,
- 				src_id ? *src_id : SRC_ID_MASK);
- 	hndl = scmi_get_handler(ni, evt_key);
--	if (!hndl)
--		return -EINVAL;
-+	if (IS_ERR(hndl))
-+		return PTR_ERR(hndl);
- 
- 	/*
- 	 * Note that this chain unregistration call is safe on its own
--- 
-2.47.0
+For the dead code, I can remove the fixes tags, and even the changes
+themselves, since there are good reasons to keep the dead code
+(consistency, and avoiding a future programmer forgetting to add it back
+when adding a subsequent seprintf() call).
 
+For the fixes to UB, do you prefer the Fixes tags to be removed too?
+
+
+Have a lovely day!
+Alex
+
+> --=20
+> Michal Hocko
+> SUSE Labs
+
+--=20
+<https://www.alejandro-colomar.es/>
+
+--tmiwotmrfmdi6oyz
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmhr3OMACgkQ64mZXMKQ
+wqmhQhAAs+ekX9398aALI01OsOZ18qRcUwUGAgNGOEKzODVWKq+ZfCv5kpLjB8Rx
+mz7WZld1t7roGUyTkEE6qInFFtJ9EB2Oc0WqZCBNEHvS7hRiWLbJdaYv3vdT5hl6
+++tJ/HhXTGChathW1i4KfKiu5iZdre5B0h36dXQJvU70Xewnca8uY7Vq4u4mfpwU
+POUiVLo1FPMx5PfJYILFFMhI8PRWrAwx6wlkbjHBmVaRqG4z286j4FonO8wwwwNt
+8E8KmyNt2a8wsc0+ezpmDJ7lgsWpxr3qTp3FGIby9yokzHBUrc4IAlzj9agSPmlT
+qWLcFUwdFPzKb4bQCX2zVfjidlbO14g6iS71wINotWZvKhy8e9Wtza78qUFhpGV4
+77u0tXXT1dVd3K2P0HYz8AmXtgawUDUA/8DAF25SxfHIodsdJq35OsSGPzfrbIfC
+BuT+K4OhfWoODvzcOYFpEyrz2a+YgXRep4GfRDc69PrGhmQk8S68V9vcMft/tzvy
+k+ggvc9f1Y1Y1MtXFKV91pGhD5//TnJA1UYduI/HOz+2DeTFk+s62nHjiy/zXdzE
+fvsiLzgRkXT8geMyrGRtKxnKKWqWEXrt0kmfr8h6FwjrBjL3hRzsrCCSyqCgmKyJ
+isD88CxA4o8wntqCuOxhMtsOVK5jXG6pN56W+eZ/LOfzfz1MSRE=
+=mTHU
+-----END PGP SIGNATURE-----
+
+--tmiwotmrfmdi6oyz--
 
