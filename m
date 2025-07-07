@@ -1,171 +1,164 @@
-Return-Path: <linux-kernel+bounces-719122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 982BDAFAA32
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 05:29:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B961AFAA3E
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 05:31:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A6D91896EF3
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 03:30:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F232189ABF6
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 03:31:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FAB92586E0;
-	Mon,  7 Jul 2025 03:29:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C207725A2BF;
+	Mon,  7 Jul 2025 03:31:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QW0jSXN7"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LcTtXg57"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C2302580FE
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 03:29:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92D241C5496
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 03:31:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751858986; cv=none; b=QI2mO5ghNglDMHsVNq/ptyvR1ZBQoe9pAaFSDOEHheCocMNAnXuaTpHgpC+7pqo3qZBw2CexSD3N5mWirbTSA0OZWhbMu5M2ECdh601QQBaQ+HIFsM42YeYk8k5GcuX1QYjM7yAVVxnhjSy6J8OCdK46aCPhTboj+/hnxWyEUT8=
+	t=1751859071; cv=none; b=QjHH0xr8i/ouL08RCG9Y9WNyRWaaXaOKlrlUTftW1QxjH/l78im81nskkeI7cklO/w3VGaFM6dFIICiLASS1uOP8uPdPomu/7rPhLOibVYLVfUpS+5IBypem5MR3nA5ML+AIkAENbOeyb/B9lHXnzPHDGxOMCh55ZUq3ElyV6m4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751858986; c=relaxed/simple;
-	bh=xttYNFFBwSr3kpaUW8tJxMwGQAXuZTSnXnLU9YrWjUM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nYeX9Kcnad9Lyq+0KHm5DheWhDkS/9oE4zRJM9pnQxj5XKjJoa/8xtKfwRgQTkolckfQroUgNE1vOi+z8t/vWrc3fWtjSx8Z4gSaV73UWDqY+nKHjDH3tPhA+YdJhgKtPNI5YReXL1uku5xMJwiAoNa16qUBxZV+J+J6pzvlEKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QW0jSXN7; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1751858981;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gzNFWf4OSQQeW+ySynN28u9/wwwb81IMF6vHrkKZo84=;
-	b=QW0jSXN7pCB1Ictyw7rDHv1llynH0JjR3fWfSXjoZZ1mLlvWvu1M5qbwHd9WkRE1DM2D9M
-	RpIAwqXoCs4fQIZBtfqSkuW9TUFpXz8NZakqo6qfteU/FRYGHH6TNnyC4bu81JAuQ6QjJY
-	IVBK9XTZsHn/+EHeL/TdpJnkESmkX0I=
-Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
- [209.85.167.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-231-DmFNuCVeO92iIfZr1lg2FA-1; Sun, 06 Jul 2025 23:29:40 -0400
-X-MC-Unique: DmFNuCVeO92iIfZr1lg2FA-1
-X-Mimecast-MFC-AGG-ID: DmFNuCVeO92iIfZr1lg2FA_1751858978
-Received: by mail-lf1-f69.google.com with SMTP id 2adb3069b0e04-5551093dd58so1388211e87.3
-        for <linux-kernel@vger.kernel.org>; Sun, 06 Jul 2025 20:29:39 -0700 (PDT)
+	s=arc-20240116; t=1751859071; c=relaxed/simple;
+	bh=5bGLlcz2LNZcz7V3A8E5z8rSY2F/sUreYHn4QIcKulI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Be7EfUCX2Vflz4IB+6w8ThNJWJJD4+or9fmCShzsnOuSRwbANjLcQXQm9qfPPyunPp2dERvUg4S8x8hDcPU1DvwrYuQVLedMuDL0u4XkFQyDgNDKz6F3iObWlCM91Cq97YKL4xFzsy8X+9iysPawBLO2tL7pHdFOJzSjwQxSSc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LcTtXg57; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-23649faf69fso21782515ad.0
+        for <linux-kernel@vger.kernel.org>; Sun, 06 Jul 2025 20:31:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751859069; x=1752463869; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6D4FNc+ZPSxMXR0yzDGObqB7ha5/gNIAEBywyOv4ZVY=;
+        b=LcTtXg578i992XbUZWtRG7EYYzL7uFwH5IWxnn+avTbqCw7+pQZRzEdD/Y3qmMR7L0
+         2oJH8okPQn7Tr+ow8kW/ymNtJCThYlnvI9d1gmi5LHUtcVSmFU/qSdoCz1hjxE1ry48/
+         +0V9N+nNzxlqLbA1g2u7QxmUIw6gNutYDlTMIZHJzhJvdU7cATF1GyhiXk5W8A2W25oC
+         yKaXwFuZ94LH/XxzIaxecaQ7Uk43eZpa5itZAK1zM66Epxn/X/7uo72bqMePdpr+Entv
+         80GxeJzOuaVmKrikCrIr6K+ELkFMb+8eWvRc2pg3W6Uw+bLqrybAis4w+eWPTn/jMnPH
+         bqNQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751858978; x=1752463778;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gzNFWf4OSQQeW+ySynN28u9/wwwb81IMF6vHrkKZo84=;
-        b=fNlUNa1T7r51QUfm0evVpJ3kOf8Uv8vWsghayUwhv4DAUiUBDs22cu+EmXY6pHx/ul
-         OYEXozWZXo3d6hq0pO9J3BUcx/TBID8XnI+nBFMKw8Roz/ZE86ptq1VFkwyrHokL4Glu
-         K8/hRGHONHOKtdGNrL7jpKZ2nVIKrFfbIb8MJXjJ8xpozZfzFERJQBJhM/xRb8vWlZaJ
-         qbeclONoAHXGzbCjlGmmLlEP3YRMTBh3bZLezMGgpix3puYBvShKoJd+lBINw1B/DVMF
-         Rj8h261Mvtm0VX77oAZcHsrPCtv6J1SjluNpMfGrWIzEECzehL/i2YU3coogrlYclDhX
-         vDOg==
-X-Forwarded-Encrypted: i=1; AJvYcCVyTWI+lIjsRfL9yCBTmqSJ8RSnbnP6S7q5A6GZuj4+lI5XorRyWiW9GZQCgklHABUKoP+n3paEZnaSaIM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKhr5b/sqpK/A5UxkMZqPKGlHhyZJfVclsex2PoccctDjRyf2T
-	A2D4EYGVyRXP1S5X5NsrTiRn+NatrlVEfRLNXN87v4YnsyrZEuawyHxbcFc4a2EyHb77LWuVmCg
-	68MwUE3EuOwJqCP+9b5HPKcTbmLWY8bmzzeedjz5U5AxI91z7FDDRint9rEcf9BWW
-X-Gm-Gg: ASbGncubIO72EJurb0DC3tzqBqD+PZ7912kmkQGu8CyL/YJzz+v8xBZmqq7H4f3/ffL
-	e0oRHw+SDXkNK/jrgQoSnzXvLbDaC6moKZx8vnNEoxJaQ5yM2DhfgfMZMSWgSAdBzSvIODs1aSF
-	lMvAUIyLpjWduoxwMx7PctHfdCiPAokxTjjwu45g1VdVSwQO1dUfrbz+RYQjXUDR3WAirgiyMAJ
-	xsArsHdBKVOkCc5qOa9EQPkSLBEYi4Q195M0P818xOPNUhAXeyDr8T7QdDhIkUfwSGFSfHXz+bB
-	RX1IpPGxJ+En2p62EbXQv8OBrfEv7mzV88LxhYRLWDhscfSU
-X-Received: by 2002:a05:6512:3d9f:b0:553:24f4:872a with SMTP id 2adb3069b0e04-557e5558009mr1851329e87.40.1751858978364;
-        Sun, 06 Jul 2025 20:29:38 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGgxRoCFlczHytULjaP6Q8J3Xtu86ygoM7iexhMKDI/4xLKg09g2YDN+ZgYPwubGW96GEC0og==
-X-Received: by 2002:a05:6512:3d9f:b0:553:24f4:872a with SMTP id 2adb3069b0e04-557e5558009mr1851314e87.40.1751858977889;
-        Sun, 06 Jul 2025 20:29:37 -0700 (PDT)
-Received: from [192.168.1.86] (85-23-48-6.bb.dnainternet.fi. [85.23.48.6])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55638497801sm1163807e87.127.2025.07.06.20.29.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 06 Jul 2025 20:29:37 -0700 (PDT)
-Message-ID: <f1e26e18-83db-4c0e-b8d8-0af8ffa8a206@redhat.com>
-Date: Mon, 7 Jul 2025 06:29:36 +0300
+        d=1e100.net; s=20230601; t=1751859069; x=1752463869;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6D4FNc+ZPSxMXR0yzDGObqB7ha5/gNIAEBywyOv4ZVY=;
+        b=pjrn8x+mXqXcnG7p/Hmo3Lf9TMpB5Aae8q/lxeMMcobLge0mGdBBMlVJn48t5KdP4J
+         j5Loyi3G64BO8V9M1G1I7uD9SDhpxSG0B06/y08JvSGuBMU4iyuDwu/flgpRSBPhjNZ+
+         7W5vztIqQAPGSIPBbUDca9XVOL+YzOy8BLGMdjHlsRb7X8SqURgA95mZE1sqgAHQBKTw
+         IjHiLte1/M6H+Wm+CJ20JwbLHAjMYhdPQbf/ToUsuCmDx6Hd7E2ODxTWd5xmZZ/MUplY
+         UOlb6V8d1LAFWULjCQtM8ynaQGQw94klpR8TJIII80VsY4SbxHwiRLF7ofKDBVxef4Go
+         evNA==
+X-Forwarded-Encrypted: i=1; AJvYcCVzqpz4q1x+IEH7DvQ20mtOSJS0piDK4otb49wRzehCuj/XhKQeB1zHE+YPLNb7E8zOeg9zOoTz/GCOG5A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YypjtFIkbNYR/Mgpc9e0P6R2/pVwAgo1NEvtnz9fGzXwKSn2cen
+	aKct7q6nXEEtDIugo6nUaNlXnoUcDZyRP9uMIvj7CQXQ/5jIk3Ikhv+v
+X-Gm-Gg: ASbGnct7o4uY/sgwO8BkyVZM6MWi9t4EXjfFHLrDUM5pKvKV0kYwc9RU7D5iA8H3d6t
+	3xRLfPgN/Fkvkij71dARoXv5crL9lznImIISy0tzV6Wyfm7rqFMqn4R1efIvdqFn2a2aYDBG/WX
+	P1CbiLLraDCHNqngrjUQoSmSixRhSprpzoOIumrYaUi1xEEyjMOEOE9fi5rqz6DYXEHMlA4gyEA
+	Q4fovnmvkMYJ3c72FmcjFlexEJkLGpJQ2+gn5JV1JQQKVbocn6EgB7zL0epTz9fygYjaliL+Qpt
+	NmeLnpoE3DafgFcftJt4K8xvKomhhLq32YphAGJmNI/OdTVgbk6/n0wG+1hr6spDbmiIpInV/8W
+	8VdxH1vMbdGIWPGbm/Kz9tCL4ZAw3skv4CuyJiXKoH7HWJkZURw==
+X-Google-Smtp-Source: AGHT+IEVYxAqKEVcCfg4J8NqSrjAG5zg58gwvdEAbHHYEWOVkuup7CGKWYMfT6CQpOy35AnTNXLlXA==
+X-Received: by 2002:a17:902:ce89:b0:234:d7b2:2ab9 with SMTP id d9443c01a7336-23c87472898mr163559135ad.12.1751859068755;
+        Sun, 06 Jul 2025 20:31:08 -0700 (PDT)
+Received: from ipravd-Nitro-AN515-55.hsd1.ca.comcast.net ([2601:646:a000:5fc0:5e93:4ea0:4954:ef6c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23c8fcf6715sm48359415ad.51.2025.07.06.20.31.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 06 Jul 2025 20:31:08 -0700 (PDT)
+From: Ivan Pravdin <ipravdin.official@gmail.com>
+To: mark@fasheh.com,
+	jlbec@evilplan.org,
+	joseph.qi@linux.alibaba.com,
+	ocfs2-devel@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Cc: Ivan Pravdin <ipravdin.official@gmail.com>,
+	syzbot+6bf948e47f9bac7aacfa@syzkaller.appspotmail.com
+Subject: [PATCH v2] ocfs2: avoid potential ABBA deadlock by reordering tl_inode lock
+Date: Sun,  6 Jul 2025 23:29:51 -0400
+Message-ID: <20250707032951.361331-1-ipravdin.official@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v1 resend 08/12] mm/thp: add split during migration support
-To: Balbir Singh <balbirs@nvidia.com>, linux-mm@kvack.org
-Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
- Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>,
- Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?=
- <jglisse@redhat.com>, Shuah Khan <shuah@kernel.org>,
- David Hildenbrand <david@redhat.com>, Barry Song <baohua@kernel.org>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Matthew Wilcox <willy@infradead.org>,
- Peter Xu <peterx@redhat.com>, Zi Yan <ziy@nvidia.com>,
- Kefeng Wang <wangkefeng.wang@huawei.com>, Jane Chu <jane.chu@oracle.com>,
- Alistair Popple <apopple@nvidia.com>, Donet Tom <donettom@linux.ibm.com>
-References: <20250703233511.2028395-1-balbirs@nvidia.com>
- <20250703233511.2028395-9-balbirs@nvidia.com>
- <e1889eb8-d2d9-4d97-b9ae-e50158442945@redhat.com>
- <715fc271-1af3-4061-b217-e3d6e32849c6@redhat.com>
- <b25b3610-5755-4b7e-9a9f-d7f1dc3e4bdc@nvidia.com>
- <6bb5b0ae-6de3-4df8-a8c1-07d4c6f8c275@redhat.com>
- <2ace3c9e-452a-4bd2-a7df-6fa9fd3de290@nvidia.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Mika_Penttil=C3=A4?= <mpenttil@redhat.com>
-In-Reply-To: <2ace3c9e-452a-4bd2-a7df-6fa9fd3de290@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 7/7/25 05:35, Balbir Singh wrote:
-> On 7/5/25 13:17, Mika Penttilä wrote:
->>>>>> +static void migrate_vma_split_pages(struct migrate_vma *migrate,
->>>>>> +					unsigned long idx, unsigned long addr,
->>>>>> +					struct folio *folio)
->>>>>> +{
->>>>>> +	unsigned long i;
->>>>>> +	unsigned long pfn;
->>>>>> +	unsigned long flags;
->>>>>> +
->>>>>> +	folio_get(folio);
->>>>>> +	split_huge_pmd_address(migrate->vma, addr, true);
->>>>>> +	__split_huge_page_to_list_to_order(folio_page(folio, 0), NULL, 0, true);
->>>>> We already have reference to folio, why is folio_get() needed ?
->>>>>
->>>>> Splitting the page splits pmd for anon folios, why is there split_huge_pmd_address() ?
->>>> Oh I see 
->>>> +	if (!isolated)
->>>> +		unmap_folio(folio);
->>>>
->>>> which explains the explicit split_huge_pmd_address(migrate->vma, addr, true);
->>>>
->>>> Still, why the folio_get(folio);?
->>>>  
->>>>
->>> That is for split_huge_pmd_address, when called with freeze=true, it drops the
->>> ref count on the page
->>>
->>> 	if (freeze)
->>> 		put_page(page);
->>>
->>> Balbir
->>>
->> yeah I guess you could have used the pmd_migration path in __split_huge_pmd_locked, and not use freeze because you have installed the migration pmd entry already.
->> Which brings to a bigger concern, that you do need the freeze semantics, like clear PageAnonExclusive (which may fail). I think you did not get this part
->> right in the 3/12 patch. And in this patch, you can't assume the split succeeds, which would mean you can't migrate the range at all.
->> Doing the split this late is quite problematic all in all.
->>
-> Clearing PageAnonExclusive will *not* fail for device private pages from what I can see in __folio_try_share_anon_rmap().
-> Doing the split late is a requirement due to the nature of the three stage migration operation, the other side
-> might fail to allocate THP sized pages and so the code needs to deal with it
->
-> Balbir Singh
+In ocfs2_move_extent(), tl_inode is currently locked after the global
+bitmap inode. However, in ocfs2_flush_truncate_log(), the lock order
+is reversed: tl_inode is locked first, followed by the global bitmap
+inode.
 
-Yes seems clearing PageAnonExclusive doesn't fail for device private pages in the end, 
-but the 3/12 patch doesn't even try to clear PageAnonExclusive with your changes afaics,
-which is a separate issue.
+This creates a classic ABBA deadlock scenario if two threads attempt
+these operations concurrently and acquire the locks in different orders.
 
-And __split_huge_page_to_list_to_order() (return value is not checked) can fail for out of memory.
-So think you can not just assume split just works. If late split is a requirement (which I can understand is),
-you should be prepared to rollback somehow the operation.
+To prevent this, move the tl_inode locking earlier in
+ocfs2_move_extent(), so that it always precedes the global bitmap
+inode lock.
 
->
---Mika
+No functional changes beyond lock ordering.
+
+Reported-by: syzbot+6bf948e47f9bac7aacfa@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/all/67d5645c.050a0220.1dc86f.0004.GAE@google.com/
+Signed-off-by: Ivan Pravdin <ipravdin.official@gmail.com>
+---
+v1 -> v2: Fixed unlocking order in ocfs2_move_extent.
+
+ fs/ocfs2/move_extents.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
+
+diff --git a/fs/ocfs2/move_extents.c b/fs/ocfs2/move_extents.c
+index 369c7d27befd..aaf8eb2693a4 100644
+--- a/fs/ocfs2/move_extents.c
++++ b/fs/ocfs2/move_extents.c
+@@ -617,6 +617,8 @@ static int ocfs2_move_extent(struct ocfs2_move_extents_context *context,
+ 	 */
+ 	credits += OCFS2_INODE_UPDATE_CREDITS + 1;
+ 
++	inode_lock(tl_inode);
++
+ 	/*
+ 	 * ocfs2_move_extent() didn't reserve any clusters in lock_allocators()
+ 	 * logic, while we still need to lock the global_bitmap.
+@@ -637,13 +639,11 @@ static int ocfs2_move_extent(struct ocfs2_move_extents_context *context,
+ 		goto out_unlock_gb_mutex;
+ 	}
+ 
+-	inode_lock(tl_inode);
+-
+ 	handle = ocfs2_start_trans(osb, credits);
+ 	if (IS_ERR(handle)) {
+ 		ret = PTR_ERR(handle);
+ 		mlog_errno(ret);
+-		goto out_unlock_tl_inode;
++		goto out_unlock_gb_inode;
+ 	}
+ 
+ 	new_phys_blkno = ocfs2_clusters_to_blocks(inode->i_sb, *new_phys_cpos);
+@@ -704,12 +704,13 @@ static int ocfs2_move_extent(struct ocfs2_move_extents_context *context,
+ 	ocfs2_commit_trans(osb, handle);
+ 	brelse(gd_bh);
+ 
+-out_unlock_tl_inode:
+-	inode_unlock(tl_inode);
+-
++out_unlock_gb_inode:
+ 	ocfs2_inode_unlock(gb_inode, 1);
++
+ out_unlock_gb_mutex:
+ 	inode_unlock(gb_inode);
++
++	inode_unlock(tl_inode);
+ 	brelse(gb_bh);
+ 	iput(gb_inode);
+ 
+-- 
+2.45.2
 
 
