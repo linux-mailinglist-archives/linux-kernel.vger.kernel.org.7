@@ -1,131 +1,333 @@
-Return-Path: <linux-kernel+bounces-719727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55AA6AFB1D8
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 12:59:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D511AFB1F2
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 13:07:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C04A16B48B
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 10:59:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59D2B3AC066
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 11:06:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F1EA29AAEC;
-	Mon,  7 Jul 2025 10:57:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3610F290D87;
+	Mon,  7 Jul 2025 11:07:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RsinOqdg"
-Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hk1F35ko"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37E141C1F2F;
-	Mon,  7 Jul 2025 10:57:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 893F3946C
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 11:07:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751885878; cv=none; b=BFr6WzpbID2E+Pww6eQkFFdel8KMn9zN79ev6XvKUfCOguLVJI5AZeCuy78V7L0W+j20AdOuwVTcasb2MMtZEn06hAs1ybzhhIbOLQ4W59p8twZtl6ePWY7cjcB3VEba9pl/SA5MsDkMjuOUNQPLzhG+T+FVKTf8sgQpUj2kt0M=
+	t=1751886422; cv=none; b=X8CoCTxIX7kgpZjkQYzMsE05qph6LBR27ik/kAnzeDfkxHjBmJYfYTnZwZbD6kM0cZ1STTYRCMJBCBl8jQOUMh3wxnbMvrlESyGnrK4ckv4fIK2sUlOgpfAZVb7tVPFYZrWGvmssJj0Gvn7adwI+tzPecwV2mauUrRsLB9mQra4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751885878; c=relaxed/simple;
-	bh=CjdYiBoeMS7qseIEcuh47YFTpqlehtkQQLEcP/t1k+o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Z3c+8y4rS50cI2tRT42UpBhkJvUAk52O15UHY0q32e+4Doz4+B2tj0zLNNUaWS3jmw3XrrspCr33UP3Tkw4gopGR6win/Gv4XBFFf1lrhjQk0juuV9Pn0WU1Pwc0R1sAlD7Vxl/inUciKithf3s0tiI0J4P27+9sAxd7a/MM+Ww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RsinOqdg; arc=none smtp.client-ip=209.85.219.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e81881bdd55so334977276.0;
-        Mon, 07 Jul 2025 03:57:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751885874; x=1752490674; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=7ioNsEHWfe5qdqz4ks5nH1iCIyBMczU2uy4kn1CK7dc=;
-        b=RsinOqdgYUsRil4WkuVN4QJDyDoVn6PeypxSbsSkssBxpB4f/Vx1BNeKBqpC9J1ny+
-         GF3p43/x0BzQD7+KH3gsoTVgegLDLGUlJXzMeFW/QlB3JJs5H33dH5fMKhDhbUdUw30W
-         eibbKjZNypDjRWSzrIjMHUrC3+9brnWZCrIcO+salJ8WNt5sCOc7+YEFmfHHcN6L+i7A
-         VSelkzL7oBYlqr5MoYc/vM4JSTwQsxh2ofh4fH/eR+J+xmcDx9APjy9vHVSKXoI9VWSm
-         6JJHLe0sBPiDIbdT38jXtPCI7cftNR6f4Qm/ywAkZlH8+aNLqynlc7TEHN/qpb2pBgbY
-         wPOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751885874; x=1752490674;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7ioNsEHWfe5qdqz4ks5nH1iCIyBMczU2uy4kn1CK7dc=;
-        b=AjScReMPSSDAtTgDHQwQ/UQidNkGb4B2SaEtDsJUCB5hZ1doTVT5Uz7iywvCvFRqK5
-         SeNvpP5zu341UU0/JphSwlEE5jRXsaiIHnSzVrrm5LXOgza4fWoNHpdzPMx/HyTVC3pH
-         VZv1EvTWgvJoZaY0WadWjR2MwE4oKqGwIKWCq9jyq3yeVw9DG4UpwEVRgXt77YYabDIo
-         Wn0oBPocdvpESJ8VUAFtdTvra9aBja/Uh41XWZjvDh8izU1g3iAZfwfJk1yn52R8gVHG
-         VTw7A+cWCEcA7gCdYrT8h0qOZwJsS3nwqzLgvZvpymwoVzEmQYXTUyhUbyy1wHorTc7d
-         OMmA==
-X-Forwarded-Encrypted: i=1; AJvYcCV3GhM0M/5FAi3Mb81huYA4hW5MXm2OoW0zgSR2FueO5qgEDnoklrlvRQvlHAWNkYmrsWaRXLtjJOzha/Q=@vger.kernel.org, AJvYcCVPBDC/C1TjGjEpDo0wJ73leqngaYgO3yb8Rqrdc4l+mMXVCsGug+ZABR9dgxxhgQT1d0Llrk7EVp2UrkM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3ysWxCPcLp6pOuCISU3i3XWUG/4Io4JKgqzj93zeyylAuF4oG
-	GEezK1j6XG7bbp3wxvgKqNONcw3LhMvylCf0MVvyJX/Hjr6AOkhEz+/ZVspKZgDOrfvptKEyBQA
-	GLKPrSN0wnWnuNGyYTKrzo8Xe41hhUfn3s+u5
-X-Gm-Gg: ASbGncvg53RuPbuo9YSWbfopC/Q47jyukW+HWnOYXj3gISQdgRMgf2J9oQEeXJAiDJp
-	8eUiusalnxav5u1Co4iqbI58idbpAlHb3zSh86aH3nHN1i39ueLUPUDEuAuXnPib7BRIRIk1G4R
-	C4voiRSAl5dbvvWNfVWJSXywVE7L7V9qkbjIzI9cKrdZ0=
-X-Google-Smtp-Source: AGHT+IGC8/osnImIufkkdDbo94SnWRe56rECvcr4sumXfQ1CXHwC0L1J81sjFCmHQGPgO6vDkShX/OtMSww4Y9CubhI=
-X-Received: by 2002:a05:690c:1a:b0:712:b566:bf7c with SMTP id
- 00721157ae682-71669eb7e1bmr71790577b3.1.1751885873842; Mon, 07 Jul 2025
- 03:57:53 -0700 (PDT)
+	s=arc-20240116; t=1751886422; c=relaxed/simple;
+	bh=TvPe6sn2VwKv6+XCrQDIbSVH+bc8I6FtHM/fuPjgMTU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qaqP+T3bXrbjof4bKSQwNM/nmrGMn2+joJmebJkFSMAdLTvOj71IhzQtqeNzPDHbfN7NZU2/tbNNGumGmemX8wdy1SwyGWDX11QDQnNw9eAgJ+R8M6Hznpn9q6Z2MxDA5Qltiowet5PWMcd/iLsobOt9u0/no/CmTjbYteCn280=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hk1F35ko; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751886420; x=1783422420;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=TvPe6sn2VwKv6+XCrQDIbSVH+bc8I6FtHM/fuPjgMTU=;
+  b=hk1F35koOAE+Ol/wA9iNnOykNCqdsPDaYS3WVGNAKGZpvNzJkpNyaWgM
+   bsUWgMN98sVd2cR3jf87abn+oUykFH2KZ7LCFY09pZocPSLBkhqdrdxbk
+   WtV9sqtLu8dnG32cetEBMT3SEovxeY4Vda2MrmJ5WtXEsyPe0tsCp/+4W
+   9LhT9qmfortmcmBSGYMzmvl/2bHeH3NlXPvMXyhvKQN+Ch8xVC92TSEOY
+   ADSQzQaL6S1IMn9G/D+sX1hmQLUpuzosCpHipzM31Kwe2htPCTcLb6Nx9
+   0IZ19rplmaEoLS1mIHFqtoE4CpfpVc0QPw4Co+kkP1W/Pv7JRFknqREgc
+   A==;
+X-CSE-ConnectionGUID: hFj7ACLDT4afxYMHsA8uMQ==
+X-CSE-MsgGUID: oXG0fWv5Szyzt0sf28SJxQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11486"; a="53984779"
+X-IronPort-AV: E=Sophos;i="6.16,294,1744095600"; 
+   d="scan'208";a="53984779"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jul 2025 04:07:00 -0700
+X-CSE-ConnectionGUID: ia13fup7RQ+X/5nkMp688w==
+X-CSE-MsgGUID: 33RwzANqShqF203blNLRWQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,294,1744095600"; 
+   d="scan'208";a="186140785"
+Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
+  by fmviesa001.fm.intel.com with ESMTP; 07 Jul 2025 04:06:56 -0700
+Date: Mon, 7 Jul 2025 18:58:45 +0800
+From: Xu Yilun <yilun.xu@linux.intel.com>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: "Tian, Kevin" <kevin.tian@intel.com>,
+	"will@kernel.org" <will@kernel.org>,
+	"aneesh.kumar@kernel.org" <aneesh.kumar@kernel.org>,
+	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"joro@8bytes.org" <joro@8bytes.org>,
+	"robin.murphy@arm.com" <robin.murphy@arm.com>,
+	"shuah@kernel.org" <shuah@kernel.org>,
+	"nicolinc@nvidia.com" <nicolinc@nvidia.com>,
+	"aik@amd.com" <aik@amd.com>,
+	"Williams, Dan J" <dan.j.williams@intel.com>,
+	"baolu.lu@linux.intel.com" <baolu.lu@linux.intel.com>,
+	"Xu, Yilun" <yilun.xu@intel.com>
+Subject: Re: [PATCH v3 2/5] iommufd: Destroy vdevice on idevice destroy
+Message-ID: <aGuoZUaNOgclC2uU@yilunxu-OptiPlex-7050>
+References: <20250627033809.1730752-1-yilun.xu@linux.intel.com>
+ <20250627033809.1730752-3-yilun.xu@linux.intel.com>
+ <BL1PR11MB52712CE938B57E41C34580908C46A@BL1PR11MB5271.namprd11.prod.outlook.com>
+ <aGJkitx6wjfQ888t@yilunxu-OptiPlex-7050>
+ <20250630145051.GY167785@nvidia.com>
+ <aGOoCa3BkV7KrwVz@yilunxu-OptiPlex-7050>
+ <20250701121315.GD167785@nvidia.com>
+ <aGSYLVmV17g832Ta@yilunxu-OptiPlex-7050>
+ <BN9PR11MB52769790C63FFCDC711E80DB8C40A@BN9PR11MB5276.namprd11.prod.outlook.com>
+ <20250702124042.GD1051729@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250628052536.43737-1-abdelrahmanfekry375@gmail.com>
- <CAHp75Vcy3dHRu8Wb2KZ=xK7adz=-P-iuRTeR8vOWzHzZL9uFeg@mail.gmail.com>
- <CAGn2d8OMRaeozOMxj1Ry8i9T3sJ5J1QqA_Jpk7wYO8KiUbpKBA@mail.gmail.com>
- <aGPYZhK65LaD0wVO@smile.fi.intel.com> <836dc6b6-2821-47fc-8f24-0838f979af76@kernel.org>
- <CAGn2d8NBEwWm0mQ0YQ3KZ+V1Zon84zusfsQQV2foVmUTBAzEAQ@mail.gmail.com> <fbfbd0e5-2c27-4f32-a3d7-9cf57fde5098@kernel.org>
-In-Reply-To: <fbfbd0e5-2c27-4f32-a3d7-9cf57fde5098@kernel.org>
-From: Abdelrahman Fekry <abdelrahmanfekry375@gmail.com>
-Date: Mon, 7 Jul 2025 13:57:41 +0300
-X-Gm-Features: Ac12FXw7W1irHG_Shk7SGyIt6mDyRdJM1OxzhEC8PPcEWPID0WwjfabTg3nNrbQ
-Message-ID: <CAGn2d8OrhbJ_MqZEwfCrXy27+-a_6JVDQW_TVmVHM=mWbcEe2w@mail.gmail.com>
-Subject: Re: [PATCH] staging: media: atomisp: Fix premature setting of
- HMM_BO_DEVICE_INITED flag
-To: Hans de Goede <hansg@kernel.org>
-Cc: Andy Shevchenko <andriy.shevchenko@intel.com>, 
-	Andy Shevchenko <andy.shevchenko@gmail.com>, andy@kernel.org, mchehab@kernel.org, 
-	sakari.ailus@linux.intel.com, gregkh@linuxfoundation.org, 
-	linux-kernel-mentees@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	linux-media@vger.kernel.org, linux-staging@lists.linux.dev, 
-	skhan@linuxfoundation.com, dan.carpenter@linaro.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250702124042.GD1051729@nvidia.com>
 
-Hi Hans,
-Thank you so much for your support and guidance. It really helps a lot.
+On Wed, Jul 02, 2025 at 09:40:42AM -0300, Jason Gunthorpe wrote:
+> On Wed, Jul 02, 2025 at 09:13:50AM +0000, Tian, Kevin wrote:
+> > > > Yes, you can't touch idev inside the destroy function at all, under
+> > > > any version. idev is only valid if you have a refcount on vdev.
+> > > >
+> > > > But why are you touching this lock? Arrange things so abort doesn't
+> > > > touch the idev??
+> > > 
+> > > idev has a pointer idev->vdev to track the vdev's lifecycle.
+> > > idev->igroup->lock protects the pointer. At the end of
+> > > iommufd_vdevice_destroy() this pointer should be NULLed so that idev
+> > > knows vdev is really destroyed.
+> 
+> Well, that is destroy, not abort, but OK, there is an issue with
+> destroy.
+> 
+> > but comparing to that I'd prefer to the original wait approach...
+> 
+> Okay, but lets try to keep the wait hidden inside the refcounting..
+> 
+> The issue here is we don't hold a refcount on idev while working with
+> idev. Let's fix that and then things should work properly?
+> 
+> Maybe something like this:
+> 
+> diff --git a/drivers/iommu/iommufd/device.c b/drivers/iommu/iommufd/device.c
+> index 4e781aa9fc6329..9174fa7c972b80 100644
+> --- a/drivers/iommu/iommufd/device.c
+> +++ b/drivers/iommu/iommufd/device.c
+> @@ -178,12 +178,20 @@ static void iommufd_device_remove_vdev(struct iommufd_device *idev)
+>  	mutex_unlock(&idev->igroup->lock);
+>  }
+>  
+> +void iommufd_device_pre_destroy(struct iommufd_object *obj)
+> +{
+> +	struct iommufd_device *idev =
+> +		container_of(obj, struct iommufd_device, obj);
+> +
+> +	/* Release the short term users on this */
+> +	iommufd_device_remove_vdev(idev);
+> +}
+> +
+>  void iommufd_device_destroy(struct iommufd_object *obj)
+>  {
+>  	struct iommufd_device *idev =
+>  		container_of(obj, struct iommufd_device, obj);
+>  
+> -	iommufd_device_remove_vdev(idev);
+>  	iommu_device_release_dma_owner(idev->dev);
+>  	iommufd_put_group(idev->igroup);
+>  	if (!iommufd_selftest_is_mock_dev(idev->dev))
+> diff --git a/drivers/iommu/iommufd/main.c b/drivers/iommu/iommufd/main.c
+> index b2e8e106c16158..387c630fdabfbd 100644
+> --- a/drivers/iommu/iommufd/main.c
+> +++ b/drivers/iommu/iommufd/main.c
+> @@ -151,6 +151,9 @@ static int iommufd_object_dec_wait_shortterm(struct iommufd_ctx *ictx,
+>  	if (refcount_dec_and_test(&to_destroy->shortterm_users))
+>  		return 0;
+>  
+> +	if (iommufd_object_ops[to_destroy->type].pre_destroy)
+> +		iommufd_object_ops[to_destroy->type].pre_destroy(to_destroy);
+> +
+>  	if (wait_event_timeout(ictx->destroy_wait,
+>  			       refcount_read(&to_destroy->shortterm_users) ==i 0,
 
-> The hmm_alloc code can use some more cleanups:
->
-> * hmm_get_mmu_base_addr() should be moved to drivers/staging/media/atomisp/pci/hmm/hmm.c
->   and then the "struct hmm_bo_device bo_device;" in hmm.c can be made static
->
-On it .
+I still see concerns here. The pre_destroy() and wait_event is before the
+idev's users count decreasing to 0, which means a new user could get in.
+The worse thing is the new user could hold the shortterm_users until
+pre_destroy(), but there isn't a second pre_destroy()...
 
-> * hmm_init() sets hmm_initialized = true even on errors. It should
->   immediately exit (return ret) on errors instead of continue-ing
->   with calling hmm_alloc() even though hmm_bo_device_init() failed.
+I think extending the life of shortterm_users at runtime makes things
+complex. My idea is keep the original definition of shortterm_users at
+runtime, only repurpose it as a wait completion after users refcount == 0.
+I.e. idev increase its own shortterm_users, waiting for vdev to decrease
+it.
 
-I have created a patch for this but i was waiting for the other patch on
-hmm_init() to be applied because it builds on it.
+diff --git a/drivers/iommu/iommufd/device.c b/drivers/iommu/iommufd/device.c
+index 9876bf70980a..49b787bc0688 100644
+--- a/drivers/iommu/iommufd/device.c
++++ b/drivers/iommu/iommufd/device.c
+@@ -147,8 +147,15 @@ static void iommufd_device_remove_vdev(struct iommufd_device *idev)
+                goto out_unlock;
 
-> * I've checked the code and hmm_init() is called before any hmm_alloc()
->   calls are made so the extra hmm_init() call in __hmm_alloc() can be
->   dropped.
+        vdev = iommufd_get_vdevice(idev->ictx, idev->vdev->obj.id);
+-       if (IS_ERR(vdev))
++       if (IS_ERR(vdev)) {
++               /*
++               * vdev is removed from xarray by userspace, but is not
++               * destroyed. We should wait for vdev real destruction before
++               * idev destruction.
++               */
++               iommufd_object_destroy_wait_prepare(&idev->obj);
+                goto out_unlock;
++       }
 
-Same for this too , i was just waiting for the prev patch to get
-applied to avoid conflicts.
+        /* Should never happen */
+        if (WARN_ON(vdev != idev->vdev)) {
+diff --git a/drivers/iommu/iommufd/iommufd_private.h b/drivers/iommu/iommufd/iommufd_private.h
+index 08f3c66366ea..6620006df8d1 100644
+--- a/drivers/iommu/iommufd/iommufd_private.h
++++ b/drivers/iommu/iommufd/iommufd_private.h
+@@ -180,6 +180,47 @@ static inline void iommufd_put_object(struct iommufd_ctx *ictx,
+                wake_up_interruptible_all(&ictx->destroy_wait);
+ }
 
-> * After dropping the extra hmm_init() call in __hmm_alloc() the
->   hmm_initialized flag can be removed since it is now no longer read
->   anywhere.
->
-I agree with this too , will do it
++/*
++ * The iommufd_object_destroy_wait_xx() are used to synchronize the last minute
++ * destructions of interrelated objects. E.g. the vdev's destroy() should
++ * always be called before idev's destroy().
++ *
++ * iommufd_object_destroy_wait_prepare() should only be called by
++ * later-destroyer in its pre_destroy() ops, where the users & shortterm_users
++ * refcounts are all zeroed. I.e. no new user is possible. Use "users == 0 &&
++ * shortterm_users == 1" as the "destroy wait" state, as this combination
++ * is not used in runtime usecase and it also prevents new users.
++ *
++ * The later-destroyer should use their own locking to ensure the
++ * first-destroyer still exists when calling this function.
++ */
++static inline void
++iommufd_object_destroy_wait_prepare(struct iommufd_object *to_destroy)
++{
++       if (WARN_ON(refcount_read(&to_destroy->users) != 0 ||
++                   refcount_read(&to_destroy->shortterm_users) != 0))
++               return;
++
++       refcount_set(&to_destroy->shortterm_users, 1);
++}
++
++/*
++ * iommufd_object_destroy_wait_complete() should be called by first-destroyer
++ * in its destroy() ops. The first-destroyer should not access the
++ * later-destroyer after calling this function.
++ */
++static inline void
++iommufd_object_destroy_wait_complete(struct iommufd_ctx *ictx,
++                                    struct iommufd_object *to_destroy)
++{
++       if (refcount_read(&to_destroy->users) != 0 ||
++           refcount_read(&to_destroy->shortterm_users) != 1)
++               return;
++
++       refcount_dec(&to_destroy->shortterm_users);
++       wake_up_interruptible_all(&ictx->destroy_wait);
++}
++
+ void iommufd_object_abort(struct iommufd_ctx *ictx, struct iommufd_object *obj);
+ void iommufd_object_abort_and_destroy(struct iommufd_ctx *ictx,
+                                      struct iommufd_object *obj);
+diff --git a/drivers/iommu/iommufd/main.c b/drivers/iommu/iommufd/main.c
+index fbccfbd8fb03..148218293f55 100644
+--- a/drivers/iommu/iommufd/main.c
++++ b/drivers/iommu/iommufd/main.c
+@@ -96,15 +96,37 @@ struct iommufd_object *iommufd_get_object(struct iommufd_ctx *ictx, u32 id,
+        return obj;
+ }
 
-> Regards,
->
-> Hans
-Thank you
-Abdelrahman Fekry
++static int iommufd_object_pre_destroy_wait(struct iommufd_ctx *ictx,
++                                          struct iommufd_object *to_destroy)
++{
++       if (!iommufd_object_ops[to_destroy->type].pre_destroy)
++               return 0;
++
++       /*
++        * pre_destroy() may put the object in destroy wait state (users == 0
++        * && shortterm_users == 1). Another thread completes the waiting by
++        * decreasing the shortterm_users back to 0. The helpers
++        * iommufd_object_destroy_wait_prepare() and
++        * iommufd_object_destroy_wait_complete() should be used for this
++        * purpose.
++        */
++       iommufd_object_ops[to_destroy->type].pre_destroy(to_destroy);
++       if (wait_event_timeout(ictx->destroy_wait,
++                              refcount_read(&to_destroy->shortterm_users) ==
++                                       0,
++                              msecs_to_jiffies(60000)))
++               return 0;
++
++       pr_crit("Time out waiting for iommufd object to become free\n");
++       return -EBUSY;
++}
++
+ static int iommufd_object_dec_wait_shortterm(struct iommufd_ctx *ictx,
+                                             struct iommufd_object *to_destroy)
+ {
+        if (refcount_dec_and_test(&to_destroy->shortterm_users))
+                return 0;
+
+-       if (iommufd_object_ops[to_destroy->type].pre_destroy)
+-               iommufd_object_ops[to_destroy->type].pre_destroy(to_destroy);
+-
+        if (wait_event_timeout(ictx->destroy_wait,
+                                refcount_read(&to_destroy->shortterm_users) ==
+                                        0,
+@@ -184,6 +206,10 @@ int iommufd_object_remove(struct iommufd_ctx *ictx,
+                ret = iommufd_object_dec_wait_shortterm(ictx, obj);
+                if (WARN_ON(ret))
+                        return ret;
++       } else {
++               ret = iommufd_object_pre_destroy_wait(ictx, obj);
++               if (WARN_ON(ret))
++                       return ret;
+        }
+
+        iommufd_object_ops[obj->type].destroy(obj);
+diff --git a/drivers/iommu/iommufd/viommu.c b/drivers/iommu/iommufd/viommu.c
+index d49e8f0c8bb3..a7feefd5e472 100644
+--- a/drivers/iommu/iommufd/viommu.c
++++ b/drivers/iommu/iommufd/viommu.c
+@@ -103,11 +103,12 @@ void iommufd_vdevice_destroy(struct iommufd_object *obj)
+ {
+        struct iommufd_vdevice *vdev =
+                container_of(obj, struct iommufd_vdevice, obj);
++       struct iommufd_device *idev = vdev->idev;
+
+-       mutex_lock(&vdev->idev->igroup->lock);
++       mutex_lock(&idev->igroup->lock);
+        iommufd_vdevice_abort(obj);
+-       mutex_unlock(&vdev->idev->igroup->lock);
+-       iommufd_put_object(vdev->viommu->ictx, &vdev->idev->obj);
++       mutex_unlock(&idev->igroup->lock);
++       iommufd_object_destroy_wait_complete(idev->ictx, &idev->obj);
+ }
+
+ int iommufd_vdevice_alloc_ioctl(struct iommufd_ucmd *ucmd)
+@@ -185,8 +186,7 @@ int iommufd_vdevice_alloc_ioctl(struct iommufd_ucmd *ucmd)
+ out_unlock_igroup:
+        mutex_unlock(&idev->igroup->lock);
+ out_put_idev:
+-       if (rc)
+-               iommufd_put_object(ucmd->ictx, &idev->obj);
++       iommufd_put_object(ucmd->ictx, &idev->obj);
+ out_put_viommu:
+        iommufd_put_object(ucmd->ictx, &viommu->obj);
+        return rc;
 
