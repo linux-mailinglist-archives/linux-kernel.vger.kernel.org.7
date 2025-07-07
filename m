@@ -1,130 +1,119 @@
-Return-Path: <linux-kernel+bounces-720592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A639AFBDE8
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 23:58:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF99AAFBE09
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 00:02:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6778E3BD724
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 21:57:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 600C63B348F
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 22:01:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FC0928A1F8;
-	Mon,  7 Jul 2025 21:57:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C9C2288C23;
+	Mon,  7 Jul 2025 22:02:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jz1yy+7e"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="ro92zX6/"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59DFB16DEB3;
-	Mon,  7 Jul 2025 21:57:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5008B288525
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 22:02:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751925473; cv=none; b=pzu+Q6d5H/HJTS6xLLsLp/4QUsrHv1Le8GErPKHsfCobz6o3HJM2nHLdQNW76APwxLAKFq/GmzGCohAd7jeDlZdvNux/Mdk7LiSmCqzJVWOR9/giepr5/M89SoSqIKYDCZy4mFCFk3pDOAK1zEGq9CG/FtJ7mIpyJS3LrMesPdA=
+	t=1751925738; cv=none; b=G9WDwnstHqukjxWKzmpesNP2IQxdamRUg/QdHxeGUnUuY3psJ3l7v8+Mw1B8SIbq9XmnsAlfesAD959lyJcHyblFK/IsZGB5tTaqCl6/LgHVnLjq/UL+7BV5JCRXFuppoEaaNzzXPLjpRcFqg9yYYYmLnlk8ZCOwsdgD9crsiro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751925473; c=relaxed/simple;
-	bh=wn4KLgMQi0FkygQy/dhVswDwIcW8jJc1HjU5vZfPamo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oN/lSab2r+yU/U44KEAgCwa2FJzFdEp5K7Ai8FQ+qnWbxUBwsVAhP0xERDI1VPzGEMlgqBo8Cq47R4fMt29y2Zrra/6gRRiqDGigOIwvz6CaKKOcypHz7Bs5OFyfUgmOAGqXGauLSDWBy/DpgAhiEbLrguNsFSOVwg2c/w3dS1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jz1yy+7e; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-450cb2ddd46so18895595e9.2;
-        Mon, 07 Jul 2025 14:57:49 -0700 (PDT)
+	s=arc-20240116; t=1751925738; c=relaxed/simple;
+	bh=U63+hVcGdAhCrCBPzO6XFzhjfIMyc/+qKWMUmgBFHZg=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=oiNCfrvn8aGBndAQzDjj5htKVCbIx0VCizrObMMDNvKNtJIGUhMHt7TM488XxqpTl0TbzGP4g32xVzS8L1bjDawXhuRRF4rXOGuXqFf+VtHseSjfdruVCLsnJDdsSu3f7hwdpH2S9NyYLyvmRh6EzqNOddQAgo2KfVKgfuoj2z8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=ro92zX6/; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-7494999de5cso2242105b3a.3
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 15:02:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751925468; x=1752530268; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jmbxv3PdqFKnk2A9UCW4ls9PEGqEY+FhX8JmesHWPR8=;
-        b=jz1yy+7el4Mr1r7g24xjbx1LmrwfAFnFvKzaYqjNWg9Nf1IoYT+kLpzU8xu6NYKGEK
-         qslW2YIOrcdJBovhPlqXZJzCFvrqPM+joTMRNHBkjD2lqHjpNAA1APkOvyS2kpqL+rYw
-         tsNIgoFV8GL1HhhzSXd2vjTvexz/JK961wCYuU5ng0pAbq+C5QV7Igo7/JwgB3AGGc7e
-         kq4tVyI6ndfpXdu6xxPoTZpEXYalSYtdvIPcYcjoDaLTmCprs6XFPs62h3u9SiFOUf7M
-         qRtxsWCuxYe+UzA9RWquS05082ndqKf568uIInC4GC73YdoKZNfaBcsuvLmC9wJuiFEX
-         q0tA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751925468; x=1752530268;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1751925735; x=1752530535; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=jmbxv3PdqFKnk2A9UCW4ls9PEGqEY+FhX8JmesHWPR8=;
-        b=XQoWAzagi65Xkg/PbECAZ3KhBZAdrYlo5nQ6nIwDaiAXKgS0h17Pe+cCfRcrQErT8X
-         2qwiqRMuan59DZtY2q1Kua7Nz6vGp4IQ4kRkKEgCvEOPZB+tMtHYyne/zVLbpEZyNfVE
-         y9/QcDsHn09F2k2K80HvPsaKBsI8xFZd9NB/X9Mh4V+TG3P3WhrJTODtr0Dy+gMQPFLd
-         1n220Vbm1gFxHXU74B7ycjTF6pfV4QscNm1JH35mIgkIUR9S5khgLFmJbkr02m3plEb3
-         NFmOT/H4bM6oCCLAU+urWDFgz6ag8wyHU+Y1hjbc+3mySAwixXwn/WJG9fAfa58roNh5
-         sZmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUe7t9OTwiqeeZQiQY2L8kHExKS7Qv3nCfrGG8DTrdOwizdHl9wij3imqy8sDres/9HE6byfhzdMe1hPHoM@vger.kernel.org, AJvYcCWQFahxHjwOn4mA6i45XHRgVqpZh6nhH3e7B80beaqIHwUn1hLc7ZIBb71XPcYShg6zCwQ=@vger.kernel.org, AJvYcCWupgBuRYODU/NCfYG3z/0pYKr9fpcTEy9/y5FEbRnd//54LBDjonvs7WngzPxLnoGj+UzGHlVZ@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCpVMQmF2wdQJ6Q3yrbXT2lVQULF6dyPKRVOLHjbqJVIt0ppDU
-	sK9xK9BDGJuE0s1ebn5XTK9BaLcR1s3ysjJQYA2CqDHzU70c6WqnQTyx
-X-Gm-Gg: ASbGncuqhVq35NRi2yPhav4UjBgnyiYPhSpcJWX7K08M1E3TEAtlQXmeIT/JxIT5JU0
-	cIAwHwETFEdl+RqnK2uUOPpGajeFQQaRniImFbKl08wJnSsBHl5GhohSkeioGWYPcqbgOhzR5kN
-	yddBItJuhsp4Gp7avOEkHCiDCJGxQyDK17BSlyZCW6DnRLBETGq8dwT2rRLmGLXnui1Dr9pWMnN
-	W9YrPAd6GqMXuEoesjJSqeohvLdAyfWRZ87ZYcASa3res8BeM7mqBe8vnc/MLheu3UGXouUHnDB
-	3F4Mw1/s+C2Rt71O9rHE5xts7OVwExKavxvw/a1D+hWfLSD2MUIBvp6k0ulqr41kJIsBSthhACV
-	CuQHDIMax8Soot5XGtMoC3IIkKtV5hNv3iKCZ6A3N3ilcXKvBYV7Lg/gEKbvlxodPlVbxoU0=
-X-Google-Smtp-Source: AGHT+IEhIg4l6YStNvu65lWOa+vurZo381w6ywFHfdsoVupncE1hKIfHVv61bQAlipenXd9yoVNn3Q==
-X-Received: by 2002:a05:600c:a20f:b0:453:c39:d0c2 with SMTP id 5b1f17b1804b1-454cdab07cemr604855e9.24.1751925468311;
-        Mon, 07 Jul 2025 14:57:48 -0700 (PDT)
-Received: from mail.gmail.com (2a01cb0889497e00f536999e2663c8dd.ipv6.abo.wanadoo.fr. [2a01:cb08:8949:7e00:f536:999e:2663:c8dd])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454cd4943bdsm3303855e9.20.2025.07.07.14.57.47
+        bh=g7bXLBC/9PX9YVcxygXI1zQaPaaYKOdSLh+6mu0LXDY=;
+        b=ro92zX6/dG4C2qL0Ym/MPLhLtHrtVkeIwKvTpVrQMT7sUEtN1XH5xLAadQCGS3X9X+
+         vPMzdUA1mHpg2c2eJBBSbYXYC7oPQG1x/R55uSshz53cI6gQYJXNL/Yj+Tx4g5YiqJy9
+         vyiwCF7goCAVUl9Te7fWNiIOICgKzQmujfYgEJNNRGIGCMQra8+zvrlvgQ+pvJ0ri4KV
+         3glb5ETc1j7fcTcbnxeBWiFVbgBmzXIBgDhpjBY/Nh7Juc+6v0MqCQr/RQXFGCipABkL
+         w69vBwB/2q2rE+etGoYos+b9U87OItC3F+R8ICRlc6gLjt1GsUDW8Zmt9CqPOIYikovz
+         U5jg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751925735; x=1752530535;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=g7bXLBC/9PX9YVcxygXI1zQaPaaYKOdSLh+6mu0LXDY=;
+        b=wMj9ZDNT20pWWO2efS1wC9NZ/Av+wx6EMqzLdzrQ3Mns6oCXId/VcawX3T6mD92hXG
+         uE2q3XB+8rAfgvRAwqum4ns2enjgTSrZKB0x59xT53ZI6O7AkJFFAjCL2A4iou4gxf31
+         QyXlPsv+/cfX9HgyOlyZzd/NflHlHylvBcrrl5/CCYKxMZ2rQDc5a2ZOuvOLUw+JYEW0
+         4QdsnWtBWEztBNZnBo5p0Qkk7OXuNPmGSa6Qf61Pp7NFLjmhhIzGR1HkyhJWlLxN0//v
+         H2/a/eAyky7RvpBlXLZq3UdQrvuTsS3YPEzyZ+Q1tE7RChnjdoIJKdvfItmOOoRjpQHW
+         elbQ==
+X-Gm-Message-State: AOJu0YwGjw2S0/+dP5Jwgjr0atZBdelh8eSsQeFKPZciCgshTBbR2Oav
+	oiLqDVDXlCVPBjc8rStwRq3KT6LsXIdkIZbVMvKwCBaTyBIDDa5cBqqnqWdA5dRJZJk=
+X-Gm-Gg: ASbGncvxaQcvLIt/zy47v+tCVSYlux3BridQEBBpFFfrj/394ORoIw6pbJIZujrXzVD
+	xZs3VStkj0ZWbmtRUSdKeJQijqlDVinKbQGo1eLkumXduWfiXZ4Y3pRNSjcUDxx8wTXBE/WQI8Z
+	34C5PASdFUr0jaU6vUC9ExjDYRCA62fX/rqV7XSGE4NsYFvPWw70bITlA70hEaUXNUYl0EBhWsI
+	8gj58iE7YPnBM3gKwxwN8b1RKSzRXJdc/a+0MuXiC2pIdjqUSKwZy+NFJb7M92crmauVn0Thxc+
+	At7L7lrVBPBa7o6GagWEbF/Rib7rJQa7pcc/yQxXINXD8rK6U3HVNxUsvLmQ
+X-Google-Smtp-Source: AGHT+IH2E4VCCHXWLNSHKY0ptSlDn6FXFLO/VUWKKVCVfMN8qIO4HFHA+oy01iANm4u8NULqGn280A==
+X-Received: by 2002:a05:6a20:e68d:b0:220:21bf:b112 with SMTP id adf61e73a8af0-22b42c05e4fmr1144292637.13.1751925735386;
+        Mon, 07 Jul 2025 15:02:15 -0700 (PDT)
+Received: from localhost ([71.212.208.158])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74ce42cefe4sm9419763b3a.157.2025.07.07.15.02.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Jul 2025 14:57:47 -0700 (PDT)
-Date: Mon, 7 Jul 2025 23:57:45 +0200
-From: Paul Chaignon <paul.chaignon@gmail.com>
-To: Eduard Zingerman <eddyz87@gmail.com>
-Cc: syzbot <syzbot+c711ce17dd78e5d4fdcf@syzkaller.appspotmail.com>,
-	andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org,
-	daniel@iogearbox.net, haoluo@google.com, john.fastabend@gmail.com,
-	jolsa@kernel.org, kpsingh@kernel.org, linux-kernel@vger.kernel.org,
-	martin.lau@linux.dev, netdev@vger.kernel.org, sdf@fomichev.me,
-	song@kernel.org, syzkaller-bugs@googlegroups.com,
-	yonghong.song@linux.dev
-Subject: Re: [syzbot] [bpf?] WARNING in reg_bounds_sanity_check
-Message-ID: <aGxC2aVjAm4m7oTU@mail.gmail.com>
-References: <68649190.a70a0220.3b7e22.20e8.GAE@google.com>
- <aGa3iOI1IgGuPDYV@Tunnel>
- <865f2345eaa61afbd26d9de0917e3b1d887c647d.camel@gmail.com>
- <aGgL_g3wA2w3yRrG@mail.gmail.com>
- <df2cdc5f4fa16a4e3e08e6a997af3722f3673d38.camel@gmail.com>
+        Mon, 07 Jul 2025 15:02:14 -0700 (PDT)
+From: Kevin Hilman <khilman@baylibre.com>
+To: tony@atomide.com, robh@kernel.org, krzk+dt@kernel.org, 
+ conor+dt@kernel.org, linux-omap@vger.kernel.org, devicetree@vger.kernel.org, 
+ Felix Brack <fb@ltec.ch>
+Cc: linux-kernel@vger.kernel.org
+In-Reply-To: <20250529135324.182868-1-fb@ltec.ch>
+References: <20250529135324.182868-1-fb@ltec.ch>
+Subject: Re: [PATCH] ARM: dts: am335x-pdu001: Fix RS-485 transceiver
+ switching
+Message-Id: <175192573416.520018.17662868630583209501.b4-ty@baylibre.com>
+Date: Mon, 07 Jul 2025 15:02:14 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <df2cdc5f4fa16a4e3e08e6a997af3722f3673d38.camel@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3-dev-d7477
 
-On Fri, Jul 04, 2025 at 10:26:14AM -0700, Eduard Zingerman wrote:
-> On Fri, 2025-07-04 at 19:14 +0200, Paul Chaignon wrote:
-> > On Thu, Jul 03, 2025 at 11:54:27AM -0700, Eduard Zingerman wrote:
-> > > On Thu, 2025-07-03 at 19:02 +0200, Paul Chaignon wrote:
-> > > > The number of times syzkaller is currently hitting this (180 in 1.5
-> > > > days) suggests there are many different ways to reproduce.
-> > > 
-> > > It is a bit inconvenient to read syzbot BPF reports at the moment,
-> > > because it us hard to figure out how the program looks like.
-> > > Do you happen to know how complicated would it be to modify syzbot
-> > > output to:
-> > > - produce a comment with BPF program
-> > > - generating reproducer with a flag, allowing to print level 2
-> > >   verifier log
-> > > ?
-> > 
-> > I have the same thought sometimes. Right now, I add verifier logs to a
-> > syz or C reproducer to see the program. Producing the BPF program in a
-> > comment would likely be tricky as we'd need to maintain a disassembler
-> > in syzkaller.
+
+On Thu, 29 May 2025 15:53:24 +0200, Felix Brack wrote:
+> The wiring of the RS-485 transceiver of UART0 of the PDU-001 board
+> allows sending or receiving date exclusively. In other words: no
+> character transmitted will ever be received.
+> Hence the tx-filter counter in the OMAP serial driver can't work
+> correctly as it relies on receiving the transmitted characters.
+> This in turn will prevent reception of data unless we disable the
+> tx-filter counter.
+> This patch disables the tx-filter counter by enabling the DTS setting
+> rs485-rx-during-tx. This might sound like the opposite to be done but
+> it uses the enabling of rs485-rx-during-tx not for receiving the data
+> transmitted but for disabling the tx-fiter counter.
 > 
-> So, it operates on raw bytes, not on logical instructions?
+> [...]
 
-Both I would say. The syzkaller descriptions for BPF are structured
-around instructions [1], though they may not always match 1:1 with
-upstream instructions. Syzkaller then mutates raw bytes, taking some
-information from the descriptions into account (ex. known flag values).
+Applied, thanks!
 
-1 - https://github.com/google/syzkaller/blob/master/sys/linux/bpf_prog.txt
+[1/1] ARM: dts: am335x-pdu001: Fix RS-485 transceiver switching
+      commit: 539e87dd661f5ce321019c27ab15cad55345e429
+
+Best regards,
+-- 
+Kevin Hilman <khilman@baylibre.com>
+
 
