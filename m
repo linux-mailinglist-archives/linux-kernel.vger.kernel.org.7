@@ -1,98 +1,87 @@
-Return-Path: <linux-kernel+bounces-719969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAD48AFB546
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 15:53:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0690CAFB51D
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 15:49:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75B2C188EA69
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 13:52:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 175EA1AA5E1A
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 13:49:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66FC0298CB1;
-	Mon,  7 Jul 2025 13:52:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2138200112;
+	Mon,  7 Jul 2025 13:47:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b="yxvvacCK"
-Received: from smtp112.iad3b.emailsrvr.com (smtp112.iad3b.emailsrvr.com [146.20.161.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jLkNWj/e"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D1562951D0
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 13:51:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=146.20.161.112
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49B181EF1D;
+	Mon,  7 Jul 2025 13:47:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751896319; cv=none; b=ADgbiSUy+F7pTFdV87saViTYXDCR5b6astB5rKlXwgtdCfRpfcQ2nxzFedagewKLOu6DLaRQIQff4SpihVgzG2GI7dTNT8WJJBmizK7yen6pBvLio9zTEvwFPrdZCJZeCf4tbzH+HSyN3cZDiOjdP6s4IOfQzez9b8swXHDQLBU=
+	t=1751896052; cv=none; b=Odd/CNPq9jqWCgGKjI1u6v6K9mgXwlwhN5pjlag0Ek6Z4+brvUllYQ27+A9XswkwszygvjEWBSXIvXh6YhtyiHt0aAWbNzbeSazr1soRc9qk3IhdmNglzBNWy0/9yrzCYtbeRXL3vDWVq+ccxn3kuYat8b0X1P8Rdsfm/ar8wwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751896319; c=relaxed/simple;
-	bh=kQUEkoO0e3HKWclSzP5sW8URv+gkDAlxxdhOQOzAwYM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hIVSEtS7SReB/0KazA2QQkQapcDCZZWccxVsnZHe1U2eABmxXoWAefd/QtyMrhu7IKgXlNhrdaJpSqqhu+KiLLwnwJaCP6nUmHBbzVg56Lyyp1lyxOGBuJgBprWELVM2sAWzmyyzljtJNUovNlkjWGdrQg0yl6uk/VvQZhC8Sho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk; spf=pass smtp.mailfrom=mev.co.uk; dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b=yxvvacCK; arc=none smtp.client-ip=146.20.161.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mev.co.uk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mev.co.uk;
-	s=20221208-6x11dpa4; t=1751895996;
-	bh=kQUEkoO0e3HKWclSzP5sW8URv+gkDAlxxdhOQOzAwYM=;
-	h=From:To:Subject:Date:From;
-	b=yxvvacCKNbKEA8pH0T8wtpaQTGv9iSUhUU4QYh3s2FosU4h/Qo6G8AY76dbiCugK/
-	 bhQxPFkLngexJhEp4DbDWrb4edGhutM1uSCpg9sz51KmgzWSUcFcdP7NbbSH/Z1K44
-	 0LOOb4MqknzTImh/FSDLZlu/r2vHa2V/Vl04I3So=
-X-Auth-ID: abbotti@mev.co.uk
-Received: by smtp23.relay.iad3b.emailsrvr.com (Authenticated sender: abbotti-AT-mev.co.uk) with ESMTPSA id 70136A01EF;
-	Mon,  7 Jul 2025 09:46:35 -0400 (EDT)
-From: Ian Abbott <abbotti@mev.co.uk>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Ian Abbott <abbotti@mev.co.uk>,
-	H Hartley Sweeten <hsweeten@visionengravers.com>,
-	stable@vger.kernel.org
-Subject: [PATCH] comedi: aio_iiro_16: Fix bit shift out of bounds
-Date: Mon,  7 Jul 2025 14:46:22 +0100
-Message-ID: <20250707134622.75403-1-abbotti@mev.co.uk>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1751896052; c=relaxed/simple;
+	bh=NkJ28C6WWVMhFFn2trWWf6jY+uHY6XH7e1z7DoddFtA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FuQ4HcGXau1FkYclNzzHVwNB0Yto/mUnxTimGGATDcZ/Ntv1wKWyPXNPlKPq1ONJ44qrtuJll8c52O68n1GlcTRGVC6NB3r7gKPIMzp2mw/plHykjS3KKJdtMkCCE5zH9/p/pYGkqnm6DHYlTp5jsJdZMAcWlWZPu95KYb3nOz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jLkNWj/e; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D82BEC4CEF4;
+	Mon,  7 Jul 2025 13:47:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751896051;
+	bh=NkJ28C6WWVMhFFn2trWWf6jY+uHY6XH7e1z7DoddFtA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=jLkNWj/eSCL6Op2B7n+OrHoC1annBvQxj4QC8Z6bqxoENFIw5wQA0O/ujXkebp7DQ
+	 YORxsB710egtIKAPSJxQP3v77rtnW8nU9vYiDabPH2OJiMdMQarG50yNOZSaCIyvo7
+	 AqSkt31ClNyES1eafiZBXFgOW/IO6dDf9YLbtPYlkGRJLNTqMDi6Rd2chTfH6MZkE0
+	 SBmXJhRPCOqdksUpsIFDRhw09NGKnC6yd69eIwJZeTwCoXd1+Y1LhTRVUbu6XbglOH
+	 O0W9AB6sVUJsjlbEfPoWnswdFLbqHax8E5zzoaOg+2M2aNo+XmyVnDep/y/X1JrmIn
+	 HjZrl3Jo8HsUQ==
+Message-ID: <89b0a4bf-2a66-4610-93d2-8f2f096592a3@kernel.org>
+Date: Mon, 7 Jul 2025 15:47:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Classification-ID: 70b25bd4-aed2-4281-9999-a00560739e81-1-1
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 7/7] drm/nouveau: Remove waitque for sched teardown
+To: Philipp Stanner <phasta@kernel.org>
+Cc: Lyude Paul <lyude@redhat.com>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Matthew Brost <matthew.brost@intel.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Sumit Semwal <sumit.semwal@linaro.org>,
+ Tvrtko Ursulin <tvrtko.ursulin@igalia.com>,
+ Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>,
+ dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
+References: <20250707134221.34291-2-phasta@kernel.org>
+ <20250707134221.34291-9-phasta@kernel.org>
+From: Danilo Krummrich <dakr@kernel.org>
+Content-Language: en-US
+In-Reply-To: <20250707134221.34291-9-phasta@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-When checking for a supported IRQ number, the following test is used:
+On 7/7/25 3:42 PM, Philipp Stanner wrote:
+> struct nouveau_sched contains a waitque needed to prevent
+> drm_sched_fini() from being called while there are still jobs pending.
+> Doing so so far would have caused memory leaks.
+> 
+> With the new memleak-free mode of operation switched on in
+> drm_sched_fini() by providing the callback
+> nouveau_sched_fence_context_kill() the waitque is not necessary anymore.
+> 
+> Remove the waitque.
+> 
+> Signed-off-by: Philipp Stanner <phasta@kernel.org>
 
-	if ((1 << it->options[1]) & 0xdcfc) {
-
-However, `it->options[i]` is an unchecked `int` value from userspace, so
-the shift amount could be negative or out of bounds.  Fix the test by
-requiring `it->options[1]` to be within bounds before proceeding with
-the original test.  Valid `it->options[1]` values that select the IRQ
-will be in the range [1,15]. The value 0 explicitly disables the use of
-interrupts.
-
-Fixes: ad7a370c8be4 ("staging: comedi: aio_iiro_16: add command support for change of state detection")
-Cc: <stable@vger.kernel.org> # 5.13+
-Signed-off-by: Ian Abbott <abbotti@mev.co.uk>
----
-Patch does not apply cleanly to longterm kernels 5.4.x and 5.10.x.
----
- drivers/comedi/drivers/aio_iiro_16.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/comedi/drivers/aio_iiro_16.c b/drivers/comedi/drivers/aio_iiro_16.c
-index b00fab0b89d4..739cc4db52ac 100644
---- a/drivers/comedi/drivers/aio_iiro_16.c
-+++ b/drivers/comedi/drivers/aio_iiro_16.c
-@@ -177,7 +177,8 @@ static int aio_iiro_16_attach(struct comedi_device *dev,
- 	 * Digital input change of state interrupts are optionally supported
- 	 * using IRQ 2-7, 10-12, 14, or 15.
- 	 */
--	if ((1 << it->options[1]) & 0xdcfc) {
-+	if (it->options[1] > 0 && it->options[1] < 16 &&
-+	    (1 << it->options[1]) & 0xdcfc) {
- 		ret = request_irq(it->options[1], aio_iiro_16_cos, 0,
- 				  dev->board_name, dev);
- 		if (ret == 0)
--- 
-2.47.2
+Doesn't this break the driver until fixed up by the subsequent patch?
 
 
