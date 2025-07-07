@@ -1,165 +1,96 @@
-Return-Path: <linux-kernel+bounces-720438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DA40AFBBAB
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 21:25:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6ABEAFBBB7
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 21:31:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CEA874A63CB
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 19:25:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2E30425043
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 19:30:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 594CD266EF1;
-	Mon,  7 Jul 2025 19:25:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4138322D7B1;
+	Mon,  7 Jul 2025 19:31:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p80+dC/N"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="g3ZNJUsR"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B646A224B0E;
-	Mon,  7 Jul 2025 19:25:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6B5D2E3717;
+	Mon,  7 Jul 2025 19:31:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751916320; cv=none; b=dGflg5nmUUQfW6WOdCasyvixJtnexbp43u3YG+/ef3QiagUXTDyRlqZVRbo5sTriIQkqQblYukzaciovV22vJnoTKV9Entu6KaUvDU4KZOneLPFY70Cu47wfoMGTrYo8fqzbq4v40/wN63UKBXda7NqAGtz/RFuwWSaVZ0OK8qA=
+	t=1751916679; cv=none; b=bKjrDuxe674wFbHCvgvHSwEW6eenWwp8dNkSN1AppfJMott/55azMWieojrHhzfQqGFx6X6VKIpR2tHPgcHB8TmGDZQ047E3A8rRHSNPth1JW6iFR5xKTvnhBbcRbMCbQTjdiAHA3FlrQyqqgOsgoA9Ywz3cNLvNFt49P0VmAvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751916320; c=relaxed/simple;
-	bh=hP82dDhok+6gAH/5p/uOZI8kvP28j/8sBKLtucO7i/E=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=S+satZSuJEHol4fGkH3NM+VkAfBNihDlvFSVkLl1Q1ZpOvs+oIbCXazz7AxqcHnfe8YI4FHS25hT08k/X+hl4b1anXqh4/QBTqrsaellaPe46roD10uFLNr0byE+dYRlz+Fk75LUp50liWkFDUe/A8ykOH2q7XIbQuZOI9rVZNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p80+dC/N; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5828CC4CEE3;
-	Mon,  7 Jul 2025 19:25:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751916320;
-	bh=hP82dDhok+6gAH/5p/uOZI8kvP28j/8sBKLtucO7i/E=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=p80+dC/NCnHnEbiDeDorpKK+/+72fDO6sO0W69Q0RnQXiYZkCGVnyK/Js9VAWXKbJ
-	 eLgWJeTm0gW3GpylTxzy3Y2sDESv/XcL63cLzvN+UAFDszY//i8jvC1pSjS2fpaWuW
-	 HA5qWiM+Vw8l7hQSysqWFBUAZzwr9KCxA7GrZBItrl/4dErwr03XmXdXj4PpoGbZi5
-	 SYCo81vWotKyb/BpeHQ1eGruR4PaTFP2SybJwMXR0ITnD1gMGdfVgn8AcQXHPVU/Lz
-	 FzmEi9uV1PSBNYSfdei1oQLchNO3G/NgzTZMjbDgJZlsiYOZP3sizEFQVlB6V/iQuA
-	 XCM7aErY2aXSw==
-Message-ID: <a7621e726227260396291e82363d2b82e5f2ad73.camel@kernel.org>
-Subject: Re: [PATCH 2/2] NFS: Improve nfsiod workqueue detection for
- allocation flags
-From: Trond Myklebust <trondmy@kernel.org>
-To: Benjamin Coddington <bcodding@redhat.com>, Anna Schumaker
- <anna@kernel.org>,  Tejun Heo <tj@kernel.org>, Lai Jiangshan
- <jiangshanlai@gmail.com>
-Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	djeffery@redhat.com, loberman@redhat.com
-Date: Mon, 07 Jul 2025 12:25:17 -0700
-In-Reply-To: <a4548815532fb7ad71a4e7c45b3783651c86c51f.1751913604.git.bcodding@redhat.com>
-References: <cover.1751913604.git.bcodding@redhat.com>
-	 <a4548815532fb7ad71a4e7c45b3783651c86c51f.1751913604.git.bcodding@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	s=arc-20240116; t=1751916679; c=relaxed/simple;
+	bh=er1bFv8ZYHWjAZxrRlj3OzEWSMk/8yNh1brflf1trco=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KizxRY3vrKfgrGXIoxJxLiq6SpNoD9HZhQYQJnK/vGhI/2g2jxPVg+gNErLfrAtE6lKC+r/53jVXloCwd/DkLIF7/Gl3aJtHDpKpeBfxF5yeeOGH6MC9obbyjaeVhU0GN/I6y8/8mFLXftRNHnZhnYOkHt+IMvALs8LydZzraT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=g3ZNJUsR; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description;
+	bh=2YqD1/MrlWeY4D5rvhRKHLBb5BvHMUGODl0dhwdd2xI=; b=g3ZNJUsRCw9mcHko2DNoRFGRRC
+	rUGklLWUNga4Y4KyPd6BBNV7jo0aIPhNYu+cEObrTRr6vppDO5z/VZIgd8M4azdyHN3JsgU0c3x8F
+	AtGkUfKt2lM/mQGdtLnnX3R1MSze7Ng2b9WDznXy+bKDesGn20nflc7sVdjOaGP/IjirsPVbKTR5C
+	4gznykrA5999HAkIkCq7thLvBvMnCZx4pkruhx3e00qwR7zMJFy4ezbHkPucrsMLRTk2Qp+FFcZZx
+	NDPIYO8l3pKGFJBlvk1iQyL1y1E7fkNuahJGuJ6KHlZ7uVb8huk57LX/6PEhdvyQeCU7hTc3oUB43
+	q+zwnfmw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uYrYZ-00000003EZ4-0Z2p;
+	Mon, 07 Jul 2025 19:31:15 +0000
+Date: Mon, 7 Jul 2025 20:31:15 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Max Kellermann <max.kellermann@ionos.com>
+Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 20/21] __dentry_kill(): new locking scheme
+Message-ID: <20250707193115.GH1880847@ZenIV>
+References: <20231124060200.GR38156@ZenIV>
+ <20231124060422.576198-1-viro@zeniv.linux.org.uk>
+ <20231124060422.576198-20-viro@zeniv.linux.org.uk>
+ <CAKPOu+_Ktbp5OMZv77UfLRyRaqmK1kUpNHNd1C=J9ihvjWLDZg@mail.gmail.com>
+ <20250707172956.GF1880847@ZenIV>
+ <CAKPOu+87UytVk_7S4L-y9We710j4Gh8HcacffwG99xUA5eGh7A@mail.gmail.com>
+ <20250707180026.GG1880847@ZenIV>
+ <CAKPOu+-QzSzUw4q18FsZFR74OJp90rs9X08gDxWnsphfwfwxoQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAKPOu+-QzSzUw4q18FsZFR74OJp90rs9X08gDxWnsphfwfwxoQ@mail.gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Mon, 2025-07-07 at 14:46 -0400, Benjamin Coddington wrote:
-> The NFS client writeback paths change which flags are passed to their
-> memory allocation calls based on whether the current task is running
-> from
-> within a workqueue or not.=C2=A0 More specifically, it appears that durin=
-g
-> writeback allocations with PF_WQ_WORKER set on current->flags will
-> add
-> __GFP_NORETRY | __GFP_NOWARN.=C2=A0 Presumably this is because nfsiod can
-> simply fail quickly and later retry to write back that specific page
-> should
-> the allocation fail.
->=20
-> However, the check for PF_WQ_WORKER is too general because tasks can
-> enter NFS
-> writeback paths from other workqueues.=C2=A0 Specifically, the loopback
-> driver
-> tends to perform writeback into backing files on NFS with
-> PF_WQ_WORKER set,
-> and additionally sets PF_MEMALLOC_NOIO.=C2=A0 The combination of
-> PF_MEMALLOC_NOIO with __GFP_NORETRY can easily result in allocation
-> failures and the loopback driver has no retry functionality.=C2=A0 As a
-> result,
-> after commit 0bae835b63c5 ("NFS: Avoid writeback threads getting
-> stuck in
-> mempool_alloc()") users are seeing corrupted loop-mounted filesystems
-> backed
-> by image files on NFS.
->=20
-> In a preceding patch, we introduced a function to allow NFS to detect
-> if
-> the task is executing within a specific workqueue.=C2=A0 Here we use that
-> helper
-> to set __GFP_NORETRY | __GFP_NOWARN only if the workqueue is nfsiod.
->=20
-> Fixes: 0bae835b63c5 ("NFS: Avoid writeback threads getting stuck in
-> mempool_alloc()")
-> Signed-off-by: Benjamin Coddington <bcodding@redhat.com>
-> ---
-> =C2=A0fs/nfs/internal.h | 12 +++++++++++-
-> =C2=A01 file changed, 11 insertions(+), 1 deletion(-)
->=20
-> diff --git a/fs/nfs/internal.h b/fs/nfs/internal.h
-> index 69c2c10ee658..173172afa3f5 100644
-> --- a/fs/nfs/internal.h
-> +++ b/fs/nfs/internal.h
-> @@ -12,6 +12,7 @@
-> =C2=A0#include <linux/nfs_page.h>
-> =C2=A0#include <linux/nfslocalio.h>
-> =C2=A0#include <linux/wait_bit.h>
-> +#include <linux/workqueue.h>
-> =C2=A0
-> =C2=A0#define NFS_SB_MASK (SB_NOSUID|SB_NODEV|SB_NOEXEC|SB_SYNCHRONOUS)
-> =C2=A0
-> @@ -669,9 +670,18 @@ nfs_write_match_verf(const struct nfs_writeverf
-> *verf,
-> =C2=A0		!nfs_write_verifier_cmp(&req->wb_verf, &verf-
-> >verifier);
-> =C2=A0}
-> =C2=A0
-> +static inline bool is_nfsiod(void)
-> +{
-> +	struct workqueue_struct *current_wq =3D current_workqueue();
-> +
-> +	if (current_wq)
-> +		return current_wq =3D=3D nfsiod_workqueue;
-> +	return false;
-> +}
-> +
-> =C2=A0static inline gfp_t nfs_io_gfp_mask(void)
-> =C2=A0{
-> -	if (current->flags & PF_WQ_WORKER)
-> +	if (is_nfsiod())
-> =C2=A0		return GFP_KERNEL | __GFP_NORETRY | __GFP_NOWARN;
-> =C2=A0	return GFP_KERNEL;
-> =C2=A0}
+On Mon, Jul 07, 2025 at 08:11:43PM +0200, Max Kellermann wrote:
+> On Mon, Jul 7, 2025 at 8:00 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+> > Well, it tries to evict all non-busy dentries, along with the ones that
+> > are only busy due to (non-busy) children, etc.
+> 
+> But why did you add code that keeps looping if a dead/killed dentry
+> was found, even though there is no code to do anything with such a
+> dentry?
 
+Huh?  That dentry contributes a soon-to-be-gone reference to parent;
+it's still there in the tree, but it's already in process of being
+evicted.  The parent will remain busy the end of __dentry_kill().
 
-Instead of trying to identify the nfsiod_workqueue, why not apply
-current_gfp_context() in order to weed out callers that set
-PF_MEMALLOC_NOIO and PF_MEMALLOC_NOFS?
+It is *not* dead; if you want slightly distrubing metaphors, it is already
+beyond resuscitation (that's what the negative refcount indicates), but
+it has not finished dying yet.  DCACHE_DENTRY_KILLED in flags ==
+"it's dead", and those can't be found in the tree/hash/list of aliases/etc.
+Negative refcount on something found in the tree == "it's busy dying at
+the moment" and parent is kept busy until that's over.
 
-i.e.
-
-
-static inline gfp_t nfs_io_gfp_mask(void)
-{
-	gfp_t ret =3D current_gfp_context(GFP_KERNEL);
-
-	if ((current->flags & PF_WQ_WORKER) && ret =3D=3D GFP_KERNEL)
-		ret |=3D __GFP_NORETRY | __GFP_NOWARN;
-	return ret;
-}
-
-
---=20
-Trond Myklebust
-Linux NFS client maintainer, Hammerspace
-trondmy@kernel.org, trond.myklebust@hammerspace.com
+And we *want* those to be findable in the tree - think e.g. of umount.
+We really don't want to progress to destroying fs-private data structures
+before all dentries are disconnected from inodes, etc.
 
