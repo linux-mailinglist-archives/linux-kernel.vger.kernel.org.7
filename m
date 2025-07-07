@@ -1,152 +1,136 @@
-Return-Path: <linux-kernel+bounces-720069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E505DAFB69D
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 16:58:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4ED3CAFB6A1
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 16:59:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A963A1765AA
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 14:58:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6573E1AA5AE0
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 14:59:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52BB52E1C48;
-	Mon,  7 Jul 2025 14:58:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 480F52E172F;
+	Mon,  7 Jul 2025 14:59:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pE4LfnzD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ho/SLovv"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A58772E1730;
-	Mon,  7 Jul 2025 14:58:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 529AD2D8DA8
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 14:59:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751900300; cv=none; b=UFOcNPbzgbJVDdydDHs/aFMXvc/0P0vus9wfguBEzgGImrS71zFTOkg1jVEyKKQh29r5MWNG6Hg9wA00CP9O9MIWZIT+JrOpa7Agm7nEGXq9tAJVVOYP+dSWJX6sov3Vfd3z/x1/UdZHNNX7nksPTYGCE5ohltOvolOPGEYqhXo=
+	t=1751900372; cv=none; b=lzLWaDEr1KOpwnxBEoAxzifBH6OVO9I4g/aO2c2UWu421mo9kvJ3RYBMjwbzWxD4CFduGjWfSMcFsL0L3/FM5c8G11+n5SagbrFpl3c8848rCJA9Bax+hTBrNYT4Gl00jlaoOd9llI3ZZp84Z5vWNvMrEwLohR6JWUlfk5eC1g4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751900300; c=relaxed/simple;
-	bh=PhN12gIU8BIJ5VKiBnTir2bDTMuW0pc6OzWU1moQax4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=S8t77TJWq5vAratTxhtW98mSFBKMd/dGunIWYFj5OyU+4iL+vqFleQpYF3+vujLncs4NiPoIRyKhHHjJVn9aCAQ9tFwZ9JtxmkuYXmL7QUKYZCjKlSXJqlFUoPGiE1jQOncX0FcCQlEl8gPJr6o3AWYOehAJrZfM8TxYhZl95ww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pE4LfnzD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3398DC4CEE3;
-	Mon,  7 Jul 2025 14:58:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751900300;
-	bh=PhN12gIU8BIJ5VKiBnTir2bDTMuW0pc6OzWU1moQax4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=pE4LfnzDkmD442B5l+oZOIrTprN4zD/ARoX0ruGGAdbpGolBgjhgC/F+vVUk+V0ik
-	 TutR/i4p4dYO+XnY1tMUxvokNDeQc0fl7hc66xdknBFLBYO4NWMvJVgGqVIq0R8usd
-	 Um1G0mFhuH8c61sDTkRqRWx8z8KK4s8FdMmAAUl23/mNaw0fx0vj6VDu9eR2jOcjZm
-	 l10oH8NaD6DXl7JwPIv6fEhLeNtDDo/+NuZc0XHvKUrzBlYE5i2UkNLxe/FufqmJpe
-	 kTgXGqSkx656sX7FymFZ6smj+LJmwrL+h4dfnPBH2r3r+B9pwziTmmgDrvKHEOih7p
-	 XwyEGPC3VEBRA==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com>
-Cc: "Boqun Feng" <boqun.feng@gmail.com>,  "Miguel Ojeda" <ojeda@kernel.org>,
-  "Alex Gaynor" <alex.gaynor@gmail.com>,  "Gary Guo" <gary@garyguo.net>,
-  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron <bjorn3_gh@protonmail.com>,  "Benno
- Lossin"
- <lossin@kernel.org>,  "Alice Ryhl" <aliceryhl@google.com>,  "Trevor Gross"
- <tmgross@umich.edu>,  "Danilo Krummrich" <dakr@kernel.org>,  "Jens Axboe"
- <axboe@kernel.dk>,  <linux-block@vger.kernel.org>,
-  <rust-for-linux@vger.kernel.org>,  <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 3/9] rust: block,core: rename `RawWriter` to `BufferWriter`
-In-Reply-To: <CANiq72nfeGwm17kp8OsmpgO-U6xMsuL9KBNwX34Rt1xz-Nxa1Q@mail.gmail.com>
- (Miguel
-	Ojeda's message of "Mon, 07 Jul 2025 16:18:13 +0200")
-References: <20250616-rnull-up-v6-16-v1-0-a4168b8e76b2@kernel.org>
-	<20250616-rnull-up-v6-16-v1-3-a4168b8e76b2@kernel.org>
-	<bpbFNIoKHyMEJSNSRBaq96hzfyrWNtFJIotbYdqEAcPhLhPf_sg-1kNlty_Uj-1tPs0ZQHcGrT-wlVRHYbANqg==@protonmail.internalid>
-	<CANiq72nfeGwm17kp8OsmpgO-U6xMsuL9KBNwX34Rt1xz-Nxa1Q@mail.gmail.com>
-User-Agent: mu4e 1.12.9; emacs 30.1
-Date: Mon, 07 Jul 2025 16:58:11 +0200
-Message-ID: <87o6twoxoc.fsf@kernel.org>
+	s=arc-20240116; t=1751900372; c=relaxed/simple;
+	bh=5J6/q/GM8RZ99jS9z81cyaKyHg6P0FVUWfxHrUa5/58=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VG2X5HtbvIwKcp/KpIXW2z9U7JK486YVeN7a9CcpwnH4xdZJ3fqHIlUgru78rkv4VM2C8IdnMj5YGbEEpUuzgtydKhHxidQW45KqrllvvrVJ8P4wYUNGbCqzGhzjQDtmTU9JL/Ch5VHG/TW7ZfCLKUBhHlNOorVCU531ZyFZqrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ho/SLovv; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-313910f392dso2621346a91.2
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 07:59:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1751900371; x=1752505171; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=6TQLxoKJTtnPQL66AOVz1qBZAurWsbbtmQ08gZuI+u0=;
+        b=ho/SLovv7ZTD7nf26TVEZqkkJaOXDwFjpqiXUIT/mABz1JG8jIXNfwKzgyuOKoqpPa
+         GjNHc+OF0/cykuCxakHldGkpfmpZwXnLo4N0t9tbfYp05nGkdH+WmWBl94BO5BulKe3O
+         J2DsBKYVcU0wDeTVaSStyZ4YqAUZcbmt11q4v+IaAjZzrE21xoMzRKyQQ/sJ9Qo6u0RA
+         Y3OOJmWqwmb9S9SC35B2bVbeOpShkTqrzwlHrr/Fm3R2oDGtK34o0yH/jb099G4Yn+mW
+         Iq+is9JHTAzQx4LkvrI92DKSKk9AOuWa//YdW1a3boFCa5ihHOzTcvzNcSqaI9LjQvOZ
+         cIPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751900371; x=1752505171;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6TQLxoKJTtnPQL66AOVz1qBZAurWsbbtmQ08gZuI+u0=;
+        b=i/9hIsoADMUMA+wmxU74p7/QqO63WZHGugfU8PZ4lgXhdyUvuHQxIdujOvyJUfIsdS
+         uKm/UHD+1PPpVlHrSqLeQe9V21tVeF60PyFTZQQd9z+kmH9xFcYfQet/vu9ZT6/qfPLe
+         /n36ymdZwAF75HKWOMG70grjZWn32PGgLw7maKr38m8iAG977GDX3y/347BY8A0oZMw9
+         /DFw6CdFRaCPnKvnBSGvK9kCBuUg+rRjmf6LrPkk1xVhlI9u4ZSEoG1hlHnzr1vNIeWE
+         96kBgd0s957Pw4JmSKBPS1KNuZtcL7Fyu6DolWYBqJsd773Gqi85L8AORqMywXwS7ocx
+         YZCA==
+X-Forwarded-Encrypted: i=1; AJvYcCU1buktSxscNquitBxH3H/bJkm8T6MlvoIwiahf8CfSK/XiwIUYpecaesblIYbPPxPmTTBwKmTTLNFFNAY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGemGVV/W4TWK5KwDZL6cIVeuss3eMQyb8/2PzbSj4o1P1Y20P
+	weQiVsm6adMvoDYLplEhhWPuJ/6ByVS4AZgc+3kLZZj72anxRXG+0/xbchKgw1VRnseVgsTSW0Z
+	WfbzyPk/idG9CXeN5jqTel2pdUUJKpnQIso3CA441
+X-Gm-Gg: ASbGncvrHK1vTuuxfAdWoMlbjqA/dIviA7nlGJkPRsOk5/bSSZszzptW+8sy375TDnc
+	S77XW3QpuGfPbqDmAFcuIePVuzrg+Kr+bUTChe5YvtbXbGNP5zrEegtrjzb5L/Zw4y+Y8XGDq2p
+	BFtmS/eEtuLwQXjOkKQo0NkudSe2+mDs9Vcdtp5s46
+X-Google-Smtp-Source: AGHT+IE9YWkTfOUxIPM2EzEa1lJ2gNYhmQvgWwWfNnfCuD/M3jrRM4u+/9ssAC3XE0kDqrvmOJaz3qcx79G+IEBBFhg=
+X-Received: by 2002:a17:90b:3f48:b0:312:b4a:6342 with SMTP id
+ 98e67ed59e1d1-31aaddfc24amr20985661a91.33.1751900370388; Mon, 07 Jul 2025
+ 07:59:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+References: <cover.1751862634.git.alx@kernel.org> <033bf00f1fcf808245ae150346019aa7b997ea11.1751862634.git.alx@kernel.org>
+ <CANpmjNMPWWdushTvUqYJzqQJz4SJLgPggH9cs4KPob_9=1T-nw@mail.gmail.com> <kicfhrecpahv5kkawnnazsuterxjoqscwf3rb4u6in5gig2bq6@jbt6dwnzs67r>
+In-Reply-To: <kicfhrecpahv5kkawnnazsuterxjoqscwf3rb4u6in5gig2bq6@jbt6dwnzs67r>
+From: Marco Elver <elver@google.com>
+Date: Mon, 7 Jul 2025 16:58:53 +0200
+X-Gm-Features: Ac12FXxNc7MVDdqbSkiHg-OPuizBzk24Lc8ThBNq8a8QxrLwekty4YemWnP4YPo
+Message-ID: <CANpmjNNXyyfmYFPYm2LCF_+vdPtWED3xj5gOJPQazpGhBizk5w@mail.gmail.com>
+Subject: Re: [RFC v3 3/7] mm: Use seprintf() instead of less ergonomic APIs
+To: Alejandro Colomar <alx@kernel.org>
+Cc: linux-mm@kvack.org, linux-hardening@vger.kernel.org, 
+	Kees Cook <kees@kernel.org>, Christopher Bazley <chris.bazley.wg14@gmail.com>, 
+	shadow <~hallyn/shadow@lists.sr.ht>, linux-kernel@vger.kernel.org, 
+	Andrew Morton <akpm@linux-foundation.org>, kasan-dev@googlegroups.com, 
+	Dmitry Vyukov <dvyukov@google.com>, Alexander Potapenko <glider@google.com>, Christoph Lameter <cl@linux.com>, 
+	David Rientjes <rientjes@google.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>, 
+	Andrew Clayton <andrew@digital-domain.net>, Sven Schnelle <svens@linux.ibm.com>, 
+	Heiko Carstens <hca@linux.ibm.com>, Tvrtko Ursulin <tvrtko.ursulin@igalia.com>, 
+	"Huang, Ying" <ying.huang@intel.com>, Lee Schermerhorn <lee.schermerhorn@hp.com>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, 
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, 
+	Chao Yu <chao.yu@oppo.com>
+Content-Type: text/plain; charset="UTF-8"
 
-"Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com> writes:
-
-> On Mon, Jun 16, 2025 at 3:26=E2=80=AFPM Andreas Hindborg <a.hindborg@kern=
-el.org> wrote:
->>
->> Rename the `RawWriter` to `BufferWriter`, wihich is a more suitable name.
->> Also move the module from `block` to `str`.
+On Mon, 7 Jul 2025 at 16:39, Alejandro Colomar <alx@kernel.org> wrote:
 >
-> The prefix should probably be "rust: block,str", or just "rust:".
-
-OK =F0=9F=91=8D
-
+> Hi Marco,
 >
-> (This patch would be ideally first in the series rather than in the
-> middle, by the way)
-
-I'll move it.
-
+> On Mon, Jul 07, 2025 at 09:44:09AM +0200, Marco Elver wrote:
+> > On Mon, 7 Jul 2025 at 07:06, Alejandro Colomar <alx@kernel.org> wrote:
+> > >
+> > > While doing this, I detected some anomalies in the existing code:
+> > >
+> > > mm/kfence/kfence_test.c:
+> > >
+> > >         -  The last call to scnprintf() did increment 'cur', but it's
+> > >            unused after that, so it was dead code.  I've removed the dead
+> > >            code in this patch.
+> >
+> > That was done to be consistent with the other code for readability,
+> > and to be clear where the next bytes should be appended (if someone
+> > decides to append more). There is no runtime dead code, the compiler
+> > optimizes away the assignment. But I'm indifferent, so removing the
+> > assignment is fine if you prefer that.
 >
->> -pub(crate) struct RawWriter<'a> {
->> +pub struct BufferWriter<'a> {
+> Yeah, I guessed that might be the reason.  I'm fine restoring it if you
+> prefer it.  I tend to use -Wunused-but-set-variable, but if it is not
+> used here and doesn't trigger, I guess it's fine to keep it.
+
+Feel free to make it warning-free, I guess that's useful.
+
+> > Did you run the tests? Do they pass?
 >
-> Since you are re-exporting, can this be kept for the crate?
+> I don't know how to run them.  I've only built the kernel.  If you point
+> me to instructions on how to run them, I'll do so.  Thanks!
 
-Yep.
+Should just be CONFIG_KFENCE_KUNIT_TEST=y -- then boot kernel and
+check that the test reports "ok".
 
->
->> +    /// Create a new [`Self`] instance.
->
-> It is not a big deal here, but when you have a "move" commit, please
-> try to keep changes to the minimum, e.g. type renaming could be done
-> before or after.
-
-Will do.
-
->
->> +    /// Return the position of the write pointer in the underlying buff=
-er.
->> +    pub fn pos(&self) -> usize {
->> +        self.pos
->> +    }
->
-> This is not mentioned in the commit message (and should have been a
-> different patch too).
-
-Right.
-
-> By the way, cannot you use `{Raw,}Formatter`? You could add a
-> formatter that null-terminates automatically and/or that tracks the
-> lifetime, but we add the null manually elsewhere.
-
-I'll look into that. It looks like I could just use `RawFormatter`. I
-don't recall the reason for `RawWriter`, it's been years and it was
-Wedson who introduced it originally.
-
->
-> Speaking of which, aren't you null-terminating manually anyway in `gen_di=
-sk.rs`?
->
-> Ah, no, you are adding two nulls -- one at the end of the buffer, and
-> one in the middle. So the current code will fail if it needs one final
-> byte (i.e. when the last null would have been enough).
-
-The null insertion at the call site should be removed, it's a leftover
-from before `BufferWriter` handled that.
-
->
-> Given all that, I would say just drop this one, and use the one we
-> have. Then we can add a fancier formatter later on independently if
-> needed.
-
-Will try that. Thanks for taking a look.
-
-
-Best regards,
-Andreas Hindborg
-
-
-
+Thanks,
+-- marco
 
