@@ -1,317 +1,450 @@
-Return-Path: <linux-kernel+bounces-719881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A22B2AFB413
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 15:13:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDE1AAFB427
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 15:15:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C22754A3D6F
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 13:13:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 974891890A31
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 13:15:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7FF32BD016;
-	Mon,  7 Jul 2025 13:12:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48B6929DB6C;
+	Mon,  7 Jul 2025 13:15:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="dr49QvzA";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="H6TUhFS0"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="gk7LV8Oz";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="SufhylUm";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="gk7LV8Oz";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="SufhylUm"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1AC029CB49;
-	Mon,  7 Jul 2025 13:12:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751893942; cv=fail; b=sp6MMkLI5Z3EP9EagOHCDSn7EBuGJVZPEav0ZfC9IwevxJhkZryBEsQ2x/iw8gxPk574j4njwMHUxQj6bpzRI9/0ih47Y3uirygwywKr0onKGycdE/Ut1CSbDBHdvUXT/uU5qIU4OZrPQ8BXCjmpGzNfuLaAUQCgCHK+iVC7Fis=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751893942; c=relaxed/simple;
-	bh=tcLWCfs89bCzvYXOAyVjUgoY95qZz1dx3L2AZw5GIaM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Py57dxeylrrR2fkRkZBgX9hJ/4eB36EmUxrkVNwMLjOdTTyXR0f4c1Im1ULV/Vw7d+YG7vmmmb7I1pt1NM4471G9ajPRy+OVvewiTqcJZ33pGRTCeFHlXYd9u05z9J4OWjKxonT1/GOhz7D6dChoR1qG5IxuCEfUzAOZm17Dhlc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=dr49QvzA; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=H6TUhFS0; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 567BM34E029671;
-	Mon, 7 Jul 2025 13:12:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2025-04-25; bh=ptkAd46WirjWb6XSxLbiMWAeWwEcLepBp3PFpTTVNvI=; b=
-	dr49QvzAI6ehOfQMa9rs32UprhtL1zQg+qIA53HAkRwJ19bN2FcHku8SHA/enzqZ
-	oH/gQKr0NAWKgrfmr3hvKW/J1YMISPJ2vccUpl6gDIn/IbeG9OBzCxvbu7u/3tJc
-	IHuW9t46qzjmdBU/IglQTTlioab31qR086cwXyVFB6MfrQgdliRnjwLI8TlBZ0Ez
-	Vwdxi8GwEedx8PFjqKqqqqCnouNNcYJn3hwwmaXWEG6B2aVbcP2Bb5mtb3mkgFbn
-	mHB1FlBz0ZKTsyKio6LklwKu9AbWF+Cg9SeOZE4Og/I+UjKP/AAl0IE89hyJzVEI
-	HR7xZSZrEA3mBJHvBkuuyQ==
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 47rd9yr5v0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 07 Jul 2025 13:12:04 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 567CUxB1027228;
-	Mon, 7 Jul 2025 13:12:03 GMT
-Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12on2073.outbound.protection.outlook.com [40.107.237.73])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 47ptg875yv-3
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 07 Jul 2025 13:12:03 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=b+dYTqu9dNQy5EUlLTPHwHR/a0vW5Asx87bGuaAovKaLg/37K8dNXRc6DniXiTQqOVzg/MWb7cU0pEFfEZ2OcQXvF4T9N+hQEimOeCZpPIs++aRhOJMFgTcXYdKAijUzMKkGDfPaemmi1c4wQZ2MkYzbyA6JiDXo6DcHDXQgKIEjdU8u2sFWP4k0A3HohiWwzS+sDuEi1mryyGoLYuGTof6UGVmDT4KMno3kdK4YH2KepV6EcgE05Rm4aGqnXc22axvkWZhvxbuZKZBtI+JL3AxUJSbF8xLeIrQ9GmD82OhWCOu4sPRxjRAMRH5Qp991p33I58jDiO8Roxsh1d5cTA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ptkAd46WirjWb6XSxLbiMWAeWwEcLepBp3PFpTTVNvI=;
- b=QIzoNGgQ3wtQChqsMaPO0RBx9aBUI5jl22rD/1is7Td8iY2hlguJhR4UtqDxiFgUnGnb01p1TGoZUVw4lhs7/P78miQRsNwmbMtUpfSZrZ0Gq6YyGJQVoe13XqdLoIEpA/93MyYaiR7YKPwaoKYcSY6BRFJJtviDN2GQjwsXNj7oSSZFDvrU1aVzey87EpRyhaOS31mChS1knWYaiAaHZKS6DAsbASnfU0VqxrmDZVYAqAMvjpnDDwTevEVe3VMb7XQsm49Pl++wsvdilm2TS9MmoqRp+ButqgDMT60+mOiEu0xnPgoDaP93iPFRBcTEBd9DrgQDMHr97Bl/vzoKsA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ptkAd46WirjWb6XSxLbiMWAeWwEcLepBp3PFpTTVNvI=;
- b=H6TUhFS09hUfZ870iHEjC12Kf801c/gpd4UMcjdUKSSIrw31r9rrvfDc7xxe9gyuore9zkfPXk8XZnmBPBm/ov6xv1cksL4wvpGroZZXl7w5exhvYrAB3RURmtZFCCvdwOdNM1ZlOdPLEhb9NFtC/xGnTU5mSYbDXd/L1khPGVw=
-Received: from MN2PR10MB4320.namprd10.prod.outlook.com (2603:10b6:208:1d5::16)
- by LV8PR10MB7776.namprd10.prod.outlook.com (2603:10b6:408:1e7::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.25; Mon, 7 Jul
- 2025 13:12:01 +0000
-Received: from MN2PR10MB4320.namprd10.prod.outlook.com
- ([fe80::42ec:1d58:8ba8:800c]) by MN2PR10MB4320.namprd10.prod.outlook.com
- ([fe80::42ec:1d58:8ba8:800c%3]) with mapi id 15.20.8901.024; Mon, 7 Jul 2025
- 13:12:01 +0000
-From: John Garry <john.g.garry@oracle.com>
-To: agk@redhat.com, snitzer@kernel.org, mpatocka@redhat.com, song@kernel.org,
-        yukuai3@huawei.com, hch@lst.de, nilay@linux.ibm.com, axboe@kernel.dk,
-        cem@kernel.org
-Cc: dm-devel@lists.linux.dev, linux-kernel@vger.kernel.org,
-        linux-raid@vger.kernel.org, linux-block@vger.kernel.org,
-        ojaswin@linux.ibm.com, martin.petersen@oracle.com,
-        akpm@linux-foundation.org, linux-xfs@vger.kernel.org,
-        djwong@kernel.org, John Garry <john.g.garry@oracle.com>
-Subject: [PATCH v4 6/6] block: use chunk_sectors when evaluating stacked atomic write limits
-Date: Mon,  7 Jul 2025 13:11:35 +0000
-Message-ID: <20250707131135.1572830-7-john.g.garry@oracle.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20250707131135.1572830-1-john.g.garry@oracle.com>
-References: <20250707131135.1572830-1-john.g.garry@oracle.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: PH0PR07CA0113.namprd07.prod.outlook.com
- (2603:10b6:510:4::28) To MN2PR10MB4320.namprd10.prod.outlook.com
- (2603:10b6:208:1d5::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E00021E4AB
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 13:15:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751894128; cv=none; b=hSePHR6lNmRyGa8vzTy+J7sSNmx4St0XpLVHs+kwRxvM3vFbTjk6VdepDd3ht630nwMsyjm4EidbfsEpimB1hSNGMvOCA2YMiJydz0kffWIj3THy/LnKkZHiLkMHpBJC4+Vn6j470DqQV+YmnLgy3ZwnTzc3AnQG0oEnUW3qPi8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751894128; c=relaxed/simple;
+	bh=NC7EQG32JWQ2+/5mFP+KCEjaXl9Nw34EJ104XDI3v1s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=s/VF4Eh3+SsTVOv2e0mHG5C+9P4HXd5fwfSEIPZy5U3LQv5jLmPaC8JwifK3HX87muDMWHnvk2DAWC3S5ORL5Cy4uHcFmF+Ksbq+0FL/uT5CV09HQOo5cVX8VGWsAsSix78njP+EdntL/gjv1hjESaGs+MxbBINiIY1DIguhPb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=gk7LV8Oz; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=SufhylUm; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=gk7LV8Oz; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=SufhylUm; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id EB7C51F390;
+	Mon,  7 Jul 2025 13:15:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1751894124; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=C1Dhfr+8pCD1IYHBaTcTmQM8ZHAUNKPJlBoJluMTmOM=;
+	b=gk7LV8OzXH0xQwoYIU01XxQQwayccpL/ryS42+1w++X1XaLujOmtL9/NgK7XqCQYJtI/PQ
+	yoMGOxcvrBUu+STibWUO1e+savkgMYHIoEzzlrIXUo+Gx7ehY66fUK2+pqyWizGNm/eooU
+	bpENS39t5dgrJDVUehMxbgXYh72Q7eA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1751894124;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=C1Dhfr+8pCD1IYHBaTcTmQM8ZHAUNKPJlBoJluMTmOM=;
+	b=SufhylUm15tiX0SS4fZ5lnTwN4UyYrOtjrqQJQtsTsiB1111iwPhgck9Q4FK5TGasuC9ZI
+	JxI0fs76hdhz+ECg==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=gk7LV8Oz;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=SufhylUm
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1751894124; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=C1Dhfr+8pCD1IYHBaTcTmQM8ZHAUNKPJlBoJluMTmOM=;
+	b=gk7LV8OzXH0xQwoYIU01XxQQwayccpL/ryS42+1w++X1XaLujOmtL9/NgK7XqCQYJtI/PQ
+	yoMGOxcvrBUu+STibWUO1e+savkgMYHIoEzzlrIXUo+Gx7ehY66fUK2+pqyWizGNm/eooU
+	bpENS39t5dgrJDVUehMxbgXYh72Q7eA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1751894124;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=C1Dhfr+8pCD1IYHBaTcTmQM8ZHAUNKPJlBoJluMTmOM=;
+	b=SufhylUm15tiX0SS4fZ5lnTwN4UyYrOtjrqQJQtsTsiB1111iwPhgck9Q4FK5TGasuC9ZI
+	JxI0fs76hdhz+ECg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 737EF13757;
+	Mon,  7 Jul 2025 13:15:23 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id nrjKGmvIa2hgFgAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Mon, 07 Jul 2025 13:15:23 +0000
+From: Thomas Zimmermann <tzimmermann@suse.de>
+To: christian.koenig@amd.com,
+	asrivats@redhat.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	jean-christophe@guillain.net,
+	superm1@kernel.org,
+	satadru@gmail.com,
+	bp@alien8.de
+Cc: dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Bert Karwatzki <spasswolf@web.de>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	linux-media@vger.kernel.org,
+	linaro-mm-sig@lists.linaro.org,
+	stable@vger.kernel.org
+Subject: [PATCH v3] drm/framebuffer: Acquire internal references on GEM handles
+Date: Mon,  7 Jul 2025 15:11:55 +0200
+Message-ID: <20250707131224.249496-1-tzimmermann@suse.de>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN2PR10MB4320:EE_|LV8PR10MB7776:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2fbd8bd5-beeb-4ce2-3592-08ddbd57dc52
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?VZT586c+kIoXcEdyabvJguRla0jrwuZtmv2+GAwCxk7NCRHA2/QwntRMKGE1?=
- =?us-ascii?Q?bTDxc4TeL/+qyWWC3AvTYhutrHjhJl9i8RdHvQKmmbVuxxPViJ9JMUqP/3YU?=
- =?us-ascii?Q?qe6IfhV61vyfBH8mvUnmZgPZ5WM5nrizfGzxtt9g+ihGtHw2BtZL5UIrbIMJ?=
- =?us-ascii?Q?Jo+snpw2LE/pAAY8ADFiv/kU8j3iyaBzuB5GcNrxzExsze7ifYnFZUUUJAto?=
- =?us-ascii?Q?ieNM/K5Qk5QG+Pxd2+Nx8KriS75tCOLvB3j1JJVUotcLR0uWdUSlx2iLYrri?=
- =?us-ascii?Q?v5/vc3TdVw6HPS3BWusqIuT7ZkCZzTfTyhbEKYNsL5SJidjF30S0yQnETKzb?=
- =?us-ascii?Q?Kd2vY4jCDE529NIh5PAbeeXEomO3w4GQ93jGksxZJDYlDu48LEcNXB5WHK3d?=
- =?us-ascii?Q?dqrNRC6qCaJjcExKJQI15jeSSG9NM/z43fpTWTgFhtcQJl0XxorXUfiQKl4b?=
- =?us-ascii?Q?s8XYojwZHBQAZr83IiifQmY3ukdaGh079Y7FTh34SK6jaS7/CbXRVkOoG/Cv?=
- =?us-ascii?Q?5NvqGqib46latDe6D8X2Tuz745WNThum0tV9ALV3oBGPVomV0PI4xwUaA9Dt?=
- =?us-ascii?Q?/jwD9fbg0s+6UtxYFNggcNMFGGnNQJOVcd7lfcvaSJB9iSCuTAEBbHXLuyK4?=
- =?us-ascii?Q?aLrjmMAEYSYFIpSbHsMivFZpRbst+XU2rY7Tfp2dTmSiUxmpJNQDInuI8sAK?=
- =?us-ascii?Q?ymjsc9yLzfU4MpDYa19Kucl/Fz4P4fzthOIeQNecXknrq6LLo9xg0E2l/Q/U?=
- =?us-ascii?Q?bmewokjTvWHMAae2Q6o3rTwtKJhW0JXnLIMepq+6MgnEf6mi/QQJYnkkkCh6?=
- =?us-ascii?Q?ctmYNhS1obo5rlSgViNUwxXxhkW8/v77zlRxIR9yoxFWRdXO1CseoNn5Q/mX?=
- =?us-ascii?Q?vS55e6Fc7eykHEKAWMYPt7YvIbHTWbaD6FyLZtgZ/uKwcfCdBbnZmmotbE5S?=
- =?us-ascii?Q?e8UxcIQ+hxG4Zny0TJzQtM46XNGLgIVQPEUDcUKWoa0qE4DfPQAYgkcC5Ati?=
- =?us-ascii?Q?zJDlQvd8pFwHyE+EL2/EbOInXBzTnzzRs/pv9UrfWmCLg6Zcst6gQXbq34Ci?=
- =?us-ascii?Q?YpEiXwWOqyAe0XC/vMJSezhw/v7ku0rEmyA4ZYV4NJqU43Jz7sgiARrrHpoh?=
- =?us-ascii?Q?5/YokRtzNuicw3a17vNUx2kJzCNbN2YA50AiMtrxjp0O7sAkasrsgHWym2ne?=
- =?us-ascii?Q?mlbsevTVn6X+bMFjBIC9Jj18vmGmOgGeqb4RmTHvIGQgA5PB68UAbi1kCM08?=
- =?us-ascii?Q?B2dE7ceMZ0qs3xWy/4qnWRIojmeFaZqYkWzy0TezncypPsgCiv73XpYReRzp?=
- =?us-ascii?Q?VGJ58b1M9jirig0HYRSDHmIjhppZRi7LgClsmp4K/NR1xK9yEMs+3pef/wMR?=
- =?us-ascii?Q?YI7+zUIWTeKZi0xHJyRjULSLIX+2?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR10MB4320.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?6fNtpnvoAHALETTM82eWPS5l9Vvx151q4khX5Ugx5XcTbn1rSUjwK4OEcnNK?=
- =?us-ascii?Q?UFUQdyAU6zpchEyRnZMaB3smiPdLG+aEJauBspsHxRCWH/4+5AZ4xf7wGSb6?=
- =?us-ascii?Q?ULEkMojww83bnbmu2HLuhsNxjTW9GCnCApC9fbdXgnJo1zUBQ5Db4y3CjNBD?=
- =?us-ascii?Q?INEUQCXVKbBHsltYewnafAgUidSqkQeBt1cWp6HuJ48OVZ9VGM+WKy8y5kXk?=
- =?us-ascii?Q?JV24hXZJlbqLU8mvOQnXfFTFuTkH8KkuAbm0DduBt841NyO7QOfC9uS9z3CQ?=
- =?us-ascii?Q?B6JFseHOQ3IaQXfk/WzKSyvkEgrd7LHeScWNXJNF0B0pZIscqdv6HGMiVbdU?=
- =?us-ascii?Q?SqbqI40Qr/Nv3OW8DxExDQlPmbeHpr4TCx8ZLN64hzwomybH64NhsXqtGGHt?=
- =?us-ascii?Q?P2FxoJY+ZJ6KThPgmbpqJSyE4TlASd5xGa5xgxZyRyI95PkdBYOOnMlQlzn0?=
- =?us-ascii?Q?XvbqbUrfmBF+KNjKKRF+3k7XcqyjenYLgC/mzjM730xRzA+DvJ1vV8uEnnM5?=
- =?us-ascii?Q?K+HROu4zZ/Bp7Y3MxCzk/IZFmPcZN6fpBJHaLUgYVbmvY1gDGexSiTiXrUnq?=
- =?us-ascii?Q?ZwlSKvRr+IuQsHAVnU6dRPPRKUlSRUcvIHAPCjQzN2HfHJOT6GbTgB1J9L8n?=
- =?us-ascii?Q?2z0r6DL5deS4sc3edG+yw92oJhWf+EOzwVJg1IMyrXj4XK78Br9SxQTVzJ30?=
- =?us-ascii?Q?yLfBq3QdjwvYkOKkOVE4lIm+YOHGBWqhtiHVaCBKWRDLYTaGbc0ajd7XQZ/g?=
- =?us-ascii?Q?97VrB50Hji/j8yj5rt1M/tX7OJtdL15tUXCRSZqbTNgur9ejPq5rW0tJUyiT?=
- =?us-ascii?Q?fksoXzq6KXsEUpMOlRIt9TcPs5kKTvfzJtZmGRCk+SzIPiwkBZESS10V5GZn?=
- =?us-ascii?Q?tW/ZDAT6GaLUuRLfqWft/UGU+r3Vkg0PjZfPAmQmXeOmfZEH8paq2WitCc5y?=
- =?us-ascii?Q?pfBtACM31N6dKt0y5L5oANoFm7rmhFkzxKs10EsIqVBguepSkZ9mckJEHX/u?=
- =?us-ascii?Q?G353uGG8cEahPh/U6U3XOc8frPTZDpNjvztS1F4qrGQ82iy4XPCFmmgS6PdH?=
- =?us-ascii?Q?UOWOgixUd3W6+GHip9GiBA5K4oB0RE0VutVDmwLa2F27/WzQh/L/4/j5udIL?=
- =?us-ascii?Q?XoZ+Dm6UtBG3UOsWdRSDcV+Me9KNScQAOfSr8s5M3VzE6+o81pUTCaPSfM8q?=
- =?us-ascii?Q?3FMQ/Hr6gfUGi8pjFx7xx5EEXgkaX8rscpHpPv2wpBqbTO2yFMt8MMeRw36+?=
- =?us-ascii?Q?yOor9wBFdCNp6dFHIma/nzUkAcjBxWHOzdVYIV8Ti6VxpPohn9d60iSHMZEh?=
- =?us-ascii?Q?wCXLslakmxiG9lojLsxwKU1m0N0aolpu440+YVpjodTi6Vi1iOLEVEg+fVm9?=
- =?us-ascii?Q?emc4MCoMOtcHWST634bo/QDCj8PnFAq7qIu2OBZcWSJ/s9/cSL0i+6U4JRjd?=
- =?us-ascii?Q?BX+SfCDkikVj9fGs1Lhuz0xVekdgKKUx4ZjZIkDhajT21zf2soyKPbGB5T/2?=
- =?us-ascii?Q?4ODCVeV7UyVJ1uzvo3A6g5orSpO/QHnaPGNPZp3MHJVBnpZIl9WrmDY2e23D?=
- =?us-ascii?Q?mAfJ4AJfIJ4i5QNyJUnYpJGmGO0C8pPJXY2Xv8bUxg+P1CL54zNAsOw4mzah?=
- =?us-ascii?Q?aw=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	BpBnkq1mY6Tjbs2N02TUcH3nbRflMjZQRKd10lg3UZDM+SrzGRwGahPr45gArcbqnSFNrx6NkcPXkvg+nNya61L+Ut6asU3eGuQe1pXhf7di2J+wU7e657bsEos9vS8LngYAyqarAVr3BP2+a+aa597QboF3dprVtM0wh7q6n1f2tHl0S3s2+0gKIZUseWc1e69v1B+P1REo1w9ipdkpqPNChWi3HroHXv2b0HubuUPeTzlFDhdljGw67SUJcGuejCcfWH4o/BjrvX9H4YlRWxx4Bfe7kPEXzIFlXdK0EMe9WUL2+vPN64b8YVGmd3aWNPkc1n3NkhS1xGuBTV58ObBlnH0jNNilq44RwGETBnVGQyIxj8WakADw30cndGIWERFaCU8/ccTc5cipOZOk5iXfWHnpGLBE7rzmCO+RWlgMfWPTOkay9bouKogFrBLPysMSVAI1pudNUI2cFy2F0e0gXKUim2+Mx7bHpW6y+R6/TNwb1YlRocno/f9X/ysIgmyKThOqAhpPi8PEH4ipu+GvbO0WQDV7aFto30SZm14qVILUJUiv3Rns2jWogLarrVo10LLmLzHR1CjLyoaM9W1aHq7LTfC4I9o5Nm3PhVI=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2fbd8bd5-beeb-4ce2-3592-08ddbd57dc52
-X-MS-Exchange-CrossTenant-AuthSource: MN2PR10MB4320.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jul 2025 13:12:01.4466
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Up7pTfSdVEyqpBMgzBwsmmYzWJAn55iGXHU/0Su3qLio1PeZo6mYwhOL65LX0BwL4rfx2adAanSpmHi4uo327g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR10MB7776
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-07_03,2025-07-07_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 malwarescore=0 adultscore=0
- suspectscore=0 phishscore=0 mlxlogscore=999 bulkscore=0 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
- definitions=main-2507070077
-X-Proofpoint-ORIG-GUID: u1dsshYQPoMPhnxxFhMnFRH9Emb8WXYK
-X-Proofpoint-GUID: u1dsshYQPoMPhnxxFhMnFRH9Emb8WXYK
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA3MDA3NyBTYWx0ZWRfX/5IiEkFLl+aq oxfq5vlAuQFIPZjv95RY2bpCTczAp+CNzp3PR4XgPrSx5vyIGnd2k/4vglTczJrnRri7XjKnw31 eGI4tMx1pePiKvmjTbkPf2UCQuJdsSNZnUUvK5m00N8NcYYXf3tD36YRP+bVEdxwOdQfXUSOyEr
- cDrXXP85oxPjKJeeft0PHGiLY/SXFHGsSA5z0f1M+iQoJbDjysDgNzFqBBTWVuVvxnU2vIQyRXt zVOlnFo7gaaqrOpQdSzgWv3o3royHy5XPutXpheAAGdhSWtu2yjhqHte+LIq6TZMR/9IJmNke5u 134FyA4cSxaJMo23cavfHZstyaAIKuSwK4yz/fY9XKbdeAkbnE+IwwpZfKwnKYRtnekGFvNJmwD
- msclSuWzLbtEMbrtwbOa/9i88YRvkwoppPrTETBv++6oD4BTWv4CLUf8IYch4/MAMnBPFEOq
-X-Authority-Analysis: v=2.4 cv=Rc+QC0tv c=1 sm=1 tr=0 ts=686bc7a4 b=1 cx=c_pps a=zPCbziy225d3KhSqZt3L1A==:117 a=zPCbziy225d3KhSqZt3L1A==:17 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=Wb1JkmetP80A:10 a=GoEa3M9JfhUA:10 a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8 a=yPCof4ZbAAAA:8 a=K8uGWW0dPpHSTKdZE74A:9 cc=ntf awl=host:12057
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spamd-Result: default: False [-3.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_TLS_ALL(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[18];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FREEMAIL_TO(0.00)[amd.com,redhat.com,linux.intel.com,kernel.org,gmail.com,ffwll.ch,guillain.net,alien8.de];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com,web.de];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[lists.freedesktop.org,vger.kernel.org,suse.de,web.de,linaro.org,lists.linaro.org];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,linaro.org:email,suse.de:mid,suse.de:dkim,suse.de:email,intel.com:email];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Rspamd-Queue-Id: EB7C51F390
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -3.51
 
-The atomic write unit max value is limited by any stacked device stripe
-size.
+Acquire GEM handles in drm_framebuffer_init() and release them in
+the corresponding drm_framebuffer_cleanup(). Ties the handle's
+lifetime to the framebuffer. Not all GEM buffer objects have GEM
+handles. If not set, no refcounting takes place. This is the case
+for some fbdev emulation. This is not a problem as these GEM objects
+do not use dma-bufs and drivers will not release them while fbdev
+emulation is running. Framebuffer flags keep a bit per color plane
+of which the framebuffer holds a GEM handle reference.
 
-It is required that the atomic write unit is a power-of-2 factor of the
-stripe size.
+As all drivers use drm_framebuffer_init(), they will now all hold
+dma-buf references as fixed in commit 5307dce878d4 ("drm/gem: Acquire
+references on GEM handles for framebuffers").
 
-Currently we use io_min limit to hold the stripe size, and check for a
-io_min <= SECTOR_SIZE when deciding if we have a striped stacked device.
+In the GEM framebuffer helpers, restore the original ref counting
+on buffer objects. As the helpers for handle refcounting are now
+no longer called from outside the DRM core, unexport the symbols.
 
-Nilay reports that this causes a problem when the physical block size is
-greater than SECTOR_SIZE [0].
+v3:
+- don't mix internal flags with mode flags (Christian)
+v2:
+- track framebuffer handle refs by flag
+- drop gma500 cleanup (Christian)
 
-Furthermore, io_min may be mutated when stacking devices, and this makes
-it a poor candidate to hold the stripe size. Such an example (of when
-io_min may change) would be when the io_min is less than the physical
-block size.
-
-Use chunk_sectors to hold the stripe size, which is more appropriate.
-
-[0] https://lore.kernel.org/linux-block/888f3b1d-7817-4007-b3b3-1a2ea04df771@linux.ibm.com/T/#mecca17129f72811137d3c2f1e477634e77f06781
-
-Signed-off-by: John Garry <john.g.garry@oracle.com>
+Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+Fixes: 5307dce878d4 ("drm/gem: Acquire references on GEM handles for framebuffers")
+Reported-by: Bert Karwatzki <spasswolf@web.de>
+Closes: https://lore.kernel.org/dri-devel/20250703115915.3096-1-spasswolf@web.de/
+Tested-by: Bert Karwatzki <spasswolf@web.de>
+Tested-by: Mario Limonciello <superm1@kernel.org>
+Cc: Thomas Zimmermann <tzimmermann@suse.de>
+Cc: Anusha Srivatsa <asrivats@redhat.com>
+Cc: Christian König <christian.koenig@amd.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Cc: Maxime Ripard <mripard@kernel.org>
+Cc: Sumit Semwal <sumit.semwal@linaro.org>
+Cc: "Christian König" <christian.koenig@amd.com>
+Cc: linux-media@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org
+Cc: linaro-mm-sig@lists.linaro.org
+Cc: <stable@vger.kernel.org>
 ---
- block/blk-settings.c | 58 ++++++++++++++++++++++++++------------------
- 1 file changed, 35 insertions(+), 23 deletions(-)
+ drivers/gpu/drm/drm_framebuffer.c            | 31 ++++++++++++++--
+ drivers/gpu/drm/drm_gem.c                    | 38 ++++++++++++--------
+ drivers/gpu/drm/drm_gem_framebuffer_helper.c | 16 ++++-----
+ drivers/gpu/drm/drm_internal.h               |  2 +-
+ include/drm/drm_framebuffer.h                |  7 ++++
+ 5 files changed, 68 insertions(+), 26 deletions(-)
 
-diff --git a/block/blk-settings.c b/block/blk-settings.c
-index 761c6ccf5af7..3259cfac5d0d 100644
---- a/block/blk-settings.c
-+++ b/block/blk-settings.c
-@@ -597,41 +597,52 @@ static bool blk_stack_atomic_writes_boundary_head(struct queue_limits *t,
- 	return true;
+diff --git a/drivers/gpu/drm/drm_framebuffer.c b/drivers/gpu/drm/drm_framebuffer.c
+index b781601946db..63a70f285cce 100644
+--- a/drivers/gpu/drm/drm_framebuffer.c
++++ b/drivers/gpu/drm/drm_framebuffer.c
+@@ -862,11 +862,23 @@ EXPORT_SYMBOL_FOR_TESTS_ONLY(drm_framebuffer_free);
+ int drm_framebuffer_init(struct drm_device *dev, struct drm_framebuffer *fb,
+ 			 const struct drm_framebuffer_funcs *funcs)
+ {
++	unsigned int i;
+ 	int ret;
++	bool exists;
+ 
+ 	if (WARN_ON_ONCE(fb->dev != dev || !fb->format))
+ 		return -EINVAL;
+ 
++	for (i = 0; i < fb->format->num_planes; i++) {
++		if (drm_WARN_ON_ONCE(dev, fb->internal_flags & DRM_FRAMEBUFFER_HAS_HANDLE_REF(i)))
++			fb->internal_flags &= ~DRM_FRAMEBUFFER_HAS_HANDLE_REF(i);
++		if (fb->obj[i]) {
++			exists = drm_gem_object_handle_get_if_exists_unlocked(fb->obj[i]);
++			if (exists)
++				fb->internal_flags |= DRM_FRAMEBUFFER_HAS_HANDLE_REF(i);
++		}
++	}
++
+ 	INIT_LIST_HEAD(&fb->filp_head);
+ 
+ 	fb->funcs = funcs;
+@@ -875,7 +887,7 @@ int drm_framebuffer_init(struct drm_device *dev, struct drm_framebuffer *fb,
+ 	ret = __drm_mode_object_add(dev, &fb->base, DRM_MODE_OBJECT_FB,
+ 				    false, drm_framebuffer_free);
+ 	if (ret)
+-		goto out;
++		goto err;
+ 
+ 	mutex_lock(&dev->mode_config.fb_lock);
+ 	dev->mode_config.num_fb++;
+@@ -883,7 +895,16 @@ int drm_framebuffer_init(struct drm_device *dev, struct drm_framebuffer *fb,
+ 	mutex_unlock(&dev->mode_config.fb_lock);
+ 
+ 	drm_mode_object_register(dev, &fb->base);
+-out:
++
++	return 0;
++
++err:
++	for (i = 0; i < fb->format->num_planes; i++) {
++		if (fb->internal_flags & DRM_FRAMEBUFFER_HAS_HANDLE_REF(i)) {
++			drm_gem_object_handle_put_unlocked(fb->obj[i]);
++			fb->internal_flags &= ~DRM_FRAMEBUFFER_HAS_HANDLE_REF(i);
++		}
++	}
+ 	return ret;
+ }
+ EXPORT_SYMBOL(drm_framebuffer_init);
+@@ -960,6 +981,12 @@ EXPORT_SYMBOL(drm_framebuffer_unregister_private);
+ void drm_framebuffer_cleanup(struct drm_framebuffer *fb)
+ {
+ 	struct drm_device *dev = fb->dev;
++	unsigned int i;
++
++	for (i = 0; i < fb->format->num_planes; i++) {
++		if (fb->internal_flags & DRM_FRAMEBUFFER_HAS_HANDLE_REF(i))
++			drm_gem_object_handle_put_unlocked(fb->obj[i]);
++	}
+ 
+ 	mutex_lock(&dev->mode_config.fb_lock);
+ 	list_del(&fb->head);
+diff --git a/drivers/gpu/drm/drm_gem.c b/drivers/gpu/drm/drm_gem.c
+index bc505d938b3e..41cdab6088ae 100644
+--- a/drivers/gpu/drm/drm_gem.c
++++ b/drivers/gpu/drm/drm_gem.c
+@@ -224,23 +224,34 @@ static void drm_gem_object_handle_get(struct drm_gem_object *obj)
  }
  
--
--/* Check stacking of first bottom device */
--static bool blk_stack_atomic_writes_head(struct queue_limits *t,
--				struct queue_limits *b)
-+static void blk_stack_atomic_writes_chunk_sectors(struct queue_limits *t)
+ /**
+- * drm_gem_object_handle_get_unlocked - acquire reference on user-space handles
++ * drm_gem_object_handle_get_if_exists_unlocked - acquire reference on user-space handle, if any
+  * @obj: GEM object
+  *
+- * Acquires a reference on the GEM buffer object's handle. Required
+- * to keep the GEM object alive. Call drm_gem_object_handle_put_unlocked()
+- * to release the reference.
++ * Acquires a reference on the GEM buffer object's handle. Required to keep
++ * the GEM object alive. Call drm_gem_object_handle_put_if_exists_unlocked()
++ * to release the reference. Does nothing if the buffer object has no handle.
++ *
++ * Returns:
++ * True if a handle exists, or false otherwise
+  */
+-void drm_gem_object_handle_get_unlocked(struct drm_gem_object *obj)
++bool drm_gem_object_handle_get_if_exists_unlocked(struct drm_gem_object *obj)
  {
--	if (b->atomic_write_hw_boundary &&
--	    !blk_stack_atomic_writes_boundary_head(t, b))
--		return false;
-+	unsigned int chunk_sectors = t->chunk_sectors, chunk_bytes;
+ 	struct drm_device *dev = obj->dev;
  
--	if (t->io_min <= SECTOR_SIZE) {
--		/* No chunk sectors, so use bottom device values directly */
--		t->atomic_write_hw_unit_max = b->atomic_write_hw_unit_max;
--		t->atomic_write_hw_unit_min = b->atomic_write_hw_unit_min;
--		t->atomic_write_hw_max = b->atomic_write_hw_max;
--		return true;
--	}
-+	if (!chunk_sectors)
-+		return;
-+
+ 	guard(mutex)(&dev->object_name_lock);
+ 
+-	drm_WARN_ON(dev, !obj->handle_count); /* first ref taken in create-tail helper */
 +	/*
-+	 * If chunk sectors is so large that its value in bytes overflows
-+	 * UINT_MAX, then just shift it down so it definitely will fit.
-+	 * We don't support atomic writes of such a large size anyway.
++	 * First ref taken during GEM object creation, if any. Some
++	 * drivers set up internal framebuffers with GEM objects that
++	 * do not have a GEM handle. Hence, this counter can be zero.
 +	 */
-+	if ((unsigned long)chunk_sectors << SECTOR_SHIFT > UINT_MAX)
-+		chunk_bytes = chunk_sectors;
-+	else
-+		chunk_bytes = chunk_sectors << SECTOR_SHIFT;
- 
- 	/*
- 	 * Find values for limits which work for chunk size.
- 	 * b->atomic_write_hw_unit_{min, max} may not be aligned with chunk
--	 * size (t->io_min), as chunk size is not restricted to a power-of-2.
-+	 * size, as the chunk size is not restricted to a power-of-2.
- 	 * So we need to find highest power-of-2 which works for the chunk
- 	 * size.
--	 * As an example scenario, we could have b->unit_max = 16K and
--	 * t->io_min = 24K. For this case, reduce t->unit_max to a value
--	 * aligned with both limits, i.e. 8K in this example.
-+	 * As an example scenario, we could have t->unit_max = 16K and
-+	 * t->chunk_sectors = 24KB. For this case, reduce t->unit_max to a
-+	 * value aligned with both limits, i.e. 8K in this example.
- 	 */
--	t->atomic_write_hw_unit_max = b->atomic_write_hw_unit_max;
--	while (t->io_min % t->atomic_write_hw_unit_max)
--		t->atomic_write_hw_unit_max /= 2;
-+	t->atomic_write_hw_unit_max = min(t->atomic_write_hw_unit_max,
-+					max_pow_of_two_factor(chunk_bytes));
- 
--	t->atomic_write_hw_unit_min = min(b->atomic_write_hw_unit_min,
-+	t->atomic_write_hw_unit_min = min(t->atomic_write_hw_unit_min,
- 					  t->atomic_write_hw_unit_max);
--	t->atomic_write_hw_max = min(b->atomic_write_hw_max, t->io_min);
-+	t->atomic_write_hw_max = min(t->atomic_write_hw_max, chunk_bytes);
-+}
- 
-+/* Check stacking of first bottom device */
-+static bool blk_stack_atomic_writes_head(struct queue_limits *t,
-+				struct queue_limits *b)
-+{
-+	if (b->atomic_write_hw_boundary &&
-+	    !blk_stack_atomic_writes_boundary_head(t, b))
++	if (!obj->handle_count)
 +		return false;
 +
-+	t->atomic_write_hw_unit_max = b->atomic_write_hw_unit_max;
-+	t->atomic_write_hw_unit_min = b->atomic_write_hw_unit_min;
-+	t->atomic_write_hw_max = b->atomic_write_hw_max;
- 	return true;
+ 	drm_gem_object_handle_get(obj);
++
++	return true;
+ }
+-EXPORT_SYMBOL(drm_gem_object_handle_get_unlocked);
+ 
+ /**
+  * drm_gem_object_handle_free - release resources bound to userspace handles
+@@ -273,7 +284,7 @@ static void drm_gem_object_exported_dma_buf_free(struct drm_gem_object *obj)
  }
  
-@@ -659,6 +670,7 @@ static void blk_stack_atomic_writes_limits(struct queue_limits *t,
+ /**
+- * drm_gem_object_handle_put_unlocked - releases reference on user-space handles
++ * drm_gem_object_handle_put_unlocked - releases reference on user-space handle
+  * @obj: GEM object
+  *
+  * Releases a reference on the GEM buffer object's handle. Possibly releases
+@@ -284,14 +295,14 @@ void drm_gem_object_handle_put_unlocked(struct drm_gem_object *obj)
+ 	struct drm_device *dev = obj->dev;
+ 	bool final = false;
  
- 	if (!blk_stack_atomic_writes_head(t, b))
- 		goto unsupported;
-+	blk_stack_atomic_writes_chunk_sectors(t);
- 	return;
+-	if (WARN_ON(READ_ONCE(obj->handle_count) == 0))
++	if (drm_WARN_ON(dev, READ_ONCE(obj->handle_count) == 0))
+ 		return;
  
- unsupported:
+ 	/*
+-	* Must bump handle count first as this may be the last
+-	* ref, in which case the object would disappear before we
+-	* checked for a name
+-	*/
++	 * Must bump handle count first as this may be the last
++	 * ref, in which case the object would disappear before
++	 * we checked for a name.
++	 */
+ 
+ 	mutex_lock(&dev->object_name_lock);
+ 	if (--obj->handle_count == 0) {
+@@ -304,7 +315,6 @@ void drm_gem_object_handle_put_unlocked(struct drm_gem_object *obj)
+ 	if (final)
+ 		drm_gem_object_put(obj);
+ }
+-EXPORT_SYMBOL(drm_gem_object_handle_put_unlocked);
+ 
+ /*
+  * Called at device or object close to release the file's
+diff --git a/drivers/gpu/drm/drm_gem_framebuffer_helper.c b/drivers/gpu/drm/drm_gem_framebuffer_helper.c
+index c60d0044d036..618ce725cd75 100644
+--- a/drivers/gpu/drm/drm_gem_framebuffer_helper.c
++++ b/drivers/gpu/drm/drm_gem_framebuffer_helper.c
+@@ -100,7 +100,7 @@ void drm_gem_fb_destroy(struct drm_framebuffer *fb)
+ 	unsigned int i;
+ 
+ 	for (i = 0; i < fb->format->num_planes; i++)
+-		drm_gem_object_handle_put_unlocked(fb->obj[i]);
++		drm_gem_object_put(fb->obj[i]);
+ 
+ 	drm_framebuffer_cleanup(fb);
+ 	kfree(fb);
+@@ -183,10 +183,8 @@ int drm_gem_fb_init_with_funcs(struct drm_device *dev,
+ 		if (!objs[i]) {
+ 			drm_dbg_kms(dev, "Failed to lookup GEM object\n");
+ 			ret = -ENOENT;
+-			goto err_gem_object_handle_put_unlocked;
++			goto err_gem_object_put;
+ 		}
+-		drm_gem_object_handle_get_unlocked(objs[i]);
+-		drm_gem_object_put(objs[i]);
+ 
+ 		min_size = (height - 1) * mode_cmd->pitches[i]
+ 			 + drm_format_info_min_pitch(info, i, width)
+@@ -196,22 +194,22 @@ int drm_gem_fb_init_with_funcs(struct drm_device *dev,
+ 			drm_dbg_kms(dev,
+ 				    "GEM object size (%zu) smaller than minimum size (%u) for plane %d\n",
+ 				    objs[i]->size, min_size, i);
+-			drm_gem_object_handle_put_unlocked(objs[i]);
++			drm_gem_object_put(objs[i]);
+ 			ret = -EINVAL;
+-			goto err_gem_object_handle_put_unlocked;
++			goto err_gem_object_put;
+ 		}
+ 	}
+ 
+ 	ret = drm_gem_fb_init(dev, fb, mode_cmd, objs, i, funcs);
+ 	if (ret)
+-		goto err_gem_object_handle_put_unlocked;
++		goto err_gem_object_put;
+ 
+ 	return 0;
+ 
+-err_gem_object_handle_put_unlocked:
++err_gem_object_put:
+ 	while (i > 0) {
+ 		--i;
+-		drm_gem_object_handle_put_unlocked(objs[i]);
++		drm_gem_object_put(objs[i]);
+ 	}
+ 	return ret;
+ }
+diff --git a/drivers/gpu/drm/drm_internal.h b/drivers/gpu/drm/drm_internal.h
+index f921cc73f8b8..e79c3c623c9a 100644
+--- a/drivers/gpu/drm/drm_internal.h
++++ b/drivers/gpu/drm/drm_internal.h
+@@ -161,7 +161,7 @@ void drm_sysfs_lease_event(struct drm_device *dev);
+ 
+ /* drm_gem.c */
+ int drm_gem_init(struct drm_device *dev);
+-void drm_gem_object_handle_get_unlocked(struct drm_gem_object *obj);
++bool drm_gem_object_handle_get_if_exists_unlocked(struct drm_gem_object *obj);
+ void drm_gem_object_handle_put_unlocked(struct drm_gem_object *obj);
+ int drm_gem_handle_create_tail(struct drm_file *file_priv,
+ 			       struct drm_gem_object *obj,
+diff --git a/include/drm/drm_framebuffer.h b/include/drm/drm_framebuffer.h
+index 668077009fce..38b24fc8978d 100644
+--- a/include/drm/drm_framebuffer.h
++++ b/include/drm/drm_framebuffer.h
+@@ -23,6 +23,7 @@
+ #ifndef __DRM_FRAMEBUFFER_H__
+ #define __DRM_FRAMEBUFFER_H__
+ 
++#include <linux/bits.h>
+ #include <linux/ctype.h>
+ #include <linux/list.h>
+ #include <linux/sched.h>
+@@ -100,6 +101,8 @@ struct drm_framebuffer_funcs {
+ 		     unsigned num_clips);
+ };
+ 
++#define DRM_FRAMEBUFFER_HAS_HANDLE_REF(_i)	BIT(0u + (_i))
++
+ /**
+  * struct drm_framebuffer - frame buffer object
+  *
+@@ -188,6 +191,10 @@ struct drm_framebuffer {
+ 	 * DRM_MODE_FB_MODIFIERS.
+ 	 */
+ 	int flags;
++	/**
++	 * @internal_flags: Framebuffer flags like DRM_FRAMEBUFFER_HAS_HANDLE_REF.
++	 */
++	unsigned int internal_flags;
+ 	/**
+ 	 * @filp_head: Placed on &drm_file.fbs, protected by &drm_file.fbs_lock.
+ 	 */
 -- 
-2.43.5
+2.50.0
 
 
