@@ -1,146 +1,138 @@
-Return-Path: <linux-kernel+bounces-720634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6ABC7AFBE8D
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 01:22:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EF8B1AFBE89
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 01:22:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C36C117FB27
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 23:22:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3717517F15B
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 23:22:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09A6A2877FA;
-	Mon,  7 Jul 2025 23:22:50 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 932F31C3C04;
-	Mon,  7 Jul 2025 23:22:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81DE42874F4;
+	Mon,  7 Jul 2025 23:21:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mDaZu2l6"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81D59259CBD
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 23:21:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751930569; cv=none; b=LBnBPL0hhkGeMZR5Lv9sBCcj+vQN91BWSns1Bx5SGQfQwWik7WD7wnzkM3a7OpuifzcKamFB9vV/eBQNIIiGWcIOVtg2Vh5hsrJBexUtQ83a87bou4b6bN8DZg+YYr8f14jcGgD8KhqpBoddNZX44DC6Zwo5nCepiENGC69fLJw=
+	t=1751930516; cv=none; b=uz5Jfub9JNVVXV8cDJ0DBMcrN1r+KTOfNi2PVaf8KF7B8HEYBXbFli2JE3cIOyrQEpjZUY664owTY6uQ4q1Yh3sXQ3dOkBZaPq1Ta4AF2mxVDxYYJmhHe92VQTWZliEXpzSp38aD4cQh7L4V+msoZkTUHgVXQW3iKQ+qCDFtHnU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751930569; c=relaxed/simple;
-	bh=TVd+BThgguhDuctJHZ7us+KGSDEn3V3ESQwr4IIBBAo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sDRYmv3QEbDjCh1ffxabUeZNNN6p0OE9BWD4tcG0Fd9wSk51gxE71KfnxhWm0/eE1EHvFXwO5uhMdNYEm3pxgFKr8UaBA8cSPiCnEMsxcCoKPZUDPQgDaoHD0hB5PGeTZn1rW+Evdcb8ZDN/BlgfzA/bJvlaLBSdi+N9dEAowZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 67E621595;
-	Mon,  7 Jul 2025 16:22:34 -0700 (PDT)
-Received: from minigeek.lan (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6E56F3F66E;
-	Mon,  7 Jul 2025 16:22:44 -0700 (PDT)
-Date: Tue, 8 Jul 2025 00:20:58 +0100
-From: Andre Przywara <andre.przywara@arm.com>
-To: Lukas Schmid <lukas.schmid@netcube.li>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Jernej
- Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti
- <alex@ghiti.fr>, Maxime Ripard <mripard@kernel.org>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
- linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v2 2/5] riscv: dts: allwinner: d1s-t113: Add pinctrl's
- required by NetCube Systems Nagami SoM
-Message-ID: <20250708002032.71167d46@minigeek.lan>
-In-Reply-To: <20250706183601.157523-3-lukas.schmid@netcube.li>
-References: <20250706183601.157523-1-lukas.schmid@netcube.li>
-	<20250706183601.157523-3-lukas.schmid@netcube.li>
-Organization: Arm Ltd.
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.31; x86_64-slackware-linux-gnu)
+	s=arc-20240116; t=1751930516; c=relaxed/simple;
+	bh=pqF96f4IuUcJ+Kaedcxh3yV4BwEHjP0qBZxEyBdKMRw=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=IPQX8LgDc0uf+gz1Ko+JWe1Ec1rhyAo6m/DI8LcHOQGyhK6JJ8YTQgKT0KtB4M/o44D1fImjepSMCeCbBQislZ8S5Gdnct2nQHxGdyY02pqg5n18geTI3F+bUvdkiGZSe2YMDJeMH07x8YyWhzP8jGxU860HYRlpYagLYm01J/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mDaZu2l6; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-311ae2b6647so3168883a91.0
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 16:21:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1751930515; x=1752535315; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Hj1vACpIMNtLTMWL6hg/ogIsM5e3V5q++OQzP3RM6XQ=;
+        b=mDaZu2l6C8H0S7GMdp8tCwLIUAGA03iTpXDWhclbHfVs4XOM4p6r6I8UEA1YrQ7mMB
+         h3WRgWV5L1auR/Sa9z6irL1ZYUoBanrCTAGW9XpHwzN0MZQQWJLIWGSiLpbeHmgP2iG8
+         1Ib+HEqrDAcjrXQHoLnA6Z6G7Ry9Vxv7Mw3Blr8kTbt6KMV4AQvc8vQg2YRlZ4qAyN58
+         GDDEwNTShHThJdLrtSNHhKgeJfa4jLUQ4XKuS51UiIZmcjjzm+tZSTG5ZLLiHs7OGxqC
+         Z0QkhtDjDL9uKiJFE+A4YwNObinhStWw3ML59Y6jyNCtJDhclDMJaMsNAySV+vuCUNoI
+         jXDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751930515; x=1752535315;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Hj1vACpIMNtLTMWL6hg/ogIsM5e3V5q++OQzP3RM6XQ=;
+        b=KLuO/Uj7dFZyS8Rb7KDKnX3KL1qqrOxaoI/NAayolnasb9l+77hsU3W7kltTiwOTe2
+         QjPBlzLVKJ27OwtMW+5XnatRak2x9ggT8RWE6GXVmYFxb+VJrMS73IVDdsSkrmdY7iaC
+         GY3VC13B/qH4RG8uxnI0pwOYHm/2owLs2d0e9xfe9Ac/7DvtDrT4F7dH+p+9pDR0IbA3
+         Xs/yrenfTHoZE7o2Pjh4dAEaw+APRWWFdn7aPmffRd6fWwhRtd790fNwMao9ni9BlqQH
+         5jrGAWSzjyTXR3Zb7I9kVZvbUwIWMxAH+WDz1cUYx4COqi6PDXuiEy/29by1dCJ3Gkge
+         QZWw==
+X-Forwarded-Encrypted: i=1; AJvYcCXgtDjA4BMX+507ZHqOl0wwwho28kH8T1vMBe71kJT/tekExt6gY9WvfhF1Wxg/lSDGMhk4iJEJ4jpsqGw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxifc+VJLNeKbgpqB6XujrSOAR08b8PSQCs0ur0Otrte4TTP4FQ
+	dPEt7/oAyAAxizGZCX+EaMIEp3N8sKDtkKLHlOS0rT0ZvzqNHuFgB4RG0E9SS0EhY5OJTHwfTYg
+	s/1Prxw==
+X-Google-Smtp-Source: AGHT+IHbncMLWrVgzE6SD0IyPR2uUJ8WUdu6nwmeNiLLHHVAc6yCAhYcUqHODi7AZvQKvlplm9LydfIo/7M=
+X-Received: from pjbsv15.prod.google.com ([2002:a17:90b:538f:b0:311:46e:8c26])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3b4f:b0:315:9cae:bd8
+ with SMTP id 98e67ed59e1d1-31c20e58391mr1415731a91.23.1751930514857; Mon, 07
+ Jul 2025 16:21:54 -0700 (PDT)
+Date: Mon, 7 Jul 2025 16:21:53 -0700
+In-Reply-To: <bp7gjrbq2xzgirehv6emtst2kywjgmcee5ktvpiooffhl36stx@bemru6qqrnsf>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20250626145122.2228258-1-naveen@kernel.org> <66bab47847aa378216c39f46e072d1b2039c3e0e.camel@redhat.com>
+ <aF2VCQyeXULVEl7b@google.com> <4ae9c25e0ef8ce3fdd993a9b396183f3953c3de7.camel@redhat.com>
+ <bp7gjrbq2xzgirehv6emtst2kywjgmcee5ktvpiooffhl36stx@bemru6qqrnsf>
+Message-ID: <aGxWkVu5qnWkZxqz@google.com>
+Subject: Re: [EARLY RFC] KVM: SVM: Enable AVIC by default from Zen 4
+From: Sean Christopherson <seanjc@google.com>
+To: Naveen N Rao <naveen@kernel.org>
+Cc: mlevitsk@redhat.com, Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Vasant Hegde <vasant.hegde@amd.com>, 
+	Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+Content-Type: text/plain; charset="us-ascii"
 
-On Sun,  6 Jul 2025 20:35:55 +0200
-Lukas Schmid <lukas.schmid@netcube.li> wrote:
-
-Hi,
-
-> Added the following pinctrl's used by the NetCube Systems Nagami SoM
->   * i2c2_pins
->   * i2c3_pins
->   * i2s1_pins, i2s1_din_pins, i2s1_dout_pins
->   * spi1_pins
+On Fri, Jun 27, 2025, Naveen N Rao wrote:
+> > Back when I implemented this, I just wanted to be a bit safer, a bit more explicit that
+> > this uses an undocumented feature.
+> > 
+> > It doesn't matter much though.
+> > 
+> > > 
+> > > I don't see any reason to do major surgery, just give "avic" auto -1/0/1 behavior:
 > 
-> Signed-off-by: Lukas Schmid <lukas.schmid@netcube.li>
-> ---
->  .../boot/dts/allwinner/sunxi-d1s-t113.dtsi    | 36 +++++++++++++++++++
->  1 file changed, 36 insertions(+)
+> I am wary of breaking existing users/deployments on Zen4/Zen5 enabling 
+> AVIC by specifying avic=on, or avic=true today. That's primarily the 
+> reason I chose not to change 'avic' into an integer. Also, post module 
+> load, sysfs reports the value for 'avic' as a 'Y' or 'N' today. So if 
+> there are scripts relying on that, those will break if we change 'avic' 
+> into an integer.
+
+That's easy enough to handle, e.g. see nx_huge_pages_ops for a very similar case
+where KVM has "auto" behavior (and a "never" case too), but otherwise treats the
+param like a bool.
+
+> For Zen1/Zen2, as I mentioned, it is unlikely that anyone today is 
+> enabling AVIC and expecting it to work since the workaround is only just 
+> hitting upstream. So, I'm hoping requiring force_avic=1 should be ok 
+> with the taint removed.
+
+But if that's the motivation, changing the semantics of force_avic doesn't make
+any sense.  Once the workaround lands, the only reason for force_avic to exist
+is to allow forcing KVM to enable AVIC even when it's not supported.
+
+> Longer term, once we get wider testing with the workaround on Zen1/Zen2, 
+> we can consider relaxing the need for force_avic, at which point AVIC 
+> can be default enabled
+
+I don't see why the default value for "avic" needs to be tied to force_avic.
+If we're not confident that AVIC is 100% functional and a net positive for the
+vast majority of setups/workloads on Zen1/Zen2, then simply leave "avic" off by
+default for those CPUs.  If we ever want to enable AVIC by default across the
+board, we can simply change the default value of "avic".
+
+But to be honest, I don't see any reason to bother trying to enable AVIC by default
+for Zen1/Zen2.  There's a very real risk that doing so would regress existing users
+that have been running setups for ~6 years, and we can't fudge around AVIC being
+hidden on Zen3 (and the IOMMU not supporting it at all), i.e. enabling AVIC by
+default only for Zen4+ provides a cleaner story for end users.
+
+> and force_avic can be limited to scenarios where AVIC support is not
+> advertised.
 > 
-> diff --git a/arch/riscv/boot/dts/allwinner/sunxi-d1s-t113.dtsi b/arch/riscv/boot/dts/allwinner/sunxi-d1s-t113.dtsi
-> index e4175adb0..8dc3deccb 100644
-> --- a/arch/riscv/boot/dts/allwinner/sunxi-d1s-t113.dtsi
-> +++ b/arch/riscv/boot/dts/allwinner/sunxi-d1s-t113.dtsi
-> @@ -78,6 +78,36 @@ dsi_4lane_pins: dsi-4lane-pins {
->  				function = "dsi";
->  			};
->  
-> +			/omit-if-no-ref/
-> +			i2c2_pins: i2c2-pins {
-> +				pins = "PD20", "PD21";
-> +				function = "i2c2";
-> +			};
-> +
-> +			/omit-if-no-ref/
-> +			i2c3_pins: i2c3-pins {
-> +				pins = "PG10", "PG11";
-> +				function = "i2c3";
-> +			};
-> +
-> +			/omit-if-no-ref/
-> +			i2s1_pins: i2s1-pins {
-> +				pins = "PG12", "PG13";
-> +				function = "i2s1";
-> +			};
-> +
-> +			/omit-if-no-ref/
-> +			i2s1_din_pins: i2s1-din-pins {
-> +				pins = "PG14";
-> +				function = "i2s1_din";
-> +			};
-> +
-> +			/omit-if-no-ref/
-> +			i2s1_dout_pins: i2s1-dout-pins {
-> +				pins = "PG15";
-> +				function = "i2s1_dout";
-> +			};
-> +
->  			/omit-if-no-ref/
->  			lcd_rgb666_pins: lcd-rgb666-pins {
->  				pins = "PD0", "PD1", "PD2", "PD3", "PD4", "PD5",
-> @@ -126,6 +156,12 @@ spi0_pins: spi0-pins {
->  				function = "spi0";
->  			};
->  
-> +			/omit-if-no-ref/
-> +			spi1_pins: spi1-pins {
-> +				pins = "PD10", "PD11", "PD12", "PD13", "PD14", "PD15";
-
-Can you please split this up, to have the MISO/MOSI/CLK signals under a
-separate label, so that basic users can reuse this group?
-CS should be a separate group, and I guess HOLD and WP can be in
-another.
-
-The rest looks alright, compared against the manual.
-
-Cheers,
-Andre
-
-> +				function = "spi1";
-> +			};
-> +
->  			/omit-if-no-ref/
->  			uart1_pg6_pins: uart1-pg6-pins {
->  				pins = "PG6", "PG7";
-
+> 
+> Thanks,
+> Naveen
+> 
 
