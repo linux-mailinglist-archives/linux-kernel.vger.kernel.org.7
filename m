@@ -1,204 +1,154 @@
-Return-Path: <linux-kernel+bounces-720041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB770AFB62E
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 16:34:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71663AFB626
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 16:33:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C56C3B4A67
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 14:34:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8642163640
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 14:32:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E4AE2E2640;
-	Mon,  7 Jul 2025 14:34:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B93929AB1B;
+	Mon,  7 Jul 2025 14:32:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KY85rR5t"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B4sKF85p"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAD972E11D6;
-	Mon,  7 Jul 2025 14:34:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26A422701DC;
+	Mon,  7 Jul 2025 14:32:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751898850; cv=none; b=lPgZSTNiJUlE4Fi44Gba6SanA/WcaOnxVsVNZbQ3U/XTHUZNFMZXGB5wsNPSidElC7BlTVdcL77gxpcyU4rxgAsQOTasnw7coouO2UuMC1MtlWhpW6QFUFRsk35TpRC9s2zygGygqLJ7In3KyJrI0Agpwe6PbFtSwJuCMkPK1Dg=
+	t=1751898742; cv=none; b=inF3MUsg0L2MkWVrLCI24uf8/BpHJCxwvBnVsp7aAy8xbaYOWDMoxTh7hL9qg6SHWZVrXvdAWz8ZrNXjOyveMDXiTH9Q4qrSNZiw9Ar3vsRl77iYtkpDEQ0BTgjErHvNNDU0v3VUrK630b12qZxgtMl7sxfCxJtXl8SMqF07wOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751898850; c=relaxed/simple;
-	bh=XqAdyY1Lsj/1Tyt0lFga2IXnnzqd94XvtRHL/gtf9kA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iACjm1xHkVFQ7np4okrec4OaxvVMQzbywdQ88uMo37jz3VQ87/Powg1wbTHI8aWPg3GIg/m0JLsY4TlW1LipCE5rJfM2mXdEXL7q9AVilzzgMcS1184QidKrQCfTlNkQqGoye504nf1P8hfXlO53rwyGdD4CRUda+vmMN0V0RsY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KY85rR5t; arc=none smtp.client-ip=209.85.128.54
+	s=arc-20240116; t=1751898742; c=relaxed/simple;
+	bh=nhc83eAPy8ZVz/rx/WT9VLQ+rUQ71HcQIgBfRRZQAgc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QLegfSwXqk91UiOa2gPcytfpQVP+8SuZ8RD7vwg9DZzaOzexqK5AjbcExydXPFrFmg/TWKjjAQn76Pda/sFkkrAdAyMUn4SCmqm+mPiC8+LWWhE21m3Hj4BkLwgo36+wnpWd9ATsqCDUfc2ZXJol7tBej0O+unCDCkBbSQa39ZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B4sKF85p; arc=none smtp.client-ip=209.85.208.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-453608ed113so35636075e9.0;
-        Mon, 07 Jul 2025 07:34:08 -0700 (PDT)
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-32b5226e6beso29072671fa.2;
+        Mon, 07 Jul 2025 07:32:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751898847; x=1752503647; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5pUnpX1P/g0fthzxnXBY5ainr9edvbgssHZPwN6SPvQ=;
-        b=KY85rR5t28rykeYQv0xixxU8d47YnTNdIICXm8vWL/L1wakCZiZEdpDLI74PZwKGGg
-         gmC5c46VHRmnnS8rvkEtuZMbEJ+WoJ/FEaCGehOIYzyQ55gbEWH4AK1uzR5ZL8lXc3bN
-         gDuGCQQephOOTYk7W5ZK2fQeRTx+oSjY/9zPzenWhjOnF53CN2rhC6pbKylBC3sRv0Vw
-         09CrkNRMzDjHGShiaMA2chWq2PYrhnkiqCiku/IKhlx/AKKa4A6UrXFXz4QmiyYQanyf
-         u6CR5SjX1o4cEwPKspy29pVJDFXSFHMkGNZWRywSEUYU77CiOTOEt3CxoYYrPkvD8rpY
-         C+zQ==
+        d=gmail.com; s=20230601; t=1751898739; x=1752503539; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=u/FMSBqJeKFryaW0a1HucMaUdkq/Nt2BLzJLFvyV1UM=;
+        b=B4sKF85pbVUSOvrxAA3mNPU7HF5kg+y4m9dstDwEupLjre9o146xTOK5rm7+uYMp/o
+         682ddnOLjyec23br9CUQJ0GH/qIoXgX7uIKrhwjll+h3p55WkCQ6gFFPrMvMmJpEyCv+
+         NgS0NNcIkvzUmR625n44NLCGFBaSAEPeuXarKRZ6cFRQ/0JiRQA1jA05nNWKBKQrdh9Z
+         IpOWoMAQ/QYk3YVWmbHL8F7uFDKG7mAwOsYen7QeqMa6PUCmzFRtDU9MfDVvxG7pe230
+         7oYUcNvUbQdu3vGysFhG7u+igaPDIysNi2RrcDW0DuQgbxWaqPG+7F976RyBpDk/og9E
+         rYyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751898847; x=1752503647;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5pUnpX1P/g0fthzxnXBY5ainr9edvbgssHZPwN6SPvQ=;
-        b=lqN+9vHNe+MJXucA+EVWomZUvE84gw5y1uuZUVuFTcAUsmGE9b01fnM3PBOEXBl0bG
-         7dRKMDqr7vYjOObgJ1zymqCmVIm13WAL+jhOpId5E8rU6ublrcmXdCGt3CgYwQSwgcA8
-         y+jbnBbAVDnkARbt69tm2H2S56xYqhcCnSzkEGblcGBHgLBBfyk1lWg2iJLtyRWiXvMc
-         cIzcimb3t/R4YLf5w25en87EU1AlQibvsrUf9Rdw0qxmFg233/qAD10eUF0YFwU5ANCv
-         q5rxM/fJfuyWjQ0Ky1mqEj7SG9Ab36ETiBVHET89k/Wz6EoFeZdZ098c34N/2LyxH0Nb
-         b20w==
-X-Forwarded-Encrypted: i=1; AJvYcCUWP9fTr6Zl7z1pmir4spmElvC7YMaXWA3ZAS7aownoXTzxPiLuIYb8R5ubgytC1Dua3kXahfqC96tsLcj6urA=@vger.kernel.org, AJvYcCVGPYjtdf6Uu/fVEYcbQuQwgKiqX3XO+7elcBPev35h280Z5VXTm+VwQwNzoWWnEiI2NDHac9QVX7oftswb@vger.kernel.org, AJvYcCWRSbLAvhUdf9SW2pvuSkKLOi6okC73879QTKrhus2a7knoiEkPbo8psUq3Aycj5fxV7Z6g8If/GS8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1BFhNDDEOw2HiTGCv+NRnKOS7JRgmkx3TDXD3+Wwk6nuyS6mm
-	5ys5rgLHe66dXlx0FiICfKSawwdkubRHd11k8+YtYuG7ydb2Qj4hfTkl
-X-Gm-Gg: ASbGnctghGDKvvCmJxJXh8kDAai/3G5fm6OjxguUaQUMHLF7W/RG6bNw4N6hEHk3IQm
-	lRpzHvHIrUMRKjpVou61c6VWK7Civx6m0zoDu3Ag639lc4CeHZdJ1balIjNFzFe8dPfJq8g1Mbi
-	m7u8qMEEiEOsw2pSajOrUgg/5EhzClcMpLOy5s6cYBqHgnbtZqTfmXCjskjt1BMcxfzOTkYs2K8
-	v2WV/EKSBUeubSmpNB/eyV99F19ORvtxoPQ5zt3jeHMXFrVIL513nUOgcmIO9q5iktOg/XGWIDx
-	iVBHgSvXNyzF47IKSd4yEtwC3bKTE5bfSjO+YucJL83M8iuBkLvioKZi+SXaO0ejFpe52/KpIv8
-	wwCY=
-X-Google-Smtp-Source: AGHT+IHoDMY8wbul5is1dz7DmZViTlbVxhnNBIfc3rpUO+h3Y9Iw0U8xnv997VFlA99JKUxfNJpPhg==
-X-Received: by 2002:a05:600c:6745:b0:43d:3df:42d8 with SMTP id 5b1f17b1804b1-454b3069f2cmr113934215e9.6.1751898846040;
-        Mon, 07 Jul 2025 07:34:06 -0700 (PDT)
-Received: from [10.38.1.85] ([188.39.32.4])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454a998a47dsm140081935e9.18.2025.07.07.07.34.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Jul 2025 07:34:04 -0700 (PDT)
-Message-ID: <0ae470c0-49c3-4ee9-913c-19e58a505b13@gmail.com>
-Date: Mon, 7 Jul 2025 15:31:49 +0100
+        d=1e100.net; s=20230601; t=1751898739; x=1752503539;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=u/FMSBqJeKFryaW0a1HucMaUdkq/Nt2BLzJLFvyV1UM=;
+        b=u2FSf2oqCvDcIQT+AMgrH0LR8n/jZp1gJWuJj/1zTqghNGuCtp1HKqTdf3NKnONVyJ
+         WLsQDjeqcDXeB6mGgHiHoD28VTUDQ+cbxwwWYiIY6GIJmojo2yI5AMZZ/Nai8+EV1JsR
+         ARljb9z+wL4PvQFTSakTGafkru3BQNnXsHf+TAjqNMWVj8Hm8dnYlmHd2w0h8/TCJZXM
+         tFaYVSETWzwsoTTnABGc70tsYsiGeq2UYqUejh5ZjmwdQGhjEaAc2XxlwhpQJ5waCOk0
+         /cfXgEFTSdmBjfEbI3EEm3XTRQ88ANGY0y9pfFIeK1SpyT1rCjNEGEKorU2to0LxSJCK
+         9Hug==
+X-Forwarded-Encrypted: i=1; AJvYcCWMAVUpln4CvNKw0m+9+8ayRc5hJlASkOpq53Eu8rc/SzIYyyzB5BnwVmhaWm/QgeXcLLWYhr1i7ZcTmI8=@vger.kernel.org, AJvYcCX5XgnLD3VwPkaAW+tFexJOnpVDENPUC1lj0JKmAYfaOc+8Ez6CqXMamgWO0QBMDwtj+FuMmXRSzgHl@vger.kernel.org
+X-Gm-Message-State: AOJu0YytYvkWKOb4Hjn5spGJt9284i6p9qofq9Gath/yXa/tHYgVRspb
+	iRZlWGElW+IXreDWBSRMtPHU+u4RScDyYAF3REXLP7MS50TrRXI87VunYU9pvBhx5YQOMY5fIQP
+	bY2AR5AAK4YDQhnupaxYlbNUF+LnkLi51FPoFlT0=
+X-Gm-Gg: ASbGncvQb/tpyPd0kgn5TyQidKUyHjRKPCWtxIatZtDJPgOoMkMKiTLptJGROoNDFUH
+	X6cFSMVzV2jmE55XydIIzxSFFe9gcv/zyW8vGlNyk6cN32YdmtrA9CjVV9YBK94ImMTCYqCtv3l
+	riO+iEUk/kSHjDQ/gNAkVeeq71tuFXnWgUVKM8Acy1eeDrTwwwo+ZTso7rnQmfYs/0Z/XqRom0O
+	Bwu
+X-Google-Smtp-Source: AGHT+IFULVURJBOVYtWcIZw+X3lh3wL59Axl2kzkDpO3LIcnEioQra3fSYTDbUsjwm8D9OHJl/nvyiF7r3K15zHyCak=
+X-Received: by 2002:a05:651c:221d:b0:32b:4773:7aaf with SMTP id
+ 38308e7fff4ca-32f09328c9emr30825051fa.35.1751898738869; Mon, 07 Jul 2025
+ 07:32:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/4] rust: i2c: add manual I2C device creation
- abstractions
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>,
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Viresh Kumar <viresh.kumar@linaro.org>,
- Asahi Lina <lina+kernel@asahilina.net>,
- Wedson Almeida Filho <wedsonaf@gmail.com>, Alex Hung <alex.hung@amd.com>,
- Tamir Duberstein <tamird@gmail.com>,
- Xiangfei Ding <dingxiangfei2009@gmail.com>, linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org, linux-i2c@vger.kernel.org
-References: <20250704153332.1193214-1-igor.korotin.linux@gmail.com>
- <20250704153912.1197034-1-igor.korotin.linux@gmail.com>
- <aGgxfNh-sgkJls_h@cassiopeiae>
- <954a40a4-2f5a-4ef8-84ea-3d2ba2c85cfe@gmail.com> <aGu3O8QzboCQiKSL@pollux>
-Content-Language: en-US
-From: Igor Korotin <igor.korotin.linux@gmail.com>
-In-Reply-To: <aGu3O8QzboCQiKSL@pollux>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <oxpeGQP7AC5GXfnifSYyeW7X_URDJhOvCxTG09iGmuvIXd330ZdXanoBmbUB3wpOcIORP1CakEzevsjtJKynhw==@protonmail.internalid>
+ <20250617131446.25551-1-pranav.tyagi03@gmail.com> <huml6d5naz4kf6a3kh5g74dyrtivlaqyzajzwwmyvnpsqhuj3d@7zazaxb3225t>
+ <rkCSJQOnZAt9nfcVUrC8gHDWqHhzMThp3xx38GD2BgJZM4iXJfvVgXZwa21-3xikSHHLO-scI4_47aO-O1d5FQ==@protonmail.internalid>
+ <CAH4c4j+dhh9uW=GOoxaaefBTWQtbLeWQs1SqrWwpka9R8mwBTg@mail.gmail.com> <aaywkct2isosqxd37njlua4xxxll2vlvv7huhh34ko3ths7iw4@cdgrtvlp3cwh>
+In-Reply-To: <aaywkct2isosqxd37njlua4xxxll2vlvv7huhh34ko3ths7iw4@cdgrtvlp3cwh>
+From: Pranav Tyagi <pranav.tyagi03@gmail.com>
+Date: Mon, 7 Jul 2025 20:02:06 +0530
+X-Gm-Features: Ac12FXzf6bQbW208adFb3L3sqINPLXWf5JxB8WTi60gS2v2uT9WkHERIFtfHvtI
+Message-ID: <CAH4c4jKisoACHNOQH5Cusduu-_51_PcevxYJT3k_o6MjBWsVJw@mail.gmail.com>
+Subject: Re: [PATCH] xfs: replace strncpy with memcpy in xattr listing
+To: Carlos Maiolino <cem@kernel.org>, "Darrick J. Wong" <djwong@kernel.org>
+Cc: skhan@linuxfoundation.org, linux-xfs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Jul 1, 2025 at 12:04=E2=80=AFAM Carlos Maiolino <cem@kernel.org> wr=
+ote:
+>
+> On Mon, Jun 30, 2025 at 06:18:06PM +0530, Pranav Tyagi wrote:
+> > On Mon, Jun 30, 2025 at 5:49=E2=80=AFPM Carlos Maiolino <cem@kernel.org=
+> wrote:
+> > >
+> > > On Tue, Jun 17, 2025 at 06:44:46PM +0530, Pranav Tyagi wrote:
+> > > > Use memcpy() in place of strncpy() in __xfs_xattr_put_listent().
+> > > > The length is known and a null byte is added manually.
+> > > >
+> > > > No functional change intended.
+> > > >
+> > > > Signed-off-by: Pranav Tyagi <pranav.tyagi03@gmail.com>
+> > > > ---
+> > > >  fs/xfs/xfs_xattr.c | 2 +-
+> > > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > >
+> > > > diff --git a/fs/xfs/xfs_xattr.c b/fs/xfs/xfs_xattr.c
+> > > > index 0f641a9091ec..ac5cecec9aa1 100644
+> > > > --- a/fs/xfs/xfs_xattr.c
+> > > > +++ b/fs/xfs/xfs_xattr.c
+> > > > @@ -243,7 +243,7 @@ __xfs_xattr_put_listent(
+> > > >       offset =3D context->buffer + context->count;
+> > > >       memcpy(offset, prefix, prefix_len);
+> > > >       offset +=3D prefix_len;
+> > > > -     strncpy(offset, (char *)name, namelen);                 /* re=
+al name */
+> > > > +     memcpy(offset, (char *)name, namelen);                  /* re=
+al name */
+> > > >       offset +=3D namelen;
+> > > >       *offset =3D '\0';
+> > >
+> > > What difference does it make?
+> >
+> > I intended this to be a cleanup patch as strncpy()
+> > is deprecated and its use discouraged.
+>
+> Fair enough. This is the kind of information that's worth
+> to add to the patch description on your future patches.
+>
+> No need to re-send this again.
+>
+> Reviewed-by: Carlos Maiolino <cmaiolino@redhat.com>
 
+Thanks Darrick and Carlos for the Reviewed-by tag.
 
-On 7/7/25 13:02, Danilo Krummrich wrote:
-> On Mon, Jul 07, 2025 at 12:20:15PM +0100, Igor Korotin wrote:
->>
->>
->> On 7/4/25 20:54, Danilo Krummrich wrote:
->>> On Fri, Jul 04, 2025 at 04:39:12PM +0100, Igor Korotin wrote:
->>>> -pub struct Device<Ctx: device::DeviceContext = device::Normal>(
->>>> +pub struct Device<Ctx: device::DeviceContext = device::Normal, State: DeviceState = state::Borrowed>(
->>>>      Opaque<bindings::i2c_client>,
->>>>      PhantomData<Ctx>,
->>>> +    PhantomData<State>,
->>>>  );
->>>
->>> I see what you're doing here, but I think you're thinking this way too
->>> complicated.
->>>
->>> I recommend not to reuse the Device type to register a new I2C client device,
->>> it's adding too much complexity without any real value.
->>>
->>> You also don't want the DeviceContext types for a device registration, since the
->>> registration will never have any other DeviceContext than device::Normal (see
->>> also my comment on the sample module).
->>>
->>> DeviceContext types are only useful for &Device (i.e. references) given out for
->>> a specific scope, such as probe(), remove(), etc.
->>>
->>> The only thing you really want to do is to register a new I2C client device, get
->>> a i2c::Registration instance and call i2c_unregister_device() when the
->>> i2c::Registration is dropped.
->>>
->>> This is exactly the same use-case as we have in the auxiliary bus. I highly
->>> recommend looking at what auxiliary::Registration does [1].
->>>
->>> Also note that if you want a reference to the device in the i2c::Registration,
->>> you can also add a i2c::Registration::device() method that returns an
->>> &i2c::Device, which through into() you can obtain an ARef<i2c::Device> from.
->>>
->>> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/rust/kernel/auxiliary.rs?h=v6.16-rc4#n299
->>
->> I took a quick look at the auxiliary Registration abstraction and I see
->> that it is not applicable for I2C subsystem. The issue here is that I2C
->> C code doesn't provide with an API that can registers an I2C client from
->> already existing `struct i2c_client`.
-> 
-> I don't see why the following wouldn't work:
-> 
-> 	struct Registration(NonNull<bindings::i2c_client>);
-> 
-> 	impl Registration {
-> 	   pub fn new(adp: &I2cAdapterRef, info: &I2cBoardInfo) -> Result<Self> {
-> 	      // SAFETY: [...]
-> 	      let cli = unsafe { bindings::i2c_new_client_device(adp.as_raw(), info.as_raw()) };
-> 	
-> 	      // Handle ERR_PTR()
-> 	
-> 	      Self(NonNull::new(cli))
-> 	   }
-> 	}
-> 	
-> 	impl Drop for Registration {
-> 	   fn drop(&mut self) {
-> 	      // SAFETY: [...]
-> 	      unsafe { bindings::i2c_unregister_device(self.as_ptr()) };
-> 	   }
-> 	}
-> 
-> And in you sample driver you can still the exactly the same as you did before:
-> 
-> 	struct SampleDriver {
-> 	   _reg: i2c::Registration,
-> 	}
-> 	
-> 	impl kernel::Module for SampleDriver {
-> 	    fn init(_module: &'static ThisModule) -> Result<Self> {
-> 	        let adapter = i2c::I2cAdapterRef::get(0).ok_or(EINVAL)?;
-> 	
-> 	        let reg = i2c::Registration::new(&adapter, &BOARD_INFO)?;
-> 	
-> 	        Ok(Self { _reg: reg })
-> 	    }
-> 	}
-> 
+I also wanted to ask if this patch has been queued for merging.
 
-Ok, I think I've caught the idea. In general I worried that if one has
-link to an i2c::Device which is a transparent representation of `struct
-i2c_client` he could somehow cast that `i2c::Device` to
-`Registration(NonNull<bindings::i2c_client>)`. After some experiments, I
-found out that this is not possible due to scope of the
-`i2c::Device::as_raw()`. So the simple NonNull implementation is as safe
-as my "super-puper secured" DeviceOwned implementation.
-Thanks
-Igor
+Regards
+Pranav Tyagi
+>
+> >
+> > Regards
+> > Pranav Tyagi
+> > >
+> > >
+> > > >
+> > > > --
+> > > > 2.49.0
+> > > >
 
