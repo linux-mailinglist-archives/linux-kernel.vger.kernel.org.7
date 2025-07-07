@@ -1,74 +1,71 @@
-Return-Path: <linux-kernel+bounces-720235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CC0DAFB8ED
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 18:49:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC4A9AFB90E
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 18:51:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 600D7423BDD
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 16:48:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 641987A250F
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 16:49:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BFB31FC109;
-	Mon,  7 Jul 2025 16:49:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B44E23B617;
+	Mon,  7 Jul 2025 16:49:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="hAytTvgW";
-	dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="9vTdHmBm"
-Received: from mailrelay-egress16.pub.mailoutpod3-cph3.one.com (mailrelay-egress16.pub.mailoutpod3-cph3.one.com [46.30.212.3])
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="txXEzBC7"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5258E21B9FD
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 16:48:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.30.212.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E24F235358;
+	Mon,  7 Jul 2025 16:49:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751906941; cv=none; b=Hi/z+EAIDcpiRkQyVxqzDnn8lVZS4QlQEm3CF8qgrEKz2bxyFrQ0G0UM1+xyy/xkOa3UNHVOkCBz9a9Y6mjxnvTifwtZR2LHWl7fXun9X6AU6qNUF/0cdSmacikP4jlIusL553/UgWlGPTWSnHv4Chbig1KdUrvffCrEugMKXzo=
+	t=1751906992; cv=none; b=r+hkZI8WLGLyYZdebMvXdwFaPj004wGzEPfF02vJP4iyHbINbWqS1FoMewoIJNk2PD3OIcsYNqtNI2cGEfJam3OKZ0qjtCxHL/kkLW4PHCdKml1s6mO7UbRkl93gHYPF6GuM56QXq6Votr7pftRVQCpRjrs09miwBWkFcL+BITU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751906941; c=relaxed/simple;
-	bh=Mr7elblSUqUXGrMtzINa5Wza39p3cXhcVjbqr+OtG54=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ir5oyO5/Zglxp5K3dJCX//4Cmo++JbjufjTPOgxPEKfZUu1gXjBsUpiMqfQPZ0b9/ebJz/l+Dnkjfd4G9WnYmv1/HMSlF/6mz0U8+VJqSogDnyzfqL6osSC3ZMN3HLn9s0VCmdHOEyyXuDOFtOgEb4t8f4p41gpZwsdK0LnQ7DE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se; spf=none smtp.mailfrom=konsulko.se; dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=hAytTvgW; dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=9vTdHmBm; arc=none smtp.client-ip=46.30.212.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=konsulko.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1751906937; x=1752511737;
-	d=konsulko.se; s=rsa1;
-	h=content-transfer-encoding:mime-version:references:in-reply-to:message-id:date:
-	 subject:cc:to:from:from;
-	bh=OLXfbJyhoKxoT4YykcPTKSb3/uR3jlHoqcpTBeW4v6s=;
-	b=hAytTvgWOQ+f8qXBb95id/65h68KdMw9zaVtKyUO4PE/Z8ylrYWwVuGfHjiqbR2t4Eyn5mF2sPd9B
-	 3GBbKzCuGyKhoohLz6ltdFb0vx6ql6Qcxk8jZlvK67paSoFcG5aMyj7rdSdhIVK5WR7VadCRbpPKWs
-	 9VryaLZxdrwmlCLr3L8IdqsRKsO5b22IGzVkRb4rsbTR+yfK4hz3dh5l98kpqay0P7CIssb5vWwvGi
-	 aswksDWNFcN2/4eB/DM3aXD+5vXWst9XXeYgEqlD3AGNzyzhWPh+0z9B1RUHtr+wVOQAANsoA5uYoV
-	 v+ZqE/pPPMUnFT/YzKGtpg21QbSSlvw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1751906937; x=1752511737;
-	d=konsulko.se; s=ed1;
-	h=content-transfer-encoding:mime-version:references:in-reply-to:message-id:date:
-	 subject:cc:to:from:from;
-	bh=OLXfbJyhoKxoT4YykcPTKSb3/uR3jlHoqcpTBeW4v6s=;
-	b=9vTdHmBmlIVZbVo5hc4c4dNwJBc+CTTBJpgQ3K+SwHd5blvdgKl2Gv2ZbgUKZjnDwxG250o3gcPNj
-	 lJl9G/qDQ==
-X-HalOne-ID: 459027f8-5b52-11f0-8ca0-81a63d10fb2d
-Received: from localhost.localdomain (host-90-238-19-233.mobileonline.telia.com [90.238.19.233])
-	by mailrelay5.pub.mailoutpod3-cph3.one.com (Halon) with ESMTPSA
-	id 459027f8-5b52-11f0-8ca0-81a63d10fb2d;
-	Mon, 07 Jul 2025 16:48:57 +0000 (UTC)
-From: Vitaly Wool <vitaly.wool@konsulko.se>
-To: linux-mm@kvack.org
-Cc: akpm@linux-foundation.org,
+	s=arc-20240116; t=1751906992; c=relaxed/simple;
+	bh=c4KSMQg7c1s2ikmZMvn4EPjkLoQe0EitSQX9Kk9KasA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UDq8tEAOzJvFvcp/EsYOLdcVlZudZJ0hsu0RP8Rj0QB9m1oNZdEZY9X23PEDkImO5WneaGQXEg+eZQtzqA6CJNCDbRTIFun3DlmvCtrqVPeBG+lIKSjEJwOjbc/ZXvwnp0RaR1chIEqa12o4xx6+X3MwprnHaqUkFsrXCDp2HDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=txXEzBC7; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
+	Subject:Cc:To:From:Reply-To:Content-Type:In-Reply-To:References;
+	bh=95qtSTC/qWsTSLa9j9zg9DGEk7v1YtKph8l3ru7WuWw=; b=txXEzBC79RXkkWjmf9rB61w86m
+	ebHNPB/2+iYG3yJd4uB84pjPf2+cuyBKBPdQj1+dgULhRtnOxwSvHr5Z/HwNurXhqi45rTBq7QOim
+	C9ftmPi2bPIZrH77L9Bke67wO8cUh5VqCRLb9mxdoDbtVW4GfP3agGdSCXtUnfkEAmZmhgMi4ZZOH
+	4eGG0Pv7Tj5nG8d5fvOE+q2+QGEXzGS87fFcJiPg3pmU2B6Nlsrj3YFy0Qrhj5yBKyBscQ/rbE2Q8
+	/Al6Mz4lHbM5bQ0ebDvAq5tL7sizhnKjU8YO56T+momMV3C8cy8Vd0IU3Tih3nnhIPb0oahDE/pgn
+	ivYB38OA==;
+Received: from i53875bf5.versanet.de ([83.135.91.245] helo=localhost.localdomain)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1uYp1o-0004yl-T3; Mon, 07 Jul 2025 18:49:16 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: heiko@sntech.de
+Cc: neil.armstrong@linaro.org,
+	quic_jesszhan@quicinc.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	hjc@rock-chips.com,
+	andy.yan@rock-chips.com,
+	andyshrk@163.com,
+	nicolas.frattaroli@collabora.com,
+	dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	rust-for-linux@vger.kernel.org,
-	Vitaly Wool <vitaly.wool@konsulko.se>
-Subject: [PATCH v11 1/4] mm/vmalloc: allow to set node and align in vrealloc
-Date: Mon,  7 Jul 2025 18:48:43 +0200
-Message-Id: <20250707164843.631434-1-vitaly.wool@konsulko.se>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20250707164755.631374-1-vitaly.wool@konsulko.se>
-References: <20250707164755.631374-1-vitaly.wool@konsulko.se>
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org
+Subject: [PATCH 00/13] Support DSI output on rk3576 and roc-rk3576-pc board
+Date: Mon,  7 Jul 2025 18:48:53 +0200
+Message-ID: <20250707164906.1445288-1-heiko@sntech.de>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,125 +74,55 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Reimplement vrealloc() to be able to set node and alignment should
-a user need to do so. Rename the function to vrealloc_node_align()
-to better match what it actually does now and introduce macros for
-vrealloc() and friends for backward compatibility.
+This enables all the necesary bits and bindings to get display output
+on the dm-m10r800-v3s addon module for the Firefly roc-rk3576-pc board.
 
-With that change we also provide the ability for the Rust part of
-the kernel to set node and alignment in its allocations.
+A bit of cleanup of the ili9881c, because the driver was still trying
+to send dcs commands when the underlying DSI driver might have already
+switched to video-mode, which caused me quite a bit of headache until
+I realized this being the culprit for my garbled display output :-) .
 
-Signed-off-by: Vitaly Wool <vitaly.wool@konsulko.se>
-Reviewed-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
----
- include/linux/vmalloc.h | 12 +++++++++---
- mm/nommu.c              |  3 ++-
- mm/vmalloc.c            | 28 +++++++++++++++++++++++-----
- 3 files changed, 34 insertions(+), 9 deletions(-)
+Only the last patch has a dependency on Nicolas' pwm series [0]
+everything else, is directly usable.
 
-diff --git a/include/linux/vmalloc.h b/include/linux/vmalloc.h
-index fdc9aeb74a44..68791f7cb3ba 100644
---- a/include/linux/vmalloc.h
-+++ b/include/linux/vmalloc.h
-@@ -197,9 +197,15 @@ extern void *__vcalloc_noprof(size_t n, size_t size, gfp_t flags) __alloc_size(1
- extern void *vcalloc_noprof(size_t n, size_t size) __alloc_size(1, 2);
- #define vcalloc(...)		alloc_hooks(vcalloc_noprof(__VA_ARGS__))
- 
--void * __must_check vrealloc_noprof(const void *p, size_t size, gfp_t flags)
--		__realloc_size(2);
--#define vrealloc(...)		alloc_hooks(vrealloc_noprof(__VA_ARGS__))
-+void *__must_check vrealloc_node_align_noprof(const void *p, size_t size,
-+		unsigned long align, gfp_t flags, int nid) __realloc_size(2);
-+#define vrealloc_node_noprof(_p, _s, _f, _nid)	\
-+	vrealloc_node_align_noprof(_p, _s, 1, _f, _nid)
-+#define vrealloc_noprof(_p, _s, _f)		\
-+	vrealloc_node_align_noprof(_p, _s, 1, _f, NUMA_NO_NODE)
-+#define vrealloc_node_align(...)		alloc_hooks(vrealloc_node_align_noprof(__VA_ARGS__))
-+#define vrealloc_node(...)			alloc_hooks(vrealloc_node_noprof(__VA_ARGS__))
-+#define vrealloc(...)				alloc_hooks(vrealloc_noprof(__VA_ARGS__))
- 
- extern void vfree(const void *addr);
- extern void vfree_atomic(const void *addr);
-diff --git a/mm/nommu.c b/mm/nommu.c
-index 87e1acab0d64..8359b2025b9f 100644
---- a/mm/nommu.c
-+++ b/mm/nommu.c
-@@ -119,7 +119,8 @@ void *__vmalloc_noprof(unsigned long size, gfp_t gfp_mask)
- }
- EXPORT_SYMBOL(__vmalloc_noprof);
- 
--void *vrealloc_noprof(const void *p, size_t size, gfp_t flags)
-+void *vrealloc_node_align_noprof(const void *p, size_t size, unsigned long align,
-+				 gfp_t flags, int node)
- {
- 	return krealloc_noprof(p, size, (flags | __GFP_COMP) & ~__GFP_HIGHMEM);
- }
-diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-index 6dbcdceecae1..412664656870 100644
---- a/mm/vmalloc.c
-+++ b/mm/vmalloc.c
-@@ -4089,13 +4089,22 @@ void *vzalloc_node_noprof(unsigned long size, int node)
- EXPORT_SYMBOL(vzalloc_node_noprof);
- 
- /**
-- * vrealloc - reallocate virtually contiguous memory; contents remain unchanged
-+ * vrealloc_node_align_noprof - reallocate virtually contiguous memory; contents
-+ * remain unchanged
-  * @p: object to reallocate memory for
-  * @size: the size to reallocate
-+ * @align: requested alignment
-  * @flags: the flags for the page level allocator
-+ * @nid: node number of the target node
-+ *
-+ * If @p is %NULL, vrealloc_XXX() behaves exactly like vmalloc(). If @size is
-+ * 0 and @p is not a %NULL pointer, the object pointed to is freed.
-  *
-- * If @p is %NULL, vrealloc() behaves exactly like vmalloc(). If @size is 0 and
-- * @p is not a %NULL pointer, the object pointed to is freed.
-+ * if @nid is not NUMA_NO_NODE, this function will try to allocate memory on
-+ * the given node. If reallocation is not necessary (e. g. the new size is less
-+ * than the current allocated size), the current allocation will be preserved
-+ * unless __GFP_THISNODE is set. In the latter case a new allocation on the
-+ * requested node will be attempted.
-  *
-  * If __GFP_ZERO logic is requested, callers must ensure that, starting with the
-  * initial memory allocation, every subsequent call to this API for the same
-@@ -4111,7 +4120,8 @@ EXPORT_SYMBOL(vzalloc_node_noprof);
-  * Return: pointer to the allocated memory; %NULL if @size is zero or in case of
-  *         failure
-  */
--void *vrealloc_noprof(const void *p, size_t size, gfp_t flags)
-+void *vrealloc_node_align_noprof(const void *p, size_t size, unsigned long align,
-+				 gfp_t flags, int nid)
- {
- 	struct vm_struct *vm = NULL;
- 	size_t alloced_size = 0;
-@@ -4135,6 +4145,12 @@ void *vrealloc_noprof(const void *p, size_t size, gfp_t flags)
- 		if (WARN(alloced_size < old_size,
- 			 "vrealloc() has mismatched area vs requested sizes (%p)\n", p))
- 			return NULL;
-+		if (WARN(!IS_ALIGNED((unsigned long)p, align),
-+			 "will not reallocate with a bigger alignment (0x%lx)\n", align))
-+			return NULL;
-+		if (unlikely(flags & __GFP_THISNODE) && nid != NUMA_NO_NODE &&
-+			     nid != page_to_nid(vmalloc_to_page(p)))
-+			goto need_realloc;
- 	}
- 
- 	/*
-@@ -4165,8 +4181,10 @@ void *vrealloc_noprof(const void *p, size_t size, gfp_t flags)
- 		return (void *)p;
- 	}
- 
-+need_realloc:
- 	/* TODO: Grow the vm_area, i.e. allocate and map additional pages. */
--	n = __vmalloc_noprof(size, flags);
-+	n = __vmalloc_node_noprof(size, align, flags, nid, __builtin_return_address(0));
-+
- 	if (!n)
- 		return NULL;
- 
+
+[0] https://lore.kernel.org/lkml/20250602-rk3576-pwm-v2-0-a6434b0ce60c@collabora.com/
+
+Guochun Huang (1):
+  drm/rockchip: dsi2: add support rk3576
+
+Heiko Stuebner (12):
+  drm/panel: ilitek-ili9881c: turn off power-supply when init fails
+  drm/panel: ilitek-ili9881c: move display_on/_off dcs calls to
+    (un-)prepare
+  drm/panel: ilitek-ili9881c: convert (un-)prepare to
+    mipi_dsi_multi_context
+  dt-bindings: vendor-prefixes: Add prefix for Shenzhen Bestar
+    Electronic
+  dt-bindings: display: ili9881c: Add Bestar BSD1218-A101KL68 LCD panel
+  drm/panel: ilitek-ili9881c: Add Bestar BSD1218-A101KL68 support
+  dt-bindings: soc: rockchip: add rk3576 mipi dcphy syscon
+  dt-bindings: display: rockchip: Add rk3576 to RK3588 DW DSI2
+    controller schema
+  arm64: dts: rockchip: add mipi-dcphy to rk3576
+  arm64: dts: rockchip: add the dsi controller to rk3576
+  arm64: dts: rockchip: add vcc3v3-lcd-s0 regulator to roc-rk3576-pc
+  arm64: dts: rockchip: add dm-m10r800-v3s overlay for roc-rk3576-pc
+
+ .../display/panel/ilitek,ili9881c.yaml        |   1 +
+ .../rockchip/rockchip,rk3588-mipi-dsi2.yaml   |   1 +
+ .../devicetree/bindings/soc/rockchip/grf.yaml |   1 +
+ .../devicetree/bindings/vendor-prefixes.yaml  |   2 +
+ arch/arm64/boot/dts/rockchip/Makefile         |   5 +
+ .../rk3576-roc-pc-dm-m10r800-v3s.dtso         | 134 ++++++++
+ .../arm64/boot/dts/rockchip/rk3576-roc-pc.dts |  16 +
+ arch/arm64/boot/dts/rockchip/rk3576.dtsi      |  50 +++
+ drivers/gpu/drm/panel/panel-ilitek-ili9881c.c | 301 ++++++++++++++----
+ .../gpu/drm/rockchip/dw-mipi-dsi2-rockchip.c  |  21 ++
+ 10 files changed, 475 insertions(+), 57 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/rockchip/rk3576-roc-pc-dm-m10r800-v3s.dtso
+
 -- 
-2.39.2
+2.47.2
 
 
