@@ -1,144 +1,86 @@
-Return-Path: <linux-kernel+bounces-720449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF282AFBBE3
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 21:49:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96685AFBBE5
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 21:50:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 153964266DB
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 19:49:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E28A316B304
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 19:50:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96B18266EF1;
-	Mon,  7 Jul 2025 19:49:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CC3MIV32"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28018267729;
+	Mon,  7 Jul 2025 19:50:00 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0012.hostedemail.com [216.40.44.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D88E233133
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 19:49:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 145BA13A244;
+	Mon,  7 Jul 2025 19:49:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751917791; cv=none; b=GDBReDhU0Kk1kgZAfd9drQqrTJ8F5GxfQtOyoooyNFZYtmW9EPThqlqksqxWkY+YXOD+pdKdIjQvKib9vp0lYb+qz+7EofSHit/EV1A653bipbN6jYtXdYd2jMfrUrceTgRFqWO7qa2qp2ImTMRilnCYgmimY4+dEdkCeYsaJtI=
+	t=1751917799; cv=none; b=W3dvxY2sp6NlG+tpkHES+6IGpaPw23L/EDXN0Mtl5zC/lk/Lu9xjO8BfgdJCoXMx2t3PVhPCzeq3pD56WVGHLTZ7dYi6stRHMN7/zdJfXBvMo/LyujHarghrsFiRKjmthIWX6OzvSloVcwcVXw1WY0DNjk++iz4s+qghn94Cozs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751917791; c=relaxed/simple;
-	bh=Bsc0l4oYKWpP++YJU/xfMtGDktQZziYr7xF8Xf+mvNQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l/1tImCJCls6gSyIWHkt0mOA+AD+ydNF1Dm95n/78krMxZ8s/GM252XL3D09wqn4qTyLzqptXW4LIfldyEc9X+Ai3UX/Bp7XSVnbVxLS7LXotZmkwam+tSGiuYNuFVaLVghAKJVi/EcFkjEJsiV6gK1ntHD9c1dr0p8NoIqmpFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CC3MIV32; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751917790; x=1783453790;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Bsc0l4oYKWpP++YJU/xfMtGDktQZziYr7xF8Xf+mvNQ=;
-  b=CC3MIV32WOsZx2iPQeAggW+NsBaxpJNU4SQLjEwqBc/KswvJHHbP6dWO
-   HqM7D6R+ikDHf3wquGtT8w16Ec9h+UrE6MaoWRc3gsxvK2F71KdFFc2JO
-   6kLXRKAX6p5vgGrSG2bwNLkWeVJaoGH5WT401S4oJKMBznpdabCfG+n90
-   L9TXt+T59AyCAGWkGZT+Fri4xYZxCgN3cbgwPFPOJhuPGA99ktd1raDbc
-   sqAh+47hP9LeO6XxmjVMdJQtM7X7hQN0kLKPLTuVsq0EOMnJxSjVCPox3
-   mBxutyBukpB0pBKtGjQSCFqd94n8LBDFtSTpmouDN3QrGatQTECQuai4X
-   Q==;
-X-CSE-ConnectionGUID: Qj6iOerORIaN5x16Tt14oA==
-X-CSE-MsgGUID: aF+OzSYHScKaXJAIr1e9mg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="54032734"
-X-IronPort-AV: E=Sophos;i="6.16,295,1744095600"; 
-   d="scan'208";a="54032734"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jul 2025 12:49:50 -0700
-X-CSE-ConnectionGUID: Z1V7/n3HQBKr3e19/Ska5A==
-X-CSE-MsgGUID: dsY7G08CQ9KxgbMOb1YOHw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,295,1744095600"; 
-   d="scan'208";a="155425105"
-Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
-  by orviesa007.jf.intel.com with ESMTP; 07 Jul 2025 12:49:46 -0700
-Date: Tue, 8 Jul 2025 03:41:33 +0800
-From: Xu Yilun <yilun.xu@linux.intel.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: "Tian, Kevin" <kevin.tian@intel.com>,
-	"will@kernel.org" <will@kernel.org>,
-	"aneesh.kumar@kernel.org" <aneesh.kumar@kernel.org>,
-	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"joro@8bytes.org" <joro@8bytes.org>,
-	"robin.murphy@arm.com" <robin.murphy@arm.com>,
-	"shuah@kernel.org" <shuah@kernel.org>,
-	"nicolinc@nvidia.com" <nicolinc@nvidia.com>,
-	"aik@amd.com" <aik@amd.com>,
-	"Williams, Dan J" <dan.j.williams@intel.com>,
-	"baolu.lu@linux.intel.com" <baolu.lu@linux.intel.com>,
-	"Xu, Yilun" <yilun.xu@intel.com>
-Subject: Re: [PATCH v3 2/5] iommufd: Destroy vdevice on idevice destroy
-Message-ID: <aGwi7fMVIOmALSz7@yilunxu-OptiPlex-7050>
-References: <BL1PR11MB52712CE938B57E41C34580908C46A@BL1PR11MB5271.namprd11.prod.outlook.com>
- <aGJkitx6wjfQ888t@yilunxu-OptiPlex-7050>
- <20250630145051.GY167785@nvidia.com>
- <aGOoCa3BkV7KrwVz@yilunxu-OptiPlex-7050>
- <20250701121315.GD167785@nvidia.com>
- <aGSYLVmV17g832Ta@yilunxu-OptiPlex-7050>
- <BN9PR11MB52769790C63FFCDC711E80DB8C40A@BN9PR11MB5276.namprd11.prod.outlook.com>
- <20250702124042.GD1051729@nvidia.com>
- <aGuoZUaNOgclC2uU@yilunxu-OptiPlex-7050>
- <20250707122502.GS1410929@nvidia.com>
+	s=arc-20240116; t=1751917799; c=relaxed/simple;
+	bh=C/pxVwNNcO2P81TrbKVfUEX/hAn4awsUloccI8+e050=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=aUvt+kXLC4/1edT6/biAkjXSbvrSJ7jSfhI4opxOiFfCVwH/xXoMe89DJUcYgEUgfvIXhGJOrkpcetMGBpZ8iu+thjDF9H/bgaR5JkEEy/g5UeJFVZLPabTHF9CLvUAmxaHV4wA6ZBjHyd9UlIQs7KblYRJc7wIauYH5iD9BSqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf06.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay02.hostedemail.com (Postfix) with ESMTP id BBABA128655;
+	Mon,  7 Jul 2025 19:42:50 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf06.hostedemail.com (Postfix) with ESMTPA id 5AB922000E;
+	Mon,  7 Jul 2025 19:42:46 +0000 (UTC)
+Date: Mon, 7 Jul 2025 15:42:45 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ bpf@vger.kernel.org, x86@kernel.org, Masami Hiramatsu
+ <mhiramat@kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra
+ <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Jiri Olsa
+ <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Thomas Gleixner
+ <tglx@linutronix.de>, Andrii Nakryiko <andrii@kernel.org>, Indu Bhagat
+ <indu.bhagat@oracle.com>, "Jose E. Marchesi" <jemarch@gnu.org>, Beau
+ Belgrave <beaub@linux.microsoft.com>, Jens Remus <jremus@linux.ibm.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton
+ <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>, Florian Weimer
+ <fweimer@redhat.com>
+Subject: Re: [PATCH v12 01/14] unwind_user: Add user space unwinding API
+Message-ID: <20250707154245.7eeeb448@batman.local.home>
+In-Reply-To: <12c620ea-4bee-4019-8143-8ecbaeeafc11@efficios.com>
+References: <20250701005321.942306427@goodmis.org>
+	<20250701005450.721228270@goodmis.org>
+	<12c620ea-4bee-4019-8143-8ecbaeeafc11@efficios.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250707122502.GS1410929@nvidia.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: uffcqguk36b5rtzjb97yrcmziuh1i78n
+X-Rspamd-Server: rspamout07
+X-Rspamd-Queue-Id: 5AB922000E
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1+hZRXtt2n9xM25ZjI5RbURs4uzubwh+r8=
+X-HE-Tag: 1751917366-491360
+X-HE-Meta: U2FsdGVkX1+TlfiLJboUxWFVhq/aBl2bQgU922t12rSyi1JWsFcrAHFLerzbTnq0xq41SHga/xi2kKB4hiRLNrK7Sr/df8bn4Ok62X/V3VK/V3SswAQzMX9VCDljJDlt7APU+uY5E1je+9lfT+EYlIA4gPiazZCNjkMqgqs0aHjqNHR9km2DNUlKiZna5qWTOEtyUxQ2vMYb86+abAM+c1AsOtBnALmMrkH0DfjCFVvUMNArbVac5C55LarMjElCob+NOedjbvXxRkqbN3v6NiL2gdG8qQWXdxCGbT6cDbbjTcUvnFsDoSCTTgP+Cp9IUDWchw8XOXUjEDadYhZZbyb72eQ9VbN+QrFcopOe0qhoKDnLwNsyka8qd3KG6kFL
 
-On Mon, Jul 07, 2025 at 09:25:02AM -0300, Jason Gunthorpe wrote:
-> On Mon, Jul 07, 2025 at 06:58:45PM +0800, Xu Yilun wrote:
-> 
-> > I still see concerns here. The pre_destroy() and wait_event is before the
-> > idev's users count decreasing to 0, which means a new user could get
-> > in.
-> 
-> Hum, yes it seems we could get a race with another vdevice being
-> created during idevice destruction, but I think this could be fixed in
-> a straightforward way with a flag 'being destroyed' in the idev under
-> the lock if it is the only issue
-> 
-> > The worse thing is the new user could hold the shortterm_users until
-> > pre_destroy(), but there isn't a second pre_destroy()...
-> 
-> This is OK, the point of pre_destroy is to remove the reference
-> cycle. So it needs to prevent new vdevs from establishing references
-> and remove the reference from any existing vdev.
-> 
-> refcounts outside of this cycle are handled by the existing
-> mechanisms - pre_destroy is only about the refcount loop.
+On Fri, 4 Jul 2025 14:20:54 -0400
+Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
 
-That works for me. I didn't prefer a being destroyed flag cause it
-seems not align with the current refcounting mechanism. But I see it
-makes sense cause idev does deterministic destruction.
+> > None of the structures introduced will be exposed to user space tooling.  
+> 
+> Would it be possible to make those unwind APIs EXPORT_SYMBOL_GPL
+> so they are available for GPL kernel modules ?
 
-The only concern is idev cannot actually prevent new reference by
-itself, need vdev to honor the flag. But just keep simple, don't
-over-engineering.
+I'm OK with that, but others tend to complain about EXPORT_SYMBOL_GPL
+for functions not used by modules in the kernel. But I personally feel
+that LTTng should get an exception for that rule ;-)
 
-Thanks,
-Yilun
-
-> 
-> > I think extending the life of shortterm_users at runtime makes things
-> > complex. 
-> 
-> Well, it keeps the refcounting working the way it is supposed
-> to. Holding a pointer without a reference is nasty and is creating
-> alot of these weird problems and strange flows. Hold the refcount
-> along with the pointer and things follow the normal patterns.
-> 
-> There is nothing inherently wrong with shortterm users for this
-> besides its name. Think of it is as 'wait for users', and we clearly
-> want to wait for the vdev user to put back its idev reference.
-> 
+-- Steve
 
