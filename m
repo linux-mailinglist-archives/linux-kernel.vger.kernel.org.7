@@ -1,247 +1,172 @@
-Return-Path: <linux-kernel+bounces-720376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BFBAAFBACC
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 20:38:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAF78AFBAD2
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 20:38:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12EFC426E66
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 18:37:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 074CA1AA8221
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 18:38:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBEBF26FD9A;
-	Mon,  7 Jul 2025 18:33:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAB36274FDC;
+	Mon,  7 Jul 2025 18:34:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="WrRtMUw8"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2083.outbound.protection.outlook.com [40.107.244.83])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="X1a4akaD"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E14426F469
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 18:33:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.83
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751913237; cv=fail; b=AMxUuUyvG41oHlLuex+tY+mE80rdKqc9mG6tRT6UaEuqYOiZZfp585ASDmNDJTSNppWI8vNp+NN+8tVPhtHkAuvXGxaV/Xd7u2hzwUt/gxL1a+Flakopp0Ebn4sJZJms/+WWVKtaijU6gHknfQzUfZHc3d+R52OBu9ovfurVZAE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751913237; c=relaxed/simple;
-	bh=RyAhKBePYSz9QwD2JI1ve8t6GvmfnSar3mRpK71wyuY=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jGV5zsB46uY9ESVytyZGBEvbMeLChBYs2WPItk1732GYNPYv8wVcGqbKMTYMhB3ezGbMKP3PB6Ro06qZ7o+TAI4oED4Yz30U/e353GnuzZiT5bMQFjY54yKwnQyr6sBwTPJkxTkUAeLN+ZSXcHLTednXH6PvE9SjR2KXDlL1zaY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=WrRtMUw8; arc=fail smtp.client-ip=40.107.244.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ouDk/gqJ5LO7wMHK/lCPFxc8sgDdpWzNu0lqNY9wjK28kr1lHGzjG7imbPk3vUrafTem0toxaGbctNiP/WmUbc4IAhipim59spfvdeH9kN7ZXyVbPCN7Q3cPcZQDvfA/scXgLnbwl3Jrd0LZrLc31v+wnomb4Ad5coXv6Mole3e7nSGhp1h6JT1xJImMxlsIaFPkV4VFX21OFFJVeBMhkkhGV7E5qThEd6OGhfPfTVY1Z3csYBq8bjINFUg+rCNpR5LK9GU9CG16opi35o1td+bufZyWaMKk13SAU35d7mjMMOaMhcylzfYMiwPA5402RI7oZiO0wLK9tsk5IaT4WQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wgMfm9Vh+6ixVrUOUdlFXV+UuzFXiqi4eTwHEikx/NI=;
- b=Fa8eHtxjToMOBdy2M1M+myzFSqBRfDY0/T1+D2opd+lQaRrmrib4Ff8ZvfGFc/zX21o6f41IdA9Ef4skup9id/W+10QiDBIWC6RfMJIl7YGjYUdZq95SXhTz2BZUwmPOJLNXrgWRkNekPYwiZGnKvINAY6lXCyHbhs3fTgp7/S3gZx1dhSbYrqjXr/Y4HVirPfoT36zslWpOxy089+VIe07RsBsynRSwO8C9n59iHoS6o/3Z3G0mUjQ32hwPpVkS+ItIU5OCqGVOdf7QnwJPf0jQGYooabk0B3q+xF8kONvogD1PzkT98RoD9kA8F0lMCqwdHmhUOQ3kEWuAwURmBg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=linutronix.de smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wgMfm9Vh+6ixVrUOUdlFXV+UuzFXiqi4eTwHEikx/NI=;
- b=WrRtMUw8oO/OHBRk6rEc8mJaAQ1VrDGCnhxYfMofQSMRmvwOX9pfMQ+HeUnOIWzzu7SNI/PhSgGL3Abx3trVq9GJvQmLkq7OMKEae8XcJ1bw+5rCJjDOu5JtW/yw4lp7psPZe0J8RcUMvd+ZhOTl3Sk0KQTiVp6tWNU5u+CDH/c=
-Received: from BY5PR16CA0007.namprd16.prod.outlook.com (2603:10b6:a03:1a0::20)
- by BL1PR12MB5731.namprd12.prod.outlook.com (2603:10b6:208:386::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.25; Mon, 7 Jul
- 2025 18:33:48 +0000
-Received: from MWH0EPF000989E8.namprd02.prod.outlook.com
- (2603:10b6:a03:1a0:cafe::88) by BY5PR16CA0007.outlook.office365.com
- (2603:10b6:a03:1a0::20) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8901.27 via Frontend Transport; Mon,
- 7 Jul 2025 18:33:46 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- MWH0EPF000989E8.mail.protection.outlook.com (10.167.241.135) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8901.20 via Frontend Transport; Mon, 7 Jul 2025 18:33:46 +0000
-Received: from tiny.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 7 Jul
- 2025 13:33:42 -0500
-From: David Kaplan <david.kaplan@amd.com>
-To: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
-	Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, Ingo Molnar
-	<mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>,
-	<x86@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>
-CC: <linux-kernel@vger.kernel.org>
-Subject: [PATCH v6 21/21] cpu: Show attack vectors in sysfs
-Date: Mon, 7 Jul 2025 13:33:16 -0500
-Message-ID: <20250707183316.1349127-22-david.kaplan@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250707183316.1349127-1-david.kaplan@amd.com>
-References: <20250707183316.1349127-1-david.kaplan@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C3B32652AF
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 18:34:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751913249; cv=none; b=ZbvzwH3WWIFzDm33W8fOdv8rniNYOUharTeB4vROOev0VvZNKYcPVeHy9ItRw2M8WKRZvq8tnelU9zJzYD9FHBmG9zQpCSgoeY7RyMBw6y3+d2lXidtoUYoW21s41bBCLWHu0hcbkWtwhMOm5I4fCE+OkHocQoAlM2Y+gXykVvU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751913249; c=relaxed/simple;
+	bh=8K+GjBl/FE9E58iFy0BSlb50AFIZ1lCSp8aNhG9rQUA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=KY/KQ/oHRsUp5zmQZS9+tu+DJBxyECB33BQodBclRJoiHyNniCSUr2qU5tkbGBWfppfxR782aKO/VhpFMHuX8tKYkKxwI0u0y3vyMjJauwALRxXQZSy/UUXcyNBv0COGVv2aDHW02Y3TFu5Cu7ujihuY0z4nxVc88Urs839Wjck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=X1a4akaD; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-54b10594812so4285928e87.1
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 11:34:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1751913242; x=1752518042; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=GI3mp7khiC3aiN54V1s1kSnePibHGblj0uNsT4N64ys=;
+        b=X1a4akaDudcpWGG6x3wdASzM2j0EkRw1PXvxGw8Y1XeoVH0rXperSPOG8bHV5J5uQh
+         cuoWkX7ZU1mPjcjP2HJCCWUMpKaqzdr0CSYO+fS3CvVBS7ECxz51e5s2y3DIzUILS4Y7
+         iIZa1W43MYuzEI2J0qEiPCD8lPYFh+/38HYEo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751913242; x=1752518042;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GI3mp7khiC3aiN54V1s1kSnePibHGblj0uNsT4N64ys=;
+        b=p0YX7NoCL/+PX97BMvfJ2thhErcBBEQT7nyElWMK9tcowNWGJXyscf2jQRUfp6/R1S
+         tr/2bbErA6QVZskEEZ0qnhp2zQeuQ+PpfYZ18zORxnEO2QW9vUA0IhTO9yvrqjWZc9mI
+         pzFHCNU+h1nvXNl/u8LDk7luuhWkr2RH33pCE4eh59rQsGI4+fjb/7W5aaiM9PScXVzR
+         ++zU48JzM3AJ5no+yyqttzDd3eaVKpuGNJ5cRSidE3Wdk73DGJTKX6YQsh0jDcxQKk2+
+         FFyZqXxX/ZczlMI+cB02NhHzUBZHAlrlDcUWPyDAWe0eIuYdAoEr61OGVWGjA/Ky34B+
+         USZg==
+X-Forwarded-Encrypted: i=1; AJvYcCV9cTJ0sFdpXUsz5DbN+9PpDpG78bI7xIqkObLpmE3fI7S/5H6pEWNgMT4kzsgm/ZRKGbuZqSwFX1Dk9kE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzbgDmg2jlQJWan87D0gLjN29fnP9cvjszK3QOH3VnIQwoQRpUR
+	IURPVtW/oxL6fuAh7G8BssZpA+U0qfb4dKFlOqpsJn8ekH4A8RtTCe4Jw5EQuTUHbQ==
+X-Gm-Gg: ASbGnctW/0inxDnIk27/LmyQXXyVlBOTlNRp2JebMwDXcU7wwB0W69tIySDlo9nznYh
+	2IW07G9WOiTAdOpderbjtBZ0FAw0yWfrEcAK+vg4Boohh1UnsYwiRBpvX1VQJC5AO1Z/5fXW8OH
+	aR1dyzKD7WI4gYpDrUvJW+qfMQEglQ51NTOY21ahFFk8NDsRMDBqjxSuJAmIUVH1VwIc7Rad1W5
+	gF9sGSB/OhkzhryAa5DB7qxLvDLloeV94yWxlkuxLd8fHzOveHrOVrWFOAQ4oRpjVEZxTgN/d+m
+	2MbM4nhUGFyx9Hy9Qwtu8VsTzwCxq0m1701wl/0GIZGp1dP29wg/99QCkQQ8p0o3vad5kznh6JK
+	fV/+Dt/rJIbzBYxEjIN95+EHJZwjP9IwWfbakvuuyvm07C2Ttkk4R
+X-Google-Smtp-Source: AGHT+IEZCncGnL0Aldaey4MgBeMqfZh2uyJKivyRIHEvg5ihpDRPGtDR+uZRcmp1UvTuk7T00/T0hA==
+X-Received: by 2002:a05:6512:2c8f:b0:549:5866:6489 with SMTP id 2adb3069b0e04-557aad3a2ecmr3691237e87.47.1751913242430;
+        Mon, 07 Jul 2025 11:34:02 -0700 (PDT)
+Received: from ribalda.c.googlers.com (166.141.88.34.bc.googleusercontent.com. [34.88.141.166])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-556383d31a6sm1417630e87.61.2025.07.07.11.34.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Jul 2025 11:34:02 -0700 (PDT)
+From: Ricardo Ribalda <ribalda@chromium.org>
+Subject: [PATCH v8 0/5] media: uvcvideo: Introduce
+ V4L2_META_FMT_UVC_MSXU_1_5 + other meta fixes
+Date: Mon, 07 Jul 2025 18:34:00 +0000
+Message-Id: <20250707-uvc-meta-v8-0-ed17f8b1218b@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MWH0EPF000989E8:EE_|BL1PR12MB5731:EE_
-X-MS-Office365-Filtering-Correlation-Id: d76b1ecf-60e9-4eae-3547-08ddbd84cf02
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|36860700013|376014|7416014|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?d55OtIo2JfG/8MDgOm8ZLZt9HNEcU7TD2qE1YImnGlyyeAUv+LhsxuWDGJgo?=
- =?us-ascii?Q?P/xKrUctZyCKkCbZi9T7Z9yN7KLZHtNVLVS9BZF/9FrFF6yqp/OvIYVwUCpH?=
- =?us-ascii?Q?AKcf53GLmGicyyrE58T2nHMFOB3iHwzzuEohTVr0W/jWena4iVyhQt3sZxeJ?=
- =?us-ascii?Q?7aFTViI/SFXfJkNheqvB27auQKIWTOGROCu6VIhvI9Odjt9hp3S7diUd6mA5?=
- =?us-ascii?Q?JVlkWycDT7sPsfIuEr9YsThV52GEKqwLFhUihPt2YIa5Dr3AgNJxq/6UNBAZ?=
- =?us-ascii?Q?HFmRAaAtkDfXLZnd1l2bbfUUrKieyYtfeYXA46SM1BBGWBON9oGrrW43RRvm?=
- =?us-ascii?Q?T0IFUEVDdQnxRtzH5EIwF9n6nz0fooQEdWMqfHEF8ZSqxDPQXEDEOMCgYWr/?=
- =?us-ascii?Q?1Oc+rpZTEk+3Q0siR7YWFLLtGdqdZEOV7i3KtB4d7/xaBpTrlGxWKeyNEp52?=
- =?us-ascii?Q?N53LuYmF98+Jx9H63IfbsqAAifNIHZP7f7rfcH/XIF7oUTHCVrglOEOzmNh+?=
- =?us-ascii?Q?s4JQDr7rATvPZQHY0GWGI8b8k164DZaFXRHL9N/M6t3UykONaJ0scdaHVeCW?=
- =?us-ascii?Q?AXI1p/ttpjU8+CQgE2vO9UdSVvXCval2C4x09O62GApG6iweX+wZb9ZP+5Le?=
- =?us-ascii?Q?mv3/NoRNwfuPt4UNutzIJhJuVoudMy6nX0YUdP/7n/oihA+hIEydc1jD4uLK?=
- =?us-ascii?Q?4wg3yqGMXrfd74KpU+N+4uwR2cgxXO9CQzihyaCD4vkQ/+7XOSFD4zh2JtSv?=
- =?us-ascii?Q?7VZr0UWDc5eTY4Hgj6gjRAqJuHaRJjB8BLw9RMrsb9eTw5vWGXQ5YYq7x13w?=
- =?us-ascii?Q?4IlUsJOHuDw+Ph341Dn7vR0FNi8uNcShUq0TmPFBLo9nD8n5fkhj80KONJ80?=
- =?us-ascii?Q?FHKGBJq7Wv54s9mRWe7833fwJSN06gU5dkYIZI6sSm8j4tM/vKzvD4uXk1bk?=
- =?us-ascii?Q?65bBh4I70J7sBptOnOTxMH1Klu6WXxigjvlTI/xJEBp1kX56KxEox/gDdfeu?=
- =?us-ascii?Q?5Uz9vr/prRO8QvWB9ySkYAcHly5vsCzIkj8RU2GZKK3x9S4P5wgvoZnVKU8P?=
- =?us-ascii?Q?tUA4J+oXj2UnQfy1iep+6DPfqFjp4qqks5cwLqnBf+fK7j3Ih5QeNXpAd1yG?=
- =?us-ascii?Q?S3PBZ5L6dJoG3U9Nlwdxcenvy3qtcwLhEZLFmfLQPNMtNHGtZ6H/JaHKRP2p?=
- =?us-ascii?Q?lnrImo/6nBLfzb8YV2Kgj9XrGR6NUdPjXhQgFGCx//3JLO0PvElV/s4oblmq?=
- =?us-ascii?Q?GOirC5cBRAJw3/wc4x3mhV97cn54W6HD3HMtYg/GcQ5YYfEAXIG23bxLyhVv?=
- =?us-ascii?Q?kWxa0R13/d22196A+kJNFzy30XO4RjSTXvgy98kWWDJOnh4rkk+RYtC8mc3D?=
- =?us-ascii?Q?S/N8wGo/N8dpnuO83jEtlazvHcJPdJBw6tMdcVRP1Q8ZVEsbxfKT4r3GajyS?=
- =?us-ascii?Q?ft0cxJLIGXVjAehsVIxDXJL179hnvTzcLIAJYFe9SpAVRYcp9CrN9gLm1hog?=
- =?us-ascii?Q?O9sJfQogukJvK3X72YLpV4jPznUnLImFVHZJ?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(376014)(7416014)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jul 2025 18:33:46.1481
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d76b1ecf-60e9-4eae-3547-08ddbd84cf02
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	MWH0EPF000989E8.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5731
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABgTbGgC/23MQQ6CMBCF4auYrq0pQ9sBV97DuGjKAF0ApoVGQ
+ 7i7hY1oWL7JfP/MAnlHgV1PM/MUXXBDn0ZxPjHbmr4h7qq0GQhQQoqcT9HyjkbDSSmNmFcZGGL
+ p/empdq8tdX+k3bowDv69laNcrweRKLngBaIxWqIqUd1s64fOTd1l8A1bO1HtrdxZlWyNZYmyt
+ lCBOLD6a/WP1cliJrNKFjYHsAcWdzbDncVkS5uukBNAof/ssiwfeRSDvFcBAAA=
+X-Change-ID: 20250403-uvc-meta-e556773d12ae
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Hans de Goede <hansg@kernel.org>, Hans de Goede <hansg@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-usb@vger.kernel.org, Ricardo Ribalda <ribalda@chromium.org>, 
+ stable@vger.kernel.org
+X-Mailer: b4 0.14.2
 
-Show the status of currently mitigated attack vectors in
-/sys/devices/system/cpu/vector_mitigations/.
+This series introduces a new metadata format for UVC cameras and adds a
+couple of improvements to the UVC metadata handling.
 
-Signed-off-by: David Kaplan <david.kaplan@amd.com>
+The new metadata format can be enabled in runtime with quirks.
+
+Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 ---
- drivers/base/cpu.c | 67 ++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 67 insertions(+)
+Changes in v8:
+- Dynamically fill dev->meta_formats instead of be const.
+- Link to v7: https://lore.kernel.org/r/20250617-uvc-meta-v7-0-9c50623e2286@chromium.org
 
-diff --git a/drivers/base/cpu.c b/drivers/base/cpu.c
-index 7779ab0ca7ce..0b76213ea70e 100644
---- a/drivers/base/cpu.c
-+++ b/drivers/base/cpu.c
-@@ -20,6 +20,7 @@
- #include <linux/tick.h>
- #include <linux/pm_qos.h>
- #include <linux/delay.h>
-+#include <linux/string_choices.h>
- #include <linux/sched/isolation.h>
- 
- #include "base.h"
-@@ -647,6 +648,70 @@ static const struct attribute_group cpu_root_vulnerabilities_group = {
- 	.attrs = cpu_root_vulnerabilities_attrs,
- };
- 
-+static const char *attack_vector_state(enum cpu_attack_vectors v)
-+{
-+	return str_on_off(cpu_attack_vector_mitigated(v));
-+}
-+
-+static ssize_t cpu_show_user_kernel_vector(struct device *dev,
-+				struct device_attribute *attr, char *buf)
-+{
-+	return sysfs_emit(buf, "%s\n",  attack_vector_state(CPU_MITIGATE_USER_KERNEL));
-+}
-+
-+static ssize_t cpu_show_user_user_vector(struct device *dev,
-+				struct device_attribute *attr, char *buf)
-+{
-+	return sysfs_emit(buf, "%s\n", attack_vector_state(CPU_MITIGATE_USER_USER));
-+}
-+
-+static ssize_t cpu_show_guest_host_vector(struct device *dev,
-+				struct device_attribute *attr, char *buf)
-+{
-+	return sysfs_emit(buf, "%s\n", attack_vector_state(CPU_MITIGATE_GUEST_HOST));
-+}
-+
-+static ssize_t cpu_show_guest_guest_vector(struct device *dev,
-+				struct device_attribute *attr, char *buf)
-+{
-+	return sysfs_emit(buf, "%s\n", attack_vector_state(CPU_MITIGATE_GUEST_GUEST));
-+}
-+
-+static ssize_t cpu_show_smt_vector(struct device *dev,
-+				struct device_attribute *attr, char *buf)
-+{
-+	switch (smt_mitigations) {
-+	case SMT_MITIGATIONS_OFF:
-+		return sysfs_emit(buf, "off\n");
-+	case SMT_MITIGATIONS_ON:
-+		return sysfs_emit(buf, "on\n");
-+	case SMT_MITIGATIONS_AUTO:
-+		return sysfs_emit(buf, "auto\n");
-+	}
-+
-+	return 0;
-+}
-+
-+static DEVICE_ATTR(user_kernel, 0444, cpu_show_user_kernel_vector, NULL);
-+static DEVICE_ATTR(user_user, 0444, cpu_show_user_user_vector, NULL);
-+static DEVICE_ATTR(guest_host, 0444, cpu_show_guest_host_vector, NULL);
-+static DEVICE_ATTR(guest_guest, 0444, cpu_show_guest_guest_vector, NULL);
-+static DEVICE_ATTR(smt, 0444, cpu_show_smt_vector, NULL);
-+
-+static struct attribute *cpu_vector_mitigations_attrs[] = {
-+	&dev_attr_user_kernel.attr,
-+	&dev_attr_user_user.attr,
-+	&dev_attr_guest_host.attr,
-+	&dev_attr_guest_guest.attr,
-+	&dev_attr_smt.attr,
-+	NULL
-+};
-+
-+static const struct attribute_group cpu_vector_mitigations_group = {
-+	.name  = "vector_mitigations",
-+	.attrs = cpu_vector_mitigations_attrs,
-+};
-+
- static void __init cpu_register_vulnerabilities(void)
- {
- 	struct device *dev = bus_get_dev_root(&cpu_subsys);
-@@ -654,6 +719,8 @@ static void __init cpu_register_vulnerabilities(void)
- 	if (dev) {
- 		if (sysfs_create_group(&dev->kobj, &cpu_root_vulnerabilities_group))
- 			pr_err("Unable to register CPU vulnerabilities\n");
-+		if (sysfs_create_group(&dev->kobj, &cpu_vector_mitigations_group))
-+			pr_err("Unable to register CPU attack vectors\n");
- 		put_device(dev);
- 	}
- }
+Changes in v7:
+- Add patch: Introduce dev->meta_formats
+- Link to v6: https://lore.kernel.org/r/20250604-uvc-meta-v6-0-7141d48c322c@chromium.org
+
+Changes in v6 (Thanks Laurent):
+- Fix typo in metafmt-uvc.rst
+- Improve metafmt-uvc-msxu-1-5.rst
+- uvc_meta_v4l2_try_format() block MSXU format unless the quirk is
+  active
+- Refactor uvc_enable_msxu
+- Document uvc_meta_detect_msxu
+- Rebase series
+- Add R-b
+- Link to v5: https://lore.kernel.org/r/20250404-uvc-meta-v5-0-f79974fc2d20@chromium.org
+
+Changes in v5:
+- Fix codestyle and kerneldoc warnings reported by media-ci
+- Link to v4: https://lore.kernel.org/r/20250403-uvc-meta-v4-0-877aa6475975@chromium.org
+
+Changes in v4:
+- Rename format to V4L2_META_FMT_UVC_MSXU_1_5 (Thanks Mauro)
+- Flag the new format with a quirk.
+- Autodetect MSXU devices.
+- Link to v3: https://lore.kernel.org/linux-media/20250313-uvc-metadata-v3-0-c467af869c60@chromium.org/
+
+Changes in v3:
+- Fix doc syntax errors.
+- Link to v2: https://lore.kernel.org/r/20250306-uvc-metadata-v2-0-7e939857cad5@chromium.org
+
+Changes in v2:
+- Add metadata invalid fix
+- Move doc note to a separate patch
+- Introduce V4L2_META_FMT_UVC_CUSTOM (thanks HdG!).
+- Link to v1: https://lore.kernel.org/r/20250226-uvc-metadata-v1-1-6cd6fe5ec2cb@chromium.org
+
+---
+Ricardo Ribalda (5):
+      media: uvcvideo: Do not mark valid metadata as invalid
+      media: Documentation: Add note about UVCH length field
+      media: uvcvideo: Introduce dev->meta_formats
+      media: uvcvideo: Introduce V4L2_META_FMT_UVC_MSXU_1_5
+      media: uvcvideo: Auto-set UVC_QUIRK_MSXU_META
+
+ .../userspace-api/media/v4l/meta-formats.rst       |   1 +
+ .../media/v4l/metafmt-uvc-msxu-1-5.rst             |  23 +++++
+ .../userspace-api/media/v4l/metafmt-uvc.rst        |   4 +-
+ MAINTAINERS                                        |   1 +
+ drivers/media/usb/uvc/uvc_driver.c                 |   7 ++
+ drivers/media/usb/uvc/uvc_metadata.c               | 115 +++++++++++++++++++--
+ drivers/media/usb/uvc/uvc_video.c                  |  12 +--
+ drivers/media/usb/uvc/uvcvideo.h                   |   7 ++
+ drivers/media/v4l2-core/v4l2-ioctl.c               |   1 +
+ include/linux/usb/uvc.h                            |   3 +
+ include/uapi/linux/videodev2.h                     |   1 +
+ 11 files changed, 161 insertions(+), 14 deletions(-)
+---
+base-commit: a8598c7de1bcd94461ca54c972efa9b4ea501fb9
+change-id: 20250403-uvc-meta-e556773d12ae
+
+Best regards,
 -- 
-2.34.1
+Ricardo Ribalda <ribalda@chromium.org>
 
 
