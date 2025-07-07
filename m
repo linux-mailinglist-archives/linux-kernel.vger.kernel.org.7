@@ -1,209 +1,129 @@
-Return-Path: <linux-kernel+bounces-719910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46A9AAFB477
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 15:25:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5285AFB481
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 15:27:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D1EBD7AD802
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 13:23:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39135170EB8
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 13:27:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DE5B2980D0;
-	Mon,  7 Jul 2025 13:24:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C01329A9ED;
+	Mon,  7 Jul 2025 13:26:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="UQCbAwFr"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jUGrLI0G"
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 100A128934D;
-	Mon,  7 Jul 2025 13:24:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 618201E22FC;
+	Mon,  7 Jul 2025 13:26:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751894681; cv=none; b=FBzgzRfICgwRHV651WTOKAz0DeYiFYEaSWWijpHFM+vedAjE1ptASJLwE4V0B/NNEcD+pS5sJAGcInp1ADva+cpmdRpjKMEwrueCaP8Yj+HGajHkHpX9wAeT1R9pvV8GQO4vvjQKU/lcjOEmh6p+IUoxoKcxQMMlVya1Hmwo/4U=
+	t=1751894812; cv=none; b=ogzTwLApgM2WcIkl8TLaLn3mPSIRTUBEMX4BWWbJhsmuHnGrA4ylW6QNZjROLrD4BCWNRroOMp/y1v99dSHogTd0vh4rX9GmDt5bTGLLX3xAT9472SkukEDGOOcCqZF8XbdnUqL2LkV7fAkGMeK8D0ONn2kzN7OZO6MCeGJkjyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751894681; c=relaxed/simple;
-	bh=HQ8ugpKvFicWAFnFH6pCynQtxCYEUf91MRmd69HRp1A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Sgy0TWM4P/FSEpxOyKU96jHY4DsM8AGaw4ojJ5/VthFiIBOW7ailQVxATlDfY4qnjN78u1vL6Pqvb5z4YY06nPt2gtbvMC1rIgEdw+MxkcgSEJkb5bl+NBnJjo5E/0Kff+pGIWeiStwnLgXXtpfypNcm0SHV1yn4eDzORvBohfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=UQCbAwFr; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56798hkr023655;
-	Mon, 7 Jul 2025 13:24:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	sua7USQNBjanjipk7bMSQOIKdbetUUl77PdhQGmFdZs=; b=UQCbAwFrUYvJa9lx
-	yy9slGKxK3EJqejQtO2h94psf0cOvBwXtrbGBQJ4p2QCi18Mwwt0NoPa857S1be4
-	x0+TKASm9cY1P9lTiqcFTk8qb+dDS7dF+F4ejR/TWMXI2/pxaPdvTZhe2p3db8Js
-	HE5037IbBnSYWJKr4fK+RHDNdvWrqB+zz8+NnUVdgedqU1IC/2093bal1KZ104Dh
-	pBdm6lSYIOfS63BK8TS9j/KuK7zKXYBo1yOcVMpJhmRQSHP+Y3h48sUefuZKLReq
-	XBSAXha5XGT2+Rlpvo4ttHy8HVF49CaQgqZjWWwBsOdgLaXU5gAhNI4CXpWHElQ8
-	TwWXgQ==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47pu0w5cxv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 07 Jul 2025 13:24:30 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 567DOT3Z014871
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 7 Jul 2025 13:24:29 GMT
-Received: from [10.218.7.247] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Mon, 7 Jul
- 2025 06:24:26 -0700
-Message-ID: <6980c961-9f95-4471-9f8e-658f5c7f1648@quicinc.com>
-Date: Mon, 7 Jul 2025 18:54:11 +0530
+	s=arc-20240116; t=1751894812; c=relaxed/simple;
+	bh=+eDQoI7Ih5xCp1XC5oM2SFOUr5/BpsbWEEV8qr+fx7s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jGdzFVp9Jwdpw/L0RrJDqcqMnzDq9SLxrVgkmjMxVc6oBRA4VvqqPk9jw5Knk9cuTRjU8i0xiQOM3bZiKz2OcQxdyRg1A4dHZ4PsXfJe5eayn+lJt4cMFPEab8zoA3gNvf+gzZ+YqCINK4slsMXRt340Bj3MPdsfBrQwzeypUK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jUGrLI0G; arc=none smtp.client-ip=209.85.219.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e81881bdd55so350285276.0;
+        Mon, 07 Jul 2025 06:26:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751894810; x=1752499610; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+eDQoI7Ih5xCp1XC5oM2SFOUr5/BpsbWEEV8qr+fx7s=;
+        b=jUGrLI0G21ULBTd6mLvIvoCLEDDgfzrvHlqU52K4SsaQZUZ9pVzeSl0CmvHeUhOUNL
+         kza4xQUl9AK9Byh7BCnhKQDP+ncm6WjPJ240HJx8YGq9iQVh3/sGDd0IkJCp5rptvpzK
+         ZF8E28HM6xYeq0MjkT20eSz94WWL8H2d0LLob3sAoxiBbzIhtxlKF2wgX10R6mLthC0p
+         cnn2JLa9FtrbPBTJwzp9jOef/FaVdwauXywf/+VUndVP391Qk9TatS6PdTL2r3eNbmRS
+         cNuF0G4Og4B1keCtk/WmjG/Kb2OWVrBv93xtjuebwLzQ3VhJEVpWtRTuDPi/8tNu1rub
+         gPEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751894810; x=1752499610;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+eDQoI7Ih5xCp1XC5oM2SFOUr5/BpsbWEEV8qr+fx7s=;
+        b=Dtxx+yPqvH93k0ccULKskPl05o/iX05R6/VqKGUi29+Pv31FHdy4xSbqEuOIukaRLJ
+         sMXgAFQ+9XuwK8SpxObQLxtFIvH82UJOQ0K/0ZdU6slGJxgyOWAnzbJAiPjidhvntaV/
+         Jg5xcR+Q/4jeEvVN9a1+IvshzZ7VjwU3NwEtQ1EjOmXtVLfTqGRartn8kcGLiV9cafGF
+         gzqEhMQ7kAhB38XisArPIiUT6BLwzd0TAwO5BvBCZzPnSrrVIh5V74zPluSb8hOEmSBG
+         /eMG+4i97lnejchOXsXvU9ia83yYDFWM5IR4s9zMnghSTH6oUDCvTroJEw1Rz7U2lehi
+         qzVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVO4KIeBP8q7sw9uulh8OPOstWB+FoK4YLCXWIe8orykNtdidRcJZb6n90xt+rDySXzQEW5hwlwl6GA6Co=@vger.kernel.org, AJvYcCWeiRhgIBIJ+LCT7Dormz53T9vO2dBSkKV4zcHVR8Yl+geeXxV6aNmpJyYEbtjZhF5+Jj1wn701680XDPY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyogY6r3am+0Cg5epPzUtmRioUIO7T/aW7QghEP8lj/MntWfbfc
+	wQ4L5qENPkrpEUqusaY34UDTSQX6H4MmMDRi3Y1jYzBvklX1+6HTuz/bVWDNviMCoe/cb31JXuq
+	be5k/s68jRQu4+bTlpnf1HdiyVwFHvxs=
+X-Gm-Gg: ASbGnct5qJYIQgs7V4/huGV5XYBVt6XT3PKg4lHZS9fruXdGJ3tkns0KCI9Jl7h0rlS
+	hlRRFO512M7zOqBdmE88ySPFvdsYU36U0EBJj08i+Oz9ktNZMe8OStsduI5MOWHpSFWloegWxck
+	bWRqggNlKKS7v3A1KTZAnFe/sAriQ9L2tHDwrP1U6tyQM=
+X-Google-Smtp-Source: AGHT+IEsKVW5JtW0RfRAq3tfnMDl8JVZLWNsI8dc7R+PLM4F6s/NZqeVQ76z6bAd0IbxM3Q0haEdHbKUvGerwwkKP3s=
+X-Received: by 2002:a05:690c:6713:b0:714:305:7c74 with SMTP id
+ 00721157ae682-71669ed6b45mr81445977b3.3.1751894810104; Mon, 07 Jul 2025
+ 06:26:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] phy: qcom-qmp-ufs: Fix HS-G4 PHY init table for sc7280
-To: Xilin Wu <sophon@radxa.com>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@oss.qualcomm.com>
-CC: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
-        Manish Pandey <quic_mapa@quicinc.com>,
-        Dmitry Baryshkov <lumag@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-phy@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20250613-sc7280-ufsphy-g4-fix-v1-1-1bf60744f5ac@radxa.com>
- <o2chuy22dls3y3bsjke34z7pnyzap6m4m34tjxswueshulii4d@d5lbcragrbjb>
- <9588D2722C1F010D+51f41c36-856d-4dda-9f30-226c2f772f2c@radxa.com>
-Content-Language: en-US
-From: Nitin Rawat <quic_nitirawa@quicinc.com>
-In-Reply-To: <9588D2722C1F010D+51f41c36-856d-4dda-9f30-226c2f772f2c@radxa.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: SmUYIJv14QmIff6cJmkl0QlZ6jnrqTxc
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA3MDA3OCBTYWx0ZWRfX7ceLMJ0dSRLM
- TuZvOf+W7HKKpeCUj0GkiJBaZNXjQnqL7ISsGXF6hqLoGKosf4jUnnzpgRaraZSnjlq0SVFDzZ6
- QZ1WVxqFzF4PYiL0LTZ0QpRtwIF81hdzuWALRl+6I4dJqWcvMz/3hHQpTypjh8yfmfKFID1pY+S
- Li9QPBmDx/g8WWxxfx7BKhQltBtKKn+6TW8SgtQZddiFAlyOHsNgaI3Qzm3BSWjm0TY2spEDXKy
- hMNmoOfHLVHGYpV/Q37kPk3CBVIl4G5VypIe7EfjXaEAiIgqzrL14g55DyKGds8e6TZ+QXl3Afq
- JJzq43QcP3Zg3pfW8cz0Cqv05W0cvA16ogqLU2yRRFYbJqm7G/kRZ/e6FIkQI7296DuL6iSMxUV
- KeYaS0DWs+n2P9gwXw5s1iyowO7PrQdIjELsgoVB0NKCRjxP7pbwAAghYs41a4s+6eqv0sO/
-X-Authority-Analysis: v=2.4 cv=Rd2QC0tv c=1 sm=1 tr=0 ts=686bca8e cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=NEAV23lmAAAA:8
- a=VwQbUJbxAAAA:8 a=ksxQWNrZAAAA:8 a=oqyW6cpqeoKVbJuktMwA:9 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10 a=l7WU34MJF0Z5EO9KEJC3:22
-X-Proofpoint-GUID: SmUYIJv14QmIff6cJmkl0QlZ6jnrqTxc
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-07_03,2025-07-07_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 suspectscore=0 mlxscore=0 malwarescore=0 lowpriorityscore=0
- mlxlogscore=999 impostorscore=0 spamscore=0 phishscore=0 priorityscore=1501
- adultscore=0 clxscore=1011 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507070078
+References: <20250628052536.43737-1-abdelrahmanfekry375@gmail.com>
+ <CAHp75Vcy3dHRu8Wb2KZ=xK7adz=-P-iuRTeR8vOWzHzZL9uFeg@mail.gmail.com>
+ <CAGn2d8OMRaeozOMxj1Ry8i9T3sJ5J1QqA_Jpk7wYO8KiUbpKBA@mail.gmail.com>
+ <aGPYZhK65LaD0wVO@smile.fi.intel.com> <836dc6b6-2821-47fc-8f24-0838f979af76@kernel.org>
+ <CAGn2d8NBEwWm0mQ0YQ3KZ+V1Zon84zusfsQQV2foVmUTBAzEAQ@mail.gmail.com> <fbfbd0e5-2c27-4f32-a3d7-9cf57fde5098@kernel.org>
+In-Reply-To: <fbfbd0e5-2c27-4f32-a3d7-9cf57fde5098@kernel.org>
+From: Abdelrahman Fekry <abdelrahmanfekry375@gmail.com>
+Date: Mon, 7 Jul 2025 16:26:38 +0300
+X-Gm-Features: Ac12FXzBqmNuWj7ejiaKXMMV8TVKT4LYL9tFZe6Npx2f8doOsoH6QUPVop8Pawo
+Message-ID: <CAGn2d8M5+5ErZd0YF_hQ75j5FWEFC60qCPX6U7G5j2HgDmz1PA@mail.gmail.com>
+Subject: Re: [PATCH] staging: media: atomisp: Fix premature setting of
+ HMM_BO_DEVICE_INITED flag
+To: Hans de Goede <hansg@kernel.org>, hdegoede@redhat.com, andy@kernel.org
+Cc: Andy Shevchenko <andriy.shevchenko@intel.com>, 
+	Andy Shevchenko <andy.shevchenko@gmail.com>, mchehab@kernel.org, 
+	sakari.ailus@linux.intel.com, gregkh@linuxfoundation.org, 
+	linux-kernel-mentees@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	linux-media@vger.kernel.org, linux-staging@lists.linux.dev, 
+	skhan@linuxfoundation.com, dan.carpenter@linaro.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Hans, Andy
 
+On Sun, Jul 6, 2025 at 9:25=E2=80=AFPM Hans de Goede <hansg@kernel.org> wro=
+te:
+>
+> Hi, Abdelrahman
+>
+> On 1-Jul-25 5:45 PM, Abdelrahman Fekry wrote:
+> > Hi Hans,
+> >
+> > On Tue, Jul 1, 2025 at 4:54=E2=80=AFPM Hans de Goede <hansg@kernel.org>=
+ wrote:
 
-On 7/5/2025 6:56 PM, Xilin Wu wrote:
-> On 2025/7/5 21:06:56, Dmitry Baryshkov wrote:
->> On Fri, Jun 13, 2025 at 10:41:48PM +0800, Xilin Wu wrote:
->>> The PHY is limited to operating in HS-G3 mode during the initial PCS
->>> registers initialization. Extra PHY init sequence is required to allow
->>> HS-G4 mode to work when needed.
->>
->> I can't find corresponding settings in either of HPGs.
->>
-> 
-> I believe there was a mistake when initially adding support for sc7280 
-> UFS PHY based on downstream code. In downstream [1] the 
-> HSGEAR_CAPABILITY registers are programmed to 0x3 **only** when Gear 4 
-> is not needed, while the current upstream driver always writes to this 
-> register regardless of the UFS Gear. [2]
+> * And maybe you'll find more possible cleanups while working on this
 
+I was working on some cleanups and i found something that i really
+don't understand.
+how is the error checking of hmm_alloc is handled , some functions are
+checking the
+returning value of it using mmgr_NULL and other use mmgr_EXCEPTION
+while in fact, when __hm_alloc fails it doesn't return either
+mmgr_EXCEPTION or mmgr_NULL in
+most cases.
 
-Hi Xilin, Dmitry
-
-The SC7280 is based on the SM8150 for gear 3 and the SM8250 for gear 4. 
-The sm8150_ufsphy_hs_g4_pcs table is identical for both the SM8250 and 
-SM8150, and is used for gear 4 settings for sc7180, SM8250 and SM8150.
-
-Additionally, the current code applies tbls table by default for all 
-gears. We need a separate overlay table for gear3 similar to overlay 
-tables 0 and 1 for gear 4 and gear 5, respectively.
-
-For settings specific to gear 3, such as 
-QPHY_V4_PCS_UFS_TX_PWM_GEAR_BAND and 
-QPHY_V4_PCS_UFS_RX_HSGEAR_CAPABILITY, we can include them in the overlay 
-table for gear 3.
-
-
-
-
-
-> 
-> I don't have access to the HPGs. The Gear4 specific init sequence is 
-> found in the Qualcomm proprietary UEFI driver code.
-> 
-> [1]:https://github.com/NothingOSS/android_kernel_msm-5.4_nothing_sm7325/ 
-> blob/sm7325/s/drivers/phy/qualcomm/phy-qcom-ufs-qmp-v4-yupik.h#L355
-> 
-> [2]: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux- 
-> next.git/tree/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c#n215
-> 
->>>
->>> Fixes: 8abe9792d1ff ("phy: qcom-qmp-ufs: Add Phy Configuration 
->>> support for SC7280")
->>> Signed-off-by: Xilin Wu <sophon@radxa.com>
->>> ---
->>> This might need testing on sm8150, sm8250 and sc8180x as well.
->>> ---
->>>   drivers/phy/qualcomm/phy-qcom-qmp-ufs.c | 7 +++++++
->>>   1 file changed, 7 insertions(+)
->>>
->>> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c b/drivers/phy/ 
->>> qualcomm/phy-qcom-qmp-ufs.c
->>> index 
->>> b33e2e2b5014d3ca8f19b623ba080887f53e616d..7797be329d75f95c80863e05351d0cf55fdf38c2 100644
->>> --- a/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
->>> +++ b/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
->>> @@ -570,6 +570,13 @@ static const struct qmp_phy_init_tbl 
->>> sm8150_ufsphy_pcs[] = {
->>>   static const struct qmp_phy_init_tbl sm8150_ufsphy_hs_g4_pcs[] = {
->>>       QMP_PHY_INIT_CFG(QPHY_V4_PCS_UFS_TX_LARGE_AMP_DRV_LVL, 0x10),
->>> +    QMP_PHY_INIT_CFG(QPHY_V4_PCS_UFS_PLL_CNTL, 0x0b),
->>> +    QMP_PHY_INIT_CFG(QPHY_V4_PCS_UFS_TIMER_20US_CORECLK_STEPS_MSB, 
->>> 0x2d),
->>> +    QMP_PHY_INIT_CFG(QPHY_V4_PCS_UFS_TIMER_20US_CORECLK_STEPS_LSB, 
->>> 0xb0),
->>> +    QMP_PHY_INIT_CFG(QPHY_V4_PCS_UFS_TX_PWM_GEAR_BAND, 0xff),
->>> +    QMP_PHY_INIT_CFG(QPHY_V4_PCS_UFS_TX_HS_GEAR_BAND, 0x1b),
->>> +    QMP_PHY_INIT_CFG(QPHY_V4_PCS_UFS_TX_HSGEAR_CAPABILITY, 0x04),
->>> +    QMP_PHY_INIT_CFG(QPHY_V4_PCS_UFS_RX_HSGEAR_CAPABILITY, 0x04),
->>>       QMP_PHY_INIT_CFG(QPHY_V4_PCS_UFS_BIST_FIXED_PAT_CTRL, 0x0a),
-
-There setting are not mention in UFS PHY HPG.
-
-Regards,
-Nitin
-
->>>   };
->>>
->>> ---
->>> base-commit: bc6e0ba6c9bafa6241b05524b9829808056ac4ad
->>> change-id: 20250613-sc7280-ufsphy-g4-fix-024542f31fac
->>>
->>> Best regards,
->>> -- 
->>> Xilin Wu <sophon@radxa.com>
->>>
->>
-> 
-> 
-
+> Regards,
+>
+> Hans
+>
+>
+Best,
+Abdelrhaman Fekry
 
