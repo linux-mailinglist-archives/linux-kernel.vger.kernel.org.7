@@ -1,111 +1,262 @@
-Return-Path: <linux-kernel+bounces-719636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADA50AFB0A1
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 12:02:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB15DAFB0A7
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 12:03:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14309170F90
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 10:02:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 720871AA3B5D
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 10:03:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07ED428CF77;
-	Mon,  7 Jul 2025 10:02:24 +0000 (UTC)
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7A871F8755;
-	Mon,  7 Jul 2025 10:02:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48D78292B51;
+	Mon,  7 Jul 2025 10:03:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="n8lMu26K"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1749028A1CE;
+	Mon,  7 Jul 2025 10:03:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751882543; cv=none; b=ZycrrIo1HvS2Dun6heIggJtt71iGQwcbKtvZBva8jYYIcPqd1ByLvznnfSZT0iqctzuR4ZGqEBoh1op/30b0ZIVjjbsYL44c6ZCnNI25EbXCqS5DR8xr1miFxqUbw5OwnGqF1yzJiMaOaaB85pOSeRB3XDqvjEhOvMFKlF8kFSs=
+	t=1751882585; cv=none; b=rkYCIbCGSdvJfNGKWNmpjoH4D5qHr/xZd4Xo3P/bKtT9kCB5LS4vql/XkXywACQf8E2aNdasZtUHbDU701Ux5CNPhIwzwwDDC5Um4BCAA7i/vtYPX8MsmCR0MbcQ50rzkvRvwsVOb7FfZ5UCK7kG3nPk8skg26i34JLMF9ydyBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751882543; c=relaxed/simple;
-	bh=vkru9bws1F+ARBeM4YsMUM2st4Em7q8l2KIm2ooe9NA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=THiIMeaxtK/lSh1EA8I52DYrUgTzfFnakGwAWGcLxz1ULv1qgmNNlzndGvStLsvpATh6ou5KQxC9M6tVVbKhfuMK9Vpd8RL191+p0mHBOVeNwnX0yrAsdLUOJwKCytAS9EAlSmIBiAB3z8KNjl6jUfka3XzECl9JtPX8pi4sUk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6fb1be9ba89so31870346d6.2;
-        Mon, 07 Jul 2025 03:02:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751882540; x=1752487340;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kAWVxOChxT99brNRnSRvqsjpYCXonES5TnFSFk+0jU8=;
-        b=OxTgic+7xpS3J5LJ9sST17zo+TGNRUVtjxnEknVzKQQj8NitzZF40RyMaiYkHnTqB7
-         +UdaBI2nhOuQ54tcaLM+K5v+cBph2991JSHfhFMdF/Q3MDxr3t5I4lGj2X+sq2Fsa0dr
-         fQ7u7x54NwK856MvYq/G6rsuzo+gWL+xN0w0knKj0396k36BKGLzWLWadlGYUDyJAx0v
-         uGpbNFE2eOCg8MWELqdyLowRJ7oGECS9drBHwOP0rC+s9m86tAOiLKZtOt/CAOKdXpSS
-         ko5r9CSCXHvJahweEZYFJzmp1eXcVgdSb8XtN/Ai4tpCVnrVGILpidZxx50ZFoHRbUVD
-         2Nfg==
-X-Forwarded-Encrypted: i=1; AJvYcCU2IC3F146/6N32k7eJ7i3bKbgBEmkgR4R5KPHxsXEZrE0Umh8AgIj809/f9x6bQOOGfIZx1683AmUCwQuWeXOMQNk=@vger.kernel.org, AJvYcCVXXSVDQhzhOGJb8KilIJ1GAT16RHJJHcj95rd0JyE8yoMR4cqnc/hQhgQQzcaNSnC5tqC1K0ENvlM=@vger.kernel.org, AJvYcCX2ZhDx1U6MTJ0AwcaeYp9coiOj/5g2rDDDR8NJt/YX8d1AdAeUMJw6Aia0EwsJ9FbZJdN1ldwe6NKmaiLL@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxz0WU2A7MGd1vChhrmDygDj6carmJ7B3QuGxvo5KcoLwCHQoic
-	AWqLpKUjDYhPR0SpVoBfNWITzj+20i0gMyZWLfbj+1CMO+2+sNVRlL04ee5T1qJw
-X-Gm-Gg: ASbGncscxowaB1WpSgvSD1i83v32vdthH/lEHDaeO10ODeAw9OsxEXijKklFlTYp0Da
-	nhB/L3SeH3t0hDy+A4wh34sSxBZcFdj0SRE+N46o0RLj0dn1xPPxirdrkorL7mE7TLzhTlZ63qA
-	v1LDoZ+7Hljm8hWOhUC4rvfz5FheChHe1wqWqND0VOheONTVrGskdIOwNa+S/xrOGspSzkYT/YL
-	ACZxrEENnl1s8PGXj4Qte4xX02yMypJyBO5Z+EcS9X80mabIIFh+pohuIjaijN8M97blOgARo1G
-	22ml/XGxdVoD8hFrfonUUnMUraiZYP4jjltIfrJAQB5c4dOsGfCp30CAEB5He3f4ImRW8gHj5+D
-	3JrIIyP1P/5pFWoSaqvS0JH/9yCoz
-X-Google-Smtp-Source: AGHT+IFVrEDF48C21dZwzvaqbmDGAzgnNksXEM5UZMq1n8w+O8QIG2ddSEEzWxetxnWnXdrVieTXjg==
-X-Received: by 2002:a05:6214:2b82:b0:704:79e4:aa4a with SMTP id 6a1803df08f44-70479e4aa8bmr3192066d6.18.1751882539362;
-        Mon, 07 Jul 2025 03:02:19 -0700 (PDT)
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com. [209.85.222.171])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-702c4d5aac7sm56081876d6.85.2025.07.07.03.02.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Jul 2025 03:02:18 -0700 (PDT)
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7d38ddc198eso346403885a.1;
-        Mon, 07 Jul 2025 03:02:18 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVl8NMpdXTZ6+f/V88vMC+5M1U3l5/ujHRk4dLtC+7aVEmh5omGRI5IM921rZlARzjovrYa648ODHI=@vger.kernel.org, AJvYcCWQQuArJyb//Gp7kUSnQSKlCiw89Z+26tI6gVk2ydc9axbS1eBmR4ShjfZT3C9SeWZmri6zdaML/z4bWntF@vger.kernel.org, AJvYcCXWHmnDVYPjmRlT1jdXmndBG0u1sTE9lZMDCwWKEmUpt7duzpHG0tFsDpLshY3xjvoWsWScl4wv1vdfMJPFKQJfR5A=@vger.kernel.org
-X-Received: by 2002:a05:620a:450c:b0:7d5:dc2a:c5f8 with SMTP id
- af79cd13be357-7d5df102f6bmr1328858485a.12.1751882538289; Mon, 07 Jul 2025
- 03:02:18 -0700 (PDT)
+	s=arc-20240116; t=1751882585; c=relaxed/simple;
+	bh=Fr153gJd+FEKlvqP+y6xczT1kZJgs0HMt4ilXQEXtDk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HItFs6m2Myfz9MagwPep4ajTPcXl3CWEUkYb/p25pBjMLSrdlza/QYYxCjFIoGepsVFYB3mrEobhE/MWhFaRD2Jiw7COXdHtZOCDPuoCTGfUy9NYm/QCkMEyaZBbRcfk3B8q+x6YTsXy/m6OndrMZwceWGG1rvElDYS7r5tcwxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=n8lMu26K; arc=none smtp.client-ip=117.135.210.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
+	Content-Type; bh=JKlpTevxu85gp6f6igNYxYtQcdo+vMwHhI23b2Bpl/U=;
+	b=n8lMu26KcKMwR2qks3e+G25Tf7fLeySn28QSabCIcoGWDfYAqRFAT8oVYmEwiL
+	PcqxKaa/n0CmUkq9DQArZAhyApzTQvLMfj7ovRkehozIolYHm5+BiqPKRY/pfHLk
+	Z/T1x1pbbmeGQyyLx/Fc7UGzrNDGbagUEOwm++sZfsjTE=
+Received: from [10.42.20.80] (unknown [])
+	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wAHHCs+m2toxqqODA--.34329S2;
+	Mon, 07 Jul 2025 18:02:39 +0800 (CST)
+Message-ID: <1567a84b-3f78-4f0a-9549-bfe9fd4aa96b@163.com>
+Date: Mon, 7 Jul 2025 18:02:38 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250704091009.58821-1-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20250704091009.58821-1-biju.das.jz@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 7 Jul 2025 12:02:04 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVzYBx-5Wfp4k_wUqO3Np6Sc+DB_2htX5uVNOqXnaRXbg@mail.gmail.com>
-X-Gm-Features: Ac12FXzx50lwWv0KDbni2_rquPePl51mbuS_ixobvgbkXsfenAFeImeuX7GhpcU
-Message-ID: <CAMuHMdVzYBx-5Wfp4k_wUqO3Np6Sc+DB_2htX5uVNOqXnaRXbg@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: r9a09g047: Fix typo
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	John Madieu <john.madieu.xa@bp.renesas.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, Biju Das <biju.das.au@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fbdev: efifb: do not load efifb if PCI BAR has changed
+ but not fixuped
+To: Thomas Zimmermann <tzimmermann@suse.de>, Helge Deller <deller@gmx.de>
+Cc: Peter Jones <pjones@redhat.com>, linux-fbdev@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ Shixiong Ou <oushixiong@kylinos.cn>
+References: <20250626094937.515552-1-oushixiong1025@163.com>
+ <3b3feb03-c417-4569-b7b0-44565d7cce4f@suse.de>
+ <a937f41f-2cee-459d-b94f-b7f979072f3e@163.com>
+ <1687bb52-e724-46a8-af75-26b486634c20@suse.de>
+From: Shixiong Ou <oushixiong1025@163.com>
+In-Reply-To: <1687bb52-e724-46a8-af75-26b486634c20@suse.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wAHHCs+m2toxqqODA--.34329S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxKrWxGr43XF4kAFW8JF15CFg_yoWxWFyxpF
+	WfGFW3CF48Xrn7Grs0g3Wqyrn3tr4kWFyq9FsxKw1UJFyqyF1avrnruryDurykZr4kGF1I
+	qr4jy34akF15CFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07Ua0PhUUUUU=
+X-CM-SenderInfo: xrxvxxx0lr0wirqskqqrwthudrp/xtbBYwCDD2hrkI3wHAAAsd
 
-Hi Biju,
 
-On Fri, 4 Jul 2025 at 11:10, Biju Das <biju.das.jz@bp.renesas.com> wrote:
-> Fix the typo et0_rxclk->et0_txclk for smux2_gbe0_txclk.
+在 2025/7/7 17:28, Thomas Zimmermann 写道:
+> Hi
 >
-> Fixes: 17dc02f7d293 ("clk: renesas: r9a09g047: Add clock and reset signals for the GBETH IPs")
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> Am 07.07.25 um 11:24 schrieb Shixiong Ou:
+>>
+>> 在 2025/6/27 17:13, Thomas Zimmermann 写道:
+>>> Hi
+>>>
+>>> Am 26.06.25 um 11:49 schrieb oushixiong1025@163.com:
+>>>> From: Shixiong Ou <oushixiong@kylinos.cn>
+>>>>
+>>>> [WHY]
+>>>> On an ARM machine, the following log is present:
+>>>> [    0.900884] efifb: framebuffer at 0x1020000000, using 3072k, 
+>>>> total 3072k
+>>>> [    2.297884] amdgpu 0000:04:00.0: 
+>>>> remove_conflicting_pci_framebuffers: bar 0: 0x1000000000 -> 
+>>>> 0x100fffffff
+>>>> [    2.297886] amdgpu 0000:04:00.0: 
+>>>> remove_conflicting_pci_framebuffers: bar 2: 0x1010000000 -> 
+>>>> 0x10101fffff
+>>>> [    2.297888] amdgpu 0000:04:00.0: 
+>>>> remove_conflicting_pci_framebuffers: bar 5: 0x58200000 -> 0x5823ffff
+>>>>
+>>>> It show that the efifb framebuffer base is out of PCI BAR, and this
+>>>> results in both efi-framebuffer and amdgpudrmfb co-existing.
+>>>>
+>>>> The fbcon will be bound to efi-framebuffer by default and cannot be 
+>>>> used.
+>>>>
+>>>> [HOW]
+>>>> Do not load efifb driver if PCI BAR has changed but not fixuped.
+>>>> In the following cases:
+>>>>     1. screen_info_lfb_pdev is NULL.
+>>>>     2. __screen_info_relocation_is_valid return false.
+>>>
+>>> Apart from ruling out invalid screen_info, did you figure out why 
+>>> the relocation tracking didn't work? It would be good to fix this if 
+>>> possible.
+>>>
+>>> Best regards
+>>> Thomas
+>>>
+>> I haven’t figure out the root cause yet.
+>>
+>> This issue is quite rare and might be related to the EFI firmware.
+>> However, I wonder if we could add some handling when no PCI resources 
+>> are found in screen_info_fixup_lfb(), as a temporary workaround for 
+>> the problem I mentioned earlier.
+>
+> As I said elsewhere in the thread, you can clear the screen_info's 
+> video type in the branch at [1] to disable it entirely. We should have 
+> probably done this anyway. Knowing the cause of the issue would still 
+> be nice though.
+>
+> Best regards
+> Thomas
+>
+> [1] 
+> https://elixir.bootlin.com/linux/v6.15.5/source/drivers/video/screen_info_pci.c#L44 
+>
+>
+thanks for you suggestion, while there are two cases:
+     1. screen_info_lfb_pdev is NULL.
+     2. __screen_info_relocation_is_valid return false.
 
-Thanks for your patch!
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-As the bad commit is only present in renesas-clk, I will fold the
-fix into the original commit.
+should we do it at [1] too?
 
-Gr{oetje,eeting}s,
+Best regards
+Shixiong Ou
 
-                        Geert
+[1] 
+https://elixir.bootlin.com/linux/v6.15.5/source/drivers/video/screen_info_pci.c#L47
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>>
+>> Best regards
+>> Shixiong Ou
+>>
+>>>>
+>>>> Signed-off-by: Shixiong Ou <oushixiong@kylinos.cn>
+>>>> ---
+>>>>   drivers/video/fbdev/efifb.c     |  4 ++++
+>>>>   drivers/video/screen_info_pci.c | 24 ++++++++++++++++++++++++
+>>>>   include/linux/screen_info.h     |  5 +++++
+>>>>   3 files changed, 33 insertions(+)
+>>>>
+>>>> diff --git a/drivers/video/fbdev/efifb.c b/drivers/video/fbdev/efifb.c
+>>>> index 0e1bd3dba255..de8d016c9a66 100644
+>>>> --- a/drivers/video/fbdev/efifb.c
+>>>> +++ b/drivers/video/fbdev/efifb.c
+>>>> @@ -303,6 +303,10 @@ static void efifb_setup(struct screen_info 
+>>>> *si, char *options)
+>>>>     static inline bool fb_base_is_valid(struct screen_info *si)
+>>>>   {
+>>>> +    /* check whether fb_base has changed but not fixuped */
+>>>> +    if (!screen_info_is_useful())
+>>>> +        return false;
+>>>> +
+>>>>       if (si->lfb_base)
+>>>>           return true;
+>>>>   diff --git a/drivers/video/screen_info_pci.c 
+>>>> b/drivers/video/screen_info_pci.c
+>>>> index 66bfc1d0a6dc..ac57dcaf0cac 100644
+>>>> --- a/drivers/video/screen_info_pci.c
+>>>> +++ b/drivers/video/screen_info_pci.c
+>>>> @@ -9,6 +9,8 @@ static struct pci_dev *screen_info_lfb_pdev;
+>>>>   static size_t screen_info_lfb_bar;
+>>>>   static resource_size_t screen_info_lfb_res_start; // original 
+>>>> start of resource
+>>>>   static resource_size_t screen_info_lfb_offset; // framebuffer 
+>>>> offset within resource
+>>>> +static bool screen_info_changed;
+>>>> +static bool screen_info_fixuped;
+>>>>     static bool __screen_info_relocation_is_valid(const struct 
+>>>> screen_info *si, struct resource *pr)
+>>>>   {
+>>>> @@ -24,6 +26,24 @@ static bool 
+>>>> __screen_info_relocation_is_valid(const struct screen_info *si, stru
+>>>>       return true;
+>>>>   }
+>>>>   +bool screen_info_is_useful(void)
+>>>> +{
+>>>> +    unsigned int type;
+>>>> +    const struct screen_info *si = &screen_info;
+>>>> +
+>>>> +    type = screen_info_video_type(si);
+>>>> +    if (type != VIDEO_TYPE_EFI)
+>>>> +        return true;
+>>>> +
+>>>> +    if (screen_info_changed && !screen_info_fixuped) {
+>>>> +        pr_warn("The screen_info has changed but not fixuped");
+>>>> +        return false;
+>>>> +    }
+>>>> +
+>>>> +    pr_info("The screen_info is useful");
+>>>> +    return true;
+>>>> +}
+>>>> +
+>>>>   void screen_info_apply_fixups(void)
+>>>>   {
+>>>>       struct screen_info *si = &screen_info;
+>>>> @@ -32,18 +52,22 @@ void screen_info_apply_fixups(void)
+>>>>           struct resource *pr = 
+>>>> &screen_info_lfb_pdev->resource[screen_info_lfb_bar];
+>>>>             if (pr->start != screen_info_lfb_res_start) {
+>>>> +            screen_info_changed = true;
+>>>>               if (__screen_info_relocation_is_valid(si, pr)) {
+>>>>                   /*
+>>>>                    * Only update base if we have an actual
+>>>>                    * relocation to a valid I/O range.
+>>>>                    */
+>>>>                   __screen_info_set_lfb_base(si, pr->start + 
+>>>> screen_info_lfb_offset);
+>>>> +                screen_info_fixuped = true;
+>>>>                   pr_info("Relocating firmware framebuffer to 
+>>>> offset %pa[d] within %pr\n",
+>>>>                       &screen_info_lfb_offset, pr);
+>>>>               } else {
+>>>>                   pr_warn("Invalid relocating, disabling firmware 
+>>>> framebuffer\n");
+>>>>               }
+>>>>           }
+>>>> +    } else {
+>>>> +        screen_info_changed = true;
+>>>>       }
+>>>>   }
+>>>>   diff --git a/include/linux/screen_info.h 
+>>>> b/include/linux/screen_info.h
+>>>> index 923d68e07679..632cdbb1adbe 100644
+>>>> --- a/include/linux/screen_info.h
+>>>> +++ b/include/linux/screen_info.h
+>>>> @@ -138,9 +138,14 @@ ssize_t screen_info_resources(const struct 
+>>>> screen_info *si, struct resource *r,
+>>>>   u32 __screen_info_lfb_bits_per_pixel(const struct screen_info *si);
+>>>>     #if defined(CONFIG_PCI)
+>>>> +bool screen_info_is_useful(void);
+>>>>   void screen_info_apply_fixups(void);
+>>>>   struct pci_dev *screen_info_pci_dev(const struct screen_info *si);
+>>>>   #else
+>>>> +bool screen_info_is_useful(void)
+>>>> +{
+>>>> +    return true;
+>>>> +}
+>>>>   static inline void screen_info_apply_fixups(void)
+>>>>   { }
+>>>>   static inline struct pci_dev *screen_info_pci_dev(const struct 
+>>>> screen_info *si)
+>>>
+>>
+>
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
