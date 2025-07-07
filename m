@@ -1,206 +1,345 @@
-Return-Path: <linux-kernel+bounces-719629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 332B9AFB08C
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 11:58:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2861FAFB091
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 11:59:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7EC28168A6D
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 09:58:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75E4116906C
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 09:59:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1D94289E2B;
-	Mon,  7 Jul 2025 09:58:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52AF028B40E;
+	Mon,  7 Jul 2025 09:59:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="je5KjS8Y"
-Received: from OS0P286CU011.outbound.protection.outlook.com (mail-japanwestazon11010054.outbound.protection.outlook.com [52.101.228.54])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="mBG3URH1"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 244542D78A;
-	Mon,  7 Jul 2025 09:58:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.228.54
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751882325; cv=fail; b=LauHQ0sy3y5WiQxr/wnmHWXh+w7Z1HGa4/QMIG9QiOs+qbEo1ZS/cPbrorBtkyDkAn0tfyoRpMdDSCFNmi3tI5I8PZvLpzFQ6qFXqS9WWkPGzP2NS+qzn21Jt2ZDowt9avkPF6L34EYtmS6qjHC3TvEy96FpQqacLhDCEgJjQj0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751882325; c=relaxed/simple;
-	bh=Dz+ySJsR6rbUYGtXoZbXkFAHHsOF8WtolJTsYoMTcOo=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=uN6KouOMO+65FxzyVFnIlvsQkZHiz9vRavtg443GBt8jy+6uyPy9/oFcN39T9ubSLo1RRuXP+yuGsEHdFEGWG1IJxv6ZjIadjSYppmUeIXCQ4y9AsCqLpINPFHXo40JKOBM9OrHm7ROjh4mH9X9j6XTVi5N/i2ZG95NBxgBS5P8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=je5KjS8Y; arc=fail smtp.client-ip=52.101.228.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=S9PlTPcNgAe40z7Fy6t+9hMOfpPfNbcdS3wiIElBxDukmr9TjMfG/EaRVNkDmvIx+tn5ZeAFreNaQ4TMldHgixgGtixFkvQGZI1NafEGR/PkTiKQ65uHDyUCPndVvZjJ3U3A6Ad6seOWaJCsEtlLajP6+wn6y2a0mYcfogPqYz+TQ3ISWiDepe9xkjbGkYdETx775CG/ov3dNlrC7ZMou4NtI7B9jGlvPcGKumxgKJr/xLfSO8FWHuZQZf9C74EQbtShad5hGMSNXweJXIoNAldMdSlFN1iL98ZoVS2bUmmILjoYfxG8ptGAF0Eovw7wVB68wyKK2lxsNviMamEagw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Dz+ySJsR6rbUYGtXoZbXkFAHHsOF8WtolJTsYoMTcOo=;
- b=iKz0/sKTHaRlbeALK2aAkjr9e3EQyP42ox990PxVd4I5Kqm2P1Omd9yxktvWeoLsf3dTyCJ/TEaQxbvVFd5zruuS4NFmmh0Ph+VmKwl4RS+U4h4eS8aycDQ4wHlfMCo/Me5g+heHg5qARlo4c+wWbM6S4IWkdeWDyAxk/FFFyhTkzDkY1GhRR9eu5MmDfdGDAKGQUbSYTb+c/knaCbub1/EV597vmd1glo+7m9fWtXD57bCTe7mFF6qHCBDaHgjmvA8DSqfuAR0hRf9oa2RooAWsFCoMiz7leI7c4pUgySdbno9jGv2/1OADKV8ax7r7V5sVYxqtUMO8HWbz1h+C/A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Dz+ySJsR6rbUYGtXoZbXkFAHHsOF8WtolJTsYoMTcOo=;
- b=je5KjS8Y0NUzvL+NIUmUGnWv3nLYpLsU3gG5HMeUn3Ow/uxX1/IsAK3Kk7wadlX6ynzQrrD9VYsp1zFPDCtIoBtR65Pah0P6Z8oYlkG1muFKwz/D1C91bHukJyi9WUuzKPsiOPuxwI3T2nzgqlbM2Vc6SqOXaY+9NB7C1PNWJWE=
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
- by TYYPR01MB13154.jpnprd01.prod.outlook.com (2603:1096:405:167::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.26; Mon, 7 Jul
- 2025 09:58:40 +0000
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::86ef:ca98:234d:60e1]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::86ef:ca98:234d:60e1%3]) with mapi id 15.20.8901.024; Mon, 7 Jul 2025
- 09:58:40 +0000
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Biju Das <biju.das.jz@bp.renesas.com>, Geert Uytterhoeven
-	<geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, Rob Herring
-	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>
-CC: John Madieu <john.madieu.xa@bp.renesas.com>, Wolfram Sang
-	<wsa+renesas@sang-engineering.com>, "linux-renesas-soc@vger.kernel.org"
-	<linux-renesas-soc@vger.kernel.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, Prabhakar Mahadev Lad
-	<prabhakar.mahadev-lad.rj@bp.renesas.com>, biju.das.au
-	<biju.das.au@gmail.com>
-Subject: RE: [PATCH] arm64: dts: renesas: rzg3e-smarc-som: Fix I2C bus for
- PMIC control
-Thread-Topic: [PATCH] arm64: dts: renesas: rzg3e-smarc-som: Fix I2C bus for
- PMIC control
-Thread-Index: AQHb7alaQlfKRuvMPEWd87dpigjmPLQmbh1w
-Date: Mon, 7 Jul 2025 09:58:40 +0000
-Message-ID:
- <TY3PR01MB1134678C03CE2F4F00D8E8C09864FA@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-References: <20250705123548.44624-1-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20250705123548.44624-1-biju.das.jz@bp.renesas.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|TYYPR01MB13154:EE_
-x-ms-office365-filtering-correlation-id: 5f856f31-5614-4ee1-f786-08ddbd3cd9a0
-x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|376014|7416014|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?S9vcjyTIuqFw3XKgIyTrG2I4+t9CQw/A1Omuk774oEFwAZSJdmqtfrSWIJrs?=
- =?us-ascii?Q?eRtbTRhjm2/BQz+vJcu8bdtlfR4U9f4pnAfOPDNkBjjhf8HiggOIpFdXPVFn?=
- =?us-ascii?Q?Axvnk2LdjZCLWFTdZibkc7/2QxpKomQrkwq2Ul9CF6UfQol67X5ApA3dZIFS?=
- =?us-ascii?Q?98Ww9xyVCItdXnady3XU9eFmvwRrp/N18aFA7DCbrRHAMtWB+1nVlIhktJer?=
- =?us-ascii?Q?gZJ+50xRLP9VYKdogWfeOaSO+coM5RhAGf9bEieDgOF/Vz4GkgI6Fx8aLIOc?=
- =?us-ascii?Q?deTrRqXVhKx1gOx7vnfJBUx637MdOH78ys42cjj2qqulQZLVn/mFw1ynOwdK?=
- =?us-ascii?Q?opA8Hu0pZdoa6oO+wie+t6tmRxpKKvZ8/fSwnjNUJ+foBwH6hXiljzUuCQ/e?=
- =?us-ascii?Q?DOFTfY1ezdeOr37KIKjgoqnFFSdY3dgeKvLm6wUIKI24Sdnp7X71ecs8dx3d?=
- =?us-ascii?Q?ogSELSMWsiOB9tOQqyUZ6c1r9FDn2Xw/3BZBHerrMz14TLqlaiC/SkUfl3JC?=
- =?us-ascii?Q?JwKIlPInHva3XLWF1SA60SDR4GlogpSKchIaC+Trf8wIZ/0P/CmMuAsvC5Mh?=
- =?us-ascii?Q?84tMfj/v3vv6gtQqtJ1AEzRY/fJp3Ek36R4c2HOZPsjL+dS6EWM4xNRfvE3K?=
- =?us-ascii?Q?ihlQI1Cee4DA9W0BVO3Lf89ZA0O7dbTVcqym9Z8+yWNcqN8syGoXsZiivtcv?=
- =?us-ascii?Q?F6o9QZAgK2LfoVF9KabMj1Pla1xtqe/vlp2uXgQpXiRLu7pW3JwXQkUYK1FX?=
- =?us-ascii?Q?HPeiXh82GV3oLTuKapW65MKRqUUR0cPkSn5K5vLBk7Aw+0/REwjhapxaAaui?=
- =?us-ascii?Q?Lc/K/CBELnk4Bm7jQMIMVsY/Y1nUTVHCmW4DUgQZNPGvMWOVQ7NfvQ83a7PT?=
- =?us-ascii?Q?ki8Aj7XlL9c4O+0eTTDLYB8B68KZClTlegqL8I3c5ENqSZg5t0sLme3aJvw1?=
- =?us-ascii?Q?xjuuLZcdF/Uo3QVVLDqPMdAf21WX7olA4nxT8jzQecq/x1MJzihPgdOgpLs6?=
- =?us-ascii?Q?DrlPvMHRNkNDs/P33rHr8jkv8CbmlJB2VSiaLOH/bDPN+wjNSNQTP85PXtXQ?=
- =?us-ascii?Q?B5j/miMVaFR0nxcFvjvzsyWFBbnfBWJvBoVYuj7W797nvMav47cqtlrU7GUL?=
- =?us-ascii?Q?03BqSygbkn0Flk/qqpJkL9NntySCEhzPXYMO91XROwX/h2VlFts36xL86nFL?=
- =?us-ascii?Q?NRB3l+NRXWssjYWz09iqFkuudf1leeGkceijt+icKgdSbfAqHy9Jdo0GnVYc?=
- =?us-ascii?Q?NdCynPyfGXsXXWTTCQ/XGfcYPeuwuvOuDtmGAGQMoOftDS8dmL097hCbfpZd?=
- =?us-ascii?Q?A+lxRl7jnIbfqVbz2Uq2Eq0qrjJfhDZfzCeBZOi5gNMfJMJU0xzDph7keykf?=
- =?us-ascii?Q?J5l0rwq9DNgkfRRzKu6+bmgQL0k5nyqKaRDxl+nPjV5ZFlMbrDdc0O37QU9e?=
- =?us-ascii?Q?cAF+ZidvEbGyHU5cZNO5pv5Q6i7s5COIfwspugvPzU6ue7Z7a/GToRYPiFkg?=
- =?us-ascii?Q?9Ycm7SORhERaq4k=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?M7jWELD2/DR/BMFtnvrSAxHOSd+DNXjcJBnLdVGCNbHRAnBxdI4xOaYgFU0p?=
- =?us-ascii?Q?iHGZcsQNgSXTaLxIS/czRmU28fSF+JOw/+vTqLtFy+7hXYmnBMvRIcCmLs0Z?=
- =?us-ascii?Q?d233UeFTV2tB04aAEhdvhk9lw3PLEnwS8oReTeqI4ygVYqfbuL6U0ODSupOX?=
- =?us-ascii?Q?atZjvxHZlZK57j2+OIduzU9biTS9+U598uQTZzH74kvUCYzCiE1KqDNuhFm4?=
- =?us-ascii?Q?IGwVFJyj+Hw5yoMF9BvDkGLUNO46GQa/wdh287MOpJCTNqGwOvJLkUi+3AAc?=
- =?us-ascii?Q?xBOD3YAcbSuXYYKHuUIuk9bObuz2m7BnuTCI1JjMHhOovFUyqI2XYrY+2J6q?=
- =?us-ascii?Q?zmqUB736y2hfrLB2g0IXqiIQ15kEohVO3TG4CvfIogHRHjsnV5w+mzi7L2+T?=
- =?us-ascii?Q?cQHCt45I0+qmsyelDW0lBZ/WtNdmmmqx+mk7ld6jYX7WC0TuWJ0eOVPUPiHB?=
- =?us-ascii?Q?DDoIBfeyDeJSMCwSe4D/2fbycWevM3MF7eCP5RrfSXQYtyE0tSl3shnu3X/8?=
- =?us-ascii?Q?BOFzFhUZtApV152ZlkYQSh6DCJkwDMvCSraHoHOYMXxNU5bNNcOq0K8elQ/v?=
- =?us-ascii?Q?mjlJZrLE+eYdshcc6tSvzq1zXxtgmcjnx1/CrqMzR6AaI2u8g6cgIG5PHYLL?=
- =?us-ascii?Q?MdEez0IfUcwjJfhVqFSXyVQmxLGfDVs+dfeyJVhK2/6TGSZ9RZZ8RqlwOlx2?=
- =?us-ascii?Q?awI4J9PtIc9GB4mzv5xmVNDDNdxITDvqQFrMfUtRyxs5bmIPBJq8UMIL5M2X?=
- =?us-ascii?Q?2RBv1wDdc5BVLefAr/T/cLrLD/NYebr1nsekeiBHJLml3jI98le+bBO0QztE?=
- =?us-ascii?Q?BGDuK3bavF+D3eABWDcDOU96cjOsUbrODzWfcdgHnADzKcdxdnBVy0nWQ+J3?=
- =?us-ascii?Q?9N7BNzNFA2DJykrjOiCOalIfVR8JKptQDlRceD+ald8N0SXyDluXIyexjvO5?=
- =?us-ascii?Q?pWO5vwzfYZCuOE10/Tgdj3pP3YihdI6k4u8Y5VGm2aw1FaPVuCGNuO39kdgn?=
- =?us-ascii?Q?SWlp41wsrU2XkuFKTgyeJ6hlKiyd2ci+pAXYa5RM5Zh0TSo0jxxax9sdwsma?=
- =?us-ascii?Q?HJ4vMY0P6nAqh0j810q/EHto45km1XTNhLll8r5eA/mSSAr/yzHD1rpcgShD?=
- =?us-ascii?Q?wkbOGGwUagme3BmI+3nRBfQAMOzMLJCNWd5T5d1iXCnKptFt5OEGeHzRsjTH?=
- =?us-ascii?Q?fkAO3kQTnkQORQZz2gJ0UvxreQxc/Mfiyuvp+3fFWBx30I0KZ4Tn4Rmf7CMj?=
- =?us-ascii?Q?eUMruIejTCfMvq+vjQdFUHBmdpRudK3QwVJBzdqqqeDVw5y5uh12dSRw7ozs?=
- =?us-ascii?Q?7c1oEgBJ4IdqweywgsxkVZJjTLt9ii5RjdB0kOZMi/Xr0iH14Zv+/ZgW8Im4?=
- =?us-ascii?Q?R+yO4zrcmfSZdJeX01d+S2OfMI9ImPeUuJUVGxBkDIzz1enEL4LO80uoiBXZ?=
- =?us-ascii?Q?+D5pGtfObdoSjft+JNvb0K8RdPnkxKv21wrJjGdeaVZWqGkKAvLcdrwt1N4u?=
- =?us-ascii?Q?0l5lMO5bdPOYOkPBOs2aaG+nkBRgypWxnExxf9vx754Q6v8EVM+fhfs0F3Vx?=
- =?us-ascii?Q?vmz0CySetzH1FBC8LypxJnPlJNt1E3vphHJZzRchRSbZ3YCBt8DlVIr0lX+7?=
- =?us-ascii?Q?iw=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A395428934E
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 09:59:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751882366; cv=none; b=mA9kOrjemKFMNMIVEkuth81jCEBf3DI0vtKuYnXkPuwp9BuZP1dYww4hXf/jQNh1yV39kZoj1Ho/4Ti0mFJeBkbUKi8l+EAa7BswlrEky3flIMyKm/3N7fayRJADhhIhJvPwjz0gqIzVo0Qu93M/Cixcvjf5mqCl+iGrcgVGf68=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751882366; c=relaxed/simple;
+	bh=12MJoW0kbKlBkp8ffyDIjdKhkfT8Yp8PMwc5Px6aCeU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pafPd1o0IxdwYrq5vL5jq6atFpHw8RY4ULJ4DbsZ8jJMWCm9LjnmxovOipEQbqhA1Hn8LZKuENEqYvRZ6CVUWQMmSUDvxKx+8EmMKzz18PPK74oznp54pBpJd2kTRN6cpEJp5vNR8nSp+c8LDZLX3M3pDUnqtnjhesbWXmEpCrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=mBG3URH1; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 0881143AE7;
+	Mon,  7 Jul 2025 09:59:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1751882356;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aIuFlXWrcDzU9uPaQKpuqpy2rjs9RFnhUBtYgzbA9Uw=;
+	b=mBG3URH1EKrJK/9byvkOGEmzsn5QyyDPOXTERmFclarapjywrB5Ah/7q0/VWSw891BpwKx
+	+WNhSstAtb7CxvRolX4NhkLoD9a/2uSR9bqPPYbAzoWbauQh8VSe4H1H+MbrTEyZqK1O/G
+	aB7gyHekMQ4lpJMEjLm9b891iOEF2t347myivgB/xdfAvJTxf2cl5FcrwAezoadPE4ZuXA
+	lkLxaoL1olalS+IE4775uYeMfrtHbTmYU9mIEO/r+e8pmCTLrh41gi0ko8Zn/btNUyipKK
+	0zm2Z3OBL6X5F+UVmOIuwHsNwN5oc4ObAM3f8WW5Fc3/ZOmt/+vR3JtxocCPZg==
+Date: Mon, 7 Jul 2025 11:58:53 +0200
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
+ <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter
+ <simona@ffwll.ch>, Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong
+ <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, Laurent
+ Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
+ <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Inki Dae
+ <inki.dae@samsung.com>, Jagan Teki <jagan@amarulasolutions.com>, Marek
+ Szyprowski <m.szyprowski@samsung.com>, Jani Nikula
+ <jani.nikula@linux.intel.com>, Dmitry Baryshkov <lumag@kernel.org>, Hui Pu
+ <Hui.Pu@gehealthcare.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-sunxi@lists.linux.dev, Kevin Hilman <khilman@baylibre.com>, Jerome
+ Brunet <jbrunet@baylibre.com>, Martin Blumenstingl
+ <martin.blumenstingl@googlemail.com>, linux-amlogic@lists.infradead.org
+Subject: Re: [PATCH 00/32] drm/mipi-dsi: avoid DSI host drivers to have
+ pointers to DSI devices
+Message-ID: <20250707115853.128f2e6f@booty>
+In-Reply-To: <20250707-strange-warm-bear-cb4ee8@houat>
+References: <20250625-drm-dsi-host-no-device-ptr-v1-0-e36bc258a7c5@bootlin.com>
+	<20250707-strange-warm-bear-cb4ee8@houat>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5f856f31-5614-4ee1-f786-08ddbd3cd9a0
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Jul 2025 09:58:40.3044
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 6xJh5ikzlzfgIWmWV8dYR8DYLT/ZfE3qaumsNQHxTZZfItDsSWv8EdjE8sieUZL2FS65cPk93uaTLfoQbVkbJAwD4Sc9rJhIO437cUtCW9A=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYYPR01MB13154
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdefudehtdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthhqredtredtjeenucfhrhhomhepnfhutggrucevvghrvghsohhlihcuoehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpedvgeejjeevhefhiefgffethfdtieffheefvedtgeekteejffdtvedugeeihfdvkeenucffohhmrghinhepfhhrvggvuggvshhkthhophdrohhrghdpkhgvrhhnvghlrdhorhhgpdgsohhothhlihhnrdgtohhmnecukfhppeekjedruddvtddrvddukedrvddtjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeekjedruddvtddrvddukedrvddtjedphhgvlhhopegsohhothihpdhmrghilhhfrhhomheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvdehpdhrtghpthhtohepmhhrihhprghrugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepmhgrrghrthgvnhdrlhgrnhhkhhhorhhstheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehtiihimhhmvghrmhgrnhhnsehsuhhsvgdruggvpdhrtghpthhtoheprghir
+ hhlihgvugesghhmrghilhdrtghomhdprhgtphhtthhopehsihhmohhnrgesfhhffihllhdrtghhpdhrtghpthhtoheprghnughriigvjhdrhhgrjhgurgesihhnthgvlhdrtghomhdprhgtphhtthhopehnvghilhdrrghrmhhsthhrohhngheslhhinhgrrhhordhorhhgpdhrtghpthhtoheprhhfohhssheskhgvrhhnvghlrdhorhhg
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
-Hi Geert,
+On Mon, 7 Jul 2025 08:16:49 +0200
+Maxime Ripard <mripard@kernel.org> wrote:
 
-> -----Original Message-----
-> From: Biju Das <biju.das.jz@bp.renesas.com>
-> Sent: 05 July 2025 13:36
-> Subject: [PATCH] arm64: dts: renesas: rzg3e-smarc-som: Fix I2C bus for PM=
-IC control
+> Hi Luca,
 >=20
-> As per the hardware manual, RIIC8 is located in PD_AWO domain and we must=
- use that bus for PMIC
-> control. Currently wrong i2c bus (i2c2) is used for the PMIC control and =
-the system is not entering
-> into suspend mode because of this.
+> On Wed, Jun 25, 2025 at 06:45:04PM +0200, Luca Ceresoli wrote:
+> > This series is the first attempt at avoiding DSI host drivers to have
+> > pointers to DSI devices (struct mipi_dsi_device), as discussed during t=
+he
+> > Linux Plumbers Conference 2024 with Maxime and Dmitry.
+> >=20
+> > It is working, but I consider this a draft in order to discuss and
+> > challenge the proposed approach.
+> >=20
+> > Overall work
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >=20
+> > This is part of the work towards removal of bridges from a still existi=
+ng
+> > DRM pipeline without use-after-free. The grand plan as discussed in [1].
+> > Here's the work breakdown (=E2=9E=9C marks the current series):
+> >=20
+> >  1. =E2=80=A6 add refcounting to DRM bridges (struct drm_bridge)
+> >     (based on devm_drm_bridge_alloc() [0])
+> >     A. =E2=9C=94 add new alloc API and refcounting (in v6.16-rc1)
+> >     B. =E2=9C=94 convert all bridge drivers to new API (now in drm-misc=
+-next)
+> >     C. =E2=9C=94 kunit tests (now in drm-misc-next)
+> >     D. =E2=80=A6 add get/put to drm_bridge_add/remove() + attach/detach=
+()
+> >          and warn on old allocation pattern (under review)
+> >     E. =E2=80=A6 add get/put on drm_bridge accessors
+> >        1. =E2=80=A6 drm_bridge_chain_get_first_bridge() + add a cleanup=
+ action
+> >        2. =E2=80=A6 drm_bridge_chain_get_last_bridge()
+> >        3. drm_bridge_get_prev_bridge()
+> >        4. drm_bridge_get_next_bridge()
+> >        5. drm_for_each_bridge_in_chain()
+> >        6. drm_bridge_connector_init
+> >        7. of_drm_find_bridge
+> >        8. drm_of_find_panel_or_bridge, *_of_get_bridge
+> >     F. debugfs improvements
+> >  2. handle gracefully atomic updates during bridge removal
+> >  3. =E2=9E=9C avoid DSI host drivers to have dangling pointers to DSI d=
+evices
+> >       (this series)
+> >  4. finish the hotplug bridge work, removing the "always-disconnected"
+> >     connector, moving code to the core and potentially removing the
+> >     hotplug-bridge itself (this needs to be clarified as points 1-3 are
+> >     developed)
+> >=20
+> > [0] https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/0cc6aadd7fc=
+1e629b715ea3d1ba537ef2da95eec
+> > [1] https://lore.kernel.org/lkml/20250206-hotplug-drm-bridge-v6-0-9d6f2=
+c9c3058@bootlin.com/t/#u
+> >=20
+> > Motivation
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >=20
+> > The motivation for this series is that with hot-pluggable hardware a DSI
+> > device can be disconnected from the DSI host at runtime, and later on
+> > reconnected, potentially with a different model having different bus
+> > parameters.
+> >=20
+> > DSI host drivers currently receive a struct mipi_dsi_device pointer in =
+the
+> > attach callback and some store it permanently for later access to the b=
+ur
+> > format data (lanes, channel, pixel format etc). The stored pointer can
+> > become dangling if the device is removed, leading to a use-after-free.
+> >=20
+> > Currently the data exchange between DSI host and device happens primari=
+ly
+> > by two means:
+> >=20
+> >  * the device requests attach, detach and message transfer to the host =
+by
+> >    calling mipi_dsi_attach/detach/transfer which in turn call the callb=
+acks
+> >    in struct mipi_dsi_host_ops
+> >     - for this to work, struct mipi_dsi_device has a pointer to the hos=
+t:
+> >       this is OK because the goal is supporting hotplug of the "remote"
+> >       part of the DRM pipeline
+> >  * the host accesses directly the fields of struct mipi_dsi_device, to
+> >    which it receives a pointer in the .attach and .detach callbacks
+> >=20
+> > The second bullet is the problematic one, which we want to remove.
+> >=20
+> > Strategy
+> > =3D=3D=3D=3D=3D=3D=3D=3D
+> >=20
+> > I devised two possible strategies to address it:
+> >=20
+> >  1. change the host ops to not pass a struct mipi_dsi_device, but inste=
+ad
+> >     to pass only a copy of the needed information (bus format mainly), =
+so
+> >     the host driver does never access any info from the device
+> >    =20
+> >  2. let the host get info from the device as needed, but without having=
+ a
+> >     pointer to it; this is be based on:
+> >      - storing a __private mipi_dsi_device pointer in struct mipi_dsi_h=
+ost
+> >      - adding getters to the DSI core for the host to query the needed
+> >        info, e.g. drm_mipi_dsi_host_get_device_lanes(host) (the getters
+> >        would be allowed to dereference the device pointer)
+> >=20
+> > This series implements strategy 1. It does so by adding a .attach_new h=
+ost
+> > op, which does not take a mipi_dsi_device pointer, and converting most =
+host
+> > drivers to it. Once all drivers are converted, the old op can be remove=
+d,
+> > and .attach_new renamed to .attach. =20
 >=20
-> Fixes: f7a98e256ee30 ("arm64: dts: renesas: rzg3e-smarc-som: Add I2C2 dev=
-ice pincontrol")
-> Fixes: 5ecd5a8261d00 ("arm64: dts: renesas: rzg3e-smarc-som: Add RAA21530=
-0 pmic support")
-> Fixes: f62bb41740462 ("arm64: dts: renesas: rzg3e-smarc-som: Reduce I2C2 =
-clock frequency")
+> I don't recall discussing this particular aspect at Plumbers, so sorry
+> if we're coming back to the same discussion we had.
+>=20
+> I'm not necessarily opposed to changing the MIPI-DSI bus API, but I
+> don't think changing the semantics to remove the fact that a particular
+> device is connected or not is a good idea.
+>=20
+> I would have expected to have bus driver (maybe) take a device pointer
+> at attach, and drop it at detach.
+>=20
+> Then, when we detect the hotplug of a DSI device, we detach it from its
+> parent, and we're done.
+>=20
+> What prevents us from using that approach?
 
-I would like to remove the fixes tag as there is a TF_A bug. The TF_A uses =
-i2c8 pins for
-PMIC control and Kernel uses I2C2 for PMIC control.
+I probably should have done a recap of the whole discussion, so let me
+do it now.
 
-TF-A not reconfiguring i2c8 pins during suspend state once the kernel overr=
-ides the i2c2 pin.
+It all starts with one fact: a DSI device can be disconnected and then
+a different one connected later on, having a different DSI bus format
+(lanes, channel, mode flags, whatever). A detach/attach sequence would
+handle that, but only in the simple case when there is a host/device
+pair. Let's how consider this topology:
+                                                     =20
+                =E2=94=8C=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
+=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
+=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=90                 =20
+                =E2=94=82    DSI bridge    =E2=94=82                 =20
+=E2=94=8C=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
+=94=80=E2=94=80=E2=94=90  A  =E2=94=82                  =E2=94=82  B  =E2=
+=94=8C=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
+=80=E2=94=80=E2=94=80=E2=94=80=E2=94=90
+=E2=94=82 DSI host=E2=94=9C=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=96=BA=E2=
+=94=82device        host=E2=94=9C=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=96=
+=BA=E2=94=82DSI device =E2=94=82
+=E2=94=94=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
+=94=80=E2=94=80=E2=94=98     =E2=94=94=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
+=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
+=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=98     =E2=94=94=
+=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
+=94=80=E2=94=80=E2=94=80=E2=94=98
+                                                     =20
+Here link A is always connected, link B is hot-pluggable. When the tail
+device is removed and a different one plugged, a detach/attach sequence
+can update the bus format on the DSI bridge, but then the DSI bridge
+cannot update the format on the first host without faking a
+detach/attach that does not map a real event.
 
-Also, I will send v2 update the commit message to use i2c8 bus for controll=
-ing PMIC across
-bootloader and Kernel.
+The above topology is probably not common, but it is exactly what the
+hotplug-bridge introduces [0]. Whether the hotplug-bridge will have to
+eventually exist or not to support hotplug is still to be defined, but
+regardless there is another problematic aspect.
 
-Cheers,
-Biju
+The second problematic aspect is that several DSI host drivers will not
+even drm_bridge_add() until they have an attached DSI device. One such
+example is samsung-dsim, which calls drm_bridge_add()
+in samsung_dsim_host_attach(). When such a driver implements the first
+DSI host, the DSI bridge must register a DSI device before the DRM card
+can be instantiated. See the lengthy comment before
+hotplug_bridge_dsi_attach() in [0] for more gory details, but the
+outcome is that the hotplug-bridge needs to attach a DSI device with
+a fake format once initially just to let the DRM card probe, and the
+detach and reattach with the correct format once an actual DSI device
+is connected at the tail.
+
+[0] https://lore.kernel.org/all/20240917-hotplug-drm-bridge-v4-4-bc4dfee61b=
+e6@bootlin.com/
+
+The above would be improved if the DSI host API provided a way to
+notify to the host about a bus format change, which is however not
+present currently.
+
+The naive solution would be adding a new DSI host op:
+
+ struct mipi_dsi_host_ops {
+ 	int (*attach)(struct mipi_dsi_host *host,
+ 		      struct mipi_dsi_device *dsi);
+ 	int (*detach)(struct mipi_dsi_host *host,
+ 		      struct mipi_dsi_device *dsi);
++	int (*bus_fmt_changed)(struct mipi_dsi_host *host,
++ 		      struct mipi_dsi_device *dsi);
+ 	ssize_t (*transfer)(struct mipi_dsi_host *host,
+ 			    const struct mipi_dsi_msg *msg);
+ };
+
+This would allow reduce the current sequence:
+ 1. attach with dummy format (no tail device yet)
+ 2. fake detach
+ 3. attach
+
+with:
+ 1. attach with dummy format (no tail device yet)
+ 2. update format
+
+Adding such a new op would be part of chapter 4 of this work, being it
+quite useless without hotplug.
+
+However while reasoning about this I noticed the DSI host drivers peek
+into the struct mipi_dsi_device fields to read the format, so there is
+no sort of isolation between host and device. Introducing a struct to
+contain all the format fields looked like a good improvement in terms
+of code organization.
+
+Yet another aspect is that several host drivers keep a pointer to the
+device, and thus in case of format change in the DSI device they might
+be reading different fields at different moments, ending up with an
+inconsistent format.
+
+The above considerations, which are all partially overlapped, led me to
+the idea of introducing a struct to exchange a DSI bus format, to be
+exchanged as a whole ("atomically") between host and device. What's
+your opinion about introducing such a struct?
+
+The second aspect of this series is not passing pointers, and that's
+the core topic you questioned. I realize it is not strictly necessary
+to reach the various goals discussed in this e-mail. The work I'm doing
+on the drm_bridge struct is actually a way to store a pointer while
+avoiding use-after-free, so that can obviously be done for a simpler
+scenario such as DSI host-device. However I thought not passing a
+pointer would be a more radical solution: if a driver receives no
+pointer, then it cannot by mistake keep it stored when it shouldn't,
+maybe in a rare case within a complex driver where it is hard to spot.
+
+I'll be OK to change the approach and keep the pointer passed in the
+attach/detach ops, if that is the best option. However I'd like to have
+your opinion about the above topics before working towards that
+direction, and ensure I fully grasp the usefulness of keeping the
+pointer.
+
+Post scriptum. The very initial issue that led to all this discussion
+when writing the hotplug-bridge driver is that the samsung-dsim driver
+will not drm_bridge_add() until a DSI device does .attach to it. Again,
+see the comments before hotplug_bridge_dsi_attach() in [0] for details.
+However by re-examining the driver for the N-th time now from a new
+POV, I _think_ this is not correct and potentially easy to solve. But this =
+leads to one fundamental question:
+
+
+--=20
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
