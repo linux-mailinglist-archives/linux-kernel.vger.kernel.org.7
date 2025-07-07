@@ -1,105 +1,140 @@
-Return-Path: <linux-kernel+bounces-720186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C201AFB84D
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 18:06:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1ECA3AFB844
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 18:05:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A2764207A7
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 16:05:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1081A7ABD2F
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 16:04:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F9972264AC;
-	Mon,  7 Jul 2025 16:05:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CEEE225A5B;
+	Mon,  7 Jul 2025 16:05:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Sr0HqWeS"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DBF2225A5B;
-	Mon,  7 Jul 2025 16:05:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mGe9GTfm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7684442049;
+	Mon,  7 Jul 2025 16:05:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751904354; cv=none; b=OOUSrdKA00leckfcFUQTtHluqPg9LU6A+MVWzADRr2g2GFP4ByddbEHReFnnYatmA+EfdiP1hjpf6T53dDcYhzLZBAKJTYSsylP/48GuN5N//ytu35wjtlke9egUVPBXwh9RzBFoRJmVTt3yh5x7zAQ1wAx7///vP3k4Vc4rmks=
+	t=1751904324; cv=none; b=YXvy+hu66k1t3TM29xyqJRO4V1swysJnM0Jq6DXYDgASpEFrwff52b+UaZ7mPTINir8I1uECvEPyT+wnfc6D84XFOTK1zpUBgu6fDJbGFYqXgGEkeDFV9v2sHcNu/lhC/l8Xf5DolhIowDEEQgRE+OkpdtswduOIeoRx5sjzOYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751904354; c=relaxed/simple;
-	bh=7+F/8Z+sos27/lZyHVZY96P6qXDO5dzJeLbCcUBiX9U=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=W1/3RAHaOLbVA0uOoRQK2NL1nLxV5HrxCYGyUDghhlYYpH1sqL/xWFRTBbVjrhJsUVEAJbLcfkyFOwb2fbvGzyv8LPFNviUU5GvIuAGLp9IDhIulhFyJi7C9cepFUYyXIJxE7Av+L9PEVIeYuB4IyTuCWFx7ZhAmsQOSrsv5wCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Sr0HqWeS; arc=none smtp.client-ip=117.135.210.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=wx
-	Vdpvg7FeWQxkIMif3XMYiXYJJQ4LWlvR78pfeDiE0=; b=Sr0HqWeSroYdLh7VtF
-	7Oz9uPLf8S10XbTfNA1l/POCAdraR3f3VaxzCEfFwaNT6p7psn+vQJVeiEvaGSf+
-	Hz4hkPihNprS9MmacFVIaimxJpu7PH5qrOH7mLzaxSWOrApqr+fkxnvt70Ar0Mbf
-	acL1N+sWopf6L4kA+ahuFuG8g=
-Received: from icess-ProLiant-DL380-Gen10.. (unknown [])
-	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wD3d+Uw8Gto+_41DQ--.4123S4;
-	Tue, 08 Jul 2025 00:05:05 +0800 (CST)
-From: Haoxiang Li <haoxiang_li2024@163.com>
-To: steffen.klassert@secunet.com,
-	herbert@gondor.apana.org.au,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	horms@kernel.org
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Haoxiang Li <haoxiang_li2024@163.com>
-Subject: [PATCH v2] af_key: Add check for the return value of pfkey_sadb2xfrm_user_sec_ctx()
-Date: Tue,  8 Jul 2025 00:05:03 +0800
-Message-Id: <20250707160503.2834390-1-haoxiang_li2024@163.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1751904324; c=relaxed/simple;
+	bh=kVh12//YSMQ4B4jH4d5HEOfJcPY9d17U+Of7O6JlIQs=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=LQwTQmFcZ8wAhSZeJE2nGqtDWJSeVc9+c6yo0wktus8hJPV9u2QiiZEN4wdEucMl3CPPt91LdA6WksikfzJcLfKnnn8MtCnnIL8+fOwyhikUp/C9t4iw3nCg305e9YgFSIkmngvRAhZUGIJJUIZI5uK4PgachVnuy+hL1VwKZa8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mGe9GTfm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD8D8C4CEE3;
+	Mon,  7 Jul 2025 16:05:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751904324;
+	bh=kVh12//YSMQ4B4jH4d5HEOfJcPY9d17U+Of7O6JlIQs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=mGe9GTfmVE7XJ8H87jr9KtM0uEO7HzuctE//hGNAUPHzRVH2JJP+5pJGZJhcHyXyw
+	 eqh05iP4WZrABco7Q+tQimDbHjNmiOFfneAb4dVTf/o1E/LsS/cjSG4TfP3Faf8/Sy
+	 YIMICeOjcoOOfq9JIBDHqBtOAS/lyIadQnvQrzse9XjUTpXD1f9/DLxsZ6hkJXCMNI
+	 3wEUVvYrIKa6HhH5uy9ul/j1NJ+RsbsElUm9O7K3ONgd9SUZPBAZu/j6QWK1m7Cj+w
+	 KISwYWqNcjvtRQLifs/JazUsitpHW5eH32y4u81gOAvXIr2RQZwe8s161Wk7KBymTA
+	 CuAAO2ivLAQRw==
+Date: Mon, 7 Jul 2025 11:05:22 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+Cc: linux-hyperv@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	mhklinux@outlook.com, tglx@linutronix.de, bhelgaas@google.com,
+	romank@linux.microsoft.com, kys@microsoft.com,
+	haiyangz@microsoft.com, wei.liu@kernel.org, decui@microsoft.com,
+	catalin.marinas@arm.com, will@kernel.org, mingo@redhat.com,
+	bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
+	lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
+	jinankjain@linux.microsoft.com, skinsburskii@linux.microsoft.com,
+	mrathor@linux.microsoft.com, x86@kernel.org
+Subject: Re: [PATCH v2 6/6] PCI: hv: Use the correct hypercall for unmasking
+ interrupts on nested
+Message-ID: <20250707160522.GA2086655@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3d+Uw8Gto+_41DQ--.4123S4
-X-Coremail-Antispam: 1Uf129KBjvJXoW7GFWrWrWDKFyDZryfGw1fXrb_yoW8JrWDpF
-	48G3sFgr4UZr15ta4xta1DuF4Fgr1rXrWqgFWSyw1agrn8Jw18G3yfKFWj9F1rZrZxJFWx
-	JFW5urZYka45XrUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pis2-rUUUUU=
-X-CM-SenderInfo: xkdr5xpdqjszblsqjki6rwjhhfrp/xtbBEg+Dbmhr7XlD-AAAsY
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1751582677-30930-7-git-send-email-nunodasneves@linux.microsoft.com>
 
-Add check for the return value of pfkey_sadb2xfrm_user_sec_ctx()
-in pfkey_compile_policy(), and set proper error flag.
+On Thu, Jul 03, 2025 at 03:44:37PM -0700, Nuno Das Neves wrote:
+> From: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
+> 
+> Running as nested root on MSHV imposes a different requirement
+> for the pci-hyperv controller.
+> 
+> In this setup, the interrupt will first come to the L1 (nested) hypervisor,
+> which will deliver it to the appropriate root CPU. Instead of issuing the
+> RETARGET hypercall, issue the MAP_DEVICE_INTERRUPT hypercall to L1 to
+> complete the setup.
+> 
+> Rename hv_arch_irq_unmask() to hv_irq_retarget_interrupt().
+> 
+> Co-developed-by: Jinank Jain <jinankjain@linux.microsoft.com>
+> Signed-off-by: Jinank Jain <jinankjain@linux.microsoft.com>
+> Signed-off-by: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
+> Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+> Reviewed-by: Roman Kisel <romank@linux.microsoft.com>
 
-Signed-off-by: Haoxiang Li <haoxiang_li2024@163.com>
----
-Changes in v2:
-- Set error flag '*dir' properly.
-- Hi, Steffen! I know that inside pfkey_sadb2xfrm_user_sec_ctx(), null
-value check has been done. This patch does the null value check after
-pfkey_sadb2xfrm_user_sec_ctx() being called in pfkey_compile_policy().
-Also, set proper error flag if pfkey_sadb2xfrm_user_sec_ctx() returns
-null. This patch code is similar to [1]. Thanks, Steffen!
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>
 
-[1]https://github.com/torvalds/linux/blob/master/net/key/af_key.c#L2404
----
- net/key/af_key.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/net/key/af_key.c b/net/key/af_key.c
-index efc2a91f4c48..9cd14a31a427 100644
---- a/net/key/af_key.c
-+++ b/net/key/af_key.c
-@@ -3335,6 +3335,11 @@ static struct xfrm_policy *pfkey_compile_policy(struct sock *sk, int opt,
- 		if ((*dir = verify_sec_ctx_len(p)))
- 			goto out;
- 		uctx = pfkey_sadb2xfrm_user_sec_ctx(sec_ctx, GFP_ATOMIC);
-+		if (!uctx) {
-+			*dir = -ENOMEM;
-+			goto out;
-+		}
-+
- 		*dir = security_xfrm_policy_alloc(&xp->security, uctx, GFP_ATOMIC);
- 		kfree(uctx);
- 
--- 
-2.25.1
-
+> ---
+>  drivers/pci/controller/pci-hyperv.c | 18 ++++++++++++++++--
+>  1 file changed, 16 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/pci-hyperv.c b/drivers/pci/controller/pci-hyperv.c
+> index 4d25754dfe2f..9a8cba39ea6b 100644
+> --- a/drivers/pci/controller/pci-hyperv.c
+> +++ b/drivers/pci/controller/pci-hyperv.c
+> @@ -600,7 +600,7 @@ static unsigned int hv_msi_get_int_vector(struct irq_data *data)
+>  #define hv_msi_prepare		pci_msi_prepare
+>  
+>  /**
+> - * hv_arch_irq_unmask() - "Unmask" the IRQ by setting its current
+> + * hv_irq_retarget_interrupt() - "Unmask" the IRQ by setting its current
+>   * affinity.
+>   * @data:	Describes the IRQ
+>   *
+> @@ -609,7 +609,7 @@ static unsigned int hv_msi_get_int_vector(struct irq_data *data)
+>   * is built out of this PCI bus's instance GUID and the function
+>   * number of the device.
+>   */
+> -static void hv_arch_irq_unmask(struct irq_data *data)
+> +static void hv_irq_retarget_interrupt(struct irq_data *data)
+>  {
+>  	struct msi_desc *msi_desc = irq_data_get_msi_desc(data);
+>  	struct hv_retarget_device_interrupt *params;
+> @@ -714,6 +714,20 @@ static void hv_arch_irq_unmask(struct irq_data *data)
+>  		dev_err(&hbus->hdev->device,
+>  			"%s() failed: %#llx", __func__, res);
+>  }
+> +
+> +static void hv_arch_irq_unmask(struct irq_data *data)
+> +{
+> +	if (hv_root_partition())
+> +		/*
+> +		 * In case of the nested root partition, the nested hypervisor
+> +		 * is taking care of interrupt remapping and thus the
+> +		 * MAP_DEVICE_INTERRUPT hypercall is required instead of
+> +		 * RETARGET_INTERRUPT.
+> +		 */
+> +		(void)hv_map_msi_interrupt(data, NULL);
+> +	else
+> +		hv_irq_retarget_interrupt(data);
+> +}
+>  #elif defined(CONFIG_ARM64)
+>  /*
+>   * SPI vectors to use for vPCI; arch SPIs range is [32, 1019], but leaving a bit
+> -- 
+> 2.34.1
+> 
 
