@@ -1,98 +1,117 @@
-Return-Path: <linux-kernel+bounces-719594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2132BAFB012
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 11:46:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67510AFB018
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 11:47:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE61018959F9
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 09:47:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B111C3A1D3B
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 09:47:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD7BB291C02;
-	Mon,  7 Jul 2025 09:46:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6858292B31;
+	Mon,  7 Jul 2025 09:47:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Ee/ZizGV"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JkROgXYz"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D12A1C4A0A;
-	Mon,  7 Jul 2025 09:46:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90B39290DAC
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 09:47:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751881609; cv=none; b=BgBA02aeSV04GTJhtlVuGXH0BF4qNcSRM3bQ1jMkHop1xzoNo2PE+qNlwxAQBnPFe89QErenzXqTXY9dm0roxg9pIt1VyfL+HgirLjWR9USBEoOAhgq22W6sfRaL85jyRp/dat+d4/QODk96qEmxh7zVIVEZSUT8C6UsoYaYsLs=
+	t=1751881634; cv=none; b=WJYaJk/9U1KpwvpG9/ohWCX2jJ6MzUcQ8eLDWB9M8m5boDKj1//RKrN+uzCjDMRN04cRUTehvE3cRwfH1AfR9V9XWzRQVZc13EikN6vV7TglwqxctIuDfD1DdgwHeIYnyzCuVP9MoCws5t9yjS5iYibtzIPfbtAo5mzug+CJ7bE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751881609; c=relaxed/simple;
-	bh=X9OPy8lPBzx5zXYW1HynhmA/aOJsEytUlCoR4bDLob4=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=lRlugNdzUGhORTvvJmqz8dExMh+fhKtX+BHR9OXu5gI9srqutG71yST8u80+/XYAdLm+yF5c4Df47OvCjpACrq35I81Nu18yT/LdOaJXD9z6WwkrsrV2rio/wbgCohCg1yIXUXQWOytAO5WRgru+/yXrB7sBuSemLxhWcZfhs7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Ee/ZizGV; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1751881605;
-	bh=X9OPy8lPBzx5zXYW1HynhmA/aOJsEytUlCoR4bDLob4=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=Ee/ZizGVMxKrUWe6P3Z0136YBYCER/oyjhC8ElcUR4/ulQ5Qf8XGLyy0gSoAxVrIT
-	 wIC2PBM/BjmesI2cnk98ro8eY0tJAHxmgzy/yqx766uAWfo/Wk2KmpkkiQy0XVBcXB
-	 9vuqrCr1nPPnMWjTaTf90rEQ1UWgc7BQiyhLN/TNezFNTiFAeMZIkPyHX/ulF1Xjg1
-	 WBX0lYxeNTm+ndxkmsU/O3mVsRPYFFl+xaY1nuyi0XXp4SYlndlvbcRRNLOk6ZaqHm
-	 fyLUflZUlQvzttDyteHhvqDqI9XTESRoKXV9spY5VrPudXt20VOwUpC0RfW8ewANLP
-	 sYafYBWj6oDFw==
-Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	s=arc-20240116; t=1751881634; c=relaxed/simple;
+	bh=30/y4SG4wGEpss7IEM4IeQjEBYvCPPiFYxp6rK9lQ3Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bJ9aWOCDCOiIfb/yrNEvcOzoEwjd6tuAfeFk8f8wApobIxN7yr69rppQDzTShtToyWpnWpSrUQbEzKRykmFEHErbZfHfzewboUzlq2JhGdaGrGkd3oAVAu7mS6q4d5rMWnvuasn6+yVWdFiwG5GCsHI4vkiEdXN5Muc58N062FA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JkROgXYz; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1751881631;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4JOhzMO9hb/LtSXeWxWkjP1ZlyyrhtnOsL7SvQkX++k=;
+	b=JkROgXYz5M889Nd2Ua+Yzi45wK0gftCehxpEUi+l+ZtsnAYVabqaJj58nRzmH00eiQ8l4l
+	+maMNcpIrwFHzmZD7VskF0FZWm6gPlRQRdEEgtrJRqPQope3ufU4OmZy+Zrc8P6iVLncTs
+	4fFju4UWZf9vZH7QWsL+DZpjFSFj9uE=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-313-7syuedqyNHCwk-PKjoBmKA-1; Mon,
+ 07 Jul 2025 05:47:06 -0400
+X-MC-Unique: 7syuedqyNHCwk-PKjoBmKA-1
+X-Mimecast-MFC-AGG-ID: 7syuedqyNHCwk-PKjoBmKA_1751881624
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 025FE17E07C9;
-	Mon,  7 Jul 2025 11:46:44 +0200 (CEST)
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Jiri Slaby <jirislaby@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- Thomas Gleixner <tglx@linutronix.de>, 
- Daniel Lezcano <daniel.lezcano@linaro.org>, 
- Wim Van Sebroeck <wim@linux-watchdog.org>, 
- Guenter Roeck <linux@roeck-us.net>, Sean Wang <sean.wang@mediatek.com>, 
- Russell King <linux@armlinux.org.uk>, Max Shevchenko <wctrl@proton.me>
-Cc: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-mediatek@lists.infradead.org, linux-watchdog@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20250702-mt6572-v4-0-bde75b7ed445@proton.me>
-References: <20250702-mt6572-v4-0-bde75b7ed445@proton.me>
-Subject: Re: (subset) [PATCH v4 00/11] ARM: Add support for MediaTek MT6572
- SoC
-Message-Id: <175188160494.76260.12978644604061063764.b4-ty@collabora.com>
-Date: Mon, 07 Jul 2025 11:46:44 +0200
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 33767195395A;
+	Mon,  7 Jul 2025 09:47:03 +0000 (UTC)
+Received: from [10.44.32.50] (unknown [10.44.32.50])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 5B15B18002B6;
+	Mon,  7 Jul 2025 09:46:55 +0000 (UTC)
+Message-ID: <29fb9fef-59d7-43f1-9c45-d6f5a4fe9818@redhat.com>
+Date: Mon, 7 Jul 2025 11:46:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v13 12/12] dpll: zl3073x: Add support to get/set
+ frequency on pins
+To: Jiri Pirko <jiri@resnulli.us>
+Cc: netdev@vger.kernel.org, Prathosh Satish <Prathosh.Satish@microchip.com>,
+ Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+ Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+ Jonathan Corbet <corbet@lwn.net>, Jason Gunthorpe <jgg@ziepe.ca>,
+ Shannon Nelson <shannon.nelson@amd.com>, Dave Jiang <dave.jiang@intel.com>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ Michal Schmidt <mschmidt@redhat.com>, Petr Oros <poros@redhat.com>
+References: <20250704182202.1641943-1-ivecera@redhat.com>
+ <20250704182202.1641943-13-ivecera@redhat.com>
+ <idzmiaubwlnkzds2jbminyr46vuqo37nz5twj7f2yytn4aqoff@r34cm3qpd5mj>
+Content-Language: en-US
+From: Ivan Vecera <ivecera@redhat.com>
+In-Reply-To: <idzmiaubwlnkzds2jbminyr46vuqo37nz5twj7f2yytn4aqoff@r34cm3qpd5mj>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On Wed, 02 Jul 2025 13:50:37 +0300, Max Shevchenko wrote:
-> This series of patches adds support for the MT6572 SoC and
-> the JTY D101 tablet and Lenovo A369i smartphone based on it.
+
+
+On 07. 07. 25 10:32 dop., Jiri Pirko wrote:
+> Fri, Jul 04, 2025 at 08:22:02PM +0200, ivecera@redhat.com wrote:
 > 
+> [...]
 > 
+>> +static int
+>> +zl3073x_dpll_input_pin_frequency_set(const struct dpll_pin *dpll_pin,
+>> +				     void *pin_priv,
+>> +				     const struct dpll_device *dpll,
+>> +				     void *dpll_priv, u64 frequency,
+>> +				     struct netlink_ext_ack *extack)
+> 
+> Unrelated to this patch, but ny idea why we don't implement
+> "FREQUENCY_CAN_CHANGE" capability. I think we are missing it.
+> 
+Interesting question... from the driver API it is not necessary
+as the DPLL core can deduce FREQUENCY_CAN_CHANGE from existence
+of pin_frequency_set() callback and also if the pin reports
+empty or single item supported-frequencies list.
 
-Applied to v6.16-next/arm32, thanks!
-
-[07/11] ARM: mediatek: add board_dt_compat entry for the MT6572 SoC
-        commit: a46ae3392aad15cc1b13fb098515e457934bfbff
-[08/11] ARM: mediatek: add MT6572 smp bring up code
-        commit: 9ed85e0747c0ef14d1867035fc05e3882343597e
-
-Cheers,
-Angelo
-
+Ivan
 
 
