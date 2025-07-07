@@ -1,97 +1,112 @@
-Return-Path: <linux-kernel+bounces-720321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA0CCAFBA42
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 20:00:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66276AFBA4B
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 20:00:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29B9717E21C
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 18:00:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2958D423851
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 18:00:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BEFF262FF8;
-	Mon,  7 Jul 2025 17:59:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B085264A65;
+	Mon,  7 Jul 2025 18:00:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Juecdsl1"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6751222DFA7;
-	Mon,  7 Jul 2025 17:59:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="njgJvhn+"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36BFA1ACECE;
+	Mon,  7 Jul 2025 18:00:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751911196; cv=none; b=NryLfRp60hLi27+Q0GxQ2oIXEkoeXMFi1vILR9Ml/ixszMFXr5EOlZv/2cPD5wRdfqzUFGdw+Tfj+34phAM43VAV4jqE8KEBoHK6qbSltjMj4k38RiKzoJOO8Iw+UEJloma68B2cSz/THVmTnjYuPqTyYu7S22QHSaLqZX85dI8=
+	t=1751911226; cv=none; b=qcedhUo7x56wy9c5GzkANF2HpxbN4JfMsBkxhZcFC5s5DOYfgaXxEazvxACK034epLMMYPLG2zphn8T6RZCUsEck0+s/vDR3KC12RLzcrj5kYUZ3v1I4/Kxjtu09Z+eg0yDdoXEldLDVeUeTf6iqWWnVMea/7AYfHTAbd8HXAJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751911196; c=relaxed/simple;
-	bh=h9zvtpIR/kBrqJ1m+JHFjDXxih1BE7QfRuvA9R9sl6s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ImjG0hW5NjEa/3qpsFr3GXoWehyJQ77OBRWr+3GY/nF3hSssaw841oRVf6iA09ALcC1inlV5J2Z2NDzcFBhJ9MK5HhOKSnBwdzbv0TsAJVBFt3LglWtGWMbi+nKPHUa2gmSwymCJg5D8AipydFZlZhhfvNkn26VlZ3LxfAGVf+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=Juecdsl1; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [10.137.184.60] (unknown [131.107.160.188])
-	by linux.microsoft.com (Postfix) with ESMTPSA id D1D5F2054680;
-	Mon,  7 Jul 2025 10:59:54 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com D1D5F2054680
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1751911194;
-	bh=zeLAABhUJntnMN2QCq43FYeskbX+YlDSGreNuuisNvA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Juecdsl1txvCzZfEQkRt9uMv4iD/sqsTLX/Z4Zocf1oI/sEohn9j7DO2um+iuzkVW
-	 u6o7vh5phHfXHeLAu1JA5p4xqBQ8r6rK2WAyhR11fjtzCU88jBJ9K9s5Gm6zuD52yL
-	 kedkEmAL/LQxnsCX/alPbUhYJmbfZssgoP6GfWiY=
-Message-ID: <adbceaa3-d5c2-4878-ad75-dab230bd8b8d@linux.microsoft.com>
-Date: Mon, 7 Jul 2025 10:59:54 -0700
+	s=arc-20240116; t=1751911226; c=relaxed/simple;
+	bh=r6NZBrffWzNw7dte2+xmTPvu0PfUvX4a7JkEhaiWhLk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=VdlgSPQUB19+EqbCPFP7vaWECq5R/DZ7vYv3mLBzj5AZWRQUwLhHy3hzihjd06GUlRADRDkrVYut4dB0U4BVuYRE2WsMzkNxCsKxSdMoYIvj7nibi6Gok+O36IUpsHxq9U23Ca4PeWbnpvBFImOdRpuOxG80ECYsyhS/AI03pcs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=njgJvhn+; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 567I041n929153;
+	Mon, 7 Jul 2025 13:00:04 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1751911204;
+	bh=jO9NDpDqasebT3fzKzOHXV7PwCeXf/Izih3UInLmNzQ=;
+	h=From:To:CC:Subject:Date;
+	b=njgJvhn+e72Egv+TaF+cymQrjgNP0QztjvQkfnySlLWww39bWZnDMJ4DFsoaMdgVr
+	 V/EM5EiMA0FECIOIEaOqEXjctxHyEROy8ixWscDbM/3Tn6iTRBLFQw8OX8VufL9CAq
+	 KKV4l139PMgW6DapELUKyT/IatIIAks1tWUsCCx4=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 567I04Eq1620340
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Mon, 7 Jul 2025 13:00:04 -0500
+Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Mon, 7
+ Jul 2025 13:00:02 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Mon, 7 Jul 2025 13:00:02 -0500
+Received: from judy-hp.dhcp.ti.com (judy-hp.dhcp.ti.com [128.247.81.105])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 567I02QL345700;
+	Mon, 7 Jul 2025 13:00:02 -0500
+From: Judith Mendez <jm@ti.com>
+To: Judith Mendez <jm@ti.com>, Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>,
+        <linux-watchdog@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Andrew Davis <afd@ti.com>
+Subject: [PATCH v3 0/2] Add reaction control in rti
+Date: Mon, 7 Jul 2025 13:00:00 -0500
+Message-ID: <20250707180002.3918865-1-jm@ti.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] Drivers: hv: Select CONFIG_SYSFB only if EFI is
- enabled
-To: mhklinux@outlook.com
-Cc: linux-kernel@vger.kernel.org, linux-hyperv@vger.kernel.org,
- stable@vger.kernel.org, kys@microsoft.com, haiyangz@microsoft.com,
- wei.liu@kernel.org, decui@microsoft.com, deller@gmx.de, javierm@redhat.com,
- arnd@arndb.de
-References: <20250613230059.380483-1-mhklinux@outlook.com>
-Content-Language: en-US
-From: Roman Kisel <romank@linux.microsoft.com>
-In-Reply-To: <20250613230059.380483-1-mhklinux@outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
+This allows for reaction control in rti driver. Since AM62L SoC [0]
+does not have WWD reset output routed to a ESM module like all other
+K3 SoC's and has a reset signal routed to the reset HW block, add a new
+compatible for AM62L and configure reset reaction for AM62L SoC instead
+of NMI.
 
+This patch has been tested on AM62L EVM [1].
 
-On 6/13/2025 4:00 PM, mhkelley58@gmail.com wrote:
-> From: Michael Kelley <mhklinux@outlook.com>
-> 
-> Commit 96959283a58d ("Drivers: hv: Always select CONFIG_SYSFB
-> for Hyper-V guests") selects CONFIG_SYSFB for Hyper-V guests
-> so that screen_info is available to the VMBus driver to get
-> the location of the framebuffer in Generation 2 VMs. However,
-> if CONFIG_HYPERV is enabled but CONFIG_EFI is not, a kernel
-> link error results in ARM64 builds because screen_info is
-> provided by the EFI firmware interface. While configuring
-> an ARM64 Hyper-V guest without EFI isn't useful since EFI is
-> required to boot, the configuration is still possible and
-> the link error should be prevented.
-> 
-> Fix this by making the selection of CONFIG_SYSFB conditional
-> on CONFIG_EFI being defined. For Generation 1 VMs on x86/x64,
-> which don't use EFI, the additional condition is OK because
-> such VMs get the framebuffer information via a mechanism
-> that doesn't use screen_info.
-> 
+Changes since v2:
+- Pick Krzysztof's tag
+- Take Andrew's sugestions from v2 for patch 2/2
+ -> switch to device_get_match_data
+ -> fix comment and assignment of reaction variable logic in rti_wdt_start
 
-[...]
+v2: https://lore.kernel.org/linux-devicetree/20250625143338.2381726-1-jm@ti.com/
+v1-resend: https://lore.kernel.org/linux-devicetree/20250624202605.1333645-1-jm@ti.com/
+v1: https://lore.kernel.org/linux-devicetree/20250624194509.1314095-1-jm@ti.com/
 
-LGTM.
-Reviewed-by: Roman Kisel <romank@linux.microsoft.com>
+[0] https://www.ti.com/product/AM62L
+[1] https://www.ti.com/tool/TMDS62LEVM
+
+Judith Mendez (2):
+  dt-bindings: watchdog: ti,rti-wdt: Add ti,am62l-rti-wdt compatible
+  watchdog: rti_wdt: Add reaction control
+
+ .../bindings/watchdog/ti,rti-wdt.yaml         |  1 +
+ drivers/watchdog/rti_wdt.c                    | 32 ++++++++++++++++---
+ 2 files changed, 29 insertions(+), 4 deletions(-)
 
 -- 
-Thank you,
-Roman
+2.49.0
 
 
