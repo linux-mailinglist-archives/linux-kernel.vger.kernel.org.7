@@ -1,143 +1,105 @@
-Return-Path: <linux-kernel+bounces-720061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11271AFB678
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 16:49:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1962AAFB6A4
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 17:00:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39AB33BA870
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 14:49:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20D031AA5B37
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 15:00:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9691E2E2664;
-	Mon,  7 Jul 2025 14:49:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 364D11EB36;
+	Mon,  7 Jul 2025 14:59:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="AFq0Z654";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="c7D8pwwM"
-Received: from fout-a4-smtp.messagingengine.com (fout-a4-smtp.messagingengine.com [103.168.172.147])
+	dkim=pass (2048-bit key) header.d=orca.pet header.i=@orca.pet header.b="VYDIQ8bI"
+Received: from smtpout8.mo534.mail-out.ovh.net (smtpout8.mo534.mail-out.ovh.net [54.36.140.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83CA22E1741;
-	Mon,  7 Jul 2025 14:49:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A443329AAF5
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 14:59:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.36.140.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751899743; cv=none; b=G6lRuyiwCoJgT2gebnAvLWzZT5SDgfsfWjVIqMWyds1TB82DTj+VEF4S3Q4ae3Kse8ybkTU64FchpdTnmqNUe+7u1ZDZ7gl6bx/LPtNlze9Fv+oNZtoIJibaJcFoNutxJghZEOhqeBKRrY7uLdHaZ3plypmvIGjaLMdMWUJOrFc=
+	t=1751900397; cv=none; b=bwqiZ5l/Y3PvyxwSo9qTim9kEOu8jS26JVfrkkTxM0SANByjsaiZ4ChU1sV7ZMXQYbIVBQPwg2JBvirONs0UtKtYuYK2ZCWs2diV0vmOGkhHs1c1Jo1B8aC/ey6FUneEwU3JBq/TJtSbPA0rirHeHn2NzskkyUrDQja9yWIJXBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751899743; c=relaxed/simple;
-	bh=nHDeJUa5JJkBQKeN7rrgGKtd/lDZ/oLCQbdP++nLQHo=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=jGyDfRBt/B3xp1iF2YAgEKFjayvTgjMvj8uvu9xw6k/dZszcYYmpVK5of83oDflPXwtvkW6/Y0rh61Kg3TREV+P99T7tGhetv4FjVKKBkkL2sHpBZEXeYlfM5zndOH5gqHxyNJZUAvBVH0GhtUDee5FEdK8j64o3wovbJ4KkG9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=AFq0Z654; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=c7D8pwwM; arc=none smtp.client-ip=103.168.172.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfout.phl.internal (Postfix) with ESMTP id 8BCEAEC0B59;
-	Mon,  7 Jul 2025 10:49:00 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-05.internal (MEProxy); Mon, 07 Jul 2025 10:49:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1751899740;
-	 x=1751986140; bh=WiYQwAAPf4n8hF54hQ9NPDuRPE4r9c35s3L/M8iusuA=; b=
-	AFq0Z654EiBDvaOSnENNsaTPa/w78Svi+tzHaxWAAsrTKYEs9s+J2vLiuMmGaehO
-	C6U0kIgEwRG+OtdYlPQLFuFBMVIT7M6LBDmYQVd1WrBtjyW7T6fnWqaBWztY6rNA
-	qwNlc/K2cDGlq7ZDsk32ha5a0mYxa9VK9fe8rQUcBY691VL31ko430pnmTXOpy2P
-	KgXyXaaDqwQspPET4qGtAFTOKXrrfchkGicQXBQ8mNVYwlGnfJsw58PvjbPDfchj
-	a0Hrsmc3tdsBAtCDzYSuYKACVVAX260Oq0vb6Gn7zGPJmGFFhkapJxjTczaufiaO
-	fV9JVG172rWriJe097Hs1w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1751899740; x=
-	1751986140; bh=WiYQwAAPf4n8hF54hQ9NPDuRPE4r9c35s3L/M8iusuA=; b=c
-	7D8pwwM8t3s4foMCtFifpLwBCI2KjTfkn+91iiliVmrPSDOuRpaCD9a2Wi0Cd99O
-	T+4bP92w6YYw1N0KjQPYaIvUfoYLY3iWJAAsuAtNL1JWxvfFT6Z/AKkzx5JC2Ay1
-	jPMDrLco9t+/A3iW9O91pVst58TX1FypMqBHkh3JzQMSto6LJfE7tsapvMk/OsE9
-	dwarxiDeCv/6BM29IZtdBNKCPvlevTOVBLiujewe/KDSFoFw7LSMMrHGJDL4mRn/
-	gpEv06hse4ZB/K0+DA5I8ocMBmY2cSu8jEWYlwZJBJDaFM5fFq/xiYPwYOZ0VfM+
-	WBtXhkx34cfBMdWT8XF4A==
-X-ME-Sender: <xms:W95raGpbaoMB8DtLvesrhMVxSKLk-WpQC_Gyo9nC260olR-gk8X5EQ>
-    <xme:W95raEpEGPwpMR-xOe82f2UaixwPnYYlSIYHSN7j_fFZf8azAhCnFZ1rkT4N2Kdij
-    yNfAVhkv2-Y79iYUeI>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdefvddtkecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
-    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
-    hnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffgvedugeduveelvdekhfdvieen
-    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
-    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopedvfedpmhhouggvpehsmhhtphhouhht
-    pdhrtghpthhtoheptggrthgrlhhinhdrmhgrrhhinhgrshesrghrmhdrtghomhdprhgtph
-    htthhopehvihhntggvnhiiohdrfhhrrghstghinhhosegrrhhmrdgtohhmpdhrtghpthht
-    oheprhhitghhrghruggtohgthhhrrghnsehgmhgrihhlrdgtohhmpdhrtghpthhtohepjh
-    hsthhulhhtiiesghhoohhglhgvrdgtohhmpdhrtghpthhtohepugifmhifvdesihhnfhhr
-    rgguvggrugdrohhrghdprhgtphhtthhopegthhhrihhsthhophhhvghrrdhsrdhhrghllh
-    esihhnthgvlhdrtghomhdprhgtphhtthhopegrthgvnhgrrhhtsehkvghrnhgvlhdrohhr
-    ghdprhgtphhtthhopehfrhgvuggvrhhitgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoh
-    eplhhuthhosehkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:W95raPvIVZLNK_8zD1nAcTSidp9ooCfasgURt4knNswRgdjekxuFCA>
-    <xmx:W95raLMlqKqBb8K_8TZspRTf6QJFz2EO46nIRPnI68skm7DsC5pjKA>
-    <xmx:W95raBqvHcMkz-lVpH6oEn5NOyTTligmyxoN9rB0OF878_p0Ch11vw>
-    <xmx:W95raE9DNVOIg4qEdNgqUJJEsOJr5ULnaB0zQ6Kxpp63FjSnejeS9g>
-    <xmx:XN5raMYsmCeNvI9rQ8qma2tHGWE-fzRfza7Kve99fsLvfbPUHFC2drMX>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id A88B6700065; Mon,  7 Jul 2025 10:48:59 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1751900397; c=relaxed/simple;
+	bh=zdEdHDTjhZ5ckA/m4c31bIgqREMkIWk9k23WQNtiaEs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HPOEcfpEAl7QxJ5DB3jgV9hLR6Bk1GFteMveXDPqgJC4+FZ9Z8EPjnwCLOsEAsIeU1Yff9gFgUzssTbrGkXVf/Z3VuGCVUriC7cgr2jnGNxC6IQsZ7r6RdESO1al8O79HQOcLr2goLVnQd5r66bT3701APbg/7kW7ECUZ/uDugA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orca.pet; spf=pass smtp.mailfrom=orca.pet; dkim=pass (2048-bit key) header.d=orca.pet header.i=@orca.pet header.b=VYDIQ8bI; arc=none smtp.client-ip=54.36.140.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orca.pet
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=orca.pet
+Received: from director4.derp.mail-out.ovh.net (director4.derp.mail-out.ovh.net [79.137.60.37])
+	by mo534.mail-out.ovh.net (Postfix) with ESMTPS id 4bbRwb4QCwz6Fg8;
+	Mon,  7 Jul 2025 14:49:51 +0000 (UTC)
+Received: from director4.derp.mail-out.ovh.net (director4.derp.mail-out.ovh.net. [127.0.0.1])
+        by director4.derp.mail-out.ovh.net (inspect_sender_mail_agent) with SMTP
+        for <brgl@bgdev.pl>; Mon,  7 Jul 2025 14:49:51 +0000 (UTC)
+Received: from mta7.priv.ovhmail-u1.ea.mail.ovh.net (unknown [10.109.231.53])
+	by director4.derp.mail-out.ovh.net (Postfix) with ESMTPS id 4bbRwb0w8Fz1y3l;
+	Mon,  7 Jul 2025 14:49:51 +0000 (UTC)
+Received: from orca.pet (unknown [10.1.6.6])
+	by mta7.priv.ovhmail-u1.ea.mail.ovh.net (Postfix) with ESMTPSA id 59EE7C3CDA;
+	Mon,  7 Jul 2025 14:49:50 +0000 (UTC)
+Authentication-Results:garm.ovh; auth=pass (GARM-99G003226193a2-2a6d-4ede-9af5-e8ebec56eebd,
+                    F886D19416C0B9BC8E07D11B456840F184BAC853) smtp.auth=marcos@orca.pet
+X-OVh-ClientIp:79.116.47.195
+Message-ID: <3f80b31d-855c-4591-9237-272895165f13@orca.pet>
+Date: Mon, 7 Jul 2025 16:49:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: T22a9fd8a498db8e8
-Date: Mon, 07 Jul 2025 16:48:39 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Thomas Gleixner" <tglx@linutronix.de>,
- =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
- "Andy Lutomirski" <luto@kernel.org>,
- "Vincenzo Frascino" <vincenzo.frascino@arm.com>, shuah <shuah@kernel.org>,
- "Anna-Maria Gleixner" <anna-maria@linutronix.de>,
- "Frederic Weisbecker" <frederic@kernel.org>,
- "John Stultz" <jstultz@google.com>, "Stephen Boyd" <sboyd@kernel.org>,
- "Catalin Marinas" <catalin.marinas@arm.com>, "Will Deacon" <will@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,
- Linux-Arch <linux-arch@vger.kernel.org>,
- "Richard Cochran" <richardcochran@gmail.com>,
- "Christopher Hall" <christopher.s.hall@intel.com>,
- "Miroslav Lichvar" <mlichvar@redhat.com>,
- "Werner Abt" <werner.abt@meinberg-usa.com>,
- "David Woodhouse" <dwmw2@infradead.org>,
- "Kurt Kanzenbach" <kurt@linutronix.de>, "Nam Cao" <namcao@linutronix.de>,
- "Antoine Tenart" <atenart@kernel.org>
-Message-Id: <fcaf7b51-a31e-4cf7-8065-db016d19d568@app.fastmail.com>
-In-Reply-To: <874ivorvij.ffs@tglx>
-References: <20250701-vdso-auxclock-v1-0-df7d9f87b9b8@linutronix.de>
- <20250701-vdso-auxclock-v1-11-df7d9f87b9b8@linutronix.de>
- <877c0ksd1p.ffs@tglx> <2078551b-c0b0-4201-b8d7-1faafa3647e6@app.fastmail.com>
- <874ivorvij.ffs@tglx>
-Subject: Re: [PATCH 11/14] vdso/vsyscall: Update auxiliary clock data in the datapage
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] gpio: vortex86: add new GPIO device driver
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
+ linux-gpio@vger.kernel.org
+References: <20250707132154.771758-1-marcos@orca.pet>
+ <CAMRc=Me5dfNFLS1qF0AWgg8sb_vk9J=d-JV3-C5xWv7pZM+sFg@mail.gmail.com>
+Content-Language: es-ES
+From: Marcos Del Sol Vives <marcos@orca.pet>
+In-Reply-To: <CAMRc=Me5dfNFLS1qF0AWgg8sb_vk9J=d-JV3-C5xWv7pZM+sFg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Ovh-Tracer-Id: 16037036800080565979
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdefvddtkecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthekredttddvjeenucfhrhhomhepofgrrhgtohhsucffvghlucfuohhlucggihhvvghsuceomhgrrhgtohhssehorhgtrgdrphgvtheqnecuggftrfgrthhtvghrnheptdegudfgiedugfekudfhlefgjefguedvjeffieevgeetjedvvdeihfeiudejvdehnecukfhppeduvdejrddtrddtrddupdejledrudduiedrgeejrdduleehnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepuddvjedrtddrtddruddpmhgrihhlfhhrohhmpehmrghrtghoshesohhrtggrrdhpvghtpdhnsggprhgtphhtthhopeegpdhrtghpthhtohepsghrghhlsegsghguvghvrdhplhdprhgtphhtthhopehlihhnuhhsrdifrghllhgvihhjsehlihhnrghrohdrohhrghdprhgtphhtthhopehlihhnuhigqdhgphhiohesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdpoffvtefjohhsthepmhhoheefgegmpdhmohguvgepshhmthhpohhuth
+DKIM-Signature: a=rsa-sha256; bh=OJu8pJoid5qMGA+qH1sillUwasBPAhGzZR0zvE2aRfI=;
+ c=relaxed/relaxed; d=orca.pet; h=From; s=ovhmo-selector-1; t=1751899791;
+ v=1;
+ b=VYDIQ8bIzbLQZfTrc9BetegfdOkRinM3Pn/VY8VcgnLmYh097v0eoWJrxIgcd8Tsvn2pSoU8
+ hiTpGjJOjquzBvWQchMUzH3ZScKtNkYAtzSRkR4D+t41udrfq+kACDOF7JzugMNobx4ML4kipKV
+ 4bAmlfby201ZgrhmgtgkLvr6JTM/6PsT7kGt/dmzttDdk+rLDyWrf4YqcrC+Kte5WByyQHWb8Rd
+ d8DfyR/uUV2x1LhKamyQZfjZShuqRCos1rK/OKDzcTjiEBPykoJ7t/PqMSppUp2Kw9FT23iBoSZ
+ CkH/SszOpk99p6Dy8gGzjIodSnuN4KR+KvR4ZuU825vdA==
 
-On Mon, Jul 7, 2025, at 15:16, Thomas Gleixner wrote:
-> On Mon, Jul 07 2025 at 13:34, Arnd Bergmann wrote:
->> On Mon, Jul 7, 2025, at 08:57, Thomas Gleixner wrote:
+El 07/07/2025 a las 16:10, Bartosz Golaszewski escribió:
+> Hi!
+> 
+> This patch immediately rings alarm bells in my head because the chip
+> is not registered with the driver model. It's not 2005 anymore so I'd
+> need some more explanation. IMO there's nothing that makes it
+> impossible to implement this as a platform device. Could you elaborate
+> more on why you chose to implement it this way?
+> 
+> Bart
 
->> (the added lines here also fix the missing clock_gettime64,
->> which was equally blocked on the sparc64 oddities)
->
-> I'm all for it.
->
-> Can you post a patch to that effect?
->
+Hi Bart!
 
-Sent, plus a bonus patch to remove CONFIG_ARCH_CLOCKSOURCE_DATA.
+This is my first time writing a driver in general, so the only reason is
+that the drivers I used as a reference (gpio-it87 and gpio-winbond) look
+more or less like this. I used those because they are fairly simple and
+also use fixed x86 ports for control.
 
-      Arnd
+I see now on gpio-f7188x that it is possible to detect if the SoC matches
+using platform_driver and platform_device. I guess that is what you were
+referring to? Should I thus make a V2 patch using those facilities? 
+
+Thanks,
+Marcos
 
