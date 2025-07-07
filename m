@@ -1,159 +1,171 @@
-Return-Path: <linux-kernel+bounces-719482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C672AFAE8D
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 10:24:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50C8DAFAE93
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 10:26:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CD5A189363D
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 08:24:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90F3A3A4660
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 08:25:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5675B28A715;
-	Mon,  7 Jul 2025 08:24:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="i4QqyX4Z"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82BAB28A72A;
+	Mon,  7 Jul 2025 08:26:01 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51680289E17
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 08:24:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19786288530;
+	Mon,  7 Jul 2025 08:25:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751876673; cv=none; b=NSshm5y32xKmqN+QUd5UwIt4JF/Q0KT3xlwAJ7Gj3PusSLL48CeAnRZiIeauGzJdKZOMIWNqME7uAVWpBMIvqCnYtzNoO5W8dgsO2ljxSeYZiWRZfT5tdNLIN8BpmVRFcETPQh5GV++VYfW6IhLQktBvp5GUwRiolJlZvHb927M=
+	t=1751876761; cv=none; b=h0zFro2GKSdyrtMrunO7HdYQe1ZHiEafTSa7kC1wQXv69ktZt4kmMi5d3cjRW2d42njYqALShX5rloX0FP2VoTOwdeBgiXUX786gMkmyQoQ8hh7LwYRKB1ILg9vYcr2/ewkKF+bePetUoX87jzt1w0b9lp0vKwmsFfmcJjJgeX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751876673; c=relaxed/simple;
-	bh=08f1MgkJS/MdrAG/JH0e1/2zkyJyP2K7GUuU9LnySrc=;
+	s=arc-20240116; t=1751876761; c=relaxed/simple;
+	bh=bP139+8C1wJwvg0E5XAk1ETIbH4Do4HXk3wI2vvnOtI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YvkKso7HK8PbNEdRQiMbgcruWCbq+hBZjeza1DWzYGe8PwsaMPy8UdI4XG4H9CJ3rIqtuiLhzeyayI/5KswUvWa3hMk5+5xAoIXX68rkBCaNUB2yWmcRZs7a/MBxyUNBQoCThTbpc0nn9AVoQoo7Pyl6/6AO3AlBDD7QGVDph2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=i4QqyX4Z; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5670kJ0w030762
-	for <linux-kernel@vger.kernel.org>; Mon, 7 Jul 2025 08:24:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	MbM0Na9BGNYEY76leSiVEoIRTJwjEgEbW28UaU8pTrc=; b=i4QqyX4ZhQI6uWob
-	/5qiPClMeuKoOkZlPichiL69OnNlj8hk6lULpnkN1J1VZo1mjErOEnbqc2wFahFt
-	iNUSOt/kxErcAiLvl4mgN5oKSfJX90zPTo9Zip6pBuQw3WIkMPVFl//ZiksqlZNB
-	/uT/Cs77uHam+gIKPG1kHUJNsG8knQoteP1R1iI6tCQYzqgxMICwn1jjvdt0BSb6
-	OTUuuu7l4/uW1/SZz1zIFAIRDs/XY+HERQgR/F2aySgwXUdIChbHCwiXtP9msLUM
-	3jDEWjhEIrf6hA8nXLQO7IuMBeUe2plDJRrw7nuSyrAKUtBWjBgLAqi0nv/9NvOU
-	8MtIjg==
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47pw7qax85-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 08:24:30 +0000 (GMT)
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7d0a9d20c2eso24460585a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 01:24:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751876669; x=1752481469;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MbM0Na9BGNYEY76leSiVEoIRTJwjEgEbW28UaU8pTrc=;
-        b=gliIUJ0HOJLlii6BqA+rnKa7a1xVUBUrdQ3Pn9DonpsEl03+HoRs/Gi5B+w0WZVLtj
-         6D2axTUKQC9OG1/TIvV04YfN9zfKrHoiUNM3HpdjEUpLrs5BTGOkSDPeA6GC8jfk0Xrp
-         7dD9WrYj3cPy396aEDQI5PZobPWxqEP4+n4EP31VZjVuuscrF84Pt/x57c/gwK1LqueI
-         skgt6BdCV1igLSGAwlbDAUvVbwaL007cKPsXEjZH2YzKUkNkKOQD3XEgq5uwQAjKcstZ
-         zXC8oSuV6TXI7Xwtrr6KUxbI0k5eNGq7cu1besyoMdlGqIFNornsAFqhPv7t/Wh3vNpk
-         FMOg==
-X-Forwarded-Encrypted: i=1; AJvYcCVma79c9Q1cx/ZNTmzxXYF5V4RIC1aPIvTKvdZfb8EjnsiWrcFgji4Qh8ec4C8gVa/T5DqZA4ld4YHk1xY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywjh76mSxC07zZrlZXr7qKvT/DmBn4qZo7cvztnPU1OH7UOY6t1
-	y0A4W4ovEUJozFlnZT+7rgTesjsh9/AH5pFoYiawCqCSVwvVHUVWgkImwiRjdwQiO+gOYa3CKjo
-	XF7Oyq6hWeBwsznsNZCp41pv0tgNP9Y3chA6GMmPTVamc0ltD7es//bezrS0Zyej1G0k=
-X-Gm-Gg: ASbGnctq48H9AHKM8koHUoi8ieeycLKJQsAAmrOZzIgChCjZvuipa4JSZfu0pp96yfx
-	3nzVrBf3DVW5nVRfIuPeDj27J1GwkOufYv/B2W2VWvo1xUNEOoyifK8WVn3ltuCYJOktByi2hx7
-	hwfMlUaQCLtfKTI9tW55NCKPNLsfS+tMslgxgH4UUFhwrv/ipz28iEbgts1Nso+Gt6UtTE6Y921
-	672SfkARt/vEufKK527rzXn10Dpxls6v9xd0ExMOowBTzYXmM9gwVnvF0vmdXfwdJswYs32yFkT
-	wF2YuzBQ+vb23DVg0yzTXCqE54Bo1klNNv1gWxRmrmanXsl5nVlNz3BO7kfjtE7vnFCl13o91lz
-	Dh8M=
-X-Received: by 2002:a05:622a:8356:b0:4a9:a2d2:5cd6 with SMTP id d75a77b69052e-4a9a2d2634cmr41323361cf.6.1751876669221;
-        Mon, 07 Jul 2025 01:24:29 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEAhUSYigL5oM1altpor3qk4P5f5OHAvNg9UYt6fOM60gyonRu+BrBPx55Xo/pckv1Ovocl8w==
-X-Received: by 2002:a05:622a:8356:b0:4a9:a2d2:5cd6 with SMTP id d75a77b69052e-4a9a2d2634cmr41323171cf.6.1751876668843;
-        Mon, 07 Jul 2025 01:24:28 -0700 (PDT)
-Received: from [192.168.143.225] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae3f66e8c31sm668150966b.18.2025.07.07.01.24.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Jul 2025 01:24:28 -0700 (PDT)
-Message-ID: <17aa8f1f-f293-4ba8-a947-08d9b3618f5b@oss.qualcomm.com>
-Date: Mon, 7 Jul 2025 10:24:24 +0200
+	 In-Reply-To:Content-Type; b=bn15ugZzfBMrtnIolzOecUP2Fb48e13v1Ol6wT+eZuJcE/wkZsrhXCk/DD7G+DtfxF8CU1FXhvAaI4HTQw81QIhUZFrwpMC/NUjYPbzof/HWUg1U/XHlUGCGHKPgJcCU0/bh+p2uBVRQog6/U4Jq3FpGYqKmAagZlgrBSf0kO+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4bbHPb4QSfzKHMhh;
+	Mon,  7 Jul 2025 16:25:55 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.252])
+	by mail.maildlp.com (Postfix) with ESMTP id 1478D1A0EEC;
+	Mon,  7 Jul 2025 16:25:54 +0800 (CST)
+Received: from [10.174.179.247] (unknown [10.174.179.247])
+	by APP3 (Coremail) with SMTP id _Ch0CgAXeCWPhGtoxpywAw--.45030S3;
+	Mon, 07 Jul 2025 16:25:53 +0800 (CST)
+Message-ID: <8b58c4c4-dd16-6c4d-369e-65d5dd7cf269@huaweicloud.com>
+Date: Mon, 7 Jul 2025 16:25:51 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/4] arm64: dts: qcom: sc8180x: modernize MDSS device
- definition
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Rob Clark <robin.clark@oss.qualcomm.com>,
-        Dmitry Baryshkov
- <lumag@kernel.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Krishna Manikandan <quic_mkrishn@quicinc.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20250704-mdss-schema-v1-0-e978e4e73e14@oss.qualcomm.com>
- <20250704-mdss-schema-v1-4-e978e4e73e14@oss.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250704-mdss-schema-v1-4-e978e4e73e14@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA3MDA0NyBTYWx0ZWRfX75B6+Znjkc0Z
- tzqJIJ8VgnxzxNUJZRDaWXBzokEvigFHNmZRwdo/261OUl2SQzMIOt+MeWdiiL7t1LeVJigFcQn
- iainWGNyhzIk3IKeBGnweCl712oW1zM6lr5YvyqhMr+YkKJLlGO1hX966l+XmxcJVpcwp6QqM/S
- mIApF5TtD//D4oEcxkZ3wrfgQ0Z8m3VhJN21mQ+NxcnAg8poIhydFo44i9r4CvbzsQoQjT4TXRS
- mW/cdYZokdeTFWE6GRugAK5NKUqr/ZlSKIxAChaoZfKRpTisV5BFWSdhMyQGoEUY674KRIyeAHa
- zGu/NXu8ElCdntsjtBypxmohiOGWcPGJ9xAiAon7i2Y7TTVPipj98oWz2Q9NsUnVyOigNoSf7Xj
- r6cbylFDPGrm3uULny35GZvXx8iJ38fRnUcz3eeVSYkXQqRkKB7VjDbPK5Y976JV78ZnyNSv
-X-Proofpoint-GUID: RZcwJGK9hMWFKIDWnpJVIXTgz6C8VRMo
-X-Proofpoint-ORIG-GUID: RZcwJGK9hMWFKIDWnpJVIXTgz6C8VRMo
-X-Authority-Analysis: v=2.4 cv=SOBCVPvH c=1 sm=1 tr=0 ts=686b843e cx=c_pps
- a=50t2pK5VMbmlHzFWWp8p/g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=UvoLlU4ym182rRgf1HoA:9
- a=QEXdDO2ut3YA:10 a=IoWCM6iH3mJn3m4BftBB:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-07_01,2025-07-07_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 priorityscore=1501 lowpriorityscore=0 bulkscore=0
- impostorscore=0 mlxlogscore=910 mlxscore=0 phishscore=0 malwarescore=0
- adultscore=0 suspectscore=0 spamscore=0 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507070047
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH] md: allow removing faulty rdev during resync
+To: Zheng Qixing <zhengqixing@huaweicloud.com>, song@kernel.org,
+ yukuai3@huawei.com
+Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
+ yi.zhang@huawei.com, yangerkun@huawei.com, houtao1@huawei.com,
+ zhengqixing@huawei.com
+References: <20250707075412.150301-1-zhengqixing@huaweicloud.com>
+From: Li Nan <linan666@huaweicloud.com>
+In-Reply-To: <20250707075412.150301-1-zhengqixing@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_Ch0CgAXeCWPhGtoxpywAw--.45030S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxJw1xuw4xKFWxKr4rGw1UGFg_yoW5WFyUpa
+	1xt3Z8Gr4UJ34fGa1UW34DGa45Xr18XrW8try7Wa4fA3ZxAr92ga4fW3WjvryYyasYgF4r
+	Xw18K3y5Cw1SqaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU90b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487
+	Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aV
+	AFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2xF
+	o4CEbIxvr21lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
+	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
+	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
+	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
+	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIda
+	VFxhVjvjDU0xZFpf9x07UZ18PUUUUU=
+X-CM-SenderInfo: polqt0awwwqx5xdzvxpfor3voofrz/
 
-On 7/4/25 6:31 PM, Dmitry Baryshkov wrote:
-> Follow the lead of other platforms and update DT description of the MDSS
-> device:
+
+
+在 2025/7/7 15:54, Zheng Qixing 写道:
+> From: Zheng Qixing <zhengqixing@huawei.com>
 > 
-> - Use generic node names (dislpay-subsystem, display-controller, phy)
->   instead of the platform-specific ones (mdss, mdp, dsi-phy)
-> - Add platform-specific compatible string to DSI controllers.
+> During RAID resync, faulty rdev cannot be removed and will result in
+> "Device or resource busy" error when attempting hot removal.
 > 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> Reproduction steps:
+>    mdadm -Cv /dev/md0 -l1 -n3 -e1.2 /dev/sd{b..d}
+>    mdadm /dev/md0 -f /dev/sdb
+>    mdadm /dev/md0 -r /dev/sdb
+>    -> mdadm: hot remove failed for /dev/sdb: Device or resource busy
+> 
+> After commit 4b10a3bc67c1 ("md: ensure resync is prioritized over
+> recovery"), when a device becomes faulty during resync, the
+> md_choose_sync_action() function returns early without calling
+> remove_and_add_spares(), preventing faulty device removal.
+> 
+> This patch extracts a helper function remove_spares() to support
+> removing faulty devices during RAID resync operations.
+> 
+> Fixes: 4b10a3bc67c1 ("md: ensure resync is prioritized over recovery")
+> Signed-off-by: Zheng Qixing <zhengqixing@huawei.com>
 > ---
+>   drivers/md/md.c | 24 +++++++++++++++++-------
+>   1 file changed, 17 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/md/md.c b/drivers/md/md.c
+> index 0f03b21e66e4..7f5e5a16243a 100644
+> --- a/drivers/md/md.c
+> +++ b/drivers/md/md.c
+> @@ -9456,17 +9456,11 @@ static bool md_spares_need_change(struct mddev *mddev)
+>   	return false;
+>   }
+>   
+> -static int remove_and_add_spares(struct mddev *mddev,
+> -				 struct md_rdev *this)
+> +static int remove_spares(struct mddev *mddev, struct md_rdev *this)
+>   {
+>   	struct md_rdev *rdev;
+> -	int spares = 0;
+>   	int removed = 0;
+>   
+> -	if (this && test_bit(MD_RECOVERY_RUNNING, &mddev->recovery))
+> -		/* Mustn't remove devices when resync thread is running */
+> -		return 0;
+> -
+>   	rdev_for_each(rdev, mddev) {
+>   		if ((this == NULL || rdev == this) && rdev_removeable(rdev) &&
+>   		    !mddev->pers->hot_remove_disk(mddev, rdev)) {
+> @@ -9480,6 +9474,21 @@ static int remove_and_add_spares(struct mddev *mddev,
+>   	if (removed && mddev->kobj.sd)
+>   		sysfs_notify_dirent_safe(mddev->sysfs_degraded);
+>   
+> +	return removed;
+> +}
+> +
+> +static int remove_and_add_spares(struct mddev *mddev,
+> +				 struct md_rdev *this)
+> +{
+> +	struct md_rdev *rdev;
+> +	int spares = 0;
+> +	int removed = 0;
+> +
+> +	if (this && test_bit(MD_RECOVERY_RUNNING, &mddev->recovery))
+> +		/* Mustn't remove devices when resync thread is running */
+> +		return 0;
+> +
+> +	removed = remove_spares(mddev, this);
+>   	if (this && removed)
+>   		goto no_add;
+>   
+> @@ -9522,6 +9531,7 @@ static bool md_choose_sync_action(struct mddev *mddev, int *spares)
+>   
+>   	/* Check if resync is in progress. */
+>   	if (mddev->recovery_cp < MaxSector) {
+> +		remove_spares(mddev, NULL);
+>   		set_bit(MD_RECOVERY_SYNC, &mddev->recovery);
+>   		clear_bit(MD_RECOVERY_RECOVER, &mddev->recovery);
+>   		return true;
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-Konrad
+LGTM, feel free to add
+
+Reviewed-by: Li Nan <linan122@huawei.com>
+
+-- 
+Thanks,
+Nan
+
 
