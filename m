@@ -1,153 +1,97 @@
-Return-Path: <linux-kernel+bounces-720538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A1DBAFBD02
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 23:00:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B04DAFBD59
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 23:18:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A4C91BC0DA5
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 21:01:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56F611668F7
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 21:18:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0C1427FD50;
-	Mon,  7 Jul 2025 21:00:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bCS4dlVm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51169287270;
+	Mon,  7 Jul 2025 21:17:50 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3886E27E04F;
-	Mon,  7 Jul 2025 21:00:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 403B6285CB3;
+	Mon,  7 Jul 2025 21:17:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751922040; cv=none; b=T4LrJQJuLF75DF984Z7gFGxkLeeOdxpnqPYG5gW9LR+aLvnAjOpscSJmJj9nqAhUDwk58PQZwrQLk9aEbrdhmew5s49aDAtkMvvbKZbKa8Q4KeFJ5UIqiiPhqEXpvD8f21XpH7xnFmUkvBrMuppmSOeanh421wEXa7vACLmUrTU=
+	t=1751923069; cv=none; b=ETO8whqf5uYFXlItPGcMgc0qEOw8fT1W0nawAf9OwYOR8wQNlwZC+A18Bzv4s8Td2swVrH714KufcaA6ECBlz6cx4qQbzxG4myw8Rqlu1RUaaZiyMtibzlXCq/l5l3puJrdj0FAdXI8EYwg+pFQspxR11p65svqQkfOt6lacZ0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751922040; c=relaxed/simple;
-	bh=ly/B021ynYzPCz1B63mrRbLIIKOdCMkQUxYcm0H81YE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Bu5v1HR72U8avCRHuHd7gudPkT9nXLRJQdJ+TUHcXxDEFQKpXPxsxdpnzuddeAb96ip8SCq21+touL4jXfMtZ0uqLqUPIWqsMTeYFDY94+RLZXtSl1bhsuctbKG3okCQBdTeWnEnsZEnmQ2XejUAXEchQPQNrdX7OtnOGHQHXQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bCS4dlVm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E01C2C4CEE3;
-	Mon,  7 Jul 2025 21:00:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751922039;
-	bh=ly/B021ynYzPCz1B63mrRbLIIKOdCMkQUxYcm0H81YE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=bCS4dlVmb6G0eHO6gwM5KgLApXv+p1pvwi3tE8cLIzARq+1MaJZueScgTDRlYcKox
-	 zyKGQU6239B8KB7wr9wlfoAYbfzN8jxl7L5jHmwjk0XLIK7zko5+LLcPe0TG6NerME
-	 Bd+xw0KWwETD68YqKtNwnGITXWdoIX1y5ga7EZzVIZyUXi7MjodUcsAta15Kyafu6l
-	 luTscLqYgBJ3WwZAJPwvzfptMsgc4yQAen2oFlqn94BJVGX5DZKnxdJ68vb/YRJTly
-	 MqEzv/wggfp3NTFcU8QyTY3KY6rj8Vr4n6TLdaE1WHORP93dyDAZD7sxiUhzTth/HT
-	 tPA7H9IOGYPjQ==
-Message-ID: <54f9d2ee-5c04-4756-8695-54a9176ddac6@kernel.org>
-Date: Mon, 7 Jul 2025 23:00:36 +0200
+	s=arc-20240116; t=1751923069; c=relaxed/simple;
+	bh=6w1dVPixiY3k13k17rtRyUsCZzgPtumdTmATn1RT6BU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LoPoQoLRC3JD4iih/VhiJz0c71wLTj5bSMtIKX7nItXV+sxh65ma35eZwjCeezk1M/iuJnZ9DAII/AVYzdrThvLUNlUPsgJA5F6Lm4ifWD2EUlrdTi2xFw+m9aCm/tyCsNZuTQaBBeolxtqxX00a22o92/0OFCAXb+EpEEYLHTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf01.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay09.hostedemail.com (Postfix) with ESMTP id ECC2D8037B;
+	Mon,  7 Jul 2025 21:01:10 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf01.hostedemail.com (Postfix) with ESMTPA id 5AD786000F;
+	Mon,  7 Jul 2025 21:01:06 +0000 (UTC)
+Date: Mon, 7 Jul 2025 17:01:05 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ bpf@vger.kernel.org, x86@kernel.org, Masami Hiramatsu
+ <mhiramat@kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra
+ <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Jiri Olsa
+ <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Thomas Gleixner
+ <tglx@linutronix.de>, Andrii Nakryiko <andrii@kernel.org>, Indu Bhagat
+ <indu.bhagat@oracle.com>, "Jose E. Marchesi" <jemarch@gnu.org>, Beau
+ Belgrave <beaub@linux.microsoft.com>, Jens Remus <jremus@linux.ibm.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton
+ <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>, Florian Weimer
+ <fweimer@redhat.com>
+Subject: Re: [PATCH v12 01/14] unwind_user: Add user space unwinding API
+Message-ID: <20250707170105.1ea1ccd5@batman.local.home>
+In-Reply-To: <20250707154245.7eeeb448@batman.local.home>
+References: <20250701005321.942306427@goodmis.org>
+	<20250701005450.721228270@goodmis.org>
+	<12c620ea-4bee-4019-8143-8ecbaeeafc11@efficios.com>
+	<20250707154245.7eeeb448@batman.local.home>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 0/5] media: uvcvideo: Introduce
- V4L2_META_FMT_UVC_MSXU_1_5 + other meta fixes
-To: Ricardo Ribalda <ribalda@chromium.org>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-usb@vger.kernel.org, stable@vger.kernel.org
-References: <20250707-uvc-meta-v8-0-ed17f8b1218b@chromium.org>
-Content-Language: en-US, nl
-From: Hans de Goede <hansg@kernel.org>
-In-Reply-To: <20250707-uvc-meta-v8-0-ed17f8b1218b@chromium.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 5AD786000F
+X-Rspamd-Server: rspamout02
+X-Stat-Signature: t8cy4pfn5kbywkbtcd3fwte3h7einzic
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1/hJGEJuHvQAlzXM3nyahxqw5XL3ZPesbc=
+X-HE-Tag: 1751922066-394350
+X-HE-Meta: U2FsdGVkX184maHp6AbgAf/k2jFaTcaeSpS3K9TchigjJp+AUwA/uPIZxrsWq7w+ozKsT2CHLZtdR/CMMdEZsv1i16RlIkZ3Whg0lthKOJcoNFa0x7FuSkemuK4mA0+U8bZuj/O51FHf+WNP1GIjLiW7wPxUeDVpTZmok2m+9aPbm1I4hEWS+uOWaWIyd5V54lInMb9k6AH42l8AEwtbpPgUmNFWTuLi5+2Su6KN+wFZejFeA4XWH36aDSjowkMB+UJjVp0UDuLZ1KLiLOSGrjhiu8uNgeS95bn+njQz+L/NPoC+dzquqoBguOOpBvdM8Uxx3Rfz6O6M1oC2du4HLTFx2lVrFt6GpeZGY9hN6x1QyknJ6BqBptV48fHoSaN5pahZ+k18pqtE38ILr/yfnJ07mKf2V+5hvzpnN7isVTDnmpmM9z/clCEPpEaUhbc/
 
-Hi Ricardo,
+On Mon, 7 Jul 2025 15:42:45 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-On 7-Jul-25 8:34 PM, Ricardo Ribalda wrote:
-> This series introduces a new metadata format for UVC cameras and adds a
-> couple of improvements to the UVC metadata handling.
+> On Fri, 4 Jul 2025 14:20:54 -0400
+> Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
 > 
-> The new metadata format can be enabled in runtime with quirks.
+> > > None of the structures introduced will be exposed to user space tooling.    
+> > 
+> > Would it be possible to make those unwind APIs EXPORT_SYMBOL_GPL
+> > so they are available for GPL kernel modules ?  
 > 
-> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> ---
-> Changes in v8:
-> - Dynamically fill dev->meta_formats instead of be const.
-> - Link to v7: https://lore.kernel.org/r/20250617-uvc-meta-v7-0-9c50623e2286@chromium.org
+> I'm OK with that, but others tend to complain about EXPORT_SYMBOL_GPL
+> for functions not used by modules in the kernel. But I personally feel
+> that LTTng should get an exception for that rule ;-)
 
-Thank you for the new version. I've merged this series
-and pushed this to uvc/for-next now.
+I just noticed that this was to patch 1. The functions here probably
+shouldn't be exported as they are more internal to the infrastructure.
 
-Regards,
+In fact, I think I'll move that macro into the user.c code. I don't
+think it should be used outside that function. And the
+unwind_user_start/next() could also be static functions.
 
-Hans
-
-
-
-
-> Changes in v7:
-> - Add patch: Introduce dev->meta_formats
-> - Link to v6: https://lore.kernel.org/r/20250604-uvc-meta-v6-0-7141d48c322c@chromium.org
-> 
-> Changes in v6 (Thanks Laurent):
-> - Fix typo in metafmt-uvc.rst
-> - Improve metafmt-uvc-msxu-1-5.rst
-> - uvc_meta_v4l2_try_format() block MSXU format unless the quirk is
->   active
-> - Refactor uvc_enable_msxu
-> - Document uvc_meta_detect_msxu
-> - Rebase series
-> - Add R-b
-> - Link to v5: https://lore.kernel.org/r/20250404-uvc-meta-v5-0-f79974fc2d20@chromium.org
-> 
-> Changes in v5:
-> - Fix codestyle and kerneldoc warnings reported by media-ci
-> - Link to v4: https://lore.kernel.org/r/20250403-uvc-meta-v4-0-877aa6475975@chromium.org
-> 
-> Changes in v4:
-> - Rename format to V4L2_META_FMT_UVC_MSXU_1_5 (Thanks Mauro)
-> - Flag the new format with a quirk.
-> - Autodetect MSXU devices.
-> - Link to v3: https://lore.kernel.org/linux-media/20250313-uvc-metadata-v3-0-c467af869c60@chromium.org/
-> 
-> Changes in v3:
-> - Fix doc syntax errors.
-> - Link to v2: https://lore.kernel.org/r/20250306-uvc-metadata-v2-0-7e939857cad5@chromium.org
-> 
-> Changes in v2:
-> - Add metadata invalid fix
-> - Move doc note to a separate patch
-> - Introduce V4L2_META_FMT_UVC_CUSTOM (thanks HdG!).
-> - Link to v1: https://lore.kernel.org/r/20250226-uvc-metadata-v1-1-6cd6fe5ec2cb@chromium.org
-> 
-> ---
-> Ricardo Ribalda (5):
->       media: uvcvideo: Do not mark valid metadata as invalid
->       media: Documentation: Add note about UVCH length field
->       media: uvcvideo: Introduce dev->meta_formats
->       media: uvcvideo: Introduce V4L2_META_FMT_UVC_MSXU_1_5
->       media: uvcvideo: Auto-set UVC_QUIRK_MSXU_META
-> 
->  .../userspace-api/media/v4l/meta-formats.rst       |   1 +
->  .../media/v4l/metafmt-uvc-msxu-1-5.rst             |  23 +++++
->  .../userspace-api/media/v4l/metafmt-uvc.rst        |   4 +-
->  MAINTAINERS                                        |   1 +
->  drivers/media/usb/uvc/uvc_driver.c                 |   7 ++
->  drivers/media/usb/uvc/uvc_metadata.c               | 115 +++++++++++++++++++--
->  drivers/media/usb/uvc/uvc_video.c                  |  12 +--
->  drivers/media/usb/uvc/uvcvideo.h                   |   7 ++
->  drivers/media/v4l2-core/v4l2-ioctl.c               |   1 +
->  include/linux/usb/uvc.h                            |   3 +
->  include/uapi/linux/videodev2.h                     |   1 +
->  11 files changed, 161 insertions(+), 14 deletions(-)
-> ---
-> base-commit: a8598c7de1bcd94461ca54c972efa9b4ea501fb9
-> change-id: 20250403-uvc-meta-e556773d12ae
-> 
-> Best regards,
-
+-- Steve
 
