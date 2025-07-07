@@ -1,125 +1,139 @@
-Return-Path: <linux-kernel+bounces-720597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F0E0AFBE1A
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 00:04:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AADA2AFBE1C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 00:05:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B1181893850
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 22:04:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FDEF172A88
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 22:04:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8361029C33B;
-	Mon,  7 Jul 2025 22:03:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9B5428C024;
+	Mon,  7 Jul 2025 22:04:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="iUJy5S40"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F3A328BAB9;
-	Mon,  7 Jul 2025 22:03:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BXyhrt5s"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67FFA28AB0B
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 22:03:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751925824; cv=none; b=S9dmOj+61dR/iEG0XycSbr+GasP2RcvcPkQlu1EnmmbMaScIsdTjghTaaxwZtFG/ftw2FKYb1h1Sa4GXSeW+5PHjuXb5C81yDGNLqzGjld+IEohhVLZ9hkMxtLUT3TCxeGEhXsewP+eKBYazPTArdHpyTFMDZjslnAXGCZAQ/v4=
+	t=1751925840; cv=none; b=VJg5hMdWB7+TWKe4cc5qP2Bnoo/P2ot93pyPVKAl8l9pa8tbw4Eak/mQPo2MTlJSEIjdrSML5g5pcgYOngOQ/wE+ph6DeRe8Sd6HrvNP69jvzfEP5oYirYTGnk3Iz9RDHKyWZkbVMeVbP/7zBcTb8knTb1mGPwOtxX9KtnCA+ic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751925824; c=relaxed/simple;
-	bh=VIoB7qiTLaV7Z1JX5PmXLYanxXX/r8BMP27IJazNm84=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=T0JkALTgE9JtJo4+zsayPQEDgE7IERPaKn+L7esIgeRbGUTDiZ/in83m8PO8EhYCfJxJDevmgJIcEX0QU9QAVfeXMYiRYfslU9y6H1T2s4NmGJctYTeGRVfCHCYsDqUnALxmoxw/A/BXUTnGh+ZVHO1JjXl9KPYvcY8xZzlunIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=iUJy5S40; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from easwarh-mobl2. (unknown [20.29.225.195])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 80DEF2054689;
-	Mon,  7 Jul 2025 15:03:42 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 80DEF2054689
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1751925823;
-	bh=ZQBUkjDtvUw42acvYUgd6vDbgxWPxXM2A3fBzrkCpHM=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=iUJy5S402vW9QcG4yGSfhRWs8qDBqFXFp3IkaUFVFzW5hQOyEWnpgi4tW1UbfLlj+
-	 +boa03gPqNmBv5uvN7aWJNvIaDZLz9Hv1+CzGVEk89Jxl+duextke1Xz8uKTQbZ1HS
-	 8foQuORd+bKXJB85V9fjNiD+GRWt+jOvD5OqUNV8=
-From: Easwar Hariharan <eahariha@linux.microsoft.com>
-Date: Mon, 07 Jul 2025 15:03:33 -0700
-Subject: [PATCH net-next v2 2/2] net: ipconfig: convert timeouts to
- secs_to_jiffies()
+	s=arc-20240116; t=1751925840; c=relaxed/simple;
+	bh=3+ZHbKkksN3tcAI2z+bM1ZZYWOFLSi7aPdLQlGUbAMI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nYIu6k2wa1Tu62gEpdMoSf/RJ7cAHIqCKQeJ/Vr6HsCyqYJQQVgABVG20ppmgbKVJOWrgVREz01LtFtCwJPIIHHbfOgdLNar8S2TlmQWus2w0CXxpAYTJ1ei/LQKiSzG/DtnF1lHqDu8z5+QBlKPl8zpqP7kC+kDFDSoj31YBYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BXyhrt5s; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-450ce3a2dd5so32874235e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 15:03:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1751925834; x=1752530634; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dogAwfSQpS99lvjgTk8yq+RnVhaWd2O8XC5gsnxqeJI=;
+        b=BXyhrt5sZRiJXJEOzXZ5P1vJMKHA8QkHATKEsnergl99L75/XMzF8iARIrSYOitZQz
+         ECH75mYMd7qYnR0a0WD7biW0X+T8Wt7gcw7i0n7jJuuE62p0GDKG+iTAxvQozX6CO86V
+         ztLc0MKu4xfmKQLX42Kk9lXx+fV3ARE3aX1XEIo5shGIODYrwedXQLGo10CZdBWPxSYg
+         q75nbiRUp8/7RiF6vfbrcRYDKDYeYCR8Y/FYPLAjuJYsJraLksurkTQ5Cn2fjGHcYAO3
+         gr1C+3AOD6ujkcgQDdI5Y9mecZmBLiYIzMES+JcS8XhDBuG2z1o3miMQk8zBl8PtricF
+         mY0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751925834; x=1752530634;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dogAwfSQpS99lvjgTk8yq+RnVhaWd2O8XC5gsnxqeJI=;
+        b=ELn9n0C9VFxY9/cVxZSi9uUZ17YDVrNOIf0EDljCSsxnLSFaZB0Mi7j/clpaHaXD/i
+         GuFQBWdE28XhV3L/UE54I7S/mdlmBHJrCXRmFx9BsvulMhkNG2deHAW4vIWI9y4UPXay
+         y3EnJl7Y7vL3JJPg88b+9JRHmD+ozbFadTroGNSg/2yCph+s3UOiDpC+tCAmmMz63qe3
+         MDsbI6JxMHnEX/7qBhfcEJtXOKMiFWbb7cMrREFMuceYXy5nm7yzqF+3jpdzquz/sU3a
+         jZepZVm+x5k6b5hiXfgLuT/PxvAxgi1+VYdTc2+5Jd1+LQHE+l9wyyRhztl3+y6cuMC+
+         +xEA==
+X-Forwarded-Encrypted: i=1; AJvYcCWq9IcZIYMhBY0/Z4WV7RKSMex+9OZeOVPQS7igohJ6vrbhP9TdJ/YsHvb4XgiL6GmWxwttVhzWerJUTmc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxnozPUQ+k3lQ7C4G8Ho4WcV4nq9Af3QrTWM0ChzaKwlQ51jppu
+	E1vzr4lUk24mkl+p085N/IjIj3gTo3FC51uu05MYX7BlbZOtP1kkBcT9YdQkuV1ZQaM=
+X-Gm-Gg: ASbGncs7oYWtGj8SamuoYw3o7faNPxMZDMoVbWAkX0sQvv4xno/oT9qz1nLBkpCl6uK
+	n8M7Syqm4Sks/vTq+POhV9Fq+To4Ll5s5VRBmF1CCBr7GunwgMvFttqV0PT/XRAzx2PugaRusOE
+	cBWhpqzqJSj2L44728koHfIjoxrm2CShjTnKK6Nn6wNzL43oXIAlvLVuK+D7GkqmkfizdNuY4sk
+	So+BHfMgAeJ3EoWTgizYv8gaZs4gYEzJlK4vM+fWUuUzVusU5mNAFBj/fwu+sb81fo/oKOyRYOq
+	wbeWSWK4foNcxZfsDMlgkL9u4MMdX5b3K8AlPMpj0NakCUZcMIBCU2jdcY+kCjwKj3p8s+4699l
+	mrPYnkbxQlCjPxgD7QRV9hPLaBZ89T2M65Zj4
+X-Google-Smtp-Source: AGHT+IGB3xOpoLWZizaIy6CWYyRq8Lhxm8frKGFEmvzu/zW7r5k6ohcmzl5fHAvHUJyguH+pkTOB3Q==
+X-Received: by 2002:a05:600c:4706:b0:454:a37a:db67 with SMTP id 5b1f17b1804b1-454b4ead1c5mr145585835e9.17.1751925833699;
+        Mon, 07 Jul 2025 15:03:53 -0700 (PDT)
+Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-454cd38fb04sm3927855e9.8.2025.07.07.15.03.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Jul 2025 15:03:53 -0700 (PDT)
+Message-ID: <5e8714a9-cd2c-4dfb-a624-8a1adba91da1@linaro.org>
+Date: Tue, 8 Jul 2025 00:03:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250707-netdev-secs-to-jiffies-part-2-v2-2-b7817036342f@linux.microsoft.com>
-References: <20250707-netdev-secs-to-jiffies-part-2-v2-0-b7817036342f@linux.microsoft.com>
-In-Reply-To: <20250707-netdev-secs-to-jiffies-part-2-v2-0-b7817036342f@linux.microsoft.com>
-To: "D. Wythe" <alibuda@linux.alibaba.com>, 
- Dust Li <dust.li@linux.alibaba.com>, 
- Sidraya Jayagond <sidraya@linux.ibm.com>, 
- Wenjia Zhang <wenjia@linux.ibm.com>, 
- Mahanta Jambigi <mjambigi@linux.ibm.com>, 
- Tony Lu <tonylu@linux.alibaba.com>, Wen Gu <guwen@linux.alibaba.com>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Simon Horman <horms@kernel.org>, David Ahern <dsahern@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-rdma@vger.kernel.org, 
- linux-s390@vger.kernel.org, netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Easwar Hariharan <eahariha@linux.microsoft.com>
-X-Mailer: b4 0.14.2
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] clocksource: timer-tegra186: Enable WDT at probe
+To: Jon Hunter <jonathanh@nvidia.com>, Kartik Rajput <kkartik@nvidia.com>
+Cc: tglx@linutronix.de, thierry.reding@gmail.com,
+ linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+References: <20250703110415.232741-1-kkartik@nvidia.com>
+ <aGuYuHx5qlKCur8P@mai.linaro.org>
+ <58d948d3-bbc9-4fca-9393-ce995a4e2567@nvidia.com>
+Content-Language: en-US
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <58d948d3-bbc9-4fca-9393-ce995a4e2567@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Commit b35108a51cf7 ("jiffies: Define secs_to_jiffies()") introduced
-secs_to_jiffies().  As the value here is a multiple of 1000, use
-secs_to_jiffies() instead of msecs_to_jiffies to avoid the multiplication.
+On 07/07/2025 23:19, Jon Hunter wrote:
+> 
+> On 07/07/2025 10:51, Daniel Lezcano wrote:
+>> On Thu, Jul 03, 2025 at 04:34:15PM +0530, Kartik Rajput wrote:
+>>> Currently, if the system crashes or hangs during kernel boot before
+>>> userspace initializes and configures the watchdog timer, then the
+>>> watchdog won’t be able to recover the system as it’s not running. This
+>>> becomes crucial during an over-the-air update, where if the newly
+>>> updated kernel crashes on boot, the watchdog is needed to reset the
+>>> device and boot into an alternative system partition. If the watchdog
+>>> is disabled in such scenarios, it can lead to the system getting
+>>> bricked.
+>>>
+>>> Enable the WDT during driver probe to allow recovery from any crash/hang
+>>> seen during early kernel boot. Also, disable interrupts once userspace
+>>> starts pinging the watchdog.
+>>
+>> Please resend with proper recipients (linux-watchdog@, Wim Van
+>> Sebroeck, Guenter Roeck) and the changelog.
+> 
+> ACK.
+> 
+>> Can someone take the opportunity to split this watchdog code and move
+>> it in the proper watchdog drivers directory ?
+> 
+> I understand that this was mentioned before, but Thierry previously 
+> objected to this for this particular driver [0].
 
-This is converted using scripts/coccinelle/misc/secs_to_jiffies.cocci with
-the following Coccinelle rules:
+Yes but meanwhile we found that the auxiliary device is designed for 
+this situation.
 
-@depends on patch@
-expression E;
-@@
+> [0] https://lore.kernel.org/linux- 
+> tegra/4ks74upuufmt2ibh5ur5zpazvfj66ak4gyq7v4rtz2zi2u5wsi@rls64ws3rukp/
+> 
 
--msecs_to_jiffies(E * 1000)
-+secs_to_jiffies(E)
-
--msecs_to_jiffies(E * MSEC_PER_SEC)
-+secs_to_jiffies(E)
-
-While here, manually convert a couple timeouts denominated in seconds
-
-Signed-off-by: Easwar Hariharan <eahariha@linux.microsoft.com>
----
- net/ipv4/ipconfig.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/net/ipv4/ipconfig.c b/net/ipv4/ipconfig.c
-index c56b6fe6f0d771e9275bb66c159d9abb330bdf4c..22a7889876c1cf7d5233fe8a0ee12e134b20c1cd 100644
---- a/net/ipv4/ipconfig.c
-+++ b/net/ipv4/ipconfig.c
-@@ -274,9 +274,9 @@ static int __init ic_open_devs(void)
- 
- 	/* wait for a carrier on at least one device */
- 	start = jiffies;
--	next_msg = start + msecs_to_jiffies(20000);
-+	next_msg = start + secs_to_jiffies(20);
- 	while (time_before(jiffies, start +
--			   msecs_to_jiffies(carrier_timeout * 1000))) {
-+			   secs_to_jiffies(carrier_timeout))) {
- 		int wait, elapsed;
- 
- 		rtnl_lock();
-@@ -295,7 +295,7 @@ static int __init ic_open_devs(void)
- 		elapsed = jiffies_to_msecs(jiffies - start);
- 		wait = (carrier_timeout * 1000 - elapsed + 500) / 1000;
- 		pr_info("Waiting up to %d more seconds for network.\n", wait);
--		next_msg = jiffies + msecs_to_jiffies(20000);
-+		next_msg = jiffies + secs_to_jiffies(20);
- 	}
- have_carrier:
- 
 
 -- 
-2.43.0
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
