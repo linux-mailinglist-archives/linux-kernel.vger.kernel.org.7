@@ -1,137 +1,208 @@
-Return-Path: <linux-kernel+bounces-719884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 084A8AFB41E
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 15:15:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4EC7AFB421
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 15:15:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B83F3B8EEB
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 13:13:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D417188ECA4
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 13:15:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0DDB29E0E1;
-	Mon,  7 Jul 2025 13:13:32 +0000 (UTC)
-Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44F761E4AB;
+	Mon,  7 Jul 2025 13:15:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j4xlipVP"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB94F28F94E;
-	Mon,  7 Jul 2025 13:13:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBAAB29CB53;
+	Mon,  7 Jul 2025 13:15:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751894012; cv=none; b=X6azo9j09aY4OKqktCw+Wff9sgrwkLWMOgDTUYre7rptPPv6GgxD+OPbhkemDdaUDV+CHwG0A+0CiC4TM/hq8SBwyAkC1Eut30hRdJL68JavfJZNyPG9OXW7UwyjHHt8QOetVezz5yeMiR4gqtziJRVhTskzWYQnPJuppObq/VM=
+	t=1751894120; cv=none; b=B9uTczUprlH1soR65LJ0AvkCuLxKPyoxZ/qMNdIYr/I77gBKxusJe1NgIdqvXRcWMWHxGm3UgbVO3CaqZTS49QbT0yDdWYEG23Tz1Y0rQ4OFjQUXiQzJZ8rGE5l7l9eStHKc/jqJxPeLPLi+6DHNfa+4nn0AMOrguc4bN+Aef10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751894012; c=relaxed/simple;
-	bh=4chqhDIunjp5JeZ04kGthvwbjcBbP/ShElPqA5Y0jNg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bObhQzIfWZiKOQVVGtzon+Qzv0zgp7+gk9o88CKjZB/PCoN5t+dq2nVJY7E4/pr2GhKEH4SwfhqZX6wE39d68NrQxo1DymQIxzyjHlmN4FK77PQ86WxVs4c3fSstgSu5hKab4G8i2c0eSjnIwCD+QWtWesVFfdMZy5kUhwWC5gY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	s=arc-20240116; t=1751894120; c=relaxed/simple;
+	bh=2dWgPe17PK5fdufSva/Q7JmuxJeb+/oVh1AHMVaqkak=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Oa0NaIXMWKx+vcF61KbIljcNXNjNz69L3bp29fc+VEKLHrYsI3krAPWSnuTzBXL/lUbsXippESZfTmjW7JDgf0spxJdq/qgmB1oth8/j0uFZHW3J2sVoxi4ufhr7Yma3kjZlFY4cgPNjcSjAJghHGVLetPYRrSuAdE6raD+ZFi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j4xlipVP; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-7d7f2600c17so173531885a.0;
-        Mon, 07 Jul 2025 06:13:30 -0700 (PDT)
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-553bcf41440so3211433e87.3;
+        Mon, 07 Jul 2025 06:15:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751894117; x=1752498917; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gbPX0NE/xm0nQIylEPb1G6KJpxgsJepLGdVW149EGic=;
+        b=j4xlipVPTeklMAyij2EkH7A0NCfmQDTgnjjsST+zv8S5ShWthNaNYf7IEanF2+z6aE
+         OE3HnF2aJAg4UpUzz+yZINVE5gJ6Xj9u6PWcs1ZmkRJf+1fkY/hKuEAH+TOVnjhXWVjw
+         7WyzyhbWpLSLPFAItOaRkl5H2kqEOnwdBe7PAVxkO4mS5IMaUQQiTbXwybecLiFhktCJ
+         EMMO2oAwVxTsjMLMOJFVVXEcOmmep9JjnwncUIAAZQUHS0Ld/q3wnNzK2PGh7pjfFUZB
+         q/v6tsY1FUZiecfcebngcZNfNhwYEFZZWgrEtk3P03TXgFXJxVAoZcC9Nenex1VxEPEe
+         oiwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751894009; x=1752498809;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=b5A4mQ2sj3YnvJWQjhwDdfJtv56v7k+z4RJsYDwtFwY=;
-        b=FKAO6sSzwaTuSX5mOPhd2OVGqK0eRJoVhqaJpvqFyLjlyRTa/m+PHY67P+5z7nYmRx
-         oimATRhgJcPOgZS5j+vrM0d7TdRYu/FHjsAIrae3V95Hb/VRrnL8MLaATEzw9tVUgVWe
-         TBp+/a2UssT4vwXLxe+BVMESSZ10QHeAln9RtKiATHYlTvH59L8DTbAHjCgxVo3B4uBt
-         knG1qPlz429mN4r5d7FMXPHri84DODNy/aAKgLRYiuHle/GMzyTWk/tj9rT0l+Iz3VJc
-         uVnxWiF9jjI8fkYR708oUKxdIS9KJGpQYZBz71FZomMtapeyvF8zo1VuZuyKdDPgzJmF
-         t0AQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU1ZtGMVkWDZ4Abziw0JAMn9FVkyr6jiaRxudHzA9whKunzsWL9yJ2tGef2Nb76YfITnypE8zDW1aq/@vger.kernel.org, AJvYcCVApfoLwhfNQe6yRYiDOc2qCZB1/MZvp1TMlSSWuXA2xfOwpilGB+eZfSG2e4iVGRxw8TJp5Ygm304pkKOH2OjsTkg=@vger.kernel.org, AJvYcCWIu8INC/pPbg0bA5n5HNIrNTQgiRto/ScuT2Kg1jZJf/3OkliLb+wTMhHpkDBXe99UtSXM6u+DSIyCR5I1@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpTs/OwGoQ3XoVvqpaKN92KlP+ugFEIcqVVeB8tkXlOOZxmb8+
-	k3JOa6l9lwSvMxzZ8oAZEogNwegRSg323PxDn3Tg0MrqGHz08pgedEPZPtEP61g1
-X-Gm-Gg: ASbGncv4aeoc8qO88HiObR/znTFJMSJm9LQ4rX+WYROaV+rx5A/12bx58EKnP/qAOSc
-	JSAz9e9NmBzUPElI5AP2UjgNWPdVRkVJuxVXJF5RAtWZKgsu2d2zsyE7IEVDEeTYPI94Jv0DDB4
-	50PmJvu4LYa5uKWgYSgDMCRhORfG2f1g1XMH/44/Cv3dVyJj1K+X9Dhk12tlkDe8nRtpYbYijJH
-	Gko+lAEO7srbxeg89oBLPgHqSHbUXo4seFv+qLHVgtdKD4SBwp3CV4erdVwvQRcHBCthiUuJjpc
-	c3cRq+vIoWlz06qdvcGZKnnlT61JRn+FYULSpchO7hGV0CqjAZmLlWNIZgiAJ3ILSrALEDvCvBu
-	rUuH2bTNV91hl+VDqBCmdifMUYs7mB+h9n5Ly6QE=
-X-Google-Smtp-Source: AGHT+IHN9o+/oZ5fF14nWIc5tY5Iz0i1syS2DkIDgNvnt/ZJVRdqjncEOcfoi5gf5wpEaWdM/fRH2Q==
-X-Received: by 2002:a05:620a:4553:b0:7d4:6123:fae0 with SMTP id af79cd13be357-7d5f17e8e0emr1421017585a.44.1751894008802;
-        Mon, 07 Jul 2025 06:13:28 -0700 (PDT)
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com. [209.85.160.171])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7d5dbd93e10sm605359285a.5.2025.07.07.06.13.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Jul 2025 06:13:28 -0700 (PDT)
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4a9741b513eso69343221cf.1;
-        Mon, 07 Jul 2025 06:13:28 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUG9gv99/WVD4/k57vxG3abLBeA21MrJezCkvAdqzk26OCuuq3na93GYVNKmA9pgQtiksVXmrmeZJxu@vger.kernel.org, AJvYcCUjtaRilQPvfxB2FSjYmLjHdx3veJ2XnzuApEkhzUgana1B4HQ9xXbKi9i7qU+51T9hTjDvc47iF+i8kqGM1eDwfbE=@vger.kernel.org, AJvYcCVHGwqxjMP6TW6o7mgvlBP4+U7BQpLIRxMoCgTKtIhwRykdVTBHFcSxYpaXkhw1ubXWLk+yoQuM9b3N9qv6@vger.kernel.org
-X-Received: by 2002:ac8:59d5:0:b0:4a5:8b39:626b with SMTP id
- d75a77b69052e-4a9a69a26dfmr148018231cf.27.1751894008321; Mon, 07 Jul 2025
- 06:13:28 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1751894117; x=1752498917;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gbPX0NE/xm0nQIylEPb1G6KJpxgsJepLGdVW149EGic=;
+        b=wjQXknY0tBJsWAzwNIHFJPMxo/2KZd+CJSYNYOrApiDx2vcL9BWeZMZY/Tu3XuT7a+
+         zslBkUmMnQAiJ1IqU6qNjmp/R4Z51MLJ92Iqeqw1VoQFEDhtnygghcHH0Y097fq6TVZK
+         RPuhjBIwCJkbW5PIehnInINej1cxW5o1mCEYqpYkrhrf64WUkYVd/1u8q95iVsPDKVvM
+         CgLhYZtxZj68/zT7pxd3W3OK6SfPCCAlpfjD2Bsnwss+4QRhIRARxBoLhKVyngk7YBe8
+         e/RTq+bdS9JQHaTBRZVbPtcXXn53NcppsO5AT94fhvRmpXyfhVoz/paZDho04xVJslex
+         wWtA==
+X-Forwarded-Encrypted: i=1; AJvYcCVfMc4/1TN53hL3XdR6eam+XnEoZsRrm6jxAxgmK8GeUcRGaG411dWpchI7Kn8VNGRj6p139k0GvwmLmSI=@vger.kernel.org, AJvYcCX95L5hWDEsfGDwKQboAcmdmVSKZWExvs6Aoj4J0xV4cEV9HcxDLKV45usjHmUPQ77N3oe3@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQUUFZYp7bj9eh5hXQivfcN194uYxpYU7Z+qm9nUD7xuppRfzf
+	TCUwRpO8stG5R+YpB2t4TB4Ogg3BmRECMai4mql6WdFywk5/5U6bj2idmFRG4g==
+X-Gm-Gg: ASbGnct9nHfcJbXnGZNJZXYWvoz/wTaR4eXhUtNtzTs6bONynbBHeD4wVQinSaBu9oc
+	d+QtzDmRTgkYcUzMO5KOXpJn1aU27/QukmPbd/oyqQzfkkyTH/Nqa4gcSTYbZJb0UtKh+HOgiAr
+	KxSZabXe2K3/UgxTG58y4BbsS26LXt4U8nzfd104Etm9i49brJ5yrF7DT/cd3tE5fpkr9ydrdcO
+	U0lHeZI+1y43nbIgPQG69TuTiZzO0CG4ZQMjS81s6lzQNZ2DJcjp/UcwC90KqEvIOFd2Es2sHyC
+	rm8SmZ92yuiMI+LwLXpRjay+4Dg/OGxgO0j4R1ZN9u5ONqcATtxNMTen8ZTbLy89vmAuEEQaxOK
+	NDYcPDBTfZpg=
+X-Google-Smtp-Source: AGHT+IFP+25N80hK9wedsBU2WB382/UhHmXyfAE1YhEjnQFs2oNEyyhujLqCT7wV/yUg8AdNcEHOtw==
+X-Received: by 2002:a05:6512:2c05:b0:553:6583:8e6 with SMTP id 2adb3069b0e04-557e5532091mr1980003e87.15.1751894116472;
+        Mon, 07 Jul 2025 06:15:16 -0700 (PDT)
+Received: from pc636 (host-95-203-1-180.mobileonline.telia.com. [95.203.1.180])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-556384a68f3sm1351686e87.144.2025.07.07.06.15.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Jul 2025 06:15:14 -0700 (PDT)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date: Mon, 7 Jul 2025 15:15:12 +0200
+To: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+Cc: Uladzislau Rezki <urezki@gmail.com>,
+	"Paul E . McKenney" <paulmck@kernel.org>,
+	Joel Fernandes <joel@joelfernandes.org>, RCU <rcu@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Joel Fernandes <joelagnelf@nvidia.com>
+Subject: Re: [PATCH v3 1/2] rcu: Enable rcu_normal_wake_from_gp on small
+ systems
+Message-ID: <aGvIYMBJsOpNx7-9@pc636>
+References: <20250702145938.66459-1-urezki@gmail.com>
+ <aGajO8rOu_GOnjrS@pc636>
+ <ccca5cb2-0d41-4fe1-a4a5-4344b4116770@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250704140823.163572-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20250704140823.163572-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 7 Jul 2025 15:13:16 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWTEoi8D_9L_d8VPkmWYeU4vSYw6kQwxGuYMaQ4h55BwA@mail.gmail.com>
-X-Gm-Features: Ac12FXx3LHe-a7yTaUPt9CR4AOBP4CmYZh5LHUSoBAQwdhq8-wvOnVoZrUcevpc
-Message-ID: <CAMuHMdWTEoi8D_9L_d8VPkmWYeU4vSYw6kQwxGuYMaQ4h55BwA@mail.gmail.com>
-Subject: Re: [PATCH v2 0/4] arm64: dts: renesas: Add XSPI support for RZ/V2N
- and RZ/V2H(P) SoCs and EVK
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ccca5cb2-0d41-4fe1-a4a5-4344b4116770@amd.com>
 
-Hi Prabhakar,
+On Mon, Jul 07, 2025 at 09:19:03AM +0530, Neeraj Upadhyay wrote:
+> 
+> 
+> On 7/3/2025 9:05 PM, Uladzislau Rezki wrote:
+> > On Wed, Jul 02, 2025 at 04:59:36PM +0200, Uladzislau Rezki (Sony) wrote:
+> >> Automatically enable the rcu_normal_wake_from_gp parameter on
+> >> systems with a small number of CPUs. The activation threshold
+> >> is set to 16 CPUs.
+> >>
+> >> This helps to reduce a latency of normal synchronize_rcu() API
+> >> by waking up GP-waiters earlier and decoupling synchronize_rcu()
+> >> callers from regular callback handling.
+> >>
+> >> A benchmark running 64 parallel jobs(system with 64 CPUs) invoking
+> >> synchronize_rcu() demonstrates a notable latency reduction with the
+> >> setting enabled.
+> >>
+> >> Latency distribution (microseconds):
+> >>
+> >> <default>
+> >>  0      - 9999   : 1
+> >>  10000  - 19999  : 4
+> >>  20000  - 29999  : 399
+> >>  30000  - 39999  : 3197
+> >>  40000  - 49999  : 10428
+> >>  50000  - 59999  : 17363
+> >>  60000  - 69999  : 15529
+> >>  70000  - 79999  : 9287
+> >>  80000  - 89999  : 4249
+> >>  90000  - 99999  : 1915
+> >>  100000 - 109999 : 922
+> >>  110000 - 119999 : 390
+> >>  120000 - 129999 : 187
+> >>  ...
+> >> <default>
+> >>
+> >> <rcu_normal_wake_from_gp>
+> >>  0      - 9999  : 1
+> >>  10000  - 19999 : 234
+> >>  20000  - 29999 : 6678
+> >>  30000  - 39999 : 33463
+> >>  40000  - 49999 : 20669
+> >>  50000  - 59999 : 2766
+> >>  60000  - 69999 : 183
+> >>  ...
+> >> <rcu_normal_wake_from_gp>
+> >>
+> >> Reviewed-by: Joel Fernandes <joelagnelf@nvidia.com>
+> >> Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+> >> ---
+> >>  kernel/rcu/tree.c | 14 +++++++++++---
+> >>  1 file changed, 11 insertions(+), 3 deletions(-)
+> >>
+> >> diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+> >> index e8a4b720d7d2..b88ceb35cebd 100644
+> >> --- a/kernel/rcu/tree.c
+> >> +++ b/kernel/rcu/tree.c
+> >> @@ -1625,8 +1625,10 @@ static void rcu_sr_put_wait_head(struct llist_node *node)
+> >>  	atomic_set_release(&sr_wn->inuse, 0);
+> >>  }
+> >>  
+> >> -/* Disabled by default. */
+> >> -static int rcu_normal_wake_from_gp;
+> >> +/* Enable rcu_normal_wake_from_gp automatically on small systems. */
+> >> +#define WAKE_FROM_GP_CPU_THRESHOLD 16
+> >> +
+> >> +static int rcu_normal_wake_from_gp = -1;
+> >>  module_param(rcu_normal_wake_from_gp, int, 0644);
+> >>  static struct workqueue_struct *sync_wq;
+> >>  
+> >> @@ -3239,7 +3241,7 @@ static void synchronize_rcu_normal(void)
+> >>  
+> >>  	trace_rcu_sr_normal(rcu_state.name, &rs.head, TPS("request"));
+> >>  
+> >> -	if (!READ_ONCE(rcu_normal_wake_from_gp)) {
+> >> +	if (READ_ONCE(rcu_normal_wake_from_gp) < 1) {
+> >>  		wait_rcu_gp(call_rcu_hurry);
+> >>  		goto trace_complete_out;
+> >>  	}
+> >> @@ -4843,6 +4845,12 @@ void __init rcu_init(void)
+> >>  	sync_wq = alloc_workqueue("sync_wq", WQ_MEM_RECLAIM, 0);
+> >>  	WARN_ON(!sync_wq);
+> >>  
+> >> +	/* Respect if explicitly disabled via a boot parameter. */
+> >> +	if (rcu_normal_wake_from_gp < 0) {
+> >> +		if (num_possible_cpus() <= WAKE_FROM_GP_CPU_THRESHOLD)
+> >> +			rcu_normal_wake_from_gp = 1;
+> >> +	}
+> >> +
+> >>  	/* Fill in default value for rcutree.qovld boot parameter. */
+> >>  	/* -After- the rcu_node ->lock fields are initialized! */
+> >>  	if (qovld < 0)
+> >> -- 
+> >> 2.39.5
+> >>
+> > Neeraj, are you planning to take this for next merge window?
+> > 
+> 
+> Yes, I have queued v2 of these for testing here:
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/neeraj.upadhyay/linux-rcu.git/log/?h=dev.01.07.2025
+> 
+> Will include them in PR for next merge window.
+> 
+Thank you! I asked because i did not see both in our common RCU tree.
 
-On Fri, 4 Jul 2025 at 16:08, Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> This patch series adds XSPI support to the Renesas RZ/V2N (R9A09G056)
-> and RZ/V2H(P) (R9A09G057) SoCs. It introduces the XSPI controller nodes
-> in the SoC-level DTSI files and enables a connected serial NOR flash
-> device on the respective evaluation boards.
->
-> Note,
-> - DT binding patches have been posted seprately [0]
->
->
-> [0] https://lore.kernel.org/all/20250624171605.469724-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
->
-> v1->v2:
-> - Added Reviewed-by tags from Geert
-> - Moved assigned-clocks and assigned-clock-rates properties to board DTS
-
-Thanks, will queue in renesas-devel for v6.17.
-
-    * MT25QU512ABB8E12 flash chip is capable of running at 166MHz
-    * clock frequency. Set the maximum clock frequency to 133MHz
-    * supported by the RZ/V2N SoC.
-
-Shouldn't that be:
-
-    * MT25QU512ABB8E12 flash chip is capable of running at 166MHz
-    * clock frequency. Set the clock frequency to the maximum 133MHz
-    * supported by the RZ/V2N SoC.
-
-? Or am I misunderstanding?
-
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+--
+Uladzislau Rezki
 
