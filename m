@@ -1,62 +1,79 @@
-Return-Path: <linux-kernel+bounces-720599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1728CAFBE1D
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 00:06:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB54CAFBE23
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 00:10:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 709E316F287
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 22:06:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 186923A6073
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 22:10:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95D7428A1EA;
-	Mon,  7 Jul 2025 22:06:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14A9428B3F9;
+	Mon,  7 Jul 2025 22:10:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="Ja1XJnJ2"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dHAv4ivC"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 361BE264614
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 22:06:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFEFF23D282
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 22:10:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751925985; cv=none; b=smLG5lKXRWmq7SkmHVmO8ZURu3wmdieID9VdDR/OdmcOWg5rRuUciW4Qi2hBYQVv2CTXQ20BUSc8lV1cKHQY9nr3SZEH+DL3Bynkn5P2gY1D0YuFID7RLm+vE4uTmpKHHCjeK+13tLHS54dcfEbOXhAHx1tAHsKBEBC5rDHlK3w=
+	t=1751926248; cv=none; b=FfnfDCaZuA944H098BAbAZpKYRH+PXmiScBiBtMVjnw+ndIllhUc3gqi83fCUFn7tYyoTaq5o+ogHdAw3RCROuEzF70p6a+xyfGbIHophBl69Em+/PlnsO7qb24doP7E1mnVBdGMkYKFPl6hl90Awa5ysMARhMF2Qjg+0+P26R8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751925985; c=relaxed/simple;
-	bh=yjlbsiWN61ToX4aXR1qNhD8hMvkmfEPy9H2+13XQ3xk=;
+	s=arc-20240116; t=1751926248; c=relaxed/simple;
+	bh=LS3u1H1ZUPIz1bNXHYNphePzuwexMZNleln0vqwzhns=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PL6UP6zvIAceXQOIspvXm8KxZ7sElmFiyypRCPjs147D4Fc3gVVBC5qDtCs4cY7MCbeWSPFJ/rPG/C7bk9hZiKH31ydhTz5p5rBy5rSUeAwq2qvo2Hv3LHHz/hoxa3s7SJ2ngCDz8c8r3keEXCFEjB+HqIKOL3WfzKjQCV+0nm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=Ja1XJnJ2; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=24ui3t+rwKJxfbKwDpGvCDr0arQyBRc+57B4RFBPe/I=; b=Ja1XJnJ2vgxfuDJnWCze+C7vVN
-	XyzH1yg4YjS0a0urFlR8LVUnvAmeq2y6NQ+ap2EdGeqkpqc9aGbcj1TFzT8qakjZIiFq/pdKmExOa
-	XvZThPHGLTMWJNElJIpK7OJO0Ka1EgbosIju/yfnKUAINHGpB+2l7QJYLicC6XJi02QXjX2kNmPlp
-	FC3BXhZgPoF7N/t1CVMUFS8WJQw5KHzWz3IdnR4UPTajah2j5zgIoEifeFaIz9Zr2RdyB8WH1yh1P
-	DIV2KCDs0bk5V3/T+RwyrKl07P2JnQc5Zdlw0CRaOqTjeVPWp1k/+6og3xcikX8mZO4xYvKlyskwZ
-	1oJRF9CQ==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uYtya-00000004AhP-1kZQ;
-	Mon, 07 Jul 2025 22:06:16 +0000
-Date: Mon, 7 Jul 2025 23:06:16 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, hannes@cmpxchg.org,
-	yosry.ahmed@linux.dev, nphamcs@gmail.com, chengming.zhou@linux.dev,
-	usamaarif642@gmail.com, ryan.roberts@arm.com, 21cnbao@gmail.com,
-	ying.huang@linux.alibaba.com, akpm@linux-foundation.org,
-	senozhatsky@chromium.org, wajdi.k.feghali@intel.com,
-	vinodh.gopal@intel.com
-Subject: Re: [PATCH v1 1/2] mm: zswap: Per-CPU acomp_ctx resources exist from
- pool creation to deletion.
-Message-ID: <20250707220616.GN1880847@ZenIV>
-References: <20250707201315.9497-1-kanchana.p.sridhar@intel.com>
- <20250707201315.9497-2-kanchana.p.sridhar@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=lAp0o1vj/X2rrhx3etVFGO1IOZASKZSFRPa2pTMMejLkpOgWZ9LeQaCkcQcpGVNil3Hx+iymjuvEOrfOhrsZb+Hy6LvCwAghF5d0GsXkr1DCD8IZeSkXgRZqnPX/BkyQ8kq6+PwrodRa2Y02FIUHZ0oOTb1oeDYbrQ3l0qmYtdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dHAv4ivC; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1751926245;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dOHOtYxTSk/GV5k8TNQRvy8+U8sJ8ZLQhuPrjPIjsj0=;
+	b=dHAv4ivCSzafF5qacpWEADUY+Ji9jQG65iih3+veBrnriklulqdfzy/hCjNFrgzaqGqDP8
+	1Zb7skztt24Ef1mm5bRMQx6cKJZb2nz4/vkkOztMRbpBi1FYI+wuHd137+itIDTr2koKMp
+	az4/XFPI24mvdxO1+t5HrjI/8B72jm0=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-326-88XBKClFPK-woEVn2zu-Gg-1; Mon,
+ 07 Jul 2025 18:10:42 -0400
+X-MC-Unique: 88XBKClFPK-woEVn2zu-Gg-1
+X-Mimecast-MFC-AGG-ID: 88XBKClFPK-woEVn2zu-Gg_1751926241
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 41A57180028A;
+	Mon,  7 Jul 2025 22:10:40 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.16])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id A9AF230001B1;
+	Mon,  7 Jul 2025 22:10:26 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Tue,  8 Jul 2025 00:09:52 +0200 (CEST)
+Date: Tue, 8 Jul 2025 00:09:38 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: "Li,Rongqing" <lirongqing@baidu.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	David Laight <david.laight.linux@gmail.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"vschneid@redhat.com" <vschneid@redhat.com>,
+	"mgorman@suse.de" <mgorman@suse.de>,
+	"bsegall@google.com" <bsegall@google.com>,
+	"rostedt@goodmis.org" <rostedt@goodmis.org>,
+	"dietmar.eggemann@arm.com" <dietmar.eggemann@arm.com>,
+	"vincent.guittot@linaro.org" <vincent.guittot@linaro.org>,
+	"juri.lelli@redhat.com" <juri.lelli@redhat.com>,
+	"mingo@redhat.com" <mingo@redhat.com>
+Subject: Re: divide error in x86 and cputime
+Message-ID: <20250707220937.GA15787@redhat.com>
+References: <78a0d7bb20504c0884d474868eccd858@baidu.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,36 +82,50 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250707201315.9497-2-kanchana.p.sridhar@intel.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <78a0d7bb20504c0884d474868eccd858@baidu.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Mon, Jul 07, 2025 at 01:13:14PM -0700, Kanchana P Sridhar wrote:
+On 07/07, Li,Rongqing wrote:
+>
+> [78250815.703847] divide error: 0000 [#1] PREEMPT SMP NOPTI
 
-> +static void acomp_ctx_dealloc(struct crypto_acomp_ctx *acomp_ctx)
-> +{
-> +	if (IS_ERR_OR_NULL(acomp_ctx))
+...
 
-Ugh.
+> It caused by a process with many threads running very long,
+> and utime+stime overflowed 64bit, then cause the below div
+>
+> mul_u64_u64_div_u64(0x69f98da9ba980c00, 0xfffd213aabd74626, 0x09e00900);
+>
+> I see the comments of mul_u64_u64_div_u64() say:
+>
+> Will generate an #DE when the result doesn't fit u64, could fix with an
+> __ex_table[] entry when it becomes an issu
+>
+> Seem __ex_table[] entry for div does not work ?
 
-> +		return;
-> +
-> +	if (!IS_ERR_OR_NULL(acomp_ctx->req))
+Well, the current version doesn't have an __ex_table[] entry for div...
 
-Ugh.
+I do not know what can/should we do in this case... Perhaps
 
-> +		acomp_request_free(acomp_ctx->req);
-> +
-> +	if (!IS_ERR_OR_NULL(acomp_ctx->acomp))
+	static inline u64 mul_u64_u64_div_u64(u64 a, u64 mul, u64 div)
+	{
+		int ok = 0;
+		u64 q;
 
-Ugh.
+		asm ("mulq %3; 1: divq %4; movl $1,%1; 2:\n"
+			_ASM_EXTABLE(1b, 2b)
+			: "=a" (q), "+r" (ok)
+			: "a" (a), "rm" (mul), "rm" (div)
+			: "rdx");
 
-> +		crypto_free_acomp(acomp_ctx->acomp);
-> +
-> +	kfree(acomp_ctx->buffer);
+		return ok ? q : -1ul;
+	}
 
-Just what are those IS_ERR_OR_NULL about?  Is it IS_ERR() or is it NULL?
-Either has valid uses, but mixing them is not something you do without a
-good reason; there are valid calling conventions that allow all three of
-"address of an object", NULL and ERR_PTR(-E...), but that's not something
-you do just in case - there should be an explanation of what's going on.
+?
+
+Should return ULLONG_MAX on #DE.
+
+Oleg.
+
 
