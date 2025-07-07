@@ -1,77 +1,78 @@
-Return-Path: <linux-kernel+bounces-720378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3277DAFBADA
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 20:38:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 481FCAFBAD3
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 20:38:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3FB442722A
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 18:37:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4211174F4B
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 18:38:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 500A3274B20;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6B18274B25;
 	Mon,  7 Jul 2025 18:34:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="IeB6u0k7"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jj5yW9X2"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C2B9265609
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 18:34:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BC55271446
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 18:34:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751913248; cv=none; b=llg2M9EqnwHWiMq2eE5Zr9WP7xby3jBulp2DdcUKwlX74PAStjyzI7j033/quzlnsmBWQp/vxyb83lML2R/tT4C3vqIX/t7T5515fsnO/XNd9NhYy/2hcspq6vb3hiCzUrZjiUa0rPU/qDz9PGceQ7E3SRdxfPd+S2Nyb2FxFZA=
+	t=1751913249; cv=none; b=RwLLXxrViNG7G8n+/O7cqQ07yK/PuCGDM4EzJgCcsg8VFwgYEtysN8UmA8y63RwC7m6BeW9cBLX5jG1YjdS1M6zUcm4mdx53n4Cny17YMtOK/nKsbCcP31GY6mHbt4RVZckPo+/W67O87lydSQsrxcO247GOQawxtcnZk3TLn3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751913248; c=relaxed/simple;
-	bh=XTTO2GlL2rwzrs5D9X0KqylT3melKL3EVpcGuIGiKrk=;
+	s=arc-20240116; t=1751913249; c=relaxed/simple;
+	bh=cMCc/YVoj/o1iMMtqAwdWEEQxRV6brtdDuFTq1NJi20=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=usspkSKpXnBs8Y6rJEoKjitpfN+nTZpbjkiOvUFXwYwuJcdJGqn2L/VWTMAKthLZ8d11tJCOZpNfuvu3F6RIVaLtTtpk8fgmA0p3wTjFCJ4O1MGADJAkaetukhsV/eopo+fMzjI+sO7RnMpEQorFNwLfa5QDvKcFV5kpcuPw4og=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=IeB6u0k7; arc=none smtp.client-ip=209.85.167.42
+	 In-Reply-To:To:Cc; b=r6ZdcFhSzV7/UuoMeYAvrbp6m2F75ek5DIPNW3woFmg/rMqqYxdjeZK0n/hQ51ztFj2UZo8IHyJdVMg1wcaGsprNbmWfcXkmoE9+34dxpeGuGid3k89zeznYqabih07MXonlbTr1lEQBtFWMKERXU7eDWV8dd7M8AqucY/NIgrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=jj5yW9X2; arc=none smtp.client-ip=209.85.167.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-553b544e7b4so3417336e87.3
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 11:34:05 -0700 (PDT)
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-55622414cf4so3345872e87.3
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 11:34:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google; t=1751913244; x=1752518044; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Yz8301aMK4jTXSvQ1f1sAIMmy3TqXQCCdC9cQDPE4Kk=;
-        b=IeB6u0k75k35RiwALC9LWWkINXmi4IoU2zYGjIzljxwz2c5Nr3unq968YLkS7cRQ80
-         XKJvINPXZAo+ks/DFk+rLEb/7nzuPFUP+Z5uCU5Fb6FmEIiWicNoMau4OS9sx1TENUhz
-         THj21WgzYznrMH4FDjumEYlwyfNI2n1FGs8o4=
+        bh=h6hGfoFapvas+Hz1L3ZuhmMpf2VFQ5l8hbCjstkgFL4=;
+        b=jj5yW9X2Xmo4AKbKKzyfApVQngaZ2Q5Ksq2EA1HeYP2pXagqk2VPu52IRuiZWkis9E
+         WNf5oTuWUh7sFjgK5egtd8RaF+kcDlGOiRH0yMv8ogHsGqahZz2yOeAcWoXKCnImPsDx
+         pMmupqtdmQADK+dcfSDBTrnrS9j8WPCX5mHCQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1751913244; x=1752518044;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Yz8301aMK4jTXSvQ1f1sAIMmy3TqXQCCdC9cQDPE4Kk=;
-        b=ZRoA1jcC/Qn1p1Y6CMejKHiGK9Fd4JxIZCaXX9C6s63o6W1ZQa7wISx9GRIG2OCLK1
-         eXJuDg2yC9P3ASB/7m9PYMvSuJfWP7LWeDQ95PgTc84OPXw+RMavlZxhgJ0TvK1PMiF9
-         SDh9nJ6rp3JbtSNyIGKffVgfYdyXhy+P7tnOffojT4yQzk6J3S7zjWL0evYXt+D29+Pj
-         AqqcJy/P1z6j05VICzm98b6og4aySw333GRrJhHnirQiS76e1TiywLZC+paHQ/cGnLLW
-         9I9vwPzgNTQAZSLfpU/z+3wV7IQ1b6h1qnkM9ScJoITLfGpr3fVDKMQl2p7GciBpkRF2
-         lLEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVYIc6PuOSep+1Xq45pJwOLOSyKMwCuhOMyZOk+Ur7AJrKY3lSbR2g/2yoYycb7vxD6/tMebfcRqKjep4c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLXhC7K/NDQ/QmuA9anY1F0aCWW3fPOSya81Im2atM2yXey1pn
-	d9sMxiFlRbDxY0zlqy890WOX9GTy3bLTLinG0Dd/nM4XYGlGLpn1vu4A4RGD7wLw7w==
-X-Gm-Gg: ASbGncs4ey5KKcXfXoa5yMHlJ/CsqfD7HnG/ZkCu2kBupxO6l4Z+il163yhM+V8mJFw
-	Ba/JguESCS0/P+k7mWRWvzWPSI1XAWA5AGZCBM/w3Tnq5QT3gqonSb83msJjEB0UeQzglWP1Ybt
-	wkKhfobIUN0/IfUcEncjzG7Gnoccq3Pu0+8F6fIERdNJ9d3ARenKOhSQY3dLN6Of8S8kPvw0O+R
-	LAbdToBn6jutGWpx4m4i+C7o7KT0tTYFXhkFd+BahlMR+xCuGrgS9Wd6Cl0YVBY4ZFCgMuPYTJV
-	TH3i9hqqNd7TsclLevVbjnUh/bTaxhOCdvRoeoL4itP7Mq9bIWgy4nyUef1A0CYktg2Oah6JZOC
-	V3mwhaCEDs0LGIJktzdj12ORK+K30wpFKmM5UtHvRQA==
-X-Google-Smtp-Source: AGHT+IGfWfOKT1mPFOAlQpBieTmRp9vWA29ON5ogRlHpx2VgDwJFdP5LHFEKMr/R8mVBYkECy0syNg==
-X-Received: by 2002:a05:6512:3081:b0:556:2764:d20b with SMTP id 2adb3069b0e04-557a19df4ebmr4253285e87.19.1751913243937;
-        Mon, 07 Jul 2025 11:34:03 -0700 (PDT)
+        bh=h6hGfoFapvas+Hz1L3ZuhmMpf2VFQ5l8hbCjstkgFL4=;
+        b=pZ4rdw1YO3CuDoxLnUdmWxOIVoKpsPOtL025PjtMwBgmxWR7mrfQTdnIFvdoHrXUlF
+         +Rhp3bzJJRLLYpUz9FYQfNBYXBJuBCsl5bPE9JvGx7vyhOTFgvJev/ux+rIZMgBc5Axh
+         Ahe0/NGGvSENk7FSbTsl4fZzx5/MoVbedObll6BsNE5ZLUXkcpisS3JMsY9R1XYX8xpI
+         DNN36EoJMV20XAJhDL3DDTrUY3bL7bSQPH4qURRIHSt7I2nN1gTtx/NTEvIpukSZBeJ4
+         aDa6mMDGWS2ORU+8EuAK4Gv4ar2ZXIISY6BKsIHVybCJ3B36HL4lGChQ9fStGz4EM0WB
+         cdGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVKn7iszWioJMfoEH5lbCKOC4yhjN93pi96qgWXkxfLlF3bDq8WnWzUv0XkcRFayrr7+fJZeKWsd7hiT8U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKbAtxhzMD/KLbPQvPBlQT8ptoodkX32LhHZCnZpgEfLeEfA3S
+	gjMpNwtViPbUrddiJN/lhm4+64ht7EvI/VOs8jsKJnsNg2QyjQkY8y/wVD0hKwadig==
+X-Gm-Gg: ASbGncunWO2y7oecUaReGicCzjbK9eQxEDBoHSh6vym5oPshWCOjDGWYW5XjKqQ6zRC
+	rp9xSkvHDp+ab/pn/Ranr6dtJQCunMWE+scbRr7AJhhcQf0A5PDU+aoRsSh2eXA0RN3smOKI0oQ
+	88nKZy0EoE5SgVW8Ud6GYPDrqgZF0vF+byRK67DbC+FGqegRXUQewuR6ADkShU4S54xjiY3xoKD
+	mw10XTfUu7vK5e39OPULLD27X4Xww5CDWqF/vCjPn6oYLny8XjmaZCyRshafCC6QCi2aJRGLq0L
+	oqQ5qIuekxcN5icszOFxxnC88i87yExi6pgne+g8nAuAPHYeeBwAFXxs8TwI+zsRVOtaD692S0i
+	17a7xIKXq5lPL2jA5Id45Z1CaOaVOnaRJBmOYFY8aQpzk/AdjxrQt
+X-Google-Smtp-Source: AGHT+IGXpDV/f3jM6ZfbvudPD8pxigPxC7oBSeMClnkzX//m6nh6RDqJosKm/5PF2RkWF3O2NZiKmw==
+X-Received: by 2002:a05:6512:10cb:b0:553:35ca:592a with SMTP id 2adb3069b0e04-557e55ce64cmr2739571e87.52.1751913244440;
+        Mon, 07 Jul 2025 11:34:04 -0700 (PDT)
 Received: from ribalda.c.googlers.com (166.141.88.34.bc.googleusercontent.com. [34.88.141.166])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-556383d31a6sm1417630e87.61.2025.07.07.11.34.03
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-556383d31a6sm1417630e87.61.2025.07.07.11.34.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Jul 2025 11:34:03 -0700 (PDT)
+        Mon, 07 Jul 2025 11:34:04 -0700 (PDT)
 From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Mon, 07 Jul 2025 18:34:03 +0000
-Subject: [PATCH v8 3/5] media: uvcvideo: Introduce dev->meta_formats
+Date: Mon, 07 Jul 2025 18:34:04 +0000
+Subject: [PATCH v8 4/5] media: uvcvideo: Introduce
+ V4L2_META_FMT_UVC_MSXU_1_5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,7 +81,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250707-uvc-meta-v8-3-ed17f8b1218b@chromium.org>
+Message-Id: <20250707-uvc-meta-v8-4-ed17f8b1218b@chromium.org>
 References: <20250707-uvc-meta-v8-0-ed17f8b1218b@chromium.org>
 In-Reply-To: <20250707-uvc-meta-v8-0-ed17f8b1218b@chromium.org>
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
@@ -92,137 +93,143 @@ Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-usb@vger.kernel.org, Ricardo Ribalda <ribalda@chromium.org>
 X-Mailer: b4 0.14.2
 
-Right now, there driver supports devices with one or two metadata
-formats. Prepare it to support more than two metadata formats.
+The UVC driver provides two metadata types V4L2_META_FMT_UVC, and
+V4L2_META_FMT_D4XX. The only difference between the two of them is that
+V4L2_META_FMT_UVC only copies PTS, SCR, size and flags, and
+V4L2_META_FMT_D4XX copies the whole metadata section.
 
-This is achieved with the introduction of a new field `meta_formats`,
-that contains the array of metadata formats supported by the device, in
-the order expected by userspace.
+Now we only enable V4L2_META_FMT_D4XX for the Intel D4xx family of
+devices, but it is useful to have the whole metadata payload for any
+device where vendors include other metadata, such as the one described by
+Microsoft:
+https://learn.microsoft.com/en-us/windows-hardware/drivers/stream/mf-capture-metadata
 
-Suggested-by: Hans de Goede <hansg@kernel.org>
+This patch introduces a new format V4L2_META_FMT_UVC_MSXU_1_5, that is
+identical to V4L2_META_FMT_D4XX.
+
+Let the user enable this format with a quirk for now. This way they can
+test if their devices provide useful metadata without rebuilding the
+kernel. They can later contribute patches to auto-quirk their devices.
+We will also work in methods to auto-detect devices compatible with this
+new metadata format.
+
+Suggested-by: Hans de Goede <hdegoede@redhat.com>
+Reviewed-by: Hans de Goede <hansg@kernel.org>
 Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 ---
- drivers/media/usb/uvc/uvc_driver.c   |  2 ++
- drivers/media/usb/uvc/uvc_metadata.c | 38 +++++++++++++++++++++++++++++-------
- drivers/media/usb/uvc/uvcvideo.h     |  6 ++++++
- 3 files changed, 39 insertions(+), 7 deletions(-)
+ .../userspace-api/media/v4l/meta-formats.rst       |  1 +
+ .../media/v4l/metafmt-uvc-msxu-1-5.rst             | 23 ++++++++++++++++++++++
+ MAINTAINERS                                        |  1 +
+ drivers/media/usb/uvc/uvc_metadata.c               |  4 ++++
+ drivers/media/usb/uvc/uvcvideo.h                   |  1 +
+ drivers/media/v4l2-core/v4l2-ioctl.c               |  1 +
+ include/uapi/linux/videodev2.h                     |  1 +
+ 7 files changed, 32 insertions(+)
 
-diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
-index 62eb45435d8bec5c955720ecb46fb8936871e6cc..56ea20eeb7b9d5d92f3d837c15bdf11d536e9f2d 100644
---- a/drivers/media/usb/uvc/uvc_driver.c
-+++ b/drivers/media/usb/uvc/uvc_driver.c
-@@ -2315,6 +2315,8 @@ static int uvc_probe(struct usb_interface *intf,
- 		goto error;
- 	}
- 
-+	uvc_meta_init(dev);
+diff --git a/Documentation/userspace-api/media/v4l/meta-formats.rst b/Documentation/userspace-api/media/v4l/meta-formats.rst
+index bb6876cfc271e1a0543eee4209d6251e1a6a73cc..0de80328c36bf148051a19abe9e5241234ddfe5c 100644
+--- a/Documentation/userspace-api/media/v4l/meta-formats.rst
++++ b/Documentation/userspace-api/media/v4l/meta-formats.rst
+@@ -20,6 +20,7 @@ These formats are used for the :ref:`metadata` interface only.
+     metafmt-pisp-fe
+     metafmt-rkisp1
+     metafmt-uvc
++    metafmt-uvc-msxu-1-5
+     metafmt-vivid
+     metafmt-vsp1-hgo
+     metafmt-vsp1-hgt
+diff --git a/Documentation/userspace-api/media/v4l/metafmt-uvc-msxu-1-5.rst b/Documentation/userspace-api/media/v4l/metafmt-uvc-msxu-1-5.rst
+new file mode 100644
+index 0000000000000000000000000000000000000000..dd1c3076df243d770a13e7f6d07c3296a269e16a
+--- /dev/null
++++ b/Documentation/userspace-api/media/v4l/metafmt-uvc-msxu-1-5.rst
+@@ -0,0 +1,23 @@
++.. SPDX-License-Identifier: GFDL-1.1-no-invariants-or-later
 +
- 	if (dev->quirks & UVC_QUIRK_NO_RESET_RESUME)
- 		udev->quirks &= ~USB_QUIRK_RESET_RESUME;
- 
++.. _v4l2-meta-fmt-uvc-msxu-1-5:
++
++***********************************
++V4L2_META_FMT_UVC_MSXU_1_5 ('UVCM')
++***********************************
++
++Microsoft(R)'s UVC Payload Metadata.
++
++
++Description
++===========
++
++V4L2_META_FMT_UVC_MSXU_1_5 buffers follow the metadata buffer layout of
++V4L2_META_FMT_UVC with the only difference that it includes all the UVC
++metadata in the `buffer[]` field, not just the first 2-12 bytes.
++
++The metadata format follows the specification from Microsoft(R) [1].
++
++.. _1:
++
++[1] https://docs.microsoft.com/en-us/windows-hardware/drivers/stream/uvc-extensions-1-5
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 658543062bba3b7e600699d7271ffc89250ba7e5..fdde1d37ed2ef9058e3ea3417bec25afe454dfc0 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -25827,6 +25827,7 @@ S:	Maintained
+ W:	http://www.ideasonboard.org/uvc/
+ T:	git git://linuxtv.org/media.git
+ F:	Documentation/userspace-api/media/drivers/uvcvideo.rst
++F:	Documentation/userspace-api/media/v4l/metafmt-uvc-msxu-1-5.rst
+ F:	Documentation/userspace-api/media/v4l/metafmt-uvc.rst
+ F:	drivers/media/common/uvc.c
+ F:	drivers/media/usb/uvc/
 diff --git a/drivers/media/usb/uvc/uvc_metadata.c b/drivers/media/usb/uvc/uvc_metadata.c
-index 82de7781f5b6b70c5ba16bcba9e0741231231904..4bcbc22f47e67c52baf6e133f240131ff3d32a03 100644
+index 4bcbc22f47e67c52baf6e133f240131ff3d32a03..77e03273d3cf6b00cac6ebb9b29b941f1cbfd9f7 100644
 --- a/drivers/media/usb/uvc/uvc_metadata.c
 +++ b/drivers/media/usb/uvc/uvc_metadata.c
-@@ -64,14 +64,20 @@ static int uvc_meta_v4l2_try_format(struct file *file, void *fh,
- 	struct uvc_device *dev = stream->dev;
- 	struct v4l2_meta_format *fmt = &format->fmt.meta;
- 	u32 fmeta = fmt->dataformat;
-+	u32 i;
+@@ -195,6 +195,10 @@ void uvc_meta_init(struct uvc_device *dev)
+ 	    !WARN_ON(dev->info->meta_format == V4L2_META_FMT_UVC))
+ 		dev->meta_formats[i++] = dev->info->meta_format;
  
- 	if (format->type != vfh->vdev->queue->type)
- 		return -EINVAL;
- 
-+	for (i = 0; (fmeta != dev->meta_formats[i]) && dev->meta_formats[i];
-+	     i++)
-+		;
-+	if (!dev->meta_formats[i])
-+		fmeta = V4L2_META_FMT_UVC;
++	if (dev->quirks & UVC_QUIRK_MSXU_META &&
++	    !WARN_ON(dev->info->meta_format == V4L2_META_FMT_UVC_MSXU_1_5))
++		dev->meta_formats[i++] = V4L2_META_FMT_UVC_MSXU_1_5;
 +
- 	memset(fmt, 0, sizeof(*fmt));
- 
--	fmt->dataformat = fmeta == dev->info->meta_format
--			? fmeta : V4L2_META_FMT_UVC;
-+	fmt->dataformat = fmeta;
- 	fmt->buffersize = UVC_METADATA_BUF_SIZE;
- 
- 	return 0;
-@@ -112,17 +118,21 @@ static int uvc_meta_v4l2_enum_formats(struct file *file, void *fh,
- 	struct v4l2_fh *vfh = file->private_data;
- 	struct uvc_streaming *stream = video_get_drvdata(vfh->vdev);
- 	struct uvc_device *dev = stream->dev;
--	u32 index = fdesc->index;
-+	u32 i;
-+
-+	if (fdesc->type != vfh->vdev->queue->type)
-+		return -EINVAL;
- 
--	if (fdesc->type != vfh->vdev->queue->type ||
--	    index > 1U || (index && !dev->info->meta_format))
-+	for (i = 0; (i < fdesc->index) && dev->meta_formats[i]; i++)
-+		;
-+	if (!dev->meta_formats[i])
- 		return -EINVAL;
- 
- 	memset(fdesc, 0, sizeof(*fdesc));
- 
- 	fdesc->type = vfh->vdev->queue->type;
--	fdesc->index = index;
--	fdesc->pixelformat = index ? dev->info->meta_format : V4L2_META_FMT_UVC;
-+	fdesc->index = i;
-+	fdesc->pixelformat = dev->meta_formats[i];
- 
- 	return 0;
+ 	 /* IMPORTANT: for new meta-formats update UVC_MAX_META_DATA_FORMATS. */
+ 	dev->meta_formats[i++] = 0;
  }
-@@ -174,3 +184,17 @@ int uvc_meta_register(struct uvc_streaming *stream)
- 					 V4L2_BUF_TYPE_META_CAPTURE,
- 					 &uvc_meta_fops, &uvc_meta_ioctl_ops);
- }
-+
-+void uvc_meta_init(struct uvc_device *dev)
-+{
-+	unsigned int i = 0;
-+
-+	dev->meta_formats[i++] = V4L2_META_FMT_UVC;
-+
-+	if (dev->info->meta_format &&
-+	    !WARN_ON(dev->info->meta_format == V4L2_META_FMT_UVC))
-+		dev->meta_formats[i++] = dev->info->meta_format;
-+
-+	 /* IMPORTANT: for new meta-formats update UVC_MAX_META_DATA_FORMATS. */
-+	dev->meta_formats[i++] = 0;
-+}
 diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
-index 11d6e3c2ebdfbabd7bbe5722f88ff85f406d9bb6..b3c094c6591e7a71fc00e1096bcf493a83f330ad 100644
+index b3c094c6591e7a71fc00e1096bcf493a83f330ad..616adc417c62a58686beccbc440a5dfac0a2d588 100644
 --- a/drivers/media/usb/uvc/uvcvideo.h
 +++ b/drivers/media/usb/uvc/uvcvideo.h
-@@ -572,6 +572,8 @@ struct uvc_status {
- 	};
- } __packed;
+@@ -77,6 +77,7 @@
+ #define UVC_QUIRK_DISABLE_AUTOSUSPEND	0x00008000
+ #define UVC_QUIRK_INVALID_DEVICE_SOF	0x00010000
+ #define UVC_QUIRK_MJPEG_NO_EOF		0x00020000
++#define UVC_QUIRK_MSXU_META		0x00040000
  
-+#define UVC_MAX_META_DATA_FORMATS 3
-+
- struct uvc_device {
- 	struct usb_device *udev;
- 	struct usb_interface *intf;
-@@ -582,6 +584,9 @@ struct uvc_device {
+ /* Format flags */
+ #define UVC_FMT_FLAG_COMPRESSED		0x00000001
+diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
+index be94a79b976e3de4eb957f5d2584ec6d4230469e..993b36417b4655456ce545cb42a41b55b98e4d6c 100644
+--- a/drivers/media/v4l2-core/v4l2-ioctl.c
++++ b/drivers/media/v4l2-core/v4l2-ioctl.c
+@@ -1463,6 +1463,7 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
+ 	case V4L2_META_FMT_VSP1_HGO:	descr = "R-Car VSP1 1-D Histogram"; break;
+ 	case V4L2_META_FMT_VSP1_HGT:	descr = "R-Car VSP1 2-D Histogram"; break;
+ 	case V4L2_META_FMT_UVC:		descr = "UVC Payload Header Metadata"; break;
++	case V4L2_META_FMT_UVC_MSXU_1_5:	descr = "UVC MSXU Metadata"; break;
+ 	case V4L2_META_FMT_D4XX:	descr = "Intel D4xx UVC Metadata"; break;
+ 	case V4L2_META_FMT_VIVID:       descr = "Vivid Metadata"; break;
+ 	case V4L2_META_FMT_RK_ISP1_PARAMS:	descr = "Rockchip ISP1 3A Parameters"; break;
+diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
+index 6f7bd38dd5aa4b1b2084685512512a380d76a5e4..863bc5b7dec32303e852d7e9c3891011ce5a3d71 100644
+--- a/include/uapi/linux/videodev2.h
++++ b/include/uapi/linux/videodev2.h
+@@ -867,6 +867,7 @@ struct v4l2_pix_format {
+ #define V4L2_META_FMT_VSP1_HGT    v4l2_fourcc('V', 'S', 'P', 'T') /* R-Car VSP1 2-D Histogram */
+ #define V4L2_META_FMT_UVC         v4l2_fourcc('U', 'V', 'C', 'H') /* UVC Payload Header metadata */
+ #define V4L2_META_FMT_D4XX        v4l2_fourcc('D', '4', 'X', 'X') /* D4XX Payload Header metadata */
++#define V4L2_META_FMT_UVC_MSXU_1_5  v4l2_fourcc('U', 'V', 'C', 'M') /* UVC MSXU metadata */
+ #define V4L2_META_FMT_VIVID	  v4l2_fourcc('V', 'I', 'V', 'D') /* Vivid Metadata */
  
- 	const struct uvc_device_info *info;
- 
-+	/* Zero-ended list of meta formats */
-+	u32 meta_formats[UVC_MAX_META_DATA_FORMATS + 1];
-+
- 	atomic_t nmappings;
- 
- 	/* Video control interface */
-@@ -751,6 +756,7 @@ int uvc_query_ctrl(struct uvc_device *dev, u8 query, u8 unit,
- void uvc_video_clock_update(struct uvc_streaming *stream,
- 			    struct vb2_v4l2_buffer *vbuf,
- 			    struct uvc_buffer *buf);
-+void uvc_meta_init(struct uvc_device *dev);
- int uvc_meta_register(struct uvc_streaming *stream);
- 
- int uvc_register_video_device(struct uvc_device *dev,
+ /* Vendor specific - used for RK_ISP1 camera sub-system */
 
 -- 
 2.50.0.727.gbf7dc18ff4-goog
