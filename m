@@ -1,104 +1,96 @@
-Return-Path: <linux-kernel+bounces-719428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FDEAAFADE0
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 09:59:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37D2AAFADE5
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 10:00:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF4643AA613
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 07:59:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3689C16F5D0
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 08:00:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23E441F3BA9;
-	Mon,  7 Jul 2025 07:59:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 638C7286880;
+	Mon,  7 Jul 2025 07:59:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="R83mDWxd"
-Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="gMcyUUNm";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cEnvC0hP"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 449EB19B3EC;
-	Mon,  7 Jul 2025 07:59:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 611161F3BA9
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 07:59:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751875167; cv=none; b=AWhHIqcEuRn6dnd5HGjpcpRoMD/ID9nIZpBMuVBY3XVTZx83dkgUmLuKaDBp55k3NYNC8eKphndA0Kvko434YkfiuXcVb1ehRiZeh8MI0fu6PfwfEp2ObRghtlDoQWwgENmaLlln9hlTd+Z0d0GdNElm2yxMIvYObUbwCgnW0yQ=
+	t=1751875191; cv=none; b=cGMJNR9phAElyiKMahVVCw5HmbnvNrKpf7xW1vnj6MCXeqziLgmWdwWxQZ1P80AVOnoHQTm5TD2dqDhx/r1aF4uu6vkWyaABIECDTCxCzph+5BDRPFSsnSxen2d7wbJ6dbAL4aU44i8oFROVp5dTIlF9WxPuVMnl05TEVnd25NM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751875167; c=relaxed/simple;
-	bh=z1aw+j5vhtSH5hM2pv6uTLlW1Ip05M+wekbXCATVdro=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=LjuEEBvj6uxRTDpI2dI/Oh2+mRL7nP+f/dXVAwlIah09WaklzDSjfBd9IPM9GhBL5AKUPpD7pUGQNDCkrR5J55bae8k3kq4Py0pct1J3C76du9/G0M1trF0MDRJO2QbnSVSH2sBqb+cg9KOJGW8jv+BBsVDBJQl58Rwhh59TGiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=R83mDWxd; arc=none smtp.client-ip=193.68.50.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
-Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 39B99A052C;
-	Mon,  7 Jul 2025 09:59:15 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:from:from:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=mail; bh=z8xdzKW5rNMmIpxVldjp
-	zEbs1g+0AxJYKg5PiusbGL8=; b=R83mDWxdCRvxyEooSaTLrR1SaRLQIjEBSws5
-	Ffnj70xK1TqrExqtHqrC6+POUYpkzajjww4psJmL8JG20jw9+RkeG6LD1eq7ayrr
-	agS8/17xD19AHPw4l5KxPM6vZmpmYKuFkJgKk2UfvPmqpdq7Jt0EiS3EboCOqjw4
-	PYuKMtHEdW99qSIdS+z3CKemb5FAS8OPLBfnUuKnmQXEn9f38ti97KEsw7wShp8C
-	tF8k43GqFinf58W93a0xTPMK+DG5xvtMevswupjWyprbYn33HFBNH9ZeNgbKJw/8
-	96AYDgCfb0FFmzvK+eRWSVcgP/vdgfbKeSb1bekzh0m4AsS6xSKVELLAIVrR8ezi
-	nC1aQ+5YWGjllAD20jkJX413u1PUJSwyAoCpt33+M2ZhR6+/ZgaJaY2mfspP63g+
-	osK4c443D7YRGoZLhoOzjVCzIX4VREWHY2veV1YUdfhNEyQY09trj5P1Xj3g1ds+
-	Su01mIM4+n4dEpY5P0DoTVU4NZmh9Yc5QEF6eUUCZvIuttNq4GbUZzXA08jEUMC8
-	Bs7hkNmR03qmkTIGRa6RwRS2JxjAXGRnBOD/Trx7/1zYRG7Od6UN/uK4EeNgtdqF
-	w/hTx7MXFzmgMpN1mXMqSPtfv96o1aSQ2kcpOyMCiwDQEhw7JPPFIqVbIK6J2Osj
-	j1iGiBk=
-Message-ID: <86ccaef5-e55c-4c97-b7c2-6c65d4f6dcda@prolan.hu>
-Date: Mon, 7 Jul 2025 09:59:14 +0200
+	s=arc-20240116; t=1751875191; c=relaxed/simple;
+	bh=Dj+qxXiCUSeP0x/yiuTreh2KBqvpawX/fXAuHfKvQmk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dg/9yBEwFrYlYw0Q+6gc1EJt6ga5M0g6tpgY1xBwbxcvhG754qEzjCrEzlHgqTktrstkXirUlcN3MYcgaX0xVZzSE6oCccalBo/tHWbk9JpnADjzZJJRNB+CpFL52etZu1K4r42wUbAN7WivPL6SFNvs9RaYHKGRLc4RlcqxxD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=gMcyUUNm; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cEnvC0hP; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 7 Jul 2025 09:59:46 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1751875188;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2j2sSg0ZRy6nf1ETEjPyw/XMmKiPm3C8NPTr78onL3g=;
+	b=gMcyUUNmlsL7Q9HhXkmRIE4Y9dchZAqXMwJGF1TKckzcfB9QBfjlDKH9FP6chQQO2PIs1q
+	8loRX1KU00nJAKVWbZNhSO3oxCO+I0PE88o5fBA8aOOTl6U78iWq9zwyafokKDwuPbSpuI
+	6MfmToBq8u2y1fyxlZfcawIFkcucjyyxCv7/H3kEz0wQ9Cpv6JRnnuBbpIayo/8xuhGemm
+	ZJpeoYIkoD2z2N4enYyU5K3RU21ZFqoSVBLt4gYIDWOvpAeY7FZMes7GhciU7r5ZMIRTST
+	XO5LOlDpux0Xh6MmNvXM4dZHwDc6dqZ8GSK0eXHx8VECWfdmY3aO8V/VAhhDxQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1751875188;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2j2sSg0ZRy6nf1ETEjPyw/XMmKiPm3C8NPTr78onL3g=;
+	b=cEnvC0hPGg1Bq8hyPVB+3C7SKRYFfYJe6IsXApn3j7vKcebOn5KyQZIAO0IHlh5LCruHS8
+	+NhwieRBPOvadCAg==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Yeoreum Yun <yeoreum.yun@arm.com>
+Cc: ryabinin.a.a@gmail.com, glider@google.com, andreyknvl@gmail.com,
+	dvyukov@google.com, vincenzo.frascino@arm.com,
+	kpm@linux-foundation.org, clrkwllms@kernel.org, rostedt@goodmis.org,
+	byungchul@sk.com, max.byungchul.park@gmail.com,
+	kasan-dev@googlegroups.com, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
+	nd@arm.com, Yunseong Kim <ysk@kzalloc.com>
+Subject: Re: [PATCH] kasan: don't call find_vm_area() in in_interrupt() for
+ possible deadlock
+Message-ID: <20250707075946.2lAwc0OR@linutronix.de>
+References: <20250701203545.216719-1-yeoreum.yun@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] i2c: qcom-geni: Add support for GPI DMA
-To: Bjorn Andersson <bjorn.andersson@linaro.org>, Vinod Koul
-	<vkoul@kernel.org>
-CC: Wolfram Sang <wsa@kernel.org>, <linux-arm-msm@vger.kernel.org>, Andy Gross
-	<agross@kernel.org>, Sumit Semwal <sumit.semwal@linaro.org>, Douglas Anderson
-	<dianders@chromium.org>, Matthias Kaehlcke <mka@chromium.org>,
-	<linux-i2c@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20211019060158.1482722-1-vkoul@kernel.org>
- <YYAUfy2ary7ZJfK+@ripper>
-Content-Language: en-US
-From: =?UTF-8?B?Q3PDs2vDoXMgQmVuY2U=?= <csokas.bence@prolan.hu>
-In-Reply-To: <YYAUfy2ary7ZJfK+@ripper>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: sinope.intranet.prolan.hu (10.254.0.237) To
- ATLAS.intranet.prolan.hu (10.254.0.229)
-X-EsetResult: clean, is OK
-X-EsetId: 37303A296767155E65746A
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250701203545.216719-1-yeoreum.yun@arm.com>
 
-Hi,
-
-On 2021. 11. 01. 17:23, Bjorn Andersson wrote:
->> +	if (ret < 0)
->> +		goto err_tx;
->> +
->> +	gi2c->rx_c = dma_request_chan(gi2c->se.dev, "rx");
->> +	ret = dev_err_probe(gi2c->se.dev, IS_ERR(gi2c->rx_c), "Failed to get rx DMA ch\n");
->> +	if (ret < 0)
->> +		goto err_rx;
->> +
->> +	dev_dbg(gi2c->se.dev, "Grabbed GPI dma channels\n");
->> +	return 0;
->> +
->> +err_rx:
->> +	dma_release_channel(gi2c->tx_c);
+On 2025-07-01 21:35:45 [+0100], Yeoreum Yun wrote:
+> diff --git a/mm/kasan/report.c b/mm/kasan/report.c
+> index 8357e1a33699..61c590e8005e 100644
+> --- a/mm/kasan/report.c
+> +++ b/mm/kasan/report.c
+> @@ -387,7 +387,7 @@ static inline struct vm_struct *kasan_find_vm_area(void *addr)
+>  	static DEFINE_WAIT_OVERRIDE_MAP(vmalloc_map, LD_WAIT_SLEEP);
+>  	struct vm_struct *va;
 > 
-> Is there a reason why there's no devm_dma_request_chan()?
+> -	if (IS_ENABLED(CONFIG_PREEMPT_RT))
+> +	if (IS_ENABLED(CONFIG_PREEMPT_RT) || in_interrupt())
 
-Just a heads-up: now there is, in dma/next! It was added in commit 
-08bf1663c21a.
+Could we stick to irq_count() ?
 
-Bence
+>  		return NULL;
+> 
+>  	/*
 
+Sebastian
 
