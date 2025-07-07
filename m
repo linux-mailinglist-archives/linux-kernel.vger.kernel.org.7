@@ -1,435 +1,230 @@
-Return-Path: <linux-kernel+bounces-719083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17D16AFA9AF
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 04:31:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CB27AFA9B3
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 04:35:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 667671785E1
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 02:31:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A32A9176834
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 02:35:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEB001D5CC7;
-	Mon,  7 Jul 2025 02:31:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D803F1A8F6D;
+	Mon,  7 Jul 2025 02:35:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Qo1uE+E8"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="sWAORXup"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2080.outbound.protection.outlook.com [40.107.237.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42FCA1C5F13
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 02:31:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751855480; cv=none; b=QoMEljnfr0RmXLuQb6HG/Pb+Wi8/2/QTIA0P4/RSucwZncmmZFc5TEQWRhuxMseO0C9BWe62thVNU9vR/g+53r0rz90g/W53cHgGXl3a+OZUYet/tpDcR93kl3Wd5hLs9uheNGrNDrP1/kYTVpTxxfFtHtkXW3k5mfDCMC/Efrg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751855480; c=relaxed/simple;
-	bh=7qbEj6s3E5X0GSkOpL6ZOYwOYfavYlJO/DbmeamEDeM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Wydf3w68b8skWBLNpXnevlkz1K08ahMei3mGyeIdlriv+7tvpBKcJ0ugbrUG1nQWKTVhKHg4BZLdglJmpNyfC0mtYVl48rhmDdfXYcQglm5cmfEmdG4/9GRd8x/jrh1v6K4Nyxj1gybfVy+CH6yzShxgHXRxG+XlspOgiR49SkI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Qo1uE+E8; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751855478; x=1783391478;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=7qbEj6s3E5X0GSkOpL6ZOYwOYfavYlJO/DbmeamEDeM=;
-  b=Qo1uE+E8aAY6sLqmQX5zLgcBOkSHxHQdcbR4M7v8fD4/NpClSimkJLcu
-   qTCpLKH9UrAhnSIpD0aEGX8wOMpoEKsgM57/gUZj2O/yAfkSJQeBuyyV7
-   W0pCQ+hKQpa1qojRa6OdAm4ihHls7h+3DJFR3SEd9E97GywaBle0qvbKB
-   t6lIw+iNQnEJPb/fuGcKQmZRWzl8v+biO1oCpw+PROUUVg6RfijzMucas
-   g7sJEnW5SVzt7bNBEU2GZ2OyuO8ZrcWmlbsUVSY0KIjBmKqrnB1bvY6Og
-   A4WF8ATOx9R35nzNYsKGH1B4pBI5Cz5uZdgojB8nGLu4oGFL5asKIn2+1
-   Q==;
-X-CSE-ConnectionGUID: fN9qQi2gSGeDqE1/oWKiaA==
-X-CSE-MsgGUID: IcdWEifNQyGFB6fHjopppQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11486"; a="64756935"
-X-IronPort-AV: E=Sophos;i="6.16,293,1744095600"; 
-   d="scan'208";a="64756935"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jul 2025 19:31:18 -0700
-X-CSE-ConnectionGUID: MahLDiB2SNW+N/5yZGjMqA==
-X-CSE-MsgGUID: 5caasCASRAGaL+i3+sce6g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,293,1744095600"; 
-   d="scan'208";a="159361662"
-Received: from linux-pnp-server-17.sh.intel.com ([10.239.166.49])
-  by fmviesa005.fm.intel.com with ESMTP; 06 Jul 2025 19:31:16 -0700
-From: Pan Deng <pan.deng@intel.com>
-To: peterz@infradead.org,
-	mingo@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	tianyou.li@intel.com,
-	tim.c.chen@linux.intel.com,
-	yu.c.chen@intel.com,
-	pan.deng@intel.com
-Subject: [PATCH 4/4] sched/rt: Split cpupri_vec->cpumask to per NUMA node to reduce contention
-Date: Mon,  7 Jul 2025 10:35:28 +0800
-Message-ID: <3755b9d2bf78da2ae593a9c92d8e79dddcaa9877.1751852370.git.pan.deng@intel.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <cover.1751852370.git.pan.deng@intel.com>
-References: <cover.1751852370.git.pan.deng@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78E7D17D7
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 02:35:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.80
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751855746; cv=fail; b=DzNz6urOMfvCUPozptmKAhvtl/2TbG+KlTuTsvDPc3xrEXLKBF12ZsxQoRfCrTEfM02kILvjEIXwmd8dMphZaeGdb2jeKvEoWrNX8u7IprkNaH/T8dnpWAk2AMIIcLG1A8M0uSaEdrvD7s1qwdyI+XoHx7T7w+ZLhaqCrQCMYdY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751855746; c=relaxed/simple;
+	bh=tNZKSAJxELSxzS9eS76Wxs5YT2GbGT1rpmRxbiGkSuk=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=EAHVRUqGSgZpTUMsjaXd96U6e8f4IrzPcojStGdUHYJ9AMeMg5Nr6c/ZN5IuBk1Wy1dRfNER+F9eGQwks+6jHP5/kOSGljgcpgSfhZoW2PjRsdhjJN4CpryV5rSdR3yOPLQUiW1wFa3G5LDfBxX/acmAFvD0X81HKhROkKwKILQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=sWAORXup; arc=fail smtp.client-ip=40.107.237.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=XDHDdkF6BAAMVifQGMLFnyD0jn1ju5kEZyGhz8rKyaZXogPTJICF+s2/T8k1gZ4tTH+q+09j05ZgXZLH4YTf1VBZ/sKGjkviIYL9HIH/C0H5P1OcD6pKbU05FwALqTtEX2TpRmHin1/hkBnjr4ht3RjlLWePbDpbbCzzDxRHEaqljBaUX1TGuKBDSP4fC2ysxVmUIaRrKHDXKf9S4UvxKOvM7lrYFr1stz6pjYUZ6BPFqut8zVcbsKJfxHoJfYGfTlpY+yoa/l7KQpo7Cht28ett63PgAVjd7GPnOiBfTxrGrw0Xkku/zF0oev7LhrtGI61Yo1BD5nXRgli0T0Kjfw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hN4LBkJccrFMPuZaeo9gMxVSoZbP4ZKUQ0anjZ6FiFg=;
+ b=lSf/W3Qqx4ss62qO4JdveCsK32Swn3Kt2ABFKu8qql/l/3SutOsL3kgqhgboRuuL/ayt2OTKVnpPjFJq8vtTfUV2bVEef3PbtqMH/dRDHqqkLpA1DFwLWzA/cwXPIv7hi1tcFHM4s6IzMaaPVB1V3s7vgpcQk5mBEcA9BOT+UuVQ8ywBOMfv97vre5k359+zbFDoH5vARXI7k8ZI9H/FObTjCvgp+ftITQVkcp9z5FqJ3wYVZOXPv5J/XChNaZGcCoVMo3smpa7HSqQAqlbpoMKqq8HYJJc+6WGoopFaSJBMv2z2x2k95jXhltZU+cGP4123aXWR7L5Z6PSv84NqOQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hN4LBkJccrFMPuZaeo9gMxVSoZbP4ZKUQ0anjZ6FiFg=;
+ b=sWAORXupAj+5IkTtzmOgnCFZI1OpzmtIHiLAfsukCPu+rQTuNRPhfPhTTHEnjLkVrox6OQwbywf50V4/NG7wTYuv+etHSLdiMo1nOd6GvBFNBJPpGL7DQcsCRm8bDsx6SNUXoQlBZId3TYnskzgKRyEDO3KyfNOThUTh2uw9cJNtJeabYFuJ8rOStXDBoMpLRW6VvplalgOAistf07jCN+qoQA6bshIDzLGsvE9Q2olcDGmmVWggmHk8w2ccm7xW9mu4ThluFtUCLBlbSJYrl6mUYguiLGiDRovEL4ltl6WtxTEwSAhWkBQUIbayAkjVebrluB+hEcsBi/j6IjdSpw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from PH8PR12MB7277.namprd12.prod.outlook.com (2603:10b6:510:223::13)
+ by SA1PR12MB7344.namprd12.prod.outlook.com (2603:10b6:806:2b7::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.20; Mon, 7 Jul
+ 2025 02:35:39 +0000
+Received: from PH8PR12MB7277.namprd12.prod.outlook.com
+ ([fe80::3a4:70ea:ff05:1251]) by PH8PR12MB7277.namprd12.prod.outlook.com
+ ([fe80::3a4:70ea:ff05:1251%4]) with mapi id 15.20.8901.021; Mon, 7 Jul 2025
+ 02:35:39 +0000
+Message-ID: <2ace3c9e-452a-4bd2-a7df-6fa9fd3de290@nvidia.com>
+Date: Mon, 7 Jul 2025 12:35:33 +1000
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v1 resend 08/12] mm/thp: add split during migration support
+To: =?UTF-8?Q?Mika_Penttil=C3=A4?= <mpenttil@redhat.com>, linux-mm@kvack.org
+Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+ Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>,
+ Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?=
+ <jglisse@redhat.com>, Shuah Khan <shuah@kernel.org>,
+ David Hildenbrand <david@redhat.com>, Barry Song <baohua@kernel.org>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Matthew Wilcox <willy@infradead.org>,
+ Peter Xu <peterx@redhat.com>, Zi Yan <ziy@nvidia.com>,
+ Kefeng Wang <wangkefeng.wang@huawei.com>, Jane Chu <jane.chu@oracle.com>,
+ Alistair Popple <apopple@nvidia.com>, Donet Tom <donettom@linux.ibm.com>
+References: <20250703233511.2028395-1-balbirs@nvidia.com>
+ <20250703233511.2028395-9-balbirs@nvidia.com>
+ <e1889eb8-d2d9-4d97-b9ae-e50158442945@redhat.com>
+ <715fc271-1af3-4061-b217-e3d6e32849c6@redhat.com>
+ <b25b3610-5755-4b7e-9a9f-d7f1dc3e4bdc@nvidia.com>
+ <6bb5b0ae-6de3-4df8-a8c1-07d4c6f8c275@redhat.com>
+Content-Language: en-US
+From: Balbir Singh <balbirs@nvidia.com>
+In-Reply-To: <6bb5b0ae-6de3-4df8-a8c1-07d4c6f8c275@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SJ0PR03CA0099.namprd03.prod.outlook.com
+ (2603:10b6:a03:333::14) To PH8PR12MB7277.namprd12.prod.outlook.com
+ (2603:10b6:510:223::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH8PR12MB7277:EE_|SA1PR12MB7344:EE_
+X-MS-Office365-Filtering-Correlation-Id: a3427167-fbbc-481a-e346-08ddbcfef626
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?bTBmOFUyaHM5b0NWbExCcDVFMldEYWFkZ2hvVDE2aVdQdnhCMmovNU1QVFRU?=
+ =?utf-8?B?aStWN1JURmNmTm1GcVpiYkREVVRIYnBWbDdGK1JPUGRUUG1pRlR0clgvQmpr?=
+ =?utf-8?B?akwvU0V2azN6NFBRN29uZUVsVEpaNUxBNHJhNmVadEMvdXRUZW5MM1pVVkZW?=
+ =?utf-8?B?Qk1JMUVDV0JEOHVZTWVwbWZNV0ZpcFM5WWU0c2NsR2dmM1dYOUhxOXNPVFVT?=
+ =?utf-8?B?TUdCc2NhSnRqTDN1ZC81Zm9aS0F0bzRtaDJOZnhaMXFUTWJLUUpoMTFhbzVY?=
+ =?utf-8?B?bW91T04xcUFDM3l5TmxteWNvQWg0ZythcmoyOEo4VkRzbWt2ZnZVSk5aZURq?=
+ =?utf-8?B?SnVnZ0l4cTd6KzJBbmxmazNYSVlpd1B2NGkyYXZtSFhqeUxVU2FNeURqU0Js?=
+ =?utf-8?B?b0w1SWtScDlHZ3B2Um9LY0J4dFk0Y2gxcHhpSjROTGc3eC9FcVhzNE1PYm5o?=
+ =?utf-8?B?SkJLQXlYMlFDbTRsdWZXdERXU2NYRHRsbXFTNm05dUxzNUtDdkxwWWwwR3V5?=
+ =?utf-8?B?MWUxWHFMcHZQV25SblZKNG0wRnFTV1ZoWTJnVjF0RFJvMWsyQlpNazRxQjJi?=
+ =?utf-8?B?VzB4UFBYRVU1cFRzYmhZQjBOMTBqNzZxMnNzTE5NQXc3NjVHNDFOdklYTXFN?=
+ =?utf-8?B?Y283bURDN2xzWlBWSmI5UTB3VFlJSTVScjVBbmtxcDBKM29rWS9FVGNOSVBQ?=
+ =?utf-8?B?R1Rwa3JsUnNhVFJ1QWFJVnhhMkNtTUxycmhWa1RYL01JNHkvcHgrME5GYjRP?=
+ =?utf-8?B?NGI3U0ZxeEg1MFJjMzFFL3B0QUlHbmplakMraW9Hb09NYjA0dkR3SHFnSHlu?=
+ =?utf-8?B?R0lQSm1PekR3a3hiRG96OFo4R0F4MDY4eVpDNERienpQODQrT0JlazBJcWI0?=
+ =?utf-8?B?RzVISHVINElGUWFpZW4xUWI3MU5zazZyWENyVXZYeFovUmZLRnZpb3VYc0R4?=
+ =?utf-8?B?M1UvenBGU01iTTlLK0xoM25yWmswa0ZkU052LzkxQVlBcGlSNi8zWHdscFZ2?=
+ =?utf-8?B?am0xR0tzeFM0MUE2bFZDdS9ET2xRNDB2SnlUdjZlNDNDVU5ZRVZ1WWpTNHFp?=
+ =?utf-8?B?WTR3NE03ZytsZ2s2UDNWR0dxc0ZxUmk0NUxkczVVSEdFOS92Y3RZaXpHQkoy?=
+ =?utf-8?B?YlRHRVdJakJkdEkwUFpLMzN2QWlUajhMZjlMR3NydUpvazFNcWIwRGVjRGdY?=
+ =?utf-8?B?MjhuWll6ZDZzRGJpbTZjcm9MZ00zRDAxb2tQRE9mM0FXY3BWbStVYWFWMzNC?=
+ =?utf-8?B?cktqL25kdnliRHpicDNoZ0ZSREFONWMrZmlrUHE1TFRxbXZnd0JpRVhMYXA2?=
+ =?utf-8?B?QjQzaXBvM1JhRnhXZFRybWI5VEVvMzZFcEM3dFhvVXAwRVdzU3hHa053UTVz?=
+ =?utf-8?B?MTRmZ2hINzJYYWVGTjg1TXlHUWh6eTBYR213SkVLRzFvUlFzR3I3T2FwYk1E?=
+ =?utf-8?B?RCtFQzlkOThQOHJLUVNXUkxnTGNzQ0t1NDdiQmozdkpuQ0RFd1Vxc1QwL3J3?=
+ =?utf-8?B?UGhxaVVmN2tiYzVLbUN4d3RYYURDT2hmRXFhS1JiRG1yQ1hiMEFNeldHSUMy?=
+ =?utf-8?B?aWIvVTlrdE5HT2lvYnNJUERiYjJyTExsKy9zd3JJbWJ3d09IdWIxdHJGd2ZN?=
+ =?utf-8?B?RmtlVGRDR05LaWtOTFJhczVDYUNWSGxGK2RvNXcvbzVJOG16SWRGbFRNTlVL?=
+ =?utf-8?B?cG92UVNGcTlmWDJsa2Z1TCsvTUZWTU5BS1NSYk9hK1prUytTWmpBcytxUlpn?=
+ =?utf-8?B?RjR3bDNWS091OUE3YzFzNkpXREVDWllSUWk4RmNQVmJ6N2J0UWxTbHJFOXpM?=
+ =?utf-8?B?V3JiRVFWdmdQcHYvNFFGRjFaTkRjMXZCM2FJSW1YaVIvVS9sRGRNQWIwYkVi?=
+ =?utf-8?B?MHI5UzRPZ1MrRnljamJqTGRXUDdWcUxyTHE1WFBUbmhGQkE9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR12MB7277.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?RlZhVGVUOS9BQ1dOUXVTMVlOWk5IZGxaTXR2VUIxa252UzJUTHhFUDRTYVh6?=
+ =?utf-8?B?N1FIZnBOWm92RFMxODZHbFI1a0ZwQUhBNC9tSzgrd2NwOFBMYlZLMHFIdmdX?=
+ =?utf-8?B?YVpxM2Q3U1VBVDhmdHhnNXROMkM1UkVOMmJqZ1FEeTVLN1FpMWN1ZlpieEtN?=
+ =?utf-8?B?R3Mwamc1RkxRdE9haXdGUFlCbFNrSWxpTTZGaVBlVHNSbHVDZW9vM2FCY1JO?=
+ =?utf-8?B?QmEvMkNmUVZBZ1cxcmozWjFvZzlOOGJjeUlNV3lSR3RKVG5oK0ozU2VXNTBx?=
+ =?utf-8?B?N0tJem5mRi84SytTcXh3Q2R3OWQyblllRStCdEpVSEdZWkV5d1h5a2ZtYTNi?=
+ =?utf-8?B?ZGU3SUwxRzc3WCtDZlNuZXpGSXJvWHFSMEpWYWZCV04yZWIrV0htOGlNUkdK?=
+ =?utf-8?B?aVhaQVFzcEN4RUJmekpPWWs3NU55cFNXRndLYWpJTCtyUmtGOWVaRXgyUXFU?=
+ =?utf-8?B?b0JYY29LN09HNkUzdDBqQzkrVGQzZmtNYnExVHhtaHdFQUkxODNkMEYxbUwz?=
+ =?utf-8?B?Z2diVlRWNTZ2ZWFZM1ZJdHVBUHlKelVnL1ZJWFJ0ZEVucXZMcFR4ZGVDNzRC?=
+ =?utf-8?B?dEpjYmNFS2FZV29EMFdTQzhnTXNGV2I5S0NDNXZsL000dFcwUHIwbEtxdXdN?=
+ =?utf-8?B?a3l6S05CVjcyRW0xQ3JiRkp6eFhMcTI5YjV2YklBZ1FodjNRclN0aFN0a1E3?=
+ =?utf-8?B?cVBiQ0xRNlRzUHROK0VrNjA4VEF0Ty9DZDZFNGtESVE2cEFYMktCR3Z4LzQv?=
+ =?utf-8?B?b0dybWxRYWM5SFk4TGRmaFdhSlJPQmNvZjNOOEczUTlDa1FvaEs5cDBKUTNC?=
+ =?utf-8?B?QUt2MWpsMGNRUFFFRi9vNklpR0hDb2poVGdXdWVaN0dFYWQ2bVpKdXBjcXhU?=
+ =?utf-8?B?NU1yN2h5OW4zY28rUzZCeFUvVDBwOFRVd1lNd0kzbFlzWUs5MVM1cmljcTZX?=
+ =?utf-8?B?c2hzTWlHVGxvL2VzR21YaFU4V2ZVMERIZDlCSFBBSG02TEtFbVBvRzN3YVpJ?=
+ =?utf-8?B?eWNWT3NVZWtvaW5FNHNWYkpuMVBJRlpudHNpdUd0WGUvenNmTlo3OWpPcU9J?=
+ =?utf-8?B?N2RITzgxbGo0eW9PN1FkZCtuZDZpNUxMS0ttMjhzWlVGWWFTZnNkWWZwMnh4?=
+ =?utf-8?B?UWREUjV0elBiZTRyVmJwTUhSMVNOTlM2TWNkdzZrVVR2eFVOUWJxbzNBMlYy?=
+ =?utf-8?B?V29neHhoZHZMckFHQWd1Q1Mra0YvbitEK2poV1ZMa1ZCT2MrZFZ0TE5HT3hG?=
+ =?utf-8?B?VGNVNGkvNEFYUnNHTnJJMVE0dW5TZHdQcTNJVnlrelNRdGcyZ29sQXp1TDRs?=
+ =?utf-8?B?WWdyMWg2Rm5HNFZhZ3NZNU5tb3BBOWJHV2JMdW9CTnJwdUtZeVp6bHp5YUFi?=
+ =?utf-8?B?Qnd0aUNxNEF2MnhSUDI0RW1HTHhtU29FUlJHVDRTRmNtb1JENENhV3Y5UEl5?=
+ =?utf-8?B?WTFHS0RTYTdkY2JicjBuUlFMZCt0NWd6OStHOCtmcDJqWHhHc2JtMmtjdFFu?=
+ =?utf-8?B?TmdXVTZYNGI3RkZWMTMraHhKZHh4WHFKSDRoZE1nQ1RJaFJXZWJzT3FJTkht?=
+ =?utf-8?B?SGtWMlVlTFUzRVNrSEYwYThYOW1mWUVySXJJS1VWVEQ1SlhHU1hkc3J0aFl6?=
+ =?utf-8?B?UGxTYXdjbVJ3Rkw3Ymp2dG9IZE9CQWJvMXVRcjJKbTdJWS85OFFvUW8vVzYx?=
+ =?utf-8?B?WDhkeTZSOFRqWmtIaTlmOXpjdUwwZWhaSDVNWlRCYktpYXhraEVZQW1hSEx3?=
+ =?utf-8?B?bWhBa3FFYzd1cmtmRkR1V0M2MUErdVZqUUxhT1ovaUVISFIxakdBbnYvZDZy?=
+ =?utf-8?B?VkNDZTlwZnBqNC9TNW1nQ3FBMnJDZjMvbXhTVUFyK1A3MkZPZGxDajN6NXkw?=
+ =?utf-8?B?akdINm1ycUU1TDhOamEwMWRVcGVDa0lJRXZnMHZ5THBTQktOZ3JVekdQMElK?=
+ =?utf-8?B?a2tGdTZkUHk5VTRJalFuZUJzVTNkZFVvUUQvUlZPSWZnT3AxTGdKaHQzL3R4?=
+ =?utf-8?B?NUE4RGttd1ZoUWFLZTIyckY2RS9tVldad0dlNm16S3Q2cGRoYngyUFcvRFpT?=
+ =?utf-8?B?UDMrc3NPV0EvMk5WenhFOG5yV25obFRhMml4RWZpaDVTVjM5M2ViZ21QRGJj?=
+ =?utf-8?Q?Opx4PeERf5YCAdjWiNqyJ/AgR?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a3427167-fbbc-481a-e346-08ddbcfef626
+X-MS-Exchange-CrossTenant-AuthSource: PH8PR12MB7277.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jul 2025 02:35:39.5583
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: WuBS+VCmrMzmMS6b4ouAJrNb6wkDPXdrVAe3eL5fxo/GvkOprk0mW+Hl1yzZ9UYzLQvx3Nu0EE3/tmUcYOO6Uw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB7344
 
-When running a multi-instance FFmpeg workload on HCC system, significant
-contention is observed on bitmap of `cpupri_vec->cpumask`.
+On 7/5/25 13:17, Mika Penttilä wrote:
+> 
+>>>>> +static void migrate_vma_split_pages(struct migrate_vma *migrate,
+>>>>> +					unsigned long idx, unsigned long addr,
+>>>>> +					struct folio *folio)
+>>>>> +{
+>>>>> +	unsigned long i;
+>>>>> +	unsigned long pfn;
+>>>>> +	unsigned long flags;
+>>>>> +
+>>>>> +	folio_get(folio);
+>>>>> +	split_huge_pmd_address(migrate->vma, addr, true);
+>>>>> +	__split_huge_page_to_list_to_order(folio_page(folio, 0), NULL, 0, true);
+>>>> We already have reference to folio, why is folio_get() needed ?
+>>>>
+>>>> Splitting the page splits pmd for anon folios, why is there split_huge_pmd_address() ?
+>>> Oh I see 
+>>> +	if (!isolated)
+>>> +		unmap_folio(folio);
+>>>
+>>> which explains the explicit split_huge_pmd_address(migrate->vma, addr, true);
+>>>
+>>> Still, why the folio_get(folio);?
+>>>  
+>>>
+>> That is for split_huge_pmd_address, when called with freeze=true, it drops the
+>> ref count on the page
+>>
+>> 	if (freeze)
+>> 		put_page(page);
+>>
+>> Balbir
+>>
+> yeah I guess you could have used the pmd_migration path in __split_huge_pmd_locked, and not use freeze because you have installed the migration pmd entry already.
+> Which brings to a bigger concern, that you do need the freeze semantics, like clear PageAnonExclusive (which may fail). I think you did not get this part
+> right in the 3/12 patch. And in this patch, you can't assume the split succeeds, which would mean you can't migrate the range at all.
+> Doing the split this late is quite problematic all in all.
+> 
 
-The SUT is a 2-socket machine with 240 physical cores and 480 logical
-CPUs. 60 FFmpeg instances are launched, each pinned to 4 physical cores
-(8 logical CPUs) for transcoding tasks. Sub-threads use RT priority 99
-with FIFO scheduling. FPS is used as score.
+Clearing PageAnonExclusive will *not* fail for device private pages from what I can see in __folio_try_share_anon_rmap().
+Doing the split late is a requirement due to the nature of the three stage migration operation, the other side
+might fail to allocate THP sized pages and so the code needs to deal with it
 
-perf c2c tool reveals:
-cpumask (bitmap) cache line of `cpupri_vec->mask`:
-- bits are loaded during cpupri_find
-- bits are stored during cpupri_set
-- cycles per load: ~2.2K to 8.7K
-
-This change splits `cpupri_vec->cpumask` into per-NUMA-node data to
-mitigate false sharing.
-
-As a result:
-- FPS improves by ~3.8%
-- Kernel cycles% drops from ~20% to ~18.7%
-- Cache line contention is mitigated, perf-c2c shows cycles per load
-  drops from ~2.2K-8.7K to ~0.5K-2.2K
-
-Note: CONFIG_CPUMASK_OFFSTACK=n remains unchanged.
-
-Appendix:
-1. Perf c2c report of `cpupri_vec->mask` bitmap cache line:
--------  -------  ------  ------  ------  ------  ------------------------
- Rmt      Lcl     Store   Data    Load    Total    Symbol
-Hitm%    Hitm%   L1 Hit%  offset  cycles  records
--------  -------  ------  ------  ------  ------  ------------------------
- 155       39       39    0xff14d52c4682d800
--------  -------  ------  ------  ------  ------  ------------------------
-43.23%   43.59%    0.00%  0x0     3489    415   _find_first_and_bit
- 3.23%    5.13%    0.00%  0x0     3478    107   __bitmap_and
- 3.23%    0.00%    0.00%  0x0     2712    33    _find_first_and_bit
- 1.94%    0.00%    7.69%  0x0     5992    33    cpupri_set
- 0.00%    0.00%    5.13%  0x0     3733    19    cpupri_set
-12.90%   12.82%    0.00%  0x8     3452    297   _find_first_and_bit
- 1.29%    2.56%    0.00%  0x8     3007    117   __bitmap_and
- 0.00%    5.13%    0.00%  0x8     3041    20    _find_first_and_bit
- 0.00%    2.56%    2.56%  0x8     2374    22    cpupri_set
- 0.00%    0.00%    7.69%  0x8     4194    38    cpupri_set
- 8.39%    2.56%    0.00%  0x10    3336    264   _find_first_and_bit
- 3.23%    0.00%    0.00%  0x10    3023    46    _find_first_and_bit
- 2.58%    0.00%    0.00%  0x10    3040    130   __bitmap_and
- 1.29%    0.00%   12.82%  0x10    4075    34    cpupri_set
- 0.00%    0.00%    2.56%  0x10    2197    19    cpupri_set
- 0.00%    2.56%    7.69%  0x18    4085    27    cpupri_set
- 0.00%    2.56%    0.00%  0x18    3128    220   _find_first_and_bit
- 0.00%    0.00%    5.13%  0x18    3028    20    cpupri_set
- 2.58%    2.56%    0.00%  0x20    3089    198   _find_first_and_bit
- 1.29%    0.00%    5.13%  0x20    5114    29    cpupri_set
- 0.65%    2.56%    0.00%  0x20    3224    96    __bitmap_and
- 0.65%    0.00%    7.69%  0x20    4392    31    cpupri_set
- 2.58%    0.00%    0.00%  0x28    3327    214   _find_first_and_bit
- 0.65%    2.56%    5.13%  0x28    5252    31    cpupri_set
- 0.65%    0.00%    7.69%  0x28    8755    25    cpupri_set
- 0.65%    0.00%    0.00%  0x28    4414    14    _find_first_and_bit
- 1.29%    2.56%    0.00%  0x30    3139    171   _find_first_and_bit
- 0.65%    0.00%    7.69%  0x30    2185    18    cpupri_set
- 0.65%    0.00%    0.00%  0x30    3404    108   __bitmap_and
- 0.00%    0.00%    2.56%  0x30    5542    21    cpupri_set
- 3.23%    5.13%    0.00%  0x38    3493    190   _find_first_and_bit
- 3.23%    2.56%    0.00%  0x38    3171    108   __bitmap_and
- 0.00%    2.56%    7.69%  0x38    3285    14    cpupri_set
- 0.00%    0.00%    5.13%  0x38    4035    27    cpupri_set
-
-Signed-off-by: Pan Deng <pan.deng@intel.com>
-Reviewed-by: Tianyou Li <tianyou.li@intel.com>
-Reviewed-by: Chen Yu <yu.c.chen@intel.com>
----
- kernel/sched/cpupri.c | 200 ++++++++++++++++++++++++++++++++++++++----
- kernel/sched/cpupri.h |   4 +
- 2 files changed, 186 insertions(+), 18 deletions(-)
-
-diff --git a/kernel/sched/cpupri.c b/kernel/sched/cpupri.c
-index 42c40cfdf836..306b6baff4cd 100644
---- a/kernel/sched/cpupri.c
-+++ b/kernel/sched/cpupri.c
-@@ -64,6 +64,143 @@ static int convert_prio(int prio)
- 	return cpupri;
- }
- 
-+#ifdef	CONFIG_CPUMASK_OFFSTACK
-+static inline int alloc_vec_masks(struct cpupri_vec *vec)
-+{
-+	int i;
-+
-+	for (i = 0; i < nr_node_ids; i++) {
-+		if (!zalloc_cpumask_var_node(&vec->masks[i], GFP_KERNEL, i))
-+			goto cleanup;
-+
-+		// Clear masks of cur node, set others
-+		bitmap_complement(cpumask_bits(vec->masks[i]),
-+			cpumask_bits(cpumask_of_node(i)), small_cpumask_bits);
-+	}
-+	return 0;
-+
-+cleanup:
-+	while (i--)
-+		free_cpumask_var(vec->masks[i]);
-+	return -ENOMEM;
-+}
-+
-+static inline void free_vec_masks(struct cpupri_vec *vec)
-+{
-+	for (int i = 0; i < nr_node_ids; i++)
-+		free_cpumask_var(vec->masks[i]);
-+}
-+
-+static inline int setup_vec_mask_var_ts(struct cpupri *cp)
-+{
-+	int i;
-+
-+	for (i = 0; i < CPUPRI_NR_PRIORITIES; i++) {
-+		struct cpupri_vec *vec = &cp->pri_to_cpu[i];
-+
-+		vec->masks = kcalloc(nr_node_ids, sizeof(cpumask_var_t), GFP_KERNEL);
-+		if (!vec->masks)
-+			goto cleanup;
-+	}
-+	return 0;
-+
-+cleanup:
-+	/* Free any already allocated masks */
-+	while (i--) {
-+		kfree(cp->pri_to_cpu[i].masks);
-+		cp->pri_to_cpu[i].masks = NULL;
-+	}
-+
-+	return -ENOMEM;
-+}
-+
-+static inline void free_vec_mask_var_ts(struct cpupri *cp)
-+{
-+	for (int i = 0; i < CPUPRI_NR_PRIORITIES; i++) {
-+		kfree(cp->pri_to_cpu[i].masks);
-+		cp->pri_to_cpu[i].masks = NULL;
-+	}
-+}
-+
-+static inline int
-+available_cpu_in_nodes(struct task_struct *p, struct cpupri_vec *vec)
-+{
-+	int cur_node = numa_node_id();
-+
-+	for (int i = 0; i < nr_node_ids; i++) {
-+		int nid = (cur_node + i) % nr_node_ids;
-+
-+		if (cpumask_first_and_and(&p->cpus_mask, vec->masks[nid],
-+					cpumask_of_node(nid)) < nr_cpu_ids)
-+			return 1;
-+	}
-+
-+	return 0;
-+}
-+
-+#define available_cpu_in_vec available_cpu_in_nodes
-+
-+#else /* !CONFIG_CPUMASK_OFFSTACK */
-+
-+static inline int alloc_vec_masks(struct cpupri_vec *vec)
-+{
-+	if (!zalloc_cpumask_var(&vec->mask, GFP_KERNEL))
-+		return -ENOMEM;
-+
-+	return 0;
-+}
-+
-+static inline void free_vec_masks(struct cpupri_vec *vec)
-+{
-+	free_cpumask_var(vec->mask);
-+}
-+
-+static inline int setup_vec_mask_var_ts(struct cpupri *cp)
-+{
-+	return 0;
-+}
-+
-+static inline void free_vec_mask_var_ts(struct cpupri *cp)
-+{
-+}
-+
-+static inline int
-+available_cpu_in_vec(struct task_struct *p, struct cpupri_vec *vec)
-+{
-+	if (cpumask_any_and(&p->cpus_mask, vec->mask) >= nr_cpu_ids)
-+		return 0;
-+
-+	return 1;
-+}
-+#endif
-+
-+static inline int alloc_all_masks(struct cpupri *cp)
-+{
-+	int i;
-+
-+	for (i = 0; i < CPUPRI_NR_PRIORITIES; i++) {
-+		if (alloc_vec_masks(&cp->pri_to_cpu[i]))
-+			goto cleanup;
-+	}
-+
-+	return 0;
-+
-+cleanup:
-+	while (i--)
-+		free_vec_masks(&cp->pri_to_cpu[i]);
-+
-+	return -ENOMEM;
-+}
-+
-+static inline void setup_vec_counts(struct cpupri *cp)
-+{
-+	for (int i = 0; i < CPUPRI_NR_PRIORITIES; i++) {
-+		struct cpupri_vec *vec = &cp->pri_to_cpu[i];
-+
-+		atomic_set(&vec->count, 0);
-+	}
-+}
-+
- static inline int __cpupri_find(struct cpupri *cp, struct task_struct *p,
- 				struct cpumask *lowest_mask, int idx)
- {
-@@ -96,11 +233,24 @@ static inline int __cpupri_find(struct cpupri *cp, struct task_struct *p,
- 	if (skip)
- 		return 0;
- 
--	if (cpumask_any_and(&p->cpus_mask, vec->mask) >= nr_cpu_ids)
-+	if (!available_cpu_in_vec(p, vec))
- 		return 0;
- 
-+#ifdef	CONFIG_CPUMASK_OFFSTACK
-+	struct cpumask *cpupri_mask = lowest_mask;
-+
-+	// available && lowest_mask
-+	if (lowest_mask) {
-+		cpumask_copy(cpupri_mask, vec->masks[0]);
-+		for (int nid = 1; nid < nr_node_ids; nid++)
-+			cpumask_and(cpupri_mask, cpupri_mask, vec->masks[nid]);
-+	}
-+#else
-+	struct cpumask *cpupri_mask = vec->mask;
-+#endif
-+
- 	if (lowest_mask) {
--		cpumask_and(lowest_mask, &p->cpus_mask, vec->mask);
-+		cpumask_and(lowest_mask, &p->cpus_mask, cpupri_mask);
- 		cpumask_and(lowest_mask, lowest_mask, cpu_active_mask);
- 
- 		/*
-@@ -229,7 +379,11 @@ void cpupri_set(struct cpupri *cp, int cpu, int newpri)
- 	if (likely(newpri != CPUPRI_INVALID)) {
- 		struct cpupri_vec *vec = &cp->pri_to_cpu[newpri];
- 
-+#ifdef	CONFIG_CPUMASK_OFFSTACK
-+		cpumask_set_cpu(cpu, vec->masks[cpu_to_node(cpu)]);
-+#else
- 		cpumask_set_cpu(cpu, vec->mask);
-+#endif
- 		/*
- 		 * When adding a new vector, we update the mask first,
- 		 * do a write memory barrier, and then update the count, to
-@@ -263,7 +417,11 @@ void cpupri_set(struct cpupri *cp, int cpu, int newpri)
- 		 */
- 		atomic_dec(&(vec)->count);
- 		smp_mb__after_atomic();
-+#ifdef	CONFIG_CPUMASK_OFFSTACK
-+		cpumask_clear_cpu(cpu, vec->masks[cpu_to_node(cpu)]);
-+#else
- 		cpumask_clear_cpu(cpu, vec->mask);
-+#endif
- 	}
- 
- 	*currpri = newpri;
-@@ -279,26 +437,31 @@ int cpupri_init(struct cpupri *cp)
- {
- 	int i;
- 
--	for (i = 0; i < CPUPRI_NR_PRIORITIES; i++) {
--		struct cpupri_vec *vec = &cp->pri_to_cpu[i];
--
--		atomic_set(&vec->count, 0);
--		if (!zalloc_cpumask_var(&vec->mask, GFP_KERNEL))
--			goto cleanup;
--	}
--
-+	/* Allocate the cpu_to_pri array */
- 	cp->cpu_to_pri = kcalloc(nr_cpu_ids, sizeof(int), GFP_KERNEL);
- 	if (!cp->cpu_to_pri)
--		goto cleanup;
-+		return -ENOMEM;
- 
-+	/* Initialize all CPUs to invalid priority */
- 	for_each_possible_cpu(i)
- 		cp->cpu_to_pri[i] = CPUPRI_INVALID;
- 
-+	/* Setup priority vectors */
-+	setup_vec_counts(cp);
-+	if (setup_vec_mask_var_ts(cp))
-+		goto fail_setup_vectors;
-+
-+	/* Allocate masks for each priority vector */
-+	if (alloc_all_masks(cp))
-+		goto fail_alloc_masks;
-+
- 	return 0;
- 
--cleanup:
--	for (i--; i >= 0; i--)
--		free_cpumask_var(cp->pri_to_cpu[i].mask);
-+fail_alloc_masks:
-+	free_vec_mask_var_ts(cp);
-+
-+fail_setup_vectors:
-+	kfree(cp->cpu_to_pri);
- 	return -ENOMEM;
- }
- 
-@@ -308,9 +471,10 @@ int cpupri_init(struct cpupri *cp)
-  */
- void cpupri_cleanup(struct cpupri *cp)
- {
--	int i;
--
- 	kfree(cp->cpu_to_pri);
--	for (i = 0; i < CPUPRI_NR_PRIORITIES; i++)
--		free_cpumask_var(cp->pri_to_cpu[i].mask);
-+
-+	for (int i = 0; i < CPUPRI_NR_PRIORITIES; i++)
-+		free_vec_masks(&cp->pri_to_cpu[i]);
-+
-+	free_vec_mask_var_ts(cp);
- }
-diff --git a/kernel/sched/cpupri.h b/kernel/sched/cpupri.h
-index 245b0fa626be..c53f1f4dad86 100644
---- a/kernel/sched/cpupri.h
-+++ b/kernel/sched/cpupri.h
-@@ -9,7 +9,11 @@
- 
- struct cpupri_vec {
- 	atomic_t		count;
-+#ifdef CONFIG_CPUMASK_OFFSTACK
-+	cpumask_var_t		*masks	____cacheline_aligned;
-+#else
- 	cpumask_var_t		mask	____cacheline_aligned;
-+#endif
- };
- 
- struct cpupri {
--- 
-2.43.5
-
+Balbir Singh
 
