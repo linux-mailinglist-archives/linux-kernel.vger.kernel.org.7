@@ -1,130 +1,183 @@
-Return-Path: <linux-kernel+bounces-720095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 668B6AFB6EF
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 17:12:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EAC0AFB6EE
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 17:11:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2753817B6FD
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 15:12:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D147618981A6
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 15:12:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97CC62E2670;
-	Mon,  7 Jul 2025 15:11:50 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0015.hostedemail.com [216.40.44.15])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CB292E1C78;
+	Mon,  7 Jul 2025 15:11:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=jvosburgh.net header.i=@jvosburgh.net header.b="bhBoWRnk";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ZFpkMHn1"
+Received: from fout-b7-smtp.messagingengine.com (fout-b7-smtp.messagingengine.com [202.12.124.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB9A052F88
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 15:11:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B385EEEDE;
+	Mon,  7 Jul 2025 15:11:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751901110; cv=none; b=g419iZRilCNVjN7yGC0Q9RpUROpyt5apN6JfC+27VqVBGl+5ddb9XJ/dzTXLR5ECVlCLpcgX9ecf6BDsG/OEFiwAdvDIDLhG94TKq9CgkgrZJc3eHWGnuye9l4uo3k169xXzCixVwX54msczjP1ydPWTbKyazWPYx35eqd+Gftg=
+	t=1751901108; cv=none; b=E9T6jgccAioAbSjtwJ/s7NoHWQXV9GOZQvnt2aq3XZV6YueMGibYwfgR4Hftq9FM3PwxySpHuTMWMksgNiW1TXpyIuYrg7nP63/QIMF4NXD/6CFSUSNOUIqhk81hrriFQ5Eht7QSIfEZUi0VdR0XM+Uzvbbb4RvvHkUCfH/7LEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751901110; c=relaxed/simple;
-	bh=YGQySKMSZlfdjvJLKUGdKVtpld5XdJV9DT3kBGUJXeE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qDWqM3xCL/G9mSHqlm1If6UjkhtYSt2c9xCmxHzjcTPctfaAJ03lfDgSeTHpKSbkhw1RYQgKWojn0XTFin7U6jYSAONDS6mOW+cpY+PIBUlMvOFamQx81qLIJcA67jvVnOLAiwRrvqhm/O5XVdtyRmw/R8BDcYrIupQbp1Cke/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf16.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay08.hostedemail.com (Postfix) with ESMTP id 658301401AD;
-	Mon,  7 Jul 2025 15:11:39 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf16.hostedemail.com (Postfix) with ESMTPA id 2898120018;
-	Mon,  7 Jul 2025 15:11:37 +0000 (UTC)
-Date: Mon, 7 Jul 2025 11:11:22 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Li,Rongqing" <lirongqing@baidu.com>
-Cc: "oleg@redhat.com" <oleg@redhat.com>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, "vschneid@redhat.com"
- <vschneid@redhat.com>, "mgorman@suse.de" <mgorman@suse.de>,
- "bsegall@google.com" <bsegall@google.com>, "dietmar.eggemann@arm.com"
- <dietmar.eggemann@arm.com>, "vincent.guittot@linaro.org"
- <vincent.guittot@linaro.org>, "juri.lelli@redhat.com"
- <juri.lelli@redhat.com>, "peterz@infradead.org" <peterz@infradead.org>,
- "mingo@redhat.com" <mingo@redhat.com>
-Subject: Re: divide error in x86 and cputime
-Message-ID: <20250707111122.7111ce31@batman.local.home>
-In-Reply-To: <78a0d7bb20504c0884d474868eccd858@baidu.com>
-References: <78a0d7bb20504c0884d474868eccd858@baidu.com>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1751901108; c=relaxed/simple;
+	bh=/ARAXRQbSZWdg9pZaoBuhq9UVIh0+v78Jr3NrAo6aJw=;
+	h=From:To:cc:Subject:In-reply-to:References:MIME-Version:
+	 Content-Type:Date:Message-ID; b=AW8vYXDI0m4P+AMQDpCkFK9BdLI7RrZ11NZO8aBgKLEIgz0I+nM/cTCBZEVZlQAMzengIgtiKjn/EeoOxnakwCHGnoon0OukkRUbLxxfjzHU25s4aOIt1x5em6SKS5OmDBRn6KYyE0xfWCJp831WNurx0N+NJ6kcDr678hsRrVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jvosburgh.net; spf=pass smtp.mailfrom=jvosburgh.net; dkim=pass (2048-bit key) header.d=jvosburgh.net header.i=@jvosburgh.net header.b=bhBoWRnk; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ZFpkMHn1; arc=none smtp.client-ip=202.12.124.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jvosburgh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jvosburgh.net
+Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
+	by mailfout.stl.internal (Postfix) with ESMTP id 7EEC31D000A2;
+	Mon,  7 Jul 2025 11:11:44 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-12.internal (MEProxy); Mon, 07 Jul 2025 11:11:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jvosburgh.net;
+	 h=cc:cc:content-id:content-transfer-encoding:content-type
+	:content-type:date:date:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to; s=fm3; t=1751901104; x=1751987504; bh=wUtS/ivm21AFbgEek477k
+	pVSpKUMueuzQzPLVXyifMo=; b=bhBoWRnk7JEdIFVy4d4mVfs4c1gytJOQiSepm
+	0m7ndkhHHE+s655P4jCmRNe5ZiVTaaoB4xl5qgdD8v0ObvYYeEjwwnTLn/rzqRdn
+	FjUBdw8m8S9ZEaLmy6C4gs6GjQWJZ4ckD4SplQC6ZSg5N9FljcqzR+WeZwVtQPsY
+	6OjqFC+ZdvPls2CjvTdbiJlu6dp2SjeJJkgL05G2eQQh6xmxhADR0J3KXjmEL3ym
+	73xpbEPmwXhIF70YE0YOVozak/oXZX+ahXjaHnFcV8ald4SZCwjoFncsomX2fi8p
+	Xwa4sCsHYyvG0yguF+atfSxc+221RUuDMk2SSpI8YRqYYlrjg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-id
+	:content-transfer-encoding:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+	1751901104; x=1751987504; bh=wUtS/ivm21AFbgEek477kpVSpKUMueuzQzP
+	LVXyifMo=; b=ZFpkMHn1kI1sIr57WFM2mLpsm27Bz6kckGaxOWWAYnsux2BUPkb
+	LQb8byIbysZNGuR8cliiZjQVIxN9DFGlBrAI95ST+6s5gLvmAULTl51EI29Pcdj3
+	QFvuiMoKLFNsbb4DlCTrvZ+1JDGE9gKtcsuROAV5UGLPzvH7m7NQMZlQt9teXRHN
+	ecm4arppy8kpnasgVYak+Ry2SAYHFy4G+EdqCFtJ4wbNh7+WghBM8gcirwA6qEjQ
+	ZlUqDejmKED2T0PbeiJZh6nTA/u2HuiTcO6J9xJRUWaWBI6ViQKL4vY2FSN4UlYc
+	5SGOsTJDdKXrnFOl+CqErLfyC/mZ7tL/v3Q==
+X-ME-Sender: <xms:r-NraJS7v827MQ0DLXK2aHLZLvHwt_vpihpeTj5EG3ij5IMzLJlqNQ>
+    <xme:r-NraNYFGqNACEEJ_FrjIhqh_9_C5Zqf8KGkjsnuEHtP7QxAubJwTLJWrJIFAyRxY
+    Ptmopz4vv7sP71qpyk>
+X-ME-Received: <xmr:r-NraE12PNqF6Oy8P_jW23bOH_i7MXdcnpkFY_q8CV96Ccs_yCJspI-wBV0-eU1Qkg61TQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdefvddufecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefhvfevufgjfhfogggtgfffkfesthhqredtredtvdenucfhrhhomheplfgrhicuggho
+    shgsuhhrghhhuceojhhvsehjvhhoshgsuhhrghhhrdhnvghtqeenucggtffrrghtthgvrh
+    hnpeeifedvleefleejveethfefieduueeivdefieevleffuddvveeftdehffffteefffen
+    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehjvhesjh
+    hvohhssghurhhghhdrnhgvthdpnhgspghrtghpthhtohepledpmhhouggvpehsmhhtphho
+    uhhtpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtth
+    hopehgnhgslhgrohesghhmrghilhdrtghomhdprhgtphhtthhopegvughumhgriigvthes
+    ghhoohhglhgvrdgtohhmpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprh
+    gtphhtthhopegrnhgurhgvfidonhgvthguvghvsehluhhnnhdrtghhpdhrtghpthhtohep
+    phgrsggvnhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnh
+    gvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehnvghtuggvvhesvhhg
+    vghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihifrghntghhuhgrnhesgihirg
+    homhhirdgtohhm
+X-ME-Proxy: <xmx:r-NraAqJCtyFsA4h0XiAlcliWpGB0mqMGB2l2xi4-lWiio8ZrrizUA>
+    <xmx:r-NraDM8n6BHjfQa1kSNG0BQ1B6oQQOA14x2zpfVHSrTvFWl6anNkQ>
+    <xmx:r-NraJqsjKCQU0xjTl5OOG4YENlCFFBcUJOLGvlAG9yg1MalJZSN_A>
+    <xmx:r-NraOvaZJm3Hp8lJfCU_rci9Q2-pos--atfqwkWLn_8ARQBMR1P3Q>
+    <xmx:sONraNcLfJgwcKQOVNZa3OYlqji1v0FYWihUyApeQ3Qfj3Lrk_6RkJ5->
+Feedback-ID: i53714940:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 7 Jul 2025 11:11:43 -0400 (EDT)
+Received: by famine.localdomain (Postfix, from userid 1000)
+	id 448C59FC7D; Mon,  7 Jul 2025 08:11:42 -0700 (PDT)
+Received: from famine (localhost [127.0.0.1])
+	by famine.localdomain (Postfix) with ESMTP id 431439FC45;
+	Mon,  7 Jul 2025 08:11:42 -0700 (PDT)
+From: Jay Vosburgh <jv@jvosburgh.net>
+To: Wanchuan Li <gnblao@gmail.com>
+cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+    kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
+    linux-kernel@vger.kernel.org, Wanchuan Li <liwanchuan@xiaomi.com>
+Subject: Re: [PATCH 1/2] bonding: exposure option coupled_control via sysfs
+In-reply-to: <20250707091549.3995140-1-liwanchuan@xiaomi.com>
+References: <20250707091549.3995140-1-liwanchuan@xiaomi.com>
+Comments: In-reply-to Wanchuan Li <gnblao@gmail.com>
+   message dated "Mon, 07 Jul 2025 17:15:48 +0800."
+X-Mailer: MH-E 8.6+git; nmh 1.8+dev; Emacs 29.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: 76twc9mye713furi37rtnucr3ifmsbam
-X-Rspamd-Server: rspamout08
-X-Rspamd-Queue-Id: 2898120018
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1/rJAGqviXk2XJWB7qRLaQNr5tiIhBTXN0=
-X-HE-Tag: 1751901097-911808
-X-HE-Meta: U2FsdGVkX1+dRGOY7UOTen1xp29QdmZLLTZGnP18d7iYgrAER2usWah25Tm/XVC76JchlVwhAtxcNmx/oA/Wma2Y+o/Lt2uNCgz/70zaJnIsjCIvHRZNbCYFWCW5igO4tW+4Nw3LP6yeDbXHh0r/MaPBBER9kvPZpCvmQOIGtArbPqxXtdRswVDEK6yGhHhCWEpoCjPJRjTm3OlhvGfBnprzYDeV0Mvw8D8aldhlVCiWvjmMCjRbexVnduSGI8TeQjBnYw0OuuSVAdDaty4JfTaT+3hYzk/Km38nhh4if6DWDvMgWTwnk9tKEjaYiEB9rHSV/2bqqeLCJPvIdspCtz2FCBxZud4D
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <73001.1751901102.1@famine>
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 07 Jul 2025 08:11:42 -0700
+Message-ID: <73002.1751901102@famine>
 
-On Mon, 7 Jul 2025 08:14:41 +0000
-"Li,Rongqing" <lirongqing@baidu.com> wrote:
+Wanchuan Li <gnblao@gmail.com> wrote:
 
-> Hi:
-> 
-> I see a divide error on x86 machine, the stack is below:
-> 
-> 
-> [78250815.703847] divide error: 0000 [#1] PREEMPT SMP NOPTI
-> [78250815.703852] CPU: 127 PID: 83435 Comm: killall Kdump: loaded Tainted: P           OE K   5.10.0 #1
+>Allow get/set of bonding parameter coupled_control
+>via sysfs.
+>
+>Signed-off-by: Wanchuan Li <liwanchuan@xiaomi.com>
 
-Did you see this on a 5.10 kernel?
+	No to both of these patches.
 
-Do you see it on something more recent? Preferably the 6.15 or 6.16.
+	For patch 1, the bonding sysfs API is deprecated, and should not
+be extended to add new functionality.  All bonding functionality is
+available via netlink and iproute2 (/sbin/ip).
 
--- Steve
+	For patch 2, new module parameters are disallowed in general.
 
-> [78250815.703853] Hardware name: Inspur SSINSPURMBX-XA3-100D-B356/NF5280A6, BIOS 3.00.21 06/27/2022
-> [78250815.703859] RIP: 0010:cputime_adjust+0x55/0xb0
-> [78250815.703860] Code: 3b 4c 8b 4d 10 48 89 c6 49 8d 04 38 4c 39 c8 73 38 48 8b 45 00 48 8b 55 08 48 85 c0 74 16 48 85 d2 74 49 48 8d 0c 10 49 f7 e1 <48> f7 f1 49 39 c0 4c 0f 42 c0 4c 89 c8 4c 29 c0 48 39 c7 77 25 48
-> [78250815.703861] RSP: 0018:ffffa34c2517bc40 EFLAGS: 00010887
-> [78250815.703864] RAX: 69f98da9ba980c00 RBX: ffff976c93d2a5e0 RCX: 0000000709e00900
-> [78250815.703864] RDX: 00f5dfffab0fc352 RSI: 0000000000000082 RDI: ff07410dca0bcd5e
-> [78250815.703865] RBP: ffffa34c2517bc70 R08: 00f5dfff54f8e5ce R09: fffd213aabd74626
-> [78250815.703866] R10: ffffa34c2517bed8 R11: 0000000000000000 R12: ffff976c93d2a5f0
-> [78250815.703867] R13: ffffa34c2517bd78 R14: ffffa34c2517bd70 R15: 0000000000001000
-> [78250815.703868] FS:  00007f58060f97a0(0000) GS:ffff976afe9c0000(0000) knlGS:0000000000000000
-> [78250815.703869] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [78250815.703870] CR2: 00007f580610e000 CR3: 0000017e3b3d2004 CR4: 0000000000770ee0
-> [78250815.703870] PKRU: 55555554
-> [78250815.703871] Call Trace:
-> [78250815.703877]  thread_group_cputime_adjusted+0x4a/0x70
-> [78250815.703881]  do_task_stat+0x2ed/0xe00
-> [78250815.703885]  ? khugepaged_enter_vma_merge+0x12/0xd0
-> [78250815.703888]  proc_single_show+0x51/0xc0
-> [78250815.703892]  seq_read_iter+0x185/0x3c0
-> [78250815.703895]  seq_read+0x106/0x150
-> [78250815.703898]  vfs_read+0x98/0x180
-> [78250815.703900]  ksys_read+0x59/0xd0
-> [78250815.703904]  do_syscall_64+0x33/0x40
-> [78250815.703907]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> [78250815.703910] RIP: 0033:0x318aeda360
-> 
-> 
-> It caused by a process with many threads running very long, and utime+stime overflowed 64bit, then cause the below div
-> 
-> mul_u64_u64_div_u64(0x69f98da9ba980c00, 0xfffd213aabd74626, 0x09e00900);
-> 
-> I see the comments of mul_u64_u64_div_u64() say:
-> 
-> Will generate an #DE when the result doesn't fit u64, could fix with an
-> __ex_table[] entry when it becomes an issu
-> 
-> 
-> Seem __ex_table[] entry for div does not work ?
-> 
-> Thanks
-> 
-> -Li
-> 
-> 
+	-J
 
+>---
+> drivers/net/bonding/bond_sysfs.c | 13 +++++++++++++
+> 1 file changed, 13 insertions(+)
+>
+>diff --git a/drivers/net/bonding/bond_sysfs.c b/drivers/net/bonding/bond_=
+sysfs.c
+>index 1e13bb170515..5a8450b2269d 100644
+>--- a/drivers/net/bonding/bond_sysfs.c
+>+++ b/drivers/net/bonding/bond_sysfs.c
+>@@ -479,6 +479,18 @@ static ssize_t bonding_show_carrier(struct device *d=
+,
+> static DEVICE_ATTR(use_carrier, 0644,
+> 		   bonding_show_carrier, bonding_sysfs_store_option);
+> =
+
+>+/* Show the coupled_control flag. */
+>+static ssize_t bonding_show_coupled_control(struct device *d,
+>+				    struct device_attribute *attr,
+>+				    char *buf)
+>+{
+>+	struct bonding *bond =3D to_bond(d);
+>+
+>+	return sysfs_emit(buf, "%d\n", bond->params.coupled_control);
+>+}
+>+static DEVICE_ATTR(coupled_control, 0644,
+>+		   bonding_show_coupled_control, bonding_sysfs_store_option);
+>+
+> =
+
+> /* Show currently active_slave. */
+> static ssize_t bonding_show_active_slave(struct device *d,
+>@@ -791,6 +803,7 @@ static struct attribute *per_bond_attrs[] =3D {
+> 	&dev_attr_ad_actor_system.attr,
+> 	&dev_attr_ad_user_port_key.attr,
+> 	&dev_attr_arp_missed_max.attr,
+>+	&dev_attr_coupled_control.attr,
+> 	NULL,
+> };
+> =
+
+>-- =
+
+>2.49.0
+>
+
+---
+	-Jay Vosburgh, jv@jvosburgh.net
 
