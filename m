@@ -1,56 +1,80 @@
-Return-Path: <linux-kernel+bounces-720190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EF4CAFB85A
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 18:08:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E225DAFB85F
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 18:09:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1246B1AA2476
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 16:08:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28B7042121E
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 16:08:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 667FC2264B2;
-	Mon,  7 Jul 2025 16:08:02 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77313215062;
-	Mon,  7 Jul 2025 16:08:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4919B226173;
+	Mon,  7 Jul 2025 16:09:00 +0000 (UTC)
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 535691E25FA;
+	Mon,  7 Jul 2025 16:08:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751904482; cv=none; b=Ygs7vThZ3vFKP4F7VLv6uRknjD8YlcShQpOWkNlQFWirM7w2I5IvyXmdVu9jSUmhJTYjo7e9XWy5C0uZR40ejf1I7a6xYUqvGiOqTVw2NGdd/rFJo4EBgWccFBJPIVNhmnYSWnj8fTBnL7aOJcewa/4f/FJhQq4Og4EfrzL1FLw=
+	t=1751904539; cv=none; b=fpRS66zEYm1ecJP+9UrcqGHzC1qcxSJO1hyodLHUgFigQOG75/KAwDXrrtPDrhS8uZ/bEQuu1k99/DCbc/egycbExaPReo03clZVixqslvMi4voIHss8bpTeuV0+NOGOFwpKStOwT9S4iXwr2UZi7rKmo2WtSYXJbsED/vdfgc0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751904482; c=relaxed/simple;
-	bh=2ygqV8EB6mY5V3xqX1r9SYbhNO7fGfzN/oIydN4m5Vc=;
+	s=arc-20240116; t=1751904539; c=relaxed/simple;
+	bh=hGAL0RAlsyh7P8ZqSXpWzyJtAQXtSCnscC0y+VSp0nI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RKRTwTEax3amSKG7aa5MVUmXLEXXbIs39BsX779dyALgmgp7YuQ+Ko3mOzsUy2FgW+EM6pKDFgQw1XggyGfNr+F5D8ydf5zZ7xZaq/jA6B4+X8V5CmKQf0346RMqfWlVAObHUnH41RY89ccrKeEY+pw8JUwMTZXGzIoC/U+QK5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 78937168F;
-	Mon,  7 Jul 2025 09:07:47 -0700 (PDT)
-Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3ADCC3F694;
-	Mon,  7 Jul 2025 09:07:56 -0700 (PDT)
-Date: Mon, 7 Jul 2025 17:07:53 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Colton Lewis <coltonlewis@google.com>
-Cc: kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Mingwei Zhang <mizhang@google.com>, Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>, Shuah Khan <shuah@kernel.org>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-	linux-perf-users@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v3 02/22] arm64: Generate sign macro for sysreg Enums
-Message-ID: <aGvw2YojY0vVX_QT@J2N7QTR9R3>
-References: <20250626200459.1153955-1-coltonlewis@google.com>
- <20250626200459.1153955-3-coltonlewis@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gX0fNvftFmI6irlD4l2eK8LdVUhkAMWFdvpR78GZL6pySP9mcVW19oc7SUu/CC7ONOTT69RGhAiNiypUeCxTchhoAUYrE8U0kVOmyy0lHN/sI67PMhBmDoGYH1OD+BrhRvjKv0cRtMP3tuQW88HJcKWwBwcw/G1v5omeS7gBAxs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-acb5ec407b1so553185066b.1;
+        Mon, 07 Jul 2025 09:08:57 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751904536; x=1752509336;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ukbvHzZfhwx6533qERNgaNRmfc+1+i0ljL79gEDoL88=;
+        b=ujiMjUU3LLg5+DNrpWRnQCC3vSVITQp4tHWdjbPcRMYN6BdDr5oNwzbSg83GsgqQIn
+         4Dqgdh9OOGeUmtOk3+IECzl+OFEl3+2SkpUopYJ3NPbrluENm9HYOna0RgZvAJhiA98S
+         KXQrn1IPFDlwyg8qWi1y39LTHnZSww4qL019TX8+1+kll5D1y+X+RwOda6hOLd6TtYNS
+         88Rrw7w+SqQekfQ9jGD16LET92SpmPDRfT7fG0tG6guKJm5vRjYTPs2bokowK0aZclYE
+         VDZqeshmf1/mzhqk94TuD/mzu8p6C5JMKf5r5hbKocd9lX9UeaL0qF+hhmxW3CINKvps
+         a6oA==
+X-Forwarded-Encrypted: i=1; AJvYcCW7zePZjP5PLbU7zoKU/UgQfxKIeBve1xWqekXj952f/QAMsn0OCInOCFOL3A5xRHTFGxB4qi8NN5Q=@vger.kernel.org, AJvYcCWkEXPMPpVYaSOLvHBvwZlGgmHanJdx+r7rOZkMBwQpSG3+PUD7HyfDrKTPOTzc+yJIuqbKC1jdVHL+s0ld@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2+4Vs2Q4hE0unNNYN/9CeEbnmt1V2hUh0un8Be4Vmca8EdtcF
+	zTO0eezyApTugH5mI+QWqkLfY7P9TceIlUfd9DePf9pLOHNRhUEY5pPE
+X-Gm-Gg: ASbGncv9K2hkkhBeERNHVmvjd9uJ1ifUjdTmT/Kq/AcsYjV+GopqmfDXzF3yXJNNd3P
+	zmI1+I8PnVJRwqS3hm26RWogcpI6qWRHOXOfdgkXpUunEDZZgclHPEHdwEi9+icHO6Mf9TFXohA
+	ePqfAJfaYRAtKoDerjmxH53mFavc/47S7q8kd/EWd5/GiFFZrW44uHyxn/CPhY14RfQpsWCjR15
+	5jZw8Cl7fXUMWNatyNhEM3jVHyAw0Mz1r59mli3PpwWoHXZD42noGJIV7KWCWTigZwR60goL1JM
+	U6mW0Tcdu8sfCGAmS92BbcGrh6T03+Y5BCUI92PZcZFCONAxn7MA5w==
+X-Google-Smtp-Source: AGHT+IFRCwe+M2LN1raXwbrfTy1qnj/eKSyDlwd2ZulMHGxXV5lbkUCyxCU9OUDf418Cp2+/qD3ZbQ==
+X-Received: by 2002:a17:906:2412:b0:ae0:bdc2:9957 with SMTP id a640c23a62f3a-ae3fbdea236mr1001311166b.61.1751904536006;
+        Mon, 07 Jul 2025 09:08:56 -0700 (PDT)
+Received: from gmail.com ([2a03:2880:30ff:70::])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae3f6abfadbsm729371066b.80.2025.07.07.09.08.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Jul 2025 09:08:55 -0700 (PDT)
+Date: Mon, 7 Jul 2025 09:08:49 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, Will Deacon <will@kernel.org>,
+	Ard Biesheuvel <ardb@kernel.org>, usamaarif642@gmail.com,
+	rmikey@meta.com, andreyknvl@gmail.com, kasan-dev@googlegroups.com,
+	linux-efi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, kernel-team@meta.com
+Subject: Re: [PATCH] arm64: efi: Fix KASAN false positive for EFI runtime
+ stack
+Message-ID: <aGvxEYDP8pVlalaz@gmail.com>
+References: <20250624-arm_kasan-v1-1-21e80eab3d70@debian.org>
+ <aGaxZHLnDQc_kSur@arm.com>
+ <CAMj1kXFadibWLnhFv3cOk-7Ah2MmPz8RqDuQjGr-3gmq+hEnMg@mail.gmail.com>
+ <aGfK2N6po39zyVIp@gmail.com>
+ <aGfYL8eXjTA9puQr@willie-the-truck>
+ <aGfZwTCNO_10Ceng@J2N7QTR9R3>
+ <aGsYkFnHEkn0dBsW@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,48 +83,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250626200459.1153955-3-coltonlewis@google.com>
+In-Reply-To: <aGsYkFnHEkn0dBsW@arm.com>
 
-On Thu, Jun 26, 2025 at 08:04:38PM +0000, Colton Lewis wrote:
-> There's no reason Enums shouldn't be equivalent to UnsignedEnums and
-> explicitly specify they are unsigned. This will avoid the annoyance I
-> had with HPMN0.
+
+On Sun, Jul 06, 2025 at 07:45:04PM -0500, Catalin Marinas wrote:
+> On Fri, Jul 04, 2025 at 02:40:17PM +0100, Mark Rutland wrote:
+> > On Fri, Jul 04, 2025 at 02:33:35PM +0100, Will Deacon wrote:
+> > > I would actually like to select VMAP_STACK unconditionally for arm64.
+> > > Historically, we were held back waiting for all the various KASAN modes
+> > > to support vmalloc properly, but I _think_ that's fixed now...
+> > > 
+> > > The VMAP_STACK dependency is:
+> > > 
+> > > 	depends on !KASAN || KASAN_HW_TAGS || KASAN_VMALLOC
+> > > 
+> > > and in arm64 we have:
+> > > 
+> > > 	select KASAN_VMALLOC if KASAN
+> > > 
+> > > so it should be fine to select it afaict.
+> > > 
+> > > Any reason not to do that?
+> > 
+> > Not that I am aware of.
+> > 
+> > I'm also in favour of unconditionally selecting VMAP_STACK.
 > 
-> Signed-off-by: Colton Lewis <coltonlewis@google.com>
+> So am I.
 
-I realise you've already agreed to drop this, so the below is mostly for
-the sake of the archive.
+Thanks. I've played a bit with it, and did some mechanical work, and
+send a v1.
 
-We deliberately kept Enum separate from SignedEnum and UnsignedEnum as
-there are enumerated ID fields which have no ordering, and are neither
-signed nor unsigned (e.g. CTR_EL0.L1Ip).
-
-That was discussed previously at:
-
-  https://lore.kernel.org/all/Y5MrVC3d8MPhvshE@FVFF77S0Q05N/
-
-We could consider adding a comment to that effect in gen-sysreg.awk, but
-that needn't be part of this series.
-
-Mark.
-
-> ---
->  arch/arm64/tools/gen-sysreg.awk | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/arm64/tools/gen-sysreg.awk b/arch/arm64/tools/gen-sysreg.awk
-> index f2a1732cb1f6..fa21a632d9b7 100755
-> --- a/arch/arm64/tools/gen-sysreg.awk
-> +++ b/arch/arm64/tools/gen-sysreg.awk
-> @@ -308,6 +308,7 @@ $1 == "Enum" && (block_current() == "Sysreg" || block_current() == "SysregFields
->  	parse_bitdef(reg, field, $2)
->  
->  	define_field(reg, field, msb, lsb)
-> +	define_field_sign(reg, field, "false")
->  
->  	next
->  }
-> -- 
-> 2.50.0.727.gbf7dc18ff4-goog
-> 
+https://lore.kernel.org/all/20250707-arm64_vmap-v1-0-8de98ca0f91c@debian.org/
 
