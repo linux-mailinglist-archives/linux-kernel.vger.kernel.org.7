@@ -1,229 +1,125 @@
-Return-Path: <linux-kernel+bounces-720501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A8A1AFBC9E
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 22:36:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F4BBAFBCA0
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 22:37:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 55EB97AC338
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 20:34:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 69B0B7A75BD
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 20:36:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1512621E082;
-	Mon,  7 Jul 2025 20:36:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDBC821E082;
+	Mon,  7 Jul 2025 20:37:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="HUcH24Dw"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l+johErD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C06ECA932;
-	Mon,  7 Jul 2025 20:36:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BB0CA932;
+	Mon,  7 Jul 2025 20:37:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751920574; cv=none; b=X/8czirzFPRbLZdsb2j9DwDc7FL7CQ1BjckhyllAOUSN47vkS3WMQLRC9Hf2iomfdli0orHptFOOJ3iXthIoREBACPBLeykzMyICx4M14QvA+LETdE79y6uKAsDu20+5qxfgThULbPdk1gnOBnKTS4po+tjaCaovIc7jYj0vTGc=
+	t=1751920670; cv=none; b=RPfVKL4UwT8Z91+TXsr3DJ5NEUbijCPaiTqnlgIVyBmCEnE6HZJnHDFGjNEdOaN+xXorf9NXJTPcajs0FqUX4bWkAOj/d8PtM2GeahUmFA2191TeVU8K8o8oZcCV+PIiprWitZs3/5/tvzjZ0eCi6kRaHMBcLkJwM92hofTGT+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751920574; c=relaxed/simple;
-	bh=zWPrwd3wg5x9gNKa3ecf3D48+KXLVbGRBDo1at35nuI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cDSNsCrMC05lTnxo5kB/q/vO1OgICXhsx40olIBUIrYP5IPxz/ccFoSXR+paZ6/JaPlDNUOSz9uXCeiGRz5A9QNieYj8H97KuwUGV6aYVlbnDfEZVX2W1pHy4AZ/ofAd9XT9pkDO4LoqteyCB/LihxY58GhaqMR7MLZTaC7pj2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=HUcH24Dw; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 567IkRLv020724;
-	Mon, 7 Jul 2025 20:35:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=BFnUtE
-	rzqi+YrOuLQHHe/HmmEuiWzUgAukevdWHaQtE=; b=HUcH24DwcvCPOm3PDDcfLM
-	HVIMdtaBq+zjU+EnIVaKtvk/C0Ei4HkfmBYrKj83PDR47o9Ndy/q67RdjBzsrYUr
-	MBor8MHerh6BtErq14W2pZVcbqui/RUKemAKfd2JLDsdA97WRiHV6poIcmcC99Jf
-	G/HVrWKjo4gRapnVvvwHNTzV41mRj27seDusIe2cC3zJe3lZcSBwMGHaTc9LxL8z
-	3+tHOeEKsj0b53lUmhfGHI0S4IQqPWHOyLOGX5TDRpq/0p2tIFoGMsIXWhvOBx48
-	TB7/sor1/z4FFI/hwS5E2yNdYvOKyuJG3fvhSX91hezE6k9gyQiOZzYSeVZPfFQg
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47pur6uwwx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 07 Jul 2025 20:35:41 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 567KZfrJ024112;
-	Mon, 7 Jul 2025 20:35:41 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47pur6uwwu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 07 Jul 2025 20:35:41 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 567HSKfa003123;
-	Mon, 7 Jul 2025 20:35:39 GMT
-Received: from smtprelay03.dal12v.mail.ibm.com ([172.16.1.5])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 47qfvm7px5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 07 Jul 2025 20:35:39 +0000
-Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
-	by smtprelay03.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 567KZbLm19989208
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 7 Jul 2025 20:35:38 GMT
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D991D58066;
-	Mon,  7 Jul 2025 20:35:37 +0000 (GMT)
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 05CDD58059;
-	Mon,  7 Jul 2025 20:35:36 +0000 (GMT)
-Received: from [9.61.104.52] (unknown [9.61.104.52])
-	by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Mon,  7 Jul 2025 20:35:35 +0000 (GMT)
-Message-ID: <e8aa7f94-3e52-488d-a858-564d3d1edd4b@linux.ibm.com>
-Date: Mon, 7 Jul 2025 16:35:35 -0400
+	s=arc-20240116; t=1751920670; c=relaxed/simple;
+	bh=2WVnxaMFwH3aEP5B+pE46qp6kq5KDL59M/OkpatTSfY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aGnW/Ly8z7o6DjyyBP1tlBHlTvtU3WTxf4v6zWn8cwgZYtFk3ZwuZsVERiFkwx/uWDdVrUBfboIcmuXCFKuyIWuB2k4cWFchXlRPpISVEkSQ2/f1b9nS0hM5jzo1MbAjdvOImisV6Y0zj5uH57+rd4KsMPfi/yVCnbNVp4KJnhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l+johErD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18F02C4CEE3;
+	Mon,  7 Jul 2025 20:37:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751920669;
+	bh=2WVnxaMFwH3aEP5B+pE46qp6kq5KDL59M/OkpatTSfY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=l+johErDv6y4tsdHj2JzxIy2MqvXYTXULLu+C+N+ntlOiAs48icy84G1TROZ3GdM6
+	 S9J02eYinhKpIiBBbRFYTb6Fv+Nk+v4YzFJ+lczR8lMP6kD+chS3HuJ8Lfg6jk4Ujc
+	 G81rRbkFZckDz3cZROqLyvf64HnpRjnjzI/6UE4amEYpVBwtUwyLbEpPQhaRJ6S2v/
+	 36ioOtX83uppbYcQ2VAaLvp61ZJzcgFV+LzdhwVTvmeLBbR4eQ0SWQX0RFAKwDuEMg
+	 3j2F/2NFjJUbMW7WkhE6T7TN/JjQh89RKjrofd94bCQlDn5eZ74e3JyK8UA+ymSEgz
+	 cGPuDQ6tEmwfQ==
+Date: Mon, 7 Jul 2025 21:37:45 +0100
+From: Mark Brown <broonie@kernel.org>
+To: "Hohn, Torben" <Torben.Hohn@bruker.com>
+Cc: "amit.kumar-mahapatra@amd.com" <amit.kumar-mahapatra@amd.com>,
+	"frogger@hardanger.blackshift.org" <frogger@hardanger.blackshift.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+	"linux@roeck-us.net" <linux@roeck-us.net>
+Subject: Re: AW: [PATCH v2] spi: Raise limit on number of chip selects
+Message-ID: <93f4bc95-80d6-4a97-9c5f-32ce033c1162@sirena.org.uk>
+References: <FR4P281MB343441EB901D3DD286B923D6837AA@FR4P281MB3434.DEUP281.PROD.OUTLOOK.COM>
+ <aF553GU_btT81_b_@finisterre.sirena.org.uk>
+ <FR4P281MB34343BD0D260C127866768298346A@FR4P281MB3434.DEUP281.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] integrity: Extract secure boot enquiry function out of
- IMA
-To: GONG Ruiqi <gongruiqi1@huawei.com>, Mimi Zohar <zohar@linux.ibm.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Madhavan Srinivasan <maddy@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>
-Cc: Eric Snowberg <eric.snowberg@oracle.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>, "Lee, Chun-Yi" <jlee@suse.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-integrity@vger.kernel.org,
-        keyrings@vger.kernel.org, Lu Jialin <lujialin4@huawei.com>
-References: <20250628063251.321370-1-gongruiqi1@huawei.com>
- <eb91dcf034db28e457a4482faa397dd7632f00fd.camel@linux.ibm.com>
- <4c59f417-86cc-4dec-ae45-8fcf8c7eb16a@huawei.com>
-Content-Language: en-US
-From: Nayna Jain <nayna@linux.ibm.com>
-In-Reply-To: <4c59f417-86cc-4dec-ae45-8fcf8c7eb16a@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA3MDEzNCBTYWx0ZWRfX53yA02ssT3+2 /gIxgy0haxwvya29kT6g0bpAanaNmXV5bL1kndK/P0mrTKdZ49SFu1TJP5w1IqUWfbQ8Q/7bznI p29/fompY+x+URuYQnREA77BOBHkHDEmm6AN+HjDBDDd/RTr2UaK74qWvyJpHwehOnPzp5QzpxI
- ViFpWyHYtpHSNs7sq+DgHFFe3uHzVgoK0nLx9qzRJhfYstdyq+scQd26JdcgQnPrcJKdrxtstzl Y7GBE8NyVQz6HC57xZGbQLTG+sCw7gv8tihuKzlQYUUQ+ap1JWDBvUxKlEN17jKZRMOzcH6dAYJ bexK7F/f5ySSxPQ058yPVn13UnaJHWwzTgez/gZP7lcrVUBsHmwJqAMghch41iaIIy1XpOVbOIK
- X1P4HInyVbuTTrX82/sSSTp06SuDddd+PLM1rGoky6MjBgSeqcetdZDjnk+u5rQfeghbBPu9
-X-Proofpoint-GUID: 9YY1oyQC6cHyMbd3txRAWdcUnljcso27
-X-Proofpoint-ORIG-GUID: ApRdDBF3eK6BnW2c7Srv0xd8U7XS3XOg
-X-Authority-Analysis: v=2.4 cv=W/M4VQWk c=1 sm=1 tr=0 ts=686c2f9d cx=c_pps a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=i0EeH86SAAAA:8 a=0SdL4vufndsjM6Dj2E8A:9 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10 a=GHzZeaHGQcwA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-07_05,2025-07-07_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 phishscore=0
- mlxscore=0 priorityscore=1501 adultscore=0 clxscore=1011 suspectscore=0
- spamscore=0 lowpriorityscore=0 mlxlogscore=999 bulkscore=0 impostorscore=0
- classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507070134
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="OZNpcDAZjeEIKzHp"
+Content-Disposition: inline
+In-Reply-To: <FR4P281MB34343BD0D260C127866768298346A@FR4P281MB3434.DEUP281.PROD.OUTLOOK.COM>
+X-Cookie: We are what we are.
 
 
-On 7/2/25 10:07 PM, GONG Ruiqi wrote:
-> Hi Mimi,
->
-> On 7/3/2025 9:38 AM, Mimi Zohar wrote:
->> [CC: Nayna Jain]
->>
->> On Sat, 2025-06-28 at 14:32 +0800, GONG Ruiqi wrote:
->>> ...
->> The original reason for querying the secure boot status of the system was in
->> order to differentiate IMA policies.  Subsequently, the secure boot check was
->> also added to safely allow loading of the certificates stored in MOK. So loading
->> IMA policies and the MOK certificates ARE dependent on the secure boot mode.
->>                                                                                  
->> What is your real motivation for moving the secure boot checking out of IMA?
->>                                                                                  
-> Sorry for not stating that clearly in this patch. I think the cover
-> letter of V3 I just sent few minutes ago can answer your question, and I
-> quote:
->
-> "We encountered a boot failure issue in an in-house testing, where the
-> kernel refused to load its modules since it couldn't verify their
-> signature. The root cause turned out to be the early return of
-> load_uefi_certs(), where arch_ima_get_secureboot() returned false
-> unconditionally due to CONFIG_IMA_SECURE_AND_OR_TRUSTED_BOOT=n, even
-> though the secure boot was enabled.
-Thanks for sharing additional details.
+--OZNpcDAZjeEIKzHp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
- From x86 Kconfig:
+On Mon, Jul 07, 2025 at 07:30:29AM +0000, Hohn, Torben wrote:
 
-/For config x86:
+> I do now believe, that the proper fix is to remove this check, and then r=
+educe SPI_CS_CNT_MAX to 4 again.
+> Because it was increased to 16 only to satify this condition here. The co=
+de however does not depend on ctrl->num_chipselects being smaller
+> than SPI_CS_CNT_MAX. The only occurence of this in struct spi_controller =
+is the last_cs stuff, which just requires array sizes of the maximum
+> number a device might have.
 
-     imply IMA_SECURE_AND_OR_TRUSTED_BOOT    if EFI
-/
-And IMA_SECURE_AND_OR_TRUSTED_BOOT is dependent on IMA_ARCH_POLICY .
+Ah, good - thanks for checking.  That does make sense, I didn't look
+properly (it's been quite a while since I looked at this code) but we
+seem to mostly be writing to last_cs[] in the controller and not reading
+=66rom it in the normal path.  The main use is to avoid duplicate and
+invalid device registrations which we should do but there will be a
+better way, and even if we use an array the use is localised enough that
+we should readily be able to support dynamically sizing for the
+controllers.
 
-And from Linux Kernel Kbuild documentation( 
-https://docs.kernel.org/kbuild/kconfig-language.html) :
+> I guess the define should get a better name that makes this relationship =
+more clear. like SPI_CS_CNT_MAX_PER_DEV or something ?
+> We have discovered the b4 web submit and are now able to post proper patc=
+hes. Will do that once we have tested this here.
 
-/weak reverse dependencies: “imply” <symbol> [“if” <expr>]
+Yeah, the naming should be clearer.  Off the top of my head
+SPI_MAX_DEV_CS or something.  We do also use it to size an array in the
+controller which ought to be bigger, something like _MAX_CTRL_CS or
+soemthing, and has a more pressing need to be dynamic since you can add
+GPIO chip selects to most controllers fairly easily (even if the board
+design issues get impractical).  That's just a first pass at naming, I'm
+not attached to my option and your idea isn't the end of the world
+either.  Devices are more common than controllers and should have a
+lower limit if there is a limit so just detaching the two counts would
+get us a long way.
 
-This is similar to “select” as it enforces a lower limit on another 
-symbol except that the “implied” symbol’s value may still be set to n 
-from a direct dependency or with a visible prompt.
+--OZNpcDAZjeEIKzHp
+Content-Type: application/pgp-signature; name="signature.asc"
 
-/Following the example from the documentation, if  it is EFI enabled and 
-IMA_ARCH_POLICY is set to y then this config should be default enabled.
+-----BEGIN PGP SIGNATURE-----
 
-If it is EFI enabled and IMA_ARCH_POLICY is set to N, then the setting 
-for IMA_SECURE_AND_OR_TRUSTED_BOOT should be prompted during the build. 
-The default setting for prompt is N. So, the person doing the build 
-should actually select Y to enable IMA_ARCH_POLICY.
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmhsMBgACgkQJNaLcl1U
+h9CNOAf/S4x5OV6yMkDI+OkgQEi40Ri1QZAnUhmpB/PFnd9AoWkOaiUIKJbD/QTb
+QlXS3p8XCjO5UVyeaIH8i5pcmnDpLjbXnpzpcYH2Mfy6UoX4Y1HiBX8dkIUP3Msl
+cvWe7s5Re+DlAUL/xvSDZqNwYy1eMkJcBdm66bySGMpT4pTdZ5jKyqswrL8vzOB0
+6zX5sCT2GepLER2fupCHWWqgl3TmeRYW0jNJyY8cExLHzC8wBt+Udg9pc0IkAX9p
+x1xHkvOB/lHxcoRauifu84Q6hJdERVZe9uT7zevvfUqjtoRUwUWMKoCaIHhb4zLy
+l0cIVm8sZ9J6PQZZJjjXP/0IXelfdQ==
+=fJQk
+-----END PGP SIGNATURE-----
 
-Wondering what is the scenario for you? Unless you have IMA_ARCH_POLICY 
-set to N, this config should have been ideally enabled. If you have 
-explicitly set it to N, am curious any specific reason for that.
-
-Thanks & Regards,
-
-    - Nayna
->
-> This patch set attempts to remove this implicit dependency by shifting
-> the functionality of efi secure boot enquiry from IMA to the integrity
-> subsystem, so that both certificate loading and IMA can make use of it
-> independently."
->
-> Here's the link of V3, and please take a look:
-> https://lore.kernel.org/all/20250703014353.3366268-1-gongruiqi1@huawei.com/T/#mef6d5ea47a4ee19745c5292ab8948eba9e16628d
->
->> FYI, there are a number of problems with the patch itself.  From a very high
->> level:
->>                                                                                  
->> - The EFI secure boot check is co-located with loading the architecture specific
->> policies.  By co-locating the secure boot check with loading the architecture
->> specific IMA policies, there aren't any ifdef's in C code.  Please refer to the
->> "conditional compilation" section in the kernel coding-style documentation on
->> avoiding ifdef's in C code.
->>                                                                                  
->> - Each architecture has it's own method of detecting secure boot. Originally the
->> x86 code was in arch/x86, but to prevent code duplication it was moved to IMA.
->> The new file should at least be named efi_secureboot.c.
-> You're right. I didn't realize it's arch-specific in the first place,
-> and moving and renaming arch_ima_get_secureboot() turned out to be a
-> real mess ...
->
-> So the V3 keeps the prototype of arch_ima_get_secureboot(), and only
-> moves out its body, which I think can also better represent the
-> intention of the patch.
->
-> As of the name of the new file, as V3 has been sent earlier and still
-> uses secureboot.c, I can't change it there. I can do it in V4.
->
-> -Ruiqi
->
->>                                                                                  
->> - The patch title should be about moving and renaming the secure boot check.
->> The patch description should include a valid reason for the change.
->>
->> Mimi & Nayna
+--OZNpcDAZjeEIKzHp--
 
