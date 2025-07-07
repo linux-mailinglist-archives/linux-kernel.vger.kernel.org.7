@@ -1,94 +1,283 @@
-Return-Path: <linux-kernel+bounces-719570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA31CAFAFBB
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 11:30:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 794AAAFAFBF
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 11:31:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41CA34A0A86
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 09:30:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6BF44A133C
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 09:31:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B5D3293C57;
-	Mon,  7 Jul 2025 09:30:05 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 145431DE8BB;
+	Mon,  7 Jul 2025 09:31:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="C1JbOEwB"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80232292B27
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 09:30:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24BE0261595
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 09:31:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751880605; cv=none; b=rukspzrWEVIet2u5/+aqIX02rjHEPZCWhTEl3TS9+S7503KKRUxdjzB77QLc9I0ZG24qS9mezKDmwxyOPlWqoKWSoDz92Su/X3IOV/BdFTJ7aFP5nQk4k2ZEre8HFUjGRIYlPxuAYRkqbFCqnu+uPcb9wvdNxBCA6Elwc9zTOMQ=
+	t=1751880669; cv=none; b=ckMD+qJO7gq3TNMhI+C+3P1hIl+DSp5B2fXRJUoxpGhq7pimYNYNVJjHQ3PGeDNTtUlOyTgUi15Ox3J3DSo+FwtFwApsiYfSF2kSaSoOLYwtmn10UsUrdSVRfaOK/EbJj+4Mx8Tr2y3iuNfw0p/QmGDtuSofw0B7wZbS8Q3kep8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751880605; c=relaxed/simple;
-	bh=pMhlVEkUFYx16frqYD2ys/zp4Vacync+fTFQLO8Y7j8=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=msfdcxmLNtcvn8WhllRCToQU/eQhYmV5HRNUG8og2cAKHkEuilPXxtDcVTB+lsjrl9wxFAGe8ZStCLKMbTQ3u+TxFGNc45ysOgHfgs6gU/RztHPgmK0ivP9Xq8y5i6/MPyFGKcNM0Kxl3v4cESFTVyzPmtnKWKZDDl0TxR1Wg1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3e05997f731so72292425ab.3
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 02:30:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751880603; x=1752485403;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=i3FrwSzkZRQpjEv5ax7x7GcgrRUZI1/BeJkblnIIDas=;
-        b=Fx4JfQHjHptzTnInlIo5J+GFBtXbTG95H1ja3SS7xTYxpWS0hCMJJda9pvTu0l45SE
-         VimOcXWJaXOzWc0pKNIII+249BvTJOHMPK0GwA6igAck3GSaIatFnZkGxiBUCfkhb0ON
-         x0uKmW7k4UIkyMSEResz3BQjnA7FXBo7Hxz+D8DeZF41gYF5N3aVvfDG5sH+nOCpvRt7
-         A1d8VsYoA28eAlzX5Wj2KlBXg/S+svpm3AA6U6egp9wTBZ+yKj/6uno8AbZCfrgBHanO
-         cTcIXafKCiLeQCdCsrc2aY0R6jj8TlAm/RSphR4abTKhB6MfpzxQdFzTmqvZtgrNmIeJ
-         zNBA==
-X-Forwarded-Encrypted: i=1; AJvYcCV8XI4VDmZkij3DZeknejCD63evUf4S5TEk3OMJ6hz//jdN+Cft//4RRk0wbQKrmvRGRD1MvQLN62gJePI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/J0xzRnG5djrwoHsjGoPFlRvCzucns5iSI5/SPhVHeOrBbHxA
-	s4+CySF8d1k5lN4z0TKJDHkaCKFmCd/oS+tV1GTC8IHbmeo+8a+IuGTyxVAlSWCmo+SFrqdPtEI
-	4rKwuG13Fqb19CUaRgODqJpsGc+ONgZ+ZAFeZf34yATEH9nRSm9rhxbZXe+w=
-X-Google-Smtp-Source: AGHT+IH5hJ99iBdAZ2eUEYhkALrqUM1smJuemUwvFzbEb4CHV+YszENd6TVowh9yRirN1q24ejmtOnIeaAYKcZbBaU/7HfoXhukt
+	s=arc-20240116; t=1751880669; c=relaxed/simple;
+	bh=9LS1/8t7DaKVh82SCYm0AEnt4c7Rroj4z2PBzKThYNI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=L46PJ2LIr/okt1K1RZLNdQyomd6T6q+ee1jrFpo3Hq93KIzLivOIJbDu0gOb6L3Lvc8xc8OlAAx6AC2xn/+wH9jutO7ahFSWs3A49sy+Ma5qNDKF2gfor32fmnG++CYvkTRNoh0Os8UVn0D+qfWgYljyYTG7lqhhTtet7251I9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=C1JbOEwB; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id BF41240E0208;
+	Mon,  7 Jul 2025 09:30:54 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id jbK1aqKiTf2C; Mon,  7 Jul 2025 09:30:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1751880650; bh=1lz/JpPtCN7njwwxfe47p4WGy8o2scBRxB/pzapm9KI=;
+	h=Date:From:To:Cc:Subject:From;
+	b=C1JbOEwBSbRAVbykwKs8j6NZofsnsHLWDwhg4FLoR2hrJ0ltzP4r7S7+F3KK6mirk
+	 v/rCCS8xa6TGIIo50OAUFj/q+KaLj9laFQK8H4NU00MYbRd8VELaWqLakGizgVmPxF
+	 gF130GLXTOK0kC2XMlhqlRWVA+aLXT+NLACNz7uA1ckAbNtp8lfqGpFb5vkZmVAuHu
+	 bTY5rsJ6MB3w6so3CFXEIDSXBJ+fyJZZmrxUviZh2lyQzhX+k3KgkTHuM44Y4FjA6+
+	 LPGFHpYKjlTfE9FvW5HXm9dhzt9/MmLGy9lwA19GUkMDF47jgY8/dkbmYv9akmViC0
+	 dVxS8JAfnC7+wJyzdBsD/Jn1V2kPdHiixWL/IgBEKwT3vE9rLrLV7D75Wg3Qdo/ta+
+	 fms9sXLrObKOj1kwjm7FtogFPfKm9jvkzzH5mKyMfPZy7rqBk6M2r5bRrg4ZAQRyeW
+	 fIF2Hhhdi1+q06jLKL4kFOUOKVO0hz1p7JQCr3DeoH2AXqlNmCJ4fXjuAo5EWlPApe
+	 IMLDnuhHdrXA+eXkdFdqYLFZoVjC5AjrlOvOiVH8JKjCwt3eZe/Fh4YMPr9qtdQwTB
+	 TNvQTxnEcs9L8vJDnNtg27jlmHoBTkBPyolu5VueCzbaMnJ0WKT+/W7TO4vnDjCaYh
+	 2azpldGwVqgZj+jC4LTqwKdE=
+Received: from zn.tnic (p57969c58.dip0.t-ipconnect.de [87.150.156.88])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 50F4940E0198;
+	Mon,  7 Jul 2025 09:30:40 +0000 (UTC)
+Date: Mon, 7 Jul 2025 11:30:32 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: amd-gfx@lists.freedesktop.org
+Cc: Alex Deucher <alexander.deucher@amd.com>,
+	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Lijo Lazar <lijo.lazar@amd.com>,
+	Marek =?utf-8?B?T2zFocOhaw==?= <marek.olsak@amd.com>,
+	Ramesh Errabolu <Ramesh.Errabolu@amd.com>,
+	Arvind Yadav <Arvind.Yadav@amd.com>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: WARNING: drivers/gpu/drm/drm_gem.c:286 at
+ drm_gem_object_handle_put_unlocked+0xb1/0xf0 [drm]
+Message-ID: <20250707093032.GAaGuTuJ0ZYHPgA2q3@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:216b:b0:3df:4738:977e with SMTP id
- e9e14a558f8ab-3e1371d527fmr93550285ab.10.1751880602735; Mon, 07 Jul 2025
- 02:30:02 -0700 (PDT)
-Date: Mon, 07 Jul 2025 02:30:02 -0700
-In-Reply-To: <67917ed8.050a0220.15cac.02eb.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <686b939a.a00a0220.c7b3.007e.GAE@google.com>
-Subject: Re: [syzbot] [fs?] BUG: corrupted list in remove_wait_queue (2)
-From: syzbot <syzbot+4e21d5f67b886a692b55@syzkaller.appspotmail.com>
-To: brauner@kernel.org, gregkh@linuxfoundation.org, jack@suse.cz, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-media@vger.kernel.org, lizhi.xu@windriver.com, mchehab@kernel.org, 
-	standback@126.com, superman.xpt@gmail.com, syzkaller-bugs@googlegroups.com, 
-	viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-syzbot has bisected this issue to:
+Hi all,
 
-commit 8ffdff6a8cfbdc174a3a390b6f825a277b5bb895
-Author: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date:   Wed Apr 14 08:58:10 2021 +0000
+I see the below on -rc5 + tip, on a RN machine.
 
-    staging: comedi: move out of staging directory
+---
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13009f70580000
-start commit:   05df91921da6 Merge tag 'v6.16-rc4-smb3-client-fixes' of gi..
-git tree:       upstream
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=10809f70580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=17009f70580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=45bd916a213c79bb
-dashboard link: https://syzkaller.appspot.com/bug?extid=4e21d5f67b886a692b55
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=161cdc8c580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14d1a582580000
+[    5.592468] cdc_ncm 2-2:2.0 eth0: register 'cdc_ncm' at usb-0000:03:00.3=
+-2, CDC NCM (NO ZLP), f8:e4:3b:33:37:71
+[    5.593133] usbcore: registered new interface driver cdc_ncm
+[    5.597944] usbcore: registered new interface driver cdc_wdm
+[    5.600108] usbcore: registered new interface driver cdc_mbim
+[    6.912317] ------------[ cut here ]------------
+[    6.912377] WARNING: drivers/gpu/drm/drm_gem.c:286 at drm_gem_object_han=
+dle_put_unlocked+0xb1/0xf0 [drm], CPU#1: Xorg/629
+[    6.912429] Modules linked in: cdc_mbim(E) cdc_wdm(E) cdc_ncm(E) cdc_eth=
+er(E) amd_atl(E) nls_ascii(E) nls_cp437(E) vfat(E) fat(E) joydev(E) amdgpu(=
+E) edac_mce_amd(E) snd_hda_codec_realtek(E) snd_hda_codec_generic(E) snd_hd=
+a_scodec_component(E) snd_hda_codec_hdmi(E) rtw88_8822ce(E) hid_multitouch(=
+E) amdxcp(E) kvm_amd(E) sha3_generic(E) rtw88_8822c(E) i2c_algo_bit(E) rtw8=
+8_pci(E) drm_client_lib(E) snd_hda_intel(E) drm_ttm_helper(E) rtw88_core(E)=
+ jitterentropy_rng(E) hid_generic(E) snd_intel_dspcfg(E) tpm_crb(E) wmi_bmo=
+f(E) drbg(E) ttm(E) kvm(E) snd_hda_codec(E) drm_exec(E) mac80211(E) irqbypa=
+ss(E) snd_hwdep(E) snd_hda_core(E) ghash_clmulni_intel(E) gpu_sched(E) liba=
+rc4(E) aesni_intel(E) snd_pcm(E) drm_suballoc_helper(E) drm_panel_backlight=
+_quirks(E) sp5100_tco(E) rapl(E) cec(E) snd_timer(E) watchdog(E) cfg80211(E=
+) drm_buddy(E) snd_rn_pci_acp3x(E) ucsi_acpi(E) snd_acp_config(E) drm_displ=
+ay_helper(E) pcspkr(E) i2c_piix4(E) xhci_pci(E) snd_soc_acpi(E) acpi_cpufre=
+q(E) snd(E) video(E) typec_ucsi(E) roles(E) drm_kms_helper(E)
+[    6.912495]  ccp(E) soundcore(E) snd_pci_acp3x(E) xhci_hcd(E) k10temp(E)=
+ rfkill(E) i2c_smbus(E) typec(E) battery(E) wmi(E) tpm_tis(E) i2c_hid_acpi(=
+E) tpm_tis_core(E) i2c_hid(E) hid(E) ac(E) button(E) fuse(E) drm(E) efi_pst=
+ore(E) tpm(E) libaescfb(E) ecdh_generic(E) ecc(E) rng_core(E) autofs4(E) ev=
+dev(E) serio_raw(E)
+[    6.912538] CPU: 1 UID: 0 PID: 629 Comm: Xorg Tainted: G            E   =
+    6.16.0-rc5+ #1 PREEMPT(voluntary)=20
+[    6.912542] Tainted: [E]=3DUNSIGNED_MODULE
+[    6.912544] Hardware name: HP HP ProBook 635 Aero G7 Notebook PC/8830, B=
+IOS S84 Ver. 01.05.00 05/14/2021
+[    6.912547] RIP: 0010:drm_gem_object_handle_put_unlocked+0xb1/0xf0 [drm]
+[    6.912573] Code: 55 d1 1e f3 48 89 ef e8 fd 22 1e f3 eb d8 48 8b 43 08 =
+48 8d b8 f8 0c 00 00 e8 cb 85 1a f3 c7 83 18 01 00 00 00 00 00 00 eb 98 <0f=
+> 0b 5b 5d e9 26 d1 1e f3 48 8b 83 f8 01 00 00 48 8b 00 48 85 c0
+[    6.912575] RSP: 0018:ffffb5ebc32e3ba0 EFLAGS: 00010246
+[    6.912578] RAX: 0000000000000000 RBX: 0000000000000001 RCX: ffffb5ebc32=
+e3b1c
+[    6.912581] RDX: 0000000000000000 RSI: ffff9efb8cb005e8 RDI: ffff9efb861=
+cd448
+[    6.912583] RBP: ffff9efb8cb00010 R08: 0000000000000001 R09: ffff9efb8cb=
+00610
+[    6.912584] R10: 0000000000000000 R11: ffffb5ebc32e3b58 R12: ffff9efb8c2=
+41700
+[    6.912586] R13: 00000000ffffffdd R14: ffffb5ebc32e3c80 R15: ffff9efb8cb=
+00010
+[    6.912588] FS:  00007f320acb2b00(0000) GS:ffff9efcd29b8000(0000) knlGS:=
+0000000000000000
+[    6.912591] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    6.912593] CR2: 00005605532d6164 CR3: 000000000bee9000 CR4: 00000000003=
+50ef0
+[    6.912595] Call Trace:
+[    6.912597]  <TASK>
+[    6.912599]  drm_gem_fb_destroy+0x2c/0x50 [drm_kms_helper]
+[    6.912616]  drm_mode_cursor_universal+0x10d/0x2a0 [drm]
+[    6.912647]  drm_mode_cursor_common.part.0+0xb0/0x200 [drm]
+[    6.912676]  ? __pfx_drm_mode_cursor2_ioctl+0x10/0x10 [drm]
+[    6.912700]  drm_ioctl_kernel+0xa9/0x100 [drm]
+[    6.912728]  drm_ioctl+0x275/0x520 [drm]
+[    6.912752]  ? __pfx_drm_mode_cursor2_ioctl+0x10/0x10 [drm]
+[    6.912777]  ? lock_release+0xc6/0x290
+[    6.912783]  ? _raw_spin_unlock_irqrestore+0x44/0x60
+[    6.912789]  amdgpu_drm_ioctl+0x4e/0x90 [amdgpu]
+[    6.913114]  __x64_sys_ioctl+0x85/0xd0
+[    6.913120]  do_syscall_64+0x6a/0x2e0
+[    6.913125]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+[    6.913128] RIP: 0033:0x7f320b0338db
+[    6.913131] Code: 00 48 89 44 24 18 31 c0 48 8d 44 24 60 c7 04 24 10 00 =
+00 00 48 89 44 24 08 48 8d 44 24 20 48 89 44 24 10 b8 10 00 00 00 0f 05 <89=
+> c2 3d 00 f0 ff ff 77 1c 48 8b 44 24 18 64 48 2b 04 25 28 00 00
+[    6.913134] RSP: 002b:00007ffd66400810 EFLAGS: 00000246 ORIG_RAX: 000000=
+0000000010
+[    6.913137] RAX: ffffffffffffffda RBX: 00007ffd664008a0 RCX: 00007f320b0=
+338db
+[    6.913139] RDX: 00007ffd664008a0 RSI: 00000000c02464bb RDI: 00000000000=
+0000f
+[    6.913141] RBP: 00007ffd664008a0 R08: 00007f320a8cbb20 R09: 00000000000=
+00001
+[    6.913143] R10: 000000000000004b R11: 0000000000000246 R12: 00000000c02=
+464bb
+[    6.913145] R13: 000000000000000f R14: 0000000000000001 R15: 00005605530=
+01d10
+[    6.913152]  </TASK>
+[    6.913153] irq event stamp: 354561
+[    6.913155] hardirqs last  enabled at (354569): [<ffffffffb2b951f2>] __u=
+p_console_sem+0x52/0x60
+[    6.913159] hardirqs last disabled at (354576): [<ffffffffb2b951d7>] __u=
+p_console_sem+0x37/0x60
+[    6.913161] softirqs last  enabled at (352542): [<ffffffffb2aeb586>] __i=
+rq_exit_rcu+0x96/0xc0
+[    6.913165] softirqs last disabled at (352537): [<ffffffffb2aeb586>] __i=
+rq_exit_rcu+0x96/0xc0
+[    6.913167] ---[ end trace 0000000000000000 ]---
+[    6.913288] ------------[ cut here ]------------
+[    6.913290] WARNING: drivers/gpu/drm/drm_gem.c:286 at drm_gem_object_han=
+dle_put_unlocked+0xb1/0xf0 [drm], CPU#1: Xorg/629
+[    6.913318] Modules linked in: cdc_mbim(E) cdc_wdm(E) cdc_ncm(E) cdc_eth=
+er(E) amd_atl(E) nls_ascii(E) nls_cp437(E) vfat(E) fat(E) joydev(E) amdgpu(=
+E) edac_mce_amd(E) snd_hda_codec_realtek(E) snd_hda_codec_generic(E) snd_hd=
+a_scodec_component(E) snd_hda_codec_hdmi(E) rtw88_8822ce(E) hid_multitouch(=
+E) amdxcp(E) kvm_amd(E) sha3_generic(E) rtw88_8822c(E) i2c_algo_bit(E) rtw8=
+8_pci(E) drm_client_lib(E) snd_hda_intel(E) drm_ttm_helper(E) rtw88_core(E)=
+ jitterentropy_rng(E) hid_generic(E) snd_intel_dspcfg(E) tpm_crb(E) wmi_bmo=
+f(E) drbg(E) ttm(E) kvm(E) snd_hda_codec(E) drm_exec(E) mac80211(E) irqbypa=
+ss(E) snd_hwdep(E) snd_hda_core(E) ghash_clmulni_intel(E) gpu_sched(E) liba=
+rc4(E) aesni_intel(E) snd_pcm(E) drm_suballoc_helper(E) drm_panel_backlight=
+_quirks(E) sp5100_tco(E) rapl(E) cec(E) snd_timer(E) watchdog(E) cfg80211(E=
+) drm_buddy(E) snd_rn_pci_acp3x(E) ucsi_acpi(E) snd_acp_config(E) drm_displ=
+ay_helper(E) pcspkr(E) i2c_piix4(E) xhci_pci(E) snd_soc_acpi(E) acpi_cpufre=
+q(E) snd(E) video(E) typec_ucsi(E) roles(E) drm_kms_helper(E)
+[    6.913380]  ccp(E) soundcore(E) snd_pci_acp3x(E) xhci_hcd(E) k10temp(E)=
+ rfkill(E) i2c_smbus(E) typec(E) battery(E) wmi(E) tpm_tis(E) i2c_hid_acpi(=
+E) tpm_tis_core(E) i2c_hid(E) hid(E) ac(E) button(E) fuse(E) drm(E) efi_pst=
+ore(E) tpm(E) libaescfb(E) ecdh_generic(E) ecc(E) rng_core(E) autofs4(E) ev=
+dev(E) serio_raw(E)
+[    6.913408] CPU: 1 UID: 0 PID: 629 Comm: Xorg Tainted: G        W   E   =
+    6.16.0-rc5+ #1 PREEMPT(voluntary)=20
+[    6.913412] Tainted: [W]=3DWARN, [E]=3DUNSIGNED_MODULE
+[    6.913414] Hardware name: HP HP ProBook 635 Aero G7 Notebook PC/8830, B=
+IOS S84 Ver. 01.05.00 05/14/2021
+[    6.913416] RIP: 0010:drm_gem_object_handle_put_unlocked+0xb1/0xf0 [drm]
+[    6.913438] Code: 55 d1 1e f3 48 89 ef e8 fd 22 1e f3 eb d8 48 8b 43 08 =
+48 8d b8 f8 0c 00 00 e8 cb 85 1a f3 c7 83 18 01 00 00 00 00 00 00 eb 98 <0f=
+> 0b 5b 5d e9 26 d1 1e f3 48 8b 83 f8 01 00 00 48 8b 00 48 85 c0
+[    6.913441] RSP: 0018:ffffb5ebc32e3ba0 EFLAGS: 00010246
+[    6.913443] RAX: 0000000000000000 RBX: 0000000000000001 RCX: ffffb5ebc32=
+e3b1c
+[    6.913445] RDX: 0000000000000000 RSI: ffff9efb8cb005e8 RDI: ffff9efb861=
+cd448
+[    6.913447] RBP: ffff9efb8cb00010 R08: 0000000000000001 R09: ffff9efb8cb=
+00610
+[    6.913449] R10: 0000000000000000 R11: ffffb5ebc32e3b58 R12: ffff9efb8c2=
+41700
+[    6.913451] R13: 00000000ffffffdd R14: ffffb5ebc32e3c80 R15: ffff9efb8cb=
+00010
+[    6.913453] FS:  00007f320acb2b00(0000) GS:ffff9efcd29b8000(0000) knlGS:=
+0000000000000000
+[    6.913455] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    6.913457] CR2: 00005605532d6164 CR3: 000000000bee9000 CR4: 00000000003=
+50ef0
+[    6.913459] Call Trace:
+[    6.913461]  <TASK>
+[    6.913464]  drm_gem_fb_destroy+0x2c/0x50 [drm_kms_helper]
+[    6.913477]  drm_mode_cursor_universal+0x10d/0x2a0 [drm]
+[    6.913506]  drm_mode_cursor_common.part.0+0xb0/0x200 [drm]
+[    6.913534]  ? __pfx_drm_mode_cursor2_ioctl+0x10/0x10 [drm]
+[    6.913557]  drm_ioctl_kernel+0xa9/0x100 [drm]
+[    6.913583]  drm_ioctl+0x275/0x520 [drm]
+[    6.913607]  ? __pfx_drm_mode_cursor2_ioctl+0x10/0x10 [drm]
+[    6.913631]  ? lock_release+0xc6/0x290
+[    6.913637]  ? _raw_spin_unlock_irqrestore+0x44/0x60
+[    6.913642]  amdgpu_drm_ioctl+0x4e/0x90 [amdgpu]
+[    6.913818]  __x64_sys_ioctl+0x85/0xd0
+[    6.913823]  do_syscall_64+0x6a/0x2e0
+[    6.913828]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+[    6.913830] RIP: 0033:0x7f320b0338db
+[    6.913832] Code: 00 48 89 44 24 18 31 c0 48 8d 44 24 60 c7 04 24 10 00 =
+00 00 48 89 44 24 08 48 8d 44 24 20 48 89 44 24 10 b8 10 00 00 00 0f 05 <89=
+> c2 3d 00 f0 ff ff 77 1c 48 8b 44 24 18 64 48 2b 04 25 28 00 00
+[    6.913835] RSP: 002b:00007ffd66400810 EFLAGS: 00000246 ORIG_RAX: 000000=
+0000000010
+[    6.913838] RAX: ffffffffffffffda RBX: 00007ffd664008a0 RCX: 00007f320b0=
+338db
+[    6.913839] RDX: 00007ffd664008a0 RSI: 00000000c02464bb RDI: 00000000000=
+0000f
+[    6.913841] RBP: 00007ffd664008a0 R08: 00007f320a8cbb20 R09: 00000000000=
+00001
+[    6.913843] R10: 000000000000004b R11: 0000000000000246 R12: 00000000c02=
+464bb
+[    6.913845] R13: 000000000000000f R14: 0000000000000001 R15: 00005605530=
+01d10
+[    6.913852]  </TASK>
+[    6.913853] irq event stamp: 355561
+[    6.913855] hardirqs last  enabled at (355569): [<ffffffffb2b951f2>] __u=
+p_console_sem+0x52/0x60
+[    6.913858] hardirqs last disabled at (355576): [<ffffffffb2b951d7>] __u=
+p_console_sem+0x37/0x60
+[    6.913861] softirqs last  enabled at (352542): [<ffffffffb2aeb586>] __i=
+rq_exit_rcu+0x96/0xc0
+[    6.913864] softirqs last disabled at (352537): [<ffffffffb2aeb586>] __i=
+rq_exit_rcu+0x96/0xc0
+[    6.913866] ---[ end trace 0000000000000000 ]---
+[   45.744032]     percentage:          78%
+[  225.782261]     percentage:          79%
 
-Reported-by: syzbot+4e21d5f67b886a692b55@syzkaller.appspotmail.com
-Fixes: 8ffdff6a8cfb ("staging: comedi: move out of staging directory")
+--=20
+Regards/Gruss,
+    Boris.
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+https://people.kernel.org/tglx/notes-about-netiquette
 
