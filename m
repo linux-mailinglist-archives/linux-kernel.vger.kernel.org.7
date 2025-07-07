@@ -1,117 +1,144 @@
-Return-Path: <linux-kernel+bounces-720295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DA8BAFB9D9
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 19:26:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 73747AFB9E5
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 19:28:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9622A4250E5
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 17:25:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 208D1423E14
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 17:28:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C1DD2E7F3A;
-	Mon,  7 Jul 2025 17:26:04 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF81422127A;
-	Mon,  7 Jul 2025 17:26:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC8B32E88A6;
+	Mon,  7 Jul 2025 17:28:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="InjHwR5y"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33213254844;
+	Mon,  7 Jul 2025 17:28:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751909164; cv=none; b=Pw6t/1wXNSRawxon+sxlZHL9b/y+1w3M+v/I7LkTIy4q01XYSBOiJj2lfv2Raoph2kEbkZJ2dgqxTaBa2ZI0TvIzSfwteNzNppsEwYDhkx65hLAqlEW35fJs3BWJUA5x7ujL+YdslM8DfqBaS9n63lulTi/HuLY0Ru9CoLXdc+8=
+	t=1751909303; cv=none; b=q0QNwDZilrU9g043f/OcX9ISM5wuDCHXJKNlyTxbD1i3mu+752jvLGYvi7qTV3w8xzGt2GnR33d1Aegn6QNrhhD1bej5Y5j39wuFWA0Qh3UxwqlpILxBnX5UTzCe7mvt75opf0ES/Z8d5OCKQDM8HxqKVGcRfNXqc+Xb7JeDLQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751909164; c=relaxed/simple;
-	bh=uTGGSkDiwNf2+d48FdgJ5vLX6nsin8g7naCfFupDseE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G67hDd81VSkMIIzGtOYNXBA9SsX73V5UlKKgsLWSEfCLtTne8qlVQ9ISO5Vewvg5HBZZZ/OfwR5WdruItMNJRXqsuS8ozX6pS3GtPeDQAKAz8k2KTI4qBRb3qfx5xDvwiXknLC3+G/2F7PRlun1tYcP5Vo/PFI/NGXNjqiW3Yo4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C8A7C168F;
-	Mon,  7 Jul 2025 10:25:49 -0700 (PDT)
-Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 652A03F66E;
-	Mon,  7 Jul 2025 10:26:00 -0700 (PDT)
-Date: Mon, 7 Jul 2025 18:25:57 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Breno Leitao <leitao@debian.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-efi@vger.kernel.org, leo.yan@arm.com, kernel-team@meta.com
-Subject: Re: [PATCH 0/8] arm64: set VMAP_STACK by default
-Message-ID: <aGwDJXTGAdV_VqY2@J2N7QTR9R3>
-References: <20250707-arm64_vmap-v1-0-8de98ca0f91c@debian.org>
+	s=arc-20240116; t=1751909303; c=relaxed/simple;
+	bh=DA0vYq7xQ92l2ohY6lnFRwwvg+usb4Pg+fhbyInf+a4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Wyz7BmNaLMnUqnIw92xcJU+12zRQtii7M7qUK6TxuT6E5B89ZOeQj1+JF38lZKNCKpm9cMRFdVUgOwI+duwLmQHX1ZhN2FwIyAaCKS39hWNPvds4HsELNAj+1H0Xj5WXukFIZJickp2LeBjNquc4uQTfwS9L5Mt5ucbruAbOXv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=InjHwR5y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAFF4C4CEF4;
+	Mon,  7 Jul 2025 17:28:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751909302;
+	bh=DA0vYq7xQ92l2ohY6lnFRwwvg+usb4Pg+fhbyInf+a4=;
+	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc:From;
+	b=InjHwR5yiJURFc32QyEd1ElrA8jBUJqwZ8RkJ+B4GfK/n7FXD5hG+RGeO/BOKa27A
+	 MwjkvAiYZJtVvqzEawYcHG3VFaCQlA5RKsal9NDycBtcUe2EutUyQkC6Kn9PF8lwq2
+	 sHw/1b1YqW79iFoMlq9bc+odY8w3LceQ4g/JGulNkLQD/oZHxqdFb//OxOm0ZWN4YB
+	 pn09uSlBNDl4zxkQftoT47W9hm9ySJIIKZLneAXTbWEsSRLXZvmoIlXvw2oCtIasu8
+	 40xY/X3u0Y7tdaDe/jBjhbsiF/9FTORO0wAHWXSXVf+uklisW2ns4ZQ+X3rRIZVHXD
+	 8KB5UXjAb/D1Q==
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-32b8134ef6aso29732941fa.0;
+        Mon, 07 Jul 2025 10:28:22 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUK+sU7+sUVkf2qm0jkpzFHkSaD24x4ypNw6YmfHaGVaFefXGjkrxqX8LDjlBKi7dIHgJgaDtRQRXpe@vger.kernel.org, AJvYcCV0gbAVqegtcFZuGtnhj/qv0za1X8KTI+YXHgWPmYEQaTI4MEQBVPRbmBj98Al7IuWutKGOPHXGdcU=@vger.kernel.org, AJvYcCVLzWd/yb+GS4LiHodhZoCcn3YU60g/B2kx1dRIH2yS2kRWnqifTP/gX5uq0UNPOmY9sxVEMzS6bxlp2KP2@vger.kernel.org, AJvYcCXgdpnbVfj0tQ8YSIrGQIch9cVdSjpcwiDXaqEwjEX1b3P1SknUawOrCHq0fZpD5cBBSSWQuTUI3ts=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUQo8+HOYffuKVxvio6F39eznXcuitCdyKWuMdmMiZOUWNC4hc
+	LRvpJ9a0N73L98WF8mtRS3YkbVBDhACGAboKN4ednXQ9KIcuOaNbyhNEqel2uHjsRI8HI9A14tJ
+	epar4ps22xXiHPCu4/viSJMhF6vUOmhA=
+X-Google-Smtp-Source: AGHT+IFY+rLsffZJVhzZIq/tx6edFSvqTm7LgThpPh+tF0NsB2IUIPiOdKkZUrVJDtPq9uSRlUjRqtYSBJv3s5pRILs=
+X-Received: by 2002:a05:651c:552:b0:32f:1f1b:1e68 with SMTP id
+ 38308e7fff4ca-32f1f1b32bamr22374831fa.18.1751909301146; Mon, 07 Jul 2025
+ 10:28:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250707-arm64_vmap-v1-0-8de98ca0f91c@debian.org>
+References: <VI2PR04MB11147CCEFE4204B852807AAF2E841A@VI2PR04MB11147.eurprd04.prod.outlook.com>
+ <20250707105816.GF11488@nxa18884-linux> <20250707-careful-pragmatic-quail-e1a2d8-mkl@pengutronix.de>
+In-Reply-To: <20250707-careful-pragmatic-quail-e1a2d8-mkl@pengutronix.de>
+Reply-To: wens@kernel.org
+From: Chen-Yu Tsai <wens@kernel.org>
+Date: Tue, 8 Jul 2025 01:28:08 +0800
+X-Gmail-Original-Message-ID: <CAGb2v64PfUiKjrJyhcthuLt6FXQS6VoaShYZ3A3WO__3pu4O+w@mail.gmail.com>
+X-Gm-Features: Ac12FXzWY8P19qDkdGNQUB3iwV0nucG8riI9TSaqcqIAG1yNxhf63TFCmT9amp4
+Message-ID: <CAGb2v64PfUiKjrJyhcthuLt6FXQS6VoaShYZ3A3WO__3pu4O+w@mail.gmail.com>
+Subject: Re: Dead lock with clock global prepare_lock mutex and device's power.runtime_status
+To: Marc Kleine-Budde <mkl@pengutronix.de>
+Cc: Miquel Raynal <miquel.raynal@bootlin.com>, Peng Fan <peng.fan@oss.nxp.com>, 
+	Carlos Song <carlos.song@nxp.com>, Ulf Hansson <ulf.hansson@linaro.org>, 
+	Stephen Boyd <sboyd@kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>, 
+	"rafael@kernel.org" <rafael@kernel.org>, "mturquette@baylibre.com" <mturquette@baylibre.com>, Frank Li <frank.li@nxp.com>, 
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "dakr@kernel.org" <dakr@kernel.org>, 
+	"festevam@gmail.com" <festevam@gmail.com>, 
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, "pavel@kernel.org" <pavel@kernel.org>, 
+	Bough Chen <haibo.chen@nxp.com>, "len.brown@intel.com" <len.brown@intel.com>, 
+	Andi Shyti <andi.shyti@kernel.org>, 
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, 
+	"s.hauer@pengutronix.de" <s.hauer@pengutronix.de>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Aisheng Dong <aisheng.dong@nxp.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"kernel@pengutronix.de" <kernel@pengutronix.de>, "shawnguo@kernel.org" <shawnguo@kernel.org>, Jun Li <jun.li@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 07, 2025 at 09:01:00AM -0700, Breno Leitao wrote:
-> Hi all,
-> 
-> This patchset select VMAP_STACK on arm64 by default, and cleans up the
-> code by removing all associated CONFIG_VMAP_STACK conditionals.
-> 
-> This is a suggestion from Will Deacon from another discussion[1].
-> 
-> With VMAP_STACK now always enabled on arm64, the code can be
-> significantly simplified, reducing complexity and potential for
-> misconfiguration.
-> 
-> Overview of Changes
-> 
->     * Remove all #ifdef CONFIG_VMAP_STACK and related runtime checks
->       throughout the architecture codebase.
->     * Replace runtime checks with build-time assertions where
->       appropriate.
-> 
-> Link: https://lore.kernel.org/all/aGfYL8eXjTA9puQr@willie-the-truck/ [1]
-> 
-> Signed-off-by: Breno Leitao <leitao@debian.org>
+Hi,
 
-Nice!
+On Mon, Jul 7, 2025 at 7:05=E2=80=AFPM Marc Kleine-Budde <mkl@pengutronix.d=
+e> wrote:
+>
+> On 07.07.2025 18:58:16, Peng Fan wrote:
+> > On Tue, Jul 01, 2025 at 03:16:08AM +0000, Carlos Song wrote:
+> > >Hi, All:
+> > >
+> > >We met the dead lock issue recently and think it should be common issu=
+e and not sure how to fix it.
+> > >
+> > >We use gpio-gate-clock clock provider (drivers/clk/clk-gpio.c), gpio i=
+s one of i2c gpio expander (drivers/gpio/gpio-pcf857x.c). Our i2c driver en=
+able run time pm (drivers/i2c/busses/i2c-imx-lpi2c.c [1]). System random bl=
+ocked when at reboot.
+> > >
+> > >The dead lock happen as below call stacks
+> > >
+> > >Task 117                                                Task 120
+> > >
+> > >schedule()
+> > >clk_prepare_lock()--> wait prepare_lock(mutex_lock)     schedule() wai=
+t for power.runtime_status exit RPM_SUSPENDING
+> > >                           ^^^^ A                       ^^^^ B
+> > >clk_bulk_unprepare()                                    rpm_resume()
+> > >lpi2c_runtime_suspend()                                 pm_runtime_res=
+ume_and_get()
+> > >...                                                     lpi2c_imx_xfer=
+()
+> > >                                                        ...
+> > >rpm_suspend() set RPM_SUSPENDING                        pcf857x_set();
+> > >                           ^^^^ B                       ...
+> > >                                                        clk_prepare_lo=
+ck() --> hold prepare_lock
+> > >                                                        ^^^^ A
+> > >                                                        ...
+> > >
+> >
+> > This is a common issue that clk use a big prepare lock which is easy
+> > to trigger dead lock with runtime pm. I recalled that pengutronix raise=
+d
+> > this, but could not find the information.
+>
+> Alexander Stein stumbled over this issue some time ago:
+>
+> | https://lore.kernel.org/all/20230421-kinfolk-glancing-e185fd9c47b4-mkl@=
+pengutronix.de/
+>
+> I encountered it too, while trying to add a clock provider driver for a
+> SPI attached CAN controller which uses runtime pm.
 
-Aside from a minor comment on the first patch, this all looks good to
-me. For the series:
+Miquel from Bootlin posted a more formal description of the problem and
+some possible solutions last year [1].
 
-Acked-by: Mark Rutland <mark.rutland@arm.com>
-
-Mark.
-
-> ---
-> Breno Leitao (8):
->       arm64: Enable VMAP_STACK support
->       arm64: efi: Remove CONFIG_VMAP_STACK check
->       arm64: Remove CONFIG_VMAP_STACK conditionals from THREAD_SHIFT and THREAD_ALIGN
->       arm64: remove CONFIG_VMAP_STACK conditionals from irq stack setup
->       arm64: remove CONFIG_VMAP_STACK conditionals from traps overflow stack
->       arm64: remove CONFIG_VMAP_STACK checks from stacktrace overflow logic
->       arm64: remove CONFIG_VMAP_STACK checks from SDEI stack handling
->       arm64: remove CONFIG_VMAP_STACK checks from entry code
-> 
->  arch/arm64/Kconfig                  |  1 +
->  arch/arm64/include/asm/memory.h     |  6 +-----
->  arch/arm64/include/asm/stacktrace.h |  6 +-----
->  arch/arm64/kernel/efi.c             |  5 -----
->  arch/arm64/kernel/entry-common.c    |  2 --
->  arch/arm64/kernel/entry.S           |  6 ------
->  arch/arm64/kernel/irq.c             | 13 -------------
->  arch/arm64/kernel/sdei.c            |  8 ++------
->  arch/arm64/kernel/stacktrace.c      |  4 +---
->  arch/arm64/kernel/traps.c           |  3 ---
->  10 files changed, 6 insertions(+), 48 deletions(-)
-> ---
-> base-commit: 9dd1757493416310a5e71146a08bc228869f8dae
-> change-id: 20250707-arm64_vmap-fa70ba3c9cfb
-> 
-> Best regards,
-> -- 
-> Breno Leitao <leitao@debian.org>
-> 
+[1] https://lore.kernel.org/all/20240527181928.4fc6b5f0@xps-13/
 
