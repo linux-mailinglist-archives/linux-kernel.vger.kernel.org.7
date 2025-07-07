@@ -1,250 +1,221 @@
-Return-Path: <linux-kernel+bounces-720492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47664AFBC7F
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 22:26:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91B33AFBC84
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 22:28:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA22D4240AD
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 20:25:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 481FE16ABE9
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 20:28:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63B1B21CC59;
-	Mon,  7 Jul 2025 20:26:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A71321D3FB;
+	Mon,  7 Jul 2025 20:28:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="p2L5tIjv"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IApY3rLd"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09AF9219EAD
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 20:26:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E147D219EAD
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 20:28:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751919962; cv=none; b=H9CrarNNhX8E5BcA42Dm/u9Ox4xFsuEY25YX/Ad6zd/tZSOotMFhESpRKfARKpTTG1LzcvkiXCsuG70cO0Hl4I6ZjXmgmMGpNrC0Qn/W43fEPHkjx0XMWyUWhoi5wd4R7XhaUbV8b4jujszKFTVBzAtx1k1cXIK5Y3xPTrCoNTY=
+	t=1751920091; cv=none; b=t6av0Oda42IAAFURrI5BBSI5fscMmdpk5YViyUDcl3oHcbgG1U7nlvfdETc/SXXwpRs2YZP/Oq8ccugdlQ4vDQFRiJCJ7qwG0EW5Se0QayHNsyZrS86PWrhKe12qSHx8R+JuyDguwIJHl0cJXDusw1Uyl9UZBWxo+R5sAuyu/k0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751919962; c=relaxed/simple;
-	bh=CUORdPvw1cX4h66ndzLvStG5j7Op+139XvwyrrREJrk=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=GUGVhCDrknDT5BKzUrf+VXExngsudhjWQrltKQuEeUssqQKv7PJrGcrrX2uiCI2UahMiqocvCFel5NY3HPtYNTC9YSoNCFu1HIFAuasMs1ouWZT/8BaG3hU1Phkg2i3necp9fbP42PmEq3j/HWLv5MDNz8cr7E81f9rnTH047ck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=p2L5tIjv; arc=none smtp.client-ip=209.85.215.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b39280167fdso360642a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 13:26:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1751919960; x=1752524760; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=iDHpPitSS0mzs6saY8nYUe4AbTUUpZo+s9Jeux1OhIQ=;
-        b=p2L5tIjvqzyikO684wUOuFMy03ShPidY57Ke1k1vhi45gealcxG/mNbVVvZuTurre7
-         fkt+49lGawnIQ8LpicG6fKSmy881+qq8WNrXDSmScIZSOG/M/UX2zHOnb6xwohL5a1qN
-         E/4j4pUSZ0p+B75nGVtFaBPDO1fBSm1fplvNCfcQGhB8v0FR1UxMHiE3Bes9wWASCx17
-         +l7YwSiULCx4cGSymfHE9h3rH6rid20ggxDe6Le1aMhaRObbo5U9TKHgqQ8TpyFHLcRI
-         aIuxUFsVOhGj1PfklZzburCGRPLDjIM+jZMJ6dKu2QEkAqtM68uAUHe1g5nQtj+l21Sg
-         F6rQ==
+	s=arc-20240116; t=1751920091; c=relaxed/simple;
+	bh=wJm5XL2AN/wtuQtnqoX2xDDrfg6p7+O/hteMlYFyOVA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=R3yU7PLNpaeZO4l9lKur51YSkSmnw1DpoZrncgssPyb3SQKAg6saPxCJMa/C7zCZn5LX5tYFg//6i6Sf0l8w1kd5VuAhXJxp9GzhjXm9yVWRhhXMBPfE1JWu0Gv28vjMOpgmfMXmUBC9Rm5UJYlvryuZ6yUKBfKvhUg+pniNO7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IApY3rLd; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1751920087;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LaAJBS5fCT5n2JFH0DqlZCq3hm+0Tj15kQ07VPmExLQ=;
+	b=IApY3rLdqVE3Sgi+X9JqDs8be/HkKT5FE5E2TUspIq/x2JTTwA1AT1By5BokQoDpYenjtw
+	yl1q1+3HsP/Ft6xLi9uJoo7HfDeUHcF00tB7FKU40e5vg60ihIy7pGCMqpKpq767Fer/EF
+	UyIIWvY6n4if5FxT2Rn+ZU6XbDQOyhU=
+Received: from mail-yw1-f200.google.com (mail-yw1-f200.google.com
+ [209.85.128.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-512-DDFT33OpOcKZTOCUcGptSw-1; Mon, 07 Jul 2025 16:28:06 -0400
+X-MC-Unique: DDFT33OpOcKZTOCUcGptSw-1
+X-Mimecast-MFC-AGG-ID: DDFT33OpOcKZTOCUcGptSw_1751920086
+Received: by mail-yw1-f200.google.com with SMTP id 00721157ae682-710ed75c7efso52996507b3.1
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 13:28:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751919960; x=1752524760;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=iDHpPitSS0mzs6saY8nYUe4AbTUUpZo+s9Jeux1OhIQ=;
-        b=PK6WGu0gI8R+q0uTBqay7Su54qb6+CNx4y26DyY1zty5pXEJgndTGJsnoMU9VnoXyw
-         tJPX2lhW6sQyj0xTBPSZjv0gyIhpBHemy+IRg8MyYk5V4MS7MVPhq7DOR4W0eUiminD2
-         ZL9r8q3jWSBmpfzcY9jlsItbMKzswFKm1cY5QnbSN3sNCgqRjQYhY4DPTBnYpXu9FH5d
-         8/0mhrisi4aY1kwphFTLZZA9lhibTNMqOixHLCNovREWcYD97QmA1Y9gVHDmxxnMxsk/
-         bn/TTzbanlj/E28VBKB3ehGyZzfNw6XIOeg9pNd8vzMxB6sJOBJGHLlwrAGadtKUuXCD
-         Xabg==
-X-Forwarded-Encrypted: i=1; AJvYcCUIRqS8iL0wBDwfNVRJIQqXWeqFPrUab2lqFkSxUokFS6THPnh0CMFawFKxrpsNgOD5xMYHauVsnDodQeM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSulGVLT7HkzNSmKWJblNf7vwv0kdeb6flt/AlbKsnd07JeZ3h
-	nB0YEot5VgckYX0FBxP9KXlbymZSjODVfBMsyManujfsLAj2YnC6P0EjLj2DvbRNBzlsdncsOCP
-	09CGPgA==
-X-Google-Smtp-Source: AGHT+IFl8zMk4n4kKwZdLDcVRgIXGtT2XaLzjhr0sN/pKm4EFVOSPvZMjw56qXhYU9AsX5p7+6HZjthUz/0=
-X-Received: from pgbee1.prod.google.com ([2002:a05:6a02:4581:b0:b1f:fd39:8314])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:12c7:b0:21f:51ea:5c57
- with SMTP id adf61e73a8af0-22b437de321mr627011637.16.1751919960279; Mon, 07
- Jul 2025 13:26:00 -0700 (PDT)
-Date: Mon, 7 Jul 2025 13:25:59 -0700
-In-Reply-To: <aF8FwqaBpfvQ7dYW@char.us.oracle.com>
+        d=1e100.net; s=20230601; t=1751920086; x=1752524886;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=LaAJBS5fCT5n2JFH0DqlZCq3hm+0Tj15kQ07VPmExLQ=;
+        b=YsVUzd81amxSS3cRtGOIVaJd28EW344i7Kkpiy/a1FmQ6NkQsQl6XMQG2fg86xd8g+
+         nt2HtmpDiL756UsSv+ymRAkvtfkdlbHsEjMTMjdoV+o/txfSQVt/9q+m3JTEl4Jb65fs
+         AUiR3ajHRcLyNfLWA3WTslG9PfskU9MkCi9r8Tp/jZ0XOaahPJlIOmffSzaKd1frrmX1
+         0cr7XV0WmtWtABc03JnMS6Q+7zgxM5h5zTOdD5JO1eA6oSRYKntpOJ0rTlTaZNWVOa1m
+         9J+LbYqhz7NNevNx3zW/tETnJU4rJDdPM7oMregO4D6vc19ZOLUJJUML/fqtyBgzEb4B
+         tZBg==
+X-Forwarded-Encrypted: i=1; AJvYcCWBj7eD1RPwxoX+w/TJdqspiaDeJXWVSn9FoUhxcOTNmpI/ncwCwm0u5re8ILBxSMKxOCXRDNfaItSw9hA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHNaaZBMiROgQGqDzS5Mm+1kDjY6JOAS7mKWE1g5XmQy+wdrCX
+	dPEhxVcJROEFeHBeMAjfheE7YqDvt17BupNrVQ/nKYAEDfhTYdJxgusqIAic+k91JHafhumzb+F
+	zCMdgSMlP6CVLkwmvBL3obj3uJGuE4mBTYAqX96CkajqcAUB4A5Q2+iLTGGZ1zvhj0g==
+X-Gm-Gg: ASbGncvmFRVWnifQk5rn1k2KPsTEI/sxGf0DEn/5UXsrAAuvArFDzsMoW/+2XtZWJ5U
+	5gAoko5tjlpmrEguJC1pm6jv8ZCIrG/p01q2fFOMGvt0lt85fWllczlmgBdvBJsCENlQggDBcCv
+	3bFZU7sMfBYjxLrh8cLSV9MuZ20aaiu0hgLVKFdnaDSPuuOWSChJauetJiSjFyV4n+2//aiPLO/
+	bmaLiYcQw+mPtsCEntFk5B8ROX1r6nsxxdW42kRuCbD8+BdT7AtFCeA7SorV+AtipSbRsk4kd2M
+	nh2f5xu+oTwTe7ATPadlgxtbw4uE/vTby9ytKPvM/IrWOaFvND671NEqlMqF7RpbmQ1MzpJH
+X-Received: by 2002:a05:690c:b11:b0:710:f1a9:1ba0 with SMTP id 00721157ae682-717a0265489mr2181827b3.3.1751920085918;
+        Mon, 07 Jul 2025 13:28:05 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGLpnBuyF0C0XXuT2Yb8x9jJDj3FWPZSJtfybwB9i+zuijNdj4VLYsumfdINkEE2Z8lg/ugbA==
+X-Received: by 2002:a05:690c:b11:b0:710:f1a9:1ba0 with SMTP id 00721157ae682-717a0265489mr2181437b3.3.1751920085513;
+        Mon, 07 Jul 2025 13:28:05 -0700 (PDT)
+Received: from ?IPv6:2600:6c64:4e7f:603b:fc4d:8b7c:e90c:601a? ([2600:6c64:4e7f:603b:fc4d:8b7c:e90c:601a])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-71665adffb8sm17818367b3.59.2025.07.07.13.28.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Jul 2025 13:28:04 -0700 (PDT)
+Message-ID: <59530cbe001f5d02fa007ce642a860a7bade4422.camel@redhat.com>
+Subject: Re: [PATCH 2/2] NFS: Improve nfsiod workqueue detection for
+ allocation flags
+From: Laurence Oberman <loberman@redhat.com>
+To: Trond Myklebust <trondmy@kernel.org>, Benjamin Coddington	
+ <bcodding@redhat.com>, Anna Schumaker <anna@kernel.org>, Tejun Heo
+ <tj@kernel.org>,  Lai Jiangshan <jiangshanlai@gmail.com>
+Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	djeffery@redhat.com
+Date: Mon, 07 Jul 2025 16:28:03 -0400
+In-Reply-To: <a7621e726227260396291e82363d2b82e5f2ad73.camel@kernel.org>
+References: <cover.1751913604.git.bcodding@redhat.com>
+		 <a4548815532fb7ad71a4e7c45b3783651c86c51f.1751913604.git.bcodding@redhat.com>
+	 <a7621e726227260396291e82363d2b82e5f2ad73.camel@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250626125720.3132623-1-alexandre.chartre@oracle.com>
- <aF1S2EIJWN47zLDG@google.com> <67bd4e2f-24a8-49d8-80af-feaca6926e45@intel.com>
- <61df5e77-dfc4-4189-a86d-f1b2cabcac88@oracle.com> <aF8FwqaBpfvQ7dYW@char.us.oracle.com>
-Message-ID: <aGwtV8f253c6IOwC@google.com>
-Subject: Re: [PATCH] kvm/x86: ARCH_CAPABILITIES should not be advertised on AMD
-From: Sean Christopherson <seanjc@google.com>
-To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc: Alexandre Chartre <alexandre.chartre@oracle.com>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Xiaoyao Li <xiaoyao.li@intel.com>, 
-	linux-kernel@vger.kernel.org, kvm@vger.kernel.org, pbonzini@redhat.com, 
-	x86@kernel.org, boris.ostrovsky@oracle.com, Jim Mattson <jmattson@google.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 
-On Fri, Jun 27, 2025, Konrad Rzeszutek Wilk wrote:
-> On Fri, Jun 27, 2025 at 08:23:52AM +0200, Alexandre Chartre wrote:
+On Mon, 2025-07-07 at 12:25 -0700, Trond Myklebust wrote:
+> On Mon, 2025-07-07 at 14:46 -0400, Benjamin Coddington wrote:
+> > The NFS client writeback paths change which flags are passed to
+> > their
+> > memory allocation calls based on whether the current task is
+> > running
+> > from
+> > within a workqueue or not.=C2=A0 More specifically, it appears that
+> > during
+> > writeback allocations with PF_WQ_WORKER set on current->flags will
+> > add
+> > __GFP_NORETRY | __GFP_NOWARN.=C2=A0 Presumably this is because nfsiod
+> > can
+> > simply fail quickly and later retry to write back that specific
+> > page
+> > should
+> > the allocation fail.
 > >=20
-> > On 6/27/25 07:41, Xiaoyao Li wrote:
-> > > On 6/26/2025 10:02 PM, Sean Christopherson wrote:
-> > > > +Jim
-> > > >=20
-> > > > For the scope, "KVM: x86:"
-> > > >=20
-> > > > On Thu, Jun 26, 2025, Alexandre Chartre wrote:
-> > > > > KVM emulates the ARCH_CAPABILITIES on x86 for both vmx and svm.
-> > > > > However the IA32_ARCH_CAPABILITIES MSR is an Intel-specific MSR
-> > > > > so it makes no sense to emulate it on AMD.
-> > > > >=20
-> > > > > The AMD documentation specifies that this MSR is not defined on
-> > > > > the AMD architecture. So emulating this MSR on AMD can even cause
-> > > > > issues (like Windows BSOD) as the guest OS might not expect this
-> > > > > MSR to exist on such architecture.
-> > > > >=20
-> > > > > Signed-off-by: Alexandre Chartre<alexandre.chartre@oracle.com>
-> > > > > ---
-> > > > >=20
-> > > > > A similar patch was submitted some years ago but it looks like it=
- felt
-> > > > > through the cracks:
-> > > > > https://lore.kernel.org/kvm/20190307093143.77182-1- xiaoyao.li@li=
-nux.intel.com/
-> > > > It didn't fall through the cracks, we deliberately elected to emula=
-te the MSR in
-> > > > common code so that KVM's advertised CPUID support would match KVM'=
-s emulation.
-> > > >=20
-> > > > =C2=A0=C2=A0 On Thu, 2019-03-07 at 19:15 +0100, Paolo Bonzini wrote=
-:
-> > > > =C2=A0=C2=A0 > On 07/03/19 18:37, Sean Christopherson wrote:
-> > > > =C2=A0=C2=A0 > > On Thu, Mar 07, 2019 at 05:31:43PM +0800, Xiaoyao =
-Li wrote:
-> > > > =C2=A0=C2=A0 > > > At present, we report F(ARCH_CAPABILITIES) for x=
-86 arch(both vmx and svm)
-> > > > =C2=A0=C2=A0 > > > unconditionally, but we only emulate this MSR in=
- vmx. It will cause #GP
-> > > > =C2=A0=C2=A0 > > > while guest kernel rdmsr(MSR_IA32_ARCH_CAPABILIT=
-IES) in an AMD host.
-> > > > =C2=A0=C2=A0 > > >
-> > > > =C2=A0=C2=A0 > > > Since MSR IA32_ARCH_CAPABILITIES is an intel-spe=
-cific MSR, it makes no
-> > > > =C2=A0=C2=A0 > > > sense to emulate it in svm. Thus this patch choo=
-ses to only emulate it
-> > > > =C2=A0=C2=A0 > > > for vmx, and moves the related handling to vmx r=
-elated files.
-> > > > =C2=A0=C2=A0 > >
-> > > > =C2=A0=C2=A0 > > What about emulating the MSR on an AMD host for te=
-sting purpsoes?=C2=A0 It
-> > > > =C2=A0=C2=A0 > > might be a useful way for someone without Intel ha=
-rdware to test spectre
-> > > > =C2=A0=C2=A0 > > related flows.
-> > > > =C2=A0=C2=A0 > >
-> > > > =C2=A0=C2=A0 > > In other words, an alternative to restricting emul=
-ation of the MSR to
-> > > > =C2=A0=C2=A0 > > Intel CPUS would be to move MSR_IA32_ARCH_CAPABILI=
-TIES handling into
-> > > > =C2=A0=C2=A0 > > kvm_{get,set}_msr_common().=C2=A0 Guest access to =
-MSR_IA32_ARCH_CAPABILITIES
-> > > > =C2=A0=C2=A0 > > is gated by X86_FEATURE_ARCH_CAPABILITIES in the g=
-uest's CPUID, e.g.
-> > > > =C2=A0=C2=A0 > > RDMSR will naturally #GP fault if userspace passes=
- through the host's
-> > > > =C2=A0=C2=A0 > > CPUID on a non-Intel system.
-> > > > =C2=A0=C2=A0 >
-> > > > =C2=A0=C2=A0 > This is also better because it wouldn't change the g=
-uest ABI for AMD
-> > > > =C2=A0=C2=A0 > processors.=C2=A0 Dropping CPUID flags is generally =
-not a good idea.
-> > > > =C2=A0=C2=A0 >
-> > > > =C2=A0=C2=A0 > Paolo
-> > > >=20
-> > > > I don't necessarily disagree about emulating ARCH_CAPABILITIES bein=
-g pointless,
-> > > > but Paolo's point about not changing ABI for existing setups still =
-stands.=C2=A0 This
-> > > > has been KVM's behavior for 6 years (since commit 0cf9135b773b ("KV=
-M: x86: Emulate
-> > > > MSR_IA32_ARCH_CAPABILITIES on AMD hosts"); 7 years, if we go back t=
-o when KVM
-> > > > enumerated support without emulating the MSR (commit 1eaafe91a0df (=
-"kvm: x86:
-> > > > IA32_ARCH_CAPABILITIES is always supported").
-> > > >=20
-> > > > And it's not like KVM is forcing userspace to enumerate support for
-> > > > ARCH_CAPABILITIES, e.g. QEMU's named AMD configs don't enumerate su=
-pport.=C2=A0 So
-> > > > while I completely agree KVM's behavior is odd and annoying for use=
-rspace to deal
-> > > > with, this is probably something that should be addressed in usersp=
-ace.
-> > > >=20
-> > > > > I am resurecting this change because some recent Windows updates =
-(like OS Build
-> > > > > 26100.4351) crashes on AMD KVM guests (BSOD with Stop code: UNSUP=
-PORTED PROCESSOR)
-> > > > > just because the ARCH_CAPABILITIES is available.
-> > >=20
-> > > Isn't it the Windows bugs? I think it is incorrect to assume AMD will=
- never implement ARCH_CAPABILITIES.
-> > >=20
+> > However, the check for PF_WQ_WORKER is too general because tasks
+> > can
+> > enter NFS
+> > writeback paths from other workqueues.=C2=A0 Specifically, the loopback
+> > driver
+> > tends to perform writeback into backing files on NFS with
+> > PF_WQ_WORKER set,
+> > and additionally sets PF_MEMALLOC_NOIO.=C2=A0 The combination of
+> > PF_MEMALLOC_NOIO with __GFP_NORETRY can easily result in allocation
+> > failures and the loopback driver has no retry functionality.=C2=A0 As a
+> > result,
+> > after commit 0bae835b63c5 ("NFS: Avoid writeback threads getting
+> > stuck in
+> > mempool_alloc()") users are seeing corrupted loop-mounted
+> > filesystems
+> > backed
+> > by image files on NFS.
 > >=20
-> > Yes, although on one hand they are just following the current AMD speci=
-fication which
-> > says that ARCH_CAPABILITIES is not defined on AMD cpus; but on the othe=
-r hand they are
-> > breaking a 6+ years behavior. So it might be nice if we could prevent s=
-uch an issue in
-> > the future.
+> > In a preceding patch, we introduced a function to allow NFS to
+> > detect
+> > if
+> > the task is executing within a specific workqueue.=C2=A0 Here we use
+> > that
+> > helper
+> > to set __GFP_NORETRY | __GFP_NOWARN only if the workqueue is
+> > nfsiod.
+> >=20
+> > Fixes: 0bae835b63c5 ("NFS: Avoid writeback threads getting stuck in
+> > mempool_alloc()")
+> > Signed-off-by: Benjamin Coddington <bcodding@redhat.com>
+> > ---
+> > =C2=A0fs/nfs/internal.h | 12 +++++++++++-
+> > =C2=A01 file changed, 11 insertions(+), 1 deletion(-)
+> >=20
+> > diff --git a/fs/nfs/internal.h b/fs/nfs/internal.h
+> > index 69c2c10ee658..173172afa3f5 100644
+> > --- a/fs/nfs/internal.h
+> > +++ b/fs/nfs/internal.h
+> > @@ -12,6 +12,7 @@
+> > =C2=A0#include <linux/nfs_page.h>
+> > =C2=A0#include <linux/nfslocalio.h>
+> > =C2=A0#include <linux/wait_bit.h>
+> > +#include <linux/workqueue.h>
+> > =C2=A0
+> > =C2=A0#define NFS_SB_MASK (SB_NOSUID|SB_NODEV|SB_NOEXEC|SB_SYNCHRONOUS)
+> > =C2=A0
+> > @@ -669,9 +670,18 @@ nfs_write_match_verf(const struct
+> > nfs_writeverf
+> > *verf,
+> > =C2=A0		!nfs_write_verifier_cmp(&req->wb_verf, &verf-
+> > > verifier);
+> > =C2=A0}
+> > =C2=A0
+> > +static inline bool is_nfsiod(void)
+> > +{
+> > +	struct workqueue_struct *current_wq =3D current_workqueue();
+> > +
+> > +	if (current_wq)
+> > +		return current_wq =3D=3D nfsiod_workqueue;
+> > +	return false;
+> > +}
+> > +
+> > =C2=A0static inline gfp_t nfs_io_gfp_mask(void)
+> > =C2=A0{
+> > -	if (current->flags & PF_WQ_WORKER)
+> > +	if (is_nfsiod())
+> > =C2=A0		return GFP_KERNEL | __GFP_NORETRY | __GFP_NOWARN;
+> > =C2=A0	return GFP_KERNEL;
+> > =C2=A0}
 >=20
-> Hi Sean,
 >=20
-> Part of the virtualization stack is to lie accurately and in this case
-> KVM is doing it incorrectly.=20
+> Instead of trying to identify the nfsiod_workqueue, why not apply
+> current_gfp_context() in order to weed out callers that set
+> PF_MEMALLOC_NOIO and PF_MEMALLOC_NOFS?
+>=20
+> i.e.
+>=20
+>=20
+> static inline gfp_t nfs_io_gfp_mask(void)
+> {
+> 	gfp_t ret =3D current_gfp_context(GFP_KERNEL);
+>=20
+> 	if ((current->flags & PF_WQ_WORKER) && ret =3D=3D GFP_KERNEL)
+> 		ret |=3D __GFP_NORETRY | __GFP_NOWARN;
+> 	return ret;
+> }
+>=20
+>=20
 
-No, KVM isn't doing anything "incorrectly".  The ioctl in question,
-KVM_GET_SUPPORTED_CPUID, advertises what *KVM* supports.  The CPUID model t=
-hat
-is configured for and presented to the guest is fully controlled by userspa=
-ce,
-i.e. by QEMU.
+I am testing both patch options to see if both prevent the failed write
+with no other impact and will report back.
 
-And relative to what KVM is advertising, KVM's behavior is correct.  Prior =
-to
-commit 0cf9135b773b, KVM was indeed buggy, because KVM didn't emulate a fea=
-ture
-that was advertised to userspace.  But that hasn't been the case for 6+ yea=
-rs.
+The test is confined to the use case of an XFS file system served by an
+image that is located on NFS. as that is where the failed writes were
+seen.
 
-Even if KVM were explicitly setting guest CPUID, KVM's behavior _still_ wou=
-ldn't
-be incorrect, because it wouldn't violate AMD's architecture.  Per AMD's AP=
-M,
-software cannot assume reserved CPUID bits are '0':
 
-  All bit positions that are not defined as fields are reserved. The value =
-of
-  bits within reserved ranges cannot be relied upon to be zero. Software mu=
-st
-  mask off all reserved bits in the return value prior to making any value
-  comparisons of represented information.
 
-> Not fixing it b/c of it being for 7 years in and being part of an ABI but
-> saying it should be fixed in QEMU sounds like you agree technically, but =
-are
-> constrained by a policy.
-
-I'm not constrained by policy, I'm weighing the risk vs. reward of changing=
- KVM's
-ABI to remedy a problem that affects exactly one configuration in one VMM, =
-is
-relatively straightforward to address in said VMM, and has already been fix=
-ed in
-the affected guest kernel (because as above, QEMU's behavior isn't a violat=
-ion
-of AMD's architecture).
 
