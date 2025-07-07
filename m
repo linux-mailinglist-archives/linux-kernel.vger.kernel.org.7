@@ -1,116 +1,144 @@
-Return-Path: <linux-kernel+bounces-720445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49E2AAFBBCE
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 21:39:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF282AFBBE3
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 21:49:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 669AC1AA20C9
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 19:39:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 153964266DB
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 19:49:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CE37266B65;
-	Mon,  7 Jul 2025 19:39:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96B18266EF1;
+	Mon,  7 Jul 2025 19:49:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nXMbflxZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CC3MIV32"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09DAF2135CE;
-	Mon,  7 Jul 2025 19:39:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D88E233133
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 19:49:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751917175; cv=none; b=sb/vpHpHMewmM74ZPCSIrPhMe8/jqhi5Tk2ENoD0twejXV2xWH8LmohMnOfd+g3w08YOOdeF/B/9rwvJbjx0HmggsfGczbkVWnN4GgdMA8XFiXFojiZC++bZiFrIeXceIgHrC2v1jr2LyOhDbBEcCVEB21BWY9c5RIQa6iTd1vQ=
+	t=1751917791; cv=none; b=GDBReDhU0Kk1kgZAfd9drQqrTJ8F5GxfQtOyoooyNFZYtmW9EPThqlqksqxWkY+YXOD+pdKdIjQvKib9vp0lYb+qz+7EofSHit/EV1A653bipbN6jYtXdYd2jMfrUrceTgRFqWO7qa2qp2ImTMRilnCYgmimY4+dEdkCeYsaJtI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751917175; c=relaxed/simple;
-	bh=vD+Zu2itQbTuNoEYx5YOHNiH1Sj1hED/r1A1/mPbDF8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=nz/OhmS709qvYpilF9oqXul4n67rgYTKr6u7KEyRA6T/wxLXVYy1brihuozLRLRpCNb62wQwTV83+lIjUsKzqRiV5Z+9tE8P981zKqDjlnMOnAw2v0Jaodq1vtUdTcP6+ptl5L/piSX5lo13cBFl7LxoQ/N2NcEZ6t2iygEnvvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nXMbflxZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3713CC4CEE3;
-	Mon,  7 Jul 2025 19:39:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751917174;
-	bh=vD+Zu2itQbTuNoEYx5YOHNiH1Sj1hED/r1A1/mPbDF8=;
-	h=From:Date:Subject:To:Cc:From;
-	b=nXMbflxZm2eHRoBHA21zgMYOHf3a9FRcSEESAeBJUVTHl47ClDJGsKe3DIIA7zpj+
-	 EuSDQCYoXWkDOxyVr1WicSnSb4cujoNmuLPyVxSThA0gZz2NO5JP+P/LHNDlKdTzJp
-	 m1Ixe1lwd260HrmQwZvGo6mxY40SFIX4jTp4OALG0Rm1opToiAkKM01/N66qjh1TcX
-	 fAvFJ/hUQqYGEQbvFWJ8ls/lXGfzI3vBFWgdsERCjnTz23I2v8NtVNn3WZMGDAoi63
-	 Z94AVMv4ybHd5xTh5HsCRWJhsYVTmoa8mws4Lsl/yvSa8dC8KjZlz2UVJEsVrbiwRJ
-	 YF+rByvr/wb+w==
-From: Nathan Chancellor <nathan@kernel.org>
-Date: Mon, 07 Jul 2025 12:39:26 -0700
-Subject: [PATCH] ARM: Fix allowing linker DCE with binutils < 2.36
+	s=arc-20240116; t=1751917791; c=relaxed/simple;
+	bh=Bsc0l4oYKWpP++YJU/xfMtGDktQZziYr7xF8Xf+mvNQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l/1tImCJCls6gSyIWHkt0mOA+AD+ydNF1Dm95n/78krMxZ8s/GM252XL3D09wqn4qTyLzqptXW4LIfldyEc9X+Ai3UX/Bp7XSVnbVxLS7LXotZmkwam+tSGiuYNuFVaLVghAKJVi/EcFkjEJsiV6gK1ntHD9c1dr0p8NoIqmpFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CC3MIV32; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751917790; x=1783453790;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Bsc0l4oYKWpP++YJU/xfMtGDktQZziYr7xF8Xf+mvNQ=;
+  b=CC3MIV32WOsZx2iPQeAggW+NsBaxpJNU4SQLjEwqBc/KswvJHHbP6dWO
+   HqM7D6R+ikDHf3wquGtT8w16Ec9h+UrE6MaoWRc3gsxvK2F71KdFFc2JO
+   6kLXRKAX6p5vgGrSG2bwNLkWeVJaoGH5WT401S4oJKMBznpdabCfG+n90
+   L9TXt+T59AyCAGWkGZT+Fri4xYZxCgN3cbgwPFPOJhuPGA99ktd1raDbc
+   sqAh+47hP9LeO6XxmjVMdJQtM7X7hQN0kLKPLTuVsq0EOMnJxSjVCPox3
+   mBxutyBukpB0pBKtGjQSCFqd94n8LBDFtSTpmouDN3QrGatQTECQuai4X
+   Q==;
+X-CSE-ConnectionGUID: Qj6iOerORIaN5x16Tt14oA==
+X-CSE-MsgGUID: aF+OzSYHScKaXJAIr1e9mg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="54032734"
+X-IronPort-AV: E=Sophos;i="6.16,295,1744095600"; 
+   d="scan'208";a="54032734"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jul 2025 12:49:50 -0700
+X-CSE-ConnectionGUID: Z1V7/n3HQBKr3e19/Ska5A==
+X-CSE-MsgGUID: dsY7G08CQ9KxgbMOb1YOHw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,295,1744095600"; 
+   d="scan'208";a="155425105"
+Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
+  by orviesa007.jf.intel.com with ESMTP; 07 Jul 2025 12:49:46 -0700
+Date: Tue, 8 Jul 2025 03:41:33 +0800
+From: Xu Yilun <yilun.xu@linux.intel.com>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: "Tian, Kevin" <kevin.tian@intel.com>,
+	"will@kernel.org" <will@kernel.org>,
+	"aneesh.kumar@kernel.org" <aneesh.kumar@kernel.org>,
+	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"joro@8bytes.org" <joro@8bytes.org>,
+	"robin.murphy@arm.com" <robin.murphy@arm.com>,
+	"shuah@kernel.org" <shuah@kernel.org>,
+	"nicolinc@nvidia.com" <nicolinc@nvidia.com>,
+	"aik@amd.com" <aik@amd.com>,
+	"Williams, Dan J" <dan.j.williams@intel.com>,
+	"baolu.lu@linux.intel.com" <baolu.lu@linux.intel.com>,
+	"Xu, Yilun" <yilun.xu@intel.com>
+Subject: Re: [PATCH v3 2/5] iommufd: Destroy vdevice on idevice destroy
+Message-ID: <aGwi7fMVIOmALSz7@yilunxu-OptiPlex-7050>
+References: <BL1PR11MB52712CE938B57E41C34580908C46A@BL1PR11MB5271.namprd11.prod.outlook.com>
+ <aGJkitx6wjfQ888t@yilunxu-OptiPlex-7050>
+ <20250630145051.GY167785@nvidia.com>
+ <aGOoCa3BkV7KrwVz@yilunxu-OptiPlex-7050>
+ <20250701121315.GD167785@nvidia.com>
+ <aGSYLVmV17g832Ta@yilunxu-OptiPlex-7050>
+ <BN9PR11MB52769790C63FFCDC711E80DB8C40A@BN9PR11MB5276.namprd11.prod.outlook.com>
+ <20250702124042.GD1051729@nvidia.com>
+ <aGuoZUaNOgclC2uU@yilunxu-OptiPlex-7050>
+ <20250707122502.GS1410929@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250707-arm-fix-dce-older-binutils-v1-1-3b5e59dc3b26@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAG4ibGgC/x3M0QpAMBSA4VfRuXZqFg2vIhebHZxidIaUvLvl8
- qu//4FIwhShzR4QujjyFhKKPINhtmEiZJ8MWulKGWXQyooj3+gHwm3xJOg4nAcvEWtjK1u6Wje
- +gTTYhVL5z7v+fT+xNyabbAAAAA==
-X-Change-ID: 20250707-arm-fix-dce-older-binutils-87a5a4b829d9
-To: Russell King <linux@armlinux.org.uk>, 
- Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- stable@vger.kernel.org, Rob Landley <rob@landley.net>, 
- Nathan Chancellor <nathan@kernel.org>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1782; i=nathan@kernel.org;
- h=from:subject:message-id; bh=vD+Zu2itQbTuNoEYx5YOHNiH1Sj1hED/r1A1/mPbDF8=;
- b=owGbwMvMwCUmm602sfCA1DTG02pJDBk5SiU2k0On3muc5uQicD7hcN6pWTYF9+Se1Wkt9ZiQz
- RboPKm1o5SFQYyLQVZMkaX6sepxQ8M5ZxlvnJoEM4eVCWQIAxenAEwk4w0jw6QPX94Wzzp2wPiS
- 5jMrCaYl8a9udTB+8+W3vX5GsGBzzyuG/2m99/UiZcK5xPLdxK9IFv1+ubXT0Deis9ng15Yzb1I
- 6WAA=
-X-Developer-Key: i=nathan@kernel.org; a=openpgp;
- fpr=2437CB76E544CB6AB3D9DFD399739260CB6CB716
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250707122502.GS1410929@nvidia.com>
 
-Commit e7607f7d6d81 ("ARM: 9443/1: Require linker to support KEEP within
-OVERLAY for DCE") accidentally broke the binutils version restriction
-that was added in commit 0d437918fb64 ("ARM: 9414/1: Fix build issue
-with LD_DEAD_CODE_DATA_ELIMINATION"), reintroducing the segmentation
-fault addressed by that workaround.
+On Mon, Jul 07, 2025 at 09:25:02AM -0300, Jason Gunthorpe wrote:
+> On Mon, Jul 07, 2025 at 06:58:45PM +0800, Xu Yilun wrote:
+> 
+> > I still see concerns here. The pre_destroy() and wait_event is before the
+> > idev's users count decreasing to 0, which means a new user could get
+> > in.
+> 
+> Hum, yes it seems we could get a race with another vdevice being
+> created during idevice destruction, but I think this could be fixed in
+> a straightforward way with a flag 'being destroyed' in the idev under
+> the lock if it is the only issue
+> 
+> > The worse thing is the new user could hold the shortterm_users until
+> > pre_destroy(), but there isn't a second pre_destroy()...
+> 
+> This is OK, the point of pre_destroy is to remove the reference
+> cycle. So it needs to prevent new vdevs from establishing references
+> and remove the reference from any existing vdev.
+> 
+> refcounts outside of this cycle are handled by the existing
+> mechanisms - pre_destroy is only about the refcount loop.
 
-Restore the binutils version dependency by using
-CONFIG_LD_CAN_USE_KEEP_IN_OVERLAY as an additional condition to ensure
-that CONFIG_HAVE_LD_DEAD_CODE_DATA_ELIMINATION is only enabled with
-binutils >= 2.36 and ld.lld >= 21.0.0.
+That works for me. I didn't prefer a being destroyed flag cause it
+seems not align with the current refcounting mechanism. But I see it
+makes sense cause idev does deterministic destruction.
 
-Cc: stable@vger.kernel.org
-Fixes: e7607f7d6d81 ("ARM: 9443/1: Require linker to support KEEP within OVERLAY for DCE")
-Reported-by: Rob Landley <rob@landley.net>
-Closes: https://lore.kernel.org/6739da7d-e555-407a-b5cb-e5681da71056@landley.net/
-Tested-by: Rob Landley <rob@landley.net>
-Signed-off-by: Nathan Chancellor <nathan@kernel.org>
----
- arch/arm/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The only concern is idev cannot actually prevent new reference by
+itself, need vdev to honor the flag. But just keep simple, don't
+over-engineering.
 
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index 3072731fe09c..962451e54fdd 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -121,7 +121,7 @@ config ARM
- 	select HAVE_KERNEL_XZ
- 	select HAVE_KPROBES if !XIP_KERNEL && !CPU_ENDIAN_BE32 && !CPU_V7M
- 	select HAVE_KRETPROBES if HAVE_KPROBES
--	select HAVE_LD_DEAD_CODE_DATA_ELIMINATION if (LD_VERSION >= 23600 || LD_CAN_USE_KEEP_IN_OVERLAY)
-+	select HAVE_LD_DEAD_CODE_DATA_ELIMINATION if (LD_VERSION >= 23600 || LD_IS_LLD) && LD_CAN_USE_KEEP_IN_OVERLAY
- 	select HAVE_MOD_ARCH_SPECIFIC
- 	select HAVE_NMI
- 	select HAVE_OPTPROBES if !THUMB2_KERNEL
+Thanks,
+Yilun
 
----
-base-commit: d7b8f8e20813f0179d8ef519541a3527e7661d3a
-change-id: 20250707-arm-fix-dce-older-binutils-87a5a4b829d9
-
-Best regards,
---  
-Nathan Chancellor <nathan@kernel.org>
-
+> 
+> > I think extending the life of shortterm_users at runtime makes things
+> > complex. 
+> 
+> Well, it keeps the refcounting working the way it is supposed
+> to. Holding a pointer without a reference is nasty and is creating
+> alot of these weird problems and strange flows. Hold the refcount
+> along with the pointer and things follow the normal patterns.
+> 
+> There is nothing inherently wrong with shortterm users for this
+> besides its name. Think of it is as 'wait for users', and we clearly
+> want to wait for the vdev user to put back its idev reference.
+> 
 
