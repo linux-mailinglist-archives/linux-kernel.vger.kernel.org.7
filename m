@@ -1,185 +1,149 @@
-Return-Path: <linux-kernel+bounces-720544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71FDFAFBD23
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 23:04:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7FD7AFBD2C
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 23:05:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74A87481466
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 21:03:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A31061890054
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 21:05:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CFE728751A;
-	Mon,  7 Jul 2025 21:03:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE228285CAD;
+	Mon,  7 Jul 2025 21:05:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="VAtLvwWm"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Wyh3TsFo"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8225728724E;
-	Mon,  7 Jul 2025 21:03:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4ADB219A6B;
+	Mon,  7 Jul 2025 21:05:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751922215; cv=none; b=R/bHTZzr9Orl4PRqLC5T+eoCQrasOTUwSMosy6vVVwuZUNdzPErp5Nd3m/9iEPpK8KQi6YiJfPkCZmY22Cql3pnSUVOvLxdjgj6xPOC/HcpQmmncmDvVB+vMtCF0r5igeppQR2VYQDu7qK62+OnannFw9HjK/P+MjaqwYCKMhx0=
+	t=1751922328; cv=none; b=NW6ulX6ozLDNLO+YaaYlpoFjIuY5QIjeqYGAfYE934M+TasHZZvkb2rHtWyAMXooMXRu5CrswYHCFxEc/DfATfZrdi0irY+oUZQtez/6t2vfQgSiC7/FKlcs7PeBanVqIEb+xhRZ/5OFohbcBndXNPOJvPtmVQvzHNSEmifzMiM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751922215; c=relaxed/simple;
-	bh=hG84qV+KfStj6ry4qZlMKSx03j2D34Jdw4tAZC3Wiss=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FCmwSIjyvPhbeK1CbM70NCICVS3hUgq2x0iXZlo28n9dAiwxZMaUIBPwDkPFNkeF4CZEDBxE2ZS9BLCJbQQFdlFu8w+6vef2PKmDrkkZYlvn2oNjZB/Gx974z/Vkz1kL9oA3S0ZeGFZUcXTguIbMa0uA86FLHG2YRvZ+NYg7Z6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=VAtLvwWm; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 567Ij1LQ023655;
-	Mon, 7 Jul 2025 21:03:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=QmGFuEexZ1c
-	MSUqFmIGDYcqGuzgfFpGnakB5jQriJPo=; b=VAtLvwWmyfbnD00hsbMGkIzhkJs
-	g0TAGlsQNktS4PlUIm5lsqaKuJUjk1QJGhczJWf02I8isIUfME/2H3nSjmHdAYWN
-	yPFlsr/aXnfYyuNTEzrq2Cn2Inc5CPjzrbg+0+ZLlmPDgiIcTVzJ7m1zPw0rcX9i
-	K35nxo+eGUIukdS8IPtPJ0EvU+z0jQcLuCd0RP8Gwok5lS8GLvKvY9rTby10NGYH
-	dQb0Xuot3GMYiaAB4vMF49Jyea24ZMPTc/w9Dh35HUxF/UDR0mw/2LMINSkQtna8
-	ZUjKj892wqRYnlqfkS2y3gfgEEF6jCqzrhgONwlhcPW2DU1MEbc9zLZoXhg==
-Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47pu0w88yh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 07 Jul 2025 21:03:09 +0000 (GMT)
-Received: from pps.filterd (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 567L36Ja015177;
-	Mon, 7 Jul 2025 21:03:06 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTP id 47pw4knn2s-1;
-	Mon, 07 Jul 2025 21:03:06 +0000
-Received: from APBLRPPMTA01.qualcomm.com (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 567L36bo015167;
-	Mon, 7 Jul 2025 21:03:06 GMT
-Received: from hu-maiyas-hyd.qualcomm.com (hu-nitirawa-hyd.qualcomm.com [10.213.109.152])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTP id 567L36Zr015166;
-	Mon, 07 Jul 2025 21:03:06 +0000
-Received: by hu-maiyas-hyd.qualcomm.com (Postfix, from userid 2342877)
-	id ADEFB57186C; Tue,  8 Jul 2025 02:33:05 +0530 (+0530)
-From: Nitin Rawat <quic_nitirawa@quicinc.com>
-To: mani@kernel.org, James.Bottomley@HansenPartnership.com,
-        martin.petersen@oracle.com, bvanassche@acm.org, avri.altman@wdc.com,
-        ebiggers@google.com, neil.armstrong@linaro.org,
-        konrad.dybcio@oss.qualcomm.com
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-scsi@vger.kernel.org, Nitin Rawat <quic_nitirawa@quicinc.com>
-Subject: [PATCH V2 3/3] scsi: ufs: qcom: Enable QUnipro Internal Clock Gating
-Date: Tue,  8 Jul 2025 02:33:00 +0530
-Message-ID: <20250707210300.561-4-quic_nitirawa@quicinc.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250707210300.561-1-quic_nitirawa@quicinc.com>
-References: <20250707210300.561-1-quic_nitirawa@quicinc.com>
+	s=arc-20240116; t=1751922328; c=relaxed/simple;
+	bh=Msw1wwMIj6bBrU/TIW6lTu4STpQvmw8gNG14LUH91S4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YC1aFPbYJn8dFxD+spamMyVzgka2o4XASQqxtspCnrSeRXeftwKuBtR/3jMOQe5VtHdXDiW/Br98l/9GXu1rkdppTAsrJMQe5QL7K0q6Y+ROuseg9Urr5LBpfcqIypPAH7Bds45Yxxgo7DycYlWT2geWCWkTJbCMsCzmSQuUk40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Wyh3TsFo; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751922327; x=1783458327;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Msw1wwMIj6bBrU/TIW6lTu4STpQvmw8gNG14LUH91S4=;
+  b=Wyh3TsFoqhK4tvmS3CFH9ORXH8XSnJSqZTzKlBPrCLsXGx8EcRmQWTly
+   uH3Gv+wznesqEOck4QXJgyHFXj6YW5gGfUwGcivBdcOD2laxgqKe5lW3L
+   oRYLa6js+Ln+9yEMgOQsm2dZEe2Uun6H2+XfB0Ks3BkYHTT37Ln0R+DfM
+   oiOGjMGnHAwBNTLRV4MAzVJDOOOsVu4qMMR4ZfRoz5hiQVPKRxTNhUlms
+   Q1nZo5Qu4yeFePUEJVNuBM88z9bfsjd7wO5o9KWnKA898tEQR/2Mzx/YR
+   TFkMagwAgRCm9mq7sCTxQwDNdR+1CQp4kshRy6BzHRBgutt85rvAV1d7Y
+   Q==;
+X-CSE-ConnectionGUID: 9Ay4YK0mQX2tTVGnBveFOA==
+X-CSE-MsgGUID: 8+n5R5XfRB+MmBunCOUlkw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11487"; a="64400404"
+X-IronPort-AV: E=Sophos;i="6.16,295,1744095600"; 
+   d="scan'208";a="64400404"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jul 2025 14:05:27 -0700
+X-CSE-ConnectionGUID: Is9nNTIMT+aYqgs+4rTEkQ==
+X-CSE-MsgGUID: djdgfGkZQPmGGO4uqQrFOQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,295,1744095600"; 
+   d="scan'208";a="192499157"
+Received: from cpetruta-mobl1.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.244.166])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jul 2025 14:05:22 -0700
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id 707C911FC1A;
+	Tue,  8 Jul 2025 00:05:19 +0300 (EEST)
+Date: Mon, 7 Jul 2025 21:05:19 +0000
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-acpi@vger.kernel.org
+Subject: Re: [PATCH v2 03/12] ACPI: mipi-disco-img: Do not duplicate rotation
+ info into swnodes
+Message-ID: <aGw2j1iHD6POx3yF@kekkonen.localdomain>
+References: <20250605-uvc-orientation-v2-0-5710f9d030aa@chromium.org>
+ <20250605-uvc-orientation-v2-3-5710f9d030aa@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: kH2gag92QeQ7GfzJU9uaCyVjJLL_xoyl
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA3MDE0MSBTYWx0ZWRfX6Tf9z1POC7VL
- wXu6gahcmiZ22xDOsWaNJIOOP77IfWWecERfbhva3wlbWtXpprKj7Y64vm0OP9w58GDy/SSwv8v
- 4TJ6ddZ9Lipskd96wtI5zbi36/XWLDxO+NChXtI+ZkN1avC3yRcifN8yfn2MQtymrcxfcUkd4Mj
- HXuuLMye8JvbXL9SD4t5V4ms7k6alhSh4rY4DVJ4IR0QURq3Y8iFYvTzBN7D7wt7Q07m5SA9S4w
- G1+ikSTHPuRCtUouFcE7yFdC4QBe4S98EHOxOe6MRWG7UUlqGzS0c6DJj5+yZuHCYHmQis4gXm2
- QEcAqxLMTjK0lLWoMcxj3zBpfe9yDOe1fNYtSsOAmfchhspmz8ebSgac92yUBWsK9YCSX2pK/kP
- mtEDTK0piOmunI0VoEhk++Z/q8UXWW2Ds5GoEeRjHldoOLYlHyeN7uenQkwOb4R+j+esj8Xv
-X-Authority-Analysis: v=2.4 cv=Rd2QC0tv c=1 sm=1 tr=0 ts=686c360e cx=c_pps
- a=Ou0eQOY4+eZoSc0qltEV5Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
- a=Wb1JkmetP80A:10 a=COk6AnOGAAAA:8 a=AaFWqURAGA-n2MsR6FgA:9
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: kH2gag92QeQ7GfzJU9uaCyVjJLL_xoyl
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-07_05,2025-07-07_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 suspectscore=0 mlxscore=0 malwarescore=0 lowpriorityscore=0
- mlxlogscore=999 impostorscore=0 spamscore=0 phishscore=0 priorityscore=1501
- adultscore=0 clxscore=1011 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507070141
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250605-uvc-orientation-v2-3-5710f9d030aa@chromium.org>
 
-Enable internal clock gating for QUnipro by setting the following
-attributes to 1 during host controller initialization:
-- DL_VS_CLK_CFG
-- PA_VS_CLK_CFG_REG
-- DME_VS_CORE_CLK_CTRL.DME_HW_CGC_EN
+Hi Ricardo,
 
-This change is necessary to support the internal clock gating mechanism
-in Qualcomm UFS host controller.
+A few more comments.
 
-Signed-off-by: Nitin Rawat <quic_nitirawa@quicinc.com>
----
- drivers/ufs/host/ufs-qcom.c | 21 +++++++++++++++++++++
- drivers/ufs/host/ufs-qcom.h |  9 +++++++++
- 2 files changed, 30 insertions(+)
+On Thu, Jun 05, 2025 at 05:52:56PM +0000, Ricardo Ribalda wrote:
+> The function v4l2_fwnode_device_parse() is not capable of parsint the
 
-diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
-index dfdc52333a96..25b5f83b049c 100644
---- a/drivers/ufs/host/ufs-qcom.c
-+++ b/drivers/ufs/host/ufs-qcom.c
-@@ -558,11 +558,32 @@ static int ufs_qcom_power_up_sequence(struct ufs_hba *hba)
-  */
- static void ufs_qcom_enable_hw_clk_gating(struct ufs_hba *hba)
- {
-+	int err = 0;
-+
-+	/* Enable UTP internal clock gating */
- 	ufshcd_rmwl(hba, REG_UFS_CFG2_CGC_EN_ALL, REG_UFS_CFG2_CGC_EN_ALL,
- 		    REG_UFS_CFG2);
+s/not/now/
+s/parsin\Kt/g/
 
- 	/* Ensure that HW clock gating is enabled before next operations */
- 	ufshcd_readl(hba, REG_UFS_CFG2);
-+
-+	/* Enable Unipro internal clock gating */
-+	err = ufshcd_dme_rmw(hba, DL_VS_CLK_CFG_MASK,
-+			     DL_VS_CLK_CFG_MASK, DL_VS_CLK_CFG);
-+	if (err)
-+		goto out;
-+
-+	err = ufshcd_dme_rmw(hba, PA_VS_CLK_CFG_REG_MASK,
-+			     PA_VS_CLK_CFG_REG_MASK, PA_VS_CLK_CFG_REG);
-+	if (err)
-+		goto out;
-+
-+	err = ufshcd_dme_rmw(hba, DME_VS_CORE_CLK_CTRL_DME_HW_CGC_EN,
-+			     DME_VS_CORE_CLK_CTRL_DME_HW_CGC_EN,
-+			     DME_VS_CORE_CLK_CTRL);
-+out:
-+	if (err)
-+		dev_err(hba->dev, "hw clk gating enabled failed\n");
- }
+?
 
- static int ufs_qcom_hce_enable_notify(struct ufs_hba *hba,
-diff --git a/drivers/ufs/host/ufs-qcom.h b/drivers/ufs/host/ufs-qcom.h
-index 0a5cfc2dd4f7..e0e129af7c16 100644
---- a/drivers/ufs/host/ufs-qcom.h
-+++ b/drivers/ufs/host/ufs-qcom.h
-@@ -24,6 +24,15 @@
+> _PLD method, there is no need to duplicate the rotation information in a
+> swnode.
+> 
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> ---
+>  drivers/acpi/mipi-disco-img.c | 15 ---------------
+>  1 file changed, 15 deletions(-)
+> 
+> diff --git a/drivers/acpi/mipi-disco-img.c b/drivers/acpi/mipi-disco-img.c
+> index 5b85989f96beeb726f59ac9e12e965a215fb38f6..b58b5ba22a47a4afc5212998074d322f0b7586dc 100644
+> --- a/drivers/acpi/mipi-disco-img.c
+> +++ b/drivers/acpi/mipi-disco-img.c
+> @@ -617,21 +617,6 @@ static void init_crs_csi2_swnodes(struct crs_csi2 *csi2)
+>  
+>  	adev_fwnode = acpi_fwnode_handle(adev);
+>  
+> -	/*
+> -	 * If the "rotation" property is not present, but _PLD is there,
+> -	 * evaluate it to get the "rotation" value.
+> -	 */
+> -	if (!fwnode_property_present(adev_fwnode, "rotation")) {
+> -		struct acpi_pld_info *pld;
+> -
+> -		if (acpi_get_physical_device_location(handle, &pld)) {
+> -			swnodes->dev_props[NEXT_PROPERTY(prop_index, DEV_ROTATION)] =
+> -					PROPERTY_ENTRY_U32("rotation",
+> -							   pld->rotation * 45U);
+> -			kfree(pld);
+> -		}
+> -	}
+> -
+>  	if (!fwnode_property_read_u32(adev_fwnode, "mipi-img-clock-frequency", &val))
+>  		swnodes->dev_props[NEXT_PROPERTY(prop_index, DEV_CLOCK_FREQUENCY)] =
+>  			PROPERTY_ENTRY_U32("clock-frequency", val);
+> 
 
- #define UFS_QCOM_LIMIT_HS_RATE		PA_HS_MODE_B
+-- 
+Regards,
 
-+/* bit and mask definitions for PA_VS_CLK_CFG_REG attribute */
-+#define PA_VS_CLK_CFG_REG      0x9004
-+#define PA_VS_CLK_CFG_REG_MASK GENMASK(8, 0)
-+
-+/* bit and mask definitions for DL_VS_CLK_CFG attribute */
-+#define DL_VS_CLK_CFG          0xA00B
-+#define DL_VS_CLK_CFG_MASK GENMASK(9, 0)
-+#define DME_VS_CORE_CLK_CTRL_DME_HW_CGC_EN             BIT(9)
-+
- /* QCOM UFS host controller vendor specific registers */
- enum {
- 	REG_UFS_SYS1CLK_1US                 = 0xC0,
---
-2.48.1
-
+Sakari Ailus
 
