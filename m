@@ -1,144 +1,124 @@
-Return-Path: <linux-kernel+bounces-719422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6291AFADD3
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 09:57:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2007BAFADCE
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 09:57:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E03F16DC01
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 07:57:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 661583AD07A
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 07:57:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 929E128AB1A;
-	Mon,  7 Jul 2025 07:57:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69E1228A1D6;
+	Mon,  7 Jul 2025 07:57:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PqXGh+98"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=brighamcampbell.com header.i=@brighamcampbell.com header.b="BMp0egYB"
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75430285CBD;
-	Mon,  7 Jul 2025 07:57:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDBE4286880
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 07:57:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751875049; cv=none; b=Di/xsOCRThCrivIiQaQdaHmmZDRbTwSzC6a3IStxKrA53sLQLIySOJu34E6MCRpItQcQWWjJkph/cp10juoVS04LdgMhnfF74as2suvvsyfN0nRTWkq/I47NAZXcCXHEKRotRRfodDaqeTuYd70Dicfi9IW2PM6hGnH6tCa1SKA=
+	t=1751875040; cv=none; b=CFwoSSG4VihjLcmK8t4iOevldHXSsBmr8zA259fN/hBTf3HDin37JkmHy9Xbvxw9ytQEi+OoXeN6WsP4hcQBR8Ep9C44AmyDPSvngeAg3xzDBXEAQQxbM8jpPU6UTeCe32A06goofc6MGiXP0kEZbE7NKyrCoGUMpI2Xckt+ZvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751875049; c=relaxed/simple;
-	bh=NgImrN6amk2YtYswbo5+SrMae2P5F6NxO2Duvw5AbHw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l11vpo25qYBl5jKhSs5rZ+NbZMMaM2Y0JrMXxLcJmSnKpTVf5Z0lP3X9y2BwPhXV65/sTFsZCnQl3viO9PMzcPzHn4JaZJrTIf9jJYS79YN1QoDqRAEMdLIKoCC0CUOuMn6N7V3h4i/bvnaSWy4mO8UxHC7pSVk06233fU+S+64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PqXGh+98; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751875047; x=1783411047;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=NgImrN6amk2YtYswbo5+SrMae2P5F6NxO2Duvw5AbHw=;
-  b=PqXGh+98CIjiuyi0bguWob/TGW9981XdocQcEgoPnJ+Ai7pIULcA+Vb7
-   ytMdrjlI1uyQAPrC2DTvCiJKFfyVcgzz4WhV0kga/KraotSLLGjzlz1v0
-   2HM7E4Vexk63ksiSvGlZoEwyVfDcwpQUQznLPKAykZivnFrsu9/sBkqs7
-   dKkA3w+QuTf2lEZeLn0oP4J3u8lQgZjKddnyhAabOxAKZUlDVOb2mJV96
-   yE+W6t1vEeRbnP/kbSXziJT58bGMmbtczmdYRH9KCFIsnq0OyI+nDFd2F
-   8X9QWEJoMA1RTOB1M3AQY8XrY5Osr7bC68Y1GWzDy4MVzOvWpMo2FX+uu
-   Q==;
-X-CSE-ConnectionGUID: v4WBFwQ3S26RiYG89X91Dg==
-X-CSE-MsgGUID: y/aBGctWReGQe8djyKXKdA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11486"; a="65151082"
-X-IronPort-AV: E=Sophos;i="6.16,293,1744095600"; 
-   d="scan'208";a="65151082"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jul 2025 00:57:23 -0700
-X-CSE-ConnectionGUID: STh4V0D9QkC8zr+WktbP7Q==
-X-CSE-MsgGUID: y9rrMQGzT32AhN6S68zIFg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,293,1744095600"; 
-   d="scan'208";a="155625886"
-Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
-  by orviesa008.jf.intel.com with ESMTP; 07 Jul 2025 00:57:20 -0700
-Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uYgiz-0000Ff-0v;
-	Mon, 07 Jul 2025 07:57:17 +0000
-Date: Mon, 7 Jul 2025 15:56:53 +0800
-From: kernel test robot <lkp@intel.com>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	Peter Xu <peterx@redhat.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
-	Pedro Falcato <pfalcato@suse.de>, Rik van Riel <riel@surriel.com>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH 05/10] mm/mremap: use an explicit uffd failure path for
- mremap
-Message-ID: <202507071505.e2HFMCH2-lkp@intel.com>
-References: <be3e068c77107d385d89eae634317cb59e04e5ba.1751865330.git.lorenzo.stoakes@oracle.com>
+	s=arc-20240116; t=1751875040; c=relaxed/simple;
+	bh=3jDMpGyu6tKmKZCNbOyYSDDf/AFtsCO10XzjbaachO4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=h8IZjIss4KBw6jBaZla3Y1V19RCV7VOXNRAUy/xzZ3/YeX0SVbECiJXRvye1hZVCuEcKOtXDSXw5pDwXUDEvOgMSqomMapA5PU8BS9Gdm6WOr1wwYDQi8j90cUWex3hak7L/g+RZE4enCPdA4K/B3vUW7akemVvrDzLS+QLnjhY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=brighamcampbell.com; spf=pass smtp.mailfrom=brighamcampbell.com; dkim=pass (2048-bit key) header.d=brighamcampbell.com header.i=@brighamcampbell.com header.b=BMp0egYB; arc=none smtp.client-ip=209.85.215.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=brighamcampbell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=brighamcampbell.com
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-b390136ed88so883657a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 00:57:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brighamcampbell.com; s=google; t=1751875038; x=1752479838; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=fQK/9TljJT68jk0i2VGXxC4KsVLmbF/aNC235kAq204=;
+        b=BMp0egYBCiMzKolyxk6mbibOEsssG3fnHXVBbUYOU/9+oN7wG8BqvxVZJc4R9faK70
+         Uzj2Li5c3CA9B68vvAj57JpIro7pj1B7ge6Xj4mhZUSY38EBPBENYUXakam31BagpUJ6
+         168sBEpVhSxWjtotMjB7IBpLAbWGPQHPi9DRjTr3oUkJymPd79zsKUJ54FMFJiQJc1AI
+         o3uSRCHgDZruIvfjyn9D7CjY+mSKUMbSAdmv11gKw+FDrwR4LEtsflYzAP3RXrJXClup
+         HnnQ+1wAoJqJnnjvZkSfnGT2Tzu5WdxBKWT85P/B0iTkCOEpeODuVJYt5TgukhA094Aw
+         +txw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751875038; x=1752479838;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fQK/9TljJT68jk0i2VGXxC4KsVLmbF/aNC235kAq204=;
+        b=kYPc6UB7dAE+QJViXkmGtEU9ShbkxD1NOs+XFClFCUiqcc0IOEukpJj9kEGeICXQGN
+         GzEA8h4wlQujdMbt+o81kqTrSGqc/wyERSg75ach6mcP0pi54hSm5NTYLHImQEB7C0dV
+         TZsTiQ+/NAR/bDqmg3a1ZWvHH4HES3c58XZxQC5ShDhMlsvX24/LMkMAkcxWESq8BuEv
+         eOKeRObmxcCej/4lPboe5HKomcVMHI+GG+qohAEGBEN/MBwLyiYqyyG01EtLeKXzf3X1
+         zaIW9axF3pBrOJe1un6ttqtehptvb0xr8ehuBmAXV36GB5Tbvl6cdSF/CUWlWpbMWweB
+         P5zQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWGKfJiXU0OixUvmuhKhC2VATeorXIy/xYqvKSFzCW7ABAmRu6/1IuPhM390ndJo6XqQ9D3KpRK4eeB4Mo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8rzGtxFBcvfRSIIwnbrI45yGgrVbpubRPU7mbp0UgyW2t6Jnn
+	SvlCNvUoMMtZfVkcdc10/7DSLJfxYaYuAXNlH4N5MELcbUjqCP6nM2935RVK6oPc2hg=
+X-Gm-Gg: ASbGncsSv1+fBiPDGwkRFTsiwbr8jzEsYSYDr9Gk/HsMwo3Z+bGA9If61u8Q7Que5Ps
+	XCT1eFfd04THkEa69aCGLIBMOzxsBN/8ahNwd08O40CNmaIb9KF44N/gr3xWNiWALv/m/4sfksu
+	t1KwB32vzpbByBPTJyno9QhJ2H9hIeFrcc6lLKz07NqgwYSwUV0FzyDW69jirVEg+BCaQiJZapg
+	hCfJvIWSBJyLxk5a/OBNjE38T5VRtG0uz4WhynYgECVPT+3r30MA1sKGmcgjzv/D4Q579pN4Y0r
+	ndJqHs4c9KQmulSiAEEJftTm6acRHjlTMj76exyjqYRcGdV7b5xjfCC6dN7YUHoDOCfGV6zoKbZ
+	YAhy4SEZN2O/ajHjjXw==
+X-Google-Smtp-Source: AGHT+IE2lbn1qBhh8KgJDxKX2gey0GXo1rH+SaJuo7y82wLYHSPHk5Utp4cnQZCTDw+CPsMhqqQlfw==
+X-Received: by 2002:a05:6a20:9189:b0:21f:5aa1:3102 with SMTP id adf61e73a8af0-2272235311bmr12458991637.37.1751875037995;
+        Mon, 07 Jul 2025 00:57:17 -0700 (PDT)
+Received: from mystery-machine.brighamcampbell.com ([64.71.154.6])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b38ee62f8bdsm8246476a12.57.2025.07.07.00.57.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Jul 2025 00:57:17 -0700 (PDT)
+From: Brigham Campbell <me@brighamcampbell.com>
+To: dianders@chromium.org,
+	tejasvipin76@gmail.com,
+	skhan@linuxfoundation.org,
+	linux-kernel-mentees@lists.linux.dev,
+	dri-devel@lists.freedesktop.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Brigham Campbell <me@brighamcampbell.com>
+Subject: [PATCH 0/3] drm: docs: Remove deprecated MIPI DSI macro
+Date: Mon,  7 Jul 2025 01:56:55 -0600
+Message-ID: <20250707075659.75810-1-me@brighamcampbell.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <be3e068c77107d385d89eae634317cb59e04e5ba.1751865330.git.lorenzo.stoakes@oracle.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Lorenzo,
+This series removes the unintuitive mipi_dsi_generic_write_seq() macro
+and related mipi_dsi_generic_write_chatty() method from the drm
+subsystem. This is in accordance with a TODO item from Douglas Anderson
+in the drm subsystem documentation. Tejas Vipin (among others) has
+largely spearheaded this effort up until now, converting MIPI panel
+drivers one at a time.
 
-kernel test robot noticed the following build errors:
+The first patch of the series converts the last remaining driver to use
+the preferred _multi() variant of mipi_dsi_generic_write_seq(). This
+work likely hasn't been completed until now because the panel's usage of
+two separate MIPI DSI interfaces at once requires special treatment. Any
+behavioral modification to the jdi lpm102a188a panel driver by this
+series is unintentional.
 
-[auto build test ERROR on akpm-mm/mm-everything]
+Brigham Campbell (3):
+  Replace usage of deprecated MIPI function
+  Remove unused MIPI write seq and chatty functions
+  Remove completed task from drm TODO list
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Lorenzo-Stoakes/mm-mremap-perform-some-simple-cleanups/20250707-133132
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/be3e068c77107d385d89eae634317cb59e04e5ba.1751865330.git.lorenzo.stoakes%40oracle.com
-patch subject: [PATCH 05/10] mm/mremap: use an explicit uffd failure path for mremap
-config: i386-buildonly-randconfig-002-20250707 (https://download.01.org/0day-ci/archive/20250707/202507071505.e2HFMCH2-lkp@intel.com/config)
-compiler: clang version 20.1.7 (https://github.com/llvm/llvm-project 6146a88f60492b520a36f8f8f3231e15f3cc6082)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250707/202507071505.e2HFMCH2-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507071505.e2HFMCH2-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> mm/mremap.c:1739:3: error: call to undeclared function 'mremap_userfaultfd_fail'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-    1739 |                 mremap_userfaultfd_fail(vrm->uf);
-         |                 ^
-   mm/mremap.c:1739:3: note: did you mean 'mremap_userfaultfd_prep'?
-   include/linux/userfaultfd_k.h:363:20: note: 'mremap_userfaultfd_prep' declared here
-     363 | static inline void mremap_userfaultfd_prep(struct vm_area_struct *vma,
-         |                    ^
-   1 error generated.
+ Documentation/gpu/todo.rst                    | 18 ----------
+ drivers/gpu/drm/drm_mipi_dsi.c                | 34 ++-----------------
+ drivers/gpu/drm/panel/panel-jdi-lpm102a188a.c | 18 ++++++----
+ include/drm/drm_mipi_dsi.h                    | 23 -------------
+ 4 files changed, 15 insertions(+), 78 deletions(-)
 
 
-vim +/mremap_userfaultfd_fail +1739 mm/mremap.c
-
-  1731	
-  1732	static void notify_uffd(struct vma_remap_struct *vrm, bool failed)
-  1733	{
-  1734		struct mm_struct *mm = current->mm;
-  1735	
-  1736		/* Regardless of success/failure, we always notify of any unmaps. */
-  1737		userfaultfd_unmap_complete(mm, vrm->uf_unmap_early);
-  1738		if (failed)
-> 1739			mremap_userfaultfd_fail(vrm->uf);
-  1740		else
-  1741			mremap_userfaultfd_complete(vrm->uf, vrm->addr,
-  1742				vrm->new_addr, vrm->old_len);
-  1743		userfaultfd_unmap_complete(mm, vrm->uf_unmap);
-  1744	}
-  1745	
-
+base-commit: e33f256dbc293a1a3a31f18d56f659e7a27a491a
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.49.0
+
 
