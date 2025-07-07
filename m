@@ -1,30 +1,30 @@
-Return-Path: <linux-kernel+bounces-719232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-719233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59A5EAFAB76
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 08:11:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64A69AFAB77
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 08:11:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A73F17B980
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 06:11:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B1333B190C
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 06:10:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA59B278156;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF52F278E60;
 	Mon,  7 Jul 2025 06:11:06 +0000 (UTC)
 Received: from cpanel.siel.si (cpanel.siel.si [46.19.9.99])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0204814A82;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 152D1274FD7;
 	Mon,  7 Jul 2025 06:11:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.19.9.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751868666; cv=none; b=L3k5ORNGrYEDrOn5XAkx59+QxnBVVE4zV3Sp8zV5rCnvQFsEKj6eljLga8RzVh+CGzEI+V586i439d09wzOMtRCDmt2IjJvDUGoeWo9ncuii729kNosQTFEXWRUu8f3GVkDBR8EBcOZXb7QLwbnl79nDVZ5vZ8KBUMg+rod6OBI=
+	t=1751868666; cv=none; b=E5zt9xVCCtNZjxKuXf32GplMPYIb/eIEsqZiJ2PASqVpsR2JCJOLdIweTDvF9b6VUJdmQcoPpNLcFjpBBWAJqQ+OyYalty0QFJz/tBzehzUcpisndsD2+jYUw7MYX6krOd6H7ZbSBBpXEEWsMD8dCMPCcoEwCbV0OEtgjCSZx8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1751868666; c=relaxed/simple;
-	bh=ywKkp03jH+gfInGP9oVa9S/zNAkbi+fU8woSzIp+x6g=;
+	bh=/3n44WxXDOasDasi2kOkKwkmJdri0cieEVq3Xtvki3k=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=PQbKNsWZN/GraJFwcIOBM2UApexNKindqBTlJKj/xNgF9ScqckFwqktBrs3NqR4+OOssMOJW0bIOakPmbAKNKPXRrP6THYczKy9lAWHGFO2NC1V7a678ERtl1SmlSZUZEThht5jtRx2FvhXKIQqibGxZWCefM9JkHKn1YOm8m0U=
+	 MIME-Version; b=kMnoYExniUri4chaYydRTreHrjIQKoO24JAJe0aosirLWZM5kHqxvT0lOKk8D0+DyJe7U3wfzlo3kdFg+pDsL6ixFE7LoXBtxPujS4nDG6FAyLIvGtVnoZ4SFC+SQVk1MDfSKYlznMcuM29MyP4DmiMVYxRHLJQLMUD4QZ4jqkw=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com; spf=pass smtp.mailfrom=norik.com; arc=none smtp.client-ip=46.19.9.99
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=norik.com
@@ -32,7 +32,7 @@ Received: from [89.212.21.243] (port=56226 helo=localhost.localdomain)
 	by cpanel.siel.si with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96.2)
 	(envelope-from <primoz.fiser@norik.com>)
-	id 1uYf4B-00DKr8-0U;
+	id 1uYf4B-00DKr8-0n;
 	Mon, 07 Jul 2025 08:11:02 +0200
 From: Primoz Fiser <primoz.fiser@norik.com>
 To: Shawn Guo <shawnguo@kernel.org>,
@@ -47,9 +47,9 @@ Cc: imx@lists.linux.dev,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	upstream@lists.phytec.de
-Subject: [PATCH v2 1/4] arm64: dts: imx93-phycore-som: Add RPMsg overlay
-Date: Mon,  7 Jul 2025 08:10:58 +0200
-Message-Id: <20250707061101.1194618-2-primoz.fiser@norik.com>
+Subject: [PATCH v2 2/4] arm64: dts: imx93-phyboard-segin: Add PEB-EVAL-01 overlay
+Date: Mon,  7 Jul 2025 08:10:59 +0200
+Message-Id: <20250707061101.1194618-3-primoz.fiser@norik.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250707061101.1194618-1-primoz.fiser@norik.com>
 References: <20250707061101.1194618-1-primoz.fiser@norik.com>
@@ -71,103 +71,96 @@ X-Source:
 X-Source-Args: 
 X-Source-Dir: 
 
-Add an overlay used for remote processor inter-core communication
-between A55 and M33 cores on the phyCORE-i.MX93 SoM based boards.
+Add overlay to support PEB-EVAL-01 adapter on phyBOARD-Segin-i.MX93.
+This is a PHYTEC evaluation module with three LEDs and two input buttons
+that users can attach to the board expansion connector X16.
 
-Overlay adds the required reserved memory regions and enables the
-mailbox unit and the M33 core for RPMsg (Remote Processor Messaging
-Framework).
+Note that, due to compatibility with existing PHYTEC platforms using the
+phyBOARD-Segin carrier board such as i.MX6UL and STM32MP1, we face some
+hardware limitations and can thus only support one user LED (D2) and one
+button (S2) on the i.MX93 variant of the phyBOARD-Segin.
 
 Signed-off-by: Primoz Fiser <primoz.fiser@norik.com>
 ---
 Changes in v2:
-- reorder reserved memory nodes by address
+- no changes 
 
- arch/arm64/boot/dts/freescale/Makefile        |  4 ++
- .../dts/freescale/imx93-phycore-rpmsg.dtso    | 60 +++++++++++++++++++
- 2 files changed, 64 insertions(+)
- create mode 100644 arch/arm64/boot/dts/freescale/imx93-phycore-rpmsg.dtso
+ arch/arm64/boot/dts/freescale/Makefile        |  2 +
+ .../imx93-phyboard-segin-peb-eval-01.dtso     | 52 +++++++++++++++++++
+ 2 files changed, 54 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/freescale/imx93-phyboard-segin-peb-eval-01.dtso
 
 diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
-index 0b473a23d120..08a1de299538 100644
+index 08a1de299538..011b2d58e4f7 100644
 --- a/arch/arm64/boot/dts/freescale/Makefile
 +++ b/arch/arm64/boot/dts/freescale/Makefile
-@@ -324,6 +324,10 @@ dtb-$(CONFIG_ARCH_MXC) += imx93-14x14-evk.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx93-kontron-bl-osm-s.dtb
+@@ -325,7 +325,9 @@ dtb-$(CONFIG_ARCH_MXC) += imx93-kontron-bl-osm-s.dtb
  dtb-$(CONFIG_ARCH_MXC) += imx93-phyboard-nash.dtb
  dtb-$(CONFIG_ARCH_MXC) += imx93-phyboard-segin.dtb
-+
-+imx93-phycore-rpmsg-dtbs += imx93-phyboard-nash.dtb imx93-phyboard-segin.dtb imx93-phycore-rpmsg.dtbo
-+dtb-$(CONFIG_ARCH_MXC) += imx93-phycore-rpmsg.dtb
-+
+ 
++imx93-phyboard-segin-peb-eval-01-dtbs += imx93-phyboard-segin.dtb imx93-phyboard-segin-peb-eval-01.dtbo
+ imx93-phycore-rpmsg-dtbs += imx93-phyboard-nash.dtb imx93-phyboard-segin.dtb imx93-phycore-rpmsg.dtbo
++dtb-$(CONFIG_ARCH_MXC) += imx93-phyboard-segin-peb-eval-01.dtb
+ dtb-$(CONFIG_ARCH_MXC) += imx93-phycore-rpmsg.dtb
+ 
  dtb-$(CONFIG_ARCH_MXC) += imx93-tqma9352-mba91xxca.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx93-tqma9352-mba93xxca.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx93-tqma9352-mba93xxla.dtb
-diff --git a/arch/arm64/boot/dts/freescale/imx93-phycore-rpmsg.dtso b/arch/arm64/boot/dts/freescale/imx93-phycore-rpmsg.dtso
+diff --git a/arch/arm64/boot/dts/freescale/imx93-phyboard-segin-peb-eval-01.dtso b/arch/arm64/boot/dts/freescale/imx93-phyboard-segin-peb-eval-01.dtso
 new file mode 100644
-index 000000000000..c6cb5c580455
+index 000000000000..8039aa1ddfba
 --- /dev/null
-+++ b/arch/arm64/boot/dts/freescale/imx93-phycore-rpmsg.dtso
-@@ -0,0 +1,60 @@
++++ b/arch/arm64/boot/dts/freescale/imx93-phyboard-segin-peb-eval-01.dtso
+@@ -0,0 +1,52 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
 + * Copyright (C) 2025 PHYTEC Messtechnik GmbH
-+ * Author: Primoz Fiser <primoz.fiser@norik.com>
++ * Author: Andrej Picej <andrej.picej@norik.com>
 + */
 +
 +/dts-v1/;
 +/plugin/;
 +
++#include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/input/input.h>
++#include "imx93-pinfunc.h"
++
 +&{/} {
-+	reserved-memory {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
++	gpio-keys {
++		compatible = "gpio-keys";
++		pinctrl-names = "default";
++		pinctrl-0 = <&pinctrl_gpio_keys>;
 +
-+		rsc_table: rsc-table@2021e000 {
-+			reg = <0 0x2021e000 0 0x1000>;
-+			no-map;
++		button-s2 {
++			label = "sleep";
++			linux,code = <KEY_SLEEP>;
++			gpios = <&gpio1 10 GPIO_ACTIVE_LOW>;
++			wakeup-source;
 +		};
++	};
 +
-+		vdev0vring0: vdev0vring0@a4000000 {
-+			reg = <0 0xa4000000 0 0x8000>;
-+			no-map;
-+		};
++	user-leds {
++		compatible = "gpio-leds";
++		pinctrl-names = "default";
++		pinctrl-0 = <&pinctrl_user_leds>;
 +
-+		vdev0vring1: vdev0vring1@a4008000 {
-+			reg = <0 0xa4008000 0 0x8000>;
-+			no-map;
-+		};
-+
-+		vdev1vring0: vdev1vring0@a4010000 {
-+			reg = <0 0xa4010000 0 0x8000>;
-+			no-map;
-+		};
-+
-+		vdev1vring1: vdev1vring1@a4018000 {
-+			reg = <0 0xa4018000 0 0x8000>;
-+			no-map;
-+		};
-+
-+		vdevbuffer: vdevbuffer@a4020000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0 0xa4020000 0 0x100000>;
-+			no-map;
++		user-led2 {
++			gpios = <&gpio4 13 GPIO_ACTIVE_HIGH>;
++			default-state = "on";
 +		};
 +	};
 +};
 +
-+&cm33 {
-+	mbox-names = "tx", "rx", "rxdb";
-+	mboxes = <&mu1 0 1>,
-+		 <&mu1 1 1>,
-+		 <&mu1 3 1>;
-+	memory-region = <&vdevbuffer>, <&vdev0vring0>, <&vdev0vring1>,
-+		 <&vdev1vring0>, <&vdev1vring1>, <&rsc_table>;
-+	status = "okay";
-+};
++&iomuxc {
++	pinctrl_gpio_keys: gpiokeysgrp {
++		fsl,pins = <
++			MX93_PAD_PDM_BIT_STREAM1__GPIO1_IO10	0x31e
++		>;
++	};
 +
-+&mu1 {
-+	status = "okay";
++	pinctrl_user_leds: userledsgrp {
++		fsl,pins = <
++			MX93_PAD_ENET1_RD3__GPIO4_IO13		0x31e
++		>;
++	};
 +};
 -- 
 2.34.1
