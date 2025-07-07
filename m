@@ -1,107 +1,98 @@
-Return-Path: <linux-kernel+bounces-720605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DB3EAFBE33
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 00:19:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E99CAFBE34
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Jul 2025 00:21:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04E121AA5062
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 22:19:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F935426DFD
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 22:20:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 449A625D535;
-	Mon,  7 Jul 2025 22:19:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="TJ/NyMbA"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98BC1255F53;
+	Mon,  7 Jul 2025 22:21:03 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0010.hostedemail.com [216.40.44.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A3491CAA6C;
-	Mon,  7 Jul 2025 22:19:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C80DB1CAA6C
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 22:21:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751926761; cv=none; b=tY9JVpXTwlXzfLxhBwIzm1EzxIxVL/VGpJy89WE/bfuCGCLVSzkc1ld7MkiQoCjxjLqa7aioPgIQP+VVHQNQYieyB2QVSrjnN+pBtWGheGgWRimYfEMKyWeR9eSKKo0g/mBI4weLhYCsPSOIa4eYecT+cE3w5vIsa11iKEnb5WU=
+	t=1751926863; cv=none; b=oF7bQ6UcY+B8tDjm1bUT8A03MOJ3BISFt2F5HNOr5uou9rOCqJmXId39EPmpwAf3OzoGRYYlOhczdFKNQVHBK74Klm0hF+iGsYz80eUakFEjMoJAMefYPEAaZIGY2RUA27ZUtx0Ss1huG3kAvVuSfrlfAbImLCmPa7xAp0Bk5Js=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751926761; c=relaxed/simple;
-	bh=d/pD4l50qB/+exeQR72Wr/rSix9IINeIPBJPur/b73E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gw5/WY6q1/EZP6vMiQ+duTphbJIgTDjfFhfVM0M5YISqw2q0oavx1DzF3M2zgiDkUr90Y2OG8y6Q69NIOD3b2//NuTHFTyItz7xtM4JVKSaKNl12XVVDDtJCthTOxR9vbFK1mtlOV7kdtXMKDzbRfIlM7fW0nTC4JcIRs2ygA04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=TJ/NyMbA; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description;
-	bh=Pq0EGLq1omLRWLWiAcIZwGlMCmRfydbLhtcyuAgUVgY=; b=TJ/NyMbARp8O7XoOPD64/ztRjH
-	26SOVi6Bwy8kZdsSVDEVoSyd7OUeFRqs/ZO7SJ86hij8bzYwFZJkAwWWK+vp0N/MdroIfRg/apPZm
-	gFM0hY3/S6GTrrEul2PiCI/VkHpt8G9r1kGS7aZiViVFvvaPheZA7FpHXfGiuHXrgmPnsJUnA2Q5X
-	25Wg/0wA7sFGWb4jlK6MA6Sw4f31ePwHAJm1H7xNhJ8ymVoDOhEG2nlE8rGSgEL2xKrmMF8F6Ke1c
-	VUY6mDTMRiPVyOuKf7oMBKz9Mp4RMc6eh0Oy20gITOrIzZH3zheefHMceirGNk7/MaypZhWgH8yv0
-	w0qVmLrg==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uYuBB-00000004FH1-3xZP;
-	Mon, 07 Jul 2025 22:19:18 +0000
-Date: Mon, 7 Jul 2025 23:19:17 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Max Kellermann <max.kellermann@ionos.com>
-Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 20/21] __dentry_kill(): new locking scheme
-Message-ID: <20250707221917.GO1880847@ZenIV>
-References: <20250707193115.GH1880847@ZenIV>
- <CAKPOu+_q7--Yfoko2F2B1WD=rnq94AduevZD1MeFW+ib94-Pxg@mail.gmail.com>
- <20250707203104.GJ1880847@ZenIV>
- <CAKPOu+8kLwwG4aKiArX2pKq-jroTgq0MSWW2AC1SjO-G9O_Aog@mail.gmail.com>
- <20250707204918.GK1880847@ZenIV>
- <CAKPOu+9qpqSSr300ZDduXRbj6dwQo8Cp2bskdS=gfehcVx-=ug@mail.gmail.com>
- <20250707205952.GL1880847@ZenIV>
- <CAKPOu+8zjtLkjYzCCVyyC80YgekMws4vGOvnPLjvUiQ6zWaqaA@mail.gmail.com>
- <20250707213214.GM1880847@ZenIV>
- <CAKPOu+-JxtBnjxiLDXWFNQrD=4dR_KtJbvEdNEzJA33ZqKGuAw@mail.gmail.com>
+	s=arc-20240116; t=1751926863; c=relaxed/simple;
+	bh=CcboY1+6mtwC8WBNfMlr72B5bIDKTsLtE6Vo+2DmoRY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=HjPIsJceRPHYIiQ1etW89395a89VHNnk40lSicxzTVyOdSLNsvYCMxuNa15kyGTi814p+NVR1P7uGfly9NrUVAXBP0ZNsWQliEOOdzBx/G0gyEq54i7G7F+rCfco+d2tPvEdo2hcev2H8EcD153kg6Df3GwQMBM+Bi+cXzJDQNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf03.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay06.hostedemail.com (Postfix) with ESMTP id 3852410A560;
+	Mon,  7 Jul 2025 22:20:59 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf03.hostedemail.com (Postfix) with ESMTPA id BA8D16000C;
+	Mon,  7 Jul 2025 22:20:56 +0000 (UTC)
+Date: Mon, 7 Jul 2025 18:20:56 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: "Li,Rongqing" <lirongqing@baidu.com>, Peter Zijlstra
+ <peterz@infradead.org>, David Laight <david.laight.linux@gmail.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "vschneid@redhat.com" <vschneid@redhat.com>, "mgorman@suse.de"
+ <mgorman@suse.de>, "bsegall@google.com" <bsegall@google.com>,
+ "dietmar.eggemann@arm.com" <dietmar.eggemann@arm.com>,
+ "vincent.guittot@linaro.org" <vincent.guittot@linaro.org>,
+ "juri.lelli@redhat.com" <juri.lelli@redhat.com>, "mingo@redhat.com"
+ <mingo@redhat.com>
+Subject: Re: divide error in x86 and cputime
+Message-ID: <20250707182056.66a8468a@gandalf.local.home>
+In-Reply-To: <20250707220937.GA15787@redhat.com>
+References: <78a0d7bb20504c0884d474868eccd858@baidu.com>
+	<20250707220937.GA15787@redhat.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAKPOu+-JxtBnjxiLDXWFNQrD=4dR_KtJbvEdNEzJA33ZqKGuAw@mail.gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: BA8D16000C
+X-Stat-Signature: f5yj86bb3m8jsy5a7jnnq7yd3bpa1u71
+X-Rspamd-Server: rspamout06
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX19Ym2XnxuOiq2yKn19JaJeAgC0C9zt9v4Y=
+X-HE-Tag: 1751926856-559964
+X-HE-Meta: U2FsdGVkX1/zgzb1/NjeL2bFo6SF37NuDb+yPPs1e+UPI1vUc1NQph4CEDku2m4LPehhuoSM0KdUn76kwxA6LCSTvTddvVOZXvd9LEoTbd1gcOaNHALwGp4BtoAZBq3BMM9YJMOJ0yUN5rTiIBmBXlncfcgTeNVNrV4McaZh4efiENYowCO5r++2ve3LMTZ5PPQz5Djm5OjpGJIvXGk4k9TERXQDWAeT6HcTRqb/VVy5iWIOMkAnT9jwfbMVI2SmDk8KvoXW7xMAVQ0rtt++k1vVgRNW3akbA4720ucyABOYguh8coDaGyF3soMj74ZKBMnO0HMTtxarH6Tk3lXEH15ruC3qz61Y
 
-On Mon, Jul 07, 2025 at 11:47:04PM +0200, Max Kellermann wrote:
-> On Mon, Jul 7, 2025 at 11:32 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
-> > The second d_walk() does not have the if (!data.found) break; after it.
-> > So if your point is that we should ignore these and bail out as soon as we
-> > reach that state, we are not getting any closer to it.
+On Tue, 8 Jul 2025 00:09:38 +0200
+Oleg Nesterov <oleg@redhat.com> wrote:
+
+> Well, the current version doesn't have an __ex_table[] entry for div...
 > 
-> Not quite. My point is that you shouldn't be busy-waiting. And
-> whatever it is that leads to busy-waiting, it should be fixed
+> I do not know what can/should we do in this case... Perhaps
 > 
-> I don't know how the dcache works, and whatever solution I suggest,
-> it's not well-founded. I still don't even know why you added that "<0"
-> check.
-
-Take a look at shrink_dcache_for_umount().  We really should not progress
-past it in such situation.  And dentry can be in a shrink list *WITHOUT*
-the need to pin the superblock it belongs to.
-
-> > The second d_walk() is specifically about the stuff already in some other
-> > thread's shrink list.  If it finds more than that, all the better, but the
-> > primary goal is to make some progress in case if there's something in
-> > another thread's shrink list they are yet to get around to evicting.
-> >
-> > Again, what would you have it do?  The requirement is to take out everything
-> > that has no busy descendents.
+> 	static inline u64 mul_u64_u64_div_u64(u64 a, u64 mul, u64 div)
+> 	{
+> 		int ok = 0;
+> 		u64 q;
 > 
-> A descendant that is dying (i.e. d_lockref.count<0 but still linked in
-> its parent because Ceph is waiting for an I/O completion), is that
-> "busy" or "not busy"? What was your idea of handling such a dentry
-> when you wrote this patch?
+> 		asm ("mulq %3; 1: divq %4; movl $1,%1; 2:\n"
+> 			_ASM_EXTABLE(1b, 2b)
+> 			: "=a" (q), "+r" (ok)
+> 			: "a" (a), "rm" (mul), "rm" (div)
+> 			: "rdx");
+> 
+> 		return ok ? q : -1ul;
+> 	}
+> 
+> ?
+> 
+> Should return ULLONG_MAX on #DE.
 
-Not busy, unless there are other things pinning it down.  That's 100%
-intentional.
+I would say this should never happen and if it does, let the kernel crash.
+
+-- Steve
 
