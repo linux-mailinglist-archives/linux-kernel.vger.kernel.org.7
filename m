@@ -1,152 +1,148 @@
-Return-Path: <linux-kernel+bounces-720283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7612AFB995
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 19:07:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3E9CAFB9A6
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 19:08:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8F244A6F10
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 17:06:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4845B1BC0119
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 17:07:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D2442E973D;
-	Mon,  7 Jul 2025 17:05:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3004E2E88B1;
+	Mon,  7 Jul 2025 17:05:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GfQ3D63d"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lbrGxHAG"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B90962E88BF
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 17:05:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EF78253B58;
+	Mon,  7 Jul 2025 17:05:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751907932; cv=none; b=foUGcEv22kVsL8VP8DptKgUn+LJXYmzyHiSTDTYlUEyFkHQok7CBgQi2lJTDp7QOq5mU7tU4OC4g8Z9hnIuinVaPeU8m9IX7Y8e8PLJk5R8RCweON78sl92FRl13T+p6M7s3DcTl8stk+9zVHE8b5VH5fZEqiZAweUR2xyUbcYA=
+	t=1751907956; cv=none; b=cD+o96XffsHS4+ejlwOoq41EmV/fpd9Mz9e1IRfrQFhkLzQC1c6KQV9O4dTQM8rx2Rk3F/xU3UkoEomXzQN34nuPrgKt7OjuJ1jlnHDoY/fjd5zgvs8NZzQc4wS0TuzmuvPwsPeREZvPc/CJvFnoXB8a0IdMFYBVuube1BoVVGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751907932; c=relaxed/simple;
-	bh=V7GVXPeniRjfSBXgyWCdSqUUNadL/PC4wB6+w+kmXrE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=hQEgCtFdJDLZRkLgqECYUWJJHJQ0OgWG3TSv7YYyXyWs+LQnQAm9Wj4m6MC8zRTXzQ/rD34A/RxuZYXnZk6gxtKT3Q0Tqnc1/vL4OjVGikQXu+AX9GeaqpogAXmD6Dkz3R19aWQuKX82/AJAJZx1R1CV1AGU3BJdf3Rv9BsOju4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GfQ3D63d; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-60700a745e5so6685381a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 10:05:30 -0700 (PDT)
+	s=arc-20240116; t=1751907956; c=relaxed/simple;
+	bh=PY+mw4mTUhq/6RadpdMRqZgmrB8wZ5jm+Z1Dkpgo29Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=j7jkHLN+0SGGz8QyHLk6e3wsq3seWAqw2fQcavuCrorPVF7WZd2Q529QJKsqNkenJQ1dhO9Utd1wMN+qazgubr0eYPG1P4bcCvB9Rq2VOVKjSA+lCSy2ZXiUtypWqcu4BXl8vSy7+0PuFWXmLHzZDNQ0+Sy//Bu0oS68TJSct7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lbrGxHAG; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-3137c2021a0so2761413a91.3;
+        Mon, 07 Jul 2025 10:05:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1751907929; x=1752512729; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=57rYJvDLr2D8w3kMcZW5Qve8k2sDHgGAExSpeGzzFo4=;
-        b=GfQ3D63d+nGazbk7+lWB93ffVNPgxydPzyZXj3KGUyz/vIms4FksdDaxrU0xQ429vw
-         rx+TtugBgSOEJDFoHPbvG9HYkXmSU6leJ+pqVLcTfaj8G7FcqCEW5S89ZoAWI+SEDzgV
-         R+dCV2bGR+srkCuQrAUqx9k5W6qnKDVtbbsZ+xPEpCd5+oZ28ot9cUeQi1R9kpBT5WUv
-         AFaWPypwbM1YUFnO4YHJFENdKPAxbUQgkL1KI5BWHacbYjjWvfmR+/Z2A+/Fd8vZCHTa
-         byUzedF4qHVgnhNVvmiIeNvVMGqmkWFKwxDl207Q6MGm5nGKidGmgu8kCcce9jdkyxQ9
-         Zt8w==
+        d=gmail.com; s=20230601; t=1751907954; x=1752512754; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=TpMdXzDnCfdN/GalFwfGmK2Pny6VW2Rxcn9/iXdWGFw=;
+        b=lbrGxHAGaSV5fsR+2Q3fCX8wlID0lMC68OpJYdZCd0MqwdOnAyAbvYjEhvse1+Ig3r
+         tJ7QqjdI8kY7KvSnV83YSi6Ks4L+xW8bLmcFcLnt1Mi9cZFvRU22F45E3OKen2jwzEfl
+         +4DkzM73G9HDWFXUK4PhX3oruVXPaPxB+KHgLjsGJxveberQivKXChSOfJ1Hkid2MpfC
+         MG3yYGuiBrwBF+amDm6LMaH9vK8Kr5Zi2y+7pG0DJIt2rsla5T96qNTknb3Jyxmuu+DL
+         sgEK/ZekbuFM6nmfZBdaf7W74ifDP9ImVqYTKM9xt/wn+Kxg8xbMddzHsNsgz8cYK8kE
+         R+7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751907929; x=1752512729;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=57rYJvDLr2D8w3kMcZW5Qve8k2sDHgGAExSpeGzzFo4=;
-        b=JZvXf8beweoN33UcYjiV100m1GDN4miBsGK8+F3qiHOwoxdZoMYpfystimSWFRaQ4S
-         l8xa0+wUM6mg9H3lZ9D7U/VNdBFT7UF7lyB9u1t/6gHkA32gT/mF4otspgXOBvwAZtKp
-         hrzgCjfquNsIH8Ad4yWX8el39lQCIysAePI9e7fpS60CcbOxvCRkdq0ArPefXqLOAjva
-         7mHVpk5PvYJ5LVsdoHMHpqrlX7suxRR5/fY/s53H2M9jhUpyfw1lPQylsf7SewaSBgED
-         t48r362q6a9EhqdvV6ssBL6Me36LQKhAAJMtfpexc1euuYLfTf27rHOIcYIBfcqzsn3Z
-         z0Qg==
-X-Forwarded-Encrypted: i=1; AJvYcCUFvrVniTWnW7vLV4bvDi6YVRaDXpbqnXyQ2wqaU+Nyt6wIzAxYRIxBEDifdvZnv9841shU2emissqKYtA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzcwz1sCL63dAEXbnQQ+SOZxXl5L377QBofzQpmoFsq+4z9Hlxv
-	0iRLflLyYlhE041n2kueEv3UdaTRi/3lgi2rQv1lBORoX127F6+MpCFm8EShmcpPKqM=
-X-Gm-Gg: ASbGncuGXbmJ3/30IBcvMLpwPzREZEBrs/8szZBmN3UWyeI79zxO3DzZ7GdVa0iN8n9
-	jAVY6zA5ifxdV7seotO+Ksapo6usF5tD0U47S3cL7Lgq18Y54llh1CddCXh8zqfyp1M+DIbThvs
-	/O+bCpu5fmo5yTWrL+onIazajN+23wqu4fKxRP45Srb1qp9s0mm9m6EMcP5WyajEFs/CDWXFgej
-	XCenJc3OPqi5GvA3zPI/yBTc0TsWWT4bWHyFIJzAkRrHcoDwdfV3f1dVvueSZAu3a6eYkoODHcX
-	r9bImcZM3vURJGKcSr4gszr1M7WzTgCQTGSYj7IE7mPNJ3utK+sO7zFdi1LuKjHr6ml/ah6n2gB
-	lg+pODP8HeGkGQwj8emZ/WslsNeADqy5DXr6/QX29ptc6qA==
-X-Google-Smtp-Source: AGHT+IH39ie4cMyXIg4z35kSN5NcopH3AiyCIAZ7/0N31t7b87LaPnUMjOhDIkjPEUdI9Xt4zZAZOg==
-X-Received: by 2002:a17:907:3c91:b0:ae3:70cb:45d5 with SMTP id a640c23a62f3a-ae3fe741335mr1295648966b.48.1751907928992;
-        Mon, 07 Jul 2025 10:05:28 -0700 (PDT)
-Received: from puffmais.c.googlers.com (8.239.204.35.bc.googleusercontent.com. [35.204.239.8])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae3f6ac54a0sm745507266b.109.2025.07.07.10.05.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Jul 2025 10:05:28 -0700 (PDT)
-From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Mon, 07 Jul 2025 18:05:27 +0100
-Subject: [PATCH] scsi: ufs: exynos: fix programming of HCI_UTRL_NEXUS_TYPE
+        d=1e100.net; s=20230601; t=1751907954; x=1752512754;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TpMdXzDnCfdN/GalFwfGmK2Pny6VW2Rxcn9/iXdWGFw=;
+        b=ZX2XgjrW6G6xSPs9IRH68ZpyjUjF0DqEI1gjoD82QX8XmkdWSE+2pH7RRPPVEQWlXp
+         +Omlo5Z0xOHULAQT5TFjFEmG+OAkp0vb6K/e/9DN18n7rqWFTpKsQZ+S/X+/OCrOAPnn
+         50J9+NdrwYgiRRKofPk+XcGlGs6nfR81sc62cKW1bbPAQ8cp2jZg3UqUPqEOyWuvSsr9
+         Ufo4pHls+/8kUIxF8xA/Z+UcmLmjaQ7Re4q0cQ0LeOMwp+jocy5DNEy9qk6vrZE6zqLM
+         2rME/p7YSN4qKVPYSA1I6cHqXKwUtry4sZNbZC7FeokniS/6Qom0/cyMFX5CkmMj7lVe
+         uc1A==
+X-Forwarded-Encrypted: i=1; AJvYcCWDzKomL5+B58W1Gq5ap1NhL/qbffyCOuU+Cmjd51haxEVBxtuHG2/GpEK1zDbBMGEE7ebwZfJU6dVPlmkb@vger.kernel.org, AJvYcCWJNa0P5AJ9v68Sq9kmW8nopdm03ptf5jwB9Kz10ipNSbXW4Eto65vVnYx9kjMpYmszrRdueKG0SlA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/QshsY/JXovlFkPnRefmRnKED7SBlIwUXL1y7REy0iDGxx3wb
+	ZIoOpvb9KP+0TOcGtLmzgyc+0pqC3Mc2c7n4KRUSL/Y3VHglRulzQ60F
+X-Gm-Gg: ASbGncvVEyrQF8uX2FhNME52SA3AdR5wCHRJvYlFYTKlaw1Zvqv1WhJ0j7RkCCdzAx4
+	2R3242i9DGYXGi87ZaLQEWCbDRpHp2CPcz9+XnkCQsfFR0IYaeo15gIiLXiCojS2kH4+y7aruzj
+	HyySCfp0uih72ApKxTJiZyMJg3HRIKYYZia5ZDIDysoNNpMTZhM/iiKdnlU4TCJu56bNEB62B1r
+	Gbc5KZQZBo9+y4rm7DrVFTulbMaXGr+zKQlFAWc7WpO0KAh5mM9sCQSUKLOe7equWhGGxOR9zT5
+	hJrMuy3uWIvh5nc1hRRq9+LTFSnDtC13pixdekQdjz1wkQ+0m1v9zFDlzACU+apcyBfl2V6RnPo
+	=
+X-Google-Smtp-Source: AGHT+IEF5fattogvax5kob4VN55wmQfM65/bVQ74yFaRHd7Gk2rpdUBuYA2r6FYpXtk6hWnOBGZqww==
+X-Received: by 2002:a17:90b:4b43:b0:312:29e:9ed5 with SMTP id 98e67ed59e1d1-31c20e59333mr265155a91.23.1751907954241;
+        Mon, 07 Jul 2025 10:05:54 -0700 (PDT)
+Received: from [10.0.0.86] ([122.172.85.55])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31a9f17bc5bsm11683652a91.48.2025.07.07.10.05.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Jul 2025 10:05:53 -0700 (PDT)
+Message-ID: <c7296a36-0bdd-464d-a681-517c814afed7@gmail.com>
+Date: Mon, 7 Jul 2025 22:35:44 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250707-ufs-exynos-shift-v1-1-1418e161ae40@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAFb+a2gC/x3MPQqAMAxA4auUzAZqqT94FXHQmmqWKo1KRby7x
- fEb3ntAKDIJdOqBSBcLbyGjLBS4dQwLIc/ZYLSpdKMbPL0gpTtsgrKyP3Cq51K3lkzrLORsj+Q
- 5/ct+eN8PxFjj5GIAAAA=
-X-Change-ID: 20250707-ufs-exynos-shift-b6d1084e28c4
-To: Alim Akhtar <alim.akhtar@samsung.com>, 
- Peter Griffin <peter.griffin@linaro.org>, 
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, 
- "Martin K. Petersen" <martin.petersen@oracle.com>, 
- Krzysztof Kozlowski <krzk@kernel.org>, Seungwon Jeon <essuuj@gmail.com>, 
- Avri Altman <avri.altman@wdc.com>, Kiwoong Kim <kwmad.kim@samsung.com>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
- linux-scsi@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- stable@vger.kernel.org, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-X-Mailer: b4 0.14.2
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] drm: docs: Remove completed task from drm TODO list
+To: Brigham Campbell <me@brighamcampbell.com>, dianders@chromium.org,
+ skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev,
+ dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Jonathan Corbet <corbet@lwn.net>
+References: <20250707075659.75810-1-me@brighamcampbell.com>
+ <20250707075659.75810-4-me@brighamcampbell.com>
+Content-Language: en-US
+From: Tejas Vipin <tejasvipin76@gmail.com>
+In-Reply-To: <20250707075659.75810-4-me@brighamcampbell.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Google gs101, the number of UTP transfer request slots (nutrs) is
-32, and in this case the driver ends up programming the UTRL_NEXUS_TYPE
-incorrectly as 0.
+Hi,
 
-This is because the left hand side of the shift is 1, which is of type
-int, i.e. 31 bits wide. Shifting by more than that width results in
-undefined behaviour.
+On 7/7/25 1:26 PM, Brigham Campbell wrote:
+> Remove TODO item from drm documentation to transition away from using
+> mipi_dsi_*_write_seq() macros now that the work is complete.
+> 
+> Signed-off-by: Brigham Campbell <me@brighamcampbell.com>
+> ---
+>  Documentation/gpu/todo.rst | 18 ------------------
+>  1 file changed, 18 deletions(-)
+> 
+> diff --git a/Documentation/gpu/todo.rst b/Documentation/gpu/todo.rst
+> index be8637da3fe9..76afb8a784e3 100644
+> --- a/Documentation/gpu/todo.rst
+> +++ b/Documentation/gpu/todo.rst
+> @@ -497,24 +497,6 @@ Contact: Douglas Anderson <dianders@chromium.org>
+>  
+>  Level: Intermediate
+>  
+> -Transition away from using mipi_dsi_*_write_seq()
+> --------------------------------------------------
+> -
+> -The macros mipi_dsi_generic_write_seq() and mipi_dsi_dcs_write_seq() are
+> -non-intuitive because, if there are errors, they return out of the *caller's*
+> -function. We should move all callers to use mipi_dsi_generic_write_seq_multi()
+> -and mipi_dsi_dcs_write_seq_multi() macros instead.
+> -
+> -Once all callers are transitioned, the macros and the functions that they call,
+> -mipi_dsi_generic_write_chatty() and mipi_dsi_dcs_write_buffer_chatty(), can
+> -probably be removed. Alternatively, if people feel like the _multi() variants
+> -are overkill for some use cases, we could keep the mipi_dsi_*_write_seq()
+> -variants but change them not to return out of the caller.
+> -
+> -Contact: Douglas Anderson <dianders@chromium.org>
+> -
+> -Level: Starter
+> -
+>  Remove devm_drm_put_bridge()
+>  ----------------------------
+>  
 
-Fix this by switching to the BIT() macro, which applies correct type
-casting as required. This ensures the correct value is written to
-UTRL_NEXUS_TYPE (0xffffffff on gs101), and it also fixes a UBSAN shift
-warning:
-    UBSAN: shift-out-of-bounds in drivers/ufs/host/ufs-exynos.c:1113:21
-    shift exponent 32 is too large for 32-bit type 'int'
+Personally I think there's merit in keeping this TODO around until all
+the other mipi_dsi functions are transitioned as well and removed
+entirely. Maybe rewording it to reflect this could be better?
 
-For consistency, apply the same change to the nutmrs / UTMRL_NEXUS_TYPE
-write.
-
-Fixes: 55f4b1f73631 ("scsi: ufs: ufs-exynos: Add UFS host support for Exynos SoCs")
-Cc: stable@vger.kernel.org
-Signed-off-by: André Draszik <andre.draszik@linaro.org>
----
- drivers/ufs/host/ufs-exynos.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/ufs/host/ufs-exynos.c b/drivers/ufs/host/ufs-exynos.c
-index 3e545af536e53e06b66c624ed0dc6dc7de13549f..f0adcd9dd553d2e630c75e8c3220e21bc5f7c8d8 100644
---- a/drivers/ufs/host/ufs-exynos.c
-+++ b/drivers/ufs/host/ufs-exynos.c
-@@ -1110,8 +1110,8 @@ static int exynos_ufs_post_link(struct ufs_hba *hba)
- 	hci_writel(ufs, val, HCI_TXPRDT_ENTRY_SIZE);
- 
- 	hci_writel(ufs, ilog2(DATA_UNIT_SIZE), HCI_RXPRDT_ENTRY_SIZE);
--	hci_writel(ufs, (1 << hba->nutrs) - 1, HCI_UTRL_NEXUS_TYPE);
--	hci_writel(ufs, (1 << hba->nutmrs) - 1, HCI_UTMRL_NEXUS_TYPE);
-+	hci_writel(ufs, BIT(hba->nutrs) - 1, HCI_UTRL_NEXUS_TYPE);
-+	hci_writel(ufs, BIT(hba->nutmrs) - 1, HCI_UTMRL_NEXUS_TYPE);
- 	hci_writel(ufs, 0xf, HCI_AXIDMA_RWDATA_BURST_LEN);
- 
- 	if (ufs->opts & EXYNOS_UFS_OPT_SKIP_CONNECTION_ESTAB)
-
----
-base-commit: 50c8770a42faf8b1c7abe93e7c114337f580a97d
-change-id: 20250707-ufs-exynos-shift-b6d1084e28c4
-
-Best regards,
 -- 
-André Draszik <andre.draszik@linaro.org>
-
+Tejas Vipin
 
