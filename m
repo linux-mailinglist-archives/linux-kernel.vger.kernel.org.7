@@ -1,130 +1,131 @@
-Return-Path: <linux-kernel+bounces-720205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-720204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CBDCAFB883
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 18:19:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B83EAFB881
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 18:18:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16F971AA0F23
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 16:20:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65272179C97
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Jul 2025 16:18:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49F7021B196;
-	Mon,  7 Jul 2025 16:19:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89C14217707;
+	Mon,  7 Jul 2025 16:18:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="jbsbNS7T"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AGbvo3sr"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D059F1A316E;
-	Mon,  7 Jul 2025 16:19:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751905185; cv=pass; b=PoVpB3Z7L2DeLQQKCFyJgjmRSsW4bnsez3Y/yz9cggKfpXOZzrL+8waxlDiKkkIg8+Qb5ayx8bEBs1HsHiawTJNsIROmVH008NxGpfnI1gU78C76WpDWtiglZqNEcNAjOUELXDWOIj1Lr58DtIVRyovgR5qqJVkwYr+RFL3toxo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751905185; c=relaxed/simple;
-	bh=R94avkSZjApSXUNZ0YQ4lxwJ6hTJ8++8l+29QNsZDtY=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=WAUBVDIDlYfVO2Yh+y/j/lsLZNbUk9tmrG1OqIk8CxeJrW7ZV7/Tkq1RPgrL6ZDKfM4AIJk70+ryHPOXWRAi+nLEe4yp6bGoPnPAH/O5/JRXF1GEvmBiBLYGPezK+Yk4TRDiuzIe6KjpvcVrVUWiJ8BMeFhXadbQeP2h2wuxS3E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=jbsbNS7T; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1751905144; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=HZgmv52LJzlDRI+1GRTwzz6PMhGLJhuRxzJpb0yIdCcPaih8VQ3fweQAXXeOFXzrC2XxvJJBUnTTg49My+drZ0MC8F5uFODrxzexW74seKuoJHRMhGVyr4CXm3QHQarPU4XyfVQqtZF9/X9015gWaWkr2zv29XvBV7HatTjeE+A=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1751905144; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=ETLYFfIfOLg2rNaiX6F+ay4E3ts9u33x29yYCRsWi/Q=; 
-	b=QV0n3xPTo4wpnOHZ8/GpbIWmsodmAMsxpnU+Hg4C925qOyQ4s0q0sYnMRlgFrkUUYFRfW5xIdINqrWltAexi+EN6j79x8r+weRtLDw29Fgw5AgcTgeWW3cydX5kbUkuyAX96EFtnXiek7ELv8vRmk+4ejOFosh7z7x0eK9Jb8co=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1751905144;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=ETLYFfIfOLg2rNaiX6F+ay4E3ts9u33x29yYCRsWi/Q=;
-	b=jbsbNS7T+VebJkTLbe5JY2EU29NdGsT8DyGAXgge+jagX2BQD4mR1vRX/+60vchh
-	Oaj3A2+WGZlyPwQWZdBPUfJo6fwKORY9EPpOBKVKD10jmuUle8ai+5z7axDm9/WoSKY
-	QK2D2yBxPe6mWcAu6Ev1x/TtGn3tCpaA0TmjLt7c=
-Received: by mx.zohomail.com with SMTPS id 1751905142619899.7142083393121;
-	Mon, 7 Jul 2025 09:19:02 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9780B749C
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Jul 2025 16:18:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751905133; cv=none; b=ui7QcAnbCri0lgtCIi13xfTrPSvgub4V9JhuTOST56+ZoGvkQ+3oHO6soSkOO0n1fkn529k2fStYh719pH2T3mhEW+p/3VnzDzeieZbAf6EYhHsugJFlA/QcUacPKwmyTIKkMm5KdQtj1Cq3u+UT82MfjAmr92PWAJWgHw++Ygk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751905133; c=relaxed/simple;
+	bh=mbn0FOtqyOrAa7bKllj5iYlS4RR7u584EVzV77yqV6Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QJOBVa0gOibf3uhc0I8QuuC46PKoLmbShyDszg1U6y/IQ7NHUkazgMfl4pg9KVTSzqnnvYxnT4ngoR7/uOyYWSOceSU0AX+4AhHa+1afMZ5UrP0xgyI67U6EA42bYy0fGfiDkASvROxmjpd8LcRRyQ+Mu4Kcw6UYXURv28IJzfQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AGbvo3sr; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-31332cff2d5so3074587a91.1
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jul 2025 09:18:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751905131; x=1752509931; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=zzS5ZyXhRFJQPdtT7pJWRReoUeeAi7PGNzHa/PItqiU=;
+        b=AGbvo3srx0S3lyGEyvsHWW10xARmRXJq3+ZQC1OlRKJknX59LG64HRrwFWCYOKE8yC
+         V+nu2zVM00rFF6jVgjrh99t81d3TLvIxHfNY8NwQQ8tPC0y4Qiq5ItFwI2mo76JZQYmH
+         vsp1K2ICY8VA0pzsGwReQInZuorreA4gYflK8wflxmCQcmby+S4XFI+ro0sEbZZ7pIHA
+         4iWjNzqwC3OAZnYuuCOx0OE6tSXdEK5C6q7WMEzSDlPeGO5WlGjAscl0mXmhJdo9vfLx
+         zbwFii2yaWmcPcca6PRjyHbahNlOz7hnPRChms922t7Cy3ExIMV02zzJ1P13cSdcKgKJ
+         1QJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751905131; x=1752509931;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zzS5ZyXhRFJQPdtT7pJWRReoUeeAi7PGNzHa/PItqiU=;
+        b=jam1WG1/8B2ropo+6TGC4rXB/rPz09j1kEDQXjYl0Ou2TVrkTw2465kGC7cT3DhM2O
+         DnWEkQXNcBfvAYRHz8fkYi9rFWwQvn5hTKz39uU281iSMqQEIHjsf9mSA8Ml/4ZfpXZC
+         ScewVnwnh5UQy8Shk+rpuQmNE1rrfb9apJleSgX3cTXmhv25DhvPmVkmU2KxfhAXpbJv
+         34v12zSJn/Z1T/PYDR+K8HeFp3H/6PPxNDclelU/LeWrP73SrhEHCtzFkA9bCNKTyo/o
+         ZjD+9KXOxjmURRlkhuA7MC6+E7+Hpk9Q7/9EqxoOevEhmkfY3pcbQ4P9vUYrUfwzWeQW
+         QiLg==
+X-Forwarded-Encrypted: i=1; AJvYcCVM8gc//F5un2HLB+gMrEkhkwxPAw7guLVbLVX550W0zGI88HrqmNGaJrK/vuDNgxZwPijEBbzMiq/5zpA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx43yqtAO4Y1otldJ3BYyXV4vUooebgEX+uNAMKGNzvtVxFsS2T
+	1DCIAbSwJxnpWQDj6KwxfzdK5TcknKDxrXzE4qwA3ZkrP7/ST0IO4zjp
+X-Gm-Gg: ASbGncuPTEgkI0A2tEXquPS4pHoxyFUJTeNszfXMT43CBiyZQix2rD5EMvG9kOLLGnZ
+	hU/gtcu+Bksc8mpATMwpxlLXO0KiPrF3q2dJjhi/fGIlFZDwyjcXesT2fZWag/OChmrI6G1Rgc0
+	1DUT7gplZxoMIm0PON2ofn0+Rs2MjfxqQ+xUpWnIWyxp2XilnywuRZjROV2WjB3bsgdANGo1WFn
+	L+N4r1g3HE2Ftzza4EgrethfZTV354capTi/ewyTT2gQEbLUEl7GVQm/JzNlN36nYSzwEk+POK2
+	wOdXTm2pGpjcpCFJcbg9AzzmrBpTMvAuiJuRWNQYOCvTtsTBJ629nKkHjkjnu9KWWVNcAFNNUXg
+	JADMOMOlu+NVis5/ygg==
+X-Google-Smtp-Source: AGHT+IEFMLWJBeYDvpnTUie9w5m1R0hi9Kd6o+X3gA7ub8wJ283E92i6zDwHtWATmQshNQ9PtPwRAw==
+X-Received: by 2002:a17:90b:4e86:b0:311:e8cc:425d with SMTP id 98e67ed59e1d1-31c20cce7c1mr130079a91.10.1751905130691;
+        Mon, 07 Jul 2025 09:18:50 -0700 (PDT)
+Received: from fedora (c-67-164-59-41.hsd1.ca.comcast.net. [67.164.59.41])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31aaae6b6casm10040486a91.18.2025.07.07.09.18.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Jul 2025 09:18:50 -0700 (PDT)
+Date: Mon, 7 Jul 2025 09:18:46 -0700
+From: "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
+To: Baolin Wang <baolin.wang@linux.alibaba.com>
+Cc: akpm@linux-foundation.org, hughd@google.com, david@redhat.com,
+	ziy@nvidia.com, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
+	npache@redhat.com, ryan.roberts@arm.com, dev.jain@arm.com,
+	baohua@kernel.org, vbabka@suse.cz, rppt@kernel.org,
+	surenb@google.com, mhocko@suse.com, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] mm: fault in complete folios instead of individual
+ pages for tmpfs
+Message-ID: <aGvzZijuczq2H5FK@fedora>
+References: <440940e78aeb7430c5cc8b6d2088ae98265b9809.1751599072.git.baolin.wang@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
-Subject: Re: [PATCH v6 3/6] rust: irq: add support for non-threaded IRQs and
- handlers
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <aGeIF_LcesUM9DHk@google.com>
-Date: Mon, 7 Jul 2025 13:18:45 -0300
-Cc: Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Trevor Gross <tmgross@umich.edu>,
- Danilo Krummrich <dakr@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>,
- Benno Lossin <lossin@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>,
- =?utf-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org,
- linux-pci@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <F3D3BD51-65D8-44BE-9007-FBA556DFB7E5@collabora.com>
-References: <20250703-topics-tyr-request_irq-v6-0-74103bdc7c52@collabora.com>
- <20250703-topics-tyr-request_irq-v6-3-74103bdc7c52@collabora.com>
- <aGeIF_LcesUM9DHk@google.com>
-To: Alice Ryhl <aliceryhl@google.com>
-X-Mailer: Apple Mail (2.3826.600.51.1.1)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <440940e78aeb7430c5cc8b6d2088ae98265b9809.1751599072.git.baolin.wang@linux.alibaba.com>
 
-Alice,
+On Fri, Jul 04, 2025 at 11:19:26AM +0800, Baolin Wang wrote:
+> After commit acd7ccb284b8 ("mm: shmem: add large folio support for tmpfs"),
+> tmpfs can also support large folio allocation (not just PMD-sized large
+> folios).
+> 
+> However, when accessing tmpfs via mmap(), although tmpfs supports large folios,
+> we still establish mappings at the base page granularity, which is unreasonable.
+> 
+> We can map multiple consecutive pages of a tmpfs folios at once according to
+> the size of the large folio. On one hand, this can reduce the overhead of page
+> faults; on the other hand, it can leverage hardware architecture optimizations
+> to reduce TLB misses, such as contiguous PTEs on the ARM architecture.
+> 
+> Moreover, tmpfs mount will use the 'huge=' option to control large folio
+> allocation explicitly. So it can be understood that the process's RSS statistics
+> might increase, and I think this will not cause any obvious effects for users.
+> 
+> Performance test:
+> I created a 1G tmpfs file, populated with 64K large folios, and write-accessed it
+> sequentially via mmap(). I observed a significant performance improvement:
+> 
+> Before the patch:
+> real	0m0.158s
+> user	0m0.008s
+> sys	0m0.150s
+> 
+> After the patch:
+> real	0m0.021s
+> user	0m0.004s
+> sys	0m0.017s
+> 
+> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
 
-[=E2=80=A6]
-
->> +/// The value that can be returned from an IrqHandler or a =
-ThreadedIrqHandler.
->> +pub enum IrqReturn {
->> +    /// The interrupt was not from this device or was not handled.
->> +    None,
->> +
->> +    /// The interrupt was handled by this device.
->> +    Handled,
->> +}
->> +
->> +impl IrqReturn {
->> +    fn into_inner(self) -> u32 {
->> +        match self {
->> +            IrqReturn::None =3D> bindings::irqreturn_IRQ_NONE,
->> +            IrqReturn::Handled =3D> bindings::irqreturn_IRQ_HANDLED,
->=20
-> One option is to specify these in the enum:
->=20
-> /// The value that can be returned from an IrqHandler or a =
-ThreadedIrqHandler.
-> pub enum IrqReturn {
->    /// The interrupt was not from this device or was not handled.
->    None =3D bindings::irqreturn_IRQ_NONE,
->=20
->    /// The interrupt was handled by this device.
->    Handled =3D bindings::irqreturn_IRQ_HANDLED,
-> }
-
-This requires explicitly setting #[repr(u32)], which is something that =
-was
-reverted at an earlier iteration of the series on Benno=E2=80=99s =
-request.
-
-=E2=80=94 Daniel=
+Reviewed-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
 
